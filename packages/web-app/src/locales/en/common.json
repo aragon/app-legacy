@@ -2,7 +2,7 @@
   "subtitle": "Welcome to",
   "title": {
     "part1": "Aragon App",
-    "part2": "The human-centered DAO infrastructure."
+    "part2": "The human centered Dao infrastructure."
   },
   "testnetIndicator": "TESTNET ACTIVE",
   "menu": "Menu",
@@ -880,5 +880,8 @@
       "title": "Select Smart Contract",
       "description": "Select a smart contract to compose any actions or connect a new smart contract if ..."
     }
+  },
+  "headerPage": {
+    "title": "DAO Name"
   }
 }
