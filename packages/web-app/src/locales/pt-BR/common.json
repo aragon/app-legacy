@@ -1,5 +1,5 @@
 {
-  "subtitle": "Welcome to",
+  "subtitle": "Bem vindo ao",
   "title": {
     "part1": "Aragon App",
     "part2": "The human-centered DAO infrastructure."
@@ -8,7 +8,7 @@
   "menu": "Menu",
   "navLinks": {
     "dashboard": "Dashboard",
-    "governance": "Governance",
+    "governance": "Governança",
     "finance": "Finance",
     "community": "Community",
     "explore": "Explore",
