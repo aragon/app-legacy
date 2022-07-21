@@ -515,9 +515,14 @@
     "chooseOptionHelptext": "To vote, you must select one of the following options. Afterwards, a confirmation with your wallet is necessary. Once the transaction is completed, your vote will be counted and displayed.",
     "submit": "Submit your vote",
     "cancel": "Cancel",
-    "remainingTime": "Remaining time",
+    "remainingTime": "{{time}} remaining",
     "voteNow": "Vote now",
-    "notStartedYet": "Not started yet"
+    "notStartedYet": "Not started yet",
+    "voteEnded": "Voting ended",
+    "emptyState": {
+      "title": "No result found for {{query}}",
+      "subtitle": "Search for another wallet or ENS address"
+    }
   },
   "explore": {
     "hero": {
