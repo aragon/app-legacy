@@ -1,5 +1,5 @@
 {
-  "subtitle": "Bem vindo ao",
+  "subtitle": "Bem-vindo a",
   "title": {
     "part1": "Zaragoza",
     "part2": "The human centered Dao infrastructure."
@@ -20,7 +20,7 @@
     "settings": "Settings"
   },
   "daoSwitcher": {
-    "title": "Select your DAO",
+    "title": "Selecione sua DAO",
     "subtitle": "Go back to Explorer page"
   },
   "navButtons": {
@@ -30,6 +30,7 @@
     "members": "Members",
     "addMember": "Add Member",
     "mintTokens": "Mint Tokens",
+    "seeAllHolders": "See All Holders",
     "approvalThreshold": "Approval Threshold",
     "viewTransactions": "View Transactions",
     "logOut": "Log Out",
@@ -261,7 +262,8 @@
       "title": "Wallet connection",
       "description": "To continue with this action, a wallet must be connected.",
       "buttonLabel": "Login Now"
-    }
+    },
+    "tokenBasedMembers": "The DAO members listed here have interacted with the DAO at least once"
   },
   "warnings": {
     "amountGtDaoToken": "Withdraw amount is greater than the current token balance"
