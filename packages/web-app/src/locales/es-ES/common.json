@@ -30,6 +30,7 @@
     "members": "Members",
     "addMember": "Add Member",
     "mintTokens": "Mint Tokens",
+    "seeAllHolders": "See All Holders",
     "approvalThreshold": "Approval Threshold",
     "viewTransactions": "View Transactions",
     "logOut": "Log Out",
@@ -261,7 +262,8 @@
       "title": "Wallet connection",
       "description": "To continue with this action, a wallet must be connected.",
       "buttonLabel": "Login Now"
-    }
+    },
+    "tokenBasedMembers": "The DAO members listed here have interacted with the DAO at least once"
   },
   "warnings": {
     "amountGtDaoToken": "Withdraw amount is greater than the current token balance"
