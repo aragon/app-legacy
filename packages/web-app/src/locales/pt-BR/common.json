@@ -31,6 +31,7 @@
     "addMember": "Add Member",
     "mintTokens": "Mint Tokens",
     "seeAllHolders": "See All Holders",
+    "aragonCore": "Aragon Core",
     "approvalThreshold": "Approval Threshold",
     "viewTransactions": "View Transactions",
     "logOut": "Log Out",
@@ -146,7 +147,8 @@
     "searchTokens": "Type to search ...",
     "searchTransfers": "Type to filter ...",
     "daoName": "Type your DAOs name ...",
-    "daoDescription": "Type your summary ..."
+    "daoDescription": "Type your summary ...",
+    "addResource": "e.g. Website, Discord, etc"
   },
   "finance": {
     "tokenSection": "Tokens",
@@ -481,11 +483,14 @@
       "description": "If the response is to execute a transaction, store your desired actions at the corresponding response. These can be simple transactions or any smart contract methods you can find (e.g. Uniswap or similar).",
       "yesOption": "Yes",
       "yesOptionSubtitle": "If the option “yes” wins the voting, perform the following actions.",
-      "addFirstActionTitle": "Add your very first action",
-      "addFirstActionSubtitle": "Add optional actions if you wish to perform on-chain executions",
       "addFirstAction": "Add First Action",
+      "addFirstActionSubtitle": "Add your very first optional action if you wish to perform on-chain executions",
       "addAction": "Add Action",
       "actionsInfo": "Based on the voting options setup, it is only possible to add actions to the option \"Yes\"."
+    },
+    "mintTokens": {
+      "methodDescription": "Which wallet addresses should get tokens, and how much? Add the wallets you want here, and then choose the distribution. Upload a CSV with <1>this template</1> if you want.",
+      "additionalInfo": "The total token supply is inclusive of the already distributed tokens of the existing holders."
     }
   },
   "votingTerminal": {
