@@ -29,6 +29,8 @@
   "labels": {
     "members": "Members",
     "addMember": "Add Member",
+    "addWallets": "Add Wallets",
+    "addWalletsDescription": "Add as many wallets as you like to the DAO. These are authorized to create proposals, request transactions or suggest changes to the DAO settings from the time of initial creation.",
     "mintTokens": "Mint Tokens",
     "seeAllHolders": "See All Holders",
     "aragonCore": "Aragon Core",
@@ -44,6 +46,7 @@
     "amount": "Amount",
     "reference": "Reference",
     "address": "Token Contract Address",
+    "clear": "Clear",
     "copy": "Copy",
     "paste": "Paste",
     "max": "Max",
@@ -116,7 +119,9 @@
       "resetEntry": "Reset Entry",
       "deleteEntry": "Delete Entry",
       "resetAllEntries": "Reset All Entries",
-      "deleteAllEntries": "Delete All Entries"
+      "deleteAllEntries": "Delete All Entries",
+      "noWallets": "No Wallets",
+      "addWalletsSubtitle": "Add a wallet to your DAO"
     },
     "review": {
       "blockchain": "Blockchain",
@@ -329,8 +334,10 @@
   },
   "AddActionModal": {
     "title": "Add Action",
-    "addRemoveAddresses": "Add or Remove Addresses",
-    "addRemoveAddressesSubtitle": "Propose to add or remove addresses to this DAO",
+    "addAddresses": "Add Authorized Wallets",
+    "addAddressesSubtitle": "Propose to add addresses to this DAO",
+    "removeAddresses": "Remove Authorized Wallets",
+    "removeAddressesSubtitle": "Propose to remove addresses from this DAO",
     "mintTokens": "Mint Tokens",
     "mintTokensSubtitle": "Mint new tokens and distribute",
     "withdrawAssets": "Withdraw Assets",
