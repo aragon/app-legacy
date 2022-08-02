@@ -157,6 +157,7 @@
     "addNWallets": "Add {{walletCount}} Wallets",
     "nAddressesSelected": "{{walletCount}} Addresses selected",
     "noAddressSelected": "No address selected",
+    "you": "you",
     "noResources": "No Resources were added",
     "newTokens": "New Tokens",
     "newHolders": "New Holders",
