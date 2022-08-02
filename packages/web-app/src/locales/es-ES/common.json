@@ -115,6 +115,11 @@
     "myWallet": "My Wallet",
     "daoTreasury": "DAO Treasury",
     "treasuryValue": "Treasury Value",
+    "searchPlaceholder": "Type to search ...",
+    "result": "1 result",
+    "nResults": "{{count}} results",
+    "noResults": "No results to show",
+    "noResultsSubtitle": "Try to modify your search to find the corresponding wallets.",
     "whitelistWallets": {
       "address": "Address",
       "addresses": "{{count}} Addresses",
