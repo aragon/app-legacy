@@ -1,8 +1,9 @@
 import {i18n} from '../../i18n.config';
 import {format, formatRelative, formatDistance} from 'date-fns';
 
-const KNOWN_FORMATS = {
+export const KNOWN_FORMATS = {
   standard: 'MMM dd yyyy HH:mm', // This is our standard used for showing dates.
+  proposals: 'yyyy/MM/dd hh:mm a',
 };
 
 /**
