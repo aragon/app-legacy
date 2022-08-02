@@ -12,6 +12,8 @@ import {
   NewWithDraw,
   ProposeNewSettings,
   EditSettings,
+  NewMintTokenProposal,
+  Community,
 } from 'utils/paths';
 import {i18n} from '../../../i18n.config';
 import MobileNav from './mobile';
@@ -29,6 +31,7 @@ const processPaths = [
   {path: CreateDAO},
   {path: NewProposal},
   {path: ProposeNewSettings},
+  {path: NewMintTokenProposal},
 ];
 
 const processes: StringIndexed = {
@@ -48,6 +51,10 @@ const processes: StringIndexed = {
   [ProposeNewSettings]: {
     processLabel: i18n.t('settings.proposeSettings'),
     returnURL: EditSettings,
+  },
+  [NewMintTokenProposal]: {
+    processLabel: i18n.t('newProposal.title'),
+    returnURL: Community,
   },
 };
 

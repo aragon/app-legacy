@@ -22,10 +22,13 @@ import {useMappedBreadcrumbs} from 'hooks/useMappedBreadcrumbs';
 
 // The number of members displayed on each page
 const MEMBERS_PER_PAGE = 10;
+import {useNavigate} from 'react-router-dom';
 
 const Community: React.FC = () => {
   const {t} = useTranslation();
   const {network} = useNetwork();
+  const navigate = useNavigate();
+
   const {breadcrumbs, icon, tag} = useMappedBreadcrumbs();
 
   const {data: daoId} = useDaoParam();
@@ -55,6 +58,14 @@ const Community: React.FC = () => {
     );
   };
 
+  const handlePrimaryClick = () => {
+    if (walletBased) {
+      // Add/remove member flow
+    } else {
+      navigate('new-mint-token');
+    }
+  };
+
   /*************************************************
    *                     Render                    *
    *************************************************/
@@ -68,6 +79,7 @@ const Community: React.FC = () => {
           icon={icon}
           crumbs={breadcrumbs}
           title={`${totalMembers} ${t('labels.members')}`}
+          onClick={handlePrimaryClick}
           {...(walletBased
             ? {
                 description: t('explore.explorer.walletBased'),

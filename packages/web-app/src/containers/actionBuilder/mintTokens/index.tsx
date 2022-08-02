@@ -17,12 +17,10 @@ const MintTokens: React.FC<Props> = ({index}) => {
   const {t} = useTranslation();
 
   const {removeAction, duplicateAction} = useActionsContext();
-  const {getValues} = useFormContext();
-  console.log(getValues());
+  const {setValue} = useFormContext();
 
   const handleReset = () => {
-    // const resetIndex = new Array(fields.length).fill(1);
-    // remove(resetIndex.map((_, i) => i));
+    setValue(`actions.${index}.inputs.mintTokensToWallets`, []);
   };
 
   const methodActions = [
@@ -61,20 +59,21 @@ const MintTokens: React.FC<Props> = ({index}) => {
 
 export default MintTokens;
 
-const MintTokenForm: React.FC<{actionIndex: number}> = ({actionIndex}) => {
+export const MintTokenForm: React.FC<{
+  actionIndex: number;
+  standAlone?: boolean;
+}> = ({actionIndex, standAlone = false}) => {
   const {t} = useTranslation();
   const {isDesktop} = useScreen();
   const {fields, append, remove} = useFieldArray({
     name: `actions.${actionIndex}.inputs.mintTokensToWallets`,
-    shouldUnregister: true,
   });
 
   useEffect(() => {
     if (fields.length === 0) {
       append({address: '', amount: '0'});
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [append, fields.length]);
 
   const handleAddWallet = () => {
     append({address: '', amount: '0'});
@@ -106,7 +105,7 @@ const MintTokenForm: React.FC<{actionIndex: number}> = ({actionIndex}) => {
   };
 
   return (
-    <Container>
+    <Container standAlone={standAlone}>
       {isDesktop && (
         <div
           className="flex items-center p-2 tablet:p-3"
@@ -188,10 +187,11 @@ const MintTokenDescription: React.FC = () => (
   </Trans>
 );
 
-const Container = styled.div.attrs({
-  className:
-    'bg-white rounded-b-xl border border-t-0 divide-y border-ui-100 divide-ui-100',
-})``;
+const Container = styled.div.attrs<{standAlone: boolean}>(({standAlone}) => ({
+  className: `bg-white border divide-y border-ui-100 divide-ui-100 ${
+    standAlone ? 'rounded-xl' : 'rounded-b-xl border-t-0'
+  }`,
+}))<{standAlone: boolean}>``;
 
 const ButtonContainer = styled.div.attrs({
   className:
