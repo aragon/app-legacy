@@ -172,7 +172,7 @@ export const MintTokenForm: React.FC<{
   );
 };
 
-const MintTokenDescription: React.FC = () => (
+export const MintTokenDescription: React.FC = () => (
   <Trans i18nKey="newProposal.mintTokens.methodDescription">
     Which wallet addresses should get tokens, and how much? Add the wallets you
     want here, and then choose the distribution. Upload a CSV with

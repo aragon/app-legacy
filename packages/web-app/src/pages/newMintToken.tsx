@@ -19,7 +19,10 @@ import {useNetwork} from 'context/network';
 import {useDaoParam} from 'hooks/useDaoParam';
 import {Loading} from 'components/temporary';
 import {useDaoActions} from 'hooks/useDaoActions';
-import {MintTokenForm} from 'containers/actionBuilder/mintTokens';
+import {
+  MintTokenDescription,
+  MintTokenForm,
+} from 'containers/actionBuilder/mintTokens';
 import {AlertInline} from '@aragon/ui-components';
 
 const NewMintToken: React.FC = () => {
@@ -54,7 +57,7 @@ const NewMintToken: React.FC = () => {
         >
           <Step
             wizardTitle={t('labels.mintTokens')}
-            wizardDescription={t('newProposal.configureActions.description')}
+            wizardDescription={<MintTokenDescription />}
           >
             <div className="space-y-2">
               <AlertInline
