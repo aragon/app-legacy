@@ -12,7 +12,7 @@ import {
   NewWithDraw,
   ProposeNewSettings,
   EditSettings,
-  NewMintTokenProposal,
+  MintTokenProposal,
   Community,
 } from 'utils/paths';
 import {i18n} from '../../../i18n.config';
@@ -31,7 +31,7 @@ const processPaths = [
   {path: CreateDAO},
   {path: NewProposal},
   {path: ProposeNewSettings},
-  {path: NewMintTokenProposal},
+  {path: MintTokenProposal},
 ];
 
 const processes: StringIndexed = {
@@ -52,8 +52,8 @@ const processes: StringIndexed = {
     processLabel: i18n.t('settings.proposeSettings'),
     returnURL: EditSettings,
   },
-  [NewMintTokenProposal]: {
-    processLabel: i18n.t('newProposal.title'),
+  [MintTokenProposal]: {
+    processLabel: i18n.t('labels.addMember'),
     returnURL: Community,
   },
 };

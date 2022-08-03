@@ -20,5 +20,4 @@ export const NewWithDraw = '/daos/:network/:dao/finance/new-withdrawal';
 
 export const Proposal = '/daos/:network/:dao/governance/proposals/:id';
 export const NewProposal = '/daos/:network/:dao/governance/new-proposal';
-export const NewMintTokenProposal =
-  '/daos/:network/:dao/community/new-mint-token';
+export const MintTokenProposal = '/daos/:network/:dao/community/mint-token';

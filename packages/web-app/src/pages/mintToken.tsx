@@ -5,7 +5,6 @@ import {useForm, FormProvider, useFormState} from 'react-hook-form';
 import {generatePath} from 'react-router-dom';
 
 import {Community} from 'utils/paths';
-import AddActionMenu from 'containers/addActionMenu';
 import ReviewProposal from 'containers/reviewProposal';
 import {ActionsProvider} from 'context/actions';
 import {FullScreenStepper, Step} from 'components/fullScreenStepper';
@@ -18,16 +17,14 @@ import SetupVotingForm, {
 import {useNetwork} from 'context/network';
 import {useDaoParam} from 'hooks/useDaoParam';
 import {Loading} from 'components/temporary';
-import {useDaoActions} from 'hooks/useDaoActions';
 import {
   MintTokenDescription,
   MintTokenForm,
 } from 'containers/actionBuilder/mintTokens';
 import {AlertInline} from '@aragon/ui-components';
 
-const NewMintToken: React.FC = () => {
+const MintToken: React.FC = () => {
   const {data: dao, loading} = useDaoParam();
-  const {data: actions} = useDaoActions(dao);
 
   const {t} = useTranslation();
   const {network} = useNetwork();
@@ -51,8 +48,8 @@ const NewMintToken: React.FC = () => {
     <FormProvider {...formMethods}>
       <ActionsProvider>
         <FullScreenStepper
-          wizardProcessName={t('newProposal.title')}
-          navLabel={t('newProposal.title')}
+          wizardProcessName={t('labels.addMember')}
+          navLabel={t('labels.addMember')}
           returnPath={generatePath(Community, {network, dao})}
         >
           <Step
@@ -91,11 +88,9 @@ const NewMintToken: React.FC = () => {
             <ReviewProposal />
           </Step>
         </FullScreenStepper>
-
-        <AddActionMenu actions={actions} />
       </ActionsProvider>
     </FormProvider>
   );
 };
 
-export default withTransaction('NewMintToken', 'component')(NewMintToken);
+export default withTransaction('MintToken', 'component')(MintToken);
