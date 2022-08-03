@@ -16,10 +16,12 @@ import {
 } from '@aragon/ui-components';
 import ResourceList from 'components/resourceList';
 import {VotingTerminal} from 'containers/votingTerminal';
+import {useFormStep} from 'components/fullScreenStepper';
 
 const ReviewProposal: React.FC = () => {
   const [expandedProposal, setExpandedProposal] = useState(false);
   const {getValues, setValue} = useFormContext();
+  const {setStep} = useFormStep();
   const {t} = useTranslation();
   const values = getValues();
   const editor = useEditor({
@@ -127,7 +129,10 @@ const ReviewProposal: React.FC = () => {
         </ProposalContainer>
 
         <AdditionalInfoContainer>
-          <ResourceList links={values.links} />
+          <ResourceList
+            links={values.links}
+            emptyStateButtonClick={() => setStep(1)}
+          />
         </AdditionalInfoContainer>
       </ContentContainer>
     </>

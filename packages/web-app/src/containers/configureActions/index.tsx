@@ -1,6 +1,11 @@
 import React from 'react';
-import {AlertInline, ButtonText, IconAdd, Label} from '@aragon/ui-components';
-import {IlluObject} from '@aragon/ui-components/src/components/illustrations';
+import {
+  AlertInline,
+  ButtonText,
+  IconAdd,
+  Label,
+  StateEmpty,
+} from '@aragon/ui-components';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 
@@ -37,25 +42,19 @@ const ConfigureActions: React.FC = () => {
           </ActionsWrapper>
         ) : (
           <>
-            {/* TODO: Refactor with StateEmpty component. Checkout APP-734 */}
-            <div className="flex flex-col items-center p-6 text-center bg-ui-0 rounded-xl">
-              <IlluObject object="smart_contract" />
-              <h1 className="mt-1 text-xl font-bold text-ui-800">
-                {t('newProposal.configureActions.addFirstAction')}
-              </h1>
-              <p className="mt-1.5 text-ui-500">
-                {t('newProposal.configureActions.addFirstActionSubtitle')}
-              </p>
-              <ButtonText
-                mode="secondary"
-                size="large"
-                bgWhite
-                label={t('newProposal.configureActions.addAction')}
-                iconLeft={<IconAdd />}
-                onClick={() => open('addAction')}
-                className="mt-3"
-              />
-            </div>
+            <StateEmpty
+              type="Object"
+              mode="card"
+              object="smart_contract"
+              title={t('newProposal.configureActions.addFirstAction')}
+              description={t(
+                'newProposal.configureActions.addFirstActionSubtitle'
+              )}
+              secondaryButton={{
+                label: t('newProposal.configureActions.addAction'),
+                onClick: () => open('addAction'),
+              }}
+            />
             <AlertInline
               label={t('newProposal.configureActions.actionsInfo')}
             />

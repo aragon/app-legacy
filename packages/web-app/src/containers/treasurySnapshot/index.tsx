@@ -38,6 +38,8 @@ const TreasurySnapshot: React.FC<Props> = ({
   if (transfers.length === 0) {
     return (
       <StateEmpty
+        type="Human"
+        mode="card"
         body={'correct'}
         expression={'surprised'}
         hair={'cool'}
