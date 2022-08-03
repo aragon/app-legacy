@@ -11,11 +11,11 @@ import {
   ButtonText,
   IconChevronDown,
   IconChevronUp,
-  CardExecution,
   Link,
 } from '@aragon/ui-components';
 import ResourceList from 'components/resourceList';
 import {VotingTerminal} from 'containers/votingTerminal';
+import {ReviewExecution} from 'components/reviewExecution';
 
 const ReviewProposal: React.FC = () => {
   const [expandedProposal, setExpandedProposal] = useState(false);
@@ -99,31 +99,7 @@ const ReviewProposal: React.FC = () => {
             voteNowDisabled
           />
 
-          {/* TODO: generalize types so that proper execution card can be rendered */}
-          {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
-          {values.actions?.map((action: any, index: number) => (
-            <CardExecution
-              key={index}
-              title={t('governance.executionCard.title')}
-              description={t('governance.executionCard.description')}
-              to={action.to}
-              from="DAO Name" // TODO: get daoName, DAO name should be shown, but not sent
-              toLabel={t('labels.to')}
-              fromLabel={t('labels.from')}
-              tokenName={action.tokenName}
-              tokenImageUrl={action.tokenImgUrl}
-              tokenSymbol={action.tokenSymbol}
-              tokenCount={action.amount}
-              treasuryShare={
-                action.tokenPrice
-                  ? new Intl.NumberFormat('en-US', {
-                      style: 'currency',
-                      currency: 'USD',
-                    }).format(action.tokenPrice * action.amount)
-                  : t('finance.unknownUSDValue')
-              }
-            />
-          ))}
+          <ReviewExecution />
         </ProposalContainer>
 
         <AdditionalInfoContainer>

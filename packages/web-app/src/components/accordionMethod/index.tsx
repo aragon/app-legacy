@@ -19,7 +19,7 @@ type AccordionMethodType = {
   verified?: boolean;
   methodDescription?: string | React.ReactNode;
   additionalInfo?: string;
-  dropdownItems: ListItemProps[];
+  dropdownItems?: ListItemProps[];
 };
 
 export const AccordionMethod: React.FC<AccordionMethodType> = ({
@@ -29,7 +29,7 @@ export const AccordionMethod: React.FC<AccordionMethodType> = ({
   verified = false,
   methodDescription,
   additionalInfo,
-  dropdownItems,
+  dropdownItems = [],
   children,
 }) => {
   return (

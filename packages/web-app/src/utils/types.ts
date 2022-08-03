@@ -186,6 +186,20 @@ export type ActionsTypes =
   | 'external_contract'
   | 'modify_settings';
 
+export type ActionWithdraw = {
+  amount: number;
+  name: string;
+  to: Address;
+  tokenAddress: Address;
+  tokenBalance: number;
+  tokenImgUrl: '';
+  tokenName: string;
+  tokenPrice: number;
+  tokenSymbol: string;
+};
+
+export type Action = ActionWithdraw;
+
 export type ParamType = {
   type: string;
   name?: string;
