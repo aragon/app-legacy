@@ -2,6 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 import {useTranslation} from 'react-i18next';
 import {
+  IconAdd,
   ListItemLink,
   ListItemLinkProps,
   StateEmpty,
@@ -37,11 +38,12 @@ const ResourceList: React.FC<ResourceListProps> = ({
       mode="inline"
       object="archive"
       title={t('labels.noResources')}
-      primaryButton={
+      secondaryButton={
         emptyStateButtonClick
           ? {
               label: t('labels.addResource'),
               onClick: emptyStateButtonClick,
+              iconLeft: <IconAdd />,
             }
           : undefined
       }

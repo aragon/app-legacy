@@ -53,6 +53,7 @@ const ConfigureActions: React.FC = () => {
               secondaryButton={{
                 label: t('newProposal.configureActions.addAction'),
                 onClick: () => open('addAction'),
+                iconLeft: <IconAdd />,
               }}
             />
             <AlertInline

@@ -18,7 +18,13 @@ import ResourceList from 'components/resourceList';
 import {VotingTerminal} from 'containers/votingTerminal';
 import {useFormStep} from 'components/fullScreenStepper';
 
-const ReviewProposal: React.FC = () => {
+type ReviewProposalProps = {
+  defineProposalStepNumber: number;
+};
+
+const ReviewProposal: React.FC<ReviewProposalProps> = ({
+  defineProposalStepNumber,
+}) => {
   const [expandedProposal, setExpandedProposal] = useState(false);
   const {getValues, setValue} = useFormContext();
   const {setStep} = useFormStep();
@@ -131,7 +137,7 @@ const ReviewProposal: React.FC = () => {
         <AdditionalInfoContainer>
           <ResourceList
             links={values.links}
-            emptyStateButtonClick={() => setStep(1)}
+            emptyStateButtonClick={() => setStep(defineProposalStepNumber)}
           />
         </AdditionalInfoContainer>
       </ContentContainer>

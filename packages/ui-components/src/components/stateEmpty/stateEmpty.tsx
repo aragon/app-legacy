@@ -1,6 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import {ButtonText} from '../button';
+import {IconType} from '../icons';
 import {
   IllustrationHuman,
   IlluHumanProps,
@@ -11,6 +12,8 @@ import {
 type ButtonProps = {
   label: string;
   onClick: () => void;
+  iconLeft?: React.FunctionComponentElement<IconType>;
+  iconRight?: React.FunctionComponentElement<IconType>;
 };
 
 type Props = {
@@ -67,6 +70,8 @@ export const StateEmpty: React.FC<StateEmptyProps> = props => {
             <ButtonText
               label={props.primaryButton.label}
               onClick={props.primaryButton.onClick}
+              iconLeft={props.primaryButton.iconLeft}
+              iconRight={props.primaryButton.iconRight}
               size="large"
             />
           )}
@@ -74,6 +79,8 @@ export const StateEmpty: React.FC<StateEmptyProps> = props => {
             <ButtonText
               label={props.secondaryButton.label}
               onClick={props.secondaryButton.onClick}
+              iconLeft={props.secondaryButton.iconLeft}
+              iconRight={props.secondaryButton.iconRight}
               mode="ghost"
               size="large"
             />
