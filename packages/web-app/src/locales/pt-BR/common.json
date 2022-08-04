@@ -158,7 +158,8 @@
     "singleAddressSelected": "1 Address selected",
     "addNWallets": "Add {{walletCount}} Wallets",
     "nAddressesSelected": "{{walletCount}} Addresses selected",
-    "noAddressSelected": "No address selected"
+    "noAddressSelected": "No address selected",
+    "noResources": "No Resources were added"
   },
   "placeHolders": {
     "selectToken": "Select a Token ...",
@@ -432,7 +433,7 @@
       "label": "Step 2",
       "title": "Describe your DAO",
       "description": "Name and define your DAO so people know they have come to the right place. These choices can be changed by a proposal and vote in the DAO.",
-      "shortTitle": "DAO details",
+      "shortTitle": "Define DAO Details",
       "shortDescription": "Let people find your DAO!  Name your DAO, give it a mission, link to sites and communities.",
       "nameSubtitle": "This name shows on lists, best if under 128 characters.",
       "logoSubtitle": "This is the Logo which represents your DAO. We support SVG, JPG, PNG or GIFs with max 3MB in size and must have 1:1 ratio. We suggest dimension of 1024x1024px.",
