@@ -112,7 +112,6 @@
     "withdraw": "Withdraw",
     "externalContract": "External Contract",
     "all": "All",
-    "myWallet": "My Wallet",
     "daoTreasury": "DAO Treasury",
     "treasuryValue": "Treasury Value",
     "searchPlaceholder": "Type to search ...",
@@ -465,6 +464,8 @@
       "tokenContractSubtitlePart1": "Copy the contract address directly from the ",
       "tokenContractSubtitlePart2": "This way you can ensure that the address is correct.",
       "distributeTokensHelpertext": "Determine who receives how many tokens. Unless otherwise specified, the treasury receives the rest tokens for the future distribution of tokens (these tokens have no voting rights and do not influence the quorum).",
+      "distributionWalletAlertText": "Your connected wallet got automatically added to the token distribution.",
+      "whiteListWalletAlertText": "Your connected wallet got automatically added to the list.",
       "createTokenHelptext": "Mint a community token on a variable or fixed supply. To learn more about how to mint the token and how to use it, read the ",
       "createTokenHelplink": "Token Minting Guide"
     },
