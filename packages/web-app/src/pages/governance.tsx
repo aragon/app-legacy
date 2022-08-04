@@ -164,6 +164,8 @@ const Container = styled.div.attrs({
 const ButtonGroupContainer = styled.div.attrs({
   className: 'flex overflow-auto mt-3 desktop:mt-8',
 })`
+  scrollbar-width: none;
+
   ::-webkit-scrollbar {
     width: 0px;
     background: transparent;
