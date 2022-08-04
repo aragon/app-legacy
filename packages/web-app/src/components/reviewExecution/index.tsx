@@ -54,7 +54,7 @@ export const ReviewExecution: React.FC = () => {
           <RenderActions
             {...{action}}
             key={index}
-            type={actionTypes[index].name}
+            type={actionTypes[index]?.name || 'withdraw_assets'}
           />
         ))}
       </Content>

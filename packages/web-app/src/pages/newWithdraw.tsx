@@ -29,6 +29,7 @@ import {useNetwork} from 'context/network';
 import {useDaoParam} from 'hooks/useDaoParam';
 import {Loading} from 'components/temporary';
 import {CreateProposalProvider} from 'context/createProposal';
+import {ActionsProvider} from 'context/actions';
 
 export type TokenFormData = {
   tokenName: string;
@@ -146,58 +147,64 @@ const NewWithdraw: React.FC = () => {
   return (
     <>
       <FormProvider {...formMethods}>
-        <CreateProposalProvider
-          showTxModal={showTxModal}
-          setShowTxModal={setShowTxModal}
-        >
-          <FullScreenStepper
-            wizardProcessName={t('newWithdraw.withdrawAssets')}
-            navLabel={t('allTransfer.newTransfer')}
-            returnPath={generatePath(Finance, {network, dao})}
+        <ActionsProvider>
+          <CreateProposalProvider
+            showTxModal={showTxModal}
+            setShowTxModal={setShowTxModal}
           >
-            <Step
-              wizardTitle={t('newWithdraw.configureWithdraw.title')}
-              wizardDescription={t('newWithdraw.configureWithdraw.subtitle')}
-              isNextButtonDisabled={
-                !configureWithdrawScreenIsValid(
-                  dirtyFields.actions?.[0],
-                  errors.actions?.[0],
-                  tokenAddress
-                )
-              }
+            <FullScreenStepper
+              wizardProcessName={t('newWithdraw.withdrawAssets')}
+              navLabel={t('allTransfer.newTransfer')}
+              returnPath={generatePath(Finance, {network, dao})}
             >
-              <ConfigureWithdrawForm />
-            </Step>
-            <Step
-              wizardTitle={t('newWithdraw.setupVoting.title')}
-              wizardDescription={t('newWithdraw.setupVoting.description')}
-              isNextButtonDisabled={!setupVotingIsValid(errors, durationSwitch)}
-            >
-              <SetupVotingForm />
-            </Step>
-            <Step
-              wizardTitle={t('newWithdraw.defineProposal.heading')}
-              wizardDescription={t('newWithdraw.defineProposal.description')}
-              isNextButtonDisabled={!defineProposalIsValid(dirtyFields, errors)}
-            >
-              <DefineProposal />
-            </Step>
-            <Step
-              wizardTitle={t('newWithdraw.reviewProposal.heading')}
-              wizardDescription={t('newWithdraw.reviewProposal.description')}
-              nextButtonLabel={t('labels.submitWithdraw')}
-              onNextButtonClicked={() => setShowTxModal(true)}
-              fullWidth
-            >
-              <ReviewProposal />
-            </Step>
-          </FullScreenStepper>
-          <TokenMenu
-            isWallet={false}
-            onTokenSelect={handleTokenSelect}
-            tokenBalances={balances}
-          />
-        </CreateProposalProvider>
+              <Step
+                wizardTitle={t('newWithdraw.configureWithdraw.title')}
+                wizardDescription={t('newWithdraw.configureWithdraw.subtitle')}
+                isNextButtonDisabled={
+                  !configureWithdrawScreenIsValid(
+                    dirtyFields.actions?.[0],
+                    errors.actions?.[0],
+                    tokenAddress
+                  )
+                }
+              >
+                <ConfigureWithdrawForm />
+              </Step>
+              <Step
+                wizardTitle={t('newWithdraw.setupVoting.title')}
+                wizardDescription={t('newWithdraw.setupVoting.description')}
+                isNextButtonDisabled={
+                  !setupVotingIsValid(errors, durationSwitch)
+                }
+              >
+                <SetupVotingForm />
+              </Step>
+              <Step
+                wizardTitle={t('newWithdraw.defineProposal.heading')}
+                wizardDescription={t('newWithdraw.defineProposal.description')}
+                isNextButtonDisabled={
+                  !defineProposalIsValid(dirtyFields, errors)
+                }
+              >
+                <DefineProposal />
+              </Step>
+              <Step
+                wizardTitle={t('newWithdraw.reviewProposal.heading')}
+                wizardDescription={t('newWithdraw.reviewProposal.description')}
+                nextButtonLabel={t('labels.submitWithdraw')}
+                onNextButtonClicked={() => setShowTxModal(true)}
+                fullWidth
+              >
+                <ReviewProposal />
+              </Step>
+            </FullScreenStepper>
+            <TokenMenu
+              isWallet={false}
+              onTokenSelect={handleTokenSelect}
+              tokenBalances={balances}
+            />
+          </CreateProposalProvider>
+        </ActionsProvider>
       </FormProvider>
     </>
   );
