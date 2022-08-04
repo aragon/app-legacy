@@ -85,7 +85,7 @@ const MintToken: React.FC = () => {
             onNextButtonClicked={() => alert('submit tx')}
             fullWidth
           >
-            <ReviewProposal />
+            <ReviewProposal defineProposalStepNumber={3} />
           </Step>
         </FullScreenStepper>
       </ActionsProvider>
