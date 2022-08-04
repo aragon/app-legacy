@@ -34,10 +34,9 @@ export const MembershipSnapshot: React.FC<Props> = ({
   } = useDaoMembers(dao);
 
   const headerButtonHandler = () => {
-    () =>
-      walletBased
-        ? navigate(generatePath(MintTokensProposal, {network, dao}))
-        : alert('This will soon take you to a page that lets you add members');
+    walletBased
+      ? alert('This will soon take you to a page that lets you add members')
+      : navigate(generatePath(MintTokensProposal, {network, dao}));
   };
 
   if (isLoading) return <Loading />;
