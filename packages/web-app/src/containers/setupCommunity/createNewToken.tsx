@@ -92,6 +92,10 @@ const CreateNewToken: React.FC = () => {
             helpText={t('createDAO.step3.distributeTokensHelpertext')}
           />
         </DescriptionContainer>
+        <AlertInline
+          label={t('createDAO.step3.distributionWalletAlertText')}
+          mode="neutral"
+        />
         <AddWallets />
       </FormItem>
     </>
