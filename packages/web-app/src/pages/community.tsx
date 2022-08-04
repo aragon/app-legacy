@@ -62,7 +62,7 @@ const Community: React.FC = () => {
     if (walletBased) {
       // Add/remove member flow
     } else {
-      navigate('mint-token');
+      navigate('mint-tokens');
     }
   };
 
