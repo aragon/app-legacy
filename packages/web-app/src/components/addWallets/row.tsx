@@ -19,7 +19,6 @@ import {
   getUserFriendlyWalletLabel,
   handleClipboardActions,
 } from 'utils/library';
-import {useWallet} from 'hooks/useWallet';
 import {validateAddress} from 'utils/validators';
 import {MAX_TOKEN_AMOUNT} from 'utils/constants';
 
@@ -37,7 +36,6 @@ export type WalletField = {
 const WalletRow: React.FC<WalletRowProps> = ({index, onDelete}) => {
   const {t} = useTranslation();
   const [isDuplicate, setIsDuplicate] = useState<boolean>(false);
-  const {address} = useWallet();
   const {control, getValues, setValue, trigger} = useFormContext();
   const walletFieldArray = getValues('wallets');
 
@@ -112,7 +110,7 @@ const WalletRow: React.FC<WalletRowProps> = ({index, onDelete}) => {
             <ValueInput
               mode={error ? 'critical' : 'default'}
               name={name}
-              value={getUserFriendlyWalletLabel(value, address || '', t)}
+              value={getUserFriendlyWalletLabel(value, t)}
               onBlur={onBlur}
               onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                 onChange(e.target.value);

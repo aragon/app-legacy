@@ -11,7 +11,6 @@ import styled from 'styled-components';
 import {useTranslation} from 'react-i18next';
 import {Controller, useFormContext, useWatch} from 'react-hook-form';
 
-import {useWallet} from 'hooks/useWallet';
 import {validateAddress} from 'utils/validators';
 import {WhitelistWallet} from 'pages/createDAO';
 import {handleClipboardActions} from 'utils/library';
@@ -24,7 +23,6 @@ type WhitelistWalletsRowProps = {
 
 export const Row = ({index, ...props}: WhitelistWalletsRowProps) => {
   const {t} = useTranslation();
-  const {address} = useWallet();
 
   const {control} = useFormContext();
   const whitelistWallets = useWatch({name: 'whitelistWallets', control});
@@ -55,7 +53,7 @@ export const Row = ({index, ...props}: WhitelistWalletsRowProps) => {
         <Container>
           <InputContainer>
             <ValueInput
-              value={value === address ? t('labels.myWallet') : value}
+              value={value}
               onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                 onChange(e.target.value);
               }}
