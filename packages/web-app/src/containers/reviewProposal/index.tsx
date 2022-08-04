@@ -28,7 +28,11 @@ import {useFormStep} from 'components/fullScreenStepper';
 import {CHAIN_METADATA} from 'utils/constants';
 import {useSpecificProvider} from 'context/providers';
 import {DAO_PACKAGE_BY_DAO_ID} from 'queries/packages';
-import {getFormattedUtcOffset, KNOWN_FORMATS} from 'utils/date';
+import {
+  getFormattedUtcOffset,
+  getCanonicalUtcOffset,
+  KNOWN_FORMATS,
+} from 'utils/date';
 import {useDaoMetadata} from 'hooks/useDaoMetadata';
 
 type ReviewProposalProps = {
@@ -67,23 +71,51 @@ const ReviewProposal: React.FC<ReviewProposalProps> = ({
 
   const startDate = useMemo(
     () =>
-      `${format(
-        Date.parse(
-          `${values.startDate} ${values.startTime}:00 ${values.startUtc}`
-        ),
-        KNOWN_FORMATS.proposals
-      )} ${getFormattedUtcOffset()}`,
+      Date.parse(
+        `${values.startDate}T${values.startTime}:00${getCanonicalUtcOffset(
+          values.startUtc
+        )}`
+      ),
     [values.startDate, values.startTime, values.startUtc]
   );
 
-  const endDate = useMemo(
+  const formattedStartDate = useMemo(
     () =>
       `${format(
-        Date.parse(`${values.endDate} ${values.endTime}:00 ${values.endUtc}`),
+        startDate,
         KNOWN_FORMATS.proposals
       )} ${getFormattedUtcOffset()}`,
-    [values.endDate, values.endTime, values.endUtc]
+    [startDate]
   );
+
+  const formattedEndDate = useMemo(() => {
+    let endDate: number;
+
+    if (values.durationSwitch === 'duration') {
+      const tempStart = new Date(startDate);
+      endDate = tempStart.setDate(
+        tempStart.getDate() + parseInt(values.duration)
+      );
+    } else {
+      endDate = Date.parse(
+        `${values.endDate}T${values.endTime}:00${getCanonicalUtcOffset(
+          values.endUtc
+        )}`
+      );
+    }
+
+    return `${format(
+      endDate,
+      KNOWN_FORMATS.proposals
+    )} ${getFormattedUtcOffset()}`;
+  }, [
+    startDate,
+    values.duration,
+    values.durationSwitch,
+    values.endDate,
+    values.endTime,
+    values.endUtc,
+  ]);
 
   /*************************************************
    *                    Hooks                      *
@@ -194,8 +226,8 @@ const ReviewProposal: React.FC<ReviewProposalProps> = ({
             statusLabel={t('votingTerminal.notStartedYet')}
             approval={approval}
             participation={participation}
-            startDate={startDate}
-            endDate={endDate}
+            startDate={formattedStartDate}
+            endDate={formattedEndDate}
           />
 
           {/* TODO: generalize types so that proper execution card can be rendered */}

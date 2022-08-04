@@ -56,9 +56,6 @@ export const VotingTerminal: React.FC<VotingTerminalProps> = ({
   const [selectedVote, setSelectedVote] = useState('');
   const {t} = useTranslation();
 
-  const isTokenBased = token?.symbol !== undefined;
-  console.log('isTokenBased', isTokenBased);
-
   const displayedVoters = useMemo(() => {
     return query === ''
       ? voters
