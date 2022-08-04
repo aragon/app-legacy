@@ -198,7 +198,15 @@ export type ActionWithdraw = {
   tokenSymbol: string;
 };
 
-export type Action = ActionWithdraw;
+export type ActionAddAddress = {
+  inputs: {
+    memberWallets: {
+      address: Address;
+    }[];
+  };
+};
+
+export type Action = ActionWithdraw | ActionAddAddress;
 
 export type ParamType = {
   type: string;

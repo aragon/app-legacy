@@ -1,9 +1,10 @@
-import {CardTransfer, CardToken} from '@aragon/ui-components';
-import {AccordionMethod} from 'components/accordionMethod';
 import React from 'react';
+import {CardTransfer, CardToken} from '@aragon/ui-components';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
+
 import {ActionWithdraw} from 'utils/types';
+import {AccordionMethod} from 'components/accordionMethod';
 
 export const WithdrawCard: React.FC<{
   action: ActionWithdraw;

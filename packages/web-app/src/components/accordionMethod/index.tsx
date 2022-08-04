@@ -12,7 +12,7 @@ import {
 } from '@aragon/ui-components';
 import styled from 'styled-components';
 
-type AccordionMethodType = {
+export type AccordionMethodType = {
   type: 'action-builder' | 'execution-widget';
   methodName: string;
   smartContractName: string;
@@ -97,7 +97,7 @@ export const AccordionMethod: React.FC<AccordionMethodType> = ({
   );
 };
 
-type AccordionType = Pick<AccordionMethodType, 'type'>;
+export type AccordionType = Pick<AccordionMethodType, 'type'>;
 
 const AccordionHeader = styled(Accordion.Header).attrs(
   ({type}: AccordionType) => ({

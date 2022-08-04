@@ -7,8 +7,15 @@ import {ButtonText} from '@aragon/ui-components';
 import {useActionsContext} from 'context/actions';
 import {useDaoMetadata} from 'hooks/useDaoMetadata';
 import {useDaoParam} from 'hooks/useDaoParam';
-import {Action, ActionsTypes, ActionWithdraw} from 'utils/types';
+import {
+  Action,
+  ActionsTypes,
+  ActionWithdraw,
+  ActionAddAddress,
+} from 'utils/types';
 import {WithdrawCard} from './withdrawCard';
+import {AddAddressCard} from './addAddressCard';
+import {RemoveAddressCard} from './removeAddressCard';
 
 type RenderActionsProps = {
   action: Action;
@@ -34,6 +41,18 @@ export const ReviewExecution: React.FC = () => {
                 action={action as ActionWithdraw}
                 daoName={dao?.name || ''}
               />
+            </>
+          );
+        case 'add_address':
+          return (
+            <>
+              <AddAddressCard action={action as ActionAddAddress} />
+            </>
+          );
+        case 'remove_address':
+          return (
+            <>
+              <RemoveAddressCard action={action as ActionAddAddress} />
             </>
           );
         default:

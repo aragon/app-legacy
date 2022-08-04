@@ -15,7 +15,7 @@ import {
 } from '@aragon/ui-components';
 import ResourceList from 'components/resourceList';
 import {VotingTerminal} from 'containers/votingTerminal';
-import {ReviewExecution} from 'components/reviewExecution';
+import {ReviewExecution} from 'components/executionWidget';
 
 const ReviewProposal: React.FC = () => {
   const [expandedProposal, setExpandedProposal] = useState(false);
