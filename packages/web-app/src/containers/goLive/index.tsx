@@ -5,7 +5,12 @@ import {useFormContext} from 'react-hook-form';
 // import {DAOFactory} from 'typechain';
 // TODO reintroduce this by adding back the postInstall script in packages.json
 // that executes the generate-abis-and-types command.
-import {Breadcrumb, ButtonText, IconChevronRight} from '@aragon/ui-components';
+import {
+  AlertCard,
+  Breadcrumb,
+  ButtonText,
+  IconChevronRight,
+} from '@aragon/ui-components';
 import {useNavigate} from 'react-router-dom';
 
 import Blockchain from './blockchain';
@@ -27,7 +32,7 @@ export const GoLiveHeader: React.FC = () => {
   };
 
   return (
-    <div className="tablet:p-3 desktop:p-6 px-2 pt-2 desktop:pt-3 pb-3 bg-ui-0 tablet:rounded-xl">
+    <div className="tablet:p-3 desktop:p-6 px-2 pt-2 desktop:pt-3 pb-3 tablet:rounded-xl bg-ui-0">
       <div className="desktop:hidden">
         <Breadcrumb
           crumbs={{label: t('createDAO.title'), path: Landing}}
@@ -50,12 +55,18 @@ export const GoLiveHeader: React.FC = () => {
 };
 
 const GoLive: React.FC = () => {
+  const {t} = useTranslation();
+
   return (
     <Container>
       <Blockchain />
       <DaoMetadata />
       <Community />
       <Governance />
+      <AlertCard
+        title={t('createDAO.review.daoUpdates')}
+        helpText={t('createDAO.review.daoUpdatesHelpText')}
+      />
     </Container>
   );
 };
@@ -89,7 +100,7 @@ export const GoLiveFooter: React.FC = () => {
 export default GoLive;
 
 const Container = styled.div.attrs({
-  className: 'tablet:mx-auto tablet:w-3/4',
+  className: 'tablet:mx-auto tablet:w-3/4 space-y-5',
 })``;
 
 const ImageContainer = styled.img.attrs({

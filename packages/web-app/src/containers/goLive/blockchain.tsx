@@ -1,10 +1,10 @@
 import React from 'react';
 import styled from 'styled-components';
-import {ButtonText, CheckboxSimple} from '@aragon/ui-components';
 import {useTranslation} from 'react-i18next';
 import {Controller, useFormContext} from 'react-hook-form';
 
 import {useFormStep} from 'components/fullScreenStepper';
+import {DescriptionListContainer, Dl, Dt, Dd} from 'components/descriptionList';
 
 const Blockchain: React.FC = () => {
   const {control, getValues} = useFormContext();
@@ -13,48 +13,34 @@ const Blockchain: React.FC = () => {
   const {t} = useTranslation();
 
   return (
-    <Card>
-      <Header>
-        <Title>{t('labels.review.blockchain')}</Title>
-      </Header>
-      <Body>
-        <Row>
-          <LabelWrapper>
-            <Label>{t('labels.review.network')}</Label>
-          </LabelWrapper>
-          <TextContent>
-            {t('createDAO.review.network', {network: blockchain.network})}
-          </TextContent>
-        </Row>
-        <Row>
-          <LabelWrapper>
-            <Label>{t('labels.review.blockchain')}</Label>
-          </LabelWrapper>
-          <TextContent>{blockchain.label}</TextContent>
-        </Row>
-      </Body>
-      <Footer>
-        <ActionWrapper>
-          <ButtonText label="Edit" mode="ghost" onClick={() => setStep(2)} />
-        </ActionWrapper>
-        <Controller
-          name="reviewCheck.blockchain"
-          control={control}
-          defaultValue={false}
-          rules={{
-            required: t('errors.required.recipient'),
-          }}
-          render={({field: {onChange, value}}) => (
-            <CheckboxSimple
-              state={value ? 'active' : 'default'}
-              label="These values are correct"
-              onClick={() => onChange(!value)}
-              multiSelect
-            />
-          )}
-        />
-      </Footer>
-    </Card>
+    <Controller
+      name="reviewCheck.blockchain"
+      control={control}
+      defaultValue={false}
+      rules={{
+        required: t('errors.required.recipient'),
+      }}
+      render={({field: {onChange, value}}) => (
+        <DescriptionListContainer
+          title={t('labels.review.blockchain')}
+          onEditClick={() => setStep(2)}
+          editLabel={t('settings.edit')}
+          checkedState={value ? 'active' : 'default'}
+          onChecked={() => onChange(!value)}
+        >
+          <Dl>
+            <Dt>{t('labels.review.network')}</Dt>
+            <Dd>
+              {t('createDAO.review.network', {network: blockchain.network})}
+            </Dd>
+          </Dl>
+          <Dl>
+            <Dt>{t('labels.review.blockchain')}</Dt>
+            <Dd>{blockchain.label}</Dd>
+          </Dl>
+        </DescriptionListContainer>
+      )}
+    />
   );
 };
 

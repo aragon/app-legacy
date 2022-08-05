@@ -1,4 +1,8 @@
-import {ButtonText, CheckboxSimple} from '@aragon/ui-components';
+import {
+  ButtonText,
+  CheckboxListItem,
+  CheckboxListItemProps,
+} from '@aragon/ui-components';
 import React from 'react';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
@@ -7,6 +11,7 @@ export type DescriptionListProps = {
   title: string;
   onEditClick?: () => void;
   editLabel?: string;
+  checkedState?: CheckboxListItemProps['state'];
   onChecked?: () => void;
 };
 
@@ -15,6 +20,7 @@ export const DescriptionListContainer: React.FC<DescriptionListProps> = ({
   children,
   onEditClick,
   editLabel,
+  checkedState,
   onChecked,
 }) => {
   const {t} = useTranslation();
@@ -32,21 +38,16 @@ export const DescriptionListContainer: React.FC<DescriptionListProps> = ({
         )}
       </HStack>
       <DlContainer>{children}</DlContainer>
-      {onEditClick && onChecked && (
-        <HStack>
-          <ButtonText
-            label={editLabel || t('labels.edit')}
-            mode="ghost"
-            onClick={onEditClick}
+      {onChecked && (
+        <div className="flex ml-auto tablet:w-3/4">
+          <CheckboxListItem
+            label="These values are correct"
+            multiSelect
+            onClick={onChecked}
+            state={checkedState}
           />
-          <div className="flex-shrink-0 tablet:w-3/4">
-            <CheckboxSimple
-              label="These values are correct"
-              multiSelect
-              onClick={onChecked}
-            />
-          </div>
-        </HStack>
+          <div className="flex-1" />
+        </div>
       )}
     </Container>
   );

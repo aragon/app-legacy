@@ -30,6 +30,7 @@
     "members": "Members",
     "addMember": "Add Member",
     "addedMembers": "Added Members",
+    "wallets": "Wallets",
     "addWallets": "Add Wallets",
     "removeWallets": "Remove Wallets",
     "removedMembers": "Removed Members",
@@ -503,7 +504,9 @@
       "days": "{{days}} Days",
       "hours": "{{hours}} Hours",
       "minutes": "{{minutes}} Minutes",
-      "button": "Publish your DAO"
+      "button": "Publish your DAO",
+      "daoUpdates": "DAO updates are doable",
+      "daoUpdatesHelpText": "These choices can be changed by a proposal and vote in the DAO."
     }
   },
   "newProposal": {
