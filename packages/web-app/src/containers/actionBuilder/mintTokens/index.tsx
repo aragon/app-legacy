@@ -13,7 +13,8 @@ import {fetchBalance, getTokenInfo} from 'utils/tokens';
 import {AddressAndTokenRow} from './addressTokenRow';
 import {BigNumber} from 'ethers';
 import {useDaoParam} from 'hooks/useDaoParam';
-import {useDaoToken} from 'hooks/useDAoToken';
+import {useDaoToken} from 'hooks/useDaoToken';
+import {isAddress} from 'ethers/lib/utils';
 
 type Props = {
   index: number;
@@ -50,6 +51,7 @@ const MintTokens: React.FC<Props> = ({index}) => {
   const [newTokenHolders, setNewTokenHolders] = useState(
     () => new Set<string>()
   );
+  const [newHoldersCount, setNewHoldersCount] = useState(0);
 
   useEffect(() => {
     if (fields.length === 0) {
@@ -72,18 +74,25 @@ const MintTokens: React.FC<Props> = ({index}) => {
     }
   }, [daoToken.id]);
 
+  // Count number of addresses that don't yet own token
   useEffect(() => {
-    // Count number of addresses that don't yet own token
     if (mints && daoToken) {
       // only check rows where form input holds address
-      const validInputs = mints.filter(m => m.address !== '');
+      const validInputs = mints.filter(
+        m => m.address !== '' && isAddress(m.address)
+      );
 
       // only check addresses that have not previously been checked
       const uncheckedAddresses = validInputs.filter(
         m => !checkedAddresses.has(m.address)
       );
 
-      if (uncheckedAddresses.length > 0) {
+      if (validInputs.length === 0) {
+        setNewHoldersCount(0);
+      } else if (uncheckedAddresses.length === 0) {
+        const count = mints.filter(m => newTokenHolders.has(m.address)).length;
+        setNewHoldersCount(count);
+      } else {
         const promises: Promise<AddressBalance>[] = uncheckedAddresses.map(
           (m: MintInfo) =>
             fetchBalance(
@@ -112,6 +121,10 @@ const MintTokens: React.FC<Props> = ({index}) => {
             uncheckedAddresses.forEach(ua => temp.add(ua.address));
             return temp;
           });
+          const count = mints.filter(m =>
+            newTokenHolders.has(m.address)
+          ).length;
+          setNewHoldersCount(count);
         });
       }
     }
@@ -240,7 +253,7 @@ const MintTokens: React.FC<Props> = ({index}) => {
             </HStack>
             <HStack>
               <Label>{t('labels.newHolders')}</Label>
-              <p>+{newTokenHolders.size}</p>
+              <p>+{newHoldersCount}</p>
             </HStack>
             <HStack>
               <Label>{t('labels.totalTokens')}</Label>
