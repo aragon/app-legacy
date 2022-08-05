@@ -43,7 +43,6 @@ const MintTokens: React.FC<Props> = ({index}) => {
   const mints = useWatch({name: 'mintTokensToWallets'}) as MintInfo[];
 
   const [newTokens, setNewTokens] = useState<number>(0);
-  const [totalTokens, setTotalTokens] = useState<number>(0);
   const [tokenSupply, setTokenSupply] = useState(0);
   const [checkedAddresses, setCheckedAddresses] = useState(
     () => new Set<string>()
@@ -66,7 +65,6 @@ const MintTokens: React.FC<Props> = ({index}) => {
       getTokenInfo(daoToken.id, infura, nativeCurrency)
         .then(r => {
           setTokenSupply(r.totalSupply as number);
-          setTotalTokens(r.totalSupply as number);
         })
         .catch(e =>
           console.log('Error happened when fetching token infos: ', e)
@@ -149,7 +147,6 @@ const MintTokens: React.FC<Props> = ({index}) => {
         newTokensCount += parseInt(m.amount);
       });
       setNewTokens(newTokensCount);
-      setTotalTokens(tokenSupply + newTokensCount);
     }
   }, [mints, daoToken.id]);
 
@@ -268,9 +265,13 @@ const MintTokens: React.FC<Props> = ({index}) => {
             </HStack>
             <HStack>
               <Label>{t('labels.totalTokens')}</Label>
-              <p>
-                {totalTokens.toString()} {daoToken.symbol}
-              </p>
+              {tokenSupply ? (
+                <p>
+                  {(tokenSupply + newTokens).toString()} {daoToken.symbol}
+                </p>
+              ) : (
+                <p>...</p>
+              )}
             </HStack>
             {/* TODO add total amount of token holders here. */}
           </SummaryContainer>
