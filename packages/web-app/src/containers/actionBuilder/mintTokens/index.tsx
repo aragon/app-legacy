@@ -62,21 +62,21 @@ const MintTokens: React.FC<Props> = ({index}) => {
 
   useEffect(() => {
     // Fetching necessary info about the token.
-    if (daoToken) {
-      try {
-        getTokenInfo(daoToken.id, infura, nativeCurrency).then(r => {
+    if (daoToken?.id) {
+      getTokenInfo(daoToken.id, infura, nativeCurrency)
+        .then(r => {
           setTokenSupply(r.totalSupply as number);
           setTotalTokens(r.totalSupply as number);
-        });
-      } catch (e) {
-        console.log('Error happened when fetching token infos: ', e);
-      }
+        })
+        .catch(e =>
+          console.log('Error happened when fetching token infos: ', e)
+        );
     }
   }, [daoToken.id]);
 
   // Count number of addresses that don't yet own token
   useEffect(() => {
-    if (mints && daoToken) {
+    if (mints && daoToken?.id) {
       // only check rows where form input holds address
       const validInputs = mints.filter(
         m => m.address !== '' && isAddress(m.address)
@@ -88,11 +88,15 @@ const MintTokens: React.FC<Props> = ({index}) => {
       );
 
       if (validInputs.length === 0) {
+        // user did not input any valid addresses
         setNewHoldersCount(0);
       } else if (uncheckedAddresses.length === 0) {
+        // No unchecked address. Simply compare inputs with cached addresses
         const count = mints.filter(m => newTokenHolders.has(m.address)).length;
         setNewHoldersCount(count);
       } else {
+        // Unchecked address. Fetch balance info for those. Update caches and
+        // set number of new holder
         const promises: Promise<AddressBalance>[] = uncheckedAddresses.map(
           (m: MintInfo) =>
             fetchBalance(
@@ -106,26 +110,33 @@ const MintTokens: React.FC<Props> = ({index}) => {
               return {address: m.address, balance: b};
             })
         );
-        Promise.all(promises).then((abs: AddressBalance[]) => {
-          // new holders are addresses that have 0 balance for token
-          const holderAddresses = abs.filter((ab: AddressBalance) =>
-            ab.balance.isZero()
+        Promise.all(promises)
+          .then((abs: AddressBalance[]) => {
+            // new holders are addresses that have 0 balance for token
+            const holderAddresses = abs.filter((ab: AddressBalance) =>
+              ab.balance.isZero()
+            );
+            setNewTokenHolders(prev => {
+              var temp = new Set(prev);
+              holderAddresses.forEach(ha => temp.add(ha.address));
+              return temp;
+            });
+            setCheckedAddresses(prev => {
+              var temp = new Set(prev);
+              uncheckedAddresses.forEach(ua => temp.add(ua.address));
+              return temp;
+            });
+            // Do not compare addresses with newTokenHolders. Since effects
+            // batch state updates, this might not yet reflect the updates done
+            // a couple of lines ago.
+            const count = mints.filter(m =>
+              holderAddresses.some(ab => ab.address === m.address)
+            ).length;
+            setNewHoldersCount(count);
+          })
+          .catch(e =>
+            console.log('Error happened when fetching balances: ', e)
           );
-          setNewTokenHolders(prev => {
-            var temp = new Set(prev);
-            holderAddresses.forEach(ha => temp.add(ha.address));
-            return temp;
-          });
-          setCheckedAddresses(prev => {
-            var temp = new Set(prev);
-            uncheckedAddresses.forEach(ua => temp.add(ua.address));
-            return temp;
-          });
-          const count = mints.filter(m =>
-            newTokenHolders.has(m.address)
-          ).length;
-          setNewHoldersCount(count);
-        });
       }
     }
   }, [mints, daoToken.id]);
