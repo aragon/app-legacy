@@ -15,6 +15,7 @@ import {BigNumber} from 'ethers';
 import {useDaoParam} from 'hooks/useDaoParam';
 import {useDaoToken} from 'hooks/useDaoToken';
 import {isAddress} from 'ethers/lib/utils';
+import {formatUnits} from 'utils/library';
 
 type Props = {
   index: number;
@@ -63,8 +64,11 @@ const MintTokens: React.FC<Props> = ({index}) => {
     // Fetching necessary info about the token.
     if (daoToken?.id) {
       getTokenInfo(daoToken.id, infura, nativeCurrency)
-        .then(r => {
-          setTokenSupply(r.totalSupply as number);
+        .then((r: Awaited<ReturnType<typeof getTokenInfo>>) => {
+          const formattedNumber = parseFloat(
+            formatUnits(r.totalSupply, r.decimals)
+          );
+          setTokenSupply(formattedNumber);
         })
         .catch(e =>
           console.log('Error happened when fetching token infos: ', e)
@@ -144,7 +148,7 @@ const MintTokens: React.FC<Props> = ({index}) => {
     if (mints && daoToken) {
       let newTokensCount = 0;
       mints.forEach(m => {
-        newTokensCount += parseInt(m.amount);
+        newTokensCount += parseFloat(m.amount);
       });
       setNewTokens(newTokensCount);
     }
