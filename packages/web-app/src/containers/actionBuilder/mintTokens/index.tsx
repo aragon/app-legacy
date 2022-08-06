@@ -128,7 +128,7 @@ export const MintTokenForm: React.FC<{
           console.error('Error happened when fetching token infos: ', e)
         );
     }
-  }, [daoToken.id]);
+  }, [daoToken.id, nativeCurrency, infura]);
 
   // Count number of addresses that don't yet own token
   useEffect(() => {
@@ -173,12 +173,12 @@ export const MintTokenForm: React.FC<{
               ab.balance.isZero()
             );
             setNewTokenHolders(prev => {
-              var temp = new Set(prev);
+              const temp = new Set(prev);
               holderAddresses.forEach(ha => temp.add(ha.address));
               return temp;
             });
             setCheckedAddresses(prev => {
-              var temp = new Set(prev);
+              const temp = new Set(prev);
               uncheckedAddresses.forEach(ua => temp.add(ua.address));
               return temp;
             });
@@ -195,6 +195,7 @@ export const MintTokenForm: React.FC<{
           );
       }
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [mints, daoToken.id]);
 
   useEffect(() => {
@@ -206,7 +207,7 @@ export const MintTokenForm: React.FC<{
       });
       setNewTokens(newTokensCount);
     }
-  }, [mints, fields, daoToken.id]);
+  }, [mints, fields, daoToken, daoToken.id]);
 
   const handleAddWallet = () => {
     append({address: '', amount: '0'});
@@ -311,7 +312,7 @@ export const MintTokenForm: React.FC<{
   );
 };
 
-const MintTokenDescription: React.FC = () => (
+export const MintTokenDescription: React.FC = () => (
   <Trans i18nKey="newProposal.mintTokens.methodDescription">
     Which wallet addresses should get tokens, and how many? Add the wallets you
     want here, and then choose the distribution. Upload a CSV with
