@@ -47,13 +47,18 @@ export const PageWrapper = ({
 }: PageWrapperProps) => {
   const {isDesktop} = useScreen();
   const navigate = useNavigate();
-  const {breadcrumbs, icon} = useMappedBreadcrumbs();
+  const {breadcrumbs, icon, tag} = useMappedBreadcrumbs();
 
   return (
     <div className="col-span-full desktop:col-start-3 desktop:col-end-11">
       <HeaderContainer className="-mx-2 tablet:mx-0 tablet:mt-3">
         {!isDesktop && (
-          <Breadcrumb icon={icon} crumbs={breadcrumbs} onClick={navigate} />
+          <Breadcrumb
+            icon={icon}
+            crumbs={breadcrumbs}
+            onClick={navigate}
+            tag={tag}
+          />
         )}
         <ContentWrapper>
           <TextWrapper>

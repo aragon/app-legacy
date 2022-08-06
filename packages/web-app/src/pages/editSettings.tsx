@@ -44,7 +44,7 @@ const EditSettings: React.FC = () => {
   const {loading} = useDaoParam();
   const {network} = useNetwork();
   const {dao} = useParams();
-  const {breadcrumbs, icon} = useMappedBreadcrumbs();
+  const {breadcrumbs, icon, tag} = useMappedBreadcrumbs();
   const formMethods = useForm({
     mode: 'onChange',
     defaultValues,
@@ -63,7 +63,12 @@ const EditSettings: React.FC = () => {
             title={t('settings.editDaoSettings')}
             description={t('settings.editSubtitle')}
             nav={
-              <Breadcrumb icon={icon} crumbs={breadcrumbs} onClick={navigate} />
+              <Breadcrumb
+                icon={icon}
+                crumbs={breadcrumbs}
+                onClick={navigate}
+                tag={tag}
+              />
             }
           />
 

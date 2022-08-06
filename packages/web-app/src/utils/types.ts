@@ -169,6 +169,12 @@ export type Nullable<T> = T | null;
 
 export type SupportedChainId = 1 | 4;
 
+export type ActionParameter = {
+  type: ActionsTypes;
+  title: string;
+  subtitle: string;
+};
+
 /**
  * Allowed Actions for each dao
  */
@@ -177,7 +183,8 @@ export type ActionsTypes =
   | 'remove_address'
   | 'withdraw_assets'
   | 'mint_token'
-  | 'external_contract';
+  | 'external_contract'
+  | 'modify_settings';
 
 export type ParamType = {
   type: string;

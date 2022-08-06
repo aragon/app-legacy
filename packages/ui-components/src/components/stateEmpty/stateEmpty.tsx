@@ -1,14 +1,24 @@
 import React from 'react';
 import styled from 'styled-components';
 import {ButtonText} from '../button';
-import {IllustrationHuman, IlluHumanProps} from '../illustrations';
+import {IconType} from '../icons';
+import {
+  IllustrationHuman,
+  IlluHumanProps,
+  IlluObjectProps,
+  IlluObject,
+} from '../illustrations';
 
 type ButtonProps = {
   label: string;
   onClick: () => void;
+  iconLeft?: React.FunctionComponentElement<IconType>;
+  iconRight?: React.FunctionComponentElement<IconType>;
 };
 
-export type StateEmptyProps = IlluHumanProps & {
+type Props = {
+  mode: 'card' | 'inline';
+  size?: 'small' | 'large';
   title: string;
   description?: string;
   primaryButton?: ButtonProps;
@@ -16,58 +26,76 @@ export type StateEmptyProps = IlluHumanProps & {
   renderHtml?: boolean;
 };
 
-export const StateEmpty: React.FC<StateEmptyProps> = ({
-  body,
-  expression,
-  hair,
-  sunglass,
-  accessory,
-  title,
-  description,
-  primaryButton,
-  secondaryButton,
-  renderHtml = false,
-}) => {
+export type StateEmptyProps =
+  | (IlluHumanProps &
+      Props & {
+        type: 'Human';
+      })
+  | (IlluObjectProps &
+      Props & {
+        type: 'Object';
+      });
+
+export const StateEmpty: React.FC<StateEmptyProps> = props => {
   return (
-    <Card>
-      <IllustrationHuman
-        {...{body, expression, hair, sunglass, accessory}}
-        height={225}
-        width={400}
-      />
+    <Card mode={props.mode} size={props.size || 'small'}>
+      {props.type === 'Human' ? (
+        <IllustrationHuman
+          {...{
+            body: props.body,
+            expression: props.expression,
+            hair: props.hair,
+            sunglass: props.sunglass,
+            accessory: props.accessory,
+          }}
+          height={props.size === 'large' ? 225 : 165}
+          width={props.size === 'large' ? 400 : 295}
+        />
+      ) : (
+        <IlluObject object={props.object} />
+      )}
       <TextWrapper>
-        <Title>{title}</Title>
-        {renderHtml ? (
-          <Description dangerouslySetInnerHTML={{__html: description || ''}} />
+        <Title>{props.title}</Title>
+        {props.renderHtml ? (
+          <Description
+            dangerouslySetInnerHTML={{__html: props.description || ''}}
+          />
         ) : (
-          <Description>{description}</Description>
+          props.description && <Description>{props.description}</Description>
         )}
       </TextWrapper>
-      <ActionContainer>
-        {primaryButton && (
-          <ButtonText
-            label={primaryButton.label}
-            onClick={primaryButton.onClick}
-            size="large"
-          />
-        )}
-        {secondaryButton && (
-          <ButtonText
-            label={secondaryButton.label}
-            onClick={secondaryButton.onClick}
-            mode="ghost"
-            size="large"
-          />
-        )}
-      </ActionContainer>
+      {(props.primaryButton || props.secondaryButton) && (
+        <ActionContainer>
+          {props.primaryButton && (
+            <ButtonText
+              label={props.primaryButton.label}
+              onClick={props.primaryButton.onClick}
+              iconLeft={props.primaryButton.iconLeft}
+              iconRight={props.primaryButton.iconRight}
+              size="large"
+            />
+          )}
+          {props.secondaryButton && (
+            <ButtonText
+              label={props.secondaryButton.label}
+              onClick={props.secondaryButton.onClick}
+              iconLeft={props.secondaryButton.iconLeft}
+              iconRight={props.secondaryButton.iconRight}
+              mode="ghost"
+              size="large"
+            />
+          )}
+        </ActionContainer>
+      )}
     </Card>
   );
 };
 
-const Card = styled.div.attrs({
-  className:
-    'flex flex-col items-center justify-center bg-ui-0 rounded-xl p-3 pb-6 desktop:p-6 w-full space-y-3 border',
-})``;
+const Card = styled.div.attrs<Pick<Props, 'mode' | 'size'>>(({mode, size}) => ({
+  className: `flex flex-col items-center justify-center rounded-xl w-full space-y-3 ${
+    mode === 'card' ? 'border bg-ui-0' : 'bg-ui-0'
+  } ${size === 'large' ? 'p-6' : 'p-3'}`,
+}))<Pick<Props, 'mode' | 'size'>>``;
 
 const TextWrapper = styled.div.attrs({
   className: 'space-y-2 text-center',

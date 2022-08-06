@@ -11,9 +11,9 @@ import styled from 'styled-components';
 
 import {Loading} from 'components/temporary';
 import {useNetwork} from 'context/network';
-import {useDaoTokenHolders, useDaoWhitelist} from 'hooks/useDaoMembers';
+import {useDaoMembers} from 'hooks/useDaoMembers';
 import useScreen from 'hooks/useScreen';
-import {Community} from 'utils/paths';
+import {Community, MintTokensProposal} from 'utils/paths';
 import {MembersList} from 'components/membersList';
 
 type Props = {dao: string; walletBased: boolean; horizontal?: boolean};
@@ -27,22 +27,19 @@ export const MembershipSnapshot: React.FC<Props> = ({
   const navigate = useNavigate();
   const {network} = useNetwork();
   const {isDesktop} = useScreen();
-  const {data: whitelist, isLoading: whiteListLoading} = useDaoWhitelist(dao);
-  const {
-    data: {daoMembers, token},
-    isLoading: tokenHoldersLoading,
-  } = useDaoTokenHolders(dao);
 
-  const memberCount = walletBased ? whitelist?.length : daoMembers?.length;
+  const {
+    data: {members, totalMembers, token},
+    isLoading,
+  } = useDaoMembers(dao);
 
   const headerButtonHandler = () => {
-    () =>
-      walletBased
-        ? alert('This will soon take you to a page for minting tokens')
-        : alert('This will soon take you to a page that lets you add members');
+    walletBased
+      ? alert('This will soon take you to a page that lets you add members')
+      : navigate(generatePath(MintTokensProposal, {network, dao}));
   };
 
-  if (whiteListLoading || tokenHoldersLoading) return <Loading />;
+  if (isLoading) return <Loading />;
 
   if (horizontal && isDesktop) {
     return (
@@ -50,7 +47,7 @@ export const MembershipSnapshot: React.FC<Props> = ({
         <div className="w-1/3">
           <ListItemHeader
             icon={<IconCommunity />}
-            value={`${memberCount} ${t('labels.members')}`}
+            value={`${totalMembers} ${t('labels.members')}`}
             label={
               walletBased
                 ? t('explore.explorer.walletBased')
@@ -65,11 +62,7 @@ export const MembershipSnapshot: React.FC<Props> = ({
         </div>
         <div className="space-y-2 w-2/3">
           <ListItemGrid>
-            <MembersList
-              whitelist={whitelist?.slice(0, 3)}
-              daoMembers={daoMembers?.slice(0, 3)}
-              {...{walletBased, token}}
-            />
+            <MembersList token={token} members={members} />
           </ListItemGrid>
           <ButtonText
             mode="secondary"
@@ -87,7 +80,7 @@ export const MembershipSnapshot: React.FC<Props> = ({
     <VerticalContainer>
       <ListItemHeader
         icon={<IconCommunity />}
-        value={`${memberCount} ${t('labels.members')}`}
+        value={`${totalMembers} ${t('labels.members')}`}
         label={
           walletBased
             ? t('explore.explorer.walletBased')
@@ -99,11 +92,7 @@ export const MembershipSnapshot: React.FC<Props> = ({
         orientation="vertical"
         onClick={headerButtonHandler}
       />
-      <MembersList
-        whitelist={whitelist?.slice(0, 3)}
-        daoMembers={daoMembers?.slice(0, 3)}
-        {...{walletBased, token}}
-      />
+      <MembersList token={token} members={members.slice(0, 3)} />
       <ButtonText
         mode="secondary"
         size="large"

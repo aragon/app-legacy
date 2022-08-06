@@ -178,7 +178,7 @@ export const DAO_METADATA = gql`
 
 // TODO: flesh out actual query
 export const DAO_MEMBERS = gql`
-  query DAO($id: ID) {
+  query DAO($id: ID, $filter: WhitelistVoter_filter) {
     dao(id: $id) {
       id
       token {
@@ -188,7 +188,7 @@ export const DAO_MEMBERS = gql`
       packages {
         pkg {
           ... on WhitelistPackage {
-            users {
+            users(where: $filter, orderby: id) {
               id
             }
           }

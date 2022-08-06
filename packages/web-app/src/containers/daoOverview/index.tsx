@@ -122,6 +122,7 @@ export const OverviewDAOStep: React.FC = () => {
         transitionTime={300}
         centerSlidePercentage={92}
         showThumbs={false}
+        infiniteLoop
         renderIndicator={(onClickHandler, isSelected, index, label) => {
           if (isSelected) {
             return (

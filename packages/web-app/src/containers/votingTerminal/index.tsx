@@ -13,8 +13,7 @@ import {
 } from '@aragon/ui-components/src/components/table';
 import {CheckboxListItem} from '@aragon/ui-components/src/components/checkbox';
 import {useTranslation} from 'react-i18next';
-import {IconClock} from '@aragon/ui-components';
-import {IlluObject} from '@aragon/ui-components';
+import {IconClock, StateEmpty} from '@aragon/ui-components';
 
 // TODO: Every string and data needed by the component is hardcoded for now.
 
@@ -154,18 +153,13 @@ export const VotingTerminal: React.FC<VotingTerminalProps> = ({
               onLoadMore={() => console.log('load more clicked')}
             />
           ) : (
-            // TODO: Replace with refactored empty state
-            <div className="flex flex-col justify-center items-center p-3 rounded-xl border border-ui-100">
-              <IlluObject object="magnifying_glass" />
-              <div className="space-y-1.5 text-center">
-                <p className="font-bold text-ui-800 ft-text-xl">
-                  {t('votingTerminal.emptyState.title', {query})}
-                </p>
-                <p className="text-ui-500 ft-text-base">
-                  {t('votingTerminal.emptyState.subtitle')}
-                </p>
-              </div>
-            </div>
+            <StateEmpty
+              type="Object"
+              mode="inline"
+              object="magnifying_glass"
+              title={t('votingTerminal.emptyState.title', {query})}
+              description={t('votingTerminal.emptyState.subtitle')}
+            />
           )}
         </div>
       ) : (

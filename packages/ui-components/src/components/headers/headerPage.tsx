@@ -2,16 +2,17 @@ import styled from 'styled-components';
 import React from 'react';
 import {ButtonText} from '../button';
 import {IconAdd, IconLinkExternal} from '../icons';
-import {Breadcrumb, DefaultCrumbProps} from '../breadcrumb';
+import {Breadcrumb, DefaultCrumbProps, BreadcrumbProps} from '../breadcrumb';
 
-export type HeaderPageProps = DefaultCrumbProps & {
-  title: string;
-  description: string;
-  buttonLabel: string;
-  secondaryButtonLabel?: string;
-  onClick?: () => void;
-  secondaryOnClick?: () => void;
-};
+export type HeaderPageProps = DefaultCrumbProps &
+  Pick<BreadcrumbProps, 'tag'> & {
+    title: string;
+    description: string;
+    buttonLabel: string;
+    secondaryButtonLabel?: string;
+    onClick?: () => void;
+    secondaryOnClick?: () => void;
+  };
 
 export const HeaderPage: React.FC<HeaderPageProps> = ({
   title,
@@ -20,13 +21,14 @@ export const HeaderPage: React.FC<HeaderPageProps> = ({
   secondaryButtonLabel,
   crumbs,
   icon,
+  tag,
   onClick,
   secondaryOnClick,
 }) => {
   return (
     <Card data-testid="page-dao">
       <BreadcrumbWrapper>
-        <Breadcrumb {...{icon, crumbs}} />
+        <Breadcrumb {...{icon, crumbs, tag}} />
       </BreadcrumbWrapper>
       <ContentWrapper>
         <Content>

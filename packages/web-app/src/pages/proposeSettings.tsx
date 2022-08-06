@@ -54,7 +54,7 @@ const ProposeSettings: React.FC = () => {
             isNextButtonDisabled
             fullWidth
           >
-            <ReviewProposal />
+            <ReviewProposal defineProposalStepNumber={2} />
           </Step>
         </FullScreenStepper>
       </FormProvider>

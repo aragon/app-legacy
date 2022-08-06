@@ -21,6 +21,7 @@ type Props = {
     component: React.ReactNode;
     callback: (index: number) => void;
   }>;
+  disabled?: boolean;
 };
 
 export const AddressRow = ({actionIndex, fieldIndex, ...props}: Props) => {
@@ -37,17 +38,28 @@ export const AddressRow = ({actionIndex, fieldIndex, ...props}: Props) => {
    *************************************************/
   const handleAdornmentClick = useCallback(
     (value: string, onChange: (value: string) => void) => {
+      // allow the user to copy the address even when input is disabled
+      if (props.disabled) {
+        handleClipboardActions(value, onChange);
+        return;
+      }
+
+      // if the input is not disabled, when there is a value clear it,
+      // paste from clipboard, and set the value
       if (value) {
         onChange('');
       } else {
         handleClipboardActions(value, onChange);
       }
     },
-    []
+    [props.disabled]
   );
 
   const addressValidator = useCallback(
     (address: string, index: number) => {
+      // allowing empty addresses as valid for better user experience
+      if (address === '') return true;
+
       let validationResult = validateAddress(address);
       if (memberWallets) {
         memberWallets.forEach(
@@ -63,6 +75,12 @@ export const AddressRow = ({actionIndex, fieldIndex, ...props}: Props) => {
     [t, memberWallets]
   );
 
+  // gets the proper label for adornment button. ick.
+  const getAdornmentText = (value: string) => {
+    if (props.disabled) return t('labels.copy');
+    return value ? t('labels.clear') : t('labels.paste');
+  };
+
   /*************************************************
    *                    Render                    *
    *************************************************/
@@ -72,7 +90,6 @@ export const AddressRow = ({actionIndex, fieldIndex, ...props}: Props) => {
       defaultValue=""
       control={control}
       rules={{
-        required: t('errors.required.walletAddress'),
         validate: value => addressValidator(value, fieldIndex),
       }}
       render={({field: {onChange, value}, fieldState: {error}}) => (
@@ -85,8 +102,9 @@ export const AddressRow = ({actionIndex, fieldIndex, ...props}: Props) => {
               }}
               mode="default"
               placeholder="0x..."
-              adornmentText={value ? t('labels.clear') : t('labels.paste')}
+              adornmentText={getAdornmentText(value)}
               onAdornmentClick={() => handleAdornmentClick(value, onChange)}
+              disabled={props.disabled}
             />
             {error?.message && (
               <AlertInline label={error.message} mode="critical" />

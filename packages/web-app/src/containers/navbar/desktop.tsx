@@ -35,7 +35,7 @@ const DesktopNav: React.FC<DesktopNavProp> = props => {
   const {network} = useNetwork();
   const {dao} = useParams();
   const selectedDao = useReactiveVar(selectedDAO);
-  const {breadcrumbs, icon} = useMappedBreadcrumbs();
+  const {breadcrumbs, icon, tag} = useMappedBreadcrumbs();
   const {address, ensName, ensAvatarUrl, isConnected} = useWallet();
 
   const isProcess = useMemo(
@@ -91,6 +91,7 @@ const DesktopNav: React.FC<DesktopNavProp> = props => {
                   icon={icon}
                   crumbs={breadcrumbs}
                   onClick={clickHandler}
+                  tag={tag}
                 />
               </>
             )}

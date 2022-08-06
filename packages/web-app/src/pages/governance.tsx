@@ -108,7 +108,7 @@ const Governance: React.FC = () => {
         }`}
         onClick={() => navigate('new-proposal')}
       >
-        <div className="flex mt-3 desktop:mt-8">
+        <ButtonGroupContainer>
           <ButtonGroup
             bgWhite
             defaultValue="all"
@@ -125,7 +125,7 @@ const Governance: React.FC = () => {
             <Option value="executed" label="Executed" />
             <Option value="defeated" label="Defeated" />
           </ButtonGroup>
-        </div>
+        </ButtonGroupContainer>
         <ListWrapper>
           <ProposalList
             proposals={displayedProposals.slice(
@@ -160,6 +160,17 @@ export default withTransaction('Governance', 'component')(Governance);
 const Container = styled.div.attrs({
   className: 'col-span-full desktop:col-start-3 desktop:col-end-11',
 })``;
+
+const ButtonGroupContainer = styled.div.attrs({
+  className: 'flex overflow-auto mt-3 desktop:mt-8',
+})`
+  scrollbar-width: none;
+
+  ::-webkit-scrollbar {
+    width: 0px;
+    background: transparent;
+  }
+`;
 
 const ListWrapper = styled.div.attrs({
   className: 'mt-3',

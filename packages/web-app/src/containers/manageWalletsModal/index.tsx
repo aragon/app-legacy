@@ -1,4 +1,4 @@
-import React, {useState, useMemo} from 'react';
+import React, {useEffect, useState, useMemo} from 'react';
 import {
   SearchInput,
   CheckboxListItem,
@@ -12,71 +12,115 @@ import ModalBottomSheetSwitcher from 'components/modalBottomSheetSwitcher';
 import {useGlobalModalContext} from 'context/globalModals';
 import {shortenAddress} from '@aragon/ui-components/src/utils/addresses';
 
-const wallets = [
-  'web3rules.eth',
-  '0x10656c07e857B7f3338EA26ECD9A0936a24c0ae3',
-  '0x13456c07e857B7f3338EA26ECD9A0936a24c0fd1',
-  'dao.eth',
-];
-
 type ManageWalletsModalProps = {
   addWalletCallback: (wallets: Array<string>) => void;
-  resetOnClose?: boolean;
+  wallets: Array<string>;
+  initialSelections?: Array<string>;
 };
+
+type SelectableWallets = Set<string>;
 
 const ManageWalletsModal: React.FC<ManageWalletsModalProps> = ({
   addWalletCallback,
-  resetOnClose = false,
+  wallets,
+  initialSelections,
 }) => {
-  const [searchValue, setSearchValue] = useState('');
-  const [selectedWallets, setSelectedWallets] = useState<
-    Record<string, boolean>
-  >({});
-  const [selectAll, setSelectAll] = useState(false);
-  const {isManageWalletOpen, close} = useGlobalModalContext();
   const {t} = useTranslation();
+  const {isManageWalletOpen, close} = useGlobalModalContext();
+  const [searchValue, setSearchValue] = useState('');
+  const [selectedWallets, setSelectedWallets] = useState<SelectableWallets>(
+    new Set()
+  );
+
+  const selectedWalletsNum = selectedWallets.size;
+  const selectAll = selectedWalletsNum === wallets.length;
 
   const filteredWallets = useMemo(() => {
     if (searchValue !== '') {
       const re = new RegExp(searchValue, 'i');
-      return wallets.reduce((tempSelectedWallets, wallet) => {
-        wallet.match(re) && tempSelectedWallets.push(wallet);
-        return tempSelectedWallets;
-      }, [] as Array<string>);
+      return wallets.filter(wallet => wallet.match(re));
+    }
+    return wallets;
+  }, [searchValue, wallets]);
+
+  const labels = useMemo(() => {
+    if (selectedWalletsNum === 0) {
+      return {
+        button: t('labels.selectWallets'),
+        label: t('labels.noAddressSelected'),
+      };
+    } else if (selectedWalletsNum === 1) {
+      return {
+        button: t('labels.addSingleWallet'),
+        label: t('labels.singleAddressSelected'),
+      };
     } else {
-      return wallets;
+      return {
+        button: t('labels.addNWallets', {walletCount: selectedWalletsNum}),
+        label: t('labels.nAddressesSelected', {
+          walletCount: selectedWalletsNum,
+        }),
+      };
     }
-  }, [searchValue]);
+  }, [selectedWalletsNum, t]);
 
-  const handleSelectWallet = (wallet: string) => {
-    const tempSelectedWallets = {...selectedWallets};
-    tempSelectedWallets[wallet]
-      ? delete tempSelectedWallets[wallet]
-      : (tempSelectedWallets[wallet] = true);
-    setSelectedWallets(tempSelectedWallets);
-
-    if (Object.keys(tempSelectedWallets).length !== wallets.length) {
-      setSelectAll(false);
+  /*************************************************
+   *             Callbacks and Handlers            *
+   *************************************************/
+  useEffect(() => {
+    /**
+     * Note: I very much dislike this pattern. That said, we need
+     * to somehow both load initial selections and keep them in sync
+     * with what the user has selected. Cancelling after changing the
+     * initial state will not work otherwise.
+     */
+    // map initial selections to selectedWallets.
+    if (initialSelections) {
+      setSelectedWallets(new Set(initialSelections));
     }
-  };
+  }, [initialSelections]);
 
+  // handles select all checkbox
   const handleSelectAll = () => {
-    setSelectedWallets(
-      wallets.reduce((tempSelectedWallets, wallet) => {
-        tempSelectedWallets[wallet] = true;
-        return tempSelectedWallets;
-      }, {} as Record<string, boolean>)
-    );
-    setSelectAll(true);
+    if (selectAll) {
+      setSelectedWallets(new Set());
+    } else {
+      setSelectedWallets(previousState => {
+        const temp = new Set(previousState);
+
+        wallets.forEach(address => {
+          // not checking if address is already in the set because
+          // add should only add if element is not already in the set
+          temp.add(address);
+        });
+
+        return temp;
+      });
+    }
   };
 
+  // handles checkbox selection for individual wallets
+  const handleSelectWallet = (wallet: string) => {
+    setSelectedWallets(previousState => {
+      const temp = new Set(previousState);
+
+      if (previousState.has(wallet)) temp.delete(wallet);
+      else temp.add(wallet);
+
+      return temp;
+    });
+  };
+
+  // handles cleanup after modal is closed.
   const handleClose = () => {
     setSearchValue('');
-    setSelectedWallets({});
-    setSelectAll(false);
+    setSelectedWallets(new Set());
     close('manageWallet');
   };
 
+  /*************************************************
+   *                    Render                     *
+   *************************************************/
   return (
     <ModalBottomSheetSwitcher
       isOpen={isManageWalletOpen}
@@ -94,10 +138,7 @@ const ManageWalletsModal: React.FC<ManageWalletsModalProps> = ({
       </ModalHeader>
       <Container>
         <SelectAllContainer>
-          <p className="text-ui-400">
-            {Object.keys(selectedWallets).length === 0 &&
-              t('labels.noAddressSelected')}
-          </p>
+          <p className="text-ui-400">{labels.label as string}</p>
           <CheckboxSimple
             label="Select All"
             multiSelect
@@ -113,7 +154,7 @@ const ManageWalletsModal: React.FC<ManageWalletsModalProps> = ({
               key={wallet}
               label={shortenAddress(wallet)}
               multiSelect
-              state={selectedWallets[wallet] ? 'active' : 'default'}
+              state={selectedWallets.has(wallet) ? 'active' : 'default'}
               onClick={() => handleSelectWallet(wallet)}
             />
           ))}
@@ -122,17 +163,11 @@ const ManageWalletsModal: React.FC<ManageWalletsModalProps> = ({
 
       <ButtonContainer>
         <ButtonText
-          label={
-            Object.keys(selectedWallets).length === 0
-              ? t('labels.selectWallets')
-              : t('labels.addNWallets', {
-                  walletCount: Object.keys(selectedWallets).length,
-                })
-          }
+          label={labels.button as string}
           size="large"
           onClick={() => {
-            addWalletCallback(Object.keys(selectedWallets));
-            resetOnClose ? handleClose() : close('manageWallet');
+            addWalletCallback(Array.from(selectedWallets));
+            handleClose();
           }}
         />
         <ButtonText

@@ -7,7 +7,9 @@ import {generatePath} from 'react-router-dom';
 import {Governance} from 'utils/paths';
 import AddActionMenu from 'containers/addActionMenu';
 import ReviewProposal from 'containers/reviewProposal';
-import ConfigureActions from 'containers/configureActions';
+import ConfigureActions, {
+  isValid as actionsAreValid,
+} from 'containers/configureActions';
 import {ActionsProvider} from 'context/actions';
 import {FullScreenStepper, Step} from 'components/fullScreenStepper';
 import DefineProposal, {
@@ -20,9 +22,11 @@ import {useNetwork} from 'context/network';
 import {useDaoParam} from 'hooks/useDaoParam';
 import {Loading} from 'components/temporary';
 import {CreateProposalProvider} from 'context/createProposal';
+import {useDaoActions} from 'hooks/useDaoActions';
 
 const NewProposal: React.FC = () => {
   const {data: dao, loading} = useDaoParam();
+  const {data: actions} = useDaoActions(dao);
   const [showTxModal, setShowTxModal] = useState(false);
 
   const {t} = useTranslation();
@@ -72,6 +76,7 @@ const NewProposal: React.FC = () => {
             <Step
               wizardTitle={t('newProposal.configureActions.heading')}
               wizardDescription={t('newProposal.configureActions.description')}
+              isNextButtonDisabled={!actionsAreValid(errors)}
             >
               <ConfigureActions />
             </Step>
@@ -82,11 +87,11 @@ const NewProposal: React.FC = () => {
               onNextButtonClicked={() => setShowTxModal(true)}
               fullWidth
             >
-              <ReviewProposal />
+              <ReviewProposal defineProposalStepNumber={1} />
             </Step>
           </FullScreenStepper>
 
-          <AddActionMenu />
+          <AddActionMenu actions={actions} />
         </ActionsProvider>
       </CreateProposalProvider>
     </FormProvider>

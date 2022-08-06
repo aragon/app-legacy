@@ -6,14 +6,16 @@ export type BadgeProps = {
   colorScheme?: 'neutral' | 'info' | 'warning' | 'critical' | 'success';
   /** Text displayed on the badge */
   label: string;
+  className?: string;
 };
 
 export const Badge: React.FC<BadgeProps> = ({
   label,
   colorScheme = 'neutral',
+  className,
 }) => {
   return (
-    <StyledBadge data-testid="badge" colorScheme={colorScheme}>
+    <StyledBadge data-testid="badge" {...{colorScheme, className}}>
       <p className="font-bold">{label}</p>
     </StyledBadge>
   );

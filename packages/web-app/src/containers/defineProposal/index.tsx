@@ -14,6 +14,7 @@ import AddLinks from 'components/addLinks';
 import {useWallet} from 'hooks/useWallet';
 import {StringIndexed} from 'utils/types';
 import {Controller, useFormContext} from 'react-hook-form';
+import {isOnlyWhitespace} from 'utils/library';
 
 const DefineProposal: React.FC = () => {
   const {t} = useTranslation();
@@ -44,6 +45,8 @@ const DefineProposal: React.FC = () => {
           control={control}
           rules={{
             required: t('errors.required.title'),
+            validate: value =>
+              isOnlyWhitespace(value) ? t('errors.required.title') : true,
           }}
           render={({
             field: {name, onBlur, onChange, value},
@@ -75,6 +78,8 @@ const DefineProposal: React.FC = () => {
           control={control}
           rules={{
             required: t('errors.required.summary'),
+            validate: value =>
+              isOnlyWhitespace(value) ? t('errors.required.summary') : true,
           }}
           render={({
             field: {name, onBlur, onChange, value},

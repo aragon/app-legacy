@@ -48,13 +48,9 @@ export function validateTokenAmount(
       : true;
   }
 
-  // Amount has no decimal point or no value after decimal point
-  if (!amount.includes('.') || amount.split('.')[1] === '')
-    return i18n.t('errors.includeDecimals') as string;
-
   // Number of characters after decimal point greater than
   // the number of decimals in the token itself
-  if (amount.split('.')[1].length > decimals)
+  if (amount.split('.')[1]?.length > decimals)
     return i18n.t('errors.exceedsFractionalParts', {decimals}) as string;
 
   // Amount less than or equal to zero

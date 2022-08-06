@@ -1,7 +1,11 @@
 import React, {useEffect, useState} from 'react';
 import {ListItemAddress} from '@aragon/ui-components';
 
-import {DaoTokenBased, DaoWhitelist} from 'hooks/useDaoMembers';
+import {
+  DaoTokenBased,
+  DaoWhitelist,
+  isWhitelistMember,
+} from 'hooks/useDaoMembers';
 import {CHAIN_METADATA} from 'utils/constants';
 import {useNetwork} from 'context/network';
 import {formatUnits, isAddress} from 'ethers/lib/utils';
@@ -9,21 +13,14 @@ import {useSpecificProvider} from 'context/providers';
 import {getTokenInfo} from 'utils/tokens';
 
 type MembersListProps = {
-  walletBased: boolean;
-  whitelist: DaoWhitelist;
-  daoMembers: DaoTokenBased;
-  token: {
+  members: Array<DaoTokenBased | DaoWhitelist>;
+  token?: {
     id: string;
     symbol: string;
   };
 };
 
-export const MembersList: React.FC<MembersListProps> = ({
-  walletBased,
-  whitelist,
-  daoMembers,
-  token,
-}) => {
+export const MembersList: React.FC<MembersListProps> = ({token, members}) => {
   const {network} = useNetwork();
   const [totalSupply, setTotalSupply] = useState<number>(0);
 
@@ -50,41 +47,36 @@ export const MembersList: React.FC<MembersListProps> = ({
     else window.open(baseUrl + '/enslookup-search?search=' + address, '_blank');
   };
 
-  if (walletBased)
-    return (
-      <>
-        {whitelist?.map(({id}: DaoWhitelist[number]) => (
+  return (
+    <>
+      {members.map(member => {
+        return (
           <ListItemAddress
-            key={id}
-            label={id}
-            src={id}
-            onClick={() => itemClickHandler(id)}
-          />
-        ))}
-      </>
-    );
-  else
-    return (
-      <>
-        {daoMembers.map(({address, balance}) => (
-          <ListItemAddress
-            key={address}
-            label={address}
-            src={address}
-            {...(!walletBased && balance
+            // won't allow key in the objects for whatever reason
+            key={isWhitelistMember(member) ? member.id : member.address}
+            {...(isWhitelistMember(member)
               ? {
+                  label: member.id,
+                  src: member.id,
+                  onClick: () => itemClickHandler(member.id),
+                }
+              : {
+                  label: member.address,
+                  src: member.address,
+                  onClick: () => itemClickHandler(member.address),
                   tokenInfo: {
-                    amount: balance,
-                    symbol: token?.symbol,
+                    amount: member.balance,
+                    symbol: token?.symbol || '',
                     percentage: totalSupply
-                      ? Number(((balance / totalSupply) * 100).toFixed(2))
+                      ? Number(
+                          ((member.balance / totalSupply) * 100).toFixed(2)
+                        )
                       : '-',
                   },
-                }
-              : {})}
-            onClick={() => itemClickHandler(address)}
+                })}
           />
-        ))}
-      </>
-    );
+        );
+      })}
+    </>
+  );
 };
