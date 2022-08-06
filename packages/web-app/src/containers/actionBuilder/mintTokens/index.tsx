@@ -1,20 +1,21 @@
 import {ButtonText, ListItemAction} from '@aragon/ui-components';
+import {BigNumber} from 'ethers';
+import {isAddress} from 'ethers/lib/utils';
 import React, {useEffect, useState} from 'react';
-import {useFieldArray, useWatch} from 'react-hook-form';
+import {useFieldArray, useFormContext, useWatch} from 'react-hook-form';
 import {Trans, useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 
-import {AccordionMethod} from 'components/accordionMethod';
 import {useActionsContext} from 'context/actions';
+import {AccordionMethod} from 'components/accordionMethod';
+import useScreen from 'hooks/useScreen';
 import {useNetwork} from 'context/network';
 import {useProviders} from 'context/providers';
 import {CHAIN_METADATA} from 'utils/constants';
 import {fetchBalance, getTokenInfo} from 'utils/tokens';
 import {AddressAndTokenRow} from './addressTokenRow';
-import {BigNumber} from 'ethers';
 import {useDaoParam} from 'hooks/useDaoParam';
 import {useDaoToken} from 'hooks/useDaoToken';
-import {isAddress} from 'ethers/lib/utils';
 import {formatUnits} from 'utils/library';
 
 type Props = {
@@ -33,15 +34,68 @@ type AddressBalance = {
 
 const MintTokens: React.FC<Props> = ({index}) => {
   const {t} = useTranslation();
+
+  const {removeAction, duplicateAction} = useActionsContext();
+  const {setValue} = useFormContext();
+
+  const handleReset = () => {
+    setValue(`actions.${index}.inputs.mintTokensToWallets`, []);
+  };
+
+  const methodActions = [
+    {
+      component: <ListItemAction title={t('labels.duplicateAction')} bgWhite />,
+      callback: () => duplicateAction(index),
+    },
+    {
+      component: <ListItemAction title={t('labels.resetAction')} bgWhite />,
+      callback: handleReset,
+    },
+    {
+      component: (
+        <ListItemAction title={t('labels.removeEntireAction')} bgWhite />
+      ),
+      callback: () => {
+        removeAction(index);
+      },
+    },
+  ];
+
+  return (
+    <AccordionMethod
+      type="action-builder"
+      methodName={t('labels.mintTokens')}
+      smartContractName={t('labels.aragonCore')}
+      verified
+      methodDescription={<MintTokenDescription />}
+      additionalInfo={t('newProposal.mintTokens.additionalInfo')}
+      dropdownItems={methodActions}
+    >
+      <MintTokenForm actionIndex={index} />
+    </AccordionMethod>
+  );
+};
+
+export default MintTokens;
+
+export const MintTokenForm: React.FC<{
+  actionIndex: number;
+  standAlone?: boolean;
+}> = ({actionIndex, standAlone = false}) => {
+  const {t} = useTranslation();
+  const {isDesktop} = useScreen();
   const {data: daoId} = useDaoParam();
   const {network} = useNetwork();
   const {infura} = useProviders();
   const nativeCurrency = CHAIN_METADATA[network].nativeCurrency;
   const {data: daoToken, isLoading: daoTokenLoading} = useDaoToken(daoId);
 
-  const {removeAction, duplicateAction} = useActionsContext();
-  const {fields, append, remove} = useFieldArray({name: 'mintTokensToWallets'});
-  const mints = useWatch({name: 'mintTokensToWallets'}) as MintInfo[];
+  const {fields, append, remove} = useFieldArray({
+    name: `actions.${actionIndex}.inputs.mintTokensToWallets`,
+  });
+  const mints = useWatch({
+    name: `actions.${actionIndex}.inputs.mintTokensToWallets`,
+  }) as MintInfo[];
 
   const [newTokens, setNewTokens] = useState<number>(0);
   const [tokenSupply, setTokenSupply] = useState(0);
@@ -71,7 +125,7 @@ const MintTokens: React.FC<Props> = ({index}) => {
           setTokenSupply(formattedNumber);
         })
         .catch(e =>
-          console.log('Error happened when fetching token infos: ', e)
+          console.error('Error happened when fetching token infos: ', e)
         );
     }
   }, [daoToken.id]);
@@ -137,7 +191,7 @@ const MintTokens: React.FC<Props> = ({index}) => {
             setNewHoldersCount(count);
           })
           .catch(e =>
-            console.log('Error happened when fetching balances: ', e)
+            console.error('Error happened when fetching balances: ', e)
           );
       }
     }
@@ -152,15 +206,10 @@ const MintTokens: React.FC<Props> = ({index}) => {
       });
       setNewTokens(newTokensCount);
     }
-  }, [mints, daoToken.id]);
+  }, [mints, fields, daoToken.id]);
 
   const handleAddWallet = () => {
     append({address: '', amount: '0'});
-  };
-
-  const handleReset = () => {
-    const resetIndex = new Array(fields.length).fill(1);
-    remove(resetIndex.map((_, i) => i));
   };
 
   const handleCSVUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -188,104 +237,79 @@ const MintTokens: React.FC<Props> = ({index}) => {
     }
   };
 
-  const methodActions = [
-    {
-      component: <ListItemAction title={t('labels.duplicateAction')} bgWhite />,
-      callback: () => duplicateAction(index),
-    },
-    {
-      component: <ListItemAction title={t('labels.resetAction')} bgWhite />,
-      callback: handleReset,
-    },
-    {
-      component: (
-        <ListItemAction title={t('labels.removeEntireAction')} bgWhite />
-      ),
-      callback: () => {
-        removeAction(index);
-      },
-    },
-  ];
-
   return (
-    <AccordionMethod
-      type="action-builder"
-      methodName={t('labels.mintTokens')}
-      smartContractName={t('labels.aragonCore')}
-      verified
-      methodDescription={<MintTokenDescription />}
-      additionalInfo={t('newProposal.mintTokens.additionalInfo')}
-      dropdownItems={methodActions}
-    >
-      <Container>
-        {fields.map((field, index) => {
-          return (
-            <AddressAndTokenRow
-              key={field.id}
-              index={index}
-              onDelete={index => {
-                // remove the address from the sets
-                checkedAddresses.delete(mints[index].address);
-                newTokenHolders.delete(mints[index].address);
-                remove(index);
-              }}
-            />
-          );
-        })}
+    <Container standAlone={standAlone}>
+      {isDesktop && (
+        <div
+          className="flex items-center p-2 tablet:p-3"
+          style={{paddingRight: 'calc(12ch + 80px)'}}
+        >
+          <p className="flex-1 font-bold">Address</p>
+          <p className="flex-1 font-bold">Tokens</p>
+        </div>
+      )}
 
-        <ButtonContainer>
-          <ButtonText
-            label={t('labels.addWallet')}
-            mode="secondary"
-            size="large"
-            bgWhite
-            className="flex-1 tablet:flex-initial"
-            onClick={handleAddWallet}
+      {fields.map((field, index) => {
+        return (
+          <AddressAndTokenRow
+            key={field.id}
+            actionIndex={actionIndex}
+            fieldIndex={index}
+            onDelete={index => remove(index)}
           />
+        );
+      })}
 
-          <label className="flex-1 tablet:flex-initial py-1.5 px-2 space-x-1.5 h-6 font-bold hover:text-primary-500 bg-ui-0 rounded-xl cursor-pointer ft-text-base">
-            Upload CSV
-            <input
-              type="file"
-              name="uploadCSV"
-              accept=".csv, .txt"
-              onChange={handleCSVUpload}
-              hidden
-            />
-          </label>
-        </ButtonContainer>
-        {!daoTokenLoading && (
-          <SummaryContainer>
-            <p>{t('labels.summary')}</p>
-            <HStack>
-              <Label>{t('labels.newTokens')}</Label>
+      <ButtonContainer>
+        <ButtonText
+          label={t('labels.addWallet')}
+          mode="secondary"
+          size="large"
+          bgWhite
+          className="flex-1 tablet:flex-initial"
+          onClick={handleAddWallet}
+        />
+
+        <label className="flex-1 tablet:flex-initial py-1.5 px-2 space-x-1.5 h-6 font-bold hover:text-primary-500 bg-ui-0 rounded-xl cursor-pointer ft-text-base">
+          Upload CSV
+          <input
+            type="file"
+            name="uploadCSV"
+            accept=".csv, .txt"
+            onChange={handleCSVUpload}
+            hidden
+          />
+        </label>
+      </ButtonContainer>
+      {!daoTokenLoading && (
+        <SummaryContainer>
+          <p>{t('labels.summary')}</p>
+          <HStack>
+            <Label>{t('labels.newTokens')}</Label>
+            <p>
+              +{newTokens} {daoToken.symbol}
+            </p>
+          </HStack>
+          <HStack>
+            <Label>{t('labels.newHolders')}</Label>
+            <p>+{newHoldersCount}</p>
+          </HStack>
+          <HStack>
+            <Label>{t('labels.totalTokens')}</Label>
+            {tokenSupply ? (
               <p>
-                +{newTokens} {daoToken.symbol}
+                {(tokenSupply + newTokens).toString()} {daoToken.symbol}
               </p>
-            </HStack>
-            <HStack>
-              <Label>{t('labels.newHolders')}</Label>
-              <p>+{newHoldersCount}</p>
-            </HStack>
-            <HStack>
-              <Label>{t('labels.totalTokens')}</Label>
-              {tokenSupply ? (
-                <p>
-                  {(tokenSupply + newTokens).toString()} {daoToken.symbol}
-                </p>
-              ) : (
-                <p>...</p>
-              )}
-            </HStack>
-            {/* TODO add total amount of token holders here. */}
-          </SummaryContainer>
-        )}
-      </Container>
-    </AccordionMethod>
+            ) : (
+              <p>...</p>
+            )}
+          </HStack>
+          {/* TODO add total amount of token holders here. */}
+        </SummaryContainer>
+      )}
+    </Container>
   );
 };
-
-export default MintTokens;
 
 const MintTokenDescription: React.FC = () => (
   <Trans i18nKey="newProposal.mintTokens.methodDescription">
@@ -302,10 +326,11 @@ const MintTokenDescription: React.FC = () => (
   </Trans>
 );
 
-const Container = styled.div.attrs({
-  className:
-    'bg-white rounded-b-xl border border-t-0 divide-y border-ui-100 divide-ui-100',
-})``;
+const Container = styled.div.attrs<{standAlone: boolean}>(({standAlone}) => ({
+  className: `bg-white border divide-y border-ui-100 divide-ui-100 ${
+    standAlone ? 'rounded-xl' : 'rounded-b-xl border-t-0'
+  }`,
+}))<{standAlone: boolean}>``;
 
 const ButtonContainer = styled.div.attrs({
   className:
