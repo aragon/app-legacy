@@ -244,8 +244,8 @@ export const MintTokenForm: React.FC<{
           className="flex items-center p-2 tablet:p-3"
           style={{paddingRight: 'calc(12ch + 80px)'}}
         >
-          <p className="flex-1 font-bold">Address</p>
-          <p className="flex-1 font-bold">Tokens</p>
+          <p className="flex-1 font-bold">{t('labels.address')}</p>
+          <p className="flex-1 font-bold">{t('finance.tokens')}</p>
         </div>
       )}
 
@@ -271,7 +271,7 @@ export const MintTokenForm: React.FC<{
         />
 
         <label className="flex-1 tablet:flex-initial py-1.5 px-2 space-x-1.5 h-6 font-bold hover:text-primary-500 bg-ui-0 rounded-xl cursor-pointer ft-text-base">
-          Upload CSV
+          {t('labels.whitelistWallets.uploadCSV')}
           <input
             type="file"
             name="uploadCSV"
