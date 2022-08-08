@@ -41,7 +41,8 @@ const PrivacyContextProvider: React.FC = ({children}) => {
   const [preferences, setPreferences] = useState<PrivacyPreferences>();
 
   // privacy policy has been accepted when this is false
-  const [showPolicyMenu, setShowPolicyMenu] = useState<boolean>(false);
+  const [showPolicyMenu, setShowPolicyMenu] = useState<boolean>(true);
+  const [showCookieSettings, setShowCookieSettings] = useState<boolean>(false);
 
   // cookie preference menu state
   const [showPreferenceMenu, setShowPreferenceMenu] = useState<boolean>(false);
@@ -50,17 +51,14 @@ const PrivacyContextProvider: React.FC = ({children}) => {
     onReject: () => setShowPreferenceMenu(false),
   });
 
-  const [showCookieSettings, setShowCookieSettings] = useState<boolean>(false);
+  console.log(showPolicyMenu);
 
   useEffect(() => {
     // get preferences from storage
     const value = localStorage.getItem(PRIVACY_KEY);
 
     // show menu if no policy has been accepted
-    if (!value) {
-      setShowPolicyMenu(true);
-      return;
-    }
+    if (!value) return;
 
     // set state
     const storedPreferences = JSON.parse(value);
@@ -97,6 +95,7 @@ const PrivacyContextProvider: React.FC = ({children}) => {
       }
 
       setShowPolicyMenu(false);
+      setShowCookieSettings(false);
     },
     [preferences?.analytics]
   );
