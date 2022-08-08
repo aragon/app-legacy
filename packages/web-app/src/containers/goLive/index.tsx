@@ -32,7 +32,7 @@ export const GoLiveHeader: React.FC = () => {
   };
 
   return (
-    <div className="tablet:p-3 desktop:p-6 px-2 pt-2 desktop:pt-3 pb-3 tablet:rounded-xl bg-ui-0">
+    <div className="tablet:p-3 desktop:p-6 px-2 pt-2 desktop:pt-3 pb-3 bg-ui-0 tablet:rounded-xl">
       <div className="desktop:hidden">
         <Breadcrumb
           crumbs={{label: t('createDAO.title'), path: Landing}}
