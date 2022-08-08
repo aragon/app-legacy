@@ -39,7 +39,9 @@ export const PRIVACY_KEY = 'privacy-policy-preferences';
 const PrivacyContextProvider: React.FC = ({children}) => {
   // 'cache' for the privacy preferences to reduce storage usage and increase speed
   const [preferences, setPreferences] = useState<PrivacyPreferences>();
-  const [policyAccepted, setPolicyAccepted] = useState<boolean>(false);
+
+  // privacy policy has been accepted when this is false
+  const [showPolicyMenu, setShowPolicyMenu] = useState<boolean>(false);
 
   // cookie preference menu state
   const [showPreferenceMenu, setShowPreferenceMenu] = useState<boolean>(false);
@@ -49,17 +51,20 @@ const PrivacyContextProvider: React.FC = ({children}) => {
   });
 
   const [showCookieSettings, setShowCookieSettings] = useState<boolean>(false);
-  const [showPolicyMenu, setShowPolicyMenu] = useState<boolean>(false);
 
   useEffect(() => {
     // get preferences from storage
     const value = localStorage.getItem(PRIVACY_KEY);
-    if (!value) return;
+
+    // show menu if no policy has been accepted
+    if (!value) {
+      setShowPolicyMenu(true);
+      return;
+    }
 
     // set state
     const storedPreferences = JSON.parse(value);
-    setPolicyAccepted(true);
-    setShowPolicyMenu(true);
+    setShowPolicyMenu(false);
     setPreferences(storedPreferences);
 
     // enable analytics
@@ -91,7 +96,7 @@ const PrivacyContextProvider: React.FC = ({children}) => {
         localStorage.setItem(PRIVACY_KEY, JSON.stringify({optIn: false}));
       }
 
-      setPolicyAccepted(true);
+      setShowPolicyMenu(false);
     },
     [preferences?.analytics]
   );
@@ -128,6 +133,11 @@ const PrivacyContextProvider: React.FC = ({children}) => {
     setShowPolicyMenu(false);
   }, []);
 
+  const handleCloseCookiesSettings = useCallback(() => {
+    setShowCookieSettings(false);
+    setShowPolicyMenu(true);
+  }, []);
+
   /**
    * Handle the cookie preference menu
    *
@@ -160,7 +170,8 @@ const PrivacyContextProvider: React.FC = ({children}) => {
   const value = useMemo(
     () => ({
       preferences,
-      policyAccepted,
+      // policy has been accepted if the menu is not shown
+      policyAccepted: !showPolicyMenu,
       acceptAll,
       rejectAll,
       setPrivacyPolicy,
@@ -171,7 +182,7 @@ const PrivacyContextProvider: React.FC = ({children}) => {
     [
       acceptAll,
       handleWithFunctionalPreferenceMenu,
-      policyAccepted,
+      showPolicyMenu,
       preferences,
       rejectAll,
       setAnalyticsCookies,
@@ -196,7 +207,7 @@ const PrivacyContextProvider: React.FC = ({children}) => {
       />
       <CookieSettingsMenu
         show={showCookieSettings}
-        onClose={() => setShowCookieSettings(false)}
+        onClose={handleCloseCookiesSettings}
         onAcceptClick={setPrivacyPolicy}
         onRejectAllClick={rejectAll}
       />
