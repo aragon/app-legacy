@@ -27,11 +27,12 @@ const PrivacyPolicyContent: React.FC<PrivacyPolicyContentProps> = ({
 
       <ButtonGroup>
         <ButtonText
-          label={t('privacyPolicy.cookieSettings')}
+          label={t('privacyPolicy.acceptAllCookies')}
+          mode="secondary"
           {...(isDesktop
-            ? {mode: 'secondary', size: 'small'}
-            : {mode: 'ghost', size: 'large', className: 'w-full'})}
-          onClick={props.onShowCookieSettings}
+            ? {size: 'small', bgWhite: true}
+            : {size: 'large', className: 'w-full'})}
+          onClick={props.onAcceptAll}
         />
         <ButtonText
           label={t('privacyPolicy.rejectAllCookies')}
@@ -42,12 +43,11 @@ const PrivacyPolicyContent: React.FC<PrivacyPolicyContentProps> = ({
           onClick={props.onRejectAll}
         />
         <ButtonText
-          label={t('privacyPolicy.acceptAllCookies')}
-          mode="secondary"
+          label={t('privacyPolicy.cookieSettings')}
           {...(isDesktop
-            ? {size: 'small', bgWhite: true}
-            : {size: 'large', className: 'w-full'})}
-          onClick={props.onAcceptAll}
+            ? {mode: 'secondary', size: 'small'}
+            : {mode: 'ghost', size: 'large', className: 'w-full'})}
+          onClick={props.onShowCookieSettings}
         />
       </ButtonGroup>
     </>

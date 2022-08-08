@@ -72,9 +72,9 @@ export default PrivacyPolicy;
 
 const Container = styled.div.attrs({
   className:
-    'flex desktop:mx-5 wide:w-190 wide:mx-auto items-center p-3 space-x-3 bg-ui-0 rounded-xl',
+    'flex desktop:mx-5 wide:w-190 wide:mx-auto items-center p-3 space-x-3 bg-ui-0 rounded-xl border border-ui-100',
 })`
-  box-shadow: 0px 10px 20px rgba(31, 41, 51, 0.04),
+  box-shadow: 0px 16px 24px rgba(31, 41, 51, 0.06),
     0px 2px 6px rgba(31, 41, 51, 0.04), 0px 0px 1px rgba(31, 41, 51, 0.04);
 `;
 
