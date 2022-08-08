@@ -195,7 +195,7 @@ const NewWithdraw: React.FC = () => {
                 onNextButtonClicked={() => setShowTxModal(true)}
                 fullWidth
               >
-                <ReviewProposal />
+                <ReviewProposal defineProposalStepNumber={3} />
               </Step>
             </FullScreenStepper>
             <TokenMenu

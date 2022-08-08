@@ -11,6 +11,9 @@ const Template: Story<StateEmptyProps> = args => <StateEmpty {...args} />;
 
 export const Default = Template.bind({});
 Default.args = {
+  type: 'Human',
+  mode: 'card',
+  object: 'archive',
   body: 'voting',
   expression: 'casual',
   hair: 'middle',

@@ -5,13 +5,13 @@ import {
   IconMenuVertical,
   Label,
   ListItemAction,
+  StateEmpty,
 } from '@aragon/ui-components';
 import styled from 'styled-components';
 import {useTranslation} from 'react-i18next';
 import React, {useEffect} from 'react';
 import {useFieldArray, useFormContext, useWatch} from 'react-hook-form';
 
-import EmptyState from './emptyState';
 import {AddressRow} from './addressRow';
 import AccordionSummary from './accordionSummary';
 import {AccordionMethod} from 'components/accordionMethod';
@@ -151,12 +151,19 @@ const AddAddresses: React.FC<Props> = ({index: actionIndex}) => {
       dropdownItems={methodActions}
     >
       {controlledWallets.length === 0 ? (
-        <EmptyState
-          title={t('labels.whitelistWallets.noWallets')}
-          subtitle={t('labels.whitelistWallets.addWalletsSubtitle')}
-          buttonLabel={t('labels.addWallet')}
-          onClick={handleAdd}
-        />
+        <FormItem className="pt-3 pb-3 rounded-b-xl">
+          <StateEmpty
+            type="Object"
+            mode="inline"
+            object="wallet"
+            title={t('labels.whitelistWallets.noWallets')}
+            description={t('labels.whitelistWallets.addWalletsSubtitle')}
+            primaryButton={{
+              label: t('labels.addWallet'),
+              onClick: handleAdd,
+            }}
+          />
+        </FormItem>
       ) : (
         <>
           <FormItem className="hidden desktop:block py-1.5">

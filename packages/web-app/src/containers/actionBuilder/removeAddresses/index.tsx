@@ -5,12 +5,12 @@ import {
   IconMenuVertical,
   Label,
   ListItemAction,
+  StateEmpty,
 } from '@aragon/ui-components';
 import React from 'react';
 import {useTranslation} from 'react-i18next';
 import {useFormContext, useWatch, useFieldArray} from 'react-hook-form';
 
-import EmptyState from '../addAddresses/emptyState';
 import {FormItem} from '../addAddresses';
 import {AddressRow} from '../addAddresses/addressRow';
 import {useDaoParam} from 'hooks/useDaoParam';
@@ -108,12 +108,19 @@ const RemoveAddresses: React.FC<Props> = ({index: actionIndex}) => {
         dropdownItems={methodActions}
       >
         {!memberWallets || memberWallets.length === 0 ? (
-          <EmptyState
-            title={t('labels.whitelistWallets.noWallets')}
-            subtitle={t('labels.whitelistWallets.removeWalletsSubtitle')}
-            buttonLabel={t('labels.selectWallet')}
-            onClick={() => open('manageWallet')}
-          />
+          <FormItem className="pt-3 pb-3 rounded-b-xl">
+            <StateEmpty
+              type="Object"
+              mode="inline"
+              object="wallet"
+              title={t('labels.whitelistWallets.noWallets')}
+              description={t('labels.whitelistWallets.removeWalletsSubtitle')}
+              primaryButton={{
+                label: t('labels.selectWallet'),
+                onClick: () => open('manageWallet'),
+              }}
+            />
+          </FormItem>
         ) : (
           <>
             <FormItem className="hidden desktop:block py-1.5">
