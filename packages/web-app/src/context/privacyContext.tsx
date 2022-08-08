@@ -51,8 +51,9 @@ const PrivacyContextProvider: React.FC = ({children}) => {
     onReject: () => setShowPreferenceMenu(false),
   });
 
-  console.log(showPolicyMenu);
-
+  /*************************************************
+   *                    Hooks                      *
+   *************************************************/
   useEffect(() => {
     // get preferences from storage
     const value = localStorage.getItem(PRIVACY_KEY);
@@ -190,6 +191,9 @@ const PrivacyContextProvider: React.FC = ({children}) => {
     ]
   );
 
+  /*************************************************
+   *                    Render                     *
+   *************************************************/
   return (
     <PrivacyContext.Provider value={value}>
       {children}

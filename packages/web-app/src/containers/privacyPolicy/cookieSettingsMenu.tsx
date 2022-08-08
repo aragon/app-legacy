@@ -26,10 +26,7 @@ const CookieSettingsMenu: React.FC<CookieSettingsMenuProps> = props => {
   const [functionalSelected, setFunctionalSelected] = useState<boolean>(true);
 
   return (
-    <Modal
-      show={props.show}
-      className="fixed bottom-0 z-50 w-full bg-ui-50 rounded-t-xl"
-    >
+    <Modal show={props.show}>
       <div>
         <ModalHeader>
           <ButtonIcon
@@ -107,7 +104,11 @@ type Props = {
 };
 
 const Modal = styled.div.attrs(({show}: Props) => ({
-  className: `${show ? 'block' : 'hidden'}` as string | undefined,
+  className: `${show ? 'block' : 'hidden'} fixed z-50 bg-ui-50
+  bottom-0 w-full rounded-t-xl
+  tablet:bottom-3 tablet:left-1/2 tablet:w-56 tablet:rounded-b-xl
+  tablet:transform tablet:-translate-x-1/2
+  desktop:bottom-auto desktop:top-12`,
 }))<Props>`
   box-shadow: 0px 24px 32px rgba(31, 41, 51, 0.04),
     0px 16px 24px rgba(31, 41, 51, 0.04), 0px 4px 8px rgba(31, 41, 51, 0.04),
