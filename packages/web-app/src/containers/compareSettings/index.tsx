@@ -47,7 +47,7 @@ const CompareSettings: React.FC = () => {
           <Dd>Aragon DAO</Dd>
         </Dl>
         <Dl>
-          <Dt>{t('labels.description')}</Dt>
+          <Dt>{t('labels.summary')}</Dt>
           <Dd>
             This is a short description of your DAO, so please look that
             it&apos;s not that long as wished. 👀

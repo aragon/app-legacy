@@ -42,20 +42,16 @@ export const isOnlyWhitespace = (value: string) => {
 /**
  * Return user friendly wallet address label if available
  * @param value address
- * @param connectedWalletAddress user connected address
  * @param t translation function
  * @returns user friendly label or wallet address
  */
 export const getUserFriendlyWalletLabel = (
   value: string,
-  connectedWalletAddress: string,
   t: TFunction<'translation', undefined>
 ) => {
   switch (value) {
     case '':
       return '';
-    case connectedWalletAddress:
-      return t('labels.myWallet');
     case constants.AddressZero:
       return t('labels.daoTreasury');
 

@@ -122,7 +122,7 @@ const DefineMetadata: React.FC = () => {
       {/* Summary */}
       <FormItem>
         <Label
-          label={t('labels.description')}
+          label={t('labels.summary')}
           helpText={t('createDAO.step2.descriptionSubtitle')}
         />
         <Controller
