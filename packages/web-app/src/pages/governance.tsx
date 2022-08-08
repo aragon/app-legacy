@@ -118,7 +118,6 @@ const Governance: React.FC = () => {
             }}
           >
             <Option value="all" label="All" />
-            <Option value="draft" label="Draft" />
             <Option value="pending" label="Pending" />
             <Option value="active" label="Active" />
             <Option value="succeeded" label="Succeeded" />
