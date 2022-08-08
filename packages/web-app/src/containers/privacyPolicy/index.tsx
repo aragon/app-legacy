@@ -1,26 +1,23 @@
 import styled from 'styled-components';
-import React, {useState} from 'react';
+import React from 'react';
 
 import useScreen from 'hooks/useScreen';
-import CookieSettingsMenu from './cookieSettingsMenu';
 import PrivacyPolicyContent from './privacyPolicyContent';
-import {PrivacyPreferences} from 'context/privacyContext';
 
 type PrivacyPolicyProps = {
   showPolicy: boolean;
   onAcceptAll: () => void;
   onRejectAll: () => void;
-  onAcceptPolicy: (preferences: PrivacyPreferences) => void;
+  onShowCookieSettings: () => void;
 };
 
 const PrivacyPolicy: React.FC<PrivacyPolicyProps> = ({
   showPolicy,
   onAcceptAll,
   onRejectAll,
-  onAcceptPolicy,
+  onShowCookieSettings,
 }) => {
   const {isDesktop} = useScreen();
-  const [showCookieSettings, setShowCookieSettings] = useState<boolean>(false);
 
   if (!showPolicy) return null;
 
@@ -33,7 +30,7 @@ const PrivacyPolicy: React.FC<PrivacyPolicyProps> = ({
               isDesktop={true}
               onAcceptAll={onAcceptAll}
               onRejectAll={onRejectAll}
-              onShowCookieSettings={() => setShowCookieSettings(true)}
+              onShowCookieSettings={onShowCookieSettings}
             />
           </Container>
         </div>
@@ -43,16 +40,10 @@ const PrivacyPolicy: React.FC<PrivacyPolicyProps> = ({
             isDesktop={false}
             onAcceptAll={onAcceptAll}
             onRejectAll={onRejectAll}
-            onShowCookieSettings={() => setShowCookieSettings(true)}
+            onShowCookieSettings={onShowCookieSettings}
           />
         </MobileModal>
       )}
-      <CookieSettingsMenu
-        show={showCookieSettings}
-        onClose={() => setShowCookieSettings(false)}
-        onAcceptClick={onAcceptPolicy}
-        onRejectAllClick={onRejectAll}
-      />
     </>
   );
 };
@@ -69,7 +60,7 @@ const Container = styled.div.attrs({
 
 const MobileModal = styled.div.attrs({
   className:
-    'space-y-3 tablet:w-56 fixed bottom-2 tablet:left-1/2 z-50 p-2 mx-2 bg-ui-0 rounded-xl border border-ui-100 tablet:transform tablet:-translate-x-1/2',
+    'space-y-3 tablet:w-56 fixed bottom-2 tablet:left-1/2 z-50 p-2 mx-2 tablet:mx-0 bg-ui-0 rounded-xl border border-ui-100 tablet:transform tablet:-translate-x-1/2',
 })`
   box-shadow: 0px 24px 32px rgba(31, 41, 51, 0.04),
     0px 16px 24px rgba(31, 41, 51, 0.04), 0px 4px 8px rgba(31, 41, 51, 0.04),
