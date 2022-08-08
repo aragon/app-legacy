@@ -1,4 +1,5 @@
 import {
+  AlertInline,
   ButtonText,
   CheckboxListItem,
   CheckboxListItemProps,
@@ -11,6 +12,8 @@ export type DescriptionListProps = {
   title: string;
   onEditClick?: () => void;
   editLabel?: string;
+  checkBoxError?: boolean;
+  checkBoxErrorMessage?: string;
   checkedState?: CheckboxListItemProps['state'];
   onChecked?: () => void;
 };
@@ -20,6 +23,8 @@ export const DescriptionListContainer: React.FC<DescriptionListProps> = ({
   children,
   onEditClick,
   editLabel,
+  checkBoxError,
+  checkBoxErrorMessage,
   checkedState,
   onChecked,
 }) => {
@@ -39,14 +44,19 @@ export const DescriptionListContainer: React.FC<DescriptionListProps> = ({
       </HStack>
       <DlContainer>{children}</DlContainer>
       {onChecked && (
-        <div className="flex ml-auto tablet:w-3/4">
-          <CheckboxListItem
-            label="These values are correct"
-            multiSelect
-            onClick={onChecked}
-            state={checkedState}
-          />
-          <div className="flex-1" />
+        <div className="ml-auto space-y-1.5 tablet:w-3/4">
+          <div className="tablet:flex">
+            <CheckboxListItem
+              label="These values are correct"
+              multiSelect
+              onClick={onChecked}
+              state={checkedState}
+              errorBorder={checkBoxError}
+            />
+          </div>
+          {checkBoxError && checkBoxErrorMessage && (
+            <AlertInline label={checkBoxErrorMessage} mode="critical" />
+          )}
         </div>
       )}
     </Container>
@@ -77,7 +87,7 @@ const DescriptionList = {
 export default DescriptionList;
 
 const Container = styled.div.attrs({
-  className: 'p-2 tablet:p-3 space-y-2 tablet:space-y-3 rounded-xl bg-ui-0',
+  className: 'p-2 tablet:p-3 space-y-3 rounded-xl bg-ui-0',
 })``;
 
 const TitleText = styled.h1.attrs({
@@ -102,6 +112,5 @@ const DdContainer = styled.dd.attrs({
 })``;
 
 const HStack = styled.div.attrs({
-  className:
-    'flex flex-wrap flex-row-reverse tablet:flex-row justify-between items-center',
+  className: 'flex justify-between items-center',
 })``;

@@ -506,7 +506,8 @@
       "minutes": "{{minutes}} Minutes",
       "button": "Publish your DAO",
       "daoUpdates": "DAO updates are doable",
-      "daoUpdatesHelpText": "These choices can be changed by a proposal and vote in the DAO."
+      "daoUpdatesHelpText": "These choices can be changed by a proposal and vote in the DAO.",
+      "acceptContent": "You have to accept your proposed content."
     }
   },
   "newProposal": {

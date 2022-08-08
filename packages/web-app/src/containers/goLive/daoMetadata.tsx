@@ -10,7 +10,7 @@ const DaoMetadata: React.FC = () => {
   const {control, getValues} = useFormContext();
   const {setStep} = useFormStep();
   const {t} = useTranslation();
-  const {daoLogo, daoName, daoSummary, links} = getValues();
+  const {daoLogo, daoName, daoSummary, links, reviewCheckError} = getValues();
 
   return (
     <Controller
@@ -23,8 +23,10 @@ const DaoMetadata: React.FC = () => {
       render={({field: {onChange, value}}) => (
         <DescriptionListContainer
           title={t('labels.review.daoMetadata')}
-          onEditClick={() => setStep(2)}
+          onEditClick={() => setStep(3)}
           editLabel={t('settings.edit')}
+          checkBoxError={reviewCheckError && !value}
+          checkBoxErrorMessage={t('createDAO.review.acceptContent')}
           checkedState={value ? 'active' : 'default'}
           onChecked={() => onChange(!value)}
         >

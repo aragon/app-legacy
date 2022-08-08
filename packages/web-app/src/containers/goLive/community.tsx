@@ -21,6 +21,7 @@ const Community: React.FC = () => {
     tokenSymbol,
     tokenTotalSupply,
     whitelistWallets,
+    reviewCheckError,
   } = getValues();
 
   return (
@@ -34,8 +35,10 @@ const Community: React.FC = () => {
       render={({field: {onChange, value}}) => (
         <DescriptionListContainer
           title={t('labels.review.community')}
-          onEditClick={() => setStep(2)}
+          onEditClick={() => setStep(4)}
           editLabel={t('settings.edit')}
+          checkBoxError={reviewCheckError && !value}
+          checkBoxErrorMessage={t('createDAO.review.acceptContent')}
           checkedState={value ? 'active' : 'default'}
           onChecked={() => onChange(!value)}
         >

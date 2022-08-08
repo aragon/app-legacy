@@ -20,6 +20,7 @@ const Governance: React.FC = () => {
     durationDays,
     membership,
     whitelistWallets,
+    reviewCheckError,
   } = getValues();
 
   return (
@@ -35,6 +36,8 @@ const Governance: React.FC = () => {
           title={t('labels.review.governance')}
           onEditClick={() => setStep(5)}
           editLabel={t('settings.edit')}
+          checkBoxError={reviewCheckError && !value}
+          checkBoxErrorMessage={t('createDAO.review.acceptContent')}
           checkedState={value ? 'active' : 'default'}
           onChecked={() => onChange(!value)}
         >

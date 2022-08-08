@@ -72,7 +72,7 @@ const GoLive: React.FC = () => {
 };
 
 export const GoLiveFooter: React.FC = () => {
-  const {watch} = useFormContext();
+  const {watch, setValue} = useFormContext();
   const {reviewCheck} = watch();
   const {t} = useTranslation();
   const {handlePublishDao} = useCreateDaoContext();
@@ -82,7 +82,13 @@ export const GoLiveFooter: React.FC = () => {
   const IsButtonDisabled = () =>
     !Object.values(reviewCheck).every(v => v === true);
 
-  const publishDao = () => (isConnected ? handlePublishDao() : open('wallet'));
+  const publishDao = () => {
+    if (IsButtonDisabled()) {
+      setValue('reviewCheckError', true);
+    } else {
+      isConnected ? handlePublishDao() : open('wallet');
+    }
+  };
 
   return (
     <div className="flex justify-center pt-3">
@@ -91,7 +97,7 @@ export const GoLiveFooter: React.FC = () => {
         iconRight={<IconChevronRight />}
         label={t('createDAO.review.button')}
         onClick={publishDao}
-        disabled={IsButtonDisabled()}
+        // disabled={IsButtonDisabled()}
       />
     </div>
   );

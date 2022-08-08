@@ -27,6 +27,7 @@ export type CheckboxListItemProps = {
   multiSelect?: boolean;
   disabled?: boolean;
   state?: 'default' | 'active' | 'multi';
+  errorBorder?: boolean;
   onClick?: React.MouseEventHandler;
 };
 
@@ -36,6 +37,7 @@ export const CheckboxListItem: React.FC<CheckboxListItemProps> = ({
   multiSelect = false,
   disabled = false,
   state = 'default',
+  errorBorder = false,
   onClick,
 }) => {
   return (
@@ -43,6 +45,7 @@ export const CheckboxListItem: React.FC<CheckboxListItemProps> = ({
       data-testid="checkboxListItem"
       state={state}
       disabled={disabled}
+      errorBorder={errorBorder}
       {...(disabled ? {} : {onClick})}
     >
       <HStack disabled={disabled} state={state}>
@@ -57,18 +60,25 @@ export const CheckboxListItem: React.FC<CheckboxListItemProps> = ({
 type ContainerTypes = {
   disabled: boolean;
   state: 'default' | 'active' | 'multi';
+  errorBorder?: boolean;
 };
 
-const Container = styled.div.attrs(({disabled, state}: ContainerTypes) => ({
-  className: `py-1.5 px-2 rounded-xl border-2 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 ${
-    disabled
-      ? 'bg-ui-100 border-ui-300'
-      : `bg-ui-0 group hover:border-primary-500 cursor-pointer ${
-          state !== 'default' ? 'border-primary-500' : 'border-ui-100'
-        }`
-  }`,
-  tabIndex: disabled ? -1 : 0,
-}))<ContainerTypes>``;
+const Container = styled.div.attrs(
+  ({disabled, state, errorBorder}: ContainerTypes) => ({
+    className: `py-1.5 px-2 rounded-xl border-2 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 ${
+      disabled
+        ? 'bg-ui-100 border-ui-300'
+        : `bg-ui-0 group hover:border-primary-500 cursor-pointer ${
+            errorBorder
+              ? 'border-critical-500'
+              : state !== 'default'
+              ? 'border-primary-500'
+              : 'border-ui-100'
+          }`
+    }`,
+    tabIndex: disabled ? -1 : 0,
+  })
+)<ContainerTypes>``;
 
 const HStack = styled.div.attrs(({disabled, state}: ContainerTypes) => ({
   className: `flex justify-between items-center group-hover:text-primary-500 space-x-1.5 ${
