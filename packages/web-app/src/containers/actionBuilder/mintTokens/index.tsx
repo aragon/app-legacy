@@ -257,6 +257,7 @@ export const MintTokenForm: React.FC<{
             actionIndex={actionIndex}
             fieldIndex={index}
             onDelete={index => remove(index)}
+            newTokenSupply={newTokens + tokenSupply}
           />
         );
       })}

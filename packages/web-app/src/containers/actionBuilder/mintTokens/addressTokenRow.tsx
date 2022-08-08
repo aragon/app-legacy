@@ -22,6 +22,7 @@ type IndexProps = {
 };
 
 type AddressAndTokenRowProps = IndexProps & {
+  newTokenSupply: number;
   onDelete: (index: number) => void;
 };
 
@@ -92,43 +93,45 @@ const TokenField: React.FC<IndexProps> = ({actionIndex, fieldIndex}) => {
   );
 };
 
-const DropdownMenu: React.FC<AddressAndTokenRowProps> = ({
-  fieldIndex,
-  onDelete,
-}) => {
-  const {t} = useTranslation();
+const DropdownMenu: React.FC<Omit<AddressAndTokenRowProps, 'newTokenSupply'>> =
+  ({fieldIndex, onDelete}) => {
+    const {t} = useTranslation();
 
-  return (
-    <Dropdown
-      align="start"
-      trigger={
-        <ButtonIcon mode="ghost" size="large" icon={<IconMenuVertical />} />
-      }
-      sideOffset={8}
-      listItems={[
-        {
-          component: (
-            <ListItemAction title={t('labels.removeWallet')} bgWhite />
-          ),
-          callback: () => {
-            onDelete(fieldIndex);
+    return (
+      <Dropdown
+        align="start"
+        trigger={
+          <ButtonIcon mode="ghost" size="large" icon={<IconMenuVertical />} />
+        }
+        sideOffset={8}
+        listItems={[
+          {
+            component: (
+              <ListItemAction title={t('labels.removeWallet')} bgWhite />
+            ),
+            callback: () => {
+              onDelete(fieldIndex);
+            },
           },
-        },
-      ]}
-    />
-  );
-};
+        ]}
+      />
+    );
+  };
 
-const PercentageDistribution: React.FC<IndexProps> = ({
-  actionIndex,
-  fieldIndex,
-}) => {
+const PercentageDistribution: React.FC<
+  Omit<AddressAndTokenRowProps, 'onDelete'>
+> = ({actionIndex, fieldIndex, newTokenSupply}) => {
+  const newMintCount = useWatch({
+    name: `actions.${actionIndex}.inputs.mintTokensToWallets.${fieldIndex}.amount`,
+  });
+  const percentage = newTokenSupply ? (newMintCount / newTokenSupply) * 100 : 0;
+
   return (
     <div style={{maxWidth: '12ch'}}>
       <TextInput
         className="text-right"
         name={`actions.${actionIndex}.inputs.mintTokensToWallets.${fieldIndex}.amount`}
-        value={'14.012%'}
+        value={percentage.toPrecision(3) + '%'}
         mode="default"
         disabled
       />
@@ -140,6 +143,7 @@ export const AddressAndTokenRow: React.FC<AddressAndTokenRowProps> = ({
   actionIndex,
   fieldIndex,
   onDelete,
+  newTokenSupply,
 }) => {
   const {isDesktop} = useScreen();
 
@@ -152,6 +156,7 @@ export const AddressAndTokenRow: React.FC<AddressAndTokenRowProps> = ({
           <PercentageDistribution
             actionIndex={actionIndex}
             fieldIndex={fieldIndex}
+            newTokenSupply={newTokenSupply}
           />
           <DropdownMenu
             actionIndex={actionIndex}
@@ -186,6 +191,7 @@ export const AddressAndTokenRow: React.FC<AddressAndTokenRowProps> = ({
           <PercentageDistribution
             actionIndex={actionIndex}
             fieldIndex={fieldIndex}
+            newTokenSupply={newTokenSupply}
           />
         </HStackWithPadding>
       </VStack>
