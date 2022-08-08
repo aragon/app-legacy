@@ -33,7 +33,6 @@
     "removeWallets": "Remove Wallets",
     "addWalletsDescription": "Add as many wallets as you like to the DAO. These are authorized to create proposals, request transactions or suggest changes to the DAO settings from the time of initial creation.",
     "removeWalletsDescription": "Remove existing wallets from the authorised list of this particular DAO.",
-    "summary": "Summary",
     "totalWallets": "Total Wallets",
     "mintTokens": "Mint Tokens",
     "seeAllHolders": "See All Holders",
@@ -76,7 +75,7 @@
     "security": "Security",
     "popularity": "Popularity",
     "daoName": "DAO Name",
-    "description": "Summary",
+    "summary": "Summary",
     "addLink": "Add Link",
     "addWallet": "Add Wallet",
     "selectWallet": "Select Wallet",
@@ -159,7 +158,11 @@
     "addNWallets": "Add {{walletCount}} Wallets",
     "nAddressesSelected": "{{walletCount}} Addresses selected",
     "noAddressSelected": "No address selected",
-    "noResources": "No Resources were added"
+    "noResources": "No Resources were added",
+    "newTokens": "New Tokens",
+    "newHolders": "New Holders",
+    "totalTokens": "Total Tokens",
+    "totalHolders": "Total Holders"
   },
   "placeHolders": {
     "selectToken": "Select a Token ...",
@@ -403,7 +406,6 @@
       "title": "Title",
       "titleHelptext": "Define a custom title if needed",
       "titlePlaceholder": "Type meaningful title",
-      "summary": "Summary",
       "summaryHelptext": "Describe this proposal in 2-3 short sentences as a summary. This information will be presented in the sharing and overview.",
       "summaryPlaceholder": "Type your description ...",
       "proposal": "Proposal",
