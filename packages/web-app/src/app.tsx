@@ -138,7 +138,7 @@ const ExploreWrapper: React.FC = () => (
 const DaoWrapper: React.FC = () => (
   <>
     <Navbar />
-    <div className="pb-10">
+    <div className="pb-15">
       <GridLayout>
         <Outlet />
         <TransferMenu />
