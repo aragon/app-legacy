@@ -536,6 +536,7 @@
     "yes+no": "Yes + Abstain + No",
     "strategy": "Strategy",
     "tokenVoting": "1 Token -> 1 Vote",
+    "multisig": "1 Wallet -> 1 Vote",
     "minimumApproval": "Minimum Approval",
     "participation": "Participation",
     "uniqueVoters": "Unique Voters",

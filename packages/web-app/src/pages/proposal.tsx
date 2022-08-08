@@ -232,8 +232,11 @@ const Proposal: React.FC = () => {
 
       status,
       statusLabel: getStatusLabel(status, Number(endDate) * 1000),
+      strategy: token
+        ? t('votingTerminal.tokenVoting')
+        : t('votingTerminal.multisig'),
     };
-  }, [getStatusLabel, proposalData]);
+  }, [getStatusLabel, proposalData, t]);
 
   const terminalProps = useMemo(() => mapDataToView(), [mapDataToView]);
   const proposalSteps = useMemo(() => {

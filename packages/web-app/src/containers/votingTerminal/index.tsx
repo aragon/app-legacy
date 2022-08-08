@@ -26,6 +26,7 @@ export type VotingTerminalProps = {
   voters?: Array<VoterType>;
   status?: string;
   statusLabel?: string;
+  strategy: string;
   token?: {
     symbol: string;
     name: string;
@@ -49,6 +50,7 @@ export const VotingTerminal: React.FC<VotingTerminalProps> = ({
   startDate,
   endDate,
   statusLabel,
+  strategy,
 }) => {
   const [query, setQuery] = useState('');
   const [buttonGroupState, setButtonGroupState] = useState('info');
@@ -148,7 +150,7 @@ export const VotingTerminal: React.FC<VotingTerminalProps> = ({
             </InfoLine>
             <InfoLine>
               <p>{t('votingTerminal.strategy')}</p>
-              <Strong>{t('votingTerminal.tokenVoting')}</Strong>
+              <Strong>{strategy}</Strong>
             </InfoLine>
             <InfoLine>
               <p>{t('votingTerminal.minimumApproval')}</p>

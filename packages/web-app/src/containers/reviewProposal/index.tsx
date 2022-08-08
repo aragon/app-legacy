@@ -44,6 +44,7 @@ const ReviewProposal: React.FC<ReviewProposalProps> = ({
 }) => {
   const {t} = useTranslation();
   const {network} = useNetwork();
+  const {setStep} = useFormStep();
   const provider = useSpecificProvider(CHAIN_METADATA[network].id);
 
   const {dao} = useParams();
@@ -53,8 +54,9 @@ const ReviewProposal: React.FC<ReviewProposalProps> = ({
   });
 
   const {getValues, setValue} = useFormContext();
-  const {setStep} = useFormStep();
-  const {t} = useTranslation();
+  const [approval, setApproval] = useState('');
+  const [participation, setParticipation] = useState('');
+  const [isWalletBased, setIsWalletBased] = useState(true);
   const values = getValues();
 
   const [expandedProposal, setExpandedProposal] = useState(false);
@@ -127,6 +129,8 @@ const ReviewProposal: React.FC<ReviewProposalProps> = ({
       const {token, supportRequiredPct, users} = data.daoPackages[0].pkg;
 
       if (token) {
+        setIsWalletBased(false);
+
         // get total supply
         const {totalSupply} = await getTokenInfo(
           token.id,
@@ -148,6 +152,8 @@ const ReviewProposal: React.FC<ReviewProposalProps> = ({
           token.decimals
         )} ${token.symbol} (0%)`;
       } else {
+        setIsWalletBased(true);
+
         formattedMinApproval = `${BigNumber.from(supportRequiredPct)
           .mul(users.length)
           .div(100)} members (${BigInt(supportRequiredPct).toString()}%)`;
@@ -228,6 +234,11 @@ const ReviewProposal: React.FC<ReviewProposalProps> = ({
             participation={participation}
             startDate={formattedStartDate}
             endDate={formattedEndDate}
+            strategy={
+              isWalletBased
+                ? t('votingTerminal.multisig')
+                : t('votingTerminal.tokenVoting')
+            }
           />
 
           {/* TODO: generalize types so that proper execution card can be rendered */}
