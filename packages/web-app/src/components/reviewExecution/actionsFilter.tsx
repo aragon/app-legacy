@@ -20,12 +20,10 @@ export const ActionsFilter: React.FC<ActionsFilterProps> = ({
   switch (type) {
     case 'withdraw_assets':
       return (
-        <>
-          <WithdrawCard
-            action={action as ActionWithdraw}
-            daoName={dao?.name || ''}
-          />
-        </>
+        <WithdrawCard
+          action={action as ActionWithdraw}
+          daoName={dao?.name || ''}
+        />
       );
     default:
       return <></>;

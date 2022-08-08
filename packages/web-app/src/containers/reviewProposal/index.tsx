@@ -33,7 +33,6 @@ import {
   getCanonicalUtcOffset,
   KNOWN_FORMATS,
 } from 'utils/date';
-import {useDaoMetadata} from 'hooks/useDaoMetadata';
 
 type ReviewProposalProps = {
   defineProposalStepNumber: number;
@@ -48,7 +47,6 @@ const ReviewProposal: React.FC<ReviewProposalProps> = ({
   const provider = useSpecificProvider(CHAIN_METADATA[network].id);
 
   const {dao} = useParams();
-  const {data: metadata, loading: metadataLoading} = useDaoMetadata(dao || '');
   const {data, loading} = useQuery(DAO_PACKAGE_BY_DAO_ID, {
     variables: {dao},
   });
@@ -181,7 +179,7 @@ const ReviewProposal: React.FC<ReviewProposalProps> = ({
     return null;
   }
 
-  if (loading || metadataLoading) return <Loading />;
+  if (loading) return <Loading />;
 
   return (
     <>
