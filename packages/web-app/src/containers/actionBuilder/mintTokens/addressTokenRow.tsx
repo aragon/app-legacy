@@ -1,20 +1,21 @@
-import React from 'react';
 import {
-  ButtonIcon,
-  IconMenuVertical,
-  ValueInput,
-  Label,
-  NumberInput,
-  ListItemAction,
-  Dropdown,
   AlertInline,
+  ButtonIcon,
+  Dropdown,
+  IconMenuVertical,
+  Label,
+  ListItemAction,
+  NumberInput,
   TextInput,
+  ValueInput,
 } from '@aragon/ui-components';
+import React from 'react';
+import {Controller, useWatch} from 'react-hook-form';
 import {useTranslation} from 'react-i18next';
-import {Controller} from 'react-hook-form';
-import {handleClipboardActions} from 'utils/library';
 import styled from 'styled-components';
+
 import useScreen from 'hooks/useScreen';
+import {handleClipboardActions} from 'utils/library';
 
 type IndexProps = {
   actionIndex: number;
