@@ -21,16 +21,23 @@ const WithdrawAction: React.FC<Props> = ({index}) => {
   const [openMenu, setOpenMenu] = useState<boolean>(false);
   const {removeAction, duplicateAction, setActionsCounter} =
     useActionsContext();
-  const {setValue, clearErrors} = useFormContext();
+  const {setValue, clearErrors, resetField} = useFormContext();
 
   const resetWithdrawFields = () => {
     clearErrors(`actions.${index}`);
+    resetField(`actions.${index}`);
     setValue(`actions.${index}`, {
       to: '',
       amount: '',
       tokenAddress: '',
       tokenSymbol: '',
     });
+    setOpenMenu(false);
+  };
+
+  const removeWithdrawFields = () => {
+    removeAction(index);
+    setOpenMenu(false);
   };
 
   return (
@@ -68,10 +75,7 @@ const WithdrawAction: React.FC<Props> = ({index}) => {
               />
               <ListItemAction
                 title={t('labels.removeEntireAction')}
-                onClick={() => {
-                  removeAction(index);
-                  setOpenMenu(false);
-                }}
+                onClick={removeWithdrawFields}
                 bgWhite
               />
             </div>

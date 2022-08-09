@@ -34,6 +34,7 @@ const NewProposal: React.FC = () => {
   const formMethods = useForm({
     mode: 'onChange',
   });
+  const {trigger} = formMethods;
   const {errors, dirtyFields} = useFormState({
     control: formMethods.control,
   });
@@ -76,7 +77,10 @@ const NewProposal: React.FC = () => {
             <Step
               wizardTitle={t('newProposal.configureActions.heading')}
               wizardDescription={t('newProposal.configureActions.description')}
-              isNextButtonDisabled={!actionsAreValid(errors)}
+              isNextButtonDisabled={!actionsAreValid(dirtyFields, errors)}
+              onNextButtonDisabledClicked={() => {
+                trigger('actions');
+              }}
             >
               <ConfigureActions />
             </Step>

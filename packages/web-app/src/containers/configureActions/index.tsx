@@ -73,8 +73,8 @@ export default ConfigureActions;
  * @param errors List of fields with errors
  * @returns Whether the screen is valid
  */
-export function isValid(errors: StringIndexed) {
-  return !errors.actions;
+export function isValid(dirtyFields: StringIndexed, errors: StringIndexed) {
+  return dirtyFields.actions && !errors.actions;
 }
 
 const FormItem = styled.div.attrs({

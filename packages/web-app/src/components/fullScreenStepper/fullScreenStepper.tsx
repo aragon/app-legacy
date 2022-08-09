@@ -59,6 +59,7 @@ export const FullScreenStepper: React.FC<FullScreenStepperProps> = ({
     isNextButtonDisabled,
     onBackButtonClicked,
     onNextButtonClicked,
+    onNextButtonDisabledClicked,
   } = children[currentIndex].props;
 
   const totalSteps = useMemo(() => {
@@ -128,15 +129,17 @@ export const FullScreenStepper: React.FC<FullScreenStepperProps> = ({
                 disabled={currentStep === 1}
                 iconLeft={<IconChevronLeft />}
               />
-              <ButtonText
-                label={nextButtonLabel || t('labels.next')}
-                size="large"
-                onClick={() =>
-                  onNextButtonClicked ? onNextButtonClicked() : next()
-                }
-                disabled={isNextButtonDisabled}
-                iconRight={<IconChevronRight />}
-              />
+              <ButtonValidationTrigger onClick={onNextButtonDisabledClicked}>
+                <ButtonText
+                  label={nextButtonLabel || t('labels.next')}
+                  size="large"
+                  onClick={() =>
+                    onNextButtonClicked ? onNextButtonClicked() : next()
+                  }
+                  disabled={isNextButtonDisabled}
+                  iconRight={<IconChevronRight />}
+                />
+              </ButtonValidationTrigger>
             </FormFooter>
           )}
         </FormLayout>
@@ -163,3 +166,5 @@ const FormLayout = styled.div.attrs(({fullWidth}: FormLayoutProps) => ({
 const FormFooter = styled.div.attrs({
   className: 'flex justify-between desktop:pt-3',
 })``;
+
+const ButtonValidationTrigger = styled.div``;
