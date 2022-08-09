@@ -4,7 +4,7 @@ import {
   CardProposal,
   ButtonText,
   IconChevronRight,
-} from '@aragon/ui-components/';
+} from '@aragon/ui-components';
 import React from 'react';
 import styled from 'styled-components';
 import {useTranslation} from 'react-i18next';
@@ -25,6 +25,8 @@ const ProposalSnapshot: React.FC<Props> = ({dao, proposals}) => {
   if (proposals.length === 0) {
     return (
       <StateEmpty
+        type="Human"
+        mode="card"
         body={'voting'}
         expression={'smile'}
         hair={'middle'}

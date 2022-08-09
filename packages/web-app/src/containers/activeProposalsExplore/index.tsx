@@ -73,6 +73,8 @@ const ActiveProposalsExplore: React.FC = () => {
           </TemporarySection>
           {
             <StateEmpty
+              type="Human"
+              mode="card"
               body="voting"
               expression="surprised"
               sunglass="big_rounded"

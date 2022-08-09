@@ -199,3 +199,17 @@ export const DAO_MEMBERS = gql`
     }
   }
 `;
+
+export const DAO_TOKEN = gql`
+  query DAO($id: ID) {
+    dao(id: $id) {
+      id
+      token {
+        id
+        name
+        symbol
+        decimals
+      }
+    }
+  }
+`;

@@ -87,7 +87,7 @@ const NewProposal: React.FC = () => {
               onNextButtonClicked={() => setShowTxModal(true)}
               fullWidth
             >
-              <ReviewProposal />
+              <ReviewProposal defineProposalStepNumber={1} />
             </Step>
           </FullScreenStepper>
 

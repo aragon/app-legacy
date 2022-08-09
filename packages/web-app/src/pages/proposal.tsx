@@ -232,8 +232,11 @@ const Proposal: React.FC = () => {
 
       status,
       statusLabel: getStatusLabel(status, Number(endDate) * 1000),
+      strategy: token
+        ? t('votingTerminal.tokenVoting')
+        : t('votingTerminal.multisig'),
     };
-  }, [getStatusLabel, proposalData]);
+  }, [getStatusLabel, proposalData, t]);
 
   const terminalProps = useMemo(() => mapDataToView(), [mapDataToView]);
   const proposalSteps = useMemo(() => {
@@ -394,18 +397,7 @@ const Proposal: React.FC = () => {
         </ProposalContainer>
 
         <AdditionalInfoContainer>
-          <ResourceList
-            links={[
-              {
-                label: 'Draft of Proposal',
-                href: 'https://docs.google.com/spreadsheets/d/1qpUXGUrR3LXed4VkONYzRQhic0ahMb9wJxOzSLiuoYs/edit#gid=289257943',
-              },
-              {
-                label: 'Thread in discord',
-                href: 'https://discord.com/channels/672466989217873929/910124501264658442/936598604804685884',
-              },
-            ]}
-          />
+          <ResourceList links={[]} />
           <WidgetStatus steps={proposalSteps} />
         </AdditionalInfoContainer>
       </ContentContainer>

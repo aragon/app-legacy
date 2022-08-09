@@ -4,7 +4,6 @@ import styled from 'styled-components';
 import {useFormContext} from 'react-hook-form';
 import {useTranslation} from 'react-i18next';
 
-import {useWallet} from 'hooks/useWallet';
 import ModalBottomSheetSwitcher from 'components/modalBottomSheetSwitcher';
 import {useGlobalModalContext} from 'context/globalModals';
 import {getUserFriendlyWalletLabel} from 'utils/library';
@@ -16,7 +15,6 @@ type CommunityAddressesModalProps = {
 const CommunityAddressesModal: React.FC<CommunityAddressesModalProps> = ({
   tokenMembership,
 }) => {
-  const {address: connectedWalletAddress} = useWallet();
   const [searchValue, setSearchValue] = useState('');
   const [page, setPage] = useState<number>(1);
   const {getValues} = useFormContext();
@@ -39,11 +37,7 @@ const CommunityAddressesModal: React.FC<CommunityAddressesModalProps> = ({
     return (tokenMembership ? wallets : whitelistWallets)
       ?.filter(filterValidator)
       .map(({address, amount}: {address: string; amount: string}) => ({
-        wallet: getUserFriendlyWalletLabel(
-          address,
-          connectedWalletAddress || '',
-          t
-        ),
+        wallet: getUserFriendlyWalletLabel(address, t),
         tokenAmount: `${amount} ${tokenSymbol}`,
       }));
   }, [
@@ -51,7 +45,6 @@ const CommunityAddressesModal: React.FC<CommunityAddressesModalProps> = ({
     wallets,
     whitelistWallets,
     filterValidator,
-    connectedWalletAddress,
     t,
     tokenSymbol,
   ]);

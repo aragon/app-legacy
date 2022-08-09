@@ -3,7 +3,7 @@ import {
   SearchInput,
   AlertInline,
   Pagination,
-  IlluObject,
+  StateEmpty,
 } from '@aragon/ui-components';
 import styled from 'styled-components';
 import {useTranslation} from 'react-i18next';
@@ -22,10 +22,13 @@ import {useMappedBreadcrumbs} from 'hooks/useMappedBreadcrumbs';
 
 // The number of members displayed on each page
 const MEMBERS_PER_PAGE = 10;
+import {useNavigate} from 'react-router-dom';
 
 const Community: React.FC = () => {
   const {t} = useTranslation();
   const {network} = useNetwork();
+  const navigate = useNavigate();
+
   const {breadcrumbs, icon, tag} = useMappedBreadcrumbs();
 
   const {data: daoId} = useDaoParam();
@@ -55,6 +58,14 @@ const Community: React.FC = () => {
     );
   };
 
+  const handlePrimaryClick = () => {
+    if (walletBased) {
+      // Add/remove member flow
+    } else {
+      navigate('mint-tokens');
+    }
+  };
+
   /*************************************************
    *                     Render                    *
    *************************************************/
@@ -68,6 +79,7 @@ const Community: React.FC = () => {
           icon={icon}
           crumbs={breadcrumbs}
           title={`${totalMembers} ${t('labels.members')}`}
+          onClick={handlePrimaryClick}
           {...(walletBased
             ? {
                 description: t('explore.explorer.walletBased'),
@@ -102,7 +114,13 @@ const Community: React.FC = () => {
           ) : (
             <>
               {debouncedTerm !== '' && members.length === 0 ? (
-                <EmptyState />
+                <StateEmpty
+                  type="Object"
+                  mode="inline"
+                  object="magnifying_glass"
+                  title={t('labels.noResults')}
+                  description={t('labels.noResultsSubtitle')}
+                />
               ) : (
                 <>
                   {debouncedTerm !== '' && !membersLoading && (
@@ -136,24 +154,6 @@ const Community: React.FC = () => {
         </PaginationWrapper>
       </BodyContainer>
     </>
-  );
-};
-
-const EmptyState = () => {
-  const {t} = useTranslation();
-
-  return (
-    <div className="flex flex-col justify-center items-center space-y-4">
-      <IlluObject object="magnifying_glass" />
-      <div className="space-y-1.5 text-center">
-        <p className="font-bold text-ui-800 ft-text-xl">
-          {t('labels.noResults')}
-        </p>
-        <p className="text-ui-500 ft-text-base">
-          {t('labels.noResultsSubtitle')}
-        </p>
-      </div>
-    </div>
   );
 };
 

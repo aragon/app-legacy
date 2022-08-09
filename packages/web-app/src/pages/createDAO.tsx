@@ -49,9 +49,6 @@ export type CreateDaoFormData = {
   whitelistWallets: WhitelistWallet[];
 };
 
-// both wallets and whitelistWallets values are updated
-// afterwards to have the actual wallet address instead of
-// the My Wallet string
 const defaultValues = {
   tokenName: '',
   tokenAddress: '',

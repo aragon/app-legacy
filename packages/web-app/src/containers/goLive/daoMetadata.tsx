@@ -53,7 +53,7 @@ const DaoMetadata: React.FC = () => {
         </Row>
         <Row>
           <LabelWrapper>
-            <Label>{t('labels.description')}</Label>
+            <Label>{t('labels.summary')}</Label>
           </LabelWrapper>
           <DescriptionContent>{daoSummary}</DescriptionContent>
         </Row>

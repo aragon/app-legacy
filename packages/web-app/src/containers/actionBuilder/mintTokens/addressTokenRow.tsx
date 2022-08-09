@@ -16,18 +16,22 @@ import {handleClipboardActions} from 'utils/library';
 import styled from 'styled-components';
 import useScreen from 'hooks/useScreen';
 
-type AddressAndTokenRowProps = {
-  index: number;
+type IndexProps = {
+  actionIndex: number;
+  fieldIndex: number;
+};
+
+type AddressAndTokenRowProps = IndexProps & {
   onDelete: (index: number) => void;
 };
 
-const AddressField: React.FC<{index: number}> = ({index}) => {
+const AddressField: React.FC<IndexProps> = ({actionIndex, fieldIndex}) => {
   const {t} = useTranslation();
 
   return (
     <Controller
       defaultValue=""
-      name={`mintTokensToWallets.${index}.address`}
+      name={`actions.${actionIndex}.inputs.mintTokensToWallets.${fieldIndex}.address`}
       // rules={{
       //   required: t('errors.required.walletAddress') as string,
       //   validate: value => addressValidator(value, index),
@@ -59,10 +63,10 @@ const AddressField: React.FC<{index: number}> = ({index}) => {
   );
 };
 
-const TokenField: React.FC<{index: number}> = ({index}) => {
+const TokenField: React.FC<IndexProps> = ({actionIndex, fieldIndex}) => {
   return (
     <Controller
-      name={`mintTokensToWallets.${index}.amount`}
+      name={`actions.${actionIndex}.inputs.mintTokensToWallets.${fieldIndex}.amount`}
       // rules={{
       //   required: t('errors.required.amount'),
       //   validate: amountValidation,
@@ -88,7 +92,10 @@ const TokenField: React.FC<{index: number}> = ({index}) => {
   );
 };
 
-const DropdownMenu: React.FC<AddressAndTokenRowProps> = ({index, onDelete}) => {
+const DropdownMenu: React.FC<AddressAndTokenRowProps> = ({
+  fieldIndex,
+  onDelete,
+}) => {
   const {t} = useTranslation();
 
   return (
@@ -104,7 +111,7 @@ const DropdownMenu: React.FC<AddressAndTokenRowProps> = ({index, onDelete}) => {
             <ListItemAction title={t('labels.removeWallet')} bgWhite />
           ),
           callback: () => {
-            onDelete(index);
+            onDelete(fieldIndex);
           },
         },
       ]}
@@ -112,12 +119,15 @@ const DropdownMenu: React.FC<AddressAndTokenRowProps> = ({index, onDelete}) => {
   );
 };
 
-const PercentageDistribution: React.FC<{index: number}> = ({index}) => {
+const PercentageDistribution: React.FC<IndexProps> = ({
+  actionIndex,
+  fieldIndex,
+}) => {
   return (
     <div style={{maxWidth: '12ch'}}>
       <TextInput
         className="text-right"
-        name={`wallets.${index}.amount`}
+        name={`actions.${actionIndex}.inputs.mintTokensToWallets.${fieldIndex}.amount`}
         value={'14.012%'}
         mode="default"
         disabled
@@ -127,7 +137,8 @@ const PercentageDistribution: React.FC<{index: number}> = ({index}) => {
 };
 
 export const AddressAndTokenRow: React.FC<AddressAndTokenRowProps> = ({
-  index,
+  actionIndex,
+  fieldIndex,
   onDelete,
 }) => {
   const {isDesktop} = useScreen();
@@ -136,10 +147,17 @@ export const AddressAndTokenRow: React.FC<AddressAndTokenRowProps> = ({
     return (
       <Container>
         <HStack>
-          <AddressField index={index} />
-          <TokenField index={index} />
-          <PercentageDistribution index={index} />
-          <DropdownMenu index={index} onDelete={onDelete} />
+          <AddressField actionIndex={actionIndex} fieldIndex={fieldIndex} />
+          <TokenField actionIndex={actionIndex} fieldIndex={fieldIndex} />
+          <PercentageDistribution
+            actionIndex={actionIndex}
+            fieldIndex={fieldIndex}
+          />
+          <DropdownMenu
+            actionIndex={actionIndex}
+            fieldIndex={fieldIndex}
+            onDelete={onDelete}
+          />
         </HStack>
       </Container>
     );
@@ -151,8 +169,12 @@ export const AddressAndTokenRow: React.FC<AddressAndTokenRowProps> = ({
         <Label label="Address" />
 
         <HStack>
-          <AddressField index={index} />
-          <DropdownMenu index={index} onDelete={onDelete} />
+          <AddressField actionIndex={actionIndex} fieldIndex={fieldIndex} />
+          <DropdownMenu
+            actionIndex={actionIndex}
+            fieldIndex={fieldIndex}
+            onDelete={onDelete}
+          />
         </HStack>
       </VStack>
 
@@ -160,8 +182,11 @@ export const AddressAndTokenRow: React.FC<AddressAndTokenRowProps> = ({
         <Label label="Tokens" />
 
         <HStackWithPadding>
-          <TokenField index={index} />
-          <PercentageDistribution index={index} />
+          <TokenField actionIndex={actionIndex} fieldIndex={fieldIndex} />
+          <PercentageDistribution
+            actionIndex={actionIndex}
+            fieldIndex={fieldIndex}
+          />
         </HStackWithPadding>
       </VStack>
     </Container>

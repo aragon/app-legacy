@@ -13,31 +13,7 @@ import {
 } from '@aragon/ui-components/src/components/table';
 import {CheckboxListItem} from '@aragon/ui-components/src/components/checkbox';
 import {useTranslation} from 'react-i18next';
-import {IconClock} from '@aragon/ui-components';
-import {IlluObject} from '@aragon/ui-components';
-
-// TODO: Every string and data needed by the component is hardcoded for now.
-
-const tempVoters: Array<VoterType> = [
-  {
-    wallet: 'DAO XYZ',
-    option: 'Yes',
-    votingPower: '40%',
-    tokenAmount: '1,000TN',
-  },
-  {
-    wallet: 'punk5768.eth',
-    option: 'No',
-    votingPower: '10%',
-    tokenAmount: '200',
-  },
-  {
-    wallet: '0xc54c...ee7a',
-    option: 'Abstain',
-    votingPower: '13.333%',
-    tokenAmount: '250TN',
-  },
-];
+import {IconClock, StateEmpty} from '@aragon/ui-components';
 
 export type VotingTerminalProps = {
   breakdownTabDisabled?: boolean;
@@ -50,6 +26,7 @@ export type VotingTerminalProps = {
   voters?: Array<VoterType>;
   status?: string;
   statusLabel?: string;
+  strategy: string;
   token?: {
     symbol: string;
     name: string;
@@ -67,12 +44,13 @@ export const VotingTerminal: React.FC<VotingTerminalProps> = ({
   voteNowDisabled = false,
   participation,
   approval,
-  voters = tempVoters,
+  voters = [],
   results,
   token,
   startDate,
   endDate,
   statusLabel,
+  strategy,
 }) => {
   const [query, setQuery] = useState('');
   const [buttonGroupState, setButtonGroupState] = useState('info');
@@ -154,18 +132,13 @@ export const VotingTerminal: React.FC<VotingTerminalProps> = ({
               onLoadMore={() => console.log('load more clicked')}
             />
           ) : (
-            // TODO: Replace with refactored empty state
-            <div className="flex flex-col justify-center items-center p-3 rounded-xl border border-ui-100">
-              <IlluObject object="magnifying_glass" />
-              <div className="space-y-1.5 text-center">
-                <p className="font-bold text-ui-800 ft-text-xl">
-                  {t('votingTerminal.emptyState.title', {query})}
-                </p>
-                <p className="text-ui-500 ft-text-base">
-                  {t('votingTerminal.emptyState.subtitle')}
-                </p>
-              </div>
-            </div>
+            <StateEmpty
+              type="Object"
+              mode="inline"
+              object="magnifying_glass"
+              title={t('votingTerminal.emptyState.title', {query})}
+              description={t('votingTerminal.emptyState.subtitle')}
+            />
           )}
         </div>
       ) : (
@@ -177,7 +150,7 @@ export const VotingTerminal: React.FC<VotingTerminalProps> = ({
             </InfoLine>
             <InfoLine>
               <p>{t('votingTerminal.strategy')}</p>
-              <Strong>{t('votingTerminal.tokenVoting')}</Strong>
+              <Strong>{strategy}</Strong>
             </InfoLine>
             <InfoLine>
               <p>{t('votingTerminal.minimumApproval')}</p>

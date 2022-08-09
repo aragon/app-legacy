@@ -1,11 +1,3 @@
-import {EditorContent, useEditor} from '@tiptap/react';
-import StarterKit from '@tiptap/starter-kit';
-import TipTapLink from '@tiptap/extension-link';
-import {useTranslation} from 'react-i18next';
-import {useFormContext} from 'react-hook-form';
-import React, {useEffect, useState} from 'react';
-import styled from 'styled-components';
-
 import {
   Badge,
   ButtonText,
@@ -13,15 +5,59 @@ import {
   IconChevronUp,
   Link,
 } from '@aragon/ui-components';
-import ResourceList from 'components/resourceList';
-import {VotingTerminal} from 'containers/votingTerminal';
-import {ReviewExecution} from 'components/executionWidget';
+import styled from 'styled-components';
+import {format} from 'date-fns';
+import StarterKit from '@tiptap/starter-kit';
+import TipTapLink from '@tiptap/extension-link';
+import {useQuery} from '@apollo/client';
+import {useParams} from 'react-router-dom';
+import {useTranslation} from 'react-i18next';
+import {useFormContext} from 'react-hook-form';
+import {EditorContent, useEditor} from '@tiptap/react';
+import React, {useEffect, useMemo, useState} from 'react';
 
-const ReviewProposal: React.FC = () => {
-  const [expandedProposal, setExpandedProposal] = useState(false);
-  const {getValues, setValue} = useFormContext();
+import {Loading} from 'components/temporary';
+import {BigNumber} from '@ethersproject/bignumber';
+import {useNetwork} from 'context/network';
+import ResourceList from 'components/resourceList';
+import {formatUnits} from 'utils/library';
+import {getTokenInfo} from 'utils/tokens';
+import {VotingTerminal} from 'containers/votingTerminal';
+import {ReviewExecution} from 'components/reviewExecution';
+import {useFormStep} from 'components/fullScreenStepper';
+import {CHAIN_METADATA} from 'utils/constants';
+import {useSpecificProvider} from 'context/providers';
+import {DAO_PACKAGE_BY_DAO_ID} from 'queries/packages';
+import {
+  getFormattedUtcOffset,
+  getCanonicalUtcOffset,
+  KNOWN_FORMATS,
+} from 'utils/date';
+
+type ReviewProposalProps = {
+  defineProposalStepNumber: number;
+};
+
+const ReviewProposal: React.FC<ReviewProposalProps> = ({
+  defineProposalStepNumber,
+}) => {
   const {t} = useTranslation();
+  const {network} = useNetwork();
+  const {setStep} = useFormStep();
+  const provider = useSpecificProvider(CHAIN_METADATA[network].id);
+
+  const {dao} = useParams();
+  const {data, loading} = useQuery(DAO_PACKAGE_BY_DAO_ID, {
+    variables: {dao},
+  });
+
+  const {getValues, setValue} = useFormContext();
+  const [approval, setApproval] = useState('');
+  const [participation, setParticipation] = useState('');
+  const [isWalletBased, setIsWalletBased] = useState(true);
   const values = getValues();
+
+  const [expandedProposal, setExpandedProposal] = useState(false);
   const editor = useEditor({
     editable: false,
     content: values.proposal,
@@ -33,15 +69,117 @@ const ReviewProposal: React.FC = () => {
     ],
   });
 
+  const startDate = useMemo(
+    () =>
+      Date.parse(
+        `${values.startDate}T${values.startTime}:00${getCanonicalUtcOffset(
+          values.startUtc
+        )}`
+      ),
+    [values.startDate, values.startTime, values.startUtc]
+  );
+
+  const formattedStartDate = useMemo(
+    () =>
+      `${format(
+        startDate,
+        KNOWN_FORMATS.proposals
+      )} ${getFormattedUtcOffset()}`,
+    [startDate]
+  );
+
+  const formattedEndDate = useMemo(() => {
+    let endDate: number;
+
+    if (values.durationSwitch === 'duration') {
+      const tempStart = new Date(startDate);
+      endDate = tempStart.setDate(
+        tempStart.getDate() + parseInt(values.duration)
+      );
+    } else {
+      endDate = Date.parse(
+        `${values.endDate}T${values.endTime}:00${getCanonicalUtcOffset(
+          values.endUtc
+        )}`
+      );
+    }
+
+    return `${format(
+      endDate,
+      KNOWN_FORMATS.proposals
+    )} ${getFormattedUtcOffset()}`;
+  }, [
+    startDate,
+    values.duration,
+    values.durationSwitch,
+    values.endDate,
+    values.endTime,
+    values.endUtc,
+  ]);
+
+  /*************************************************
+   *                    Hooks                      *
+   *************************************************/
+  useEffect(() => {
+    async function mapToView() {
+      let formattedMinApproval: string;
+      let formattedParticipation: string;
+      const {token, supportRequiredPct, users} = data.daoPackages[0].pkg;
+
+      if (token) {
+        setIsWalletBased(false);
+
+        // get total supply
+        const {totalSupply} = await getTokenInfo(
+          token.id,
+          provider,
+          CHAIN_METADATA[network].nativeCurrency
+        );
+
+        // calculate & format approval
+        formattedMinApproval = `${formatUnits(
+          BigNumber.from(supportRequiredPct)
+            .mul(BigNumber.from(totalSupply))
+            .div(100),
+          token.decimals
+        )} ${token.symbol} (${BigInt(supportRequiredPct).toString()}%)`;
+
+        // calculate & format participation
+        formattedParticipation = `0 of ${formatUnits(
+          totalSupply,
+          token.decimals
+        )} ${token.symbol} (0%)`;
+      } else {
+        setIsWalletBased(true);
+
+        formattedMinApproval = `${BigNumber.from(supportRequiredPct)
+          .mul(users.length)
+          .div(100)} members (${BigInt(supportRequiredPct).toString()}%)`;
+        formattedParticipation = `0 of ${users.length} members (0%)`;
+      }
+      setApproval(formattedMinApproval);
+      setParticipation(formattedParticipation);
+    }
+
+    if (data) {
+      mapToView();
+    }
+  }, [data, network, provider]);
+
   useEffect(() => {
     if (values.proposal === '<p></p>') {
       setValue('proposal', '');
     }
   }, [setValue, values.proposal]);
 
+  /*************************************************
+   *                    Render                     *
+   *************************************************/
   if (!editor) {
     return null;
   }
+
+  if (loading) return <Loading />;
 
   return (
     <>
@@ -53,12 +191,7 @@ const ReviewProposal: React.FC = () => {
         </div>
         <ProposerLink>
           {t('governance.proposals.publishedBy')}{' '}
-          <Link
-            external
-            label={'you'}
-            // label={shortenAddress(publisherAddress || '')}
-            // href={`${explorers[chainId]}${publisherAddress}`}
-          />
+          <Link external label={t('labels.you')} />
         </ProposerLink>
       </BadgeContainer>
 
@@ -89,21 +222,31 @@ const ReviewProposal: React.FC = () => {
               />
             </>
           )}
-          {/*
-            TODO: All the values inside the voting terminal is hardcoded.
-            The info tab needs to display data from the form context & graph query
-          */}
+
           <VotingTerminal
             breakdownTabDisabled
             votersTabDisabled
             voteNowDisabled
+            statusLabel={t('votingTerminal.notStartedYet')}
+            approval={approval}
+            participation={participation}
+            startDate={formattedStartDate}
+            endDate={formattedEndDate}
+            strategy={
+              isWalletBased
+                ? t('votingTerminal.multisig')
+                : t('votingTerminal.tokenVoting')
+            }
           />
 
           <ReviewExecution />
         </ProposalContainer>
 
         <AdditionalInfoContainer>
-          <ResourceList links={values.links} />
+          <ResourceList
+            links={values.links}
+            emptyStateButtonClick={() => setStep(defineProposalStepNumber)}
+          />
         </AdditionalInfoContainer>
       </ContentContainer>
     </>

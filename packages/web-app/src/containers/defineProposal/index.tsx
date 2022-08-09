@@ -70,7 +70,7 @@ const DefineProposal: React.FC = () => {
 
       <FormItem>
         <Label
-          label={t('newWithdraw.defineProposal.summary')}
+          label={t('labels.summary')}
           helpText={t('newWithdraw.defineProposal.summaryHelptext')}
         />
         <Controller

@@ -53,3 +53,31 @@ export const DAO_WHITELIST_PACKAGE_BY_ID = gql`
     }
   }
 `;
+
+// TODO: deprecate this query the moment we have multiple packages
+// installed on a DAO.
+export const DAO_PACKAGE_BY_DAO_ID = gql`
+  query package($dao: ID) {
+    daoPackages(where: {dao: $dao}) {
+      id
+      pkg {
+        ... on WhitelistPackage {
+          supportRequiredPct
+          participationRequiredPct
+          users {
+            id
+          }
+        }
+        ... on ERC20VotingPackage {
+          supportRequiredPct
+          participationRequiredPct
+          token {
+            id
+            decimals
+            symbol
+          }
+        }
+      }
+    }
+  }
+`;
