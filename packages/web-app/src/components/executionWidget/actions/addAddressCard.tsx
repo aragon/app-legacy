@@ -11,6 +11,9 @@ export const AddAddressCard: React.FC<{
   action: ActionAddAddress;
 }> = ({action}) => {
   const {t} = useTranslation();
+  const filteredMemberWallets = action.inputs.memberWallets.filter(
+    wallet => wallet.address
+  );
 
   return (
     <AccordionMethod
@@ -21,13 +24,13 @@ export const AddAddressCard: React.FC<{
       methodDescription={t('labels.addWalletsDescription')}
     >
       <Container>
-        {action.inputs.memberWallets.map(({address}, index: number) => (
+        {filteredMemberWallets.map(({address}, index: number) => (
           <ListItemAddress label={address} src={address} key={index} />
         ))}
       </Container>
       <AccordionSummary
         type="execution-widget"
-        total={action.inputs.memberWallets.length}
+        total={filteredMemberWallets.length}
       />
     </AccordionMethod>
   );

@@ -23,7 +23,7 @@ import ResourceList from 'components/resourceList';
 import {formatUnits} from 'utils/library';
 import {getTokenInfo} from 'utils/tokens';
 import {VotingTerminal} from 'containers/votingTerminal';
-import {ReviewExecution} from 'components/reviewExecution';
+import {ExecutionWidget} from 'components/executionWidget';
 import {useFormStep} from 'components/fullScreenStepper';
 import {CHAIN_METADATA} from 'utils/constants';
 import {useSpecificProvider} from 'context/providers';
@@ -239,7 +239,7 @@ const ReviewProposal: React.FC<ReviewProposalProps> = ({
             }
           />
 
-          <ReviewExecution />
+          <ExecutionWidget />
         </ProposalContainer>
 
         <AdditionalInfoContainer>

@@ -1,66 +1,18 @@
-import React, {useCallback} from 'react';
+import React from 'react';
 import {useFormContext} from 'react-hook-form';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 import {ButtonText} from '@aragon/ui-components';
 
 import {useActionsContext} from 'context/actions';
-import {useDaoMetadata} from 'hooks/useDaoMetadata';
-import {useDaoParam} from 'hooks/useDaoParam';
-import {
-  Action,
-  ActionsTypes,
-  ActionWithdraw,
-  ActionAddAddress,
-} from 'utils/types';
-import {WithdrawCard} from './withdrawCard';
-import {AddAddressCard} from './addAddressCard';
-import {RemoveAddressCard} from './removeAddressCard';
+import {Action} from 'utils/types';
+import {ActionsFilter} from './actionsFilter';
 
-type RenderActionsProps = {
-  action: Action;
-  type: ActionsTypes;
-};
-
-export const ReviewExecution: React.FC = () => {
+export const ExecutionWidget: React.FC = () => {
   const {t} = useTranslation();
   const {getValues} = useFormContext();
   const {actions} = getValues();
   const {actions: actionTypes} = useActionsContext();
-
-  const {data: daoId} = useDaoParam();
-  const {data: dao} = useDaoMetadata(daoId);
-
-  const RenderActions = useCallback(
-    ({action, type}: RenderActionsProps) => {
-      switch (type) {
-        case 'withdraw_assets':
-          return (
-            <>
-              <WithdrawCard
-                action={action as ActionWithdraw}
-                daoName={dao?.name || ''}
-              />
-            </>
-          );
-        case 'add_address':
-          return (
-            <>
-              <AddAddressCard action={action as ActionAddAddress} />
-            </>
-          );
-        case 'remove_address':
-          return (
-            <>
-              <RemoveAddressCard action={action as ActionAddAddress} />
-            </>
-          );
-        default:
-          return <></>;
-      }
-    },
-    [dao?.name]
-  );
 
   return (
     <Card>
@@ -70,7 +22,7 @@ export const ReviewExecution: React.FC = () => {
       </Header>
       <Content>
         {actions?.map((action: Action, index: number) => (
-          <RenderActions
+          <ActionsFilter
             {...{action}}
             key={index}
             type={actionTypes[index]?.name || 'withdraw_assets'}
