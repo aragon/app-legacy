@@ -35,7 +35,7 @@ const Action: React.FC<ActionsComponentProps> = ({name, actionIndex}) => {
   switch (name) {
     case 'withdraw_assets':
       return <WithdrawAction {...{actionIndex}} />;
-    case 'mint_token':
+    case 'mint_tokens':
       return <MintTokens {...{actionIndex}} />;
     case 'external_contract':
       return (

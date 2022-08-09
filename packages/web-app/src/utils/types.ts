@@ -192,7 +192,7 @@ export type ActionsTypes =
   | 'add_address'
   | 'remove_address'
   | 'withdraw_assets'
-  | 'mint_token'
+  | 'mint_tokens'
   | 'external_contract'
   | 'modify_settings';
 
@@ -216,10 +216,16 @@ export type ActionAddAddress = {
   };
 };
 
+export type ActionMintToken = {
+  inputs: {
+    mintTokensToWallets: Array<{address: string; amount: string}>;
+  };
+};
+
 // TODO: Consider making this a generic type that take other types of the form
-// like ActionAddAddres (or more generically, ActionItem...?) instead taking the
+// like ActionAddAddress (or more generically, ActionItem...?) instead taking the
 // union of those subtypes. [VR 11-08-2022]
-export type Action = ActionWithdraw | ActionAddAddress;
+export type Action = ActionWithdraw | ActionAddAddress | ActionMintToken;
 
 export type ParamType = {
   type: string;

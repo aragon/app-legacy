@@ -45,7 +45,7 @@ export function useDaoActions(dao: string): HookData<ActionParameter[]> {
 
   const erc20Actions = baseActions.concat([
     {
-      type: 'mint_token',
+      type: 'mint_tokens',
       title: t('AddActionModal.mintTokens'),
       subtitle: t('AddActionModal.mintTokensSubtitle'),
     },
