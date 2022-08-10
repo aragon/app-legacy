@@ -35,15 +35,17 @@ const AddressField: React.FC<IndexProps> = ({actionIndex, fieldIndex}) => {
     `actions.${actionIndex}.inputs.mintTokensToWallets`
   );
 
-  const addressValidator = (address: string, index: number) => {
+  const addressValidator = async (address: string, index: number) => {
     let validationResult = validateAddress(address);
     if (walletFieldArray) {
-      walletFieldArray.forEach((wallet: WalletField, walletIndex: number) => {
-        if (address === wallet.address && index !== walletIndex)
-          validationResult = t('errors.duplicateAddress') as string;
-        if (Number(wallet.amount) > 0 && wallet.address === '')
-          validationResult = t('errors.required.walletAddress') as string;
-      });
+      await walletFieldArray.forEach(
+        (wallet: WalletField, walletIndex: number) => {
+          if (address === wallet.address && index !== walletIndex)
+            validationResult = t('errors.duplicateAddress') as string;
+          if (Number(wallet.amount) > 0 && wallet.address === '')
+            validationResult = t('errors.required.walletAddress') as string;
+        }
+      );
     }
     return validationResult;
   };
