@@ -1,19 +1,19 @@
 import React from 'react';
+import {useFormContext} from 'react-hook-form';
 
-import {useActionsContext} from 'context/actions';
-import WithdrawAction from './withdraw/withdrawAction';
-import {ActionsTypes} from 'utils/types';
+import {TemporarySection} from 'components/temporary';
 import TokenMenu from 'containers/tokenMenu';
-import {BaseTokenInfo, ActionItem} from 'utils/types';
+import {useActionsContext} from 'context/actions';
+import {useNetwork} from 'context/network';
+import {useDaoBalances} from 'hooks/useDaoBalances';
+import {useDaoParam} from 'hooks/useDaoParam';
 import {fetchTokenPrice} from 'services/prices';
 import {formatUnits} from 'utils/library';
-import {useFormContext} from 'react-hook-form';
-import {useDaoBalances} from 'hooks/useDaoBalances';
-import {useNetwork} from 'context/network';
-import {useDaoParam} from 'hooks/useDaoParam';
-import MintTokens from './mintTokens';
+import {ActionItem, ActionsTypes, BaseTokenInfo} from 'utils/types';
 import AddAddresses from './addAddresses';
+import MintTokens from './mintTokens';
 import RemoveAddresses from './removeAddresses';
+import WithdrawAction from './withdraw/withdrawAction';
 
 /**
  * This Component is responsible for generating all actions that append to pipeline context (actions)
@@ -34,9 +34,13 @@ const Action: React.FC<ActionsComponentProps> = ({name, index}) => {
     case 'mint_token':
       return <MintTokens {...{index}} />;
     case 'external_contract':
-      return null;
+      return (
+        <TemporarySection purpose="It serves as a placeholder for not yet implemented external contract interaction component" />
+      );
     case 'modify_settings':
-      return null;
+      return (
+        <TemporarySection purpose="It serves as a placeholder for not yet implemented external contract interaction component" />
+      );
     case 'add_address':
       return <AddAddresses {...{index}} />;
     case 'remove_address':
@@ -98,6 +102,10 @@ const ActionBuilder: React.FC = () => {
       {actions?.map((action: ActionItem, index: number) => (
         <Action key={index} name={action?.name} {...{index}} />
       ))}
+
+      {/* TODO Fabrice(?), could the TokenMenu and the corresponding callback be
+          moved further down to the respective child(ren)? I assume there was a
+          reason for putting it here. Is it still valid? [VR 10-08-2022] */}
       <TokenMenu
         isWallet={false}
         onTokenSelect={handleTokenSelect}

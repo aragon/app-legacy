@@ -1,4 +1,5 @@
 import {Address} from '@aragon/ui-components/src/utils/addresses';
+
 import {TimeFilter, TransferTypes} from './constants';
 
 /*************************************************
@@ -156,18 +157,7 @@ type ExecutionData = {
   amount: number;
 };
 
-/* GENERIC HOOK RETURN TYPE ================================================= */
-
-/** Return type for data hooks */
-export type HookData<T> = {
-  data: T;
-  isLoading: boolean;
-  error?: Error;
-};
-
-export type Nullable<T> = T | null;
-
-export type SupportedChainId = 1 | 4;
+/* ACTION TYPES ============================================================= */
 
 export type ActionParameter = {
   type: ActionsTypes;
@@ -231,11 +221,22 @@ export type TransactionItem = {
   };
 };
 
+export type Dao = {
+  address: string;
+};
+
+/* UTILITY TYPES ============================================================ */
+
+/** Return type for data hooks */
+export type HookData<T> = {
+  data: T;
+  isLoading: boolean;
+  error?: Error;
+};
+
+export type Nullable<T> = T | null;
+
 export type StringIndexed = {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   [key: string]: any;
-};
-
-export type Dao = {
-  address: string;
 };

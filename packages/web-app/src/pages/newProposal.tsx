@@ -1,32 +1,29 @@
-import {useTranslation} from 'react-i18next';
 import {withTransaction} from '@elastic/apm-rum-react';
 import React, {useState} from 'react';
-import {useForm, FormProvider, useFormState} from 'react-hook-form';
+import {FormProvider, useForm, useFormState} from 'react-hook-form';
+import {useTranslation} from 'react-i18next';
 import {generatePath} from 'react-router-dom';
 
-import {Governance} from 'utils/paths';
-import AddActionMenu from 'containers/addActionMenu';
-import ReviewProposal from 'containers/reviewProposal';
+import {FullScreenStepper, Step} from 'components/fullScreenStepper';
+import {Loading} from 'components/temporary';
 import ConfigureActions, {
   isValid as actionsAreValid,
 } from 'containers/configureActions';
-import {ActionsProvider} from 'context/actions';
-import {FullScreenStepper, Step} from 'components/fullScreenStepper';
 import DefineProposal, {
   isValid as defineProposalIsValid,
 } from 'containers/defineProposal';
+import ReviewProposal from 'containers/reviewProposal';
 import SetupVotingForm, {
   isValid as setupVotingIsValid,
 } from 'containers/setupVotingForm';
+import {ActionsProvider} from 'context/actions';
+import {CreateProposalProvider} from 'context/createProposal';
 import {useNetwork} from 'context/network';
 import {useDaoParam} from 'hooks/useDaoParam';
-import {Loading} from 'components/temporary';
-import {CreateProposalProvider} from 'context/createProposal';
-import {useDaoActions} from 'hooks/useDaoActions';
+import {Governance} from 'utils/paths';
 
 const NewProposal: React.FC = () => {
   const {data: dao, loading} = useDaoParam();
-  const {data: actions} = useDaoActions(dao);
   const [showTxModal, setShowTxModal] = useState(false);
 
   const {t} = useTranslation();
@@ -90,8 +87,6 @@ const NewProposal: React.FC = () => {
               <ReviewProposal defineProposalStepNumber={1} />
             </Step>
           </FullScreenStepper>
-
-          <AddActionMenu actions={actions} />
         </ActionsProvider>
       </CreateProposalProvider>
     </FormProvider>

@@ -1,4 +1,5 @@
 import {useTranslation} from 'react-i18next';
+
 import {ActionParameter, HookData} from 'utils/types';
 import {useDaoMetadata} from './useDaoMetadata';
 
@@ -47,6 +48,7 @@ export function useDaoActions(dao: string): HookData<ActionParameter[]> {
       subtitle: t('AddActionModal.mintTokensSubtitle'),
     },
   ]);
+
   return {
     data: whitelist ? whitelistActions : erc20Actions,
     isLoading,
