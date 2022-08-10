@@ -59,6 +59,6 @@ export const Container = styled.div.attrs(
 
 export const StyledInput = styled.input.attrs(() => {
   const className: string | undefined =
-    'w-full bg-transparent focus:outline-none';
+    'w-full bg-transparent focus:outline-none h-4';
   return {className};
 })``;
