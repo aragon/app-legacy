@@ -94,31 +94,30 @@ const TokenField: React.FC<IndexProps> = ({actionIndex, fieldIndex}) => {
   );
 };
 
-const DropdownMenu: React.FC<
-  Omit<AddressAndTokenRowProps, 'newTokenSupply'>
-> = ({fieldIndex, onDelete}) => {
-  const {t} = useTranslation();
+const DropdownMenu: React.FC<Omit<AddressAndTokenRowProps, 'newTokenSupply'>> =
+  ({fieldIndex, onDelete}) => {
+    const {t} = useTranslation();
 
-  return (
-    <Dropdown
-      align="start"
-      trigger={
-        <ButtonIcon mode="ghost" size="large" icon={<IconMenuVertical />} />
-      }
-      sideOffset={8}
-      listItems={[
-        {
-          component: (
-            <ListItemAction title={t('labels.removeWallet')} bgWhite />
-          ),
-          callback: () => {
-            onDelete(fieldIndex);
+    return (
+      <Dropdown
+        align="start"
+        trigger={
+          <ButtonIcon mode="ghost" size="large" icon={<IconMenuVertical />} />
+        }
+        sideOffset={8}
+        listItems={[
+          {
+            component: (
+              <ListItemAction title={t('labels.removeWallet')} bgWhite />
+            ),
+            callback: () => {
+              onDelete(fieldIndex);
+            },
           },
-        },
-      ]}
-    />
-  );
-};
+        ]}
+      />
+    );
+  };
 const PercentageDistribution: React.FC<
   Omit<AddressAndTokenRowProps, 'onDelete'>
 > = ({actionIndex, fieldIndex, newTokenSupply}) => {
