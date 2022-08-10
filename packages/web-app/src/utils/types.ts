@@ -220,6 +220,12 @@ export type ActionMintToken = {
   inputs: {
     mintTokensToWallets: Array<{address: string; amount: string}>;
   };
+  summary: {
+    newTokens: number;
+    tokenSupply: number;
+    newHoldersCount: number;
+    daoTokenSymbol: string;
+  };
 };
 
 // TODO: Consider making this a generic type that take other types of the form

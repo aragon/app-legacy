@@ -9,6 +9,8 @@ export const MintTokenCard: React.FC<{
   action: ActionMintToken;
 }> = ({action}) => {
   const {t} = useTranslation();
+  const {newTokens, newHoldersCount, tokenSupply, daoTokenSymbol} =
+    action.summary;
 
   return (
     <AccordionMethod
@@ -19,30 +21,51 @@ export const MintTokenCard: React.FC<{
       additionalInfo={t('newProposal.mintTokens.additionalInfo')}
     >
       <Container>
-        <div className="p-2 tablet:p-3 bg-ui-50">
-          {action.inputs.mintTokensToWallets.map((wallet, index) => (
-            <ListItemAddress
-              key={index}
-              label={wallet.address}
-              src={wallet.address}
-              tokenInfo={{amount: 4000, symbol: 'ETH', percentage: '0.1'}}
-            />
-          ))}
+        <div className="p-2 tablet:p-3 space-y-2 bg-ui-50">
+          {action.inputs.mintTokensToWallets.map((wallet, index) => {
+            const newTokenSupply = newTokens + tokenSupply;
+            const amount = Number(wallet.amount);
+
+            const percentage = newTokenSupply
+              ? (amount / newTokenSupply) * 100
+              : 0;
+
+            return wallet.address ? (
+              <ListItemAddress
+                key={index}
+                label={wallet.address}
+                src={wallet.address}
+                tokenInfo={{
+                  amount,
+                  symbol: daoTokenSymbol,
+                  percentage: percentage.toPrecision(3),
+                }}
+              />
+            ) : null;
+          })}
         </div>
 
         <SummaryContainer>
-          <p>{t('labels.summary')}</p>
+          <p className="font-bold text-ui-800">{t('labels.summary')}</p>
           <HStack>
             <Label>{t('labels.newTokens')}</Label>
-            <p>+4000 ETH</p>
+            <p>
+              +{newTokens} {daoTokenSymbol}
+            </p>
           </HStack>
           <HStack>
             <Label>{t('labels.newHolders')}</Label>
-            <p>+2</p>
+            <p>+{newHoldersCount}</p>
           </HStack>
           <HStack>
             <Label>{t('labels.totalTokens')}</Label>
-            <p>100,000 ETH</p>
+            {tokenSupply ? (
+              <p>
+                {(tokenSupply + newTokens).toString()} {daoTokenSymbol}
+              </p>
+            ) : (
+              <p>...</p>
+            )}
           </HStack>
           {/* TODO add total amount of token holders here. */}
           <Link
