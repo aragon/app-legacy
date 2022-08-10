@@ -36,9 +36,10 @@ const Governance: React.FC = () => {
           title={t('labels.review.governance')}
           onEditClick={() => setStep(5)}
           editLabel={t('settings.edit')}
-          checkBoxError={reviewCheckError && !value}
           checkBoxErrorMessage={t('createDAO.review.acceptContent')}
-          checkedState={value ? 'active' : 'default'}
+          checkedState={
+            value ? 'active' : reviewCheckError ? 'error' : 'default'
+          }
           onChecked={() => onChange(!value)}
         >
           {membership === 'token' && (

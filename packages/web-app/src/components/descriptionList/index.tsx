@@ -12,9 +12,8 @@ export type DescriptionListProps = {
   title: string;
   onEditClick?: () => void;
   editLabel?: string;
-  checkBoxError?: boolean;
   checkBoxErrorMessage?: string;
-  checkedState?: CheckboxListItemProps['state'];
+  checkedState?: CheckboxListItemProps['type'];
   onChecked?: () => void;
 };
 
@@ -23,7 +22,6 @@ export const DescriptionListContainer: React.FC<DescriptionListProps> = ({
   children,
   onEditClick,
   editLabel,
-  checkBoxError,
   checkBoxErrorMessage,
   checkedState,
   onChecked,
@@ -47,14 +45,13 @@ export const DescriptionListContainer: React.FC<DescriptionListProps> = ({
         <div className="ml-auto space-y-1.5 tablet:w-3/4">
           <div className="tablet:flex">
             <CheckboxListItem
-              label="These values are correct"
+              label={t('createDAO.review.valuesCorrect')}
               multiSelect
-              onClick={onChecked}
-              state={checkedState}
-              errorBorder={checkBoxError}
+              onClick={() => onChecked?.()}
+              type={checkedState}
             />
           </div>
-          {checkBoxError && checkBoxErrorMessage && (
+          {checkedState === 'error' && checkBoxErrorMessage && (
             <AlertInline label={checkBoxErrorMessage} mode="critical" />
           )}
         </div>

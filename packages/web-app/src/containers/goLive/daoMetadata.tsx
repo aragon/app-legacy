@@ -25,9 +25,10 @@ const DaoMetadata: React.FC = () => {
           title={t('labels.review.daoMetadata')}
           onEditClick={() => setStep(3)}
           editLabel={t('settings.edit')}
-          checkBoxError={reviewCheckError && !value}
           checkBoxErrorMessage={t('createDAO.review.acceptContent')}
-          checkedState={value ? 'active' : 'default'}
+          checkedState={
+            value ? 'active' : reviewCheckError ? 'error' : 'default'
+          }
           onChecked={() => onChange(!value)}
         >
           <Dl>

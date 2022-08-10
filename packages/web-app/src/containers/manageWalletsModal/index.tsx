@@ -154,7 +154,7 @@ const ManageWalletsModal: React.FC<ManageWalletsModalProps> = ({
               key={wallet}
               label={shortenAddress(wallet)}
               multiSelect
-              state={selectedWallets.has(wallet) ? 'active' : 'default'}
+              type={selectedWallets.has(wallet) ? 'active' : 'default'}
               onClick={() => handleSelectWallet(wallet)}
             />
           ))}

@@ -15,7 +15,7 @@
     "learn": "Learn",
     "build": "Build",
     "help": "Help",
-    "terms": "Terms of Servitce",
+    "terms": "Terms of Service",
     "privacy": "Privacy",
     "settings": "Settings"
   },
@@ -36,7 +36,6 @@
     "removedMembers": "Removed Members",
     "addWalletsDescription": "Add as many wallets as you like to the DAO. These are authorized to create proposals, request transactions or suggest changes to the DAO settings from the time of initial creation.",
     "removeWalletsDescription": "Remove existing wallets from the authorised list of this particular DAO.",
-    "summary": "Summary",
     "seeCommunity": "See Community",
     "totalWallets": "Total Wallets",
     "mintTokens": "Mint Tokens",
@@ -507,7 +506,8 @@
       "button": "Publish your DAO",
       "daoUpdates": "DAO updates are doable",
       "daoUpdatesHelpText": "These choices can be changed by a proposal and vote in the DAO.",
-      "acceptContent": "You have to accept your proposed content."
+      "acceptContent": "You have to accept your proposed content.",
+      "valuesCorrect": "These values are correct"
     }
   },
   "newProposal": {

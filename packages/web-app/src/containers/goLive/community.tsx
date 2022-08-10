@@ -37,9 +37,10 @@ const Community: React.FC = () => {
           title={t('labels.review.community')}
           onEditClick={() => setStep(4)}
           editLabel={t('settings.edit')}
-          checkBoxError={reviewCheckError && !value}
           checkBoxErrorMessage={t('createDAO.review.acceptContent')}
-          checkedState={value ? 'active' : 'default'}
+          checkedState={
+            value ? 'active' : reviewCheckError ? 'error' : 'default'
+          }
           onChecked={() => onChange(!value)}
         >
           <Dl>

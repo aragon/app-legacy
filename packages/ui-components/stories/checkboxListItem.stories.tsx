@@ -17,7 +17,7 @@ Default.args = {
   helptext: 'Helptext',
   multiSelect: true,
   disabled: false,
-  state: 'default',
+  type: 'default',
   onClick: console.log,
 };
 
@@ -35,14 +35,14 @@ export const ListGroup = () => {
         helptext="HelpText One"
         multiSelect={false}
         onClick={() => handleOnClick(1)}
-        state={selectedIndex === 1 ? 'active' : 'default'}
+        type={selectedIndex === 1 ? 'active' : 'default'}
       />
       <CheckboxListItem
         label="Label Two"
         helptext="HelpText Two"
         multiSelect={false}
         onClick={() => handleOnClick(2)}
-        state={selectedIndex === 2 ? 'active' : 'default'}
+        type={selectedIndex === 2 ? 'active' : 'default'}
       />
     </div>
   );

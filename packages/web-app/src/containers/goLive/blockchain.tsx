@@ -25,9 +25,10 @@ const Blockchain: React.FC = () => {
           title={t('labels.review.blockchain')}
           onEditClick={() => setStep(2)}
           editLabel={t('settings.edit')}
-          checkBoxError={reviewCheckError && !value}
           checkBoxErrorMessage={t('createDAO.review.acceptContent')}
-          checkedState={value ? 'active' : 'default'}
+          checkedState={
+            value ? 'active' : reviewCheckError ? 'error' : 'default'
+          }
           onChecked={() => onChange(!value)}
         >
           <Dl>

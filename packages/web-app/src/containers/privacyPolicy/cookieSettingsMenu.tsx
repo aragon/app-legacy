@@ -49,14 +49,14 @@ const CookieSettingsMenu: React.FC<CookieSettingsMenuProps> = props => {
           <div className="space-y-1.5">
             <CheckboxListItem
               label={t('privacyPolicy.functional')}
-              state={functionalSelected ? 'active' : 'default'}
+              type={functionalSelected ? 'active' : 'default'}
               onClick={() => setFunctionalSelected(!functionalSelected)}
               helptext={t('privacyPolicy.functionalHelpText')}
               multiSelect
             />
             <CheckboxListItem
               label={t('privacyPolicy.analytics')}
-              state={analyticsSelected ? 'active' : 'default'}
+              type={analyticsSelected ? 'active' : 'default'}
               onClick={() => setAnalyticsSelected(!analyticsSelected)}
               helptext={t('privacyPolicy.analyticsHelpText')}
               multiSelect

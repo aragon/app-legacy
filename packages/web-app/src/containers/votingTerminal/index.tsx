@@ -192,19 +192,19 @@ export const VotingTerminal: React.FC<VotingTerminalProps> = ({
               label={t('votingTerminal.yes')}
               helptext={t('votingTerminal.yesHelptext')}
               onClick={() => setSelectedVote('yes')}
-              state={selectedVote === 'yes' ? 'active' : 'default'}
+              type={selectedVote === 'yes' ? 'active' : 'default'}
             />
             <CheckboxListItem
               label={t('votingTerminal.abstain')}
               helptext={t('votingTerminal.abstainHelptext')}
               onClick={() => setSelectedVote('abstain')}
-              state={selectedVote === 'abstain' ? 'active' : 'default'}
+              type={selectedVote === 'abstain' ? 'active' : 'default'}
             />
             <CheckboxListItem
               label={t('votingTerminal.no')}
               helptext={t('votingTerminal.noHelptext')}
               onClick={() => setSelectedVote('no')}
-              state={selectedVote === 'no' ? 'active' : 'default'}
+              type={selectedVote === 'no' ? 'active' : 'default'}
             />
           </CheckboxContainer>
 
