@@ -1,4 +1,4 @@
-import {ListItemAddress} from '@aragon/ui-components';
+import {IconLinkExternal, Link, ListItemAddress} from '@aragon/ui-components';
 import {AccordionMethod} from 'components/accordionMethod';
 import React from 'react';
 import {useTranslation} from 'react-i18next';
@@ -45,6 +45,10 @@ export const MintTokenCard: React.FC<{
             <p>100,000 ETH</p>
           </HStack>
           {/* TODO add total amount of token holders here. */}
+          <Link
+            label={t('labels.seeCommunity')}
+            iconRight={<IconLinkExternal />}
+          />
         </SummaryContainer>
       </Container>
     </AccordionMethod>
