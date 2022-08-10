@@ -5,6 +5,7 @@ import {BigNumber, providers as EthersProviders} from 'ethers';
 import {i18n} from '../../i18n.config';
 import {isERC20Token} from './tokens';
 import {ALPHA_NUMERIC_PATTERN} from './constants';
+import {ActionItem, ActionWithdraw, StringIndexed} from './types';
 
 /**
  * Validate given token contract address
@@ -93,3 +94,42 @@ export const alphaNumericValidator = (
     ? true
     : (i18n.t('errors.onlyAlphaNumeric', {field}) as string);
 };
+
+/**
+ * Check if the screen is valid
+ * @param errors List of fields with errors
+ * @returns Whether the screen is valid
+ */
+export function actionsAreValid(
+  actionFromList: ActionWithdraw[],
+  actions: ActionItem[],
+  errors: StringIndexed
+) {
+  let result = false;
+  function isActionValid(index: number) {
+    switch (actions[0]?.name) {
+      case 'withdraw_assets':
+        return (
+          actionFromList[index]?.to === '' ||
+          actionFromList[index]?.amount?.toString() === '' ||
+          errors.actions
+        );
+      case 'mint_token':
+        return false;
+      default:
+        return false;
+    }
+  }
+
+  for (let i = 0; i < actionFromList?.length; i++) {
+    if (isActionValid(i)) {
+      result = false;
+      break;
+    } else {
+      result = true;
+    }
+  }
+  if (actions?.length === 0) return true;
+  if (actions.length !== actionFromList.length) return false;
+  return result;
+}

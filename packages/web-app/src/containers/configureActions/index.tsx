@@ -9,7 +9,6 @@ import {
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 
-import {ActionWithdraw, StringIndexed, ActionItem} from 'utils/types';
 import {useGlobalModalContext} from 'context/globalModals';
 import {useActionsContext} from 'context/actions';
 import ActionBuilder from 'containers/actionBuilder';
@@ -67,35 +66,6 @@ const ConfigureActions: React.FC = () => {
 };
 
 export default ConfigureActions;
-
-/**
- * Check if the screen is valid
- * @param errors List of fields with errors
- * @returns Whether the screen is valid
- */
-export function isValid(
-  actionFromList: ActionWithdraw[],
-  actions: ActionItem[],
-  errors: StringIndexed
-) {
-  let result = false;
-  console.log('1->', actions, actionFromList, result);
-  for (let i = 0; i < actionFromList?.length; i++) {
-    if (
-      actionFromList[i]?.to === '' ||
-      actionFromList[i]?.amount.toString() === '' ||
-      errors.actions
-    ) {
-      result = false;
-      break;
-    } else {
-      result = true;
-    }
-  }
-  if (actions?.length === 0) return true;
-  if (actions.length !== actionFromList.length) return false;
-  return result;
-}
 
 const FormItem = styled.div.attrs({
   className: 'space-y-1.5',

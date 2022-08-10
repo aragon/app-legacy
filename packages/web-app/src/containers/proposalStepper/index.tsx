@@ -5,9 +5,7 @@ import {generatePath} from 'react-router-dom';
 
 import {Governance} from 'utils/paths';
 import ReviewProposal from 'containers/reviewProposal';
-import ConfigureActions, {
-  isValid as actionsAreValid,
-} from 'containers/configureActions';
+import ConfigureActions from 'containers/configureActions';
 import {FullScreenStepper, Step} from 'components/fullScreenStepper';
 import DefineProposal, {
   isValid as defineProposalIsValid,
@@ -20,6 +18,7 @@ import {useDaoParam} from 'hooks/useDaoParam';
 import {Loading} from 'components/temporary';
 import {useActionsContext} from 'context/actions';
 import {StringIndexed} from 'utils/types';
+import {actionsAreValid} from 'utils/validators';
 
 type ProposalStepperType = {
   enableTxModal: () => void;
