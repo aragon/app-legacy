@@ -9,7 +9,7 @@ import {
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 
-import {StringIndexed} from 'utils/types';
+import {ActionWithdraw, StringIndexed, ActionItem} from 'utils/types';
 import {useGlobalModalContext} from 'context/globalModals';
 import {useActionsContext} from 'context/actions';
 import ActionBuilder from 'containers/actionBuilder';
@@ -73,12 +73,17 @@ export default ConfigureActions;
  * @param errors List of fields with errors
  * @returns Whether the screen is valid
  */
-export function isValid(dirtyFields: StringIndexed, errors: StringIndexed) {
+export function isValid(
+  actionFromList: ActionWithdraw[],
+  actions: ActionItem[],
+  errors: StringIndexed
+) {
   let result = false;
-  for (let i = 0; i < dirtyFields.actions?.length; i++) {
+  console.log('1->', actions, actionFromList, result);
+  for (let i = 0; i < actionFromList?.length; i++) {
     if (
-      !dirtyFields.actions[i]?.to ||
-      !dirtyFields.actions[i]?.amount ||
+      actionFromList[i]?.to === '' ||
+      actionFromList[i]?.amount.toString() === '' ||
       errors.actions
     ) {
       result = false;
@@ -87,6 +92,8 @@ export function isValid(dirtyFields: StringIndexed, errors: StringIndexed) {
       result = true;
     }
   }
+  if (actions?.length === 0) return true;
+  if (actions.length !== actionFromList.length) return false;
   return result;
 }
 
