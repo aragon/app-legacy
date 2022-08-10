@@ -21,8 +21,8 @@ export const RemoveAddressCard: React.FC<{
       methodDescription={t('labels.removeWalletsDescription')}
     >
       <Container>
-        {action.inputs.memberWallets.map(({address}, index: number) => (
-          <ListItemAddress label={address} src={address} key={index} />
+        {action.inputs.memberWallets.map(({address}) => (
+          <ListItemAddress label={address} src={address} key={address} />
         ))}
       </Container>
       <AccordionSummary

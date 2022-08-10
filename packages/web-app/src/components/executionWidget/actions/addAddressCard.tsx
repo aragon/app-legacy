@@ -24,8 +24,8 @@ export const AddAddressCard: React.FC<{
       methodDescription={t('labels.addWalletsDescription')}
     >
       <Container>
-        {filteredMemberWallets.map(({address}, index: number) => (
-          <ListItemAddress label={address} src={address} key={index} />
+        {filteredMemberWallets.map(({address}) => (
+          <ListItemAddress label={address} src={address} key={address} />
         ))}
       </Container>
       <AccordionSummary
