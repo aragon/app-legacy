@@ -392,6 +392,7 @@ const ConfigureWithdrawForm: React.FC<ConfigureWithdrawFormProps> = ({
                 name={name}
                 type="number"
                 value={value}
+                placeholder="0"
                 onBlur={onBlur}
                 onChange={onChange}
               />
