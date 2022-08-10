@@ -74,7 +74,20 @@ export default ConfigureActions;
  * @returns Whether the screen is valid
  */
 export function isValid(dirtyFields: StringIndexed, errors: StringIndexed) {
-  return dirtyFields.actions && !errors.actions;
+  let result = false;
+  for (let i = 0; i < dirtyFields.actions?.length; i++) {
+    if (
+      !dirtyFields.actions[i]?.to ||
+      !dirtyFields.actions[i]?.amount ||
+      errors.actions
+    ) {
+      result = false;
+      break;
+    } else {
+      result = true;
+    }
+  }
+  return result;
 }
 
 const FormItem = styled.div.attrs({
