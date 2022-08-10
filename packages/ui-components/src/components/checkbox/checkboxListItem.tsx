@@ -80,9 +80,9 @@ const HStack = styled.div.attrs(({disabled, type}: ContainerTypes) => ({
   className: `flex justify-between items-center group-hover:text-primary-500 space-x-1.5 ${
     disabled
       ? 'text-ui-600'
-      : type !== 'default'
-      ? 'text-primary-500'
-      : 'text-ui-600'
+      : type === 'default' || type === 'error'
+      ? 'text-ui-600'
+      : 'text-primary-500'
   }`,
 }))<ContainerTypes>``;
 
