@@ -3,7 +3,6 @@ import {
   ButtonText,
   IconChevronDown,
   IconChevronUp,
-  CardExecution,
   Link,
 } from '@aragon/ui-components';
 import styled from 'styled-components';
@@ -24,6 +23,7 @@ import ResourceList from 'components/resourceList';
 import {formatUnits} from 'utils/library';
 import {getTokenInfo} from 'utils/tokens';
 import {VotingTerminal} from 'containers/votingTerminal';
+import {ExecutionWidget} from 'components/executionWidget';
 import {useFormStep} from 'components/fullScreenStepper';
 import {CHAIN_METADATA} from 'utils/constants';
 import {useSpecificProvider} from 'context/providers';
@@ -33,7 +33,6 @@ import {
   getCanonicalUtcOffset,
   KNOWN_FORMATS,
 } from 'utils/date';
-import {useDaoMetadata} from 'hooks/useDaoMetadata';
 
 type ReviewProposalProps = {
   defineProposalStepNumber: number;
@@ -48,7 +47,6 @@ const ReviewProposal: React.FC<ReviewProposalProps> = ({
   const provider = useSpecificProvider(CHAIN_METADATA[network].id);
 
   const {dao} = useParams();
-  const {data: metadata, loading: metadataLoading} = useDaoMetadata(dao || '');
   const {data, loading} = useQuery(DAO_PACKAGE_BY_DAO_ID, {
     variables: {dao},
   });
@@ -181,7 +179,7 @@ const ReviewProposal: React.FC<ReviewProposalProps> = ({
     return null;
   }
 
-  if (loading || metadataLoading) return <Loading />;
+  if (loading) return <Loading />;
 
   return (
     <>
@@ -241,31 +239,7 @@ const ReviewProposal: React.FC<ReviewProposalProps> = ({
             }
           />
 
-          {/* TODO: generalize types so that proper execution card can be rendered */}
-          {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
-          {values.actions?.map((action: any, index: number) => (
-            <CardExecution
-              key={index}
-              title={t('governance.executionCard.title')}
-              description={t('governance.executionCard.description')}
-              to={action.to}
-              from={metadata.name}
-              toLabel={t('labels.to')}
-              fromLabel={t('labels.from')}
-              tokenName={action.tokenName}
-              tokenImageUrl={action.tokenImgUrl}
-              tokenSymbol={action.tokenSymbol}
-              tokenCount={action.amount}
-              treasuryShare={
-                action.tokenPrice
-                  ? new Intl.NumberFormat('en-US', {
-                      style: 'currency',
-                      currency: 'USD',
-                    }).format(action.tokenPrice * action.amount)
-                  : t('finance.unknownUSDValue')
-              }
-            />
-          ))}
+          <ExecutionWidget />
         </ProposalContainer>
 
         <AdditionalInfoContainer>

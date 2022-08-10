@@ -9,7 +9,7 @@ export type CardTokenProps = {
   tokenSymbol: string;
   tokenImageUrl: string;
   treasurySharePercentage?: string;
-  tokenCount: string;
+  tokenCount: number | string;
   tokenUSDValue?: string;
   treasuryShare?: string;
   type?: 'vault' | 'transfer';
@@ -67,8 +67,7 @@ export const CardToken: React.FC<CardTokenProps> = ({
             props.treasuryShare
           ) : (
             <>
-              <span>{props.tokenCount}</span>{' '}
-              <span className="tablet:hidden">{props.tokenSymbol}</span>
+              <span>{props.tokenCount}</span> <span>{props.tokenSymbol}</span>
             </>
           )}
         </FiatValue>

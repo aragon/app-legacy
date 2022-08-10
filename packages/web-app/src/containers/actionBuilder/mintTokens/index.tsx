@@ -6,17 +6,17 @@ import {useFieldArray, useFormContext, useWatch} from 'react-hook-form';
 import {Trans, useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 
-import {useActionsContext} from 'context/actions';
 import {AccordionMethod} from 'components/accordionMethod';
-import useScreen from 'hooks/useScreen';
+import {useActionsContext} from 'context/actions';
 import {useNetwork} from 'context/network';
 import {useProviders} from 'context/providers';
-import {CHAIN_METADATA} from 'utils/constants';
-import {fetchBalance, getTokenInfo} from 'utils/tokens';
-import {AddressAndTokenRow} from './addressTokenRow';
 import {useDaoParam} from 'hooks/useDaoParam';
 import {useDaoToken} from 'hooks/useDaoToken';
+import useScreen from 'hooks/useScreen';
+import {CHAIN_METADATA} from 'utils/constants';
 import {formatUnits} from 'utils/library';
+import {fetchBalance, getTokenInfo} from 'utils/tokens';
+import {AddressAndTokenRow} from './addressTokenRow';
 
 type Props = {
   index: number;
@@ -257,6 +257,7 @@ export const MintTokenForm: React.FC<{
             actionIndex={actionIndex}
             fieldIndex={index}
             onDelete={index => remove(index)}
+            newTokenSupply={newTokens + tokenSupply}
           />
         );
       })}
