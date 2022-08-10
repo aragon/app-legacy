@@ -81,7 +81,7 @@ export const VotingTerminal: React.FC<VotingTerminalProps> = ({
           <Option
             value="voters"
             label={t('votingTerminal.voters')}
-            disabled={votersTabDisabled || voters.length === 0}
+            disabled={votersTabDisabled}
           />
           <Option value="info" label={t('votingTerminal.info')} />
         </ButtonGroup>
