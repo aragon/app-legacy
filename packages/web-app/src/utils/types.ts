@@ -159,6 +159,10 @@ type ExecutionData = {
 
 /* ACTION TYPES ============================================================= */
 
+export type ActionIndex = {
+  actionIndex: number;
+};
+
 /**
  * Metadata for actions. This data can not really be fetched and is therefore
  * declared locally.

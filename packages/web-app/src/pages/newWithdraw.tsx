@@ -168,7 +168,7 @@ const NewWithdraw: React.FC = () => {
                   )
                 }
               >
-                <ConfigureWithdrawForm />
+                <ConfigureWithdrawForm actionIndex={0} />
               </Step>
               <Step
                 wizardTitle={t('newWithdraw.setupVoting.title')}

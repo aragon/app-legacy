@@ -9,7 +9,12 @@ import {useDaoBalances} from 'hooks/useDaoBalances';
 import {useDaoParam} from 'hooks/useDaoParam';
 import {fetchTokenPrice} from 'services/prices';
 import {formatUnits} from 'utils/library';
-import {ActionItem, ActionsTypes, BaseTokenInfo} from 'utils/types';
+import {
+  ActionIndex,
+  ActionItem,
+  ActionsTypes,
+  BaseTokenInfo,
+} from 'utils/types';
 import AddAddresses from './addAddresses';
 import MintTokens from './mintTokens';
 import RemoveAddresses from './removeAddresses';
@@ -24,15 +29,14 @@ import WithdrawAction from './withdraw/withdrawAction';
 
 type ActionsComponentProps = {
   name: ActionsTypes;
-  index: number;
-};
+} & ActionIndex;
 
-const Action: React.FC<ActionsComponentProps> = ({name, index}) => {
+const Action: React.FC<ActionsComponentProps> = ({name, actionIndex}) => {
   switch (name) {
     case 'withdraw_assets':
-      return <WithdrawAction {...{index}} />;
+      return <WithdrawAction {...{actionIndex}} />;
     case 'mint_token':
-      return <MintTokens {...{index}} />;
+      return <MintTokens {...{actionIndex}} />;
     case 'external_contract':
       return (
         <TemporarySection purpose="It serves as a placeholder for not yet implemented external contract interaction component" />
@@ -42,9 +46,9 @@ const Action: React.FC<ActionsComponentProps> = ({name, index}) => {
         <TemporarySection purpose="It serves as a placeholder for not yet implemented external contract interaction component" />
       );
     case 'add_address':
-      return <AddAddresses {...{index}} />;
+      return <AddAddresses {...{actionIndex}} />;
     case 'remove_address':
-      return <RemoveAddresses {...{index}} />;
+      return <RemoveAddresses {...{actionIndex}} />;
     default:
       throw Error('Action not found');
   }
@@ -57,6 +61,8 @@ const ActionBuilder: React.FC = () => {
   const {data: tokens} = useDaoBalances(daoAddress);
   const {setValue, resetField, clearErrors, formState, trigger} =
     useFormContext();
+
+  console.log('[LOGGING] index ' + index);
 
   /*************************************************
    *             Callbacks and Handlers            *
