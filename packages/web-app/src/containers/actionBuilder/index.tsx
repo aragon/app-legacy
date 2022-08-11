@@ -57,7 +57,7 @@ const Action: React.FC<ActionsComponentProps> = ({name, actionIndex}) => {
 const ActionBuilder: React.FC = () => {
   const {data: daoAddress} = useDaoParam();
   const {network} = useNetwork();
-  const {actionsCounter: index, actions} = useActionsContext();
+  const {selectedActionIndex: index, actions} = useActionsContext();
   const {data: tokens} = useDaoBalances(daoAddress);
   const {setValue, resetField, clearErrors, formState, trigger} =
     useFormContext();

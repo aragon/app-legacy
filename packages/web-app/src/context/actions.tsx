@@ -15,8 +15,8 @@ const ActionsContext = createContext<ActionsContextType | null>(null);
 type ActionsContextType = {
   daoAddress: Address;
   actions: ActionItem[];
-  actionsCounter: number;
-  setActionsCounter: (index: number) => void;
+  selectedActionIndex: number;
+  setSelectedActionIndex: React.Dispatch<React.SetStateAction<number>>;
   addAction: (value: ActionItem) => void;
   duplicateAction: (index: number) => void;
   removeAction: (index: number) => void;
@@ -28,8 +28,8 @@ type ActionsProviderProps = {
 
 const ActionsProvider: React.FC<ActionsProviderProps> = ({daoId, children}) => {
   const [actions, setActions] = useState<ActionsContextType['actions']>([]);
-  const [actionsCounter, setActionsCounter] =
-    useState<ActionsContextType['actionsCounter']>(0);
+  const [selectedActionIndex, setSelectedActionIndex] =
+    useState<ActionsContextType['selectedActionIndex']>(0);
 
   const {control} = useFormContext();
   const {remove} = useFieldArray({control, name: 'actions'});
@@ -62,10 +62,17 @@ const ActionsProvider: React.FC<ActionsProviderProps> = ({daoId, children}) => {
       addAction,
       removeAction,
       duplicateAction,
-      actionsCounter,
-      setActionsCounter,
+      selectedActionIndex,
+      setSelectedActionIndex,
     }),
-    [daoId, actions, addAction, removeAction, duplicateAction, actionsCounter]
+    [
+      daoId,
+      actions,
+      addAction,
+      removeAction,
+      duplicateAction,
+      selectedActionIndex,
+    ]
   );
 
   return (

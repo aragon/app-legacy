@@ -48,7 +48,7 @@ const ConfigureWithdrawForm: React.FC<ConfigureWithdrawFormProps> = ({
   const {address} = useWallet();
   const {infura: provider} = useProviders();
   const {data: daoAddress} = useDaoParam();
-  const {setActionsCounter} = useActionsContext();
+  const {setSelectedActionIndex} = useActionsContext();
 
   const {control, getValues, trigger, resetField, setFocus, setValue} =
     useFormContext();
@@ -332,7 +332,7 @@ const ConfigureWithdrawForm: React.FC<ConfigureWithdrawFormProps> = ({
                 mode={error ? 'critical' : 'default'}
                 value={value}
                 onClick={() => {
-                  setActionsCounter(actionIndex);
+                  setSelectedActionIndex(actionIndex);
                   open('token');
                 }}
                 placeholder={t('placeHolders.selectToken')}
