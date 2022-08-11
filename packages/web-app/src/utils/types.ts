@@ -159,14 +159,30 @@ type ExecutionData = {
 
 /* ACTION TYPES ============================================================= */
 
+/**
+ * Metadata for actions. This data can not really be fetched and is therefore
+ * declared locally.
+ */
 export type ActionParameter = {
   type: ActionsTypes;
+  /**
+   * Name displayed in the UI
+   */
   title: string;
+  /**
+   * Description displayed in the UI
+   */
   subtitle: string;
+  /**
+   * Whether an action can be used several times in a proposal. Currently
+   * actions are either limited to 1 or not limited at all. This might need to
+   * be changed to a number if the rules for reuseability become more complex.
+   */
+  isReuseable?: boolean;
 };
 
 /**
- * Allowed Actions for each dao
+ * All available types of action for DAOs
  */
 export type ActionsTypes =
   | 'add_address'
@@ -196,6 +212,9 @@ export type ActionAddAddress = {
   };
 };
 
+// TODO: Consider making this a generic type that take other types of the form
+// like ActionAddAddres (or more generically, ActionItem...?) instead taking the
+// union of those subtypes. [VR 11-08-2022]
 export type Action = ActionWithdraw | ActionAddAddress;
 
 export type ParamType = {

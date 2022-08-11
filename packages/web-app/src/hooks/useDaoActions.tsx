@@ -14,6 +14,7 @@ export function useDaoActions(dao: string): HookData<ActionParameter[]> {
       type: 'withdraw_assets',
       title: t('AddActionModal.withdrawAssets'),
       subtitle: t('AddActionModal.withdrawAssetsSubtitle'),
+      isReuseable: true,
     },
     {
       type: 'modify_settings',
@@ -25,6 +26,7 @@ export function useDaoActions(dao: string): HookData<ActionParameter[]> {
       type: 'external_contract',
       title: t('AddActionModal.externalContract'),
       subtitle: t('AddActionModal.externalContractSubtitle'),
+      isReuseable: true,
     },
   ];
 
