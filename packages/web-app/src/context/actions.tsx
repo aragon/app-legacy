@@ -1,13 +1,12 @@
+import {Address} from '@aragon/ui-components/dist/utils/addresses';
 import React, {
   createContext,
-  useContext,
-  useState,
-  useMemo,
-  ReactNode,
   useCallback,
+  useContext,
+  useMemo,
+  useState,
 } from 'react';
 import {useFieldArray, useFormContext} from 'react-hook-form';
-import {Address} from '@aragon/ui-components/dist/utils/addresses';
 
 import {ActionItem} from 'utils/types';
 
@@ -21,18 +20,13 @@ type ActionsContextType = {
   addAction: (value: ActionItem) => void;
   duplicateAction: (index: number) => void;
   removeAction: (index: number) => void;
-  setDaoAddress: (value: string) => void;
 };
 
-type Props = Record<'children', ReactNode>;
+type ActionsProviderProps = {
+  daoId: Address;
+};
 
-/**
- * This Context must refactor later and add more attributes to cover whole transactions process
- */
-
-const ActionsProvider: React.FC<Props> = ({children}) => {
-  const [daoAddress, setDaoAddress] =
-    useState<ActionsContextType['daoAddress']>('');
+const ActionsProvider: React.FC<ActionsProviderProps> = ({daoId, children}) => {
   const [actions, setActions] = useState<ActionsContextType['actions']>([]);
   const [actionsCounter, setActionsCounter] =
     useState<ActionsContextType['actionsCounter']>(0);
@@ -63,23 +57,15 @@ const ActionsProvider: React.FC<Props> = ({children}) => {
 
   const value = useMemo(
     (): ActionsContextType => ({
-      daoAddress,
+      daoAddress: daoId,
       actions,
-      setDaoAddress,
       addAction,
       removeAction,
       duplicateAction,
       actionsCounter,
       setActionsCounter,
     }),
-    [
-      daoAddress,
-      actions,
-      addAction,
-      removeAction,
-      duplicateAction,
-      actionsCounter,
-    ]
+    [daoId, actions, addAction, removeAction, duplicateAction, actionsCounter]
   );
 
   return (

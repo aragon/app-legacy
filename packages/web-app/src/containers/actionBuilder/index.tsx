@@ -103,9 +103,6 @@ const ActionBuilder: React.FC = () => {
         <Action key={index} name={action?.name} {...{index}} />
       ))}
 
-      {/* TODO Fabrice(?), could the TokenMenu and the corresponding callback be
-          moved further down to the respective child(ren)? I assume there was a
-          reason for putting it here. Is it still valid? [VR 10-08-2022] */}
       <TokenMenu
         isWallet={false}
         onTokenSelect={handleTokenSelect}

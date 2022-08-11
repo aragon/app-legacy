@@ -50,7 +50,7 @@ const NewProposal: React.FC = () => {
         showTxModal={showTxModal}
         setShowTxModal={setShowTxModal}
       >
-        <ActionsProvider>
+        <ActionsProvider daoId={dao}>
           <FullScreenStepper
             wizardProcessName={t('newProposal.title')}
             navLabel={t('newProposal.title')}
