@@ -177,6 +177,15 @@ const ConfigureWithdrawForm: React.FC<ConfigureWithdrawFormProps> = ({
     [tokenBalance, t]
   );
 
+  const handleMaxClicked = useCallback(
+    (onChange: React.ChangeEventHandler<HTMLInputElement>) => {
+      if (tokenBalance) {
+        onChange(tokenBalance);
+      }
+    },
+    [tokenBalance]
+  );
+
   const handleAdornmentClick = useCallback(
     (value: string, onChange: (value: string) => void) => {
       // when there is a value clear it
@@ -395,6 +404,8 @@ const ConfigureWithdrawForm: React.FC<ConfigureWithdrawFormProps> = ({
                 placeholder="0"
                 onBlur={onBlur}
                 onChange={onChange}
+                adornmentText={t('labels.max')}
+                onAdornmentClick={() => handleMaxClicked(onChange)}
               />
               <div className="flex justify-between items-start">
                 <div className="space-y-1">
