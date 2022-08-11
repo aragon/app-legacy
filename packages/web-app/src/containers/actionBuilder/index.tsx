@@ -62,8 +62,6 @@ const ActionBuilder: React.FC = () => {
   const {setValue, resetField, clearErrors, formState, trigger} =
     useFormContext();
 
-  console.log('[LOGGING] index ' + index);
-
   /*************************************************
    *             Callbacks and Handlers            *
    *************************************************/
