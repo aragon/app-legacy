@@ -35,7 +35,7 @@ type AddressBalance = {
 const MintTokens: React.FC<Props> = ({index}) => {
   const {t} = useTranslation();
 
-  const {removeAction, duplicateAction} = useActionsContext();
+  const {removeAction} = useActionsContext();
   const {setValue} = useFormContext();
 
   const handleReset = () => {
@@ -43,10 +43,6 @@ const MintTokens: React.FC<Props> = ({index}) => {
   };
 
   const methodActions = [
-    {
-      component: <ListItemAction title={t('labels.duplicateAction')} bgWhite />,
-      callback: () => duplicateAction(index),
-    },
     {
       component: <ListItemAction title={t('labels.resetAction')} bgWhite />,
       callback: handleReset,
