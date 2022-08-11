@@ -82,23 +82,28 @@ export const GoLiveFooter: React.FC = () => {
   const IsButtonDisabled = () =>
     !Object.values(reviewCheck).every(v => v === true);
 
-  const publishDao = () => {
+  const publishDao = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    isConnected ? handlePublishDao() : open('wallet');
+  };
+
+  const showInvalidFields = () => {
     if (IsButtonDisabled()) {
       setValue('reviewCheckError', true);
-    } else {
-      isConnected ? handlePublishDao() : open('wallet');
     }
   };
 
   return (
     <div className="flex justify-center pt-3">
-      <ButtonText
-        size="large"
-        iconRight={<IconChevronRight />}
-        label={t('createDAO.review.button')}
-        onClick={publishDao}
-        // disabled={IsButtonDisabled()}
-      />
+      <div onClick={showInvalidFields}>
+        <ButtonText
+          size="large"
+          iconRight={<IconChevronRight />}
+          label={t('createDAO.review.button')}
+          onClick={publishDao}
+          disabled={IsButtonDisabled()}
+        />
+      </div>
     </div>
   );
 };
