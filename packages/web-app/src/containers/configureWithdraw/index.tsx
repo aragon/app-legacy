@@ -177,6 +177,7 @@ const ConfigureWithdrawForm: React.FC<ConfigureWithdrawFormProps> = ({
     [tokenBalance, t]
   );
 
+  // add maximum amount to amount field
   const handleMaxClicked = useCallback(
     (onChange: React.ChangeEventHandler<HTMLInputElement>) => {
       if (tokenBalance) {
@@ -186,6 +187,7 @@ const ConfigureWithdrawForm: React.FC<ConfigureWithdrawFormProps> = ({
     [tokenBalance]
   );
 
+  // clear field when there is a value, else paste
   const handleAdornmentClick = useCallback(
     (value: string, onChange: (value: string) => void) => {
       // when there is a value clear it
