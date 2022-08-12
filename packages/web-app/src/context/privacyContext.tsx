@@ -11,6 +11,7 @@ import {Nullable} from 'utils/types';
 import PrivacyPolicy from 'containers/privacyPolicy';
 import CookiePreferenceMenu from 'containers/privacyPolicy/cookiePreferenceMenu';
 import {disableAnalytics, enableAnalytics} from 'services/analytics';
+import CookieSettingsMenu from 'containers/privacyPolicy/cookieSettingsMenu';
 
 export type PrivacyPreferences = {
   analytics: boolean;
@@ -38,7 +39,10 @@ export const PRIVACY_KEY = 'privacy-policy-preferences';
 const PrivacyContextProvider: React.FC = ({children}) => {
   // 'cache' for the privacy preferences to reduce storage usage and increase speed
   const [preferences, setPreferences] = useState<PrivacyPreferences>();
-  const [policyAccepted, setPolicyAccepted] = useState<boolean>(false);
+
+  // privacy policy has been accepted when this is false
+  const [showPolicyMenu, setShowPolicyMenu] = useState<boolean>(true);
+  const [showCookieSettings, setShowCookieSettings] = useState<boolean>(false);
 
   // cookie preference menu state
   const [showPreferenceMenu, setShowPreferenceMenu] = useState<boolean>(false);
@@ -47,14 +51,19 @@ const PrivacyContextProvider: React.FC = ({children}) => {
     onReject: () => setShowPreferenceMenu(false),
   });
 
+  /*************************************************
+   *                    Hooks                      *
+   *************************************************/
   useEffect(() => {
     // get preferences from storage
     const value = localStorage.getItem(PRIVACY_KEY);
+
+    // show menu if no policy has been accepted
     if (!value) return;
 
     // set state
     const storedPreferences = JSON.parse(value);
-    setPolicyAccepted(true);
+    setShowPolicyMenu(false);
     setPreferences(storedPreferences);
 
     // enable analytics
@@ -86,7 +95,8 @@ const PrivacyContextProvider: React.FC = ({children}) => {
         localStorage.setItem(PRIVACY_KEY, JSON.stringify({optIn: false}));
       }
 
-      setPolicyAccepted(true);
+      setShowPolicyMenu(false);
+      setShowCookieSettings(false);
     },
     [preferences?.analytics]
   );
@@ -117,6 +127,16 @@ const PrivacyContextProvider: React.FC = ({children}) => {
       functional: preferences?.functional || false,
     });
   }, [preferences?.functional, setPrivacyPolicy]);
+
+  const handleShowCookiesSettings = useCallback(() => {
+    setShowCookieSettings(true);
+    setShowPolicyMenu(false);
+  }, []);
+
+  const handleCloseCookiesSettings = useCallback(() => {
+    setShowCookieSettings(false);
+    setShowPolicyMenu(true);
+  }, []);
 
   /**
    * Handle the cookie preference menu
@@ -150,7 +170,8 @@ const PrivacyContextProvider: React.FC = ({children}) => {
   const value = useMemo(
     () => ({
       preferences,
-      policyAccepted,
+      // policy has been accepted if the menu is not shown
+      policyAccepted: !showPolicyMenu,
       acceptAll,
       rejectAll,
       setPrivacyPolicy,
@@ -161,7 +182,7 @@ const PrivacyContextProvider: React.FC = ({children}) => {
     [
       acceptAll,
       handleWithFunctionalPreferenceMenu,
-      policyAccepted,
+      showPolicyMenu,
       preferences,
       rejectAll,
       setAnalyticsCookies,
@@ -170,19 +191,28 @@ const PrivacyContextProvider: React.FC = ({children}) => {
     ]
   );
 
+  /*************************************************
+   *                    Render                     *
+   *************************************************/
   return (
     <PrivacyContext.Provider value={value}>
       {children}
       <PrivacyPolicy
-        showPolicy={!policyAccepted}
+        showPolicy={showPolicyMenu}
         onAcceptAll={acceptAll}
         onRejectAll={rejectAll}
-        onAcceptPolicy={setPrivacyPolicy}
+        onShowCookieSettings={handleShowCookiesSettings}
       />
       <CookiePreferenceMenu
         show={showPreferenceMenu}
         onClose={preferenceMenuCallbacks.onReject}
         onAccept={preferenceMenuCallbacks.onAccept}
+      />
+      <CookieSettingsMenu
+        show={showCookieSettings}
+        onClose={handleCloseCookiesSettings}
+        onAcceptClick={setPrivacyPolicy}
+        onRejectAllClick={rejectAll}
       />
     </PrivacyContext.Provider>
   );

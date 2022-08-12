@@ -1,4 +1,9 @@
-import {ButtonText, CheckboxSimple} from '@aragon/ui-components';
+import {
+  AlertInline,
+  ButtonText,
+  CheckboxListItem,
+  CheckboxListItemProps,
+} from '@aragon/ui-components';
 import React from 'react';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
@@ -7,6 +12,8 @@ export type DescriptionListProps = {
   title: string;
   onEditClick?: () => void;
   editLabel?: string;
+  checkBoxErrorMessage?: string;
+  checkedState?: CheckboxListItemProps['type'];
   onChecked?: () => void;
 };
 
@@ -15,6 +22,8 @@ export const DescriptionListContainer: React.FC<DescriptionListProps> = ({
   children,
   onEditClick,
   editLabel,
+  checkBoxErrorMessage,
+  checkedState,
   onChecked,
 }) => {
   const {t} = useTranslation();
@@ -32,21 +41,20 @@ export const DescriptionListContainer: React.FC<DescriptionListProps> = ({
         )}
       </HStack>
       <DlContainer>{children}</DlContainer>
-      {onEditClick && onChecked && (
-        <HStack>
-          <ButtonText
-            label={editLabel || t('labels.edit')}
-            mode="ghost"
-            onClick={onEditClick}
-          />
-          <div className="flex-shrink-0 tablet:w-3/4">
-            <CheckboxSimple
-              label="These values are correct"
+      {onChecked && (
+        <div className="ml-auto space-y-1.5 tablet:w-3/4">
+          <div className="tablet:flex">
+            <CheckboxListItem
+              label={t('createDAO.review.valuesCorrect')}
               multiSelect
-              onClick={onChecked}
+              onClick={() => onChecked?.()}
+              type={checkedState}
             />
           </div>
-        </HStack>
+          {checkedState === 'error' && checkBoxErrorMessage && (
+            <AlertInline label={checkBoxErrorMessage} mode="critical" />
+          )}
+        </div>
       )}
     </Container>
   );
@@ -76,7 +84,7 @@ const DescriptionList = {
 export default DescriptionList;
 
 const Container = styled.div.attrs({
-  className: 'p-2 tablet:p-3 space-y-2 tablet:space-y-3 rounded-xl bg-ui-0',
+  className: 'p-2 tablet:p-3 space-y-3 rounded-xl bg-ui-0',
 })``;
 
 const TitleText = styled.h1.attrs({
@@ -101,6 +109,5 @@ const DdContainer = styled.dd.attrs({
 })``;
 
 const HStack = styled.div.attrs({
-  className:
-    'flex flex-wrap flex-row-reverse tablet:flex-row justify-between items-center',
+  className: 'flex justify-between items-center',
 })``;

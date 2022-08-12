@@ -8,8 +8,6 @@ import styled from 'styled-components';
 import {useTranslation} from 'react-i18next';
 import React, {useState} from 'react';
 
-import ModalBottomSheetSwitcher from 'components/modalBottomSheetSwitcher';
-
 export type CookiesType = {
   analytics: boolean;
   functional: boolean;
@@ -28,11 +26,7 @@ const CookieSettingsMenu: React.FC<CookieSettingsMenuProps> = props => {
   const [functionalSelected, setFunctionalSelected] = useState<boolean>(true);
 
   return (
-    <ModalBottomSheetSwitcher
-      isOpen={props.show}
-      onClose={props.onClose}
-      onOpenAutoFocus={e => e.preventDefault()}
-    >
+    <Modal show={props.show}>
       <div>
         <ModalHeader>
           <ButtonIcon
@@ -49,14 +43,14 @@ const CookieSettingsMenu: React.FC<CookieSettingsMenuProps> = props => {
           <div className="space-y-1.5">
             <CheckboxListItem
               label={t('privacyPolicy.functional')}
-              state={functionalSelected ? 'active' : 'default'}
+              type={functionalSelected ? 'active' : 'default'}
               onClick={() => setFunctionalSelected(!functionalSelected)}
               helptext={t('privacyPolicy.functionalHelpText')}
               multiSelect
             />
             <CheckboxListItem
               label={t('privacyPolicy.analytics')}
-              state={analyticsSelected ? 'active' : 'default'}
+              type={analyticsSelected ? 'active' : 'default'}
               onClick={() => setAnalyticsSelected(!analyticsSelected)}
               helptext={t('privacyPolicy.analyticsHelpText')}
               multiSelect
@@ -84,18 +78,18 @@ const CookieSettingsMenu: React.FC<CookieSettingsMenuProps> = props => {
           </div>
         </BottomSheetContentContainer>
       </div>
-    </ModalBottomSheetSwitcher>
+    </Modal>
   );
 };
 
 export default CookieSettingsMenu;
 
 const Title = styled.div.attrs({
-  className: 'flex-1 font-bold text-center text-ui-800',
+  className: 'flex-1 font-bold text-center ft-text-base text-ui-800',
 })``;
 
 const ModalHeader = styled.div.attrs({
-  className: 'flex items-center p-2 space-x-2 bg-ui-0 rounded-xl sticky top-0',
+  className: 'flex items-center p-2 space-x-2 bg-ui-0 rounded-xl',
 })`
   box-shadow: 0px 4px 8px rgba(31, 41, 51, 0.04),
     0px 0px 2px rgba(31, 41, 51, 0.06), 0px 0px 1px rgba(31, 41, 51, 0.04);
@@ -104,3 +98,20 @@ const ModalHeader = styled.div.attrs({
 const BottomSheetContentContainer = styled.div.attrs({
   className: 'py-3 px-2 space-y-3',
 })``;
+
+type Props = {
+  show: boolean;
+};
+
+// For the sake of consistency height of modal is halfway screen size, but modals need to be higher
+const Modal = styled.div.attrs(({show}: Props) => ({
+  className: `${show ? 'block' : 'hidden'} fixed z-20 bg-ui-50
+  bottom-0 w-full rounded-t-xl
+  tablet:bottom-3 tablet:left-1/2 tablet:w-56 tablet:rounded-b-xl
+  tablet:transform tablet:-translate-x-1/2
+  desktop:bottom-auto desktop:top-1/2 desktop:-translate-y-1/2`,
+}))<Props>`
+  box-shadow: 0px 24px 32px rgba(31, 41, 51, 0.04),
+    0px 16px 24px rgba(31, 41, 51, 0.04), 0px 4px 8px rgba(31, 41, 51, 0.04),
+    0px 0px 1px rgba(31, 41, 51, 0.04);
+`;

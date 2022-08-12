@@ -47,7 +47,7 @@ const SetupCommunityForm: React.FC = () => {
                   resetTokenFields();
                   onChange('token');
                 }}
-                {...(value === 'token' ? {state: 'active'} : {})}
+                {...(value === 'token' ? {type: 'active'} : {})}
               />
 
               <CheckboxListItem
@@ -58,7 +58,7 @@ const SetupCommunityForm: React.FC = () => {
                   onChange('wallet');
                 }}
                 multiSelect={false}
-                {...(value === 'wallet' ? {state: 'active'} : {})}
+                {...(value === 'wallet' ? {type: 'active'} : {})}
               />
             </>
           )}
@@ -89,7 +89,7 @@ const SetupCommunityForm: React.FC = () => {
                   resetTokenFields();
                   onChange(true);
                 }}
-                state={value ? 'active' : 'default'}
+                type={value ? 'active' : 'default'}
               />
             )}
           />
@@ -101,7 +101,7 @@ const SetupCommunityForm: React.FC = () => {
               <CheckboxListItem
                 label={t('createDAO.step3.existingToken')}
                 helptext={t('createDAO.step3.existingTokenSubtitle')}
-                state={value === false ? 'active' : 'default'}
+                type={value === false ? 'active' : 'default'}
                 multiSelect={false}
                 onClick={() => {
                   onChange(false);

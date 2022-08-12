@@ -164,15 +164,6 @@ const ConfigureWithdrawForm: React.FC<ConfigureWithdrawFormProps> = ({
   /*************************************************
    *             Callbacks and Handlers            *
    *************************************************/
-  const handleMaxClicked = useCallback(
-    (onChange: React.ChangeEventHandler<HTMLInputElement>) => {
-      if (tokenBalance) {
-        onChange(tokenBalance);
-      }
-    },
-    [tokenBalance]
-  );
-
   const renderWarning = useCallback(
     (value: string) => {
       // Insufficient data to calculate warning
@@ -184,6 +175,26 @@ const ConfigureWithdrawForm: React.FC<ConfigureWithdrawFormProps> = ({
         );
     },
     [tokenBalance, t]
+  );
+
+  // add maximum amount to amount field
+  const handleMaxClicked = useCallback(
+    (onChange: React.ChangeEventHandler<HTMLInputElement>) => {
+      if (tokenBalance) {
+        onChange(tokenBalance);
+      }
+    },
+    [tokenBalance]
+  );
+
+  // clear field when there is a value, else paste
+  const handleAdornmentClick = useCallback(
+    (value: string, onChange: (value: string) => void) => {
+      // when there is a value clear it
+      if (value) onChange('');
+      else handleClipboardActions(value, onChange);
+    },
+    []
   );
 
   /*************************************************
@@ -287,8 +298,8 @@ const ConfigureWithdrawForm: React.FC<ConfigureWithdrawFormProps> = ({
                 onBlur={onBlur}
                 onChange={onChange}
                 placeholder={t('placeHolders.walletOrEns')}
-                adornmentText={value ? t('labels.copy') : t('labels.paste')}
-                onAdornmentClick={() => handleClipboardActions(value, onChange)}
+                adornmentText={value ? t('labels.clear') : t('labels.paste')}
+                onAdornmentClick={() => handleAdornmentClick(value, onChange)}
               />
               {error?.message && (
                 <AlertInline label={error.message} mode="critical" />
@@ -356,10 +367,8 @@ const ConfigureWithdrawForm: React.FC<ConfigureWithdrawFormProps> = ({
                   value={value}
                   onBlur={onBlur}
                   onChange={onChange}
-                  adornmentText={value ? t('labels.copy') : t('labels.paste')}
-                  onAdornmentClick={() =>
-                    handleClipboardActions(value, onChange)
-                  }
+                  adornmentText={value ? t('labels.clear') : t('labels.paste')}
+                  onAdornmentClick={() => handleAdornmentClick(value, onChange)}
                 />
                 {error?.message && (
                   <AlertInline label={error.message} mode="critical" />
@@ -394,6 +403,7 @@ const ConfigureWithdrawForm: React.FC<ConfigureWithdrawFormProps> = ({
                 name={name}
                 type="number"
                 value={value}
+                placeholder="0"
                 onBlur={onBlur}
                 onChange={onChange}
                 adornmentText={t('labels.max')}

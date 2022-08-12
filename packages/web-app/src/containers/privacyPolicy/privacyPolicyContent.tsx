@@ -27,27 +27,34 @@ const PrivacyPolicyContent: React.FC<PrivacyPolicyContentProps> = ({
 
       <ButtonGroup>
         <ButtonText
-          label={t('privacyPolicy.cookieSettings')}
+          label={t('privacyPolicy.acceptAllCookies')}
+          mode="secondary"
+          bgWhite
           {...(isDesktop
-            ? {mode: 'secondary', size: 'small'}
-            : {mode: 'ghost', size: 'large', className: 'w-full'})}
-          onClick={props.onShowCookieSettings}
+            ? {size: 'small'}
+            : {size: 'large', className: 'w-full'})}
+          onClick={props.onAcceptAll}
         />
         <ButtonText
           label={t('privacyPolicy.rejectAllCookies')}
           mode="secondary"
+          bgWhite
           {...(isDesktop
-            ? {size: 'small', bgWhite: true}
+            ? {size: 'small'}
             : {size: 'large', className: 'w-full'})}
           onClick={props.onRejectAll}
         />
         <ButtonText
-          label={t('privacyPolicy.acceptAllCookies')}
-          mode="secondary"
+          label={t('privacyPolicy.cookieSettings')}
           {...(isDesktop
-            ? {size: 'small', bgWhite: true}
-            : {size: 'large', className: 'w-full'})}
-          onClick={props.onAcceptAll}
+            ? {mode: 'secondary', size: 'small'}
+            : {
+                mode: 'ghost',
+                bgWhite: true,
+                size: 'large',
+                className: 'w-full',
+              })}
+          onClick={props.onShowCookieSettings}
         />
       </ButtonGroup>
     </>
@@ -57,7 +64,7 @@ const PrivacyPolicyContent: React.FC<PrivacyPolicyContentProps> = ({
 export default PrivacyPolicyContent;
 
 const Text = styled.div.attrs({
-  className: 'flex-1 desktop:text-sm text-ui-600',
+  className: 'flex-1 ft-text-sm text-ui-600',
 })``;
 
 const ButtonGroup = styled.div.attrs({

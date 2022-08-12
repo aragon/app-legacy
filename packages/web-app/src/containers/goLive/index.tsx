@@ -5,7 +5,12 @@ import {useFormContext} from 'react-hook-form';
 // import {DAOFactory} from 'typechain';
 // TODO reintroduce this by adding back the postInstall script in packages.json
 // that executes the generate-abis-and-types command.
-import {Breadcrumb, ButtonText, IconChevronRight} from '@aragon/ui-components';
+import {
+  AlertCard,
+  Breadcrumb,
+  ButtonText,
+  IconChevronRight,
+} from '@aragon/ui-components';
 import {useNavigate} from 'react-router-dom';
 
 import Blockchain from './blockchain';
@@ -50,18 +55,24 @@ export const GoLiveHeader: React.FC = () => {
 };
 
 const GoLive: React.FC = () => {
+  const {t} = useTranslation();
+
   return (
     <Container>
       <Blockchain />
       <DaoMetadata />
       <Community />
       <Governance />
+      <AlertCard
+        title={t('createDAO.review.daoUpdates')}
+        helpText={t('createDAO.review.daoUpdatesHelpText')}
+      />
     </Container>
   );
 };
 
 export const GoLiveFooter: React.FC = () => {
-  const {watch} = useFormContext();
+  const {watch, setValue} = useFormContext();
   const {reviewCheck} = watch();
   const {t} = useTranslation();
   const {handlePublishDao} = useCreateDaoContext();
@@ -71,17 +82,28 @@ export const GoLiveFooter: React.FC = () => {
   const IsButtonDisabled = () =>
     !Object.values(reviewCheck).every(v => v === true);
 
-  const publishDao = () => (isConnected ? handlePublishDao() : open('wallet'));
+  const publishDao = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    isConnected ? handlePublishDao() : open('wallet');
+  };
+
+  const showInvalidFields = () => {
+    if (IsButtonDisabled()) {
+      setValue('reviewCheckError', true);
+    }
+  };
 
   return (
     <div className="flex justify-center pt-3">
-      <ButtonText
-        size="large"
-        iconRight={<IconChevronRight />}
-        label={t('createDAO.review.button')}
-        onClick={publishDao}
-        disabled={IsButtonDisabled()}
-      />
+      <div onClick={showInvalidFields}>
+        <ButtonText
+          size="large"
+          iconRight={<IconChevronRight />}
+          label={t('createDAO.review.button')}
+          onClick={publishDao}
+          disabled={IsButtonDisabled()}
+        />
+      </div>
     </div>
   );
 };
@@ -89,7 +111,7 @@ export const GoLiveFooter: React.FC = () => {
 export default GoLive;
 
 const Container = styled.div.attrs({
-  className: 'tablet:mx-auto tablet:w-3/4',
+  className: 'tablet:mx-auto tablet:w-3/4 space-y-5',
 })``;
 
 const ImageContainer = styled.img.attrs({

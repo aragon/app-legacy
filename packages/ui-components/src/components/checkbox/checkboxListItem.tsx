@@ -13,20 +13,22 @@ export const Icons = {
     active: <IconCheckboxSelected />,
     multi: <IconCheckboxMulti />,
     default: <IconCheckboxDefault />,
+    error: <IconCheckboxDefault />,
   },
   radio: {
     active: <IconRadioSelected />,
     multi: <IconRadioDefault />,
     default: <IconRadioDefault />,
+    error: <IconRadioDefault />,
   },
 };
 
 export type CheckboxListItemProps = {
   label: string;
   helptext?: string;
-  multiSelect?: boolean;
   disabled?: boolean;
-  state?: 'default' | 'active' | 'multi';
+  multiSelect?: boolean;
+  type?: 'default' | 'error' | 'active' | 'multi';
   onClick?: React.MouseEventHandler;
 };
 
@@ -35,19 +37,19 @@ export const CheckboxListItem: React.FC<CheckboxListItemProps> = ({
   helptext,
   multiSelect = false,
   disabled = false,
-  state = 'default',
+  type = 'default',
   onClick,
 }) => {
   return (
     <Container
       data-testid="checkboxListItem"
-      state={state}
+      type={type}
       disabled={disabled}
       {...(disabled ? {} : {onClick})}
     >
-      <HStack disabled={disabled} state={state}>
+      <HStack disabled={disabled} type={type}>
         <p className="font-bold">{label}</p>
-        {Icons[multiSelect ? 'multiSelect' : 'radio'][state]}
+        {Icons[multiSelect ? 'multiSelect' : 'radio'][type]}
       </HStack>
       {helptext && <Helptext>{helptext}</Helptext>}
     </Container>
@@ -56,27 +58,31 @@ export const CheckboxListItem: React.FC<CheckboxListItemProps> = ({
 
 type ContainerTypes = {
   disabled: boolean;
-  state: 'default' | 'active' | 'multi';
+  type: CheckboxListItemProps['type'];
 };
 
-const Container = styled.div.attrs(({disabled, state}: ContainerTypes) => ({
-  className: `w-full py-1.5 px-2 rounded-xl border-2 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 ${
+const Container = styled.div.attrs(({disabled, type}: ContainerTypes) => ({
+  className: `py-1.5 px-2 rounded-xl border-2 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 ${
     disabled
       ? 'bg-ui-100 border-ui-300'
       : `bg-ui-0 group hover:border-primary-500 cursor-pointer ${
-          state !== 'default' ? 'border-primary-500' : 'border-ui-100'
+          type === 'error'
+            ? 'border-critical-500'
+            : type !== 'default'
+            ? 'border-primary-500'
+            : 'border-ui-100'
         }`
   }`,
   tabIndex: disabled ? -1 : 0,
 }))<ContainerTypes>``;
 
-const HStack = styled.div.attrs(({disabled, state}: ContainerTypes) => ({
-  className: `flex justify-between items-center group-hover:text-primary-500 ${
+const HStack = styled.div.attrs(({disabled, type}: ContainerTypes) => ({
+  className: `flex justify-between items-center group-hover:text-primary-500 space-x-1.5 ${
     disabled
       ? 'text-ui-600'
-      : state !== 'default'
-      ? 'text-primary-500'
-      : 'text-ui-600'
+      : type === 'default' || type === 'error'
+      ? 'text-ui-600'
+      : 'text-primary-500'
   }`,
 }))<ContainerTypes>``;
 

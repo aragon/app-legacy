@@ -217,7 +217,7 @@ const SetupVotingForm: React.FC = () => {
           <CheckboxListItem
             label={t('newWithdraw.setupVoting.yesNoLabel.title')}
             helptext={t('newWithdraw.setupVoting.yesNoLabel.helptext')}
-            state="active"
+            type="active"
             multiSelect={false}
           />
           <AlertInline label={t('infos.newVotingTypes')} mode="neutral" />
