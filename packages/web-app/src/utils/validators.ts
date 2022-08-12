@@ -121,7 +121,6 @@ export function actionsAreValid(
           (actionFromList[index] as ActionWithdraw)?.amount?.toString() === ''
         );
       case 'mint_token':
-        console.log(actionFromList[index]);
         return (
           actionFromList[index] as ActionTokenMinting
         )?.inputs.mintTokensToWallets.some(wallet => wallet.address === '');
