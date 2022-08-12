@@ -5,7 +5,13 @@ import {BigNumber, providers as EthersProviders} from 'ethers';
 import {i18n} from '../../i18n.config';
 import {isERC20Token} from './tokens';
 import {ALPHA_NUMERIC_PATTERN} from './constants';
-import {ActionItem, ActionWithdraw, StringIndexed} from './types';
+import {
+  ActionItem,
+  Action,
+  StringIndexed,
+  ActionWithdraw,
+  ActionTokenMinting,
+} from './types';
 
 /**
  * Validate given token contract address
@@ -101,28 +107,31 @@ export const alphaNumericValidator = (
  * @returns Whether the screen is valid
  */
 export function actionsAreValid(
-  actionFromList: ActionWithdraw[],
+  actionFromList: Action[],
   actions: ActionItem[],
   errors: StringIndexed
 ) {
   let result = false;
-  function isActionValid(index: number) {
+  function isActionNotValid(index: number) {
+    if (errors.actions) return true;
     switch (actions[0]?.name) {
       case 'withdraw_assets':
         return (
-          actionFromList[index]?.to === '' ||
-          actionFromList[index]?.amount?.toString() === '' ||
-          errors.actions
+          (actionFromList[index] as ActionWithdraw)?.to === '' ||
+          (actionFromList[index] as ActionWithdraw)?.amount?.toString() === ''
         );
       case 'mint_token':
-        return false;
+        console.log(actionFromList[index]);
+        return (
+          actionFromList[index] as ActionTokenMinting
+        )?.inputs.mintTokensToWallets.some(wallet => wallet.address === '');
       default:
         return false;
     }
   }
 
   for (let i = 0; i < actionFromList?.length; i++) {
-    if (isActionValid(i)) {
+    if (isActionNotValid(i)) {
       result = false;
       break;
     } else {

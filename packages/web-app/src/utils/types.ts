@@ -188,7 +188,7 @@ export type ActionsTypes =
 
 export type ActionWithdraw = {
   amount: number;
-  name: string;
+  name: 'withdraw_assets';
   to: Address;
   tokenAddress: Address;
   tokenBalance: number;
@@ -198,6 +198,7 @@ export type ActionWithdraw = {
   tokenSymbol: string;
 };
 
+// TODO: merge these types
 export type ActionAddAddress = {
   inputs: {
     memberWallets: {
@@ -206,7 +207,16 @@ export type ActionAddAddress = {
   };
 };
 
-export type Action = ActionWithdraw | ActionAddAddress;
+export type ActionTokenMinting = {
+  inputs: {
+    mintTokensToWallets: {
+      address: Address;
+      amount: number;
+    }[];
+  };
+};
+
+export type Action = ActionWithdraw | ActionAddAddress | ActionTokenMinting;
 
 export type ParamType = {
   type: string;
