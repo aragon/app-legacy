@@ -104,7 +104,7 @@ const ActionBuilder: React.FC = () => {
   return (
     <>
       {actions?.map((action: ActionItem, index: number) => (
-        <Action key={index} name={action?.name} {...{index}} />
+        <Action key={index} name={action?.name} actionIndex={index} />
       ))}
 
       <TokenMenu
