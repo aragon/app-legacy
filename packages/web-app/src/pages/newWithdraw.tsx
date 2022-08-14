@@ -1,17 +1,17 @@
-import React, {useState} from 'react';
 import {Address} from '@aragon/ui-components/dist/utils/addresses';
-import {useTranslation} from 'react-i18next';
 import {withTransaction} from '@elastic/apm-rum-react';
-import {useForm, FormProvider, useWatch, useFormState} from 'react-hook-form';
+import React, {useState} from 'react';
+import {FormProvider, useForm, useFormState, useWatch} from 'react-hook-form';
+import {useTranslation} from 'react-i18next';
 
-import TokenMenu from 'containers/tokenMenu';
-import {Finance} from 'utils/paths';
-import {formatUnits} from 'utils/library';
+import {FullScreenStepper, Step} from 'components/fullScreenStepper';
 import ReviewProposal from 'containers/reviewProposal';
-import {BaseTokenInfo} from 'utils/types';
+import TokenMenu from 'containers/tokenMenu';
 import {useDaoBalances} from 'hooks/useDaoBalances';
 import {fetchTokenPrice} from 'services/prices';
-import {FullScreenStepper, Step} from 'components/fullScreenStepper';
+import {formatUnits} from 'utils/library';
+import {Finance} from 'utils/paths';
+import {BaseTokenInfo} from 'utils/types';
 
 import ConfigureWithdrawForm, {
   isValid as configureWithdrawScreenIsValid,
@@ -21,15 +21,15 @@ import DefineProposal, {
   isValid as defineProposalIsValid,
 } from 'containers/defineProposal';
 
+import {Loading} from 'components/temporary';
 import SetupVotingForm, {
   isValid as setupVotingIsValid,
 } from 'containers/setupVotingForm';
-import {generatePath} from 'react-router-dom';
+import {ActionsProvider} from 'context/actions';
+import {CreateProposalProvider} from 'context/createProposal';
 import {useNetwork} from 'context/network';
 import {useDaoParam} from 'hooks/useDaoParam';
-import {Loading} from 'components/temporary';
-import {CreateProposalProvider} from 'context/createProposal';
-import {ActionsProvider} from 'context/actions';
+import {generatePath} from 'react-router-dom';
 
 export type TokenFormData = {
   tokenName: string;
@@ -147,7 +147,7 @@ const NewWithdraw: React.FC = () => {
   return (
     <>
       <FormProvider {...formMethods}>
-        <ActionsProvider>
+        <ActionsProvider daoId={dao}>
           <CreateProposalProvider
             showTxModal={showTxModal}
             setShowTxModal={setShowTxModal}
@@ -168,7 +168,7 @@ const NewWithdraw: React.FC = () => {
                   )
                 }
               >
-                <ConfigureWithdrawForm />
+                <ConfigureWithdrawForm actionIndex={0} />
               </Step>
               <Step
                 wizardTitle={t('newWithdraw.setupVoting.title')}

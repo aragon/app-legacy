@@ -1,27 +1,26 @@
 import {
-  ButtonText,
   ButtonIcon,
+  ButtonText,
   Dropdown,
   IconMenuVertical,
   Label,
   ListItemAction,
   StateEmpty,
 } from '@aragon/ui-components';
-import styled from 'styled-components';
-import {useTranslation} from 'react-i18next';
 import React, {useEffect} from 'react';
 import {useFieldArray, useFormContext, useWatch} from 'react-hook-form';
+import {useTranslation} from 'react-i18next';
+import styled from 'styled-components';
 
-import {AddressRow} from './addressRow';
-import AccordionSummary from './accordionSummary';
 import {AccordionMethod} from 'components/accordionMethod';
 import {useActionsContext} from 'context/actions';
+import {ActionIndex} from 'utils/types';
+import AccordionSummary from './accordionSummary';
+import {AddressRow} from './addressRow';
 
-type Props = {
-  index: number;
-};
+type AddAddressesProps = ActionIndex;
 
-const AddAddresses: React.FC<Props> = ({index: actionIndex}) => {
+const AddAddresses: React.FC<AddAddressesProps> = ({actionIndex}) => {
   const {t} = useTranslation();
   const {removeAction} = useActionsContext();
 

@@ -1,4 +1,5 @@
 import {useTranslation} from 'react-i18next';
+
 import {ActionParameter, HookData} from 'utils/types';
 import {useDaoMetadata} from './useDaoMetadata';
 
@@ -13,6 +14,7 @@ export function useDaoActions(dao: string): HookData<ActionParameter[]> {
       type: 'withdraw_assets',
       title: t('AddActionModal.withdrawAssets'),
       subtitle: t('AddActionModal.withdrawAssetsSubtitle'),
+      isReuseable: true,
     },
     {
       type: 'modify_settings',
@@ -24,6 +26,7 @@ export function useDaoActions(dao: string): HookData<ActionParameter[]> {
       type: 'external_contract',
       title: t('AddActionModal.externalContract'),
       subtitle: t('AddActionModal.externalContractSubtitle'),
+      isReuseable: true,
     },
   ];
 
@@ -47,6 +50,7 @@ export function useDaoActions(dao: string): HookData<ActionParameter[]> {
       subtitle: t('AddActionModal.mintTokensSubtitle'),
     },
   ]);
+
   return {
     data: whitelist ? whitelistActions : erc20Actions,
     isLoading,

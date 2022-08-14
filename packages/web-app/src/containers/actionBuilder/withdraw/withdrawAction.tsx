@@ -1,21 +1,19 @@
-import React from 'react';
 import {ListItemAction} from '@aragon/ui-components';
-import {useTranslation} from 'react-i18next';
+import React from 'react';
 import {useFormContext} from 'react-hook-form';
+import {useTranslation} from 'react-i18next';
 
-import {FormItem} from '../addAddresses';
 import {AccordionMethod} from 'components/accordionMethod';
-import {useActionsContext} from 'context/actions';
 import ConfigureWithdrawForm from 'containers/configureWithdraw';
+import {useActionsContext} from 'context/actions';
+import {ActionIndex} from 'utils/types';
+import {FormItem} from '../addAddresses';
 
-type Props = {
-  index: number;
-};
+type WithdrawActionProps = ActionIndex;
 
-const WithdrawAction: React.FC<Props> = ({index: actionIndex}) => {
+const WithdrawAction: React.FC<WithdrawActionProps> = ({actionIndex}) => {
   const {t} = useTranslation();
-  const {removeAction, duplicateAction, setActionsCounter} =
-    useActionsContext();
+  const {removeAction, duplicateAction} = useActionsContext();
   const {setValue, clearErrors, resetField} = useFormContext();
 
   const resetWithdrawFields = () => {
@@ -60,10 +58,7 @@ const WithdrawAction: React.FC<Props> = ({index: actionIndex}) => {
       methodDescription={t('AddActionModal.withdrawAssetsActionSubtitle')}
     >
       <FormItem className="py-3 space-y-3 rounded-b-xl">
-        <ConfigureWithdrawForm
-          index={actionIndex}
-          setActionsCounter={setActionsCounter}
-        />
+        <ConfigureWithdrawForm actionIndex={actionIndex} />
       </FormItem>
     </AccordionMethod>
   );

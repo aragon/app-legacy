@@ -18,9 +18,9 @@ import {handleClipboardActions} from 'utils/library';
 import useScreen from 'hooks/useScreen';
 import {validateAddress} from 'utils/validators';
 import {WalletField} from 'components/addWallets/row';
+import {ActionIndex} from 'utils/types';
 
-type IndexProps = {
-  actionIndex: number;
+type IndexProps = ActionIndex & {
   fieldIndex: number;
 };
 
@@ -117,10 +117,11 @@ const TokenField: React.FC<IndexProps> = ({actionIndex, fieldIndex}) => {
   );
 };
 
-const DropdownMenu: React.FC<
-  Omit<AddressAndTokenRowProps, 'newTokenSupply'>
-> = ({fieldIndex, onDelete}) => {
+type DropdownProps = Omit<AddressAndTokenRowProps, 'newTokenSupply'>;
+
+const DropdownMenu: React.FC<DropdownProps> = ({fieldIndex, onDelete}) => {
   const {t} = useTranslation();
+
   return (
     <Dropdown
       align="start"

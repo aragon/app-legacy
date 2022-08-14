@@ -40,7 +40,7 @@ const NewProposal: React.FC = () => {
         showTxModal={showTxModal}
         setShowTxModal={setShowTxModal}
       >
-        <ActionsProvider>
+        <ActionsProvider daoId={dao}>
           <ProposalStepper
             enableTxModal={enableTxModal}
             errors={errors}

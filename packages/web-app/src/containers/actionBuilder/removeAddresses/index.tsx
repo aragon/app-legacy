@@ -8,26 +8,25 @@ import {
   StateEmpty,
 } from '@aragon/ui-components';
 import React from 'react';
+import {useFieldArray, useFormContext, useWatch} from 'react-hook-form';
 import {useTranslation} from 'react-i18next';
-import {useFormContext, useWatch, useFieldArray} from 'react-hook-form';
 
-import {FormItem} from '../addAddresses';
-import {AddressRow} from '../addAddresses/addressRow';
-import {useDaoParam} from 'hooks/useDaoParam';
-import AccordionSummary from '../addAddresses/accordionSummary';
-import {DaoWhitelist, useDaoMembers} from 'hooks/useDaoMembers';
 import {AccordionMethod} from 'components/accordionMethod';
 import ManageWalletsModal from 'containers/manageWalletsModal';
 import {useActionsContext} from 'context/actions';
 import {useGlobalModalContext} from 'context/globalModals';
+import {DaoWhitelist, useDaoMembers} from 'hooks/useDaoMembers';
+import {useDaoParam} from 'hooks/useDaoParam';
+import {ActionIndex} from 'utils/types';
+import {FormItem} from '../addAddresses';
+import AccordionSummary from '../addAddresses/accordionSummary';
+import {AddressRow} from '../addAddresses/addressRow';
 
-type Props = {
-  index: number;
-};
+type RemoveAddressesProps = ActionIndex;
 
 // README: when uploading CSV be sure to check for duplicates
 
-const RemoveAddresses: React.FC<Props> = ({index: actionIndex}) => {
+const RemoveAddresses: React.FC<RemoveAddressesProps> = ({actionIndex}) => {
   const {t} = useTranslation();
   const {open} = useGlobalModalContext();
   const {removeAction} = useActionsContext();

@@ -1,27 +1,27 @@
-import {useTranslation} from 'react-i18next';
+import {AlertInline} from '@aragon/ui-components';
 import {withTransaction} from '@elastic/apm-rum-react';
 import React from 'react';
-import {useForm, FormProvider, useFormState} from 'react-hook-form';
+import {FormProvider, useForm, useFormState} from 'react-hook-form';
+import {useTranslation} from 'react-i18next';
 import {generatePath} from 'react-router-dom';
 
-import {Community} from 'utils/paths';
-import ReviewProposal from 'containers/reviewProposal';
-import {ActionsProvider} from 'context/actions';
 import {FullScreenStepper, Step} from 'components/fullScreenStepper';
-import DefineProposal, {
-  isValid as defineProposalIsValid,
-} from 'containers/defineProposal';
-import SetupVotingForm, {
-  isValid as setupVotingIsValid,
-} from 'containers/setupVotingForm';
-import {useNetwork} from 'context/network';
-import {useDaoParam} from 'hooks/useDaoParam';
 import {Loading} from 'components/temporary';
 import {
   MintTokenDescription,
   MintTokenForm,
 } from 'containers/actionBuilder/mintTokens';
-import {AlertInline} from '@aragon/ui-components';
+import DefineProposal, {
+  isValid as defineProposalIsValid,
+} from 'containers/defineProposal';
+import ReviewProposal from 'containers/reviewProposal';
+import SetupVotingForm, {
+  isValid as setupVotingIsValid,
+} from 'containers/setupVotingForm';
+import {ActionsProvider} from 'context/actions';
+import {useNetwork} from 'context/network';
+import {useDaoParam} from 'hooks/useDaoParam';
+import {Community} from 'utils/paths';
 
 const MintToken: React.FC = () => {
   const {data: dao, loading} = useDaoParam();
@@ -46,7 +46,7 @@ const MintToken: React.FC = () => {
 
   return (
     <FormProvider {...formMethods}>
-      <ActionsProvider>
+      <ActionsProvider daoId={dao}>
         <FullScreenStepper
           wizardProcessName={t('labels.addMember')}
           navLabel={t('labels.addMember')}

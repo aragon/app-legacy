@@ -1,4 +1,5 @@
 import {Address} from '@aragon/ui-components/src/utils/addresses';
+
 import {TimeFilter, TransferTypes} from './constants';
 
 /*************************************************
@@ -156,27 +157,36 @@ type ExecutionData = {
   amount: number;
 };
 
-/* GENERIC HOOK RETURN TYPE ================================================= */
+/* ACTION TYPES ============================================================= */
 
-/** Return type for data hooks */
-export type HookData<T> = {
-  data: T;
-  isLoading: boolean;
-  error?: Error;
-};
-
-export type Nullable<T> = T | null;
-
-export type SupportedChainId = 1 | 4;
-
-export type ActionParameter = {
-  type: ActionsTypes;
-  title: string;
-  subtitle: string;
+export type ActionIndex = {
+  actionIndex: number;
 };
 
 /**
- * Allowed Actions for each dao
+ * Metadata for actions. This data can not really be fetched and is therefore
+ * declared locally.
+ */
+export type ActionParameter = {
+  type: ActionsTypes;
+  /**
+   * Name displayed in the UI
+   */
+  title: string;
+  /**
+   * Description displayed in the UI
+   */
+  subtitle: string;
+  /**
+   * Whether an action can be used several times in a proposal. Currently
+   * actions are either limited to 1 or not limited at all. This might need to
+   * be changed to a number if the rules for reuseability become more complex.
+   */
+  isReuseable?: boolean;
+};
+
+/**
+ * All available types of action for DAOs
  */
 export type ActionsTypes =
   | 'add_address'
@@ -216,6 +226,9 @@ export type ActionTokenMinting = {
   };
 };
 
+// TODO: Consider making this a generic type that take other types of the form
+// like ActionAddAddres (or more generically, ActionItem...?) instead taking the
+// union of those subtypes. [VR 11-08-2022]
 export type Action = ActionWithdraw | ActionAddAddress | ActionTokenMinting;
 
 export type ParamType = {
@@ -241,11 +254,22 @@ export type TransactionItem = {
   };
 };
 
+export type Dao = {
+  address: string;
+};
+
+/* UTILITY TYPES ============================================================ */
+
+/** Return type for data hooks */
+export type HookData<T> = {
+  data: T;
+  isLoading: boolean;
+  error?: Error;
+};
+
+export type Nullable<T> = T | null;
+
 export type StringIndexed = {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   [key: string]: any;
-};
-
-export type Dao = {
-  address: string;
 };

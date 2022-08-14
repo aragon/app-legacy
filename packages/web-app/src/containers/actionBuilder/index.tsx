@@ -1,19 +1,24 @@
 import React from 'react';
+import {useFormContext} from 'react-hook-form';
 
-import {useActionsContext} from 'context/actions';
-import WithdrawAction from './withdraw/withdrawAction';
-import {ActionsTypes} from 'utils/types';
+import {TemporarySection} from 'components/temporary';
 import TokenMenu from 'containers/tokenMenu';
-import {BaseTokenInfo, ActionItem} from 'utils/types';
+import {useActionsContext} from 'context/actions';
+import {useNetwork} from 'context/network';
+import {useDaoBalances} from 'hooks/useDaoBalances';
+import {useDaoParam} from 'hooks/useDaoParam';
 import {fetchTokenPrice} from 'services/prices';
 import {formatUnits} from 'utils/library';
-import {useFormContext} from 'react-hook-form';
-import {useDaoBalances} from 'hooks/useDaoBalances';
-import {useNetwork} from 'context/network';
-import {useDaoParam} from 'hooks/useDaoParam';
-import MintTokens from './mintTokens';
+import {
+  ActionIndex,
+  ActionItem,
+  ActionsTypes,
+  BaseTokenInfo,
+} from 'utils/types';
 import AddAddresses from './addAddresses';
+import MintTokens from './mintTokens';
 import RemoveAddresses from './removeAddresses';
+import WithdrawAction from './withdraw/withdrawAction';
 
 /**
  * This Component is responsible for generating all actions that append to pipeline context (actions)
@@ -24,23 +29,26 @@ import RemoveAddresses from './removeAddresses';
 
 type ActionsComponentProps = {
   name: ActionsTypes;
-  index: number;
-};
+} & ActionIndex;
 
-const Action: React.FC<ActionsComponentProps> = ({name, index}) => {
+const Action: React.FC<ActionsComponentProps> = ({name, actionIndex}) => {
   switch (name) {
     case 'withdraw_assets':
-      return <WithdrawAction {...{index}} />;
+      return <WithdrawAction {...{actionIndex}} />;
     case 'mint_token':
-      return <MintTokens {...{index}} />;
+      return <MintTokens {...{actionIndex}} />;
     case 'external_contract':
-      return null;
+      return (
+        <TemporarySection purpose="It serves as a placeholder for not yet implemented external contract interaction component" />
+      );
     case 'modify_settings':
-      return null;
+      return (
+        <TemporarySection purpose="It serves as a placeholder for not yet implemented external contract interaction component" />
+      );
     case 'add_address':
-      return <AddAddresses {...{index}} />;
+      return <AddAddresses {...{actionIndex}} />;
     case 'remove_address':
-      return <RemoveAddresses {...{index}} />;
+      return <RemoveAddresses {...{actionIndex}} />;
     default:
       throw Error('Action not found');
   }
@@ -49,7 +57,7 @@ const Action: React.FC<ActionsComponentProps> = ({name, index}) => {
 const ActionBuilder: React.FC = () => {
   const {data: daoAddress} = useDaoParam();
   const {network} = useNetwork();
-  const {actionsCounter: index, actions} = useActionsContext();
+  const {selectedActionIndex: index, actions} = useActionsContext();
   const {data: tokens} = useDaoBalances(daoAddress);
   const {setValue, resetField, clearErrors} = useFormContext();
 
@@ -91,8 +99,9 @@ const ActionBuilder: React.FC = () => {
   return (
     <>
       {actions?.map((action: ActionItem, index: number) => (
-        <Action key={index} name={action?.name} {...{index}} />
+        <Action key={index} name={action?.name} actionIndex={index} />
       ))}
+
       <TokenMenu
         isWallet={false}
         onTokenSelect={handleTokenSelect}

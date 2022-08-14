@@ -14,7 +14,7 @@ type AddActionMenuProps = {
 
 const AddActionMenu: React.FC<AddActionMenuProps> = ({actions}) => {
   const {isAddActionOpen, close} = useGlobalModalContext();
-  const {addAction} = useActionsContext();
+  const {actions: usedActions, addAction} = useActionsContext();
   const {t} = useTranslation();
 
   return (
@@ -29,6 +29,11 @@ const AddActionMenu: React.FC<AddActionMenuProps> = ({actions}) => {
             key={a.type}
             title={a.title}
             subtitle={a.subtitle}
+            mode={
+              !a.isReuseable && usedActions.some(ua => ua.name === a.type)
+                ? 'disabled'
+                : 'default'
+            }
             iconRight={<IconChevronRight />}
             onClick={() => {
               addAction({
