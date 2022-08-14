@@ -39,7 +39,9 @@ const MintTokens: React.FC<Props> = ({index}) => {
   const {setValue} = useFormContext();
 
   const handleReset = () => {
-    setValue(`actions.${index}.inputs.mintTokensToWallets`, []);
+    setValue(`actions.${index}.inputs.mintTokensToWallets`, [
+      {address: '', amount: '0'},
+    ]);
   };
 
   const methodActions = [

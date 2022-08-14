@@ -56,6 +56,7 @@ const AddressField: React.FC<IndexProps> = ({actionIndex, fieldIndex}) => {
       defaultValue=""
       name={`actions.${actionIndex}.inputs.mintTokensToWallets.${fieldIndex}.address`}
       rules={{
+        required: t('errors.required.walletAddress') as string,
         validate: value => addressValidator(value, actionIndex),
       }}
       render={({
@@ -99,11 +100,11 @@ const TokenField: React.FC<IndexProps> = ({actionIndex, fieldIndex}) => {
             name={name}
             value={value}
             onBlur={onBlur}
-            onChange={() => {
+            onChange={e => {
               trigger(
                 `actions.${actionIndex}.inputs.mintTokensToWallets.${fieldIndex}.address`
               );
-              onChange();
+              onChange(e);
             }}
             placeholder="0"
             min={0}

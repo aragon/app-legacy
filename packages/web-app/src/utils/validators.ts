@@ -107,7 +107,7 @@ export const alphaNumericValidator = (
  * @returns Whether the screen is valid
  */
 export function actionsAreValid(
-  actionFromList: Action[],
+  actionFormList: Action[],
   actions: ActionItem[],
   errors: StringIndexed
 ) {
@@ -117,19 +117,19 @@ export function actionsAreValid(
     switch (actions[0]?.name) {
       case 'withdraw_assets':
         return (
-          (actionFromList[index] as ActionWithdraw)?.to === '' ||
-          (actionFromList[index] as ActionWithdraw)?.amount?.toString() === ''
+          (actionFormList[index] as ActionWithdraw)?.to === '' ||
+          (actionFormList[index] as ActionWithdraw)?.amount?.toString() === ''
         );
       case 'mint_token':
         return (
-          actionFromList[index] as ActionTokenMinting
-        )?.inputs.mintTokensToWallets.some(wallet => wallet.address === '');
+          actionFormList[index] as ActionTokenMinting
+        )?.inputs?.mintTokensToWallets?.some(wallet => wallet.address === '');
       default:
         return false;
     }
   }
 
-  for (let i = 0; i < actionFromList?.length; i++) {
+  for (let i = 0; i < actionFormList?.length; i++) {
     if (isActionNotValid(i)) {
       result = false;
       break;
@@ -138,6 +138,6 @@ export function actionsAreValid(
     }
   }
   if (actions?.length === 0) return true;
-  if (actions.length !== actionFromList.length) return false;
+  if (actions.length !== actionFormList.length) return false;
   return result;
 }
