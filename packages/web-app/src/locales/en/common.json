@@ -225,7 +225,6 @@
   },
   "errors": {
     "amountWithInvalidToken": "Cannot validate amount with invalid token address",
-    "invalidZeroAmount": "Amount should be more that zero",
     "defaultAmountValidationError": "Error validating amount",
     "durationTooShort": "Duration must be at least 5 days",
     "endPast": "End date must be more then 5 days from the start",

@@ -29,6 +29,11 @@ const AddActionMenu: React.FC<AddActionMenuProps> = ({actions}) => {
             key={a.type}
             title={a.title}
             subtitle={a.subtitle}
+            mode={
+              !a.isReuseable && usedActions.some(ua => ua.name === a.type)
+                ? 'disabled'
+                : 'default'
+            }
             iconRight={<IconChevronRight />}
             onClick={() => {
               addAction({

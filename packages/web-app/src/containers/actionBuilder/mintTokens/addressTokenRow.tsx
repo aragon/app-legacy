@@ -91,17 +91,11 @@ const TokenField: React.FC<IndexProps> = ({actionIndex, fieldIndex}) => {
   const {trigger} = useFormContext();
   const {t} = useTranslation();
 
-  const amountValidator = (value: string) => {
-    if (Number(value) <= 0) return t('errors.invalidZeroAmount') as string;
-    return true;
-  };
-
   return (
     <Controller
       name={`actions.${actionIndex}.inputs.mintTokensToWallets.${fieldIndex}.amount`}
       rules={{
         required: t('errors.required.amount') as string,
-        validate: amountValidator,
       }}
       render={({
         field: {name, value, onBlur, onChange},
