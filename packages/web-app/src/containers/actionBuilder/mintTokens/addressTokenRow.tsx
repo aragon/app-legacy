@@ -41,8 +41,9 @@ const AddressField: React.FC<IndexProps> = ({actionIndex, fieldIndex}) => {
     if (walletFieldArray) {
       await walletFieldArray.forEach(
         (wallet: WalletField, walletIndex: number) => {
-          if (address === wallet.address && index !== walletIndex)
+          if (address === wallet.address && index !== walletIndex) {
             validationResult = t('errors.duplicateAddress') as string;
+          }
           if (Number(wallet.amount) > 0 && wallet.address === '')
             validationResult = t('errors.required.walletAddress') as string;
         }
@@ -57,7 +58,7 @@ const AddressField: React.FC<IndexProps> = ({actionIndex, fieldIndex}) => {
       name={`actions.${actionIndex}.inputs.mintTokensToWallets.${fieldIndex}.address`}
       rules={{
         required: t('errors.required.walletAddress') as string,
-        validate: value => addressValidator(value, actionIndex),
+        validate: value => addressValidator(value, fieldIndex),
       }}
       render={({
         field: {name, value, onBlur, onChange},
@@ -88,9 +89,20 @@ const AddressField: React.FC<IndexProps> = ({actionIndex, fieldIndex}) => {
 
 const TokenField: React.FC<IndexProps> = ({actionIndex, fieldIndex}) => {
   const {trigger} = useFormContext();
+  const {t} = useTranslation();
+
+  const amountValidator = (value: string) => {
+    if (Number(value) <= 0) return t('errors.invalidZeroAmount') as string;
+    return true;
+  };
+
   return (
     <Controller
       name={`actions.${actionIndex}.inputs.mintTokensToWallets.${fieldIndex}.amount`}
+      rules={{
+        required: t('errors.required.amount') as string,
+        validate: amountValidator,
+      }}
       render={({
         field: {name, value, onBlur, onChange},
         fieldState: {error},
@@ -111,6 +123,11 @@ const TokenField: React.FC<IndexProps> = ({actionIndex, fieldIndex}) => {
             includeDecimal
             mode={error?.message ? 'critical' : 'default'}
           />
+          {error?.message && (
+            <ErrorContainer>
+              <AlertInline label={error.message} mode="critical" />
+            </ErrorContainer>
+          )}
         </div>
       )}
     />

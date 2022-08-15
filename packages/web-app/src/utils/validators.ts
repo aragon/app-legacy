@@ -114,7 +114,7 @@ export function actionsAreValid(
   let result = false;
   function isActionNotValid(index: number) {
     if (errors.actions) return true;
-    switch (actions[0]?.name) {
+    switch (actions[index]?.name) {
       case 'withdraw_assets':
         return (
           (actionFormList[index] as ActionWithdraw)?.to === '' ||

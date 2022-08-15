@@ -17,6 +17,8 @@ const AddActionMenu: React.FC<AddActionMenuProps> = ({actions}) => {
   const {actions: usedActions, addAction} = useActionsContext();
   const {t} = useTranslation();
 
+  console.log('usedActions', usedActions, actions);
+
   return (
     <ModalBottomSheetSwitcher
       isOpen={isAddActionOpen}
@@ -29,11 +31,6 @@ const AddActionMenu: React.FC<AddActionMenuProps> = ({actions}) => {
             key={a.type}
             title={a.title}
             subtitle={a.subtitle}
-            mode={
-              !a.isReuseable && usedActions.some(ua => ua.name === a.type)
-                ? 'disabled'
-                : 'default'
-            }
             iconRight={<IconChevronRight />}
             onClick={() => {
               addAction({
