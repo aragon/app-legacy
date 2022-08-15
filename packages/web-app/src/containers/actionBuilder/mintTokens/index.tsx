@@ -41,7 +41,7 @@ const MintTokens: React.FC<MintTokensProps> = ({actionIndex}) => {
     clearErrors(`actions.${actionIndex}`);
     resetField(`actions.${actionIndex}`);
     setValue(`actions.${actionIndex}.inputs.mintTokensToWallets`, [
-      {address: '', amount: '0'},
+      {address: '', amount: ''},
     ]);
   };
 
