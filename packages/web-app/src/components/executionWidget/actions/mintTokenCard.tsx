@@ -1,14 +1,25 @@
 import {IconLinkExternal, Link, ListItemAddress} from '@aragon/ui-components';
 import {AccordionMethod} from 'components/accordionMethod';
+import {MintTokenDescription} from 'containers/actionBuilder/mintTokens';
+import {useNetwork} from 'context/network';
+import {useDaoMembers} from 'hooks/useDaoMembers';
+import {useDaoParam} from 'hooks/useDaoParam';
 import React from 'react';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
+import {CHAIN_METADATA} from 'utils/constants';
 import {ActionMintToken} from 'utils/types';
 
 export const MintTokenCard: React.FC<{
   action: ActionMintToken;
 }> = ({action}) => {
   const {t} = useTranslation();
+  const {network} = useNetwork();
+  const {data: daoId} = useDaoParam();
+  const {
+    data: {token},
+  } = useDaoMembers(daoId);
+
   const {newTokens, newHoldersCount, tokenSupply, daoTokenSymbol} =
     action.summary;
 
@@ -18,6 +29,7 @@ export const MintTokenCard: React.FC<{
       methodName={t('labels.mintTokens')}
       smartContractName={t('labels.aragonCore')}
       verified
+      methodDescription={<MintTokenDescription />}
       additionalInfo={t('newProposal.mintTokens.additionalInfo')}
     >
       <Container>
@@ -35,6 +47,12 @@ export const MintTokenCard: React.FC<{
                 key={index}
                 label={wallet.address}
                 src={wallet.address}
+                onClick={() =>
+                  window.open(
+                    `${CHAIN_METADATA[network].explorer}/address/${wallet.address}`,
+                    '_blank'
+                  )
+                }
                 tokenInfo={{
                   amount,
                   symbol: daoTokenSymbol,
@@ -70,6 +88,7 @@ export const MintTokenCard: React.FC<{
           {/* TODO add total amount of token holders here. */}
           <Link
             label={t('labels.seeCommunity')}
+            href={`${CHAIN_METADATA[network].explorer}/token/tokenholderchart/${token?.id}`}
             iconRight={<IconLinkExternal />}
           />
         </SummaryContainer>
