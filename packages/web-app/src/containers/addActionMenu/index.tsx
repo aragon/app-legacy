@@ -17,8 +17,6 @@ const AddActionMenu: React.FC<AddActionMenuProps> = ({actions}) => {
   const {actions: usedActions, addAction} = useActionsContext();
   const {t} = useTranslation();
 
-  console.log('usedActions', usedActions, actions);
-
   return (
     <ModalBottomSheetSwitcher
       isOpen={isAddActionOpen}
