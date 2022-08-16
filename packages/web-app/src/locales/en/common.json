@@ -563,6 +563,9 @@
     "cancel": "Cancel",
     "remainingTime": "{{time}} remaining",
     "voteNow": "Vote now",
+    "voted": "Voted",
+    "voteUnavailable": "Vote unavailable",
+    "voteConcluded": "Vote concluded",
     "notStartedYet": "Not started yet",
     "voteEnded": "Voting ended",
     "emptyState": {

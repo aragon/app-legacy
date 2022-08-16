@@ -43,6 +43,7 @@ export type VotingTerminalProps = {
   votingInProcess?: boolean;
   onVoteClicked?: React.MouseEventHandler<HTMLButtonElement>;
   onCancelClicked?: React.MouseEventHandler<HTMLButtonElement>;
+  voteButtonLabel?: string;
 };
 
 export const VotingTerminal: React.FC<VotingTerminalProps> = ({
@@ -61,6 +62,7 @@ export const VotingTerminal: React.FC<VotingTerminalProps> = ({
   onVoteClicked,
   votingInProcess,
   onCancelClicked,
+  voteButtonLabel,
 }) => {
   const [query, setQuery] = useState('');
   const [buttonGroupState, setButtonGroupState] = useState('info');
@@ -240,7 +242,7 @@ export const VotingTerminal: React.FC<VotingTerminalProps> = ({
       ) : (
         <VoteContainer>
           <ButtonText
-            label={t('votingTerminal.voteNow')}
+            label={voteButtonLabel || t('votingTerminal.voteUnavailable')}
             size="large"
             onClick={onVoteClicked}
             className="w-full tablet:w-max"

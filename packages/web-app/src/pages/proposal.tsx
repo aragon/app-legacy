@@ -23,39 +23,51 @@ import ResourceList from 'components/resourceList';
 import {Loading} from 'components/temporary';
 import {StyledEditorContent} from 'containers/reviewProposal';
 import {VotingTerminal} from 'containers/votingTerminal';
+import {useGlobalModalContext} from 'context/globalModals';
 import {useNetwork} from 'context/network';
 import {useCache} from 'hooks/useCache';
 import {useDaoParam} from 'hooks/useDaoParam';
 import {DisplayedVoter, useDaoProposal} from 'hooks/useDaoProposal';
+import {useIsDaoMember} from 'hooks/useIsDaoMember';
 import {useMappedBreadcrumbs} from 'hooks/useMappedBreadcrumbs';
 import useScreen from 'hooks/useScreen';
 import {useWallet} from 'hooks/useWallet';
 import {CHAIN_METADATA} from 'utils/constants';
 import {NotFound} from 'utils/paths';
-import {useGlobalModalContext} from 'context/globalModals';
 
 const Proposal: React.FC = () => {
   const {t} = useTranslation();
   const {id} = useParams();
-  const {open} = useGlobalModalContext();
   const navigate = useNavigate();
   const {network} = useNetwork();
   const {set, get} = useCache();
   const {isDesktop} = useScreen();
+  const {open, close} = useGlobalModalContext();
   const {data: daoId} = useDaoParam();
   const {breadcrumbs, tag} = useMappedBreadcrumbs();
 
-  const shouldCheckNetwork = useRef(false);
-  const {address, isOnWrongNetwork, methods} = useWallet();
+  const {address, isConnected, isOnWrongNetwork, methods} = useWallet();
+  const [votingInProcess, setVotingInProcess] = useState(false);
+  const {data: isMember, isLoading: isDaoMemberLoading} = useIsDaoMember(
+    daoId,
+    address!
+  );
+
+  // Note: these two refs being used to hold "memories" of previous "state"
+  // across renders in order to automate the following states:
+  // loggedOut -> login modal => switch network modal -> vote options selection
+  // ref for holding value of whether user was previously not logged in
+  const wasNotLoggedIn = useRef(false);
+
+  // ref for holding value of whether user was previously logged in but
+  // on the wrong network
+  const wasOnWrongNetwork = useRef(false);
 
   if (!id) navigate(NotFound);
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [metadata, setMetadata] = useState<Record<string, any> | undefined>();
   const [expandedProposal, setExpandedProposal] = useState(false);
-
-  // voting
-  const [votingInProcess, setVotingInProcess] = useState(false);
 
   const {
     data: {
@@ -65,7 +77,7 @@ const Proposal: React.FC = () => {
       proposalTags,
       proposalContent,
     },
-    isLoading,
+    isLoading: proposalIsLoading,
     error,
   } = useDaoProposal(id);
 
@@ -104,55 +116,129 @@ const Proposal: React.FC = () => {
       set('proposalStatus', mappedProposal.status);
   }, [get, mappedProposal, set]);
 
+  // handle automatic network switch
   useEffect(() => {
-    if (shouldCheckNetwork.current && isOnWrongNetwork) {
-      open('network');
-      shouldCheckNetwork.current = false;
-    }
-  }, [isOnWrongNetwork, open]);
+    // whenever user is not logged in or is on the wrong network,
+    // collapse options.
+    if (isOnWrongNetwork || !isConnected) setVotingInProcess(false);
 
-  const voteNowDisabled = useMemo(() => {
-    // logged in && not a member
-    // if (address && !isMember) return true;
+    // if user just transitioned from not logged in to logged in state
+    if (wasNotLoggedIn.current && isConnected) {
+      // reset reference
+      wasNotLoggedIn.current = false;
 
-    // member & already voted
-    if (
-      //(isMember &&
-      mappedProposal?.voters &&
-      mappedProposal.voters.some(
-        (voter: DisplayedVoter) => voter.wallet === address
-      )
-    )
-      return true;
+      // update network reference; not logged is synonymous to being
+      // on wrong network
+      wasOnWrongNetwork.current = true;
 
-    return false;
-  }, [address, mappedProposal?.voters]);
-
-  /*************************************************
-   *               Callbacks & Handlers            *
-   *************************************************/
-  const handleCancelClicked = () => {
-    setVotingInProcess(false);
-  };
-
-  const handleVoteClicked = async () => {
-    // if not logged in, request login
-    if (!address) {
-      methods.selectWallet();
-      shouldCheckNetwork.current = true;
-      return;
+      // currently on wrong network, automatically ask for switch
+      if (isOnWrongNetwork) {
+        open('network');
+      } else setVotingInProcess(true);
     }
 
-    // show wrong network modal automatically TODO
-    if (isOnWrongNetwork) open('network');
+    // previously on wrong network but now on proper network,
+    // close the network modal and show next steps
+    if (wasOnWrongNetwork.current && !isOnWrongNetwork) {
+      setVotingInProcess(true);
+      close('network');
+      wasOnWrongNetwork.current = false;
+    }
+  }, [close, isConnected, isOnWrongNetwork, open]);
 
-    // setVotingInProcess(true);
-  };
+  // Note: this can also be extracted into the useProposal hook granted we want to give
+  // it all the responsibility for data mapping, despite proposal not necessarily having
+  // much to do with whether vote button is enabled. Would probably be good clean up of the
+  // current component.
+
+  // TODO: fill out execution widget & terminal statuses based on different cases
+  // calculate button text and disabled status
+  const [voteNowDisabled, voteButtonLabel, handleVoteClicked] = useMemo(() => {
+    let label = t('votingTerminal.voted');
+    let disabled = false;
+    let onClick;
+
+    const voted = mappedProposal?.voters.some(
+      (voter: DisplayedVoter) => voter.wallet === address
+    );
+
+    switch (mappedProposal?.status) {
+      case 'draft':
+      case 'pending':
+        disabled = true;
+        label = t('votingTerminal.voteUnavailable');
+
+        break;
+      case 'succeeded':
+      case 'defeated':
+      case 'executed':
+        disabled = true;
+        label = t('votingTerminal.voteConcluded');
+
+        break;
+      case 'active': {
+        // logged in on proper network && not a member
+        if (address && !isOnWrongNetwork && !isMember) {
+          disabled = true;
+          label = t('votingTerminal.voteUnavailable');
+        }
+
+        // already voted
+        else if (isMember && voted) {
+          disabled = true;
+          label = t('votingTerminal.voted');
+        }
+
+        // member not yet voted
+        else if (address && !isOnWrongNetwork && isMember) {
+          disabled = false;
+          label = t('votingTerminal.voteNow');
+          onClick = () => {
+            setVotingInProcess(true);
+          };
+        }
+
+        // wrong network
+        else if (address && isOnWrongNetwork) {
+          disabled = false;
+          label = t('votingTerminal.voteNow');
+
+          onClick = () => {
+            open('network');
+            wasOnWrongNetwork.current = true;
+          };
+        }
+
+        // not logged in
+        else {
+          disabled = false;
+          label = t('votingTerminal.voteNow');
+
+          onClick = () => {
+            methods.selectWallet();
+            wasNotLoggedIn.current = true;
+          };
+        }
+        break;
+      }
+    }
+
+    return [disabled, label, onClick];
+  }, [
+    address,
+    isMember,
+    isOnWrongNetwork,
+    mappedProposal?.status,
+    mappedProposal?.voters,
+    methods,
+    open,
+    t,
+  ]);
 
   /*************************************************
    *                    Render                    *
    *************************************************/
-  if (isLoading) {
+  if (proposalIsLoading) {
     return <Loading />;
   }
 
@@ -228,13 +314,14 @@ const Proposal: React.FC = () => {
             </>
           )}
 
-          {mappedProposal && (
+          {mappedProposal && !isDaoMemberLoading && (
             <VotingTerminal
               {...mappedProposal}
               votingInProcess={votingInProcess}
-              onCancelClicked={handleCancelClicked}
+              onCancelClicked={() => setVotingInProcess(false)}
               onVoteClicked={handleVoteClicked}
               voteNowDisabled={voteNowDisabled}
+              voteButtonLabel={voteButtonLabel}
             />
           )}
 
