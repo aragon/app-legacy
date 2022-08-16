@@ -4,34 +4,34 @@ import {
   ButtonText,
   CardExecution,
   IconChevronDown,
-  IconGovernance,
   IconChevronUp,
+  IconGovernance,
   Link,
   WidgetStatus,
 } from '@aragon/ui-components';
-import styled from 'styled-components';
-import TipTapLink from '@tiptap/extension-link';
-import StarterKit from '@tiptap/starter-kit';
-import {useEditor} from '@tiptap/react';
-import {useTranslation} from 'react-i18next';
 import {shortenAddress} from '@aragon/ui-components/src/utils/addresses';
 import {withTransaction} from '@elastic/apm-rum-react';
-import React, {useState, useEffect} from 'react';
+import TipTapLink from '@tiptap/extension-link';
+import {useEditor} from '@tiptap/react';
+import StarterKit from '@tiptap/starter-kit';
+import React, {useEffect, useState} from 'react';
+import {useTranslation} from 'react-i18next';
 import {generatePath, useNavigate, useParams} from 'react-router-dom';
+import styled from 'styled-components';
 
-import useScreen from 'hooks/useScreen';
-import {Loading} from 'components/temporary';
-import {useCache} from 'hooks/useCache';
-import {NotFound} from 'utils/paths';
-import {useWallet} from 'hooks/useWallet';
-import {useNetwork} from 'context/network';
 import ResourceList from 'components/resourceList';
+import {Loading} from 'components/temporary';
+import {StyledEditorContent} from 'containers/reviewProposal';
+import {VotingTerminal} from 'containers/votingTerminal';
+import {useNetwork} from 'context/network';
+import {useCache} from 'hooks/useCache';
 import {useDaoParam} from 'hooks/useDaoParam';
 import {useDaoProposal} from 'hooks/useDaoProposal';
-import {VotingTerminal} from 'containers/votingTerminal';
-import {CHAIN_METADATA} from 'utils/constants';
-import {StyledEditorContent} from 'containers/reviewProposal';
 import {useMappedBreadcrumbs} from 'hooks/useMappedBreadcrumbs';
+import useScreen from 'hooks/useScreen';
+import {useWallet} from 'hooks/useWallet';
+import {CHAIN_METADATA} from 'utils/constants';
+import {NotFound} from 'utils/paths';
 
 const Proposal: React.FC = () => {
   const {t} = useTranslation();

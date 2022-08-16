@@ -1,16 +1,16 @@
 import {useQuery} from '@apollo/client';
-import {BigNumber} from 'ethers';
-import {formatUnits} from 'utils/library';
-import {useTranslation} from 'react-i18next';
-import {useCallback, useMemo} from 'react';
-import {format, formatDistance} from 'date-fns';
-import {ERC20VOTING_PROPOSAL_DETAILS} from 'queries/proposals';
-
-import {useWallet} from './useWallet';
-import {StringIndexed} from 'utils/types';
-import {categorizeProposal} from 'pages/governance';
 import {ProgressStatusProps} from '@aragon/ui-components';
+import {format, formatDistance} from 'date-fns';
+import {BigNumber} from 'ethers';
+import {ERC20VOTING_PROPOSAL_DETAILS} from 'queries/proposals';
+import {useCallback, useMemo} from 'react';
+import {useTranslation} from 'react-i18next';
+import {formatUnits} from 'utils/library';
+
+import {categorizeProposal} from 'pages/governance';
 import {getFormattedUtcOffset, KNOWN_FORMATS} from 'utils/date';
+import {StringIndexed} from 'utils/types';
+import {useWallet} from './useWallet';
 
 /**
  * This hook/file extracts the data fetching and processing logic from the
