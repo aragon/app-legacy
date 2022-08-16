@@ -14,7 +14,7 @@ import {withTransaction} from '@elastic/apm-rum-react';
 import TipTapLink from '@tiptap/extension-link';
 import {useEditor} from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useMemo, useRef, useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {generatePath, useNavigate, useParams} from 'react-router-dom';
 import styled from 'styled-components';
@@ -26,23 +26,27 @@ import {VotingTerminal} from 'containers/votingTerminal';
 import {useNetwork} from 'context/network';
 import {useCache} from 'hooks/useCache';
 import {useDaoParam} from 'hooks/useDaoParam';
-import {useDaoProposal} from 'hooks/useDaoProposal';
+import {DisplayedVoter, useDaoProposal} from 'hooks/useDaoProposal';
 import {useMappedBreadcrumbs} from 'hooks/useMappedBreadcrumbs';
 import useScreen from 'hooks/useScreen';
 import {useWallet} from 'hooks/useWallet';
 import {CHAIN_METADATA} from 'utils/constants';
 import {NotFound} from 'utils/paths';
+import {useGlobalModalContext} from 'context/globalModals';
 
 const Proposal: React.FC = () => {
   const {t} = useTranslation();
   const {id} = useParams();
+  const {open} = useGlobalModalContext();
   const navigate = useNavigate();
-  const {address} = useWallet();
   const {network} = useNetwork();
   const {set, get} = useCache();
   const {isDesktop} = useScreen();
   const {data: daoId} = useDaoParam();
   const {breadcrumbs, tag} = useMappedBreadcrumbs();
+
+  const shouldCheckNetwork = useRef(false);
+  const {address, isOnWrongNetwork, methods} = useWallet();
 
   if (!id) navigate(NotFound);
 
@@ -100,8 +104,49 @@ const Proposal: React.FC = () => {
       set('proposalStatus', mappedProposal.status);
   }, [get, mappedProposal, set]);
 
+  useEffect(() => {
+    if (shouldCheckNetwork.current && isOnWrongNetwork) {
+      open('network');
+      shouldCheckNetwork.current = false;
+    }
+  }, [isOnWrongNetwork, open]);
+
+  const voteNowDisabled = useMemo(() => {
+    // logged in && not a member
+    // if (address && !isMember) return true;
+
+    // member & already voted
+    if (
+      //(isMember &&
+      mappedProposal?.voters &&
+      mappedProposal.voters.some(
+        (voter: DisplayedVoter) => voter.wallet === address
+      )
+    )
+      return true;
+
+    return false;
+  }, [address, mappedProposal?.voters]);
+
+  /*************************************************
+   *               Callbacks & Handlers            *
+   *************************************************/
   const handleCancelClicked = () => {
     setVotingInProcess(false);
+  };
+
+  const handleVoteClicked = async () => {
+    // if not logged in, request login
+    if (!address) {
+      methods.selectWallet();
+      shouldCheckNetwork.current = true;
+      return;
+    }
+
+    // show wrong network modal automatically TODO
+    if (isOnWrongNetwork) open('network');
+
+    // setVotingInProcess(true);
   };
 
   /*************************************************
@@ -188,6 +233,8 @@ const Proposal: React.FC = () => {
               {...mappedProposal}
               votingInProcess={votingInProcess}
               onCancelClicked={handleCancelClicked}
+              onVoteClicked={handleVoteClicked}
+              voteNowDisabled={voteNowDisabled}
             />
           )}
 
