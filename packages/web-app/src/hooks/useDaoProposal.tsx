@@ -20,7 +20,7 @@ import {useWallet} from './useWallet';
  */
 
 /* MOCK DATA ================================================================ */
-type DisplayedVoter = {
+export type DisplayedVoter = {
   wallet: string;
   option: string;
   votingPower: string;
@@ -43,7 +43,6 @@ const Votes: StringIndexed = {
 const proposalTags = ['Finance', 'Withdraw'];
 
 export const useDaoProposal = (proposalId?: string) => {
-  const {address} = useWallet();
   const {t, i18n} = useTranslation();
 
   const {
@@ -155,14 +154,8 @@ export const useDaoProposal = (proposalId?: string) => {
       proposalData.erc20VotingProposals[0]
     ).type;
 
-    // TODO: check if dao member
-    const canVote =
-      status === 'active' && // vote open
-      !(voters as DisplayedVoter[]).some(voter => voter.wallet === address); // haven't voted yet
-
     return {
       results,
-      voteNowDisabled: !canVote, // yuck
       createdAt: `${format(
         Number(createdAt) * 1000,
         KNOWN_FORMATS.proposals
@@ -199,7 +192,7 @@ export const useDaoProposal = (proposalId?: string) => {
         ? t('votingTerminal.tokenVoting')
         : t('votingTerminal.multisig'),
     };
-  }, [address, getStatusLabel, proposalData, t]);
+  }, [getStatusLabel, proposalData, t]);
 
   // steps for step card
   const proposalSteps = useMemo(() => {
