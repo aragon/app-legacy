@@ -39,11 +39,11 @@ import {formatDistance} from 'date-fns';
 const Proposal: React.FC = () => {
   const {t} = useTranslation();
   const {id} = useParams();
-  const {open} = useGlobalModalContext();
   const navigate = useNavigate();
   const {network} = useNetwork();
   const {set, get} = useCache();
   const {isDesktop} = useScreen();
+  const {open} = useGlobalModalContext();
   const {data: daoId} = useDaoParam();
   const {breadcrumbs, tag} = useMappedBreadcrumbs();
 
@@ -114,6 +114,7 @@ const Proposal: React.FC = () => {
       set('proposalStatus', mappedProposal.status);
   }, [get, mappedProposal, set]);
 
+  // handle automatic network switch
   useEffect(() => {
     // was not logged in but now logged in
     if (statusRef.current.wasNotLoggedIn && isConnected) {

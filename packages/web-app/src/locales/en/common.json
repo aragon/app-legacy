@@ -167,8 +167,7 @@
     "newTokens": "New Tokens",
     "newHolders": "New Holders",
     "totalTokens": "Total Tokens",
-    "totalHolders": "Total Holders",
-    "seeCommunity": "See Community"
+    "totalHolders": "Total Holders"
   },
   "placeHolders": {
     "selectToken": "Select a Token ...",
@@ -571,6 +570,11 @@
       "voted": "You have already voted."
     },
     "voteNow": "Vote now",
+    "voted": "Voted",
+    "voteUnavailable": "Vote unavailable",
+    "voteConcluded": "Vote concluded",
+    "notStartedYet": "Not started yet",
+    "voteEnded": "Voting ended",
     "emptyState": {
       "titleSearch": "No result found for {{query}}",
       "title": "There are no voters yet",
