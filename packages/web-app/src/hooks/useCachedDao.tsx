@@ -1,59 +1,53 @@
 import {useCache} from './useCache';
 import {useClient} from './useClient';
 import {
-  ICreateDaoERC20Voting,
-  ICreateDaoWhitelistVoting,
+  ContextPlugin,
+  Context,
+  ClientErc20,
+  ClientAddressList,
 } from '@aragon/sdk-client';
 import {Dao} from 'utils/types';
+import {Address} from '@aragon/ui-components/dist/utils/addresses';
 
 interface IUseDaoResponse {
-  createErc20: (dao: ICreateDaoERC20Voting) => Promise<string>;
-  createWhitelist: (dao: ICreateDaoWhitelistVoting) => Promise<string>;
+  createErc20: (pluginAddress: Address) => ClientErc20 | Error;
+  createWhitelist: (pluginAddress: Address) => ClientAddressList | Error;
 }
 
 export const useDao = (): IUseDaoResponse => {
   const {set: setCache} = useCache();
-  const {erc20: erc20Client, whitelist: whitelistClient} = useClient();
+  const {client, context} = useClient();
 
-  const createErc20 = (dao: ICreateDaoERC20Voting): Promise<string> => {
-    if (!erc20Client) {
-      return Promise.reject(
-        new Error('ERC20 SDK client is not initialized correctly')
-      );
+  const createErc20 = (pluginAddress: Address): ClientErc20 | Error => {
+    if (!client || !context) {
+      return new Error('ERC20 SDK client is not initialized correctly');
     }
-    return erc20Client.dao
-      .create(dao)
-      .then((address: string) => {
-        const cacheKey = `dao-${address}`;
-        const cacheDao: Dao = {
-          address,
-        };
-        setCache(cacheKey, cacheDao);
-        return Promise.resolve(address);
-      })
-      .catch((e: Error) => {
-        return Promise.reject(e);
-      });
+    const contextPlugin: ContextPlugin = ContextPlugin.fromContext(
+      context as Context,
+      pluginAddress
+    );
+
+    const clientERC20: ClientErc20 = new ClientErc20(contextPlugin);
+
+    return clientERC20;
   };
-  const createWhitelist = (dao: ICreateDaoWhitelistVoting): Promise<string> => {
-    if (!whitelistClient) {
-      return Promise.reject(
-        new Error('Whitelist SDK client is not initialized correctly')
-      );
+
+  const createWhitelist = (
+    pluginAddress: Address
+  ): ClientAddressList | Error => {
+    if (!client || !context) {
+      return new Error('ERC20 SDK client is not initialized correctly');
     }
-    return whitelistClient.dao
-      .create(dao)
-      .then((address: string) => {
-        const cacheKey = `dao-${address}`;
-        const cacheDao: Dao = {
-          address,
-        };
-        setCache(cacheKey, cacheDao);
-        return Promise.resolve(address);
-      })
-      .catch((e: Error) => {
-        return Promise.reject(e);
-      });
+    const contextPlugin: ContextPlugin = ContextPlugin.fromContext(
+      context as Context,
+      pluginAddress
+    );
+
+    const createWhitelist: ClientAddressList = new ClientAddressList(
+      contextPlugin
+    );
+
+    return createWhitelist;
   };
   return {
     createWhitelist,

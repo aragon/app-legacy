@@ -1,7 +1,4 @@
-import {
-  ICreateDaoERC20Voting,
-  ICreateDaoWhitelistVoting,
-} from '@aragon/sdk-client';
+import {ICreateParams} from '@aragon/sdk-client';
 
 import React, {
   createContext,
@@ -27,8 +24,6 @@ import {useGlobalModalContext} from './globalModals';
 import {useClient} from 'hooks/useClient';
 import {usePollGasFee} from 'hooks/usePollGasfee';
 
-type DAOCreationSettings = ICreateDaoERC20Voting | ICreateDaoWhitelistVoting;
-
 type CreateDaoContextType = {
   /** Prepares the creation data and awaits user confirmation to start process */
   handlePublishDao: () => void;
@@ -44,7 +39,7 @@ const CreateDaoProvider: React.FC<Props> = ({children}) => {
   const {isOnWrongNetwork} = useWallet();
   const [showModal, setShowModal] = useState(false);
 
-  const [daoCreationData, setDaoCreationData] = useState<DAOCreationSettings>();
+  const [daoCreationData, setDaoCreationData] = useState<ICreateParams>();
   const [creationProcessState, setCreationProcessState] =
     useState<TransactionState>();
 
@@ -53,7 +48,7 @@ const CreateDaoProvider: React.FC<Props> = ({children}) => {
   const [membership] = useWatch({name: ['membership'], control});
 
   const {createErc20, createWhitelist} = useDao();
-  const {erc20, whitelist} = useClient();
+  const client = useClient();
 
   const shouldPoll = useMemo(
     () =>
@@ -65,10 +60,8 @@ const CreateDaoProvider: React.FC<Props> = ({children}) => {
   // estimate creation fees
   const estimateCreationFees = useCallback(async () => {
     return membership === 'token'
-      ? erc20?.estimate.create(daoCreationData as ICreateDaoERC20Voting)
-      : whitelist?.estimate.create(
-          daoCreationData as ICreateDaoWhitelistVoting
-        );
+      ? erc20?.estimate.create(daoCreationData as ICreateParams)
+      : whitelist?.estimate.create(daoCreationData as ICreateParams);
   }, [daoCreationData, erc20?.estimate, membership, whitelist?.estimate]);
 
   const {tokenPrice, maxFee, averageFee, stopPolling} = usePollGasFee(

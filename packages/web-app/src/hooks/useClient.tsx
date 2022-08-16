@@ -5,17 +5,15 @@ import React, {
   useEffect,
   useState,
 } from 'react';
-import {
-  ClientDaoERC20Voting,
-  ClientDaoWhitelistVoting,
-  Context as SdkContext,
-} from '@aragon/sdk-client';
+import {Context as SdkContext, ContextParams, Client} from '@aragon/sdk-client';
 import {useWallet} from './useWallet';
+require('dotenv').config();
 
 interface ClientContext {
-  erc20?: ClientDaoERC20Voting;
-  whitelist?: ClientDaoWhitelistVoting;
+  client?: Client;
+  context?: SdkContext;
 }
+
 const UseClientContext = createContext<ClientContext>({} as ClientContext);
 
 export const useClient = () => {
@@ -30,16 +28,15 @@ export const useClient = () => {
 
 export const UseClientProvider = ({children}: {children: ReactNode}) => {
   const {signer} = useWallet();
-  const [erc20Client, setErc20Client] = useState<ClientDaoERC20Voting>();
-  const [whitelistClient, setWhitelistClient] =
-    useState<ClientDaoWhitelistVoting>();
+  const [client, setClient] = useState<Client>();
+  const [context, setContext] = useState<SdkContext>();
 
   useEffect(() => {
     if (signer) {
       const web3Providers = import.meta.env
         .VITE_REACT_APP_SDK_WEB3_PROVIDERS as string;
 
-      const context = new SdkContext({
+      const contextParams: ContextParams = {
         network: 'rinkeby', // TODO: remove temporarily hardcoded network
         signer,
         web3Providers: web3Providers
@@ -47,17 +44,28 @@ export const UseClientProvider = ({children}: {children: ReactNode}) => {
           : [
               'https://eth-rinkeby.alchemyapi.io/v2/bgIqe2NxazpzsjfmVmhj3aS3j_HZ9mpr',
             ],
+        ipfsNodes: [
+          {
+            url: 'https://testing-ipfs-0.aragon.network/api/v0',
+            headers: {'X-API-KEY': process.env.IPFS_API_KEY || ''},
+          },
+        ],
         daoFactoryAddress: '0xF4433059cb12E224EF33510a3bE3329c8c750fD8', // TODO: remove temporary until SDK updates
-      });
+        graphqlNodes: [
+          'https://api.thegraph.com/subgraphs/name/aragon/aragon-zaragoza-rinkeby',
+        ],
+      };
 
-      setErc20Client(new ClientDaoERC20Voting(context));
-      setWhitelistClient(new ClientDaoWhitelistVoting(context));
+      const sdkContext = new SdkContext(contextParams);
+
+      setClient(new Client(sdkContext));
+      setContext(sdkContext);
     }
   }, [signer]);
 
   const value: ClientContext = {
-    erc20: erc20Client,
-    whitelist: whitelistClient,
+    client: client,
+    context: context,
   };
 
   return (
