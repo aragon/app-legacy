@@ -1,6 +1,7 @@
 import {
   ClientAddressList,
   ClientErc20,
+  DaoCreationSteps,
   IAddressListPluginInstall,
   ICreateParams,
   IErc20PluginInstall,
@@ -14,12 +15,10 @@ import React, {
   useCallback,
   useMemo,
 } from 'react';
-import {constants} from 'ethers';
 import {parseUnits} from 'ethers/lib/utils';
 import {useNavigate} from 'react-router-dom';
 import {useFormContext, useWatch} from 'react-hook-form';
 
-import {useDao} from 'hooks/useCachedDao';
 import PublishModal from 'containers/transactionModals/publishModal';
 import {TransactionState} from 'utils/constants';
 import {getSecondsFromDHM} from 'utils/date';
@@ -54,8 +53,7 @@ const CreateDaoProvider: React.FC<Props> = ({children}) => {
   const {getValues, control} = useFormContext<CreateDaoFormData>();
   const [membership] = useWatch({name: ['membership'], control});
 
-  const {createErc20, createWhitelist} = useDao();
-  const {client, context} = useClient();
+  const {client} = useClient();
 
   const shouldPoll = useMemo(
     () =>
@@ -216,27 +214,43 @@ const CreateDaoProvider: React.FC<Props> = ({children}) => {
     shouldPoll
   );
 
+  const createDaoIterator = useMemo(() => {
+    return client?.methods.create(getDaoSettings());
+  }, [client, getDaoSettings]);
+
   // run dao creation transaction
   const createDao = useCallback(async () => {
     setCreationProcessState(TransactionState.LOADING);
 
-    try {
-      const address =
-        membership === 'token'
-          ? await createErc20(daoCreationData as ICreateDaoERC20Voting)
-          : await createWhitelist(daoCreationData as ICreateDaoWhitelistVoting);
-
-      // temporary, considering once transaction is successfully executed,
-      // we can navigate to the new dao
-      console.log('Newly created DAO address', address);
-      setDaoCreationData(undefined);
-      setCreationProcessState(TransactionState.SUCCESS);
-    } catch (error) {
-      // unsuccessful execution, keep creation data for retry
-      console.log(error);
-      setCreationProcessState(TransactionState.ERROR);
+    // Check if SDK initialized properly
+    if (!client) {
+      throw new Error('SDK client is not initialized correctly');
     }
-  }, [createErc20, createWhitelist, membership, daoCreationData]);
+
+    // Check if deposit function is initialized
+    if (!createDaoIterator) {
+      throw new Error('deposit function is not initialized correctly');
+    }
+
+    for await (const step of createDaoIterator) {
+      try {
+        switch (step.key) {
+          case DaoCreationSteps.CREATING:
+            console.log(step.txHash);
+            break;
+          case DaoCreationSteps.DONE:
+            console.log('Newly created DAO address', step.address);
+            setDaoCreationData(undefined);
+            setCreationProcessState(TransactionState.SUCCESS);
+            break;
+        }
+      } catch (err) {
+        // unsuccessful execution, keep creation data for retry
+        console.log(err);
+        setCreationProcessState(TransactionState.ERROR);
+      }
+    }
+  }, [client, createDaoIterator]);
 
   /*************************************************
    *                    Render                     *
