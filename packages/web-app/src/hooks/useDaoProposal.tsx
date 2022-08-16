@@ -10,7 +10,6 @@ import {formatUnits} from 'utils/library';
 import {categorizeProposal} from 'pages/governance';
 import {getFormattedUtcOffset, KNOWN_FORMATS} from 'utils/date';
 import {StringIndexed} from 'utils/types';
-import {useWallet} from './useWallet';
 
 /**
  * This hook/file extracts the data fetching and processing logic from the
