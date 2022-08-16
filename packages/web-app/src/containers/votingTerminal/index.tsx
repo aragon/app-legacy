@@ -2,18 +2,21 @@ import React, {useMemo, useState} from 'react';
 import styled from 'styled-components';
 
 // TODO: Change to use proper imports
+import {IconClock, StateEmpty} from '@aragon/ui-components';
 import {AlertInline} from '@aragon/ui-components/src/components/alerts';
-import {ButtonText} from '@aragon/ui-components/src/components/button';
+import {
+  ButtonGroup,
+  ButtonText,
+  Option,
+} from '@aragon/ui-components/src/components/button';
+import {CheckboxListItem} from '@aragon/ui-components/src/components/checkbox';
 import {SearchInput} from '@aragon/ui-components/src/components/input';
 import {LinearProgress} from '@aragon/ui-components/src/components/progress';
-import {ButtonGroup, Option} from '@aragon/ui-components/src/components/button';
 import {
   VotersTable,
   VoterType,
 } from '@aragon/ui-components/src/components/table';
-import {CheckboxListItem} from '@aragon/ui-components/src/components/checkbox';
 import {useTranslation} from 'react-i18next';
-import {IconClock, StateEmpty} from '@aragon/ui-components';
 import {shortenAddress} from '@aragon/ui-components/src/utils/addresses';
 
 export type VotingTerminalProps = {
@@ -37,6 +40,9 @@ export type VotingTerminalProps = {
     no: {value: string; percentage: string};
     abstain: {value: string; percentage: string};
   };
+  votingInProcess?: boolean;
+  onVoteClicked?: React.MouseEventHandler<HTMLButtonElement>;
+  onCancelClicked?: React.MouseEventHandler<HTMLButtonElement>;
 };
 
 export const VotingTerminal: React.FC<VotingTerminalProps> = ({
@@ -52,10 +58,12 @@ export const VotingTerminal: React.FC<VotingTerminalProps> = ({
   endDate,
   statusLabel,
   strategy,
+  onVoteClicked,
+  votingInProcess,
+  onCancelClicked,
 }) => {
   const [query, setQuery] = useState('');
   const [buttonGroupState, setButtonGroupState] = useState('info');
-  const [votingInProcess, setVotingInProcess] = useState(false);
   const [selectedVote, setSelectedVote] = useState('');
   const {t} = useTranslation();
 
@@ -223,7 +231,7 @@ export const VotingTerminal: React.FC<VotingTerminalProps> = ({
                 label={t('votingTerminal.cancel')}
                 mode="ghost"
                 size="large"
-                onClick={() => setVotingInProcess(false)}
+                onClick={onCancelClicked}
               />
             </ButtonWrapper>
             <AlertInline label={statusLabel || ''} mode="neutral" />
@@ -234,7 +242,7 @@ export const VotingTerminal: React.FC<VotingTerminalProps> = ({
           <ButtonText
             label={t('votingTerminal.voteNow')}
             size="large"
-            onClick={() => setVotingInProcess(true)}
+            onClick={onVoteClicked}
             className="w-full tablet:w-max"
             disabled={voteNowDisabled}
           />

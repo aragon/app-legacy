@@ -50,6 +50,9 @@ const Proposal: React.FC = () => {
   const [metadata, setMetadata] = useState<Record<string, any> | undefined>();
   const [expandedProposal, setExpandedProposal] = useState(false);
 
+  // voting
+  const [votingInProcess, setVotingInProcess] = useState(false);
+
   const {
     data: {
       mappedProposal,
@@ -97,6 +100,10 @@ const Proposal: React.FC = () => {
       set('proposalStatus', mappedProposal.status);
   }, [get, mappedProposal, set]);
 
+  const handleCancelClicked = () => {
+    setVotingInProcess(false);
+  };
+
   /*************************************************
    *                    Render                    *
    *************************************************/
@@ -129,7 +136,7 @@ const Proposal: React.FC = () => {
         <ProposalTitle>{metadata?.title}</ProposalTitle>
         <ContentWrapper>
           <BadgeContainer>
-            {proposalTags.map(tag => (
+            {proposalTags.map((tag: string) => (
               <Badge label={tag} key={tag} />
             ))}
           </BadgeContainer>
@@ -176,7 +183,13 @@ const Proposal: React.FC = () => {
             </>
           )}
 
-          {mappedProposal && <VotingTerminal {...mappedProposal} />}
+          {mappedProposal && (
+            <VotingTerminal
+              {...mappedProposal}
+              votingInProcess={votingInProcess}
+              onCancelClicked={handleCancelClicked}
+            />
+          )}
 
           <CardExecution
             title="Execution"
