@@ -13,6 +13,7 @@ import {
   ProposeNewSettings,
   EditSettings,
   MintTokensProposal,
+  ManageMembersProposal,
   Community,
 } from 'utils/paths';
 import {i18n} from '../../../i18n.config';
@@ -32,6 +33,7 @@ const processPaths = [
   {path: NewProposal},
   {path: ProposeNewSettings},
   {path: MintTokensProposal},
+  {path: ManageMembersProposal},
 ];
 
 const processes: StringIndexed = {
@@ -53,6 +55,10 @@ const processes: StringIndexed = {
     returnURL: EditSettings,
   },
   [MintTokensProposal]: {
+    processLabel: i18n.t('labels.addMember'),
+    returnURL: Community,
+  },
+  [ManageMembersProposal]: {
     processLabel: i18n.t('labels.addMember'),
     returnURL: Community,
   },

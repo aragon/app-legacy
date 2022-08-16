@@ -60,7 +60,7 @@ const Community: React.FC = () => {
 
   const handlePrimaryClick = () => {
     if (walletBased) {
-      // Add/remove member flow
+      navigate('manage-members');
     } else {
       navigate('mint-tokens');
     }
