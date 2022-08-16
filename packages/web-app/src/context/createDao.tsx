@@ -1,4 +1,10 @@
-import {ICreateParams} from '@aragon/sdk-client';
+import {
+  ClientAddressList,
+  ClientErc20,
+  IAddressListPluginInstall,
+  ICreateParams,
+  IErc20PluginInstall,
+} from '@aragon/sdk-client';
 
 import React, {
   createContext,
@@ -23,6 +29,7 @@ import {useWallet} from 'hooks/useWallet';
 import {useGlobalModalContext} from './globalModals';
 import {useClient} from 'hooks/useClient';
 import {usePollGasFee} from 'hooks/usePollGasfee';
+import {IPluginListItem} from '@aragon/sdk-client/dist/internal/interfaces/common';
 
 type CreateDaoContextType = {
   /** Prepares the creation data and awaits user confirmation to start process */
@@ -48,7 +55,7 @@ const CreateDaoProvider: React.FC<Props> = ({children}) => {
   const [membership] = useWatch({name: ['membership'], control});
 
   const {createErc20, createWhitelist} = useDao();
-  const client = useClient();
+  const {client, context} = useClient();
 
   const shouldPoll = useMemo(
     () =>
@@ -57,32 +64,11 @@ const CreateDaoProvider: React.FC<Props> = ({children}) => {
     [creationProcessState, daoCreationData]
   );
 
-  // estimate creation fees
-  const estimateCreationFees = useCallback(async () => {
-    return membership === 'token'
-      ? erc20?.estimate.create(daoCreationData as ICreateParams)
-      : whitelist?.estimate.create(daoCreationData as ICreateParams);
-  }, [daoCreationData, erc20?.estimate, membership, whitelist?.estimate]);
-
-  const {tokenPrice, maxFee, averageFee, stopPolling} = usePollGasFee(
-    estimateCreationFees,
-    shouldPoll
-  );
-
   /*************************************************
    *                   Handlers                    *
    *************************************************/
   const handlePublishDao = () => {
-    switch (membership) {
-      case 'token':
-        setDaoCreationData(getERC20VotingDaoSettings());
-        break;
-      case 'wallet':
-        setDaoCreationData(getWhiteListVotingDaoSettings());
-        break;
-      default:
-        throw new Error(`Unknown dao type: ${membership}`);
-    }
+    setDaoCreationData(getDaoSettings());
     setCreationProcessState(TransactionState.WAITING);
     setShowModal(true);
   };
@@ -133,74 +119,102 @@ const CreateDaoProvider: React.FC<Props> = ({children}) => {
    *                   Helpers                     *
    *************************************************/
   // get dao configurations
-  const getDaoConfig = useCallback(() => {
-    const {daoName} = getValues();
-    return {
-      name: daoName,
-      metadata: constants.AddressZero,
-    };
-  }, [getValues]);
-
-  // get voting configuration
-  const getVotingConfig = useCallback(() => {
+  const erc20PluginParams: IErc20PluginInstall = useMemo(() => {
     const {
       minimumApproval,
       minimumParticipation,
       durationDays,
       durationHours,
       durationMinutes,
+      tokenName,
+      tokenSymbol,
+      wallets,
     } = getValues();
-
     return {
-      minParticipation: parseInt(minimumParticipation) || 0,
-      minSupport: parseInt(minimumApproval) || 0,
-      minDuration: getSecondsFromDHM(
-        parseInt(durationDays),
-        parseInt(durationHours),
-        parseInt(durationMinutes)
-      ),
+      proposals: {
+        minDuration: getSecondsFromDHM(
+          parseInt(durationDays),
+          parseInt(durationHours),
+          parseInt(durationMinutes)
+        ),
+        minTurnout: parseInt(minimumParticipation) || 0,
+        minSupport: parseInt(minimumApproval) || 0,
+      },
+      newToken: {
+        name: tokenName,
+        symbol: tokenSymbol,
+        decimals: 18,
+        // minter: '0x...', // optionally, define a minter
+        balances: wallets.map(wallet => ({
+          address: wallet.address,
+          balance: BigInt(parseUnits(wallet.amount, 18).toBigInt()),
+        })),
+      },
+    };
+  }, [getValues]);
+
+  const whiteListPluginParams: IAddressListPluginInstall = useMemo(() => {
+    const {
+      minimumApproval,
+      minimumParticipation,
+      durationDays,
+      durationHours,
+      durationMinutes,
+      whitelistWallets,
+    } = getValues();
+    return {
+      proposals: {
+        minDuration: getSecondsFromDHM(
+          parseInt(durationDays),
+          parseInt(durationHours),
+          parseInt(durationMinutes)
+        ),
+        minTurnout: parseInt(minimumParticipation) || 0,
+        minSupport: parseInt(minimumApproval) || 0,
+      },
+      addresses: whitelistWallets.map(wallet => wallet.address),
     };
   }, [getValues]);
 
   // get settings for erc20 voting DAOs
-  const getERC20VotingDaoSettings = useCallback((): ICreateDaoERC20Voting => {
+  const getDaoSettings = useCallback((): ICreateParams => {
     const values = getValues();
+    let plugins: IPluginListItem;
+
+    switch (membership) {
+      case 'token':
+        plugins = ClientErc20.encoding.installEntry(erc20PluginParams);
+        break;
+      case 'wallet':
+        plugins = ClientAddressList.encoding.installEntry(
+          whiteListPluginParams
+        );
+        break;
+      default:
+        throw new Error(`Unknown dao type: ${membership}`);
+    }
 
     return {
-      daoConfig: getDaoConfig(),
-      votingConfig: getVotingConfig(),
-      gsnForwarder: constants.AddressZero,
-
-      // token configuration
-      tokenConfig: {
-        address: values.isCustomToken
-          ? constants.AddressZero
-          : values.tokenAddress,
-        name: values.tokenName,
-        symbol: values.tokenSymbol,
+      metadata: {
+        name: values.daoName,
+        description: values.daoSummary,
+        avatar: values.daoLogo,
+        links: values.links,
       },
-
-      // mint configuration
-      mintConfig: values.wallets.map(wallet => ({
-        address: wallet.address,
-        balance: BigInt(parseUnits(wallet.amount, 18).toBigInt()),
-      })),
+      ensSubdomain: 'my-org', // my-org.dao.eth
+      plugins: [plugins],
     };
-  }, [getDaoConfig, getValues, getVotingConfig]);
+  }, [erc20PluginParams, getValues, membership, whiteListPluginParams]);
 
-  // get settings for whitelist voting DAOs
-  const getWhiteListVotingDaoSettings =
-    useCallback((): ICreateDaoWhitelistVoting => {
-      const values = getValues();
+  // estimate creation fees
+  const estimateCreationFees = useCallback(async () => {
+    return client?.estimation.create(getDaoSettings());
+  }, [client?.estimation, getDaoSettings]);
 
-      return {
-        daoConfig: getDaoConfig(),
-        votingConfig: getVotingConfig(),
-        gsnForwarder: constants.AddressZero,
-
-        whitelistVoters: values.whitelistWallets.map(wallet => wallet.address),
-      };
-    }, [getDaoConfig, getValues, getVotingConfig]);
+  const {tokenPrice, maxFee, averageFee, stopPolling} = usePollGasFee(
+    estimateCreationFees,
+    shouldPoll
+  );
 
   // run dao creation transaction
   const createDao = useCallback(async () => {

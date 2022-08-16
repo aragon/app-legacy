@@ -36,7 +36,7 @@ export type CreateDaoFormData = {
   tokenSymbol: string;
   tokenTotalSupply: number;
   isCustomToken: boolean;
-  links: {label: string; link: string}[];
+  links: {name: string; url: string}[];
   wallets: WalletField[];
   tokenAddress: string;
   durationMinutes: string;

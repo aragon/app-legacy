@@ -48,21 +48,22 @@ const DaoMetadata: React.FC = () => {
             <Dt>{t('labels.summary')}</Dt>
             <Dd>{daoSummary}</Dd>
           </Dl>
-          {links[0].href !== '' && (
+          {links[0].url !== '' && (
             <Dl>
               <Dt>{t('labels.links')}</Dt>
               <Dd>
                 <div className="space-y-1.5">
                   {links.map(
                     (
-                      {label, href}: {label: string; href: string},
+                      {name, url}: {name: string; url: string},
                       index: number
                     ) => {
                       return (
-                        href !== '' && (
+                        url !== '' && (
                           <ListItemLink
                             key={index}
-                            {...{label, href}}
+                            label={name}
+                            href={url}
                             external
                           />
                         )
