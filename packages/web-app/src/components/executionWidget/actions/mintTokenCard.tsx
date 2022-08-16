@@ -49,7 +49,7 @@ export const MintTokenCard: React.FC<{
                 src={wallet.address}
                 onClick={() =>
                   window.open(
-                    `${CHAIN_METADATA[network].explorer}/address/${wallet.address}`,
+                    `${CHAIN_METADATA[network].explorer}address/${wallet.address}`,
                     '_blank'
                   )
                 }
