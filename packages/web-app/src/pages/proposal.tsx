@@ -47,7 +47,6 @@ const Proposal: React.FC = () => {
   const {data: daoId} = useDaoParam();
   const {breadcrumbs, tag} = useMappedBreadcrumbs();
 
-  const [votingInProcess, setVotingInProcess] = useState(false);
   const {address, isConnected, isOnWrongNetwork} = useWallet();
   const {data: canVote, isLoading: canVoteLoading} = useWalletCanVote(
     daoId,
@@ -64,6 +63,9 @@ const Proposal: React.FC = () => {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [metadata, setMetadata] = useState<Record<string, any> | undefined>();
   const [expandedProposal, setExpandedProposal] = useState(false);
+
+  // voting
+  const [votingInProcess, setVotingInProcess] = useState(false);
 
   const {
     data: {
