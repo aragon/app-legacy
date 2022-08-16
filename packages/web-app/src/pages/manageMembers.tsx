@@ -46,17 +46,16 @@ const ManageMembers: React.FC = () => {
       <ActionsProvider daoId={dao}>
         <FullScreenStepper
           wizardProcessName={t('newProposal.title')}
-          navLabel={t('labels.addMember')}
+          navLabel={t('labels.manageMember')}
           returnPath={generatePath(Community, {network, dao})}
         >
           <Step
             wizardTitle={t('newProposal.manageWallets.title')}
             wizardDescription={t('newProposal.manageWallets.description')}
           >
-            {/* <MintTokenForm actionIndex={0} standAlone /> */}
             <>
-              <AddAddresses actionIndex={0} />
-              <RemoveAddresses actionIndex={1} />
+              <AddAddresses actionIndex={0} useCustomHeader />
+              <RemoveAddresses actionIndex={1} useCustomHeader />
             </>
           </Step>
           <Step

@@ -83,11 +83,11 @@ const Community: React.FC = () => {
           {...(walletBased
             ? {
                 description: t('explore.explorer.walletBased'),
-                buttonLabel: t('labels.addMember'),
+                buttonLabel: t('labels.manageMember'),
               }
             : {
                 description: t('explore.explorer.tokenBased'),
-                buttonLabel: t('labels.mintTokens'),
+                buttonLabel: t('labels.addMember'),
                 secondaryButtonLabel: t('labels.seeAllHolders'),
                 secondaryOnClick: handleSecondaryButtonClick,
               })}

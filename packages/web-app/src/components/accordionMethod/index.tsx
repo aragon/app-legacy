@@ -20,6 +20,7 @@ export type AccordionMethodType = {
   methodDescription?: string | React.ReactNode;
   additionalInfo?: string;
   dropdownItems?: ListItemProps[];
+  customHeader?: React.ReactNode;
 };
 
 export const AccordionMethod: React.FC<AccordionMethodType> = ({
@@ -30,66 +31,71 @@ export const AccordionMethod: React.FC<AccordionMethodType> = ({
   methodDescription,
   additionalInfo,
   dropdownItems = [],
+  customHeader,
   children,
 }) => {
   return (
     <Accordion.Root type="single" defaultValue="item-1" collapsible>
       <Accordion.Item value="item-1">
-        <AccordionHeader type={type}>
-          <HStack>
-            <FlexContainer>
-              <MethodName>{methodName}</MethodName>
-              <div
-                className={`flex items-center space-x-1 ${
-                  verified ? 'text-primary-600' : 'text-warning-600'
-                }`}
-              >
-                <p
-                  className={`font-bold ${
-                    verified ? 'text-primary-500' : 'text-warning-500'
+        {!customHeader ? (
+          <AccordionHeader type={type}>
+            <HStack>
+              <FlexContainer>
+                <MethodName>{methodName}</MethodName>
+                <div
+                  className={`flex items-center space-x-1 ${
+                    verified ? 'text-primary-600' : 'text-warning-600'
                   }`}
                 >
-                  {smartContractName}
-                </p>
-                {verified ? <IconSuccess /> : <IconWarning />}
-              </div>
-            </FlexContainer>
+                  <p
+                    className={`font-bold ${
+                      verified ? 'text-primary-500' : 'text-warning-500'
+                    }`}
+                  >
+                    {smartContractName}
+                  </p>
+                  {verified ? <IconSuccess /> : <IconWarning />}
+                </div>
+              </FlexContainer>
 
-            <VStack>
-              {type === 'action-builder' && (
-                <Dropdown
-                  side="bottom"
-                  align="end"
-                  listItems={dropdownItems}
-                  trigger={
-                    <ButtonIcon
-                      mode="ghost"
-                      size="medium"
-                      icon={<IconMenuVertical />}
-                    />
-                  }
-                />
-              )}
-              <Accordion.Trigger>
-                <AccordionButton
-                  mode={type === 'action-builder' ? 'ghost' : 'secondary'}
-                  size="medium"
-                  icon={<IconChevronDown />}
-                />
-              </Accordion.Trigger>
-            </VStack>
-          </HStack>
+              <VStack>
+                {type === 'action-builder' && (
+                  <Dropdown
+                    side="bottom"
+                    align="end"
+                    listItems={dropdownItems}
+                    trigger={
+                      <ButtonIcon
+                        mode="ghost"
+                        size="medium"
+                        icon={<IconMenuVertical />}
+                      />
+                    }
+                  />
+                )}
+                <Accordion.Trigger>
+                  <AccordionButton
+                    mode={type === 'action-builder' ? 'ghost' : 'secondary'}
+                    size="medium"
+                    icon={<IconChevronDown />}
+                  />
+                </Accordion.Trigger>
+              </VStack>
+            </HStack>
 
-          {methodDescription && (
-            <AdditionalInfoContainer>
-              <p className="tablet:pr-10">{methodDescription}</p>
+            {methodDescription && (
+              <AdditionalInfoContainer>
+                <p className="tablet:pr-10">{methodDescription}</p>
 
-              {additionalInfo && (
-                <AlertInline label={additionalInfo} mode="neutral" />
-              )}
-            </AdditionalInfoContainer>
-          )}
-        </AccordionHeader>
+                {additionalInfo && (
+                  <AlertInline label={additionalInfo} mode="neutral" />
+                )}
+              </AdditionalInfoContainer>
+            )}
+          </AccordionHeader>
+        ) : (
+          <>{customHeader}</>
+        )}
 
         <Accordion.Content>{children}</Accordion.Content>
       </Accordion.Item>

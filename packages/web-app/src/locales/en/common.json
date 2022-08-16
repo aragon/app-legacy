@@ -28,7 +28,8 @@
   },
   "labels": {
     "members": "Members",
-    "addMember": "Manage Members",
+    "addMember": "Add Members",
+    "manageMember": "Manage Members",
     "addedMembers": "Added Members",
     "wallets": "Wallets",
     "addWallets": "Add Wallets",

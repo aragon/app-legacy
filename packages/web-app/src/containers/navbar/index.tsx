@@ -59,7 +59,7 @@ const processes: StringIndexed = {
     returnURL: Community,
   },
   [ManageMembersProposal]: {
-    processLabel: i18n.t('labels.addMember'),
+    processLabel: i18n.t('labels.manageMember'),
     returnURL: Community,
   },
 };

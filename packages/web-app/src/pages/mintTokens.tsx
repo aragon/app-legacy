@@ -48,7 +48,7 @@ const MintToken: React.FC = () => {
     <FormProvider {...formMethods}>
       <ActionsProvider daoId={dao}>
         <FullScreenStepper
-          wizardProcessName={t('labels.addMember')}
+          wizardProcessName={t('newProposal.title')}
           navLabel={t('labels.addMember')}
           returnPath={generatePath(Community, {network, dao})}
         >
