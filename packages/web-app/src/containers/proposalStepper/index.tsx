@@ -1,6 +1,6 @@
 import {useTranslation} from 'react-i18next';
 import React from 'react';
-import {useFormContext} from 'react-hook-form';
+import {useFormContext, useFormState} from 'react-hook-form';
 import {generatePath} from 'react-router-dom';
 
 import {Governance} from 'utils/paths';
@@ -17,30 +17,29 @@ import {useNetwork} from 'context/network';
 import {useDaoParam} from 'hooks/useDaoParam';
 import {Loading} from 'components/temporary';
 import {useActionsContext} from 'context/actions';
-import {StringIndexed} from 'utils/types';
 import {actionsAreValid} from 'utils/validators';
 
 type ProposalStepperType = {
   enableTxModal: () => void;
-  errors: StringIndexed;
-  dirtyFields: StringIndexed;
 };
 
 const ProposalStepper: React.FC<ProposalStepperType> = ({
   enableTxModal,
-  errors,
-  dirtyFields,
 }: ProposalStepperType) => {
   const {data: dao, loading} = useDaoParam();
   const {actions} = useActionsContext();
 
   const {t} = useTranslation();
   const {network} = useNetwork();
-  const {getValues, trigger} = useFormContext();
+  const {getValues, trigger, control} = useFormContext();
   const [durationSwitch, actionsForm] = getValues([
     'durationSwitch',
     'actions',
   ]);
+
+  const {errors, dirtyFields} = useFormState({
+    control,
+  });
 
   /*************************************************
    *                    Render                     *

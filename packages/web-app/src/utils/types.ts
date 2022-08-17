@@ -196,6 +196,7 @@ export type ActionsTypes =
   | 'external_contract'
   | 'modify_settings';
 
+// TODO Refactor ActionWithdraw With the new input structure
 export type ActionWithdraw = {
   amount: number;
   name: 'withdraw_assets';

@@ -15,9 +15,6 @@ const NewProposal: React.FC = () => {
   const formMethods = useForm({
     mode: 'onChange',
   });
-  const {errors, dirtyFields} = useFormState({
-    control: formMethods.control,
-  });
 
   const enableTxModal = () => {
     setShowTxModal(true);
@@ -38,11 +35,7 @@ const NewProposal: React.FC = () => {
         setShowTxModal={setShowTxModal}
       >
         <ActionsProvider daoId={dao}>
-          <ProposalStepper
-            enableTxModal={enableTxModal}
-            errors={errors}
-            dirtyFields={dirtyFields}
-          />
+          <ProposalStepper enableTxModal={enableTxModal} />
         </ActionsProvider>
       </CreateProposalProvider>
     </FormProvider>

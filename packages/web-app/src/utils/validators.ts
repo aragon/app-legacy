@@ -1,17 +1,11 @@
-import {ValidateResult} from 'react-hook-form';
+import {FieldErrors, ValidateResult} from 'react-hook-form';
 import {isAddress, parseUnits} from 'ethers/lib/utils';
 import {BigNumber, providers as EthersProviders} from 'ethers';
 
 import {i18n} from '../../i18n.config';
 import {isERC20Token} from './tokens';
 import {ALPHA_NUMERIC_PATTERN} from './constants';
-import {
-  ActionItem,
-  Action,
-  StringIndexed,
-  ActionWithdraw,
-  ActionTokenMinting,
-} from './types';
+import {ActionItem, Action, ActionWithdraw, ActionTokenMinting} from './types';
 
 /**
  * Validate given token contract address
@@ -109,7 +103,7 @@ export const alphaNumericValidator = (
 export function actionsAreValid(
   actionFormList: Action[],
   actions: ActionItem[],
-  errors: StringIndexed
+  errors: FieldErrors
 ) {
   let result = false;
   function isActionNotValid(index: number) {
