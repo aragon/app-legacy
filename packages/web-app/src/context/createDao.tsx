@@ -143,7 +143,7 @@ const CreateDaoProvider: React.FC<Props> = ({children}) => {
         symbol: tokenSymbol,
         decimals: 18,
         // minter: '0x...', // optionally, define a minter
-        balances: wallets.map(wallet => ({
+        balances: wallets?.map(wallet => ({
           address: wallet.address,
           balance: BigInt(parseUnits(wallet.amount, 18).toBigInt()),
         })),
@@ -170,7 +170,7 @@ const CreateDaoProvider: React.FC<Props> = ({children}) => {
         minTurnout: parseInt(minimumParticipation) || 0,
         minSupport: parseInt(minimumApproval) || 0,
       },
-      addresses: whitelistWallets.map(wallet => wallet.address),
+      addresses: whitelistWallets?.map(wallet => wallet.address),
     };
   }, [getValues]);
 
@@ -179,12 +179,17 @@ const CreateDaoProvider: React.FC<Props> = ({children}) => {
     const values = getValues();
     let plugins: IPluginListItem;
 
+    if (
+      !erc20PluginParams.newToken?.balances ||
+      !whiteListPluginParams.addresses
+    )
+      return {} as ICreateParams;
     switch (membership) {
       case 'token':
-        plugins = ClientErc20.encoding.installEntry(erc20PluginParams);
+        plugins = ClientErc20?.encoding?.installEntry(erc20PluginParams);
         break;
       case 'wallet':
-        plugins = ClientAddressList.encoding.installEntry(
+        plugins = ClientAddressList?.encoding?.installEntry(
           whiteListPluginParams
         );
         break;
@@ -219,7 +224,7 @@ const CreateDaoProvider: React.FC<Props> = ({children}) => {
   }, [client, getDaoSettings]);
 
   // run dao creation transaction
-  const createDao = useCallback(async () => {
+  const createDao = async () => {
     setCreationProcessState(TransactionState.LOADING);
 
     // Check if SDK initialized properly
@@ -250,7 +255,7 @@ const CreateDaoProvider: React.FC<Props> = ({children}) => {
         setCreationProcessState(TransactionState.ERROR);
       }
     }
-  }, [client, createDaoIterator]);
+  };
 
   /*************************************************
    *                    Render                     *

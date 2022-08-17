@@ -7,7 +7,6 @@ import React, {
 } from 'react';
 import {Context as SdkContext, ContextParams, Client} from '@aragon/sdk-client';
 import {useWallet} from './useWallet';
-require('dotenv').config();
 
 interface ClientContext {
   client?: Client;
@@ -41,13 +40,13 @@ export const UseClientProvider = ({children}: {children: ReactNode}) => {
         signer,
         web3Providers: web3Providers
           ? web3Providers.split(',')
-          : [
-              'https://eth-rinkeby.alchemyapi.io/v2/bgIqe2NxazpzsjfmVmhj3aS3j_HZ9mpr',
-            ],
+          : [import.meta.env.VITE_IPFS_ALCHEMY_API as string],
         ipfsNodes: [
           {
             url: 'https://testing-ipfs-0.aragon.network/api/v0',
-            headers: {'X-API-KEY': process.env.IPFS_API_KEY || ''},
+            headers: {
+              'X-API-KEY': (import.meta.env.VITE_IPFS_API_KEY as string) || '',
+            },
           },
         ],
         daoFactoryAddress: '0xF4433059cb12E224EF33510a3bE3329c8c750fD8', // TODO: remove temporary until SDK updates

@@ -32,7 +32,6 @@
     "apollo-link-rest": "^0.9.0-rc.1",
     "apollo3-cache-persist": "^0.14.0",
     "date-fns": "^2.28.0",
-    "dotenv": "^16.0.1",
     "ethers": "^5.5.4",
     "framer-motion": "^5.2.1",
     "graphql": "^16.3.0",
