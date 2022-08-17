@@ -1,6 +1,6 @@
 import {withTransaction} from '@elastic/apm-rum-react';
 import React, {useState} from 'react';
-import {useForm, FormProvider, useFormState} from 'react-hook-form';
+import {useForm, FormProvider} from 'react-hook-form';
 
 import {ActionsProvider} from 'context/actions';
 import {useDaoParam} from 'hooks/useDaoParam';
