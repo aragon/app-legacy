@@ -166,7 +166,8 @@
     "newTokens": "New Tokens",
     "newHolders": "New Holders",
     "totalTokens": "Total Tokens",
-    "totalHolders": "Total Holders"
+    "totalHolders": "Total Holders",
+    "seeCommunity": "See Community"
   },
   "placeHolders": {
     "selectToken": "Select a Token ...",

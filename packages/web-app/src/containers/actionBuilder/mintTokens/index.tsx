@@ -92,6 +92,7 @@ export const MintTokenForm: React.FC<MintTokenFormProps> = ({
   const {infura} = useProviders();
   const nativeCurrency = CHAIN_METADATA[network].nativeCurrency;
   const {data: daoToken, isLoading: daoTokenLoading} = useDaoToken(daoId);
+  const {setValue} = useFormContext();
 
   const {fields, append, remove} = useFieldArray({
     name: `actions.${actionIndex}.inputs.mintTokensToWallets`,
@@ -126,12 +127,27 @@ export const MintTokenForm: React.FC<MintTokenFormProps> = ({
             formatUnits(r.totalSupply, r.decimals)
           );
           setTokenSupply(formattedNumber);
+          setValue(
+            `actions.${actionIndex}.summary.tokenSupply`,
+            formattedNumber
+          );
+          setValue(
+            `actions.${actionIndex}.summary.daoTokenSymbol`,
+            daoToken.symbol
+          );
         })
         .catch(e =>
           console.error('Error happened when fetching token infos: ', e)
         );
     }
-  }, [daoToken.id, nativeCurrency, infura]);
+  }, [
+    daoToken.id,
+    nativeCurrency,
+    infura,
+    setValue,
+    actionIndex,
+    daoToken.symbol,
+  ]);
 
   // Count number of addresses that don't yet own token
   useEffect(() => {
@@ -149,10 +165,12 @@ export const MintTokenForm: React.FC<MintTokenFormProps> = ({
       if (validInputs.length === 0) {
         // user did not input any valid addresses
         setNewHoldersCount(0);
+        setValue(`actions.${actionIndex}.summary.newHoldersCount`, 0);
       } else if (uncheckedAddresses.length === 0) {
         // No unchecked address. Simply compare inputs with cached addresses
         const count = mints.filter(m => newTokenHolders.has(m.address)).length;
         setNewHoldersCount(count);
+        setValue(`actions.${actionIndex}.summary.newHoldersCount`, count);
       } else {
         // Unchecked address. Fetch balance info for those. Update caches and
         // set number of new holder
@@ -192,6 +210,7 @@ export const MintTokenForm: React.FC<MintTokenFormProps> = ({
               holderAddresses.some(ab => ab.address === m.address)
             ).length;
             setNewHoldersCount(count);
+            setValue(`actions.${actionIndex}.summary.newHoldersCount`, count);
           })
           .catch(e =>
             console.error('Error happened when fetching balances: ', e)
@@ -209,8 +228,9 @@ export const MintTokenForm: React.FC<MintTokenFormProps> = ({
         newTokensCount += parseFloat(m.amount);
       });
       setNewTokens(newTokensCount);
+      setValue(`actions.${actionIndex}.summary.newTokens`, newTokensCount);
     }
-  }, [mints, fields, daoToken, daoToken.id]);
+  }, [mints, fields, daoToken, daoToken.id, setValue, actionIndex]);
 
   const handleAddWallet = () => {
     append({address: '', amount: '0'});
@@ -288,7 +308,7 @@ export const MintTokenForm: React.FC<MintTokenFormProps> = ({
       </ButtonContainer>
       {!daoTokenLoading && (
         <SummaryContainer>
-          <p>{t('labels.summary')}</p>
+          <p className="font-bold text-ui-800">{t('labels.summary')}</p>
           <HStack>
             <Label>{t('labels.newTokens')}</Label>
             <p>

@@ -68,7 +68,7 @@ export const CHAIN_METADATA: ChainList = {
     name: 'Arbitrum One',
     domain: 'L2 Blockchain',
     logo: 'https://bridge.arbitrum.io/logo.png',
-    explorer: 'https://arbiscan.io',
+    explorer: 'https://arbiscan.io/',
     testnet: false,
     rpc: ['https://arb1.arbitrum.io/rpc', 'wss://arb1.arbitrum.io/ws'],
     nativeCurrency: {
@@ -96,7 +96,7 @@ export const CHAIN_METADATA: ChainList = {
     name: 'Polygon',
     domain: 'L2 Blockchain',
     logo: 'https://assets.coingecko.com/coins/images/4713/large/matic-token-icon.png?1624446912',
-    explorer: 'https://polygonscan.com',
+    explorer: 'https://polygonscan.com/',
     testnet: false,
     rpc: ['https://polygon-rpc.com/', 'https://rpc-mainnet.matic.network'],
     nativeCurrency: {
