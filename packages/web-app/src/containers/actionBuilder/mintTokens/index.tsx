@@ -90,7 +90,6 @@ export const MintTokenForm: React.FC<MintTokenFormProps> = ({
   const {data: daoId} = useDaoParam();
   const {network} = useNetwork();
   const {infura} = useProviders();
-  const {setValue} = useFormContext();
   const nativeCurrency = CHAIN_METADATA[network].nativeCurrency;
   const {data: daoToken, isLoading: daoTokenLoading} = useDaoToken(daoId);
   const {setValue} = useFormContext();

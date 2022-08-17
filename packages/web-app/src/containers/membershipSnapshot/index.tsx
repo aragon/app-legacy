@@ -13,7 +13,11 @@ import {Loading} from 'components/temporary';
 import {useNetwork} from 'context/network';
 import {useDaoMembers} from 'hooks/useDaoMembers';
 import useScreen from 'hooks/useScreen';
-import {Community, MintTokensProposal} from 'utils/paths';
+import {
+  Community,
+  ManageMembersProposal,
+  MintTokensProposal,
+} from 'utils/paths';
 import {MembersList} from 'components/membersList';
 
 type Props = {dao: string; walletBased: boolean; horizontal?: boolean};
@@ -35,7 +39,7 @@ export const MembershipSnapshot: React.FC<Props> = ({
 
   const headerButtonHandler = () => {
     walletBased
-      ? alert('This will soon take you to a page that lets you add members')
+      ? navigate(generatePath(ManageMembersProposal, {network, dao}))
       : navigate(generatePath(MintTokensProposal, {network, dao}));
   };
 
