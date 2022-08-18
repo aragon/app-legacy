@@ -1,22 +1,22 @@
-import {useTranslation} from 'react-i18next';
 import React from 'react';
-import {useFormContext, useFormState} from 'react-hook-form';
+import {useFormContext, useFormState, useWatch} from 'react-hook-form';
+import {useTranslation} from 'react-i18next';
 import {generatePath} from 'react-router-dom';
 
-import {Governance} from 'utils/paths';
-import ReviewProposal from 'containers/reviewProposal';
-import ConfigureActions from 'containers/configureActions';
 import {FullScreenStepper, Step} from 'components/fullScreenStepper';
+import {Loading} from 'components/temporary';
+import ConfigureActions from 'containers/configureActions';
 import DefineProposal, {
   isValid as defineProposalIsValid,
 } from 'containers/defineProposal';
+import ReviewProposal from 'containers/reviewProposal';
 import SetupVotingForm, {
   isValid as setupVotingIsValid,
 } from 'containers/setupVotingForm';
+import {useActionsContext} from 'context/actions';
 import {useNetwork} from 'context/network';
 import {useDaoParam} from 'hooks/useDaoParam';
-import {Loading} from 'components/temporary';
-import {useActionsContext} from 'context/actions';
+import {Governance} from 'utils/paths';
 import {actionsAreValid} from 'utils/validators';
 
 type ProposalStepperType = {
@@ -31,11 +31,12 @@ const ProposalStepper: React.FC<ProposalStepperType> = ({
 
   const {t} = useTranslation();
   const {network} = useNetwork();
-  const {getValues, trigger, control} = useFormContext();
-  const [durationSwitch, actionsForm] = getValues([
-    'durationSwitch',
-    'actions',
-  ]);
+  const {trigger, control} = useFormContext();
+
+  const [durationSwitch, formActions] = useWatch({
+    name: ['durationSwitch', 'actions'],
+    control,
+  });
 
   const {errors, dirtyFields} = useFormState({
     control,
@@ -72,7 +73,7 @@ const ProposalStepper: React.FC<ProposalStepperType> = ({
       <Step
         wizardTitle={t('newProposal.configureActions.heading')}
         wizardDescription={t('newProposal.configureActions.description')}
-        isNextButtonDisabled={!actionsAreValid(actionsForm, actions, errors)}
+        isNextButtonDisabled={!actionsAreValid(formActions, actions, errors)}
         onNextButtonDisabledClicked={() => {
           trigger('actions');
         }}
