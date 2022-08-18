@@ -5,7 +5,7 @@ import {BigNumber, providers as EthersProviders} from 'ethers';
 import {i18n} from '../../i18n.config';
 import {isERC20Token} from './tokens';
 import {ALPHA_NUMERIC_PATTERN} from './constants';
-import {ActionItem, Action, ActionWithdraw, ActionTokenMinting} from './types';
+import {ActionItem, Action, ActionWithdraw, ActionMintToken} from './types';
 
 /**
  * Validate given token contract address
@@ -114,9 +114,14 @@ export function actionsAreValid(
           (actionFormList[index] as ActionWithdraw)?.to === '' ||
           (actionFormList[index] as ActionWithdraw)?.amount?.toString() === ''
         );
-      case 'mint_token':
+      case 'mint_tokens':
+        if (
+          (actionFormList[index] as ActionMintToken)?.inputs
+            ?.mintTokensToWallets.length === 0
+        )
+          return true;
         return (
-          actionFormList[index] as ActionTokenMinting
+          actionFormList[index] as ActionMintToken
         )?.inputs?.mintTokensToWallets?.some(wallet => wallet.address === '');
       default:
         return false;

@@ -312,7 +312,7 @@ export const MintTokenForm: React.FC<MintTokenFormProps> = ({
           <HStack>
             <Label>{t('labels.newTokens')}</Label>
             <p>
-              +{newTokens} {daoToken.symbol}
+              +{newTokens || 0} {daoToken.symbol}
             </p>
           </HStack>
           <HStack>
@@ -323,7 +323,7 @@ export const MintTokenForm: React.FC<MintTokenFormProps> = ({
             <Label>{t('labels.totalTokens')}</Label>
             {tokenSupply ? (
               <p>
-                {(tokenSupply + newTokens).toString()} {daoToken.symbol}
+                {(tokenSupply + (newTokens || 0)).toString()} {daoToken.symbol}
               </p>
             ) : (
               <p>...</p>

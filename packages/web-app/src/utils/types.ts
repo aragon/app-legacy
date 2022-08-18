@@ -218,7 +218,7 @@ export type ActionAddAddress = {
   };
 };
 
-export type ActionTokenMinting = {
+export type ActionMintToken = {
   inputs: {
     mintTokensToWallets: Array<{address: string; amount: string}>;
   };
@@ -233,7 +233,7 @@ export type ActionTokenMinting = {
 // TODO: Consider making this a generic type that take other types of the form
 // like ActionAddAddress (or more generically, ActionItem...?) instead taking the
 // union of those subtypes. [VR 11-08-2022]
-export type Action = ActionWithdraw | ActionAddAddress | ActionTokenMinting;
+export type Action = ActionWithdraw | ActionAddAddress | ActionMintToken;
 
 export type ParamType = {
   type: string;
