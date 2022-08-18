@@ -30,72 +30,78 @@ type AddressAndTokenRowProps = IndexProps & {
   onDelete: (index: number) => void;
 };
 
-const AddressField: React.FC<IndexProps & {onClear?: (index: number) => void}> =
-  ({actionIndex, fieldIndex, onClear}) => {
-    const {t} = useTranslation();
-    const {control} = useFormContext();
-    const walletFieldArray = useWatch({
-      name: `actions.${actionIndex}.inputs.mintTokensToWallets`,
-      control,
-    });
+type AddressFieldProps = IndexProps & {
+  onClear?: (index: number) => void;
+};
+const AddressField: React.FC<AddressFieldProps> = ({
+  actionIndex,
+  fieldIndex,
+  onClear,
+}) => {
+  const {t} = useTranslation();
+  const {control} = useFormContext();
+  const walletFieldArray = useWatch({
+    name: `actions.${actionIndex}.inputs.mintTokensToWallets`,
+    control,
+  });
 
-    const handleAdornmentClick = (
-      value: string,
-      onChange: (value: string) => void
-    ) => {
-      if (value) {
-        onClear?.(fieldIndex) || onChange('');
-      } else handleClipboardActions(value, onChange);
-    };
-
-    const addressValidator = async (address: string, index: number) => {
-      let validationResult = validateAddress(address);
-      if (walletFieldArray) {
-        await walletFieldArray.forEach(
-          (wallet: WalletField, walletIndex: number) => {
-            if (address === wallet.address && index !== walletIndex) {
-              validationResult = t('errors.duplicateAddress') as string;
-            }
-          }
-        );
-      }
-      return validationResult;
-    };
-
-    return (
-      <Controller
-        defaultValue=""
-        name={`actions.${actionIndex}.inputs.mintTokensToWallets.${fieldIndex}.address`}
-        rules={{
-          required: t('errors.required.walletAddress') as string,
-          validate: value => addressValidator(value, fieldIndex),
-        }}
-        render={({
-          field: {name, value, onBlur, onChange},
-          fieldState: {error},
-        }) => (
-          <div className="flex-1">
-            <ValueInput
-              name={name}
-              value={value}
-              onBlur={onBlur}
-              onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                onChange(e.target.value);
-              }}
-              placeholder={t('placeHolders.walletOrEns')}
-              adornmentText={value ? t('labels.clear') : t('labels.paste')}
-              onAdornmentClick={() => handleAdornmentClick(value, onChange)}
-            />
-            {error?.message && (
-              <ErrorContainer>
-                <AlertInline label={error.message} mode="critical" />
-              </ErrorContainer>
-            )}
-          </div>
-        )}
-      />
-    );
+  const handleAdornmentClick = (
+    value: string,
+    onChange: (value: string) => void
+  ) => {
+    if (value) {
+      onClear?.(fieldIndex) || onChange('');
+    } else handleClipboardActions(value, onChange);
   };
+
+  const addressValidator = async (address: string, index: number) => {
+    let validationResult = validateAddress(address);
+    if (walletFieldArray) {
+      await walletFieldArray.forEach(
+        (wallet: WalletField, walletIndex: number) => {
+          if (address === wallet.address && index !== walletIndex) {
+            validationResult = t('errors.duplicateAddress') as string;
+          }
+        }
+      );
+    }
+    return validationResult;
+  };
+
+  return (
+    <Controller
+      defaultValue=""
+      name={`actions.${actionIndex}.inputs.mintTokensToWallets.${fieldIndex}.address`}
+      rules={{
+        required: t('errors.required.walletAddress') as string,
+        validate: value => addressValidator(value, fieldIndex),
+      }}
+      render={({
+        field: {name, value, onBlur, onChange},
+        fieldState: {error},
+      }) => (
+        <div className="flex-1">
+          <ValueInput
+            name={name}
+            value={value}
+            onBlur={onBlur}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+              onChange(e.target.value);
+            }}
+            placeholder={t('placeHolders.walletOrEns')}
+            adornmentText={value ? t('labels.clear') : t('labels.paste')}
+            onAdornmentClick={() => handleAdornmentClick(value, onChange)}
+          />
+          {error?.message && (
+            <ErrorContainer>
+              <AlertInline label={error.message} mode="critical" />
+            </ErrorContainer>
+          )}
+        </div>
+      )}
+    />
+  );
+};
 
 const TokenField: React.FC<IndexProps> = ({actionIndex, fieldIndex}) => {
   const {trigger} = useFormContext();
