@@ -16,7 +16,9 @@ import {handleClipboardActions} from 'utils/library';
 
 type Props = {
   actionIndex: number;
-  disabled?: boolean;
+  // TODO: when refactoring, this is what indicates whether the row
+  // should be editable or not. Please rename.
+  isRemove?: boolean;
   fieldIndex: number;
   dropdownItems: Array<{
     callback: (index: number) => void;
@@ -27,7 +29,7 @@ type Props = {
 
 export const AddressRow = ({
   actionIndex,
-  disabled,
+  isRemove = false,
   fieldIndex,
   dropdownItems,
   onClearRow,
@@ -48,7 +50,7 @@ export const AddressRow = ({
   const handleAdornmentClick = useCallback(
     (value: string, onChange: (value: string) => void) => {
       // allow the user to copy the address even when input is disabled
-      if (disabled) {
+      if (isRemove) {
         handleClipboardActions(value, onChange);
         return;
       }
@@ -61,7 +63,7 @@ export const AddressRow = ({
         handleClipboardActions(value, onChange);
       }
     },
-    [fieldIndex, disabled, onClearRow]
+    [fieldIndex, isRemove, onClearRow]
   );
 
   const addressValidator = useCallback(
@@ -86,7 +88,7 @@ export const AddressRow = ({
 
   // gets the proper label for adornment button. ick.
   const getAdornmentText = (value: string) => {
-    if (disabled) return t('labels.copy');
+    if (isRemove) return t('labels.copy');
     return value ? t('labels.clear') : t('labels.paste');
   };
 
@@ -114,14 +116,14 @@ export const AddressRow = ({
               placeholder="0x..."
               adornmentText={getAdornmentText(value)}
               onAdornmentClick={() => handleAdornmentClick(value, onChange)}
-              disabled={disabled}
+              disabled={isRemove}
             />
             {error?.message && (
               <AlertInline label={error.message} mode="critical" />
             )}
           </InputContainer>
           <Dropdown
-            disabled={memberWallets?.length === 1}
+            disabled={memberWallets?.length === 1 && !isRemove}
             side="bottom"
             align="start"
             sideOffset={4}

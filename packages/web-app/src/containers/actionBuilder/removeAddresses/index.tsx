@@ -131,7 +131,7 @@ const RemoveAddresses: React.FC<RemoveAddressesProps> = ({actionIndex}) => {
                   <Label label={t('labels.whitelistWallets.address')} />
                 </div>
                 <AddressRow
-                  disabled
+                  isRemove
                   key={field.id}
                   actionIndex={actionIndex}
                   fieldIndex={fieldIndex}
