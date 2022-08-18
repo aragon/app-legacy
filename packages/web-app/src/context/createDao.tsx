@@ -116,7 +116,7 @@ const CreateDaoProvider: React.FC<Props> = ({children}) => {
   /*************************************************
    *                   Helpers                     *
    *************************************************/
-  // get dao configurations
+  // get ERC20 Plugin configuration
   const erc20PluginParams: IErc20PluginInstall = useMemo(() => {
     const {
       minimumApproval,
@@ -151,6 +151,7 @@ const CreateDaoProvider: React.FC<Props> = ({children}) => {
     };
   }, [getValues]);
 
+  // get whiteList Plugin configuration
   const whiteListPluginParams: IAddressListPluginInstall = useMemo(() => {
     const {
       minimumApproval,
@@ -174,7 +175,7 @@ const CreateDaoProvider: React.FC<Props> = ({children}) => {
     };
   }, [getValues]);
 
-  // get settings for erc20 voting DAOs
+  // Get dao setting configuration for creation process
   const getDaoSettings = useCallback((): ICreateParams => {
     const values = getValues();
     let plugins: IPluginListItem;
@@ -204,7 +205,8 @@ const CreateDaoProvider: React.FC<Props> = ({children}) => {
         avatar: values.daoLogo,
         links: values.links,
       },
-      ensSubdomain: 'my-org', // my-org.dao.eth
+      // TODO: We're using dao name without spaces for ens, We need to add alert to inform this to user
+      ensSubdomain: values.daoName?.replace(/ /g, '_'),
       plugins: [plugins],
     };
   }, [erc20PluginParams, getValues, membership, whiteListPluginParams]);
@@ -232,7 +234,7 @@ const CreateDaoProvider: React.FC<Props> = ({children}) => {
       throw new Error('SDK client is not initialized correctly');
     }
 
-    // Check if deposit function is initialized
+    // Check if createDaoIterator function is initialized
     if (!createDaoIterator) {
       throw new Error('deposit function is not initialized correctly');
     }
