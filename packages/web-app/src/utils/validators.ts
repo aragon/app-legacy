@@ -11,6 +11,7 @@ import {
   ActionWithdraw,
   ActionMintToken,
   ActionAddAddress,
+  ActionRemoveAddress,
   Nullable,
 } from './types';
 
@@ -120,10 +121,10 @@ export function actionsAreValid(
   // mismatch between action form list and actions context
   if (contextActions.length !== formActions?.length) return false;
 
-  let result = false;
+  let isValid = false;
 
   // @Sepehr might need to make affirmative instead at some point - F.F. 2022-08-18
-  function isActionNotValid(index: number) {
+  function actionIsInvalid(index: number) {
     if (errors.actions) return true;
     switch (contextActions[index]?.name) {
       case 'withdraw_assets':
@@ -147,17 +148,24 @@ export function actionsAreValid(
       // the form specific validator
       case 'add_address':
         return (
-          formActions?.[index] as ActionAddAddress
+          formActions?.[index] as ActionRemoveAddress
         )?.inputs.memberWallets?.some(wallet => wallet.address === '');
+
+      //check whether an address is added to the action
+      case 'remove_address':
+        return (
+          (formActions?.[index] as ActionAddAddress)?.inputs.memberWallets
+            ?.length === 0
+        );
       default:
         return false;
     }
   }
 
   for (let i = 0; i < formActions?.length; i++) {
-    result = !isActionNotValid(i);
-    if (result === false) break;
+    isValid = !actionIsInvalid(i);
+    if (isValid === false) break;
   }
 
-  return result;
+  return isValid;
 }
