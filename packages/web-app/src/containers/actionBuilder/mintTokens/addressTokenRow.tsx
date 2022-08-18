@@ -26,66 +26,76 @@ type IndexProps = ActionIndex & {
 
 type AddressAndTokenRowProps = IndexProps & {
   newTokenSupply: number;
+  onClear?: (index: number) => void;
   onDelete: (index: number) => void;
 };
 
-const AddressField: React.FC<IndexProps> = ({actionIndex, fieldIndex}) => {
-  const {t} = useTranslation();
-  const {getValues} = useFormContext();
-  const walletFieldArray = getValues(
-    `actions.${actionIndex}.inputs.mintTokensToWallets`
-  );
+const AddressField: React.FC<IndexProps & {onClear?: (index: number) => void}> =
+  ({actionIndex, fieldIndex, onClear}) => {
+    const {t} = useTranslation();
+    const {control} = useFormContext();
+    const walletFieldArray = useWatch({
+      name: `actions.${actionIndex}.inputs.mintTokensToWallets`,
+      control,
+    });
 
-  const addressValidator = async (address: string, index: number) => {
-    let validationResult = validateAddress(address);
-    if (walletFieldArray) {
-      await walletFieldArray.forEach(
-        (wallet: WalletField, walletIndex: number) => {
-          if (address === wallet.address && index !== walletIndex) {
-            validationResult = t('errors.duplicateAddress') as string;
+    const handleAdornmentClick = (
+      value: string,
+      onChange: (value: string) => void
+    ) => {
+      if (value) {
+        onClear?.(fieldIndex) || onChange('');
+      } else handleClipboardActions(value, onChange);
+    };
+
+    const addressValidator = async (address: string, index: number) => {
+      let validationResult = validateAddress(address);
+      if (walletFieldArray) {
+        await walletFieldArray.forEach(
+          (wallet: WalletField, walletIndex: number) => {
+            if (address === wallet.address && index !== walletIndex) {
+              validationResult = t('errors.duplicateAddress') as string;
+            }
           }
-          if (Number(wallet.amount) > 0 && wallet.address === '')
-            validationResult = t('errors.required.walletAddress') as string;
-        }
-      );
-    }
-    return validationResult;
-  };
+        );
+      }
+      return validationResult;
+    };
 
-  return (
-    <Controller
-      defaultValue=""
-      name={`actions.${actionIndex}.inputs.mintTokensToWallets.${fieldIndex}.address`}
-      rules={{
-        required: t('errors.required.walletAddress') as string,
-        validate: value => addressValidator(value, fieldIndex),
-      }}
-      render={({
-        field: {name, value, onBlur, onChange},
-        fieldState: {error},
-      }) => (
-        <div className="flex-1">
-          <ValueInput
-            name={name}
-            value={value}
-            onBlur={onBlur}
-            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-              onChange(e.target.value);
-            }}
-            placeholder={t('placeHolders.walletOrEns')}
-            adornmentText={value ? t('labels.copy') : t('labels.paste')}
-            onAdornmentClick={() => handleClipboardActions(value, onChange)}
-          />
-          {error?.message && (
-            <ErrorContainer>
-              <AlertInline label={error.message} mode="critical" />
-            </ErrorContainer>
-          )}
-        </div>
-      )}
-    />
-  );
-};
+    return (
+      <Controller
+        defaultValue=""
+        name={`actions.${actionIndex}.inputs.mintTokensToWallets.${fieldIndex}.address`}
+        rules={{
+          required: t('errors.required.walletAddress') as string,
+          validate: value => addressValidator(value, fieldIndex),
+        }}
+        render={({
+          field: {name, value, onBlur, onChange},
+          fieldState: {error},
+        }) => (
+          <div className="flex-1">
+            <ValueInput
+              name={name}
+              value={value}
+              onBlur={onBlur}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                onChange(e.target.value);
+              }}
+              placeholder={t('placeHolders.walletOrEns')}
+              adornmentText={value ? t('labels.clear') : t('labels.paste')}
+              onAdornmentClick={() => handleAdornmentClick(value, onChange)}
+            />
+            {error?.message && (
+              <ErrorContainer>
+                <AlertInline label={error.message} mode="critical" />
+              </ErrorContainer>
+            )}
+          </div>
+        )}
+      />
+    );
+  };
 
 const TokenField: React.FC<IndexProps> = ({actionIndex, fieldIndex}) => {
   const {trigger} = useFormContext();
@@ -134,16 +144,28 @@ const TokenField: React.FC<IndexProps> = ({actionIndex, fieldIndex}) => {
   );
 };
 
-type DropdownProps = Omit<AddressAndTokenRowProps, 'newTokenSupply'>;
+type DropdownProps = Omit<AddressAndTokenRowProps, 'newTokenSupply'> & {
+  disabled?: boolean;
+};
 
-const DropdownMenu: React.FC<DropdownProps> = ({fieldIndex, onDelete}) => {
+const DropdownMenu: React.FC<DropdownProps> = ({
+  fieldIndex,
+  onDelete,
+  disabled = false,
+}) => {
   const {t} = useTranslation();
 
   return (
     <Dropdown
+      disabled={disabled}
       align="start"
       trigger={
-        <ButtonIcon mode="ghost" size="large" icon={<IconMenuVertical />} />
+        <ButtonIcon
+          mode="secondary"
+          size="large"
+          icon={<IconMenuVertical />}
+          bgWhite
+        />
       }
       sideOffset={8}
       listItems={[
@@ -184,15 +206,26 @@ export const AddressAndTokenRow: React.FC<AddressAndTokenRowProps> = ({
   actionIndex,
   fieldIndex,
   onDelete,
+  onClear,
   newTokenSupply,
 }) => {
   const {isDesktop} = useScreen();
+
+  const {control} = useFormContext();
+  const walletFieldArray = useWatch({
+    name: `actions.${actionIndex}.inputs.mintTokensToWallets`,
+    control,
+  });
 
   if (isDesktop) {
     return (
       <Container>
         <HStack>
-          <AddressField actionIndex={actionIndex} fieldIndex={fieldIndex} />
+          <AddressField
+            actionIndex={actionIndex}
+            fieldIndex={fieldIndex}
+            onClear={onClear}
+          />
           <TokenField actionIndex={actionIndex} fieldIndex={fieldIndex} />
           <PercentageDistribution
             actionIndex={actionIndex}
@@ -203,6 +236,7 @@ export const AddressAndTokenRow: React.FC<AddressAndTokenRowProps> = ({
             actionIndex={actionIndex}
             fieldIndex={fieldIndex}
             onDelete={onDelete}
+            disabled={walletFieldArray.length === 1}
           />
         </HStack>
       </Container>
@@ -220,6 +254,7 @@ export const AddressAndTokenRow: React.FC<AddressAndTokenRowProps> = ({
             actionIndex={actionIndex}
             fieldIndex={fieldIndex}
             onDelete={onDelete}
+            disabled={walletFieldArray.length === 1}
           />
         </HStack>
       </VStack>

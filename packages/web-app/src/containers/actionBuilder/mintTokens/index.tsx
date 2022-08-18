@@ -92,14 +92,23 @@ export const MintTokenForm: React.FC<MintTokenFormProps> = ({
   const {infura} = useProviders();
   const nativeCurrency = CHAIN_METADATA[network].nativeCurrency;
   const {data: daoToken, isLoading: daoTokenLoading} = useDaoToken(daoId);
-  const {setValue} = useFormContext();
+  const {setValue, trigger, control} = useFormContext();
 
-  const {fields, append, remove} = useFieldArray({
+  const {fields, append, remove, update} = useFieldArray({
     name: `actions.${actionIndex}.inputs.mintTokensToWallets`,
   });
+
   const mints = useWatch({
     name: `actions.${actionIndex}.inputs.mintTokensToWallets`,
+    control,
   }) as MintInfo[];
+
+  const controlledWallets = fields.map((field, ctrlledIndex) => {
+    return {
+      ...field,
+      ...(mints && {...mints[ctrlledIndex]}),
+    };
+  });
 
   const [newTokens, setNewTokens] = useState<number>(0);
   const [tokenSupply, setTokenSupply] = useState(0);
@@ -111,8 +120,11 @@ export const MintTokenForm: React.FC<MintTokenFormProps> = ({
   );
   const [newHoldersCount, setNewHoldersCount] = useState(0);
 
+  /*************************************************
+   *                    Hooks                     *
+   *************************************************/
   useEffect(() => {
-    if (fields.length === 0) {
+    if (controlledWallets.length === 0) {
       append({address: '', amount: '0'});
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -151,9 +163,9 @@ export const MintTokenForm: React.FC<MintTokenFormProps> = ({
 
   // Count number of addresses that don't yet own token
   useEffect(() => {
-    if (mints && daoToken?.id) {
+    if (controlledWallets && daoToken?.id) {
       // only check rows where form input holds address
-      const validInputs = mints.filter(
+      const validInputs = controlledWallets.filter(
         m => m.address !== '' && isAddress(m.address)
       );
 
@@ -168,7 +180,9 @@ export const MintTokenForm: React.FC<MintTokenFormProps> = ({
         setValue(`actions.${actionIndex}.summary.newHoldersCount`, 0);
       } else if (uncheckedAddresses.length === 0) {
         // No unchecked address. Simply compare inputs with cached addresses
-        const count = mints.filter(m => newTokenHolders.has(m.address)).length;
+        const count = controlledWallets.filter(m =>
+          newTokenHolders.has(m.address)
+        ).length;
         setNewHoldersCount(count);
         setValue(`actions.${actionIndex}.summary.newHoldersCount`, count);
       } else {
@@ -206,7 +220,7 @@ export const MintTokenForm: React.FC<MintTokenFormProps> = ({
             // Do not compare addresses with newTokenHolders. Since effects
             // batch state updates, this might not yet reflect the updates done
             // a couple of lines ago.
-            const count = mints.filter(m =>
+            const count = controlledWallets.filter(m =>
               holderAddresses.some(ab => ab.address === m.address)
             ).length;
             setNewHoldersCount(count);
@@ -218,22 +232,42 @@ export const MintTokenForm: React.FC<MintTokenFormProps> = ({
       }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [mints, daoToken.id]);
+  }, [controlledWallets, daoToken.id]);
 
   useEffect(() => {
     // Collecting token amounts that are to be minted
-    if (mints && daoToken) {
+    if (controlledWallets && daoToken) {
       let newTokensCount = 0;
-      mints.forEach(m => {
+      controlledWallets.forEach(m => {
         newTokensCount += parseFloat(m.amount);
       });
       setNewTokens(newTokensCount);
       setValue(`actions.${actionIndex}.summary.newTokens`, newTokensCount);
     }
-  }, [mints, fields, daoToken, daoToken.id, setValue, actionIndex]);
+  }, [actionIndex, daoToken, controlledWallets, setValue]);
 
+  /*************************************************
+   *             Callbacks and Handlers            *
+   *************************************************/
   const handleAddWallet = () => {
     append({address: '', amount: '0'});
+  };
+
+  const handleClearWallet = (index: number) => {
+    update(index, {address: '', amount: controlledWallets[index].amount});
+
+    if (controlledWallets.length > 1) {
+      setTimeout(() => {
+        trigger(`actions.${actionIndex}.inputs.mintTokensToWallets`);
+      }, 50);
+    }
+  };
+
+  const handleDeleteWallet = (index: number) => {
+    remove(index);
+    setTimeout(() => {
+      trigger(`actions.${actionIndex}.inputs.mintTokensToWallets`);
+    }, 50);
   };
 
   const handleCSVUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -261,6 +295,9 @@ export const MintTokenForm: React.FC<MintTokenFormProps> = ({
     }
   };
 
+  /*************************************************
+   *                    Render                    *
+   *************************************************/
   return (
     <Container standAlone={standAlone}>
       {isDesktop && (
@@ -273,13 +310,14 @@ export const MintTokenForm: React.FC<MintTokenFormProps> = ({
         </div>
       )}
 
-      {fields.map((field, index) => {
+      {controlledWallets.map((field, index) => {
         return (
           <AddressAndTokenRow
             key={field.id}
             actionIndex={actionIndex}
             fieldIndex={index}
-            onDelete={index => remove(index)}
+            onClear={handleClearWallet}
+            onDelete={handleDeleteWallet}
             newTokenSupply={newTokens + tokenSupply}
           />
         );

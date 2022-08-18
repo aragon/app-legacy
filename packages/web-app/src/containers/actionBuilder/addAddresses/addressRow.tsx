@@ -57,9 +57,6 @@ export const AddressRow = ({actionIndex, fieldIndex, ...props}: Props) => {
 
   const addressValidator = useCallback(
     (address: string, index: number) => {
-      // allowing empty addresses as valid for better user experience
-      if (address === '') return true;
-
       let validationResult = validateAddress(address);
       if (memberWallets) {
         memberWallets.forEach(
