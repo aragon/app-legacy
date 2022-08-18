@@ -8,6 +8,7 @@ import CTACard from 'components/ctaCard';
 import {CTACards} from 'components/ctaCard/data';
 import useScreen from 'hooks/useScreen';
 import {useWallet} from 'hooks/useWallet';
+import {trackEvent} from 'services/analytics';
 
 const Carousel: React.FC = () => {
   const {isDesktop} = useScreen();
@@ -20,6 +21,10 @@ const Carousel: React.FC = () => {
   // when the rest of CTAs are enabled
   const handleCTAClick = useCallback(
     (path: string) => {
+      if (path === '/create') {
+        trackEvent('landing_createDaoBtn_clicked');
+      }
+
       if (path.startsWith('http')) {
         window.open(path, '_blank');
         return;
