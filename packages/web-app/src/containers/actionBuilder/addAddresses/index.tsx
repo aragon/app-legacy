@@ -5,7 +5,6 @@ import {
   IconMenuVertical,
   Label,
   ListItemAction,
-  StateEmpty,
 } from '@aragon/ui-components';
 import React, {useEffect} from 'react';
 import {useFieldArray, useFormContext, useWatch} from 'react-hook-form';
@@ -32,7 +31,7 @@ const AddAddresses: React.FC<AddAddressesProps> = ({actionIndex}) => {
     control,
   });
 
-  const {fields, update, replace, append, remove} = useFieldArray({
+  const {fields, update, append, remove} = useFieldArray({
     control,
     name: memberListKey,
   });
@@ -51,14 +50,21 @@ const AddAddresses: React.FC<AddAddressesProps> = ({actionIndex}) => {
     if (controlledWallets.length === 0) {
       append({address: ''});
     }
-
-    // disabling because I can. Jk, only need this to happen once
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [append, controlledWallets.length]);
 
   /*************************************************
    *             Callbacks and Handlers            *
    *************************************************/
+  // if there are more than one address, trigger validation
+  // to fix duplicate address error
+  const validateFields = () => {
+    if (controlledWallets.length > 1) {
+      setTimeout(() => {
+        trigger(memberListKey);
+      }, 50);
+    }
+  };
+
   // reset all rows
   const handleResetAll = () => {
     controlledWallets.forEach((_, index) => {
@@ -67,27 +73,20 @@ const AddAddresses: React.FC<AddAddressesProps> = ({actionIndex}) => {
   };
 
   // reset single row
-  const handleRowReset = (index: number) => {
+  const handleRowClear = (index: number) => {
     update(index, {address: ''});
-
-    // this is quite unfortunate, but now empty fields will all be validated
-    // on row reset. Turn off required validation for row if that is not desired
-    setTimeout(() => {
-      trigger(memberListKey);
-    }, 50);
+    validateFields();
   };
 
   // remove all rows
   const handleDeleteAll = () => {
-    replace([]);
+    remove();
   };
 
   // remove single row
   const handleRowDelete = (index: number) => {
     remove(index);
-    setTimeout(() => {
-      trigger(memberListKey);
-    }, 50);
+    validateFields();
   };
 
   // add empty wallet
@@ -98,17 +97,6 @@ const AddAddresses: React.FC<AddAddressesProps> = ({actionIndex}) => {
   // TODO: extract actions out of component
   // separating this because rows sometimes don't have the same actions
   const rowActions = [
-    {
-      component: (
-        <ListItemAction
-          title={t('labels.whitelistWallets.resetEntry')}
-          bgWhite
-        />
-      ),
-      callback: (rowIndex: number) => {
-        handleRowReset(rowIndex);
-      },
-    },
     {
       component: (
         <ListItemAction
@@ -149,98 +137,81 @@ const AddAddresses: React.FC<AddAddressesProps> = ({actionIndex}) => {
       methodDescription={t('labels.addWalletsDescription')}
       dropdownItems={methodActions}
     >
-      {controlledWallets.length === 0 ? (
-        <FormItem className="pt-3 pb-3 rounded-b-xl">
-          <StateEmpty
-            type="Object"
-            mode="inline"
-            object="wallet"
-            title={t('labels.whitelistWallets.noWallets')}
-            description={t('labels.whitelistWallets.addWalletsSubtitle')}
-            primaryButton={{
-              label: t('labels.addWallet'),
-              onClick: handleAdd,
-            }}
-          />
-        </FormItem>
-      ) : (
-        <>
-          <FormItem className="hidden desktop:block py-1.5">
-            <Label label={t('labels.whitelistWallets.address')} />
-          </FormItem>
-          {controlledWallets.map((field, fieldIndex) => {
-            return (
-              <FormItem key={field.id}>
-                <div className="desktop:hidden mb-0.5 desktop:mb-0">
-                  <Label label={t('labels.whitelistWallets.address')} />
-                </div>
-                <AddressRow
-                  actionIndex={actionIndex}
-                  fieldIndex={fieldIndex}
-                  dropdownItems={rowActions}
-                />
-              </FormItem>
-            );
-          })}
-          <FormItem className="flex justify-between">
-            <ButtonText
-              label={t('labels.addWallet')}
-              mode="secondary"
-              size="large"
-              bgWhite
-              onClick={handleAdd}
+      <FormItem className="hidden desktop:block py-1.5">
+        <Label label={t('labels.whitelistWallets.address')} />
+      </FormItem>
+      {controlledWallets.map((field, fieldIndex) => {
+        return (
+          <FormItem key={field.id}>
+            <div className="desktop:hidden mb-0.5 desktop:mb-0">
+              <Label label={t('labels.whitelistWallets.address')} />
+            </div>
+            <AddressRow
+              actionIndex={actionIndex}
+              fieldIndex={fieldIndex}
+              dropdownItems={rowActions}
+              onClearRow={handleRowClear}
             />
+          </FormItem>
+        );
+      })}
+      <FormItem className="flex justify-between">
+        <ButtonText
+          label={t('labels.addWallet')}
+          mode="secondary"
+          size="large"
+          bgWhite
+          onClick={handleAdd}
+        />
 
-            <Dropdown
-              side="bottom"
-              align="start"
-              sideOffset={4}
-              trigger={
-                <ButtonIcon
-                  size="large"
-                  mode="secondary"
-                  icon={<IconMenuVertical />}
-                  data-testid="trigger"
+        <Dropdown
+          side="bottom"
+          align="start"
+          sideOffset={4}
+          trigger={
+            <ButtonIcon
+              size="large"
+              mode="secondary"
+              icon={<IconMenuVertical />}
+              data-testid="trigger"
+              bgWhite
+            />
+          }
+          listItems={[
+            {
+              component: (
+                <ListItemAction
+                  title={t('labels.whitelistWallets.resetAllEntries')}
                   bgWhite
                 />
-              }
-              listItems={[
-                {
-                  component: (
-                    <ListItemAction
-                      title={t('labels.whitelistWallets.resetAllEntries')}
-                      bgWhite
-                    />
-                  ),
-                  callback: handleResetAll,
-                },
-                {
-                  component: (
-                    <ListItemAction
-                      title={t('labels.whitelistWallets.deleteAllEntries')}
-                      bgWhite
-                    />
-                  ),
-                  callback: handleDeleteAll,
-                },
-                {
-                  component: (
-                    <ListItemAction
-                      title={t('labels.whitelistWallets.uploadCSV')}
-                      bgWhite
-                      mode="disabled"
-                    />
-                  ),
-                  callback: () => {},
-                },
-              ]}
-            />
-          </FormItem>
-          <AccordionSummary
-            total={controlledWallets.filter(wallet => wallet.address).length}
-          />
-        </>
-      )}
+              ),
+              callback: handleResetAll,
+            },
+            {
+              component: (
+                <ListItemAction
+                  title={t('labels.whitelistWallets.deleteAllEntries')}
+                  bgWhite
+                />
+              ),
+              callback: handleDeleteAll,
+            },
+            {
+              component: (
+                <ListItemAction
+                  title={t('labels.whitelistWallets.uploadCSV')}
+                  bgWhite
+                  mode="disabled"
+                />
+              ),
+              callback: () => {},
+            },
+          ]}
+        />
+      </FormItem>
+      <AccordionSummary
+        total={controlledWallets.filter(wallet => wallet.address).length}
+      />
     </AccordionMethod>
   );
 };
