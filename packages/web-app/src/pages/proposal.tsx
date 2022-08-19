@@ -150,14 +150,12 @@ const Proposal: React.FC = () => {
   // much to do with whether vote button is enabled. Would probably be good clean up of the
   // current component.
 
-  // TODO: fill out execution widget & terminal statuses based on different cases
-  // calculate button text and disabled status
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [voteNowDisabled, statusLabel, _, handleVoteClicked] = useMemo(() => {
     let voteNowDisabled = true;
     let onClick;
     let statusLabel = '';
     let alertMessage = '';
-    const executionMessage = '';
 
     const voted = mappedProposal?.voters.some(
       (voter: DisplayedVoter) => voter.wallet === address
@@ -170,10 +168,12 @@ const Proposal: React.FC = () => {
         break;
 
       case 'pending':
-        statusLabel = t(
-          'votingTerminal.status.pending',
-          formatDistance(new Date(mappedProposal.startDate), new Date())
-        );
+        statusLabel = t('votingTerminal.status.pending', {
+          startDate: formatDistance(
+            new Date(mappedProposal.startDate),
+            new Date()
+          ),
+        });
         break;
 
       case 'succeeded':
@@ -190,10 +190,9 @@ const Proposal: React.FC = () => {
         break;
 
       case 'active': {
-        statusLabel = t(
-          'votingTerminal.status.active',
-          formatDistance(new Date(), new Date(mappedProposal.endDate))
-        );
+        statusLabel = t('votingTerminal.status.active', {
+          endDate: formatDistance(new Date(), new Date(mappedProposal.endDate)),
+        });
 
         // member not yet voted
         if (address && !isOnWrongNetwork && canVote) {
@@ -338,7 +337,6 @@ const Proposal: React.FC = () => {
               onCancelClicked={() => setVotingInProcess(false)}
               onVoteClicked={handleVoteClicked}
               voteNowDisabled={voteNowDisabled}
-              voteButtonLabel={t('votingTerminal.voteNow')}
               statusLabel={statusLabel}
             />
           )}

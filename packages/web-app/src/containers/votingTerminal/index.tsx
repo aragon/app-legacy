@@ -242,7 +242,7 @@ export const VotingTerminal: React.FC<VotingTerminalProps> = ({
       ) : (
         <VoteContainer>
           <ButtonText
-            label={voteButtonLabel || t('votingTerminal.voteUnavailable')}
+            label={voteButtonLabel || t('votingTerminal.voteNow')}
             size="large"
             onClick={onVoteClicked}
             className="w-full tablet:w-max"
