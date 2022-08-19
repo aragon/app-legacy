@@ -134,7 +134,7 @@ const Proposal: React.FC = () => {
 
   useEffect(() => {
     // wrong network, no wallet -> no options
-    if (isOnWrongNetwork || !address) setVotingInProcess(false);
+    if (isOnWrongNetwork || !address || !canVote) setVotingInProcess(false);
 
     // was on wrong network but now on correct network
     if (wasOnWrongNetwork.current && !isOnWrongNetwork) {
@@ -151,105 +151,111 @@ const Proposal: React.FC = () => {
   // current component.
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [voteNowDisabled, statusLabel, _, handleVoteClicked] = useMemo(() => {
-    let voteNowDisabled = true;
-    let onClick;
-    let statusLabel = '';
-    let alertMessage = '';
+  const [voteNowDisabled, statusLabel, alertMessage, handleVoteClicked] =
+    useMemo(() => {
+      let voteNowDisabled = true;
+      let onClick;
+      let statusLabel = '';
+      let alertMessage = '';
 
-    const voted = mappedProposal?.voters.some(
-      (voter: DisplayedVoter) => voter.wallet === address
-    );
+      const voted = mappedProposal?.voters.some(
+        (voter: DisplayedVoter) => voter.wallet === address
+      );
 
-    switch (mappedProposal?.status) {
-      // not sure how we'll be handling draft proposals so until then, keeping this
-      case 'draft':
-        statusLabel = t('votingTerminal.status.draft');
-        break;
+      switch (mappedProposal?.status) {
+        // not sure how we'll be handling draft proposals so until then, keeping this
+        case 'draft':
+          statusLabel = t('votingTerminal.status.draft');
+          break;
 
-      case 'pending':
-        statusLabel = t('votingTerminal.status.pending', {
-          startDate: formatDistance(
-            new Date(mappedProposal.startDate),
-            new Date()
-          ),
-        });
-        break;
+        case 'pending':
+          statusLabel = t('votingTerminal.status.pending', {
+            startDate: formatDistance(
+              new Date(mappedProposal.startDate),
+              new Date()
+            ),
+          });
+          break;
 
-      case 'succeeded':
-        statusLabel = t('votingTerminal.status.closed');
-        break;
+        case 'succeeded':
+          statusLabel = t('votingTerminal.status.closed');
+          break;
 
-      case 'executed':
-        statusLabel = t('votingTerminal.status.closed');
-        break;
+        case 'executed':
+          statusLabel = t('votingTerminal.status.closed');
+          break;
 
-      case 'defeated':
-        statusLabel = t('votingTerminal.status.closed');
+        case 'defeated':
+          statusLabel = t('votingTerminal.status.closed');
 
-        break;
+          break;
 
-      case 'active': {
-        statusLabel = t('votingTerminal.status.active', {
-          endDate: formatDistance(new Date(), new Date(mappedProposal.endDate)),
-        });
+        case 'active': {
+          statusLabel = t('votingTerminal.status.active', {
+            endDate: formatDistance(
+              new Date(),
+              new Date(mappedProposal.endDate)
+            ),
+          });
 
-        // member not yet voted
-        if (address && !isOnWrongNetwork && canVote) {
-          voteNowDisabled = false;
-          onClick = () => {
-            setVotingInProcess(true);
-          };
+          // member not yet voted
+          if (address && !isOnWrongNetwork && canVote) {
+            voteNowDisabled = false;
+            onClick = () => {
+              setVotingInProcess(true);
+            };
+          }
+
+          // already voted
+          else if (canVote && voted) {
+            statusLabel = t('votingTerminal.status.voted') + statusLabel;
+          }
+
+          // not a member
+          else if (address && !isOnWrongNetwork && !canVote) {
+            alertMessage = mappedProposal.token
+              ? t('votingTerminal.status.ineligibleTokenBased', {
+                  token: mappedProposal.token.name,
+                })
+              : t('votingTerminal.status.ineligibleWhitelist');
+          }
+
+          // wrong network
+          else if (address && isOnWrongNetwork) {
+            voteNowDisabled = false;
+
+            onClick = () => {
+              open('network');
+              wasOnWrongNetwork.current = true;
+            };
+          }
+
+          // not logged in
+          else {
+            voteNowDisabled = false;
+
+            onClick = () => {
+              open('wallet');
+              wasNotLoggedIn.current = true;
+            };
+          }
+          break;
         }
-
-        // already voted
-        else if (canVote && voted) {
-          statusLabel = t('votingTerminal.status.voted') + statusLabel;
-        }
-
-        // not a member
-        else if (address && !isOnWrongNetwork && !canVote) {
-          alertMessage = mappedProposal.token
-            ? 'You did not have at least 1 {{token}} before the proposal was created.'
-            : 'You were not a member before the proposal was created.';
-        }
-
-        // wrong network
-        else if (address && isOnWrongNetwork) {
-          voteNowDisabled = false;
-
-          onClick = () => {
-            open('network');
-            wasOnWrongNetwork.current = true;
-          };
-        }
-
-        // not logged in
-        else {
-          voteNowDisabled = false;
-
-          onClick = () => {
-            open('wallet');
-            wasNotLoggedIn.current = true;
-          };
-        }
-        break;
       }
-    }
 
-    return [voteNowDisabled, statusLabel, alertMessage, onClick];
-  }, [
-    address,
-    canVote,
-    isOnWrongNetwork,
-    mappedProposal?.endDate,
-    mappedProposal?.startDate,
-    mappedProposal?.status,
-    mappedProposal?.token,
-    mappedProposal?.voters,
-    open,
-    t,
-  ]);
+      return [voteNowDisabled, statusLabel, alertMessage, onClick];
+    }, [
+      address,
+      canVote,
+      isOnWrongNetwork,
+      mappedProposal?.endDate,
+      mappedProposal?.startDate,
+      mappedProposal?.status,
+      mappedProposal?.token,
+      mappedProposal?.voters,
+      open,
+      t,
+    ]);
 
   /*************************************************
    *                    Render                    *
@@ -338,6 +344,7 @@ const Proposal: React.FC = () => {
               onVoteClicked={handleVoteClicked}
               voteNowDisabled={voteNowDisabled}
               statusLabel={statusLabel}
+              alertMessage={alertMessage}
             />
           )}
 

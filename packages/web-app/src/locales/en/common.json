@@ -566,6 +566,8 @@
       "pending": "Voting begins in {{startDate}}",
       "closed": "Proposal has concluded successfully.",
       "active": "Voting concludes in {{endDate}}",
+      "ineligibleWhitelist": "You were not a member before the proposal was created.",
+      "ineligibleTokenBased": "You did not have any {{token}} before the proposal was created.",
       "voted": "You have already voted."
     },
     "voteNow": "Vote now",

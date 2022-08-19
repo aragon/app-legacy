@@ -2,8 +2,11 @@ import React, {useMemo, useState} from 'react';
 import styled from 'styled-components';
 
 // TODO: Change to use proper imports
-import {IconClock, StateEmpty} from '@aragon/ui-components';
-import {AlertInline} from '@aragon/ui-components/src/components/alerts';
+import {IconClock, IconInfo, StateEmpty} from '@aragon/ui-components';
+import {
+  AlertInline,
+  AlertCard,
+} from '@aragon/ui-components/src/components/alerts';
 import {
   ButtonGroup,
   ButtonText,
@@ -19,6 +22,7 @@ import {
 import {useTranslation} from 'react-i18next';
 import {shortenAddress} from '@aragon/ui-components/src/utils/addresses';
 
+// TODO: clean up props: some shouldn't be optional
 export type VotingTerminalProps = {
   breakdownTabDisabled?: boolean;
   votersTabDisabled?: boolean;
@@ -44,6 +48,7 @@ export type VotingTerminalProps = {
   onVoteClicked?: React.MouseEventHandler<HTMLButtonElement>;
   onCancelClicked?: React.MouseEventHandler<HTMLButtonElement>;
   voteButtonLabel?: string;
+  alertMessage?: string;
 };
 
 export const VotingTerminal: React.FC<VotingTerminalProps> = ({
@@ -57,12 +62,14 @@ export const VotingTerminal: React.FC<VotingTerminalProps> = ({
   token,
   startDate,
   endDate,
+  status,
   statusLabel,
   strategy,
   onVoteClicked,
   votingInProcess,
   onCancelClicked,
   voteButtonLabel,
+  alertMessage,
 }) => {
   const [query, setQuery] = useState('');
   const [buttonGroupState, setButtonGroupState] = useState('info');
@@ -74,6 +81,16 @@ export const VotingTerminal: React.FC<VotingTerminalProps> = ({
       ? voters
       : voters.filter(voter => voter.wallet.includes(query));
   }, [query, voters]);
+
+  const statusIcon = useMemo(
+    () =>
+      status === 'pending' || status === 'active' ? (
+        <IconClock className="text-info-500" />
+      ) : (
+        <IconInfo className="text-info-500" />
+      ),
+    [status]
+  );
 
   return (
     <Container>
@@ -240,20 +257,28 @@ export const VotingTerminal: React.FC<VotingTerminalProps> = ({
           </VoteContainer>
         </VotingContainer>
       ) : (
-        <VoteContainer>
-          <ButtonText
-            label={voteButtonLabel || t('votingTerminal.voteNow')}
-            size="large"
-            onClick={onVoteClicked}
-            className="w-full tablet:w-max"
-            disabled={voteNowDisabled}
-          />
-          <AlertInline
-            label={statusLabel || ''}
-            mode="neutral"
-            icon={<IconClock className="text-info-500" />}
-          />
-        </VoteContainer>
+        <>
+          <VoteContainer>
+            <ButtonText
+              label={voteButtonLabel || t('votingTerminal.voteNow')}
+              size="large"
+              onClick={onVoteClicked}
+              className="w-full tablet:w-max"
+              disabled={voteNowDisabled}
+            />
+            <AlertInline
+              label={statusLabel || ''}
+              mode="neutral"
+              icon={statusIcon}
+            />
+          </VoteContainer>
+
+          {alertMessage && (
+            <div className="pt-2 tablet:pt-0 tablet:mt-3">
+              <AlertCard title={alertMessage} mode="warning" />
+            </div>
+          )}
+        </>
       )}
     </Container>
   );
@@ -306,7 +331,7 @@ const CheckboxContainer = styled.div.attrs({
 
 const VoteContainer = styled.div.attrs({
   className:
-    'flex flex-col tablet:flex-row tablet:justify-between items-center tablet:items-center mt-3 space-y-2 tablet:space-y-0',
+    'flex flex-col tablet:flex-row tablet:space-x-3 items-center tablet:items-center mt-3 space-y-2 tablet:space-y-0',
 })``;
 
 const ButtonWrapper = styled.div.attrs({
