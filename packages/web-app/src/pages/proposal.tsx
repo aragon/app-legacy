@@ -14,7 +14,13 @@ import {withTransaction} from '@elastic/apm-rum-react';
 import TipTapLink from '@tiptap/extension-link';
 import {useEditor} from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
-import React, {useEffect, useMemo, useRef, useState} from 'react';
+import React, {
+  useEffect,
+  useLayoutEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 import {useTranslation} from 'react-i18next';
 import {generatePath, useNavigate, useParams} from 'react-router-dom';
 import styled from 'styled-components';
@@ -28,7 +34,7 @@ import {useNetwork} from 'context/network';
 import {useCache} from 'hooks/useCache';
 import {useDaoParam} from 'hooks/useDaoParam';
 import {DisplayedVoter, useDaoProposal} from 'hooks/useDaoProposal';
-import {useIsDaoMember} from 'hooks/useIsDaoMember';
+import {useWalletCanVote} from 'hooks/useWalletCanVote';
 import {useMappedBreadcrumbs} from 'hooks/useMappedBreadcrumbs';
 import useScreen from 'hooks/useScreen';
 import {useWallet} from 'hooks/useWallet';
@@ -38,29 +44,29 @@ import {NotFound} from 'utils/paths';
 const Proposal: React.FC = () => {
   const {t} = useTranslation();
   const {id} = useParams();
+  const {open} = useGlobalModalContext();
   const navigate = useNavigate();
   const {network} = useNetwork();
   const {set, get} = useCache();
   const {isDesktop} = useScreen();
-  const {open, close} = useGlobalModalContext();
   const {data: daoId} = useDaoParam();
   const {breadcrumbs, tag} = useMappedBreadcrumbs();
 
-  const {address, isConnected, isOnWrongNetwork, methods} = useWallet();
   const [votingInProcess, setVotingInProcess] = useState(false);
-  const {data: isMember, isLoading: isDaoMemberLoading} = useIsDaoMember(
+  const {address, isConnected, isOnWrongNetwork} = useWallet();
+  const {data: canVote, isLoading: canVoteLoading} = useWalletCanVote(
     daoId,
     address!
   );
 
   // Note: these two refs being used to hold "memories" of previous "state"
   // across renders in order to automate the following states:
-  // loggedOut -> login modal => switch network modal -> vote options selection
-  // ref for holding value of whether user was previously not logged in
+  // loggedOut -> login modal => switch network modal -> vote options selection;
+  // ref for holding value of whether user was previously not logged in when vote now was clicked
   const wasNotLoggedIn = useRef(false);
 
   // ref for holding value of whether user was previously logged in but
-  // on the wrong network
+  // on the wrong network when vote now was clicked
   const wasOnWrongNetwork = useRef(false);
 
   if (!id) navigate(NotFound);
@@ -116,35 +122,33 @@ const Proposal: React.FC = () => {
       set('proposalStatus', mappedProposal.status);
   }, [get, mappedProposal, set]);
 
-  // handle automatic network switch
   useEffect(() => {
-    // whenever user is not logged in or is on the wrong network,
-    // collapse options.
-    if (isOnWrongNetwork || !isConnected) setVotingInProcess(false);
-
-    // if user just transitioned from not logged in to logged in state
+    // was not logged in but now logged in
     if (wasNotLoggedIn.current && isConnected) {
-      // reset reference
-      wasNotLoggedIn.current = false;
-
-      // update network reference; not logged is synonymous to being
-      // on wrong network
-      wasOnWrongNetwork.current = true;
-
-      // currently on wrong network, automatically ask for switch
       if (isOnWrongNetwork) {
         open('network');
-      } else setVotingInProcess(true);
-    }
+      }
 
-    // previously on wrong network but now on proper network,
-    // close the network modal and show next steps
+      // logged out is technically on wrong network
+      wasOnWrongNetwork.current = true;
+
+      // reset reference
+      wasNotLoggedIn.current = false;
+    }
+  }, [isConnected, canVote, isOnWrongNetwork, open]);
+
+  useEffect(() => {
+    // wrong network, no wallet -> no options
+    if (isOnWrongNetwork || !address) setVotingInProcess(false);
+
+    // was on wrong network but now on correct network
     if (wasOnWrongNetwork.current && !isOnWrongNetwork) {
-      setVotingInProcess(true);
-      close('network');
+      if (canVote) setVotingInProcess(true);
+
+      // reset "state"
       wasOnWrongNetwork.current = false;
     }
-  }, [close, isConnected, isOnWrongNetwork, open]);
+  }, [address, canVote, isOnWrongNetwork]);
 
   // Note: this can also be extracted into the useProposal hook granted we want to give
   // it all the responsibility for data mapping, despite proposal not necessarily having
@@ -178,24 +182,24 @@ const Proposal: React.FC = () => {
         break;
       case 'active': {
         // logged in on proper network && not a member
-        if (address && !isOnWrongNetwork && !isMember) {
+        if (address && !isOnWrongNetwork && !canVote) {
           disabled = true;
           label = t('votingTerminal.voteUnavailable');
         }
 
-        // already voted
-        else if (isMember && voted) {
-          disabled = true;
-          label = t('votingTerminal.voted');
-        }
-
         // member not yet voted
-        else if (address && !isOnWrongNetwork && isMember) {
+        else if (address && !isOnWrongNetwork && canVote) {
           disabled = false;
           label = t('votingTerminal.voteNow');
           onClick = () => {
             setVotingInProcess(true);
           };
+        }
+
+        // already voted
+        else if (canVote && voted) {
+          disabled = true;
+          label = t('votingTerminal.voted');
         }
 
         // wrong network
@@ -215,7 +219,7 @@ const Proposal: React.FC = () => {
           label = t('votingTerminal.voteNow');
 
           onClick = () => {
-            methods.selectWallet();
+            open('wallet');
             wasNotLoggedIn.current = true;
           };
         }
@@ -226,11 +230,10 @@ const Proposal: React.FC = () => {
     return [disabled, label, onClick];
   }, [
     address,
-    isMember,
+    canVote,
     isOnWrongNetwork,
     mappedProposal?.status,
     mappedProposal?.voters,
-    methods,
     open,
     t,
   ]);
@@ -314,7 +317,7 @@ const Proposal: React.FC = () => {
             </>
           )}
 
-          {mappedProposal && !isDaoMemberLoading && (
+          {mappedProposal && !canVoteLoading && (
             <VotingTerminal
               {...mappedProposal}
               votingInProcess={votingInProcess}

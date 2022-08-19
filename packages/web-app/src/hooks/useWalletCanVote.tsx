@@ -8,10 +8,11 @@ import {useSpecificProvider} from 'context/providers';
 import {isWhitelistMember, useDaoMembers} from './useDaoMembers';
 import {HookData} from 'utils/types';
 
-// Hook to determine if connected address is a member of the current
-// DAO. Note that ERC20 voting member is anyone holding the token
+// Hook to determine if connected address is eligible to vote on proposals of the current
+// DAO. Note that for ERC20, voting member is anyone holding the token
 // and not just those who have previously interacted with the DAO, obviously.
-export const useIsDaoMember = (
+// This of course will need to be modified for proper voter eligibility
+export const useWalletCanVote = (
   dao: string,
   address: string
 ): HookData<boolean> => {
@@ -20,7 +21,7 @@ export const useIsDaoMember = (
   const provider = useSpecificProvider(CHAIN_METADATA[network].id);
 
   const {data, isLoading, error} = useDaoMembers(dao, address);
-  const [isMember, setIsMember] = useState(false);
+  const [canVote, setCanVote] = useState(false);
 
   useEffect(() => {
     async function checkIfMember() {
@@ -29,7 +30,7 @@ export const useIsDaoMember = (
       if (address && searchResult) {
         // Whitelist member
         if (isWhitelistMember(searchResult)) {
-          setIsMember(searchResult.id === address);
+          setCanVote(searchResult.id === address);
           return;
         }
 
@@ -46,18 +47,18 @@ export const useIsDaoMember = (
             false
           );
 
-          setIsMember(BigNumber.from(balance).gt(0));
+          setCanVote(BigNumber.from(balance).gt(0));
           return;
         }
       }
-      setIsMember(false);
+      setCanVote(false);
     }
 
     checkIfMember();
   }, [address, data, network, provider]);
 
   return {
-    data: isMember,
+    data: canVote,
     isLoading,
     error,
   };
