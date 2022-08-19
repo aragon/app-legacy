@@ -114,7 +114,6 @@ const Proposal: React.FC = () => {
       set('proposalStatus', mappedProposal.status);
   }, [get, mappedProposal, set]);
 
-  // handle automatic network switch
   useEffect(() => {
     // was not logged in but now logged in
     if (statusRef.current.wasNotLoggedIn && isConnected) {
