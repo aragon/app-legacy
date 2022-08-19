@@ -1,7 +1,13 @@
 import React, {useEffect, useMemo} from 'react';
 import {withTransaction} from '@elastic/apm-rum-react';
 import {useTranslation} from 'react-i18next';
-import {FormProvider, useForm, useFormState, useWatch} from 'react-hook-form';
+import {
+  FormProvider,
+  useForm,
+  useFormContext,
+  useFormState,
+  useWatch,
+} from 'react-hook-form';
 
 import {FullScreenStepper, Step} from 'components/fullScreenStepper';
 import {OverviewDAOHeader, OverviewDAOStep} from 'containers/daoOverview';
@@ -17,6 +23,7 @@ import {CHAIN_METADATA, getSupportedNetworkByChainId} from 'utils/constants';
 import {useNetwork} from 'context/network';
 import {useWallet} from 'hooks/useWallet';
 import {Link} from '@aragon/ui-components';
+import {trackEvent} from 'services/analytics';
 
 export type WhitelistWallet = {
   id: string;
@@ -225,6 +232,15 @@ const CreateDAO: React.FC = () => {
                 />
               </>
             }
+            onNextButtonClicked={next => {
+              trackEvent('daoCreation_continueBtn', {
+                step: '1_select_blockchain',
+                settings: {
+                  network: formMethods.getValues('blockchain')?.network,
+                },
+              });
+              next();
+            }}
           >
             <SelectChain />
           </Step>
@@ -232,6 +248,16 @@ const CreateDAO: React.FC = () => {
             wizardTitle={t('createDAO.step2.title')}
             wizardDescription={t('createDAO.step2.description')}
             isNextButtonDisabled={!daoMetadataIsValid}
+            onNextButtonClicked={next => {
+              trackEvent('daoCreation_continueBtn', {
+                step: '2_define_metadata',
+                settings: {
+                  dao_name: formMethods.getValues('daoName'),
+                  links: formMethods.getValues('links'),
+                },
+              });
+              next();
+            }}
           >
             <DefineMetadata />
           </Step>
@@ -239,6 +265,19 @@ const CreateDAO: React.FC = () => {
             wizardTitle={t('createDAO.step3.title')}
             wizardDescription={t('createDAO.step3.description')}
             isNextButtonDisabled={!daoSetupCommunityIsValid}
+            onNextButtonClicked={next => {
+              trackEvent('daoCreation_continueBtn', {
+                step: '3_setup_community',
+                settings: {
+                  governance_type: formMethods.getValues('membership'),
+                  token_name: formMethods.getValues('tokenName'),
+                  symbol: formMethods.getValues('tokenSymbol'),
+                  token_address: formMethods.getValues('tokenAddress'),
+                  whitelistWallets: formMethods.getValues('whitelistWallets'),
+                },
+              });
+              next();
+            }}
           >
             <SetupCommunity />
           </Step>
@@ -251,6 +290,20 @@ const CreateDAO: React.FC = () => {
               </>
             }
             isNextButtonDisabled={!daoConfigureCommunity}
+            onNextButtonClicked={next => {
+              trackEvent('daoCreation_continueBtn', {
+                step: '4_configure_governance',
+                settings: {
+                  minimum_approval: formMethods.getValues('minimumApproval'),
+                  support: formMethods.getValues('support'),
+                  duration_days: formMethods.getValues('durationDays'),
+                  duration_hours: formMethods.getValues('durationHours'),
+                  duration_minutes: formMethods.getValues('durationMinutes'),
+                  governance_type: formMethods.getValues('membership'),
+                },
+              });
+              next();
+            }}
           >
             <ConfigureCommunity />
           </Step>

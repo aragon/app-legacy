@@ -134,7 +134,7 @@ export const FullScreenStepper: React.FC<FullScreenStepperProps> = ({
                   label={nextButtonLabel || t('labels.next')}
                   size="large"
                   onClick={() =>
-                    onNextButtonClicked ? onNextButtonClicked() : next()
+                    onNextButtonClicked ? onNextButtonClicked(next) : next()
                   }
                   disabled={isNextButtonDisabled}
                   iconRight={<IconChevronRight />}

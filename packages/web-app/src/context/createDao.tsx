@@ -26,6 +26,7 @@ import {useWallet} from 'hooks/useWallet';
 import {useGlobalModalContext} from './globalModals';
 import {useClient} from 'hooks/useClient';
 import {usePollGasFee} from 'hooks/usePollGasfee';
+import {trackEvent} from 'services/analytics';
 
 type DAOCreationSettings = ICreateDaoERC20Voting | ICreateDaoWhitelistVoting;
 
@@ -41,7 +42,7 @@ const CreateDaoContext = createContext<CreateDaoContextType | null>(null);
 const CreateDaoProvider: React.FC<Props> = ({children}) => {
   const {open} = useGlobalModalContext();
   const navigate = useNavigate();
-  const {isOnWrongNetwork} = useWallet();
+  const {isOnWrongNetwork, provider} = useWallet();
   const [showModal, setShowModal] = useState(false);
 
   const [daoCreationData, setDaoCreationData] = useState<DAOCreationSettings>();
@@ -99,6 +100,14 @@ const CreateDaoProvider: React.FC<Props> = ({children}) => {
     // if DAO has been created, we don't need to do anything
     // do not execute it again, close the modal
     // TODO: navigate to new dao when available
+    trackEvent('daoCreation_publishDAONow_clicked', {
+      network: getValues('blockchain')?.network,
+      wallet_provider: provider,
+      governance_type: getValues('membership'),
+      estimated_gwei_fee: averageFee,
+      total_usd_cost: averageFee ? tokenPrice * Number(averageFee) : 0,
+    });
+
     if (creationProcessState === TransactionState.SUCCESS) {
       handleCloseModal();
       return;

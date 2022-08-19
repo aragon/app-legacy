@@ -15,6 +15,7 @@ import {i18n} from '../../../i18n.config';
 import useScreen from 'hooks/useScreen';
 import {CHAIN_METADATA, SupportedNetworks} from 'utils/constants';
 import {useNetwork} from 'context/network';
+import {trackEvent} from 'services/analytics';
 
 type NetworkType = 'main' | 'test';
 type SortFilter = 'cost' | 'popularity' | 'security';
@@ -36,6 +37,7 @@ const SelectChainForm: React.FC = () => {
       setIsOpen(false);
       const {name} = e.currentTarget as HTMLButtonElement;
 
+      trackEvent('daoCreation_sortBy_clicked', {sort_by: name});
       if (sortFilter !== name) {
         setFilter(name as SortFilter);
       }

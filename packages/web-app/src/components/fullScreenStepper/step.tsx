@@ -12,7 +12,7 @@ export type StepProps = {
   nextButtonLabel?: string;
   isNextButtonDisabled?: boolean;
   onBackButtonClicked?: () => void;
-  onNextButtonClicked?: () => void;
+  onNextButtonClicked?: (next: () => void) => void;
   // This method can use to trigger validations once user clicked on disabled next button
   onNextButtonDisabledClicked?: () => void;
 };

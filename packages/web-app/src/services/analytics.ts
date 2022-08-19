@@ -27,12 +27,12 @@ function getAnalyticsMethod(methodType: MethodType) {
  * @param eventName The event name tied to actions like button clicks.
  * @returns void
  */
-export function trackEvent(eventName: string) {
+export function trackEvent(eventName: string, properties?: Object) {
   const trackerMethod = getAnalyticsMethod(MethodType.EVENT);
   if (typeof trackerMethod !== 'function') {
     return;
   }
-  trackerMethod(eventName);
+  trackerMethod(eventName, properties);
 }
 
 /**
