@@ -226,7 +226,7 @@ const ReviewProposal: React.FC<ReviewProposalProps> = ({
           <VotingTerminal
             breakdownTabDisabled
             voteNowDisabled
-            statusLabel={t('votingTerminal.notStartedYet')}
+            statusLabel={t('votingTerminal.status.draft')}
             approval={approval}
             participation={participation}
             startDate={formattedStartDate}

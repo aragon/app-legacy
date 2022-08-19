@@ -1,9 +1,9 @@
 import {useQuery} from '@apollo/client';
 import {ProgressStatusProps} from '@aragon/ui-components';
-import {format, formatDistance} from 'date-fns';
+import {format} from 'date-fns';
 import {BigNumber} from 'ethers';
 import {ERC20VOTING_PROPOSAL_DETAILS} from 'queries/proposals';
-import {useCallback, useMemo} from 'react';
+import {useMemo} from 'react';
 import {useTranslation} from 'react-i18next';
 import {formatUnits} from 'utils/library';
 
@@ -53,23 +53,6 @@ export const useDaoProposal = (proposalId?: string) => {
   /*************************************************
    *              Callbacks & Handlers             *
    *************************************************/
-  const getStatusLabel = useCallback(
-    (status: string, endDate: number) => {
-      switch (status) {
-        case 'pending':
-          return t('votingTerminal.notStartedYet');
-
-        case 'active':
-          return t('votingTerminal.remainingTime', {
-            time: formatDistance(new Date(), new Date(endDate)),
-          });
-
-        default:
-          return t('votingTerminal.voteEnded');
-      }
-    },
-    [t]
-  );
 
   // remove this when integrating with sdk
   // since it maps the proposal subgraph data to displayed data
@@ -188,12 +171,11 @@ export const useDaoProposal = (proposalId?: string) => {
       } (${tokenParticipation.div(BigNumber.from(votingPower)).mul(100)}%)`,
 
       status,
-      statusLabel: getStatusLabel(status, Number(endDate) * 1000),
       strategy: token
         ? t('votingTerminal.tokenVoting')
         : t('votingTerminal.multisig'),
     };
-  }, [getStatusLabel, proposalData, t]);
+  }, [proposalData, t]);
 
   // steps for step card
   const proposalSteps = useMemo(() => {
