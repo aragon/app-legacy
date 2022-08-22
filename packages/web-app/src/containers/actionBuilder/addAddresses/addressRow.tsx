@@ -16,20 +16,31 @@ import {handleClipboardActions} from 'utils/library';
 
 type Props = {
   actionIndex: number;
+  // TODO: when refactoring, this is what indicates whether the row
+  // should be editable or not. Please rename.
+  isRemove?: boolean;
   fieldIndex: number;
   dropdownItems: Array<{
-    component: React.ReactNode;
     callback: (index: number) => void;
+    component: React.ReactNode;
   }>;
-  disabled?: boolean;
+  onClearRow?: (index: number) => void;
 };
 
-export const AddressRow = ({actionIndex, fieldIndex, ...props}: Props) => {
+export const AddressRow = ({
+  actionIndex,
+  isRemove = false,
+  fieldIndex,
+  dropdownItems,
+  onClearRow,
+}: Props) => {
   const {t} = useTranslation();
 
   const {control} = useFormContext();
+
+  const memberWalletsKey = `actions.${actionIndex}.inputs.memberWallets`;
   const memberWallets = useWatch({
-    name: `actions.${actionIndex}.inputs.memberWallets`,
+    name: memberWalletsKey,
     control,
   });
 
@@ -39,7 +50,7 @@ export const AddressRow = ({actionIndex, fieldIndex, ...props}: Props) => {
   const handleAdornmentClick = useCallback(
     (value: string, onChange: (value: string) => void) => {
       // allow the user to copy the address even when input is disabled
-      if (props.disabled) {
+      if (isRemove) {
         handleClipboardActions(value, onChange);
         return;
       }
@@ -47,12 +58,12 @@ export const AddressRow = ({actionIndex, fieldIndex, ...props}: Props) => {
       // if the input is not disabled, when there is a value clear it,
       // paste from clipboard, and set the value
       if (value) {
-        onChange('');
+        onClearRow?.(fieldIndex) || onChange('');
       } else {
         handleClipboardActions(value, onChange);
       }
     },
-    [props.disabled]
+    [fieldIndex, isRemove, onClearRow]
   );
 
   const addressValidator = useCallback(
@@ -77,7 +88,7 @@ export const AddressRow = ({actionIndex, fieldIndex, ...props}: Props) => {
 
   // gets the proper label for adornment button. ick.
   const getAdornmentText = (value: string) => {
-    if (props.disabled) return t('labels.copy');
+    if (isRemove) return t('labels.copy');
     return value ? t('labels.clear') : t('labels.paste');
   };
 
@@ -86,35 +97,37 @@ export const AddressRow = ({actionIndex, fieldIndex, ...props}: Props) => {
    *************************************************/
   return (
     <Controller
-      name={`actions.${actionIndex}.inputs.memberWallets.${fieldIndex}.address`}
+      name={`${memberWalletsKey}.${fieldIndex}.address`}
       defaultValue=""
       control={control}
       rules={{
+        required: t('errors.required.walletAddress') as string,
         validate: value => addressValidator(value, fieldIndex),
       }}
       render={({field: {onChange, value}, fieldState: {error}}) => (
         <Container>
           <InputContainer>
             <ValueInput
+              mode={error ? 'critical' : 'default'}
               value={value}
               onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                 onChange(e.target.value);
               }}
-              mode="default"
               placeholder="0x..."
               adornmentText={getAdornmentText(value)}
               onAdornmentClick={() => handleAdornmentClick(value, onChange)}
-              disabled={props.disabled}
+              disabled={isRemove}
             />
             {error?.message && (
               <AlertInline label={error.message} mode="critical" />
             )}
           </InputContainer>
           <Dropdown
+            disabled={memberWallets?.length === 1 && !isRemove}
             side="bottom"
             align="start"
             sideOffset={4}
-            listItems={props.dropdownItems.map(item => ({
+            listItems={dropdownItems.map(item => ({
               component: item.component,
               callback: () => item.callback(fieldIndex),
             }))}

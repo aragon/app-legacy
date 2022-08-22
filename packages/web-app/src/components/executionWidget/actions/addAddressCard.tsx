@@ -1,16 +1,19 @@
+import {ListItemAddress} from '@aragon/ui-components';
 import React from 'react';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 
-import {ActionAddAddress} from 'utils/types';
 import {AccordionMethod} from 'components/accordionMethod';
-import {ListItemAddress} from '@aragon/ui-components';
 import AccordionSummary from 'containers/actionBuilder/addAddresses/accordionSummary';
+import {useNetwork} from 'context/network';
+import {CHAIN_METADATA} from 'utils/constants';
+import {ActionAddAddress} from 'utils/types';
 
 export const AddAddressCard: React.FC<{
   action: ActionAddAddress;
 }> = ({action}) => {
   const {t} = useTranslation();
+  const {network} = useNetwork();
   const filteredMemberWallets = action.inputs.memberWallets.filter(
     wallet => wallet.address
   );
@@ -25,7 +28,17 @@ export const AddAddressCard: React.FC<{
     >
       <Container>
         {filteredMemberWallets.map(({address}) => (
-          <ListItemAddress label={address} src={address} key={address} />
+          <ListItemAddress
+            label={address}
+            src={address}
+            key={address}
+            onClick={() =>
+              window.open(
+                `${CHAIN_METADATA[network].explorer}address/${address}`,
+                '_blank'
+              )
+            }
+          />
         ))}
       </Container>
       <AccordionSummary
