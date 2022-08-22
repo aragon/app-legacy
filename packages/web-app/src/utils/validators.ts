@@ -128,16 +128,12 @@ export function actionsAreValid(
     if (errors.actions) return true;
     switch (contextActions[index]?.name) {
       case 'withdraw_assets':
-        console.log(
-          'see',
-          (actionFormList[index] as ActionWithdraw)?.isCustomToken
-        );
         return (
-          (actionFormList[index] as ActionWithdraw)?.to === '' ||
-          (actionFormList[index] as ActionWithdraw)?.amount?.toString() ===
+          (contextActions[index] as ActionWithdraw)?.to === '' ||
+          (contextActions[index] as ActionWithdraw)?.amount?.toString() ===
             '' ||
-          ((actionFormList[index] as ActionWithdraw)?.isCustomToken &&
-            (actionFormList[index] as ActionWithdraw)?.tokenAddress === '')
+          ((contextActions[index] as ActionWithdraw)?.isCustomToken &&
+            (contextActions[index] as ActionWithdraw)?.tokenAddress === '')
         );
       case 'mint_tokens':
         if (
