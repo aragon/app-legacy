@@ -561,7 +561,8 @@
     "notStartedYet": "Not started yet",
     "voteEnded": "Voting ended",
     "emptyState": {
-      "title": "No result found for {{query}}",
+      "titleSearch": "No result found for {{query}}",
+      "title": "There are no voters yet",
       "subtitle": "Search for another wallet or ENS address"
     }
   },
