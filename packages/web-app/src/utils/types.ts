@@ -218,6 +218,8 @@ export type ActionAddAddress = {
   };
 };
 
+export type ActionRemoveAddress = ActionAddAddress;
+
 export type ActionMintToken = {
   inputs: {
     mintTokensToWallets: Array<{address: string; amount: string}>;

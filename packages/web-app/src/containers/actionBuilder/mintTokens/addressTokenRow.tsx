@@ -82,6 +82,7 @@ const AddressField: React.FC<AddressFieldProps> = ({
       }) => (
         <div className="flex-1">
           <ValueInput
+            mode={error ? 'critical' : 'default'}
             name={name}
             value={value}
             onBlur={onBlur}
