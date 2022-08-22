@@ -110,9 +110,16 @@ export function actionsAreValid(
     if (errors.actions) return true;
     switch (actions[index]?.name) {
       case 'withdraw_assets':
+        console.log(
+          'see',
+          (actionFormList[index] as ActionWithdraw)?.isCustomToken
+        );
         return (
           (actionFormList[index] as ActionWithdraw)?.to === '' ||
-          (actionFormList[index] as ActionWithdraw)?.amount?.toString() === ''
+          (actionFormList[index] as ActionWithdraw)?.amount?.toString() ===
+            '' ||
+          ((actionFormList[index] as ActionWithdraw)?.isCustomToken &&
+            (actionFormList[index] as ActionWithdraw)?.tokenAddress === '')
         );
       case 'mint_tokens':
         if (

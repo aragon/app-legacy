@@ -207,6 +207,7 @@ export type ActionWithdraw = {
   tokenName: string;
   tokenPrice: number;
   tokenSymbol: string;
+  isCustomToken: boolean;
 };
 
 // TODO: merge these types
