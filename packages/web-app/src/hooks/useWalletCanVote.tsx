@@ -34,10 +34,8 @@ export const useWalletCanVote = (
           return;
         }
 
-        // fetch token balance for the address for the
-        // ERC20 voting packages just in case this is the first
-        // time the address has interacted with the DAO but
-        // still holds some of the DAO's tokens.
+        // fetch token balance for the address
+        // FIXME: this is temporary until we have proper member eligibility for ERC20
         if (data?.token?.id) {
           const balance = await fetchBalance(
             data.token.id,

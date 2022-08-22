@@ -150,7 +150,6 @@ const Proposal: React.FC = () => {
   // much to do with whether vote button is enabled. Would probably be good clean up of the
   // current component.
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [voteNowDisabled, statusLabel, alertMessage, handleVoteClicked] =
     useMemo(() => {
       let voteNowDisabled = true;
@@ -187,7 +186,6 @@ const Proposal: React.FC = () => {
 
         case 'defeated':
           statusLabel = t('votingTerminal.status.closed');
-
           break;
 
         case 'active': {
