@@ -143,7 +143,13 @@ const RemoveAddresses: React.FC<RemoveAddressesProps> = ({
               <Label label={t('labels.whitelistWallets.address')} />
             </FormItem>
             {controlledWallets.map((field, fieldIndex) => (
-              <FormItem key={field.id}>
+              <FormItem
+                key={field.id}
+                className={`${
+                  fieldIndex === 0 &&
+                  'rounded-t-xl border-t desktop:rounded-none desktop:border-t-0'
+                }`}
+              >
                 <div className="desktop:hidden mb-0.5 desktop:mb-0">
                   <Label label={t('labels.whitelistWallets.address')} />
                 </div>

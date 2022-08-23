@@ -211,6 +211,7 @@ export type ActionWithdraw = {
 
 // TODO: merge these types
 export type ActionAddAddress = {
+  name: 'add_address';
   inputs: {
     memberWallets: {
       address: Address;
@@ -218,9 +219,17 @@ export type ActionAddAddress = {
   };
 };
 
-export type ActionRemoveAddress = ActionAddAddress;
+export type ActionRemoveAddress = {
+  name: 'remove_address';
+  inputs: {
+    memberWallets: {
+      address: Address;
+    }[];
+  };
+};
 
 export type ActionMintToken = {
+  name: 'mint_tokens';
   inputs: {
     mintTokensToWallets: Array<{address: string; amount: string}>;
   };

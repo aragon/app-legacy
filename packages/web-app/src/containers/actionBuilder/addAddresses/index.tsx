@@ -147,12 +147,22 @@ const AddAddresses: React.FC<AddAddressesProps> = ({
       dropdownItems={methodActions}
       customHeader={useCustomHeader && <CustomHeader />}
     >
-      <FormItem className="hidden desktop:block py-1.5">
+      <FormItem
+        className={`hidden desktop:block ${
+          useCustomHeader ? 'rounded-t-xl border-t pt-3 pb-1.5' : 'py-1.5'
+        }`}
+      >
         <Label label={t('labels.whitelistWallets.address')} />
       </FormItem>
       {controlledWallets.map((field, fieldIndex) => {
         return (
-          <FormItem key={field.id}>
+          <FormItem
+            key={field.id}
+            className={`${
+              fieldIndex === 0 &&
+              'rounded-t-xl border-t desktop:rounded-none desktop:border-t-0'
+            }`}
+          >
             <div className="desktop:hidden mb-0.5 desktop:mb-0">
               <Label label={t('labels.whitelistWallets.address')} />
             </div>

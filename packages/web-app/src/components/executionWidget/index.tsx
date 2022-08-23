@@ -20,11 +20,7 @@ export const ExecutionWidget: React.FC = () => {
       </Header>
       <Content>
         {actions?.map((action: Action, index: number) => (
-          <ActionsFilter
-            {...{action}}
-            key={index}
-            type={actions[index]?.name}
-          />
+          <ActionsFilter {...{action}} key={index} type={action.name} />
         ))}
       </Content>
       <Action>
