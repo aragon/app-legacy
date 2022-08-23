@@ -1,13 +1,7 @@
 import React, {useEffect, useMemo} from 'react';
 import {withTransaction} from '@elastic/apm-rum-react';
 import {useTranslation} from 'react-i18next';
-import {
-  FormProvider,
-  useForm,
-  useFormContext,
-  useFormState,
-  useWatch,
-} from 'react-hook-form';
+import {FormProvider, useForm, useFormState, useWatch} from 'react-hook-form';
 
 import {FullScreenStepper, Step} from 'components/fullScreenStepper';
 import {OverviewDAOHeader, OverviewDAOStep} from 'containers/daoOverview';
