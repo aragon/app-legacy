@@ -15,6 +15,7 @@ export interface IUseWallet extends SignerValue {
    * the network name returned by the useNetwork context).
    */
   isOnWrongNetwork: boolean;
+  network: string;
 }
 
 export const useWallet = (): IUseWallet => {
@@ -66,5 +67,6 @@ export const useWallet = (): IUseWallet => {
     isConnected,
     isOnWrongNetwork,
     methods,
+    network,
   };
 };

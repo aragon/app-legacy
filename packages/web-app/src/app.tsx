@@ -6,7 +6,7 @@ import {Navigate, Routes, Route, useLocation, Outlet} from 'react-router-dom';
 
 import Navbar from 'containers/navbar';
 import {WalletMenu} from 'containers/walletMenu';
-import {trackPage} from 'services/analytics';
+import {trackEvent, trackPage} from 'services/analytics';
 import '../i18n.config';
 
 // HACK: All pages MUST be exported with the withTransaction function
@@ -48,7 +48,17 @@ function App() {
   // TODO this needs to be inside a Routes component. Will be moved there with
   // further refactoring of layout (see further below).
   const {pathname} = useLocation();
-  const {methods} = useWallet();
+  const {methods, status, network, address, provider} = useWallet();
+
+  useEffect(() => {
+    if (status === 'connected') {
+      trackEvent('wallet_connected', {
+        network,
+        wallet_address: address,
+        wallet_provider: provider?.connection.url,
+      });
+    }
+  }, [address, network, provider, status]);
 
   useEffect(() => {
     // This check would prevent the wallet selection modal from opening up if the user hasn't logged in previously.

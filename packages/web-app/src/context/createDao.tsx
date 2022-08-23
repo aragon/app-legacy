@@ -231,14 +231,34 @@ const CreateDaoProvider: React.FC<Props> = ({children}) => {
       // temporary, considering once transaction is successfully executed,
       // we can navigate to the new dao
       console.log('Newly created DAO address', address);
+      trackEvent('daoCreation_transaction_success', {
+        network: getValues('blockchain')?.network,
+        wallet_provider: provider,
+        governance_type: getValues('membership'),
+      });
+
       setDaoCreationData(undefined);
       setCreationProcessState(TransactionState.SUCCESS);
     } catch (error) {
       // unsuccessful execution, keep creation data for retry
       console.log(error);
+      trackEvent('daoCreation_transaction_failed', {
+        network: getValues('blockchain')?.network,
+        wallet_provider: provider,
+        governance_type: getValues('membership'),
+        error,
+      });
+
       setCreationProcessState(TransactionState.ERROR);
     }
-  }, [createErc20, createWhitelist, membership, daoCreationData]);
+  }, [
+    membership,
+    createErc20,
+    daoCreationData,
+    createWhitelist,
+    getValues,
+    provider,
+  ]);
 
   /*************************************************
    *                    Render                     *
