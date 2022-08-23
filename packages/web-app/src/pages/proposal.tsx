@@ -54,17 +54,12 @@ const Proposal: React.FC = () => {
     address!
   );
 
-  // Note: these two refs being used to hold "memories" of previous "state"
+  if (!id) navigate(NotFound);
+
+  // ref used to hold "memories" of previous "state"
   // across renders in order to automate the following states:
   // loggedOut -> login modal => switch network modal -> vote options selection;
-  // ref for holding value of whether user was previously not logged in when vote now was clicked
-  const wasNotLoggedIn = useRef(false);
-
-  // ref for holding value of whether user was previously logged in but
-  // on the wrong network when vote now was clicked
-  const wasOnWrongNetwork = useRef(false);
-
-  if (!id) navigate(NotFound);
+  const statusRef = useRef({wasNotLoggedIn: false, wasOnWrongNetwork: false});
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [metadata, setMetadata] = useState<Record<string, any> | undefined>();
@@ -119,16 +114,16 @@ const Proposal: React.FC = () => {
 
   useEffect(() => {
     // was not logged in but now logged in
-    if (wasNotLoggedIn.current && isConnected) {
+    if (statusRef.current.wasNotLoggedIn && isConnected) {
       if (isOnWrongNetwork) {
         open('network');
       }
 
       // logged out is technically on wrong network
-      wasOnWrongNetwork.current = true;
+      statusRef.current.wasOnWrongNetwork = true;
 
       // reset reference
-      wasNotLoggedIn.current = false;
+      statusRef.current.wasNotLoggedIn = false;
     }
   }, [isConnected, canVote, isOnWrongNetwork, open]);
 
@@ -137,11 +132,11 @@ const Proposal: React.FC = () => {
     if (isOnWrongNetwork || !address || !canVote) setVotingInProcess(false);
 
     // was on wrong network but now on correct network
-    if (wasOnWrongNetwork.current && !isOnWrongNetwork) {
+    if (statusRef.current.wasOnWrongNetwork && !isOnWrongNetwork) {
       if (canVote) setVotingInProcess(true);
 
       // reset "state"
-      wasOnWrongNetwork.current = false;
+      statusRef.current.wasOnWrongNetwork = false;
     }
   }, [address, canVote, isOnWrongNetwork]);
 
@@ -224,7 +219,7 @@ const Proposal: React.FC = () => {
 
             onClick = () => {
               open('network');
-              wasOnWrongNetwork.current = true;
+              statusRef.current.wasOnWrongNetwork = true;
             };
           }
 
@@ -234,7 +229,7 @@ const Proposal: React.FC = () => {
 
             onClick = () => {
               open('wallet');
-              wasNotLoggedIn.current = true;
+              statusRef.current.wasNotLoggedIn = true;
             };
           }
           break;
