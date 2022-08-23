@@ -13,9 +13,9 @@ interface IUseDaoResponse {
 }
 
 /**
- * This hook can use to build ERC20 or whitelist clients
+ * This hook can be used to build ERC20 or whitelist clients
  * @method createErc20 By passing instance plugin address will create an ERC20Client
- * @method createWhitelist By passing instance plugin address will create an ERC20Client
+ * @method createWhitelist By passing instance plugin address will create an WhitelistClient
  * @returns The corresponding Client
  */
 
@@ -40,7 +40,7 @@ export const useDao = (): IUseDaoResponse => {
     pluginAddress: Address
   ): ClientAddressList | Error => {
     if (!client || !context) {
-      return new Error('ERC20 SDK client is not initialized correctly');
+      return new Error('Whitelist SDK client is not initialized correctly');
     }
     const contextPlugin: ContextPlugin = ContextPlugin.fromContext(
       context as Context,

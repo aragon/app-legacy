@@ -62,7 +62,7 @@ const DepositProvider = ({children}: {children: ReactNode}) => {
   }, [client, depositParams]);
 
   const estimateDepositFees = useCallback(async () => {
-    // if (client && depositParams) {
+    // if (client && depositParams) { //TODO: will enable this once the increase allowance gas estimation method was ready
     // if (currentStep === 2 || isNativeToken(depositParams.token as string)) {
     return client?.estimation.deposit(depositParams as IDepositParams);
     // } else
