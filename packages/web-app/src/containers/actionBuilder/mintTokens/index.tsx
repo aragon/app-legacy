@@ -40,9 +40,7 @@ const MintTokens: React.FC<MintTokensProps> = ({actionIndex}) => {
   const handleReset = () => {
     clearErrors(`actions.${actionIndex}`);
     resetField(`actions.${actionIndex}`);
-    setValue(`actions.${actionIndex}.inputs.mintTokensToWallets`, [
-      {address: '', amount: ''},
-    ]);
+    setValue(`actions.${actionIndex}.inputs.mintTokensToWallets`, []);
   };
 
   const methodActions = [
@@ -94,7 +92,7 @@ export const MintTokenForm: React.FC<MintTokenFormProps> = ({
   const {data: daoToken, isLoading: daoTokenLoading} = useDaoToken(daoId);
   const {setValue, trigger} = useFormContext();
 
-  const {fields, append, remove, update} = useFieldArray({
+  const {fields, append, remove} = useFieldArray({
     name: `actions.${actionIndex}.inputs.mintTokensToWallets`,
   });
   const mints = useWatch({
@@ -118,8 +116,7 @@ export const MintTokenForm: React.FC<MintTokenFormProps> = ({
     if (fields.length === 0) {
       append({address: '', amount: '0'});
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [append, fields.length]);
 
   useEffect(() => {
     // Fetching necessary info about the token.
@@ -245,16 +242,6 @@ export const MintTokenForm: React.FC<MintTokenFormProps> = ({
     append({address: '', amount: '0'});
   };
 
-  const handleClearWallet = (index: number) => {
-    update(index, {address: '', amount: mints[index].amount});
-
-    if (mints.length > 1) {
-      setTimeout(() => {
-        trigger(`actions.${actionIndex}.inputs.mintTokensToWallets`);
-      }, 50);
-    }
-  };
-
   const handleDeleteWallet = (index: number) => {
     remove(index);
     setTimeout(() => {
@@ -308,7 +295,6 @@ export const MintTokenForm: React.FC<MintTokenFormProps> = ({
             key={field.id}
             actionIndex={actionIndex}
             fieldIndex={index}
-            onClear={handleClearWallet}
             onDelete={handleDeleteWallet}
             newTokenSupply={newTokens + tokenSupply}
           />
