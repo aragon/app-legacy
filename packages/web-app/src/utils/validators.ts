@@ -128,19 +128,11 @@ export function actionsAreValid(
     if (errors.actions) return true;
     switch (contextActions[index]?.name) {
       case 'withdraw_assets':
-        if ((formActions?.[index] as ActionWithdraw)?.isCustomToken) {
-          return (
-            (formActions?.[index] as ActionWithdraw)?.to === '' ||
-            (formActions?.[index] as ActionWithdraw)?.amount?.toString() ===
-              '' ||
-            !(formActions?.[index] as ActionWithdraw)?.tokenAddress
-          );
-        } else {
-          return (
-            (formActions?.[index] as ActionWithdraw)?.to === '' ||
-            (formActions?.[index] as ActionWithdraw)?.amount?.toString() === ''
-          );
-        }
+        return (
+          (formActions?.[index] as ActionWithdraw)?.to === '' ||
+          (formActions?.[index] as ActionWithdraw)?.amount?.toString() === '' ||
+          !(formActions?.[index] as ActionWithdraw)?.tokenAddress
+        );
       case 'mint_tokens':
         if (
           (formActions?.[index] as ActionMintToken)?.inputs?.mintTokensToWallets
