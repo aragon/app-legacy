@@ -98,7 +98,7 @@ const EditSettings: React.FC = () => {
                     : t('settings.edit')
                 }
                 disabled={currentMenu === 'metadata'}
-                mode={currentMenu === 'metadata' ? 'secondary' : 'primary'}
+                mode="secondary"
                 onClick={() => setCurrentMenu('metadata')}
                 bgWhite
               />
@@ -124,7 +124,7 @@ const EditSettings: React.FC = () => {
                     : t('settings.edit')
                 }
                 disabled={currentMenu === 'governance'}
-                mode={currentMenu === 'governance' ? 'secondary' : 'primary'}
+                mode="secondary"
                 onClick={() => setCurrentMenu('governance')}
                 bgWhite
               />
