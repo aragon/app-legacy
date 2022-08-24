@@ -191,6 +191,18 @@ const CreateDAO: React.FC = () => {
     errors.support,
   ]);
 
+  const handleNextButtonTracking = (
+    next: () => void,
+    stepName: string,
+    properties: Record<string, unknown>
+  ) => {
+    trackEvent('daoCreation_continueBtn', {
+      step: stepName,
+      settings: properties,
+    });
+    next();
+  };
+
   /*************************************************
    *                    Render                     *
    *************************************************/
@@ -226,15 +238,11 @@ const CreateDAO: React.FC = () => {
                 />
               </>
             }
-            onNextButtonClicked={next => {
-              trackEvent('daoCreation_continueBtn', {
-                step: '1_select_blockchain',
-                settings: {
-                  network: formMethods.getValues('blockchain')?.network,
-                },
-              });
-              next();
-            }}
+            onNextButtonClicked={next =>
+              handleNextButtonTracking(next, '1_select_blockchain', {
+                network: formMethods.getValues('blockchain')?.network,
+              })
+            }
           >
             <SelectChain />
           </Step>
@@ -242,16 +250,12 @@ const CreateDAO: React.FC = () => {
             wizardTitle={t('createDAO.step2.title')}
             wizardDescription={t('createDAO.step2.description')}
             isNextButtonDisabled={!daoMetadataIsValid}
-            onNextButtonClicked={next => {
-              trackEvent('daoCreation_continueBtn', {
-                step: '2_define_metadata',
-                settings: {
-                  dao_name: formMethods.getValues('daoName'),
-                  links: formMethods.getValues('links'),
-                },
-              });
-              next();
-            }}
+            onNextButtonClicked={next =>
+              handleNextButtonTracking(next, '2_define_metadata', {
+                dao_name: formMethods.getValues('daoName'),
+                links: formMethods.getValues('links'),
+              })
+            }
           >
             <DefineMetadata />
           </Step>
@@ -259,19 +263,15 @@ const CreateDAO: React.FC = () => {
             wizardTitle={t('createDAO.step3.title')}
             wizardDescription={t('createDAO.step3.description')}
             isNextButtonDisabled={!daoSetupCommunityIsValid}
-            onNextButtonClicked={next => {
-              trackEvent('daoCreation_continueBtn', {
-                step: '3_setup_community',
-                settings: {
-                  governance_type: formMethods.getValues('membership'),
-                  token_name: formMethods.getValues('tokenName'),
-                  symbol: formMethods.getValues('tokenSymbol'),
-                  token_address: formMethods.getValues('tokenAddress'),
-                  whitelistWallets: formMethods.getValues('whitelistWallets'),
-                },
-              });
-              next();
-            }}
+            onNextButtonClicked={next =>
+              handleNextButtonTracking(next, '3_setup_community', {
+                governance_type: formMethods.getValues('membership'),
+                token_name: formMethods.getValues('tokenName'),
+                symbol: formMethods.getValues('tokenSymbol'),
+                token_address: formMethods.getValues('tokenAddress'),
+                whitelistWallets: formMethods.getValues('whitelistWallets'),
+              })
+            }
           >
             <SetupCommunity />
           </Step>
@@ -284,20 +284,16 @@ const CreateDAO: React.FC = () => {
               </>
             }
             isNextButtonDisabled={!daoConfigureCommunity}
-            onNextButtonClicked={next => {
-              trackEvent('daoCreation_continueBtn', {
-                step: '4_configure_governance',
-                settings: {
-                  minimum_approval: formMethods.getValues('minimumApproval'),
-                  support: formMethods.getValues('support'),
-                  duration_days: formMethods.getValues('durationDays'),
-                  duration_hours: formMethods.getValues('durationHours'),
-                  duration_minutes: formMethods.getValues('durationMinutes'),
-                  governance_type: formMethods.getValues('membership'),
-                },
-              });
-              next();
-            }}
+            onNextButtonClicked={next =>
+              handleNextButtonTracking(next, '4_configure_governance', {
+                minimum_approval: formMethods.getValues('minimumApproval'),
+                support: formMethods.getValues('support'),
+                duration_days: formMethods.getValues('durationDays'),
+                duration_hours: formMethods.getValues('durationHours'),
+                duration_minutes: formMethods.getValues('durationMinutes'),
+                governance_type: formMethods.getValues('membership'),
+              })
+            }
           >
             <ConfigureCommunity />
           </Step>
