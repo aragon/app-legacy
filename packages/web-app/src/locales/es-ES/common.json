@@ -28,7 +28,8 @@
   },
   "labels": {
     "members": "Members",
-    "addMember": "Add Member",
+    "addMember": "Add Members",
+    "manageMember": "Manage Members",
     "addedMembers": "Added Members",
     "wallets": "Wallets",
     "addWallets": "Add Wallets",
@@ -525,6 +526,10 @@
     "mintTokens": {
       "methodDescription": "Which wallet addresses should get tokens, and how much? Add the wallets you want here, and then choose the distribution. Upload a CSV with <1>this template</1> if you want.",
       "additionalInfo": "The total token supply is inclusive of the already distributed tokens of the existing holders."
+    },
+    "manageWallets": {
+      "title": "Manage authorised wallets",
+      "description": "TBD Description, but something like: To add and/or remove new members to this wallet-based DAO …"
     }
   },
   "votingTerminal": {
