@@ -33,18 +33,23 @@ import {
   getCanonicalUtcOffset,
   KNOWN_FORMATS,
 } from 'utils/date';
+import {useActionsContext} from 'context/actions';
 
 type ReviewProposalProps = {
   defineProposalStepNumber: number;
+  addActionsStepNumber?: number;
 };
 
 const ReviewProposal: React.FC<ReviewProposalProps> = ({
   defineProposalStepNumber,
+  addActionsStepNumber,
 }) => {
   const {t} = useTranslation();
   const {network} = useNetwork();
   const {setStep} = useFormStep();
   const provider = useSpecificProvider(CHAIN_METADATA[network].id);
+
+  const {actions: actionTypes} = useActionsContext();
 
   const {dao} = useParams();
   const {data, loading} = useQuery(DAO_PACKAGE_BY_DAO_ID, {
@@ -116,6 +121,13 @@ const ReviewProposal: React.FC<ReviewProposalProps> = ({
     values.endTime,
     values.endUtc,
   ]);
+
+  const executableActions = useMemo(() => {
+    const formActions = getValues('actions');
+    return actionTypes.map((action, index) => {
+      return {type: action.name, action: formActions[index]};
+    });
+  }, [actionTypes, getValues]);
 
   /*************************************************
    *                    Hooks                      *
@@ -238,7 +250,14 @@ const ReviewProposal: React.FC<ReviewProposalProps> = ({
             }
           />
 
-          <ExecutionWidget />
+          <ExecutionWidget
+            actions={executableActions}
+            onAddAction={
+              addActionsStepNumber
+                ? () => setStep(addActionsStepNumber)
+                : undefined
+            }
+          />
         </ProposalContainer>
 
         <AdditionalInfoContainer>
