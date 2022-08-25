@@ -130,7 +130,8 @@ export function actionsAreValid(
       case 'withdraw_assets':
         return (
           (formActions?.[index] as ActionWithdraw)?.to === '' ||
-          (formActions?.[index] as ActionWithdraw)?.amount?.toString() === ''
+          (formActions?.[index] as ActionWithdraw)?.amount?.toString() === '' ||
+          !(formActions?.[index] as ActionWithdraw)?.tokenAddress
         );
       case 'mint_tokens':
         return (

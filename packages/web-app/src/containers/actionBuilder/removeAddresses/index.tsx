@@ -7,7 +7,7 @@ import {
   ListItemAction,
   StateEmpty,
 } from '@aragon/ui-components';
-import React from 'react';
+import React, {useEffect} from 'react';
 import {useFieldArray, useFormContext, useWatch} from 'react-hook-form';
 import {useTranslation} from 'react-i18next';
 
@@ -18,15 +18,18 @@ import {useGlobalModalContext} from 'context/globalModals';
 import {DaoWhitelist, useDaoMembers} from 'hooks/useDaoMembers';
 import {useDaoParam} from 'hooks/useDaoParam';
 import {ActionIndex} from 'utils/types';
-import {FormItem} from '../addAddresses';
+import {CustomHeaderProps, FormItem} from '../addAddresses';
 import AccordionSummary from '../addAddresses/accordionSummary';
 import {AddressRow} from '../addAddresses/addressRow';
 
-type RemoveAddressesProps = ActionIndex;
+type RemoveAddressesProps = ActionIndex & CustomHeaderProps;
 
 // README: when uploading CSV be sure to check for duplicates
 
-const RemoveAddresses: React.FC<RemoveAddressesProps> = ({actionIndex}) => {
+const RemoveAddresses: React.FC<RemoveAddressesProps> = ({
+  actionIndex,
+  useCustomHeader = false,
+}) => {
   const {t} = useTranslation();
   const {open} = useGlobalModalContext();
   const {removeAction} = useActionsContext();
@@ -36,7 +39,7 @@ const RemoveAddresses: React.FC<RemoveAddressesProps> = ({actionIndex}) => {
   const {data} = useDaoMembers(dao);
 
   // form context data & hooks
-  const {control} = useFormContext();
+  const {control, setValue} = useFormContext();
   const membersListKey = `actions.${actionIndex}.inputs.memberWallets`;
   const {fields, replace, remove} = useFieldArray({
     control,
@@ -50,6 +53,11 @@ const RemoveAddresses: React.FC<RemoveAddressesProps> = ({actionIndex}) => {
       ...(memberWallets && {...memberWallets[ctrlledIndex]}),
     };
   });
+
+  useEffect(() => {
+    setValue(`actions.${actionIndex}.name`, 'remove_address');
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   /*************************************************
    *             Callbacks and Handlers            *
@@ -105,9 +113,14 @@ const RemoveAddresses: React.FC<RemoveAddressesProps> = ({actionIndex}) => {
         smartContractName={t('labels.aragonCore')}
         methodDescription={t('labels.removeWalletsDescription')}
         dropdownItems={methodActions}
+        customHeader={useCustomHeader && <CustomHeader />}
       >
         {!memberWallets || memberWallets.length === 0 ? (
-          <FormItem className="pt-3 pb-3 rounded-b-xl">
+          <FormItem
+            className={`pt-3 pb-3 ${
+              useCustomHeader ? 'rounded-xl border-t' : 'rounded-b-xl'
+            }`}
+          >
             <StateEmpty
               type="Object"
               mode="inline"
@@ -122,11 +135,21 @@ const RemoveAddresses: React.FC<RemoveAddressesProps> = ({actionIndex}) => {
           </FormItem>
         ) : (
           <>
-            <FormItem className="hidden desktop:block py-1.5">
+            <FormItem
+              className={`hidden desktop:block ${
+                useCustomHeader ? 'rounded-t-xl border-t pt-3 pb-1.5' : 'py-1.5'
+              }`}
+            >
               <Label label={t('labels.whitelistWallets.address')} />
             </FormItem>
             {controlledWallets.map((field, fieldIndex) => (
-              <FormItem key={field.id}>
+              <FormItem
+                key={field.id}
+                className={`${
+                  fieldIndex === 0 &&
+                  'rounded-t-xl border-t desktop:rounded-none desktop:border-t-0'
+                }`}
+              >
                 <div className="desktop:hidden mb-0.5 desktop:mb-0">
                   <Label label={t('labels.whitelistWallets.address')} />
                 </div>
@@ -201,3 +224,18 @@ const RemoveAddresses: React.FC<RemoveAddressesProps> = ({actionIndex}) => {
 };
 
 export default RemoveAddresses;
+
+const CustomHeader: React.FC = () => {
+  const {t} = useTranslation();
+
+  return (
+    <div className="mb-1.5 space-y-0.5">
+      <p className="text-base font-bold text-ui-800">
+        {t('labels.removeWallets')}
+      </p>
+      <p className="text-sm text-ui-600">
+        {t('labels.removeWalletsDescription')}
+      </p>
+    </div>
+  );
+};

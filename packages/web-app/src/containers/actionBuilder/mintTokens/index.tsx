@@ -79,6 +79,8 @@ type MintTokenFormProps = {
   standAlone?: boolean;
 } & ActionIndex;
 
+type WatchedFields = [mints: MintInfo[], actionName: string];
+
 export const MintTokenForm: React.FC<MintTokenFormProps> = ({
   actionIndex,
   standAlone = false,
@@ -95,9 +97,12 @@ export const MintTokenForm: React.FC<MintTokenFormProps> = ({
   const {fields, append, remove} = useFieldArray({
     name: `actions.${actionIndex}.inputs.mintTokensToWallets`,
   });
-  const mints = useWatch({
-    name: `actions.${actionIndex}.inputs.mintTokensToWallets`,
-  }) as MintInfo[];
+  const [mints, actionName]: WatchedFields = useWatch({
+    name: [
+      `actions.${actionIndex}.inputs.mintTokensToWallets`,
+      `actions.${actionIndex}.name`,
+    ],
+  });
 
   const [newTokens, setNewTokens] = useState<number>(0);
   const [tokenSupply, setTokenSupply] = useState(0);
@@ -116,7 +121,11 @@ export const MintTokenForm: React.FC<MintTokenFormProps> = ({
     if (fields.length === 0) {
       append({address: '', amount: '0'});
     }
-  }, [append, fields.length]);
+
+    if (!actionName) {
+      setValue(`actions.${actionIndex}.name`, 'mint_tokens');
+    }
+  }, [actionIndex, actionName, append, fields.length, setValue]);
 
   useEffect(() => {
     // Fetching necessary info about the token.

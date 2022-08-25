@@ -43,6 +43,7 @@ const NewProposalPage = lazy(() => import('pages/newProposal'));
 const ProposalPage = lazy(() => import('pages/proposal'));
 
 const MintTokensProposalPage = lazy(() => import('pages/mintTokens'));
+const ManageMembersProposalPage = lazy(() => import('pages/manageMembers'));
 
 function App() {
   // TODO this needs to be inside a Routes component. Will be moved there with
@@ -105,6 +106,10 @@ function App() {
               <Route
                 path="community/mint-tokens"
                 element={<MintTokensProposalPage />}
+              />
+              <Route
+                path="community/manage-members"
+                element={<ManageMembersProposalPage />}
               />
               {/* Redirects the user to the dashboard page by default if no dao-specific page is specified. */}
               <Route index element={<Navigate to={'dashboard'} replace />} />

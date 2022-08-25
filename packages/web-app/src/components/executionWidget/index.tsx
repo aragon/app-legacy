@@ -4,7 +4,6 @@ import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 import {ButtonText} from '@aragon/ui-components';
 
-import {useActionsContext} from 'context/actions';
 import {Action} from 'utils/types';
 import {ActionsFilter} from './actionsFilter';
 
@@ -12,7 +11,6 @@ export const ExecutionWidget: React.FC = () => {
   const {t} = useTranslation();
   const {getValues} = useFormContext();
   const {actions} = getValues();
-  const {actions: actionTypes} = useActionsContext();
 
   return (
     <Card>
@@ -22,11 +20,7 @@ export const ExecutionWidget: React.FC = () => {
       </Header>
       <Content>
         {actions?.map((action: Action, index: number) => (
-          <ActionsFilter
-            {...{action}}
-            key={index}
-            type={actionTypes[index]?.name || 'withdraw_assets'}
-          />
+          <ActionsFilter {...{action}} key={index} type={action.name} />
         ))}
       </Content>
       <Action>

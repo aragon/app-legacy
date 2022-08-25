@@ -17,14 +17,21 @@ import {ActionIndex} from 'utils/types';
 import AccordionSummary from './accordionSummary';
 import {AddressRow} from './addressRow';
 
-type AddAddressesProps = ActionIndex;
+export type CustomHeaderProps = {
+  useCustomHeader?: boolean;
+};
 
-const AddAddresses: React.FC<AddAddressesProps> = ({actionIndex}) => {
+type AddAddressesProps = ActionIndex & CustomHeaderProps;
+
+const AddAddresses: React.FC<AddAddressesProps> = ({
+  actionIndex,
+  useCustomHeader = false,
+}) => {
   const {t} = useTranslation();
   const {removeAction} = useActionsContext();
 
   // form context
-  const {control, trigger} = useFormContext();
+  const {control, trigger, setValue} = useFormContext();
   const memberListKey = `actions.${actionIndex}.inputs.memberWallets`;
   const memberWallets = useWatch({
     name: memberListKey,
@@ -50,7 +57,9 @@ const AddAddresses: React.FC<AddAddressesProps> = ({actionIndex}) => {
     if (controlledWallets.length === 0) {
       append({address: ''});
     }
-  }, [append, controlledWallets.length]);
+
+    setValue(`actions.${actionIndex}.name`, 'add_address');
+  }, [actionIndex, append, controlledWallets.length, setValue]);
 
   /*************************************************
    *             Callbacks and Handlers            *
@@ -136,13 +145,24 @@ const AddAddresses: React.FC<AddAddressesProps> = ({actionIndex}) => {
       smartContractName={t('labels.aragonCore')}
       methodDescription={t('labels.addWalletsDescription')}
       dropdownItems={methodActions}
+      customHeader={useCustomHeader && <CustomHeader />}
     >
-      <FormItem className="hidden desktop:block py-1.5">
+      <FormItem
+        className={`hidden desktop:block ${
+          useCustomHeader ? 'rounded-t-xl border-t pt-3 pb-1.5' : 'py-1.5'
+        }`}
+      >
         <Label label={t('labels.whitelistWallets.address')} />
       </FormItem>
       {controlledWallets.map((field, fieldIndex) => {
         return (
-          <FormItem key={field.id}>
+          <FormItem
+            key={field.id}
+            className={`${
+              fieldIndex === 0 &&
+              'rounded-t-xl border-t desktop:rounded-none desktop:border-t-0'
+            }`}
+          >
             <div className="desktop:hidden mb-0.5 desktop:mb-0">
               <Label label={t('labels.whitelistWallets.address')} />
             </div>
@@ -217,6 +237,19 @@ const AddAddresses: React.FC<AddAddressesProps> = ({actionIndex}) => {
 };
 
 export default AddAddresses;
+
+const CustomHeader: React.FC = () => {
+  const {t} = useTranslation();
+
+  return (
+    <div className="mb-1.5 space-y-0.5">
+      <p className="text-base font-bold text-ui-800">
+        {t('labels.addWallets')}
+      </p>
+      <p className="text-sm text-ui-600">{t('labels.addWalletsDescription')}</p>
+    </div>
+  );
+};
 
 export const FormItem = styled.div.attrs({
   className: 'px-3 py-1.5 bg-ui-0 border border-ui-100 border-t-0' as
