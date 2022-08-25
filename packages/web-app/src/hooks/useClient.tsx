@@ -40,7 +40,7 @@ export const UseClientProvider = ({children}: {children: ReactNode}) => {
       const contextParams: ContextParams = {
         network: 'rinkeby', // TODO: remove temporarily hardcoded network
         signer,
-        web3Providers: new Array(alchemyApiAddress.concat(alchemyApiKey)),
+        web3Providers: new Array(alchemyApiKey.concat(alchemyApiAddress)),
         ipfsNodes: [
           {
             url: 'https://testing-ipfs-0.aragon.network/api/v0',

@@ -214,26 +214,24 @@ const CreateDaoProvider: React.FC<Props> = ({children}) => {
 
   // estimate creation fees
   const estimateCreationFees = useCallback(async () => {
-    return client?.estimation.create(getDaoSettings());
-  }, [client?.estimation, getDaoSettings]);
+    if (daoCreationData) return client?.estimation.create(daoCreationData);
+  }, [client?.estimation, daoCreationData]);
 
   const {tokenPrice, maxFee, averageFee, stopPolling} = usePollGasFee(
     estimateCreationFees,
     shouldPoll
   );
 
-  const createDaoIterator = useMemo(() => {
-    return client?.methods.create(getDaoSettings());
-  }, [client, getDaoSettings]);
-
   // run dao creation transaction
   const createDao = async () => {
     setCreationProcessState(TransactionState.LOADING);
 
     // Check if SDK initialized properly
-    if (!client) {
+    if (!client || !daoCreationData) {
       throw new Error('SDK client is not initialized correctly');
     }
+
+    const createDaoIterator = client?.methods.create(daoCreationData);
 
     // Check if createDaoIterator function is initialized
     if (!createDaoIterator) {
