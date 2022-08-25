@@ -53,7 +53,9 @@ export const UseClientProvider = ({children}: {children: ReactNode}) => {
         ],
         daoFactoryAddress: '0xF4433059cb12E224EF33510a3bE3329c8c750fD8', // TODO: remove temporary until SDK updates
         graphqlNodes: [
-          'https://api.thegraph.com/subgraphs/name/aragon/aragon-zaragoza-rinkeby',
+          {
+            url: 'https://api.thegraph.com/subgraphs/name/aragon/aragon-zaragoza-rinkeby',
+          },
         ],
       };
 

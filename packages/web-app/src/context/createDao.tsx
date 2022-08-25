@@ -28,7 +28,7 @@ import {useWallet} from 'hooks/useWallet';
 import {useGlobalModalContext} from './globalModals';
 import {useClient} from 'hooks/useClient';
 import {usePollGasFee} from 'hooks/usePollGasfee';
-import {IPluginListItem} from '@aragon/sdk-client/dist/internal/interfaces/common';
+import {IPluginInstallItem} from '@aragon/sdk-client/dist/internal/interfaces/common';
 
 type CreateDaoContextType = {
   /** Prepares the creation data and awaits user confirmation to start process */
@@ -129,7 +129,7 @@ const CreateDaoProvider: React.FC<Props> = ({children}) => {
       wallets,
     } = getValues();
     return {
-      proposals: {
+      settings: {
         minDuration: getSecondsFromDHM(
           parseInt(durationDays),
           parseInt(durationHours),
@@ -162,7 +162,7 @@ const CreateDaoProvider: React.FC<Props> = ({children}) => {
       whitelistWallets,
     } = getValues();
     return {
-      proposals: {
+      settings: {
         minDuration: getSecondsFromDHM(
           parseInt(durationDays),
           parseInt(durationHours),
@@ -178,7 +178,7 @@ const CreateDaoProvider: React.FC<Props> = ({children}) => {
   // Get dao setting configuration for creation process
   const getDaoSettings = useCallback((): ICreateParams => {
     const values = getValues();
-    let plugins: IPluginListItem;
+    let plugins: IPluginInstallItem;
 
     if (
       !erc20PluginParams.newToken?.balances ||
@@ -187,10 +187,11 @@ const CreateDaoProvider: React.FC<Props> = ({children}) => {
       return {} as ICreateParams;
     switch (membership) {
       case 'token':
-        plugins = ClientErc20?.encoding?.installEntry(erc20PluginParams);
+        plugins =
+          ClientErc20?.encoding?.getPluginInstallItem(erc20PluginParams);
         break;
       case 'wallet':
-        plugins = ClientAddressList?.encoding?.installEntry(
+        plugins = ClientAddressList?.encoding?.getPluginInstallItem(
           whiteListPluginParams
         );
         break;

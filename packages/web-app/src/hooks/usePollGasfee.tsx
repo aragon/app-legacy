@@ -1,9 +1,9 @@
 import {constants} from 'ethers';
 import {useCallback, useEffect, useState} from 'react';
-import {IGasFeeEstimation} from '@aragon/sdk-client/dist/internal/interfaces/dao';
 
 import {useNetwork} from 'context/network';
 import {fetchTokenPrice} from 'services/prices';
+import {GasFeeEstimation} from '@aragon/sdk-client';
 
 /**
  * This hook returns the gas estimation for a particular transaction and
@@ -18,7 +18,7 @@ import {fetchTokenPrice} from 'services/prices';
  * and a function to stop the interval polling
  */
 export const usePollGasFee = (
-  estimationFunction: () => Promise<IGasFeeEstimation | undefined>,
+  estimationFunction: () => Promise<GasFeeEstimation | undefined>,
   shouldPoll = true
 ) => {
   const {network} = useNetwork();
@@ -48,7 +48,7 @@ export const usePollGasFee = (
     }
 
     if (shouldPoll) getFeesAndPrice();
-  }, [averageFee, estimationFunction, maxFee, network, shouldPoll, tokenPrice]);
+  }, [estimationFunction, network, shouldPoll]);
 
   // stop polling in anticipation for polling at interval
   const stopPolling = useCallback(() => {
