@@ -34,13 +34,13 @@ export const UseClientProvider = ({children}: {children: ReactNode}) => {
     if (signer) {
       const alchemyApiAddress = import.meta.env
         .VITE_REACT_APP_ALCHEMY_API_KEY as string;
-      const alchemyApiKey = import.meta.env
-        .VITE_REACT_APP_ALCHEMY_API_URL as string;
 
       const contextParams: ContextParams = {
         network: 'rinkeby', // TODO: remove temporarily hardcoded network
         signer,
-        web3Providers: new Array(alchemyApiKey.concat(alchemyApiAddress)),
+        web3Providers: new Array(
+          'https://eth-rinkeby.alchemyapi.io/v2/'.concat(alchemyApiAddress)
+        ),
         ipfsNodes: [
           {
             url: 'https://testing-ipfs-0.aragon.network/api/v0',
