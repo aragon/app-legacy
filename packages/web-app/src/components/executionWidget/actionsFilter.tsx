@@ -7,10 +7,13 @@ import {
   ActionsTypes,
   ActionWithdraw,
   ActionAddAddress,
+  ActionMintToken,
+  ActionRemoveAddress,
 } from 'utils/types';
 import {WithdrawCard} from './actions/withdrawCard';
 import {AddAddressCard} from './actions/addAddressCard';
 import {RemoveAddressCard} from './actions/removeAddressCard';
+import {MintTokenCard} from './actions/mintTokenCard';
 
 type ActionsFilterProps = {
   action: Action;
@@ -43,7 +46,13 @@ export const ActionsFilter: React.FC<ActionsFilterProps> = ({
     case 'remove_address':
       return (
         <>
-          <RemoveAddressCard action={action as ActionAddAddress} />
+          <RemoveAddressCard action={action as ActionRemoveAddress} />
+        </>
+      );
+    case 'mint_tokens':
+      return (
+        <>
+          <MintTokenCard action={action as ActionMintToken} />
         </>
       );
     default:

@@ -14,6 +14,7 @@ import {
 import {CheckboxListItem} from '@aragon/ui-components/src/components/checkbox';
 import {useTranslation} from 'react-i18next';
 import {IconClock, StateEmpty} from '@aragon/ui-components';
+import {shortenAddress} from '@aragon/ui-components/src/utils/addresses';
 
 export type VotingTerminalProps = {
   breakdownTabDisabled?: boolean;
@@ -81,7 +82,7 @@ export const VotingTerminal: React.FC<VotingTerminalProps> = ({
           <Option
             value="voters"
             label={t('votingTerminal.voters')}
-            disabled={votersTabDisabled || voters.length === 0}
+            disabled={votersTabDisabled}
           />
           <Option value="info" label={t('votingTerminal.info')} />
         </ButtonGroup>
@@ -136,7 +137,14 @@ export const VotingTerminal: React.FC<VotingTerminalProps> = ({
               type="Object"
               mode="inline"
               object="magnifying_glass"
-              title={t('votingTerminal.emptyState.title', {query})}
+              title={t(
+                query === ''
+                  ? 'votingTerminal.emptyState.title'
+                  : 'votingTerminal.emptyState.titleSearch',
+                {
+                  query: shortenAddress(query),
+                }
+              )}
               description={t('votingTerminal.emptyState.subtitle')}
             />
           )}

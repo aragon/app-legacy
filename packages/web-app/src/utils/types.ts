@@ -192,13 +192,14 @@ export type ActionsTypes =
   | 'add_address'
   | 'remove_address'
   | 'withdraw_assets'
-  | 'mint_token'
+  | 'mint_tokens'
   | 'external_contract'
   | 'modify_settings';
 
+// TODO Refactor ActionWithdraw With the new input structure
 export type ActionWithdraw = {
   amount: number;
-  name: string;
+  name: 'withdraw_assets';
   to: Address;
   tokenAddress: Address;
   tokenBalance: number;
@@ -206,9 +207,12 @@ export type ActionWithdraw = {
   tokenName: string;
   tokenPrice: number;
   tokenSymbol: string;
+  isCustomToken: boolean;
 };
 
+// TODO: merge these types
 export type ActionAddAddress = {
+  name: 'add_address';
   inputs: {
     memberWallets: {
       address: Address;
@@ -216,10 +220,36 @@ export type ActionAddAddress = {
   };
 };
 
+export type ActionRemoveAddress = {
+  name: 'remove_address';
+  inputs: {
+    memberWallets: {
+      address: Address;
+    }[];
+  };
+};
+
+export type ActionMintToken = {
+  name: 'mint_tokens';
+  inputs: {
+    mintTokensToWallets: Array<{address: string; amount: string}>;
+  };
+  summary: {
+    newTokens: number;
+    tokenSupply: number;
+    newHoldersCount: number;
+    daoTokenSymbol: string;
+  };
+};
+
 // TODO: Consider making this a generic type that take other types of the form
-// like ActionAddAddres (or more generically, ActionItem...?) instead taking the
+// like ActionAddAddress (or more generically, ActionItem...?) instead taking the
 // union of those subtypes. [VR 11-08-2022]
-export type Action = ActionWithdraw | ActionAddAddress;
+export type Action =
+  | ActionWithdraw
+  | ActionAddAddress
+  | ActionRemoveAddress
+  | ActionMintToken;
 
 export type ParamType = {
   type: string;

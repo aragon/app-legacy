@@ -1,4 +1,3 @@
-import {AlertInline} from '@aragon/ui-components';
 import {withTransaction} from '@elastic/apm-rum-react';
 import React from 'react';
 import {FormProvider, useForm, useFormState} from 'react-hook-form';
@@ -7,10 +6,6 @@ import {generatePath} from 'react-router-dom';
 
 import {FullScreenStepper, Step} from 'components/fullScreenStepper';
 import {Loading} from 'components/temporary';
-import {
-  MintTokenDescription,
-  MintTokenForm,
-} from 'containers/actionBuilder/mintTokens';
 import DefineProposal, {
   isValid as defineProposalIsValid,
 } from 'containers/defineProposal';
@@ -22,8 +17,10 @@ import {ActionsProvider} from 'context/actions';
 import {useNetwork} from 'context/network';
 import {useDaoParam} from 'hooks/useDaoParam';
 import {Community} from 'utils/paths';
+import AddAddresses from 'containers/actionBuilder/addAddresses';
+import RemoveAddresses from 'containers/actionBuilder/removeAddresses';
 
-const MintToken: React.FC = () => {
+const ManageMembers: React.FC = () => {
   const {data: dao, loading} = useDaoParam();
 
   const {t} = useTranslation();
@@ -49,20 +46,17 @@ const MintToken: React.FC = () => {
       <ActionsProvider daoId={dao}>
         <FullScreenStepper
           wizardProcessName={t('newProposal.title')}
-          navLabel={t('labels.addMember')}
+          navLabel={t('labels.manageMember')}
           returnPath={generatePath(Community, {network, dao})}
         >
           <Step
-            wizardTitle={t('labels.mintTokens')}
-            wizardDescription={<MintTokenDescription />}
+            wizardTitle={t('newProposal.manageWallets.title')}
+            wizardDescription={t('newProposal.manageWallets.description')}
           >
-            <div className="space-y-2">
-              <AlertInline
-                label={t('newProposal.mintTokens.additionalInfo')}
-                mode="neutral"
-              />
-              <MintTokenForm actionIndex={0} standAlone />
-            </div>
+            <>
+              <AddAddresses actionIndex={0} useCustomHeader />
+              <RemoveAddresses actionIndex={1} useCustomHeader />
+            </>
           </Step>
           <Step
             wizardTitle={t('newWithdraw.setupVoting.title')}
@@ -93,4 +87,4 @@ const MintToken: React.FC = () => {
   );
 };
 
-export default withTransaction('MintToken', 'component')(MintToken);
+export default withTransaction('ManageMembers', 'component')(ManageMembers);

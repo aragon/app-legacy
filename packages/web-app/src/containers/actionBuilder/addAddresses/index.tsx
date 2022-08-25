@@ -5,7 +5,6 @@ import {
   IconMenuVertical,
   Label,
   ListItemAction,
-  StateEmpty,
 } from '@aragon/ui-components';
 import React, {useEffect} from 'react';
 import {useFieldArray, useFormContext, useWatch} from 'react-hook-form';
@@ -18,21 +17,28 @@ import {ActionIndex} from 'utils/types';
 import AccordionSummary from './accordionSummary';
 import {AddressRow} from './addressRow';
 
-type AddAddressesProps = ActionIndex;
+export type CustomHeaderProps = {
+  useCustomHeader?: boolean;
+};
 
-const AddAddresses: React.FC<AddAddressesProps> = ({actionIndex}) => {
+type AddAddressesProps = ActionIndex & CustomHeaderProps;
+
+const AddAddresses: React.FC<AddAddressesProps> = ({
+  actionIndex,
+  useCustomHeader = false,
+}) => {
   const {t} = useTranslation();
   const {removeAction} = useActionsContext();
 
   // form context
-  const {control, trigger} = useFormContext();
+  const {control, trigger, setValue} = useFormContext();
   const memberListKey = `actions.${actionIndex}.inputs.memberWallets`;
   const memberWallets = useWatch({
     name: memberListKey,
     control,
   });
 
-  const {fields, update, replace, append, remove} = useFieldArray({
+  const {fields, update, append, remove} = useFieldArray({
     control,
     name: memberListKey,
   });
@@ -52,13 +58,22 @@ const AddAddresses: React.FC<AddAddressesProps> = ({actionIndex}) => {
       append({address: ''});
     }
 
-    // disabling because I can. Jk, only need this to happen once
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+    setValue(`actions.${actionIndex}.name`, 'add_address');
+  }, [actionIndex, append, controlledWallets.length, setValue]);
 
   /*************************************************
    *             Callbacks and Handlers            *
    *************************************************/
+  // if there are more than one address, trigger validation
+  // to fix duplicate address error
+  const validateFields = () => {
+    if (controlledWallets.length > 1) {
+      setTimeout(() => {
+        trigger(memberListKey);
+      }, 50);
+    }
+  };
+
   // reset all rows
   const handleResetAll = () => {
     controlledWallets.forEach((_, index) => {
@@ -67,27 +82,20 @@ const AddAddresses: React.FC<AddAddressesProps> = ({actionIndex}) => {
   };
 
   // reset single row
-  const handleRowReset = (index: number) => {
+  const handleRowClear = (index: number) => {
     update(index, {address: ''});
-
-    // this is quite unfortunate, but now empty fields will all be validated
-    // on row reset. Turn off required validation for row if that is not desired
-    setTimeout(() => {
-      trigger(memberListKey);
-    }, 50);
+    validateFields();
   };
 
   // remove all rows
   const handleDeleteAll = () => {
-    replace([]);
+    remove();
   };
 
   // remove single row
   const handleRowDelete = (index: number) => {
     remove(index);
-    setTimeout(() => {
-      trigger(memberListKey);
-    }, 50);
+    validateFields();
   };
 
   // add empty wallet
@@ -98,17 +106,6 @@ const AddAddresses: React.FC<AddAddressesProps> = ({actionIndex}) => {
   // TODO: extract actions out of component
   // separating this because rows sometimes don't have the same actions
   const rowActions = [
-    {
-      component: (
-        <ListItemAction
-          title={t('labels.whitelistWallets.resetEntry')}
-          bgWhite
-        />
-      ),
-      callback: (rowIndex: number) => {
-        handleRowReset(rowIndex);
-      },
-    },
     {
       component: (
         <ListItemAction
@@ -148,104 +145,111 @@ const AddAddresses: React.FC<AddAddressesProps> = ({actionIndex}) => {
       smartContractName={t('labels.aragonCore')}
       methodDescription={t('labels.addWalletsDescription')}
       dropdownItems={methodActions}
+      customHeader={useCustomHeader && <CustomHeader />}
     >
-      {controlledWallets.length === 0 ? (
-        <FormItem className="pt-3 pb-3 rounded-b-xl">
-          <StateEmpty
-            type="Object"
-            mode="inline"
-            object="wallet"
-            title={t('labels.whitelistWallets.noWallets')}
-            description={t('labels.whitelistWallets.addWalletsSubtitle')}
-            primaryButton={{
-              label: t('labels.addWallet'),
-              onClick: handleAdd,
-            }}
-          />
-        </FormItem>
-      ) : (
-        <>
-          <FormItem className="hidden desktop:block py-1.5">
-            <Label label={t('labels.whitelistWallets.address')} />
-          </FormItem>
-          {controlledWallets.map((field, fieldIndex) => {
-            return (
-              <FormItem key={field.id}>
-                <div className="desktop:hidden mb-0.5 desktop:mb-0">
-                  <Label label={t('labels.whitelistWallets.address')} />
-                </div>
-                <AddressRow
-                  actionIndex={actionIndex}
-                  fieldIndex={fieldIndex}
-                  dropdownItems={rowActions}
-                />
-              </FormItem>
-            );
-          })}
-          <FormItem className="flex justify-between">
-            <ButtonText
-              label={t('labels.addWallet')}
-              mode="secondary"
-              size="large"
-              bgWhite
-              onClick={handleAdd}
+      <FormItem
+        className={`hidden desktop:block ${
+          useCustomHeader ? 'rounded-t-xl border-t pt-3 pb-1.5' : 'py-1.5'
+        }`}
+      >
+        <Label label={t('labels.whitelistWallets.address')} />
+      </FormItem>
+      {controlledWallets.map((field, fieldIndex) => {
+        return (
+          <FormItem
+            key={field.id}
+            className={`${
+              fieldIndex === 0 &&
+              'rounded-t-xl border-t desktop:rounded-none desktop:border-t-0'
+            }`}
+          >
+            <div className="desktop:hidden mb-0.5 desktop:mb-0">
+              <Label label={t('labels.whitelistWallets.address')} />
+            </div>
+            <AddressRow
+              actionIndex={actionIndex}
+              fieldIndex={fieldIndex}
+              dropdownItems={rowActions}
+              onClearRow={handleRowClear}
             />
+          </FormItem>
+        );
+      })}
+      <FormItem className="flex justify-between">
+        <ButtonText
+          label={t('labels.addWallet')}
+          mode="secondary"
+          size="large"
+          bgWhite
+          onClick={handleAdd}
+        />
 
-            <Dropdown
-              side="bottom"
-              align="start"
-              sideOffset={4}
-              trigger={
-                <ButtonIcon
-                  size="large"
-                  mode="secondary"
-                  icon={<IconMenuVertical />}
-                  data-testid="trigger"
+        <Dropdown
+          side="bottom"
+          align="start"
+          sideOffset={4}
+          trigger={
+            <ButtonIcon
+              size="large"
+              mode="secondary"
+              icon={<IconMenuVertical />}
+              data-testid="trigger"
+              bgWhite
+            />
+          }
+          listItems={[
+            {
+              component: (
+                <ListItemAction
+                  title={t('labels.whitelistWallets.resetAllEntries')}
                   bgWhite
                 />
-              }
-              listItems={[
-                {
-                  component: (
-                    <ListItemAction
-                      title={t('labels.whitelistWallets.resetAllEntries')}
-                      bgWhite
-                    />
-                  ),
-                  callback: handleResetAll,
-                },
-                {
-                  component: (
-                    <ListItemAction
-                      title={t('labels.whitelistWallets.deleteAllEntries')}
-                      bgWhite
-                    />
-                  ),
-                  callback: handleDeleteAll,
-                },
-                {
-                  component: (
-                    <ListItemAction
-                      title={t('labels.whitelistWallets.uploadCSV')}
-                      bgWhite
-                      mode="disabled"
-                    />
-                  ),
-                  callback: () => {},
-                },
-              ]}
-            />
-          </FormItem>
-          <AccordionSummary
-            total={controlledWallets.filter(wallet => wallet.address).length}
-          />
-        </>
-      )}
+              ),
+              callback: handleResetAll,
+            },
+            {
+              component: (
+                <ListItemAction
+                  title={t('labels.whitelistWallets.deleteAllEntries')}
+                  bgWhite
+                />
+              ),
+              callback: handleDeleteAll,
+            },
+            {
+              component: (
+                <ListItemAction
+                  title={t('labels.whitelistWallets.uploadCSV')}
+                  bgWhite
+                  mode="disabled"
+                />
+              ),
+              callback: () => {},
+            },
+          ]}
+        />
+      </FormItem>
+      <AccordionSummary
+        total={controlledWallets.filter(wallet => wallet.address).length}
+      />
     </AccordionMethod>
   );
 };
 
 export default AddAddresses;
+
+const CustomHeader: React.FC = () => {
+  const {t} = useTranslation();
+
+  return (
+    <div className="mb-1.5 space-y-0.5">
+      <p className="text-base font-bold text-ui-800">
+        {t('labels.addWallets')}
+      </p>
+      <p className="text-sm text-ui-600">{t('labels.addWalletsDescription')}</p>
+    </div>
+  );
+};
 
 export const FormItem = styled.div.attrs({
   className: 'px-3 py-1.5 bg-ui-0 border border-ui-100 border-t-0' as

@@ -13,6 +13,8 @@ export type StepProps = {
   isNextButtonDisabled?: boolean;
   onBackButtonClicked?: () => void;
   onNextButtonClicked?: () => void;
+  // This method can use to trigger validations once user clicked on disabled next button
+  onNextButtonDisabledClicked?: () => void;
 };
 
 export const Step: React.FC<StepProps> = ({children}) => {

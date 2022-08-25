@@ -1,10 +1,19 @@
-import {ValidateResult} from 'react-hook-form';
+import {FieldErrors, ValidateResult} from 'react-hook-form';
 import {isAddress, parseUnits} from 'ethers/lib/utils';
 import {BigNumber, providers as EthersProviders} from 'ethers';
 
 import {i18n} from '../../i18n.config';
 import {isERC20Token} from './tokens';
 import {ALPHA_NUMERIC_PATTERN} from './constants';
+import {
+  ActionItem,
+  Action,
+  ActionWithdraw,
+  ActionMintToken,
+  ActionAddAddress,
+  ActionRemoveAddress,
+  Nullable,
+} from './types';
 
 /**
  * Validate given token contract address
@@ -93,3 +102,71 @@ export const alphaNumericValidator = (
     ? true
     : (i18n.t('errors.onlyAlphaNumeric', {field}) as string);
 };
+
+/**
+ * Check if the proposal actions screen is valid
+ * @param formActions List of actions from the form
+ * @param contextActions List of actions from the ActionsContext
+ * @param errors List of fields with errors
+ * @returns Whether the screen is valid
+ */
+export function actionsAreValid(
+  formActions: Nullable<Action[]>,
+  contextActions: ActionItem[],
+  errors: FieldErrors
+) {
+  // proposals can go through without any actions
+  if (contextActions?.length === 0) return true;
+
+  // mismatch between action form list and actions context
+  if (contextActions.length !== formActions?.length) return false;
+
+  let isValid = false;
+
+  // @Sepehr might need to make affirmative instead at some point - F.F. 2022-08-18
+  function actionIsInvalid(index: number) {
+    if (errors.actions) return true;
+    switch (contextActions[index]?.name) {
+      case 'withdraw_assets':
+        return (
+          (formActions?.[index] as ActionWithdraw)?.to === '' ||
+          (formActions?.[index] as ActionWithdraw)?.amount?.toString() === '' ||
+          !(formActions?.[index] as ActionWithdraw)?.tokenAddress
+        );
+      case 'mint_tokens':
+        if (
+          (formActions?.[index] as ActionMintToken)?.inputs?.mintTokensToWallets
+            .length === 0
+        )
+          return true;
+        return (
+          formActions?.[index] as ActionMintToken
+        )?.inputs?.mintTokensToWallets?.some(
+          wallet => wallet.address === '' || Number(wallet.amount) === 0
+        );
+
+      // check that no address is empty; invalid addresses will be caught by
+      // the form specific validator
+      case 'add_address':
+        return (
+          formActions?.[index] as ActionRemoveAddress
+        )?.inputs.memberWallets?.some(wallet => wallet.address === '');
+
+      //check whether an address is added to the action
+      case 'remove_address':
+        return (
+          (formActions?.[index] as ActionAddAddress)?.inputs.memberWallets
+            ?.length === 0
+        );
+      default:
+        return false;
+    }
+  }
+
+  for (let i = 0; i < formActions?.length; i++) {
+    isValid = !actionIsInvalid(i);
+    if (isValid === false) break;
+  }
+
+  return isValid;
+}

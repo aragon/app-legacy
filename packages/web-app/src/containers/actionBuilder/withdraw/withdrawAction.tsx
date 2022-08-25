@@ -13,17 +13,22 @@ type WithdrawActionProps = ActionIndex;
 
 const WithdrawAction: React.FC<WithdrawActionProps> = ({actionIndex}) => {
   const {t} = useTranslation();
-  const {setValue, clearErrors} = useFormContext();
   const {removeAction, duplicateAction} = useActionsContext();
+  const {setValue, clearErrors, resetField} = useFormContext();
 
   const resetWithdrawFields = () => {
     clearErrors(`actions.${actionIndex}`);
+    resetField(`actions.${actionIndex}`);
     setValue(`actions.${actionIndex}`, {
       to: '',
       amount: '',
       tokenAddress: '',
       tokenSymbol: '',
     });
+  };
+
+  const removeWithdrawFields = (actionIndex: number) => {
+    removeAction(actionIndex);
   };
 
   const methodActions = [
@@ -39,7 +44,7 @@ const WithdrawAction: React.FC<WithdrawActionProps> = ({actionIndex}) => {
       component: (
         <ListItemAction title={t('labels.removeEntireAction')} bgWhite />
       ),
-      callback: () => removeAction(actionIndex),
+      callback: () => removeWithdrawFields(actionIndex),
     },
   ];
 

@@ -1,3 +1,4 @@
+import React from 'react';
 import {
   AlertInline,
   ButtonIcon,
@@ -9,13 +10,14 @@ import {
   TextInput,
   ValueInput,
 } from '@aragon/ui-components';
-import React from 'react';
-import {Controller, useWatch} from 'react-hook-form';
 import {useTranslation} from 'react-i18next';
+import {Controller, useFormContext, useWatch} from 'react-hook-form';
 import styled from 'styled-components';
 
-import useScreen from 'hooks/useScreen';
 import {handleClipboardActions} from 'utils/library';
+import useScreen from 'hooks/useScreen';
+import {validateAddress} from 'utils/validators';
+import {WalletField} from 'components/addWallets/row';
 import {ActionIndex} from 'utils/types';
 
 type IndexProps = ActionIndex & {
@@ -29,21 +31,42 @@ type AddressAndTokenRowProps = IndexProps & {
 
 const AddressField: React.FC<IndexProps> = ({actionIndex, fieldIndex}) => {
   const {t} = useTranslation();
+  const {getValues} = useFormContext();
+  const walletFieldArray = getValues(
+    `actions.${actionIndex}.inputs.mintTokensToWallets`
+  );
+
+  const addressValidator = async (address: string, index: number) => {
+    let validationResult = validateAddress(address);
+    if (walletFieldArray) {
+      await walletFieldArray.forEach(
+        (wallet: WalletField, walletIndex: number) => {
+          if (address === wallet.address && index !== walletIndex) {
+            validationResult = t('errors.duplicateAddress') as string;
+          }
+          if (Number(wallet.amount) > 0 && wallet.address === '')
+            validationResult = t('errors.required.walletAddress') as string;
+        }
+      );
+    }
+    return validationResult;
+  };
 
   return (
     <Controller
       defaultValue=""
       name={`actions.${actionIndex}.inputs.mintTokensToWallets.${fieldIndex}.address`}
-      // rules={{
-      //   required: t('errors.required.walletAddress') as string,
-      //   validate: value => addressValidator(value, index),
-      // }}
+      rules={{
+        required: t('errors.required.walletAddress') as string,
+        validate: value => addressValidator(value, fieldIndex),
+      }}
       render={({
         field: {name, value, onBlur, onChange},
         fieldState: {error},
       }) => (
         <div className="flex-1">
           <ValueInput
+            mode={error ? 'critical' : 'default'}
             name={name}
             value={value}
             onBlur={onBlur}
@@ -66,13 +89,21 @@ const AddressField: React.FC<IndexProps> = ({actionIndex, fieldIndex}) => {
 };
 
 const TokenField: React.FC<IndexProps> = ({actionIndex, fieldIndex}) => {
+  const {trigger} = useFormContext();
+  const {t} = useTranslation();
+
+  const amountValidator = (value: string) => {
+    if (Number(value) > 0) return true;
+    return t('errors.lteZero') as string;
+  };
+
   return (
     <Controller
       name={`actions.${actionIndex}.inputs.mintTokensToWallets.${fieldIndex}.amount`}
-      // rules={{
-      //   required: t('errors.required.amount'),
-      //   validate: amountValidation,
-      // }}
+      rules={{
+        required: t('errors.required.amount') as string,
+        validate: amountValidator,
+      }}
       render={({
         field: {name, value, onBlur, onChange},
         fieldState: {error},
@@ -82,12 +113,22 @@ const TokenField: React.FC<IndexProps> = ({actionIndex, fieldIndex}) => {
             name={name}
             value={value}
             onBlur={onBlur}
-            onChange={onChange}
+            onChange={e => {
+              trigger(
+                `actions.${actionIndex}.inputs.mintTokensToWallets.${fieldIndex}.address`
+              );
+              onChange(e);
+            }}
             placeholder="0"
             min={0}
             includeDecimal
             mode={error?.message ? 'critical' : 'default'}
           />
+          {error?.message && (
+            <ErrorContainer>
+              <AlertInline label={error.message} mode="critical" />
+            </ErrorContainer>
+          )}
         </div>
       )}
     />

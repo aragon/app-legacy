@@ -14,7 +14,6 @@ import {useActionsContext} from 'context/actions';
 import {useGlobalModalContext} from 'context/globalModals';
 import {useDaoActions} from 'hooks/useDaoActions';
 import {useDaoParam} from 'hooks/useDaoParam';
-import {StringIndexed} from 'utils/types';
 import AddActionMenu from 'containers/addActionMenu';
 
 const ConfigureActions: React.FC = () => {
@@ -69,15 +68,6 @@ const ConfigureActions: React.FC = () => {
 };
 
 export default ConfigureActions;
-
-/**
- * Check if the screen is valid
- * @param errors List of fields with errors
- * @returns Whether the screen is valid
- */
-export function isValid(errors: StringIndexed) {
-  return !errors.actions;
-}
 
 const FormWrapper = styled.div.attrs({
   className: 'space-y-1.5',
