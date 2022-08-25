@@ -40,7 +40,9 @@ export const UseClientProvider = ({children}: {children: ReactNode}) => {
         signer,
         web3Providers: web3Providers
           ? web3Providers.split(',')
-          : [import.meta.env.VITE_IPFS_ALCHEMY_API as string],
+          : [
+              'https://eth-rinkeby.alchemyapi.io/v2/bgIqe2NxazpzsjfmVmhj3aS3j_HZ9mpr',
+            ],
         ipfsNodes: [
           {
             url: 'https://testing-ipfs-0.aragon.network/api/v0',
