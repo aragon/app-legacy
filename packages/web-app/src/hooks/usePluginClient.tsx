@@ -7,11 +7,6 @@ import {
 } from '@aragon/sdk-client';
 import {Address} from '@aragon/ui-components/dist/utils/addresses';
 
-interface IUseDaoResponse {
-  createErc20: (pluginAddress: Address) => ClientErc20 | Error;
-  createWhitelist: (pluginAddress: Address) => ClientAddressList | Error;
-}
-
 type ClientTypes = 'ERC20' | 'Whitelist';
 
 /**
