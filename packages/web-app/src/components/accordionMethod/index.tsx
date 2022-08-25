@@ -107,7 +107,7 @@ export type AccordionType = Pick<AccordionMethodType, 'type'>;
 
 const AccordionHeader = styled(Accordion.Header).attrs(
   ({type}: AccordionType) => ({
-    className: `p-2 tablet:px-3 rounded-xl border border-transparent ${
+    className: `p-2 tablet:px-3 rounded-xl border border-ui-100 ${
       type === 'action-builder' ? 'bg-white' : 'bg-ui-50'
     }`,
   })

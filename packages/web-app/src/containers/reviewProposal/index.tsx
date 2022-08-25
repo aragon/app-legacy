@@ -1,3 +1,4 @@
+import {useQuery} from '@apollo/client';
 import {
   Badge,
   ButtonText,
@@ -5,35 +6,33 @@ import {
   IconChevronUp,
   Link,
 } from '@aragon/ui-components';
-import styled from 'styled-components';
-import {format} from 'date-fns';
-import StarterKit from '@tiptap/starter-kit';
 import TipTapLink from '@tiptap/extension-link';
-import {useQuery} from '@apollo/client';
-import {useParams} from 'react-router-dom';
-import {useTranslation} from 'react-i18next';
-import {useFormContext} from 'react-hook-form';
 import {EditorContent, useEditor} from '@tiptap/react';
+import StarterKit from '@tiptap/starter-kit';
+import {format} from 'date-fns';
 import React, {useEffect, useMemo, useState} from 'react';
+import {useFormContext} from 'react-hook-form';
+import {useTranslation} from 'react-i18next';
+import {useParams} from 'react-router-dom';
+import styled from 'styled-components';
 
-import {Loading} from 'components/temporary';
 import {BigNumber} from '@ethersproject/bignumber';
-import {useNetwork} from 'context/network';
-import ResourceList from 'components/resourceList';
-import {formatUnits} from 'utils/library';
-import {getTokenInfo} from 'utils/tokens';
-import {VotingTerminal} from 'containers/votingTerminal';
 import {ExecutionWidget} from 'components/executionWidget';
 import {useFormStep} from 'components/fullScreenStepper';
-import {CHAIN_METADATA} from 'utils/constants';
+import ResourceList from 'components/resourceList';
+import {Loading} from 'components/temporary';
+import {VotingTerminal} from 'containers/votingTerminal';
+import {useNetwork} from 'context/network';
 import {useSpecificProvider} from 'context/providers';
 import {DAO_PACKAGE_BY_DAO_ID} from 'queries/packages';
+import {CHAIN_METADATA} from 'utils/constants';
 import {
-  getFormattedUtcOffset,
   getCanonicalUtcOffset,
+  getFormattedUtcOffset,
   KNOWN_FORMATS,
 } from 'utils/date';
-import {useActionsContext} from 'context/actions';
+import {formatUnits} from 'utils/library';
+import {getTokenInfo} from 'utils/tokens';
 
 type ReviewProposalProps = {
   defineProposalStepNumber: number;
@@ -48,8 +47,6 @@ const ReviewProposal: React.FC<ReviewProposalProps> = ({
   const {network} = useNetwork();
   const {setStep} = useFormStep();
   const provider = useSpecificProvider(CHAIN_METADATA[network].id);
-
-  const {actions: actionTypes} = useActionsContext();
 
   const {dao} = useParams();
   const {data, loading} = useQuery(DAO_PACKAGE_BY_DAO_ID, {
@@ -121,13 +118,6 @@ const ReviewProposal: React.FC<ReviewProposalProps> = ({
     values.endTime,
     values.endUtc,
   ]);
-
-  const executableActions = useMemo(() => {
-    const formActions = getValues('actions');
-    return actionTypes.map((action, index) => {
-      return {type: action.name, action: formActions[index]};
-    });
-  }, [actionTypes, getValues]);
 
   /*************************************************
    *                    Hooks                      *
@@ -251,7 +241,7 @@ const ReviewProposal: React.FC<ReviewProposalProps> = ({
           />
 
           <ExecutionWidget
-            actions={executableActions}
+            actions={values.actions}
             onAddAction={
               addActionsStepNumber
                 ? () => setStep(addActionsStepNumber)

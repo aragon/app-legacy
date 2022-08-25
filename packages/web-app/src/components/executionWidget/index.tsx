@@ -15,7 +15,6 @@ import {ExecutionStatus} from 'pages/proposal';
 
 type ExecutionWidgetProps = {
   txhash?: string;
-  alert?: string;
   actions?: Array<Action>;
   status?: ExecutionStatus;
   onAddAction?: () => void;
@@ -23,7 +22,6 @@ type ExecutionWidgetProps = {
 
 export const ExecutionWidget: React.FC<ExecutionWidgetProps> = ({
   actions = [],
-  alert,
   status,
   txhash,
   onAddAction,
@@ -57,23 +55,25 @@ export const ExecutionWidget: React.FC<ExecutionWidgetProps> = ({
               <ActionsFilter {...{action}} key={index} type={action.name} />
             ))}
           </Content>
-          <WidgetFooter status={status} alert={alert} txhash={txhash} />
+          <WidgetFooter status={status} txhash={txhash} />
         </>
       )}
     </Card>
   );
 };
 
-type FooterProps = Pick<ExecutionWidgetProps, 'status' | 'alert' | 'txhash'>;
+type FooterProps = Pick<ExecutionWidgetProps, 'status' | 'txhash'>;
 
-const WidgetFooter: React.FC<FooterProps> = ({
-  status = 'default',
-  alert = '',
-}) => {
+const WidgetFooter: React.FC<FooterProps> = ({status = 'default'}) => {
   const {t} = useTranslation();
   switch (status) {
     case 'defeated':
-      return <AlertInline label={alert} mode={'warning'} />;
+      return (
+        <AlertInline
+          label={t('governance.executionCard.status.defeated')}
+          mode={'warning'}
+        />
+      );
     case 'executable':
       return (
         <Footer>
@@ -81,22 +81,45 @@ const WidgetFooter: React.FC<FooterProps> = ({
             label={t('governance.proposals.buttons.execute')}
             size="large"
           />
-
-          <AlertInline label={alert} />
+          <AlertInline label={t('governance.executionCard.status.succeeded')} />
         </Footer>
       );
-    case 'executed':
+    case 'executable-failed':
       return (
         <Footer>
           <ButtonText
-            label="See transaction"
+            label={t('governance.proposals.buttons.execute')}
+            size="large"
+          />
+          <ButtonText
+            label={t('governance.executionCard.seeTransaction')}
             mode="secondary"
             iconRight={<IconLinkExternal />}
             size="large"
             bgWhite
           />
 
-          <AlertInline label={alert} mode="success" />
+          <AlertInline
+            label={t('governance.executionCard.status.failed')}
+            mode="warning"
+          />
+        </Footer>
+      );
+    case 'executed':
+      return (
+        <Footer>
+          <ButtonText
+            label={t('governance.executionCard.seeTransaction')}
+            mode="secondary"
+            iconRight={<IconLinkExternal />}
+            size="large"
+            bgWhite
+          />
+
+          <AlertInline
+            label={t('governance.executionCard.status.executed')}
+            mode="success"
+          />
         </Footer>
       );
     default:

@@ -132,11 +132,11 @@ export const useDaoProposal = (proposalId?: string) => {
     };
 
     // get proposal category
-    // const status = categorizeProposal(
-    //   proposalData.erc20VotingProposals[0]
-    // ).type;
-    const status = 'succeeded';
+    const status = categorizeProposal(
+      proposalData.erc20VotingProposals[0]
+    ).type;
 
+    // TODO: decode actions once available on SDK
     return {
       results,
       createdAt: `${format(

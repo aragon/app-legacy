@@ -38,9 +38,9 @@ import {ExecutionWidget} from 'components/executionWidget';
 
 export type ExecutionStatus =
   | 'defeated'
-  | 'executable'
   | 'executed'
-  | 'execution-failed'
+  | 'executable'
+  | 'executable-failed'
   | 'default';
 
 const Proposal: React.FC = () => {
@@ -158,7 +158,6 @@ const Proposal: React.FC = () => {
     voteNowDisabled,
     statusLabel,
     alertMessage,
-    executionAlert,
     executionStatus,
     handleVoteClicked,
   ] = useMemo(() => {
@@ -166,7 +165,6 @@ const Proposal: React.FC = () => {
     let onClick;
     let statusLabel = '';
     let alertMessage = '';
-    let executionAlert = '';
     let executionStatus: ExecutionStatus = 'default';
 
     const voted = mappedProposal?.voters.some(
@@ -189,22 +187,21 @@ const Proposal: React.FC = () => {
         break;
 
       case 'succeeded':
-        statusLabel = 'Proposal has passed.';
-        executionAlert = 'Proposal has passed and is ready to be executed';
+        statusLabel = t('votingTerminal.status.succeeded');
         executionStatus = 'executable';
         break;
 
       case 'executed':
-        statusLabel = t('votingTerminal.status.closed');
+        statusLabel = t('votingTerminal.status.succeeded');
 
         // TODO: add cases for failed execution
-        executionAlert = 'Proposal has been executed successfully';
+        // executionStatus = 'executable-failed';
+
         executionStatus = 'executed';
         break;
 
       case 'defeated':
-        statusLabel = 'Proposal has been defeated.';
-        executionAlert = 'Proposal has been defeated.';
+        statusLabel = t('votingTerminal.status.defeated');
         executionStatus = 'defeated';
         break;
 
@@ -262,7 +259,6 @@ const Proposal: React.FC = () => {
       voteNowDisabled,
       statusLabel,
       alertMessage,
-      executionAlert,
       executionStatus,
       onClick,
     ];
@@ -370,7 +366,7 @@ const Proposal: React.FC = () => {
             />
           )}
 
-          <ExecutionWidget alert={executionAlert} status={executionStatus} />
+          <ExecutionWidget status={executionStatus} />
         </ProposalContainer>
 
         <AdditionalInfoContainer>
