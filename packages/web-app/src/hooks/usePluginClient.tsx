@@ -7,7 +7,10 @@ import {
 } from '@aragon/sdk-client';
 import {Address} from '@aragon/ui-components/dist/utils/addresses';
 
-type ClientTypes = 'ERC20' | 'Whitelist';
+enum ClientTypes {
+  ERC20,
+  Whitelist,
+}
 
 /**
  * This hook can be used to build ERC20 or whitelist clients
@@ -26,7 +29,7 @@ export const usePluginClient = (
     return new Error('SDK client is not initialized correctly');
   }
 
-  if (type === 'ERC20') {
+  if (type === ClientTypes.ERC20) {
     const contextPlugin: ContextPlugin = ContextPlugin.fromContext(
       context as Context,
       pluginAddress
@@ -34,7 +37,7 @@ export const usePluginClient = (
     const clientERC20: ClientErc20 = new ClientErc20(contextPlugin);
 
     return clientERC20;
-  } else if (type === 'Whitelist') {
+  } else if (type === ClientTypes.Whitelist) {
     const contextPlugin: ContextPlugin = ContextPlugin.fromContext(
       context as Context,
       pluginAddress
