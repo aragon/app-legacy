@@ -2,7 +2,12 @@ import {ButtonText, ListItemAction} from '@aragon/ui-components';
 import {BigNumber} from 'ethers';
 import {isAddress} from 'ethers/lib/utils';
 import React, {useEffect, useState} from 'react';
-import {useFieldArray, useFormContext, useWatch} from 'react-hook-form';
+import {
+  FieldError,
+  useFieldArray,
+  useFormContext,
+  useWatch,
+} from 'react-hook-form';
 import {Trans, useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 
@@ -79,6 +84,10 @@ type MintTokenFormProps = {
   standAlone?: boolean;
 } & ActionIndex;
 
+type MappedError = {
+  address?: FieldError;
+};
+
 type WatchedFields = [mints: MintInfo[], actionName: string];
 
 export const MintTokenForm: React.FC<MintTokenFormProps> = ({
@@ -92,9 +101,9 @@ export const MintTokenForm: React.FC<MintTokenFormProps> = ({
   const {infura} = useProviders();
   const nativeCurrency = CHAIN_METADATA[network].nativeCurrency;
   const {data: daoToken, isLoading: daoTokenLoading} = useDaoToken(daoId);
-  const {setValue, trigger} = useFormContext();
+  const {setValue, trigger, formState} = useFormContext();
 
-  const {fields, append, remove} = useFieldArray({
+  const {fields, append, remove, update} = useFieldArray({
     name: `actions.${actionIndex}.inputs.mintTokensToWallets`,
   });
   const [mints, actionName]: WatchedFields = useWatch({
@@ -126,6 +135,17 @@ export const MintTokenForm: React.FC<MintTokenFormProps> = ({
       setValue(`actions.${actionIndex}.name`, 'mint_tokens');
     }
   }, [actionIndex, actionName, append, fields.length, setValue]);
+
+  useEffect(() => {
+    if (!mints) return;
+
+    const actionErrors =
+      formState.errors?.actions?.[`${actionIndex}`].inputs.mintTokensToWallets;
+
+    actionErrors?.forEach((error: MappedError) => {
+      if (error?.address) trigger(error.address.ref?.name);
+    });
+  }, [actionIndex, formState.errors?.actions, trigger, mints]);
 
   useEffect(() => {
     // Fetching necessary info about the token.
@@ -242,7 +262,7 @@ export const MintTokenForm: React.FC<MintTokenFormProps> = ({
         setValue(`actions.${actionIndex}.summary.newTokens`, newTokensCount);
       }
     }
-  }, [mints, fields, daoToken, daoToken.id, setValue, actionIndex, newTokens]);
+  }, [mints, daoToken, daoToken.id, setValue, actionIndex, newTokens]);
 
   /*************************************************
    *             Callbacks and Handlers            *
@@ -251,11 +271,15 @@ export const MintTokenForm: React.FC<MintTokenFormProps> = ({
     append({address: '', amount: '0'});
   };
 
+  const handleClearWallet = (index: number) => {
+    update(index, {address: '', amount: mints[index].amount});
+  };
+
   const handleDeleteWallet = (index: number) => {
     remove(index);
     setTimeout(() => {
       trigger(`actions.${actionIndex}.inputs.mintTokensToWallets`);
-    }, 50);
+    }, 450);
   };
 
   const handleCSVUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -304,6 +328,7 @@ export const MintTokenForm: React.FC<MintTokenFormProps> = ({
             key={field.id}
             actionIndex={actionIndex}
             fieldIndex={index}
+            onClear={handleClearWallet}
             onDelete={handleDeleteWallet}
             newTokenSupply={newTokens + tokenSupply}
           />

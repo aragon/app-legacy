@@ -1,4 +1,4 @@
-import React, {useCallback} from 'react';
+import React from 'react';
 import {
   AlertInline,
   ButtonIcon,
@@ -26,73 +26,31 @@ type IndexProps = ActionIndex & {
 
 type AddressAndTokenRowProps = IndexProps & {
   newTokenSupply: number;
+  onClear?: (index: number) => void;
   onDelete: (index: number) => void;
 };
 
-const AddressField: React.FC<IndexProps> = ({actionIndex, fieldIndex}) => {
+type AddressFieldProps = IndexProps & {
+  onClear?: (index: number) => void;
+};
+const AddressField: React.FC<AddressFieldProps> = ({
+  actionIndex,
+  fieldIndex,
+  onClear,
+}) => {
   const {t} = useTranslation();
-  const {control, trigger, formState} = useFormContext();
+  const {control} = useFormContext();
   const walletFieldArray = useWatch({
     name: `actions.${actionIndex}.inputs.mintTokensToWallets`,
     control,
   });
 
-  // returns a function that calls on change & trigger validation conditionally
-  const changeAndValidate = useCallback(
-    (originalOnChange: (a: string) => void) => {
-      return (arg: string) => {
-        // trim the value passed in
-        const newValue = arg.trim();
-
-        // call onChange
-        originalOnChange(newValue);
-
-        const actionErrors =
-          formState.errors?.actions?.[`${actionIndex}`].inputs
-            .mintTokensToWallets;
-
-        /**
-         * attempt to validate *all* the rows only when there are
-         * more than one rows and at least one error already present (the first error
-         * is always caught by the field specific validator (addressValidator))
-         */
-        if (walletFieldArray.length > 1 && actionErrors.length !== 0) {
-          setTimeout(() => {
-            /**
-             * loop through validating only the *address* field of rows that have an error
-             * don't validate current field (field specific validator will do that)
-             *
-             * don't validate fields that are going to have the same value as the incoming
-             * value (removes the awkward state where both inputs show duplication error
-             * instead of the last one that introduced the duplication)
-             */
-            for (let i = 0; i < walletFieldArray.length; i++) {
-              if (
-                actionErrors?.[i]?.address &&
-                i !== fieldIndex &&
-                newValue !== walletFieldArray[i].address
-              )
-                trigger(actionErrors[i].address.ref?.name);
-            }
-          }, 50);
-        }
-      };
-    },
-    [
-      actionIndex,
-      fieldIndex,
-      formState.errors?.actions,
-      trigger,
-      walletFieldArray,
-    ]
-  );
-
   const handleAdornmentClick = (
     value: string,
     onChange: (value: string) => void
   ) => {
-    if (value.trim()) {
-      onChange('');
+    if (value) {
+      onClear?.(fieldIndex) || onChange('');
     } else handleClipboardActions(value, onChange);
   };
 
@@ -100,7 +58,10 @@ const AddressField: React.FC<IndexProps> = ({actionIndex, fieldIndex}) => {
     let validationResult = validateAddress(address);
     if (walletFieldArray) {
       walletFieldArray.forEach((wallet: WalletField, walletIndex: number) => {
-        if (address === wallet.address && index !== walletIndex) {
+        if (
+          address.toLowerCase() === wallet.address.toLowerCase() &&
+          index !== walletIndex
+        ) {
           validationResult = t('errors.duplicateAddress') as string;
         }
       });
@@ -126,15 +87,10 @@ const AddressField: React.FC<IndexProps> = ({actionIndex, fieldIndex}) => {
             name={name}
             value={value}
             onBlur={onBlur}
-            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-              e.preventDefault();
-              changeAndValidate(onChange)(e.target.value);
-            }}
+            onChange={onChange}
             placeholder={t('placeHolders.walletOrEns')}
             adornmentText={value ? t('labels.clear') : t('labels.paste')}
-            onAdornmentClick={() =>
-              handleAdornmentClick(value, changeAndValidate(onChange))
-            }
+            onAdornmentClick={() => handleAdornmentClick(value, onChange)}
           />
           {error?.message && (
             <ErrorContainer>
@@ -256,6 +212,7 @@ export const AddressAndTokenRow: React.FC<AddressAndTokenRowProps> = ({
   actionIndex,
   fieldIndex,
   onDelete,
+  onClear,
   newTokenSupply,
 }) => {
   const {isDesktop} = useScreen();
@@ -270,7 +227,11 @@ export const AddressAndTokenRow: React.FC<AddressAndTokenRowProps> = ({
     return (
       <Container>
         <HStack>
-          <AddressField actionIndex={actionIndex} fieldIndex={fieldIndex} />
+          <AddressField
+            actionIndex={actionIndex}
+            fieldIndex={fieldIndex}
+            onClear={onClear}
+          />
           <TokenField actionIndex={actionIndex} fieldIndex={fieldIndex} />
           <PercentageDistribution
             actionIndex={actionIndex}
