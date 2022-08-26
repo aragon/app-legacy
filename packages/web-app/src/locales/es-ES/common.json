@@ -37,10 +37,10 @@
     "removedMembers": "Removed Members",
     "addWalletsDescription": "Add as many wallets as you like to the DAO. These are authorized to create proposals, request transactions or suggest changes to the DAO settings from the time of initial creation.",
     "removeWalletsDescription": "Remove existing wallets from the authorised list of this particular DAO.",
-    "seeCommunity": "See Community",
     "totalWallets": "Total Wallets",
     "mintTokens": "Mint Tokens",
     "seeAllHolders": "See All Holders",
+    "seeCommunity": "See Community",
     "aragonCore": "Aragon Core",
     "approvalThreshold": "Approval Threshold",
     "viewTransactions": "View Transactions",
@@ -217,7 +217,15 @@
     "noProposals": "No proposals found!",
     "executionCard": {
       "title": "Execution",
-      "description": "These smart actions are executed when the proposal reaches sufficient support. Find out which actions are executed."
+      "description": "These smart actions are executed when the proposal reaches sufficient support.",
+      "addAction": "Add Action",
+      "seeTransaction": "See Transaction",
+      "status": {
+        "succeeded": "Proposal has passed and is ready to be executed",
+        "executed": "Proposal has been executed successfully",
+        "defeated": "Proposal has been defeated",
+        "failed": " Execution failed"
+      }
     }
   },
   "infos": {
@@ -563,10 +571,11 @@
     "status": {
       "draft": "Publish to enable voting.",
       "pending": "Voting begins in {{startDate}}",
-      "closed": "Proposal has concluded successfully.",
+      "succeeded": "Proposal has passed",
+      "defeated": "Proposal has been defeated",
       "active": "Voting concludes in {{endDate}}",
-      "ineligibleWhitelist": "You were not a member before the proposal was created.",
-      "ineligibleTokenBased": "You did not have any {{token}} before the proposal was created.",
+      "ineligibleWhitelist": "You had to be a member before the proposal was created to be able to vote",
+      "ineligibleTokenBased": "You had to hold {{token}} when proposal was created to be able to vote",
       "voted": "You have already voted."
     },
     "voteNow": "Vote now",
