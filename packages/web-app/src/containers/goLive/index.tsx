@@ -22,6 +22,7 @@ import {Landing} from 'utils/paths';
 import {useCreateDaoContext} from 'context/createDao';
 import {useWallet} from 'hooks/useWallet';
 import {useGlobalModalContext} from 'context/globalModals';
+import {trackEvent} from 'services/analytics';
 
 export const GoLiveHeader: React.FC = () => {
   const {t} = useTranslation();
@@ -72,18 +73,25 @@ const GoLive: React.FC = () => {
 };
 
 export const GoLiveFooter: React.FC = () => {
-  const {watch, setValue} = useFormContext();
+  const {watch, setValue, getValues} = useFormContext();
   const {reviewCheck} = watch();
   const {t} = useTranslation();
   const {handlePublishDao} = useCreateDaoContext();
   const {open} = useGlobalModalContext();
-  const {isConnected} = useWallet();
+  const {isConnected, provider} = useWallet();
 
   const IsButtonDisabled = () =>
     !Object.values(reviewCheck).every(v => v === true);
 
   const publishDao = (e: React.MouseEvent) => {
     e.stopPropagation();
+    isConnected &&
+      trackEvent('daoCreation_publishYourDAO_clicked', {
+        network: getValues('blockchain')?.network,
+        wallet_provider: provider,
+        governance_type: getValues('membership'),
+      });
+
     isConnected ? handlePublishDao() : open('wallet');
   };
 

@@ -1,3 +1,4 @@
+import {useQuery} from '@apollo/client';
 import {
   Badge,
   ButtonText,
@@ -5,41 +6,42 @@ import {
   IconChevronUp,
   Link,
 } from '@aragon/ui-components';
-import styled from 'styled-components';
-import {format} from 'date-fns';
-import StarterKit from '@tiptap/starter-kit';
 import TipTapLink from '@tiptap/extension-link';
-import {useQuery} from '@apollo/client';
-import {useParams} from 'react-router-dom';
-import {useTranslation} from 'react-i18next';
-import {useFormContext} from 'react-hook-form';
 import {EditorContent, useEditor} from '@tiptap/react';
+import StarterKit from '@tiptap/starter-kit';
+import {format} from 'date-fns';
 import React, {useEffect, useMemo, useState} from 'react';
+import {useFormContext} from 'react-hook-form';
+import {useTranslation} from 'react-i18next';
+import {useParams} from 'react-router-dom';
+import styled from 'styled-components';
 
-import {Loading} from 'components/temporary';
 import {BigNumber} from '@ethersproject/bignumber';
-import {useNetwork} from 'context/network';
-import ResourceList from 'components/resourceList';
-import {formatUnits} from 'utils/library';
-import {getTokenInfo} from 'utils/tokens';
-import {VotingTerminal} from 'containers/votingTerminal';
 import {ExecutionWidget} from 'components/executionWidget';
 import {useFormStep} from 'components/fullScreenStepper';
-import {CHAIN_METADATA} from 'utils/constants';
+import ResourceList from 'components/resourceList';
+import {Loading} from 'components/temporary';
+import {VotingTerminal} from 'containers/votingTerminal';
+import {useNetwork} from 'context/network';
 import {useSpecificProvider} from 'context/providers';
 import {DAO_PACKAGE_BY_DAO_ID} from 'queries/packages';
+import {CHAIN_METADATA} from 'utils/constants';
 import {
-  getFormattedUtcOffset,
   getCanonicalUtcOffset,
+  getFormattedUtcOffset,
   KNOWN_FORMATS,
 } from 'utils/date';
+import {formatUnits} from 'utils/library';
+import {getTokenInfo} from 'utils/tokens';
 
 type ReviewProposalProps = {
   defineProposalStepNumber: number;
+  addActionsStepNumber?: number;
 };
 
 const ReviewProposal: React.FC<ReviewProposalProps> = ({
   defineProposalStepNumber,
+  addActionsStepNumber,
 }) => {
   const {t} = useTranslation();
   const {network} = useNetwork();
@@ -226,7 +228,7 @@ const ReviewProposal: React.FC<ReviewProposalProps> = ({
           <VotingTerminal
             breakdownTabDisabled
             voteNowDisabled
-            statusLabel={t('votingTerminal.notStartedYet')}
+            statusLabel={t('votingTerminal.status.draft')}
             approval={approval}
             participation={participation}
             startDate={formattedStartDate}
@@ -238,7 +240,14 @@ const ReviewProposal: React.FC<ReviewProposalProps> = ({
             }
           />
 
-          <ExecutionWidget />
+          <ExecutionWidget
+            actions={values.actions}
+            onAddAction={
+              addActionsStepNumber
+                ? () => setStep(addActionsStepNumber)
+                : undefined
+            }
+          />
         </ProposalContainer>
 
         <AdditionalInfoContainer>

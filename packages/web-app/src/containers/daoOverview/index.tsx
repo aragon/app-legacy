@@ -10,6 +10,7 @@ import {useFormStep} from 'components/fullScreenStepper';
 import useScreen from 'hooks/useScreen';
 import {ActiveIndicator, Indicator, StyledCarousel} from 'containers/carousel';
 import {i18n} from '../../../i18n.config';
+import {trackEvent} from 'services/analytics';
 
 type OverviewDAOHeaderProps = {
   navLabel: string;
@@ -23,6 +24,11 @@ export const OverviewDAOHeader: React.FC<OverviewDAOHeaderProps> = ({
   const {t} = useTranslation();
   const {next} = useFormStep();
   const navigate = useNavigate();
+
+  const handleSetupClick = () => {
+    trackEvent('daoCreation_setupDAO_clicked');
+    next();
+  };
 
   return (
     <div className="p-2 tablet:p-6 bg-ui-0 tablet:rounded-xl">
@@ -58,7 +64,7 @@ export const OverviewDAOHeader: React.FC<OverviewDAOHeaderProps> = ({
             className="w-full tablet:w-max whitespace-nowrap"
             iconRight={<IconChevronRight />}
             label={t('createDAO.overview.button')}
-            onClick={next}
+            onClick={handleSetupClick}
           />
         </div>
       </div>

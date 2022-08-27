@@ -1,16 +1,15 @@
 import {useQuery} from '@apollo/client';
 import {ProgressStatusProps} from '@aragon/ui-components';
-import {format, formatDistance} from 'date-fns';
+import {format} from 'date-fns';
 import {BigNumber} from 'ethers';
 import {ERC20VOTING_PROPOSAL_DETAILS} from 'queries/proposals';
-import {useCallback, useMemo} from 'react';
+import {useMemo} from 'react';
 import {useTranslation} from 'react-i18next';
 import {formatUnits} from 'utils/library';
 
 import {categorizeProposal} from 'pages/governance';
 import {getFormattedUtcOffset, KNOWN_FORMATS} from 'utils/date';
 import {StringIndexed} from 'utils/types';
-import {useWallet} from './useWallet';
 
 /**
  * This hook/file extracts the data fetching and processing logic from the
@@ -20,7 +19,7 @@ import {useWallet} from './useWallet';
  */
 
 /* MOCK DATA ================================================================ */
-type DisplayedVoter = {
+export type DisplayedVoter = {
   wallet: string;
   option: string;
   votingPower: string;
@@ -43,7 +42,6 @@ const Votes: StringIndexed = {
 const proposalTags = ['Finance', 'Withdraw'];
 
 export const useDaoProposal = (proposalId?: string) => {
-  const {address} = useWallet();
   const {t, i18n} = useTranslation();
 
   const {
@@ -55,23 +53,6 @@ export const useDaoProposal = (proposalId?: string) => {
   /*************************************************
    *              Callbacks & Handlers             *
    *************************************************/
-  const getStatusLabel = useCallback(
-    (status: string, endDate: number) => {
-      switch (status) {
-        case 'pending':
-          return t('votingTerminal.notStartedYet');
-
-        case 'active':
-          return t('votingTerminal.remainingTime', {
-            time: formatDistance(new Date(), new Date(endDate)),
-          });
-
-        default:
-          return t('votingTerminal.voteEnded');
-      }
-    },
-    [t]
-  );
 
   // remove this when integrating with sdk
   // since it maps the proposal subgraph data to displayed data
@@ -155,14 +136,9 @@ export const useDaoProposal = (proposalId?: string) => {
       proposalData.erc20VotingProposals[0]
     ).type;
 
-    // TODO: check if dao member
-    const canVote =
-      status === 'active' && // vote open
-      !(voters as DisplayedVoter[]).some(voter => voter.wallet === address); // haven't voted yet
-
+    // TODO: decode actions once available on SDK
     return {
       results,
-      voteNowDisabled: !canVote, // yuck
       createdAt: `${format(
         Number(createdAt) * 1000,
         KNOWN_FORMATS.proposals
@@ -194,12 +170,11 @@ export const useDaoProposal = (proposalId?: string) => {
       } (${tokenParticipation.div(BigNumber.from(votingPower)).mul(100)}%)`,
 
       status,
-      statusLabel: getStatusLabel(status, Number(endDate) * 1000),
       strategy: token
         ? t('votingTerminal.tokenVoting')
         : t('votingTerminal.multisig'),
     };
-  }, [address, getStatusLabel, proposalData, t]);
+  }, [proposalData, t]);
 
   // steps for step card
   const proposalSteps = useMemo(() => {

@@ -6,7 +6,7 @@ import {Navigate, Routes, Route, useLocation, Outlet} from 'react-router-dom';
 
 import Navbar from 'containers/navbar';
 import {WalletMenu} from 'containers/walletMenu';
-import {trackPage} from 'services/analytics';
+import {trackEvent, trackPage} from 'services/analytics';
 import '../i18n.config';
 
 // HACK: All pages MUST be exported with the withTransaction function
@@ -22,6 +22,7 @@ import Footer from 'containers/exploreFooter';
 import NetworkErrorMenu from 'containers/networkErrorMenu';
 import TransferMenu from 'containers/transferMenu';
 import {useWallet} from 'hooks/useWallet';
+import {useForm, FormProvider} from 'react-hook-form';
 
 const ExplorePage = lazy(() => import('pages/explore'));
 const NotFoundPage = lazy(() => import('pages/notFound'));
@@ -49,7 +50,17 @@ function App() {
   // TODO this needs to be inside a Routes component. Will be moved there with
   // further refactoring of layout (see further below).
   const {pathname} = useLocation();
-  const {methods} = useWallet();
+  const {methods, status, network, address, provider} = useWallet();
+
+  useEffect(() => {
+    if (status === 'connected') {
+      trackEvent('wallet_connected', {
+        network,
+        wallet_address: address,
+        wallet_provider: provider?.connection.url,
+      });
+    }
+  }, [address, network, provider, status]);
 
   useEffect(() => {
     // This check would prevent the wallet selection modal from opening up if the user hasn't logged in previously.
@@ -98,11 +109,13 @@ function App() {
               />
               <Route path="community" element={<CommunityPage />} />
               <Route path="settings" element={<SettingsPage />} />
-              <Route path="settings/edit" element={<EditSettingsPage />} />
-              <Route
-                path="settings/new-proposal"
-                element={<ProposeSettingsPage />}
-              />
+              <Route element={<NewSettingsWrapper />}>
+                <Route path="settings/edit" element={<EditSettingsPage />} />
+                <Route
+                  path="settings/new-proposal"
+                  element={<ProposeSettingsPage />}
+                />
+              </Route>
               <Route
                 path="community/mint-tokens"
                 element={<MintTokensProposalPage />}
@@ -125,6 +138,18 @@ function App() {
     </>
   );
 }
+
+const NewSettingsWrapper: React.FC = () => {
+  const formMethods = useForm({
+    mode: 'onChange',
+  });
+
+  return (
+    <FormProvider {...formMethods}>
+      <Outlet />
+    </FormProvider>
+  );
+};
 
 const NotFoundWrapper: React.FC = () => {
   const {pathname} = useLocation();

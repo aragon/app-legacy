@@ -22,6 +22,20 @@ function getAnalyticsMethod(methodType: MethodType) {
 }
 
 /**
+ * Sends analytics information about the events logged.
+ *
+ * @param eventName The event name tied to actions like button clicks.
+ * @returns void
+ */
+export function trackEvent(eventName: string, properties?: Object) {
+  const trackerMethod = getAnalyticsMethod(MethodType.EVENT);
+  if (typeof trackerMethod !== 'function') {
+    return;
+  }
+  trackerMethod(eventName, properties);
+}
+
+/**
  * Sends analytics information about the pages visited.
  *
  * @param pathName (Dynamic) Path name as given by the react router.

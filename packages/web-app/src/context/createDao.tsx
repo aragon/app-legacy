@@ -29,6 +29,7 @@ import {useGlobalModalContext} from './globalModals';
 import {useClient} from 'hooks/useClient';
 import {usePollGasFee} from 'hooks/usePollGasfee';
 import {IPluginInstallItem} from '@aragon/sdk-client/dist/internal/interfaces/common';
+import {trackEvent} from 'services/analytics';
 
 type CreateDaoContextType = {
   /** Prepares the creation data and awaits user confirmation to start process */
@@ -42,7 +43,7 @@ const CreateDaoContext = createContext<CreateDaoContextType | null>(null);
 const CreateDaoProvider: React.FC<Props> = ({children}) => {
   const {open} = useGlobalModalContext();
   const navigate = useNavigate();
-  const {isOnWrongNetwork} = useWallet();
+  const {isOnWrongNetwork, provider} = useWallet();
   const [showModal, setShowModal] = useState(false);
 
   const [daoCreationData, setDaoCreationData] = useState<ICreateParams>();
@@ -76,6 +77,14 @@ const CreateDaoProvider: React.FC<Props> = ({children}) => {
     // if DAO has been created, we don't need to do anything
     // do not execute it again, close the modal
     // TODO: navigate to new dao when available
+    trackEvent('daoCreation_publishDAONow_clicked', {
+      network: getValues('blockchain')?.network,
+      wallet_provider: provider,
+      governance_type: getValues('membership'),
+      estimated_gwei_fee: averageFee,
+      total_usd_cost: averageFee ? tokenPrice * Number(averageFee) : 0,
+    });
+
     if (creationProcessState === TransactionState.SUCCESS) {
       handleCloseModal();
       return;
@@ -246,6 +255,11 @@ const CreateDaoProvider: React.FC<Props> = ({children}) => {
             break;
           case DaoCreationSteps.DONE:
             console.log('Newly created DAO address', step.address);
+            trackEvent('daoCreation_transaction_success', {
+              network: getValues('blockchain')?.network,
+              wallet_provider: provider,
+              governance_type: getValues('membership'),
+            });
             setDaoCreationData(undefined);
             setCreationProcessState(TransactionState.SUCCESS);
             break;
@@ -253,6 +267,12 @@ const CreateDaoProvider: React.FC<Props> = ({children}) => {
       } catch (err) {
         // unsuccessful execution, keep creation data for retry
         console.log(err);
+        trackEvent('daoCreation_transaction_failed', {
+          network: getValues('blockchain')?.network,
+          wallet_provider: provider,
+          governance_type: getValues('membership'),
+          err,
+        });
         setCreationProcessState(TransactionState.ERROR);
       }
     }

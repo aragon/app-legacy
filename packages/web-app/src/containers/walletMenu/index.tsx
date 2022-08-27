@@ -19,11 +19,20 @@ import {handleClipboardActions} from 'utils/library';
 import useScreen from 'hooks/useScreen';
 import {CHAIN_METADATA} from 'utils/constants';
 import {LoginRequired} from './LoginRequired';
+import {trackEvent} from 'services/analytics';
 
 export const WalletMenu = () => {
   const {close, isWalletOpen} = useGlobalModalContext();
-  const {address, ensName, ensAvatarUrl, methods, chainId, isConnected} =
-    useWallet();
+  const {
+    address,
+    ensName,
+    ensAvatarUrl,
+    methods,
+    chainId,
+    isConnected,
+    network,
+    provider,
+  } = useWallet();
   const {isDesktop} = useScreen();
   const {t} = useTranslation();
 
@@ -31,6 +40,11 @@ export const WalletMenu = () => {
     methods
       .disconnect()
       .then(() => {
+        trackEvent('wallet_disconnected', {
+          network,
+          wallet_address: address,
+          wallet_provider: provider?.connection.url,
+        });
         localStorage.removeItem('WEB3_CONNECT_CACHED_PROVIDER');
         close('wallet');
       })

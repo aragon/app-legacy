@@ -87,7 +87,7 @@ const ProposalStepper: React.FC<ProposalStepperType> = ({
         onNextButtonClicked={enableTxModal}
         fullWidth
       >
-        <ReviewProposal defineProposalStepNumber={1} />
+        <ReviewProposal defineProposalStepNumber={1} addActionsStepNumber={3} />
       </Step>
     </FullScreenStepper>
   );
