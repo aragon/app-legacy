@@ -179,7 +179,7 @@
     "@web3-react/types" "^6.0.7"
     tiny-warning "^1.0.3"
 
-"@aragon/sdk-client@0.0.19-alpha":
+"@aragon/sdk-client@^0.0.19-alpha":
   version "0.0.19-alpha"
   resolved "https://registry.yarnpkg.com/@aragon/sdk-client/-/sdk-client-0.0.19-alpha.tgz#1fb85830e75e39d8cd7a03659e215695f27417e6"
   integrity sha512-cyuNvGhecsPkniVfGD4dkPqCMLEbQFY6Gj09tcCAIA5hhGOZgvOhIkPec/RVPPGf2dhK59Nv7NZkfXHfRtWNrg==
