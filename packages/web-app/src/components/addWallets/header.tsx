@@ -11,10 +11,13 @@ const AddWalletsHeader: React.FC = () => {
       <HeaderItem>
         <Label label={t('labels.whitelistWallets.address')} />
       </HeaderItem>
-      <HeaderItem>
-        <StyledLabel>{t('finance.tokens')}</StyledLabel>
-      </HeaderItem>
-      <div className="w-36" />
+      <div className="w-25">
+        <Label label={t('finance.tokens')} />
+      </div>
+      <div className="w-10">
+        <Label label={t('finance.allocation')} />
+      </div>
+      <div className="w-6" />
     </Container>
   );
 };
@@ -27,8 +30,4 @@ export const Container = styled.div.attrs({
 
 export const HeaderItem = styled.div.attrs({
   className: 'flex-1',
-})``;
-
-const StyledLabel = styled.p.attrs({
-  className: 'font-bold text-ui-800 text-right',
 })``;
