@@ -1,68 +1,35 @@
+import {CardProposal, CardProposalProps} from '@aragon/ui-components';
 import React from 'react';
-import {CardProposal} from '@aragon/ui-components';
 import {useTranslation} from 'react-i18next';
-import {useNavigate} from 'react-router-dom';
 
+import {useNetwork} from 'context/network';
+import {Proposal} from 'hooks/useProposals';
+import {CHAIN_METADATA, SupportedNetworks} from 'utils/constants';
 import {translateProposalDate} from 'utils/date';
-import {useWallet} from 'hooks/useWallet';
-import {CategorizedProposal} from 'pages/governance';
+import {i18n} from '../../../i18n.config';
 
 type ProposalListProps = {
-  proposals: Array<CategorizedProposal>;
+  proposals: Array<Proposal>;
 };
 
 const ProposalList: React.FC<ProposalListProps> = ({proposals}) => {
   const {t} = useTranslation();
-  const navigate = useNavigate();
-  const {chainId} = useWallet();
+  const {network} = useNetwork();
 
   if (proposals.length === 0)
     return <p data-testid="proposalList">{t('governance.noProposals')}</p>;
 
   return (
     <div className="space-y-3" data-testid="proposalList">
-      {proposals.map(p => {
-        const totalVoteCount = p.abstain + p.yea + p.nay;
-
-        const alertMessage = translateProposalDate(
-          p.type,
-          p.startDate,
-          p.endDate
-        );
-        return (
-          <CardProposal
-            title={'Title eventually coming from Metadata'}
-            description={'Summary eventually coming from Metadata'}
-            onClick={() => {
-              navigate('proposals/' + p.id);
-            }}
-            process={p.type}
-            chainId={chainId}
-            voteTitle={t('governance.proposals.voteTitle') as string}
-            {...(p.type === 'active' && {
-              voteProgress: relativeVoteCount(
-                p.yea || 0,
-                totalVoteCount
-              ).toString(),
-              voteLabel: t('newProposal.configureActions.yesOption'),
-              tokenAmount: totalVoteCount.toString(),
-              tokenSymbol: p.pkg.token?.symbol || undefined,
-            })}
-            publishLabel={t('governance.proposals.publishedBy') as string}
-            publisherAddress={p.creator}
-            stateLabel={[
-              t('governance.proposals.states.draft'),
-              t('governance.proposals.states.pending'),
-              t('governance.proposals.states.active'),
-              t('governance.proposals.states.executed'),
-              t('governance.proposals.states.succeeded'),
-              t('governance.proposals.states.defeated'),
-            ]}
-            {...(alertMessage && {alertMessage})}
-            key={p.id}
-          />
-        );
-      })}
+      {mapToCardViewProposal(proposals, network).map(({id, ...proposal}) => (
+        <CardProposal
+          {...proposal}
+          key={id}
+          // TODO: uncomment when proposal details is fixed
+          // onClick={() => navigate(`proposals/${id}`)}
+          onClick={() => null}
+        />
+      ))}
     </div>
   );
 };
@@ -72,6 +39,66 @@ function relativeVoteCount(optionCount: number, totalCount: number) {
     return 0;
   }
   return Math.round((optionCount / totalCount) * 100);
+}
+
+export type CardViewProposal = Omit<CardProposalProps, 'onClick'> & {
+  id: string;
+};
+
+/**
+ * Map SDK proposals to proposals to be displayed as CardProposals
+ * @param proposals proposal list from SDK
+ * @param network supported network name
+ * @returns list of proposals ready to be display as CardProposals
+ */
+export function mapToCardViewProposal(
+  proposals: Array<Proposal>,
+  network: SupportedNetworks
+): Array<CardViewProposal> {
+  return proposals.map(({metadata, result, ...proposal}) => {
+    const totalVoteCount =
+      Number(result.abstain) + Number(result.yes) + Number(result.no);
+
+    return {
+      id: proposal.id,
+      title: metadata.title,
+      description: metadata.summary,
+      process: proposal.status.toLowerCase() as CardProposalProps['process'],
+      voteTitle: i18n.t('governance.proposals.voteTitle'),
+
+      chainId: CHAIN_METADATA[network].id,
+      publishLabel: i18n.t('governance.proposals.publishedBy'),
+      publisherAddress: proposal.creatorAddress,
+      alertMessage:
+        translateProposalDate(
+          proposal.status.toLowerCase(),
+          proposal.startDate.getTime().toString(),
+          proposal.endDate.getTime().toString()
+        ) || undefined,
+      stateLabel: [
+        i18n.t('governance.proposals.states.draft'),
+        i18n.t('governance.proposals.states.pending'),
+        i18n.t('governance.proposals.states.active'),
+        i18n.t('governance.proposals.states.executed'),
+        i18n.t('governance.proposals.states.succeeded'),
+        i18n.t('governance.proposals.states.defeated'),
+      ],
+
+      ...(proposal.status.toLowerCase() === 'active'
+        ? {
+            voteProgress: relativeVoteCount(
+              Number(result.yes) || 0,
+              totalVoteCount
+            ),
+            voteLabel: i18n.t('newProposal.configureActions.yesOption'),
+            tokenAmount: totalVoteCount.toString(),
+            ...('token' in proposal
+              ? {tokenSymbol: proposal.token.symbol}
+              : {}),
+          }
+        : {}),
+    };
+  });
 }
 
 export default ProposalList;

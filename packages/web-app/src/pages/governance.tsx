@@ -11,66 +11,49 @@ import {
 import {useTranslation} from 'react-i18next';
 import {useNavigate} from 'react-router-dom';
 import styled from 'styled-components';
-import {useQuery} from '@apollo/client';
 
 import {PageWrapper} from 'components/wrappers';
 import ProposalList from 'components/proposalList';
 import NoProposals from 'public/noProposals.svg';
-import {ERC20VOTING_PROPOSAL_LIST} from 'queries/proposals';
-import {
-  erc20VotingProposals,
-  erc20VotingProposals_erc20VotingProposals,
-} from 'queries/__generated__/erc20VotingProposals';
-import {useDaoParam} from 'hooks/useDaoParam';
+import {erc20VotingProposals_erc20VotingProposals} from 'queries/__generated__/erc20VotingProposals';
 import {Loading} from 'components/temporary';
+import {Proposal, useProposals} from 'hooks/useProposals';
+import {useDaoDetails} from 'hooks/useDaoDetails';
+import {useDaoParam} from 'hooks/useDaoParam';
 
 const Governance: React.FC = () => {
+  const {data: dao, loading} = useDaoParam();
+  const {data: daoDetails, isLoading: detailsAreLoading} = useDaoDetails(dao!);
+  const {data: proposals, isLoading: proposalsAreLoading} = useProposals(
+    daoDetails?.plugins[0].instanceAddress || '',
+    'Whitelist'
+  );
+
   const {t} = useTranslation();
   const navigate = useNavigate();
   const [filterValue, setFilterValue] = useState<string>('all');
-  const {data: daoId, loading: daoIdLoading, error: daoIdError} = useDaoParam();
-  const {
-    data: uncategorizedDaoProposals,
-    loading: proposalsLoading,
-    error: proposalsError,
-  } = useQuery<erc20VotingProposals>(ERC20VOTING_PROPOSAL_LIST, {
-    variables: {dao: daoId},
-  });
 
   // The number of proposals displayed on each page
   const ProposalsPerPage = 6;
   const [page, setPage] = useState(1);
 
-  const daoProposals = uncategorizedDaoProposals?.erc20VotingProposals
-    // As of this commit, vote data is not available. Simply delete the first
-    // mapping once they are. [VR 13-07-2022]
-    .map(p => ({
-      ...p,
-      yea: Math.floor(Math.random() * 100),
-      nay: Math.floor(Math.random() * 100),
-    }))
-    .map(categorizeProposal);
-
-  const activeProposalCount = daoProposals?.filter(
-    proposal => proposal.type === 'active'
+  const activeProposalCount = proposals?.filter(
+    proposal => proposal.status.toLowerCase() === 'active'
   ).length;
 
-  let displayedProposals: CategorizedProposal[] = [];
-  if (daoProposals && daoProposals.length > 0 && filterValue) {
-    displayedProposals = daoProposals.filter(
-      t => t.type === filterValue || filterValue === 'all'
+  let displayedProposals: Array<Proposal> = [];
+
+  if (proposals && proposals.length > 0 && filterValue) {
+    displayedProposals = proposals.filter(
+      t => t.status.toLowerCase() === filterValue || filterValue === 'all'
     );
   }
 
-  if (proposalsLoading || daoIdLoading) {
+  if (proposalsAreLoading || detailsAreLoading || loading) {
     return <Loading />;
   }
 
-  if (proposalsError || daoIdError) {
-    return <p>Error. Check console</p>;
-  }
-
-  if (!daoProposals || daoProposals.length === 0) {
+  if (!proposals || proposals.length === 0) {
     return (
       <>
         <Container>
@@ -79,7 +62,6 @@ const Governance: React.FC = () => {
             <EmptyStateHeading>
               {t('governance.emptyState.title')}
             </EmptyStateHeading>
-
             <p className="mt-1.5 lg:w-1/2 text-center">
               {t('governance.emptyState.subtitleLine1')}{' '}
               {t('governance.emptyState.subtitleLine2')}{' '}
@@ -97,7 +79,6 @@ const Governance: React.FC = () => {
       </>
     );
   }
-
   return (
     <>
       <PageWrapper
