@@ -1,21 +1,22 @@
 import {
-  ListItemHeader,
-  IconGovernance,
-  CardProposal,
   ButtonText,
+  CardProposal,
   IconChevronRight,
+  IconGovernance,
+  ListItemHeader,
+  StateEmpty,
 } from '@aragon/ui-components';
 import React from 'react';
-import styled from 'styled-components';
 import {useTranslation} from 'react-i18next';
-import {useNavigate, generatePath} from 'react-router-dom';
+import {generatePath, useNavigate} from 'react-router-dom';
+import styled from 'styled-components';
 
+import {mapToCardViewProposal} from 'components/proposalList';
 import {useNetwork} from 'context/network';
-import {MockProposal} from 'hooks/useDaoProposals';
-import {NewProposal, Governance} from 'utils/paths';
-import {StateEmpty} from '@aragon/ui-components/src';
+import {Proposal} from 'hooks/useProposals';
+import {Governance, NewProposal} from 'utils/paths';
 
-type Props = {dao: string; proposals: MockProposal[]};
+type Props = {dao: string; proposals: Proposal[]};
 
 const ProposalSnapshot: React.FC<Props> = ({dao, proposals}) => {
   const {t} = useTranslation();
@@ -54,7 +55,8 @@ const ProposalSnapshot: React.FC<Props> = ({dao, proposals}) => {
         onClick={() => navigate(generatePath(NewProposal, {network, dao}))}
       />
 
-      {proposals.map((p, index) => (
+      {mapToCardViewProposal(proposals, network).map((p, index) => (
+        // TODO: navigate to the proposal details page
         <CardProposal key={index} type="list" onClick={() => null} {...p} />
       ))}
 

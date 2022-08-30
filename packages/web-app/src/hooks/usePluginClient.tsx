@@ -1,13 +1,14 @@
-import {useClient} from './useClient';
 import {
-  ContextPlugin,
-  Context,
-  ClientErc20,
   ClientAddressList,
+  ClientErc20,
+  ContextPlugin,
 } from '@aragon/sdk-client';
 import {Address} from '@aragon/ui-components/dist/utils/addresses';
+import {useMemo} from 'react';
 
-type ClientTypes = 'ERC20' | 'Whitelist';
+import {useClient} from './useClient';
+
+export type PluginTypes = 'ERC20' | 'Whitelist';
 
 /**
  * This hook can be used to build ERC20 or whitelist clients
@@ -17,35 +18,32 @@ type ClientTypes = 'ERC20' | 'Whitelist';
  */
 
 export const usePluginClient = (
-  type: ClientTypes,
+  type: PluginTypes,
   pluginAddress: Address
-): ClientErc20 | ClientAddressList | Error => {
+): ClientErc20 | ClientAddressList | undefined => {
   const {client, context} = useClient();
 
   if (!client || !context) {
-    return new Error('SDK client is not initialized correctly');
+    throw new Error('SDK client is not initialized correctly');
   }
 
-  if (type === 'ERC20') {
-    const contextPlugin: ContextPlugin = ContextPlugin.fromContext(
-      context as Context,
-      pluginAddress
-    );
-    const clientERC20: ClientErc20 = new ClientErc20(contextPlugin);
+  const pluginClient = useMemo(() => {
+    if (!pluginAddress) return;
 
-    return clientERC20;
-  } else if (type === 'Whitelist') {
-    const contextPlugin: ContextPlugin = ContextPlugin.fromContext(
-      context as Context,
-      pluginAddress
-    );
+    switch (type) {
+      case 'ERC20':
+        return new ClientErc20(
+          ContextPlugin.fromContext(context, pluginAddress)
+        );
+      case 'Whitelist':
+        return new ClientAddressList(
+          ContextPlugin.fromContext(context, pluginAddress)
+        );
 
-    const createWhitelist: ClientAddressList = new ClientAddressList(
-      contextPlugin
-    );
+      default:
+        throw new Error('The requested sdk type is invalid');
+    }
+  }, [context, pluginAddress, type]);
 
-    return createWhitelist;
-  } else {
-    return new Error('The requested sdk type is invalid');
-  }
+  return pluginClient;
 };
