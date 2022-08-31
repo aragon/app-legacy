@@ -11,10 +11,12 @@ import {useNetwork} from 'context/network';
 import {useDaoDetails} from 'hooks/useDaoDetails';
 import {useDaoParam} from 'hooks/useDaoParam';
 import {useDaoVault} from 'hooks/useDaoVault';
+import {PluginTypes} from 'hooks/usePluginClient';
 import {Proposal, useProposals} from 'hooks/useProposals';
 import useScreen from 'hooks/useScreen';
 import {useTranslation} from 'react-i18next';
 import {Transfer} from 'utils/types';
+import {formatDate} from 'utils/date';
 
 const Dashboard: React.FC = () => {
   const {t} = useTranslation();
@@ -29,10 +31,9 @@ const Dashboard: React.FC = () => {
   const {transfers, totalAssetValue} = useDaoVault(daoId!, showTransactions);
   const {data: dao, isLoading: detailsAreLoading} = useDaoDetails(daoId!);
 
-  // TODO: get plugin type from DAO details
   const {data: topTen, isLoading: proposalsAreLoading} = useProposals(
     dao?.plugins[0].instanceAddress || '',
-    'Whitelist'
+    dao?.plugins[0].id as PluginTypes
   );
 
   if (proposalsAreLoading || detailsAreLoading || daoParamLoading) {
@@ -40,19 +41,25 @@ const Dashboard: React.FC = () => {
   }
 
   if (!dao) return null;
-  const isWalletBased = false;
+
+  const isAddressList =
+    (dao.plugins[0].id as PluginTypes) === 'addresslistvoting.dao.eth';
 
   return (
     <>
       <HeaderWrapper>
         <HeaderDao
-          daoName={dao?.metadata.name}
+          daoName={dao.metadata.name}
+          daoAvatar={dao.metadata.avatar}
           daoUrl={`app.aragon.org/#/daos/${network}/${daoId}`}
-          description={dao?.metadata.description}
-          created_at={dao?.creationDate.toString()}
+          description={dao.metadata.description}
+          created_at={formatDate(
+            dao.creationDate.getTime() / 1000,
+            'MMMM yyyy'
+          ).toString()}
           daoChain={network}
           daoType={
-            isWalletBased
+            isAddressList
               ? t('explore.explorer.walletBased')
               : t('explore.explorer.tokenBased')
           }
@@ -78,7 +85,7 @@ const Dashboard: React.FC = () => {
           proposals={topTen}
           transfers={transfers}
           totalAssetValue={totalAssetValue}
-          walletBased={isWalletBased}
+          walletBased={isAddressList}
         />
       ) : (
         <MobileDashboardContent
@@ -86,7 +93,7 @@ const Dashboard: React.FC = () => {
           proposals={topTen}
           transfers={transfers}
           totalAssetValue={totalAssetValue}
-          walletBased={isWalletBased}
+          walletBased={isAddressList}
         />
       )}
     </>
@@ -176,7 +183,7 @@ const LeftWideContent = styled.div.attrs({
 })``;
 
 const RightNarrowContent = styled.div.attrs({
-  className: 'dektop:col-start-8 desktop:col-span-4 desktop:space-y-3',
+  className: 'desktop:col-start-8 desktop:col-span-4 desktop:space-y-3',
 })``;
 
 const EqualDivide = styled.div.attrs({

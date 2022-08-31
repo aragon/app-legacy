@@ -1,34 +1,34 @@
-import React, {useState} from 'react';
-import {withTransaction} from '@elastic/apm-rum-react';
 import {
-  Option,
   ButtonGroup,
-  Pagination,
   ButtonText,
   IconAdd,
   Link,
+  Option,
+  Pagination,
 } from '@aragon/ui-components';
+import {withTransaction} from '@elastic/apm-rum-react';
+import React, {useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {useNavigate} from 'react-router-dom';
 import styled from 'styled-components';
 
-import {PageWrapper} from 'components/wrappers';
 import ProposalList from 'components/proposalList';
-import NoProposals from 'public/noProposals.svg';
-import {erc20VotingProposals_erc20VotingProposals} from 'queries/__generated__/erc20VotingProposals';
 import {Loading} from 'components/temporary';
-import {Proposal, useProposals} from 'hooks/useProposals';
+import {PageWrapper} from 'components/wrappers';
 import {useDaoDetails} from 'hooks/useDaoDetails';
 import {useDaoParam} from 'hooks/useDaoParam';
+import {PluginTypes} from 'hooks/usePluginClient';
+import {Proposal, useProposals} from 'hooks/useProposals';
+import NoProposals from 'public/noProposals.svg';
+import {erc20VotingProposals_erc20VotingProposals} from 'queries/__generated__/erc20VotingProposals';
 
 const Governance: React.FC = () => {
   const {data: dao, loading} = useDaoParam();
   const {data: daoDetails, isLoading: detailsAreLoading} = useDaoDetails(dao!);
 
-  // TODO: get plugin type from DAO details
   const {data: proposals, isLoading: proposalsAreLoading} = useProposals(
     daoDetails?.plugins[0].instanceAddress || '',
-    'Whitelist'
+    daoDetails?.plugins[0].id as PluginTypes
   );
 
   const {t} = useTranslation();
