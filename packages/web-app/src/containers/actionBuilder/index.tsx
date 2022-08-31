@@ -105,7 +105,7 @@ const ActionBuilder: React.FC = () => {
       <TokenMenu
         isWallet={false}
         onTokenSelect={handleTokenSelect}
-        tokenBalances={tokens}
+        tokenBalances={tokens!}
       />
     </>
   );

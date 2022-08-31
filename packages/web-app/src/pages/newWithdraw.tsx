@@ -198,11 +198,13 @@ const NewWithdraw: React.FC = () => {
                 <ReviewProposal defineProposalStepNumber={3} />
               </Step>
             </FullScreenStepper>
-            <TokenMenu
-              isWallet={false}
-              onTokenSelect={handleTokenSelect}
-              tokenBalances={balances}
-            />
+            {balances && (
+              <TokenMenu
+                isWallet={false}
+                onTokenSelect={handleTokenSelect}
+                tokenBalances={balances}
+              />
+            )}
           </CreateProposalProvider>
         </ActionsProvider>
       </FormProvider>

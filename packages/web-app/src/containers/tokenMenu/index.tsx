@@ -1,22 +1,22 @@
+import {AssetBalance} from '@aragon/sdk-client';
 import {
-  SearchInput,
   ButtonText,
   IconAdd,
   IconStorage,
+  SearchInput,
 } from '@aragon/ui-components';
-import styled from 'styled-components';
-import {useTranslation} from 'react-i18next';
 import React, {useCallback, useState} from 'react';
+import {useTranslation} from 'react-i18next';
+import styled from 'styled-components';
 
-import TokenBox from './tokenBox';
-import {formatUnits} from 'utils/library';
-import {useGlobalModalContext} from 'context/globalModals';
-import {BaseTokenInfo, TokenBalance, TokenWithMetadata} from 'utils/types';
 import ModalBottomSheetSwitcher from 'components/modalBottomSheetSwitcher';
-
-import {useTokenMetadata} from 'hooks/useTokenMetadata';
-import {abbreviateTokenAmount} from 'utils/tokens';
+import {useGlobalModalContext} from 'context/globalModals';
 import {constants} from 'ethers';
+import {useTokenMetadata} from 'hooks/useTokenMetadata';
+import {formatUnits} from 'utils/library';
+import {abbreviateTokenAmount} from 'utils/tokens';
+import {BaseTokenInfo, TokenWithMetadata} from 'utils/types';
+import TokenBox from './tokenBox';
 
 const customToken = {
   address: '',
@@ -29,7 +29,7 @@ const customToken = {
 
 type TokenMenuProps = {
   isWallet?: boolean;
-  tokenBalances: TokenBalance[];
+  tokenBalances: AssetBalance[];
   onTokenSelect: (token: BaseTokenInfo) => void;
 };
 

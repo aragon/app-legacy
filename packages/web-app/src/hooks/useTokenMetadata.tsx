@@ -1,11 +1,14 @@
-import {useEffect, useState} from 'react';
 import {useApolloClient} from '@apollo/client';
+import {AssetBalance} from '@aragon/sdk-client';
+import {constants} from 'ethers';
+import {useEffect, useState} from 'react';
 
 import {useNetwork} from 'context/network';
 import {fetchTokenData} from 'services/prices';
-import {TokenBalance, TokenWithMetadata} from 'utils/types';
+import {CHAIN_METADATA} from 'utils/constants';
+import {TokenWithMetadata} from 'utils/types';
 
-export const useTokenMetadata = (balances: TokenBalance[]) => {
+export const useTokenMetadata = (assets: AssetBalance[]) => {
   const client = useApolloClient();
   const {network} = useNetwork();
   const [data, setData] = useState<TokenWithMetadata[]>([]);
@@ -17,19 +20,37 @@ export const useTokenMetadata = (balances: TokenBalance[]) => {
 
       // fetch token metadata from external api
       const metadata = await Promise.all(
-        balances?.map(balance => {
-          return fetchTokenData(balance.token.id, client, network);
+        assets?.map(asset => {
+          return fetchTokenData(
+            asset.type === 'erc20' ? asset.address : constants.AddressZero,
+            client,
+            network
+          );
         })
       );
 
       // map metadata to token balances
-      const tokensWithMetadata = balances?.map((balance, index) => ({
-        balance: balance.balance,
+      const tokensWithMetadata = assets?.map((asset, index) => ({
+        balance: asset.balance,
         metadata: {
-          id: balance.token.id,
-          decimals: balance.token.decimals,
-          name: metadata[index]?.name || balance.token.name,
-          symbol: metadata[index]?.symbol || balance.token.symbol,
+          ...(asset.type === 'erc20'
+            ? {
+                id: asset.address,
+                decimals: asset.decimals,
+                name: metadata[index]?.name || asset.name,
+                symbol: metadata[index]?.symbol || asset.symbol,
+              }
+            : {
+                id: constants.AddressZero,
+                decimals: CHAIN_METADATA[network].nativeCurrency.decimals,
+                name:
+                  metadata[index]?.name ||
+                  CHAIN_METADATA[network].nativeCurrency.name,
+                symbol:
+                  metadata[index]?.symbol ||
+                  CHAIN_METADATA[network].nativeCurrency.symbol,
+              }),
+
           price: metadata[index]?.price,
           apiId: metadata[index]?.id,
           imgUrl: metadata[index]?.imgUrl || '',
@@ -40,8 +61,8 @@ export const useTokenMetadata = (balances: TokenBalance[]) => {
       setLoading(false);
     };
 
-    if (balances) fetchMetadata();
-  }, [balances, network, client]);
+    if (assets) fetchMetadata();
+  }, [assets, network, client]);
 
   return {data, loading};
 };

@@ -1,11 +1,11 @@
-import {useCallback, useEffect, useState} from 'react';
+import {useEffect, useState} from 'react';
 
+import {PollTokenOptions, VaultToken} from 'utils/types';
 import {useDaoBalances} from './useDaoBalances';
 import {useDaoTransfers} from './useDaoTransfers';
+import {usePollTokenPrices} from './usePollTokenPrices';
 import {usePollTransfersPrices} from './usePollTransfersPrices';
 import {useTokenMetadata} from './useTokenMetadata';
-import {usePollTokenPrices} from './usePollTokenPrices';
-import {PollTokenOptions, VaultToken} from 'utils/types';
 
 /**
  * Hook encapsulating the logic for fetching the assets from the DAO vault, mapping them
@@ -21,11 +21,11 @@ export const useDaoVault = (
   showTransfers = true,
   options?: PollTokenOptions
 ) => {
-  const {data: balances, refetch: refetchBalances} = useDaoBalances(daoAddress);
-  const {data: transfers, refetch: refetchTransfers} =
-    useDaoTransfers(daoAddress);
-  const {data: tokensWithMetadata} = useTokenMetadata(balances);
+  const {data: balances} = useDaoBalances(daoAddress);
+  const {data: tokensWithMetadata} = useTokenMetadata(balances!);
   const {data} = usePollTokenPrices(tokensWithMetadata, options);
+
+  const {data: transfers} = useDaoTransfers(daoAddress);
   const {data: transferPrices} = usePollTransfersPrices(transfers);
   const [tokens, setTokens] = useState<VaultToken[]>([]);
 
@@ -55,9 +55,5 @@ export const useDaoVault = (
     totalAssetValue: data.totalAssetValue,
     totalAssetChange: data.totalAssetChange,
     transfers: showTransfers ? transferPrices.transfers : [],
-    refetch: useCallback(async () => {
-      await refetchBalances();
-      await refetchTransfers();
-    }, [refetchBalances, refetchTransfers]),
   };
 };
