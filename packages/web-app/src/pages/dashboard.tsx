@@ -28,6 +28,8 @@ const Dashboard: React.FC = () => {
 
   const {transfers, totalAssetValue} = useDaoVault(daoId!, showTransactions);
   const {data: dao, isLoading: detailsAreLoading} = useDaoDetails(daoId!);
+
+  // TODO: get plugin type from DAO details
   const {data: topTen, isLoading: proposalsAreLoading} = useProposals(
     dao?.plugins[0].instanceAddress || '',
     'Whitelist'

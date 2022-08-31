@@ -24,6 +24,8 @@ import {useDaoParam} from 'hooks/useDaoParam';
 const Governance: React.FC = () => {
   const {data: dao, loading} = useDaoParam();
   const {data: daoDetails, isLoading: detailsAreLoading} = useDaoDetails(dao!);
+
+  // TODO: get plugin type from DAO details
   const {data: proposals, isLoading: proposalsAreLoading} = useProposals(
     daoDetails?.plugins[0].instanceAddress || '',
     'Whitelist'
