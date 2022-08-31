@@ -182,7 +182,8 @@
     "tokenSection": "Tokens",
     "transferSection": "Latest Transfers",
     "unknownUSDValue": "Value unknown",
-    "tokens": "Tokens"
+    "tokens": "Tokens",
+    "allocation": "Allocation"
   },
   "governance": {
     "emptyState": {
