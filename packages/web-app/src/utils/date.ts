@@ -6,6 +6,12 @@ export const KNOWN_FORMATS = {
   proposals: 'yyyy/MM/dd hh:mm a',
 };
 
+type Offset = {
+  days?: number;
+  hours?: number;
+  minutes?: number;
+};
+
 /**
  * This function returns the number of seconds given the days hours and minutes
  * @param days number of days
@@ -19,6 +25,29 @@ export function getSecondsFromDHM(
   minutes: number
 ): number {
   return minutes * 60 + hours * 3600 + days * 86400;
+}
+
+/**
+ * This function returns the number of seconds given the days hours and minutes
+ * @param seconds number of seconds
+ * @returns {
+ *  days,
+ *  hours,
+ *  minutes,
+ * } an object includes days & hours & minutes
+ */
+export function getDHMFromSeconds(seconds: number): Offset {
+  if (!seconds) return {} as Offset;
+
+  const days = seconds / 86400 < 1 ? 0 : seconds / 86400;
+  const hours = seconds % 86400 < 3600 ? 0 : (seconds % 86400) / 3600;
+  const minutes = seconds % 3600 < 60 ? 0 : (seconds % 311040000) / 60;
+
+  return {
+    days,
+    hours,
+    minutes,
+  };
 }
 
 /**
@@ -59,12 +88,6 @@ export function hoursToMills(hours: number): number {
 export function minutesToMills(minutes: number): number {
   return minutes * 60 * 1000;
 }
-
-type Offset = {
-  days?: number;
-  hours?: number;
-  minutes?: number;
-};
 
 function offsetToMills(offset: Offset) {
   return (

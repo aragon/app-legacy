@@ -26,7 +26,7 @@ const Governance: React.FC = () => {
   const {data: daoDetails, isLoading: detailsAreLoading} = useDaoDetails(dao!);
   const {data: proposals, isLoading: proposalsAreLoading} = useProposals(
     daoDetails?.plugins[0].instanceAddress || '',
-    'Whitelist'
+    'addresslistvoting.dao.eth'
   );
 
   const {t} = useTranslation();

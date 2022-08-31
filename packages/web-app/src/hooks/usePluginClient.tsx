@@ -8,7 +8,7 @@ import {useMemo} from 'react';
 
 import {useClient} from './useClient';
 
-export type PluginTypes = 'ERC20' | 'Whitelist';
+export type PluginTypes = 'addresslistvoting.dao.eth' | 'erc20voting.dao.eth';
 
 /**
  * This hook can be used to build ERC20 or whitelist clients
@@ -31,11 +31,11 @@ export const usePluginClient = (
     if (!pluginAddress) return;
 
     switch (type) {
-      case 'ERC20':
+      case 'erc20voting.dao.eth':
         return new ClientErc20(
           ContextPlugin.fromContext(context, pluginAddress)
         );
-      case 'Whitelist':
+      case 'addresslistvoting.dao.eth':
         return new ClientAddressList(
           ContextPlugin.fromContext(context, pluginAddress)
         );
