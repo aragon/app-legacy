@@ -266,12 +266,13 @@ export const MintTokenForm: React.FC<MintTokenFormProps> = ({
   return (
     <Container standAlone={standAlone}>
       {isDesktop && (
-        <div
-          className="flex items-center p-2 tablet:p-3"
-          style={{paddingRight: 'calc(12ch + 80px)'}}
-        >
+        <div className="flex items-center p-2 tablet:p-3 space-x-2">
           <p className="flex-1 font-bold">{t('labels.address')}</p>
           <p className="flex-1 font-bold">{t('finance.tokens')}</p>
+          <p className="flex-1 font-bold" style={{maxWidth: '11ch'}}>
+            {t('finance.allocation')}
+          </p>
+          <div className="w-6" />
         </div>
       )}
 

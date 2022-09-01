@@ -1,13 +1,31 @@
+import React, {useCallback, useMemo, useEffect} from 'react';
 import {AlertInline, Label, NumberInput} from '@aragon/ui-components';
-import React, {useCallback, useMemo} from 'react';
 import styled from 'styled-components';
 import {useTranslation} from 'react-i18next';
 import {Controller, useFormContext, useWatch} from 'react-hook-form';
 import {HOURS_IN_DAY, MINS_IN_DAY, MINS_IN_HOUR} from 'utils/constants';
+import {Loading} from 'components/temporary';
+import {useDaoParam} from 'hooks/useDaoParam';
+import {useDaoDetails} from 'hooks/useDaoDetails';
+import {usePluginSettings} from 'hooks/usePluginSettings';
+import {PluginTypes} from 'hooks/usePluginClient';
+import {getDHMFromSeconds} from 'utils/date';
 
 const ConfigureCommunity: React.FC = () => {
   const {t} = useTranslation();
   const {control, setValue, getValues} = useFormContext();
+  const {data: daoId, loading} = useDaoParam();
+  const {data: daoDetails, isLoading: detailsAreLoading} = useDaoDetails(
+    daoId!
+  );
+
+  const {data: daoSettings, isLoading: settingsAreLoading} = usePluginSettings(
+    daoDetails?.plugins[1].instanceAddress as string,
+    daoDetails?.plugins[1].id as PluginTypes
+  );
+
+  const {days, hours, minutes} = getDHMFromSeconds(daoSettings.minDuration);
+
   const defaultMinimumParticipation = 51;
   const [
     tokenTotalSupply,
@@ -24,6 +42,28 @@ const ConfigureCommunity: React.FC = () => {
       'minimumParticipation',
     ],
   });
+
+  useEffect(() => {
+    setValue('minimumApproval', Math.round(daoSettings.minTurnout * 100));
+    setValue('support', Math.round(daoSettings.minSupport * 100));
+    setValue('durationDays', days);
+    setValue('durationHours', hours);
+    setValue('durationMinutes', minutes);
+  }, [
+    daoSettings.minSupport,
+    daoSettings.minTurnout,
+    days,
+    hours,
+    minutes,
+    setValue,
+  ]);
+
+  useEffect(() => {}, [
+    daoDetails?.ensDomain,
+    daoDetails?.metadata.avatar,
+    daoDetails?.metadata.description,
+    setValue,
+  ]);
 
   /*************************************************
    *             Callbacks and Handlers            *
@@ -93,6 +133,10 @@ const ConfigureCommunity: React.FC = () => {
       ) / 100
     );
   }, [minimumParticipation, whitelistWallets?.length]);
+
+  if (loading || detailsAreLoading || settingsAreLoading) {
+    return <Loading />;
+  }
 
   /*************************************************
    *                   Render                     *

@@ -1,5 +1,6 @@
 import {
   AlertInline,
+  Badge,
   ButtonText,
   CheckboxListItem,
   CheckboxListItemProps,
@@ -15,6 +16,7 @@ export type DescriptionListProps = {
   checkBoxErrorMessage?: string;
   checkedState?: CheckboxListItemProps['type'];
   onChecked?: () => void;
+  notChangeableBadge?: boolean;
 };
 
 export const DescriptionListContainer: React.FC<DescriptionListProps> = ({
@@ -25,13 +27,21 @@ export const DescriptionListContainer: React.FC<DescriptionListProps> = ({
   checkBoxErrorMessage,
   checkedState,
   onChecked,
+  notChangeableBadge = false,
 }) => {
   const {t} = useTranslation();
 
   return (
     <Container>
       <HStack>
-        <TitleText>{title}</TitleText>
+        <TitleContainer>
+          <TitleText>{title}</TitleText>
+          {notChangeableBadge && (
+            <div>
+              <Badge label={t('labels.notChangeable')} colorScheme="info" />
+            </div>
+          )}
+        </TitleContainer>
         {onEditClick && (
           <ButtonText
             label={editLabel || t('labels.edit')}
@@ -89,6 +99,10 @@ const Container = styled.div.attrs({
 
 const TitleText = styled.h1.attrs({
   className: 'text-lg font-bold text-ui-800',
+})``;
+
+const TitleContainer = styled.div.attrs({
+  className: 'flex space-x-2',
 })``;
 
 const DlContainer = styled.dl.attrs({

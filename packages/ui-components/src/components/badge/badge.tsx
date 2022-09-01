@@ -39,7 +39,7 @@ const StyledBadge = styled.div.attrs(({colorScheme}: StyledBadgeProps) => {
     colorCode = 'bg-ui-100 text-ui-600';
   }
 
-  const className = `inline-flex ft-text-sm px-0.5 rounded ${colorCode}`;
+  const className = `inline-flex ft-text-sm px-0.5 rounded items-center ${colorCode}`;
 
   return {className, style: {paddingTop: 2, paddingBottom: 2}};
 })<StyledBadgeProps>``;

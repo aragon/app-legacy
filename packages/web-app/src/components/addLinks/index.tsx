@@ -27,7 +27,7 @@ const AddLinks: React.FC<AddLinks> = ({buttonPlusIcon, buttonLabel}) => {
 
   // TODO: research focus after input refactor
   const handleAddLink = () => {
-    append({label: '', href: ''});
+    append({name: '', url: ''});
   };
 
   return (

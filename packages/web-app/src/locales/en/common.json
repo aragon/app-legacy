@@ -123,6 +123,7 @@
     "nResults": "{{count}} results",
     "noResults": "No results to show",
     "noResultsSubtitle": "Try to modify your search to find the corresponding wallets.",
+    "notChangeable": "Not Changeable",
     "whitelistWallets": {
       "address": "Address",
       "addresses": "{{count}} Addresses",
@@ -182,7 +183,8 @@
     "tokenSection": "Tokens",
     "transferSection": "Latest Transfers",
     "unknownUSDValue": "Value unknown",
-    "tokens": "Tokens"
+    "tokens": "Tokens",
+    "allocation": "Allocation"
   },
   "governance": {
     "emptyState": {

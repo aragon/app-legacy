@@ -60,7 +60,10 @@ const Settings: React.FC = () => {
       onClick={() => navigate(generatePath(EditSettings, {network, dao}))}
     >
       <div className="mt-3 desktop:mt-8 space-y-5">
-        <DescriptionListContainer title={t('labels.review.blockchain')}>
+        <DescriptionListContainer
+          title={t('labels.review.blockchain')}
+          notChangeableBadge
+        >
           <Dl>
             <Dt>{t('labels.review.network')}</Dt>
             <Dd>{t('createDAO.review.network', {network: 'Main'})}</Dd>
@@ -101,7 +104,10 @@ const Settings: React.FC = () => {
           </Dl>
         </DescriptionListContainer>
 
-        <DescriptionListContainer title={t('labels.review.community')}>
+        <DescriptionListContainer
+          title={t('labels.review.community')}
+          notChangeableBadge
+        >
           <Dl>
             <Dt>{t('labels.review.eligibleMembers')}</Dt>
             <Dd>{t('createDAO.step3.tokenMembership')}</Dd>

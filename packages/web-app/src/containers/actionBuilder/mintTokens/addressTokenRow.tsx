@@ -160,6 +160,7 @@ const DropdownMenu: React.FC<DropdownProps> = ({fieldIndex, onDelete}) => {
     />
   );
 };
+
 const PercentageDistribution: React.FC<
   Omit<AddressAndTokenRowProps, 'onDelete'>
 > = ({actionIndex, fieldIndex, newTokenSupply}) => {
@@ -188,6 +189,7 @@ export const AddressAndTokenRow: React.FC<AddressAndTokenRowProps> = ({
   newTokenSupply,
 }) => {
   const {isDesktop} = useScreen();
+  const {t} = useTranslation();
 
   if (isDesktop) {
     return (
@@ -213,7 +215,7 @@ export const AddressAndTokenRow: React.FC<AddressAndTokenRowProps> = ({
   return (
     <Container>
       <VStack>
-        <Label label="Address" />
+        <Label label={t('labels.whitelistWallets.address')} />
 
         <HStack>
           <AddressField actionIndex={actionIndex} fieldIndex={fieldIndex} />
@@ -226,7 +228,14 @@ export const AddressAndTokenRow: React.FC<AddressAndTokenRowProps> = ({
       </VStack>
 
       <VStack>
-        <Label label="Tokens" />
+        <div className="flex space-x-2">
+          <div className="flex-1">
+            <Label label={t('finance.tokens')} />
+          </div>
+          <div className="flex-1" style={{maxWidth: '12ch'}}>
+            <Label label={t('finance.allocation')} />
+          </div>
+        </div>
 
         <HStackWithPadding>
           <TokenField actionIndex={actionIndex} fieldIndex={fieldIndex} />

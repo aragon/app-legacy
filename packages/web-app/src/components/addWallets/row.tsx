@@ -139,7 +139,7 @@ const WalletRow: React.FC<WalletRowProps> = ({index, onDelete}) => {
         render={({field, fieldState: {error}}) => (
           <AmountsWrapper>
             <LabelWrapper>
-              <Label label={t('labels.amount')} />
+              <Label label={t('finance.tokens')} />
             </LabelWrapper>
 
             <NumberInput
@@ -166,6 +166,9 @@ const WalletRow: React.FC<WalletRowProps> = ({index, onDelete}) => {
       <Break />
 
       <PercentageInputDisplayWrapper>
+        <LabelWrapper>
+          <Label label={t('finance.allocation')} />
+        </LabelWrapper>
         <PercentageInputDisplay
           name={`wallets.${index}.amount`}
           value={calculateTotalTokenSupply(walletFieldArray[index].amount)}
@@ -226,7 +229,7 @@ const PercentageInputDisplay = styled(TextInput).attrs({
 })``;
 
 const PercentageInputDisplayWrapper = styled.div.attrs({
-  className: 'flex order-5 tablet:order-4 mt-3.5 tablet:mt-0 w-10',
+  className: 'order-5 tablet:order-4 w-10',
 })``;
 
 const LabelWrapper = styled.div.attrs({

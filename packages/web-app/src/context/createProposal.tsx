@@ -1,25 +1,22 @@
-import {ICreateProposal} from '@aragon/sdk-client';
-
-import React, {useState, useCallback, useMemo} from 'react';
-import {constants} from 'ethers';
-import {parseUnits} from 'ethers/lib/utils';
-import {generatePath, useNavigate} from 'react-router-dom';
+import {useQuery} from '@apollo/client';
+import {ICreateProposalParams} from '@aragon/sdk-client';
+import React, {useCallback, useMemo, useState} from 'react';
 import {useFormContext} from 'react-hook-form';
 import {useTranslation} from 'react-i18next';
-import {useQuery} from '@apollo/client';
+import {generatePath, useNavigate} from 'react-router-dom';
 
+import {Loading} from 'components/temporary';
 import PublishModal from 'containers/transactionModals/publishModal';
+import {useDaoParam} from 'hooks/useDaoParam';
+import {usePluginClient} from 'hooks/usePluginClient';
+import {usePollGasFee} from 'hooks/usePollGasfee';
+import {useWallet} from 'hooks/useWallet';
+import {DAO_BY_ADDRESS} from 'queries/dao';
 import {TransactionState} from 'utils/constants';
 import {Governance} from 'utils/paths';
-import {useClient} from 'hooks/useClient';
-import {usePollGasFee} from 'hooks/usePollGasfee';
-import {DAO_BY_ADDRESS} from 'queries/dao';
 import {client} from './apolloClient';
-import {useNetwork} from './network';
-import {useDaoParam} from 'hooks/useDaoParam';
-import {Loading} from 'components/temporary';
-import {useWallet} from 'hooks/useWallet';
 import {useGlobalModalContext} from './globalModals';
+import {useNetwork} from './network';
 
 type Props = {
   showTxModal: boolean;
@@ -39,11 +36,23 @@ const CreateProposalProvider: React.FC<Props> = ({
   const {open} = useGlobalModalContext();
 
   const {data: dao, loading} = useDaoParam();
-  const {erc20: erc20Client, whitelist: whitelistClient} = useClient();
+
   const {data, loading: daoDetailsLoading} = useQuery(DAO_BY_ADDRESS, {
     variables: {id: dao},
     client: client[network],
   });
+
+  const {__typename: type, id: pluginAddress} = data?.dao.packages[0].pkg;
+
+  const pluginType = useMemo(
+    () =>
+      type === 'WhitelistPackage'
+        ? 'addresslistvoting.dao.eth'
+        : 'erc20voting.dao.eth',
+    [type]
+  );
+
+  const pluginClient = usePluginClient(pluginType, pluginAddress);
 
   const [creationProcessState, setCreationProcessState] =
     useState<TransactionState>(TransactionState.WAITING);
@@ -53,17 +62,36 @@ const CreateProposalProvider: React.FC<Props> = ({
     [creationProcessState]
   );
 
-  const estimateCreationFees = useCallback(async () => {
-    const {__typename: type, id: votingAddress} = data?.dao?.packages[0].pkg;
+  // Because getValues does NOT get updated on each render, leaving this as
+  // a function to be called when data is needed instead of a memoized value
+  const getProposalCreationParams = useCallback((): ICreateProposalParams => {
+    const [title, summary, description, resources] = getValues([
+      'proposalTitle',
+      'proposalSummary',
+      'proposal',
+      'links',
+    ]);
 
-    return type === 'WhitelistPackage'
-      ? erc20Client?.estimate.createProposal(votingAddress, {
-          metadata: constants.AddressZero,
-        })
-      : whitelistClient?.estimate.createProposal(votingAddress, {
-          metadata: constants.AddressZero,
-        });
-  }, [data?.dao?.packages, erc20Client?.estimate, whitelistClient?.estimate]);
+    return {
+      pluginAddress,
+      metadata: {
+        title,
+        summary,
+        description,
+        resources,
+      },
+    };
+  }, [getValues, pluginAddress]);
+
+  const estimateCreationFees = useCallback(async () => {
+    if (!pluginClient) {
+      return Promise.reject(
+        new Error('ERC20 SDK client is not initialized correctly')
+      );
+    }
+
+    return pluginClient?.estimation.createProposal(getProposalCreationParams());
+  }, [getProposalCreationParams, pluginClient]);
 
   const {tokenPrice, maxFee, averageFee, stopPolling} = usePollGasFee(
     estimateCreationFees,
@@ -85,57 +113,33 @@ const CreateProposalProvider: React.FC<Props> = ({
     }
   };
 
-  const createErc20VotingProposal = async (votingAddress: string) => {
-    if (!erc20Client) {
+  const createVotingProposal = async () => {
+    if (!pluginClient) {
       return Promise.reject(
         new Error('ERC20 SDK client is not initialized correctly')
       );
     }
 
-    const proposalCreationParams: ICreateProposal = {
-      metadata: constants.AddressZero,
-      actions: encodeActions(),
-    };
-
-    return erc20Client.dao.simpleVote.createProposal(
-      votingAddress,
-      proposalCreationParams
-    );
+    return pluginClient.methods.createProposal(getProposalCreationParams());
   };
 
-  const createWhitelistVotingProposal = async (votingAddress: string) => {
-    if (!whitelistClient) {
-      return Promise.reject(
-        new Error('ERC20 SDK client is not initialized correctly')
-      );
-    }
-
-    const proposalCreationParams: ICreateProposal = {
-      metadata: constants.AddressZero,
-      actions: encodeActions(),
-    };
-
-    return whitelistClient.dao.whitelist.createProposal(
-      votingAddress,
-      proposalCreationParams
-    );
-  };
-
+  // TODO: add action encoding with new version of sdk
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const encodeActions = () => {
     const actions = getValues().actions;
     return actions.map((action: Record<string, string>) => {
       if (action.name === 'withdraw_assets') {
         // doesn't matter which client we use to encode actions, both are the same
-        return erc20Client?.actions.withdraw(
-          action.to,
-          BigInt(parseUnits(action.amount, 18).toBigInt()),
-          {
-            to: action.to,
-            token: action.tokenAddress,
-            amount: BigInt(parseUnits(action.amount, 18).toBigInt()),
-            reference: action.reference,
-          }
-        );
+        // return pluginClient?.encode.actions.withdraw(
+        //   action.to,
+        //   BigInt(parseUnits(action.amount, 18).toBigInt()),
+        //   {
+        //     to: action.to,
+        //     token: action.tokenAddress,
+        //     amount: BigInt(parseUnits(action.amount, 18).toBigInt()),
+        //     reference: action.reference,
+        //   }
+        // );
       }
     });
   };
@@ -152,25 +156,14 @@ const CreateProposalProvider: React.FC<Props> = ({
       return;
     }
 
-    const {__typename: type, id: votingAddress} = data?.dao?.packages[0].pkg;
     setCreationProcessState(TransactionState.LOADING);
 
-    if (type === 'WhitelistPackage') {
-      try {
-        await createWhitelistVotingProposal(votingAddress);
-        setCreationProcessState(TransactionState.SUCCESS);
-      } catch (error) {
-        console.error(error);
-        setCreationProcessState(TransactionState.ERROR);
-      }
-    } else {
-      try {
-        await createErc20VotingProposal(votingAddress);
-        setCreationProcessState(TransactionState.SUCCESS);
-      } catch (error) {
-        console.error(error);
-        setCreationProcessState(TransactionState.ERROR);
-      }
+    try {
+      await createVotingProposal();
+      setCreationProcessState(TransactionState.SUCCESS);
+    } catch (error) {
+      console.error(error);
+      setCreationProcessState(TransactionState.ERROR);
     }
   };
 
