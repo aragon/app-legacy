@@ -1,28 +1,39 @@
-import {useMemo} from 'react';
+import {IAssetTransfers} from '@aragon/sdk-client/dist/internal/interfaces/client';
 import {Address} from '@aragon/ui-components/dist/utils/addresses';
-import {useQuery} from '@apollo/client';
+import {useEffect, useState} from 'react';
 
-import {DaoTransfer} from 'utils/types';
-import {DAO_TRANSFER_LIST} from 'queries/finances';
+import {HookData} from 'utils/types';
+import {useClient} from './useClient';
 
-export const useDaoTransfers = (daoAddress: Address) => {
-  const {data, error, loading, refetch} = useQuery(DAO_TRANSFER_LIST, {
-    variables: {dao: daoAddress},
-    fetchPolicy: 'no-cache',
+export const useDaoTransfers = (
+  daoAddressOrEns: Address
+): HookData<IAssetTransfers> => {
+  const {client} = useClient();
+
+  const [data, setData] = useState<IAssetTransfers>({
+    deposits: [],
+    withdrawals: [],
   });
+  const [error, setError] = useState<Error>();
+  const [isLoading, setIsLoading] = useState(false);
 
-  const sortedData = useMemo(() => {
-    if (data) {
-      return [...data.vaultDeposits, ...data.vaultWithdraws].sort(
-        (a: DaoTransfer, b: DaoTransfer) => b.createdAt - a.createdAt
-      );
-    } else return data;
-  }, [data]);
+  useEffect(() => {
+    async function getTransfers() {
+      try {
+        setIsLoading(true);
 
-  return {
-    data: sortedData as DaoTransfer[],
-    error,
-    loading,
-    refetch,
-  };
+        const transfers = await client?.methods.getTransfers(daoAddressOrEns);
+        if (transfers) setData(transfers);
+      } catch (error) {
+        console.error(error);
+        setError(error as Error);
+      } finally {
+        setIsLoading(false);
+      }
+    }
+
+    getTransfers();
+  }, [client?.methods, daoAddressOrEns]);
+
+  return {data, error, isLoading};
 };

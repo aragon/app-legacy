@@ -102,6 +102,7 @@ export type Transfer = {
   tokenName: string;
   reference?: string;
   transaction: string;
+  tokenAddress: string;
 } & (
   | {transferType: TransferTypes.Deposit; sender: Address}
   | {transferType: TransferTypes.Withdraw; to: Address; proposalId: string}
