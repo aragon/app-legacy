@@ -1,21 +1,14 @@
-import {
-  AddressListProposalListItem,
-  Erc20ProposalListItem,
-} from '@aragon/sdk-client';
 import {IPluginSettings} from '@aragon/sdk-client/dist/internal/interfaces/plugins';
 import {useEffect, useState} from 'react';
 import {HookData} from 'utils/types';
 
 import {PluginTypes, usePluginClient} from './usePluginClient';
 
-export type Proposal = Erc20ProposalListItem | AddressListProposalListItem;
-
 /**
- * Retrieves list of proposals from SDK
- * NOTE: rename to useDaoProposals once the other hook has been deprecated
+ * Retrieves plugin governance settings from SDK
  * @param pluginAddress plugin from which proposals will be retrieved
  * @param type plugin type
- * @returns list of proposals on plugin
+ * @returns plugin governance settings
  */
 export function usePluginSettings(
   pluginAddress: string,
