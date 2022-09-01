@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import {withTransaction} from '@elastic/apm-rum-react';
 import {useTranslation} from 'react-i18next';
 import {
@@ -21,9 +21,14 @@ import ConfigureCommunity from 'containers/configureCommunity';
 import {useMappedBreadcrumbs} from 'hooks/useMappedBreadcrumbs';
 import useScreen from 'hooks/useScreen';
 import {useDaoParam} from 'hooks/useDaoParam';
+import {useDaoDetails} from 'hooks/useDaoDetails';
+import {usePluginSettings} from 'hooks/usePluginSettings';
 import {Loading} from 'components/temporary';
 import {ProposeNewSettings} from 'utils/paths';
 import {useNetwork} from 'context/network';
+import {PluginTypes} from 'hooks/usePluginClient';
+import {useFormContext} from 'react-hook-form';
+import {getDHMFromSeconds} from 'utils/date';
 
 const EditSettings: React.FC = () => {
   const [currentMenu, setCurrentMenu] = useState<'metadata' | 'governance'>(
@@ -35,9 +40,46 @@ const EditSettings: React.FC = () => {
   const {loading} = useDaoParam();
   const {network} = useNetwork();
   const {dao} = useParams();
+  const {setValue} = useFormContext();
   const {breadcrumbs, icon, tag} = useMappedBreadcrumbs();
+  const {data: daoId, loading: paramAreLoading} = useDaoParam();
+  const {data: daoDetails, isLoading: detailsAreLoading} = useDaoDetails(
+    daoId!
+  );
+  const {data: daoSettings, isLoading: settingsAreLoading} = usePluginSettings(
+    daoDetails?.plugins[1].instanceAddress as string,
+    daoDetails?.plugins[1].id as PluginTypes
+  );
 
-  if (loading) {
+  const {days, hours, minutes} = getDHMFromSeconds(daoSettings.minDuration);
+
+  useEffect(() => {
+    setValue('daoName', daoDetails?.ensDomain);
+    setValue('daoSummary', daoDetails?.metadata.description);
+    setValue('daoLogo', daoDetails?.metadata.avatar);
+  }, [
+    daoDetails?.ensDomain,
+    daoDetails?.metadata.avatar,
+    daoDetails?.metadata.description,
+    setValue,
+  ]);
+
+  useEffect(() => {
+    setValue('minimumApproval', Math.round(daoSettings.minTurnout * 100));
+    setValue('support', Math.round(daoSettings.minSupport * 100));
+    setValue('durationDays', days);
+    setValue('durationHours', hours);
+    setValue('durationMinutes', minutes);
+  }, [
+    daoSettings.minSupport,
+    daoSettings.minTurnout,
+    days,
+    hours,
+    minutes,
+    setValue,
+  ]);
+
+  if (loading || paramAreLoading || detailsAreLoading || settingsAreLoading) {
     return <Loading />;
   }
 

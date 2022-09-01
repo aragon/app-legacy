@@ -7,14 +7,11 @@ import {
 } from '@aragon/ui-components';
 import styled from 'styled-components';
 import {useTranslation} from 'react-i18next';
-import React, {useCallback, useEffect} from 'react';
+import React, {useCallback} from 'react';
 import {Controller, FieldError, useFormContext} from 'react-hook-form';
 
 import AddLinks from 'components/addLinks';
 import {isOnlyWhitespace} from 'utils/library';
-import {useDaoParam} from 'hooks/useDaoParam';
-import {useDaoDetails} from 'hooks/useDaoDetails';
-import {Loading} from 'components/temporary';
 
 const DAO_LOGO = {
   maxDimension: 2400,
@@ -24,11 +21,7 @@ const DAO_LOGO = {
 
 const DefineMetadata: React.FC = () => {
   const {t} = useTranslation();
-  const {control, setError, setValue} = useFormContext();
-  const {data: daoId, loading} = useDaoParam();
-  const {data: daoDetails, isLoading: detailsAreLoading} = useDaoDetails(
-    daoId!
-  );
+  const {control, setError} = useFormContext();
 
   const handleImageError = useCallback(
     (error: {code: string; message: string}) => {
@@ -57,21 +50,6 @@ const DefineMetadata: React.FC = () => {
     },
     [setError, t]
   );
-
-  useEffect(() => {
-    setValue('daoName', daoDetails?.ensDomain);
-    setValue('daoSummary', daoDetails?.metadata.description);
-    setValue('daoLogo', daoDetails?.metadata.avatar);
-  }, [
-    daoDetails?.ensDomain,
-    daoDetails?.metadata.avatar,
-    daoDetails?.metadata.description,
-    setValue,
-  ]);
-
-  if (loading || detailsAreLoading) {
-    return <Loading />;
-  }
 
   return (
     <>
