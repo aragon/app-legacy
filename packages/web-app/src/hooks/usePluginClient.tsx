@@ -21,11 +21,7 @@ export const usePluginClient = (
   type: PluginTypes,
   pluginAddress: Address
 ): ClientErc20 | ClientAddressList | undefined => {
-  const {client, context} = useClient();
-
-  if (!client || !context) {
-    throw new Error('SDK client is not initialized correctly');
-  }
+  const {context} = useClient();
 
   const pluginClient = useMemo(() => {
     if (!pluginAddress) return;
@@ -33,11 +29,11 @@ export const usePluginClient = (
     switch (type) {
       case 'erc20voting.dao.eth':
         return new ClientErc20(
-          ContextPlugin.fromContext(context, pluginAddress)
+          ContextPlugin.fromContext(context!, pluginAddress)
         );
       case 'addresslistvoting.dao.eth':
         return new ClientAddressList(
-          ContextPlugin.fromContext(context, pluginAddress)
+          ContextPlugin.fromContext(context!, pluginAddress)
         );
 
       default:
