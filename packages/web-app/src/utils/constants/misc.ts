@@ -101,3 +101,12 @@ export const MAX_TOKEN_AMOUNT = BigNumber.from(
 export const HOURS_IN_DAY = 24;
 export const MINS_IN_HOUR = 60;
 export const MINS_IN_DAY = HOURS_IN_DAY * MINS_IN_HOUR;
+
+export const PROPOSAL_STATE_LABELS = [
+  i18n.t('governance.proposals.states.draft'),
+  i18n.t('governance.proposals.states.pending'),
+  i18n.t('governance.proposals.states.active'),
+  i18n.t('governance.proposals.states.executed'),
+  i18n.t('governance.proposals.states.succeeded'),
+  i18n.t('governance.proposals.states.defeated'),
+];

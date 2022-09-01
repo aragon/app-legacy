@@ -134,11 +134,6 @@ export function actionsAreValid(
           !(formActions?.[index] as ActionWithdraw)?.tokenAddress
         );
       case 'mint_tokens':
-        if (
-          (formActions?.[index] as ActionMintToken)?.inputs?.mintTokensToWallets
-            .length === 0
-        )
-          return true;
         return (
           formActions?.[index] as ActionMintToken
         )?.inputs?.mintTokensToWallets?.some(

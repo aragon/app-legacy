@@ -4,7 +4,11 @@ import {useTranslation} from 'react-i18next';
 
 import {useNetwork} from 'context/network';
 import {Proposal} from 'hooks/useProposals';
-import {CHAIN_METADATA, SupportedNetworks} from 'utils/constants';
+import {
+  CHAIN_METADATA,
+  PROPOSAL_STATE_LABELS,
+  SupportedNetworks,
+} from 'utils/constants';
 import {translateProposalDate} from 'utils/date';
 import {i18n} from '../../../i18n.config';
 
@@ -64,25 +68,18 @@ export function mapToCardViewProposal(
       title: metadata.title,
       description: metadata.summary,
       process: proposal.status.toLowerCase() as CardProposalProps['process'],
-      voteTitle: i18n.t('governance.proposals.voteTitle'),
-
       chainId: CHAIN_METADATA[network].id,
-      publishLabel: i18n.t('governance.proposals.publishedBy'),
       publisherAddress: proposal.creatorAddress,
+      publishLabel: i18n.t('governance.proposals.publishedBy'),
+      voteTitle: i18n.t('governance.proposals.voteTitle'),
+      stateLabel: PROPOSAL_STATE_LABELS,
+
       alertMessage:
         translateProposalDate(
           proposal.status.toLowerCase(),
           proposal.startDate.getTime().toString(),
           proposal.endDate.getTime().toString()
         ) || undefined,
-      stateLabel: [
-        i18n.t('governance.proposals.states.draft'),
-        i18n.t('governance.proposals.states.pending'),
-        i18n.t('governance.proposals.states.active'),
-        i18n.t('governance.proposals.states.executed'),
-        i18n.t('governance.proposals.states.succeeded'),
-        i18n.t('governance.proposals.states.defeated'),
-      ],
 
       ...(proposal.status.toLowerCase() === 'active'
         ? {

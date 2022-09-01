@@ -1,10 +1,9 @@
-import React, {useCallback, useMemo, useEffect} from 'react';
+import React, {useCallback, useMemo} from 'react';
 import {AlertInline, Label, NumberInput} from '@aragon/ui-components';
 import styled from 'styled-components';
 import {useTranslation} from 'react-i18next';
 import {Controller, useFormContext, useWatch} from 'react-hook-form';
 import {HOURS_IN_DAY, MINS_IN_DAY, MINS_IN_HOUR} from 'utils/constants';
-import {Loading} from 'components/temporary';
 
 const ConfigureCommunity: React.FC = () => {
   const {t} = useTranslation();

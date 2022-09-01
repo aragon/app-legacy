@@ -8,7 +8,7 @@ import {useMemo} from 'react';
 
 import {useClient} from './useClient';
 
-export type PluginTypes = 'addresslistvoting.dao.eth' | 'erc20voting.dao.eth';
+export type PluginTypes = 'erc20voting.dao.eth' | 'addresslistvoting.dao.eth';
 
 /**
  * This hook can be used to build ERC20 or whitelist clients

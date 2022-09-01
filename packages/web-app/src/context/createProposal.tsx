@@ -8,7 +8,7 @@ import {generatePath, useNavigate} from 'react-router-dom';
 import {Loading} from 'components/temporary';
 import PublishModal from 'containers/transactionModals/publishModal';
 import {useDaoParam} from 'hooks/useDaoParam';
-import {usePluginClient} from 'hooks/usePluginClient';
+import {PluginTypes, usePluginClient} from 'hooks/usePluginClient';
 import {usePollGasFee} from 'hooks/usePollGasfee';
 import {useWallet} from 'hooks/useWallet';
 import {DAO_BY_ADDRESS} from 'queries/dao';
@@ -44,7 +44,7 @@ const CreateProposalProvider: React.FC<Props> = ({
 
   const {__typename: type, id: pluginAddress} = data?.dao.packages[0].pkg;
 
-  const pluginType = useMemo(
+  const pluginType: PluginTypes = useMemo(
     () =>
       type === 'WhitelistPackage'
         ? 'addresslistvoting.dao.eth'
