@@ -1,9 +1,9 @@
-import {ButtonText, HeaderDao} from '@aragon/ui-components';
+import {HeaderDao} from '@aragon/ui-components';
 import {withTransaction} from '@elastic/apm-rum-react';
-import React, {useState} from 'react';
+import React from 'react';
 import styled from 'styled-components';
 
-import {Loading, TemporarySection} from 'components/temporary';
+import {Loading} from 'components/temporary';
 import {MembershipSnapshot} from 'containers/membershipSnapshot';
 import ProposalSnapshot from 'containers/proposalSnapshot';
 import TreasurySnapshot from 'containers/treasurySnapshot';
@@ -15,20 +15,17 @@ import {PluginTypes} from 'hooks/usePluginClient';
 import {Proposal, useProposals} from 'hooks/useProposals';
 import useScreen from 'hooks/useScreen';
 import {useTranslation} from 'react-i18next';
-import {Transfer} from 'utils/types';
 import {formatDate} from 'utils/date';
+import {Transfer} from 'utils/types';
 
 const Dashboard: React.FC = () => {
   const {t} = useTranslation();
   const {network} = useNetwork();
   const {isDesktop} = useScreen();
 
-  //temporary helpers
-  const [showTransactions, setShowTransactions] = useState(true);
-
   const {data: daoId, loading: daoParamLoading} = useDaoParam();
 
-  const {transfers, totalAssetValue} = useDaoVault(daoId!, showTransactions);
+  const {transfers, totalAssetValue} = useDaoVault(daoId!);
   const {data: dao, isLoading: detailsAreLoading} = useDaoDetails(daoId!);
 
   const {data: topTen, isLoading: proposalsAreLoading} = useProposals(
@@ -71,14 +68,7 @@ const Dashboard: React.FC = () => {
           }
         />
       </HeaderWrapper>
-      <div className="col-span-full">
-        <TemporarySection purpose="It allows to toggle the presence of data and see the corresponding layouts.">
-          <ButtonText
-            label={showTransactions ? 'Show No Transfers' : 'Show Transfers'}
-            onClick={() => setShowTransactions(prev => !prev)}
-          />
-        </TemporarySection>
-      </div>
+
       {isDesktop ? (
         <DashboardContent
           dao={daoId}

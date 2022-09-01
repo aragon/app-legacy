@@ -17,6 +17,7 @@ import {
 import {formatDate} from 'utils/date';
 import {formatUnits} from 'utils/library';
 import {HookData, Transfer} from 'utils/types';
+import {i18n} from '../../i18n.config';
 
 export const usePollTransfersPrices = (
   transfers: IAssetTransfers
@@ -80,8 +81,6 @@ export const usePollTransfersPrices = (
   };
 };
 
-// fix date
-
 /**
  * Map SDK data to DAO transfer
  * TODO: when we refactor, we should find a way to
@@ -108,7 +107,9 @@ function mapToDaoTransfers(
     transfer = transfers.deposits[i];
     if (transfer)
       daoTransfers.push({
-        title: transfer.reference ? transfer.reference : 'deposit',
+        title: transfer.reference
+          ? transfer.reference
+          : i18n.t('labels.deposit'),
         sender: transfer.from,
         transferType: TransferTypes.Deposit,
         id: transfer.transactionId,
@@ -145,7 +146,9 @@ function mapToDaoTransfers(
     if (transfer)
       daoTransfers.push({
         id: transfer.transactionId,
-        title: transfer.reference ? transfer.reference : 'withdraw',
+        title: transfer.reference
+          ? transfer.reference
+          : i18n.t('labels.withdraw'),
         transferType: TransferTypes.Withdraw,
         to: transfer.to,
         proposalId: transfer.transactionId,

@@ -16,11 +16,7 @@ import {useTokenMetadata} from './useTokenMetadata';
  * @returns A list of tokens in the DAO treasury, current USD sum value of all assets,
  * and the price change in USD based on the filter. An option to manually refetch assets is included.
  */
-export const useDaoVault = (
-  daoAddress: string,
-  showTransfers = true,
-  options?: PollTokenOptions
-) => {
+export const useDaoVault = (daoAddress: string, options?: PollTokenOptions) => {
   const {data: balances} = useDaoBalances(daoAddress);
   const {data: tokensWithMetadata} = useTokenMetadata(balances!);
   const {data} = usePollTokenPrices(tokensWithMetadata, options);
@@ -54,6 +50,6 @@ export const useDaoVault = (
     tokens,
     totalAssetValue: data.totalAssetValue,
     totalAssetChange: data.totalAssetChange,
-    transfers: showTransfers ? transferPrices.transfers : [],
+    transfers: transferPrices.transfers,
   };
 };

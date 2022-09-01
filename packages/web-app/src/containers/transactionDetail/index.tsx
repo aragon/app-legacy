@@ -11,25 +11,21 @@ import React from 'react';
 import styled from 'styled-components';
 import {useTranslation} from 'react-i18next';
 
-import {Transfer} from 'utils/types';
 import {useNetwork} from 'context/network';
 import ModalBottomSheetSwitcher from 'components/modalBottomSheetSwitcher';
 import {CHAIN_METADATA, TransferTypes} from 'utils/constants';
 import {abbreviateTokenAmount} from 'utils/tokens';
+import {useTransactionDetailContext} from 'context/transactionDetail';
 
 type TransactionDetailProps = {
-  transfer: Transfer;
-  isOpen: boolean;
-  onClose: () => void;
+  daoName: string;
 };
 
-const TransactionDetail: React.FC<TransactionDetailProps> = ({
-  transfer,
-  isOpen,
-  onClose,
-}) => {
+const TransactionDetail: React.FC<TransactionDetailProps> = ({daoName}) => {
   const {t} = useTranslation();
   const {network} = useNetwork();
+
+  const {isOpen, transfer, onClose} = useTransactionDetailContext();
 
   const transactionUrl = `
     ${CHAIN_METADATA[network].explorer}tx/${transfer.transaction}`;
@@ -50,8 +46,8 @@ const TransactionDetail: React.FC<TransactionDetailProps> = ({
       <Content>
         <CardTransfer
           {...(transfer.transferType === TransferTypes.Deposit
-            ? {to: 'Dao Name', from: transfer.sender}
-            : {to: transfer.to, from: 'DaoName'})}
+            ? {to: daoName, from: transfer.sender}
+            : {to: transfer.to, from: daoName})}
           toLabel={t('labels.to')}
           fromLabel={t('labels.from')}
         />
