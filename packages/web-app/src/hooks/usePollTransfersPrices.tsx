@@ -80,6 +80,8 @@ export const usePollTransfersPrices = (
   };
 };
 
+// fix date
+
 /**
  * Map SDK data to DAO transfer
  * TODO: when we refactor, we should find a way to
@@ -110,7 +112,10 @@ function mapToDaoTransfers(
         sender: transfer.from,
         transferType: TransferTypes.Deposit,
         id: transfer.transactionId,
-        transferDate: `${formatDate(transfer.date.getTime(), 'relative')}`,
+        transferDate: `${formatDate(
+          transfer.date.getTime() / 1000,
+          'relative'
+        )}`,
         transferTimestamp: transfer.date.getTime(),
         usdValue: '',
         isPending: false,
@@ -145,7 +150,10 @@ function mapToDaoTransfers(
         to: transfer.to,
         proposalId: transfer.transactionId,
         transferTimestamp: transfer.date.getTime(),
-        transferDate: `${formatDate(transfer.date.getTime(), 'relative')}`,
+        transferDate: `${formatDate(
+          transfer.date.getTime() / 1000,
+          'relative'
+        )}`,
         usdValue: '',
         isPending: false,
         reference: transfer.reference,
