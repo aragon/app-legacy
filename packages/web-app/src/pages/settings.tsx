@@ -51,8 +51,6 @@ const Settings: React.FC = () => {
 
   const {days, hours, minutes} = getDHMFromSeconds(daoSettings.minDuration);
 
-  console.log('network', network);
-
   return (
     <PageWrapper
       title={t('labels.daoSettings')}

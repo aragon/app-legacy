@@ -47,8 +47,8 @@ const EditSettings: React.FC = () => {
     daoId!
   );
   const {data: daoSettings, isLoading: settingsAreLoading} = usePluginSettings(
-    daoDetails?.plugins[1].instanceAddress as string,
-    daoDetails?.plugins[1].id as PluginTypes
+    daoDetails?.plugins[0].instanceAddress as string,
+    daoDetails?.plugins[0].id as PluginTypes
   );
 
   const {days, hours, minutes} = getDHMFromSeconds(daoSettings.minDuration);
@@ -70,7 +70,13 @@ const EditSettings: React.FC = () => {
     setValue('durationDays', days);
     setValue('durationHours', hours);
     setValue('durationMinutes', minutes);
+    // TODO: Need to add community settings later
+    setValue(
+      'membership',
+      daoDetails?.plugins[0].id === 'erc20voting.dao.eth' ? 'token' : 'wallet'
+    );
   }, [
+    daoDetails?.plugins,
     daoSettings.minSupport,
     daoSettings.minTurnout,
     days,
