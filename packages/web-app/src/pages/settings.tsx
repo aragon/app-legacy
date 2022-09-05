@@ -51,6 +51,8 @@ const Settings: React.FC = () => {
 
   const {days, hours, minutes} = getDHMFromSeconds(daoSettings.minDuration);
 
+  console.log('network', network);
+
   return (
     <PageWrapper
       title={t('labels.daoSettings')}
@@ -70,7 +72,7 @@ const Settings: React.FC = () => {
           </Dl>
           <Dl>
             <Dt>{t('labels.review.blockchain')}</Dt>
-            <Dd>Rinkeby</Dd>
+            <Dd>{network}</Dd>
           </Dl>
         </DescriptionListContainer>
 

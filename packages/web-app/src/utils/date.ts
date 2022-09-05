@@ -28,7 +28,7 @@ export function getSecondsFromDHM(
 }
 
 /**
- * This function returns the number of seconds given the days hours and minutes
+ * This function returns the days, hours and minutes of seconds
  * @param seconds number of seconds
  * @returns {
  *  days,
