@@ -72,11 +72,11 @@ const Community: React.FC = () => {
                 <Dt>{t('votingTerminal.token')}</Dt>
                 <Dd>
                   <div className="flex items-center space-x-1.5">
-                    <p>{t('createDAO.step3.tokenName')}</p>
-                    <p>
-                      {tokenName}&nbsp;&nbsp;{tokenSymbol}
-                    </p>
-                    {isCustomToken && <Badge label="New" colorScheme="info" />}
+                    <span>{tokenName}</span>
+                    <span>{tokenSymbol}</span>
+                    {isCustomToken && (
+                      <Badge label={t('labels.new')} colorScheme="info" />
+                    )}
                   </div>
                 </Dd>
               </Dl>
@@ -87,7 +87,7 @@ const Community: React.FC = () => {
                     <p>
                       {tokenTotalSupply} {tokenSymbol}
                     </p>
-                    <Badge label="Fixed" colorScheme="neutral" />
+                    <Badge label={t('labels.mintable')} colorScheme="neutral" />
                   </div>
                 </Dd>
               </Dl>

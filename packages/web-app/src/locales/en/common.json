@@ -167,7 +167,9 @@
     "newTokens": "New Tokens",
     "newHolders": "New Holders",
     "totalTokens": "Total Tokens",
-    "totalHolders": "Total Holders"
+    "totalHolders": "Total Holders",
+    "mintable": "Mintable",
+    "new": "New"
   },
   "placeHolders": {
     "selectToken": "Select a Token ...",
