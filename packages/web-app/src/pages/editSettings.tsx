@@ -27,7 +27,7 @@ import {Loading} from 'components/temporary';
 import {ProposeNewSettings} from 'utils/paths';
 import {useNetwork} from 'context/network';
 import {PluginTypes} from 'hooks/usePluginClient';
-import {useFormContext} from 'react-hook-form';
+import {useFormContext, useWatch} from 'react-hook-form';
 import {getDHMFromSeconds} from 'utils/date';
 
 const EditSettings: React.FC = () => {
@@ -50,33 +50,89 @@ const EditSettings: React.FC = () => {
     daoDetails?.plugins[1].instanceAddress as string,
     daoDetails?.plugins[1].id as PluginTypes
   );
+  const [isMetadataChanged, setIsMetadataChanged] = useState(false);
+  const [isGovernanceChanged, setIsGovernanceChanged] = useState(false);
 
   const {days, hours, minutes} = getDHMFromSeconds(daoSettings.minDuration);
 
-  useEffect(() => {
+  const [
+    daoName,
+    daoSummary,
+    daoLogo,
+    minimumApproval,
+    support,
+    durationDays,
+    durationHours,
+    durationMinutes,
+  ] = useWatch({
+    name: [
+      'daoName',
+      'daoSummary',
+      'daoLogo',
+      'minimumApproval',
+      'support',
+      'durationDays',
+      'durationHours',
+      'durationMinutes',
+    ],
+  });
+
+  const setCurrentMetadata = () => {
     setValue('daoName', daoDetails?.ensDomain);
     setValue('daoSummary', daoDetails?.metadata.description);
     setValue('daoLogo', daoDetails?.metadata.avatar);
-  }, [
-    daoDetails?.ensDomain,
-    daoDetails?.metadata.avatar,
-    daoDetails?.metadata.description,
-    setValue,
-  ]);
+  };
 
   useEffect(() => {
+    setCurrentMetadata();
+    setCurrentGovernance();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [daoDetails, daoSettings]);
+
+  const setCurrentGovernance = () => {
     setValue('minimumApproval', Math.round(daoSettings.minTurnout * 100));
     setValue('support', Math.round(daoSettings.minSupport * 100));
     setValue('durationDays', days);
     setValue('durationHours', hours);
     setValue('durationMinutes', minutes);
+  };
+
+  useEffect(() => {
+    if (
+      daoName !== daoDetails?.ensDomain ||
+      daoSummary !== daoDetails?.metadata.description ||
+      daoLogo !== daoDetails?.metadata.avatar
+    )
+      setIsMetadataChanged(true);
+    else setIsMetadataChanged(false);
+
+    // TODO: We need to force forms only use one form
+    if (
+      Number(minimumApproval) !== Math.round(daoSettings.minTurnout * 100) ||
+      Number(support) !== Math.round(daoSettings.minSupport * 100) ||
+      Number(durationDays) !== days ||
+      Number(durationHours) !== hours ||
+      Number(durationMinutes) !== minutes
+    )
+      setIsGovernanceChanged(true);
+    else setIsGovernanceChanged(false);
   }, [
+    daoDetails?.ensDomain,
+    daoDetails?.metadata.avatar,
+    daoDetails?.metadata.description,
+    daoLogo,
+    daoName,
     daoSettings.minSupport,
     daoSettings.minTurnout,
+    daoSummary,
     days,
+    durationDays,
+    durationHours,
+    durationMinutes,
     hours,
+    minimumApproval,
     minutes,
-    setValue,
+    support,
   ]);
 
   if (loading || paramAreLoading || detailsAreLoading || settingsAreLoading) {
@@ -118,16 +174,22 @@ const EditSettings: React.FC = () => {
           <Heading>{t('labels.review.daoMetadata')}</Heading>
 
           <HStack>
-            <AlertInline label={t('settings.newSettings')} mode="neutral" />
+            {isMetadataChanged && (
+              <AlertInline label={t('settings.newSettings')} mode="neutral" />
+            )}
             <ButtonText
               label={
                 currentMenu === 'metadata'
                   ? t('settings.resetChanges')
                   : t('settings.edit')
               }
-              disabled={currentMenu === 'metadata'}
+              disabled={currentMenu === 'metadata' && !isMetadataChanged}
               mode="secondary"
-              onClick={() => setCurrentMenu('metadata')}
+              onClick={() =>
+                currentMenu === 'metadata'
+                  ? setCurrentMetadata()
+                  : setCurrentMenu('metadata')
+              }
               bgWhite
             />
           </HStack>
@@ -144,16 +206,22 @@ const EditSettings: React.FC = () => {
           <Heading>{t('labels.review.governance')}</Heading>
 
           <HStack>
-            <AlertInline label={t('settings.newSettings')} mode="neutral" />
+            {isGovernanceChanged && (
+              <AlertInline label={t('settings.newSettings')} mode="neutral" />
+            )}
             <ButtonText
               label={
                 currentMenu === 'governance'
                   ? t('settings.resetChanges')
                   : t('settings.edit')
               }
-              disabled={currentMenu === 'governance'}
+              disabled={currentMenu === 'governance' && !isGovernanceChanged}
               mode="secondary"
-              onClick={() => setCurrentMenu('governance')}
+              onClick={() =>
+                currentMenu === 'governance'
+                  ? setCurrentGovernance()
+                  : setCurrentMenu('governance')
+              }
               bgWhite
             />
           </HStack>
