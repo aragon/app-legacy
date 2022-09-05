@@ -335,7 +335,7 @@ export const MintTokenForm: React.FC<MintTokenFormProps> = ({
             fieldIndex={index}
             onClear={handleClearWallet}
             onDelete={handleDeleteWallet}
-            newTokenSupply={newTokens + tokenSupply}
+            newTokenSupply={newTokens.plus(Big(tokenSupply))}
           />
         );
       })}
