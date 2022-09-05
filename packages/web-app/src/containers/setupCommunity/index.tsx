@@ -1,20 +1,21 @@
+import {
+  AlertCard,
+  AlertInline,
+  CheckboxListItem,
+  Label,
+} from '@aragon/ui-components';
 import React from 'react';
-import styled from 'styled-components';
-import {useTranslation} from 'react-i18next';
-import {AlertCard, CheckboxListItem, Label} from '@aragon/ui-components/src';
 import {Controller, useFormContext, useWatch} from 'react-hook-form';
-import ExistingTokenPartialForm from './addExistingToken';
-import CreateNewToken from './createNewToken';
+import {useTranslation} from 'react-i18next';
+import styled from 'styled-components';
+
 import {WhitelistWallets} from 'components/whitelistWallets';
-import {AlertInline} from '@aragon/ui-components';
+import CreateNewToken from './createNewToken';
 
 const SetupCommunityForm: React.FC = () => {
   const {t} = useTranslation();
 
   const {control, resetField} = useFormContext();
-  const isNewToken = useWatch({
-    name: 'isCustomToken',
-  });
   const membership = useWatch({
     name: 'membership',
   });
@@ -35,6 +36,7 @@ const SetupCommunityForm: React.FC = () => {
         <Label label={t('labels.membership')} />
         <Controller
           name="membership"
+          rules={{required: 'Validate'}}
           control={control}
           defaultValue="token"
           render={({field: {onChange, value}}) => (
@@ -73,7 +75,7 @@ const SetupCommunityForm: React.FC = () => {
       {/* Membership type */}
       {/* for some reason the default value of the use form is not setting up correctly
       and is initialized to null or '' so the condition cannot be membership === 'token'  */}
-      {membership !== 'wallet' && (
+      {/* {membership !== 'wallet' && (
         <FormItem>
           <Label label={t('labels.communityToken')} />
           <Controller
@@ -111,7 +113,7 @@ const SetupCommunityForm: React.FC = () => {
             )}
           />
         </FormItem>
-      )}
+      )}*/}
       {membership === 'wallet' && (
         <FormItem>
           <Label
@@ -132,13 +134,12 @@ const SetupCommunityForm: React.FC = () => {
         </FormItem>
       )}
 
+      {membership === 'token' && <CreateNewToken />}
+
       {/* Add existing token */}
-
-      {isNewToken === true && membership === 'token' && <CreateNewToken />}
-
-      {isNewToken === false && membership === 'token' && (
+      {/*{isNewToken === false && membership === 'token' && (
         <ExistingTokenPartialForm />
-      )}
+      )} */}
     </>
   );
 };
