@@ -83,9 +83,7 @@ export const usePollTransfersPrices = (
 
 /**
  * Map SDK data to DAO transfer
- * TODO: when we refactor, we should find a way to
- * remove the need for the mapping. Performance goes
- * down the more transactions we have.
+ * We should not do this in the SDK
  * @param transfers Asset transfers from the SDK
  * @param network Currently selected network
  * @returns List of objects of type Transfer
