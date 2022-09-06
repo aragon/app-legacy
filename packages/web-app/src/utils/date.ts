@@ -41,8 +41,8 @@ export function getDHMFromSeconds(seconds: number): Offset {
 
   const days = seconds < 86400 ? 0 : seconds / 86400;
   const hours = seconds % 86400 < 3600 ? 0 : (seconds % 86400) / 3600;
-  const remandedMinutes = (seconds % 86400) % 3600;
-  const minutes = remandedMinutes < 60 ? 0 : remandedMinutes / 60;
+  const remainingMinutes = (seconds % 86400) % 3600;
+  const minutes = remainingMinutes < 60 ? 0 : remainingMinutes / 60;
 
   return {
     days: Math.floor(days),
