@@ -123,6 +123,7 @@
     "nResults": "{{count}} results",
     "noResults": "No results to show",
     "noResultsSubtitle": "Try to modify your search to find the corresponding wallets.",
+    "notChangeable": "Not Changeable",
     "whitelistWallets": {
       "address": "Address",
       "addresses": "{{count}} Addresses",
@@ -214,6 +215,9 @@
         "readFullProposal": "Read Full Proposal",
         "closeFullProposal": "Close Full Proposal"
       }
+    },
+    "settings": {
+      "preview": "{{days}} Days {{hours}} Hours {{minutes}} Minutes"
     },
     "noProposals": "No proposals found!",
     "executionCard": {
