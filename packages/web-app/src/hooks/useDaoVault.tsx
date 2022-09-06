@@ -13,12 +13,12 @@ import {useTokenMetadata} from './useTokenMetadata';
  * @param daoAddress Dao address
  * @param options.filter TimeFilter for market data
  * @param options.interval Delay in milliseconds
- * @returns A list of tokens in the DAO treasury, current USD sum value of all assets,
- * and the price change in USD based on the filter. An option to manually refetch assets is included.
+ * @returns A list of transfers and of tokens in the DAO treasury,
+ * current USD sum value of all assets, and the price change in USD based on the filter.
  */
 export const useDaoVault = (daoAddress: string, options?: PollTokenOptions) => {
   const {data: balances} = useDaoBalances(daoAddress);
-  const {data: tokensWithMetadata} = useTokenMetadata(balances!);
+  const {data: tokensWithMetadata} = useTokenMetadata(balances || []);
   const {data} = usePollTokenPrices(tokensWithMetadata, options);
 
   const {data: transfers} = useDaoTransfers(daoAddress);
