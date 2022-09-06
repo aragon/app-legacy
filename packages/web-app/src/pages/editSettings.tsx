@@ -37,7 +37,6 @@ const EditSettings: React.FC = () => {
   const {t} = useTranslation();
   const navigate = useNavigate();
   const {isMobile} = useScreen();
-  const {loading} = useDaoParam();
   const {network} = useNetwork();
   const {dao} = useParams();
   const {setValue} = useFormContext();
@@ -85,7 +84,7 @@ const EditSettings: React.FC = () => {
     setValue,
   ]);
 
-  if (loading || paramAreLoading || detailsAreLoading || settingsAreLoading) {
+  if (paramAreLoading || detailsAreLoading || settingsAreLoading) {
     return <Loading />;
   }
 
