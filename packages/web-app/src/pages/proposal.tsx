@@ -6,14 +6,13 @@ import {
   IconChevronUp,
   IconGovernance,
   Link,
-  WidgetStatus,
 } from '@aragon/ui-components';
 import {shortenAddress} from '@aragon/ui-components/src/utils/addresses';
 import {withTransaction} from '@elastic/apm-rum-react';
 import TipTapLink from '@tiptap/extension-link';
 import {useEditor} from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
-import React, {useEffect, useMemo, useRef, useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {generatePath, useNavigate, useParams} from 'react-router-dom';
 import styled from 'styled-components';
@@ -21,74 +20,45 @@ import styled from 'styled-components';
 import ResourceList from 'components/resourceList';
 import {Loading} from 'components/temporary';
 import {StyledEditorContent} from 'containers/reviewProposal';
-import {VotingTerminal} from 'containers/votingTerminal';
-import {useGlobalModalContext} from 'context/globalModals';
 import {useNetwork} from 'context/network';
 import {useCache} from 'hooks/useCache';
+import {useDaoDetails} from 'hooks/useDaoDetails';
 import {useDaoParam} from 'hooks/useDaoParam';
-import {DisplayedVoter, useDaoProposal} from 'hooks/useDaoProposal';
+import {useDaoProposal} from 'hooks/useDaoProposal';
 import {useMappedBreadcrumbs} from 'hooks/useMappedBreadcrumbs';
+import {PluginTypes} from 'hooks/usePluginClient';
 import useScreen from 'hooks/useScreen';
 import {useWallet} from 'hooks/useWallet';
-import {useWalletCanVote} from 'hooks/useWalletCanVote';
 import {CHAIN_METADATA} from 'utils/constants';
-import {NotFound} from 'utils/paths';
-import {formatDistance} from 'date-fns';
-import {ExecutionWidget} from 'components/executionWidget';
 
-export type ExecutionStatus =
-  | 'defeated'
-  | 'executed'
-  | 'executable'
-  | 'executable-failed'
-  | 'default';
+const PROPOSAL_TAGS = ['Finance', 'Withdraw'];
 
 const Proposal: React.FC = () => {
   const {t} = useTranslation();
   const {id} = useParams();
   const navigate = useNavigate();
-  const {network} = useNetwork();
-  const {set, get} = useCache();
   const {isDesktop} = useScreen();
-  const {open} = useGlobalModalContext();
-  const {data: daoId} = useDaoParam();
   const {breadcrumbs, tag} = useMappedBreadcrumbs();
 
-  const {address, isConnected, isOnWrongNetwork} = useWallet();
-  const {data: canVote, isLoading: canVoteLoading} = useWalletCanVote(
-    daoId,
-    address!
+  const {set, get} = useCache();
+
+  const {network} = useNetwork();
+  const {address} = useWallet();
+
+  const {data: daoId, loading: paramIsLoading} = useDaoParam();
+  const {data: daoDetails, isLoading: detailsAreLoading} = useDaoDetails(
+    daoId || ''
+  );
+  const {data: proposal, isLoading: proposalIsLoading} = useDaoProposal(
+    id || '',
+    daoDetails?.plugins[0].instanceAddress || '',
+    daoDetails?.plugins[0].id as PluginTypes
   );
 
-  if (!id) navigate(NotFound);
-
-  // ref used to hold "memories" of previous "state"
-  // across renders in order to automate the following states:
-  // loggedOut -> login modal => switch network modal -> vote options selection;
-  const statusRef = useRef({wasNotLoggedIn: false, wasOnWrongNetwork: false});
-
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const [metadata, setMetadata] = useState<Record<string, any> | undefined>();
   const [expandedProposal, setExpandedProposal] = useState(false);
-
-  // voting
-  const [votingInProcess, setVotingInProcess] = useState(false);
-
-  const {
-    data: {
-      mappedProposal,
-      proposalSteps,
-      creator,
-      proposalTags,
-      proposalContent,
-    },
-    isLoading: proposalIsLoading,
-    error,
-  } = useDaoProposal(id);
 
   const editor = useEditor({
     editable: false,
-    content: proposalContent,
     extensions: [
       StarterKit,
       TipTapLink.configure({
@@ -101,198 +71,26 @@ const Proposal: React.FC = () => {
    *                     Hooks                     *
    *************************************************/
   useEffect(() => {
-    // uncomment when integrating with sdk
-    // if (!proposalLoading && proposalData) {
-    //   setMetadata(JSON.parse(proposalData.erc20VotingProposals[0].metadata));
-    // editor?.commands.setContent(metadata?.proposal, true);
-    // }
-    setMetadata({
-      title: 'Create new Pets United Sub DAO',
-      summary: "We're creating a new DAO to manage pets and their owners.",
-      proposal: proposalContent,
-    });
-  }, [proposalContent]);
+    if (proposal && editor) {
+      editor.commands.setContent(proposal.metadata.description, false);
+    }
+  }, [editor, proposal]);
 
   // caches the status for breadcrumb
   useEffect(() => {
-    const proposalStatus = get('proposalStatus');
-
-    if (mappedProposal && mappedProposal.status !== proposalStatus)
-      set('proposalStatus', mappedProposal.status);
-  }, [get, mappedProposal, set]);
-
-  useEffect(() => {
-    // was not logged in but now logged in
-    if (statusRef.current.wasNotLoggedIn && isConnected) {
-      if (isOnWrongNetwork) {
-        open('network');
-      }
-
-      // logged out is technically on wrong network
-      statusRef.current.wasOnWrongNetwork = true;
-
-      // reset reference
-      statusRef.current.wasNotLoggedIn = false;
-    }
-  }, [isConnected, canVote, isOnWrongNetwork, open]);
-
-  useEffect(() => {
-    // wrong network, no wallet -> no options
-    if (isOnWrongNetwork || !address || !canVote) setVotingInProcess(false);
-
-    // was on wrong network but now on correct network
-    if (statusRef.current.wasOnWrongNetwork && !isOnWrongNetwork) {
-      if (canVote) setVotingInProcess(true);
-
-      // reset "state"
-      statusRef.current.wasOnWrongNetwork = false;
-    }
-  }, [address, canVote, isOnWrongNetwork]);
-
-  // Note: this can also be extracted into the useProposal hook granted we want to give
-  // it all the responsibility for data mapping, despite proposal not necessarily having
-  // much to do with whether vote button is enabled. Would probably be good clean up of the
-  // current component.
-
-  const [
-    voteNowDisabled,
-    statusLabel,
-    alertMessage,
-    executionStatus,
-    handleVoteClicked,
-  ] = useMemo(() => {
-    let voteNowDisabled = true;
-    let onClick;
-    let statusLabel = '';
-    let alertMessage = '';
-    let executionStatus: ExecutionStatus = 'default';
-
-    const voted = mappedProposal?.voters.some(
-      (voter: DisplayedVoter) => voter.wallet === address
-    );
-
-    switch (mappedProposal?.status) {
-      // not sure how we'll be handling draft proposals so until then, keeping this
-      case 'draft':
-        statusLabel = t('votingTerminal.status.draft');
-        break;
-
-      case 'pending':
-        statusLabel = t('votingTerminal.status.pending', {
-          startDate: formatDistance(
-            new Date(mappedProposal.startDate),
-            new Date()
-          ),
-        });
-        break;
-
-      case 'succeeded':
-        statusLabel = t('votingTerminal.status.succeeded');
-        executionStatus = 'executable';
-        break;
-
-      case 'executed':
-        statusLabel = t('votingTerminal.status.succeeded');
-
-        // TODO: add cases for failed execution
-        // executionStatus = 'executable-failed';
-
-        executionStatus = 'executed';
-        break;
-
-      case 'defeated':
-        statusLabel = t('votingTerminal.status.defeated');
-        executionStatus = 'defeated';
-        break;
-
-      case 'active': {
-        statusLabel = t('votingTerminal.status.active', {
-          endDate: formatDistance(new Date(), new Date(mappedProposal.endDate)),
-        });
-
-        // member not yet voted
-        if (address && !isOnWrongNetwork && canVote) {
-          voteNowDisabled = false;
-          onClick = () => {
-            setVotingInProcess(true);
-          };
-        }
-
-        // already voted
-        else if (canVote && voted) {
-          statusLabel = t('votingTerminal.status.voted') + statusLabel;
-        }
-
-        // not a member
-        else if (address && !isOnWrongNetwork && !canVote) {
-          alertMessage = mappedProposal.token
-            ? t('votingTerminal.status.ineligibleTokenBased', {
-                token: mappedProposal.token.name,
-              })
-            : t('votingTerminal.status.ineligibleWhitelist');
-        }
-
-        // wrong network
-        else if (address && isOnWrongNetwork) {
-          voteNowDisabled = false;
-
-          onClick = () => {
-            open('network');
-            statusRef.current.wasOnWrongNetwork = true;
-          };
-        }
-
-        // not logged in
-        else {
-          voteNowDisabled = false;
-
-          onClick = () => {
-            open('wallet');
-            statusRef.current.wasNotLoggedIn = true;
-          };
-        }
-        break;
-      }
-    }
-
-    return [
-      voteNowDisabled,
-      statusLabel,
-      alertMessage,
-      executionStatus,
-      onClick,
-    ];
-  }, [
-    address,
-    canVote,
-    isOnWrongNetwork,
-    mappedProposal?.endDate,
-    mappedProposal?.startDate,
-    mappedProposal?.status,
-    mappedProposal?.token,
-    mappedProposal?.voters,
-    open,
-    t,
-  ]);
+    if (proposal && proposal.status !== get('proposalStatus'))
+      set('proposalStatus', proposal.status);
+  }, [get, proposal, set]);
 
   /*************************************************
-   *                    Render                    *
+   *                     Render                    *
    *************************************************/
-  if (proposalIsLoading) {
+  if (paramIsLoading || proposalIsLoading || detailsAreLoading) {
     return <Loading />;
-  }
-
-  if (error) {
-    return <p>Error. Check console</p>;
-  }
-
-  if (!editor) {
-    return null;
   }
 
   return (
     <Container>
-      {/* Proposal Header */}
       <HeaderContainer>
         {!isDesktop && (
           <Breadcrumb
@@ -304,10 +102,10 @@ const Proposal: React.FC = () => {
             tag={tag}
           />
         )}
-        <ProposalTitle>{metadata?.title}</ProposalTitle>
+        <ProposalTitle>{proposal?.metadata.title}</ProposalTitle>
         <ContentWrapper>
           <BadgeContainer>
-            {proposalTags.map((tag: string) => (
+            {PROPOSAL_TAGS.map((tag: string) => (
               <Badge label={tag} key={tag} />
             ))}
           </BadgeContainer>
@@ -316,17 +114,16 @@ const Proposal: React.FC = () => {
             <Link
               external
               label={
-                creator === address?.toLowerCase()
+                proposal?.creatorAddress === address?.toLowerCase()
                   ? t('labels.you')
-                  : shortenAddress(creator)
+                  : shortenAddress(proposal?.creatorAddress || '')
               }
-              href={`${CHAIN_METADATA[network].explorer}/address/${creator}`}
+              href={`${CHAIN_METADATA[network].explorer}/address/${proposal?.creatorAddress}`}
             />
           </ProposerLink>
         </ContentWrapper>
-        <SummaryText>{metadata?.summary}</SummaryText>
-
-        {metadata?.proposal && !expandedProposal && (
+        <SummaryText>{proposal?.metadata.summary}</SummaryText>
+        {!expandedProposal && (
           <ButtonText
             className="w-full tablet:w-max"
             size="large"
@@ -337,13 +134,11 @@ const Proposal: React.FC = () => {
           />
         )}
       </HeaderContainer>
-
       <ContentContainer expandedProposal={expandedProposal}>
         <ProposalContainer>
-          {metadata?.proposal && expandedProposal && (
+          {expandedProposal && (
             <>
               <StyledEditorContent editor={editor} />
-
               <ButtonText
                 className="mt-3 w-full tablet:w-max"
                 label={t('governance.proposals.buttons.closeFullProposal')}
@@ -353,25 +148,16 @@ const Proposal: React.FC = () => {
               />
             </>
           )}
+          {/* TODO: Fill out voting terminal props*/}
+          {/* <VotingTerminal /> */}
 
-          {mappedProposal && !canVoteLoading && (
-            <VotingTerminal
-              {...mappedProposal}
-              votingInProcess={votingInProcess}
-              onCancelClicked={() => setVotingInProcess(false)}
-              onVoteClicked={handleVoteClicked}
-              voteNowDisabled={voteNowDisabled}
-              statusLabel={statusLabel}
-              alertMessage={alertMessage}
-            />
-          )}
-
-          <ExecutionWidget status={executionStatus} />
+          {/* TODO: Fill out voting terminal props*/}
+          {/* <ExecutionWidget /> */}
         </ProposalContainer>
-
         <AdditionalInfoContainer>
-          <ResourceList links={[]} />
-          <WidgetStatus steps={proposalSteps} />
+          <ResourceList links={proposal?.metadata.resources} />
+          {/* TODO: Fill out proposal steps*/}
+          {/* <WidgetStatus steps={proposalSteps} /> */}
         </AdditionalInfoContainer>
       </ContentContainer>
     </Container>

@@ -1,6 +1,3 @@
-import React from 'react';
-import {useTranslation} from 'react-i18next';
-import styled from 'styled-components';
 import {
   AlertInline,
   ButtonText,
@@ -8,10 +5,19 @@ import {
   IconLinkExternal,
   StateEmpty,
 } from '@aragon/ui-components';
+import React from 'react';
+import {useTranslation} from 'react-i18next';
+import styled from 'styled-components';
 
 import {Action} from 'utils/types';
 import {ActionsFilter} from './actionsFilter';
-import {ExecutionStatus} from 'pages/proposal';
+
+export type ExecutionStatus =
+  | 'defeated'
+  | 'executed'
+  | 'executable'
+  | 'executable-failed'
+  | 'default';
 
 type ExecutionWidgetProps = {
   txhash?: string;
