@@ -10,6 +10,7 @@ import {
   TextInput,
   ValueInput,
 } from '@aragon/ui-components';
+import Big from 'big.js';
 import {useTranslation} from 'react-i18next';
 import {Controller, useFormContext, useWatch} from 'react-hook-form';
 import styled from 'styled-components';
@@ -25,7 +26,7 @@ type IndexProps = ActionIndex & {
 };
 
 type AddressAndTokenRowProps = IndexProps & {
-  newTokenSupply: number;
+  newTokenSupply: Big;
   onClear?: (index: number) => void;
   onDelete: (index: number) => void;
 };
@@ -194,7 +195,10 @@ const PercentageDistribution: React.FC<
   const newMintCount = useWatch({
     name: `actions.${actionIndex}.inputs.mintTokensToWallets.${fieldIndex}.amount`,
   });
-  const percentage = newTokenSupply ? (newMintCount / newTokenSupply) * 100 : 0;
+  const percentage =
+    newTokenSupply && !newTokenSupply.eq(Big(0))
+      ? Big(newMintCount).div(newTokenSupply).mul(Big(100))
+      : Big(0);
 
   return (
     <div style={{maxWidth: '12ch'}}>

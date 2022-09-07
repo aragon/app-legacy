@@ -1,6 +1,4 @@
-import TransactionDetail from 'containers/transactionDetail';
-import React, {useCallback} from 'react';
-import {createContext, useState} from 'react';
+import React, {createContext, useCallback, useState} from 'react';
 
 import {Transfer} from 'utils/types';
 
@@ -9,6 +7,9 @@ const TransactionDetailContext =
 
 type TransactionDetailContextType = {
   handleTransferClicked: (transfer: Transfer) => void;
+  isOpen: boolean;
+  onClose: () => void;
+  transfer: Transfer;
 };
 
 const TransactionDetailProvider: React.FC<{
@@ -26,13 +27,15 @@ const TransactionDetailProvider: React.FC<{
   }, []);
 
   return (
-    <TransactionDetailContext.Provider value={{handleTransferClicked}}>
+    <TransactionDetailContext.Provider
+      value={{
+        handleTransferClicked,
+        isOpen: showTransactionDetail,
+        transfer: selectedTransfer,
+        onClose: () => setShowTransactionDetail(false),
+      }}
+    >
       {children}
-      <TransactionDetail
-        isOpen={showTransactionDetail}
-        onClose={() => setShowTransactionDetail(false)}
-        transfer={selectedTransfer}
-      />
     </TransactionDetailContext.Provider>
   );
 };

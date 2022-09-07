@@ -28,7 +28,7 @@ export function getSecondsFromDHM(
 }
 
 /**
- * This function returns the number of seconds given the days hours and minutes
+ * This function returns the days, hours and minutes of seconds
  * @param seconds number of seconds
  * @returns {
  *  days,
@@ -39,14 +39,15 @@ export function getSecondsFromDHM(
 export function getDHMFromSeconds(seconds: number): Offset {
   if (!seconds) return {} as Offset;
 
-  const days = seconds / 86400 < 1 ? 0 : seconds / 86400;
+  const days = seconds < 86400 ? 0 : seconds / 86400;
   const hours = seconds % 86400 < 3600 ? 0 : (seconds % 86400) / 3600;
-  const minutes = seconds % 3600 < 60 ? 0 : (seconds % 311040000) / 60;
+  const remainingMinutes = (seconds % 86400) % 3600;
+  const minutes = remainingMinutes < 60 ? 0 : remainingMinutes / 60;
 
   return {
-    days,
-    hours,
-    minutes,
+    days: Math.floor(days),
+    hours: Math.floor(hours),
+    minutes: Math.floor(minutes),
   };
 }
 

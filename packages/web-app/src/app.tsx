@@ -2,7 +2,14 @@ import React, {useEffect, lazy, Suspense} from 'react';
 
 // FIXME: Change route to ApmRoute once package has been updated to be
 // compatible with react-router-dom v6
-import {Navigate, Routes, Route, useLocation, Outlet} from 'react-router-dom';
+import {
+  Navigate,
+  Routes,
+  Route,
+  useLocation,
+  Outlet,
+  useParams,
+} from 'react-router-dom';
 
 import Navbar from 'containers/navbar';
 import {WalletMenu} from 'containers/walletMenu';
@@ -23,6 +30,8 @@ import NetworkErrorMenu from 'containers/networkErrorMenu';
 import TransferMenu from 'containers/transferMenu';
 import {useWallet} from 'hooks/useWallet';
 import {useForm, FormProvider} from 'react-hook-form';
+import TransactionDetail from 'containers/transactionDetail';
+import {useDaoDetails} from 'hooks/useDaoDetails';
 
 const ExplorePage = lazy(() => import('pages/explore'));
 const NotFoundPage = lazy(() => import('pages/notFound'));
@@ -165,16 +174,24 @@ const ExploreWrapper: React.FC = () => (
   </>
 );
 
-const DaoWrapper: React.FC = () => (
-  <>
-    <Navbar />
-    <div className="pb-15">
-      <GridLayout>
-        <Outlet />
-        <TransferMenu />
-      </GridLayout>
-    </div>
-  </>
-);
+const DaoWrapper: React.FC = () => {
+  const {dao} = useParams();
+  const {data: daoDetails} = useDaoDetails(dao!);
+
+  return (
+    <>
+      <Navbar />
+      <div className="pb-15">
+        <GridLayout>
+          <Outlet />
+          <TransferMenu />
+          {daoDetails && (
+            <TransactionDetail daoName={daoDetails.metadata.name} />
+          )}
+        </GridLayout>
+      </div>
+    </>
+  );
+};
 
 export default App;

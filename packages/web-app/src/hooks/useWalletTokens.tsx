@@ -1,15 +1,16 @@
-import {constants} from 'ethers';
-import {Interface, getAddress, hexZeroPad} from 'ethers/lib/utils';
 import {Log} from '@ethersproject/providers';
-import {useState, useEffect} from 'react';
+import {constants} from 'ethers';
+import {getAddress, hexZeroPad, Interface} from 'ethers/lib/utils';
+import {useEffect, useState} from 'react';
 
+import {AssetBalance} from '@aragon/sdk-client';
 import {erc20TokenABI} from 'abis/erc20TokenABI';
-import {useWallet} from 'hooks/useWallet';
-import {useProviders} from 'context/providers';
-import {isNativeToken, fetchBalance, getTokenInfo} from 'utils/tokens';
-import {TokenBalance, HookData} from 'utils/types';
 import {useNetwork} from 'context/network';
+import {useProviders} from 'context/providers';
+import {useWallet} from 'hooks/useWallet';
 import {CHAIN_METADATA} from 'utils/constants';
+import {fetchBalance, getTokenInfo, isNativeToken} from 'utils/tokens';
+import {HookData} from 'utils/types';
 
 // TODO The two hooks in this file are very similar and should probably be
 // merged into one. The reason I'm not doing it now is that I'm not sure if
@@ -79,7 +80,7 @@ export function useUserTokenAddresses(): HookData<string[]> {
  * This is hook is very similar to useUserTokenAddresses, but in addition to the
  * contract address it also returns the user's balance for each of the tokens.
  */
-export function useWalletTokens(): HookData<TokenBalance[]> {
+export function useWalletTokens(): HookData<AssetBalance[]> {
   const {address, balance} = useWallet();
   const {infura: provider} = useProviders();
   const {network} = useNetwork();
@@ -91,7 +92,7 @@ export function useWalletTokens(): HookData<TokenBalance[]> {
     error: tokenListError,
   } = useUserTokenAddresses();
 
-  const [walletTokens, setWalletTokens] = useState<TokenBalance[]>([]);
+  const [walletTokens, setWalletTokens] = useState<AssetBalance[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<Error | undefined>();
 
@@ -156,22 +157,36 @@ export function useWalletTokens(): HookData<TokenBalance[]> {
       );
 
       // map tokens with their balance
+
       setWalletTokens(
         balances
-          ?.map(_balance => ({
-            token: {
-              id: _balance[1].id,
-              name: _balance[1].name,
-              symbol: _balance[1].symbol,
-              decimals: _balance[1].decimals,
-            },
-            balance: BigInt(_balance[0]),
-          }))
-          // do not display tokens without proper metadata
-          .filter(
-            ({token: {name, symbol, decimals}}) => name && symbol && decimals
-          )
+          ?.map((_balance): AssetBalance => {
+            if (_balance[1].id === constants.AddressZero) {
+              return {
+                type: 'native',
+                balance: BigInt(_balance[0]),
+                lastUpdate: new Date(),
+              };
+            } else {
+              return {
+                type: 'erc20',
+                address: _balance[1].id,
+                name: _balance[1].name,
+                symbol: _balance[1].symbol,
+                decimals: _balance[1].decimals,
+                balance: BigInt(_balance[0]),
+                lastUpdate: new Date(),
+              };
+            }
+          })
+          .filter(asset => {
+            return (
+              asset.type === 'native' ||
+              (asset.name && asset.symbol && asset.decimals)
+            );
+          })
       );
+
       setIsLoading(false);
     }
 
@@ -184,11 +199,12 @@ export function useWalletTokens(): HookData<TokenBalance[]> {
   }, [
     address,
     balance,
-    tokenList,
-    provider,
-    tokenListLoading,
-    tokenListError,
     nativeCurrency,
+    network,
+    provider,
+    tokenList,
+    tokenListError,
+    tokenListLoading,
   ]);
 
   return {data: walletTokens, isLoading: tokenListLoading || isLoading, error};

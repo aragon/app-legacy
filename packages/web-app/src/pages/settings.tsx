@@ -70,7 +70,7 @@ const Settings: React.FC = () => {
           </Dl>
           <Dl>
             <Dt>{t('labels.review.blockchain')}</Dt>
-            <Dd>Rinkeby</Dd>
+            <Dd>{network}</Dd>
           </Dl>
         </DescriptionListContainer>
 
@@ -156,7 +156,11 @@ const Settings: React.FC = () => {
           <Dl>
             <Dt>{t('labels.minimumDuration')}</Dt>
             <Dd>
-              {days} Days {hours} Hours {minutes} Minutes
+              {t('governance.settings.preview', {
+                days,
+                hours,
+                minutes,
+              })}
             </Dd>
           </Dl>
         </DescriptionListContainer>

@@ -216,6 +216,9 @@
         "closeFullProposal": "Close Full Proposal"
       }
     },
+    "settings": {
+      "preview": "{{days}} Days {{hours}} Hours {{minutes}} Minutes"
+    },
     "noProposals": "No proposals found!",
     "executionCard": {
       "title": "Execution",

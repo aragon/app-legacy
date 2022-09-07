@@ -1,4 +1,5 @@
 import {ButtonText, ListItemAction} from '@aragon/ui-components';
+import Big from 'big.js';
 import {BigNumber} from 'ethers';
 import {isAddress} from 'ethers/lib/utils';
 import React, {useEffect, useState} from 'react';
@@ -113,7 +114,7 @@ export const MintTokenForm: React.FC<MintTokenFormProps> = ({
     ],
   });
 
-  const [newTokens, setNewTokens] = useState<number>(0);
+  const [newTokens, setNewTokens] = useState<Big>(Big(0));
   const [tokenSupply, setTokenSupply] = useState(0);
   const [checkedAddresses, setCheckedAddresses] = useState(
     () => new Set<string>()
@@ -252,14 +253,17 @@ export const MintTokenForm: React.FC<MintTokenFormProps> = ({
   useEffect(() => {
     // Collecting token amounts that are to be minted
     if (mints && daoToken) {
-      let newTokensCount = 0;
+      let newTokensCount: Big = Big(0);
       mints.forEach(m => {
-        newTokensCount += parseFloat(m.amount);
+        newTokensCount = newTokensCount.plus(Big(m.amount));
       });
 
-      if (newTokensCount !== newTokens) {
+      if (!newTokensCount.eq(newTokens)) {
         setNewTokens(newTokensCount);
-        setValue(`actions.${actionIndex}.summary.newTokens`, newTokensCount);
+        setValue(
+          `actions.${actionIndex}.summary.newTokens`,
+          '' + newTokensCount
+        );
       }
     }
   }, [mints, daoToken, daoToken.id, setValue, actionIndex, newTokens]);
@@ -331,7 +335,7 @@ export const MintTokenForm: React.FC<MintTokenFormProps> = ({
             fieldIndex={index}
             onClear={handleClearWallet}
             onDelete={handleDeleteWallet}
-            newTokenSupply={newTokens + tokenSupply}
+            newTokenSupply={newTokens.plus(Big(tokenSupply))}
           />
         );
       })}
@@ -363,7 +367,7 @@ export const MintTokenForm: React.FC<MintTokenFormProps> = ({
           <HStack>
             <Label>{t('labels.newTokens')}</Label>
             <p>
-              +{newTokens || 0} {daoToken.symbol}
+              +{'' + newTokens} {daoToken.symbol}
             </p>
           </HStack>
           <HStack>
@@ -374,7 +378,7 @@ export const MintTokenForm: React.FC<MintTokenFormProps> = ({
             <Label>{t('labels.totalTokens')}</Label>
             {tokenSupply ? (
               <p>
-                {(tokenSupply + (newTokens || 0)).toString()} {daoToken.symbol}
+                {'' + newTokens.plus(Big(tokenSupply))} {daoToken.symbol}
               </p>
             ) : (
               <p>...</p>
