@@ -31,37 +31,35 @@ export const UseClientProvider = ({children}: {children: ReactNode}) => {
   const [context, setContext] = useState<SdkContext>();
 
   useEffect(() => {
-    if (signer) {
-      const alchemyApiAddress = import.meta.env
-        .VITE_REACT_APP_ALCHEMY_API_KEY as string;
+    const alchemyApiAddress = import.meta.env
+      .VITE_REACT_APP_ALCHEMY_API_KEY as string;
 
-      const contextParams: ContextParams = {
-        network: 'rinkeby', // TODO: remove temporarily hardcoded network
-        signer,
-        web3Providers: new Array(
-          'https://eth-rinkeby.alchemyapi.io/v2/'.concat(alchemyApiAddress)
-        ),
-        ipfsNodes: [
-          {
-            url: 'https://testing-ipfs-0.aragon.network/api/v0',
-            headers: {
-              'X-API-KEY': (import.meta.env.VITE_IPFS_API_KEY as string) || '',
-            },
+    const contextParams: ContextParams = {
+      network: 'rinkeby', // TODO: remove temporarily hardcoded network
+      signer: signer || undefined,
+      web3Providers: new Array(
+        'https://eth-rinkeby.alchemyapi.io/v2/'.concat(alchemyApiAddress)
+      ),
+      ipfsNodes: [
+        {
+          url: 'https://testing-ipfs-0.aragon.network/api/v0',
+          headers: {
+            'X-API-KEY': (import.meta.env.VITE_IPFS_API_KEY as string) || '',
           },
-        ],
-        daoFactoryAddress: '0xF4433059cb12E224EF33510a3bE3329c8c750fD8', // TODO: remove temporary until SDK updates
-        graphqlNodes: [
-          {
-            url: 'https://api.thegraph.com/subgraphs/name/aragon/aragon-zaragoza-rinkeby',
-          },
-        ],
-      };
+        },
+      ],
+      daoFactoryAddress: '0xF4433059cb12E224EF33510a3bE3329c8c750fD8', // TODO: remove temporary until SDK updates
+      graphqlNodes: [
+        {
+          url: 'https://api.thegraph.com/subgraphs/name/aragon/aragon-zaragoza-rinkeby',
+        },
+      ],
+    };
 
-      const sdkContext = new SdkContext(contextParams);
+    const sdkContext = new SdkContext(contextParams);
 
-      setClient(new Client(sdkContext));
-      setContext(sdkContext);
-    }
+    setClient(new Client(sdkContext));
+    setContext(sdkContext);
   }, [signer]);
 
   const value: ClientContext = {
