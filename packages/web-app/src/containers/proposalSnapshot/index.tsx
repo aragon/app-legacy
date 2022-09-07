@@ -13,10 +13,10 @@ import styled from 'styled-components';
 
 import {mapToCardViewProposal} from 'components/proposalList';
 import {useNetwork} from 'context/network';
-import {Proposal} from 'hooks/useProposals';
-import {Governance, NewProposal} from 'utils/paths';
+import {Proposal as ProposalType} from 'hooks/useProposals';
+import {Governance, NewProposal, Proposal} from 'utils/paths';
 
-type Props = {dao: string; proposals: Proposal[]};
+type Props = {dao: string; proposals: ProposalType[]};
 
 const ProposalSnapshot: React.FC<Props> = ({dao, proposals}) => {
   const {t} = useTranslation();
@@ -55,9 +55,15 @@ const ProposalSnapshot: React.FC<Props> = ({dao, proposals}) => {
         onClick={() => navigate(generatePath(NewProposal, {network, dao}))}
       />
 
-      {mapToCardViewProposal(proposals, network).map((p, index) => (
-        // TODO: navigate to the proposal details page
-        <CardProposal key={index} type="list" onClick={() => null} {...p} />
+      {mapToCardViewProposal(proposals, network).map(p => (
+        <CardProposal
+          key={p.id}
+          type="list"
+          onClick={() =>
+            navigate(generatePath(Proposal, {network, dao, id: p.id}))
+          }
+          {...p}
+        />
       ))}
 
       <ButtonText

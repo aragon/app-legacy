@@ -1,6 +1,7 @@
 import {CardProposal, CardProposalProps} from '@aragon/ui-components';
 import React from 'react';
 import {useTranslation} from 'react-i18next';
+import {useNavigate} from 'react-router-dom';
 
 import {useNetwork} from 'context/network';
 import {Proposal} from 'hooks/useProposals';
@@ -19,6 +20,7 @@ type ProposalListProps = {
 const ProposalList: React.FC<ProposalListProps> = ({proposals}) => {
   const {t} = useTranslation();
   const {network} = useNetwork();
+  const navigate = useNavigate();
 
   if (proposals.length === 0)
     return <p data-testid="proposalList">{t('governance.noProposals')}</p>;
@@ -29,9 +31,7 @@ const ProposalList: React.FC<ProposalListProps> = ({proposals}) => {
         <CardProposal
           {...proposal}
           key={id}
-          // TODO: uncomment when proposal details is fixed
-          // onClick={() => navigate(`proposals/${id}`)}
-          onClick={() => null}
+          onClick={() => navigate(`proposals/${id}`)}
         />
       ))}
     </div>
