@@ -255,7 +255,17 @@ export const MintTokenForm: React.FC<MintTokenFormProps> = ({
     if (mints && daoToken) {
       let newTokensCount: Big = Big(0);
       mints.forEach(m => {
-        newTokensCount = newTokensCount.plus(Big(m.amount));
+        // NOTE: If `m.amount` is not a valid input for `Big` to parse, an error
+        // will be thrown. Since Big.js doesn't provide the means to check this
+        // beforehand, the try/catch block is necessary.
+        try {
+          newTokensCount = newTokensCount.plus(Big(m.amount));
+        } catch {
+          // NOTE: If an input contains an invalid amount, it is simply ignored.
+          console.warn(
+            'An input contains an invalid amount of tokens to be minted.'
+          );
+        }
       });
 
       if (!newTokensCount.eq(newTokens)) {

@@ -192,13 +192,18 @@ const DropdownMenu: React.FC<DropdownProps> = ({
 const PercentageDistribution: React.FC<
   Omit<AddressAndTokenRowProps, 'onDelete'>
 > = ({actionIndex, fieldIndex, newTokenSupply}) => {
-  const newMintCount = useWatch({
+  const mintAmount = useWatch({
     name: `actions.${actionIndex}.inputs.mintTokensToWallets.${fieldIndex}.amount`,
   });
-  const percentage =
-    newTokenSupply && !newTokenSupply.eq(Big(0))
-      ? Big(newMintCount).div(newTokenSupply).mul(Big(100))
-      : Big(0);
+  let percentage;
+  try {
+    percentage =
+      newTokenSupply && !newTokenSupply.eq(Big(0))
+        ? Big(mintAmount).div(newTokenSupply).mul(Big(100))
+        : Big(0);
+  } catch {
+    percentage = Big(0);
+  }
 
   return (
     <div style={{maxWidth: '12ch'}}>
