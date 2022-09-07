@@ -1,15 +1,13 @@
 import React from 'react';
 import styled from 'styled-components';
 import {useTranslation} from 'react-i18next';
-import {
-  IconAdd,
-  ListItemLink,
-  ListItemLinkProps,
-  StateEmpty,
-} from '@aragon/ui-components';
+import {IconAdd, ListItemLink, StateEmpty} from '@aragon/ui-components';
 
 type ResourceListProps = {
-  links?: ListItemLinkProps[];
+  links?: Array<{
+    url: string;
+    name: string;
+  }>;
   emptyStateButtonClick?: () => void;
 };
 
@@ -25,7 +23,7 @@ const ResourceList: React.FC<ResourceListProps> = ({
         <Title>{t('labels.resources')}</Title>
         <ListItemContainer>
           {links.map((link, index) => (
-            <ListItemLink {...link} key={index} />
+            <ListItemLink label={link.name} href={link.url} key={index} />
           ))}
         </ListItemContainer>
       </Container>

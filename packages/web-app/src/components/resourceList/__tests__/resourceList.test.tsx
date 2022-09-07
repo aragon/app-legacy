@@ -4,8 +4,8 @@ import {render, screen} from 'test-utils';
 import ResourceList from '..';
 
 const links = [
-  {href: 'https://client.aragon.org/', label: 'Client'},
-  {href: 'https://govern.aragon.org/', label: 'Govern'},
+  {url: 'https://client.aragon.org/', name: 'Client'},
+  {url: 'https://govern.aragon.org/', name: 'Govern'},
 ];
 
 describe('ResourceList', () => {
