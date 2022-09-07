@@ -59,20 +59,24 @@ const EditSettings: React.FC = () => {
     daoSummary,
     daoLogo,
     minimumApproval,
+    minimumParticipation,
     support,
     durationDays,
     durationHours,
     durationMinutes,
+    membership,
   ] = useWatch({
     name: [
       'daoName',
       'daoSummary',
       'daoLogo',
       'minimumApproval',
+      'minimumParticipation',
       'support',
       'durationDays',
       'durationHours',
       'durationMinutes',
+      'membership',
     ],
   });
 
@@ -89,12 +93,18 @@ const EditSettings: React.FC = () => {
   }, [daoDetails, daoSettings]);
 
   const setCurrentGovernance = () => {
-    setValue('minimumApproval', Math.round(daoSettings.minTurnout * 100));
+    if (membership === 'token')
+      setValue('minimumApproval', Math.round(daoSettings.minTurnout * 100));
+    else
+      setValue(
+        'minimumParticipation',
+        Math.round(daoSettings.minTurnout * 100)
+      );
     setValue('support', Math.round(daoSettings.minSupport * 100));
     setValue('durationDays', days);
     setValue('durationHours', hours);
     setValue('durationMinutes', minutes);
-    // TODO: Need to add community settings later
+    // TODO: Need to add community settings later, Also the Alerts share will be added later
     setValue(
       'membership',
       daoDetails?.plugins[0].id === 'erc20voting.dao.eth' ? 'token' : 'wallet'
@@ -110,9 +120,11 @@ const EditSettings: React.FC = () => {
       setIsMetadataChanged(true);
     else setIsMetadataChanged(false);
 
-    // TODO: We need to force forms only use one form
+    // TODO: We need to force forms to only use one type, Number or string
     if (
-      Number(minimumApproval) !== Math.round(daoSettings.minTurnout * 100) ||
+      Number(
+        membership === 'token' ? minimumApproval : minimumParticipation
+      ) !== Math.round(daoSettings.minTurnout * 100) ||
       Number(support) !== Math.round(daoSettings.minSupport * 100) ||
       Number(durationDays) !== days ||
       Number(durationHours) !== hours ||
@@ -134,7 +146,9 @@ const EditSettings: React.FC = () => {
     durationHours,
     durationMinutes,
     hours,
+    membership,
     minimumApproval,
+    minimumParticipation,
     minutes,
     support,
   ]);
