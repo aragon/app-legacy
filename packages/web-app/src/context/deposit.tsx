@@ -22,6 +22,8 @@ import {isNativeToken} from 'utils/tokens';
 import {useStepper} from 'hooks/useStepper';
 import {usePollGasFee} from 'hooks/usePollGasfee';
 import {useGlobalModalContext} from './globalModals';
+import {useReactiveVar} from '@apollo/client';
+import {pendingDeposits} from './apolloClient';
 
 interface IDepositContextType {
   handleOpenModal: () => void;
@@ -47,6 +49,7 @@ const DepositProvider = ({children}: {children: ReactNode}) => {
   const [depositState, setDepositState] = useState<TransactionState>();
   const [depositParams, setDepositParams] = useState<IDepositParams>();
   const [modalParams, setModalParams] = useState<modalParamsType>({});
+  const pendingDepositsTxs = useReactiveVar(pendingDeposits);
 
   const {client} = useClient();
   const {setStep: setModalStep, currentStep} = useStepper(2);
@@ -195,6 +198,9 @@ const DepositProvider = ({children}: {children: ReactNode}) => {
   };
 
   const handleDeposit = async () => {
+    const {amount, from, reference, tokenAddress, tokenName, tokenSymbol} =
+      getValues();
+
     let transactionHash = '';
 
     // Check if SDK initialized properly
@@ -210,15 +216,27 @@ const DepositProvider = ({children}: {children: ReactNode}) => {
     try {
       setDepositState(TransactionState.LOADING);
 
-      if (includeApproval) {
-        for (let step = 0; step < 2; step++) {
-          transactionHash = (await depositIterator.next()).value as string;
-        }
-      } else {
-        for await (const step of depositIterator) {
-          if (step.key === DaoDepositSteps.DEPOSITING) {
-            transactionHash = step.txHash;
-          }
+      for await (const step of depositIterator) {
+        if (step.key === DaoDepositSteps.DEPOSITING) {
+          transactionHash = step.txHash;
+          const depositTxs = [
+            ...pendingDepositsTxs,
+            {
+              transactionId: transactionHash,
+              from,
+              amount,
+              reference,
+              type: isNativeToken(tokenAddress) ? 'native' : 'erc20',
+              address: tokenAddress,
+              name: tokenName,
+              symbol: tokenSymbol,
+              // TODO: Fix the decimals value
+              decimals: '18',
+            },
+          ];
+
+          pendingDeposits(depositTxs);
+          localStorage.setItem('pendingDeposits', JSON.stringify(depositTxs));
         }
       }
 

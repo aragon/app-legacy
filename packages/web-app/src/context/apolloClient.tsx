@@ -5,6 +5,7 @@ import {
   makeVar,
   NormalizedCacheObject,
 } from '@apollo/client';
+import {AssetDeposit} from '@aragon/sdk-client/dist/internal/interfaces/client';
 import {RestLink} from 'apollo-link-rest';
 import {CachePersistor, LocalStorageWrapper} from 'apollo3-cache-persist';
 import {BASE_URL, SUBGRAPH_API_URL, SupportedNetworks} from 'utils/constants';
@@ -118,6 +119,10 @@ const favoriteDAOs = makeVar<Array<favoriteDAO>>([
   {daoAddress: 'dao-name.dao.eth', daoName: 'DAO name'},
 ]);
 
+const depositTxs = JSON.parse(localStorage.getItem('pendingDeposits') || '[]');
+
+const pendingDeposits = makeVar<AssetDeposit[]>(depositTxs);
+
 selectedDAO(favoriteDAOs()[0]);
 
-export {client, favoriteDAOs, selectedDAO};
+export {client, favoriteDAOs, selectedDAO, pendingDeposits};
