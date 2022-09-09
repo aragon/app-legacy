@@ -8,6 +8,12 @@ import {fetchBalance} from 'utils/tokens';
 import {HookData} from 'utils/types';
 import {isWhitelistMember, useDaoMembers} from './useDaoMembers';
 
+// NOTE: Temporarily mocking token information, as SDK does not yet expose this.
+const token = {
+  id: '0x35f7A3379B8D0613c3F753863edc85997D8D0968',
+  symbol: 'DTT',
+};
+
 // Hook to determine if connected address is eligible to vote on proposals of the current
 // DAO. Note that for ERC20, voting member is anyone holding the token
 // and not just those who have previously interacted with the DAO, obviously.
@@ -25,10 +31,6 @@ export const useWalletCanVote = (
     'addresslistvoting.dao.eth'
   );
   const [canVote, setCanVote] = useState(false);
-  const token = {
-    id: '0x35f7A3379B8D0613c3F753863edc85997D8D0968',
-    symbol: 'DTT',
-  };
 
   useEffect(() => {
     async function checkIfMember() {

@@ -6,8 +6,6 @@ import styled from 'styled-components';
 import {AccordionMethod} from 'components/accordionMethod';
 import {MintTokenDescription} from 'containers/actionBuilder/mintTokens';
 import {useNetwork} from 'context/network';
-import {useDaoMembers} from 'hooks/useDaoMembers';
-import {useDaoParam} from 'hooks/useDaoParam';
 import {CHAIN_METADATA} from 'utils/constants';
 import {ActionMintToken} from 'utils/types';
 
@@ -16,10 +14,8 @@ export const MintTokenCard: React.FC<{
 }> = ({action}) => {
   const {t} = useTranslation();
   const {network} = useNetwork();
-  const {data: daoId} = useDaoParam();
-  // const {
-  //   data: {token},
-  // } = useDaoMembers(daoId, 'addresslistvoting.dao.eth');
+
+  // NOTE: Temporarily mocking token information, as SDK does not yet expose this.
   const token = {
     id: '0x35f7A3379B8D0613c3F753863edc85997D8D0968',
     symbol: 'DTT',
