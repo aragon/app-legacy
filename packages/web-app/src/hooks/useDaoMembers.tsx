@@ -26,9 +26,9 @@ export function isWhitelistMember(
 
 /**
  * Hook to fetch DAO members. Fetches token if DAO is token based, and allows
- * for a search term to be passed in to filter the members list.
- * NOTE: the totalMembers included in the response is the total number of members in the DAO,
- * and not the number of members returned when filtering by search term.
+ * for a search term to be passed in to filter the members list. NOTE: the
+ * totalMembers included in the response is the total number of members in the
+ * DAO, and not the number of members returned when filtering by search term.
  * @param pluginAddress plugin from which members will be retrieved
  * @param type plugin type
  * @param searchTerm Optional member search term  (e.g. '0x...')
@@ -36,7 +36,7 @@ export function isWhitelistMember(
  */
 export const useDaoMembers = (
   pluginAddress: string,
-  pluginType: PluginTypes,
+  pluginType?: PluginTypes,
   searchTerm?: string
 ): HookData<DaoMembers> => {
   const [data, setData] = useState<MemberBalance[] | DaoWhitelist[]>([]);
@@ -44,7 +44,8 @@ export const useDaoMembers = (
   const [isLoading, setIsLoading] = useState(false);
   const [totalMemberCount, setTotalMemberCount] = useState<number | null>(null);
 
-  const client = usePluginClient(pluginType, pluginAddress);
+  const client = usePluginClient(pluginAddress, pluginType);
+  console.log('stop annoying me', searchTerm);
 
   // Fetch the list of members for a this DAO.
   useEffect(() => {
@@ -52,7 +53,12 @@ export const useDaoMembers = (
       try {
         setIsLoading(true);
 
+        if (!pluginType) {
+          setData([] as MemberBalance[] | DaoWhitelist[]);
+          return;
+        }
         const rawMembers = await client?.methods.getMembers(pluginAddress);
+
         if (!rawMembers) {
           setData([] as MemberBalance[] | DaoWhitelist[]);
           return;
