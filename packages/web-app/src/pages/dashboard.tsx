@@ -75,7 +75,7 @@ const Dashboard: React.FC = () => {
           proposals={topTen}
           transfers={transfers}
           totalAssetValue={totalAssetValue}
-          walletBased={isAddressList}
+          pluginType={dao?.plugins[0].id as PluginTypes}
         />
       ) : (
         <MobileDashboardContent
@@ -83,7 +83,7 @@ const Dashboard: React.FC = () => {
           proposals={topTen}
           transfers={transfers}
           totalAssetValue={totalAssetValue}
-          walletBased={isAddressList}
+          pluginType={dao?.plugins[0].id as PluginTypes}
         />
       )}
     </>
@@ -102,7 +102,7 @@ type DashboardContentProps = {
   proposals: Proposal[];
   transfers: Transfer[];
   totalAssetValue: number;
-  walletBased: boolean;
+  pluginType: PluginTypes;
 };
 
 const DashboardContent: React.FC<DashboardContentProps> = ({
@@ -110,7 +110,7 @@ const DashboardContent: React.FC<DashboardContentProps> = ({
   transfers,
   dao,
   totalAssetValue,
-  walletBased,
+  pluginType,
 }) => {
   const proposalCount = proposals.length;
   const transactionCount = transfers.length;
@@ -142,7 +142,7 @@ const DashboardContent: React.FC<DashboardContentProps> = ({
           </>
         )}
         <MembersWrapper>
-          <MembershipSnapshot dao={dao} walletBased={walletBased} horizontal />
+          <MembershipSnapshot dao={dao} pluginType={pluginType} horizontal />
         </MembersWrapper>
       </>
     );
@@ -159,7 +159,7 @@ const DashboardContent: React.FC<DashboardContentProps> = ({
           transfers={transfers}
           totalAssetValue={totalAssetValue}
         />
-        <MembershipSnapshot dao={dao} walletBased={walletBased} />
+        <MembershipSnapshot dao={dao} pluginType={pluginType} />
       </RightNarrowContent>
     </>
   );
@@ -192,7 +192,7 @@ const MobileDashboardContent: React.FC<DashboardContentProps> = ({
   proposals,
   transfers,
   totalAssetValue,
-  walletBased,
+  pluginType,
 }) => {
   return (
     <MobileLayout>
@@ -202,7 +202,7 @@ const MobileDashboardContent: React.FC<DashboardContentProps> = ({
         transfers={transfers}
         totalAssetValue={totalAssetValue}
       />
-      <MembershipSnapshot dao={dao} walletBased={walletBased} />
+      <MembershipSnapshot dao={dao} pluginType={pluginType} />
     </MobileLayout>
   );
 };

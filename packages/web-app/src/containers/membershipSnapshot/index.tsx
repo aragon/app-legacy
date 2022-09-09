@@ -19,12 +19,13 @@ import {
   ManageMembersProposal,
   MintTokensProposal,
 } from 'utils/paths';
+import {PluginTypes} from 'hooks/usePluginClient';
 
-type Props = {dao: string; walletBased: boolean; horizontal?: boolean};
+type Props = {dao: string; pluginType: PluginTypes; horizontal?: boolean};
 
 export const MembershipSnapshot: React.FC<Props> = ({
   dao,
-  walletBased,
+  pluginType,
   horizontal,
 }) => {
   const {t} = useTranslation();
@@ -35,7 +36,9 @@ export const MembershipSnapshot: React.FC<Props> = ({
   const {
     data: {members, totalMembers},
     isLoading,
-  } = useDaoMembers(dao, 'addresslistvoting.dao.eth');
+  } = useDaoMembers(dao, pluginType);
+
+  const walletBased = pluginType === 'addresslistvoting.dao.eth';
 
   const headerButtonHandler = () => {
     walletBased

@@ -14,11 +14,12 @@ import styled from 'styled-components';
 import {MembersList} from 'components/membersList';
 import {Loading} from 'components/temporary';
 import {useNetwork} from 'context/network';
+import {useDaoDetails} from 'hooks/useDaoDetails';
 import {useDaoMembers} from 'hooks/useDaoMembers';
-import {useDaoMetadata} from 'hooks/useDaoMetadata';
 import {useDaoParam} from 'hooks/useDaoParam';
 import {useDebouncedState} from 'hooks/useDebouncedState';
 import {useMappedBreadcrumbs} from 'hooks/useMappedBreadcrumbs';
+import {PluginTypes} from 'hooks/usePluginClient';
 import {CHAIN_METADATA} from 'utils/constants';
 
 // The number of members displayed on each page
@@ -32,7 +33,9 @@ const Community: React.FC = () => {
   const {breadcrumbs, icon, tag} = useMappedBreadcrumbs();
 
   const {data: daoId} = useDaoParam();
-  const {data: dao, loading: metadataLoading} = useDaoMetadata(daoId);
+  const {data: daoDetails, isLoading: detailsAreLoading} = useDaoDetails(
+    daoId!
+  );
 
   const [page, setPage] = useState(1);
   const [debouncedTerm, searchTerm, setSearchTerm] = useDebouncedState('');
@@ -40,17 +43,15 @@ const Community: React.FC = () => {
   const {
     data: {members, totalMembers},
     isLoading: membersLoading,
-  } = useDaoMembers(
-    daoId,
-    'addresslistvoting.dao.eth',
-    debouncedTerm.toLowerCase()
-  );
+  } = useDaoMembers(daoId, daoDetails?.plugins[0].id as PluginTypes);
 
+  // NOTE: Temporarily mocking token information, as SDK does not yet expose this.
   const token = {
     id: '0x35f7A3379B8D0613c3F753863edc85997D8D0968',
     symbol: 'DTT',
   };
-  const walletBased = dao?.packages[0].pkg.__typename === 'WhitelistPackage';
+  const walletBased =
+    (daoDetails?.plugins[0].id as PluginTypes) === 'addresslistvoting.dao.eth';
 
   /*************************************************
    *                    Handlers                   *
@@ -77,7 +78,7 @@ const Community: React.FC = () => {
   /*************************************************
    *                     Render                    *
    *************************************************/
-  if (metadataLoading) return <Loading />;
+  if (detailsAreLoading || membersLoading) return <Loading />;
 
   return (
     <>
