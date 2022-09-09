@@ -1,28 +1,28 @@
 import {
-  HeaderPage,
-  SearchInput,
   AlertInline,
+  HeaderPage,
   Pagination,
+  SearchInput,
   StateEmpty,
 } from '@aragon/ui-components';
-import styled from 'styled-components';
-import {useTranslation} from 'react-i18next';
-import React, {useState} from 'react';
 import {withTransaction} from '@elastic/apm-rum-react';
+import React, {useState} from 'react';
+import {useTranslation} from 'react-i18next';
+import {useNavigate} from 'react-router-dom';
+import styled from 'styled-components';
 
+import {MembersList} from 'components/membersList';
 import {Loading} from 'components/temporary';
 import {useNetwork} from 'context/network';
-import {MembersList} from 'components/membersList';
-import {useDaoParam} from 'hooks/useDaoParam';
 import {useDaoMembers} from 'hooks/useDaoMembers';
 import {useDaoMetadata} from 'hooks/useDaoMetadata';
-import {CHAIN_METADATA} from 'utils/constants';
+import {useDaoParam} from 'hooks/useDaoParam';
 import {useDebouncedState} from 'hooks/useDebouncedState';
 import {useMappedBreadcrumbs} from 'hooks/useMappedBreadcrumbs';
+import {CHAIN_METADATA} from 'utils/constants';
 
 // The number of members displayed on each page
 const MEMBERS_PER_PAGE = 10;
-import {useNavigate} from 'react-router-dom';
 
 const Community: React.FC = () => {
   const {t} = useTranslation();
@@ -38,10 +38,18 @@ const Community: React.FC = () => {
   const [debouncedTerm, searchTerm, setSearchTerm] = useDebouncedState('');
 
   const {
-    data: {members, totalMembers, token},
+    data: {members, totalMembers},
     isLoading: membersLoading,
-  } = useDaoMembers(daoId, debouncedTerm.toLowerCase());
+  } = useDaoMembers(
+    daoId,
+    'addresslistvoting.dao.eth',
+    debouncedTerm.toLowerCase()
+  );
 
+  const token = {
+    id: '0x35f7A3379B8D0613c3F753863edc85997D8D0968',
+    symbol: 'DTT',
+  };
   const walletBased = dao?.packages[0].pkg.__typename === 'WhitelistPackage';
 
   /*************************************************

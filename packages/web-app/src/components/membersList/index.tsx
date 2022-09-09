@@ -1,19 +1,19 @@
-import React, {useEffect, useState} from 'react';
 import {ListItemAddress} from '@aragon/ui-components';
+import React, {useEffect, useState} from 'react';
 
+import {useNetwork} from 'context/network';
+import {useSpecificProvider} from 'context/providers';
+import {formatUnits, isAddress} from 'ethers/lib/utils';
 import {
-  DaoTokenBased,
   DaoWhitelist,
   isWhitelistMember,
+  MemberBalance,
 } from 'hooks/useDaoMembers';
 import {CHAIN_METADATA} from 'utils/constants';
-import {useNetwork} from 'context/network';
-import {formatUnits, isAddress} from 'ethers/lib/utils';
-import {useSpecificProvider} from 'context/providers';
 import {getTokenInfo} from 'utils/tokens';
 
 type MembersListProps = {
-  members: Array<DaoTokenBased | DaoWhitelist>;
+  members: Array<MemberBalance | DaoWhitelist>;
   token?: {
     id: string;
     symbol: string;

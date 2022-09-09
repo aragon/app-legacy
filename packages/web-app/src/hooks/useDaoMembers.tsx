@@ -1,34 +1,27 @@
-import {useQuery} from '@apollo/client';
-import {useEffect, useMemo, useState} from 'react';
+import {useEffect, useState} from 'react';
 
-import {client} from 'context/apolloClient';
-import {useNetwork} from 'context/network';
-import {DAO_MEMBERS} from 'queries/dao';
-import {TokenBalance, HookData} from 'utils/types';
+import {HookData} from 'utils/types';
+import {PluginTypes, usePluginClient} from './usePluginClient';
 
-// NOTE: Previously two hooks were used to fetch, but now merging.
-// TODO: remove static token holder data, subgraph will have a
-// members list as well for token based DAOs.
 export type DaoWhitelist = {
   id: string;
 };
 
-export type DaoTokenBased = {
+export type MemberBalance = {
   address: string;
   balance: number;
 };
 
 export type DaoMembers = {
-  members: Array<DaoWhitelist | DaoTokenBased>;
-  token?: TokenBalance['token'];
+  members: DaoWhitelist[] | MemberBalance[];
   totalMembers: number;
 };
 
 // this type guard will need to evolve when there are more types
 export function isWhitelistMember(
-  member: DaoTokenBased | DaoWhitelist
+  member: MemberBalance | DaoWhitelist
 ): member is DaoWhitelist {
-  return Object.prototype.hasOwnProperty.call(member, 'id');
+  return 'id' in member;
 }
 
 /**
@@ -36,68 +29,73 @@ export function isWhitelistMember(
  * for a search term to be passed in to filter the members list.
  * NOTE: the totalMembers included in the response is the total number of members in the DAO,
  * and not the number of members returned when filtering by search term.
- * @param id DAO id
+ * @param pluginAddress plugin from which members will be retrieved
+ * @param type plugin type
  * @param searchTerm Optional member search term  (e.g. '0x...')
  * @returns A list of DAO members and the total number of members in the DAO
  */
 export const useDaoMembers = (
-  id: string,
+  pluginAddress: string,
+  pluginType: PluginTypes,
   searchTerm?: string
 ): HookData<DaoMembers> => {
-  const {network} = useNetwork();
+  const [data, setData] = useState<MemberBalance[] | DaoWhitelist[]>([]);
+  const [error, setError] = useState<Error>();
+  const [isLoading, setIsLoading] = useState(false);
   const [totalMemberCount, setTotalMemberCount] = useState<number | null>(null);
 
-  const {
-    data,
-    error,
-    loading: isLoading,
-  } = useQuery(DAO_MEMBERS, {
-    client: client[network],
-    fetchPolicy: 'no-cache',
-    variables: {
-      id,
-      ...(searchTerm ? {filter: {id: searchTerm}} : {}),
-    },
-  });
+  const client = usePluginClient(pluginType, pluginAddress);
 
-  const walletBased =
-    data?.dao?.packages[0].pkg.__typename === 'WhitelistPackage';
+  // Fetch the list of members for a this DAO.
+  useEffect(() => {
+    async function fetchMembers() {
+      try {
+        setIsLoading(true);
 
-  /*************************************************
-   *                Hooks & handlers               *
-   *************************************************/
-  // TODO: need to remove later, the sort will be handled within the query
-  const sortTokenMembers = (a: DaoTokenBased, b: DaoTokenBased) =>
-    b.balance - a.balance;
+        const rawMembers = await client?.methods.getMembers(pluginAddress);
+        if (!rawMembers) {
+          setData([] as MemberBalance[] | DaoWhitelist[]);
+          return;
+        }
 
-  const members = useMemo(() => {
-    // TODO: Fetch token holders addresses and the balance for each address
-    if (data) {
-      return walletBased
-        ? data?.dao.packages[0].pkg.users
-        : MOCK_ADDRESSES.filter(() => Math.random() > 0.4)
-            .map(member => {
-              return {
-                address: member,
-                balance: Math.floor(Math.random() * 500 + 1),
-              };
-            })
-            .sort(sortTokenMembers);
-    } else return [];
-  }, [data, walletBased]);
+        const members =
+          pluginType === 'erc20voting.dao.eth'
+            ? rawMembers.map(m => {
+                return {
+                  address: m,
+                  balance: Math.floor(Math.random() * 500 + 1),
+                } as MemberBalance;
+              })
+            : rawMembers.map(m => {
+                return {
+                  id: m,
+                } as DaoWhitelist;
+              });
+        members.sort(sortMembers);
+        setData(members);
+        setError(undefined);
+      } catch (err) {
+        console.error(err);
+        setError(err as Error);
+      } finally {
+        setIsLoading(false);
+      }
+    }
+
+    fetchMembers();
+  }, [client?.methods, pluginAddress, pluginType]);
 
   // when search term is passed in, only set total on the first time,
   // i.e. when totalMemberCount is null
   useEffect(() => {
     if (data && totalMemberCount === null) {
-      setTotalMemberCount(members.length);
+      setTotalMemberCount(data.length);
     }
-  }, [data, members.length, totalMemberCount]);
+  }, [data, totalMemberCount]);
 
   return {
     data: {
-      members,
-      token: data?.dao.token,
+      members: data,
       totalMembers: totalMemberCount || 0,
     },
     isLoading,
@@ -105,11 +103,12 @@ export const useDaoMembers = (
   };
 };
 
-const MOCK_ADDRESSES = [
-  '0x8367dc645e31321CeF3EeD91a10a5b7077e21f70',
-  '0xDA9dfA130Df4dE4673b89022EE50ff26f6EA73Cf',
-  '0xBE0eB53F46cd790Cd13851d5EFf43D12404d33E8',
-  'cool.eth',
-  'sio.eth',
-  'beer.eth',
-];
+function sortMembers<T extends MemberBalance | DaoWhitelist>(a: T, b: T) {
+  if (isWhitelistMember(a)) {
+    if (a.id === (b as DaoWhitelist).id) return 0;
+    return a.id > (b as DaoWhitelist).id ? 1 : -1;
+  } else {
+    if (a.balance === (b as MemberBalance).balance) return 0;
+    return a.balance > (b as MemberBalance).balance ? 1 : -1;
+  }
+}

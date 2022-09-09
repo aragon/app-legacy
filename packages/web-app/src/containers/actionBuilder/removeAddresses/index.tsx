@@ -36,7 +36,7 @@ const RemoveAddresses: React.FC<RemoveAddressesProps> = ({
 
   // dao data
   const {data: dao} = useDaoParam();
-  const {data} = useDaoMembers(dao);
+  const {data} = useDaoMembers(dao, 'addresslistvoting.dao.eth');
 
   // form context data & hooks
   const {control, setValue} = useFormContext();
