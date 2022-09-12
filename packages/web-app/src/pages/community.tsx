@@ -23,7 +23,7 @@ import {PluginTypes} from 'hooks/usePluginClient';
 import {CHAIN_METADATA} from 'utils/constants';
 
 // The number of members displayed on each page
-const MEMBERS_PER_PAGE = 10;
+const MEMBERS_PER_PAGE = 2;
 
 const Community: React.FC = () => {
   const {t} = useTranslation();
@@ -139,7 +139,13 @@ const Community: React.FC = () => {
                         : t('labels.nResults', {count: members.length})}
                     </ResultsCountLabel>
                   )}
-                  <MembersList token={token} members={members} />
+                  <MembersList
+                    token={token}
+                    members={members.slice(
+                      (page - 1) * MEMBERS_PER_PAGE,
+                      page * MEMBERS_PER_PAGE
+                    )}
+                  />
                 </>
               )}
             </>
@@ -183,7 +189,7 @@ const ResultsCountLabel = styled.p.attrs({
 })``;
 
 const PaginationWrapper = styled.div.attrs({
-  className: 'flex',
+  className: 'flex mt-8',
 })``;
 
 const InputWrapper = styled.div.attrs({
