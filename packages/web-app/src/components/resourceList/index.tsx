@@ -3,11 +3,10 @@ import styled from 'styled-components';
 import {useTranslation} from 'react-i18next';
 import {IconAdd, ListItemLink, StateEmpty} from '@aragon/ui-components';
 
+import {ProposalResource} from 'utils/types';
+
 type ResourceListProps = {
-  links?: Array<{
-    url: string;
-    name: string;
-  }>;
+  links?: Array<ProposalResource>;
   emptyStateButtonClick?: () => void;
 };
 

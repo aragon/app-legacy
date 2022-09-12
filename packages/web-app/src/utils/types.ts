@@ -134,8 +134,8 @@ type ProposalMetadata = {
   executed?: BlockChainInteraction;
 };
 
-type ProposalResource = {
-  title: string;
+export type ProposalResource = {
+  name: string;
   url: string;
 };
 
