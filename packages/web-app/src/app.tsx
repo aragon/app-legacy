@@ -13,7 +13,7 @@ import {
 
 import Navbar from 'containers/navbar';
 import {WalletMenu} from 'containers/walletMenu';
-import {trackEvent, trackPage} from 'services/analytics';
+import {identifyUser, trackPage} from 'services/analytics';
 import '../i18n.config';
 
 // HACK: All pages MUST be exported with the withTransaction function
@@ -63,11 +63,7 @@ function App() {
 
   useEffect(() => {
     if (status === 'connected') {
-      trackEvent('wallet_connected', {
-        network,
-        wallet_address: address,
-        wallet_provider: provider?.connection.url,
-      });
+      identifyUser(address || '', provider?.connection.url || '', network);
     }
   }, [address, network, provider, status]);
 
