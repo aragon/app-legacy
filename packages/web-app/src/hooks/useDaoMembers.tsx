@@ -107,7 +107,7 @@ export const useDaoMembers = (
           : (data as DaoWhitelist[]).filter(d => d.id.includes(searchTerm));
       setFilteredData(filtered);
     }
-  }, [searchTerm]);
+  }, [data, pluginType, searchTerm]);
 
   return {
     data: {
