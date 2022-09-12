@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, useCallback} from 'react';
 import {withTransaction} from '@elastic/apm-rum-react';
 import {useTranslation} from 'react-i18next';
 import {
@@ -65,6 +65,7 @@ const EditSettings: React.FC = () => {
     durationHours,
     durationMinutes,
     membership,
+    links,
   ] = useWatch({
     name: [
       'daoName',
@@ -77,22 +78,24 @@ const EditSettings: React.FC = () => {
       'durationHours',
       'durationMinutes',
       'membership',
+      'links',
     ],
   });
 
-  const setCurrentMetadata = () => {
+  const setCurrentMetadata = useCallback(() => {
     setValue('daoName', daoDetails?.ensDomain);
     setValue('daoSummary', daoDetails?.metadata.description);
     setValue('daoLogo', daoDetails?.metadata.avatar);
-  };
+    setValue('links', daoDetails?.metadata.links);
+  }, [
+    daoDetails?.ensDomain,
+    daoDetails?.metadata.avatar,
+    daoDetails?.metadata.description,
+    daoDetails?.metadata.links,
+    setValue,
+  ]);
 
-  useEffect(() => {
-    setCurrentMetadata();
-    setCurrentGovernance();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [daoDetails, daoSettings]);
-
-  const setCurrentGovernance = () => {
+  const setCurrentGovernance = useCallback(() => {
     if (membership === 'token')
       setValue('minimumApproval', Math.round(daoSettings.minTurnout * 100));
     else
@@ -109,7 +112,21 @@ const EditSettings: React.FC = () => {
       'membership',
       daoDetails?.plugins[0].id === 'erc20voting.dao.eth' ? 'token' : 'wallet'
     );
-  };
+  }, [
+    daoDetails?.plugins,
+    daoSettings.minSupport,
+    daoSettings.minTurnout,
+    days,
+    hours,
+    membership,
+    minutes,
+    setValue,
+  ]);
+
+  useEffect(() => {
+    setCurrentMetadata();
+    setCurrentGovernance();
+  }, [setCurrentGovernance, setCurrentMetadata]);
 
   useEffect(() => {
     if (
@@ -119,6 +136,16 @@ const EditSettings: React.FC = () => {
     )
       setIsMetadataChanged(true);
     else setIsMetadataChanged(false);
+
+    daoDetails?.metadata?.links?.map((link, index) => {
+      if (
+        link!.name !== links[index]?.name ||
+        link!.url !== links[index]?.url
+      ) {
+        setIsMetadataChanged(true);
+        return;
+      }
+    });
 
     // TODO: We need to force forms to only use one type, Number or string
     if (
@@ -136,6 +163,7 @@ const EditSettings: React.FC = () => {
     daoDetails?.ensDomain,
     daoDetails?.metadata.avatar,
     daoDetails?.metadata.description,
+    daoDetails?.metadata.links,
     daoLogo,
     daoName,
     daoSettings.minSupport,
@@ -146,6 +174,7 @@ const EditSettings: React.FC = () => {
     durationHours,
     durationMinutes,
     hours,
+    links,
     membership,
     minimumApproval,
     minimumParticipation,
