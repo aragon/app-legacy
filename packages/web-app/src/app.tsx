@@ -63,7 +63,7 @@ function App() {
 
   useEffect(() => {
     if (status === 'connected') {
-      identifyUser(address || '', provider?.connection.url || '', network);
+      identifyUser(address || '', network, provider?.connection.url || '');
     }
   }, [address, network, provider, status]);
 
