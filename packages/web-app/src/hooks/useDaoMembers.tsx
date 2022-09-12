@@ -66,7 +66,9 @@ export const useDaoMembers = (
 
         const members =
           pluginType === 'erc20voting.dao.eth'
-            ? rawMembers.map(m => {
+            ? // TODO as soon as the SDK exposes Token information, fetch balances
+              // from contract.
+              rawMembers.map(m => {
                 return {
                   address: m,
                   balance: Math.floor(Math.random() * 500 + 1),
@@ -79,6 +81,7 @@ export const useDaoMembers = (
               });
         members.sort(sortMembers);
         setData(members);
+        setTotalMemberCount(members.length);
         setError(undefined);
       } catch (err) {
         console.error(err);
@@ -90,14 +93,6 @@ export const useDaoMembers = (
 
     fetchMembers();
   }, [client?.methods, pluginAddress, pluginType]);
-
-  // when search term is passed in, only set total on the first time,
-  // i.e. when totalMemberCount is null
-  useEffect(() => {
-    if (data && totalMemberCount === null) {
-      setTotalMemberCount(data.length);
-    }
-  }, [data, totalMemberCount]);
 
   return {
     data: {
