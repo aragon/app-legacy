@@ -34,9 +34,10 @@ export const MembershipSnapshot: React.FC<Props> = ({
   const {isDesktop} = useScreen();
 
   const {
-    data: {members, totalMembers},
+    data: {members},
     isLoading,
   } = useDaoMembers(dao, pluginType);
+  const totalMemberCount = members.length;
 
   const walletBased = pluginType === 'addresslistvoting.dao.eth';
 
@@ -54,7 +55,7 @@ export const MembershipSnapshot: React.FC<Props> = ({
         <div className="w-1/3">
           <ListItemHeader
             icon={<IconCommunity />}
-            value={`${totalMembers} ${t('labels.members')}`}
+            value={`${totalMemberCount} ${t('labels.members')}`}
             label={
               walletBased
                 ? t('explore.explorer.walletBased')
@@ -93,7 +94,7 @@ export const MembershipSnapshot: React.FC<Props> = ({
     <VerticalContainer>
       <ListItemHeader
         icon={<IconCommunity />}
-        value={`${totalMembers} ${t('labels.members')}`}
+        value={`${totalMemberCount} ${t('labels.members')}`}
         label={
           walletBased
             ? t('explore.explorer.walletBased')

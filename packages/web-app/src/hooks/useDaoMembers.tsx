@@ -14,7 +14,7 @@ export type MemberBalance = {
 
 export type DaoMembers = {
   members: DaoWhitelist[] | MemberBalance[];
-  totalMembers: number;
+  filteredMembers: DaoWhitelist[] | MemberBalance[];
 };
 
 // this type guard will need to evolve when there are more types
@@ -40,9 +40,11 @@ export const useDaoMembers = (
   searchTerm?: string
 ): HookData<DaoMembers> => {
   const [data, setData] = useState<MemberBalance[] | DaoWhitelist[]>([]);
+  const [filteredData, setFilteredData] = useState<
+    MemberBalance[] | DaoWhitelist[]
+  >([]);
   const [error, setError] = useState<Error>();
   const [isLoading, setIsLoading] = useState(false);
-  const [totalMemberCount, setTotalMemberCount] = useState<number | null>(null);
 
   const client = usePluginClient(pluginAddress, pluginType);
   console.log('stop annoying me', searchTerm);
@@ -81,7 +83,6 @@ export const useDaoMembers = (
               });
         members.sort(sortMembers);
         setData(members);
-        setTotalMemberCount(members.length);
         setError(undefined);
       } catch (err) {
         console.error(err);
@@ -94,10 +95,24 @@ export const useDaoMembers = (
     fetchMembers();
   }, [client?.methods, pluginAddress, pluginType]);
 
+  useEffect(() => {
+    if (!searchTerm) {
+      setFilteredData([]);
+    } else {
+      const filtered =
+        pluginType === 'erc20voting.dao.eth'
+          ? (data as MemberBalance[]).filter(d =>
+              d.address.includes(searchTerm)
+            )
+          : (data as DaoWhitelist[]).filter(d => d.id.includes(searchTerm));
+      setFilteredData(filtered);
+    }
+  }, [searchTerm]);
+
   return {
     data: {
       members: data,
-      totalMembers: totalMemberCount || 0,
+      filteredMembers: filteredData,
     },
     isLoading,
     error,

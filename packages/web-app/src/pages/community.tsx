@@ -22,6 +22,12 @@ import {useMappedBreadcrumbs} from 'hooks/useMappedBreadcrumbs';
 import {PluginTypes} from 'hooks/usePluginClient';
 import {CHAIN_METADATA} from 'utils/constants';
 
+// NOTE: Temporarily mocking token information, as SDK does not yet expose this.
+const token = {
+  id: '0x35f7A3379B8D0613c3F753863edc85997D8D0968',
+  symbol: 'DTT',
+};
+
 // The number of members displayed on each page
 const MEMBERS_PER_PAGE = 2;
 
@@ -41,15 +47,18 @@ const Community: React.FC = () => {
   const [debouncedTerm, searchTerm, setSearchTerm] = useDebouncedState('');
 
   const {
-    data: {members, totalMembers},
+    data: {members, filteredMembers},
     isLoading: membersLoading,
-  } = useDaoMembers(daoId, daoDetails?.plugins[0].id as PluginTypes);
+  } = useDaoMembers(
+    daoId,
+    daoDetails?.plugins[0].id as PluginTypes,
+    debouncedTerm
+  );
 
-  // NOTE: Temporarily mocking token information, as SDK does not yet expose this.
-  const token = {
-    id: '0x35f7A3379B8D0613c3F753863edc85997D8D0968',
-    symbol: 'DTT',
-  };
+  const totalMemberCount = members.length;
+  const filteredMemberCount = filteredMembers.length;
+  const displayedMembers = filteredMemberCount > 0 ? filteredMembers : members;
+
   const walletBased =
     (daoDetails?.plugins[0].id as PluginTypes) === 'addresslistvoting.dao.eth';
 
@@ -87,7 +96,7 @@ const Community: React.FC = () => {
           tag={tag}
           icon={icon}
           crumbs={breadcrumbs}
-          title={`${totalMembers} ${t('labels.members')}`}
+          title={`${totalMemberCount} ${t('labels.members')}`}
           onClick={handlePrimaryClick}
           {...(walletBased
             ? {
@@ -122,7 +131,7 @@ const Community: React.FC = () => {
             <Loading />
           ) : (
             <>
-              {debouncedTerm !== '' && members.length === 0 ? (
+              {debouncedTerm !== '' && !filteredMemberCount ? (
                 <StateEmpty
                   type="Object"
                   mode="inline"
@@ -134,14 +143,14 @@ const Community: React.FC = () => {
                 <>
                   {debouncedTerm !== '' && !membersLoading && (
                     <ResultsCountLabel>
-                      {members.length === 1
+                      {filteredMemberCount === 1
                         ? t('labels.result')
-                        : t('labels.nResults', {count: members.length})}
+                        : t('labels.nResults', {count: filteredMemberCount})}
                     </ResultsCountLabel>
                   )}
                   <MembersList
                     token={token}
-                    members={members.slice(
+                    members={displayedMembers.slice(
                       (page - 1) * MEMBERS_PER_PAGE,
                       page * MEMBERS_PER_PAGE
                     )}
@@ -154,10 +163,12 @@ const Community: React.FC = () => {
 
         {/* Pagination */}
         <PaginationWrapper>
-          {(members.length || 0) > MEMBERS_PER_PAGE && (
+          {(displayedMembers.length || 0) > MEMBERS_PER_PAGE && (
             <Pagination
               totalPages={
-                Math.ceil((members.length || 0) / MEMBERS_PER_PAGE) as number
+                Math.ceil(
+                  (displayedMembers.length || 0) / MEMBERS_PER_PAGE
+                ) as number
               }
               activePage={page}
               onChange={(activePage: number) => {
