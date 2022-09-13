@@ -1,26 +1,30 @@
-import React, {useMemo, useState} from 'react';
-import styled from 'styled-components';
-
-// TODO: Change to use proper imports
-import {IconClock, IconInfo, StateEmpty} from '@aragon/ui-components';
+import {ProposalStatus} from '@aragon/sdk-client/dist/internal/interfaces/common';
 import {
-  AlertInline,
   AlertCard,
-} from '@aragon/ui-components/src/components/alerts';
-import {
+  AlertInline,
   ButtonGroup,
   ButtonText,
+  CheckboxListItem,
+  IconClock,
+  IconInfo,
+  IconRadioCancel,
+  LinearProgress,
   Option,
-} from '@aragon/ui-components/src/components/button';
-import {CheckboxListItem} from '@aragon/ui-components/src/components/checkbox';
-import {SearchInput} from '@aragon/ui-components/src/components/input';
-import {LinearProgress} from '@aragon/ui-components/src/components/progress';
-import {
+  SearchInput,
+  StateEmpty,
   VotersTable,
   VoterType,
-} from '@aragon/ui-components/src/components/table';
-import {useTranslation} from 'react-i18next';
+} from '@aragon/ui-components';
 import {shortenAddress} from '@aragon/ui-components/src/utils/addresses';
+import React, {useMemo, useState} from 'react';
+import {useTranslation} from 'react-i18next';
+import styled from 'styled-components';
+
+export type ProposalVoteResults = {
+  yes: {value: string | number; percentage: number};
+  no: {value: string | number; percentage: number};
+  abstain: {value: string | number; percentage: number};
+};
 
 // TODO: clean up props: some shouldn't be optional
 export type VotingTerminalProps = {
@@ -32,18 +36,14 @@ export type VotingTerminalProps = {
   participation?: string;
   approval?: string;
   voters?: Array<VoterType>;
-  status?: string;
-  statusLabel?: string;
-  strategy: string;
+  status?: ProposalStatus;
+  statusLabel: string;
+  strategy?: string;
   token?: {
     symbol: string;
     name: string;
   };
-  results?: {
-    yes: {value: string; percentage: string};
-    no: {value: string; percentage: string};
-    abstain: {value: string; percentage: string};
-  };
+  results?: ProposalVoteResults;
   votingInProcess?: boolean;
   onVoteClicked?: React.MouseEventHandler<HTMLButtonElement>;
   onCancelClicked?: React.MouseEventHandler<HTMLButtonElement>;
@@ -82,15 +82,15 @@ export const VotingTerminal: React.FC<VotingTerminalProps> = ({
       : voters.filter(voter => voter.wallet.includes(query));
   }, [query, voters]);
 
-  const statusIcon = useMemo(
-    () =>
-      status === 'pending' || status === 'active' ? (
-        <IconClock className="text-info-500" />
-      ) : (
-        <IconInfo className="text-info-500" />
-      ),
-    [status]
-  );
+  const statusIcon = useMemo(() => {
+    if (status === 'Pending' || status === 'Active') {
+      return <IconClock className="text-info-500" />;
+    } else if (status === 'Defeated') {
+      return <IconRadioCancel className="text-critical-500" />;
+    } else {
+      return <IconInfo className="text-info-500" />;
+    }
+  }, [status]);
 
   return (
     <Container>
@@ -120,28 +120,34 @@ export const VotingTerminal: React.FC<VotingTerminalProps> = ({
           <VStackNormal>
             <HStack>
               <VoteOption>{t('votingTerminal.yes')}</VoteOption>
-              <TokenValue>{`${results?.yes.value} ${token?.symbol}`}</TokenValue>
+              <TokenValue>{`${results?.yes.value} ${
+                token ? token.symbol : t('labels.members')
+              }`}</TokenValue>
               <VotePercentage>{results?.yes.percentage}%</VotePercentage>
             </HStack>
-            <LinearProgress max={100} value={results?.yes.value} />
-          </VStackNormal>
-
-          <VStackNormal>
-            <HStack>
-              <VoteOption>{t('votingTerminal.abstain')}</VoteOption>
-              <TokenValue>{`${results?.abstain.value} ${token?.symbol}`}</TokenValue>
-              <VotePercentage>{results?.abstain.percentage}%</VotePercentage>
-            </HStack>
-            <LinearProgress max={100} value={results?.abstain.value} />
+            <LinearProgress max={100} value={results?.yes.percentage} />
           </VStackNormal>
 
           <VStackNormal>
             <HStack>
               <VoteOption>{t('votingTerminal.no')}</VoteOption>
-              <TokenValue>{`${results?.no.value} ${token?.symbol}`}</TokenValue>
+              <TokenValue>{`${results?.no.value} ${
+                token ? token.symbol : t('labels.members')
+              }`}</TokenValue>
               <VotePercentage>{results?.no.percentage}%</VotePercentage>
             </HStack>
-            <LinearProgress max={100} value={results?.no.value} />
+            <LinearProgress max={100} value={results?.no.percentage} />
+          </VStackNormal>
+
+          <VStackNormal>
+            <HStack>
+              <VoteOption>{t('votingTerminal.abstain')}</VoteOption>
+              <TokenValue>{`${results?.abstain.value} ${
+                token ? token.symbol : t('labels.members')
+              }`}</TokenValue>
+              <VotePercentage>{results?.abstain.percentage}%</VotePercentage>
+            </HStack>
+            <LinearProgress max={100} value={results?.abstain.percentage} />
           </VStackNormal>
         </VStackRelaxed>
       ) : buttonGroupState === 'voters' ? (
@@ -149,14 +155,16 @@ export const VotingTerminal: React.FC<VotingTerminalProps> = ({
           <SearchInput
             placeholder={t('votingTerminal.inputPlaceholder')}
             value={query}
-            onChange={e => setQuery(e.target.value)}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+              setQuery(e.currentTarget.value)
+            }
           />
           {displayedVoters.length !== 0 ? (
             <VotersTable
               voters={displayedVoters}
               showOption
               showVotingPower
-              showAmount
+              showAmount={token !== undefined}
               onLoadMore={() => console.log('load more clicked')}
             />
           ) : (
@@ -230,22 +238,26 @@ export const VotingTerminal: React.FC<VotingTerminalProps> = ({
               type={selectedVote === 'yes' ? 'active' : 'default'}
             />
             <CheckboxListItem
-              label={t('votingTerminal.abstain')}
-              helptext={t('votingTerminal.abstainHelptext')}
-              onClick={() => setSelectedVote('abstain')}
-              type={selectedVote === 'abstain' ? 'active' : 'default'}
-            />
-            <CheckboxListItem
               label={t('votingTerminal.no')}
               helptext={t('votingTerminal.noHelptext')}
               onClick={() => setSelectedVote('no')}
               type={selectedVote === 'no' ? 'active' : 'default'}
             />
+            <CheckboxListItem
+              label={t('votingTerminal.abstain')}
+              helptext={t('votingTerminal.abstainHelptext')}
+              onClick={() => setSelectedVote('abstain')}
+              type={selectedVote === 'abstain' ? 'active' : 'default'}
+            />
           </CheckboxContainer>
 
           <VoteContainer>
             <ButtonWrapper>
-              <ButtonText label={t('votingTerminal.submit')} size="large" />
+              <ButtonText
+                label={t('votingTerminal.submit')}
+                size="large"
+                disabled={selectedVote === ''}
+              />
               <ButtonText
                 label={t('votingTerminal.cancel')}
                 mode="ghost"
@@ -253,7 +265,7 @@ export const VotingTerminal: React.FC<VotingTerminalProps> = ({
                 onClick={onCancelClicked}
               />
             </ButtonWrapper>
-            <AlertInline label={statusLabel || ''} mode="neutral" />
+            <AlertInline label={statusLabel} mode="neutral" />
           </VoteContainer>
         </VotingContainer>
       ) : (
@@ -267,8 +279,8 @@ export const VotingTerminal: React.FC<VotingTerminalProps> = ({
               disabled={voteNowDisabled}
             />
             <AlertInline
-              label={statusLabel || ''}
-              mode="neutral"
+              label={statusLabel}
+              mode={status === 'Defeated' ? 'critical' : 'neutral'}
               icon={statusIcon}
             />
           </VoteContainer>
