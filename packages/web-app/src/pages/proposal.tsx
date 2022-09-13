@@ -30,6 +30,7 @@ import {PluginTypes} from 'hooks/usePluginClient';
 import useScreen from 'hooks/useScreen';
 import {useWallet} from 'hooks/useWallet';
 import {CHAIN_METADATA} from 'utils/constants';
+import {ExecutionWidget} from 'components/executionWidget';
 
 const PROPOSAL_TAGS = ['Finance', 'Withdraw'];
 
@@ -88,6 +89,8 @@ const Proposal: React.FC = () => {
   if (paramIsLoading || proposalIsLoading || detailsAreLoading) {
     return <Loading />;
   }
+
+  console.log('proposal-->', proposal);
 
   return (
     <Container>
@@ -152,7 +155,7 @@ const Proposal: React.FC = () => {
           {/* <VotingTerminal /> */}
 
           {/* TODO: Fill out voting terminal props*/}
-          {/* <ExecutionWidget /> */}
+          <ExecutionWidget />
         </ProposalContainer>
         <AdditionalInfoContainer>
           <ResourceList links={proposal?.metadata.resources} />

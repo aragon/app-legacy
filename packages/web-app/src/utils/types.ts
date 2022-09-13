@@ -204,7 +204,7 @@ export type ActionWithdraw = {
   to: Address;
   tokenAddress: Address;
   tokenBalance: number;
-  tokenImgUrl: '';
+  tokenImgUrl: string;
   tokenName: string;
   tokenPrice: number;
   tokenSymbol: string;

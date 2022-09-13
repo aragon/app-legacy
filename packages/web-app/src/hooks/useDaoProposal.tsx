@@ -8,6 +8,7 @@ import {AddressListProposal, Erc20Proposal} from '@aragon/sdk-client';
 import {useEffect, useState} from 'react';
 
 import {HookData} from 'utils/types';
+import {useClient} from './useClient';
 import {PluginTypes, usePluginClient} from './usePluginClient';
 
 export type DetailedProposal = Erc20Proposal | AddressListProposal;
@@ -19,6 +20,7 @@ export type DetailedProposal = Erc20Proposal | AddressListProposal;
  * @param type plugin type
  * @returns a detailed proposal
  */
+
 export const useDaoProposal = (
   proposalId: string,
   pluginAddress: string,
@@ -27,6 +29,21 @@ export const useDaoProposal = (
   const [data, setData] = useState<DetailedProposal>();
   const [error, setError] = useState<Error>();
   const [isLoading, setIsLoading] = useState(false);
+  const {client: globalClient} = useClient();
+  const daoAddress = '0x1234567890123456789012345678901234567890';
+
+  useEffect(() => {
+    const getClient = async () => {
+      const action = await globalClient?.encoding.withdrawAction(daoAddress, {
+        recipientAddress: '0x1234567890123456789012345678901234567890',
+        amount: BigInt(10),
+        tokenAddress: '0x1234567890123456789012345678901234567890',
+        reference: 'test',
+      });
+      console.log('test->', action);
+    };
+    getClient();
+  }, [globalClient?.encoding]);
 
   const client = usePluginClient(type, pluginAddress);
 
@@ -36,6 +53,7 @@ export const useDaoProposal = (
         setIsLoading(true);
 
         const proposal = await client?.methods.getProposal(proposalId);
+        console.log('see', proposal);
         if (proposal) setData(proposal);
       } catch (err) {
         console.error(err);
