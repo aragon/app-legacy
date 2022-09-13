@@ -29,6 +29,8 @@ const token = {
 };
 
 // The number of members displayed on each page
+// TODO: 2 is currently set for QA purposes. Change back to 10 once live data
+// comes in or once the SDK returns more addresses.
 const MEMBERS_PER_PAGE = 2;
 
 const Community: React.FC = () => {
