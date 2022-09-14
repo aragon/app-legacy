@@ -64,13 +64,7 @@ export const useDaoProposal = (
         setIsLoading(true);
         console.log('action', encodedData?.data);
         const proposal = await client?.methods.getProposal(proposalId);
-        const action = await decodeWithdrawToAction(
-          encodedData?.data,
-          globalClient,
-          apolloClient,
-          network
-        );
-        console.log('see', action);
+        if (proposal && encodedData) proposal.actions[0] = encodedData;
         if (proposal) setData(proposal);
       } catch (err) {
         console.error(err);

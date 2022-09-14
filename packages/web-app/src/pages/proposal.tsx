@@ -31,6 +31,10 @@ import useScreen from 'hooks/useScreen';
 import {useWallet} from 'hooks/useWallet';
 import {CHAIN_METADATA} from 'utils/constants';
 import {ExecutionWidget} from 'components/executionWidget';
+import {decodeWithdrawToAction} from 'hooks/useDecodeWithdrawToAction';
+import {useClient} from 'hooks/useClient';
+import {useApolloClient} from '@apollo/client';
+import {ActionWithdraw} from 'utils/types';
 
 const PROPOSAL_TAGS = ['Finance', 'Withdraw'];
 
@@ -40,6 +44,10 @@ const Proposal: React.FC = () => {
   const navigate = useNavigate();
   const {isDesktop} = useScreen();
   const {breadcrumbs, tag} = useMappedBreadcrumbs();
+  const apolloClient = useApolloClient();
+  const [decodedActions, setDecodedActions] =
+    useState<(ActionWithdraw | undefined)[]>();
+  const {client} = useClient();
 
   const {set, get} = useCache();
 
@@ -77,6 +85,24 @@ const Proposal: React.FC = () => {
     }
   }, [editor, proposal]);
 
+  useEffect(() => {
+    async function getProposalAction() {
+      const actionPromises = proposal?.actions.map(action => {
+        return decodeWithdrawToAction(
+          action.data,
+          client,
+          apolloClient,
+          network
+        );
+      });
+
+      Promise.all(actionPromises || []).then(value => {
+        if (value) setDecodedActions(value);
+      });
+    }
+    getProposalAction();
+  }, [apolloClient, client, network, proposal?.actions]);
+
   // caches the status for breadcrumb
   useEffect(() => {
     if (proposal && proposal.status !== get('proposalStatus'))
@@ -89,8 +115,6 @@ const Proposal: React.FC = () => {
   if (paramIsLoading || proposalIsLoading || detailsAreLoading) {
     return <Loading />;
   }
-
-  console.log('proposal-->', proposal);
 
   return (
     <Container>
@@ -155,7 +179,7 @@ const Proposal: React.FC = () => {
           {/* <VotingTerminal /> */}
 
           {/* TODO: Fill out voting terminal props*/}
-          <ExecutionWidget />
+          <ExecutionWidget actions={decodedActions} />
         </ProposalContainer>
         <AdditionalInfoContainer>
           <ResourceList links={proposal?.metadata.resources} />
