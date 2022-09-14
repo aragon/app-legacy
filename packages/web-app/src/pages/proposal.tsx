@@ -31,10 +31,10 @@ import useScreen from 'hooks/useScreen';
 import {useWallet} from 'hooks/useWallet';
 import {CHAIN_METADATA} from 'utils/constants';
 import {ExecutionWidget} from 'components/executionWidget';
-import {decodeWithdrawToAction} from 'hooks/useDecodeWithdrawToAction';
 import {useClient} from 'hooks/useClient';
 import {useApolloClient} from '@apollo/client';
 import {ActionWithdraw} from 'utils/types';
+import {decodeWithdrawToAction} from 'utils/library';
 
 const PROPOSAL_TAGS = ['Finance', 'Withdraw'];
 
@@ -96,9 +96,10 @@ const Proposal: React.FC = () => {
         );
       });
 
-      Promise.all(actionPromises || []).then(value => {
-        if (value) setDecodedActions(value);
-      });
+      if (actionPromises)
+        Promise.all(actionPromises).then(value => {
+          if (value) setDecodedActions(value);
+        });
     }
     getProposalAction();
   }, [apolloClient, client, network, proposal?.actions]);
@@ -195,7 +196,6 @@ const Proposal: React.FC = () => {
           {/* TODO: Fill out voting terminal props*/}
           {/* <VotingTerminal /> */}
 
-          {/* TODO: Fill out voting terminal props*/}
           <ExecutionWidget actions={decodedActions} status={executionStatus} />
         </ProposalContainer>
         <AdditionalInfoContainer>

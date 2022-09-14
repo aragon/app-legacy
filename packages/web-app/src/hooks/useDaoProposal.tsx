@@ -6,12 +6,10 @@
 
 import {AddressListProposal, Erc20Proposal} from '@aragon/sdk-client';
 import {useEffect, useState} from 'react';
-import {useApolloClient} from '@apollo/client';
 
 import {HookData} from 'utils/types';
 import {useClient} from './useClient';
 import {PluginTypes, usePluginClient} from './usePluginClient';
-import {useNetwork} from 'context/network';
 import {DaoAction} from '@aragon/sdk-client/dist/internal/interfaces/common';
 
 export type DetailedProposal = Erc20Proposal | AddressListProposal;
@@ -34,13 +32,11 @@ export const useDaoProposal = (
   const [isLoading, setIsLoading] = useState(false);
   const [encodedData, setEncodedData] = useState<DaoAction | undefined>();
   const {client: globalClient} = useClient();
-  const {network} = useNetwork();
-
-  const apolloClient = useApolloClient();
   const daoAddress = '0x1234567890123456789012345678901234567890';
 
   useEffect(() => {
-    const getClient = async () => {
+    // TODO: this method is for dummy usage only, Will remove later
+    const getEncodedAction = async () => {
       const encodedAction = await globalClient?.encoding.withdrawAction(
         daoAddress,
         {
@@ -52,7 +48,7 @@ export const useDaoProposal = (
       );
       setEncodedData(encodedAction);
     };
-    getClient();
+    getEncodedAction();
   }, [globalClient?.encoding]);
 
   const client = usePluginClient(type, pluginAddress);
@@ -73,14 +69,7 @@ export const useDaoProposal = (
     }
 
     getDaoProposal();
-  }, [
-    encodedData,
-    apolloClient,
-    client?.methods,
-    globalClient,
-    network,
-    proposalId,
-  ]);
+  }, [client?.methods, encodedData, proposalId]);
 
   return {data, error, isLoading};
 };
