@@ -27,8 +27,13 @@ import {Loading} from 'components/temporary';
 import {ProposeNewSettings} from 'utils/paths';
 import {useNetwork} from 'context/network';
 import {PluginTypes} from 'hooks/usePluginClient';
-import {useFormContext, useWatch} from 'react-hook-form';
+import {useFieldArray, useFormContext, useWatch} from 'react-hook-form';
 import {getDHMFromSeconds} from 'utils/date';
+
+type linksArray = {
+  name: string;
+  url: string;
+}[];
 
 const EditSettings: React.FC = () => {
   const [currentMenu, setCurrentMenu] = useState<'metadata' | 'governance'>(
@@ -39,7 +44,7 @@ const EditSettings: React.FC = () => {
   const {isMobile} = useScreen();
   const {network} = useNetwork();
   const {dao} = useParams();
-  const {setValue} = useFormContext();
+  const {control, setValue} = useFormContext();
   const {breadcrumbs, icon, tag} = useMappedBreadcrumbs();
   const {data: daoId, loading: paramAreLoading} = useDaoParam();
   const {data: daoDetails, isLoading: detailsAreLoading} = useDaoDetails(
@@ -65,7 +70,6 @@ const EditSettings: React.FC = () => {
     durationHours,
     durationMinutes,
     membership,
-    links,
   ] = useWatch({
     name: [
       'daoName',
@@ -78,9 +82,10 @@ const EditSettings: React.FC = () => {
       'durationHours',
       'durationMinutes',
       'membership',
-      'links',
     ],
   });
+
+  const {fields} = useFieldArray({name: 'links', control});
 
   const setCurrentMetadata = useCallback(() => {
     setValue('daoName', daoDetails?.ensDomain);
@@ -129,6 +134,26 @@ const EditSettings: React.FC = () => {
   }, [setCurrentGovernance, setCurrentMetadata]);
 
   useEffect(() => {
+    console.log('checkcheck', fields);
+  }, [fields]);
+
+  // if (daoDetails?.metadata?.links) {
+  //   const storageLinks = daoDetails?.metadata?.links || [];
+  //   for (let index = 0; index < storageLinks.length; index++) {
+  //     if (
+  //       (fields as unknown as linksArray)?.[index]?.name !==
+  //         storageLinks?.[index].name ||
+  //       (fields as unknown as linksArray)?.[index]?.url !==
+  //         storageLinks?.[index].url
+  //     ) {
+  //       console.log('View', fields?.[index], storageLinks?.[index]);
+  //       setIsMetadataChanged(true);
+  //       break;
+  //     }
+  //   }
+  // }
+
+  useEffect(() => {
     if (
       daoName !== daoDetails?.ensDomain ||
       daoSummary !== daoDetails?.metadata.description ||
@@ -137,15 +162,23 @@ const EditSettings: React.FC = () => {
       setIsMetadataChanged(true);
     else setIsMetadataChanged(false);
 
-    daoDetails?.metadata?.links?.map((link, index) => {
-      if (
-        link!.name !== links[index]?.name ||
-        link!.url !== links[index]?.url
-      ) {
-        setIsMetadataChanged(true);
-        return;
-      }
-    });
+    // if (daoDetails?.metadata?.links) {
+    //   const storageLinks = daoDetails?.metadata?.links || [];
+    //   for (let index = 0; index < storageLinks.length; index++) {
+    //     if (
+    //       (fields as unknown as linksArray)?.[index]?.name !==
+    //         storageLinks?.[index].name ||
+    //       (fields as unknown as linksArray)?.[index]?.url !==
+    //         storageLinks?.[index].url
+    //     ) {
+    //       console.log('View', fields?.[index], storageLinks?.[index]);
+    //       setIsMetadataChanged(true);
+    //       break;
+    //     }
+    //   }
+    // }
+
+    // console.log('->', links, daoDetails?.metadata?.links);
 
     // TODO: We need to force forms to only use one type, Number or string
     if (
@@ -173,8 +206,8 @@ const EditSettings: React.FC = () => {
     durationDays,
     durationHours,
     durationMinutes,
+    fields,
     hours,
-    links,
     membership,
     minimumApproval,
     minimumParticipation,
