@@ -82,16 +82,6 @@ export const VotingTerminal: React.FC<VotingTerminalProps> = ({
       : voters.filter(voter => voter.wallet.includes(query));
   }, [query, voters]);
 
-  const statusIcon = useMemo(() => {
-    if (status === 'Pending' || status === 'Active') {
-      return <IconClock className="text-info-500" />;
-    } else if (status === 'Defeated') {
-      return <IconRadioCancel className="text-critical-500" />;
-    } else {
-      return <IconInfo className="text-info-500" />;
-    }
-  }, [status]);
-
   return (
     <Container>
       <Header>
@@ -281,7 +271,7 @@ export const VotingTerminal: React.FC<VotingTerminalProps> = ({
             <AlertInline
               label={statusLabel}
               mode={status === 'Defeated' ? 'critical' : 'neutral'}
-              icon={statusIcon}
+              icon={<StatusIcon status={status} />}
             />
           </VoteContainer>
 
@@ -294,6 +284,20 @@ export const VotingTerminal: React.FC<VotingTerminalProps> = ({
       )}
     </Container>
   );
+};
+
+type StatusProp = {
+  status?: ProposalStatus;
+};
+
+const StatusIcon: React.FC<StatusProp> = ({status}) => {
+  if (status === 'Pending' || status === 'Active') {
+    return <IconClock className="text-info-500" />;
+  } else if (status === 'Defeated') {
+    return <IconRadioCancel className="text-critical-500" />;
+  } else {
+    return <IconInfo className="text-info-500" />;
+  }
 };
 
 const Container = styled.div.attrs({
