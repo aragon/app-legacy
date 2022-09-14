@@ -6,7 +6,7 @@ import {useSpecificProvider} from 'context/providers';
 import {CHAIN_METADATA} from 'utils/constants';
 import {fetchBalance} from 'utils/tokens';
 import {HookData} from 'utils/types';
-import {isWhitelistMember, useDaoMembers} from './useDaoMembers';
+import {isWalletListMember, useDaoMembers} from './useDaoMembers';
 
 // NOTE: Temporarily mocking token information, as SDK does not yet expose this.
 const token = {
@@ -38,8 +38,8 @@ export const useWalletCanVote = (
 
       if (address && searchResult) {
         // Whitelist member
-        if (isWhitelistMember(searchResult)) {
-          setCanVote(searchResult.id === address);
+        if (isWalletListMember(searchResult)) {
+          setCanVote(searchResult.address === address);
           return;
         }
 

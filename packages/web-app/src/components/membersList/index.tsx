@@ -1,19 +1,19 @@
 import {ListItemAddress} from '@aragon/ui-components';
+import {formatUnits, isAddress} from 'ethers/lib/utils';
 import React, {useEffect, useState} from 'react';
 
 import {useNetwork} from 'context/network';
 import {useSpecificProvider} from 'context/providers';
-import {formatUnits, isAddress} from 'ethers/lib/utils';
 import {
-  DaoWhitelist,
-  isWhitelistMember,
-  MemberBalance,
+  WalletMember,
+  BalanceMember,
+  isBalanceMember,
 } from 'hooks/useDaoMembers';
 import {CHAIN_METADATA} from 'utils/constants';
 import {getTokenInfo} from 'utils/tokens';
 
 type MembersListProps = {
-  members: Array<MemberBalance | DaoWhitelist>;
+  members: Array<BalanceMember | WalletMember>;
   token?: {
     id: string;
     symbol: string;
@@ -53,14 +53,9 @@ export const MembersList: React.FC<MembersListProps> = ({token, members}) => {
         return (
           <ListItemAddress
             // won't allow key in the objects for whatever reason
-            key={isWhitelistMember(member) ? member.id : member.address}
-            {...(isWhitelistMember(member)
+            key={member.address}
+            {...(isBalanceMember(member)
               ? {
-                  label: member.id,
-                  src: member.id,
-                  onClick: () => itemClickHandler(member.id),
-                }
-              : {
                   label: member.address,
                   src: member.address,
                   onClick: () => itemClickHandler(member.address),
@@ -73,6 +68,11 @@ export const MembersList: React.FC<MembersListProps> = ({token, members}) => {
                         )
                       : '-',
                   },
+                }
+              : {
+                  label: member.address,
+                  src: member.address,
+                  onClick: () => itemClickHandler(member.address),
                 })}
           />
         );

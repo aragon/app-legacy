@@ -3,25 +3,30 @@ import {useEffect, useState} from 'react';
 import {HookData} from 'utils/types';
 import {PluginTypes, usePluginClient} from './usePluginClient';
 
-export type DaoWhitelist = {
-  id: string;
+export type WalletMember = {
+  address: string;
 };
 
-export type MemberBalance = {
-  address: string;
+export type BalanceMember = WalletMember & {
   balance: number;
 };
 
 export type DaoMembers = {
-  members: DaoWhitelist[] | MemberBalance[];
-  filteredMembers: DaoWhitelist[] | MemberBalance[];
+  members: WalletMember[] | BalanceMember[];
+  filteredMembers: WalletMember[] | BalanceMember[];
 };
 
 // this type guard will need to evolve when there are more types
-export function isWhitelistMember(
-  member: MemberBalance | DaoWhitelist
-): member is DaoWhitelist {
-  return 'id' in member;
+export function isWalletListMember(
+  member: BalanceMember | WalletMember
+): member is WalletMember {
+  return !('address' in member);
+}
+
+export function isBalanceMember(
+  member: BalanceMember | WalletMember
+): member is BalanceMember {
+  return 'balance' in member;
 }
 
 /**
@@ -29,8 +34,9 @@ export function isWhitelistMember(
  * for a search term to be passed in to filter the members list. NOTE: the
  * totalMembers included in the response is the total number of members in the
  * DAO, and not the number of members returned when filtering by search term.
+ *
  * @param pluginAddress plugin from which members will be retrieved
- * @param type plugin type
+ * @param pluginType plugin type
  * @param searchTerm Optional member search term  (e.g. '0x...')
  * @returns A list of DAO members and the total number of members in the DAO
  */
@@ -39,9 +45,9 @@ export const useDaoMembers = (
   pluginType?: PluginTypes,
   searchTerm?: string
 ): HookData<DaoMembers> => {
-  const [data, setData] = useState<MemberBalance[] | DaoWhitelist[]>([]);
+  const [data, setData] = useState<BalanceMember[] | WalletMember[]>([]);
   const [filteredData, setFilteredData] = useState<
-    MemberBalance[] | DaoWhitelist[]
+    BalanceMember[] | WalletMember[]
   >([]);
   const [error, setError] = useState<Error>();
   const [isLoading, setIsLoading] = useState(false);
@@ -55,13 +61,13 @@ export const useDaoMembers = (
         setIsLoading(true);
 
         if (!pluginType) {
-          setData([] as MemberBalance[] | DaoWhitelist[]);
+          setData([] as BalanceMember[] | WalletMember[]);
           return;
         }
         const rawMembers = await client?.methods.getMembers(pluginAddress);
 
         if (!rawMembers) {
-          setData([] as MemberBalance[] | DaoWhitelist[]);
+          setData([] as BalanceMember[] | WalletMember[]);
           return;
         }
 
@@ -73,12 +79,12 @@ export const useDaoMembers = (
                 return {
                   address: m,
                   balance: Math.floor(Math.random() * 500 + 1),
-                } as MemberBalance;
+                } as BalanceMember;
               })
             : rawMembers.map(m => {
                 return {
-                  id: m,
-                } as DaoWhitelist;
+                  address: m,
+                } as WalletMember;
               });
         members.sort(sortMembers);
         setData(members);
@@ -100,10 +106,12 @@ export const useDaoMembers = (
     } else {
       const filtered =
         pluginType === 'erc20voting.dao.eth'
-          ? (data as MemberBalance[]).filter(d =>
+          ? (data as BalanceMember[]).filter(d =>
               d.address.includes(searchTerm)
             )
-          : (data as DaoWhitelist[]).filter(d => d.id.includes(searchTerm));
+          : (data as WalletMember[]).filter(d =>
+              d.address.includes(searchTerm)
+            );
       setFilteredData(filtered);
     }
   }, [data, pluginType, searchTerm]);
@@ -118,12 +126,12 @@ export const useDaoMembers = (
   };
 };
 
-function sortMembers<T extends MemberBalance | DaoWhitelist>(a: T, b: T) {
-  if (isWhitelistMember(a)) {
-    if (a.id === (b as DaoWhitelist).id) return 0;
-    return a.id > (b as DaoWhitelist).id ? 1 : -1;
+function sortMembers<T extends BalanceMember | WalletMember>(a: T, b: T) {
+  if (isBalanceMember(a)) {
+    if (a.balance === (b as BalanceMember).balance) return 0;
+    return a.balance > (b as BalanceMember).balance ? 1 : -1;
   } else {
-    if (a.balance === (b as MemberBalance).balance) return 0;
-    return a.balance > (b as MemberBalance).balance ? 1 : -1;
+    if (a.address === (b as WalletMember).address) return 0;
+    return a.address > (b as WalletMember).address ? 1 : -1;
   }
 }
