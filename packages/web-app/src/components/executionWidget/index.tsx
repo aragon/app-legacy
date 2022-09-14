@@ -21,7 +21,7 @@ export type ExecutionStatus =
 
 type ExecutionWidgetProps = {
   txhash?: string;
-  actions?: Array<Action | undefined>;
+  actions?: Array<Action | void>;
   status?: ExecutionStatus;
   onAddAction?: () => void;
 };

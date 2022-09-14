@@ -73,7 +73,6 @@ export const toHex = (num: number | string) => {
 
 /**
  * DecodeWithdrawToAction
- * Note: Please rename to useDaoMetadata once the other hook as been deprecated
  * @param data Uint8Array action data
  * @param client SDK client, Fetched using useClient
  * @param apolloClient Apollo client, Fetched using useApolloClient

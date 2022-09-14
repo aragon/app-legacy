@@ -12,7 +12,7 @@ import {withTransaction} from '@elastic/apm-rum-react';
 import TipTapLink from '@tiptap/extension-link';
 import {useEditor} from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
-import React, {useEffect, useState, useMemo} from 'react';
+import React, {useEffect, useState, useMemo, useCallback} from 'react';
 import {useTranslation} from 'react-i18next';
 import {generatePath, useNavigate, useParams} from 'react-router-dom';
 import styled from 'styled-components';
@@ -35,6 +35,7 @@ import {useClient} from 'hooks/useClient';
 import {useApolloClient} from '@apollo/client';
 import {ActionWithdraw} from 'utils/types';
 import {decodeWithdrawToAction} from 'utils/library';
+import {DaoAction} from '@aragon/sdk-client/dist/internal/interfaces/common';
 
 const PROPOSAL_TAGS = ['Finance', 'Withdraw'];
 
@@ -46,7 +47,7 @@ const Proposal: React.FC = () => {
   const {breadcrumbs, tag} = useMappedBreadcrumbs();
   const apolloClient = useApolloClient();
   const [decodedActions, setDecodedActions] =
-    useState<(ActionWithdraw | undefined)[]>();
+    useState<(ActionWithdraw | void)[]>();
   const {client} = useClient();
 
   const {set, get} = useCache();
@@ -85,24 +86,37 @@ const Proposal: React.FC = () => {
     }
   }, [editor, proposal]);
 
+  const findDecoder = useCallback(
+    (action: DaoAction) => {
+      const functionParams = client?.decoding.findInterface(action.data);
+      switch (functionParams?.functionName) {
+        case 'withdraw':
+          return decodeWithdrawToAction(
+            action.data,
+            client,
+            apolloClient,
+            network
+          );
+        default:
+          return {} as ActionWithdraw;
+      }
+    },
+    [apolloClient, client, network]
+  );
+
   useEffect(() => {
     async function getProposalAction() {
-      const actionPromises = proposal?.actions.map(action => {
-        return decodeWithdrawToAction(
-          action.data,
-          client,
-          apolloClient,
-          network
+      if (proposal) {
+        const actionPromises = proposal.actions.map(action =>
+          findDecoder(action)
         );
-      });
-
-      if (actionPromises)
         Promise.all(actionPromises).then(value => {
-          if (value) setDecodedActions(value);
+          setDecodedActions(value);
         });
+      }
     }
     getProposalAction();
-  }, [apolloClient, client, network, proposal?.actions]);
+  }, [apolloClient, client, findDecoder, network, proposal, proposal?.actions]);
 
   const executionStatus = useMemo(() => {
     switch (proposal?.status) {
