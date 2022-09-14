@@ -6,10 +6,14 @@
 
 import {AddressListProposal, Erc20Proposal} from '@aragon/sdk-client';
 import {useEffect, useState} from 'react';
+import {useApolloClient} from '@apollo/client';
 
 import {HookData} from 'utils/types';
 import {useClient} from './useClient';
+import {decodeWithdrawToAction} from './useDecodeWithdrawToAction';
 import {PluginTypes, usePluginClient} from './usePluginClient';
+import {useNetwork} from 'context/network';
+import {DaoAction} from '@aragon/sdk-client/dist/internal/interfaces/common';
 
 export type DetailedProposal = Erc20Proposal | AddressListProposal;
 
@@ -29,18 +33,25 @@ export const useDaoProposal = (
   const [data, setData] = useState<DetailedProposal>();
   const [error, setError] = useState<Error>();
   const [isLoading, setIsLoading] = useState(false);
+  const [encodedData, setEncodedData] = useState<DaoAction | undefined>();
   const {client: globalClient} = useClient();
+  const {network} = useNetwork();
+
+  const apolloClient = useApolloClient();
   const daoAddress = '0x1234567890123456789012345678901234567890';
 
   useEffect(() => {
     const getClient = async () => {
-      const action = await globalClient?.encoding.withdrawAction(daoAddress, {
-        recipientAddress: '0x1234567890123456789012345678901234567890',
-        amount: BigInt(10),
-        tokenAddress: '0x1234567890123456789012345678901234567890',
-        reference: 'test',
-      });
-      console.log('test->', action);
+      const encodedAction = await globalClient?.encoding.withdrawAction(
+        daoAddress,
+        {
+          recipientAddress: '0x1234567890123456789012345678901234567890',
+          amount: BigInt(10),
+          tokenAddress: '0xa1cba00d6e99f52b8cb5f867a6f2db0f3ad62276',
+          reference: 'test',
+        }
+      );
+      setEncodedData(encodedAction);
     };
     getClient();
   }, [globalClient?.encoding]);
@@ -51,9 +62,15 @@ export const useDaoProposal = (
     async function getDaoProposal() {
       try {
         setIsLoading(true);
-
+        console.log('action', encodedData?.data);
         const proposal = await client?.methods.getProposal(proposalId);
-        console.log('see', proposal);
+        const action = await decodeWithdrawToAction(
+          encodedData?.data,
+          globalClient,
+          apolloClient,
+          network
+        );
+        console.log('see', action);
         if (proposal) setData(proposal);
       } catch (err) {
         console.error(err);
@@ -64,7 +81,14 @@ export const useDaoProposal = (
     }
 
     getDaoProposal();
-  }, [client?.methods, proposalId]);
+  }, [
+    encodedData,
+    apolloClient,
+    client?.methods,
+    globalClient,
+    network,
+    proposalId,
+  ]);
 
   return {data, error, isLoading};
 };
