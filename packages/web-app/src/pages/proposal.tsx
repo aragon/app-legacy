@@ -30,7 +30,7 @@ import {PluginTypes} from 'hooks/usePluginClient';
 import useScreen from 'hooks/useScreen';
 import {useWallet} from 'hooks/useWallet';
 import {CHAIN_METADATA} from 'utils/constants';
-import {ExecutionStatus, ExecutionWidget} from 'components/executionWidget';
+import {ExecutionWidget} from 'components/executionWidget';
 import {decodeWithdrawToAction} from 'hooks/useDecodeWithdrawToAction';
 import {useClient} from 'hooks/useClient';
 import {useApolloClient} from '@apollo/client';
