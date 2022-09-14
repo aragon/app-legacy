@@ -187,36 +187,37 @@ const Proposal: React.FC = () => {
 
   // vote button state and handler
   const {voteNowDisabled, onClick} = useMemo(() => {
-    let voteNowDisabled = true;
-    let onClick;
-
-    if (proposal?.status !== 'Active') return {voteNowDisabled, onClick};
+    if (proposal?.status !== 'Active') return {voteNowDisabled: true};
 
     // not logged in
     if (!address) {
-      voteNowDisabled = false;
-      onClick = () => {
-        open('wallet');
-        statusRef.current.wasNotLoggedIn = true;
+      return {
+        voteNowDisabled: false,
+        onClick: () => {
+          open('wallet');
+          statusRef.current.wasNotLoggedIn = true;
+        },
       };
     }
 
     // wrong network
     else if (address && isOnWrongNetwork) {
-      voteNowDisabled = false;
-      onClick = () => {
-        open('network');
-        statusRef.current.wasOnWrongNetwork = true;
+      return {
+        voteNowDisabled: false,
+        onClick: () => {
+          open('network');
+          statusRef.current.wasOnWrongNetwork = true;
+        },
       };
     }
 
     // member, not yet voted
     else if (address && !isOnWrongNetwork && canVote) {
-      voteNowDisabled = false;
-      onClick = () => setVotingInProcess(true);
-    }
-
-    return {voteNowDisabled, onClick};
+      return {
+        voteNowDisabled: false,
+        onClick: () => setVotingInProcess(true),
+      };
+    } else return {voteNowDisabled: true};
   }, [address, canVote, isOnWrongNetwork, open, proposal?.status]);
 
   // alert message, only shown when not eligible to vote
@@ -255,7 +256,7 @@ const Proposal: React.FC = () => {
         {!isDesktop && (
           <Breadcrumb
             onClick={(path: string) =>
-              navigate(generatePath(path, {network, daoId: 'daoId'}))
+              navigate(generatePath(path, {network, daoId}))
             }
             crumbs={breadcrumbs}
             icon={<IconGovernance />}
