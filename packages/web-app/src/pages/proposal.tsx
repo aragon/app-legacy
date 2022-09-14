@@ -12,7 +12,7 @@ import {withTransaction} from '@elastic/apm-rum-react';
 import TipTapLink from '@tiptap/extension-link';
 import {useEditor} from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useState, useMemo} from 'react';
 import {useTranslation} from 'react-i18next';
 import {generatePath, useNavigate, useParams} from 'react-router-dom';
 import styled from 'styled-components';
@@ -30,7 +30,7 @@ import {PluginTypes} from 'hooks/usePluginClient';
 import useScreen from 'hooks/useScreen';
 import {useWallet} from 'hooks/useWallet';
 import {CHAIN_METADATA} from 'utils/constants';
-import {ExecutionWidget} from 'components/executionWidget';
+import {ExecutionStatus, ExecutionWidget} from 'components/executionWidget';
 import {decodeWithdrawToAction} from 'hooks/useDecodeWithdrawToAction';
 import {useClient} from 'hooks/useClient';
 import {useApolloClient} from '@apollo/client';
@@ -102,6 +102,23 @@ const Proposal: React.FC = () => {
     }
     getProposalAction();
   }, [apolloClient, client, network, proposal?.actions]);
+
+  const executionStatus = useMemo(() => {
+    switch (proposal?.status) {
+      case 'Succeeded':
+        return 'executable';
+      case 'Executed':
+        // TODO: add cases for failed execution
+        // executionStatus = 'executable-failed';
+        return 'executed';
+      case 'Defeated':
+        return 'defeated';
+      case 'Active':
+      case 'Pending':
+      default:
+        return 'default';
+    }
+  }, [proposal?.status]);
 
   // caches the status for breadcrumb
   useEffect(() => {
@@ -179,7 +196,7 @@ const Proposal: React.FC = () => {
           {/* <VotingTerminal /> */}
 
           {/* TODO: Fill out voting terminal props*/}
-          <ExecutionWidget actions={decodedActions} />
+          <ExecutionWidget actions={decodedActions} status={executionStatus} />
         </ProposalContainer>
         <AdditionalInfoContainer>
           <ResourceList links={proposal?.metadata.resources} />

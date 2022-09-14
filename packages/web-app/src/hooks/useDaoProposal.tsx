@@ -10,7 +10,6 @@ import {useApolloClient} from '@apollo/client';
 
 import {HookData} from 'utils/types';
 import {useClient} from './useClient';
-import {decodeWithdrawToAction} from './useDecodeWithdrawToAction';
 import {PluginTypes, usePluginClient} from './usePluginClient';
 import {useNetwork} from 'context/network';
 import {DaoAction} from '@aragon/sdk-client/dist/internal/interfaces/common';
@@ -62,7 +61,6 @@ export const useDaoProposal = (
     async function getDaoProposal() {
       try {
         setIsLoading(true);
-        console.log('action', encodedData?.data);
         const proposal = await client?.methods.getProposal(proposalId);
         if (proposal && encodedData) proposal.actions[0] = encodedData;
         if (proposal) setData(proposal);
