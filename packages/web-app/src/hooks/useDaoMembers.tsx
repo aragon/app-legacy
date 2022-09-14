@@ -47,7 +47,6 @@ export const useDaoMembers = (
   const [isLoading, setIsLoading] = useState(false);
 
   const client = usePluginClient(pluginAddress, pluginType);
-  console.log('stop annoying me', searchTerm);
 
   // Fetch the list of members for a this DAO.
   useEffect(() => {
