@@ -19,14 +19,14 @@ export type DetailedProposal = Erc20Proposal | AddressListProposal;
  * Retrieve a single detailed proposal
  * @param proposalId id of proposal to retrieve
  * @param pluginAddress plugin from which proposals will be retrieved
- * @param type plugin type
+ * @param pluginType plugin type
  * @returns a detailed proposal
  */
 
 export const useDaoProposal = (
   proposalId: string,
   pluginAddress: string,
-  type: PluginTypes
+  pluginType: PluginTypes
 ): HookData<DetailedProposal | undefined> => {
   const [data, setData] = useState<DetailedProposal>();
   const [error, setError] = useState<Error>();
@@ -52,7 +52,7 @@ export const useDaoProposal = (
     getEncodedAction();
   }, [globalClient?.encoding]);
 
-  const client = usePluginClient(pluginAddress, type);
+  const client = usePluginClient(pluginAddress, pluginType);
 
   useEffect(() => {
     async function getDaoProposal() {
