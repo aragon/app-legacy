@@ -6,6 +6,7 @@ import {
   IconChevronUp,
   IconGovernance,
   Link,
+  WidgetStatus,
 } from '@aragon/ui-components';
 import {shortenAddress} from '@aragon/ui-components/src/utils/addresses';
 import {withTransaction} from '@elastic/apm-rum-react';
@@ -39,9 +40,11 @@ import {
   getErc20MinimumApproval,
   getErc20Results,
   getErc20VotersAndParticipation,
+  getProposalStatusSteps,
   getWhitelistMinimumApproval,
   getWhitelistResults,
   getWhitelistVoterParticipation,
+  isTokenBasedProposal,
 } from 'utils/proposals';
 import {i18n} from '../../i18n.config';
 import {ExecutionWidget} from 'components/executionWidget';
@@ -280,7 +283,7 @@ const Proposal: React.FC = () => {
     ) {
       // presence of token delineates token voting proposal
       // people add types to these things!!
-      return 'token' in proposal
+      return isTokenBasedProposal(proposal)
         ? t('votingTerminal.status.ineligibleTokenBased', {
             token: proposal.token.name,
           })
@@ -288,9 +291,33 @@ const Proposal: React.FC = () => {
     }
   }, [address, canVote, isOnWrongNetwork, proposal, t]);
 
+  // terminal props
   const terminalPropsFromProposal = useMemo(() => {
     if (proposal) return getTerminalProps(proposal);
   }, [proposal]);
+
+  // status steps for proposal
+  const proposalSteps = useMemo(() => {
+    if (
+      proposal?.status &&
+      proposal?.startDate &&
+      proposal?.endDate &&
+      proposal?.creationDate
+    )
+      return getProposalStatusSteps(
+        proposal.status,
+        proposal.startDate,
+        proposal.endDate,
+        proposal.creationDate,
+        '123,123,123',
+        new Date() // TODO: change to proposal.executionDate from sdk
+      );
+  }, [
+    proposal?.creationDate,
+    proposal?.endDate,
+    proposal?.startDate,
+    proposal?.status,
+  ]);
 
   /*************************************************
    *                     Render                    *
@@ -377,8 +404,7 @@ const Proposal: React.FC = () => {
         </ProposalContainer>
         <AdditionalInfoContainer>
           <ResourceList links={proposal?.metadata.resources} />
-          {/* TODO: Fill out proposal steps*/}
-          {/* <WidgetStatus steps={proposalSteps} /> */}
+          <WidgetStatus steps={proposalSteps || []} />
         </AdditionalInfoContainer>
       </ContentContainer>
     </Container>
@@ -444,7 +470,7 @@ function getTerminalProps(proposal: DetailedProposal) {
   let approval;
   let strategy;
 
-  if ('token' in proposal) {
+  if (isTokenBasedProposal(proposal)) {
     // token
     token = {
       name: proposal.token.name,
