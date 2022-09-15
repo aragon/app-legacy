@@ -1,3 +1,4 @@
+/* eslint-disable no-fallthrough */
 /**
  * This file contains helpers for mapping a proposal
  * to voting terminal properties. Doesn't exactly belong
@@ -6,17 +7,21 @@
  */
 
 import {AddressListProposal, Erc20Proposal} from '@aragon/sdk-client';
+import {ProposalStatus} from '@aragon/sdk-client/dist/internal/interfaces/common';
 import {
   AddressListProposalResult,
   Erc20ProposalResult,
   VoteValues,
 } from '@aragon/sdk-client/dist/internal/interfaces/plugins';
-import {VoterType} from '@aragon/ui-components';
+import {ProgressStatusProps, VoterType} from '@aragon/ui-components';
 import Big from 'big.js';
+import {format} from 'date-fns';
 import {BigNumber} from 'ethers';
 
 import {ProposalVoteResults} from 'containers/votingTerminal';
+import {DetailedProposal} from 'hooks/useDaoProposal';
 import {i18n} from '../../i18n.config';
+import {getFormattedUtcOffset, KNOWN_FORMATS} from './date';
 import {formatUnits} from './library';
 import {abbreviateTokenAmount} from './tokens';
 
@@ -25,6 +30,13 @@ const MappedVotes: {[key in VoteValues]: VoterType['option']} = {
   2: 'No',
   3: 'Abstain',
 };
+
+// this type guard will need to evolve when there are more types
+export function isTokenBasedProposal(
+  proposal: DetailedProposal
+): proposal is Erc20Proposal {
+  return 'token' in proposal;
+}
 
 /**
  * Get minimum approval summary for ERC20 voting proposal
@@ -239,5 +251,136 @@ export function getWhitelistResults(
         ((abstain / snapshotVotingPower) * 100).toFixed(2)
       ),
     },
+  };
+}
+
+/**
+ * Get proposal status steps
+ * @param status proposal status
+ * @param endDate proposal voting end date
+ * @param creationDate proposal creation date
+ * @param block block number
+ * @param executionDate proposal execution date
+ * @returns list of status steps based on proposal status
+ */
+export function getProposalStatusSteps(
+  status: ProposalStatus,
+  startDate: Date,
+  endDate: Date,
+  creationDate: Date,
+  block: string,
+  executionDate?: Date
+): Array<ProgressStatusProps> {
+  switch (status) {
+    case 'Active':
+      return [
+        {...getPublishedProposalStep(creationDate, block)},
+        {
+          label: 'Running',
+          mode: 'active',
+          date: `${format(
+            startDate,
+            KNOWN_FORMATS.proposals
+          )}  ${getFormattedUtcOffset()}`,
+        },
+      ];
+    case 'Defeated':
+      return [
+        ...getRunningProposalSteps(creationDate, startDate, block),
+        {
+          label: 'Rejected',
+          mode: 'failed',
+          date: `${format(
+            endDate,
+            KNOWN_FORMATS.proposals
+          )}  ${getFormattedUtcOffset()}`,
+        },
+      ];
+    case 'Succeeded':
+      return [
+        ...getSucceededProposalSteps(creationDate, startDate, endDate, block),
+        {label: 'Executed', mode: 'upcoming'},
+      ];
+
+    // TODO - Execution failed
+    case 'Executed':
+      if (executionDate)
+        return [
+          ...getSucceededProposalSteps(creationDate, startDate, endDate, block),
+          {
+            label: 'Executed',
+            mode: 'succeeded',
+            date: `${format(
+              executionDate,
+              KNOWN_FORMATS.proposals
+            )}  ${getFormattedUtcOffset()}`,
+          },
+        ];
+
+    // Pending by default
+    default:
+      return [
+        {...getPublishedProposalStep(creationDate, block)},
+        {
+          label: 'Running',
+          mode: 'upcoming',
+          date: `${format(
+            startDate,
+            KNOWN_FORMATS.proposals
+          )}  ${getFormattedUtcOffset()}`,
+        },
+      ];
+  }
+}
+
+function getSucceededProposalSteps(
+  creationDate: Date,
+  startDate: Date,
+  endDate: Date,
+  block: string
+): Array<ProgressStatusProps> {
+  return [
+    ...getRunningProposalSteps(creationDate, startDate, block),
+    {
+      label: 'Succeeded',
+      mode: 'done',
+      date: `${format(
+        endDate,
+        KNOWN_FORMATS.proposals
+      )}  ${getFormattedUtcOffset()}`,
+    },
+  ];
+}
+
+function getRunningProposalSteps(
+  creationDate: Date,
+  startDate: Date,
+  block: string
+): Array<ProgressStatusProps> {
+  return [
+    {...getPublishedProposalStep(creationDate, block)},
+    {
+      label: 'Running',
+      mode: 'done',
+      date: `${format(
+        startDate,
+        KNOWN_FORMATS.proposals
+      )}  ${getFormattedUtcOffset()}`,
+    },
+  ];
+}
+
+function getPublishedProposalStep(
+  creationDate: Date,
+  block: string
+): ProgressStatusProps {
+  return {
+    label: 'Published',
+    date: `${format(
+      creationDate,
+      KNOWN_FORMATS.proposals
+    )}  ${getFormattedUtcOffset()}`,
+    mode: 'done',
+    block,
   };
 }
