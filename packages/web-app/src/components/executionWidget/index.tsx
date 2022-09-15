@@ -21,7 +21,7 @@ export type ExecutionStatus =
 
 type ExecutionWidgetProps = {
   txhash?: string;
-  actions?: Array<Action | void>;
+  actions?: Array<Action | undefined>;
   status?: ExecutionStatus;
   onAddAction?: () => void;
 };
@@ -57,7 +57,7 @@ export const ExecutionWidget: React.FC<ExecutionWidgetProps> = ({
       ) : (
         <>
           <Content>
-            {actions?.map((action, index: number) => {
+            {actions.map((action, index: number) => {
               if (action)
                 return (
                   <ActionsFilter {...{action}} key={index} type={action.name} />

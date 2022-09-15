@@ -35,7 +35,6 @@ import {useClient} from 'hooks/useClient';
 import {useApolloClient} from '@apollo/client';
 import {ActionWithdraw} from 'utils/types';
 import {decodeWithdrawToAction} from 'utils/library';
-import {DaoAction} from '@aragon/sdk-client/dist/internal/interfaces/common';
 
 const PROPOSAL_TAGS = ['Finance', 'Withdraw'];
 
@@ -47,7 +46,7 @@ const Proposal: React.FC = () => {
   const {breadcrumbs, tag} = useMappedBreadcrumbs();
   const apolloClient = useApolloClient();
   const [decodedActions, setDecodedActions] =
-    useState<(ActionWithdraw | void)[]>();
+    useState<(ActionWithdraw | undefined)[]>();
   const {client} = useClient();
 
   const {set, get} = useCache();
@@ -86,37 +85,27 @@ const Proposal: React.FC = () => {
     }
   }, [editor, proposal]);
 
-  const findDecoder = useCallback(
-    (action: DaoAction) => {
-      const functionParams = client?.decoding.findInterface(action.data);
-      switch (functionParams?.functionName) {
-        case 'withdraw':
-          return decodeWithdrawToAction(
-            action.data,
-            client,
-            apolloClient,
-            network
-          );
-        default:
-          return {} as ActionWithdraw;
-      }
-    },
-    [apolloClient, client, network]
-  );
-
   useEffect(() => {
-    async function getProposalAction() {
-      if (proposal) {
-        const actionPromises = proposal.actions.map(action =>
-          findDecoder(action)
-        );
-        Promise.all(actionPromises).then(value => {
-          setDecodedActions(value);
-        });
-      }
+    if (proposal) {
+      const actionPromises = proposal.actions.map(action => {
+        const functionParams = client?.decoding.findInterface(action.data);
+        switch (functionParams?.functionName) {
+          case 'withdraw':
+            return decodeWithdrawToAction(
+              action.data,
+              client,
+              apolloClient,
+              network
+            );
+          default:
+            return Promise.resolve({} as ActionWithdraw);
+        }
+      });
+      Promise.all(actionPromises).then(value => {
+        setDecodedActions(value);
+      });
     }
-    getProposalAction();
-  }, [apolloClient, client, findDecoder, network, proposal, proposal?.actions]);
+  }, [apolloClient, client, network, proposal]);
 
   const executionStatus = useMemo(() => {
     switch (proposal?.status) {
