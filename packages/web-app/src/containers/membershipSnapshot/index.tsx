@@ -9,6 +9,7 @@ import {useTranslation} from 'react-i18next';
 import {generatePath, useNavigate} from 'react-router-dom';
 import styled from 'styled-components';
 
+import {MembersList} from 'components/membersList';
 import {Loading} from 'components/temporary';
 import {useNetwork} from 'context/network';
 import {useDaoMembers} from 'hooks/useDaoMembers';
@@ -18,13 +19,13 @@ import {
   ManageMembersProposal,
   MintTokensProposal,
 } from 'utils/paths';
-import {MembersList} from 'components/membersList';
+import {PluginTypes} from 'hooks/usePluginClient';
 
-type Props = {dao: string; walletBased: boolean; horizontal?: boolean};
+type Props = {dao: string; pluginType: PluginTypes; horizontal?: boolean};
 
 export const MembershipSnapshot: React.FC<Props> = ({
   dao,
-  walletBased,
+  pluginType,
   horizontal,
 }) => {
   const {t} = useTranslation();
@@ -33,9 +34,12 @@ export const MembershipSnapshot: React.FC<Props> = ({
   const {isDesktop} = useScreen();
 
   const {
-    data: {members, totalMembers, token},
+    data: {members},
     isLoading,
-  } = useDaoMembers(dao);
+  } = useDaoMembers(dao, pluginType);
+  const totalMemberCount = members.length;
+
+  const walletBased = pluginType === 'addresslistvoting.dao.eth';
 
   const headerButtonHandler = () => {
     walletBased
@@ -51,7 +55,7 @@ export const MembershipSnapshot: React.FC<Props> = ({
         <div className="w-1/3">
           <ListItemHeader
             icon={<IconCommunity />}
-            value={`${totalMembers} ${t('labels.members')}`}
+            value={`${totalMemberCount} ${t('labels.members')}`}
             label={
               walletBased
                 ? t('explore.explorer.walletBased')
@@ -66,7 +70,13 @@ export const MembershipSnapshot: React.FC<Props> = ({
         </div>
         <div className="space-y-2 w-2/3">
           <ListItemGrid>
-            <MembersList token={token} members={members} />
+            <MembersList
+              token={{
+                id: '0x35f7A3379B8D0613c3F753863edc85997D8D0968',
+                symbol: 'DTT',
+              }}
+              members={members}
+            />
           </ListItemGrid>
           <ButtonText
             mode="secondary"
@@ -84,7 +94,7 @@ export const MembershipSnapshot: React.FC<Props> = ({
     <VerticalContainer>
       <ListItemHeader
         icon={<IconCommunity />}
-        value={`${totalMembers} ${t('labels.members')}`}
+        value={`${totalMemberCount} ${t('labels.members')}`}
         label={
           walletBased
             ? t('explore.explorer.walletBased')
@@ -96,7 +106,13 @@ export const MembershipSnapshot: React.FC<Props> = ({
         orientation="vertical"
         onClick={headerButtonHandler}
       />
-      <MembersList token={token} members={members.slice(0, 3)} />
+      <MembersList
+        token={{
+          id: '0x35f7A3379B8D0613c3F753863edc85997D8D0968',
+          symbol: 'DTT',
+        }}
+        members={members.slice(0, 3)}
+      />
       <ButtonText
         mode="secondary"
         size="large"

@@ -52,7 +52,7 @@ export const useDaoProposal = (
     getEncodedAction();
   }, [globalClient?.encoding]);
 
-  const client = usePluginClient(type, pluginAddress);
+  const client = usePluginClient(pluginAddress, type);
 
   useEffect(() => {
     async function getDaoProposal() {

@@ -561,7 +561,7 @@
     "token": "Token",
     "inputPlaceholder": "Type Address, ENS or E-Mail",
     "options": "Options",
-    "yes+no": "Yes + Abstain + No",
+    "yes+no": "Yes, No, or Abstain",
     "strategy": "Strategy",
     "tokenVoting": "1 Token -> 1 Vote",
     "multisig": "1 Wallet -> 1 Vote",
@@ -571,6 +571,7 @@
     "duration": "Duration",
     "start": "Start",
     "end": "End",
+    "participationErc20": "{{participation}} of {{totalWeight}} {{tokenSymbol}} ({{percentage}}%)",
     "chooseOption": "Choose your option",
     "chooseOptionHelptext": "To vote, you must select one of the following options. Afterwards, a confirmation with your wallet is necessary. Once the transaction is completed, your vote will be counted and displayed.",
     "submit": "Submit your vote",
@@ -579,11 +580,12 @@
       "draft": "Publish to enable voting.",
       "pending": "Voting begins in {{startDate}}",
       "succeeded": "Proposal has passed",
+      "executed": "Proposal has been accepted",
       "defeated": "Proposal has been defeated",
-      "active": "Voting concludes in {{endDate}}",
+      "active": "Voting ends in {{endDate}}",
       "ineligibleWhitelist": "You had to be a member before the proposal was created to be able to vote",
       "ineligibleTokenBased": "You had to hold {{token}} when proposal was created to be able to vote",
-      "voted": "You have already voted."
+      "voteSubmitted": "Vote submitted"
     },
     "voteNow": "Vote now",
     "emptyState": {

@@ -12,7 +12,7 @@ import {withTransaction} from '@elastic/apm-rum-react';
 import TipTapLink from '@tiptap/extension-link';
 import {useEditor} from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
-import React, {useEffect, useState, useMemo} from 'react';
+import React, {useEffect, useMemo, useRef, useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {generatePath, useNavigate, useParams} from 'react-router-dom';
 import styled from 'styled-components';
@@ -20,27 +20,44 @@ import styled from 'styled-components';
 import ResourceList from 'components/resourceList';
 import {Loading} from 'components/temporary';
 import {StyledEditorContent} from 'containers/reviewProposal';
+import {VotingTerminal} from 'containers/votingTerminal';
+import {useGlobalModalContext} from 'context/globalModals';
 import {useNetwork} from 'context/network';
+import format from 'date-fns/format';
+import formatDistance from 'date-fns/formatDistance';
 import {useCache} from 'hooks/useCache';
 import {useDaoDetails} from 'hooks/useDaoDetails';
 import {useDaoParam} from 'hooks/useDaoParam';
-import {useDaoProposal} from 'hooks/useDaoProposal';
+import {DetailedProposal, useDaoProposal} from 'hooks/useDaoProposal';
 import {useMappedBreadcrumbs} from 'hooks/useMappedBreadcrumbs';
 import {PluginTypes} from 'hooks/usePluginClient';
 import useScreen from 'hooks/useScreen';
 import {useWallet} from 'hooks/useWallet';
 import {CHAIN_METADATA} from 'utils/constants';
+import {getFormattedUtcOffset, KNOWN_FORMATS} from 'utils/date';
+import {
+  getErc20MinimumApproval,
+  getErc20Results,
+  getErc20VotersAndParticipation,
+  getWhitelistMinimumApproval,
+  getWhitelistResults,
+  getWhitelistVoterParticipation,
+} from 'utils/proposals';
+import {i18n} from '../../i18n.config';
 import {ExecutionWidget} from 'components/executionWidget';
 import {useClient} from 'hooks/useClient';
 import {useApolloClient} from '@apollo/client';
 import {ActionWithdraw} from 'utils/types';
 import {decodeWithdrawToAction} from 'utils/library';
 
+// TODO: @Sepehr Please assign proper tags on action decoding
 const PROPOSAL_TAGS = ['Finance', 'Withdraw'];
+const TEMP_VOTING_POWER = 1600;
 
 const Proposal: React.FC = () => {
   const {t} = useTranslation();
   const {id} = useParams();
+  const {open} = useGlobalModalContext();
   const navigate = useNavigate();
   const {isDesktop} = useScreen();
   const {breadcrumbs, tag} = useMappedBreadcrumbs();
@@ -52,7 +69,7 @@ const Proposal: React.FC = () => {
   const {set, get} = useCache();
 
   const {network} = useNetwork();
-  const {address} = useWallet();
+  const {address, isConnected, isOnWrongNetwork} = useWallet();
 
   const {data: daoId, loading: paramIsLoading} = useDaoParam();
   const {data: daoDetails, isLoading: detailsAreLoading} = useDaoDetails(
@@ -64,7 +81,17 @@ const Proposal: React.FC = () => {
     daoDetails?.plugins[0].id as PluginTypes
   );
 
+  // ref used to hold "memories" of previous "state"
+  // across renders in order to automate the following states:
+  // loggedOut -> login modal => switch network modal -> vote options selection;
+  const statusRef = useRef({wasNotLoggedIn: false, wasOnWrongNetwork: false});
+
+  // voting
+  const [votingInProcess, setVotingInProcess] = useState(false);
   const [expandedProposal, setExpandedProposal] = useState(false);
+
+  // TODO: please replace this with proper logic from voting gating
+  const canVote = useState(true);
 
   const editor = useEditor({
     editable: false,
@@ -81,7 +108,7 @@ const Proposal: React.FC = () => {
    *************************************************/
   useEffect(() => {
     if (proposal && editor) {
-      editor.commands.setContent(proposal.metadata.description, false);
+      editor.commands.setContent(proposal.metadata.description, true);
     }
   }, [editor, proposal]);
 
@@ -129,6 +156,141 @@ const Proposal: React.FC = () => {
     if (proposal && proposal.status !== get('proposalStatus'))
       set('proposalStatus', proposal.status);
   }, [get, proposal, set]);
+
+  useEffect(() => {
+    // was not logged in but now logged in
+    if (statusRef.current.wasNotLoggedIn && isConnected) {
+      if (isOnWrongNetwork) {
+        open('network');
+      }
+
+      // logged out is technically on wrong network
+      statusRef.current.wasOnWrongNetwork = true;
+
+      // reset reference
+      statusRef.current.wasNotLoggedIn = false;
+    }
+  }, [isConnected, canVote, isOnWrongNetwork, open]);
+
+  useEffect(() => {
+    // wrong network, no wallet -> no options
+    if (isOnWrongNetwork || !address || !canVote) setVotingInProcess(false);
+
+    // was on wrong network but now on correct network
+    if (statusRef.current.wasOnWrongNetwork && !isOnWrongNetwork) {
+      if (canVote) setVotingInProcess(true);
+
+      // reset "state"
+      statusRef.current.wasOnWrongNetwork = false;
+    }
+  }, [address, canVote, isOnWrongNetwork]);
+
+  // whether current user has voted
+  const voted = useMemo(() => {
+    return address && proposal?.votes.some(voter => voter.address === address)
+      ? true
+      : false;
+  }, [address, proposal?.votes]);
+
+  // vote button and status
+  const [voteStatus, buttonLabel] = useMemo(() => {
+    let voteStatus = '';
+    let voteButtonLabel = '';
+
+    if (!proposal?.status || !proposal?.endDate || !proposal?.startDate)
+      return [voteStatus, voteButtonLabel];
+
+    switch (proposal.status) {
+      case 'Pending':
+        voteStatus = t('votingTerminal.status.pending', {
+          startDate: formatDistance(new Date(proposal.startDate), new Date()),
+        });
+        break;
+      case 'Succeeded':
+        voteStatus = t('votingTerminal.status.succeeded');
+        voteButtonLabel = t('votingTerminal.status.voteSubmitted');
+
+        break;
+      case 'Executed':
+        voteStatus = t('votingTerminal.status.executed');
+        voteButtonLabel = t('votingTerminal.status.voteSubmitted');
+        break;
+      case 'Defeated':
+        voteStatus = t('votingTerminal.status.defeated');
+        voteButtonLabel = t('votingTerminal.status.voteSubmitted');
+
+        break;
+      case 'Active':
+        voteStatus = t('votingTerminal.status.active', {
+          endDate: formatDistance(new Date(), new Date(proposal.endDate)),
+        });
+
+        // haven't voted
+        voteButtonLabel = voted
+          ? t('votingTerminal.status.voteSubmitted')
+          : t('votingTerminal.voteNow');
+        break;
+    }
+    return [voteStatus, voteButtonLabel];
+  }, [proposal?.endDate, proposal?.startDate, proposal?.status, t, voted]);
+
+  // vote button state and handler
+  const {voteNowDisabled, onClick} = useMemo(() => {
+    if (proposal?.status !== 'Active') return {voteNowDisabled: true};
+
+    // not logged in
+    if (!address) {
+      return {
+        voteNowDisabled: false,
+        onClick: () => {
+          open('wallet');
+          statusRef.current.wasNotLoggedIn = true;
+        },
+      };
+    }
+
+    // wrong network
+    else if (address && isOnWrongNetwork) {
+      return {
+        voteNowDisabled: false,
+        onClick: () => {
+          open('network');
+          statusRef.current.wasOnWrongNetwork = true;
+        },
+      };
+    }
+
+    // member, not yet voted
+    else if (address && !isOnWrongNetwork && canVote) {
+      return {
+        voteNowDisabled: false,
+        onClick: () => setVotingInProcess(true),
+      };
+    } else return {voteNowDisabled: true};
+  }, [address, canVote, isOnWrongNetwork, open, proposal?.status]);
+
+  // alert message, only shown when not eligible to vote
+  const alertMessage = useMemo(() => {
+    if (
+      proposal &&
+      proposal.status === 'Active' &&
+      address &&
+      !isOnWrongNetwork &&
+      !canVote
+    ) {
+      // presence of token delineates token voting proposal
+      // people add types to these things!!
+      return 'token' in proposal
+        ? t('votingTerminal.status.ineligibleTokenBased', {
+            token: proposal.token.name,
+          })
+        : t('votingTerminal.status.ineligibleWhitelist');
+    }
+  }, [address, canVote, isOnWrongNetwork, proposal, t]);
+
+  const terminalPropsFromProposal = useMemo(() => {
+    if (proposal) return getTerminalProps(proposal);
+  }, [proposal]);
 
   /*************************************************
    *                     Render                    *
@@ -182,6 +344,7 @@ const Proposal: React.FC = () => {
           />
         )}
       </HeaderContainer>
+
       <ContentContainer expandedProposal={expandedProposal}>
         <ProposalContainer>
           {expandedProposal && (
@@ -196,8 +359,19 @@ const Proposal: React.FC = () => {
               />
             </>
           )}
-          {/* TODO: Fill out voting terminal props*/}
-          {/* <VotingTerminal /> */}
+
+          {proposal && (
+            <VotingTerminal
+              statusLabel={voteStatus}
+              alertMessage={alertMessage}
+              onVoteClicked={onClick}
+              onCancelClicked={() => setVotingInProcess(false)}
+              voteButtonLabel={buttonLabel}
+              voteNowDisabled={voteNowDisabled}
+              votingInProcess={votingInProcess}
+              {...terminalPropsFromProposal}
+            />
+          )}
 
           <ExecutionWidget actions={decodedActions} status={executionStatus} />
         </ProposalContainer>
@@ -260,3 +434,97 @@ const ContentContainer = styled.div.attrs(
     } mt-3 tablet:flex tablet:space-x-3 space-y-3 tablet:space-y-0`,
   })
 )<ContentContainerProps>``;
+
+// get terminal props from proposal
+function getTerminalProps(proposal: DetailedProposal) {
+  let token;
+  let voters;
+  let participation;
+  let results;
+  let approval;
+  let strategy;
+
+  if ('token' in proposal) {
+    // token
+    token = {
+      name: proposal.token.name,
+      symbol: proposal.token.symbol,
+    };
+
+    // voters
+    const ptcResults = getErc20VotersAndParticipation(
+      proposal.votes,
+      proposal.token,
+      proposal.usedVotingWeight
+    );
+    voters = ptcResults.voters;
+
+    // participation summary
+    participation = ptcResults.summary;
+
+    // results
+    results = getErc20Results(
+      proposal.result,
+      proposal.token.decimals,
+      proposal.usedVotingWeight
+    );
+
+    // min approval
+    approval = getErc20MinimumApproval(
+      proposal.settings.minSupport,
+      proposal.usedVotingWeight,
+      proposal.token
+    );
+
+    // strategy
+    strategy = i18n.t('votingTerminal.tokenVoting');
+  } else {
+    // voters
+    const ptcResults = getWhitelistVoterParticipation(
+      proposal.votes,
+      // TODO: add proposal.votingPower when on SDK,
+      TEMP_VOTING_POWER
+    );
+    voters = ptcResults.voters;
+
+    // participation summary
+    participation = ptcResults.summary;
+
+    // results
+    results = getWhitelistResults(
+      proposal.result,
+      // TODO: add proposal.votingPower when on SDK,
+      TEMP_VOTING_POWER
+    );
+
+    // approval
+    approval = getWhitelistMinimumApproval(
+      proposal.settings.minSupport,
+      // TODO: add proposal.votingPower when on SDK,
+      TEMP_VOTING_POWER
+    );
+
+    // strategy
+    strategy = i18n.t('votingTerminal.multisig');
+  }
+
+  return {
+    token,
+    status: proposal.status,
+    voters,
+    results,
+    approval,
+    strategy,
+    participation,
+
+    startDate: `${format(
+      proposal.startDate,
+      KNOWN_FORMATS.proposals
+    )}  ${getFormattedUtcOffset()}`,
+
+    endDate: `${format(
+      proposal.endDate,
+      KNOWN_FORMATS.proposals
+    )}  ${getFormattedUtcOffset()}`,
+  };
+}

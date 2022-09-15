@@ -1,28 +1,37 @@
 import {
-  HeaderPage,
-  SearchInput,
   AlertInline,
+  HeaderPage,
   Pagination,
+  SearchInput,
   StateEmpty,
 } from '@aragon/ui-components';
-import styled from 'styled-components';
-import {useTranslation} from 'react-i18next';
-import React, {useState} from 'react';
 import {withTransaction} from '@elastic/apm-rum-react';
+import React, {useState} from 'react';
+import {useTranslation} from 'react-i18next';
+import {useNavigate} from 'react-router-dom';
+import styled from 'styled-components';
 
+import {MembersList} from 'components/membersList';
 import {Loading} from 'components/temporary';
 import {useNetwork} from 'context/network';
-import {MembersList} from 'components/membersList';
-import {useDaoParam} from 'hooks/useDaoParam';
+import {useDaoDetails} from 'hooks/useDaoDetails';
 import {useDaoMembers} from 'hooks/useDaoMembers';
-import {useDaoMetadata} from 'hooks/useDaoMetadata';
-import {CHAIN_METADATA} from 'utils/constants';
+import {useDaoParam} from 'hooks/useDaoParam';
 import {useDebouncedState} from 'hooks/useDebouncedState';
 import {useMappedBreadcrumbs} from 'hooks/useMappedBreadcrumbs';
+import {PluginTypes} from 'hooks/usePluginClient';
+import {CHAIN_METADATA} from 'utils/constants';
+
+// NOTE: Temporarily mocking token information, as SDK does not yet expose this.
+const token = {
+  id: '0x35f7A3379B8D0613c3F753863edc85997D8D0968',
+  symbol: 'DTT',
+};
 
 // The number of members displayed on each page
-const MEMBERS_PER_PAGE = 10;
-import {useNavigate} from 'react-router-dom';
+// TODO: 2 is currently set for QA purposes. Change back to 10 once live data
+// comes in or once the SDK returns more addresses.
+const MEMBERS_PER_PAGE = 2;
 
 const Community: React.FC = () => {
   const {t} = useTranslation();
@@ -32,17 +41,28 @@ const Community: React.FC = () => {
   const {breadcrumbs, icon, tag} = useMappedBreadcrumbs();
 
   const {data: daoId} = useDaoParam();
-  const {data: dao, loading: metadataLoading} = useDaoMetadata(daoId);
+  const {data: daoDetails, isLoading: detailsAreLoading} = useDaoDetails(
+    daoId!
+  );
 
   const [page, setPage] = useState(1);
   const [debouncedTerm, searchTerm, setSearchTerm] = useDebouncedState('');
 
   const {
-    data: {members, totalMembers, token},
+    data: {members, filteredMembers},
     isLoading: membersLoading,
-  } = useDaoMembers(daoId, debouncedTerm.toLowerCase());
+  } = useDaoMembers(
+    daoId,
+    daoDetails?.plugins[0].id as PluginTypes,
+    debouncedTerm
+  );
 
-  const walletBased = dao?.packages[0].pkg.__typename === 'WhitelistPackage';
+  const totalMemberCount = members.length;
+  const filteredMemberCount = filteredMembers.length;
+  const displayedMembers = filteredMemberCount > 0 ? filteredMembers : members;
+
+  const walletBased =
+    (daoDetails?.plugins[0].id as PluginTypes) === 'addresslistvoting.dao.eth';
 
   /*************************************************
    *                    Handlers                   *
@@ -69,7 +89,7 @@ const Community: React.FC = () => {
   /*************************************************
    *                     Render                    *
    *************************************************/
-  if (metadataLoading) return <Loading />;
+  if (detailsAreLoading || membersLoading) return <Loading />;
 
   return (
     <>
@@ -78,7 +98,7 @@ const Community: React.FC = () => {
           tag={tag}
           icon={icon}
           crumbs={breadcrumbs}
-          title={`${totalMembers} ${t('labels.members')}`}
+          title={`${totalMemberCount} ${t('labels.members')}`}
           onClick={handlePrimaryClick}
           {...(walletBased
             ? {
@@ -113,7 +133,7 @@ const Community: React.FC = () => {
             <Loading />
           ) : (
             <>
-              {debouncedTerm !== '' && members.length === 0 ? (
+              {debouncedTerm !== '' && !filteredMemberCount ? (
                 <StateEmpty
                   type="Object"
                   mode="inline"
@@ -125,12 +145,18 @@ const Community: React.FC = () => {
                 <>
                   {debouncedTerm !== '' && !membersLoading && (
                     <ResultsCountLabel>
-                      {members.length === 1
+                      {filteredMemberCount === 1
                         ? t('labels.result')
-                        : t('labels.nResults', {count: members.length})}
+                        : t('labels.nResults', {count: filteredMemberCount})}
                     </ResultsCountLabel>
                   )}
-                  <MembersList token={token} members={members} />
+                  <MembersList
+                    token={token}
+                    members={displayedMembers.slice(
+                      (page - 1) * MEMBERS_PER_PAGE,
+                      page * MEMBERS_PER_PAGE
+                    )}
+                  />
                 </>
               )}
             </>
@@ -139,10 +165,12 @@ const Community: React.FC = () => {
 
         {/* Pagination */}
         <PaginationWrapper>
-          {(members.length || 0) > MEMBERS_PER_PAGE && (
+          {(displayedMembers.length || 0) > MEMBERS_PER_PAGE && (
             <Pagination
               totalPages={
-                Math.ceil((members.length || 0) / MEMBERS_PER_PAGE) as number
+                Math.ceil(
+                  (displayedMembers.length || 0) / MEMBERS_PER_PAGE
+                ) as number
               }
               activePage={page}
               onChange={(activePage: number) => {
@@ -174,7 +202,7 @@ const ResultsCountLabel = styled.p.attrs({
 })``;
 
 const PaginationWrapper = styled.div.attrs({
-  className: 'flex',
+  className: 'flex mt-8',
 })``;
 
 const InputWrapper = styled.div.attrs({

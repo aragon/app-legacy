@@ -2,11 +2,17 @@ import {BigNumber} from 'ethers';
 import {useEffect, useState} from 'react';
 
 import {useNetwork} from 'context/network';
-import {fetchBalance} from 'utils/tokens';
-import {CHAIN_METADATA} from 'utils/constants';
 import {useSpecificProvider} from 'context/providers';
-import {isWhitelistMember, useDaoMembers} from './useDaoMembers';
+import {CHAIN_METADATA} from 'utils/constants';
+import {fetchBalance} from 'utils/tokens';
 import {HookData} from 'utils/types';
+import {isWalletListMember, useDaoMembers} from './useDaoMembers';
+
+// NOTE: Temporarily mocking token information, as SDK does not yet expose this.
+const token = {
+  id: '0x35f7A3379B8D0613c3F753863edc85997D8D0968',
+  symbol: 'DTT',
+};
 
 // Hook to determine if connected address is eligible to vote on proposals of the current
 // DAO. Note that for ERC20, voting member is anyone holding the token
@@ -20,7 +26,10 @@ export const useWalletCanVote = (
 
   const provider = useSpecificProvider(CHAIN_METADATA[network].id);
 
-  const {data, isLoading, error} = useDaoMembers(dao, address);
+  const {data, isLoading, error} = useDaoMembers(
+    dao,
+    'addresslistvoting.dao.eth'
+  );
   const [canVote, setCanVote] = useState(false);
 
   useEffect(() => {
@@ -29,16 +38,16 @@ export const useWalletCanVote = (
 
       if (address && searchResult) {
         // Whitelist member
-        if (isWhitelistMember(searchResult)) {
-          setCanVote(searchResult.id === address);
+        if (isWalletListMember(searchResult)) {
+          setCanVote(searchResult.address === address);
           return;
         }
 
         // fetch token balance for the address
         // FIXME: this is temporary until we have proper member eligibility for ERC20
-        if (data?.token?.id) {
+        if (token?.id) {
           const balance = await fetchBalance(
-            data.token.id,
+            token.id,
             address,
             provider,
             CHAIN_METADATA[network].nativeCurrency,

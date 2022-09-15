@@ -1,115 +1,137 @@
-import {useQuery} from '@apollo/client';
-import {useEffect, useMemo, useState} from 'react';
+import {useEffect, useState} from 'react';
 
-import {client} from 'context/apolloClient';
-import {useNetwork} from 'context/network';
-import {DAO_MEMBERS} from 'queries/dao';
-import {TokenBalance, HookData} from 'utils/types';
+import {HookData} from 'utils/types';
+import {PluginTypes, usePluginClient} from './usePluginClient';
 
-// NOTE: Previously two hooks were used to fetch, but now merging.
-// TODO: remove static token holder data, subgraph will have a
-// members list as well for token based DAOs.
-export type DaoWhitelist = {
-  id: string;
+export type WalletMember = {
+  address: string;
 };
 
-export type DaoTokenBased = {
-  address: string;
+export type BalanceMember = WalletMember & {
   balance: number;
 };
 
 export type DaoMembers = {
-  members: Array<DaoWhitelist | DaoTokenBased>;
-  token?: TokenBalance['token'];
-  totalMembers: number;
+  members: WalletMember[] | BalanceMember[];
+  filteredMembers: WalletMember[] | BalanceMember[];
 };
 
 // this type guard will need to evolve when there are more types
-export function isWhitelistMember(
-  member: DaoTokenBased | DaoWhitelist
-): member is DaoWhitelist {
-  return Object.prototype.hasOwnProperty.call(member, 'id');
+export function isWalletListMember(
+  member: BalanceMember | WalletMember
+): member is WalletMember {
+  return !('address' in member);
+}
+
+export function isBalanceMember(
+  member: BalanceMember | WalletMember
+): member is BalanceMember {
+  return 'balance' in member;
 }
 
 /**
  * Hook to fetch DAO members. Fetches token if DAO is token based, and allows
- * for a search term to be passed in to filter the members list.
- * NOTE: the totalMembers included in the response is the total number of members in the DAO,
- * and not the number of members returned when filtering by search term.
- * @param id DAO id
+ * for a search term to be passed in to filter the members list. NOTE: the
+ * totalMembers included in the response is the total number of members in the
+ * DAO, and not the number of members returned when filtering by search term.
+ *
+ * @param pluginAddress plugin from which members will be retrieved
+ * @param pluginType plugin type
  * @param searchTerm Optional member search term  (e.g. '0x...')
  * @returns A list of DAO members and the total number of members in the DAO
  */
 export const useDaoMembers = (
-  id: string,
+  pluginAddress: string,
+  pluginType?: PluginTypes,
   searchTerm?: string
 ): HookData<DaoMembers> => {
-  const {network} = useNetwork();
-  const [totalMemberCount, setTotalMemberCount] = useState<number | null>(null);
+  const [data, setData] = useState<BalanceMember[] | WalletMember[]>([]);
+  const [filteredData, setFilteredData] = useState<
+    BalanceMember[] | WalletMember[]
+  >([]);
+  const [error, setError] = useState<Error>();
+  const [isLoading, setIsLoading] = useState(false);
 
-  const {
-    data,
-    error,
-    loading: isLoading,
-  } = useQuery(DAO_MEMBERS, {
-    client: client[network],
-    fetchPolicy: 'no-cache',
-    variables: {
-      id,
-      ...(searchTerm ? {filter: {id: searchTerm}} : {}),
-    },
-  });
+  const client = usePluginClient(pluginAddress, pluginType);
 
-  const walletBased =
-    data?.dao?.packages[0].pkg.__typename === 'WhitelistPackage';
-
-  /*************************************************
-   *                Hooks & handlers               *
-   *************************************************/
-  // TODO: need to remove later, the sort will be handled within the query
-  const sortTokenMembers = (a: DaoTokenBased, b: DaoTokenBased) =>
-    b.balance - a.balance;
-
-  const members = useMemo(() => {
-    // TODO: Fetch token holders addresses and the balance for each address
-    if (data) {
-      return walletBased
-        ? data?.dao.packages[0].pkg.users
-        : MOCK_ADDRESSES.filter(() => Math.random() > 0.4)
-            .map(member => {
-              return {
-                address: member,
-                balance: Math.floor(Math.random() * 500 + 1),
-              };
-            })
-            .sort(sortTokenMembers);
-    } else return [];
-  }, [data, walletBased]);
-
-  // when search term is passed in, only set total on the first time,
-  // i.e. when totalMemberCount is null
+  // Fetch the list of members for a this DAO.
   useEffect(() => {
-    if (data && totalMemberCount === null) {
-      setTotalMemberCount(members.length);
+    async function fetchMembers() {
+      try {
+        setIsLoading(true);
+
+        if (!pluginType) {
+          setData([] as BalanceMember[] | WalletMember[]);
+          return;
+        }
+        const rawMembers = await client?.methods.getMembers(pluginAddress);
+
+        if (!rawMembers) {
+          setData([] as BalanceMember[] | WalletMember[]);
+          return;
+        }
+
+        const members =
+          pluginType === 'erc20voting.dao.eth'
+            ? // TODO as soon as the SDK exposes Token information, fetch balances
+              // from contract.
+              rawMembers.map(m => {
+                return {
+                  address: m,
+                  balance: Math.floor(Math.random() * 500 + 1),
+                } as BalanceMember;
+              })
+            : rawMembers.map(m => {
+                return {
+                  address: m,
+                } as WalletMember;
+              });
+        members.sort(sortMembers);
+        setData(members);
+        setError(undefined);
+      } catch (err) {
+        console.error(err);
+        setError(err as Error);
+      } finally {
+        setIsLoading(false);
+      }
     }
-  }, [data, members.length, totalMemberCount]);
+
+    fetchMembers();
+  }, [client?.methods, pluginAddress, pluginType]);
+
+  useEffect(() => {
+    if (!searchTerm) {
+      setFilteredData([]);
+    } else {
+      const filtered =
+        pluginType === 'erc20voting.dao.eth'
+          ? (data as BalanceMember[]).filter(d =>
+              d.address.includes(searchTerm)
+            )
+          : (data as WalletMember[]).filter(d =>
+              d.address.includes(searchTerm)
+            );
+      setFilteredData(filtered);
+    }
+  }, [data, pluginType, searchTerm]);
 
   return {
     data: {
-      members,
-      token: data?.dao.token,
-      totalMembers: totalMemberCount || 0,
+      members: data,
+      filteredMembers: filteredData,
     },
     isLoading,
     error,
   };
 };
 
-const MOCK_ADDRESSES = [
-  '0x8367dc645e31321CeF3EeD91a10a5b7077e21f70',
-  '0xDA9dfA130Df4dE4673b89022EE50ff26f6EA73Cf',
-  '0xBE0eB53F46cd790Cd13851d5EFf43D12404d33E8',
-  'cool.eth',
-  'sio.eth',
-  'beer.eth',
-];
+function sortMembers<T extends BalanceMember | WalletMember>(a: T, b: T) {
+  if (isBalanceMember(a)) {
+    if (a.balance === (b as BalanceMember).balance) return 0;
+    return a.balance > (b as BalanceMember).balance ? 1 : -1;
+  } else {
+    if (a.address === (b as WalletMember).address) return 0;
+    return a.address > (b as WalletMember).address ? 1 : -1;
+  }
+}

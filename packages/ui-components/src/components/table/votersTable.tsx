@@ -10,8 +10,8 @@ import {shortenAddress} from '../../utils/addresses';
 export type VoterType = {
   wallet: string;
   option: 'Yes' | 'Abstain' | 'No';
-  votingPower: string;
-  tokenAmount: string;
+  votingPower?: string;
+  tokenAmount?: string;
 };
 
 export type VotersTableProps = {
