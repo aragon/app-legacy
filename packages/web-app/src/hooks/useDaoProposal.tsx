@@ -11,6 +11,7 @@ import {HookData} from 'utils/types';
 import {useClient} from './useClient';
 import {PluginTypes, usePluginClient} from './usePluginClient';
 import {DaoAction} from '@aragon/sdk-client/dist/internal/interfaces/common';
+import {constants} from 'ethers';
 
 export type DetailedProposal = Erc20Proposal | AddressListProposal;
 
@@ -42,7 +43,7 @@ export const useDaoProposal = (
         {
           recipientAddress: '0x1234567890123456789012345678901234567890',
           amount: BigInt(10),
-          tokenAddress: '0xa1cba00d6e99f52b8cb5f867a6f2db0f3ad62276',
+          tokenAddress: constants.AddressZero,
           reference: 'test',
         }
       );
