@@ -17,6 +17,7 @@ export const WidgetStatus: React.FC<WidgetStatusProps> = ({steps}) => {
   return (
     <Card data-testid="widgetStatus">
       <Header>Status</Header>
+
       {steps.length > 0 ? (
         steps.map(s => {
           return <ProgressStatus key={s.label + s.mode} {...s} />;
@@ -29,9 +30,11 @@ export const WidgetStatus: React.FC<WidgetStatusProps> = ({steps}) => {
 };
 
 const Card = styled.div.attrs(() => {
-  const baseClasses = 'bg-ui-0 rounded-xl pt-3 pb-4 space-y-3';
+  const baseClasses = 'bg-ui-0 rounded-xl pt-3 pb-4 space-y-2';
   const bpClasses = ' px-2  tablet:px-3';
   return {className: baseClasses + bpClasses};
 })``;
 
-const Header = styled.p.attrs({className: 'font-bold ft-text-xl'})``;
+const Header = styled.p.attrs({
+  className: 'font-bold ft-text-xl text-ui-800',
+})``;
