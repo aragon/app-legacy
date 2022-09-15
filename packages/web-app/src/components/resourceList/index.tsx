@@ -52,6 +52,6 @@ export default ResourceList;
 
 const Container = styled.div.attrs({className: 'p-3 bg-ui-0 rounded-xl'})``;
 
-const Title = styled.p.attrs({className: 'text-lg font-bold text-ui-800'})``;
+const Title = styled.p.attrs({className: 'ft-text-xl font-bold text-ui-800'})``;
 
 const ListItemContainer = styled.div.attrs({className: 'mt-3 space-y-2'})``;
