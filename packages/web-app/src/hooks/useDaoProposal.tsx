@@ -28,7 +28,7 @@ export const useDaoProposal = (
   const [error, setError] = useState<Error>();
   const [isLoading, setIsLoading] = useState(false);
 
-  const client = usePluginClient(type, pluginAddress);
+  const client = usePluginClient(pluginAddress, type);
 
   useEffect(() => {
     async function getDaoProposal() {
