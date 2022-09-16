@@ -81,15 +81,15 @@ const EditSettings: React.FC = () => {
   });
 
   const setCurrentMetadata = useCallback(() => {
-    setValue('daoName', daoDetails?.ensDomain);
+    setValue('daoName', daoDetails?.metadata.name);
     setValue('daoSummary', daoDetails?.metadata.description);
     setValue('daoLogo', daoDetails?.metadata.avatar);
     setValue('links', daoDetails?.metadata.links);
   }, [
-    daoDetails?.ensDomain,
     daoDetails?.metadata.avatar,
     daoDetails?.metadata.description,
     daoDetails?.metadata.links,
+    daoDetails?.metadata.name,
     setValue,
   ]);
 
