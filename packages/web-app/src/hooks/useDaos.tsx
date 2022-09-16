@@ -52,9 +52,6 @@ export function useDaos(useCase: ExploreFilter): HookData<DaoDetails[]> {
     } finally {
       setLoading(false);
     }
-
-    try {
-    } catch (error) {}
   }, [client?.methods, useCase]);
 
   return {data, isLoading: loading, error};

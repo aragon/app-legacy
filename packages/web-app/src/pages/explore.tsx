@@ -23,7 +23,7 @@ const Explore: React.FC = () => {
           <Carousel />
           <StatisticsContainer>
             {statistics.map((s: Stats) => (
-              <Statistic>
+              <Statistic key={s.statKey}>
                 <StatisticValue>{s.statValue}</StatisticValue>
                 <StatisticKey>{s.statKey}</StatisticKey>
               </Statistic>
