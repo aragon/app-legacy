@@ -1,6 +1,3 @@
-import React, {useState, useEffect, useCallback} from 'react';
-import {withTransaction} from '@elastic/apm-rum-react';
-import {useTranslation} from 'react-i18next';
 import {
   AlertInline,
   Breadcrumb,
@@ -8,39 +5,54 @@ import {
   IconGovernance,
   Wizard,
 } from '@aragon/ui-components';
-import styled from 'styled-components';
+import {withTransaction} from '@elastic/apm-rum-react';
+import React, {useCallback, useEffect, useMemo, useState} from 'react';
+import {useTranslation} from 'react-i18next';
 import {
   generatePath,
-  useParams,
-  useNavigate,
   Link as RouterLink,
+  useNavigate,
+  useParams,
 } from 'react-router-dom';
+import styled from 'styled-components';
 
-import DefineMetadata from 'containers/defineMetadata';
-import ConfigureCommunity from 'containers/configureCommunity';
-import {useMappedBreadcrumbs} from 'hooks/useMappedBreadcrumbs';
-import useScreen from 'hooks/useScreen';
-import {useDaoParam} from 'hooks/useDaoParam';
-import {useDaoDetails} from 'hooks/useDaoDetails';
-import {usePluginSettings} from 'hooks/usePluginSettings';
 import {Loading} from 'components/temporary';
-import {ProposeNewSettings} from 'utils/paths';
+import ConfigureCommunity from 'containers/configureCommunity';
+import DefineMetadata from 'containers/defineMetadata';
 import {useNetwork} from 'context/network';
+import {useDaoDetails} from 'hooks/useDaoDetails';
+import {useDaoParam} from 'hooks/useDaoParam';
+import {useMappedBreadcrumbs} from 'hooks/useMappedBreadcrumbs';
 import {PluginTypes} from 'hooks/usePluginClient';
-import {useFormContext, useWatch} from 'react-hook-form';
+import {usePluginSettings} from 'hooks/usePluginSettings';
+import useScreen from 'hooks/useScreen';
+import {
+  useFieldArray,
+  useFormContext,
+  useFormState,
+  useWatch,
+} from 'react-hook-form';
 import {getDHMFromSeconds} from 'utils/date';
+import {ProposeNewSettings} from 'utils/paths';
 
 const EditSettings: React.FC = () => {
   const [currentMenu, setCurrentMenu] = useState<'metadata' | 'governance'>(
     'metadata'
   );
   const {t} = useTranslation();
-  const navigate = useNavigate();
-  const {isMobile} = useScreen();
-  const {network} = useNetwork();
   const {dao} = useParams();
-  const {setValue} = useFormContext();
+  const navigate = useNavigate();
+  const {network} = useNetwork();
+  const {isMobile} = useScreen();
   const {breadcrumbs, icon, tag} = useMappedBreadcrumbs();
+
+  const {setValue, control} = useFormContext();
+  const {fields, replace} = useFieldArray({
+    name: 'links',
+    control,
+  });
+  const {errors} = useFormState({control});
+
   const {data: daoId, loading: paramAreLoading} = useDaoParam();
   const {data: daoDetails, isLoading: detailsAreLoading} = useDaoDetails(
     daoId!
@@ -49,8 +61,6 @@ const EditSettings: React.FC = () => {
     daoDetails?.plugins[0].instanceAddress as string,
     daoDetails?.plugins[0].id as PluginTypes
   );
-  const [isMetadataChanged, setIsMetadataChanged] = useState(false);
-  const [isGovernanceChanged, setIsGovernanceChanged] = useState(false);
 
   const {days, hours, minutes} = getDHMFromSeconds(daoSettings.minDuration);
 
@@ -65,6 +75,7 @@ const EditSettings: React.FC = () => {
     durationHours,
     durationMinutes,
     membership,
+    resourceLinks,
   ] = useWatch({
     name: [
       'daoName',
@@ -77,20 +88,132 @@ const EditSettings: React.FC = () => {
       'durationHours',
       'durationMinutes',
       'membership',
+      'links',
     ],
+    control,
   });
+
+  const controlledLinks = fields.map((field, index) => {
+    return {
+      ...field,
+      ...(resourceLinks && {...resourceLinks[index]}),
+    };
+  });
+
+  const resourceLinksAreEqual: boolean = useMemo(() => {
+    if (!daoDetails?.metadata.links || !resourceLinks) return true;
+
+    // length validation
+    const lengthDifference =
+      resourceLinks.length - daoDetails.metadata.links.length;
+
+    // links were added to form
+    if (lengthDifference > 0) {
+      // loop through extra links
+      for (
+        let i = daoDetails.metadata.links.length;
+        i < resourceLinks.length;
+        i++
+      ) {
+        // check if link is filled without error -> then consider it as a proper change
+        if (resourceLinks[i].name && resourceLinks[i].url && !errors.links?.[i])
+          return false;
+      }
+    }
+
+    // links were removed
+    if (lengthDifference < 0) return false;
+
+    // content validation (i.e. same number of links)
+    for (let i = 0; i < daoDetails.metadata.links.length; i++) {
+      if (
+        controlledLinks[i].name !== daoDetails.metadata.links[i].name ||
+        controlledLinks[i].url !== daoDetails.metadata.links[i].url
+      )
+        return false;
+    }
+
+    return true;
+  }, [
+    controlledLinks,
+    daoDetails?.metadata.links,
+    errors.links,
+    resourceLinks,
+  ]);
+
+  // metadata setting changes
+  const isMetadataChanged = useMemo(
+    () =>
+      daoDetails?.metadata.name &&
+      (daoName !== daoDetails.metadata.name ||
+        daoSummary !== daoDetails.metadata.description ||
+        daoLogo !== daoDetails.metadata.avatar ||
+        !resourceLinksAreEqual),
+    [
+      daoDetails?.metadata.avatar,
+      daoDetails?.metadata.description,
+      daoDetails?.metadata.name,
+      daoLogo,
+      daoName,
+      daoSummary,
+      resourceLinksAreEqual,
+    ]
+  );
+
+  // governance
+  const isGovernanceChanged = useMemo(() => {
+    // TODO: We need to force forms to only use one type, Number or string
+    return (
+      Number(
+        membership === 'token' ? minimumApproval : minimumParticipation
+      ) !== Math.round(daoSettings.minTurnout * 100) ||
+      Number(support) !== Math.round(daoSettings.minSupport * 100) ||
+      Number(durationDays) !== days ||
+      Number(durationHours) !== hours ||
+      Number(durationMinutes) !== minutes
+    );
+  }, [
+    daoSettings.minSupport,
+    daoSettings.minTurnout,
+    days,
+    durationDays,
+    durationHours,
+    durationMinutes,
+    hours,
+    membership,
+    minimumApproval,
+    minimumParticipation,
+    minutes,
+    support,
+  ]);
 
   const setCurrentMetadata = useCallback(() => {
     setValue('daoName', daoDetails?.metadata.name);
     setValue('daoSummary', daoDetails?.metadata.description);
     setValue('daoLogo', daoDetails?.metadata.avatar);
-    setValue('links', daoDetails?.metadata.links);
+
+    //
+    /**
+     * FIXME - this is the dumbest workaround: because there is an internal
+     * field array in 'AddLinks', conflicts arise when removing rows
+     * via remove and update. While the append, remove and replace
+     * technically happens whe we reset the form, a row is not added to the AddLinks component
+     * leaving the component in a state where one or more rows are hidden
+     * until the Add Link button is clicked.
+     * The workaround is to forcefully set empty fields for each link coming from
+     * daoDetails and then replacing them with the proper values
+     */
+    if (daoDetails?.metadata.links) {
+      setValue('links', [...daoDetails.metadata.links.map(() => ({}))]);
+      replace([...daoDetails.metadata.links]);
+    }
   }, [
     daoDetails?.metadata.avatar,
     daoDetails?.metadata.description,
     daoDetails?.metadata.links,
     daoDetails?.metadata.name,
     setValue,
+    replace,
   ]);
 
   const setCurrentGovernance = useCallback(() => {
@@ -125,49 +248,6 @@ const EditSettings: React.FC = () => {
     setCurrentMetadata();
     setCurrentGovernance();
   }, [setCurrentGovernance, setCurrentMetadata]);
-
-  useEffect(() => {
-    if (
-      daoName !== daoDetails?.ensDomain ||
-      daoSummary !== daoDetails?.metadata.description ||
-      daoLogo !== daoDetails?.metadata.avatar
-    )
-      setIsMetadataChanged(true);
-    else setIsMetadataChanged(false);
-
-    // TODO: We need to force forms to only use one type, Number or string
-    if (
-      Number(
-        membership === 'token' ? minimumApproval : minimumParticipation
-      ) !== Math.round(daoSettings.minTurnout * 100) ||
-      Number(support) !== Math.round(daoSettings.minSupport * 100) ||
-      Number(durationDays) !== days ||
-      Number(durationHours) !== hours ||
-      Number(durationMinutes) !== minutes
-    )
-      setIsGovernanceChanged(true);
-    else setIsGovernanceChanged(false);
-  }, [
-    daoDetails?.ensDomain,
-    daoDetails?.metadata.avatar,
-    daoDetails?.metadata.description,
-    daoDetails?.metadata.links,
-    daoLogo,
-    daoName,
-    daoSettings.minSupport,
-    daoSettings.minTurnout,
-    daoSummary,
-    days,
-    durationDays,
-    durationHours,
-    durationMinutes,
-    hours,
-    membership,
-    minimumApproval,
-    minimumParticipation,
-    minutes,
-    support,
-  ]);
 
   if (paramAreLoading || detailsAreLoading || settingsAreLoading) {
     return <Loading />;
