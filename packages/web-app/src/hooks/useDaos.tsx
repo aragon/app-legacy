@@ -1,64 +1,65 @@
+import {DaoDetails} from '@aragon/sdk-client';
 import {useEffect, useState} from 'react';
 
-import {DaoType} from 'components/daoCard';
 import {ExploreFilter} from 'containers/daoExplorer';
 import {HookData} from 'utils/types';
+import {useClient} from './useClient';
 
-type DaoOverview = {
-  name: string;
-  description: string;
-  logo?: string;
-  chainId: number;
-  daoType: DaoType;
-};
+// NOTE Currently the DAOs are fetched using the SDK's getDaos method. This
+// method simply returns a list of mocked DAOs. In particular, it does not allow
+// to pass any arguments like "newest" or "popular". Consequently the fetched
+// data is returned as is if "popular" is set and simply sorts the data by date
+// if "newest" is set. [VR 16-09-2022]
 
-export function useDaos(useCase: ExploreFilter): HookData<DaoOverview[]> {
-  const [data, setData] = useState(() => createMockData(useCase));
+// TODO This hook is missing the "MyDaos" feature. I don't think this is in
+// scope for alpha, though. [VR 16-09-2022]
+
+/**
+ * This hook returns a list of daos. The data returned for each dao contains
+ * information about the dao such as metadata, plugins installed on the dao,
+ * address, etc.
+ *
+ * The hook takes a single argument that determines the criteria for which DAOs
+ * will be returned. This can be either popular or newest DAOs, or DAOs that a
+ * user has favourited.
+ *
+ * @param useCase filter criteria that should be applied when fetching daos
+ * @returns A list of Daos and their respective infos (metadata, plugins, etc.)
+ */
+export function useDaos(useCase: ExploreFilter): HookData<DaoDetails[]> {
+  const [data, setData] = useState<DaoDetails[]>([] as DaoDetails[]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<Error>();
+  const {client} = useClient();
 
   useEffect(() => {
-    setData(createMockData(useCase));
-  }, [useCase]);
-  return {data, isLoading: false};
+    async function fetchDaos() {
+      const daoDetails = (await client?.methods.getDaos()) || [];
+
+      // TODO Remove this (unfortunate) piece of code once SDK provides
+      // filtering capabilities.
+      if (useCase === 'newest') {
+        daoDetails.sort(sortNewest);
+        setData(daoDetails);
+      } else {
+        setData(daoDetails);
+      }
+    }
+    try {
+      fetchDaos();
+    } catch (e) {
+      setError(e as Error);
+    } finally {
+      setLoading(false);
+    }
+
+    try {
+    } catch (error) {}
+  }, [client?.methods, useCase]);
+
+  return {data, isLoading: loading, error};
 }
 
-function createMockData(useCase: ExploreFilter) {
-  const data: DaoOverview[] = [];
-  if (useCase === 'newest') {
-    const length = Math.ceil(12 * Math.pow(Math.random(), 2));
-    for (let i = 0; i < length; i++) {
-      data.push({
-        name: `Dao created ${i} days ago`,
-        logo: 'https://cdn.vox-cdn.com/thumbor/2l9eryHceOI1AmNOQNSNxXcKLu8=/0x0:1268x845/1400x1400/filters:focal(0x0:1268x845):format(png)/cdn.vox-cdn.com/uploads/chorus_image/image/35813328/Screenshot_2014-07-19_15.24.57.0.png',
-        description:
-          'Lorem ipsum dolor sit amet, consectetur adipiscing elit. In blandit enim ac quam porta tempus. Morbi feugiat leo in ultricies commodo. Praesent tempus neque eu tellus pulvinar, suscipit imperdiet erat laoreet. Vivamus interdum risus fermentum magna convallis tristique. Praesent sit amet venenatis nulla, non ornare lectus. Quisque elit tortor, suscipit sed mi id, mattis tempus felis. Praesent bibendum viverra auctor. Cras finibus, mauris at congue cursus, nisl magna semper lorem, quis ornare odio sem id nulla. Vestibulum fermentum commodo tortor, ac vehicula libero. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Nunc facilisis nisl viverra, fermentum dui non, ultricies dolor. Mauris ornare varius est, eu finibus tellus lobortis quis. Nullam sagittis vulputate mi in tincidunt. Nam tempor lacus lorem, ac consectetur velit malesuada sed. ',
-        chainId: 4,
-        daoType: 'wallet-based',
-      });
-    }
-  } else if (useCase === 'favourite') {
-    const length = Math.ceil(6 * Math.pow(Math.random(), 2));
-    for (let i = 0; i < length; i++) {
-      data.push({
-        name: `Favourite DAO ${i + 1}`,
-        logo: 'https://cdn.vox-cdn.com/thumbor/2l9eryHceOI1AmNOQNSNxXcKLu8=/0x0:1268x845/1400x1400/filters:focal(0x0:1268x845):format(png)/cdn.vox-cdn.com/uploads/chorus_image/image/35813328/Screenshot_2014-07-19_15.24.57.0.png',
-        description:
-          'Lorem ipsum dolor sit amet, consectetur adipiscing elit. In blandit enim ac quam porta tempus. Morbi feugiat leo in ultricies commodo. Praesent tempus neque eu tellus pulvinar, suscipit imperdiet erat laoreet. Vivamus interdum risus fermentum magna convallis tristique. Praesent sit amet venenatis nulla, non ornare lectus. Quisque elit tortor, suscipit sed mi id, mattis tempus felis. Praesent bibendum viverra auctor. Cras finibus, mauris at congue cursus, nisl magna semper lorem, quis ornare odio sem id nulla. Vestibulum fermentum commodo tortor, ac vehicula libero. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Nunc facilisis nisl viverra, fermentum dui non, ultricies dolor. Mauris ornare varius est, eu finibus tellus lobortis quis. Nullam sagittis vulputate mi in tincidunt. Nam tempor lacus lorem, ac consectetur velit malesuada sed. ',
-        chainId: 4,
-        daoType: 'wallet-based',
-      });
-    }
-  } else {
-    const length = Math.ceil(8 * Math.pow(Math.random(), 2));
-    for (let i = 0; i < length; i++) {
-      data.push({
-        name: `Popular DAO ${i + 1}`,
-        logo: 'https://cdn.vox-cdn.com/thumbor/2l9eryHceOI1AmNOQNSNxXcKLu8=/0x0:1268x845/1400x1400/filters:focal(0x0:1268x845):format(png)/cdn.vox-cdn.com/uploads/chorus_image/image/35813328/Screenshot_2014-07-19_15.24.57.0.png',
-        description:
-          'Lorem ipsum dolor sit amet, consectetur adipiscing elit. In blandit enim ac quam porta tempus. Morbi feugiat leo in ultricies commodo. Praesent tempus neque eu tellus pulvinar, suscipit imperdiet erat laoreet. Vivamus interdum risus fermentum magna convallis tristique. Praesent sit amet venenatis nulla, non ornare lectus. Quisque elit tortor, suscipit sed mi id, mattis tempus felis. Praesent bibendum viverra auctor. Cras finibus, mauris at congue cursus, nisl magna semper lorem, quis ornare odio sem id nulla. Vestibulum fermentum commodo tortor, ac vehicula libero. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Nunc facilisis nisl viverra, fermentum dui non, ultricies dolor. Mauris ornare varius est, eu finibus tellus lobortis quis. Nullam sagittis vulputate mi in tincidunt. Nam tempor lacus lorem, ac consectetur velit malesuada sed. ',
-        chainId: 4,
-        daoType: 'wallet-based',
-      });
-    }
-  }
-  return data;
+function sortNewest(a: DaoDetails, b: DaoDetails) {
+  return b.creationDate.valueOf() - a.creationDate.valueOf();
 }
