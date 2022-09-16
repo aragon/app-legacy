@@ -114,7 +114,7 @@ function mapToDaoTransfers(
         transferDate: transfer.date
           ? `${formatDate(transfer.date.getTime() / 1000, 'relative')}`
           : i18n.t('labels.pendingTransaction'),
-        transferTimestamp: transfer.date.getTime(),
+        transferTimestamp: transfer.date?.getTime(),
         usdValue: '',
         isPending: !transfer.date,
         reference: transfer.reference,
@@ -149,7 +149,7 @@ function mapToDaoTransfers(
         transferType: TransferTypes.Withdraw,
         to: transfer.to,
         proposalId: transfer.transactionId,
-        transferTimestamp: transfer.date.getTime(),
+        transferTimestamp: transfer.date?.getTime(),
         transferDate: `${formatDate(
           transfer.date.getTime() / 1000,
           'relative'

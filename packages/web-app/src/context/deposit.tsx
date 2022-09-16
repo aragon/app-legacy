@@ -235,6 +235,8 @@ const DepositProvider = ({children}: {children: ReactNode}) => {
             },
           ];
 
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore
           pendingDeposits(depositTxs);
           localStorage.setItem('pendingDeposits', JSON.stringify(depositTxs));
         }
