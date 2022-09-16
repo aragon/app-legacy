@@ -27,7 +27,7 @@ import {Loading} from 'components/temporary';
 import {ProposeNewSettings} from 'utils/paths';
 import {useNetwork} from 'context/network';
 import {PluginTypes} from 'hooks/usePluginClient';
-import {useFieldArray, useFormContext, useWatch} from 'react-hook-form';
+import {useFormContext, useWatch} from 'react-hook-form';
 import {getDHMFromSeconds} from 'utils/date';
 
 const EditSettings: React.FC = () => {
@@ -39,7 +39,7 @@ const EditSettings: React.FC = () => {
   const {isMobile} = useScreen();
   const {network} = useNetwork();
   const {dao} = useParams();
-  const {control, setValue} = useFormContext();
+  const {setValue} = useFormContext();
   const {breadcrumbs, icon, tag} = useMappedBreadcrumbs();
   const {data: daoId, loading: paramAreLoading} = useDaoParam();
   const {data: daoDetails, isLoading: detailsAreLoading} = useDaoDetails(
@@ -79,8 +79,6 @@ const EditSettings: React.FC = () => {
       'membership',
     ],
   });
-
-  const {fields} = useFieldArray({name: 'links', control});
 
   const setCurrentMetadata = useCallback(() => {
     setValue('daoName', daoDetails?.ensDomain);
@@ -163,7 +161,6 @@ const EditSettings: React.FC = () => {
     durationDays,
     durationHours,
     durationMinutes,
-    fields,
     hours,
     membership,
     minimumApproval,
