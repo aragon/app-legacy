@@ -52,7 +52,7 @@ const CreateProposalProvider: React.FC<Props> = ({
     [type]
   );
 
-  const pluginClient = usePluginClient(pluginType, pluginAddress);
+  const pluginClient = usePluginClient(pluginAddress, pluginType);
 
   const [creationProcessState, setCreationProcessState] =
     useState<TransactionState>(TransactionState.WAITING);
