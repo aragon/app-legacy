@@ -30,11 +30,6 @@ import {PluginTypes} from 'hooks/usePluginClient';
 import {useFieldArray, useFormContext, useWatch} from 'react-hook-form';
 import {getDHMFromSeconds} from 'utils/date';
 
-type linksArray = {
-  name: string;
-  url: string;
-}[];
-
 const EditSettings: React.FC = () => {
   const [currentMenu, setCurrentMenu] = useState<'metadata' | 'governance'>(
     'metadata'
@@ -51,8 +46,8 @@ const EditSettings: React.FC = () => {
     daoId!
   );
   const {data: daoSettings, isLoading: settingsAreLoading} = usePluginSettings(
-    daoDetails?.plugins[1].instanceAddress as string,
-    daoDetails?.plugins[1].id as PluginTypes
+    daoDetails?.plugins[0].instanceAddress as string,
+    daoDetails?.plugins[0].id as PluginTypes
   );
   const [isMetadataChanged, setIsMetadataChanged] = useState(false);
   const [isGovernanceChanged, setIsGovernanceChanged] = useState(false);
@@ -134,26 +129,6 @@ const EditSettings: React.FC = () => {
   }, [setCurrentGovernance, setCurrentMetadata]);
 
   useEffect(() => {
-    console.log('checkcheck', fields);
-  }, [fields]);
-
-  // if (daoDetails?.metadata?.links) {
-  //   const storageLinks = daoDetails?.metadata?.links || [];
-  //   for (let index = 0; index < storageLinks.length; index++) {
-  //     if (
-  //       (fields as unknown as linksArray)?.[index]?.name !==
-  //         storageLinks?.[index].name ||
-  //       (fields as unknown as linksArray)?.[index]?.url !==
-  //         storageLinks?.[index].url
-  //     ) {
-  //       console.log('View', fields?.[index], storageLinks?.[index]);
-  //       setIsMetadataChanged(true);
-  //       break;
-  //     }
-  //   }
-  // }
-
-  useEffect(() => {
     if (
       daoName !== daoDetails?.ensDomain ||
       daoSummary !== daoDetails?.metadata.description ||
@@ -161,24 +136,6 @@ const EditSettings: React.FC = () => {
     )
       setIsMetadataChanged(true);
     else setIsMetadataChanged(false);
-
-    // if (daoDetails?.metadata?.links) {
-    //   const storageLinks = daoDetails?.metadata?.links || [];
-    //   for (let index = 0; index < storageLinks.length; index++) {
-    //     if (
-    //       (fields as unknown as linksArray)?.[index]?.name !==
-    //         storageLinks?.[index].name ||
-    //       (fields as unknown as linksArray)?.[index]?.url !==
-    //         storageLinks?.[index].url
-    //     ) {
-    //       console.log('View', fields?.[index], storageLinks?.[index]);
-    //       setIsMetadataChanged(true);
-    //       break;
-    //     }
-    //   }
-    // }
-
-    // console.log('->', links, daoDetails?.metadata?.links);
 
     // TODO: We need to force forms to only use one type, Number or string
     if (
