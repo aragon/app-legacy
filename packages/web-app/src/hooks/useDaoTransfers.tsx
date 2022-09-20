@@ -29,7 +29,7 @@ export const useDaoTransfers = (
         const transfers = await client?.methods.getTransfers(daoAddressOrEns);
         if (transfers) {
           if (pendingDepositsTxs.length > 0) {
-            for (let i = 0; i < pendingDepositsTxs.length; i++) {
+            for (let i = 0; i < pendingDepositsTxs.length; ) {
               const tx = pendingDepositsTxs[i];
 
               for (let j = 0; j < transfers.deposits.length; j++) {
@@ -37,6 +37,9 @@ export const useDaoTransfers = (
                 if (deposit.transactionId === tx.transactionId) {
                   pendingDepositsTxs.splice(i, 1);
                   break;
+                }
+                if (j === transfers.deposits.length - 1) {
+                  i++;
                 }
               }
             }
