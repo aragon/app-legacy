@@ -6,9 +6,8 @@ import {
   IconChevronUp,
   IconGovernance,
   Link,
-  // WidgetStatus,
+  WidgetStatus,
 } from '@aragon/ui-components';
-import {WidgetStatus} from '@aragon/ui-components/src';
 import {shortenAddress} from '@aragon/ui-components/src/utils/addresses';
 import {withTransaction} from '@elastic/apm-rum-react';
 import TipTapLink from '@tiptap/extension-link';
