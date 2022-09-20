@@ -31,8 +31,9 @@ export type ProgressStatusProps = {
   label: string;
   /**
    * Describes when the progress status was last changed. Every mode of progress
-   * status MUST have a date, EXCEPT for "upcoming", which NEVER has a date, (as
-   * it is in the future).
+   * status MUST have a date, EXCEPT for:
+   * - "upcoming"  which NEVER has a date, (as it is in the future)
+   * - "failed" might not have a date of failure (in the case of a failed execution)
    *
    * If no date is passed when one is required, a fallback text will be displayed.
    * */
@@ -51,8 +52,8 @@ export const ProgressStatus: React.FC<ProgressStatusProps> = ({
   date,
   block,
 }) => {
-  if (mode !== 'upcoming' && !date) date = 'No information available';
-  if (mode === 'upcoming') date = '';
+  if (mode !== 'upcoming' && mode !== 'failed' && !date)
+    date = 'No information available';
   const mayHaveBlock = mode === 'done' || mode === 'succeeded';
   return (
     <TopContainer data-testid="progressStatus">
