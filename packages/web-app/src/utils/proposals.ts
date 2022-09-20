@@ -259,7 +259,7 @@ export function getWhitelistResults(
  * @param status proposal status
  * @param endDate proposal voting end date
  * @param creationDate proposal creation date
- * @param block block number
+ * @param publishedBlock block number
  * @param executionDate proposal execution date
  * @returns list of status steps based on proposal status
  */
@@ -268,13 +268,14 @@ export function getProposalStatusSteps(
   startDate: Date,
   endDate: Date,
   creationDate: Date,
-  block: string,
+  publishedBlock: string,
+  executionBlock?: string,
   executionDate?: Date
 ): Array<ProgressStatusProps> {
   switch (status) {
     case 'Active':
       return [
-        {...getPublishedProposalStep(creationDate, block)},
+        {...getPublishedProposalStep(creationDate, publishedBlock)},
         {
           label: i18n.t('governance.statusWidget.active'),
           mode: 'active',
@@ -286,7 +287,7 @@ export function getProposalStatusSteps(
       ];
     case 'Defeated':
       return [
-        {...getPublishedProposalStep(creationDate, block)},
+        {...getPublishedProposalStep(creationDate, publishedBlock)},
         {
           label: i18n.t('governance.statusWidget.defeated'),
           mode: 'failed',
@@ -298,7 +299,7 @@ export function getProposalStatusSteps(
       ];
     case 'Succeeded':
       return [
-        ...getPassedProposalSteps(creationDate, startDate, block),
+        ...getPassedProposalSteps(creationDate, startDate, publishedBlock),
         {label: i18n.t('governance.statusWidget.succeeded'), mode: 'upcoming'},
       ];
 
@@ -306,7 +307,7 @@ export function getProposalStatusSteps(
     case 'Executed':
       if (executionDate)
         return [
-          ...getPassedProposalSteps(creationDate, startDate, block),
+          ...getPassedProposalSteps(creationDate, startDate, publishedBlock),
           {
             label: i18n.t('governance.statusWidget.executed'),
             mode: 'succeeded',
@@ -314,18 +315,19 @@ export function getProposalStatusSteps(
               executionDate,
               KNOWN_FORMATS.proposals
             )}  ${getFormattedUtcOffset()}`,
+            block: executionBlock,
           },
         ];
       else
         return [
-          ...getPassedProposalSteps(creationDate, startDate, block),
+          ...getPassedProposalSteps(creationDate, startDate, publishedBlock),
           {label: i18n.t('governance.statusWidget.failed'), mode: 'failed'},
         ];
 
     // Pending by default
     default:
       return [
-        {...getPublishedProposalStep(creationDate, block)},
+        {...getPublishedProposalStep(creationDate, publishedBlock)},
         {
           label: i18n.t('governance.statusWidget.pending'),
           mode: 'upcoming',

@@ -6,8 +6,9 @@ import {
   IconChevronUp,
   IconGovernance,
   Link,
-  WidgetStatus,
+  // WidgetStatus,
 } from '@aragon/ui-components';
+import {WidgetStatus} from '@aragon/ui-components/src';
 import {shortenAddress} from '@aragon/ui-components/src/utils/addresses';
 import {withTransaction} from '@elastic/apm-rum-react';
 import TipTapLink from '@tiptap/extension-link';
@@ -310,6 +311,7 @@ const Proposal: React.FC = () => {
         proposal.endDate,
         proposal.creationDate,
         '123,123,123',
+        '456,456,456',
         new Date() // TODO: change to proposal.executionDate from sdk
       );
   }, [
