@@ -17,12 +17,6 @@ export function useDaoActions(dao: string): HookData<ActionParameter[]> {
       isReuseable: true,
     },
     {
-      type: 'modify_settings',
-      // TODO: Replace these with proper copies and i18n.
-      title: 'Modify Settings',
-      subtitle: 'Propose new settings for your DAO',
-    },
-    {
       type: 'external_contract',
       title: t('AddActionModal.externalContract'),
       subtitle: t('AddActionModal.externalContractSubtitle'),
