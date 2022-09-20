@@ -7,13 +7,14 @@ import {
 } from '@aragon/ui-components';
 import {withTransaction} from '@elastic/apm-rum-react';
 import React, {useCallback, useEffect, useMemo, useState} from 'react';
-import {useTranslation} from 'react-i18next';
 import {
-  generatePath,
-  Link as RouterLink,
-  useNavigate,
-  useParams,
-} from 'react-router-dom';
+  useFieldArray,
+  useFormContext,
+  useFormState,
+  useWatch,
+} from 'react-hook-form';
+import {useTranslation} from 'react-i18next';
+import {generatePath, useNavigate} from 'react-router-dom';
 import styled from 'styled-components';
 
 import {Loading} from 'components/temporary';
@@ -26,12 +27,6 @@ import {useMappedBreadcrumbs} from 'hooks/useMappedBreadcrumbs';
 import {PluginTypes} from 'hooks/usePluginClient';
 import {usePluginSettings} from 'hooks/usePluginSettings';
 import useScreen from 'hooks/useScreen';
-import {
-  useFieldArray,
-  useFormContext,
-  useFormState,
-  useWatch,
-} from 'react-hook-form';
 import {getDHMFromSeconds} from 'utils/date';
 import {ProposeNewSettings} from 'utils/paths';
 
@@ -40,7 +35,6 @@ const EditSettings: React.FC = () => {
     'metadata'
   );
   const {t} = useTranslation();
-  const {dao} = useParams();
   const navigate = useNavigate();
   const {network} = useNetwork();
   const {isMobile} = useScreen();
@@ -349,14 +343,15 @@ const EditSettings: React.FC = () => {
 
       <ButtonContainer>
         <HStack>
-          <RouterLink to={generatePath(ProposeNewSettings, {network, dao})}>
-            <ButtonText
-              className="w-full tablet:w-max"
-              label={t('settings.proposeSettings')}
-              iconLeft={<IconGovernance />}
-              size={isMobile ? 'large' : 'medium'}
-            />
-          </RouterLink>
+          <ButtonText
+            className="w-full tablet:w-max"
+            label={t('settings.proposeSettings')}
+            iconLeft={<IconGovernance />}
+            size={isMobile ? 'large' : 'medium'}
+            onClick={() =>
+              navigate(generatePath(ProposeNewSettings, {network, dao: daoId}))
+            }
+          />
           <ButtonText
             className="w-full tablet:w-max"
             label={t('settings.resetChanges')}

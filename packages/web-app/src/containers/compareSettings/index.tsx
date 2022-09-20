@@ -1,21 +1,22 @@
-import React, {useState} from 'react';
 import {
   AvatarDao,
   ButtonGroup,
   ListItemLink,
   Option,
 } from '@aragon/ui-components';
-import {generatePath, useNavigate, useParams} from 'react-router-dom';
-import {useTranslation} from 'react-i18next';
-import {DescriptionListContainer, Dl, Dt, Dd} from 'components/descriptionList';
-import {EditSettings} from 'utils/paths';
+import {Dd, DescriptionListContainer, Dl, Dt} from 'components/descriptionList';
 import {useNetwork} from 'context/network';
+import {useDaoParam} from 'hooks/useDaoParam';
+import React, {useState} from 'react';
+import {useTranslation} from 'react-i18next';
+import {generatePath, useNavigate} from 'react-router-dom';
+import {EditSettings} from 'utils/paths';
 
 const CompareSettings: React.FC = () => {
   const [selectedButton, setSelectedButton] = useState('new');
   const {t} = useTranslation();
   const navigate = useNavigate();
-  const {dao} = useParams();
+  const {data: daoId} = useDaoParam();
   const {network} = useNetwork();
 
   return (
@@ -33,7 +34,9 @@ const CompareSettings: React.FC = () => {
 
       <DescriptionListContainer
         title={t('labels.review.daoMetadata')}
-        onEditClick={() => navigate(generatePath(EditSettings, {network, dao}))}
+        onEditClick={() =>
+          navigate(generatePath(EditSettings, {network, dao: daoId}))
+        }
         editLabel={t('settings.edit')}
       >
         <Dl>
@@ -66,7 +69,9 @@ const CompareSettings: React.FC = () => {
 
       <DescriptionListContainer
         title={t('labels.review.governance')}
-        onEditClick={() => navigate(generatePath(EditSettings, {network, dao}))}
+        onEditClick={() =>
+          navigate(generatePath(EditSettings, {network, dao: daoId}))
+        }
         editLabel={t('settings.edit')}
       >
         <Dl>

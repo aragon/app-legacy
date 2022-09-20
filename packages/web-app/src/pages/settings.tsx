@@ -1,5 +1,3 @@
-import React from 'react';
-import {withTransaction} from '@elastic/apm-rum-react';
 import {
   AvatarDao,
   Badge,
@@ -8,26 +6,23 @@ import {
   Link,
   ListItemLink,
 } from '@aragon/ui-components';
+import {withTransaction} from '@elastic/apm-rum-react';
+import React from 'react';
 import {useTranslation} from 'react-i18next';
-import {
-  generatePath,
-  useParams,
-  Link as RouterLink,
-  useNavigate,
-} from 'react-router-dom';
+import {generatePath, useNavigate} from 'react-router-dom';
 
-import {PageWrapper} from 'components/wrappers';
-import {DescriptionListContainer, Dl, Dt, Dd} from 'components/descriptionList';
-import {useGlobalModalContext} from 'context/globalModals';
-import useScreen from 'hooks/useScreen';
-import {useDaoParam} from 'hooks/useDaoParam';
+import {Dd, DescriptionListContainer, Dl, Dt} from 'components/descriptionList';
 import {Loading} from 'components/temporary';
-import {EditSettings} from 'utils/paths';
+import {PageWrapper} from 'components/wrappers';
+import {useGlobalModalContext} from 'context/globalModals';
 import {useNetwork} from 'context/network';
 import {useDaoDetails} from 'hooks/useDaoDetails';
-import {usePluginSettings} from 'hooks/usePluginSettings';
+import {useDaoParam} from 'hooks/useDaoParam';
 import {PluginTypes} from 'hooks/usePluginClient';
+import {usePluginSettings} from 'hooks/usePluginSettings';
+import useScreen from 'hooks/useScreen';
 import {getDHMFromSeconds} from 'utils/date';
+import {EditSettings} from 'utils/paths';
 
 const Settings: React.FC = () => {
   const {data: daoId, isLoading} = useDaoParam();
@@ -35,7 +30,6 @@ const Settings: React.FC = () => {
   const {open} = useGlobalModalContext();
   const {isMobile} = useScreen();
   const {network} = useNetwork();
-  const {dao} = useParams();
   const navigate = useNavigate();
   const {data: daoDetails, isLoading: detailsAreLoading} = useDaoDetails(
     daoId!
@@ -57,7 +51,7 @@ const Settings: React.FC = () => {
       buttonLabel={t('settings.proposeSettings')}
       showButton={isMobile}
       buttonIcon={<IconGovernance />}
-      onClick={() => navigate(generatePath(EditSettings, {network, dao}))}
+      onClick={() => navigate(generatePath(EditSettings, {network, daoId}))}
     >
       <div className="mt-3 desktop:mt-8 space-y-5">
         <DescriptionListContainer
@@ -165,14 +159,13 @@ const Settings: React.FC = () => {
           </Dl>
         </DescriptionListContainer>
 
-        <RouterLink to={generatePath(EditSettings, {network, dao})}>
-          <ButtonText
-            label={t('settings.proposeSettings')}
-            className="mx-auto mt-5 w-full tablet:w-max"
-            size="large"
-            iconLeft={<IconGovernance />}
-          />
-        </RouterLink>
+        <ButtonText
+          label={t('settings.proposeSettings')}
+          className="mx-auto mt-5 w-full tablet:w-max"
+          size="large"
+          iconLeft={<IconGovernance />}
+          onClick={() => navigate('edit')}
+        />
       </div>
     </PageWrapper>
   );

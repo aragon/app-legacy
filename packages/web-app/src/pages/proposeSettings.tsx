@@ -1,19 +1,20 @@
+import {withTransaction} from '@elastic/apm-rum-react';
 import React from 'react';
 import {useTranslation} from 'react-i18next';
-import {withTransaction} from '@elastic/apm-rum-react';
-import {generatePath, useParams} from 'react-router-dom';
+import {generatePath} from 'react-router-dom';
 
-import ReviewProposal from 'containers/reviewProposal';
 import {FullScreenStepper, Step} from 'components/fullScreenStepper';
+import CompareSettings from 'containers/compareSettings';
 import DefineProposal from 'containers/defineProposal';
+import ReviewProposal from 'containers/reviewProposal';
 import SetupVotingForm from 'containers/setupVotingForm';
 import {useNetwork} from 'context/network';
+import {useDaoParam} from 'hooks/useDaoParam';
 import {EditSettings} from 'utils/paths';
-import CompareSettings from 'containers/compareSettings';
 
 const ProposeSettings: React.FC = () => {
   const {t} = useTranslation();
-  const {dao} = useParams();
+  const {data: daoId} = useDaoParam();
   const {network} = useNetwork();
 
   return (
@@ -21,7 +22,7 @@ const ProposeSettings: React.FC = () => {
       <FullScreenStepper
         wizardProcessName={t('newProposal.title')}
         navLabel={t('navLinks.settings')}
-        returnPath={generatePath(EditSettings, {network, dao})}
+        returnPath={generatePath(EditSettings, {network, dao: daoId})}
       >
         <Step
           wizardTitle={t('settings.proposeSettings')}
