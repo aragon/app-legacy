@@ -81,7 +81,9 @@ type ModeProps = {
   mode: ModeType;
 };
 
-const TopContainer = styled.div.attrs({className: 'flex justify-between'})``;
+const TopContainer = styled.div.attrs({
+  className: 'flex justify-between gap-x-1.5',
+})``;
 
 const LeftContainer = styled.div.attrs(({mode}: ModeProps) => {
   const className: string | undefined = 'flex space-x-1.5 ' + textColors[mode];
