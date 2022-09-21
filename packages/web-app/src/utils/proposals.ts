@@ -1,4 +1,3 @@
-/* eslint-disable no-fallthrough */
 /**
  * This file contains helpers for mapping a proposal
  * to voting terminal properties. Doesn't exactly belong
