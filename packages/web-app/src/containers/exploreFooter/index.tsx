@@ -1,13 +1,13 @@
+import {Link} from '@aragon/ui-components';
 import React from 'react';
 import styled from 'styled-components';
 
-import IconLogo from 'public/iconLogo.svg';
-import Green from 'public/greenGradient.svg';
-import Purple from 'public/purpleGradient.svg';
-import {EXPLORE_NAV_LINKS, PRIVACY_NAV_LINKS} from 'utils/constants';
 import {GridLayout} from 'components/layout';
 import useScreen from 'hooks/useScreen';
-import {Link} from '@aragon/ui-components';
+import Green from 'public/greenGradient.svg';
+import IconLogo from 'public/iconLogo.svg';
+import Purple from 'public/purpleGradient.svg';
+import {EXPLORE_NAV_LINKS, PRIVACY_NAV_LINKS} from 'utils/constants';
 
 const Footer: React.FC = () => {
   const {isDesktop} = useScreen();
