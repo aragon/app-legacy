@@ -33,7 +33,7 @@ const Icons: {[key: string]: JSX.Element} = {
     <IconDeposit className="w-1.5 desktop:w-2 h-1.5 desktop:h-2 text-success-600" />
   ),
   Pending: (
-    <IconSpinner className="w-1.5 desktop:w-2 h-1.5 desktop:h-2 text-primary-500" />
+    <IconSpinner className="w-1.5 desktop:w-2 h-1.5 desktop:h-2 animate-spin text-primary-500" />
   ),
   VaultWithdraw: (
     <IconWithdraw className="w-1.5 desktop:w-2 h-1.5 desktop:h-2 text-warning-600" />
