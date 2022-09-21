@@ -31,7 +31,7 @@ export const DaoExplorer = () => {
   const [filterValue, setFilterValue] = useState<ExploreFilter>(
     isConnected ? 'favourite' : 'popular'
   );
-  const {data} = useDaos(filterValue);
+  const {data} = useDaos(filterValue, showCount);
 
   const handleShowMoreClick = () => {
     setShowCount(prev => prev + PAGE_SIZE);
