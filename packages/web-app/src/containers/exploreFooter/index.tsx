@@ -14,13 +14,13 @@ const Footer: React.FC = () => {
 
   const ExploreNavLinks = EXPLORE_NAV_LINKS.map(item => (
     <li key={item.label}>
-      <Link className={'text-ui-0'} label={item.label} href={item.path} />
+      <NavLink href={item.path} label={item.label} />
     </li>
   ));
 
   const PrivacyNavLinks = PRIVACY_NAV_LINKS.map(item => (
     <li key={item.label}>
-      <Link className="text-ui-0" label={item.label} href={item.path} />
+      <NavLink label={item.label} href={item.path} />
     </li>
   ));
 
@@ -98,6 +98,12 @@ const GradientGreen = styled.img.attrs({
 
 const GradientPurple = styled.img.attrs({
   className: 'desktop:h-40 h-30 absolute -right-5 desktop:-top-11 top-16',
+})``;
+
+const NavLink = styled(Link).attrs({
+  className: `px-0.5 text-ui-0 disabled:text-primary-300 hover:text-primary-100 
+  focus:text-primary-50 focus:ring-2 focus:ring-ui-0 focus:outline-none 
+  active:text-primary-800 active:ring-0 active:ring-transparent active:outline-none `,
 })``;
 
 export default Footer;

@@ -187,6 +187,7 @@ module.exports = {
       backgroundColor: ['active', 'disabled'],
       textColor: ['active', 'disabled'],
       borderColor: ['active', 'disabled'],
+      ringColor: ['active'],
     },
     fluidType: ['responsive'],
   },
