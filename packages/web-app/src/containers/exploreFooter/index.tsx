@@ -7,19 +7,20 @@ import Purple from 'public/purpleGradient.svg';
 import {EXPLORE_NAV_LINKS, PRIVACY_NAV_LINKS} from 'utils/constants';
 import {GridLayout} from 'components/layout';
 import useScreen from 'hooks/useScreen';
+import {Link} from '@aragon/ui-components';
 
 const Footer: React.FC = () => {
   const {isDesktop} = useScreen();
 
   const ExploreNavLinks = EXPLORE_NAV_LINKS.map(item => (
     <li key={item.label}>
-      <NavItem>{item.label}</NavItem>
+      <Link className={'text-ui-0'} label={item.label} href={item.path} />
     </li>
   ));
 
   const PrivacyNavLinks = PRIVACY_NAV_LINKS.map(item => (
     <li key={item.label}>
-      <NavItem>{item.label}</NavItem>
+      <Link className="text-ui-0" label={item.label} href={item.path} />
     </li>
   ));
 
@@ -89,11 +90,6 @@ const StyledNavList = styled.ul.attrs({
 
 const Copyright = styled.span.attrs({
   className: 'text-ui-0 font-normal',
-})``;
-
-// Used button instead of links because not sure the navigation is internal or not!
-const NavItem = styled.button.attrs({
-  className: 'text-ui-0',
 })``;
 
 const GradientGreen = styled.img.attrs({

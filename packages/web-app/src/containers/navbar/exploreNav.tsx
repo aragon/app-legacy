@@ -30,7 +30,10 @@ const ExploreNav: React.FC = () => {
       <Menu>
         <GridLayout>
           <LeftContent>
-            <LogoContainer src={Logo} />
+            <LogoContainer
+              src={Logo}
+              onClick={() => window.open('https://aragon.org/', '_blank')}
+            />
           </LeftContent>
           <RightContent>
             <ActionsWrapper>

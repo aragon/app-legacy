@@ -60,30 +60,30 @@ export const NAV_LINKS_DATA: NavLinkData[] = [
 export const EXPLORE_NAV_LINKS = [
   {
     label: i18n.t('navLinks.explore'),
-    path: Dashboard,
+    path: 'https://staging-app.aragon.org/',
   },
   {
     label: i18n.t('navLinks.learn'),
-    path: Dashboard,
+    path: 'https://aragon.org/how-to',
   },
   {
     label: i18n.t('navLinks.build'),
-    path: Dashboard,
+    path: 'https://devs.aragon.org/',
   },
   {
     label: i18n.t('navLinks.help'),
-    path: Dashboard,
+    path: 'https://documentation.aragon.org/aragon/readme',
   },
 ];
 
 export const PRIVACY_NAV_LINKS = [
   {
     label: i18n.t('navLinks.terms'),
-    path: Dashboard,
+    path: 'https://aragon.org/terms-and-conditions',
   },
   {
     label: i18n.t('navLinks.privacy'),
-    path: Dashboard,
+    path: 'https://aragon.org/privacy-policy',
   },
 ];
 
