@@ -240,6 +240,7 @@ export type ActionMintToken = {
     tokenSupply: number;
     newHoldersCount: number;
     daoTokenSymbol: string;
+    daoTokenAddress: string;
   };
 };
 

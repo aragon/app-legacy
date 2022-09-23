@@ -165,6 +165,10 @@ export const MintTokenForm: React.FC<MintTokenFormProps> = ({
             `actions.${actionIndex}.summary.daoTokenSymbol`,
             daoToken.symbol
           );
+          setValue(
+            `actions.${actionIndex}.summary.daoTokenAddress`,
+            daoToken.id
+          );
         })
         .catch(e =>
           console.error('Error happened when fetching token infos: ', e)
