@@ -1,4 +1,5 @@
 import {
+  ClientErc20,
   ICreateProposalParams,
   InstalledPluginListItem,
   ProposalCreationSteps,
@@ -21,8 +22,7 @@ import {useNetwork} from './network';
 import {useDaoDetails} from 'hooks/useDaoDetails';
 import {getCanonicalUtcOffset} from 'utils/date';
 import {useClient} from 'hooks/useClient';
-import {useActionsContext} from './actions';
-import {ActionItem} from 'utils/types';
+import {Action} from 'utils/types';
 import {DaoAction} from '@aragon/sdk-client/dist/internal/interfaces/common';
 
 type Props = {
@@ -44,7 +44,6 @@ const CreateProposalProvider: React.FC<Props> = ({
   const {data: dao, isLoading} = useDaoParam();
   const {data: daoDetails, isLoading: daoDetailsLoading} = useDaoDetails(dao);
   const {client} = useClient();
-  const {actions} = useActionsContext();
   const [proposalCreationData, setProposalCreationData] =
     useState<ICreateProposalParams>();
 
@@ -66,27 +65,44 @@ const CreateProposalProvider: React.FC<Props> = ({
     [creationProcessState, proposalCreationData]
   );
 
-  const encodeActions = useCallback(() => {
-    const actionsForm = getValues().actions;
-    // return an empty array for undefined clients
-    if (!client) return Promise.resolve([] as DaoAction[]);
+  const encodeActions = useCallback(async () => {
+    const actionsFromForm = getValues('actions');
+    const actions: Array<Promise<DaoAction>> = [];
 
-    const promises = actions?.map((action: ActionItem, index: number) => {
+    // return an empty array for undefined clients
+    if (!pluginClient || !client) return Promise.resolve([] as DaoAction[]);
+
+    actionsFromForm.forEach((action: Action) => {
       switch (action.name) {
         case 'withdraw_assets':
-          return client.encoding.withdrawAction(dao, {
-            recipientAddress: actionsForm[index].to,
-            amount: BigInt(
-              Number(actionsForm[index].amount) * Math.pow(10, 18)
-            ),
-            tokenAddress: actionsForm[index].tokenAddress,
+          actions.push(
+            client.encoding.withdrawAction(dao, {
+              recipientAddress: action.to,
+              amount: BigInt(Number(action.amount) * Math.pow(10, 18)),
+              tokenAddress: action.tokenAddress,
+            })
+          );
+          break;
+        case 'mint_tokens':
+          action.inputs.mintTokensToWallets.forEach(mint => {
+            actions.push(
+              Promise.resolve(
+                (pluginClient as ClientErc20).encoding.mintTokenAction(
+                  action.summary.daoTokenAddress,
+                  {
+                    address: mint.address,
+                    amount: BigInt(Number(mint.amount) * Math.pow(10, 18)),
+                  }
+                )
+              )
+            );
           });
-        default:
-          return Promise.resolve({} as DaoAction);
+          break;
       }
     });
-    return Promise.all(promises);
-  }, [actions, client, dao, getValues]);
+
+    return Promise.all(actions);
+  }, [client, dao, getValues, pluginClient]);
 
   // Because getValues does NOT get updated on each render, leaving this as
   // a function to be called when data is needed instead of a memoized value
