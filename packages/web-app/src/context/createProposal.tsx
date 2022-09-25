@@ -3,7 +3,7 @@ import {
   InstalledPluginListItem,
   ProposalCreationSteps,
 } from '@aragon/sdk-client';
-import React, {useCallback, useMemo, useState} from 'react';
+import React, {useCallback, useEffect, useMemo, useState} from 'react';
 import {useFormContext} from 'react-hook-form';
 import {useTranslation} from 'react-i18next';
 import {generatePath, useNavigate} from 'react-router-dom';
@@ -45,6 +45,8 @@ const CreateProposalProvider: React.FC<Props> = ({
   const {data: daoDetails, isLoading: daoDetailsLoading} = useDaoDetails(dao);
   const {client} = useClient();
   const {actions} = useActionsContext();
+  const [proposalCreationData, setProposalCreationData] =
+    useState<ICreateProposalParams>();
 
   const {id: pluginType, instanceAddress: pluginAddress} =
     daoDetails?.plugins[0] || ({} as InstalledPluginListItem);
@@ -58,8 +60,10 @@ const CreateProposalProvider: React.FC<Props> = ({
     useState<TransactionState>(TransactionState.WAITING);
 
   const shouldPoll = useMemo(
-    () => creationProcessState === TransactionState.WAITING && showTxModal,
-    [creationProcessState, showTxModal]
+    () =>
+      creationProcessState === TransactionState.WAITING &&
+      proposalCreationData !== undefined,
+    [creationProcessState, proposalCreationData]
   );
 
   const encodeActions = useCallback(() => {
@@ -133,16 +137,25 @@ const CreateProposalProvider: React.FC<Props> = ({
       };
     }, [encodeActions, getValues, pluginAddress]);
 
+  useEffect(() => {
+    async function setProposalData() {
+      if (showTxModal && creationProcessState === TransactionState.WAITING)
+        setProposalCreationData(await getProposalCreationParams());
+    }
+
+    setProposalData();
+  }, [creationProcessState, getProposalCreationParams, showTxModal]);
+
   const estimateCreationFees = useCallback(async () => {
     if (!pluginClient) {
       return Promise.reject(
         new Error('ERC20 SDK client is not initialized correctly')
       );
     }
-    return pluginClient?.estimation.createProposal(
-      await getProposalCreationParams()
-    );
-  }, [getProposalCreationParams, pluginClient]);
+    if (!proposalCreationData) return;
+
+    return pluginClient?.estimation.createProposal(proposalCreationData);
+  }, [pluginClient, proposalCreationData]);
 
   const {tokenPrice, maxFee, averageFee, stopPolling} = usePollGasFee(
     estimateCreationFees,
@@ -169,9 +182,17 @@ const CreateProposalProvider: React.FC<Props> = ({
       return new Error('ERC20 SDK client is not initialized correctly');
     }
 
-    const proposalIterator = pluginClient.methods.createProposal(
-      await getProposalCreationParams()
-    );
+    // if no creation data is set, or transaction already running, do nothing.
+    if (
+      !proposalCreationData ||
+      creationProcessState === TransactionState.LOADING
+    ) {
+      console.log('Transaction is running');
+      return;
+    }
+
+    const proposalIterator =
+      pluginClient.methods.createProposal(proposalCreationData);
 
     if (creationProcessState === TransactionState.SUCCESS) {
       handleCloseModal();
@@ -192,6 +213,7 @@ const CreateProposalProvider: React.FC<Props> = ({
             console.log(step.txHash);
             break;
           case ProposalCreationSteps.DONE:
+            console.log('proposal id', step.proposalId);
             setCreationProcessState(TransactionState.SUCCESS);
             break;
         }
