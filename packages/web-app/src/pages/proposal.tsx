@@ -18,6 +18,8 @@ import {useTranslation} from 'react-i18next';
 import {generatePath, useNavigate, useParams} from 'react-router-dom';
 import styled from 'styled-components';
 
+import {useApolloClient} from '@apollo/client';
+import {ExecutionWidget} from 'components/executionWidget';
 import ResourceList from 'components/resourceList';
 import {Loading} from 'components/temporary';
 import {StyledEditorContent} from 'containers/reviewProposal';
@@ -27,6 +29,7 @@ import {useNetwork} from 'context/network';
 import format from 'date-fns/format';
 import formatDistance from 'date-fns/formatDistance';
 import {useCache} from 'hooks/useCache';
+import {useClient} from 'hooks/useClient';
 import {useDaoDetails} from 'hooks/useDaoDetails';
 import {useDaoParam} from 'hooks/useDaoParam';
 import {DetailedProposal, useDaoProposal} from 'hooks/useDaoProposal';
@@ -34,8 +37,10 @@ import {useMappedBreadcrumbs} from 'hooks/useMappedBreadcrumbs';
 import {PluginTypes} from 'hooks/usePluginClient';
 import useScreen from 'hooks/useScreen';
 import {useWallet} from 'hooks/useWallet';
+import {useWalletCanVote} from 'hooks/useWalletCanVote';
 import {CHAIN_METADATA} from 'utils/constants';
 import {getFormattedUtcOffset, KNOWN_FORMATS} from 'utils/date';
+import {decodeWithdrawToAction} from 'utils/library';
 import {
   getErc20MinimumApproval,
   getErc20Results,
@@ -46,12 +51,8 @@ import {
   getWhitelistVoterParticipation,
   isTokenBasedProposal,
 } from 'utils/proposals';
-import {i18n} from '../../i18n.config';
-import {ExecutionWidget} from 'components/executionWidget';
-import {useClient} from 'hooks/useClient';
-import {useApolloClient} from '@apollo/client';
 import {ActionWithdraw} from 'utils/types';
-import {decodeWithdrawToAction} from 'utils/library';
+import {i18n} from '../../i18n.config';
 
 // TODO: @Sepehr Please assign proper tags on action decoding
 const PROPOSAL_TAGS = ['Finance', 'Withdraw'];
@@ -83,6 +84,13 @@ const Proposal: React.FC = () => {
     daoDetails?.plugins[0].id as PluginTypes
   );
 
+  const {data: canVote} = useWalletCanVote(
+    address,
+    id || '',
+    daoDetails?.plugins[0].instanceAddress || '',
+    daoDetails?.plugins[0].id as PluginTypes
+  );
+
   // ref used to hold "memories" of previous "state"
   // across renders in order to automate the following states:
   // loggedOut -> login modal => switch network modal -> vote options selection;
@@ -91,9 +99,6 @@ const Proposal: React.FC = () => {
   // voting
   const [votingInProcess, setVotingInProcess] = useState(false);
   const [expandedProposal, setExpandedProposal] = useState(false);
-
-  // TODO: please replace this with proper logic from voting gating
-  const canVote = useState(true);
 
   const editor = useEditor({
     editable: false,
@@ -136,6 +141,49 @@ const Proposal: React.FC = () => {
     }
   }, [apolloClient, client, network, proposal]);
 
+  // caches the status for breadcrumb
+  useEffect(() => {
+    if (proposal && proposal.status !== get('proposalStatus'))
+      set('proposalStatus', proposal.status);
+  }, [get, proposal, set]);
+
+  useEffect(() => {
+    // was not logged in but now logged in
+    if (statusRef.current.wasNotLoggedIn && isConnected) {
+      // reset ref
+      statusRef.current.wasNotLoggedIn = false;
+
+      // logged out technically wrong network
+      statusRef.current.wasOnWrongNetwork = true;
+
+      // throw network modal
+      if (isOnWrongNetwork) {
+        open('network');
+      }
+    }
+  }, [isConnected, isOnWrongNetwork, open]);
+
+  useEffect(() => {
+    // all conditions unmet close voting in process
+    if (isOnWrongNetwork || !isConnected || !canVote) {
+      setVotingInProcess(false);
+    }
+
+    // was on the wrong network but now on the right one
+    if (statusRef.current.wasOnWrongNetwork && !isOnWrongNetwork) {
+      // reset ref
+      statusRef.current.wasOnWrongNetwork = false;
+
+      // show voting in process
+      if (canVote) setVotingInProcess(true);
+    }
+  }, [
+    canVote,
+    isConnected,
+    isOnWrongNetwork,
+    statusRef.current.wasOnWrongNetwork,
+  ]);
+
   const executionStatus = useMemo(() => {
     switch (proposal?.status) {
       case 'Succeeded':
@@ -152,40 +200,6 @@ const Proposal: React.FC = () => {
         return 'default';
     }
   }, [proposal?.status]);
-
-  // caches the status for breadcrumb
-  useEffect(() => {
-    if (proposal && proposal.status !== get('proposalStatus'))
-      set('proposalStatus', proposal.status);
-  }, [get, proposal, set]);
-
-  useEffect(() => {
-    // was not logged in but now logged in
-    if (statusRef.current.wasNotLoggedIn && isConnected) {
-      if (isOnWrongNetwork) {
-        open('network');
-      }
-
-      // logged out is technically on wrong network
-      statusRef.current.wasOnWrongNetwork = true;
-
-      // reset reference
-      statusRef.current.wasNotLoggedIn = false;
-    }
-  }, [isConnected, canVote, isOnWrongNetwork, open]);
-
-  useEffect(() => {
-    // wrong network, no wallet -> no options
-    if (isOnWrongNetwork || !address || !canVote) setVotingInProcess(false);
-
-    // was on wrong network but now on correct network
-    if (statusRef.current.wasOnWrongNetwork && !isOnWrongNetwork) {
-      if (canVote) setVotingInProcess(true);
-
-      // reset "state"
-      statusRef.current.wasOnWrongNetwork = false;
-    }
-  }, [address, canVote, isOnWrongNetwork]);
 
   // whether current user has voted
   const voted = useMemo(() => {
@@ -252,7 +266,7 @@ const Proposal: React.FC = () => {
     }
 
     // wrong network
-    else if (address && isOnWrongNetwork) {
+    else if (isOnWrongNetwork) {
       return {
         voteNowDisabled: false,
         onClick: () => {
@@ -263,7 +277,7 @@ const Proposal: React.FC = () => {
     }
 
     // member, not yet voted
-    else if (address && !isOnWrongNetwork && canVote) {
+    else if (canVote) {
       return {
         voteNowDisabled: false,
         onClick: () => setVotingInProcess(true),
