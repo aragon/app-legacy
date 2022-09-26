@@ -1,72 +1,56 @@
-import {BigNumber} from 'ethers';
 import {useEffect, useState} from 'react';
 
-import {useNetwork} from 'context/network';
-import {useSpecificProvider} from 'context/providers';
-import {CHAIN_METADATA} from 'utils/constants';
-import {fetchBalance} from 'utils/tokens';
 import {HookData} from 'utils/types';
-import {isWalletListMember, useDaoMembers} from './useDaoMembers';
+import {PluginTypes, usePluginClient} from './usePluginClient';
 
-// NOTE: Temporarily mocking token information, as SDK does not yet expose this.
-const token = {
-  id: '0x35f7A3379B8D0613c3F753863edc85997D8D0968',
-  symbol: 'DTT',
-};
-
-// Hook to determine if connected address is eligible to vote on proposals of the current
-// DAO. Note that for ERC20, voting member is anyone holding the token
-// and not just those who have previously interacted with the DAO, obviously.
-// This of course will need to be modified for proper voter eligibility
+/**
+ * Check whether wallet is eligible to vote on proposal
+ * @param address wallet address
+ * @param proposalId proposal id
+ * @param pluginAddress plugin for which voting eligibility will be calculated
+ * @param pluginType plugin type
+ * @returns whether given wallet address is allowed to vote on proposal with given id
+ */
 export const useWalletCanVote = (
-  dao: string,
-  address: string
+  address: string | null,
+  proposalId: string,
+  pluginAddress: string,
+  pluginType?: PluginTypes
 ): HookData<boolean> => {
-  const {network} = useNetwork();
+  const [data, setData] = useState(false);
+  const [error, setError] = useState<Error>();
+  const [isLoading, setIsLoading] = useState(false);
 
-  const provider = useSpecificProvider(CHAIN_METADATA[network].id);
-
-  const {data, isLoading, error} = useDaoMembers(
-    dao,
-    'addresslistvoting.dao.eth'
-  );
-  const [canVote, setCanVote] = useState(false);
+  const client = usePluginClient(pluginAddress, pluginType);
 
   useEffect(() => {
-    async function checkIfMember() {
-      const searchResult = data?.members[0];
-
-      if (address && searchResult) {
-        // Whitelist member
-        if (isWalletListMember(searchResult)) {
-          setCanVote(searchResult.address === address);
-          return;
-        }
-
-        // fetch token balance for the address
-        // FIXME: this is temporary until we have proper member eligibility for ERC20
-        if (token?.id) {
-          const balance = await fetchBalance(
-            token.id,
-            address,
-            provider,
-            CHAIN_METADATA[network].nativeCurrency,
-            false
-          );
-
-          setCanVote(BigNumber.from(balance).gt(0));
-          return;
-        }
+    async function fetchCanVote() {
+      if (!address || !proposalId || !pluginAddress || !pluginType) {
+        setData(false);
+        return;
       }
-      setCanVote(false);
+
+      try {
+        setIsLoading(true);
+
+        const canVote = await client?.methods.canVote({
+          address,
+          proposalId,
+          pluginAddress,
+        });
+
+        if (canVote !== undefined) setData(canVote);
+        else setData(false);
+      } catch (error) {
+        console.error(error);
+        setError(error as Error);
+      } finally {
+        setIsLoading(false);
+      }
     }
 
-    checkIfMember();
-  }, [address, data, network, provider]);
+    fetchCanVote();
+  }, [address, client?.methods, pluginAddress, pluginType, proposalId]);
 
-  return {
-    data: canVote,
-    isLoading,
-    error,
-  };
+  return {data, error, isLoading};
 };
