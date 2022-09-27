@@ -218,6 +218,49 @@ const Proposal: React.FC = () => {
     statusRef.current.wasOnWrongNetwork,
   ]);
 
+  // caches the status for breadcrumb
+  useEffect(() => {
+    if (proposal && proposal.status !== get('proposalStatus'))
+      set('proposalStatus', proposal.status);
+  }, [get, proposal, set]);
+
+  useEffect(() => {
+    // was not logged in but now logged in
+    if (statusRef.current.wasNotLoggedIn && isConnected) {
+      // reset ref
+      statusRef.current.wasNotLoggedIn = false;
+
+      // logged out technically wrong network
+      statusRef.current.wasOnWrongNetwork = true;
+
+      // throw network modal
+      if (isOnWrongNetwork) {
+        open('network');
+      }
+    }
+  }, [isConnected, isOnWrongNetwork, open]);
+
+  useEffect(() => {
+    // all conditions unmet close voting in process
+    if (isOnWrongNetwork || !isConnected || !canVote) {
+      setVotingInProcess(false);
+    }
+
+    // was on the wrong network but now on the right one
+    if (statusRef.current.wasOnWrongNetwork && !isOnWrongNetwork) {
+      // reset ref
+      statusRef.current.wasOnWrongNetwork = false;
+
+      // show voting in process
+      if (canVote) setVotingInProcess(true);
+    }
+  }, [
+    canVote,
+    isConnected,
+    isOnWrongNetwork,
+    statusRef.current.wasOnWrongNetwork,
+  ]);
+
   const executionStatus = useMemo(() => {
     switch (proposal?.status) {
       case 'Succeeded':
