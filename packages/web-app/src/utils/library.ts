@@ -2,12 +2,18 @@
 import {BigNumberish, constants, ethers} from 'ethers';
 import {TFunction} from 'react-i18next';
 import {ApolloClient} from '@apollo/client';
-import {Client} from '@aragon/sdk-client';
+import {Client, ClientAddressList, ClientErc20} from '@aragon/sdk-client';
 
 import {fetchTokenData} from 'services/prices';
 import {SupportedNetworks} from 'utils/constants';
 
-import {ActionWithdraw} from 'utils/types';
+import {
+  ActionAddAddress,
+  ActionRemoveAddress,
+  ActionWithdraw,
+} from 'utils/types';
+import {IMintTokenParams} from '@aragon/sdk-client/dist/internal/interfaces/plugins';
+import {Address} from '@aragon/ui-components/dist/utils/addresses';
 
 export function formatUnits(amount: BigNumberish, decimals: number) {
   if (amount.toString().includes('.') || !decimals) {
@@ -115,4 +121,79 @@ export async function decodeWithdrawToAction(
     tokenSymbol: response?.symbol || '',
     isCustomToken: false,
   };
+}
+
+/**
+ * decodeMintTokenToAction
+ * @param data Uint8Array action data
+ * @param client SDK ERC20Client, Fetched using usePluginClient
+ * @returns Return Decoded Withdraw action
+ */
+export async function decodeMintTokenToAction(
+  data: Uint8Array | undefined,
+  client: ClientErc20 | undefined
+): Promise<IMintTokenParams | undefined> {
+  if (!client || !data) {
+    console.error('SDK client is not initialized correctly');
+    return;
+  }
+
+  return Promise.resolve(client.decoding.mintTokenAction(data));
+}
+
+/**
+ * decodeAddMembersToAction
+ * @param data Uint8Array action data
+ * @param client SDK AddressListClient, Fetched using usePluginClient
+ * @returns Return Decoded AddMembers action
+ */
+export async function decodeAddMembersToAction(
+  data: Uint8Array | undefined,
+  client: ClientAddressList | undefined
+): Promise<ActionAddAddress | undefined> {
+  if (!client || !data) {
+    console.error('SDK client is not initialized correctly');
+    return;
+  }
+
+  const addresses: {
+    address: Address;
+  }[] = client.decoding.addMembersAction(data)?.map(address => ({
+    address,
+  }));
+
+  return Promise.resolve({
+    name: 'add_address',
+    inputs: {
+      memberWallets: addresses,
+    },
+  });
+}
+
+/**
+ * decodeRemoveMembersToAction
+ * @param data Uint8Array action data
+ * @param client SDK AddressListClient, Fetched using usePluginClient
+ * @returns Return Decoded RemoveMembers action
+ */
+export async function decodeRemoveMembersToAction(
+  data: Uint8Array | undefined,
+  client: ClientAddressList | undefined
+): Promise<ActionRemoveAddress | undefined> {
+  if (!client || !data) {
+    console.error('SDK client is not initialized correctly');
+    return;
+  }
+  const addresses: {
+    address: Address;
+  }[] = client.decoding.removeMembersAction(data)?.map(address => ({
+    address,
+  }));
+
+  return Promise.resolve({
+    name: 'remove_address',
+    inputs: {
+      memberWallets: addresses,
+    },
+  });
 }

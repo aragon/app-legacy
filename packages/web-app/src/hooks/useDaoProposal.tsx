@@ -4,7 +4,11 @@
  * so we don't have to rewrite the fetch and return pattern every time
  */
 
-import {AddressListProposal, Erc20Proposal} from '@aragon/sdk-client';
+import {
+  AddressListProposal,
+  ClientAddressList,
+  Erc20Proposal,
+} from '@aragon/sdk-client';
 import {useEffect, useState} from 'react';
 
 import {HookData} from 'utils/types';
@@ -31,14 +35,25 @@ export const useDaoProposal = (
   const [data, setData] = useState<DetailedProposal>();
   const [error, setError] = useState<Error>();
   const [isLoading, setIsLoading] = useState(false);
-  const [encodedData, setEncodedData] = useState<DaoAction | undefined>();
+  const [encodedActions, setEncodedActions] = useState<DaoAction[]>();
   const {client: globalClient} = useClient();
+  const pluginClient = usePluginClient(
+    pluginAddress,
+    pluginType as PluginTypes
+  );
   const daoAddress = '0x1234567890123456789012345678901234567890';
 
   useEffect(() => {
     // TODO: this method is for dummy usage only, Will remove later
+    const members: string[] = [
+      '0x1357924680135792468013579246801357924680',
+      '0x2468013579246801357924680135792468013579',
+      '0x0987654321098765432109876543210987654321',
+    ];
+
     const getEncodedAction = async () => {
-      const encodedAction = await globalClient?.encoding.withdrawAction(
+      if (!globalClient || !pluginClient) return;
+      const encodedWithdrawAction = globalClient.encoding.withdrawAction(
         daoAddress,
         {
           recipientAddress: '0x1234567890123456789012345678901234567890',
@@ -47,19 +62,32 @@ export const useDaoProposal = (
           reference: 'test',
         }
       );
-      setEncodedData(encodedAction);
-    };
-    getEncodedAction();
-  }, [globalClient?.encoding]);
+      const encodedAddMembersAction = (
+        pluginClient as ClientAddressList
+      ).encoding.addMembersAction(pluginAddress, members);
 
-  const client = usePluginClient(pluginAddress, pluginType);
+      const encodedRemoveMembersAction = (
+        pluginClient as ClientAddressList
+      ).encoding.removeMembersAction(daoAddress, members);
+      console.log(
+        'details',
+        await Promise.all([
+          encodedWithdrawAction,
+          encodedAddMembersAction,
+          encodedRemoveMembersAction,
+        ])
+      );
+    };
+
+    getEncodedAction();
+  }, [globalClient, pluginAddress, pluginClient]);
 
   useEffect(() => {
     async function getDaoProposal() {
       try {
         setIsLoading(true);
-        const proposal = await client?.methods.getProposal(proposalId);
-        if (proposal && encodedData) proposal.actions[0] = encodedData;
+        const proposal = await pluginClient?.methods.getProposal(proposalId);
+        if (proposal && encodedActions) proposal.actions = encodedActions;
         if (proposal) setData(proposal);
       } catch (err) {
         console.error(err);
@@ -70,7 +98,7 @@ export const useDaoProposal = (
     }
 
     getDaoProposal();
-  }, [client?.methods, encodedData, proposalId]);
+  }, [encodedActions, pluginClient?.methods, proposalId]);
 
   return {data, error, isLoading};
 };
