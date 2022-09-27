@@ -2,7 +2,7 @@
 import {BigNumberish, constants, ethers} from 'ethers';
 import {TFunction} from 'react-i18next';
 import {ApolloClient} from '@apollo/client';
-import {Client, ClientAddressList, ClientErc20} from '@aragon/sdk-client';
+import {Client, ClientAddressList} from '@aragon/sdk-client';
 
 import {fetchTokenData} from 'services/prices';
 import {SupportedNetworks} from 'utils/constants';
@@ -12,7 +12,6 @@ import {
   ActionRemoveAddress,
   ActionWithdraw,
 } from 'utils/types';
-import {IMintTokenParams} from '@aragon/sdk-client/dist/internal/interfaces/plugins';
 import {Address} from '@aragon/ui-components/dist/utils/addresses';
 
 export function formatUnits(amount: BigNumberish, decimals: number) {
@@ -121,24 +120,6 @@ export async function decodeWithdrawToAction(
     tokenSymbol: response?.symbol || '',
     isCustomToken: false,
   };
-}
-
-/**
- * decodeMintTokenToAction
- * @param data Uint8Array action data
- * @param client SDK ERC20Client, Fetched using usePluginClient
- * @returns Return Decoded Withdraw action
- */
-export async function decodeMintTokenToAction(
-  data: Uint8Array | undefined,
-  client: ClientErc20 | undefined
-): Promise<IMintTokenParams | undefined> {
-  if (!client || !data) {
-    console.error('SDK client is not initialized correctly');
-    return;
-  }
-
-  return Promise.resolve(client.decoding.mintTokenAction(data));
 }
 
 /**

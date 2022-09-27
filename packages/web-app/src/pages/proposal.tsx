@@ -145,7 +145,6 @@ const Proposal: React.FC = () => {
           client?.decoding.findInterface(action.data) ||
           pluginClient?.decoding.findInterface(action.data);
 
-        console.log('t-', functionParams);
         switch (functionParams?.functionName) {
           case 'withdraw':
             return decodeWithdrawToAction(
@@ -169,9 +168,8 @@ const Proposal: React.FC = () => {
             return Promise.resolve({} as ActionWithdraw);
         }
       });
-      // console.log('actionName', actionPromises);
+
       Promise.all(actionPromises).then(value => {
-        console.log('actionName', value);
         setDecodedActions(value);
       });
     }
@@ -375,8 +373,6 @@ const Proposal: React.FC = () => {
   if (paramIsLoading || proposalIsLoading || detailsAreLoading) {
     return <Loading />;
   }
-
-  console.log('review', decodedActions, proposal);
 
   return (
     <Container>

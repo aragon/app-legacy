@@ -14,7 +14,6 @@ import {useCallback, useEffect, useState} from 'react';
 import {HookData} from 'utils/types';
 import {useClient} from './useClient';
 import {PluginTypes, usePluginClient} from './usePluginClient';
-import {DaoAction} from '@aragon/sdk-client/dist/internal/interfaces/common';
 import {constants} from 'ethers';
 
 export type DetailedProposal = Erc20Proposal | AddressListProposal;
