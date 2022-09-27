@@ -59,6 +59,9 @@ jobs:
           VITE_REACT_APP_DEPLOY_ENVIRONMENT: ${{ needs.set-environment.outputs.environment }}
           VITE_REACT_APP_ANALYTICS_KEY: ${{ secrets.VITE_REACT_APP_ANALYTICS_KEY }}
           VITE_REACT_APP_RPC: 'mainnet.eth.aragon.network'
+          VITE_REACT_APP_ALCHEMY_API_KEY: ${{secrets.VITE_REACT_APP_ALCHEMY_API_KEY}}
+          VITE_IPFS_API_KEY: ${{secrets.VITE_IPFS_API_KEY}}
+          VITE_IPFS_API_URL: ${{secrets.VITE_IPFS_API_URL}}
           # TODO
           # Remove when the SDK no longer needs the addresses of the contract
           VITE_REACT_APP_SDK_DAO_FACTORY_ADDRESS: '0x2290E6dF695C5272cE942015c90aAe24bFB94960'
