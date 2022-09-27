@@ -103,7 +103,6 @@ const CreateProposalProvider: React.FC<Props> = ({
           const wallets = action.inputs.memberWallets.map(
             wallet => wallet.address
           );
-          console.log(pluginAddress);
           actions.push(
             Promise.resolve(
               (pluginClient as ClientAddressList).encoding.addMembersAction(
@@ -118,7 +117,6 @@ const CreateProposalProvider: React.FC<Props> = ({
           const wallets = action.inputs.memberWallets.map(
             wallet => wallet.address
           );
-          console.log(pluginAddress);
           actions.push(
             Promise.resolve(
               (pluginClient as ClientAddressList).encoding.removeMembersAction(
@@ -164,7 +162,6 @@ const CreateProposalProvider: React.FC<Props> = ({
       ]);
 
       const actions = await encodeActions();
-      console.log(actions);
 
       // Ignore encoding if the proposal had no actions
       return {

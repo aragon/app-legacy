@@ -242,7 +242,7 @@ const DepositProvider = ({children}: {children: ReactNode}) => {
           localStorage.setItem('pendingDeposits', JSON.stringify(depositTxs));
           trackEvent('newDeposit_transaction_signed', {
             network,
-            wallet_provider: provider,
+            wallet_provider: provider?.connection.url,
           });
         }
       }
@@ -251,7 +251,7 @@ const DepositProvider = ({children}: {children: ReactNode}) => {
       console.log(transactionHash);
       trackEvent('newDeposit_transaction_success', {
         network,
-        wallet_provider: provider,
+        wallet_provider: provider?.connection.url,
       });
     } catch (error) {
       console.error(error);
@@ -259,7 +259,7 @@ const DepositProvider = ({children}: {children: ReactNode}) => {
       trackEvent('newDeposit_transaction_failed', {
         network,
         error,
-        wallet_provider: provider,
+        wallet_provider: provider?.connection.url,
       });
     }
   };

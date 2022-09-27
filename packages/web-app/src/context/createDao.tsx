@@ -79,7 +79,7 @@ const CreateDaoProvider: React.FC<Props> = ({children}) => {
     // TODO: navigate to new dao when available
     trackEvent('daoCreation_publishDAONow_clicked', {
       network: getValues('blockchain')?.network,
-      wallet_provider: provider,
+      wallet_provider: provider?.connection.url,
       governance_type: getValues('membership'),
       estimated_gwei_fee: averageFee,
       total_usd_cost: averageFee ? tokenPrice * Number(averageFee) : 0,
@@ -257,7 +257,7 @@ const CreateDaoProvider: React.FC<Props> = ({children}) => {
             console.log('Newly created DAO address', step.address);
             trackEvent('daoCreation_transaction_success', {
               network: getValues('blockchain')?.network,
-              wallet_provider: provider,
+              wallet_provider: provider?.connection.url,
               governance_type: getValues('membership'),
             });
             setDaoCreationData(undefined);
@@ -269,7 +269,7 @@ const CreateDaoProvider: React.FC<Props> = ({children}) => {
         console.log(err);
         trackEvent('daoCreation_transaction_failed', {
           network: getValues('blockchain')?.network,
-          wallet_provider: provider,
+          wallet_provider: provider?.connection.url,
           governance_type: getValues('membership'),
           err,
         });

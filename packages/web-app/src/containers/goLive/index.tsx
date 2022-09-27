@@ -88,7 +88,7 @@ export const GoLiveFooter: React.FC = () => {
     isConnected &&
       trackEvent('daoCreation_publishYourDAO_clicked', {
         network: getValues('blockchain')?.network,
-        wallet_provider: provider,
+        wallet_provider: provider?.connection.url,
         governance_type: getValues('membership'),
       });
 
