@@ -311,11 +311,11 @@ const Container = styled.div.attrs({
 
 const Header = styled.div.attrs({
   className:
-    'tablet:flex tablet:justify-between tablet:items-center mb-4 tablet:mb-5 space-y-2 tablet:space-y-0',
+    'tablet:flex tablet:justify-between pb-1 tablet:items-center space-y-2 tablet:space-y-0',
 })``;
 
 const Heading1 = styled.h1.attrs({
-  className: 'text-2xl font-bold text-ui-800 flex-grow',
+  className: 'ft-text-xl font-bold text-ui-800 flex-grow',
 })``;
 
 const VStackRelaxed = styled.div.attrs({
@@ -327,7 +327,8 @@ const VStackNormal = styled.div.attrs({
 })``;
 
 const VStackSection = styled(VStackNormal).attrs({
-  className: 'p-3 -mx-2 tablet:-mx-3 border-b border-ui-100' as string,
+  className:
+    'p-2 tablet:p-3 -mx-2 tablet:-mx-3 border-b border-ui-100' as string,
 })``;
 
 const HStack = styled.div.attrs({
@@ -351,7 +352,7 @@ const VotingContainer = styled.div.attrs({
 })``;
 
 const Heading2 = styled.h2.attrs({
-  className: 'text-xl font-bold text-ui-800',
+  className: 'ft-text-xl font-bold text-ui-800',
 })``;
 
 const CheckboxContainer = styled.div.attrs({
