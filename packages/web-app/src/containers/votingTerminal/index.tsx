@@ -175,8 +175,9 @@ export const VotingTerminal: React.FC<VotingTerminalProps> = ({
           )}
         </div>
       ) : (
-        <VStackRelaxed>
-          <VStackNormal>
+        <>
+          <VStackSection>
+            <SectionHeader>Rules of decision</SectionHeader>
             <InfoLine>
               <p>{t('votingTerminal.options')}</p>
               <Strong>{t('votingTerminal.yes+no')}</Strong>
@@ -189,18 +190,10 @@ export const VotingTerminal: React.FC<VotingTerminalProps> = ({
               <p>{t('votingTerminal.minimumApproval')}</p>
               <Strong>{approval}</Strong>
             </InfoLine>
-            <InfoLine>
-              <p>{t('votingTerminal.participation')}</p>
-              <Strong>{participation}</Strong>
-            </InfoLine>
-            <InfoLine>
-              <p>{t('votingTerminal.uniqueVoters')}</p>
-              <Strong>{voters.length}</Strong>
-            </InfoLine>
-          </VStackNormal>
+          </VStackSection>
 
-          <VStackNormal>
-            <Strong>{t('votingTerminal.duration')}</Strong>
+          <VStackSection>
+            <SectionHeader>{t('votingTerminal.duration')}</SectionHeader>
             <InfoLine>
               <p>{t('votingTerminal.start')}</p>
               <Strong>{startDate?.toString()}</Strong>
@@ -209,8 +202,20 @@ export const VotingTerminal: React.FC<VotingTerminalProps> = ({
               <p>{t('votingTerminal.end')}</p>
               <Strong>{endDate}</Strong>
             </InfoLine>
-          </VStackNormal>
-        </VStackRelaxed>
+          </VStackSection>
+
+          <VStackSection>
+            <SectionHeader>Voting activity</SectionHeader>
+            <InfoLine>
+              <p>{t('votingTerminal.participation')}</p>
+              <Strong>{participation}</Strong>
+            </InfoLine>
+            <InfoLine>
+              <p>{t('votingTerminal.uniqueVoters')}</p>
+              <Strong>{voters.length}</Strong>
+            </InfoLine>
+          </VStackSection>
+        </>
       )}
 
       {votingInProcess ? (
@@ -241,7 +246,7 @@ export const VotingTerminal: React.FC<VotingTerminalProps> = ({
             />
           </CheckboxContainer>
 
-          <VoteContainer>
+          <VoteContainer className="justify-between">
             <ButtonWrapper>
               <ButtonText
                 label={t('votingTerminal.submit')}
@@ -260,7 +265,7 @@ export const VotingTerminal: React.FC<VotingTerminalProps> = ({
         </VotingContainer>
       ) : (
         <>
-          <VoteContainer>
+          <VoteContainer className="justify-between">
             <ButtonText
               label={voteButtonLabel || t('votingTerminal.voteNow')}
               size="large"
@@ -301,7 +306,7 @@ const StatusIcon: React.FC<StatusProp> = ({status}) => {
 };
 
 const Container = styled.div.attrs({
-  className: 'tablet:p-3 py-2.5 px-2 rounded-xl bg-ui-0',
+  className: 'tablet:p-3 py-2.5 px-2 rounded-xl bg-ui-0 border border-ui-100',
 })``;
 
 const Header = styled.div.attrs({
@@ -321,6 +326,10 @@ const VStackNormal = styled.div.attrs({
   className: 'space-y-1.5',
 })``;
 
+const VStackSection = styled(VStackNormal).attrs({
+  className: 'p-3 -mx-2 tablet:-mx-3 border-b border-ui-100' as string,
+})``;
+
 const HStack = styled.div.attrs({
   className: 'flex space-x-1.5',
 })``;
@@ -331,6 +340,10 @@ const InfoLine = styled.div.attrs({
 
 const Strong = styled.p.attrs({
   className: 'font-bold text-ui-800',
+})``;
+
+const SectionHeader = styled.p.attrs({
+  className: 'font-bold text-ui-800 ft-text-lg',
 })``;
 
 const VotingContainer = styled.div.attrs({
@@ -347,7 +360,7 @@ const CheckboxContainer = styled.div.attrs({
 
 const VoteContainer = styled.div.attrs({
   className:
-    'flex flex-col tablet:flex-row tablet:space-x-3 items-center tablet:items-center mt-3 space-y-2 tablet:space-y-0',
+    'flex flex-col tablet:flex-row tablet:space-x-3 items-center tablet:items-center mt-3 space-y-2 tablet:space-y-0' as string,
 })``;
 
 const ButtonWrapper = styled.div.attrs({
