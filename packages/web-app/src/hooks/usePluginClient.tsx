@@ -35,6 +35,7 @@ export const usePluginClient = (
       throw new Error('SDK client is not initialized correctly');
     }
 
+    console.log('-->', contextParams, pluginAddress, pluginType);
     if (!pluginAddress || !pluginType) setPluginClient(undefined);
     else {
       switch (pluginType) {
@@ -46,7 +47,7 @@ export const usePluginClient = (
             )
           );
           break;
-        case 'addresslistvoting.dao.eth':
+        case 'addreslistvoting.dao.eth' as 'addresslistvoting.dao.eth':
           setPluginClient(
             new ClientAddressList(
               //TODO: replace when method fixed on SDK ContextPlugin.fromContext(context, pluginAddress)

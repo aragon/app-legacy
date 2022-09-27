@@ -141,8 +141,11 @@ const Proposal: React.FC = () => {
   useEffect(() => {
     if (proposal) {
       const actionPromises = proposal.actions.map(action => {
-        const functionParams = client?.decoding.findInterface(action.data);
-        console.log('actionName', functionParams?.functionName);
+        const functionParams =
+          client?.decoding.findInterface(action.data) ||
+          pluginClient?.decoding.findInterface(action.data);
+
+        console.log('t-', functionParams);
         switch (functionParams?.functionName) {
           case 'withdraw':
             return decodeWithdrawToAction(
@@ -166,7 +169,9 @@ const Proposal: React.FC = () => {
             return Promise.resolve({} as ActionWithdraw);
         }
       });
+      // console.log('actionName', actionPromises);
       Promise.all(actionPromises).then(value => {
+        console.log('actionName', value);
         setDecodedActions(value);
       });
     }
