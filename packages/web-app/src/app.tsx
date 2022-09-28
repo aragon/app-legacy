@@ -1,13 +1,13 @@
-import React, {useEffect, lazy, Suspense} from 'react';
+import React, {lazy, Suspense, useEffect} from 'react';
 
 // FIXME: Change route to ApmRoute once package has been updated to be
 // compatible with react-router-dom v6
 import {
   Navigate,
-  Routes,
-  Route,
-  useLocation,
   Outlet,
+  Route,
+  Routes,
+  useLocation,
   useParams,
 } from 'react-router-dom';
 
@@ -19,19 +19,20 @@ import '../i18n.config';
 // HACK: All pages MUST be exported with the withTransaction function
 // from the '@elastic/apm-rum-react' package in order for analytics to
 // work properly on the pages.
-import {NotFound} from 'utils/paths';
-import DaoSelectMenu from 'containers/navbar/daoSelectMenu';
-import {Loading} from 'components/temporary/loading';
-import CreateDAO from 'pages/createDAO';
 import {GridLayout} from 'components/layout';
-import ExploreNav from 'containers/navbar/exploreNav';
+import {Loading} from 'components/temporary/loading';
 import Footer from 'containers/exploreFooter';
+import DaoSelectMenu from 'containers/navbar/daoSelectMenu';
+import ExploreNav from 'containers/navbar/exploreNav';
 import NetworkErrorMenu from 'containers/networkErrorMenu';
-import TransferMenu from 'containers/transferMenu';
-import {useWallet} from 'hooks/useWallet';
-import {useForm, FormProvider} from 'react-hook-form';
 import TransactionDetail from 'containers/transactionDetail';
+import TransferMenu from 'containers/transferMenu';
+import {ProposalTransactionProvider} from 'context/proposalTransaction';
 import {useDaoDetails} from 'hooks/useDaoDetails';
+import {useWallet} from 'hooks/useWallet';
+import CreateDAO from 'pages/createDAO';
+import {FormProvider, useForm} from 'react-hook-form';
+import {NotFound} from 'utils/paths';
 
 const ExplorePage = lazy(() => import('pages/explore'));
 const NotFoundPage = lazy(() => import('pages/notFound'));
@@ -110,7 +111,7 @@ function App() {
               />
               <Route
                 path="governance/proposals/:id"
-                element={<ProposalPage />}
+                element={<ProposalDetailsWrapper />}
               />
               <Route path="community" element={<CommunityPage />} />
               <Route path="settings" element={<SettingsPage />} />
@@ -155,6 +156,12 @@ const NewSettingsWrapper: React.FC = () => {
     </FormProvider>
   );
 };
+
+const ProposalDetailsWrapper: React.FC = () => (
+  <ProposalTransactionProvider>
+    <ProposalPage />
+  </ProposalTransactionProvider>
+);
 
 const NotFoundWrapper: React.FC = () => {
   const {pathname} = useLocation();
