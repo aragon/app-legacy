@@ -212,6 +212,13 @@ const Proposal: React.FC = () => {
     }
   }, [voteSubmitted]);
 
+  useEffect(() => {
+    if (voteSubmitted) {
+      setTerminalTab('voters');
+      setVotingInProcess(false);
+    }
+  }, [voteSubmitted]);
+
   // caches the status for breadcrumb
   useEffect(() => {
     if (proposal && proposal.status !== get('proposalStatus'))
