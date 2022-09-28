@@ -55,11 +55,7 @@ import {
   getWhitelistVoterParticipation,
   isTokenBasedProposal,
 } from 'utils/proposals';
-import {
-  ActionAddAddress,
-  ActionWithdraw,
-  ActionRemoveAddress,
-} from 'utils/types';
+import {Action} from 'utils/types';
 import {i18n} from '../../i18n.config';
 import {ClientAddressList, InstalledPluginListItem} from '@aragon/sdk-client';
 
@@ -75,9 +71,7 @@ const Proposal: React.FC = () => {
   const {breadcrumbs, tag} = useMappedBreadcrumbs();
   const apolloClient = useApolloClient();
   const [decodedActions, setDecodedActions] =
-    useState<
-      (ActionWithdraw | ActionAddAddress | ActionRemoveAddress | undefined)[]
-    >();
+    useState<(Action | undefined)[]>();
   const {client} = useClient();
 
   const {set, get} = useCache();
@@ -140,34 +134,35 @@ const Proposal: React.FC = () => {
 
   useEffect(() => {
     if (proposal) {
-      const actionPromises = proposal.actions.map(action => {
-        const functionParams =
-          client?.decoding.findInterface(action.data) ||
-          pluginClient?.decoding.findInterface(action.data);
+      const actionPromises: Promise<Action | undefined>[] =
+        proposal.actions.map(action => {
+          const functionParams =
+            client?.decoding.findInterface(action.data) ||
+            pluginClient?.decoding.findInterface(action.data);
 
-        switch (functionParams?.functionName) {
-          case 'withdraw':
-            return decodeWithdrawToAction(
-              action.data,
-              client,
-              apolloClient,
-              network
-            );
-          case 'mint':
-          case 'addWhitelistedUsers':
-            return decodeAddMembersToAction(
-              action.data,
-              pluginClient as ClientAddressList
-            );
-          case 'removeWhitelistedUsers':
-            return decodeRemoveMembersToAction(
-              action.data,
-              pluginClient as ClientAddressList
-            );
-          default:
-            return Promise.resolve({} as ActionWithdraw);
-        }
-      });
+          switch (functionParams?.functionName) {
+            case 'withdraw':
+              return decodeWithdrawToAction(
+                action.data,
+                client,
+                apolloClient,
+                network
+              );
+            case 'mint':
+            case 'addWhitelistedUsers':
+              return decodeAddMembersToAction(
+                action.data,
+                pluginClient as ClientAddressList
+              );
+            case 'removeWhitelistedUsers':
+              return decodeRemoveMembersToAction(
+                action.data,
+                pluginClient as ClientAddressList
+              );
+            default:
+              return Promise.resolve({} as Action);
+          }
+        });
 
       Promise.all(actionPromises).then(value => {
         setDecodedActions(value);
