@@ -25,6 +25,7 @@ type ProposalTransactionContextType = {
   pluginAddress: string;
   pluginType: PluginTypes;
   isLoading: boolean;
+  voteSubmitted: boolean;
 };
 
 type Props = Record<'children', ReactNode>;
@@ -42,6 +43,7 @@ const ProposalTransactionProvider: React.FC<Props> = ({children}) => {
   const [showVoteModal, setShowVoteModal] = useState(false);
 
   const [voteParams, setVoteParams] = useState<IVoteProposalParams>();
+  const [voteSubmitted, setVoteSubmitted] = useState(false);
   const [voteProcessState, setVoteProcessState] = useState<TransactionState>();
 
   const {data: daoId, isLoading: paramIsLoading} = useDaoParam();
@@ -93,7 +95,10 @@ const ProposalTransactionProvider: React.FC<Props> = ({children}) => {
       case TransactionState.LOADING:
         break;
       case TransactionState.SUCCESS:
-        setShowVoteModal(false);
+        {
+          setShowVoteModal(false);
+          setVoteSubmitted(true);
+        }
         break; // TODO: reload and cache
       default: {
         setShowVoteModal(false);
@@ -158,9 +163,10 @@ const ProposalTransactionProvider: React.FC<Props> = ({children}) => {
     <ProposalTransactionContext.Provider
       value={{
         handleSubmitVote,
+        isLoading: paramIsLoading || detailsAreLoading,
         pluginAddress,
         pluginType,
-        isLoading: paramIsLoading || detailsAreLoading,
+        voteSubmitted,
       }}
     >
       {children}
