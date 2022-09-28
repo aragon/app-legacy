@@ -370,3 +370,96 @@ function getPublishedProposalStep(
     block,
   };
 }
+
+/**
+ * get transformed data for terminal
+ * @param proposal proposal
+ * @returns transformed data for terminal
+ */
+export function getTerminalProps(proposal: DetailedProposal) {
+  let token;
+  let voters;
+  let participation;
+  let results;
+  let approval;
+  let strategy;
+
+  if (isTokenBasedProposal(proposal)) {
+    // token
+    token = {
+      name: proposal.token.name,
+      symbol: proposal.token.symbol,
+    };
+
+    // voters
+    const ptcResults = getErc20VotersAndParticipation(
+      proposal.votes,
+      proposal.token,
+      proposal.totalVotingWeight,
+      proposal.usedVotingWeight
+    );
+    voters = ptcResults.voters;
+
+    // participation summary
+    participation = ptcResults.summary;
+
+    // results
+    results = getErc20Results(
+      proposal.result,
+      proposal.token.decimals,
+      proposal.totalVotingWeight
+    );
+
+    // min approval
+    approval = getErc20MinimumApproval(
+      proposal.settings.minSupport,
+      proposal.totalVotingWeight,
+      proposal.token
+    );
+
+    // strategy
+    strategy = i18n.t('votingTerminal.tokenVoting');
+  } else {
+    // voters
+    const ptcResults = getWhitelistVoterParticipation(
+      proposal.votes,
+      proposal.totalVotingWeight
+    );
+    voters = ptcResults.voters;
+
+    // participation summary
+    participation = ptcResults.summary;
+
+    // results
+    results = getWhitelistResults(proposal.result, proposal.totalVotingWeight);
+
+    // approval
+    approval = getWhitelistMinimumApproval(
+      proposal.settings.minSupport,
+      proposal.totalVotingWeight
+    );
+
+    // strategy
+    strategy = i18n.t('votingTerminal.multisig');
+  }
+
+  return {
+    token,
+    status: proposal.status,
+    voters,
+    results,
+    approval,
+    strategy,
+    participation,
+
+    startDate: `${format(
+      proposal.startDate,
+      KNOWN_FORMATS.proposals
+    )}  ${getFormattedUtcOffset()}`,
+
+    endDate: `${format(
+      proposal.endDate,
+      KNOWN_FORMATS.proposals
+    )}  ${getFormattedUtcOffset()}`,
+  };
+}
