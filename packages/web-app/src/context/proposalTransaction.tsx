@@ -15,6 +15,7 @@ import {useDaoDetails} from 'hooks/useDaoDetails';
 import {useDaoParam} from 'hooks/useDaoParam';
 import {PluginTypes, usePluginClient} from 'hooks/usePluginClient';
 import {usePollGasFee} from 'hooks/usePollGasfee';
+import {useTranslation} from 'react-i18next';
 import {TransactionState} from 'utils/constants';
 
 //TODO: currently a context, but considering there will only ever be one child,
@@ -38,6 +39,7 @@ const ProposalTransactionContext =
   createContext<ProposalTransactionContextType | null>(null);
 
 const ProposalTransactionProvider: React.FC<Props> = ({children}) => {
+  const {t} = useTranslation();
   const {id} = useParams();
 
   const [showVoteModal, setShowVoteModal] = useState(false);
@@ -171,11 +173,11 @@ const ProposalTransactionProvider: React.FC<Props> = ({children}) => {
     >
       {children}
       <PublishModal
-        title={'Vote'}
+        title={t('labels.signVote')}
         state={voteProcessState || TransactionState.WAITING}
         isOpen={showVoteModal}
         onClose={handleCloseVoteModal}
-        buttonLabel="Vote Now"
+        buttonLabel={t('governance.proposals.buttons.vote')}
         callback={handleVoteExecution}
         closeOnDrag={voteProcessState !== TransactionState.LOADING}
         maxFee={maxFee}

@@ -171,7 +171,8 @@
     "totalHolders": "Total Holders",
     "mintable": "Mintable",
     "new": "New",
-    "pendingTransaction": "Pending Transaction..."
+    "pendingTransaction": "Pending Transaction...",
+    "signVote": "Sign Vote"
   },
   "placeHolders": {
     "selectToken": "Select a Token ...",
@@ -580,6 +581,8 @@
     "participation": "Participation",
     "uniqueVoters": "Unique Voters",
     "duration": "Duration",
+    "decision": "Rules of decision",
+    "activity": "Voting activity",
     "start": "Start",
     "end": "End",
     "participationErc20": "{{participation}} of {{totalWeight}} {{tokenSymbol}} ({{percentage}}%)",

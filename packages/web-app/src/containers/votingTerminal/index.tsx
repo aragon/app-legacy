@@ -185,7 +185,7 @@ export const VotingTerminal: React.FC<VotingTerminalProps> = ({
       ) : (
         <>
           <VStackSection>
-            <SectionHeader>Rules of decision</SectionHeader>
+            <SectionHeader>{t('votingTerminal.decision')}</SectionHeader>
             <InfoLine>
               <p>{t('votingTerminal.options')}</p>
               <Strong>{t('votingTerminal.yes+no')}</Strong>
@@ -213,7 +213,7 @@ export const VotingTerminal: React.FC<VotingTerminalProps> = ({
           </VStackSection>
 
           <VStackSection>
-            <SectionHeader>Voting activity</SectionHeader>
+            <SectionHeader>{t('votingTerminal.activity')}</SectionHeader>
             <InfoLine>
               <p>{t('votingTerminal.participation')}</p>
               <Strong>{participation}</Strong>
