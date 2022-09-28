@@ -43,13 +43,13 @@ import {
   decodeRemoveMembersToAction,
   decodeWithdrawToAction,
 } from 'utils/library';
-import {NotFound} from 'utils/paths';
 import {
   getProposalStatusSteps,
   getTerminalProps,
   isTokenBasedProposal,
 } from 'utils/proposals';
 import {Action} from 'utils/types';
+import {NotFound} from 'utils/paths';
 
 // TODO: @Sepehr Please assign proper tags on action decoding
 const PROPOSAL_TAGS = ['Finance', 'Withdraw'];
