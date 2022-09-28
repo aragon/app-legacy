@@ -376,7 +376,10 @@ function getPublishedProposalStep(
  * @param proposal proposal
  * @returns transformed data for terminal
  */
-export function getTerminalProps(proposal: DetailedProposal) {
+export function getTerminalProps(
+  proposal: DetailedProposal,
+  voter: string | null
+) {
   let token;
   let voters;
   let participation;
@@ -398,7 +401,7 @@ export function getTerminalProps(proposal: DetailedProposal) {
       proposal.totalVotingWeight,
       proposal.usedVotingWeight
     );
-    voters = ptcResults.voters;
+    voters = ptcResults.voters.sort(a => (a.wallet === voter ? -1 : 0));
 
     // participation summary
     participation = ptcResults.summary;
@@ -425,7 +428,7 @@ export function getTerminalProps(proposal: DetailedProposal) {
       proposal.votes,
       proposal.totalVotingWeight
     );
-    voters = ptcResults.voters;
+    voters = ptcResults.voters.sort(a => (a.wallet === voter ? -1 : 0));
 
     // participation summary
     participation = ptcResults.summary;

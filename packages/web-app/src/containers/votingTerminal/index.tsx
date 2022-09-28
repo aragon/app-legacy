@@ -1,3 +1,4 @@
+import {VoteValues} from '@aragon/sdk-client';
 import {ProposalStatus} from '@aragon/sdk-client/dist/internal/interfaces/common';
 import {
   AlertCard,
@@ -26,6 +27,8 @@ export type ProposalVoteResults = {
   abstain: {value: string | number; percentage: number};
 };
 
+export type TerminalTabs = 'voters' | 'breakdown' | 'info';
+
 // TODO: clean up props: some shouldn't be optional
 export type VotingTerminalProps = {
   breakdownTabDisabled?: boolean;
@@ -46,9 +49,12 @@ export type VotingTerminalProps = {
   results?: ProposalVoteResults;
   votingInProcess?: boolean;
   onVoteClicked?: React.MouseEventHandler<HTMLButtonElement>;
+  onVoteSubmitClicked?: (vote: VoteValues) => void;
   onCancelClicked?: React.MouseEventHandler<HTMLButtonElement>;
   voteButtonLabel?: string;
   alertMessage?: string;
+  selectedTab?: TerminalTabs;
+  onTabSelected?: React.Dispatch<React.SetStateAction<TerminalTabs>>;
 };
 
 export const VotingTerminal: React.FC<VotingTerminalProps> = ({
@@ -68,12 +74,14 @@ export const VotingTerminal: React.FC<VotingTerminalProps> = ({
   onVoteClicked,
   votingInProcess,
   onCancelClicked,
+  onVoteSubmitClicked,
   voteButtonLabel,
   alertMessage,
+  selectedTab = 'info',
+  onTabSelected,
 }) => {
   const [query, setQuery] = useState('');
-  const [buttonGroupState, setButtonGroupState] = useState('info');
-  const [selectedVote, setSelectedVote] = useState('');
+  const [selectedVote, setSelectedVote] = useState<VoteValues>();
   const {t} = useTranslation();
 
   const displayedVoters = useMemo(() => {
@@ -88,8 +96,8 @@ export const VotingTerminal: React.FC<VotingTerminalProps> = ({
         <Heading1>{t('votingTerminal.title')}</Heading1>
         <ButtonGroup
           bgWhite
-          defaultValue={buttonGroupState}
-          onChange={setButtonGroupState}
+          defaultValue={selectedTab}
+          onChange={value => onTabSelected?.(value as TerminalTabs)}
         >
           <Option
             value="breakdown"
@@ -105,7 +113,7 @@ export const VotingTerminal: React.FC<VotingTerminalProps> = ({
         </ButtonGroup>
       </Header>
 
-      {buttonGroupState === 'breakdown' ? (
+      {selectedTab === 'breakdown' ? (
         <VStackRelaxed>
           <VStackNormal>
             <HStack>
@@ -140,7 +148,7 @@ export const VotingTerminal: React.FC<VotingTerminalProps> = ({
             <LinearProgress max={100} value={results?.abstain.percentage} />
           </VStackNormal>
         </VStackRelaxed>
-      ) : buttonGroupState === 'voters' ? (
+      ) : selectedTab === 'voters' ? (
         <div className="space-y-2">
           <SearchInput
             placeholder={t('votingTerminal.inputPlaceholder')}
@@ -229,29 +237,33 @@ export const VotingTerminal: React.FC<VotingTerminalProps> = ({
             <CheckboxListItem
               label={t('votingTerminal.yes')}
               helptext={t('votingTerminal.yesHelptext')}
-              onClick={() => setSelectedVote('yes')}
-              type={selectedVote === 'yes' ? 'active' : 'default'}
+              onClick={() => setSelectedVote(VoteValues.YES)}
+              type={selectedVote === VoteValues.YES ? 'active' : 'default'}
             />
             <CheckboxListItem
               label={t('votingTerminal.no')}
               helptext={t('votingTerminal.noHelptext')}
-              onClick={() => setSelectedVote('no')}
-              type={selectedVote === 'no' ? 'active' : 'default'}
+              onClick={() => setSelectedVote(VoteValues.NO)}
+              type={selectedVote === VoteValues.NO ? 'active' : 'default'}
             />
             <CheckboxListItem
               label={t('votingTerminal.abstain')}
               helptext={t('votingTerminal.abstainHelptext')}
-              onClick={() => setSelectedVote('abstain')}
-              type={selectedVote === 'abstain' ? 'active' : 'default'}
+              onClick={() => setSelectedVote(VoteValues.ABSTAIN)}
+              type={selectedVote === VoteValues.ABSTAIN ? 'active' : 'default'}
             />
           </CheckboxContainer>
 
-          <VoteContainer className="justify-between">
+          <VoteContainer>
             <ButtonWrapper>
               <ButtonText
                 label={t('votingTerminal.submit')}
                 size="large"
-                disabled={selectedVote === ''}
+                disabled={!selectedVote}
+                onClick={() => {
+                  if (selectedVote && onVoteSubmitClicked)
+                    onVoteSubmitClicked(selectedVote);
+                }}
               />
               <ButtonText
                 label={t('votingTerminal.cancel')}
@@ -265,7 +277,7 @@ export const VotingTerminal: React.FC<VotingTerminalProps> = ({
         </VotingContainer>
       ) : (
         <>
-          <VoteContainer className="justify-between">
+          <VoteContainer>
             <ButtonText
               label={voteButtonLabel || t('votingTerminal.voteNow')}
               size="large"
