@@ -1,4 +1,10 @@
-import React, {createContext, useContext, useState} from 'react';
+import React, {
+  createContext,
+  useCallback,
+  useContext,
+  useMemo,
+  useState,
+} from 'react';
 import styled from 'styled-components';
 
 import {OptionProps} from './button';
@@ -6,7 +12,7 @@ import {OptionProps} from './button';
 type ButtonContextType = {
   bgWhite: boolean;
   selectedValue: string;
-  onChange: ((value: string) => void) | undefined;
+  onChange: (value: string) => void;
 };
 
 export const ButtonGroupContext = createContext<ButtonContextType | undefined>(
@@ -17,40 +23,51 @@ export const useButtonGroupContext = () =>
   useContext(ButtonGroupContext) as ButtonContextType;
 
 type ButtonProviderProps = {
-  defaultValue: string;
+  value?: string;
+  defaultValue?: string;
   bgWhite: boolean;
-  onChange: ((value: string) => void) | undefined;
+  onChange?: (value: string) => void;
 };
 
 const ButtonProvider: React.FC<ButtonProviderProps> = ({
+  value,
   bgWhite,
   defaultValue,
   onChange: onChangeCallback,
   children,
 }) => {
-  const [selectedValue, setSelectedValue] = useState(defaultValue);
+  const isControlled = typeof value !== 'undefined';
+  const [internalValue, setInternalValue] = useState(defaultValue || '');
 
-  const onChange = (nextValue: string) => {
-    setSelectedValue(nextValue);
-    if (onChangeCallback) {
-      onChangeCallback(nextValue);
-    }
-  };
+  const onChange = useCallback(
+    (nextValue: string) => {
+      onChangeCallback?.(nextValue);
 
-  const value = {
-    bgWhite,
-    selectedValue,
-    onChange,
-  };
+      if (!isControlled) setInternalValue(nextValue);
+    },
+    [isControlled, onChangeCallback]
+  );
+
+  const contextValues = useMemo(
+    () => ({
+      bgWhite,
+      selectedValue: isControlled ? (value as string) : internalValue,
+      onChange,
+    }),
+    [bgWhite, internalValue, isControlled, onChange, value]
+  );
+
+  console.log('Context value', contextValues.selectedValue);
 
   return (
-    <ButtonGroupContext.Provider value={value}>
+    <ButtonGroupContext.Provider value={contextValues}>
       {children}
     </ButtonGroupContext.Provider>
   );
 };
 
 export type ButtonGroupProps = {
+  value?: string;
   bgWhite: boolean;
   defaultValue: string;
   onChange?: (value: string) => void;
@@ -58,6 +75,7 @@ export type ButtonGroupProps = {
 };
 
 export const ButtonGroup: React.FC<ButtonGroupProps> = ({
+  value,
   bgWhite,
   defaultValue,
   onChange,
@@ -67,6 +85,7 @@ export const ButtonGroup: React.FC<ButtonGroupProps> = ({
     <ButtonProvider
       bgWhite={bgWhite}
       defaultValue={defaultValue}
+      value={value}
       onChange={onChange}
     >
       <HStack data-testid="buttonGroup" bgWhite={bgWhite}>
