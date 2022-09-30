@@ -1,5 +1,5 @@
 import {useApolloClient} from '@apollo/client';
-import {ClientAddressList} from '@aragon/sdk-client';
+import {ClientAddressList, Erc20Proposal} from '@aragon/sdk-client';
 import {
   Badge,
   Breadcrumb,
@@ -15,6 +15,7 @@ import {withTransaction} from '@elastic/apm-rum-react';
 import TipTapLink from '@tiptap/extension-link';
 import {useEditor} from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
+import formatDistance from 'date-fns/formatDistance';
 import React, {useEffect, useMemo, useRef, useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {generatePath, useNavigate, useParams} from 'react-router-dom';
@@ -28,7 +29,6 @@ import {TerminalTabs, VotingTerminal} from 'containers/votingTerminal';
 import {useGlobalModalContext} from 'context/globalModals';
 import {useNetwork} from 'context/network';
 import {useProposalTransactionContext} from 'context/proposalTransaction';
-import formatDistance from 'date-fns/formatDistance';
 import {useCache} from 'hooks/useCache';
 import {useClient} from 'hooks/useClient';
 import {useDaoProposal} from 'hooks/useDaoProposal';
@@ -43,34 +43,35 @@ import {
   decodeRemoveMembersToAction,
   decodeWithdrawToAction,
 } from 'utils/library';
+import {NotFound} from 'utils/paths';
 import {
   getProposalStatusSteps,
   getTerminalProps,
   isTokenBasedProposal,
 } from 'utils/proposals';
 import {Action} from 'utils/types';
-import {NotFound} from 'utils/paths';
 
 // TODO: @Sepehr Please assign proper tags on action decoding
 const PROPOSAL_TAGS = ['Finance', 'Withdraw'];
 
 const Proposal: React.FC = () => {
   const {t} = useTranslation();
-  const {dao, id: proposalId} = useParams();
   const {open} = useGlobalModalContext();
-  const navigate = useNavigate();
   const {isDesktop} = useScreen();
   const {breadcrumbs, tag} = useMappedBreadcrumbs();
 
-  const apolloClient = useApolloClient();
-  const [decodedActions, setDecodedActions] =
-    useState<(Action | undefined)[]>();
-  const {client} = useClient();
+  const navigate = useNavigate();
+  const {dao, id: proposalId} = useParams();
 
+  const {client} = useClient();
   const {set, get} = useCache();
+  const apolloClient = useApolloClient();
 
   const {network} = useNetwork();
   const {address, isConnected, isOnWrongNetwork} = useWallet();
+
+  const [decodedActions, setDecodedActions] =
+    useState<(Action | undefined)[]>();
 
   const {
     handleSubmitVote,
@@ -212,6 +213,7 @@ const Proposal: React.FC = () => {
     }
   }, [voteSubmitted]);
 
+  // show voter tab once user has voted
   useEffect(() => {
     if (voteSubmitted) {
       setTerminalTab('voters');
@@ -400,7 +402,7 @@ const Proposal: React.FC = () => {
         proposal.startDate,
         proposal.endDate,
         proposal.creationDate,
-        '123,123,123',
+        '123,123,123', // TODO: Add block numbers from sdk
         '456,456,456',
         new Date() // TODO: change to proposal.executionDate from sdk
       );
@@ -491,9 +493,14 @@ const Proposal: React.FC = () => {
             onVoteClicked={onClick}
             onCancelClicked={() => setVotingInProcess(false)}
             voteButtonLabel={buttonLabel}
-            voteNowDisabled={voteNowDisabled}
+            voteNowDisabled={voted || voteNowDisabled}
             votingInProcess={votingInProcess}
-            onVoteSubmitClicked={handleSubmitVote}
+            onVoteSubmitClicked={vote =>
+              handleSubmitVote(
+                vote,
+                (proposal as Erc20Proposal).token.address || ''
+              )
+            }
             {...terminalPropsFromProposal}
           />
 
