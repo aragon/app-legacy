@@ -60,26 +60,31 @@ export const useDaoProposal = (
         reference: 'test',
       }
     );
-    const encodedAddMembersAction = Promise.resolve(
-      (pluginClient as ClientAddressList).encoding.addMembersAction(
-        pluginAddress,
-        members
-      )
-    );
 
-    const encodedRemoveMembersAction = Promise.resolve(
-      (pluginClient as ClientAddressList).encoding.removeMembersAction(
-        daoAddress,
-        members
-      )
-    );
+    if (pluginType === 'addresslistvoting.dao.eth') {
+      const encodedAddMembersAction = Promise.resolve(
+        (pluginClient as ClientAddressList).encoding.addMembersAction(
+          pluginAddress,
+          members
+        )
+      );
 
-    return Promise.all([
-      encodedWithdrawAction,
-      encodedAddMembersAction,
-      encodedRemoveMembersAction,
-    ]);
-  }, [globalClient, pluginAddress, pluginClient]);
+      const encodedRemoveMembersAction = Promise.resolve(
+        (pluginClient as ClientAddressList).encoding.removeMembersAction(
+          daoAddress,
+          members
+        )
+      );
+
+      return Promise.all([
+        encodedWithdrawAction,
+        encodedAddMembersAction,
+        encodedRemoveMembersAction,
+      ]);
+    }
+
+    return Promise.all([encodedWithdrawAction]);
+  }, [globalClient, pluginAddress, pluginClient, pluginType]);
 
   useEffect(() => {
     async function getDaoProposal() {
