@@ -373,7 +373,7 @@ function getPublishedProposalStep(
 
 /**
  * get transformed data for terminal
- * @param proposal proposal
+ * @param proposal
  * @returns transformed data for terminal
  */
 export function getTerminalProps(
