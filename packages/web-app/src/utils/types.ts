@@ -1,3 +1,4 @@
+import {VoteValues} from '@aragon/sdk-client';
 import {Address} from '@aragon/ui-components/src/utils/addresses';
 
 import {TimeFilter, TransferTypes} from './constants';
@@ -156,6 +157,15 @@ type ExecutionData = {
   from: Address;
   to: Address;
   amount: number;
+};
+
+export type AddressListVote = {
+  address: string;
+  vote: VoteValues;
+};
+
+export type Erc20ProposalVote = AddressListVote & {
+  weight: bigint;
 };
 
 /* ACTION TYPES ============================================================= */
