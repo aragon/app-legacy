@@ -10,14 +10,12 @@ import {
   ClientAddressList,
   Erc20Proposal,
 } from '@aragon/sdk-client';
-import {DaoAction} from '@aragon/sdk-client/dist/internal/interfaces/common';
 import {BigNumber, constants} from 'ethers';
 import {useCallback, useEffect, useState} from 'react';
 
 import {pendingVotesVar} from 'context/apolloClient';
 import {isTokenBasedProposal, MappedVotes} from 'utils/proposals';
 import {Erc20ProposalVote, HookData} from 'utils/types';
-import {useCache} from './useCache';
 import {useClient} from './useClient';
 import {PluginTypes, usePluginClient} from './usePluginClient';
 
@@ -69,7 +67,11 @@ export const useDaoProposal = (
       }
     );
 
-    if (pluginType === 'addresslistvoting.dao.eth') {
+    // TODO: remove when plugin address is fixed
+    if (
+      pluginType === 'addresslistvoting.dao.eth' ||
+      ('addreslistvoting.dao.eth' as PluginTypes)
+    ) {
       const encodedAddMembersAction = Promise.resolve(
         (pluginClient as ClientAddressList).encoding.addMembersAction(
           pluginAddress,
@@ -148,6 +150,7 @@ export const useDaoProposal = (
         if (proposal && encodedActions) proposal.actions = encodedActions;
         if (proposal) {
           setData({...augmentProposalWithCache(proposal)});
+          // TODO: uncomment for PR review setData({...augmentProposalWithCache(proposal), status: 'Active'});
         }
       } catch (err) {
         console.error(err);

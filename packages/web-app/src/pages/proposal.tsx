@@ -496,10 +496,7 @@ const Proposal: React.FC = () => {
             voteNowDisabled={voted || voteNowDisabled}
             votingInProcess={votingInProcess}
             onVoteSubmitClicked={vote =>
-              handleSubmitVote(
-                vote,
-                (proposal as Erc20Proposal).token.address || ''
-              )
+              handleSubmitVote(vote, (proposal as Erc20Proposal).token?.address)
             }
             {...terminalPropsFromProposal}
           />
