@@ -57,8 +57,6 @@ const ButtonProvider: React.FC<ButtonProviderProps> = ({
     [bgWhite, internalValue, isControlled, onChange, value]
   );
 
-  console.log('Context value', contextValues.selectedValue);
-
   return (
     <ButtonGroupContext.Provider value={contextValues}>
       {children}
