@@ -23,10 +23,10 @@ import {getFormattedUtcOffset, KNOWN_FORMATS} from './date';
 import {formatUnits} from './library';
 import {abbreviateTokenAmount} from './tokens';
 
-const MappedVotes: {[key in VoteValues]: VoterType['option']} = {
-  1: 'Abstain',
-  2: 'Yes',
-  3: 'No',
+export const MappedVotes: {[key in VoteValues]: VoterType['option']} = {
+  1: 'abstain',
+  2: 'yes',
+  3: 'no',
 };
 
 // this type guard will need to evolve when there are more types
