@@ -75,6 +75,7 @@ const Proposal: React.FC = () => {
 
   const {
     handleSubmitVote,
+    handleExecuteProposal,
     isLoading: paramsAreLoading,
     pluginAddress,
     pluginType,
@@ -501,7 +502,11 @@ const Proposal: React.FC = () => {
             {...terminalPropsFromProposal}
           />
 
-          <ExecutionWidget actions={decodedActions} status={executionStatus} />
+          <ExecutionWidget
+            actions={decodedActions}
+            status={executionStatus}
+            onExecuteClicked={handleExecuteProposal}
+          />
         </ProposalContainer>
         <AdditionalInfoContainer>
           <ResourceList links={proposal?.metadata.resources} />

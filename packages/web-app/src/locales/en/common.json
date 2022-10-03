@@ -172,7 +172,8 @@
     "mintable": "Mintable",
     "new": "New",
     "pendingTransaction": "Pending Transaction...",
-    "signVote": "Sign Vote"
+    "signVote": "Sign Vote",
+    "signExecuteProposal": "Execute Proposal"
   },
   "placeHolders": {
     "selectToken": "Select a Token ...",
