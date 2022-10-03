@@ -3,12 +3,15 @@ import {
   InstalledPluginListItem,
   ProposalCreationSteps,
 } from '@aragon/sdk-client';
+import {IMetadata} from '@aragon/sdk-client/dist/internal/interfaces/client';
+import {DaoAction} from '@aragon/sdk-client/dist/internal/interfaces/common';
+import {IPluginSettings} from '@aragon/sdk-client/dist/internal/interfaces/plugins';
 import {withTransaction} from '@elastic/apm-rum-react';
+import Big from 'big.js';
 import React, {useCallback, useEffect, useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {generatePath, useNavigate} from 'react-router-dom';
 
-import {DaoAction} from '@aragon/sdk-client/dist/internal/interfaces/common';
 import {FullScreenStepper, Step} from 'components/fullScreenStepper';
 import {Loading} from 'components/temporary';
 import CompareSettings from 'containers/compareSettings';
@@ -18,6 +21,7 @@ import SetupVotingForm from 'containers/setupVotingForm';
 import PublishModal from 'containers/transactionModals/publishModal';
 import {useGlobalModalContext} from 'context/globalModals';
 import {useNetwork} from 'context/network';
+import {useClient} from 'hooks/useClient';
 import {useDaoDetails} from 'hooks/useDaoDetails';
 import {useDaoParam} from 'hooks/useDaoParam';
 import {PluginTypes, usePluginClient} from 'hooks/usePluginClient';
@@ -25,9 +29,8 @@ import {usePollGasFee} from 'hooks/usePollGasfee';
 import {useWallet} from 'hooks/useWallet';
 import {useFormContext} from 'react-hook-form';
 import {TransactionState} from 'utils/constants';
-import {getCanonicalUtcOffset} from 'utils/date';
+import {getCanonicalUtcOffset, getSecondsFromDHM} from 'utils/date';
 import {EditSettings, Governance} from 'utils/paths';
-import {useClient} from 'hooks/useClient';
 
 const ProposeSettings: React.FC = () => {
   const {t} = useTranslation();
@@ -122,15 +125,54 @@ const ProposeSettingWrapper: React.FC<Props> = ({
 
   useEffect(() => {
     const encodeActions = async (): Promise<DaoAction[]> => {
-      const actionsFromForm = getValues('actions');
+      const [
+        daoName,
+        daoSummary,
+        links,
+        minimumParticipation,
+        support,
+        durationDays,
+        durationHours,
+        durationMinutes,
+      ] = getValues([
+        'daoName',
+        'daoSummary',
+        'links',
+        'minimumParticipation',
+        'support',
+        'durationDays',
+        'durationHours',
+        'durationMinutes',
+      ]);
       const actions: Array<Promise<DaoAction>> = [];
 
       // return an empty array for undefined clients
       if (!pluginClient || !client) return Promise.resolve([] as DaoAction[]);
 
-      // TODO: Encode settings
+      const updateParams: IMetadata = {
+        description: daoSummary,
+        links: links,
+        name: daoName,
+        // avatar: avatarUrl,
+      };
+      actions.push(client.encoding.updateMetadataAction(dao, updateParams));
 
-      return Promise.all(actions);
+      const durationInSeconds = getSecondsFromDHM(
+        durationDays,
+        durationHours,
+        durationMinutes
+      );
+      const settingsParams: IPluginSettings = {
+        minDuration: durationInSeconds,
+        minSupport: Big(support).div(100).toNumber(),
+        minTurnout: Big(minimumParticipation).div(100).toNumber(),
+      };
+      actions.push(
+        Promise.resolve(
+          pluginClient.encoding.updatePluginSettingsAction(dao, settingsParams)
+        )
+      );
+      return Promise.resolve([] as DaoAction[]);
     };
 
     const getProposalCreationParams =
@@ -219,7 +261,7 @@ const ProposeSettingWrapper: React.FC<Props> = ({
     }
   };
 
-  const handlePublishProposal = async () => {
+  const handlePublishSettings = async () => {
     if (!pluginClient) {
       return new Error('ERC20 SDK client is not initialized correctly');
     }
@@ -281,7 +323,7 @@ const ProposeSettingWrapper: React.FC<Props> = ({
         state={creationProcessState || TransactionState.WAITING}
         isOpen={showTxModal}
         onClose={handleCloseModal}
-        callback={handlePublishProposal}
+        callback={handlePublishSettings}
         closeOnDrag={creationProcessState !== TransactionState.LOADING}
         maxFee={maxFee}
         averageFee={averageFee}
