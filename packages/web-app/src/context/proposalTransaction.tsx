@@ -307,7 +307,11 @@ const ProposalTransactionProvider: React.FC<Props> = ({children}) => {
     >
       {children}
       <PublishModal
-        title={showExecuteModal ? t('labels.signVote') : t('labels.signVote')}
+        title={
+          showExecuteModal
+            ? t('labels.signExecuteProposal')
+            : t('labels.signVote')
+        }
         buttonLabel={
           showExecuteModal
             ? t('governance.proposals.buttons.execute')

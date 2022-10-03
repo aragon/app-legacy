@@ -88,14 +88,14 @@ const WidgetFooter: React.FC<FooterProps> = ({
 }) => {
   const {t} = useTranslation();
   switch (status) {
-    // case 'defeated':
-    //   return (
-    //     <AlertInline
-    //       label={t('governance.executionCard.status.defeated')}
-    //       mode={'warning'}
-    //     />
-    //   );
-    case 'defeated' as 'executable':
+    case 'defeated':
+      return (
+        <AlertInline
+          label={t('governance.executionCard.status.defeated')}
+          mode={'warning'}
+        />
+      );
+    case 'executable':
       return (
         <Footer>
           <ButtonText
