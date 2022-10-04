@@ -70,11 +70,10 @@ export function getWhitelistMinimumApproval(
   minSupport: number,
   totalVotingWeight: number
 ): string {
-  const members = Math.ceil(totalVotingWeight * minSupport);
+  const percentage = minSupport / Math.pow(10, 18);
 
-  return `${members} ${i18n.t('labels.members')} (${parseFloat(
-    (minSupport * 100).toFixed(2)
-  )}%)`;
+  const members = Math.ceil(totalVotingWeight * percentage);
+  return `${members} ${i18n.t('labels.members')} (${percentage * 100}%)`;
 }
 
 /**
