@@ -225,9 +225,10 @@ const DepositProvider = ({children}: {children: ReactNode}) => {
             {
               transactionId: transactionHash,
               from,
-              amount,
+              amount: BigInt(amount),
               reference,
-              type: isNativeToken(tokenAddress) ? 'native' : 'erc20',
+              type: TransferType.Deposit,
+              tokenType: isNativeToken(tokenAddress) ? 'native' : 'erc20',
               address: tokenAddress,
               name: tokenName,
               symbol: tokenSymbol,

@@ -1,9 +1,4 @@
 import {useApolloClient} from '@apollo/client';
-import {
-  AssetDeposit,
-  AssetWithdrawal,
-  IAssetTransfers,
-} from '@aragon/sdk-client/dist/internal/interfaces/client';
 
 import {useNetwork} from 'context/network';
 import {constants} from 'ethers';
@@ -18,6 +13,7 @@ import {formatDate} from 'utils/date';
 import {formatUnits} from 'utils/library';
 import {HookData, Transfer} from 'utils/types';
 import {i18n} from '../../i18n.config';
+import {IAssetTransfers} from './useDaoTransfers';
 
 export const usePollTransfersPrices = (
   transfers: IAssetTransfers
@@ -91,92 +87,59 @@ export const usePollTransfersPrices = (
 function mapToDaoTransfers(
   transfers: IAssetTransfers,
   network: SupportedNetworks
-) {
-  const length =
-    transfers.deposits.length > transfers.withdrawals.length
-      ? transfers.deposits.length
-      : transfers.withdrawals.length;
+): Transfer[] {
+  return transfers.map(transfer => {
+    const mappedTransfer = {
+      usdValue: '',
+      tokenImgUrl: '',
+      id: transfer.transactionId,
+      reference: transfer.reference,
+      transaction: transfer.transactionId,
+      transferTimestamp: transfer.creationDate?.getTime(),
 
-  const daoTransfers: Transfer[] = [];
-  let transfer: AssetDeposit | AssetWithdrawal;
+      ...(transfer.tokenType === 'native'
+        ? {
+            tokenAddress: constants.AddressZero,
+            tokenName: CHAIN_METADATA[network].nativeCurrency.name,
+            tokenSymbol: CHAIN_METADATA[network].nativeCurrency.symbol,
+            tokenAmount: formatUnits(
+              transfer.amount,
+              CHAIN_METADATA[network].nativeCurrency.decimals
+            ),
+          }
+        : {
+            tokenName: transfer.token.name,
+            tokenAddress: transfer.token.address,
+            tokenSymbol: transfer.token.symbol,
+            tokenAmount: formatUnits(transfer.amount, transfer.token.decimals),
+          }),
+    };
 
-  for (let i = 0; i < length; i++) {
-    // map deposit to Transfer
-    transfer = transfers.deposits[i];
-    if (transfer)
-      daoTransfers.push({
-        title: transfer.reference
-          ? transfer.reference
-          : i18n.t('labels.deposit'),
+    // map differences
+    if (transfer.type === 'Deposit') {
+      return {
+        ...mappedTransfer,
+        title: transfer.reference || i18n.t('labels.deposit'),
         sender: transfer.from,
-        transferType: TransferTypes.Deposit,
-        id: transfer.transactionId,
-        transferDate: transfer.date
-          ? `${formatDate(transfer.date.getTime() / 1000, 'relative')}`
+        transferType: TransferTypes.Deposit as TransferTypes.Deposit, // FIX FIX FIX
+        isPending: !transfer.creationDate,
+        transferDate: transfer.creationDate
+          ? `${formatDate(transfer.creationDate.getTime() / 1000, 'relative')}`
           : i18n.t('labels.pendingTransaction'),
-        transferTimestamp: transfer.date?.getTime(),
-        usdValue: '',
-        isPending: !transfer.date,
-        reference: transfer.reference,
-        transaction: transfer.transactionId,
-        tokenImgUrl: '',
-        ...(transfer.type === 'native'
-          ? {
-              tokenAddress: constants.AddressZero,
-              tokenName: CHAIN_METADATA[network].nativeCurrency.name,
-              tokenSymbol: CHAIN_METADATA[network].nativeCurrency.symbol,
-              tokenAmount: formatUnits(
-                transfer.amount,
-                CHAIN_METADATA[network].nativeCurrency.decimals
-              ),
-            }
-          : {
-              tokenName: transfer.name,
-              tokenAddress: transfer.address,
-              tokenSymbol: transfer.symbol,
-              tokenAmount: formatUnits(transfer.amount, transfer.decimals),
-            }),
-      });
-
-    // map withdraw to Transfer
-    transfer = transfers.withdrawals[i];
-    if (transfer)
-      daoTransfers.push({
-        id: transfer.transactionId,
-        title: transfer.reference
-          ? transfer.reference
-          : i18n.t('labels.withdraw'),
-        transferType: TransferTypes.Withdraw,
+      };
+    } else {
+      return {
+        ...mappedTransfer,
+        title: transfer.reference || i18n.t('labels.withdraw'),
+        transferType: TransferTypes.Withdraw as TransferTypes.Withdraw, // FIX FIX FIX
         to: transfer.to,
         proposalId: transfer.transactionId,
-        transferTimestamp: transfer.date?.getTime(),
+        isPending: false,
         transferDate: `${formatDate(
-          transfer.date.getTime() / 1000,
+          transfer.creationDate.getTime() / 1000,
           'relative'
         )}`,
-        usdValue: '',
-        isPending: false,
-        reference: transfer.reference,
-        transaction: transfer.transactionId,
-        tokenImgUrl: '',
-        ...(transfer.type === 'native'
-          ? {
-              tokenAddress: constants.AddressZero,
-              tokenName: CHAIN_METADATA[network].nativeCurrency.name,
-              tokenSymbol: CHAIN_METADATA[network].nativeCurrency.symbol,
-              tokenAmount: formatUnits(
-                transfer.amount,
-                CHAIN_METADATA[network].nativeCurrency.decimals
-              ),
-            }
-          : {
-              tokenName: transfer.name,
-              tokenAddress: transfer.address,
-              tokenSymbol: transfer.symbol,
-              tokenAmount: formatUnits(transfer.amount, transfer.decimals),
-            }),
-      });
-  }
-
-  return daoTransfers;
+      };
+    }
+  });
 }
