@@ -1,7 +1,10 @@
 import {useReactiveVar} from '@apollo/client';
-import {VoteProposalStep, VoteValues} from '@aragon/sdk-client';
 import {
+  VoteProposalStep,
+  VoteValues,
   ExecuteProposalStep,
+} from '@aragon/sdk-client';
+import {
   IExecuteProposalParams,
   IVoteProposalParams,
 } from '@aragon/sdk-client/dist/internal/interfaces/plugins';
