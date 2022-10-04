@@ -228,7 +228,15 @@ const ProposeSettingWrapper: React.FC<Props> = ({
     }
 
     setProposalData();
-  }, [creationProcessState, showTxModal, getValues]);
+  }, [
+    creationProcessState,
+    showTxModal,
+    getValues,
+    dao,
+    pluginAddress,
+    pluginClient,
+    client,
+  ]);
 
   const estimateCreationFees = useCallback(async () => {
     if (!pluginClient) {
