@@ -13,7 +13,7 @@ export type Proposal = Erc20ProposalListItem | AddressListProposalListItem;
 /**
  * Retrieves list of proposals from SDK
  * NOTE: rename to useDaoProposals once the other hook has been deprecated
- * @param pluginAddress plugin from which proposals will be retrieved
+ * @param daoAddressOrEns
  * @param type plugin type
  * @returns list of proposals on plugin
  */
@@ -45,7 +45,7 @@ export function useProposals(
       }
     }
 
-    getDaoProposals();
+    if (daoAddressOrEns) getDaoProposals();
   }, [client?.methods, daoAddressOrEns]);
 
   return {data, error, isLoading};

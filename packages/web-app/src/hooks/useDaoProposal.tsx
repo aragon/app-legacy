@@ -64,11 +64,7 @@ export const useDaoProposal = (
       }
     );
 
-    // TODO: remove when plugin address is fixed
-    if (
-      pluginType === 'addresslistvoting.dao.eth' ||
-      ('addreslistvoting.dao.eth' as PluginTypes)
-    ) {
+    if (pluginType === 'addresslistvoting.dao.eth') {
       const encodedAddMembersAction = Promise.resolve(
         (pluginClient as ClientAddressList).encoding.addMembersAction(
           pluginAddress,
@@ -88,9 +84,7 @@ export const useDaoProposal = (
         encodedAddMembersAction,
         encodedRemoveMembersAction,
       ]);
-    }
-
-    return Promise.all([encodedWithdrawAction]);
+    } else return Promise.all([encodedWithdrawAction]);
   }, [globalClient, pluginAddress, pluginClient, pluginType]);
 
   // add cached vote to proposal and recalculate dependent info

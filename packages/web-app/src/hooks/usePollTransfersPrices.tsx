@@ -121,8 +121,7 @@ function mapToDaoTransfers(
         ...mappedTransfer,
         title: transfer.reference || i18n.t('labels.deposit'),
         sender: transfer.from,
-        transferType: TransferTypes.Deposit as TransferTypes.Deposit, // FIX FIX FIX
-        isPending: !transfer.creationDate,
+        transferType: TransferTypes.Deposit as TransferTypes.Deposit,
         transferDate: transfer.creationDate
           ? `${formatDate(transfer.creationDate.getTime() / 1000, 'relative')}`
           : i18n.t('labels.pendingTransaction'),
@@ -131,7 +130,7 @@ function mapToDaoTransfers(
       return {
         ...mappedTransfer,
         title: transfer.reference || i18n.t('labels.withdraw'),
-        transferType: TransferTypes.Withdraw as TransferTypes.Withdraw, // FIX FIX FIX
+        transferType: TransferTypes.Withdraw as TransferTypes.Withdraw,
         to: transfer.to,
         proposalId: transfer.transactionId,
         isPending: false,

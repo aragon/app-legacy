@@ -40,7 +40,9 @@ export const usePluginClient = (
           setPluginClient(new ClientErc20(ContextPlugin.fromContext(context)));
           break;
         case 'addresslistvoting.dao.eth':
-          setPluginClient(new ClientErc20(ContextPlugin.fromContext(context)));
+          setPluginClient(
+            new ClientAddressList(ContextPlugin.fromContext(context))
+          );
           break;
         default:
           throw new Error('The requested sdk type is invalid');

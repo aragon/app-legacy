@@ -1,4 +1,8 @@
-import {DaoDepositSteps, IDepositParams} from '@aragon/sdk-client';
+import {
+  DaoDepositSteps,
+  IDepositParams,
+  TransferType,
+} from '@aragon/sdk-client';
 import {useFormContext} from 'react-hook-form';
 import {generatePath, useNavigate, useParams} from 'react-router-dom';
 import React, {
@@ -227,7 +231,7 @@ const DepositProvider = ({children}: {children: ReactNode}) => {
               from,
               amount: BigInt(amount),
               reference,
-              type: TransferType.Deposit,
+              type: TransferType.DEPOSIT,
               tokenType: isNativeToken(tokenAddress) ? 'native' : 'erc20',
               address: tokenAddress,
               name: tokenName,

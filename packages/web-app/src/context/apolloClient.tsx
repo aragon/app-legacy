@@ -5,7 +5,7 @@ import {
   makeVar,
   NormalizedCacheObject,
 } from '@apollo/client';
-import {AssetDeposit} from '@aragon/sdk-client/dist/internal/interfaces/client';
+import {Deposit} from '@aragon/sdk-client';
 import {RestLink} from 'apollo-link-rest';
 import {CachePersistor, LocalStorageWrapper} from 'apollo3-cache-persist';
 
@@ -121,7 +121,7 @@ const favoriteDAOs = makeVar<Array<favoriteDAO>>([
 selectedDAO(favoriteDAOs()[0]);
 
 const depositTxs = JSON.parse(localStorage.getItem('pendingDeposits') || '[]');
-const pendingDeposits = makeVar<AssetDeposit[]>(depositTxs);
+const pendingDeposits = makeVar<Deposit[]>(depositTxs);
 
 // PENDING VOTES
 type PendingVotes = {
