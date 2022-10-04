@@ -14,13 +14,13 @@ const Footer: React.FC = () => {
 
   const ExploreNavLinks = EXPLORE_NAV_LINKS.map(item => (
     <li key={item.label}>
-      <NavLink href={item.path} label={item.label} />
+      <Link href={item.path} label={item.label} type="secondary" />
     </li>
   ));
 
   const PrivacyNavLinks = PRIVACY_NAV_LINKS.map(item => (
     <li key={item.label}>
-      <NavLink label={item.label} href={item.path} />
+      <Link label={item.label} href={item.path} type="secondary" />
     </li>
   ));
 
