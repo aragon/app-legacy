@@ -39,10 +39,7 @@ export const useDaoProposal = (
   const [isLoading, setIsLoading] = useState(false);
 
   const {client: globalClient} = useClient();
-  const pluginClient = usePluginClient(
-    pluginAddress,
-    pluginType as PluginTypes
-  );
+  const pluginClient = usePluginClient(pluginType as PluginTypes);
 
   const cachedVotes = useReactiveVar(pendingVotesVar);
   const daoAddress = '0x1234567890123456789012345678901234567890';

@@ -51,10 +51,7 @@ const CreateProposalProvider: React.FC<Props> = ({
   const {id: pluginType, instanceAddress: pluginAddress} =
     daoDetails?.plugins[0] || ({} as InstalledPluginListItem);
 
-  const pluginClient = usePluginClient(
-    pluginAddress,
-    pluginType as PluginTypes
-  );
+  const pluginClient = usePluginClient(pluginType as PluginTypes);
 
   const [creationProcessState, setCreationProcessState] =
     useState<TransactionState>(TransactionState.WAITING);

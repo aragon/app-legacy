@@ -18,7 +18,7 @@ export function usePluginSettings(
   const [error, setError] = useState<Error>();
   const [isLoading, setIsLoading] = useState(false);
 
-  const client = usePluginClient(pluginAddress, type);
+  const client = usePluginClient(type);
 
   useEffect(() => {
     async function getPluginSettings() {

@@ -94,7 +94,7 @@ const Proposal: React.FC = () => {
     pluginType
   );
 
-  const pluginClient = usePluginClient(pluginAddress, pluginType);
+  const pluginClient = usePluginClient(pluginType);
 
   // ref used to hold "memories" of previous "state"
   // across renders in order to automate the following states:

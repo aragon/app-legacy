@@ -1,6 +1,7 @@
 import {
   AddressListProposalListItem,
   Erc20ProposalListItem,
+  ProposalSortBy,
 } from '@aragon/sdk-client';
 import {useEffect, useState} from 'react';
 import {HookData} from 'utils/types';
@@ -17,21 +18,24 @@ export type Proposal = Erc20ProposalListItem | AddressListProposalListItem;
  * @returns list of proposals on plugin
  */
 export function useProposals(
-  pluginAddress: string,
+  daoAddressOrEns: string,
   type: PluginTypes
 ): HookData<Array<Proposal>> {
   const [data, setData] = useState<Array<Proposal>>([]);
   const [error, setError] = useState<Error>();
   const [isLoading, setIsLoading] = useState(false);
 
-  const client = usePluginClient(pluginAddress, type);
+  const client = usePluginClient(type);
 
   useEffect(() => {
     async function getDaoProposals() {
       try {
         setIsLoading(true);
 
-        const proposals = await client?.methods.getProposals({limit: 10});
+        const proposals = await client?.methods.getProposals({
+          sortBy: ProposalSortBy.CREATED_AT,
+          daoAddressOrEns,
+        });
         if (proposals) setData(proposals);
       } catch (err) {
         console.error(err);
@@ -42,7 +46,7 @@ export function useProposals(
     }
 
     getDaoProposals();
-  }, [client?.methods]);
+  }, [client?.methods, daoAddressOrEns]);
 
   return {data, error, isLoading};
 }

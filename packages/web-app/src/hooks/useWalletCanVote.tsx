@@ -21,7 +21,7 @@ export const useWalletCanVote = (
   const [error, setError] = useState<Error>();
   const [isLoading, setIsLoading] = useState(false);
 
-  const client = usePluginClient(pluginAddress, pluginType);
+  const client = usePluginClient(pluginType);
 
   useEffect(() => {
     async function fetchCanVote() {

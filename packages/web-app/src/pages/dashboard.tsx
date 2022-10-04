@@ -29,7 +29,7 @@ const Dashboard: React.FC = () => {
   const {data: dao, isLoading: detailsAreLoading} = useDaoDetails(daoId!);
 
   const {data: topTen, isLoading: proposalsAreLoading} = useProposals(
-    dao?.plugins[0].instanceAddress || '',
+    daoId,
     dao?.plugins[0].id as PluginTypes
   );
 

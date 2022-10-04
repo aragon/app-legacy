@@ -73,7 +73,6 @@ const ProposalTransactionProvider: React.FC<Props> = ({children}) => {
   }, [daoDetails?.plugins]);
 
   const pluginClient = usePluginClient(
-    pluginAddress,
     daoDetails?.plugins[0].id as PluginTypes
   );
 
