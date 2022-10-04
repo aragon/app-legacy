@@ -150,7 +150,6 @@ export const useDaoProposal = (
         if (proposal && encodedActions) proposal.actions = encodedActions;
         if (proposal) {
           setData({...augmentProposalWithCache(proposal)});
-          // TODO: uncomment for PR review setData({...augmentProposalWithCache(proposal), status: 'Active'});
         }
       } catch (err) {
         console.error(err);
