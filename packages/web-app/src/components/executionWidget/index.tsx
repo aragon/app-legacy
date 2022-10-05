@@ -88,14 +88,16 @@ const WidgetFooter: React.FC<FooterProps> = ({
 }) => {
   const {t} = useTranslation();
   switch (status) {
-    case 'defeated':
-      return (
-        <AlertInline
-          label={t('governance.executionCard.status.defeated')}
-          mode={'warning'}
-        />
-      );
-    case 'executable':
+    // TODO: Commented this piece of code to enable testing. Will be reverted before merging the PR
+    // case 'defeated':
+    //   return (
+    //     <AlertInline
+    //       label={t('governance.executionCard.status.defeated')}
+    //       mode={'warning'}
+    //     />
+    //   );
+    // case 'executable':
+    case 'defeated' as 'executable':
       return (
         <Footer>
           <ButtonText
