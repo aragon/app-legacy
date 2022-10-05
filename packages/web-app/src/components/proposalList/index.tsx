@@ -1,7 +1,7 @@
 import {CardProposal, CardProposalProps} from '@aragon/ui-components';
 import React from 'react';
 import {useTranslation} from 'react-i18next';
-import {useNavigate} from 'react-router-dom';
+import {useNavigate, useParams} from 'react-router-dom';
 
 import {useNetwork} from 'context/network';
 import {Proposal} from 'hooks/useProposals';
@@ -12,6 +12,7 @@ import {
 } from 'utils/constants';
 import {translateProposalDate} from 'utils/date';
 import {i18n} from '../../../i18n.config';
+import {trackEvent} from 'services/analytics';
 
 type ProposalListProps = {
   proposals: Array<Proposal>;
@@ -20,6 +21,7 @@ type ProposalListProps = {
 const ProposalList: React.FC<ProposalListProps> = ({proposals}) => {
   const {t} = useTranslation();
   const {network} = useNetwork();
+  const {dao} = useParams();
   const navigate = useNavigate();
 
   if (proposals.length === 0)
@@ -31,7 +33,13 @@ const ProposalList: React.FC<ProposalListProps> = ({proposals}) => {
         <CardProposal
           {...proposal}
           key={id}
-          onClick={() => navigate(`proposals/${id}`)}
+          onClick={() => {
+            trackEvent('governance_viewProposal_clicked', {
+              proposal_id: id,
+              dao_address: dao,
+            });
+            navigate(`proposals/${id}`);
+          }}
         />
       ))}
     </div>

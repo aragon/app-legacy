@@ -18,6 +18,8 @@ import {useNetwork} from 'context/network';
 import {useDaoParam} from 'hooks/useDaoParam';
 import {Governance} from 'utils/paths';
 import {actionsAreValid} from 'utils/validators';
+import {trackEvent} from 'services/analytics';
+import {useWallet} from 'hooks/useWallet';
 
 type ProposalStepperType = {
   enableTxModal: () => void;
@@ -31,7 +33,8 @@ const ProposalStepper: React.FC<ProposalStepperType> = ({
 
   const {t} = useTranslation();
   const {network} = useNetwork();
-  const {trigger, control} = useFormContext();
+  const {trigger, control, getValues} = useFormContext();
+  const {address} = useWallet();
 
   const [durationSwitch, formActions] = useWatch({
     name: ['durationSwitch', 'actions'],
@@ -60,6 +63,20 @@ const ProposalStepper: React.FC<ProposalStepperType> = ({
         wizardTitle={t('newWithdraw.defineProposal.heading')}
         wizardDescription={t('newWithdraw.defineProposal.description')}
         isNextButtonDisabled={!defineProposalIsValid(dirtyFields, errors)}
+        onNextButtonClicked={next => {
+          trackEvent('newProposal_nextBtn_clicked', {
+            dao_address: dao,
+            step: '1_define_proposal',
+            settings: {
+              author_address: address,
+              title: getValues('proposalTitle'),
+              summary: getValues('proposalSummary'),
+              proposal: getValues('proposal'),
+              resources_list: getValues('links'),
+            },
+          });
+          next();
+        }}
       >
         <DefineProposal />
       </Step>
@@ -67,6 +84,17 @@ const ProposalStepper: React.FC<ProposalStepperType> = ({
         wizardTitle={t('newWithdraw.setupVoting.title')}
         wizardDescription={t('newWithdraw.setupVoting.description')}
         isNextButtonDisabled={!setupVotingIsValid(errors, durationSwitch)}
+        onNextButtonClicked={next => {
+          trackEvent('newProposal_nextBtn_clicked', {
+            dao_address: dao,
+            step: '2_setup_voting',
+            settings: {
+              start: getValues('startUtc'),
+              end: getValues('endUtc'),
+            },
+          });
+          next();
+        }}
       >
         <SetupVotingForm />
       </Step>
@@ -77,6 +105,17 @@ const ProposalStepper: React.FC<ProposalStepperType> = ({
         onNextButtonDisabledClicked={() => {
           trigger('actions');
         }}
+        onNextButtonClicked={next => {
+          trackEvent('newProposal_nextBtn_clicked', {
+            dao_address: dao,
+            step: '3_configure_actions',
+            settings: {
+              actions: actions.map(action => action.name),
+              actions_count: actions.length,
+            },
+          });
+          next();
+        }}
       >
         <ConfigureActions />
       </Step>
@@ -84,7 +123,10 @@ const ProposalStepper: React.FC<ProposalStepperType> = ({
         wizardTitle={t('newWithdraw.reviewProposal.heading')}
         wizardDescription={t('newWithdraw.reviewProposal.description')}
         nextButtonLabel={t('labels.submitWithdraw')}
-        onNextButtonClicked={enableTxModal}
+        onNextButtonClicked={() => {
+          trackEvent('newProposal_publishBtn_clicked', {dao_address: dao});
+          enableTxModal();
+        }}
         fullWidth
       >
         <ReviewProposal defineProposalStepNumber={1} addActionsStepNumber={3} />
