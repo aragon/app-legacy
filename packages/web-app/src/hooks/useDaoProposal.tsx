@@ -39,7 +39,7 @@ export const useDaoProposal = (
   const [isLoading, setIsLoading] = useState(false);
 
   const {client: globalClient} = useClient();
-  const pluginClient = usePluginClient(pluginType as PluginTypes);
+  const pluginClient = usePluginClient(pluginType);
 
   const cachedVotes = useReactiveVar(pendingVotesVar);
   const daoAddress = '0x1234567890123456789012345678901234567890';
@@ -92,7 +92,7 @@ export const useDaoProposal = (
     (proposal: DetailedProposal) => {
       const cachedVote = cachedVotes[proposal.id];
 
-      // no cache return proper
+      // no cache return original proposal
       if (!cachedVote) return proposal;
 
       // if vote in cache is included delete it
