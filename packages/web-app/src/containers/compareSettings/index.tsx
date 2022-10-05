@@ -4,20 +4,28 @@ import {
   ListItemLink,
   Option,
 } from '@aragon/ui-components';
+import React, {useState} from 'react';
+import {useFormContext} from 'react-hook-form';
+import {useTranslation} from 'react-i18next';
+import {generatePath, useNavigate} from 'react-router-dom';
+
 import {Dd, DescriptionListContainer, Dl, Dt} from 'components/descriptionList';
 import {useNetwork} from 'context/network';
 import {useDaoParam} from 'hooks/useDaoParam';
-import React, {useState} from 'react';
-import {useTranslation} from 'react-i18next';
-import {generatePath, useNavigate} from 'react-router-dom';
 import {EditSettings} from 'utils/paths';
 
 const CompareSettings: React.FC = () => {
-  const [selectedButton, setSelectedButton] = useState('new');
   const {t} = useTranslation();
   const navigate = useNavigate();
   const {data: daoId} = useDaoParam();
   const {network} = useNetwork();
+  const {getValues} = useFormContext();
+
+  const [selectedButton, setSelectedButton] = useState<'new' | 'old'>('new');
+
+  const onButtonGroupChangeHandler = () => {
+    setSelectedButton(prev => (prev === 'new' ? 'old' : 'new'));
+  };
 
   return (
     <div className="space-y-2">
@@ -25,7 +33,7 @@ const CompareSettings: React.FC = () => {
         <ButtonGroup
           bgWhite={false}
           defaultValue={selectedButton}
-          onChange={setSelectedButton}
+          onChange={onButtonGroupChangeHandler}
         >
           <Option value="new" label={t('settings.newSettings')} />
           <Option value="old" label={t('settings.oldSettings')} />
@@ -47,21 +55,23 @@ const CompareSettings: React.FC = () => {
         </Dl>
         <Dl>
           <Dt>{t('labels.daoName')}</Dt>
-          <Dd>Aragon DAO</Dd>
+          <Dd>{getValues('daoName')}</Dd>
         </Dl>
         <Dl>
           <Dt>{t('labels.summary')}</Dt>
-          <Dd>
-            This is a short description of your DAO, so please look that
-            it&apos;s not that long as wished. 👀
-          </Dd>
+          <Dd>{getValues('daoSummary')}</Dd>
         </Dl>
         <Dl>
           <Dt>{t('labels.links')}</Dt>
           <Dd>
             <div className="space-y-1.5">
-              <ListItemLink label="Forum" href="https://forum.aragon.org" />
-              <ListItemLink label="Discord" href="https://discord.com" />
+              {getValues('links').map((link: {name: string; url: string}) => (
+                <ListItemLink
+                  key={link.name + link.url}
+                  label={link.name}
+                  href={link.url}
+                />
+              ))}
             </div>
           </Dd>
         </Dl>
@@ -76,15 +86,21 @@ const CompareSettings: React.FC = () => {
       >
         <Dl>
           <Dt>{t('labels.minimumApproval')}</Dt>
-          <Dd>15% (150 TKN)</Dd>
+          <Dd> {getValues('minimumApproval')}%</Dd>
         </Dl>
         <Dl>
           <Dt>{t('labels.minimumSupport')}</Dt>
-          <Dd>50%</Dd>
+          <Dd>{getValues('minimumParticipation')}%</Dd>
         </Dl>
         <Dl>
           <Dt>{t('labels.minimumDuration')}</Dt>
-          <Dd>5 Days 12 Hours 30 Minutes</Dd>
+          <Dd>
+            {t('governance.settings.preview', {
+              days: getValues('durationDays'),
+              hours: getValues('durationHours'),
+              minutes: getValues('durationMinutes'),
+            })}
+          </Dd>
         </Dl>
       </DescriptionListContainer>
     </div>
