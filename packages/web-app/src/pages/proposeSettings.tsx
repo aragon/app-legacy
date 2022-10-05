@@ -111,10 +111,7 @@ const ProposeSettingWrapper: React.FC<Props> = ({
   const {id: pluginType, instanceAddress: pluginAddress} =
     daoDetails?.plugins[0] || ({} as InstalledPluginListItem);
 
-  const pluginClient = usePluginClient(
-    pluginAddress,
-    pluginType as PluginTypes
-  );
+  const pluginClient = usePluginClient(pluginType as PluginTypes);
 
   const [creationProcessState, setCreationProcessState] =
     useState<TransactionState>(TransactionState.WAITING);
@@ -147,7 +144,7 @@ const ProposeSettingWrapper: React.FC<Props> = ({
       const actions: Array<Promise<DaoAction>> = [];
 
       // return an empty array for undefined clients
-      if (!pluginClient || !client) return Promise.resolve([] as DaoAction[]);
+      if (!pluginClient || !client) return Promise.all(actions);
 
       const updateParams: IMetadata = {
         description: daoSummary,
@@ -172,7 +169,7 @@ const ProposeSettingWrapper: React.FC<Props> = ({
           pluginClient.encoding.updatePluginSettingsAction(dao, settingsParams)
         )
       );
-      return Promise.resolve([] as DaoAction[]);
+      return Promise.all(actions);
     };
 
     const getProposalCreationParams =
