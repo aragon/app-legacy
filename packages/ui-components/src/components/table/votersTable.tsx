@@ -9,7 +9,7 @@ import {shortenAddress} from '../../utils/addresses';
 
 export type VoterType = {
   wallet: string;
-  option: 'Yes' | 'Abstain' | 'No';
+  option: 'yes' | 'abstain' | 'no';
   votingPower?: string;
   tokenAmount?: string;
 };
@@ -24,7 +24,7 @@ export type VotersTableProps = {
 };
 
 const colorScheme = (option: string) =>
-  option === 'Yes' ? 'success' : option === 'No' ? 'critical' : 'neutral';
+  option === 'yes' ? 'success' : option === 'no' ? 'critical' : 'neutral';
 
 export const VotersTable: React.FC<VotersTableProps> = ({
   voters,
@@ -53,6 +53,7 @@ export const VotersTable: React.FC<VotersTableProps> = ({
                 {voter.option && (
                   <Badge
                     label={voter.option}
+                    className="capitalize"
                     colorScheme={colorScheme(voter.option)}
                   />
                 )}

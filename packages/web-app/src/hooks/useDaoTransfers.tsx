@@ -1,22 +1,20 @@
-import {IAssetTransfers} from '@aragon/sdk-client/dist/internal/interfaces/client';
+import {useReactiveVar} from '@apollo/client';
+import {Transfer, TransferSortBy} from '@aragon/sdk-client';
 import {Address} from '@aragon/ui-components/dist/utils/addresses';
 import {useEffect, useState} from 'react';
 
+import {pendingDeposits} from 'context/apolloClient';
 import {HookData} from 'utils/types';
 import {useClient} from './useClient';
-import {useReactiveVar} from '@apollo/client';
 
-import {pendingDeposits} from 'context/apolloClient';
+export type IAssetTransfers = Transfer[];
 
 export const useDaoTransfers = (
   daoAddressOrEns: Address
-): HookData<IAssetTransfers> => {
+): HookData<Transfer[]> => {
   const {client} = useClient();
 
-  const [data, setData] = useState<IAssetTransfers>({
-    deposits: [],
-    withdrawals: [],
-  });
+  const [data, setData] = useState<Transfer[]>([]);
   const [error, setError] = useState<Error>();
   const [isLoading, setIsLoading] = useState(false);
   const pendingDepositsTxs = useReactiveVar(pendingDeposits);
@@ -26,34 +24,35 @@ export const useDaoTransfers = (
       try {
         setIsLoading(true);
 
-        const transfers = await client?.methods.getTransfers(daoAddressOrEns);
-        if (transfers) {
-          if (pendingDepositsTxs.length > 0) {
-            for (let i = 0; i < pendingDepositsTxs.length; ) {
-              const tx = pendingDepositsTxs[i];
+        const transfers = await client?.methods.getTransfers({
+          sortBy: TransferSortBy.CREATED_AT,
+          daoAddressOrEns,
+        });
 
-              for (let j = 0; j < transfers.deposits.length; j++) {
-                const deposit = transfers.deposits[j];
-                if (deposit.transactionId === tx.transactionId) {
-                  pendingDepositsTxs.splice(i, 1);
-                  break;
-                }
-                if (j === transfers.deposits.length - 1) {
-                  i++;
-                }
+        if (transfers) {
+          const deposits = transfers.filter(t => t.type === 'Deposit');
+
+          for (let i = 0; i < pendingDepositsTxs.length; ) {
+            const tx = pendingDepositsTxs[i];
+
+            for (let j = 0; j < deposits.length; j++) {
+              const deposit = deposits[j];
+              if (deposit.transactionId === tx.transactionId) {
+                pendingDepositsTxs.splice(i, 1);
+                break;
+              }
+              if (j === deposits.length - 1) {
+                i++;
               }
             }
-
-            localStorage.setItem(
-              'pendingDeposits',
-              JSON.stringify(pendingDepositsTxs)
-            );
           }
 
-          setData({
-            ...transfers,
-            deposits: [...pendingDepositsTxs, ...transfers.deposits],
-          });
+          localStorage.setItem(
+            'pendingDeposits',
+            JSON.stringify(pendingDepositsTxs)
+          );
+
+          setData([...pendingDepositsTxs, ...transfers]);
         }
       } catch (error) {
         console.error(error);

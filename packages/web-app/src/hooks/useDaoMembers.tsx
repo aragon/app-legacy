@@ -52,7 +52,7 @@ export const useDaoMembers = (
   const [error, setError] = useState<Error>();
   const [isLoading, setIsLoading] = useState(false);
 
-  const client = usePluginClient(pluginAddress, pluginType);
+  const client = usePluginClient(pluginType);
 
   // Fetch the list of members for a this DAO.
   useEffect(() => {

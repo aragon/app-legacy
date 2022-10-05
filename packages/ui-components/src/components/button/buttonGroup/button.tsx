@@ -24,11 +24,7 @@ export const Option: React.FC<OptionProps> = ({
       size="small"
       className="flex-1 justify-center whitespace-nowrap"
       disabled={disabled}
-      onClick={() => {
-        if (onChange) {
-          onChange(value);
-        }
-      }}
+      onClick={() => onChange?.(value)}
     />
   );
 };

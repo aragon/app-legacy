@@ -23,10 +23,10 @@ import {getFormattedUtcOffset, KNOWN_FORMATS} from './date';
 import {formatUnits} from './library';
 import {abbreviateTokenAmount} from './tokens';
 
-const MappedVotes: {[key in VoteValues]: VoterType['option']} = {
-  1: 'Abstain',
-  2: 'Yes',
-  3: 'No',
+export const MappedVotes: {[key in VoteValues]: VoterType['option']} = {
+  1: 'abstain',
+  2: 'yes',
+  3: 'no',
 };
 
 // this type guard will need to evolve when there are more types
@@ -70,11 +70,10 @@ export function getWhitelistMinimumApproval(
   minSupport: number,
   totalVotingWeight: number
 ): string {
-  const members = Math.ceil(totalVotingWeight * minSupport);
+  const percentage = minSupport / Math.pow(10, 18);
 
-  return `${members} ${i18n.t('labels.members')} (${parseFloat(
-    (minSupport * 100).toFixed(2)
-  )}%)`;
+  const members = Math.ceil(totalVotingWeight * percentage);
+  return `${members} ${i18n.t('labels.members')} (${percentage * 100}%)`;
 }
 
 /**
@@ -373,7 +372,7 @@ function getPublishedProposalStep(
 
 /**
  * get transformed data for terminal
- * @param proposal proposal
+ * @param proposal
  * @returns transformed data for terminal
  */
 export function getTerminalProps(

@@ -97,7 +97,8 @@ export const VotingTerminal: React.FC<VotingTerminalProps> = ({
         <ButtonGroup
           bgWhite
           defaultValue={selectedTab}
-          onChange={value => onTabSelected?.(value as TerminalTabs)}
+          value={selectedTab}
+          onChange={(value: string) => onTabSelected?.(value as TerminalTabs)}
         >
           <Option
             value="breakdown"

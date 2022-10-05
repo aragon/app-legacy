@@ -4,17 +4,20 @@
  * so we don't have to rewrite the fetch and return pattern every time
  */
 
+import {useReactiveVar} from '@apollo/client';
 import {
   AddressListProposal,
   ClientAddressList,
   Erc20Proposal,
 } from '@aragon/sdk-client';
+import {BigNumber, constants} from 'ethers';
 import {useCallback, useEffect, useState} from 'react';
 
-import {HookData} from 'utils/types';
+import {pendingVotesVar} from 'context/apolloClient';
+import {isTokenBasedProposal, MappedVotes} from 'utils/proposals';
+import {Erc20ProposalVote, HookData} from 'utils/types';
 import {useClient} from './useClient';
 import {PluginTypes, usePluginClient} from './usePluginClient';
-import {constants} from 'ethers';
 
 export type DetailedProposal = Erc20Proposal | AddressListProposal;
 
@@ -34,11 +37,11 @@ export const useDaoProposal = (
   const [data, setData] = useState<DetailedProposal>();
   const [error, setError] = useState<Error>();
   const [isLoading, setIsLoading] = useState(false);
+
   const {client: globalClient} = useClient();
-  const pluginClient = usePluginClient(
-    pluginAddress,
-    pluginType as PluginTypes
-  );
+  const pluginClient = usePluginClient(pluginType);
+
+  const cachedVotes = useReactiveVar(pendingVotesVar);
   const daoAddress = '0x1234567890123456789012345678901234567890';
 
   // TODO: this method is for dummy usage only, Will remove later
@@ -81,19 +84,64 @@ export const useDaoProposal = (
         encodedAddMembersAction,
         encodedRemoveMembersAction,
       ]);
-    }
-
-    return Promise.all([encodedWithdrawAction]);
+    } else return Promise.all([encodedWithdrawAction]);
   }, [globalClient, pluginAddress, pluginClient, pluginType]);
+
+  // add cached vote to proposal and recalculate dependent info
+  const augmentProposalWithCache = useCallback(
+    (proposal: DetailedProposal) => {
+      const cachedVote = cachedVotes[proposal.id];
+
+      // no cache return original proposal
+      if (!cachedVote) return proposal;
+
+      // if vote in cache is included delete it
+      if (proposal.votes.some(voter => voter.address === cachedVote.address)) {
+        const newCache = {...cachedVotes};
+        delete newCache[proposal.id];
+        pendingVotesVar({...newCache});
+        return proposal;
+      }
+
+      const voteValue = MappedVotes[cachedVote.vote];
+      if (isTokenBasedProposal(proposal)) {
+        return {
+          ...proposal,
+          votes: [...proposal.votes, {...cachedVote}],
+          result: {
+            ...proposal.result,
+            [voteValue]: BigNumber.from(proposal.result[voteValue])
+              .add((cachedVote as Erc20ProposalVote).weight)
+              .toBigInt(),
+          },
+          usedVotingWeight: BigNumber.from(proposal.usedVotingWeight)
+            .add((cachedVote as Erc20ProposalVote).weight)
+            .toBigInt(),
+        } as Erc20Proposal;
+      } else {
+        return {
+          ...proposal,
+          votes: [...proposal.votes, {...cachedVote}],
+          result: {
+            ...proposal.result,
+            [voteValue]: proposal.result[voteValue] + 1,
+          },
+        } as AddressListProposal;
+      }
+    },
+    [cachedVotes]
+  );
 
   useEffect(() => {
     async function getDaoProposal() {
       try {
         setIsLoading(true);
-        const proposal = await pluginClient?.methods.getProposal(proposalId);
         const encodedActions = await getEncodedAction();
+        const proposal = await pluginClient?.methods.getProposal(proposalId);
         if (proposal && encodedActions) proposal.actions = encodedActions;
-        if (proposal) setData(proposal);
+        if (proposal) {
+          setData({...augmentProposalWithCache(proposal)});
+        }
       } catch (err) {
         console.error(err);
         setError(err as Error);
@@ -102,7 +150,12 @@ export const useDaoProposal = (
       }
     }
     getDaoProposal();
-  }, [getEncodedAction, pluginClient?.methods, proposalId]);
+  }, [
+    augmentProposalWithCache,
+    getEncodedAction,
+    pluginClient?.methods,
+    proposalId,
+  ]);
 
   return {data, error, isLoading};
 };

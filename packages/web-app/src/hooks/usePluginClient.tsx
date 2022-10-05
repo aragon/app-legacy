@@ -3,7 +3,6 @@ import {
   ClientErc20,
   ContextPlugin,
 } from '@aragon/sdk-client';
-import {Address} from '@aragon/ui-components/dist/utils/addresses';
 import {useEffect, useState} from 'react';
 
 import {useClient} from './useClient';
@@ -22,7 +21,6 @@ export type PluginTypes = 'erc20voting.dao.eth' | 'addresslistvoting.dao.eth';
  * @returns The corresponding Client
  */
 export const usePluginClient = (
-  pluginAddress: Address,
   pluginType?: PluginTypes
 ): ClientErc20 | ClientAddressList | undefined => {
   const [pluginClient, setPluginClient] = useState<
@@ -35,31 +33,22 @@ export const usePluginClient = (
       throw new Error('SDK client is not initialized correctly');
     }
 
-    if (!pluginAddress || !pluginType) setPluginClient(undefined);
+    if (!pluginType) setPluginClient(undefined);
     else {
       switch (pluginType) {
         case 'erc20voting.dao.eth':
-          setPluginClient(
-            new ClientErc20(
-              //TODO: replace when method fixed on SDK ContextPlugin.fromContext(context, pluginAddress)
-              new ContextPlugin({...contextParams, pluginAddress})
-            )
-          );
+          setPluginClient(new ClientErc20(ContextPlugin.fromContext(context)));
           break;
-        // FIXME: Fix this once the SDK Dummy dao plugin name got fixed
-        case 'addreslistvoting.dao.eth' as 'addresslistvoting.dao.eth':
+        case 'addresslistvoting.dao.eth':
           setPluginClient(
-            new ClientAddressList(
-              //TODO: replace when method fixed on SDK ContextPlugin.fromContext(context, pluginAddress)
-              new ContextPlugin({...contextParams, pluginAddress})
-            )
+            new ClientAddressList(ContextPlugin.fromContext(context))
           );
           break;
         default:
           throw new Error('The requested sdk type is invalid');
       }
     }
-  }, [client, context, contextParams, pluginAddress, pluginType]);
+  }, [client, context, contextParams, pluginType]);
 
   return pluginClient;
 };

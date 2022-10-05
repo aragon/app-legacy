@@ -5,10 +5,12 @@ import {
   makeVar,
   NormalizedCacheObject,
 } from '@apollo/client';
-import {AssetDeposit} from '@aragon/sdk-client/dist/internal/interfaces/client';
+import {Deposit} from '@aragon/sdk-client';
 import {RestLink} from 'apollo-link-rest';
 import {CachePersistor, LocalStorageWrapper} from 'apollo3-cache-persist';
+
 import {BASE_URL, SUBGRAPH_API_URL, SupportedNetworks} from 'utils/constants';
+import {AddressListVote, Erc20ProposalVote} from 'utils/types';
 import {PRIVACY_KEY} from './privacyContext';
 
 const restLink = new RestLink({
@@ -108,9 +110,7 @@ type favoriteDAO = {
   daoAddress: string;
   daoName: string;
 };
-
 const selectedDAO = makeVar<favoriteDAO>({daoName: '', daoAddress: ''});
-
 const favoriteDAOs = makeVar<Array<favoriteDAO>>([
   {
     daoAddress: '0x0ee165029b09d91a54687041adbc705f6376c67f',
@@ -118,11 +118,16 @@ const favoriteDAOs = makeVar<Array<favoriteDAO>>([
   },
   {daoAddress: 'dao-name.dao.eth', daoName: 'DAO name'},
 ]);
-
-const depositTxs = JSON.parse(localStorage.getItem('pendingDeposits') || '[]');
-
-const pendingDeposits = makeVar<AssetDeposit[]>(depositTxs);
-
 selectedDAO(favoriteDAOs()[0]);
 
-export {client, favoriteDAOs, selectedDAO, pendingDeposits};
+const depositTxs = JSON.parse(localStorage.getItem('pendingDeposits') || '[]');
+const pendingDeposits = makeVar<Deposit[]>(depositTxs);
+
+// PENDING VOTES
+type PendingVotes = {
+  [key: string]: AddressListVote | Erc20ProposalVote;
+};
+const pendingVotes = JSON.parse(localStorage.getItem('pendingVotes') || '{}');
+const pendingVotesVar = makeVar<PendingVotes>(pendingVotes);
+
+export {client, favoriteDAOs, selectedDAO, pendingDeposits, pendingVotesVar};
