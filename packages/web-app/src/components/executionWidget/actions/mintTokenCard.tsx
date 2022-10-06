@@ -19,6 +19,7 @@ export const MintTokenCard: React.FC<{
   const {network} = useNetwork();
   const {data: daoId} = useDaoParam();
   const {data: daoToken, isLoading: daoTokenLoading} = useDaoToken(daoId);
+  const [tokenSupply, setTokenSupply] = useState(0);
 
   // NOTE: Temporarily mocking token information, as SDK does not yet expose this.
   const token = {
