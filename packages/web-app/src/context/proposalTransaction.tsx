@@ -57,7 +57,7 @@ const ProposalTransactionProvider: React.FC<Props> = ({children}) => {
   const {t} = useTranslation();
   const {id} = useParams();
 
-  const {address} = useWallet();
+  const {address, isConnected} = useWallet();
   const {network} = useNetwork();
   const {infura: provider} = useProviders();
 
@@ -263,6 +263,11 @@ const ProposalTransactionProvider: React.FC<Props> = ({children}) => {
       console.error('Plugin address is required');
       return;
     }
+    if (!isConnected) {
+      open('wallet');
+      return;
+    }
+
     setExecuteProcessState(TransactionState.LOADING);
     const executeSteps = pluginClient?.methods.executeProposal(executeParams);
     if (!executeSteps) {
@@ -289,6 +294,7 @@ const ProposalTransactionProvider: React.FC<Props> = ({children}) => {
     executeParams,
     executeProcessState,
     handleCloseExecuteModal,
+    isConnected,
     pluginAddress,
     pluginClient?.methods,
   ]);
