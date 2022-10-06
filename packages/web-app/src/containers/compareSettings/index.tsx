@@ -65,13 +65,15 @@ const CompareSettings: React.FC = () => {
           <Dt>{t('labels.links')}</Dt>
           <Dd>
             <div className="space-y-1.5">
-              {getValues('links').map((link: {name: string; url: string}) => (
-                <ListItemLink
-                  key={link.name + link.url}
-                  label={link.name}
-                  href={link.url}
-                />
-              ))}
+              {getValues('daoLinks').map(
+                (link: {name: string; url: string}) => (
+                  <ListItemLink
+                    key={link.name + link.url}
+                    label={link.name}
+                    href={link.url}
+                  />
+                )
+              )}
             </div>
           </Dd>
         </Dl>

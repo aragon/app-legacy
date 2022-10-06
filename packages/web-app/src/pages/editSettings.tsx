@@ -42,7 +42,7 @@ const EditSettings: React.FC = () => {
 
   const {setValue, control} = useFormContext();
   const {fields, replace} = useFieldArray({
-    name: 'links',
+    name: 'daoLinks',
     control,
   });
   const {errors} = useFormState({control});
@@ -82,7 +82,7 @@ const EditSettings: React.FC = () => {
       'durationHours',
       'durationMinutes',
       'membership',
-      'links',
+      'daoLinks',
     ],
     control,
   });
@@ -110,7 +110,11 @@ const EditSettings: React.FC = () => {
         i++
       ) {
         // check if link is filled without error -> then consider it as a proper change
-        if (resourceLinks[i].name && resourceLinks[i].url && !errors.links?.[i])
+        if (
+          resourceLinks[i].name &&
+          resourceLinks[i].url &&
+          !errors.daoLinks?.[i]
+        )
           return false;
       }
     }
@@ -131,7 +135,7 @@ const EditSettings: React.FC = () => {
   }, [
     controlledLinks,
     daoDetails?.metadata.links,
-    errors.links,
+    errors.daoLinks,
     resourceLinks,
   ]);
 
@@ -198,7 +202,7 @@ const EditSettings: React.FC = () => {
      * daoDetails and then replacing them with the proper values
      */
     if (daoDetails?.metadata.links) {
-      setValue('links', [...daoDetails.metadata.links.map(() => ({}))]);
+      setValue('daoLinks', [...daoDetails.metadata.links.map(() => ({}))]);
       replace([...daoDetails.metadata.links]);
     }
   }, [
