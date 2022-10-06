@@ -32,6 +32,7 @@ import {useDaoParam} from 'hooks/useDaoParam';
 import {generatePath} from 'react-router-dom';
 import {trackEvent} from 'services/analytics';
 import {useWallet} from 'hooks/useWallet';
+import {getCanonicalUtcOffset} from 'utils/date';
 
 export type TokenFormData = {
   tokenName: string;
@@ -197,11 +198,30 @@ const NewWithdraw: React.FC = () => {
                   !setupVotingIsValid(errors, durationSwitch)
                 }
                 onNextButtonClicked={next => {
+                  const [
+                    startDate,
+                    startTime,
+                    startUtc,
+                    endDate,
+                    endTime,
+                    endUtc,
+                  ] = formMethods.getValues([
+                    'startDate',
+                    'startTime',
+                    'startUtc',
+                    'endDate',
+                    'endTime',
+                    'endUtc',
+                  ]);
                   trackEvent('newWithdraw_continueBtn_clicked', {
                     step: '2_setup_voting',
                     settings: {
-                      start: formMethods.getValues('startUtc'),
-                      end: formMethods.getValues('endUtc'),
+                      start: `${startDate}T${startTime}:00${getCanonicalUtcOffset(
+                        startUtc
+                      )}`,
+                      end: `${endDate}T${endTime}:00${getCanonicalUtcOffset(
+                        endUtc
+                      )}`,
                     },
                   });
                   next();

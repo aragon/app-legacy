@@ -20,6 +20,7 @@ import {Governance} from 'utils/paths';
 import {actionsAreValid} from 'utils/validators';
 import {trackEvent} from 'services/analytics';
 import {useWallet} from 'hooks/useWallet';
+import {getCanonicalUtcOffset} from 'utils/date';
 
 type ProposalStepperType = {
   enableTxModal: () => void;
@@ -85,12 +86,23 @@ const ProposalStepper: React.FC<ProposalStepperType> = ({
         wizardDescription={t('newWithdraw.setupVoting.description')}
         isNextButtonDisabled={!setupVotingIsValid(errors, durationSwitch)}
         onNextButtonClicked={next => {
+          const [startDate, startTime, startUtc, endDate, endTime, endUtc] =
+            getValues([
+              'startDate',
+              'startTime',
+              'startUtc',
+              'endDate',
+              'endTime',
+              'endUtc',
+            ]);
           trackEvent('newProposal_nextBtn_clicked', {
             dao_address: dao,
             step: '2_setup_voting',
             settings: {
-              start: getValues('startUtc'),
-              end: getValues('endUtc'),
+              start: `${startDate}T${startTime}:00${getCanonicalUtcOffset(
+                startUtc
+              )}`,
+              end: `${endDate}T${endTime}:00${getCanonicalUtcOffset(endUtc)}`,
             },
           });
           next();
