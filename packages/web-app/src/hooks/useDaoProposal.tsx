@@ -8,6 +8,7 @@ import {useReactiveVar} from '@apollo/client';
 import {
   AddressListProposal,
   ClientAddressList,
+  ClientErc20,
   Erc20Proposal,
 } from '@aragon/sdk-client';
 import {BigNumber, constants} from 'ethers';
@@ -43,6 +44,7 @@ export const useDaoProposal = (
 
   const cachedVotes = useReactiveVar(pendingVotesVar);
   const daoAddress = '0x1234567890123456789012345678901234567890';
+  const daoTokenAddress = '0x1234567890123456789012345678901234567890';
 
   // TODO: this method is for dummy usage only, Will remove later
 
@@ -84,7 +86,24 @@ export const useDaoProposal = (
         encodedAddMembersAction,
         encodedRemoveMembersAction,
       ]);
-    } else return Promise.all([encodedWithdrawAction]);
+    } else {
+      const encodedTokenMintingActions = members.map((member: string) =>
+        Promise.resolve(
+          (pluginClient as ClientErc20).encoding.mintTokenAction(
+            daoTokenAddress,
+            {
+              address: member,
+              amount: BigInt(Number(10) * Math.pow(10, 18)),
+            }
+          )
+        )
+      );
+
+      return Promise.all([
+        encodedWithdrawAction,
+        ...encodedTokenMintingActions,
+      ]);
+    }
   }, [globalClient, pluginAddress, pluginClient, pluginType]);
 
   // add cached vote to proposal and recalculate dependent info

@@ -1,5 +1,9 @@
 import {useApolloClient} from '@apollo/client';
-import {ClientAddressList, Erc20Proposal} from '@aragon/sdk-client';
+import {
+  ClientAddressList,
+  ClientErc20,
+  Erc20Proposal,
+} from '@aragon/sdk-client';
 import {
   Badge,
   Breadcrumb,
@@ -40,6 +44,7 @@ import {useWalletCanVote} from 'hooks/useWalletCanVote';
 import {CHAIN_METADATA} from 'utils/constants';
 import {
   decodeAddMembersToAction,
+  decodeMintTokensToAction,
   decodeRemoveMembersToAction,
   decodeWithdrawToAction,
 } from 'utils/library';
@@ -50,6 +55,7 @@ import {
   isTokenBasedProposal,
 } from 'utils/proposals';
 import {Action} from 'utils/types';
+import {DaoAction} from '@aragon/sdk-client/dist/internal/interfaces/common';
 
 // TODO: @Sepehr Please assign proper tags on action decoding
 const PROPOSAL_TAGS = ['Finance', 'Withdraw'];
@@ -127,8 +133,14 @@ const Proposal: React.FC = () => {
 
   useEffect(() => {
     if (proposal) {
+      console.log('proposal', proposal);
+      const mintTokenActions: {
+        actions: Uint8Array[];
+        index: number;
+      } = {actions: [], index: 0};
+
       const actionPromises: Promise<Action | undefined>[] =
-        proposal.actions.map(action => {
+        proposal.actions.map((action: DaoAction, index) => {
           const functionParams =
             client?.decoding.findInterface(action.data) ||
             pluginClient?.decoding.findInterface(action.data);
@@ -142,6 +154,10 @@ const Proposal: React.FC = () => {
                 network
               );
             case 'mint':
+              mintTokenActions.actions.push(action.data);
+              if (mintTokenActions.actions.length === 0)
+                mintTokenActions.index = index;
+              return Promise.resolve({} as Action);
             case 'addWhitelistedUsers':
               return decodeAddMembersToAction(
                 action.data,
@@ -156,6 +172,15 @@ const Proposal: React.FC = () => {
               return Promise.resolve({} as Action);
           }
         });
+
+      const decodedMintToken = decodeMintTokensToAction(
+        mintTokenActions.actions,
+        pluginClient as ClientErc20
+      );
+
+      actionPromises.splice(mintTokenActions.index, 0, decodedMintToken);
+
+      console.log('viewPromises', actionPromises);
 
       Promise.all(actionPromises).then(value => {
         setDecodedActions(value);

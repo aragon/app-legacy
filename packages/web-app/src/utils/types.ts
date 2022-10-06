@@ -1,4 +1,4 @@
-import {VoteValues} from '@aragon/sdk-client';
+import {IMintTokenParams, VoteValues} from '@aragon/sdk-client';
 import {Address} from '@aragon/ui-components/src/utils/addresses';
 
 import {TimeFilter, TransferTypes} from './constants';
@@ -243,14 +243,14 @@ export type ActionRemoveAddress = {
 export type ActionMintToken = {
   name: 'mint_tokens';
   inputs: {
-    mintTokensToWallets: Array<{address: string; amount: string}>;
+    mintTokensToWallets: IMintTokenParams[];
   };
   summary: {
     newTokens: number;
-    tokenSupply: number;
+    tokenSupply?: number;
     newHoldersCount: number;
-    daoTokenSymbol: string;
-    daoTokenAddress: string;
+    daoTokenSymbol?: string;
+    daoTokenAddress?: string;
   };
 };
 

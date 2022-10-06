@@ -8,12 +8,17 @@ import {MintTokenDescription} from 'containers/actionBuilder/mintTokens';
 import {useNetwork} from 'context/network';
 import {CHAIN_METADATA} from 'utils/constants';
 import {ActionMintToken} from 'utils/types';
+import {useDaoParam} from 'hooks/useDaoParam';
+import {useDaoToken} from 'hooks/useDaoToken';
+import {formatUnits} from 'ethers/utils';
 
 export const MintTokenCard: React.FC<{
   action: ActionMintToken;
 }> = ({action}) => {
   const {t} = useTranslation();
   const {network} = useNetwork();
+  const {data: daoId} = useDaoParam();
+  const {data: daoToken, isLoading: daoTokenLoading} = useDaoToken(daoId);
 
   // NOTE: Temporarily mocking token information, as SDK does not yet expose this.
   const token = {
@@ -21,8 +26,13 @@ export const MintTokenCard: React.FC<{
     symbol: 'DTT',
   };
 
-  const {newTokens, newHoldersCount, tokenSupply, daoTokenSymbol} =
-    action.summary;
+  const newHoldersCount = action.summary.newHoldersCount;
+  const newTokens = formatUnits(
+    Number(action.summary.newTokens),
+    daoToken.decimals
+  );
+  // This should be replace With Skeleton loading in near future
+  if (daoTokenLoading) return <></>;
 
   return (
     <AccordionMethod
@@ -56,7 +66,7 @@ export const MintTokenCard: React.FC<{
                 }
                 tokenInfo={{
                   amount,
-                  symbol: daoTokenSymbol,
+                  symbol: daoToken.decimals,
                   percentage: percentage.toPrecision(3),
                 }}
               />
@@ -69,7 +79,7 @@ export const MintTokenCard: React.FC<{
           <HStack>
             <Label>{t('labels.newTokens')}</Label>
             <p>
-              +{newTokens} {daoTokenSymbol}
+              +{newTokens} {daoToken.symbol}
             </p>
           </HStack>
           <HStack>
@@ -80,7 +90,7 @@ export const MintTokenCard: React.FC<{
             <Label>{t('labels.totalTokens')}</Label>
             {tokenSupply ? (
               <p>
-                {(tokenSupply + newTokens).toString()} {daoTokenSymbol}
+                {(tokenSupply + newTokens).toString()} {daoToken.symbol}
               </p>
             ) : (
               <p>...</p>

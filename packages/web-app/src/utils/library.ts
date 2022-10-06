@@ -1,3 +1,4 @@
+import {ClientErc20, IMintTokenParams} from '@aragon/sdk-client';
 // Library utils / Ethers for now
 import {BigNumberish, constants, ethers} from 'ethers';
 import {TFunction} from 'react-i18next';
@@ -9,6 +10,7 @@ import {SupportedNetworks} from 'utils/constants';
 
 import {
   ActionAddAddress,
+  ActionMintToken,
   ActionRemoveAddress,
   ActionWithdraw,
 } from 'utils/types';
@@ -120,6 +122,41 @@ export async function decodeWithdrawToAction(
     tokenSymbol: response?.symbol || '',
     isCustomToken: false,
   };
+}
+
+/**
+ * decodeAddMembersToAction
+ * @param data Uint8Array action data
+ * @param client SDK AddressListClient, Fetched using usePluginClient
+ * @returns Return Decoded AddMembers action
+ */
+export async function decodeMintTokensToAction(
+  data: Uint8Array[] | undefined,
+  client: ClientErc20 | undefined
+): Promise<ActionMintToken | undefined> {
+  if (!client || !data) {
+    console.error('SDK client is not initialized correctly');
+    return;
+  }
+
+  const decoded: IMintTokenParams[] = data.map(action =>
+    client.decoding.mintTokenAction(action)
+  );
+
+  const newTokens = decoded.reduce((accumulator, value) => {
+    return accumulator + Number(value.amount);
+  }, 0);
+
+  return Promise.resolve({
+    name: 'mint_tokens',
+    inputs: {
+      mintTokensToWallets: decoded,
+    },
+    summary: {
+      newTokens,
+      newHoldersCount: decoded.length,
+    },
+  });
 }
 
 /**
