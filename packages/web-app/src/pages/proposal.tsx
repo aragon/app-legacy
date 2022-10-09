@@ -180,8 +180,6 @@ const Proposal: React.FC = () => {
 
       actionPromises.splice(mintTokenActions.index, 0, decodedMintToken);
 
-      console.log('viewPromises', actionPromises);
-
       Promise.all(actionPromises).then(value => {
         setDecodedActions(value);
       });

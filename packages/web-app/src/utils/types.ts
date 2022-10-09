@@ -246,7 +246,7 @@ export type ActionMintToken = {
     mintTokensToWallets: IMintTokenParams[];
   };
   summary: {
-    newTokens: number;
+    newTokens: number | bigint;
     tokenSupply?: number;
     newHoldersCount: number;
     daoTokenSymbol?: string;

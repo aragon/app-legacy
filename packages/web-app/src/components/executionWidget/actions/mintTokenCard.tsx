@@ -1,5 +1,5 @@
+import React, {useEffect, useState} from 'react';
 import {IconLinkExternal, Link, ListItemAddress} from '@aragon/ui-components';
-import React from 'react';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 
@@ -10,7 +10,9 @@ import {CHAIN_METADATA} from 'utils/constants';
 import {ActionMintToken} from 'utils/types';
 import {useDaoParam} from 'hooks/useDaoParam';
 import {useDaoToken} from 'hooks/useDaoToken';
-import {formatUnits} from 'ethers/utils';
+import {formatUnits} from 'ethers/lib/utils';
+import {getTokenInfo} from 'utils/tokens';
+import {useProviders} from 'context/providers';
 
 export const MintTokenCard: React.FC<{
   action: ActionMintToken;
@@ -20,18 +22,35 @@ export const MintTokenCard: React.FC<{
   const {data: daoId} = useDaoParam();
   const {data: daoToken, isLoading: daoTokenLoading} = useDaoToken(daoId);
   const [tokenSupply, setTokenSupply] = useState(0);
-
-  // NOTE: Temporarily mocking token information, as SDK does not yet expose this.
-  const token = {
-    id: '0x35f7A3379B8D0613c3F753863edc85997D8D0968',
-    symbol: 'DTT',
-  };
+  const nativeCurrency = CHAIN_METADATA[network].nativeCurrency;
+  const {infura} = useProviders();
 
   const newHoldersCount = action.summary.newHoldersCount;
-  const newTokens = formatUnits(
-    Number(action.summary.newTokens),
-    daoToken.decimals
-  );
+
+  // const newTokens = Number(
+  //   formatUnits(Number(action.summary.newTokens), daoToken.decimals)
+  // );
+
+  if (action?.summary.newTokens)
+    console.log(
+      formatUnits(Number(action.summary.newTokens), daoToken.decimals)
+    );
+
+  useEffect(() => {
+    // Fetching necessary info about the token.
+    if (daoToken?.id) {
+      getTokenInfo(daoToken.id, infura, nativeCurrency)
+        .then((r: Awaited<ReturnType<typeof getTokenInfo>>) => {
+          const formattedNumber = parseFloat(
+            formatUnits(r.totalSupply, r.decimals)
+          );
+          setTokenSupply(formattedNumber);
+        })
+        .catch(e =>
+          console.error('Error happened when fetching token infos: ', e)
+        );
+    }
+  }, [daoToken.id, infura, nativeCurrency]);
   // This should be replace With Skeleton loading in near future
   if (daoTokenLoading) return <></>;
 
@@ -47,7 +66,8 @@ export const MintTokenCard: React.FC<{
       <Container>
         <div className="p-2 tablet:p-3 space-y-2 bg-ui-50">
           {action.inputs.mintTokensToWallets.map((wallet, index) => {
-            const newTokenSupply = newTokens + tokenSupply;
+            // const newTokenSupply = newTokens + tokenSupply;
+            const newTokenSupply = 0 + tokenSupply;
             const amount = Number(wallet.amount);
 
             const percentage = newTokenSupply
@@ -79,9 +99,7 @@ export const MintTokenCard: React.FC<{
           <p className="font-bold text-ui-800">{t('labels.summary')}</p>
           <HStack>
             <Label>{t('labels.newTokens')}</Label>
-            <p>
-              +{newTokens} {daoToken.symbol}
-            </p>
+            <p>{/* +{newTokens} {daoToken.symbol} */}</p>
           </HStack>
           <HStack>
             <Label>{t('labels.newHolders')}</Label>
@@ -91,7 +109,7 @@ export const MintTokenCard: React.FC<{
             <Label>{t('labels.totalTokens')}</Label>
             {tokenSupply ? (
               <p>
-                {(tokenSupply + newTokens).toString()} {daoToken.symbol}
+                {/* {(tokenSupply + newTokens).toString()} {daoToken.symbol} */}
               </p>
             ) : (
               <p>...</p>
@@ -100,7 +118,7 @@ export const MintTokenCard: React.FC<{
           {/* TODO add total amount of token holders here. */}
           <Link
             label={t('labels.seeCommunity')}
-            href={`${CHAIN_METADATA[network].explorer}/token/tokenholderchart/${token?.id}`}
+            href={`${CHAIN_METADATA[network].explorer}/token/tokenholderchart/${daoToken?.id}`}
             iconRight={<IconLinkExternal />}
           />
         </SummaryContainer>

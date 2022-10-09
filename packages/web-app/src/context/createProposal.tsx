@@ -86,7 +86,7 @@ const CreateProposalProvider: React.FC<Props> = ({
             actions.push(
               Promise.resolve(
                 (pluginClient as ClientErc20).encoding.mintTokenAction(
-                  action.summary.daoTokenAddress,
+                  action.summary.daoTokenAddress as string,
                   {
                     address: mint.address,
                     amount: BigInt(Number(mint.amount) * Math.pow(10, 18)),

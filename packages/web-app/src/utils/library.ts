@@ -153,7 +153,7 @@ export async function decodeMintTokensToAction(
       mintTokensToWallets: decoded,
     },
     summary: {
-      newTokens,
+      newTokens: BigInt(newTokens),
       newHoldersCount: decoded.length,
     },
   });
