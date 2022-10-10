@@ -5,7 +5,7 @@ import {
   makeVar,
   NormalizedCacheObject,
 } from '@apollo/client';
-import {Deposit} from '@aragon/sdk-client';
+import {AddressListProposal, Deposit, Erc20Proposal} from '@aragon/sdk-client';
 import {RestLink} from 'apollo-link-rest';
 import {CachePersistor, LocalStorageWrapper} from 'apollo3-cache-persist';
 
@@ -131,9 +131,27 @@ const pendingDeposits = makeVar<Deposit[]>(depositTxs);
 
 // PENDING VOTES
 type PendingVotes = {
+  /** key is proposal id */
   [key: string]: AddressListVote | Erc20ProposalVote;
 };
 const pendingVotes = JSON.parse(localStorage.getItem('pendingVotes') || '{}');
 const pendingVotesVar = makeVar<PendingVotes>(pendingVotes);
 
-export {client, favoriteDAOs, selectedDAO, pendingDeposits, pendingVotesVar};
+// PENDING PROPOSAL
+type PendingProposal = {
+  /** key is proposal id */
+  [key: string]: Erc20Proposal | AddressListProposal;
+};
+const pendingProposals = JSON.parse(
+  localStorage.getItem('pendingProposals') || '{}'
+);
+const pendingProposalsVar = makeVar<PendingProposal>(pendingProposals);
+
+export {
+  client,
+  favoriteDAOs,
+  selectedDAO,
+  pendingDeposits,
+  pendingProposalsVar,
+  pendingVotesVar,
+};

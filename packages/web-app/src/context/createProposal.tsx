@@ -17,7 +17,7 @@ import {PluginTypes, usePluginClient} from 'hooks/usePluginClient';
 import {usePollGasFee} from 'hooks/usePollGasfee';
 import {useWallet} from 'hooks/useWallet';
 import {TransactionState} from 'utils/constants';
-import {Governance} from 'utils/paths';
+import {Governance, Proposal} from 'utils/paths';
 import {useGlobalModalContext} from './globalModals';
 import {useNetwork} from './network';
 import {useDaoDetails} from 'hooks/useDaoDetails';
@@ -26,6 +26,8 @@ import {useClient} from 'hooks/useClient';
 import {Action} from 'utils/types';
 import {DaoAction} from '@aragon/sdk-client/dist/internal/interfaces/common';
 import {trackEvent} from 'services/analytics';
+import {pendingProposalsVar} from './apolloClient';
+import {useReactiveVar} from '@apollo/client';
 
 type Props = {
   showTxModal: boolean;
@@ -56,6 +58,10 @@ const CreateProposalProvider: React.FC<Props> = ({
 
   const [creationProcessState, setCreationProcessState] =
     useState<TransactionState>(TransactionState.WAITING);
+
+  const [proposalId, setProposalId] = useState<string>();
+
+  const cachedProposals = useReactiveVar(pendingProposalsVar);
 
   const shouldPoll = useMemo(
     () =>
@@ -210,7 +216,7 @@ const CreateProposalProvider: React.FC<Props> = ({
       case TransactionState.LOADING:
         break;
       case TransactionState.SUCCESS:
-        navigate(generatePath(Governance, {network, dao}));
+        navigate(generatePath(Proposal, {network, dao, id: proposalId}));
         break;
       default: {
         setCreationProcessState(TransactionState.WAITING);
@@ -268,13 +274,19 @@ const CreateProposalProvider: React.FC<Props> = ({
             console.log(step.txHash);
             break;
           case ProposalCreationSteps.DONE:
-            console.log('proposal id', step.proposalId);
+            setProposalId(step.proposalId);
             setCreationProcessState(TransactionState.SUCCESS);
             trackEvent('newProposal_transaction_success', {
               dao_address: dao,
               network: network,
               wallet_provider: provider?.connection.url,
               proposalId: step.proposalId,
+            });
+
+            // cache proposal
+            pendingProposalsVar({
+              ...cachedProposals,
+              [step.proposalId]: {...proposalCreationData},
             });
             break;
         }
