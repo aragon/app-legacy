@@ -17,12 +17,12 @@ const NotFound: React.FC = () => {
   const {t} = useTranslation();
 
   return (
-    <>
+    <div className="overflow-x-hidden">
       <Container>
         <div className="hidden desktop:block py-2 desktop:py-4">
           <GridLayout>
             <img
-              className="col-span-2 h-4"
+              className="col-span-2 h-4 cursor-pointer"
               src={Logo}
               onClick={() => window.open('https://aragon.org/', '_blank')}
             />
@@ -82,7 +82,7 @@ const NotFound: React.FC = () => {
           />
         </HStack>
       </GridLayout>
-    </>
+    </div>
   );
 };
 
