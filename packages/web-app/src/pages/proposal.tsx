@@ -178,6 +178,8 @@ const Proposal: React.FC = () => {
         pluginClient as ClientErc20
       );
 
+      console.log('decodedMintToken', decodedMintToken);
+
       actionPromises.splice(mintTokenActions.index, 0, decodedMintToken);
 
       Promise.all(actionPromises).then(value => {

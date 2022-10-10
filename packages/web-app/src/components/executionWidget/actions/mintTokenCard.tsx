@@ -31,26 +31,26 @@ export const MintTokenCard: React.FC<{
   //   formatUnits(Number(action.summary.newTokens), daoToken.decimals)
   // );
 
-  if (action?.summary.newTokens)
-    console.log(
-      formatUnits(Number(action.summary.newTokens), daoToken.decimals)
-    );
+  // if (action?.summary.newTokens)
+  //   console.log(
+  //     formatUnits(Number(action.summary.newTokens), daoToken.decimals)
+  //   );
 
-  useEffect(() => {
-    // Fetching necessary info about the token.
-    if (daoToken?.id) {
-      getTokenInfo(daoToken.id, infura, nativeCurrency)
-        .then((r: Awaited<ReturnType<typeof getTokenInfo>>) => {
-          const formattedNumber = parseFloat(
-            formatUnits(r.totalSupply, r.decimals)
-          );
-          setTokenSupply(formattedNumber);
-        })
-        .catch(e =>
-          console.error('Error happened when fetching token infos: ', e)
-        );
-    }
-  }, [daoToken.id, infura, nativeCurrency]);
+  // useEffect(() => {
+  //   // Fetching necessary info about the token.
+  //   if (daoToken?.address) {
+  //     getTokenInfo(daoToken.address, infura, nativeCurrency)
+  //       .then((r: Awaited<ReturnType<typeof getTokenInfo>>) => {
+  //         const formattedNumber = parseFloat(
+  //           formatUnits(r.totalSupply, r.decimals)
+  //         );
+  //         setTokenSupply(formattedNumber);
+  //       })
+  //       .catch(e =>
+  //         console.error('Error happened when fetching token infos: ', e)
+  //       );
+  //   }
+  // }, [daoToken.address, infura, nativeCurrency]);
   // This should be replace With Skeleton loading in near future
   if (daoTokenLoading) return <></>;
 
@@ -68,7 +68,9 @@ export const MintTokenCard: React.FC<{
           {action.inputs.mintTokensToWallets.map((wallet, index) => {
             // const newTokenSupply = newTokens + tokenSupply;
             const newTokenSupply = 0 + tokenSupply;
-            const amount = Number(wallet.amount);
+            const amount = Number(
+              formatUnits(wallet.amount, daoToken.decimals)
+            );
 
             const percentage = newTokenSupply
               ? (amount / newTokenSupply) * 100
@@ -87,7 +89,7 @@ export const MintTokenCard: React.FC<{
                 }
                 tokenInfo={{
                   amount,
-                  symbol: daoToken.decimals,
+                  symbol: daoToken?.symbol,
                   percentage: percentage.toPrecision(3),
                 }}
               />
@@ -118,7 +120,7 @@ export const MintTokenCard: React.FC<{
           {/* TODO add total amount of token holders here. */}
           <Link
             label={t('labels.seeCommunity')}
-            href={`${CHAIN_METADATA[network].explorer}/token/tokenholderchart/${daoToken?.id}`}
+            href={`${CHAIN_METADATA[network].explorer}/token/tokenholderchart/${daoToken?.address}`}
             iconRight={<IconLinkExternal />}
           />
         </SummaryContainer>
