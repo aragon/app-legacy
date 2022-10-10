@@ -59,7 +59,7 @@ const NotFound: React.FC = () => {
           <ButtonText
             label={t('cta.404.backToExplore')}
             size="large"
-            className="desktop:hidden block mt-14 desktop:mt-0 w-full"
+            className="block desktop:hidden mt-14 desktop:mt-0 w-full"
             onClick={() => navigate(Landing)}
           />
         </div>
