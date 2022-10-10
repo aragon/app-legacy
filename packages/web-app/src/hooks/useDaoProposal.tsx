@@ -18,6 +18,7 @@ import {isTokenBasedProposal, MappedVotes} from 'utils/proposals';
 import {Erc20ProposalVote, HookData} from 'utils/types';
 import {useClient} from './useClient';
 import {PluginTypes, usePluginClient} from './usePluginClient';
+import {usePrivacyContext} from 'context/privacyContext';
 
 export type DetailedProposal = Erc20Proposal | AddressListProposal;
 
@@ -41,6 +42,7 @@ export const useDaoProposal = (
   const {client: globalClient} = useClient();
   const pluginClient = usePluginClient(pluginType);
 
+  const {preferences} = usePrivacyContext();
   const cachedVotes = useReactiveVar(pendingVotesVar);
   const cachedProposals = useReactiveVar(pendingProposalsVar);
 
@@ -149,8 +151,10 @@ export const useDaoProposal = (
 
           // remove cache there's already a proposal
           if (cachedProposal) {
-            delete cachedProposals[proposalId];
-            pendingProposalsVar({...cachedProposals});
+            pendingProposalsVar({});
+            if (preferences?.functional) {
+              localStorage.setItem('pendingProposals', '{}');
+            }
           }
         } else if (cachedProposal) {
           setData({...augmentProposalWithCache(cachedProposal)});
@@ -168,6 +172,7 @@ export const useDaoProposal = (
     cachedProposals,
     getEncodedAction,
     pluginClient?.methods,
+    preferences?.functional,
     proposalId,
   ]);
 
