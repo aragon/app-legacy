@@ -6,6 +6,7 @@ import {useEffect, useState} from 'react';
 import {pendingDeposits} from 'context/apolloClient';
 import {HookData} from 'utils/types';
 import {useClient} from './useClient';
+import {PENDING_DEPOSITS_KEY} from 'utils/constants';
 
 export type IAssetTransfers = Transfer[];
 
@@ -50,7 +51,7 @@ export const useDaoTransfers = (
           }
 
           localStorage.setItem(
-            'pendingDeposits',
+            PENDING_DEPOSITS_KEY,
             JSON.stringify(pendingDepositsTxs)
           );
 

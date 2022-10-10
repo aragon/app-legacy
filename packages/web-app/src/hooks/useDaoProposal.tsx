@@ -19,6 +19,7 @@ import {Erc20ProposalVote, HookData} from 'utils/types';
 import {useClient} from './useClient';
 import {PluginTypes, usePluginClient} from './usePluginClient';
 import {usePrivacyContext} from 'context/privacyContext';
+import {PENDING_PROPOSALS_KEY} from 'utils/constants';
 
 export type DetailedProposal = Erc20Proposal | AddressListProposal;
 
@@ -153,7 +154,7 @@ export const useDaoProposal = (
           if (cachedProposal) {
             pendingProposalsVar({});
             if (preferences?.functional) {
-              localStorage.setItem('pendingProposals', '{}');
+              localStorage.setItem(PENDING_PROPOSALS_KEY, '{}');
             }
           }
         } else if (cachedProposal) {

@@ -7,6 +7,7 @@ import {
 import {pendingProposalsVar} from 'context/apolloClient';
 import {usePrivacyContext} from 'context/privacyContext';
 import {useCallback, useEffect, useState} from 'react';
+import {PENDING_PROPOSALS_KEY} from 'utils/constants';
 import {customJSONReplacer} from 'utils/library';
 import {HookData} from 'utils/types';
 
@@ -52,7 +53,7 @@ export function useProposals(
       pendingProposalsVar(newCache);
       if (preferences?.functional) {
         localStorage.setItem(
-          'pendingProposals',
+          PENDING_PROPOSALS_KEY,
           JSON.stringify(newCache, customJSONReplacer)
         );
       }
