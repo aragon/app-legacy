@@ -15,14 +15,12 @@ import {useCallback, useEffect, useState} from 'react';
 
 import {pendingProposalsVar, pendingVotesVar} from 'context/apolloClient';
 import {isTokenBasedProposal, MappedVotes} from 'utils/proposals';
-import {Erc20ProposalVote, HookData} from 'utils/types';
+import {DetailedProposal, Erc20ProposalVote, HookData} from 'utils/types';
 import {useClient} from './useClient';
 import {PluginTypes, usePluginClient} from './usePluginClient';
 import {usePrivacyContext} from 'context/privacyContext';
 import {PENDING_PROPOSALS_KEY, PENDING_VOTES_KEY} from 'utils/constants';
 import {customJSONReplacer} from 'utils/library';
-
-export type DetailedProposal = Erc20Proposal | AddressListProposal;
 
 /**
  * Retrieve a single detailed proposal

@@ -17,11 +17,11 @@ import Big from 'big.js';
 import {format} from 'date-fns';
 
 import {ProposalVoteResults} from 'containers/votingTerminal';
-import {DetailedProposal} from 'hooks/useDaoProposal';
 import {i18n} from '../../i18n.config';
 import {getFormattedUtcOffset, KNOWN_FORMATS} from './date';
 import {formatUnits} from './library';
 import {abbreviateTokenAmount} from './tokens';
+import {DetailedProposal} from './types';
 
 export const MappedVotes: {[key in VoteValues]: VoterType['option']} = {
   1: 'abstain',
