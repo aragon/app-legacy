@@ -10,6 +10,7 @@ import {RestLink} from 'apollo-link-rest';
 import {CachePersistor, LocalStorageWrapper} from 'apollo3-cache-persist';
 
 import {BASE_URL, SUBGRAPH_API_URL, SupportedNetworks} from 'utils/constants';
+import {customJSONReviver} from 'utils/library';
 import {AddressListVote, Erc20ProposalVote} from 'utils/types';
 import {PRIVACY_KEY} from './privacyContext';
 
@@ -138,14 +139,15 @@ const pendingVotes = JSON.parse(localStorage.getItem('pendingVotes') || '{}');
 const pendingVotesVar = makeVar<PendingVotes>(pendingVotes);
 
 // PENDING PROPOSAL
-type PendingProposal = {
+type PendingProposals = {
   /** key is proposal id */
   [key: string]: Erc20Proposal | AddressListProposal;
 };
 const pendingProposals = JSON.parse(
-  localStorage.getItem('pendingProposals') || '{}'
+  localStorage.getItem('pendingProposals') || '{}',
+  customJSONReviver
 );
-const pendingProposalsVar = makeVar<PendingProposal>(pendingProposals);
+const pendingProposalsVar = makeVar<PendingProposals>(pendingProposals);
 
 export {
   client,

@@ -13,7 +13,7 @@ import {
 import {BigNumber, constants} from 'ethers';
 import {useCallback, useEffect, useState} from 'react';
 
-import {pendingVotesVar} from 'context/apolloClient';
+import {pendingProposalsVar, pendingVotesVar} from 'context/apolloClient';
 import {isTokenBasedProposal, MappedVotes} from 'utils/proposals';
 import {Erc20ProposalVote, HookData} from 'utils/types';
 import {useClient} from './useClient';
@@ -42,6 +42,8 @@ export const useDaoProposal = (
   const pluginClient = usePluginClient(pluginType);
 
   const cachedVotes = useReactiveVar(pendingVotesVar);
+  const cachedProposals = useReactiveVar(pendingProposalsVar);
+
   const daoAddress = '0x1234567890123456789012345678901234567890';
 
   // TODO: this method is for dummy usage only, Will remove later
@@ -136,11 +138,22 @@ export const useDaoProposal = (
     async function getDaoProposal() {
       try {
         setIsLoading(true);
-        const encodedActions = await getEncodedAction();
+        const cachedProposal = cachedProposals[proposalId];
         const proposal = await pluginClient?.methods.getProposal(proposalId);
+
+        const encodedActions = await getEncodedAction();
         if (proposal && encodedActions) proposal.actions = encodedActions;
+
         if (proposal) {
           setData({...augmentProposalWithCache(proposal)});
+
+          // remove cache there's already a proposal
+          if (cachedProposal) {
+            delete cachedProposals[proposalId];
+            pendingProposalsVar({...cachedProposals});
+          }
+        } else if (cachedProposal) {
+          setData({...augmentProposalWithCache(cachedProposal)});
         }
       } catch (err) {
         console.error(err);
@@ -152,6 +165,7 @@ export const useDaoProposal = (
     getDaoProposal();
   }, [
     augmentProposalWithCache,
+    cachedProposals,
     getEncodedAction,
     pluginClient?.methods,
     proposalId,
