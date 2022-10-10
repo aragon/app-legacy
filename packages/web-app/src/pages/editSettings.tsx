@@ -3,6 +3,7 @@ import {
   Breadcrumb,
   ButtonText,
   IconGovernance,
+  ListItemAction,
   Wizard,
 } from '@aragon/ui-components';
 import {withTransaction} from '@elastic/apm-rum-react';
@@ -29,6 +30,7 @@ import {usePluginSettings} from 'hooks/usePluginSettings';
 import useScreen from 'hooks/useScreen';
 import {getDHMFromSeconds} from 'utils/date';
 import {ProposeNewSettings} from 'utils/paths';
+import {AccordionMethod} from 'components/accordionMethod';
 
 const EditSettings: React.FC = () => {
   const [currentMenu, setCurrentMenu] = useState<'metadata' | 'governance'>(
@@ -251,6 +253,13 @@ const EditSettings: React.FC = () => {
     return <Loading />;
   }
 
+  const methodActions = [
+    {
+      component: <ListItemAction title={t('labels.resetAction')} bgWhite />,
+      // callback: handleReset,
+    },
+  ];
+
   return (
     <Container>
       <div className="-mx-2 desktop:mx-0">
@@ -281,11 +290,14 @@ const EditSettings: React.FC = () => {
         )}
       </div>
 
-      <div>
-        <Accordion>
-          <Heading>{t('labels.review.daoMetadata')}</Heading>
-
-          <HStack>
+      <div className="mx-auto mt-5 desktop:mt-8 desktop:w-3/5">
+        <AccordionMethod
+          type="action-builder"
+          methodName={t('labels.review.daoMetadata')}
+          smartContractName={t('labels.aragonCore')}
+          dropdownItems={methodActions}
+        >
+          {/* <HStack>
             {isMetadataChanged && (
               <AlertInline label={t('settings.newSettings')} mode="neutral" />
             )}
@@ -304,20 +316,22 @@ const EditSettings: React.FC = () => {
               }
               bgWhite
             />
-          </HStack>
-        </Accordion>
-        {currentMenu === 'metadata' && (
+          </HStack> */}
+
           <AccordionContent>
             <DefineMetadata />
           </AccordionContent>
-        )}
+        </AccordionMethod>
       </div>
 
-      <div>
-        <Accordion>
-          <Heading>{t('labels.review.governance')}</Heading>
-
-          <HStack>
+      <div className="mx-auto mt-3 desktop:w-3/5">
+        <AccordionMethod
+          type="action-builder"
+          methodName={t('labels.review.governance')}
+          smartContractName={t('labels.aragonCore')}
+          dropdownItems={methodActions}
+        >
+          {/* <HStack>
             {isGovernanceChanged && (
               <AlertInline label={t('settings.newSettings')} mode="neutral" />
             )}
@@ -336,13 +350,11 @@ const EditSettings: React.FC = () => {
               }
               bgWhite
             />
-          </HStack>
-        </Accordion>
-        {currentMenu === 'governance' && (
+          </HStack> */}
           <AccordionContent>
             <ConfigureCommunity />
           </AccordionContent>
-        )}
+        </AccordionMethod>
       </div>
 
       <ButtonContainer>
@@ -374,20 +386,12 @@ export default withTransaction('EditSettings', 'component')(EditSettings);
 
 const Container = styled.div.attrs({
   className:
-    'col-span-full desktop:col-start-2 desktop:col-end-12 desktop:mt-5 space-y-5 desktop:space-y-8',
-})``;
-
-const Accordion = styled.div.attrs({
-  className:
-    'desktop:flex justify-between items-center p-3 bg-white rounded-xl space-y-2 desktop:space-y-0',
+    'col-span-full desktop:col-start-2 desktop:col-end-12 desktop:mt-5',
 })``;
 
 const AccordionContent = styled.div.attrs({
-  className: 'mx-auto mt-3 desktop:mt-5 space-y-3 desktop:w-3/5',
-})``;
-
-const Heading = styled.div.attrs({
-  className: 'text-lg text-ui-800',
+  className:
+    'p-3 pb-6 space-y-3 bg-ui-0 border border-ui-100 rounded-b-xl border-t-0',
 })``;
 
 const HStack = styled.div.attrs({
