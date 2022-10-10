@@ -320,6 +320,13 @@
       "description": "To continue with this action, a wallet must be connected.",
       "buttonLabel": "Login Now"
     },
+    "gatingUsers": {
+      "tokenTitle": "Token not found",
+      "tokenDescription": "The wallet does not contain '{{tokenName}}' Token. Please ensure that you have the necessary tokens in order to continue.",
+      "walletTitle": "Wallet not allowlisted",
+      "walletDescription": "The connected wallet is not allowlisted. Please connect a valid wallet in order to proceed with the process.",
+      "buttonLabel": "Ok, understood"
+    },
     "tokenBasedMembers": "The DAO members listed here have interacted with the DAO at least once"
   },
   "warnings": {

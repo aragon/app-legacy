@@ -19,6 +19,7 @@ type GlobalModalsContextType = {
   isNetworkOpen: boolean;
   isMobileMenuOpen: boolean;
   isManageWalletOpen: boolean;
+  isGatingOpen: boolean;
   open: (arg?: MenuTypes) => void;
   close: (arg?: MenuTypes) => void;
 };
@@ -34,7 +35,8 @@ export type MenuTypes =
   | 'network'
   | 'mobileMenu'
   | 'network'
-  | 'manageWallet';
+  | 'manageWallet'
+  | 'gating';
 
 type Props = Record<'children', ReactNode>;
 
@@ -63,6 +65,8 @@ const GlobalModalsProvider: React.FC<Props> = ({children}) => {
     useState<GlobalModalsContextType['isMobileMenuOpen']>(false);
   const [isManageWalletOpen, setManageWalletOpen] =
     useState<GlobalModalsContextType['isManageWalletOpen']>(false);
+  const [isGatingOpen, setIsGatingOpen] =
+    useState<GlobalModalsContextType['isGatingOpen']>(false);
 
   const open = (type?: MenuTypes) => {
     switch (type) {
@@ -92,6 +96,9 @@ const GlobalModalsProvider: React.FC<Props> = ({children}) => {
         break;
       case 'manageWallet':
         setManageWalletOpen(true);
+        break;
+      case 'gating':
+        setIsGatingOpen(true);
         break;
       default:
         setIsTransferOpen(true);
@@ -128,6 +135,9 @@ const GlobalModalsProvider: React.FC<Props> = ({children}) => {
       case 'manageWallet':
         setManageWalletOpen(false);
         break;
+      case 'gating':
+        setIsGatingOpen(false);
+        break;
       default:
         setIsTransferOpen(false);
         break;
@@ -155,20 +165,22 @@ const GlobalModalsProvider: React.FC<Props> = ({children}) => {
       isNetworkOpen,
       isMobileMenuOpen,
       isManageWalletOpen,
+      isGatingOpen,
       open,
       close,
     }),
     [
-      isTransferOpen,
-      isTokenOpen,
-      isUtcOpen,
       isAddActionOpen,
-      isSelectDaoOpen,
       isAddressesOpen,
-      isWalletOpen,
-      isNetworkOpen,
-      isMobileMenuOpen,
+      isGatingOpen,
       isManageWalletOpen,
+      isMobileMenuOpen,
+      isNetworkOpen,
+      isSelectDaoOpen,
+      isTokenOpen,
+      isTransferOpen,
+      isUtcOpen,
+      isWalletOpen,
     ]
   );
 

@@ -33,6 +33,7 @@ import {useWallet} from 'hooks/useWallet';
 import CreateDAO from 'pages/createDAO';
 import {FormProvider, useForm} from 'react-hook-form';
 import {NotFound} from 'utils/paths';
+import ProtectedRoute from 'components/protectedRoute';
 
 const ExplorePage = lazy(() => import('pages/explore'));
 const NotFoundPage = lazy(() => import('pages/notFound'));
@@ -98,38 +99,40 @@ function App() {
               <Route path="dashboard" element={<DashboardPage />} />
               <Route path="finance" element={<FinancePage />} />
               <Route path="finance/new-deposit" element={<NewDepositPage />} />
-              <Route
-                path="finance/new-withdrawal"
-                element={<NewWithdrawPage />}
-              />
               <Route path="finance/tokens" element={<TokensPage />} />
               <Route path="finance/transfers" element={<TransfersPage />} />
+              <Route element={<ProtectedRoute />}>
+                <Route
+                  path="finance/new-withdrawal"
+                  element={<NewWithdrawPage />}
+                />
+                <Route
+                  path="governance/new-proposal"
+                  element={<NewProposalPage />}
+                />
+                <Route element={<NewSettingsWrapper />}>
+                  <Route path="settings/edit" element={<EditSettingsPage />} />
+                  <Route
+                    path="settings/new-proposal"
+                    element={<ProposeSettingsPage />}
+                  />
+                </Route>
+                <Route
+                  path="community/mint-tokens"
+                  element={<MintTokensProposalPage />}
+                />
+                <Route
+                  path="community/manage-members"
+                  element={<ManageMembersProposalPage />}
+                />
+              </Route>
               <Route path="governance" element={<GovernancePage />} />
-              <Route
-                path="governance/new-proposal"
-                element={<NewProposalPage />}
-              />
               <Route
                 path="governance/proposals/:id"
                 element={<ProposalDetailsWrapper />}
               />
               <Route path="community" element={<CommunityPage />} />
               <Route path="settings" element={<SettingsPage />} />
-              <Route element={<NewSettingsWrapper />}>
-                <Route path="settings/edit" element={<EditSettingsPage />} />
-                <Route
-                  path="settings/new-proposal"
-                  element={<ProposeSettingsPage />}
-                />
-              </Route>
-              <Route
-                path="community/mint-tokens"
-                element={<MintTokensProposalPage />}
-              />
-              <Route
-                path="community/manage-members"
-                element={<ManageMembersProposalPage />}
-              />
               {/* Redirects the user to the dashboard page by default if no dao-specific page is specified. */}
               <Route index element={<Navigate to={'dashboard'} replace />} />
             </Route>

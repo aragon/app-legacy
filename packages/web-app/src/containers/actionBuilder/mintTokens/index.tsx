@@ -150,8 +150,8 @@ export const MintTokenForm: React.FC<MintTokenFormProps> = ({
 
   useEffect(() => {
     // Fetching necessary info about the token.
-    if (daoToken?.id) {
-      getTokenInfo(daoToken.id, infura, nativeCurrency)
+    if (daoToken?.address) {
+      getTokenInfo(daoToken.address, infura, nativeCurrency)
         .then((r: Awaited<ReturnType<typeof getTokenInfo>>) => {
           const formattedNumber = parseFloat(
             formatUnits(r.totalSupply, r.decimals)
@@ -167,7 +167,7 @@ export const MintTokenForm: React.FC<MintTokenFormProps> = ({
           );
           setValue(
             `actions.${actionIndex}.summary.daoTokenAddress`,
-            daoToken.id
+            daoToken.address
           );
         })
         .catch(e =>
@@ -175,7 +175,7 @@ export const MintTokenForm: React.FC<MintTokenFormProps> = ({
         );
     }
   }, [
-    daoToken.id,
+    daoToken.address,
     nativeCurrency,
     infura,
     setValue,
@@ -185,7 +185,7 @@ export const MintTokenForm: React.FC<MintTokenFormProps> = ({
 
   // Count number of addresses that don't yet own token
   useEffect(() => {
-    if (mints && daoToken?.id) {
+    if (mints && daoToken?.address) {
       // only check rows where form input holds address
       const validInputs = mints.filter(
         m => m.address !== '' && isAddress(m.address)
@@ -211,7 +211,7 @@ export const MintTokenForm: React.FC<MintTokenFormProps> = ({
         const promises: Promise<AddressBalance>[] = uncheckedAddresses.map(
           (m: MintInfo) =>
             fetchBalance(
-              daoToken.id,
+              daoToken.address,
               m.address,
               infura,
               nativeCurrency,
@@ -252,7 +252,7 @@ export const MintTokenForm: React.FC<MintTokenFormProps> = ({
       }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [mints, daoToken.id]);
+  }, [mints, daoToken.address]);
 
   useEffect(() => {
     // Collecting token amounts that are to be minted
@@ -280,7 +280,7 @@ export const MintTokenForm: React.FC<MintTokenFormProps> = ({
         );
       }
     }
-  }, [mints, daoToken, daoToken.id, setValue, actionIndex, newTokens]);
+  }, [mints, daoToken, daoToken.address, setValue, actionIndex, newTokens]);
 
   /*************************************************
    *             Callbacks and Handlers            *

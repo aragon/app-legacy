@@ -30,7 +30,8 @@ export const usePluginClient = (
 
   useEffect(() => {
     if (!client || !context) {
-      throw new Error('SDK client is not initialized correctly');
+      // throw new Error('SDK client is not initialized correctly');
+      return;
     }
 
     if (!pluginType) setPluginClient(undefined);

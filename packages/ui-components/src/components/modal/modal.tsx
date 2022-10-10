@@ -82,7 +82,7 @@ const ModalContainer = styled(Content).attrs(({style}: StyledContentProps) => {
   const className = 'bg-ui-50 z-30';
   const currentStyle: CSSProperties = style || {
     position: 'fixed',
-    top: '60%',
+    top: '50%',
     left: '50%',
     transform: 'translate(-50%, -60%)',
     boxShadow:

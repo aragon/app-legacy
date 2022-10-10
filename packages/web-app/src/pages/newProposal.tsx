@@ -11,7 +11,6 @@ import ProposalStepper from 'containers/proposalStepper';
 const NewProposal: React.FC = () => {
   const {data: dao, isLoading} = useDaoParam();
   const [showTxModal, setShowTxModal] = useState(false);
-
   const formMethods = useForm({
     mode: 'onChange',
   });

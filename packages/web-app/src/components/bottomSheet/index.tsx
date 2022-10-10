@@ -8,7 +8,7 @@ import usePrevious from 'hooks/usePrevious';
 export type BottomSheetProps = {
   children?: ReactNode;
   isOpen: boolean;
-  onClose: () => void;
+  onClose?: () => void;
   title?: string;
   subtitle?: string;
   closeOnDrag?: boolean;
@@ -17,7 +17,7 @@ export type BottomSheetProps = {
 export default function BottomSheet({
   children,
   isOpen,
-  onClose,
+  onClose = () => null,
   title,
   subtitle,
   closeOnDrag = true,

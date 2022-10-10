@@ -1,10 +1,7 @@
-import {useQuery} from '@apollo/client';
-import {client} from 'context/apolloClient';
-import {useNetwork} from 'context/network';
-import {DAO_BY_ADDRESS} from 'queries/dao';
 import {useEffect} from 'react';
 import {useNavigate, useParams} from 'react-router-dom';
 import {NotFound} from 'utils/paths';
+import {useDaoDetails} from './useDaoDetails';
 
 /**
  * This hook queries the current URL for a the DAO address and validates that a
@@ -12,38 +9,22 @@ import {NotFound} from 'utils/paths';
  * the id parsed from the URL. If the dao exists, the id is simply returned. If
  * it does not exist, the user is redirected to the 404 page.
  *
- * @returns A apollo query result containing the DAO id.
+ * @returns A DAO id from SDK.
  */
 export function useDaoParam() {
   const {dao} = useParams();
-  const {network} = useNetwork();
 
   // NOTE At this point, daoParam will always be defined.
-  const {
-    data,
-    error,
-    loading: isLoading,
-  } = useQuery(DAO_BY_ADDRESS, {
-    variables: {id: dao ? dao : ''},
-    client: client[network],
-    fetchPolicy: 'cache-and-network',
-  });
+  const {error, isLoading} = useDaoDetails(dao as string);
   const navigate = useNavigate();
 
   useEffect(() => {
-    // undefined mainnet clients cause problem here. This bypasses the dao param
-    // validation on mainnets and immediately redirects to notfound (which makes
-    // sense since there can not yet be daos on mainnets). Remove this if
-    // statement once those clients are implemented.
-    if (!client[network])
-      navigate(NotFound, {replace: true, state: {incorrectDao: dao}});
-
     if (isLoading) {
       return;
-    } else if (error || !data?.dao?.id) {
+    } else if (error) {
       navigate(NotFound, {replace: true, state: {incorrectDao: dao}});
     }
-  }, [isLoading, dao, network]); // eslint-disable-line
+  }, [dao, error, isLoading, navigate]);
 
-  return {data: data?.dao?.id, error, isLoading};
+  return {data: dao as string, error, isLoading};
 }

@@ -1,35 +1,39 @@
-import {useQuery} from '@apollo/client';
+import {useEffect, useState} from 'react';
+import {ClientErc20, Erc20TokenDetails} from '@aragon/sdk-client';
 
-import {client} from 'context/apolloClient';
-import {useNetwork} from 'context/network';
-import {DAO_TOKEN} from 'queries/dao';
 import {HookData} from 'utils/types';
+import {usePluginClient} from './usePluginClient';
 
-type DaoToken = {
-  id: string;
-  name: string;
-  symbol: string;
-  decimals: string;
-};
+export function useDaoToken(
+  pluginAddress: string
+): HookData<Erc20TokenDetails> {
+  const [data, setData] = useState<Erc20TokenDetails>({} as Erc20TokenDetails);
+  const [error, setError] = useState<Error>();
+  const [isLoading, setIsLoading] = useState(false);
 
-export function useDaoToken(dao: string): HookData<DaoToken> {
-  const {network} = useNetwork();
+  const pluginClient = usePluginClient('erc20voting.dao.eth');
 
-  // TODO: This needs to be more fleshed out to return members properly
-  const {data, error, loading} = useQuery(DAO_TOKEN, {
-    variables: {id: dao},
-    client: client[network],
-    fetchPolicy: 'no-cache',
-  });
+  useEffect(() => {
+    async function getDaoMetadata() {
+      try {
+        setIsLoading(true);
 
-  return {
-    data: {
-      id: data?.dao?.token?.id,
-      name: data?.dao?.token?.name,
-      symbol: data?.dao?.token?.symbol,
-      decimals: data?.dao?.token?.decimals,
-    },
-    error,
-    isLoading: loading,
-  };
+        if (pluginAddress) {
+          const dao = await (pluginClient as ClientErc20)?.methods.getToken(
+            pluginAddress
+          );
+          if (dao) setData(dao);
+        }
+      } catch (err) {
+        console.error(err);
+        setError(err as Error);
+      } finally {
+        setIsLoading(false);
+      }
+    }
+
+    getDaoMetadata();
+  }, [pluginAddress, pluginClient]);
+
+  return {data, error, isLoading};
 }
