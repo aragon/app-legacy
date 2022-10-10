@@ -5,7 +5,11 @@ import {ApolloClient} from '@apollo/client';
 import {Client, ClientAddressList} from '@aragon/sdk-client';
 
 import {fetchTokenData} from 'services/prices';
-import {SupportedNetworks} from 'utils/constants';
+import {
+  BIGINT_PATTERN,
+  ISO_DATE_PATTERN,
+  SupportedNetworks,
+} from 'utils/constants';
 
 import {
   ActionAddAddress,
@@ -178,3 +182,31 @@ export async function decodeRemoveMembersToAction(
     },
   });
 }
+
+/**
+ *  Custom serializer that includes fix for BigInt type
+ * @param _ key; unused
+ * @param value value to serialize
+ * @returns serialized value
+ */
+export const customJSONReplacer = (_: string, value: unknown) =>
+  typeof value === 'bigint' ? value.toString() + 'n' : value;
+
+/**
+ * Custom function to deserialize values, including Date and BigInt types
+ * @param _ key: unused
+ * @param value value to deserialize
+ * @returns deserialized value
+ */
+export const customJSONReviver = (_: string, value: unknown) => {
+  if (typeof value === 'string') {
+    // BigInt
+    if (BIGINT_PATTERN.test(value))
+      return BigInt(value.slice(8, value.length - 1));
+
+    // Date
+    if (ISO_DATE_PATTERN.test(value)) return new Date(value);
+  }
+
+  return value;
+};
