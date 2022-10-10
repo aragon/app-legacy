@@ -19,7 +19,8 @@ import {Erc20ProposalVote, HookData} from 'utils/types';
 import {useClient} from './useClient';
 import {PluginTypes, usePluginClient} from './usePluginClient';
 import {usePrivacyContext} from 'context/privacyContext';
-import {PENDING_PROPOSALS_KEY} from 'utils/constants';
+import {PENDING_PROPOSALS_KEY, PENDING_VOTES_KEY} from 'utils/constants';
+import {customJSONReplacer} from 'utils/library';
 
 export type DetailedProposal = Erc20Proposal | AddressListProposal;
 
@@ -104,7 +105,14 @@ export const useDaoProposal = (
       if (proposal.votes.some(voter => voter.address === cachedVote.address)) {
         const newCache = {...cachedVotes};
         delete newCache[proposal.id];
+
         pendingVotesVar({...newCache});
+        if (preferences?.functional) {
+          localStorage.setItem(
+            PENDING_VOTES_KEY,
+            JSON.stringify(newCache, customJSONReplacer)
+          );
+        }
         return proposal;
       }
 
@@ -134,7 +142,7 @@ export const useDaoProposal = (
         } as AddressListProposal;
       }
     },
-    [cachedVotes]
+    [cachedVotes, preferences?.functional]
   );
 
   useEffect(() => {
