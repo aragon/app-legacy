@@ -22,12 +22,36 @@ export type AccordionMethodType = {
   additionalInfo?: string;
   dropdownItems?: ListItemProps[];
   customHeader?: React.ReactNode;
-  expanded?: boolean;
-  onTriggerClicked?: (expanded: boolean) => void;
 };
 
 export const AccordionMethod: React.FC<AccordionMethodType> = ({
+  children,
+  ...props
+}) => (
+  <Accordion.Root type="single" collapsible>
+    <AccordionItem name="item-1" {...props}>
+      {children}
+    </AccordionItem>
+  </Accordion.Root>
+);
+
+export const AccordionMultiple: React.FC<{
+  defaultValue: string;
+  className?: string;
+}> = ({defaultValue, className, children}) => (
+  <Accordion.Root
+    type="single"
+    defaultValue={defaultValue}
+    collapsible
+    className={className}
+  >
+    {children}
+  </Accordion.Root>
+);
+
+export const AccordionItem: React.FC<AccordionMethodType & {name: string}> = ({
   type,
+  name,
   methodName,
   smartContractName,
   verified = false,
@@ -36,88 +60,75 @@ export const AccordionMethod: React.FC<AccordionMethodType> = ({
   additionalInfo,
   dropdownItems = [],
   customHeader,
-  expanded = true,
-  onTriggerClicked,
   children,
-}) => {
-  return (
-    <Accordion.Root
-      type="single"
-      value={expanded === true ? 'item-1' : ''}
-      collapsible
-      onValueChange={() => {
-        onTriggerClicked?.(!expanded);
-      }}
-    >
-      <Accordion.Item value="item-1">
-        {!customHeader ? (
-          <AccordionHeader type={type}>
-            <HStack>
-              <FlexContainer>
-                <MethodName>{methodName}</MethodName>
-                {smartContractName && (
-                  <div
-                    className={`flex items-center space-x-1 ${
-                      verified ? 'text-primary-600' : 'text-warning-600'
-                    }`}
-                  >
-                    <p
-                      className={`font-bold ${
-                        verified ? 'text-primary-500' : 'text-warning-500'
-                      }`}
-                    >
-                      {smartContractName}
-                    </p>
-                    {verified ? <IconSuccess /> : <IconWarning />}
-                  </div>
-                )}
-                {alertLabel && <AlertInline label={alertLabel} />}
-              </FlexContainer>
-
-              <VStack>
-                {type === 'action-builder' && (
-                  <Dropdown
-                    side="bottom"
-                    align="end"
-                    listItems={dropdownItems}
-                    trigger={
-                      <ButtonIcon
-                        mode="ghost"
-                        size="medium"
-                        icon={<IconMenuVertical />}
-                      />
-                    }
-                  />
-                )}
-                <Accordion.Trigger>
-                  <AccordionButton
-                    mode={type === 'action-builder' ? 'ghost' : 'secondary'}
-                    size="medium"
-                    icon={<IconChevronDown />}
-                  />
-                </Accordion.Trigger>
-              </VStack>
-            </HStack>
-
-            {methodDescription && (
-              <AdditionalInfoContainer>
-                <p className="tablet:pr-10">{methodDescription}</p>
-
-                {additionalInfo && (
-                  <AlertInline label={additionalInfo} mode="neutral" />
-                )}
-              </AdditionalInfoContainer>
+}) => (
+  <Accordion.Item value={name}>
+    {!customHeader ? (
+      <AccordionHeader type={type}>
+        <HStack>
+          <FlexContainer>
+            <MethodName>{methodName}</MethodName>
+            {smartContractName && (
+              <div
+                className={`flex items-center space-x-1 ${
+                  verified ? 'text-primary-600' : 'text-warning-600'
+                }`}
+              >
+                <p
+                  className={`font-bold ${
+                    verified ? 'text-primary-500' : 'text-warning-500'
+                  }`}
+                >
+                  {smartContractName}
+                </p>
+                {verified ? <IconSuccess /> : <IconWarning />}
+              </div>
             )}
-          </AccordionHeader>
-        ) : (
-          <>{customHeader}</>
-        )}
+            {alertLabel && <AlertInline label={alertLabel} />}
+          </FlexContainer>
 
-        <Accordion.Content>{children}</Accordion.Content>
-      </Accordion.Item>
-    </Accordion.Root>
-  );
-};
+          <VStack>
+            {type === 'action-builder' && (
+              <Dropdown
+                side="bottom"
+                align="end"
+                listItems={dropdownItems}
+                trigger={
+                  <ButtonIcon
+                    mode="ghost"
+                    size="medium"
+                    icon={<IconMenuVertical />}
+                  />
+                }
+              />
+            )}
+            <Accordion.Trigger>
+              <AccordionButton
+                mode={type === 'action-builder' ? 'ghost' : 'secondary'}
+                size="medium"
+                icon={<IconChevronDown />}
+              />
+            </Accordion.Trigger>
+          </VStack>
+        </HStack>
+
+        {methodDescription && (
+          <AdditionalInfoContainer>
+            <p className="tablet:pr-10">{methodDescription}</p>
+
+            {additionalInfo && (
+              <AlertInline label={additionalInfo} mode="neutral" />
+            )}
+          </AdditionalInfoContainer>
+        )}
+      </AccordionHeader>
+    ) : (
+      <>{customHeader}</>
+    )}
+
+    <Accordion.Content>{children}</Accordion.Content>
+  </Accordion.Item>
+);
 
 export type AccordionType = Pick<AccordionMethodType, 'type'>;
 

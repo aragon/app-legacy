@@ -7,7 +7,7 @@ import {
   Wizard,
 } from '@aragon/ui-components';
 import {withTransaction} from '@elastic/apm-rum-react';
-import React, {useCallback, useEffect, useMemo, useState} from 'react';
+import React, {useCallback, useEffect, useMemo} from 'react';
 import {
   useFieldArray,
   useFormContext,
@@ -30,12 +30,9 @@ import {usePluginSettings} from 'hooks/usePluginSettings';
 import useScreen from 'hooks/useScreen';
 import {getDHMFromSeconds} from 'utils/date';
 import {ProposeNewSettings} from 'utils/paths';
-import {AccordionMethod} from 'components/accordionMethod';
+import {AccordionItem, AccordionMultiple} from 'components/accordionMethod';
 
 const EditSettings: React.FC = () => {
-  const [currentMenu, setCurrentMenu] = useState<'metadata' | 'governance'>(
-    'metadata'
-  );
   const {t} = useTranslation();
   const navigate = useNavigate();
   const {network} = useNetwork();
@@ -299,37 +296,35 @@ const EditSettings: React.FC = () => {
       </div>
 
       <div className="mx-auto mt-5 desktop:mt-8 desktop:w-3/5">
-        <AccordionMethod
-          type="action-builder"
-          methodName={t('labels.review.daoMetadata')}
-          alertLabel={isMetadataChanged ? t('settings.newSettings') : undefined}
-          dropdownItems={metadataAction}
-          expanded={currentMenu === 'metadata'}
-          onTriggerClicked={expanded => expanded && setCurrentMenu('metadata')}
-        >
-          <AccordionContent>
-            <DefineMetadata />
-          </AccordionContent>
-        </AccordionMethod>
-      </div>
+        <AccordionMultiple defaultValue="metadata" className="space-y-3">
+          <AccordionItem
+            type="action-builder"
+            name="metadata"
+            methodName={t('labels.review.daoMetadata')}
+            alertLabel={
+              isMetadataChanged ? t('settings.newSettings') : undefined
+            }
+            dropdownItems={metadataAction}
+          >
+            <AccordionContent>
+              <DefineMetadata />
+            </AccordionContent>
+          </AccordionItem>
 
-      <div className="mx-auto mt-3 desktop:w-3/5">
-        <AccordionMethod
-          type="action-builder"
-          methodName={t('labels.review.governance')}
-          alertLabel={
-            isGovernanceChanged ? t('settings.newSettings') : undefined
-          }
-          dropdownItems={governanceAction}
-          expanded={currentMenu === 'governance'}
-          onTriggerClicked={expanded =>
-            expanded && setCurrentMenu('governance')
-          }
-        >
-          <AccordionContent>
-            <ConfigureCommunity />
-          </AccordionContent>
-        </AccordionMethod>
+          <AccordionItem
+            type="action-builder"
+            name="governance"
+            methodName={t('labels.review.governance')}
+            alertLabel={
+              isGovernanceChanged ? t('settings.newSettings') : undefined
+            }
+            dropdownItems={governanceAction}
+          >
+            <AccordionContent>
+              <ConfigureCommunity />
+            </AccordionContent>
+          </AccordionItem>
+        </AccordionMultiple>
       </div>
 
       <ButtonContainer>
