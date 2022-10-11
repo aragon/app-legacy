@@ -17,6 +17,7 @@ export type AccordionMethodType = {
   methodName: string;
   smartContractName?: string;
   verified?: boolean;
+  alertLabel?: string;
   methodDescription?: string | React.ReactNode;
   additionalInfo?: string;
   dropdownItems?: ListItemProps[];
@@ -30,6 +31,7 @@ export const AccordionMethod: React.FC<AccordionMethodType> = ({
   methodName,
   smartContractName,
   verified = false,
+  alertLabel,
   methodDescription,
   additionalInfo,
   dropdownItems = [],
@@ -69,6 +71,7 @@ export const AccordionMethod: React.FC<AccordionMethodType> = ({
                     {verified ? <IconSuccess /> : <IconWarning />}
                   </div>
                 )}
+                {alertLabel && <AlertInline label={alertLabel} />}
               </FlexContainer>
 
               <VStack>

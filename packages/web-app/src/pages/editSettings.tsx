@@ -144,11 +144,12 @@ const EditSettings: React.FC = () => {
   // metadata setting changes
   const isMetadataChanged = useMemo(
     () =>
-      daoDetails?.metadata.name &&
-      (daoName !== daoDetails.metadata.name ||
-        daoSummary !== daoDetails.metadata.description ||
-        daoLogo !== daoDetails.metadata.avatar ||
-        !resourceLinksAreEqual),
+      daoDetails?.metadata.name
+        ? daoName !== daoDetails.metadata.name ||
+          daoSummary !== daoDetails.metadata.description ||
+          daoLogo !== daoDetails.metadata.avatar ||
+          !resourceLinksAreEqual
+        : false,
     [
       daoDetails?.metadata.avatar,
       daoDetails?.metadata.description,
@@ -253,10 +254,17 @@ const EditSettings: React.FC = () => {
     return <Loading />;
   }
 
-  const methodActions = [
+  const metadataAction = [
     {
       component: <ListItemAction title={t('labels.resetAction')} bgWhite />,
-      // callback: handleReset,
+      callback: setCurrentMetadata,
+    },
+  ];
+
+  const governanceAction = [
+    {
+      component: <ListItemAction title={t('labels.resetAction')} bgWhite />,
+      callback: setCurrentGovernance,
     },
   ];
 
@@ -294,31 +302,11 @@ const EditSettings: React.FC = () => {
         <AccordionMethod
           type="action-builder"
           methodName={t('labels.review.daoMetadata')}
-          dropdownItems={methodActions}
+          alertLabel={isMetadataChanged ? t('settings.newSettings') : undefined}
+          dropdownItems={metadataAction}
           expanded={currentMenu === 'metadata'}
           onTriggerClicked={expanded => expanded && setCurrentMenu('metadata')}
         >
-          {/* <HStack>
-            {isMetadataChanged && (
-              <AlertInline label={t('settings.newSettings')} mode="neutral" />
-            )}
-            <ButtonText
-              label={
-                currentMenu === 'metadata'
-                  ? t('settings.resetChanges')
-                  : t('settings.edit')
-              }
-              disabled={currentMenu === 'metadata' && !isMetadataChanged}
-              mode="secondary"
-              onClick={() =>
-                currentMenu === 'metadata'
-                  ? setCurrentMetadata()
-                  : setCurrentMenu('metadata')
-              }
-              bgWhite
-            />
-          </HStack> */}
-
           <AccordionContent>
             <DefineMetadata />
           </AccordionContent>
@@ -329,32 +317,15 @@ const EditSettings: React.FC = () => {
         <AccordionMethod
           type="action-builder"
           methodName={t('labels.review.governance')}
-          dropdownItems={methodActions}
+          alertLabel={
+            isGovernanceChanged ? t('settings.newSettings') : undefined
+          }
+          dropdownItems={governanceAction}
           expanded={currentMenu === 'governance'}
           onTriggerClicked={expanded =>
             expanded && setCurrentMenu('governance')
           }
         >
-          {/* <HStack>
-            {isGovernanceChanged && (
-              <AlertInline label={t('settings.newSettings')} mode="neutral" />
-            )}
-            <ButtonText
-              label={
-                currentMenu === 'governance'
-                  ? t('settings.resetChanges')
-                  : t('settings.edit')
-              }
-              disabled={currentMenu === 'governance' && !isGovernanceChanged}
-              mode="secondary"
-              onClick={() =>
-                currentMenu === 'governance'
-                  ? setCurrentGovernance()
-                  : setCurrentMenu('governance')
-              }
-              bgWhite
-            />
-          </HStack> */}
           <AccordionContent>
             <ConfigureCommunity />
           </AccordionContent>
@@ -368,6 +339,7 @@ const EditSettings: React.FC = () => {
             label={t('settings.proposeSettings')}
             iconLeft={<IconGovernance />}
             size={isMobile ? 'large' : 'medium'}
+            disabled={!isGovernanceChanged && !isMetadataChanged}
             onClick={() =>
               navigate(generatePath(ProposeNewSettings, {network, dao: daoId}))
             }
@@ -377,6 +349,10 @@ const EditSettings: React.FC = () => {
             label={t('settings.resetChanges')}
             mode="secondary"
             size={isMobile ? 'large' : 'medium'}
+            onClick={() => {
+              setCurrentMetadata();
+              setCurrentGovernance();
+            }}
           />
         </HStack>
 
