@@ -183,14 +183,27 @@ export async function decodeRemoveMembersToAction(
   });
 }
 
+const FLAG_TYPED_ARRAY = 'FLAG_TYPED_ARRAY';
 /**
  *  Custom serializer that includes fix for BigInt type
  * @param _ key; unused
  * @param value value to serialize
  * @returns serialized value
  */
-export const customJSONReplacer = (_: string, value: unknown) =>
-  typeof value === 'bigint' ? value.toString() + 'n' : value;
+export const customJSONReplacer = (_: string, value: unknown) => {
+  // uint8array (encoded actions)
+  if (value instanceof Uint8Array) {
+    return {
+      data: [...value],
+      flag: FLAG_TYPED_ARRAY,
+    };
+  }
+
+  // bigint
+  if (typeof value === 'bigint') return value.toString();
+
+  return value;
+};
 
 /**
  * Custom function to deserialize values, including Date and BigInt types
@@ -198,7 +211,18 @@ export const customJSONReplacer = (_: string, value: unknown) =>
  * @param value value to deserialize
  * @returns deserialized value
  */
-export const customJSONReviver = (_: string, value: unknown) => {
+// disabling so forced assertion is not necessary in try catch
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export const customJSONReviver = (_: string, value: any) => {
+  // deserialize uint8array
+  try {
+    if ('flag' in value && value.flag === FLAG_TYPED_ARRAY) {
+      return new Uint8Array(value.data);
+    }
+  } catch (e) {
+    // not an object? do nothing
+  }
+
   if (typeof value === 'string') {
     // BigInt
     if (BIGINT_PATTERN.test(value))
