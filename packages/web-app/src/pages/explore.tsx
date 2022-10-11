@@ -35,43 +35,31 @@ const Explore: React.FC = () => {
           <TemporarySection purpose="It allows you to navigate to a mock dao to test daos URLs.">
             <ActionListItem
               title={'ERC20Voting DAO'}
-              subtitle={'Rinkeby Testnet'}
+              subtitle={'Görli Testnet'}
               icon={<IconExpand />}
               background={'white'}
               onClick={() => {
                 navigate(
                   generatePath(Dashboard, {
-                    network: 'rinkeby',
-                    dao: '0xac01076d6ea006206aaa5b1295ac1b65913ec79c',
+                    network: 'goerli',
+                    dao: '0x1cab6f621a41438639e1f1b51c274ae65d41b8cb',
                   })
                 );
               }}
             />
             <ActionListItem
               title={'WhiteListVoting DAO'}
-              subtitle={'Rinkeby Testnet'}
+              subtitle={'Görli Testnet'}
               icon={<IconExpand />}
               background={'white'}
               onClick={() => {
                 navigate(
                   generatePath(Dashboard, {
-                    network: 'rinkeby',
-                    dao: '0x680533bff2e194e52df204685d9aed5b874c4f63',
+                    network: 'goerli',
+                    dao: '0x6e01ba3a2b7e9b494db30bcb61853d990b3763f3',
                   })
                 );
               }}
-            />
-
-            <ActionListItem
-              title={'Non-existing dao: 0x1234'}
-              subtitle={'Rinkeby testnet'}
-              icon={<IconExpand />}
-              background={'white'}
-              onClick={() =>
-                navigate(
-                  generatePath(Dashboard, {network: 'rinkeby', dao: '0x1234'})
-                )
-              }
             />
           </TemporarySection>
         </ContentWrapper>
