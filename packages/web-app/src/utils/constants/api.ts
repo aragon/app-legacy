@@ -6,6 +6,8 @@ export const SUBGRAPH_API_URL: SubgraphNetworkUrl = {
   ethereum: undefined,
   rinkeby:
     'https://api.thegraph.com/subgraphs/name/aragon/aragon-zaragoza-rinkeby',
+  goerli:
+    'https://api.thegraph.com/subgraphs/name/aragon/aragon-zaragoza-goerli',
   polygon: undefined,
   mumbai:
     'https://api.thegraph.com/subgraphs/name/aragon/aragon-zaragoza-mumbai',
@@ -25,6 +27,7 @@ export const ASSET_PLATFORMS: Record<SupportedNetworks, string | null> = {
   'arbitrum-test': null,
   ethereum: 'ethereum',
   rinkeby: null,
+  goerli: null,
   polygon: 'polygon-pos',
   mumbai: null,
 };

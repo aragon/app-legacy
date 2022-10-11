@@ -83,6 +83,11 @@ export const rinkebyClient = new ApolloClient({
   link: restLink.concat(new HttpLink({uri: SUBGRAPH_API_URL['rinkeby']})),
 });
 
+export const goerliClient = new ApolloClient({
+  cache,
+  link: restLink.concat(new HttpLink({uri: SUBGRAPH_API_URL['goerli']})),
+});
+
 const mumbaiClient = new ApolloClient({
   cache,
   link: restLink.concat(new HttpLink({uri: SUBGRAPH_API_URL['mumbai']})),
@@ -100,6 +105,7 @@ const client: Record<
 > = {
   ethereum: undefined,
   rinkeby: rinkebyClient,
+  goerli: goerliClient,
   polygon: undefined,
   mumbai: mumbaiClient,
   arbitrum: undefined,
