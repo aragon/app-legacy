@@ -32,11 +32,11 @@
     "manageMember": "Manage Members",
     "addedMembers": "Added Members",
     "wallets": "Wallets",
-    "addWallets": "Add Wallets",
-    "removeWallets": "Remove Wallets",
+    "addWallets": "Add wallets",
+    "removeWallets": "Remove wallets",
     "removedMembers": "Removed Members",
-    "addWalletsDescription": "Add as many wallets as you like to the DAO. These are authorized to create proposals, request transactions or suggest changes to the DAO settings from the time of initial creation.",
-    "removeWalletsDescription": "Remove existing wallets from the authorised list of this particular DAO.",
+    "addWalletsDescription": "Wallets can create proposals, propose to send funds in and out of the treasury, and vote in your DAO.",
+    "removeWalletsDescription": "Revoke a wallet's ability to create proposals, propose to send funds in and out of the treasury, and vote in your DAO. ",
     "totalWallets": "Total Wallets",
     "mintTokens": "Mint Tokens",
     "seeAllHolders": "See All Holders",
@@ -64,11 +64,11 @@
     "next": "Next",
     "submitDeposit": "Submit Deposit",
     "resources": "Resources",
-    "start": "Start",
-    "end": "End",
+    "startDate": "Start date",
+    "endDate": "End date",
     "days": "Days",
     "dateTime": "Date + Time",
-    "resourcesHelptext": "Link to external resources, such as documents, forum links, chats or similar.",
+    "resourcesHelptext": "Share external resources here.",
     "submitWithdraw": "Publish Proposal",
     "sortBy": "Sort by",
     "mainNet": "Main Net",
@@ -83,7 +83,7 @@
     "summary": "Summary",
     "addLink": "Add Link",
     "addWallet": "Add Wallet",
-    "selectWallet": "Select Wallet",
+    "selectWallet": "Select wallet",
     "removeLink": "Remove Link",
     "removeWallet": "Delete This Address",
     "resetDistribution": "Reset Token Distribution",
@@ -226,30 +226,30 @@
     },
     "noProposals": "No proposals found!",
     "statusWidget": {
-      "published": "Proposal has been published",
+      "published": "Proposal published",
       "pending": "Voting is pending",
       "active": "Voting is active...",
-      "passed": "Proposal has passed",
+      "passed": "Proposal passed",
       "failed": "Proposal execution failed",
-      "executed": "Proposal has been executed successfully",
+      "executed": "Proposal executed",
       "succeeded": "Proposal is ready to execute",
       "defeated": "Proposal has been defeated"
     },
     "executionCard": {
-      "title": "Execution",
-      "description": "These smart actions are executed when the proposal reaches sufficient support.",
+      "title": "Automatic Actions",
+      "description": "These actions execute automatically when the parameters you set prior to the vote are met. ",
       "addAction": "Add Action",
       "seeTransaction": "See Transaction",
       "status": {
         "succeeded": "Proposal has passed and is ready to be executed",
-        "executed": "Proposal has been executed successfully",
-        "defeated": "Proposal has been defeated",
+        "executed": "Actions executed",
+        "defeated": "Proposal defeated",
         "failed": " Execution failed"
       }
     }
   },
   "infos": {
-    "voteDuration": "The minimum duration of 5 days is defined by DAO Governance Settings",
+    "voteDuration": "The minimum duration of 5 days is defined by DAO Governance Settings, To change the minimum duration a vote is required",
     "newVotingTypes": "New voting types will be released soon"
   },
   "errors": {
@@ -350,7 +350,7 @@
     "item1Title": "Deposit assets",
     "item1Subtitle": "Add assets to the DAO treasury",
     "item2Title": "Withdraw assets",
-    "item2Subtitle": "Propose to withdraw assets from the DAO treasury"
+    "item2Subtitle": "Create a proposal to withdraw assets to a wallet."
   },
   "TokenModal": {
     "noTokens": "No tokens available",
@@ -369,6 +369,7 @@
     "approveToken": "Approve token",
     "depositTitle": "Sign Deposit",
     "dismiss": "Dismiss",
+    "launchGovernancePage": "Launch Governance page",
     "errorLabel": "Error while confirming transaction",
     "estimatedFees": "Estimated Gas Fees",
     "maxFee": "Max Fee",
@@ -385,17 +386,17 @@
   },
   "AddActionModal": {
     "title": "Add Action",
-    "addAddresses": "Add Authorized Wallets",
-    "addAddressesSubtitle": "Propose to add addresses to this DAO",
-    "removeAddresses": "Remove Authorized Wallets",
-    "removeAddressesSubtitle": "Propose to remove addresses from this DAO",
-    "mintTokens": "Mint Tokens",
-    "mintTokensSubtitle": "Mint new tokens and distribute",
+    "addAddresses": "Authorize wallets",
+    "addAddressesSubtitle": "Create a proposal to authorize new wallets to vote in your DAO. ",
+    "removeAddresses": "Remove wallets",
+    "removeAddressesSubtitle": "Create a proposal to unauthorize wallets from voting in your DAO. ",
+    "mintTokens": "Mint tokens",
+    "mintTokensSubtitle": "Mint more DAO tokens and distribute to wallets. ",
     "withdrawAssets": "Withdraw Assets",
     "withdrawAssetsSubtitle": "Propose to withdraw assets from the DAO treasury",
     "withdrawAssetsActionSubtitle": "Withdraw assets from the DAO treasury",
-    "externalContract": "External Contract",
-    "externalContractSubtitle": "Interact with any contract on the blockchain and access any functionality"
+    "externalContract": "Interact with a contract",
+    "externalContractSubtitle": "Interact with an external contract on the chain your DAO is deployed on. "
   },
   "newDeposit": {
     "depositAssets": "Deposit Assets",
@@ -422,27 +423,24 @@
       }
     },
     "setupVoting": {
-      "title": "Setup Voting",
+      "title": "Initiate the vote",
       "description": "For a withdraw, a vote is necessary so that the majority can determine whether your proposal is legitimate. For this, you need this configuration.",
       "optionLabel": {
         "title": "Options"
       },
       "yesNoLabel": {
-        "title": "Yes, Abstain & No",
-        "helptext": "Let users vote for or against."
-      },
-      "endDescription": "Define how long the voting should last in days or exact date and time."
+        "title": "Yes, No, or Abstain"
+      }
     },
     "defineProposal": {
-      "heading": "Define Proposal",
-      "description": "A proposal is necessary so that the community understands why you want to execute this withdraw. Fill in the necessary fields and be as detailed but as concise as possible.",
+      "heading": "Create a proposal",
+      "description": "Provide the information voters will need to make their decision here.",
       "title": "Title",
-      "titleHelptext": "Define a custom title if needed",
       "titlePlaceholder": "Type meaningful title",
-      "summaryHelptext": "Describe this proposal in 2-3 short sentences as a summary. This information will be presented in the sharing and overview.",
-      "summaryPlaceholder": "Type your description ...",
+      "summaryPlaceholder": "Describe your proposal in 2-3 sentences. This will appear in in the proposal overview... ",
       "proposal": "Proposal",
-      "proposalPlaceholder": "Type your proposal ..."
+      "body": "Body",
+      "proposalPlaceholder": "Write the body of the proposal here... "
     },
     "reviewProposal": {
       "heading": "Review Proposal",
@@ -542,14 +540,15 @@
   "newProposal": {
     "title": "New Proposal",
     "configureActions": {
-      "heading": "Configure Actions",
-      "description": "If the response is to execute a transaction, store your desired actions at the corresponding response. These can be simple transactions or any smart contract methods you can find (e.g. Uniswap or similar).",
+      "heading": "Set Automations",
+      "description": "These actions will automatically execute if the parameters you set for them are met. ",
+      "votePasses": "Vote passes",
       "yesOption": "Yes",
-      "yesOptionSubtitle": "If the option “yes” wins the voting, perform the following actions.",
-      "addFirstAction": "Add First Action",
-      "addFirstActionSubtitle": "Add your very first optional action if you wish to perform on-chain executions",
+      "yesOptionSubtitle": "If the vote passes, the following actions will execute automatically. If the vote fails, nothing will happen",
+      "addFirstAction": "Add Action",
+      "addFirstActionSubtitle": "This action will execute it the vote passes. A common automatic action is transferring funds to a guild or person if their proposal passes a vote. ",
       "addAction": "Add Action",
-      "actionsInfo": "Based on the voting options setup, it is only possible to add actions to the option \"Yes\"."
+      "actionsInfo": "More options for parameters are coming soon. "
     },
     "mintTokens": {
       "methodDescription": "Which wallet addresses should get tokens, and how much? Add the wallets you want here, and then choose the distribution. Upload a CSV with <1>this template</1> if you want.",
@@ -575,24 +574,24 @@
     "inputPlaceholder": "Type Address, ENS or E-Mail",
     "options": "Options",
     "yes+no": "Yes, No, or Abstain",
-    "strategy": "Strategy",
+    "voteType": "Vote type",
     "tokenVoting": "1 Token -> 1 Vote",
     "multisig": "1 Wallet -> 1 Vote",
-    "minimumApproval": "Minimum Approval",
+    "approvalThreshold": "Approval threshold",
     "participation": "Participation",
     "uniqueVoters": "Unique Voters",
     "duration": "Duration",
-    "decision": "Rules of decision",
+    "decision": "Vote settings",
     "activity": "Voting activity",
-    "start": "Start",
-    "end": "End",
+    "startDate": "Start date",
+    "endDate": "End date",
     "participationErc20": "{{participation}} of {{totalWeight}} {{tokenSymbol}} ({{percentage}}%)",
     "chooseOption": "Choose your option",
     "chooseOptionHelptext": "To vote, you must select one of the following options. Afterwards, a confirmation with your wallet is necessary. Once the transaction is completed, your vote will be counted and displayed.",
     "submit": "Submit your vote",
     "cancel": "Cancel",
     "status": {
-      "draft": "Publish to enable voting.",
+      "draft": "Publish proposal to enable voting",
       "pending": "Voting begins in {{startDate}}",
       "succeeded": "Proposal has passed",
       "executed": "Proposal has been accepted",
@@ -688,9 +687,9 @@
   "dashboard": {
     "proposalsTitle": "Proposals created",
     "emptyTransfers": {
-      "title": "Create Very First Transfer",
-      "description": "Create the first financial transaction for this DAO by by either depositing or withdrawing tokens.",
-      "buttonLabel": "Create Transaction"
+      "title": "Initiate a token transfer",
+      "description": "Ready to distribute tokens or pay members? Initiate a token transfer here. For ideas on how to distribute your community's token, read our guide on token distribution ",
+      "buttonLabel": "Initiate Transfer"
     }
   }
 }

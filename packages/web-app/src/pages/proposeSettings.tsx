@@ -335,6 +335,7 @@ const ProposeSettingWrapper: React.FC<Props> = ({
         tokenPrice={tokenPrice}
         title={t('TransactionModal.createProposal')}
         buttonLabel={t('TransactionModal.createProposalNow')}
+        buttonLabelSuccess={t('TransactionModal.launchGovernancePage')}
       />
     </>
   );

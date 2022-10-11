@@ -35,10 +35,7 @@ const DefineProposal: React.FC = () => {
       </FormItem>
 
       <FormItem>
-        <Label
-          label={t('newWithdraw.defineProposal.title')}
-          helpText={t('newWithdraw.defineProposal.titleHelptext')}
-        />
+        <Label label={t('newWithdraw.defineProposal.title')} />
         <Controller
           name="proposalTitle"
           defaultValue=""
@@ -69,10 +66,7 @@ const DefineProposal: React.FC = () => {
       </FormItem>
 
       <FormItem>
-        <Label
-          label={t('labels.summary')}
-          helpText={t('newWithdraw.defineProposal.summaryHelptext')}
-        />
+        <Label label={t('labels.summary')} />
         <Controller
           name="proposalSummary"
           control={control}
@@ -102,10 +96,7 @@ const DefineProposal: React.FC = () => {
       </FormItem>
 
       <FormItem>
-        <Label
-          label={t('newWithdraw.defineProposal.proposal')}
-          isOptional={true}
-        />
+        <Label label={t('newWithdraw.defineProposal.body')} isOptional={true} />
         <Controller
           name="proposal"
           control={control}

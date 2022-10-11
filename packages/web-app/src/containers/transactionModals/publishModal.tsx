@@ -25,6 +25,7 @@ type PublishModalProps = {
   tokenPrice: number;
   title?: string;
   buttonLabel?: string;
+  buttonLabelSuccess?: string;
 };
 
 const icons = {
@@ -45,6 +46,7 @@ const PublishModal: React.FC<PublishModalProps> = ({
   tokenPrice,
   title,
   buttonLabel,
+  buttonLabelSuccess,
 }) => {
   const {t} = useTranslation();
   const {network} = useNetwork();
@@ -53,7 +55,8 @@ const PublishModal: React.FC<PublishModalProps> = ({
     [TransactionState.WAITING]:
       buttonLabel || t('TransactionModal.publishDaoButtonLabel'),
     [TransactionState.LOADING]: t('TransactionModal.waiting'),
-    [TransactionState.SUCCESS]: t('TransactionModal.dismiss'),
+    [TransactionState.SUCCESS]:
+      buttonLabelSuccess || t('TransactionModal.dismiss'),
     [TransactionState.ERROR]: t('TransactionModal.tryAgain'),
   };
 

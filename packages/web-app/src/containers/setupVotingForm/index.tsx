@@ -216,7 +216,6 @@ const SetupVotingForm: React.FC = () => {
         <>
           <CheckboxListItem
             label={t('newWithdraw.setupVoting.yesNoLabel.title')}
-            helptext={t('newWithdraw.setupVoting.yesNoLabel.helptext')}
             type="active"
             multiSelect={false}
           />
@@ -226,7 +225,7 @@ const SetupVotingForm: React.FC = () => {
 
       {/* Start Date */}
       <FormSection>
-        <Label label={t('labels.start')} />
+        <Label label={t('labels.startDate')} />
         <HStack>
           <Controller
             name="startDate"
@@ -283,10 +282,7 @@ const SetupVotingForm: React.FC = () => {
 
       {/* End date */}
       <FormSection>
-        <Label
-          label={t('labels.end')}
-          helpText={t('newWithdraw.setupVoting.endDescription')}
-        />
+        <Label label={t('labels.endDate')} />
         {endDateType === 'duration' ? (
           <>
             <HStack>
@@ -411,6 +407,7 @@ const SetupVotingForm: React.FC = () => {
             <DateTimeErrors mode={'end'} />
           </>
         )}
+        {/* TODO: Days should be dynamic */}
         <AlertInline label={t('infos.voteDuration')} mode="neutral" />
       </FormSection>
       <UtcMenu onTimezoneSelect={tzSelector} />
