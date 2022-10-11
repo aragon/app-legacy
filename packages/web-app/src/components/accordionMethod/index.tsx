@@ -15,12 +15,14 @@ import styled from 'styled-components';
 export type AccordionMethodType = {
   type: 'action-builder' | 'execution-widget';
   methodName: string;
-  smartContractName: string;
+  smartContractName?: string;
   verified?: boolean;
   methodDescription?: string | React.ReactNode;
   additionalInfo?: string;
   dropdownItems?: ListItemProps[];
   customHeader?: React.ReactNode;
+  expanded?: boolean;
+  onTriggerClicked?: (expanded: boolean) => void;
 };
 
 export const AccordionMethod: React.FC<AccordionMethodType> = ({
@@ -32,30 +34,41 @@ export const AccordionMethod: React.FC<AccordionMethodType> = ({
   additionalInfo,
   dropdownItems = [],
   customHeader,
+  expanded = true,
+  onTriggerClicked,
   children,
 }) => {
   return (
-    <Accordion.Root type="single" defaultValue="item-1" collapsible>
+    <Accordion.Root
+      type="single"
+      value={expanded === true ? 'item-1' : ''}
+      collapsible
+      onValueChange={() => {
+        onTriggerClicked?.(!expanded);
+      }}
+    >
       <Accordion.Item value="item-1">
         {!customHeader ? (
           <AccordionHeader type={type}>
             <HStack>
               <FlexContainer>
                 <MethodName>{methodName}</MethodName>
-                <div
-                  className={`flex items-center space-x-1 ${
-                    verified ? 'text-primary-600' : 'text-warning-600'
-                  }`}
-                >
-                  <p
-                    className={`font-bold ${
-                      verified ? 'text-primary-500' : 'text-warning-500'
+                {smartContractName && (
+                  <div
+                    className={`flex items-center space-x-1 ${
+                      verified ? 'text-primary-600' : 'text-warning-600'
                     }`}
                   >
-                    {smartContractName}
-                  </p>
-                  {verified ? <IconSuccess /> : <IconWarning />}
-                </div>
+                    <p
+                      className={`font-bold ${
+                        verified ? 'text-primary-500' : 'text-warning-500'
+                      }`}
+                    >
+                      {smartContractName}
+                    </p>
+                    {verified ? <IconSuccess /> : <IconWarning />}
+                  </div>
+                )}
               </FlexContainer>
 
               <VStack>

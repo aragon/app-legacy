@@ -294,8 +294,9 @@ const EditSettings: React.FC = () => {
         <AccordionMethod
           type="action-builder"
           methodName={t('labels.review.daoMetadata')}
-          smartContractName={t('labels.aragonCore')}
           dropdownItems={methodActions}
+          expanded={currentMenu === 'metadata'}
+          onTriggerClicked={expanded => expanded && setCurrentMenu('metadata')}
         >
           {/* <HStack>
             {isMetadataChanged && (
@@ -328,8 +329,11 @@ const EditSettings: React.FC = () => {
         <AccordionMethod
           type="action-builder"
           methodName={t('labels.review.governance')}
-          smartContractName={t('labels.aragonCore')}
           dropdownItems={methodActions}
+          expanded={currentMenu === 'governance'}
+          onTriggerClicked={expanded =>
+            expanded && setCurrentMenu('governance')
+          }
         >
           {/* <HStack>
             {isGovernanceChanged && (

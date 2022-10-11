@@ -1,4 +1,5 @@
 import {
+  AlertInline,
   AvatarDao,
   Badge,
   ButtonText,
@@ -215,14 +216,17 @@ const Settings: React.FC = () => {
             </Dd>
           </Dl>
         </DescriptionListContainer>
+      </div>
 
+      <div className="space-y-2">
         <ButtonText
-          label={t('settings.proposeSettings')}
-          className="mx-auto mt-5 w-full tablet:w-max"
+          label={t('settings.edit')}
+          className="mt-5 desktop:mt-8 w-full tablet:w-max"
           size="large"
           iconLeft={<IconGovernance />}
           onClick={() => navigate('edit')}
         />
+        <AlertInline label={t('settings.proposeSettingsInfo')} />
       </div>
     </PageWrapper>
   );
