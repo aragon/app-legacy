@@ -13,12 +13,14 @@ export type AddLinks = {
   arrayName?: string;
   buttonPlusIcon?: boolean;
   buttonLabel?: string;
+  bgWhite?: boolean;
 };
 
 const AddLinks: React.FC<AddLinks> = ({
   buttonPlusIcon,
   buttonLabel,
   arrayName = 'links',
+  bgWhite = false,
 }) => {
   const {t} = useTranslation();
   const {control} = useFormContext();
@@ -41,13 +43,14 @@ const AddLinks: React.FC<AddLinks> = ({
     <Container data-testid="add-links">
       {fields.length > 0 && (
         <ListGroup>
-          <Header />
+          <Header bgWhite={bgWhite} />
           {controlledLinks.map((field, index) => (
             <Row
               key={field.id}
               index={index}
               onDelete={() => remove(index)}
               arrayName={arrayName}
+              bgWhite={bgWhite}
             />
           ))}
         </ListGroup>
@@ -55,7 +58,7 @@ const AddLinks: React.FC<AddLinks> = ({
 
       <ButtonText
         label={buttonLabel || t('labels.addLink')}
-        mode="secondary"
+        mode={bgWhite ? 'ghost' : 'secondary'}
         size="large"
         onClick={handleAddLink}
         {...(buttonPlusIcon ? {iconLeft: <IconAdd />} : {})}
@@ -68,5 +71,5 @@ export default AddLinks;
 
 const Container = styled.div.attrs({className: 'space-y-1.5'})``;
 const ListGroup = styled.div.attrs({
-  className: 'flex flex-col overflow-hidden space-y-0.25 rounded-xl',
+  className: 'flex flex-col overflow-auto rounded-xl',
 })``;

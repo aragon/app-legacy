@@ -18,6 +18,7 @@ import {
   URL_WITH_PROTOCOL_PATTERN,
 } from 'utils/constants';
 import {isOnlyWhitespace} from 'utils/library';
+import {BgWhite} from './header';
 
 type LinkRowProps = {
   index: number;
@@ -31,10 +32,11 @@ const UrlRegex = new RegExp(URL_PATTERN);
 const EmailRegex = new RegExp(EMAIL_PATTERN);
 const UrlWithProtocolRegex = new RegExp(URL_WITH_PROTOCOL_PATTERN);
 
-const LinkRow: React.FC<LinkRowProps> = ({
+const LinkRow: React.FC<LinkRowProps & BgWhite> = ({
   index,
   onDelete,
   arrayName = 'links',
+  bgWhite = false,
 }) => {
   const {t} = useTranslation();
   const {control, clearErrors, getValues, trigger, setValue} = useFormContext();
@@ -106,7 +108,7 @@ const LinkRow: React.FC<LinkRowProps> = ({
    *                    Render                     *
    *************************************************/
   return (
-    <Container data-testid="link-row">
+    <Container data-testid="link-row" bgWhite={bgWhite}>
       <LabelContainer>
         <Controller
           control={control}
@@ -198,9 +200,13 @@ const LinkRow: React.FC<LinkRowProps> = ({
 
 export default LinkRow;
 
-const Container = styled.div.attrs({
-  className: 'flex flex-wrap gap-x-2 gap-y-1.5 p-2 bg-ui-0',
-})``;
+const Container = styled.div.attrs(({bgWhite}: BgWhite) => ({
+  className: `flex flex-wrap gap-x-2 gap-y-1.5 p-2 ${
+    bgWhite
+      ? 'bg-ui-50 border border-t-0 border-ui-100 last:rounded-b-xl'
+      : 'bg-ui-0'
+  }`,
+}))<BgWhite>``;
 
 const LabelContainer = styled.div.attrs({
   className: 'flex-1 order-1 h-full',

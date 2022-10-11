@@ -6,11 +6,13 @@ import {
   IconGovernance,
   Link,
   ListItemLink,
+  Wizard,
 } from '@aragon/ui-components';
 import {withTransaction} from '@elastic/apm-rum-react';
 import React, {useEffect, useState} from 'react';
 import {useTranslation} from 'react-i18next';
-import {generatePath, useNavigate} from 'react-router-dom';
+import {generatePath, useNavigate, useParams} from 'react-router-dom';
+import styled from 'styled-components';
 
 import {Dd, DescriptionListContainer, Dl, Dt} from 'components/descriptionList';
 import {Loading} from 'components/temporary';
@@ -29,11 +31,12 @@ import {getDHMFromSeconds} from 'utils/date';
 import {formatUnits} from 'utils/library';
 import {Community, EditSettings} from 'utils/paths';
 import {getTokenInfo} from 'utils/tokens';
+import {useGlobalModalContext} from 'context/globalModals';
 
 const Settings: React.FC = () => {
   const {data: daoId, isLoading} = useDaoParam();
   const {t} = useTranslation();
-  const {isMobile} = useScreen();
+  const {open} = useGlobalModalContext();
   const {network} = useNetwork();
   const navigate = useNavigate();
   const {infura} = useProviders();
@@ -89,13 +92,7 @@ const Settings: React.FC = () => {
     (daoDetails?.plugins?.[0]?.id as PluginTypes) === 'erc20voting.dao.eth';
 
   return (
-    <PageWrapper
-      title={t('labels.daoSettings')}
-      buttonLabel={t('settings.proposeSettings')}
-      showButton={isMobile}
-      buttonIcon={<IconGovernance />}
-      onClick={() => navigate(generatePath(EditSettings, {network, daoId}))}
-    >
+    <SettingsWrapper>
       <div className="mt-3 desktop:mt-8 space-y-5">
         <DescriptionListContainer
           title={t('labels.review.blockchain')}
@@ -228,8 +225,47 @@ const Settings: React.FC = () => {
         />
         <AlertInline label={t('settings.proposeSettingsInfo')} />
       </div>
-    </PageWrapper>
+    </SettingsWrapper>
+  );
+};
+
+const SettingsWrapper: React.FC = ({children}) => {
+  const {t} = useTranslation();
+  const {isMobile} = useScreen();
+  const navigate = useNavigate();
+  const {dao: daoId} = useParams();
+  const {network} = useNetwork();
+
+  if (isMobile) {
+    return (
+      <PageWrapper
+        title={t('labels.daoSettings')}
+        buttonLabel={t('settings.proposeSettings')}
+        showButton={isMobile}
+        buttonIcon={<IconGovernance />}
+        onClick={() => navigate(generatePath(EditSettings, {network, daoId}))}
+      >
+        {children}
+      </PageWrapper>
+    );
+  }
+
+  return (
+    <Layout>
+      <Wizard
+        title={t('labels.daoSettings')}
+        nav={null}
+        description={null}
+        includeStepper={false}
+      />
+      <div className="mx-auto desktop:w-3/5">{children}</div>
+    </Layout>
   );
 };
 
 export default withTransaction('Settings', 'component')(Settings);
+
+const Layout = styled.div.attrs({
+  className:
+    'col-span-full desktop:col-start-2 desktop:col-end-12 font-medium text-ui-600',
+})``;

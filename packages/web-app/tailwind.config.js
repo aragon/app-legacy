@@ -189,6 +189,7 @@ module.exports = {
       borderColor: ['active', 'disabled'],
       ringColor: ['active', 'focus-visible'],
       ringWidth: ['active', 'focus-visible', 'disabled'],
+      borderRadius: ['last'],
     },
     fluidType: ['responsive'],
   },

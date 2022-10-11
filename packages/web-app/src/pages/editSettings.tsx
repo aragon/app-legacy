@@ -253,14 +253,26 @@ const EditSettings: React.FC = () => {
 
   const metadataAction = [
     {
-      component: <ListItemAction title={t('labels.resetAction')} bgWhite />,
+      component: (
+        <ListItemAction
+          title={t('labels.resetAction')}
+          bgWhite
+          mode={isMetadataChanged ? 'default' : 'disabled'}
+        />
+      ),
       callback: setCurrentMetadata,
     },
   ];
 
   const governanceAction = [
     {
-      component: <ListItemAction title={t('labels.resetAction')} bgWhite />,
+      component: (
+        <ListItemAction
+          title={t('labels.resetAction')}
+          bgWhite
+          mode={isGovernanceChanged ? 'default' : 'disabled'}
+        />
+      ),
       callback: setCurrentGovernance,
     },
   ];
@@ -307,7 +319,7 @@ const EditSettings: React.FC = () => {
             dropdownItems={metadataAction}
           >
             <AccordionContent>
-              <DefineMetadata />
+              <DefineMetadata bgWhite />
             </AccordionContent>
           </AccordionItem>
 
