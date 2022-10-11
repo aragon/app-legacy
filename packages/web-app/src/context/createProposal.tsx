@@ -75,7 +75,7 @@ const CreateProposalProvider: React.FC<Props> = ({
   const {
     data: {members},
   } = useDaoMembers(pluginAddress, pluginType as PluginTypes);
-  const {data: daoToken} = useDaoToken(dao);
+  const {data: daoToken} = useDaoToken(pluginAddress);
 
   const [creationProcessState, setCreationProcessState] =
     useState<TransactionState>(TransactionState.WAITING);
@@ -84,7 +84,9 @@ const CreateProposalProvider: React.FC<Props> = ({
   const [proposalId] = useState<string>(
     '0xd7e937b8d779de644c691857e58e3342ab322345_0x0'
   );
-  const [tokenSupply, setTokenSupply] = useState<bigint>(BigInt(0));
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [tokenSupply, setTokenSupply] = useState<bigint>();
 
   const {preferences} = usePrivacyContext();
   const cachedProposals = useReactiveVar(pendingProposalsVar);
@@ -99,21 +101,22 @@ const CreateProposalProvider: React.FC<Props> = ({
   useEffect(() => {
     // Fetching necessary info about the token.
     async function fetchTotalSupply() {
-      try {
-        const {totalSupply} = await getTokenInfo(
-          daoToken.id,
-          infura,
-          CHAIN_METADATA[network].nativeCurrency
-        );
+      if (daoToken?.address)
+        try {
+          const {totalSupply} = await getTokenInfo(
+            daoToken?.address,
+            infura,
+            CHAIN_METADATA[network].nativeCurrency
+          );
 
-        setTokenSupply(totalSupply);
-      } catch (error) {
-        console.error('Error fetching token information: ', error);
-      }
+          setTokenSupply(totalSupply);
+        } catch (error) {
+          console.error('Error fetching token information: ', error);
+        }
     }
 
-    if (daoToken.id) fetchTotalSupply();
-  }, [daoToken.id, infura, network]);
+    fetchTotalSupply();
+  }, [daoToken?.address, infura, network]);
 
   const encodeActions = useCallback(async () => {
     const actionsFromForm = getValues('actions');
@@ -257,12 +260,7 @@ const CreateProposalProvider: React.FC<Props> = ({
   );
 
   const mapDataToCachedProposal = useCallback(() => {
-    if (
-      proposalCreationData &&
-      !pluginSettingsLoading &&
-      pluginSettings &&
-      tokenSupply
-    )
+    if (proposalCreationData && !pluginSettingsLoading && pluginSettings)
       return {
         actions: proposalCreationData.actions || [],
         creationDate: new Date(),
@@ -271,7 +269,6 @@ const CreateProposalProvider: React.FC<Props> = ({
         endDate: proposalCreationData.endDate,
         id: proposalId,
         metadata: proposalCreationData.metadata,
-        result: {yes: BigInt(0), no: BigInt(0), abstain: BigInt(0)},
         settings: {
           minSupport: pluginSettings.minSupport,
           minTurnout: pluginSettings.minTurnout,
@@ -286,27 +283,33 @@ const CreateProposalProvider: React.FC<Props> = ({
         ...(pluginType === 'erc20voting.dao.eth'
           ? {
               token: {
-                address: '0xce7508bdefd874b45d148d7e8a54dd8a2e96811e', // daoToken.id,
-                decimals: 18, //daoToken.decimals ,
-                name: 'Test Token', //daoToken.name ,
-                symbol: 'TTK', //daoToken.symbol,
+                address: daoToken?.address,
+                decimals: daoToken?.decimals,
+                name: daoToken?.name,
+                symbol: daoToken?.symbol,
               },
-              totalVotingWeight: BigInt(3000000000000000000000000), // tokenSupply,
+              //TODO: tokenSupply, when rpc issue is fixed
+              totalVotingWeight: BigInt('500000000000000000000000000'),
               usedVotingWeight: BigInt(0),
+              result: {yes: BigInt(0), no: BigInt(0), abstain: BigInt(0)},
             }
-          : {totalVotingWeight: members.length, usedVotingWeight: 0}),
+          : {
+              totalVotingWeight: members.length,
+              usedVotingWeight: 0,
+              result: {yes: 0, no: 0, abstain: 0},
+            }),
       } as DetailedProposal;
   }, [
     address,
     daoDetails?.address,
     daoDetails?.metadata.name,
+    daoToken,
     members.length,
     pluginSettings,
     pluginSettingsLoading,
     pluginType,
     proposalCreationData,
     proposalId,
-    tokenSupply,
   ]);
 
   const handleCloseModal = () => {
@@ -383,23 +386,23 @@ const CreateProposalProvider: React.FC<Props> = ({
               });
 
               // cache proposal
-              const cachedProposal = mapDataToCachedProposal();
-              if (cachedProposal) {
-                const newCache = {
-                  ...cachedProposals,
-                  // TODO: use step.proposalId when sdk returns proper id
-                  [proposalId]: {...cachedProposal} as DetailedProposal,
-                };
+              const cachedProposal =
+                mapDataToCachedProposal() as DetailedProposal;
 
-                pendingProposalsVar(newCache);
+              const newCache = {
+                ...cachedProposals,
+                // TODO: use step.proposalId when sdk returns proper id
+                [proposalId]: {...cachedProposal},
+              };
 
-                // persist new cache if functional cookies enabled
-                if (preferences?.functional) {
-                  localStorage.setItem(
-                    PENDING_PROPOSALS_KEY,
-                    JSON.stringify(newCache, customJSONReplacer)
-                  );
-                }
+              pendingProposalsVar(newCache);
+
+              // persist new cache if functional cookies enabled
+              if (preferences?.functional) {
+                localStorage.setItem(
+                  PENDING_PROPOSALS_KEY,
+                  JSON.stringify(newCache, customJSONReplacer)
+                );
               }
             }
             break;

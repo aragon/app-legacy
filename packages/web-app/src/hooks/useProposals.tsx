@@ -38,7 +38,7 @@ export function useProposals(
   const augmentProposalsWithCache = useCallback(
     (fetchedProposals: Proposal[]) => {
       const newCache = {...proposalCache};
-      const augmentedProposals = {...fetchedProposals};
+      const augmentedProposals = [...fetchedProposals];
 
       for (const key in proposalCache) {
         if (fetchedProposals.some(p => p.id === key)) {
@@ -60,7 +60,11 @@ export function useProposals(
 
       return augmentedProposals;
     },
-    [preferences?.functional, proposalCache]
+
+    // intentionally leaving out proposalCache so that this doesn't
+    // get re-run when items are removed from the cache
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [preferences?.functional]
   );
 
   useEffect(() => {
@@ -72,7 +76,8 @@ export function useProposals(
           sortBy: ProposalSortBy.CREATED_AT,
           daoAddressOrEns,
         });
-        setData({...augmentProposalsWithCache(proposals || [])});
+
+        setData([...augmentProposalsWithCache(proposals || [])]);
       } catch (err) {
         console.error(err);
         setError(err as Error);
