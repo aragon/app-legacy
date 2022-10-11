@@ -46,10 +46,10 @@ const NotFound: React.FC = () => {
             />
           </div>
 
-          <div className="relative mt-2 desktop:mt-0 desktop:w-1/2">
+          <div className="relative mt-2 desktop:-mt-8 desktop:w-1/2">
             <GradientGreen src={Green} />
             <GradientPurple src={Purple} />
-            <img src={Logo404} />
+            <img src={Logo404} className="w-full" />
           </div>
         </Wrapper>
       </GridLayout>
@@ -97,7 +97,7 @@ type CardProps = {
 
 const Card: React.FC<CardProps> = ({description, linkLabel, href, onClick}) => (
   <CardContainer>
-    <p>{description}</p>
+    <p className="text-ui-600">{description}</p>
     <Link
       label={linkLabel}
       iconRight={<IconChevronRight />}
@@ -129,7 +129,7 @@ const GradientGreen = styled.img.attrs({
 })``;
 
 const GradientPurple = styled.img.attrs({
-  className: 'h-25 desktop:h-40 absolute -bottom-8 -right-8',
+  className: 'h-25 desktop:h-40 absolute -bottom-8 -right-12',
 })``;
 
 const HStack = styled.div.attrs({
@@ -138,7 +138,8 @@ const HStack = styled.div.attrs({
 })``;
 
 const CardContainer = styled.div.attrs({
-  className: 'flex-1 p-3 space-y-1.5 bg-white rounded-xl border border-ui-100',
+  className:
+    'flex-1 p-2 desktop:p-3 space-y-1.5 bg-white rounded-xl border border-ui-100',
 })`
   box-shadow: 0px 4px 8px rgba(31, 41, 51, 0.04),
     0px 0px 2px rgba(31, 41, 51, 0.06), 0px 0px 1px rgba(31, 41, 51, 0.04);
