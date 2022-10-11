@@ -1,9 +1,10 @@
 import {useQuery} from '@apollo/client';
+import {useEffect} from 'react';
+import {useNavigate, useParams} from 'react-router-dom';
+
 import {client} from 'context/apolloClient';
 import {useNetwork} from 'context/network';
 import {DAO_BY_ADDRESS} from 'queries/dao';
-import {useEffect} from 'react';
-import {useNavigate, useParams} from 'react-router-dom';
 import {NotFound} from 'utils/paths';
 
 /**
@@ -24,9 +25,9 @@ export function useDaoParam() {
     error,
     loading: isLoading,
   } = useQuery(DAO_BY_ADDRESS, {
-    variables: {id: dao ? dao : ''},
-    client: client[network],
-    fetchPolicy: 'cache-and-network',
+    variables: {id: '0x1cab6f621a41438639e1f1b51c274ae65d41b8cb'},
+    client: client['goerli']!,
+    fetchPolicy: 'no-cache',
   });
   const navigate = useNavigate();
 
