@@ -56,7 +56,7 @@ const Settings: React.FC = () => {
       <div className="mt-3 desktop:mt-8 space-y-5">
         <DescriptionListContainer
           title={t('labels.review.blockchain')}
-          notChangeableBadge
+          badgeLabel={t('labels.notChangeable')}
         >
           <Dl>
             <Dt>{t('labels.review.network')}</Dt>
@@ -99,11 +99,11 @@ const Settings: React.FC = () => {
         </DescriptionListContainer>
 
         <DescriptionListContainer
-          title={t('labels.review.community')}
-          notChangeableBadge
+          title={t('labels.review.voters')}
+          badgeLabel={t('labels.notChangeable')}
         >
           <Dl>
-            <Dt>{t('labels.review.eligibleMembers')}</Dt>
+            <Dt>{t('labels.review.eligibleVoters')}</Dt>
             <Dd>{t('createDAO.step3.tokenMembership')}</Dd>
           </Dl>
           <Dl>

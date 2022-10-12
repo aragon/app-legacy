@@ -16,7 +16,7 @@ export type DescriptionListProps = {
   checkBoxErrorMessage?: string;
   checkedState?: CheckboxListItemProps['type'];
   onChecked?: () => void;
-  notChangeableBadge?: boolean;
+  badgeLabel?: string;
 };
 
 export const DescriptionListContainer: React.FC<DescriptionListProps> = ({
@@ -27,7 +27,7 @@ export const DescriptionListContainer: React.FC<DescriptionListProps> = ({
   checkBoxErrorMessage,
   checkedState,
   onChecked,
-  notChangeableBadge = false,
+  badgeLabel,
 }) => {
   const {t} = useTranslation();
 
@@ -36,9 +36,9 @@ export const DescriptionListContainer: React.FC<DescriptionListProps> = ({
       <HStack>
         <TitleContainer>
           <TitleText>{title}</TitleText>
-          {notChangeableBadge && (
+          {badgeLabel && (
             <div>
-              <Badge label={t('labels.notChangeable')} colorScheme="info" />
+              <Badge label={badgeLabel || ''} colorScheme="info" />
             </div>
           )}
         </TitleContainer>

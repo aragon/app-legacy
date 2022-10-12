@@ -29,6 +29,7 @@ const Blockchain: React.FC = () => {
           checkedState={
             value ? 'active' : reviewCheckError ? 'error' : 'default'
           }
+          badgeLabel={t('labels.notChangeable')}
           onChecked={() => onChange(!value)}
         >
           <Dl>

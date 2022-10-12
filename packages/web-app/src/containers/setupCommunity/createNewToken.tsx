@@ -13,10 +13,14 @@ const CreateNewToken: React.FC = () => {
   return (
     <>
       <DescriptionContainer>
-        <Title>{t('labels.createToken')}</Title>
+        <Title>{t('labels.mintToken')}</Title>
         <Subtitle>
           {t('createDAO.step3.createTokenHelptext')}
-          <Link label={t('createDAO.step3.createTokenHelplink')} href="" />.
+          <Link
+            label={t('createDAO.step3.createTokenHelplink')}
+            href="https://aragon.org/how-to/mint-dao-governance-tokens"
+          />
+          .
         </Subtitle>
       </DescriptionContainer>
       <FormItem>

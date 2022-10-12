@@ -234,7 +234,7 @@ const CreateDAO: React.FC = () => {
               <>
                 {t('createDAO.step1.description')}
                 <Link
-                  href=""
+                  href="https://aragon.org/how-to/how-to-choose-the-right-blockchain-for-your-dao"
                   label={t('createDAO.step1.blockchainOverviewGuide.')}
                 />
               </>
@@ -249,7 +249,15 @@ const CreateDAO: React.FC = () => {
           </Step>
           <Step
             wizardTitle={t('createDAO.step2.title')}
-            wizardDescription={t('createDAO.step2.description')}
+            wizardDescription={
+              <>
+                {t('createDAO.step2.description')}
+                <Link
+                  href="https://aragon.org/how-to/how-to-build-a-dao-brand-identity"
+                  label={t('createDAO.step2.metadataOverviewGuide')}
+                />
+              </>
+            }
             isNextButtonDisabled={!daoMetadataIsValid}
             onNextButtonClicked={next =>
               handleNextButtonTracking(next, '2_define_metadata', {
@@ -262,7 +270,15 @@ const CreateDAO: React.FC = () => {
           </Step>
           <Step
             wizardTitle={t('createDAO.step3.title')}
-            wizardDescription={t('createDAO.step3.description')}
+            wizardDescription={
+              <>
+                {t('createDAO.step3.description')}
+                <Link
+                  href="https://aragon.org/how-to/set-your-dao-governance"
+                  label={t('createDAO.step3.communityOverviewGuide')}
+                />
+              </>
+            }
             isNextButtonDisabled={!daoSetupCommunityIsValid}
             onNextButtonClicked={next =>
               handleNextButtonTracking(next, '3_setup_community', {

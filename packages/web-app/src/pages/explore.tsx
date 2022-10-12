@@ -11,6 +11,7 @@ import Carousel from 'containers/carousel';
 import {DaoExplorer} from 'containers/daoExplorer';
 import Hero from 'containers/hero';
 import {Dashboard} from 'utils/paths';
+import {i18n} from '../../i18n.config';
 
 const Explore: React.FC = () => {
   const navigate = useNavigate();
@@ -112,19 +113,19 @@ type Stats = {
 };
 const statistics: Stats[] = [
   {
-    statKey: 'DAOs Created',
+    statKey: i18n.t('explore.statics.daosCreated'),
     statValue: '5,126',
   },
   {
-    statKey: 'Members in PbA',
+    statKey: i18n.t('explore.statics.aragonMembers'),
     statValue: '65,372',
   },
   {
-    statKey: 'Active Proposals',
+    statKey: i18n.t('explore.statics.activeProposals'),
     statValue: '1,531',
   },
   {
-    statKey: 'in Treasury',
+    statKey: i18n.t('explore.statics.securedByAragon'),
     statValue: '$19M+',
   },
 ];

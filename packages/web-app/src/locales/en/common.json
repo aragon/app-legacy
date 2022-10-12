@@ -42,7 +42,7 @@
     "seeAllHolders": "See All Holders",
     "seeCommunity": "See Community",
     "aragonCore": "Aragon Core",
-    "approvalThreshold": "Approval Threshold",
+    "approvalThreshold": "Approval threshold",
     "viewTransactions": "View Transactions",
     "logOut": "Log Out",
     "seeAll": "See all",
@@ -81,6 +81,7 @@
     "popularity": "Popularity",
     "daoName": "DAO Name",
     "summary": "Summary",
+    "description": "Description",
     "addLink": "Add Link",
     "addWallet": "Add Wallet",
     "selectWallet": "Select wallet",
@@ -94,13 +95,13 @@
     "label": "Name / Description",
     "logo": "Logo",
     "optional": "Optional",
-    "minimumApproval": "Minimum Approval",
-    "minimumParticipation": "Minimum Participation",
-    "minimumSupport": "Minimum Support",
-    "minimumDuration": "Minimum Duration",
+    "minimumApproval": "Minimum participation or quorum",
+    "minimumParticipation": "Minimum participation or quorum",
+    "minimumSupport": "Approval threshold",
+    "minimumDuration": "Minimum duration",
     "support": "Support",
     "duration": "Duration",
-    "membership": "Who is eligible to participate in your DAO?",
+    "membership": "Who can participate in governance?",
     "communityToken": "Does your community have a token?",
     "authorisedWallets": "Authorised Wallets / Addresses",
     "addExistingToken": "Add existing Token",
@@ -108,7 +109,7 @@
     "tokenSymbol": "Symbol",
     "supply": "Supply",
     "distributeTokens": "Distribute Tokens",
-    "createToken": "Create Token",
+    "mintToken": "Mint your token",
     "duplicateAction": "Duplicate Action",
     "resetAction": "Reset Action",
     "removeEntireAction": "Remove Entire Action",
@@ -124,6 +125,7 @@
     "noResults": "No results to show",
     "noResultsSubtitle": "Try to modify your search to find the corresponding wallets.",
     "notChangeable": "Not Changeable",
+    "changeableVote": "Changeable with a vote",
     "whitelistWallets": {
       "address": "Address",
       "addresses": "{{count}} Addresses",
@@ -141,10 +143,11 @@
     "review": {
       "blockchain": "Blockchain",
       "daoMetadata": "DAO Details",
-      "community": "Community",
+      "voters": "Voters",
+      "votingParameters": "Voting parameters",
       "governance": "Governance",
       "network": "Network",
-      "eligibleMembers": "Eligible Members",
+      "eligibleVoters": "Eligible Voters",
       "distribution": "Distribution",
       "distributionLink": "See all {{walletCount}} Addresses",
       "minimumParticipation": "{{walletCount}} Wallets"
@@ -308,7 +311,7 @@
     }
   },
   "alert": {
-    "durationAlert": "We recommend a minimum duration of 1 day if it does not have to be a quick financial decision.",
+    "durationAlert": "We recommend a minimum duration of at least one day.",
     "wrongWalletNetwork": "Wrong Wallet Network",
     "wrongNetwork": {
       "title": "Wrong Network",
@@ -370,11 +373,13 @@
     "depositTitle": "Sign Deposit",
     "dismiss": "Dismiss",
     "launchGovernancePage": "Launch Governance page",
+    "launchDaoDashboard": "Launch DAO dashboard",
     "errorLabel": "Error while confirming transaction",
     "estimatedFees": "Estimated Gas Fees",
     "maxFee": "Max Fee",
-    "publishDao": "Publish Dao",
-    "publishDaoButtonLabel": "Publish DAO Now",
+    "publishDao": "Deploy your DAO",
+    "publishDaoSubtitle": "The fees below are the cost of using the Ethereum network.",
+    "publishDaoButtonLabel": "Approve Transaction",
     "signDeposit": "Sign Deposit",
     "successLabel": "Transaction successfully executed",
     "synced": "Synced {{time}} sec ago",
@@ -450,35 +455,34 @@
   "createDAO": {
     "title": "Create your DAO",
     "overview": {
-      "title": "Get started with your DAO",
+      "title": "Build your DAO",
       "description": "Start simple and learn as a team. You and your community can always decide how to evolve your DAO as you go.",
-      "button": "Setup your DAO"
+      "button": "Build your DAO"
     },
     "step1": {
       "label": "Step 1",
-      "title": "Choose Blockchain",
-      "description": "Your DAO should live on the blockchain where you expect most of your transactions to happen - where will you trade coins, make payments, etc.  If you already have a token, use the same chain.  The chain cannot be changed later, though you can create a new DAO if you want to. For more details on chains, layer 1 and layer 2, etc see our ",
-      "shortTitle": "Select Blockchain",
-      "shortDescription": "Decide which blockchain the DAO should be at home on.",
-      "blockchainOverviewGuide.": "Blockchain Overview Guide."
+      "title": "Select blockchain",
+      "description": "The chain you choose is where your tokens and assets are stored. If you already have a token, choose the chain your token is minted on. *This cannot be changed later. * For help selecting your chain, read our guide on",
+      "shortTitle": "Select blockchain",
+      "blockchainOverviewGuide.": "choosing the best blockchain for your DAO."
     },
     "step2": {
       "label": "Step 2",
       "title": "Describe your DAO",
-      "description": "Name and define your DAO so people know they have come to the right place. These choices can be changed by a proposal and vote in the DAO.",
-      "shortTitle": "Define DAO Details",
-      "shortDescription": "Let people find your DAO!  Name your DAO, give it a mission, link to sites and communities.",
-      "nameSubtitle": "This name shows on lists, best if under 128 characters.",
-      "logoSubtitle": "This is the Logo which represents your DAO. We support SVG, JPG, PNG or GIFs with max 3MB in size and must have 1:1 ratio. We suggest dimension of 1024x1024px.",
-      "descriptionSubtitle": "What is your DAO's mission or goal?  This description appears on detail pages where your DAO is listed publicly.",
-      "linksSubtitle": "Link out to websites, community forums, repositories or documents. Point people to where your mission and proposal discussions live."
+      "description": "Name and define your DAO so new contributors know they've come to the right place. This information is displayed on the DAO Explore page and can be changed with a vote. For ideas on DAO branding, ",
+      "shortTitle": "Describe your DAO",
+      "nameSubtitle": "Best if under 128 characters",
+      "logoSubtitle": "JPG, PNG, GIF, or SVG of no more than 3MB. We recommend 1024x1024px",
+      "descriptionSubtitle": "Describe your DAO's purpose in a few sentences. This is listed on the Explore page so new contributors can find you.",
+      "linksSubtitle": "Link to your website, Twitter, Discord, or other places your community gathers. ",
+      "metadataOverviewGuide": "read our guide"
     },
     "step3": {
       "label": "Step 3",
-      "title": "Define your Community",
-      "description": "This section defines who is allowed to create proposals in your DAO and vote on them. You can identify specific people based on their wallet addresses or let people cast a vote for each of your tokens they hold. If you have a token already, use that. Otherwise you can create a new token here.",
-      "shortTitle": "Setup Community",
-      "shortDescription": "Who is eligible to participate in the DAO? Create a token if needed.",
+      "title": "Select governance type",
+      "description": "Decide the type of voting your DAO uses. You can change these settings with a vote. For help deciding which type of governance is best for you, ",
+      "shortTitle": "Select governance type",
+      "communityOverviewGuide": "read this guide",
       "newToken": "No",
       "authorisedWalletsSubtitle": "Add as many addresses as you like to the DAO. These are authorised to create proposals, transactions or suggest changes to the DAO settings after its creation. Upload a CSV with <a href='https://aragon.org' external>this template</a> if you want.",
       "warningTitle": "Changing the list",
@@ -486,34 +490,33 @@
       "newTokenSubtitle": "No, I would like to create a token.",
       "existingToken": "Yes",
       "existingTokenSubtitle": "Yes, we already have a token.",
-      "tokenMembership": "Token Holders",
+      "tokenMembership": "Token holders",
       "tokenName": "Token Name",
-      "tokenMembershipSubtitle": "All those who have a token are entitled to participate. 1 token equals 1 vote.",
-      "walletMemberShip": "Authorized Wallets",
-      "walletMemberShipSubtitle": "Only authorised wallets are entitled to particpiate. 1 Wallet equals 1 vote.",
-      "nameSubtitle": "The full name of the token eg. Aragon",
-      "symbolSubtitle": "The symbol of your token e.g. ANT (good practice is to use 3-4 letters)",
+      "tokenMembershipSubtitle": "Tokens act as voting chips. The more tokens you hold, the more weight your vote has. Token holders can also create proposals. ",
+      "walletMemberShip": "Authorized wallets",
+      "walletMemberShipSubtitle": "Allowlist wallet addresses of trusted members, so voting is 1 wallet = 1 vote. Allowlisted wallets can also create proposals. ",
+      "nameSubtitle": "The full name of the token. Example: Uniswap",
+      "symbolSubtitle": "The abbreviation of the token. Example: UNI",
       "addExistingTokenHelptext": "Hinterlege einen bestehenden Token, welcher deine Community für die Governance verwendet. To learn more about what it’s important if you use an existing Token, read first the ",
       "tokenHelptextLink": "Token Distribution Guide",
       "tokenContractSubtitlePart1": "Copy the contract address directly from the ",
       "tokenContractSubtitlePart2": "This way you can ensure that the address is correct.",
-      "distributeTokensHelpertext": "Determine who receives how many tokens. Unless otherwise specified, the treasury receives the rest tokens for the future distribution of tokens (these tokens have no voting rights and do not influence the quorum).",
-      "distributionWalletAlertText": "Your connected wallet got automatically added to the token distribution.",
+      "distributeTokensHelpertext": "Add the wallets of your core team and DAO treasury here. If you don't plan on doing an initial distribution, just put your wallet and all tokens will go there. If you need help distributing tokens, read our guide",
+      "distributionWalletAlertText": "Your connected wallet was automatically added to the distribution list. You can remove it if you like.",
       "whiteListWalletAlertText": "Your connected wallet got automatically added to the list.",
-      "createTokenHelptext": "Mint a community token on a variable or fixed supply. To learn more about how to mint the token and how to use it, read the ",
-      "createTokenHelplink": "Token Minting Guide"
+      "createTokenHelptext": " Define the token details and distribute tokens to a core team and DAO treasury. For more on token minting best practices, ",
+      "createTokenHelplink": "read this guide."
     },
     "step4": {
       "label": "Step 4",
       "title": "Rules for Deciding",
       "description": "These are the rules that set how voting works in your DAO. How many people have to participate? What percent counts as winning? How long may a proposal be open for voting? Learn more about ",
-      "shortTitle": "Configure Governance",
-      "shortDescription": "How are decisions made in the DAO? How long may a proposal be open for voting?",
+      "shortTitle": "Set voting parameters",
       "bestPractices": "Best practices on governance.",
-      "minimumApprovalSubtitle": "Support is the percentage of tokens or addresses that are required to vote “Yes” for a proposal to be approved, calculated based on total tokens or addresses that voted.",
-      "minimumParticipationSubtitle": "Participation is the percentage of the token supply or addresses in the authorized list that vote on a proposal (either yes or no). The minimum is how many have to vote for the result to be valid.",
+      "minimumApprovalSubtitle": "The approval threshold is the percentage of tokens out of quorum that need to cast a vote in-favor for a vote to pass. This is the amount of Yes votes.",
+      "minimumParticipationSubtitle": "This is the percentage of voters who need to cast a vote for a vote to be valid. For example, if you set quorum at 10% and only 9% of tokens in the network are cast, the vote is not valid and does not execute.  *Note: your DAO treasury does not count as a voter, so if all your tokens are in your DAO treasury, set this rate at 0% for now and you can change it later.",
       "supportSubtitle": "Support is the relative percentage of tokens or wallets that are required to vote “Yes” for a proposal to be approved.",
-      "durationSubtitle": "Duration is the length of time that a proposal will be open for participation. The duration applies to each proposal in the DAO. Proposal creators can extend the time if necessary, but not shorten it!",
+      "durationSubtitle": "The minimum duration is the time that a vote is live. You can set custom durations for each proposal you create, but they can't be less than  the duration you set here. So, aim low and you can scale up as needed.",
       "days": "Days",
       "hours": "Hours",
       "minutes": "Minutes",
@@ -523,16 +526,15 @@
       }
     },
     "review": {
-      "title": "Go Live",
-      "description": "Take your DAO public by reviewing the following information and cross-checking the values.",
+      "title": "Deploy your DAO",
+      "description": "Double-check that everything is correct before launching your organization.",
       "network": "{{network}} net",
       "distributionLink": "See {{count}} Addresses",
       "days": "{{days}} Days",
       "hours": "{{hours}} Hours",
       "minutes": "{{minutes}} Minutes",
-      "button": "Publish your DAO",
-      "daoUpdates": "DAO updates are doable",
-      "daoUpdatesHelpText": "These choices can be changed by a proposal and vote in the DAO.",
+      "button": "Deploy your DAO",
+      "daoUpdates": "Except for the chain you choose and the token you mint, you can change all these values later with a vote in your DAO.",
       "acceptContent": "You have to accept your proposed content.",
       "valuesCorrect": "These values are correct"
     }
@@ -611,8 +613,8 @@
   "explore": {
     "hero": {
       "title": "EXPLORE THE DAO WORLD",
-      "subtitle1": "Welcome to the Aragon Explore Portal.",
-      "subtitle2": "Take a look to the ecosystem,find inspiration and learn."
+      "subtitle1": "Build your DAO, explore communities, and",
+      "subtitle2": "find inspiration for your project, all from one place."
     },
     "explorer": {
       "title": "Explore DAOs",
@@ -628,12 +630,18 @@
     "emptyStateProposal": {
       "title": "There are no active proposals",
       "description": "You can still check upcoming or past proposals on your DAOs."
+    },
+    "statics": {
+      "daosCreated": "DAOs Created",
+      "aragonMembers": "Members in Aragon app DAOs",
+      "activeProposals": "Active Proposals",
+      "securedByAragon": "secured by aragonOS"
     }
   },
   "privacyPolicy": {
     "title": "Privacy policy",
     "analytics": "Analytics cookies",
-    "analyticsHelpText": "It will allow to collect information of how you use our app.",
+    "analyticsHelpText": "Collects information on how you use the App",
     "functional": "Functional cookies",
     "functionalHelpText": "Used to store your preferences in the application.",
     "cookieSettings": "Cookie settings",
@@ -652,20 +660,20 @@
   },
   "cookiePreferences": {
     "title": "Cookie Preferences",
-    "content": "In order to use this feature you need to allow the usage of functional cookies so we can store your preferences within our app.",
+    "content": "To access this feature, we need to store your preferences. Enable cookies to continue.",
     "accept": "Accept",
     "cancel": "Cancel"
   },
   "cta": {
     "create": {
-      "title": "Create a DAO",
-      "description": "Create your Decentralized Autonomous Organization on open-source infrastructure with governance plugins.",
+      "title": "Create your DAO",
+      "description": "Mint tokens, set governance parameters, and deploy your DAO on-chain in minutes with our no-code setup process.",
       "actionLabel": "Create a DAO"
     },
     "learn": {
-      "title": "Learn about DAO",
-      "description": "Explore and learn through our “How-to Guides”, DAO Education, Educational Articles and more!",
-      "actionLabel": "Learn about DAO"
+      "title": "Learn about DAOs",
+      "description": "Find inspiration and learn about DAOs in our education portal designed for builders at every stage of the journey.",
+      "actionLabel": "Learn about DAOs"
     },
     "build": {
       "title": "Build faster",

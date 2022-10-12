@@ -64,10 +64,7 @@ const GoLive: React.FC = () => {
       <DaoMetadata />
       <Community />
       <Governance />
-      <AlertCard
-        title={t('createDAO.review.daoUpdates')}
-        helpText={t('createDAO.review.daoUpdatesHelpText')}
-      />
+      <AlertCard title={t('createDAO.review.daoUpdates')} />
     </Container>
   );
 };

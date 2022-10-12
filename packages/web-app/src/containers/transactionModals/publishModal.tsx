@@ -24,6 +24,7 @@ type PublishModalProps = {
   averageFee: BigInt | undefined;
   tokenPrice: number;
   title?: string;
+  subtitle?: string;
   buttonLabel?: string;
   buttonLabelSuccess?: string;
 };
@@ -45,6 +46,7 @@ const PublishModal: React.FC<PublishModalProps> = ({
   averageFee,
   tokenPrice,
   title,
+  subtitle,
   buttonLabel,
   buttonLabelSuccess,
 }) => {
@@ -96,6 +98,7 @@ const PublishModal: React.FC<PublishModalProps> = ({
     <ModalBottomSheetSwitcher
       {...{isOpen, onClose, closeOnDrag}}
       title={title || t('TransactionModal.publishDao')}
+      subtitle={subtitle}
     >
       <GasCostTableContainer>
         <GasCostEthContainer>

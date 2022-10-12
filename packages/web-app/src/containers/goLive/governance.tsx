@@ -33,13 +33,14 @@ const Governance: React.FC = () => {
       }}
       render={({field: {onChange, value}}) => (
         <DescriptionListContainer
-          title={t('labels.review.governance')}
+          title={t('labels.review.votingParameters')}
           onEditClick={() => setStep(5)}
           editLabel={t('settings.edit')}
           checkBoxErrorMessage={t('createDAO.review.acceptContent')}
           checkedState={
             value ? 'active' : reviewCheckError ? 'error' : 'default'
           }
+          badgeLabel={t('labels.changeableVote')}
           onChecked={() => onChange(!value)}
         >
           {membership === 'token' && (

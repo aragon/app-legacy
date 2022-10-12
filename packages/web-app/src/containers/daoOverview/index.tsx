@@ -78,28 +78,24 @@ const OverviewCards = [
     imgSrc={<IlluObject object="chain" />}
     caption={i18n.t('createDAO.step1.label')}
     title={i18n.t('createDAO.step1.shortTitle')}
-    subtitle={i18n.t('createDAO.step1.shortDescription')}
   />,
   <CardWithImage
     key="DefineMetadata"
     imgSrc={<IlluObject object="labels" />}
     caption={i18n.t('createDAO.step2.label')}
     title={i18n.t('createDAO.step2.shortTitle')}
-    subtitle={i18n.t('createDAO.step2.shortDescription')}
   />,
   <CardWithImage
     key="SetupCommunity"
     imgSrc={<IlluObject object="users" />}
     caption={i18n.t('createDAO.step3.label')}
     title={i18n.t('createDAO.step3.shortTitle')}
-    subtitle={i18n.t('createDAO.step3.shortDescription')}
   />,
   <CardWithImage
     key="ConfigureGovernance"
     imgSrc={<IlluObject object="settings" />}
     caption={i18n.t('createDAO.step4.label')}
     title={i18n.t('createDAO.step4.shortTitle')}
-    subtitle={i18n.t('createDAO.step4.shortDescription')}
   />,
 ];
 

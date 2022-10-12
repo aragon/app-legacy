@@ -5,7 +5,7 @@ type CardWithImageProps = {
   imgSrc: React.ReactNode;
   caption: string;
   title: string;
-  subtitle: string;
+  subtitle?: string;
 };
 
 const CardWithImage: React.FC<CardWithImageProps> = ({
