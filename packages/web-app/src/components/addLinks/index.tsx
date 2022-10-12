@@ -1,22 +1,29 @@
-import React from 'react';
-import styled from 'styled-components';
-import {useTranslation} from 'react-i18next';
 import {ButtonText, IconAdd} from '@aragon/ui-components';
-import {useFormContext, useFieldArray, useWatch} from 'react-hook-form';
+import React from 'react';
+import {useFieldArray, useFormContext, useWatch} from 'react-hook-form';
+import {useTranslation} from 'react-i18next';
+import styled from 'styled-components';
 
-import Row from './row';
 import Header from './header';
+import Row from './row';
 
 export type AddLinks = {
+  /** Name of the fieldArray that is the target of the link inputs. Defaults to
+   * 'links' */
+  arrayName?: string;
   buttonPlusIcon?: boolean;
   buttonLabel?: string;
 };
 
-const AddLinks: React.FC<AddLinks> = ({buttonPlusIcon, buttonLabel}) => {
+const AddLinks: React.FC<AddLinks> = ({
+  buttonPlusIcon,
+  buttonLabel,
+  arrayName = 'links',
+}) => {
   const {t} = useTranslation();
   const {control} = useFormContext();
-  const links = useWatch({name: 'links', control});
-  const {fields, append, remove} = useFieldArray({name: 'links', control});
+  const links = useWatch({name: arrayName, control});
+  const {fields, append, remove} = useFieldArray({name: arrayName, control});
 
   const controlledLinks = fields.map((field, index) => {
     return {
@@ -36,7 +43,12 @@ const AddLinks: React.FC<AddLinks> = ({buttonPlusIcon, buttonLabel}) => {
         <ListGroup>
           <Header />
           {controlledLinks.map((field, index) => (
-            <Row key={field.id} index={index} onDelete={() => remove(index)} />
+            <Row
+              key={field.id}
+              index={index}
+              onDelete={() => remove(index)}
+              arrayName={arrayName}
+            />
           ))}
         </ListGroup>
       )}

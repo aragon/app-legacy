@@ -22,13 +22,20 @@ import {isOnlyWhitespace} from 'utils/library';
 type LinkRowProps = {
   index: number;
   onDelete?: (index: number) => void;
+  /** Name of the fieldArray that is the target of the link inputs. Defaults to
+   * 'links' */
+  arrayName?: string;
 };
 
 const UrlRegex = new RegExp(URL_PATTERN);
 const EmailRegex = new RegExp(EMAIL_PATTERN);
 const UrlWithProtocolRegex = new RegExp(URL_WITH_PROTOCOL_PATTERN);
 
-const LinkRow: React.FC<LinkRowProps> = ({index, onDelete}) => {
+const LinkRow: React.FC<LinkRowProps> = ({
+  index,
+  onDelete,
+  arrayName = 'links',
+}) => {
   const {t} = useTranslation();
   const {control, clearErrors, getValues, trigger, setValue} = useFormContext();
   const {errors} = useFormState();
@@ -59,11 +66,11 @@ const LinkRow: React.FC<LinkRowProps> = ({index, onDelete}) => {
 
   const labelValidator = useCallback(
     (label: string, index: number) => {
-      if (linkedFieldsAreValid(label, `links.${index}.url`)) return;
+      if (linkedFieldsAreValid(label, `${arrayName}.${index}.url`)) return;
 
       return isOnlyWhitespace(label) ? t('errors.required.label') : true;
     },
-    [linkedFieldsAreValid, t]
+    [arrayName, linkedFieldsAreValid, t]
   );
 
   const addProtocolToLinks = useCallback(
@@ -84,7 +91,7 @@ const LinkRow: React.FC<LinkRowProps> = ({index, onDelete}) => {
 
   const linkValidator = useCallback(
     (url: string, index: number) => {
-      if (linkedFieldsAreValid(url, `links.${index}.label`)) return;
+      if (linkedFieldsAreValid(url, `${arrayName}.${index}.label`)) return;
 
       if (url === '') return t('errors.required.link');
 
@@ -92,7 +99,7 @@ const LinkRow: React.FC<LinkRowProps> = ({index, onDelete}) => {
         ? true
         : t('errors.invalidURL');
     },
-    [linkedFieldsAreValid, t]
+    [arrayName, linkedFieldsAreValid, t]
   );
 
   /*************************************************
@@ -103,7 +110,7 @@ const LinkRow: React.FC<LinkRowProps> = ({index, onDelete}) => {
       <LabelContainer>
         <Controller
           control={control}
-          name={`links.${index}.name`}
+          name={`${arrayName}.${index}.name`}
           rules={{
             validate: value => labelValidator(value, index),
           }}
@@ -129,7 +136,7 @@ const LinkRow: React.FC<LinkRowProps> = ({index, onDelete}) => {
 
       <LinkContainer>
         <Controller
-          name={`links.${index}.url`}
+          name={`${arrayName}.${index}.url`}
           control={control}
           rules={{
             validate: value => linkValidator(value, index),
