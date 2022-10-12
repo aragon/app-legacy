@@ -1,6 +1,6 @@
 import {Client, Context as SdkContext, ContextParams} from '@aragon/sdk-client';
 import React, {createContext, useContext, useEffect, useState} from 'react';
-import {SUBGRAPH_API_URL} from 'utils/constants';
+import {ALCHEMY_API_KEY, SUBGRAPH_API_URL} from 'utils/constants';
 
 import {useWallet} from './useWallet';
 
@@ -39,10 +39,8 @@ export const UseClientProvider: React.FC = ({children}) => {
     const contextParams: ContextParams = {
       network: 'goerli', // TODO: remove temporarily hardcoded network
       signer: signer || undefined,
-      // NOTE: This is a dummy endpoint and API keys used as POC. Will be
-      // replaced with a proper endpoint and API key in an upcoming PR.
       web3Providers: new Array(
-        'https://eth-goerli.g.alchemy.com/v2/XquT7N4WMWBTFsNWB7B_Ef-0Ayz9051v'
+        `https://eth-goerli.g.alchemy.com/v2/${ALCHEMY_API_KEY}`
       ),
       ipfsNodes: [
         {

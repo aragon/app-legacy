@@ -128,8 +128,8 @@ export const CHAIN_METADATA: ChainList = {
     explorer: 'https://rinkeby.etherscan.io/',
     testnet: true,
     rpc: [
-      'https://rinkeby.infura.io/v3/${INFURA_API_KEY}',
-      'wss://rinkeby.infura.io/ws/v3/${INFURA_API_KEY}',
+      'https://rinkeby.infura.io/v3/${INFURA_PROJECT_ID}',
+      'wss://rinkeby.infura.io/ws/v3/${INFURA_PROJECT_ID}',
     ],
     nativeCurrency: {
       name: 'Rinkeby Ether',
@@ -138,15 +138,15 @@ export const CHAIN_METADATA: ChainList = {
     },
   },
   goerli: {
-    id: 4,
+    id: 5,
     name: 'Goerli',
     domain: 'L1 Blockchain',
     logo: 'https://assets.coingecko.com/coins/images/279/large/ethereum.png?1595348880',
     explorer: 'https://goerli.etherscan.io/',
     testnet: true,
     rpc: [
-      'https://goerli.infura.io/v3/${INFURA_API_KEY}',
-      'wss://goerli.infura.io/ws/v3/${INFURA_API_KEY}',
+      'https://goerli.infura.io/v3/${INFURA_PROJECT_ID}',
+      'wss://goerli.infura.io/ws/v3/${INFURA_PROJECT_ID}',
     ],
     nativeCurrency: {
       name: 'Goerli Ether',
