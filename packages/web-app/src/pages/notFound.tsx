@@ -17,9 +17,9 @@ const NotFound: React.FC = () => {
   const {t} = useTranslation();
 
   return (
-    <div className="overflow-x-hidden">
+    <>
       <Container>
-        <div className="hidden desktop:block py-2 desktop:py-4">
+        <Menu>
           <GridLayout>
             <img
               className="col-span-2 h-4 cursor-pointer"
@@ -27,62 +27,64 @@ const NotFound: React.FC = () => {
               onClick={() => window.open('https://aragon.org/', '_blank')}
             />
           </GridLayout>
-        </div>
+        </Menu>
       </Container>
 
-      <GridLayout>
-        <Wrapper>
-          <div className="mt-3 desktop:mt-0 desktop:w-1/2">
-            <Title>
-              {t('cta.404.titleLine1')}
-              <br />
-              {t('cta.404.titleLine2')}
-            </Title>
+      <div className="overflow-x-hidden">
+        <GridLayout>
+          <Wrapper>
+            <div className="mt-3 desktop:mt-0 desktop:w-1/2">
+              <Title>
+                {t('cta.404.titleLine1')}
+                <br />
+                {t('cta.404.titleLine2')}
+              </Title>
+              <ButtonText
+                label={t('cta.404.backToExplore')}
+                size="large"
+                className="hidden desktop:block mt-5"
+                onClick={() => navigate(Landing)}
+              />
+            </div>
+
+            <div className="relative mt-2 desktop:mt-0 desktop:w-1/2">
+              <GradientGreen src={Green} />
+              <GradientPurple src={Purple} />
+              <img src={Logo404} className="w-full" />
+            </div>
+          </Wrapper>
+        </GridLayout>
+
+        <GridLayout>
+          <div className="col-span-full">
             <ButtonText
               label={t('cta.404.backToExplore')}
               size="large"
-              className="hidden desktop:block mt-5"
+              className="block desktop:hidden mt-14 desktop:mt-0 w-full"
               onClick={() => navigate(Landing)}
             />
           </div>
 
-          <div className="relative mt-2 desktop:-mt-8 desktop:w-1/2">
-            <GradientGreen src={Green} />
-            <GradientPurple src={Purple} />
-            <img src={Logo404} className="w-full" />
-          </div>
-        </Wrapper>
-      </GridLayout>
-
-      <GridLayout>
-        <div className="col-span-full">
-          <ButtonText
-            label={t('cta.404.backToExplore')}
-            size="large"
-            className="block desktop:hidden mt-14 desktop:mt-0 w-full"
-            onClick={() => navigate(Landing)}
-          />
-        </div>
-
-        <HStack>
-          <Card
-            description={t('cta.404.findOut')}
-            linkLabel={t('cta.404.findOutActionLabel')}
-            href="https://aragon.org/aragon-app"
-          />
-          <Card
-            description={t('cta.404.create')}
-            linkLabel={t('cta.404.createActionLabel')}
-            onClick={() => navigate(CreateDAO)}
-          />
-          <Card
-            description={t('cta.404.learn')}
-            linkLabel={t('cta.404.learnActionLabel')}
-            href="https://aragon.org/how-to"
-          />
-        </HStack>
-      </GridLayout>
-    </div>
+          <HStack>
+            <Card
+              description={t('cta.404.findOut')}
+              linkLabel={t('cta.404.findOutActionLabel')}
+              href="https://aragon.org/aragon-app"
+            />
+            <Card
+              description={t('cta.404.create')}
+              linkLabel={t('cta.404.createActionLabel')}
+              onClick={() => navigate(CreateDAO)}
+            />
+            <Card
+              description={t('cta.404.learn')}
+              linkLabel={t('cta.404.learnActionLabel')}
+              href="https://aragon.org/how-to"
+            />
+          </HStack>
+        </GridLayout>
+      </div>
+    </>
   );
 };
 
@@ -106,6 +108,17 @@ const Card: React.FC<CardProps> = ({description, linkLabel, href, onClick}) => (
     />
   </CardContainer>
 );
+
+const Menu = styled.nav.attrs({
+  className: 'hidden desktop:block py-2 desktop:py-4',
+})`
+  background: linear-gradient(
+    180deg,
+    rgba(245, 247, 250, 1) 0%,
+    rgba(245, 247, 250, 0) 100%
+  );
+  backdrop-filter: blur(24px);
+`;
 
 const Wrapper = styled.div.attrs({
   className:
