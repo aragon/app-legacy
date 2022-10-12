@@ -31,12 +31,10 @@ import {getDHMFromSeconds} from 'utils/date';
 import {formatUnits} from 'utils/library';
 import {Community, EditSettings} from 'utils/paths';
 import {getTokenInfo} from 'utils/tokens';
-import {useGlobalModalContext} from 'context/globalModals';
 
 const Settings: React.FC = () => {
   const {data: daoId, isLoading} = useDaoParam();
   const {t} = useTranslation();
-  const {open} = useGlobalModalContext();
   const {network} = useNetwork();
   const navigate = useNavigate();
   const {infura} = useProviders();

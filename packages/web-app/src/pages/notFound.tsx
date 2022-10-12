@@ -22,9 +22,8 @@ const NotFound: React.FC = () => {
         <Menu>
           <GridLayout>
             <img
-              className="col-span-2 h-4 cursor-pointer"
+              className="col-span-2 col-start-2 desktop:col-start-auto mx-auto desktop:mx-0 h-4"
               src={Logo}
-              onClick={() => window.open('https://aragon.org/', '_blank')}
             />
           </GridLayout>
         </Menu>
@@ -110,7 +109,7 @@ const Card: React.FC<CardProps> = ({description, linkLabel, href, onClick}) => (
 );
 
 const Menu = styled.nav.attrs({
-  className: 'hidden desktop:block py-2 desktop:py-4',
+  className: 'py-2 desktop:py-4',
 })`
   background: linear-gradient(
     180deg,
