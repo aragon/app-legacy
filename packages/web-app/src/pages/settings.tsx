@@ -61,8 +61,8 @@ const Settings: React.FC = () => {
 
   useEffect(() => {
     // Fetching necessary info about the token.
-    if (daoToken?.id) {
-      getTokenInfo(daoToken.id, infura, nativeCurrency)
+    if (daoToken?.address) {
+      getTokenInfo(daoToken.address, infura, nativeCurrency)
         .then((r: Awaited<ReturnType<typeof getTokenInfo>>) => {
           const formattedNumber = parseFloat(
             formatUnits(r.totalSupply, r.decimals)
@@ -73,7 +73,7 @@ const Settings: React.FC = () => {
           console.error('Error happened when fetching token infos: ', e)
         );
     }
-  }, [daoToken.id, nativeCurrency, infura, network]);
+  }, [daoToken?.address, nativeCurrency, infura, network]);
 
   if (
     isLoading ||
@@ -161,8 +161,8 @@ const Settings: React.FC = () => {
                 <Dt>{t('votingTerminal.token')}</Dt>
                 <Dd>
                   <div className="flex items-center space-x-1.5">
-                    <p>{daoToken.name}</p>
-                    <p>{daoToken.symbol}</p>
+                    <p>{daoToken?.name}</p>
+                    <p>{daoToken?.symbol}</p>
                   </div>
                 </Dd>
               </Dl>
@@ -171,7 +171,7 @@ const Settings: React.FC = () => {
                 <Dd>
                   <div className="flex items-center space-x-1.5">
                     <p>
-                      {tokenSupply} {daoToken.symbol}
+                      {tokenSupply} {daoToken?.symbol}
                     </p>
                     <Badge label="Mintable" />
                   </div>
@@ -203,7 +203,7 @@ const Settings: React.FC = () => {
             {isErc20Plugin ? (
               <Dd>
                 {Math.round(daoSettings.minTurnout * 100)}% (
-                {daoSettings.minTurnout * tokenSupply} {daoToken.symbol})
+                {daoSettings.minTurnout * tokenSupply} {daoToken?.symbol})
               </Dd>
             ) : (
               <Dd>{Math.round(daoSettings.minTurnout * 100)}%</Dd>
