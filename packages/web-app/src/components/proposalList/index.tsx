@@ -76,7 +76,7 @@ export function mapToCardViewProposal(
       title: metadata.title,
       description: metadata.summary,
       process: proposal.status.toLowerCase() as CardProposalProps['process'],
-      chainId: CHAIN_METADATA[network].id,
+      explorer: CHAIN_METADATA[network].explorer,
       publisherAddress: proposal.creatorAddress,
       publishLabel: i18n.t('governance.proposals.publishedBy'),
       voteTitle: i18n.t('governance.proposals.voteTitle'),
