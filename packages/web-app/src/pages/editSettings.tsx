@@ -255,7 +255,7 @@ const EditSettings: React.FC = () => {
     {
       component: (
         <ListItemAction
-          title={t('labels.resetAction')}
+          title={t('settings.resetChanges')}
           bgWhite
           mode={isMetadataChanged ? 'default' : 'disabled'}
         />
@@ -268,7 +268,7 @@ const EditSettings: React.FC = () => {
     {
       component: (
         <ListItemAction
-          title={t('labels.resetAction')}
+          title={t('settings.resetChanges')}
           bgWhite
           mode={isGovernanceChanged ? 'default' : 'disabled'}
         />
