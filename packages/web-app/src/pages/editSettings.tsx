@@ -311,7 +311,7 @@ const EditSettings: React.FC = () => {
 
       <div>
         <Accordion>
-          <Heading>{t('labels.review.governance')}</Heading>
+          <Heading>{t('labels.review.votingParameters')}</Heading>
 
           <HStack>
             {isGovernanceChanged && (
@@ -345,7 +345,7 @@ const EditSettings: React.FC = () => {
         <HStack>
           <ButtonText
             className="w-full tablet:w-max"
-            label={t('settings.proposeSettings')}
+            label={t('settings.reviewProposal')}
             iconLeft={<IconGovernance />}
             size={isMobile ? 'large' : 'medium'}
             onClick={() =>

@@ -312,7 +312,7 @@ const CreateProposalProvider: React.FC<Props> = ({
         averageFee={averageFee}
         tokenPrice={tokenPrice}
         title={t('TransactionModal.createProposal')}
-        buttonLabel={t('TransactionModal.createProposalNow')}
+        buttonLabel={t('TransactionModal.createProposal')}
       />
     </>
   );

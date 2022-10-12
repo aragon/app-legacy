@@ -130,7 +130,7 @@ const NewDeposit: React.FC = () => {
             <DepositForm />
           </Step>
           <Step
-            wizardTitle={t('newDeposit.reviewTransfer')}
+            wizardTitle={t('newDeposit.reviewDeposit')}
             wizardDescription={t('newDeposit.reviewTransferSubtitle')}
             nextButtonLabel={t('labels.submitDeposit')}
             customFooter={<CustomFooter />}

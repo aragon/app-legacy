@@ -68,7 +68,10 @@ const Settings: React.FC = () => {
           </Dl>
         </DescriptionListContainer>
 
-        <DescriptionListContainer title={t('labels.review.daoMetadata')}>
+        <DescriptionListContainer
+          title={t('labels.review.daoMetadata')}
+          badgeLabel={t('labels.changeableVote')}
+        >
           <Dl>
             <Dt>{t('labels.logo')}</Dt>
             <Dd>
@@ -138,7 +141,10 @@ const Settings: React.FC = () => {
           </Dl>
         </DescriptionListContainer>
 
-        <DescriptionListContainer title={t('labels.review.governance')}>
+        <DescriptionListContainer
+          title={t('labels.review.governance')}
+          badgeLabel={t('labels.changeable')}
+        >
           <Dl>
             <Dt>{t('labels.minimumApproval')}</Dt>
             <Dd>{Math.round(daoSettings.minTurnout * 100)}% (150 TKN)</Dd>

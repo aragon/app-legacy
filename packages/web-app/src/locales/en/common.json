@@ -28,6 +28,7 @@
   },
   "labels": {
     "members": "Members",
+    "tokenHolders": "Token Holders",
     "addMember": "Add Members",
     "manageMember": "Manage Members",
     "addedMembers": "Added Members",
@@ -38,7 +39,7 @@
     "addWalletsDescription": "Wallets can create proposals, propose to send funds in and out of the treasury, and vote in your DAO.",
     "removeWalletsDescription": "Revoke a wallet's ability to create proposals, propose to send funds in and out of the treasury, and vote in your DAO. ",
     "totalWallets": "Total Wallets",
-    "mintTokens": "Mint Tokens",
+    "mintTokens": "Mint tokens",
     "seeAllHolders": "See All Holders",
     "seeCommunity": "See Community",
     "aragonCore": "Aragon Core",
@@ -49,9 +50,11 @@
     "seeAllTokens": "See All Tokens",
     "seeAllTransfers": "See All Transfers",
     "to": "To",
+    "recipient": "Recipient",
     "from": "From",
     "token": "Token",
     "amount": "Amount",
+    "tokenAmount": "Token amount",
     "reference": "Reference",
     "address": "Token Contract Address",
     "clear": "Clear",
@@ -126,6 +129,7 @@
     "noResultsSubtitle": "Try to modify your search to find the corresponding wallets.",
     "notChangeable": "Not Changeable",
     "changeableVote": "Changeable with a vote",
+    "changeable": "Changeable",
     "whitelistWallets": {
       "address": "Address",
       "addresses": "{{count}} Addresses",
@@ -142,7 +146,7 @@
     },
     "review": {
       "blockchain": "Blockchain",
-      "daoMetadata": "DAO Details",
+      "daoMetadata": "DAO details",
       "voters": "Voters",
       "votingParameters": "Voting parameters",
       "governance": "Governance",
@@ -324,7 +328,7 @@
       "description": "To continue with this action, a wallet must be connected.",
       "buttonLabel": "Login Now"
     },
-    "tokenBasedMembers": "The DAO members listed here have interacted with the DAO at least once"
+    "tokenBasedMembers": "The token holders listed here have interacted with the DAO at least once"
   },
   "warnings": {
     "amountGtDaoToken": "Withdraw amount is greater than the current token balance"
@@ -351,7 +355,7 @@
     "allTransfers": "All Transfers",
     "newTransfer": "New Transfer",
     "item1Title": "Deposit assets",
-    "item1Subtitle": "Add assets to the DAO treasury",
+    "item1Subtitle": "Send assets to the DAO treasury",
     "item2Title": "Withdraw assets",
     "item2Subtitle": "Create a proposal to withdraw assets to a wallet."
   },
@@ -381,7 +385,7 @@
     "publishDaoSubtitle": "The fees below are the cost of using the Ethereum network.",
     "publishDaoButtonLabel": "Approve Transaction",
     "signDeposit": "Sign Deposit",
-    "successLabel": "Transaction successfully executed",
+    "successLabel": "Transaction executed",
     "synced": "Synced {{time}} sec ago",
     "totalCost": "Total Cost",
     "tryAgain": "Try Again",
@@ -392,37 +396,37 @@
   "AddActionModal": {
     "title": "Add Action",
     "addAddresses": "Authorize wallets",
-    "addAddressesSubtitle": "Create a proposal to authorize new wallets to vote in your DAO. ",
+    "addAddressesSubtitle": "Create a proposal to authorize new wallets to vote in your DAO.",
     "removeAddresses": "Remove wallets",
-    "removeAddressesSubtitle": "Create a proposal to unauthorize wallets from voting in your DAO. ",
+    "removeAddressesSubtitle": "Create a proposal to unauthorize wallets from voting in your DAO.",
     "mintTokens": "Mint tokens",
-    "mintTokensSubtitle": "Mint more DAO tokens and distribute to wallets. ",
+    "mintTokensSubtitle": "Mint more DAO tokens and distribute to wallets.",
     "withdrawAssets": "Withdraw Assets",
-    "withdrawAssetsSubtitle": "Propose to withdraw assets from the DAO treasury",
+    "withdrawAssetsSubtitle": "Send assets from the treasury to a wallet",
     "withdrawAssetsActionSubtitle": "Withdraw assets from the DAO treasury",
     "externalContract": "Interact with a contract",
-    "externalContractSubtitle": "Interact with an external contract on the chain your DAO is deployed on. "
+    "externalContractSubtitle": "Interact with an external contract on the chain your DAO is deployed on."
   },
   "newDeposit": {
     "depositAssets": "Deposit Assets",
     "configureDeposit": "Configure Deposit",
     "configureDepositSubtitle": "Enter the desired token and its number for transmission. Furthermore, a reception address is necessary.",
-    "reviewTransfer": "Review Transfer",
-    "reviewTransferSubtitle": "Check your details and make sure everything is correct. After confirmation, no more changes can be made and your token will be transferred.",
-    "toSubtitle": "The recipient of the tokens is the DAO in which you are currently operating.",
-    "tokenSubtitle": "Select Token to deposit in DAO",
+    "reviewDeposit": "Review deposit",
+    "reviewTransferSubtitle": "After confirming, you can't edit or reverse the transaction.",
+    "toSubtitle": "The recipient is automatically set to your DAO address.",
+    "tokenSubtitle": "Token to deposit",
     "contractAddressSubtitle": "You have selected a custom token. Enter the contract address of this token to interact with it.",
-    "amountSubtitle": "Define amount to deposit",
-    "referenceSubtitle": "Add a reference copy to identify this transaction later on"
+    "amountSubtitle": "Calculated in token amount, not dollar value.",
+    "referenceSubtitle": "Add a description so you can identify the transaction in your records later on. "
   },
   "newWithdraw": {
     "withdrawAssets": "Withdraw Assets",
     "configureWithdraw": {
-      "title": "Configure Withdraw",
-      "subtitle": "Enter the desired token and its number for transmission. Furthermore, a reception address is necessary.",
-      "toSubtitle": "Define receiver of tokens",
-      "tokenSubtitle": "Select token you'd like to withdraw",
-      "amountSubtitle": "Define amount to withdraw",
+      "title": "Initiate withdrawal",
+      "subtitle": "To withdraw assets from the treasury, your proposal will need to pass a vote.",
+      "toSubtitle": "The wallet that receives the tokens",
+      "tokenSubtitle": "Token to withdraw",
+      "amountSubtitle": "Amount is calculated in token amount, not USD",
       "utcMenu": {
         "title": "Select a UTC Timezone"
       }
@@ -484,7 +488,7 @@
       "shortTitle": "Select governance type",
       "communityOverviewGuide": "read this guide",
       "newToken": "No",
-      "authorisedWalletsSubtitle": "Add as many addresses as you like to the DAO. These are authorised to create proposals, transactions or suggest changes to the DAO settings after its creation. Upload a CSV with <a href='https://aragon.org' external>this template</a> if you want.",
+      "authorisedWalletsSubtitle": "Add wallets of members who are authorized to participate in governance",
       "warningTitle": "Changing the list",
       "warningSubtitle": "If you want to add addresses after creating your DAO, you will need to create a proposal to be voted by the members.",
       "newTokenSubtitle": "No, I would like to create a token.",
@@ -553,12 +557,12 @@
       "actionsInfo": "More options for parameters are coming soon. "
     },
     "mintTokens": {
-      "methodDescription": "Which wallet addresses should get tokens, and how much? Add the wallets you want here, and then choose the distribution. Upload a CSV with <1>this template</1> if you want.",
-      "additionalInfo": "The total token supply is inclusive of the already distributed tokens of the existing holders."
+      "methodDescription": "Select the wallets that should receive tokens and determine how many. CSV files accepted.",
+      "additionalInfo": "The total token supply includes all tokens you've already minted."
     },
     "manageWallets": {
-      "title": "Manage authorised wallets",
-      "description": "TBD Description, but something like: To add and/or remove new members to this wallet-based DAO …"
+      "title": "Add or remove wallets",
+      "description": "Authorized wallets can create proposals, propose to move funds in and out of the treasury, and vote in your DAO"
     }
   },
   "votingTerminal": {
@@ -683,14 +687,15 @@
   },
   "settings": {
     "proposeSettings": "Propose new settings",
+    "reviewProposal": "Review proposal",
     "proposeSettingsSubtitle": "Confirm the new settings that will be presented to the community in your proposal.",
     "editDaoSettings": "Edit DAO Settings",
-    "editSubtitle": "To edit the DAO settings, fill the new data and then you have to propose this to the DAO community. If it gets approved, the new settings will get applied.",
+    "editSubtitle": "To edit settings such as the logo and description, you'll need to create a proposal and put it to vote in your DAO",
     "resetChanges": "Reset Changes",
     "edit": "Edit Settings",
     "newSettings": "New Settings",
     "oldSettings": "Old Settings",
-    "proposeSettingsInfo": "To make changes to the settings of this DAO, a vote must be taken via the community."
+    "proposeSettingsInfo": "To make these changes, voters must approve the proposal."
   },
   "dashboard": {
     "proposalsTitle": "Proposals created",

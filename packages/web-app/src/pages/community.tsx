@@ -98,7 +98,7 @@ const Community: React.FC = () => {
           tag={tag}
           icon={icon}
           crumbs={breadcrumbs}
-          title={`${totalMemberCount} ${t('labels.members')}`}
+          title={`${totalMemberCount} ${t('labels.tokenHolders')}`}
           onClick={handlePrimaryClick}
           {...(walletBased
             ? {
@@ -107,7 +107,7 @@ const Community: React.FC = () => {
               }
             : {
                 description: t('explore.explorer.tokenBased'),
-                buttonLabel: t('labels.addMember'),
+                buttonLabel: t('labels.mintTokens'),
                 secondaryButtonLabel: t('labels.seeAllHolders'),
                 secondaryOnClick: handleSecondaryButtonClick,
               })}
