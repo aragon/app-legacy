@@ -379,7 +379,7 @@
     "errorLabel": "Error while confirming transaction",
     "estimatedFees": "Estimated Gas Fees",
     "maxFee": "Max Fee",
-    "publishDaoSubtitle": "The fees below are the cost of using the Ethereum network.",
+    "publishDaoSubtitle": "The fees below are the cost of using the selected blockchain.",
     "publishDaoButtonLabel": "Approve Transaction",
     "signDeposit": "Sign Deposit",
     "successLabel": "Transaction executed",
@@ -398,8 +398,7 @@
     "removeAddressesSubtitle": "Create a proposal to unauthorize wallets from voting in your DAO.",
     "mintTokens": "Mint tokens",
     "mintTokensSubtitle": "Mint more DAO tokens and distribute to wallets.",
-    "withdrawAssets": "Withdraw Assets",
-    "withdrawAssetsSubtitle": "Send assets from the treasury to a wallet",
+    "withdrawAssetsSubtitle": "Create a proposal to withdraw assets to a wallet.",
     "withdrawAssetsActionSubtitle": "Withdraw assets from the DAO treasury",
     "externalContract": "Interact with a contract",
     "externalContractSubtitle": "Interact with an external contract on the chain your DAO is deployed on."
@@ -416,7 +415,6 @@
     "referenceSubtitle": "Add a description so you can identify the transaction in your records later on. "
   },
   "newWithdraw": {
-    "withdrawAssets": "Withdraw Assets",
     "configureWithdraw": {
       "title": "Initiate withdrawal",
       "subtitle": "To withdraw assets from the treasury, your proposal will need to pass a vote.",
@@ -679,13 +677,7 @@
     "404": {
       "titleLine1": "Oh no,",
       "titleLine2": "you found a wormhole in the DAO Space!",
-      "backToExplore": "Back to Explore",
-      "findOut": "Find out about the next generation DAO platform.",
-      "findOutActionLabel": "Aragon App",
-      "create": "Create Decentralized Autonomous Organization.",
-      "createActionLabel": "Create a DAO",
-      "learn": "Explore and learn through our “How-to Guides”, DAO Education",
-      "learnActionLabel": "Learn about DAOs"
+      "backToExplore": "Back to Explore"
     }
   },
   "settings": {

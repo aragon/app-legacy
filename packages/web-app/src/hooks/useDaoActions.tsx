@@ -12,7 +12,7 @@ export function useDaoActions(dao: string): HookData<ActionParameter[]> {
   const baseActions: ActionParameter[] = [
     {
       type: 'withdraw_assets',
-      title: t('AddActionModal.withdrawAssets'),
+      title: t('TransferModal.item2Title'),
       subtitle: t('AddActionModal.withdrawAssetsSubtitle'),
       isReuseable: true,
     },

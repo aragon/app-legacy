@@ -63,24 +63,6 @@ const NotFound: React.FC = () => {
               onClick={() => navigate(Landing)}
             />
           </div>
-
-          <HStack>
-            <Card
-              description={t('cta.404.findOut')}
-              linkLabel={t('cta.404.findOutActionLabel')}
-              href="https://aragon.org/aragon-app"
-            />
-            <Card
-              description={t('cta.404.create')}
-              linkLabel={t('cta.404.createActionLabel')}
-              onClick={() => navigate(CreateDAO)}
-            />
-            <Card
-              description={t('cta.404.learn')}
-              linkLabel={t('cta.404.learnActionLabel')}
-              href="https://aragon.org/how-to"
-            />
-          </HStack>
         </GridLayout>
       </div>
     </>

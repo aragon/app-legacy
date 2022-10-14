@@ -161,7 +161,7 @@ const NewWithdraw: React.FC = () => {
             setShowTxModal={setShowTxModal}
           >
             <FullScreenStepper
-              wizardProcessName={t('newWithdraw.withdrawAssets')}
+              wizardProcessName={t('TransferModal.item2Title')}
               navLabel={t('allTransfer.newTransfer')}
               returnPath={generatePath(Finance, {network, dao})}
             >
