@@ -3,14 +3,14 @@ import styled from 'styled-components';
 import {withTransaction} from '@elastic/apm-rum-react';
 import {useNavigate} from 'react-router-dom';
 import {useTranslation} from 'react-i18next';
-import {ButtonText, IconChevronRight, Link} from '@aragon/ui-components';
+import {ButtonText} from '@aragon/ui-components';
 
 import {Container, GridLayout} from 'components/layout';
 import Logo from 'public/logoBlue.svg';
 import Logo404 from 'public/illu-custom.svg';
 import Green from 'public/circleGreenGradient.svg';
 import Purple from 'public/purpleGradient.svg';
-import {CreateDAO, Landing} from 'utils/paths';
+import {Landing} from 'utils/paths';
 
 const NotFound: React.FC = () => {
   const navigate = useNavigate();
@@ -71,25 +71,6 @@ const NotFound: React.FC = () => {
 
 export default withTransaction('NotFound', 'component')(NotFound);
 
-type CardProps = {
-  description: string;
-  linkLabel: string;
-  href?: string;
-  onClick?: () => void;
-};
-
-const Card: React.FC<CardProps> = ({description, linkLabel, href, onClick}) => (
-  <CardContainer>
-    <p className="text-ui-600">{description}</p>
-    <Link
-      label={linkLabel}
-      iconRight={<IconChevronRight />}
-      href={href}
-      onClick={onClick}
-    />
-  </CardContainer>
-);
-
 const Menu = styled.nav.attrs({
   className: 'py-2 desktop:py-4',
 })`
@@ -125,16 +106,3 @@ const GradientGreen = styled.img.attrs({
 const GradientPurple = styled.img.attrs({
   className: 'h-25 desktop:h-40 absolute -bottom-8 -right-12',
 })``;
-
-const HStack = styled.div.attrs({
-  className:
-    'desktop:flex col-span-full desktop:col-start-2 desktop:col-end-12 desktop:mt-14 space-y-3 desktop:space-y-0 desktop:space-x-3 pb-3',
-})``;
-
-const CardContainer = styled.div.attrs({
-  className:
-    'flex-1 p-2 desktop:p-3 space-y-1.5 bg-white rounded-xl border border-ui-100',
-})`
-  box-shadow: 0px 4px 8px rgba(31, 41, 51, 0.04),
-    0px 0px 2px rgba(31, 41, 51, 0.06), 0px 0px 1px rgba(31, 41, 51, 0.04);
-`;
