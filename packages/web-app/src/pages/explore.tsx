@@ -113,19 +113,19 @@ type Stats = {
 };
 const statistics: Stats[] = [
   {
-    statKey: i18n.t('explore.statics.daosCreated'),
+    statKey: i18n.t('explore.statistics.daosCreated'),
     statValue: '5,126',
   },
   {
-    statKey: i18n.t('explore.statics.aragonMembers'),
+    statKey: i18n.t('explore.statistics.aragonMembers'),
     statValue: '65,372',
   },
   {
-    statKey: i18n.t('explore.statics.activeProposals'),
+    statKey: i18n.t('explore.statistics.activeProposals'),
     statValue: '1,531',
   },
   {
-    statKey: i18n.t('explore.statics.securedByAragon'),
+    statKey: i18n.t('explore.statistics.securedByAragon'),
     statValue: '$19M+',
   },
 ];

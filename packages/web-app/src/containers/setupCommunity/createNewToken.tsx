@@ -20,7 +20,6 @@ const CreateNewToken: React.FC = () => {
             label={t('createDAO.step3.createTokenHelplink')}
             href="https://aragon.org/how-to/mint-dao-governance-tokens"
           />
-          .
         </Subtitle>
       </DescriptionContainer>
       <FormItem>

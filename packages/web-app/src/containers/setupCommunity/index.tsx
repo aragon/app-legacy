@@ -33,7 +33,7 @@ const SetupCommunityForm: React.FC = () => {
     <>
       {/* Eligibility */}
       <FormItem>
-        <Label label={t('labels.membership')} />
+        <Label label={t('createDAO.step3.membership') as string} />
         <Controller
           name="membership"
           rules={{required: 'Validate'}}

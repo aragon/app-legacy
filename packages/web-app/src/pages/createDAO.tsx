@@ -1,6 +1,6 @@
 import React, {useEffect, useMemo} from 'react';
 import {withTransaction} from '@elastic/apm-rum-react';
-import {useTranslation} from 'react-i18next';
+import {Trans, useTranslation} from 'react-i18next';
 import {FormProvider, useForm, useFormState, useWatch} from 'react-hook-form';
 
 import {FullScreenStepper, Step} from 'components/fullScreenStepper';
@@ -232,7 +232,17 @@ const CreateDAO: React.FC = () => {
             wizardTitle={t('createDAO.step1.title')}
             wizardDescription={
               <>
-                {t('createDAO.step1.description')}
+                <Trans i18nKey={'createDAO.step1.description'}>
+                  This is the percentage of voters who need to cast a vote for a
+                  vote to be valid. For example, if you set quorum at 10% and
+                  only 9% of tokens in the network are cast, the vote is not
+                  valid and does not execute.{' '}
+                  <strong>
+                    Note: your DAO treasury does not count as a voter, so if all
+                    your tokens are in your DAO treasury, set this rate at 0%
+                    for now and you can change it later.
+                  </strong>
+                </Trans>
                 <Link
                   href="https://aragon.org/how-to/how-to-choose-the-right-blockchain-for-your-dao"
                   label={t('createDAO.step1.blockchainOverviewGuide.')}
@@ -297,7 +307,10 @@ const CreateDAO: React.FC = () => {
             wizardDescription={
               <>
                 {t('createDAO.step4.description')}
-                <Link href="" label={t('createDAO.step4.bestPractices')} />
+                <Link
+                  href="https://aragon.org/how-to/setting-dao-governance-thresholds"
+                  label={t('createDAO.step2.metadataOverviewGuide')}
+                />
               </>
             }
             isNextButtonDisabled={!daoConfigureCommunity}

@@ -408,7 +408,10 @@ const SetupVotingForm: React.FC = () => {
           </>
         )}
         {/* TODO: Days should be dynamic */}
-        <AlertInline label={t('infos.voteDuration')} mode="neutral" />
+        <AlertInline
+          label={t('infos.voteDuration', {days: 5})}
+          mode="neutral"
+        />
       </FormSection>
       <UtcMenu onTimezoneSelect={tzSelector} />
     </>

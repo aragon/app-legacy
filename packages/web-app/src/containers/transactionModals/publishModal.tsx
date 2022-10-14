@@ -58,7 +58,7 @@ const PublishModal: React.FC<PublishModalProps> = ({
       buttonLabel || t('TransactionModal.publishDaoButtonLabel'),
     [TransactionState.LOADING]: t('TransactionModal.waiting'),
     [TransactionState.SUCCESS]:
-      buttonLabelSuccess || t('TransactionModal.dismiss'),
+      buttonLabelSuccess || t('TransactionModal.goToFinance'),
     [TransactionState.ERROR]: t('TransactionModal.tryAgain'),
   };
 
@@ -97,7 +97,7 @@ const PublishModal: React.FC<PublishModalProps> = ({
   return (
     <ModalBottomSheetSwitcher
       {...{isOpen, onClose, closeOnDrag}}
-      title={title || t('TransactionModal.publishDao')}
+      title={title || t('createDAO.review.title')}
       subtitle={subtitle}
     >
       <GasCostTableContainer>

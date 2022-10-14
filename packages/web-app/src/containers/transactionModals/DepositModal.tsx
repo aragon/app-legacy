@@ -64,7 +64,7 @@ const DepositModal: React.FC<TransactionModalProps> = ({
   const label = {
     [TransactionState.WAITING]: t('TransactionModal.signDeposit'),
     [TransactionState.LOADING]: t('TransactionModal.signDeposit'),
-    [TransactionState.SUCCESS]: t('TransactionModal.dismiss'),
+    [TransactionState.SUCCESS]: t('TransactionModal.goToFinance'),
     [TransactionState.ERROR]: t('TransactionModal.tryAgain'),
   };
 

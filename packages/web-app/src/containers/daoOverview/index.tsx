@@ -77,19 +77,19 @@ const OverviewCards = [
     key="SelectBlockchain"
     imgSrc={<IlluObject object="chain" />}
     caption={i18n.t('createDAO.step1.label')}
-    title={i18n.t('createDAO.step1.shortTitle')}
+    title={i18n.t('createDAO.step1.title')}
   />,
   <CardWithImage
     key="DefineMetadata"
     imgSrc={<IlluObject object="labels" />}
     caption={i18n.t('createDAO.step2.label')}
-    title={i18n.t('createDAO.step2.shortTitle')}
+    title={i18n.t('createDAO.step2.title')}
   />,
   <CardWithImage
     key="SetupCommunity"
     imgSrc={<IlluObject object="users" />}
     caption={i18n.t('createDAO.step3.label')}
-    title={i18n.t('createDAO.step3.shortTitle')}
+    title={i18n.t('createDAO.step3.title')}
   />,
   <CardWithImage
     key="ConfigureGovernance"

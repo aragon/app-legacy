@@ -104,7 +104,7 @@ export const GoLiveFooter: React.FC = () => {
         <ButtonText
           size="large"
           iconRight={<IconChevronRight />}
-          label={t('createDAO.review.button')}
+          label={t('createDAO.review.title')}
           onClick={publishDao}
           disabled={IsButtonDisabled()}
         />
