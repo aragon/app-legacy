@@ -14,9 +14,7 @@ function Hero() {
         <Wrapper>
           <ContentWrapper>
             <Title>{t('explore.hero.title')}</Title>
-            <Subtitle>
-              {t('explore.hero.subtitle1')} <br /> {t('explore.hero.subtitle2')}
-            </Subtitle>
+            <Subtitle>{t('explore.hero.subtitle1')}</Subtitle>
           </ContentWrapper>
           <ImageWrapper>
             <StyledImage src={Logo} />

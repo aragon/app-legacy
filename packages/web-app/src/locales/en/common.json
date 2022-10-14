@@ -198,10 +198,10 @@
   },
   "governance": {
     "emptyState": {
-      "title": "Create your very first proposal now",
-      "subtitleLine1": "By creating a proposal, your community can vote and participate in this DAO.",
-      "subtitleLine2": "Learn more in",
-      "proposalGuide": "our Proposal Guide.",
+      "title": "Create your first proposal",
+      "subtitleLine1": "What's the first thing your community needs to decide?",
+      "subtitleLine2": "For ideas on how to structure proposals,",
+      "proposalGuide": "read this guide",
       "completeDescription": "By creating a proposal, your community can vote and participate in this DAO. Learn more in our <a href='https://aragon.org' target='_blank' rel='noreferrer'>Proposal Guide</a>"
     },
     "proposals": {
@@ -505,7 +505,7 @@
     },
     "step4": {
       "label": "Step 4",
-      "title": "Rules for Deciding",
+      "title": "Set voting parameters",
       "description": "Voting parameters include quorum, pass rate, and vote duration. These are levers you can use to adjust how difficult it is to get a vote through. To understand what these levers can do to the governance process of your DAO, ",
       "shortTitle": "Set voting parameters",
       "minimumApprovalSubtitle": "The approval threshold is the percentage of tokens out of quorum that need to cast a vote in-favor for a vote to pass. This is the amount of Yes votes.",
@@ -537,8 +537,7 @@
     "title": "New Proposal",
     "configureActions": {
       "heading": "Set actions",
-      "description": "These actions will automatically execute if the parameters you set for them are met. ",
-      "votePasses": "Vote passes",
+      "description": "These actions can be executed if the parameters you set for them are met. ",
       "yesOption": "Yes",
       "yesOptionSubtitle": "If the vote passes, the following actions will execute automatically. If the vote fails, nothing will happen.",
       "addFirstAction": "Add Action",
@@ -607,8 +606,7 @@
   "explore": {
     "hero": {
       "title": "EXPLORE THE DAO WORLD",
-      "subtitle1": "Build your DAO, explore communities, and",
-      "subtitle2": "find inspiration for your project, all from one place."
+      "subtitle1": "Build your DAO, explore communities, and find inspiration for your project, all from one place."
     },
     "explorer": {
       "title": "Explore DAOs",

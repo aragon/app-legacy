@@ -33,7 +33,7 @@ const ProposalSnapshot: React.FC<Props> = ({dao, proposals}) => {
         hair={'middle'}
         accessory={'earrings_rhombus'}
         sunglass={'big_rounded'}
-        title={'Create Very First Proposal'}
+        title={t('governance.emptyState.title')}
         description={t('governance.emptyState.completeDescription')}
         primaryButton={{
           label: t('TransactionModal.createProposal'),

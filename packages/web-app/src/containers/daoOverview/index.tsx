@@ -43,7 +43,7 @@ export const OverviewDAOHeader: React.FC<OverviewDAOHeaderProps> = ({
       </div>
 
       <div className="tablet:flex items-end tablet:space-x-6">
-        <div>
+        <div className="w-full">
           <h1 className="font-bold text-ui-800 ft-text-3xl">
             {t('createDAO.overview.title')}
           </h1>
