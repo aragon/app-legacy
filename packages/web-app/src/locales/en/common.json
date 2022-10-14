@@ -675,6 +675,17 @@
       "title": "Build faster",
       "description": "Build something something on open-source infrastructure with governance plugins.",
       "actionLabel": "Coming soon"
+    },
+    "404": {
+      "titleLine1": "Oh no,",
+      "titleLine2": "you found a wormhole in the DAO Space!",
+      "backToExplore": "Back to Explore",
+      "findOut": "Find out about the next generation DAO platform.",
+      "findOutActionLabel": "Aragon App",
+      "create": "Create Decentralized Autonomous Organization.",
+      "createActionLabel": "Create a DAO",
+      "learn": "Explore and learn through our “How-to Guides”, DAO Education",
+      "learnActionLabel": "Learn about DAOs"
     }
   },
   "settings": {
