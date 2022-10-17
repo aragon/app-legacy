@@ -233,7 +233,7 @@ const ConfigureCommunity: React.FC = () => {
         />
 
         <Controller
-          name="support"
+          name="minimumApproval"
           control={control}
           defaultValue="50"
           rules={{

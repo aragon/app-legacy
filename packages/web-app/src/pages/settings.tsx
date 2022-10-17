@@ -199,7 +199,7 @@ const Settings: React.FC = () => {
           badgeLabel={t('labels.changeable')}
         >
           <Dl>
-            <Dt>{t('labels.minimumApproval')}</Dt>
+            <Dt>{t('labels.minimumParticipation')}</Dt>
             {isErc20Plugin ? (
               <Dd>
                 {Math.round(daoSettings.minTurnout * 100)}% (
@@ -210,7 +210,7 @@ const Settings: React.FC = () => {
             )}
           </Dl>
           <Dl>
-            <Dt>{t('labels.minimumSupport')}</Dt>
+            <Dt>{t('labels.minimumApproval')}</Dt>
             <Dd>{Math.round(daoSettings?.minSupport * 100)}%</Dd>
           </Dl>
           <Dl>

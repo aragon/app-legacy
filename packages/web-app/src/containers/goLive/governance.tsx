@@ -66,7 +66,7 @@ const Governance: React.FC = () => {
             </Dl>
           )}
           <Dl>
-            <Dt>{t('labels.minimumSupport')}</Dt>
+            <Dt>{t('labels.minimumApproval')}</Dt>
             <Dd>{support}%</Dd>
           </Dl>
           <Dl>
