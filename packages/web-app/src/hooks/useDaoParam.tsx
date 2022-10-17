@@ -26,7 +26,7 @@ export function useDaoParam() {
     loading: isLoading,
   } = useQuery(DAO_BY_ADDRESS, {
     variables: {id: dao},
-    client: client['goerli']!,
+    client: client[network]!,
     fetchPolicy: 'no-cache',
   });
   const navigate = useNavigate();
