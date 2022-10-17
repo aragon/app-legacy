@@ -5,7 +5,7 @@ import {useDaoMetadata} from './useDaoMetadata';
 
 export function useDaoActions(dao: string): HookData<ActionParameter[]> {
   const {data, error, isLoading} = useDaoMetadata(dao);
-  const whitelist = data?.packages[0].pkg.__typename === 'WhitelistPackage';
+  const whitelist = data?.packages[0].pkg.__typename === 'AllowlistPackage';
 
   const {t} = useTranslation();
 

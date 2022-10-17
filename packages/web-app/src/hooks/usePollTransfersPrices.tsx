@@ -1,4 +1,5 @@
 import {useApolloClient} from '@apollo/client';
+import {TransferType} from '@aragon/sdk-client';
 
 import {useNetwork} from 'context/network';
 import {constants} from 'ethers';
@@ -116,7 +117,7 @@ function mapToDaoTransfers(
     };
 
     // map differences
-    if (transfer.type === 'Deposit') {
+    if (transfer.type === TransferType.DEPOSIT) {
       return {
         ...mappedTransfer,
         title: transfer.reference || i18n.t('labels.deposit'),

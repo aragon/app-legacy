@@ -98,7 +98,7 @@ const Community: React.FC = () => {
           tag={tag}
           icon={icon}
           crumbs={breadcrumbs}
-          title={`${totalMemberCount} ${t('labels.tokenHolders')}`}
+          title={`${totalMemberCount} ${t('labels.members')}`}
           onClick={handlePrimaryClick}
           {...(walletBased
             ? {

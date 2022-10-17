@@ -1,5 +1,5 @@
 import {useReactiveVar} from '@apollo/client';
-import {Transfer, TransferSortBy} from '@aragon/sdk-client';
+import {Transfer, TransferSortBy, TransferType} from '@aragon/sdk-client';
 import {Address} from '@aragon/ui-components/dist/utils/addresses';
 import {useEffect, useState} from 'react';
 
@@ -30,7 +30,9 @@ export const useDaoTransfers = (
         });
 
         if (transfers) {
-          const deposits = transfers.filter(t => t.type === 'Deposit');
+          const deposits = transfers.filter(
+            t => t.type === TransferType.DEPOSIT
+          );
 
           for (let i = 0; i < pendingDepositsTxs.length; ) {
             const tx = pendingDepositsTxs[i];

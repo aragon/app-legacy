@@ -57,6 +57,8 @@ const CreateProposalProvider: React.FC<Props> = ({
   const [creationProcessState, setCreationProcessState] =
     useState<TransactionState>(TransactionState.WAITING);
 
+  console.log('daoDetails', daoDetails);
+
   const shouldPoll = useMemo(
     () =>
       creationProcessState === TransactionState.WAITING &&
