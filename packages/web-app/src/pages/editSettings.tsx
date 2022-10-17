@@ -38,6 +38,7 @@ const EditSettings: React.FC = () => {
   const {network} = useNetwork();
   const {isMobile} = useScreen();
   const {breadcrumbs, icon, tag} = useMappedBreadcrumbs();
+  const {data: daoId, isLoading: paramAreLoading} = useDaoParam();
 
   const {setValue, control} = useFormContext();
   const {fields, replace} = useFieldArray({
@@ -46,10 +47,10 @@ const EditSettings: React.FC = () => {
   });
   const {errors} = useFormState({control});
 
-  const {data: daoId, isLoading: paramAreLoading} = useDaoParam();
   const {data: daoDetails, isLoading: detailsAreLoading} = useDaoDetails(
     daoId!
   );
+
   const {data: daoSettings, isLoading: settingsAreLoading} = usePluginSettings(
     daoDetails?.plugins[0].instanceAddress as string,
     daoDetails?.plugins[0].id as PluginTypes
@@ -63,11 +64,9 @@ const EditSettings: React.FC = () => {
     daoLogo,
     minimumApproval,
     minimumParticipation,
-    support,
     durationDays,
     durationHours,
     durationMinutes,
-    membership,
     resourceLinks,
   ] = useWatch({
     name: [
@@ -76,11 +75,9 @@ const EditSettings: React.FC = () => {
       'daoLogo',
       'minimumApproval',
       'minimumParticipation',
-      'support',
       'durationDays',
       'durationHours',
       'durationMinutes',
-      'membership',
       'daoLinks',
     ],
     control,
@@ -149,9 +146,8 @@ const EditSettings: React.FC = () => {
   // governance
   // TODO: We need to force forms to only use one type, Number or string
   const isGovernanceChanged =
-    Number(membership === 'token' ? minimumApproval : minimumParticipation) !==
-      Math.round(daoSettings.minTurnout * 100) ||
-    Number(support) !== Math.round(daoSettings.minSupport * 100) ||
+    Number(minimumParticipation) !== Math.round(daoSettings.minTurnout * 100) ||
+    Number(minimumApproval) !== Math.round(daoSettings.minSupport * 100) ||
     Number(durationDays) !== days ||
     Number(durationHours) !== hours ||
     Number(durationMinutes) !== minutes;
@@ -186,14 +182,8 @@ const EditSettings: React.FC = () => {
   ]);
 
   const setCurrentGovernance = useCallback(() => {
-    if (membership === 'token')
-      setValue('minimumApproval', Math.round(daoSettings.minTurnout * 100));
-    else
-      setValue(
-        'minimumParticipation',
-        Math.round(daoSettings.minTurnout * 100)
-      );
-    setValue('support', Math.round(daoSettings.minSupport * 100));
+    setValue('minimumApproval', Math.round(daoSettings.minSupport * 100));
+    setValue('minimumParticipation', Math.round(daoSettings.minTurnout * 100));
     setValue('durationDays', days);
     setValue('durationHours', hours);
     setValue('durationMinutes', minutes);
@@ -208,7 +198,6 @@ const EditSettings: React.FC = () => {
     daoSettings.minTurnout,
     days,
     hours,
-    membership,
     minutes,
     setValue,
   ]);

@@ -63,8 +63,8 @@ const CompareSettings: React.FC = () => {
       name: daoDetails?.metadata.name,
       summary: daoDetails?.metadata.description,
       links: daoDetails?.metadata.links,
-      minParticipation: daoSettings,
-      approvalThreshold: daoSettings,
+      minParticipation: daoSettings.minTurnout * 100,
+      approvalThreshold: daoSettings.minSupport * 100,
       days: duration.days,
       hours: duration.hours,
       minutes: duration.minutes,
@@ -134,7 +134,7 @@ const CompareSettings: React.FC = () => {
         </Dl>
         <Dl>
           <Dt>{t('labels.minimumSupport')}</Dt>
-          <Dd>{'displayedInfo.approvalThreshold'}%</Dd>
+          <Dd>{displayedInfo.approvalThreshold}%</Dd>
         </Dl>
         <Dl>
           <Dt>{t('labels.minimumDuration')}</Dt>
