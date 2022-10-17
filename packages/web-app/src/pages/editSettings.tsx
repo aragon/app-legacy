@@ -139,51 +139,22 @@ const EditSettings: React.FC = () => {
   ]);
 
   // metadata setting changes
-  const isMetadataChanged = useMemo(
-    () =>
-      daoDetails?.metadata.name
-        ? daoName !== daoDetails.metadata.name ||
-          daoSummary !== daoDetails.metadata.description ||
-          daoLogo !== daoDetails.metadata.avatar ||
-          !resourceLinksAreEqual
-        : false,
-    [
-      daoDetails?.metadata.avatar,
-      daoDetails?.metadata.description,
-      daoDetails?.metadata.name,
-      daoLogo,
-      daoName,
-      daoSummary,
-      resourceLinksAreEqual,
-    ]
-  );
+  const isMetadataChanged =
+    daoDetails?.metadata.name &&
+    (daoName !== daoDetails.metadata.name ||
+      daoSummary !== daoDetails.metadata.description ||
+      daoLogo !== daoDetails.metadata.avatar ||
+      !resourceLinksAreEqual);
 
   // governance
-  const isGovernanceChanged = useMemo(() => {
-    // TODO: We need to force forms to only use one type, Number or string
-    return (
-      Number(
-        membership === 'token' ? minimumApproval : minimumParticipation
-      ) !== Math.round(daoSettings.minTurnout * 100) ||
-      Number(support) !== Math.round(daoSettings.minSupport * 100) ||
-      Number(durationDays) !== days ||
-      Number(durationHours) !== hours ||
-      Number(durationMinutes) !== minutes
-    );
-  }, [
-    daoSettings.minSupport,
-    daoSettings.minTurnout,
-    days,
-    durationDays,
-    durationHours,
-    durationMinutes,
-    hours,
-    membership,
-    minimumApproval,
-    minimumParticipation,
-    minutes,
-    support,
-  ]);
+  // TODO: We need to force forms to only use one type, Number or string
+  const isGovernanceChanged =
+    Number(membership === 'token' ? minimumApproval : minimumParticipation) !==
+      Math.round(daoSettings.minTurnout * 100) ||
+    Number(support) !== Math.round(daoSettings.minSupport * 100) ||
+    Number(durationDays) !== days ||
+    Number(durationHours) !== hours ||
+    Number(durationMinutes) !== minutes;
 
   const setCurrentMetadata = useCallback(() => {
     setValue('daoName', daoDetails?.metadata.name);
