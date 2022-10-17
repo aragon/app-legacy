@@ -25,7 +25,7 @@ export function useDaoParam() {
     error,
     loading: isLoading,
   } = useQuery(DAO_BY_ADDRESS, {
-    variables: {id: '0x1cab6f621a41438639e1f1b51c274ae65d41b8cb'},
+    variables: {id: dao},
     client: client['goerli']!,
     fetchPolicy: 'no-cache',
   });
