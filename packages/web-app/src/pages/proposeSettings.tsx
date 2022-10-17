@@ -34,13 +34,17 @@ import {EditSettings, Governance} from 'utils/paths';
 
 const ProposeSettings: React.FC = () => {
   const {t} = useTranslation();
-  const {data: daoId} = useDaoParam();
+  const {data: daoId, isLoading: daoParamLoading} = useDaoParam();
   const {network} = useNetwork();
   const [showTxModal, setShowTxModal] = useState(false);
 
   const enableTxModal = () => {
     setShowTxModal(true);
   };
+
+  if (daoParamLoading) {
+    return <Loading />;
+  }
 
   return (
     <ProposeSettingWrapper
