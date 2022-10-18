@@ -145,10 +145,6 @@ const Settings: React.FC = () => {
         >
           <Dl>
             <Dt>{t('labels.review.eligibleVoters')}</Dt>
-            <Dd>{t('createDAO.step3.tokenMembership')}</Dd>
-          </Dl>
-          <Dl>
-            <Dt>{t('votingTerminal.token')}</Dt>
             <Dd>
               {isErc20Plugin
                 ? t('createDAO.step3.tokenMembership')
