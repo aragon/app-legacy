@@ -23,7 +23,7 @@ const CompareSettings: React.FC = () => {
   const {t} = useTranslation();
   const navigate = useNavigate();
   const {network} = useNetwork();
-  const {data: daoId} = useDaoParam();
+  const {data: daoId, isLoading: areParamsLoading} = useDaoParam();
   const {getValues} = useFormContext();
 
   const {data: daoDetails, isLoading: areDetailsLoading} = useDaoDetails(
@@ -41,7 +41,7 @@ const CompareSettings: React.FC = () => {
     setSelectedButton(prev => (prev === 'new' ? 'old' : 'new'));
   };
 
-  if (areDetailsLoading || areDetailsLoading || areSettingsLoading) {
+  if (areParamsLoading || areDetailsLoading || areSettingsLoading) {
     return <Loading />;
   }
 

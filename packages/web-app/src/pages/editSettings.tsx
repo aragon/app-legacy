@@ -38,7 +38,7 @@ const EditSettings: React.FC = () => {
   const {network} = useNetwork();
   const {isMobile} = useScreen();
   const {breadcrumbs, icon, tag} = useMappedBreadcrumbs();
-  const {data: daoId, isLoading: paramAreLoading} = useDaoParam();
+  const {data: daoId, isLoading: paramsAreLoading} = useDaoParam();
 
   const {setValue, control} = useFormContext();
   const {fields, replace} = useFieldArray({
@@ -207,7 +207,7 @@ const EditSettings: React.FC = () => {
     setCurrentGovernance();
   }, [setCurrentGovernance, setCurrentMetadata]);
 
-  if (paramAreLoading || detailsAreLoading || settingsAreLoading) {
+  if (paramsAreLoading || detailsAreLoading || settingsAreLoading) {
     return <Loading />;
   }
 
