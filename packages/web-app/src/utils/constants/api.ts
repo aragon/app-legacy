@@ -6,6 +6,8 @@ export const SUBGRAPH_API_URL: SubgraphNetworkUrl = {
   ethereum: undefined,
   rinkeby:
     'https://api.thegraph.com/subgraphs/name/aragon/aragon-zaragoza-rinkeby',
+  goerli:
+    'https://api.thegraph.com/subgraphs/name/aragon/aragon-zaragoza-goerli',
   polygon: undefined,
   mumbai:
     'https://api.thegraph.com/subgraphs/name/aragon/aragon-zaragoza-mumbai',
@@ -16,7 +18,11 @@ export const SUBGRAPH_API_URL: SubgraphNetworkUrl = {
 
 export const BASE_URL = 'https://api.coingecko.com/api/v3';
 export const DEFAULT_CURRENCY = 'usd';
-export const INFURA_PROJECT_ID = '7a03fcb37be7479da06f92c5117afd47';
+
+// NOTE: These are dummy endpoints and API keys used as POC. They should be
+// replaced by env var secrets in an upcoming PR.
+export const ALCHEMY_API_KEY = 'XquT7N4WMWBTFsNWB7B_Ef-0Ayz9051v';
+export const INFURA_PROJECT_ID = '000bb62a6d1f4b478f2910ab8118bad1';
 export const INFURA_PROJECT_ID_ARB = '92aa62d2bb5449cfafe04b83ca8636f1';
 
 // Coingecko Api specific asset platform keys
@@ -25,6 +31,7 @@ export const ASSET_PLATFORMS: Record<SupportedNetworks, string | null> = {
   'arbitrum-test': null,
   ethereum: 'ethereum',
   rinkeby: null,
+  goerli: null,
   polygon: 'polygon-pos',
   mumbai: null,
 };

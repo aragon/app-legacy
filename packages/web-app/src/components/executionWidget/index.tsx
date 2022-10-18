@@ -24,6 +24,7 @@ type ExecutionWidgetProps = {
   actions?: Array<Action | undefined>;
   status?: ExecutionStatus;
   onAddAction?: () => void;
+  onExecuteClicked?: () => void;
 };
 
 export const ExecutionWidget: React.FC<ExecutionWidgetProps> = ({
@@ -31,6 +32,7 @@ export const ExecutionWidget: React.FC<ExecutionWidgetProps> = ({
   status,
   txhash,
   onAddAction,
+  onExecuteClicked,
 }) => {
   const {t} = useTranslation();
 
@@ -64,31 +66,44 @@ export const ExecutionWidget: React.FC<ExecutionWidgetProps> = ({
                 );
             })}
           </Content>
-          <WidgetFooter status={status} txhash={txhash} />
+          <WidgetFooter
+            status={status}
+            txhash={txhash}
+            onExecuteClicked={onExecuteClicked}
+          />
         </>
       )}
     </Card>
   );
 };
 
-type FooterProps = Pick<ExecutionWidgetProps, 'status' | 'txhash'>;
+type FooterProps = Pick<
+  ExecutionWidgetProps,
+  'status' | 'txhash' | 'onExecuteClicked'
+>;
 
-const WidgetFooter: React.FC<FooterProps> = ({status = 'default'}) => {
+const WidgetFooter: React.FC<FooterProps> = ({
+  status = 'default',
+  onExecuteClicked,
+}) => {
   const {t} = useTranslation();
   switch (status) {
-    case 'defeated':
-      return (
-        <AlertInline
-          label={t('governance.executionCard.status.defeated')}
-          mode={'warning'}
-        />
-      );
-    case 'executable':
+    // TODO: Commented this piece of code to enable testing. Will be reverted before merging the PR
+    // case 'defeated':
+    //   return (
+    //     <AlertInline
+    //       label={t('governance.executionCard.status.defeated')}
+    //       mode={'warning'}
+    //     />
+    //   );
+    // case 'executable':
+    case 'defeated' as 'executable':
       return (
         <Footer>
           <ButtonText
             label={t('governance.proposals.buttons.execute')}
             size="large"
+            onClick={onExecuteClicked}
           />
           <AlertInline label={t('governance.executionCard.status.succeeded')} />
         </Footer>
@@ -99,6 +114,7 @@ const WidgetFooter: React.FC<FooterProps> = ({status = 'default'}) => {
           <ButtonText
             label={t('governance.proposals.buttons.execute')}
             size="large"
+            onClick={onExecuteClicked}
           />
           <ButtonText
             label={t('governance.executionCard.seeTransaction')}

@@ -114,7 +114,7 @@ const NewDeposit: React.FC = () => {
           wizardProcessName={t('newDeposit.depositAssets')}
         >
           <Step
-            wizardTitle={t('newDeposit.configureDeposit')}
+            wizardTitle={t('newDeposit.depositAssets')}
             wizardDescription={t('newDeposit.configureDepositSubtitle')}
             isNextButtonDisabled={!formMethods.formState.isValid}
             onNextButtonClicked={next => {
@@ -130,7 +130,7 @@ const NewDeposit: React.FC = () => {
             <DepositForm />
           </Step>
           <Step
-            wizardTitle={t('newDeposit.reviewTransfer')}
+            wizardTitle={t('newDeposit.reviewDeposit')}
             wizardDescription={t('newDeposit.reviewTransferSubtitle')}
             nextButtonLabel={t('labels.submitDeposit')}
             customFooter={<CustomFooter />}

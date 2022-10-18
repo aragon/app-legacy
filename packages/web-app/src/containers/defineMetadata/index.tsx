@@ -5,14 +5,14 @@ import {
   TextareaSimple,
   TextInput,
 } from '@aragon/ui-components';
-import styled from 'styled-components';
-import {useTranslation} from 'react-i18next';
 import React, {useCallback} from 'react';
 import {Controller, FieldError, useFormContext} from 'react-hook-form';
+import {useTranslation} from 'react-i18next';
+import styled from 'styled-components';
 
 import AddLinks from 'components/addLinks';
-import {isOnlyWhitespace} from 'utils/library';
 import {URL_PATTERN} from 'utils/constants';
+import {isOnlyWhitespace} from 'utils/library';
 
 const DAO_LOGO = {
   maxDimension: 2400,
@@ -20,7 +20,7 @@ const DAO_LOGO = {
   maxFileSize: 3000000,
 };
 
-const DefineMetadata: React.FC = () => {
+const DefineMetadata: React.FC<{bgWhite?: boolean}> = ({bgWhite = false}) => {
   const {t} = useTranslation();
   const {control, setError} = useFormContext();
 
@@ -131,7 +131,7 @@ const DefineMetadata: React.FC = () => {
       {/* Summary */}
       <FormItem>
         <Label
-          label={t('labels.summary')}
+          label={t('labels.description')}
           helpText={t('createDAO.step2.descriptionSubtitle')}
         />
         <Controller
@@ -163,7 +163,7 @@ const DefineMetadata: React.FC = () => {
           helpText={t('createDAO.step2.linksSubtitle')}
           isOptional
         />
-        <AddLinks />
+        <AddLinks arrayName="daoLinks" bgWhite={bgWhite} />
       </FormItem>
     </>
   );

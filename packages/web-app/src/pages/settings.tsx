@@ -1,42 +1,44 @@
-import React from 'react';
-import {withTransaction} from '@elastic/apm-rum-react';
 import {
+  AlertInline,
   AvatarDao,
   Badge,
   ButtonText,
   IconGovernance,
   Link,
   ListItemLink,
+  Wizard,
 } from '@aragon/ui-components';
+import {withTransaction} from '@elastic/apm-rum-react';
+import React, {useEffect, useState} from 'react';
 import {useTranslation} from 'react-i18next';
-import {
-  generatePath,
-  useParams,
-  Link as RouterLink,
-  useNavigate,
-} from 'react-router-dom';
+import {generatePath, useNavigate, useParams} from 'react-router-dom';
+import styled from 'styled-components';
 
-import {PageWrapper} from 'components/wrappers';
-import {DescriptionListContainer, Dl, Dt, Dd} from 'components/descriptionList';
-import {useGlobalModalContext} from 'context/globalModals';
-import useScreen from 'hooks/useScreen';
-import {useDaoParam} from 'hooks/useDaoParam';
+import {Dd, DescriptionListContainer, Dl, Dt} from 'components/descriptionList';
 import {Loading} from 'components/temporary';
-import {EditSettings} from 'utils/paths';
+import {PageWrapper} from 'components/wrappers';
 import {useNetwork} from 'context/network';
+import {useProviders} from 'context/providers';
 import {useDaoDetails} from 'hooks/useDaoDetails';
-import {usePluginSettings} from 'hooks/usePluginSettings';
+import {useDaoMembers} from 'hooks/useDaoMembers';
+import {useDaoParam} from 'hooks/useDaoParam';
+import {useDaoToken} from 'hooks/useDaoToken';
 import {PluginTypes} from 'hooks/usePluginClient';
+import {usePluginSettings} from 'hooks/usePluginSettings';
+import useScreen from 'hooks/useScreen';
+import {CHAIN_METADATA} from 'utils/constants';
 import {getDHMFromSeconds} from 'utils/date';
+import {formatUnits} from 'utils/library';
+import {Community, EditSettings} from 'utils/paths';
+import {getTokenInfo} from 'utils/tokens';
 
 const Settings: React.FC = () => {
   const {data: daoId, isLoading} = useDaoParam();
   const {t} = useTranslation();
-  const {open} = useGlobalModalContext();
-  const {isMobile} = useScreen();
   const {network} = useNetwork();
-  const {dao} = useParams();
   const navigate = useNavigate();
+  const {infura} = useProviders();
+
   const {data: daoDetails, isLoading: detailsAreLoading} = useDaoDetails(
     daoId!
   );
@@ -45,24 +47,54 @@ const Settings: React.FC = () => {
     daoDetails?.plugins[0].id as PluginTypes
   );
 
-  if (isLoading || detailsAreLoading || settingsAreLoading) {
+  const {data: daoMembers, isLoading: MembersAreLoading} = useDaoMembers(
+    daoDetails?.plugins?.[0]?.instanceAddress || '',
+    (daoDetails?.plugins?.[0]?.id as PluginTypes) || undefined
+  );
+
+  const {data: daoToken, isLoading: tokensAreLoading} = useDaoToken(
+    daoDetails?.plugins?.[0]?.instanceAddress || ''
+  );
+
+  const [tokenSupply, setTokenSupply] = useState(0);
+  const nativeCurrency = CHAIN_METADATA[network].nativeCurrency;
+
+  useEffect(() => {
+    // Fetching necessary info about the token.
+    if (daoToken?.address) {
+      getTokenInfo(daoToken.address, infura, nativeCurrency)
+        .then((r: Awaited<ReturnType<typeof getTokenInfo>>) => {
+          const formattedNumber = parseFloat(
+            formatUnits(r.totalSupply, r.decimals)
+          );
+          setTokenSupply(formattedNumber);
+        })
+        .catch(e =>
+          console.error('Error happened when fetching token infos: ', e)
+        );
+    }
+  }, [daoToken.address, nativeCurrency, infura, network]);
+
+  if (
+    isLoading ||
+    detailsAreLoading ||
+    settingsAreLoading ||
+    MembersAreLoading ||
+    tokensAreLoading
+  ) {
     return <Loading />;
   }
 
   const {days, hours, minutes} = getDHMFromSeconds(daoSettings.minDuration);
+  const isErc20Plugin =
+    (daoDetails?.plugins?.[0]?.id as PluginTypes) === 'erc20voting.dao.eth';
 
   return (
-    <PageWrapper
-      title={t('labels.daoSettings')}
-      buttonLabel={t('settings.proposeSettings')}
-      showButton={isMobile}
-      buttonIcon={<IconGovernance />}
-      onClick={() => navigate(generatePath(EditSettings, {network, dao}))}
-    >
+    <SettingsWrapper>
       <div className="mt-3 desktop:mt-8 space-y-5">
         <DescriptionListContainer
           title={t('labels.review.blockchain')}
-          notChangeableBadge
+          badgeLabel={t('labels.notChangeable')}
         >
           <Dl>
             <Dt>{t('labels.review.network')}</Dt>
@@ -74,7 +106,10 @@ const Settings: React.FC = () => {
           </Dl>
         </DescriptionListContainer>
 
-        <DescriptionListContainer title={t('labels.review.daoMetadata')}>
+        <DescriptionListContainer
+          title={t('labels.review.daoMetadata')}
+          badgeLabel={t('labels.changeableVote')}
+        >
           <Dl>
             <Dt>{t('labels.logo')}</Dt>
             <Dd>
@@ -105,49 +140,74 @@ const Settings: React.FC = () => {
         </DescriptionListContainer>
 
         <DescriptionListContainer
-          title={t('labels.review.community')}
-          notChangeableBadge
+          title={t('labels.review.voters')}
+          badgeLabel={t('labels.notChangeable')}
         >
           <Dl>
-            <Dt>{t('labels.review.eligibleMembers')}</Dt>
+            <Dt>{t('labels.review.eligibleVoters')}</Dt>
             <Dd>{t('createDAO.step3.tokenMembership')}</Dd>
           </Dl>
           <Dl>
             <Dt>{t('votingTerminal.token')}</Dt>
             <Dd>
-              <div className="flex items-center space-x-1.5">
-                <p>{t('createDAO.step3.tokenName')}</p>
-                <p>TKN</p>
-                <Badge label="New" colorScheme="info" />
-              </div>
+              {isErc20Plugin
+                ? t('createDAO.step3.tokenMembership')
+                : t('createDAO.step3.walletMemberShip')}
             </Dd>
           </Dl>
-          <Dl>
-            <Dt>{t('labels.supply')}</Dt>
-            <Dd>
-              <div className="flex items-center space-x-1.5">
-                <p>1,000 TKN</p>
-                <Badge label="Mintable" />
-              </div>
-            </Dd>
-          </Dl>
+          {isErc20Plugin && (
+            <>
+              <Dl>
+                <Dt>{t('votingTerminal.token')}</Dt>
+                <Dd>
+                  <div className="flex items-center space-x-1.5">
+                    <p>{daoToken.name}</p>
+                    <p>{daoToken.symbol}</p>
+                  </div>
+                </Dd>
+              </Dl>
+              <Dl>
+                <Dt>{t('labels.supply')}</Dt>
+                <Dd>
+                  <div className="flex items-center space-x-1.5">
+                    <p>
+                      {tokenSupply} {daoToken.symbol}
+                    </p>
+                    <Badge label="Mintable" />
+                  </div>
+                </Dd>
+              </Dl>
+            </>
+          )}
           <Dl>
             <Dt>{t('labels.review.distribution')}</Dt>
             <Dd>
               <Link
                 label={t('createDAO.review.distributionLink', {
-                  count: 10,
+                  count: daoMembers.members.length,
                 })}
-                onClick={() => open('addresses')}
+                onClick={() =>
+                  navigate(generatePath(Community, {network, dao: daoId}))
+                }
               />
             </Dd>
           </Dl>
         </DescriptionListContainer>
 
-        <DescriptionListContainer title={t('labels.review.governance')}>
+        <DescriptionListContainer
+          title={t('labels.review.governance')}
+          badgeLabel={t('labels.changeable')}
+        >
           <Dl>
             <Dt>{t('labels.minimumApproval')}</Dt>
-            <Dd>{Math.round(daoSettings.minTurnout * 100)}% (150 TKN)</Dd>
+            {isErc20Plugin ? (
+              <Dd>
+                {Math.round(daoSettings.minTurnout * 100)}% (
+                {daoSettings.minTurnout * tokenSupply} {daoToken.symbol})
+              </Dd>
+            ) : (
+              <Dd>{Math.round(daoSettings.minTurnout * 100)}%</Dd>
+            )}
           </Dl>
           <Dl>
             <Dt>{t('labels.minimumSupport')}</Dt>
@@ -164,18 +224,59 @@ const Settings: React.FC = () => {
             </Dd>
           </Dl>
         </DescriptionListContainer>
-
-        <RouterLink to={generatePath(EditSettings, {network, dao})}>
-          <ButtonText
-            label={t('settings.proposeSettings')}
-            className="mx-auto mt-5 w-full tablet:w-max"
-            size="large"
-            iconLeft={<IconGovernance />}
-          />
-        </RouterLink>
       </div>
-    </PageWrapper>
+
+      <div className="space-y-2">
+        <ButtonText
+          label={t('settings.edit')}
+          className="mt-5 desktop:mt-8 w-full tablet:w-max"
+          size="large"
+          iconLeft={<IconGovernance />}
+          onClick={() => navigate('edit')}
+        />
+        <AlertInline label={t('settings.proposeSettingsInfo')} />
+      </div>
+    </SettingsWrapper>
+  );
+};
+
+const SettingsWrapper: React.FC = ({children}) => {
+  const {t} = useTranslation();
+  const {isMobile} = useScreen();
+  const navigate = useNavigate();
+  const {dao: daoId} = useParams();
+  const {network} = useNetwork();
+
+  if (isMobile) {
+    return (
+      <PageWrapper
+        title={t('labels.daoSettings')}
+        buttonLabel={t('settings.proposeSettings')}
+        showButton={isMobile}
+        buttonIcon={<IconGovernance />}
+        onClick={() => navigate(generatePath(EditSettings, {network, daoId}))}
+      >
+        {children}
+      </PageWrapper>
+    );
+  }
+
+  return (
+    <Layout>
+      <Wizard
+        title={t('labels.daoSettings')}
+        nav={null}
+        description={null}
+        includeStepper={false}
+      />
+      <div className="mx-auto desktop:w-3/5">{children}</div>
+    </Layout>
   );
 };
 
 export default withTransaction('Settings', 'component')(Settings);
+
+const Layout = styled.div.attrs({
+  className:
+    'col-span-full desktop:col-start-2 desktop:col-end-12 font-medium text-ui-600',
+})``;

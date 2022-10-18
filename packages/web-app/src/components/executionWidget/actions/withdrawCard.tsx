@@ -14,7 +14,7 @@ export const WithdrawCard: React.FC<{
   return (
     <AccordionMethod
       type="execution-widget"
-      methodName={t('AddActionModal.withdrawAssets')}
+      methodName={t('TransferModal.item2Title')}
       smartContractName={t('labels.aragonCore')}
       verified
       methodDescription={t('AddActionModal.withdrawAssetsActionSubtitle')}

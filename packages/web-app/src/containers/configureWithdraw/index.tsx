@@ -280,7 +280,7 @@ const ConfigureWithdrawForm: React.FC<ConfigureWithdrawFormProps> = ({
       {/* Recipient (to) */}
       <FormItem>
         <Label
-          label={t('labels.to')}
+          label={t('labels.recipient')}
           helpText={t('newWithdraw.configureWithdraw.toSubtitle')}
         />
         <Controller

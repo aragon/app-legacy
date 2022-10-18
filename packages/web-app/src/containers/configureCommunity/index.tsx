@@ -1,7 +1,7 @@
 import React, {useCallback, useMemo} from 'react';
 import {AlertInline, Label, NumberInput} from '@aragon/ui-components';
 import styled from 'styled-components';
-import {useTranslation} from 'react-i18next';
+import {Trans, useTranslation} from 'react-i18next';
 import {Controller, useFormContext, useWatch} from 'react-hook-form';
 import {HOURS_IN_DAY, MINS_IN_DAY, MINS_IN_HOUR} from 'utils/constants';
 
@@ -105,7 +105,21 @@ const ConfigureCommunity: React.FC = () => {
         <FormItem>
           <Label
             label={t('labels.minimumParticipation')}
-            helpText={t('createDAO.step4.minimumParticipationSubtitle')}
+            helpText={
+              (
+                <Trans i18nKey={'createDAO.step4.minimumParticipationSubtitle'}>
+                  This is the percentage of voters who need to cast a vote for a
+                  vote to be valid. For example, if you set quorum at 10% and
+                  only 9% of tokens in the network are cast, the vote is not
+                  valid and does not execute.{' '}
+                  <strong>
+                    Note: your DAO treasury does not count as a voter, so if all
+                    your tokens are in your DAO treasury, set this rate at 0%
+                    for now and you can change it later.
+                  </strong>
+                </Trans>
+              ) as unknown as string
+            }
           />
           <Controller
             name="minimumApproval"
@@ -150,7 +164,21 @@ const ConfigureCommunity: React.FC = () => {
         <FormItem>
           <Label
             label={t('labels.minimumParticipation')}
-            helpText={t('createDAO.step4.minimumParticipationSubtitle')}
+            helpText={
+              (
+                <Trans i18nKey={'createDAO.step4.minimumParticipationSubtitle'}>
+                  This is the percentage of voters who need to cast a vote for a
+                  vote to be valid. For example, if you set quorum at 10% and
+                  only 9% of tokens in the network are cast, the vote is not
+                  valid and does not execute.{' '}
+                  <strong>
+                    Note: your DAO treasury does not count as a voter, so if all
+                    your tokens are in your DAO treasury, set this rate at 0%
+                    for now and you can change it later.
+                  </strong>
+                </Trans>
+              ) as unknown as string
+            }
           />
           <Controller
             name="minimumParticipation"

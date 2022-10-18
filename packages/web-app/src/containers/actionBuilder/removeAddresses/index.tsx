@@ -126,7 +126,6 @@ const RemoveAddresses: React.FC<RemoveAddressesProps> = ({
               mode="inline"
               object="wallet"
               title={t('labels.whitelistWallets.noWallets')}
-              description={t('labels.whitelistWallets.removeWalletsSubtitle')}
               primaryButton={{
                 label: t('labels.selectWallet'),
                 onClick: () => open('manageWallet'),

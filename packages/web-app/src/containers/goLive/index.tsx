@@ -64,10 +64,7 @@ const GoLive: React.FC = () => {
       <DaoMetadata />
       <Community />
       <Governance />
-      <AlertCard
-        title={t('createDAO.review.daoUpdates')}
-        helpText={t('createDAO.review.daoUpdatesHelpText')}
-      />
+      <AlertCard title={t('createDAO.review.daoUpdates')} />
     </Container>
   );
 };
@@ -107,7 +104,7 @@ export const GoLiveFooter: React.FC = () => {
         <ButtonText
           size="large"
           iconRight={<IconChevronRight />}
-          label={t('createDAO.review.button')}
+          label={t('createDAO.review.title')}
           onClick={publishDao}
           disabled={IsButtonDisabled()}
         />

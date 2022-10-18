@@ -11,6 +11,7 @@ import Carousel from 'containers/carousel';
 import {DaoExplorer} from 'containers/daoExplorer';
 import Hero from 'containers/hero';
 import {Dashboard} from 'utils/paths';
+import {i18n} from '../../i18n.config';
 
 const Explore: React.FC = () => {
   const navigate = useNavigate();
@@ -35,43 +36,31 @@ const Explore: React.FC = () => {
           <TemporarySection purpose="It allows you to navigate to a mock dao to test daos URLs.">
             <ActionListItem
               title={'ERC20Voting DAO'}
-              subtitle={'Rinkeby Testnet'}
+              subtitle={'Görli Testnet'}
               icon={<IconExpand />}
               background={'white'}
               onClick={() => {
                 navigate(
                   generatePath(Dashboard, {
-                    network: 'rinkeby',
-                    dao: '0xac01076d6ea006206aaa5b1295ac1b65913ec79c',
+                    network: 'goerli',
+                    dao: '0x1cab6f621a41438639e1f1b51c274ae65d41b8cb',
                   })
                 );
               }}
             />
             <ActionListItem
               title={'WhiteListVoting DAO'}
-              subtitle={'Rinkeby Testnet'}
+              subtitle={'Görli Testnet'}
               icon={<IconExpand />}
               background={'white'}
               onClick={() => {
                 navigate(
                   generatePath(Dashboard, {
-                    network: 'rinkeby',
-                    dao: '0x680533bff2e194e52df204685d9aed5b874c4f63',
+                    network: 'goerli',
+                    dao: '0x6e01ba3a2b7e9b494db30bcb61853d990b3763f3',
                   })
                 );
               }}
-            />
-
-            <ActionListItem
-              title={'Non-existing dao: 0x1234'}
-              subtitle={'Rinkeby testnet'}
-              icon={<IconExpand />}
-              background={'white'}
-              onClick={() =>
-                navigate(
-                  generatePath(Dashboard, {network: 'rinkeby', dao: '0x1234'})
-                )
-              }
             />
           </TemporarySection>
         </ContentWrapper>
@@ -112,19 +101,19 @@ type Stats = {
 };
 const statistics: Stats[] = [
   {
-    statKey: 'DAOs Created',
+    statKey: i18n.t('explore.statistics.daosCreated'),
     statValue: '5,126',
   },
   {
-    statKey: 'Members in PbA',
+    statKey: i18n.t('explore.statistics.aragonMembers'),
     statValue: '65,372',
   },
   {
-    statKey: 'Active Proposals',
+    statKey: i18n.t('explore.statistics.activeProposals'),
     statValue: '1,531',
   },
   {
-    statKey: 'in Treasury',
+    statKey: i18n.t('explore.statistics.securedByAragon'),
     statValue: '$19M+',
   },
 ];

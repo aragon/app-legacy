@@ -176,6 +176,7 @@ module.exports = {
       textColor: ['active', 'disabled'],
       borderColor: ['active', 'disabled'],
       borderWidth: ['active', 'disabled'],
+      ringColor: ['focus-visible'],
       ringWidth: ['active', 'focus-visible', 'disabled'],
       outline: ['focus-visible', 'active', 'focus', 'hover'],
       rounded: ['focus-visible'],

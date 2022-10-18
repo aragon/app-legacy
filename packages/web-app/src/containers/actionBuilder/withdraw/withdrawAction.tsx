@@ -52,7 +52,7 @@ const WithdrawAction: React.FC<WithdrawActionProps> = ({actionIndex}) => {
     <AccordionMethod
       verified
       type="action-builder"
-      methodName={t('AddActionModal.withdrawAssets')}
+      methodName={t('TransferModal.item2Title')}
       dropdownItems={methodActions}
       smartContractName={t('labels.aragonCore')}
       methodDescription={t('AddActionModal.withdrawAssetsActionSubtitle')}

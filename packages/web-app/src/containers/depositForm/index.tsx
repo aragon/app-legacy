@@ -192,7 +192,10 @@ const DepositForm: React.FC = () => {
   return (
     <>
       <FormItem>
-        <Label label={t('labels.to')} helpText={t('newDeposit.toSubtitle')} />
+        <Label
+          label={t('labels.recipient')}
+          helpText={t('newDeposit.toSubtitle')}
+        />
 
         {/* TODO: Proper DAO address */}
         <ButtonWallet
@@ -273,7 +276,7 @@ const DepositForm: React.FC = () => {
       {/* Token amount */}
       <FormItem>
         <Label
-          label={t('labels.amount')}
+          label={t('labels.tokenAmount')}
           helpText={t('newDeposit.amountSubtitle')}
         />
         <Controller
@@ -320,7 +323,7 @@ const DepositForm: React.FC = () => {
       {/* Token reference */}
       <FormItem>
         <Label
-          label={t('labels.reference')}
+          label={t('labels.description')}
           helpText={t('newDeposit.referenceSubtitle')}
           isOptional={true}
         />

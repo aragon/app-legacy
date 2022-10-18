@@ -107,7 +107,7 @@ const Community: React.FC = () => {
               }
             : {
                 description: t('explore.explorer.tokenBased'),
-                buttonLabel: t('labels.addMember'),
+                buttonLabel: t('labels.mintTokens'),
                 secondaryButtonLabel: t('labels.seeAllHolders'),
                 secondaryOnClick: handleSecondaryButtonClick,
               })}

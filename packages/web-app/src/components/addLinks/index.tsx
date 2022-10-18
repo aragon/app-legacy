@@ -1,22 +1,31 @@
-import React from 'react';
-import styled from 'styled-components';
-import {useTranslation} from 'react-i18next';
 import {ButtonText, IconAdd} from '@aragon/ui-components';
-import {useFormContext, useFieldArray, useWatch} from 'react-hook-form';
+import React from 'react';
+import {useFieldArray, useFormContext, useWatch} from 'react-hook-form';
+import {useTranslation} from 'react-i18next';
+import styled from 'styled-components';
 
-import Row from './row';
 import Header from './header';
+import Row from './row';
 
 export type AddLinks = {
+  /** Name of the fieldArray that is the target of the link inputs. Defaults to
+   * 'links' */
+  arrayName?: string;
   buttonPlusIcon?: boolean;
   buttonLabel?: string;
+  bgWhite?: boolean;
 };
 
-const AddLinks: React.FC<AddLinks> = ({buttonPlusIcon, buttonLabel}) => {
+const AddLinks: React.FC<AddLinks> = ({
+  buttonPlusIcon,
+  buttonLabel,
+  arrayName = 'links',
+  bgWhite = false,
+}) => {
   const {t} = useTranslation();
   const {control} = useFormContext();
-  const links = useWatch({name: 'links', control});
-  const {fields, append, remove} = useFieldArray({name: 'links', control});
+  const links = useWatch({name: arrayName, control});
+  const {fields, append, remove} = useFieldArray({name: arrayName, control});
 
   const controlledLinks = fields.map((field, index) => {
     return {
@@ -34,16 +43,22 @@ const AddLinks: React.FC<AddLinks> = ({buttonPlusIcon, buttonLabel}) => {
     <Container data-testid="add-links">
       {fields.length > 0 && (
         <ListGroup>
-          <Header />
+          <Header bgWhite={bgWhite} />
           {controlledLinks.map((field, index) => (
-            <Row key={field.id} index={index} onDelete={() => remove(index)} />
+            <Row
+              key={field.id}
+              index={index}
+              onDelete={() => remove(index)}
+              arrayName={arrayName}
+              bgWhite={bgWhite}
+            />
           ))}
         </ListGroup>
       )}
 
       <ButtonText
         label={buttonLabel || t('labels.addLink')}
-        mode="secondary"
+        mode={bgWhite ? 'ghost' : 'secondary'}
         size="large"
         onClick={handleAddLink}
         {...(buttonPlusIcon ? {iconLeft: <IconAdd />} : {})}
@@ -56,5 +71,5 @@ export default AddLinks;
 
 const Container = styled.div.attrs({className: 'space-y-1.5'})``;
 const ListGroup = styled.div.attrs({
-  className: 'flex flex-col overflow-hidden space-y-0.25 rounded-xl',
+  className: 'flex flex-col overflow-auto rounded-xl',
 })``;

@@ -24,7 +24,9 @@ type PublishModalProps = {
   averageFee: BigInt | undefined;
   tokenPrice: number;
   title?: string;
+  subtitle?: string;
   buttonLabel?: string;
+  buttonLabelSuccess?: string;
 };
 
 const icons = {
@@ -44,7 +46,9 @@ const PublishModal: React.FC<PublishModalProps> = ({
   averageFee,
   tokenPrice,
   title,
+  subtitle,
   buttonLabel,
+  buttonLabelSuccess,
 }) => {
   const {t} = useTranslation();
   const {network} = useNetwork();
@@ -53,7 +57,8 @@ const PublishModal: React.FC<PublishModalProps> = ({
     [TransactionState.WAITING]:
       buttonLabel || t('TransactionModal.publishDaoButtonLabel'),
     [TransactionState.LOADING]: t('TransactionModal.waiting'),
-    [TransactionState.SUCCESS]: t('TransactionModal.dismiss'),
+    [TransactionState.SUCCESS]:
+      buttonLabelSuccess || t('TransactionModal.goToFinance'),
     [TransactionState.ERROR]: t('TransactionModal.tryAgain'),
   };
 
@@ -92,7 +97,8 @@ const PublishModal: React.FC<PublishModalProps> = ({
   return (
     <ModalBottomSheetSwitcher
       {...{isOpen, onClose, closeOnDrag}}
-      title={title || t('TransactionModal.publishDao')}
+      title={title || t('createDAO.review.title')}
+      subtitle={subtitle}
     >
       <GasCostTableContainer>
         <GasCostEthContainer>

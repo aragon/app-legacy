@@ -56,11 +56,6 @@ jobs:
           VITE_REACT_APP_ALCHEMY_API_KEY: ${{secrets.VITE_REACT_APP_ALCHEMY_API_KEY}}
           VITE_IPFS_API_KEY: ${{secrets.VITE_IPFS_API_KEY}}
           VITE_IPFS_API_URL: ${{secrets.VITE_IPFS_API_URL}}
-          # TODO
-          # Remove when the SDK no longer needs the addresses of the contract
-          VITE_REACT_APP_SDK_DAO_FACTORY_ADDRESS: '0x2290E6dF695C5272cE942015c90aAe24bFB94960'
-          # "address1,address2,address3,...,addressN"
-          VITE_REACT_APP_SDK_WEB3_PROVIDERS: 'https://eth-rinkeby.alchemyapi.io/v2/bgIqe2NxazpzsjfmVmhj3aS3j_HZ9mpr'
           NODE_OPTIONS: '--max-old-space-size=6656'
       - uses: actions/setup-python@v2
         with:

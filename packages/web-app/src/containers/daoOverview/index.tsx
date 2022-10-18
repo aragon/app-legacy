@@ -43,7 +43,7 @@ export const OverviewDAOHeader: React.FC<OverviewDAOHeaderProps> = ({
       </div>
 
       <div className="tablet:flex items-end tablet:space-x-6">
-        <div>
+        <div className="w-full">
           <h1 className="font-bold text-ui-800 ft-text-3xl">
             {t('createDAO.overview.title')}
           </h1>
@@ -77,29 +77,25 @@ const OverviewCards = [
     key="SelectBlockchain"
     imgSrc={<IlluObject object="chain" />}
     caption={i18n.t('createDAO.step1.label')}
-    title={i18n.t('createDAO.step1.shortTitle')}
-    subtitle={i18n.t('createDAO.step1.shortDescription')}
+    title={i18n.t('createDAO.step1.title')}
   />,
   <CardWithImage
     key="DefineMetadata"
     imgSrc={<IlluObject object="labels" />}
     caption={i18n.t('createDAO.step2.label')}
-    title={i18n.t('createDAO.step2.shortTitle')}
-    subtitle={i18n.t('createDAO.step2.shortDescription')}
+    title={i18n.t('createDAO.step2.title')}
   />,
   <CardWithImage
     key="SetupCommunity"
     imgSrc={<IlluObject object="users" />}
     caption={i18n.t('createDAO.step3.label')}
-    title={i18n.t('createDAO.step3.shortTitle')}
-    subtitle={i18n.t('createDAO.step3.shortDescription')}
+    title={i18n.t('createDAO.step3.title')}
   />,
   <CardWithImage
     key="ConfigureGovernance"
     imgSrc={<IlluObject object="settings" />}
     caption={i18n.t('createDAO.step4.label')}
     title={i18n.t('createDAO.step4.shortTitle')}
-    subtitle={i18n.t('createDAO.step4.shortDescription')}
   />,
 ];
 

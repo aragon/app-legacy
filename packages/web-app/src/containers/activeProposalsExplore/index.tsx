@@ -5,14 +5,17 @@ import {
   StateEmpty,
 } from '@aragon/ui-components';
 import {TemporarySection} from 'components/temporary';
+import {useNetwork} from 'context/network';
 import {useDaoProposals} from 'hooks/useDaoProposals';
 import React, {useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
+import {CHAIN_METADATA} from 'utils/constants';
 
 // NOTE: There will be changes when integrating proposals.
 const ActiveProposalsExplore: React.FC = () => {
   const {t} = useTranslation();
+  const {network} = useNetwork();
   const [showProposals, setShowProposals] = useState(true);
   const topTen = useDaoProposals(showProposals).topTen.filter(
     value => value.process === 'active'
@@ -44,6 +47,7 @@ const ActiveProposalsExplore: React.FC = () => {
               <CardProposal
                 key={index}
                 type="explore"
+                explorer={CHAIN_METADATA[network].explorer}
                 daoName="Some Mock Dao"
                 onClick={() =>
                   alert(

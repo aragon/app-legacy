@@ -30,6 +30,7 @@ import {useClient} from 'hooks/useClient';
 import {usePollGasFee} from 'hooks/usePollGasfee';
 import {IPluginInstallItem} from '@aragon/sdk-client/dist/internal/interfaces/common';
 import {trackEvent} from 'services/analytics';
+import {useTranslation} from 'react-i18next';
 
 type CreateDaoContextType = {
   /** Prepares the creation data and awaits user confirmation to start process */
@@ -45,6 +46,7 @@ const CreateDaoProvider: React.FC<Props> = ({children}) => {
   const navigate = useNavigate();
   const {isOnWrongNetwork, provider} = useWallet();
   const [showModal, setShowModal] = useState(false);
+  const {t} = useTranslation();
 
   const [daoCreationData, setDaoCreationData] = useState<ICreateParams>();
   const [creationProcessState, setCreationProcessState] =
@@ -285,6 +287,8 @@ const CreateDaoProvider: React.FC<Props> = ({children}) => {
     <CreateDaoContext.Provider value={{handlePublishDao}}>
       {children}
       <PublishModal
+        subtitle={t('TransactionModal.publishDaoSubtitle')}
+        buttonLabelSuccess={t('TransactionModal.launchDaoDashboard')}
         state={creationProcessState || TransactionState.WAITING}
         isOpen={showModal}
         onClose={handleCloseModal}

@@ -21,6 +21,7 @@ import {PluginTypes} from 'hooks/usePluginClient';
 import {Proposal, useProposals} from 'hooks/useProposals';
 import NoProposals from 'public/noProposals.svg';
 import {erc20VotingProposals_erc20VotingProposals} from 'queries/__generated__/erc20VotingProposals';
+import {trackEvent} from 'services/analytics';
 
 const Governance: React.FC = () => {
   const {data: dao, isLoading} = useDaoParam();
@@ -67,14 +68,22 @@ const Governance: React.FC = () => {
             <p className="mt-1.5 lg:w-1/2 text-center">
               {t('governance.emptyState.subtitleLine1')}{' '}
               {t('governance.emptyState.subtitleLine2')}{' '}
-              <Link label={t('governance.emptyState.proposalGuide')} />
+              <Link
+                label={t('governance.emptyState.proposalGuide')}
+                href="https://aragon.org/how-to/structure-dao-proposals-and-build-proposal-processes"
+              />
             </p>
             <ButtonText
               size="large"
               label="New Proposal"
               iconLeft={<IconAdd />}
               className="mt-4"
-              onClick={() => navigate('new-proposal')}
+              onClick={() => {
+                trackEvent('governance_newProposalBtn_clicked', {
+                  dao_address: dao,
+                });
+                navigate('new-proposal');
+              }}
             />
           </EmptyStateContainer>
         </Container>
@@ -89,7 +98,12 @@ const Governance: React.FC = () => {
         subtitle={`${activeProposalCount} active proposal${
           activeProposalCount !== 1 ? 's' : ''
         }`}
-        onClick={() => navigate('new-proposal')}
+        onClick={() => {
+          trackEvent('governance_newProposalBtn_clicked', {
+            dao_address: dao,
+          });
+          navigate('new-proposal');
+        }}
       >
         <ButtonGroupContainer>
           <ButtonGroup

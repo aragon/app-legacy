@@ -25,6 +25,7 @@ import {getCanonicalUtcOffset} from 'utils/date';
 import {useClient} from 'hooks/useClient';
 import {Action} from 'utils/types';
 import {DaoAction} from '@aragon/sdk-client/dist/internal/interfaces/common';
+import {trackEvent} from 'services/analytics';
 
 type Props = {
   showTxModal: boolean;
@@ -40,7 +41,7 @@ const CreateProposalProvider: React.FC<Props> = ({
   const {network} = useNetwork();
   const {getValues} = useFormContext();
   const {t} = useTranslation();
-  const {isOnWrongNetwork} = useWallet();
+  const {isOnWrongNetwork, provider} = useWallet();
   const {open} = useGlobalModalContext();
   const {data: dao, isLoading} = useDaoParam();
   const {data: daoDetails, isLoading: daoDetailsLoading} = useDaoDetails(dao);
@@ -233,8 +234,20 @@ const CreateProposalProvider: React.FC<Props> = ({
       return;
     }
 
+    trackEvent('newProposal_createNowBtn_clicked', {
+      dao_address: dao,
+      estimated_gwei_fee: averageFee,
+      total_usd_cost: averageFee ? tokenPrice * Number(averageFee) : 0,
+    });
+
     const proposalIterator =
       pluginClient.methods.createProposal(proposalCreationData);
+
+    trackEvent('newProposal_transaction_signed', {
+      dao_address: dao,
+      network: network,
+      wallet_provider: provider?.connection.url,
+    });
 
     if (creationProcessState === TransactionState.SUCCESS) {
       handleCloseModal();
@@ -257,11 +270,23 @@ const CreateProposalProvider: React.FC<Props> = ({
           case ProposalCreationSteps.DONE:
             console.log('proposal id', step.proposalId);
             setCreationProcessState(TransactionState.SUCCESS);
+            trackEvent('newProposal_transaction_success', {
+              dao_address: dao,
+              network: network,
+              wallet_provider: provider?.connection.url,
+              proposalId: step.proposalId,
+            });
             break;
         }
       } catch (error) {
         console.error(error);
         setCreationProcessState(TransactionState.ERROR);
+        trackEvent('newProposal_transaction_failed', {
+          dao_address: dao,
+          network: network,
+          wallet_provider: provider?.connection.url,
+          error,
+        });
       }
     }
   };
@@ -287,7 +312,7 @@ const CreateProposalProvider: React.FC<Props> = ({
         averageFee={averageFee}
         tokenPrice={tokenPrice}
         title={t('TransactionModal.createProposal')}
-        buttonLabel={t('TransactionModal.createProposalNow')}
+        buttonLabel={t('TransactionModal.createProposal')}
       />
     </>
   );

@@ -1,5 +1,6 @@
-import React, {ReactNode} from 'react';
+import React from 'react';
 import styled from 'styled-components';
+
 import {Badge} from '../badge';
 import {LinearProgress} from '../progress';
 import {Address, shortenAddress} from '../../utils/addresses';
@@ -7,6 +8,14 @@ import {Link} from '../link';
 import {AvatarDao} from '../avatar';
 import {IconClock} from '../icons';
 import {AlertInline} from '../alerts';
+
+type ProposalUsecase = 'list' | 'explore';
+
+export function isExploreProposal(
+  proposalUsecase: ProposalUsecase
+): proposalUsecase is 'explore' {
+  return proposalUsecase === 'explore';
+}
 
 export type CardProposalProps = {
   /** Proposal Title / Title of the card */
@@ -30,7 +39,7 @@ export type CardProposalProps = {
     | 'executed'
     | 'defeated';
   /** Indicates whether the proposal is in being used in list or in its special form (see explore page) */
-  type?: 'list' | 'explore';
+  type?: ProposalUsecase;
   /** Url for the dao avatar */
   daoLogo?: 'string';
   /** The title that appears at the top of the progress bar */
@@ -49,22 +58,14 @@ export type CardProposalProps = {
   publisherAddress?: Address;
   /** DAO name to display when type is explore */
   daoName?: string;
-  /** Chain ID for redirect user to the right explorer */
-  chainId?: number;
+  /** Blockchain explorer URL */
+  explorer?: string;
 
   alertMessage?: string;
   /**
    * ['Draft', 'Pending', 'Active', 'Executed', 'Succeeded', 'Defeated']
    */
   stateLabel: string[];
-};
-
-export const explorers: {
-  [key: number]: string;
-} = {
-  1: 'https://etherscan.io/address/',
-  4: 'https://rinkeby.etherscan.io/address/',
-  42161: 'https://arbiscan.io/address/',
 };
 
 export const CardProposal: React.FC<CardProposalProps> = ({
@@ -78,7 +79,7 @@ export const CardProposal: React.FC<CardProposalProps> = ({
   tokenSymbol,
   publishLabel,
   publisherAddress,
-  chainId = 1,
+  explorer = 'https://etherscan.io/',
   alertMessage,
   stateLabel,
   type = 'list',
@@ -86,49 +87,23 @@ export const CardProposal: React.FC<CardProposalProps> = ({
   daoName,
   onClick,
 }: CardProposalProps) => {
-  const isTypeExplore = type === 'explore';
-
-  const headerOptions: {
-    [key in CardProposalProps['process']]: ReactNode;
-  } = {
-    draft: <Badge label={stateLabel[0]} />,
-    pending: (
-      <>
-        <Badge label={stateLabel[1]} />
-        {alertMessage && (
-          <AlertInline
-            label={alertMessage}
-            icon={<IconClock className="text-info-500" />}
-            mode="neutral"
-          />
-        )}
-      </>
-    ),
-    active: (
-      <>
-        {!isTypeExplore && <Badge label={stateLabel[2]} colorScheme={'info'} />}
-        {alertMessage && (
-          <AlertInline
-            label={alertMessage}
-            icon={<IconClock className="text-info-500" />}
-            mode="neutral"
-          />
-        )}
-      </>
-    ),
-    executed: <Badge label={stateLabel[3]} colorScheme={'success'} />,
-    succeeded: <Badge label={stateLabel[4]} colorScheme={'success'} />,
-    defeated: <Badge label={stateLabel[5]} colorScheme={'critical'} />,
-  };
+  const adressExploreUrl = `${explorer}address/${publisherAddress}`;
 
   return (
     <Card data-testid="cardProposal" onClick={onClick}>
-      <Header>{headerOptions[process]}</Header>
+      <Header>
+        <HeaderOptions
+          process={process}
+          stateLabel={stateLabel}
+          alertMessage={alertMessage}
+          type={type}
+        />
+      </Header>
       <TextContent>
         <Title>{title}</Title>
         <Description>{description}</Description>
         <Publisher>
-          {isTypeExplore ? (
+          {isExploreProposal(type) ? (
             <AvatarDao daoName={daoName!} size="small" src={daoLogo} />
           ) : (
             <PublisherLabel>{publishLabel}</PublisherLabel>
@@ -136,9 +111,9 @@ export const CardProposal: React.FC<CardProposalProps> = ({
 
           <Link
             external
-            href={`${explorers[chainId]}${publisherAddress}`}
+            href={adressExploreUrl}
             label={shortenAddress(
-              (isTypeExplore ? daoName : publisherAddress) || ''
+              (isExploreProposal(type) ? daoName : publisherAddress) || ''
             )}
             className="text-sm"
           />
@@ -161,6 +136,61 @@ export const CardProposal: React.FC<CardProposalProps> = ({
       )}
     </Card>
   );
+};
+
+type HeaderOptionProps = Pick<
+  CardProposalProps,
+  'alertMessage' | 'process' | 'stateLabel'
+> & {
+  type: NonNullable<CardProposalProps['type']>;
+};
+
+const HeaderOptions: React.VFC<HeaderOptionProps> = ({
+  alertMessage,
+  process,
+  stateLabel,
+  type,
+}) => {
+  switch (process) {
+    case 'draft':
+      return <Badge label={stateLabel[0]} />;
+    case 'pending':
+      return (
+        <>
+          <Badge label={stateLabel[1]} />
+          {alertMessage && (
+            <AlertInline
+              label={alertMessage}
+              icon={<IconClock className="text-info-500" />}
+              mode="neutral"
+            />
+          )}
+        </>
+      );
+    case 'active':
+      return (
+        <>
+          {!isExploreProposal(type) && (
+            <Badge label={stateLabel[2]} colorScheme={'info'} />
+          )}
+          {alertMessage && (
+            <AlertInline
+              label={alertMessage}
+              icon={<IconClock className="text-info-500" />}
+              mode="neutral"
+            />
+          )}
+        </>
+      );
+    case 'executed':
+      return <Badge label={stateLabel[3]} colorScheme={'success'} />;
+    case 'succeeded':
+      return <Badge label={stateLabel[4]} colorScheme={'success'} />;
+    case 'defeated':
+      return <Badge label={stateLabel[5]} colorScheme={'critical'} />;
+    default:
+      return null;
+  }
 };
 
 const Card = styled.button.attrs({

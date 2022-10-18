@@ -192,11 +192,11 @@ export const VotingTerminal: React.FC<VotingTerminalProps> = ({
               <Strong>{t('votingTerminal.yes+no')}</Strong>
             </InfoLine>
             <InfoLine>
-              <p>{t('votingTerminal.strategy')}</p>
+              <p>{t('votingTerminal.voteType')}</p>
               <Strong>{strategy}</Strong>
             </InfoLine>
             <InfoLine>
-              <p>{t('votingTerminal.minimumApproval')}</p>
+              <p>{t('votingTerminal.approvalThreshold')}</p>
               <Strong>{approval}</Strong>
             </InfoLine>
           </VStackSection>
@@ -204,11 +204,11 @@ export const VotingTerminal: React.FC<VotingTerminalProps> = ({
           <VStackSection>
             <SectionHeader>{t('votingTerminal.duration')}</SectionHeader>
             <InfoLine>
-              <p>{t('votingTerminal.start')}</p>
+              <p>{t('votingTerminal.startDate')}</p>
               <Strong>{startDate?.toString()}</Strong>
             </InfoLine>
             <InfoLine>
-              <p>{t('votingTerminal.end')}</p>
+              <p>{t('votingTerminal.endDate') as string}</p>
               <Strong>{endDate}</Strong>
             </InfoLine>
           </VStackSection>

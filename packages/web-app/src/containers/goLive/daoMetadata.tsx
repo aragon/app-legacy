@@ -29,6 +29,7 @@ const DaoMetadata: React.FC = () => {
           checkedState={
             value ? 'active' : reviewCheckError ? 'error' : 'default'
           }
+          badgeLabel={t('labels.changeableVote')}
           onChecked={() => onChange(!value)}
         >
           <Dl>

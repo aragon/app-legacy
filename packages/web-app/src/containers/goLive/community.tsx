@@ -34,17 +34,18 @@ const Community: React.FC = () => {
       }}
       render={({field: {onChange, value}}) => (
         <DescriptionListContainer
-          title={t('labels.review.community')}
+          title={t('labels.review.voters')}
           onEditClick={() => setStep(4)}
           editLabel={t('settings.edit')}
           checkBoxErrorMessage={t('createDAO.review.acceptContent')}
           checkedState={
             value ? 'active' : reviewCheckError ? 'error' : 'default'
           }
+          badgeLabel={t('labels.changeableVote')}
           onChecked={() => onChange(!value)}
         >
           <Dl>
-            <Dt>{t('labels.review.eligibleMembers')}</Dt>
+            <Dt>{t('labels.review.eligibleVoters')}</Dt>
             <Dd>
               {membership === 'token'
                 ? t('createDAO.step3.tokenMembership')

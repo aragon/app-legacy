@@ -30,6 +30,9 @@ import {CreateProposalProvider} from 'context/createProposal';
 import {useNetwork} from 'context/network';
 import {useDaoParam} from 'hooks/useDaoParam';
 import {generatePath} from 'react-router-dom';
+import {trackEvent} from 'services/analytics';
+import {useWallet} from 'hooks/useWallet';
+import {getCanonicalUtcOffset} from 'utils/date';
 
 export type TokenFormData = {
   tokenName: string;
@@ -60,6 +63,10 @@ type WithdrawFormData = {
   startUtc: string;
   endUtc: string;
   durationSwitch: string;
+  proposalTitle: string;
+  proposalSummary: string;
+  proposal: unknown;
+  links: unknown;
 };
 
 export const defaultValues = {
@@ -81,6 +88,7 @@ const NewWithdraw: React.FC = () => {
   const {t} = useTranslation();
   const {data: dao, isLoading} = useDaoParam();
   const {network} = useNetwork();
+  const {address} = useWallet();
   const [showTxModal, setShowTxModal] = useState(false);
 
   const formMethods = useForm<WithdrawFormData>({
@@ -153,7 +161,7 @@ const NewWithdraw: React.FC = () => {
             setShowTxModal={setShowTxModal}
           >
             <FullScreenStepper
-              wizardProcessName={t('newWithdraw.withdrawAssets')}
+              wizardProcessName={t('TransferModal.item2Title')}
               navLabel={t('allTransfer.newTransfer')}
               returnPath={generatePath(Finance, {network, dao})}
             >
@@ -167,6 +175,19 @@ const NewWithdraw: React.FC = () => {
                     tokenAddress
                   )
                 }
+                onNextButtonClicked={next => {
+                  trackEvent('newWithdraw_continueBtn_clicked', {
+                    step: '1_configure_withdraw',
+                    settings: {
+                      to: formMethods.getValues('actions.0.to'),
+                      token_address: formMethods.getValues(
+                        'actions.0.tokenAddress'
+                      ),
+                      amount: formMethods.getValues('actions.0.amount'),
+                    },
+                  });
+                  next();
+                }}
               >
                 <ConfigureWithdrawForm actionIndex={0} />
               </Step>
@@ -176,6 +197,35 @@ const NewWithdraw: React.FC = () => {
                 isNextButtonDisabled={
                   !setupVotingIsValid(errors, durationSwitch)
                 }
+                onNextButtonClicked={next => {
+                  const [
+                    startDate,
+                    startTime,
+                    startUtc,
+                    endDate,
+                    endTime,
+                    endUtc,
+                  ] = formMethods.getValues([
+                    'startDate',
+                    'startTime',
+                    'startUtc',
+                    'endDate',
+                    'endTime',
+                    'endUtc',
+                  ]);
+                  trackEvent('newWithdraw_continueBtn_clicked', {
+                    step: '2_setup_voting',
+                    settings: {
+                      start: `${startDate}T${startTime}:00${getCanonicalUtcOffset(
+                        startUtc
+                      )}`,
+                      end: `${endDate}T${endTime}:00${getCanonicalUtcOffset(
+                        endUtc
+                      )}`,
+                    },
+                  });
+                  next();
+                }}
               >
                 <SetupVotingForm />
               </Step>
@@ -185,6 +235,19 @@ const NewWithdraw: React.FC = () => {
                 isNextButtonDisabled={
                   !defineProposalIsValid(dirtyFields, errors)
                 }
+                onNextButtonClicked={next => {
+                  trackEvent('newWithdraw_continueBtn_clicked', {
+                    step: '3_define_proposal',
+                    settings: {
+                      author_address: address,
+                      title: formMethods.getValues('proposalTitle'),
+                      summary: formMethods.getValues('proposalSummary'),
+                      proposal: formMethods.getValues('proposal'),
+                      resources_list: formMethods.getValues('links'),
+                    },
+                  });
+                  next();
+                }}
               >
                 <DefineProposal />
               </Step>
@@ -192,7 +255,12 @@ const NewWithdraw: React.FC = () => {
                 wizardTitle={t('newWithdraw.reviewProposal.heading')}
                 wizardDescription={t('newWithdraw.reviewProposal.description')}
                 nextButtonLabel={t('labels.submitWithdraw')}
-                onNextButtonClicked={() => setShowTxModal(true)}
+                onNextButtonClicked={() => {
+                  trackEvent('newWithdraw_publishBtn_clicked', {
+                    dao_address: dao,
+                  });
+                  setShowTxModal(true);
+                }}
                 fullWidth
               >
                 <ReviewProposal defineProposalStepNumber={3} />

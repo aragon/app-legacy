@@ -1,11 +1,7 @@
-import React, {
-  createContext,
-  ReactNode,
-  useContext,
-  useEffect,
-  useState,
-} from 'react';
-import {Context as SdkContext, ContextParams, Client} from '@aragon/sdk-client';
+import {Client, Context as SdkContext, ContextParams} from '@aragon/sdk-client';
+import React, {createContext, useContext, useEffect, useState} from 'react';
+import {ALCHEMY_API_KEY, SUBGRAPH_API_URL} from 'utils/constants';
+
 import {useWallet} from './useWallet';
 
 interface ClientContext {
@@ -28,7 +24,7 @@ export const useClient = () => {
   return client;
 };
 
-export const UseClientProvider = ({children}: {children: ReactNode}) => {
+export const UseClientProvider: React.FC = ({children}) => {
   const {signer} = useWallet();
   const [client, setClient] = useState<Client>();
   const [context, setContext] = useState<SdkContext>();
@@ -37,14 +33,14 @@ export const UseClientProvider = ({children}: {children: ReactNode}) => {
   const [contextParams, setContextParams] = useState<ContextParams>();
 
   useEffect(() => {
-    const alchemyApiAddress = import.meta.env
-      .VITE_REACT_APP_ALCHEMY_API_KEY as string;
+    // const alchemyApiAddress = import.meta.env
+    //   .VITE_REACT_APP_ALCHEMY_API_KEY as string;
 
     const contextParams: ContextParams = {
-      network: 'rinkeby', // TODO: remove temporarily hardcoded network
+      network: 'goerli', // TODO: remove temporarily hardcoded network
       signer: signer || undefined,
       web3Providers: new Array(
-        'https://eth-rinkeby.alchemyapi.io/v2/'.concat(alchemyApiAddress)
+        `https://eth-goerli.g.alchemy.com/v2/${ALCHEMY_API_KEY}`
       ),
       ipfsNodes: [
         {
@@ -54,10 +50,10 @@ export const UseClientProvider = ({children}: {children: ReactNode}) => {
           },
         },
       ],
-      daoFactoryAddress: '0xF4433059cb12E224EF33510a3bE3329c8c750fD8', // TODO: remove temporary until SDK updates
+      daoFactoryAddress: '0x8B4Ca38524fCeCbD5acA39C7cd2f3B762B1d91Bf', // TODO: remove temporary until SDK updates
       graphqlNodes: [
         {
-          url: 'https://api.thegraph.com/subgraphs/name/aragon/aragon-zaragoza-rinkeby',
+          url: SUBGRAPH_API_URL['goerli']!,
         },
       ],
     };
