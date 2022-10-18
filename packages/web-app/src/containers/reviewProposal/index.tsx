@@ -19,7 +19,7 @@ import styled from 'styled-components';
 import {ExecutionWidget} from 'components/executionWidget';
 import {useFormStep} from 'components/fullScreenStepper';
 import ResourceList from 'components/resourceList';
-import {VotingTerminal} from 'containers/votingTerminal';
+import {TerminalTabs, VotingTerminal} from 'containers/votingTerminal';
 import {useNetwork} from 'context/network';
 import {useSpecificProvider} from 'context/providers';
 import {useDaoDetails} from 'hooks/useDaoDetails';
@@ -73,6 +73,7 @@ const ReviewProposal: React.FC<ReviewProposalProps> = ({
   const [approval, setApproval] = useState('');
   const [participation, setParticipation] = useState('');
   const [isWalletBased, setIsWalletBased] = useState(true);
+  const [terminalTab, setTerminalTab] = useState<TerminalTabs>('info');
   const values = getValues();
 
   const [expandedProposal, setExpandedProposal] = useState(false);
@@ -254,6 +255,8 @@ const ReviewProposal: React.FC<ReviewProposalProps> = ({
             breakdownTabDisabled
             votersTabDisabled
             voteNowDisabled
+            selectedTab={terminalTab}
+            onTabSelected={setTerminalTab}
             statusLabel={t('votingTerminal.status.draft')}
             approval={approval}
             participation={participation}
