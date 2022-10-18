@@ -432,6 +432,7 @@ const CreateProposalProvider: React.FC<Props> = ({
         tokenPrice={tokenPrice}
         title={t('TransactionModal.createProposal')}
         buttonLabel={t('TransactionModal.createProposal')}
+        buttonLabelSuccess={t('TransactionModal.goToProposal')}
       />
     </>
   );
