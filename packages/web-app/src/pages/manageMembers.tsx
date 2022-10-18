@@ -136,26 +136,28 @@ export default withTransaction('ManageMembers', 'component')(ManageMembers);
  */
 function actionsAreValid(
   errors: FieldErrors,
-  formActions: Array<ActionAddAddress | ActionRemoveAddress> = []
+  formActions: Array<ActionAddAddress | ActionRemoveAddress>
 ) {
-  if (errors.actions) return false;
+  if (errors.actions || !formActions) return false;
 
   let containsEmptyField = false;
-  let totalWallets = 0;
+  let removedWallets = 0;
 
   for (let i = 0; i < formActions.length; i++) {
-    containsEmptyField = formActions[i].inputs.memberWallets.some(
-      w => w.address === ''
-    );
-
-    if (containsEmptyField) {
-      return false;
+    if (formActions[i].name === 'add_address') {
+      containsEmptyField = formActions[i].inputs.memberWallets.some(
+        w => w.address === ''
+      );
+      continue;
     }
 
-    totalWallets += formActions[i].inputs.memberWallets.length;
+    if (formActions[i].name === 'remove_address') {
+      removedWallets += formActions[i].inputs.memberWallets.length;
+      continue;
+    }
   }
 
-  return totalWallets > 0;
+  return !containsEmptyField || (containsEmptyField && removedWallets > 0);
 }
 
 /**
