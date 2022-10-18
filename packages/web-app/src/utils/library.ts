@@ -215,12 +215,8 @@ export const customJSONReplacer = (_: string, value: unknown) => {
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const customJSONReviver = (_: string, value: any) => {
   // deserialize uint8array
-  try {
-    if ('flag' in value && value.flag === FLAG_TYPED_ARRAY) {
-      return new Uint8Array(value.data);
-    }
-  } catch (e) {
-    // not an object? do nothing
+  if (value.flag === FLAG_TYPED_ARRAY) {
+    return new Uint8Array(value.data);
   }
 
   if (typeof value === 'string') {
