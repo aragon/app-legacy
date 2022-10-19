@@ -6,7 +6,7 @@ import {identifyUser} from 'services/analytics';
 import {updateAPMContext, useAPM} from './elasticAPM';
 import {useNetwork} from './network';
 import {Nullable} from 'utils/types';
-import {SupportedChainID} from 'utils/constants';
+import {SupportedChainID, SUPPORTED_CHAIN_ID} from 'utils/constants';
 
 export type WalletAugmented = Wallet & {
   isOnCorrectNetwork: boolean;
@@ -76,13 +76,13 @@ export const connectors: Connector[] = [
   {
     id: 'injected',
     properties: {
-      chainId: [1, 4, 137, 80001, 42161, 421611],
+      chainId: [...SUPPORTED_CHAIN_ID],
     },
   },
   {
     id: 'frame',
     properties: {
-      chainId: [1, 4, 137, 80001, 42161, 421611],
+      chainId: [...SUPPORTED_CHAIN_ID],
     },
   },
 ];
