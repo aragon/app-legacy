@@ -12,7 +12,7 @@ import {GatingMenu} from 'containers/gatingMenu';
 
 const ProtectedRoute: React.FC = () => {
   const {data: dao, isLoading: paramIsLoading} = useDaoParam();
-  const {address, isConnected, status} = useWallet();
+  const {address, isConnected, status, isOnWrongNetwork} = useWallet();
   const {data: daoDetails, isLoading: detailsAreLoading} = useDaoDetails(
     dao || ''
   );
@@ -30,12 +30,29 @@ const ProtectedRoute: React.FC = () => {
     // Note: if user came to protected routes by direct link the status could be disconnected > connecting > connected
     // In this scenario "close" on else case will help to fix unexpected behaviors at the wallet loading moment
     if (!isConnected && status !== 'connecting') open('wallet');
-    else close('wallet');
-  }, [address, close, isConnected, open, status]);
+    else {
+      close('wallet');
+      if (isOnWrongNetwork) open('network');
+      else close('network');
+    }
 
-  if (filteredMembers.length === 0 && daoDetails && isConnected) {
-    open('gating');
-  }
+    if (
+      filteredMembers.length === 0 &&
+      daoDetails &&
+      isConnected &&
+      !isOnWrongNetwork
+    ) {
+      open('gating');
+    }
+  }, [
+    close,
+    daoDetails,
+    filteredMembers.length,
+    isConnected,
+    isOnWrongNetwork,
+    open,
+    status,
+  ]);
 
   if (paramIsLoading || detailsAreLoading || MembershipIsLoading)
     return <Loading />;

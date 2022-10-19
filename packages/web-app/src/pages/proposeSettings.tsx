@@ -48,13 +48,17 @@ import {getTokenInfo} from 'utils/tokens';
 
 const ProposeSettings: React.FC = () => {
   const {t} = useTranslation();
-  const {data: daoId} = useDaoParam();
+  const {data: daoId, isLoading: daoParamLoading} = useDaoParam();
   const {network} = useNetwork();
   const [showTxModal, setShowTxModal] = useState(false);
 
   const enableTxModal = () => {
     setShowTxModal(true);
   };
+
+  if (daoParamLoading) {
+    return <Loading />;
+  }
 
   return (
     <ProposeSettingWrapper
@@ -189,7 +193,7 @@ const ProposeSettingWrapper: React.FC<Props> = ({
         daoSummary,
         links,
         minimumParticipation,
-        support,
+        minimumApproval,
         durationDays,
         durationHours,
         durationMinutes,
@@ -198,7 +202,7 @@ const ProposeSettingWrapper: React.FC<Props> = ({
         'daoSummary',
         'links',
         'minimumParticipation',
-        'support',
+        'minimumApproval',
         'durationDays',
         'durationHours',
         'durationMinutes',
@@ -223,7 +227,7 @@ const ProposeSettingWrapper: React.FC<Props> = ({
       );
       const settingsParams: IPluginSettings = {
         minDuration: durationInSeconds,
-        minSupport: Big(support).div(100).toNumber(),
+        minSupport: Big(minimumApproval).div(100).toNumber(),
         minTurnout: Big(minimumParticipation).div(100).toNumber(),
       };
       actions.push(

@@ -33,7 +33,9 @@ const TokenContainer = ({dao}: {dao: string}) => {
       <WarningDescription>
         {t('alert.gatingUsers.tokenDescription', {
           tokenName:
-            !daoTokenLoading && !detailsAreLoading ? daoToken?.name : '',
+            !daoTokenLoading && !detailsAreLoading && daoToken
+              ? daoToken?.name
+              : '',
         })}
       </WarningDescription>
     </WarningContainer>

@@ -2,8 +2,8 @@ import React from 'react';
 import {Controller, useFormContext} from 'react-hook-form';
 import {useTranslation} from 'react-i18next';
 
+import {Dd, DescriptionListContainer, Dl, Dt} from 'components/descriptionList';
 import {useFormStep} from 'components/fullScreenStepper';
-import {DescriptionListContainer, Dl, Dt, Dd} from 'components/descriptionList';
 
 const Governance: React.FC = () => {
   const {control, getValues} = useFormContext();
@@ -66,7 +66,7 @@ const Governance: React.FC = () => {
             </Dl>
           )}
           <Dl>
-            <Dt>{t('labels.minimumSupport')}</Dt>
+            <Dt>{t('labels.minimumApproval')}</Dt>
             <Dd>{support}%</Dd>
           </Dl>
           <Dl>
