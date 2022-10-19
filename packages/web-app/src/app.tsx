@@ -101,31 +101,31 @@ function App() {
               <Route path="finance/new-deposit" element={<NewDepositPage />} />
               <Route path="finance/tokens" element={<TokensPage />} />
               <Route path="finance/transfers" element={<TransfersPage />} />
-              {/* <Route element={<ProtectedRoute />}> */}
-              <Route
-                path="finance/new-withdrawal"
-                element={<NewWithdrawPage />}
-              />
-              <Route
-                path="governance/new-proposal"
-                element={<NewProposalPage />}
-              />
-              <Route element={<NewSettingsWrapper />}>
-                <Route path="settings/edit" element={<EditSettingsPage />} />
+              <Route element={<ProtectedRoute />}>
                 <Route
-                  path="settings/new-proposal"
-                  element={<ProposeSettingsPage />}
+                  path="finance/new-withdrawal"
+                  element={<NewWithdrawPage />}
+                />
+                <Route
+                  path="governance/new-proposal"
+                  element={<NewProposalPage />}
+                />
+                <Route element={<NewSettingsWrapper />}>
+                  <Route path="settings/edit" element={<EditSettingsPage />} />
+                  <Route
+                    path="settings/new-proposal"
+                    element={<ProposeSettingsPage />}
+                  />
+                </Route>
+                <Route
+                  path="community/mint-tokens"
+                  element={<MintTokensProposalPage />}
+                />
+                <Route
+                  path="community/manage-members"
+                  element={<ManageMembersProposalPage />}
                 />
               </Route>
-              <Route
-                path="community/mint-tokens"
-                element={<MintTokensProposalPage />}
-              />
-              <Route
-                path="community/manage-members"
-                element={<ManageMembersProposalPage />}
-              />
-              {/* </Route> */}
               <Route path="governance" element={<GovernancePage />} />
               <Route
                 path="governance/proposals/:id"
