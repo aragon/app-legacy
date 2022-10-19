@@ -86,11 +86,6 @@ if (value && JSON.parse(value).functional) {
   restoreApolloCache();
 }
 
-export const rinkebyClient = new ApolloClient({
-  cache,
-  link: restLink.concat(new HttpLink({uri: SUBGRAPH_API_URL['rinkeby']})),
-});
-
 export const goerliClient = new ApolloClient({
   cache,
   link: restLink.concat(new HttpLink({uri: SUBGRAPH_API_URL['goerli']})),
@@ -112,7 +107,6 @@ const client: Record<
   ApolloClient<NormalizedCacheObject> | undefined
 > = {
   ethereum: undefined,
-  rinkeby: rinkebyClient,
   goerli: goerliClient,
   polygon: undefined,
   mumbai: mumbaiClient,

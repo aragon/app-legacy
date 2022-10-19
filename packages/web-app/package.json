@@ -12,7 +12,7 @@
     "lint": "eslint src --max-warnings=0 && yarn check-types",
     "lint:fix": "eslint src --fix",
     "check-types": "tsc --noemit",
-    "codegen": "apollo client:codegen --target typescript --globalTypesFile=types/global_apollo.ts --includes=./src/queries/*.tsx  --endpoint 'https://api.thegraph.com/subgraphs/name/aragon/aragon-zaragoza-rinkeby'",
+    "codegen": "apollo client:codegen --target typescript --globalTypesFile=types/global_apollo.ts --includes=./src/queries/*.tsx  --endpoint 'https://api.thegraph.com/subgraphs/name/aragon/aragon-zaragoza-goerli'",
     "generate-abis-and-types": "node scripts/generate-abis-and-types.js && yarn typechain --target ethers-v5 --out-dir src/typechain './src/abis/*.json'"
   },
   "dependencies": {
