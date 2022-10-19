@@ -278,7 +278,6 @@ export const MintTokenForm: React.FC<MintTokenFormProps> = ({
       });
 
       if (!newTokensCount.eq(newTokens)) {
-        console.log('newTokensCount', newTokensCount);
         setNewTokens(newTokensCount);
         setValue(
           `actions.${actionIndex}.summary.newTokens`,

@@ -134,7 +134,6 @@ const Proposal: React.FC = () => {
 
   useEffect(() => {
     if (proposal) {
-      console.log('proposal', proposal);
       const mintTokenActions: {
         actions: Uint8Array[];
         index: number;
@@ -178,8 +177,6 @@ const Proposal: React.FC = () => {
         mintTokenActions.actions,
         pluginClient as ClientErc20
       );
-
-      console.log('decodedMintToken', decodedMintToken);
 
       actionPromises.splice(mintTokenActions.index, 0, decodedMintToken);
 

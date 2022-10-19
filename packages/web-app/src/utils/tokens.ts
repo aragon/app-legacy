@@ -112,9 +112,6 @@ export async function getTokenInfo(
       totalSupply,
     };
   }
-
-  console.log('providerS', address);
-
   const contract = new ethers.Contract(address, erc20TokenABI, provider);
 
   try {
@@ -130,7 +127,6 @@ export async function getTokenInfo(
     symbol = values[2];
     totalSupply = values[3];
   } catch (error) {
-    // console.log('providerE', error, contract, address, erc20TokenABI, provider);
     console.error('Error, getting token info from contract');
   }
 

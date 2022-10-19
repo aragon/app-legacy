@@ -22,7 +22,6 @@ export function useDaoToken(
           const data = await (pluginClient as ClientErc20)?.methods.getToken(
             pluginAddress
           );
-          console.log('daoToken', data);
           if (data) setData(data);
         }
       } catch (err) {

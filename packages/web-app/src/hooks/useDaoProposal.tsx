@@ -22,6 +22,7 @@ import {PluginTypes, usePluginClient} from './usePluginClient';
 import {usePrivacyContext} from 'context/privacyContext';
 import {PENDING_PROPOSALS_KEY, PENDING_VOTES_KEY} from 'utils/constants';
 import {customJSONReplacer} from 'utils/library';
+import Big from 'big.js';
 
 /**
  * Retrieve a single detailed proposal
@@ -97,7 +98,7 @@ export const useDaoProposal = (
             daoTokenAddress,
             {
               address: member,
-              amount: BigInt(Number(10) * Math.pow(10, 18)),
+              amount: BigInt(10),
             }
           )
         )

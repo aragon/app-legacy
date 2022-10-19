@@ -13,6 +13,8 @@ import {useDaoToken} from 'hooks/useDaoToken';
 import {formatUnits} from 'ethers/lib/utils';
 import {useProviders} from 'context/providers';
 import {useDaoDetails} from 'hooks/useDaoDetails';
+import Big from 'big.js';
+import {getTokenInfo} from 'utils/tokens';
 
 export const MintTokenCard: React.FC<{
   action: ActionMintToken;
@@ -24,38 +26,28 @@ export const MintTokenCard: React.FC<{
   const {data: daoToken, isLoading: daoTokenLoading} = useDaoToken(
     daoDetails?.plugins[0].instanceAddress as string
   );
-  const [tokenSupply, setTokenSupply] = useState(0);
+  const [tokenSupply, setTokenSupply] = useState<Big>(Big(0));
   const nativeCurrency = CHAIN_METADATA[network].nativeCurrency;
   const {infura} = useProviders();
 
   const newHoldersCount = action.summary.newHoldersCount;
+  const newTokens = action.summary.newTokens;
 
-  console.log('daoToken', action.summary.newTokens);
-
-  // const newTokens = Number(
-  //   formatUnits(Number(action.summary.newTokens), daoToken?.decimals)
-  // );
-
-  // if (action?.summary.newTokens)
-  //   console.log(
-  //     formatUnits(Number(action.summary.newTokens), daoToken.decimals)
-  //   );
-
-  // useEffect(() => {
-  //   // Fetching necessary info about the token.
-  //   if (daoToken?.address) {
-  //     getTokenInfo(daoToken.address, infura, nativeCurrency)
-  //       .then((r: Awaited<ReturnType<typeof getTokenInfo>>) => {
-  //         const formattedNumber = parseFloat(
-  //           formatUnits(r.totalSupply, r.decimals)
-  //         );
-  //         setTokenSupply(formattedNumber);
-  //       })
-  //       .catch(e =>
-  //         console.error('Error happened when fetching token infos: ', e)
-  //       );
-  //   }
-  // }, [daoToken.address, infura, nativeCurrency]);
+  useEffect(() => {
+    // Fetching necessary info about the token.
+    if (daoToken?.address) {
+      getTokenInfo(daoToken.address, infura, nativeCurrency)
+        .then((r: Awaited<ReturnType<typeof getTokenInfo>>) => {
+          const formattedNumber = parseFloat(
+            formatUnits(r.totalSupply, r.decimals)
+          );
+          setTokenSupply(Big(formattedNumber));
+        })
+        .catch(e =>
+          console.error('Error happened when fetching token infos: ', e)
+        );
+    }
+  }, [daoToken?.address, infura, nativeCurrency]);
   // This should be replace With Skeleton loading in near future
   if (detailsAreLoading || daoTokenLoading) return <></>;
 
@@ -71,16 +63,17 @@ export const MintTokenCard: React.FC<{
       <Container>
         <div className="p-2 tablet:p-3 space-y-2 bg-ui-50">
           {action.inputs.mintTokensToWallets.map((wallet, index) => {
-            // const newTokenSupply = newTokens + tokenSupply;
-            const newTokenSupply = 0 + tokenSupply;
-            const amount = Number(
-              formatUnits(wallet.amount, daoToken?.decimals)
-            );
+            const newTokenSupply = Big(Number(newTokens)).plus(tokenSupply);
 
-            const percentage = newTokenSupply
-              ? (amount / newTokenSupply) * 100
-              : 0;
-
+            let percentage;
+            try {
+              percentage =
+                newTokenSupply && !newTokenSupply.eq(Big(0))
+                  ? Big(Number(wallet.amount)).div(newTokenSupply).mul(Big(100))
+                  : Big(0);
+            } catch {
+              percentage = Big(0);
+            }
             return wallet.address ? (
               <ListItemAddress
                 key={index}
@@ -92,11 +85,11 @@ export const MintTokenCard: React.FC<{
                     '_blank'
                   )
                 }
-                // tokenInfo={{
-                //   amount,
-                //   symbol: daoToken!.symbol,
-                //   percentage: percentage.toPrecision(3),
-                // }}
+                tokenInfo={{
+                  amount: Big(Number(wallet.amount)).toNumber(),
+                  symbol: daoToken?.symbol || '',
+                  percentage: percentage.toPrecision(3),
+                }}
               />
             ) : null;
           })}
@@ -106,7 +99,9 @@ export const MintTokenCard: React.FC<{
           <p className="font-bold text-ui-800">{t('labels.summary')}</p>
           <HStack>
             <Label>{t('labels.newTokens')}</Label>
-            <p>{/* +{newTokens} {daoToken?.symbol} */}</p>
+            <p>
+              +{Number(newTokens)} {daoToken?.symbol}
+            </p>
           </HStack>
           <HStack>
             <Label>{t('labels.newHolders')}</Label>
@@ -116,7 +111,8 @@ export const MintTokenCard: React.FC<{
             <Label>{t('labels.totalTokens')}</Label>
             {tokenSupply ? (
               <p>
-                {/* {(tokenSupply + newTokens).toString()} {daoToken.symbol} */}
+                {Big(tokenSupply).toNumber() + Number(newTokens)}{' '}
+                {daoToken?.symbol}
               </p>
             ) : (
               <p>...</p>
