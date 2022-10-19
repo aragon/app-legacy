@@ -22,7 +22,6 @@ import {PluginTypes, usePluginClient} from './usePluginClient';
 import {usePrivacyContext} from 'context/privacyContext';
 import {PENDING_PROPOSALS_KEY, PENDING_VOTES_KEY} from 'utils/constants';
 import {customJSONReplacer} from 'utils/library';
-import Big from 'big.js';
 
 /**
  * Retrieve a single detailed proposal
