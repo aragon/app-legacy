@@ -26,28 +26,28 @@ const ProtectedRoute: React.FC = () => {
     address as string
   );
 
-  useEffect(() => {
-    // Note: if user came to protected routes by direct link the status could be disconnected > connecting > connected
-    // In this scenario "close" on else case will help to fix unexpected behaviors at the wallet loading moment
-    if (!isConnected && status !== 'connecting') open('wallet');
-    else {
-      close('wallet');
-      if (isOnWrongNetwork) open('network');
-      else close('network');
-    }
-  }, [address, close, isConnected, isOnWrongNetwork, open, status]);
+  // useEffect(() => {
+  //   // Note: if user came to protected routes by direct link the status could be disconnected > connecting > connected
+  //   // In this scenario "close" on else case will help to fix unexpected behaviors at the wallet loading moment
+  //   if (!isConnected && status !== 'connecting') open('wallet');
+  //   else {
+  //     close('wallet');
+  //     if (isOnWrongNetwork) open('network');
+  //     else close('network');
+  //   }
+  // }, [address, close, isConnected, isOnWrongNetwork, open, status]);
 
-  if (
-    filteredMembers.length === 0 &&
-    daoDetails &&
-    isConnected &&
-    !isOnWrongNetwork
-  ) {
-    open('gating');
-  }
+  // if (
+  //   filteredMembers.length === 0 &&
+  //   daoDetails &&
+  //   isConnected &&
+  //   !isOnWrongNetwork
+  // ) {
+  //   open('gating');
+  // }
 
-  if (paramIsLoading || detailsAreLoading || MembershipIsLoading)
-    return <Loading />;
+  // if (paramIsLoading || detailsAreLoading || MembershipIsLoading)
+  //   return <Loading />;
 
   return (
     <>

@@ -117,18 +117,16 @@ export async function decodeWithdrawToAction(
     ]);
 
     return {
-      to: decoded.recipientAddress,
-      name: 'withdraw_assets',
       amount: Number(formatUnits(decoded.amount, response.decimals)),
-
-      isCustomToken: false,
-
-      tokenBalance: 0, // unnecessary
+      name: 'withdraw_assets',
+      to: decoded.recipientAddress,
+      tokenBalance: 0, // unnecessary?
       tokenAddress: address,
-      tokenName: response.name,
-      tokenSymbol: response.symbol,
-      tokenPrice: apiResponse?.price || 0,
       tokenImgUrl: apiResponse?.imgUrl || '',
+      tokenName: response.name,
+      tokenPrice: apiResponse?.price || 0,
+      tokenSymbol: response.symbol,
+      isCustomToken: false,
     };
   } catch (error) {
     console.error('Error fetching token data', error);
