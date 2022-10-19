@@ -21,7 +21,7 @@ import {useWallet} from 'hooks/useWallet';
 import {useNetwork} from './network';
 import DepositModal from 'containers/transactionModals/DepositModal';
 import {DepositFormData} from 'pages/newDeposit';
-import {TransactionState} from 'utils/constants';
+import {PENDING_DEPOSITS_KEY, TransactionState} from 'utils/constants';
 import {isNativeToken} from 'utils/tokens';
 import {useStepper} from 'hooks/useStepper';
 import {usePollGasFee} from 'hooks/usePollGasfee';
@@ -244,7 +244,10 @@ const DepositProvider = ({children}: {children: ReactNode}) => {
           // eslint-disable-next-line @typescript-eslint/ban-ts-comment
           // @ts-ignore
           pendingDeposits(depositTxs);
-          localStorage.setItem('pendingDeposits', JSON.stringify(depositTxs));
+          localStorage.setItem(
+            PENDING_DEPOSITS_KEY,
+            JSON.stringify(depositTxs)
+          );
           trackEvent('newDeposit_transaction_signed', {
             network,
             wallet_provider: provider?.connection.url,

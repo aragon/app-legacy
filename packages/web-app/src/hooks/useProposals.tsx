@@ -1,9 +1,14 @@
+import {useReactiveVar} from '@apollo/client';
 import {
   AddressListProposalListItem,
   Erc20ProposalListItem,
   ProposalSortBy,
 } from '@aragon/sdk-client';
-import {useEffect, useState} from 'react';
+import {pendingProposalsVar} from 'context/apolloClient';
+import {usePrivacyContext} from 'context/privacyContext';
+import {useCallback, useEffect, useState} from 'react';
+import {PENDING_PROPOSALS_KEY} from 'utils/constants';
+import {customJSONReplacer} from 'utils/library';
 import {HookData} from 'utils/types';
 
 import {PluginTypes, usePluginClient} from './usePluginClient';
@@ -27,6 +32,41 @@ export function useProposals(
 
   const client = usePluginClient(type);
 
+  const {preferences} = usePrivacyContext();
+  const proposalCache = useReactiveVar(pendingProposalsVar);
+
+  const augmentProposalsWithCache = useCallback(
+    (fetchedProposals: Proposal[]) => {
+      const newCache = {...proposalCache};
+      const augmentedProposals = [...fetchedProposals];
+
+      for (const key in proposalCache) {
+        if (fetchedProposals.some(p => p.id === key)) {
+          // proposal already picked up
+          delete newCache[key];
+        } else {
+          augmentedProposals.unshift({...proposalCache[key]} as Proposal);
+        }
+      }
+
+      // cache and store new values
+      pendingProposalsVar(newCache);
+      if (preferences?.functional) {
+        localStorage.setItem(
+          PENDING_PROPOSALS_KEY,
+          JSON.stringify(newCache, customJSONReplacer)
+        );
+      }
+
+      return augmentedProposals;
+    },
+
+    // intentionally leaving out proposalCache so that this doesn't
+    // get re-run when items are removed from the cache
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [preferences?.functional]
+  );
+
   useEffect(() => {
     async function getDaoProposals() {
       try {
@@ -36,7 +76,8 @@ export function useProposals(
           sortBy: ProposalSortBy.CREATED_AT,
           daoAddressOrEns,
         });
-        if (proposals) setData(proposals);
+
+        setData([...augmentProposalsWithCache(proposals || [])]);
       } catch (err) {
         console.error(err);
         setError(err as Error);
@@ -46,7 +87,7 @@ export function useProposals(
     }
 
     if (daoAddressOrEns) getDaoProposals();
-  }, [client?.methods, daoAddressOrEns]);
+  }, [augmentProposalsWithCache, client?.methods, daoAddressOrEns]);
 
   return {data, error, isLoading};
 }

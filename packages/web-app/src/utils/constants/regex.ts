@@ -11,3 +11,8 @@ export const TOKEN_AMOUNT_REGEX =
   /(?<integers>[\d*]*)[.]*(?<decimals>[\d]*)\s*(?<symbol>[A-Za-z]*)/;
 
 export const ALPHA_NUMERIC_PATTERN = /^[a-zA-Z\s0-9]+$/g;
+
+export const ISO_DATE_PATTERN =
+  /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2}(?:\.\d*))(?:Z|(\+|-)([\d|:]*))?$/;
+
+export const BIGINT_PATTERN = /^\d+n$/;

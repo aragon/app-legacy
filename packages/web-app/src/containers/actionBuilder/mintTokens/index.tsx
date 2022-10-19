@@ -24,6 +24,7 @@ import {formatUnits} from 'utils/library';
 import {fetchBalance, getTokenInfo} from 'utils/tokens';
 import {ActionIndex} from 'utils/types';
 import {AddressAndTokenRow} from './addressTokenRow';
+import {useDaoDetails} from 'hooks/useDaoDetails';
 
 type MintTokensProps = ActionIndex;
 
@@ -101,8 +102,11 @@ export const MintTokenForm: React.FC<MintTokenFormProps> = ({
   const {network} = useNetwork();
   const {infura} = useProviders();
   const nativeCurrency = CHAIN_METADATA[network].nativeCurrency;
-  const {data: daoToken, isLoading: daoTokenLoading} = useDaoToken(daoId);
-  const {setValue, trigger, formState} = useFormContext();
+  const {data: daoDetails, isLoading: detailsAreLoading} = useDaoDetails(daoId);
+  const {data: daoToken, isLoading: daoTokenLoading} = useDaoToken(
+    daoDetails?.plugins[0].instanceAddress as string
+  );
+  const {setValue, trigger, formState, control} = useFormContext();
 
   const {fields, append, remove, update} = useFieldArray({
     name: `actions.${actionIndex}.inputs.mintTokensToWallets`,
@@ -112,6 +116,7 @@ export const MintTokenForm: React.FC<MintTokenFormProps> = ({
       `actions.${actionIndex}.inputs.mintTokensToWallets`,
       `actions.${actionIndex}.name`,
     ],
+    control,
   });
 
   const [newTokens, setNewTokens] = useState<Big>(Big(0));
@@ -175,12 +180,12 @@ export const MintTokenForm: React.FC<MintTokenFormProps> = ({
         );
     }
   }, [
-    daoToken.address,
+    daoToken?.address,
     nativeCurrency,
     infura,
     setValue,
     actionIndex,
-    daoToken.symbol,
+    daoToken?.symbol,
   ]);
 
   // Count number of addresses that don't yet own token
@@ -252,7 +257,7 @@ export const MintTokenForm: React.FC<MintTokenFormProps> = ({
       }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [mints, daoToken.address]);
+  }, [mints, daoToken?.address]);
 
   useEffect(() => {
     // Collecting token amounts that are to be minted
@@ -273,6 +278,7 @@ export const MintTokenForm: React.FC<MintTokenFormProps> = ({
       });
 
       if (!newTokensCount.eq(newTokens)) {
+        console.log('newTokensCount', newTokensCount);
         setNewTokens(newTokensCount);
         setValue(
           `actions.${actionIndex}.summary.newTokens`,
@@ -280,7 +286,7 @@ export const MintTokenForm: React.FC<MintTokenFormProps> = ({
         );
       }
     }
-  }, [mints, daoToken, daoToken.address, setValue, actionIndex, newTokens]);
+  }, [actionIndex, daoToken, mints, newTokens, setValue]);
 
   /*************************************************
    *             Callbacks and Handlers            *
@@ -377,13 +383,13 @@ export const MintTokenForm: React.FC<MintTokenFormProps> = ({
           />
         </label>
       </ButtonContainer>
-      {!daoTokenLoading && (
+      {!daoTokenLoading && !detailsAreLoading && (
         <SummaryContainer>
           <p className="font-bold text-ui-800">{t('labels.summary')}</p>
           <HStack>
             <Label>{t('labels.newTokens')}</Label>
             <p>
-              +{'' + newTokens} {daoToken.symbol}
+              +{'' + newTokens} {daoToken?.symbol}
             </p>
           </HStack>
           <HStack>
@@ -394,7 +400,7 @@ export const MintTokenForm: React.FC<MintTokenFormProps> = ({
             <Label>{t('labels.totalTokens')}</Label>
             {tokenSupply ? (
               <p>
-                {'' + newTokens.plus(Big(tokenSupply))} {daoToken.symbol}
+                {'' + newTokens.plus(Big(tokenSupply))} {daoToken?.symbol}
               </p>
             ) : (
               <p>...</p>

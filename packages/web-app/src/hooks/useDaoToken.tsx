@@ -6,8 +6,8 @@ import {usePluginClient} from './usePluginClient';
 
 export function useDaoToken(
   pluginAddress: string
-): HookData<Erc20TokenDetails> {
-  const [data, setData] = useState<Erc20TokenDetails>({} as Erc20TokenDetails);
+): HookData<Erc20TokenDetails | undefined> {
+  const [data, setData] = useState<Erc20TokenDetails>();
   const [error, setError] = useState<Error>();
   const [isLoading, setIsLoading] = useState(false);
 
@@ -19,10 +19,11 @@ export function useDaoToken(
         setIsLoading(true);
 
         if (pluginAddress) {
-          const dao = await (pluginClient as ClientErc20)?.methods.getToken(
+          const data = await (pluginClient as ClientErc20)?.methods.getToken(
             pluginAddress
           );
-          if (dao) setData(dao);
+          console.log('daoToken', data);
+          if (data) setData(data);
         }
       } catch (err) {
         console.error(err);

@@ -11,8 +11,8 @@ import {ActionMintToken} from 'utils/types';
 import {useDaoParam} from 'hooks/useDaoParam';
 import {useDaoToken} from 'hooks/useDaoToken';
 import {formatUnits} from 'ethers/lib/utils';
-import {getTokenInfo} from 'utils/tokens';
 import {useProviders} from 'context/providers';
+import {useDaoDetails} from 'hooks/useDaoDetails';
 
 export const MintTokenCard: React.FC<{
   action: ActionMintToken;
@@ -20,15 +20,20 @@ export const MintTokenCard: React.FC<{
   const {t} = useTranslation();
   const {network} = useNetwork();
   const {data: daoId} = useDaoParam();
-  const {data: daoToken, isLoading: daoTokenLoading} = useDaoToken(daoId);
+  const {data: daoDetails, isLoading: detailsAreLoading} = useDaoDetails(daoId);
+  const {data: daoToken, isLoading: daoTokenLoading} = useDaoToken(
+    daoDetails?.plugins[0].instanceAddress as string
+  );
   const [tokenSupply, setTokenSupply] = useState(0);
   const nativeCurrency = CHAIN_METADATA[network].nativeCurrency;
   const {infura} = useProviders();
 
   const newHoldersCount = action.summary.newHoldersCount;
 
+  console.log('daoToken', action.summary.newTokens);
+
   // const newTokens = Number(
-  //   formatUnits(Number(action.summary.newTokens), daoToken.decimals)
+  //   formatUnits(Number(action.summary.newTokens), daoToken?.decimals)
   // );
 
   // if (action?.summary.newTokens)
@@ -52,7 +57,7 @@ export const MintTokenCard: React.FC<{
   //   }
   // }, [daoToken.address, infura, nativeCurrency]);
   // This should be replace With Skeleton loading in near future
-  if (daoTokenLoading) return <></>;
+  if (detailsAreLoading || daoTokenLoading) return <></>;
 
   return (
     <AccordionMethod
@@ -69,7 +74,7 @@ export const MintTokenCard: React.FC<{
             // const newTokenSupply = newTokens + tokenSupply;
             const newTokenSupply = 0 + tokenSupply;
             const amount = Number(
-              formatUnits(wallet.amount, daoToken.decimals)
+              formatUnits(wallet.amount, daoToken?.decimals)
             );
 
             const percentage = newTokenSupply
@@ -87,11 +92,11 @@ export const MintTokenCard: React.FC<{
                     '_blank'
                   )
                 }
-                tokenInfo={{
-                  amount,
-                  symbol: daoToken?.symbol,
-                  percentage: percentage.toPrecision(3),
-                }}
+                // tokenInfo={{
+                //   amount,
+                //   symbol: daoToken!.symbol,
+                //   percentage: percentage.toPrecision(3),
+                // }}
               />
             ) : null;
           })}
@@ -101,7 +106,7 @@ export const MintTokenCard: React.FC<{
           <p className="font-bold text-ui-800">{t('labels.summary')}</p>
           <HStack>
             <Label>{t('labels.newTokens')}</Label>
-            <p>{/* +{newTokens} {daoToken.symbol} */}</p>
+            <p>{/* +{newTokens} {daoToken?.symbol} */}</p>
           </HStack>
           <HStack>
             <Label>{t('labels.newHolders')}</Label>

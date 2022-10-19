@@ -25,11 +25,17 @@ import {useDaoParam} from 'hooks/useDaoParam';
 import {PluginTypes, usePluginClient} from 'hooks/usePluginClient';
 import {usePollGasFee} from 'hooks/usePollGasfee';
 import {useWallet} from 'hooks/useWallet';
-import {CHAIN_METADATA, TransactionState} from 'utils/constants';
+import {
+  CHAIN_METADATA,
+  PENDING_VOTES_KEY,
+  TransactionState,
+} from 'utils/constants';
 import {fetchBalance} from 'utils/tokens';
 import {pendingVotesVar} from './apolloClient';
 import {useNetwork} from './network';
 import {useProviders} from './providers';
+import {customJSONReplacer} from 'utils/library';
+import {usePrivacyContext} from './privacyContext';
 
 //TODO: currently a context, but considering there might only ever be one child,
 // might need to turn it into a wrapper that passes props to proposal page
@@ -90,6 +96,8 @@ const ProposalTransactionProvider: React.FC<Props> = ({children}) => {
   const pluginClient = usePluginClient(
     daoDetails?.plugins[0].id as PluginTypes
   );
+
+  const {preferences} = usePrivacyContext();
 
   const shouldPollVoteFees = useMemo(
     () =>
@@ -162,9 +170,18 @@ const ProposalTransactionProvider: React.FC<Props> = ({children}) => {
 
       if (!address) return;
 
+      let newCache;
       // no token address, not tokenBased proposal
       if (!tokenAddress) {
-        pendingVotesVar({...cachedVotes, [proposalId]: {address, vote}});
+        newCache = {...cachedVotes, [proposalId]: {address, vote}};
+        pendingVotesVar(newCache);
+
+        if (preferences?.functional) {
+          localStorage.setItem(
+            PENDING_VOTES_KEY,
+            JSON.stringify(newCache, customJSONReplacer)
+          );
+        }
         return;
       }
 
@@ -177,9 +194,23 @@ const ProposalTransactionProvider: React.FC<Props> = ({children}) => {
         false
       );
 
-      pendingVotesVar({...cachedVotes, [proposalId]: {address, vote, weight}});
+      newCache = {...cachedVotes, [proposalId]: {address, vote, weight}};
+      pendingVotesVar(newCache);
+      if (preferences?.functional) {
+        localStorage.setItem(
+          PENDING_VOTES_KEY,
+          JSON.stringify(newCache, customJSONReplacer)
+        );
+      }
     },
-    [address, cachedVotes, network, provider, tokenAddress]
+    [
+      address,
+      cachedVotes,
+      network,
+      preferences?.functional,
+      provider,
+      tokenAddress,
+    ]
   );
 
   // handles vote submission/execution

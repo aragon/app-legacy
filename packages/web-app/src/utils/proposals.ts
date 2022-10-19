@@ -10,6 +10,9 @@ import {ProposalStatus} from '@aragon/sdk-client/dist/internal/interfaces/common
 import {
   AddressListProposalResult,
   Erc20ProposalResult,
+  Erc20TokenDetails,
+  ICreateProposalParams,
+  IPluginSettings,
   VoteValues,
 } from '@aragon/sdk-client/dist/internal/interfaces/plugins';
 import {ProgressStatusProps, VoterType} from '@aragon/ui-components';
@@ -17,11 +20,12 @@ import Big from 'big.js';
 import {format} from 'date-fns';
 
 import {ProposalVoteResults} from 'containers/votingTerminal';
-import {DetailedProposal} from 'hooks/useDaoProposal';
+import differenceInSeconds from 'date-fns/fp/differenceInSeconds';
 import {i18n} from '../../i18n.config';
 import {getFormattedUtcOffset, KNOWN_FORMATS} from './date';
 import {formatUnits} from './library';
 import {abbreviateTokenAmount} from './tokens';
+import {DetailedProposal} from './types';
 
 export const MappedVotes: {[key in VoteValues]: VoterType['option']} = {
   1: 'abstain',
@@ -464,4 +468,60 @@ export function getTerminalProps(
       KNOWN_FORMATS.proposals
     )}  ${getFormattedUtcOffset()}`,
   };
+}
+
+type MapToDetailedProposalParams = {
+  creatorAddress: string;
+  daoAddress: string;
+  daoName: string;
+  daoToken?: Erc20TokenDetails;
+  totalVotingWeight: number | bigint;
+  pluginSettings: IPluginSettings;
+  proposalCreationData: ICreateProposalParams;
+  proposalId: string;
+};
+
+/**
+ * Map newly created proposal to Detailed proposal that can be cached and shown
+ * @param params necessary parameters to map newly created proposal to augmented DetailedProposal
+ * @returns Detailed proposal, ready for caching and displaying
+ */
+export function mapToDetailedProposal(params: MapToDetailedProposalParams) {
+  return {
+    actions: params.proposalCreationData.actions || [],
+    creationDate: new Date(),
+    creatorAddress: params.creatorAddress,
+    dao: {address: params.daoAddress, name: params.daoName},
+    endDate: params.proposalCreationData.endDate,
+    id: params.proposalId,
+    metadata: params.proposalCreationData.metadata,
+    settings: {
+      minSupport: params.pluginSettings.minSupport,
+      minTurnout: params.pluginSettings.minTurnout,
+      duration: differenceInSeconds(
+        params.proposalCreationData.startDate!,
+        params.proposalCreationData.endDate!
+      ),
+    },
+    startDate: params.proposalCreationData.startDate,
+    status: 'Pending',
+    votes: [],
+    ...(params.daoToken
+      ? {
+          token: {
+            address: params.daoToken?.address,
+            decimals: params.daoToken?.decimals,
+            name: params.daoToken?.name,
+            symbol: params.daoToken?.symbol,
+          },
+          totalVotingWeight: params.totalVotingWeight as bigint,
+          usedVotingWeight: BigInt(0),
+          result: {yes: BigInt(0), no: BigInt(0), abstain: BigInt(0)},
+        }
+      : {
+          totalVotingWeight: params.totalVotingWeight as number,
+          usedVotingWeight: 0,
+          result: {yes: 0, no: 0, abstain: 0},
+        }),
+  } as DetailedProposal;
 }

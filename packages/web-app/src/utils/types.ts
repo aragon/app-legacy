@@ -1,4 +1,9 @@
-import {IMintTokenParams, VoteValues} from '@aragon/sdk-client';
+import {
+  IMintTokenParams,
+  AddressListProposal,
+  Erc20Proposal,
+  VoteValues,
+} from '@aragon/sdk-client';
 import {Address} from '@aragon/ui-components/src/utils/addresses';
 
 import {TimeFilter, TransferTypes} from './constants';
@@ -167,6 +172,8 @@ export type AddressListVote = {
 export type Erc20ProposalVote = AddressListVote & {
   weight: bigint;
 };
+
+export type DetailedProposal = Erc20Proposal | AddressListProposal;
 
 /* ACTION TYPES ============================================================= */
 

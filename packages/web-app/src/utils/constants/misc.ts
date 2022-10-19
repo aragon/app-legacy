@@ -110,3 +110,8 @@ export const PROPOSAL_STATE_LABELS = [
   i18n.t('governance.proposals.states.succeeded'),
   i18n.t('governance.proposals.states.defeated'),
 ];
+
+// Storage and cacheing keys
+export const PENDING_DEPOSITS_KEY = 'pendingDeposits';
+export const PENDING_PROPOSALS_KEY = 'pendingProposals';
+export const PENDING_VOTES_KEY = 'pendingVotes';
