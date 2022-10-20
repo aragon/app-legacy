@@ -5,32 +5,31 @@ import {
   IAddressListPluginInstall,
   ICreateParams,
   IErc20PluginInstall,
+  IPluginSettings,
 } from '@aragon/sdk-client';
-
+import {IPluginInstallItem} from '@aragon/sdk-client/dist/internal/interfaces/common';
+import {parseUnits} from 'ethers/lib/utils';
 import React, {
   createContext,
-  useContext,
-  useState,
   ReactNode,
   useCallback,
-  useMemo,
+  useContext,
+  useState,
 } from 'react';
-import {parseUnits} from 'ethers/lib/utils';
+import {useFormContext} from 'react-hook-form';
 import {useNavigate} from 'react-router-dom';
-import {useFormContext, useWatch} from 'react-hook-form';
 
 import PublishModal from 'containers/transactionModals/publishModal';
-import {TransactionState} from 'utils/constants';
-import {getSecondsFromDHM} from 'utils/date';
-import {CreateDaoFormData} from 'pages/createDAO';
-import {Landing} from 'utils/paths';
-import {useWallet} from 'hooks/useWallet';
-import {useGlobalModalContext} from './globalModals';
 import {useClient} from 'hooks/useClient';
 import {usePollGasFee} from 'hooks/usePollGasfee';
-import {IPluginInstallItem} from '@aragon/sdk-client/dist/internal/interfaces/common';
-import {trackEvent} from 'services/analytics';
+import {useWallet} from 'hooks/useWallet';
+import {CreateDaoFormData} from 'pages/createDAO';
 import {useTranslation} from 'react-i18next';
+import {trackEvent} from 'services/analytics';
+import {TransactionState} from 'utils/constants';
+import {getSecondsFromDHM} from 'utils/date';
+import {Landing} from 'utils/paths';
+import {useGlobalModalContext} from './globalModals';
 
 type CreateDaoContextType = {
   /** Prepares the creation data and awaits user confirmation to start process */
@@ -45,25 +44,18 @@ const CreateDaoProvider: React.FC<Props> = ({children}) => {
   const {open} = useGlobalModalContext();
   const navigate = useNavigate();
   const {isOnWrongNetwork, provider} = useWallet();
-  const [showModal, setShowModal] = useState(false);
   const {t} = useTranslation();
+  const {getValues} = useFormContext<CreateDaoFormData>();
+  const {client} = useClient();
 
+  const [showModal, setShowModal] = useState(false);
   const [daoCreationData, setDaoCreationData] = useState<ICreateParams>();
   const [creationProcessState, setCreationProcessState] =
     useState<TransactionState>();
 
-  // Form values
-  const {getValues, control} = useFormContext<CreateDaoFormData>();
-  const [membership] = useWatch({name: ['membership'], control});
-
-  const {client} = useClient();
-
-  const shouldPoll = useMemo(
-    () =>
-      daoCreationData !== undefined &&
-      creationProcessState === TransactionState.WAITING,
-    [creationProcessState, daoCreationData]
-  );
+  const shouldPoll =
+    daoCreationData !== undefined &&
+    creationProcessState === TransactionState.WAITING;
 
   /*************************************************
    *                   Handlers                    *
@@ -124,32 +116,29 @@ const CreateDaoProvider: React.FC<Props> = ({children}) => {
     }
   };
 
-  /*************************************************
-   *                   Helpers                     *
-   *************************************************/
-  // get ERC20 Plugin configuration
-  const erc20PluginParams: IErc20PluginInstall = useMemo(() => {
+  const getPluginSettings: () => IPluginSettings = useCallback(() => {
     const {
       minimumApproval,
       minimumParticipation,
       durationDays,
       durationHours,
       durationMinutes,
-      tokenName,
-      tokenSymbol,
-      wallets,
     } = getValues();
     return {
-      settings: {
-        minDuration: getSecondsFromDHM(
-          parseInt(durationDays),
-          parseInt(durationHours),
-          parseInt(durationMinutes)
-        ),
-        minTurnout: parseInt(minimumParticipation) || 0,
-        minSupport: parseInt(minimumApproval) || 0,
-      },
-      newToken: {
+      minDuration: getSecondsFromDHM(
+        parseInt(durationDays),
+        parseInt(durationHours),
+        parseInt(durationMinutes)
+      ),
+      minTurnout: parseInt(minimumParticipation) / 100,
+      minSupport: parseInt(minimumApproval) / 100,
+    };
+  }, [getValues]);
+
+  const getErc20PluginParams: () => IErc20PluginInstall['newToken'] =
+    useCallback(() => {
+      const {tokenName, tokenSymbol, wallets} = getValues();
+      return {
         name: tokenName,
         symbol: tokenSymbol,
         decimals: 18,
@@ -158,52 +147,43 @@ const CreateDaoProvider: React.FC<Props> = ({children}) => {
           address: wallet.address,
           balance: BigInt(parseUnits(wallet.amount, 18).toBigInt()),
         })),
-      },
-    };
-  }, [getValues]);
+      };
+    }, [getValues]);
 
   // get whiteList Plugin configuration
-  const whiteListPluginParams: IAddressListPluginInstall = useMemo(() => {
-    const {
-      minimumApproval,
-      minimumParticipation,
-      durationDays,
-      durationHours,
-      durationMinutes,
-      whitelistWallets,
-    } = getValues();
-    return {
-      settings: {
-        minDuration: getSecondsFromDHM(
-          parseInt(durationDays),
-          parseInt(durationHours),
-          parseInt(durationMinutes)
-        ),
-        minTurnout: parseInt(minimumParticipation) || 0,
-        minSupport: parseInt(minimumApproval) || 0,
-      },
-      addresses: whitelistWallets?.map(wallet => wallet.address),
-    };
-  }, [getValues]);
+  const getAddresslistParams: () => IAddressListPluginInstall['addresses'] =
+    useCallback(() => {
+      const {whitelistWallets} = getValues();
+      return whitelistWallets?.map(wallet => wallet.address);
+    }, [getValues]);
 
   // Get dao setting configuration for creation process
-  const getDaoSettings = useCallback((): ICreateParams => {
-    const values = getValues();
-    let plugins: IPluginInstallItem;
+  const getDaoSettings = useCallback(() => {
+    const {membership, daoName, daoSummary, daoLogo, links} = getValues();
+    let plugins: IPluginInstallItem[] = [];
+    const pluginSettings = getPluginSettings();
 
-    if (
-      !erc20PluginParams.newToken?.balances ||
-      !whiteListPluginParams.addresses
-    )
-      return {} as ICreateParams;
     switch (membership) {
       case 'token':
-        plugins =
-          ClientErc20?.encoding?.getPluginInstallItem(erc20PluginParams);
+        const erc20Params = getErc20PluginParams();
+        const erc20PluginParams: IErc20PluginInstall = {
+          settings: pluginSettings,
+          newToken: erc20Params,
+        };
+        plugins.push(
+          ClientErc20?.encoding?.getPluginInstallItem(erc20PluginParams)
+        );
         break;
       case 'wallet':
-        plugins = ClientAddressList?.encoding?.getPluginInstallItem(
-          whiteListPluginParams
+        const addressListParams = getAddresslistParams();
+        const addressListPluginParams: IAddressListPluginInstall = {
+          settings: pluginSettings,
+          addresses: addressListParams,
+        };
+        plugins.push(
+          ClientAddressList?.encoding?.getPluginInstallItem(
+            addressListPluginParams
+          )
         );
         break;
       default:
@@ -212,16 +192,21 @@ const CreateDaoProvider: React.FC<Props> = ({children}) => {
 
     return {
       metadata: {
-        name: values.daoName,
-        description: values.daoSummary,
-        avatar: values.daoLogo,
-        links: values.links,
+        name: daoName,
+        description: daoSummary,
+        avatar: daoLogo,
+        links: links,
       },
       // TODO: We're using dao name without spaces for ens, We need to add alert to inform this to user
-      ensSubdomain: values.daoName?.replace(/ /g, '_'),
-      plugins: [plugins],
+      ensSubdomain: daoName?.replace(/ /g, '_'),
+      plugins: plugins,
     };
-  }, [erc20PluginParams, getValues, membership, whiteListPluginParams]);
+  }, [
+    getValues,
+    getPluginSettings,
+    getErc20PluginParams,
+    getAddresslistParams,
+  ]);
 
   // estimate creation fees
   const estimateCreationFees = useCallback(async () => {
