@@ -1,5 +1,4 @@
 import {
-  IMintTokenParams,
   AddressListProposal,
   Erc20Proposal,
   VoteValues,
@@ -256,11 +255,11 @@ export type ActionMintToken = {
     }[];
   };
   summary: {
-    newTokens: number | bigint;
-    tokenSupply?: number;
+    newTokens: number;
+    tokenSupply: number;
     newHoldersCount: number;
-    daoTokenSymbol?: string;
-    daoTokenAddress?: string;
+    daoTokenSymbol: string;
+    daoTokenAddress: string;
   };
 };
 

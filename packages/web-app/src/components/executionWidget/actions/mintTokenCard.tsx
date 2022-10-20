@@ -15,8 +15,7 @@ export const MintTokenCard: React.FC<{
   const {t} = useTranslation();
   const {network} = useNetwork();
 
-  const newTotalSupply =
-    action.summary.newTokens + Number(action.summary.tokenSupply);
+  const newTotalSupply = action.summary.newTokens + action.summary.tokenSupply;
 
   return (
     <AccordionMethod
