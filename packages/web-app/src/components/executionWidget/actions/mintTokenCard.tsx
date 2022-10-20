@@ -111,8 +111,7 @@ export const MintTokenCard: React.FC<{
             <Label>{t('labels.totalTokens')}</Label>
             {tokenSupply ? (
               <p>
-                {Big(tokenSupply).toNumber() + Number(newTokens)}{' '}
-                {daoToken?.symbol}
+                {tokenSupply.toNumber() + Number(newTokens)} {daoToken?.symbol}
               </p>
             ) : (
               <p>...</p>

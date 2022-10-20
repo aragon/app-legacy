@@ -19,6 +19,7 @@ import {
   ActionWithdraw,
 } from 'utils/types';
 import {Address} from '@aragon/ui-components/dist/utils/addresses';
+import Big from 'big.js';
 
 export function formatUnits(amount: BigNumberish, decimals: number) {
   if (amount.toString().includes('.') || !decimals) {
@@ -143,13 +144,12 @@ export async function decodeMintTokensToAction(
     return;
   }
 
-  const decoded: IMintTokenParams[] = data.map(action =>
-    client.decoding.mintTokenAction(action)
-  );
-
-  const newTokens = decoded.reduce((accumulator, value) => {
-    return accumulator + Number(value.amount);
-  }, 0);
+  const newTokens = Big(0);
+  const decoded: IMintTokenParams[] = data.map(action => {
+    const decodedAction = client.decoding.mintTokenAction(action);
+    newTokens.plus(Big(Number(decodedAction.amount)));
+    return decodedAction;
+  });
 
   return Promise.resolve({
     name: 'mint_tokens',
@@ -157,7 +157,7 @@ export async function decodeMintTokensToAction(
       mintTokensToWallets: decoded,
     },
     summary: {
-      newTokens: BigInt(newTokens),
+      newTokens: BigInt(Number(newTokens)),
       newHoldersCount: decoded.length,
     },
   });
