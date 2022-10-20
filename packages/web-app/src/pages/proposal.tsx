@@ -56,6 +56,8 @@ import {
 } from 'utils/proposals';
 import {Action} from 'utils/types';
 import {DaoAction} from '@aragon/sdk-client/dist/internal/interfaces/common';
+import {useDaoDetails} from 'hooks/useDaoDetails';
+import {useDaoToken} from 'hooks/useDaoToken';
 
 // TODO: @Sepehr Please assign proper tags on action decoding
 const PROPOSAL_TAGS = ['Finance', 'Withdraw'];
@@ -68,6 +70,12 @@ const Proposal: React.FC = () => {
 
   const navigate = useNavigate();
   const {dao, id: proposalId} = useParams();
+  const {data: daoDetails, isLoading: detailsAreLoading} = useDaoDetails(
+    dao as string
+  );
+  const {data: daoToken, isLoading: daoTokenLoading} = useDaoToken(
+    daoDetails?.plugins[0].instanceAddress as string
+  );
 
   const {client} = useClient();
   const {set, get} = useCache();
@@ -175,7 +183,8 @@ const Proposal: React.FC = () => {
 
       const decodedMintToken = decodeMintTokensToAction(
         mintTokenActions.actions,
-        pluginClient as ClientErc20
+        pluginClient as ClientErc20,
+        daoToken?.decimals || 18
       );
 
       actionPromises.splice(mintTokenActions.index, 0, decodedMintToken);
@@ -184,7 +193,7 @@ const Proposal: React.FC = () => {
         setDecodedActions(value);
       });
     }
-  }, [apolloClient, client, network, pluginClient, proposal]);
+  }, [apolloClient, client, daoToken, network, pluginClient, proposal]);
 
   // caches the status for breadcrumb
   useEffect(() => {
@@ -439,7 +448,13 @@ const Proposal: React.FC = () => {
   /*************************************************
    *                     Render                    *
    *************************************************/
-  if (paramsAreLoading || proposalIsLoading || !proposal) {
+  if (
+    paramsAreLoading ||
+    detailsAreLoading ||
+    daoTokenLoading ||
+    proposalIsLoading ||
+    !proposal
+  ) {
     return <Loading />;
   }
 

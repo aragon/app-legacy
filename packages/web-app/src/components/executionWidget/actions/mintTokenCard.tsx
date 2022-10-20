@@ -10,7 +10,7 @@ import {CHAIN_METADATA} from 'utils/constants';
 import {ActionMintToken} from 'utils/types';
 import {useDaoParam} from 'hooks/useDaoParam';
 import {useDaoToken} from 'hooks/useDaoToken';
-import {formatUnits} from 'ethers/lib/utils';
+import {formatUnits} from 'utils/library';
 import {useProviders} from 'context/providers';
 import {useDaoDetails} from 'hooks/useDaoDetails';
 import Big from 'big.js';
@@ -32,6 +32,8 @@ export const MintTokenCard: React.FC<{
 
   const newHoldersCount = action.summary.newHoldersCount;
   const newTokens = action.summary.newTokens;
+
+  console.log('newLog', newTokens);
 
   useEffect(() => {
     // Fetching necessary info about the token.
@@ -68,11 +70,20 @@ export const MintTokenCard: React.FC<{
             let percentage;
             try {
               percentage =
-                newTokenSupply && !newTokenSupply.eq(Big(0))
-                  ? Big(Number(wallet.amount)).div(newTokenSupply).mul(Big(100))
-                  : Big(0);
+                newTokenSupply && !newTokenSupply.eq(0)
+                  ? (Number(wallet.amount) /
+                      Number(
+                        formatUnits(
+                          newTokenSupply.toNumber(),
+                          daoToken?.decimals as number
+                        )
+                      )) *
+                    100
+                  : 0;
+
+              console.log('newTokenSupply');
             } catch {
-              percentage = Big(0);
+              percentage = 0;
             }
             return wallet.address ? (
               <ListItemAddress
@@ -86,9 +97,9 @@ export const MintTokenCard: React.FC<{
                   )
                 }
                 tokenInfo={{
-                  amount: Big(Number(wallet.amount)).toNumber(),
+                  amount: Number(wallet.amount),
                   symbol: daoToken?.symbol || '',
-                  percentage: percentage.toPrecision(3),
+                  percentage: percentage.toPrecision(4),
                 }}
               />
             ) : null;

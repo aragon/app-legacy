@@ -1,6 +1,6 @@
 import {ClientErc20, IMintTokenParams} from '@aragon/sdk-client';
 // Library utils / Ethers for now
-import {BigNumberish, constants, ethers} from 'ethers';
+import {BigNumber, BigNumberish, constants, ethers} from 'ethers';
 import {TFunction} from 'react-i18next';
 import {ApolloClient} from '@apollo/client';
 import {Client, ClientAddressList} from '@aragon/sdk-client';
@@ -137,18 +137,20 @@ export async function decodeWithdrawToAction(
  */
 export async function decodeMintTokensToAction(
   data: Uint8Array[] | undefined,
-  client: ClientErc20 | undefined
+  client: ClientErc20 | undefined,
+  decimals: number
 ): Promise<ActionMintToken | undefined> {
   if (!client || !data) {
     console.error('SDK client is not initialized correctly');
     return;
   }
 
-  const newTokens = Big(0);
-  const decoded: IMintTokenParams[] = data.map(action => {
-    const decodedAction = client.decoding.mintTokenAction(action);
-    newTokens.plus(Big(Number(decodedAction.amount)));
-    return decodedAction;
+  let newTokens = BigInt(0);
+  const decoded = data.map(action => {
+    const {amount, address}: IMintTokenParams =
+      client.decoding.mintTokenAction(action);
+    newTokens = newTokens + amount;
+    return {address, amount: formatUnits(amount, decimals)};
   });
 
   return Promise.resolve({
@@ -157,7 +159,7 @@ export async function decodeMintTokensToAction(
       mintTokensToWallets: decoded,
     },
     summary: {
-      newTokens: BigInt(Number(newTokens)),
+      newTokens: Number(formatUnits(newTokens, decimals)),
       newHoldersCount: decoded.length,
     },
   });

@@ -97,7 +97,7 @@ export const useDaoProposal = (
             daoTokenAddress,
             {
               address: member,
-              amount: BigInt(10 * (10 ^ 18)),
+              amount: BigInt(10 * 10 ** 18),
             }
           )
         )
