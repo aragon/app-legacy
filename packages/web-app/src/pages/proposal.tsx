@@ -58,6 +58,7 @@ import {Action} from 'utils/types';
 import {DaoAction} from '@aragon/sdk-client/dist/internal/interfaces/common';
 import {useDaoDetails} from 'hooks/useDaoDetails';
 import {useDaoToken} from 'hooks/useDaoToken';
+import {useSpecificProvider} from 'context/providers';
 
 // TODO: @Sepehr Please assign proper tags on action decoding
 const PROPOSAL_TAGS = ['Finance', 'Withdraw'];
@@ -82,6 +83,7 @@ const Proposal: React.FC = () => {
   const apolloClient = useApolloClient();
 
   const {network} = useNetwork();
+  const provider = useSpecificProvider(CHAIN_METADATA[network].id);
   const {address, isConnected, isOnWrongNetwork} = useWallet();
 
   const [decodedActions, setDecodedActions] =
@@ -181,19 +183,31 @@ const Proposal: React.FC = () => {
           }
         });
 
-      const decodedMintToken = decodeMintTokensToAction(
-        mintTokenActions.actions,
-        pluginClient as ClientErc20,
-        daoToken?.decimals || 18
-      );
+      if (daoToken?.address) {
+        const decodedMintToken = decodeMintTokensToAction(
+          mintTokenActions.actions,
+          pluginClient as ClientErc20,
+          daoToken.address,
+          provider,
+          network
+        );
 
-      actionPromises.splice(mintTokenActions.index, 0, decodedMintToken);
+        actionPromises.splice(mintTokenActions.index, 0, decodedMintToken);
 
-      Promise.all(actionPromises).then(value => {
-        setDecodedActions(value);
-      });
+        Promise.all(actionPromises).then(value => {
+          setDecodedActions(value);
+        });
+      }
     }
-  }, [apolloClient, client, daoToken, network, pluginClient, proposal]);
+  }, [
+    apolloClient,
+    client,
+    daoToken?.address,
+    network,
+    pluginClient,
+    proposal,
+    provider,
+  ]);
 
   // caches the status for breadcrumb
   useEffect(() => {

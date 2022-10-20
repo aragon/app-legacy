@@ -1,25 +1,29 @@
-import {ClientErc20, IMintTokenParams} from '@aragon/sdk-client';
 // Library utils / Ethers for now
-import {BigNumber, BigNumberish, constants, ethers} from 'ethers';
-import {TFunction} from 'react-i18next';
 import {ApolloClient} from '@apollo/client';
-import {Client, ClientAddressList} from '@aragon/sdk-client';
+import {
+  Client,
+  ClientAddressList,
+  ClientErc20,
+  IMintTokenParams,
+} from '@aragon/sdk-client';
+import {Address} from '@aragon/ui-components/dist/utils/addresses';
+import {BigNumber, BigNumberish, constants, ethers, providers} from 'ethers';
+import {TFunction} from 'react-i18next';
 
 import {fetchTokenData} from 'services/prices';
 import {
   BIGINT_PATTERN,
+  CHAIN_METADATA,
   ISO_DATE_PATTERN,
   SupportedNetworks,
 } from 'utils/constants';
-
 import {
   ActionAddAddress,
   ActionMintToken,
   ActionRemoveAddress,
   ActionWithdraw,
 } from 'utils/types';
-import {Address} from '@aragon/ui-components/dist/utils/addresses';
-import Big from 'big.js';
+import {getTokenInfo} from './tokens';
 
 export function formatUnits(amount: BigNumberish, decimals: number) {
   if (amount.toString().includes('.') || !decimals) {
@@ -138,31 +142,52 @@ export async function decodeWithdrawToAction(
 export async function decodeMintTokensToAction(
   data: Uint8Array[] | undefined,
   client: ClientErc20 | undefined,
-  decimals: number
+  daoTokenAddress: Address,
+  provider: providers.Provider,
+  network: SupportedNetworks
 ): Promise<ActionMintToken | undefined> {
   if (!client || !data) {
     console.error('SDK client is not initialized correctly');
     return;
   }
 
-  let newTokens = BigInt(0);
-  const decoded = data.map(action => {
-    const {amount, address}: IMintTokenParams =
-      client.decoding.mintTokenAction(action);
-    newTokens = newTokens + amount;
-    return {address, amount: formatUnits(amount, decimals)};
-  });
+  try {
+    // get token info
+    const {totalSupply, symbol, decimals} = await getTokenInfo(
+      daoTokenAddress,
+      provider,
+      CHAIN_METADATA[network].nativeCurrency
+    );
 
-  return Promise.resolve({
-    name: 'mint_tokens',
-    inputs: {
-      mintTokensToWallets: decoded,
-    },
-    summary: {
-      newTokens: Number(formatUnits(newTokens, decimals)),
-      newHoldersCount: decoded.length,
-    },
-  });
+    // decode and calculate new tokens count
+    let newTokens = BigNumber.from(0);
+
+    const decoded = data.map(action => {
+      // decode action
+      const {amount, address}: IMintTokenParams =
+        client.decoding.mintTokenAction(action);
+
+      // update new tokens count
+      newTokens = newTokens.add(amount);
+      return {address, amount: Number(formatUnits(amount, decimals))};
+    });
+
+    return Promise.resolve({
+      name: 'mint_tokens',
+      inputs: {
+        mintTokensToWallets: decoded,
+      },
+      summary: {
+        newTokens: Number(formatUnits(newTokens, decimals)),
+        tokenSupply: parseFloat(formatUnits(totalSupply, decimals)),
+        newHoldersCount: decoded.length,
+        daoTokenSymbol: symbol,
+        daoTokenAddress: daoTokenAddress,
+      },
+    });
+  } catch (error) {
+    console.error('Error decoding mint token action', error);
+  }
 }
 
 /**
