@@ -151,7 +151,7 @@ const CreateDaoProvider: React.FC<Props> = ({children}) => {
     }, [getValues]);
 
   // get whiteList Plugin configuration
-  const getAddresslistParams: () => IAddressListPluginInstall['addresses'] =
+  const getAddresslistPluginParams: () => IAddressListPluginInstall['addresses'] =
     useCallback(() => {
       const {whitelistWallets} = getValues();
       return whitelistWallets?.map(wallet => wallet.address);
@@ -160,32 +160,32 @@ const CreateDaoProvider: React.FC<Props> = ({children}) => {
   // Get dao setting configuration for creation process
   const getDaoSettings = useCallback(() => {
     const {membership, daoName, daoSummary, daoLogo, links} = getValues();
-    let plugins: IPluginInstallItem[] = [];
+    const plugins: IPluginInstallItem[] = [];
     const pluginSettings = getPluginSettings();
 
     switch (membership) {
-      case 'token':
+      case 'token': {
         const erc20Params = getErc20PluginParams();
-        const erc20PluginParams: IErc20PluginInstall = {
+        const pluginInstallParams: IErc20PluginInstall = {
           settings: pluginSettings,
           newToken: erc20Params,
         };
         plugins.push(
-          ClientErc20?.encoding?.getPluginInstallItem(erc20PluginParams)
+          ClientErc20?.encoding?.getPluginInstallItem(pluginInstallParams)
         );
         break;
-      case 'wallet':
-        const addressListParams = getAddresslistParams();
-        const addressListPluginParams: IAddressListPluginInstall = {
+      }
+      case 'wallet': {
+        const addressListParams = getAddresslistPluginParams();
+        const pluginInstallParams: IAddressListPluginInstall = {
           settings: pluginSettings,
           addresses: addressListParams,
         };
         plugins.push(
-          ClientAddressList?.encoding?.getPluginInstallItem(
-            addressListPluginParams
-          )
+          ClientAddressList?.encoding?.getPluginInstallItem(pluginInstallParams)
         );
         break;
+      }
       default:
         throw new Error(`Unknown dao type: ${membership}`);
     }
@@ -205,7 +205,7 @@ const CreateDaoProvider: React.FC<Props> = ({children}) => {
     getValues,
     getPluginSettings,
     getErc20PluginParams,
-    getAddresslistParams,
+    getAddresslistPluginParams,
   ]);
 
   // estimate creation fees
