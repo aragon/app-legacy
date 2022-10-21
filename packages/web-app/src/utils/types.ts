@@ -66,35 +66,8 @@ export type VaultToken = TokenWithMarketData & {
 export type PollTokenOptions = {interval?: number; filter: TimeFilter};
 
 // Transfers
-type Deposit = {
-  __typename: TransferTypes.Deposit;
-  sender: Address;
-};
-
-type Withdraw = {
-  __typename: TransferTypes.Withdraw;
-
-  to: Address;
-  proposal: {
-    id: string;
-  };
-};
-
-/** The Dao transfer */
-export type DaoTransfer = {
-  amount: number;
-  createdAt: number;
-  dao: {
-    id: string;
-  };
-  token: TokenBalance['token'];
-  id: string;
-  reference: string;
-  transaction: string;
-} & (Withdraw | Deposit);
-
 /** A transfer transaction */
-export type Transfer = {
+export type BaseTransfer = {
   id: string;
   title: string;
   tokenAmount: string;
@@ -108,10 +81,19 @@ export type Transfer = {
   reference?: string;
   transaction: string;
   tokenAddress: string;
-} & (
-  | {transferType: TransferTypes.Deposit; sender: Address}
-  | {transferType: TransferTypes.Withdraw; to: Address; proposalId: string}
-);
+};
+
+export type Deposit = BaseTransfer & {
+  sender: Address;
+  transferType: TransferTypes.Deposit;
+};
+export type Withdraw = BaseTransfer & {
+  proposalId: string;
+  to: Address;
+  transferType: TransferTypes.Withdraw;
+};
+
+export type Transfer = Deposit | Withdraw;
 
 /*************************************************
  *                  Proposal types               *
