@@ -133,7 +133,7 @@ function mapToDaoTransfers(
         title: transfer.reference || i18n.t('labels.withdraw'),
         transferType: TransferTypes.Withdraw as TransferTypes.Withdraw,
         to: transfer.to,
-        proposalId: transfer.transactionId,
+        proposalId: transfer.proposalId,
         isPending: false,
         transferDate: `${formatDate(
           transfer.creationDate.getTime() / 1000,
