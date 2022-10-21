@@ -34,6 +34,7 @@ import CreateDAO from 'pages/createDAO';
 import {FormProvider, useForm} from 'react-hook-form';
 import {NotFound} from 'utils/paths';
 import ProtectedRoute from 'components/protectedRoute';
+import {useTransactionDetailContext} from 'context/transactionDetail';
 
 const ExplorePage = lazy(() => import('pages/explore'));
 const NotFoundPage = lazy(() => import('pages/notFound'));
@@ -184,6 +185,11 @@ const DaoWrapper: React.FC = () => {
   const {dao} = useParams();
   const {data: daoDetails} = useDaoDetails(dao!);
 
+  // using isOpen to conditionally render TransactionDetail so that
+  // api call is not made on mount regardless of whether the user
+  // wants to open the modal
+  const {isOpen} = useTransactionDetailContext();
+
   return (
     <>
       <Navbar />
@@ -191,8 +197,11 @@ const DaoWrapper: React.FC = () => {
         <GridLayout>
           <Outlet />
           <TransferMenu />
-          {daoDetails && (
-            <TransactionDetail daoName={daoDetails.metadata.name} />
+          {daoDetails && isOpen && (
+            <TransactionDetail
+              daoName={daoDetails.metadata.name}
+              daoPlugin={daoDetails.plugins[0]}
+            />
           )}
         </GridLayout>
       </div>

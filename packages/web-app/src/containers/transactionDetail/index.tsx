@@ -3,35 +3,65 @@ import {
   CardText,
   CardToken,
   CardTransfer,
+  IconChevronRight,
   IconClose,
   IconLinkExternal,
   ListItemAction,
 } from '@aragon/ui-components';
-import React from 'react';
-import styled from 'styled-components';
+import React, {useCallback} from 'react';
 import {useTranslation} from 'react-i18next';
+import styled from 'styled-components';
 
-import {useNetwork} from 'context/network';
+import {InstalledPluginListItem} from '@aragon/sdk-client';
 import ModalBottomSheetSwitcher from 'components/modalBottomSheetSwitcher';
-import {CHAIN_METADATA, TransferTypes} from 'utils/constants';
-import {abbreviateTokenAmount} from 'utils/tokens';
+import {useNetwork} from 'context/network';
 import {useTransactionDetailContext} from 'context/transactionDetail';
+import {useDaoProposal} from 'hooks/useDaoProposal';
+import {PluginTypes} from 'hooks/usePluginClient';
+import {generatePath, useNavigate, useParams} from 'react-router-dom';
 import {trackEvent} from 'services/analytics';
-import {useParams} from 'react-router-dom';
+import {CHAIN_METADATA, TransferTypes} from 'utils/constants';
+import {Proposal} from 'utils/paths';
+import {abbreviateTokenAmount} from 'utils/tokens';
+import {Withdraw} from 'utils/types';
 
 type TransactionDetailProps = {
   daoName: string;
+  daoPlugin: InstalledPluginListItem;
 };
 
-const TransactionDetail: React.FC<TransactionDetailProps> = ({daoName}) => {
+const TransactionDetail: React.FC<TransactionDetailProps> = ({
+  daoName,
+  daoPlugin,
+}) => {
   const {t} = useTranslation();
-  const {network} = useNetwork();
   const {dao} = useParams();
+  const navigate = useNavigate();
+
+  const {network} = useNetwork();
 
   const {isOpen, transfer, onClose} = useTransactionDetailContext();
 
   const transactionUrl = `
     ${CHAIN_METADATA[network].explorer}tx/${transfer.transaction}`;
+  const proposalId = (transfer as Withdraw).proposalId;
+
+  const {data: proposal} = useDaoProposal(
+    proposalId,
+    daoPlugin.instanceAddress,
+    daoPlugin.id as PluginTypes
+  );
+
+  const handleNavigateToProposal = useCallback(() => {
+    navigate(
+      generatePath(Proposal, {
+        network,
+        dao,
+        id: proposalId,
+      })
+    );
+    onClose();
+  }, [dao, navigate, network, onClose, proposalId]);
 
   return (
     <ModalBottomSheetSwitcher isOpen={isOpen} onClose={onClose}>
@@ -64,13 +94,23 @@ const TransactionDetail: React.FC<TransactionDetailProps> = ({daoName}) => {
           tokenImageUrl={transfer.tokenImgUrl}
           treasuryShare={transfer.usdValue}
         />
-        {transfer.reference && (
-          <CardText
-            type="label"
-            title={t('labels.reference')}
-            content={transfer.reference}
-          />
-        )}
+
+        {transfer.transferType === TransferTypes.Deposit
+          ? transfer.reference && (
+              <CardText
+                type="label"
+                title={t('labels.reference')}
+                content={transfer.reference}
+              />
+            )
+          : transfer.transferType === TransferTypes.Withdraw && (
+              <ListItemAction
+                title={proposal?.metadata.title || 'Loading...'}
+                subtitle="Linked Proposal"
+                iconRight={<IconChevronRight />}
+                onClick={handleNavigateToProposal}
+              />
+            )}
 
         <div>
           <a
