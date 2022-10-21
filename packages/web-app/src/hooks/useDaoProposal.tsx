@@ -192,7 +192,7 @@ export const useDaoProposal = (
         setIsLoading(false);
       }
     }
-    getDaoProposal();
+    if (proposalId) getDaoProposal();
   }, [
     augmentProposalWithCache,
     cachedProposals,

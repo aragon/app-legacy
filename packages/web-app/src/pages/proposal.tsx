@@ -483,6 +483,10 @@ const Proposal: React.FC = () => {
     navigate(NotFound, {replace: true, state: {invalidProposal: proposalId}});
   }
 
+  if (paramsAreLoading || proposalIsLoading || !proposal) {
+    return <Loading />;
+  }
+
   return (
     <Container>
       <HeaderContainer>
