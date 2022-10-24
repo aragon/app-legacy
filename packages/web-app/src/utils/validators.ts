@@ -172,8 +172,9 @@ export async function isDaoNameValid(value: string, provider: InfuraProvider) {
   if (isOnlyWhitespace(value)) return i18n.t('errors.required.name');
   try {
     const ensAddress = await provider?.resolveName(value.replaceAll(' ', '_'));
+    if (ensAddress) return i18n.t('errors.ensDuplication');
   } catch (err) {
-    return i18n.t('errors.required.name');
+    return i18n.t('errors.ensNetworkIssue');
   }
   return true;
 }
