@@ -285,6 +285,7 @@
     "percentage": "Percentage amount should be between 0 and 100",
     "totalSupplyZero": "Total token supply can not be 0",
     "onlyAlphaNumeric": "{{field}} can only contain alphanumeric characters",
+    "ensDuplication": "This DAO name is already taken. Try another one.",
     "required": {
       "tokenAddress": "Token address is required",
       "tokenName": "Token name is required",

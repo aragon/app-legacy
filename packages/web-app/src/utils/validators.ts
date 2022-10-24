@@ -1,6 +1,7 @@
 import {FieldErrors, ValidateResult} from 'react-hook-form';
 import {isAddress, parseUnits} from 'ethers/lib/utils';
 import {BigNumber, providers as EthersProviders} from 'ethers';
+import {InfuraProvider} from '@ethersproject/providers';
 
 import {i18n} from '../../i18n.config';
 import {isERC20Token} from './tokens';
@@ -14,6 +15,7 @@ import {
   ActionRemoveAddress,
   Nullable,
 } from './types';
+import {isOnlyWhitespace} from './library';
 
 /**
  * Validate given token contract address
@@ -164,4 +166,14 @@ export function actionsAreValid(
   }
 
   return isValid;
+}
+
+export async function isDaoNameValid(value: string, provider: InfuraProvider) {
+  if (isOnlyWhitespace(value)) return i18n.t('errors.required.name');
+  try {
+    const ensAddress = await provider?.resolveName(value.replaceAll(' ', '_'));
+  } catch (err) {
+    return i18n.t('errors.required.name');
+  }
+  return true;
 }
