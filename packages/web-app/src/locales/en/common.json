@@ -27,6 +27,7 @@
     "connectWallet": "Login"
   },
   "labels": {
+    "loading": "Loading...",
     "members": "Members",
     "tokenHolders": "Token Holders",
     "addMember": "Add Members",

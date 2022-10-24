@@ -105,7 +105,7 @@ const TransactionDetail: React.FC<TransactionDetailProps> = ({
             )
           : transfer.transferType === TransferTypes.Withdraw && (
               <ListItemAction
-                title={proposal?.metadata.title || 'Loading...'}
+                title={proposal?.metadata.title || t('labels.loading')}
                 subtitle="Linked Proposal"
                 iconRight={<IconChevronRight />}
                 onClick={handleNavigateToProposal}
