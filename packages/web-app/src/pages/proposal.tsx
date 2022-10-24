@@ -29,6 +29,7 @@ import {TerminalTabs, VotingTerminal} from 'containers/votingTerminal';
 import {useGlobalModalContext} from 'context/globalModals';
 import {useNetwork} from 'context/network';
 import {useProposalTransactionContext} from 'context/proposalTransaction';
+import {useSpecificProvider} from 'context/providers';
 import {useCache} from 'hooks/useCache';
 import {useClient} from 'hooks/useClient';
 import {useDaoProposal} from 'hooks/useDaoProposal';
@@ -69,6 +70,7 @@ const Proposal: React.FC = () => {
 
   const {network} = useNetwork();
   const {address, isConnected, isOnWrongNetwork} = useWallet();
+  const provider = useSpecificProvider(CHAIN_METADATA[network].id);
 
   const [decodedActions, setDecodedActions] =
     useState<(Action | undefined)[]>();
@@ -140,6 +142,7 @@ const Proposal: React.FC = () => {
                 action.data,
                 client,
                 apolloClient,
+                provider,
                 network
               );
             case 'mint':
@@ -162,7 +165,7 @@ const Proposal: React.FC = () => {
         setDecodedActions(value);
       });
     }
-  }, [apolloClient, client, network, pluginClient, proposal]);
+  }, [apolloClient, client, network, pluginClient, proposal, provider]);
 
   // caches the status for breadcrumb
   useEffect(() => {
@@ -450,7 +453,8 @@ const Proposal: React.FC = () => {
             <Link
               external
               label={
-                proposal?.creatorAddress === address?.toLowerCase()
+                proposal?.creatorAddress.toLowerCase() ===
+                address?.toLowerCase()
                   ? t('labels.you')
                   : shortenAddress(proposal?.creatorAddress || '')
               }

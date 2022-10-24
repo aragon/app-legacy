@@ -1,22 +1,23 @@
 // Library utils / Ethers for now
-import {BigNumberish, constants, ethers} from 'ethers';
-import {TFunction} from 'react-i18next';
 import {ApolloClient} from '@apollo/client';
 import {Client, ClientAddressList} from '@aragon/sdk-client';
+import {Address} from '@aragon/ui-components/dist/utils/addresses';
+import {BigNumberish, constants, ethers, providers} from 'ethers';
+import {TFunction} from 'react-i18next';
 
 import {fetchTokenData} from 'services/prices';
 import {
   BIGINT_PATTERN,
+  CHAIN_METADATA,
   ISO_DATE_PATTERN,
   SupportedNetworks,
 } from 'utils/constants';
-
 import {
   ActionAddAddress,
   ActionRemoveAddress,
   ActionWithdraw,
 } from 'utils/types';
-import {Address} from '@aragon/ui-components/dist/utils/addresses';
+import {getTokenInfo} from './tokens';
 
 export function formatUnits(amount: BigNumberish, decimals: number) {
   if (amount.toString().includes('.') || !decimals) {
@@ -85,6 +86,7 @@ export const toHex = (num: number | string) => {
  * @param data Uint8Array action data
  * @param client SDK client, Fetched using useClient
  * @param apolloClient Apollo client, Fetched using useApolloClient
+ * @param provider Eth provider
  * @param network network of the dao
  * @returns Return Decoded Withdraw action
  */
@@ -92,6 +94,7 @@ export async function decodeWithdrawToAction(
   data: Uint8Array | undefined,
   client: Client | undefined,
   apolloClient: ApolloClient<object>,
+  provider: providers.Provider,
   network: SupportedNetworks
 ): Promise<ActionWithdraw | undefined> {
   if (!client || !data) {
@@ -106,24 +109,28 @@ export async function decodeWithdrawToAction(
     return;
   }
 
-  const response = await fetchTokenData(
-    decoded?.tokenAddress || constants.AddressZero,
-    apolloClient,
-    network
-  );
+  const address = decoded?.tokenAddress || constants.AddressZero;
+  try {
+    const [response, apiResponse] = await Promise.all([
+      getTokenInfo(address, provider, CHAIN_METADATA[network].nativeCurrency),
+      fetchTokenData(address, apolloClient, network),
+    ]);
 
-  return {
-    amount: Number(decoded.amount),
-    name: 'withdraw_assets',
-    to: decoded.recipientAddress,
-    tokenAddress: response?.address || (decoded?.tokenAddress as string),
-    tokenBalance: 0, // unnecessary
-    tokenImgUrl: response?.imgUrl as string,
-    tokenName: response?.name || '',
-    tokenPrice: response?.price || 0,
-    tokenSymbol: response?.symbol || '',
-    isCustomToken: false,
-  };
+    return {
+      amount: Number(formatUnits(decoded.amount, response.decimals)),
+      name: 'withdraw_assets',
+      to: decoded.recipientAddress,
+      tokenBalance: 0, // unnecessary?
+      tokenAddress: address,
+      tokenImgUrl: apiResponse?.imgUrl || '',
+      tokenName: response.name,
+      tokenPrice: apiResponse?.price || 0,
+      tokenSymbol: response.symbol,
+      isCustomToken: false,
+    };
+  } catch (error) {
+    console.error('Error fetching token data', error);
+  }
 }
 
 /**

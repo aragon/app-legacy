@@ -381,6 +381,7 @@
     "approveToken": "Approve token",
     "depositTitle": "Sign Deposit",
     "goToFinance": "Go to Finance",
+    "goToProposal": "Open your Proposal",
     "launchGovernancePage": "Launch Governance page",
     "launchDaoDashboard": "Launch DAO dashboard",
     "errorLabel": "Error while confirming transaction",
