@@ -1,3 +1,4 @@
+import {Erc20TokenDetails} from '@aragon/sdk-client';
 import {ListItemAddress} from '@aragon/ui-components';
 import {formatUnits, isAddress} from 'ethers/lib/utils';
 import React, {useEffect, useState} from 'react';
@@ -5,19 +6,16 @@ import React, {useEffect, useState} from 'react';
 import {useNetwork} from 'context/network';
 import {useSpecificProvider} from 'context/providers';
 import {
-  WalletMember,
   BalanceMember,
   isBalanceMember,
+  WalletMember,
 } from 'hooks/useDaoMembers';
 import {CHAIN_METADATA} from 'utils/constants';
 import {getTokenInfo} from 'utils/tokens';
 
 type MembersListProps = {
   members: Array<BalanceMember | WalletMember>;
-  token?: {
-    id: string;
-    symbol: string;
-  };
+  token?: Erc20TokenDetails;
 };
 
 export const MembersList: React.FC<MembersListProps> = ({token, members}) => {
@@ -30,7 +28,7 @@ export const MembersList: React.FC<MembersListProps> = ({token, members}) => {
     async function fetchTotalSupply() {
       if (token) {
         const {totalSupply: supply, decimals} = await getTokenInfo(
-          token.id,
+          token.address,
           provider,
           CHAIN_METADATA[network].nativeCurrency
         );
