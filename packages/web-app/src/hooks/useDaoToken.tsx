@@ -11,7 +11,7 @@ export function useDaoToken(
   const [error, setError] = useState<Error>();
   const [isLoading, setIsLoading] = useState(false);
 
-  const pluginClient = usePluginClient('erc20voting.dao.eth');
+  const pluginClient = usePluginClient('erc20voting.dao.eth') as ClientErc20;
 
   useEffect(() => {
     async function getDaoMetadata() {
@@ -19,10 +19,9 @@ export function useDaoToken(
         setIsLoading(true);
 
         if (pluginAddress) {
-          const data = await (pluginClient as ClientErc20)?.methods.getToken(
-            pluginAddress
-          );
-          if (data) setData(data);
+          const response = await pluginClient?.methods.getToken(pluginAddress);
+
+          if (response) setData(response);
         }
       } catch (err) {
         console.error(err);
