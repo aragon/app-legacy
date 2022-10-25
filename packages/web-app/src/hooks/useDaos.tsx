@@ -29,11 +29,11 @@ export function useDaos(
 
   useEffect(() => {
     async function fetchDaos() {
-      if (useCase === 'favourite') {
-        // TODO get favourited DAO from local storage. This is out of scope for
-        // the alpha. [VR 21-09-2022]
-        throw Error('Not yet implemented');
-      }
+      // TODO get favourited DAO from local storage. This is out of scope for
+      // the alpha. [VR 21-09-2022]
+      // if (useCase === 'favourite') {
+      //   throw Error('Not yet implemented');
+      // }
 
       const sortParam =
         useCase === 'popular' ? DaoSortBy.POPULARITY : DaoSortBy.CREATED_AT;
@@ -42,7 +42,9 @@ export function useDaos(
         [];
       setData(daoDetails);
     }
+
     try {
+      setLoading(true);
       fetchDaos();
     } catch (e) {
       setError(e as Error);

@@ -4,15 +4,15 @@ import {
   IconChevronDown,
   Option,
 } from '@aragon/ui-components';
-import {DaoCard} from 'components/daoCard';
-import {useDaos} from 'hooks/useDaos';
-import {PluginTypes} from 'hooks/usePluginClient';
-import {useWallet} from 'hooks/useWallet';
 import React, {useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 
-const EXPLORE_FILTER = ['favourite', 'newest', 'popular'] as const;
+import {DaoCard} from 'components/daoCard';
+import {useDaos} from 'hooks/useDaos';
+import {PluginTypes} from 'hooks/usePluginClient';
+
+const EXPLORE_FILTER = ['newest', 'popular'] as const;
 
 export type ExploreFilter = typeof EXPLORE_FILTER[number];
 
@@ -27,10 +27,7 @@ const PAGE_SIZE = 4;
 export const DaoExplorer = () => {
   const {t} = useTranslation();
   const [showCount, setShowCount] = useState(PAGE_SIZE);
-  const {isConnected} = useWallet();
-  const [filterValue, setFilterValue] = useState<ExploreFilter>(
-    isConnected ? 'favourite' : 'popular'
-  );
+  const [filterValue, setFilterValue] = useState<ExploreFilter>('newest');
   const {data} = useDaos(filterValue, showCount);
 
   const handleShowMoreClick = () => {
@@ -56,14 +53,15 @@ export const DaoExplorer = () => {
               onChange={v => handleFliterChange(v)}
               bgWhite={false}
             >
-              {isConnected ? (
+              {/*  // TODO: uncomment when favouriting is being implemented
+               {isConnected ? (
                 <Option
                   label={t('explore.explorer.myDaos')}
                   value="favourite"
                 />
               ) : (
                 <></>
-              )}
+              )} */}
               <Option label={t('explore.explorer.popular')} value="popular" />
               <Option label={t('explore.explorer.newest')} value="newest" />
             </ButtonGroup>
