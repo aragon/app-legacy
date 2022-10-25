@@ -26,7 +26,7 @@ export const usePluginClient = (
   const [pluginClient, setPluginClient] = useState<
     ClientErc20 | ClientAddressList | undefined
   >(undefined);
-  const {client, context, contextParams} = useClient();
+  const {client, context} = useClient();
 
   useEffect(() => {
     if (!client || !context) {
@@ -49,7 +49,7 @@ export const usePluginClient = (
           throw new Error('The requested sdk type is invalid');
       }
     }
-  }, [client, context, contextParams, pluginType]);
+  }, [client, context, pluginType]);
 
   return pluginClient;
 };
