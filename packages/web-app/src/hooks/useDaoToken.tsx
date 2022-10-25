@@ -18,11 +18,8 @@ export function useDaoToken(
       try {
         setIsLoading(true);
 
-        if (pluginAddress) {
-          const response = await pluginClient?.methods.getToken(pluginAddress);
-
-          if (response) setData(response);
-        }
+        const response = await pluginClient?.methods.getToken(pluginAddress);
+        if (response) setData(response);
       } catch (err) {
         console.error(err);
         setError(err as Error);
@@ -31,7 +28,7 @@ export function useDaoToken(
       }
     }
 
-    getDaoMetadata();
+    if (pluginAddress) getDaoMetadata();
   }, [pluginAddress, pluginClient]);
 
   return {data, error, isLoading};

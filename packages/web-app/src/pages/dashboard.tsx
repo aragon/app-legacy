@@ -76,7 +76,7 @@ const Dashboard: React.FC = () => {
           transfers={transfers}
           totalAssetValue={totalAssetValue}
           pluginType={dao?.plugins[0].id as PluginTypes}
-          pluginAddress={dao?.plugins[0].instanceAddress as string}
+          pluginAddress={dao?.plugins[0].instanceAddress || ''}
         />
       ) : (
         <MobileDashboardContent
@@ -85,7 +85,7 @@ const Dashboard: React.FC = () => {
           transfers={transfers}
           totalAssetValue={totalAssetValue}
           pluginType={dao?.plugins[0].id as PluginTypes}
-          pluginAddress={dao?.plugins[0].instanceAddress as string}
+          pluginAddress={dao?.plugins[0].instanceAddress || ''}
         />
       )}
     </>

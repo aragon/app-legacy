@@ -23,7 +23,7 @@ import {useNetwork} from 'context/network';
 const TokenContainer = ({dao}: {dao: string}) => {
   const {data: daoDetails, isLoading: detailsAreLoading} = useDaoDetails(dao!);
   const {data: daoToken, isLoading: daoTokenLoading} = useDaoToken(
-    daoDetails?.plugins[0].instanceAddress as string
+    daoDetails?.plugins[0].instanceAddress || ''
   );
   const {t} = useTranslation();
 
