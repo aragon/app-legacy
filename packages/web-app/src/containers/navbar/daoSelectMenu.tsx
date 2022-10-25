@@ -6,27 +6,28 @@ import {
   ListItemDao,
 } from '@aragon/ui-components';
 import React, {useCallback} from 'react';
-import styled from 'styled-components';
-import {useNavigate} from 'react-router-dom';
 import {useTranslation} from 'react-i18next';
+import {useNavigate} from 'react-router-dom';
+import styled from 'styled-components';
 
 import {useReactiveVar} from '@apollo/client';
-import {useGlobalModalContext} from 'context/globalModals';
 import ModalBottomSheetSwitcher from 'components/modalBottomSheetSwitcher';
-import {favoriteDAOs, selectedDAO} from 'context/apolloClient';
+import {selectedDaoVar} from 'context/apolloClient';
+import {useGlobalModalContext} from 'context/globalModals';
 import useScreen from 'hooks/useScreen';
+import {NavigationDao} from 'utils/types';
 
 // NOTE: the state setting is temporary until backend integration
 const DaoSelectMenu: React.FC = () => {
   const {t} = useTranslation();
   const {isDesktop} = useScreen();
   const navigate = useNavigate();
-  const selectedDao = useReactiveVar(selectedDAO);
-  const favoriteDaos = useReactiveVar(favoriteDAOs);
+  const currentDao = useReactiveVar(selectedDaoVar);
   const {isSelectDaoOpen, close, open} = useGlobalModalContext();
 
-  const handleDaoSelect = (dao: {daoName: string; daoAddress: string}) => {
-    selectedDAO(dao);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const handleDaoSelect = (dao: NavigationDao) => {
+    // update when favoring daos selectedDaoVar(dao);
     close('selectDao');
   };
 
@@ -54,14 +55,13 @@ const DaoSelectMenu: React.FC = () => {
       </ModalHeader>
       <ModalContentContainer>
         <ListGroup>
-          {favoriteDaos.map(dao => (
-            <ListItemDao
-              {...dao}
-              selected={dao.daoAddress === selectedDao?.daoAddress}
-              key={dao.daoAddress}
-              onClick={() => handleDaoSelect(dao)}
-            />
-          ))}
+          <ListItemDao
+            selected
+            daoAddress={currentDao?.daoEns}
+            daoName={currentDao?.daoName}
+            daoLogo={currentDao?.daoLogo}
+            onClick={() => handleDaoSelect(currentDao)}
+          />
         </ListGroup>
         {/* TODO: Change click */}
         <ButtonText
