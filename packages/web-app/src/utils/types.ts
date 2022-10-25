@@ -298,6 +298,7 @@ export type Dao = {
 };
 
 export type NavigationDao = {
+  daoAddress: string; // including because we can only navigate by address for now
   daoEns: string;
   daoLogo?: string;
   daoName: string;

@@ -115,6 +115,7 @@ const client: Record<
 };
 
 const selectedDaoVar = makeVar<NavigationDao>({
+  daoAddress: '',
   daoEns: '',
   daoLogo: '',
   daoName: '',

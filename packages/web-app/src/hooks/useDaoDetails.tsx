@@ -32,7 +32,7 @@ export function useDaoDetails(daoId: string): HookData<DaoDetails | undefined> {
       }
     }
 
-    getDaoMetadata();
+    if (daoId) getDaoMetadata();
   }, [client?.methods, daoId]);
 
   return {data, error, isLoading};
