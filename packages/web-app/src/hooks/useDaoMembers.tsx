@@ -1,6 +1,12 @@
+import {Erc20TokenDetails} from '@aragon/sdk-client';
+import {useNetwork} from 'context/network';
+import {useSpecificProvider} from 'context/providers';
 import {useEffect, useState} from 'react';
+import {CHAIN_METADATA} from 'utils/constants';
+import {fetchBalance} from 'utils/tokens';
 
 import {HookData} from 'utils/types';
+import {useDaoToken} from './useDaoToken';
 import {PluginTypes, usePluginClient} from './usePluginClient';
 
 export type WalletMember = {
@@ -14,6 +20,7 @@ export type BalanceMember = WalletMember & {
 export type DaoMembers = {
   members: WalletMember[] | BalanceMember[];
   filteredMembers: WalletMember[] | BalanceMember[];
+  daoToken?: Erc20TokenDetails;
 };
 
 // this type guard will need to evolve when there are more types
@@ -38,7 +45,8 @@ export function isBalanceMember(
  * @param pluginAddress plugin from which members will be retrieved
  * @param pluginType plugin type
  * @param searchTerm Optional member search term  (e.g. '0x...')
- * @returns A list of DAO members and the total number of members in the DAO
+ * @returns A list of DAO members, the total number of members in the DAO and
+ * the DAO token (if token-based)
  */
 export const useDaoMembers = (
   pluginAddress: string,
@@ -46,11 +54,18 @@ export const useDaoMembers = (
   searchTerm?: string
 ): HookData<DaoMembers> => {
   const [data, setData] = useState<BalanceMember[] | WalletMember[]>([]);
+  const [rawMembers, setRawMembers] = useState<string[]>();
   const [filteredData, setFilteredData] = useState<
     BalanceMember[] | WalletMember[]
   >([]);
   const [error, setError] = useState<Error>();
   const [isLoading, setIsLoading] = useState(false);
+
+  const {network} = useNetwork();
+  const provider = useSpecificProvider(CHAIN_METADATA[network].id);
+
+  const isTokenBased = pluginType === 'erc20voting.dao.eth';
+  const {data: daoToken} = useDaoToken(pluginAddress);
 
   const client = usePluginClient(pluginType);
 
@@ -64,30 +79,13 @@ export const useDaoMembers = (
           setData([] as BalanceMember[] | WalletMember[]);
           return;
         }
-        const rawMembers = await client?.methods.getMembers(pluginAddress);
+        const response = await client?.methods.getMembers(pluginAddress);
 
-        if (!rawMembers) {
+        if (!response) {
           setData([] as BalanceMember[] | WalletMember[]);
           return;
         }
-
-        const members =
-          pluginType === 'erc20voting.dao.eth'
-            ? // TODO as soon as the SDK exposes Token information, fetch balances
-              // from contract.
-              rawMembers.map(m => {
-                return {
-                  address: m,
-                  balance: Math.floor(Math.random() * 500 + 1),
-                } as BalanceMember;
-              })
-            : rawMembers.map(m => {
-                return {
-                  address: m,
-                } as WalletMember;
-              });
-        members.sort(sortMembers);
-        setData(members);
+        setRawMembers(response);
         setError(undefined);
       } catch (err) {
         console.error(err);
@@ -100,28 +98,68 @@ export const useDaoMembers = (
     fetchMembers();
   }, [client?.methods, pluginAddress, pluginType]);
 
+  // map the members to the desired structure
+  // Doing this separately to get rid of duplicate calls
+  // when raw members present, but no token details yet
+  useEffect(() => {
+    async function mapMembers() {
+      if (!rawMembers) return;
+
+      let members;
+
+      if (isTokenBased && daoToken?.address) {
+        const balances = await Promise.all(
+          rawMembers.map(m =>
+            fetchBalance(
+              daoToken?.address,
+              m,
+              provider,
+              CHAIN_METADATA[network].nativeCurrency
+            )
+          )
+        );
+
+        members = rawMembers.map(
+          (m, index) =>
+            ({
+              address: m,
+              balance: Number(balances[index]),
+            } as BalanceMember)
+        );
+      } else {
+        members = rawMembers.map(m => ({address: m} as WalletMember));
+      }
+
+      members.sort(sortMembers);
+      setData(members);
+    }
+
+    mapMembers();
+  }, [daoToken?.address, isTokenBased, network, provider, rawMembers]);
+
   useEffect(() => {
     if (!searchTerm) {
       setFilteredData([]);
     } else {
-      const filtered =
-        pluginType === 'erc20voting.dao.eth'
-          ? (data as BalanceMember[]).filter(d =>
+      isTokenBased
+        ? setFilteredData(
+            (data as BalanceMember[]).filter(d =>
               d.address.includes(searchTerm)
             )
-          : (data as WalletMember[]).filter(d =>
-              d.address.includes(searchTerm)
-            );
-      setFilteredData(filtered);
+          )
+        : setFilteredData(
+            (data as WalletMember[]).filter(d => d.address.includes(searchTerm))
+          );
     }
-  }, [data, pluginType, searchTerm]);
+  }, [data, isTokenBased, searchTerm]);
 
   return {
     data: {
       members: data,
       filteredMembers: filteredData,
+      daoToken,
     },
-    isLoading,
+    isLoading: isLoading,
     error,
   };
 };
