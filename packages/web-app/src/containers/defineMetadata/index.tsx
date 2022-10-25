@@ -5,7 +5,7 @@ import {
   TextareaSimple,
   TextInput,
 } from '@aragon/ui-components';
-import React, {useCallback} from 'react';
+import React, {MutableRefObject, useCallback, useRef} from 'react';
 import {Controller, FieldError, useFormContext} from 'react-hook-form';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
@@ -26,6 +26,9 @@ const DefineMetadata: React.FC<{bgWhite?: boolean}> = ({bgWhite = false}) => {
   const {t} = useTranslation();
   const {control, setError} = useFormContext();
   const {infura: provider} = useProviders();
+  const timeoutBuffer: MutableRefObject<ReturnType<typeof setTimeout>> = useRef(
+    {} as ReturnType<typeof setTimeout>
+  );
 
   const handleImageError = useCallback(
     (error: {code: string; message: string}) => {
@@ -70,7 +73,7 @@ const DefineMetadata: React.FC<{bgWhite?: boolean}> = ({bgWhite = false}) => {
           defaultValue=""
           rules={{
             required: t('errors.required.name'),
-            validate: value => isDaoNameValid(value, provider),
+            validate: value => isDaoNameValid(value, provider, timeoutBuffer),
           }}
           render={({
             field: {onBlur, onChange, value, name},

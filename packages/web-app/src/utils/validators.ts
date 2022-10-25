@@ -168,10 +168,20 @@ export function actionsAreValid(
   return isValid;
 }
 
-export async function isDaoNameValid(value: string, provider: InfuraProvider) {
+export function isDaoNameValid(
+  value: string,
+  provider: InfuraProvider,
+  timeoutBuffer: React.MutableRefObject<ReturnType<typeof setTimeout>>
+) {
   if (isOnlyWhitespace(value)) return i18n.t('errors.required.name');
+  let ensAddress = null;
   try {
-    const ensAddress = await provider?.resolveName(value.replaceAll(' ', '_'));
+    timeoutBuffer.current = setTimeout(async () => {
+      ensAddress = await provider?.resolveName(value.replaceAll(' ', '_'));
+    }, 50);
+
+    clearTimeout(timeoutBuffer.current);
+
     if (ensAddress) return i18n.t('errors.ensDuplication');
   } catch (err) {
     return i18n.t('errors.ensNetworkIssue');
