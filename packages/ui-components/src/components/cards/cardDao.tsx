@@ -32,7 +32,9 @@ export const CardDao: React.FC<CardDaoProps> = ({
   return (
     <Card data-testid="cardDao" onClick={onClick}>
       <LeftContent>
-        <AvatarDao daoName={daoName} src={src} />
+        <AvatarWrapper>
+          <AvatarDao daoName={daoName} src={src} />
+        </AvatarWrapper>
         <TextContainer>
           <DaoName>{daoName}</DaoName>
           <DaoAddress>{shortenAddress(daoAddress)}</DaoAddress>
@@ -63,17 +65,19 @@ const Card = styled.div.attrs(() => ({
 }))``;
 
 const LeftContent = styled.div.attrs({
-  className: 'inline-flex flex-1 space-x-1.5',
+  className: 'inline-flex flex-1 space-x-1.5 min-w-0',
 })``;
 
+const AvatarWrapper = styled.div``;
+
 const TextContainer = styled.div.attrs({
-  className: 'flex flex-col justify-center',
+  className: 'flex flex-col justify-center min-w-0 ',
 })``;
 
 const DaoName = styled.p.attrs({
-  className: 'text-ui-800 font-bold',
+  className: 'text-ui-800 font-bold truncate',
 })``;
 
 const DaoAddress = styled.p.attrs({
-  className: 'text-ui-500 ft-text-sm desktop:hidden',
+  className: 'text-ui-500 ft-text-sm desktop:hidden truncate',
 })``;
