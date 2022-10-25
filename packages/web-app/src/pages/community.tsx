@@ -22,7 +22,7 @@ import {useMappedBreadcrumbs} from 'hooks/useMappedBreadcrumbs';
 import {PluginTypes} from 'hooks/usePluginClient';
 import {CHAIN_METADATA} from 'utils/constants';
 
-const MEMBERS_PER_PAGE = 10;
+const MEMBERS_PER_PAGE = 20;
 
 const Community: React.FC = () => {
   const {t} = useTranslation();
