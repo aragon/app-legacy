@@ -292,8 +292,15 @@ export type TransactionItem = {
   };
 };
 
+/* MISCELLANEOUS TYPES ======================================================= */
 export type Dao = {
   address: string;
+};
+
+export type NavigationDao = {
+  daoEns: string;
+  daoLogo?: string;
+  daoName: string;
 };
 
 /* UTILITY TYPES ============================================================ */

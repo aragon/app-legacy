@@ -18,7 +18,7 @@ import {
   SupportedNetworks,
 } from 'utils/constants';
 import {customJSONReviver} from 'utils/library';
-import {AddressListVote, Erc20ProposalVote} from 'utils/types';
+import {AddressListVote, Erc20ProposalVote, NavigationDao} from 'utils/types';
 import {PRIVACY_KEY} from './privacyContext';
 
 const restLink = new RestLink({
@@ -114,19 +114,13 @@ const client: Record<
   'arbitrum-test': arbitrumTestClient,
 };
 
-type favoriteDAO = {
-  daoAddress: string;
-  daoName: string;
-};
-const selectedDAO = makeVar<favoriteDAO>({daoName: '', daoAddress: ''});
-const favoriteDAOs = makeVar<Array<favoriteDAO>>([
-  {
-    daoAddress: '0x0ee165029b09d91a54687041adbc705f6376c67f',
-    daoName: 'Lorax DAO',
-  },
-  {daoAddress: 'dao-name.dao.eth', daoName: 'DAO name'},
-]);
-selectedDAO(favoriteDAOs()[0]);
+const selectedDaoVar = makeVar<NavigationDao>({
+  daoEns: '',
+  daoLogo: '',
+  daoName: '',
+});
+
+const favoriteDAOs = makeVar<Array<NavigationDao>>([]);
 
 const depositTxs = JSON.parse(
   localStorage.getItem(PENDING_DEPOSITS_KEY) || '[]'
@@ -157,7 +151,7 @@ const pendingProposalsVar = makeVar<PendingProposals>(pendingProposals);
 export {
   client,
   favoriteDAOs,
-  selectedDAO,
+  selectedDaoVar,
   pendingDeposits,
   pendingProposalsVar,
   pendingVotesVar,
