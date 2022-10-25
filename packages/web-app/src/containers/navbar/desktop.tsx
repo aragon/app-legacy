@@ -6,7 +6,7 @@ import {useTranslation} from 'react-i18next';
 import React, {useMemo} from 'react';
 
 import {useWallet} from 'hooks/useWallet';
-import {selectedDAO} from 'context/apolloClient';
+import {selectedDaoVar} from 'context/apolloClient';
 import NetworkIndicator from './networkIndicator';
 import {useReactiveVar} from '@apollo/client';
 import {NavlinksDropdown} from './breadcrumbDropdown';
@@ -23,18 +23,12 @@ type DesktopNavProp = {
   onWalletClick: () => void;
 };
 
-// temporary
-const FALLBACK_DAO = {
-  daoAddress: '0x0ee165029b09d91a54687041adbc705f6376c67f',
-  daoName: 'Lorax DAO',
-};
-
 const DesktopNav: React.FC<DesktopNavProp> = props => {
   const {t} = useTranslation();
   const navigate = useNavigate();
   const {network} = useNetwork();
   const {dao} = useParams();
-  const selectedDao = useReactiveVar(selectedDAO);
+  const currentDao = useReactiveVar(selectedDaoVar);
   const {breadcrumbs, icon, tag} = useMappedBreadcrumbs();
   const {address, ensName, ensAvatarUrl, isConnected} = useWallet();
 
@@ -76,8 +70,9 @@ const DesktopNav: React.FC<DesktopNavProp> = props => {
       <Menu>
         <Content>
           <CardDao
-            daoName={selectedDao.daoName || FALLBACK_DAO.daoName}
-            daoAddress={selectedDao.daoAddress || FALLBACK_DAO.daoAddress}
+            daoName={currentDao?.daoName}
+            daoAddress={currentDao?.daoEns}
+            src={currentDao?.daoLogo}
             onClick={props.onDaoSelect}
           />
 

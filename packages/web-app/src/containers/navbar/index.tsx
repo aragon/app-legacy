@@ -1,28 +1,30 @@
+import React, {useEffect, useMemo} from 'react';
+import {matchRoutes, useLocation, useParams} from 'react-router-dom';
 import styled from 'styled-components';
-import React, {useMemo} from 'react';
-import {matchRoutes, useLocation} from 'react-router-dom';
 
+import {selectedDaoVar} from 'context/apolloClient';
+import {useGlobalModalContext} from 'context/globalModals';
+import {usePrivacyContext} from 'context/privacyContext';
+import {useDaoDetails} from 'hooks/useDaoDetails';
+import useScreen from 'hooks/useScreen';
+import {useWallet} from 'hooks/useWallet';
 import {
+  Community,
   CreateDAO,
-  Landing,
+  EditSettings,
   Finance,
   Governance,
+  Landing,
+  ManageMembersProposal,
+  MintTokensProposal,
   NewDeposit,
   NewProposal,
   NewWithDraw,
   ProposeNewSettings,
-  EditSettings,
-  MintTokensProposal,
-  ManageMembersProposal,
-  Community,
 } from 'utils/paths';
 import {i18n} from '../../../i18n.config';
-import MobileNav from './mobile';
-import useScreen from 'hooks/useScreen';
 import DesktopNav from './desktop';
-import {useWallet} from 'hooks/useWallet';
-import {usePrivacyContext} from 'context/privacyContext';
-import {useGlobalModalContext} from 'context/globalModals';
+import MobileNav from './mobile';
 
 type StringIndexed = {[key: string]: {processLabel: string; returnURL: string}};
 
@@ -70,6 +72,20 @@ const Navbar: React.FC = () => {
   const {isDesktop} = useScreen();
   const {methods, isConnected} = useWallet();
   const {handleWithFunctionalPreferenceMenu} = usePrivacyContext();
+
+  const {dao} = useParams();
+  const {data: daoDetails} = useDaoDetails(dao || '');
+
+  // set current dao as selected dao
+  useEffect(() => {
+    if (daoDetails) {
+      selectedDaoVar({
+        daoEns: daoDetails.ensDomain,
+        daoLogo: daoDetails.metadata.avatar,
+        daoName: daoDetails.metadata.name,
+      });
+    }
+  }, [daoDetails]);
 
   const processName = useMemo(() => {
     const results = matchRoutes(processPaths, pathname);

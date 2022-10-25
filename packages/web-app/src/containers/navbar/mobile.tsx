@@ -1,3 +1,4 @@
+import {useReactiveVar} from '@apollo/client';
 import {
   AvatarDao,
   ButtonIcon,
@@ -6,16 +7,15 @@ import {
   IconMenu,
 } from '@aragon/ui-components';
 import React from 'react';
-import styled from 'styled-components';
 import {useTranslation} from 'react-i18next';
-import {useReactiveVar} from '@apollo/client';
+import styled from 'styled-components';
 
-import useScreen from 'hooks/useScreen';
-import MobileMenu from './mobileMenu';
-import {useWallet} from 'hooks/useWallet';
-import {selectedDAO} from 'context/apolloClient';
-import NetworkIndicator from './networkIndicator';
+import {selectedDaoVar} from 'context/apolloClient';
 import {useGlobalModalContext} from 'context/globalModals';
+import useScreen from 'hooks/useScreen';
+import {useWallet} from 'hooks/useWallet';
+import MobileMenu from './mobileMenu';
+import NetworkIndicator from './networkIndicator';
 
 type MobileNavProps = {
   isProcess?: boolean;
@@ -27,11 +27,8 @@ const MobileNav: React.FC<MobileNavProps> = props => {
   const {t} = useTranslation();
   const {isMobile} = useScreen();
   const {open} = useGlobalModalContext();
-  const selectedDao = useReactiveVar(selectedDAO);
+  const {daoLogo, daoName} = useReactiveVar(selectedDaoVar);
   const {isConnected, address, ensName, ensAvatarUrl} = useWallet();
-
-  // TEMPORARY
-  const daoName = selectedDao.daoName || 'DAO Name';
 
   if (props.isProcess)
     return (
@@ -64,7 +61,11 @@ const MobileNav: React.FC<MobileNavProps> = props => {
           </FlexOne>
           <FlexOne className="justify-center">
             <DaoContainer>
-              <AvatarDao daoName={daoName} onClick={props.onDaoSelect} />
+              <AvatarDao
+                src={daoLogo}
+                daoName={daoName}
+                onClick={props.onDaoSelect}
+              />
               <DaoName>{daoName}</DaoName>
             </DaoContainer>
           </FlexOne>
@@ -81,12 +82,7 @@ const MobileNav: React.FC<MobileNavProps> = props => {
         </Menu>
         <NetworkIndicator />
       </Container>
-      <MobileMenu
-        daoName={daoName}
-        daoAddress={
-          selectedDao.daoAddress || '0x0ee165029b09d91a54687041adbc705f6376c67f'
-        }
-      />
+      <MobileMenu />
     </>
   );
 };
