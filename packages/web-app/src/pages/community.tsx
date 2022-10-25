@@ -22,16 +22,7 @@ import {useMappedBreadcrumbs} from 'hooks/useMappedBreadcrumbs';
 import {PluginTypes} from 'hooks/usePluginClient';
 import {CHAIN_METADATA} from 'utils/constants';
 
-// NOTE: Temporarily mocking token information, as SDK does not yet expose this.
-const token = {
-  id: '0x35f7A3379B8D0613c3F753863edc85997D8D0968',
-  symbol: 'DTT',
-};
-
-// The number of members displayed on each page
-// TODO: 2 is currently set for QA purposes. Change back to 10 once live data
-// comes in or once the SDK returns more addresses.
-const MEMBERS_PER_PAGE = 2;
+const MEMBERS_PER_PAGE = 10;
 
 const Community: React.FC = () => {
   const {t} = useTranslation();
@@ -49,10 +40,10 @@ const Community: React.FC = () => {
   const [debouncedTerm, searchTerm, setSearchTerm] = useDebouncedState('');
 
   const {
-    data: {members, filteredMembers},
+    data: {members, filteredMembers, daoToken},
     isLoading: membersLoading,
   } = useDaoMembers(
-    daoId,
+    daoDetails?.plugins[0].instanceAddress as string,
     daoDetails?.plugins[0].id as PluginTypes,
     debouncedTerm
   );
@@ -73,7 +64,9 @@ const Community: React.FC = () => {
 
   const handleSecondaryButtonClick = () => {
     window.open(
-      CHAIN_METADATA[network].explorer + '/token/tokenholderchart/' + token?.id,
+      CHAIN_METADATA[network].explorer +
+        '/token/tokenholderchart/' +
+        daoToken?.address,
       '_blank'
     );
   };
@@ -151,7 +144,7 @@ const Community: React.FC = () => {
                     </ResultsCountLabel>
                   )}
                   <MembersList
-                    token={token}
+                    token={daoToken}
                     members={displayedMembers.slice(
                       (page - 1) * MEMBERS_PER_PAGE,
                       page * MEMBERS_PER_PAGE

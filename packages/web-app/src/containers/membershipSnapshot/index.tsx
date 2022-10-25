@@ -21,11 +21,17 @@ import {
 } from 'utils/paths';
 import {PluginTypes} from 'hooks/usePluginClient';
 
-type Props = {dao: string; pluginType: PluginTypes; horizontal?: boolean};
+type Props = {
+  dao: string;
+  pluginType: PluginTypes;
+  pluginAddress: string;
+  horizontal?: boolean;
+};
 
 export const MembershipSnapshot: React.FC<Props> = ({
   dao,
   pluginType,
+  pluginAddress,
   horizontal,
 }) => {
   const {t} = useTranslation();
@@ -34,9 +40,9 @@ export const MembershipSnapshot: React.FC<Props> = ({
   const {isDesktop} = useScreen();
 
   const {
-    data: {members},
+    data: {members, daoToken},
     isLoading,
-  } = useDaoMembers(dao, pluginType);
+  } = useDaoMembers(pluginAddress, pluginType);
   const totalMemberCount = members.length;
 
   const walletBased = pluginType === 'addresslistvoting.dao.eth';
@@ -70,13 +76,7 @@ export const MembershipSnapshot: React.FC<Props> = ({
         </div>
         <div className="space-y-2 w-2/3">
           <ListItemGrid>
-            <MembersList
-              token={{
-                id: '0x35f7A3379B8D0613c3F753863edc85997D8D0968',
-                symbol: 'DTT',
-              }}
-              members={members}
-            />
+            <MembersList token={daoToken} members={members} />
           </ListItemGrid>
           <ButtonText
             mode="secondary"
@@ -106,13 +106,7 @@ export const MembershipSnapshot: React.FC<Props> = ({
         orientation="vertical"
         onClick={headerButtonHandler}
       />
-      <MembersList
-        token={{
-          id: '0x35f7A3379B8D0613c3F753863edc85997D8D0968',
-          symbol: 'DTT',
-        }}
-        members={members.slice(0, 3)}
-      />
+      <MembersList token={daoToken} members={members.slice(0, 3)} />
       <ButtonText
         mode="secondary"
         size="large"
