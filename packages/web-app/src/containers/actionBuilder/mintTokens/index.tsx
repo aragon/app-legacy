@@ -10,13 +10,14 @@ import {
   useWatch,
 } from 'react-hook-form';
 import {Trans, useTranslation} from 'react-i18next';
+import {useParams} from 'react-router-dom';
 import styled from 'styled-components';
 
 import {AccordionMethod} from 'components/accordionMethod';
 import {useActionsContext} from 'context/actions';
 import {useNetwork} from 'context/network';
 import {useProviders} from 'context/providers';
-import {useDaoParam} from 'hooks/useDaoParam';
+import {useDaoDetails} from 'hooks/useDaoDetails';
 import {useDaoToken} from 'hooks/useDaoToken';
 import useScreen from 'hooks/useScreen';
 import {CHAIN_METADATA} from 'utils/constants';
@@ -24,7 +25,6 @@ import {formatUnits} from 'utils/library';
 import {fetchBalance, getTokenInfo} from 'utils/tokens';
 import {ActionIndex} from 'utils/types';
 import {AddressAndTokenRow} from './addressTokenRow';
-import {useDaoDetails} from 'hooks/useDaoDetails';
 
 type MintTokensProps = ActionIndex;
 
@@ -97,15 +97,18 @@ export const MintTokenForm: React.FC<MintTokenFormProps> = ({
   standAlone = false,
 }) => {
   const {t} = useTranslation();
+  const {dao} = useParams();
   const {isDesktop} = useScreen();
-  const {data: daoId} = useDaoParam();
+
   const {network} = useNetwork();
   const {infura} = useProviders();
   const nativeCurrency = CHAIN_METADATA[network].nativeCurrency;
-  const {data: daoDetails, isLoading: detailsAreLoading} = useDaoDetails(daoId);
+
+  const {data: daoDetails} = useDaoDetails(dao!);
   const {data: daoToken, isLoading: daoTokenLoading} = useDaoToken(
-    daoDetails?.plugins[0].instanceAddress as string
+    daoDetails?.plugins[0].instanceAddress || ''
   );
+
   const {setValue, trigger, formState, control} = useFormContext();
 
   const {fields, append, remove, update} = useFieldArray({
@@ -382,7 +385,7 @@ export const MintTokenForm: React.FC<MintTokenFormProps> = ({
           />
         </label>
       </ButtonContainer>
-      {!daoTokenLoading && !detailsAreLoading && (
+      {!daoTokenLoading && (
         <SummaryContainer>
           <p className="font-bold text-ui-800">{t('labels.summary')}</p>
           <HStack>
