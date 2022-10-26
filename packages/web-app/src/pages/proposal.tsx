@@ -185,6 +185,7 @@ const Proposal: React.FC = () => {
         });
 
       if (daoToken?.address) {
+        // Decode all the mint actions into one action with several addresses
         const decodedMintToken = decodeMintTokensToAction(
           mintTokenActions.actions,
           pluginClient as ClientErc20,
@@ -193,7 +194,12 @@ const Proposal: React.FC = () => {
           network
         );
 
-        actionPromises.splice(mintTokenActions.index, 0, decodedMintToken);
+        // splice them back to the actions array with all the other actions
+        actionPromises.splice(
+          mintTokenActions.index,
+          mintTokenActions.actions.length,
+          decodedMintToken
+        );
 
         Promise.all(actionPromises).then(value => {
           setDecodedActions(value);

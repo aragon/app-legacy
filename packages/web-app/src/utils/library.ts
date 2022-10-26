@@ -178,6 +178,7 @@ export async function decodeMintTokensToAction(
       return {address, amount: Number(formatUnits(amount, decimals))};
     });
 
+    //TODO: That's technically not correct. The minting could go to addresses who already hold that token.
     return Promise.resolve({
       name: 'mint_tokens',
       inputs: {
