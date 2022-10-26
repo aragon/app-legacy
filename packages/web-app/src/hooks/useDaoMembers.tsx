@@ -159,7 +159,7 @@ export const useDaoMembers = (
       filteredMembers: filteredData,
       daoToken,
     },
-    isLoading: isLoading,
+    isLoading,
     error,
   };
 };
