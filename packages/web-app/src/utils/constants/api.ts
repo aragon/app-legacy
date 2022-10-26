@@ -4,8 +4,6 @@ type SubgraphNetworkUrl = Record<SupportedNetworks, string | undefined>;
 
 export const SUBGRAPH_API_URL: SubgraphNetworkUrl = {
   ethereum: undefined,
-  rinkeby:
-    'https://api.thegraph.com/subgraphs/name/aragon/aragon-zaragoza-rinkeby',
   goerli:
     'https://api.thegraph.com/subgraphs/name/aragon/aragon-zaragoza-goerli',
   polygon: undefined,
@@ -21,7 +19,7 @@ export const DEFAULT_CURRENCY = 'usd';
 
 // NOTE: These are dummy endpoints and API keys used as POC. They should be
 // replaced by env var secrets in an upcoming PR.
-export const ALCHEMY_API_KEY = 'XquT7N4WMWBTFsNWB7B_Ef-0Ayz9051v';
+export const ALCHEMY_API_KEY = 'dWiL89bA8nrsJW1GIBZ5Sq7kHGmT40av';
 export const INFURA_PROJECT_ID = '000bb62a6d1f4b478f2910ab8118bad1';
 export const INFURA_PROJECT_ID_ARB = '92aa62d2bb5449cfafe04b83ca8636f1';
 
@@ -30,7 +28,6 @@ export const ASSET_PLATFORMS: Record<SupportedNetworks, string | null> = {
   arbitrum: 'arbitrum-one',
   'arbitrum-test': null,
   ethereum: 'ethereum',
-  rinkeby: null,
   goerli: null,
   polygon: 'polygon-pos',
   mumbai: null,

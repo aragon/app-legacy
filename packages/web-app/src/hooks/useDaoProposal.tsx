@@ -64,7 +64,7 @@ export const useDaoProposal = (
       daoAddress,
       {
         recipientAddress: '0x1234567890123456789012345678901234567890',
-        amount: BigInt(10),
+        amount: BigInt('10000000000000000000000'),
         tokenAddress: constants.AddressZero,
         reference: 'test',
       }

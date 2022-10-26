@@ -33,6 +33,7 @@ import {TerminalTabs, VotingTerminal} from 'containers/votingTerminal';
 import {useGlobalModalContext} from 'context/globalModals';
 import {useNetwork} from 'context/network';
 import {useProposalTransactionContext} from 'context/proposalTransaction';
+import {useSpecificProvider} from 'context/providers';
 import {useCache} from 'hooks/useCache';
 import {useClient} from 'hooks/useClient';
 import {useDaoProposal} from 'hooks/useDaoProposal';
@@ -58,7 +59,6 @@ import {Action} from 'utils/types';
 import {DaoAction} from '@aragon/sdk-client/dist/internal/interfaces/common';
 import {useDaoDetails} from 'hooks/useDaoDetails';
 import {useDaoToken} from 'hooks/useDaoToken';
-import {useSpecificProvider} from 'context/providers';
 
 // TODO: @Sepehr Please assign proper tags on action decoding
 const PROPOSAL_TAGS = ['Finance', 'Withdraw'];
@@ -161,6 +161,7 @@ const Proposal: React.FC = () => {
                 action.data,
                 client,
                 apolloClient,
+                provider,
                 network
               );
             case 'mint':
@@ -501,7 +502,8 @@ const Proposal: React.FC = () => {
             <Link
               external
               label={
-                proposal?.creatorAddress === address?.toLowerCase()
+                proposal?.creatorAddress.toLowerCase() ===
+                address?.toLowerCase()
                   ? t('labels.you')
                   : shortenAddress(proposal?.creatorAddress || '')
               }

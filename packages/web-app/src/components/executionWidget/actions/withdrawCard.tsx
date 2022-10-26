@@ -30,7 +30,7 @@ export const WithdrawCard: React.FC<{
           tokenName={action.tokenName}
           tokenImageUrl={action.tokenImgUrl}
           tokenSymbol={action.tokenSymbol}
-          tokenCount={Number(action.amount)}
+          tokenCount={action.amount}
           treasuryShare={
             action.tokenPrice
               ? new Intl.NumberFormat('en-US', {
