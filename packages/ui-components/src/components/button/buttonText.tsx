@@ -81,7 +81,7 @@ const StyledButton = styled(ButtonBase).attrs(
             : `${isActive ? 'bg-ui-0' : 'bg-ui-50'}  active:bg-ui-0`
         } ${isActive ? 'text-primary-500' : 'text-ui-600'} ${
           paddingStyles[size]
-        } hover:text-primary-500 active:text-primary-500 disabled:text-ui-300`;
+        } hover:text-primary-500 active:text-primary-500 disabled:text-ui-300 disabled:bg-ui-50`;
         break;
 
       default:
