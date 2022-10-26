@@ -28,7 +28,7 @@ export const AccordionMethod: React.FC<AccordionMethodType> = ({
   children,
   ...props
 }) => (
-  <Accordion.Root type="single" collapsible>
+  <Accordion.Root type="single" collapsible defaultValue="item-1">
     <AccordionItem name="item-1" {...props}>
       {children}
     </AccordionItem>
