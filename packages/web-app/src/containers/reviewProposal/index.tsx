@@ -1,4 +1,4 @@
-import {useQuery} from '@apollo/client';
+import {InstalledPluginListItem} from '@aragon/sdk-client';
 import {
   Badge,
   ButtonText,
@@ -16,22 +16,28 @@ import {useTranslation} from 'react-i18next';
 import {useParams} from 'react-router-dom';
 import styled from 'styled-components';
 
-import {BigNumber} from '@ethersproject/bignumber';
 import {ExecutionWidget} from 'components/executionWidget';
 import {useFormStep} from 'components/fullScreenStepper';
 import ResourceList from 'components/resourceList';
-import {Loading} from 'components/temporary';
 import {VotingTerminal} from 'containers/votingTerminal';
 import {useNetwork} from 'context/network';
 import {useSpecificProvider} from 'context/providers';
-import {DAO_PACKAGE_BY_DAO_ID} from 'queries/packages';
+import {useDaoDetails} from 'hooks/useDaoDetails';
+import {useDaoMembers} from 'hooks/useDaoMembers';
+import {PluginTypes} from 'hooks/usePluginClient';
+import {usePluginSettings} from 'hooks/usePluginSettings';
 import {CHAIN_METADATA} from 'utils/constants';
 import {
   getCanonicalUtcOffset,
   getFormattedUtcOffset,
   KNOWN_FORMATS,
 } from 'utils/date';
-import {formatUnits} from 'utils/library';
+import {
+  getErc20MinimumApproval,
+  getErc20VotersAndParticipation,
+  getWhitelistMinimumApproval,
+  getWhitelistVoterParticipation,
+} from 'utils/proposals';
 import {getTokenInfo} from 'utils/tokens';
 
 type ReviewProposalProps = {
@@ -49,9 +55,18 @@ const ReviewProposal: React.FC<ReviewProposalProps> = ({
   const provider = useSpecificProvider(CHAIN_METADATA[network].id);
 
   const {dao} = useParams();
-  const {data, loading} = useQuery(DAO_PACKAGE_BY_DAO_ID, {
-    variables: {dao},
-  });
+  const {data: daoDetails} = useDaoDetails(dao!);
+  const {id: pluginType, instanceAddress: pluginAddress} =
+    daoDetails?.plugins[0] || ({} as InstalledPluginListItem);
+
+  const {
+    data: {members, daoToken},
+  } = useDaoMembers(pluginAddress, pluginType as PluginTypes);
+
+  const {data: daoSettings} = usePluginSettings(
+    pluginAddress,
+    pluginType as PluginTypes
+  );
 
   const {getValues, setValue} = useFormContext();
   const [approval, setApproval] = useState('');
@@ -124,49 +139,60 @@ const ReviewProposal: React.FC<ReviewProposalProps> = ({
    *************************************************/
   useEffect(() => {
     async function mapToView() {
-      let formattedMinApproval: string;
-      let formattedParticipation: string;
-      const {token, supportRequiredPct, users} = data.daoPackages[0].pkg;
-
-      if (token) {
-        setIsWalletBased(false);
-
-        // get total supply
-        const {totalSupply} = await getTokenInfo(
-          token.id,
-          provider,
-          CHAIN_METADATA[network].nativeCurrency
-        );
-
-        // calculate & format approval
-        formattedMinApproval = `${formatUnits(
-          BigNumber.from(supportRequiredPct)
-            .mul(BigNumber.from(totalSupply))
-            .div(100),
-          token.decimals
-        )} ${token.symbol} (${BigInt(supportRequiredPct).toString()}%)`;
-
-        // calculate & format participation
-        formattedParticipation = `0 of ${formatUnits(
-          totalSupply,
-          token.decimals
-        )} ${token.symbol} (0%)`;
-      } else {
+      if (pluginType === 'addresslistvoting.dao.eth') {
         setIsWalletBased(true);
 
-        formattedMinApproval = `${BigNumber.from(supportRequiredPct)
-          .mul(users.length)
-          .div(100)} members (${BigInt(supportRequiredPct).toString()}%)`;
-        formattedParticipation = `0 of ${users.length} members (0%)`;
+        // get voter participation
+        const {summary} = getWhitelistVoterParticipation([], members.length);
+        setParticipation(summary);
+
+        // get approval threshold
+        setApproval(
+          getWhitelistMinimumApproval(daoSettings.minSupport, members.length)
+        );
+      } else {
+        // token based
+        setIsWalletBased(false);
+
+        if (daoToken) {
+          // get voter participation
+          const {totalSupply} = await getTokenInfo(
+            daoToken.address,
+            provider,
+            CHAIN_METADATA[network].nativeCurrency
+          );
+
+          const {summary} = getErc20VotersAndParticipation(
+            [],
+            daoToken,
+            totalSupply,
+            BigInt(0)
+          );
+          setParticipation(summary);
+
+          // get approval threshold
+          setApproval(
+            getErc20MinimumApproval(
+              daoSettings.minSupport,
+              totalSupply,
+              daoToken
+            )
+          );
+        }
       }
-      setApproval(formattedMinApproval);
-      setParticipation(formattedParticipation);
     }
 
-    if (data) {
+    if (members && daoSettings?.minSupport) {
       mapToView();
     }
-  }, [data, network, provider]);
+  }, [
+    daoSettings.minSupport,
+    daoToken,
+    members,
+    network,
+    pluginType,
+    provider,
+  ]);
 
   useEffect(() => {
     if (values.proposal === '<p></p>') {
@@ -180,8 +206,6 @@ const ReviewProposal: React.FC<ReviewProposalProps> = ({
   if (!editor) {
     return null;
   }
-
-  if (loading) return <Loading />;
 
   return (
     <>
