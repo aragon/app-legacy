@@ -9,15 +9,13 @@ import React, {useCallback, useEffect, useMemo} from 'react';
 import {Controller, useFormContext, useWatch} from 'react-hook-form';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
-import {chains} from 'use-wallet';
-import {ChainInformation} from 'use-wallet/dist/cjs/types';
 
 import {useSpecificProvider} from 'context/providers';
 import {formatUnits} from 'utils/library';
 import {getTokenInfo} from 'utils/tokens';
 import {validateTokenAddress} from 'utils/validators';
 import {useNetwork} from 'context/network';
-import {CHAIN_METADATA} from 'utils/constants';
+import {CHAIN_METADATA, getSupportedNetworkByChainId} from 'utils/constants';
 
 const DEFAULT_BLOCK_EXPLORER = 'https://etherscan.io/';
 
@@ -39,11 +37,9 @@ const AddExistingToken: React.FC = () => {
   const provider = useSpecificProvider(blockchain.id);
   const explorer = useMemo(() => {
     if (blockchain.id) {
-      // TODO move necessary information from useWallet's ChainInformation into
-      // CHAIN_METADATA
-      const {explorerUrl} = chains.getChainInformation(
-        blockchain.id
-      ) as ChainInformation;
+      const defaultNetwork =
+        getSupportedNetworkByChainId(blockchain.id) || 'ethereum';
+      const explorerUrl = CHAIN_METADATA[defaultNetwork].explorer;
       return explorerUrl || DEFAULT_BLOCK_EXPLORER;
     }
 
