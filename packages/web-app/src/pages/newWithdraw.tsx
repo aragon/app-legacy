@@ -70,6 +70,7 @@ type WithdrawFormData = {
 };
 
 export const defaultValues = {
+  links: [{name: '', url: ''}],
   actions: [
     {
       name: 'withdraw_assets',
