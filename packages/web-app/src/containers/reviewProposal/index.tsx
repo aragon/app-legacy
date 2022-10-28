@@ -33,6 +33,7 @@ import {
 } from 'utils/date';
 import {formatUnits} from 'utils/library';
 import {getTokenInfo} from 'utils/tokens';
+import {ProposalResource} from 'utils/types';
 
 type ReviewProposalProps = {
   defineProposalStepNumber: number;
@@ -252,7 +253,9 @@ const ReviewProposal: React.FC<ReviewProposalProps> = ({
 
         <AdditionalInfoContainer>
           <ResourceList
-            links={values.links}
+            links={values.links.filter(
+              (l: ProposalResource) => l.name && l.url
+            )}
             emptyStateButtonClick={() => setStep(defineProposalStepNumber)}
           />
         </AdditionalInfoContainer>

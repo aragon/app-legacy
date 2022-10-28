@@ -34,7 +34,7 @@ import {customJSONReplacer} from 'utils/library';
 import {Proposal} from 'utils/paths';
 import {mapToDetailedProposal} from 'utils/proposals';
 import {getTokenInfo} from 'utils/tokens';
-import {Action} from 'utils/types';
+import {Action, ProposalResource} from 'utils/types';
 import {pendingProposalsVar} from './apolloClient';
 import {useGlobalModalContext} from './globalModals';
 import {useNetwork} from './network';
@@ -229,7 +229,7 @@ const CreateProposalProvider: React.FC<Props> = ({
           title,
           summary,
           description,
-          resources,
+          resources: resources.filter((r: ProposalResource) => r.name && r.url),
         },
         startDate: new Date(
           `${startDate}T${startTime}:00${getCanonicalUtcOffset(startUtc)}`
