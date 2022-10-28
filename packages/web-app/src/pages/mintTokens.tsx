@@ -31,11 +31,12 @@ const MintToken: React.FC = () => {
   const {network} = useNetwork();
   const formMethods = useForm({
     mode: 'onChange',
+    defaultValues: {links: [{name: '', url: ''}], durationSwitch: 'date'},
   });
   const {errors, dirtyFields} = useFormState({
     control: formMethods.control,
   });
-  const [durationSwitch] = formMethods.getValues(['durationSwitch']);
+  const durationSwitch = formMethods.getValues('durationSwitch');
 
   const [showTxModal, setShowTxModal] = useState(false);
   const enableTxModal = () => {
