@@ -45,6 +45,7 @@ import {customJSONReplacer} from 'utils/library';
 import {EditSettings, Proposal} from 'utils/paths';
 import {mapToDetailedProposal} from 'utils/proposals';
 import {getTokenInfo} from 'utils/tokens';
+import {ProposalResource} from 'utils/types';
 
 const ProposeSettings: React.FC = () => {
   const {t} = useTranslation();
@@ -273,7 +274,9 @@ const ProposeSettingWrapper: React.FC<Props> = ({
             title,
             summary,
             description,
-            resources,
+            resources: resources.filter(
+              (r: ProposalResource) => r.name && r.url
+            ),
           },
           startDate: new Date(
             `${startDate}T${startTime}:00${getCanonicalUtcOffset(startUtc)}`

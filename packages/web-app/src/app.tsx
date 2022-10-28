@@ -151,6 +151,7 @@ function App() {
 const NewSettingsWrapper: React.FC = () => {
   const formMethods = useForm({
     mode: 'onChange',
+    defaultValues: {links: [{name: '', url: ''}]},
   });
 
   return (
