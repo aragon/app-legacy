@@ -270,6 +270,7 @@ export function getProposalStatusSteps(
   endDate: Date,
   creationDate: Date,
   publishedBlock: string,
+  executionFailed: boolean,
   executionBlock?: string,
   executionDate?: Date
 ): Array<ProgressStatusProps> {
@@ -299,12 +300,26 @@ export function getProposalStatusSteps(
         },
       ];
     case 'Succeeded':
-      return [
-        ...getPassedProposalSteps(creationDate, startDate, publishedBlock),
-        {label: i18n.t('governance.statusWidget.succeeded'), mode: 'upcoming'},
-      ];
-
-    // TODO - Execution failed: no execution date treated as failure for now
+      if (executionFailed)
+        return [
+          ...getPassedProposalSteps(creationDate, startDate, publishedBlock),
+          {
+            label: i18n.t('governance.statusWidget.failed'),
+            mode: 'failed',
+            date: `${format(
+              endDate,
+              KNOWN_FORMATS.proposals
+            )}  ${getFormattedUtcOffset()}`,
+          },
+        ];
+      else
+        return [
+          ...getPassedProposalSteps(creationDate, startDate, publishedBlock),
+          {
+            label: i18n.t('governance.statusWidget.succeeded'),
+            mode: 'upcoming',
+          },
+        ];
     case 'Executed':
       if (executionDate)
         return [
