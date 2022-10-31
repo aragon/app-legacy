@@ -96,7 +96,7 @@ const WidgetFooter: React.FC<FooterProps> = ({
     //       mode={'warning'}
     //     />
     //   );
-    // case 'executable':
+    case 'executable':
     case 'defeated' as 'executable':
       return (
         <Footer>

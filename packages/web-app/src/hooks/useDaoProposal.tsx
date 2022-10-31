@@ -30,6 +30,14 @@ import {customJSONReplacer} from 'utils/library';
  * @returns a detailed proposal
  */
 
+export enum ProposalStatus {
+  ACTIVE = 'Active',
+  PENDING = 'Pending',
+  SUCCEEDED = 'Succeeded',
+  EXECUTED = 'Executed',
+  DEFEATED = 'Defeated',
+}
+
 export const useDaoProposal = (
   proposalId: string,
   pluginAddress: string,
@@ -154,7 +162,10 @@ export const useDaoProposal = (
         if (proposal && encodedActions) proposal.actions = encodedActions;
 
         if (proposal) {
-          setData({...augmentProposalWithCache(proposal)});
+          setData({
+            ...augmentProposalWithCache(proposal),
+            status: ProposalStatus.SUCCEEDED,
+          });
 
           // remove cache there's already a proposal
           if (cachedProposal) {
@@ -164,7 +175,9 @@ export const useDaoProposal = (
             }
           }
         } else if (cachedProposal) {
-          setData({...augmentProposalWithCache(cachedProposal)});
+          setData({
+            ...augmentProposalWithCache(cachedProposal),
+          });
         }
       } catch (err) {
         console.error(err);
