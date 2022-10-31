@@ -10,7 +10,6 @@ import {
   useWatch,
 } from 'react-hook-form';
 import {Trans, useTranslation} from 'react-i18next';
-import {useParams} from 'react-router-dom';
 import styled from 'styled-components';
 
 import {AccordionMethod} from 'components/accordionMethod';
@@ -18,6 +17,7 @@ import {useActionsContext} from 'context/actions';
 import {useNetwork} from 'context/network';
 import {useProviders} from 'context/providers';
 import {useDaoDetails} from 'hooks/useDaoDetails';
+import {useDaoParam} from 'hooks/useDaoParam';
 import {useDaoToken} from 'hooks/useDaoToken';
 import useScreen from 'hooks/useScreen';
 import {CHAIN_METADATA} from 'utils/constants';
@@ -25,7 +25,6 @@ import {formatUnits} from 'utils/library';
 import {fetchBalance, getTokenInfo} from 'utils/tokens';
 import {ActionIndex} from 'utils/types';
 import {AddressAndTokenRow} from './addressTokenRow';
-import {useDaoParam} from 'hooks/useDaoParam';
 
 type MintTokensProps = ActionIndex;
 
