@@ -200,11 +200,11 @@ const Proposal: React.FC = () => {
           mintTokenActions.actions.length,
           decodedMintToken
         );
-
-        Promise.all(actionPromises).then(value => {
-          setDecodedActions(value);
-        });
       }
+
+      Promise.all(actionPromises).then(value => {
+        setDecodedActions(value);
+      });
     }
   }, [
     apolloClient,
