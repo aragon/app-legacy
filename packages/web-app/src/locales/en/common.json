@@ -440,7 +440,8 @@
         "title": "Options"
       },
       "yesNoLabel": {
-        "title": "Yes, No, or Abstain"
+        "title": "Yes, No, or Abstain",
+        "helpText": "Let users vote for or against."
       }
     },
     "defineProposal": {
