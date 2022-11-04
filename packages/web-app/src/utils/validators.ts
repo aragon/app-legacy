@@ -175,6 +175,7 @@ export async function isDaoNameValid(value: string, provider: InfuraProvider) {
     ensAddress = await provider?.resolveName(value.replaceAll(' ', '_'));
 
     if (ensAddress) return i18n.t('errors.ensDuplication');
+    else return true;
   } catch (err) {
     return i18n.t('errors.ensNetworkIssue');
   }
