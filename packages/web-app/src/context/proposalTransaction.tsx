@@ -49,6 +49,7 @@ type ProposalTransactionContextType = {
   voteSubmitted: boolean;
   executeSubmitted: boolean;
   executionFailed: boolean;
+  transactionHash: string;
 };
 
 type Props = Record<'children', ReactNode>;
@@ -79,9 +80,10 @@ const ProposalTransactionProvider: React.FC<Props> = ({children}) => {
 
   const [executeParams, setExecuteParams] = useState<IExecuteProposalParams>();
   const [executeSubmitted, setExecuteSubmitted] = useState(false);
-  const [executionFailed, setExecutionFailed] = useState(true);
+  const [executionFailed, setExecutionFailed] = useState(false);
   const [executeProcessState, setExecuteProcessState] =
     useState<TransactionState>();
+  const [transactionHash, setTransactionHash] = useState<string>('');
 
   const {data: daoId, isLoading: paramIsLoading} = useDaoParam();
   const {data: daoDetails, isLoading: detailsAreLoading} = useDaoDetails(
@@ -311,6 +313,7 @@ const ProposalTransactionProvider: React.FC<Props> = ({children}) => {
         switch (step.key) {
           case ExecuteProposalStep.EXECUTING:
             console.log(step.txHash);
+            setTransactionHash(step.txHash);
             break;
           case ExecuteProposalStep.DONE:
             console.log(step.key);
@@ -348,6 +351,7 @@ const ProposalTransactionProvider: React.FC<Props> = ({children}) => {
         voteSubmitted,
         executeSubmitted,
         executionFailed,
+        transactionHash,
       }}
     >
       {children}

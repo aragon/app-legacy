@@ -162,10 +162,7 @@ export const useDaoProposal = (
         if (proposal && encodedActions) proposal.actions = encodedActions;
 
         if (proposal) {
-          setData({
-            ...augmentProposalWithCache(proposal),
-            status: ProposalStatus.SUCCEEDED,
-          });
+          setData({...augmentProposalWithCache(proposal)});
 
           // remove cache there's already a proposal
           if (cachedProposal) {

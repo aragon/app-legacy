@@ -300,14 +300,14 @@ export function getProposalStatusSteps(
         },
       ];
     case 'Succeeded':
-      if (executionFailed)
+      if (executionFailed && executionDate)
         return [
           ...getPassedProposalSteps(creationDate, startDate, publishedBlock),
           {
             label: i18n.t('governance.statusWidget.failed'),
             mode: 'failed',
             date: `${format(
-              endDate,
+              executionDate,
               KNOWN_FORMATS.proposals
             )}  ${getFormattedUtcOffset()}`,
           },
