@@ -30,14 +30,6 @@ import {customJSONReplacer} from 'utils/library';
  * @returns a detailed proposal
  */
 
-export enum ProposalStatus {
-  ACTIVE = 'Active',
-  PENDING = 'Pending',
-  SUCCEEDED = 'Succeeded',
-  EXECUTED = 'Executed',
-  DEFEATED = 'Defeated',
-}
-
 export const useDaoProposal = (
   proposalId: string,
   pluginAddress: string,

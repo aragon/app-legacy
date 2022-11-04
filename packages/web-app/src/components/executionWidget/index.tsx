@@ -11,6 +11,8 @@ import styled from 'styled-components';
 
 import {Action} from 'utils/types';
 import {ActionsFilter} from './actionsFilter';
+import {CHAIN_METADATA} from 'utils/constants';
+import {useNetwork} from 'context/network';
 
 export type ExecutionStatus =
   | 'defeated'
@@ -85,8 +87,15 @@ type FooterProps = Pick<
 const WidgetFooter: React.FC<FooterProps> = ({
   status = 'default',
   onExecuteClicked,
+  txhash,
 }) => {
   const {t} = useTranslation();
+  const {network} = useNetwork();
+
+  const handleTxViewButtonClick = () => {
+    window.open(CHAIN_METADATA[network].explorer + 'tx/' + txhash, '_blank');
+  };
+
   switch (status) {
     case 'defeated':
       return (
@@ -120,6 +129,7 @@ const WidgetFooter: React.FC<FooterProps> = ({
             iconRight={<IconLinkExternal />}
             size="large"
             bgWhite
+            onClick={handleTxViewButtonClick}
           />
 
           <AlertInline
@@ -137,6 +147,7 @@ const WidgetFooter: React.FC<FooterProps> = ({
             iconRight={<IconLinkExternal />}
             size="large"
             bgWhite
+            onClick={handleTxViewButtonClick}
           />
 
           <AlertInline

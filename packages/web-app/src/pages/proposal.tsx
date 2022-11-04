@@ -83,6 +83,7 @@ const Proposal: React.FC = () => {
     pluginType,
     voteSubmitted,
     executionFailed,
+    transactionHash,
   } = useProposalTransactionContext();
 
   const {
@@ -512,6 +513,7 @@ const Proposal: React.FC = () => {
             actions={decodedActions}
             status={executionStatus}
             onExecuteClicked={handleExecuteProposal}
+            txhash={transactionHash}
           />
         </ProposalContainer>
         <AdditionalInfoContainer>
