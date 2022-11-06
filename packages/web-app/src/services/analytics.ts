@@ -87,7 +87,15 @@ export function enableAnalytics() {
   const analyticsKey = import.meta.env.VITE_REACT_APP_ANALYTICS_KEY;
 
   if (analyticsKey) {
-    analytics.load(analyticsKey, 'https://rudderstack.aragon.org');
+    analytics.load(analyticsKey, 'https://rudderstack.aragon.org', {
+      sendAdblockPage: true,
+      sendAdblockPageOptions: {
+        integrations: {
+          All: false,
+        },
+        secureCookie: true,
+      },
+    });
     analytics.page();
   }
 }

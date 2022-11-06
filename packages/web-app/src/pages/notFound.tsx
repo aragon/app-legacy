@@ -22,14 +22,14 @@ const NotFound: React.FC = () => {
         <Menu>
           <GridLayout>
             <img
-              className="col-span-2 col-start-2 desktop:col-start-auto mx-auto desktop:mx-0 h-4"
+              className="col-span-2 col-start-2 tablet:col-start-4 desktop:col-start-auto mx-auto desktop:mx-0 h-4"
               src={Logo}
             />
           </GridLayout>
         </Menu>
       </Container>
 
-      <div className="overflow-x-hidden">
+      <div className="overflow-x-hidden desktop:overflow-x-visible">
         <GridLayout>
           <Wrapper>
             <div className="mt-3 desktop:mt-0 desktop:w-1/2">
