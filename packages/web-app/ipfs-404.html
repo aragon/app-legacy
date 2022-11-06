@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link
+      rel="apple-touch-icon"
+      sizes="180x180"
+      href="/src/public/apple-touch-icon.png"
+    />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="32x32"
+      href="/src/public/favicon-32x32.png"
+    />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="16x16"
+      href="/src/public/favicon-16x16.png"
+    />
+    <link rel="manifest" href="/src/public/site.webmanifest" />
+    <link
+      rel="mask-icon"
+      href="/src/public/safari-pinned-tab.svg"
+      color="#3164fa"
+    />
+    <meta name="msapplication-TileColor" content="#3164fa" />
+    <meta name="theme-color" content="#ffffff" />
+
+    <!-- TODO: remove once fonts have been downloaded and set in stone -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;700&family=Syne:wght@700&display=swap"
+      rel="stylesheet"
+    />
+
+    <style>
+      * {
+        font-weight: 500;
+      }
+
+      body {
+        background-color: #f5f7fa;
+      }
+
+      /* Web3Modal comes with a default setting of z-index: 2. This conflicts with
+other parts of the application. Namely the navbars, which have a z-index of 10
+(tailwind class z-10). Fixin the global css od the modal seems to be the
+recommended solution:
+https://github.com/Web3Modal/web3modal/issues/165#issuecomment-938666905 */
+      .web3modal-modal-lightbox {
+        z-index: 20 !important;
+      }
+
+      #fullscreen-editor {
+        position: absolute;
+        z-index: 10;
+      }
+    </style>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Aragon App</title>
+  </head>
+
+  <body>
+    <div id="root"><h1>404 - TODO</h1></div>
+    <script>
+      !(function () {
+        const analyticsKey = '%VITE_REACT_APP_ANALYTICS_KEY%';
+        if (!analyticsKey.includes('undefined')) {
+          rudderAnalytics = window.rudderanalytics = [];
+          for (
+            var methods = [
+                'load',
+                'page',
+                'track',
+                'identify',
+                'alias',
+                'group',
+                'ready',
+                'reset',
+                'getAnonymousId',
+                'setAnonymousId',
+              ],
+              i = 0;
+            i < methods.length;
+            i++
+          ) {
+            var method = methods[i];
+            rudderAnalytics[method] = (function (a) {
+              return function () {
+                rudderAnalytics.push(
+                  [a].concat(Array.prototype.slice.call(arguments))
+                );
+              };
+            })(method);
+          }
+        }
+      })();
+    </script>
+    <script
+      async
+      src="https://cdn.rudderlabs.com/v1.1/rudder-analytics.min.js"
+    ></script>
+  </body>
+</html>
