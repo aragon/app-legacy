@@ -5,6 +5,7 @@ import {
   DropdownInput,
   Label,
   NumberInput,
+  TimeInput,
 } from '@aragon/ui-components';
 import {toDate} from 'date-fns-tz';
 import {
@@ -18,7 +19,6 @@ import {useTranslation} from 'react-i18next';
 import React, {useEffect, useState} from 'react';
 
 import {DateModeSwitch} from './dateModeSwitch';
-import {SimplifiedTimeInput} from 'components/inputTime/inputTime';
 import UtcMenu from 'containers/utcMenu';
 import {timezones} from 'containers/utcMenu/utcData';
 import {
@@ -258,7 +258,7 @@ const SetupVotingForm: React.FC = () => {
             }}
             render={({field: {name, value, onChange, onBlur}}) => (
               <div>
-                <SimplifiedTimeInput
+                <TimeInput
                   name={name}
                   value={value}
                   onChange={onChange}
@@ -384,7 +384,7 @@ const SetupVotingForm: React.FC = () => {
                   }}
                   render={({field: {name, value, onChange, onBlur}}) => (
                     <div>
-                      <SimplifiedTimeInput
+                      <TimeInput
                         name={name}
                         value={value}
                         onChange={onChange}
