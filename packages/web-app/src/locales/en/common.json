@@ -182,7 +182,7 @@
   },
   "placeHolders": {
     "selectToken": "Select a Token ...",
-    "walletOrEns": "Type wallet address or ENS ...",
+    "walletOrEns": "Type wallet address or ENS name...",
     "searchTokens": "Type to search ...",
     "searchTransfers": "Type to filter ...",
     "daoName": "Type your DAOs name ...",
