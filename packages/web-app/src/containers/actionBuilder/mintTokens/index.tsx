@@ -213,7 +213,9 @@ export const MintTokenForm: React.FC<MintTokenFormProps> = ({
         setValue(`actions.${actionIndex}.summary.newHoldersCount`, 0);
       } else if (uncheckedAddresses.length === 0) {
         // No unchecked address. Simply compare inputs with cached addresses
-        const count = mints.filter(m => newTokenHolders.has(m.address)).length;
+        const count = validInputs.filter(m =>
+          newTokenHolders.has(m.address)
+        ).length;
         setNewHoldersCount(count);
         setValue(`actions.${actionIndex}.summary.newHoldersCount`, count);
       } else {
@@ -262,12 +264,20 @@ export const MintTokenForm: React.FC<MintTokenFormProps> = ({
           );
       }
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [mints, daoToken?.address]);
+  }, [
+    mints,
+    daoToken?.address,
+    actionIndex,
+    checkedAddresses,
+    infura,
+    nativeCurrency,
+    newTokenHolders,
+    setValue,
+  ]);
 
   useEffect(() => {
     // Collecting token amounts that are to be minted
-    if (mints && daoToken) {
+    if (mints) {
       let newTokensCount: Big = Big(0);
       mints.forEach(m => {
         // NOTE: If `m.amount` is not a valid input for `Big` to parse, an error
@@ -291,7 +301,7 @@ export const MintTokenForm: React.FC<MintTokenFormProps> = ({
         );
       }
     }
-  }, [actionIndex, daoToken, mints, newTokens, setValue]);
+  }, [actionIndex, mints, newTokens, setValue]);
 
   /*************************************************
    *             Callbacks and Handlers            *
