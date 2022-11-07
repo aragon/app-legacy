@@ -112,9 +112,9 @@ export const CHAIN_METADATA: ChainList = {
     logo: 'https://bridge.arbitrum.io/logo.png',
     explorer: 'https://goerli-rollup-explorer.arbitrum.io/',
     testnet: true,
-    rpc: [' https://goerli-rollup.arbitrum.io/rpc'],
+    rpc: ['https://goerli-rollup.arbitrum.io/rpc'],
     nativeCurrency: {
-      name: 'GoerliETH',
+      name: 'Goerli Ether',
       symbol: 'ETH',
       decimals: 18,
     },
