@@ -1,6 +1,6 @@
 /* SUPPORTED NETWORK TYPES ================================================== */
 
-export const SUPPORTED_CHAIN_ID = [1, 5, 137, 80001, 42161, 421611] as const;
+export const SUPPORTED_CHAIN_ID = [1, 5, 137, 80001, 42161, 421613] as const;
 export type SupportedChainID = typeof SUPPORTED_CHAIN_ID[number];
 
 export function isSupportedChainId(
@@ -106,15 +106,15 @@ export const CHAIN_METADATA: ChainList = {
     },
   },
   'arbitrum-test': {
-    id: 421611,
-    name: 'Arbitrum Rinkeby',
+    id: 421613,
+    name: 'Arbitrum Goerli',
     domain: 'L2 Blockchain',
     logo: 'https://bridge.arbitrum.io/logo.png',
-    explorer: 'https://testnet.arbiscan.io/',
+    explorer: 'https://goerli-rollup-explorer.arbitrum.io/',
     testnet: true,
-    rpc: ['https://rinkeby.arbitrum.io/rpc', 'wss://rinkeby.arbitrum.io/ws'],
+    rpc: [' https://goerli-rollup.arbitrum.io/rpc'],
     nativeCurrency: {
-      name: 'Ether',
+      name: 'GoerliETH',
       symbol: 'ETH',
       decimals: 18,
     },
