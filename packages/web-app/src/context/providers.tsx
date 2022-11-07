@@ -50,7 +50,8 @@ export function ProvidersProvider({children}: ProviderProviderProps) {
 
   return (
     <ProviderContext.Provider
-      value={{infura: infuraProvider, web3: provider || null}}
+      // TODO: remove casting once useSigner has updated its version of the ethers library
+      value={{infura: infuraProvider, web3: (provider as Web3Provider) || null}}
     >
       {children}
     </ProviderContext.Provider>
