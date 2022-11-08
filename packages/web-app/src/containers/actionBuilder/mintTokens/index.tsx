@@ -297,7 +297,7 @@ export const MintTokenForm: React.FC<MintTokenFormProps> = ({
         setNewTokens(newTokensCount);
         setValue(
           `actions.${actionIndex}.summary.newTokens`,
-          '' + newTokensCount
+          newTokensCount.toNumber()
         );
       }
     }

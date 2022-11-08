@@ -62,7 +62,11 @@ export const ExecutionWidget: React.FC<ExecutionWidgetProps> = ({
             {actions.map((action, index: number) => {
               if (action)
                 return (
-                  <ActionsFilter {...{action}} key={index} type={action.name} />
+                  <ActionsFilter
+                    action={action}
+                    key={index}
+                    type={action.name}
+                  />
                 );
             })}
           </Content>
@@ -88,7 +92,8 @@ const WidgetFooter: React.FC<FooterProps> = ({
 }) => {
   const {t} = useTranslation();
   switch (status) {
-    // TODO: Commented this piece of code to enable testing. Will be reverted before merging the PR
+    // TODO: Commented this piece of code to enable testing. Will be reverted
+    // before merging the PR
     // case 'defeated':
     //   return (
     //     <AlertInline

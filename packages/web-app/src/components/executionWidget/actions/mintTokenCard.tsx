@@ -1,5 +1,5 @@
-import React from 'react';
 import {IconLinkExternal, Link, ListItemAddress} from '@aragon/ui-components';
+import React from 'react';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 
