@@ -36,9 +36,12 @@ export type StateEmptyProps =
         type: 'Object';
       });
 
-export const StateEmpty: React.FC<StateEmptyProps> = props => {
+export const StateEmpty: React.FC<StateEmptyProps> = ({
+  size = 'small',
+  ...props
+}) => {
   return (
-    <Card mode={props.mode} size={props.size || 'small'} type={props.type}>
+    <Card mode={props.mode} size={size} type={props.type}>
       {props.type === 'Human' ? (
         <IllustrationHuman
           {...{
@@ -48,8 +51,8 @@ export const StateEmpty: React.FC<StateEmptyProps> = props => {
             sunglass: props.sunglass,
             accessory: props.accessory,
           }}
-          height={props.size === 'large' ? 225 : 165}
-          width={props.size === 'large' ? 400 : 295}
+          height={size === 'large' ? 225 : 165}
+          width={size === 'large' ? 400 : 295}
         />
       ) : (
         <IlluObject object={props.object} />
@@ -59,17 +62,17 @@ export const StateEmpty: React.FC<StateEmptyProps> = props => {
           <Title>{props.title}</Title>
           {props.renderHtml ? (
             <Description
-              size={props.size}
+              size={size}
               dangerouslySetInnerHTML={{__html: props.description || ''}}
             />
           ) : (
             props.description && (
-              <Description size={props.size}>{props.description}</Description>
+              <Description size={size}>{props.description}</Description>
             )
           )}
         </TextWrapper>
         {(props.primaryButton || props.secondaryButton) && (
-          <ActionContainer size={props.size || 'small'}>
+          <ActionContainer size={size}>
             {props.primaryButton && (
               <ButtonText
                 label={props.primaryButton.label}
