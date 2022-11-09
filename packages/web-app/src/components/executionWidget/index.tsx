@@ -107,7 +107,7 @@ const WidgetFooter: React.FC<FooterProps> = ({
     case 'executable':
       return (
         <Footer>
-          <ButtonText
+          <StyledButtonText
             label={t('governance.proposals.buttons.execute')}
             size="large"
             onClick={onExecuteClicked}
@@ -118,12 +118,12 @@ const WidgetFooter: React.FC<FooterProps> = ({
     case 'executable-failed':
       return (
         <Footer>
-          <ButtonText
+          <StyledButtonText
             label={t('governance.proposals.buttons.execute')}
             size="large"
             onClick={onExecuteClicked}
           />
-          <ButtonText
+          <StyledButtonText
             label={t('governance.executionCard.seeTransaction')}
             mode="secondary"
             iconRight={<IconLinkExternal />}
@@ -141,7 +141,7 @@ const WidgetFooter: React.FC<FooterProps> = ({
     case 'executed':
       return (
         <Footer>
-          <ButtonText
+          <StyledButtonText
             label={t('governance.executionCard.seeTransaction')}
             mode="secondary"
             iconRight={<IconLinkExternal />}
@@ -182,5 +182,10 @@ const Content = styled.div.attrs({
 })``;
 
 const Footer = styled.div.attrs({
-  className: 'flex gap-x-3',
+  className:
+    'flex flex-col tablet:flex-row items-center gap-y-2 tablet:gap-y-0 tablet:gap-x-3',
+})``;
+
+const StyledButtonText = styled(ButtonText).attrs({
+  className: 'w-full tablet:w-max',
 })``;
