@@ -170,7 +170,6 @@ export function actionsAreValid(
 
 export async function isDaoNameValid(value: string, provider: InfuraProvider) {
   if (isOnlyWhitespace(value)) return i18n.t('errors.required.name');
-  console.log(provider.network);
 
   // some networks like Arbitrum Goerli and other L2s do not support ENS domains as of now
   // don't check and allow name collision failure to happen when trying to run transaction
