@@ -611,7 +611,7 @@
     "emptyState": {
       "titleSearch": "No result found for {{query}}",
       "title": "No voters yet.",
-      "subtitle": "Publish a proposal to allow voting."
+      "subtitle": "Search for another wallet or ENS address."
     }
   },
   "explore": {

@@ -1,15 +1,12 @@
-import {
-  ButtonText,
-  CardProposal,
-  IconChevronDown,
-  StateEmpty,
-} from '@aragon/ui-components';
-import {TemporarySection} from 'components/temporary';
-import {useNetwork} from 'context/network';
-import {useDaoProposals} from 'hooks/useDaoProposals';
+import {ButtonText, CardProposal, IconChevronDown} from '@aragon/ui-components';
 import React, {useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
+
+import {StateEmpty} from 'components/stateEmpty';
+import {TemporarySection} from 'components/temporary';
+import {useNetwork} from 'context/network';
+import {useDaoProposals} from 'hooks/useDaoProposals';
 import {CHAIN_METADATA} from 'utils/constants';
 
 // NOTE: There will be changes when integrating proposals.
@@ -84,10 +81,8 @@ const ActiveProposalsExplore: React.FC = () => {
               sunglass="big_rounded"
               hair="middle"
               accessory="earrings_rhombus"
-              title={'There are no active proposals'}
-              description={
-                'You can still check upcoming or past proposals on your DAOs.'
-              }
+              title={t('explore.emptyStateProposal.title')}
+              description={t('explore.emptyStateProposal.description')}
             />
           }
         </>

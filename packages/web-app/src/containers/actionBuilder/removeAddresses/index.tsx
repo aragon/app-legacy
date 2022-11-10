@@ -5,13 +5,13 @@ import {
   IconMenuVertical,
   Label,
   ListItemAction,
-  StateEmpty,
 } from '@aragon/ui-components';
 import React, {useEffect} from 'react';
 import {useFieldArray, useFormContext, useWatch} from 'react-hook-form';
 import {useTranslation} from 'react-i18next';
 
 import {AccordionMethod} from 'components/accordionMethod';
+import {StateEmpty} from 'components/stateEmpty';
 import ManageWalletsModal from 'containers/manageWalletsModal';
 import {useActionsContext} from 'context/actions';
 import {useGlobalModalContext} from 'context/globalModals';
@@ -126,7 +126,7 @@ const RemoveAddresses: React.FC<RemoveAddressesProps> = ({
               mode="inline"
               object="wallet"
               title={t('labels.whitelistWallets.noWallets')}
-              primaryButton={{
+              secondaryButton={{
                 label: t('labels.selectWallet'),
                 onClick: () => open('manageWallet'),
               }}

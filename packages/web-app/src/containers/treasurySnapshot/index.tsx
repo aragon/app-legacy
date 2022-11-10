@@ -3,20 +3,20 @@ import {
   IconChevronRight,
   IconFinance,
   ListItemHeader,
-  StateEmpty,
   TransferListItem,
 } from '@aragon/ui-components';
 import React from 'react';
-import styled from 'styled-components';
 import {useTranslation} from 'react-i18next';
-import {useNavigate, generatePath} from 'react-router-dom';
+import {generatePath, useNavigate} from 'react-router-dom';
+import styled from 'styled-components';
 
-import {useNetwork} from 'context/network';
-import {AllTransfers} from 'utils/paths';
+import {StateEmpty} from 'components/stateEmpty';
 import {useGlobalModalContext} from 'context/globalModals';
+import {useNetwork} from 'context/network';
 import {useTransactionDetailContext} from 'context/transactionDetail';
-import {Transfer} from 'utils/types';
+import {AllTransfers} from 'utils/paths';
 import {abbreviateTokenAmount} from 'utils/tokens';
+import {Transfer} from 'utils/types';
 
 type Props = {
   dao: string;

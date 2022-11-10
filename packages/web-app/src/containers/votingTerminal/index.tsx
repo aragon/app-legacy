@@ -12,7 +12,6 @@ import {
   LinearProgress,
   Option,
   SearchInput,
-  StateEmpty,
   VotersTable,
   VoterType,
 } from '@aragon/ui-components';
@@ -20,6 +19,8 @@ import {shortenAddress} from '@aragon/ui-components/src/utils/addresses';
 import React, {useMemo, useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
+
+import {StateEmpty} from 'components/stateEmpty';
 
 export type ProposalVoteResults = {
   yes: {value: string | number; percentage: number};
@@ -179,7 +180,9 @@ export const VotingTerminal: React.FC<VotingTerminalProps> = ({
                   query: shortenAddress(query),
                 }
               )}
-              description={t('votingTerminal.emptyState.subtitle')}
+              description={
+                query === '' ? '' : t('votingTerminal.emptyState.subtitle')
+              }
             />
           )}
         </div>

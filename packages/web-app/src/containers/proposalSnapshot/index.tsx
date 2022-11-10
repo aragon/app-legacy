@@ -4,7 +4,6 @@ import {
   IconChevronRight,
   IconGovernance,
   ListItemHeader,
-  StateEmpty,
 } from '@aragon/ui-components';
 import React from 'react';
 import {useTranslation} from 'react-i18next';
@@ -12,6 +11,7 @@ import {generatePath, useNavigate} from 'react-router-dom';
 import styled from 'styled-components';
 
 import {mapToCardViewProposal} from 'components/proposalList';
+import {StateEmpty} from 'components/stateEmpty';
 import {useNetwork} from 'context/network';
 import {Proposal as ProposalType} from 'hooks/useProposals';
 import {Governance, NewProposal, Proposal} from 'utils/paths';

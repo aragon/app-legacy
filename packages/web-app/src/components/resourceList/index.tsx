@@ -1,8 +1,9 @@
+import {IconAdd, ListItemLink} from '@aragon/ui-components';
 import React from 'react';
-import styled from 'styled-components';
 import {useTranslation} from 'react-i18next';
-import {IconAdd, ListItemLink, StateEmpty} from '@aragon/ui-components';
+import styled from 'styled-components';
 
+import {StateEmpty} from 'components/stateEmpty';
 import {ProposalResource} from 'utils/types';
 
 type ResourceListProps = {
@@ -30,21 +31,23 @@ const ResourceList: React.FC<ResourceListProps> = ({
   }
 
   return (
-    <StateEmpty
-      type="Object"
-      mode="inline"
-      object="archive"
-      title={t('labels.noResources')}
-      secondaryButton={
-        emptyStateButtonClick
-          ? {
-              label: t('labels.addResource'),
-              onClick: emptyStateButtonClick,
-              iconLeft: <IconAdd />,
-            }
-          : undefined
-      }
-    />
+    <Container>
+      <StateEmpty
+        type="Object"
+        mode="inline"
+        object="archive"
+        title={t('labels.noResources')}
+        secondaryButton={
+          emptyStateButtonClick
+            ? {
+                label: t('labels.addResource'),
+                onClick: emptyStateButtonClick,
+                iconLeft: <IconAdd />,
+              }
+            : undefined
+        }
+      />
+    </Container>
   );
 };
 

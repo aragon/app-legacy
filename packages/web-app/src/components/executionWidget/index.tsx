@@ -3,16 +3,16 @@ import {
   ButtonText,
   IconAdd,
   IconLinkExternal,
-  StateEmpty,
 } from '@aragon/ui-components';
 import React from 'react';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 
+import {StateEmpty} from 'components/stateEmpty';
+import {useNetwork} from 'context/network';
+import {CHAIN_METADATA} from 'utils/constants';
 import {Action} from 'utils/types';
 import {ActionsFilter} from './actionsFilter';
-import {CHAIN_METADATA} from 'utils/constants';
-import {useNetwork} from 'context/network';
 
 export type ExecutionStatus =
   | 'defeated'

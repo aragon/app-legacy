@@ -3,7 +3,6 @@ import {
   HeaderPage,
   Pagination,
   SearchInput,
-  StateEmpty,
 } from '@aragon/ui-components';
 import {withTransaction} from '@elastic/apm-rum-react';
 import React, {useState} from 'react';
@@ -12,6 +11,7 @@ import {useNavigate} from 'react-router-dom';
 import styled from 'styled-components';
 
 import {MembersList} from 'components/membersList';
+import {StateEmpty} from 'components/stateEmpty';
 import {Loading} from 'components/temporary';
 import {useNetwork} from 'context/network';
 import {useDaoDetails} from 'hooks/useDaoDetails';
