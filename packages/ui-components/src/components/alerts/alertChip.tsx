@@ -41,7 +41,7 @@ const myCSS = css`
 `;
 
 const Container = styled.div.attrs(({isOpen}: ContainerProps) => ({
-  className: `flex items-center bg-ui-800 rounded-full px-3 py-2 absolute space-x-1 cursor-default ${
+  className: `flex items-center bg-ui-800 rounded-full px-3 py-2 fixed space-x-1 cursor-default right-1/2 z-50 ${
     isOpen ? 'visible' : 'hidden'
   }`,
 }))`
