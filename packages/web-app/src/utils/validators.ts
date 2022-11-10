@@ -170,9 +170,18 @@ export function actionsAreValid(
 
 export async function isDaoNameValid(value: string, provider: InfuraProvider) {
   if (isOnlyWhitespace(value)) return i18n.t('errors.required.name');
-  let ensAddress = null;
+
+  // some networks like Arbitrum Goerli and other L2s do not support ENS domains as of now
+  // don't check and allow name collision failure to happen when trying to run transaction
+  if (!provider.network.ensAddress) {
+    console.warn(
+      `Unable to verify DAO ens name: ${provider.network.name} does not support ENS domains`
+    );
+    return true;
+  }
+
   try {
-    ensAddress = await provider?.resolveName(value.replaceAll(' ', '_'));
+    const ensAddress = await provider?.resolveName(value.replaceAll(' ', '_'));
 
     if (ensAddress) return i18n.t('errors.ensDuplication');
     else return true;
