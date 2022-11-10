@@ -9,16 +9,17 @@ const SCC: React.FC = () => {
 
   return (
     <Container>
-      <TemporarySection purpose="SMART CONTRACT COMPOSER COMPONENTS" />
-
-      <ButtonText
-        label="Toggle EmptyState"
-        onClick={() => setEmptyStateIsOpen(s => !s)}
-      />
-      <EmptyState
-        isOpen={emptyStateIsOpen}
-        onClose={() => setEmptyStateIsOpen(false)}
-      />
+      <TemporarySection purpose="SCC - Initial Modal, Empty State">
+        <ButtonText
+          label="Show EmptyState"
+          onClick={() => setEmptyStateIsOpen(false)}
+        />
+        <EmptyState
+          isOpen={emptyStateIsOpen}
+          onClose={() => setEmptyStateIsOpen(false)}
+          onBackButtonClicked={() => setEmptyStateIsOpen(false)}
+        />
+      </TemporarySection>
     </Container>
   );
 };
