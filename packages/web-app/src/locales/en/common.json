@@ -708,5 +708,13 @@
       "description": "Ready to distribute tokens or pay members? Initiate a token transfer here. For ideas on how to distribute your community's token, read our guide on token distribution.",
       "buttonLabel": "Initiate Transfer"
     }
+  },
+  "scc": {
+    "emptyState": {
+      "modalTitle": "Smart Contract Composer",
+      "title": "No Smart Contract",
+      "description": "Add a smart contract to interact with its actions",
+      "primaryBtnLabel": "Connect Smart Contract"
+    }
   }
 }

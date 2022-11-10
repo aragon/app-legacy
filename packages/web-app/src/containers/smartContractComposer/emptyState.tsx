@@ -1,42 +1,48 @@
-import {ButtonIcon, IconChevronLeft} from '@aragon/ui-components';
 import ModalBottomSheetSwitcher from 'components/modalBottomSheetSwitcher';
-import {t} from 'i18next';
+import {StateEmpty} from 'components/stateEmpty';
 import React from 'react';
+import ModalHeader from './modalHeader';
+import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 
 type Props = {
   isOpen: boolean;
   onClose: () => void;
-  onBackClicked: () => void;
+  onBackButtonClicked: () => void;
 };
 
+// not exactly sure where opening will be happen or if
+// these modals will be global modals. For now, keeping
+// this as a "controlled" component
 const EmptyState: React.FC<Props> = props => {
+  const {t} = useTranslation();
+
+  const handleConnectSCC = () => {};
+
   return (
     <ModalBottomSheetSwitcher isOpen={props.isOpen} onClose={props.onClose}>
-      <ModalHeader>
-        <ButtonIcon
-          mode="secondary"
-          size="small"
-          bgWhite
-          icon={<IconChevronLeft />}
-          onClick={props.onBackClicked}
+      <ModalHeader
+        title={t('scc.emptyState.modalTitle')}
+        onClose={props.onClose}
+        onBackButtonClicked={props.onBackButtonClicked}
+      />
+      <Content>
+        <StateEmpty
+          mode="inline"
+          type="Object"
+          object="smart_contract"
+          title={t('scc.emptyState.title')}
+          description={t('scc.emptyState.description')}
+          primaryButton={{
+            label: t('scc.emptyState.primaryBtnLabel'),
+            onClick: handleConnectSCC,
+          }}
         />
-        <Title>{t('sCC.emptyTitle')}</Title>
-        <div role="presentation" className="w-4 h-4" />
-      </ModalHeader>
+      </Content>
     </ModalBottomSheetSwitcher>
   );
 };
 
 export default EmptyState;
 
-const ModalHeader = styled.div.attrs({
-  className: 'flex items-center p-2 space-x-2 bg-ui-0 rounded-xl sticky top-0',
-})`
-  box-shadow: 0px 4px 8px rgba(31, 41, 51, 0.04),
-    0px 0px 2px rgba(31, 41, 51, 0.06), 0px 0px 1px rgba(31, 41, 51, 0.04);
-`;
-
-const Title = styled.div.attrs({
-  className: 'flex-1 font-bold text-center text-ui-800',
-})``;
+const Content = styled.div.attrs({className: 'px-2 tablet:px-3 pb-3'})``;
