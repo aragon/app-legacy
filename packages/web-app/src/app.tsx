@@ -36,6 +36,7 @@ import {NotFound} from 'utils/paths';
 import ProtectedRoute from 'components/protectedRoute';
 import {useTransactionDetailContext} from 'context/transactionDetail';
 
+const DemoSCCPage = lazy(() => import('pages/demoScc'));
 const ExplorePage = lazy(() => import('pages/explore'));
 const NotFoundPage = lazy(() => import('pages/notFound'));
 
@@ -89,6 +90,8 @@ function App() {
       {/* TODO: replace with loading indicator */}
       <Suspense fallback={<Loading />}>
         <Routes>
+          <Route path="/scc" element={<DemoSCCPage />} />
+
           <Route element={<ExploreWrapper />}>
             <Route path="/" element={<ExplorePage />} />
           </Route>
