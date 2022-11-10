@@ -77,6 +77,7 @@ export const StateEmpty: React.FC<StateEmptyProps> = props => {
                 iconLeft={props.primaryButton.iconLeft}
                 iconRight={props.primaryButton.iconRight}
                 size="large"
+                {...(props.secondaryButton ? {} : {className: 'w-full'})}
               />
             )}
             {props.secondaryButton && (
