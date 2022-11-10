@@ -18,6 +18,7 @@ import {useNetwork} from 'context/network';
 import {useWallet} from 'hooks/useWallet';
 import {Link} from '@aragon/ui-components';
 import {trackEvent} from 'services/analytics';
+import {useAlertContext} from 'context/alert';
 
 export type WhitelistWallet = {
   id: string;
@@ -82,6 +83,7 @@ const CreateDAO: React.FC = () => {
         'membership',
       ],
     });
+  const {alert} = useAlertContext();
 
   // Note: The wallet network determines the expected network when entering
   // the flow so that the process is more convenient for already logged in
@@ -256,6 +258,7 @@ const CreateDAO: React.FC = () => {
             }
           >
             <SelectChain />
+            <button onClick={() => alert('pasted')}>Click here</button>
           </Step>
           <Step
             wizardTitle={t('createDAO.step2.title')}

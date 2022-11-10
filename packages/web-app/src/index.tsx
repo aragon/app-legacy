@@ -18,6 +18,7 @@ import {TransactionDetailProvider} from 'context/transactionDetail';
 import {WalletMenuProvider} from 'context/walletMenu';
 import {UseCacheProvider} from 'hooks/useCache';
 import {UseClientProvider} from 'hooks/useClient';
+import {AlertProvider} from 'context/alert';
 import App from './app';
 
 const providerOptions: IProviderOptions = {
@@ -44,13 +45,15 @@ ReactDOM.render(
                       <TransactionDetailProvider>
                         <WalletMenuProvider>
                           <GlobalModalsProvider>
-                            {/* By default, goerli client is chosen, each useQuery needs to pass the network client it needs as argument
+                            <AlertProvider>
+                              {/* By default, goerli client is chosen, each useQuery needs to pass the network client it needs as argument
                       For REST queries using apollo, there's no need to pass a different client to useQuery  */}
-                            <ApolloProvider
-                              client={client['goerli'] || goerliClient} //TODO remove fallback when all clients are defined
-                            >
-                              <App />
-                            </ApolloProvider>
+                              <ApolloProvider
+                                client={client['goerli'] || goerliClient} //TODO remove fallback when all clients are defined
+                              >
+                                <App />
+                              </ApolloProvider>
+                            </AlertProvider>
                           </GlobalModalsProvider>
                         </WalletMenuProvider>
                       </TransactionDetailProvider>
