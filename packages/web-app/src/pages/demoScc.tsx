@@ -12,7 +12,7 @@ const SCC: React.FC = () => {
       <TemporarySection purpose="SCC - Initial Modal, Empty State">
         <ButtonText
           label="Show EmptyState"
-          onClick={() => setEmptyStateIsOpen(false)}
+          onClick={() => setEmptyStateIsOpen(true)}
         />
         <EmptyState
           isOpen={emptyStateIsOpen}
