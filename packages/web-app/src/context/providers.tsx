@@ -11,7 +11,7 @@ import {Nullable} from 'utils/types';
 import {useNetwork} from './network';
 
 const NW_ARB = {chainId: 42161, name: 'arbitrum'};
-const NW_ARB_RINKEBY = {chainId: 421611, name: 'arbitrum-rinkeby'};
+const NW_ARB_GOERLI = {chainId: 421613, name: 'arbitrum-goerli'};
 
 /* CONTEXT PROVIDER ========================================================= */
 
@@ -50,7 +50,8 @@ export function ProvidersProvider({children}: ProviderProviderProps) {
 
   return (
     <ProviderContext.Provider
-      value={{infura: infuraProvider, web3: provider || null}}
+      // TODO: remove casting once useSigner has updated its version of the ethers library
+      value={{infura: infuraProvider, web3: (provider as Web3Provider) || null}}
     >
       {children}
     </ProviderContext.Provider>
@@ -59,15 +60,15 @@ export function ProvidersProvider({children}: ProviderProviderProps) {
 
 function getInfuraProvider(givenChainId?: SupportedChainID) {
   // NOTE Passing the chainIds from useWallet doesn't work in the case of
-  // arbitrum and arbitrum-rinkeby. They need to be passed as objects.
+  // arbitrum and arbitrum-goerli. They need to be passed as objects.
   // However, I have no idea why this is necessary. Looking at the ethers
   // library, there's no reason why passing the chainId wouldn't work. Also,
   // I've tried it on a fresh project and had no problems there...
   // [VR 07-03-2022]
   if (givenChainId === 42161) {
     return new InfuraProvider(NW_ARB, INFURA_PROJECT_ID_ARB);
-  } else if (givenChainId === 421611) {
-    return new InfuraProvider(NW_ARB_RINKEBY, INFURA_PROJECT_ID_ARB);
+  } else if (givenChainId === 421613) {
+    return new InfuraProvider(NW_ARB_GOERLI, INFURA_PROJECT_ID_ARB);
   } else {
     return new InfuraProvider(givenChainId, INFURA_PROJECT_ID_ARB);
   }

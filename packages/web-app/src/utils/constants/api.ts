@@ -10,8 +10,7 @@ export const SUBGRAPH_API_URL: SubgraphNetworkUrl = {
   mumbai:
     'https://api.thegraph.com/subgraphs/name/aragon/aragon-zaragoza-mumbai',
   arbitrum: undefined,
-  'arbitrum-test':
-    'https://api.thegraph.com/subgraphs/name/aragon/aragon-zaragoza-arbitrum-rinkeby',
+  'arbitrum-test': undefined,
 };
 
 export const BASE_URL = 'https://api.coingecko.com/api/v3';

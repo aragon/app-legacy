@@ -11,6 +11,8 @@ import styled from 'styled-components';
 
 import {Action} from 'utils/types';
 import {ActionsFilter} from './actionsFilter';
+import {CHAIN_METADATA} from 'utils/constants';
+import {useNetwork} from 'context/network';
 
 export type ExecutionStatus =
   | 'defeated'
@@ -85,22 +87,27 @@ type FooterProps = Pick<
 const WidgetFooter: React.FC<FooterProps> = ({
   status = 'default',
   onExecuteClicked,
+  txhash,
 }) => {
   const {t} = useTranslation();
+  const {network} = useNetwork();
+
+  const handleTxViewButtonClick = () => {
+    window.open(CHAIN_METADATA[network].explorer + 'tx/' + txhash, '_blank');
+  };
+
   switch (status) {
-    // TODO: Commented this piece of code to enable testing. Will be reverted before merging the PR
-    // case 'defeated':
-    //   return (
-    //     <AlertInline
-    //       label={t('governance.executionCard.status.defeated')}
-    //       mode={'warning'}
-    //     />
-    //   );
-    // case 'executable':
-    case 'defeated' as 'executable':
+    case 'defeated':
+      return (
+        <AlertInline
+          label={t('governance.executionCard.status.defeated')}
+          mode={'warning'}
+        />
+      );
+    case 'executable':
       return (
         <Footer>
-          <ButtonText
+          <StyledButtonText
             label={t('governance.proposals.buttons.execute')}
             size="large"
             onClick={onExecuteClicked}
@@ -111,17 +118,18 @@ const WidgetFooter: React.FC<FooterProps> = ({
     case 'executable-failed':
       return (
         <Footer>
-          <ButtonText
+          <StyledButtonText
             label={t('governance.proposals.buttons.execute')}
             size="large"
             onClick={onExecuteClicked}
           />
-          <ButtonText
+          <StyledButtonText
             label={t('governance.executionCard.seeTransaction')}
             mode="secondary"
             iconRight={<IconLinkExternal />}
             size="large"
             bgWhite
+            onClick={handleTxViewButtonClick}
           />
 
           <AlertInline
@@ -133,12 +141,13 @@ const WidgetFooter: React.FC<FooterProps> = ({
     case 'executed':
       return (
         <Footer>
-          <ButtonText
+          <StyledButtonText
             label={t('governance.executionCard.seeTransaction')}
             mode="secondary"
             iconRight={<IconLinkExternal />}
             size="large"
             bgWhite
+            onClick={handleTxViewButtonClick}
           />
 
           <AlertInline
@@ -173,5 +182,10 @@ const Content = styled.div.attrs({
 })``;
 
 const Footer = styled.div.attrs({
-  className: 'flex gap-x-3',
+  className:
+    'flex flex-col tablet:flex-row items-center gap-y-2 tablet:gap-y-0 tablet:gap-x-3',
+})``;
+
+const StyledButtonText = styled(ButtonText).attrs({
+  className: 'w-full tablet:w-max',
 })``;

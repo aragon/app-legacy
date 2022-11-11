@@ -13,6 +13,8 @@ import styled from 'styled-components';
 import AddLinks from 'components/addLinks';
 import {URL_PATTERN} from 'utils/constants';
 import {isOnlyWhitespace} from 'utils/library';
+import {isDaoNameValid} from 'utils/validators';
+import {useProviders} from 'context/providers';
 
 const DAO_LOGO = {
   maxDimension: 2400,
@@ -23,6 +25,7 @@ const DAO_LOGO = {
 const DefineMetadata: React.FC<{bgWhite?: boolean}> = ({bgWhite = false}) => {
   const {t} = useTranslation();
   const {control, setError} = useFormContext();
+  const {infura: provider} = useProviders();
 
   const handleImageError = useCallback(
     (error: {code: string; message: string}) => {
@@ -67,8 +70,7 @@ const DefineMetadata: React.FC<{bgWhite?: boolean}> = ({bgWhite = false}) => {
           defaultValue=""
           rules={{
             required: t('errors.required.name'),
-            validate: value =>
-              isOnlyWhitespace(value) ? t('errors.required.name') : true,
+            validate: async value => await isDaoNameValid(value, provider),
           }}
           render={({
             field: {onBlur, onChange, value, name},

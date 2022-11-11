@@ -183,7 +183,9 @@ export const useDaoProposal = (
             }
           }
         } else if (cachedProposal) {
-          setData({...augmentProposalWithCache(cachedProposal)});
+          setData({
+            ...augmentProposalWithCache(cachedProposal),
+          });
         }
       } catch (err) {
         console.error(err);

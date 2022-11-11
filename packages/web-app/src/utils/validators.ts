@@ -1,6 +1,7 @@
 import {FieldErrors, ValidateResult} from 'react-hook-form';
 import {isAddress, parseUnits} from 'ethers/lib/utils';
 import {BigNumber, providers as EthersProviders} from 'ethers';
+import {InfuraProvider} from '@ethersproject/providers';
 
 import {i18n} from '../../i18n.config';
 import {isERC20Token} from './tokens';
@@ -14,6 +15,7 @@ import {
   ActionRemoveAddress,
   Nullable,
 } from './types';
+import {isOnlyWhitespace} from './library';
 
 /**
  * Validate given token contract address
@@ -164,4 +166,26 @@ export function actionsAreValid(
   }
 
   return isValid;
+}
+
+export async function isDaoNameValid(value: string, provider: InfuraProvider) {
+  if (isOnlyWhitespace(value)) return i18n.t('errors.required.name');
+
+  // some networks like Arbitrum Goerli and other L2s do not support ENS domains as of now
+  // don't check and allow name collision failure to happen when trying to run transaction
+  if (!provider.network.ensAddress) {
+    console.warn(
+      `Unable to verify DAO ens name: ${provider.network.name} does not support ENS domains`
+    );
+    return true;
+  }
+
+  try {
+    const ensAddress = await provider?.resolveName(value.replaceAll(' ', '_'));
+
+    if (ensAddress) return i18n.t('errors.ensDuplication');
+    else return true;
+  } catch (err) {
+    return i18n.t('errors.ensNetworkIssue');
+  }
 }

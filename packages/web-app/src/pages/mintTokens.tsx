@@ -1,7 +1,13 @@
 import {AlertInline} from '@aragon/ui-components';
 import {withTransaction} from '@elastic/apm-rum-react';
 import React, {useState} from 'react';
-import {FormProvider, useForm, useFormState} from 'react-hook-form';
+import {
+  FieldErrors,
+  FormProvider,
+  useForm,
+  useFormState,
+  useWatch,
+} from 'react-hook-form';
 import {useTranslation} from 'react-i18next';
 import {generatePath} from 'react-router-dom';
 
@@ -19,24 +25,35 @@ import SetupVotingForm, {
   isValid as setupVotingIsValid,
 } from 'containers/setupVotingForm';
 import {ActionsProvider} from 'context/actions';
+import {CreateProposalProvider} from 'context/createProposal';
 import {useNetwork} from 'context/network';
 import {useDaoParam} from 'hooks/useDaoParam';
 import {Community} from 'utils/paths';
-import {CreateProposalProvider} from 'context/createProposal';
+import {ActionMintToken} from 'utils/types';
 
 const MintToken: React.FC = () => {
   const {data: dao, isLoading} = useDaoParam();
 
   const {t} = useTranslation();
   const {network} = useNetwork();
+
   const formMethods = useForm({
     mode: 'onChange',
-    defaultValues: {links: [{name: '', url: ''}], durationSwitch: 'date'},
+    defaultValues: {
+      links: [{name: '', url: ''}],
+      durationSwitch: 'date',
+      actions: [] as Array<ActionMintToken>,
+    },
   });
+
   const {errors, dirtyFields} = useFormState({
     control: formMethods.control,
   });
-  const durationSwitch = formMethods.getValues('durationSwitch');
+
+  const [durationSwitch, formActions] = useWatch({
+    name: ['durationSwitch', 'actions'],
+    control: formMethods.control,
+  });
 
   const [showTxModal, setShowTxModal] = useState(false);
   const enableTxModal = () => {
@@ -65,6 +82,8 @@ const MintToken: React.FC = () => {
             <Step
               wizardTitle={t('labels.mintTokens')}
               wizardDescription={<MintTokenDescription />}
+              isNextButtonDisabled={!actionIsValid(errors, formActions)}
+              onNextButtonDisabledClicked={() => formMethods.trigger('actions')}
             >
               <div className="space-y-2">
                 <AlertInline
@@ -105,3 +124,20 @@ const MintToken: React.FC = () => {
 };
 
 export default withTransaction('MintToken', 'component')(MintToken);
+
+/**
+ * Check whether the mint tokens action is valid
+ * @param errors form errors
+ * @param formActions mint tokens actions
+ * @returns whether the action is valid
+ */
+function actionIsValid(
+  errors: FieldErrors,
+  formActions: Array<ActionMintToken>
+) {
+  if (errors.actions || !formActions[0]) return false;
+
+  return !formActions[0]?.inputs?.mintTokensToWallets?.some(
+    wallet => wallet.address === '' || Number(wallet.amount) === 0
+  );
+}

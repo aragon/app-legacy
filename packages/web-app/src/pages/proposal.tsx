@@ -96,6 +96,8 @@ const Proposal: React.FC = () => {
     pluginAddress,
     pluginType,
     voteSubmitted,
+    executionFailed,
+    transactionHash,
   } = useProposalTransactionContext();
 
   const {
@@ -320,10 +322,9 @@ const Proposal: React.FC = () => {
   const executionStatus = useMemo(() => {
     switch (proposal?.status) {
       case 'Succeeded':
-        return 'executable';
+        if (executionFailed) return 'executable-failed';
+        else return 'executable';
       case 'Executed':
-        // TODO: add cases for failed execution
-        // executionStatus = 'executable-failed';
         return 'executed';
       case 'Defeated':
         return 'defeated';
@@ -332,7 +333,7 @@ const Proposal: React.FC = () => {
       default:
         return 'default';
     }
-  }, [proposal?.status]);
+  }, [executionFailed, proposal?.status]);
 
   // whether current user has voted
   const voted = useMemo(() => {
@@ -456,6 +457,7 @@ const Proposal: React.FC = () => {
         proposal.endDate,
         proposal.creationDate,
         '123,123,123', // TODO: Add block numbers from sdk
+        executionFailed,
         '456,456,456',
         new Date() // TODO: change to proposal.executionDate from sdk
       );
@@ -464,6 +466,7 @@ const Proposal: React.FC = () => {
     proposal?.endDate,
     proposal?.startDate,
     proposal?.status,
+    executionFailed,
   ]);
 
   /*************************************************
@@ -569,6 +572,7 @@ const Proposal: React.FC = () => {
             actions={decodedActions}
             status={executionStatus}
             onExecuteClicked={handleExecuteProposal}
+            txhash={transactionHash}
           />
         </ProposalContainer>
         <AdditionalInfoContainer>
