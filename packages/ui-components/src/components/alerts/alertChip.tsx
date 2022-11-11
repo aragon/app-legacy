@@ -21,15 +21,17 @@ export const AlertChip: React.FC<AlertChipProps> = ({
   isOpen,
 }) => {
   return (
-    <Container {...{isOpen}}>
-      {showIcon &&
-        React.cloneElement(icon, {
-          height: 10,
-          width: 10,
-          className: 'text-ui-300',
-        })}
-      <Label>{label}</Label>
-    </Container>
+    <Wrapper {...{isOpen}}>
+      <BadgeContainer>
+        {showIcon &&
+          React.cloneElement(icon, {
+            height: 10,
+            width: 10,
+            className: 'text-ui-300',
+          })}
+        <Label>{label}</Label>
+      </BadgeContainer>
+    </Wrapper>
   );
 };
 
@@ -40,12 +42,13 @@ const myCSS = css`
     isOpen ? 'fadein 0.5s' : 'fadeout 0.5s'};
 `;
 
-const Container = styled.div.attrs(({isOpen}: ContainerProps) => ({
-  className: `flex items-center bg-ui-800 rounded-full px-3 py-2 fixed space-x-1 cursor-default right-1/2 z-50 ${
+const Wrapper = styled.div.attrs(({isOpen}: ContainerProps) => ({
+  className: `fixed w-full flex items-center justify-center z-50 ${
     isOpen ? 'visible' : 'hidden'
   }`,
 }))`
   top: 30px;
+
   ${myCSS}
 
   @-webkit-keyframes fadein {
@@ -92,6 +95,11 @@ const Container = styled.div.attrs(({isOpen}: ContainerProps) => ({
     }
   }
 `;
+
+const BadgeContainer = styled.div.attrs(() => ({
+  className:
+    'flex items-center bg-ui-800 rounded-full px-3 py-2 space-x-1 cursor-default',
+}))``;
 
 const Label = styled.span.attrs({
   className: 'text-ui-100 ft-text-sm',
