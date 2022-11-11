@@ -21,7 +21,7 @@ export const AlertChip: React.FC<AlertChipProps> = ({
   isOpen = false,
 }) => {
   return (
-    <Wrapper {...{isOpen}}>
+    <Wrapper data-testid="alertChip" {...{isOpen}}>
       <BadgeContainer>
         {showIcon &&
           React.cloneElement(icon, {
