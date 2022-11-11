@@ -3,8 +3,6 @@ import {useEffect, useState} from 'react';
 import {BigNumber} from 'ethers';
 import {useNetwork} from 'context/network';
 import {CHAIN_METADATA} from 'utils/constants';
-import {useTranslation} from 'react-i18next';
-import {useAlertContext} from 'context/alert';
 
 export interface IUseWallet extends SignerValue {
   balance: BigNumber | null;
@@ -27,8 +25,6 @@ export const useWallet = (): IUseWallet => {
   const [ensName, setEnsName] = useState<string>('');
   const [ensAvatarUrl, setEnsAvatarUrl] = useState<string>('');
   const [isConnected, setIsConnected] = useState<boolean>(false);
-  const {t} = useTranslation();
-  const {alert} = useAlertContext();
 
   // Update balance
   useEffect(() => {
@@ -53,10 +49,8 @@ export const useWallet = (): IUseWallet => {
 
   // update isConnected
   useEffect(() => {
-    if (status === 'connected' && !isConnected)
-      alert(t('alert.chip.walletConnected'));
     setIsConnected(status === 'connected');
-  }, [alert, isConnected, status, t]);
+  }, [status]);
 
   const isOnWrongNetwork =
     isConnected && CHAIN_METADATA[network].id !== chainId;

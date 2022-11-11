@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import {
   Avatar,
   ButtonIcon,
@@ -32,11 +32,17 @@ export const WalletMenu = () => {
     chainId,
     isConnected,
     network,
+    status,
     provider,
   } = useWallet();
   const {isDesktop} = useScreen();
   const {t} = useTranslation();
   const {alert} = useAlertContext();
+
+  useEffect(() => {
+    if (status === 'connected' && !isConnected)
+      alert(t('alert.chip.walletConnected'));
+  }, [alert, isConnected, status, t]);
 
   const handleDisconnect = () => {
     methods

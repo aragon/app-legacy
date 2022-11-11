@@ -1,6 +1,7 @@
 import React from 'react';
 import {FormProvider, useForm} from 'react-hook-form';
 import {render, screen, fireEvent} from 'test-utils';
+import {AlertProvider} from 'context/alert';
 
 import AddLinks from '..';
 
@@ -12,9 +13,11 @@ const RenderWithForm: React.FC = ({children}) => {
 describe('AddLinks', () => {
   test('should render', () => {
     render(
-      <RenderWithForm>
-        <AddLinks />
-      </RenderWithForm>
+      <AlertProvider>
+        <RenderWithForm>
+          <AddLinks />
+        </RenderWithForm>
+      </AlertProvider>
     );
 
     const element = screen.getByTestId('add-links');
@@ -23,9 +26,11 @@ describe('AddLinks', () => {
 
   test('should add row when button click', () => {
     render(
-      <RenderWithForm>
-        <AddLinks />
-      </RenderWithForm>
+      <AlertProvider>
+        <RenderWithForm>
+          <AddLinks />
+        </RenderWithForm>
+      </AlertProvider>
     );
 
     const element = screen.getByText('Add Link');
