@@ -8,9 +8,9 @@ export type AlertChipProps = {
   label: string;
   /** Icon component */
   icon?: ReactComponentElement<IconType>;
-  /** Icon visibility */
+  /** control Icon visibility */
   showIcon?: boolean;
-  /** chip visibility */
+  /** Is chip visible */
   isOpen: boolean;
 };
 
@@ -18,7 +18,7 @@ export const AlertChip: React.FC<AlertChipProps> = ({
   label,
   icon = <IconCheckmark />,
   showIcon = false,
-  isOpen,
+  isOpen = false,
 }) => {
   return (
     <Wrapper {...{isOpen}}>
@@ -37,28 +37,20 @@ export const AlertChip: React.FC<AlertChipProps> = ({
 
 type ContainerProps = Pick<AlertChipProps, 'isOpen'>;
 
-const myCSS = css`
+const WrapperAnimationCSS = css`
   animation: ${({isOpen}: ContainerProps) =>
-    isOpen ? 'fadein 0.5s' : 'fadeout 0.5s'};
-`;
-
-const Wrapper = styled.div.attrs(({isOpen}: ContainerProps) => ({
-  className: `fixed w-full flex items-center justify-center z-50 ${
-    isOpen ? 'visible' : 'hidden'
-  }`,
-}))`
-  top: 30px;
-
-  ${myCSS}
+    isOpen ? 'fadein 0.3s' : 'fadeout 0.3s'};
 
   @-webkit-keyframes fadein {
     from {
       top: 0;
       opacity: 0;
+      z-index: 0;
     }
     to {
-      top: 30px;
+      top: 24px;
       opacity: 1;
+      z-index: 50;
     }
   }
 
@@ -66,34 +58,48 @@ const Wrapper = styled.div.attrs(({isOpen}: ContainerProps) => ({
     from {
       top: 0;
       opacity: 0;
+      z-index: 0;
     }
     to {
-      top: 30px;
+      top: 24px;
       opacity: 1;
+      z-index: 50;
     }
   }
 
   @-webkit-keyframes fadeout {
     from {
-      top: 30px;
+      top: 24px;
       opacity: 1;
+      z-index: 50;
     }
     to {
       top: 0;
       opacity: 0;
+      z-index: 0;
     }
   }
 
   @keyframes fadeout {
     from {
-      top: 30px;
+      top: 24px;
       opacity: 1;
+      z-index: 50;
     }
     to {
-      top: 0;
+      top: 0;s
       opacity: 0;
+      z-index: 0;
     }
   }
+`;
+
+const Wrapper = styled.div.attrs(({isOpen}: ContainerProps) => ({
+  className: `fixed w-full flex items-center justify-center top-3 ${
+    isOpen ? 'opacity-100 fixed z-50' : 'opacity-0 none z-0'
+  }`,
+}))`
+  ${WrapperAnimationCSS}
 `;
 
 const BadgeContainer = styled.div.attrs(() => ({
