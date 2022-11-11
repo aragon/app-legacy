@@ -40,7 +40,7 @@ const AlertProvider: React.FC<Props> = ({children}) => {
   return (
     <AlertContext.Provider value={value}>
       {children}
-      <AlertChip {...{isOpen, label}} />
+      <AlertChip {...{isOpen, label}} showIcon />
     </AlertContext.Provider>
   );
 };

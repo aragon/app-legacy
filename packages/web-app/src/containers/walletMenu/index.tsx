@@ -20,6 +20,7 @@ import useScreen from 'hooks/useScreen';
 import {CHAIN_METADATA} from 'utils/constants';
 import {LoginRequired} from './LoginRequired';
 import {trackEvent} from 'services/analytics';
+import {useAlertContext} from 'context/alert';
 
 export const WalletMenu = () => {
   const {close, isWalletOpen} = useGlobalModalContext();
@@ -35,6 +36,7 @@ export const WalletMenu = () => {
   } = useWallet();
   const {isDesktop} = useScreen();
   const {t} = useTranslation();
+  const {alert} = useAlertContext();
 
   const handleDisconnect = () => {
     methods
@@ -84,7 +86,7 @@ export const WalletMenu = () => {
           icon={<IconCopy />}
           size="small"
           onClick={() =>
-            address ? handleClipboardActions(address, () => null) : null
+            address ? handleClipboardActions(address, () => null, alert) : null
           }
         />
         {isDesktop && (

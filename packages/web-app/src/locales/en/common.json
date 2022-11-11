@@ -335,7 +335,19 @@
       "walletDescription": "The connected wallet is not allowlisted. Please connect a valid wallet in order to proceed with the process.",
       "buttonLabel": "Ok, understood"
     },
-    "tokenBasedMembers": "The DAO members listed here have interacted with the DAO at least once"
+    "tokenBasedMembers": "The DAO members listed here have interacted with the DAO at least once",
+    "chip": {
+      "removedLink": "Link removed",
+      "removedAddress": "Address removed",
+      "distributionReset": "Token distribution reset",
+      "removedAllAddresses": "All addresses removed",
+      "duplicateAction": "Action duplicated",
+      "resetAction": "Action reset",
+      "removedAction": "Action removed",
+      "inputCleared": "Cleared",
+      "inputCopied": "Copied",
+      "inputPasted": "Pasted"
+    }
   },
   "warnings": {
     "amountGtDaoToken": "Withdraw amount is greater than the current token balance"

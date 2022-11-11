@@ -13,6 +13,7 @@ import {Controller, useFormContext, useWatch} from 'react-hook-form';
 import {validateAddress} from 'utils/validators';
 import {WhitelistWallet} from 'pages/createDAO';
 import {handleClipboardActions} from 'utils/library';
+import {useAlertContext} from 'context/alert';
 
 type Props = {
   actionIndex: number;
@@ -35,6 +36,7 @@ export const AddressRow = ({
   onClearRow,
 }: Props) => {
   const {t} = useTranslation();
+  const {alert} = useAlertContext();
 
   const {control} = useFormContext();
 
@@ -51,7 +53,7 @@ export const AddressRow = ({
     (value: string, onChange: (value: string) => void) => {
       // allow the user to copy the address even when input is disabled
       if (isRemove) {
-        handleClipboardActions(value, onChange);
+        handleClipboardActions(value, onChange, alert);
         return;
       }
 
@@ -60,10 +62,10 @@ export const AddressRow = ({
       if (value) {
         onClearRow?.(fieldIndex) || onChange('');
       } else {
-        handleClipboardActions(value, onChange);
+        handleClipboardActions(value, onChange, alert);
       }
     },
-    [fieldIndex, isRemove, onClearRow]
+    [alert, fieldIndex, isRemove, onClearRow]
   );
 
   const addressValidator = useCallback(

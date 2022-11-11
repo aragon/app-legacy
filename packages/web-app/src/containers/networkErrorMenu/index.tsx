@@ -18,6 +18,7 @@ import WalletIcon from 'public/wallet.svg';
 import {useNetwork} from 'context/network';
 import {useSwitchNetwork} from 'hooks/useSwitchNetwork';
 import {CHAIN_METADATA} from 'utils/constants';
+import {useAlertContext} from 'context/alert';
 
 const NetworkErrorMenu = () => {
   const {isNetworkOpen, close} = useGlobalModalContext();
@@ -26,6 +27,7 @@ const NetworkErrorMenu = () => {
   const {address, ensName, ensAvatarUrl, provider} = useWallet();
   const {isDesktop} = useScreen();
   const {t} = useTranslation();
+  const {alert} = useAlertContext();
 
   return (
     <ModalBottomSheetSwitcher
@@ -45,7 +47,7 @@ const NetworkErrorMenu = () => {
           icon={<IconCopy />}
           size="small"
           onClick={() =>
-            address ? handleClipboardActions(address, () => null) : null
+            address ? handleClipboardActions(address, () => null, alert) : null
           }
         />
         {isDesktop && (
