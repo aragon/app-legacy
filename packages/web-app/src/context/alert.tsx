@@ -25,7 +25,6 @@ const AlertProvider: React.FC<Props> = ({children}) => {
     setIsOpen(true);
     setTimeout(() => {
       setIsOpen(false);
-      setLabel('');
     }, 1000);
   };
 
