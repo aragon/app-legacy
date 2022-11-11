@@ -36,16 +36,16 @@ ReactDOM.render(
     <PrivacyContextProvider>
       <APMProvider>
         <Router>
-          <NetworkProvider>
-            <WalletProvider>
-              <UseSignerProvider providerOptions={providerOptions}>
-                <UseClientProvider>
-                  <UseCacheProvider>
-                    <ProvidersProvider>
-                      <TransactionDetailProvider>
-                        <WalletMenuProvider>
-                          <GlobalModalsProvider>
-                            <AlertProvider>
+          <AlertProvider>
+            <NetworkProvider>
+              <WalletProvider>
+                <UseSignerProvider providerOptions={providerOptions}>
+                  <UseClientProvider>
+                    <UseCacheProvider>
+                      <ProvidersProvider>
+                        <TransactionDetailProvider>
+                          <WalletMenuProvider>
+                            <GlobalModalsProvider>
                               {/* By default, goerli client is chosen, each useQuery needs to pass the network client it needs as argument
                       For REST queries using apollo, there's no need to pass a different client to useQuery  */}
                               <ApolloProvider
@@ -53,16 +53,16 @@ ReactDOM.render(
                               >
                                 <App />
                               </ApolloProvider>
-                            </AlertProvider>
-                          </GlobalModalsProvider>
-                        </WalletMenuProvider>
-                      </TransactionDetailProvider>
-                    </ProvidersProvider>
-                  </UseCacheProvider>
-                </UseClientProvider>
-              </UseSignerProvider>
-            </WalletProvider>
-          </NetworkProvider>
+                            </GlobalModalsProvider>
+                          </WalletMenuProvider>
+                        </TransactionDetailProvider>
+                      </ProvidersProvider>
+                    </UseCacheProvider>
+                  </UseClientProvider>
+                </UseSignerProvider>
+              </WalletProvider>
+            </NetworkProvider>
+          </AlertProvider>
         </Router>
       </APMProvider>
     </PrivacyContextProvider>

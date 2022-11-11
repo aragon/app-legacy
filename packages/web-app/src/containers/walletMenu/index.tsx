@@ -49,6 +49,7 @@ export const WalletMenu = () => {
         });
         localStorage.removeItem('WEB3_CONNECT_CACHED_PROVIDER');
         close('wallet');
+        alert(t('alert.chip.walletDisconnected'));
       })
       .catch((e: Error) => {
         console.error(e);

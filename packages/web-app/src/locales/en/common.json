@@ -346,7 +346,9 @@
       "removedAction": "Action removed",
       "inputCleared": "Cleared",
       "inputCopied": "Copied",
-      "inputPasted": "Pasted"
+      "inputPasted": "Pasted",
+      "walletConnected": "Wallet connected",
+      "walletDisconnected": "Wallet disconnected"
     }
   },
   "warnings": {
