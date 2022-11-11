@@ -163,6 +163,7 @@ const DropdownMenu: React.FC<DropdownProps> = ({
   disabled = false,
 }) => {
   const {t} = useTranslation();
+  const {alert} = useAlertContext();
 
   return (
     <Dropdown
@@ -184,6 +185,7 @@ const DropdownMenu: React.FC<DropdownProps> = ({
           ),
           callback: () => {
             onDelete(fieldIndex);
+            alert(t('alert.chip.removedAddress'));
           },
         },
       ]}

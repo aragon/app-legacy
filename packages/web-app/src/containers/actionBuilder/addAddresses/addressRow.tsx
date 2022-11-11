@@ -61,11 +61,12 @@ export const AddressRow = ({
       // paste from clipboard, and set the value
       if (value) {
         onClearRow?.(fieldIndex) || onChange('');
+        alert(t('alert.chip.inputCleared'));
       } else {
         handleClipboardActions(value, onChange, alert);
       }
     },
-    [alert, fieldIndex, isRemove, onClearRow]
+    [alert, fieldIndex, isRemove, onClearRow, t]
   );
 
   const addressValidator = useCallback(
