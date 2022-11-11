@@ -5,7 +5,6 @@ import {
   DropdownInput,
   Label,
   NumberInput,
-  TimeInput,
 } from '@aragon/ui-components';
 import {toDate} from 'date-fns-tz';
 import {
