@@ -20,6 +20,13 @@ const AlertProvider: React.FC<Props> = ({children}) => {
   const [isOpen, setIsOpen] = useState<AlertContextType['isOpen']>(false);
   const [label, setLabel] = useState<string>('');
 
+  /**
+   * @param label Alert text
+   * This method will show the alert then wait for 1200 sec and close the modal
+   *
+   * We can add others method in future to have better control if needed
+   */
+
   const alert = (label: string) => {
     setLabel(label);
     setIsOpen(true);
