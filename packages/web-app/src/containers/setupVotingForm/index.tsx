@@ -31,6 +31,7 @@ import {
 import {DateTimeErrors} from './dateTimeErrors';
 import {useGlobalModalContext} from 'context/globalModals';
 import {StringIndexed} from 'utils/types';
+import {SimplifiedTimeInput} from 'components/inputTime/inputTime';
 
 type UtcInstance = 'first' | 'second';
 
@@ -258,7 +259,7 @@ const SetupVotingForm: React.FC = () => {
             }}
             render={({field: {name, value, onChange, onBlur}}) => (
               <div>
-                <TimeInput
+                <SimplifiedTimeInput
                   name={name}
                   value={value}
                   onChange={onChange}
@@ -384,7 +385,7 @@ const SetupVotingForm: React.FC = () => {
                   }}
                   render={({field: {name, value, onChange, onBlur}}) => (
                     <div>
-                      <TimeInput
+                      <SimplifiedTimeInput
                         name={name}
                         value={value}
                         onChange={onChange}
