@@ -63,7 +63,7 @@ jobs:
           VITE_IPFS_API_KEY: ${{secrets.VITE_IPFS_API_KEY}}
           VITE_IPFS_API_URL: ${{secrets.VITE_IPFS_API_URL}}
           NODE_OPTIONS: '--max-old-space-size=6656'
-      - name: Activate rinkeby's fleek
+      - name: Activate fleek
         env:
           FLEEK_FILE: ${{ needs.set-environment.outputs.environment }}
         run: mv ../../.github/fleek/$FLEEK_FILE.json .fleek.json
