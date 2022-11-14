@@ -5,16 +5,17 @@
  * so open to suggestions.
  */
 
-import {AddressListProposal, Erc20Proposal} from '@aragon/sdk-client';
-import {ProposalStatus} from '@aragon/sdk-client/dist/internal/interfaces/common';
 import {
+  AddressListProposal,
   AddressListProposalResult,
+  Erc20Proposal,
   Erc20ProposalResult,
   Erc20TokenDetails,
   ICreateProposalParams,
   IPluginSettings,
+  ProposalStatus,
   VoteValues,
-} from '@aragon/sdk-client/dist/internal/interfaces/plugins';
+} from '@aragon/sdk-client';
 import {ProgressStatusProps, VoterType} from '@aragon/ui-components';
 import Big from 'big.js';
 import {format} from 'date-fns';

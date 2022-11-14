@@ -1,12 +1,12 @@
 import {useReactiveVar} from '@apollo/client';
 import {
+  DaoAction,
   ICreateProposalParams,
+  IMetadata,
   InstalledPluginListItem,
+  IPluginSettings,
   ProposalCreationSteps,
 } from '@aragon/sdk-client';
-import {IMetadata} from '@aragon/sdk-client/dist/internal/interfaces/client';
-import {DaoAction} from '@aragon/sdk-client/dist/internal/interfaces/common';
-import {IPluginSettings} from '@aragon/sdk-client/dist/internal/interfaces/plugins';
 import {withTransaction} from '@elastic/apm-rum-react';
 import Big from 'big.js';
 import React, {useCallback, useEffect, useState} from 'react';

@@ -1,13 +1,11 @@
 import {useReactiveVar} from '@apollo/client';
 import {
-  VoteProposalStep,
-  VoteValues,
   ExecuteProposalStep,
-} from '@aragon/sdk-client';
-import {
   IExecuteProposalParams,
   IVoteProposalParams,
-} from '@aragon/sdk-client/dist/internal/interfaces/plugins';
+  VoteProposalStep,
+  VoteValues,
+} from '@aragon/sdk-client';
 import React, {
   createContext,
   ReactNode,
@@ -30,12 +28,12 @@ import {
   PENDING_VOTES_KEY,
   TransactionState,
 } from 'utils/constants';
+import {customJSONReplacer} from 'utils/library';
 import {fetchBalance} from 'utils/tokens';
 import {pendingVotesVar} from './apolloClient';
 import {useNetwork} from './network';
-import {useProviders} from './providers';
-import {customJSONReplacer} from 'utils/library';
 import {usePrivacyContext} from './privacyContext';
+import {useProviders} from './providers';
 
 //TODO: currently a context, but considering there might only ever be one child,
 // might need to turn it into a wrapper that passes props to proposal page
