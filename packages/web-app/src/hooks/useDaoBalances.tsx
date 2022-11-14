@@ -17,7 +17,7 @@ export const useDaoBalances = (
     async function getBalances() {
       try {
         setIsLoading(true);
-        const balances = await client?.methods.getBalances(daoAddressOrEns);
+        const balances = await client?.methods.getBalances(daoAddressOrEns, []);
         if (balances) setData(balances);
       } catch (error) {
         console.error(error);
