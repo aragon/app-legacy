@@ -111,7 +111,7 @@ export const MintTokenForm: React.FC<MintTokenFormProps> = ({
     name: `actions.${actionIndex}.inputs.mintTokensToWallets`,
   });
 
-  // NOTE: DO NOT MERGE THESE. Apparently, when returned as a touple, the
+  // NOTE: DO NOT MERGE THESE. Apparently, when returned as a tuple, the
   // useEffects that depend on `mints` do not recognize changes to the `mints`
   // array...
   const mints: MintInfo[] = useWatch({
@@ -152,7 +152,8 @@ export const MintTokenForm: React.FC<MintTokenFormProps> = ({
     if (!mints) return;
 
     const actionErrors =
-      formState.errors?.actions?.[`${actionIndex}`].inputs.mintTokensToWallets;
+      formState.errors?.actions?.[`${actionIndex}`]?.inputs
+        ?.mintTokensToWallets;
 
     actionErrors?.forEach((error: MappedError) => {
       if (error?.address) trigger(error.address.ref?.name);
