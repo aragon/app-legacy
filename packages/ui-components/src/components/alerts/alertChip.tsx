@@ -11,22 +11,22 @@ export type AlertChipProps = {
   /** control Icon visibility */
   showIcon?: boolean;
   /** Is chip visible */
-  isOpen: boolean;
+  isShown: boolean;
 };
 
 export const AlertChip: React.FC<AlertChipProps> = ({
   label,
   icon = <IconCheckmark />,
   showIcon = false,
-  isOpen = false,
+  isShown = false,
 }) => {
   return (
-    <Wrapper data-testid="alertChip" {...{isOpen}}>
+    <Wrapper data-testid="alertChip" {...{isShown}}>
       <BadgeContainer>
         {showIcon &&
           React.cloneElement(icon, {
-            height: 10,
-            width: 10,
+            height: 12,
+            width: 12,
             className: 'text-ui-300',
           })}
         <Label>{label}</Label>
@@ -35,11 +35,11 @@ export const AlertChip: React.FC<AlertChipProps> = ({
   );
 };
 
-type ContainerProps = Pick<AlertChipProps, 'isOpen'>;
+type ContainerProps = Pick<AlertChipProps, 'isShown'>;
 
 const WrapperAnimationCSS = css`
-  animation: ${({isOpen}: ContainerProps) =>
-    isOpen ? 'fadein 0.3s' : 'fadeout 0.3s'};
+  animation: ${({isShown}: ContainerProps) =>
+    isShown ? 'fadein 0.3s' : 'fadeout 0.3s'};
 
   @-webkit-keyframes fadein {
     from {
@@ -94,9 +94,9 @@ const WrapperAnimationCSS = css`
   }
 `;
 
-const Wrapper = styled.div.attrs(({isOpen}: ContainerProps) => ({
+const Wrapper = styled.div.attrs(({isShown}: ContainerProps) => ({
   className: `fixed w-full flex items-center justify-center top-3 ${
-    isOpen ? 'opacity-100 fixed z-50' : 'opacity-0 none z-0'
+    isShown ? 'opacity-100 fixed z-50' : 'opacity-0 none z-0'
   }`,
 }))`
   ${WrapperAnimationCSS}
@@ -104,7 +104,7 @@ const Wrapper = styled.div.attrs(({isOpen}: ContainerProps) => ({
 
 const BadgeContainer = styled.div.attrs(() => ({
   className:
-    'flex items-center bg-ui-800 rounded-full px-3 py-2 space-x-1 cursor-default',
+    'flex items-center bg-ui-900 rounded-full px-3 py-2 space-x-1 cursor-default',
 }))``;
 
 const Label = styled.span.attrs({
