@@ -41,7 +41,6 @@ jobs:
           VITE_REACT_APP_DEPLOY_VERSION: ${{ github.sha }}
           VITE_REACT_APP_DEPLOY_ENVIRONMENT: ${{ needs.set-environment.outputs.environment }}
           VITE_REACT_APP_ANALYTICS_KEY: ${{ secrets.VITE_REACT_APP_ANALYTICS_KEY }}
-          VITE_REACT_APP_ALCHEMY_API_KEY: ${{secrets.VITE_REACT_APP_ALCHEMY_API_KEY}}
           VITE_IPFS_API_KEY: ${{secrets.VITE_IPFS_API_KEY}}
           VITE_IPFS_API_URL: ${{secrets.VITE_IPFS_API_URL}}
           NODE_OPTIONS: '--max-old-space-size=6656'

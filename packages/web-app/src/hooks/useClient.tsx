@@ -27,9 +27,6 @@ export const UseClientProvider: React.FC = ({children}) => {
   const [context, setContext] = useState<SdkContext>();
 
   useEffect(() => {
-    // const alchemyApiAddress = import.meta.env
-    //   .VITE_REACT_APP_ALCHEMY_API_KEY as string;
-
     const contextParams: ContextParams = {
       network: 'goerli', // TODO: remove temporarily hardcoded network
       signer: signer || undefined,
