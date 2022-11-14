@@ -14,7 +14,6 @@ const Governance: React.FC = () => {
     minimumParticipation,
     tokenTotalSupply,
     tokenSymbol,
-    support,
     durationMinutes,
     durationHours,
     durationDays,
@@ -67,7 +66,7 @@ const Governance: React.FC = () => {
           )}
           <Dl>
             <Dt>{t('labels.minimumApproval')}</Dt>
-            <Dd>{support}%</Dd>
+            <Dd>{parseInt(minimumApproval)}%</Dd>
           </Dl>
           <Dl>
             <Dt>{t('labels.minimumDuration')}</Dt>
