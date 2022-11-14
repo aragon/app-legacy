@@ -18,9 +18,7 @@ export const DEFAULT_CURRENCY = 'usd';
 
 // NOTE: These are dummy endpoints and API keys used as POC. They should be
 // replaced by env var secrets in an upcoming PR.
-export const ALCHEMY_API_KEY = 'dWiL89bA8nrsJW1GIBZ5Sq7kHGmT40av';
-export const INFURA_PROJECT_ID = '000bb62a6d1f4b478f2910ab8118bad1';
-export const INFURA_PROJECT_ID_ARB = '92aa62d2bb5449cfafe04b83ca8636f1';
+export const INFURA_PROJECT_ID = '92aa62d2bb5449cfafe04b83ca8636f1';
 
 export const ARAGON_RPC = 'mainnet.eth.aragon.network';
 
