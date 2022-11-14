@@ -189,9 +189,10 @@ const ConfigureWithdrawForm: React.FC<ConfigureWithdrawFormProps> = ({
     (onChange: React.ChangeEventHandler<HTMLInputElement>) => {
       if (tokenBalance) {
         onChange(tokenBalance);
+        alert(t('alert.chip.max'));
       }
     },
-    [tokenBalance]
+    [alert, t, tokenBalance]
   );
 
   // clear field when there is a value, else paste

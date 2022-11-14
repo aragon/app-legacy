@@ -348,7 +348,8 @@
       "inputCopied": "Copied",
       "inputPasted": "Pasted",
       "walletConnected": "Wallet connected",
-      "walletDisconnected": "Wallet disconnected"
+      "walletDisconnected": "Wallet disconnected",
+      "max": "Max Balance applied"
     }
   },
   "warnings": {

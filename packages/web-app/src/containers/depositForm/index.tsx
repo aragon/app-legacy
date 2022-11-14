@@ -183,9 +183,10 @@ const DepositForm: React.FC = () => {
 
       if (tokenBalance !== '') {
         onChange(tokenBalance);
+        alert(t('alert.chip.max'));
       }
     },
-    [getValues]
+    [alert, getValues, t]
   );
 
   /*************************************************

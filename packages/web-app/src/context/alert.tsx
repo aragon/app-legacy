@@ -10,14 +10,14 @@ import {AlertChip} from '@aragon/ui-components';
 const AlertContext = createContext<AlertContextType | null>(null);
 
 type AlertContextType = {
-  isOpen: boolean;
+  isShown: boolean;
   alert: (label: string) => void;
 };
 
 type Props = Record<'children', ReactNode>;
 
 const AlertProvider: React.FC<Props> = ({children}) => {
-  const [isOpen, setIsOpen] = useState<AlertContextType['isOpen']>(false);
+  const [isShown, setIsShown] = useState<AlertContextType['isShown']>(false);
   const [label, setLabel] = useState<string>('');
 
   /**
@@ -29,24 +29,24 @@ const AlertProvider: React.FC<Props> = ({children}) => {
 
   const alert = (label: string) => {
     setLabel(label);
-    setIsOpen(true);
+    setIsShown(true);
     setTimeout(() => {
-      setIsOpen(false);
+      setIsShown(false);
     }, 1200);
   };
 
   const value = useMemo(
     (): AlertContextType => ({
-      isOpen,
+      isShown,
       alert,
     }),
-    [isOpen]
+    [isShown]
   );
 
   return (
     <AlertContext.Provider value={value}>
       {children}
-      <AlertChip {...{isOpen, label}} showIcon />
+      <AlertChip {...{isShown, label}} showIcon />
     </AlertContext.Provider>
   );
 };

@@ -92,6 +92,7 @@ export const Row = ({index, ...props}: WhitelistWalletsRowProps) => {
                 ),
                 callback: () => {
                   props.onResetEntry(index);
+                  alert(t('alert.chip.resetAction'));
                 },
               },
               {
@@ -103,6 +104,7 @@ export const Row = ({index, ...props}: WhitelistWalletsRowProps) => {
                 ),
                 callback: () => {
                   props.onDeleteEntry(index);
+                  alert(t('alert.chip.removedAction'));
                 },
               },
             ]}
