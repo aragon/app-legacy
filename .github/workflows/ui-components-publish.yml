@@ -29,11 +29,12 @@ jobs:
       run:
         working-directory: packages/ui-components
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: Install node
-        uses: actions/setup-node@v1
+        uses: actions/setup-node@v3
         with:
           node-version: 16
+          cache: 'yarn'
           registry-url: "https://registry.npmjs.org"
       - name: Install dependencies
         run: yarn install --pure-lockfile

@@ -18,7 +18,7 @@ jobs:
           wget https://dist.ipfs.io/ipfs-cluster-ctl/v1.0.0/ipfs-cluster-ctl_v1.0.0_linux-amd64.tar.gz
           tar xvfz ipfs-cluster-ctl_v1.0.0_linux-amd64.tar.gz
       - name: Find Previous WebApp Deployment
-        uses: peter-evans/find-comment@v1
+        uses: peter-evans/find-comment@v2
         id: fcwebapp
         with:
           issue-number: ${{ github.event.pull_request.number }}
@@ -31,7 +31,7 @@ jobs:
           hash=${array[3]}
           ./ipfs-cluster-ctl/ipfs-cluster-ctl --basic-auth '${{ secrets.IPFS_BASIC_AUTH }}' --host '${{ secrets.IPFS_HOST }}' pin rm $hash
       - name: Delete Comment
-        uses: actions/github-script@v5
+        uses: actions/github-script@v6
         if: steps.fcwebapp.outputs.comment-id != 0
         with:
           script: |
@@ -41,7 +41,7 @@ jobs:
               repo: context.repo.repo,
             })
       - name: Find Previous UI-Components Deployment
-        uses: peter-evans/find-comment@v1
+        uses: peter-evans/find-comment@v2
         id: fcui
         with:
           issue-number: ${{ github.event.pull_request.number }}
@@ -54,7 +54,7 @@ jobs:
           hash=${array[3]}
           ./ipfs-cluster-ctl/ipfs-cluster-ctl --basic-auth '${{ secrets.IPFS_BASIC_AUTH }}' --host '${{ secrets.IPFS_HOST }}' pin rm $hash
       - name: Delete Comment
-        uses: actions/github-script@v5
+        uses: actions/github-script@v6
         if: steps.fcui.outputs.comment-id != 0
         with:
           script: |

@@ -35,13 +35,14 @@ jobs:
       run:
         working-directory: packages/ui-components
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
         with:
           token: ${{ secrets.ARABOT_PAT }}
       - name: Install node
-        uses: actions/setup-node@v1
+        uses: actions/setup-node@v3
         with:
           node-version: 16
+          cache: 'yarn'
       - name: bump version
         id: bump
         run: |
@@ -61,7 +62,7 @@ jobs:
           git push
           echo "commitid=$(git rev-parse HEAD)" >> $GITHUB_OUTPUT
       - name: create tag
-        uses: actions/github-script@v5
+        uses: actions/github-script@v6
         with:
           github-token: ${{ secrets.ARABOT_PAT }}
           script: |
