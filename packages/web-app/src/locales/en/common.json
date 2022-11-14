@@ -241,8 +241,8 @@
       "defeated": "Proposal has been defeated"
     },
     "executionCard": {
-      "title": "Automatic Actions",
-      "description": "These actions execute automatically when the parameters you set prior to the vote are met. ",
+      "title": "Actions",
+      "description": "These actions can be executed if the parameters you set for them are met.",
       "addAction": "Add Action",
       "seeTransaction": "See Transaction",
       "status": {
@@ -552,7 +552,7 @@
       "yesOption": "Yes",
       "yesOptionSubtitle": "If the vote passes, the following actions will execute automatically. If the vote fails, nothing will happen.",
       "addFirstAction": "Add Action",
-      "addFirstActionSubtitle": "This action will execute it the vote passes. A common automatic action is transferring funds to a guild or person if their proposal passes a vote.",
+      "addFirstActionSubtitle": "This action will execute if the vote passes. A common automatic action is transferring funds to a guild or person if their proposal passes a vote.",
       "addAction": "Add Action",
       "actionsInfo": "More options for parameters are coming soon. "
     },
