@@ -6,11 +6,8 @@ import * as rudderAnalytics from 'rudder-sdk-js';
  * @param eventName The event name tied to actions like button clicks.
  * @returns void
  */
-export function trackEvent(
-  eventName: string,
-  properties?: rudderAnalytics.apiObject
-) {
-  rudderAnalytics.track(eventName, properties);
+export function trackEvent(eventName: string, properties?: Object) {
+  rudderAnalytics.track(eventName, properties as rudderAnalytics.apiObject);
 }
 
 /**
