@@ -1,25 +1,4 @@
-enum MethodType {
-  PAGE,
-  IDENTIFY,
-  EVENT,
-}
-
-/**
- * This private method extracts the necessary method from the global window object.
- *
- * @param methodType Type of analytics to track
- * @returns the corresponding analytics method
- */
-function getAnalyticsMethod(methodType: MethodType) {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const windowAnalytics = (window as any).rudderanalytics;
-  if (!windowAnalytics) {
-    return;
-  }
-  if (methodType === MethodType.PAGE) return windowAnalytics.page;
-  if (methodType === MethodType.IDENTIFY) return windowAnalytics.identify;
-  if (methodType === MethodType.EVENT) return windowAnalytics.track;
-}
+import * as rudderAnalytics from 'rudder-sdk-js';
 
 /**
  * Sends analytics information about the events logged.
@@ -27,12 +6,11 @@ function getAnalyticsMethod(methodType: MethodType) {
  * @param eventName The event name tied to actions like button clicks.
  * @returns void
  */
-export function trackEvent(eventName: string, properties?: Object) {
-  const trackerMethod = getAnalyticsMethod(MethodType.EVENT);
-  if (typeof trackerMethod !== 'function') {
-    return;
-  }
-  trackerMethod(eventName, properties);
+export function trackEvent(
+  eventName: string,
+  properties?: rudderAnalytics.apiObject
+) {
+  rudderAnalytics.track(eventName, properties);
 }
 
 /**
@@ -42,11 +20,7 @@ export function trackEvent(eventName: string, properties?: Object) {
  * @returns void
  */
 export function trackPage(pathName: string) {
-  const trackerMethod = getAnalyticsMethod(MethodType.PAGE);
-  if (typeof trackerMethod !== 'function') {
-    return;
-  }
-  trackerMethod({
+  rudderAnalytics.page({
     path: pathName,
   });
 }
@@ -64,16 +38,12 @@ export function identifyUser(
   networkType: string,
   connector: string
 ) {
-  const trackerMethod = getAnalyticsMethod(MethodType.IDENTIFY);
-  if (typeof trackerMethod !== 'function') {
-    return;
-  }
   const walletData = {
     wallet_address: account,
     wallet_provider: connector,
     network: networkType,
   };
-  trackerMethod(walletData);
+  rudderAnalytics.identify(walletData);
 }
 
 export function disableAnalytics() {
@@ -83,19 +53,21 @@ export function disableAnalytics() {
 
 export function enableAnalytics() {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const analytics = (window as any).rudderanalytics;
   const analyticsKey = import.meta.env.VITE_REACT_APP_ANALYTICS_KEY;
 
   if (analyticsKey) {
-    analytics.load(analyticsKey, 'https://rudderstack.aragon.org', {
-      sendAdblockPage: true,
-      sendAdblockPageOptions: {
-        integrations: {
-          All: false,
-        },
+    rudderAnalytics.load(
+      analyticsKey as string,
+      'https://rudderstack.aragon.org',
+      {
         secureCookie: true,
-      },
-    });
-    analytics.page();
+        sendAdblockPage: true,
+        sendAdblockPageOptions: {
+          integrations: {
+            All: false,
+          },
+        },
+      }
+    );
   }
 }
