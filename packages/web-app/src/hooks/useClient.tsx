@@ -1,6 +1,6 @@
 import {Client, Context as SdkContext, ContextParams} from '@aragon/sdk-client';
 import React, {createContext, useContext, useEffect, useState} from 'react';
-import {CHAIN_METADATA, SUBGRAPH_API_URL} from 'utils/constants';
+import {CHAIN_METADATA, IPFS_ENDPOINT, SUBGRAPH_API_URL} from 'utils/constants';
 
 import {useWallet} from './useWallet';
 
@@ -35,7 +35,7 @@ export const UseClientProvider: React.FC = ({children}) => {
       web3Providers: CHAIN_METADATA[network].rpc[0],
       ipfsNodes: [
         {
-          url: 'https://testing-ipfs-0.aragon.network/api/v0',
+          url: IPFS_ENDPOINT,
           headers: {
             'X-API-KEY': (import.meta.env.VITE_IPFS_API_KEY as string) || '',
           },

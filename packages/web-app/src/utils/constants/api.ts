@@ -22,6 +22,8 @@ export const INFURA_PROJECT_ID = '92aa62d2bb5449cfafe04b83ca8636f1';
 
 export const ARAGON_RPC = 'mainnet.eth.aragon.network';
 
+export const IPFS_ENDPOINT = 'https://testing-ipfs-0.aragon.network/api/v0';
+
 // Coingecko Api specific asset platform keys
 export const ASSET_PLATFORMS: Record<SupportedNetworks, string | null> = {
   arbitrum: 'arbitrum-one',
