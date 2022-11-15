@@ -12,10 +12,12 @@ import {useFieldArray, useFormContext, useWatch} from 'react-hook-form';
 
 import {Row} from './row';
 import {useWallet} from 'hooks/useWallet';
+import {useAlertContext} from 'context/alert';
 
 export const WhitelistWallets = () => {
   const {t} = useTranslation();
   const {address} = useWallet();
+  const {alert} = useAlertContext();
 
   const {control, trigger} = useFormContext();
   const whitelistWallets = useWatch({name: 'whitelistWallets', control});
@@ -40,6 +42,7 @@ export const WhitelistWallets = () => {
   // add empty wallet
   const handleAdd = () => {
     append({address: ''});
+    alert(t('alert.chip.addressAdded'));
     setTimeout(() => {
       trigger(`whitelistWallets.${controlledWallets.length}.address`);
     }, 50);
