@@ -1,6 +1,6 @@
 import {Client, Context as SdkContext, ContextParams} from '@aragon/sdk-client';
 import React, {createContext, useContext, useEffect, useState} from 'react';
-import {ALCHEMY_API_KEY, SUBGRAPH_API_URL} from 'utils/constants';
+import {CHAIN_METADATA, SUBGRAPH_API_URL} from 'utils/constants';
 
 import {useWallet} from './useWallet';
 
@@ -25,14 +25,14 @@ export const UseClientProvider: React.FC = ({children}) => {
   const {signer} = useWallet();
   const [client, setClient] = useState<Client>();
   const [context, setContext] = useState<SdkContext>();
+  // TODO hook this up to useNetwork once other networks become useable.
 
   useEffect(() => {
+    const network = 'goerli';
     const contextParams: ContextParams = {
-      network: 'goerli', // TODO: remove temporarily hardcoded network
+      network: network,
       signer: signer || undefined,
-      web3Providers: new Array(
-        `https://eth-goerli.g.alchemy.com/v2/${ALCHEMY_API_KEY}`
-      ),
+      web3Providers: CHAIN_METADATA[network].rpc[0],
       ipfsNodes: [
         {
           url: 'https://testing-ipfs-0.aragon.network/api/v0',
@@ -44,7 +44,7 @@ export const UseClientProvider: React.FC = ({children}) => {
       daoFactoryAddress: '0x8B4Ca38524fCeCbD5acA39C7cd2f3B762B1d91Bf', // TODO: remove temporary until SDK updates
       graphqlNodes: [
         {
-          url: SUBGRAPH_API_URL['goerli']!,
+          url: SUBGRAPH_API_URL[network]!,
         },
       ],
     };

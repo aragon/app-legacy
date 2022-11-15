@@ -1,5 +1,7 @@
 /* SUPPORTED NETWORK TYPES ================================================== */
 
+import {INFURA_PROJECT_ID} from './api';
+
 export const SUPPORTED_CHAIN_ID = [1, 5, 137, 80001, 42161, 421613] as const;
 export type SupportedChainID = typeof SUPPORTED_CHAIN_ID[number];
 
@@ -127,8 +129,8 @@ export const CHAIN_METADATA: ChainList = {
     explorer: 'https://goerli.etherscan.io/',
     testnet: true,
     rpc: [
-      'https://goerli.infura.io/v3/${INFURA_PROJECT_ID}',
-      'wss://goerli.infura.io/ws/v3/${INFURA_PROJECT_ID}',
+      `https://goerli.infura.io/v3/${INFURA_PROJECT_ID}`,
+      `wss://goerli.infura.io/ws/v3/${INFURA_PROJECT_ID}`,
     ],
     nativeCurrency: {
       name: 'Goerli Ether',
