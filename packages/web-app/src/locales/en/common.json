@@ -241,8 +241,8 @@
       "defeated": "Proposal has been defeated"
     },
     "executionCard": {
-      "title": "Automatic Actions",
-      "description": "These actions execute automatically when the parameters you set prior to the vote are met. ",
+      "title": "Actions",
+      "description": "These actions can be executed if the parameters you set for them are met.",
       "addAction": "Add Action",
       "seeTransaction": "See Transaction",
       "status": {
@@ -335,7 +335,25 @@
       "walletDescription": "The connected wallet is not allowlisted. Please connect a valid wallet in order to proceed with the process.",
       "buttonLabel": "Ok, understood"
     },
-    "tokenBasedMembers": "The DAO members listed here have interacted with the DAO at least once"
+    "tokenBasedMembers": "The DAO members listed here have interacted with the DAO at least once",
+    "chip": {
+      "removedLink": "Link removed",
+      "removedAddress": "Address removed",
+      "distributionReset": "Token distribution reset",
+      "removedAllAddresses": "All addresses removed",
+      "duplicateAction": "Action duplicated",
+      "resetAction": "Action reset",
+      "resetAddress": "Address reset",
+      "resetAllAddresses": "All addresses reset",
+      "removedAction": "Action removed",
+      "addressAdded": "New address added",
+      "inputCleared": "Cleared",
+      "inputCopied": "Copied",
+      "inputPasted": "Pasted",
+      "walletConnected": "Wallet connected",
+      "walletDisconnected": "Wallet disconnected",
+      "max": "Max Balance applied"
+    }
   },
   "warnings": {
     "amountGtDaoToken": "Withdraw amount is greater than the current token balance"
@@ -552,7 +570,7 @@
       "yesOption": "Yes",
       "yesOptionSubtitle": "If the vote passes, the following actions will execute automatically. If the vote fails, nothing will happen.",
       "addFirstAction": "Add Action",
-      "addFirstActionSubtitle": "This action will execute it the vote passes. A common automatic action is transferring funds to a guild or person if their proposal passes a vote.",
+      "addFirstActionSubtitle": "This action will execute if the vote passes. A common automatic action is transferring funds to a guild or person if their proposal passes a vote.",
       "addAction": "Add Action",
       "actionsInfo": "More options for parameters are coming soon. "
     },

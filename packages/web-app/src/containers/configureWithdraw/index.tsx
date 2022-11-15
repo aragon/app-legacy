@@ -35,6 +35,7 @@ import {
   validateTokenAddress,
   validateTokenAmount,
 } from 'utils/validators';
+import {useAlertContext} from 'context/alert';
 
 type ConfigureWithdrawFormProps = ActionIndex; //extend if necessary
 
@@ -49,6 +50,7 @@ const ConfigureWithdrawForm: React.FC<ConfigureWithdrawFormProps> = ({
   const {infura: provider} = useProviders();
   const {data: daoAddress} = useDaoParam();
   const {setSelectedActionIndex} = useActionsContext();
+  const {alert} = useAlertContext();
 
   const {control, getValues, trigger, resetField, setFocus, setValue} =
     useFormContext();
@@ -187,19 +189,22 @@ const ConfigureWithdrawForm: React.FC<ConfigureWithdrawFormProps> = ({
     (onChange: React.ChangeEventHandler<HTMLInputElement>) => {
       if (tokenBalance) {
         onChange(tokenBalance);
+        alert(t('alert.chip.max'));
       }
     },
-    [tokenBalance]
+    [alert, t, tokenBalance]
   );
 
   // clear field when there is a value, else paste
   const handleAdornmentClick = useCallback(
     (value: string, onChange: (value: string) => void) => {
       // when there is a value clear it
-      if (value) onChange('');
-      else handleClipboardActions(value, onChange);
+      if (value) {
+        onChange('');
+        alert(t('alert.chip.inputCleared'));
+      } else handleClipboardActions(value, onChange, alert);
     },
-    []
+    [alert, t]
   );
 
   /*************************************************

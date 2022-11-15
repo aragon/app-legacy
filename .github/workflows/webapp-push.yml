@@ -16,11 +16,12 @@ jobs:
       run:
         working-directory: ${{env.working-directory}}
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: Install node
-        uses: actions/setup-node@v1
+        uses: actions/setup-node@v3
         with:
           node-version: 16
+          cache: 'yarn'
       - name: Build ui-components
         run: |
           cd ../ui-components
@@ -41,10 +42,7 @@ jobs:
           VITE_REACT_APP_DEPLOY_VERSION: ${{ github.sha }}
           VITE_REACT_APP_DEPLOY_ENVIRONMENT: ${{ needs.set-environment.outputs.environment }}
           VITE_REACT_APP_ANALYTICS_KEY: ${{ secrets.VITE_REACT_APP_ANALYTICS_KEY }}
-          VITE_REACT_APP_RPC: 'mainnet.eth.aragon.network'
-          VITE_REACT_APP_ALCHEMY_API_KEY: ${{secrets.VITE_REACT_APP_ALCHEMY_API_KEY}}
           VITE_IPFS_API_KEY: ${{secrets.VITE_IPFS_API_KEY}}
-          VITE_IPFS_API_URL: ${{secrets.VITE_IPFS_API_URL}}
           NODE_OPTIONS: '--max-old-space-size=6656'
       - name: SonarCloud Scan
         uses: SonarSource/sonarcloud-github-action@master

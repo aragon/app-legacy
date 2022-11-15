@@ -23,6 +23,7 @@ import {
   ActionRemoveAddress,
   ActionWithdraw,
 } from 'utils/types';
+import {i18n} from '../../i18n.config';
 import {getTokenInfo} from './tokens';
 
 export function formatUnits(amount: BigNumberish, decimals: number) {
@@ -40,16 +41,16 @@ export function formatUnits(amount: BigNumberish, decimals: number) {
  */
 export async function handleClipboardActions(
   currentValue: string,
-  onChange: (value: string) => void
+  onChange: (value: string) => void,
+  alert: (label: string) => void
 ) {
   if (currentValue) {
     await navigator.clipboard.writeText(currentValue);
-
-    // TODO: change to proper mechanism
-    alert('Copied');
+    alert(i18n.t('alert.chip.inputCopied'));
   } else {
     const textFromClipboard = await navigator.clipboard.readText();
     onChange(textFromClipboard);
+    alert(i18n.t('alert.chip.inputPasted'));
   }
 }
 

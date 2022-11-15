@@ -21,6 +21,7 @@ import {ActionIndex} from 'utils/types';
 import {CustomHeaderProps, FormItem} from '../addAddresses';
 import AccordionSummary from '../addAddresses/accordionSummary';
 import {AddressRow} from '../addAddresses/addressRow';
+import {useAlertContext} from 'context/alert';
 
 type RemoveAddressesProps = ActionIndex & CustomHeaderProps;
 
@@ -33,6 +34,7 @@ const RemoveAddresses: React.FC<RemoveAddressesProps> = ({
   const {t} = useTranslation();
   const {open} = useGlobalModalContext();
   const {removeAction} = useActionsContext();
+  const {alert} = useAlertContext();
 
   // dao data
   const {data: dao} = useDaoParam();
@@ -74,6 +76,7 @@ const RemoveAddresses: React.FC<RemoveAddressesProps> = ({
 
   function handleDeleteAll() {
     replace([]);
+    alert(t('alert.chip.removedAllAddresses'));
   }
 
   const rowActions = [
@@ -86,6 +89,7 @@ const RemoveAddresses: React.FC<RemoveAddressesProps> = ({
       ),
       callback: (rowIndex: number) => {
         handleRowDelete(rowIndex);
+        alert(t('alert.chip.removedAddress'));
       },
     },
   ];
@@ -97,6 +101,7 @@ const RemoveAddresses: React.FC<RemoveAddressesProps> = ({
       ),
       callback: () => {
         removeAction(actionIndex);
+        alert(t('alert.chip.removedAction'));
       },
     },
   ];
@@ -201,6 +206,7 @@ const RemoveAddresses: React.FC<RemoveAddressesProps> = ({
                         mode="disabled"
                       />
                     ),
+                    // TODO: This needs to be added later
                     callback: () => {},
                   },
                 ]}

@@ -1,10 +1,10 @@
 import {InfuraProvider, Web3Provider} from '@ethersproject/providers';
 import React, {createContext, useContext, useEffect, useState} from 'react';
-import {useWallet} from 'hooks/useWallet';
 
+import {useWallet} from 'hooks/useWallet';
 import {
   CHAIN_METADATA,
-  INFURA_PROJECT_ID_ARB,
+  INFURA_PROJECT_ID,
   SupportedChainID,
 } from 'utils/constants';
 import {Nullable} from 'utils/types';
@@ -40,7 +40,7 @@ export function ProvidersProvider({children}: ProviderProviderProps) {
   const {network} = useNetwork();
 
   const [infuraProvider, setInfuraProvider] = useState(
-    new InfuraProvider(NW_ARB, INFURA_PROJECT_ID_ARB)
+    new InfuraProvider(NW_ARB, INFURA_PROJECT_ID)
   );
 
   useEffect(() => {
@@ -66,11 +66,11 @@ function getInfuraProvider(givenChainId?: SupportedChainID) {
   // I've tried it on a fresh project and had no problems there...
   // [VR 07-03-2022]
   if (givenChainId === 42161) {
-    return new InfuraProvider(NW_ARB, INFURA_PROJECT_ID_ARB);
+    return new InfuraProvider(NW_ARB, INFURA_PROJECT_ID);
   } else if (givenChainId === 421613) {
-    return new InfuraProvider(NW_ARB_GOERLI, INFURA_PROJECT_ID_ARB);
+    return new InfuraProvider(NW_ARB_GOERLI, INFURA_PROJECT_ID);
   } else {
-    return new InfuraProvider(givenChainId, INFURA_PROJECT_ID_ARB);
+    return new InfuraProvider(givenChainId, INFURA_PROJECT_ID);
   }
 }
 

@@ -99,7 +99,7 @@ const DepositProvider = ({children}: {children: ReactNode}) => {
     }
 
     setDepositParams({
-      daoAddress: to,
+      daoAddressOrEns: to,
       amount: BigInt(Number(amount) * Math.pow(10, 18)),
       tokenAddress,
       reference,

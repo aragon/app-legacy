@@ -25,6 +25,7 @@ import {formatUnits} from 'utils/library';
 import {fetchBalance, getTokenInfo} from 'utils/tokens';
 import {ActionIndex} from 'utils/types';
 import {AddressAndTokenRow} from './addressTokenRow';
+import {useAlertContext} from 'context/alert';
 
 type MintTokensProps = ActionIndex;
 
@@ -40,6 +41,7 @@ type AddressBalance = {
 
 const MintTokens: React.FC<MintTokensProps> = ({actionIndex}) => {
   const {t} = useTranslation();
+  const {alert} = useAlertContext();
 
   const {removeAction} = useActionsContext();
   const {setValue, clearErrors, resetField} = useFormContext();
@@ -48,6 +50,7 @@ const MintTokens: React.FC<MintTokensProps> = ({actionIndex}) => {
     clearErrors(`actions.${actionIndex}`);
     resetField(`actions.${actionIndex}`);
     setValue(`actions.${actionIndex}.inputs.mintTokensToWallets`, []);
+    alert(t('alert.chip.resetAction'));
   };
 
   const methodActions = [
@@ -61,6 +64,7 @@ const MintTokens: React.FC<MintTokensProps> = ({actionIndex}) => {
       ),
       callback: () => {
         removeAction(actionIndex);
+        alert(t('alert.chip.removedAction'));
       },
     },
   ];
@@ -111,7 +115,7 @@ export const MintTokenForm: React.FC<MintTokenFormProps> = ({
     name: `actions.${actionIndex}.inputs.mintTokensToWallets`,
   });
 
-  // NOTE: DO NOT MERGE THESE. Apparently, when returned as a touple, the
+  // NOTE: DO NOT MERGE THESE. Apparently, when returned as a tuple, the
   // useEffects that depend on `mints` do not recognize changes to the `mints`
   // array...
   const mints: MintInfo[] = useWatch({
@@ -152,7 +156,8 @@ export const MintTokenForm: React.FC<MintTokenFormProps> = ({
     if (!mints) return;
 
     const actionErrors =
-      formState.errors?.actions?.[`${actionIndex}`].inputs.mintTokensToWallets;
+      formState.errors?.actions?.[`${actionIndex}`]?.inputs
+        ?.mintTokensToWallets;
 
     actionErrors?.forEach((error: MappedError) => {
       if (error?.address) trigger(error.address.ref?.name);

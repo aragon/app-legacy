@@ -20,6 +20,7 @@ import useScreen from 'hooks/useScreen';
 import {validateAddress} from 'utils/validators';
 import {WalletField} from 'components/addWallets/row';
 import {ActionIndex} from 'utils/types';
+import {useAlertContext} from 'context/alert';
 
 type IndexProps = ActionIndex & {
   fieldIndex: number;
@@ -41,6 +42,7 @@ const AddressField: React.FC<AddressFieldProps> = ({
 }) => {
   const {t} = useTranslation();
   const {control} = useFormContext();
+  const {alert} = useAlertContext();
   const walletFieldArray = useWatch({
     name: `actions.${actionIndex}.inputs.mintTokensToWallets`,
     control,
@@ -52,7 +54,7 @@ const AddressField: React.FC<AddressFieldProps> = ({
   ) => {
     if (value) {
       onClear?.(fieldIndex) || onChange('');
-    } else handleClipboardActions(value, onChange);
+    } else handleClipboardActions(value, onChange, alert);
   };
 
   const addressValidator = (address: string, index: number) => {
@@ -161,6 +163,7 @@ const DropdownMenu: React.FC<DropdownProps> = ({
   disabled = false,
 }) => {
   const {t} = useTranslation();
+  const {alert} = useAlertContext();
 
   return (
     <Dropdown
@@ -182,6 +185,7 @@ const DropdownMenu: React.FC<DropdownProps> = ({
           ),
           callback: () => {
             onDelete(fieldIndex);
+            alert(t('alert.chip.removedAddress'));
           },
         },
       ]}

@@ -21,6 +21,7 @@ import {
 } from 'utils/library';
 import {validateAddress} from 'utils/validators';
 import {MAX_TOKEN_AMOUNT} from 'utils/constants';
+import {useAlertContext} from 'context/alert';
 
 type WalletRowProps = {
   index: number;
@@ -38,6 +39,7 @@ const WalletRow: React.FC<WalletRowProps> = ({index, onDelete}) => {
   const [isDuplicate, setIsDuplicate] = useState<boolean>(false);
   const {control, getValues, setValue, trigger} = useFormContext();
   const walletFieldArray = getValues('wallets');
+  const {alert} = useAlertContext();
 
   const calculateTotalTokenSupply = (value: number) => {
     let totalSupply = 0;
@@ -118,7 +120,9 @@ const WalletRow: React.FC<WalletRowProps> = ({index, onDelete}) => {
               // Uncomment when minting to DAO Treasury is supported
               // disabled={index === 0}
               adornmentText={value ? t('labels.copy') : t('labels.paste')}
-              onAdornmentClick={() => handleClipboardActions(value, onChange)}
+              onAdornmentClick={() =>
+                handleClipboardActions(value, onChange, alert)
+              }
             />
             {error?.message && (
               <ErrorContainer>
@@ -208,6 +212,7 @@ const WalletRow: React.FC<WalletRowProps> = ({index, onDelete}) => {
                   ]);
                   setValue('tokenTotalSupply', totalSupply - amount);
                   onDelete(index);
+                  alert(t('alert.chip.removedAddress') as string);
                 }
               },
             },

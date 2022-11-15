@@ -2,11 +2,11 @@ import {useReactiveVar} from '@apollo/client';
 import {
   ClientAddressList,
   ClientErc20,
+  DaoAction,
   ICreateProposalParams,
   InstalledPluginListItem,
   ProposalCreationSteps,
 } from '@aragon/sdk-client';
-import {DaoAction} from '@aragon/sdk-client/dist/internal/interfaces/common';
 import React, {useCallback, useEffect, useMemo, useState} from 'react';
 import {useFormContext} from 'react-hook-form';
 import {useTranslation} from 'react-i18next';

@@ -7,6 +7,7 @@ import 'tailwindcss/tailwind.css';
 import {UseSignerProvider} from 'use-signer';
 import {IProviderOptions} from 'web3modal';
 
+import {AlertProvider} from 'context/alert';
 import {client, goerliClient} from 'context/apolloClient';
 import {WalletProvider} from 'context/augmentedWallet';
 import {APMProvider} from 'context/elasticAPM';
@@ -18,14 +19,14 @@ import {TransactionDetailProvider} from 'context/transactionDetail';
 import {WalletMenuProvider} from 'context/walletMenu';
 import {UseCacheProvider} from 'hooks/useCache';
 import {UseClientProvider} from 'hooks/useClient';
+import {ARAGON_RPC} from 'utils/constants';
 import App from './app';
 
 const providerOptions: IProviderOptions = {
   walletconnect: {
     package: WalletConnectProvider,
     options: {
-      infuraId:
-        import.meta.env.VITE_REACT_APP_RPC || 'mainnet.eth.aragon.network',
+      infuraId: ARAGON_RPC,
     },
   },
 };
@@ -35,31 +36,33 @@ ReactDOM.render(
     <PrivacyContextProvider>
       <APMProvider>
         <Router>
-          <NetworkProvider>
-            <WalletProvider>
-              <UseSignerProvider providerOptions={providerOptions}>
-                <UseClientProvider>
-                  <UseCacheProvider>
-                    <ProvidersProvider>
-                      <TransactionDetailProvider>
-                        <WalletMenuProvider>
-                          <GlobalModalsProvider>
-                            {/* By default, goerli client is chosen, each useQuery needs to pass the network client it needs as argument
+          <AlertProvider>
+            <NetworkProvider>
+              <WalletProvider>
+                <UseSignerProvider providerOptions={providerOptions}>
+                  <UseClientProvider>
+                    <UseCacheProvider>
+                      <ProvidersProvider>
+                        <TransactionDetailProvider>
+                          <WalletMenuProvider>
+                            <GlobalModalsProvider>
+                              {/* By default, goerli client is chosen, each useQuery needs to pass the network client it needs as argument
                       For REST queries using apollo, there's no need to pass a different client to useQuery  */}
-                            <ApolloProvider
-                              client={client['goerli'] || goerliClient} //TODO remove fallback when all clients are defined
-                            >
-                              <App />
-                            </ApolloProvider>
-                          </GlobalModalsProvider>
-                        </WalletMenuProvider>
-                      </TransactionDetailProvider>
-                    </ProvidersProvider>
-                  </UseCacheProvider>
-                </UseClientProvider>
-              </UseSignerProvider>
-            </WalletProvider>
-          </NetworkProvider>
+                              <ApolloProvider
+                                client={client['goerli'] || goerliClient} //TODO remove fallback when all clients are defined
+                              >
+                                <App />
+                              </ApolloProvider>
+                            </GlobalModalsProvider>
+                          </WalletMenuProvider>
+                        </TransactionDetailProvider>
+                      </ProvidersProvider>
+                    </UseCacheProvider>
+                  </UseClientProvider>
+                </UseSignerProvider>
+              </WalletProvider>
+            </NetworkProvider>
+          </AlertProvider>
         </Router>
       </APMProvider>
     </PrivacyContextProvider>

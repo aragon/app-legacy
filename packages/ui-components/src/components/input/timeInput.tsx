@@ -1,34 +1,33 @@
-import React, {useMemo, useState} from 'react';
+import React, {useMemo} from 'react';
 import styled from 'styled-components';
 import {Option, ButtonGroup} from '../button/buttonGroup';
 
 export type valueType = {time: string; midday: 'pm' | 'am'};
 
-export type TimeInputProps = React.InputHTMLAttributes<HTMLInputElement> & {
+export type TimeInputProps = Omit<
+  React.InputHTMLAttributes<HTMLInputElement>,
+  'onChange'
+> & {
   /** Changes a input's color schema */
   mode?: 'default' | 'success' | 'warning' | 'critical';
   disabled?: boolean;
-  onChange: (value: valueType) => void;
+  onChange: (value: string) => void;
   width?: number;
+  value: string;
 };
 
 export const TimeInput: React.FC<TimeInputProps> = ({
   mode = 'default',
   disabled,
   width,
+  value,
   onChange: onChangeCallback,
   ...props
 }) => {
-  const [time, setTime] = useState<valueType>({
-    time: '',
-    midday: 'pm',
-  });
-
-  useMemo(() => {
-    if (onChangeCallback) {
-      onChangeCallback(time);
-    }
-  }, [onChangeCallback, time]);
+  const midday = useMemo(() => {
+    const hours = Number(value?.match(/^(\d+)/)?.[1]);
+    return hours > 11 ? 'pm' : 'am';
+  }, [value]);
 
   const onChange = (
     nextValue: React.FormEvent<HTMLInputElement> | string,
@@ -37,15 +36,39 @@ export const TimeInput: React.FC<TimeInputProps> = ({
     if (type === 'time') {
       const currentTarget = (nextValue as React.FormEvent<HTMLInputElement>)
         .target;
-      setTime(prevState => ({
-        time: (currentTarget as HTMLInputElement).value,
-        midday: prevState.midday,
-      }));
+
+      const hours = Number(
+        (currentTarget as HTMLInputElement).value.match(/^(\d+)/)?.[1]
+      );
+
+      const minutes = Number(
+        (currentTarget as HTMLInputElement).value.match(/:(\d+)/)?.[1]
+      );
+
+      let sHours = hours.toString();
+      let sMinutes = minutes.toString();
+      if (hours < 10) sHours = '0' + sHours;
+      if (minutes < 10) sMinutes = '0' + sMinutes;
+
+      onChangeCallback(sHours + ':' + sMinutes);
     } else {
-      setTime(prevState => ({
-        time: prevState.time,
-        midday: nextValue as 'pm' | 'am',
-      }));
+      let hours = Number(value.match(/^(\d+)/)?.[1]);
+      const minutes = Number(value.match(/:(\d+)/)?.[1]);
+
+      if (nextValue === 'am' && hours > 12) {
+        hours = hours - 12;
+      }
+
+      if (nextValue === 'pm' && hours < 12) {
+        hours = hours + 12;
+      }
+
+      let sHours = hours.toString();
+      let sMinutes = minutes.toString();
+      if (hours < 10) sHours = '0' + sHours;
+      if (minutes < 10) sMinutes = '0' + sMinutes;
+
+      onChangeCallback(sHours + ':' + sMinutes);
     }
   };
 
@@ -56,6 +79,7 @@ export const TimeInput: React.FC<TimeInputProps> = ({
         disabled={disabled}
         onChange={e => onChange(e, 'time')}
         type={'time'}
+        value={value}
         required
       />
       {/* TODO: This Radio button need to be customized. For now we used a
@@ -65,6 +89,7 @@ export const TimeInput: React.FC<TimeInputProps> = ({
         bgWhite
         defaultValue={'am'}
         onChange={e => onChange(e, 'midday')}
+        value={midday}
       >
         <Option value="am" label="AM" />
         <Option value="pm" label="PM" />

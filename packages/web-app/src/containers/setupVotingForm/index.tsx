@@ -18,7 +18,6 @@ import {useTranslation} from 'react-i18next';
 import React, {useEffect, useState} from 'react';
 
 import {DateModeSwitch} from './dateModeSwitch';
-import {SimplifiedTimeInput} from 'components/inputTime/inputTime';
 import UtcMenu from 'containers/utcMenu';
 import {timezones} from 'containers/utcMenu/utcData';
 import {
@@ -31,6 +30,7 @@ import {
 import {DateTimeErrors} from './dateTimeErrors';
 import {useGlobalModalContext} from 'context/globalModals';
 import {StringIndexed} from 'utils/types';
+import {SimplifiedTimeInput} from 'components/inputTime/inputTime';
 
 type UtcInstance = 'first' | 'second';
 

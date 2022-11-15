@@ -1,4 +1,4 @@
-import {IPluginSettings} from '@aragon/sdk-client/dist/internal/interfaces/plugins';
+import {IPluginSettings} from '@aragon/sdk-client';
 import {useEffect, useState} from 'react';
 import {HookData} from 'utils/types';
 

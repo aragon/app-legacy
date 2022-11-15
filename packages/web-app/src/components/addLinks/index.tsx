@@ -1,4 +1,5 @@
 import {ButtonText, IconAdd} from '@aragon/ui-components';
+import {useAlertContext} from 'context/alert';
 import React from 'react';
 import {useFieldArray, useFormContext, useWatch} from 'react-hook-form';
 import {useTranslation} from 'react-i18next';
@@ -26,6 +27,7 @@ const AddLinks: React.FC<AddLinks> = ({
   const {control} = useFormContext();
   const links = useWatch({name: arrayName, control});
   const {fields, append, remove} = useFieldArray({name: arrayName, control});
+  const {alert} = useAlertContext();
 
   const controlledLinks = fields.map((field, index) => {
     return {
@@ -48,7 +50,10 @@ const AddLinks: React.FC<AddLinks> = ({
             <Row
               key={field.id}
               index={index}
-              onDelete={() => remove(index)}
+              onDelete={() => {
+                remove(index);
+                alert(t('alert.chip.removedLink') as string);
+              }}
               arrayName={arrayName}
               bgWhite={bgWhite}
             />
