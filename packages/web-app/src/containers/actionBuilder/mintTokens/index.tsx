@@ -25,6 +25,7 @@ import {formatUnits} from 'utils/library';
 import {fetchBalance, getTokenInfo} from 'utils/tokens';
 import {ActionIndex} from 'utils/types';
 import {AddressAndTokenRow} from './addressTokenRow';
+import {useAlertContext} from 'context/alert';
 
 type MintTokensProps = ActionIndex;
 
@@ -40,6 +41,7 @@ type AddressBalance = {
 
 const MintTokens: React.FC<MintTokensProps> = ({actionIndex}) => {
   const {t} = useTranslation();
+  const {alert} = useAlertContext();
 
   const {removeAction} = useActionsContext();
   const {setValue, clearErrors, resetField} = useFormContext();
@@ -48,6 +50,7 @@ const MintTokens: React.FC<MintTokensProps> = ({actionIndex}) => {
     clearErrors(`actions.${actionIndex}`);
     resetField(`actions.${actionIndex}`);
     setValue(`actions.${actionIndex}.inputs.mintTokensToWallets`, []);
+    alert(t('alert.chip.resetAction'));
   };
 
   const methodActions = [
@@ -61,6 +64,7 @@ const MintTokens: React.FC<MintTokensProps> = ({actionIndex}) => {
       ),
       callback: () => {
         removeAction(actionIndex);
+        alert(t('alert.chip.removedAction'));
       },
     },
   ];

@@ -5,9 +5,9 @@ import {
   IAddressListPluginInstall,
   ICreateParams,
   IErc20PluginInstall,
+  IPluginInstallItem,
   IPluginSettings,
 } from '@aragon/sdk-client';
-import {IPluginInstallItem} from '@aragon/sdk-client/dist/internal/interfaces/common';
 import {parseUnits} from 'ethers/lib/utils';
 import React, {
   createContext,

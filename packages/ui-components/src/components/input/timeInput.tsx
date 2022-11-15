@@ -4,7 +4,10 @@ import {Option, ButtonGroup} from '../button/buttonGroup';
 
 export type valueType = {time: string; midday: 'pm' | 'am'};
 
-export type TimeInputProps = React.InputHTMLAttributes<HTMLInputElement> & {
+export type TimeInputProps = Omit<
+  React.InputHTMLAttributes<HTMLInputElement>,
+  'onChange'
+> & {
   /** Changes a input's color schema */
   mode?: 'default' | 'success' | 'warning' | 'critical';
   disabled?: boolean;

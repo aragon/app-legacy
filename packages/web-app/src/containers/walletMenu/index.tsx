@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import {
   Avatar,
   ButtonIcon,
@@ -20,6 +20,7 @@ import useScreen from 'hooks/useScreen';
 import {CHAIN_METADATA} from 'utils/constants';
 import {LoginRequired} from './LoginRequired';
 import {trackEvent} from 'services/analytics';
+import {useAlertContext} from 'context/alert';
 
 export const WalletMenu = () => {
   const {close, isWalletOpen} = useGlobalModalContext();
@@ -31,10 +32,17 @@ export const WalletMenu = () => {
     chainId,
     isConnected,
     network,
+    status,
     provider,
   } = useWallet();
   const {isDesktop} = useScreen();
   const {t} = useTranslation();
+  const {alert} = useAlertContext();
+
+  useEffect(() => {
+    if (status === 'connected' && !isConnected)
+      alert(t('alert.chip.walletConnected'));
+  }, [alert, isConnected, status, t]);
 
   const handleDisconnect = () => {
     methods
@@ -47,6 +55,7 @@ export const WalletMenu = () => {
         });
         localStorage.removeItem('WEB3_CONNECT_CACHED_PROVIDER');
         close('wallet');
+        alert(t('alert.chip.walletDisconnected'));
       })
       .catch((e: Error) => {
         console.error(e);
@@ -84,7 +93,7 @@ export const WalletMenu = () => {
           icon={<IconCopy />}
           size="small"
           onClick={() =>
-            address ? handleClipboardActions(address, () => null) : null
+            address ? handleClipboardActions(address, () => null, alert) : null
           }
         />
         {isDesktop && (

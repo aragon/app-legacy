@@ -20,7 +20,7 @@ jobs:
           GITHUB_REF="${{ github.ref }}"
           TAG=${GITHUB_REF##*/}
           VERSION=$(echo "$TAG" | grep -woP "([0-9]+\.[0-9]+\.[0-9]+)")
-          echo "::set-output name=version::$VERSION"
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
   publish:
     runs-on: ubuntu-latest
     name: Publish ui-components
@@ -29,11 +29,12 @@ jobs:
       run:
         working-directory: packages/ui-components
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: Install node
-        uses: actions/setup-node@v1
+        uses: actions/setup-node@v3
         with:
           node-version: 16
+          cache: 'yarn'
           registry-url: "https://registry.npmjs.org"
       - name: Install dependencies
         run: yarn install --pure-lockfile

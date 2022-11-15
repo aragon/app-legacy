@@ -1,6 +1,7 @@
 import React from 'react';
 import {FormProvider, useForm} from 'react-hook-form';
 import {render, screen, fireEvent} from 'test-utils';
+import {AlertProvider} from 'context/alert';
 
 import AddWallets from '..';
 
@@ -12,9 +13,11 @@ const RenderWithForm: React.FC = ({children}) => {
 describe('AddWallets', () => {
   test('should render', () => {
     render(
-      <RenderWithForm>
-        <AddWallets />
-      </RenderWithForm>
+      <AlertProvider>
+        <RenderWithForm>
+          <AddWallets />
+        </RenderWithForm>
+      </AlertProvider>
     );
 
     const element = screen.getByTestId('add-wallets');
@@ -23,9 +26,11 @@ describe('AddWallets', () => {
 
   test('should add row when button click', () => {
     render(
-      <RenderWithForm>
-        <AddWallets />
-      </RenderWithForm>
+      <AlertProvider>
+        <RenderWithForm>
+          <AddWallets />
+        </RenderWithForm>
+      </AlertProvider>
     );
 
     const element = screen.getByText('Add Wallet');

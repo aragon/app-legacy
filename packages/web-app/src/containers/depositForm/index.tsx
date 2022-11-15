@@ -27,6 +27,7 @@ import {handleClipboardActions} from 'utils/library';
 import {fetchBalance, getTokenInfo, isNativeToken} from 'utils/tokens';
 import {validateTokenAddress, validateTokenAmount} from 'utils/validators';
 import {CHAIN_METADATA} from 'utils/constants';
+import {useAlertContext} from 'context/alert';
 
 const DepositForm: React.FC = () => {
   const client = useApolloClient();
@@ -37,6 +38,7 @@ const DepositForm: React.FC = () => {
   const {infura: provider} = useProviders();
   const {control, resetField, setValue, setFocus, trigger, getValues} =
     useFormContext();
+  const {alert} = useAlertContext();
   const {errors, dirtyFields} = useFormState({control});
   const [daoAddress, tokenAddress, isCustomToken, tokenBalance, tokenSymbol] =
     useWatch({
@@ -181,9 +183,10 @@ const DepositForm: React.FC = () => {
 
       if (tokenBalance !== '') {
         onChange(tokenBalance);
+        alert(t('alert.chip.max'));
       }
     },
-    [getValues]
+    [alert, getValues, t]
   );
 
   /*************************************************
@@ -261,7 +264,7 @@ const DepositForm: React.FC = () => {
                   onChange={onChange}
                   adornmentText={value ? t('labels.copy') : t('labels.paste')}
                   onAdornmentClick={() =>
-                    handleClipboardActions(value, onChange)
+                    handleClipboardActions(value, onChange, alert)
                   }
                 />
                 {error?.message && (

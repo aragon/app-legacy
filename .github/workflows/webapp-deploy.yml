@@ -20,11 +20,11 @@ jobs:
       - name: Set environment to staging
         if: endsWith(github.ref, '/develop')
         id: envdev
-        run: echo "::set-output name=environment::staging"
+        run: echo "environment=staging" >> $GITHUB_OUTPUT
       - name: Set environment to prod
         if: endsWith(github.ref, '/main')
         id: envprod
-        run: echo "::set-output name=environment::production"
+        run: echo "environment=production" >> $GITHUB_OUTPUT
   build-deploy:
     runs-on: ubuntu-latest
     container: fleek/create-react-app:node-16
@@ -35,11 +35,12 @@ jobs:
       run:
         working-directory: ${{env.working-directory}}
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: Install node
-        uses: actions/setup-node@v1
+        uses: actions/setup-node@v3
         with:
           node-version: 16
+          cache: 'yarn'
       - name: Build ui-components
         run: |
           cd ../ui-components
@@ -60,7 +61,7 @@ jobs:
           VITE_REACT_APP_ANALYTICS_KEY: ${{ secrets.VITE_REACT_APP_ANALYTICS_KEY }}
           VITE_IPFS_API_KEY: ${{secrets.VITE_IPFS_API_KEY}}
           NODE_OPTIONS: '--max-old-space-size=6656'
-      - name: Activate rinkeby's fleek
+      - name: Activate fleek
         env:
           FLEEK_FILE: ${{ needs.set-environment.outputs.environment }}
         run: mv ../../.github/fleek/$FLEEK_FILE.json .fleek.json

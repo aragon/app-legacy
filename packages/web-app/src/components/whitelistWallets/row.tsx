@@ -14,6 +14,7 @@ import {Controller, useFormContext, useWatch} from 'react-hook-form';
 import {validateAddress} from 'utils/validators';
 import {WhitelistWallet} from 'pages/createDAO';
 import {handleClipboardActions} from 'utils/library';
+import {useAlertContext} from 'context/alert';
 
 type WhitelistWalletsRowProps = {
   index: number;
@@ -23,6 +24,7 @@ type WhitelistWalletsRowProps = {
 
 export const Row = ({index, ...props}: WhitelistWalletsRowProps) => {
   const {t} = useTranslation();
+  const {alert} = useAlertContext();
 
   const {control} = useFormContext();
   const whitelistWallets = useWatch({name: 'whitelistWallets', control});
@@ -60,7 +62,9 @@ export const Row = ({index, ...props}: WhitelistWalletsRowProps) => {
               mode="default"
               placeholder="0x..."
               adornmentText={value ? t('labels.copy') : t('labels.paste')}
-              onAdornmentClick={() => handleClipboardActions(value, onChange)}
+              onAdornmentClick={() =>
+                handleClipboardActions(value, onChange, alert)
+              }
             />
             {error?.message && (
               <AlertInline label={error.message} mode="critical" />
@@ -88,6 +92,7 @@ export const Row = ({index, ...props}: WhitelistWalletsRowProps) => {
                 ),
                 callback: () => {
                   props.onResetEntry(index);
+                  alert(t('alert.chip.resetAddress'));
                 },
               },
               {
@@ -99,6 +104,7 @@ export const Row = ({index, ...props}: WhitelistWalletsRowProps) => {
                 ),
                 callback: () => {
                   props.onDeleteEntry(index);
+                  alert(t('alert.chip.removedAddress'));
                 },
               },
             ]}

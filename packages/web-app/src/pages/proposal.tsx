@@ -2,6 +2,7 @@ import {useApolloClient} from '@apollo/client';
 import {
   ClientAddressList,
   ClientErc20,
+  DaoAction,
   Erc20Proposal,
 } from '@aragon/sdk-client';
 import {
@@ -36,7 +37,9 @@ import {useProposalTransactionContext} from 'context/proposalTransaction';
 import {useSpecificProvider} from 'context/providers';
 import {useCache} from 'hooks/useCache';
 import {useClient} from 'hooks/useClient';
+import {useDaoDetails} from 'hooks/useDaoDetails';
 import {useDaoProposal} from 'hooks/useDaoProposal';
+import {useDaoToken} from 'hooks/useDaoToken';
 import {useMappedBreadcrumbs} from 'hooks/useMappedBreadcrumbs';
 import {usePluginClient} from 'hooks/usePluginClient';
 import useScreen from 'hooks/useScreen';
@@ -56,9 +59,6 @@ import {
   isTokenBasedProposal,
 } from 'utils/proposals';
 import {Action} from 'utils/types';
-import {DaoAction} from '@aragon/sdk-client/dist/internal/interfaces/common';
-import {useDaoDetails} from 'hooks/useDaoDetails';
-import {useDaoToken} from 'hooks/useDaoToken';
 
 // TODO: @Sepehr Please assign proper tags on action decoding
 const PROPOSAL_TAGS = ['Finance', 'Withdraw'];

@@ -14,6 +14,7 @@ import Row from './row';
 import Header from './header';
 import Footer from './footer';
 import {useWallet} from 'hooks/useWallet';
+import {useAlertContext} from 'context/alert';
 
 const AddWallets: React.FC = () => {
   const {t} = useTranslation();
@@ -25,6 +26,7 @@ const AddWallets: React.FC = () => {
     name: 'wallets',
     control,
   });
+  const {alert} = useAlertContext();
 
   const controlledFields = fields.map((field, index) => {
     return {
@@ -46,6 +48,7 @@ const AddWallets: React.FC = () => {
       setValue(`wallets.${index}.amount`, '0');
     });
     resetField('tokenTotalSupply');
+    alert(t('alert.chip.distributionReset'));
   };
 
   // setTimeout added because instant trigger not working
@@ -109,6 +112,7 @@ const AddWallets: React.FC = () => {
               callback: () => {
                 remove();
                 resetField('tokenTotalSupply');
+                alert(t('alert.chip.removedAllAddresses'));
               },
             },
           ]}

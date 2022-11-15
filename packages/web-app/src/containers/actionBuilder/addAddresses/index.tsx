@@ -16,6 +16,7 @@ import {useActionsContext} from 'context/actions';
 import {ActionIndex} from 'utils/types';
 import AccordionSummary from './accordionSummary';
 import {AddressRow} from './addressRow';
+import {useAlertContext} from 'context/alert';
 
 export type CustomHeaderProps = {
   useCustomHeader?: boolean;
@@ -29,6 +30,7 @@ const AddAddresses: React.FC<AddAddressesProps> = ({
 }) => {
   const {t} = useTranslation();
   const {removeAction} = useActionsContext();
+  const {alert} = useAlertContext();
 
   // form context
   const {control, trigger, setValue} = useFormContext();
@@ -79,6 +81,7 @@ const AddAddresses: React.FC<AddAddressesProps> = ({
     controlledWallets.forEach((_, index) => {
       update(index, {address: ''});
     });
+    alert(t('alert.chip.resetAction'));
   };
 
   // reset single row
@@ -90,6 +93,7 @@ const AddAddresses: React.FC<AddAddressesProps> = ({
   // remove all rows
   const handleDeleteAll = () => {
     remove();
+    alert(t('alert.chip.removedAllAddresses'));
   };
 
   // remove single row
@@ -115,6 +119,7 @@ const AddAddresses: React.FC<AddAddressesProps> = ({
       ),
       callback: (rowIndex: number) => {
         handleRowDelete(rowIndex);
+        alert(t('alert.chip.removedAddress'));
       },
     },
   ];
@@ -130,6 +135,7 @@ const AddAddresses: React.FC<AddAddressesProps> = ({
       ),
       callback: () => {
         removeAction(actionIndex);
+        alert(t('alert.chip.removedAction'));
       },
     },
   ];
@@ -224,6 +230,7 @@ const AddAddresses: React.FC<AddAddressesProps> = ({
                   mode="disabled"
                 />
               ),
+              // TODO: needs to be implemented later
               callback: () => {},
             },
           ]}

@@ -15,13 +15,13 @@ jobs:
         working-directory: packages/web-app
     steps:
       - name: Find Previous Deployment
-        uses: peter-evans/find-comment@v1
+        uses: peter-evans/find-comment@v2
         id: fc
         with:
           issue-number: ${{ github.event.pull_request.number }}
           body-includes: 'WebApp IPFS Hash: '
       - name: Delete Comment
-        uses: actions/github-script@v5
+        uses: actions/github-script@v6
         continue-on-error: true
         if: steps.fc.outputs.comment-id != 0
         with:
@@ -31,11 +31,12 @@ jobs:
               owner: context.repo.owner,
               repo: context.repo.repo,
             })
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: Install node
-        uses: actions/setup-node@v1
+        uses: actions/setup-node@v3
         with:
           node-version: 16
+          cache: 'yarn'
       - name: Build ui-components
         run: |
           cd ../ui-components
@@ -54,10 +55,11 @@ jobs:
           VITE_REACT_APP_ANALYTICS_KEY: ${{ secrets.VITE_REACT_APP_ANALYTICS_KEY }}
           VITE_IPFS_API_KEY: ${{secrets.VITE_IPFS_API_KEY}}
           NODE_OPTIONS: '--max-old-space-size=6656'
-      - uses: actions/setup-python@v2
+      - uses: actions/setup-python@v4
         with:
           python-version: '3.x'
           architecture: 'x64'
+          cache: 'pip'
       - name: install pyyaml
         run: |
           pip install --user pyyaml packaging
@@ -78,9 +80,9 @@ jobs:
         run: |
           ipfsResult="$(./ipfs-cluster-ctl/ipfs-cluster-ctl --basic-auth '${{ secrets.IPFS_BASIC_AUTH }}' --host '${{ secrets.IPFS_HOST }}' add -r './dist/' | tail -1)"
           IFS=" " read -ra array <<< "$ipfsResult"
-          echo "::set-output name=ipfsHash::${array[1]}"
+          echo "ipfsHash=${array[1]}" >> $GITHUB_OUTPUT
       - name: Echo url
-        uses: peter-evans/create-or-update-comment@v1
+        uses: peter-evans/create-or-update-comment@v2
         with:
           issue-number: ${{ github.event.pull_request.number }}
           body: |
