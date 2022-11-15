@@ -344,6 +344,7 @@
       "duplicateAction": "Action duplicated",
       "resetAction": "Action reset",
       "resetAddress": "Address reset",
+      "resetAllAddresses": "All addresses reset",
       "removedAction": "Action removed",
       "addressAdded": "New address added",
       "inputCleared": "Cleared",

@@ -51,17 +51,20 @@ export const WhitelistWallets = () => {
   // remove wallet
   const handleDeleteEntry = (index: number) => {
     remove(index);
+    alert(t('alert.chip.removedAddress'));
     trigger('whitelistWallets');
   };
 
   // remove all wallets
   const handleDeleteAll = () => {
+    alert(t('alert.chip.removedAllAddresses'));
     replace([{address: address}]);
   };
 
   // reset wallet
   const handleResetEntry = (index: number) => {
     update(index, {address: ''});
+    alert(t('alert.chip.resetAddress'));
     trigger('whitelistWallets');
   };
 
@@ -73,6 +76,7 @@ export const WhitelistWallets = () => {
         update(index, {address: ''});
       }
     });
+    alert(t('alert.chip.resetAllAddresses'));
     trigger('whitelistWallets');
   };
 
