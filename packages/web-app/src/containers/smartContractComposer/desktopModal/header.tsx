@@ -1,10 +1,11 @@
 import {
   ButtonIcon,
-  IconHome,
   IconChevronRight,
   IconClose,
+  IconHome,
 } from '@aragon/ui-components';
 import React from 'react';
+import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 
 type DesktopModalHeaderProps = {
@@ -13,6 +14,8 @@ type DesktopModalHeaderProps = {
 };
 
 const DesktopModalHeader: React.FC<DesktopModalHeaderProps> = props => {
+  const {t} = useTranslation();
+
   return (
     <Container>
       <LeftContent>
@@ -24,7 +27,7 @@ const DesktopModalHeader: React.FC<DesktopModalHeaderProps> = props => {
             <IconChevronRight />
           </>
         )}
-        <p className="border">Type to find any action...</p>
+        <p className="border">{t('scc.labels.searchPlaceholder')}</p>
       </LeftContent>
       <ButtonIcon
         mode="secondary"
