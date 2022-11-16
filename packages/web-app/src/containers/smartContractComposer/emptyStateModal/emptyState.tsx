@@ -1,7 +1,7 @@
 import ModalBottomSheetSwitcher from 'components/modalBottomSheetSwitcher';
 import {StateEmpty} from 'components/stateEmpty';
 import React from 'react';
-import ModalHeader from './modalHeader';
+import ModalHeader from '../components/modalHeader';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 
