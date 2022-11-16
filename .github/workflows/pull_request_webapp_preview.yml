@@ -59,7 +59,6 @@ jobs:
         with:
           python-version: '3.x'
           architecture: 'x64'
-          cache: 'pip'
       - name: install pyyaml
         run: |
           pip install --user pyyaml packaging
