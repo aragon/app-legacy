@@ -129,6 +129,7 @@
     "notChangeable": "Not Changeable",
     "changeableVote": "Changeable with a vote",
     "changeable": "Changeable",
+    "etherscan": "Etherscan",
     "whitelistWallets": {
       "address": "Address",
       "addresses": "{{count}} Addresses",
@@ -733,6 +734,12 @@
       "title": "No Smart Contract",
       "description": "Add a smart contract to interact with its actions",
       "primaryBtnLabel": "Connect Smart Contract"
+    },
+    "addressValidation": {
+      "modalTitle": "Smart Contract Composer",
+      "title": "Smart Contract Address",
+      "description": "Enter the desired smart contract address. It is best to copy this address directly from",
+      "actionLabel": "Validate Smart Contract"
     }
   }
 }

@@ -189,3 +189,15 @@ export async function isDaoNameValid(value: string, provider: InfuraProvider) {
     return i18n.t('errors.ensNetworkIssue');
   }
 }
+
+export async function validateContract(
+  address: string,
+  provider: EthersProviders.Provider
+) {
+  try {
+    const code = await provider.getCode(address);
+    return code !== '0x';
+  } catch (error) {
+    console.log(error);
+  }
+}
