@@ -1,12 +1,14 @@
 import {ButtonText} from '@aragon/ui-components';
-import {TemporarySection} from 'components/temporary';
-import ContractAddressValidation from 'containers/smartContractComposer/contractAddressValidation';
-import EmptyState from 'containers/smartContractComposer/emptyState';
 import {useNetwork} from 'context/network';
 import React, {useEffect} from 'react';
 import {FormProvider, useForm} from 'react-hook-form';
 import styled from 'styled-components';
 import {SccFormData} from 'utils/types';
+
+import {TemporarySection} from 'components/temporary';
+import ContractAddressValidation from 'containers/smartContractComposer/contractAddressValidation';
+import SmartContractList from 'containers/smartContractComposer/contractListModal';
+import EmptyState from 'containers/smartContractComposer/emptyStateModal/emptyState';
 
 const defaultValues = {
   contractAddress: '',
@@ -14,6 +16,8 @@ const defaultValues = {
 
 const SCC: React.FC = () => {
   const [emptyStateIsOpen, setEmptyStateIsOpen] = React.useState(false);
+  const [contractListIsOpen, setContractListIsOpen] = React.useState(false);
+
   const [addressValidationIsOpen, setAddressValidationIsOpen] =
     React.useState(false);
   const {setNetwork} = useNetwork();
@@ -47,6 +51,19 @@ const SCC: React.FC = () => {
             isOpen={addressValidationIsOpen}
             onClose={() => setAddressValidationIsOpen(false)}
             onBackButtonClicked={() => setAddressValidationIsOpen(false)}
+          />
+        </TemporarySection>
+
+        <TemporarySection purpose="SCC - Initial Modal, Connected Contracts">
+          <ButtonText
+            label="Show list of contracts"
+            onClick={() => setContractListIsOpen(true)}
+          />
+          <SmartContractList
+            isOpen={contractListIsOpen}
+            onConnect={() => {}}
+            onClose={() => setContractListIsOpen(false)}
+            onBackButtonClicked={() => setContractListIsOpen(false)}
           />
         </TemporarySection>
       </Container>
