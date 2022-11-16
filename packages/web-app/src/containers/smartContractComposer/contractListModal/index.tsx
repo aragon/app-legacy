@@ -36,16 +36,19 @@ const SmartContractList: React.FC<Props> = props => {
   const {t} = useTranslation();
   const {isDesktop} = useScreen();
 
-  return isDesktop ? (
-    <DesktopModal
-      contracts={DUMMY_CONTRACTS}
-      isOpen={props.isOpen}
-      onClose={props.onClose}
-      onConnect={props.onConnect}
-      onBackButtonClicked={props.onBackButtonClicked}
-    />
-  ) : (
-    //   mobile modal
+  if (isDesktop)
+    return (
+      <DesktopModal
+        contracts={DUMMY_CONTRACTS}
+        isOpen={props.isOpen}
+        onClose={props.onClose}
+        onConnect={props.onConnect}
+        onBackButtonClicked={props.onBackButtonClicked}
+      />
+    );
+
+  // mobile modal
+  return (
     <BottomSheet isOpen={props.isOpen} onClose={props.onClose}>
       <CustomMobileHeader onBackButtonClicked={props.onBackButtonClicked} />
       <Content>
