@@ -13,6 +13,7 @@ type DesktopModalProps = {
   contracts: Array<SmartContract>;
   isOpen: boolean;
   onClose: () => void;
+  onConnect: () => void;
   onBackButtonClicked: () => void;
 };
 
@@ -29,6 +30,7 @@ const DesktopModal: React.FC<DesktopModalProps> = props => {
             mode="secondary"
             size="large"
             label={t('scc.labels.connect')}
+            onClick={props.onConnect}
             className="w-full"
           />
         </Aside>
