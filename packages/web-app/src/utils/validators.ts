@@ -196,6 +196,7 @@ export async function validateContract(
   setIsContractValid: (value: boolean) => void
 ) {
   try {
+    // TODO: This Method is temporary and Will be replaced by etherscan API Verification
     const code = await provider.getCode(address);
     setIsContractValid(code !== '0x');
   } catch (error) {
