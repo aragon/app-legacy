@@ -192,12 +192,14 @@ export async function isDaoNameValid(value: string, provider: InfuraProvider) {
 
 export async function validateContract(
   address: string,
-  provider: EthersProviders.Provider
+  provider: EthersProviders.Provider,
+  setIsContractValid: (value: boolean) => void
 ) {
   try {
     const code = await provider.getCode(address);
-    return code !== '0x';
+    setIsContractValid(code !== '0x');
   } catch (error) {
+    setIsContractValid(false);
     console.log(error);
   }
 }

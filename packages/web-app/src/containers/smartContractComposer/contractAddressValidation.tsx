@@ -1,13 +1,23 @@
-import React from 'react';
+import React, {useCallback, useState} from 'react';
 import ModalBottomSheetSwitcher from 'components/modalBottomSheetSwitcher';
 import ModalHeader from './modalHeader';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
-import {AlertInline, ButtonText, Link, ValueInput} from '@aragon/ui-components';
+import {
+  AlertInline,
+  ButtonText,
+  IconChevronRight,
+  IconReload,
+  Link,
+  Spinner,
+  ValueInput,
+} from '@aragon/ui-components';
 import {handleClipboardActions} from 'utils/library';
 import {Controller, useFormContext, useWatch} from 'react-hook-form';
-import {CHAIN_METADATA} from 'utils/constants';
+import {CHAIN_METADATA, TransactionState} from 'utils/constants';
 import {useNetwork} from 'context/network';
+import {validateContract} from 'utils/validators';
+import {useProviders} from 'context/providers';
 
 type Props = {
   isOpen: boolean;
@@ -15,22 +25,44 @@ type Props = {
   onBackButtonClicked: () => void;
 };
 
+const icons = {
+  [TransactionState.WAITING]: undefined,
+  [TransactionState.LOADING]: <Spinner size="xs" color="white" />,
+  [TransactionState.SUCCESS]: <IconChevronRight />,
+  [TransactionState.ERROR]: <IconReload />,
+};
 // not exactly sure where opening will be happen or if
 // these modals will be global modals. For now, keeping
 // this as a "controlled" component
 const ContractAddressValidation: React.FC<Props> = props => {
   const {t} = useTranslation();
+  const [transactionState, setTransactionState] = useState<TransactionState>(
+    TransactionState.WAITING
+  );
   const {control} = useFormContext();
   const {network} = useNetwork();
-  const walletFieldArray = useWatch({
+  const {infura: provider} = useProviders();
+  const addressField = useWatch({
     name: 'contractAddress',
     control,
   });
 
+  const label = {
+    [TransactionState.WAITING]: t('scc.addressValidation.actionLabelWaiting'),
+    [TransactionState.LOADING]: t('scc.addressValidation.actionLabelLoading'),
+    [TransactionState.SUCCESS]: t('scc.addressValidation.actionLabelSuccess'),
+    [TransactionState.ERROR]: t('scc.addressValidation.tryAgain'),
+  };
+
+  const setContractValid = useCallback((value: boolean) => {
+    if (value) setTransactionState(TransactionState.SUCCESS);
+    else setTransactionState(TransactionState.ERROR);
+  }, []);
+
   return (
     <ModalBottomSheetSwitcher isOpen={props.isOpen} onClose={props.onClose}>
       <ModalHeader
-        title={t('scc.addressValidation.modalTitle')}
+        title={t('scc.addressValidation.modalTitle') as string}
         onClose={props.onClose}
         onBackButtonClicked={props.onBackButtonClicked}
       />
@@ -41,7 +73,7 @@ const ContractAddressValidation: React.FC<Props> = props => {
             {t('scc.addressValidation.description')}{' '}
             <Link
               external
-              label={t('labels.etherscan')}
+              label={t('labels.etherscan') as string}
               href={`${CHAIN_METADATA[network].explorer}`}
             />
           </Description>
@@ -78,12 +110,25 @@ const ContractAddressValidation: React.FC<Props> = props => {
           )}
         />
         <ButtonText
-          label={t('scc.addressValidation.actionLabel') as string}
-          onClick={() => null}
-          disabled={walletFieldArray === ''}
+          label={label[transactionState] as string}
+          onClick={async () => {
+            setTransactionState(TransactionState.LOADING);
+            await validateContract(addressField, provider, setContractValid);
+          }}
+          iconLeft={icons[transactionState]}
+          isActive={transactionState === TransactionState.LOADING}
+          disabled={addressField === ''}
           size="large"
           className="mt-3 w-full"
         />
+        {transactionState === TransactionState.SUCCESS && (
+          <AlertInlineContainer>
+            <AlertInline
+              label={t('scc.addressValidation.successLabel') as string}
+              mode="success"
+            />
+          </AlertInlineContainer>
+        )}
       </Content>
     </ModalBottomSheetSwitcher>
   );
@@ -103,4 +148,8 @@ const Title = styled.h2.attrs({
 
 const Description = styled.p.attrs({
   className: 'ft-text-sm text-ui-600 font-normal',
+})``;
+
+const AlertInlineContainer = styled.div.attrs({
+  className: 'mx-auto mt-2 w-max',
 })``;

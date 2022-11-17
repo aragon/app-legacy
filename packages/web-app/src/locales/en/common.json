@@ -739,7 +739,11 @@
       "modalTitle": "Smart Contract Composer",
       "title": "Smart Contract Address",
       "description": "Enter the desired smart contract address. It is best to copy this address directly from",
-      "actionLabel": "Validate Smart Contract"
+      "actionLabelWaiting": "Validate Smart Contract",
+      "actionLabelLoading": "Validate Smart Contract ...",
+      "actionLabelSuccess": "Compose Actions",
+      "successLabel": "Smart Contract Verified",
+      "tryAgain": "could not be verified"
     }
   }
 }
