@@ -10,7 +10,7 @@ import styled from 'styled-components';
 
 type DesktopModalHeaderProps = {
   onClose?: () => void;
-  selectedContract?: string;
+  selectedContract?: string; // Note: may come from form, not set in stone
 };
 
 const DesktopModalHeader: React.FC<DesktopModalHeaderProps> = props => {

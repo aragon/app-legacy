@@ -17,6 +17,7 @@ export type SmartContract = {
   name: string;
 };
 
+// NOTE: may come from form, not set in stone
 type SCCListGroupProps = {
   contracts: Array<SmartContract>;
 };
