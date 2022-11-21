@@ -18,7 +18,6 @@ import {useClient} from 'hooks/useClient';
 import {useDaoDetails} from 'hooks/useDaoDetails';
 import {useDaoMembers} from 'hooks/useDaoMembers';
 import {useDaoParam} from 'hooks/useDaoParam';
-import {useDaoToken} from 'hooks/useDaoToken';
 import {PluginTypes, usePluginClient} from 'hooks/usePluginClient';
 import {usePluginSettings} from 'hooks/usePluginSettings';
 import {usePollGasFee} from 'hooks/usePollGasfee';
@@ -68,14 +67,13 @@ const CreateProposalProvider: React.FC<Props> = ({
     daoDetails?.plugins[0] || ({} as InstalledPluginListItem);
 
   const {
-    data: {members},
+    data: {members, daoToken},
   } = useDaoMembers(pluginAddress, pluginType as PluginTypes);
 
   const {data: pluginSettings} = usePluginSettings(
     pluginAddress,
     pluginType as PluginTypes
   );
-  const {data: daoToken} = useDaoToken(pluginAddress);
 
   const {client} = useClient();
   const pluginClient = usePluginClient(pluginType as PluginTypes);
@@ -86,12 +84,7 @@ const CreateProposalProvider: React.FC<Props> = ({
   const [creationProcessState, setCreationProcessState] =
     useState<TransactionState>(TransactionState.WAITING);
 
-  // TODO: set proposal ID when sdk returns proper id for now dummy id
-  const [proposalId] = useState<string>(
-    '0xd7e937b8d779de644c691857e58e3342ab322345_0x0'
-  );
-
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [proposalId, setProposalId] = useState<string>();
   const [tokenSupply, setTokenSupply] = useState<bigint>();
   const cachedProposals = useReactiveVar(pendingProposalsVar);
 
@@ -334,8 +327,7 @@ const CreateProposalProvider: React.FC<Props> = ({
             break;
           case ProposalCreationSteps.DONE:
             console.log('proposal id', step.proposalId);
-            // TODO: uncomment when sdk returns proper id
-            // setProposalId(step.proposalId);
+            setProposalId(step.proposalId);
             setCreationProcessState(TransactionState.SUCCESS);
             trackEvent('newProposal_transaction_success', {
               dao_address: dao,
@@ -345,8 +337,7 @@ const CreateProposalProvider: React.FC<Props> = ({
             });
 
             // cache proposal
-            // TODO: use step.proposalId when sdk returns proper id
-            handleCacheProposal(proposalId);
+            handleCacheProposal(step.proposalId);
             break;
         }
       } catch (error) {
@@ -373,9 +364,8 @@ const CreateProposalProvider: React.FC<Props> = ({
         daoName: daoDetails?.metadata.name,
         daoToken,
         totalVotingWeight:
-          // TODO: use token supply once RPC issue is resolved
-          pluginType === 'erc20voting.dao.eth'
-            ? BigInt('500000000000000000000000000')
+          pluginType === 'erc20voting.dao.eth' && tokenSupply
+            ? tokenSupply
             : members.length,
         pluginSettings,
         proposalCreationData,
@@ -407,6 +397,7 @@ const CreateProposalProvider: React.FC<Props> = ({
       pluginType,
       preferences?.functional,
       proposalCreationData,
+      tokenSupply,
     ]
   );
 
