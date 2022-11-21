@@ -17,9 +17,9 @@ import {Controller, useFormContext, useWatch} from 'react-hook-form';
 import {CHAIN_METADATA, TransactionState} from 'utils/constants';
 import {useNetwork} from 'context/network';
 import {validateContract} from 'utils/validators';
-import {useProviders} from 'context/providers';
 import {useAlertContext} from 'context/alert';
 import {isAddress} from 'ethers/lib/utils';
+import {EtherscanContractResponse} from 'utils/types';
 
 type Props = {
   isOpen: boolean;
@@ -43,12 +43,14 @@ const ContractAddressValidation: React.FC<Props> = props => {
   );
   const {control} = useFormContext();
   const {network} = useNetwork();
-  const {infura: provider} = useProviders();
   const addressField = useWatch({
     name: 'contractAddress',
     control,
   });
   const {alert} = useAlertContext();
+  const [contractData, setContractData] = useState<
+    EtherscanContractResponse | undefined
+  >();
 
   const label = {
     [TransactionState.WAITING]: t('scc.addressValidation.actionLabelWaiting'),
@@ -57,9 +59,14 @@ const ContractAddressValidation: React.FC<Props> = props => {
     [TransactionState.ERROR]: t('scc.addressValidation.tryAgain'),
   };
 
-  const setContractValid = useCallback((value: boolean) => {
-    if (value) setTransactionState(TransactionState.SUCCESS);
-    else setTransactionState(TransactionState.ERROR);
+  const setContractValid = useCallback(value => {
+    if (value) {
+      setTransactionState(TransactionState.SUCCESS);
+      setContractData(value);
+    } else {
+      setTransactionState(TransactionState.ERROR);
+      setContractData(value);
+    }
   }, []);
 
   // clear field when there is a value, else paste
@@ -137,7 +144,7 @@ const ContractAddressValidation: React.FC<Props> = props => {
           label={label[transactionState] as string}
           onClick={async () => {
             setTransactionState(TransactionState.LOADING);
-            setContractValid(await validateContract(addressField, provider));
+            setContractValid(await validateContract(addressField));
           }}
           iconLeft={
             transactionState === TransactionState.LOADING ? (
@@ -153,7 +160,11 @@ const ContractAddressValidation: React.FC<Props> = props => {
         {transactionState === TransactionState.SUCCESS && (
           <AlertInlineContainer>
             <AlertInline
-              label={t('scc.addressValidation.successLabel') as string}
+              label={
+                t('scc.addressValidation.successLabel', {
+                  contractName: contractData?.ContractName,
+                }) as string
+              }
               mode="success"
             />
           </AlertInlineContainer>

@@ -5,7 +5,7 @@ import {InfuraProvider} from '@ethersproject/providers';
 
 import {i18n} from '../../i18n.config';
 import {isERC20Token} from './tokens';
-import {ALPHA_NUMERIC_PATTERN} from './constants';
+import {ALPHA_NUMERIC_PATTERN, ETHERSCAN_BASIC_URL} from './constants';
 import {
   ActionItem,
   Action,
@@ -190,16 +190,18 @@ export async function isDaoNameValid(value: string, provider: InfuraProvider) {
   }
 }
 
-export async function validateContract(
-  address: string,
-  provider: EthersProviders.Provider
-) {
+export async function validateContract(address: string) {
+  const apiKey = import.meta.env.VITE_ETHERSCAN_API_KEY;
+  const url = `${ETHERSCAN_BASIC_URL}?module=contract&action=getsourcecode&address=${address}&apikey=${apiKey}`;
+
   try {
-    // TODO: This Method is temporary and Will be replaced by etherscan API Verification
-    const code = await provider.getCode(address);
-    return code !== '0x';
+    const res = await fetch(url);
+    const data = await res.json();
+    if (data.result[0].ABI !== 'Contract source code not verified')
+      return data.result[0];
+    else return;
   } catch (error) {
     console.log(error);
-    return false;
+    return;
   }
 }

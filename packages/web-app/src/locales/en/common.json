@@ -742,7 +742,7 @@
       "actionLabelWaiting": "Validate Smart Contract",
       "actionLabelLoading": "Validating Smart Contract ...",
       "actionLabelSuccess": "Compose Actions",
-      "successLabel": "Smart Contract Verified",
+      "successLabel": "Smart Contract validated -> {{contractName}}",
       "tryAgain": "could not be verified"
     }
   }
