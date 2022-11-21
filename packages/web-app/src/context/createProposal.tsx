@@ -319,8 +319,13 @@ const CreateProposalProvider: React.FC<Props> = ({
     }
 
     setCreationProcessState(TransactionState.LOADING);
-    for await (const step of proposalIterator) {
-      try {
+
+    // NOTE: quite weird, I've had to wrap the entirety of the generator
+    // in a try-catch because when the user rejects the transaction,
+    // the try-catch block inside the for loop would not catch the error
+    // FF - 11/21/2020
+    try {
+      for await (const step of proposalIterator) {
         switch (step.key) {
           case ProposalCreationSteps.CREATING:
             console.log(step.txHash);
@@ -340,16 +345,16 @@ const CreateProposalProvider: React.FC<Props> = ({
             handleCacheProposal(step.proposalId);
             break;
         }
-      } catch (error) {
-        console.error(error);
-        setCreationProcessState(TransactionState.ERROR);
-        trackEvent('newProposal_transaction_failed', {
-          dao_address: dao,
-          network: network,
-          wallet_provider: provider?.connection.url,
-          error,
-        });
       }
+    } catch (error) {
+      console.error(error);
+      setCreationProcessState(TransactionState.ERROR);
+      trackEvent('newProposal_transaction_failed', {
+        dao_address: dao,
+        network: network,
+        wallet_provider: provider?.connection.url,
+        error,
+      });
     }
   };
 
