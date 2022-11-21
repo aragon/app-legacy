@@ -272,7 +272,7 @@ export const customJSONReplacer = (_: string, value: unknown) => {
   }
 
   // bigint
-  if (typeof value === 'bigint') return value.toString();
+  if (typeof value === 'bigint') return `${value.toString()}n`;
 
   return value;
 };
