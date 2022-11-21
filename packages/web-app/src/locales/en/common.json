@@ -736,11 +736,11 @@
       "primaryBtnLabel": "Connect Smart Contract"
     },
     "addressValidation": {
-      "modalTitle": "Smart Contract Composer",
+      "modalTitle": "Connect Smart Contract",
       "title": "Smart Contract Address",
       "description": "Enter the desired smart contract address. It is best to copy this address directly from",
       "actionLabelWaiting": "Validate Smart Contract",
-      "actionLabelLoading": "Validate Smart Contract ...",
+      "actionLabelLoading": "Validating Smart Contract ...",
       "actionLabelSuccess": "Compose Actions",
       "successLabel": "Smart Contract Verified",
       "tryAgain": "could not be verified"

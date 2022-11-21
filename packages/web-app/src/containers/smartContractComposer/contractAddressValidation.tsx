@@ -1,4 +1,4 @@
-import React, {useCallback, useState} from 'react';
+import React, {useCallback, useMemo, useState} from 'react';
 import ModalBottomSheetSwitcher from 'components/modalBottomSheetSwitcher';
 import ModalHeader from './modalHeader';
 import {useTranslation} from 'react-i18next';
@@ -18,6 +18,8 @@ import {CHAIN_METADATA, TransactionState} from 'utils/constants';
 import {useNetwork} from 'context/network';
 import {validateContract} from 'utils/validators';
 import {useProviders} from 'context/providers';
+import {useAlertContext} from 'context/alert';
+import {isAddress} from 'ethers/lib/utils';
 
 type Props = {
   isOpen: boolean;
@@ -27,7 +29,7 @@ type Props = {
 
 const icons = {
   [TransactionState.WAITING]: undefined,
-  [TransactionState.LOADING]: <Spinner size="xs" color="white" />,
+  [TransactionState.LOADING]: undefined,
   [TransactionState.SUCCESS]: <IconChevronRight />,
   [TransactionState.ERROR]: <IconReload />,
 };
@@ -46,6 +48,7 @@ const ContractAddressValidation: React.FC<Props> = props => {
     name: 'contractAddress',
     control,
   });
+  const {alert} = useAlertContext();
 
   const label = {
     [TransactionState.WAITING]: t('scc.addressValidation.actionLabelWaiting'),
@@ -59,12 +62,34 @@ const ContractAddressValidation: React.FC<Props> = props => {
     else setTransactionState(TransactionState.ERROR);
   }, []);
 
+  // clear field when there is a value, else paste
+  const handleAdornmentClick = useCallback(
+    (value: string, onChange: (value: string) => void) => {
+      // when there is a value clear it
+      if (value) {
+        onChange('');
+        alert(t('alert.chip.inputCleared'));
+      } else handleClipboardActions(value, onChange, alert);
+    },
+    [alert, t]
+  );
+
+  const isButtonDisabled = useMemo(
+    () =>
+      transactionState === TransactionState.SUCCESS || !isAddress(addressField),
+    [addressField, transactionState]
+  );
+
   return (
     <ModalBottomSheetSwitcher isOpen={props.isOpen} onClose={props.onClose}>
       <ModalHeader
         title={t('scc.addressValidation.modalTitle') as string}
         onClose={props.onClose}
         onBackButtonClicked={props.onBackButtonClicked}
+        disabled={
+          transactionState === TransactionState.LOADING ||
+          transactionState === TransactionState.SUCCESS
+        }
       />
       <Content>
         <DescriptionContainer>
@@ -83,6 +108,7 @@ const ContractAddressValidation: React.FC<Props> = props => {
           control={control}
           rules={{
             required: t('errors.required.tokenAddress') as string,
+            validate: value => isAddress(value) || t('errors.invalidAddress'),
           }}
           defaultValue={''}
           render={({
@@ -98,10 +124,8 @@ const ContractAddressValidation: React.FC<Props> = props => {
                 onBlur={onBlur}
                 onChange={onChange}
                 placeholder="0x ..."
-                adornmentText={value ? t('labels.copy') : t('labels.paste')}
-                onAdornmentClick={() =>
-                  handleClipboardActions(value, onChange, alert)
-                }
+                adornmentText={value ? t('labels.clear') : t('labels.paste')}
+                onAdornmentClick={() => handleAdornmentClick(value, onChange)}
               />
               {error?.message && (
                 <AlertInline label={error.message} mode="critical" />
@@ -113,11 +137,16 @@ const ContractAddressValidation: React.FC<Props> = props => {
           label={label[transactionState] as string}
           onClick={async () => {
             setTransactionState(TransactionState.LOADING);
-            await validateContract(addressField, provider, setContractValid);
+            setContractValid(await validateContract(addressField, provider));
           }}
-          iconLeft={icons[transactionState]}
+          iconLeft={
+            transactionState === TransactionState.LOADING ? (
+              <Spinner size="xs" color="white" />
+            ) : undefined
+          }
+          iconRight={icons[transactionState]}
           isActive={transactionState === TransactionState.LOADING}
-          disabled={addressField === ''}
+          disabled={isButtonDisabled}
           size="large"
           className="mt-3 w-full"
         />
