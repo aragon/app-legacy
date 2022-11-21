@@ -17,11 +17,13 @@ import useScreen from 'hooks/useScreen';
 import {useTranslation} from 'react-i18next';
 import {formatDate} from 'utils/date';
 import {Transfer} from 'utils/types';
+import {useAlertContext} from 'context/alert';
 
 const Dashboard: React.FC = () => {
   const {t} = useTranslation();
   const {network} = useNetwork();
   const {isDesktop} = useScreen();
+  const {alert} = useAlertContext();
 
   const {data: daoId, isLoading: daoParamLoading} = useDaoParam();
 
@@ -42,6 +44,13 @@ const Dashboard: React.FC = () => {
   const isAddressList =
     (dao.plugins[0].id as PluginTypes) === 'addresslistvoting.dao.eth';
 
+  async function handleClipboardActions() {
+    await navigator.clipboard.writeText(
+      `app.aragon.org/#/daos/${network}/${daoId}`
+    );
+    alert(t('alert.chip.inputCopied'));
+  }
+
   return (
     <>
       <HeaderWrapper>
@@ -60,6 +69,7 @@ const Dashboard: React.FC = () => {
               ? t('explore.explorer.walletBased')
               : t('explore.explorer.tokenBased')
           }
+          copiedOnClick={handleClipboardActions}
           links={
             dao?.metadata.links.map(link => ({
               label: link.name,
