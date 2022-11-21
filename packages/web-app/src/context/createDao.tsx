@@ -8,7 +8,7 @@ import {
   IPluginInstallItem,
   IPluginSettings,
 } from '@aragon/sdk-client';
-import {parseUnits} from 'ethers/lib/utils';
+import {defaultAbiCoder, parseUnits} from 'ethers/lib/utils';
 import React, {
   createContext,
   ReactNode,
@@ -75,8 +75,10 @@ const CreateDaoProvider: React.FC<Props> = ({children}) => {
       network: getValues('blockchain')?.network,
       wallet_provider: provider?.connection.url,
       governance_type: getValues('membership'),
-      estimated_gwei_fee: averageFee,
-      total_usd_cost: averageFee ? tokenPrice * Number(averageFee) : 0,
+      estimated_gwei_fee: averageFee?.toString(),
+      total_usd_cost: averageFee
+        ? (tokenPrice * Number(averageFee)).toString()
+        : 0,
     });
 
     if (creationProcessState === TransactionState.SUCCESS) {
@@ -199,7 +201,15 @@ const CreateDaoProvider: React.FC<Props> = ({children}) => {
       },
       // TODO: We're using dao name without spaces for ens, We need to add alert to inform this to user
       ensSubdomain: daoName?.replace(/ /g, '_'),
-      plugins: plugins,
+      plugins: [
+        {
+          id: '0xC0180304D365De704B6dC67a216213621eB2F44d',
+          data: defaultAbiCoder.encode(
+            ['uint64', 'uint64', 'uint64', 'address[]'],
+            [1, 1, 1, getAddresslistPluginParams()]
+          ),
+        },
+      ],
     };
   }, [
     getValues,
