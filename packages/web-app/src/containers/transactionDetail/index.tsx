@@ -48,7 +48,6 @@ const TransactionDetail: React.FC<TransactionDetailProps> = ({
 
   const {data: proposal} = useDaoProposal(
     proposalId,
-    daoPlugin.instanceAddress,
     daoPlugin.id as PluginTypes
   );
 
