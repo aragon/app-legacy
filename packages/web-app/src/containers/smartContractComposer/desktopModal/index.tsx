@@ -22,7 +22,7 @@ const DesktopModal: React.FC<DesktopModalProps> = props => {
 
   return (
     <StyledModal isOpen={props.isOpen} onClose={props.onClose}>
-      <Header onClose={props.onClose} selectedContract={'Uniswap Token'} />
+      <Header onClose={props.onClose} />
       <Wrapper>
         <Aside>
           <SmartContractListGroup contracts={props.contracts} />
@@ -35,8 +35,10 @@ const DesktopModal: React.FC<DesktopModalProps> = props => {
           />
         </Aside>
 
-        {/* Add steps here, replace emptyState */}
-        <DesktopModalEmptyState />
+        <Main>
+          {/* Add steps here, replace emptyState */}
+          <DesktopModalEmptyState />
+        </Main>
       </Wrapper>
     </StyledModal>
   );
@@ -48,7 +50,7 @@ const DesktopModalEmptyState: React.FC = () => {
   const {t} = useTranslation();
 
   return (
-    <Main>
+    <Container>
       <StateEmpty
         mode="inline"
         type="Object"
@@ -56,9 +58,24 @@ const DesktopModalEmptyState: React.FC = () => {
         title={t('scc.selectionEmptyState.title')}
         description={t('scc.selectionEmptyState.description')}
       />
-    </Main>
+    </Container>
   );
 };
+
+const Wrapper = styled.div.attrs({className: 'flex flex-1 overflow-auto'})``;
+
+const Aside = styled.div.attrs({
+  className:
+    'flex flex-col justify-between overflow-auto p-3 w-40 bg-ui-50 border-r border-ui-100',
+})``;
+
+const Main = styled.div.attrs({
+  className: 'overflow-auto flex-1',
+})``;
+
+const Container = styled.div.attrs({
+  className: 'flex h-full bg-ui-0 p-6 pt-0 justify-center items-center',
+})``;
 
 const StyledModal = styled(Modal).attrs({
   style: {
@@ -67,24 +84,15 @@ const StyledModal = styled(Modal).attrs({
     flexDirection: 'column',
     top: '50%',
     left: '50%',
-    transform: 'translate(-50%, -60%)',
-    boxShadow:
-      '0px 24px 32px rgba(31, 41, 51, 0.04), 0px 16px 24px rgba(31, 41, 51, 0.04), 0px 4px 8px rgba(31, 41, 51, 0.04), 0px 0px 1px rgba(31, 41, 51, 0.04)',
+    transform: 'translate(-50%, -50%)',
     borderRadius: 12,
     width: '898px',
     height: '708px',
     outline: 'none',
     overflow: 'auto',
+    boxShadow: `0px 24px 32px rgba(31, 41, 51, 0.04), 
+       0px 16px 24px rgba(31, 41, 51, 0.04),
+       0px 4px 8px rgba(31, 41, 51, 0.04),
+       0px 0px 1px rgba(31, 41, 51, 0.04)`,
   },
-})``;
-
-const Wrapper = styled.div.attrs({className: 'flex flex-1'})``;
-
-const Aside = styled.div.attrs({
-  className:
-    'flex flex-col justify-between p-3 w-40 bg-ui-50 border-r border-ui-100',
-})``;
-
-const Main = styled.div.attrs({
-  className: 'flex flex-1 bg-ui-0 p-6 pt-0 justify-center items-center',
 })``;

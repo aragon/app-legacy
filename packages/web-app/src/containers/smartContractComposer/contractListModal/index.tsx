@@ -12,11 +12,19 @@ import BottomSheet from 'components/bottomSheet';
 import useScreen from 'hooks/useScreen';
 import SmartContractListGroup from '../components/smartContractListGroup';
 import DesktopModal from '../desktopModal';
+import {ActionSearchInput} from '../desktopModal/header';
 
 // Assumption is that these will come from the form;
 // temporarily passing them down
 const DUMMY_CONTRACTS = [
   {actions: [{}, {}], address: '0x123', logo: '', name: 'Uniswap Token'},
+  // {actions: [{}, {}], address: '0x123', logo: '', name: 'Uniswap Token'},
+  // {actions: [{}, {}], address: '0x123', logo: '', name: 'Uniswap Token'},
+  // {actions: [{}, {}], address: '0x123', logo: '', name: 'Uniswap Token'},
+  // {actions: [{}, {}], address: '0x123', logo: '', name: 'Uniswap Token'},
+  // {actions: [{}, {}], address: '0x123', logo: '', name: 'Uniswap Token'},
+  // {actions: [{}, {}], address: '0x123', logo: '', name: 'Uniswap Token'},
+
   {
     actions: [{}, {}, {}],
     address: '0x234',
@@ -78,9 +86,10 @@ const CustomMobileHeader: React.FC<CustomHeaderProps> = props => {
     <Header>
       <ButtonIcon mode="secondary" size="small" icon={<IconHome />} bgWhite />
 
-      <p className="flex-1 text-ui-300 border">
-        {t('scc.labels.searchPlaceholder')}
-      </p>
+      <ActionSearchInput
+        type="text"
+        placeholder={t('scc.labels.searchPlaceholder')}
+      />
 
       <ButtonIcon
         mode="secondary"
@@ -94,10 +103,12 @@ const CustomMobileHeader: React.FC<CustomHeaderProps> = props => {
 };
 
 const Header = styled.div.attrs({
-  className: 'flex items-center rounded-xl space-x-2 p-2',
+  className: 'flex items-center rounded-xl space-x-2 p-2 bg-ui-0',
 })`
   box-shadow: 0px 4px 8px rgba(31, 41, 51, 0.04),
     0px 0px 2px rgba(31, 41, 51, 0.06), 0px 0px 1px rgba(31, 41, 51, 0.04);
 `;
 
-const Content = styled.div.attrs({className: 'py-3 px-2 space-y-3'})``;
+const Content = styled.div.attrs({
+  className: 'py-3 px-2 space-y-3 overflow-auto',
+})``;

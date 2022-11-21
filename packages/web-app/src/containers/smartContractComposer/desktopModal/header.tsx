@@ -27,7 +27,11 @@ const DesktopModalHeader: React.FC<DesktopModalHeaderProps> = props => {
             <IconChevronRight />
           </>
         )}
-        <p className="border">{t('scc.labels.searchPlaceholder')}</p>
+
+        <ActionSearchInput
+          type="text"
+          placeholder={t('scc.labels.searchPlaceholder')}
+        />
       </LeftContent>
       <ButtonIcon
         mode="secondary"
@@ -52,4 +56,8 @@ const LeftContent = styled.div.attrs({
 
 const SelectedContract = styled.p.attrs({
   className: 'font-bold text-ui-600 ft-text-base',
+})``;
+
+export const ActionSearchInput = styled.input.attrs({
+  className: 'flex-1 text-ui-300 bg-ui-0 ft-text-base focus:outline-none',
 })``;
