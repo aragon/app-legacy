@@ -5,19 +5,13 @@
  */
 
 import {useReactiveVar} from '@apollo/client';
-import {
-  AddressListProposal,
-  ClientAddressList,
-  ClientErc20,
-  Erc20Proposal,
-} from '@aragon/sdk-client';
-import {BigNumber, constants} from 'ethers';
+import {AddressListProposal, Erc20Proposal} from '@aragon/sdk-client';
+import {BigNumber} from 'ethers';
 import {useCallback, useEffect, useState} from 'react';
 
 import {pendingProposalsVar, pendingVotesVar} from 'context/apolloClient';
 import {isTokenBasedProposal, MappedVotes} from 'utils/proposals';
 import {DetailedProposal, Erc20ProposalVote, HookData} from 'utils/types';
-import {useClient} from './useClient';
 import {PluginTypes, usePluginClient} from './usePluginClient';
 import {usePrivacyContext} from 'context/privacyContext';
 import {PENDING_PROPOSALS_KEY, PENDING_VOTES_KEY} from 'utils/constants';
@@ -26,89 +20,23 @@ import {customJSONReplacer} from 'utils/library';
 /**
  * Retrieve a single detailed proposal
  * @param proposalId id of proposal to retrieve
- * @param pluginAddress plugin from which proposals will be retrieved
  * @param pluginType plugin type
  * @returns a detailed proposal
  */
 
 export const useDaoProposal = (
   proposalId: string,
-  pluginAddress: string,
   pluginType: PluginTypes
 ): HookData<DetailedProposal | undefined> => {
   const [data, setData] = useState<DetailedProposal>();
   const [error, setError] = useState<Error>();
   const [isLoading, setIsLoading] = useState(false);
 
-  const {client: globalClient} = useClient();
   const pluginClient = usePluginClient(pluginType);
 
   const {preferences} = usePrivacyContext();
   const cachedVotes = useReactiveVar(pendingVotesVar);
   const cachedProposals = useReactiveVar(pendingProposalsVar);
-
-  const daoAddress = '0x1234567890123456789012345678901234567890';
-  const daoTokenAddress = '0x1234567890123456789012345678901234567890';
-
-  // TODO: this method is for dummy usage only, Will remove later
-
-  const getEncodedAction = useCallback(() => {
-    const members: string[] = [
-      '0x1357924680135792468013579246801357924680',
-      '0x2468013579246801357924680135792468013579',
-      '0x0987654321098765432109876543210987654321',
-    ];
-
-    if (!globalClient || !pluginClient) return;
-    const encodedWithdrawAction = globalClient.encoding.withdrawAction(
-      daoAddress,
-      {
-        recipientAddress: '0x1234567890123456789012345678901234567890',
-        amount: BigInt('10000000000000000000000'),
-        tokenAddress: constants.AddressZero,
-        reference: 'test',
-      }
-    );
-
-    if (pluginType === 'addresslistvoting.dao.eth') {
-      const encodedAddMembersAction = Promise.resolve(
-        (pluginClient as ClientAddressList).encoding.addMembersAction(
-          pluginAddress,
-          members
-        )
-      );
-
-      const encodedRemoveMembersAction = Promise.resolve(
-        (pluginClient as ClientAddressList).encoding.removeMembersAction(
-          daoAddress,
-          members
-        )
-      );
-
-      return Promise.all([
-        encodedWithdrawAction,
-        encodedAddMembersAction,
-        encodedRemoveMembersAction,
-      ]);
-    } else {
-      const encodedTokenMintingActions = members.map((member: string) =>
-        Promise.resolve(
-          (pluginClient as ClientErc20).encoding.mintTokenAction(
-            daoTokenAddress,
-            {
-              address: member,
-              amount: BigInt(10 * 10 ** 18),
-            }
-          )
-        )
-      );
-
-      return Promise.all([
-        encodedWithdrawAction,
-        ...encodedTokenMintingActions,
-      ]);
-    }
-  }, [globalClient, pluginAddress, pluginClient, pluginType]);
 
   // add cached vote to proposal and recalculate dependent info
   const augmentProposalWithCache = useCallback(
@@ -169,9 +97,6 @@ export const useDaoProposal = (
         const cachedProposal = cachedProposals[proposalId];
         const proposal = await pluginClient?.methods.getProposal(proposalId);
 
-        const encodedActions = await getEncodedAction();
-        if (proposal && encodedActions) proposal.actions = encodedActions;
-
         if (proposal) {
           setData({...augmentProposalWithCache(proposal)});
 
@@ -198,7 +123,6 @@ export const useDaoProposal = (
   }, [
     augmentProposalWithCache,
     cachedProposals,
-    getEncodedAction,
     pluginClient?.methods,
     preferences?.functional,
     proposalId,

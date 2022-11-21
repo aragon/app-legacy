@@ -104,7 +104,7 @@ const Proposal: React.FC = () => {
     data: proposal,
     error: proposalError,
     isLoading: proposalIsLoading,
-  } = useDaoProposal(proposalId!, pluginAddress, pluginType);
+  } = useDaoProposal(proposalId!, pluginType);
 
   const {data: canVote} = useWalletCanVote(
     address,
