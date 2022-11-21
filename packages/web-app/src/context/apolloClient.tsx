@@ -5,12 +5,18 @@ import {
   makeVar,
   NormalizedCacheObject,
 } from '@apollo/client';
-import {AddressListProposal, Deposit, Erc20Proposal} from '@aragon/sdk-client';
+import {
+  AddressListProposal,
+  Deposit,
+  Erc20Proposal,
+  ICreateParams,
+} from '@aragon/sdk-client';
 import {RestLink} from 'apollo-link-rest';
 import {CachePersistor, LocalStorageWrapper} from 'apollo3-cache-persist';
 
 import {
   BASE_URL,
+  PENDING_DAOS_KEY,
   PENDING_DEPOSITS_KEY,
   PENDING_PROPOSALS_KEY,
   PENDING_VOTES_KEY,
@@ -149,6 +155,16 @@ const pendingProposals = JSON.parse(
 );
 const pendingProposalsVar = makeVar<PendingProposals>(pendingProposals);
 
+type PendingDaoCreation = {
+  [key: string]: {
+    [key: string]: ICreateParams;
+  };
+};
+const pendingDaoCreation = JSON.parse(
+  localStorage.getItem(PENDING_DAOS_KEY) || '{}'
+);
+const pendingDaoCreationVar = makeVar<PendingDaoCreation>(pendingDaoCreation);
+
 export {
   client,
   favoriteDAOs,
@@ -156,4 +172,5 @@ export {
   pendingDeposits,
   pendingProposalsVar,
   pendingVotesVar,
+  pendingDaoCreationVar,
 };

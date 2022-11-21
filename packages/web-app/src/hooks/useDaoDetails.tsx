@@ -1,8 +1,11 @@
+import {useReactiveVar} from '@apollo/client';
 import {DaoDetails} from '@aragon/sdk-client';
+import {pendingDaoCreationVar} from 'context/apolloClient';
 import {useEffect, useState} from 'react';
 
 import {HookData} from 'utils/types';
 import {useClient} from './useClient';
+import {useWallet} from './useWallet';
 
 /**
  * Get dao metadata
@@ -10,20 +13,32 @@ import {useClient} from './useClient';
  * @param daoId dao ens name or address
  * @returns dao metadata for given address
  */
-export function useDaoDetails(daoId: string): HookData<DaoDetails | undefined> {
+export function useDaoDetails(
+  daoId: string
+): HookData<DaoDetails | undefined> & {waitingForSubgraph: boolean} {
   const {client} = useClient();
 
   const [data, setData] = useState<DaoDetails>();
   const [error, setError] = useState<Error>();
   const [isLoading, setIsLoading] = useState(false);
+  const [waitingForSubgraph, setWaitingForSubgraph] = useState(false);
+  const {network} = useWallet();
+  const cachedDaos = useReactiveVar(pendingDaoCreationVar);
 
   useEffect(() => {
     async function getDaoMetadata() {
       try {
         setIsLoading(true);
 
-        const dao = await client?.methods.getDao(daoId.toLowerCase());
-        if (dao) setData(dao);
+        if (cachedDaos?.[network]?.[daoId.toLowerCase()]) {
+          setWaitingForSubgraph(true);
+        } else {
+          const dao = await client?.methods.getDao(daoId.toLowerCase());
+          if (dao) {
+            setData(dao);
+            setWaitingForSubgraph(false);
+          }
+        }
       } catch (err) {
         console.error(err);
         setError(err as Error);
@@ -33,7 +48,7 @@ export function useDaoDetails(daoId: string): HookData<DaoDetails | undefined> {
     }
 
     if (daoId) getDaoMetadata();
-  }, [client?.methods, daoId]);
+  }, [cachedDaos, client?.methods, daoId, network]);
 
-  return {data, error, isLoading};
+  return {data, error, isLoading, waitingForSubgraph};
 }
