@@ -215,7 +215,11 @@ export const VotingTerminal: React.FC<VotingTerminalProps> = ({
             </InfoLine>
           </VStackSection>
 
-          <VStackSection>
+          <VStackSection
+            className={
+              status ? '' : 'pb-0 tablet:pb-0 border-b-0 tablet:border-b-0 '
+            }
+          >
             <SectionHeader>{t('votingTerminal.activity')}</SectionHeader>
             <InfoLine>
               <p>{t('votingTerminal.participation')}</p>
@@ -279,28 +283,30 @@ export const VotingTerminal: React.FC<VotingTerminalProps> = ({
           </VoteContainer>
         </VotingContainer>
       ) : (
-        <>
-          <VoteContainer>
-            <ButtonText
-              label={voteButtonLabel || t('votingTerminal.voteNow')}
-              size="large"
-              onClick={onVoteClicked}
-              className="w-full tablet:w-max"
-              disabled={voteNowDisabled}
-            />
-            <AlertInline
-              label={statusLabel}
-              mode={status === 'Defeated' ? 'critical' : 'neutral'}
-              icon={<StatusIcon status={status} />}
-            />
-          </VoteContainer>
+        status && (
+          <>
+            <VoteContainer>
+              <ButtonText
+                label={voteButtonLabel || t('votingTerminal.voteNow')}
+                size="large"
+                onClick={onVoteClicked}
+                className="w-full tablet:w-max"
+                disabled={voteNowDisabled}
+              />
+              <AlertInline
+                label={statusLabel}
+                mode={status === 'Defeated' ? 'critical' : 'neutral'}
+                icon={<StatusIcon status={status} />}
+              />
+            </VoteContainer>
 
-          {alertMessage && (
-            <div className="pt-2 tablet:pt-0 tablet:mt-3">
-              <AlertCard title={alertMessage} mode="warning" />
-            </div>
-          )}
-        </>
+            {alertMessage && (
+              <div className="pt-2 tablet:pt-0 tablet:mt-3">
+                <AlertCard title={alertMessage} mode="warning" />
+              </div>
+            )}
+          </>
+        )
       )}
     </Container>
   );
@@ -341,9 +347,9 @@ const VStackNormal = styled.div.attrs({
   className: 'space-y-1.5',
 })``;
 
-const VStackSection = styled(VStackNormal).attrs({
+const VStackSection = styled.div.attrs({
   className:
-    'p-2 tablet:p-3 -mx-2 tablet:-mx-3 border-b border-ui-100' as string,
+    'space-y-1.5 p-2 tablet:p-3 -mx-2 tablet:-mx-3 border-b border-ui-100' as string,
 })``;
 
 const HStack = styled.div.attrs({
