@@ -12,7 +12,6 @@ import {
   Spinner,
   ValueInput,
 } from '@aragon/ui-components';
-import {shortenAddress} from '@aragon/ui-components/src/utils/addresses';
 
 import {handleClipboardActions} from 'utils/library';
 import {Controller, useFormContext, useWatch} from 'react-hook-form';
@@ -137,7 +136,7 @@ const ContractAddressValidation: React.FC<Props> = props => {
                 mode={error ? 'critical' : 'default'}
                 name={name}
                 onBlur={onBlur}
-                value={isTransactionSuccessful ? shortenAddress(value) : value}
+                value={value}
                 onChange={onChange}
                 disabled={isTransactionSuccessful || isTransactionLoading}
                 placeholder="0x ..."
