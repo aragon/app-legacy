@@ -1,4 +1,5 @@
 import {
+  AlertCard,
   AlertInline,
   CheckboxListItem,
   DateInput,
@@ -213,15 +214,17 @@ const SetupVotingForm: React.FC = () => {
       {/* Voting Type Selection */}
       <FormSection>
         <Label label={t('newWithdraw.setupVoting.optionLabel.title')} />
-        <>
-          <CheckboxListItem
-            label={t('newWithdraw.setupVoting.yesNoLabel.title')}
-            type="active"
-            helptext={t('newWithdraw.setupVoting.yesNoLabel.helpText')}
-            multiSelect={false}
-          />
-          <AlertInline label={t('infos.newVotingTypes')} mode="neutral" />
-        </>
+        <CheckboxListItem
+          label={t('newWithdraw.setupVoting.yesNoLabel.title')}
+          type="active"
+          helptext={t('newWithdraw.setupVoting.yesNoLabel.helpText')}
+          multiSelect={false}
+        />
+        <AlertCard
+          mode="info"
+          title={t('infos.newVotingTypes')}
+          helpText={t('infos.newTypesHelpText')}
+        />
       </FormSection>
 
       {/* Start Date */}
