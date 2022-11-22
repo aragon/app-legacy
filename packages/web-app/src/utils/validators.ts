@@ -8,7 +8,6 @@ import {isERC20Token} from './tokens';
 import {
   ALPHA_NUMERIC_PATTERN,
   CHAIN_METADATA,
-  ETHERSCAN_BASIC_URL,
   SupportedNetworks,
 } from './constants';
 import {
