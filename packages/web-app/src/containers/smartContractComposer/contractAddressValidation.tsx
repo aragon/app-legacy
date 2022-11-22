@@ -148,7 +148,7 @@ const ContractAddressValidation: React.FC<Props> = props => {
           label={label[transactionState] as string}
           onClick={async () => {
             setTransactionState(TransactionState.LOADING);
-            setContractValid(await validateContract(addressField));
+            setContractValid(await validateContract(addressField, network));
           }}
           iconLeft={
             isTransactionLoading ? (

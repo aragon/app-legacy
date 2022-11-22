@@ -61,6 +61,7 @@ export type ChainData = {
   logo: string;
   rpc: string[];
   nativeCurrency: NativeTokenData;
+  etherscanApi: string;
 };
 
 export type ChainList = Record<SupportedNetworks, ChainData>;
@@ -78,6 +79,7 @@ export const CHAIN_METADATA: ChainList = {
       symbol: 'ETH',
       decimals: 18,
     },
+    etherscanApi: 'https://api.arbiscan.io/api',
   },
   ethereum: {
     id: 1,
@@ -92,6 +94,7 @@ export const CHAIN_METADATA: ChainList = {
       symbol: 'ETH',
       decimals: 18,
     },
+    etherscanApi: 'https://api.etherscan.io/api',
   },
   polygon: {
     id: 137,
@@ -106,6 +109,7 @@ export const CHAIN_METADATA: ChainList = {
       symbol: 'MATIC',
       decimals: 18,
     },
+    etherscanApi: 'https://api.polygonscan.com/api',
   },
   'arbitrum-test': {
     id: 421613,
@@ -120,6 +124,7 @@ export const CHAIN_METADATA: ChainList = {
       symbol: 'ETH',
       decimals: 18,
     },
+    etherscanApi: 'https://api-goerli.arbiscan.io/api',
   },
   goerli: {
     id: 5,
@@ -137,6 +142,7 @@ export const CHAIN_METADATA: ChainList = {
       symbol: 'ETH',
       decimals: 18,
     },
+    etherscanApi: 'https://api-goerli.etherscan.io/api',
   },
   mumbai: {
     id: 80001,
@@ -155,5 +161,6 @@ export const CHAIN_METADATA: ChainList = {
       symbol: 'MATIC',
       decimals: 18,
     },
+    etherscanApi: 'https://api-testnet.polygonscan.com/api',
   },
 };

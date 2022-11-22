@@ -5,7 +5,12 @@ import {InfuraProvider} from '@ethersproject/providers';
 
 import {i18n} from '../../i18n.config';
 import {isERC20Token} from './tokens';
-import {ALPHA_NUMERIC_PATTERN, ETHERSCAN_BASIC_URL} from './constants';
+import {
+  ALPHA_NUMERIC_PATTERN,
+  CHAIN_METADATA,
+  ETHERSCAN_BASIC_URL,
+  SupportedNetworks,
+} from './constants';
 import {
   ActionItem,
   Action,
@@ -190,9 +195,12 @@ export async function isDaoNameValid(value: string, provider: InfuraProvider) {
   }
 }
 
-export async function validateContract(address: string) {
+export async function validateContract(
+  address: string,
+  networks: SupportedNetworks
+) {
   const apiKey = import.meta.env.VITE_ETHERSCAN_API_KEY;
-  const url = `${ETHERSCAN_BASIC_URL}?module=contract&action=getsourcecode&address=${address}&apikey=${apiKey}`;
+  const url = `${CHAIN_METADATA[networks].etherscanApi}?module=contract&action=getsourcecode&address=${address}&apikey=${apiKey}`;
 
   try {
     const res = await fetch(url);
