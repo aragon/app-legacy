@@ -20,11 +20,7 @@ const ConfigureActions: React.FC = () => {
 
   return (
     <FormWrapper>
-      <Label
-        label={t('newProposal.configureActions.yesOption')}
-        helpText={t('newProposal.configureActions.yesOptionSubtitle')}
-        isOptional
-      />
+      <Label label={t('newProposal.configureActions.yesOption')} isOptional />
       {actions.length ? (
         <ActionsWrapper>
           <ActionBuilder />

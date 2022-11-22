@@ -178,7 +178,8 @@
     "new": "New",
     "pendingTransaction": "Pending Transaction...",
     "signVote": "Sign Vote",
-    "signExecuteProposal": "Execute Proposal"
+    "signExecuteProposal": "Execute Proposal",
+    "yes": "Yes"
   },
   "placeHolders": {
     "selectToken": "Select a Token ...",
@@ -567,8 +568,7 @@
     "configureActions": {
       "heading": "Set actions",
       "description": "These actions can be executed if the parameters you set for them are met. ",
-      "yesOption": "Yes",
-      "yesOptionSubtitle": "If the vote passes, the following actions will execute automatically. If the vote fails, nothing will happen.",
+      "yesOption": "If option \"Yes\" wins",
       "addFirstAction": "Add Action",
       "addFirstActionSubtitle": "This action will execute if the vote passes. A common automatic action is transferring funds to a guild or person if their proposal passes a vote.",
       "addAction": "Add Action",

@@ -95,7 +95,7 @@ export function mapToCardViewProposal(
               Number(result.yes) || 0,
               totalVoteCount
             ),
-            voteLabel: i18n.t('newProposal.configureActions.yesOption'),
+            voteLabel: i18n.t('labels.yes'),
             tokenAmount: totalVoteCount.toString(),
             ...('token' in proposal
               ? {tokenSymbol: proposal.token.symbol}
