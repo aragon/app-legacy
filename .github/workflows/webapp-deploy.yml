@@ -60,6 +60,7 @@ jobs:
           VITE_REACT_APP_DEPLOY_ENVIRONMENT: ${{ needs.set-environment.outputs.environment }}
           VITE_REACT_APP_ANALYTICS_KEY: ${{ secrets.VITE_REACT_APP_ANALYTICS_KEY }}
           VITE_IPFS_API_KEY: ${{secrets.VITE_IPFS_API_KEY}}
+          VITE_ETHERSCAN_API_KEY: ${{secrets.VITE_ETHERSCAN_API_KEY}}
           NODE_OPTIONS: '--max-old-space-size=6656'
       - name: Activate fleek
         env:
