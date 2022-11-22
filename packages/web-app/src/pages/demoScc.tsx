@@ -11,7 +11,7 @@ const SCC: React.FC = () => {
   const [addressValidationIsOpen, setAddressValidationIsOpen] =
     React.useState(false);
 
-  const methods = useForm();
+  const methods = useForm({mode: 'onChange'});
 
   return (
     <FormProvider {...methods}>

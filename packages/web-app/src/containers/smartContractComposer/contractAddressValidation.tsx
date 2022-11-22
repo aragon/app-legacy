@@ -86,6 +86,12 @@ const ContractAddressValidation: React.FC<Props> = props => {
     [alert, t]
   );
 
+  const addressValidator = (value: string) => {
+    console.log('check', value);
+    if (isAddress(value)) return true;
+    return t('errors.invalidAddress') as string;
+  };
+
   const isButtonDisabled = useMemo(
     () => isTransactionSuccessful || !isAddress(addressField),
     [addressField, isTransactionSuccessful]
@@ -118,20 +124,20 @@ const ContractAddressValidation: React.FC<Props> = props => {
           name="contractAddress"
           rules={{
             required: t('errors.required.tokenAddress') as string,
-            validate: value => isAddress(value) || t('errors.invalidAddress'),
+            validate: addressValidator,
           }}
+          control={control}
           defaultValue={''}
           render={({
-            field: {name, onBlur, onChange, value, ref},
+            field: {name, onBlur, onChange, value},
             fieldState: {error},
           }) => (
             <>
               <ValueInput
                 mode={error ? 'critical' : 'default'}
-                ref={ref}
                 name={name}
-                value={isTransactionSuccessful ? shortenAddress(value) : value}
                 onBlur={onBlur}
+                value={isTransactionSuccessful ? shortenAddress(value) : value}
                 onChange={onChange}
                 disabled={isTransactionSuccessful || isTransactionLoading}
                 placeholder="0x ..."
