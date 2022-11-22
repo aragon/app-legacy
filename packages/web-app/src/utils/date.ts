@@ -1,5 +1,6 @@
 import {i18n} from '../../i18n.config';
 import {format, formatRelative, formatDistance} from 'date-fns';
+import {ProposalStatus} from '@aragon/sdk-client';
 
 export const KNOWN_FORMATS = {
   standard: 'MMM dd yyyy HH:mm', // This is our standard used for showing dates.
@@ -205,40 +206,51 @@ export function getFormattedUtcOffset(): string {
 /**
  * Note: This function will return the remaining time from input timestamp
  * to current time.
- * @param timestamp proposal creat/end timestamp must be greater than current timestamp
+ * @param timestamp proposal create/end timestamp must be greater than current timestamp
  * @returns remaining timestamp from now
  */
 export function getRemainingTime(
-  timestamp: number | string // in seconds
+  timestamp: number | string // in milliseconds
 ): number {
-  const currentTimestamp = Math.floor(new Date().getTime() / 1000);
+  const currentTimestamp = Math.floor(new Date().getTime());
   return parseInt(`${timestamp}`) - currentTimestamp;
 }
 
 /**
  * Note: this function will convert the proposal's timestamp to proper string to show
  * as a alert message on proposals card
- * @param type return the message if the type was pending or active
- * @param voteData proposal's voting data, containing the timestamps (in UTC
- * seconds) of the start and end of vote.
+ * @param status return the message if the type was pending or active
+ * @param startDate proposal startDate
+ * @param endDate proposal endDate
  * @returns a message with i18 translation as proposal ends alert
  */
 export function translateProposalDate(
-  type: string,
-  startDate: string,
-  endDate: string
-): string | null {
-  let leftTimestamp;
-  if (type === 'pending') {
-    leftTimestamp = getRemainingTime(startDate);
-  } else if (type === 'active') {
-    leftTimestamp = getRemainingTime(endDate);
+  status: ProposalStatus,
+  startDate: Date,
+  endDate: Date
+): string | undefined {
+  let leftTimestamp: number;
+  if (status === 'Pending') {
+    leftTimestamp = getRemainingTime(startDate.getTime());
+  } else if (status === 'Active') {
+    leftTimestamp = getRemainingTime(endDate.getTime());
   } else {
-    return null;
+    return;
   }
-  const days = Math.floor(leftTimestamp / 86400);
-  const hours = Math.floor((leftTimestamp % 86400) / 3600);
-  return i18n.t(`governance.proposals.${type}`, {days, hours}) as string;
+
+  const {days, hours} = getDaysAndHours(leftTimestamp);
+
+  return i18n.t(`governance.proposals.${status}`, {
+    days,
+    hours,
+  }) as string;
+}
+
+export function getDaysAndHours(timestamp: number) {
+  return {
+    days: Math.floor(timestamp / (1000 * 60 * 60 * 24)),
+    hours: Math.floor((timestamp / (1000 * 60 * 60)) % 24),
+  };
 }
 
 /**
