@@ -194,6 +194,7 @@ export async function isDaoNameValid(value: string, provider: InfuraProvider) {
   }
 }
 
+// FIXME: For some chains like polygon we might need different api key
 export async function validateContract(
   address: string,
   networks: SupportedNetworks
