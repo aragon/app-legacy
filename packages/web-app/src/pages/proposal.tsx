@@ -20,7 +20,6 @@ import {withTransaction} from '@elastic/apm-rum-react';
 import TipTapLink from '@tiptap/extension-link';
 import {useEditor} from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
-import formatDistance from 'date-fns/formatDistance';
 import React, {useEffect, useMemo, useRef, useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {generatePath, useNavigate, useParams} from 'react-router-dom';
@@ -46,6 +45,7 @@ import useScreen from 'hooks/useScreen';
 import {useWallet} from 'hooks/useWallet';
 import {useWalletCanVote} from 'hooks/useWalletCanVote';
 import {CHAIN_METADATA} from 'utils/constants';
+import {getDaysAndHours, getRemainingTime} from 'utils/date';
 import {
   decodeAddMembersToAction,
   decodeMintTokensToAction,
@@ -352,9 +352,13 @@ const Proposal: React.FC = () => {
 
     switch (proposal.status) {
       case 'Pending':
-        voteStatus = t('votingTerminal.status.pending', {
-          startDate: formatDistance(new Date(proposal.startDate), new Date()),
-        });
+        {
+          const {days, hours} = getDaysAndHours(
+            getRemainingTime(proposal.startDate.getTime())
+          );
+
+          voteStatus = t('votingTerminal.status.pending', {days, hours});
+        }
         break;
       case 'Succeeded':
         voteStatus = t('votingTerminal.status.succeeded');
@@ -371,14 +375,18 @@ const Proposal: React.FC = () => {
 
         break;
       case 'Active':
-        voteStatus = t('votingTerminal.status.active', {
-          endDate: formatDistance(new Date(), new Date(proposal.endDate)),
-        });
+        {
+          const {days, hours} = getDaysAndHours(
+            getRemainingTime(proposal.endDate.getTime())
+          );
 
-        // haven't voted
-        voteButtonLabel = voted
-          ? t('votingTerminal.status.voteSubmitted')
-          : t('votingTerminal.voteNow');
+          voteStatus = t('votingTerminal.status.active', {days, hours});
+
+          // haven't voted
+          voteButtonLabel = voted
+            ? t('votingTerminal.status.voteSubmitted')
+            : t('votingTerminal.voteNow');
+        }
         break;
     }
     return [voteStatus, voteButtonLabel];

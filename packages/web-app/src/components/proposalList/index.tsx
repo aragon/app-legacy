@@ -82,12 +82,11 @@ export function mapToCardViewProposal(
       voteTitle: i18n.t('governance.proposals.voteTitle'),
       stateLabel: PROPOSAL_STATE_LABELS,
 
-      alertMessage:
-        translateProposalDate(
-          proposal.status.toLowerCase(),
-          proposal.startDate.getTime().toString(),
-          proposal.endDate.getTime().toString()
-        ) || undefined,
+      alertMessage: translateProposalDate(
+        proposal.status,
+        proposal.startDate,
+        proposal.endDate
+      ),
 
       ...(proposal.status.toLowerCase() === 'active'
         ? {
