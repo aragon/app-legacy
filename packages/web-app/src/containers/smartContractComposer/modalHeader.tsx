@@ -6,7 +6,7 @@ type Props = {
   title: string;
   onBackButtonClicked: () => void;
   onClose?: () => void;
-  disabled: boolean;
+  disabled?: boolean;
 };
 
 // NOTE: While this header is technically a ui-component,

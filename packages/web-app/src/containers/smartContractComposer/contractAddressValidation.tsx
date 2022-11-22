@@ -12,6 +12,8 @@ import {
   Spinner,
   ValueInput,
 } from '@aragon/ui-components';
+import {shortenAddress} from '@aragon/ui-components/src/utils/addresses';
+
 import {handleClipboardActions} from 'utils/library';
 import {Controller, useFormContext, useWatch} from 'react-hook-form';
 import {CHAIN_METADATA, TransactionState} from 'utils/constants';
@@ -52,6 +54,9 @@ const ContractAddressValidation: React.FC<Props> = props => {
     EtherscanContractResponse | undefined
   >();
 
+  const isTransactionSuccessful = transactionState === TransactionState.SUCCESS;
+  const isTransactionLoading = transactionState === TransactionState.LOADING;
+
   const label = {
     [TransactionState.WAITING]: t('scc.addressValidation.actionLabelWaiting'),
     [TransactionState.LOADING]: t('scc.addressValidation.actionLabelLoading'),
@@ -82,9 +87,8 @@ const ContractAddressValidation: React.FC<Props> = props => {
   );
 
   const isButtonDisabled = useMemo(
-    () =>
-      transactionState === TransactionState.SUCCESS || !isAddress(addressField),
-    [addressField, transactionState]
+    () => isTransactionSuccessful || !isAddress(addressField),
+    [addressField, isTransactionSuccessful]
   );
 
   return (
@@ -95,7 +99,7 @@ const ContractAddressValidation: React.FC<Props> = props => {
         onBackButtonClicked={props.onBackButtonClicked}
         disabled={
           transactionState === TransactionState.LOADING ||
-          transactionState === TransactionState.SUCCESS
+          isTransactionSuccessful
         }
       />
       <Content>
@@ -112,7 +116,6 @@ const ContractAddressValidation: React.FC<Props> = props => {
         </DescriptionContainer>
         <Controller
           name="contractAddress"
-          control={control}
           rules={{
             required: t('errors.required.tokenAddress') as string,
             validate: value => isAddress(value) || t('errors.invalidAddress'),
@@ -127,9 +130,10 @@ const ContractAddressValidation: React.FC<Props> = props => {
                 mode={error ? 'critical' : 'default'}
                 ref={ref}
                 name={name}
-                value={value}
+                value={isTransactionSuccessful ? shortenAddress(value) : value}
                 onBlur={onBlur}
                 onChange={onChange}
+                disabled={isTransactionSuccessful || isTransactionLoading}
                 placeholder="0x ..."
                 adornmentText={value ? t('labels.clear') : t('labels.paste')}
                 onAdornmentClick={() => handleAdornmentClick(value, onChange)}
@@ -147,17 +151,17 @@ const ContractAddressValidation: React.FC<Props> = props => {
             setContractValid(await validateContract(addressField));
           }}
           iconLeft={
-            transactionState === TransactionState.LOADING ? (
+            isTransactionLoading ? (
               <Spinner size="xs" color="white" />
             ) : undefined
           }
           iconRight={icons[transactionState]}
-          isActive={transactionState === TransactionState.LOADING}
+          isActive={isTransactionLoading}
           disabled={isButtonDisabled}
           size="large"
           className="mt-3 w-full"
         />
-        {transactionState === TransactionState.SUCCESS && (
+        {isTransactionSuccessful && (
           <AlertInlineContainer>
             <AlertInline
               label={
