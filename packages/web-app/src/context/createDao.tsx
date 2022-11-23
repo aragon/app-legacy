@@ -1,5 +1,4 @@
 import {
-  ClientAddressList,
   ClientErc20,
   DaoCreationSteps,
   IAddressListPluginInstall,
@@ -8,7 +7,7 @@ import {
   IPluginInstallItem,
   IPluginSettings,
 } from '@aragon/sdk-client';
-import {defaultAbiCoder, parseUnits} from 'ethers/lib/utils';
+import {defaultAbiCoder, parseUnits, toUtf8Bytes} from 'ethers/lib/utils';
 import React, {
   createContext,
   ReactNode,
@@ -178,14 +177,15 @@ const CreateDaoProvider: React.FC<Props> = ({children}) => {
         break;
       }
       case 'wallet': {
-        const addressListParams = getAddresslistPluginParams();
-        const pluginInstallParams: IAddressListPluginInstall = {
-          settings: pluginSettings,
-          addresses: addressListParams,
-        };
-        plugins.push(
-          ClientAddressList?.encoding?.getPluginInstallItem(pluginInstallParams)
-        );
+        plugins.push({
+          id: '0xC0180304D365De704B6dC67a216213621eB2F44d',
+          data: toUtf8Bytes(
+            defaultAbiCoder.encode(
+              ['uint64', 'uint64', 'uint64', 'address[]'],
+              [1, 1, 1, getAddresslistPluginParams()]
+            )
+          ),
+        });
         break;
       }
       default:
@@ -201,15 +201,7 @@ const CreateDaoProvider: React.FC<Props> = ({children}) => {
       },
       // TODO: We're using dao name without spaces for ens, We need to add alert to inform this to user
       ensSubdomain: daoName?.replace(/ /g, '_'),
-      plugins: [
-        {
-          id: '0xC0180304D365De704B6dC67a216213621eB2F44d',
-          data: defaultAbiCoder.encode(
-            ['uint64', 'uint64', 'uint64', 'address[]'],
-            [1, 1, 1, getAddresslistPluginParams()]
-          ),
-        },
-      ],
+      plugins: plugins,
     };
   }, [
     getValues,
