@@ -39,7 +39,7 @@ const icons = {
 // this as a "controlled" component
 const ContractAddressValidation: React.FC<Props> = props => {
   const {t} = useTranslation();
-  const [transactionState, setTransactionState] = useState<TransactionState>(
+  const [verificationState, setVerificationState] = useState<TransactionState>(
     TransactionState.WAITING
   );
   const {control} = useFormContext();
@@ -53,8 +53,9 @@ const ContractAddressValidation: React.FC<Props> = props => {
     EtherscanContractResponse | undefined
   >();
 
-  const isTransactionSuccessful = transactionState === TransactionState.SUCCESS;
-  const isTransactionLoading = transactionState === TransactionState.LOADING;
+  const isTransactionSuccessful =
+    verificationState === TransactionState.SUCCESS;
+  const isTransactionLoading = verificationState === TransactionState.LOADING;
 
   const label = {
     [TransactionState.WAITING]: t('scc.addressValidation.actionLabelWaiting'),
@@ -65,10 +66,10 @@ const ContractAddressValidation: React.FC<Props> = props => {
 
   const setContractValid = useCallback(value => {
     if (value) {
-      setTransactionState(TransactionState.SUCCESS);
+      setVerificationState(TransactionState.SUCCESS);
       setContractData(value);
     } else {
-      setTransactionState(TransactionState.ERROR);
+      setVerificationState(TransactionState.ERROR);
       setContractData(value);
     }
   }, []);
@@ -91,8 +92,8 @@ const ContractAddressValidation: React.FC<Props> = props => {
   };
 
   const isButtonDisabled = useMemo(
-    () => isTransactionSuccessful || !isAddress(addressField),
-    [addressField, isTransactionSuccessful]
+    () => !isAddress(addressField),
+    [addressField]
   );
 
   return (
@@ -102,7 +103,7 @@ const ContractAddressValidation: React.FC<Props> = props => {
         onClose={props.onClose}
         onBackButtonClicked={props.onBackButtonClicked}
         disabled={
-          transactionState === TransactionState.LOADING ||
+          verificationState === TransactionState.LOADING ||
           isTransactionSuccessful
         }
       />
@@ -149,9 +150,9 @@ const ContractAddressValidation: React.FC<Props> = props => {
           )}
         />
         <ButtonText
-          label={label[transactionState] as string}
+          label={label[verificationState] as string}
           onClick={async () => {
-            setTransactionState(TransactionState.LOADING);
+            setVerificationState(TransactionState.LOADING);
             setContractValid(await validateContract(addressField, network));
           }}
           iconLeft={
@@ -159,7 +160,7 @@ const ContractAddressValidation: React.FC<Props> = props => {
               <Spinner size="xs" color="white" />
             ) : undefined
           }
-          iconRight={icons[transactionState]}
+          iconRight={icons[verificationState]}
           isActive={isTransactionLoading}
           disabled={isButtonDisabled}
           size="large"
