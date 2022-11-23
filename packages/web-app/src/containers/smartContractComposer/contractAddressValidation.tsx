@@ -14,7 +14,12 @@ import {
 } from '@aragon/ui-components';
 
 import {handleClipboardActions} from 'utils/library';
-import {Controller, useFormContext, useWatch} from 'react-hook-form';
+import {
+  Controller,
+  useFormContext,
+  useFormState,
+  useWatch,
+} from 'react-hook-form';
 import {CHAIN_METADATA, TransactionState} from 'utils/constants';
 import {useNetwork} from 'context/network';
 import {validateContract} from 'utils/validators';
@@ -52,6 +57,8 @@ const ContractAddressValidation: React.FC<Props> = props => {
   const [contractData, setContractData] = useState<
     EtherscanContractResponse | undefined
   >();
+
+  const {errors} = useFormState({control});
 
   const isTransactionSuccessful =
     verificationState === TransactionState.SUCCESS;
@@ -106,8 +113,8 @@ const ContractAddressValidation: React.FC<Props> = props => {
   }, [addressField, isTransactionLoading, isTransactionSuccessful, t]);
 
   const isButtonDisabled = useMemo(
-    () => !isAddress(addressField),
-    [addressField]
+    () => errors.contractAddress,
+    [errors.contractAddress]
   );
 
   return (
