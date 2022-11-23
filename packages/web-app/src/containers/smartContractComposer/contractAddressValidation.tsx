@@ -42,7 +42,7 @@ const ContractAddressValidation: React.FC<Props> = props => {
   const [verificationState, setVerificationState] = useState<TransactionState>(
     TransactionState.WAITING
   );
-  const {control} = useFormContext();
+  const {control, resetField} = useFormContext();
   const {network} = useNetwork();
   const addressField = useWatch({
     name: 'contractAddress',
@@ -85,6 +85,16 @@ const ContractAddressValidation: React.FC<Props> = props => {
     },
     [alert, t]
   );
+
+  const handleVerificationClick = async () => {
+    if (verificationState === TransactionState.WAITING) {
+      setVerificationState(TransactionState.LOADING);
+      setContractValid(await validateContract(addressField, network));
+    } else if (verificationState === TransactionState.ERROR) {
+      setVerificationState(TransactionState.WAITING);
+      resetField('contractAddress');
+    }
+  };
 
   const addressValidator = (value: string) => {
     if (isAddress(value)) return true;
@@ -158,10 +168,7 @@ const ContractAddressValidation: React.FC<Props> = props => {
         />
         <ButtonText
           label={label[verificationState] as string}
-          onClick={async () => {
-            setVerificationState(TransactionState.LOADING);
-            setContractValid(await validateContract(addressField, network));
-          }}
+          onClick={handleVerificationClick}
           iconLeft={
             isTransactionLoading ? (
               <Spinner size="xs" color="white" />
