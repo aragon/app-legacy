@@ -78,12 +78,12 @@ const ContractAddressValidation: React.FC<Props> = props => {
   const handleAdornmentClick = useCallback(
     (value: string, onChange: (value: string) => void) => {
       // when there is a value clear it
-      if (value && !isTransactionSuccessful) {
+      if (value && !isTransactionSuccessful && !isTransactionLoading) {
         onChange('');
         alert(t('alert.chip.inputCleared'));
       } else handleClipboardActions(value, onChange, alert);
     },
-    [alert, isTransactionSuccessful, t]
+    [alert, isTransactionLoading, isTransactionSuccessful, t]
   );
 
   const handleVerificationClick = async () => {
@@ -102,10 +102,11 @@ const ContractAddressValidation: React.FC<Props> = props => {
   };
 
   const adornmentText = useMemo(() => {
-    if (isTransactionSuccessful) return t('labels.copy');
+    if (isTransactionSuccessful || isTransactionLoading)
+      return t('labels.copy');
     if (addressField !== '') return t('labels.clear');
     return t('labels.paste');
-  }, [addressField, isTransactionSuccessful, t]);
+  }, [addressField, isTransactionLoading, isTransactionSuccessful, t]);
 
   const isButtonDisabled = useMemo(
     () => !isAddress(addressField),
@@ -118,10 +119,13 @@ const ContractAddressValidation: React.FC<Props> = props => {
         title={t('scc.addressValidation.modalTitle') as string}
         onClose={props.onClose}
         onBackButtonClicked={props.onBackButtonClicked}
-        disabled={
-          verificationState === TransactionState.LOADING ||
-          isTransactionSuccessful
+        showBackButton={
+          !(
+            verificationState === TransactionState.LOADING ||
+            isTransactionSuccessful
+          )
         }
+        showCloseButton={!isTransactionLoading}
       />
       <Content>
         <DescriptionContainer>

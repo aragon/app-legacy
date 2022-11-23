@@ -205,8 +205,11 @@ export async function validateContract(
   try {
     const res = await fetch(url);
     const data = await res.json();
+    // status 1 means that the etherscan response was successful
     if (data.status === '1')
       if (data.result[0].ABI !== 'Contract source code not verified')
+        // The API works with no api key as well but this condition will check
+        // the abi and api key existence with the same condition
         return data.result[0];
   } catch (error) {
     console.log(error);
