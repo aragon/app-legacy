@@ -17,16 +17,18 @@ type Props = {
 const Header: React.FC<Props> = props => {
   return (
     <ModalHeader>
-      {props.showBackButton && (
-        <ButtonIcon
-          mode="secondary"
-          size="small"
-          icon={<IconChevronLeft />}
-          onClick={props.onBackButtonClicked}
-          bgWhite
-          {...props}
-        />
-      )}
+      <ButtonWrapper className="w-4 h-4">
+        {props.showBackButton && (
+          <ButtonIcon
+            mode="secondary"
+            size="small"
+            icon={<IconChevronLeft />}
+            onClick={props.onBackButtonClicked}
+            bgWhite
+            {...props}
+          />
+        )}
+      </ButtonWrapper>
       <Title>{props.title}</Title>
       <ButtonWrapper className="w-4 h-4">
         {props.showCloseButton && (

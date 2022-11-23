@@ -2,7 +2,8 @@ import {ButtonText} from '@aragon/ui-components';
 import {TemporarySection} from 'components/temporary';
 import ContractAddressValidation from 'containers/smartContractComposer/contractAddressValidation';
 import EmptyState from 'containers/smartContractComposer/emptyState';
-import React from 'react';
+import {useNetwork} from 'context/network';
+import React, {useEffect} from 'react';
 import {FormProvider, useForm} from 'react-hook-form';
 import styled from 'styled-components';
 import {SccFormData} from 'utils/types';
@@ -15,6 +16,11 @@ const SCC: React.FC = () => {
   const [emptyStateIsOpen, setEmptyStateIsOpen] = React.useState(false);
   const [addressValidationIsOpen, setAddressValidationIsOpen] =
     React.useState(false);
+  const {setNetwork} = useNetwork();
+
+  useEffect(() => {
+    setNetwork('goerli');
+  }, [setNetwork]);
 
   const methods = useForm<SccFormData>({mode: 'onChange', defaultValues});
 
