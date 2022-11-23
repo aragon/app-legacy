@@ -78,12 +78,12 @@ const ContractAddressValidation: React.FC<Props> = props => {
   const handleAdornmentClick = useCallback(
     (value: string, onChange: (value: string) => void) => {
       // when there is a value clear it
-      if (value) {
+      if (value && !isTransactionSuccessful) {
         onChange('');
         alert(t('alert.chip.inputCleared'));
       } else handleClipboardActions(value, onChange, alert);
     },
-    [alert, t]
+    [alert, isTransactionSuccessful, t]
   );
 
   const handleVerificationClick = async () => {
