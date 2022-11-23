@@ -91,6 +91,12 @@ const ContractAddressValidation: React.FC<Props> = props => {
     return t('errors.invalidAddress') as string;
   };
 
+  const adornmentText = useMemo(() => {
+    if (isTransactionSuccessful) return t('labels.copy');
+    if (addressField !== '') return t('labels.clear');
+    return t('labels.paste');
+  }, [addressField, isTransactionSuccessful, t]);
+
   const isButtonDisabled = useMemo(
     () => !isAddress(addressField),
     [addressField]
@@ -131,6 +137,7 @@ const ContractAddressValidation: React.FC<Props> = props => {
             field: {name, onBlur, onChange, value},
             fieldState: {error},
           }) => (
+            //TODO: This value input needs to replace with wallet input
             <>
               <ValueInput
                 mode={error ? 'critical' : 'default'}
@@ -140,7 +147,7 @@ const ContractAddressValidation: React.FC<Props> = props => {
                 onChange={onChange}
                 disabled={isTransactionSuccessful || isTransactionLoading}
                 placeholder="0x ..."
-                adornmentText={value ? t('labels.clear') : t('labels.paste')}
+                adornmentText={adornmentText}
                 onAdornmentClick={() => handleAdornmentClick(value, onChange)}
               />
               {error?.message && (
