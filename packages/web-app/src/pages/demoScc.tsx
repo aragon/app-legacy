@@ -5,13 +5,18 @@ import EmptyState from 'containers/smartContractComposer/emptyState';
 import React from 'react';
 import {FormProvider, useForm} from 'react-hook-form';
 import styled from 'styled-components';
+import {SccFormData} from 'utils/types';
+
+const defaultValues = {
+  contractAddress: '',
+};
 
 const SCC: React.FC = () => {
   const [emptyStateIsOpen, setEmptyStateIsOpen] = React.useState(false);
   const [addressValidationIsOpen, setAddressValidationIsOpen] =
     React.useState(false);
 
-  const methods = useForm({mode: 'onChange'});
+  const methods = useForm<SccFormData>({mode: 'onChange', defaultValues});
 
   return (
     <FormProvider {...methods}>

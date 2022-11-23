@@ -313,3 +313,7 @@ export type EtherscanContractResponse = {
   LicenseType: string;
   SourceCode: string;
 };
+
+export type SccFormData = {
+  contractAddress: string;
+};

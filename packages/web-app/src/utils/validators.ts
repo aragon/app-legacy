@@ -207,9 +207,7 @@ export async function validateContract(
     const data = await res.json();
     if (data.result[0].ABI !== 'Contract source code not verified')
       return data.result[0];
-    else return;
   } catch (error) {
     console.log(error);
-    return;
   }
 }

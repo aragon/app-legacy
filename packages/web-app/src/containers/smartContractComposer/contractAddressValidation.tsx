@@ -86,7 +86,6 @@ const ContractAddressValidation: React.FC<Props> = props => {
   );
 
   const addressValidator = (value: string) => {
-    console.log('check', value);
     if (isAddress(value)) return true;
     return t('errors.invalidAddress') as string;
   };
