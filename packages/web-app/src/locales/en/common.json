@@ -289,6 +289,7 @@
     "onlyAlphaNumeric": "{{field}} can only contain alphanumeric characters",
     "ensDuplication": "This DAO name is already taken. Try another one.",
     "ensNetworkIssue": "Failed to resolve ens name",
+    "notValidContractAddress": "Smart Contract address not valid",
     "required": {
       "tokenAddress": "Token address is required",
       "tokenName": "Token name is required",
@@ -742,8 +743,7 @@
       "actionLabelWaiting": "Validate Smart Contract",
       "actionLabelLoading": "Validating Smart Contract ...",
       "actionLabelSuccess": "Compose Actions",
-      "successLabel": "Smart Contract validated -> {{contractName}}",
-      "tryAgain": "could not be verified"
+      "successLabel": "Smart Contract validated -> {{contractName}}"
     }
   }
 }

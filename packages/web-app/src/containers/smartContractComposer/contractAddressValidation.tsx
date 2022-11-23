@@ -42,7 +42,7 @@ const ContractAddressValidation: React.FC<Props> = props => {
   const [verificationState, setVerificationState] = useState<TransactionState>(
     TransactionState.WAITING
   );
-  const {control, resetField} = useFormContext();
+  const {control, setError} = useFormContext();
   const {network} = useNetwork();
   const addressField = useWatch({
     name: 'contractAddress',
@@ -61,18 +61,25 @@ const ContractAddressValidation: React.FC<Props> = props => {
     [TransactionState.WAITING]: t('scc.addressValidation.actionLabelWaiting'),
     [TransactionState.LOADING]: t('scc.addressValidation.actionLabelLoading'),
     [TransactionState.SUCCESS]: t('scc.addressValidation.actionLabelSuccess'),
-    [TransactionState.ERROR]: t('scc.addressValidation.tryAgain'),
+    [TransactionState.ERROR]: '',
   };
 
-  const setContractValid = useCallback(value => {
-    if (value) {
-      setVerificationState(TransactionState.SUCCESS);
-      setContractData(value);
-    } else {
-      setVerificationState(TransactionState.ERROR);
-      setContractData(value);
-    }
-  }, []);
+  const setContractValid = useCallback(
+    value => {
+      if (value) {
+        setVerificationState(TransactionState.SUCCESS);
+        setContractData(value);
+      } else {
+        setVerificationState(TransactionState.WAITING);
+        setContractData(value);
+        setError('contractAddress', {
+          type: 'validate',
+          message: t('errors.notValidContractAddress') as string,
+        });
+      }
+    },
+    [setError, t]
+  );
 
   // clear field when there is a value, else paste
   const handleAdornmentClick = useCallback(
@@ -85,16 +92,6 @@ const ContractAddressValidation: React.FC<Props> = props => {
     },
     [alert, isTransactionLoading, isTransactionSuccessful, t]
   );
-
-  const handleVerificationClick = async () => {
-    if (verificationState === TransactionState.WAITING) {
-      setVerificationState(TransactionState.LOADING);
-      setContractValid(await validateContract(addressField, network));
-    } else if (verificationState === TransactionState.ERROR) {
-      setVerificationState(TransactionState.WAITING);
-      resetField('contractAddress');
-    }
-  };
 
   const addressValidator = (value: string) => {
     if (isAddress(value)) return true;
@@ -164,15 +161,20 @@ const ContractAddressValidation: React.FC<Props> = props => {
                 adornmentText={adornmentText}
                 onAdornmentClick={() => handleAdornmentClick(value, onChange)}
               />
-              {error?.message && (
-                <AlertInline label={error.message} mode="critical" />
-              )}
+              <div className="mt-1">
+                {error?.message && (
+                  <AlertInline label={error.message} mode="critical" />
+                )}
+              </div>
             </>
           )}
         />
         <ButtonText
           label={label[verificationState] as string}
-          onClick={handleVerificationClick}
+          onClick={async () => {
+            setVerificationState(TransactionState.LOADING);
+            setContractValid(await validateContract(addressField, network));
+          }}
           iconLeft={
             isTransactionLoading ? (
               <Spinner size="xs" color="white" />
