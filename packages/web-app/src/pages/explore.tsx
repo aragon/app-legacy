@@ -49,7 +49,7 @@ const Explore: React.FC = () => {
               }}
             />
             <ActionListItem
-              title={'WhiteListVoting DAO'}
+              title={'AddressList Voting DAO'}
               subtitle={'Görli Testnet'}
               icon={<IconExpand />}
               background={'white'}
@@ -57,7 +57,7 @@ const Explore: React.FC = () => {
                 navigate(
                   generatePath(Dashboard, {
                     network: 'goerli',
-                    dao: '0x794666dc10dc3628ecd246240920311bef78e8ee',
+                    dao: '0x2b17079448fc6e1d98b00c8dffacfadaf5479071',
                   })
                 );
               }}
