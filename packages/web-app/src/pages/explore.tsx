@@ -43,7 +43,7 @@ const Explore: React.FC = () => {
                 navigate(
                   generatePath(Dashboard, {
                     network: 'goerli',
-                    dao: '0x1cab6f621a41438639e1f1b51c274ae65d41b8cb',
+                    dao: '0x00d88af3a7a824de1eb59bebc2bd8d5059d5dde2',
                   })
                 );
               }}
@@ -57,7 +57,7 @@ const Explore: React.FC = () => {
                 navigate(
                   generatePath(Dashboard, {
                     network: 'goerli',
-                    dao: '0x6e01ba3a2b7e9b494db30bcb61853d990b3763f3',
+                    dao: '0x794666dc10dc3628ecd246240920311bef78e8ee',
                   })
                 );
               }}

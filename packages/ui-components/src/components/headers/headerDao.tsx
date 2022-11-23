@@ -31,6 +31,7 @@ export type HeaderDaoProps = {
     readMore: string;
     readLess: string;
   };
+  copiedOnClick?: () => void;
 };
 
 type DescriptionProps = {
@@ -47,15 +48,9 @@ export const HeaderDao: React.FC<HeaderDaoProps> = ({
   daoType,
   links,
   translation,
+  copiedOnClick,
 }) => {
   const [fullDescription, setFullDescription] = useState<boolean>(false);
-
-  async function handleClipboardActions() {
-    await navigator.clipboard.writeText(daoUrl);
-
-    // TODO: change to proper mechanism
-    alert('Copied');
-  }
 
   return (
     <Card data-testid="header-dao">
@@ -65,7 +60,7 @@ export const HeaderDao: React.FC<HeaderDaoProps> = ({
           <Link
             label={daoUrl}
             iconRight={<IconCopy />}
-            onClick={handleClipboardActions}
+            onClick={copiedOnClick}
           />
           <div>
             <Description {...{fullDescription}}>{description}</Description>
