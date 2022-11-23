@@ -171,12 +171,12 @@ const Proposal: React.FC = () => {
               if (mintTokenActions.actions.length === 0)
                 mintTokenActions.index = index;
               return Promise.resolve({} as Action);
-            case 'addWhitelistedUsers':
+            case 'addAllowedUsers':
               return decodeAddMembersToAction(
                 action.data,
                 pluginClient as ClientAddressList
               );
-            case 'removeWhitelistedUsers':
+            case 'removeAllowedUsers':
               return decodeRemoveMembersToAction(
                 action.data,
                 pluginClient as ClientAddressList
