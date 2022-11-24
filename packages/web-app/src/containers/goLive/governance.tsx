@@ -44,10 +44,10 @@ const Governance: React.FC = () => {
         >
           {membership === 'token' && (
             <Dl>
-              <Dt>{t('labels.minimumApproval')}</Dt>
+              <Dt>{t('labels.minimumParticipation')}</Dt>
               <Dd>
-                {minimumApproval}% (
-                {Math.floor(tokenTotalSupply * (minimumApproval / 100))}{' '}
+                {minimumParticipation}% (
+                {Math.floor(tokenTotalSupply * (minimumParticipation / 100))}{' '}
                 {tokenSymbol})
               </Dd>
             </Dl>
