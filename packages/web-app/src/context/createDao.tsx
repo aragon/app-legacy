@@ -242,10 +242,10 @@ const CreateDaoProvider: React.FC<Props> = ({children}) => {
       plugins: plugins,
     };
   }, [
-    getAddresslistPluginParams,
-    getErc20PluginParams,
-    getPluginSettings,
     getValues,
+    getPluginSettings,
+    getErc20PluginParams,
+    getAddresslistPluginParams,
   ]);
 
   // estimate creation fees
