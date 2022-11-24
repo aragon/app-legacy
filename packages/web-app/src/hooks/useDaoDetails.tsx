@@ -22,7 +22,7 @@ export function useDaoDetails(daoId: string): HookData<DaoDetails | undefined> {
       try {
         setIsLoading(true);
 
-        const dao = await client?.methods.getDao(daoId);
+        const dao = await client?.methods.getDao(daoId.toLowerCase());
         if (dao) setData(dao);
       } catch (err) {
         console.error(err);
