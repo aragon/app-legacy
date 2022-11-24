@@ -87,7 +87,7 @@ const CreateDaoProvider: React.FC<Props> = ({children}) => {
       estimated_gwei_fee: averageFee?.toString(),
       total_usd_cost: averageFee
         ? (tokenPrice * Number(averageFee)).toString()
-        : 0,
+        : '0',
     });
 
     if (creationProcessState === TransactionState.SUCCESS) {
