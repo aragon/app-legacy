@@ -162,23 +162,44 @@ const CreateDaoProvider: React.FC<Props> = ({children}) => {
   const getDaoSettings = useCallback(() => {
     const {membership, daoName, daoSummary, daoLogo, links} = getValues();
     const plugins: IPluginInstallItem[] = [];
-    const pluginSettings = getPluginSettings();
+    // const pluginSettings = getPluginSettings();
 
     switch (membership) {
       case 'token': {
         const erc20Params = getErc20PluginParams();
-        const pluginInstallParams: IErc20PluginInstall = {
-          settings: pluginSettings,
-          newToken: erc20Params,
-        };
-        plugins.push(
-          ClientErc20?.encoding?.getPluginInstallItem(pluginInstallParams)
-        );
+        // const pluginInstallParams: IErc20PluginInstall = {
+        //   settings: pluginSettings,
+        //   newToken: erc20Params,
+        // };
+        // plugins.push(
+        //   ClientErc20?.encoding?.getPluginInstallItem(pluginInstallParams)
+        // );
+        plugins.push({
+          id: '0xa76b0ed4cdefd43ac6b213e957d5be6526498fdf',
+          data: toUtf8Bytes(
+            defaultAbiCoder.encode(
+              [
+                'uint64',
+                'uint64',
+                'uint64',
+                'tuple(address,string,string)',
+                'tuple(address[],uint256[])',
+              ],
+              [
+                1,
+                1,
+                1,
+                ['0x', erc20Params?.name, erc20Params?.symbol],
+                erc20Params?.balances,
+              ]
+            )
+          ),
+        });
         break;
       }
       case 'wallet': {
         plugins.push({
-          id: '0xC0180304D365De704B6dC67a216213621eB2F44d',
+          id: '0xc0180304d365de704b6dc67a216213621eb2f44d',
           data: toUtf8Bytes(
             defaultAbiCoder.encode(
               ['uint64', 'uint64', 'uint64', 'address[]'],
@@ -203,12 +224,7 @@ const CreateDaoProvider: React.FC<Props> = ({children}) => {
       ensSubdomain: daoName?.replace(/ /g, '_'),
       plugins: plugins,
     };
-  }, [
-    getValues,
-    getPluginSettings,
-    getErc20PluginParams,
-    getAddresslistPluginParams,
-  ]);
+  }, [getAddresslistPluginParams, getErc20PluginParams, getValues]);
 
   // estimate creation fees
   const estimateCreationFees = useCallback(async () => {

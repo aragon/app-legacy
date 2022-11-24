@@ -1,4 +1,4 @@
-import {DaoListItem, DaoSortBy} from '@aragon/sdk-client';
+import {DaoListItem, DaoSortBy, SortDirection} from '@aragon/sdk-client';
 import {useEffect, useState} from 'react';
 
 import {ExploreFilter} from 'containers/daoExplorer';
@@ -38,8 +38,11 @@ export function useDaos(
       const sortParam =
         useCase === 'popular' ? DaoSortBy.POPULARITY : DaoSortBy.CREATED_AT;
       const daoDetails =
-        (await client?.methods.getDaos({sortBy: sortParam, limit: count})) ||
-        [];
+        (await client?.methods.getDaos({
+          sortBy: sortParam,
+          direction: SortDirection.DESC,
+          limit: count,
+        })) || [];
       setData(daoDetails);
     }
 
