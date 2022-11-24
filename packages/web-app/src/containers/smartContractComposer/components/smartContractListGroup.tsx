@@ -1,8 +1,4 @@
-import {
-  ListItemAction,
-  IconClock,
-  IconChevronRight,
-} from '@aragon/ui-components';
+import {ListItemAction, IconChevronRight} from '@aragon/ui-components';
 import React from 'react';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
@@ -40,7 +36,6 @@ const SmartContractListGroup: React.FC<SCCListGroupProps> = ({contracts}) => {
           title={c.name}
           subtitle={`${c.actions.length} Actions`}
           bgWhite
-          iconLeft={<IconClock />}
           iconRight={<IconChevronRight />}
         />
       ))}
