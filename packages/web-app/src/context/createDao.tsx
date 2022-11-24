@@ -274,8 +274,8 @@ const CreateDaoProvider: React.FC<Props> = ({children}) => {
       throw new Error('deposit function is not initialized correctly');
     }
 
-    for await (const step of createDaoIterator) {
-      try {
+    try {
+      for await (const step of createDaoIterator) {
         switch (step.key) {
           case DaoCreationSteps.CREATING:
             console.log(step.txHash);
@@ -291,17 +291,17 @@ const CreateDaoProvider: React.FC<Props> = ({children}) => {
             setCreationProcessState(TransactionState.SUCCESS);
             break;
         }
-      } catch (err) {
-        // unsuccessful execution, keep creation data for retry
-        console.log(err);
-        trackEvent('daoCreation_transaction_failed', {
-          network: getValues('blockchain')?.network,
-          wallet_provider: provider?.connection.url,
-          governance_type: getValues('membership'),
-          err,
-        });
-        setCreationProcessState(TransactionState.ERROR);
       }
+    } catch (err) {
+      // unsuccessful execution, keep creation data for retry
+      console.log(err);
+      trackEvent('daoCreation_transaction_failed', {
+        network: getValues('blockchain')?.network,
+        wallet_provider: provider?.connection.url,
+        governance_type: getValues('membership'),
+        err,
+      });
+      setCreationProcessState(TransactionState.ERROR);
     }
   };
 
