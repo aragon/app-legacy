@@ -26,5 +26,5 @@ export function useDaoParam() {
     }
   }, [dao, error, isLoading, navigate]);
 
-  return {data: dao as string, error, isLoading};
+  return {data: (dao as string).toLowerCase(), error, isLoading};
 }

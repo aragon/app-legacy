@@ -1,6 +1,6 @@
 import React from 'react';
 
-import {useDaoMetadata} from 'hooks/useDaoMetadata';
+import {useDaoDetails} from 'hooks/useDaoDetails';
 import {useDaoParam} from 'hooks/useDaoParam';
 import {
   Action,
@@ -25,14 +25,14 @@ export const ActionsFilter: React.FC<ActionsFilterProps> = ({
   type,
 }: ActionsFilterProps) => {
   const {data: daoId} = useDaoParam();
-  const {data: dao} = useDaoMetadata(daoId);
+  const {data: dao} = useDaoDetails(daoId);
 
   switch (type) {
     case 'withdraw_assets':
       return (
         <WithdrawCard
           action={action as ActionWithdraw}
-          daoName={dao?.name || ''}
+          daoName={dao?.metadata?.name || ''}
         />
       );
     case 'add_address':

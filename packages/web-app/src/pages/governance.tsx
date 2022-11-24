@@ -28,7 +28,7 @@ const Governance: React.FC = () => {
   const {data: daoDetails, isLoading: detailsAreLoading} = useDaoDetails(dao!);
 
   const {data: proposals, isLoading: proposalsAreLoading} = useProposals(
-    dao,
+    daoDetails?.address as string,
     daoDetails?.plugins[0].id as PluginTypes
   );
 
