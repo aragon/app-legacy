@@ -1,5 +1,4 @@
 import {
-  ClientErc20,
   DaoCreationSteps,
   IAddressListPluginInstall,
   ICreateParams,
@@ -29,6 +28,17 @@ import {TransactionState} from 'utils/constants';
 import {getSecondsFromDHM} from 'utils/date';
 import {Landing} from 'utils/paths';
 import {useGlobalModalContext} from './globalModals';
+import {BigNumber, constants} from 'ethers';
+
+// TODO: Copied from SDK. To be removed once SDK supports encoders for DAO creation
+function encodeRatio(ratio: number, digits: number): number {
+  if (ratio < 0 || ratio > 1) {
+    throw new Error('The ratio value should range between 0 and 1');
+  } else if (!Number.isInteger(digits) || digits < 1 || digits > 15) {
+    throw new Error('The number of digits should range between 1 and 15');
+  }
+  return Math.round(ratio * 10 ** digits);
+}
 
 type CreateDaoContextType = {
   /** Prepares the creation data and awaits user confirmation to start process */
@@ -162,18 +172,20 @@ const CreateDaoProvider: React.FC<Props> = ({children}) => {
   const getDaoSettings = useCallback(() => {
     const {membership, daoName, daoSummary, daoLogo, links} = getValues();
     const plugins: IPluginInstallItem[] = [];
-    // const pluginSettings = getPluginSettings();
+    const pluginSettings = getPluginSettings();
 
     switch (membership) {
       case 'token': {
         const erc20Params = getErc20PluginParams();
-        // const pluginInstallParams: IErc20PluginInstall = {
-        //   settings: pluginSettings,
-        //   newToken: erc20Params,
-        // };
-        // plugins.push(
-        //   ClientErc20?.encoding?.getPluginInstallItem(pluginInstallParams)
-        // );
+        const mintingConfig = erc20Params?.balances.reduce(
+          (acc, wallet) => {
+            acc[0].push(wallet.address);
+            acc[1].push(wallet.balance);
+            return acc;
+          },
+          [[], []] as [string[], BigInt[]]
+        );
+
         plugins.push({
           id: '0xa76b0ed4cdefd43ac6b213e957d5be6526498fdf',
           data: toUtf8Bytes(
@@ -186,11 +198,11 @@ const CreateDaoProvider: React.FC<Props> = ({children}) => {
                 'tuple(address[],uint256[])',
               ],
               [
-                1,
-                1,
-                1,
-                ['0x', erc20Params?.name, erc20Params?.symbol],
-                erc20Params?.balances,
+                BigNumber.from(encodeRatio(pluginSettings.minTurnout, 2)),
+                BigNumber.from(encodeRatio(pluginSettings.minSupport, 2)),
+                BigNumber.from(pluginSettings.minDuration),
+                [constants.AddressZero, erc20Params?.name, erc20Params?.symbol],
+                mintingConfig,
               ]
             )
           ),
@@ -203,7 +215,12 @@ const CreateDaoProvider: React.FC<Props> = ({children}) => {
           data: toUtf8Bytes(
             defaultAbiCoder.encode(
               ['uint64', 'uint64', 'uint64', 'address[]'],
-              [1, 1, 1, getAddresslistPluginParams()]
+              [
+                BigNumber.from(encodeRatio(pluginSettings.minTurnout, 2)),
+                BigNumber.from(encodeRatio(pluginSettings.minSupport, 2)),
+                BigNumber.from(pluginSettings.minDuration),
+                getAddresslistPluginParams(),
+              ]
             )
           ),
         });
@@ -224,7 +241,12 @@ const CreateDaoProvider: React.FC<Props> = ({children}) => {
       ensSubdomain: daoName?.replace(/ /g, '_'),
       plugins: plugins,
     };
-  }, [getAddresslistPluginParams, getErc20PluginParams, getValues]);
+  }, [
+    getAddresslistPluginParams,
+    getErc20PluginParams,
+    getPluginSettings,
+    getValues,
+  ]);
 
   // estimate creation fees
   const estimateCreationFees = useCallback(async () => {
