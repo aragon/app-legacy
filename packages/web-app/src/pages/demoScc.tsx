@@ -1,32 +1,39 @@
 import {ButtonText} from '@aragon/ui-components';
 import {useNetwork} from 'context/network';
-import React, {useEffect} from 'react';
+import React, {useEffect, useState} from 'react';
 import {FormProvider, useForm} from 'react-hook-form';
 import styled from 'styled-components';
-import {SccFormData} from 'utils/types';
 
 import {TemporarySection} from 'components/temporary';
+import {SmartContract} from 'containers/smartContractComposer/components/smartContractListGroup';
 import ContractAddressValidation from 'containers/smartContractComposer/contractAddressValidation';
 import SmartContractList from 'containers/smartContractComposer/contractListModal';
 import EmptyState from 'containers/smartContractComposer/emptyStateModal/emptyState';
 
 const defaultValues = {
+  contracts: [],
   contractAddress: '',
 };
 
+// TODO please move to types
+export type SccFormData = {
+  contractAddress: string;
+  contracts: Array<SmartContract>;
+};
+
 const SCC: React.FC = () => {
-  const [emptyStateIsOpen, setEmptyStateIsOpen] = React.useState(false);
-  const [contractListIsOpen, setContractListIsOpen] = React.useState(false);
+  const [emptyStateIsOpen, setEmptyStateIsOpen] = useState(false);
+  const [contractListIsOpen, setContractListIsOpen] = useState(false);
+  const [addressValidationIsOpen, setAddressValidationIsOpen] = useState(false);
 
-  const [addressValidationIsOpen, setAddressValidationIsOpen] =
-    React.useState(false);
+  const methods = useForm<SccFormData>({mode: 'onChange', defaultValues});
+
+  // TODO: temporary, to make sure we validate using goerli;
+  // remove when integrating
   const {setNetwork} = useNetwork();
-
   useEffect(() => {
     setNetwork('goerli');
   }, [setNetwork]);
-
-  const methods = useForm<SccFormData>({mode: 'onChange', defaultValues});
 
   return (
     <FormProvider {...methods}>
@@ -44,7 +51,7 @@ const SCC: React.FC = () => {
         </TemporarySection>
         <TemporarySection purpose="SCC - Contract Address Validation">
           <ButtonText
-            label="Show EmptyState"
+            label="Show Address Validation"
             onClick={() => setAddressValidationIsOpen(true)}
           />
           <ContractAddressValidation

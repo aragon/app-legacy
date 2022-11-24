@@ -292,6 +292,7 @@
     "ensDuplication": "This DAO name is already taken. Try another one.",
     "ensNetworkIssue": "Failed to resolve ens name",
     "notValidContractAddress": "Smart Contract address not valid",
+    "duplicateContractAddress": "Contract has already been added",
     "required": {
       "tokenAddress": "Token address is required",
       "tokenName": "Token name is required",

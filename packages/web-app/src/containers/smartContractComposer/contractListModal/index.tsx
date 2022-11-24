@@ -5,33 +5,17 @@ import {
   IconHome,
 } from '@aragon/ui-components';
 import React from 'react';
+import {useWatch} from 'react-hook-form';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 
 import BottomSheet from 'components/bottomSheet';
 import useScreen from 'hooks/useScreen';
-import SmartContractListGroup from '../components/smartContractListGroup';
+import SmartContractListGroup, {
+  SmartContract,
+} from '../components/smartContractListGroup';
 import DesktopModal from '../desktopModal';
 import {ActionSearchInput} from '../desktopModal/header';
-
-// Assumption is that these will come from the form;
-// temporarily passing them down
-const DUMMY_CONTRACTS = [
-  {actions: [{}, {}], address: '0x123', logo: '', name: 'Uniswap Token'},
-  // {actions: [{}, {}], address: '0x123', logo: '', name: 'Uniswap Token'},
-  // {actions: [{}, {}], address: '0x123', logo: '', name: 'Uniswap Token'},
-  // {actions: [{}, {}], address: '0x123', logo: '', name: 'Uniswap Token'},
-  // {actions: [{}, {}], address: '0x123', logo: '', name: 'Uniswap Token'},
-  // {actions: [{}, {}], address: '0x123', logo: '', name: 'Uniswap Token'},
-  // {actions: [{}, {}], address: '0x123', logo: '', name: 'Uniswap Token'},
-
-  {
-    actions: [{}, {}, {}],
-    address: '0x234',
-    logo: '',
-    name: 'Smart Contract Name',
-  },
-];
 
 type Props = {
   isOpen: boolean;
@@ -44,10 +28,12 @@ const SmartContractList: React.FC<Props> = props => {
   const {t} = useTranslation();
   const {isDesktop} = useScreen();
 
+  const contracts: Array<SmartContract> = useWatch({name: 'contracts'});
+
   if (isDesktop)
     return (
       <DesktopModal
-        contracts={DUMMY_CONTRACTS}
+        contracts={contracts}
         isOpen={props.isOpen}
         onClose={props.onClose}
         onConnect={props.onConnect}
@@ -60,7 +46,7 @@ const SmartContractList: React.FC<Props> = props => {
     <BottomSheet isOpen={props.isOpen} onClose={props.onClose}>
       <CustomMobileHeader onBackButtonClicked={props.onBackButtonClicked} />
       <Content>
-        <SmartContractListGroup contracts={DUMMY_CONTRACTS} />
+        <SmartContractListGroup contracts={contracts} />
         <ButtonText
           mode="secondary"
           size="large"

@@ -305,6 +305,7 @@ export type StringIndexed = {
   [key: string]: any;
 };
 
+/* SCC TYPES ============================================================ */
 export type EtherscanContractResponse = {
   ABI: string;
   CompilerVersion: string;
@@ -314,6 +315,12 @@ export type EtherscanContractResponse = {
   SourceCode: string;
 };
 
-export type SccFormData = {
-  contractAddress: string;
+// TODO: Fill out as we go
+export type SmartContractAction = {};
+
+export type SmartContract = {
+  actions: Array<SmartContractAction>;
+  address: string;
+  logo?: string;
+  name: string;
 };
