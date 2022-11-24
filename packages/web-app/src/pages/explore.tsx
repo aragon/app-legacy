@@ -57,7 +57,7 @@ const Explore: React.FC = () => {
                 navigate(
                   generatePath(Dashboard, {
                     network: 'goerli',
-                    dao: '0x2b17079448fc6e1d98b00c8dffacfadaf5479071',
+                    dao: '0x60A4A30812f66852814Fae1899eA9baD08E6C146',
                   })
                 );
               }}
