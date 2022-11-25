@@ -203,6 +203,7 @@ const DaoWrapper: React.FC = () => {
           <TransferMenu />
           {daoDetails && isOpen && (
             <TransactionDetail
+              daoAddress={daoDetails.address}
               daoName={daoDetails.metadata.name}
               daoPlugin={daoDetails.plugins[0]}
             />

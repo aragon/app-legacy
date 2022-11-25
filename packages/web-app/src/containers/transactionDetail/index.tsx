@@ -1,3 +1,4 @@
+import {InstalledPluginListItem} from '@aragon/sdk-client';
 import {
   ButtonIcon,
   CardText,
@@ -10,15 +11,14 @@ import {
 } from '@aragon/ui-components';
 import React, {useCallback} from 'react';
 import {useTranslation} from 'react-i18next';
+import {generatePath, useNavigate} from 'react-router-dom';
 import styled from 'styled-components';
 
-import {InstalledPluginListItem} from '@aragon/sdk-client';
 import ModalBottomSheetSwitcher from 'components/modalBottomSheetSwitcher';
 import {useNetwork} from 'context/network';
 import {useTransactionDetailContext} from 'context/transactionDetail';
 import {useDaoProposal} from 'hooks/useDaoProposal';
 import {PluginTypes} from 'hooks/usePluginClient';
-import {generatePath, useNavigate, useParams} from 'react-router-dom';
 import {trackEvent} from 'services/analytics';
 import {CHAIN_METADATA, TransferTypes} from 'utils/constants';
 import {Proposal} from 'utils/paths';
@@ -26,16 +26,17 @@ import {abbreviateTokenAmount} from 'utils/tokens';
 import {Withdraw} from 'utils/types';
 
 type TransactionDetailProps = {
+  daoAddress: string;
   daoName: string;
   daoPlugin: InstalledPluginListItem;
 };
 
 const TransactionDetail: React.FC<TransactionDetailProps> = ({
+  daoAddress,
   daoName,
   daoPlugin,
 }) => {
   const {t} = useTranslation();
-  const {dao} = useParams();
   const navigate = useNavigate();
 
   const {network} = useNetwork();
@@ -47,6 +48,7 @@ const TransactionDetail: React.FC<TransactionDetailProps> = ({
   const proposalId = (transfer as Withdraw).proposalId;
 
   const {data: proposal} = useDaoProposal(
+    daoAddress,
     proposalId,
     daoPlugin.id as PluginTypes
   );
@@ -55,12 +57,12 @@ const TransactionDetail: React.FC<TransactionDetailProps> = ({
     navigate(
       generatePath(Proposal, {
         network,
-        dao,
+        dao: daoAddress,
         id: proposalId,
       })
     );
     onClose();
-  }, [dao, navigate, network, onClose, proposalId]);
+  }, [daoAddress, navigate, network, onClose, proposalId]);
 
   return (
     <ModalBottomSheetSwitcher isOpen={isOpen} onClose={onClose}>
@@ -119,7 +121,7 @@ const TransactionDetail: React.FC<TransactionDetailProps> = ({
             onClick={() =>
               trackEvent('finance_viewInBlockExplorer_clicked', {
                 transaction_hash: transfer.id,
-                dao_address: dao,
+                dao_address: daoAddress,
               })
             }
           >

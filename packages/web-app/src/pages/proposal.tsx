@@ -59,6 +59,7 @@ import {
   isTokenBasedProposal,
 } from 'utils/proposals';
 import {Action} from 'utils/types';
+import {useDaoParam} from 'hooks/useDaoParam';
 
 // TODO: @Sepehr Please assign proper tags on action decoding
 const PROPOSAL_TAGS = ['Finance', 'Withdraw'];
@@ -70,10 +71,10 @@ const Proposal: React.FC = () => {
   const {breadcrumbs, tag} = useMappedBreadcrumbs();
 
   const navigate = useNavigate();
-  const {dao, id: proposalId} = useParams();
-  const {data: daoDetails, isLoading: detailsAreLoading} = useDaoDetails(
-    dao as string
-  );
+  const {id: proposalId} = useParams();
+
+  const {data: dao} = useDaoParam();
+  const {data: daoDetails, isLoading: detailsAreLoading} = useDaoDetails(dao);
   const {data: daoToken, isLoading: daoTokenLoading} = useDaoToken(
     daoDetails?.plugins[0].instanceAddress as string
   );
@@ -104,7 +105,7 @@ const Proposal: React.FC = () => {
     data: proposal,
     error: proposalError,
     isLoading: proposalIsLoading,
-  } = useDaoProposal(proposalId!, pluginType);
+  } = useDaoProposal(dao, proposalId!, pluginType);
 
   const {data: canVote} = useWalletCanVote(
     address,
