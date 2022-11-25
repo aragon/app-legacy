@@ -8,7 +8,7 @@ import {pendingProposalsVar} from 'context/apolloClient';
 import {usePrivacyContext} from 'context/privacyContext';
 import {useCallback, useEffect, useState} from 'react';
 import {PENDING_PROPOSALS_KEY} from 'utils/constants';
-import {customJSONReplacer} from 'utils/library';
+import {customJSONReplacer, generateCachedProposalId} from 'utils/library';
 import {HookData} from 'utils/types';
 
 import {PluginTypes, usePluginClient} from './usePluginClient';
@@ -18,12 +18,12 @@ export type Proposal = Erc20ProposalListItem | AddressListProposalListItem;
 /**
  * Retrieves list of proposals from SDK
  * NOTE: rename to useDaoProposals once the other hook has been deprecated
- * @param daoAddressOrEns
+ * @param daoAddress
  * @param type plugin type
  * @returns list of proposals on plugin
  */
 export function useProposals(
-  daoAddressOrEns: string,
+  daoAddress: string,
   type: PluginTypes
 ): HookData<Array<Proposal>> {
   const [data, setData] = useState<Array<Proposal>>([]);
@@ -41,7 +41,11 @@ export function useProposals(
       const augmentedProposals = [...fetchedProposals];
 
       for (const key in proposalCache) {
-        if (fetchedProposals.some(p => p.id === key)) {
+        if (
+          fetchedProposals.some(
+            p => generateCachedProposalId(daoAddress, p.id) === key
+          )
+        ) {
           // proposal already picked up
           delete newCache[key];
         } else {
@@ -74,7 +78,7 @@ export function useProposals(
 
         const proposals = await client?.methods.getProposals({
           sortBy: ProposalSortBy.CREATED_AT,
-          daoAddressOrEns,
+          daoAddressOrEns: daoAddress,
         });
 
         setData([...augmentProposalsWithCache(proposals || [])]);
@@ -86,8 +90,8 @@ export function useProposals(
       }
     }
 
-    if (daoAddressOrEns) getDaoProposals();
-  }, [augmentProposalsWithCache, client?.methods, daoAddressOrEns]);
+    if (daoAddress) getDaoProposals();
+  }, [augmentProposalsWithCache, client?.methods, daoAddress]);
 
   return {data, error, isLoading};
 }

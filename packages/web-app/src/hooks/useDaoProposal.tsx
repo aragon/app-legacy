@@ -15,7 +15,7 @@ import {DetailedProposal, Erc20ProposalVote, HookData} from 'utils/types';
 import {PluginTypes, usePluginClient} from './usePluginClient';
 import {usePrivacyContext} from 'context/privacyContext';
 import {PENDING_PROPOSALS_KEY, PENDING_VOTES_KEY} from 'utils/constants';
-import {customJSONReplacer} from 'utils/library';
+import {customJSONReplacer, generateCachedProposalId} from 'utils/library';
 
 /**
  * Retrieve a single detailed proposal
@@ -25,6 +25,7 @@ import {customJSONReplacer} from 'utils/library';
  */
 
 export const useDaoProposal = (
+  daoAddress: string,
   proposalId: string,
   pluginType: PluginTypes
 ): HookData<DetailedProposal | undefined> => {
@@ -94,7 +95,8 @@ export const useDaoProposal = (
     async function getDaoProposal() {
       try {
         setIsLoading(true);
-        const cachedProposal = cachedProposals[proposalId];
+        const id = generateCachedProposalId(daoAddress, proposalId);
+        const cachedProposal = cachedProposals[id];
         const proposal = await pluginClient?.methods.getProposal(proposalId);
 
         if (proposal) {
@@ -123,6 +125,7 @@ export const useDaoProposal = (
   }, [
     augmentProposalWithCache,
     cachedProposals,
+    daoAddress,
     pluginClient?.methods,
     preferences?.functional,
     proposalId,
