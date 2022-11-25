@@ -4,9 +4,8 @@ import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 
 import {StateEmpty} from 'components/stateEmpty';
-import SmartContractListGroup, {
-  SmartContract,
-} from '../components/smartContractListGroup';
+import {SmartContract} from 'utils/types';
+import SmartContractListGroup from '../components/smartContractListGroup';
 import Header from './header';
 
 type DesktopModalProps = {

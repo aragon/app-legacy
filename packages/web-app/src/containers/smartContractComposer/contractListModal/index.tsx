@@ -11,9 +11,8 @@ import styled from 'styled-components';
 
 import BottomSheet from 'components/bottomSheet';
 import useScreen from 'hooks/useScreen';
-import SmartContractListGroup, {
-  SmartContract,
-} from '../components/smartContractListGroup';
+import {SmartContract} from 'utils/types';
+import SmartContractListGroup from '../components/smartContractListGroup';
 import DesktopModal from '../desktopModal';
 import {ActionSearchInput} from '../desktopModal/header';
 

@@ -5,10 +5,10 @@ import {FormProvider, useForm} from 'react-hook-form';
 import styled from 'styled-components';
 
 import {TemporarySection} from 'components/temporary';
-import {SmartContract} from 'containers/smartContractComposer/components/smartContractListGroup';
 import ContractAddressValidation from 'containers/smartContractComposer/contractAddressValidation';
 import SmartContractList from 'containers/smartContractComposer/contractListModal';
 import EmptyState from 'containers/smartContractComposer/emptyStateModal/emptyState';
+import {SmartContract} from 'utils/types';
 
 const defaultValues = {
   contracts: [],
