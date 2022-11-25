@@ -41,7 +41,7 @@ import {
   TransactionState,
 } from 'utils/constants';
 import {getCanonicalUtcOffset, getSecondsFromDHM} from 'utils/date';
-import {customJSONReplacer} from 'utils/library';
+import {customJSONReplacer, generateCachedProposalId} from 'utils/library';
 import {EditSettings, Proposal} from 'utils/paths';
 import {mapToDetailedProposal} from 'utils/proposals';
 import {getTokenInfo} from 'utils/tokens';
@@ -392,9 +392,14 @@ const ProposeSettingWrapper: React.FC<Props> = ({
   };
 
   const handleCacheProposal = useCallback(
-    (newProposalId: string) => {
+    (proposalId: string) => {
       if (!address || !daoDetails || !pluginSettings || !proposalCreationData)
         return;
+
+      const cachedProposalId = generateCachedProposalId(
+        daoDetails.address,
+        proposalId
+      );
 
       const proposalData = {
         creatorAddress: address,
@@ -408,13 +413,13 @@ const ProposeSettingWrapper: React.FC<Props> = ({
             : members.length,
         pluginSettings,
         proposalCreationData,
-        proposalId: newProposalId,
+        proposalId,
       };
 
       const cachedProposal = mapToDetailedProposal(proposalData);
       const newCache = {
         ...cachedProposals,
-        [newProposalId]: {...cachedProposal},
+        [cachedProposalId]: {...cachedProposal},
       };
       pendingProposalsVar(newCache);
 
