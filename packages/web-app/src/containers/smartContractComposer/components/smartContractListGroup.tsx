@@ -1,17 +1,9 @@
-import {ListItemAction, IconChevronRight} from '@aragon/ui-components';
+import {IconChevronRight, ListItemAction} from '@aragon/ui-components';
 import React from 'react';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 
-// TODO: Fill out as we go
-export type SmartContractAction = {};
-
-export type SmartContract = {
-  actions: Array<SmartContractAction>;
-  address: string;
-  logo?: string;
-  name: string;
-};
+import {SmartContract} from 'utils/types';
 
 // NOTE: may come from form, not set in stone
 type SCCListGroupProps = {
@@ -31,6 +23,8 @@ const SmartContractListGroup: React.FC<SCCListGroupProps> = ({contracts}) => {
             })}
       </ContractNumberIndicator>
       {contracts.map(c => (
+        // TODO: replace with new listitem that takes image
+        // or custom component
         <ListItemAction
           key={c.address}
           title={c.name}
