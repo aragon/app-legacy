@@ -10,7 +10,7 @@ import {
   IconReload,
   Link,
   Spinner,
-  ValueInput,
+  WalletInput,
 } from '@aragon/ui-components';
 
 import {handleClipboardActions} from 'utils/library';
@@ -157,13 +157,13 @@ const ContractAddressValidation: React.FC<Props> = props => {
           }) => (
             //TODO: This value input needs to replace with wallet input
             <>
-              <ValueInput
+              <WalletInput
                 mode={error ? 'critical' : 'default'}
                 name={name}
                 onBlur={onBlur}
                 value={value}
                 onChange={onChange}
-                disabled={isTransactionSuccessful || isTransactionLoading}
+                disabledFilled={isTransactionSuccessful || isTransactionLoading}
                 placeholder="0x ..."
                 adornmentText={adornmentText}
                 onAdornmentClick={() => handleAdornmentClick(value, onChange)}
