@@ -12,8 +12,8 @@ export type WalletInputProps = React.InputHTMLAttributes<HTMLInputElement> & {
   onAdornmentClick?: () => void;
   /** Changes a input's color schema */
   mode?: 'default' | 'success' | 'warning' | 'critical';
-
-  disabledFilled: boolean;
+  /** Disable the form but keep the adornment button active */
+  disabledFilled?: boolean;
 };
 
 export const WalletInput = React.forwardRef<HTMLInputElement, WalletInputProps>(
