@@ -130,7 +130,7 @@ const pendingDeposits = makeVar<Deposit[]>(depositTxs);
 
 // PENDING VOTES
 type PendingVotes = {
-  /** key is proposal id */
+  /** key is: daoAddress_proposalId */
   [key: string]: AddressListVote | Erc20ProposalVote;
 };
 const pendingVotes = JSON.parse(
@@ -140,7 +140,7 @@ const pendingVotesVar = makeVar<PendingVotes>(pendingVotes);
 
 // PENDING PROPOSAL
 type PendingProposals = {
-  /** key is proposal id */
+  /** key is: daoAddress_proposalId */
   [key: string]: Erc20Proposal | AddressListProposal;
 };
 const pendingProposals = JSON.parse(
