@@ -4,12 +4,20 @@ import {
   Erc20ProposalListItem,
   ProposalSortBy,
 } from '@aragon/sdk-client';
-import {pendingProposalsVar} from 'context/apolloClient';
-import {usePrivacyContext} from 'context/privacyContext';
+import {BigNumber} from 'ethers';
 import {useCallback, useEffect, useState} from 'react';
+
+import {pendingProposalsVar, pendingVotesVar} from 'context/apolloClient';
+import {usePrivacyContext} from 'context/privacyContext';
 import {PENDING_PROPOSALS_KEY} from 'utils/constants';
 import {customJSONReplacer, generateCachedProposalId} from 'utils/library';
-import {HookData} from 'utils/types';
+import {isTokenBasedProposal, MappedVotes} from 'utils/proposals';
+import {
+  AddressListVote,
+  DetailedProposal,
+  Erc20ProposalVote,
+  HookData,
+} from 'utils/types';
 
 import {PluginTypes, usePluginClient} from './usePluginClient';
 
@@ -33,6 +41,7 @@ export function useProposals(
   const client = usePluginClient(type);
 
   const {preferences} = usePrivacyContext();
+  const cachedVotes = useReactiveVar(pendingVotesVar);
   const proposalCache = useReactiveVar(pendingProposalsVar);
 
   const augmentProposalsWithCache = useCallback(
@@ -41,15 +50,18 @@ export function useProposals(
       const augmentedProposals = [...fetchedProposals];
 
       for (const key in proposalCache) {
-        if (
-          fetchedProposals.some(
-            p => generateCachedProposalId(daoAddress, p.id) === key
-          )
-        ) {
-          // proposal already picked up
+        const cachedProposalIsFetched = fetchedProposals.some(
+          p => key === generateCachedProposalId(daoAddress, p.id)
+        );
+
+        // proposal already picked up; delete it
+        if (cachedProposalIsFetched) {
           delete newCache[key];
         } else {
-          augmentedProposals.unshift({...proposalCache[key]} as Proposal);
+          // proposal not yet fetched, augment and add votes if necessary
+          augmentedProposals.unshift({
+            ...addVoteToProposal(proposalCache[key], cachedVotes[key]),
+          } as Proposal);
         }
       }
 
@@ -68,7 +80,7 @@ export function useProposals(
     // intentionally leaving out proposalCache so that this doesn't
     // get re-run when items are removed from the cache
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [preferences?.functional]
+    [daoAddress, preferences?.functional]
   );
 
   useEffect(() => {
@@ -94,4 +106,44 @@ export function useProposals(
   }, [augmentProposalsWithCache, client?.methods, daoAddress]);
 
   return {data, error, isLoading};
+}
+
+/**
+ * Augment proposal with vote
+ * @param proposal proposal to be augmented with vote
+ * @param vote
+ * @returns a proposal augmented with a singular vote, or
+ * the given proposal if no vote is given.
+ */
+function addVoteToProposal(
+  proposal: DetailedProposal,
+  vote: AddressListVote | Erc20ProposalVote
+): Proposal {
+  if (!vote) return proposal;
+
+  // calculate new vote values including cached ones
+  const voteValue = MappedVotes[vote.vote];
+  if (isTokenBasedProposal(proposal)) {
+    // Token-based calculation
+    return {
+      ...proposal,
+
+      result: {
+        ...proposal.result,
+        [voteValue]: BigNumber.from(proposal.result[voteValue])
+          .add((vote as Erc20ProposalVote).weight)
+          .toBigInt(),
+      },
+    };
+  } else {
+    // AddressList calculation
+    return {
+      ...proposal,
+
+      result: {
+        ...proposal.result,
+        [voteValue]: proposal.result[voteValue] + 1,
+      },
+    };
+  }
 }

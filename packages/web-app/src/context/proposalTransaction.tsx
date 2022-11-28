@@ -28,7 +28,7 @@ import {
   PENDING_VOTES_KEY,
   TransactionState,
 } from 'utils/constants';
-import {customJSONReplacer} from 'utils/library';
+import {customJSONReplacer, generateCachedProposalId} from 'utils/library';
 import {fetchBalance} from 'utils/tokens';
 import {pendingVotesVar} from './apolloClient';
 import {useNetwork} from './network';
@@ -83,9 +83,9 @@ const ProposalTransactionProvider: React.FC<Props> = ({children}) => {
     useState<TransactionState>();
   const [transactionHash, setTransactionHash] = useState<string>('');
 
-  const {data: daoId, isLoading: paramIsLoading} = useDaoParam();
+  const {data: daoAddress, isLoading: paramIsLoading} = useDaoParam();
   const {data: daoDetails, isLoading: detailsAreLoading} = useDaoDetails(
-    daoId || ''
+    daoAddress || ''
   );
 
   const {pluginAddress, pluginType} = useMemo(() => {
@@ -173,9 +173,11 @@ const ProposalTransactionProvider: React.FC<Props> = ({children}) => {
       if (!address) return;
 
       let newCache;
+      const cachedProposalId = generateCachedProposalId(daoAddress, proposalId);
+
       // no token address, not tokenBased proposal
       if (!tokenAddress) {
-        newCache = {...cachedVotes, [proposalId]: {address, vote}};
+        newCache = {...cachedVotes, [cachedProposalId]: {address, vote}};
         pendingVotesVar(newCache);
 
         if (preferences?.functional) {
@@ -196,7 +198,7 @@ const ProposalTransactionProvider: React.FC<Props> = ({children}) => {
         false
       );
 
-      newCache = {...cachedVotes, [proposalId]: {address, vote, weight}};
+      newCache = {...cachedVotes, [cachedProposalId]: {address, vote, weight}};
       pendingVotesVar(newCache);
       if (preferences?.functional) {
         localStorage.setItem(
@@ -208,6 +210,7 @@ const ProposalTransactionProvider: React.FC<Props> = ({children}) => {
     [
       address,
       cachedVotes,
+      daoAddress,
       network,
       preferences?.functional,
       provider,
