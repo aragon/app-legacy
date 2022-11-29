@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 import React, {SyntheticEvent} from 'react';
 
-import {Badge} from '../badge';
+import {Tag} from '../tag';
 import FallbackImg from '../../assets/avatar-token.svg';
 import {IconRadioDefault, IconSuccess} from '../icons';
 
@@ -30,7 +30,7 @@ export const ListItemBlockchain: React.FC<ListItemBlockchainProps> = ({
         <Domain selected={selected}>{props.name}</Domain>
         <Name>{props.domain}</Name>
       </Content>
-      {props.tag && <Badge label={props.tag} colorScheme="info" />}
+      {props.tag && <Tag label={props.tag} colorScheme="info" />}
       {selected ? (
         <IconSuccess width={20} height={20} className="text-primary-500" />
       ) : (

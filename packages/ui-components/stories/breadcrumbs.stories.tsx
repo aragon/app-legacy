@@ -1,6 +1,6 @@
 import React from 'react';
 import {Meta, Story} from '@storybook/react';
-import {Badge, Breadcrumb, BreadcrumbProps, IconFinance} from '../src';
+import {Tag, Breadcrumb, BreadcrumbProps, IconFinance} from '../src';
 
 export default {
   title: 'Components/Breadcrumb',
@@ -19,7 +19,7 @@ Default.args = {
     {label: 'Tokens', to: '/abc'},
     {label: 'Third Level', to: '/abc'},
   ],
-  tag: <Badge label="Tagging" />,
+  tag: <Tag label="Tagging" />,
   icon: <IconFinance />,
 };
 
@@ -33,5 +33,5 @@ NoTag.args = {
 
 Process.args = {
   crumbs: {label: 'New Proposal', to: '/abc'},
-  tag: <Badge label="Draft" />,
+  tag: <Tag label="Draft" />,
 };

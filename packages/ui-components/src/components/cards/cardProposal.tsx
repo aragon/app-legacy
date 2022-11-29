@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 
-import {Badge} from '../badge';
+import {Tag} from '../tag';
 import {LinearProgress} from '../progress';
 import {Address, shortenAddress} from '../../utils/addresses';
 import {Link} from '../link';
@@ -153,11 +153,11 @@ const HeaderOptions: React.VFC<HeaderOptionProps> = ({
 }) => {
   switch (process) {
     case 'draft':
-      return <Badge label={stateLabel[0]} />;
+      return <Tag label={stateLabel[0]} />;
     case 'pending':
       return (
         <>
-          <Badge label={stateLabel[1]} />
+          <Tag label={stateLabel[1]} />
           {alertMessage && (
             <AlertInline
               label={alertMessage}
@@ -171,7 +171,7 @@ const HeaderOptions: React.VFC<HeaderOptionProps> = ({
       return (
         <>
           {!isExploreProposal(type) && (
-            <Badge label={stateLabel[2]} colorScheme={'info'} />
+            <Tag label={stateLabel[2]} colorScheme={'info'} />
           )}
           {alertMessage && (
             <AlertInline
@@ -183,11 +183,11 @@ const HeaderOptions: React.VFC<HeaderOptionProps> = ({
         </>
       );
     case 'executed':
-      return <Badge label={stateLabel[3]} colorScheme={'success'} />;
+      return <Tag label={stateLabel[3]} colorScheme={'success'} />;
     case 'succeeded':
-      return <Badge label={stateLabel[4]} colorScheme={'success'} />;
+      return <Tag label={stateLabel[4]} colorScheme={'success'} />;
     case 'defeated':
-      return <Badge label={stateLabel[5]} colorScheme={'critical'} />;
+      return <Tag label={stateLabel[5]} colorScheme={'critical'} />;
     default:
       return null;
   }
