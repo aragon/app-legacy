@@ -1,13 +1,11 @@
 import {
-  AvatarDaoProps,
+  Address,
   AvatarDao,
+  AvatarDaoProps,
   ButtonIcon,
   IconChevronDown,
-} from '@aragon/ui-components';
-import {
-  Address,
   shortenAddress,
-} from '@aragon/ui-components/src/utils/addresses';
+} from '@aragon/ui-components';
 
 import useScreen from 'hooks/useScreen';
 import React from 'react';

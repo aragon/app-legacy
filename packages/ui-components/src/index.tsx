@@ -28,3 +28,4 @@ export * from './components/tokenListItem';
 export * from './components/transferListItem';
 export * from './components/widgets';
 export * from './components/wizard';
+export * from './utils/addresses';
