@@ -1,11 +1,11 @@
 import {
   AlertInline,
   AvatarDao,
-  Badge,
   ButtonText,
   IconGovernance,
   Link,
   ListItemLink,
+  Tag,
   Wizard,
 } from '@aragon/ui-components';
 import {withTransaction} from '@elastic/apm-rum-react';
@@ -169,7 +169,7 @@ const Settings: React.FC = () => {
                     <p>
                       {tokenSupply} {daoToken?.symbol}
                     </p>
-                    <Badge label="Mintable" />
+                    <Tag label="Mintable" />
                   </div>
                 </Dd>
               </Dl>

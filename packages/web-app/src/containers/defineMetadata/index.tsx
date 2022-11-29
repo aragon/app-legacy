@@ -95,7 +95,7 @@ const DefineMetadata: React.FC<{bgWhite?: boolean}> = ({bgWhite = false}) => {
           label={t('labels.logo')}
           helpText={t('createDAO.step2.logoSubtitle')}
           isOptional
-          badgeLabel={t('labels.optional')}
+          tagLabel={t('labels.optional')}
         />
 
         <Controller

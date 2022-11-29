@@ -6,13 +6,13 @@ import {
   Erc20Proposal,
 } from '@aragon/sdk-client';
 import {
-  Badge,
   Breadcrumb,
   ButtonText,
   IconChevronDown,
   IconChevronUp,
   IconGovernance,
   Link,
+  Tag,
   WidgetStatus,
 } from '@aragon/ui-components';
 import {shortenAddress} from '@aragon/ui-components/src/utils/addresses';
@@ -518,7 +518,7 @@ const Proposal: React.FC = () => {
         <ContentWrapper>
           <BadgeContainer>
             {PROPOSAL_TAGS.map((tag: string) => (
-              <Badge label={tag} key={tag} />
+              <Tag label={tag} key={tag} />
             ))}
           </BadgeContainer>
           <ProposerLink>

@@ -1,17 +1,17 @@
-import React from 'react';
-import styled from 'styled-components';
-import {useNavigate} from 'react-router-dom';
 import {
-  Badge,
   Breadcrumb,
   ButtonText,
   IconAdd,
   IconType,
+  Tag,
 } from '@aragon/ui-components';
+import React from 'react';
+import {useNavigate} from 'react-router-dom';
+import styled from 'styled-components';
 
+import {useMappedBreadcrumbs} from 'hooks/useMappedBreadcrumbs';
 import useScreen from 'hooks/useScreen';
 import {SectionWrapperProps} from './sectionWrappers';
-import {useMappedBreadcrumbs} from 'hooks/useMappedBreadcrumbs';
 
 type ChangeSign = -1 | 0 | 1;
 
@@ -65,7 +65,7 @@ export const PageWrapper = ({
             <PageTitle>{title}</PageTitle>
             {subtitle && (
               <PageSubtitleContainer>
-                {timePeriod && <Badge label={timePeriod} />}
+                {timePeriod && <Tag label={timePeriod} />}
                 <p className={textColors[sign as ChangeSign]}>{subtitle}</p>
               </PageSubtitleContainer>
             )}

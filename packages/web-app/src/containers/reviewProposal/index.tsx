@@ -1,10 +1,10 @@
 import {InstalledPluginListItem} from '@aragon/sdk-client';
 import {
-  Badge,
   ButtonText,
   IconChevronDown,
   IconChevronUp,
   Link,
+  Tag,
 } from '@aragon/ui-components';
 import TipTapLink from '@tiptap/extension-link';
 import {EditorContent, useEditor} from '@tiptap/react';
@@ -214,8 +214,8 @@ const ReviewProposal: React.FC<ReviewProposalProps> = ({
       <Header>{values.proposalTitle}</Header>
       <BadgeContainer>
         <div className="flex space-x-1.5">
-          <Badge label="Finance" />
-          <Badge label="Withdraw" />
+          <Tag label="Finance" />
+          <Tag label="Withdraw" />
         </div>
         <ProposerLink>
           {t('governance.proposals.publishedBy')}{' '}

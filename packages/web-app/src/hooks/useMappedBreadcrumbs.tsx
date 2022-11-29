@@ -1,11 +1,11 @@
 import {
-  IconDashboard,
   IconCommunity,
+  IconDashboard,
   IconFinance,
   IconGovernance,
   IconSettings,
-  BadgeProps,
-  Badge,
+  Tag,
+  TagProps,
 } from '@aragon/ui-components';
 import React from 'react';
 import {useMatch} from 'react-router-dom';
@@ -19,7 +19,7 @@ type MappedBreadcrumbs = {
     path: string;
     label: string;
   }[];
-  tag?: React.FunctionComponentElement<BadgeProps>;
+  tag?: React.FunctionComponentElement<TagProps>;
   icon: JSX.Element;
 };
 
@@ -66,7 +66,7 @@ export function useMappedBreadcrumbs(): MappedBreadcrumbs {
 
   let tag;
   if (isProposalDetail && proposalStatus)
-    tag = <Badge label={proposalStatus} className="capitalize" />;
+    tag = <Tag label={proposalStatus} className="capitalize" />;
 
   return {breadcrumbs, icon, tag};
 }
