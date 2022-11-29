@@ -1,9 +1,9 @@
 import {useReactiveVar} from '@apollo/client';
-import {CardDao} from '@aragon/ui-components';
 import React from 'react';
 import styled from 'styled-components';
 
 import BottomSheet from 'components/bottomSheet';
+import {DaoSelector} from 'components/daoSelector';
 import NavLinks from 'components/navLinks';
 import {selectedDaoVar} from 'context/apolloClient';
 import {useGlobalModalContext} from 'context/globalModals';
@@ -19,7 +19,7 @@ const MobileNavMenu: React.FC = () => {
     <BottomSheet isOpen={isMobileMenuOpen} onClose={() => close('mobileMenu')}>
       <div className="tablet:w-50">
         <CardWrapper className="rounded-xl">
-          <CardDao
+          <DaoSelector
             daoAddress={daoEns}
             daoName={daoName}
             onClick={() => {
