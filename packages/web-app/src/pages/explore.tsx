@@ -1,4 +1,4 @@
-import {ActionListItem, IconExpand} from '@aragon/ui-components';
+import {ListItemAction} from '@aragon/ui-components';
 import React from 'react';
 import 'react-responsive-carousel/lib/styles/carousel.min.css';
 import {generatePath, useNavigate} from 'react-router-dom';
@@ -34,11 +34,9 @@ const Explore: React.FC = () => {
           <ActiveProposalsExplore />
           <div className="h-20" />
           <TemporarySection purpose="It allows you to navigate to a mock dao to test daos URLs.">
-            <ActionListItem
+            <ListItemAction
               title={'ERC20Voting DAO'}
               subtitle={'Görli Testnet'}
-              icon={<IconExpand />}
-              background={'white'}
               onClick={() => {
                 navigate(
                   generatePath(Dashboard, {
@@ -48,11 +46,9 @@ const Explore: React.FC = () => {
                 );
               }}
             />
-            <ActionListItem
+            <ListItemAction
               title={'AddressList Voting DAO'}
               subtitle={'Görli Testnet'}
-              icon={<IconExpand />}
-              background={'white'}
               onClick={() => {
                 navigate(
                   generatePath(Dashboard, {
