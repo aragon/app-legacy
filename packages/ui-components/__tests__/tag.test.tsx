@@ -1,13 +1,13 @@
 import React from 'react';
 import {render, screen} from '@testing-library/react';
 
-import {Badge} from '../src';
+import {Tag} from '../src';
 
-describe('Badge', () => {
+describe('Tag', () => {
   // eslint-disable-next-line
   function setup(args: any) {
-    render(<Badge {...args} />);
-    return screen.getByTestId('badge');
+    render(<Tag {...args} />);
+    return screen.getByTestId('tag');
   }
 
   test('should render without crashing', () => {
