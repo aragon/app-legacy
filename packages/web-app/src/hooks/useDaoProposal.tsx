@@ -1,7 +1,7 @@
 import {useReactiveVar} from '@apollo/client';
 import {AddressListProposal, Erc20Proposal} from '@aragon/sdk-client';
 import {BigNumber} from 'ethers';
-import {useCallback, useEffect, useMemo, useState} from 'react';
+import {useCallback, useEffect, useState} from 'react';
 
 import {pendingProposalsVar, pendingVotesVar} from 'context/apolloClient';
 import {usePrivacyContext} from 'context/privacyContext';
@@ -35,62 +35,71 @@ export const useDaoProposal = (
 
   const {preferences} = usePrivacyContext();
   const cachedVotes = useReactiveVar(pendingVotesVar);
-  const cachedProposals = useReactiveVar(pendingProposalsVar);
-
-  const cachedProposalId = useMemo(
-    () => generateCachedProposalId(daoAddress, proposalId),
-    [daoAddress, proposalId]
-  );
+  const proposalCache = useReactiveVar(pendingProposalsVar);
 
   // add cached vote to proposal and recalculate dependent info
-  const augmentProposalWithCache = useCallback(
+  const augmentWithVoteCache = useCallback(
     (proposal: DetailedProposal) => {
-      const cachedVote = cachedVotes[cachedProposalId];
+      const id = generateCachedProposalId(daoAddress, proposalId);
+      const cachedVote = cachedVotes[id];
 
       // no cache return original proposal
       if (!cachedVote) return proposal;
 
-      // if vote in cache is included delete it
-      if (proposal.votes.some(voter => voter.address === cachedVote.address)) {
-        const newCache = {...cachedVotes};
-        delete newCache[cachedProposalId];
+      // vote in cache is returned from SDK, delete cache
+      if (proposal.votes.some(v => v.address === cachedVote.address)) {
+        const newVoteCache = {...cachedVotes};
+        delete newVoteCache[id];
 
-        pendingVotesVar({...newCache});
+        // update cache
+        pendingVotesVar(newVoteCache);
         if (preferences?.functional) {
           localStorage.setItem(
             PENDING_VOTES_KEY,
-            JSON.stringify(newCache, customJSONReplacer)
+            JSON.stringify(newVoteCache, customJSONReplacer)
           );
         }
+
         return proposal;
       } else {
-        // return proposal with cached vote
+        // augment with cached vote
         return addVoteToProposal(proposal, cachedVote);
       }
     },
-    [cachedProposalId, cachedVotes, preferences?.functional]
+    [cachedVotes, daoAddress, preferences?.functional, proposalId]
   );
 
   useEffect(() => {
     async function getDaoProposal() {
       try {
         setIsLoading(true);
-        const cachedProposal = cachedProposals[cachedProposalId];
+
+        const cachedProposal = proposalCache[daoAddress][proposalId];
+
         const proposal = await pluginClient?.methods.getProposal(proposalId);
-
         if (proposal) {
-          setData({...augmentProposalWithCache(proposal)});
+          setData({
+            ...augmentWithVoteCache(proposal),
+          });
 
-          // remove cache there's already a proposal
+          // remove cached proposal if it exists
           if (cachedProposal) {
-            pendingProposalsVar({});
+            const newCache = {...proposalCache};
+            delete newCache[daoAddress][proposalId];
+
+            // update new values
+            pendingProposalsVar(newCache);
+
             if (preferences?.functional) {
-              localStorage.setItem(PENDING_PROPOSALS_KEY, '{}');
+              localStorage.setItem(
+                PENDING_PROPOSALS_KEY,
+                JSON.stringify(newCache, customJSONReplacer)
+              );
             }
           }
         } else if (cachedProposal) {
           setData({
-            ...augmentProposalWithCache(cachedProposal),
+            ...augmentWithVoteCache(cachedProposal),
           });
         }
       } catch (err) {
@@ -102,11 +111,11 @@ export const useDaoProposal = (
     }
     if (proposalId) getDaoProposal();
   }, [
-    augmentProposalWithCache,
-    cachedProposalId,
-    cachedProposals,
+    augmentWithVoteCache,
+    daoAddress,
     pluginClient?.methods,
     preferences?.functional,
+    proposalCache,
     proposalId,
   ]);
 

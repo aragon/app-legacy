@@ -29,7 +29,7 @@ import {
   TransactionState,
 } from 'utils/constants';
 import {getCanonicalUtcOffset} from 'utils/date';
-import {customJSONReplacer, generateCachedProposalId} from 'utils/library';
+import {customJSONReplacer} from 'utils/library';
 import {Proposal} from 'utils/paths';
 import {mapToDetailedProposal} from 'utils/proposals';
 import {getTokenInfo} from 'utils/tokens';
@@ -363,11 +363,6 @@ const CreateProposalProvider: React.FC<Props> = ({
       if (!address || !daoDetails || !pluginSettings || !proposalCreationData)
         return;
 
-      const cachedProposalId = generateCachedProposalId(
-        daoDetails.address,
-        proposalId
-      );
-
       const proposalData = {
         creatorAddress: address,
         daoAddress: daoDetails?.address,
@@ -385,7 +380,10 @@ const CreateProposalProvider: React.FC<Props> = ({
       const cachedProposal = mapToDetailedProposal(proposalData);
       const newCache = {
         ...cachedProposals,
-        [cachedProposalId]: {...cachedProposal},
+        [daoDetails.address]: {
+          ...cachedProposals[daoDetails.address],
+          [proposalId]: {...cachedProposal},
+        },
       };
       pendingProposalsVar(newCache);
 

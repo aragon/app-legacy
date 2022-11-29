@@ -46,32 +46,34 @@ export function useProposals(
 
   const augmentProposalsWithCache = useCallback(
     (fetchedProposals: Proposal[]) => {
-      const newCache = {...proposalCache};
+      if (!proposalCache[daoAddress]) return fetchedProposals;
+
+      const daoCache = {...proposalCache[daoAddress]};
       const augmentedProposals = [...fetchedProposals];
 
-      for (const key in proposalCache) {
-        const cachedProposalIsFetched = fetchedProposals.some(
-          p => key === generateCachedProposalId(daoAddress, p.id)
-        );
-
+      for (const proposalId in daoCache) {
         // proposal already picked up; delete it
-        if (cachedProposalIsFetched) {
-          delete newCache[key];
+        if (fetchedProposals.some(p => proposalId === p.id)) {
+          delete daoCache[proposalId];
+
+          // cache and store new values
+          const newCache = {...proposalCache, [daoAddress]: {...daoCache}};
+          pendingProposalsVar(newCache);
+          if (preferences?.functional) {
+            localStorage.setItem(
+              PENDING_PROPOSALS_KEY,
+              JSON.stringify(newCache, customJSONReplacer)
+            );
+          }
         } else {
           // proposal not yet fetched, augment and add votes if necessary
           augmentedProposals.unshift({
-            ...addVoteToProposal(proposalCache[key], cachedVotes[key]),
+            ...addVoteToProposal(
+              daoCache[proposalId],
+              cachedVotes[generateCachedProposalId(daoAddress, proposalId)]
+            ),
           } as Proposal);
         }
-      }
-
-      // cache and store new values
-      pendingProposalsVar(newCache);
-      if (preferences?.functional) {
-        localStorage.setItem(
-          PENDING_PROPOSALS_KEY,
-          JSON.stringify(newCache, customJSONReplacer)
-        );
       }
 
       return augmentedProposals;
