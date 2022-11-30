@@ -1,11 +1,11 @@
 import {useReactiveVar} from '@apollo/client';
 import {DaoDetails} from '@aragon/sdk-client';
-import {pendingDaoCreationVar} from 'context/apolloClient';
 import {useEffect, useState} from 'react';
 
+import {pendingDaoCreationVar} from 'context/apolloClient';
+import {useNetwork} from 'context/network';
 import {HookData} from 'utils/types';
 import {useClient} from './useClient';
-import {useWallet} from './useWallet';
 
 /**
  * Get dao metadata
@@ -22,7 +22,7 @@ export function useDaoDetails(
   const [error, setError] = useState<Error>();
   const [isLoading, setIsLoading] = useState(false);
   const [waitingForSubgraph, setWaitingForSubgraph] = useState(false);
-  const {network} = useWallet();
+  const {network} = useNetwork();
   const cachedDaos = useReactiveVar(pendingDaoCreationVar);
 
   useEffect(() => {

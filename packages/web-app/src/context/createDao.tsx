@@ -32,6 +32,7 @@ import {BigNumber, constants} from 'ethers';
 import {pendingDaoCreationVar} from './apolloClient';
 import {useReactiveVar} from '@apollo/client';
 import {usePrivacyContext} from './privacyContext';
+import {useNetwork} from './network';
 
 // TODO: Copied from SDK. To be removed once SDK supports encoders for DAO creation
 function encodeRatio(ratio: number, digits: number): number {
@@ -55,7 +56,8 @@ const CreateDaoContext = createContext<CreateDaoContextType | null>(null);
 const CreateDaoProvider: React.FC<Props> = ({children}) => {
   const {open} = useGlobalModalContext();
   const navigate = useNavigate();
-  const {isOnWrongNetwork, provider, network} = useWallet();
+  const {isOnWrongNetwork, provider} = useWallet();
+  const {network} = useNetwork();
   const {t} = useTranslation();
   const {getValues} = useFormContext<CreateDaoFormData>();
   const {client} = useClient();

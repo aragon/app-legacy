@@ -71,34 +71,8 @@ const Dashboard: React.FC = () => {
   );
 
   useEffect(() => {
-    return () => {
-      clearInterval(pollForDaoData);
-      pollForDaoData = undefined;
-    };
-  }, []);
-
-  if (proposalsAreLoading || detailsAreLoading || daoParamLoading) {
-    return <Loading />;
-  }
-
-  if (waitingForSubgraph) {
-    const buttonLabel = {
-      [DaoCreationState.ASSEMBLING_DAO]: t(
-        'dashboard.emptyState.assemblingDao'
-      ),
-      [DaoCreationState.DAO_READY]: t('dashboard.emptyState.daoReady'),
-      [DaoCreationState.OPEN_DAO]: t('dashboard.emptyState.openDao'),
-    };
-
-    const buttonIcon = {
-      [DaoCreationState.ASSEMBLING_DAO]: (
-        <IconSpinner className="w-1.5 desktop:w-2 h-1.5 desktop:h-2 animate-spin" />
-      ),
-      [DaoCreationState.DAO_READY]: <IconCheckmark />,
-      [DaoCreationState.OPEN_DAO]: undefined,
-    };
-
     if (
+      waitingForSubgraph &&
       !pollForDaoData &&
       daoCreationState === DaoCreationState.ASSEMBLING_DAO
     ) {
@@ -122,6 +96,33 @@ const Dashboard: React.FC = () => {
         }
       }, 1000);
     }
+
+    return () => {
+      clearInterval(pollForDaoData);
+      pollForDaoData = undefined;
+    };
+  }, [client?.methods, daoCreationState, daoId, waitingForSubgraph]);
+
+  if (proposalsAreLoading || detailsAreLoading || daoParamLoading) {
+    return <Loading />;
+  }
+
+  if (waitingForSubgraph) {
+    const buttonLabel = {
+      [DaoCreationState.ASSEMBLING_DAO]: t(
+        'dashboard.emptyState.assemblingDao'
+      ),
+      [DaoCreationState.DAO_READY]: t('dashboard.emptyState.daoReady'),
+      [DaoCreationState.OPEN_DAO]: t('dashboard.emptyState.openDao'),
+    };
+
+    const buttonIcon = {
+      [DaoCreationState.ASSEMBLING_DAO]: (
+        <IconSpinner className="w-1.5 desktop:w-2 h-1.5 desktop:h-2 animate-spin" />
+      ),
+      [DaoCreationState.DAO_READY]: <IconCheckmark />,
+      [DaoCreationState.OPEN_DAO]: undefined,
+    };
 
     return (
       <Container>

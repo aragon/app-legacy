@@ -156,7 +156,9 @@ const pendingProposals = JSON.parse(
 const pendingProposalsVar = makeVar<PendingProposals>(pendingProposals);
 
 type PendingDaoCreation = {
+  // This key is the network in string representation
   [key: string]: {
+    // This key is the id of the newly created DAO
     [key: string]: ICreateParams;
   };
 };
