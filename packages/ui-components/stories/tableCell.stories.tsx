@@ -1,11 +1,11 @@
-import React from 'react';
 import {Meta, Story} from '@storybook/react';
+import React from 'react';
 import {
-  Badge,
   ButtonText,
   IconChevronDown,
   TableCell,
   TableCellProps,
+  Tag,
 } from '../src';
 
 export default {
@@ -24,17 +24,17 @@ Default.args = {
 };
 
 const TagTemplate: Story<TableCellProps> = args => (
-  <TableCell type="tag" {...args}>
-    <Badge label="Tag" colorScheme="critical" />
+  <TableCell {...args}>
+    <Tag label="Tag" colorScheme="critical" />
   </TableCell>
 );
-export const Tag = TagTemplate.bind({});
+export const Tagged = TagTemplate.bind({});
 
 const LinkTemplate: Story<TableCellProps> = args => (
-  <TableCell type="link" {...args}>
+  <TableCell {...args}>
     <ButtonText
       mode="ghost"
-      label={args.text}
+      label={args.text as string}
       bgWhite={args.bgWhite}
       isActive
       iconRight={<IconChevronDown />}

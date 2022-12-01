@@ -2,14 +2,14 @@ import React, {ReactComponentElement} from 'react';
 import styled from 'styled-components';
 
 import {IconType} from '../icons';
-import {BadgeProps} from '../badge';
+import {TagProps} from '../tag';
 
 type CrumbProps = {
   first?: boolean;
   label: string;
   last?: boolean;
   icon?: ReactComponentElement<IconType>;
-  tag?: React.FunctionComponentElement<BadgeProps>;
+  tag?: React.FunctionComponentElement<TagProps>;
   onClick?: React.MouseEventHandler;
 };
 

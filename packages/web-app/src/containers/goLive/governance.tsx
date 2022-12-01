@@ -39,7 +39,7 @@ const Governance: React.FC = () => {
           checkedState={
             value ? 'active' : reviewCheckError ? 'error' : 'default'
           }
-          badgeLabel={t('labels.changeableVote')}
+          tagLabel={t('labels.changeableVote')}
           onChecked={() => onChange(!value)}
         >
           {membership === 'token' && (

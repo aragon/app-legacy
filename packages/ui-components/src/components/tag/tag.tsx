@@ -1,31 +1,31 @@
 import React from 'react';
 import styled from 'styled-components';
 
-export type BadgeProps = {
-  /** Changes a badge's color scheme */
+export type TagProps = {
+  /** Changes a tag's color scheme */
   colorScheme?: 'neutral' | 'info' | 'warning' | 'critical' | 'success';
-  /** Text displayed on the badge */
+  /** Text displayed on the tag */
   label: string;
   className?: string;
 };
 
-export const Badge: React.FC<BadgeProps> = ({
+export const Tag: React.FC<TagProps> = ({
   label,
   colorScheme = 'neutral',
   className,
 }) => {
   return (
-    <StyledBadge data-testid="badge" {...{colorScheme, className}}>
+    <StyledTag data-testid="tag" {...{colorScheme, className}}>
       <p className="font-bold">{label}</p>
-    </StyledBadge>
+    </StyledTag>
   );
 };
 
-type StyledBadgeProps = {
-  colorScheme: BadgeProps['colorScheme'];
+type StyledTagProps = {
+  colorScheme: TagProps['colorScheme'];
 };
 
-const StyledBadge = styled.div.attrs(({colorScheme}: StyledBadgeProps) => {
+const StyledTag = styled.div.attrs(({colorScheme}: StyledTagProps) => {
   let colorCode;
   if (colorScheme === 'success') {
     colorCode = 'bg-success-200 text-success-800';
@@ -42,4 +42,4 @@ const StyledBadge = styled.div.attrs(({colorScheme}: StyledBadgeProps) => {
   const className = `inline-flex ft-text-sm px-0.5 rounded items-center ${colorCode}`;
 
   return {className, style: {paddingTop: 2, paddingBottom: 2}};
-})<StyledBadgeProps>``;
+})<StyledTagProps>``;

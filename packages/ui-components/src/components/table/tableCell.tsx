@@ -1,5 +1,5 @@
 import React from 'react';
-import {BadgeProps, LinkProps} from '../..';
+import {TagProps, LinkProps} from '../..';
 
 export type TableCellProps = {
   type: 'text' | 'foot' | 'head' | 'link' | 'tag';
@@ -8,7 +8,7 @@ export type TableCellProps = {
   rightAligned?: boolean;
   bgWhite?: boolean;
   children?:
-    | React.FunctionComponentElement<BadgeProps>
+    | React.FunctionComponentElement<TagProps>
     | React.FunctionComponentElement<LinkProps>;
 };
 
