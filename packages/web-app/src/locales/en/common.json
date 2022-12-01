@@ -292,6 +292,7 @@
     "ensDuplication": "This DAO name is already taken. Try another one.",
     "ensNetworkIssue": "Failed to resolve ens name",
     "notValidContractAddress": "Smart Contract address not valid",
+    "duplicateContractAddress": "Contract has already been added",
     "required": {
       "tokenAddress": "Token address is required",
       "tokenName": "Token name is required",
@@ -731,6 +732,12 @@
     }
   },
   "scc": {
+    "labels": {
+      "connect": "Connect Smart Contract",
+      "singleContractConnected": "1 Connected Contract",
+      "nContractsConnected": "{{numConnected}} Connected Smart Contracts",
+      "searchPlaceholder": "Type to find any action ..."
+    },
     "emptyState": {
       "modalTitle": "Smart Contract Composer",
       "title": "No Smart Contract",
@@ -745,6 +752,10 @@
       "actionLabelLoading": "Validating Smart Contract ...",
       "actionLabelSuccess": "Compose Actions",
       "successLabel": "Smart Contract validated -> {{contractName}}"
+    },
+    "selectionEmptyState": {
+      "title": "Select Smart Contract",
+      "description": "Select a smart contract to compose any actions or connect a new smart contract if ..."
     }
   }
 }

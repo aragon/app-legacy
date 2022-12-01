@@ -1,8 +1,3 @@
-import React, {useCallback, useMemo, useState} from 'react';
-import ModalBottomSheetSwitcher from 'components/modalBottomSheetSwitcher';
-import ModalHeader from './modalHeader';
-import {useTranslation} from 'react-i18next';
-import styled from 'styled-components';
 import {
   AlertInline,
   ButtonText,
@@ -12,20 +7,26 @@ import {
   Spinner,
   WalletInput,
 } from '@aragon/ui-components';
-
-import {handleClipboardActions} from 'utils/library';
+import {isAddress} from 'ethers/lib/utils';
+import React, {useCallback, useMemo, useState} from 'react';
 import {
   Controller,
   useFormContext,
   useFormState,
   useWatch,
 } from 'react-hook-form';
-import {CHAIN_METADATA, TransactionState} from 'utils/constants';
-import {useNetwork} from 'context/network';
-import {validateContract} from 'utils/validators';
+import {useTranslation} from 'react-i18next';
+import styled from 'styled-components';
+
+import ModalBottomSheetSwitcher from 'components/modalBottomSheetSwitcher';
 import {useAlertContext} from 'context/alert';
-import {isAddress} from 'ethers/lib/utils';
+import {useNetwork} from 'context/network';
+import {SccFormData} from 'pages/demoScc';
+import {CHAIN_METADATA, TransactionState} from 'utils/constants';
+import {handleClipboardActions} from 'utils/library';
 import {EtherscanContractResponse} from 'utils/types';
+import {validateContract} from 'utils/validators';
+import ModalHeader from './components/modalHeader';
 
 type Props = {
   isOpen: boolean;
@@ -39,26 +40,27 @@ const icons = {
   [TransactionState.SUCCESS]: <IconChevronRight />,
   [TransactionState.ERROR]: <IconReload />,
 };
+
 // not exactly sure where opening will be happen or if
 // these modals will be global modals. For now, keeping
 // this as a "controlled" component
 const ContractAddressValidation: React.FC<Props> = props => {
   const {t} = useTranslation();
+  const {alert} = useAlertContext();
+  const {network} = useNetwork();
+
   const [verificationState, setVerificationState] = useState<TransactionState>(
     TransactionState.WAITING
   );
-  const {control, setError} = useFormContext();
-  const {network} = useNetwork();
-  const addressField = useWatch({
-    name: 'contractAddress',
-    control,
-  });
-  const {alert} = useAlertContext();
-  const [contractData, setContractData] = useState<
-    EtherscanContractResponse | undefined
-  >();
+
+  const {control, resetField, setValue, setError} =
+    useFormContext<SccFormData>();
 
   const {errors} = useFormState({control});
+  const [addressField, contracts] = useWatch({
+    name: ['contractAddress', 'contracts'],
+    control,
+  });
 
   const isTransactionSuccessful =
     verificationState === TransactionState.SUCCESS;
@@ -72,20 +74,29 @@ const ContractAddressValidation: React.FC<Props> = props => {
   };
 
   const setContractValid = useCallback(
-    value => {
+    (value: EtherscanContractResponse) => {
       if (value) {
         setVerificationState(TransactionState.SUCCESS);
-        setContractData(value);
+        setValue('contracts', [
+          ...contracts,
+          {
+            actions: [{}, {}],
+            address: addressField,
+            name: value.ContractName,
+          },
+        ]);
+
+        // clear contract address field
+        resetField('contractAddress');
       } else {
         setVerificationState(TransactionState.WAITING);
-        setContractData(value);
         setError('contractAddress', {
           type: 'validate',
           message: t('errors.notValidContractAddress') as string,
         });
       }
     },
-    [setError, t]
+    [addressField, contracts, resetField, setError, setValue, t]
   );
 
   // clear field when there is a value, else paste
@@ -101,8 +112,16 @@ const ContractAddressValidation: React.FC<Props> = props => {
   );
 
   const addressValidator = (value: string) => {
+    // duplication: contract already connected
+    const addressExists = contracts.some(
+      c => c.address.toLowerCase() === value.toLowerCase()
+    );
+
+    if (addressExists) return t('errors.duplicateContractAddress');
+
+    // check if address is valid address string
     if (isAddress(value)) return true;
-    return t('errors.invalidAddress') as string;
+    else return t('errors.invalidAddress') as string;
   };
 
   const adornmentText = useMemo(() => {
@@ -113,7 +132,7 @@ const ContractAddressValidation: React.FC<Props> = props => {
   }, [addressField, isTransactionLoading, isTransactionSuccessful, t]);
 
   const isButtonDisabled = useMemo(
-    () => errors.contractAddress,
+    () => errors.contractAddress !== undefined,
     [errors.contractAddress]
   );
 
@@ -197,7 +216,7 @@ const ContractAddressValidation: React.FC<Props> = props => {
             <AlertInline
               label={
                 t('scc.addressValidation.successLabel', {
-                  contractName: contractData?.ContractName,
+                  contractName: contracts[contracts.length - 1]?.name,
                 }) as string
               }
               mode="success"

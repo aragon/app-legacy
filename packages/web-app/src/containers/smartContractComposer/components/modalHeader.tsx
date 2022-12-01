@@ -50,7 +50,7 @@ export default Header;
 
 const ModalHeader = styled.div.attrs({
   className:
-    'flex items-center rounded-xl space-x-2 desktop:space-x-3 p-2 desktop:p-3',
+    'flex items-center rounded-xl space-x-2 desktop:space-x-3 p-2 desktop:p-3 bg-ui-0',
 })`
   box-shadow: 0px 4px 8px rgba(31, 41, 51, 0.04),
     0px 0px 2px rgba(31, 41, 51, 0.06), 0px 0px 1px rgba(31, 41, 51, 0.04);
