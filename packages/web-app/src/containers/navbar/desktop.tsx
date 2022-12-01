@@ -1,18 +1,19 @@
-import {Breadcrumb, ButtonWallet, CardDao} from '@aragon/ui-components';
-import styled from 'styled-components';
+import {Breadcrumb, ButtonWallet} from '@aragon/ui-components';
 import NavLinks from 'components/navLinks';
-import {generatePath, useNavigate, useParams} from 'react-router-dom';
-import {useTranslation} from 'react-i18next';
 import React, {useMemo} from 'react';
+import {useTranslation} from 'react-i18next';
+import {generatePath, useNavigate, useParams} from 'react-router-dom';
+import styled from 'styled-components';
 
-import {useWallet} from 'hooks/useWallet';
-import {selectedDaoVar} from 'context/apolloClient';
-import NetworkIndicator from './networkIndicator';
 import {useReactiveVar} from '@apollo/client';
-import {NavlinksDropdown} from './breadcrumbDropdown';
+import {DaoSelector} from 'components/daoSelector';
+import {Container} from 'components/layout';
+import {selectedDaoVar} from 'context/apolloClient';
 import {useNetwork} from 'context/network';
 import {useMappedBreadcrumbs} from 'hooks/useMappedBreadcrumbs';
-import {Container} from 'components/layout';
+import {useWallet} from 'hooks/useWallet';
+import {NavlinksDropdown} from './breadcrumbDropdown';
+import NetworkIndicator from './networkIndicator';
 
 const MIN_ROUTE_DEPTH_FOR_BREADCRUMBS = 2;
 
@@ -69,7 +70,7 @@ const DesktopNav: React.FC<DesktopNavProp> = props => {
       <NetworkIndicator />
       <Menu>
         <Content>
-          <CardDao
+          <DaoSelector
             daoName={currentDao?.daoName}
             daoAddress={currentDao?.daoEns}
             src={currentDao?.daoLogo}

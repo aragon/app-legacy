@@ -6,7 +6,15 @@ import {TableCell} from '../src';
 describe('TableCell', () => {
   // eslint-disable-next-line
   function setup(args: any) {
-    render(<TableCell {...args} />);
+    render(
+      <table>
+        <tbody>
+          <tr>
+            <TableCell {...args} />
+          </tr>
+        </tbody>
+      </table>
+    );
     return screen.getByTestId('tableCell');
   }
 
