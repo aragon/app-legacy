@@ -155,7 +155,6 @@ const ContractAddressValidation: React.FC<Props> = props => {
             field: {name, onBlur, onChange, value},
             fieldState: {error},
           }) => (
-            //TODO: This value input needs to replace with wallet input
             <>
               <WalletInput
                 mode={error ? 'critical' : 'default'}
