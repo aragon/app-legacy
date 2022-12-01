@@ -35,7 +35,7 @@ const Tokens: React.FC = () => {
   return (
     <PageWrapper
       title={t('allTokens.title') as string}
-      subtitle={
+      description={
         tokens.length === 1
           ? t('allTokens.subtitleSingular')
           : t('allTokens.subtitle', {count: tokens.length})

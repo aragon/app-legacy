@@ -90,7 +90,7 @@ const Transfers: React.FC = () => {
       <PageWrapper
         title={t('TransferModal.allTransfers')}
         buttonLabel={t('TransferModal.newTransfer')}
-        subtitle={`${totalTransfers} Total Volume`}
+        description={`${totalTransfers} Total Volume`}
         onClick={open}
       >
         <div className="mt-3 desktop:mt-8">
