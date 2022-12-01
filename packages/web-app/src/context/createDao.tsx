@@ -1,3 +1,4 @@
+import {useReactiveVar} from '@apollo/client';
 import {
   DaoCreationSteps,
   IAddressListPluginInstall,
@@ -6,6 +7,7 @@ import {
   IPluginInstallItem,
   IPluginSettings,
 } from '@aragon/sdk-client';
+import {BigNumber, constants} from 'ethers';
 import {defaultAbiCoder, parseUnits, toUtf8Bytes} from 'ethers/lib/utils';
 import React, {
   createContext,
@@ -15,7 +17,7 @@ import React, {
   useState,
 } from 'react';
 import {useFormContext} from 'react-hook-form';
-import {useNavigate} from 'react-router-dom';
+import {generatePath, useNavigate} from 'react-router-dom';
 
 import PublishModal from 'containers/transactionModals/publishModal';
 import {useClient} from 'hooks/useClient';
@@ -24,11 +26,13 @@ import {useWallet} from 'hooks/useWallet';
 import {CreateDaoFormData} from 'pages/createDAO';
 import {useTranslation} from 'react-i18next';
 import {trackEvent} from 'services/analytics';
-import {TransactionState} from 'utils/constants';
+import {PENDING_DAOS_KEY, TransactionState} from 'utils/constants';
 import {getSecondsFromDHM} from 'utils/date';
-import {Landing} from 'utils/paths';
+import {Dashboard} from 'utils/paths';
+import {pendingDaoCreationVar} from './apolloClient';
 import {useGlobalModalContext} from './globalModals';
-import {BigNumber, constants} from 'ethers';
+import {useNetwork} from './network';
+import {usePrivacyContext} from './privacyContext';
 
 // TODO: Copied from SDK. To be removed once SDK supports encoders for DAO creation
 function encodeRatio(ratio: number, digits: number): number {
@@ -53,14 +57,18 @@ const CreateDaoProvider: React.FC<Props> = ({children}) => {
   const {open} = useGlobalModalContext();
   const navigate = useNavigate();
   const {isOnWrongNetwork, provider} = useWallet();
+  const {network} = useNetwork();
   const {t} = useTranslation();
   const {getValues} = useFormContext<CreateDaoFormData>();
   const {client} = useClient();
+  const cachedDaoCreation = useReactiveVar(pendingDaoCreationVar);
+  const {preferences} = usePrivacyContext();
 
-  const [showModal, setShowModal] = useState(false);
-  const [daoCreationData, setDaoCreationData] = useState<ICreateParams>();
   const [creationProcessState, setCreationProcessState] =
     useState<TransactionState>();
+  const [daoCreationData, setDaoCreationData] = useState<ICreateParams>();
+  const [showModal, setShowModal] = useState(false);
+  const [daoAddress, setDaoAddress] = useState('');
 
   const shouldPoll =
     daoCreationData !== undefined &&
@@ -77,9 +85,8 @@ const CreateDaoProvider: React.FC<Props> = ({children}) => {
 
   // Handler for modal button click
   const handleExecuteCreation = async () => {
-    // if DAO has been created, we don't need to do anything
-    // do not execute it again, close the modal
-    // TODO: navigate to new dao when available
+    // if DAO has been created, we don't need to do anything do not execute it
+    // again, close the modal
     trackEvent('daoCreation_publishDAONow_clicked', {
       network: getValues('blockchain')?.network,
       wallet_provider: provider?.connection.url,
@@ -118,7 +125,12 @@ const CreateDaoProvider: React.FC<Props> = ({children}) => {
       case TransactionState.LOADING:
         break;
       case TransactionState.SUCCESS:
-        navigate(Landing);
+        navigate(
+          generatePath(Dashboard, {
+            network: network,
+            dao: daoAddress,
+          })
+        );
         break;
       default: {
         setShowModal(false);
@@ -281,7 +293,10 @@ const CreateDaoProvider: React.FC<Props> = ({children}) => {
             console.log(step.txHash);
             break;
           case DaoCreationSteps.DONE:
-            console.log('Newly created DAO address', step.address);
+            console.log(
+              'Newly created DAO address',
+              step.address.toLowerCase()
+            );
             trackEvent('daoCreation_transaction_success', {
               network: getValues('blockchain')?.network,
               wallet_provider: provider?.connection.url,
@@ -289,6 +304,22 @@ const CreateDaoProvider: React.FC<Props> = ({children}) => {
             });
             setDaoCreationData(undefined);
             setCreationProcessState(TransactionState.SUCCESS);
+            setDaoAddress(step.address.toLowerCase());
+
+            // eslint-disable-next-line no-case-declarations
+            const newCache = {
+              ...cachedDaoCreation,
+              [network]: {
+                ...cachedDaoCreation[network],
+                [step.address.toLocaleLowerCase()]: daoCreationData,
+              },
+            };
+
+            pendingDaoCreationVar(newCache);
+
+            if (preferences?.functional) {
+              localStorage.setItem(PENDING_DAOS_KEY, JSON.stringify(newCache));
+            }
             break;
         }
       }

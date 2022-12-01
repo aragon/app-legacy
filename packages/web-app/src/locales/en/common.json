@@ -729,6 +729,13 @@
       "title": "Initiate a token transfer",
       "description": "Ready to distribute tokens or pay members? Initiate a token transfer here. For ideas on how to distribute your community's token, read our guide on token distribution.",
       "buttonLabel": "Initiate Transfer"
+    },
+    "emptyState": {
+      "title": "Your DAO is getting built up!",
+      "subtitle": "Your created DAO is getting assembled. The on-chain data are getting deployed and published to the subgraph. As soon as the data is available, you will be able to access the full DAO.",
+      "assemblingDao": "Assembling your DAO",
+      "daoReady": "Your DAO is ready",
+      "openDao": "Open your DAO"
     }
   },
   "scc": {

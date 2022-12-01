@@ -153,7 +153,7 @@ const Governance: React.FC = () => {
 
 export default withTransaction('Governance', 'component')(Governance);
 
-const Container = styled.div.attrs({
+export const Container = styled.div.attrs({
   className: 'col-span-full desktop:col-start-3 desktop:col-end-11',
 })``;
 
@@ -176,16 +176,16 @@ const PaginationWrapper = styled.div.attrs({
   className: 'flex mt-8',
 })``;
 
-const EmptyStateContainer = styled.div.attrs({
+export const EmptyStateContainer = styled.div.attrs({
   className:
-    'flex flex-col w-full items-center py-4 px-3 tablet:py-8 tablet:px-6 mx-auto mt-3 tablet:mt-5 text-lg bg-white rounded-xl text-ui-500',
+    'flex flex-col w-full items-center py-4 px-3 tablet:py-12 tablet:px-6 mx-auto mt-3 tablet:mt-5 text-lg bg-white rounded-xl text-ui-500',
 })``;
 
 const ImageContainer = styled.img.attrs({
   className: 'object-cover w-1/2',
 })``;
 
-const EmptyStateHeading = styled.h1.attrs({
+export const EmptyStateHeading = styled.h1.attrs({
   className: 'mt-4 text-2xl font-bold text-ui-800 text-center',
 })``;
 
