@@ -20,7 +20,7 @@ const styles = {
     borderColor: 'border-warning-400',
   },
   critical: {
-    icon: <IconWarning className="text-critical-500" size={20} height={20} />,
+    icon: <IconWarning className="text-critical-500" height={20} width={20} />,
     color: 'text-critical-800',
     borderColor: 'border-critical-400',
   },
