@@ -199,6 +199,10 @@
     "allocation": "Allocation"
   },
   "governance": {
+    "title": "Proposals",
+    "subtitle": "{{activeProposalCount}} Active Proposals",
+    "subtitleSingular": "1 Active Proposal",
+    "action": "New Proposal",
     "emptyState": {
       "title": "Create your first proposal",
       "subtitleLine1": "What's the first thing your community needs to decide?",

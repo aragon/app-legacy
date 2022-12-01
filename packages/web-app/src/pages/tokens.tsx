@@ -1,4 +1,4 @@
-import {SearchInput} from '@aragon/ui-components';
+import {IconAdd, SearchInput} from '@aragon/ui-components';
 import {useTranslation} from 'react-i18next';
 import {withTransaction} from '@elastic/apm-rum-react';
 import React, {useState} from 'react';
@@ -40,6 +40,7 @@ const Tokens: React.FC = () => {
           ? t('allTokens.subtitleSingular')
           : t('allTokens.subtitle', {count: tokens.length})
       }
+      buttonIcon={<IconAdd />}
       buttonLabel={t('TransferModal.newTransfer') as string}
       onClick={open}
     >

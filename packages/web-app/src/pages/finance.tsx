@@ -2,7 +2,7 @@ import {Breadcrumb, ButtonText, IconAdd, Tag} from '@aragon/ui-components';
 import {withTransaction} from '@elastic/apm-rum-react';
 import React from 'react';
 import {useTranslation} from 'react-i18next';
-import {useNavigate, useParams} from 'react-router-dom';
+import {useNavigate} from 'react-router-dom';
 import styled from 'styled-components';
 
 import {Loading} from 'components/temporary/loading';
