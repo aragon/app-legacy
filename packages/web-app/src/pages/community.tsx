@@ -1,6 +1,7 @@
 import {
   AlertInline,
-  HeaderPage,
+  IconAdd,
+  IconLinkExternal,
   Pagination,
   SearchInput,
 } from '@aragon/ui-components';
@@ -13,12 +14,12 @@ import styled from 'styled-components';
 import {MembersList} from 'components/membersList';
 import {StateEmpty} from 'components/stateEmpty';
 import {Loading} from 'components/temporary';
+import {PageWrapper} from 'components/wrappers';
 import {useNetwork} from 'context/network';
 import {useDaoDetails} from 'hooks/useDaoDetails';
 import {useDaoMembers} from 'hooks/useDaoMembers';
 import {useDaoParam} from 'hooks/useDaoParam';
 import {useDebouncedState} from 'hooks/useDebouncedState';
-import {useMappedBreadcrumbs} from 'hooks/useMappedBreadcrumbs';
 import {PluginTypes} from 'hooks/usePluginClient';
 import {CHAIN_METADATA} from 'utils/constants';
 
@@ -28,8 +29,6 @@ const Community: React.FC = () => {
   const {t} = useTranslation();
   const {network} = useNetwork();
   const navigate = useNavigate();
-
-  const {breadcrumbs, icon, tag} = useMappedBreadcrumbs();
 
   const {data: daoId} = useDaoParam();
   const {data: daoDetails, isLoading: detailsAreLoading} = useDaoDetails(
@@ -85,28 +84,23 @@ const Community: React.FC = () => {
   if (detailsAreLoading || membersLoading) return <Loading />;
 
   return (
-    <>
-      <HeaderContainer>
-        <HeaderPage
-          tag={tag}
-          icon={icon}
-          crumbs={breadcrumbs}
-          title={`${totalMemberCount} ${t('labels.members')}`}
-          onClick={handlePrimaryClick}
-          {...(walletBased
-            ? {
-                description: t('explore.explorer.walletBased'),
-                buttonLabel: t('labels.manageMember'),
-              }
-            : {
-                description: t('explore.explorer.tokenBased'),
-                buttonLabel: t('labels.mintTokens'),
-                secondaryButtonLabel: t('labels.seeAllHolders'),
-                secondaryOnClick: handleSecondaryButtonClick,
-              })}
-        />
-      </HeaderContainer>
-
+    <PageWrapper
+      title={`${totalMemberCount} ${t('labels.members')}`}
+      onClick={handlePrimaryClick}
+      {...(walletBased
+        ? {
+            description: t('explore.explorer.walletBased'),
+            buttonLabel: t('labels.manageMember'),
+          }
+        : {
+            description: t('explore.explorer.tokenBased'),
+            buttonIcon: <IconAdd />,
+            buttonLabel: t('labels.mintTokens'),
+            secondaryButtonIcon: <IconLinkExternal />,
+            secondaryButtonLabel: t('labels.seeAllHolders'),
+            secondaryOnClick: handleSecondaryButtonClick,
+          })}
+    >
       <BodyContainer>
         <SearchAndResultWrapper>
           {/* Search input */}
@@ -174,18 +168,12 @@ const Community: React.FC = () => {
           )}
         </PaginationWrapper>
       </BodyContainer>
-    </>
+    </PageWrapper>
   );
 };
 
-const HeaderContainer = styled.div.attrs({
-  className:
-    'col-span-full desktop:col-start-2 desktop:col-end-12 -mx-2 tablet:mx-0 tablet:mt-3 desktop:mt-5',
-})``;
-
 const BodyContainer = styled.div.attrs({
-  className:
-    'col-span-full desktop:col-start-3 desktop:col-end-11 mt-5 desktop:space-y-8',
+  className: 'mt-5 desktop:space-y-8',
 })``;
 
 const SearchAndResultWrapper = styled.div.attrs({className: 'space-y-3'})``;
