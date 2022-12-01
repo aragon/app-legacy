@@ -1,16 +1,19 @@
 import styled from 'styled-components';
 import React from 'react';
 import {ButtonText} from '../button';
-import {IconAdd, IconLinkExternal} from '../icons';
+import {IconType} from '../icons';
 import {Breadcrumb, DefaultCrumbProps, BreadcrumbProps} from '../breadcrumb';
 
 export type HeaderPageProps = DefaultCrumbProps &
   Pick<BreadcrumbProps, 'tag'> & {
     title: string;
     description: string;
-    buttonLabel: string;
+    buttonLabel?: string;
+    buttonIcon?: React.FunctionComponentElement<IconType>;
     secondaryButtonLabel?: string;
+    secondaryButtonIcon?: React.FunctionComponentElement<IconType>;
     onClick?: () => void;
+    onCrumbClick?: () => void;
     secondaryOnClick?: () => void;
   };
 
@@ -18,17 +21,20 @@ export const HeaderPage: React.FC<HeaderPageProps> = ({
   title,
   description,
   buttonLabel,
+  buttonIcon,
   secondaryButtonLabel,
+  secondaryButtonIcon,
   crumbs,
   icon,
   tag,
   onClick,
+  onCrumbClick,
   secondaryOnClick,
 }) => {
   return (
     <Card data-testid="page-dao">
       <BreadcrumbWrapper>
-        <Breadcrumb {...{icon, crumbs, tag}} />
+        <Breadcrumb {...{icon, crumbs, tag}} onClick={onCrumbClick} />
       </BreadcrumbWrapper>
       <ContentWrapper>
         <Content>
@@ -39,18 +45,20 @@ export const HeaderPage: React.FC<HeaderPageProps> = ({
           {secondaryButtonLabel && (
             <ButtonText
               label={secondaryButtonLabel}
-              iconLeft={<IconLinkExternal />}
+              iconLeft={secondaryButtonIcon}
               size="large"
               mode="ghost"
               onClick={secondaryOnClick}
             />
           )}
-          <ButtonText
-            label={buttonLabel}
-            iconLeft={<IconAdd />}
-            size="large"
-            onClick={onClick}
-          />
+          {buttonLabel && (
+            <ButtonText
+              label={buttonLabel}
+              iconLeft={buttonIcon}
+              size="large"
+              onClick={onClick}
+            />
+          )}
         </ActionWrapper>
       </ContentWrapper>
     </Card>
@@ -59,14 +67,11 @@ export const HeaderPage: React.FC<HeaderPageProps> = ({
 
 const Card = styled.div.attrs({
   className:
-    'w-full bg-white tablet:rounded-xl p-2 tablet:p-3 desktop:p-5 border border-ui-100 desktop:space-y-0 tablet:space-3 space-y-2',
-})`
-  box-shadow: 0px 4px 8px rgba(31, 41, 51, 0.04),
-    0px 0px 2px rgba(31, 41, 51, 0.06), 0px 0px 1px rgba(31, 41, 51, 0.04);
-`;
+    'flex flex-col p-2 pb-3 tablet:p-3 desktop:p-5 bg-ui-0 gap-y-2 tablet:gap-y-3 tablet:rounded-xl tablet:border tablet:border-ui-100 tablet:shadow-100',
+})``;
 
 const Content = styled.div.attrs({
-  className: 'space-y-1 desktop:space-y-2',
+  className: 'tablet:flex-1 space-y-1 desktop:space-y-2 capitalize',
 })``;
 
 const Title = styled.h2.attrs({
@@ -79,13 +84,13 @@ const Description = styled.div.attrs({
 
 const ContentWrapper = styled.div.attrs({
   className:
-    'flex flex-col tablet:flex-row justify-between desktop:items-center space-y-2 tablet:space-y-0',
+    'flex flex-col tablet:flex-row gap-y-2 tablet:gap-x-6 tablet:items-start desktop:items-center desktop:mt-0 desktop:pt-0',
 })``;
 
 const ActionWrapper = styled.div.attrs({
-  className: 'flex space-x-2',
+  className: 'flex flex-col tablet:flex-row gap-2',
 })``;
 
 const BreadcrumbWrapper = styled.div.attrs({
-  className: 'desktop:hidden flex',
+  className: 'desktop:hidden desktop:h-0 flex',
 })``;
