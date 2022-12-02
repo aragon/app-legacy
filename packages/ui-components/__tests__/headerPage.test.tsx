@@ -7,7 +7,7 @@ describe('HeaderPage', () => {
   // eslint-disable-next-line
   function setup(args: any) {
     render(<HeaderPage {...args} />);
-    return screen.getByTestId('page-dao');
+    return screen.getByTestId('header-page');
   }
 
   test('should render without crashing', () => {
