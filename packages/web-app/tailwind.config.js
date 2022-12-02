@@ -121,6 +121,12 @@ module.exports = {
       borderRadius: {
         larger: '10px',
       },
+      boxShadow: {
+        100: '0px 4px 8px rgba(31, 41, 51, 0.04), 0px 0px 2px rgba(31, 41, 51, 0.06), 0px 0px 1px rgba(31, 41, 51, 0.04)',
+        200: '0px 10px 20px rgba(31, 41, 51, 0.04), 0px 2px 6px rgba(31, 41, 51, 0.04), 0px 0px 1px rgba(31, 41, 51, 0.04)',
+        300: '0px 16px 24px rgba(31, 41, 51, 0.06), 0px 2px 6px rgba(31, 41, 51, 0.04), 0px 0px 1px rgba(31, 41, 51, 0.04)',
+        400: '0px 24px 32px rgba(31, 41, 51, 0.04), 0px 16px 24px rgba(31, 41, 51, 0.04), 0px 4px 8px rgba(31, 41, 51, 0.04), 0px 0px 1px rgba(31, 41, 51, 0.04)',
+      },
     },
     fontWeight: {
       normal: 500,
