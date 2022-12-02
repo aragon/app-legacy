@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import React, {useEffect} from 'react';
 import {Outlet} from 'react-router-dom';
 
@@ -19,7 +18,7 @@ const ProtectedRoute: React.FC = () => {
   );
   const {open, close} = useGlobalModalContext();
   const {
-    data: {filteredMembers, daoToken},
+    data: {daoToken, filteredMembers},
     isLoading: MembershipIsLoading,
   } = useDaoMembers(
     daoDetails?.plugins[0].instanceAddress || '',
@@ -61,7 +60,11 @@ const ProtectedRoute: React.FC = () => {
   return (
     <>
       <Outlet />
-      <GatingMenu tokenName={daoToken?.name} />
+      <GatingMenu
+        daoAddress={dao}
+        pluginType={daoDetails?.plugins[0].id as PluginTypes}
+        tokenName={daoToken?.name}
+      />
     </>
   );
 };

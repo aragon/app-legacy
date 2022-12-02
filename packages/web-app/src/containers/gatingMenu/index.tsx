@@ -13,7 +13,7 @@ import {
 } from 'containers/networkErrorMenu';
 import {useGlobalModalContext} from 'context/globalModals';
 import {useNetwork} from 'context/network';
-import {useDaoParam} from 'hooks/useDaoParam';
+import {PluginTypes} from 'hooks/usePluginClient';
 import WalletIcon from 'public/wallet.svg';
 import {Governance} from 'utils/paths';
 
@@ -42,19 +42,24 @@ const WalletContainer = () => {
   );
 };
 
-export const GatingMenu = ({tokenName}: {tokenName?: string}) => {
+type Props = {daoAddress: string; pluginType: PluginTypes; tokenName?: string};
+
+export const GatingMenu: React.FC<Props> = ({
+  daoAddress: dao,
+  pluginType,
+  tokenName,
+}) => {
   const {close, isGatingOpen} = useGlobalModalContext();
   const {t} = useTranslation();
   const navigate = useNavigate();
   const {network} = useNetwork();
-  const {data: dao} = useDaoParam();
 
   return (
     <ModalBottomSheetSwitcher isOpen={isGatingOpen}>
       <ModalBody>
         <StyledImage src={WalletIcon} />
-        {tokenName ? (
-          <TokenContainer tokenName={tokenName} />
+        {pluginType === 'erc20voting.dao.eth' ? (
+          <TokenContainer tokenName={tokenName || ''} />
         ) : (
           <WalletContainer />
         )}
