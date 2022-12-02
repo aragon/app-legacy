@@ -13,7 +13,7 @@ export type HeaderPageProps = DefaultCrumbProps &
     secondaryButtonLabel?: string;
     secondaryButtonIcon?: React.FunctionComponentElement<IconType>;
     onClick?: () => void;
-    onCrumbClick?: () => void;
+    onCrumbClick?: (path: string) => void;
     secondaryOnClick?: () => void;
   };
 
@@ -42,12 +42,16 @@ export const HeaderPage: React.FC<HeaderPageProps> = ({
           <Description>{description}</Description>
         </Content>
         <ActionWrapper>
+          {/* Keeping these here for now but ideally should take
+          a list of buttons so that we get all the flexibility of
+          icon sides */}
           {secondaryButtonLabel && (
             <ButtonText
               label={secondaryButtonLabel}
-              iconLeft={secondaryButtonIcon}
+              iconRight={secondaryButtonIcon}
               size="large"
-              mode="ghost"
+              mode="secondary"
+              bgWhite
               onClick={secondaryOnClick}
             />
           )}
@@ -71,7 +75,7 @@ const Card = styled.div.attrs({
 })``;
 
 const Content = styled.div.attrs({
-  className: 'tablet:flex-1 space-y-1 desktop:space-y-2 capitalize',
+  className: 'tablet:flex-1 space-y-1 desktop:space-y-2',
 })``;
 
 const Title = styled.h2.attrs({
@@ -88,7 +92,7 @@ const ContentWrapper = styled.div.attrs({
 })``;
 
 const ActionWrapper = styled.div.attrs({
-  className: 'flex flex-col tablet:flex-row gap-2',
+  className: 'flex flex-col-reverse tablet:flex-row gap-2',
 })``;
 
 const BreadcrumbWrapper = styled.div.attrs({

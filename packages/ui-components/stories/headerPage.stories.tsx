@@ -19,5 +19,6 @@ Page.args = {
     {label: 'Tokens', path: '/abc'},
     {label: 'Third Level', path: '/abc'},
   ],
+  onCrumbClick: path => alert(path),
   icon: <IconFinance />,
 };
