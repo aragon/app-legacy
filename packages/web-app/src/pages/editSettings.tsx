@@ -200,6 +200,8 @@ const EditSettings: React.FC = () => {
     setValue,
   ]);
 
+  const settingsUnchanged = !isGovernanceChanged && !isMetadataChanged;
+
   const handleResetChanges = () => {
     setCurrentMetadata();
     setCurrentGovernance();
@@ -244,8 +246,15 @@ const EditSettings: React.FC = () => {
     <PageWrapper
       title={t('settings.editDaoSettings')}
       description={t('settings.editSubtitle')}
-      secondaryButtonLabel={isMobile ? t('settings.resetChanges') : undefined}
-      secondaryOnClick={handleResetChanges}
+      secondaryBtnProps={
+        isMobile
+          ? {
+              disabled: settingsUnchanged,
+              label: t('settings.resetChanges'),
+              onClick: () => handleResetChanges(),
+            }
+          : undefined
+      }
       customBody={
         <Layout>
           <Container>
@@ -286,8 +295,8 @@ const EditSettings: React.FC = () => {
                 className="w-full tablet:w-max"
                 label={t('settings.reviewProposal')}
                 iconLeft={<IconGovernance />}
-                size={isMobile ? 'large' : 'medium'}
-                disabled={!isGovernanceChanged && !isMetadataChanged}
+                size="large"
+                disabled={settingsUnchanged}
                 onClick={() =>
                   navigate(
                     generatePath(ProposeNewSettings, {network, dao: daoId})
@@ -298,7 +307,8 @@ const EditSettings: React.FC = () => {
                 className="w-full tablet:w-max"
                 label={t('settings.resetChanges')}
                 mode="secondary"
-                size={isMobile ? 'large' : 'medium'}
+                size="large"
+                disabled={settingsUnchanged}
                 onClick={handleResetChanges}
               />
             </HStack>

@@ -89,10 +89,12 @@ const Transfers: React.FC = () => {
     <>
       <PageWrapper
         title={t('TransferModal.allTransfers')}
-        buttonIcon={<IconAdd />}
-        buttonLabel={t('TransferModal.newTransfer')}
         description={`${totalTransfers} Total Volume`}
-        onClick={open}
+        primaryBtnProps={{
+          label: t('TransferModal.newTransfer'),
+          iconLeft: <IconAdd />,
+          onClick: () => open(),
+        }}
       >
         <div className="mt-3 desktop:mt-8">
           <div className="space-y-1.5">

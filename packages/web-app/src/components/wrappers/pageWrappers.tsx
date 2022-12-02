@@ -7,36 +7,27 @@ import {useMappedBreadcrumbs} from 'hooks/useMappedBreadcrumbs';
 
 export type PageWrapperProps = Omit<
   HeaderPageProps,
-  'tag' | 'icon' | 'crumbs' | 'onCrumbClick' | 'title' | 'description'
+  'breadCrumbs' | 'description' | 'title'
 > & {
-  title?: string;
   children?: React.ReactNode;
-  description?: string;
   customHeader?: React.ReactNode;
   customBody?: React.ReactNode;
+  description?: string;
+  title?: string;
 };
 
-export const PageWrapper: React.FC<PageWrapperProps> = props => {
+export const PageWrapper: React.FC<PageWrapperProps> = ({title, ...props}) => {
   const navigate = useNavigate();
-  const {breadcrumbs, icon, tag} = useMappedBreadcrumbs();
+  const {breadcrumbs: crumbs, icon} = useMappedBreadcrumbs();
 
   return (
     <>
       {props.customHeader || (
         <HeaderContainer>
           <HeaderPage
-            tag={tag}
-            icon={icon}
-            crumbs={breadcrumbs}
-            onCrumbClick={navigate}
-            title={props.title || ''}
-            description={props.description || ''}
-            buttonLabel={props.buttonLabel}
-            onClick={props.onClick}
-            buttonIcon={props.buttonIcon}
-            secondaryButtonLabel={props.secondaryButtonLabel}
-            secondaryButtonIcon={props.secondaryButtonIcon}
-            secondaryOnClick={props.secondaryOnClick}
+            {...props}
+            title={title || ''}
+            breadCrumbs={{crumbs, icon, onClick: navigate}}
           />
         </HeaderContainer>
       )}

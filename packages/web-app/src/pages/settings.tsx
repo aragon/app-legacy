@@ -247,13 +247,16 @@ export const SettingsWrapper: React.FC = ({children}) => {
     <PageWrapper
       title={t('labels.daoSettings')}
       description="TBD"
-      {...(isMobile
-        ? {
-            buttonLabel: t('settings.edit'),
-            buttonIcon: <IconGovernance />,
-            onClick: () => navigate(generatePath(EditSettings, {network, dao})),
-          }
-        : {})}
+      primaryBtnProps={
+        isMobile
+          ? {
+              label: t('settings.edit'),
+              iconLeft: <IconGovernance />,
+              onClick: () =>
+                navigate(generatePath(EditSettings, {network, dao})),
+            }
+          : undefined
+      }
       customBody={<Layout>{children}</Layout>}
     />
   );

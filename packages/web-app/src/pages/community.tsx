@@ -86,19 +86,26 @@ const Community: React.FC = () => {
   return (
     <PageWrapper
       title={`${totalMemberCount} ${t('labels.members')}`}
-      onClick={handlePrimaryClick}
       {...(walletBased
         ? {
             description: t('explore.explorer.walletBased'),
-            buttonLabel: t('labels.manageMember'),
+            primaryBtnProps: {
+              label: t('labels.manageMember'),
+              onClick: handlePrimaryClick,
+            },
           }
         : {
             description: t('explore.explorer.tokenBased'),
-            buttonIcon: <IconAdd />,
-            buttonLabel: t('labels.mintTokens'),
-            secondaryButtonIcon: <IconLinkExternal />,
-            secondaryButtonLabel: t('labels.seeAllHolders'),
-            secondaryOnClick: handleSecondaryButtonClick,
+            primaryBtnProps: {
+              label: t('labels.mintTokens'),
+              iconLeft: <IconAdd />,
+              onClick: handlePrimaryClick,
+            },
+            secondaryBtnProps: {
+              label: t('labels.seeAllHolders'),
+              iconLeft: <IconLinkExternal />,
+              onClick: handleSecondaryButtonClick,
+            },
           })}
     >
       <BodyContainer>
