@@ -65,12 +65,11 @@ const Container = styled.button.attrs(() => {
     | undefined = `${baseLayoutClasses} ${baseStyleClasses}`;
 
   const focusVisibleClasses =
-    'focus-visible:outline-none focus-visible:ring-0 focus-visible:ring-transparent';
-  const focusClasses = 'focus:outline-none focus:ring-2 focus:ring-primary-500';
+    'focus-visible:ring-0 focus-visible:ring-transparent';
   const hoverClasses = 'hover:text-primary-500 hover:shadow-100';
   const activeClasses = 'active:outline-none active:border-ui-200';
 
-  className += ` text-ui-600 ${focusVisibleClasses} ${focusClasses} ${activeClasses} ${hoverClasses}`;
+  className += ` text-ui-600 ${focusVisibleClasses} ${activeClasses} ${hoverClasses}`;
 
   return {className};
 })``;

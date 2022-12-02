@@ -40,7 +40,7 @@ type Selectable = Pick<ListItemDaoProps, 'selected'>;
 const Container = styled.button.attrs(({selected}: Selectable) => {
   const baseClasses =
     'group flex items-center p-2 space-x-2  w-full rounded-xl' +
-    ' focus:ring-2 focus:ring-primary-500 focus:outline-none';
+    ' focus-visible:ring-2 focus-visible:ring-primary-500 focus:outline-none';
 
   return {
     className: selected

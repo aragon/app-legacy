@@ -146,4 +146,6 @@ const StyledTimeInput = styled.input.attrs(({disabled}) => {
   ::-webkit-datetime-edit-ampm-field {
     display: none;
   }
+
+  outline: 0;
 `;

@@ -143,9 +143,7 @@ const StyledNumberInput = styled.input.attrs(
   ({disabled, percentage}: StyledNumberInputProps) => {
     const className: string | undefined = `${
       disabled ? 'text-ui-300' : 'text-ui-600'
-    } bg-transparent focus:outline-none margin-0 ${
-      percentage ? 'w-3.5' : 'w-full'
-    }`;
+    } bg-transparent margin-0 ${percentage ? 'w-3.5' : 'w-full'}`;
     return {
       className,
     };
@@ -158,6 +156,8 @@ const StyledNumberInput = styled.input.attrs(
     margin: 0;
   }
   -moz-appearance: textfield;
+
+  outline: 0;
 `;
 
 const StyledIconButton = styled(ButtonIcon).attrs({

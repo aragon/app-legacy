@@ -55,7 +55,7 @@ const StyledButton = styled.button.attrs(({isLoading}: StyledButtonProp) => {
     isLoading ? 'text-primary-500' : 'text-ui-600'
   } flex items-center tablet:space-x-1.5 font-bold p-1.5 hover:text-ui-800
     active:text-ui-800 disabled:text-ui-300 bg-ui-0 hover:bg-ui-100 active:bg-ui-200
-    disabled:bg-ui-100 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500`;
+    disabled:bg-ui-100 rounded-xl focus-visible:ring-2 focus-visible:ring-primary-500`;
   return {className};
 })``;
 

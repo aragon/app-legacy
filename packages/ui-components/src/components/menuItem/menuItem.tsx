@@ -39,7 +39,7 @@ type ContainerProp = {isSelected: boolean};
 const Container = styled.button.attrs(({isSelected}: ContainerProp) => ({
   className: `flex items-center py-1 px-2 space-x-1.5 ${
     isSelected ? 'text-primary-500 bg-ui-0' : 'text-ui-600 hover:text-ui-800'
-  } active:text-primary-500 focus:bg-ui-0 focus:outline-none focus:ring-2 focus:ring-primary-500 rounded-xl`,
+  } active:text-primary-500 focus:bg-ui-0 focus:outline-none focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 rounded-xl`,
 }))<ContainerProp>`
   cursor: pointer;
 `;

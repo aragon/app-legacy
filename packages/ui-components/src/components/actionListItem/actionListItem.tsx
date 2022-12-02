@@ -56,7 +56,7 @@ export const ActionListItem: React.FC<ActionListItemProps> = ({
 type ContainerProps = Pick<ActionListItemProps, 'background'>;
 const Container = styled.button.attrs(({background}: ContainerProps) => ({
   className: `w-full flex justify-between items-center py-1.5 
-  px-2 space-x-1.5 focus:outline-none focus:ring-2 focus:ring-primary-500 
+  px-2 space-x-1.5 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 
   box-border border-ui-100 active:border-ui-800 hover:border-ui-300 
   disabled:border-ui-200 disabled:bg-ui-100 rounded-xl
   ${background && `bg-${background}`} `,

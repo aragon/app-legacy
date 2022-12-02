@@ -40,17 +40,17 @@ const InputContainer = styled.div.attrs(({disabled}: InputContainerProps) => {
   if (disabled) {
     className += ' bg-ui-100 text-ui-300 border-ui-200';
   } else {
-    const focusClasses =
-      'focus:outline-none focus:ring-2 focus:ring-primary-500';
+    const focusVisibleClasses =
+      'focus-visible:ring-2 focus-visible:ring-primary-500';
     const hoverClasses = 'hover:border-ui-300';
     const activeClasses = 'active:border-primary-500';
-    className += ` bg-ui-0 text-ui-600 ${focusClasses} ${hoverClasses} ${activeClasses}`;
+    className += ` bg-ui-0 text-ui-600 ${focusVisibleClasses} ${hoverClasses} ${activeClasses}`;
   }
   return {className, disabled};
 })<DateInputProps>``;
 
 const StyledInput = styled.input.attrs(() => {
-  const baseClasses = 'w-full bg-transparent focus:outline-none';
+  const baseClasses = 'w-full bg-transparent';
   const className = `${baseClasses}`;
 
   return {className};
@@ -59,6 +59,8 @@ const StyledInput = styled.input.attrs(() => {
     margin-top: 4px;
     margin-bottom: 4px;
   }
+
+  outline: 0;
 `;
 
 const IconContainer = styled.div.attrs(({disabled}: InputContainerProps) => {

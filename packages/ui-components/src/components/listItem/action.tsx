@@ -79,7 +79,7 @@ const Container = styled.button.attrs(
       default:
         {
           const focusClasses =
-            'focus:outline-none focus:ring-2 focus:ring-primary-500';
+            'focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500';
           const hoverClasses = 'hover:text-primary-500';
           let activeClasses = 'active:outline-none active:ring-0';
           activeClasses += bgWhite
