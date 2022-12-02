@@ -1,15 +1,15 @@
+import {IconChevronRight, ListItemAction} from '@aragon/ui-components';
 import React from 'react';
-import styled from 'styled-components';
-import {generatePath, useNavigate, useParams} from 'react-router-dom';
 import {useTranslation} from 'react-i18next';
-import {ActionListItem, IconChevronRight} from '@aragon/ui-components';
+import {generatePath, useNavigate, useParams} from 'react-router-dom';
+import styled from 'styled-components';
 
-import {NewDeposit, NewWithDraw} from 'utils/paths';
-import {useWallet} from 'hooks/useWallet';
-import {useGlobalModalContext} from 'context/globalModals';
 import ModalBottomSheetSwitcher from 'components/modalBottomSheetSwitcher';
+import {useGlobalModalContext} from 'context/globalModals';
 import {useNetwork} from 'context/network';
+import {useWallet} from 'hooks/useWallet';
 import {trackEvent} from 'services/analytics';
+import {NewDeposit, NewWithDraw} from 'utils/paths';
 
 type Action = 'deposit_assets' | 'withdraw_assets';
 
@@ -44,16 +44,16 @@ const TransferMenu: React.FC = () => {
       title={t('TransferModal.newTransfer') as string}
     >
       <Container>
-        <ActionListItem
+        <ListItemAction
           title={t('TransferModal.item1Title') as string}
           subtitle={t('TransferModal.item1Subtitle') as string}
-          icon={<IconChevronRight />}
+          iconRight={<IconChevronRight />}
           onClick={() => handleClick('deposit_assets')}
         />
-        <ActionListItem
+        <ListItemAction
           title={t('TransferModal.item2Title') as string}
           subtitle={t('TransferModal.item2Subtitle') as string}
-          icon={<IconChevronRight />}
+          iconRight={<IconChevronRight />}
           onClick={() => handleClick('withdraw_assets')}
         />
       </Container>
