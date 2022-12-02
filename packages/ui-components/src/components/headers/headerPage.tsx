@@ -1,69 +1,52 @@
 import styled from 'styled-components';
 import React from 'react';
-import {ButtonText} from '../button';
-import {IconType} from '../icons';
+import {ButtonText, ButtonTextProps} from '../button';
 import {Breadcrumb, DefaultCrumbProps, BreadcrumbProps} from '../breadcrumb';
 
-export type HeaderPageProps = DefaultCrumbProps &
-  Pick<BreadcrumbProps, 'tag'> & {
-    title: string;
-    description: string;
-    buttonLabel?: string;
-    buttonIcon?: React.FunctionComponentElement<IconType>;
-    secondaryButtonLabel?: string;
-    secondaryButtonIcon?: React.FunctionComponentElement<IconType>;
-    onClick?: () => void;
-    onCrumbClick?: (path: string) => void;
-    secondaryOnClick?: () => void;
-  };
+export type HeaderPageProps = {
+  /** Page title */
+  title: string;
+  /** Page description */
+  description?: string;
+  /** Primary action button properties */
+  primaryBtnProps?: Omit<ButtonTextProps, 'mode' | 'size'>;
+  /** Secondary action button properties */
+  secondaryBtnProps?: Omit<ButtonTextProps, 'mode' | 'size' | 'bgWhite'>;
+  /** Breadcrumb properties */
+  breadCrumbs: DefaultCrumbProps & NonNullable<Omit<BreadcrumbProps, 'tag'>>;
+};
 
 export const HeaderPage: React.FC<HeaderPageProps> = ({
   title,
   description,
-  buttonLabel,
-  buttonIcon,
-  secondaryButtonLabel,
-  secondaryButtonIcon,
-  crumbs,
-  icon,
-  tag,
-  onClick,
-  onCrumbClick,
-  secondaryOnClick,
+  breadCrumbs,
+  primaryBtnProps,
+  secondaryBtnProps,
 }) => {
   return (
-    <Card data-testid="page-dao">
+    <Card data-testid="header-page">
       <BreadcrumbWrapper>
-        <Breadcrumb {...{icon, crumbs, tag}} onClick={onCrumbClick} />
+        <Breadcrumb {...breadCrumbs} />
       </BreadcrumbWrapper>
       <ContentWrapper>
-        <Content>
+        <TextContent>
           <Title>{title}</Title>
           <Description>{description}</Description>
-        </Content>
-        <ActionWrapper>
-          {/* Keeping these here for now but ideally should take
-          a list of buttons so that we get all the flexibility of
-          icon sides */}
-          {secondaryButtonLabel && (
+        </TextContent>
+        {/* Mode,size, bgWhite should not be changed, adding after spread to override */}
+        <ButtonGroup>
+          {secondaryBtnProps && (
             <ButtonText
-              label={secondaryButtonLabel}
-              iconRight={secondaryButtonIcon}
+              {...secondaryBtnProps}
               size="large"
               mode="secondary"
               bgWhite
-              onClick={secondaryOnClick}
             />
           )}
-          {buttonLabel && (
-            <ButtonText
-              label={buttonLabel}
-              iconLeft={buttonIcon}
-              size="large"
-              onClick={onClick}
-            />
+          {primaryBtnProps && (
+            <ButtonText {...primaryBtnProps} mode="primary" size="large" />
           )}
-        </ActionWrapper>
+        </ButtonGroup>
       </ContentWrapper>
     </Card>
   );
@@ -74,7 +57,7 @@ const Card = styled.div.attrs({
     'flex flex-col p-2 pb-3 tablet:p-3 desktop:p-5 bg-ui-0 gap-y-2 tablet:gap-y-3 tablet:rounded-xl tablet:border tablet:border-ui-100 tablet:shadow-100',
 })``;
 
-const Content = styled.div.attrs({
+const TextContent = styled.div.attrs({
   className: 'tablet:flex-1 space-y-1 desktop:space-y-2',
 })``;
 
@@ -91,7 +74,7 @@ const ContentWrapper = styled.div.attrs({
     'flex flex-col tablet:flex-row gap-y-2 tablet:gap-x-6 tablet:items-start desktop:items-center desktop:mt-0 desktop:pt-0',
 })``;
 
-const ActionWrapper = styled.div.attrs({
+const ButtonGroup = styled.div.attrs({
   className: 'flex flex-col-reverse tablet:flex-row gap-2',
 })``;
 
