@@ -4,20 +4,14 @@ import {
   Erc20ProposalListItem,
   ProposalSortBy,
 } from '@aragon/sdk-client';
-import {BigNumber} from 'ethers';
 import {useCallback, useEffect, useState} from 'react';
 
 import {pendingProposalsVar, pendingVotesVar} from 'context/apolloClient';
 import {usePrivacyContext} from 'context/privacyContext';
 import {PENDING_PROPOSALS_KEY} from 'utils/constants';
 import {customJSONReplacer, generateCachedProposalId} from 'utils/library';
-import {isTokenBasedProposal, MappedVotes} from 'utils/proposals';
-import {
-  AddressListVote,
-  DetailedProposal,
-  Erc20ProposalVote,
-  HookData,
-} from 'utils/types';
+import {addVoteToProposal} from 'utils/proposals';
+import {HookData} from 'utils/types';
 
 import {PluginTypes, usePluginClient} from './usePluginClient';
 
@@ -68,11 +62,11 @@ export function useProposals(
         } else {
           // proposal not yet fetched, augment and add votes if necessary
           augmentedProposals.unshift({
-            ...addVoteToProposal(
+            ...(addVoteToProposal(
               daoCache[proposalId],
               cachedVotes[generateCachedProposalId(daoAddress, proposalId)]
-            ),
-          } as Proposal);
+            ) as Proposal),
+          });
         }
       }
 
@@ -108,44 +102,4 @@ export function useProposals(
   }, [augmentProposalsWithCache, client?.methods, daoAddress]);
 
   return {data, error, isLoading};
-}
-
-/**
- * Augment proposal with vote
- * @param proposal proposal to be augmented with vote
- * @param vote
- * @returns a proposal augmented with a singular vote, or
- * the given proposal if no vote is given.
- */
-function addVoteToProposal(
-  proposal: DetailedProposal,
-  vote: AddressListVote | Erc20ProposalVote
-): Proposal {
-  if (!vote) return proposal;
-
-  // calculate new vote values including cached ones
-  const voteValue = MappedVotes[vote.vote];
-  if (isTokenBasedProposal(proposal)) {
-    // Token-based calculation
-    return {
-      ...proposal,
-
-      result: {
-        ...proposal.result,
-        [voteValue]: BigNumber.from(proposal.result[voteValue])
-          .add((vote as Erc20ProposalVote).weight)
-          .toBigInt(),
-      },
-    };
-  } else {
-    // AddressList calculation
-    return {
-      ...proposal,
-
-      result: {
-        ...proposal.result,
-        [voteValue]: proposal.result[voteValue] + 1,
-      },
-    };
-  }
 }

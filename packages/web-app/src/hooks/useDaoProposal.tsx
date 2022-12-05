@@ -1,19 +1,12 @@
 import {useReactiveVar} from '@apollo/client';
-import {AddressListProposal, Erc20Proposal} from '@aragon/sdk-client';
-import {BigNumber} from 'ethers';
 import {useCallback, useEffect, useState} from 'react';
 
 import {pendingProposalsVar, pendingVotesVar} from 'context/apolloClient';
 import {usePrivacyContext} from 'context/privacyContext';
 import {PENDING_PROPOSALS_KEY, PENDING_VOTES_KEY} from 'utils/constants';
 import {customJSONReplacer, generateCachedProposalId} from 'utils/library';
-import {isTokenBasedProposal, MappedVotes} from 'utils/proposals';
-import {
-  AddressListVote,
-  DetailedProposal,
-  Erc20ProposalVote,
-  HookData,
-} from 'utils/types';
+import {addVoteToProposal} from 'utils/proposals';
+import {DetailedProposal, HookData} from 'utils/types';
 import {PluginTypes, usePluginClient} from './usePluginClient';
 
 /**
@@ -121,43 +114,3 @@ export const useDaoProposal = (
 
   return {data, error, isLoading};
 };
-
-/**
- * Augment proposal with vote
- * @param proposal proposal to be augmented with vote
- * @param vote
- * @returns a proposal augmented with a singular vote
- */
-function addVoteToProposal(
-  proposal: DetailedProposal,
-  vote: AddressListVote | Erc20ProposalVote
-): DetailedProposal {
-  // calculate new vote values including cached ones
-  const voteValue = MappedVotes[vote.vote];
-  if (isTokenBasedProposal(proposal)) {
-    // Token-based calculation
-    return {
-      ...proposal,
-      votes: [...proposal.votes, {...vote}],
-      result: {
-        ...proposal.result,
-        [voteValue]: BigNumber.from(proposal.result[voteValue])
-          .add((vote as Erc20ProposalVote).weight)
-          .toBigInt(),
-      },
-      usedVotingWeight: BigNumber.from(proposal.usedVotingWeight)
-        .add((vote as Erc20ProposalVote).weight)
-        .toBigInt(),
-    } as Erc20Proposal;
-  } else {
-    // AddressList calculation
-    return {
-      ...proposal,
-      votes: [...proposal.votes, {...vote}],
-      result: {
-        ...proposal.result,
-        [voteValue]: proposal.result[voteValue] + 1,
-      },
-    } as AddressListProposal;
-  }
-}
