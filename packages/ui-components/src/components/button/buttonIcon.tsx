@@ -73,7 +73,7 @@ const StyledButton = styled(ButtonBase).attrs(
         className = `${
           bgWhite
             ? `${isActive ? 'bg-primary-50' : 'bg-ui-0'} active:bg-primary-50`
-            : `${isActive ? 'bg-ui-0' : 'bg-ui-50'} active:bg-ui-0`
+            : `${isActive ? 'bg-ui-0' : 'bg-transparent'} active:bg-ui-0`
         } ${isActive ? 'ext-primary-500' : 'text-ui-500'} ${
           paddingStyles[size]
         } focus:text-primary-400 hover:text-primary-500 active:text-primary-500 disabled:text-ui-300 disabled:bg-transparent`;
