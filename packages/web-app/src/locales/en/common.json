@@ -913,7 +913,9 @@
       "connect": "Connect smart contract",
       "singleContractConnected": "One connected contract",
       "nContractsConnected": "{{numConnected}} Connected smart contracts",
-      "searchPlaceholder": "Type to find any action …"
+      "searchPlaceholder": "Type to find any action …",
+      "singleActionAvailable": "One write action",
+      "nActionsAvailable": "{{numConnected}} write actions"
     },
     "emptyState": {
       "modalTitle": "Smart contract composer",

@@ -6,25 +6,22 @@ import styled from 'styled-components';
 
 import {SmartContract} from 'utils/types';
 
-// NOTE: may come from form, not set in stone
-type SCCListGroupProps = {
-  contracts: Array<SmartContract>;
-};
+type ActionListGroupProps = Pick<SmartContract, 'actions'>;
 
-const SmartContractListGroup: React.FC<SCCListGroupProps> = ({contracts}) => {
+const ActionListGroup: React.FC<ActionListGroupProps> = ({actions}) => {
   const {t} = useTranslation();
   const {setValue} = useFormContext();
 
   return (
     <ListGroup>
       <ContractNumberIndicator>
-        {contracts.length === 1
-          ? t('scc.labels.singleContractConnected')
-          : t('scc.labels.nContractsConnected', {
-              numConnected: contracts.length,
+        {actions.length === 1
+          ? t('scc.labels.singleActionAvailable')
+          : t('scc.labels.nActionsAvailable', {
+              numConnected: actions.length,
             })}
       </ContractNumberIndicator>
-      {contracts.map(c => (
+      {/* {actions.map(c => (
         // TODO: replace with new listitem that takes image
         // or custom component
         <ListItemAction
@@ -35,14 +32,16 @@ const SmartContractListGroup: React.FC<SCCListGroupProps> = ({contracts}) => {
           iconRight={<IconChevronRight />}
           onClick={() => setValue('selectedSC', c)}
         />
-      ))}
+      ))} */}
     </ListGroup>
   );
 };
 
-export default SmartContractListGroup;
+export default ActionListGroup;
 
-const ListGroup = styled.div.attrs({className: 'pb-2 space-y-1'})``;
+const ListGroup = styled.div.attrs({
+  className: 'flex-1 pt-4 pb-2 space-y-1',
+})``;
 
 const ContractNumberIndicator = styled.div.attrs({
   className: 'ft-text-sm font-bold text-ui-400',

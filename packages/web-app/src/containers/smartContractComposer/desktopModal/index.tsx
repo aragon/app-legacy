@@ -1,12 +1,14 @@
-import {ButtonText, Modal} from '@aragon/ui-components';
+import {ButtonText, ListItemAction, Modal} from '@aragon/ui-components';
 import React from 'react';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
+import {useFormContext, useWatch} from 'react-hook-form';
 
 import {StateEmpty} from 'components/stateEmpty';
 import {SmartContract} from 'utils/types';
 import SmartContractListGroup from '../components/smartContractListGroup';
 import Header from './header';
+import ActionListGroup from '../components/actionListGroup';
 
 type DesktopModalProps = {
   contracts: Array<SmartContract>;
@@ -18,25 +20,43 @@ type DesktopModalProps = {
 
 const DesktopModal: React.FC<DesktopModalProps> = props => {
   const {t} = useTranslation();
+  const {setValue} = useFormContext();
+  const selectedSC: SmartContract = useWatch({name: 'selectedSC'});
 
   return (
     <StyledModal isOpen={props.isOpen} onClose={props.onClose}>
       <Header onClose={props.onClose} />
       <Wrapper>
         <Aside>
-          <SmartContractListGroup contracts={props.contracts} />
-          <ButtonText
-            mode="secondary"
-            size="large"
-            label={t('scc.labels.connect')}
-            onClick={props.onConnect}
-            className="w-full"
-          />
+          {selectedSC ? (
+            <>
+              <ListItemAction
+                key={selectedSC.address}
+                title={selectedSC.name}
+                subtitle={`${selectedSC.actions.length} Actions to compose`}
+                bgWhite
+                // iconRight={<IconChevronRight />}
+                onClick={() => setValue('selectedSC', undefined)}
+              />
+              <ActionListGroup actions={selectedSC.actions} />
+            </>
+          ) : (
+            <>
+              <SmartContractListGroup contracts={props.contracts} />
+              <ButtonText
+                mode="secondary"
+                size="large"
+                label={t('scc.labels.connect')}
+                onClick={props.onConnect}
+                className="w-full"
+              />
+            </>
+          )}
         </Aside>
 
         <Main>
           {/* Add steps here, replace emptyState */}
-          <DesktopModalEmptyState />
+          {selectedSC ? null : <DesktopModalEmptyState />}
         </Main>
       </Wrapper>
     </StyledModal>

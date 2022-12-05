@@ -80,7 +80,7 @@ const ContractAddressValidation: React.FC<Props> = props => {
         setValue('contracts', [
           ...contracts,
           {
-            actions: [{}, {}],
+            actions: JSON.parse(value.ABI),
             address: addressField,
             name: value.ContractName,
           },
