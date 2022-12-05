@@ -551,6 +551,8 @@ export function addVoteToProposal(
   proposal: DetailedProposal,
   vote: AddressListVote | Erc20ProposalVote
 ): DetailedProposal {
+  if (!vote) return proposal;
+
   // calculate new vote values including cached ones
   const voteValue = MappedVotes[vote.vote];
   if (isTokenBasedProposal(proposal)) {
