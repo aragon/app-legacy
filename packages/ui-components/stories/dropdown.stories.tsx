@@ -1,7 +1,7 @@
 import React from 'react';
 import {Meta, Story} from '@storybook/react';
 
-import {ActionListItem} from '../src/components/actionListItem';
+import {ListItemAction} from '../src/components/listItem/action';
 import {
   Dropdown,
   DropdownProps,
@@ -26,7 +26,7 @@ const Template: Story<DropdownProps> = args => (
 const items: ListItemProps[] = [
   {
     component: (
-      <ActionListItem icon={<IconChevronRight />} title="first item" />
+      <ListItemAction iconRight={<IconChevronRight />} title="first item" />
     ),
     callback: () => {
       alert('first item selected');
@@ -34,7 +34,7 @@ const items: ListItemProps[] = [
   },
   {
     component: (
-      <ActionListItem icon={<IconChevronRight />} title="second item" />
+      <ListItemAction iconRight={<IconChevronRight />} title="second item" />
     ),
     callback: () => {
       alert('second item selected');
