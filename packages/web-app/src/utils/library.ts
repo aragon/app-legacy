@@ -302,3 +302,16 @@ export const customJSONReviver = (_: string, value: any) => {
 
   return value;
 };
+
+/**
+ * Get unique proposal key
+ * @param daoAddress
+ * @param proposalId
+ * @returns key for proposal to cache
+ */
+export function generateCachedProposalId(
+  daoAddress: string,
+  proposalId: string
+): string {
+  return `${daoAddress}_${proposalId}`;
+}

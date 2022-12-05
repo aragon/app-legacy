@@ -150,12 +150,8 @@ const ProposeSettingWrapper: React.FC<Props> = ({
   const [creationProcessState, setCreationProcessState] =
     useState<TransactionState>(TransactionState.WAITING);
 
-  // TODO: set proposal ID when sdk returns proper id for now dummy id
-  const [proposalId] = useState<string>(
-    '0xd7e937b8d779de644c691857e58e3342ab322345_0x0'
-  );
+  const [proposalId, setProposalId] = useState<string>();
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [tokenSupply, setTokenSupply] = useState<bigint>();
   const cachedProposals = useReactiveVar(pendingProposalsVar);
 
@@ -367,32 +363,30 @@ const ProposeSettingWrapper: React.FC<Props> = ({
     }
 
     setCreationProcessState(TransactionState.LOADING);
-    for await (const step of proposalIterator) {
-      try {
+    try {
+      for await (const step of proposalIterator) {
         switch (step.key) {
           case ProposalCreationSteps.CREATING:
             console.log(step.txHash);
             break;
           case ProposalCreationSteps.DONE:
             console.log('proposal id', step.proposalId);
-            // TODO: uncomment when sdk returns proper id
-            // setProposalId(step.proposalId);
+            setProposalId(step.proposalId);
             setCreationProcessState(TransactionState.SUCCESS);
 
             // cache proposal
-            // TODO: use step.proposalId when sdk returns proper id
-            handleCacheProposal(proposalId);
+            handleCacheProposal(step.proposalId);
             break;
         }
-      } catch (error) {
-        console.error(error);
-        setCreationProcessState(TransactionState.ERROR);
       }
+    } catch (error) {
+      console.error(error);
+      setCreationProcessState(TransactionState.ERROR);
     }
   };
 
   const handleCacheProposal = useCallback(
-    (newProposalId: string) => {
+    (proposalId: string) => {
       if (!address || !daoDetails || !pluginSettings || !proposalCreationData)
         return;
 
@@ -402,19 +396,21 @@ const ProposeSettingWrapper: React.FC<Props> = ({
         daoName: daoDetails?.metadata.name,
         daoToken,
         totalVotingWeight:
-          // TODO: use token supply once RPC issue is resolved
-          pluginType === 'erc20voting.dao.eth'
-            ? BigInt('500000000000000000000000000')
+          pluginType === 'erc20voting.dao.eth' && tokenSupply
+            ? tokenSupply
             : members.length,
         pluginSettings,
         proposalCreationData,
-        proposalId: newProposalId,
+        proposalId,
       };
 
       const cachedProposal = mapToDetailedProposal(proposalData);
       const newCache = {
         ...cachedProposals,
-        [newProposalId]: {...cachedProposal},
+        [daoDetails.address]: {
+          ...cachedProposals[daoDetails.address],
+          [proposalId]: {...cachedProposal},
+        },
       };
       pendingProposalsVar(newCache);
 
@@ -436,6 +432,7 @@ const ProposeSettingWrapper: React.FC<Props> = ({
       pluginType,
       preferences?.functional,
       proposalCreationData,
+      tokenSupply,
     ]
   );
 

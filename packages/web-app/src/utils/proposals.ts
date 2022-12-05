@@ -26,7 +26,8 @@ import {i18n} from '../../i18n.config';
 import {getFormattedUtcOffset, KNOWN_FORMATS} from './date';
 import {formatUnits} from './library';
 import {abbreviateTokenAmount} from './tokens';
-import {DetailedProposal} from './types';
+import {AddressListVote, DetailedProposal, Erc20ProposalVote} from './types';
+import {BigNumber} from 'ethers';
 
 export const MappedVotes: {[key in VoteValues]: VoterType['option']} = {
   1: 'abstain',
@@ -538,4 +539,44 @@ export function mapToDetailedProposal(params: MapToDetailedProposalParams) {
           result: {yes: 0, no: 0, abstain: 0},
         }),
   } as DetailedProposal;
+}
+
+/**
+ * Augment proposal with vote
+ * @param proposal proposal to be augmented with vote
+ * @param vote
+ * @returns a proposal augmented with a singular vote
+ */
+export function addVoteToProposal(
+  proposal: DetailedProposal,
+  vote: AddressListVote | Erc20ProposalVote
+): DetailedProposal {
+  // calculate new vote values including cached ones
+  const voteValue = MappedVotes[vote.vote];
+  if (isTokenBasedProposal(proposal)) {
+    // Token-based calculation
+    return {
+      ...proposal,
+      votes: [...proposal.votes, {...vote}],
+      result: {
+        ...proposal.result,
+        [voteValue]: BigNumber.from(proposal.result[voteValue])
+          .add((vote as Erc20ProposalVote).weight)
+          .toBigInt(),
+      },
+      usedVotingWeight: BigNumber.from(proposal.usedVotingWeight)
+        .add((vote as Erc20ProposalVote).weight)
+        .toBigInt(),
+    } as Erc20Proposal;
+  } else {
+    // AddressList calculation
+    return {
+      ...proposal,
+      votes: [...proposal.votes, {...vote}],
+      result: {
+        ...proposal.result,
+        [voteValue]: proposal.result[voteValue] + 1,
+      },
+    } as AddressListProposal;
+  }
 }

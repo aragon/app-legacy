@@ -359,7 +359,7 @@ const CreateProposalProvider: React.FC<Props> = ({
   };
 
   const handleCacheProposal = useCallback(
-    (newProposalId: string) => {
+    (proposalId: string) => {
       if (!address || !daoDetails || !pluginSettings || !proposalCreationData)
         return;
 
@@ -374,13 +374,16 @@ const CreateProposalProvider: React.FC<Props> = ({
             : members.length,
         pluginSettings,
         proposalCreationData,
-        proposalId: newProposalId,
+        proposalId,
       };
 
       const cachedProposal = mapToDetailedProposal(proposalData);
       const newCache = {
         ...cachedProposals,
-        [newProposalId]: {...cachedProposal},
+        [daoDetails.address]: {
+          ...cachedProposals[daoDetails.address],
+          [proposalId]: {...cachedProposal},
+        },
       };
       pendingProposalsVar(newCache);
 
