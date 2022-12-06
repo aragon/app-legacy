@@ -166,9 +166,6 @@ module.exports = {
         '5xl': [6, 1.2],
       },
     },
-    outline: {
-      primary: ['2px solid #003BF5'],
-    },
   },
   variants: {
     extend: {
