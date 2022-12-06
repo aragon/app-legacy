@@ -26,7 +26,7 @@ import {CHAIN_METADATA, TransactionState} from 'utils/constants';
 import {handleClipboardActions} from 'utils/library';
 import {EtherscanContractResponse} from 'utils/types';
 import {validateContract} from 'utils/validators';
-import ModalHeader from './components/modalHeader';
+import ModalHeader from './modalHeader';
 
 type Props = {
   isOpen: boolean;
@@ -85,9 +85,6 @@ const ContractAddressValidation: React.FC<Props> = props => {
             name: value.ContractName,
           },
         ]);
-
-        // clear contract address field
-        resetField('contractAddress');
       } else {
         setVerificationState(TransactionState.WAITING);
         setError('contractAddress', {
@@ -96,7 +93,7 @@ const ContractAddressValidation: React.FC<Props> = props => {
         });
       }
     },
-    [addressField, contracts, resetField, setError, setValue, t]
+    [addressField, contracts, setError, setValue, t]
   );
 
   // clear field when there is a value, else paste
