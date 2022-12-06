@@ -102,13 +102,17 @@ const DefineMetadata: React.FC<{bgWhite?: boolean}> = ({bgWhite = false}) => {
           name="daoLogo"
           control={control}
           render={({field: {value, onChange}, fieldState: {error}}) => {
-            let preview;
+            let preview = '';
 
-            // in case url does not need to be created
-            if (URL_PATTERN.test(value)) {
-              preview = value;
-            } else {
-              preview = value ? URL.createObjectURL(value) : '';
+            try {
+              // in case url does not need to be created
+              if (URL_PATTERN.test(value)) {
+                preview = value;
+              } else {
+                preview = value ? URL.createObjectURL(value) : '';
+              }
+            } catch (error) {
+              console.error(error);
             }
 
             return (
