@@ -582,3 +582,35 @@ export function addVoteToProposal(
     } as AddressListProposal;
   }
 }
+
+/**
+ * Strips proposal id of plugin address
+ * @param proposalId id with following format: *0x4206cdbc60f9d8f4acd9df6a675da298a38cae35_0x0*
+ * @returns proposal id without the pluginAddress
+ * or the given proposal id if already stripped of the plugin address: *0x3*
+ */
+export function stripPlgnAdrFromProposalId(proposalId: string) {
+  const parts = proposalId.split('_');
+
+  // return the "pure" contract proposal id or consider given proposal already stripped
+  return parts[1] || proposalId;
+}
+
+/**
+ * Adds plugin address to proposal id
+ * @param proposalId id with following format: *0x0000000000000000000000000000000000000000000000000000000000000002*
+ * @param pluginAddress address of plugin on which proposal was created
+ * @returns proposal id prefixed with the plugin address
+ * or the given proposal id if already prefixed with teh plugin address: *0x4206cdbc60f9d8f4acd9df6a675da298a38cae35_0x0*
+ */
+export function prefixProposalIdWithPlgnAdr(
+  proposalId: string,
+  pluginAddress: string
+) {
+  const parts = proposalId.split('_');
+
+  // address already prefixed
+  if (parts.length === 2) return proposalId;
+
+  return `${pluginAddress}_0x${proposalId.slice(-3)}`;
+}
