@@ -1,114 +1,47 @@
-import {
-  Breadcrumb,
-  ButtonText,
-  IconAdd,
-  IconType,
-  Tag,
-} from '@aragon/ui-components';
+import {HeaderPage, HeaderPageProps} from '@aragon/ui-components';
 import React from 'react';
 import {useNavigate} from 'react-router-dom';
 import styled from 'styled-components';
 
 import {useMappedBreadcrumbs} from 'hooks/useMappedBreadcrumbs';
-import useScreen from 'hooks/useScreen';
-import {SectionWrapperProps} from './sectionWrappers';
 
-type ChangeSign = -1 | 0 | 1;
-
-export type PageWrapperProps = SectionWrapperProps & {
-  buttonLabel: string;
-  buttonIcon?: React.FunctionComponentElement<IconType>;
-  subtitle?: string;
-  timePeriod?: string;
-  sign?: number;
-  onClick?: () => void;
+export type PageWrapperProps = Omit<
+  HeaderPageProps,
+  'breadCrumbs' | 'description' | 'title'
+> & {
+  children?: React.ReactNode;
+  customHeader?: React.ReactNode;
+  customBody?: React.ReactNode;
+  description?: string;
+  title?: string;
 };
 
-const textColors: Record<ChangeSign, string> = {
-  '-1': 'text-critical-800',
-  '1': 'text-success-600',
-  '0': 'text-ui-600',
-};
-
-/**
- * Non proposal page wrapper. Consists of a header with a title and a
- * icon button.
- */
-export const PageWrapper = ({
-  title,
-  children,
-  buttonLabel,
-  buttonIcon,
-  timePeriod,
-  sign = 0,
-  subtitle,
-  showButton = true,
-  onClick,
-}: PageWrapperProps) => {
-  const {isDesktop} = useScreen();
+export const PageWrapper: React.FC<PageWrapperProps> = ({title, ...props}) => {
   const navigate = useNavigate();
-  const {breadcrumbs, icon, tag} = useMappedBreadcrumbs();
+  const {breadcrumbs: crumbs, icon} = useMappedBreadcrumbs();
 
   return (
-    <div className="col-span-full desktop:col-start-3 desktop:col-end-11">
-      <HeaderContainer className="-mx-2 tablet:mx-0 tablet:mt-3">
-        {!isDesktop && (
-          <Breadcrumb
-            icon={icon}
-            crumbs={breadcrumbs}
-            onClick={navigate}
-            tag={tag}
+    <>
+      {props.customHeader || (
+        <HeaderContainer>
+          <HeaderPage
+            {...props}
+            title={title || ''}
+            breadCrumbs={{crumbs, icon, onClick: navigate}}
           />
-        )}
-        <ContentWrapper>
-          <TextWrapper>
-            <PageTitle>{title}</PageTitle>
-            {subtitle && (
-              <PageSubtitleContainer>
-                {timePeriod && <Tag label={timePeriod} />}
-                <p className={textColors[sign as ChangeSign]}>{subtitle}</p>
-              </PageSubtitleContainer>
-            )}
-          </TextWrapper>
+        </HeaderContainer>
+      )}
 
-          {showButton && (
-            <ButtonText
-              size="large"
-              label={buttonLabel}
-              iconLeft={buttonIcon || <IconAdd />}
-              className="w-full tablet:w-auto"
-              onClick={onClick}
-            />
-          )}
-        </ContentWrapper>
-      </HeaderContainer>
-
-      {children}
-    </div>
+      {props.customBody || <BodyContainer>{props.children}</BodyContainer>}
+    </>
   );
 };
 
-const PageSubtitleContainer = styled.div.attrs({
-  className: 'flex gap-x-1.5 items-center mt-1 text-lg text-ui-600',
-})``;
-
-const TextWrapper = styled.div.attrs({
-  className: 'tablet:flex-1',
-})``;
-
 const HeaderContainer = styled.div.attrs({
   className:
-    'flex flex-col gap-y-2 tablet:gap-y-3 desktop:p-0 px-2 tablet:px-3 pt-2' +
-    ' desktop:pt-0 pb-3 bg-ui-0 desktop:bg-transparent' +
-    ' tablet:rounded-xl desktop:rounded-none',
+    'col-span-full desktop:col-start-2 desktop:col-end-12 -mx-2 tablet:mx-0 tablet:mt-3 desktop:mt-5',
 })``;
 
-const PageTitle = styled.p.attrs({
-  className: 'text-3xl font-bold text-ui-800 ft-text-3xl',
-})``;
-
-const ContentWrapper = styled.div.attrs({
-  className:
-    'tablet:flex tablet:justify-between tablet:items-start' +
-    ' space-y-2 tablet:space-y-0 tablet:space-x-3',
+const BodyContainer = styled.div.attrs({
+  className: 'col-span-full desktop:col-start-3 desktop:col-end-11',
 })``;

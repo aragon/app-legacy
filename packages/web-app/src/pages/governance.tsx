@@ -94,15 +94,20 @@ const Governance: React.FC = () => {
     <>
       <PageWrapper
         title={'Proposals'}
-        buttonLabel={'New Proposal'}
-        subtitle={`${activeProposalCount} active proposal${
-          activeProposalCount !== 1 ? 's' : ''
-        }`}
-        onClick={() => {
-          trackEvent('governance_newProposalBtn_clicked', {
-            dao_address: dao,
-          });
-          navigate('new-proposal');
+        description={
+          activeProposalCount === 1
+            ? t('governance.subtitleSingular')
+            : t('governance.subtitle', {activeProposalCount})
+        }
+        primaryBtnProps={{
+          label: t('governance.action'),
+          iconLeft: <IconAdd />,
+          onClick: () => {
+            trackEvent('governance_newProposalBtn_clicked', {
+              dao_address: dao,
+            });
+            navigate('new-proposal');
+          },
         }}
       >
         <ButtonGroupContainer>

@@ -249,7 +249,7 @@ const Dashboard: React.FC = () => {
 
 const HeaderWrapper = styled.div.attrs({
   className:
-    'w-screen -mx-2 tablet:col-span-full tablet:w-full tablet:mx-0 desktop:col-start-2 desktop:col-span-10',
+    'w-screen -mx-2 tablet:col-span-full tablet:w-full tablet:mx-0 desktop:col-start-2 desktop:col-span-10 desktop:mt-3',
 })``;
 
 /* DESKTOP DASHBOARD ======================================================== */

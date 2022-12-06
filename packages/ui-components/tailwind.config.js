@@ -3,7 +3,7 @@ module.exports = {
   darkMode: false,
   theme: {
     extend: {
-      // extends colors accorging to design system
+      // extends colors according to design system
       colors: {
         primary: {
           50: '#F5F8FF',

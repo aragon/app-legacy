@@ -1,6 +1,12 @@
 import React from 'react';
 import {Meta, Story} from '@storybook/react';
-import {HeaderPage, HeaderPageProps, IconFinance} from '../src';
+import {
+  HeaderPage,
+  HeaderPageProps,
+  IconAdd,
+  IconFinance,
+  IconLinkExternal,
+} from '../src';
 
 export default {
   title: 'Components/Headers/Page',
@@ -13,11 +19,25 @@ export const Page = Template.bind({});
 Page.args = {
   title: 'Title',
   description: 'description',
-  buttonLabel: 'buttonLabel',
-  crumbs: [
-    {label: 'Finance', path: '/abc'},
-    {label: 'Tokens', path: '/abc'},
-    {label: 'Third Level', path: '/abc'},
-  ],
-  icon: <IconFinance />,
+
+  breadCrumbs: {
+    crumbs: [
+      {label: 'Finance', path: '/abc'},
+      {label: 'Tokens', path: '/abc'},
+      {label: 'Third Level', path: '/abc'},
+    ],
+    icon: <IconFinance />,
+    onClick: path => alert(path),
+  },
+
+  primaryBtnProps: {
+    iconLeft: <IconAdd />,
+    label: 'Primary Action',
+  },
+
+  secondaryBtnProps: {
+    iconRight: <IconLinkExternal />,
+    label: 'Secondary Action',
+    disabled: true,
+  },
 };

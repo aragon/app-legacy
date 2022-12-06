@@ -3,7 +3,7 @@ import * as Locales from 'date-fns/locale';
 import {format, Locale} from 'date-fns';
 import {useTranslation} from 'react-i18next';
 import {withTransaction} from '@elastic/apm-rum-react';
-import {Option, ButtonGroup, SearchInput} from '@aragon/ui-components';
+import {Option, ButtonGroup, SearchInput, IconAdd} from '@aragon/ui-components';
 import React, {useCallback, useMemo, useState} from 'react';
 
 import {Transfer} from 'utils/types';
@@ -89,9 +89,12 @@ const Transfers: React.FC = () => {
     <>
       <PageWrapper
         title={t('TransferModal.allTransfers')}
-        buttonLabel={t('TransferModal.newTransfer')}
-        subtitle={`${totalTransfers} Total Volume`}
-        onClick={open}
+        description={`${totalTransfers} Total Volume`}
+        primaryBtnProps={{
+          label: t('TransferModal.newTransfer'),
+          iconLeft: <IconAdd />,
+          onClick: () => open(),
+        }}
       >
         <div className="mt-3 desktop:mt-8">
           <div className="space-y-1.5">

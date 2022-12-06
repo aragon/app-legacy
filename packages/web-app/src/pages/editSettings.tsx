@@ -1,10 +1,8 @@
 import {
   AlertInline,
-  Breadcrumb,
   ButtonText,
   IconGovernance,
   ListItemAction,
-  Wizard,
 } from '@aragon/ui-components';
 import {withTransaction} from '@elastic/apm-rum-react';
 import React, {useCallback, useEffect, useMemo} from 'react';
@@ -18,26 +16,26 @@ import {useTranslation} from 'react-i18next';
 import {generatePath, useNavigate} from 'react-router-dom';
 import styled from 'styled-components';
 
+import {AccordionItem, AccordionMultiple} from 'components/accordionMethod';
 import {Loading} from 'components/temporary';
+import {PageWrapper} from 'components/wrappers';
 import ConfigureCommunity from 'containers/configureCommunity';
 import DefineMetadata from 'containers/defineMetadata';
 import {useNetwork} from 'context/network';
 import {useDaoDetails} from 'hooks/useDaoDetails';
 import {useDaoParam} from 'hooks/useDaoParam';
-import {useMappedBreadcrumbs} from 'hooks/useMappedBreadcrumbs';
 import {PluginTypes} from 'hooks/usePluginClient';
 import {usePluginSettings} from 'hooks/usePluginSettings';
 import useScreen from 'hooks/useScreen';
 import {getDHMFromSeconds} from 'utils/date';
 import {ProposeNewSettings} from 'utils/paths';
-import {AccordionItem, AccordionMultiple} from 'components/accordionMethod';
+import {Layout} from './settings';
 
 const EditSettings: React.FC = () => {
   const {t} = useTranslation();
   const navigate = useNavigate();
   const {network} = useNetwork();
   const {isMobile} = useScreen();
-  const {breadcrumbs, icon, tag} = useMappedBreadcrumbs();
   const {data: daoId, isLoading: paramsAreLoading} = useDaoParam();
 
   const {setValue, control} = useFormContext();
@@ -202,6 +200,13 @@ const EditSettings: React.FC = () => {
     setValue,
   ]);
 
+  const settingsUnchanged = !isGovernanceChanged && !isMetadataChanged;
+
+  const handleResetChanges = () => {
+    setCurrentMetadata();
+    setCurrentGovernance();
+  };
+
   useEffect(() => {
     setCurrentMetadata();
     setCurrentGovernance();
@@ -238,102 +243,87 @@ const EditSettings: React.FC = () => {
   ];
 
   return (
-    <Container>
-      <div className="-mx-2 desktop:mx-0">
-        <Wizard
-          includeStepper={false}
-          title={t('settings.editDaoSettings')}
-          description={t('settings.editSubtitle')}
-          nav={
-            <Breadcrumb
-              icon={icon}
-              crumbs={breadcrumbs}
-              onClick={navigate}
-              tag={tag}
-            />
-          }
-        />
-
-        {isMobile && (
-          <div className="px-2 pb-3 -mt-1 bg-white">
-            <ButtonText
-              className="w-full tablet:w-max"
-              label={t('settings.resetChanges')}
-              mode="secondary"
-              size={isMobile ? 'large' : 'medium'}
-              disabled
-            />
-          </div>
-        )}
-      </div>
-
-      <div className="mx-auto mt-5 desktop:mt-8 desktop:w-3/5">
-        <AccordionMultiple defaultValue="metadata" className="space-y-3">
-          <AccordionItem
-            type="action-builder"
-            name="metadata"
-            methodName={t('labels.review.daoMetadata')}
-            alertLabel={
-              isMetadataChanged ? t('settings.newSettings') : undefined
+    <PageWrapper
+      title={t('settings.editDaoSettings')}
+      description={t('settings.editSubtitle')}
+      secondaryBtnProps={
+        isMobile
+          ? {
+              disabled: settingsUnchanged,
+              label: t('settings.resetChanges'),
+              onClick: () => handleResetChanges(),
             }
-            dropdownItems={metadataAction}
-          >
-            <AccordionContent>
-              <DefineMetadata bgWhite />
-            </AccordionContent>
-          </AccordionItem>
+          : undefined
+      }
+      customBody={
+        <Layout>
+          <Container>
+            <AccordionMultiple defaultValue="metadata" className="space-y-3">
+              <AccordionItem
+                type="action-builder"
+                name="metadata"
+                methodName={t('labels.review.daoMetadata')}
+                alertLabel={
+                  isMetadataChanged ? t('settings.newSettings') : undefined
+                }
+                dropdownItems={metadataAction}
+              >
+                <AccordionContent>
+                  <DefineMetadata bgWhite />
+                </AccordionContent>
+              </AccordionItem>
 
-          <AccordionItem
-            type="action-builder"
-            name="governance"
-            methodName={t('labels.review.governance')}
-            alertLabel={
-              isGovernanceChanged ? t('settings.newSettings') : undefined
-            }
-            dropdownItems={governanceAction}
-          >
-            <AccordionContent>
-              <ConfigureCommunity />
-            </AccordionContent>
-          </AccordionItem>
-        </AccordionMultiple>
-      </div>
-
-      <ButtonContainer>
-        <HStack>
-          <ButtonText
-            className="w-full tablet:w-max"
-            label={t('settings.reviewProposal')}
-            iconLeft={<IconGovernance />}
-            size={isMobile ? 'large' : 'medium'}
-            disabled={!isGovernanceChanged && !isMetadataChanged}
-            onClick={() =>
-              navigate(generatePath(ProposeNewSettings, {network, dao: daoId}))
-            }
-          />
-          <ButtonText
-            className="w-full tablet:w-max"
-            label={t('settings.resetChanges')}
-            mode="secondary"
-            size={isMobile ? 'large' : 'medium'}
-            onClick={() => {
-              setCurrentMetadata();
-              setCurrentGovernance();
-            }}
-          />
-        </HStack>
-
-        <AlertInline label={t('settings.proposeSettingsInfo')} mode="neutral" />
-      </ButtonContainer>
-    </Container>
+              <AccordionItem
+                type="action-builder"
+                name="governance"
+                methodName={t('labels.review.governance')}
+                alertLabel={
+                  isGovernanceChanged ? t('settings.newSettings') : undefined
+                }
+                dropdownItems={governanceAction}
+              >
+                <AccordionContent>
+                  <ConfigureCommunity />
+                </AccordionContent>
+              </AccordionItem>
+            </AccordionMultiple>
+          </Container>
+          {/* Footer */}
+          <Footer>
+            <HStack>
+              <ButtonText
+                className="w-full tablet:w-max"
+                label={t('settings.reviewProposal')}
+                iconLeft={<IconGovernance />}
+                size="large"
+                disabled={settingsUnchanged}
+                onClick={() =>
+                  navigate(
+                    generatePath(ProposeNewSettings, {network, dao: daoId})
+                  )
+                }
+              />
+              <ButtonText
+                className="w-full tablet:w-max"
+                label={t('settings.resetChanges')}
+                mode="secondary"
+                size="large"
+                disabled={settingsUnchanged}
+                onClick={handleResetChanges}
+              />
+            </HStack>
+            <AlertInline label={t('settings.proposeSettingsInfo')} />
+          </Footer>
+        </Layout>
+      }
+    />
   );
 };
 
 export default withTransaction('EditSettings', 'component')(EditSettings);
 
 const Container = styled.div.attrs({
-  className:
-    'col-span-full desktop:col-start-2 desktop:col-end-12 desktop:mt-5',
+  className: 'mt-5 desktop:mt-8',
 })``;
 
 const AccordionContent = styled.div.attrs({
@@ -342,10 +332,9 @@ const AccordionContent = styled.div.attrs({
 })``;
 
 const HStack = styled.div.attrs({
-  className:
-    'desktop:flex space-x-0 desktop:space-x-3 space-y-2 desktop:space-y-0',
+  className: 'tablet:flex space-y-2 tablet:space-y-0 tablet:space-x-3',
 })``;
 
-const ButtonContainer = styled.div.attrs({
-  className: 'mx-auto mt-5 desktop:mt-8 space-y-2 desktop:w-3/5',
+const Footer = styled.div.attrs({
+  className: 'mt-5 desktop:mt-8 space-y-2',
 })``;

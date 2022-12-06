@@ -1,57 +1,52 @@
 import styled from 'styled-components';
 import React from 'react';
-import {ButtonText} from '../button';
-import {IconAdd, IconLinkExternal} from '../icons';
+import {ButtonText, ButtonTextProps} from '../button';
 import {Breadcrumb, DefaultCrumbProps, BreadcrumbProps} from '../breadcrumb';
 
-export type HeaderPageProps = DefaultCrumbProps &
-  Pick<BreadcrumbProps, 'tag'> & {
-    title: string;
-    description: string;
-    buttonLabel: string;
-    secondaryButtonLabel?: string;
-    onClick?: () => void;
-    secondaryOnClick?: () => void;
-  };
+export type HeaderPageProps = {
+  /** Page title */
+  title: string;
+  /** Page description */
+  description?: string;
+  /** Primary action button properties */
+  primaryBtnProps?: Omit<ButtonTextProps, 'mode' | 'size'>;
+  /** Secondary action button properties */
+  secondaryBtnProps?: Omit<ButtonTextProps, 'mode' | 'size' | 'bgWhite'>;
+  /** Breadcrumb properties */
+  breadCrumbs: DefaultCrumbProps & NonNullable<Omit<BreadcrumbProps, 'tag'>>;
+};
 
 export const HeaderPage: React.FC<HeaderPageProps> = ({
   title,
   description,
-  buttonLabel,
-  secondaryButtonLabel,
-  crumbs,
-  icon,
-  tag,
-  onClick,
-  secondaryOnClick,
+  breadCrumbs,
+  primaryBtnProps,
+  secondaryBtnProps,
 }) => {
   return (
-    <Card data-testid="page-dao">
+    <Card data-testid="header-page">
       <BreadcrumbWrapper>
-        <Breadcrumb {...{icon, crumbs, tag}} />
+        <Breadcrumb {...breadCrumbs} />
       </BreadcrumbWrapper>
       <ContentWrapper>
-        <Content>
+        <TextContent>
           <Title>{title}</Title>
           <Description>{description}</Description>
-        </Content>
-        <ActionWrapper>
-          {secondaryButtonLabel && (
+        </TextContent>
+        {/* Mode,size, bgWhite should not be changed, adding after spread to override */}
+        <ButtonGroup>
+          {secondaryBtnProps && (
             <ButtonText
-              label={secondaryButtonLabel}
-              iconLeft={<IconLinkExternal />}
+              {...secondaryBtnProps}
               size="large"
-              mode="ghost"
-              onClick={secondaryOnClick}
+              mode="secondary"
+              bgWhite
             />
           )}
-          <ButtonText
-            label={buttonLabel}
-            iconLeft={<IconAdd />}
-            size="large"
-            onClick={onClick}
-          />
-        </ActionWrapper>
+          {primaryBtnProps && (
+            <ButtonText {...primaryBtnProps} mode="primary" size="large" />
+          )}
+        </ButtonGroup>
       </ContentWrapper>
     </Card>
   );
@@ -59,14 +54,11 @@ export const HeaderPage: React.FC<HeaderPageProps> = ({
 
 const Card = styled.div.attrs({
   className:
-    'w-full bg-white tablet:rounded-xl p-2 tablet:p-3 desktop:p-5 border border-ui-100 desktop:space-y-0 tablet:space-3 space-y-2',
-})`
-  box-shadow: 0px 4px 8px rgba(31, 41, 51, 0.04),
-    0px 0px 2px rgba(31, 41, 51, 0.06), 0px 0px 1px rgba(31, 41, 51, 0.04);
-`;
+    'flex flex-col p-2 pb-3 tablet:p-3 desktop:p-5 bg-ui-0 gap-y-2 tablet:gap-y-3 tablet:rounded-xl tablet:border tablet:border-ui-100 tablet:shadow-100',
+})``;
 
-const Content = styled.div.attrs({
-  className: 'space-y-1 desktop:space-y-2',
+const TextContent = styled.div.attrs({
+  className: 'tablet:flex-1 space-y-1 desktop:space-y-2',
 })``;
 
 const Title = styled.h2.attrs({
@@ -79,13 +71,13 @@ const Description = styled.div.attrs({
 
 const ContentWrapper = styled.div.attrs({
   className:
-    'flex flex-col tablet:flex-row justify-between desktop:items-center space-y-2 tablet:space-y-0',
+    'flex flex-col tablet:flex-row gap-y-2 tablet:gap-x-6 tablet:items-start desktop:items-center desktop:mt-0 desktop:pt-0',
 })``;
 
-const ActionWrapper = styled.div.attrs({
-  className: 'flex space-x-2',
+const ButtonGroup = styled.div.attrs({
+  className: 'flex flex-col-reverse tablet:flex-row gap-2',
 })``;
 
 const BreadcrumbWrapper = styled.div.attrs({
-  className: 'desktop:hidden flex',
+  className: 'desktop:hidden desktop:h-0 flex',
 })``;

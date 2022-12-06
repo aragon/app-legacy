@@ -6,7 +6,6 @@ import {
   Link,
   ListItemLink,
   Tag,
-  Wizard,
 } from '@aragon/ui-components';
 import {withTransaction} from '@elastic/apm-rum-react';
 import React, {useEffect, useState} from 'react';
@@ -236,43 +235,36 @@ const Settings: React.FC = () => {
   );
 };
 
-const SettingsWrapper: React.FC = ({children}) => {
+export const SettingsWrapper: React.FC = ({children}) => {
   const {t} = useTranslation();
   const {isMobile} = useScreen();
-  const navigate = useNavigate();
-  const {dao: daoId} = useParams();
-  const {network} = useNetwork();
 
-  if (isMobile) {
-    return (
-      <PageWrapper
-        title={t('labels.daoSettings')}
-        buttonLabel={t('settings.proposeSettings')}
-        showButton={isMobile}
-        buttonIcon={<IconGovernance />}
-        onClick={() => navigate(generatePath(EditSettings, {network, daoId}))}
-      >
-        {children}
-      </PageWrapper>
-    );
-  }
+  const {dao} = useParams();
+  const {network} = useNetwork();
+  const navigate = useNavigate();
 
   return (
-    <Layout>
-      <Wizard
-        title={t('labels.daoSettings')}
-        nav={null}
-        description={null}
-        includeStepper={false}
-      />
-      <div className="mx-auto desktop:w-3/5">{children}</div>
-    </Layout>
+    <PageWrapper
+      title={t('labels.daoSettings')}
+      description="TBD"
+      primaryBtnProps={
+        isMobile
+          ? {
+              label: t('settings.edit'),
+              iconLeft: <IconGovernance />,
+              onClick: () =>
+                navigate(generatePath(EditSettings, {network, dao})),
+            }
+          : undefined
+      }
+      customBody={<Layout>{children}</Layout>}
+    />
   );
 };
 
 export default withTransaction('Settings', 'component')(Settings);
 
-const Layout = styled.div.attrs({
+export const Layout = styled.div.attrs({
   className:
-    'col-span-full desktop:col-start-2 desktop:col-end-12 font-medium text-ui-600',
+    'col-span-full desktop:col-start-4 desktop:col-end-10 text-ui-600' as string,
 })``;
