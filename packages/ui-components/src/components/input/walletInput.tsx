@@ -12,13 +12,28 @@ export type WalletInputProps = React.InputHTMLAttributes<HTMLInputElement> & {
   onAdornmentClick?: () => void;
   /** Changes a input's color schema */
   mode?: 'default' | 'success' | 'warning' | 'critical';
+  /** Disable the input but keep the adornment button active */
+  disabledFilled?: boolean;
 };
 
 export const WalletInput = React.forwardRef<HTMLInputElement, WalletInputProps>(
-  ({mode = 'default', disabled = false, adornmentText = '', ...props}, ref) => (
-    <Container data-testid="input-wallet" {...{mode, disabled}}>
+  (
+    {
+      mode = 'default',
+      disabled = false,
+      disabledFilled = false,
+      adornmentText = '',
+      ...props
+    },
+    ref
+  ) => (
+    <Container
+      data-testid="input-wallet"
+      disabled={disabled || disabledFilled}
+      {...{mode, disabledFilled}}
+    >
       <StyledInput
-        disabled={disabled}
+        disabled={disabled || disabledFilled}
         {...props}
         ref={ref}
         onWheel={e => {
@@ -32,7 +47,7 @@ export const WalletInput = React.forwardRef<HTMLInputElement, WalletInputProps>(
           size="small"
           mode="secondary"
           bgWhite={true}
-          disabled={props.value === '' && disabled}
+          disabled={disabled}
           onClick={props.onAdornmentClick}
         />
       )}
@@ -48,9 +63,8 @@ export const Container = styled.div.attrs(
   ({mode, disabled}: StyledContainerProps) => {
     let className = `${
       disabled ? 'bg-ui-100 border-ui-200' : 'bg-ui-0'
-    } flex items-center space-x-1.5 p-0.75 pl-2 focus:outline-none 
-      text-ui-600 rounded-xl border-2 hover:border-ui-300 
-      focus-within:ring-2 focus-within:ring-primary-500 `;
+    } flex items-center space-x-1.5 p-0.75 pl-2 
+      text-ui-600 rounded-xl border-2 hover:border-ui-300 `;
 
     if (mode === 'default') {
       className += 'border-ui-100';
@@ -64,4 +78,8 @@ export const Container = styled.div.attrs(
 
     return {className};
   }
-)<StyledContainerProps>``;
+)<StyledContainerProps>`
+  :focus-within {
+    border-color: #003bf5;
+  }
+`;
