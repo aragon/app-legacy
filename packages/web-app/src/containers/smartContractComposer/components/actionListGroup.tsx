@@ -21,18 +21,18 @@ const ActionListGroup: React.FC<ActionListGroupProps> = ({actions}) => {
               numConnected: actions.length,
             })}
       </ContractNumberIndicator>
-      {/* {actions.map(c => (
+      {actions.map(a => (
         // TODO: replace with new listitem that takes image
         // or custom component
         <ListItemAction
-          key={c.address}
-          title={c.name}
-          subtitle={`${c.actions.length} Actions`}
+          key={a.name}
+          title={a.name}
+          subtitle={a.name}
           bgWhite
           iconRight={<IconChevronRight />}
-          onClick={() => setValue('selectedSC', c)}
+          onClick={() => setValue('selectedAction', a)}
         />
-      ))} */}
+      ))}
     </ListGroup>
   );
 };
@@ -40,9 +40,9 @@ const ActionListGroup: React.FC<ActionListGroupProps> = ({actions}) => {
 export default ActionListGroup;
 
 const ListGroup = styled.div.attrs({
-  className: 'flex-1 pt-4 pb-2 space-y-1',
+  className: 'flex-1 pt-3 desktop:pt-4 pb-2 space-y-1',
 })``;
 
 const ContractNumberIndicator = styled.div.attrs({
-  className: 'ft-text-sm font-bold text-ui-400',
+  className: 'ft-text-sm font-bold text-ui-400 hidden desktop:block',
 })``;

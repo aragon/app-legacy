@@ -5,6 +5,7 @@ import {
   IconHome,
 } from '@aragon/ui-components';
 import React from 'react';
+import {useFormContext} from 'react-hook-form';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 
@@ -15,11 +16,20 @@ type DesktopModalHeaderProps = {
 
 const DesktopModalHeader: React.FC<DesktopModalHeaderProps> = props => {
   const {t} = useTranslation();
+  const {setValue} = useFormContext();
 
   return (
     <Container>
       <LeftContent>
-        <ButtonIcon icon={<IconHome />} mode="secondary" bgWhite />
+        <ButtonIcon
+          icon={<IconHome />}
+          mode="secondary"
+          bgWhite
+          onClick={() => {
+            setValue('selectedSC', null);
+            setValue('selectedAction', null);
+          }}
+        />
         <IconChevronRight />
         {props.selectedContract && (
           <>

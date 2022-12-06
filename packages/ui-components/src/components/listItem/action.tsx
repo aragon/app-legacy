@@ -48,8 +48,8 @@ export const ListItemAction: React.FC<ListItemActionProps> = ({
         {/* This could be done with label. However, I can't get the label's text
          to inherit the color (for example, when selected mode is on) */}
         <LabelContainer>
-          <p className="font-bold ft-text-base">{title}</p>
-          {subtitle && <p className="ft-text-sm">{subtitle}</p>}
+          <p className="font-bold truncate ft-text-base">{title}</p>
+          {subtitle && <p className="truncate ft-text-sm">{subtitle}</p>}
         </LabelContainer>
       </LeftContent>
       {iconRight && <span>{iconRight}</span>}
@@ -96,7 +96,9 @@ const Container = styled.button.attrs(
   }
 )<InputContainerProps>``;
 
-const LabelContainer = styled.div.attrs({className: 'text-left'})``;
+const LabelContainer = styled.div.attrs({
+  className: 'text-left overflow-hidden',
+})``;
 const LeftContent = styled.div.attrs({
-  className: 'flex items-center space-x-1.5 flex-1',
+  className: 'flex items-center space-x-1.5 flex-1 overflow-hidden',
 })``;

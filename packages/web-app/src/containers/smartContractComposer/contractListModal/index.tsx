@@ -1,11 +1,14 @@
 import {
   ButtonIcon,
   ButtonText,
+  IconChevronLeft,
   IconClose,
   IconHome,
+  IconMenuVertical,
+  ListItemAction,
 } from '@aragon/ui-components';
 import React from 'react';
-import {useWatch} from 'react-hook-form';
+import {useFormContext, useWatch} from 'react-hook-form';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 
@@ -15,6 +18,7 @@ import {SmartContract} from 'utils/types';
 import SmartContractListGroup from '../components/smartContractListGroup';
 import DesktopModal from '../desktopModal';
 import {ActionSearchInput} from '../desktopModal/header';
+import ActionListGroup from '../components/actionListGroup';
 
 type Props = {
   isOpen: boolean;
@@ -27,7 +31,10 @@ const SmartContractList: React.FC<Props> = props => {
   const {t} = useTranslation();
   const {isDesktop} = useScreen();
 
-  const contracts: Array<SmartContract> = useWatch({name: 'contracts'});
+  const [contracts, selectedSC]: [Array<SmartContract>, SmartContract] =
+    useWatch({
+      name: ['contracts', 'selectedSC'],
+    });
 
   if (isDesktop)
     return (
@@ -45,7 +52,36 @@ const SmartContractList: React.FC<Props> = props => {
     <BottomSheet isOpen={props.isOpen} onClose={props.onClose}>
       <CustomMobileHeader onBackButtonClicked={props.onBackButtonClicked} />
       <Content>
-        <SmartContractListGroup contracts={contracts} />
+        {selectedSC ? (
+          <div>
+            <ListItemAction
+              key={selectedSC.address}
+              title={selectedSC.name}
+              subtitle={`${selectedSC.actions.length} Actions to compose`}
+              bgWhite
+              iconRight={<IconMenuVertical />}
+            />
+            <ActionListGroup
+              actions={selectedSC.actions.filter(
+                a =>
+                  a.type === 'function' &&
+                  (a.stateMutability === 'payable' ||
+                    a.stateMutability === 'nonpayable')
+              )}
+            />
+          </div>
+        ) : (
+          <>
+            <SmartContractListGroup contracts={contracts} />
+            <ButtonText
+              mode="secondary"
+              size="large"
+              label={t('scc.labels.connect')}
+              onClick={props.onConnect}
+              className="w-full"
+            />
+          </>
+        )}
         <ButtonText
           mode="secondary"
           size="large"
@@ -66,10 +102,25 @@ type CustomHeaderProps = {
 };
 const CustomMobileHeader: React.FC<CustomHeaderProps> = props => {
   const {t} = useTranslation();
+  const {setValue} = useFormContext();
+  const selectedSC: SmartContract = useWatch({name: 'selectedSC'});
 
   return (
     <Header>
-      <ButtonIcon mode="secondary" size="small" icon={<IconHome />} bgWhite />
+      {selectedSC ? (
+        <ButtonIcon
+          mode="secondary"
+          size="small"
+          icon={<IconChevronLeft />}
+          bgWhite
+          onClick={() => {
+            setValue('selectedSC', null);
+            setValue('selectedAction', null);
+          }}
+        />
+      ) : (
+        <ButtonIcon mode="secondary" size="small" icon={<IconHome />} bgWhite />
+      )}
 
       <ActionSearchInput
         type="text"
@@ -96,4 +147,6 @@ const Header = styled.div.attrs({
 
 const Content = styled.div.attrs({
   className: 'py-3 px-2 space-y-3 overflow-auto',
-})``;
+})`
+  max-height: 70vh;
+`;

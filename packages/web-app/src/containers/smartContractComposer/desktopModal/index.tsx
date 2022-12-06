@@ -1,11 +1,16 @@
-import {ButtonText, ListItemAction, Modal} from '@aragon/ui-components';
+import {
+  ButtonText,
+  IconMenuVertical,
+  ListItemAction,
+  Modal,
+} from '@aragon/ui-components';
 import React from 'react';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
-import {useFormContext, useWatch} from 'react-hook-form';
+import {useWatch} from 'react-hook-form';
 
 import {StateEmpty} from 'components/stateEmpty';
-import {SmartContract} from 'utils/types';
+import {SmartContract, SmartContractAction} from 'utils/types';
 import SmartContractListGroup from '../components/smartContractListGroup';
 import Header from './header';
 import ActionListGroup from '../components/actionListGroup';
@@ -20,12 +25,14 @@ type DesktopModalProps = {
 
 const DesktopModal: React.FC<DesktopModalProps> = props => {
   const {t} = useTranslation();
-  const {setValue} = useFormContext();
-  const selectedSC: SmartContract = useWatch({name: 'selectedSC'});
+  const [selectedSC, selectedAction]: [SmartContract, SmartContractAction] =
+    useWatch({
+      name: ['selectedSC', 'selectedAction'],
+    });
 
   return (
     <StyledModal isOpen={props.isOpen} onClose={props.onClose}>
-      <Header onClose={props.onClose} />
+      <Header onClose={props.onClose} selectedContract={selectedSC?.name} />
       <Wrapper>
         <Aside>
           {selectedSC ? (
@@ -35,10 +42,16 @@ const DesktopModal: React.FC<DesktopModalProps> = props => {
                 title={selectedSC.name}
                 subtitle={`${selectedSC.actions.length} Actions to compose`}
                 bgWhite
-                // iconRight={<IconChevronRight />}
-                onClick={() => setValue('selectedSC', undefined)}
+                iconRight={<IconMenuVertical />}
               />
-              <ActionListGroup actions={selectedSC.actions} />
+              <ActionListGroup
+                actions={selectedSC.actions.filter(
+                  a =>
+                    a.type === 'function' &&
+                    (a.stateMutability === 'payable' ||
+                      a.stateMutability === 'nonpayable')
+                )}
+              />
             </>
           ) : (
             <>
@@ -55,8 +68,15 @@ const DesktopModal: React.FC<DesktopModalProps> = props => {
         </Aside>
 
         <Main>
-          {/* Add steps here, replace emptyState */}
-          {selectedSC ? null : <DesktopModalEmptyState />}
+          {selectedSC ? (
+            selectedAction && (
+              <div className="p-6 h-full bg-white">
+                TBD: Form to collect inputs for {selectedAction.name} function
+              </div>
+            )
+          ) : (
+            <DesktopModalEmptyState />
+          )}
         </Main>
       </Wrapper>
     </StyledModal>
