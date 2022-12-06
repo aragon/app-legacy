@@ -1,4 +1,5 @@
 import {useEffect, useState} from 'react';
+import {stripPlgnAdrFromProposalId} from 'utils/proposals';
 
 import {HookData} from 'utils/types';
 import {PluginTypes, usePluginClient} from './usePluginClient';
@@ -35,7 +36,7 @@ export const useWalletCanVote = (
 
         const canVote = await client?.methods.canVote({
           address,
-          proposalId,
+          proposalId: stripPlgnAdrFromProposalId(proposalId),
           pluginAddress,
         });
 

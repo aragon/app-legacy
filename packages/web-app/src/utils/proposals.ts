@@ -19,6 +19,7 @@ import {
 import {ProgressStatusProps, VoterType} from '@aragon/ui-components';
 import Big from 'big.js';
 import {format} from 'date-fns';
+import {BigNumber} from 'ethers';
 
 import {ProposalVoteResults} from 'containers/votingTerminal';
 import differenceInSeconds from 'date-fns/fp/differenceInSeconds';
@@ -27,7 +28,6 @@ import {getFormattedUtcOffset, KNOWN_FORMATS} from './date';
 import {formatUnits} from './library';
 import {abbreviateTokenAmount} from './tokens';
 import {AddressListVote, DetailedProposal, Erc20ProposalVote} from './types';
-import {BigNumber} from 'ethers';
 
 export const MappedVotes: {[key in VoteValues]: VoterType['option']} = {
   1: 'abstain',
@@ -590,10 +590,8 @@ export function addVoteToProposal(
  * or the given proposal id if already stripped of the plugin address: *0x3*
  */
 export function stripPlgnAdrFromProposalId(proposalId: string) {
-  const parts = proposalId.split('_');
-
   // return the "pure" contract proposal id or consider given proposal already stripped
-  return parts[1] || proposalId;
+  return proposalId?.split('_')[1] || proposalId;
 }
 
 /**

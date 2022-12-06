@@ -29,6 +29,7 @@ import {
   TransactionState,
 } from 'utils/constants';
 import {customJSONReplacer, generateCachedProposalId} from 'utils/library';
+import {stripPlgnAdrFromProposalId} from 'utils/proposals';
 import {fetchBalance} from 'utils/tokens';
 import {pendingVotesVar} from './apolloClient';
 import {useNetwork} from './network';
@@ -236,7 +237,10 @@ const ProposalTransactionProvider: React.FC<Props> = ({children}) => {
     }
 
     setVoteProcessState(TransactionState.LOADING);
-    const voteSteps = pluginClient?.methods.voteProposal(voteParams);
+    const voteSteps = pluginClient?.methods.voteProposal({
+      ...voteParams,
+      proposalId: stripPlgnAdrFromProposalId(voteParams.proposalId),
+    });
 
     if (!voteSteps) {
       throw new Error('Voting function is not initialized correctly');
@@ -305,7 +309,11 @@ const ProposalTransactionProvider: React.FC<Props> = ({children}) => {
     }
 
     setExecuteProcessState(TransactionState.LOADING);
-    const executeSteps = pluginClient?.methods.executeProposal(executeParams);
+    const executeSteps = pluginClient?.methods.executeProposal({
+      ...executeParams,
+      proposalId: stripPlgnAdrFromProposalId(executeParams.proposalId),
+    });
+
     if (!executeSteps) {
       throw new Error('Voting function is not initialized correctly');
     }
