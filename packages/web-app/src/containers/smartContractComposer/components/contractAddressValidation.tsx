@@ -26,7 +26,7 @@ import {CHAIN_METADATA, TransactionState} from 'utils/constants';
 import {handleClipboardActions} from 'utils/library';
 import {EtherscanContractResponse} from 'utils/types';
 import {validateContract} from 'utils/validators';
-import ModalHeader from './components/modalHeader';
+import ModalHeader from './modalHeader';
 
 type Props = {
   isOpen: boolean;
@@ -137,7 +137,12 @@ const ContractAddressValidation: React.FC<Props> = props => {
     <ModalBottomSheetSwitcher isOpen={props.isOpen} onClose={props.onClose}>
       <ModalHeader
         title={t('scc.addressValidation.modalTitle') as string}
-        onClose={props.onClose}
+        onClose={() => {
+          // clear contract address field
+          resetField('contractAddress');
+          setVerificationState(TransactionState.WAITING);
+          props.onClose();
+        }}
         onBackButtonClicked={props.onBackButtonClicked}
         showBackButton={
           !(
