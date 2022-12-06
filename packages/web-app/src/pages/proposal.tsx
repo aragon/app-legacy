@@ -187,7 +187,7 @@ const Proposal: React.FC = () => {
           }
         });
 
-      if (daoToken?.address) {
+      if (daoToken?.address && mintTokenActions.actions.length !== 0) {
         // Decode all the mint actions into one action with several addresses
         const decodedMintToken = decodeMintTokensToAction(
           mintTokenActions.actions,

@@ -67,7 +67,7 @@ export const useDaoProposal = (
       try {
         setIsLoading(true);
 
-        const cachedProposal = proposalCache[daoAddress][proposalId];
+        const cachedProposal = proposalCache[daoAddress]?.[proposalId];
 
         const proposal = await pluginClient?.methods.getProposal(proposalId);
         if (proposal) {

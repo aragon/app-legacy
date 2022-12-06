@@ -26,7 +26,7 @@ import {CHAIN_METADATA, TransactionState} from 'utils/constants';
 import {handleClipboardActions} from 'utils/library';
 import {EtherscanContractResponse} from 'utils/types';
 import {validateContract} from 'utils/validators';
-import ModalHeader from './modalHeader';
+import ModalHeader from './components/modalHeader';
 
 type Props = {
   isOpen: boolean;
