@@ -140,7 +140,8 @@ type PendingVotes = {
   [key: string]: AddressListVote | Erc20ProposalVote;
 };
 const pendingVotes = JSON.parse(
-  localStorage.getItem(PENDING_VOTES_KEY) || '{}'
+  localStorage.getItem(PENDING_VOTES_KEY) || '{}',
+  customJSONReviver
 );
 const pendingVotesVar = makeVar<PendingVotes>(pendingVotes);
 

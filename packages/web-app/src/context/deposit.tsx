@@ -29,6 +29,7 @@ import {useGlobalModalContext} from './globalModals';
 import {useReactiveVar} from '@apollo/client';
 import {pendingDeposits} from './apolloClient';
 import {trackEvent} from 'services/analytics';
+import {customJSONReplacer} from 'utils/library';
 
 interface IDepositContextType {
   handleOpenModal: () => void;
@@ -221,39 +222,36 @@ const DepositProvider = ({children}: {children: ReactNode}) => {
     try {
       setDepositState(TransactionState.LOADING);
 
-      console.log('amount->', depositParams);
+      console.log('amount->', depositParams, amount);
 
-      // eslint-disable-next-line no-debugger
-      debugger;
       for await (const step of depositIterator) {
         if (step.key === DaoDepositSteps.DEPOSITING) {
           transactionHash = step.txHash;
 
-          console.log('amount', amount);
-          // const depositTxs = [
-          //   ...pendingDepositsTxs,
-          //   {
-          //     transactionId: transactionHash,
-          //     from,
-          //     amount: BigInt(amount),
-          //     reference,
-          //     type: TransferType.DEPOSIT,
-          //     tokenType: isNativeToken(tokenAddress) ? 'native' : 'erc20',
-          //     address: tokenAddress,
-          //     name: tokenName,
-          //     symbol: tokenSymbol,
-          //     // TODO: Fix the decimals value
-          //     decimals: '18',
-          //   },
-          // ];
+          const depositTxs = [
+            ...pendingDepositsTxs,
+            {
+              transactionId: transactionHash,
+              from,
+              amount: depositParams?.amount,
+              reference,
+              type: TransferType.DEPOSIT,
+              tokenType: isNativeToken(tokenAddress) ? 'native' : 'erc20',
+              address: tokenAddress,
+              name: tokenName,
+              symbol: tokenSymbol,
+              // TODO: Fix the decimals value
+              decimals: '18',
+            },
+          ];
 
           // eslint-disable-next-line @typescript-eslint/ban-ts-comment
           // @ts-ignore
-          // pendingDeposits(depositTxs);
-          // localStorage.setItem(
-          //   PENDING_DEPOSITS_KEY,
-          //   JSON.stringify(depositTxs)
-          // );
+          pendingDeposits(depositTxs);
+          localStorage.setItem(
+            PENDING_DEPOSITS_KEY,
+            JSON.stringify(depositTxs, customJSONReplacer)
+          );
           trackEvent('newDeposit_transaction_signed', {
             network,
             wallet_provider: provider?.connection.url,

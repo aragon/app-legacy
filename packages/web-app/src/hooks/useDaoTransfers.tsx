@@ -7,6 +7,7 @@ import {pendingDeposits} from 'context/apolloClient';
 import {HookData} from 'utils/types';
 import {useClient} from './useClient';
 import {PENDING_DEPOSITS_KEY} from 'utils/constants';
+import {customJSONReplacer} from 'utils/library';
 
 export type IAssetTransfers = Transfer[];
 
@@ -52,7 +53,7 @@ export const useDaoTransfers = (
 
           localStorage.setItem(
             PENDING_DEPOSITS_KEY,
-            JSON.stringify(pendingDepositsTxs)
+            JSON.stringify(pendingDepositsTxs, customJSONReplacer)
           );
 
           setData([...pendingDepositsTxs, ...transfers]);
