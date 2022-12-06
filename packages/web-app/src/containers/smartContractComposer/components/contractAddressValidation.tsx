@@ -53,7 +53,7 @@ const ContractAddressValidation: React.FC<Props> = props => {
     TransactionState.WAITING
   );
 
-  const {control, resetField, setValue, setError} =
+  const {control, setValue, resetField, setError} =
     useFormContext<SccFormData>();
 
   const {errors} = useFormState({control});
