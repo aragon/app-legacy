@@ -31,7 +31,10 @@ import {
 import {getCanonicalUtcOffset} from 'utils/date';
 import {customJSONReplacer} from 'utils/library';
 import {Proposal} from 'utils/paths';
-import {mapToDetailedProposal} from 'utils/proposals';
+import {
+  mapToDetailedProposal,
+  prefixProposalIdWithPlgnAdr,
+} from 'utils/proposals';
 import {getTokenInfo} from 'utils/tokens';
 import {Action, ProposalResource} from 'utils/types';
 import {pendingProposalsVar} from './apolloClient';
@@ -330,20 +333,27 @@ const CreateProposalProvider: React.FC<Props> = ({
           case ProposalCreationSteps.CREATING:
             console.log(step.txHash);
             break;
-          case ProposalCreationSteps.DONE:
-            console.log('proposal id', step.proposalId);
-            setProposalId(step.proposalId);
+          case ProposalCreationSteps.DONE: {
+            //TODO: replace with step.proposal id when SDK returns proper format
+            const prefixedId = prefixProposalIdWithPlgnAdr(
+              step.proposalId,
+              pluginAddress
+            );
+
+            console.log('proposal id', prefixedId);
+            setProposalId(prefixedId);
             setCreationProcessState(TransactionState.SUCCESS);
             trackEvent('newProposal_transaction_success', {
               dao_address: dao,
               network: network,
               wallet_provider: provider?.connection.url,
-              proposalId: step.proposalId,
+              proposalId: prefixedId,
             });
 
             // cache proposal
-            handleCacheProposal(step.proposalId);
+            handleCacheProposal(prefixedId);
             break;
+          }
         }
       }
     } catch (error) {

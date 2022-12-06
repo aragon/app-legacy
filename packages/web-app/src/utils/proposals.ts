@@ -585,7 +585,7 @@ export function addVoteToProposal(
 
 /**
  * Strips proposal id of plugin address
- * @param proposalId id with following format: *0x4206cdbc60f9d8f4acd9df6a675da298a38cae35_0x0*
+ * @param proposalId id with following format:  *0x4206cdbc...a675cae35_0x0*
  * @returns proposal id without the pluginAddress
  * or the given proposal id if already stripped of the plugin address: *0x3*
  */
@@ -598,10 +598,10 @@ export function stripPlgnAdrFromProposalId(proposalId: string) {
 
 /**
  * Adds plugin address to proposal id
- * @param proposalId id with following format: *0x0000000000000000000000000000000000000000000000000000000000000002*
+ * @param proposalId id with following format: *0x000000000...00000000002*
  * @param pluginAddress address of plugin on which proposal was created
  * @returns proposal id prefixed with the plugin address
- * or the given proposal id if already prefixed with teh plugin address: *0x4206cdbc60f9d8f4acd9df6a675da298a38cae35_0x0*
+ * or the given proposal id if already prefixed with teh plugin address: *0x4206cdbc...a675cae35_0x0*
  */
 export function prefixProposalIdWithPlgnAdr(
   proposalId: string,
@@ -612,5 +612,7 @@ export function prefixProposalIdWithPlgnAdr(
   // address already prefixed
   if (parts.length === 2) return proposalId;
 
-  return `${pluginAddress}_0x${proposalId.slice(-3)}`;
+  // get last five characters from proposal, remove leading zeros, and prefix with
+  // plugin address
+  return `${pluginAddress}_0x${proposalId.slice(-5).replace(/^0+/, '')}`;
 }
