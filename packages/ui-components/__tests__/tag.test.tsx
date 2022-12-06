@@ -1,13 +1,13 @@
 import React from 'react';
 import {render, screen} from '@testing-library/react';
 
-import {Default as CardDao} from '../stories/cardDao.stories';
+import {Tag} from '../src';
 
-describe('CardDao', () => {
+describe('Tag', () => {
   // eslint-disable-next-line
   function setup(args: any) {
-    render(<CardDao {...args} daoName={'daoName'} />);
-    return screen.getByTestId('cardDao');
+    render(<Tag {...args} />);
+    return screen.getByTestId('tag');
   }
 
   test('should render without crashing', () => {

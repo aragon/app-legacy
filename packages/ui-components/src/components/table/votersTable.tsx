@@ -2,7 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 
 import {TableCell} from './tableCell';
-import {Badge} from '../badge';
+import {Tag} from '../tag';
 import {IconChevronDown} from '../icons';
 import {Link} from '../link';
 import {shortenAddress} from '../../utils/addresses';
@@ -51,7 +51,7 @@ export const VotersTable: React.FC<VotersTableProps> = ({
             {showOption && (
               <TableCell type="tag">
                 {voter.option && (
-                  <Badge
+                  <Tag
                     label={voter.option}
                     className="capitalize"
                     colorScheme={colorScheme(voter.option)}

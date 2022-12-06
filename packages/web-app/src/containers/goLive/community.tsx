@@ -1,12 +1,12 @@
+import {Link, Tag} from '@aragon/ui-components';
 import React from 'react';
-import {Link, Badge} from '@aragon/ui-components';
 import {Controller, useFormContext} from 'react-hook-form';
 import {useTranslation} from 'react-i18next';
 
+import {Dd, DescriptionListContainer, Dl, Dt} from 'components/descriptionList';
 import {useFormStep} from 'components/fullScreenStepper';
 import CommunityAddressesModal from 'containers/communityAddressesModal';
 import {useGlobalModalContext} from 'context/globalModals';
-import {DescriptionListContainer, Dl, Dt, Dd} from 'components/descriptionList';
 
 const Community: React.FC = () => {
   const {control, getValues} = useFormContext();
@@ -41,7 +41,7 @@ const Community: React.FC = () => {
           checkedState={
             value ? 'active' : reviewCheckError ? 'error' : 'default'
           }
-          badgeLabel={t('labels.changeableVote')}
+          tagLabel={t('labels.changeableVote')}
           onChecked={() => onChange(!value)}
         >
           <Dl>
@@ -76,7 +76,7 @@ const Community: React.FC = () => {
                     <span>{tokenName}</span>
                     <span>{tokenSymbol}</span>
                     {isCustomToken && (
-                      <Badge label={t('labels.new')} colorScheme="info" />
+                      <Tag label={t('labels.new')} colorScheme="info" />
                     )}
                   </div>
                 </Dd>
@@ -88,7 +88,7 @@ const Community: React.FC = () => {
                     <p>
                       {tokenTotalSupply} {tokenSymbol}
                     </p>
-                    <Badge label={t('labels.mintable')} colorScheme="neutral" />
+                    <Tag label={t('labels.mintable')} colorScheme="neutral" />
                   </div>
                 </Dd>
               </Dl>

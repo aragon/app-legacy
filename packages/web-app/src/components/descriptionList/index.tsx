@@ -1,9 +1,9 @@
 import {
   AlertInline,
-  Badge,
   ButtonText,
   CheckboxListItem,
   CheckboxListItemProps,
+  Tag,
 } from '@aragon/ui-components';
 import React from 'react';
 import {useTranslation} from 'react-i18next';
@@ -16,7 +16,7 @@ export type DescriptionListProps = {
   checkBoxErrorMessage?: string;
   checkedState?: CheckboxListItemProps['type'];
   onChecked?: () => void;
-  badgeLabel?: string;
+  tagLabel?: string;
 };
 
 export const DescriptionListContainer: React.FC<DescriptionListProps> = ({
@@ -27,7 +27,7 @@ export const DescriptionListContainer: React.FC<DescriptionListProps> = ({
   checkBoxErrorMessage,
   checkedState,
   onChecked,
-  badgeLabel,
+  tagLabel: badgeLabel,
 }) => {
   const {t} = useTranslation();
 
@@ -38,7 +38,7 @@ export const DescriptionListContainer: React.FC<DescriptionListProps> = ({
           <TitleText>{title}</TitleText>
           {badgeLabel && (
             <div>
-              <Badge label={badgeLabel || ''} colorScheme="info" />
+              <Tag label={badgeLabel || ''} colorScheme="info" />
             </div>
           )}
         </TitleContainer>

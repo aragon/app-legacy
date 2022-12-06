@@ -1,34 +1,32 @@
+import {
+  Address,
+  AvatarDao,
+  AvatarDaoProps,
+  ButtonIcon,
+  IconChevronDown,
+  shortenAddress,
+} from '@aragon/ui-components';
+
+import useScreen from 'hooks/useScreen';
 import React from 'react';
 import styled from 'styled-components';
 
-import {Address, shortenAddress} from '../../utils/addresses';
-import {AvatarDao, AvatarDaoProps} from '../avatar';
-import {ButtonIcon} from '../button/buttonIcon';
-import {IconSwitch} from '../icons';
-
-export type CardDaoProps = {
+type DaoSelectorProps = {
   daoName: string;
   /** Dao's ethereum address **or** ENS name */
   daoAddress: Address;
-
-  /** Handler for the switch button. Will be called when the button is clicked.
-   * */
+  /** Handler for the switch button. Will be called when the button is clicked. */
   onClick: () => void;
 } & Pick<AvatarDaoProps, 'src'>;
 
-/**
- * ## Description
- *
- * This card is used to display the current DAO (including name and (ens-)
- * address). Additionally, the switch button allows a user to access the DAO
- * explorer, where they can change DAO.
- */
-export const CardDao: React.FC<CardDaoProps> = ({
+export const DaoSelector: React.FC<DaoSelectorProps> = ({
   daoName,
   daoAddress,
   onClick,
   src,
-}: CardDaoProps) => {
+}: DaoSelectorProps) => {
+  const {isDesktop} = useScreen();
+
   return (
     <Card data-testid="cardDao" onClick={onClick}>
       <LeftContent>
@@ -42,17 +40,10 @@ export const CardDao: React.FC<CardDaoProps> = ({
       </LeftContent>
 
       <ButtonIcon
-        className="desktop:hidden"
-        icon={<IconSwitch />}
+        icon={<IconChevronDown />}
         mode="secondary"
         size="small"
-        bgWhite
-      />
-      <ButtonIcon
-        className="hidden desktop:flex"
-        icon={<IconSwitch />}
-        mode="secondary"
-        size="small"
+        bgWhite={!isDesktop}
       />
     </Card>
   );

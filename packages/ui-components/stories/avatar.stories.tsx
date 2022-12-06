@@ -11,13 +11,13 @@ const Template: Story<AvatarProps> = args => <Avatar {...args} />;
 
 export const Square = Template.bind({});
 Square.args = {
-  src: 'https://banner2.cleanpng.com/20180325/sxw/kisspng-computer-icons-avatar-avatar-5ab7529a8e4e14.9936310115219636745829.jpg',
+  src: 'https://cdn.discordapp.com/icons/672466989217873929/a_51c83f18bd98ca37916f540b3ecf40f7.webp?size=1024',
   mode: 'square',
 };
 
 export const Circle = Template.bind({});
 Circle.args = {
-  src: 'https://banner2.cleanpng.com/20180325/sxw/kisspng-computer-icons-avatar-avatar-5ab7529a8e4e14.9936310115219636745829.jpg',
+  src: 'https://cdn.discordapp.com/icons/672466989217873929/a_51c83f18bd98ca37916f540b3ecf40f7.webp?size=1024',
   mode: 'circle',
 };
 

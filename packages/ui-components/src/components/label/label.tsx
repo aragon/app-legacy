@@ -1,12 +1,12 @@
 import React from 'react';
 import styled from 'styled-components';
-import {Badge} from '../badge';
+import {Tag} from '../tag';
 
 export type LabelProps = {
   label: string;
   helpText?: string;
   isOptional?: boolean;
-  badgeLabel?: string;
+  tagLabel?: string;
   renderHtml?: boolean;
 };
 
@@ -14,7 +14,7 @@ export const Label: React.FC<LabelProps> = ({
   label,
   helpText,
   isOptional = false,
-  badgeLabel,
+  tagLabel,
   renderHtml = false,
 }) => {
   return (
@@ -25,7 +25,7 @@ export const Label: React.FC<LabelProps> = ({
         ) : (
           <Heading>{label}</Heading>
         )}
-        {isOptional && <Badge label={badgeLabel || 'Optional'} />}
+        {isOptional && <Tag label={tagLabel || 'Optional'} />}
       </LabelLine>
       {renderHtml && helpText ? (
         <HelpText dangerouslySetInnerHTML={{__html: helpText}} />

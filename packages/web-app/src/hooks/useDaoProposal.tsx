@@ -1,21 +1,13 @@
-/**
- * NOTE: Because most of these hooks merely returns the fetched
- * data, we can later extract the similar logic into a hook of it's own
- * so we don't have to rewrite the fetch and return pattern every time
- */
-
 import {useReactiveVar} from '@apollo/client';
-import {AddressListProposal, Erc20Proposal} from '@aragon/sdk-client';
-import {BigNumber} from 'ethers';
 import {useCallback, useEffect, useState} from 'react';
 
 import {pendingProposalsVar, pendingVotesVar} from 'context/apolloClient';
-import {isTokenBasedProposal, MappedVotes} from 'utils/proposals';
-import {DetailedProposal, Erc20ProposalVote, HookData} from 'utils/types';
-import {PluginTypes, usePluginClient} from './usePluginClient';
 import {usePrivacyContext} from 'context/privacyContext';
 import {PENDING_PROPOSALS_KEY, PENDING_VOTES_KEY} from 'utils/constants';
-import {customJSONReplacer} from 'utils/library';
+import {customJSONReplacer, generateCachedProposalId} from 'utils/library';
+import {addVoteToProposal} from 'utils/proposals';
+import {DetailedProposal, HookData} from 'utils/types';
+import {PluginTypes, usePluginClient} from './usePluginClient';
 
 /**
  * Retrieve a single detailed proposal
@@ -23,8 +15,8 @@ import {customJSONReplacer} from 'utils/library';
  * @param pluginType plugin type
  * @returns a detailed proposal
  */
-
 export const useDaoProposal = (
+  daoAddress: string,
   proposalId: string,
   pluginType: PluginTypes
 ): HookData<DetailedProposal | undefined> => {
@@ -36,80 +28,71 @@ export const useDaoProposal = (
 
   const {preferences} = usePrivacyContext();
   const cachedVotes = useReactiveVar(pendingVotesVar);
-  const cachedProposals = useReactiveVar(pendingProposalsVar);
+  const proposalCache = useReactiveVar(pendingProposalsVar);
 
   // add cached vote to proposal and recalculate dependent info
-  const augmentProposalWithCache = useCallback(
+  const augmentWithVoteCache = useCallback(
     (proposal: DetailedProposal) => {
-      const cachedVote = cachedVotes[proposal.id];
+      const id = generateCachedProposalId(daoAddress, proposalId);
+      const cachedVote = cachedVotes[id];
 
       // no cache return original proposal
       if (!cachedVote) return proposal;
 
-      // if vote in cache is included delete it
-      if (proposal.votes.some(voter => voter.address === cachedVote.address)) {
-        const newCache = {...cachedVotes};
-        delete newCache[proposal.id];
+      // vote in cache is returned from SDK, delete cache
+      if (proposal.votes.some(v => v.address === cachedVote.address)) {
+        const newVoteCache = {...cachedVotes};
+        delete newVoteCache[id];
 
-        pendingVotesVar({...newCache});
+        // update cache
+        pendingVotesVar(newVoteCache);
         if (preferences?.functional) {
           localStorage.setItem(
             PENDING_VOTES_KEY,
-            JSON.stringify(newCache, customJSONReplacer)
+            JSON.stringify(newVoteCache, customJSONReplacer)
           );
         }
-        return proposal;
-      }
 
-      const voteValue = MappedVotes[cachedVote.vote];
-      if (isTokenBasedProposal(proposal)) {
-        return {
-          ...proposal,
-          votes: [...proposal.votes, {...cachedVote}],
-          result: {
-            ...proposal.result,
-            [voteValue]: BigNumber.from(proposal.result[voteValue])
-              .add((cachedVote as Erc20ProposalVote).weight)
-              .toBigInt(),
-          },
-          usedVotingWeight: BigNumber.from(proposal.usedVotingWeight)
-            .add((cachedVote as Erc20ProposalVote).weight)
-            .toBigInt(),
-        } as Erc20Proposal;
+        return proposal;
       } else {
-        return {
-          ...proposal,
-          votes: [...proposal.votes, {...cachedVote}],
-          result: {
-            ...proposal.result,
-            [voteValue]: proposal.result[voteValue] + 1,
-          },
-        } as AddressListProposal;
+        // augment with cached vote
+        return addVoteToProposal(proposal, cachedVote);
       }
     },
-    [cachedVotes, preferences?.functional]
+    [cachedVotes, daoAddress, preferences?.functional, proposalId]
   );
 
   useEffect(() => {
     async function getDaoProposal() {
       try {
         setIsLoading(true);
-        const cachedProposal = cachedProposals[proposalId];
+
+        const cachedProposal = proposalCache[daoAddress]?.[proposalId];
+
         const proposal = await pluginClient?.methods.getProposal(proposalId);
-
         if (proposal) {
-          setData({...augmentProposalWithCache(proposal)});
+          setData({
+            ...augmentWithVoteCache(proposal),
+          });
 
-          // remove cache there's already a proposal
+          // remove cached proposal if it exists
           if (cachedProposal) {
-            pendingProposalsVar({});
+            const newCache = {...proposalCache};
+            delete newCache[daoAddress][proposalId];
+
+            // update new values
+            pendingProposalsVar(newCache);
+
             if (preferences?.functional) {
-              localStorage.setItem(PENDING_PROPOSALS_KEY, '{}');
+              localStorage.setItem(
+                PENDING_PROPOSALS_KEY,
+                JSON.stringify(newCache, customJSONReplacer)
+              );
             }
           }
         } else if (cachedProposal) {
           setData({
-            ...augmentProposalWithCache(cachedProposal),
+            ...augmentWithVoteCache(cachedProposal),
           });
         }
       } catch (err) {
@@ -121,10 +104,11 @@ export const useDaoProposal = (
     }
     if (proposalId) getDaoProposal();
   }, [
-    augmentProposalWithCache,
-    cachedProposals,
+    augmentWithVoteCache,
+    daoAddress,
     pluginClient?.methods,
     preferences?.functional,
+    proposalCache,
     proposalId,
   ]);
 

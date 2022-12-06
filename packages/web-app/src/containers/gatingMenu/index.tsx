@@ -1,42 +1,30 @@
-import React from 'react';
 import {ButtonText} from '@aragon/ui-components';
-import styled from 'styled-components';
+import React from 'react';
 import {useTranslation} from 'react-i18next';
 import {generatePath, useNavigate} from 'react-router-dom';
+import styled from 'styled-components';
 
-import WalletIcon from 'public/wallet.svg';
 import ModalBottomSheetSwitcher from 'components/modalBottomSheetSwitcher';
-import {useGlobalModalContext} from 'context/globalModals';
 import {
   ModalBody,
   StyledImage,
   WarningContainer,
   WarningTitle,
 } from 'containers/networkErrorMenu';
-import {useDaoToken} from 'hooks/useDaoToken';
-import {useDaoParam} from 'hooks/useDaoParam';
-import {useDaoDetails} from 'hooks/useDaoDetails';
-import {PluginTypes} from 'hooks/usePluginClient';
-import {Governance} from 'utils/paths';
+import {useGlobalModalContext} from 'context/globalModals';
 import {useNetwork} from 'context/network';
+import {PluginTypes} from 'hooks/usePluginClient';
+import WalletIcon from 'public/wallet.svg';
+import {Governance} from 'utils/paths';
 
-const TokenContainer = ({dao}: {dao: string}) => {
-  const {data: daoDetails, isLoading: detailsAreLoading} = useDaoDetails(dao!);
-  const {data: daoToken, isLoading: daoTokenLoading} = useDaoToken(
-    daoDetails?.plugins[0].instanceAddress || ''
-  );
+const TokenContainer = ({tokenName}: {tokenName: string}) => {
   const {t} = useTranslation();
 
   return (
     <WarningContainer>
       <WarningTitle>{t('alert.gatingUsers.tokenTitle')}</WarningTitle>
       <WarningDescription>
-        {t('alert.gatingUsers.tokenDescription', {
-          tokenName:
-            !daoTokenLoading && !detailsAreLoading && daoToken
-              ? daoToken?.name
-              : '',
-        })}
+        {t('alert.gatingUsers.tokenDescription', {tokenName})}
       </WarningDescription>
     </WarningContainer>
   );
@@ -54,19 +42,24 @@ const WalletContainer = () => {
   );
 };
 
-export const GatingMenu = ({pluginType}: {pluginType: PluginTypes}) => {
+type Props = {daoAddress: string; pluginType: PluginTypes; tokenName?: string};
+
+export const GatingMenu: React.FC<Props> = ({
+  daoAddress: dao,
+  pluginType,
+  tokenName,
+}) => {
   const {close, isGatingOpen} = useGlobalModalContext();
   const {t} = useTranslation();
   const navigate = useNavigate();
   const {network} = useNetwork();
-  const {data: dao} = useDaoParam();
 
   return (
     <ModalBottomSheetSwitcher isOpen={isGatingOpen}>
       <ModalBody>
         <StyledImage src={WalletIcon} />
         {pluginType === 'erc20voting.dao.eth' ? (
-          <TokenContainer dao={dao} />
+          <TokenContainer tokenName={tokenName || ''} />
         ) : (
           <WalletContainer />
         )}

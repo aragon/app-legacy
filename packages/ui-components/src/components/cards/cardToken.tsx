@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 import React, {SyntheticEvent} from 'react';
 
-import {Badge} from '../badge';
+import {Tag} from '../tag';
 import FallbackImg from '../../assets/avatar-token.svg';
 
 export type CardTokenProps = {
@@ -42,7 +42,7 @@ export const CardToken: React.FC<CardTokenProps> = ({
             <CoinName>{props.tokenName}</CoinName>
             <ToggleMobileVisibility visible={false}>
               {props.treasurySharePercentage && isVault && (
-                <Badge label={props.treasurySharePercentage} />
+                <Tag label={props.treasurySharePercentage} />
               )}
             </ToggleMobileVisibility>
           </CoinNameAndAllocation>
@@ -89,7 +89,7 @@ export const CardToken: React.FC<CardTokenProps> = ({
                 </ToggleMobileVisibility>
               )}
               {props.percentageChangeDuringInterval && (
-                <Badge
+                <Tag
                   label={props.percentageChangeDuringInterval}
                   colorScheme={
                     changeType === 'Positive' ? 'success' : 'critical'
