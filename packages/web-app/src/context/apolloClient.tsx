@@ -130,7 +130,8 @@ const selectedDaoVar = makeVar<NavigationDao>({
 const favoriteDAOs = makeVar<Array<NavigationDao>>([]);
 
 const depositTxs = JSON.parse(
-  localStorage.getItem(PENDING_DEPOSITS_KEY) || '[]'
+  localStorage.getItem(PENDING_DEPOSITS_KEY) || '[]',
+  customJSONReviver
 );
 const pendingDeposits = makeVar<Deposit[]>(depositTxs);
 
@@ -140,8 +141,7 @@ type PendingVotes = {
   [key: string]: AddressListVote | Erc20ProposalVote;
 };
 const pendingVotes = JSON.parse(
-  localStorage.getItem(PENDING_VOTES_KEY) || '{}',
-  customJSONReviver
+  localStorage.getItem(PENDING_VOTES_KEY) || '{}'
 );
 const pendingVotesVar = makeVar<PendingVotes>(pendingVotes);
 
