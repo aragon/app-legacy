@@ -87,6 +87,7 @@ export const DaoExplorer = () => {
               onClick={() =>
                 navigate(
                   generatePath(Dashboard, {
+                    // TODO: Remove the hardcoded network param
                     network: 'goerli',
                     dao: dao.address,
                   })
