@@ -1,5 +1,10 @@
 import {useReactiveVar} from '@apollo/client';
-import {Transfer, TransferSortBy, TransferType} from '@aragon/sdk-client';
+import {
+  SortDirection,
+  Transfer,
+  TransferSortBy,
+  TransferType,
+} from '@aragon/sdk-client';
 import {Address} from '@aragon/ui-components/dist/utils/addresses';
 import {useEffect, useState} from 'react';
 
@@ -28,6 +33,7 @@ export const useDaoTransfers = (
         const transfers = await client?.methods.getTransfers({
           sortBy: TransferSortBy.CREATED_AT,
           daoAddressOrEns,
+          direction: SortDirection.DESC,
         });
 
         if (transfers) {
