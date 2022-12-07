@@ -372,22 +372,21 @@ const ProposeSettingWrapper: React.FC<Props> = ({
           case ProposalCreationSteps.CREATING:
             console.log(step.txHash);
             break;
-          case ProposalCreationSteps.DONE:
-            {
-              //TODO: replace with step.proposal id when SDK returns proper format
-              const prefixedId = prefixProposalIdWithPlgnAdr(
-                step.proposalId,
-                pluginAddress
-              );
+          case ProposalCreationSteps.DONE: {
+            //TODO: replace with step.proposal id when SDK returns proper format
+            const prefixedId = prefixProposalIdWithPlgnAdr(
+              step.proposalId,
+              pluginAddress
+            );
 
-              console.log('proposal id', prefixedId);
-              setProposalId(prefixedId);
-              setCreationProcessState(TransactionState.SUCCESS);
+            console.log('proposal id', prefixedId);
+            setProposalId(prefixedId);
+            setCreationProcessState(TransactionState.SUCCESS);
 
-              // cache proposal
-              handleCacheProposal(prefixedId);
-            }
+            // cache proposal
+            handleCacheProposal(prefixedId);
             break;
+          }
         }
       }
     } catch (error) {
