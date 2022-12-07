@@ -43,7 +43,10 @@ import {
 import {getCanonicalUtcOffset, getSecondsFromDHM} from 'utils/date';
 import {customJSONReplacer} from 'utils/library';
 import {EditSettings, Proposal} from 'utils/paths';
-import {mapToDetailedProposal} from 'utils/proposals';
+import {
+  mapToDetailedProposal,
+  prefixProposalIdWithPlgnAdr,
+} from 'utils/proposals';
 import {getTokenInfo} from 'utils/tokens';
 import {ProposalResource} from 'utils/types';
 
@@ -370,12 +373,20 @@ const ProposeSettingWrapper: React.FC<Props> = ({
             console.log(step.txHash);
             break;
           case ProposalCreationSteps.DONE:
-            console.log('proposal id', step.proposalId);
-            setProposalId(step.proposalId);
-            setCreationProcessState(TransactionState.SUCCESS);
+            {
+              //TODO: replace with step.proposal id when SDK returns proper format
+              const prefixedId = prefixProposalIdWithPlgnAdr(
+                step.proposalId,
+                pluginAddress
+              );
 
-            // cache proposal
-            handleCacheProposal(step.proposalId);
+              console.log('proposal id', prefixedId);
+              setProposalId(prefixedId);
+              setCreationProcessState(TransactionState.SUCCESS);
+
+              // cache proposal
+              handleCacheProposal(prefixedId);
+            }
             break;
         }
       }
