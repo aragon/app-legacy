@@ -23,7 +23,6 @@ import {
   SUBGRAPH_API_URL,
   SupportedNetworks,
 } from 'utils/constants';
-import {customJSONReviver} from 'utils/library';
 import {AddressListVote, Erc20ProposalVote, NavigationDao} from 'utils/types';
 import {PRIVACY_KEY} from './privacyContext';
 
@@ -130,8 +129,7 @@ const selectedDaoVar = makeVar<NavigationDao>({
 const favoriteDAOs = makeVar<Array<NavigationDao>>([]);
 
 const depositTxs = JSON.parse(
-  localStorage.getItem(PENDING_DEPOSITS_KEY) || '[]',
-  customJSONReviver
+  localStorage.getItem(PENDING_DEPOSITS_KEY) || '[]'
 );
 const pendingDeposits = makeVar<Deposit[]>(depositTxs);
 
@@ -156,8 +154,7 @@ type PendingProposals = {
 };
 
 const pendingProposals = JSON.parse(
-  localStorage.getItem(PENDING_PROPOSALS_KEY) || '{}',
-  customJSONReviver
+  localStorage.getItem(PENDING_PROPOSALS_KEY) || '{}'
 );
 const pendingProposalsVar = makeVar<PendingProposals>(pendingProposals);
 

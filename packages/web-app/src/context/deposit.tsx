@@ -29,7 +29,6 @@ import {useGlobalModalContext} from './globalModals';
 import {useReactiveVar} from '@apollo/client';
 import {pendingDeposits} from './apolloClient';
 import {trackEvent} from 'services/analytics';
-import {customJSONReplacer} from 'utils/library';
 
 interface IDepositContextType {
   handleOpenModal: () => void;
@@ -222,18 +221,15 @@ const DepositProvider = ({children}: {children: ReactNode}) => {
     try {
       setDepositState(TransactionState.LOADING);
 
-      console.log('amount->', depositParams, amount);
-
       for await (const step of depositIterator) {
         if (step.key === DaoDepositSteps.DEPOSITING) {
           transactionHash = step.txHash;
-
           const depositTxs = [
             ...pendingDepositsTxs,
             {
               transactionId: transactionHash,
               from,
-              amount: depositParams?.amount,
+              amount: BigInt(amount),
               reference,
               type: TransferType.DEPOSIT,
               tokenType: isNativeToken(tokenAddress) ? 'native' : 'erc20',
@@ -250,7 +246,7 @@ const DepositProvider = ({children}: {children: ReactNode}) => {
           pendingDeposits(depositTxs);
           localStorage.setItem(
             PENDING_DEPOSITS_KEY,
-            JSON.stringify(depositTxs, customJSONReplacer)
+            JSON.stringify(depositTxs)
           );
           trackEvent('newDeposit_transaction_signed', {
             network,
