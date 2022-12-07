@@ -144,11 +144,13 @@ export const useDaoMembers = (
       isTokenBased
         ? setFilteredData(
             (data as BalanceMember[]).filter(d =>
-              d.address.includes(searchTerm)
+              d.address.toLowerCase().includes(searchTerm.toLowerCase())
             )
           )
         : setFilteredData(
-            (data as WalletMember[]).filter(d => d.address.includes(searchTerm))
+            (data as WalletMember[]).filter(d =>
+              d.address.toLowerCase().includes(searchTerm.toLowerCase())
+            )
           );
     }
   }, [data, isTokenBased, searchTerm]);
