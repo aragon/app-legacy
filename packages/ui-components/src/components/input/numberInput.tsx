@@ -50,7 +50,8 @@ export const NumberInput: React.FC<NumberInputProps> = ({
     <Container data-testid="number-input" {...{mode, disabled, width}}>
       <StyledIconButton
         name="down"
-        mode="ghost"
+        mode="secondary"
+        bgWhite
         size="small"
         icon={<IconRemove />}
         disabled={disabled}
@@ -76,7 +77,8 @@ export const NumberInput: React.FC<NumberInputProps> = ({
       </InputWrapper>
       <StyledIconButton
         name="up"
-        mode="ghost"
+        mode="secondary"
+        bgWhite
         size="small"
         icon={<IconAdd />}
         disabled={disabled}

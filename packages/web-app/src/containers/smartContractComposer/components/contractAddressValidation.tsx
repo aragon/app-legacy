@@ -5,7 +5,7 @@ import {
   IconReload,
   Link,
   Spinner,
-  ValueInput,
+  WalletInput,
 } from '@aragon/ui-components';
 import {isAddress} from 'ethers/lib/utils';
 import React, {useCallback, useMemo, useState} from 'react';
@@ -26,7 +26,7 @@ import {CHAIN_METADATA, TransactionState} from 'utils/constants';
 import {handleClipboardActions} from 'utils/library';
 import {EtherscanContractResponse} from 'utils/types';
 import {validateContract} from 'utils/validators';
-import ModalHeader from './components/modalHeader';
+import ModalHeader from './modalHeader';
 
 type Props = {
   isOpen: boolean;
@@ -53,7 +53,7 @@ const ContractAddressValidation: React.FC<Props> = props => {
     TransactionState.WAITING
   );
 
-  const {control, resetField, setValue, setError} =
+  const {control, setValue, resetField, setError} =
     useFormContext<SccFormData>();
 
   const {errors} = useFormState({control});
@@ -85,9 +85,6 @@ const ContractAddressValidation: React.FC<Props> = props => {
             name: value.ContractName,
           },
         ]);
-
-        // clear contract address field
-        resetField('contractAddress');
       } else {
         setVerificationState(TransactionState.WAITING);
         setError('contractAddress', {
@@ -96,7 +93,7 @@ const ContractAddressValidation: React.FC<Props> = props => {
         });
       }
     },
-    [addressField, contracts, resetField, setError, setValue, t]
+    [addressField, contracts, setError, setValue, t]
   );
 
   // clear field when there is a value, else paste
@@ -140,7 +137,12 @@ const ContractAddressValidation: React.FC<Props> = props => {
     <ModalBottomSheetSwitcher isOpen={props.isOpen} onClose={props.onClose}>
       <ModalHeader
         title={t('scc.addressValidation.modalTitle') as string}
-        onClose={props.onClose}
+        onClose={() => {
+          // clear contract address field
+          resetField('contractAddress');
+          setVerificationState(TransactionState.WAITING);
+          props.onClose();
+        }}
         onBackButtonClicked={props.onBackButtonClicked}
         showBackButton={
           !(
@@ -174,15 +176,14 @@ const ContractAddressValidation: React.FC<Props> = props => {
             field: {name, onBlur, onChange, value},
             fieldState: {error},
           }) => (
-            //TODO: This value input needs to replace with wallet input
             <>
-              <ValueInput
+              <WalletInput
                 mode={error ? 'critical' : 'default'}
                 name={name}
                 onBlur={onBlur}
                 value={value}
                 onChange={onChange}
-                disabled={isTransactionSuccessful || isTransactionLoading}
+                disabledFilled={isTransactionSuccessful || isTransactionLoading}
                 placeholder="0x ..."
                 adornmentText={adornmentText}
                 onAdornmentClick={() => handleAdornmentClick(value, onChange)}

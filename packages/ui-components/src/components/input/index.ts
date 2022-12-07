@@ -21,5 +21,8 @@ export type {TimeInputProps} from './timeInput';
 export {DateInput} from './dateInput';
 export type {DateInputProps} from './dateInput';
 
+export {WalletInput} from './walletInput';
+export type {WalletInputProps} from './walletInput';
+
 export * from './inputImageSingle';
 export * from './valueInput';
