@@ -11,6 +11,7 @@ export interface IDaoCardProps {
   description: string;
   chainId: number;
   daoType: DaoType;
+  onClick?: () => void;
 }
 
 export type DaoType = 'wallet-based' | 'token-based';
@@ -46,7 +47,7 @@ export const DaoCard = (props: IDaoCardProps) => {
   }, [props.chainId]);
 
   return (
-    <Container data-testid="daoCard">
+    <Container data-testid="daoCard" onClick={props.onClick}>
       <DaoDataWrapper>
         <HeaderContainer>
           <AvatarDao daoName={props.name} src={props.logo} />

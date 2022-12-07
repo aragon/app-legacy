@@ -67,7 +67,7 @@ const Dashboard: React.FC = () => {
 
   const {data: topTen, isLoading: proposalsAreLoading} = useProposals(
     daoId,
-    dao?.plugins[0].id as PluginTypes
+    dao?.plugins[0]?.id as PluginTypes
   );
 
   useEffect(() => {

@@ -7,10 +7,12 @@ import {
 import React, {useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
+import {generatePath, useNavigate} from 'react-router-dom';
 
 import {DaoCard} from 'components/daoCard';
 import {useDaos} from 'hooks/useDaos';
 import {PluginTypes} from 'hooks/usePluginClient';
+import {Dashboard} from 'utils/paths';
 
 const EXPLORE_FILTER = ['newest', 'popular'] as const;
 
@@ -29,6 +31,7 @@ export const DaoExplorer = () => {
   const [showCount, setShowCount] = useState(PAGE_SIZE);
   const [filterValue, setFilterValue] = useState<ExploreFilter>('newest');
   const {data} = useDaos(filterValue, showCount);
+  const navigate = useNavigate();
 
   const handleShowMoreClick = () => {
     setShowCount(prev => prev + PAGE_SIZE);
@@ -81,6 +84,14 @@ export const DaoExplorer = () => {
                   : 'wallet-based'
               }
               key={index}
+              onClick={() =>
+                navigate(
+                  generatePath(Dashboard, {
+                    network: 'goerli',
+                    dao: dao.address,
+                  })
+                )
+              }
             />
           ))}
         </CardsWrapper>

@@ -31,6 +31,16 @@ export function useDaoDetails(
         setIsLoading(true);
 
         if (cachedDaos?.[network]?.[daoId.toLowerCase()]) {
+          const pendingDAO = cachedDaos?.[network]?.[daoId.toLowerCase()];
+          if (pendingDAO) {
+            setData({
+              address: daoId,
+              ensDomain: pendingDAO.ensSubdomain,
+              metadata: pendingDAO.metadata,
+              plugins: [],
+              creationDate: new Date(),
+            });
+          }
           setWaitingForSubgraph(true);
         } else {
           const dao = await client?.methods.getDao(daoId.toLowerCase());
