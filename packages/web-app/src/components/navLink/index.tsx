@@ -85,7 +85,7 @@ const NavItem = styled.button.attrs(({isSelected}: {isSelected: boolean}) => {
   let className =
     'py-1.5 px-2 rounded-xl font-bold hover:text-primary-500 ' +
     'active:text-primary-700 disabled:text-ui-300 disabled:bg-ui-50' +
-    ' focus:ring-2 focus:ring-primary-500 focus:outline-none ';
+    ' focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:outline-none ';
 
   if (isSelected) className += 'text-primary-500 bg-ui-0';
   else className += 'text-ui-600';
