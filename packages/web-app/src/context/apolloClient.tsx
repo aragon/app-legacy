@@ -23,6 +23,7 @@ import {
   SUBGRAPH_API_URL,
   SupportedNetworks,
 } from 'utils/constants';
+import {customJSONReviver} from 'utils/library';
 import {AddressListVote, Erc20ProposalVote, NavigationDao} from 'utils/types';
 import {PRIVACY_KEY} from './privacyContext';
 
@@ -154,7 +155,8 @@ type PendingProposals = {
 };
 
 const pendingProposals = JSON.parse(
-  localStorage.getItem(PENDING_PROPOSALS_KEY) || '{}'
+  localStorage.getItem(PENDING_PROPOSALS_KEY) || '{}',
+  customJSONReviver
 );
 const pendingProposalsVar = makeVar<PendingProposals>(pendingProposals);
 
