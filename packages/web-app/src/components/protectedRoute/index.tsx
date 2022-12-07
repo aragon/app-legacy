@@ -1,4 +1,4 @@
-import React, {useCallback, useEffect} from 'react';
+import React, {useCallback, useEffect, useRef} from 'react';
 import {Outlet} from 'react-router-dom';
 
 import {Loading} from 'components/temporary';
@@ -33,8 +33,10 @@ const ProtectedRoute: React.FC = () => {
   const {network} = useNetwork();
   const provider = useSpecificProvider(CHAIN_METADATA[network].id);
 
-  const checkIfTokenbasedMember = useCallback(async () => {
-    if (daoToken && address) {
+  const userWentThroughLoginFlow = useRef(false);
+
+  const checkIfTokenBasedMember = useCallback(async () => {
+    if (daoToken && address && filteredMembers.length === 0) {
       const balance = await fetchBalance(
         daoToken?.address,
         address,
@@ -43,43 +45,63 @@ const ProtectedRoute: React.FC = () => {
       );
 
       if (Number(balance) === 0) open('gating');
+      else close('gating');
     }
-  }, [address, daoToken, network, open, provider]);
+  }, [
+    address,
+    close,
+    daoToken,
+    filteredMembers.length,
+    network,
+    open,
+    provider,
+  ]);
 
   const checkIfAllowlistedMember = useCallback(() => {
     if (filteredMembers.length === 0) open('gating');
   }, [filteredMembers.length, open]);
 
   useEffect(() => {
-    // Note: if user came to protected routes by direct link the status could be disconnected > connecting > connected
-    // In this scenario "close" on else case will help to fix unexpected behaviors at the wallet loading moment
-    if (!isConnected && status !== 'connecting') open('wallet');
+    // show the wallet menu only if the user hasn't gone through the flow previously
+    // and is currently logged out; this allows user to log out mid flow with
+    // no lasting consequences considering status will be checked upon proposal creation
+    // If we want to keep user logged in (I'm in favor of), remove ref throughout component
+    // Fabrice F. - [12/07/2022]
+    if (
+      !isConnected &&
+      status !== 'connecting' &&
+      userWentThroughLoginFlow.current === false
+    )
+      open('wallet');
     else {
-      close('wallet');
       if (isOnWrongNetwork) open('network');
       else close('network');
     }
-
-    // if (
-    //   daoDetails &&
-    //   isConnected &&
-    //   !isOnWrongNetwork &&
-    //   filteredMembers.length === 0
-    // ) {
-    //   if (daoDetails.plugins[0].id === 'erc20voting.dao.eth')
-    //     // only checking for members that got token directly not from dao
-    //     checkIfTokenbasedMember();
-    //   else open('gating');
-    // }
-    // if (
-    //   filteredMembers.length === 0 &&
-    //   daoDetails &&
-    //   isConnected &&
-    //   !isOnWrongNetwork
-    // ) {
-    //   open('gating');
-    // }
   }, [close, isConnected, isOnWrongNetwork, open, status]);
+
+  useEffect(() => {
+    if (address && !isOnWrongNetwork && daoDetails?.plugins[0].id) {
+      if (daoDetails?.plugins[0].id === 'erc20voting.dao.eth') {
+        checkIfTokenBasedMember();
+      } else {
+        checkIfAllowlistedMember();
+      }
+
+      // user has gone through login flow allow them to log out in peace
+      userWentThroughLoginFlow.current = true;
+    }
+  }, [
+    address,
+    checkIfAllowlistedMember,
+    checkIfTokenBasedMember,
+    daoDetails?.plugins,
+    isOnWrongNetwork,
+  ]);
+
+  useEffect(() => {
+    // need to do this to close the modal upon user login
+    if (address && userWentThroughLoginFlow.current === false) close('wallet');
+  }, [address, close]);
 
   if (paramIsLoading || detailsAreLoading || MembershipIsLoading)
     return <Loading />;
@@ -87,11 +109,11 @@ const ProtectedRoute: React.FC = () => {
   return (
     <>
       <Outlet />
-      {/* <GatingMenu
+      <GatingMenu
         daoAddress={dao}
         pluginType={daoDetails?.plugins[0].id as PluginTypes}
         tokenName={daoToken?.name}
-      /> */}
+      />
     </>
   );
 };
