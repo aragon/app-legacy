@@ -97,7 +97,9 @@ export function getErc20VotersAndParticipation(
   let tokenAmount;
 
   // map to voters structure
-  const voters = votes.map(vote => {
+  const voters = votes.flatMap(vote => {
+    if (vote.vote === undefined) return [];
+
     votingPower =
       parseFloat(
         Big(Number(vote.weight))
@@ -162,11 +164,15 @@ export function getWhitelistVoterParticipation(
   votes: AddressListProposal['votes'],
   totalVotingWeight: number
 ): {voters: Array<VoterType>; summary: string} {
-  const voters = votes.map(voter => ({
-    wallet: voter.address,
-    option: MappedVotes[voter.vote],
-    votingPower: '1',
-  }));
+  const voters = votes.flatMap(voter => {
+    return voter.vote !== undefined
+      ? {
+          wallet: voter.address,
+          option: MappedVotes[voter.vote],
+          votingPower: '1',
+        }
+      : [];
+  });
 
   // calculate summary
   return {

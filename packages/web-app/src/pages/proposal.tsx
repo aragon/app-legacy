@@ -340,7 +340,9 @@ const Proposal: React.FC = () => {
   const voted = useMemo(() => {
     return address &&
       proposal?.votes.some(
-        voter => voter.address.toLowerCase() === address.toLowerCase()
+        voter =>
+          voter.address.toLowerCase() === address.toLowerCase() &&
+          voter.vote !== undefined
       )
       ? true
       : false;
