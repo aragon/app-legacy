@@ -130,11 +130,11 @@ const ProposalTransactionProvider: React.FC<Props> = ({children}) => {
     if (voteParams) return pluginClient?.estimation.voteProposal(voteParams);
   }, [pluginClient?.estimation, voteParams]);
 
-  const handleExecuteProposal = () => {
+  const handleExecuteProposal = useCallback(() => {
     setExecuteParams({proposalId: id!, pluginAddress});
     setShowExecuteModal(true);
     setExecuteProcessState(TransactionState.WAITING);
-  };
+  }, [id, pluginAddress]);
 
   // estimate proposal execution fees
   const estimateExecuteFees = useCallback(async () => {
@@ -345,23 +345,36 @@ const ProposalTransactionProvider: React.FC<Props> = ({children}) => {
     pluginClient?.methods,
   ]);
 
+  const value = useMemo(
+    () => ({
+      handleSubmitVote,
+      handleExecuteProposal,
+      isLoading: paramIsLoading || detailsAreLoading,
+      pluginAddress,
+      pluginType,
+      voteSubmitted,
+      executeSubmitted,
+      executionFailed,
+      transactionHash,
+    }),
+    [
+      detailsAreLoading,
+      executeSubmitted,
+      executionFailed,
+      handleExecuteProposal,
+      handleSubmitVote,
+      paramIsLoading,
+      pluginAddress,
+      pluginType,
+      transactionHash,
+      voteSubmitted,
+    ]
+  );
   /*************************************************
    *                    Render                     *
    *************************************************/
   return (
-    <ProposalTransactionContext.Provider
-      value={{
-        handleSubmitVote,
-        handleExecuteProposal,
-        isLoading: paramIsLoading || detailsAreLoading,
-        pluginAddress,
-        pluginType,
-        voteSubmitted,
-        executeSubmitted,
-        executionFailed,
-        transactionHash,
-      }}
-    >
+    <ProposalTransactionContext.Provider value={value}>
       {children}
       <PublishModal
         title={

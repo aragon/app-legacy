@@ -266,7 +266,7 @@ const CreateProposalProvider: React.FC<Props> = ({
     shouldPoll
   );
 
-  const handleCloseModal = () => {
+  const handleCloseModal = useCallback(() => {
     switch (creationProcessState) {
       case TransactionState.LOADING:
         break;
@@ -279,9 +279,68 @@ const CreateProposalProvider: React.FC<Props> = ({
         stopPolling();
       }
     }
-  };
+  }, [
+    creationProcessState,
+    dao,
+    navigate,
+    network,
+    proposalId,
+    setShowTxModal,
+    stopPolling,
+  ]);
 
-  const handlePublishProposal = async () => {
+  const handleCacheProposal = useCallback(
+    (proposalId: string) => {
+      if (!address || !daoDetails || !pluginSettings || !proposalCreationData)
+        return;
+
+      const proposalData = {
+        creatorAddress: address,
+        daoAddress: daoDetails?.address,
+        daoName: daoDetails?.metadata.name,
+        daoToken,
+        totalVotingWeight:
+          pluginType === 'erc20voting.dao.eth' && tokenSupply
+            ? tokenSupply
+            : members.length,
+        pluginSettings,
+        proposalCreationData,
+        proposalId,
+      };
+
+      const cachedProposal = mapToDetailedProposal(proposalData);
+      const newCache = {
+        ...cachedProposals,
+        [daoDetails.address]: {
+          ...cachedProposals[daoDetails.address],
+          [proposalId]: {...cachedProposal},
+        },
+      };
+      pendingProposalsVar(newCache);
+
+      // persist new cache if functional cookies enabled
+      if (preferences?.functional) {
+        localStorage.setItem(
+          PENDING_PROPOSALS_KEY,
+          JSON.stringify(newCache, customJSONReplacer)
+        );
+      }
+    },
+    [
+      address,
+      cachedProposals,
+      daoDetails,
+      daoToken,
+      members.length,
+      pluginSettings,
+      pluginType,
+      preferences?.functional,
+      proposalCreationData,
+      tokenSupply,
+    ]
+  );
+
+  const handlePublishProposal = useCallback(async () => {
     if (!pluginClient) {
       return new Error('ERC20 SDK client is not initialized correctly');
     }
@@ -366,58 +425,21 @@ const CreateProposalProvider: React.FC<Props> = ({
         error,
       });
     }
-  };
-
-  const handleCacheProposal = useCallback(
-    (proposalId: string) => {
-      if (!address || !daoDetails || !pluginSettings || !proposalCreationData)
-        return;
-
-      const proposalData = {
-        creatorAddress: address,
-        daoAddress: daoDetails?.address,
-        daoName: daoDetails?.metadata.name,
-        daoToken,
-        totalVotingWeight:
-          pluginType === 'erc20voting.dao.eth' && tokenSupply
-            ? tokenSupply
-            : members.length,
-        pluginSettings,
-        proposalCreationData,
-        proposalId,
-      };
-
-      const cachedProposal = mapToDetailedProposal(proposalData);
-      const newCache = {
-        ...cachedProposals,
-        [daoDetails.address]: {
-          ...cachedProposals[daoDetails.address],
-          [proposalId]: {...cachedProposal},
-        },
-      };
-      pendingProposalsVar(newCache);
-
-      // persist new cache if functional cookies enabled
-      if (preferences?.functional) {
-        localStorage.setItem(
-          PENDING_PROPOSALS_KEY,
-          JSON.stringify(newCache, customJSONReplacer)
-        );
-      }
-    },
-    [
-      address,
-      cachedProposals,
-      daoDetails,
-      daoToken,
-      members.length,
-      pluginSettings,
-      pluginType,
-      preferences?.functional,
-      proposalCreationData,
-      tokenSupply,
-    ]
-  );
+  }, [
+    averageFee,
+    creationProcessState,
+    dao,
+    handleCacheProposal,
+    handleCloseModal,
+    isOnWrongNetwork,
+    network,
+    open,
+    pluginAddress,
+    pluginClient,
+    proposalCreationData,
+    provider?.connection.url,
+    tokenPrice,
+  ]);
 
   /*************************************************
    *                    Render                     *
