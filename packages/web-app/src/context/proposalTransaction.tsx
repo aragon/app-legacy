@@ -128,7 +128,11 @@ const ProposalTransactionProvider: React.FC<Props> = ({children}) => {
 
   // estimate voting fees
   const estimateVotingFees = useCallback(async () => {
-    if (voteParams) return pluginClient?.estimation.voteProposal(voteParams);
+    if (voteParams)
+      return pluginClient?.estimation.voteProposal({
+        ...voteParams,
+        proposalId: stripPlgnAdrFromProposalId(voteParams.proposalId),
+      });
   }, [pluginClient?.estimation, voteParams]);
 
   const handleExecuteProposal = useCallback(() => {
@@ -140,7 +144,10 @@ const ProposalTransactionProvider: React.FC<Props> = ({children}) => {
   // estimate proposal execution fees
   const estimateExecuteFees = useCallback(async () => {
     if (executeParams)
-      return pluginClient?.estimation.executeProposal(executeParams);
+      return pluginClient?.estimation.executeProposal({
+        ...executeParams,
+        proposalId: stripPlgnAdrFromProposalId(executeParams.proposalId),
+      });
   }, [executeParams, pluginClient?.estimation]);
 
   // estimation fees for voting on proposal/executing proposal
@@ -179,7 +186,10 @@ const ProposalTransactionProvider: React.FC<Props> = ({children}) => {
 
       // no token address, not tokenBased proposal
       if (!tokenAddress) {
-        newCache = {...cachedVotes, [cachedProposalId]: {address, vote}};
+        newCache = {
+          ...cachedVotes,
+          [cachedProposalId]: {address, vote},
+        };
         pendingVotesVar(newCache);
 
         if (preferences?.functional) {
