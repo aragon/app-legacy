@@ -58,7 +58,7 @@ const PublishModal: React.FC<PublishModalProps> = ({
       buttonLabel || t('TransactionModal.publishDaoButtonLabel'),
     [TransactionState.LOADING]: t('TransactionModal.waiting'),
     [TransactionState.SUCCESS]:
-      buttonLabelSuccess || t('TransactionModal.goToFinance'),
+      buttonLabelSuccess || t('TransactionModal.goToProposal'),
     [TransactionState.ERROR]: t('TransactionModal.tryAgain'),
   };
 
