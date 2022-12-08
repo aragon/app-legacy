@@ -40,7 +40,11 @@ export const useDaoProposal = (
       if (!cachedVote) return proposal;
 
       // vote in cache is returned from SDK, delete cache
-      if (proposal.votes.some(v => v.address === cachedVote.address)) {
+      if (
+        proposal.votes.some(
+          v => v.address.toLowerCase() === cachedVote.address.toLowerCase()
+        )
+      ) {
         const newVoteCache = {...cachedVotes};
         delete newVoteCache[id];
 
