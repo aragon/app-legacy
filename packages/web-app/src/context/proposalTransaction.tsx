@@ -6,6 +6,7 @@ import {
   VoteProposalStep,
   VoteValues,
 } from '@aragon/sdk-client';
+import {BigNumber} from 'ethers';
 import React, {
   createContext,
   ReactNode,
@@ -191,7 +192,7 @@ const ProposalTransactionProvider: React.FC<Props> = ({children}) => {
       }
 
       // fetch token user balance, ie vote weight
-      const weight: bigint = await fetchBalance(
+      const weight: BigNumber = await fetchBalance(
         tokenAddress,
         address!,
         provider,
@@ -199,7 +200,10 @@ const ProposalTransactionProvider: React.FC<Props> = ({children}) => {
         false
       );
 
-      newCache = {...cachedVotes, [cachedProposalId]: {address, vote, weight}};
+      newCache = {
+        ...cachedVotes,
+        [cachedProposalId]: {address, vote, weight: weight.toBigInt()},
+      };
       pendingVotesVar(newCache);
       if (preferences?.functional) {
         localStorage.setItem(
