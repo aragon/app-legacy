@@ -247,7 +247,7 @@ const CreateDaoProvider: React.FC<Props> = ({children}) => {
         name: daoName,
         description: daoSummary,
         avatar: daoLogo,
-        links: links,
+        links: links.filter(r => r.name && r.url),
       },
       // TODO: We're using dao name without spaces for ens, We need to add alert to inform this to user
       ensSubdomain: daoName?.replace(/ /g, '_'),

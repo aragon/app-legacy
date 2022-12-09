@@ -88,6 +88,9 @@ const Settings: React.FC = () => {
   const isErc20Plugin =
     (daoDetails?.plugins?.[0]?.id as PluginTypes) === 'erc20voting.dao.eth';
 
+  const resourceLinks = daoDetails?.metadata.links.filter(l => l.name && l.url);
+  console.log(daoDetails);
+
   return (
     <SettingsWrapper>
       <div className="mt-3 desktop:mt-8 space-y-5">
@@ -126,16 +129,18 @@ const Settings: React.FC = () => {
             <Dt>{t('labels.summary')}</Dt>
             <Dd>{daoDetails?.metadata.description}</Dd>
           </Dl>
-          <Dl>
-            <Dt>{t('labels.links')}</Dt>
-            <Dd>
-              <div className="space-y-1.5">
-                {daoDetails?.metadata.links.map(({name, url}) => (
-                  <ListItemLink label={name} href={url} key={url} />
-                ))}
-              </div>
-            </Dd>
-          </Dl>
+          {resourceLinks && resourceLinks.length > 0 && (
+            <Dl>
+              <Dt>{t('labels.links')}</Dt>
+              <Dd>
+                <div className="space-y-1.5">
+                  {resourceLinks.map(({name, url}) => (
+                    <ListItemLink label={name} href={url} key={url} />
+                  ))}
+                </div>
+              </Dd>
+            </Dl>
+          )}
         </DescriptionListContainer>
 
         <DescriptionListContainer
