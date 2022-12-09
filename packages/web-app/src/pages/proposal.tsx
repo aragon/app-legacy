@@ -537,7 +537,7 @@ const Proposal: React.FC = () => {
           </ProposerLink>
         </ContentWrapper>
         <SummaryText>{proposal?.metadata.summary}</SummaryText>
-        {!expandedProposal && (
+        {proposal.metadata.description && !expandedProposal && (
           <ButtonText
             className="w-full tablet:w-max"
             size="large"
@@ -551,7 +551,7 @@ const Proposal: React.FC = () => {
 
       <ContentContainer expandedProposal={expandedProposal}>
         <ProposalContainer>
-          {expandedProposal && (
+          {proposal.metadata.description && expandedProposal && (
             <>
               <StyledEditorContent editor={editor} />
               <ButtonText

@@ -1,11 +1,5 @@
 import {InstalledPluginListItem} from '@aragon/sdk-client';
-import {
-  ButtonText,
-  IconChevronDown,
-  IconChevronUp,
-  Link,
-  Tag,
-} from '@aragon/ui-components';
+import {Link, Tag} from '@aragon/ui-components';
 import TipTapLink from '@tiptap/extension-link';
 import {EditorContent, useEditor} from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
@@ -76,7 +70,6 @@ const ReviewProposal: React.FC<ReviewProposalProps> = ({
   const [terminalTab, setTerminalTab] = useState<TerminalTabs>('info');
   const values = getValues();
 
-  const [expandedProposal, setExpandedProposal] = useState(false);
   const editor = useEditor({
     editable: false,
     content: values.proposal,
@@ -225,29 +218,11 @@ const ReviewProposal: React.FC<ReviewProposalProps> = ({
 
       <SummaryText>{values.proposalSummary}</SummaryText>
 
-      {values.proposal && !expandedProposal && (
-        <ButtonText
-          className="mt-3 w-full tablet:w-max"
-          label={t('governance.proposals.buttons.readFullProposal')}
-          mode="secondary"
-          iconRight={<IconChevronDown />}
-          onClick={() => setExpandedProposal(true)}
-        />
-      )}
-
-      <ContentContainer expandedProposal={expandedProposal}>
+      <ContentContainer>
         <ProposalContainer>
-          {values.proposal && expandedProposal && (
+          {values.proposal && (
             <>
               <StyledEditorContent editor={editor} />
-
-              <ButtonText
-                className="mt-3 w-full tablet:w-max"
-                label={t('governance.proposals.buttons.closeFullProposal')}
-                mode="secondary"
-                iconRight={<IconChevronUp />}
-                onClick={() => setExpandedProposal(false)}
-              />
             </>
           )}
 
@@ -316,17 +291,9 @@ const AdditionalInfoContainer = styled.div.attrs({
   className: 'space-y-3 tablet:w-2/5',
 })``;
 
-type ContentContainerProps = {
-  expandedProposal: boolean;
-};
-
-const ContentContainer = styled.div.attrs(
-  ({expandedProposal}: ContentContainerProps) => ({
-    className: `${
-      expandedProposal ? 'tablet:mt-5' : 'tablet:mt-8'
-    } mt-3 tablet:flex tablet:space-x-3 space-y-3 tablet:space-y-0`,
-  })
-)<ContentContainerProps>``;
+const ContentContainer = styled.div.attrs({
+  className: 'mt-3 tablet:flex tablet:space-x-3 space-y-3 tablet:space-y-0',
+})``;
 
 export const StyledEditorContent = styled(EditorContent)`
   flex: 1;
