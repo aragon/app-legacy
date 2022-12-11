@@ -1,4 +1,4 @@
-import {FieldErrors, ValidateResult} from 'react-hook-form';
+import {FieldError, FieldErrors, ValidateResult} from 'react-hook-form';
 import {isAddress, parseUnits} from 'ethers/lib/utils';
 import {BigNumber, providers as EthersProviders} from 'ethers';
 import {InfuraProvider} from '@ethersproject/providers';
@@ -172,9 +172,11 @@ export function actionsAreValid(
   return isValid;
 }
 
-export async function isDaoNameValid(value: string, provider: InfuraProvider) {
-  if (isOnlyWhitespace(value)) return i18n.t('errors.required.name');
-
+export async function isDaoNameValid(
+  value: string,
+  provider: InfuraProvider,
+  setError: (name: string, error: FieldError) => void
+) {
   // some networks like Arbitrum Goerli and other L2s do not support ENS domains as of now
   // don't check and allow name collision failure to happen when trying to run transaction
   if (!provider.network.ensAddress) {
@@ -185,12 +187,20 @@ export async function isDaoNameValid(value: string, provider: InfuraProvider) {
   }
 
   try {
-    const ensAddress = await provider?.resolveName(value.replaceAll(' ', '_'));
+    const ensAddress = await provider?.resolveName(
+      `${value.replaceAll(' ', '_')}.dao.eth`
+    );
 
-    if (ensAddress) return i18n.t('errors.ensDuplication');
-    else return true;
+    if (ensAddress)
+      setError('daoName', {
+        type: 'onBlur',
+        message: i18n.t('errors.ensDuplication') as string,
+      });
   } catch (err) {
-    return i18n.t('errors.ensNetworkIssue');
+    setError('daoName', {
+      type: 'onBlur',
+      message: i18n.t('errors.ensNetworkIssue') as string,
+    });
   }
 }
 

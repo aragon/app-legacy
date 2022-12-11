@@ -70,15 +70,14 @@ const DefineMetadata: React.FC<{bgWhite?: boolean}> = ({bgWhite = false}) => {
           defaultValue=""
           rules={{
             required: t('errors.required.name'),
-            validate: async value => await isDaoNameValid(value, provider),
           }}
-          render={({
-            field: {onBlur, onChange, value, name},
-            fieldState: {error},
-          }) => (
+          render={({field: {onChange, value, name}, fieldState: {error}}) => (
             <>
               <TextInput
-                {...{name, value, onBlur, onChange}}
+                {...{name, value, onChange}}
+                onBlur={async () =>
+                  await isDaoNameValid(value, provider, setError)
+                }
                 placeholder={t('placeHolders.daoName')}
               />
               {error?.message && (
