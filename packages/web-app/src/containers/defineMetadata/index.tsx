@@ -5,7 +5,7 @@ import {
   TextareaSimple,
   TextInput,
 } from '@aragon/ui-components';
-import React, {useCallback, useState} from 'react';
+import React, {useCallback} from 'react';
 import {Controller, FieldError, useFormContext} from 'react-hook-form';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';

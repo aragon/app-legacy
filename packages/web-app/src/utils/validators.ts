@@ -19,7 +19,6 @@ import {
   ActionRemoveAddress,
   Nullable,
 } from './types';
-import {isOnlyWhitespace} from './library';
 
 /**
  * Validate given token contract address
@@ -187,6 +186,7 @@ export async function isDaoNameValid(
     return true;
   }
 
+  // Disable Next button while loading ens name status
   setError('daoName', {
     type: 'onBlur',
     message: '',
