@@ -293,7 +293,7 @@
     "percentage": "Percentage amount should be between 0 and 100",
     "totalSupplyZero": "Total token supply can not be 0",
     "onlyAlphaNumeric": "{{field}} can only contain alphanumeric characters",
-    "ensDuplication": "This DAO name is already taken. Try another one.",
+    "ensDuplication": "DAO name is already taken. Please Try a different one.",
     "ensNetworkIssue": "Failed to resolve ens name",
     "notValidContractAddress": "Smart Contract address not valid",
     "duplicateContractAddress": "Contract has already been added",

@@ -5,7 +5,7 @@ import {
   TextareaSimple,
   TextInput,
 } from '@aragon/ui-components';
-import React, {useCallback} from 'react';
+import React, {useCallback, useState} from 'react';
 import {Controller, FieldError, useFormContext} from 'react-hook-form';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
@@ -24,7 +24,7 @@ const DAO_LOGO = {
 
 const DefineMetadata: React.FC<{bgWhite?: boolean}> = ({bgWhite = false}) => {
   const {t} = useTranslation();
-  const {control, setError} = useFormContext();
+  const {control, setError, clearErrors} = useFormContext();
   const {infura: provider} = useProviders();
 
   const handleImageError = useCallback(
@@ -75,9 +75,9 @@ const DefineMetadata: React.FC<{bgWhite?: boolean}> = ({bgWhite = false}) => {
             <>
               <TextInput
                 {...{name, value, onChange}}
-                onBlur={async () =>
-                  await isDaoNameValid(value, provider, setError)
-                }
+                onBlur={async () => {
+                  await isDaoNameValid(value, provider, setError, clearErrors);
+                }}
                 placeholder={t('placeHolders.daoName')}
               />
               {error?.message && (
