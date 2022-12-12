@@ -425,7 +425,6 @@ const SetupVotingForm: React.FC = () => {
               <DateTimeErrors mode={'end'} />
             </>
           )}
-          {/* TODO: Days should be dynamic */}
           <AlertInline label={t('infos.voteDuration', {days})} mode="neutral" />
         </FormSection>
       )}
