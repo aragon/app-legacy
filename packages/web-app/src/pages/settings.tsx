@@ -89,7 +89,6 @@ const Settings: React.FC = () => {
     (daoDetails?.plugins?.[0]?.id as PluginTypes) === 'erc20voting.dao.eth';
 
   const resourceLinks = daoDetails?.metadata.links.filter(l => l.name && l.url);
-  console.log(daoDetails);
 
   return (
     <SettingsWrapper>
