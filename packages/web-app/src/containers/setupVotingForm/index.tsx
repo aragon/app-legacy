@@ -8,15 +8,10 @@ import {
   NumberInput,
 } from '@aragon/ui-components';
 import {toDate} from 'date-fns-tz';
-import {
-  Controller,
-  FieldError,
-  useFormContext,
-  useWatch,
-} from 'react-hook-form';
+import {Controller, useFormContext, useWatch} from 'react-hook-form';
 import styled from 'styled-components';
 import {useTranslation} from 'react-i18next';
-import React, {useEffect, useState} from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 
 import {DateModeSwitch} from './dateModeSwitch';
 import UtcMenu from 'containers/utcMenu';
@@ -86,49 +81,13 @@ const SetupVotingForm: React.FC = () => {
     }
   }, []); //eslint-disable-line
 
-  // validate start time on UTC changes
-  // (Doing this in a separate hook is necessary since the UTC selector is
-  // currently not controllable using the the form conroller)
-  useEffect(() => {
-    const fieldErrors: FieldError[] = Object.values(formState.errors);
-    const hasEmptyFields = fieldErrors.some(
-      e =>
-        e.type === 'validate' &&
-        (e.ref?.name === 'startDate' || e.ref?.name === 'startTime')
-    );
-
-    if (!hasEmptyFields) {
-      dateTimeValidator();
-    }
-  }, [utcStart]); //eslint-disable-line
-
-  // validate end time on UTC changes
-  // (Doing this in a separate hook is necessary since the UTC selector is
-  // currently not controllable using the the form conroller)
-  useEffect(() => {
-    const fieldErrors: FieldError[] = Object.values(formState.errors);
-    const hasEmptyFields = fieldErrors.some(
-      e =>
-        e.type === 'validate' &&
-        (e.ref?.name === 'endDate' || e.ref?.name === 'endTime')
-    );
-
-    if (!hasEmptyFields) {
-      dateTimeValidator();
-    }
-  }, [utcEnd]); //eslint-disable-line
-
-  /*************************************************
-   *                Field Validators               *
-   *************************************************/
-
   // validates both start time and date. This validator checks all constraints
   // on the start and end date/time at once. This is necessary, as time date and
   // times validity are tied to each other. If any constraint is violated, an
   // error is constructed and passed to the form state.
   //
   // Note: does not take and argument, as it is not tied to any individual input.
-  const dateTimeValidator = () => {
+  const dateTimeValidator = useCallback(() => {
     //build start date/time in utc mills
     const sDate = getValues('startDate');
     const sTime = getValues('startTime');
@@ -145,11 +104,14 @@ const SetupVotingForm: React.FC = () => {
     const eDate = getValues('endDate');
     const eTime = getValues('endTime');
     const eUtc = getValues('endUtc');
+
     const canonicalEUtc = getCanonicalUtcOffset(eUtc);
     const endDateTime = toDate(eDate + 'T' + eTime + canonicalEUtc);
     const endMills = endDateTime.valueOf();
 
     const minEndDateTimeMills = startMills + daysToMills(5);
+
+    let returnValue = '';
 
     // check start constraints
     if (startMills < currMills) {
@@ -161,7 +123,7 @@ const SetupVotingForm: React.FC = () => {
         type: 'validate',
         message: t('errors.startPast'),
       });
-      return t('errors.endPast');
+      returnValue = t('errors.endPast');
     }
     if (startMills >= currMills) {
       clearErrors('startDate');
@@ -178,15 +140,30 @@ const SetupVotingForm: React.FC = () => {
         type: 'validate',
         message: t('errors.endPast'),
       });
-      return t('errors.endPast');
+      returnValue = t('errors.endPast');
     }
+
     if (endMills >= minEndDateTimeMills) {
       clearErrors('endDate');
       clearErrors('endTime');
     }
 
-    return true;
-  };
+    return !returnValue ? true : returnValue;
+  }, [clearErrors, getValues, setError, t]);
+
+  // validate start time on UTC changes
+  // (Doing this in a separate hook is necessary since the UTC selector is
+  // currently not controllable using the the form conroller)
+  useEffect(() => {
+    dateTimeValidator();
+  }, [utcStart, dateTimeValidator]);
+
+  // validate end time on UTC changes
+  // (Doing this in a separate hook is necessary since the UTC selector is
+  // currently not controllable using the the form conroller)
+  useEffect(() => {
+    dateTimeValidator();
+  }, [utcEnd, dateTimeValidator]); //eslint-disable-line
 
   // sets the UTC values for the start and end date/time
   const tzSelector = (tz: string) => {
