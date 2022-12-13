@@ -393,13 +393,13 @@ export default SetupVotingForm;
  * @param durationSwitch Duration switch value
  * @returns Whether the screen is valid
  */
-export function isValid(errors: StringIndexed, durationSwitch: string) {
-  if (durationSwitch === 'date') {
-    return errors.startDate || errors.startTime || errors.endDate
-      ? false
-      : true;
-  }
-  return errors.startDate || errors.startTime || errors.duration ? false : true;
+export function isValid(errors: StringIndexed) {
+  return !(
+    errors.startDate ||
+    errors.startTime ||
+    errors.endDate ||
+    errors.ednTime
+  );
 }
 
 const FormSection = styled.div.attrs({
