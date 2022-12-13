@@ -26,6 +26,7 @@ type TransactionModalProps = {
   includeApproval?: boolean;
   maxFee: BigInt | undefined;
   averageFee: BigInt | undefined;
+  gasEstimationError?: Error;
   ethPrice: number;
   depositAmount: BigInt;
   tokenAddress: string;
@@ -51,6 +52,7 @@ const DepositModal: React.FC<TransactionModalProps> = ({
   includeApproval = false,
   maxFee,
   averageFee,
+  gasEstimationError,
   ethPrice,
   depositAmount,
   tokenAddress,
@@ -251,6 +253,14 @@ const DepositModal: React.FC<TransactionModalProps> = ({
             <AlertInline
               label={t('TransactionModal.successLabel')}
               mode="success"
+            />
+          </AlertInlineContainer>
+        )}
+        {gasEstimationError && (
+          <AlertInlineContainer>
+            <AlertInline
+              label={t('TransactionModal.gasEstimationErrorLabel') as string}
+              mode="warning"
             />
           </AlertInlineContainer>
         )}

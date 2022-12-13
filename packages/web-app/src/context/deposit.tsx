@@ -89,10 +89,13 @@ const DepositProvider = ({children}: {children: ReactNode}) => {
     }
   }, [client, currentStep, depositParams]);
 
-  const {tokenPrice, maxFee, averageFee, stopPolling} = usePollGasFee(
-    estimateDepositFees,
-    shouldPoll
-  );
+  const {
+    tokenPrice,
+    maxFee,
+    averageFee,
+    stopPolling,
+    error: gasEstimationError,
+  } = usePollGasFee(estimateDepositFees, shouldPoll);
 
   const handleOpenModal = useCallback(() => {
     // get deposit data from
@@ -318,6 +321,7 @@ const DepositProvider = ({children}: {children: ReactNode}) => {
         onClose={handleCloseModal}
         handleDeposit={handleDeposit}
         handleApproval={handleApproval}
+        gasEstimationError={gasEstimationError}
         closeOnDrag={depositState !== TransactionState.LOADING}
         depositAmount={depositParams?.amount as bigint}
         tokenAddress={depositParams?.tokenAddress as string}

@@ -261,10 +261,13 @@ const CreateProposalProvider: React.FC<Props> = ({
     return pluginClient?.estimation.createProposal(proposalCreationData);
   }, [pluginClient, proposalCreationData]);
 
-  const {tokenPrice, maxFee, averageFee, stopPolling} = usePollGasFee(
-    estimateCreationFees,
-    shouldPoll
-  );
+  const {
+    tokenPrice,
+    maxFee,
+    averageFee,
+    stopPolling,
+    error: gasEstimationError,
+  } = usePollGasFee(estimateCreationFees, shouldPoll);
 
   const handleCloseModal = useCallback(() => {
     switch (creationProcessState) {
@@ -460,6 +463,7 @@ const CreateProposalProvider: React.FC<Props> = ({
         closeOnDrag={creationProcessState !== TransactionState.LOADING}
         maxFee={maxFee}
         averageFee={averageFee}
+        gasEstimationError={gasEstimationError}
         tokenPrice={tokenPrice}
         title={t('TransactionModal.createProposal')}
         buttonLabel={t('TransactionModal.createProposal')}
