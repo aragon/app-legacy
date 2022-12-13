@@ -262,7 +262,9 @@
   "infos": {
     "voteDuration": "The minimum duration of {{days}} days is defined by DAO Governance Settings, To change the minimum duration a vote is required",
     "newVotingTypes": "New voting types soon",
-    "newTypesHelpText": "The Aragon App will provide further voting types like single/multiple choice, or others in the near future."
+    "newTypesHelpText": "The Aragon App will provide further voting types like single/multiple choice, or others in the near future.",
+    "ensAvailable": "DAO Name available",
+    "checkingEns": "checking dao name..."
   },
   "errors": {
     "amountWithInvalidToken": "Cannot validate amount with invalid token address",

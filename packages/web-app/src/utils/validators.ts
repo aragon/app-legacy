@@ -19,6 +19,7 @@ import {
   ActionRemoveAddress,
   Nullable,
 } from './types';
+import {isOnlyWhitespace} from './library';
 
 /**
  * Validate given token contract address
@@ -177,6 +178,7 @@ export async function isDaoNameValid(
   setError: (name: string, error: FieldError) => void,
   clearErrors: (name: string) => void
 ) {
+  if (isOnlyWhitespace(value)) return i18n.t('errors.required.name');
   // some networks like Arbitrum Goerli and other L2s do not support ENS domains as of now
   // don't check and allow name collision failure to happen when trying to run transaction
   if (!provider.network.ensAddress) {
@@ -188,26 +190,19 @@ export async function isDaoNameValid(
 
   // Disable Next button while loading ens name status
   setError('daoName', {
-    type: 'onBlur',
+    type: 'onChange',
     message: '',
   });
 
   try {
     const ensAddress = await provider?.resolveName(
-      `${value.replaceAll(' ', '_')}.dao.eth`
+      `${value.toLocaleLowerCase().replaceAll(' ', '_')}.dao.eth`
     );
-
-    if (ensAddress)
-      setError('daoName', {
-        type: 'onBlur',
-        message: i18n.t('errors.ensDuplication') as string,
-      });
-    else clearErrors('daoName');
+    if (ensAddress) return i18n.t('errors.ensDuplication') as string;
+    // clear errors will show the available message and enable the next button
+    else if (value !== '') return true;
   } catch (err) {
-    setError('daoName', {
-      type: 'onBlur',
-      message: i18n.t('errors.ensNetworkIssue') as string,
-    });
+    return i18n.t('errors.ensNetworkIssue') as string;
   }
 }
 

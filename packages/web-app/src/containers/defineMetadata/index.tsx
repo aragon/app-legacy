@@ -55,6 +55,33 @@ const DefineMetadata: React.FC<{bgWhite?: boolean}> = ({bgWhite = false}) => {
     [setError, t]
   );
 
+  function ErrorHandler({value, error}: {value: string; error?: FieldError}) {
+    console.log('error', error);
+    if (value) {
+      if (error?.type) {
+        if (error.type === 'onChange') {
+          return (
+            <AlertInline
+              label={t('infos.checkingEns') as string}
+              mode="neutral"
+            />
+          );
+        } else {
+          return (
+            <AlertInline label={error.message as string} mode="critical" />
+          );
+        }
+      } else {
+        return (
+          <AlertInline
+            label={t('infos.ensAvailable') as string}
+            mode="success"
+          />
+        );
+      }
+    } else return null;
+  }
+
   return (
     <>
       {/* Name */}
@@ -70,19 +97,19 @@ const DefineMetadata: React.FC<{bgWhite?: boolean}> = ({bgWhite = false}) => {
           defaultValue=""
           rules={{
             required: t('errors.required.name'),
+            validate: async value =>
+              await isDaoNameValid(value, provider, setError, clearErrors),
           }}
-          render={({field: {onChange, value, name}, fieldState: {error}}) => (
+          render={({
+            field: {onBlur, onChange, value, name},
+            fieldState: {error},
+          }) => (
             <>
               <TextInput
-                {...{name, value, onChange}}
-                onBlur={async () => {
-                  await isDaoNameValid(value, provider, setError, clearErrors);
-                }}
+                {...{name, value, onBlur, onChange}}
                 placeholder={t('placeHolders.daoName')}
               />
-              {error?.message && (
-                <AlertInline label={error.message} mode="critical" />
-              )}
+              <ErrorHandler {...{value, error}} />
             </>
           )}
         />
