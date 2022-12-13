@@ -28,6 +28,8 @@ import {
   getCanonicalUtcOffset,
   getDHMFromSeconds,
   getFormattedUtcOffset,
+  hoursToMills,
+  minutesToMills,
 } from 'utils/date';
 import {DateTimeErrors} from './dateTimeErrors';
 import {useGlobalModalContext} from 'context/globalModals';
@@ -162,7 +164,11 @@ const SetupVotingForm: React.FC = () => {
     const endDateTime = toDate(eDate + 'T' + eTime + canonicalEUtc);
     const endMills = endDateTime.valueOf();
 
-    const minEndDateTimeMills = startMills + daysToMills(5);
+    const minEndDateTimeMills =
+      startMills +
+      daysToMills(days || 0) +
+      hoursToMills(hours || 0) +
+      minutesToMills(minutes || 0);
 
     // check start constraints
     if (startMills < currMills) {
@@ -301,7 +307,7 @@ const SetupVotingForm: React.FC = () => {
       {daoSettings.minDuration && (
         <FormSection>
           <Label label={t('labels.endDate')} />
-          {endDateType === 'duration' ? (
+          {endDateType === 'duration' && days && days >= 1 ? (
             <>
               <HStack>
                 <Controller
@@ -354,24 +360,26 @@ const SetupVotingForm: React.FC = () => {
           ) : (
             <>
               <div className="block space-y-2">
-                <div>
-                  <Controller
-                    name="durationSwitch"
-                    control={control}
-                    defaultValue="date"
-                    render={({field: {onChange, value}}) => {
-                      return (
-                        <DateModeSwitch
-                          value={value}
-                          setValue={value => {
-                            clearInputs();
-                            onChange(value);
-                          }}
-                        />
-                      );
-                    }}
-                  />
-                </div>
+                {days && days >= 1 && (
+                  <div>
+                    <Controller
+                      name="durationSwitch"
+                      control={control}
+                      defaultValue="date"
+                      render={({field: {onChange, value}}) => {
+                        return (
+                          <DateModeSwitch
+                            value={value}
+                            setValue={value => {
+                              clearInputs();
+                              onChange(value);
+                            }}
+                          />
+                        );
+                      }}
+                    />
+                  </div>
+                )}
                 <HStack>
                   <Controller
                     name="endDate"
@@ -395,7 +403,11 @@ const SetupVotingForm: React.FC = () => {
                   <Controller
                     name="endTime"
                     control={control}
-                    defaultValue={getCanonicalTime({days, hours, minutes})}
+                    defaultValue={getCanonicalTime({
+                      days,
+                      hours,
+                      minutes: (minutes || 0) + 10,
+                    })}
                     rules={{
                       required: t('errors.required.time'),
                       validate: dateTimeValidator,
@@ -425,7 +437,22 @@ const SetupVotingForm: React.FC = () => {
               <DateTimeErrors mode={'end'} />
             </>
           )}
-          <AlertInline label={t('infos.voteDuration', {days})} mode="neutral" />
+          {minutes && minutes > 0 ? (
+            <AlertInline
+              label={t('infos.voteDHMDuration', {days, hours, minutes})}
+              mode="neutral"
+            />
+          ) : hours && hours > 0 ? (
+            <AlertInline
+              label={t('infos.voteDHDuration', {days, hours})}
+              mode="neutral"
+            />
+          ) : (
+            <AlertInline
+              label={t('infos.voteDuration', {days})}
+              mode="neutral"
+            />
+          )}
         </FormSection>
       )}
       <UtcMenu onTimezoneSelect={tzSelector} />

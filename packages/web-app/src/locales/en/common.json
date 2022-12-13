@@ -260,7 +260,9 @@
     }
   },
   "infos": {
-    "voteDuration": "The minimum duration of {{days}} days is defined by DAO Governance Settings, To change the minimum duration a vote is required",
+    "voteDuration": "The minimum duration of {{days}} days is defined by DAO Governance Settings. To change the minimum duration a vote is required",
+    "voteDHDuration": "The minimum duration of {{days}} days and {{hours}} hours is defined by DAO Governance Settings. To change the minimum duration a vote is required",
+    "voteDHMDuration": "The minimum duration of {{days}} days, {{hours}} hours, and {{minutes}} minutes is defined by DAO Governance Settings. To change the minimum duration a vote is required",
     "newVotingTypes": "New voting types soon",
     "newTypesHelpText": "The Aragon App will provide further voting types like single/multiple choice, or others in the near future."
   },
