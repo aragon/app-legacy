@@ -195,9 +195,7 @@ const NewWithdraw: React.FC = () => {
               <Step
                 wizardTitle={t('newWithdraw.setupVoting.title')}
                 wizardDescription={t('newWithdraw.setupVoting.description')}
-                isNextButtonDisabled={
-                  !setupVotingIsValid(errors, durationSwitch)
-                }
+                isNextButtonDisabled={!setupVotingIsValid(errors)}
                 onNextButtonClicked={next => {
                   const [
                     startDate,
