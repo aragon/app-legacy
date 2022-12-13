@@ -22,6 +22,7 @@ type PublishModalProps = {
   closeOnDrag: boolean;
   maxFee: BigInt | undefined;
   averageFee: BigInt | undefined;
+  gasEstimationError?: Error;
   tokenPrice: number;
   title?: string;
   subtitle?: string;
@@ -44,6 +45,7 @@ const PublishModal: React.FC<PublishModalProps> = ({
   closeOnDrag,
   maxFee,
   averageFee,
+  gasEstimationError,
   tokenPrice,
   title,
   subtitle,
@@ -143,6 +145,14 @@ const PublishModal: React.FC<PublishModalProps> = ({
             <AlertInline
               label={t('TransactionModal.errorLabel')}
               mode="critical"
+            />
+          </AlertInlineContainer>
+        )}
+        {gasEstimationError && (
+          <AlertInlineContainer>
+            <AlertInline
+              label={t('TransactionModal.gasEstimationErrorLabel') as string}
+              mode="warning"
             />
           </AlertInlineContainer>
         )}

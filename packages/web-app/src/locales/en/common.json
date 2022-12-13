@@ -414,6 +414,7 @@
     "launchGovernancePage": "Launch Governance page",
     "launchDaoDashboard": "Launch DAO dashboard",
     "errorLabel": "Error while confirming transaction",
+    "gasEstimationErrorLabel": "Failed to estimate Gas fee. Feel free to proceed anyway.",
     "estimatedFees": "Estimated Gas Fees",
     "maxFee": "Max Fee",
     "publishDaoSubtitle": "The fees below are the cost of using the selected blockchain.",
