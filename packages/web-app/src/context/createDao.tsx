@@ -309,12 +309,23 @@ const CreateDaoProvider: React.FC = ({children}) => {
             setCreationProcessState(TransactionState.SUCCESS);
             setDaoAddress(step.address.toLowerCase());
 
+            const {daoName, daoSummary, daoLogo, links} = getValues();
+            const metadata: IMetadata = {
+              name: daoName,
+              description: daoSummary,
+              avatar: daoLogo,
+              links: links.filter(r => r.name && r.url),
+            };
+
             // eslint-disable-next-line no-case-declarations
             const newCache = {
               ...cachedDaoCreation,
               [network]: {
                 ...cachedDaoCreation[network],
-                [step.address.toLocaleLowerCase()]: daoCreationData,
+                [step.address.toLocaleLowerCase()]: {
+                  daoCreationParams: daoCreationData,
+                  daoMetadata: metadata,
+                },
               },
             };
 
