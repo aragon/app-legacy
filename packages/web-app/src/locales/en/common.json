@@ -297,6 +297,7 @@
     "onlyAlphaNumeric": "{{field}} can only contain alphanumeric characters",
     "ensDuplication": "DAO name is already taken. Please Try a different one.",
     "ensNetworkIssue": "Failed to resolve ens name",
+    "ensNameLength": "DAO name must be less than 128 characters",
     "notValidContractAddress": "Smart Contract address not valid",
     "duplicateContractAddress": "Contract has already been added",
     "required": {

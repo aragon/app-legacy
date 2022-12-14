@@ -180,6 +180,7 @@ export function isDaoNameValid(
   getValues: (payload?: string | string[]) => Object
 ) {
   if (isOnlyWhitespace(value)) return i18n.t('errors.required.name');
+  if (value.length > 128) return i18n.t('errors.ensNameLength');
   // some networks like Arbitrum Goerli and other L2s do not support ENS domains as of now
   // don't check and allow name collision failure to happen when trying to run transaction
   if (!provider.network.ensAddress) {

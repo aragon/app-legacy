@@ -106,6 +106,7 @@ const DefineMetadata: React.FC<{bgWhite?: boolean}> = ({bgWhite = false}) => {
                 {...{name, value, onBlur, onChange}}
                 placeholder={t('placeHolders.daoName')}
               />
+              <InputCount>{`${value.length}/128`}</InputCount>
               <ErrorHandler {...{value, error}} />
             </>
           )}
@@ -199,6 +200,10 @@ const DefineMetadata: React.FC<{bgWhite?: boolean}> = ({bgWhite = false}) => {
 };
 
 export default DefineMetadata;
+
+const InputCount = styled.div.attrs({
+  className: 'ft-text-sm mt-1',
+})``;
 
 const FormItem = styled.div.attrs({
   className: 'space-y-1.5',
