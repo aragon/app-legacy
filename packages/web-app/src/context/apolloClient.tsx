@@ -10,6 +10,7 @@ import {
   Deposit,
   Erc20Proposal,
   ICreateParams,
+  IMetadata,
 } from '@aragon/sdk-client';
 import {RestLink} from 'apollo-link-rest';
 import {CachePersistor, LocalStorageWrapper} from 'apollo3-cache-persist';
@@ -165,7 +166,10 @@ const pendingProposalsVar = makeVar<PendingProposals>(pendingProposals);
 type PendingDaoCreation = {
   [key in SupportedNetworks]?: {
     // This key is the id of the newly created DAO
-    [key: string]: ICreateParams;
+    [key: string]: {
+      daoCreationParams: ICreateParams;
+      daoMetadata: IMetadata;
+    };
   };
 };
 const pendingDaoCreation = JSON.parse(

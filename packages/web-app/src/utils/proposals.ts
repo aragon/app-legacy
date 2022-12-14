@@ -13,16 +13,17 @@ import {
   Erc20TokenDetails,
   ICreateProposalParams,
   IPluginSettings,
+  ProposalMetadata,
   ProposalStatus,
   VoteValues,
 } from '@aragon/sdk-client';
 import {ProgressStatusProps, VoterType} from '@aragon/ui-components';
 import Big from 'big.js';
 import {format} from 'date-fns';
+import differenceInSeconds from 'date-fns/fp/differenceInSeconds';
 import {BigNumber} from 'ethers';
 
 import {ProposalVoteResults} from 'containers/votingTerminal';
-import differenceInSeconds from 'date-fns/fp/differenceInSeconds';
 import {i18n} from '../../i18n.config';
 import {getFormattedUtcOffset, KNOWN_FORMATS} from './date';
 import {formatUnits} from './library';
@@ -491,14 +492,15 @@ export function getTerminalProps(
   };
 }
 
-type MapToDetailedProposalParams = {
+export type MapToDetailedProposalParams = {
   creatorAddress: string;
   daoAddress: string;
   daoName: string;
   daoToken?: Erc20TokenDetails;
   totalVotingWeight: number | bigint;
   pluginSettings: IPluginSettings;
-  proposalCreationData: ICreateProposalParams;
+  metadata: ProposalMetadata;
+  proposalParams: ICreateProposalParams;
   proposalId: string;
 };
 
@@ -509,22 +511,22 @@ type MapToDetailedProposalParams = {
  */
 export function mapToDetailedProposal(params: MapToDetailedProposalParams) {
   return {
-    actions: params.proposalCreationData.actions || [],
+    actions: params.proposalParams.actions || [],
     creationDate: new Date(),
     creatorAddress: params.creatorAddress,
     dao: {address: params.daoAddress, name: params.daoName},
-    endDate: params.proposalCreationData.endDate,
+    endDate: params.proposalParams.endDate,
     id: params.proposalId,
-    metadata: params.proposalCreationData.metadata,
+    metadata: params.metadata,
     settings: {
       minSupport: params.pluginSettings.minSupport,
       minTurnout: params.pluginSettings.minTurnout,
       duration: differenceInSeconds(
-        params.proposalCreationData.startDate!,
-        params.proposalCreationData.endDate!
+        params.proposalParams.startDate!,
+        params.proposalParams.endDate!
       ),
     },
-    startDate: params.proposalCreationData.startDate,
+    startDate: params.proposalParams.startDate,
     status: 'Pending',
     votes: [],
     ...(params.daoToken

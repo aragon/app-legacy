@@ -6,6 +6,7 @@ import {
   ICreateProposalParams,
   InstalledPluginListItem,
   ProposalCreationSteps,
+  ProposalMetadata,
 } from '@aragon/sdk-client';
 import React, {useCallback, useEffect, useMemo, useState} from 'react';
 import {useFormContext} from 'react-hook-form';
@@ -33,6 +34,7 @@ import {customJSONReplacer} from 'utils/library';
 import {Proposal} from 'utils/paths';
 import {
   mapToDetailedProposal,
+  MapToDetailedProposalParams,
   prefixProposalIdWithPlgnAdr,
 } from 'utils/proposals';
 import {getTokenInfo} from 'utils/tokens';
@@ -83,7 +85,6 @@ const CreateProposalProvider: React.FC<Props> = ({
 
   const [proposalCreationData, setProposalCreationData] =
     useState<ICreateProposalParams>();
-
   const [creationProcessState, setCreationProcessState] =
     useState<TransactionState>(TransactionState.WAITING);
 
@@ -218,15 +219,19 @@ const CreateProposalProvider: React.FC<Props> = ({
 
       const actions = await encodeActions();
 
+      const metadata: ProposalMetadata = {
+        title,
+        summary,
+        description,
+        resources: resources.filter((r: ProposalResource) => r.name && r.url),
+      };
+
+      const ipfsUri = await pluginClient?.methods.pinMetadata(metadata);
+
       // Ignore encoding if the proposal had no actions
       return {
         pluginAddress,
-        metadata: {
-          title,
-          summary,
-          description,
-          resources: resources.filter((r: ProposalResource) => r.name && r.url),
-        },
+        metadataUri: ipfsUri || '',
         startDate: new Date(
           `${startDate}T${startTime}:00${getCanonicalUtcOffset(startUtc)}`
         ),
@@ -235,7 +240,7 @@ const CreateProposalProvider: React.FC<Props> = ({
         ),
         actions,
       };
-    }, [encodeActions, getValues, pluginAddress]);
+    }, [encodeActions, getValues, pluginAddress, pluginClient?.methods]);
 
   useEffect(() => {
     // set proposal creation data
@@ -294,7 +299,21 @@ const CreateProposalProvider: React.FC<Props> = ({
       if (!address || !daoDetails || !pluginSettings || !proposalCreationData)
         return;
 
-      const proposalData = {
+      const [title, summary, description, resources] = getValues([
+        'proposalTitle',
+        'proposalSummary',
+        'proposal',
+        'links',
+      ]);
+
+      const metadata: ProposalMetadata = {
+        title,
+        summary,
+        description,
+        resources: resources.filter((r: ProposalResource) => r.name && r.url),
+      };
+
+      const proposalData: MapToDetailedProposalParams = {
         creatorAddress: address,
         daoAddress: daoDetails?.address,
         daoName: daoDetails?.metadata.name,
@@ -304,8 +323,9 @@ const CreateProposalProvider: React.FC<Props> = ({
             ? tokenSupply
             : members.length,
         pluginSettings,
-        proposalCreationData,
+        proposalParams: proposalCreationData,
         proposalId,
+        metadata: metadata,
       };
 
       const cachedProposal = mapToDetailedProposal(proposalData);
@@ -331,6 +351,7 @@ const CreateProposalProvider: React.FC<Props> = ({
       cachedProposals,
       daoDetails,
       daoToken,
+      getValues,
       members.length,
       pluginSettings,
       pluginType,

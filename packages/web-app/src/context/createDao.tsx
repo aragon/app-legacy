@@ -4,19 +4,15 @@ import {
   IAddressListPluginInstall,
   ICreateParams,
   IErc20PluginInstall,
+  IMetadata,
   IPluginInstallItem,
   IPluginSettings,
 } from '@aragon/sdk-client';
 import {BigNumber, constants} from 'ethers';
 import {defaultAbiCoder, parseUnits, toUtf8Bytes} from 'ethers/lib/utils';
-import React, {
-  createContext,
-  ReactNode,
-  useCallback,
-  useContext,
-  useState,
-} from 'react';
+import React, {createContext, useCallback, useContext, useState} from 'react';
 import {useFormContext} from 'react-hook-form';
+import {useTranslation} from 'react-i18next';
 import {generatePath, useNavigate} from 'react-router-dom';
 
 import PublishModal from 'containers/transactionModals/publishModal';
@@ -24,7 +20,6 @@ import {useClient} from 'hooks/useClient';
 import {usePollGasFee} from 'hooks/usePollGasfee';
 import {useWallet} from 'hooks/useWallet';
 import {CreateDaoFormData} from 'pages/createDAO';
-import {useTranslation} from 'react-i18next';
 import {trackEvent} from 'services/analytics';
 import {PENDING_DAOS_KEY, TransactionState} from 'utils/constants';
 import {getSecondsFromDHM} from 'utils/date';
@@ -49,11 +44,9 @@ type CreateDaoContextType = {
   handlePublishDao: () => void;
 };
 
-type Props = Record<'children', ReactNode>;
-
 const CreateDaoContext = createContext<CreateDaoContextType | null>(null);
 
-const CreateDaoProvider: React.FC<Props> = ({children}) => {
+const CreateDaoProvider: React.FC = ({children}) => {
   const {open} = useGlobalModalContext();
   const navigate = useNavigate();
   const {isOnWrongNetwork, provider} = useWallet();
@@ -77,8 +70,9 @@ const CreateDaoProvider: React.FC<Props> = ({children}) => {
   /*************************************************
    *                   Handlers                    *
    *************************************************/
-  const handlePublishDao = () => {
-    setDaoCreationData(getDaoSettings());
+  const handlePublishDao = async () => {
+    const creationParams: ICreateParams = await getDaoSettings();
+    setDaoCreationData(creationParams);
     setCreationProcessState(TransactionState.WAITING);
     setShowModal(true);
   };
@@ -181,7 +175,7 @@ const CreateDaoProvider: React.FC<Props> = ({children}) => {
     }, [getValues]);
 
   // Get dao setting configuration for creation process
-  const getDaoSettings = useCallback(() => {
+  const getDaoSettings = useCallback(async () => {
     const {membership, daoName, daoSummary, daoLogo, links} = getValues();
     const plugins: IPluginInstallItem[] = [];
     const pluginSettings = getPluginSettings();
@@ -242,18 +236,27 @@ const CreateDaoProvider: React.FC<Props> = ({children}) => {
         throw new Error(`Unknown dao type: ${membership}`);
     }
 
-    return {
-      metadata: {
-        name: daoName,
-        description: daoSummary,
-        avatar: daoLogo,
-        links: links.filter(r => r.name && r.url),
-      },
-      // TODO: We're using dao name without spaces for ens, We need to add alert to inform this to user
-      ensSubdomain: daoName?.replace(/ /g, '_'),
-      plugins: plugins,
+    const metadata: IMetadata = {
+      name: daoName,
+      description: daoSummary,
+      avatar: daoLogo,
+      links: links.filter(r => r.name && r.url),
     };
+
+    try {
+      const ipfsUri = await client?.methods.pinMetadata(metadata);
+      return {
+        metadataUri: ipfsUri || '',
+        // TODO: We're using dao name without spaces for ens, We need to add alert
+        // to inform this to user
+        ensSubdomain: daoName?.replace(/ /g, '_'),
+        plugins: plugins,
+      };
+    } catch {
+      throw Error('Could not pin metadata on IPFS');
+    }
   }, [
+    client?.methods,
     getValues,
     getPluginSettings,
     getErc20PluginParams,
