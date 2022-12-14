@@ -289,6 +289,14 @@ const CreateDaoProvider: React.FC = ({children}) => {
       throw new Error('deposit function is not initialized correctly');
     }
 
+    const {daoName, daoSummary, daoLogo, links} = getValues();
+    const metadata: IMetadata = {
+      name: daoName,
+      description: daoSummary,
+      avatar: daoLogo,
+      links: links.filter(r => r.name && r.url),
+    };
+
     try {
       for await (const step of createDaoIterator) {
         switch (step.key) {
@@ -308,14 +316,6 @@ const CreateDaoProvider: React.FC = ({children}) => {
             setDaoCreationData(undefined);
             setCreationProcessState(TransactionState.SUCCESS);
             setDaoAddress(step.address.toLowerCase());
-
-            const {daoName, daoSummary, daoLogo, links} = getValues();
-            const metadata: IMetadata = {
-              name: daoName,
-              description: daoSummary,
-              avatar: daoLogo,
-              links: links.filter(r => r.name && r.url),
-            };
 
             // eslint-disable-next-line no-case-declarations
             const newCache = {
