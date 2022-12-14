@@ -329,10 +329,10 @@ const SetupVotingForm: React.FC = () => {
                 <Controller
                   name="duration"
                   control={control}
-                  defaultValue={days}
+                  defaultValue={days + 1}
                   rules={{
                     min: {
-                      value: days || 0,
+                      value: days + 1 || 0,
                       message: t('errors.durationTooShort'),
                     },
                     required: t('errors.required.duration'),
@@ -360,7 +360,7 @@ const SetupVotingForm: React.FC = () => {
           ) : (
             <>
               <div className="block space-y-2">
-                {days && days >= 1 && (
+                {days && days >= 1 ? (
                   <div>
                     <Controller
                       name="durationSwitch"
@@ -379,7 +379,7 @@ const SetupVotingForm: React.FC = () => {
                       }}
                     />
                   </div>
-                )}
+                ) : null}
                 <HStack>
                   <Controller
                     name="endDate"
