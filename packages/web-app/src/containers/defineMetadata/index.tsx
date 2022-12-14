@@ -24,7 +24,7 @@ const DAO_LOGO = {
 
 const DefineMetadata: React.FC<{bgWhite?: boolean}> = ({bgWhite = false}) => {
   const {t} = useTranslation();
-  const {control, setError, clearErrors} = useFormContext();
+  const {control, setError} = useFormContext();
   const {infura: provider} = useProviders();
 
   const handleImageError = useCallback(
@@ -56,30 +56,27 @@ const DefineMetadata: React.FC<{bgWhite?: boolean}> = ({bgWhite = false}) => {
   );
 
   function ErrorHandler({value, error}: {value: string; error?: FieldError}) {
-    console.log('error', error);
-    if (value) {
-      if (error?.type) {
-        if (error.type === 'onChange') {
-          return (
-            <AlertInline
-              label={t('infos.checkingEns') as string}
-              mode="neutral"
-            />
-          );
-        } else {
-          return (
-            <AlertInline label={error.message as string} mode="critical" />
-          );
-        }
+    if (error?.type) {
+      if (error.type === 'onChange') {
+        return (
+          <AlertInline
+            label={t('infos.checkingEns') as string}
+            mode="neutral"
+          />
+        );
       } else {
+        return <AlertInline label={error.message as string} mode="critical" />;
+      }
+    } else {
+      if (value) {
         return (
           <AlertInline
             label={t('infos.ensAvailable') as string}
             mode="success"
           />
         );
-      }
-    } else return null;
+      } else return null;
+    }
   }
 
   return (
@@ -98,7 +95,7 @@ const DefineMetadata: React.FC<{bgWhite?: boolean}> = ({bgWhite = false}) => {
           rules={{
             required: t('errors.required.name'),
             validate: async value =>
-              await isDaoNameValid(value, provider, setError, clearErrors),
+              await isDaoNameValid(value, provider, setError),
           }}
           render={({
             field: {onBlur, onChange, value, name},

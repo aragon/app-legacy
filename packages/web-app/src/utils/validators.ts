@@ -175,8 +175,7 @@ export function actionsAreValid(
 export async function isDaoNameValid(
   value: string,
   provider: InfuraProvider,
-  setError: (name: string, error: FieldError) => void,
-  clearErrors: (name: string) => void
+  setError: (name: string, error: FieldError) => void
 ) {
   if (isOnlyWhitespace(value)) return i18n.t('errors.required.name');
   // some networks like Arbitrum Goerli and other L2s do not support ENS domains as of now
