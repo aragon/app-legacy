@@ -172,10 +172,12 @@ export function actionsAreValid(
   return isValid;
 }
 
-export async function isDaoNameValid(
+export function isDaoNameValid(
   value: string,
   provider: InfuraProvider,
-  setError: (name: string, error: FieldError) => void
+  setError: (name: string, error: FieldError) => void,
+  clearError: (name?: string | string[]) => void,
+  getValues: (payload?: string | string[]) => Object
 ) {
   if (isOnlyWhitespace(value)) return i18n.t('errors.required.name');
   // some networks like Arbitrum Goerli and other L2s do not support ENS domains as of now
@@ -187,19 +189,27 @@ export async function isDaoNameValid(
     return true;
   }
 
-  // Disable Next button while loading ens name status
-  setError('daoName', {
-    type: 'onChange',
-    message: '',
-  });
-
+  // We might need to combine the method with setTimeout (Similar to useDebouncedState)
+  // for better performance
   try {
-    const ensAddress = await provider?.resolveName(
-      `${value.toLocaleLowerCase().replaceAll(' ', '_')}.dao.eth`
-    );
-    if (ensAddress) return i18n.t('errors.ensDuplication') as string;
+    provider
+      ?.resolveName(`${value.toLocaleLowerCase().replaceAll(' ', '_')}.dao.eth`)
+      .then(result => {
+        const inputValue = getValues('daoName');
+        // Check to see if the response belongs to current value
+        if (value === inputValue) {
+          if (result)
+            setError('daoName', {
+              type: 'validate',
+              message: i18n.t('errors.ensDuplication'),
+            });
+          else clearError();
+        }
+      });
+
+    return i18n.t('infos.checkingEns');
+
     // clear errors will show the available message and enable the next button
-    else if (value !== '') return true;
   } catch (err) {
     return i18n.t('errors.ensNetworkIssue') as string;
   }
