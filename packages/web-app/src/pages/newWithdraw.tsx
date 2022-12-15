@@ -5,34 +5,31 @@ import {FormProvider, useForm, useFormState, useWatch} from 'react-hook-form';
 import {useTranslation} from 'react-i18next';
 
 import {FullScreenStepper, Step} from 'components/fullScreenStepper';
-import ReviewProposal from 'containers/reviewProposal';
-import TokenMenu from 'containers/tokenMenu';
-import {useDaoBalances} from 'hooks/useDaoBalances';
-import {fetchTokenPrice} from 'services/prices';
-import {formatUnits} from 'utils/library';
-import {Finance} from 'utils/paths';
-import {BaseTokenInfo} from 'utils/types';
-
+import {Loading} from 'components/temporary';
 import ConfigureWithdrawForm, {
   isValid as configureWithdrawScreenIsValid,
 } from 'containers/configureWithdraw';
-
 import DefineProposal, {
   isValid as defineProposalIsValid,
 } from 'containers/defineProposal';
-
-import {Loading} from 'components/temporary';
+import ReviewProposal from 'containers/reviewProposal';
 import SetupVotingForm, {
   isValid as setupVotingIsValid,
 } from 'containers/setupVotingForm';
+import TokenMenu from 'containers/tokenMenu';
 import {ActionsProvider} from 'context/actions';
 import {CreateProposalProvider} from 'context/createProposal';
 import {useNetwork} from 'context/network';
+import {useDaoBalances} from 'hooks/useDaoBalances';
 import {useDaoParam} from 'hooks/useDaoParam';
+import {useWallet} from 'hooks/useWallet';
 import {generatePath} from 'react-router-dom';
 import {trackEvent} from 'services/analytics';
-import {useWallet} from 'hooks/useWallet';
+import {fetchTokenPrice} from 'services/prices';
 import {getCanonicalUtcOffset} from 'utils/date';
+import {formatUnits} from 'utils/library';
+import {Finance} from 'utils/paths';
+import {BaseTokenInfo} from 'utils/types';
 
 export type TokenFormData = {
   tokenName: string;
@@ -99,8 +96,8 @@ const NewWithdraw: React.FC = () => {
 
   const {errors, dirtyFields} = useFormState({control: formMethods.control});
 
-  const [durationSwitch, tokenAddress] = useWatch({
-    name: ['durationSwitch', 'actions.0.tokenAddress'],
+  const [tokenAddress] = useWatch({
+    name: ['actions.0.tokenAddress'],
     control: formMethods.control,
   });
 

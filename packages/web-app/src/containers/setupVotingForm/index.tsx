@@ -160,7 +160,7 @@ const SetupVotingForm: React.FC = () => {
     }
 
     return !returnValue ? true : returnValue;
-  }, [clearErrors, getValues, setError, t]);
+  }, [clearErrors, days, getValues, hours, minutes, setError, t]);
 
   // These effects trigger validation when UTC fields are changed.
 

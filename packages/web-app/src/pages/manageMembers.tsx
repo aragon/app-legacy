@@ -45,8 +45,8 @@ const ManageMembers: React.FC = () => {
     control: formMethods.control,
   });
 
-  const [durationSwitch, formActions] = useWatch({
-    name: ['durationSwitch', 'actions'],
+  const [formActions] = useWatch({
+    name: ['actions'],
     control: formMethods.control,
   });
 

@@ -16,11 +16,11 @@ import SetupVotingForm, {
 import {useActionsContext} from 'context/actions';
 import {useNetwork} from 'context/network';
 import {useDaoParam} from 'hooks/useDaoParam';
+import {useWallet} from 'hooks/useWallet';
+import {trackEvent} from 'services/analytics';
+import {getCanonicalUtcOffset} from 'utils/date';
 import {Governance} from 'utils/paths';
 import {actionsAreValid} from 'utils/validators';
-import {trackEvent} from 'services/analytics';
-import {useWallet} from 'hooks/useWallet';
-import {getCanonicalUtcOffset} from 'utils/date';
 
 type ProposalStepperType = {
   enableTxModal: () => void;
@@ -37,8 +37,8 @@ const ProposalStepper: React.FC<ProposalStepperType> = ({
   const {trigger, control, getValues} = useFormContext();
   const {address} = useWallet();
 
-  const [durationSwitch, formActions] = useWatch({
-    name: ['durationSwitch', 'actions'],
+  const [formActions] = useWatch({
+    name: ['actions'],
     control,
   });
 
