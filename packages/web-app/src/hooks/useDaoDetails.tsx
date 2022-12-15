@@ -35,8 +35,8 @@ export function useDaoDetails(
           if (pendingDAO) {
             setData({
               address: daoId,
-              ensDomain: pendingDAO.ensSubdomain,
-              metadata: pendingDAO.metadata,
+              ensDomain: pendingDAO.daoCreationParams.ensSubdomain,
+              metadata: pendingDAO.daoMetadata,
               plugins: [],
               creationDate: new Date(),
             });

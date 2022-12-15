@@ -17,12 +17,19 @@ import {SimplifiedTimeInput} from 'components/inputTime/inputTime';
 import UtcMenu from 'containers/utcMenu';
 import {timezones} from 'containers/utcMenu/utcData';
 import {useGlobalModalContext} from 'context/globalModals';
+import {useDaoDetails} from 'hooks/useDaoDetails';
+import {useDaoParam} from 'hooks/useDaoParam';
+import {PluginTypes} from 'hooks/usePluginClient';
+import {usePluginSettings} from 'hooks/usePluginSettings';
 import {
   daysToMills,
   getCanonicalDate,
   getCanonicalTime,
   getCanonicalUtcOffset,
+  getDHMFromSeconds,
   getFormattedUtcOffset,
+  hoursToMills,
+  minutesToMills,
 } from 'utils/date';
 import {StringIndexed} from 'utils/types';
 import {DateModeSwitch} from './dateModeSwitch';
@@ -52,6 +59,14 @@ const SetupVotingForm: React.FC = () => {
   const [utcInstance, setUtcInstance] = useState<UtcInstance>('first');
   const [utcStart, setUtcStart] = useState('');
   const [utcEnd, setUtcEnd] = useState('');
+
+  const {data: daoId} = useDaoParam();
+  const {data: daoDetails} = useDaoDetails(daoId!);
+  const {data: daoSettings} = usePluginSettings(
+    daoDetails?.plugins[0].instanceAddress as string,
+    daoDetails?.plugins[0].id as PluginTypes
+  );
+  const {days, hours, minutes} = getDHMFromSeconds(daoSettings.minDuration);
 
   // Initializes values for the form
   // This is done here rather than in the defaulValues object as time can
@@ -101,7 +116,11 @@ const SetupVotingForm: React.FC = () => {
     const endDateTime = toDate(eDate + 'T' + eTime + canonicalEUtc);
     const endMills = endDateTime.valueOf();
 
-    const minEndDateTimeMills = startMills + daysToMills(5);
+    const minEndDateTimeMills =
+      startMills +
+      daysToMills(days || 0) +
+      hoursToMills(hours || 0) +
+      minutesToMills(minutes || 0);
 
     let returnValue = '';
 
@@ -248,66 +267,16 @@ const SetupVotingForm: React.FC = () => {
       </FormSection>
 
       {/* End date */}
-      <FormSection>
-        <Label label={t('labels.endDate')} />
-        {endDateType === 'duration' ? (
-          <>
-            <HStack>
-              <Controller
-                name="durationSwitch"
-                defaultValue="duration"
-                control={control}
-                render={({field: {onChange, value}}) => {
-                  return (
-                    <DateModeSwitch
-                      value={value}
-                      setValue={value => {
-                        clearInputs();
-                        onChange(value);
-                      }}
-                    />
-                  );
-                }}
-              />
-              <Controller
-                name="duration"
-                control={control}
-                defaultValue={5}
-                rules={{
-                  min: {
-                    value: 5,
-                    message: t('errors.durationTooShort'),
-                  },
-                  required: t('errors.required.duration'),
-                }}
-                render={({field: {name, onChange, value}}) => {
-                  return (
-                    <NumberInput
-                      name={name}
-                      value={value}
-                      min={5}
-                      onChange={onChange}
-                      width={144}
-                    />
-                  );
-                }}
-              />
-            </HStack>
-            {formState.errors?.duration?.message && (
-              <AlertInline
-                label={formState.errors.duration.message}
-                mode="critical"
-              />
-            )}
-          </>
-        ) : (
-          <>
-            <div className="block space-y-2">
-              <div>
+      {daoSettings.minDuration && (
+        <FormSection>
+          <Label label={t('labels.endDate')} />
+          {endDateType === 'duration' && days && days >= 1 ? (
+            <>
+              <HStack>
                 <Controller
                   name="durationSwitch"
+                  defaultValue="duration"
                   control={control}
-                  defaultValue="date"
                   render={({field: {onChange, value}}) => {
                     return (
                       <DateModeSwitch
@@ -320,66 +289,135 @@ const SetupVotingForm: React.FC = () => {
                     );
                   }}
                 />
-              </div>
-              <HStack>
                 <Controller
-                  name="endDate"
+                  name="duration"
                   control={control}
+                  defaultValue={days + 1}
                   rules={{
-                    required: t('errors.required.date'),
-                    validate: dateTimeValidator,
+                    min: {
+                      value: days + 1 || 0,
+                      message: t('errors.durationTooShort'),
+                    },
+                    required: t('errors.required.duration'),
                   }}
-                  defaultValue={getCanonicalDate({days: 5, minutes: 10})}
-                  render={({field: {name, value, onChange, onBlur}}) => (
-                    <div>
-                      <DateInput
+                  render={({field: {name, onChange, value}}) => {
+                    return (
+                      <NumberInput
                         name={name}
                         value={value}
+                        min={days}
                         onChange={onChange}
-                        onBlur={onBlur}
+                        width={144}
                       />
-                    </div>
-                  )}
-                />
-                <Controller
-                  name="endTime"
-                  control={control}
-                  defaultValue={getCanonicalTime({days: 5, minutes: 10})}
-                  rules={{
-                    required: t('errors.required.time'),
-                    validate: dateTimeValidator,
+                    );
                   }}
-                  render={({field: {name, value, onChange, onBlur}}) => (
-                    <div>
-                      <SimplifiedTimeInput
-                        name={name}
-                        value={value}
-                        onChange={onChange}
-                        onBlur={onBlur}
-                      />
-                    </div>
-                  )}
                 />
-                <div>
-                  <DropdownInput
-                    value={utcEnd}
-                    onClick={() => {
-                      setUtcInstance('second');
-                      open('utc');
-                    }}
-                  />
-                </div>
               </HStack>
-            </div>
-            <DateTimeErrors mode={'end'} />
-          </>
-        )}
-        {/* TODO: Days should be dynamic */}
-        <AlertInline
-          label={t('infos.voteDuration', {days: 5})}
-          mode="neutral"
-        />
-      </FormSection>
+              {formState.errors?.duration?.message && (
+                <AlertInline
+                  label={formState.errors.duration.message}
+                  mode="critical"
+                />
+              )}
+            </>
+          ) : (
+            <>
+              <div className="block space-y-2">
+                {days && days >= 1 ? (
+                  <div>
+                    <Controller
+                      name="durationSwitch"
+                      control={control}
+                      defaultValue="date"
+                      render={({field: {onChange, value}}) => {
+                        return (
+                          <DateModeSwitch
+                            value={value}
+                            setValue={value => {
+                              clearInputs();
+                              onChange(value);
+                            }}
+                          />
+                        );
+                      }}
+                    />
+                  </div>
+                ) : null}
+                <HStack>
+                  <Controller
+                    name="endDate"
+                    control={control}
+                    rules={{
+                      required: t('errors.required.date'),
+                      validate: dateTimeValidator,
+                    }}
+                    defaultValue={getCanonicalDate({days, hours, minutes})}
+                    render={({field: {name, value, onChange, onBlur}}) => (
+                      <div>
+                        <DateInput
+                          name={name}
+                          value={value}
+                          onChange={onChange}
+                          onBlur={onBlur}
+                        />
+                      </div>
+                    )}
+                  />
+                  <Controller
+                    name="endTime"
+                    control={control}
+                    defaultValue={getCanonicalTime({
+                      days,
+                      hours,
+                      minutes: (minutes || 0) + 10,
+                    })}
+                    rules={{
+                      required: t('errors.required.time'),
+                      validate: dateTimeValidator,
+                    }}
+                    render={({field: {name, value, onChange, onBlur}}) => (
+                      <div>
+                        <SimplifiedTimeInput
+                          name={name}
+                          value={value}
+                          onChange={onChange}
+                          onBlur={onBlur}
+                        />
+                      </div>
+                    )}
+                  />
+                  <div>
+                    <DropdownInput
+                      value={utcEnd}
+                      onClick={() => {
+                        setUtcInstance('second');
+                        open('utc');
+                      }}
+                    />
+                  </div>
+                </HStack>
+              </div>
+              <DateTimeErrors mode={'end'} />
+            </>
+          )}
+          {minutes && minutes > 0 ? (
+            <AlertInline
+              label={t('infos.voteDHMDuration', {days, hours, minutes})}
+              mode="neutral"
+            />
+          ) : hours && hours > 0 ? (
+            <AlertInline
+              label={t('infos.voteDHDuration', {days, hours})}
+              mode="neutral"
+            />
+          ) : (
+            <AlertInline
+              label={t('infos.voteDuration', {days})}
+              mode="neutral"
+            />
+          )}
+        </FormSection>
+      )}
       <UtcMenu onTimezoneSelect={tzSelector} />
     </>
   );

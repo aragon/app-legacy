@@ -151,7 +151,13 @@ const ProposalTransactionProvider: React.FC<Props> = ({children}) => {
   }, [executeParams, pluginClient?.estimation]);
 
   // estimation fees for voting on proposal/executing proposal
-  const {tokenPrice, maxFee, averageFee, stopPolling} = usePollGasFee(
+  const {
+    tokenPrice,
+    maxFee,
+    averageFee,
+    stopPolling,
+    error: gasEstimationError,
+  } = usePollGasFee(
     showExecuteModal ? estimateExecuteFees : estimateVotingFees,
     shouldPollVoteFees
   );
@@ -420,6 +426,7 @@ const ProposalTransactionProvider: React.FC<Props> = ({children}) => {
         maxFee={maxFee}
         averageFee={averageFee}
         tokenPrice={tokenPrice}
+        gasEstimationError={gasEstimationError}
       />
     </ProposalTransactionContext.Provider>
   );

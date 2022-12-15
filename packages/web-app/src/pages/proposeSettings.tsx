@@ -6,6 +6,7 @@ import {
   InstalledPluginListItem,
   IPluginSettings,
   ProposalCreationSteps,
+  ProposalMetadata,
 } from '@aragon/sdk-client';
 import {withTransaction} from '@elastic/apm-rum-react';
 import Big from 'big.js';
@@ -45,6 +46,7 @@ import {customJSONReplacer} from 'utils/library';
 import {EditSettings, Proposal} from 'utils/paths';
 import {
   mapToDetailedProposal,
+  MapToDetailedProposalParams,
   prefixProposalIdWithPlgnAdr,
 } from 'utils/proposals';
 import {getTokenInfo} from 'utils/tokens';
@@ -218,7 +220,9 @@ const ProposeSettingWrapper: React.FC<Props> = ({
         name: daoName,
         // avatar: avatarUrl,
       };
-      actions.push(client.encoding.updateMetadataAction(dao, updateParams));
+
+      const ipfsUri = await client.methods.pinMetadata(updateParams);
+      actions.push(client.encoding.updateMetadataAction(dao, ipfsUri));
 
       const durationInSeconds = getSecondsFromDHM(
         durationDays,
@@ -266,17 +270,19 @@ const ProposeSettingWrapper: React.FC<Props> = ({
 
         const actions = await encodeActions();
 
+        const metadata: ProposalMetadata = {
+          title,
+          summary,
+          description,
+          resources: resources.filter((r: ProposalResource) => r.name && r.url),
+        };
+
+        const ipfsUri = await pluginClient?.methods.pinMetadata(metadata);
+
         // Ignore encoding if the proposal had no actions
         return {
           pluginAddress,
-          metadata: {
-            title,
-            summary,
-            description,
-            resources: resources.filter(
-              (r: ProposalResource) => r.name && r.url
-            ),
-          },
+          metadataUri: ipfsUri || '',
           startDate: new Date(
             `${startDate}T${startTime}:00${getCanonicalUtcOffset(startUtc)}`
           ),
@@ -317,10 +323,13 @@ const ProposeSettingWrapper: React.FC<Props> = ({
     return pluginClient?.estimation.createProposal(proposalCreationData);
   }, [pluginClient, proposalCreationData]);
 
-  const {tokenPrice, maxFee, averageFee, stopPolling} = usePollGasFee(
-    estimateCreationFees,
-    shouldPoll
-  );
+  const {
+    tokenPrice,
+    maxFee,
+    averageFee,
+    stopPolling,
+    error: gasEstimationError,
+  } = usePollGasFee(estimateCreationFees, shouldPoll);
 
   const handleCloseModal = () => {
     switch (creationProcessState) {
@@ -400,7 +409,21 @@ const ProposeSettingWrapper: React.FC<Props> = ({
       if (!address || !daoDetails || !pluginSettings || !proposalCreationData)
         return;
 
-      const proposalData = {
+      const [title, summary, description, resources] = getValues([
+        'proposalTitle',
+        'proposalSummary',
+        'proposal',
+        'links',
+      ]);
+
+      const metadata: ProposalMetadata = {
+        title,
+        summary,
+        description,
+        resources: resources.filter((r: ProposalResource) => r.name && r.url),
+      };
+
+      const proposalData: MapToDetailedProposalParams = {
         creatorAddress: address,
         daoAddress: daoDetails?.address,
         daoName: daoDetails?.metadata.name,
@@ -410,8 +433,9 @@ const ProposeSettingWrapper: React.FC<Props> = ({
             ? tokenSupply
             : members.length,
         pluginSettings,
-        proposalCreationData,
+        proposalParams: proposalCreationData,
         proposalId,
+        metadata: metadata,
       };
 
       const cachedProposal = mapToDetailedProposal(proposalData);
@@ -437,6 +461,7 @@ const ProposeSettingWrapper: React.FC<Props> = ({
       cachedProposals,
       daoDetails,
       daoToken,
+      getValues,
       members.length,
       pluginSettings,
       pluginType,
@@ -465,6 +490,7 @@ const ProposeSettingWrapper: React.FC<Props> = ({
         closeOnDrag={creationProcessState !== TransactionState.LOADING}
         maxFee={maxFee}
         averageFee={averageFee}
+        gasEstimationError={gasEstimationError}
         tokenPrice={tokenPrice}
         title={t('TransactionModal.createProposal')}
         buttonLabel={t('TransactionModal.createProposalNow')}

@@ -18,6 +18,7 @@ import {PluginTypes} from 'hooks/usePluginClient';
 import {usePluginSettings} from 'hooks/usePluginSettings';
 import {getDHMFromSeconds} from 'utils/date';
 import {EditSettings} from 'utils/paths';
+import {ProposalResource} from 'utils/types';
 
 const CompareSettings: React.FC = () => {
   const {t} = useTranslation();
@@ -50,7 +51,9 @@ const CompareSettings: React.FC = () => {
     displayedInfo = {
       name: getValues('daoName'),
       summary: getValues('daoSummary'),
-      links: getValues('daoLinks'),
+      links: getValues('daoLinks').filter(
+        (l: ProposalResource) => l.name && l.url
+      ),
       minParticipation: getValues('minimumParticipation'),
       approvalThreshold: getValues('minimumApproval'),
       days: getValues('durationDays'),
@@ -62,7 +65,7 @@ const CompareSettings: React.FC = () => {
     displayedInfo = {
       name: daoDetails?.metadata.name,
       summary: daoDetails?.metadata.description,
-      links: daoDetails?.metadata.links,
+      links: daoDetails?.metadata.links.filter(l => l.name && l.url),
       minParticipation: daoSettings.minTurnout * 100,
       approvalThreshold: daoSettings.minSupport * 100,
       days: duration.days,
@@ -105,20 +108,24 @@ const CompareSettings: React.FC = () => {
           <Dt>{t('labels.summary')}</Dt>
           <Dd>{displayedInfo.summary}</Dd>
         </Dl>
-        <Dl>
-          <Dt>{t('labels.links')}</Dt>
-          <Dd>
-            <div className="space-y-1.5">
-              {displayedInfo.links.map((link: {name: string; url: string}) => (
-                <ListItemLink
-                  key={link.name + link.url}
-                  label={link.name}
-                  href={link.url}
-                />
-              ))}
-            </div>
-          </Dd>
-        </Dl>
+        {displayedInfo.links && displayedInfo.links.length > 0 && (
+          <Dl>
+            <Dt>{t('labels.links')}</Dt>
+            <Dd>
+              <div className="space-y-1.5">
+                {displayedInfo.links.map(
+                  (link: {name: string; url: string}) => (
+                    <ListItemLink
+                      key={link.name + link.url}
+                      label={link.name}
+                      href={link.url}
+                    />
+                  )
+                )}
+              </div>
+            </Dd>
+          </Dl>
+        )}
       </DescriptionListContainer>
 
       <DescriptionListContainer
