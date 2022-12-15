@@ -305,7 +305,7 @@ const SetupVotingForm: React.FC = () => {
                       <NumberInput
                         name={name}
                         value={value}
-                        min={days}
+                        min={days + 1}
                         onChange={onChange}
                         width={144}
                       />

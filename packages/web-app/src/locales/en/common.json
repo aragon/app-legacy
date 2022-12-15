@@ -260,7 +260,7 @@
     }
   },
   "infos": {
-    "voteDuration": "The minimum duration of {{days}} days is defined by DAO Governance Settings. To change the minimum duration a vote is required",
+    "voteDuration": "The minimum duration of {{days}} days is defined by DAO Governance Settings. To change the minimum duration a vote is required.",
     "voteDHDuration": "The minimum duration of {{days}} days and {{hours}} hours is defined by DAO Governance Settings. To change the minimum duration a vote is required",
     "voteDHMDuration": "The minimum duration of {{days}} days, {{hours}} hours, and {{minutes}} minutes is defined by DAO Governance Settings. To change the minimum duration a vote is required",
     "newVotingTypes": "New voting types soon",
@@ -269,8 +269,8 @@
   "errors": {
     "amountWithInvalidToken": "Cannot validate amount with invalid token address",
     "defaultAmountValidationError": "Error validating amount",
-    "durationTooShort": "Duration must be at least 5 days",
-    "endPast": "End date must be more then 5 days from the start",
+    "durationTooShort": "Duration too short",
+    "endPast": "Duration too short",
     "exceedsFractionalParts": "The number of decimals in the amount must not exceed the number of decimals of the token({{decimals}})",
     "includeDecimals": "Include decimals, e.g. 10.0",
     "includeExactAmount": "The token doesn't contain decimals. Please enter the exact amount",
