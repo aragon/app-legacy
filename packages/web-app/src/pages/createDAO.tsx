@@ -72,16 +72,22 @@ const CreateDAO: React.FC = () => {
     defaultValues,
   });
   const {errors, dirtyFields} = useFormState({control: formMethods.control});
-  const [whitelistWallets, isCustomToken, tokenTotalSupply, membership] =
-    useWatch({
-      control: formMethods.control,
-      name: [
-        'whitelistWallets',
-        'isCustomToken',
-        'tokenTotalSupply',
-        'membership',
-      ],
-    });
+  const [
+    whitelistWallets,
+    isCustomToken,
+    tokenTotalSupply,
+    membership,
+    daoName,
+  ] = useWatch({
+    control: formMethods.control,
+    name: [
+      'whitelistWallets',
+      'isCustomToken',
+      'tokenTotalSupply',
+      'membership',
+      'daoName',
+    ],
+  });
 
   // Note: The wallet network determines the expected network when entering
   // the flow so that the process is more convenient for already logged in
@@ -114,11 +120,11 @@ const CreateDAO: React.FC = () => {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const daoMetadataIsValid = useMemo(() => {
     // required fields not dirty
-    if (!dirtyFields.daoName || !dirtyFields.daoSummary) return false;
+    if (!daoName || !dirtyFields.daoSummary) return false;
 
     return errors.daoName || errors.links || errors.daoSummary ? false : true;
   }, [
-    dirtyFields.daoName,
+    daoName,
     dirtyFields.daoSummary,
     errors.daoName,
     errors.daoSummary,
