@@ -37,7 +37,7 @@ export const useDaoTransfers = (
           direction: SortDirection.DESC,
         });
 
-        if (transfers) {
+        if (transfers?.length) {
           const deposits = transfers.filter(
             t => t.type === TransferType.DEPOSIT
           );
