@@ -48,9 +48,10 @@ export const CardToken: React.FC<CardTokenProps> = ({
           </CoinNameAndAllocation>
           {isVault && (
             <SecondaryCoinDetails>
-              <span>
-                {props.tokenCount} {props.tokenSymbol}
-              </span>
+              <div className="flex space-x-0.5">
+                <div className="truncate">{props.tokenCount}</div>{' '}
+                <div>{props.tokenSymbol}</div>
+              </div>
               {props.tokenUSDValue && (
                 <ToggleMobileVisibility visible={false}>
                   <span>•</span>
@@ -64,11 +65,12 @@ export const CardToken: React.FC<CardTokenProps> = ({
       <MarketProperties>
         <FiatValue>
           {isVault ? (
-            props.treasuryShare
+            <div className="truncate">{props.treasuryShare}</div>
           ) : (
-            <>
-              <span>{props.tokenCount}</span> <span>{props.tokenSymbol}</span>
-            </>
+            <div className="flex space-x-0.5">
+              <div className="truncate">{props.tokenCount}</div>{' '}
+              <div>{props.tokenSymbol}</div>
+            </div>
           )}
         </FiatValue>
 
@@ -109,13 +111,13 @@ export const CardToken: React.FC<CardTokenProps> = ({
 type CardProps = Pick<CardTokenProps, 'bgWhite'>;
 
 const Card = styled.div.attrs(({bgWhite}: CardProps) => ({
-  className: `flex justify-between items-center py-2.5 px-3 ${
+  className: `flex justify-between space-x-4 items-center py-2.5 px-3 overflow-hidden ${
     bgWhite ? 'bg-ui-50' : 'bg-ui-0'
   } rounded-xl`,
 }))<CardProps>``;
 
 const CoinDetailsWithImage = styled.div.attrs({
-  className: 'flex items-center',
+  className: 'flex items-center flex-auto',
 })``;
 
 const CoinImage = styled.img.attrs(({src}) => ({
@@ -136,15 +138,15 @@ const CoinName = styled.h1.attrs({
 })``;
 
 const SecondaryCoinDetails = styled.div.attrs({
-  className: 'ft-text-sm text-ui-500 space-x-0.5',
+  className: 'ft-text-sm text-ui-500 space-x-0.5 tablet:flex',
 })``;
 
 const MarketProperties = styled.div.attrs({
-  className: 'text-right space-y-1 overflow-hidden',
+  className: 'text-right space-y-1 flex-auto overflow-hidden',
 })``;
 
 const FiatValue = styled.h1.attrs({
-  className: 'font-bold text-ui-800 truncate',
+  className: 'font-bold text-ui-800',
 })``;
 
 const SecondaryFiatDetails = styled.div.attrs({
