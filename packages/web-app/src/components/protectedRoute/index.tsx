@@ -58,8 +58,9 @@ const ProtectedRoute: React.FC = () => {
   ]);
 
   const checkIfAllowlistedMember = useCallback(() => {
-    if (filteredMembers.length === 0) open('gating');
-  }, [filteredMembers.length, open]);
+    if (filteredMembers.length === 0 && !MembershipIsLoading) open('gating');
+    else close('gating');
+  }, [MembershipIsLoading, close, filteredMembers, open]);
 
   useEffect(() => {
     // show the wallet menu only if the user hasn't gone through the flow previously

@@ -85,13 +85,13 @@ export const useDaoMembers = (
           setData([] as BalanceMember[] | WalletMember[]);
           return;
         }
+
+        setIsLoading(false);
         setRawMembers(response);
         setError(undefined);
       } catch (err) {
         console.error(err);
         setError(err as Error);
-      } finally {
-        setIsLoading(false);
       }
     }
 
