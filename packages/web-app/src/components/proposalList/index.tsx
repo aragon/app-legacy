@@ -13,6 +13,8 @@ import {
 import {translateProposalDate} from 'utils/date';
 import {i18n} from '../../../i18n.config';
 import {trackEvent} from 'services/analytics';
+import {formatUnits} from 'utils/library';
+import {abbreviateTokenAmount} from 'utils/tokens';
 
 type ProposalListProps = {
   proposals: Array<Proposal>;
@@ -95,7 +97,16 @@ export function mapToCardViewProposal(
               totalVoteCount
             ),
             voteLabel: i18n.t('labels.yes'),
-            tokenAmount: totalVoteCount.toString(),
+            tokenAmount:
+              'token' in proposal
+                ? abbreviateTokenAmount(
+                    parseFloat(
+                      Number(
+                        formatUnits(result.yes, proposal.token.decimals)
+                      ).toFixed(2)
+                    ).toString()
+                  )
+                : totalVoteCount.toString(),
             ...('token' in proposal
               ? {tokenSymbol: proposal.token.symbol}
               : {}),

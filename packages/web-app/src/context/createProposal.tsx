@@ -29,7 +29,7 @@ import {
   PENDING_PROPOSALS_KEY,
   TransactionState,
 } from 'utils/constants';
-import {getCanonicalUtcOffset} from 'utils/date';
+import {getCanonicalDate, getCanonicalUtcOffset} from 'utils/date';
 import {customJSONReplacer} from 'utils/library';
 import {Proposal} from 'utils/paths';
 import {
@@ -204,6 +204,8 @@ const CreateProposalProvider: React.FC<Props> = ({
         endDate,
         endTime,
         endUtc,
+        duration,
+        durationSwitch,
       ] = getValues([
         'proposalTitle',
         'proposalSummary',
@@ -215,6 +217,8 @@ const CreateProposalProvider: React.FC<Props> = ({
         'endDate',
         'endTime',
         'endUtc',
+        'duration',
+        'durationSwitch',
       ]);
 
       const actions = await encodeActions();
@@ -235,9 +239,16 @@ const CreateProposalProvider: React.FC<Props> = ({
         startDate: new Date(
           `${startDate}T${startTime}:00${getCanonicalUtcOffset(startUtc)}`
         ),
-        endDate: new Date(
-          `${endDate}T${endTime}:00${getCanonicalUtcOffset(endUtc)}`
-        ),
+        endDate:
+          durationSwitch === 'duration'
+            ? new Date(
+                `${getCanonicalDate({
+                  days: duration,
+                })}T${startTime}:00${getCanonicalUtcOffset(endUtc)}`
+              )
+            : new Date(
+                `${endDate}T${endTime}:00${getCanonicalUtcOffset(endUtc)}`
+              ),
         actions,
       };
     }, [encodeActions, getValues, pluginAddress, pluginClient?.methods]);
