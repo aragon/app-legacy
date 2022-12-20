@@ -172,6 +172,14 @@ const SetupVotingForm: React.FC = () => {
     dateTimeValidator();
   }, [utcEnd, dateTimeValidator]); //eslint-disable-line
 
+  useEffect(() => {
+    if (!daoSettings.minDuration) {
+      setError('areSettingsLoading', {});
+    } else {
+      clearErrors('areSettingsLoading');
+    }
+  }, [clearErrors, daoSettings.minDuration, setError]);
+
   // sets the UTC values for the start and end date/time
   const tzSelector = (tz: string) => {
     if (utcInstance === 'first') {
@@ -436,7 +444,8 @@ export function isValid(errors: StringIndexed) {
     errors.startDate ||
     errors.startTime ||
     errors.endDate ||
-    errors.ednTime
+    errors.ednTime ||
+    errors.areSettingsLoading
   );
 }
 
