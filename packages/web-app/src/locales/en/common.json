@@ -212,8 +212,8 @@
     },
     "proposals": {
       "publishedBy": "Published by",
-      "Pending": "Starts in {{days}} days {{hours}} hours",
-      "Active": "{{days}} days {{hours}} hours left",
+      "Pending": "Starts in {{timeDiff}}",
+      "Active": "{{timeDiff}} left",
       "voteTitle": "Winning Option",
       "states": {
         "draft": "Draft",
@@ -630,11 +630,11 @@
     "cancel": "Cancel",
     "status": {
       "draft": "Publish proposal to enable voting",
-      "pending": "Voting begins in {{days}} days {{hours}} hours",
+      "pending": "Voting begins in {{timeUntilNow}}",
       "succeeded": "Proposal has passed",
       "executed": "Proposal passed",
       "defeated": "Proposal has been defeated",
-      "active": "Voting ends in {{days}} days {{hours}} hours",
+      "active": "Voting ends in {{timeUntilEnd}}",
       "ineligibleWhitelist": "You had to be a member before the proposal was created to be able to vote",
       "ineligibleTokenBased": "You had to hold {{token}} when proposal was created to be able to vote",
       "voteSubmitted": "Vote submitted"

@@ -1,5 +1,6 @@
 import {i18n} from '../../i18n.config';
-import {format, formatRelative, formatDistance} from 'date-fns';
+import {format, formatRelative, formatDistance, formatDistanceToNow, Locale} from 'date-fns';
+import * as Locales from 'date-fns/locale';
 import {ProposalStatus} from '@aragon/sdk-client';
 
 export const KNOWN_FORMATS = {
@@ -230,19 +231,18 @@ export function translateProposalDate(
   endDate: Date
 ): string | undefined {
   let leftTimestamp: number;
+  let timeDiff: string;
+  const locale = (Locales as Record<string, Locale>)[i18n.language];
   if (status === 'Pending') {
-    leftTimestamp = getRemainingTime(startDate.getTime());
+    timeDiff = formatDistanceToNow(startDate, { includeSeconds: true, locale });
   } else if (status === 'Active') {
-    leftTimestamp = getRemainingTime(endDate.getTime());
+    timeDiff = formatDistanceToNow(endDate, { includeSeconds: true, locale });
   } else {
     return;
   }
 
-  const {days, hours} = getDaysAndHours(leftTimestamp);
-
   return i18n.t(`governance.proposals.${status}`, {
-    days,
-    hours,
+    timeDiff
   }) as string;
 }
 
