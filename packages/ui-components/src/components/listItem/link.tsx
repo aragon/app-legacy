@@ -37,7 +37,7 @@ export const ListItemLink: React.FC<ListItemLinkProps> = ({
 };
 
 const Container = styled.div.attrs({
-  className: 'w-full',
+  className: 'w-full overflow-hidden',
 })``;
 
 const Link = styled.a.attrs({
@@ -52,5 +52,5 @@ const Title = styled.p.attrs({
 const Icon = styled(IconLinkExternal).attrs({className: 'ml-1 w-1.5 h-1.5'})``;
 
 const Subtitle = styled.p.attrs({
-  className: 'tablet:w-50 w-full ft-text-sm text-ui-500 truncate',
+  className: 'ft-text-sm text-ui-500 truncate',
 })``;

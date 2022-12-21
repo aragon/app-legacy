@@ -193,7 +193,7 @@ const DefineMetadata: React.FC<{bgWhite?: boolean}> = ({bgWhite = false}) => {
           helpText={t('createDAO.step2.linksSubtitle')}
           isOptional
         />
-        <AddLinks arrayName="daoLinks" bgWhite={bgWhite} />
+        <AddLinks arrayName="links" bgWhite={bgWhite} />
       </FormItem>
     </>
   );
