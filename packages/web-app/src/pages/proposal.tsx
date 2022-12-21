@@ -168,9 +168,10 @@ const Proposal: React.FC = () => {
                 network
               );
             case 'mint':
-              mintTokenActions.actions.push(action.data);
-              if (mintTokenActions.actions.length === 0)
+              if (mintTokenActions.actions.length === 0) {
                 mintTokenActions.index = index;
+              }
+              mintTokenActions.actions.push(action.data);
               return Promise.resolve({} as Action);
             case 'addAllowedUsers':
               return decodeAddMembersToAction(
@@ -203,11 +204,11 @@ const Proposal: React.FC = () => {
           mintTokenActions.actions.length,
           decodedMintToken
         );
-      }
 
-      Promise.all(actionPromises).then(value => {
-        setDecodedActions(value);
-      });
+        Promise.all(actionPromises).then(value => {
+          setDecodedActions(value);
+        });
+      }
     }
   }, [
     apolloClient,
