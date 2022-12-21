@@ -37,8 +37,8 @@ const ProposalStepper: React.FC<ProposalStepperType> = ({
   const {trigger, control, getValues} = useFormContext();
   const {address} = useWallet();
 
-  const [formActions] = useWatch({
-    name: ['actions'],
+  const [formActions, proposalTitle] = useWatch({
+    name: ['actions', 'proposalTitle'],
     control,
   });
 
@@ -63,7 +63,9 @@ const ProposalStepper: React.FC<ProposalStepperType> = ({
       <Step
         wizardTitle={t('newWithdraw.defineProposal.heading')}
         wizardDescription={t('newWithdraw.defineProposal.description')}
-        isNextButtonDisabled={!defineProposalIsValid(dirtyFields, errors)}
+        isNextButtonDisabled={
+          !defineProposalIsValid(dirtyFields, errors, proposalTitle)
+        }
         onNextButtonClicked={next => {
           trackEvent('newProposal_nextBtn_clicked', {
             dao_address: dao,

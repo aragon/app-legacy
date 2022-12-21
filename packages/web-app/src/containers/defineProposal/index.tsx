@@ -132,10 +132,14 @@ export default DefineProposal;
  * @param errors List of fields with errors
  * @returns Whether the screen is valid
  */
-export function isValid(dirtyFields: StringIndexed, errors: StringIndexed) {
+export function isValid(
+  dirtyFields: StringIndexed,
+  errors: StringIndexed,
+  proposalTitle?: string
+) {
   // required fields not dirty
   if (
-    !dirtyFields.proposalTitle ||
+    !proposalTitle ||
     !dirtyFields.proposalSummary ||
     errors.proposalTitle ||
     errors.proposalSummary
