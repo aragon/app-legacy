@@ -3,10 +3,15 @@ import {
   AddressListProposalListItem,
   Erc20ProposalListItem,
   ProposalSortBy,
+  ProposalStatus,
 } from '@aragon/sdk-client';
 import {useCallback, useEffect, useState} from 'react';
 
-import {pendingProposalsVar, pendingVotesVar} from 'context/apolloClient';
+import {
+  pendingExecutionVar,
+  pendingProposalsVar,
+  pendingVotesVar,
+} from 'context/apolloClient';
 import {usePrivacyContext} from 'context/privacyContext';
 import {PENDING_PROPOSALS_KEY} from 'utils/constants';
 import {customJSONReplacer, generateCachedProposalId} from 'utils/library';
@@ -36,6 +41,7 @@ export function useProposals(
 
   const {preferences} = usePrivacyContext();
   const cachedVotes = useReactiveVar(pendingVotesVar);
+  const cachedExecutions = useReactiveVar(pendingExecutionVar);
   const proposalCache = useReactiveVar(pendingProposalsVar);
 
   const augmentProposalsWithCache = useCallback(
@@ -60,12 +66,14 @@ export function useProposals(
             );
           }
         } else {
-          // proposal not yet fetched, augment and add votes if necessary
+          // proposal not yet fetched, augment and add votes, execution status if necessary
+          const id = generateCachedProposalId(daoAddress, proposalId);
+          const cachedProposal = cachedExecutions[id]
+            ? {...daoCache[proposalId], status: ProposalStatus.EXECUTED}
+            : {...daoCache[proposalId]};
+
           augmentedProposals.unshift({
-            ...(addVoteToProposal(
-              daoCache[proposalId],
-              cachedVotes[generateCachedProposalId(daoAddress, proposalId)]
-            ) as Proposal),
+            ...(addVoteToProposal(cachedProposal, cachedVotes[id]) as Proposal),
           });
         }
       }

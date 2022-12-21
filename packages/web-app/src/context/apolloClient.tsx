@@ -21,6 +21,7 @@ import {
   FAVORITE_DAOS_KEY,
   PENDING_DAOS_KEY,
   PENDING_DEPOSITS_KEY,
+  PENDING_EXECUTION_KEY,
   PENDING_PROPOSALS_KEY,
   PENDING_VOTES_KEY,
   SUBGRAPH_API_URL,
@@ -169,6 +170,17 @@ const pendingVotes = JSON.parse(
 );
 const pendingVotesVar = makeVar<PendingVotes>(pendingVotes);
 
+// PENDING EXECUTION
+type PendingExecution = {
+  /** key is: daoAddress_proposalId */
+  [key: string]: boolean;
+};
+const pendingExecution = JSON.parse(
+  localStorage.getItem(PENDING_EXECUTION_KEY) || '{}',
+  customJSONReviver
+);
+const pendingExecutionVar = makeVar<PendingExecution>(pendingExecution);
+
 // PENDING PROPOSAL
 // iffy about this structure
 type PendingProposals = {
@@ -207,4 +219,5 @@ export {
   pendingProposalsVar,
   pendingVotesVar,
   pendingDaoCreationVar,
+  pendingExecutionVar,
 };

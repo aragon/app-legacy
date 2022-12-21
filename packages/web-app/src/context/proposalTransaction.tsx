@@ -26,13 +26,14 @@ import {usePollGasFee} from 'hooks/usePollGasfee';
 import {useWallet} from 'hooks/useWallet';
 import {
   CHAIN_METADATA,
+  PENDING_EXECUTION_KEY,
   PENDING_VOTES_KEY,
   TransactionState,
 } from 'utils/constants';
 import {customJSONReplacer, generateCachedProposalId} from 'utils/library';
 import {stripPlgnAdrFromProposalId} from 'utils/proposals';
 import {fetchBalance} from 'utils/tokens';
-import {pendingVotesVar} from './apolloClient';
+import {pendingExecutionVar, pendingVotesVar} from './apolloClient';
 import {useNetwork} from './network';
 import {usePrivacyContext} from './privacyContext';
 import {useProviders} from './providers';
@@ -74,6 +75,7 @@ const ProposalTransactionProvider: React.FC<Props> = ({children}) => {
   const [showExecuteModal, setShowExecuteModal] = useState(false);
 
   const cachedVotes = useReactiveVar(pendingVotesVar);
+  const cachedExecution = useReactiveVar(pendingExecutionVar);
   const [voteParams, setVoteParams] = useState<IVoteProposalParams>();
   const [voteSubmitted, setVoteSubmitted] = useState(false);
   const [voteProcessState, setVoteProcessState] = useState<TransactionState>();
@@ -105,8 +107,11 @@ const ProposalTransactionProvider: React.FC<Props> = ({children}) => {
 
   const shouldPollVoteFees = useMemo(
     () =>
-      voteParams !== undefined && voteProcessState === TransactionState.WAITING,
-    [voteParams, voteProcessState]
+      (voteParams !== undefined &&
+        voteProcessState === TransactionState.WAITING) ||
+      (executeParams !== undefined &&
+        executeProcessState === TransactionState.WAITING),
+    [executeParams, executeProcessState, voteParams, voteProcessState]
   );
 
   /*************************************************
@@ -238,6 +243,29 @@ const ProposalTransactionProvider: React.FC<Props> = ({children}) => {
     ]
   );
 
+  // set proper state and cache proposal execution when transaction is successful
+  const onExecutionSubmitted = useCallback(
+    async (proposalId: string) => {
+      if (!address) return;
+
+      const cachedProposalId = generateCachedProposalId(daoAddress, proposalId);
+
+      const newCache = {
+        ...cachedExecution,
+        [cachedProposalId]: true,
+      };
+      pendingExecutionVar(newCache);
+
+      if (preferences?.functional) {
+        localStorage.setItem(
+          PENDING_EXECUTION_KEY,
+          JSON.stringify(newCache, customJSONReplacer)
+        );
+      }
+    },
+    [address, cachedExecution, daoAddress, preferences?.functional]
+  );
+
   // handles vote submission/execution
   const handleVoteExecution = useCallback(async () => {
     if (voteProcessState === TransactionState.SUCCESS) {
@@ -273,9 +301,9 @@ const ProposalTransactionProvider: React.FC<Props> = ({children}) => {
             break;
           case VoteProposalStep.DONE:
             console.log(step.voteId);
+            onVoteSubmitted(voteParams.proposalId, voteParams.vote);
             break;
         }
-        onVoteSubmitted(voteParams.proposalId, voteParams.vote);
       }
     } catch (err) {
       console.error(err);
@@ -345,11 +373,12 @@ const ProposalTransactionProvider: React.FC<Props> = ({children}) => {
             break;
           case ExecuteProposalStep.DONE:
             console.log(step.key);
+            setExecuteParams(undefined);
+            setExecutionFailed(false);
+            setExecuteProcessState(TransactionState.SUCCESS);
+            onExecutionSubmitted(executeParams.proposalId);
             break;
         }
-        setExecuteParams(undefined);
-        setExecutionFailed(false);
-        setExecuteProcessState(TransactionState.SUCCESS);
       }
     } catch (err) {
       console.error(err);
@@ -361,6 +390,7 @@ const ProposalTransactionProvider: React.FC<Props> = ({children}) => {
     executeProcessState,
     handleCloseExecuteModal,
     isConnected,
+    onExecutionSubmitted,
     pluginAddress,
     pluginClient?.methods,
   ]);

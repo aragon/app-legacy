@@ -67,7 +67,7 @@ export const CardToken: React.FC<CardTokenProps> = ({
           {isVault ? (
             <div className="truncate">{props.treasuryShare}</div>
           ) : (
-            <div className="flex space-x-0.5">
+            <div className="flex justify-end space-x-0.5">
               <div className="truncate">{props.tokenCount}</div>{' '}
               <div>{props.tokenSymbol}</div>
             </div>
@@ -100,7 +100,7 @@ export const CardToken: React.FC<CardTokenProps> = ({
               )}
             </>
           ) : (
-            props.treasuryShare
+            <div className="truncate">{props.treasuryShare}</div>
           )}
         </SecondaryFiatDetails>
       </MarketProperties>

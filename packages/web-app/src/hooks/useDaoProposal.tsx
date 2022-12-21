@@ -1,13 +1,22 @@
 import {useReactiveVar} from '@apollo/client';
 import {useCallback, useEffect, useState} from 'react';
 
-import {pendingProposalsVar, pendingVotesVar} from 'context/apolloClient';
+import {
+  pendingExecutionVar,
+  pendingProposalsVar,
+  pendingVotesVar,
+} from 'context/apolloClient';
 import {usePrivacyContext} from 'context/privacyContext';
-import {PENDING_PROPOSALS_KEY, PENDING_VOTES_KEY} from 'utils/constants';
+import {
+  PENDING_EXECUTION_KEY,
+  PENDING_PROPOSALS_KEY,
+  PENDING_VOTES_KEY,
+} from 'utils/constants';
 import {customJSONReplacer, generateCachedProposalId} from 'utils/library';
 import {addVoteToProposal} from 'utils/proposals';
 import {DetailedProposal, HookData} from 'utils/types';
 import {PluginTypes, usePluginClient} from './usePluginClient';
+import {ProposalStatus} from '@aragon/sdk-client';
 
 /**
  * Retrieve a single detailed proposal
@@ -28,6 +37,7 @@ export const useDaoProposal = (
 
   const {preferences} = usePrivacyContext();
   const cachedVotes = useReactiveVar(pendingVotesVar);
+  const cachedExecutions = useReactiveVar(pendingExecutionVar);
   const proposalCache = useReactiveVar(pendingProposalsVar);
 
   // add cached vote to proposal and recalculate dependent info
@@ -66,6 +76,35 @@ export const useDaoProposal = (
     [cachedVotes, daoAddress, preferences?.functional, proposalId]
   );
 
+  const augmentWithExecutionCache = useCallback(
+    (proposal: DetailedProposal) => {
+      const id = generateCachedProposalId(daoAddress, proposalId);
+      const cachedExecution = cachedExecutions[id];
+
+      // no cache return original proposal
+      if (!cachedExecution) return proposal;
+
+      if (proposal.status === ProposalStatus.EXECUTED) {
+        const newExecutionCache = {...cachedExecutions};
+        delete newExecutionCache[id];
+
+        // update cache
+        pendingExecutionVar(newExecutionCache);
+        if (preferences?.functional) {
+          localStorage.setItem(
+            PENDING_EXECUTION_KEY,
+            JSON.stringify(newExecutionCache, customJSONReplacer)
+          );
+        }
+
+        return proposal;
+      } else {
+        return {...proposal, status: ProposalStatus.EXECUTED};
+      }
+    },
+    [cachedExecutions, daoAddress, preferences?.functional, proposalId]
+  );
+
   useEffect(() => {
     async function getDaoProposal() {
       try {
@@ -77,6 +116,7 @@ export const useDaoProposal = (
         if (proposal) {
           setData({
             ...augmentWithVoteCache(proposal),
+            ...augmentWithExecutionCache(proposal),
           });
 
           // remove cached proposal if it exists
@@ -97,6 +137,7 @@ export const useDaoProposal = (
         } else if (cachedProposal) {
           setData({
             ...augmentWithVoteCache(cachedProposal),
+            ...augmentWithExecutionCache(cachedProposal),
           });
         }
       } catch (err) {
@@ -108,6 +149,7 @@ export const useDaoProposal = (
     }
     if (proposalId) getDaoProposal();
   }, [
+    augmentWithExecutionCache,
     augmentWithVoteCache,
     daoAddress,
     pluginClient?.methods,
