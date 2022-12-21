@@ -45,7 +45,6 @@ import useScreen from 'hooks/useScreen';
 import {useWallet} from 'hooks/useWallet';
 import {useWalletCanVote} from 'hooks/useWalletCanVote';
 import {CHAIN_METADATA} from 'utils/constants';
-import {getDaysAndHours, getRemainingTime} from 'utils/date';
 import * as Locales from 'date-fns/locale';
 import {formatDistanceToNow, Locale} from 'date-fns';
 import {
@@ -362,7 +361,10 @@ const Proposal: React.FC = () => {
       case 'Pending':
         {
           const locale = (Locales as Record<string, Locale>)[i18n.language];
-          const timeUntilNow = formatDistanceToNow(proposal.startDate, { includeSeconds: true, locale });
+          const timeUntilNow = formatDistanceToNow(proposal.startDate, {
+            includeSeconds: true,
+            locale,
+          });
 
           voteStatus = t('votingTerminal.status.pending', {timeUntilNow});
         }
@@ -384,8 +386,11 @@ const Proposal: React.FC = () => {
       case 'Active':
         {
           const locale = (Locales as Record<string, Locale>)[i18n.language];
-          const timeUntilEnd = formatDistanceToNow(proposal.endDate, { includeSeconds: true, locale });
-          
+          const timeUntilEnd = formatDistanceToNow(proposal.endDate, {
+            includeSeconds: true,
+            locale,
+          });
+
           voteStatus = t('votingTerminal.status.active', {timeUntilEnd});
 
           // haven't voted
@@ -396,7 +401,14 @@ const Proposal: React.FC = () => {
         break;
     }
     return [voteStatus, voteButtonLabel];
-  }, [proposal?.endDate, proposal?.startDate, proposal?.status, t, voted]);
+  }, [
+    proposal?.endDate,
+    proposal?.startDate,
+    proposal?.status,
+    t,
+    voted,
+    i18n.language,
+  ]);
 
   // vote button state and handler
   const {voteNowDisabled, onClick} = useMemo(() => {

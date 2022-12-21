@@ -2,7 +2,7 @@
   "bracketSpacing": false,
   "singleQuote": true,
   "arrowParens": "avoid",
-
+  "endOfLine": "auto",
   "overrides": [
     {
       "files": "*.sol",
