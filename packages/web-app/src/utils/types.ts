@@ -248,8 +248,8 @@ export type ActionMintToken = {
 export type ActionUpdateSettings = {
   name: 'modify_settings';
   inputs: {
-    minApproval: number;
-    minSupport: number;
+    minParticipation: number;
+    minSupport: number; // AKA minimum approval
     minDuration: number;
   };
 };

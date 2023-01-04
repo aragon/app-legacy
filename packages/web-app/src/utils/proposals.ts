@@ -161,7 +161,6 @@ export function getErc20Voters(
 ): Array<VoterType> {
   let votingPower;
   let tokenAmount;
-
   // map to voters structure
   return votes.flatMap(vote => {
     if (vote.vote === undefined) return [];

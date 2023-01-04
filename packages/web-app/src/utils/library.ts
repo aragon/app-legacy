@@ -258,7 +258,7 @@ export async function decodeRemoveMembersToAction(
 
 export async function decodePluginSettingsToAction(
   data: Uint8Array | undefined,
-  pluginClient: ClientErc20 | undefined
+  pluginClient: ClientErc20 | ClientAddressList | undefined
 ): Promise<ActionUpdateSettings | undefined> {
   if (!pluginClient || !data) {
     console.error('SDK client is not initialized correctly');
@@ -271,7 +271,7 @@ export async function decodePluginSettingsToAction(
   return Promise.resolve({
     name: 'modify_settings',
     inputs: {
-      minApproval: minTurnout,
+      minParticipation: minTurnout,
       minDuration,
       minSupport,
     },
