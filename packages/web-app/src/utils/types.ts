@@ -245,6 +245,15 @@ export type ActionMintToken = {
   };
 };
 
+export type ActionUpdateSettings = {
+  name: 'modify_settings';
+  inputs: {
+    minApproval: number;
+    minSupport: number;
+    minDuration: number;
+  };
+};
+
 // TODO: Consider making this a generic type that take other types of the form
 // like ActionAddAddress (or more generically, ActionItem...?) instead taking the
 // union of those subtypes. [VR 11-08-2022]
@@ -252,7 +261,8 @@ export type Action =
   | ActionWithdraw
   | ActionAddAddress
   | ActionRemoveAddress
-  | ActionMintToken;
+  | ActionMintToken
+  | ActionUpdateSettings;
 
 export type ParamType = {
   type: string;

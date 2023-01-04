@@ -21,6 +21,7 @@ import {
   ActionAddAddress,
   ActionMintToken,
   ActionRemoveAddress,
+  ActionUpdateSettings,
   ActionWithdraw,
 } from 'utils/types';
 import {i18n} from '../../i18n.config';
@@ -251,6 +252,28 @@ export async function decodeRemoveMembersToAction(
     name: 'remove_address',
     inputs: {
       memberWallets: addresses,
+    },
+  });
+}
+
+export async function decodePluginSettingsToAction(
+  data: Uint8Array | undefined,
+  pluginClient: ClientErc20 | undefined
+): Promise<ActionUpdateSettings | undefined> {
+  if (!pluginClient || !data) {
+    console.error('SDK client is not initialized correctly');
+    return;
+  }
+
+  const {minDuration, minSupport, minTurnout} =
+    pluginClient.decoding.updatePluginSettingsAction(data);
+
+  return Promise.resolve({
+    name: 'modify_settings',
+    inputs: {
+      minApproval: minTurnout,
+      minDuration,
+      minSupport,
     },
   });
 }

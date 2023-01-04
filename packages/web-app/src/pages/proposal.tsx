@@ -58,6 +58,7 @@ import {CHAIN_METADATA} from 'utils/constants';
 import {
   decodeAddMembersToAction,
   decodeMintTokensToAction,
+  decodePluginSettingsToAction,
   decodeRemoveMembersToAction,
   decodeWithdrawToAction,
   formatUnits,
@@ -197,6 +198,11 @@ const Proposal: React.FC = () => {
               return decodeRemoveMembersToAction(
                 action.data,
                 pluginClient as ClientAddressList
+              );
+            case 'setConfiguration':
+              return decodePluginSettingsToAction(
+                action.data,
+                pluginClient as ClientErc20
               );
             default:
               return Promise.resolve({} as Action);
