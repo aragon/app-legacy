@@ -1,6 +1,8 @@
 import {
   AddressListProposal,
   TokenVotingProposal,
+  IMetadata,
+  IPluginSettings,
   VoteValues,
 } from '@aragon/sdk-client';
 import {Address} from '@aragon/ui-components/src/utils/addresses';
@@ -193,7 +195,8 @@ export type ActionsTypes =
   | 'withdraw_assets'
   | 'mint_tokens'
   | 'external_contract'
-  | 'modify_settings';
+  | 'modify_settings'
+  | 'modify_metadata';
 
 // TODO Refactor ActionWithdraw With the new input structure
 export type ActionWithdraw = {
@@ -245,13 +248,14 @@ export type ActionMintToken = {
   };
 };
 
-export type ActionUpdateSettings = {
+export type ActionUpdatePluginSettings = {
   name: 'modify_settings';
-  inputs: {
-    minParticipation: number;
-    minSupport: number; // AKA minimum approval
-    minDuration: number;
-  };
+  inputs: IPluginSettings;
+};
+
+export type ActionUpdateMetadata = {
+  name: 'modify_metadata';
+  inputs: IMetadata;
 };
 
 // TODO: Consider making this a generic type that take other types of the form
@@ -262,7 +266,8 @@ export type Action =
   | ActionAddAddress
   | ActionRemoveAddress
   | ActionMintToken
-  | ActionUpdateSettings;
+  | ActionUpdatePluginSettings
+  | ActionUpdateMetadata;
 
 export type ParamType = {
   type: string;

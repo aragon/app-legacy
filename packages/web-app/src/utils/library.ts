@@ -21,7 +21,8 @@ import {
   ActionAddAddress,
   ActionMintToken,
   ActionRemoveAddress,
-  ActionUpdateSettings,
+  ActionUpdateMetadata,
+  ActionUpdatePluginSettings,
   ActionWithdraw,
 } from 'utils/types';
 import {i18n} from '../../i18n.config';
@@ -258,23 +259,35 @@ export async function decodeRemoveMembersToAction(
 
 export async function decodePluginSettingsToAction(
   data: Uint8Array | undefined,
-  pluginClient: ClientErc20 | ClientAddressList | undefined
-): Promise<ActionUpdateSettings | undefined> {
-  if (!pluginClient || !data) {
+  client: ClientErc20 | ClientAddressList | undefined
+): Promise<ActionUpdatePluginSettings | undefined> {
+  if (!client || !data) {
     console.error('SDK client is not initialized correctly');
     return;
   }
 
-  const {minDuration, minSupport, minTurnout} =
-    pluginClient.decoding.updatePluginSettingsAction(data);
+  const decodedSettings = client.decoding.updatePluginSettingsAction(data);
 
   return Promise.resolve({
     name: 'modify_settings',
-    inputs: {
-      minParticipation: minTurnout,
-      minDuration,
-      minSupport,
-    },
+    inputs: {...decodedSettings},
+  });
+}
+
+export async function decodeMetadataToAction(
+  data: Uint8Array | undefined,
+  client: Client | undefined
+): Promise<ActionUpdateMetadata | undefined> {
+  if (!client || !data) {
+    console.error('SDK client is not initialized correctly');
+    return;
+  }
+
+  const decodedSettings = await client.decoding.updateMetadataAction(data);
+
+  return Promise.resolve({
+    name: 'modify_metadata',
+    inputs: {...decodedSettings},
   });
 }
 

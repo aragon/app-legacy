@@ -3,16 +3,15 @@ import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 
 import {AccordionMethod} from 'components/accordionMethod';
-import {ActionUpdateSettings} from 'utils/types';
+import {ActionUpdatePluginSettings} from 'utils/types';
 import {getDHMFromSeconds} from 'utils/date';
 
-const ModifySettings: React.FC<{action: ActionUpdateSettings}> = ({
+const ModifySettings: React.FC<{action: ActionUpdatePluginSettings}> = ({
   action: {inputs},
 }) => {
   const {t} = useTranslation();
   const {days, hours, minutes} = getDHMFromSeconds(inputs.minDuration);
 
-  console.log(inputs);
   return (
     <AccordionMethod
       type="execution-widget"
@@ -24,8 +23,8 @@ const ModifySettings: React.FC<{action: ActionUpdateSettings}> = ({
     >
       <Container>
         <div>
-          <Title>Minimum Approval</Title>
-          <Value>{Math.round(inputs.minSupport * 100)}% (TKN)</Value>
+          <Title>Minimum Participation</Title>
+          <Value>{Math.round(inputs.minTurnout * 100)}% (TKN)</Value>
         </div>
         <div>
           <Title>Minimum Support</Title>

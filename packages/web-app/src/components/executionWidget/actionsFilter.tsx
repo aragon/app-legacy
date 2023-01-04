@@ -8,7 +8,7 @@ import {
   ActionMintToken,
   ActionRemoveAddress,
   ActionsTypes,
-  ActionUpdateSettings,
+  ActionUpdatePluginSettings,
   ActionWithdraw,
 } from 'utils/types';
 import {AddAddressCard} from './actions/addAddressCard';
@@ -44,7 +44,9 @@ export const ActionsFilter: React.FC<ActionsFilterProps> = ({
     case 'mint_tokens':
       return <MintTokenCard action={action as ActionMintToken} />;
     case 'modify_settings':
-      return <ModifySettingsCard action={action as ActionUpdateSettings} />;
+      return (
+        <ModifySettingsCard action={action as ActionUpdatePluginSettings} />
+      );
     default:
       return <></>;
   }
