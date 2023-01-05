@@ -1,6 +1,5 @@
 import {
   AddressListProposal,
-  DaoListItem,
   Erc20Proposal,
   VoteValues,
 } from '@aragon/sdk-client';
@@ -281,15 +280,6 @@ export type TransactionItem = {
 /* MISCELLANEOUS TYPES ======================================================= */
 export type Dao = {
   address: string;
-};
-
-// TODO: update the type when SDK updates DaoListItem to include description
-export type NavigationDao = Omit<DaoListItem, 'metadata'> & {
-  metadata: {
-    name: string;
-    avatar?: string;
-    description: string;
-  };
 };
 
 /* UTILITY TYPES ============================================================ */
