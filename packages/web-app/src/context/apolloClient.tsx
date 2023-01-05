@@ -12,6 +12,8 @@ import {
   Erc20Proposal,
   ICreateParams,
   IMetadata,
+  InstalledPluginListItem,
+  IPluginInstallItem,
 } from '@aragon/sdk-client';
 import {RestLink} from 'apollo-link-rest';
 import {CachePersistor, LocalStorageWrapper} from 'apollo3-cache-persist';
@@ -128,13 +130,14 @@ const client: Record<
 // FAVORITE & SELECTED DAOS
 // including description, type, and chain in anticipation for
 // showing these daos on explorer page
-export type NavigationDao = Omit<DaoListItem, 'metadata'> & {
+export type NavigationDao = Omit<DaoListItem, 'metadata' | 'plugins'> & {
   chain: SupportedChainID;
   metadata: {
     name: string;
     avatar?: string;
     description?: string;
   };
+  plugins: InstalledPluginListItem[] | IPluginInstallItem[];
 };
 const favoriteDaos = JSON.parse(
   localStorage.getItem(FAVORITE_DAOS_KEY) || '[]'

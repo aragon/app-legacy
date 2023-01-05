@@ -1,3 +1,4 @@
+/* eslint-disable no-case-declarations */
 import {useReactiveVar} from '@apollo/client';
 import {
   DaoCreationSteps,
@@ -21,10 +22,19 @@ import {usePollGasFee} from 'hooks/usePollGasfee';
 import {useWallet} from 'hooks/useWallet';
 import {CreateDaoFormData} from 'pages/createDAO';
 import {trackEvent} from 'services/analytics';
-import {PENDING_DAOS_KEY, TransactionState} from 'utils/constants';
+import {
+  FAVORITE_DAOS_KEY,
+  PENDING_DAOS_KEY,
+  SupportedChainID,
+  TransactionState,
+} from 'utils/constants';
 import {getSecondsFromDHM} from 'utils/date';
 import {Dashboard} from 'utils/paths';
-import {pendingDaoCreationVar} from './apolloClient';
+import {
+  favoriteDaosVar,
+  NavigationDao,
+  pendingDaoCreationVar,
+} from './apolloClient';
 import {useGlobalModalContext} from './globalModals';
 import {useNetwork} from './network';
 import {usePrivacyContext} from './privacyContext';
@@ -49,12 +59,13 @@ const CreateDaoContext = createContext<CreateDaoContextType | null>(null);
 const CreateDaoProvider: React.FC = ({children}) => {
   const {open} = useGlobalModalContext();
   const navigate = useNavigate();
-  const {isOnWrongNetwork, provider} = useWallet();
+  const {isOnWrongNetwork, provider, chainId} = useWallet();
   const {network} = useNetwork();
   const {t} = useTranslation();
   const {getValues} = useFormContext<CreateDaoFormData>();
   const {client} = useClient();
   const cachedDaoCreation = useReactiveVar(pendingDaoCreationVar);
+  const favoriteDaoCache = useReactiveVar(favoriteDaosVar);
   const {preferences} = usePrivacyContext();
 
   const [creationProcessState, setCreationProcessState] =
@@ -320,7 +331,6 @@ const CreateDaoProvider: React.FC = ({children}) => {
             setCreationProcessState(TransactionState.SUCCESS);
             setDaoAddress(step.address.toLowerCase());
 
-            // eslint-disable-next-line no-case-declarations
             const newCache = {
               ...cachedDaoCreation,
               [network]: {
@@ -334,8 +344,25 @@ const CreateDaoProvider: React.FC = ({children}) => {
 
             pendingDaoCreationVar(newCache);
 
+            const newFavoriteDao: NavigationDao = {
+              address: step.address.toLocaleLowerCase(),
+              chain: chainId as SupportedChainID,
+              ensDomain: daoCreationData.ensSubdomain,
+              plugins: daoCreationData.plugins,
+              metadata: {
+                name: metadata.name,
+                avatar: metadata.avatar,
+                description: metadata.description,
+              },
+            };
+
+            const tempCache = [...favoriteDaoCache, newFavoriteDao];
+
+            favoriteDaosVar(tempCache);
+
             if (preferences?.functional) {
               localStorage.setItem(PENDING_DAOS_KEY, JSON.stringify(newCache));
+              localStorage.setItem(FAVORITE_DAOS_KEY, JSON.stringify(newCache));
             }
             break;
         }
