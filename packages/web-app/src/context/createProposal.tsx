@@ -113,7 +113,7 @@ const CreateProposalProvider: React.FC<Props> = ({
             CHAIN_METADATA[network].nativeCurrency
           );
 
-          setTokenSupply(totalSupply);
+          setTokenSupply(totalSupply.toBigInt());
         } catch (error) {
           console.error('Error fetching token information: ', error);
         }
