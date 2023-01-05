@@ -39,22 +39,21 @@ const SetupCommunityForm: React.FC = () => {
           rules={{required: 'Validate'}}
           control={control}
           defaultValue="token"
-          render={({field: {onChange, value}}) => {
-            return (
-              <>
-                <CheckboxListItem
-                  label={t('createDAO.step3.tokenMembership')}
-                  helptext={t('createDAO.step3.tokenMembershipSubtitle')}
-                  multiSelect={false}
-                  onClick={() => {
-                    resetTokenFields();
-                    onChange('token');
-                  }}
-                  {...(value === 'token' ? {type: 'active'} : {})}
-                />
+          render={({field: {onChange, value}}) => (
+            <>
+              <CheckboxListItem
+                label={t('createDAO.step3.tokenMembership')}
+                helptext={t('createDAO.step3.tokenMembershipSubtitle')}
+                multiSelect={false}
+                onClick={() => {
+                  resetTokenFields();
+                  onChange('token');
+                }}
+                {...(value === 'token' ? {type: 'active'} : {})}
+              />
 
-                {/* Address List Dao has been disabled */}
-                {/* <CheckboxListItem
+              {/* Address List Dao has been disabled */}
+              {/* <CheckboxListItem
                   label={t('createDAO.step3.walletMemberShip')}
                   helptext={t('createDAO.step3.walletMemberShipSubtitle')}
                   onClick={() => {
@@ -64,9 +63,8 @@ const SetupCommunityForm: React.FC = () => {
                   multiSelect={false}
                   {...(value === 'wallet' ? {type: 'active'} : {})}
                 /> */}
-              </>
-            );
-          }}
+            </>
+          )}
         />
       </FormItem>
 
