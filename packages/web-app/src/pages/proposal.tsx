@@ -57,6 +57,7 @@ import {useWalletCanVote} from 'hooks/useWalletCanVote';
 import {CHAIN_METADATA} from 'utils/constants';
 import {
   decodeAddMembersToAction,
+  decodeMetadataToAction,
   decodeMintTokensToAction,
   decodePluginSettingsToAction,
   decodeRemoveMembersToAction,
@@ -204,6 +205,8 @@ const Proposal: React.FC = () => {
                 action.data,
                 pluginClient as ClientErc20
               );
+            case 'setMetadata':
+              return decodeMetadataToAction(action.data, client);
             default:
               return Promise.resolve({} as Action);
           }
@@ -234,7 +237,7 @@ const Proposal: React.FC = () => {
   }, [
     apolloClient,
     client,
-    daoToken?.address,
+    daoToken,
     network,
     pluginClient,
     proposal,

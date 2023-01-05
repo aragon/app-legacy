@@ -257,6 +257,12 @@ export async function decodeRemoveMembersToAction(
   });
 }
 
+/**
+ * Decode update plugin settings action
+ * @param data Uint8Array action data
+ * @param client SDK AddressList or Erc20 client
+ * @returns decoded action
+ */
 export async function decodePluginSettingsToAction(
   data: Uint8Array | undefined,
   client: ClientErc20 | ClientAddressList | undefined
@@ -265,15 +271,20 @@ export async function decodePluginSettingsToAction(
     console.error('SDK client is not initialized correctly');
     return;
   }
-
   const decodedSettings = client.decoding.updatePluginSettingsAction(data);
 
-  return Promise.resolve({
+  return {
     name: 'modify_settings',
     inputs: {...decodedSettings},
-  });
+  };
 }
 
+/**
+ * Decode update DAO metadata settings action
+ * @param data Uint8Array action data
+ * @param client SDK plugin-agnostic client
+ * @returns decoded action
+ */
 export async function decodeMetadataToAction(
   data: Uint8Array | undefined,
   client: Client | undefined
@@ -283,12 +294,16 @@ export async function decodeMetadataToAction(
     return;
   }
 
-  const decodedSettings = await client.decoding.updateMetadataAction(data);
+  try {
+    const decodedSettings = await client.decoding.updateMetadataAction(data);
 
-  return Promise.resolve({
-    name: 'modify_metadata',
-    inputs: {...decodedSettings},
-  });
+    return {
+      name: 'modify_metadata',
+      inputs: {...decodedSettings},
+    };
+  } catch (error) {
+    console.error('Error decoding update dao metadata action', error);
+  }
 }
 
 const FLAG_TYPED_ARRAY = 'FLAG_TYPED_ARRAY';

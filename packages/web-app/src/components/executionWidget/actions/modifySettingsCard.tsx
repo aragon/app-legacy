@@ -15,11 +15,10 @@ const ModifySettings: React.FC<{action: ActionUpdatePluginSettings}> = ({
   return (
     <AccordionMethod
       type="execution-widget"
-      methodName={t('Update Governance Settings')}
+      methodName={t('labels.updateGovernanceAction')}
       smartContractName={t('labels.aragonCore')}
       verified
-      //   methodDescription={t('AddActionModal.withdrawAssetsActionSubtitle')}
-      methodDescription={t('TBD')}
+      methodDescription={t('labels.updateGovernanceActionDescription')}
     >
       <Container>
         <div>
