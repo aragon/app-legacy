@@ -169,8 +169,7 @@ const ProposalTransactionProvider: React.FC<Props> = ({children}) => {
         break;
       case TransactionState.SUCCESS:
         setShowVoteModal(false);
-
-        break; // TODO: reload and cache
+        break;
       default: {
         setShowVoteModal(false);
         stopPolling();
@@ -266,8 +265,8 @@ const ProposalTransactionProvider: React.FC<Props> = ({children}) => {
       throw new Error('Voting function is not initialized correctly');
     }
 
-    for await (const step of voteSteps) {
-      try {
+    try {
+      for await (const step of voteSteps) {
         switch (step.key) {
           case VoteProposalStep.VOTING:
             console.log(step.txHash);
@@ -277,10 +276,10 @@ const ProposalTransactionProvider: React.FC<Props> = ({children}) => {
             break;
         }
         onVoteSubmitted(voteParams.proposalId, voteParams.vote);
-      } catch (err) {
-        console.error(err);
-        setVoteProcessState(TransactionState.ERROR);
       }
+    } catch (err) {
+      console.error(err);
+      setVoteProcessState(TransactionState.ERROR);
     }
   }, [
     handleCloseVoteModal,
@@ -337,8 +336,9 @@ const ProposalTransactionProvider: React.FC<Props> = ({children}) => {
     if (!executeSteps) {
       throw new Error('Voting function is not initialized correctly');
     }
-    for await (const step of executeSteps) {
-      try {
+
+    try {
+      for await (const step of executeSteps) {
         switch (step.key) {
           case ExecuteProposalStep.EXECUTING:
             setTransactionHash(step.txHash);
@@ -350,11 +350,11 @@ const ProposalTransactionProvider: React.FC<Props> = ({children}) => {
         setExecuteParams(undefined);
         setExecutionFailed(false);
         setExecuteProcessState(TransactionState.SUCCESS);
-      } catch (err) {
-        console.error(err);
-        setExecutionFailed(true);
-        setExecuteProcessState(TransactionState.ERROR);
       }
+    } catch (err) {
+      console.error(err);
+      setExecutionFailed(true);
+      setExecuteProcessState(TransactionState.ERROR);
     }
   }, [
     executeParams,
