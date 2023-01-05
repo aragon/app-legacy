@@ -419,7 +419,6 @@ export function getTerminalProps(
       symbol: proposal.token.symbol,
     };
 
-    console.log(proposal);
     // voters
     const ptcResults = getErc20VotersAndParticipation(
       proposal.votes,
