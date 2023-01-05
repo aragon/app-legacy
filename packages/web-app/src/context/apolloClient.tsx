@@ -7,6 +7,7 @@ import {
 } from '@apollo/client';
 import {
   AddressListProposal,
+  DaoListItem,
   Deposit,
   Erc20Proposal,
   ICreateParams,
@@ -26,7 +27,7 @@ import {
   SupportedNetworks,
 } from 'utils/constants';
 import {customJSONReviver} from 'utils/library';
-import {AddressListVote, Erc20ProposalVote, NavigationDao} from 'utils/types';
+import {AddressListVote, Erc20ProposalVote} from 'utils/types';
 import {PRIVACY_KEY} from './privacyContext';
 
 const restLink = new RestLink({
@@ -122,24 +123,37 @@ const client: Record<
   'arbitrum-test': arbitrumTestClient,
 };
 
-// including description and plugin in anticipation for
-// showing these daos on explorer page
-const selectedDaoVar = makeVar<NavigationDao>({
+// SELECTED DAO
+export type SelectedDao = {
+  address: string;
+  ensDomain: string;
+  avatar?: string;
+  name: string;
+};
+
+const selectedDaoVar = makeVar<SelectedDao>({
   address: '',
   ensDomain: '',
-  metadata: {
-    name: '',
-    description: '',
-    avatar: '',
-  },
-  plugins: [],
+  avatar: '',
+  name: '',
 });
 
+// FAVORITE DAOS
+// including description and plugin in anticipation for
+// showing these daos on explorer page
+type FavoriteDao = Omit<DaoListItem, 'metadata'> & {
+  metadata: {
+    name: string;
+    avatar?: string;
+    description: string;
+  };
+};
 const favoriteDaos = JSON.parse(
   localStorage.getItem(FAVORITE_DAOS_KEY) || '[]'
 );
-const favoriteDaosVar = makeVar<Array<NavigationDao>>(favoriteDaos);
+const favoriteDaosVar = makeVar<Array<FavoriteDao>>(favoriteDaos);
 
+// PENDING DEPOSITS
 const depositTxs = JSON.parse(
   localStorage.getItem(PENDING_DEPOSITS_KEY) || '[]',
   customJSONReviver

@@ -25,9 +25,9 @@ type MobileNavProps = {
 
 const MobileNav: React.FC<MobileNavProps> = props => {
   const {t} = useTranslation();
-  const {isMobile} = useScreen();
   const {open} = useGlobalModalContext();
-  const {daoLogo, daoName} = useReactiveVar(selectedDaoVar);
+  const {isMobile} = useScreen();
+  const currentDao = useReactiveVar(selectedDaoVar);
   const {isConnected, address, ensName, ensAvatarUrl} = useWallet();
 
   if (props.isProcess)
@@ -62,11 +62,11 @@ const MobileNav: React.FC<MobileNavProps> = props => {
           <FlexOne className="justify-center">
             <DaoContainer>
               <AvatarDao
-                src={daoLogo}
-                daoName={daoName}
+                src={currentDao.avatar}
+                daoName={currentDao.name}
                 onClick={props.onDaoSelect}
               />
-              <DaoName>{daoName}</DaoName>
+              <DaoName>{currentDao.name}</DaoName>
             </DaoContainer>
           </FlexOne>
           <FlexOne className="justify-end">

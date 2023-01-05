@@ -80,10 +80,10 @@ const Navbar: React.FC = () => {
   useEffect(() => {
     if (daoDetails) {
       selectedDaoVar({
-        daoAddress: daoDetails.address,
-        daoEns: daoDetails.ensDomain,
-        daoLogo: daoDetails.metadata.avatar,
-        daoName: daoDetails.metadata.name,
+        address: daoDetails.address,
+        ensDomain: daoDetails.ensDomain,
+        name: daoDetails.metadata.name,
+        avatar: daoDetails.metadata.avatar,
       });
     }
   }, [daoDetails]);

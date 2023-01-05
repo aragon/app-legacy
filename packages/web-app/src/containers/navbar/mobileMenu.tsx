@@ -10,7 +10,7 @@ import {useGlobalModalContext} from 'context/globalModals';
 import {usePrivacyContext} from 'context/privacyContext';
 
 const MobileNavMenu: React.FC = () => {
-  const {daoEns, daoName, daoLogo} = useReactiveVar(selectedDaoVar);
+  const currentDao = useReactiveVar(selectedDaoVar);
   const {open, close, isMobileMenuOpen} = useGlobalModalContext();
 
   const {handleWithFunctionalPreferenceMenu} = usePrivacyContext();
@@ -20,13 +20,13 @@ const MobileNavMenu: React.FC = () => {
       <div className="tablet:w-50">
         <CardWrapper className="rounded-xl">
           <DaoSelector
-            daoAddress={daoEns}
-            daoName={daoName}
+            daoAddress={currentDao.ensDomain}
+            daoName={currentDao.name}
+            src={currentDao.avatar}
             onClick={() => {
               close('mobileMenu');
               handleWithFunctionalPreferenceMenu(() => open('selectDao'));
             }}
-            src={daoLogo}
           />
         </CardWrapper>
         <div className="py-3 px-2 space-y-3">

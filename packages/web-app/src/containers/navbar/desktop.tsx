@@ -29,9 +29,10 @@ const DesktopNav: React.FC<DesktopNavProp> = props => {
   const navigate = useNavigate();
   const {network} = useNetwork();
   const {dao} = useParams();
-  const currentDao = useReactiveVar(selectedDaoVar);
   const {breadcrumbs, icon, tag} = useMappedBreadcrumbs();
   const {address, ensName, ensAvatarUrl, isConnected} = useWallet();
+
+  const currentDao = useReactiveVar(selectedDaoVar);
 
   const isProcess = useMemo(
     () => props.returnURL && props.processLabel,
@@ -71,12 +72,11 @@ const DesktopNav: React.FC<DesktopNavProp> = props => {
       <Menu>
         <Content>
           <DaoSelector
-            daoName={currentDao?.daoName}
-            daoAddress={currentDao?.daoEns}
-            src={currentDao?.daoLogo}
+            daoAddress={currentDao.ensDomain}
+            daoName={currentDao.name}
+            src={currentDao.avatar}
             onClick={props.onDaoSelect}
           />
-
           <LinksWrapper>
             {breadcrumbs.length < MIN_ROUTE_DEPTH_FOR_BREADCRUMBS ? (
               <NavLinks />
