@@ -17,6 +17,7 @@ import {CachePersistor, LocalStorageWrapper} from 'apollo3-cache-persist';
 
 import {
   BASE_URL,
+  FAVORITE_DAOS_KEY,
   PENDING_DAOS_KEY,
   PENDING_DEPOSITS_KEY,
   PENDING_PROPOSALS_KEY,
@@ -121,14 +122,23 @@ const client: Record<
   'arbitrum-test': arbitrumTestClient,
 };
 
+// including description and plugin in anticipation for
+// showing these daos on explorer page
 const selectedDaoVar = makeVar<NavigationDao>({
-  daoAddress: '',
-  daoEns: '',
-  daoLogo: '',
-  daoName: '',
+  address: '',
+  ensDomain: '',
+  metadata: {
+    name: '',
+    description: '',
+    avatar: '',
+  },
+  plugins: [],
 });
 
-const favoriteDAOs = makeVar<Array<NavigationDao>>([]);
+const favoriteDaos = JSON.parse(
+  localStorage.getItem(FAVORITE_DAOS_KEY) || '[]'
+);
+const favoriteDaosVar = makeVar<Array<NavigationDao>>(favoriteDaos);
 
 const depositTxs = JSON.parse(
   localStorage.getItem(PENDING_DEPOSITS_KEY) || '[]',
@@ -179,7 +189,7 @@ const pendingDaoCreationVar = makeVar<PendingDaoCreation>(pendingDaoCreation);
 
 export {
   client,
-  favoriteDAOs,
+  favoriteDaosVar,
   selectedDaoVar,
   pendingDeposits,
   pendingProposalsVar,

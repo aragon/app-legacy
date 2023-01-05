@@ -1,5 +1,6 @@
 import {
   AddressListProposal,
+  DaoListItem,
   Erc20Proposal,
   VoteValues,
 } from '@aragon/sdk-client';
@@ -282,11 +283,13 @@ export type Dao = {
   address: string;
 };
 
-export type NavigationDao = {
-  daoAddress: string; // including because we can only navigate by address for now
-  daoEns: string;
-  daoLogo?: string;
-  daoName: string;
+// TODO: update the type when SDK updates DaoListItem to include description
+export type NavigationDao = Omit<DaoListItem, 'metadata'> & {
+  metadata: {
+    name: string;
+    avatar?: string;
+    description: string;
+  };
 };
 
 /* UTILITY TYPES ============================================================ */
