@@ -293,8 +293,7 @@ export const customJSONReviver = (_: string, value: any) => {
 
   if (typeof value === 'string') {
     // BigInt
-    if (BIGINT_PATTERN.test(value))
-      return BigInt(value.slice(8, value.length - 1));
+    if (BIGINT_PATTERN.test(value)) return BigInt(value.slice(0, -1));
 
     // Date
     if (ISO_DATE_PATTERN.test(value)) return new Date(value);

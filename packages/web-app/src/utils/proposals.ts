@@ -140,7 +140,7 @@ export function getErc20VotersAndParticipation(
   const participationPercentage = parseFloat(
     Big(Number(usedVotingWeight))
       .mul(100)
-      .div(Number(totalVotingWeight))
+      .div(totalVotingWeight.toString())
       .toFixed(2)
   );
 
@@ -419,6 +419,7 @@ export function getTerminalProps(
       symbol: proposal.token.symbol,
     };
 
+    console.log(proposal);
     // voters
     const ptcResults = getErc20VotersAndParticipation(
       proposal.votes,
