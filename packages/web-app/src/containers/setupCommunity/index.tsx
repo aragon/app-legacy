@@ -38,9 +38,8 @@ const SetupCommunityForm: React.FC = () => {
           name="membership"
           rules={{required: 'Validate'}}
           control={control}
-          defaultValue=""
+          defaultValue="token"
           render={({field: {onChange, value}}) => {
-            console.log('review-->', value);
             return (
               <>
                 <CheckboxListItem
