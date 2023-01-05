@@ -38,32 +38,36 @@ const SetupCommunityForm: React.FC = () => {
           name="membership"
           rules={{required: 'Validate'}}
           control={control}
-          defaultValue="token"
-          render={({field: {onChange, value}}) => (
-            <>
-              <CheckboxListItem
-                label={t('createDAO.step3.tokenMembership')}
-                helptext={t('createDAO.step3.tokenMembershipSubtitle')}
-                multiSelect={false}
-                onClick={() => {
-                  resetTokenFields();
-                  onChange('token');
-                }}
-                {...(value === 'token' ? {type: 'active'} : {})}
-              />
+          defaultValue=""
+          render={({field: {onChange, value}}) => {
+            console.log('review-->', value);
+            return (
+              <>
+                <CheckboxListItem
+                  label={t('createDAO.step3.tokenMembership')}
+                  helptext={t('createDAO.step3.tokenMembershipSubtitle')}
+                  multiSelect={false}
+                  onClick={() => {
+                    resetTokenFields();
+                    onChange('token');
+                  }}
+                  {...(value === 'token' ? {type: 'active'} : {})}
+                />
 
-              <CheckboxListItem
-                label={t('createDAO.step3.walletMemberShip')}
-                helptext={t('createDAO.step3.walletMemberShipSubtitle')}
-                onClick={() => {
-                  resetTokenFields();
-                  onChange('wallet');
-                }}
-                multiSelect={false}
-                {...(value === 'wallet' ? {type: 'active'} : {})}
-              />
-            </>
-          )}
+                {/* Address List Dao has been disabled */}
+                {/* <CheckboxListItem
+                  label={t('createDAO.step3.walletMemberShip')}
+                  helptext={t('createDAO.step3.walletMemberShipSubtitle')}
+                  onClick={() => {
+                    resetTokenFields();
+                    onChange('wallet');
+                  }}
+                  multiSelect={false}
+                  {...(value === 'wallet' ? {type: 'active'} : {})}
+                /> */}
+              </>
+            );
+          }}
         />
       </FormItem>
 

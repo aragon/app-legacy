@@ -59,7 +59,7 @@ const defaultValues = {
 
   // Uncomment when DAO Treasury minting is supported
   // wallets: [{address: constants.AddressZero, amount: '0'}],
-  membership: '',
+  membership: 'token',
   isCustomToken: true,
 };
 
