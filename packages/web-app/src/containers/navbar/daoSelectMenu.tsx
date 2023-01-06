@@ -72,7 +72,7 @@ const DaoSelectMenu: React.FC = () => {
             daoAddress={currentDao?.ensDomain}
             daoName={currentDao?.metadata.name}
             daoLogo={currentDao?.metadata.avatar}
-            onClick={() => handleDaoSelect(currentDao)}
+            onClick={() => close('selectDao')}
           />
           {favoriteDaoCache.flatMap(dao => {
             if (
@@ -122,7 +122,7 @@ const Title = styled.div.attrs({
 })``;
 
 const ModalContentContainer = styled.div.attrs({
-  className: 'p-3 space-y-3',
+  className: 'p-3 space-y-3 tablet:w-50 desktop:w-auto',
 })``;
 
 const ListGroup = styled.div.attrs({
