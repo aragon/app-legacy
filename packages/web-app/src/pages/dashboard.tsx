@@ -1,3 +1,4 @@
+import {useReactiveVar} from '@apollo/client';
 import {
   ButtonText,
   HeaderDao,
@@ -7,31 +8,34 @@ import {
   IllustrationHuman,
 } from '@aragon/ui-components';
 import {withTransaction} from '@elastic/apm-rum-react';
-import React, {useEffect, useState} from 'react';
-import styled from 'styled-components';
-import {useReactiveVar} from '@apollo/client';
-import {generatePath, useNavigate} from 'react-router-dom';
+import React, {useCallback, useEffect, useMemo, useState} from 'react';
 import {useTranslation} from 'react-i18next';
+import {generatePath, useNavigate} from 'react-router-dom';
+import styled from 'styled-components';
 
 import {Loading} from 'components/temporary';
 import {MembershipSnapshot} from 'containers/membershipSnapshot';
 import ProposalSnapshot from 'containers/proposalSnapshot';
 import TreasurySnapshot from 'containers/treasurySnapshot';
-import {useNetwork} from 'context/network';
 import {useAlertContext} from 'context/alert';
-import {pendingDaoCreationVar} from 'context/apolloClient';
+import {
+  FavoriteDao,
+  favoriteDaosVar,
+  pendingDaoCreationVar,
+} from 'context/apolloClient';
+import {useNetwork} from 'context/network';
 import {usePrivacyContext} from 'context/privacyContext';
+import {useClient} from 'hooks/useClient';
 import {useDaoDetails} from 'hooks/useDaoDetails';
 import {useDaoParam} from 'hooks/useDaoParam';
 import {useDaoVault} from 'hooks/useDaoVault';
 import {PluginTypes} from 'hooks/usePluginClient';
 import {Proposal, useProposals} from 'hooks/useProposals';
 import useScreen from 'hooks/useScreen';
-import {useClient} from 'hooks/useClient';
+import {FAVORITE_DAOS_KEY, PENDING_DAOS_KEY} from 'utils/constants';
 import {formatDate} from 'utils/date';
-import {Transfer} from 'utils/types';
-import {PENDING_DAOS_KEY} from 'utils/constants';
 import {Dashboard as DashboardPath} from 'utils/paths';
+import {Transfer} from 'utils/types';
 import {Container, EmptyStateContainer, EmptyStateHeading} from './governance';
 
 let pollForDaoData: number | undefined;
@@ -48,7 +52,8 @@ const Dashboard: React.FC = () => {
   const {isDesktop, isMobile} = useScreen();
   const {alert} = useAlertContext();
   const {client} = useClient();
-  const {preferences} = usePrivacyContext();
+  const {preferences, handleWithFunctionalPreferenceMenu} = usePrivacyContext();
+  const favoriteDaoCache = useReactiveVar(favoriteDaosVar);
 
   const {
     data: daoId,
@@ -70,6 +75,25 @@ const Dashboard: React.FC = () => {
     dao?.plugins[0]?.id as PluginTypes
   );
 
+  const daoType =
+    (dao?.plugins[0].id as PluginTypes) === 'addresslistvoting.dao.eth'
+      ? t('explore.explorer.walletBased')
+      : t('explore.explorer.tokenBased');
+
+  const favoriteDaoMatchPredicate = useCallback(
+    (favoriteDao: FavoriteDao) =>
+      favoriteDao.address === daoId && favoriteDao.chain === network,
+    [daoId, network]
+  );
+
+  const isFavoritedDao = useMemo(
+    () => favoriteDaoCache.some(favoriteDaoMatchPredicate),
+    [favoriteDaoCache, favoriteDaoMatchPredicate]
+  );
+
+  /*************************************************
+   *                    Hooks                      *
+   *************************************************/
   useEffect(() => {
     if (
       waitingForSubgraph &&
@@ -103,6 +127,56 @@ const Dashboard: React.FC = () => {
     };
   }, [client?.methods, daoCreationState, daoId, waitingForSubgraph]);
 
+  /*************************************************
+   *                    Handlers                   *
+   *************************************************/
+  const handleFavoriteClick = useCallback(() => {
+    if (!dao) return;
+
+    handleWithFunctionalPreferenceMenu(() => {
+      let newCache;
+
+      if (isFavoritedDao) {
+        newCache = favoriteDaoCache.filter(
+          fd => !favoriteDaoMatchPredicate(fd)
+        );
+      } else {
+        const newFavoriteDao: FavoriteDao = {
+          address: dao.address.toLowerCase(),
+          chain: network,
+          ensDomain: dao.ensDomain,
+          type: daoType,
+          metadata: {
+            name: dao.metadata.name,
+            avatar: dao.metadata.avatar,
+            description: dao.metadata.description,
+          },
+        };
+
+        newCache = [...favoriteDaoCache, newFavoriteDao];
+      }
+
+      favoriteDaosVar(newCache);
+      localStorage.setItem(FAVORITE_DAOS_KEY, JSON.stringify(newCache));
+
+      isFavoritedDao
+        ? alert('Removed from favorites')
+        : alert('DAO favorited!');
+    });
+  }, [
+    alert,
+    dao,
+    daoType,
+    favoriteDaoCache,
+    favoriteDaoMatchPredicate,
+    handleWithFunctionalPreferenceMenu,
+    isFavoritedDao,
+    network,
+  ]);
+
+  /*************************************************
+   *                    Render                     *
+   *************************************************/
   if (proposalsAreLoading || detailsAreLoading || daoParamLoading) {
     return <Loading />;
   }
@@ -186,9 +260,6 @@ const Dashboard: React.FC = () => {
 
   if (!dao) return null;
 
-  const isAddressList =
-    (dao.plugins[0].id as PluginTypes) === 'addresslistvoting.dao.eth';
-
   async function handleClipboardActions() {
     await navigator.clipboard.writeText(
       `app.aragon.org/#/daos/${network}/${daoId}`
@@ -209,12 +280,10 @@ const Dashboard: React.FC = () => {
             'MMMM yyyy'
           ).toString()}
           daoChain={network}
-          daoType={
-            isAddressList
-              ? t('explore.explorer.walletBased')
-              : t('explore.explorer.tokenBased')
-          }
+          daoType={daoType}
+          favorited={isFavoritedDao}
           copiedOnClick={handleClipboardActions}
+          onFavoriteClick={handleFavoriteClick}
           links={
             dao?.metadata.links.map(link => ({
               label: link.name,
