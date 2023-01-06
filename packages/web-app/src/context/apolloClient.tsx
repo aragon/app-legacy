@@ -24,6 +24,7 @@ import {
   PENDING_PROPOSALS_KEY,
   PENDING_VOTES_KEY,
   SUBGRAPH_API_URL,
+  SupportedChainID,
   SupportedNetworks,
 } from 'utils/constants';
 import {customJSONReviver} from 'utils/library';
@@ -126,9 +127,8 @@ const client: Record<
 // FAVORITE & SELECTED DAOS
 // including description, type, and chain in anticipation for
 // showing these daos on explorer page
-export type NavigationDao = Omit<DaoListItem, 'metadata' | 'plugins'> & {
-  type?: string;
-  chain: SupportedNetworks;
+export type NavigationDao = Omit<DaoListItem, 'metadata'> & {
+  chain: SupportedChainID;
   metadata: {
     name: string;
     avatar?: string;
@@ -147,8 +147,8 @@ const selectedDaoVar = makeVar<NavigationDao>({
     name: '',
     avatar: '',
   },
-  type: '',
-  chain: 'goerli',
+  chain: 5,
+  plugins: [],
 });
 
 // PENDING DEPOSITS
