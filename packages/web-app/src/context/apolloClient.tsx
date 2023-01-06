@@ -139,9 +139,11 @@ const selectedDaoVar = makeVar<SelectedDao>({
 });
 
 // FAVORITE DAOS
-// including description and plugin in anticipation for
+// including description, type, and chain in anticipation for
 // showing these daos on explorer page
-type FavoriteDao = Omit<DaoListItem, 'metadata'> & {
+export type FavoriteDao = Omit<DaoListItem, 'metadata' | 'plugins'> & {
+  type: string;
+  chain: SupportedNetworks;
   metadata: {
     name: string;
     avatar?: string;
