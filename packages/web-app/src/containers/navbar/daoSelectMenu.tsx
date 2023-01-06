@@ -12,7 +12,7 @@ import styled from 'styled-components';
 
 import {useReactiveVar} from '@apollo/client';
 import ModalBottomSheetSwitcher from 'components/modalBottomSheetSwitcher';
-import {SelectedDao, selectedDaoVar} from 'context/apolloClient';
+import {NavigationDao, selectedDaoVar} from 'context/apolloClient';
 import {useGlobalModalContext} from 'context/globalModals';
 import useScreen from 'hooks/useScreen';
 
@@ -25,7 +25,7 @@ const DaoSelectMenu: React.FC = () => {
   const {isSelectDaoOpen, close, open} = useGlobalModalContext();
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const handleDaoSelect = (dao: SelectedDao) => {
+  const handleDaoSelect = (dao: NavigationDao) => {
     // update when favoring daos selectedDaoVar(dao);
     close('selectDao');
   };
@@ -57,8 +57,8 @@ const DaoSelectMenu: React.FC = () => {
           <ListItemDao
             selected
             daoAddress={currentDao?.ensDomain}
-            daoName={currentDao?.name}
-            daoLogo={currentDao?.avatar}
+            daoName={currentDao?.metadata.name}
+            daoLogo={currentDao?.metadata.avatar}
             onClick={() => handleDaoSelect(currentDao)}
           />
         </ListGroup>

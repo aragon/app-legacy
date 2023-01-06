@@ -73,8 +73,8 @@ const DesktopNav: React.FC<DesktopNavProp> = props => {
         <Content>
           <DaoSelector
             daoAddress={currentDao.ensDomain}
-            daoName={currentDao.name}
-            src={currentDao.avatar}
+            daoName={currentDao.metadata.name}
+            src={currentDao.metadata.avatar}
             onClick={props.onDaoSelect}
           />
           <LinksWrapper>

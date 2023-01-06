@@ -123,37 +123,33 @@ const client: Record<
   'arbitrum-test': arbitrumTestClient,
 };
 
-// SELECTED DAO
-export type SelectedDao = {
-  address: string;
-  ensDomain: string;
-  avatar?: string;
-  name: string;
-};
-
-const selectedDaoVar = makeVar<SelectedDao>({
-  address: '',
-  ensDomain: '',
-  avatar: '',
-  name: '',
-});
-
-// FAVORITE DAOS
+// FAVORITE & SELECTED DAOS
 // including description, type, and chain in anticipation for
 // showing these daos on explorer page
-export type FavoriteDao = Omit<DaoListItem, 'metadata' | 'plugins'> & {
-  type: string;
+export type NavigationDao = Omit<DaoListItem, 'metadata' | 'plugins'> & {
+  type?: string;
   chain: SupportedNetworks;
   metadata: {
     name: string;
     avatar?: string;
-    description: string;
+    description?: string;
   };
 };
 const favoriteDaos = JSON.parse(
   localStorage.getItem(FAVORITE_DAOS_KEY) || '[]'
 );
-const favoriteDaosVar = makeVar<Array<FavoriteDao>>(favoriteDaos);
+const favoriteDaosVar = makeVar<Array<NavigationDao>>(favoriteDaos);
+
+const selectedDaoVar = makeVar<NavigationDao>({
+  address: '',
+  ensDomain: '',
+  metadata: {
+    name: '',
+    avatar: '',
+  },
+  type: '',
+  chain: 'goerli',
+});
 
 // PENDING DEPOSITS
 const depositTxs = JSON.parse(

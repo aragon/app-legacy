@@ -4,6 +4,7 @@ import styled from 'styled-components';
 
 import {selectedDaoVar} from 'context/apolloClient';
 import {useGlobalModalContext} from 'context/globalModals';
+import {useNetwork} from 'context/network';
 import {usePrivacyContext} from 'context/privacyContext';
 import {useDaoDetails} from 'hooks/useDaoDetails';
 import useScreen from 'hooks/useScreen';
@@ -68,6 +69,7 @@ const processes: StringIndexed = {
 
 const Navbar: React.FC = () => {
   const {open} = useGlobalModalContext();
+  const {network} = useNetwork();
   const {pathname} = useLocation();
   const {isDesktop} = useScreen();
   const {methods, isConnected} = useWallet();
@@ -82,11 +84,14 @@ const Navbar: React.FC = () => {
       selectedDaoVar({
         address: daoDetails.address,
         ensDomain: daoDetails.ensDomain,
-        name: daoDetails.metadata.name,
-        avatar: daoDetails.metadata.avatar,
+        metadata: {
+          name: daoDetails.metadata.name,
+          avatar: daoDetails.metadata.avatar,
+        },
+        chain: network,
       });
     }
-  }, [daoDetails]);
+  }, [daoDetails, network]);
 
   const processName = useMemo(() => {
     const results = matchRoutes(processPaths, pathname);
