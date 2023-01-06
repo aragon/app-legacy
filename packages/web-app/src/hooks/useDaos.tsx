@@ -1,10 +1,17 @@
+import {useReactiveVar} from '@apollo/client';
 import {DaoListItem, DaoSortBy, SortDirection} from '@aragon/sdk-client';
 import {useEffect, useState} from 'react';
 import {resolveIpfsCid} from '@aragon/sdk-common';
 
 import {ExploreFilter} from 'containers/daoExplorer';
+import {favoriteDaosVar} from 'context/apolloClient';
 import {HookData} from 'utils/types';
 import {useClient} from './useClient';
+import {SupportedChainID} from 'utils/constants';
+
+type AugmentedDaoListItem = DaoListItem & {
+  chain?: SupportedChainID;
+};
 
 /**
  * This hook returns a list of daos. The data returned for each dao contains
@@ -22,51 +29,59 @@ import {useClient} from './useClient';
 export function useDaos(
   useCase: ExploreFilter,
   count: number
-): HookData<DaoListItem[]> {
-  const [data, setData] = useState<DaoListItem[]>([] as DaoListItem[]);
-  const [loading, setLoading] = useState(true);
+): HookData<AugmentedDaoListItem[]> {
+  const favoriteDaoCache = useReactiveVar(favoriteDaosVar);
+  const [data, setData] = useState<AugmentedDaoListItem[]>([]);
   const [error, setError] = useState<Error>();
+  const [isLoading, setIsLoading] = useState(true);
+
   const {client} = useClient();
 
   useEffect(() => {
     async function fetchDaos() {
-      // TODO get favourited DAO from local storage. This is out of scope for
-      // the alpha. [VR 21-09-2022]
-      // if (useCase === 'favourite') {
-      //   throw Error('Not yet implemented');
-      // }
+      try {
+        setIsLoading(true);
 
-      const sortParam =
-        useCase === 'popular' ? DaoSortBy.POPULARITY : DaoSortBy.CREATED_AT;
-      const daoDetails =
-        (await client?.methods.getDaos({
-          sortBy: sortParam,
-          direction: SortDirection.DESC,
-          limit: count,
-        })) || [];
+        if (useCase === 'favourite') {
+          setData(favoriteDaoCache as AugmentedDaoListItem[]);
+        } else {
+          const sortParam =
+            useCase === 'popular' ? DaoSortBy.POPULARITY : DaoSortBy.CREATED_AT;
 
-      daoDetails.map(dao => {
-        if (dao.metadata.avatar) {
-          try {
-            const logoCid = resolveIpfsCid(dao.metadata.avatar);
-            dao.metadata.avatar = `https://ipfs.io/ipfs/${logoCid}`;
-          } catch (err) {
-            dao.metadata.avatar = undefined;
-          }
+          const daoDetails =
+            (await client?.methods.getDaos({
+              sortBy: sortParam,
+              direction: SortDirection.DESC,
+              limit: count,
+            })) || [];
+
+          daoDetails.map(dao => {
+            if (dao.metadata.avatar) {
+              try {
+                const logoCid = resolveIpfsCid(dao.metadata.avatar);
+                dao.metadata.avatar = `https://ipfs.io/ipfs/${logoCid}`;
+              } catch (err) {
+                dao.metadata.avatar = undefined;
+              }
+            }
+          });
+          setData(daoDetails);
         }
-      });
-      setData(daoDetails);
+      } catch (error) {
+        console.error(error);
+        setError(error as Error);
+        setData([]);
+      } finally {
+        setIsLoading(false);
+      }
     }
 
-    try {
-      setLoading(true);
-      fetchDaos();
-    } catch (e) {
-      setError(e as Error);
-    } finally {
-      setLoading(false);
-    }
+    fetchDaos();
+
+    // intentionally leaving out favoriteDaoCache so that this doesn't
+    // get re-run when items are removed from the cache
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [client?.methods, useCase, count]);
 
-  return {data, isLoading: loading, error};
+  return {data, isLoading, error};
 }

@@ -1,9 +1,10 @@
-import React, {useEffect, useState} from 'react';
-import styled from 'styled-components';
 import {AvatarDao, IconBlock, IconCommunity} from '@aragon/ui-components';
-import {CHAIN_METADATA} from 'utils/constants';
-import useScreen from 'hooks/useScreen';
+import React from 'react';
 import {useTranslation} from 'react-i18next';
+import styled from 'styled-components';
+
+import useScreen from 'hooks/useScreen';
+import {getSupportedNetworkByChainId} from 'utils/constants';
 
 export interface IDaoCardProps {
   name: string;
@@ -32,19 +33,8 @@ type DescriptionProps = {
 };
 
 export const DaoCard = (props: IDaoCardProps) => {
-  const [networkName, setNetworkName] = useState('');
   const {isDesktop} = useScreen();
   const daoType = useGetDaoType(props.daoType);
-
-  useEffect(() => {
-    let networks: keyof typeof CHAIN_METADATA;
-    for (networks in CHAIN_METADATA) {
-      if (CHAIN_METADATA[networks].id === props.chainId) {
-        setNetworkName(CHAIN_METADATA[networks].name);
-        return;
-      }
-    }
-  }, [props.chainId]);
 
   return (
     <Container data-testid="daoCard" onClick={props.onClick}>
@@ -58,7 +48,7 @@ export const DaoCard = (props: IDaoCardProps) => {
       <DaoMetadataWrapper>
         <IconWrapper>
           <StyledIconBlock />
-          <IconLabel>{networkName}</IconLabel>
+          <IconLabel>{getSupportedNetworkByChainId(props.chainId)}</IconLabel>
         </IconWrapper>
         <IconWrapper>
           <StyledIconCommunity />
@@ -112,7 +102,7 @@ const DaoMetadataWrapper = styled.div.attrs({
   className: 'flex flex-row space-x-3',
 })``;
 const IconLabel = styled.p.attrs({
-  className: 'text-ui-600 ft-text-sm',
+  className: 'text-ui-600 ft-text-sm capitalize',
 })``;
 const IconWrapper = styled.div.attrs({
   className: 'flex flex-row space-x-1',
