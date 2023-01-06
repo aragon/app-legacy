@@ -65,14 +65,14 @@ const Governance: React.FC = () => {
             <EmptyStateHeading>
               {t('governance.emptyState.title')}
             </EmptyStateHeading>
-            <p className="mt-1.5 lg:w-1/2 text-center">
+            <span className="mt-1.5 lg:w-1/2 text-center">
               {t('governance.emptyState.subtitleLine1')}{' '}
               {t('governance.emptyState.subtitleLine2')}{' '}
               <Link
                 label={t('governance.emptyState.proposalGuide')}
                 href="https://aragon.org/how-to/structure-dao-proposals-and-build-proposal-processes"
               />
-            </p>
+            </span>
             <ButtonText
               size="large"
               label="New Proposal"

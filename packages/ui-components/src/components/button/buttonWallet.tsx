@@ -59,6 +59,6 @@ const StyledButton = styled.button.attrs(({isLoading}: StyledButtonProp) => {
   return {className};
 })``;
 
-const StyledLabel = styled.p.attrs({
+const StyledLabel = styled.span.attrs({
   className: 'tablet:inline hidden',
 })``;
