@@ -23,6 +23,7 @@ export type HeaderDaoProps = {
   created_at: string;
   daoChain: string;
   daoType: string;
+  favorited?: boolean;
   links: Array<{
     label: string;
     href: string;
@@ -32,6 +33,7 @@ export type HeaderDaoProps = {
     readLess: string;
   };
   copiedOnClick?: () => void;
+  onFavoriteClick?: () => void;
 };
 
 type DescriptionProps = {
@@ -46,9 +48,11 @@ export const HeaderDao: React.FC<HeaderDaoProps> = ({
   created_at,
   daoChain,
   daoType,
+  favorited = false,
   links,
   translation,
   copiedOnClick,
+  onFavoriteClick,
 }) => {
   const [fullDescription, setFullDescription] = useState<boolean>(false);
 
@@ -119,8 +123,9 @@ export const HeaderDao: React.FC<HeaderDaoProps> = ({
                 <ButtonText
                   iconRight={<IconChevronDown />}
                   label={'All Links'}
-                  mode="ghost"
+                  mode="secondary"
                   size="large"
+                  bgWhite
                 />
               }
               sideOffset={8}
@@ -140,8 +145,11 @@ export const HeaderDao: React.FC<HeaderDaoProps> = ({
             />
             <ButtonIcon
               icon={<StyledIconFavoriteSelected />}
-              mode="ghost"
+              onClick={onFavoriteClick}
+              mode="secondary"
               size="large"
+              isActive={favorited}
+              bgWhite
             />
           </ActionContainer>
         </ActionWrapper>
