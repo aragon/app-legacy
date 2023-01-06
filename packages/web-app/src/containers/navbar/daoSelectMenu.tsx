@@ -7,7 +7,7 @@ import {
 } from '@aragon/ui-components';
 import React, {useCallback} from 'react';
 import {useTranslation} from 'react-i18next';
-import {useNavigate} from 'react-router-dom';
+import {generatePath, useNavigate} from 'react-router-dom';
 import styled from 'styled-components';
 
 import {useReactiveVar} from '@apollo/client';
@@ -19,8 +19,8 @@ import {
 } from 'context/apolloClient';
 import {useGlobalModalContext} from 'context/globalModals';
 import useScreen from 'hooks/useScreen';
+import {Dashboard} from 'utils/paths';
 
-// NOTE: the state setting is temporary until backend integration
 const DaoSelectMenu: React.FC = () => {
   const {t} = useTranslation();
   const {isDesktop} = useScreen();
@@ -29,11 +29,19 @@ const DaoSelectMenu: React.FC = () => {
   const favoriteDaoCache = useReactiveVar(favoriteDaosVar);
   const {isSelectDaoOpen, close, open} = useGlobalModalContext();
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const handleDaoSelect = (dao: NavigationDao) => {
-    // update when favoring daos selectedDaoVar(dao);
-    close('selectDao');
-  };
+  const handleDaoSelect = useCallback(
+    (dao: NavigationDao) => {
+      selectedDaoVar(dao);
+      navigate(
+        generatePath(Dashboard, {
+          network: dao.chain,
+          dao: dao.address,
+        })
+      );
+      close('selectDao');
+    },
+    [close, navigate]
+  );
 
   const handleBackButtonClick = useCallback(() => {
     close('selectDao');
@@ -66,15 +74,24 @@ const DaoSelectMenu: React.FC = () => {
             daoLogo={currentDao?.metadata.avatar}
             onClick={() => handleDaoSelect(currentDao)}
           />
-          {favoriteDaoCache.map(dao => (
-            <ListItemDao
-              key={dao.address}
-              daoAddress={dao.ensDomain}
-              daoName={dao.metadata.name}
-            />
-          ))}
+          {favoriteDaoCache.flatMap(dao => {
+            if (
+              dao.address === currentDao.address &&
+              dao.chain === currentDao.chain
+            ) {
+              return [];
+            } else {
+              return (
+                <ListItemDao
+                  key={dao.address}
+                  daoAddress={dao.ensDomain}
+                  daoName={dao.metadata.name}
+                  onClick={() => handleDaoSelect(dao)}
+                />
+              );
+            }
+          })}
         </ListGroup>
-        {/* TODO: Change click */}
         <ButtonText
           mode="secondary"
           size="large"
