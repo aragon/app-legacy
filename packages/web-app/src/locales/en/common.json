@@ -366,7 +366,9 @@
       "inputPasted": "Pasted",
       "walletConnected": "Wallet connected",
       "walletDisconnected": "Wallet disconnected",
-      "max": "Max Balance applied"
+      "max": "Max Balance applied",
+      "favorited": "DAO favorited",
+      "unfavorite": "DAO removed from favorites"
     }
   },
   "warnings": {

@@ -160,8 +160,8 @@ const Dashboard: React.FC = () => {
       localStorage.setItem(FAVORITE_DAOS_KEY, JSON.stringify(newCache));
 
       isFavoritedDao
-        ? alert('Removed from favorites')
-        : alert('DAO favorited!');
+        ? alert(t('alert.chip.unfavorite'))
+        : alert(t('alert.chip.favorited'));
     });
   }, [
     alert,
@@ -172,6 +172,7 @@ const Dashboard: React.FC = () => {
     handleWithFunctionalPreferenceMenu,
     isFavoritedDao,
     network,
+    t,
   ]);
 
   /*************************************************
