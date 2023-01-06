@@ -19,6 +19,7 @@ import {
 } from 'context/apolloClient';
 import {useGlobalModalContext} from 'context/globalModals';
 import useScreen from 'hooks/useScreen';
+import {getSupportedNetworkByChainId} from 'utils/constants';
 import {Dashboard} from 'utils/paths';
 
 const DaoSelectMenu: React.FC = () => {
@@ -34,7 +35,7 @@ const DaoSelectMenu: React.FC = () => {
       selectedDaoVar(dao);
       navigate(
         generatePath(Dashboard, {
-          network: dao.chain,
+          network: getSupportedNetworkByChainId(dao.chain),
           dao: dao.address,
         })
       );
