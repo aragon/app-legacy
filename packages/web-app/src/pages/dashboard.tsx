@@ -19,8 +19,8 @@ import ProposalSnapshot from 'containers/proposalSnapshot';
 import TreasurySnapshot from 'containers/treasurySnapshot';
 import {useAlertContext} from 'context/alert';
 import {
-  FavoriteDao,
   favoriteDaosVar,
+  NavigationDao,
   pendingDaoCreationVar,
 } from 'context/apolloClient';
 import {useNetwork} from 'context/network';
@@ -81,7 +81,7 @@ const Dashboard: React.FC = () => {
       : t('explore.explorer.tokenBased');
 
   const favoriteDaoMatchPredicate = useCallback(
-    (favoriteDao: FavoriteDao) =>
+    (favoriteDao: NavigationDao) =>
       favoriteDao.address === daoId && favoriteDao.chain === network,
     [daoId, network]
   );
@@ -141,7 +141,7 @@ const Dashboard: React.FC = () => {
           fd => !favoriteDaoMatchPredicate(fd)
         );
       } else {
-        const newFavoriteDao: FavoriteDao = {
+        const newFavoriteDao: NavigationDao = {
           address: dao.address.toLowerCase(),
           chain: network,
           ensDomain: dao.ensDomain,
