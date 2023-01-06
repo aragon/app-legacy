@@ -144,11 +144,14 @@ export const HeaderDao: React.FC<HeaderDaoProps> = ({
               )}
             />
             <ButtonIcon
-              icon={<StyledIconFavoriteSelected />}
+              icon={
+                <IconFavoriteSelected
+                  className={favorited ? 'text-primary-500' : 'text-ui-600'}
+                />
+              }
               onClick={onFavoriteClick}
               mode="secondary"
               size="large"
-              isActive={favorited}
               bgWhite
             />
           </ActionContainer>
@@ -218,8 +221,4 @@ const ActionContainer = styled.div.attrs({
 const ActionWrapper = styled.div.attrs({
   className:
     'flex items-center tablet:space-x-3 justify-between tablet:justify-start w-full tablet:w-max space-y-3 tablet:space-y-0',
-})``;
-
-const StyledIconFavoriteSelected = styled(IconFavoriteSelected).attrs({
-  className: 'text-ui-600',
 })``;
