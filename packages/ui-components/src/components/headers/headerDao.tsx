@@ -8,6 +8,7 @@ import {
   IconCopy,
   IconFlag,
   IconFavoriteSelected,
+  IconFavoriteDefault,
 } from '../icons';
 import {AvatarDao} from '../avatar';
 import {Link} from '../link';
@@ -145,9 +146,7 @@ export const HeaderDao: React.FC<HeaderDaoProps> = ({
             />
             <ButtonIcon
               icon={
-                <IconFavoriteSelected
-                  className={favorited ? 'text-primary-500' : 'text-ui-600'}
-                />
+                favorited ? <IconFavoriteSelected /> : <IconFavoriteDefault />
               }
               onClick={onFavoriteClick}
               mode="secondary"
