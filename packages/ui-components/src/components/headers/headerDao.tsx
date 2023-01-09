@@ -1,20 +1,24 @@
+import React, {useEffect, useRef, useState} from 'react';
 import styled from 'styled-components';
-import React, {useState} from 'react';
 
+import useScreen from '../../hooks/useScreen';
+import {AvatarDao} from '../avatar';
+import {ButtonIcon, ButtonText} from '../button';
+import {Dropdown} from '../dropdown';
 import {
   IconBlock,
   IconChevronDown,
   IconCommunity,
   IconCopy,
-  IconFlag,
-  IconFavoriteSelected,
   IconFavoriteDefault,
+  IconFavoriteSelected,
+  IconFlag,
 } from '../icons';
-import {AvatarDao} from '../avatar';
 import {Link} from '../link';
-import {ButtonIcon, ButtonText} from '../button';
-import {Dropdown} from '../dropdown';
 import {ListItemLink} from '../listItem';
+
+const DEFAULT_LINES_SHOWN = 2;
+const DEFAULT_LINKS_SHOWN = 3;
 
 export type HeaderDaoProps = {
   daoName: string;
@@ -25,7 +29,7 @@ export type HeaderDaoProps = {
   daoChain: string;
   daoType: string;
   favorited?: boolean;
-  links: Array<{
+  links?: Array<{
     label: string;
     href: string;
   }>;
@@ -34,7 +38,7 @@ export type HeaderDaoProps = {
     readLess: string;
   };
   copiedOnClick?: () => void;
-  onFavoriteClick?: () => void;
+  onFavoriteClick?: (e: React.MouseEvent<HTMLButtonElement>) => void;
 };
 
 type DescriptionProps = {
@@ -50,12 +54,45 @@ export const HeaderDao: React.FC<HeaderDaoProps> = ({
   daoChain,
   daoType,
   favorited = false,
-  links,
+  links = [],
   translation,
   copiedOnClick,
   onFavoriteClick,
 }) => {
-  const [fullDescription, setFullDescription] = useState<boolean>(false);
+  const [showAll, setShowAll] = useState(true);
+  const [shouldClamp, setShouldClamp] = useState(false);
+
+  const {isDesktop} = useScreen();
+
+  const descriptionRef = useRef<HTMLParagraphElement>(null);
+
+  // this should be extracted into a hook if clamping/showing elsewhere
+  useEffect(() => {
+    function countNumberOfLines() {
+      const descriptionEl = descriptionRef.current;
+
+      if (!descriptionEl) return;
+
+      const numberOfLines =
+        descriptionEl.offsetHeight /
+        parseFloat(getComputedStyle(descriptionEl).lineHeight);
+
+      setShouldClamp(numberOfLines > DEFAULT_LINES_SHOWN);
+      setShowAll(numberOfLines <= DEFAULT_LINES_SHOWN);
+    }
+
+    countNumberOfLines();
+
+    window.addEventListener('resize', countNumberOfLines);
+
+    return () => {
+      window.removeEventListener('resize', countNumberOfLines);
+    };
+  }, []);
+
+  // always show dropdown if there are links, unless we're on desktop with less than 3 links
+  const showDropdown =
+    !(links?.length <= DEFAULT_LINKS_SHOWN && isDesktop) && links?.length !== 0;
 
   return (
     <Card data-testid="header-dao">
@@ -68,16 +105,20 @@ export const HeaderDao: React.FC<HeaderDaoProps> = ({
             onClick={copiedOnClick}
           />
           <div>
-            <Description {...{fullDescription}}>{description}</Description>
-            <Link
-              label={
-                fullDescription
-                  ? `${translation?.readLess || 'Read less'} ↑`
-                  : `${translation?.readMore || 'Read more'} ↓`
-              }
-              className="ft-text-base"
-              onClick={() => setFullDescription(prevState => !prevState)}
-            />
+            <Description ref={descriptionRef} {...{fullDescription: showAll}}>
+              {description}
+            </Description>
+            {shouldClamp && (
+              <Link
+                label={
+                  showAll
+                    ? `${translation?.readLess || 'Read less'} ↑`
+                    : `${translation?.readMore || 'Read more'} ↓`
+                }
+                className="ft-text-base"
+                onClick={() => setShowAll(prevState => !prevState)}
+              />
+            )}
           </div>
         </Content>
         <AvatarContainer>
@@ -107,43 +148,35 @@ export const HeaderDao: React.FC<HeaderDaoProps> = ({
         <ActionWrapper>
           <LinksWrapper>
             {links
-              ?.slice(0, 3)
-              ?.map(
-                (
-                  {label, href}: HeaderDaoProps['links'][number],
-                  index: number
-                ) => (
-                  <Link {...{label, href}} external key={index} />
-                )
-              )}
+              ?.slice(0, DEFAULT_LINKS_SHOWN)
+              ?.map(({label, href}, index: number) => (
+                <Link {...{label, href}} external key={index} />
+              ))}
           </LinksWrapper>
           <ActionContainer>
-            <Dropdown
-              align="start"
-              trigger={
-                <ButtonText
-                  iconRight={<IconChevronDown />}
-                  label={'All Links'}
-                  mode="secondary"
-                  size="large"
-                  bgWhite
-                />
-              }
-              sideOffset={8}
-              className="max-w-xs"
-              listItems={links?.map(
-                (
-                  {label, href}: HeaderDaoProps['links'][number],
-                  index: number
-                ) => ({
+            {showDropdown && (
+              <Dropdown
+                align="start"
+                trigger={
+                  <ButtonText
+                    iconRight={<IconChevronDown />}
+                    label={'All Links'}
+                    mode="secondary"
+                    size="large"
+                    bgWhite
+                  />
+                }
+                sideOffset={8}
+                className="max-w-xs"
+                listItems={links?.map(({label, href}, index: number) => ({
                   component: (
                     <div className="p-1 mb-1.5">
                       <ListItemLink {...{label, href}} key={index} external />
                     </div>
                   ),
-                })
-              )}
-            />
+                }))}
+              />
+            )}
             <ButtonIcon
               icon={
                 favorited ? <IconFavoriteSelected /> : <IconFavoriteDefault />
@@ -190,7 +223,8 @@ const Description = styled.p.attrs({
   overflow: hidden;
   display: -webkit-box;
   -webkit-box-orient: vertical;
-  -webkit-line-clamp: ${props => (props.fullDescription ? 'unset' : 2)};
+  -webkit-line-clamp: ${props =>
+    props.fullDescription ? 'unset' : DEFAULT_LINES_SHOWN};
 `;
 
 const DetailsWrapper = styled.div.attrs({
