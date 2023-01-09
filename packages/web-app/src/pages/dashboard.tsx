@@ -32,11 +32,10 @@ import {useDaoVault} from 'hooks/useDaoVault';
 import {PluginTypes} from 'hooks/usePluginClient';
 import {Proposal, useProposals} from 'hooks/useProposals';
 import useScreen from 'hooks/useScreen';
-import {useWallet} from 'hooks/useWallet';
 import {
+  CHAIN_METADATA,
   FAVORITE_DAOS_KEY,
   PENDING_DAOS_KEY,
-  SupportedChainID,
 } from 'utils/constants';
 import {formatDate} from 'utils/date';
 import {Dashboard as DashboardPath} from 'utils/paths';
@@ -54,7 +53,6 @@ enum DaoCreationState {
 const Dashboard: React.FC = () => {
   const {t} = useTranslation();
   const {network} = useNetwork();
-  const {chainId} = useWallet();
   const {isDesktop, isMobile} = useScreen();
   const {alert} = useAlertContext();
   const {client} = useClient();
@@ -88,8 +86,9 @@ const Dashboard: React.FC = () => {
 
   const favoriteDaoMatchPredicate = useCallback(
     (favoriteDao: NavigationDao) =>
-      favoriteDao.address === daoId && favoriteDao.chain === chainId,
-    [chainId, daoId]
+      favoriteDao.address === daoId &&
+      favoriteDao.chain === CHAIN_METADATA[network].id,
+    [daoId, network]
   );
 
   const isFavoritedDao = useMemo(
@@ -149,7 +148,7 @@ const Dashboard: React.FC = () => {
       } else {
         const newFavoriteDao: NavigationDao = {
           address: dao.address.toLowerCase(),
-          chain: chainId as SupportedChainID,
+          chain: CHAIN_METADATA[network].id,
           ensDomain: dao.ensDomain,
           plugins: dao.plugins,
           metadata: {
@@ -171,12 +170,12 @@ const Dashboard: React.FC = () => {
     });
   }, [
     alert,
-    chainId,
     dao,
     favoriteDaoCache,
     favoriteDaoMatchPredicate,
     handleWithFunctionalPreferenceMenu,
     isFavoritedDao,
+    network,
     t,
   ]);
 
