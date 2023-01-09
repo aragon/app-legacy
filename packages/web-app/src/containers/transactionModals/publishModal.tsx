@@ -27,6 +27,7 @@ type PublishModalProps = {
   subtitle?: string;
   buttonLabel?: string;
   buttonLabelSuccess?: string;
+  disabledCallback?: boolean;
 };
 
 const icons = {
@@ -50,6 +51,7 @@ const PublishModal: React.FC<PublishModalProps> = ({
   subtitle,
   buttonLabel,
   buttonLabelSuccess,
+  disabledCallback,
 }) => {
   const {t} = useTranslation();
   const {network} = useNetwork();
@@ -136,6 +138,7 @@ const PublishModal: React.FC<PublishModalProps> = ({
           iconLeft={icons[state]}
           isActive={state === TransactionState.LOADING}
           onClick={callback}
+          disabled={disabledCallback}
         />
         {state === TransactionState.SUCCESS && (
           <AlertInlineContainer>

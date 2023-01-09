@@ -500,6 +500,7 @@ const CreateProposalProvider: React.FC<Props> = ({
         title={t('TransactionModal.createProposal')}
         buttonLabel={t('TransactionModal.createProposal')}
         buttonLabelSuccess={t('TransactionModal.goToProposal')}
+        disabledCallback={!proposalCreationData}
       />
     </>
   );
