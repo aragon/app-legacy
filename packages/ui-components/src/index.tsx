@@ -16,7 +16,6 @@ export * from './components/listItem';
 export * from './components/menuItem';
 export * from './components/modal';
 export * from './components/pagination';
-export * from './components/popover';
 export * from './components/progress';
 export * from './components/spinner';
 export * from './components/table';
