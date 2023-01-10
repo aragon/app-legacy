@@ -4,11 +4,12 @@ import styled from 'styled-components';
 
 import {selectedDaoVar} from 'context/apolloClient';
 import {useGlobalModalContext} from 'context/globalModals';
+import {useNetwork} from 'context/network';
 import {usePrivacyContext} from 'context/privacyContext';
 import {useDaoDetails} from 'hooks/useDaoDetails';
 import useScreen from 'hooks/useScreen';
 import {useWallet} from 'hooks/useWallet';
-import {SupportedChainID} from 'utils/constants';
+import {CHAIN_METADATA} from 'utils/constants';
 import {
   Community,
   CreateDAO,
@@ -71,6 +72,7 @@ const Navbar: React.FC = () => {
   const {open} = useGlobalModalContext();
   const {pathname} = useLocation();
   const {isDesktop} = useScreen();
+  const {network} = useNetwork();
   const {methods, isConnected, chainId} = useWallet();
   const {handleWithFunctionalPreferenceMenu} = usePrivacyContext();
 
@@ -87,11 +89,11 @@ const Navbar: React.FC = () => {
           name: daoDetails.metadata.name,
           avatar: daoDetails.metadata.avatar,
         },
-        chain: chainId as SupportedChainID,
+        chain: CHAIN_METADATA[network].id,
         plugins: daoDetails.plugins,
       });
     }
-  }, [chainId, daoDetails]);
+  }, [daoDetails, network]);
 
   const processName = useMemo(() => {
     const results = matchRoutes(processPaths, pathname);
