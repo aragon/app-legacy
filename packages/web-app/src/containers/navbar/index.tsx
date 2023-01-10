@@ -73,7 +73,7 @@ const Navbar: React.FC = () => {
   const {pathname} = useLocation();
   const {isDesktop} = useScreen();
   const {network} = useNetwork();
-  const {methods, isConnected, chainId} = useWallet();
+  const {methods, isConnected} = useWallet();
   const {handleWithFunctionalPreferenceMenu} = usePrivacyContext();
 
   const {dao} = useParams();
