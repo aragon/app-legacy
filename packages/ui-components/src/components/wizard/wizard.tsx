@@ -62,7 +62,7 @@ const StepTitle = styled.p.attrs({
   className: 'ft-text-3xl text-ui-800 font-bold',
 })``;
 
-const StepSubTitle = styled.p.attrs({
+const StepSubTitle = styled.span.attrs({
   className: 'text-ui-600 ft-text-lg',
 })``;
 

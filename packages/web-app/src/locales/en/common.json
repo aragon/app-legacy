@@ -504,7 +504,7 @@
     "step1": {
       "label": "Step 1",
       "title": "Select blockchain",
-      "description": "The chain you choose is where your tokens and assets are stored. If you already have a token, choose the chain your token is minted on. <1> This cannot be changed later.</1> For help selecting your chain, read our guide on",
+      "description": "The chain you choose is where your tokens and assets are stored. If you already have a token, choose the chain your token is minted on. <1> This cannot be changed later.</1> For help selecting your chain, read our guide on ",
       "blockchainOverviewGuide.": "choosing the best blockchain for your DAO."
     },
     "step2": {
