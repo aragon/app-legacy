@@ -272,6 +272,7 @@ const Dashboard: React.FC = () => {
     alert(t('alert.chip.inputCopied'));
   }
 
+  console.table(dao.metadata.links);
   return (
     <>
       <HeaderWrapper>
@@ -290,10 +291,14 @@ const Dashboard: React.FC = () => {
           copiedOnClick={handleClipboardActions}
           onFavoriteClick={handleFavoriteClick}
           links={
-            dao?.metadata.links.map(link => ({
-              label: link.name,
-              href: link.url,
-            })) || []
+            dao?.metadata.links.flatMap(link => {
+              if (link.name !== '' && link.url !== '')
+                return {
+                  label: link.name,
+                  href: link.url,
+                };
+              else return [];
+            }) || []
           }
         />
       </HeaderWrapper>
