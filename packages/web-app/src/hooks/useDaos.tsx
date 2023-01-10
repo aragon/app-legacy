@@ -9,6 +9,8 @@ import {HookData} from 'utils/types';
 import {useClient} from './useClient';
 import {SupportedChainID} from 'utils/constants';
 
+// TODO: At some point, DaoListItem is supposed to get the chainId
+// please revert to DaoListItem instead of this when that happens
 type AugmentedDaoListItem = DaoListItem & {
   chain?: SupportedChainID;
 };

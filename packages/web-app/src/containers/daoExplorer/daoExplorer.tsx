@@ -41,8 +41,6 @@ export const DaoExplorer = () => {
 
   const {data, isLoading} = useDaos(filterValue, showCount);
 
-  console.log(isLoading);
-
   const handleShowMoreClick = () => {
     setShowCount(prev => prev + PAGE_SIZE);
   };
