@@ -1,17 +1,16 @@
 import {
   ButtonText,
+  Dropdown,
   IconChevronDown,
   Label,
   ListItemAction,
   ListItemBlockchain,
-  Popover,
 } from '@aragon/ui-components';
 import styled from 'styled-components';
 import {useTranslation} from 'react-i18next';
 import {Controller, useFormContext} from 'react-hook-form';
 import React, {useCallback, useState} from 'react';
 
-import {i18n} from '../../../i18n.config';
 import useScreen from 'hooks/useScreen';
 import {CHAIN_METADATA, SupportedNetworks} from 'utils/constants';
 import {useNetwork} from 'context/network';
@@ -32,10 +31,27 @@ const SelectChainForm: React.FC = () => {
     () => getValues('blockchain')?.network || 'main'
   );
 
+  // moving this up so state change triggers translation changes
+  const labels = {
+    cost: {tag: t('labels.cheapest'), title: t('labels.networkCost')},
+    popularity: {
+      tag: t('labels.mostPopular'),
+      title: t('labels.popularity'),
+    },
+    security: {
+      tag: t('labels.safest'),
+      title: t('labels.security'),
+    },
+  };
+
   const handleFilterChanged = useCallback(
-    (e: React.MouseEvent) => {
+    (e: Event) => {
       setIsOpen(false);
-      const {name} = e.currentTarget as HTMLButtonElement;
+
+      // Note: the dropdown returns a div parent as the target for the onSelect,
+      // and not the original element
+      const {name} = (e.currentTarget as HTMLDivElement)
+        .children[0] as HTMLButtonElement;
 
       trackEvent('daoCreation_sortBy_clicked', {sort_by: name});
       if (sortFilter !== name) {
@@ -66,47 +82,55 @@ const SelectChainForm: React.FC = () => {
         </NetworkTypeSwitcher>
         <SortFilter>
           {!isMobile && <Label label={t('labels.sortBy')} />}
-          {/* TODO: replace with proper dropdown */}
-          <Popover
-            side="bottom"
-            open={isOpen}
-            align="start"
-            width={264}
-            onOpenChange={(value: boolean) => setIsOpen(value)}
-            content={
-              <DropdownContent>
-                <ListItemAction
-                  name="cost"
-                  mode={sortFilter === 'cost' ? 'selected' : 'default'}
-                  title={t('labels.networkCost')}
-                  onClick={handleFilterChanged}
-                  bgWhite
-                />
-                <ListItemAction
-                  name="popularity"
-                  mode={sortFilter === 'popularity' ? 'selected' : 'default'}
-                  title={t('labels.popularity')}
-                  onClick={handleFilterChanged}
-                  bgWhite
-                />
-                <ListItemAction
-                  name="security"
-                  mode={sortFilter === 'security' ? 'selected' : 'default'}
-                  title={t('labels.security')}
-                  onClick={handleFilterChanged}
-                  bgWhite
-                />
-              </DropdownContent>
+          <Dropdown
+            align="end"
+            sideOffset={8}
+            style={{width: 234}}
+            trigger={
+              <ButtonText
+                label={labels?.[sortFilter]?.title}
+                mode="secondary"
+                size={isMobile ? 'small' : 'large'}
+                isActive={isOpen}
+                iconRight={<IconChevronDown />}
+              />
             }
-          >
-            <ButtonText
-              label={labels[sortFilter].title}
-              mode="secondary"
-              size={isMobile ? 'small' : 'large'}
-              isActive={isOpen}
-              iconRight={<IconChevronDown />}
-            />
-          </Popover>
+            listItems={[
+              {
+                component: (
+                  <ListItemAction
+                    name="cost"
+                    mode={sortFilter === 'cost' ? 'selected' : 'default'}
+                    title={t('labels.networkCost')}
+                    bgWhite
+                  />
+                ),
+                callback: handleFilterChanged,
+              },
+              {
+                component: (
+                  <ListItemAction
+                    name="popularity"
+                    mode={sortFilter === 'popularity' ? 'selected' : 'default'}
+                    title={t('labels.popularity')}
+                    bgWhite
+                  />
+                ),
+                callback: handleFilterChanged,
+              },
+              {
+                component: (
+                  <ListItemAction
+                    name="security"
+                    mode={sortFilter === 'security' ? 'selected' : 'default'}
+                    title={t('labels.security')}
+                    bgWhite
+                  />
+                ),
+                callback: handleFilterChanged,
+              },
+            ]}
+          />
         </SortFilter>
       </Header>
       <FormItem>
@@ -153,20 +177,6 @@ const SortFilter = styled.div.attrs({
 const FormItem = styled.div.attrs({
   className: 'space-y-1.5',
 })``;
-
-const DropdownContent = styled.div.attrs({className: 'p-1.5 space-y-0.5'})``;
-
-const labels = {
-  cost: {tag: i18n.t('labels.cheapest'), title: i18n.t('labels.networkCost')},
-  popularity: {
-    tag: i18n.t('labels.mostPopular'),
-    title: i18n.t('labels.popularity'),
-  },
-  security: {
-    tag: i18n.t('labels.safest'),
-    title: i18n.t('labels.security'),
-  },
-};
 
 // Note: Default Network name in polygon network is different than Below list
 type SelectableNetworks = Record<
