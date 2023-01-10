@@ -358,6 +358,10 @@ const Proposal: React.FC = () => {
     if (!proposal?.status || !proposal?.endDate || !proposal?.startDate)
       return [voteStatus, voteButtonLabel];
 
+    voteButtonLabel = voted
+      ? t('votingTerminal.status.voteSubmitted')
+      : t('votingTerminal.voteOver');
+
     switch (proposal.status) {
       case 'Pending':
         {
@@ -367,21 +371,18 @@ const Proposal: React.FC = () => {
             locale,
           });
 
+          voteButtonLabel = t('votingTerminal.voteNow');
           voteStatus = t('votingTerminal.status.pending', {timeUntilNow});
         }
         break;
       case 'Succeeded':
         voteStatus = t('votingTerminal.status.succeeded');
-        voteButtonLabel = t('votingTerminal.status.voteSubmitted');
-
         break;
       case 'Executed':
         voteStatus = t('votingTerminal.status.executed');
-        voteButtonLabel = t('votingTerminal.status.voteSubmitted');
         break;
       case 'Defeated':
         voteStatus = t('votingTerminal.status.defeated');
-        voteButtonLabel = t('votingTerminal.status.voteSubmitted');
 
         break;
       case 'Active':
@@ -395,9 +396,7 @@ const Proposal: React.FC = () => {
           voteStatus = t('votingTerminal.status.active', {timeUntilEnd});
 
           // haven't voted
-          voteButtonLabel = voted
-            ? t('votingTerminal.status.voteSubmitted')
-            : t('votingTerminal.voteNow');
+          if (!voted) voteButtonLabel = t('votingTerminal.voteNow');
         }
         break;
     }

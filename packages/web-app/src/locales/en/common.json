@@ -639,6 +639,7 @@
       "ineligibleTokenBased": "You had to hold {{token}} when proposal was created to be able to vote",
       "voteSubmitted": "Vote submitted"
     },
+    "voteOver": "Vote over",
     "voteNow": "Vote now",
     "emptyState": {
       "titleSearch": "No result found for {{query}}",
