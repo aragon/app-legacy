@@ -1,9 +1,10 @@
 import {Breadcrumb, ButtonWallet} from '@aragon/ui-components';
 import NavLinks from 'components/navLinks';
-import React, {useMemo} from 'react';
+import React, {useEffect, useMemo, useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {generatePath, useNavigate, useParams} from 'react-router-dom';
 import styled from 'styled-components';
+import {resolveIpfsCid} from '@aragon/sdk-common';
 
 import {useReactiveVar} from '@apollo/client';
 import {DaoSelector} from 'components/daoSelector';
@@ -31,6 +32,7 @@ const DesktopNav: React.FC<DesktopNavProp> = props => {
   const {dao} = useParams();
   const {breadcrumbs, icon, tag} = useMappedBreadcrumbs();
   const {address, ensName, ensAvatarUrl, isConnected} = useWallet();
+  const [logoSrc, setLogoSrc] = useState<string | undefined>();
 
   const currentDao = useReactiveVar(selectedDaoVar);
 
@@ -42,6 +44,17 @@ const DesktopNav: React.FC<DesktopNavProp> = props => {
   const clickHandler = (path: string) => {
     navigate(generatePath(path, {network, dao}));
   };
+
+  useEffect(() => {
+    if (currentDao.metadata.avatar) {
+      try {
+        const logoCid = resolveIpfsCid(currentDao.metadata.avatar);
+        setLogoSrc(`https://ipfs.io/ipfs/${logoCid}`);
+      } catch (err) {
+        setLogoSrc(currentDao.metadata.avatar);
+      }
+    }
+  }, [currentDao.metadata.avatar]);
 
   if (isProcess) {
     return (
@@ -74,7 +87,7 @@ const DesktopNav: React.FC<DesktopNavProp> = props => {
           <DaoSelector
             daoAddress={currentDao.ensDomain}
             daoName={currentDao.metadata.name}
-            src={currentDao.metadata.avatar}
+            src={logoSrc}
             onClick={props.onDaoSelect}
           />
           <LinksWrapper>

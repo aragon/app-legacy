@@ -30,7 +30,7 @@ export type CreateDaoFormData = {
     label: string;
     network: string;
   };
-  daoLogo: string;
+  daoLogo: unknown;
   daoName: string;
   daoSummary: string;
   tokenName: string;

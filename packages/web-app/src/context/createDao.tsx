@@ -49,6 +49,17 @@ function encodeRatio(ratio: number, digits: number): number {
   return Math.round(ratio * 10 ** digits);
 }
 
+function readFile(file: Blob): Promise<ArrayBuffer> {
+  return new Promise((resolve, reject) => {
+    const fr = new FileReader();
+    fr.onload = () => {
+      resolve(fr.result as ArrayBuffer);
+    };
+    fr.onerror = reject;
+    fr.readAsArrayBuffer(file);
+  });
+}
+
 type CreateDaoContextType = {
   /** Prepares the creation data and awaits user confirmation to start process */
   handlePublishDao: () => void;
@@ -250,9 +261,15 @@ const CreateDaoProvider: React.FC = ({children}) => {
     const metadata: IMetadata = {
       name: daoName,
       description: daoSummary,
-      avatar: daoLogo,
       links: links.filter(r => r.name && r.url),
     };
+
+    if (daoLogo) {
+      const daoLogoBuffer = await readFile(daoLogo);
+      const logoCID = await client?.ipfs.add(new Uint8Array(daoLogoBuffer));
+      await client?.ipfs.pin(logoCID!);
+      metadata.avatar = `ipfs://${logoCID}`;
+    }
 
     try {
       const ipfsUri = await client?.methods.pinMetadata(metadata);
@@ -272,6 +289,7 @@ const CreateDaoProvider: React.FC = ({children}) => {
     getPluginSettings,
     getErc20PluginParams,
     getAddresslistPluginParams,
+    client?.ipfs,
   ]);
 
   // estimate creation fees
@@ -307,7 +325,7 @@ const CreateDaoProvider: React.FC = ({children}) => {
     const metadata: IMetadata = {
       name: daoName,
       description: daoSummary,
-      avatar: daoLogo,
+      avatar: URL.createObjectURL(daoLogo),
       links: links.filter(r => r.name && r.url),
     };
 
