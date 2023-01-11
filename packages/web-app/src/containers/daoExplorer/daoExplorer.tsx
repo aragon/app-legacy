@@ -17,7 +17,7 @@ import {useWallet} from 'hooks/useWallet';
 import {getSupportedNetworkByChainId} from 'utils/constants';
 import {Dashboard} from 'utils/paths';
 
-const EXPLORE_FILTER = ['favourite', 'newest', 'popular'] as const;
+const EXPLORE_FILTER = ['favorite', 'newest', 'popular'] as const;
 
 export type ExploreFilter = typeof EXPLORE_FILTER[number];
 
@@ -36,7 +36,7 @@ export const DaoExplorer = () => {
   const {address} = useWallet();
 
   const [filterValue, setFilterValue] = useState<ExploreFilter>(() =>
-    address ? 'favourite' : 'newest'
+    address ? 'favorite' : 'newest'
   );
 
   const {data, isLoading} = useDaos(filterValue, showCount);
@@ -45,7 +45,7 @@ export const DaoExplorer = () => {
     setShowCount(prev => prev + PAGE_SIZE);
   };
 
-  const handleFliterChange = (filterValue: string) => {
+  const handleFilterChange = (filterValue: string) => {
     if (isExploreFilter(filterValue)) {
       setFilterValue(filterValue);
       setShowCount(PAGE_SIZE);
@@ -61,7 +61,7 @@ export const DaoExplorer = () => {
           <ButtonGroupContainer>
             <ButtonGroup
               defaultValue={filterValue}
-              onChange={v => handleFliterChange(v)}
+              onChange={v => handleFilterChange(v)}
               bgWhite={false}
             >
               {address ? (

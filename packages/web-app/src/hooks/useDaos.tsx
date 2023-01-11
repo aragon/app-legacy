@@ -22,7 +22,7 @@ type AugmentedDaoListItem = DaoListItem & {
  *
  * The hook takes a single argument that determines the criteria for which DAOs
  * will be returned. This can be either popular or newest DAOs, or DAOs that a
- * user has favourited.
+ * user has favorited.
  *
  * @param useCase filter criteria that should be applied when fetching daos
  * @param count number of DAOs to fetch at once.
@@ -44,7 +44,7 @@ export function useDaos(
       try {
         setIsLoading(true);
 
-        if (useCase === 'favourite') {
+        if (useCase === 'favorite') {
           setData(favoriteDaoCache as AugmentedDaoListItem[]);
         } else {
           const sortParam =
