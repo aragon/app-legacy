@@ -65,10 +65,7 @@ export const DaoExplorer = () => {
               bgWhite={false}
             >
               {address ? (
-                <Option
-                  label={t('explore.explorer.myDaos')}
-                  value="favourite"
-                />
+                <Option label={t('explore.explorer.myDaos')} value="favorite" />
               ) : (
                 <></>
               )}
