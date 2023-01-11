@@ -265,7 +265,7 @@ const CreateDaoProvider: React.FC = ({children}) => {
     };
 
     if (daoLogo) {
-      const daoLogoBuffer = await readFile(daoLogo);
+      const daoLogoBuffer = await readFile(daoLogo as Blob);
       const logoCID = await client?.ipfs.add(new Uint8Array(daoLogoBuffer));
       await client?.ipfs.pin(logoCID!);
       metadata.avatar = `ipfs://${logoCID}`;
@@ -325,7 +325,7 @@ const CreateDaoProvider: React.FC = ({children}) => {
     const metadata: IMetadata = {
       name: daoName,
       description: daoSummary,
-      avatar: URL.createObjectURL(daoLogo),
+      avatar: URL.createObjectURL(daoLogo as Blob),
       links: links.filter(r => r.name && r.url),
     };
 
