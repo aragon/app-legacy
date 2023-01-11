@@ -80,7 +80,7 @@ const Dashboard: React.FC = () => {
   );
 
   const daoType =
-    (dao?.plugins[0].id as PluginTypes) === 'addresslistvoting.dao.eth'
+    (dao?.plugins[0]?.id as PluginTypes) === 'addresslistvoting.dao.eth'
       ? t('explore.explorer.walletBased')
       : t('explore.explorer.tokenBased');
 
