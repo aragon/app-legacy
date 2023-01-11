@@ -53,8 +53,6 @@ export function useDaos(
           } catch (err) {
             dao.metadata.avatar = undefined;
           }
-        } else {
-          dao.metadata.avatar = undefined;
         }
       });
       setData(daoDetails);

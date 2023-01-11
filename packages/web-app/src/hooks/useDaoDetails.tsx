@@ -53,8 +53,6 @@ export function useDaoDetails(
               } catch (err) {
                 dao.metadata.avatar = undefined;
               }
-            } else {
-              dao.metadata.avatar = undefined;
             }
             setData(dao);
             setWaitingForSubgraph(false);
