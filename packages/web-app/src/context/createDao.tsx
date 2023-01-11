@@ -23,9 +23,9 @@ import {useWallet} from 'hooks/useWallet';
 import {CreateDaoFormData} from 'pages/createDAO';
 import {trackEvent} from 'services/analytics';
 import {
+  CHAIN_METADATA,
   FAVORITE_DAOS_KEY,
   PENDING_DAOS_KEY,
-  SupportedChainID,
   TransactionState,
 } from 'utils/constants';
 import {getSecondsFromDHM} from 'utils/date';
@@ -59,7 +59,7 @@ const CreateDaoContext = createContext<CreateDaoContextType | null>(null);
 const CreateDaoProvider: React.FC = ({children}) => {
   const {open} = useGlobalModalContext();
   const navigate = useNavigate();
-  const {isOnWrongNetwork, provider, chainId} = useWallet();
+  const {isOnWrongNetwork, provider} = useWallet();
   const {network} = useNetwork();
   const {t} = useTranslation();
   const {getValues} = useFormContext<CreateDaoFormData>();
@@ -346,7 +346,7 @@ const CreateDaoProvider: React.FC = ({children}) => {
 
             const newFavoriteDao: NavigationDao = {
               address: step.address.toLocaleLowerCase(),
-              chain: chainId as SupportedChainID,
+              chain: CHAIN_METADATA[network].id,
               ensDomain: daoCreationData.ensSubdomain,
               plugins: daoCreationData.plugins,
               metadata: {
@@ -362,7 +362,10 @@ const CreateDaoProvider: React.FC = ({children}) => {
 
             if (preferences?.functional) {
               localStorage.setItem(PENDING_DAOS_KEY, JSON.stringify(newCache));
-              localStorage.setItem(FAVORITE_DAOS_KEY, JSON.stringify(newCache));
+              localStorage.setItem(
+                FAVORITE_DAOS_KEY,
+                JSON.stringify(tempCache)
+              );
             }
             break;
         }
