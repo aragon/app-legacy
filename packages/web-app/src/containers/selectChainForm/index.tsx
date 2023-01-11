@@ -2,7 +2,6 @@ import {
   ButtonText,
   Dropdown,
   IconChevronDown,
-  Label,
   ListItemAction,
   ListItemBlockchain,
 } from '@aragon/ui-components';
@@ -65,6 +64,7 @@ const SelectChainForm: React.FC = () => {
         <NetworkTypeSwitcher>
           <ButtonText
             mode="ghost"
+            bgWhite
             disabled
             size={isMobile ? 'small' : 'medium'}
             label={t('labels.mainNet')}
@@ -72,7 +72,8 @@ const SelectChainForm: React.FC = () => {
             onClick={() => setNetworkType('main')}
           />
           <ButtonText
-            mode="secondary"
+            mode="ghost"
+            bgWhite
             size={isMobile ? 'small' : 'medium'}
             label={t('labels.testNet')}
             isActive={networkType === 'test'}
@@ -80,7 +81,6 @@ const SelectChainForm: React.FC = () => {
           />
         </NetworkTypeSwitcher>
         <SortFilter>
-          {!isMobile && <Label label={t('labels.sortBy')} />}
           <Dropdown
             align="end"
             sideOffset={8}

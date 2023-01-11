@@ -112,7 +112,7 @@ const CreateDAO: React.FC = () => {
     // intentionally disabling this next line so that changing the
     // wallet network doesn't cause effect to run
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [chainId]);
+  }, []);
 
   /*************************************************
    *             Step Validation States            *
