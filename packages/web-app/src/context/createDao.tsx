@@ -93,10 +93,10 @@ const CreateDaoProvider: React.FC = ({children}) => {
    *                   Handlers                    *
    *************************************************/
   const handlePublishDao = async () => {
-    const creationParams: ICreateParams = await getDaoSettings();
-    setDaoCreationData(creationParams);
     setCreationProcessState(TransactionState.WAITING);
     setShowModal(true);
+    const creationParams: ICreateParams = await getDaoSettings();
+    setDaoCreationData(creationParams);
   };
 
   // Handler for modal button click
