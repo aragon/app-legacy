@@ -14,7 +14,7 @@ import {DaoCard} from 'components/daoCard';
 import {useDaos} from 'hooks/useDaos';
 import {PluginTypes} from 'hooks/usePluginClient';
 import {useWallet} from 'hooks/useWallet';
-import {getSupportedNetworkByChainId} from 'utils/constants';
+import {CHAIN_METADATA, getSupportedNetworkByChainId} from 'utils/constants';
 import {Dashboard} from 'utils/paths';
 
 const EXPLORE_FILTER = ['favorite', 'newest', 'popular'] as const;
@@ -84,7 +84,7 @@ export const DaoExplorer = () => {
                 logo={dao.metadata.avatar}
                 // TODO: replace with -> description={dao.metadata.description}
                 description="This is a DAO."
-                chainId={dao.chain || 5} // Default to Goerli
+                chainId={dao.chain || CHAIN_METADATA.goerli.id} // Default to Goerli
                 daoType={
                   (dao?.plugins[0].id as PluginTypes) === 'erc20voting.dao.eth'
                     ? 'token-based'
@@ -94,7 +94,9 @@ export const DaoExplorer = () => {
                 onClick={() =>
                   navigate(
                     generatePath(Dashboard, {
-                      network: getSupportedNetworkByChainId(dao.chain || 5),
+                      network: getSupportedNetworkByChainId(
+                        dao.chain || CHAIN_METADATA.goerli.id
+                      ),
                       dao: dao.address,
                     })
                   )
