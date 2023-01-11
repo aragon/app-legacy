@@ -94,7 +94,7 @@ const FlexOne = styled.div.attrs({
 })``;
 
 const Container = styled.div.attrs({
-  className: 'flex flex-col fixed left-0 bottom-0 w-full z-50',
+  className: 'flex flex-col fixed left-0 bottom-0 w-full z-10',
 })``;
 
 const Menu = styled.nav.attrs({

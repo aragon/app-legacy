@@ -1,5 +1,6 @@
 import {DaoListItem, DaoSortBy, SortDirection} from '@aragon/sdk-client';
 import {useEffect, useState} from 'react';
+import {resolveIpfsCid} from '@aragon/sdk-common';
 
 import {ExploreFilter} from 'containers/daoExplorer';
 import {HookData} from 'utils/types';
@@ -43,6 +44,19 @@ export function useDaos(
           direction: SortDirection.DESC,
           limit: count,
         })) || [];
+
+      daoDetails.map(dao => {
+        if (dao.metadata.avatar) {
+          try {
+            const logoCid = resolveIpfsCid(dao.metadata.avatar);
+            dao.metadata.avatar = `https://ipfs.io/ipfs/${logoCid}`;
+          } catch (err) {
+            dao.metadata.avatar = undefined;
+          }
+        } else {
+          dao.metadata.avatar = undefined;
+        }
+      });
       setData(daoDetails);
     }
 

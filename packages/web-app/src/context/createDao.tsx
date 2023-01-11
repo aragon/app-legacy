@@ -265,10 +265,14 @@ const CreateDaoProvider: React.FC = ({children}) => {
     };
 
     if (daoLogo) {
-      const daoLogoBuffer = await readFile(daoLogo as Blob);
-      const logoCID = await client?.ipfs.add(new Uint8Array(daoLogoBuffer));
-      await client?.ipfs.pin(logoCID!);
-      metadata.avatar = `ipfs://${logoCID}`;
+      try {
+        const daoLogoBuffer = await readFile(daoLogo as Blob);
+        const logoCID = await client?.ipfs.add(new Uint8Array(daoLogoBuffer));
+        await client?.ipfs.pin(logoCID!);
+        metadata.avatar = `ipfs://${logoCID}`;
+      } catch (e) {
+        metadata.avatar = undefined;
+      }
     }
 
     try {

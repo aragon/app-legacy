@@ -1,6 +1,5 @@
 import React, {HTMLAttributes, useEffect, useMemo, useState} from 'react';
 import styled from 'styled-components';
-import {resolveIpfsCid} from '@aragon/sdk-common';
 
 export interface AvatarDaoProps extends HTMLAttributes<HTMLElement> {
   daoName: string;
@@ -17,20 +16,9 @@ export const AvatarDao: React.FC<AvatarDaoProps> = ({
   ...props
 }) => {
   const [error, setError] = useState(false);
-  const [logoSrc, setLogoSrc] = useState<string | undefined>();
 
   useEffect(() => {
     setError(false);
-    if (src) {
-      try {
-        const logoCid = resolveIpfsCid(src);
-        setLogoSrc(`https://ipfs.io/ipfs/${logoCid}`);
-      } catch (err) {
-        setLogoSrc(undefined);
-      }
-    } else {
-      setLogoSrc(undefined);
-    }
   }, [src]);
 
   const daoInitials = useMemo(() => {
@@ -39,13 +27,13 @@ export const AvatarDao: React.FC<AvatarDaoProps> = ({
     else return arr[0][0] + arr[1][0];
   }, [daoName]);
 
-  return error || !logoSrc ? (
+  return error || !src ? (
     <FallBackAvatar onClick={onClick} size={size} {...props}>
       <DaoInitials>{daoInitials?.toUpperCase()}</DaoInitials>
     </FallBackAvatar>
   ) : (
     <Avatar
-      src={logoSrc}
+      src={src}
       size={size}
       alt="dao avatar"
       onClick={onClick}
