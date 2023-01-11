@@ -272,7 +272,6 @@ const Dashboard: React.FC = () => {
     alert(t('alert.chip.inputCopied'));
   }
 
-  console.table(dao.metadata.links);
   return (
     <>
       <HeaderWrapper>
