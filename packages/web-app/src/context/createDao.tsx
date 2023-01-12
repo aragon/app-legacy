@@ -329,7 +329,7 @@ const CreateDaoProvider: React.FC = ({children}) => {
     const metadata: IMetadata = {
       name: daoName,
       description: daoSummary,
-      avatar: URL.createObjectURL(daoLogo as Blob),
+      avatar: daoLogo ? URL.createObjectURL(daoLogo as Blob) : undefined,
       links: links.filter(r => r.name && r.url),
     };
 
