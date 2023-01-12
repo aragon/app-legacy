@@ -87,6 +87,7 @@ const DaoSelectMenu: React.FC = () => {
                   key={dao.address}
                   daoAddress={dao.ensDomain}
                   daoName={dao.metadata.name}
+                  daoLogo={dao.metadata.avatar}
                   onClick={() => handleDaoSelect(dao)}
                 />
               );
