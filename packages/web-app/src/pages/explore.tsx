@@ -1,64 +1,35 @@
-import {ListItemAction} from '@aragon/ui-components';
+// TODO: Remove when statistics are available
+/* eslint-disable @typescript-eslint/no-unused-vars */
+
 import React from 'react';
 import 'react-responsive-carousel/lib/styles/carousel.min.css';
-import {generatePath, useNavigate} from 'react-router-dom';
 import styled from 'styled-components';
 
 import {GridLayout} from 'components/layout';
-import {TemporarySection} from 'components/temporary';
 import ActiveProposalsExplore from 'containers/activeProposalsExplore';
 import Carousel from 'containers/carousel';
 import {DaoExplorer} from 'containers/daoExplorer';
 import Hero from 'containers/hero';
-import {Dashboard} from 'utils/paths';
 import {i18n} from '../../i18n.config';
 
 const Explore: React.FC = () => {
-  const navigate = useNavigate();
-
   return (
     <>
       <Hero />
       <GridLayout>
         <ContentWrapper>
           <Carousel />
-          <StatisticsContainer>
+          {/* Uncomment when statistics are available */}
+          {/* <StatisticsContainer>
             {statistics.map((s: Stats) => (
               <Statistic key={s.statKey}>
                 <StatisticValue>{s.statValue}</StatisticValue>
                 <StatisticKey>{s.statKey}</StatisticKey>
               </Statistic>
             ))}
-          </StatisticsContainer>
+          </StatisticsContainer> */}
           <DaoExplorer />
           <ActiveProposalsExplore />
-          <div className="h-20" />
-          <TemporarySection purpose="It allows you to navigate to a mock dao to test daos URLs.">
-            <ListItemAction
-              title={'ERC20Voting DAO'}
-              subtitle={'Görli Testnet'}
-              onClick={() => {
-                navigate(
-                  generatePath(Dashboard, {
-                    network: 'goerli',
-                    dao: '0x00d88af3a7a824de1eb59bebc2bd8d5059d5dde2',
-                  })
-                );
-              }}
-            />
-            <ListItemAction
-              title={'AddressList Voting DAO'}
-              subtitle={'Görli Testnet'}
-              onClick={() => {
-                navigate(
-                  generatePath(Dashboard, {
-                    network: 'goerli',
-                    dao: '0x60A4A30812f66852814Fae1899eA9baD08E6C146',
-                  })
-                );
-              }}
-            />
-          </TemporarySection>
         </ContentWrapper>
       </GridLayout>
     </>

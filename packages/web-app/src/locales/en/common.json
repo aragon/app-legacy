@@ -715,7 +715,7 @@
     },
     "build": {
       "title": "Build faster",
-      "description": "Build something something on open-source infrastructure with governance plugins.",
+      "description": "Build something on open-source infrastructure with governance plugins.",
       "actionLabel": "Coming soon"
     },
     "404": {
