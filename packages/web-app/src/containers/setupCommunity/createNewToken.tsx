@@ -5,6 +5,7 @@ import {useTranslation} from 'react-i18next';
 import {Controller, useFormContext} from 'react-hook-form';
 import AddWallets from 'components/addWallets';
 import {alphaNumericValidator} from 'utils/validators';
+import {SelectEligibility} from 'components/selectEligibility';
 
 const CreateNewToken: React.FC = () => {
   const {t} = useTranslation();
@@ -100,6 +101,15 @@ const CreateNewToken: React.FC = () => {
           mode="neutral"
         />
         <AddWallets />
+      </FormItem>
+      <FormItem>
+        <DescriptionContainer>
+          <Label
+            label={t('labels.proposalCreation')}
+            helpText={t('createDAO.step3.proposalCreationHelpertext')}
+          />
+        </DescriptionContainer>
+        <SelectEligibility />
       </FormItem>
     </>
   );

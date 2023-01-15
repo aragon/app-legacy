@@ -111,6 +111,7 @@
     "tokenSymbol": "Symbol",
     "supply": "Supply",
     "distributeTokens": "Distribute Tokens",
+    "proposalCreation": "Proposal Creation",
     "mintToken": "Mint your token",
     "duplicateAction": "Duplicate Action",
     "resetAction": "Reset Action",
@@ -543,11 +544,20 @@
       "tokenContractSubtitlePart1": "Copy the contract address directly from the ",
       "tokenContractSubtitlePart2": "This way you can ensure that the address is correct.",
       "distributeTokensHelpertext": "Add the wallets of your core team and DAO treasury here. If you don't plan on doing an initial distribution, just put your wallet and all tokens will go there. If you need help distributing tokens, read our guide.",
+      "proposalCreationHelpertext": "Specify who is permitted to create proposals and what is the minimum token requirement.",
       "distributionWalletAlertText": "Your connected wallet was automatically added to the distribution list. You can remove it if you like.",
       "whiteListWalletAlertText": "Your connected wallet got automatically added to the list.",
       "createTokenHelptext": " Define the token details and distribute tokens to a core team and DAO treasury. For more on token minting best practices, ",
       "createTokenHelplink": "read this guide.",
-      "membership": "Who can participate in governance?"
+      "membership": "Who can participate in governance?",
+      "eligibility": {
+        "optionTitle": "Who is eligible?",
+        "inputTitle": "Minimum Tokens Required",
+        "tokenHolders.title": "Token Holders",
+        "tokenHolders.description": "Only token holders with an certain amount are eligible to create proposals.",
+        "anyone.title": "Anyone",
+        "anyone.description": "Only a wallet is required to create a proposal."
+      }
     },
     "step4": {
       "label": "Step 4",
