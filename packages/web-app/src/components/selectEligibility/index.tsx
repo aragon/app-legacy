@@ -1,99 +1,99 @@
 import React from 'react';
 import {useTranslation} from 'react-i18next';
-import {Controller, useFormContext} from 'react-hook-form';
+import {Controller, useFormContext, useWatch} from 'react-hook-form';
 import styled from 'styled-components';
 
 import {CheckboxListItem, NumberInput} from '@aragon/ui-components';
+import {AlertInline} from '@aragon/ui-components';
 
 export const SelectEligibility = () => {
-  const {control, getValues} = useFormContext();
+  const {control, getValues, resetField} = useFormContext();
   const {t} = useTranslation();
+  const {tokenTotalSupply} = getValues();
+  const eligibilityType = useWatch({name: 'eligibilityType', control});
+
+  function eligibilityValidator(value: string) {
+    if (value === '') return t('errors.required.amount');
+    if (value === '0') return t('errors.requiredTokenAddressZero');
+    if (tokenTotalSupply)
+      if (Number(value) > tokenTotalSupply)
+        return t('errors.biggerThanTotalSupply');
+    return true;
+  }
 
   return (
-    <Controller
-      name="reviewCheck.blockchain"
-      control={control}
-      defaultValue={false}
-      rules={{
-        required: t('errors.required.recipient'),
-      }}
-      render={({field: {onChange, value}}) => (
-        <Container>
-          <TitleContainer>
-            <DoTitle>{t('createDAO.step3.eligibility.optionTitle')}</DoTitle>
-            <DiTitle>{t('createDAO.step3.eligibility.inputTitle')}</DiTitle>
-          </TitleContainer>
-          <DlContainer>
-            <Dl>
-              <DoContainer>
-                <CheckboxListItem
-                  label={t('createDAO.step3.eligibility.tokenHolders.title')}
-                  helptext={t(
-                    'createDAO.step3.eligibility.tokenHolders.description'
-                  )}
-                  multiSelect={false}
-                  onClick={() => null}
-                  {...(value === 'token' ? {type: 'active'} : {})}
-                />
-              </DoContainer>
-              <DiContainer>
-                <NumberInput value={'500'} view="bigger" />
-              </DiContainer>
-            </Dl>
-            <Dl>
-              <DoContainer>
-                <CheckboxListItem
-                  label={t('createDAO.step3.eligibility.anyone.title')}
-                  helptext={t('createDAO.step3.eligibility.anyone.description')}
-                  onClick={() => null}
-                  multiSelect={false}
-                  {...(value === 'wallet' ? {type: 'active'} : {})}
-                />
-              </DoContainer>
-              <DiContainer></DiContainer>
-            </Dl>
-          </DlContainer>
-        </Container>
-      )}
-    />
+    <Container>
+      <Controller
+        name="eligibilityType"
+        control={control}
+        defaultValue={'token'}
+        render={({field: {onChange, value}}) => (
+          <OptionsContainers>
+            <OptionsTitle>
+              {t('createDAO.step3.eligibility.optionTitle')}
+            </OptionsTitle>
+            <CheckboxListItem
+              label={t('createDAO.step3.eligibility.tokenHolders.title')}
+              helptext={t(
+                'createDAO.step3.eligibility.tokenHolders.description'
+              )}
+              multiSelect={false}
+              onClick={() => {
+                onChange('token');
+              }}
+              {...(value === 'token' ? {type: 'active'} : {})}
+            />
+            <CheckboxListItem
+              label={t('createDAO.step3.eligibility.anyone.title')}
+              helptext={t('createDAO.step3.eligibility.anyone.description')}
+              onClick={() => {
+                onChange('anyone');
+                resetField('eligibilityTokenAmount');
+              }}
+              multiSelect={false}
+              {...(value === 'anyone' ? {type: 'active'} : {})}
+            />
+          </OptionsContainers>
+        )}
+      />
+      <Controller
+        name="eligibilityTokenAmount"
+        control={control}
+        defaultValue={0}
+        rules={{
+          validate: value => eligibilityValidator(value),
+        }}
+        render={({field: {onChange, value}, fieldState: {error}}) => (
+          <OptionsContainers>
+            <OptionsTitle>
+              {t('createDAO.step3.eligibility.inputTitle')}
+            </OptionsTitle>
+            <NumberInput
+              value={value}
+              view="bigger"
+              onChange={onChange}
+              max={tokenTotalSupply}
+              disabled={eligibilityType === 'anyone'}
+            />
+            {error?.message && (
+              <AlertInline label={error.message} mode="critical" />
+            )}
+          </OptionsContainers>
+        )}
+      />
+    </Container>
   );
 };
 
 const Container = styled.div.attrs({
-  className: 'p-2 tablet:p-3 space-y-1 rounded-xl bg-ui-0',
-})``;
-
-const Dl: React.FC = ({children}) => (
-  <DlContainer>
-    <ListItemContainer>{children}</ListItemContainer>
-  </DlContainer>
-);
-
-const DoTitle = styled.h2.attrs({
-  className: 'ft-text-base font-bold text-ui-800',
-})``;
-
-const DiTitle = styled.h2.attrs({
-  className: 'ft-text-base font-bold text-ui-800 tablet:w-1/2',
-})``;
-
-const TitleContainer = styled.div.attrs({
-  className: 'flex items-center justify-between',
-})``;
-
-const DoContainer = styled.dt.attrs({
-  className: 'font-bold text-ui-800',
-})``;
-
-const DiContainer = styled.dd.attrs({
-  className: 'flex-shrink-0 tablet:w-1/2 text-ui-600',
-})``;
-
-const DlContainer = styled.dl.attrs({
-  className: 'space-y-1',
-})``;
-
-const ListItemContainer = styled.div.attrs({
   className:
-    'tablet:flex justify-between tablet:space-x-2 space-y-0.5 tablet:space-y-0',
+    'tablet:flex p-2 tablet:p-3 space-y-1 tablet:space-y-0 rounded-xl bg-ui-0 tablet:space-x-3 space-x-0',
+})``;
+
+const OptionsContainers = styled.div.attrs({
+  className: 'space-y-1 tablet:w-1/2',
+})``;
+
+const OptionsTitle = styled.h2.attrs({
+  className: 'ft-text-base font-bold text-ui-800',
 })``;
