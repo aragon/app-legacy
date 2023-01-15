@@ -195,7 +195,7 @@ const ConfigureCommunity: React.FC = () => {
               fieldState: {error},
             }) => (
               <>
-                <ApprovalContainer>
+                <ParticipationContainer>
                   <ApprovalWrapper>
                     <div className="w-1/3">
                       <NumberInput
@@ -211,16 +211,25 @@ const ConfigureCommunity: React.FC = () => {
                     <LinearProgressContainer>
                       <LinearProgress
                         max={tokenTotalSupply}
-                        value={Math.round(tokenTotalSupply * (value / 100))}
+                        value={Math.ceil(tokenTotalSupply * (value / 100))}
                       />
 
                       <ProgressInfo2>
                         <p
                           className="font-bold text-right text-primary-500"
-                          style={{flexBasis: `${value}%`}}
+                          style={{
+                            flexBasis: `${
+                              (Math.ceil(tokenTotalSupply * (value / 100)) /
+                                tokenTotalSupply) *
+                              100
+                            }%`,
+                          }}
                         >
-                          {value !== 100 ? '≥' : ''}
-                          {Math.round(tokenTotalSupply * (value / 100))}
+                          {Math.ceil(tokenTotalSupply * (value / 100)) <
+                          tokenTotalSupply
+                            ? '≥'
+                            : ''}
+                          {Math.ceil(tokenTotalSupply * (value / 100))}
                         </p>
 
                         <p className="flex-shrink-0 text-ui-600">
@@ -229,7 +238,7 @@ const ConfigureCommunity: React.FC = () => {
                       </ProgressInfo2>
                     </LinearProgressContainer>
                   </ApprovalWrapper>
-                </ApprovalContainer>
+                </ParticipationContainer>
 
                 {error?.message && (
                   <AlertInline label={error.message} mode="critical" />
@@ -441,6 +450,10 @@ const TimeLabel = styled.span.attrs({
 
 const ApprovalContainer = styled.div.attrs({
   className: 'flex items-center p-3 space-x-3 rounded-xl bg-ui-0',
+})``;
+
+const ParticipationContainer = styled.div.attrs({
+  className: 'p-3 space-x-3 rounded-xl bg-ui-0',
 })``;
 
 const LinearProgressContainer = styled.div.attrs({
