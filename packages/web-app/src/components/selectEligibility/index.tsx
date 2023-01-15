@@ -14,12 +14,23 @@ export const SelectEligibility = () => {
 
   function eligibilityValidator(value: string) {
     if (value === '') return t('errors.required.amount');
+    /**
+     * Prevent user from entering 0 because It will makes any wallet eligible
+     */
     if (value === '0') return t('errors.requiredTokenAddressZero');
+    /**
+     * Prevent user from entering values more than total supply
+     */
     if (tokenTotalSupply)
       if (Number(value) > tokenTotalSupply)
         return t('errors.biggerThanTotalSupply');
     return true;
   }
+
+  /**
+   * Current Types like token or anyone are dummies and may refactor later
+   * according to SDK method requirements
+   */
 
   return (
     <Container>
