@@ -6,6 +6,9 @@ import {IconAdd, IconRemove} from '../icons';
 export type NumberInputProps = React.InputHTMLAttributes<HTMLInputElement> & {
   /** Changes a input's color schema */
   mode?: 'default' | 'success' | 'warning' | 'critical';
+  /**
+   * change the input view with corresponding symbols
+   */
   view?: 'default' | 'percentage' | 'bigger';
   disabled?: boolean;
   width?: number;
@@ -46,6 +49,7 @@ export const NumberInput: React.FC<NumberInputProps> = ({
     onChange?.(event);
   };
 
+  // input width based on view
   const inputWidth: {
     [value: string]: string;
   } = {
@@ -54,6 +58,7 @@ export const NumberInput: React.FC<NumberInputProps> = ({
     default: 'w-full',
   };
 
+  // input placeholder based on view
   const placeholder: {
     [value: string]: string;
   } = {
@@ -62,6 +67,7 @@ export const NumberInput: React.FC<NumberInputProps> = ({
     default: '0',
   };
 
+  // input range based on view
   const inputRange: {
     [value: string]: {
       min?: number;
