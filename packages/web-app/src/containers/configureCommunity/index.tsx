@@ -120,7 +120,7 @@ const ConfigureCommunity: React.FC = () => {
             fieldState: {error},
           }) => (
             <>
-              <div className="flex items-center p-3 space-x-3 rounded-xl bg-ui-0">
+              <ApprovalContainer>
                 <div className="w-1/3">
                   <NumberInput
                     name={name}
@@ -139,10 +139,10 @@ const ConfigureCommunity: React.FC = () => {
                     className="mr-1.5 w-6"
                   />
 
-                  <div className="flex relative flex-1 items-center">
+                  <LinearProgressContainer>
                     <LinearProgress max={100} value={value} />
-                    <div className="absolute left-1/2 w-1 h-2.5 border-r-2 border-l-2 transform -translate-x-1/2 bg-ui-300 border-ui-0" />
-                    <div className="flex absolute -top-2.5 justify-between space-x-0.5 w-full text-sm">
+                    <ProgressBarTick />
+                    <ProgressInfo1>
                       <p
                         className="font-bold text-right text-primary-500"
                         style={{flexBasis: `${value}%`}}
@@ -150,12 +150,12 @@ const ConfigureCommunity: React.FC = () => {
                         {value !== '100' ? '≥' : ''}
                         {value}%
                       </p>
-                    </div>
-                  </div>
+                    </ProgressInfo1>
+                  </LinearProgressContainer>
 
                   <Tag label={t('labels.no')} className="ml-1.5 w-6" />
                 </div>
-              </div>
+              </ApprovalContainer>
 
               {error?.message && (
                 <AlertInline label={error.message} mode="critical" />
@@ -195,7 +195,7 @@ const ConfigureCommunity: React.FC = () => {
               fieldState: {error},
             }) => (
               <>
-                <div className="p-3 space-x-3 rounded-xl bg-ui-0">
+                <ApprovalContainer>
                   <ApprovalWrapper>
                     <div className="w-1/3">
                       <NumberInput
@@ -208,13 +208,13 @@ const ConfigureCommunity: React.FC = () => {
                       />
                     </div>
 
-                    <div className="flex relative flex-1 items-center">
+                    <LinearProgressContainer>
                       <LinearProgress
                         max={tokenTotalSupply}
                         value={Math.round(tokenTotalSupply * (value / 100))}
                       />
 
-                      <div className="flex absolute -top-1 justify-between space-x-0.5 w-full text-sm">
+                      <ProgressInfo2>
                         <p
                           className="font-bold text-right text-primary-500"
                           style={{flexBasis: `${value}%`}}
@@ -226,10 +226,10 @@ const ConfigureCommunity: React.FC = () => {
                         <p className="flex-shrink-0 text-ui-600">
                           of {tokenTotalSupply} Tokens
                         </p>
-                      </div>
-                    </div>
+                      </ProgressInfo2>
+                    </LinearProgressContainer>
                   </ApprovalWrapper>
-                </div>
+                </ApprovalContainer>
 
                 {error?.message && (
                   <AlertInline label={error.message} mode="critical" />
@@ -437,6 +437,28 @@ const TimeLabelWrapper = styled.div.attrs({
 
 const TimeLabel = styled.span.attrs({
   className: 'text-sm font-bold text-ui-800',
+})``;
+
+const ApprovalContainer = styled.div.attrs({
+  className: 'flex items-center p-3 space-x-3 rounded-xl bg-ui-0',
+})``;
+
+const LinearProgressContainer = styled.div.attrs({
+  className: 'flex relative flex-1 items-center',
+})``;
+
+const ProgressBarTick = styled.div.attrs({
+  className:
+    'absolute left-1/2 w-1 h-2.5 border-r-2 border-l-2 transform -translate-x-1/2 bg-ui-300 border-ui-0',
+})``;
+
+const ProgressInfo1 = styled.div.attrs({
+  className:
+    'flex absolute -top-2.5 justify-between space-x-0.5 w-full text-sm',
+})``;
+
+const ProgressInfo2 = styled.div.attrs({
+  className: 'flex absolute -top-1 justify-between space-x-0.5 w-full text-sm',
 })``;
 
 function getDaysHoursMins(value: number, period: 'hours' | 'mins' = 'mins') {
