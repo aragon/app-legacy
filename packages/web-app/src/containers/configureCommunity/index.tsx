@@ -142,7 +142,7 @@ const ConfigureCommunity: React.FC = () => {
                       onBlur={onBlur}
                       onChange={onChange}
                       placeholder={t('placeHolders.daoName')}
-                      percentage={true}
+                      view="percentage"
                     />
                   </FormWrapper>
                   <AlertInline
@@ -200,7 +200,7 @@ const ConfigureCommunity: React.FC = () => {
                       onBlur={onBlur}
                       onChange={onChange}
                       placeholder={t('placeHolders.daoName')}
-                      percentage={true}
+                      view="percentage"
                     />
                   </FormWrapper>
                   <AlertInline
@@ -251,7 +251,7 @@ const ConfigureCommunity: React.FC = () => {
                   onBlur={onBlur}
                   onChange={onChange}
                   placeholder={t('placeHolders.daoName')}
-                  percentage
+                  view="percentage"
                 />
               </FormWrapper>
               {error?.message && (

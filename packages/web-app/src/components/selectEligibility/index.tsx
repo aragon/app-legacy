@@ -3,7 +3,6 @@ import {useTranslation} from 'react-i18next';
 import {Controller, useFormContext} from 'react-hook-form';
 import styled from 'styled-components';
 
-import {DescriptionListContainer} from 'components/descriptionList';
 import {CheckboxListItem, NumberInput} from '@aragon/ui-components';
 
 export const SelectEligibility = () => {
@@ -26,7 +25,7 @@ export const SelectEligibility = () => {
           </TitleContainer>
           <DlContainer>
             <Dl>
-              <Do>
+              <DoContainer>
                 <CheckboxListItem
                   label={t('createDAO.step3.eligibility.tokenHolders.title')}
                   helptext={t(
@@ -36,13 +35,13 @@ export const SelectEligibility = () => {
                   onClick={() => null}
                   {...(value === 'token' ? {type: 'active'} : {})}
                 />
-              </Do>
-              <Di>
-                <NumberInput value={'≥500'} />
-              </Di>
+              </DoContainer>
+              <DiContainer>
+                <NumberInput value={'500'} view="bigger" />
+              </DiContainer>
             </Dl>
             <Dl>
-              <Do>
+              <DoContainer>
                 <CheckboxListItem
                   label={t('createDAO.step3.eligibility.anyone.title')}
                   helptext={t('createDAO.step3.eligibility.anyone.description')}
@@ -50,8 +49,8 @@ export const SelectEligibility = () => {
                   multiSelect={false}
                   {...(value === 'wallet' ? {type: 'active'} : {})}
                 />
-              </Do>
-              <Di></Di>
+              </DoContainer>
+              <DiContainer></DiContainer>
             </Dl>
           </DlContainer>
         </Container>
@@ -61,7 +60,7 @@ export const SelectEligibility = () => {
 };
 
 const Container = styled.div.attrs({
-  className: 'p-2 tablet:p-3 space-y-3 rounded-xl bg-ui-0',
+  className: 'p-2 tablet:p-3 space-y-1 rounded-xl bg-ui-0',
 })``;
 
 const Dl: React.FC = ({children}) => (
@@ -69,10 +68,6 @@ const Dl: React.FC = ({children}) => (
     <ListItemContainer>{children}</ListItemContainer>
   </DlContainer>
 );
-
-const Do: React.FC = ({children}) => <DoContainer>{children}</DoContainer>;
-
-const Di: React.FC = ({children}) => <DiContainer>{children}</DiContainer>;
 
 const DoTitle = styled.h2.attrs({
   className: 'ft-text-base font-bold text-ui-800',
@@ -95,7 +90,7 @@ const DiContainer = styled.dd.attrs({
 })``;
 
 const DlContainer = styled.dl.attrs({
-  className: 'space-y-2',
+  className: 'space-y-1',
 })``;
 
 const ListItemContainer = styled.div.attrs({

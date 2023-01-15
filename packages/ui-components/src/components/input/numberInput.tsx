@@ -6,9 +6,9 @@ import {IconAdd, IconRemove} from '../icons';
 export type NumberInputProps = React.InputHTMLAttributes<HTMLInputElement> & {
   /** Changes a input's color schema */
   mode?: 'default' | 'success' | 'warning' | 'critical';
+  view?: 'default' | 'percentage' | 'bigger';
   disabled?: boolean;
   width?: number;
-  percentage?: boolean;
   value: string;
   /** Determines whether decimal values are accepted */
   includeDecimal?: boolean;
@@ -16,9 +16,9 @@ export type NumberInputProps = React.InputHTMLAttributes<HTMLInputElement> & {
 
 export const NumberInput: React.FC<NumberInputProps> = ({
   mode = 'default',
+  view = 'default',
   disabled,
   width,
-  percentage = false,
   value,
   includeDecimal,
   onChange,
@@ -46,6 +46,38 @@ export const NumberInput: React.FC<NumberInputProps> = ({
     onChange?.(event);
   };
 
+  const inputWidth: {
+    [value: string]: string;
+  } = {
+    bigger: 'w-8',
+    percentage: 'w-3.5',
+    default: 'w-full',
+  };
+
+  const placeholder: {
+    [value: string]: string;
+  } = {
+    bigger: '≥0',
+    percentage: '0%',
+    default: '0',
+  };
+
+  const inputRange: {
+    [value: string]: {
+      min?: number;
+      max?: number;
+    };
+  } = {
+    bigger: {
+      min: 0,
+    },
+    percentage: {
+      min: 0,
+      max: 100,
+    },
+    default: {},
+  };
+
   return (
     <Container data-testid="number-input" {...{mode, disabled, width}}>
       <StyledIconButton
@@ -58,14 +90,18 @@ export const NumberInput: React.FC<NumberInputProps> = ({
         onClick={() => handleStepperChange('down')}
       />
       <InputWrapper>
+        {view === 'bigger' && value !== '' && (
+          <LeftAdornment disabled={disabled}>≥</LeftAdornment>
+        )}
         <StyledNumberInput
           {...props}
           {...{value}}
-          {...(percentage && {percentage, min: 0, max: 100})}
+          {...inputRange[view]}
+          inputWidth={inputWidth[view]}
           ref={inputRef}
           disabled={disabled}
           type={'number'}
-          placeholder={percentage ? '0 %' : '0'}
+          placeholder={placeholder[view]}
           onChange={handleChange}
           onKeyDown={handleKeyDown}
           onWheel={e => {
@@ -73,7 +109,9 @@ export const NumberInput: React.FC<NumberInputProps> = ({
             (e.target as HTMLInputElement).blur();
           }}
         />
-        {percentage && value !== '' && <Percent disabled={disabled}>%</Percent>}
+        {view === 'percentage' && value !== '' && (
+          <Percent disabled={disabled}>%</Percent>
+        )}
       </InputWrapper>
       <StyledIconButton
         name="up"
@@ -125,10 +163,9 @@ const InputWrapper = styled.div.attrs({
   className: 'flex justify-center w-4/5',
 })``;
 
-export type StyledNumberInputProps = Pick<
-  NumberInputProps,
-  'disabled' | 'percentage'
->;
+export type StyledNumberInputProps = Pick<NumberInputProps, 'disabled'> & {
+  inputWidth: string;
+};
 
 export type PercentProps = Pick<NumberInputProps, 'disabled'>;
 
@@ -141,11 +178,20 @@ const Percent = styled.label.attrs(({disabled}: PercentProps) => {
   };
 })<PercentProps>``;
 
+const LeftAdornment = styled.label.attrs(({disabled}: PercentProps) => {
+  const className: string | undefined = `${
+    disabled ? 'text-ui-300' : 'text-ui-600'
+  }`;
+  return {
+    className,
+  };
+})<PercentProps>``;
+
 const StyledNumberInput = styled.input.attrs(
-  ({disabled, percentage}: StyledNumberInputProps) => {
+  ({disabled, inputWidth}: StyledNumberInputProps) => {
     const className: string | undefined = `${
       disabled ? 'text-ui-300' : 'text-ui-600'
-    } bg-transparent margin-0 ${percentage ? 'w-3.5' : 'w-full'}`;
+    } bg-transparent margin-0 ${inputWidth}`;
     return {
       className,
     };
