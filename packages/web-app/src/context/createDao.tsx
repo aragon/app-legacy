@@ -169,8 +169,8 @@ const CreateDaoProvider: React.FC = ({children}) => {
         parseInt(durationHours),
         parseInt(durationMinutes)
       ),
-      minTurnout: parseInt(minimumParticipation) / 100,
-      minSupport: parseInt(minimumApproval) / 100,
+      minParticipation: parseInt(minimumParticipation) / 100,
+      supportThreshold: parseInt(minimumApproval) / 100,
     };
   }, [getValues]);
 
@@ -226,8 +226,8 @@ const CreateDaoProvider: React.FC = ({children}) => {
                 'tuple(address[],uint256[])',
               ],
               [
-                BigNumber.from(encodeRatio(pluginSettings.minTurnout, 2)),
-                BigNumber.from(encodeRatio(pluginSettings.minSupport, 2)),
+                BigNumber.from(encodeRatio(pluginSettings.minParticipation, 2)),
+                BigNumber.from(encodeRatio(pluginSettings.supportThreshold, 2)),
                 BigNumber.from(pluginSettings.minDuration),
                 [constants.AddressZero, erc20Params?.name, erc20Params?.symbol],
                 mintingConfig,
@@ -244,8 +244,8 @@ const CreateDaoProvider: React.FC = ({children}) => {
             defaultAbiCoder.encode(
               ['uint64', 'uint64', 'uint64', 'address[]'],
               [
-                BigNumber.from(encodeRatio(pluginSettings.minTurnout, 2)),
-                BigNumber.from(encodeRatio(pluginSettings.minSupport, 2)),
+                BigNumber.from(encodeRatio(pluginSettings.minParticipation, 2)),
+                BigNumber.from(encodeRatio(pluginSettings.supportThreshold, 2)),
                 BigNumber.from(pluginSettings.minDuration),
                 getAddresslistPluginParams(),
               ]

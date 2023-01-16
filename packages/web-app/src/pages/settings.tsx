@@ -201,16 +201,16 @@ const Settings: React.FC = () => {
             <Dt>{t('labels.minimumParticipation')}</Dt>
             {isErc20Plugin ? (
               <Dd>
-                {Math.round(daoSettings.minTurnout * 100)}% (
-                {daoSettings.minTurnout * tokenSupply} {daoToken?.symbol})
+                {Math.round(daoSettings.minParticipation * 100)}% (
+                {daoSettings.minParticipation * tokenSupply} {daoToken?.symbol})
               </Dd>
             ) : (
-              <Dd>{Math.round(daoSettings.minTurnout * 100)}%</Dd>
+              <Dd>{Math.round(daoSettings.minParticipation * 100)}%</Dd>
             )}
           </Dl>
           <Dl>
             <Dt>{t('labels.minimumApproval')}</Dt>
-            <Dd>{Math.round(daoSettings?.minSupport * 100)}%</Dd>
+            <Dd>{Math.round(daoSettings?.supportThreshold * 100)}%</Dd>
           </Dl>
           <Dl>
             <Dt>{t('labels.minimumDuration')}</Dt>
