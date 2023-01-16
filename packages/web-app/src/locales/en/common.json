@@ -564,8 +564,10 @@
       "hours": "Hours",
       "minutes": "Minutes",
       "alerts": {
-        "minimumApprovalAlert": "{{amount}} {{symbol}} tokens",
-        "minimumParticipationAlert": "Rounded up to {{percentage}}% equals {{walletCount}} Wallets have to vote"
+        "minimumApprovalAlert": "of {{amount}} Tokens",
+        "minimumParticipationAlert": "Rounded up to {{percentage}}% equals {{walletCount}} Wallets have to vote",
+        "minority": "Proposals could be approved by minority rather than majority",
+        "majority": "Proposal will be approved by majority"
       }
     },
     "review": {

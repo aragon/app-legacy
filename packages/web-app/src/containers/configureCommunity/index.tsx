@@ -162,12 +162,12 @@ const ConfigureCommunity: React.FC = () => {
               )}
               {value < 50 ? (
                 <AlertInline
-                  label="Proposals could be approved by minority rather than majority"
+                  label={t('createDAO.step4.alerts.minority')}
                   mode="warning"
                 />
               ) : (
                 <AlertInline
-                  label="Proposal will be approved by majority"
+                  label={t('createDAO.step4.alerts.majority')}
                   mode="success"
                 />
               )}
@@ -233,7 +233,9 @@ const ConfigureCommunity: React.FC = () => {
                         </p>
 
                         <p className="flex-shrink-0 text-ui-600">
-                          of {tokenTotalSupply} Tokens
+                          {t('createDAO.step4.alerts.minimumApprovalAlert', {
+                            amount: Math.round(tokenTotalSupply),
+                          })}
                         </p>
                       </ProgressInfo2>
                     </LinearProgressContainer>
