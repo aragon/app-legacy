@@ -25,7 +25,7 @@ export function usePluginSettings(
       try {
         setIsLoading(true);
 
-        const settings = await client?.methods.getSettings(pluginAddress);
+        const settings = await client?.methods.getVotingSettings(pluginAddress);
         if (settings) setData(settings);
       } catch (err) {
         console.error(err);

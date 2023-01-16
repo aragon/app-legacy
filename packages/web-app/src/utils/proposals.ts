@@ -7,12 +7,14 @@
 
 import {
   AddressListProposal,
+  AddressListProposalListItem,
   AddressListProposalResult,
   Erc20TokenDetails,
   ICreateProposalParams,
   ProposalMetadata,
   ProposalStatus,
   TokenVotingProposal,
+  TokenVotingProposalListItem,
   TokenVotingProposalResult,
   VoteValues,
   VotingSettings,
@@ -38,7 +40,10 @@ export const MappedVotes: {[key in VoteValues]: VoterType['option']} = {
 
 // this type guard will need to evolve when there are more types
 export function isTokenBasedProposal(
-  proposal: DetailedProposal
+  proposal:
+    | DetailedProposal
+    | TokenVotingProposalListItem
+    | AddressListProposalListItem
 ): proposal is TokenVotingProposal {
   return 'token' in proposal;
 }
@@ -50,7 +55,10 @@ export function isErc20Token(
 }
 
 export function isErc20VotingProposal(
-  proposal: DetailedProposal
+  proposal:
+    | DetailedProposal
+    | TokenVotingProposalListItem
+    | AddressListProposalListItem
 ): proposal is TokenVotingProposal & {token: Erc20TokenDetails} {
   return isTokenBasedProposal(proposal) && isErc20Token(proposal.token);
 }
@@ -523,17 +531,16 @@ export type MapToDetailedProposalParams = {
   proposalId: string;
 };
 
+type CachedProposal = Omit<
+  DetailedProposal,
+  'creationBlockNumber' | 'executionBlockNumber' | 'executionDate'
+>;
 /**
  * Map newly created proposal to Detailed proposal that can be cached and shown
  * @param params necessary parameters to map newly created proposal to augmented DetailedProposal
  * @returns Detailed proposal, ready for caching and displaying
  */
-export function mapToDetailedProposal(
-  params: MapToDetailedProposalParams
-): Omit<
-  DetailedProposal,
-  'creationBlockNumber' | 'executionBlockNumber' | 'executionDate'
-> {
+export function mapToDetailedProposal(params: MapToDetailedProposalParams) {
   // common properties
   const commonProps = {
     actions: params.proposalParams.actions || [],
@@ -569,14 +576,14 @@ export function mapToDetailedProposal(
       totalVotingWeight: params.totalVotingWeight as bigint,
       usedVotingWeight: BigInt(0),
       result: {yes: BigInt(0), no: BigInt(0), abstain: BigInt(0)},
-    } as unknown as DetailedProposal;
+    } as CachedProposal;
   } else {
     // addressList
     return {
       ...commonProps,
       totalVotingWeight: params.totalVotingWeight as number,
       result: {yes: 0, no: 0, abstain: 0},
-    };
+    } as CachedProposal;
   }
 }
 

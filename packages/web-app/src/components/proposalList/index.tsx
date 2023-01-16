@@ -15,6 +15,7 @@ import {i18n} from '../../../i18n.config';
 import {trackEvent} from 'services/analytics';
 import {formatUnits} from 'utils/library';
 import {abbreviateTokenAmount} from 'utils/tokens';
+import {isErc20VotingProposal} from 'utils/proposals';
 
 type ProposalListProps = {
   proposals: Array<Proposal>;
@@ -69,14 +70,16 @@ export function mapToCardViewProposal(
   proposals: Array<Proposal>,
   network: SupportedNetworks
 ): Array<CardViewProposal> {
-  return proposals.map(({metadata, result, ...proposal}) => {
+  return proposals.map(proposal => {
     const totalVoteCount =
-      Number(result.abstain) + Number(result.yes) + Number(result.no);
+      Number(proposal.result.abstain) +
+      Number(proposal.result.yes) +
+      Number(proposal.result.no);
 
     return {
       id: proposal.id,
-      title: metadata.title,
-      description: metadata.summary,
+      title: proposal.metadata.title,
+      description: proposal.metadata.summary,
       process: proposal.status.toLowerCase() as CardProposalProps['process'],
       explorer: CHAIN_METADATA[network].explorer,
       publisherAddress: proposal.creatorAddress,
@@ -93,23 +96,27 @@ export function mapToCardViewProposal(
       ...(proposal.status.toLowerCase() === 'active'
         ? {
             voteProgress: relativeVoteCount(
-              Number(result.yes) || 0,
+              Number(proposal.result.yes) || 0,
               totalVoteCount
             ),
             voteLabel: i18n.t('labels.yes'),
-            tokenAmount:
-              'token' in proposal
-                ? abbreviateTokenAmount(
+            ...(isErc20VotingProposal(proposal)
+              ? {
+                  tokenSymbol: proposal.token.symbol,
+                  tokenAmount: abbreviateTokenAmount(
                     parseFloat(
                       Number(
-                        formatUnits(result.yes, proposal.token.decimals)
+                        formatUnits(
+                          proposal.result.yes,
+                          proposal.token.decimals
+                        )
                       ).toFixed(2)
                     ).toString()
-                  )
-                : totalVoteCount.toString(),
-            ...('token' in proposal
-              ? {tokenSymbol: proposal.token.symbol}
-              : {}),
+                  ),
+                }
+              : {
+                  tokenAmount: totalVoteCount.toString(),
+                }),
           }
         : {}),
     };

@@ -231,8 +231,8 @@ const ProposeSettingWrapper: React.FC<Props> = ({
       );
       const settingsParams: VotingSettings = {
         minDuration: durationInSeconds,
-        minSupport: Big(minimumApproval).div(100).toNumber(),
-        minTurnout: Big(minimumParticipation).div(100).toNumber(),
+        supportThreshold: Big(minimumApproval).div(100).toNumber(),
+        minParticipation: Big(minimumParticipation).div(100).toNumber(),
       };
       actions.push(
         Promise.resolve(
@@ -384,7 +384,7 @@ const ProposeSettingWrapper: React.FC<Props> = ({
           case ProposalCreationSteps.DONE: {
             //TODO: replace with step.proposal id when SDK returns proper format
             const prefixedId = prefixProposalIdWithPlgnAdr(
-              step.proposalId,
+              step.proposalId.toString(),
               pluginAddress
             );
 

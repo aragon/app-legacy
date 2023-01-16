@@ -1,8 +1,8 @@
 import {useApolloClient} from '@apollo/client';
 import {
   ClientAddressList,
-  TokenVotingClient,
   DaoAction,
+  TokenVotingClient,
   TokenVotingProposal,
 } from '@aragon/sdk-client';
 import {
@@ -34,9 +34,12 @@ import {useGlobalModalContext} from 'context/globalModals';
 import {useNetwork} from 'context/network';
 import {useProposalTransactionContext} from 'context/proposalTransaction';
 import {useSpecificProvider} from 'context/providers';
+import {formatDistanceToNow, Locale} from 'date-fns';
+import * as Locales from 'date-fns/locale';
 import {useCache} from 'hooks/useCache';
 import {useClient} from 'hooks/useClient';
 import {useDaoDetails} from 'hooks/useDaoDetails';
+import {useDaoParam} from 'hooks/useDaoParam';
 import {useDaoProposal} from 'hooks/useDaoProposal';
 import {useDaoToken} from 'hooks/useDaoToken';
 import {useMappedBreadcrumbs} from 'hooks/useMappedBreadcrumbs';
@@ -45,8 +48,6 @@ import useScreen from 'hooks/useScreen';
 import {useWallet} from 'hooks/useWallet';
 import {useWalletCanVote} from 'hooks/useWalletCanVote';
 import {CHAIN_METADATA} from 'utils/constants';
-import * as Locales from 'date-fns/locale';
-import {formatDistanceToNow, Locale} from 'date-fns';
 import {
   decodeAddMembersToAction,
   decodeMintTokensToAction,
@@ -57,10 +58,9 @@ import {NotFound} from 'utils/paths';
 import {
   getProposalStatusSteps,
   getTerminalProps,
-  isTokenBasedProposal,
+  isErc20VotingProposal,
 } from 'utils/proposals';
 import {Action} from 'utils/types';
-import {useDaoParam} from 'hooks/useDaoParam';
 
 // TODO: @Sepehr Please assign proper tags on action decoding
 const PROPOSAL_TAGS = ['Finance', 'Withdraw'];
@@ -456,7 +456,7 @@ const Proposal: React.FC = () => {
     ) {
       // presence of token delineates token voting proposal
       // people add types to these things!!
-      return isTokenBasedProposal(proposal)
+      return isErc20VotingProposal(proposal)
         ? t('votingTerminal.status.ineligibleTokenBased', {
             token: proposal.token.name,
           })

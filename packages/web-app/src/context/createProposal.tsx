@@ -430,7 +430,7 @@ const CreateProposalProvider: React.FC<Props> = ({
           case ProposalCreationSteps.DONE: {
             //TODO: replace with step.proposal id when SDK returns proper format
             const prefixedId = prefixProposalIdWithPlgnAdr(
-              step.proposalId,
+              step.proposalId.toString(),
               pluginAddress
             );
 

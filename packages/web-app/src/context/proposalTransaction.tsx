@@ -300,7 +300,6 @@ const ProposalTransactionProvider: React.FC<Props> = ({children}) => {
             console.log(step.txHash);
             break;
           case VoteProposalStep.DONE:
-            console.log(step.voteId);
             onVoteSubmitted(voteParams.proposalId, voteParams.vote);
             break;
         }
