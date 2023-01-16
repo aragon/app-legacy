@@ -8,14 +8,14 @@
 import {
   AddressListProposal,
   AddressListProposalResult,
-  TokenVotingProposal,
-  TokenVotingProposalResult,
   Erc20TokenDetails,
   ICreateProposalParams,
-  VotingSettings,
   ProposalMetadata,
   ProposalStatus,
+  TokenVotingProposal,
+  TokenVotingProposalResult,
   VoteValues,
+  VotingSettings,
 } from '@aragon/sdk-client';
 import {ProgressStatusProps, VoterType} from '@aragon/ui-components';
 import Big from 'big.js';
@@ -43,6 +43,25 @@ export function isTokenBasedProposal(
   return 'token' in proposal;
 }
 
+export function isErc20Token(
+  token: TokenVotingProposal['token']
+): token is Erc20TokenDetails {
+  return token !== null && 'decimals' in token;
+}
+
+export function isErc20VotingProposal(
+  proposal: DetailedProposal
+): proposal is TokenVotingProposal & {token: Erc20TokenDetails} {
+  return isTokenBasedProposal(proposal) && isErc20Token(proposal.token);
+}
+
+//TODO Will be renamed and/or deprecated
+export function isAddressListVotingProposal(
+  proposal: DetailedProposal
+): proposal is AddressListProposal {
+  return !('token' in proposal);
+}
+
 /**
  * Get minimum approval summary for ERC20 voting proposal
  * @param minSupport Minimum support for vote to pass
@@ -53,7 +72,7 @@ export function isTokenBasedProposal(
 export function getErc20MinimumApproval(
   minSupport: number,
   totalVotingWeight: bigint,
-  token: TokenVotingProposal['token']
+  token: Erc20TokenDetails
 ): string {
   const percentage = Math.trunc(minSupport * 100);
   const tokenValue = abbreviateTokenAmount(
@@ -90,7 +109,7 @@ export function getWhitelistMinimumApproval(
  */
 export function getErc20VotersAndParticipation(
   votes: TokenVotingProposal['votes'],
-  token: TokenVotingProposal['token'],
+  token: Erc20TokenDetails,
   totalVotingWeight: bigint,
   usedVotingWeight: bigint
 ): {voters: Array<VoterType>; summary: string} {
@@ -412,7 +431,7 @@ export function getTerminalProps(
   let approval;
   let strategy;
 
-  if (isTokenBasedProposal(proposal)) {
+  if (isErc20VotingProposal(proposal)) {
     // token
     token = {
       name: proposal.token.name,
@@ -447,7 +466,7 @@ export function getTerminalProps(
 
     // strategy
     strategy = i18n.t('votingTerminal.tokenVoting');
-  } else {
+  } else if (isAddressListVotingProposal(proposal)) {
     // voters
     const ptcResults = getWhitelistVoterParticipation(
       proposal.votes,
@@ -509,44 +528,56 @@ export type MapToDetailedProposalParams = {
  * @param params necessary parameters to map newly created proposal to augmented DetailedProposal
  * @returns Detailed proposal, ready for caching and displaying
  */
-export function mapToDetailedProposal(params: MapToDetailedProposalParams) {
-  return {
+export function mapToDetailedProposal(
+  params: MapToDetailedProposalParams
+): Omit<
+  DetailedProposal,
+  'creationBlockNumber' | 'executionBlockNumber' | 'executionDate'
+> {
+  // common properties
+  const commonProps = {
     actions: params.proposalParams.actions || [],
     creationDate: new Date(),
     creatorAddress: params.creatorAddress,
     dao: {address: params.daoAddress, name: params.daoName},
-    endDate: params.proposalParams.endDate,
+    endDate: params.proposalParams.endDate!,
+    startDate: params.proposalParams.startDate!,
     id: params.proposalId,
     metadata: params.metadata,
+    status: ProposalStatus.PENDING,
+    votes: [],
     settings: {
-      minSupport: params.pluginSettings.minSupport,
-      minTurnout: params.pluginSettings.minTurnout,
+      minSupport: params.pluginSettings.supportThreshold,
+      minTurnout: params.pluginSettings.minParticipation,
       duration: differenceInSeconds(
         params.proposalParams.startDate!,
         params.proposalParams.endDate!
       ),
     },
-    startDate: params.proposalParams.startDate,
-    status: 'Pending',
-    votes: [],
-    ...(params.daoToken
-      ? {
-          token: {
-            address: params.daoToken?.address,
-            decimals: params.daoToken?.decimals,
-            name: params.daoToken?.name,
-            symbol: params.daoToken?.symbol,
-          },
-          totalVotingWeight: params.totalVotingWeight as bigint,
-          usedVotingWeight: BigInt(0),
-          result: {yes: BigInt(0), no: BigInt(0), abstain: BigInt(0)},
-        }
-      : {
-          totalVotingWeight: params.totalVotingWeight as number,
-          usedVotingWeight: 0,
-          result: {yes: 0, no: 0, abstain: 0},
-        }),
-  } as DetailedProposal;
+  };
+
+  // erc20
+  if (params.daoToken && isErc20Token(params.daoToken)) {
+    return {
+      ...commonProps,
+      token: {
+        address: params.daoToken.address,
+        decimals: params.daoToken.decimals,
+        name: params.daoToken.name,
+        symbol: params.daoToken.symbol,
+      },
+      totalVotingWeight: params.totalVotingWeight as bigint,
+      usedVotingWeight: BigInt(0),
+      result: {yes: BigInt(0), no: BigInt(0), abstain: BigInt(0)},
+    } as unknown as DetailedProposal;
+  } else {
+    // addressList
+    return {
+      ...commonProps,
+      totalVotingWeight: params.totalVotingWeight as number,
+      result: {yes: 0, no: 0, abstain: 0},
+    };
+  }
 }
 
 /**
