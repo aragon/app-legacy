@@ -8,11 +8,11 @@
 import {
   AddressListProposal,
   AddressListProposalResult,
-  Erc20Proposal,
-  Erc20ProposalResult,
+  TokenVotingProposal,
+  TokenVotingProposalResult,
   Erc20TokenDetails,
   ICreateProposalParams,
-  IPluginSettings,
+  VotingSettings,
   ProposalMetadata,
   ProposalStatus,
   VoteValues,
@@ -39,7 +39,7 @@ export const MappedVotes: {[key in VoteValues]: VoterType['option']} = {
 // this type guard will need to evolve when there are more types
 export function isTokenBasedProposal(
   proposal: DetailedProposal
-): proposal is Erc20Proposal {
+): proposal is TokenVotingProposal {
   return 'token' in proposal;
 }
 
@@ -53,7 +53,7 @@ export function isTokenBasedProposal(
 export function getErc20MinimumApproval(
   minSupport: number,
   totalVotingWeight: bigint,
-  token: Erc20Proposal['token']
+  token: TokenVotingProposal['token']
 ): string {
   const percentage = Math.trunc(minSupport * 100);
   const tokenValue = abbreviateTokenAmount(
@@ -89,8 +89,8 @@ export function getWhitelistMinimumApproval(
  * @returns mapped voters and participation summary
  */
 export function getErc20VotersAndParticipation(
-  votes: Erc20Proposal['votes'],
-  token: Erc20Proposal['token'],
+  votes: TokenVotingProposal['votes'],
+  token: TokenVotingProposal['token'],
   totalVotingWeight: bigint,
   usedVotingWeight: bigint
 ): {voters: Array<VoterType>; summary: string} {
@@ -197,7 +197,7 @@ export function getWhitelistVoterParticipation(
  * @returns mapped voting result
  */
 export function getErc20Results(
-  result: Erc20ProposalResult,
+  result: TokenVotingProposalResult,
   tokenDecimals: number,
   totalVotingWeight: BigInt
 ): ProposalVoteResults {
@@ -498,7 +498,7 @@ export type MapToDetailedProposalParams = {
   daoName: string;
   daoToken?: Erc20TokenDetails;
   totalVotingWeight: number | bigint;
-  pluginSettings: IPluginSettings;
+  pluginSettings: VotingSettings;
   metadata: ProposalMetadata;
   proposalParams: ICreateProposalParams;
   proposalId: string;
@@ -577,7 +577,7 @@ export function addVoteToProposal(
       usedVotingWeight: BigNumber.from(proposal.usedVotingWeight)
         .add((vote as Erc20ProposalVote).weight)
         .toBigInt(),
-    } as Erc20Proposal;
+    } as TokenVotingProposal;
   } else {
     // AddressList calculation
     return {

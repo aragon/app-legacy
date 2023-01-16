@@ -1,5 +1,5 @@
 import {useEffect, useState} from 'react';
-import {ClientErc20, Erc20TokenDetails} from '@aragon/sdk-client';
+import {TokenVotingClient, Erc20TokenDetails} from '@aragon/sdk-client';
 
 import {HookData} from 'utils/types';
 import {usePluginClient} from './usePluginClient';
@@ -11,7 +11,9 @@ export function useDaoToken(
   const [error, setError] = useState<Error>();
   const [isLoading, setIsLoading] = useState(false);
 
-  const pluginClient = usePluginClient('erc20voting.dao.eth') as ClientErc20;
+  const pluginClient = usePluginClient(
+    'erc20voting.dao.eth'
+  ) as TokenVotingClient;
 
   useEffect(() => {
     async function getDaoMetadata() {

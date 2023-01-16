@@ -1,6 +1,6 @@
 import {
   ClientAddressList,
-  ClientErc20,
+  TokenVotingClient,
   ContextPlugin,
 } from '@aragon/sdk-client';
 import {useEffect, useState} from 'react';
@@ -22,9 +22,9 @@ export type PluginTypes = 'erc20voting.dao.eth' | 'addresslistvoting.dao.eth';
  */
 export const usePluginClient = (
   pluginType?: PluginTypes
-): ClientErc20 | ClientAddressList | undefined => {
+): TokenVotingClient | ClientAddressList | undefined => {
   const [pluginClient, setPluginClient] = useState<
-    ClientErc20 | ClientAddressList | undefined
+    TokenVotingClient | ClientAddressList | undefined
   >(undefined);
   const {client, context} = useClient();
 
@@ -38,7 +38,9 @@ export const usePluginClient = (
     else {
       switch (pluginType) {
         case 'erc20voting.dao.eth':
-          setPluginClient(new ClientErc20(ContextPlugin.fromContext(context)));
+          setPluginClient(
+            new TokenVotingClient(ContextPlugin.fromContext(context))
+          );
           break;
         case 'addresslistvoting.dao.eth':
           setPluginClient(

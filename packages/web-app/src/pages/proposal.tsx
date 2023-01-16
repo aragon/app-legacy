@@ -1,9 +1,9 @@
 import {useApolloClient} from '@apollo/client';
 import {
   ClientAddressList,
-  ClientErc20,
+  TokenVotingClient,
   DaoAction,
-  Erc20Proposal,
+  TokenVotingProposal,
 } from '@aragon/sdk-client';
 import {
   Breadcrumb,
@@ -193,7 +193,7 @@ const Proposal: React.FC = () => {
         // Decode all the mint actions into one action with several addresses
         const decodedMintToken = decodeMintTokensToAction(
           mintTokenActions.actions,
-          pluginClient as ClientErc20,
+          pluginClient as TokenVotingClient,
           daoToken.address,
           provider,
           network
@@ -589,7 +589,10 @@ const Proposal: React.FC = () => {
             voteNowDisabled={voted || voteNowDisabled}
             votingInProcess={votingInProcess}
             onVoteSubmitClicked={vote =>
-              handleSubmitVote(vote, (proposal as Erc20Proposal).token?.address)
+              handleSubmitVote(
+                vote,
+                (proposal as TokenVotingProposal).token?.address
+              )
             }
             {...terminalPropsFromProposal}
           />

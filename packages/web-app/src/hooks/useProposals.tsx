@@ -1,7 +1,7 @@
 import {useReactiveVar} from '@apollo/client';
 import {
   AddressListProposalListItem,
-  Erc20ProposalListItem,
+  TokenVotingProposalListItem,
   ProposalSortBy,
   ProposalStatus,
 } from '@aragon/sdk-client';
@@ -20,7 +20,9 @@ import {HookData} from 'utils/types';
 
 import {PluginTypes, usePluginClient} from './usePluginClient';
 
-export type Proposal = Erc20ProposalListItem | AddressListProposalListItem;
+export type Proposal =
+  | TokenVotingProposalListItem
+  | AddressListProposalListItem;
 
 /**
  * Retrieves list of proposals from SDK

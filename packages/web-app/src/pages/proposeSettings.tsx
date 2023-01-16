@@ -4,7 +4,7 @@ import {
   ICreateProposalParams,
   IMetadata,
   InstalledPluginListItem,
-  IPluginSettings,
+  VotingSettings,
   ProposalCreationSteps,
   ProposalMetadata,
 } from '@aragon/sdk-client';
@@ -229,7 +229,7 @@ const ProposeSettingWrapper: React.FC<Props> = ({
         durationHours,
         durationMinutes
       );
-      const settingsParams: IPluginSettings = {
+      const settingsParams: VotingSettings = {
         minDuration: durationInSeconds,
         minSupport: Big(minimumApproval).div(100).toNumber(),
         minTurnout: Big(minimumParticipation).div(100).toNumber(),

@@ -1,4 +1,4 @@
-import {IPluginSettings} from '@aragon/sdk-client';
+import {VotingSettings} from '@aragon/sdk-client';
 import {useEffect, useState} from 'react';
 import {HookData} from 'utils/types';
 
@@ -13,8 +13,8 @@ import {PluginTypes, usePluginClient} from './usePluginClient';
 export function usePluginSettings(
   pluginAddress: string,
   type: PluginTypes
-): HookData<IPluginSettings> {
-  const [data, setData] = useState<IPluginSettings>({} as IPluginSettings);
+): HookData<VotingSettings> {
+  const [data, setData] = useState<VotingSettings>({} as VotingSettings);
   const [error, setError] = useState<Error>();
   const [isLoading, setIsLoading] = useState(false);
 

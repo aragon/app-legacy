@@ -9,7 +9,7 @@ import {
   AddressListProposal,
   DaoListItem,
   Deposit,
-  Erc20Proposal,
+  TokenVotingProposal,
   ICreateParams,
   IMetadata,
   InstalledPluginListItem,
@@ -190,7 +190,7 @@ type PendingProposals = {
   // key is dao address
   [key: string]: {
     // key is proposal id
-    [key: string]: Erc20Proposal | AddressListProposal;
+    [key: string]: TokenVotingProposal | AddressListProposal;
   };
 };
 

@@ -4,10 +4,10 @@ import {
   DaoCreationSteps,
   IAddressListPluginInstall,
   ICreateParams,
-  IErc20PluginInstall,
+  ITokenVotingPluginInstall,
   IMetadata,
   IPluginInstallItem,
-  IPluginSettings,
+  VotingSettings,
 } from '@aragon/sdk-client';
 import {BigNumber, constants} from 'ethers';
 import {defaultAbiCoder, parseUnits, toUtf8Bytes} from 'ethers/lib/utils';
@@ -155,7 +155,7 @@ const CreateDaoProvider: React.FC = ({children}) => {
     }
   };
 
-  const getPluginSettings: () => IPluginSettings = useCallback(() => {
+  const getPluginSettings: () => VotingSettings = useCallback(() => {
     const {
       minimumApproval,
       minimumParticipation,
@@ -174,7 +174,7 @@ const CreateDaoProvider: React.FC = ({children}) => {
     };
   }, [getValues]);
 
-  const getErc20PluginParams: () => IErc20PluginInstall['newToken'] =
+  const getErc20PluginParams: () => ITokenVotingPluginInstall['newToken'] =
     useCallback(() => {
       const {tokenName, tokenSymbol, wallets} = getValues();
       return {

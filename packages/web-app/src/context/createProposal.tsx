@@ -1,7 +1,7 @@
 import {useReactiveVar} from '@apollo/client';
 import {
   ClientAddressList,
-  ClientErc20,
+  TokenVotingClient,
   DaoAction,
   ICreateProposalParams,
   InstalledPluginListItem,
@@ -144,7 +144,7 @@ const CreateProposalProvider: React.FC<Props> = ({
           action.inputs.mintTokensToWallets.forEach(mint => {
             actions.push(
               Promise.resolve(
-                (pluginClient as ClientErc20).encoding.mintTokenAction(
+                (pluginClient as TokenVotingClient).encoding.mintTokenAction(
                   action.summary.daoTokenAddress as string,
                   {
                     address: mint.address,
