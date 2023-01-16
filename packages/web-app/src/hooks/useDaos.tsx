@@ -66,7 +66,7 @@ export function useDaos(
               limit,
             })) || [];
 
-          daos.map(dao => {
+          daos.forEach(dao => {
             if (dao.metadata.avatar) {
               try {
                 const logoCid = resolveIpfsCid(dao.metadata.avatar);
