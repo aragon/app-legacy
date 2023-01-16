@@ -13,14 +13,13 @@ import {MembersList} from 'components/membersList';
 import {Loading} from 'components/temporary';
 import {useNetwork} from 'context/network';
 import {useDaoMembers} from 'hooks/useDaoMembers';
+import {PluginTypes} from 'hooks/usePluginClient';
 import useScreen from 'hooks/useScreen';
 import {
   Community,
   ManageMembersProposal,
   MintTokensProposal,
 } from 'utils/paths';
-import {PluginTypes} from 'hooks/usePluginClient';
-import {Erc20TokenDetails} from '@aragon/sdk-client';
 
 type Props = {
   dao: string;
@@ -77,10 +76,7 @@ export const MembershipSnapshot: React.FC<Props> = ({
         </div>
         <div className="space-y-2 w-2/3">
           <ListItemGrid>
-            <MembersList
-              token={daoToken as Erc20TokenDetails}
-              members={members}
-            />
+            <MembersList token={daoToken} members={members} />
           </ListItemGrid>
           <ButtonText
             mode="secondary"
@@ -110,10 +106,7 @@ export const MembershipSnapshot: React.FC<Props> = ({
         orientation="vertical"
         onClick={headerButtonHandler}
       />
-      <MembersList
-        token={daoToken as Erc20TokenDetails}
-        members={members.slice(0, 3)}
-      />
+      <MembersList token={daoToken} members={members.slice(0, 3)} />
       <ButtonText
         mode="secondary"
         size="large"
