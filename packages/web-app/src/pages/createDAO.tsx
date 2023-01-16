@@ -47,6 +47,8 @@ export type CreateDaoFormData = {
   minimumParticipation: string;
   support: string;
   membership: string;
+  earlyExecution: boolean;
+  voteReplacement: boolean;
   whitelistWallets: WhitelistWallet[];
 };
 
@@ -59,6 +61,8 @@ const defaultValues = {
 
   // Uncomment when DAO Treasury minting is supported
   // wallets: [{address: constants.AddressZero, amount: '0'}],
+  earlyExecution: true,
+  voteReplacement: false,
   membership: 'token',
   isCustomToken: true,
 };
