@@ -1,6 +1,7 @@
 import React, {useMemo} from 'react';
 import styled from 'styled-components';
-import {Option, ButtonGroup} from '../button/buttonGroup';
+
+import {ButtonGroup, Option} from '../button/buttonGroup';
 
 export type valueType = {time: string; midday: 'pm' | 'am'};
 
@@ -111,7 +112,8 @@ const Container = styled.div.attrs(
       width ? '' : 'w-30'
     } focus:outline-none items-center font-normal
       focus-within:ring-2 focus-within:ring-primary-500 justify-between
-      rounded-xl hover:border-ui-300 border-2 active:border-primary-500 
+      rounded-xl hover:border-ui-300 border-2 active:border-primary-500
+      active:ring-0 
     `;
 
     if (mode === 'default') {

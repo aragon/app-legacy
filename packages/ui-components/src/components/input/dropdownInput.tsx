@@ -1,5 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
+
 import {IconChevronDown} from '../icons';
 import {StyledContainerProps} from './numberInput';
 
@@ -39,8 +40,8 @@ const Container = styled.button.attrs(
       disabled ? 'bg-ui-100' : 'bg-ui-0'
     } flex bg-ui-0 focus:outline-none focus-within:ring-2 
     focus-within:ring-primary-500 py-1.5 px-2 rounded-xl w-full 
-    hover:border-ui-300 border-2 active:border-primary-500 items-center 
-    justify-between `;
+    hover:border-ui-300 border-2 active:border-primary-500 active:ring-0 
+    items-center justify-between `;
 
     if (mode === 'default') {
       className += 'border-ui-100';
