@@ -29,7 +29,6 @@ import {
   SupportedNetworks,
 } from 'utils/constants';
 import {customJSONReviver} from 'utils/library';
-import {CachedProposal} from 'utils/proposals';
 import {
   AddressListVote,
   DetailedProposal,

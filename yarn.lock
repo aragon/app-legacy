@@ -197,9 +197,9 @@
     graphql-request "^4.3.0"
 
 "@aragon/sdk-common@^0.9.2-alpha":
-  version "0.9.1-alpha"
-  resolved "https://registry.yarnpkg.com/@aragon/sdk-common/-/sdk-common-0.9.1-alpha.tgz#af8ccbadb8b5f5f929a3438e98a10e7e1f95dbdb"
-  integrity sha512-VBbQ6YYk3UgXFDo4RKaLBWCp2bgHEhqmNXWM9IpP24uuDJMiqiHbG6zIbnvPKzpdaDTc1vKnNpF+Rxh3iZxcsw==
+  version "0.9.2-alpha"
+  resolved "https://registry.yarnpkg.com/@aragon/sdk-common/-/sdk-common-0.9.2-alpha.tgz#880fbc33e1bd785b98669125b8106017b25038ca"
+  integrity sha512-7B/s7Y17O+aNunCYkgWbe68RnNPgQE3fNbcpiSH7srZS07KHb0bggmmisdeGLZOpn+Gjvp44PLroviMY0dJXaw==
 
 "@aragon/sdk-ipfs@^0.2.0-alpha":
   version "0.2.0-alpha"
