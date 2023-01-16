@@ -12,7 +12,7 @@ export function useDaoToken(
   const [isLoading, setIsLoading] = useState(false);
 
   const pluginClient = usePluginClient(
-    'erc20voting.dao.eth'
+    'token-voting.plugin.dao.eth'
   ) as TokenVotingClient;
 
   useEffect(() => {

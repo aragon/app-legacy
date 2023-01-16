@@ -193,7 +193,9 @@ const EditSettings: React.FC = () => {
     // TODO: Need to add community settings later, Also the Alerts share will be added later
     setValue(
       'membership',
-      daoDetails?.plugins[0].id === 'erc20voting.dao.eth' ? 'token' : 'wallet'
+      daoDetails?.plugins[0].id === 'token-voting.plugin.dao.eth'
+        ? 'token'
+        : 'wallet'
     );
   }, [
     daoDetails?.plugins,

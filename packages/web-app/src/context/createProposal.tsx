@@ -333,7 +333,7 @@ const CreateProposalProvider: React.FC<Props> = ({
         daoName: daoDetails?.metadata.name,
         daoToken,
         totalVotingWeight:
-          pluginType === 'erc20voting.dao.eth' && tokenSupply
+          pluginType === 'token-voting.plugin.dao.eth' && tokenSupply
             ? tokenSupply
             : members.length,
         pluginSettings,

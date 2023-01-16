@@ -86,7 +86,8 @@ const Settings: React.FC = () => {
 
   const {days, hours, minutes} = getDHMFromSeconds(daoSettings.minDuration);
   const isErc20Plugin =
-    (daoDetails?.plugins?.[0]?.id as PluginTypes) === 'erc20voting.dao.eth';
+    (daoDetails?.plugins?.[0]?.id as PluginTypes) ===
+    'token-voting.plugin.dao.eth';
 
   const resourceLinks = daoDetails?.metadata.links.filter(l => l.name && l.url);
 

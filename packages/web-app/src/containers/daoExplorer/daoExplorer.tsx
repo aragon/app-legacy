@@ -110,7 +110,8 @@ export const DaoExplorer = () => {
                 description="This is a DAO."
                 chainId={dao.chain || DEFAULT_CHAIN_ID} // Default to Goerli
                 daoType={
-                  (dao?.plugins[0].id as PluginTypes) === 'erc20voting.dao.eth'
+                  (dao?.plugins[0].id as PluginTypes) ===
+                  'token-voting.plugin.dao.eth'
                     ? 'token-based'
                     : 'wallet-based'
                 }

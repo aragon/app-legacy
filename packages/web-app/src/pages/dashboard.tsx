@@ -80,7 +80,7 @@ const Dashboard: React.FC = () => {
   );
 
   const daoType =
-    (dao?.plugins[0]?.id as PluginTypes) === 'addresslistvoting.dao.eth'
+    (dao?.plugins[0]?.id as PluginTypes) === 'addresslist-voting.plugin.dao.eth'
       ? t('explore.explorer.walletBased')
       : t('explore.explorer.tokenBased');
 
@@ -271,6 +271,7 @@ const Dashboard: React.FC = () => {
     );
     alert(t('alert.chip.inputCopied'));
   }
+  console.log(dao);
 
   return (
     <>
@@ -351,6 +352,8 @@ const DashboardContent: React.FC<DashboardContentProps> = ({
 }) => {
   const proposalCount = proposals.length;
   const transactionCount = transfers.length;
+
+  console.log(pluginAddress, pluginType);
 
   if (!proposalCount) {
     return (

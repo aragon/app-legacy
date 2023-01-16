@@ -5,7 +5,8 @@ import {useDaoDetails} from './useDaoDetails';
 
 export function useDaoActions(dao: string): HookData<ActionParameter[]> {
   const {data: daoDetails, error, isLoading} = useDaoDetails(dao);
-  const whitelist = daoDetails?.plugins[0].id === 'addresslistvoting.dao.eth';
+  const addressList =
+    daoDetails?.plugins[0].id === 'addresslist-voting.plugin.dao.eth';
 
   const {t} = useTranslation();
 
@@ -46,7 +47,7 @@ export function useDaoActions(dao: string): HookData<ActionParameter[]> {
   ]);
 
   return {
-    data: whitelist ? whitelistActions : erc20Actions,
+    data: addressList ? whitelistActions : erc20Actions,
     isLoading,
     error,
   };

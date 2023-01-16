@@ -7,7 +7,9 @@ import {useEffect, useState} from 'react';
 
 import {useClient} from './useClient';
 
-export type PluginTypes = 'erc20voting.dao.eth' | 'addresslistvoting.dao.eth';
+export type PluginTypes =
+  | 'token-voting.plugin.dao.eth'
+  | 'addresslist-voting.plugin.dao.eth';
 
 /**
  * This hook can be used to build ERC20 or whitelist clients
@@ -37,12 +39,12 @@ export const usePluginClient = (
     if (!pluginType) setPluginClient(undefined);
     else {
       switch (pluginType) {
-        case 'erc20voting.dao.eth':
+        case 'token-voting.plugin.dao.eth':
           setPluginClient(
             new TokenVotingClient(ContextPlugin.fromContext(context))
           );
           break;
-        case 'addresslistvoting.dao.eth':
+        case 'addresslist-voting.plugin.dao.eth':
           setPluginClient(
             new ClientAddressList(ContextPlugin.fromContext(context))
           );

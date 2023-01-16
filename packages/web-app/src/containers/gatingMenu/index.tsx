@@ -58,7 +58,7 @@ export const GatingMenu: React.FC<Props> = ({
     <ModalBottomSheetSwitcher isOpen={isGatingOpen}>
       <ModalBody>
         <StyledImage src={WalletIcon} />
-        {pluginType === 'erc20voting.dao.eth' ? (
+        {pluginType === 'token-voting.plugin.dao.eth' ? (
           <TokenContainer tokenName={tokenName || ''} />
         ) : (
           <WalletContainer />

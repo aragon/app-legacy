@@ -45,7 +45,7 @@ export const MembershipSnapshot: React.FC<Props> = ({
   } = useDaoMembers(pluginAddress, pluginType);
   const totalMemberCount = members.length;
 
-  const walletBased = pluginType === 'addresslistvoting.dao.eth';
+  const walletBased = pluginType === 'addresslist-voting.plugin.dao.eth';
 
   const headerButtonHandler = () => {
     walletBased
