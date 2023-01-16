@@ -52,11 +52,16 @@ export const DaoExplorer = () => {
       } else setDisplayedDaos(prev => [...prev, ...data]);
     }
 
+    // NOTE: somewhere up the chain, changing login state is creating new instance
+    // of the data from useDaos hook. Patching by doing proper data comparison
+    // using JSON.stringify. Proper investigation needs to be done
+    // [FF - 01/16/2023]
+
     // intentionally removing filterValue from the dependencies
     // because the update to the ref needs to happen after data
     // has changed only
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [data]);
+  }, [JSON.stringify(data[0])]);
 
   const filterWasChanged = filterRef.current !== filterValue;
 
