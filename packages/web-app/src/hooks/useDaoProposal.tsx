@@ -1,5 +1,6 @@
 import {useReactiveVar} from '@apollo/client';
 import {useCallback, useEffect, useState} from 'react';
+import {ProposalStatus} from '@aragon/sdk-client';
 
 import {
   pendingExecutionVar,
@@ -16,7 +17,6 @@ import {customJSONReplacer, generateCachedProposalId} from 'utils/library';
 import {addVoteToProposal} from 'utils/proposals';
 import {DetailedProposal, HookData} from 'utils/types';
 import {PluginTypes, usePluginClient} from './usePluginClient';
-import {ProposalStatus} from '@aragon/sdk-client';
 
 /**
  * Retrieve a single detailed proposal
@@ -136,8 +136,8 @@ export const useDaoProposal = (
           }
         } else if (cachedProposal) {
           setData({
-            ...augmentWithVoteCache(cachedProposal),
-            ...augmentWithExecutionCache(cachedProposal),
+            ...augmentWithVoteCache(cachedProposal as DetailedProposal),
+            ...augmentWithExecutionCache(cachedProposal as DetailedProposal),
           });
         }
       } catch (err) {

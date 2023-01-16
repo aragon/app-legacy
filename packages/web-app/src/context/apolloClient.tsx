@@ -6,10 +6,8 @@ import {
   NormalizedCacheObject,
 } from '@apollo/client';
 import {
-  AddressListProposal,
   DaoListItem,
   Deposit,
-  TokenVotingProposal,
   ICreateParams,
   IMetadata,
   InstalledPluginListItem,
@@ -31,7 +29,12 @@ import {
   SupportedNetworks,
 } from 'utils/constants';
 import {customJSONReviver} from 'utils/library';
-import {AddressListVote, Erc20ProposalVote} from 'utils/types';
+import {CachedProposal} from 'utils/proposals';
+import {
+  AddressListVote,
+  DetailedProposal,
+  Erc20ProposalVote,
+} from 'utils/types';
 import {PRIVACY_KEY} from './privacyContext';
 
 const restLink = new RestLink({
@@ -186,11 +189,15 @@ const pendingExecutionVar = makeVar<PendingExecution>(pendingExecution);
 
 // PENDING PROPOSAL
 // iffy about this structure
+export type CachedProposal = Omit<
+  DetailedProposal,
+  'creationBlockNumber' | 'executionBlockNumber' | 'executionDate'
+>;
 type PendingProposals = {
   // key is dao address
   [key: string]: {
     // key is proposal id
-    [key: string]: TokenVotingProposal | AddressListProposal;
+    [key: string]: CachedProposal;
   };
 };
 

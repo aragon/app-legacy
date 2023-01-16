@@ -31,6 +31,7 @@ import {getFormattedUtcOffset, KNOWN_FORMATS} from './date';
 import {formatUnits} from './library';
 import {abbreviateTokenAmount} from './tokens';
 import {AddressListVote, DetailedProposal, Erc20ProposalVote} from './types';
+import {CachedProposal} from 'context/apolloClient';
 
 export const MappedVotes: {[key in VoteValues]: VoterType['option']} = {
   1: 'abstain',
@@ -531,10 +532,6 @@ export type MapToDetailedProposalParams = {
   proposalId: string;
 };
 
-type CachedProposal = Omit<
-  DetailedProposal,
-  'creationBlockNumber' | 'executionBlockNumber' | 'executionDate'
->;
 /**
  * Map newly created proposal to Detailed proposal that can be cached and shown
  * @param params necessary parameters to map newly created proposal to augmented DetailedProposal
