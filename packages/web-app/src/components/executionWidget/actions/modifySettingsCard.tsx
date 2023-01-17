@@ -63,13 +63,13 @@ const ModifySettings: React.FC<{action: ActionUpdatePluginSettings}> = ({
           </Value>
         </div>
         <div>
-          <Title>Early Execution</Title>
+          <Title>{t('labels.earlyExecution')}</Title>
           <Value>
             {inputs.votingMode === VotingMode.EARLY_EXECUTION ? 'Yes' : 'No'}
           </Value>
         </div>
         <div>
-          <Title>Vote Replacement</Title>
+          <Title>{t('labels.voteReplacement')}</Title>
           <Value>
             {inputs.votingMode === VotingMode.VOTE_REPLACEMENT ? 'Yes' : 'No'}
           </Value>
