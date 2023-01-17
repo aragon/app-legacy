@@ -45,18 +45,21 @@ const Settings: React.FC = () => {
     daoDetails?.plugins[0].instanceAddress as string,
     daoDetails?.plugins[0].id as PluginTypes
   );
-
   const {data: daoMembers, isLoading: MembersAreLoading} = useDaoMembers(
     daoDetails?.plugins?.[0]?.instanceAddress || '',
     (daoDetails?.plugins?.[0]?.id as PluginTypes) || undefined
   );
-
   const {data: daoToken, isLoading: tokensAreLoading} = useDaoToken(
     daoDetails?.plugins?.[0]?.instanceAddress || ''
   );
 
   const [tokenSupply, setTokenSupply] = useState(0);
-  const nativeCurrency = CHAIN_METADATA[network].nativeCurrency;
+  const networkInfo = CHAIN_METADATA[network];
+  const nativeCurrency = networkInfo.nativeCurrency;
+  const chainLabel = networkInfo.name;
+  const networkType = networkInfo.testnet
+    ? t('labels.testNet')
+    : t('labels.mainNet');
 
   useEffect(() => {
     // Fetching necessary info about the token.
@@ -102,11 +105,11 @@ const Settings: React.FC = () => {
         >
           <Dl>
             <Dt>{t('labels.review.network')}</Dt>
-            <Dd>{t('createDAO.review.network', {network: 'Main'})}</Dd>
+            <Dd>{networkType}</Dd>
           </Dl>
           <Dl>
             <Dt>{t('labels.review.blockchain')}</Dt>
-            <Dd>{network}</Dd>
+            <Dd>{chainLabel}</Dd>
           </Dl>
         </DescriptionListContainer>
 
