@@ -65,6 +65,9 @@ const defaultValues = {
   voteReplacement: false,
   membership: 'token',
   isCustomToken: true,
+  durationDays: '1',
+  durationHours: '0',
+  durationMinutes: '0',
 };
 
 const CreateDAO: React.FC = () => {

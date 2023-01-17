@@ -87,6 +87,7 @@ const ConfigureCommunity: React.FC = () => {
         }
       } else if (value === 0 && durationDays === '0') {
         setValue('durationHours', '1');
+        setValue('durationMinutes', '0');
         e.target.value = '1';
       }
 
