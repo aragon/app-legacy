@@ -1,9 +1,9 @@
 import {
   AddressListProposal,
-  TokenVotingProposal,
   IMetadata,
-  IPluginSettings,
+  TokenVotingProposal,
   VoteValues,
+  VotingSettings,
 } from '@aragon/sdk-client';
 import {Address} from '@aragon/ui-components/src/utils/addresses';
 
@@ -250,7 +250,7 @@ export type ActionMintToken = {
 
 export type ActionUpdatePluginSettings = {
   name: 'modify_settings';
-  inputs: IPluginSettings;
+  inputs: VotingSettings;
 };
 
 export type ActionUpdateMetadata = {

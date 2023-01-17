@@ -265,7 +265,7 @@ export async function decodeRemoveMembersToAction(
  */
 export async function decodePluginSettingsToAction(
   data: Uint8Array | undefined,
-  client: ClientErc20 | ClientAddressList | undefined
+  client: TokenVotingClient | ClientAddressList | undefined
 ): Promise<ActionUpdatePluginSettings | undefined> {
   if (!client || !data) {
     console.error('SDK client is not initialized correctly');

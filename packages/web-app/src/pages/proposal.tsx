@@ -203,7 +203,7 @@ const Proposal: React.FC = () => {
             case 'setConfiguration':
               return decodePluginSettingsToAction(
                 action.data,
-                pluginClient as ClientErc20
+                pluginClient as TokenVotingClient
               );
             case 'setMetadata':
               return decodeMetadataToAction(action.data, client);

@@ -23,11 +23,11 @@ const ModifySettings: React.FC<{action: ActionUpdatePluginSettings}> = ({
       <Container>
         <div>
           <Title>Minimum Participation</Title>
-          <Value>{Math.round(inputs.minTurnout * 100)}% (TKN)</Value>
+          <Value>{Math.round(inputs.minParticipation * 100)}% (TKN)</Value>
         </div>
         <div>
           <Title>Minimum Support</Title>
-          <Value>{Math.round(inputs.minSupport * 100)}%</Value>
+          <Value>{Math.round(inputs.supportThreshold * 100)}%</Value>
         </div>
         <div>
           <Title>Minimum Duration</Title>
