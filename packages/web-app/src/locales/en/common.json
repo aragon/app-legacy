@@ -334,7 +334,9 @@
     }
   },
   "alert": {
-    "durationAlert": "We recommend a minimum duration of at least one day.",
+    "durationAlert": "We recommend a minimum duration of 1 day so members have the time to review and vote.",
+    "maxDurationAlert": "365 days is the maximum duration in Majority Voting Systems.",
+    "minDurationAlert": "1 hour is the minimum duration in Majority Voting Systems.",
     "wrongWalletNetwork": "Wrong Wallet Network",
     "wrongNetwork": {
       "title": "Wrong Network",

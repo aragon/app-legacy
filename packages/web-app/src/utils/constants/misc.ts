@@ -98,6 +98,7 @@ export const MAX_TOKEN_AMOUNT = BigNumber.from(
   '26959946667150600000000000000000000000000000000000'
 );
 
+export const DAYS_IN_YEAR = 365;
 export const HOURS_IN_DAY = 24;
 export const MINS_IN_HOUR = 60;
 export const MINS_IN_DAY = HOURS_IN_DAY * MINS_IN_HOUR;
