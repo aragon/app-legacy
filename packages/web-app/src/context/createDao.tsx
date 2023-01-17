@@ -4,12 +4,14 @@ import {
   DaoCreationSteps,
   IAddressListPluginInstall,
   ICreateParams,
-  ITokenVotingPluginInstall,
   IMetadata,
   IPluginInstallItem,
+  ITokenVotingPluginInstall,
+  TokenVotingClient,
+  VotingMode,
   VotingSettings,
 } from '@aragon/sdk-client';
-import {BigNumber, constants} from 'ethers';
+import {BigNumber} from 'ethers';
 import {defaultAbiCoder, parseUnits, toUtf8Bytes} from 'ethers/lib/utils';
 import React, {createContext, useCallback, useContext, useState} from 'react';
 import {useFormContext} from 'react-hook-form';
@@ -95,7 +97,7 @@ const CreateDaoProvider: React.FC = ({children}) => {
   const handlePublishDao = async () => {
     setCreationProcessState(TransactionState.WAITING);
     setShowModal(true);
-    const creationParams: ICreateParams = await getDaoSettings();
+    const creationParams = await getDaoSettings();
     setDaoCreationData(creationParams);
   };
 
@@ -155,7 +157,7 @@ const CreateDaoProvider: React.FC = ({children}) => {
     }
   };
 
-  const getPluginSettings: () => VotingSettings = useCallback(() => {
+  const getVoteSettings = useCallback((): VotingSettings => {
     const {
       minimumApproval,
       minimumParticipation,
@@ -171,11 +173,12 @@ const CreateDaoProvider: React.FC = ({children}) => {
       ),
       minParticipation: parseInt(minimumParticipation) / 100,
       supportThreshold: parseInt(minimumApproval) / 100,
+      votingMode: VotingMode.EARLY_EXECUTION,
     };
   }, [getValues]);
 
-  const getErc20PluginParams: () => ITokenVotingPluginInstall['newToken'] =
-    useCallback(() => {
+  const getErc20PluginParams =
+    useCallback((): ITokenVotingPluginInstall['newToken'] => {
       const {tokenName, tokenSymbol, wallets} = getValues();
       return {
         name: tokenName,
@@ -197,46 +200,12 @@ const CreateDaoProvider: React.FC = ({children}) => {
     }, [getValues]);
 
   // Get dao setting configuration for creation process
-  const getDaoSettings = useCallback(async () => {
+  const getDaoSettings = useCallback(async (): Promise<ICreateParams> => {
     const {membership, daoName, daoSummary, daoLogo, links} = getValues();
     const plugins: IPluginInstallItem[] = [];
-    const pluginSettings = getPluginSettings();
+    const votingSettings = getVoteSettings();
 
     switch (membership) {
-      case 'token': {
-        const erc20Params = getErc20PluginParams();
-        const mintingConfig = erc20Params?.balances.reduce(
-          (acc, wallet) => {
-            acc[0].push(wallet.address);
-            acc[1].push(wallet.balance);
-            return acc;
-          },
-          [[], []] as [string[], BigInt[]]
-        );
-
-        plugins.push({
-          id: '0xa76b0ed4cdefd43ac6b213e957d5be6526498fdf',
-          data: toUtf8Bytes(
-            defaultAbiCoder.encode(
-              [
-                'uint64',
-                'uint64',
-                'uint64',
-                'tuple(address,string,string)',
-                'tuple(address[],uint256[])',
-              ],
-              [
-                BigNumber.from(encodeRatio(pluginSettings.minParticipation, 2)),
-                BigNumber.from(encodeRatio(pluginSettings.supportThreshold, 2)),
-                BigNumber.from(pluginSettings.minDuration),
-                [constants.AddressZero, erc20Params?.name, erc20Params?.symbol],
-                mintingConfig,
-              ]
-            )
-          ),
-        });
-        break;
-      }
       case 'wallet': {
         plugins.push({
           id: '0xc0180304d365de704b6dc67a216213621eb2f44d',
@@ -244,9 +213,9 @@ const CreateDaoProvider: React.FC = ({children}) => {
             defaultAbiCoder.encode(
               ['uint64', 'uint64', 'uint64', 'address[]'],
               [
-                BigNumber.from(encodeRatio(pluginSettings.minParticipation, 2)),
-                BigNumber.from(encodeRatio(pluginSettings.supportThreshold, 2)),
-                BigNumber.from(pluginSettings.minDuration),
+                BigNumber.from(encodeRatio(votingSettings.minParticipation, 2)),
+                BigNumber.from(encodeRatio(votingSettings.supportThreshold, 2)),
+                BigNumber.from(votingSettings.minDuration),
                 getAddresslistPluginParams(),
               ]
             )
@@ -254,6 +223,17 @@ const CreateDaoProvider: React.FC = ({children}) => {
         });
         break;
       }
+      case 'token':
+        {
+          const tokenVotingPlugin =
+            TokenVotingClient.encoding.getPluginInstallItem({
+              votingSettings: votingSettings,
+              newToken: getErc20PluginParams(),
+            });
+
+          plugins.push(tokenVotingPlugin);
+        }
+        break;
       default:
         throw new Error(`Unknown dao type: ${membership}`);
     }
@@ -282,18 +262,18 @@ const CreateDaoProvider: React.FC = ({children}) => {
         // TODO: We're using dao name without spaces for ens, We need to add alert
         // to inform this to user
         ensSubdomain: daoName?.replace(/ /g, '_'),
-        plugins: plugins,
+        plugins: [...plugins],
       };
     } catch {
       throw Error('Could not pin metadata on IPFS');
     }
   }, [
-    client?.methods,
-    getValues,
-    getPluginSettings,
-    getErc20PluginParams,
-    getAddresslistPluginParams,
     client?.ipfs,
+    client?.methods,
+    getAddresslistPluginParams,
+    getErc20PluginParams,
+    getValues,
+    getVoteSettings,
   ]);
 
   // estimate creation fees

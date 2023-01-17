@@ -271,7 +271,6 @@ const Dashboard: React.FC = () => {
     );
     alert(t('alert.chip.inputCopied'));
   }
-  console.log(dao);
 
   return (
     <>
@@ -352,8 +351,6 @@ const DashboardContent: React.FC<DashboardContentProps> = ({
 }) => {
   const proposalCount = proposals.length;
   const transactionCount = transfers.length;
-
-  console.log(pluginAddress, pluginType);
 
   if (!proposalCount) {
     return (

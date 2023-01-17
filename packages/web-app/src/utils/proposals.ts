@@ -655,5 +655,5 @@ export function prefixProposalIdWithPlgnAdr(
 
   // get last five characters from proposal, remove leading zeros, and prefix with
   // plugin address
-  return `${pluginAddress}_0x${proposalId.slice(-5).replace(/^0+/, '') || 0}`;
+  return `${pluginAddress}_0${proposalId.slice(-5).replace(/^0+/, '') || 0}`;
 }

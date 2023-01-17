@@ -434,7 +434,6 @@ const CreateProposalProvider: React.FC<Props> = ({
               pluginAddress
             );
 
-            console.log('proposal id', prefixedId);
             setProposalId(prefixedId);
             setCreationProcessState(TransactionState.SUCCESS);
             trackEvent('newProposal_transaction_success', {
