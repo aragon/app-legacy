@@ -291,7 +291,7 @@ const Dashboard: React.FC = () => {
           copiedOnClick={handleClipboardActions}
           onFavoriteClick={handleFavoriteClick}
           links={
-            dao?.metadata.links.flatMap(link => {
+            dao?.metadata?.links?.flatMap(link => {
               if (link.name !== '' && link.url !== '')
                 return {
                   label: link.name,

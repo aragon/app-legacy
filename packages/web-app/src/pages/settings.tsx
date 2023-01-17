@@ -89,7 +89,9 @@ const Settings: React.FC = () => {
     (daoDetails?.plugins?.[0]?.id as PluginTypes) ===
     'token-voting.plugin.dao.eth';
 
-  const resourceLinks = daoDetails?.metadata.links.filter(l => l.name && l.url);
+  const resourceLinks = daoDetails?.metadata.links?.filter(
+    l => l.name && l.url
+  );
 
   return (
     <SettingsWrapper>
