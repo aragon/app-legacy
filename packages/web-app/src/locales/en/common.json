@@ -558,7 +558,7 @@
       "label": "Step 4",
       "title": "Rules for Deciding",
       "description": "These are the rules that set how voting works in your DAO. How many people have to participate?  What percent counts as winning? How long may a proposal be open for voting? Learn more about ",
-      "bestPractices": "Best practices on governance.",
+      "bestPractices": "best practices on governance.",
       "shortTitle": "Rules for Deciding",
       "supportThresholdSubtitle": "Support is the percentage of tokens or that are required to vote “Yes” for a proposal to be approved, calculated based on total tokens that voted.",
       "minimumParticipationSubtitle": "Participation is the percentage of the token supply or addresses in the authorized list that vote on a proposal (either yes, no or abstain). The minimum is how many have to vote for the result to be valid.",
