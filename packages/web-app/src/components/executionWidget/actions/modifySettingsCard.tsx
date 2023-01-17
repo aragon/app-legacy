@@ -1,16 +1,41 @@
-import React from 'react';
+import Big from 'big.js';
+import {formatUnits} from 'ethers/lib/utils';
+import React, {useMemo} from 'react';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 
+import {VotingMode} from '@aragon/sdk-client';
 import {AccordionMethod} from 'components/accordionMethod';
-import {ActionUpdatePluginSettings} from 'utils/types';
 import {getDHMFromSeconds} from 'utils/date';
+import {abbreviateTokenAmount} from 'utils/tokens';
+import {ActionUpdatePluginSettings} from 'utils/types';
 
 const ModifySettings: React.FC<{action: ActionUpdatePluginSettings}> = ({
   action: {inputs},
 }) => {
   const {t} = useTranslation();
   const {days, hours, minutes} = getDHMFromSeconds(inputs.minDuration);
+
+  const minParticipation = useMemo(
+    () => `${Math.round(inputs.minParticipation * 100)}% (≥
+            ${abbreviateTokenAmount(
+              parseFloat(
+                Big(
+                  formatUnits(inputs.totalVotingWeight, inputs.token?.decimals)
+                )
+                  .mul(inputs.supportThreshold)
+                  .toFixed(2)
+              ).toString()
+            )} 
+            ${inputs.token?.symbol})`,
+    [
+      inputs.minParticipation,
+      inputs.supportThreshold,
+      inputs.token?.decimals,
+      inputs.token?.symbol,
+      inputs.totalVotingWeight,
+    ]
+  );
 
   return (
     <AccordionMethod
@@ -22,21 +47,31 @@ const ModifySettings: React.FC<{action: ActionUpdatePluginSettings}> = ({
     >
       <Container>
         <div>
-          <Title>Minimum Participation</Title>
-          <Value>{Math.round(inputs.minParticipation * 100)}% (TKN)</Value>
+          <Title>{t('labels.supportThreshold')}</Title>
+          <Value>&gt;{Math.round(inputs.supportThreshold * 100)}%</Value>
         </div>
         <div>
-          <Title>Minimum Support</Title>
-          <Value>{Math.round(inputs.supportThreshold * 100)}%</Value>
+          <Title>{t('labels.minimumParticipation')}</Title>
+          <Value>{minParticipation}</Value>
         </div>
         <div>
-          <Title>Minimum Duration</Title>
+          <Title>{t('labels.minimumDuration')}</Title>
+          <Value className="space-x-1.5">
+            <span>{t('createDAO.review.days', {days})}</span>
+            <span>{t('createDAO.review.hours', {hours})}</span>
+            <span>{t('createDAO.review.minutes', {minutes})}</span>
+          </Value>
+        </div>
+        <div>
+          <Title>Early Execution</Title>
           <Value>
-            {t('governance.settings.preview', {
-              days,
-              hours,
-              minutes,
-            })}
+            {inputs.votingMode === VotingMode.EARLY_EXECUTION ? 'Yes' : 'No'}
+          </Value>
+        </div>
+        <div>
+          <Title>Vote Replacement</Title>
+          <Value>
+            {inputs.votingMode === VotingMode.VOTE_REPLACEMENT ? 'Yes' : 'No'}
           </Value>
         </div>
       </Container>
@@ -56,5 +91,5 @@ const Title = styled.p.attrs({
 })``;
 
 const Value = styled.span.attrs({
-  className: 'text-ui-600',
+  className: 'text-ui-600' as string,
 })``;

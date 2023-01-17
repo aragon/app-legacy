@@ -1,5 +1,6 @@
 import {
   AddressListProposal,
+  Erc20TokenDetails,
   IMetadata,
   TokenVotingProposal,
   VoteValues,
@@ -250,7 +251,10 @@ export type ActionMintToken = {
 
 export type ActionUpdatePluginSettings = {
   name: 'modify_settings';
-  inputs: VotingSettings;
+  inputs: VotingSettings & {
+    token?: Erc20TokenDetails;
+    totalVotingWeight: bigint;
+  };
 };
 
 export type ActionUpdateMetadata = {

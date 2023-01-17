@@ -68,7 +68,9 @@ import {NotFound} from 'utils/paths';
 import {
   getProposalStatusSteps,
   getTerminalProps,
+  isErc20Token,
   isErc20VotingProposal,
+  isTokenBasedProposal,
 } from 'utils/proposals';
 import {Action} from 'utils/types';
 
@@ -156,6 +158,21 @@ const Proposal: React.FC = () => {
   /*************************************************
    *                     Hooks                     *
    *************************************************/
+  const addSettingsAction = useCallback(() => {
+    // add settings action
+    const settingsAction = pluginClient?.encoding.updatePluginSettingsAction(
+      pluginAddress,
+      {
+        votingMode: VotingMode.EARLY_EXECUTION,
+        supportThreshold: 0.9,
+        minDuration: 6666,
+        minParticipation: 0.9,
+      }
+    );
+
+    if (settingsAction && proposal) proposal.actions.push(settingsAction);
+  }, [pluginAddress, pluginClient?.encoding, proposal]);
+
   useEffect(() => {
     if (proposal && editor) {
       editor.commands.setContent(proposal.metadata.description, true);
@@ -168,6 +185,8 @@ const Proposal: React.FC = () => {
         actions: Uint8Array[];
         index: number;
       } = {actions: [], index: 0};
+
+      addSettingsAction();
 
       const actionPromises: Promise<Action | undefined>[] =
         proposal.actions.map((action: DaoAction, index) => {
@@ -200,10 +219,14 @@ const Proposal: React.FC = () => {
                 action.data,
                 pluginClient as ClientAddressList
               );
-            case 'setConfiguration':
+            case 'updateVotingSettings':
               return decodePluginSettingsToAction(
                 action.data,
-                pluginClient as TokenVotingClient
+                pluginClient as TokenVotingClient,
+                proposal.totalVotingWeight as bigint,
+                isTokenBasedProposal(proposal) && isErc20Token(proposal.token)
+                  ? proposal.token
+                  : undefined
               );
             case 'setMetadata':
               return decodeMetadataToAction(action.data, client);
@@ -235,9 +258,10 @@ const Proposal: React.FC = () => {
       });
     }
   }, [
+    addSettingsAction,
     apolloClient,
     client,
-    daoToken,
+    daoToken?.address,
     network,
     pluginClient,
     proposal,

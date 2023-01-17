@@ -3,8 +3,9 @@ import {ApolloClient} from '@apollo/client';
 import {
   Client,
   ClientAddressList,
-  TokenVotingClient,
+  Erc20TokenDetails,
   IMintTokenParams,
+  TokenVotingClient,
 } from '@aragon/sdk-client';
 import {Address} from '@aragon/ui-components/dist/utils/addresses';
 import {BigNumber, BigNumberish, constants, ethers, providers} from 'ethers';
@@ -265,7 +266,9 @@ export async function decodeRemoveMembersToAction(
  */
 export async function decodePluginSettingsToAction(
   data: Uint8Array | undefined,
-  client: TokenVotingClient | ClientAddressList | undefined
+  client: TokenVotingClient | undefined,
+  totalVotingWeight: bigint,
+  token?: Erc20TokenDetails
 ): Promise<ActionUpdatePluginSettings | undefined> {
   if (!client || !data) {
     console.error('SDK client is not initialized correctly');
@@ -273,9 +276,11 @@ export async function decodePluginSettingsToAction(
   }
   const decodedSettings = client.decoding.updatePluginSettingsAction(data);
 
+  console.log(decodedSettings);
+
   return {
     name: 'modify_settings',
-    inputs: {...decodedSettings},
+    inputs: {...decodedSettings, token, totalVotingWeight},
   };
 }
 
