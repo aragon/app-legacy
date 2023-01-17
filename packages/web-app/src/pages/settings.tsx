@@ -99,6 +99,7 @@ const Settings: React.FC = () => {
   return (
     <SettingsWrapper>
       <div className="mt-3 desktop:mt-8 space-y-5">
+        {/* BLOCKCHAIN SECTION */}
         <DescriptionListContainer
           title={t('labels.review.blockchain')}
           tagLabel={t('labels.notChangeable')}
@@ -113,10 +114,8 @@ const Settings: React.FC = () => {
           </Dl>
         </DescriptionListContainer>
 
-        <DescriptionListContainer
-          title={t('labels.review.daoMetadata')}
-          tagLabel={t('labels.changeableVote')}
-        >
+        {/* DAO DETAILS SECTION */}
+        <DescriptionListContainer title={t('labels.review.daoMetadata')}>
           <Dl>
             <Dt>{t('labels.logo')}</Dt>
             <Dd>
@@ -148,10 +147,8 @@ const Settings: React.FC = () => {
           )}
         </DescriptionListContainer>
 
-        <DescriptionListContainer
-          title={t('labels.review.voters')}
-          tagLabel={t('labels.notChangeable')}
-        >
+        {/* COMMUNITY SECTION */}
+        <DescriptionListContainer title={t('labels.review.voters')}>
           <Dl>
             <Dt>{t('labels.review.eligibleVoters')}</Dt>
             <Dd>
@@ -199,10 +196,8 @@ const Settings: React.FC = () => {
           </Dl>
         </DescriptionListContainer>
 
-        <DescriptionListContainer
-          title={t('labels.review.governance')}
-          tagLabel={t('labels.changeable')}
-        >
+        {/* GOVERNANCE SECTION */}
+        <DescriptionListContainer title={t('labels.review.governance')}>
           <Dl>
             <Dt>{t('labels.minimumParticipation')}</Dt>
             {isErc20Plugin ? (
@@ -256,7 +251,8 @@ export const SettingsWrapper: React.FC = ({children}) => {
   return (
     <PageWrapper
       title={t('labels.daoSettings')}
-      description="TBD"
+      // TODO add correct description once available in designs [VR 17-01-2023]
+      description="Review your DAO's settings"
       primaryBtnProps={
         isMobile
           ? {
