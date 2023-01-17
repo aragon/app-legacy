@@ -13,7 +13,8 @@
     "lint:fix": "eslint src --fix",
     "check-types": "tsc --noemit",
     "codegen": "apollo client:codegen --target typescript --globalTypesFile=types/global_apollo.ts --includes=./src/queries/*.tsx  --endpoint 'https://api.thegraph.com/subgraphs/name/aragon/aragon-zaragoza-goerli'",
-    "generate-abis-and-types": "node scripts/generate-abis-and-types.js && yarn typechain --target ethers-v5 --out-dir src/typechain './src/abis/*.json'"
+    "generate-abis-and-types": "node scripts/generate-abis-and-types.js && yarn typechain --target ethers-v5 --out-dir src/typechain './src/abis/*.json'",
+    "e2e": "env-cmd -f .env.development.local npx synpress run --configFile synpress.config.js"
   },
   "dependencies": {
     "@apollo/client": "^3.5.8",
@@ -22,6 +23,7 @@
     "@elastic/apm-rum-react": "^1.3.1",
     "@radix-ui/react-accordion": "^0.1.6",
     "@rollup/plugin-typescript": "^8.3.0",
+    "@synthetixio/synpress": "^3.0.5",
     "@tailwindcss/line-clamp": "^0.4.0",
     "@tiptap/extension-link": "^2.0.0-beta.35",
     "@tiptap/react": "^2.0.0-beta.104",
@@ -73,6 +75,8 @@
     "autoprefixer": "^10.3.1",
     "babel-jest": "^27.0.6",
     "babel-preset-vite": "^1.0.4",
+    "cypress": "^12.3.0",
+    "env-cmd": "^10.1.0",
     "eslint": "^7.30.0",
     "eslint-config-prettier": "^8.3.0",
     "eslint-plugin-prettier": "^3.4.0",
