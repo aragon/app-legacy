@@ -482,16 +482,19 @@ const Proposal: React.FC = () => {
         proposal.startDate,
         proposal.endDate,
         proposal.creationDate,
-        '123,123,123', // TODO: Add block numbers from sdk
+        proposal.creationBlockNumber.toString(),
         executionFailed,
-        '456,456,456',
-        new Date() // TODO: change to proposal.executionDate from sdk
+        proposal.executionBlockNumber.toString(),
+        proposal.executionDate
       );
   }, [
     proposal?.creationDate,
     proposal?.endDate,
     proposal?.startDate,
     proposal?.status,
+    proposal?.creationBlockNumber,
+    proposal?.executionBlockNumber,
+    proposal?.executionDate,
     executionFailed,
   ]);
 

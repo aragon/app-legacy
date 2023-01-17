@@ -106,8 +106,7 @@ export const DaoExplorer = () => {
               <DaoCard
                 name={dao.metadata.name}
                 logo={dao.metadata.avatar}
-                // TODO: replace with -> description={dao.metadata.description}
-                description="This is a DAO."
+                description={dao.metadata.description}
                 chainId={dao.chain || DEFAULT_CHAIN_ID} // Default to Goerli
                 daoType={
                   (dao?.plugins[0].id as PluginTypes) ===
