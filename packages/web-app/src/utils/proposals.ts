@@ -50,9 +50,10 @@ export function isTokenBasedProposal(
 }
 
 export function isErc20Token(
-  token: TokenVotingProposal['token']
+  token?: TokenVotingProposal['token']
 ): token is Erc20TokenDetails {
-  return token !== null && 'decimals' in token;
+  if (!token) return false;
+  return 'decimals' in token;
 }
 
 export function isErc20VotingProposal(
@@ -561,7 +562,7 @@ export function mapToDetailedProposal(params: MapToDetailedProposalParams) {
   };
 
   // erc20
-  if (params.daoToken && isErc20Token(params.daoToken)) {
+  if (isErc20Token(params.daoToken)) {
     return {
       ...commonProps,
       token: {

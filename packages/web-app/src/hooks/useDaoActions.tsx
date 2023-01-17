@@ -25,7 +25,7 @@ export function useDaoActions(dao: string): HookData<ActionParameter[]> {
     },
   ];
 
-  const whitelistActions = baseActions.concat([
+  const addressListActions = baseActions.concat([
     {
       type: 'add_address',
       title: t('AddActionModal.addAddresses'),
@@ -47,7 +47,7 @@ export function useDaoActions(dao: string): HookData<ActionParameter[]> {
   ]);
 
   return {
-    data: addressList ? whitelistActions : erc20Actions,
+    data: addressList ? addressListActions : erc20Actions,
     isLoading,
     error,
   };
