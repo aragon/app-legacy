@@ -192,6 +192,8 @@
     "voteReplacementDescription": "Allows vote replacement while the vote is still open. This can change the vote outcome anytime and is auto-disabled if early execution is enabled.",
     "updateGovernanceAction": "Update Governance Settings",
     "updateGovernanceActionDescription": "TBD",
+    "updateMetadataAction": "Update DAO Metadata",
+    "updateMetadataActionDescription": "TBD",
     "earlyExecution": "Early Execution",
     "earlyExecutionDescription": "Allow proposal execution before the vote ends if the requirements are met and the vote outcome cannot be changed by more voters participating.",
     "voteReplacement": "Vote Replacement",

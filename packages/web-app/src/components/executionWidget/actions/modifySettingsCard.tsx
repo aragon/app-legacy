@@ -10,9 +10,9 @@ import {getDHMFromSeconds} from 'utils/date';
 import {abbreviateTokenAmount} from 'utils/tokens';
 import {ActionUpdatePluginSettings} from 'utils/types';
 
-const ModifySettings: React.FC<{action: ActionUpdatePluginSettings}> = ({
-  action: {inputs},
-}) => {
+export const ModifySettingsCard: React.FC<{
+  action: ActionUpdatePluginSettings;
+}> = ({action: {inputs}}) => {
   const {t} = useTranslation();
   const {days, hours, minutes} = getDHMFromSeconds(inputs.minDuration);
 
@@ -42,8 +42,8 @@ const ModifySettings: React.FC<{action: ActionUpdatePluginSettings}> = ({
       type="execution-widget"
       methodName={t('labels.updateGovernanceAction')}
       smartContractName={t('labels.aragonCore')}
-      verified
       methodDescription={t('labels.updateGovernanceActionDescription')}
+      verified
     >
       <Container>
         <div>
@@ -78,8 +78,6 @@ const ModifySettings: React.FC<{action: ActionUpdatePluginSettings}> = ({
     </AccordionMethod>
   );
 };
-
-export default ModifySettings;
 
 const Container = styled.div.attrs({
   className:
