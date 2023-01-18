@@ -80,6 +80,14 @@ const Governance: React.FC = () => {
               </div>
             </Dd>
           </Dl>
+          <Dl>
+            <Dt>{t('labels.earlyExecution')}</Dt>
+            <Dd>{t('labels.yes')}</Dd>
+          </Dl>
+          <Dl>
+            <Dt>{t('labels.voteReplacement')}</Dt>
+            <Dd>{t('labels.no')}</Dd>
+          </Dl>
         </DescriptionListContainer>
       )}
     />

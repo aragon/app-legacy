@@ -102,6 +102,8 @@
     "minimumApproval": "Approval threshold",
     "minimumParticipation": "Minimum Participation (Quorum)",
     "minimumDuration": "Minimum Duration",
+    "earlyExecution": "Early Execution",
+    "voteReplacement": "Vote Replacement",
     "support": "Support",
     "duration": "Duration",
     "communityToken": "Does your community have a token?",
