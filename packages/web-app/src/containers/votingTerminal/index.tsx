@@ -37,7 +37,7 @@ export type VotingTerminalProps = {
   startDate?: string;
   endDate?: string;
   participation?: string;
-  approval?: string;
+  supportThreshold?: number;
   voters?: Array<VoterType>;
   status?: ProposalStatus;
   statusLabel: string;
@@ -62,7 +62,7 @@ export const VotingTerminal: React.FC<VotingTerminalProps> = ({
   votersTabDisabled = false,
   voteNowDisabled = false,
   participation,
-  approval,
+  supportThreshold,
   voters = [],
   results,
   token,
@@ -198,8 +198,8 @@ export const VotingTerminal: React.FC<VotingTerminalProps> = ({
               <Strong>{strategy}</Strong>
             </InfoLine>
             <InfoLine>
-              <p>{t('votingTerminal.approvalThreshold')}</p>
-              <Strong>{approval}</Strong>
+              <p>{t('votingTerminal.supportThreshold')}</p>
+              <Strong>&gt;{supportThreshold}%</Strong>
             </InfoLine>
           </VStackSection>
 

@@ -26,12 +26,12 @@ import differenceInSeconds from 'date-fns/fp/differenceInSeconds';
 import {BigNumber} from 'ethers';
 
 import {ProposalVoteResults} from 'containers/votingTerminal';
+import {CachedProposal} from 'context/apolloClient';
 import {i18n} from '../../i18n.config';
 import {getFormattedUtcOffset, KNOWN_FORMATS} from './date';
 import {formatUnits} from './library';
 import {abbreviateTokenAmount} from './tokens';
 import {AddressListVote, DetailedProposal, Erc20ProposalVote} from './types';
-import {CachedProposal} from 'context/apolloClient';
 
 export const MappedVotes: {[key in VoteValues]: VoterType['option']} = {
   1: 'abstain',
@@ -70,30 +70,6 @@ export function isAddressListVotingProposal(
   proposal: DetailedProposal
 ): proposal is AddressListProposal {
   return !('token' in proposal);
-}
-
-/**
- * Get minimum approval summary for ERC20 voting proposal
- * @param minSupport Minimum support for vote to pass
- * @param totalVotingWeight number of eligible voting tokens at proposal creation snapshot
- * @param token token associated with proposal
- * @returns minimum approval summary for voting terminal
- */
-export function getErc20MinimumApproval(
-  minSupport: number,
-  totalVotingWeight: bigint,
-  token: Erc20TokenDetails
-): string {
-  const percentage = Math.trunc(minSupport * 100);
-  const tokenValue = abbreviateTokenAmount(
-    parseFloat(
-      Big(formatUnits(totalVotingWeight, token.decimals))
-        .mul(minSupport)
-        .toFixed(2)
-    ).toString()
-  );
-
-  return `${tokenValue} ${token.symbol} (${percentage}%)`;
 }
 
 /**
@@ -438,7 +414,7 @@ export function getTerminalProps(
   let voters;
   let participation;
   let results;
-  let approval;
+  let supportThreshold;
   let strategy;
 
   if (isErc20VotingProposal(proposal)) {
@@ -468,36 +444,10 @@ export function getTerminalProps(
     );
 
     // min approval
-    approval = getErc20MinimumApproval(
-      proposal.settings.minSupport,
-      proposal.totalVotingWeight,
-      proposal.token
-    );
+    supportThreshold = Math.round(proposal.settings.minSupport * 100);
 
     // strategy
     strategy = i18n.t('votingTerminal.tokenVoting');
-  } else if (isAddressListVotingProposal(proposal)) {
-    // voters
-    const ptcResults = getWhitelistVoterParticipation(
-      proposal.votes,
-      proposal.totalVotingWeight
-    );
-    voters = ptcResults.voters.sort(a => (a.wallet === voter ? -1 : 0));
-
-    // participation summary
-    participation = ptcResults.summary;
-
-    // results
-    results = getWhitelistResults(proposal.result, proposal.totalVotingWeight);
-
-    // approval
-    approval = getWhitelistMinimumApproval(
-      proposal.settings.minSupport,
-      proposal.totalVotingWeight
-    );
-
-    // strategy
-    strategy = i18n.t('votingTerminal.multisig');
   }
 
   return {
@@ -505,7 +455,7 @@ export function getTerminalProps(
     status: proposal.status,
     voters,
     results,
-    approval,
+    supportThreshold,
     strategy,
     participation,
 

@@ -27,9 +27,7 @@ import {
   KNOWN_FORMATS,
 } from 'utils/date';
 import {
-  getErc20MinimumApproval,
   getErc20VotersAndParticipation,
-  getWhitelistMinimumApproval,
   getWhitelistVoterParticipation,
 } from 'utils/proposals';
 import {getTokenInfo} from 'utils/tokens';
@@ -64,7 +62,6 @@ const ReviewProposal: React.FC<ReviewProposalProps> = ({
   );
 
   const {getValues, setValue} = useFormContext();
-  const [approval, setApproval] = useState('');
   const [participation, setParticipation] = useState('');
   const [isWalletBased, setIsWalletBased] = useState(true);
   const [terminalTab, setTerminalTab] = useState<TerminalTabs>('info');
@@ -140,14 +137,6 @@ const ReviewProposal: React.FC<ReviewProposalProps> = ({
         // get voter participation
         const {summary} = getWhitelistVoterParticipation([], members.length);
         setParticipation(summary);
-
-        // get approval threshold
-        setApproval(
-          getWhitelistMinimumApproval(
-            daoSettings.supportThreshold,
-            members.length
-          )
-        );
       } else {
         // token based
         setIsWalletBased(false);
@@ -167,30 +156,14 @@ const ReviewProposal: React.FC<ReviewProposalProps> = ({
             BigInt(0)
           );
           setParticipation(summary);
-
-          // get approval threshold
-          setApproval(
-            getErc20MinimumApproval(
-              daoSettings.supportThreshold,
-              totalSupply,
-              daoToken
-            )
-          );
         }
       }
     }
 
-    if (members && daoSettings?.supportThreshold) {
+    if (members) {
       mapToView();
     }
-  }, [
-    daoSettings.supportThreshold,
-    daoToken,
-    members,
-    network,
-    pluginType,
-    provider,
-  ]);
+  }, [daoToken, members, network, pluginType, provider]);
 
   useEffect(() => {
     if (values.proposal === '<p></p>') {
@@ -236,7 +209,7 @@ const ReviewProposal: React.FC<ReviewProposalProps> = ({
             selectedTab={terminalTab}
             onTabSelected={setTerminalTab}
             statusLabel={t('votingTerminal.status.draft')}
-            approval={approval}
+            supportThreshold={Math.round(daoSettings.supportThreshold * 100)}
             participation={participation}
             startDate={formattedStartDate}
             endDate={formattedEndDate}
