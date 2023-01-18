@@ -559,7 +559,8 @@
         "tokenHolders.title": "Token Holders",
         "tokenHolders.description": "Only token holders with an certain amount are eligible to create proposals.",
         "anyone.title": "Anyone",
-        "anyone.description": "Only a wallet is required to create a proposal."
+        "anyone.description": "Only a wallet is required to create a proposal.",
+        "anyone.warning": "With anyone being able to propose, there is a risk of proposal spam. Consider having a minimum token threshold."
       }
     },
     "step4": {

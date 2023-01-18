@@ -33,65 +33,73 @@ export const SelectEligibility = () => {
    */
 
   return (
-    <Container>
-      <Controller
-        name="eligibilityType"
-        control={control}
-        defaultValue={'token'}
-        render={({field: {onChange, value}}) => (
-          <OptionsContainers>
-            <OptionsTitle>
-              {t('createDAO.step3.eligibility.optionTitle')}
-            </OptionsTitle>
-            <CheckboxListItem
-              label={t('createDAO.step3.eligibility.tokenHolders.title')}
-              helptext={t(
-                'createDAO.step3.eligibility.tokenHolders.description'
+    <>
+      <Container>
+        <Controller
+          name="eligibilityType"
+          control={control}
+          defaultValue={'token'}
+          render={({field: {onChange, value}}) => (
+            <OptionsContainers>
+              <OptionsTitle>
+                {t('createDAO.step3.eligibility.optionTitle')}
+              </OptionsTitle>
+              <CheckboxListItem
+                label={t('createDAO.step3.eligibility.tokenHolders.title')}
+                helptext={t(
+                  'createDAO.step3.eligibility.tokenHolders.description'
+                )}
+                multiSelect={false}
+                onClick={() => {
+                  onChange('token');
+                }}
+                {...(value === 'token' ? {type: 'active'} : {})}
+              />
+              <CheckboxListItem
+                label={t('createDAO.step3.eligibility.anyone.title')}
+                helptext={t('createDAO.step3.eligibility.anyone.description')}
+                onClick={() => {
+                  onChange('anyone');
+                  resetField('eligibilityTokenAmount');
+                }}
+                multiSelect={false}
+                {...(value === 'anyone' ? {type: 'active'} : {})}
+              />
+            </OptionsContainers>
+          )}
+        />
+        <Controller
+          name="eligibilityTokenAmount"
+          control={control}
+          rules={{
+            validate: value => eligibilityValidator(value),
+          }}
+          render={({field: {onChange, value}, fieldState: {error}}) => (
+            <OptionsContainers>
+              <OptionsTitle>
+                {t('createDAO.step3.eligibility.inputTitle')}
+              </OptionsTitle>
+              <NumberInput
+                value={value}
+                view="bigger"
+                onChange={onChange}
+                max={tokenTotalSupply}
+                disabled={eligibilityType === 'anyone'}
+              />
+              {error?.message && (
+                <AlertInline label={error.message} mode="critical" />
               )}
-              multiSelect={false}
-              onClick={() => {
-                onChange('token');
-              }}
-              {...(value === 'token' ? {type: 'active'} : {})}
-            />
-            <CheckboxListItem
-              label={t('createDAO.step3.eligibility.anyone.title')}
-              helptext={t('createDAO.step3.eligibility.anyone.description')}
-              onClick={() => {
-                onChange('anyone');
-                resetField('eligibilityTokenAmount');
-              }}
-              multiSelect={false}
-              {...(value === 'anyone' ? {type: 'active'} : {})}
-            />
-          </OptionsContainers>
-        )}
-      />
-      <Controller
-        name="eligibilityTokenAmount"
-        control={control}
-        rules={{
-          validate: value => eligibilityValidator(value),
-        }}
-        render={({field: {onChange, value}, fieldState: {error}}) => (
-          <OptionsContainers>
-            <OptionsTitle>
-              {t('createDAO.step3.eligibility.inputTitle')}
-            </OptionsTitle>
-            <NumberInput
-              value={value}
-              view="bigger"
-              onChange={onChange}
-              max={tokenTotalSupply}
-              disabled={eligibilityType === 'anyone'}
-            />
-            {error?.message && (
-              <AlertInline label={error.message} mode="critical" />
-            )}
-          </OptionsContainers>
-        )}
-      />
-    </Container>
+            </OptionsContainers>
+          )}
+        />
+      </Container>
+      {eligibilityType === 'anyone' && (
+        <AlertInline
+          label={t('createDAO.step3.eligibility.anyone.warning')}
+          mode="warning"
+        />
+      )}
+    </>
   );
 };
 
