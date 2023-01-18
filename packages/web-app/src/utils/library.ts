@@ -7,6 +7,7 @@ import {
   IMintTokenParams,
   TokenVotingClient,
 } from '@aragon/sdk-client';
+import {resolveIpfsCid} from '@aragon/sdk-common';
 import {Address} from '@aragon/ui-components/dist/utils/addresses';
 import {BigNumber, BigNumberish, constants, ethers, providers} from 'ethers';
 import {TFunction} from 'react-i18next';
@@ -274,13 +275,14 @@ export async function decodePluginSettingsToAction(
     console.error('SDK client is not initialized correctly');
     return;
   }
-  const decodedSettings = client.decoding.updatePluginSettingsAction(data);
-
-  console.log(decodedSettings);
 
   return {
     name: 'modify_settings',
-    inputs: {...decodedSettings, token, totalVotingWeight},
+    inputs: {
+      ...client.decoding.updatePluginSettingsAction(data),
+      token,
+      totalVotingWeight,
+    },
   };
 }
 
@@ -300,11 +302,11 @@ export async function decodeMetadataToAction(
   }
 
   try {
-    const decodedSettings = await client.decoding.updateMetadataAction(data);
+    const decodedMetadata = await client.decoding.updateMetadataAction(data);
 
     return {
       name: 'modify_metadata',
-      inputs: {...decodedSettings},
+      inputs: decodedMetadata,
     };
   } catch (error) {
     console.error('Error decoding update dao metadata action', error);
@@ -369,4 +371,20 @@ export function generateCachedProposalId(
   proposalId: string
 ): string {
   return `${daoAddress}_${proposalId}`;
+}
+
+/**
+ * Get DAO avatar url given avatar IPFS cid
+ * @param avatar - IPFS cid for DAO avatar
+ * @returns the url to the DAO avatar
+ */
+export function resolveDaoAvatarIpfsCid(avatar?: string): string | undefined {
+  if (avatar) {
+    try {
+      const logoCid = resolveIpfsCid(avatar);
+      return `https://ipfs.io/ipfs/${logoCid}`;
+    } catch (err) {
+      console.warn('Error resolving DAO avatar IPFS Cid', err);
+    }
+  }
 }

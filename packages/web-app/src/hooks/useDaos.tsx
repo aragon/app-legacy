@@ -1,11 +1,11 @@
 import {useReactiveVar} from '@apollo/client';
 import {DaoListItem, DaoSortBy, SortDirection} from '@aragon/sdk-client';
-import {resolveIpfsCid} from '@aragon/sdk-common';
 import {useEffect, useState} from 'react';
 
 import {ExploreFilter} from 'containers/daoExplorer';
 import {favoriteDaosVar} from 'context/apolloClient';
 import {SupportedChainID} from 'utils/constants';
+import {resolveDaoAvatarIpfsCid} from 'utils/library';
 import {HookData} from 'utils/types';
 import {useClient} from './useClient';
 
@@ -67,14 +67,7 @@ export function useDaos(
             })) || [];
 
           daos.forEach(dao => {
-            if (dao.metadata.avatar) {
-              try {
-                const logoCid = resolveIpfsCid(dao.metadata.avatar);
-                dao.metadata.avatar = `https://ipfs.io/ipfs/${logoCid}`;
-              } catch (err) {
-                dao.metadata.avatar = undefined;
-              }
-            }
+            dao.metadata.avatar = resolveDaoAvatarIpfsCid(dao.metadata.avatar);
           });
           setData(daos);
         }

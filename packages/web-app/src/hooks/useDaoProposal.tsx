@@ -1,6 +1,6 @@
 import {useReactiveVar} from '@apollo/client';
+import {ProposalStatus, VotingMode} from '@aragon/sdk-client';
 import {useCallback, useEffect, useState} from 'react';
-import {ProposalStatus} from '@aragon/sdk-client';
 
 import {
   pendingExecutionVar,
@@ -16,6 +16,7 @@ import {
 import {customJSONReplacer, generateCachedProposalId} from 'utils/library';
 import {addVoteToProposal} from 'utils/proposals';
 import {DetailedProposal, HookData} from 'utils/types';
+import {useClient} from './useClient';
 import {PluginTypes, usePluginClient} from './usePluginClient';
 
 /**
@@ -105,6 +106,7 @@ export const useDaoProposal = (
     [cachedExecutions, daoAddress, preferences?.functional, proposalId]
   );
 
+  const {client} = useClient();
   useEffect(() => {
     async function getDaoProposal() {
       try {
@@ -112,8 +114,29 @@ export const useDaoProposal = (
 
         const cachedProposal = proposalCache[daoAddress]?.[proposalId];
 
+        // TODO: for Demo purposes, removing before merge
+        const metadataAction = await client?.encoding.updateMetadataAction(
+          daoAddress,
+          'ipfs://QmSyZg8jWsU9UgTsg6rJzzXuh9dYYqgk9aEbySd562p85U'
+        );
+
+        const settingsAction =
+          pluginClient?.encoding.updatePluginSettingsAction(
+            '0xfee55b0ed94b71bbe42d19c79667039227abb28d',
+            {
+              votingMode: VotingMode.EARLY_EXECUTION,
+              supportThreshold: 0.9,
+              minDuration: 6666,
+              minParticipation: 0.9,
+            }
+          );
+
+        // TODO: for Demo purposes
         const proposal = await pluginClient?.methods.getProposal(proposalId);
-        if (proposal) {
+        if (proposal && metadataAction && settingsAction) {
+          proposal.actions.push(metadataAction);
+          proposal.actions.push(settingsAction);
+
           setData({
             ...augmentWithVoteCache(proposal),
             ...augmentWithExecutionCache(proposal),
@@ -151,7 +174,9 @@ export const useDaoProposal = (
   }, [
     augmentWithExecutionCache,
     augmentWithVoteCache,
+    client?.encoding,
     daoAddress,
+    pluginClient?.encoding,
     pluginClient?.methods,
     preferences?.functional,
     proposalCache,
