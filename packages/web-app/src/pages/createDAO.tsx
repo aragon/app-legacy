@@ -154,7 +154,11 @@ const CreateDAO: React.FC = () => {
           !dirtyFields.tokenName ||
           !dirtyFields.wallets ||
           !dirtyFields.tokenSymbol ||
+          !(
+            dirtyFields.eligibilityType || dirtyFields.eligibilityTokenAmount
+          ) ||
           errors.wallets ||
+          errors.eligibilityTokenAmount ||
           tokenTotalSupply === 0
         )
           return false;
@@ -168,16 +172,19 @@ const CreateDAO: React.FC = () => {
     }
   }, [
     membership,
+    whitelistWallets,
     errors.whitelistWallets,
     errors.wallets,
+    errors.eligibilityTokenAmount,
     errors.tokenName,
     errors.tokenSymbol,
     errors.tokenAddress,
-    whitelistWallets,
     isCustomToken,
     dirtyFields.tokenName,
     dirtyFields.wallets,
     dirtyFields.tokenSymbol,
+    dirtyFields.eligibilityType,
+    dirtyFields.eligibilityTokenAmount,
     dirtyFields.tokenAddress,
     tokenTotalSupply,
   ]);
