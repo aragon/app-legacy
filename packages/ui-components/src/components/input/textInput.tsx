@@ -41,7 +41,7 @@ export const Container = styled.div.attrs(
     } flex items-center space-x-1.5 space-x-1.5 py-1.5 px-2
     focus-within:ring-2 focus-within:ring-primary-500
     rounded-xl hover:border-ui-300 border-2 h-6
-    active:border-primary-500 `;
+    active:border-primary-500 active:ring-0 `;
 
     if (mode === 'default') {
       className += 'border-ui-100';

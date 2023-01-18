@@ -64,7 +64,7 @@ export const useDaoMembers = (
   const {network} = useNetwork();
   const provider = useSpecificProvider(CHAIN_METADATA[network].id);
 
-  const isTokenBased = pluginType === 'erc20voting.dao.eth';
+  const isTokenBased = pluginType === 'token-voting.plugin.dao.eth';
   const {data: daoToken} = useDaoToken(pluginAddress);
 
   const client = usePluginClient(pluginType);

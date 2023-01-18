@@ -17,7 +17,7 @@ export const SelectEligibility = () => {
     /**
      * Prevent user from entering 0 because It will makes any wallet eligible
      */
-    if (value === '0') return t('errors.requiredTokenAddressZero');
+    if (Number(value) === 0) return t('errors.requiredTokenAddressZero');
     /**
      * Prevent user from entering values more than total supply
      */
@@ -70,7 +70,6 @@ export const SelectEligibility = () => {
       <Controller
         name="eligibilityTokenAmount"
         control={control}
-        defaultValue={0}
         rules={{
           validate: value => eligibilityValidator(value),
         }}

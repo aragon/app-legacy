@@ -1,7 +1,8 @@
 import React from 'react';
-import {TextInput, TextInputProps} from './textInput';
-import {IconSearch, IconClose} from '../icons';
+
+import {IconClose, IconSearch} from '../icons';
 import {Spinner} from '../spinner';
+import {TextInput, TextInputProps} from './textInput';
 
 export type SearchInputProps = Omit<
   TextInputProps,

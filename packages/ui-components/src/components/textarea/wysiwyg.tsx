@@ -1,10 +1,11 @@
-import React, {useCallback, useState} from 'react';
-import ReactDOM from 'react-dom';
-import {useEditor, EditorContent, Editor} from '@tiptap/react';
-import StarterKit from '@tiptap/starter-kit';
 import Link from '@tiptap/extension-link';
 import Placeholder from '@tiptap/extension-placeholder';
+import {Editor, EditorContent, useEditor} from '@tiptap/react';
+import StarterKit from '@tiptap/starter-kit';
+import React, {useCallback, useState} from 'react';
+import ReactDOM from 'react-dom';
 import styled from 'styled-components';
+
 import {ButtonIcon} from '../button';
 import {
   IconBold,
@@ -227,17 +228,9 @@ const Container = styled.div.attrs(({disabled, fullScreen = false}: Props) => ({
   className: `w-full text-ui-600 overflow-auto ${
     fullScreen
       ? 'h-screen flex flex-col fixed top-0'
-      : 'rounded-xl border-2 border-ui-100 hover:border-ui-300'
+      : 'rounded-xl border-2 border-ui-100 hover:border-ui-300 focus-within:ring-2 focus-within:ring-primary-500 active:border-primary-500 active:ring-0 '
   } ${disabled ? 'bg-ui-100 border-ui-200' : 'bg-white'}`,
 }))<Props>`
-  :focus-within {
-    border-color: #003bf5;
-  }
-
-  :focus-within[disabled] {
-    border-color: #cbd2d9;
-  }
-
   ::-webkit-input-placeholder {
     color: #9aa5b1;
   }

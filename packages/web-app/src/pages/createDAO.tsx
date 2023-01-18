@@ -45,6 +45,8 @@ export type CreateDaoFormData = {
   durationDays: string;
   minimumApproval: string;
   minimumParticipation: string;
+  eligibilityType: 'token' | 'anyone';
+  eligibilityTokenAmount: number | string;
   support: string;
   membership: string;
   whitelistWallets: WhitelistWallet[];
@@ -60,7 +62,8 @@ const defaultValues = {
   // Uncomment when DAO Treasury minting is supported
   // wallets: [{address: constants.AddressZero, amount: '0'}],
   membership: 'token',
-  eligibilityType: 'token',
+  eligibilityType: 'token' as CreateDaoFormData['eligibilityType'],
+  eligibilityTokenAmount: 0,
   isCustomToken: true,
 };
 
@@ -316,7 +319,7 @@ const CreateDAO: React.FC = () => {
                 {t('createDAO.step4.description')}
                 <Link
                   href="https://aragon.org/how-to/setting-dao-governance-thresholds"
-                  label={t('createDAO.step2.metadataOverviewGuide')}
+                  label={t('createDAO.step4.bestPractices')}
                 />
               </>
             }

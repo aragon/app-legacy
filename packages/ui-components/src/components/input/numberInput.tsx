@@ -1,5 +1,6 @@
 import React, {useRef} from 'react';
 import styled from 'styled-components';
+
 import {ButtonIcon} from '../button';
 import {IconAdd, IconRemove} from '../icons';
 
@@ -145,7 +146,8 @@ const Container = styled.div.attrs(
       width ? '' : 'w-full'
     } focus:outline-none items-center h-6
       focus-within:ring-2 focus-within:ring-primary-500 justify-between
-      rounded-xl hover:border-ui-300 border-2 active:border-primary-500 
+      rounded-xl hover:border-ui-300 border-2 active:border-primary-500
+      active:ring-0 
     `;
 
     if (mode === 'default') {
@@ -164,7 +166,6 @@ const Container = styled.div.attrs(
     };
   }
 )<StyledContainerProps>``;
-
 const InputWrapper = styled.div.attrs({
   className: 'flex justify-center w-4/5',
 })``;

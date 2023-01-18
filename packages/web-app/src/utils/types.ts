@@ -1,6 +1,6 @@
 import {
   AddressListProposal,
-  Erc20Proposal,
+  TokenVotingProposal,
   VoteValues,
 } from '@aragon/sdk-client';
 import {Address} from '@aragon/ui-components/src/utils/addresses';
@@ -154,7 +154,7 @@ export type Erc20ProposalVote = AddressListVote & {
   weight: bigint;
 };
 
-export type DetailedProposal = Erc20Proposal | AddressListProposal;
+export type DetailedProposal = TokenVotingProposal | AddressListProposal;
 
 /* ACTION TYPES ============================================================= */
 

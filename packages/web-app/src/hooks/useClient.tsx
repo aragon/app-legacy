@@ -41,7 +41,7 @@ export const UseClientProvider: React.FC = ({children}) => {
           },
         },
       ],
-      daoFactoryAddress: '0xd52CA6BbfC11627aF9aC3496CAb975ae20E70A81', // TODO: remove temporary until SDK updates
+      daoFactoryAddress: '0x66DBb74f6cADD2486CBFf0b9DF211e3D7961eBf9', // TODO: remove temporary until SDK updates
       graphqlNodes: [
         {
           url: SUBGRAPH_API_URL[network]!,

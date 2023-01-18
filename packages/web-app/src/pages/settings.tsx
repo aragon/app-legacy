@@ -86,9 +86,12 @@ const Settings: React.FC = () => {
 
   const {days, hours, minutes} = getDHMFromSeconds(daoSettings.minDuration);
   const isErc20Plugin =
-    (daoDetails?.plugins?.[0]?.id as PluginTypes) === 'erc20voting.dao.eth';
+    (daoDetails?.plugins?.[0]?.id as PluginTypes) ===
+    'token-voting.plugin.dao.eth';
 
-  const resourceLinks = daoDetails?.metadata.links.filter(l => l.name && l.url);
+  const resourceLinks = daoDetails?.metadata.links?.filter(
+    l => l.name && l.url
+  );
 
   return (
     <SettingsWrapper>
@@ -201,16 +204,16 @@ const Settings: React.FC = () => {
             <Dt>{t('labels.minimumParticipation')}</Dt>
             {isErc20Plugin ? (
               <Dd>
-                {Math.round(daoSettings.minTurnout * 100)}% (
-                {daoSettings.minTurnout * tokenSupply} {daoToken?.symbol})
+                {Math.round(daoSettings.minParticipation * 100)}% (
+                {daoSettings.minParticipation * tokenSupply} {daoToken?.symbol})
               </Dd>
             ) : (
-              <Dd>{Math.round(daoSettings.minTurnout * 100)}%</Dd>
+              <Dd>{Math.round(daoSettings.minParticipation * 100)}%</Dd>
             )}
           </Dl>
           <Dl>
             <Dt>{t('labels.minimumApproval')}</Dt>
-            <Dd>{Math.round(daoSettings?.minSupport * 100)}%</Dd>
+            <Dd>{Math.round(daoSettings?.supportThreshold * 100)}%</Dd>
           </Dl>
           <Dl>
             <Dt>{t('labels.minimumDuration')}</Dt>

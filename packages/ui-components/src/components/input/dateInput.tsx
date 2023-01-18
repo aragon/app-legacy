@@ -1,5 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
+
 import {IconCalendar} from '../icons';
 
 // NOTE: Currently, there are no designs for the actual date-picker.
@@ -41,9 +42,9 @@ const InputContainer = styled.div.attrs(({disabled}: InputContainerProps) => {
     className += ' bg-ui-100 text-ui-300 border-ui-200';
   } else {
     const focusVisibleClasses =
-      'focus-visible:ring-2 focus-visible:ring-primary-500';
+      'focus-within:ring-2 focus-within:ring-primary-500';
     const hoverClasses = 'hover:border-ui-300';
-    const activeClasses = 'active:border-primary-500';
+    const activeClasses = 'active:border-primary-500 active:ring-0';
     className += ` bg-ui-0 text-ui-600 ${focusVisibleClasses} ${hoverClasses} ${activeClasses}`;
   }
   return {className, disabled};
