@@ -3,7 +3,7 @@ import {ApolloClient} from '@apollo/client';
 import {
   Client,
   ClientAddressList,
-  ClientErc20,
+  TokenVotingClient,
   IMintTokenParams,
 } from '@aragon/sdk-client';
 import {Address} from '@aragon/ui-components/dist/utils/addresses';
@@ -148,7 +148,7 @@ export async function decodeWithdrawToAction(
  */
 export async function decodeMintTokensToAction(
   data: Uint8Array[] | undefined,
-  client: ClientErc20 | undefined,
+  client: TokenVotingClient | undefined,
   daoTokenAddress: Address,
   provider: providers.Provider,
   network: SupportedNetworks

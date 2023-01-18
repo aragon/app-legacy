@@ -13,13 +13,13 @@ import {MembersList} from 'components/membersList';
 import {Loading} from 'components/temporary';
 import {useNetwork} from 'context/network';
 import {useDaoMembers} from 'hooks/useDaoMembers';
+import {PluginTypes} from 'hooks/usePluginClient';
 import useScreen from 'hooks/useScreen';
 import {
   Community,
   ManageMembersProposal,
   MintTokensProposal,
 } from 'utils/paths';
-import {PluginTypes} from 'hooks/usePluginClient';
 
 type Props = {
   dao: string;
@@ -45,7 +45,7 @@ export const MembershipSnapshot: React.FC<Props> = ({
   } = useDaoMembers(pluginAddress, pluginType);
   const totalMemberCount = members.length;
 
-  const walletBased = pluginType === 'addresslistvoting.dao.eth';
+  const walletBased = pluginType === 'addresslist-voting.plugin.dao.eth';
 
   const headerButtonHandler = () => {
     walletBased

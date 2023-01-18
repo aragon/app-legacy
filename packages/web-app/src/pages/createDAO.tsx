@@ -316,7 +316,7 @@ const CreateDAO: React.FC = () => {
                 {t('createDAO.step4.description')}
                 <Link
                   href="https://aragon.org/how-to/setting-dao-governance-thresholds"
-                  label={t('createDAO.step2.metadataOverviewGuide')}
+                  label={t('createDAO.step4.bestPractices')}
                 />
               </>
             }

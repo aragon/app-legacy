@@ -82,7 +82,7 @@ const ProtectedRoute: React.FC = () => {
 
   useEffect(() => {
     if (address && !isOnWrongNetwork && daoDetails?.plugins[0].id) {
-      if (daoDetails?.plugins[0].id === 'erc20voting.dao.eth') {
+      if (daoDetails?.plugins[0].id === 'token-voting.plugin.dao.eth') {
         checkIfTokenBasedMember();
       } else {
         checkIfAllowlistedMember();

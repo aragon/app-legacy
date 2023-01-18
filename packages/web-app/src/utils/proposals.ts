@@ -7,15 +7,17 @@
 
 import {
   AddressListProposal,
+  AddressListProposalListItem,
   AddressListProposalResult,
-  Erc20Proposal,
-  Erc20ProposalResult,
   Erc20TokenDetails,
   ICreateProposalParams,
-  IPluginSettings,
   ProposalMetadata,
   ProposalStatus,
+  TokenVotingProposal,
+  TokenVotingProposalListItem,
+  TokenVotingProposalResult,
   VoteValues,
+  VotingSettings,
 } from '@aragon/sdk-client';
 import {ProgressStatusProps, VoterType} from '@aragon/ui-components';
 import Big from 'big.js';
@@ -29,6 +31,7 @@ import {getFormattedUtcOffset, KNOWN_FORMATS} from './date';
 import {formatUnits} from './library';
 import {abbreviateTokenAmount} from './tokens';
 import {AddressListVote, DetailedProposal, Erc20ProposalVote} from './types';
+import {CachedProposal} from 'context/apolloClient';
 
 export const MappedVotes: {[key in VoteValues]: VoterType['option']} = {
   1: 'abstain',
@@ -38,9 +41,35 @@ export const MappedVotes: {[key in VoteValues]: VoterType['option']} = {
 
 // this type guard will need to evolve when there are more types
 export function isTokenBasedProposal(
-  proposal: DetailedProposal
-): proposal is Erc20Proposal {
+  proposal:
+    | DetailedProposal
+    | TokenVotingProposalListItem
+    | AddressListProposalListItem
+): proposal is TokenVotingProposal {
   return 'token' in proposal;
+}
+
+export function isErc20Token(
+  token?: TokenVotingProposal['token']
+): token is Erc20TokenDetails {
+  if (!token) return false;
+  return 'decimals' in token;
+}
+
+export function isErc20VotingProposal(
+  proposal:
+    | DetailedProposal
+    | TokenVotingProposalListItem
+    | AddressListProposalListItem
+): proposal is TokenVotingProposal & {token: Erc20TokenDetails} {
+  return isTokenBasedProposal(proposal) && isErc20Token(proposal.token);
+}
+
+//TODO Will be renamed and/or deprecated
+export function isAddressListVotingProposal(
+  proposal: DetailedProposal
+): proposal is AddressListProposal {
+  return !('token' in proposal);
 }
 
 /**
@@ -53,7 +82,7 @@ export function isTokenBasedProposal(
 export function getErc20MinimumApproval(
   minSupport: number,
   totalVotingWeight: bigint,
-  token: Erc20Proposal['token']
+  token: Erc20TokenDetails
 ): string {
   const percentage = Math.trunc(minSupport * 100);
   const tokenValue = abbreviateTokenAmount(
@@ -89,8 +118,8 @@ export function getWhitelistMinimumApproval(
  * @returns mapped voters and participation summary
  */
 export function getErc20VotersAndParticipation(
-  votes: Erc20Proposal['votes'],
-  token: Erc20Proposal['token'],
+  votes: TokenVotingProposal['votes'],
+  token: Erc20TokenDetails,
   totalVotingWeight: bigint,
   usedVotingWeight: bigint
 ): {voters: Array<VoterType>; summary: string} {
@@ -197,7 +226,7 @@ export function getWhitelistVoterParticipation(
  * @returns mapped voting result
  */
 export function getErc20Results(
-  result: Erc20ProposalResult,
+  result: TokenVotingProposalResult,
   tokenDecimals: number,
   totalVotingWeight: BigInt
 ): ProposalVoteResults {
@@ -412,7 +441,7 @@ export function getTerminalProps(
   let approval;
   let strategy;
 
-  if (isTokenBasedProposal(proposal)) {
+  if (isErc20VotingProposal(proposal)) {
     // token
     token = {
       name: proposal.token.name,
@@ -447,7 +476,7 @@ export function getTerminalProps(
 
     // strategy
     strategy = i18n.t('votingTerminal.tokenVoting');
-  } else {
+  } else if (isAddressListVotingProposal(proposal)) {
     // voters
     const ptcResults = getWhitelistVoterParticipation(
       proposal.votes,
@@ -498,7 +527,7 @@ export type MapToDetailedProposalParams = {
   daoName: string;
   daoToken?: Erc20TokenDetails;
   totalVotingWeight: number | bigint;
-  pluginSettings: IPluginSettings;
+  pluginSettings: VotingSettings;
   metadata: ProposalMetadata;
   proposalParams: ICreateProposalParams;
   proposalId: string;
@@ -510,43 +539,50 @@ export type MapToDetailedProposalParams = {
  * @returns Detailed proposal, ready for caching and displaying
  */
 export function mapToDetailedProposal(params: MapToDetailedProposalParams) {
-  return {
+  // common properties
+  const commonProps = {
     actions: params.proposalParams.actions || [],
     creationDate: new Date(),
     creatorAddress: params.creatorAddress,
     dao: {address: params.daoAddress, name: params.daoName},
-    endDate: params.proposalParams.endDate,
+    endDate: params.proposalParams.endDate!,
+    startDate: params.proposalParams.startDate!,
     id: params.proposalId,
     metadata: params.metadata,
+    status: ProposalStatus.PENDING,
+    votes: [],
     settings: {
-      minSupport: params.pluginSettings.minSupport,
-      minTurnout: params.pluginSettings.minTurnout,
+      minSupport: params.pluginSettings.supportThreshold,
+      minTurnout: params.pluginSettings.minParticipation,
       duration: differenceInSeconds(
         params.proposalParams.startDate!,
         params.proposalParams.endDate!
       ),
     },
-    startDate: params.proposalParams.startDate,
-    status: 'Pending',
-    votes: [],
-    ...(params.daoToken
-      ? {
-          token: {
-            address: params.daoToken?.address,
-            decimals: params.daoToken?.decimals,
-            name: params.daoToken?.name,
-            symbol: params.daoToken?.symbol,
-          },
-          totalVotingWeight: params.totalVotingWeight as bigint,
-          usedVotingWeight: BigInt(0),
-          result: {yes: BigInt(0), no: BigInt(0), abstain: BigInt(0)},
-        }
-      : {
-          totalVotingWeight: params.totalVotingWeight as number,
-          usedVotingWeight: 0,
-          result: {yes: 0, no: 0, abstain: 0},
-        }),
-  } as DetailedProposal;
+  };
+
+  // erc20
+  if (isErc20Token(params.daoToken)) {
+    return {
+      ...commonProps,
+      token: {
+        address: params.daoToken.address,
+        decimals: params.daoToken.decimals,
+        name: params.daoToken.name,
+        symbol: params.daoToken.symbol,
+      },
+      totalVotingWeight: params.totalVotingWeight as bigint,
+      usedVotingWeight: BigInt(0),
+      result: {yes: BigInt(0), no: BigInt(0), abstain: BigInt(0)},
+    } as CachedProposal;
+  } else {
+    // addressList
+    return {
+      ...commonProps,
+      totalVotingWeight: params.totalVotingWeight as number,
+      result: {yes: 0, no: 0, abstain: 0},
+    } as CachedProposal;
+  }
 }
 
 /**
@@ -577,7 +613,7 @@ export function addVoteToProposal(
       usedVotingWeight: BigNumber.from(proposal.usedVotingWeight)
         .add((vote as Erc20ProposalVote).weight)
         .toBigInt(),
-    } as Erc20Proposal;
+    } as TokenVotingProposal;
   } else {
     // AddressList calculation
     return {
@@ -620,5 +656,5 @@ export function prefixProposalIdWithPlgnAdr(
 
   // get last five characters from proposal, remove leading zeros, and prefix with
   // plugin address
-  return `${pluginAddress}_0x${proposalId.slice(-5).replace(/^0+/, '') || 0}`;
+  return `${pluginAddress}_0${proposalId.slice(-5).replace(/^0+/, '') || 0}`;
 }

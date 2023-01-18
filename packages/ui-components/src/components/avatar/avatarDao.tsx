@@ -22,6 +22,9 @@ export const AvatarDao: React.FC<AvatarDaoProps> = ({
   }, [src]);
 
   const daoInitials = useMemo(() => {
+    // To allow for no name daos - should not be a thing
+    if (!daoName) return '';
+
     const arr = daoName.trim().split(' ');
     if (arr.length === 1) return arr[0][0];
     else return arr[0][0] + arr[1][0];

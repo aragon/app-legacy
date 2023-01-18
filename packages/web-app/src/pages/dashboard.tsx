@@ -80,7 +80,7 @@ const Dashboard: React.FC = () => {
   );
 
   const daoType =
-    (dao?.plugins[0]?.id as PluginTypes) === 'addresslistvoting.dao.eth'
+    (dao?.plugins[0]?.id as PluginTypes) === 'addresslist-voting.plugin.dao.eth'
       ? t('explore.explorer.walletBased')
       : t('explore.explorer.tokenBased');
 
@@ -290,7 +290,7 @@ const Dashboard: React.FC = () => {
           copiedOnClick={handleClipboardActions}
           onFavoriteClick={handleFavoriteClick}
           links={
-            dao?.metadata.links.flatMap(link => {
+            dao?.metadata?.links?.flatMap(link => {
               if (link.name !== '' && link.url !== '')
                 return {
                   label: link.name,

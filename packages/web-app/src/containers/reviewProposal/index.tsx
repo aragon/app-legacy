@@ -134,7 +134,7 @@ const ReviewProposal: React.FC<ReviewProposalProps> = ({
    *************************************************/
   useEffect(() => {
     async function mapToView() {
-      if (pluginType === 'addresslistvoting.dao.eth') {
+      if (pluginType === 'addresslist-voting.plugin.dao.eth') {
         setIsWalletBased(true);
 
         // get voter participation
@@ -143,7 +143,10 @@ const ReviewProposal: React.FC<ReviewProposalProps> = ({
 
         // get approval threshold
         setApproval(
-          getWhitelistMinimumApproval(daoSettings.minSupport, members.length)
+          getWhitelistMinimumApproval(
+            daoSettings.supportThreshold,
+            members.length
+          )
         );
       } else {
         // token based
@@ -168,7 +171,7 @@ const ReviewProposal: React.FC<ReviewProposalProps> = ({
           // get approval threshold
           setApproval(
             getErc20MinimumApproval(
-              daoSettings.minSupport,
+              daoSettings.supportThreshold,
               totalSupply,
               daoToken
             )
@@ -177,11 +180,11 @@ const ReviewProposal: React.FC<ReviewProposalProps> = ({
       }
     }
 
-    if (members && daoSettings?.minSupport) {
+    if (members && daoSettings?.supportThreshold) {
       mapToView();
     }
   }, [
-    daoSettings.minSupport,
+    daoSettings.supportThreshold,
     daoToken,
     members,
     network,

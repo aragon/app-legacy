@@ -1,9 +1,9 @@
 import {useApolloClient} from '@apollo/client';
 import {
   ClientAddressList,
-  ClientErc20,
   DaoAction,
-  Erc20Proposal,
+  TokenVotingClient,
+  TokenVotingProposal,
 } from '@aragon/sdk-client';
 import {
   Breadcrumb,
@@ -34,9 +34,12 @@ import {useGlobalModalContext} from 'context/globalModals';
 import {useNetwork} from 'context/network';
 import {useProposalTransactionContext} from 'context/proposalTransaction';
 import {useSpecificProvider} from 'context/providers';
+import {formatDistanceToNow, Locale} from 'date-fns';
+import * as Locales from 'date-fns/locale';
 import {useCache} from 'hooks/useCache';
 import {useClient} from 'hooks/useClient';
 import {useDaoDetails} from 'hooks/useDaoDetails';
+import {useDaoParam} from 'hooks/useDaoParam';
 import {useDaoProposal} from 'hooks/useDaoProposal';
 import {useDaoToken} from 'hooks/useDaoToken';
 import {useMappedBreadcrumbs} from 'hooks/useMappedBreadcrumbs';
@@ -45,8 +48,6 @@ import useScreen from 'hooks/useScreen';
 import {useWallet} from 'hooks/useWallet';
 import {useWalletCanVote} from 'hooks/useWalletCanVote';
 import {CHAIN_METADATA} from 'utils/constants';
-import * as Locales from 'date-fns/locale';
-import {formatDistanceToNow, Locale} from 'date-fns';
 import {
   decodeAddMembersToAction,
   decodeMintTokensToAction,
@@ -57,10 +58,9 @@ import {NotFound} from 'utils/paths';
 import {
   getProposalStatusSteps,
   getTerminalProps,
-  isTokenBasedProposal,
+  isErc20VotingProposal,
 } from 'utils/proposals';
 import {Action} from 'utils/types';
-import {useDaoParam} from 'hooks/useDaoParam';
 
 // TODO: @Sepehr Please assign proper tags on action decoding
 const PROPOSAL_TAGS = ['Finance', 'Withdraw'];
@@ -193,7 +193,7 @@ const Proposal: React.FC = () => {
         // Decode all the mint actions into one action with several addresses
         const decodedMintToken = decodeMintTokensToAction(
           mintTokenActions.actions,
-          pluginClient as ClientErc20,
+          pluginClient as TokenVotingClient,
           daoToken.address,
           provider,
           network
@@ -456,7 +456,7 @@ const Proposal: React.FC = () => {
     ) {
       // presence of token delineates token voting proposal
       // people add types to these things!!
-      return isTokenBasedProposal(proposal)
+      return isErc20VotingProposal(proposal)
         ? t('votingTerminal.status.ineligibleTokenBased', {
             token: proposal.token.name,
           })
@@ -589,7 +589,10 @@ const Proposal: React.FC = () => {
             voteNowDisabled={voted || voteNowDisabled}
             votingInProcess={votingInProcess}
             onVoteSubmitClicked={vote =>
-              handleSubmitVote(vote, (proposal as Erc20Proposal).token?.address)
+              handleSubmitVote(
+                vote,
+                (proposal as TokenVotingProposal).token?.address
+              )
             }
             {...terminalPropsFromProposal}
           />

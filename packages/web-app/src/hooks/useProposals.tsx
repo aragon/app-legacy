@@ -1,7 +1,7 @@
 import {useReactiveVar} from '@apollo/client';
 import {
   AddressListProposalListItem,
-  Erc20ProposalListItem,
+  TokenVotingProposalListItem,
   ProposalSortBy,
   ProposalStatus,
 } from '@aragon/sdk-client';
@@ -16,11 +16,13 @@ import {usePrivacyContext} from 'context/privacyContext';
 import {PENDING_PROPOSALS_KEY} from 'utils/constants';
 import {customJSONReplacer, generateCachedProposalId} from 'utils/library';
 import {addVoteToProposal} from 'utils/proposals';
-import {HookData} from 'utils/types';
+import {DetailedProposal, HookData} from 'utils/types';
 
 import {PluginTypes, usePluginClient} from './usePluginClient';
 
-export type Proposal = Erc20ProposalListItem | AddressListProposalListItem;
+export type Proposal =
+  | TokenVotingProposalListItem
+  | AddressListProposalListItem;
 
 /**
  * Retrieves list of proposals from SDK
@@ -73,7 +75,10 @@ export function useProposals(
             : {...daoCache[proposalId]};
 
           augmentedProposals.unshift({
-            ...(addVoteToProposal(cachedProposal, cachedVotes[id]) as Proposal),
+            ...(addVoteToProposal(
+              cachedProposal as DetailedProposal,
+              cachedVotes[id]
+            ) as Proposal),
           });
         }
       }

@@ -1,7 +1,7 @@
 import {useReactiveVar} from '@apollo/client';
 import {
   ClientAddressList,
-  ClientErc20,
+  TokenVotingClient,
   DaoAction,
   ICreateProposalParams,
   InstalledPluginListItem,
@@ -144,7 +144,7 @@ const CreateProposalProvider: React.FC<Props> = ({
           action.inputs.mintTokensToWallets.forEach(mint => {
             actions.push(
               Promise.resolve(
-                (pluginClient as ClientErc20).encoding.mintTokenAction(
+                (pluginClient as TokenVotingClient).encoding.mintTokenAction(
                   action.summary.daoTokenAddress as string,
                   {
                     address: mint.address,
@@ -333,7 +333,7 @@ const CreateProposalProvider: React.FC<Props> = ({
         daoName: daoDetails?.metadata.name,
         daoToken,
         totalVotingWeight:
-          pluginType === 'erc20voting.dao.eth' && tokenSupply
+          pluginType === 'token-voting.plugin.dao.eth' && tokenSupply
             ? tokenSupply
             : members.length,
         pluginSettings,
@@ -430,11 +430,10 @@ const CreateProposalProvider: React.FC<Props> = ({
           case ProposalCreationSteps.DONE: {
             //TODO: replace with step.proposal id when SDK returns proper format
             const prefixedId = prefixProposalIdWithPlgnAdr(
-              step.proposalId,
+              step.proposalId.toString(),
               pluginAddress
             );
 
-            console.log('proposal id', prefixedId);
             setProposalId(prefixedId);
             setCreationProcessState(TransactionState.SUCCESS);
             trackEvent('newProposal_transaction_success', {

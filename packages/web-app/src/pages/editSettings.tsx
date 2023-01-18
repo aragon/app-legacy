@@ -144,8 +144,10 @@ const EditSettings: React.FC = () => {
   // governance
   // TODO: We need to force forms to only use one type, Number or string
   const isGovernanceChanged =
-    Number(minimumParticipation) !== Math.round(daoSettings.minTurnout * 100) ||
-    Number(minimumApproval) !== Math.round(daoSettings.minSupport * 100) ||
+    Number(minimumParticipation) !==
+      Math.round(daoSettings.minParticipation * 100) ||
+    Number(minimumApproval) !==
+      Math.round(daoSettings.supportThreshold * 100) ||
     Number(durationDays) !== days ||
     Number(durationHours) !== hours ||
     Number(durationMinutes) !== minutes;
@@ -180,20 +182,25 @@ const EditSettings: React.FC = () => {
   ]);
 
   const setCurrentGovernance = useCallback(() => {
-    setValue('minimumApproval', Math.round(daoSettings.minSupport * 100));
-    setValue('minimumParticipation', Math.round(daoSettings.minTurnout * 100));
+    setValue('minimumApproval', Math.round(daoSettings.supportThreshold * 100));
+    setValue(
+      'minimumParticipation',
+      Math.round(daoSettings.minParticipation * 100)
+    );
     setValue('durationDays', days);
     setValue('durationHours', hours);
     setValue('durationMinutes', minutes);
     // TODO: Need to add community settings later, Also the Alerts share will be added later
     setValue(
       'membership',
-      daoDetails?.plugins[0].id === 'erc20voting.dao.eth' ? 'token' : 'wallet'
+      daoDetails?.plugins[0].id === 'token-voting.plugin.dao.eth'
+        ? 'token'
+        : 'wallet'
     );
   }, [
     daoDetails?.plugins,
-    daoSettings.minSupport,
-    daoSettings.minTurnout,
+    daoSettings.supportThreshold,
+    daoSettings.minParticipation,
     days,
     hours,
     minutes,
