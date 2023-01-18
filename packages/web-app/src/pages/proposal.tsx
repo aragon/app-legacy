@@ -169,6 +169,11 @@ const Proposal: React.FC = () => {
         index: number;
       } = {actions: [], index: 0};
 
+      const proposalErc20Token =
+        isTokenBasedProposal(proposal) && isErc20Token(proposal.token)
+          ? proposal.token
+          : undefined;
+
       const actionPromises: Promise<Action | undefined>[] =
         proposal.actions.map((action: DaoAction, index) => {
           const functionParams =
@@ -205,9 +210,7 @@ const Proposal: React.FC = () => {
                 action.data,
                 pluginClient as TokenVotingClient,
                 proposal.totalVotingWeight as bigint,
-                isTokenBasedProposal(proposal) && isErc20Token(proposal.token)
-                  ? proposal.token
-                  : undefined
+                proposalErc20Token
               );
             case 'setMetadata':
               return decodeMetadataToAction(action.data, client);
@@ -216,16 +219,12 @@ const Proposal: React.FC = () => {
           }
         });
 
-      if (
-        isTokenBasedProposal(proposal) &&
-        isErc20Token(proposal.token) &&
-        mintTokenActions.actions.length !== 0
-      ) {
+      if (proposalErc20Token && mintTokenActions.actions.length !== 0) {
         // Decode all the mint actions into one action with several addresses
         const decodedMintToken = decodeMintTokensToAction(
           mintTokenActions.actions,
           pluginClient as TokenVotingClient,
-          proposal.token.address,
+          proposalErc20Token.address,
           provider,
           network
         );

@@ -2,7 +2,7 @@ import React from 'react';
 
 import {useDaoDetails} from 'hooks/useDaoDetails';
 import {useDaoParam} from 'hooks/useDaoParam';
-import {Action, ActionWithdraw} from 'utils/types';
+import {Action} from 'utils/types';
 import {AddAddressCard} from './actions/addAddressCard';
 import {MintTokenCard} from './actions/mintTokenCard';
 import {ModifyMetadataCard} from './actions/modifyMetadataCard';
@@ -22,10 +22,7 @@ export const ActionsFilter: React.FC<ActionsFilterProps> = ({action}) => {
   switch (action.name) {
     case 'withdraw_assets':
       return (
-        <WithdrawCard
-          action={action as ActionWithdraw}
-          daoName={dao?.metadata?.name || ''}
-        />
+        <WithdrawCard action={action} daoName={dao?.metadata?.name || ''} />
       );
     case 'add_address':
       return <AddAddressCard action={action} />;

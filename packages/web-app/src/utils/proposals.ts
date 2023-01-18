@@ -53,7 +53,7 @@ export function isTokenBasedProposal(
 }
 
 export function isErc20Token(
-  token?: TokenVotingProposal['token']
+  token: TokenVotingProposal['token'] | undefined
 ): token is Erc20TokenDetails {
   if (!token) return false;
   return 'decimals' in token;
