@@ -60,7 +60,7 @@ const StyledLink = styled.a.attrs(({disabled, type}: StyledLinkProps) => {
   outline: 0; // forcefully setting to remove default Chrome black outline
 `;
 
-const Label = styled.div.attrs({
+const Label = styled.span.attrs({
   className: 'font-bold truncate',
 })``;
 
