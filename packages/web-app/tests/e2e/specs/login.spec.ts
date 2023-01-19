@@ -1,3 +1,5 @@
 describe('Test User Login', () => {
-  cy.visit('/');
+  it('Loads the Explore page', () => {
+    cy.visit('/');
+  });
 });
