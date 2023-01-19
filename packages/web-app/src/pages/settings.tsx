@@ -148,7 +148,7 @@ const Settings: React.FC = () => {
         </DescriptionListContainer>
 
         {/* COMMUNITY SECTION */}
-        <DescriptionListContainer title={t('labels.review.voters')}>
+        <DescriptionListContainer title={t('navLinks.community')}>
           <Dl>
             <Dt>{t('labels.review.eligibleVoters')}</Dt>
             <Dd>
@@ -175,7 +175,7 @@ const Settings: React.FC = () => {
                     <p>
                       {tokenSupply} {daoToken?.symbol}
                     </p>
-                    <Tag label="Mintable" />
+                    <Tag label={t('labels.mintable')} />
                   </div>
                 </Dd>
               </Dl>
@@ -194,6 +194,20 @@ const Settings: React.FC = () => {
               />
             </Dd>
           </Dl>
+          {isErc20Plugin && (
+            <Dl>
+              <Dt>{t('labels.review.proposalThreshold')}</Dt>
+              <Dd>
+                {t('labels.review.tokenHoldersWithTkns', {
+                  tokenAmount: formatUnits(
+                    daoSettings.minProposerVotingPower || 0,
+                    daoToken?.decimals || 18
+                  ),
+                  tokenSymbol: daoToken?.symbol,
+                })}
+              </Dd>
+            </Dl>
+          )}
         </DescriptionListContainer>
 
         {/* GOVERNANCE SECTION */}
