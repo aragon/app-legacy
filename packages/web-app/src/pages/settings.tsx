@@ -134,6 +134,7 @@ const Settings: React.FC = () => {
             <Dt>{t('labels.logo')}</Dt>
             <Dd>
               <AvatarDao
+                size={'small'}
                 daoName={daoDetails?.ensDomain || ''}
                 src={daoDetails?.metadata.avatar}
               />
