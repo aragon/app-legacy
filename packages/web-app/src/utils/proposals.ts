@@ -66,13 +66,6 @@ export function isErc20VotingProposal(
   return isTokenBasedProposal(proposal) && isErc20Token(proposal.token);
 }
 
-//TODO Will be renamed and/or deprecated
-export function isAddressListVotingProposal(
-  proposal: DetailedProposal
-): proposal is AddressListProposal {
-  return !('token' in proposal);
-}
-
 /**
  * Get formatted minimum participation for an ERC20 proposal
  * @param minParticipation minimum number of tokens needed to participate in vote
@@ -94,42 +87,7 @@ export function getErc20MinParticipation(
   );
 }
 
-/**
- * Get formatted participation values for ERC20 proposal
- * @param usedVotingWeight number of tokens used for voting
- * @param totalVotingWeight total number of tokens able to vote
- * @param tokenDecimals proposal token decimals
- * @returns formatted participation values
- */
-export function getErc20CurrentParticipation(
-  usedVotingWeight: bigint,
-  totalVotingWeight: bigint,
-  tokenDecimals: number
-) {
-  // calculate participation summary
-  const totalWeight = abbreviateTokenAmount(
-    parseFloat(
-      Number(formatUnits(totalVotingWeight, tokenDecimals)).toFixed(2)
-    ).toString()
-  );
-
-  const participation = abbreviateTokenAmount(
-    parseFloat(
-      Number(formatUnits(usedVotingWeight, tokenDecimals)).toFixed(2)
-    ).toString()
-  );
-
-  const percentage = parseFloat(
-    Big(usedVotingWeight.toString())
-      .mul(100)
-      .div(totalVotingWeight.toString())
-      .toFixed(2)
-  );
-
-  return {participation, percentage, totalWeight};
-}
-
-function getErc20VotingParticipation(
+export function getErc20VotingParticipation(
   minParticipation: number,
   usedVotingWeight: bigint,
   totalVotingWeight: bigint,
@@ -157,15 +115,10 @@ function getErc20VotingParticipation(
   );
 
   // minimum participation
-  const minPart = abbreviateTokenAmount(
-    parseFloat(
-      Number(
-        formatUnits(
-          Big(totalVotingWeight.toString()).mul(minParticipation).toString(),
-          tokenDecimals
-        )
-      ).toFixed(2)
-    ).toString()
+  const minPart = getErc20MinParticipation(
+    minParticipation,
+    totalVotingWeight,
+    tokenDecimals
   );
 
   // missing participation (used - minimum part)
