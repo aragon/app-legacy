@@ -72,15 +72,20 @@ const WalletRow: React.FC<WalletRowProps> = ({index, onDelete}) => {
 
   const amountValidation = (amount: string) => {
     let totalSupply = 0;
+    let minAmount = walletFieldArray[0]?.amount;
     const address = getValues(`wallets.${index}.address`);
     if (address === '') trigger(`wallets.${index}.address`);
 
     // calculate total token supply disregarding error invalid fields
     walletFieldArray.forEach((wallet: WalletField) => {
+      if (Number(wallet.amount) < minAmount) {
+        minAmount = wallet.amount;
+      }
       if (Number(wallet.amount) > 0)
         totalSupply = parseInt(wallet.amount) + totalSupply;
     });
     setValue('tokenTotalSupply', totalSupply);
+    setValue('minTokenAmount', minAmount);
 
     // show max amount error
     if (BigNumber.from(amount).gt(MAX_TOKEN_AMOUNT))
