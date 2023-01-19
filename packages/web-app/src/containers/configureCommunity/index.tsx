@@ -12,10 +12,11 @@ import {Trans, useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 
 import {
-  DAYS_IN_YEAR,
+  MAX_DURATION_DAYS,
   HOURS_IN_DAY,
   MINS_IN_DAY,
   MINS_IN_HOUR,
+  MIN_DURATION_HOURS,
 } from 'utils/constants';
 
 const ConfigureCommunity: React.FC = () => {
@@ -54,14 +55,14 @@ const ConfigureCommunity: React.FC = () => {
       onChange: React.ChangeEventHandler
     ) => {
       const value = Number(e.target.value);
-      if (value >= DAYS_IN_YEAR) {
-        e.target.value = DAYS_IN_YEAR.toString();
+      if (value >= MAX_DURATION_DAYS) {
+        e.target.value = MAX_DURATION_DAYS.toString();
 
-        setValue('durationDays', DAYS_IN_YEAR.toString());
+        setValue('durationDays', MAX_DURATION_DAYS.toString());
         setValue('durationHours', '0');
         setValue('durationMinutes', '0');
       } else if (value === 0 && durationHours === '0') {
-        setValue('durationHours', '1');
+        setValue('durationHours', MIN_DURATION_HOURS.toString());
       }
 
       onChange(e);
@@ -86,9 +87,9 @@ const ConfigureCommunity: React.FC = () => {
           );
         }
       } else if (value === 0 && durationDays === '0') {
-        setValue('durationHours', '1');
+        setValue('durationHours', MIN_DURATION_HOURS.toString());
         setValue('durationMinutes', '0');
-        e.target.value = '1';
+        e.target.value = MIN_DURATION_HOURS.toString();
       }
 
       onChange(e);
@@ -404,7 +405,7 @@ const ConfigureCommunity: React.FC = () => {
                   }
                   placeholder={'0'}
                   min="0"
-                  disabled={durationDays === '365'}
+                  disabled={durationDays === MAX_DURATION_DAYS.toString()}
                 />
                 {error?.message && (
                   <AlertInline label={error.message} mode="critical" />
@@ -433,7 +434,7 @@ const ConfigureCommunity: React.FC = () => {
                   }
                   placeholder={'0'}
                   min="0"
-                  disabled={durationDays === '365'}
+                  disabled={durationDays === MAX_DURATION_DAYS.toString()}
                 />
                 {error?.message && (
                   <AlertInline label={error.message} mode="critical" />
@@ -474,13 +475,13 @@ const ConfigureCommunity: React.FC = () => {
             )}
           />
         </DurationContainer>
-        {durationDays === '365' ? (
+        {durationDays === MAX_DURATION_DAYS.toString() ? (
           <AlertInline
             label={t('alert.maxDurationAlert') as string}
             mode="warning"
           />
         ) : durationDays === '0' &&
-          durationHours === '1' &&
+          durationHours === MIN_DURATION_HOURS.toString() &&
           durationMinutes === '0' ? (
           <AlertInline
             label={t('alert.minDurationAlert') as string}
