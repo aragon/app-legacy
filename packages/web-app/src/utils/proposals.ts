@@ -120,13 +120,73 @@ export function getErc20CurrentParticipation(
   );
 
   const percentage = parseFloat(
-    Big(Number(usedVotingWeight))
+    Big(usedVotingWeight.toString())
       .mul(100)
       .div(totalVotingWeight.toString())
       .toFixed(2)
   );
 
   return {participation, percentage, totalWeight};
+}
+
+function getErc20VotingParticipation(
+  minParticipation: number,
+  usedVotingWeight: bigint,
+  totalVotingWeight: bigint,
+  tokenDecimals: number
+) {
+  // calculate participation summary
+  const totalWeight = abbreviateTokenAmount(
+    parseFloat(
+      Number(formatUnits(totalVotingWeight, tokenDecimals)).toFixed(2)
+    ).toString()
+  );
+
+  // current participation
+  const currentPart = abbreviateTokenAmount(
+    parseFloat(
+      Number(formatUnits(usedVotingWeight, tokenDecimals)).toFixed(2)
+    ).toString()
+  );
+
+  const currentPercentage = parseFloat(
+    Big(usedVotingWeight.toString())
+      .mul(100)
+      .div(totalVotingWeight.toString())
+      .toFixed(2)
+  );
+
+  // minimum participation
+  const minPart = abbreviateTokenAmount(
+    parseFloat(
+      Number(
+        formatUnits(
+          Big(totalVotingWeight.toString()).mul(minParticipation).toString(),
+          tokenDecimals
+        )
+      ).toFixed(2)
+    ).toString()
+  );
+
+  // missing participation (used - minimum part)
+  const missingRaw = Number(
+    formatUnits(
+      Big(usedVotingWeight.toString())
+        .minus(Big(totalVotingWeight.toString()).mul(minParticipation))
+        .toString(),
+      tokenDecimals
+    )
+  );
+
+  let missingPart;
+
+  if (Math.sign(missingRaw) === 1) {
+    // number of votes greater than required minimum participation
+    missingPart = 0;
+  } else missingPart = Math.abs(missingRaw);
+  // const missingPart = Math.sign(Number(missingRaw)) === 1 ? Math.abs(Number(missingRaw));
+
+  return {currentPart, currentPercentage, minPart, missingPart, totalWeight};
 }
 
 /**
@@ -429,6 +489,7 @@ export function getTerminalProps(
   let voters;
   let currentParticipation;
   let minParticipation;
+  let missingParticipation;
   let results;
   let supportThreshold;
   let strategy;
@@ -455,29 +516,30 @@ export function getTerminalProps(
       proposal.totalVotingWeight
     );
 
-    // participation summary
-    const {totalWeight, ...rest} = getErc20CurrentParticipation(
-      proposal.usedVotingWeight,
-      proposal.totalVotingWeight,
-      proposal.token.decimals
-    );
-
-    currentParticipation = t('votingTerminal.participationErc20', {
-      tokenSymbol: token.symbol,
-      totalWeight,
-      ...rest,
-    });
-
-    minParticipation = t('votingTerminal.participationErc20', {
-      tokenSymbol: token.symbol,
-      totalWeight,
-      percentage: Math.round(proposal.settings.minTurnout * 100),
-      participation: getErc20MinParticipation(
+    // calculate participation
+    const {currentPart, currentPercentage, minPart, missingPart, totalWeight} =
+      getErc20VotingParticipation(
         proposal.settings.minTurnout,
+        proposal.usedVotingWeight,
         proposal.totalVotingWeight,
         proposal.token.decimals
-      ),
+      );
+
+    minParticipation = t('votingTerminal.participationErc20', {
+      participation: minPart,
+      totalWeight,
+      tokenSymbol: token.symbol,
+      percentage: Math.round(proposal.settings.minTurnout * 100),
     });
+
+    currentParticipation = t('votingTerminal.participationErc20', {
+      participation: currentPart,
+      totalWeight,
+      tokenSymbol: token.symbol,
+      percentage: currentPercentage,
+    });
+
+    missingParticipation = missingPart;
 
     // support threshold
     supportThreshold = Math.round(proposal.settings.minSupport * 100);
@@ -495,7 +557,7 @@ export function getTerminalProps(
     supportThreshold,
     minParticipation,
     currentParticipation,
-
+    missingParticipation,
     startDate: `${format(
       proposal.startDate,
       KNOWN_FORMATS.proposals
