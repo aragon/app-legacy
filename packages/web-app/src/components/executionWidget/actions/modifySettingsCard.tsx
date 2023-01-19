@@ -17,7 +17,7 @@ export const ModifySettingsCard: React.FC<{
   const {days, hours, minutes} = getDHMFromSeconds(inputs.minDuration);
 
   const minParticipation = useMemo(
-    () => `${Math.round(inputs.minParticipation * 100)}% (≥
+    () => `≥ ${Math.round(inputs.minParticipation * 100)}% (≥
             ${abbreviateTokenAmount(
               parseFloat(
                 Big(
