@@ -27,8 +27,7 @@ import {
   KNOWN_FORMATS,
 } from 'utils/date';
 import {
-  getErc20CurrentParticipation,
-  getErc20MinParticipation,
+  getErc20VotingParticipation,
   getWhitelistVoterParticipation,
 } from 'utils/proposals';
 import {getTokenInfo} from 'utils/tokens';
@@ -65,6 +64,7 @@ const ReviewProposal: React.FC<ReviewProposalProps> = ({
   const {getValues, setValue} = useFormContext();
   const [minParticipation, setMinParticipation] = useState('');
   const [currentParticipation, setCurrentParticipation] = useState('');
+  const [missingParticipation, setMissingParticipation] = useState(0);
   const [isWalletBased, setIsWalletBased] = useState(true);
   const [terminalTab, setTerminalTab] = useState<TerminalTabs>('info');
   const values = getValues();
@@ -151,32 +151,39 @@ const ReviewProposal: React.FC<ReviewProposalProps> = ({
             CHAIN_METADATA[network].nativeCurrency
           );
 
-          // current part
-          const {totalWeight, ...rest} = getErc20CurrentParticipation(
+          // calculate participation
+          const {
+            currentPart,
+            currentPercentage,
+            minPart,
+            missingPart,
+            totalWeight,
+          } = getErc20VotingParticipation(
+            daoSettings.minParticipation,
             BigInt(0),
             totalSupply,
             daoToken.decimals
           );
+
           setCurrentParticipation(
             t('votingTerminal.participationErc20', {
-              tokenSymbol: daoToken.symbol,
+              participation: currentPart,
               totalWeight,
-              ...rest,
+              tokenSymbol: daoToken.symbol,
+              percentage: currentPercentage,
             })
           );
 
           setMinParticipation(
             t('votingTerminal.participationErc20', {
-              tokenSymbol: daoToken.symbol,
+              participation: minPart,
               totalWeight,
+              tokenSymbol: daoToken.symbol,
               percentage: Math.round(daoSettings.minParticipation * 100),
-              participation: getErc20MinParticipation(
-                daoSettings.minParticipation,
-                totalSupply,
-                daoToken.decimals
-              ),
             })
           );
+
+          setMissingParticipation(missingPart);
         }
       }
     }
@@ -235,6 +242,7 @@ const ReviewProposal: React.FC<ReviewProposalProps> = ({
             }
             minParticipation={minParticipation}
             currentParticipation={currentParticipation}
+            missingParticipation={missingParticipation}
             startDate={formattedStartDate}
             endDate={formattedEndDate}
             strategy={
