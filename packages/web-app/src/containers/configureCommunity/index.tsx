@@ -1,5 +1,6 @@
 import {
   AlertInline,
+  CheckboxListItem,
   Label,
   LinearProgress,
   NumberInput,
@@ -17,15 +18,21 @@ const ConfigureCommunity: React.FC = () => {
   const {control, setValue, getValues} = useFormContext();
 
   const defaultMinimumParticipation = 51;
-  const [tokenTotalSupply, membership, whitelistWallets, minimumParticipation] =
-    useWatch({
-      name: [
-        'tokenTotalSupply',
-        'membership',
-        'whitelistWallets',
-        'minimumParticipation',
-      ],
-    });
+  const [
+    tokenTotalSupply,
+    membership,
+    whitelistWallets,
+    minimumParticipation,
+    earlyExecution,
+  ] = useWatch({
+    name: [
+      'tokenTotalSupply',
+      'membership',
+      'whitelistWallets',
+      'minimumParticipation',
+      'earlyExecution',
+    ],
+  });
 
   /*************************************************
    *             Callbacks and Handlers            *
@@ -73,6 +80,17 @@ const ConfigureCommunity: React.FC = () => {
       }
 
       onChange(e);
+    },
+    [getValues, setValue]
+  );
+
+  const handleEarlyExecutionChanged = useCallback(
+    (value: boolean, onChange: (value: boolean) => void) => {
+      if (value && getValues('voteReplacement')) {
+        setValue('voteReplacement', false);
+      }
+
+      onChange(value);
     },
     [getValues, setValue]
   );
@@ -418,11 +436,94 @@ const ConfigureCommunity: React.FC = () => {
           mode="neutral"
         />
       </FormItem>
+
+      {/* Early execution */}
+      <FormItem>
+        <Label
+          label={t('labels.earlyExecution')}
+          helpText={t('labels.earlyExecutionDescription')}
+        />
+        <Controller
+          name="earlyExecution"
+          rules={{required: 'Validate'}}
+          control={control}
+          render={({field: {onChange, value}}) => (
+            <ToggleCheckList
+              onChange={changeValue =>
+                handleEarlyExecutionChanged(changeValue, onChange)
+              }
+              value={value as boolean}
+            />
+          )}
+        />
+      </FormItem>
+
+      {/* Vote replacement */}
+      <FormItem>
+        <Label
+          label={t('labels.voteReplacement')}
+          helpText={t('labels.voteReplacementDescription')}
+        />
+        <Controller
+          name="voteReplacement"
+          rules={{required: 'Validate'}}
+          control={control}
+          render={({field: {onChange, value}}) => (
+            <ToggleCheckList
+              onChange={onChange}
+              value={value as boolean}
+              disabled={earlyExecution}
+            />
+          )}
+        />
+      </FormItem>
     </>
   );
 };
 
 export default ConfigureCommunity;
+
+const ToggleCheckList = ({
+  disabled,
+  onChange,
+  value,
+}: {
+  disabled?: boolean;
+  value: boolean;
+  onChange: (value: boolean) => void;
+}) => {
+  const {t} = useTranslation();
+
+  return (
+    <ToggleCheckListContainer>
+      <ToggleCheckListItemWrapper>
+        <CheckboxListItem
+          label={t('labels.no')}
+          multiSelect={false}
+          disabled={disabled}
+          onClick={() => onChange(false)}
+          type={value ? 'default' : 'active'}
+        />
+      </ToggleCheckListItemWrapper>
+
+      <ToggleCheckListItemWrapper>
+        <CheckboxListItem
+          label={t('labels.yes')}
+          multiSelect={false}
+          disabled={disabled}
+          onClick={() => onChange(true)}
+          type={value ? 'active' : 'default'}
+        />
+      </ToggleCheckListItemWrapper>
+    </ToggleCheckListContainer>
+  );
+};
+
+const ToggleCheckListContainer = styled.div.attrs({
+  className: 'flex gap-x-3',
+})``;
+
+const ToggleCheckListItemWrapper = styled.div.attrs({className: 'flex-1'})``;
 
 const FormItem = styled.div.attrs({
   className: 'space-y-1.5',
