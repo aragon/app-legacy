@@ -466,8 +466,8 @@ const Proposal: React.FC = () => {
 
   // terminal props
   const terminalPropsFromProposal = useMemo(() => {
-    if (proposal) return getTerminalProps(proposal, address);
-  }, [proposal, address]);
+    if (proposal) return getTerminalProps(t, proposal, address);
+  }, [address, proposal, t]);
 
   // status steps for proposal
   const proposalSteps = useMemo(() => {

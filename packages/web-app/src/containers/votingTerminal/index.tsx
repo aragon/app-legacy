@@ -36,7 +36,8 @@ export type VotingTerminalProps = {
   voteNowDisabled?: boolean;
   startDate?: string;
   endDate?: string;
-  participation?: string;
+  minParticipation?: string;
+  currentParticipation?: string;
   supportThreshold?: number;
   voters?: Array<VoterType>;
   status?: ProposalStatus;
@@ -61,7 +62,8 @@ export const VotingTerminal: React.FC<VotingTerminalProps> = ({
   breakdownTabDisabled = false,
   votersTabDisabled = false,
   voteNowDisabled = false,
-  participation,
+  currentParticipation,
+  minParticipation,
   supportThreshold,
   voters = [],
   results,
@@ -186,51 +188,16 @@ export const VotingTerminal: React.FC<VotingTerminalProps> = ({
           )}
         </div>
       ) : (
-        <>
-          <VStackSection>
-            <SectionHeader>{t('votingTerminal.decision')}</SectionHeader>
-            <InfoLine>
-              <p>{t('votingTerminal.options')}</p>
-              <Strong>{t('votingTerminal.yes+no')}</Strong>
-            </InfoLine>
-            <InfoLine>
-              <p>{t('votingTerminal.voteType')}</p>
-              <Strong>{strategy}</Strong>
-            </InfoLine>
-            <InfoLine>
-              <p>{t('votingTerminal.supportThreshold')}</p>
-              <Strong>&gt;{supportThreshold}%</Strong>
-            </InfoLine>
-          </VStackSection>
-
-          <VStackSection>
-            <SectionHeader>{t('votingTerminal.duration')}</SectionHeader>
-            <InfoLine>
-              <p>{t('votingTerminal.startDate')}</p>
-              <Strong>{startDate?.toString()}</Strong>
-            </InfoLine>
-            <InfoLine>
-              <p>{t('votingTerminal.endDate') as string}</p>
-              <Strong>{endDate}</Strong>
-            </InfoLine>
-          </VStackSection>
-
-          <VStackSection
-            className={
-              status ? '' : 'pb-0 tablet:pb-0 border-b-0 tablet:border-b-0 '
-            }
-          >
-            <SectionHeader>{t('votingTerminal.activity')}</SectionHeader>
-            <InfoLine>
-              <p>{t('votingTerminal.participation')}</p>
-              <Strong>{participation}</Strong>
-            </InfoLine>
-            <InfoLine>
-              <p>{t('votingTerminal.uniqueVoters')}</p>
-              <Strong>{voters.length}</Strong>
-            </InfoLine>
-          </VStackSection>
-        </>
+        <InfoTab
+          endDate={endDate}
+          startDate={startDate}
+          status={status}
+          strategy={strategy}
+          supportThreshold={supportThreshold}
+          currentParticipation={currentParticipation}
+          minParticipation={minParticipation}
+          uniqueVoters={voters.length}
+        />
       )}
 
       {votingInProcess ? (
@@ -399,3 +366,72 @@ const TokenValue = styled.p.attrs({
 })``;
 
 const VoteOption = styled.p.attrs({className: 'font-bold text-primary-500'})``;
+
+type InfoTabProps = Pick<
+  VotingTerminalProps,
+  | 'strategy'
+  | 'supportThreshold'
+  | 'startDate'
+  | 'endDate'
+  | 'status'
+  | 'currentParticipation'
+  | 'minParticipation'
+> & {
+  uniqueVoters: number;
+};
+
+const InfoTab: React.FC<InfoTabProps> = props => {
+  const {t} = useTranslation();
+
+  return (
+    <>
+      <VStackSection>
+        <SectionHeader>{t('votingTerminal.decision')}</SectionHeader>
+        <InfoLine>
+          <p>{t('votingTerminal.options')}</p>
+          <Strong>{t('votingTerminal.yes+no')}</Strong>
+        </InfoLine>
+        <InfoLine>
+          <p>{t('votingTerminal.strategy')}</p>
+          <Strong>{props.strategy}</Strong>
+        </InfoLine>
+        <InfoLine>
+          <p>{t('votingTerminal.supportThreshold')}</p>
+          <Strong>{`> ${props.supportThreshold}%`}</Strong>
+        </InfoLine>
+        <InfoLine>
+          <p>{t('votingTerminal.minParticipation')}</p>
+          {props.minParticipation && (
+            <Strong>{`≥ ${props.minParticipation}`}</Strong>
+          )}
+        </InfoLine>
+      </VStackSection>
+      <VStackSection>
+        <SectionHeader>{t('votingTerminal.activity')}</SectionHeader>
+        <InfoLine>
+          <p>{t('votingTerminal.currentParticipation')}</p>
+          <Strong>{props.currentParticipation}</Strong>
+        </InfoLine>
+        <InfoLine>
+          <p>{t('votingTerminal.uniqueVoters')}</p>
+          <Strong>{props.uniqueVoters}</Strong>
+        </InfoLine>
+      </VStackSection>
+      <VStackSection
+        className={
+          props.status ? '' : 'pb-0 tablet:pb-0 border-b-0 tablet:border-b-0 '
+        }
+      >
+        <SectionHeader>{t('votingTerminal.duration')}</SectionHeader>
+        <InfoLine>
+          <p>{t('votingTerminal.startDate')}</p>
+          <Strong>{props.startDate}</Strong>
+        </InfoLine>
+        <InfoLine>
+          <p>{t('votingTerminal.endDate')}</p>
+          <Strong>{props.endDate}</Strong>
+        </InfoLine>
+      </VStackSection>
+    </>
+  );
+};
