@@ -217,31 +217,34 @@ export const VotingTerminal: React.FC<VotingTerminalProps> = ({
           </VStackSection>
           <VStackSection>
             <SectionHeader>{t('votingTerminal.activity')}</SectionHeader>
-            <div className="flex space-x-2 text-ui-600">
+            <InfoLine>
               <p className="flex-1">
                 {t('votingTerminal.currentParticipation')}
               </p>
-              {minimumReached && (
-                <span>
-                  <Tag
-                    label={t('votingTerminal.reached')}
-                    colorScheme="success"
-                  />
-                </span>
-              )}
-              <div>
+
+              <CurrentParticipationWrapper>
                 <Strong>{currentParticipation}</Strong>
-                <p className="text-right ft-text-sm">
-                  {minimumReached
-                    ? t('votingTerminal.noVotesMissing')
-                    : t('votingTerminal.missingVotes', {
-                        votes: abbreviateTokenAmount(
-                          parseFloat(missingParticipation.toFixed(2)).toString()
-                        ),
-                      })}
-                </p>
-              </div>
-            </div>
+                <div className="flex gap-x-1 justify-end">
+                  {minimumReached && (
+                    <Tag
+                      label={t('votingTerminal.reached')}
+                      colorScheme="success"
+                    />
+                  )}
+                  <p className="text-right text-ui-400 ft-text-sm">
+                    {minimumReached
+                      ? t('votingTerminal.noVotesMissing')
+                      : t('votingTerminal.missingVotes', {
+                          votes: abbreviateTokenAmount(
+                            parseFloat(
+                              missingParticipation.toFixed(2)
+                            ).toString()
+                          ),
+                        })}
+                  </p>
+                </div>
+              </CurrentParticipationWrapper>
+            </InfoLine>
             <InfoLine>
               <p>{t('votingTerminal.uniqueVoters')}</p>
               <Strong>{voters.length}</Strong>
@@ -431,3 +434,7 @@ const TokenValue = styled.p.attrs({
 })``;
 
 const VoteOption = styled.p.attrs({className: 'font-bold text-primary-500'})``;
+
+const CurrentParticipationWrapper = styled.div.attrs({
+  className: 'space-y-0.5 text-right',
+})``;
