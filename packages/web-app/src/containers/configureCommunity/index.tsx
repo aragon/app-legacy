@@ -21,7 +21,7 @@ import {
 
 const ConfigureCommunity: React.FC = () => {
   const {t} = useTranslation();
-  const {control, setValue, getValues} = useFormContext();
+  const {control, setValue, getValues, trigger} = useFormContext();
 
   const defaultMinimumParticipation = 51;
   const [
@@ -64,10 +64,10 @@ const ConfigureCommunity: React.FC = () => {
       } else if (value === 0 && durationHours === '0') {
         setValue('durationHours', MIN_DURATION_HOURS.toString());
       }
-
+      trigger(['durationMinutes', 'durationHours', 'durationDays']);
       onChange(e);
     },
-    [durationHours, setValue]
+    [durationHours, setValue, trigger]
   );
 
   const handleHoursChanged = useCallback(
@@ -91,10 +91,10 @@ const ConfigureCommunity: React.FC = () => {
         setValue('durationMinutes', '0');
         e.target.value = MIN_DURATION_HOURS.toString();
       }
-
+      trigger(['durationMinutes', 'durationHours', 'durationDays']);
       onChange(e);
     },
-    [durationDays, getValues, setValue]
+    [durationDays, getValues, setValue, trigger]
   );
 
   const handleMinutesChanged = useCallback(
@@ -118,10 +118,10 @@ const ConfigureCommunity: React.FC = () => {
         setValue('durationHours', hours.toString());
         e.target.value = mins.toString();
       }
-
+      trigger(['durationMinutes', 'durationHours', 'durationDays']);
       onChange(e);
     },
-    [getValues, setValue]
+    [getValues, setValue, trigger]
   );
 
   const handleEarlyExecutionChanged = useCallback(
