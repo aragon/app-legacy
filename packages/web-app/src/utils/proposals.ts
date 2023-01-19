@@ -661,7 +661,8 @@ export function prefixProposalIdWithPlgnAdr(
     // first proposal => 0x00
     return `${pluginAddress}_0x0`;
   } else {
-    // other proposals => 0x3
+    // other proposals => 0x3; removes leading zeros from contract proposal id
+    // NOTE: Be very careful before modifying; in fact, leave it alone ;)
     return `${pluginAddress}_0x${parts[1].replace(/^0+/, '')}`;
   }
 }
