@@ -155,7 +155,9 @@
       "distributionLink": "See all {{walletCount}} Addresses",
       "minimumParticipation": "{{walletCount}} Wallets",
       "proposalThreshold": "Proposal Threshold",
-      "tokenHoldersWithTkns": "Token Holders with ≥{{tokenAmount}} {{tokenSymbol}}"
+      "tokenHoldersWithTkns": "Token Holders with ≥{{tokenAmount}} {{tokenSymbol}}",
+      "earlyExecution": "Early Execution",
+      "voteReplacement": "Vote Replacement"
     },
     "author": "Author",
     "sec": "sec",

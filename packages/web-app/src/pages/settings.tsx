@@ -1,3 +1,4 @@
+import {VotingMode} from '@aragon/sdk-client';
 import {
   AlertInline,
   AvatarDao,
@@ -95,6 +96,19 @@ const Settings: React.FC = () => {
   const resourceLinks = daoDetails?.metadata.links?.filter(
     l => l.name && l.url
   );
+
+  const votingMode = {
+    // Note: This implies that earlyExecution and voteReplacement may never be
+    // both true at the same time, as they shouldn't.
+    earlyExecution:
+      daoSettings.votingMode === VotingMode.EARLY_EXECUTION
+        ? t('labels.yes')
+        : t('labels.no'),
+    voteReplacement:
+      daoSettings.votingMode === VotingMode.VOTE_REPLACEMENT
+        ? t('labels.yes')
+        : t('labels.no'),
+  };
 
   return (
     <SettingsWrapper>
@@ -213,19 +227,23 @@ const Settings: React.FC = () => {
         {/* GOVERNANCE SECTION */}
         <DescriptionListContainer title={t('labels.review.governance')}>
           <Dl>
+            <Dt>{t('labels.minimumApproval')}</Dt>
+            <Dd>
+              {'>'}
+              {Math.round(daoSettings?.supportThreshold * 100)}%
+            </Dd>
+          </Dl>
+          <Dl>
             <Dt>{t('labels.minimumParticipation')}</Dt>
             {isErc20Plugin ? (
               <Dd>
-                {Math.round(daoSettings.minParticipation * 100)}% (
+                {'≥'}
+                {Math.round(daoSettings.minParticipation * 100)}% ({'≥'}
                 {daoSettings.minParticipation * tokenSupply} {daoToken?.symbol})
               </Dd>
             ) : (
               <Dd>{Math.round(daoSettings.minParticipation * 100)}%</Dd>
             )}
-          </Dl>
-          <Dl>
-            <Dt>{t('labels.minimumApproval')}</Dt>
-            <Dd>{Math.round(daoSettings?.supportThreshold * 100)}%</Dd>
           </Dl>
           <Dl>
             <Dt>{t('labels.minimumDuration')}</Dt>
@@ -236,6 +254,14 @@ const Settings: React.FC = () => {
                 minutes,
               })}
             </Dd>
+          </Dl>
+          <Dl>
+            <Dt>{t('labels.review.earlyExecution')}</Dt>
+            <Dd>{votingMode.earlyExecution}</Dd>
+          </Dl>
+          <Dl>
+            <Dt>{t('labels.review.voteReplacement')}</Dt>
+            <Dd>{votingMode.voteReplacement}</Dd>
           </Dl>
         </DescriptionListContainer>
       </div>
