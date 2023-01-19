@@ -27,7 +27,8 @@ import {
   KNOWN_FORMATS,
 } from 'utils/date';
 import {
-  getErc20VotersAndParticipation,
+  getErc20CurrentParticipation,
+  getErc20MinParticipation,
   getWhitelistVoterParticipation,
 } from 'utils/proposals';
 import {getTokenInfo} from 'utils/tokens';
@@ -62,7 +63,8 @@ const ReviewProposal: React.FC<ReviewProposalProps> = ({
   );
 
   const {getValues, setValue} = useFormContext();
-  const [participation, setParticipation] = useState('');
+  const [minParticipation, setMinParticipation] = useState('');
+  const [currentParticipation, setCurrentParticipation] = useState('');
   const [isWalletBased, setIsWalletBased] = useState(true);
   const [terminalTab, setTerminalTab] = useState<TerminalTabs>('info');
   const values = getValues();
@@ -136,12 +138,12 @@ const ReviewProposal: React.FC<ReviewProposalProps> = ({
 
         // get voter participation
         const {summary} = getWhitelistVoterParticipation([], members.length);
-        setParticipation(summary);
+        setMinParticipation(summary);
       } else {
         // token based
         setIsWalletBased(false);
 
-        if (daoToken) {
+        if (daoToken && daoSettings) {
           // get voter participation
           const {totalSupply} = await getTokenInfo(
             daoToken.address,
@@ -149,13 +151,32 @@ const ReviewProposal: React.FC<ReviewProposalProps> = ({
             CHAIN_METADATA[network].nativeCurrency
           );
 
-          const {summary} = getErc20VotersAndParticipation(
-            [],
-            daoToken,
+          // current part
+          const {totalWeight, ...rest} = getErc20CurrentParticipation(
+            BigInt(0),
             totalSupply,
-            BigInt(0)
+            daoToken.decimals
           );
-          setParticipation(summary);
+          setCurrentParticipation(
+            t('votingTerminal.participationErc20', {
+              tokenSymbol: daoToken.symbol,
+              totalWeight,
+              ...rest,
+            })
+          );
+
+          setMinParticipation(
+            t('votingTerminal.participationErc20', {
+              tokenSymbol: daoToken.symbol,
+              totalWeight,
+              percentage: Math.round(daoSettings.minParticipation * 100),
+              participation: getErc20MinParticipation(
+                daoSettings.minParticipation,
+                totalSupply,
+                daoToken.decimals
+              ),
+            })
+          );
         }
       }
     }
@@ -163,7 +184,7 @@ const ReviewProposal: React.FC<ReviewProposalProps> = ({
     if (members) {
       mapToView();
     }
-  }, [daoToken, members, network, pluginType, provider]);
+  }, [daoSettings, daoToken, members, network, pluginType, provider, t]);
 
   useEffect(() => {
     if (values.proposal === '<p></p>') {
@@ -209,8 +230,11 @@ const ReviewProposal: React.FC<ReviewProposalProps> = ({
             selectedTab={terminalTab}
             onTabSelected={setTerminalTab}
             statusLabel={t('votingTerminal.status.draft')}
-            supportThreshold={Math.round(daoSettings.supportThreshold * 100)}
-            participation={participation}
+            supportThreshold={
+              Math.round(daoSettings.supportThreshold * 100) || 0
+            }
+            minParticipation={minParticipation}
+            currentParticipation={currentParticipation}
             startDate={formattedStartDate}
             endDate={formattedEndDate}
             strategy={
