@@ -654,12 +654,12 @@ export function prefixProposalIdWithPlgnAdr(
   // address already prefixed
   if (parts.length === 2) return proposalId;
 
-  // get proposal number
+  // get proposal number "0x00" => "00"
   parts = proposalId.split('0x');
 
-  if (parts[1] === '0') {
-    // first proposal => 0x0
-    return `${pluginAddress}_0x${parts[1]}`;
+  if (parts[1] === '00') {
+    // first proposal => 0x00
+    return `${pluginAddress}_0x0`;
   } else {
     // other proposals => 0x3
     return `${pluginAddress}_0x${parts[1].replace(/^0+/, '')}`;

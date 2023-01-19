@@ -3,8 +3,8 @@ import {prefixProposalIdWithPlgnAdr} from 'utils/proposals';
 const pluginAddress = '0xfee55b0ed94b71bbe42d19c79667039227abb28d';
 const testCases = [
   {
-    case: 'should prefix first proposal (0x0)',
-    proposalId: '0x0', // coming from contracts
+    case: 'should prefix first proposal (0x00)',
+    proposalId: '0x00', // coming from contracts
     expectedId: `${pluginAddress}_0x0`,
   },
   {
