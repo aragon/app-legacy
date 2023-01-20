@@ -13,12 +13,17 @@ import {fetchBalance} from 'utils/tokens';
 import {CHAIN_METADATA} from 'utils/constants';
 import {useSpecificProvider} from 'context/providers';
 import {useNetwork} from 'context/network';
+import {usePluginSettings} from 'hooks/usePluginSettings';
 
 const ProtectedRoute: React.FC = () => {
   const {data: dao, isLoading: paramIsLoading} = useDaoParam();
   const {address, isConnected, status, isOnWrongNetwork} = useWallet();
   const {data: daoDetails, isLoading: detailsAreLoading} = useDaoDetails(
     dao || ''
+  );
+  const {data: daoSettings, isLoading: settingsAreLoading} = usePluginSettings(
+    daoDetails?.plugins[0].instanceAddress as string,
+    daoDetails?.plugins[0].id as PluginTypes
   );
   const {open, close} = useGlobalModalContext();
   const {
@@ -43,13 +48,17 @@ const ProtectedRoute: React.FC = () => {
         provider,
         CHAIN_METADATA[network].nativeCurrency
       );
-
-      if (Number(balance) === 0) open('gating');
-      else close('gating');
+      if (
+        daoSettings.minProposerVotingPower &&
+        Number(balance) < daoSettings.minProposerVotingPower
+      ) {
+        open('gating');
+      } else close('gating');
     }
   }, [
     address,
     close,
+    daoSettings.minProposerVotingPower,
     daoToken,
     filteredMembers.length,
     network,
@@ -104,7 +113,12 @@ const ProtectedRoute: React.FC = () => {
     if (address && userWentThroughLoginFlow.current === false) close('wallet');
   }, [address, close]);
 
-  if (paramIsLoading || detailsAreLoading || MembershipIsLoading)
+  if (
+    paramIsLoading ||
+    detailsAreLoading ||
+    MembershipIsLoading ||
+    settingsAreLoading
+  )
     return <Loading />;
 
   return (
