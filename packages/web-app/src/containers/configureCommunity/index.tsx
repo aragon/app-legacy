@@ -159,7 +159,7 @@ const ConfigureCommunity: React.FC = () => {
    *************************************************/
   return (
     <>
-      {/* Support */}
+      {/* Support Threshold */}
       <FormItem>
         <Label
           label={t('labels.supportThreshold')}
@@ -205,7 +205,7 @@ const ConfigureCommunity: React.FC = () => {
                         className="font-bold text-right text-primary-500"
                         style={{flexBasis: `${value}%`}}
                       >
-                        {value !== '100' ? '≥' : ''}
+                        {value !== '100' ? '>' : ''}
                         {value}%
                       </p>
                     </ProgressInfo1>
@@ -234,7 +234,7 @@ const ConfigureCommunity: React.FC = () => {
         />
       </FormItem>
 
-      {/* Minimum approval */}
+      {/* Minimum Participation */}
       {membership === 'token' ? (
         <FormItem>
           <Label
