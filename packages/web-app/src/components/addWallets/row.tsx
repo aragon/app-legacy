@@ -85,7 +85,7 @@ const WalletRow: React.FC<WalletRowProps> = ({index, onDelete}) => {
         totalSupply = parseInt(wallet.amount) + totalSupply;
     });
     setValue('tokenTotalSupply', totalSupply);
-    setValue('minTokenAmount', minAmount);
+    setValue('eligibilityTokenAmount', minAmount);
 
     // show max amount error
     if (BigNumber.from(amount).gt(MAX_TOKEN_AMOUNT))
