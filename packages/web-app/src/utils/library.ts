@@ -5,6 +5,7 @@ import {
   ClientAddressList,
   TokenVotingClient,
   IMintTokenParams,
+  VotingMode,
 } from '@aragon/sdk-client';
 import {Address} from '@aragon/ui-components/dist/utils/addresses';
 import {BigNumber, BigNumberish, constants, ethers, providers} from 'ethers';
@@ -313,4 +314,18 @@ export function generateCachedProposalId(
   proposalId: string
 ): string {
   return `${daoAddress}_${proposalId}`;
+}
+
+type DecodedVotingMode = {
+  earlyExecution: boolean;
+  voteReplacement: boolean;
+};
+
+export function decodeVotingMode(mode: VotingMode): DecodedVotingMode {
+  return {
+    // Note: This implies that earlyExecution and voteReplacement may never be
+    // both true at the same time, as they shouldn't.
+    earlyExecution: mode === VotingMode.EARLY_EXECUTION,
+    voteReplacement: mode === VotingMode.VOTE_REPLACEMENT,
+  };
 }
