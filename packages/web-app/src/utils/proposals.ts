@@ -46,7 +46,9 @@ export function isTokenBasedProposal(
     | DetailedProposal
     | TokenVotingProposalListItem
     | AddressListProposalListItem
+    | undefined
 ): proposal is TokenVotingProposal {
+  if (!proposal) return false;
   return 'token' in proposal;
 }
 
@@ -62,6 +64,7 @@ export function isErc20VotingProposal(
     | DetailedProposal
     | TokenVotingProposalListItem
     | AddressListProposalListItem
+    | undefined
 ): proposal is TokenVotingProposal & {token: Erc20TokenDetails} {
   return isTokenBasedProposal(proposal) && isErc20Token(proposal.token);
 }
