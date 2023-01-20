@@ -60,6 +60,7 @@ import {
   decodeMintTokensToAction,
   decodeRemoveMembersToAction,
   decodeWithdrawToAction,
+  formatUnits,
 } from 'utils/library';
 import {NotFound} from 'utils/paths';
 import {
@@ -368,8 +369,11 @@ const Proposal: React.FC = () => {
     const supportThreshold = proposal.settings.minSupport;
 
     // those who didn't vote (this is NOT voting abstain)
-    const absentee = Big(proposal.totalVotingWeight.toString()).minus(
-      proposal.usedVotingWeight.toString()
+    const absentee = formatUnits(
+      Big(proposal.totalVotingWeight.toString())
+        .minus(proposal.usedVotingWeight.toString())
+        .toString(),
+      proposal.token.decimals
     );
 
     return (
