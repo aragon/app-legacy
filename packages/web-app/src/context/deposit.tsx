@@ -35,6 +35,7 @@ import {useReactiveVar} from '@apollo/client';
 import {pendingDeposits} from './apolloClient';
 import {trackEvent} from 'services/analytics';
 import {customJSONReplacer} from 'utils/library';
+import {BigNumber} from 'ethers';
 
 interface IDepositContextType {
   handleOpenModal: () => void;
@@ -97,9 +98,10 @@ const DepositProvider = ({children}: {children: ReactNode}) => {
     error: gasEstimationError,
   } = usePollGasFee(estimateDepositFees, shouldPoll);
 
-  const handleOpenModal = useCallback(() => {
+  const handleOpenModal = useCallback(async () => {
     // get deposit data from
     const {amount, tokenAddress, to, reference, tokenSymbol} = getValues();
+    const tokenAmount = BigInt(Number(amount) * Math.pow(10, 18));
 
     // validate and set deposit data
     if (!to) {
@@ -109,7 +111,7 @@ const DepositProvider = ({children}: {children: ReactNode}) => {
 
     setDepositParams({
       daoAddressOrEns: to,
-      amount: BigInt(Number(amount) * Math.pow(10, 18)),
+      amount: tokenAmount,
       tokenAddress,
       reference,
     });
@@ -124,13 +126,44 @@ const DepositProvider = ({children}: {children: ReactNode}) => {
       setIncludeApproval(false);
       setModalStep(2);
     } else {
-      setIncludeApproval(true);
-      setModalStep(1);
+      /**
+       * This method will return a generator to iterate the allowance process,
+       * According to the current deposit context, I defined this to get
+       * user allowance before showing the modal and skip the allowance if needed,
+       * It might not be perfect and needs some refactors later but for now will
+       * solve the token allowance history issue completely
+       */
+      const allowanceSteps = client?.methods.ensureAllowance({
+        daoAddress: dao as string,
+        amount: tokenAmount,
+        tokenAddress,
+      });
+
+      if (allowanceSteps) {
+        for await (const step of allowanceSteps) {
+          try {
+            switch (step.key) {
+              case DaoDepositSteps.CHECKED_ALLOWANCE:
+                if (BigNumber.from(step.allowance).lt(tokenAmount)) {
+                  setIncludeApproval(true);
+                  setModalStep(1);
+                } else {
+                  setIncludeApproval(false);
+                  setModalStep(2);
+                }
+                break;
+            }
+            break;
+          } catch (error) {
+            console.log(error);
+          }
+        }
+      }
     }
 
     setDepositState(TransactionState.WAITING);
     setShowModal(true);
-  }, [getValues, setModalStep]);
+  }, [client?.methods, dao, getValues, setModalStep]);
 
   // Handler for modal close; don't close modal if transaction is still running
   const handleCloseModal = useCallback(() => {
