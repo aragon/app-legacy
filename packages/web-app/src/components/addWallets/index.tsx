@@ -48,6 +48,7 @@ const AddWallets: React.FC = () => {
       setValue(`wallets.${index}.amount`, '0');
     });
     resetField('tokenTotalSupply');
+    setValue('eligibilityTokenAmount', 0);
     alert(t('alert.chip.distributionReset'));
   };
 
@@ -112,6 +113,7 @@ const AddWallets: React.FC = () => {
               callback: () => {
                 remove();
                 resetField('tokenTotalSupply');
+                setValue('eligibilityTokenAmount', 0);
                 alert(t('alert.chip.removedAllAddresses'));
               },
             },
