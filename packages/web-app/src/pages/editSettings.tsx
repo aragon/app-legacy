@@ -303,7 +303,7 @@ const EditSettings: React.FC = () => {
                 dropdownItems={metadataAction}
               >
                 <AccordionContent>
-                  <DefineMetadata bgWhite />
+                  <DefineMetadata bgWhite arrayName="daoLinks" />
                 </AccordionContent>
               </AccordionItem>
 

@@ -22,7 +22,15 @@ const DAO_LOGO = {
   maxFileSize: 3000000,
 };
 
-const DefineMetadata: React.FC<{bgWhite?: boolean}> = ({bgWhite = false}) => {
+export type DefineMetadataProps = {
+  arrayName?: string;
+  bgWhite?: boolean;
+};
+
+const DefineMetadata: React.FC<DefineMetadataProps> = ({
+  arrayName = 'links',
+  bgWhite = false,
+}) => {
   const {t} = useTranslation();
   const {control, setError, clearErrors, getValues} = useFormContext();
   const {infura: provider} = useProviders();
@@ -193,7 +201,7 @@ const DefineMetadata: React.FC<{bgWhite?: boolean}> = ({bgWhite = false}) => {
           helpText={t('createDAO.step2.linksSubtitle')}
           isOptional
         />
-        <AddLinks arrayName="links" bgWhite={bgWhite} />
+        <AddLinks arrayName={arrayName} bgWhite={bgWhite} />
       </FormItem>
     </>
   );
