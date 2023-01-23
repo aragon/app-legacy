@@ -1,5 +1,3 @@
-import Big from 'big.js';
-import {formatUnits} from 'ethers/lib/utils';
 import React, {useMemo} from 'react';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
@@ -7,7 +5,7 @@ import styled from 'styled-components';
 import {VotingMode} from '@aragon/sdk-client';
 import {AccordionMethod} from 'components/accordionMethod';
 import {getDHMFromSeconds} from 'utils/date';
-import {abbreviateTokenAmount} from 'utils/tokens';
+import {getErc20MinParticipation} from 'utils/proposals';
 import {ActionUpdatePluginSettings} from 'utils/types';
 
 export const ModifySettingsCard: React.FC<{
@@ -18,19 +16,14 @@ export const ModifySettingsCard: React.FC<{
 
   const minParticipation = useMemo(
     () => `≥ ${Math.round(inputs.minParticipation * 100)}% (≥
-            ${abbreviateTokenAmount(
-              parseFloat(
-                Big(
-                  formatUnits(inputs.totalVotingWeight, inputs.token?.decimals)
-                )
-                  .mul(inputs.supportThreshold)
-                  .toFixed(2)
-              ).toString()
+            ${getErc20MinParticipation(
+              inputs.minParticipation,
+              inputs.totalVotingWeight,
+              inputs.token?.decimals || 18
             )} 
             ${inputs.token?.symbol})`,
     [
       inputs.minParticipation,
-      inputs.supportThreshold,
       inputs.token?.decimals,
       inputs.token?.symbol,
       inputs.totalVotingWeight,
@@ -65,13 +58,17 @@ export const ModifySettingsCard: React.FC<{
         <div>
           <Title>{t('labels.earlyExecution')}</Title>
           <Value>
-            {inputs.votingMode === VotingMode.EARLY_EXECUTION ? 'Yes' : 'No'}
+            {inputs.votingMode === VotingMode.EARLY_EXECUTION
+              ? t('labels.yes')
+              : t('labels.no')}
           </Value>
         </div>
         <div>
           <Title>{t('labels.voteReplacement')}</Title>
           <Value>
-            {inputs.votingMode === VotingMode.VOTE_REPLACEMENT ? 'Yes' : 'No'}
+            {inputs.votingMode === VotingMode.VOTE_REPLACEMENT
+              ? t('labels.yes')
+              : t('labels.no')}
           </Value>
         </div>
       </Container>
