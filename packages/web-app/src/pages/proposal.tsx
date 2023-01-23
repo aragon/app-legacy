@@ -650,7 +650,7 @@ const Proposal: React.FC = () => {
             onVoteClicked={onClick}
             onCancelClicked={() => setVotingInProcess(false)}
             voteButtonLabel={buttonLabel}
-            voteNowDisabled={voted || voteNowDisabled}
+            voteNowDisabled={voteNowDisabled}
             votingInProcess={votingInProcess}
             onVoteSubmitClicked={vote =>
               handleSubmitVote(
