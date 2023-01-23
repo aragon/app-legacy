@@ -51,7 +51,6 @@ const Settings: React.FC = () => {
   const {data: daoToken, isLoading: tokensAreLoading} = useDaoToken(
     daoDetails?.plugins?.[0]?.instanceAddress || ''
   );
-
   const {data: tokenSupply, isLoading: tokenSupplyIsLoading} = useTokenSupply(
     daoToken?.address || ''
   );

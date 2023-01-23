@@ -4,9 +4,10 @@ import {
   ICreateProposalParams,
   IMetadata,
   InstalledPluginListItem,
-  VotingSettings,
   ProposalCreationSteps,
   ProposalMetadata,
+  VotingMode,
+  VotingSettings,
 } from '@aragon/sdk-client';
 import {withTransaction} from '@elastic/apm-rum-react';
 import Big from 'big.js';
@@ -26,7 +27,6 @@ import {pendingProposalsVar} from 'context/apolloClient';
 import {useGlobalModalContext} from 'context/globalModals';
 import {useNetwork} from 'context/network';
 import {usePrivacyContext} from 'context/privacyContext';
-import {useSpecificProvider} from 'context/providers';
 import {useClient} from 'hooks/useClient';
 import {useDaoDetails} from 'hooks/useDaoDetails';
 import {useDaoMembers} from 'hooks/useDaoMembers';
@@ -35,12 +35,9 @@ import {useDaoToken} from 'hooks/useDaoToken';
 import {PluginTypes, usePluginClient} from 'hooks/usePluginClient';
 import {usePluginSettings} from 'hooks/usePluginSettings';
 import {usePollGasFee} from 'hooks/usePollGasfee';
+import {useTokenSupply} from 'hooks/useTokenSupply';
 import {useWallet} from 'hooks/useWallet';
-import {
-  CHAIN_METADATA,
-  PENDING_PROPOSALS_KEY,
-  TransactionState,
-} from 'utils/constants';
+import {PENDING_PROPOSALS_KEY, TransactionState} from 'utils/constants';
 import {getCanonicalUtcOffset, getSecondsFromDHM} from 'utils/date';
 import {customJSONReplacer} from 'utils/library';
 import {EditSettings, Proposal} from 'utils/paths';
@@ -49,7 +46,6 @@ import {
   MapToDetailedProposalParams,
   prefixProposalIdWithPlgnAdr,
 } from 'utils/proposals';
-import {getTokenInfo} from 'utils/tokens';
 import {ProposalResource} from 'utils/types';
 
 const ProposeSettings: React.FC = () => {
@@ -122,30 +118,28 @@ const ProposeSettingWrapper: React.FC<Props> = ({
 }) => {
   const {t} = useTranslation();
   const {open} = useGlobalModalContext();
-  const {preferences} = usePrivacyContext();
-
   const navigate = useNavigate();
   const {getValues} = useFormContext();
 
+  const {preferences} = usePrivacyContext();
   const {network} = useNetwork();
   const {address, isOnWrongNetwork} = useWallet();
-  const provider = useSpecificProvider(CHAIN_METADATA[network].id);
 
   const {data: dao, isLoading} = useDaoParam();
   const {data: daoDetails, isLoading: daoDetailsLoading} = useDaoDetails(dao);
   const {id: pluginType, instanceAddress: pluginAddress} =
     daoDetails?.plugins[0] || ({} as InstalledPluginListItem);
-
   const {
     data: {members},
   } = useDaoMembers(pluginAddress, pluginType as PluginTypes);
-
   const {data: pluginSettings} = usePluginSettings(
     pluginAddress,
     pluginType as PluginTypes
   );
   const {data: daoToken} = useDaoToken(pluginAddress);
-
+  const {data: tokenSupply, isLoading: tokenSupplyIsLoading} = useTokenSupply(
+    daoToken?.address || ''
+  );
   const {client} = useClient();
   const pluginClient = usePluginClient(pluginType as PluginTypes);
 
@@ -157,7 +151,6 @@ const ProposeSettingWrapper: React.FC<Props> = ({
 
   const [proposalId, setProposalId] = useState<string>();
 
-  const [tokenSupply, setTokenSupply] = useState<bigint>();
   const cachedProposals = useReactiveVar(pendingProposalsVar);
 
   const shouldPoll =
@@ -167,25 +160,6 @@ const ProposeSettingWrapper: React.FC<Props> = ({
   /*************************************************
    *                     Effects                   *
    *************************************************/
-  useEffect(() => {
-    // Fetching necessary info about the token.
-    async function fetchTotalSupply() {
-      if (daoToken?.address)
-        try {
-          const {totalSupply} = await getTokenInfo(
-            daoToken?.address,
-            provider,
-            CHAIN_METADATA[network].nativeCurrency
-          );
-
-          setTokenSupply(totalSupply.toBigInt());
-        } catch (error) {
-          console.error('Error fetching token information: ', error);
-        }
-    }
-
-    fetchTotalSupply();
-  }, [daoToken?.address, network, provider]);
 
   useEffect(() => {
     // encoding actions
@@ -196,6 +170,8 @@ const ProposeSettingWrapper: React.FC<Props> = ({
         links,
         minimumParticipation,
         minimumApproval,
+        earlyExecution,
+        voteReplacement,
         durationDays,
         durationHours,
         durationMinutes,
@@ -205,6 +181,8 @@ const ProposeSettingWrapper: React.FC<Props> = ({
         'links',
         'minimumParticipation',
         'minimumApproval',
+        'earlyExecution',
+        'voteReplacement',
         'durationDays',
         'durationHours',
         'durationMinutes',
@@ -233,6 +211,11 @@ const ProposeSettingWrapper: React.FC<Props> = ({
         minDuration: durationInSeconds,
         supportThreshold: Big(minimumApproval).div(100).toNumber(),
         minParticipation: Big(minimumParticipation).div(100).toNumber(),
+        votingMode: earlyExecution
+          ? VotingMode.EARLY_EXECUTION
+          : voteReplacement
+          ? VotingMode.VOTE_REPLACEMENT
+          : VotingMode.STANDARD,
       };
       actions.push(
         Promise.resolve(
@@ -475,7 +458,7 @@ const ProposeSettingWrapper: React.FC<Props> = ({
    *                    Render                     *
    *************************************************/
 
-  if (isLoading || daoDetailsLoading) {
+  if (isLoading || daoDetailsLoading || tokenSupplyIsLoading) {
     return <Loading />;
   }
 
