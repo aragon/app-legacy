@@ -191,9 +191,9 @@
     "voteReplacement": "Vote Replacement",
     "voteReplacementDescription": "Allows vote replacement while the vote is still open. This can change the vote outcome anytime and is auto-disabled if early execution is enabled.",
     "updateGovernanceAction": "Update Governance Settings",
-    "updateGovernanceActionDescription": "TBD",
+    "updateGovernanceActionDescription": "Change your DAO governance settings",
     "updateMetadataAction": "Update DAO Metadata",
-    "updateMetadataActionDescription": "TBD"
+    "updateMetadataActionDescription": "Change your DAO metadata"
   },
   "placeHolders": {
     "selectToken": "Select a Token ...",
