@@ -196,7 +196,7 @@ export type ActionsTypes =
   | 'withdraw_assets'
   | 'mint_tokens'
   | 'external_contract'
-  | 'modify_settings'
+  | 'modify_token_voting_settings'
   | 'modify_metadata';
 
 // TODO Refactor ActionWithdraw With the new input structure
@@ -250,7 +250,7 @@ export type ActionMintToken = {
 };
 
 export type ActionUpdatePluginSettings = {
-  name: 'modify_settings';
+  name: 'modify_token_voting_settings';
   inputs: VotingSettings & {
     token?: Erc20TokenDetails;
     totalVotingWeight: bigint;

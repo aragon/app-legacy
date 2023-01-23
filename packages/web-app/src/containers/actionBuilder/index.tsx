@@ -41,7 +41,7 @@ const Action: React.FC<ActionsComponentProps> = ({name, actionIndex}) => {
       return (
         <TemporarySection purpose="It serves as a placeholder for not yet implemented external contract interaction component" />
       );
-    case 'modify_settings':
+    case 'modify_token_voting_settings':
       return (
         <TemporarySection purpose="It serves as a placeholder for not yet implemented external contract interaction component" />
       );

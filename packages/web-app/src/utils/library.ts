@@ -277,7 +277,7 @@ export async function decodePluginSettingsToAction(
   }
 
   return {
-    name: 'modify_settings',
+    name: 'modify_token_voting_settings',
     inputs: {
       ...client.decoding.updatePluginSettingsAction(data),
       token,

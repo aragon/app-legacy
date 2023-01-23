@@ -32,7 +32,7 @@ export const ActionsFilter: React.FC<ActionsFilterProps> = ({action}) => {
       return <MintTokenCard action={action} />;
     case 'modify_metadata':
       return <ModifyMetadataCard action={action} />;
-    case 'modify_settings':
+    case 'modify_token_voting_settings':
       return <ModifySettingsCard action={action} />;
     default:
       return <></>;
