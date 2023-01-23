@@ -1,10 +1,10 @@
 import {useReactiveVar} from '@apollo/client';
 import {DaoDetails} from '@aragon/sdk-client';
+import {resolveIpfsCid} from '@aragon/sdk-common';
 import {useEffect, useState} from 'react';
 
 import {pendingDaoCreationVar} from 'context/apolloClient';
 import {useNetwork} from 'context/network';
-import {resolveDaoAvatarIpfsCid} from 'utils/library';
 import {HookData} from 'utils/types';
 import {useClient} from './useClient';
 
@@ -46,7 +46,14 @@ export function useDaoDetails(
         } else {
           const dao = await client?.methods.getDao(daoId.toLowerCase());
           if (dao) {
-            dao.metadata.avatar = resolveDaoAvatarIpfsCid(dao.metadata.avatar);
+            if (dao.metadata.avatar) {
+              try {
+                const logoCid = resolveIpfsCid(dao.metadata.avatar);
+                dao.metadata.avatar = `https://ipfs.io/ipfs/${logoCid}`;
+              } catch (err) {
+                dao.metadata.avatar = undefined;
+              }
+            }
             setData(dao);
             setWaitingForSubgraph(false);
           }
