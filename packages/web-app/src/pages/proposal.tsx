@@ -67,9 +67,7 @@ import {NotFound} from 'utils/paths';
 import {
   getProposalStatusSteps,
   getTerminalProps,
-  isErc20Token,
   isErc20VotingProposal,
-  isTokenBasedProposal,
 } from 'utils/proposals';
 import {Action} from 'utils/types';
 
@@ -169,10 +167,9 @@ const Proposal: React.FC = () => {
         index: number;
       } = {actions: [], index: 0};
 
-      const proposalErc20Token =
-        isTokenBasedProposal(proposal) && isErc20Token(proposal.token)
-          ? proposal.token
-          : undefined;
+      const proposalErc20Token = isErc20VotingProposal(proposal)
+        ? proposal.token
+        : undefined;
 
       const actionPromises: Promise<Action | undefined>[] =
         proposal.actions.map((action: DaoAction, index) => {
