@@ -295,7 +295,7 @@ const CreateDaoProvider: React.FC = ({children}) => {
 
   // estimate creation fees
   const estimateCreationFees = useCallback(async () => {
-    if (daoCreationData) return client?.estimation.create(daoCreationData);
+    if (daoCreationData) return client?.estimation.createDao(daoCreationData);
   }, [client?.estimation, daoCreationData]);
 
   const {
@@ -315,7 +315,7 @@ const CreateDaoProvider: React.FC = ({children}) => {
       throw new Error('SDK client is not initialized correctly');
     }
 
-    const createDaoIterator = client?.methods.create(daoCreationData);
+    const createDaoIterator = client?.methods.createDao(daoCreationData);
 
     // Check if createDaoIterator function is initialized
     if (!createDaoIterator) {
