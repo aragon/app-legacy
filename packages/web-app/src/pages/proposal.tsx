@@ -1,6 +1,6 @@
 import {useApolloClient} from '@apollo/client';
 import {
-  ClientAddressList,
+  AddresslistVotingClient,
   DaoAction,
   TokenVotingClient,
   TokenVotingProposal,
@@ -195,12 +195,12 @@ const Proposal: React.FC = () => {
             case 'addAllowedUsers':
               return decodeAddMembersToAction(
                 action.data,
-                pluginClient as ClientAddressList
+                pluginClient as AddresslistVotingClient
               );
             case 'removeAllowedUsers':
               return decodeRemoveMembersToAction(
                 action.data,
-                pluginClient as ClientAddressList
+                pluginClient as AddresslistVotingClient
               );
             case 'updateVotingSettings':
               return decodePluginSettingsToAction(

@@ -2,7 +2,7 @@
 import {ApolloClient} from '@apollo/client';
 import {
   Client,
-  ClientAddressList,
+  AddresslistVotingClient,
   Erc20TokenDetails,
   IMintTokenParams,
   TokenVotingClient,
@@ -210,7 +210,7 @@ export async function decodeMintTokensToAction(
  */
 export async function decodeAddMembersToAction(
   data: Uint8Array | undefined,
-  client: ClientAddressList | undefined
+  client: AddresslistVotingClient | undefined
 ): Promise<ActionAddAddress | undefined> {
   if (!client || !data) {
     console.error('SDK client is not initialized correctly');
@@ -239,7 +239,7 @@ export async function decodeAddMembersToAction(
  */
 export async function decodeRemoveMembersToAction(
   data: Uint8Array | undefined,
-  client: ClientAddressList | undefined
+  client: AddresslistVotingClient | undefined
 ): Promise<ActionRemoveAddress | undefined> {
   if (!client || !data) {
     console.error('SDK client is not initialized correctly');
