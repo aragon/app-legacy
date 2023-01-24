@@ -435,7 +435,9 @@ const Proposal: React.FC = () => {
       return [voteStatus, voteButtonLabel];
 
     voteButtonLabel = voted
-      ? t('votingTerminal.status.voteSubmitted')
+      ? canVote
+        ? t('votingTerminal.status.revote')
+        : t('votingTerminal.status.voteSubmitted')
       : t('votingTerminal.voteOver');
 
     switch (proposal.status) {
@@ -484,6 +486,7 @@ const Proposal: React.FC = () => {
     t,
     voted,
     i18n.language,
+    canVote,
   ]);
 
   // vote button state and handler
