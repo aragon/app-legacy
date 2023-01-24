@@ -178,7 +178,7 @@ const ProposeSettingWrapper: React.FC<Props> = ({
       ] = getValues([
         'daoName',
         'daoSummary',
-        'links',
+        'daoLinks',
         'minimumParticipation',
         'minimumApproval',
         'earlyExecution',
