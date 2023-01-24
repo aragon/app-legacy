@@ -1,5 +1,5 @@
 import {
-  AddressListProposal,
+  AddresslistVotingProposal,
   Erc20TokenDetails,
   DaoMetadata,
   TokenVotingProposal,
@@ -157,7 +157,7 @@ export type Erc20ProposalVote = AddressListVote & {
   weight: bigint;
 };
 
-export type DetailedProposal = TokenVotingProposal | AddressListProposal;
+export type DetailedProposal = TokenVotingProposal | AddresslistVotingProposal;
 
 /* ACTION TYPES ============================================================= */
 

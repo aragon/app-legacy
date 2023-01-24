@@ -2,7 +2,7 @@
 import {useReactiveVar} from '@apollo/client';
 import {
   DaoCreationSteps,
-  IAddressListPluginInstall,
+  IAddresslistVotingPluginInstall,
   CreateDaoParams,
   DaoMetadata,
   IPluginInstallItem,
@@ -210,7 +210,7 @@ const CreateDaoProvider: React.FC = ({children}) => {
     }, [getValues]);
 
   // get whiteList Plugin configuration
-  const getAddresslistPluginParams: () => IAddressListPluginInstall['addresses'] =
+  const getAddresslistPluginParams: () => IAddresslistVotingPluginInstall['addresses'] =
     useCallback(() => {
       const {whitelistWallets} = getValues();
       return whitelistWallets?.map(wallet => wallet.address);

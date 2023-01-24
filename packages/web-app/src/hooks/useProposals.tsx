@@ -1,6 +1,6 @@
 import {useReactiveVar} from '@apollo/client';
 import {
-  AddressListProposalListItem,
+  AddresslistVotingProposalListItem,
   TokenVotingProposalListItem,
   ProposalSortBy,
   ProposalStatus,
@@ -22,7 +22,7 @@ import {PluginTypes, usePluginClient} from './usePluginClient';
 
 export type Proposal =
   | TokenVotingProposalListItem
-  | AddressListProposalListItem;
+  | AddresslistVotingProposalListItem;
 
 /**
  * Retrieves list of proposals from SDK
