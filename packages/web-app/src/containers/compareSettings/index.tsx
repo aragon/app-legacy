@@ -1,3 +1,4 @@
+import {VotingMode} from '@aragon/sdk-client';
 import {
   AvatarDao,
   ButtonGroup,
@@ -14,6 +15,7 @@ import {Loading} from 'components/temporary';
 import {useNetwork} from 'context/network';
 import {useDaoDetails} from 'hooks/useDaoDetails';
 import {useDaoParam} from 'hooks/useDaoParam';
+import {useDaoToken} from 'hooks/useDaoToken';
 import {PluginTypes} from 'hooks/usePluginClient';
 import {usePluginSettings} from 'hooks/usePluginSettings';
 import {getDHMFromSeconds} from 'utils/date';
@@ -30,10 +32,12 @@ const CompareSettings: React.FC = () => {
   const {data: daoDetails, isLoading: areDetailsLoading} = useDaoDetails(
     daoId!
   );
-
   const {data: daoSettings, isLoading: areSettingsLoading} = usePluginSettings(
     daoDetails?.plugins[0].instanceAddress as string,
     daoDetails?.plugins[0].id as PluginTypes
+  );
+  const {data: daoToken, isLoading: tokensAreLoading} = useDaoToken(
+    daoDetails?.plugins?.[0]?.instanceAddress || ''
   );
 
   const [selectedButton, setSelectedButton] = useState<'new' | 'old'>('new');
@@ -42,35 +46,87 @@ const CompareSettings: React.FC = () => {
     setSelectedButton(prev => (prev === 'new' ? 'old' : 'new'));
   };
 
-  if (areParamsLoading || areDetailsLoading || areSettingsLoading) {
+  if (
+    areParamsLoading ||
+    areDetailsLoading ||
+    areSettingsLoading ||
+    tokensAreLoading
+  ) {
     return <Loading />;
   }
 
   let displayedInfo;
+  const [
+    daoName,
+    daoSummary,
+    daoLogo,
+    daoLinks,
+    minimumApproval,
+    minimumParticipation,
+    tokenTotalSupply,
+    durationDays,
+    durationHours,
+    durationMinutes,
+    earlyExecution,
+    voteReplacement,
+  ] = getValues([
+    'daoName',
+    'daoSummary',
+    'daoLogo',
+    'daoLinks',
+    'minimumApproval',
+    'minimumParticipation',
+    'tokenTotalSupply',
+    'durationDays',
+    'durationHours',
+    'durationMinutes',
+    'earlyExecution',
+    'voteReplacement',
+  ]);
   if (selectedButton === 'new') {
     displayedInfo = {
-      name: getValues('daoName'),
-      summary: getValues('daoSummary'),
-      links: getValues('daoLinks').filter(
-        (l: ProposalResource) => l.name && l.url
-      ),
-      minParticipation: getValues('minimumParticipation'),
-      approvalThreshold: getValues('minimumApproval'),
-      days: getValues('durationDays'),
-      hours: getValues('durationHours'),
-      minutes: getValues('durationMinutes'),
+      name: daoName,
+      summary: daoSummary,
+      avatar: daoLogo,
+      links: daoLinks.filter((l: ProposalResource) => l.name && l.url),
+      approvalThreshold: `>${minimumApproval}%`,
+      minParticipation: `≥${minimumParticipation}% (≥${
+        (parseInt(minimumParticipation) * (tokenTotalSupply || 0)) / 100
+      } ${daoToken?.symbol})`,
+      days: durationDays,
+      hours: durationMinutes,
+      minutes: durationHours,
+      votingMode: {
+        earlyExecution: earlyExecution ? t('labels.yes') : t('labels.no'),
+        voteReplacement: voteReplacement ? t('labels.yes') : t('labels.no'),
+      },
     };
   } else {
     const duration = getDHMFromSeconds(daoSettings.minDuration);
     displayedInfo = {
       name: daoDetails?.metadata.name,
       summary: daoDetails?.metadata.description,
+      avatar: daoDetails?.metadata.avatar,
       links: daoDetails?.metadata.links.filter(l => l.name && l.url),
-      minParticipation: daoSettings.minParticipation * 100,
-      approvalThreshold: daoSettings.supportThreshold * 100,
+      approvalThreshold: `>${Math.round(daoSettings.supportThreshold * 100)}%`,
+      minParticipation: `≥${Math.round(
+        daoSettings.minParticipation * 100
+      )}% (≥${daoSettings.minParticipation * (tokenTotalSupply || 0)} ${
+        daoToken?.symbol
+      })`,
       days: duration.days,
       hours: duration.hours,
       minutes: duration.minutes,
+      votingMode: {
+        earlyExecution:
+          daoSettings.votingMode === VotingMode.EARLY_EXECUTION
+            ? t('labels.yes')
+            : t('labels.no'),
+        voteReplacement:
+          daoSettings.votingMode === VotingMode.VOTE_REPLACEMENT
+            ? t('labels.yes')
+            : t('labels.no'),
+      },
     };
   }
 
@@ -97,7 +153,7 @@ const CompareSettings: React.FC = () => {
         <Dl>
           <Dt>{t('labels.logo')}</Dt>
           <Dd>
-            <AvatarDao daoName={displayedInfo.name} />
+            <AvatarDao daoName={displayedInfo.avatar} />
           </Dd>
         </Dl>
         <Dl>
@@ -136,12 +192,12 @@ const CompareSettings: React.FC = () => {
         editLabel={t('settings.edit')}
       >
         <Dl>
-          <Dt>{t('labels.minimumParticipation')}</Dt>
-          <Dd> {displayedInfo.minParticipation}%</Dd>
+          <Dt>{t('labels.minimumApproval')}</Dt>
+          <Dd>{displayedInfo.approvalThreshold}</Dd>
         </Dl>
         <Dl>
-          <Dt>{t('labels.minimumApproval')}</Dt>
-          <Dd>{displayedInfo.approvalThreshold}%</Dd>
+          <Dt>{t('labels.minimumParticipation')}</Dt>
+          <Dd>{displayedInfo.minParticipation}</Dd>
         </Dl>
         <Dl>
           <Dt>{t('labels.minimumDuration')}</Dt>
@@ -152,6 +208,14 @@ const CompareSettings: React.FC = () => {
               minutes: displayedInfo.minutes,
             })}
           </Dd>
+        </Dl>
+        <Dl>
+          <Dt>{t('labels.review.earlyExecution')}</Dt>
+          <Dd>{displayedInfo.votingMode.earlyExecution}</Dd>
+        </Dl>
+        <Dl>
+          <Dt>{t('labels.review.voteReplacement')}</Dt>
+          <Dd>{displayedInfo.votingMode.voteReplacement}</Dd>
         </Dl>
       </DescriptionListContainer>
     </div>

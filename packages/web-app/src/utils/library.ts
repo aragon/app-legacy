@@ -6,6 +6,7 @@ import {
   Erc20TokenDetails,
   IMintTokenParams,
   TokenVotingClient,
+  VotingMode,
 } from '@aragon/sdk-client';
 import {resolveIpfsCid} from '@aragon/sdk-common';
 import {Address} from '@aragon/ui-components/dist/utils/addresses';
@@ -387,4 +388,18 @@ export function resolveDaoAvatarIpfsCid(avatar?: string): string | undefined {
       console.warn('Error resolving DAO avatar IPFS Cid', err);
     }
   }
+}
+
+type DecodedVotingMode = {
+  earlyExecution: boolean;
+  voteReplacement: boolean;
+};
+
+export function decodeVotingMode(mode: VotingMode): DecodedVotingMode {
+  return {
+    // Note: This implies that earlyExecution and voteReplacement may never be
+    // both true at the same time, as they shouldn't.
+    earlyExecution: mode === VotingMode.EARLY_EXECUTION,
+    voteReplacement: mode === VotingMode.VOTE_REPLACEMENT,
+  };
 }

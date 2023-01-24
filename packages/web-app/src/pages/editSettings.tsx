@@ -1,3 +1,4 @@
+import {VotingMode} from '@aragon/sdk-client';
 import {
   AlertInline,
   ButtonText,
@@ -24,10 +25,13 @@ import DefineMetadata from 'containers/defineMetadata';
 import {useNetwork} from 'context/network';
 import {useDaoDetails} from 'hooks/useDaoDetails';
 import {useDaoParam} from 'hooks/useDaoParam';
+import {useDaoToken} from 'hooks/useDaoToken';
 import {PluginTypes} from 'hooks/usePluginClient';
 import {usePluginSettings} from 'hooks/usePluginSettings';
 import useScreen from 'hooks/useScreen';
+import {useTokenSupply} from 'hooks/useTokenSupply';
 import {getDHMFromSeconds} from 'utils/date';
+import {decodeVotingMode} from 'utils/library';
 import {ProposeNewSettings} from 'utils/paths';
 import {Layout} from './settings';
 
@@ -47,6 +51,14 @@ const EditSettings: React.FC = () => {
 
   const {data: daoDetails, isLoading: detailsAreLoading} = useDaoDetails(
     daoId!
+  );
+
+  const {data: daoToken, isLoading: tokensAreLoading} = useDaoToken(
+    daoDetails?.plugins?.[0]?.instanceAddress || ''
+  );
+
+  const {data: tokenSupply, isLoading: tokenSupplyIsLoading} = useTokenSupply(
+    daoToken?.address || ''
   );
 
   const {data: daoSettings, isLoading: settingsAreLoading} = usePluginSettings(
@@ -157,16 +169,15 @@ const EditSettings: React.FC = () => {
     setValue('daoSummary', daoDetails?.metadata.description);
     setValue('daoLogo', daoDetails?.metadata.avatar);
 
-    //
     /**
      * FIXME - this is the dumbest workaround: because there is an internal
-     * field array in 'AddLinks', conflicts arise when removing rows
-     * via remove and update. While the append, remove and replace
-     * technically happens whe we reset the form, a row is not added to the AddLinks component
-     * leaving the component in a state where one or more rows are hidden
-     * until the Add Link button is clicked.
-     * The workaround is to forcefully set empty fields for each link coming from
-     * daoDetails and then replacing them with the proper values
+     * field array in 'AddLinks', conflicts arise when removing rows via remove
+     * and update. While the append, remove and replace technically happens whe
+     * we reset the form, a row is not added to the AddLinks component leaving
+     * the component in a state where one or more rows are hidden until the Add
+     * Link button is clicked. The workaround is to forcefully set empty fields
+     * for each link coming from daoDetails and then replacing them with the
+     * proper values
      */
     if (daoDetails?.metadata.links) {
       setValue('daoLinks', [...daoDetails.metadata.links.map(() => ({}))]);
@@ -182,15 +193,25 @@ const EditSettings: React.FC = () => {
   ]);
 
   const setCurrentGovernance = useCallback(() => {
+    setValue('tokenTotalSupply', tokenSupply);
     setValue('minimumApproval', Math.round(daoSettings.supportThreshold * 100));
     setValue(
       'minimumParticipation',
       Math.round(daoSettings.minParticipation * 100)
     );
+
+    const votingMode = decodeVotingMode(
+      daoSettings?.votingMode || VotingMode.STANDARD
+    );
+
+    setValue('earlyExecution', votingMode.earlyExecution);
+    setValue('voteReplacement', votingMode.voteReplacement);
+
     setValue('durationDays', days);
     setValue('durationHours', hours);
     setValue('durationMinutes', minutes);
-    // TODO: Need to add community settings later, Also the Alerts share will be added later
+
+    // TODO: Alerts share will be added later
     setValue(
       'membership',
       daoDetails?.plugins[0].id === 'token-voting.plugin.dao.eth'
@@ -200,10 +221,12 @@ const EditSettings: React.FC = () => {
   }, [
     daoDetails?.plugins,
     daoSettings.supportThreshold,
+    daoSettings.votingMode,
     daoSettings.minParticipation,
     days,
     hours,
     minutes,
+    tokenSupply,
     setValue,
   ]);
 
@@ -219,7 +242,13 @@ const EditSettings: React.FC = () => {
     setCurrentGovernance();
   }, [setCurrentGovernance, setCurrentMetadata]);
 
-  if (paramsAreLoading || detailsAreLoading || settingsAreLoading) {
+  if (
+    paramsAreLoading ||
+    detailsAreLoading ||
+    settingsAreLoading ||
+    tokensAreLoading ||
+    tokenSupplyIsLoading
+  ) {
     return <Loading />;
   }
 
@@ -276,7 +305,7 @@ const EditSettings: React.FC = () => {
                 dropdownItems={metadataAction}
               >
                 <AccordionContent>
-                  <DefineMetadata bgWhite />
+                  <DefineMetadata bgWhite arrayName="daoLinks" />
                 </AccordionContent>
               </AccordionItem>
 

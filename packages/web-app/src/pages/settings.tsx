@@ -9,7 +9,7 @@ import {
   Tag,
 } from '@aragon/ui-components';
 import {withTransaction} from '@elastic/apm-rum-react';
-import React, {useEffect, useState} from 'react';
+import React from 'react';
 import {useTranslation} from 'react-i18next';
 import {generatePath, useNavigate, useParams} from 'react-router-dom';
 import styled from 'styled-components';
@@ -18,7 +18,6 @@ import {Dd, DescriptionListContainer, Dl, Dt} from 'components/descriptionList';
 import {Loading} from 'components/temporary';
 import {PageWrapper} from 'components/wrappers';
 import {useNetwork} from 'context/network';
-import {useProviders} from 'context/providers';
 import {useDaoDetails} from 'hooks/useDaoDetails';
 import {useDaoMembers} from 'hooks/useDaoMembers';
 import {useDaoParam} from 'hooks/useDaoParam';
@@ -26,18 +25,17 @@ import {useDaoToken} from 'hooks/useDaoToken';
 import {PluginTypes} from 'hooks/usePluginClient';
 import {usePluginSettings} from 'hooks/usePluginSettings';
 import useScreen from 'hooks/useScreen';
+import {useTokenSupply} from 'hooks/useTokenSupply';
 import {CHAIN_METADATA} from 'utils/constants';
 import {getDHMFromSeconds} from 'utils/date';
 import {formatUnits} from 'utils/library';
 import {Community, EditSettings} from 'utils/paths';
-import {getTokenInfo} from 'utils/tokens';
 
 const Settings: React.FC = () => {
   const {data: daoId, isLoading} = useDaoParam();
   const {t} = useTranslation();
   const {network} = useNetwork();
   const navigate = useNavigate();
-  const {infura} = useProviders();
 
   const {data: daoDetails, isLoading: detailsAreLoading} = useDaoDetails(
     daoId!
@@ -53,37 +51,23 @@ const Settings: React.FC = () => {
   const {data: daoToken, isLoading: tokensAreLoading} = useDaoToken(
     daoDetails?.plugins?.[0]?.instanceAddress || ''
   );
+  const {data: tokenSupply, isLoading: tokenSupplyIsLoading} = useTokenSupply(
+    daoToken?.address || ''
+  );
 
-  const [tokenSupply, setTokenSupply] = useState(0);
   const networkInfo = CHAIN_METADATA[network];
-  const nativeCurrency = networkInfo.nativeCurrency;
   const chainLabel = networkInfo.name;
   const networkType = networkInfo.testnet
     ? t('labels.testNet')
     : t('labels.mainNet');
-
-  useEffect(() => {
-    // Fetching necessary info about the token.
-    if (daoToken?.address) {
-      getTokenInfo(daoToken.address, infura, nativeCurrency)
-        .then((r: Awaited<ReturnType<typeof getTokenInfo>>) => {
-          const formattedNumber = parseFloat(
-            formatUnits(r.totalSupply, r.decimals)
-          );
-          setTokenSupply(formattedNumber);
-        })
-        .catch(e =>
-          console.error('Error happened when fetching token infos: ', e)
-        );
-    }
-  }, [daoToken?.address, nativeCurrency, infura, network]);
 
   if (
     isLoading ||
     detailsAreLoading ||
     settingsAreLoading ||
     MembersAreLoading ||
-    tokensAreLoading
+    tokensAreLoading ||
+    tokenSupplyIsLoading
   ) {
     return <Loading />;
   }
@@ -240,7 +224,8 @@ const Settings: React.FC = () => {
               <Dd>
                 {'≥'}
                 {Math.round(daoSettings.minParticipation * 100)}% ({'≥'}
-                {daoSettings.minParticipation * tokenSupply} {daoToken?.symbol})
+                {daoSettings.minParticipation * (tokenSupply || 0)}{' '}
+                {daoToken?.symbol})
               </Dd>
             ) : (
               <Dd>{Math.round(daoSettings.minParticipation * 100)}%</Dd>
