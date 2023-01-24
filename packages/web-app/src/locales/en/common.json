@@ -194,7 +194,8 @@
     "updateGovernanceAction": "Update Governance Settings",
     "updateGovernanceActionDescription": "Change your DAO governance settings",
     "updateMetadataAction": "Update DAO Metadata",
-    "updateMetadataActionDescription": "Change your DAO metadata"
+    "updateMetadataActionDescription": "Change your DAO metadata",
+    "name": "Name"
   },
   "placeHolders": {
     "selectToken": "Select a Token ...",

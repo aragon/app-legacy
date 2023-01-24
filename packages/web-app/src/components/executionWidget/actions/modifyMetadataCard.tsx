@@ -12,6 +12,10 @@ export const ModifyMetadataCard: React.FC<{action: ActionUpdateMetadata}> = ({
 }) => {
   const {t} = useTranslation();
 
+  const displayedLinks = inputs.links.filter(
+    l => l.url !== '' && l.name !== ''
+  );
+
   return (
     <AccordionMethod
       type="execution-widget"
@@ -30,17 +34,27 @@ export const ModifyMetadataCard: React.FC<{action: ActionUpdateMetadata}> = ({
           />
         </div>
         <div>
+          <Title>{t('labels.name')}</Title>
+          <Value>{inputs.name}</Value>
+        </div>
+        <div>
           <Title>{t('labels.description')}</Title>
           <Value>{inputs.description}</Value>
         </div>
-        <div>
-          <Title>{t('labels.links')}</Title>
-          <Value>
-            {inputs.links.map(link => (
-              <ListItemLink key={link.url} label={link.name} href={link.url} />
-            ))}
-          </Value>
-        </div>
+        {displayedLinks.length > 0 && (
+          <div>
+            <Title>{t('labels.links')}</Title>
+            <Value>
+              {displayedLinks.map(link => (
+                <ListItemLink
+                  key={link.url}
+                  label={link.name}
+                  href={link.url}
+                />
+              ))}
+            </Value>
+          </div>
+        )}
       </Container>
     </AccordionMethod>
   );
