@@ -3,7 +3,7 @@ import {useReactiveVar} from '@apollo/client';
 import {
   DaoCreationSteps,
   IAddressListPluginInstall,
-  ICreateParams,
+  CreateDaoParams,
   IMetadata,
   IPluginInstallItem,
   ITokenVotingPluginInstall,
@@ -83,7 +83,7 @@ const CreateDaoProvider: React.FC = ({children}) => {
 
   const [creationProcessState, setCreationProcessState] =
     useState<TransactionState>();
-  const [daoCreationData, setDaoCreationData] = useState<ICreateParams>();
+  const [daoCreationData, setDaoCreationData] = useState<CreateDaoParams>();
   const [showModal, setShowModal] = useState(false);
   const [daoAddress, setDaoAddress] = useState('');
 
@@ -217,7 +217,7 @@ const CreateDaoProvider: React.FC = ({children}) => {
     }, [getValues]);
 
   // Get dao setting configuration for creation process
-  const getDaoSettings = useCallback(async (): Promise<ICreateParams> => {
+  const getDaoSettings = useCallback(async (): Promise<CreateDaoParams> => {
     const {membership, daoName, daoSummary, daoLogo, links} = getValues();
     const plugins: IPluginInstallItem[] = [];
     const votingSettings = getVoteSettings();

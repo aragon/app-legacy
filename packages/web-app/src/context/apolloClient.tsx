@@ -8,7 +8,7 @@ import {
 import {
   DaoListItem,
   Deposit,
-  ICreateParams,
+  CreateDaoParams,
   IMetadata,
   InstalledPluginListItem,
   IPluginInstallItem,
@@ -210,7 +210,7 @@ type PendingDaoCreation = {
   [key in SupportedNetworks]?: {
     // This key is the id of the newly created DAO
     [key: string]: {
-      daoCreationParams: ICreateParams;
+      daoCreationParams: CreateDaoParams;
       daoMetadata: IMetadata;
     };
   };
