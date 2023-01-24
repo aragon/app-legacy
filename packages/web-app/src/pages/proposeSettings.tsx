@@ -2,15 +2,12 @@ import {useReactiveVar} from '@apollo/client';
 import {
   DaoAction,
   ICreateProposalParams,
-  IMetadata,
   InstalledPluginListItem,
   ProposalCreationSteps,
   ProposalMetadata,
   VotingMode,
-  VotingSettings,
 } from '@aragon/sdk-client';
 import {withTransaction} from '@elastic/apm-rum-react';
-import Big from 'big.js';
 import React, {useCallback, useEffect, useState} from 'react';
 import {useFormContext} from 'react-hook-form';
 import {useTranslation} from 'react-i18next';
@@ -46,7 +43,12 @@ import {
   MapToDetailedProposalParams,
   prefixProposalIdWithPlgnAdr,
 } from 'utils/proposals';
-import {ProposalResource} from 'utils/types';
+import {
+  Action,
+  ActionUpdateMetadata,
+  ActionUpdatePluginSettings,
+  ProposalResource,
+} from 'utils/types';
 
 const ProposeSettings: React.FC = () => {
   const {t} = useTranslation();
@@ -119,7 +121,7 @@ const ProposeSettingWrapper: React.FC<Props> = ({
   const {t} = useTranslation();
   const {open} = useGlobalModalContext();
   const navigate = useNavigate();
-  const {getValues} = useFormContext();
+  const {getValues, setValue} = useFormContext();
 
   const {preferences} = usePrivacyContext();
   const {network} = useNetwork();
@@ -160,68 +162,95 @@ const ProposeSettingWrapper: React.FC<Props> = ({
   /*************************************************
    *                     Effects                   *
    *************************************************/
-
+  // Not a fan, but this sets the actions on the form
+  // context so that the Action Widget can read them
   useEffect(() => {
-    // encoding actions
-    const encodeActions = async (): Promise<DaoAction[]> => {
+    {
       const [
         daoName,
         daoSummary,
-        links,
-        minimumParticipation,
+        daoLogo,
         minimumApproval,
+        minimumParticipation,
         earlyExecution,
         voteReplacement,
         durationDays,
         durationHours,
         durationMinutes,
+        resourceLinks,
+        tokenSupply,
       ] = getValues([
         'daoName',
         'daoSummary',
-        'daoLinks',
-        'minimumParticipation',
+        'daoLogo',
         'minimumApproval',
+        'minimumParticipation',
         'earlyExecution',
         'voteReplacement',
         'durationDays',
         'durationHours',
         'durationMinutes',
+        'daoLinks',
+        'tokenTotalSupply',
       ]);
-      const actions: Array<Promise<DaoAction>> = [];
 
+      const metadataAction: ActionUpdateMetadata = {
+        name: 'modify_metadata',
+        inputs: {
+          name: daoName,
+          description: daoSummary,
+          avatar: daoLogo,
+          links: resourceLinks,
+        },
+      };
+
+      const voteSettingsAction: ActionUpdatePluginSettings = {
+        name: 'modify_token_voting_settings',
+        inputs: {
+          token: daoToken,
+          totalVotingWeight: tokenSupply?.raw || BigInt(0),
+
+          minDuration: getSecondsFromDHM(
+            durationDays,
+            durationHours,
+            durationMinutes
+          ),
+          supportThreshold: Number(minimumApproval) / 100,
+          minParticipation: Number(minimumParticipation) / 100,
+          votingMode: earlyExecution
+            ? VotingMode.EARLY_EXECUTION
+            : voteReplacement
+            ? VotingMode.VOTE_REPLACEMENT
+            : VotingMode.STANDARD,
+        },
+      };
+
+      setValue('actions', [metadataAction, voteSettingsAction]);
+    }
+  }, [daoToken, getValues, setValue]);
+
+  useEffect(() => {
+    // encoding actions
+    const encodeActions = async (): Promise<DaoAction[]> => {
       // return an empty array for undefined clients
+      const actions: Array<Promise<DaoAction>> = [];
       if (!pluginClient || !client) return Promise.all(actions);
 
-      const updateParams: IMetadata = {
-        description: daoSummary,
-        links: links,
-        name: daoName,
-        // avatar: avatarUrl,
-      };
-
-      const ipfsUri = await client.methods.pinMetadata(updateParams);
-      actions.push(client.encoding.updateMetadataAction(dao, ipfsUri));
-
-      const durationInSeconds = getSecondsFromDHM(
-        durationDays,
-        durationHours,
-        durationMinutes
-      );
-      const settingsParams: VotingSettings = {
-        minDuration: durationInSeconds,
-        supportThreshold: Big(minimumApproval).div(100).toNumber(),
-        minParticipation: Big(minimumParticipation).div(100).toNumber(),
-        votingMode: earlyExecution
-          ? VotingMode.EARLY_EXECUTION
-          : voteReplacement
-          ? VotingMode.VOTE_REPLACEMENT
-          : VotingMode.STANDARD,
-      };
-      actions.push(
-        Promise.resolve(
-          pluginClient.encoding.updatePluginSettingsAction(dao, settingsParams)
-        )
-      );
+      for (const action of getValues('actions') as Array<Action>) {
+        if (action.name === 'modify_metadata') {
+          const ipfsUri = await client.methods.pinMetadata(action.inputs);
+          actions.push(client.encoding.updateMetadataAction(dao, ipfsUri));
+        } else if (action.name === 'modify_token_voting_settings') {
+          actions.push(
+            Promise.resolve(
+              pluginClient.encoding.updatePluginSettingsAction(
+                dao,
+                action.inputs
+              )
+            )
+          );
+        }
+      }
       return Promise.all(actions);
     };
 
