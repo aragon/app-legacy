@@ -4,7 +4,7 @@ import {
   DaoCreationSteps,
   IAddressListPluginInstall,
   CreateDaoParams,
-  IMetadata,
+  DaoMetadata,
   IPluginInstallItem,
   ITokenVotingPluginInstall,
   TokenVotingClient,
@@ -255,7 +255,7 @@ const CreateDaoProvider: React.FC = ({children}) => {
         throw new Error(`Unknown dao type: ${membership}`);
     }
 
-    const metadata: IMetadata = {
+    const metadata: DaoMetadata = {
       name: daoName,
       description: daoSummary,
       links: links.filter(r => r.name && r.url),
@@ -323,7 +323,7 @@ const CreateDaoProvider: React.FC = ({children}) => {
     }
 
     const {daoName, daoSummary, daoLogo, links} = getValues();
-    const metadata: IMetadata = {
+    const metadata: DaoMetadata = {
       name: daoName,
       description: daoSummary,
       avatar: daoLogo ? URL.createObjectURL(daoLogo as Blob) : undefined,

@@ -2,7 +2,7 @@ import {useReactiveVar} from '@apollo/client';
 import {
   DaoAction,
   ICreateProposalParams,
-  IMetadata,
+  DaoMetadata,
   InstalledPluginListItem,
   VotingSettings,
   ProposalCreationSteps,
@@ -214,7 +214,7 @@ const ProposeSettingWrapper: React.FC<Props> = ({
       // return an empty array for undefined clients
       if (!pluginClient || !client) return Promise.all(actions);
 
-      const updateParams: IMetadata = {
+      const updateParams: DaoMetadata = {
         description: daoSummary,
         links: links,
         name: daoName,
