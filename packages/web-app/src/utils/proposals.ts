@@ -124,15 +124,12 @@ export function getErc20VotingParticipation(
     tokenDecimals
   );
 
-  // missing participation (used - minimum part)
-  const missingRaw = Number(
-    formatUnits(
-      Big(usedVotingWeight.toString())
-        .minus(Big(totalVotingWeight.toString()).mul(minParticipation))
-        .toString(),
-      tokenDecimals
+  // missing participation
+  const missingRaw = Big(formatUnits(usedVotingWeight, tokenDecimals))
+    .minus(
+      Big(formatUnits(totalVotingWeight, tokenDecimals)).mul(minParticipation)
     )
-  );
+    .toNumber();
 
   let missingPart;
 

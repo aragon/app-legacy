@@ -375,9 +375,7 @@ const Proposal: React.FC = () => {
 
     // those who didn't vote (this is NOT voting abstain)
     const absentee = formatUnits(
-      Big(proposal.totalVotingWeight.toString())
-        .minus(proposal.usedVotingWeight.toString())
-        .toString(),
+      proposal.totalVotingWeight - proposal.usedVotingWeight,
       proposal.token.decimals
     );
 
