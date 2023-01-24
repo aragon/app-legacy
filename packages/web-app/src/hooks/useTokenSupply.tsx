@@ -7,13 +7,18 @@ import {CHAIN_METADATA} from 'utils/constants';
 import {getTokenInfo} from 'utils/tokens';
 import {HookData} from 'utils/types';
 
+type TokenSupplyData = {
+  formatted: number;
+  raw: bigint;
+};
+
 export function useTokenSupply(
   tokenAddress: string
-): HookData<number | undefined> {
+): HookData<TokenSupplyData | undefined> {
   const {network} = useNetwork();
   const {infura} = useProviders();
 
-  const [data, setData] = useState<number>();
+  const [data, setData] = useState<TokenSupplyData>();
   const [error, setError] = useState<Error>();
   const [isLoading, setIsLoading] = useState(false);
 
@@ -24,7 +29,10 @@ export function useTokenSupply(
           const formattedNumber = parseFloat(
             formatUnits(r.totalSupply, r.decimals)
           );
-          setData(formattedNumber);
+          setData({
+            formatted: formattedNumber,
+            raw: BigInt(r.totalSupply.toString()),
+          });
           setIsLoading(false);
         })
         .catch(setError);

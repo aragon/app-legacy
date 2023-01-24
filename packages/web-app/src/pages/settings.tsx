@@ -172,7 +172,7 @@ const Settings: React.FC = () => {
                 <Dd>
                   <div className="flex items-center space-x-1.5">
                     <p>
-                      {tokenSupply} {daoToken?.symbol}
+                      {tokenSupply?.formatted} {daoToken?.symbol}
                     </p>
                     <Tag label={t('labels.mintable')} />
                   </div>
@@ -224,7 +224,8 @@ const Settings: React.FC = () => {
               <Dd>
                 {'≥'}
                 {Math.round(daoSettings.minParticipation * 100)}% ({'≥'}
-                {daoSettings.minParticipation * (tokenSupply || 0)}{' '}
+                {daoSettings.minParticipation *
+                  (tokenSupply?.formatted || 0)}{' '}
                 {daoToken?.symbol})
               </Dd>
             ) : (
