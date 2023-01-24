@@ -222,7 +222,7 @@ const ProposeSettingWrapper: React.FC<Props> = ({
       };
 
       const ipfsUri = await client.methods.pinMetadata(updateParams);
-      actions.push(client.encoding.updateMetadataAction(dao, ipfsUri));
+      actions.push(client.encoding.updateDaoMetadataAction(dao, ipfsUri));
 
       const durationInSeconds = getSecondsFromDHM(
         durationDays,

@@ -302,7 +302,7 @@ export async function decodeMetadataToAction(
   }
 
   try {
-    const decodedMetadata = await client.decoding.updateMetadataAction(data);
+    const decodedMetadata = await client.decoding.updateDaoMetadataAction(data);
 
     return {
       name: 'modify_metadata',
