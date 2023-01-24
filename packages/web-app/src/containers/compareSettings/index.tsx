@@ -18,7 +18,6 @@ import {useDaoParam} from 'hooks/useDaoParam';
 import {useDaoToken} from 'hooks/useDaoToken';
 import {PluginTypes} from 'hooks/usePluginClient';
 import {usePluginSettings} from 'hooks/usePluginSettings';
-import {useTokenSupply} from 'hooks/useTokenSupply';
 import {getDHMFromSeconds} from 'utils/date';
 import {EditSettings} from 'utils/paths';
 import {ProposalResource} from 'utils/types';
@@ -40,9 +39,6 @@ const CompareSettings: React.FC = () => {
   const {data: daoToken, isLoading: tokensAreLoading} = useDaoToken(
     daoDetails?.plugins?.[0]?.instanceAddress || ''
   );
-  const {data: tokenSupply, isLoading: tokenSupplyIsLoading} = useTokenSupply(
-    daoToken?.address || ''
-  );
 
   const [selectedButton, setSelectedButton] = useState<'new' | 'old'>('new');
 
@@ -54,34 +50,55 @@ const CompareSettings: React.FC = () => {
     areParamsLoading ||
     areDetailsLoading ||
     areSettingsLoading ||
-    tokensAreLoading ||
-    tokenSupplyIsLoading
+    tokensAreLoading
   ) {
     return <Loading />;
   }
 
   let displayedInfo;
+  const [
+    daoName,
+    daoSummary,
+    daoLogo,
+    daoLinks,
+    minimumApproval,
+    minimumParticipation,
+    tokenTotalSupply,
+    durationDays,
+    durationHours,
+    durationMinutes,
+    earlyExecution,
+    voteReplacement,
+  ] = getValues([
+    'daoName',
+    'daoSummary',
+    'daoLogo',
+    'daoLinks',
+    'minimumApproval',
+    'minimumParticipation',
+    'tokenTotalSupply',
+    'durationDays',
+    'durationHours',
+    'durationMinutes',
+    'earlyExecution',
+    'voteReplacement',
+  ]);
   if (selectedButton === 'new') {
     displayedInfo = {
-      name: getValues('daoName'),
-      summary: getValues('daoSummary'),
-      links: getValues('daoLinks').filter(
-        (l: ProposalResource) => l.name && l.url
-      ),
-      approvalThreshold: `>${getValues('minimumApproval')}%`,
-      minParticipation: `≥${getValues('minimumParticipation')}% (≥${
-        (parseInt(getValues('minimumParticipation')) * (tokenSupply || 0)) / 100
+      name: daoName,
+      summary: daoSummary,
+      avatar: daoLogo,
+      links: daoLinks.filter((l: ProposalResource) => l.name && l.url),
+      approvalThreshold: `>${minimumApproval}%`,
+      minParticipation: `≥${minimumParticipation}% (≥${
+        (parseInt(minimumParticipation) * (tokenTotalSupply || 0)) / 100
       } ${daoToken?.symbol})`,
-      days: getValues('durationDays'),
-      hours: getValues('durationHours'),
-      minutes: getValues('durationMinutes'),
+      days: durationDays,
+      hours: durationMinutes,
+      minutes: durationHours,
       votingMode: {
-        earlyExecution: getValues('earlyExecution')
-          ? t('labels.yes')
-          : t('labels.no'),
-        voteReplacement: getValues('voteReplacement')
-          ? t('labels.yes')
-          : t('labels.no'),
+        earlyExecution: earlyExecution ? t('labels.yes') : t('labels.no'),
+        voteReplacement: voteReplacement ? t('labels.yes') : t('labels.no'),
       },
     };
   } else {
@@ -89,11 +106,12 @@ const CompareSettings: React.FC = () => {
     displayedInfo = {
       name: daoDetails?.metadata.name,
       summary: daoDetails?.metadata.description,
+      avatar: daoDetails?.metadata.avatar,
       links: daoDetails?.metadata.links.filter(l => l.name && l.url),
       approvalThreshold: `>${Math.round(daoSettings.supportThreshold * 100)}%`,
       minParticipation: `≥${Math.round(
         daoSettings.minParticipation * 100
-      )}% (≥${daoSettings.minParticipation * (tokenSupply || 0)} ${
+      )}% (≥${daoSettings.minParticipation * (tokenTotalSupply || 0)} ${
         daoToken?.symbol
       })`,
       days: duration.days,
@@ -135,7 +153,7 @@ const CompareSettings: React.FC = () => {
         <Dl>
           <Dt>{t('labels.logo')}</Dt>
           <Dd>
-            <AvatarDao daoName={displayedInfo.name} />
+            <AvatarDao daoName={displayedInfo.avatar} />
           </Dd>
         </Dl>
         <Dl>

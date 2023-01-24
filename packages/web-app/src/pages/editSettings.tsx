@@ -225,6 +225,7 @@ const EditSettings: React.FC = () => {
     days,
     hours,
     minutes,
+    tokenSupply,
     setValue,
   ]);
 
