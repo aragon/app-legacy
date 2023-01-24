@@ -188,7 +188,7 @@ const CreateDaoProvider: React.FC = ({children}) => {
       supportThreshold: parseInt(minimumApproval) / 100,
       minProposerVotingPower:
         eligibilityType === 'token'
-          ? BigInt(Number(eligibilityTokenAmount))
+          ? parseUnits(eligibilityTokenAmount.toString(), 18).toBigInt()
           : BigInt(0),
       votingMode,
     };
@@ -204,7 +204,7 @@ const CreateDaoProvider: React.FC = ({children}) => {
         // minter: '0x...', // optionally, define a minter
         balances: wallets?.map(wallet => ({
           address: wallet.address,
-          balance: BigInt(parseUnits(wallet.amount, 18).toBigInt()),
+          balance: parseUnits(wallet.amount, 18).toBigInt(),
         })),
       };
     }, [getValues]);
