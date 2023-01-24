@@ -197,7 +197,7 @@ const EditSettings: React.FC = () => {
     setValue('minimumApproval', Math.round(daoSettings.supportThreshold * 100));
     setValue(
       'minimumParticipation',
-      Math.round(daoSettings.supportThreshold * 100)
+      Math.round(daoSettings.minParticipation * 100)
     );
 
     const votingMode = decodeVotingMode(
@@ -221,6 +221,7 @@ const EditSettings: React.FC = () => {
   }, [
     daoDetails?.plugins,
     daoSettings.supportThreshold,
+    daoSettings.votingMode,
     daoSettings.minParticipation,
     days,
     hours,
