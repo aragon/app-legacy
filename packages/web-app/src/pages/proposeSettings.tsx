@@ -167,7 +167,7 @@ const ProposeSettingWrapper: React.FC<Props> = ({
       const [
         daoName,
         daoSummary,
-        links,
+        daoLinks,
         minimumParticipation,
         minimumApproval,
         earlyExecution,
@@ -178,7 +178,7 @@ const ProposeSettingWrapper: React.FC<Props> = ({
       ] = getValues([
         'daoName',
         'daoSummary',
-        'links',
+        'daoLinks',
         'minimumParticipation',
         'minimumApproval',
         'earlyExecution',
@@ -194,7 +194,7 @@ const ProposeSettingWrapper: React.FC<Props> = ({
 
       const updateParams: DaoMetadata = {
         description: daoSummary,
-        links: links,
+        links: daoLinks,
         name: daoName,
         // avatar: avatarUrl,
       };
