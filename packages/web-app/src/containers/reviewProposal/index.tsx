@@ -27,9 +27,7 @@ import {
   KNOWN_FORMATS,
 } from 'utils/date';
 import {
-  getErc20MinimumApproval,
-  getErc20VotersAndParticipation,
-  getWhitelistMinimumApproval,
+  getErc20VotingParticipation,
   getWhitelistVoterParticipation,
 } from 'utils/proposals';
 import {getTokenInfo} from 'utils/tokens';
@@ -64,8 +62,9 @@ const ReviewProposal: React.FC<ReviewProposalProps> = ({
   );
 
   const {getValues, setValue} = useFormContext();
-  const [approval, setApproval] = useState('');
-  const [participation, setParticipation] = useState('');
+  const [minParticipation, setMinParticipation] = useState('');
+  const [currentParticipation, setCurrentParticipation] = useState('');
+  const [missingParticipation, setMissingParticipation] = useState(0);
   const [isWalletBased, setIsWalletBased] = useState(true);
   const [terminalTab, setTerminalTab] = useState<TerminalTabs>('info');
   const values = getValues();
@@ -139,20 +138,12 @@ const ReviewProposal: React.FC<ReviewProposalProps> = ({
 
         // get voter participation
         const {summary} = getWhitelistVoterParticipation([], members.length);
-        setParticipation(summary);
-
-        // get approval threshold
-        setApproval(
-          getWhitelistMinimumApproval(
-            daoSettings.supportThreshold,
-            members.length
-          )
-        );
+        setMinParticipation(summary);
       } else {
         // token based
         setIsWalletBased(false);
 
-        if (daoToken) {
+        if (daoToken && daoSettings) {
           // get voter participation
           const {totalSupply} = await getTokenInfo(
             daoToken.address,
@@ -160,37 +151,47 @@ const ReviewProposal: React.FC<ReviewProposalProps> = ({
             CHAIN_METADATA[network].nativeCurrency
           );
 
-          const {summary} = getErc20VotersAndParticipation(
-            [],
-            daoToken,
+          // calculate participation
+          const {
+            currentPart,
+            currentPercentage,
+            minPart,
+            missingPart,
+            totalWeight,
+          } = getErc20VotingParticipation(
+            daoSettings.minParticipation,
+            BigInt(0),
             totalSupply,
-            BigInt(0)
+            daoToken.decimals
           );
-          setParticipation(summary);
 
-          // get approval threshold
-          setApproval(
-            getErc20MinimumApproval(
-              daoSettings.supportThreshold,
-              totalSupply,
-              daoToken
-            )
+          setCurrentParticipation(
+            t('votingTerminal.participationErc20', {
+              participation: currentPart,
+              totalWeight,
+              tokenSymbol: daoToken.symbol,
+              percentage: currentPercentage,
+            })
           );
+
+          setMinParticipation(
+            t('votingTerminal.participationErc20', {
+              participation: minPart,
+              totalWeight,
+              tokenSymbol: daoToken.symbol,
+              percentage: Math.round(daoSettings.minParticipation * 100),
+            })
+          );
+
+          setMissingParticipation(missingPart);
         }
       }
     }
 
-    if (members && daoSettings?.supportThreshold) {
+    if (members) {
       mapToView();
     }
-  }, [
-    daoSettings.supportThreshold,
-    daoToken,
-    members,
-    network,
-    pluginType,
-    provider,
-  ]);
+  }, [daoSettings, daoToken, members, network, pluginType, provider, t]);
 
   useEffect(() => {
     if (values.proposal === '<p></p>') {
@@ -236,8 +237,12 @@ const ReviewProposal: React.FC<ReviewProposalProps> = ({
             selectedTab={terminalTab}
             onTabSelected={setTerminalTab}
             statusLabel={t('votingTerminal.status.draft')}
-            approval={approval}
-            participation={participation}
+            supportThreshold={
+              Math.round(daoSettings.supportThreshold * 100) || 0
+            }
+            minParticipation={minParticipation}
+            currentParticipation={currentParticipation}
+            missingParticipation={missingParticipation}
             startDate={formattedStartDate}
             endDate={formattedEndDate}
             strategy={

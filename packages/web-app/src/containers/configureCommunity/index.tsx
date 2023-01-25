@@ -1,5 +1,6 @@
 import {
   AlertInline,
+  CheckboxListItem,
   Label,
   LinearProgress,
   NumberInput,
@@ -10,26 +11,65 @@ import {Controller, useFormContext, useWatch} from 'react-hook-form';
 import {Trans, useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 
-import {HOURS_IN_DAY, MINS_IN_DAY, MINS_IN_HOUR} from 'utils/constants';
+import {
+  MAX_DURATION_DAYS,
+  HOURS_IN_DAY,
+  MINS_IN_DAY,
+  MINS_IN_HOUR,
+  MIN_DURATION_HOURS,
+} from 'utils/constants';
 
 const ConfigureCommunity: React.FC = () => {
   const {t} = useTranslation();
-  const {control, setValue, getValues} = useFormContext();
+  const {control, setValue, getValues, trigger} = useFormContext();
 
   const defaultMinimumParticipation = 51;
-  const [tokenTotalSupply, membership, whitelistWallets, minimumParticipation] =
-    useWatch({
-      name: [
-        'tokenTotalSupply',
-        'membership',
-        'whitelistWallets',
-        'minimumParticipation',
-      ],
-    });
+  const [
+    tokenTotalSupply,
+    membership,
+    whitelistWallets,
+    minimumParticipation,
+    earlyExecution,
+    durationDays,
+    durationHours,
+    durationMinutes,
+  ] = useWatch({
+    name: [
+      'tokenTotalSupply',
+      'membership',
+      'whitelistWallets',
+      'minimumParticipation',
+      'earlyExecution',
+      'durationDays',
+      'durationHours',
+      'durationMinutes',
+    ],
+  });
 
   /*************************************************
    *             Callbacks and Handlers            *
    *************************************************/
+  const handleDaysChanged = useCallback(
+    (
+      e: React.ChangeEvent<HTMLInputElement>,
+      onChange: React.ChangeEventHandler
+    ) => {
+      const value = Number(e.target.value);
+      if (value >= MAX_DURATION_DAYS) {
+        e.target.value = MAX_DURATION_DAYS.toString();
+
+        setValue('durationDays', MAX_DURATION_DAYS.toString());
+        setValue('durationHours', '0');
+        setValue('durationMinutes', '0');
+      } else if (value === 0 && durationHours === '0') {
+        setValue('durationHours', MIN_DURATION_HOURS.toString());
+      }
+      trigger(['durationMinutes', 'durationHours', 'durationDays']);
+      onChange(e);
+    },
+    [durationHours, setValue, trigger]
+  );
+
   const handleHoursChanged = useCallback(
     (
       e: React.ChangeEvent<HTMLInputElement>,
@@ -41,13 +81,20 @@ const ConfigureCommunity: React.FC = () => {
         e.target.value = hours.toString();
 
         if (days > 0) {
-          setValue('durationDays', Number(getValues('durationDays')) + days);
+          setValue(
+            'durationDays',
+            (Number(getValues('durationDays')) + days).toString()
+          );
         }
+      } else if (value === 0 && durationDays === '0') {
+        setValue('durationHours', MIN_DURATION_HOURS.toString());
+        setValue('durationMinutes', '0');
+        e.target.value = MIN_DURATION_HOURS.toString();
       }
-
+      trigger(['durationMinutes', 'durationHours', 'durationDays']);
       onChange(e);
     },
-    [getValues, setValue]
+    [durationDays, getValues, setValue, trigger]
   );
 
   const handleMinutesChanged = useCallback(
@@ -67,12 +114,23 @@ const ConfigureCommunity: React.FC = () => {
           oldDays * MINS_IN_DAY + oldHours * MINS_IN_HOUR + value;
 
         const {days, hours, mins} = getDaysHoursMins(totalMins);
-        setValue('durationDays', days);
-        setValue('durationHours', hours);
+        setValue('durationDays', days.toString());
+        setValue('durationHours', hours.toString());
         e.target.value = mins.toString();
       }
-
+      trigger(['durationMinutes', 'durationHours', 'durationDays']);
       onChange(e);
+    },
+    [getValues, setValue, trigger]
+  );
+
+  const handleEarlyExecutionChanged = useCallback(
+    (value: boolean, onChange: (value: boolean) => void) => {
+      if (value && getValues('voteReplacement')) {
+        setValue('voteReplacement', false);
+      }
+
+      onChange(value);
     },
     [getValues, setValue]
   );
@@ -128,7 +186,7 @@ const ConfigureCommunity: React.FC = () => {
                     onBlur={onBlur}
                     onChange={onChange}
                     placeholder={t('placeHolders.daoName')}
-                    percentage
+                    view="percentage"
                   />
                 </div>
 
@@ -204,7 +262,7 @@ const ConfigureCommunity: React.FC = () => {
                         onBlur={onBlur}
                         onChange={onChange}
                         placeholder={t('placeHolders.daoName')}
-                        percentage={true}
+                        view="percentage"
                       />
                     </div>
 
@@ -289,7 +347,7 @@ const ConfigureCommunity: React.FC = () => {
                       onBlur={onBlur}
                       onChange={onChange}
                       placeholder={t('placeHolders.daoName')}
-                      percentage={true}
+                      view="percentage"
                     />
                   </FormWrapper>
                   <AlertInline
@@ -347,6 +405,7 @@ const ConfigureCommunity: React.FC = () => {
                   }
                   placeholder={'0'}
                   min="0"
+                  disabled={durationDays === MAX_DURATION_DAYS.toString()}
                 />
                 {error?.message && (
                   <AlertInline label={error.message} mode="critical" />
@@ -375,6 +434,7 @@ const ConfigureCommunity: React.FC = () => {
                   }
                   placeholder={'0'}
                   min="0"
+                  disabled={durationDays === MAX_DURATION_DAYS.toString()}
                 />
                 {error?.message && (
                   <AlertInline label={error.message} mode="critical" />
@@ -402,7 +462,9 @@ const ConfigureCommunity: React.FC = () => {
                   name={name}
                   value={value}
                   onBlur={onBlur}
-                  onChange={onChange}
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                    handleDaysChanged(e, onChange)
+                  }
                   placeholder={'0'}
                   min="0"
                 />
@@ -413,9 +475,64 @@ const ConfigureCommunity: React.FC = () => {
             )}
           />
         </DurationContainer>
-        <AlertInline
-          label={t('alert.durationAlert') as string}
-          mode="neutral"
+        {durationDays === MAX_DURATION_DAYS.toString() ? (
+          <AlertInline
+            label={t('alert.maxDurationAlert') as string}
+            mode="warning"
+          />
+        ) : durationDays === '0' &&
+          durationHours === MIN_DURATION_HOURS.toString() &&
+          durationMinutes === '0' ? (
+          <AlertInline
+            label={t('alert.minDurationAlert') as string}
+            mode="warning"
+          />
+        ) : (
+          <AlertInline
+            label={t('alert.durationAlert') as string}
+            mode="neutral"
+          />
+        )}
+      </FormItem>
+
+      {/* Early execution */}
+      <FormItem>
+        <Label
+          label={t('labels.earlyExecution')}
+          helpText={t('labels.earlyExecutionDescription')}
+        />
+        <Controller
+          name="earlyExecution"
+          rules={{required: 'Validate'}}
+          control={control}
+          render={({field: {onChange, value}}) => (
+            <ToggleCheckList
+              onChange={changeValue =>
+                handleEarlyExecutionChanged(changeValue, onChange)
+              }
+              value={value as boolean}
+            />
+          )}
+        />
+      </FormItem>
+
+      {/* Vote replacement */}
+      <FormItem>
+        <Label
+          label={t('labels.voteReplacement')}
+          helpText={t('labels.voteReplacementDescription')}
+        />
+        <Controller
+          name="voteReplacement"
+          rules={{required: 'Validate'}}
+          control={control}
+          render={({field: {onChange, value}}) => (
+            <ToggleCheckList
+              onChange={onChange}
+              value={value as boolean}
+              disabled={earlyExecution}
+            />
+          )}
         />
       </FormItem>
     </>
@@ -423,6 +540,48 @@ const ConfigureCommunity: React.FC = () => {
 };
 
 export default ConfigureCommunity;
+
+const ToggleCheckList = ({
+  disabled,
+  onChange,
+  value,
+}: {
+  disabled?: boolean;
+  value: boolean;
+  onChange: (value: boolean) => void;
+}) => {
+  const {t} = useTranslation();
+
+  return (
+    <ToggleCheckListContainer>
+      <ToggleCheckListItemWrapper>
+        <CheckboxListItem
+          label={t('labels.no')}
+          multiSelect={false}
+          disabled={disabled}
+          onClick={() => onChange(false)}
+          type={value ? 'default' : 'active'}
+        />
+      </ToggleCheckListItemWrapper>
+
+      <ToggleCheckListItemWrapper>
+        <CheckboxListItem
+          label={t('labels.yes')}
+          multiSelect={false}
+          disabled={disabled}
+          onClick={() => onChange(true)}
+          type={value ? 'active' : 'default'}
+        />
+      </ToggleCheckListItemWrapper>
+    </ToggleCheckListContainer>
+  );
+};
+
+const ToggleCheckListContainer = styled.div.attrs({
+  className: 'flex gap-x-3',
+})``;
+
+const ToggleCheckListItemWrapper = styled.div.attrs({className: 'flex-1'})``;
 
 const FormItem = styled.div.attrs({
   className: 'space-y-1.5',

@@ -4,6 +4,7 @@ import {
   DaoAction,
   TokenVotingClient,
   TokenVotingProposal,
+  VotingMode,
 } from '@aragon/sdk-client';
 import {
   Breadcrumb,
@@ -20,7 +21,10 @@ import {withTransaction} from '@elastic/apm-rum-react';
 import TipTapLink from '@tiptap/extension-link';
 import {useEditor} from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
-import React, {useEffect, useMemo, useRef, useState} from 'react';
+import Big from 'big.js';
+import {formatDistanceToNow, Locale} from 'date-fns';
+import * as Locales from 'date-fns/locale';
+import React, {useCallback, useEffect, useMemo, useRef, useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {generatePath, useNavigate, useParams} from 'react-router-dom';
 import styled from 'styled-components';
@@ -29,30 +33,35 @@ import {ExecutionWidget} from 'components/executionWidget';
 import ResourceList from 'components/resourceList';
 import {Loading} from 'components/temporary';
 import {StyledEditorContent} from 'containers/reviewProposal';
-import {TerminalTabs, VotingTerminal} from 'containers/votingTerminal';
+import {
+  ProposalVoteResults,
+  TerminalTabs,
+  VotingTerminal,
+} from 'containers/votingTerminal';
 import {useGlobalModalContext} from 'context/globalModals';
 import {useNetwork} from 'context/network';
 import {useProposalTransactionContext} from 'context/proposalTransaction';
 import {useSpecificProvider} from 'context/providers';
-import {formatDistanceToNow, Locale} from 'date-fns';
-import * as Locales from 'date-fns/locale';
 import {useCache} from 'hooks/useCache';
 import {useClient} from 'hooks/useClient';
 import {useDaoDetails} from 'hooks/useDaoDetails';
 import {useDaoParam} from 'hooks/useDaoParam';
 import {useDaoProposal} from 'hooks/useDaoProposal';
-import {useDaoToken} from 'hooks/useDaoToken';
 import {useMappedBreadcrumbs} from 'hooks/useMappedBreadcrumbs';
-import {usePluginClient} from 'hooks/usePluginClient';
+import {PluginTypes, usePluginClient} from 'hooks/usePluginClient';
+import {usePluginSettings} from 'hooks/usePluginSettings';
 import useScreen from 'hooks/useScreen';
 import {useWallet} from 'hooks/useWallet';
 import {useWalletCanVote} from 'hooks/useWalletCanVote';
 import {CHAIN_METADATA} from 'utils/constants';
 import {
   decodeAddMembersToAction,
+  decodeMetadataToAction,
   decodeMintTokensToAction,
+  decodePluginSettingsToAction,
   decodeRemoveMembersToAction,
   decodeWithdrawToAction,
+  formatUnits,
 } from 'utils/library';
 import {NotFound} from 'utils/paths';
 import {
@@ -65,6 +74,8 @@ import {Action} from 'utils/types';
 // TODO: @Sepehr Please assign proper tags on action decoding
 const PROPOSAL_TAGS = ['Finance', 'Withdraw'];
 
+const NumberFormatter = new Intl.NumberFormat('en-US');
+
 const Proposal: React.FC = () => {
   const {t, i18n} = useTranslation();
   const {open} = useGlobalModalContext();
@@ -76,8 +87,10 @@ const Proposal: React.FC = () => {
 
   const {data: dao} = useDaoParam();
   const {data: daoDetails, isLoading: detailsAreLoading} = useDaoDetails(dao);
-  const {data: daoToken, isLoading: daoTokenLoading} = useDaoToken(
-    daoDetails?.plugins[0].instanceAddress as string
+
+  const {data: daoSettings} = usePluginSettings(
+    daoDetails?.plugins[0].instanceAddress as string,
+    daoDetails?.plugins[0].id as PluginTypes
   );
 
   const {client} = useClient();
@@ -140,6 +153,7 @@ const Proposal: React.FC = () => {
   /*************************************************
    *                     Hooks                     *
    *************************************************/
+
   useEffect(() => {
     if (proposal && editor) {
       editor.commands.setContent(proposal.metadata.description, true);
@@ -152,6 +166,10 @@ const Proposal: React.FC = () => {
         actions: Uint8Array[];
         index: number;
       } = {actions: [], index: 0};
+
+      const proposalErc20Token = isErc20VotingProposal(proposal)
+        ? proposal.token
+        : undefined;
 
       const actionPromises: Promise<Action | undefined>[] =
         proposal.actions.map((action: DaoAction, index) => {
@@ -184,17 +202,26 @@ const Proposal: React.FC = () => {
                 action.data,
                 pluginClient as ClientAddressList
               );
+            case 'updateVotingSettings':
+              return decodePluginSettingsToAction(
+                action.data,
+                pluginClient as TokenVotingClient,
+                proposal.totalVotingWeight as bigint,
+                proposalErc20Token
+              );
+            case 'setMetadata':
+              return decodeMetadataToAction(action.data, client);
             default:
               return Promise.resolve({} as Action);
           }
         });
 
-      if (daoToken?.address && mintTokenActions.actions.length !== 0) {
+      if (proposalErc20Token && mintTokenActions.actions.length !== 0) {
         // Decode all the mint actions into one action with several addresses
         const decodedMintToken = decodeMintTokensToAction(
           mintTokenActions.actions,
           pluginClient as TokenVotingClient,
-          daoToken.address,
+          proposalErc20Token.address,
           provider,
           network
         );
@@ -211,15 +238,7 @@ const Proposal: React.FC = () => {
         setDecodedActions(value);
       });
     }
-  }, [
-    apolloClient,
-    client,
-    daoToken?.address,
-    network,
-    pluginClient,
-    proposal,
-    provider,
-  ]);
+  }, [apolloClient, client, network, pluginClient, proposal, provider]);
 
   // caches the status for breadcrumb
   useEffect(() => {
@@ -322,6 +341,61 @@ const Proposal: React.FC = () => {
     statusRef.current.wasOnWrongNetwork,
   ]);
 
+  // terminal props
+  const mappedProps = useMemo(() => {
+    if (proposal) return getTerminalProps(t, proposal, address);
+  }, [address, proposal, t]);
+
+  const canExecuteEarly = useCallback(() => {
+    if (
+      !isErc20VotingProposal(proposal) || // proposal is not token-based
+      !mappedProps?.results || // no mapped data
+      daoSettings?.votingMode !== VotingMode.EARLY_EXECUTION // early execution disabled
+    ) {
+      return false;
+    }
+
+    // check if proposal can be executed early
+    const votes: Record<keyof ProposalVoteResults, Big> = {
+      yes: Big(0),
+      no: Big(0),
+      abstain: Big(0),
+    };
+
+    for (const voteType in mappedProps.results) {
+      votes[voteType as keyof ProposalVoteResults] = Big(
+        mappedProps.results[
+          voteType as keyof ProposalVoteResults
+        ].value.toString()
+      );
+    }
+
+    // renaming for clarity, should be renamed in later versions of sdk
+    const supportThreshold = proposal.settings.minSupport;
+
+    // those who didn't vote (this is NOT voting abstain)
+    const absentee = formatUnits(
+      Big(proposal.totalVotingWeight.toString())
+        .minus(proposal.usedVotingWeight.toString())
+        .toString(),
+      proposal.token.decimals
+    );
+
+    return (
+      // participation reached
+      mappedProps?.missingParticipation === 0 &&
+      // support threshold met
+      votes.yes.div(votes.yes.add(votes.no)).gt(supportThreshold) &&
+      // even if absentees show up and all vote against, still cannot change outcome
+      votes.yes.div(votes.yes.add(votes.no).add(absentee)).gt(supportThreshold)
+    );
+  }, [
+    daoSettings?.votingMode,
+    proposal,
+    mappedProps?.missingParticipation,
+    mappedProps?.results,
+  ]);
+
   const executionStatus = useMemo(() => {
     switch (proposal?.status) {
       case 'Succeeded':
@@ -332,11 +406,13 @@ const Proposal: React.FC = () => {
       case 'Defeated':
         return 'defeated';
       case 'Active':
+        if (canExecuteEarly()) return 'executable';
+        else return 'default';
       case 'Pending':
       default:
         return 'default';
     }
-  }, [executionFailed, proposal?.status]);
+  }, [canExecuteEarly, executionFailed, proposal?.status]);
 
   // whether current user has voted
   const voted = useMemo(() => {
@@ -464,11 +540,6 @@ const Proposal: React.FC = () => {
     }
   }, [address, canVote, isOnWrongNetwork, proposal, t]);
 
-  // terminal props
-  const terminalPropsFromProposal = useMemo(() => {
-    if (proposal) return getTerminalProps(proposal, address);
-  }, [proposal, address]);
-
   // status steps for proposal
   const proposalSteps = useMemo(() => {
     if (
@@ -482,37 +553,30 @@ const Proposal: React.FC = () => {
         proposal.startDate,
         proposal.endDate,
         proposal.creationDate,
-        '123,123,123', // TODO: Add block numbers from sdk
+        NumberFormatter.format(proposal.creationBlockNumber),
         executionFailed,
-        '456,456,456',
-        new Date() // TODO: change to proposal.executionDate from sdk
+        NumberFormatter.format(proposal.executionBlockNumber),
+        proposal.executionDate
       );
   }, [
     proposal?.creationDate,
     proposal?.endDate,
     proposal?.startDate,
     proposal?.status,
+    proposal?.creationBlockNumber,
+    proposal?.executionBlockNumber,
+    proposal?.executionDate,
     executionFailed,
   ]);
 
   /*************************************************
    *                     Render                    *
    *************************************************/
-  if (
-    paramsAreLoading ||
-    detailsAreLoading ||
-    daoTokenLoading ||
-    proposalIsLoading ||
-    !proposal
-  ) {
-    return <Loading />;
-  }
-
   if (proposalError) {
     navigate(NotFound, {replace: true, state: {invalidProposal: proposalId}});
   }
 
-  if (paramsAreLoading || proposalIsLoading || !proposal) {
+  if (paramsAreLoading || proposalIsLoading || detailsAreLoading || !proposal) {
     return <Loading />;
   }
 
@@ -594,7 +658,7 @@ const Proposal: React.FC = () => {
                 (proposal as TokenVotingProposal).token?.address
               )
             }
-            {...terminalPropsFromProposal}
+            {...mappedProps}
           />
 
           <ExecutionWidget

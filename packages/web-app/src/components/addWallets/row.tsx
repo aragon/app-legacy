@@ -13,7 +13,7 @@ import styled from 'styled-components';
 import {BigNumber} from 'ethers';
 import React, {useState} from 'react';
 import {useTranslation} from 'react-i18next';
-import {Controller, useFormContext} from 'react-hook-form';
+import {Controller, useFormContext, useWatch} from 'react-hook-form';
 
 import {
   getUserFriendlyWalletLabel,
@@ -38,7 +38,7 @@ const WalletRow: React.FC<WalletRowProps> = ({index, onDelete}) => {
   const {t} = useTranslation();
   const [isDuplicate, setIsDuplicate] = useState<boolean>(false);
   const {control, getValues, setValue, trigger} = useFormContext();
-  const walletFieldArray = getValues('wallets');
+  const walletFieldArray = useWatch({name: 'wallets', control});
   const {alert} = useAlertContext();
 
   const calculateTotalTokenSupply = (value: number) => {
@@ -72,15 +72,23 @@ const WalletRow: React.FC<WalletRowProps> = ({index, onDelete}) => {
 
   const amountValidation = (amount: string) => {
     let totalSupply = 0;
+    let minAmount = walletFieldArray[0]?.amount;
     const address = getValues(`wallets.${index}.address`);
+    const eligibilityType = getValues('eligibilityType');
     if (address === '') trigger(`wallets.${index}.address`);
 
     // calculate total token supply disregarding error invalid fields
     walletFieldArray.forEach((wallet: WalletField) => {
+      if (Number(wallet.amount) < minAmount) {
+        minAmount = wallet.amount;
+      }
       if (Number(wallet.amount) > 0)
         totalSupply = parseInt(wallet.amount) + totalSupply;
     });
     setValue('tokenTotalSupply', totalSupply);
+
+    if (eligibilityType === 'token')
+      setValue('eligibilityTokenAmount', minAmount);
 
     // show max amount error
     if (BigNumber.from(amount).gt(MAX_TOKEN_AMOUNT))
@@ -206,12 +214,34 @@ const WalletRow: React.FC<WalletRowProps> = ({index, onDelete}) => {
               ),
               callback: () => {
                 if (typeof onDelete === 'function') {
-                  const [totalSupply, amount] = getValues([
+                  const [
+                    totalSupply,
+                    amount,
+                    eligibilityType,
+                    eligibilityTokenAmount,
+                  ] = getValues([
                     'tokenTotalSupply',
                     `wallets.${index}.amount`,
+                    'eligibilityType',
+                    'eligibilityTokenAmount',
                   ]);
+
                   setValue('tokenTotalSupply', totalSupply - amount);
                   onDelete(index);
+                  if (eligibilityType === 'token') {
+                    if (eligibilityTokenAmount === amount) {
+                      let minAmount = walletFieldArray[0]?.amount;
+                      (walletFieldArray as WalletField[]).map(
+                        (wallet, mapIndex) => {
+                          if (mapIndex !== index)
+                            if (Number(wallet.amount) < minAmount) {
+                              minAmount = wallet.amount;
+                            }
+                        }
+                      );
+                      setValue('eligibilityTokenAmount', minAmount);
+                    }
+                  }
                   alert(t('alert.chip.removedAddress') as string);
                 }
               },

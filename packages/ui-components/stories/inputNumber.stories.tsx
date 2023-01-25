@@ -21,5 +21,6 @@ const Template: Story<NumberInputProps> = args => {
 export const Number = Template.bind({});
 Number.args = {
   mode: 'default',
+  view: 'default',
   disabled: false,
 };

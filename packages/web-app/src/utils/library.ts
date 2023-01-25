@@ -3,9 +3,11 @@ import {ApolloClient} from '@apollo/client';
 import {
   Client,
   ClientAddressList,
-  TokenVotingClient,
+  Erc20TokenDetails,
   IMintTokenParams,
+  TokenVotingClient,
 } from '@aragon/sdk-client';
+import {resolveIpfsCid} from '@aragon/sdk-common';
 import {Address} from '@aragon/ui-components/dist/utils/addresses';
 import {BigNumber, BigNumberish, constants, ethers, providers} from 'ethers';
 import {TFunction} from 'react-i18next';
@@ -21,6 +23,8 @@ import {
   ActionAddAddress,
   ActionMintToken,
   ActionRemoveAddress,
+  ActionUpdateMetadata,
+  ActionUpdatePluginSettings,
   ActionWithdraw,
 } from 'utils/types';
 import {i18n} from '../../i18n.config';
@@ -255,6 +259,60 @@ export async function decodeRemoveMembersToAction(
   });
 }
 
+/**
+ * Decode update plugin settings action
+ * @param data Uint8Array action data
+ * @param client SDK AddressList or Erc20 client
+ * @returns decoded action
+ */
+export async function decodePluginSettingsToAction(
+  data: Uint8Array | undefined,
+  client: TokenVotingClient | undefined,
+  totalVotingWeight: bigint,
+  token?: Erc20TokenDetails
+): Promise<ActionUpdatePluginSettings | undefined> {
+  if (!client || !data) {
+    console.error('SDK client is not initialized correctly');
+    return;
+  }
+
+  return {
+    name: 'modify_token_voting_settings',
+    inputs: {
+      ...client.decoding.updatePluginSettingsAction(data),
+      token,
+      totalVotingWeight,
+    },
+  };
+}
+
+/**
+ * Decode update DAO metadata settings action
+ * @param data Uint8Array action data
+ * @param client SDK plugin-agnostic client
+ * @returns decoded action
+ */
+export async function decodeMetadataToAction(
+  data: Uint8Array | undefined,
+  client: Client | undefined
+): Promise<ActionUpdateMetadata | undefined> {
+  if (!client || !data) {
+    console.error('SDK client is not initialized correctly');
+    return;
+  }
+
+  try {
+    const decodedMetadata = await client.decoding.updateMetadataAction(data);
+
+    return {
+      name: 'modify_metadata',
+      inputs: decodedMetadata,
+    };
+  } catch (error) {
+    console.error('Error decoding update dao metadata action', error);
+  }
+}
+
 const FLAG_TYPED_ARRAY = 'FLAG_TYPED_ARRAY';
 /**
  *  Custom serializer that includes fix for BigInt type
@@ -313,4 +371,20 @@ export function generateCachedProposalId(
   proposalId: string
 ): string {
   return `${daoAddress}_${proposalId}`;
+}
+
+/**
+ * Get DAO avatar url given avatar IPFS cid
+ * @param avatar - IPFS cid for DAO avatar
+ * @returns the url to the DAO avatar
+ */
+export function resolveDaoAvatarIpfsCid(avatar?: string): string | undefined {
+  if (avatar) {
+    try {
+      const logoCid = resolveIpfsCid(avatar);
+      return `https://ipfs.io/ipfs/${logoCid}`;
+    } catch (err) {
+      console.warn('Error resolving DAO avatar IPFS Cid', err);
+    }
+  }
 }

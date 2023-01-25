@@ -1,3 +1,4 @@
+import {VotingMode} from '@aragon/sdk-client';
 import {
   AlertInline,
   AvatarDao,
@@ -45,18 +46,21 @@ const Settings: React.FC = () => {
     daoDetails?.plugins[0].instanceAddress as string,
     daoDetails?.plugins[0].id as PluginTypes
   );
-
   const {data: daoMembers, isLoading: MembersAreLoading} = useDaoMembers(
     daoDetails?.plugins?.[0]?.instanceAddress || '',
     (daoDetails?.plugins?.[0]?.id as PluginTypes) || undefined
   );
-
   const {data: daoToken, isLoading: tokensAreLoading} = useDaoToken(
     daoDetails?.plugins?.[0]?.instanceAddress || ''
   );
 
   const [tokenSupply, setTokenSupply] = useState(0);
-  const nativeCurrency = CHAIN_METADATA[network].nativeCurrency;
+  const networkInfo = CHAIN_METADATA[network];
+  const nativeCurrency = networkInfo.nativeCurrency;
+  const chainLabel = networkInfo.name;
+  const networkType = networkInfo.testnet
+    ? t('labels.testNet')
+    : t('labels.mainNet');
 
   useEffect(() => {
     // Fetching necessary info about the token.
@@ -93,31 +97,44 @@ const Settings: React.FC = () => {
     l => l.name && l.url
   );
 
+  const votingMode = {
+    // Note: This implies that earlyExecution and voteReplacement may never be
+    // both true at the same time, as they shouldn't.
+    earlyExecution:
+      daoSettings.votingMode === VotingMode.EARLY_EXECUTION
+        ? t('labels.yes')
+        : t('labels.no'),
+    voteReplacement:
+      daoSettings.votingMode === VotingMode.VOTE_REPLACEMENT
+        ? t('labels.yes')
+        : t('labels.no'),
+  };
+
   return (
     <SettingsWrapper>
       <div className="mt-3 desktop:mt-8 space-y-5">
+        {/* BLOCKCHAIN SECTION */}
         <DescriptionListContainer
           title={t('labels.review.blockchain')}
           tagLabel={t('labels.notChangeable')}
         >
           <Dl>
             <Dt>{t('labels.review.network')}</Dt>
-            <Dd>{t('createDAO.review.network', {network: 'Main'})}</Dd>
+            <Dd>{networkType}</Dd>
           </Dl>
           <Dl>
             <Dt>{t('labels.review.blockchain')}</Dt>
-            <Dd>{network}</Dd>
+            <Dd>{chainLabel}</Dd>
           </Dl>
         </DescriptionListContainer>
 
-        <DescriptionListContainer
-          title={t('labels.review.daoMetadata')}
-          tagLabel={t('labels.changeableVote')}
-        >
+        {/* DAO DETAILS SECTION */}
+        <DescriptionListContainer title={t('labels.review.daoMetadata')}>
           <Dl>
             <Dt>{t('labels.logo')}</Dt>
             <Dd>
               <AvatarDao
+                size={'small'}
                 daoName={daoDetails?.ensDomain || ''}
                 src={daoDetails?.metadata.avatar}
               />
@@ -145,10 +162,8 @@ const Settings: React.FC = () => {
           )}
         </DescriptionListContainer>
 
-        <DescriptionListContainer
-          title={t('labels.review.voters')}
-          tagLabel={t('labels.notChangeable')}
-        >
+        {/* COMMUNITY SECTION */}
+        <DescriptionListContainer title={t('navLinks.community')}>
           <Dl>
             <Dt>{t('labels.review.eligibleVoters')}</Dt>
             <Dd>
@@ -175,7 +190,7 @@ const Settings: React.FC = () => {
                     <p>
                       {tokenSupply} {daoToken?.symbol}
                     </p>
-                    <Tag label="Mintable" />
+                    <Tag label={t('labels.mintable')} />
                   </div>
                 </Dd>
               </Dl>
@@ -194,26 +209,42 @@ const Settings: React.FC = () => {
               />
             </Dd>
           </Dl>
+          {isErc20Plugin && (
+            <Dl>
+              <Dt>{t('labels.review.proposalThreshold')}</Dt>
+              <Dd>
+                {t('labels.review.tokenHoldersWithTkns', {
+                  tokenAmount: formatUnits(
+                    daoSettings.minProposerVotingPower || 0,
+                    daoToken?.decimals || 18
+                  ),
+                  tokenSymbol: daoToken?.symbol,
+                })}
+              </Dd>
+            </Dl>
+          )}
         </DescriptionListContainer>
 
-        <DescriptionListContainer
-          title={t('labels.review.governance')}
-          tagLabel={t('labels.changeable')}
-        >
+        {/* GOVERNANCE SECTION */}
+        <DescriptionListContainer title={t('labels.review.governance')}>
+          <Dl>
+            <Dt>{t('labels.minimumApproval')}</Dt>
+            <Dd>
+              {'>'}
+              {Math.round(daoSettings?.supportThreshold * 100)}%
+            </Dd>
+          </Dl>
           <Dl>
             <Dt>{t('labels.minimumParticipation')}</Dt>
             {isErc20Plugin ? (
               <Dd>
-                {Math.round(daoSettings.minParticipation * 100)}% (
+                {'≥'}
+                {Math.round(daoSettings.minParticipation * 100)}% ({'≥'}
                 {daoSettings.minParticipation * tokenSupply} {daoToken?.symbol})
               </Dd>
             ) : (
               <Dd>{Math.round(daoSettings.minParticipation * 100)}%</Dd>
             )}
-          </Dl>
-          <Dl>
-            <Dt>{t('labels.minimumApproval')}</Dt>
-            <Dd>{Math.round(daoSettings?.supportThreshold * 100)}%</Dd>
           </Dl>
           <Dl>
             <Dt>{t('labels.minimumDuration')}</Dt>
@@ -224,6 +255,14 @@ const Settings: React.FC = () => {
                 minutes,
               })}
             </Dd>
+          </Dl>
+          <Dl>
+            <Dt>{t('labels.review.earlyExecution')}</Dt>
+            <Dd>{votingMode.earlyExecution}</Dd>
+          </Dl>
+          <Dl>
+            <Dt>{t('labels.review.voteReplacement')}</Dt>
+            <Dd>{votingMode.voteReplacement}</Dd>
           </Dl>
         </DescriptionListContainer>
       </div>
@@ -253,7 +292,8 @@ export const SettingsWrapper: React.FC = ({children}) => {
   return (
     <PageWrapper
       title={t('labels.daoSettings')}
-      description="TBD"
+      // TODO add correct description once available in designs [VR 17-01-2023]
+      description="Review your DAO's settings"
       primaryBtnProps={
         isMobile
           ? {

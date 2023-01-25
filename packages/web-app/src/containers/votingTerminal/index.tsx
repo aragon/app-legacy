@@ -11,6 +11,7 @@ import {
   LinearProgress,
   Option,
   SearchInput,
+  Tag,
   VotersTable,
   VoterType,
 } from '@aragon/ui-components';
@@ -20,6 +21,7 @@ import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 
 import {StateEmpty} from 'components/stateEmpty';
+import {abbreviateTokenAmount} from 'utils/tokens';
 
 export type ProposalVoteResults = {
   yes: {value: string | number; percentage: number};
@@ -36,8 +38,10 @@ export type VotingTerminalProps = {
   voteNowDisabled?: boolean;
   startDate?: string;
   endDate?: string;
-  participation?: string;
-  approval?: string;
+  minParticipation?: string;
+  currentParticipation?: string;
+  missingParticipation?: number;
+  supportThreshold?: number;
   voters?: Array<VoterType>;
   status?: ProposalStatus;
   statusLabel: string;
@@ -61,8 +65,10 @@ export const VotingTerminal: React.FC<VotingTerminalProps> = ({
   breakdownTabDisabled = false,
   votersTabDisabled = false,
   voteNowDisabled = false,
-  participation,
-  approval,
+  currentParticipation,
+  minParticipation,
+  missingParticipation = 0,
+  supportThreshold,
   voters = [],
   results,
   token,
@@ -89,6 +95,8 @@ export const VotingTerminal: React.FC<VotingTerminalProps> = ({
       ? voters
       : voters.filter(voter => voter.wallet.includes(query));
   }, [query, voters]);
+
+  const minimumReached = missingParticipation === 0;
 
   return (
     <Container>
@@ -186,6 +194,7 @@ export const VotingTerminal: React.FC<VotingTerminalProps> = ({
           )}
         </div>
       ) : (
+        //=================== Info tab
         <>
           <VStackSection>
             <SectionHeader>{t('votingTerminal.decision')}</SectionHeader>
@@ -194,40 +203,66 @@ export const VotingTerminal: React.FC<VotingTerminalProps> = ({
               <Strong>{t('votingTerminal.yes+no')}</Strong>
             </InfoLine>
             <InfoLine>
-              <p>{t('votingTerminal.voteType')}</p>
+              <p>{t('votingTerminal.strategy')}</p>
               <Strong>{strategy}</Strong>
             </InfoLine>
             <InfoLine>
-              <p>{t('votingTerminal.approvalThreshold')}</p>
-              <Strong>{approval}</Strong>
+              <p>{t('votingTerminal.supportThreshold')}</p>
+              <Strong>{`> ${supportThreshold}%`}</Strong>
+            </InfoLine>
+            <InfoLine>
+              <p>{t('votingTerminal.minParticipation')}</p>
+              {minParticipation && <Strong>{`≥ ${minParticipation}`}</Strong>}
             </InfoLine>
           </VStackSection>
-
           <VStackSection>
-            <SectionHeader>{t('votingTerminal.duration')}</SectionHeader>
+            <SectionHeader>{t('votingTerminal.activity')}</SectionHeader>
             <InfoLine>
-              <p>{t('votingTerminal.startDate')}</p>
-              <Strong>{startDate?.toString()}</Strong>
+              <p className="flex-1">
+                {t('votingTerminal.currentParticipation')}
+              </p>
+
+              <CurrentParticipationWrapper>
+                <Strong>{currentParticipation}</Strong>
+                <div className="flex gap-x-1 justify-end">
+                  {minimumReached && (
+                    <Tag
+                      label={t('votingTerminal.reached')}
+                      colorScheme="success"
+                    />
+                  )}
+                  <p className="text-right text-ui-400 ft-text-sm">
+                    {minimumReached
+                      ? t('votingTerminal.noVotesMissing')
+                      : t('votingTerminal.missingVotes', {
+                          votes: abbreviateTokenAmount(
+                            parseFloat(
+                              missingParticipation.toFixed(2)
+                            ).toString()
+                          ),
+                        })}
+                  </p>
+                </div>
+              </CurrentParticipationWrapper>
             </InfoLine>
             <InfoLine>
-              <p>{t('votingTerminal.endDate') as string}</p>
-              <Strong>{endDate}</Strong>
+              <p>{t('votingTerminal.uniqueVoters')}</p>
+              <Strong>{voters.length}</Strong>
             </InfoLine>
           </VStackSection>
-
           <VStackSection
             className={
               status ? '' : 'pb-0 tablet:pb-0 border-b-0 tablet:border-b-0 '
             }
           >
-            <SectionHeader>{t('votingTerminal.activity')}</SectionHeader>
+            <SectionHeader>{t('votingTerminal.duration')}</SectionHeader>
             <InfoLine>
-              <p>{t('votingTerminal.participation')}</p>
-              <Strong>{participation}</Strong>
+              <p>{t('votingTerminal.startDate')}</p>
+              <Strong>{startDate}</Strong>
             </InfoLine>
             <InfoLine>
-              <p>{t('votingTerminal.uniqueVoters')}</p>
-              <Strong>{voters.length}</Strong>
+              <p>{t('votingTerminal.endDate')}</p>
+              <Strong>{endDate}</Strong>
             </InfoLine>
           </VStackSection>
         </>
@@ -399,3 +434,7 @@ const TokenValue = styled.p.attrs({
 })``;
 
 const VoteOption = styled.p.attrs({className: 'font-bold text-primary-500'})``;
+
+const CurrentParticipationWrapper = styled.div.attrs({
+  className: 'space-y-0.5 text-right',
+})``;

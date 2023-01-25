@@ -164,7 +164,20 @@ const CreateDaoProvider: React.FC = ({children}) => {
       durationDays,
       durationHours,
       durationMinutes,
+      eligibilityType,
+      eligibilityTokenAmount,
+      voteReplacement,
+      earlyExecution,
     } = getValues();
+
+    let votingMode;
+
+    // since voteReplacement cannot be set without early execution,
+    // it takes precedence
+    if (voteReplacement) votingMode = VotingMode.VOTE_REPLACEMENT;
+    else if (earlyExecution) votingMode = VotingMode.EARLY_EXECUTION;
+    else votingMode = VotingMode.STANDARD;
+
     return {
       minDuration: getSecondsFromDHM(
         parseInt(durationDays),
@@ -173,7 +186,11 @@ const CreateDaoProvider: React.FC = ({children}) => {
       ),
       minParticipation: parseInt(minimumParticipation) / 100,
       supportThreshold: parseInt(minimumApproval) / 100,
-      votingMode: VotingMode.EARLY_EXECUTION,
+      minProposerVotingPower:
+        eligibilityType === 'token'
+          ? BigInt(Number(eligibilityTokenAmount))
+          : BigInt(0),
+      votingMode,
     };
   }, [getValues]);
 

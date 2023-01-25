@@ -19,6 +19,10 @@ export type DescriptionListProps = {
   tagLabel?: string;
 };
 
+// TODO: This needs to be reworked, as it currently leads to nested DL (DLs get
+// passed in as children to this component, where they get wrapped in DLs
+// again). [VR 17-01-2023]
+
 export const DescriptionListContainer: React.FC<DescriptionListProps> = ({
   title,
   children,
@@ -115,7 +119,7 @@ const ListItemContainer = styled.div.attrs({
 })``;
 
 const DtContainer = styled.dt.attrs({
-  className: 'font-bold text-ui-800',
+  className: 'flex items-center font-bold text-ui-800',
 })``;
 
 const DdContainer = styled.dd.attrs({
