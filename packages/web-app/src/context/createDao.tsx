@@ -2,9 +2,9 @@
 import {useReactiveVar} from '@apollo/client';
 import {
   DaoCreationSteps,
-  IAddressListPluginInstall,
-  ICreateParams,
-  IMetadata,
+  IAddresslistVotingPluginInstall,
+  CreateDaoParams,
+  DaoMetadata,
   IPluginInstallItem,
   ITokenVotingPluginInstall,
   TokenVotingClient,
@@ -83,7 +83,7 @@ const CreateDaoProvider: React.FC = ({children}) => {
 
   const [creationProcessState, setCreationProcessState] =
     useState<TransactionState>();
-  const [daoCreationData, setDaoCreationData] = useState<ICreateParams>();
+  const [daoCreationData, setDaoCreationData] = useState<CreateDaoParams>();
   const [showModal, setShowModal] = useState(false);
   const [daoAddress, setDaoAddress] = useState('');
 
@@ -210,14 +210,14 @@ const CreateDaoProvider: React.FC = ({children}) => {
     }, [getValues]);
 
   // get whiteList Plugin configuration
-  const getAddresslistPluginParams: () => IAddressListPluginInstall['addresses'] =
+  const getAddresslistPluginParams: () => IAddresslistVotingPluginInstall['addresses'] =
     useCallback(() => {
       const {whitelistWallets} = getValues();
       return whitelistWallets?.map(wallet => wallet.address);
     }, [getValues]);
 
   // Get dao setting configuration for creation process
-  const getDaoSettings = useCallback(async (): Promise<ICreateParams> => {
+  const getDaoSettings = useCallback(async (): Promise<CreateDaoParams> => {
     const {membership, daoName, daoSummary, daoLogo, links} = getValues();
     const plugins: IPluginInstallItem[] = [];
     const votingSettings = getVoteSettings();
@@ -255,7 +255,7 @@ const CreateDaoProvider: React.FC = ({children}) => {
         throw new Error(`Unknown dao type: ${membership}`);
     }
 
-    const metadata: IMetadata = {
+    const metadata: DaoMetadata = {
       name: daoName,
       description: daoSummary,
       links: links.filter(r => r.name && r.url),
@@ -295,7 +295,7 @@ const CreateDaoProvider: React.FC = ({children}) => {
 
   // estimate creation fees
   const estimateCreationFees = useCallback(async () => {
-    if (daoCreationData) return client?.estimation.create(daoCreationData);
+    if (daoCreationData) return client?.estimation.createDao(daoCreationData);
   }, [client?.estimation, daoCreationData]);
 
   const {
@@ -315,7 +315,7 @@ const CreateDaoProvider: React.FC = ({children}) => {
       throw new Error('SDK client is not initialized correctly');
     }
 
-    const createDaoIterator = client?.methods.create(daoCreationData);
+    const createDaoIterator = client?.methods.createDao(daoCreationData);
 
     // Check if createDaoIterator function is initialized
     if (!createDaoIterator) {
@@ -323,7 +323,7 @@ const CreateDaoProvider: React.FC = ({children}) => {
     }
 
     const {daoName, daoSummary, daoLogo, links} = getValues();
-    const metadata: IMetadata = {
+    const metadata: DaoMetadata = {
       name: daoName,
       description: daoSummary,
       avatar: daoLogo ? URL.createObjectURL(daoLogo as Blob) : undefined,

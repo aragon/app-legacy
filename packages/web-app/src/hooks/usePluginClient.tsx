@@ -1,5 +1,5 @@
 import {
-  ClientAddressList,
+  AddresslistVotingClient,
   TokenVotingClient,
   ContextPlugin,
 } from '@aragon/sdk-client';
@@ -24,9 +24,9 @@ export type PluginTypes =
  */
 export const usePluginClient = (
   pluginType?: PluginTypes
-): TokenVotingClient | ClientAddressList | undefined => {
+): TokenVotingClient | AddresslistVotingClient | undefined => {
   const [pluginClient, setPluginClient] = useState<
-    TokenVotingClient | ClientAddressList | undefined
+    TokenVotingClient | AddresslistVotingClient | undefined
   >(undefined);
   const {client, context} = useClient();
 
@@ -46,7 +46,7 @@ export const usePluginClient = (
           break;
         case 'addresslist-voting.plugin.dao.eth':
           setPluginClient(
-            new ClientAddressList(ContextPlugin.fromContext(context))
+            new AddresslistVotingClient(ContextPlugin.fromContext(context))
           );
           break;
         default:

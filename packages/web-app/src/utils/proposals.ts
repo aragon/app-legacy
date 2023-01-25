@@ -6,9 +6,9 @@
  */
 
 import {
-  AddressListProposal,
-  AddressListProposalListItem,
-  AddressListProposalResult,
+  AddresslistVotingProposal,
+  AddresslistVotingProposalListItem,
+  AddresslistVotingProposalResult,
   Erc20TokenDetails,
   ICreateProposalParams,
   ProposalMetadata,
@@ -45,7 +45,7 @@ export function isTokenBasedProposal(
   proposal:
     | DetailedProposal
     | TokenVotingProposalListItem
-    | AddressListProposalListItem
+    | AddresslistVotingProposalListItem
     | undefined
 ): proposal is TokenVotingProposal {
   if (!proposal) return false;
@@ -53,7 +53,7 @@ export function isTokenBasedProposal(
 }
 
 export function isErc20Token(
-  token?: TokenVotingProposal['token']
+  token: TokenVotingProposal['token'] | undefined
 ): token is Erc20TokenDetails {
   if (!token) return false;
   return 'decimals' in token;
@@ -63,7 +63,7 @@ export function isErc20VotingProposal(
   proposal:
     | DetailedProposal
     | TokenVotingProposalListItem
-    | AddressListProposalListItem
+    | AddresslistVotingProposalListItem
     | undefined
 ): proposal is TokenVotingProposal & {token: Erc20TokenDetails} {
   return isTokenBasedProposal(proposal) && isErc20Token(proposal.token);
@@ -161,7 +161,6 @@ export function getErc20Voters(
 ): Array<VoterType> {
   let votingPower;
   let tokenAmount;
-
   // map to voters structure
   return votes.flatMap(vote => {
     if (vote.vote === undefined) return [];
@@ -197,7 +196,7 @@ export function getErc20Voters(
  * @returns mapped voters and participation summary
  */
 export function getWhitelistVoterParticipation(
-  votes: AddressListProposal['votes'],
+  votes: AddresslistVotingProposal['votes'],
   totalVotingWeight: number
 ): {voters: Array<VoterType>; summary: string} {
   const voters = votes.flatMap(voter => {
@@ -277,7 +276,7 @@ export function getErc20Results(
  * @returns mapped voters and participation summary
  */
 export function getWhitelistResults(
-  result: AddressListProposalResult,
+  result: AddresslistVotingProposalResult,
   totalVotingWeight: number
 ): ProposalVoteResults {
   const {yes, no, abstain} = result;
@@ -628,7 +627,7 @@ export function addVoteToProposal(
         ...proposal.result,
         [voteValue]: proposal.result[voteValue] + 1,
       },
-    } as AddressListProposal;
+    } as AddresslistVotingProposal;
   }
 }
 

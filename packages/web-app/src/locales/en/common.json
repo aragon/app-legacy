@@ -190,7 +190,11 @@
     "earlyExecution": "Early Execution",
     "earlyExecutionDescription": "Allow proposal execution before the vote ends if the requirements are met and the vote outcome cannot be changed by more voters participating.",
     "voteReplacement": "Vote Replacement",
-    "voteReplacementDescription": "Allows vote replacement while the vote is still open. This can change the vote outcome anytime and is auto-disabled if early execution is enabled."
+    "voteReplacementDescription": "Allows vote replacement while the vote is still open. This can change the vote outcome anytime and is auto-disabled if early execution is enabled.",
+    "updateGovernanceAction": "Update Governance Settings",
+    "updateGovernanceActionDescription": "Change your DAO governance settings",
+    "updateMetadataAction": "Update DAO Metadata",
+    "updateMetadataActionDescription": "Change your DAO metadata"
   },
   "placeHolders": {
     "selectToken": "Select a Token ...",
@@ -670,7 +674,8 @@
       "active": "Voting ends in {{timeUntilEnd}}",
       "ineligibleWhitelist": "You had to be a member before the proposal was created to be able to vote",
       "ineligibleTokenBased": "You had to hold {{token}} when proposal was created to be able to vote",
-      "voteSubmitted": "Vote submitted"
+      "voteSubmitted": "Vote submitted",
+      "revote": "Revote"
     },
     "voteOver": "Vote over",
     "voteNow": "Vote now",

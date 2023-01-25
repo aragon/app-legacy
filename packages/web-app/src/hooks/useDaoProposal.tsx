@@ -1,6 +1,6 @@
 import {useReactiveVar} from '@apollo/client';
-import {useCallback, useEffect, useState} from 'react';
 import {ProposalStatus} from '@aragon/sdk-client';
+import {useCallback, useEffect, useState} from 'react';
 
 import {
   pendingExecutionVar,
@@ -112,6 +112,7 @@ export const useDaoProposal = (
 
         const cachedProposal = proposalCache[daoAddress]?.[proposalId];
 
+        // TODO: for Demo purposes
         const proposal = await pluginClient?.methods.getProposal(proposalId);
         if (proposal) {
           setData({

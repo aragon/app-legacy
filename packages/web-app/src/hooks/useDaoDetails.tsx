@@ -1,7 +1,7 @@
 import {useReactiveVar} from '@apollo/client';
 import {DaoDetails} from '@aragon/sdk-client';
-import {useEffect, useState} from 'react';
 import {resolveIpfsCid} from '@aragon/sdk-common';
+import {useEffect, useState} from 'react';
 
 import {pendingDaoCreationVar} from 'context/apolloClient';
 import {useNetwork} from 'context/network';

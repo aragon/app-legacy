@@ -102,7 +102,7 @@ export const AccordionItem: React.FC<AccordionMethodType & {name: string}> = ({
                 }
               />
             )}
-            <Accordion.Trigger>
+            <Accordion.Trigger asChild>
               <AccordionButton
                 mode={type === 'action-builder' ? 'ghost' : 'secondary'}
                 size="medium"
