@@ -8,8 +8,8 @@ import {
 import {
   DaoListItem,
   Deposit,
-  ICreateParams,
-  IMetadata,
+  CreateDaoParams,
+  DaoMetadata,
   InstalledPluginListItem,
   IPluginInstallItem,
 } from '@aragon/sdk-client';
@@ -210,8 +210,8 @@ type PendingDaoCreation = {
   [key in SupportedNetworks]?: {
     // This key is the id of the newly created DAO
     [key: string]: {
-      daoCreationParams: ICreateParams;
-      daoMetadata: IMetadata;
+      daoCreationParams: CreateDaoParams;
+      daoMetadata: DaoMetadata;
     };
   };
 };

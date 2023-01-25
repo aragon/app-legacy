@@ -1,6 +1,6 @@
 import {useReactiveVar} from '@apollo/client';
 import {
-  ClientAddressList,
+  AddresslistVotingClient,
   TokenVotingClient,
   DaoAction,
   ICreateProposalParams,
@@ -161,10 +161,9 @@ const CreateProposalProvider: React.FC<Props> = ({
           );
           actions.push(
             Promise.resolve(
-              (pluginClient as ClientAddressList).encoding.addMembersAction(
-                pluginAddress,
-                wallets
-              )
+              (
+                pluginClient as AddresslistVotingClient
+              ).encoding.addMembersAction(pluginAddress, wallets)
             )
           );
           break;
@@ -175,10 +174,9 @@ const CreateProposalProvider: React.FC<Props> = ({
           );
           actions.push(
             Promise.resolve(
-              (pluginClient as ClientAddressList).encoding.removeMembersAction(
-                pluginAddress,
-                wallets
-              )
+              (
+                pluginClient as AddresslistVotingClient
+              ).encoding.removeMembersAction(pluginAddress, wallets)
             )
           );
           break;

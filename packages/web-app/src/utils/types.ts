@@ -1,7 +1,7 @@
 import {
-  AddressListProposal,
+  AddresslistVotingProposal,
   Erc20TokenDetails,
-  IMetadata,
+  DaoMetadata,
   TokenVotingProposal,
   VoteValues,
   VotingSettings,
@@ -157,7 +157,7 @@ export type Erc20ProposalVote = AddressListVote & {
   weight: bigint;
 };
 
-export type DetailedProposal = TokenVotingProposal | AddressListProposal;
+export type DetailedProposal = TokenVotingProposal | AddresslistVotingProposal;
 
 /* ACTION TYPES ============================================================= */
 
@@ -259,7 +259,7 @@ export type ActionUpdatePluginSettings = {
 
 export type ActionUpdateMetadata = {
   name: 'modify_metadata';
-  inputs: IMetadata;
+  inputs: DaoMetadata;
 };
 
 // TODO: Consider making this a generic type that take other types of the form

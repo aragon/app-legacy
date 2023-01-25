@@ -675,7 +675,8 @@
       "active": "Voting ends in {{timeUntilEnd}}",
       "ineligibleWhitelist": "You had to be a member before the proposal was created to be able to vote",
       "ineligibleTokenBased": "You had to hold {{token}} when proposal was created to be able to vote",
-      "voteSubmitted": "Vote submitted"
+      "voteSubmitted": "Vote submitted",
+      "revote": "Revote"
     },
     "voteOver": "Vote over",
     "voteNow": "Vote now",

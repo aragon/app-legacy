@@ -2,9 +2,10 @@
 import {ApolloClient} from '@apollo/client';
 import {
   Client,
-  ClientAddressList,
+  AddresslistVotingClient,
   Erc20TokenDetails,
   IMintTokenParams,
+  VotingMode,
   TokenVotingClient,
   VotingMode,
 } from '@aragon/sdk-client';
@@ -211,7 +212,7 @@ export async function decodeMintTokensToAction(
  */
 export async function decodeAddMembersToAction(
   data: Uint8Array | undefined,
-  client: ClientAddressList | undefined
+  client: AddresslistVotingClient | undefined
 ): Promise<ActionAddAddress | undefined> {
   if (!client || !data) {
     console.error('SDK client is not initialized correctly');
@@ -240,7 +241,7 @@ export async function decodeAddMembersToAction(
  */
 export async function decodeRemoveMembersToAction(
   data: Uint8Array | undefined,
-  client: ClientAddressList | undefined
+  client: AddresslistVotingClient | undefined
 ): Promise<ActionRemoveAddress | undefined> {
   if (!client || !data) {
     console.error('SDK client is not initialized correctly');
@@ -303,7 +304,7 @@ export async function decodeMetadataToAction(
   }
 
   try {
-    const decodedMetadata = await client.decoding.updateMetadataAction(data);
+    const decodedMetadata = await client.decoding.updateDaoMetadataAction(data);
 
     return {
       name: 'modify_metadata',
@@ -372,6 +373,20 @@ export function generateCachedProposalId(
   proposalId: string
 ): string {
   return `${daoAddress}_${proposalId}`;
+}
+
+type DecodedVotingMode = {
+  earlyExecution: boolean;
+  voteReplacement: boolean;
+};
+
+export function decodeVotingMode(mode: VotingMode): DecodedVotingMode {
+  return {
+    // Note: This implies that earlyExecution and voteReplacement may never be
+    // both true at the same time, as they shouldn't.
+    earlyExecution: mode === VotingMode.EARLY_EXECUTION,
+    voteReplacement: mode === VotingMode.VOTE_REPLACEMENT,
+  };
 }
 
 /**

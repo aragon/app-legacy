@@ -1,6 +1,6 @@
 import {useApolloClient} from '@apollo/client';
 import {
-  ClientAddressList,
+  AddresslistVotingClient,
   DaoAction,
   TokenVotingClient,
   TokenVotingProposal,
@@ -195,12 +195,12 @@ const Proposal: React.FC = () => {
             case 'addAllowedUsers':
               return decodeAddMembersToAction(
                 action.data,
-                pluginClient as ClientAddressList
+                pluginClient as AddresslistVotingClient
               );
             case 'removeAllowedUsers':
               return decodeRemoveMembersToAction(
                 action.data,
-                pluginClient as ClientAddressList
+                pluginClient as AddresslistVotingClient
               );
             case 'updateVotingSettings':
               return decodePluginSettingsToAction(
@@ -433,7 +433,9 @@ const Proposal: React.FC = () => {
       return [voteStatus, voteButtonLabel];
 
     voteButtonLabel = voted
-      ? t('votingTerminal.status.voteSubmitted')
+      ? canVote
+        ? t('votingTerminal.status.revote')
+        : t('votingTerminal.status.voteSubmitted')
       : t('votingTerminal.voteOver');
 
     switch (proposal.status) {
@@ -482,6 +484,7 @@ const Proposal: React.FC = () => {
     t,
     voted,
     i18n.language,
+    canVote,
   ]);
 
   // vote button state and handler
@@ -648,7 +651,7 @@ const Proposal: React.FC = () => {
             onVoteClicked={onClick}
             onCancelClicked={() => setVotingInProcess(false)}
             voteButtonLabel={buttonLabel}
-            voteNowDisabled={voted || voteNowDisabled}
+            voteNowDisabled={voteNowDisabled}
             votingInProcess={votingInProcess}
             onVoteSubmitClicked={vote =>
               handleSubmitVote(

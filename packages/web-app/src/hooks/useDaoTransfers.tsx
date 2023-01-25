@@ -31,7 +31,7 @@ export const useDaoTransfers = (
       try {
         setIsLoading(true);
 
-        const transfers = await client?.methods.getTransfers({
+        const transfers = await client?.methods.getDaoTransfers({
           sortBy: TransferSortBy.CREATED_AT,
           daoAddressOrEns,
           direction: SortDirection.DESC,

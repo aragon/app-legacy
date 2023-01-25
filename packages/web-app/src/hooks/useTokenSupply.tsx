@@ -26,11 +26,9 @@ export function useTokenSupply(
     if (tokenAddress) {
       getTokenInfo(tokenAddress, infura, CHAIN_METADATA[network].nativeCurrency)
         .then((r: Awaited<ReturnType<typeof getTokenInfo>>) => {
-          const formattedNumber = parseFloat(
-            formatUnits(r.totalSupply, r.decimals)
-          );
+          const formatted = parseFloat(formatUnits(r.totalSupply, r.decimals));
           setData({
-            formatted: formattedNumber,
+            formatted,
             raw: BigInt(r.totalSupply.toString()),
           });
           setIsLoading(false);

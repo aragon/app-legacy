@@ -239,7 +239,7 @@ const ProposeSettingWrapper: React.FC<Props> = ({
       for (const action of getValues('actions') as Array<Action>) {
         if (action.name === 'modify_metadata') {
           const ipfsUri = await client.methods.pinMetadata(action.inputs);
-          actions.push(client.encoding.updateMetadataAction(dao, ipfsUri));
+          actions.push(client.encoding.updateDaoMetadataAction(dao, ipfsUri));
         } else if (action.name === 'modify_token_voting_settings') {
           actions.push(
             Promise.resolve(
