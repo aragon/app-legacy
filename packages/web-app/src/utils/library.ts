@@ -1,11 +1,10 @@
 // Library utils / Ethers for now
 import {ApolloClient} from '@apollo/client';
 import {
-  Client,
   AddresslistVotingClient,
+  Client,
   Erc20TokenDetails,
   IMintTokenParams,
-  VotingMode,
   TokenVotingClient,
   VotingMode,
 } from '@aragon/sdk-client';
@@ -403,18 +402,4 @@ export function resolveDaoAvatarIpfsCid(avatar?: string): string | undefined {
       console.warn('Error resolving DAO avatar IPFS Cid', err);
     }
   }
-}
-
-type DecodedVotingMode = {
-  earlyExecution: boolean;
-  voteReplacement: boolean;
-};
-
-export function decodeVotingMode(mode: VotingMode): DecodedVotingMode {
-  return {
-    // Note: This implies that earlyExecution and voteReplacement may never be
-    // both true at the same time, as they shouldn't.
-    earlyExecution: mode === VotingMode.EARLY_EXECUTION,
-    voteReplacement: mode === VotingMode.VOTE_REPLACEMENT,
-  };
 }
