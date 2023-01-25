@@ -7,14 +7,13 @@
 
 import {
   AddresslistVotingProposal,
-  AddresslistVotingProposalListItem,
   AddresslistVotingProposalResult,
   Erc20TokenDetails,
   ICreateProposalParams,
+  MultisigProposal,
   ProposalMetadata,
   ProposalStatus,
   TokenVotingProposal,
-  TokenVotingProposalListItem,
   TokenVotingProposalResult,
   VoteValues,
   VotingSettings,
@@ -32,7 +31,12 @@ import {i18n} from '../../i18n.config';
 import {getFormattedUtcOffset, KNOWN_FORMATS} from './date';
 import {formatUnits} from './library';
 import {abbreviateTokenAmount} from './tokens';
-import {AddressListVote, DetailedProposal, Erc20ProposalVote} from './types';
+import {
+  AddressListVote,
+  DetailedProposal,
+  Erc20ProposalVote,
+  SupportedProposals,
+} from './types';
 
 export const MappedVotes: {[key in VoteValues]: VoterType['option']} = {
   1: 'abstain',
@@ -42,11 +46,7 @@ export const MappedVotes: {[key in VoteValues]: VoterType['option']} = {
 
 // this type guard will need to evolve when there are more types
 export function isTokenBasedProposal(
-  proposal:
-    | DetailedProposal
-    | TokenVotingProposalListItem
-    | AddresslistVotingProposalListItem
-    | undefined
+  proposal: SupportedProposals | undefined
 ): proposal is TokenVotingProposal {
   if (!proposal) return false;
   return 'token' in proposal;
@@ -60,13 +60,16 @@ export function isErc20Token(
 }
 
 export function isErc20VotingProposal(
-  proposal:
-    | DetailedProposal
-    | TokenVotingProposalListItem
-    | AddresslistVotingProposalListItem
-    | undefined
+  proposal: SupportedProposals | undefined
 ): proposal is TokenVotingProposal & {token: Erc20TokenDetails} {
   return isTokenBasedProposal(proposal) && isErc20Token(proposal.token);
+}
+
+export function isMultisigProposal(
+  proposal: SupportedProposals | undefined
+): proposal is MultisigProposal {
+  if (!proposal) return false;
+  return 'approvals' in proposal;
 }
 
 /**
@@ -494,28 +497,29 @@ export function getTerminalProps(
 
     // strategy
     strategy = t('votingTerminal.tokenVoting');
+    return {
+      token,
+      status: proposal.status,
+      voters,
+      results,
+      strategy,
+      supportThreshold,
+      minParticipation,
+      currentParticipation,
+      missingParticipation,
+      startDate: `${format(
+        proposal.startDate,
+        KNOWN_FORMATS.proposals
+      )}  ${getFormattedUtcOffset()}`,
+
+      endDate: `${format(
+        proposal.endDate,
+        KNOWN_FORMATS.proposals
+      )}  ${getFormattedUtcOffset()}`,
+    };
   }
 
-  return {
-    token,
-    status: proposal.status,
-    voters,
-    results,
-    strategy,
-    supportThreshold,
-    minParticipation,
-    currentParticipation,
-    missingParticipation,
-    startDate: `${format(
-      proposal.startDate,
-      KNOWN_FORMATS.proposals
-    )}  ${getFormattedUtcOffset()}`,
-
-    endDate: `${format(
-      proposal.endDate,
-      KNOWN_FORMATS.proposals
-    )}  ${getFormattedUtcOffset()}`,
-  };
+  // TODO: please add Multisig path
 }
 
 export type MapToDetailedProposalParams = {
@@ -611,17 +615,10 @@ export function addVoteToProposal(
         .add((vote as Erc20ProposalVote).weight)
         .toBigInt(),
     } as TokenVotingProposal;
-  } else {
-    // AddressList calculation
-    return {
-      ...proposal,
-      votes: [...proposal.votes, {...vote}],
-      result: {
-        ...proposal.result,
-        [voteValue]: proposal.result[voteValue] + 1,
-      },
-    } as AddresslistVotingProposal;
   }
+
+  // TODO please add multisig vote config
+  return {} as DetailedProposal;
 }
 
 /**

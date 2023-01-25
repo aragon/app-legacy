@@ -1,8 +1,10 @@
 import {
-  AddresslistVotingProposal,
-  Erc20TokenDetails,
   DaoMetadata,
+  Erc20TokenDetails,
+  MultisigProposal,
+  MultisigProposalListItem,
   TokenVotingProposal,
+  TokenVotingProposalListItem,
   VoteValues,
   VotingSettings,
 } from '@aragon/sdk-client';
@@ -157,7 +159,11 @@ export type Erc20ProposalVote = AddressListVote & {
   weight: bigint;
 };
 
-export type DetailedProposal = TokenVotingProposal | AddresslistVotingProposal;
+export type DetailedProposal = MultisigProposal | TokenVotingProposal;
+export type ProposalListItem =
+  | TokenVotingProposalListItem
+  | MultisigProposalListItem;
+export type SupportedProposals = DetailedProposal | ProposalListItem;
 
 /* ACTION TYPES ============================================================= */
 
