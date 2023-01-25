@@ -78,6 +78,8 @@ const EditSettings: React.FC = () => {
     durationHours,
     durationMinutes,
     resourceLinks,
+    earlyExecution,
+    voteReplacement,
   ] = useWatch({
     name: [
       'daoName',
@@ -89,6 +91,8 @@ const EditSettings: React.FC = () => {
       'durationHours',
       'durationMinutes',
       'daoLinks',
+      'earlyExecution',
+      'voteReplacement',
     ],
     control,
   });
@@ -154,6 +158,10 @@ const EditSettings: React.FC = () => {
       !resourceLinksAreEqual);
 
   // governance
+  const daoVotingMode = decodeVotingMode(
+    daoSettings?.votingMode || VotingMode.STANDARD
+  );
+
   // TODO: We need to force forms to only use one type, Number or string
   const isGovernanceChanged =
     Number(minimumParticipation) !==
@@ -162,7 +170,9 @@ const EditSettings: React.FC = () => {
       Math.round(daoSettings.supportThreshold * 100) ||
     Number(durationDays) !== days ||
     Number(durationHours) !== hours ||
-    Number(durationMinutes) !== minutes;
+    Number(durationMinutes) !== minutes ||
+    earlyExecution !== daoVotingMode.earlyExecution ||
+    voteReplacement !== daoVotingMode.voteReplacement;
 
   const setCurrentMetadata = useCallback(() => {
     setValue('daoName', daoDetails?.metadata.name);
