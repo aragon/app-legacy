@@ -87,8 +87,7 @@ const WalletRow: React.FC<WalletRowProps> = ({index, onDelete}) => {
     });
     setValue('tokenTotalSupply', totalSupply);
 
-    if (eligibilityType === 'token')
-      setValue('eligibilityTokenAmount', minAmount);
+    if (eligibilityType === 'token') setValue('minimumTokenAmount', minAmount);
 
     // show max amount error
     if (BigNumber.from(amount).gt(MAX_TOKEN_AMOUNT))
@@ -239,7 +238,7 @@ const WalletRow: React.FC<WalletRowProps> = ({index, onDelete}) => {
                             }
                         }
                       );
-                      setValue('eligibilityTokenAmount', minAmount);
+                      setValue('minimumTokenAmount', minAmount);
                     }
                   }
                   alert(t('alert.chip.removedAddress') as string);

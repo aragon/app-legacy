@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import {useTranslation} from 'react-i18next';
 import {Controller, useFormContext, useWatch} from 'react-hook-form';
 import styled from 'styled-components';
@@ -7,10 +7,13 @@ import {CheckboxListItem, NumberInput} from '@aragon/ui-components';
 import {AlertInline} from '@aragon/ui-components';
 
 export const SelectEligibility = () => {
-  const {control, getValues, resetField} = useFormContext();
+  const {control, getValues, resetField, setValue} = useFormContext();
   const {t} = useTranslation();
   const {tokenTotalSupply} = getValues();
-  const eligibilityType = useWatch({name: 'eligibilityType', control});
+  const [eligibilityType, minimumTokenAmount] = useWatch({
+    name: ['eligibilityType', 'minimumTokenAmount'],
+    control,
+  });
 
   function eligibilityValidator(value: string) {
     if (value === '') return t('errors.required.amount');
@@ -26,6 +29,10 @@ export const SelectEligibility = () => {
         return t('errors.biggerThanTotalSupply');
     return true;
   }
+
+  useEffect(() => {
+    setValue('eligibilityTokenAmount', minimumTokenAmount);
+  }, [minimumTokenAmount, setValue]);
 
   /**
    * Current Types like token or anyone are dummies and may refactor later
@@ -52,6 +59,7 @@ export const SelectEligibility = () => {
                 multiSelect={false}
                 onClick={() => {
                   onChange('token');
+                  setValue('eligibilityTokenAmount', minimumTokenAmount);
                 }}
                 {...(value === 'token' ? {type: 'active'} : {})}
               />

@@ -161,12 +161,10 @@ const CreateDAO: React.FC = () => {
           !dirtyFields.tokenName ||
           !dirtyFields.wallets ||
           !dirtyFields.tokenSymbol ||
-          !(
-            dirtyFields.eligibilityType || dirtyFields.eligibilityTokenAmount
-          ) ||
           errors.wallets ||
           errors.eligibilityTokenAmount ||
           tokenTotalSupply === 0
+          ///////// !(eligibilityType === 'token' && eligibilityTokenAmount !== 0)
         )
           return false;
         return errors.tokenName || errors.tokenSymbol || errors.wallets
@@ -190,8 +188,6 @@ const CreateDAO: React.FC = () => {
     dirtyFields.tokenName,
     dirtyFields.wallets,
     dirtyFields.tokenSymbol,
-    dirtyFields.eligibilityType,
-    dirtyFields.eligibilityTokenAmount,
     dirtyFields.tokenAddress,
     tokenTotalSupply,
   ]);
