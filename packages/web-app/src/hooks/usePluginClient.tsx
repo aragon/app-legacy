@@ -1,7 +1,7 @@
 import {
-  AddresslistVotingClient,
-  TokenVotingClient,
   ContextPlugin,
+  MultisigClient,
+  TokenVotingClient,
 } from '@aragon/sdk-client';
 import {useEffect, useState} from 'react';
 
@@ -9,8 +9,9 @@ import {useClient} from './useClient';
 
 export type PluginTypes =
   | 'token-voting.plugin.dao.eth'
-  | 'addresslist-voting.plugin.dao.eth';
+  | 'multisig.plugin.dao.eth';
 
+type PluginClientTypes = MultisigClient | TokenVotingClient | undefined;
 /**
  * This hook can be used to build ERC20 or whitelist clients
  * @param pluginType Type of plugin for which a client is to be built. Note that
@@ -24,10 +25,9 @@ export type PluginTypes =
  */
 export const usePluginClient = (
   pluginType?: PluginTypes
-): TokenVotingClient | AddresslistVotingClient | undefined => {
-  const [pluginClient, setPluginClient] = useState<
-    TokenVotingClient | AddresslistVotingClient | undefined
-  >(undefined);
+): PluginClientTypes => {
+  const [pluginClient, setPluginClient] =
+    useState<PluginClientTypes>(undefined);
   const {client, context} = useClient();
 
   useEffect(() => {
@@ -44,9 +44,9 @@ export const usePluginClient = (
             new TokenVotingClient(ContextPlugin.fromContext(context))
           );
           break;
-        case 'addresslist-voting.plugin.dao.eth':
+        case 'multisig.plugin.dao.eth':
           setPluginClient(
-            new AddresslistVotingClient(ContextPlugin.fromContext(context))
+            new MultisigClient(ContextPlugin.fromContext(context))
           );
           break;
         default:
