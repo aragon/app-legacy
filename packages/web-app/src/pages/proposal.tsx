@@ -161,91 +161,90 @@ const Proposal: React.FC = () => {
 
   // decode metadata
   useEffect(() => {
-    if (proposal) {
-      //TODO: add multisig option
-      if (isMultisigProposal(proposal)) {
-        setDecodedActions([]);
-        return;
-      }
+    if (!proposal) return;
 
-      const mintTokenActions: {
-        actions: Uint8Array[];
-        index: number;
-      } = {actions: [], index: 0};
+    const mintTokenActions: {
+      actions: Uint8Array[];
+      index: number;
+    } = {actions: [], index: 0};
 
-      const proposalErc20Token = isErc20VotingProposal(proposal)
-        ? proposal.token
-        : undefined;
+    const proposalErc20Token = isErc20VotingProposal(proposal)
+      ? proposal.token
+      : undefined;
 
-      const actionPromises: Promise<Action | undefined>[] =
-        proposal.actions.map((action: DaoAction, index) => {
-          const functionParams =
-            client?.decoding.findInterface(action.data) ||
-            pluginClient?.decoding.findInterface(action.data);
+    const actionPromises: Promise<Action | undefined>[] = proposal.actions.map(
+      (action: DaoAction, index) => {
+        const functionParams =
+          client?.decoding.findInterface(action.data) ||
+          pluginClient?.decoding.findInterface(action.data);
 
-          switch (functionParams?.functionName) {
-            case 'withdraw':
-              return decodeWithdrawToAction(
-                action.data,
-                client,
-                apolloClient,
-                provider,
-                network
-              );
-            case 'mint':
-              if (mintTokenActions.actions.length === 0) {
-                mintTokenActions.index = index;
-              }
-              mintTokenActions.actions.push(action.data);
-              return Promise.resolve({} as Action);
+        switch (functionParams?.functionName) {
+          case 'withdraw':
+            return decodeWithdrawToAction(
+              action.data,
+              client,
+              apolloClient,
+              provider,
+              network
+            );
+          case 'mint':
+            if (mintTokenActions.actions.length === 0) {
+              mintTokenActions.index = index;
+            }
+            mintTokenActions.actions.push(action.data);
+            return Promise.resolve({} as Action);
 
-            // TODO: switch to multisig
-            // case 'addAllowedUsers':
-            //   return decodeAddMembersToAction(
-            //     action.data,
-            //     pluginClient as AddresslistVotingClient
-            //   );
-            // case 'removeAllowedUsers':
-            //   return decodeRemoveMembersToAction(
-            //     action.data,
-            //     pluginClient as AddresslistVotingClient
-            //   );
-            case 'updateVotingSettings':
+          // TODO: switch to multisig
+          // case 'addAllowedUsers':
+          //   return decodeAddMembersToAction(
+          //     action.data,
+          //     pluginClient as AddresslistVotingClient
+          //   );
+          // case 'removeAllowedUsers':
+          //   return decodeRemoveMembersToAction(
+          //     action.data,
+          //     pluginClient as AddresslistVotingClient
+          //   );
+          case 'updateVotingSettings':
+            if (isErc20VotingProposal(proposal))
               return decodePluginSettingsToAction(
                 action.data,
                 pluginClient as TokenVotingClient,
                 proposal.totalVotingWeight as bigint,
                 proposalErc20Token
               );
-            case 'setMetadata':
-              return decodeMetadataToAction(action.data, client);
-            default:
-              return Promise.resolve({} as Action);
-          }
-        });
 
-      if (proposalErc20Token && mintTokenActions.actions.length !== 0) {
-        // Decode all the mint actions into one action with several addresses
-        const decodedMintToken = decodeMintTokensToAction(
-          mintTokenActions.actions,
-          pluginClient as TokenVotingClient,
-          proposalErc20Token.address,
-          provider,
-          network
-        );
-
-        // splice them back to the actions array with all the other actions
-        actionPromises.splice(
-          mintTokenActions.index,
-          mintTokenActions.actions.length,
-          decodedMintToken
-        );
+            // TODO add multisig option here or inside decoder
+            return Promise.resolve({} as Action);
+          case 'setMetadata':
+            return decodeMetadataToAction(action.data, client);
+          default:
+            return Promise.resolve({} as Action);
+        }
       }
+    );
 
-      Promise.all(actionPromises).then(value => {
-        setDecodedActions(value);
-      });
+    if (proposalErc20Token && mintTokenActions.actions.length !== 0) {
+      // Decode all the mint actions into one action with several addresses
+      const decodedMintToken = decodeMintTokensToAction(
+        mintTokenActions.actions,
+        pluginClient as TokenVotingClient,
+        proposalErc20Token.address,
+        provider,
+        network
+      );
+
+      // splice them back to the actions array with all the other actions
+      actionPromises.splice(
+        mintTokenActions.index,
+        mintTokenActions.actions.length,
+        decodedMintToken
+      );
     }
+
+    Promise.all(actionPromises).then(value => {
+      setDecodedActions(value);
+    });
   }, [apolloClient, client, network, pluginClient, proposal, provider]);
 
   // caches the status for breadcrumb

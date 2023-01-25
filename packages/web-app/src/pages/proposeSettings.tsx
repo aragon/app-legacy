@@ -7,7 +7,6 @@ import {
   ProposalMetadata,
   TokenVotingClient,
   VotingMode,
-  VotingSettings,
 } from '@aragon/sdk-client';
 import {withTransaction} from '@elastic/apm-rum-react';
 import React, {useCallback, useEffect, useState} from 'react';
@@ -451,7 +450,7 @@ const ProposeSettingWrapper: React.FC<Props> = ({
             ? tokenSupply.formatted
             : members.length,
         // TODO: Add multisig
-        pluginSettings: pluginSettings as VotingSettings,
+        pluginSettings: pluginSettings,
         proposalParams: proposalCreationData,
         proposalId,
         metadata: metadata,
