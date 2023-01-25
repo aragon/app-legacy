@@ -133,7 +133,7 @@ const ReviewProposal: React.FC<ReviewProposalProps> = ({
    *************************************************/
   useEffect(() => {
     async function mapToView() {
-      if (pluginType === 'addresslist-voting.plugin.dao.eth') {
+      if (pluginType === 'multisig.plugin.dao.eth') {
         setIsWalletBased(true);
 
         // get voter participation

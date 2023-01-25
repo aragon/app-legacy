@@ -5,8 +5,7 @@ import {useDaoDetails} from './useDaoDetails';
 
 export function useDaoActions(dao: string): HookData<ActionParameter[]> {
   const {data: daoDetails, error, isLoading} = useDaoDetails(dao);
-  const addressList =
-    daoDetails?.plugins[0].id === 'addresslist-voting.plugin.dao.eth';
+  const addressList = daoDetails?.plugins[0].id === 'multisig.plugin.dao.eth';
 
   const {t} = useTranslation();
 

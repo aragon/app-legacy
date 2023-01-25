@@ -30,7 +30,7 @@ import {useDaoDetails} from 'hooks/useDaoDetails';
 import {useDaoParam} from 'hooks/useDaoParam';
 import {useDaoVault} from 'hooks/useDaoVault';
 import {PluginTypes} from 'hooks/usePluginClient';
-import {ProposalListItem, useProposals} from 'hooks/useProposals';
+import {useProposals} from 'hooks/useProposals';
 import useScreen from 'hooks/useScreen';
 import {
   CHAIN_METADATA,
@@ -39,7 +39,7 @@ import {
 } from 'utils/constants';
 import {formatDate} from 'utils/date';
 import {Dashboard as DashboardPath} from 'utils/paths';
-import {Transfer} from 'utils/types';
+import {ProposalListItem, Transfer} from 'utils/types';
 import {Container, EmptyStateContainer, EmptyStateHeading} from './governance';
 
 let pollForDaoData: number | undefined;
@@ -80,7 +80,7 @@ const Dashboard: React.FC = () => {
   );
 
   const daoType =
-    (dao?.plugins[0]?.id as PluginTypes) === 'addresslist-voting.plugin.dao.eth'
+    (dao?.plugins[0]?.id as PluginTypes) === 'multisig.plugin.dao.eth'
       ? t('explore.explorer.walletBased')
       : t('explore.explorer.tokenBased');
 
