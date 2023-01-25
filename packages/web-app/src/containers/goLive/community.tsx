@@ -22,6 +22,8 @@ const Community: React.FC = () => {
     tokenTotalSupply,
     whitelistWallets,
     reviewCheckError,
+    eligibilityType,
+    eligibilityTokenAmount,
   } = getValues();
 
   return (
@@ -101,6 +103,17 @@ const Community: React.FC = () => {
                     })}
                     onClick={() => open('addresses')}
                   />
+                </Dd>
+              </Dl>
+              <Dl>
+                <Dt>{t('labels.proposalCreation')}</Dt>
+                <Dd>
+                  {eligibilityType === 'token'
+                    ? t('createDAO.review.proposalCreation', {
+                        token: eligibilityTokenAmount,
+                        symbol: tokenSymbol,
+                      })
+                    : 'Anyone'}
                 </Dd>
               </Dl>
             </>

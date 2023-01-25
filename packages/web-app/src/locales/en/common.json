@@ -607,7 +607,8 @@
       "minutes": "{{minutes}} Minutes",
       "daoUpdates": "Except for the chain you choose and the token you mint, you can change all these values later with a vote in your DAO.",
       "acceptContent": "You have to accept your proposed content.",
-      "valuesCorrect": "These values are correct"
+      "valuesCorrect": "These values are correct",
+      "proposalCreation": "Token Holders with ≥{{token}} {{symbol}}"
     }
   },
   "newProposal": {
