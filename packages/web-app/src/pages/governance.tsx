@@ -18,7 +18,7 @@ import {PageWrapper} from 'components/wrappers';
 import {useDaoDetails} from 'hooks/useDaoDetails';
 import {useDaoParam} from 'hooks/useDaoParam';
 import {PluginTypes} from 'hooks/usePluginClient';
-import {Proposal, useProposals} from 'hooks/useProposals';
+import {ProposalListItem, useProposals} from 'hooks/useProposals';
 import NoProposals from 'public/noProposals.svg';
 import {erc20VotingProposals_erc20VotingProposals} from 'queries/__generated__/erc20VotingProposals';
 import {trackEvent} from 'services/analytics';
@@ -44,7 +44,7 @@ const Governance: React.FC = () => {
     proposal => proposal.status.toLowerCase() === 'active'
   ).length;
 
-  let displayedProposals: Array<Proposal> = [];
+  let displayedProposals: Array<ProposalListItem> = [];
 
   if (proposals && proposals.length > 0 && filterValue) {
     displayedProposals = proposals.filter(

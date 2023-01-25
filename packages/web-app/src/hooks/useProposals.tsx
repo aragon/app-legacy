@@ -1,10 +1,5 @@
 import {useReactiveVar} from '@apollo/client';
-import {
-  AddresslistVotingProposalListItem,
-  TokenVotingProposalListItem,
-  ProposalSortBy,
-  ProposalStatus,
-} from '@aragon/sdk-client';
+import {ProposalSortBy, ProposalStatus} from '@aragon/sdk-client';
 import {useCallback, useEffect, useState} from 'react';
 
 import {
@@ -16,13 +11,8 @@ import {usePrivacyContext} from 'context/privacyContext';
 import {PENDING_PROPOSALS_KEY} from 'utils/constants';
 import {customJSONReplacer, generateCachedProposalId} from 'utils/library';
 import {addVoteToProposal} from 'utils/proposals';
-import {DetailedProposal, HookData} from 'utils/types';
-
+import {DetailedProposal, HookData, ProposalListItem} from 'utils/types';
 import {PluginTypes, usePluginClient} from './usePluginClient';
-
-export type Proposal =
-  | TokenVotingProposalListItem
-  | AddresslistVotingProposalListItem;
 
 /**
  * Retrieves list of proposals from SDK
@@ -34,8 +24,8 @@ export type Proposal =
 export function useProposals(
   daoAddress: string,
   type: PluginTypes
-): HookData<Array<Proposal>> {
-  const [data, setData] = useState<Array<Proposal>>([]);
+): HookData<Array<ProposalListItem>> {
+  const [data, setData] = useState<Array<ProposalListItem>>([]);
   const [error, setError] = useState<Error>();
   const [isLoading, setIsLoading] = useState(false);
 
@@ -47,7 +37,7 @@ export function useProposals(
   const proposalCache = useReactiveVar(pendingProposalsVar);
 
   const augmentProposalsWithCache = useCallback(
-    (fetchedProposals: Proposal[]) => {
+    (fetchedProposals: ProposalListItem[]) => {
       if (!proposalCache[daoAddress]) return fetchedProposals;
 
       const daoCache = {...proposalCache[daoAddress]};
@@ -78,7 +68,7 @@ export function useProposals(
             ...(addVoteToProposal(
               cachedProposal as DetailedProposal,
               cachedVotes[id]
-            ) as Proposal),
+            ) as ProposalListItem),
           });
         }
       }

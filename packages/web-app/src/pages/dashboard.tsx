@@ -30,7 +30,7 @@ import {useDaoDetails} from 'hooks/useDaoDetails';
 import {useDaoParam} from 'hooks/useDaoParam';
 import {useDaoVault} from 'hooks/useDaoVault';
 import {PluginTypes} from 'hooks/usePluginClient';
-import {Proposal, useProposals} from 'hooks/useProposals';
+import {ProposalListItem, useProposals} from 'hooks/useProposals';
 import useScreen from 'hooks/useScreen';
 import {
   CHAIN_METADATA,
@@ -334,7 +334,7 @@ const HeaderWrapper = styled.div.attrs({
 
 type DashboardContentProps = {
   dao: string;
-  proposals: Proposal[];
+  proposals: ProposalListItem[];
   transfers: Transfer[];
   totalAssetValue: number;
   pluginType: PluginTypes;
