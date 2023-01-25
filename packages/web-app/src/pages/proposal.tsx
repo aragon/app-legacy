@@ -3,7 +3,6 @@ import {
   DaoAction,
   TokenVotingClient,
   TokenVotingProposal,
-  VotingMode,
 } from '@aragon/sdk-client';
 import {
   Breadcrumb,
@@ -20,10 +19,7 @@ import {withTransaction} from '@elastic/apm-rum-react';
 import TipTapLink from '@tiptap/extension-link';
 import {useEditor} from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
-import Big from 'big.js';
-import {formatDistanceToNow, Locale} from 'date-fns';
-import * as Locales from 'date-fns/locale';
-import React, {useCallback, useEffect, useMemo, useRef, useState} from 'react';
+import React, {useEffect, useMemo, useRef, useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {generatePath, useNavigate, useParams} from 'react-router-dom';
 import styled from 'styled-components';
@@ -32,11 +28,7 @@ import {ExecutionWidget} from 'components/executionWidget';
 import ResourceList from 'components/resourceList';
 import {Loading} from 'components/temporary';
 import {StyledEditorContent} from 'containers/reviewProposal';
-import {
-  ProposalVoteResults,
-  TerminalTabs,
-  VotingTerminal,
-} from 'containers/votingTerminal';
+import {TerminalTabs, VotingTerminal} from 'containers/votingTerminal';
 import {useGlobalModalContext} from 'context/globalModals';
 import {useNetwork} from 'context/network';
 import {useProposalTransactionContext} from 'context/proposalTransaction';
@@ -58,12 +50,14 @@ import {
   decodeMintTokensToAction,
   decodePluginSettingsToAction,
   decodeWithdrawToAction,
-  formatUnits,
 } from 'utils/library';
 import {NotFound} from 'utils/paths';
 import {
+  checkIfCanExecuteEarly,
+  getProposalExecutionStatus,
   getProposalStatusSteps,
   getTerminalProps,
+  getVoteStatusAndLabel,
   isErc20VotingProposal,
   isMultisigProposal,
 } from 'utils/proposals';
@@ -75,7 +69,7 @@ const PROPOSAL_TAGS = ['Finance', 'Withdraw'];
 const NumberFormatter = new Intl.NumberFormat('en-US');
 
 const Proposal: React.FC = () => {
-  const {t, i18n} = useTranslation();
+  const {t} = useTranslation();
   const {open} = useGlobalModalContext();
   const {isDesktop} = useScreen();
   const {breadcrumbs, tag} = useMappedBreadcrumbs();
@@ -159,7 +153,7 @@ const Proposal: React.FC = () => {
     }
   }, [editor, proposal]);
 
-  // decode metadata
+  // decode proposal actions
   useEffect(() => {
     if (!proposal) return;
 
@@ -206,16 +200,13 @@ const Proposal: React.FC = () => {
           //     pluginClient as AddresslistVotingClient
           //   );
           case 'updateVotingSettings':
-            if (isErc20VotingProposal(proposal))
-              return decodePluginSettingsToAction(
-                action.data,
-                pluginClient as TokenVotingClient,
-                proposal.totalVotingWeight as bigint,
-                proposalErc20Token
-              );
-
             // TODO add multisig option here or inside decoder
-            return Promise.resolve({} as Action);
+            return decodePluginSettingsToAction(
+              action.data,
+              pluginClient as TokenVotingClient,
+              (proposal as TokenVotingProposal).totalVotingWeight as bigint,
+              proposalErc20Token
+            );
           case 'setMetadata':
             return decodeMetadataToAction(action.data, client);
           default:
@@ -253,7 +244,7 @@ const Proposal: React.FC = () => {
       set('proposalStatus', proposal.status);
   }, [get, proposal, set]);
 
-  // login journey
+  // handle can vote and wallet connection status
   useEffect(() => {
     // was not logged in but now logged in
     if (statusRef.current.wasNotLoggedIn && isConnected) {
@@ -304,48 +295,21 @@ const Proposal: React.FC = () => {
     if (proposal) return getTerminalProps(t, proposal, address);
   }, [address, proposal, t]);
 
-  // majority voting early execution
-  const canExecuteEarly = useCallback(() => {
+  // get early execution status
+  const canExecuteEarly = useMemo(() => {
     if (
-      !isErc20VotingProposal(proposal) || // proposal is not token-based
-      !mappedProps?.results || // no mapped data
-      daoSettings?.votingMode !== VotingMode.EARLY_EXECUTION // early execution disabled
+      mappedProps?.missingParticipation &&
+      isErc20VotingProposal(proposal) &&
+      mappedProps?.results &&
+      daoSettings?.votingMode
     ) {
-      return false;
-    }
-
-    // check if proposal can be executed early
-    const votes: Record<keyof ProposalVoteResults, Big> = {
-      yes: Big(0),
-      no: Big(0),
-      abstain: Big(0),
-    };
-
-    for (const voteType in mappedProps.results) {
-      votes[voteType as keyof ProposalVoteResults] = Big(
-        mappedProps.results[
-          voteType as keyof ProposalVoteResults
-        ].value.toString()
+      return checkIfCanExecuteEarly(
+        mappedProps?.missingParticipation,
+        proposal,
+        mappedProps?.results,
+        daoSettings.votingMode
       );
-    }
-
-    // renaming for clarity, should be renamed in later versions of sdk
-    const supportThreshold = proposal.settings.minSupport;
-
-    // those who didn't vote (this is NOT voting abstain)
-    const absentee = formatUnits(
-      proposal.totalVotingWeight - proposal.usedVotingWeight,
-      proposal.token.decimals
-    );
-
-    return (
-      // participation reached
-      mappedProps?.missingParticipation === 0 &&
-      // support threshold met
-      votes.yes.div(votes.yes.add(votes.no)).gt(supportThreshold) &&
-      // even if absentees show up and all vote against, still cannot change outcome
-      votes.yes.div(votes.yes.add(votes.no).add(absentee)).gt(supportThreshold)
-    );
+    } else return false;
   }, [
     daoSettings?.votingMode,
     proposal,
@@ -354,23 +318,15 @@ const Proposal: React.FC = () => {
   ]);
 
   // proposal execution status
-  const executionStatus = useMemo(() => {
-    switch (proposal?.status) {
-      case 'Succeeded':
-        if (executionFailed) return 'executable-failed';
-        else return 'executable';
-      case 'Executed':
-        return 'executed';
-      case 'Defeated':
-        return 'defeated';
-      case 'Active':
-        if (canExecuteEarly()) return 'executable';
-        else return 'default';
-      case 'Pending':
-      default:
-        return 'default';
-    }
-  }, [canExecuteEarly, executionFailed, proposal?.status]);
+  const executionStatus = useMemo(
+    () =>
+      getProposalExecutionStatus(
+        proposal?.status,
+        canExecuteEarly,
+        executionFailed
+      ),
+    [canExecuteEarly, executionFailed, proposal?.status]
+  );
 
   // whether current user has voted
   const voted = useMemo(() => {
@@ -389,61 +345,10 @@ const Proposal: React.FC = () => {
 
   // vote button and status
   const [voteStatus, buttonLabel] = useMemo(() => {
-    let voteStatus = '';
-    let voteButtonLabel = '';
-
-    // TODO: update with multisig props
-    if (isMultisigProposal(proposal)) return [voteStatus, voteButtonLabel];
-
-    if (!proposal?.status || !proposal?.endDate || !proposal?.startDate)
-      return [voteStatus, voteButtonLabel];
-
-    voteButtonLabel = voted
-      ? canVote
-        ? t('votingTerminal.status.revote')
-        : t('votingTerminal.status.voteSubmitted')
-      : t('votingTerminal.voteOver');
-
-    switch (proposal.status) {
-      case 'Pending':
-        {
-          const locale = (Locales as Record<string, Locale>)[i18n.language];
-          const timeUntilNow = formatDistanceToNow(proposal.startDate, {
-            includeSeconds: true,
-            locale,
-          });
-
-          voteButtonLabel = t('votingTerminal.voteNow');
-          voteStatus = t('votingTerminal.status.pending', {timeUntilNow});
-        }
-        break;
-      case 'Succeeded':
-        voteStatus = t('votingTerminal.status.succeeded');
-        break;
-      case 'Executed':
-        voteStatus = t('votingTerminal.status.executed');
-        break;
-      case 'Defeated':
-        voteStatus = t('votingTerminal.status.defeated');
-
-        break;
-      case 'Active':
-        {
-          const locale = (Locales as Record<string, Locale>)[i18n.language];
-          const timeUntilEnd = formatDistanceToNow(proposal.endDate, {
-            includeSeconds: true,
-            locale,
-          });
-
-          voteStatus = t('votingTerminal.status.active', {timeUntilEnd});
-
-          // haven't voted
-          if (!voted) voteButtonLabel = t('votingTerminal.voteNow');
-        }
-        break;
-    }
-    return [voteStatus, voteButtonLabel];
-  }, [proposal, voted, canVote, t, i18n.language]);
+    return proposal
+      ? getVoteStatusAndLabel(proposal, voted, canVote, t)
+      : ['', ''];
+  }, [proposal, voted, canVote, t]);
 
   // vote button state and handler
   const {voteNowDisabled, onClick} = useMemo(() => {
@@ -509,7 +414,7 @@ const Proposal: React.FC = () => {
       proposal?.startDate &&
       proposal?.endDate &&
       proposal?.creationDate
-    )
+    ) {
       return getProposalStatusSteps(
         proposal.status,
         proposal.startDate,
@@ -520,6 +425,7 @@ const Proposal: React.FC = () => {
         NumberFormatter.format(proposal.executionBlockNumber),
         proposal.executionDate
       );
+    } else return [];
   }, [proposal, executionFailed]);
 
   /*************************************************
@@ -623,7 +529,7 @@ const Proposal: React.FC = () => {
         </ProposalContainer>
         <AdditionalInfoContainer>
           <ResourceList links={proposal?.metadata.resources} />
-          <WidgetStatus steps={proposalSteps || []} />
+          <WidgetStatus steps={proposalSteps} />
         </AdditionalInfoContainer>
       </ContentContainer>
     </Container>
