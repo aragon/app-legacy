@@ -89,8 +89,6 @@ const CreateDAO: React.FC = () => {
     tokenTotalSupply,
     membership,
     daoName,
-    eligibilityTokenAmount,
-    eligibilityType,
   ] = useWatch({
     control: formMethods.control,
     name: [
@@ -99,8 +97,6 @@ const CreateDAO: React.FC = () => {
       'tokenTotalSupply',
       'membership',
       'daoName',
-      'eligibilityTokenAmount',
-      'eligibilityType',
     ],
   });
 
