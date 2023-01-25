@@ -1,12 +1,11 @@
 import {useReactiveVar} from '@apollo/client';
 import {
-  AddresslistVotingClient,
-  TokenVotingClient,
   DaoAction,
   ICreateProposalParams,
   InstalledPluginListItem,
   ProposalCreationSteps,
   ProposalMetadata,
+  TokenVotingClient,
 } from '@aragon/sdk-client';
 import React, {useCallback, useEffect, useMemo, useState} from 'react';
 import {useFormContext} from 'react-hook-form';
@@ -155,37 +154,39 @@ const CreateProposalProvider: React.FC<Props> = ({
             );
           });
           break;
-        case 'add_address': {
-          const wallets = action.inputs.memberWallets.map(
-            wallet => wallet.address
-          );
-          actions.push(
-            Promise.resolve(
-              (
-                pluginClient as AddresslistVotingClient
-              ).encoding.addMembersAction(pluginAddress, wallets)
-            )
-          );
-          break;
-        }
-        case 'remove_address': {
-          const wallets = action.inputs.memberWallets.map(
-            wallet => wallet.address
-          );
-          actions.push(
-            Promise.resolve(
-              (
-                pluginClient as AddresslistVotingClient
-              ).encoding.removeMembersAction(pluginAddress, wallets)
-            )
-          );
-          break;
-        }
+
+        // TODO: convert to Multisig
+        // case 'add_address': {
+        //   const wallets = action.inputs.memberWallets.map(
+        //     wallet => wallet.address
+        //   );
+        //   actions.push(
+        //     Promise.resolve(
+        //       (
+        //         pluginClient as AddresslistVotingClient
+        //       ).encoding.addMembersAction(pluginAddress, wallets)
+        //     )
+        //   );
+        //   break;
+        // }
+        // case 'remove_address': {
+        //   const wallets = action.inputs.memberWallets.map(
+        //     wallet => wallet.address
+        //   );
+        //   actions.push(
+        //     Promise.resolve(
+        //       (
+        //         pluginClient as AddresslistVotingClient
+        //       ).encoding.removeMembersAction(pluginAddress, wallets)
+        //     )
+        //   );
+        //   break;
+        // }
       }
     });
 
     return Promise.all(actions);
-  }, [client, dao, getValues, pluginAddress, pluginClient]);
+  }, [client, dao, getValues, pluginClient]);
 
   // Because getValues does NOT get updated on each render, leaving this as
   // a function to be called when data is needed instead of a memoized value

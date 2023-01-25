@@ -3,6 +3,7 @@ import {
   ExecuteProposalStep,
   IExecuteProposalParams,
   IVoteProposalParams,
+  TokenVotingClient,
   VoteProposalStep,
   VoteValues,
 } from '@aragon/sdk-client';
@@ -100,8 +101,10 @@ const ProposalTransactionProvider: React.FC<Props> = ({children}) => {
   }, [daoDetails?.plugins]);
 
   const pluginClient = usePluginClient(
-    daoDetails?.plugins[0].id as PluginTypes
-  );
+    // TODO update context to work with multisig
+    // daoDetails?.plugins[0].id as PluginTypes
+    'token-voting.plugin.dao.eth'
+  ) as unknown as TokenVotingClient | undefined;
 
   const {preferences} = usePrivacyContext();
 
