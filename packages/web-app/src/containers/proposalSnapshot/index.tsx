@@ -13,10 +13,10 @@ import styled from 'styled-components';
 import {mapToCardViewProposal} from 'components/proposalList';
 import {StateEmpty} from 'components/stateEmpty';
 import {useNetwork} from 'context/network';
-import {ProposalListItem as ProposalType} from 'hooks/useProposals';
 import {Governance, NewProposal, Proposal} from 'utils/paths';
+import {ProposalListItem} from 'utils/types';
 
-type Props = {dao: string; proposals: ProposalType[]};
+type Props = {dao: string; proposals: ProposalListItem[]};
 
 const ProposalSnapshot: React.FC<Props> = ({dao, proposals}) => {
   const {t} = useTranslation();
