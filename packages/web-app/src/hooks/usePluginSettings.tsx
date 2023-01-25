@@ -26,7 +26,8 @@ export function usePluginSettings(
         setIsLoading(true);
 
         const settings = await client?.methods.getVotingSettings(pluginAddress);
-        if (settings) setData(settings);
+        // TODO: update to include multisig
+        if (settings) setData(settings as VotingSettings);
       } catch (err) {
         console.error(err);
         setError(err as Error);

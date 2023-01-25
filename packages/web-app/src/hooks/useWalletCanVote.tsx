@@ -1,6 +1,7 @@
 import {useEffect, useState} from 'react';
-import {stripPlgnAdrFromProposalId} from 'utils/proposals';
+import {TokenVotingClient} from '@aragon/sdk-client';
 
+import {stripPlgnAdrFromProposalId} from 'utils/proposals';
 import {HookData} from 'utils/types';
 import {PluginTypes, usePluginClient} from './usePluginClient';
 
@@ -22,7 +23,7 @@ export const useWalletCanVote = (
   const [error, setError] = useState<Error>();
   const [isLoading, setIsLoading] = useState(false);
 
-  const client = usePluginClient(pluginType);
+  const client = usePluginClient(pluginType) as TokenVotingClient;
 
   useEffect(() => {
     async function fetchCanVote() {

@@ -14,7 +14,7 @@ import {
   PENDING_VOTES_KEY,
 } from 'utils/constants';
 import {customJSONReplacer, generateCachedProposalId} from 'utils/library';
-import {addVoteToProposal} from 'utils/proposals';
+import {addVoteToProposal, isErc20VotingProposal} from 'utils/proposals';
 import {DetailedProposal, HookData} from 'utils/types';
 import {PluginTypes, usePluginClient} from './usePluginClient';
 
@@ -51,6 +51,8 @@ export const useDaoProposal = (
 
       // vote in cache is returned from SDK, delete cache
       if (
+        // TODO: Handle Multisig
+        isErc20VotingProposal(proposal) &&
         proposal.votes.some(
           v => v.address.toLowerCase() === cachedVote.address.toLowerCase()
         )

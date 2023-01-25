@@ -5,7 +5,9 @@ import {
   InstalledPluginListItem,
   ProposalCreationSteps,
   ProposalMetadata,
+  TokenVotingClient,
   VotingMode,
+  VotingSettings,
 } from '@aragon/sdk-client';
 import {withTransaction} from '@elastic/apm-rum-react';
 import React, {useCallback, useEffect, useState} from 'react';
@@ -143,7 +145,11 @@ const ProposeSettingWrapper: React.FC<Props> = ({
     daoToken?.address || ''
   );
   const {client} = useClient();
-  const pluginClient = usePluginClient(pluginType as PluginTypes);
+  const pluginClient = usePluginClient(
+    // TODO update context to work with multisig
+    // pluginType as PluginTypes
+    'token-voting.plugin.dao.eth'
+  ) as unknown as TokenVotingClient | undefined;
 
   const [proposalCreationData, setProposalCreationData] =
     useState<ICreateProposalParams>();
@@ -444,7 +450,8 @@ const ProposeSettingWrapper: React.FC<Props> = ({
           pluginType === 'token-voting.plugin.dao.eth' && tokenSupply
             ? tokenSupply.formatted
             : members.length,
-        pluginSettings,
+        // TODO: Add multisig
+        pluginSettings: pluginSettings as VotingSettings,
         proposalParams: proposalCreationData,
         proposalId,
         metadata: metadata,
