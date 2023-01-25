@@ -17,9 +17,9 @@ const Governance: React.FC = () => {
     durationMinutes,
     durationHours,
     durationDays,
-    membership,
-    whitelistWallets,
     reviewCheckError,
+    earlyExecution,
+    voteReplacement,
   } = getValues();
 
   return (
@@ -42,31 +42,20 @@ const Governance: React.FC = () => {
           tagLabel={t('labels.changeableVote')}
           onChecked={() => onChange(!value)}
         >
-          {membership === 'token' && (
-            <Dl>
-              <Dt>{t('labels.minimumParticipation')}</Dt>
-              <Dd>
-                {minimumParticipation}% (
-                {Math.floor(tokenTotalSupply * (minimumParticipation / 100))}{' '}
-                {tokenSymbol})
-              </Dd>
-            </Dl>
-          )}
-          {membership === 'wallet' && (
-            <Dl>
-              <Dt>{t('labels.minimumParticipation')}</Dt>
-              <Dd>
-                {t('labels.review.minimumParticipation', {
-                  walletCount: Math.ceil(
-                    (minimumParticipation * whitelistWallets.length) / 100
-                  ),
-                })}
-              </Dd>
-            </Dl>
-          )}
           <Dl>
-            <Dt>{t('labels.minimumApproval')}</Dt>
-            <Dd>{parseInt(minimumApproval)}%</Dd>
+            <Dt>{t('labels.supportThreshold')}</Dt>
+            <Dd>&gt;{parseInt(minimumApproval)}%</Dd>
+          </Dl>
+          <Dl>
+            <Dt>{t('labels.minimumParticipation')}</Dt>
+            <Dd>
+              {minimumParticipation}% (
+              {Math.ceil(tokenTotalSupply * (value / 100)) < tokenTotalSupply
+                ? '≥'
+                : ''}
+              {Math.ceil(tokenTotalSupply * (minimumParticipation / 100))}{' '}
+              {tokenSymbol})
+            </Dd>
           </Dl>
           <Dl>
             <Dt>{t('labels.minimumDuration')}</Dt>
@@ -82,11 +71,11 @@ const Governance: React.FC = () => {
           </Dl>
           <Dl>
             <Dt>{t('labels.earlyExecution')}</Dt>
-            <Dd>{t('labels.yes')}</Dd>
+            <Dd>{earlyExecution ? t('labels.yes') : t('labels.no')}</Dd>
           </Dl>
           <Dl>
             <Dt>{t('labels.voteReplacement')}</Dt>
-            <Dd>{t('labels.no')}</Dd>
+            <Dd>{voteReplacement ? t('labels.yes') : t('labels.no')}</Dd>
           </Dl>
         </DescriptionListContainer>
       )}
