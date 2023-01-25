@@ -1,6 +1,5 @@
 import {useApolloClient} from '@apollo/client';
 import {
-  AddresslistVotingClient,
   DaoAction,
   TokenVotingClient,
   TokenVotingProposal,
@@ -55,11 +54,9 @@ import {useWallet} from 'hooks/useWallet';
 import {useWalletCanVote} from 'hooks/useWalletCanVote';
 import {CHAIN_METADATA} from 'utils/constants';
 import {
-  decodeAddMembersToAction,
   decodeMetadataToAction,
   decodeMintTokensToAction,
   decodePluginSettingsToAction,
-  decodeRemoveMembersToAction,
   decodeWithdrawToAction,
   formatUnits,
 } from 'utils/library';
@@ -68,6 +65,7 @@ import {
   getProposalStatusSteps,
   getTerminalProps,
   isErc20VotingProposal,
+  isMultisigProposal,
 } from 'utils/proposals';
 import {Action} from 'utils/types';
 
@@ -164,6 +162,12 @@ const Proposal: React.FC = () => {
   // decode metadata
   useEffect(() => {
     if (proposal) {
+      //TODO: add multisig option
+      if (isMultisigProposal(proposal)) {
+        setDecodedActions([]);
+        return;
+      }
+
       const mintTokenActions: {
         actions: Uint8Array[];
         index: number;
@@ -194,16 +198,18 @@ const Proposal: React.FC = () => {
               }
               mintTokenActions.actions.push(action.data);
               return Promise.resolve({} as Action);
-            case 'addAllowedUsers':
-              return decodeAddMembersToAction(
-                action.data,
-                pluginClient as AddresslistVotingClient
-              );
-            case 'removeAllowedUsers':
-              return decodeRemoveMembersToAction(
-                action.data,
-                pluginClient as AddresslistVotingClient
-              );
+
+            // TODO: switch to multisig
+            // case 'addAllowedUsers':
+            //   return decodeAddMembersToAction(
+            //     action.data,
+            //     pluginClient as AddresslistVotingClient
+            //   );
+            // case 'removeAllowedUsers':
+            //   return decodeRemoveMembersToAction(
+            //     action.data,
+            //     pluginClient as AddresslistVotingClient
+            //   );
             case 'updateVotingSettings':
               return decodePluginSettingsToAction(
                 action.data,
@@ -369,6 +375,9 @@ const Proposal: React.FC = () => {
 
   // whether current user has voted
   const voted = useMemo(() => {
+    // TODO: updated with multisig
+    if (isMultisigProposal(proposal)) return false;
+
     return address &&
       proposal?.votes.some(
         voter =>
@@ -377,12 +386,15 @@ const Proposal: React.FC = () => {
       )
       ? true
       : false;
-  }, [address, proposal?.votes]);
+  }, [address, proposal]);
 
   // vote button and status
   const [voteStatus, buttonLabel] = useMemo(() => {
     let voteStatus = '';
     let voteButtonLabel = '';
+
+    // TODO: update with multisig props
+    if (isMultisigProposal(proposal)) return [voteStatus, voteButtonLabel];
 
     if (!proposal?.status || !proposal?.endDate || !proposal?.startDate)
       return [voteStatus, voteButtonLabel];
@@ -432,15 +444,7 @@ const Proposal: React.FC = () => {
         break;
     }
     return [voteStatus, voteButtonLabel];
-  }, [
-    proposal?.endDate,
-    proposal?.startDate,
-    proposal?.status,
-    t,
-    voted,
-    i18n.language,
-    canVote,
-  ]);
+  }, [proposal, voted, canVote, t, i18n.language]);
 
   // vote button state and handler
   const {voteNowDisabled, onClick} = useMemo(() => {
@@ -498,6 +502,9 @@ const Proposal: React.FC = () => {
 
   // status steps for proposal
   const proposalSteps = useMemo(() => {
+    // TODO: add multisig option
+    if (isMultisigProposal(proposal)) return [];
+
     if (
       proposal?.status &&
       proposal?.startDate &&
@@ -514,16 +521,7 @@ const Proposal: React.FC = () => {
         NumberFormatter.format(proposal.executionBlockNumber),
         proposal.executionDate
       );
-  }, [
-    proposal?.creationDate,
-    proposal?.endDate,
-    proposal?.startDate,
-    proposal?.status,
-    proposal?.creationBlockNumber,
-    proposal?.executionBlockNumber,
-    proposal?.executionDate,
-    executionFailed,
-  ]);
+  }, [proposal, executionFailed]);
 
   /*************************************************
    *                     Render                    *
