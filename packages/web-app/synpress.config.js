@@ -9,7 +9,7 @@ log(`Detected synpress plugin path is: ${pluginsPath}`);
 const setupNodeEvents = require(pluginsPath);
 const fixturesFolder = `${synpressPath}/fixtures`;
 log(`Detected synpress fixtures path is: ${fixturesFolder}`);
-const supportFile = 'tests/e2e/support.js';
+const supportFile = 'tests/e2e/support.ts';
 
 module.exports = defineConfig({
   userAgent: 'synpress',
