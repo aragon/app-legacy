@@ -49,6 +49,7 @@ const Governance: React.FC = () => {
           <Dl>
             <Dt>{t('labels.minimumParticipation')}</Dt>
             <Dd>
+              {'≥'}
               {minimumParticipation}% (
               {Math.ceil(tokenTotalSupply * (value / 100)) < tokenTotalSupply
                 ? '≥'

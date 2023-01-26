@@ -113,7 +113,7 @@ const Community: React.FC = () => {
                         token: eligibilityTokenAmount,
                         symbol: tokenSymbol,
                       })
-                    : 'Anyone'}
+                    : t('createDAO.step3.eligibility.anyone.title')}
                 </Dd>
               </Dl>
             </>
