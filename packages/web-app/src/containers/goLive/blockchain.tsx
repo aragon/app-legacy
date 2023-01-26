@@ -1,10 +1,10 @@
 import React from 'react';
-import styled from 'styled-components';
-import {useTranslation} from 'react-i18next';
 import {Controller, useFormContext} from 'react-hook-form';
+import {useTranslation} from 'react-i18next';
+import styled from 'styled-components';
 
+import {Dd, DescriptionListContainer, Dl, Dt} from 'components/descriptionList';
 import {useFormStep} from 'components/fullScreenStepper';
-import {DescriptionListContainer, Dl, Dt, Dd} from 'components/descriptionList';
 
 const Blockchain: React.FC = () => {
   const {control, getValues} = useFormContext();
@@ -34,9 +34,8 @@ const Blockchain: React.FC = () => {
         >
           <Dl>
             <Dt>{t('labels.review.network')}</Dt>
-            <Dd>
-              {t('createDAO.review.network', {network: blockchain.network})}
-            </Dd>
+            {/* FIXME using code from Settings page. */}
+            <Dd>{'Testnet'}</Dd>
           </Dl>
           <Dl>
             <Dt>{t('labels.review.blockchain')}</Dt>
