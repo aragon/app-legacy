@@ -236,29 +236,25 @@ export function getErc20Results(
 
   return {
     yes: {
-      value: abbreviateTokenAmount(
-        parseFloat(
-          Number(formatUnits(yes, tokenDecimals)).toFixed(2)
-        ).toString()
-      ),
+      value: parseFloat(
+        Number(formatUnits(yes, tokenDecimals)).toFixed(2)
+      ).toString(),
       percentage: parseFloat(
         Big(Number(yes)).mul(100).div(Number(totalVotingWeight)).toFixed(2)
       ),
     },
     no: {
-      value: abbreviateTokenAmount(
-        parseFloat(Number(formatUnits(no, tokenDecimals)).toFixed(2)).toString()
-      ),
+      value: parseFloat(
+        Number(formatUnits(no, tokenDecimals)).toFixed(2)
+      ).toString(),
       percentage: parseFloat(
         Big(Number(no)).mul(100).div(Number(totalVotingWeight)).toFixed(2)
       ),
     },
     abstain: {
-      value: abbreviateTokenAmount(
-        parseFloat(
-          Number(formatUnits(abstain, tokenDecimals)).toFixed(2)
-        ).toString()
-      ),
+      value: parseFloat(
+        Number(formatUnits(abstain, tokenDecimals)).toFixed(2)
+      ).toString(),
       percentage: parseFloat(
         Big(Number(abstain)).mul(100).div(Number(totalVotingWeight)).toFixed(2)
       ),

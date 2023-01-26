@@ -127,9 +127,9 @@ export const VotingTerminal: React.FC<VotingTerminalProps> = ({
           <VStackNormal>
             <HStack>
               <VoteOption>{t('votingTerminal.yes')}</VoteOption>
-              <TokenValue>{`${results?.yes.value} ${
-                token ? token.symbol : t('labels.members')
-              }`}</TokenValue>
+              <TokenValue>{`${abbreviateTokenAmount(
+                results?.yes.value as string
+              )} ${token ? token.symbol : t('labels.members')}`}</TokenValue>
               <VotePercentage>{results?.yes.percentage}%</VotePercentage>
             </HStack>
             <LinearProgress max={100} value={results?.yes.percentage} />
@@ -138,9 +138,9 @@ export const VotingTerminal: React.FC<VotingTerminalProps> = ({
           <VStackNormal>
             <HStack>
               <VoteOption>{t('votingTerminal.no')}</VoteOption>
-              <TokenValue>{`${results?.no.value} ${
-                token ? token.symbol : t('labels.members')
-              }`}</TokenValue>
+              <TokenValue>{`${abbreviateTokenAmount(
+                results?.no.value as string
+              )} ${token ? token.symbol : t('labels.members')}`}</TokenValue>
               <VotePercentage>{results?.no.percentage}%</VotePercentage>
             </HStack>
             <LinearProgress max={100} value={results?.no.percentage} />
@@ -149,9 +149,9 @@ export const VotingTerminal: React.FC<VotingTerminalProps> = ({
           <VStackNormal>
             <HStack>
               <VoteOption>{t('votingTerminal.abstain')}</VoteOption>
-              <TokenValue>{`${results?.abstain.value} ${
-                token ? token.symbol : t('labels.members')
-              }`}</TokenValue>
+              <TokenValue>{`${abbreviateTokenAmount(
+                results?.abstain.value as string
+              )} ${token ? token.symbol : t('labels.members')}`}</TokenValue>
               <VotePercentage>{results?.abstain.percentage}%</VotePercentage>
             </HStack>
             <LinearProgress max={100} value={results?.abstain.percentage} />
