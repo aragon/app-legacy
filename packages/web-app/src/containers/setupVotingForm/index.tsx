@@ -1,3 +1,4 @@
+import {VotingSettings} from '@aragon/sdk-client';
 import {
   AlertCard,
   AlertInline,
@@ -62,10 +63,13 @@ const SetupVotingForm: React.FC = () => {
 
   const {data: daoId} = useDaoParam();
   const {data: daoDetails} = useDaoDetails(daoId!);
-  const {data: daoSettings} = usePluginSettings(
+  const {data} = usePluginSettings(
     daoDetails?.plugins[0].instanceAddress as string,
     daoDetails?.plugins[0].id as PluginTypes
   );
+
+  // TODO: fix when implementing multisig
+  const daoSettings = data as VotingSettings;
   const {days, hours, minutes} = getDHMFromSeconds(daoSettings.minDuration);
 
   // Initializes values for the form

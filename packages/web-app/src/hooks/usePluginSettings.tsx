@@ -1,8 +1,22 @@
-import {VotingSettings} from '@aragon/sdk-client';
+import {MultisigVotingSettings, VotingSettings} from '@aragon/sdk-client';
 import {useEffect, useState} from 'react';
-import {HookData} from 'utils/types';
+import {HookData, SupportedVotingSettings} from 'utils/types';
 
 import {PluginTypes, usePluginClient} from './usePluginClient';
+
+export function isTokenVotingSettings(
+  settings: SupportedVotingSettings | undefined
+): settings is VotingSettings {
+  if (!settings) return false;
+  return 'minDuration' in settings;
+}
+
+export function isMultisigVotingSettings(
+  settings: SupportedVotingSettings | undefined
+): settings is MultisigVotingSettings {
+  if (!settings) return false;
+  return !('minDuration' in settings);
+}
 
 /**
  * Retrieves plugin governance settings from SDK
@@ -13,8 +27,10 @@ import {PluginTypes, usePluginClient} from './usePluginClient';
 export function usePluginSettings(
   pluginAddress: string,
   type: PluginTypes
-): HookData<VotingSettings> {
-  const [data, setData] = useState<VotingSettings>({} as VotingSettings);
+): HookData<SupportedVotingSettings> {
+  const [data, setData] = useState<SupportedVotingSettings>(
+    {} as SupportedVotingSettings
+  );
   const [error, setError] = useState<Error>();
   const [isLoading, setIsLoading] = useState(false);
 
@@ -26,7 +42,6 @@ export function usePluginSettings(
         setIsLoading(true);
 
         const settings = await client?.methods.getVotingSettings(pluginAddress);
-        // TODO: update to include multisig
         if (settings) setData(settings as VotingSettings);
       } catch (err) {
         console.error(err);

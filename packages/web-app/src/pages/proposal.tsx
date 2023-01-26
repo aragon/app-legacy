@@ -3,6 +3,7 @@ import {
   DaoAction,
   TokenVotingClient,
   TokenVotingProposal,
+  VotingSettings,
 } from '@aragon/sdk-client';
 import {
   Breadcrumb,
@@ -80,10 +81,13 @@ const Proposal: React.FC = () => {
   const {data: dao} = useDaoParam();
   const {data: daoDetails, isLoading: detailsAreLoading} = useDaoDetails(dao);
 
-  const {data: daoSettings} = usePluginSettings(
+  const {data} = usePluginSettings(
     daoDetails?.plugins[0].instanceAddress as string,
     daoDetails?.plugins[0].id as PluginTypes
   );
+
+  // TODO: fix when integrating multisig
+  const daoSettings = data as VotingSettings;
 
   const {client} = useClient();
   const {set, get} = useCache();

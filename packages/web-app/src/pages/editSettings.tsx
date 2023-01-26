@@ -1,4 +1,4 @@
-import {VotingMode} from '@aragon/sdk-client';
+import {VotingMode, VotingSettings} from '@aragon/sdk-client';
 import {
   AlertInline,
   ButtonText,
@@ -61,10 +61,13 @@ const EditSettings: React.FC = () => {
     daoToken?.address || ''
   );
 
-  const {data: daoSettings, isLoading: settingsAreLoading} = usePluginSettings(
+  const {data, isLoading: settingsAreLoading} = usePluginSettings(
     daoDetails?.plugins[0].instanceAddress as string,
     daoDetails?.plugins[0].id as PluginTypes
   );
+
+  // TODO: fix when integrating multisig
+  const daoSettings = data as VotingSettings;
 
   const {days, hours, minutes} = getDHMFromSeconds(daoSettings.minDuration);
 
