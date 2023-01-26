@@ -154,12 +154,14 @@ const Proposal: React.FC = () => {
    *                     Hooks                     *
    *************************************************/
 
+  // set editor data
   useEffect(() => {
     if (proposal && editor) {
       editor.commands.setContent(proposal.metadata.description, true);
     }
   }, [editor, proposal]);
 
+  // decode metadata
   useEffect(() => {
     if (proposal) {
       const mintTokenActions: {
@@ -246,6 +248,7 @@ const Proposal: React.FC = () => {
       set('proposalStatus', proposal.status);
   }, [get, proposal, set]);
 
+  // login journey
   useEffect(() => {
     // was not logged in but now logged in
     if (statusRef.current.wasNotLoggedIn && isConnected) {
@@ -282,13 +285,6 @@ const Proposal: React.FC = () => {
     isOnWrongNetwork,
     statusRef.current.wasOnWrongNetwork,
   ]);
-
-  useEffect(() => {
-    if (voteSubmitted) {
-      setTerminalTab('voters');
-      setVotingInProcess(false);
-    }
-  }, [voteSubmitted]);
 
   // show voter tab once user has voted
   useEffect(() => {
@@ -298,54 +294,12 @@ const Proposal: React.FC = () => {
     }
   }, [voteSubmitted]);
 
-  // caches the status for breadcrumb
-  useEffect(() => {
-    if (proposal && proposal.status !== get('proposalStatus'))
-      set('proposalStatus', proposal.status);
-  }, [get, proposal, set]);
-
-  useEffect(() => {
-    // was not logged in but now logged in
-    if (statusRef.current.wasNotLoggedIn && isConnected) {
-      // reset ref
-      statusRef.current.wasNotLoggedIn = false;
-
-      // logged out technically wrong network
-      statusRef.current.wasOnWrongNetwork = true;
-
-      // throw network modal
-      if (isOnWrongNetwork) {
-        open('network');
-      }
-    }
-  }, [isConnected, isOnWrongNetwork, open]);
-
-  useEffect(() => {
-    // all conditions unmet close voting in process
-    if (isOnWrongNetwork || !isConnected || !canVote) {
-      setVotingInProcess(false);
-    }
-
-    // was on the wrong network but now on the right one
-    if (statusRef.current.wasOnWrongNetwork && !isOnWrongNetwork) {
-      // reset ref
-      statusRef.current.wasOnWrongNetwork = false;
-
-      // show voting in process
-      if (canVote) setVotingInProcess(true);
-    }
-  }, [
-    canVote,
-    isConnected,
-    isOnWrongNetwork,
-    statusRef.current.wasOnWrongNetwork,
-  ]);
-
   // terminal props
   const mappedProps = useMemo(() => {
     if (proposal) return getTerminalProps(t, proposal, address);
   }, [address, proposal, t]);
 
+  // majority voting early execution
   const canExecuteEarly = useCallback(() => {
     if (
       !isErc20VotingProposal(proposal) || // proposal is not token-based
@@ -394,6 +348,7 @@ const Proposal: React.FC = () => {
     mappedProps?.results,
   ]);
 
+  // proposal execution status
   const executionStatus = useMemo(() => {
     switch (proposal?.status) {
       case 'Succeeded':
