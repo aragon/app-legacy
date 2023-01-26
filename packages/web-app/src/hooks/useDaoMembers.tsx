@@ -9,29 +9,29 @@ import {HookData} from 'utils/types';
 import {useDaoToken} from './useDaoToken';
 import {PluginTypes, usePluginClient} from './usePluginClient';
 
-export type WalletMember = {
+export type MultisigMember = {
   address: string;
 };
 
-export type BalanceMember = WalletMember & {
+export type BalanceMember = MultisigMember & {
   balance: number;
 };
 
 export type DaoMembers = {
-  members: WalletMember[] | BalanceMember[];
-  filteredMembers: WalletMember[] | BalanceMember[];
+  members: MultisigMember[] | BalanceMember[];
+  filteredMembers: MultisigMember[] | BalanceMember[];
   daoToken?: Erc20TokenDetails;
 };
 
 // this type guard will need to evolve when there are more types
 export function isWalletListMember(
-  member: BalanceMember | WalletMember
-): member is WalletMember {
+  member: BalanceMember | MultisigMember
+): member is MultisigMember {
   return !('address' in member);
 }
 
 export function isBalanceMember(
-  member: BalanceMember | WalletMember
+  member: BalanceMember | MultisigMember
 ): member is BalanceMember {
   return 'balance' in member;
 }
@@ -53,10 +53,10 @@ export const useDaoMembers = (
   pluginType?: PluginTypes,
   searchTerm?: string
 ): HookData<DaoMembers> => {
-  const [data, setData] = useState<BalanceMember[] | WalletMember[]>([]);
+  const [data, setData] = useState<BalanceMember[] | MultisigMember[]>([]);
   const [rawMembers, setRawMembers] = useState<string[]>();
   const [filteredData, setFilteredData] = useState<
-    BalanceMember[] | WalletMember[]
+    BalanceMember[] | MultisigMember[]
   >([]);
   const [error, setError] = useState<Error>();
   const [isLoading, setIsLoading] = useState(false);
@@ -76,13 +76,13 @@ export const useDaoMembers = (
         setIsLoading(true);
 
         if (!pluginType) {
-          setData([] as BalanceMember[] | WalletMember[]);
+          setData([] as BalanceMember[] | MultisigMember[]);
           return;
         }
         const response = await client?.methods.getMembers(pluginAddress);
 
         if (!response) {
-          setData([] as BalanceMember[] | WalletMember[]);
+          setData([] as BalanceMember[] | MultisigMember[]);
           return;
         }
 
@@ -127,7 +127,7 @@ export const useDaoMembers = (
             } as BalanceMember)
         );
       } else {
-        members = rawMembers.map(m => ({address: m} as WalletMember));
+        members = rawMembers.map(m => ({address: m} as MultisigMember));
       }
 
       members.sort(sortMembers);
@@ -148,7 +148,7 @@ export const useDaoMembers = (
             )
           )
         : setFilteredData(
-            (data as WalletMember[]).filter(d =>
+            (data as MultisigMember[]).filter(d =>
               d.address.toLowerCase().includes(searchTerm.toLowerCase())
             )
           );
@@ -166,12 +166,12 @@ export const useDaoMembers = (
   };
 };
 
-function sortMembers<T extends BalanceMember | WalletMember>(a: T, b: T) {
+function sortMembers<T extends BalanceMember | MultisigMember>(a: T, b: T) {
   if (isBalanceMember(a)) {
     if (a.balance === (b as BalanceMember).balance) return 0;
     return a.balance > (b as BalanceMember).balance ? 1 : -1;
   } else {
-    if (a.address === (b as WalletMember).address) return 0;
-    return a.address > (b as WalletMember).address ? 1 : -1;
+    if (a.address === (b as MultisigMember).address) return 0;
+    return a.address > (b as MultisigMember).address ? 1 : -1;
   }
 }
