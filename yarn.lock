@@ -179,10 +179,10 @@
     "@web3-react/types" "^6.0.7"
     tiny-warning "^1.0.3"
 
-"@aragon/sdk-client@^0.18.0-alpha":
-  version "0.18.0-alpha"
-  resolved "https://registry.yarnpkg.com/@aragon/sdk-client/-/sdk-client-0.18.0-alpha.tgz#694aafb15fada7765c1844aff758326ed3ff46f9"
-  integrity sha512-4hiqldvNCAsv8sAhR7wmzewC0jMl4kUfkg2qu5Po7BtI8JRj80FKJQfQ7JuK1KrJZGRjIJ8ROg2S2xHXesVBXA==
+"@aragon/sdk-client@^0.19.0-alpha":
+  version "0.19.0-alpha"
+  resolved "https://registry.yarnpkg.com/@aragon/sdk-client/-/sdk-client-0.19.0-alpha.tgz#49958d01784941f62a25738734c99850df494467"
+  integrity sha512-jJiNDVHbChPpKkfw790BNtt4QsQ6oLn6d1pa429BZCBYlxhP3YeaC1R8A8Pcla5JO3XpdGYkaFoKx+1TQVjh/Q==
   dependencies:
     "@aragon/core-contracts-ethers" "^0.6.0-alpha"
     "@aragon/sdk-common" "^0.9.2-alpha"
