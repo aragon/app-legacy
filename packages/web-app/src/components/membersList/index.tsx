@@ -8,13 +8,13 @@ import {useSpecificProvider} from 'context/providers';
 import {
   BalanceMember,
   isBalanceMember,
-  WalletMember,
+  MultisigMember,
 } from 'hooks/useDaoMembers';
 import {CHAIN_METADATA} from 'utils/constants';
 import {getTokenInfo} from 'utils/tokens';
 
 type MembersListProps = {
-  members: Array<BalanceMember | WalletMember>;
+  members: Array<BalanceMember | MultisigMember>;
   token?: Erc20TokenDetails;
 };
 
