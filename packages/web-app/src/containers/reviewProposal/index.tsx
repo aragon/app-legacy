@@ -1,4 +1,4 @@
-import {InstalledPluginListItem} from '@aragon/sdk-client';
+import {InstalledPluginListItem, VotingSettings} from '@aragon/sdk-client';
 import {Link, Tag} from '@aragon/ui-components';
 import TipTapLink from '@tiptap/extension-link';
 import {EditorContent, useEditor} from '@tiptap/react';
@@ -56,10 +56,10 @@ const ReviewProposal: React.FC<ReviewProposalProps> = ({
     data: {members, daoToken},
   } = useDaoMembers(pluginAddress, pluginType as PluginTypes);
 
-  const {data: daoSettings} = usePluginSettings(
-    pluginAddress,
-    pluginType as PluginTypes
-  );
+  const {data} = usePluginSettings(pluginAddress, pluginType as PluginTypes);
+
+  // TODO: fix when implementing multisig
+  const daoSettings = data as VotingSettings;
 
   const {getValues, setValue} = useFormContext();
   const [minParticipation, setMinParticipation] = useState('');

@@ -1,4 +1,4 @@
-import {VotingMode} from '@aragon/sdk-client';
+import {VotingMode, VotingSettings} from '@aragon/sdk-client';
 import {
   AvatarDao,
   ButtonGroup,
@@ -32,10 +32,13 @@ const CompareSettings: React.FC = () => {
   const {data: daoDetails, isLoading: areDetailsLoading} = useDaoDetails(
     daoId!
   );
-  const {data: daoSettings, isLoading: areSettingsLoading} = usePluginSettings(
+  const {data, isLoading: areSettingsLoading} = usePluginSettings(
     daoDetails?.plugins[0].instanceAddress as string,
     daoDetails?.plugins[0].id as PluginTypes
   );
+
+  const daoSettings = data as VotingSettings;
+
   const {data: daoToken, isLoading: tokensAreLoading} = useDaoToken(
     daoDetails?.plugins?.[0]?.instanceAddress || ''
   );

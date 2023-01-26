@@ -6,6 +6,7 @@ import {
   ProposalCreationSteps,
   ProposalMetadata,
   TokenVotingClient,
+  VotingSettings,
 } from '@aragon/sdk-client';
 import React, {useCallback, useEffect, useMemo, useState} from 'react';
 import {useFormContext} from 'react-hook-form';
@@ -335,7 +336,9 @@ const CreateProposalProvider: React.FC<Props> = ({
           pluginType === 'token-voting.plugin.dao.eth' && tokenSupply
             ? tokenSupply
             : members.length,
-        pluginSettings,
+
+        // TODO: fix when implementing multisig
+        pluginSettings: pluginSettings as VotingSettings,
         proposalParams: proposalCreationData,
         proposalId,
         metadata: metadata,

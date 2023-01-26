@@ -1,4 +1,4 @@
-import {VotingMode} from '@aragon/sdk-client';
+import {VotingMode, VotingSettings} from '@aragon/sdk-client';
 import {
   AlertInline,
   AvatarDao,
@@ -40,10 +40,14 @@ const Settings: React.FC = () => {
   const {data: daoDetails, isLoading: detailsAreLoading} = useDaoDetails(
     daoId!
   );
-  const {data: daoSettings, isLoading: settingsAreLoading} = usePluginSettings(
+  const {data, isLoading: settingsAreLoading} = usePluginSettings(
     daoDetails?.plugins[0].instanceAddress as string,
     daoDetails?.plugins[0].id as PluginTypes
   );
+
+  // TODO fix when implementing Multisig
+  const daoSettings = data as VotingSettings;
+
   const {data: daoMembers, isLoading: MembersAreLoading} = useDaoMembers(
     daoDetails?.plugins?.[0]?.instanceAddress || '',
     (daoDetails?.plugins?.[0]?.id as PluginTypes) || undefined

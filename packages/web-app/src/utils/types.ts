@@ -3,6 +3,7 @@ import {
   Erc20TokenDetails,
   MultisigProposal,
   MultisigProposalListItem,
+  MultisigVotingSettings,
   TokenVotingProposal,
   TokenVotingProposalListItem,
   VoteValues,
@@ -164,6 +165,8 @@ export type ProposalListItem =
   | TokenVotingProposalListItem
   | MultisigProposalListItem;
 export type SupportedProposals = DetailedProposal | ProposalListItem;
+
+export type SupportedVotingSettings = MultisigVotingSettings | VotingSettings;
 
 /* ACTION TYPES ============================================================= */
 

@@ -1,3 +1,4 @@
+import {VotingSettings} from '@aragon/sdk-client';
 import React, {useCallback, useEffect, useRef} from 'react';
 import {Outlet} from 'react-router-dom';
 
@@ -22,10 +23,14 @@ const ProtectedRoute: React.FC = () => {
   const {data: daoDetails, isLoading: detailsAreLoading} = useDaoDetails(
     dao || ''
   );
-  const {data: daoSettings, isLoading: settingsAreLoading} = usePluginSettings(
+  const {data, isLoading: settingsAreLoading} = usePluginSettings(
     daoDetails?.plugins[0].instanceAddress as string,
     daoDetails?.plugins[0].id as PluginTypes
   );
+
+  // TODO: fix when implementing multisig
+  const daoSettings = data as VotingSettings;
+
   const {open, close} = useGlobalModalContext();
   const {
     data: {daoToken, filteredMembers},
