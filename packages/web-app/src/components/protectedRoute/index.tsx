@@ -4,16 +4,17 @@ import {Outlet} from 'react-router-dom';
 import {Loading} from 'components/temporary';
 import {GatingMenu} from 'containers/gatingMenu';
 import {useGlobalModalContext} from 'context/globalModals';
+import {useNetwork} from 'context/network';
+import {useSpecificProvider} from 'context/providers';
 import {useDaoDetails} from 'hooks/useDaoDetails';
 import {useDaoMembers} from 'hooks/useDaoMembers';
 import {useDaoParam} from 'hooks/useDaoParam';
 import {PluginTypes} from 'hooks/usePluginClient';
-import {useWallet} from 'hooks/useWallet';
-import {fetchBalance} from 'utils/tokens';
-import {CHAIN_METADATA} from 'utils/constants';
-import {useSpecificProvider} from 'context/providers';
-import {useNetwork} from 'context/network';
 import {usePluginSettings} from 'hooks/usePluginSettings';
+import {useWallet} from 'hooks/useWallet';
+import {CHAIN_METADATA} from 'utils/constants';
+import {formatUnits} from 'utils/library';
+import {fetchBalance} from 'utils/tokens';
 
 const ProtectedRoute: React.FC = () => {
   const {data: dao, isLoading: paramIsLoading} = useDaoParam();
@@ -48,10 +49,13 @@ const ProtectedRoute: React.FC = () => {
         provider,
         CHAIN_METADATA[network].nativeCurrency
       );
-      if (
-        daoSettings.minProposerVotingPower &&
-        Number(balance) < daoSettings.minProposerVotingPower
-      ) {
+      const minProposalThreshold = Number(
+        formatUnits(
+          daoSettings.minProposerVotingPower || 0,
+          daoToken?.decimals || 18
+        )
+      );
+      if (minProposalThreshold && Number(balance) < minProposalThreshold) {
         open('gating');
       } else close('gating');
     }
