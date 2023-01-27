@@ -91,8 +91,7 @@ const CompareSettings: React.FC = () => {
       links: daoLinks.filter((l: ProposalResource) => l.name && l.url),
       approvalThreshold: `>${minimumApproval}%`,
       minParticipation: `≥${minimumParticipation}% (≥${
-        (parseInt(minimumParticipation) * (tokenTotalSupply.formatted || 0)) /
-        100
+        (parseInt(minimumParticipation) * (tokenTotalSupply || 0)) / 100
       } ${daoToken?.symbol})`,
       days: durationDays,
       hours: durationMinutes,
