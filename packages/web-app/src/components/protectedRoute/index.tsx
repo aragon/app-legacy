@@ -75,6 +75,7 @@ const ProtectedRoute: React.FC = () => {
     provider,
   ]);
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const checkIfAllowlistedMember = useCallback(() => {
     if (filteredMembers.length === 0 && !MembershipIsLoading) open('gating');
     else close('gating');
@@ -103,19 +104,13 @@ const ProtectedRoute: React.FC = () => {
       if (daoDetails?.plugins[0].id === 'token-voting.plugin.dao.eth') {
         checkIfTokenBasedMember();
       } else {
-        checkIfAllowlistedMember();
+        // checkIfAllowlistedMember();
       }
 
       // user has gone through login flow allow them to log out in peace
       userWentThroughLoginFlow.current = true;
     }
-  }, [
-    address,
-    checkIfAllowlistedMember,
-    checkIfTokenBasedMember,
-    daoDetails?.plugins,
-    isOnWrongNetwork,
-  ]);
+  }, [address, checkIfTokenBasedMember, daoDetails?.plugins, isOnWrongNetwork]);
 
   useEffect(() => {
     // need to do this to close the modal upon user login
