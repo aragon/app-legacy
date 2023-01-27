@@ -439,7 +439,7 @@ const ProposeSettingWrapper: React.FC<Props> = ({
         daoName: daoDetails?.metadata.name,
         daoToken,
         totalVotingWeight:
-          pluginType === 'token-voting.plugin.dao.eth' && tokenSupply
+          pluginType === 'token-voting.plugin.dao.eth' && tokenSupply?.formatted
             ? tokenSupply.formatted
             : members.length,
         pluginSettings,
