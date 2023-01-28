@@ -71,6 +71,9 @@
     "startDate": "Start date",
     "endDate": "End date",
     "days": "Days",
+    "date": "Date",
+    "time": "Time",
+    "timezone": "Your Timezone",
     "dateTime": "Date + Time",
     "resourcesHelptext": "Share external resources here.",
     "submitWithdraw": "Publish Proposal",
@@ -510,6 +513,7 @@
         "startDescription": "Define when a proposal should be active to receive approvals. If now is selected, the proposal is immediately active after publishing.",
         "expiration": "Expiration Time",
         "expirationDescription": "Define when a proposal should get expired, if the minimum approval threshold is never reached until then. After the expiration time, there is no way to approve or execute the proposal.",
+        "expirationAlert": "It’s recommended to have an expiration time of five days, so you have a clean proposal list.",
         "now": "Now",
         "dateTime": "Specific Date + Time",
         "duration": "Duration"
