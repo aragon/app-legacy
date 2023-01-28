@@ -722,13 +722,14 @@ export function getVoteStatusAndLabel(
   return [voteStatus, voteButtonLabel];
 }
 
-export function checkIfCanExecuteEarly(
-  missingParticipation: number,
-  proposal: TokenVotingProposal,
-  results: ProposalVoteResults,
-  votingMode: VotingMode
+export function isEarlyExecutable(
+  missingParticipation: number | undefined,
+  proposal: DetailedProposal | undefined,
+  results: ProposalVoteResults | undefined,
+  votingMode: VotingMode | undefined
 ): boolean {
   if (
+    missingParticipation === undefined ||
     votingMode !== VotingMode.EARLY_EXECUTION || // early execution disabled
     !isErc20VotingProposal(proposal) || // proposal is not token-based
     !results // no mapped data

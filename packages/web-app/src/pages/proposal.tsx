@@ -54,7 +54,7 @@ import {
 } from 'utils/library';
 import {NotFound} from 'utils/paths';
 import {
-  checkIfCanExecuteEarly,
+  isEarlyExecutable,
   getProposalExecutionStatus,
   getProposalStatusSteps,
   getTerminalProps,
@@ -300,26 +300,21 @@ const Proposal: React.FC = () => {
   }, [address, proposal, t]);
 
   // get early execution status
-  const canExecuteEarly = useMemo(() => {
-    if (
-      mappedProps?.missingParticipation &&
-      isErc20VotingProposal(proposal) &&
-      mappedProps?.results &&
-      daoSettings?.votingMode
-    ) {
-      return checkIfCanExecuteEarly(
+  const canExecuteEarly = useMemo(
+    () =>
+      isEarlyExecutable(
         mappedProps?.missingParticipation,
         proposal,
         mappedProps?.results,
         daoSettings.votingMode
-      );
-    } else return false;
-  }, [
-    daoSettings?.votingMode,
-    proposal,
-    mappedProps?.missingParticipation,
-    mappedProps?.results,
-  ]);
+      ),
+    [
+      daoSettings?.votingMode,
+      proposal,
+      mappedProps?.missingParticipation,
+      mappedProps?.results,
+    ]
+  );
 
   // proposal execution status
   const executionStatus = useMemo(
