@@ -1,9 +1,10 @@
-import {Label, CheckboxListItem, AlertInline} from '@aragon/ui-components';
-import Duration from 'containers/duration';
+import {AlertInline, CheckboxListItem, Label} from '@aragon/ui-components';
 import React from 'react';
-import {useFormContext, Controller} from 'react-hook-form';
+import {Controller, useFormContext} from 'react-hook-form';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
+
+import Duration from 'containers/duration';
 import {FormSection} from '.';
 
 const SetupMultisigVotingForm: React.FC = () => {
@@ -18,20 +19,20 @@ const SetupMultisigVotingForm: React.FC = () => {
   }
 
   const startItems = [
-    {label: t('newWithdraw.setupVoting.mulitisg.now'), selectValue: 'now'},
+    {label: t('newWithdraw.setupVoting.multisig.now'), selectValue: 'now'},
     {
-      label: t('newWithdraw.setupVoting.mulitisg.dateTime'),
+      label: t('newWithdraw.setupVoting.multisig.dateTime'),
       selectValue: 'dateTime',
     },
   ];
 
   const expirationItems = [
     {
-      label: t('newWithdraw.setupVoting.mulitisg.duration'),
+      label: t('newWithdraw.setupVoting.multisig.duration'),
       selectValue: 'duration',
     },
     {
-      label: t('newWithdraw.setupVoting.mulitisg.dateTime'),
+      label: t('newWithdraw.setupVoting.multisig.dateTime'),
       selectValue: 'dateTime',
     },
   ];
@@ -42,27 +43,27 @@ const SetupMultisigVotingForm: React.FC = () => {
       <FormSection>
         <Label
           label={t('newWithdraw.setupVoting.optionLabel.title')}
-          helpText={t('newWithdraw.setupVoting.mulitisg.optionDescription')}
+          helpText={t('newWithdraw.setupVoting.multisig.optionDescription')}
         />
         <CheckboxListItem
-          label={t('newWithdraw.setupVoting.mulitisg.votingOption.label')}
+          label={t('newWithdraw.setupVoting.multisig.votingOption.label')}
           type="active"
           helptext={t(
-            'newWithdraw.setupVoting.mulitisg.votingOption.description'
+            'newWithdraw.setupVoting.multisig.votingOption.description'
           )}
           multiSelect={false}
         />
         <AlertInline
           mode="neutral"
-          label={t('newWithdraw.setupVoting.mulitisg.votingOption.alert')}
+          label={t('newWithdraw.setupVoting.multisig.votingOption.alert')}
         />
       </FormSection>
 
       {/* Start time */}
       <FormSection>
         <Label
-          label={t('newWithdraw.setupVoting.mulitisg.startLabel')}
-          helpText={t('newWithdraw.setupVoting.mulitisg.startDescription')}
+          label={t('newWithdraw.setupVoting.multisig.startLabel')}
+          helpText={t('newWithdraw.setupVoting.multisig.startDescription')}
         />
         <Controller
           name="startNow"
@@ -84,8 +85,8 @@ const SetupMultisigVotingForm: React.FC = () => {
       {/* Expiration time */}
       <FormSection>
         <Label
-          label={t('newWithdraw.setupVoting.mulitisg.expiration')}
-          helpText={t('newWithdraw.setupVoting.mulitisg.expirationDescription')}
+          label={t('newWithdraw.setupVoting.multisig.expiration')}
+          helpText={t('newWithdraw.setupVoting.multisig.expirationDescription')}
         />
         <Controller
           name="expirationDuration"

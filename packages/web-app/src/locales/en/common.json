@@ -499,7 +499,7 @@
         "title": "Yes, No, or Abstain",
         "helpText": "Let users vote for or against."
       },
-      "mulitisg": {
+      "multisig": {
         "optionDescription": "These are the following options for voting on this proposition.",
         "votingOption": {
           "label": "Approve",
