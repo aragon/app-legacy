@@ -222,7 +222,7 @@ const DurationContainer = styled.div.attrs({
 })``;
 
 const TimeLabelWrapper = styled.div.attrs({
-  className: 'w-1/2 tablet:w-full space-y-0.5',
+  className: 'tablet:w-full space-y-0.5',
 })``;
 
 const TimeLabel = styled.span.attrs({

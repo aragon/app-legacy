@@ -159,7 +159,7 @@ const ToggleCheckList: React.FC<Props> = ({onChange, items, value}) => {
 };
 
 const ToggleCheckListContainer = styled.div.attrs({
-  className: 'flex gap-x-3',
+  className: 'flex flex-col gap-y-1.5 desktop:flex-row desktop:gap-x-3',
 })``;
 
 const ToggleCheckListItemWrapper = styled.div.attrs({className: 'flex-1'})``;
