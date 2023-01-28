@@ -13,14 +13,11 @@ import {Controller, useFormContext, useWatch} from 'react-hook-form';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 
+import {VotingSettings} from '@aragon/sdk-client';
 import {SimplifiedTimeInput} from 'components/inputTime/inputTime';
 import UtcMenu from 'containers/utcMenu';
 import {timezones} from 'containers/utcMenu/utcData';
 import {useGlobalModalContext} from 'context/globalModals';
-import {useDaoDetails} from 'hooks/useDaoDetails';
-import {useDaoParam} from 'hooks/useDaoParam';
-import {PluginTypes} from 'hooks/usePluginClient';
-import {usePluginSettings} from 'hooks/usePluginSettings';
 import {
   daysToMills,
   getCanonicalDate,
@@ -34,11 +31,14 @@ import {
 import {StringIndexed} from 'utils/types';
 import {DateModeSwitch} from './dateModeSwitch';
 import {DateTimeErrors} from './dateTimeErrors';
-import {VotingSettings} from '@aragon/sdk-client';
 
 type UtcInstance = 'first' | 'second';
 
-const SetupTokenVotingForm: React.FC = () => {
+type Props = {
+  pluginSettings: VotingSettings;
+};
+
+const SetupTokenVotingForm: React.FC<Props> = ({pluginSettings}) => {
   const {t} = useTranslation();
   const {open} = useGlobalModalContext();
   const {
@@ -61,15 +61,7 @@ const SetupTokenVotingForm: React.FC = () => {
   const [utcStart, setUtcStart] = useState('');
   const [utcEnd, setUtcEnd] = useState('');
 
-  const {data: daoId} = useDaoParam();
-  const {data: daoDetails} = useDaoDetails(daoId!);
-  const {data} = usePluginSettings(
-    daoDetails?.plugins[0].instanceAddress as string,
-    daoDetails?.plugins[0].id as PluginTypes
-  );
-
-  const daoSettings = data as VotingSettings;
-  const {days, hours, minutes} = getDHMFromSeconds(daoSettings.minDuration);
+  const {days, hours, minutes} = getDHMFromSeconds(pluginSettings.minDuration);
 
   // Initializes values for the form
   // This is done here rather than in the defaulValues object as time can
@@ -96,7 +88,7 @@ const SetupTokenVotingForm: React.FC = () => {
   // if the dates violate any of the following constraints:
   //   - The start date is in the past
   //   - The end date is before the start date
-  // If the form is invalid, errors are set for the repsective group of fields.
+  // If the form is invalid, errors are set for the respective group of fields.
   const dateTimeValidator = useCallback(() => {
     //build start date/time in utc mills
     const sDate = getValues('startDate');
@@ -176,12 +168,12 @@ const SetupTokenVotingForm: React.FC = () => {
   }, [utcEnd, dateTimeValidator]); //eslint-disable-line
 
   useEffect(() => {
-    if (!daoSettings.minDuration) {
+    if (!pluginSettings.minDuration) {
       setError('areSettingsLoading', {});
     } else {
       clearErrors('areSettingsLoading');
     }
-  }, [clearErrors, daoSettings.minDuration, setError]);
+  }, [clearErrors, pluginSettings.minDuration, setError]);
 
   // sets the UTC values for the start and end date/time
   const tzSelector = (tz: string) => {
@@ -278,7 +270,7 @@ const SetupTokenVotingForm: React.FC = () => {
       </FormSection>
 
       {/* End date */}
-      {daoSettings.minDuration && (
+      {pluginSettings.minDuration && (
         <FormSection>
           <Label label={t('labels.endDate')} />
           {endDateType === 'duration' && days && days >= 1 ? (

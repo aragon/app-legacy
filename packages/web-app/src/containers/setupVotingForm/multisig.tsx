@@ -4,6 +4,7 @@ import {Controller, useFormContext} from 'react-hook-form';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 
+import DateTimeSelector from 'containers/dateTimeSelector';
 import Duration from 'containers/duration';
 import {FormSection} from '.';
 
@@ -11,18 +12,11 @@ const SetupMultisigVotingForm: React.FC = () => {
   const {t} = useTranslation();
   const {control} = useFormContext();
 
-  function handleCheckBoxToggled(
-    changeValue: string,
-    onChange: (value: string) => void
-  ) {
-    onChange(changeValue);
-  }
-
   const startItems = [
     {label: t('newWithdraw.setupVoting.multisig.now'), selectValue: 'now'},
     {
       label: t('newWithdraw.setupVoting.multisig.dateTime'),
-      selectValue: 'dateTime',
+      selectValue: 'date',
     },
   ];
 
@@ -33,10 +27,23 @@ const SetupMultisigVotingForm: React.FC = () => {
     },
     {
       label: t('newWithdraw.setupVoting.multisig.dateTime'),
-      selectValue: 'dateTime',
+      selectValue: 'date',
     },
   ];
 
+  /*************************************************
+   *                   Handlers                    *
+   *************************************************/
+  function handleCheckBoxToggled(
+    changeValue: string,
+    onChange: (value: string) => void
+  ) {
+    onChange(changeValue);
+  }
+
+  /*************************************************
+   *                      Render                   *
+   *************************************************/
   return (
     <>
       {/* Voting Type Selection  */}
@@ -71,13 +78,16 @@ const SetupMultisigVotingForm: React.FC = () => {
           control={control}
           defaultValue="now"
           render={({field: {onChange, value}}) => (
-            <ToggleCheckList
-              items={startItems}
-              value={value}
-              onChange={changeValue =>
-                handleCheckBoxToggled(changeValue, onChange)
-              }
-            />
+            <>
+              <ToggleCheckList
+                items={startItems}
+                value={value}
+                onChange={changeValue =>
+                  handleCheckBoxToggled(changeValue, onChange)
+                }
+              />
+              {value === 'date' && <DateTimeSelector />}
+            </>
           )}
         />
       </FormSection>
@@ -94,17 +104,26 @@ const SetupMultisigVotingForm: React.FC = () => {
           control={control}
           defaultValue="duration"
           render={({field: {onChange, value}}) => (
-            <ToggleCheckList
-              value={value}
-              items={expirationItems}
-              onChange={changeValue =>
-                handleCheckBoxToggled(changeValue, onChange)
-              }
-            />
+            <>
+              <ToggleCheckList
+                value={value}
+                items={expirationItems}
+                onChange={changeValue =>
+                  handleCheckBoxToggled(changeValue, onChange)
+                }
+              />
+              {value === 'duration' ? (
+                <Duration name="expiration" />
+              ) : (
+                <DateTimeSelector />
+              )}
+            </>
           )}
         />
-
-        <Duration name="expiration" />
+        <AlertInline
+          mode="neutral"
+          label={t('newWithdraw.setupVoting.multisig.expirationAlert')}
+        />
       </FormSection>
     </>
   );

@@ -1,70 +1,56 @@
-import {VotingSettings} from '@aragon/sdk-client';
-import {AlertInline, CheckboxListItem, Label} from '@aragon/ui-components';
-import {toDate} from 'date-fns-tz';
-import React, {useCallback, useEffect, useState} from 'react';
-import {Controller, useFormContext, useWatch} from 'react-hook-form';
-import {useTranslation} from 'react-i18next';
+import React from 'react';
 import styled from 'styled-components';
 
-import Duration from 'containers/duration';
-import {timezones} from 'containers/utcMenu/utcData';
-import {useGlobalModalContext} from 'context/globalModals';
+import {Loading} from 'components/temporary';
 import {useDaoDetails} from 'hooks/useDaoDetails';
 import {useDaoParam} from 'hooks/useDaoParam';
 import {PluginTypes} from 'hooks/usePluginClient';
-import {usePluginSettings} from 'hooks/usePluginSettings';
 import {
-  daysToMills,
-  getCanonicalUtcOffset,
-  getDHMFromSeconds,
-  getFormattedUtcOffset,
-  hoursToMills,
-  minutesToMills,
-} from 'utils/date';
+  isMultisigVotingSettings,
+  isTokenVotingSettings,
+  usePluginSettings,
+} from 'hooks/usePluginSettings';
+import {customJSONReplacer} from 'utils/library';
 import {StringIndexed} from 'utils/types';
 import SetupMultisigVotingForm from './multisig';
-
-type UtcInstance = 'first' | 'second';
+import SetupTokenVotingForm from './tokenVoting';
 
 const SetupVotingForm: React.FC = () => {
-  const {t} = useTranslation();
-  const {open} = useGlobalModalContext();
-  const {
-    control,
-    setValue,
-    getValues,
-    setError,
-    formState,
-    clearErrors,
-    resetField,
-  } = useFormContext();
-  const endDateType = useWatch({
-    name: 'durationSwitch',
-  });
-
   /*************************************************
-   *                    STATE & EFFECT             *
+   *                    STATE                      *
    *************************************************/
-  const [utcInstance, setUtcInstance] = useState<UtcInstance>('first');
-  const [utcStart, setUtcStart] = useState('');
-  const [utcEnd, setUtcEnd] = useState('');
-
   const {data: daoId} = useDaoParam();
-  const {data: daoDetails} = useDaoDetails(daoId!);
-  const {data} = usePluginSettings(
+
+  const {data: daoDetails, isLoading: detailsLoading} = useDaoDetails(daoId!);
+  const {data: pluginSettings, isLoading: settingsLoading} = usePluginSettings(
     daoDetails?.plugins[0].instanceAddress as string,
     daoDetails?.plugins[0].id as PluginTypes
   );
 
-  // TODO: fix when implementing multisig
-  const daoSettings = data as VotingSettings;
-  const {days, hours, minutes} = getDHMFromSeconds(daoSettings.minDuration);
-
   /*************************************************
    *                    Render                     *
    *************************************************/
+  // Data loading
+  if (
+    detailsLoading ||
+    settingsLoading ||
+    // TODO: for whatever reason we don't allow plugin settings to be
+    // undefined. Creating a task to allow pluginSettings to be undefined
+    // so we don't make unnecessary stringify calls.
+    JSON.stringify(pluginSettings, customJSONReplacer) === '{}'
+  ) {
+    return <Loading />;
+  }
 
-  return <SetupMultisigVotingForm />;
+  // Display plugin screens
+  if (isTokenVotingSettings(pluginSettings)) {
+    return <SetupTokenVotingForm pluginSettings={pluginSettings} />;
+  } else if (isMultisigVotingSettings(pluginSettings)) {
+    return <SetupMultisigVotingForm />;
+  }
+
+  // TODO: We need an error output/boundary for when a network error occurs
+  return null;
 };
 
 export default SetupVotingForm;
