@@ -1,13 +1,14 @@
-import {i18n} from '../../i18n.config';
+import {ProposalStatus} from '@aragon/sdk-client';
 import {
   format,
-  formatRelative,
   formatDistance,
   formatDistanceToNow,
+  formatRelative,
   Locale,
 } from 'date-fns';
 import * as Locales from 'date-fns/locale';
-import {ProposalStatus} from '@aragon/sdk-client';
+import {i18n} from '../../i18n.config';
+import {HOURS_IN_DAY, MINS_IN_DAY, MINS_IN_HOUR} from './constants';
 
 export const KNOWN_FORMATS = {
   standard: 'MMM dd yyyy HH:mm', // This is our standard used for showing dates.
@@ -289,4 +290,22 @@ export function formatTime(time: number | string) {
   } catch (e) {
     return time;
   }
+}
+
+export function getDaysHoursMins(
+  value: number,
+  period: 'hours' | 'mins' = 'mins'
+) {
+  if (period === 'mins') {
+    return {
+      days: Math.floor(value / MINS_IN_DAY),
+      hours: Math.floor((value / MINS_IN_HOUR) % HOURS_IN_DAY),
+      mins: value % MINS_IN_HOUR,
+    };
+  } else
+    return {
+      days: Math.floor(value / HOURS_IN_DAY),
+      hours: value % HOURS_IN_DAY,
+      mins: 0,
+    };
 }

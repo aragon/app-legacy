@@ -18,6 +18,7 @@ import {
   MINS_IN_HOUR,
   MIN_DURATION_HOURS,
 } from 'utils/constants';
+import {getDaysHoursMins} from 'utils/date';
 
 const ConfigureCommunity: React.FC = () => {
   const {t} = useTranslation();
@@ -634,18 +635,3 @@ const ProgressInfo1 = styled.div.attrs({
 const ProgressInfo2 = styled.div.attrs({
   className: 'flex absolute -top-1 justify-between space-x-0.5 w-full text-sm',
 })``;
-
-function getDaysHoursMins(value: number, period: 'hours' | 'mins' = 'mins') {
-  if (period === 'mins') {
-    return {
-      days: Math.floor(value / MINS_IN_DAY),
-      hours: Math.floor((value / MINS_IN_HOUR) % HOURS_IN_DAY),
-      mins: value % MINS_IN_HOUR,
-    };
-  } else
-    return {
-      days: Math.floor(value / HOURS_IN_DAY),
-      hours: value % HOURS_IN_DAY,
-      mins: 0,
-    };
-}
