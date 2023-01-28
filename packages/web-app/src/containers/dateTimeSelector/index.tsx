@@ -19,7 +19,7 @@ import {
 type UtcInstance = 'first' | 'second';
 type Props = {name?: string};
 
-const DateTimeDuration: React.FC<Props> = ({name}) => {
+const DateTimeSelector: React.FC<Props> = ({name}) => {
   const {t} = useTranslation();
   const {open} = useGlobalModalContext();
   const {control, clearErrors, getValues, setError, setValue} =
@@ -222,7 +222,7 @@ const DateTimeDuration: React.FC<Props> = ({name}) => {
   );
 };
 
-export default DateTimeDuration;
+export default DateTimeSelector;
 const InputWrapper = styled.div.attrs({
   className: 'space-y-0.5 w-1/2 tablet:w-full',
 })``;
