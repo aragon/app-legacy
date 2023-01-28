@@ -498,6 +498,21 @@
       "yesNoLabel": {
         "title": "Yes, No, or Abstain",
         "helpText": "Let users vote for or against."
+      },
+      "mulitisg": {
+        "optionDescription": "These are the following options for voting on this proposition.",
+        "votingOption": {
+          "label": "Approve",
+          "description": "Each Multisig member has the ability to approve the proposal and any associated optional actions. The proposal will be executed if three out of four members approve it.",
+          "alert": "Approval is the only option for Multisig DAOs."
+        },
+        "startLabel": "Start Time",
+        "startDescription": "Define when a proposal should be active to receive approvals. If now is selected, the proposal is immediately active after publishing.",
+        "expiration": "Expiration Time",
+        "expirationDescription": "Define when a proposal should get expired, if the minimum approval threshold is never reached until then. After the expiration time, there is no way to approve or execute the proposal.",
+        "now": "Now",
+        "dateTime": "Specific Date + Time",
+        "duration": "Duration"
       }
     },
     "defineProposal": {

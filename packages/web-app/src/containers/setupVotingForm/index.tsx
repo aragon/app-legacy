@@ -254,13 +254,22 @@ const SetupVotingFormMultisig = () => {
   }
 
   const startItems = [
-    {label: t('Now'), selectValue: 'now'},
-    {label: t('Specific Date + Time'), selectValue: 'dateTime'},
+    {label: t('newWithdraw.setupVoting.mulitisg.now'), selectValue: 'now'},
+    {
+      label: t('newWithdraw.setupVoting.mulitisg.dateTime'),
+      selectValue: 'dateTime',
+    },
   ];
 
   const expirationItems = [
-    {label: t('Duration'), selectValue: 'duration'},
-    {label: t('Specific Date + Time'), selectValue: 'dateTime'},
+    {
+      label: t('newWithdraw.setupVoting.mulitisg.duration'),
+      selectValue: 'duration',
+    },
+    {
+      label: t('newWithdraw.setupVoting.mulitisg.dateTime'),
+      selectValue: 'dateTime',
+    },
   ];
 
   const handleDaysChanged = useCallback(
@@ -344,29 +353,27 @@ const SetupVotingFormMultisig = () => {
       <FormSection>
         <Label
           label={t('newWithdraw.setupVoting.optionLabel.title')}
-          helpText="These are the following options for voting on this proposition."
+          helpText={t('newWithdraw.setupVoting.mulitisg.optionDescription')}
         />
         <CheckboxListItem
-          label={t('Approve')}
+          label={t('newWithdraw.setupVoting.mulitisg.votingOption.label')}
           type="active"
           helptext={t(
-            'Each Multisig member has the ability to approve the proposal and any associated optional actions. The proposal will be executed if three out of four members approve it.'
+            'newWithdraw.setupVoting.mulitisg.votingOption.description'
           )}
           multiSelect={false}
         />
         <AlertInline
           mode="neutral"
-          label={t('Approval is the only option for Multisig DAOs.')}
+          label={t('newWithdraw.setupVoting.mulitisg.votingOption.alert')}
         />
       </FormSection>
 
       {/* Start time */}
       <FormSection>
         <Label
-          label={t('Start Time')}
-          helpText={t(
-            'Define when a proposal should be active to receive approvals. If now is selected, the proposal is immediately active after publishing.'
-          )}
+          label={t('newWithdraw.setupVoting.mulitisg.startLabel')}
+          helpText={t('newWithdraw.setupVoting.mulitisg.startDescription')}
         />
         <Controller
           name="startNow"
@@ -388,10 +395,8 @@ const SetupVotingFormMultisig = () => {
       {/* Expiration time */}
       <FormSection>
         <Label
-          label={t('Expiration Time')}
-          helpText={t(
-            'Define when a proposal should get expired, if the minimum approval threshold is never reached until then. After the expiration time, there is no way to approve or execute the proposal.'
-          )}
+          label={t('newWithdraw.setupVoting.mulitisg.expiration')}
+          helpText={t('newWithdraw.setupVoting.mulitisg.expirationDescription')}
         />
         <Controller
           name="expirationDuration"
