@@ -132,13 +132,13 @@ const DateTimeSelector: React.FC<Props> = ({name}) => {
     if (!currTimezone) {
       setUtcStart(timezones[13]);
       setUtcEnd(timezones[13]);
-      setValue('startUtc', timezones[13]);
-      setValue('endUtc', timezones[13]);
+      setValue(`${name}startUtc`, timezones[13]);
+      setValue(`${name}endUtc`, timezones[13]);
     } else {
       setUtcStart(currTimezone);
       setUtcEnd(currTimezone);
-      setValue('startUtc', currTimezone);
-      setValue('endUtc', currTimezone);
+      setValue(`${name}startUtc`, currTimezone);
+      setValue(`${name}endUtc`, currTimezone);
     }
   }, []); //eslint-disable-line
 
@@ -211,6 +211,7 @@ const DateTimeSelector: React.FC<Props> = ({name}) => {
           <DropdownInput
             value={utcStart}
             onClick={() => {
+              // TODO: Check on utc instance
               setUtcInstance('first');
               open('utc');
             }}

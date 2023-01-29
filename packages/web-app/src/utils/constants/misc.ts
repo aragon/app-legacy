@@ -98,8 +98,15 @@ export const MAX_TOKEN_AMOUNT = BigNumber.from(
   '26959946667150600000000000000000000000000000000000'
 );
 
+// TokenVoting duration boundaries
 export const MAX_DURATION_DAYS = 365;
 export const MIN_DURATION_HOURS = 1;
+
+// Multisig duration boundaries
+export const MULTISIG_MAX_DURATION_DAYS = 30;
+export const MULTISIG_MIN_DURATION_HOURS = 1;
+
+// date time
 export const HOURS_IN_DAY = 24;
 export const MINS_IN_HOUR = 60;
 export const MINS_IN_DAY = HOURS_IN_DAY * MINS_IN_HOUR;

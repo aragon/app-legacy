@@ -86,7 +86,7 @@ const SetupMultisigVotingForm: React.FC = () => {
                   handleCheckBoxToggled(changeValue, onChange)
                 }
               />
-              {value === 'date' && <DateTimeSelector />}
+              {value === 'date' && <DateTimeSelector name="start" />}
             </>
           )}
         />
@@ -115,7 +115,7 @@ const SetupMultisigVotingForm: React.FC = () => {
               {value === 'duration' ? (
                 <Duration name="expiration" />
               ) : (
-                <DateTimeSelector />
+                <DateTimeSelector name="expiration" />
               )}
             </>
           )}
