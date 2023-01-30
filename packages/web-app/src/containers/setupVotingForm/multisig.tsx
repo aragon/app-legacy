@@ -1,31 +1,63 @@
 import {AlertInline, CheckboxListItem, Label} from '@aragon/ui-components';
-import React from 'react';
+import {toDate} from 'date-fns-tz';
+import React, {useCallback, useEffect, useState} from 'react';
 import {Controller, useFormContext, useWatch} from 'react-hook-form';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 
 import DateTimeSelector from 'containers/dateTimeSelector';
 import Duration from 'containers/duration';
-import {FormSection} from '.';
+import UtcMenu from 'containers/utcMenu';
+import {timezones} from 'containers/utcMenu/utcData';
+import {useGlobalModalContext} from 'context/globalModals';
 import {
   MULTISIG_MAX_DURATION_DAYS,
   MULTISIG_MIN_DURATION_HOURS,
 } from 'utils/constants';
+import {
+  daysToMills,
+  getCanonicalUtcOffset,
+  getFormattedUtcOffset,
+  hoursToMills,
+} from 'utils/date';
+import {FormSection} from '.';
+import {DateTimeErrors} from './dateTimeErrors';
+
+type UtcInstance = 'first' | 'second';
 
 const SetupMultisigVotingForm: React.FC = () => {
   const {t} = useTranslation();
-  const {control} = useFormContext();
-  const [durationDays, durationHours, durationMinutes] = useWatch({
-    control,
-    name: ['durationDays', 'durationHours', 'durationMinutes'],
-  });
+  const {open} = useGlobalModalContext();
+
+  const [utcInstance, setUtcInstance] = useState<UtcInstance>('first');
+  const [utcStart, setUtcStart] = useState('');
+  const [utcEnd, setUtcEnd] = useState('');
+
+  const {control, getValues, clearErrors, resetField, setValue, setError} =
+    useFormContext();
+
+  const [durationDays, durationHours, durationMinutes, durationMills] =
+    useWatch({
+      control,
+      name: [
+        'durationDays',
+        'durationHours',
+        'durationMinutes',
+        'durationMills',
+      ],
+    });
 
   const isMinDuration =
-    durationDays === '0' &&
-    durationHours === MULTISIG_MIN_DURATION_HOURS.toString() &&
-    durationMinutes === '0';
+    // duration fields only contain minimum duration
+    (durationDays === '0' &&
+      durationHours === MULTISIG_MIN_DURATION_HOURS.toString() &&
+      durationMinutes === '0') ||
+    // dateTime fields add up to minimum duration
+    Number(durationMills) / hoursToMills(1) === MULTISIG_MIN_DURATION_HOURS;
 
-  const isMaxDuration = Number(durationDays) >= MULTISIG_MAX_DURATION_DAYS;
+  const isMaxDuration =
+    Number(durationDays) >= MULTISIG_MAX_DURATION_DAYS ||
+    Number(durationMills) / daysToMills(1) >= MULTISIG_MAX_DURATION_DAYS;
 
   const startItems = [
     {label: t('newWithdraw.setupVoting.multisig.now'), selectValue: 'now'},
@@ -46,15 +78,162 @@ const SetupMultisigVotingForm: React.FC = () => {
     },
   ];
 
+  // const {days, hours, minutes} = getDHMFromSeconds(pluginSettings.minDuration);
+
+  // Initializes values for the form
+  // This is done here rather than in the defaulValues object as time can
+  // ellapse between the creation of the form context and this stage of the form.
+  useEffect(() => {
+    const currTimezone = timezones.find(tz => tz === getFormattedUtcOffset());
+    if (!currTimezone) {
+      setUtcStart(timezones[13]);
+      setUtcEnd(timezones[13]);
+      setValue('startUtc', timezones[13]);
+      setValue('endUtc', timezones[13]);
+    } else {
+      setUtcStart(currTimezone);
+      setUtcEnd(currTimezone);
+      setValue('startUtc', currTimezone);
+      setValue('endUtc', currTimezone);
+    }
+  }, []); //eslint-disable-line
+
+  // Validates all fields (date, time and UTC) for both start and end
+  // simultaneously. This is necessary, as all the fields are related to one
+  // another. The validation gathers information from all start and end fields
+  // and constructs two date (start and end). The validation leads to an error
+  // if the dates violate any of the following constraints:
+  //   - The start date is in the past
+  //   - The end date is before the start date
+  // If the form is invalid, errors are set for the respective group of fields.
+  const dateTimeValidator = useCallback(() => {
+    //build start date/time in utc mills
+    // check end time using start and duration
+    const sDate = getValues('startDate');
+    const sTime = getValues('startTime');
+    const sUtc = getValues('startUtc');
+
+    const canonicalSUtc = getCanonicalUtcOffset(sUtc);
+    const startDateTime = toDate(sDate + 'T' + sTime + canonicalSUtc);
+    const startMills = startDateTime.valueOf();
+
+    const currDateTime = new Date();
+    const currMills = currDateTime.getTime();
+
+    //build end date/time in utc mills
+    const eDate = getValues('endDate');
+    const eTime = getValues('endTime');
+    const eUtc = getValues('endUtc');
+
+    const canonicalEUtc = getCanonicalUtcOffset(eUtc);
+    const endDateTime = toDate(eDate + 'T' + eTime + canonicalEUtc);
+    const endMills = endDateTime.valueOf();
+
+    const minEndDateTimeMills =
+      startMills + hoursToMills(MULTISIG_MIN_DURATION_HOURS);
+
+    // I need youuuu
+    setValue('durationMills', endMills - startMills);
+
+    let returnValue = '';
+
+    // check start constraints
+    if (startMills < currMills) {
+      setError('startTime', {
+        type: 'validate',
+        message: t('errors.startPast'),
+      });
+      setError('startDate', {
+        type: 'validate',
+        message: t('errors.startPast'),
+      });
+      returnValue = t('errors.startPast');
+    }
+    if (startMills >= currMills) {
+      clearErrors('startDate');
+      clearErrors('startTime');
+    }
+
+    //check end constraints
+    if (endMills < minEndDateTimeMills) {
+      setError('endTime', {
+        type: 'validate',
+        message: t('errors.endPast'),
+      });
+      setError('endDate', {
+        type: 'validate',
+        message: t('errors.endPast'),
+      });
+      returnValue = t('errors.endPast');
+    }
+
+    if (endMills >= minEndDateTimeMills) {
+      clearErrors('endDate');
+      clearErrors('endTime');
+    }
+
+    return !returnValue ? true : returnValue;
+  }, [clearErrors, getValues, setError, setValue, t]);
+
+  // These effects trigger validation when UTC fields are changed.
+
+  useEffect(() => {
+    dateTimeValidator();
+  }, [utcStart, dateTimeValidator]);
+
+  useEffect(() => {
+    dateTimeValidator();
+  }, [utcEnd, dateTimeValidator]); //eslint-disable-line
+
+  // sets the UTC values for the start and end date/time
+  const tzSelector = (tz: string) => {
+    if (utcInstance === 'first') {
+      setUtcStart(tz);
+      setValue('startUtc', tz);
+    } else {
+      setUtcEnd(tz);
+      setValue('endUtc', tz);
+    }
+  };
+
   /*************************************************
    *                   Handlers                    *
    *************************************************/
-  function handleCheckBoxToggled(
-    changeValue: string,
-    onChange: (value: string) => void
-  ) {
-    onChange(changeValue);
-  }
+  const resetDuration = useCallback(() => {
+    resetField('durationDays');
+    resetField('durationHours');
+    resetField('durationMinutes');
+  }, [resetField]);
+
+  const resetStartDate = useCallback(() => {
+    resetField('startDate');
+    resetField('startTime');
+    resetField('startUtc');
+  }, [resetField]);
+
+  const resetEndDate = useCallback(() => {
+    resetField('endDate');
+    resetField('endTime');
+    resetField('endUtc');
+  }, [resetField]);
+
+  const handleStartNowToggle = useCallback(
+    (changeValue, onChange: (value: string) => void) => {
+      onChange(changeValue);
+      if (changeValue === 'now') resetStartDate();
+    },
+    [resetStartDate]
+  );
+
+  const handleExpirationTimeToggle = useCallback(
+    (changeValue, onChange: (value: string) => void) => {
+      onChange(changeValue);
+
+      if (changeValue === 'duration') resetEndDate();
+      else resetDuration();
+    },
+    [resetDuration, resetEndDate]
+  );
 
   /*************************************************
    *                      Render                   *
@@ -98,10 +277,23 @@ const SetupMultisigVotingForm: React.FC = () => {
                 items={startItems}
                 value={value}
                 onChange={changeValue =>
-                  handleCheckBoxToggled(changeValue, onChange)
+                  handleStartNowToggle(changeValue, onChange)
                 }
               />
-              {value === 'date' && <DateTimeSelector name="start" />}
+              {value === 'date' && (
+                <>
+                  <DateTimeSelector
+                    mode="start"
+                    value={utcStart}
+                    validator={dateTimeValidator}
+                    onUtcClicked={() => {
+                      setUtcInstance('first');
+                      open('utc');
+                    }}
+                  />
+                  <DateTimeErrors mode="start" />
+                </>
+              )}
             </>
           )}
         />
@@ -124,27 +316,39 @@ const SetupMultisigVotingForm: React.FC = () => {
                 value={value}
                 items={expirationItems}
                 onChange={changeValue =>
-                  handleCheckBoxToggled(changeValue, onChange)
+                  handleExpirationTimeToggle(changeValue, onChange)
                 }
               />
               {value === 'duration' ? (
-                <>
-                  <Duration
-                    defaultValues={{days: 5}}
-                    minDurationHours={MULTISIG_MIN_DURATION_HOURS}
-                  />
-                  <DurationLabel
-                    maxDuration={isMaxDuration}
-                    minDuration={isMinDuration}
-                  />
-                </>
+                <Duration
+                  defaultValues={{days: 5}}
+                  minDurationHours={MULTISIG_MIN_DURATION_HOURS}
+                />
               ) : (
-                <DateTimeSelector name="expiration" />
+                <>
+                  <DateTimeSelector
+                    mode="end"
+                    value={utcEnd}
+                    validator={dateTimeValidator}
+                    defaultDateOffset={5}
+                    onUtcClicked={() => {
+                      setUtcInstance('second');
+                      open('utc');
+                    }}
+                  />
+                  <DateTimeErrors mode="end" />
+                </>
               )}
+              <DurationLabel
+                maxDuration={isMaxDuration}
+                minDuration={isMinDuration}
+              />
             </>
           )}
         />
+        <pre>{JSON.stringify(getValues(), null, 2)}</pre>
       </FormSection>
+      <UtcMenu onTimezoneSelect={tzSelector} />
     </>
   );
 };
