@@ -4,18 +4,34 @@ import {Controller, useFormContext, useWatch} from 'react-hook-form';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 
-import {
-  HOURS_IN_DAY,
-  MAX_DURATION_DAYS,
-  MINS_IN_DAY,
-  MINS_IN_HOUR,
-  MIN_DURATION_HOURS,
-} from 'utils/constants';
+import {HOURS_IN_DAY, MINS_IN_DAY, MINS_IN_HOUR} from 'utils/constants';
 import {getDaysHoursMins} from 'utils/date';
 
-type Props = {name?: string};
+type Props = {
+  name?: string;
+  maxDurationDays?: number;
+  minDurationHours: number;
+  defaultValues?: {
+    days?: number;
+    hours?: number;
+    mins?: number;
+  };
+};
 
-const Duration: React.FC<Props> = ({name = ''}) => {
+const durationDefaults = {
+  days: 0,
+  hours: 0,
+  mins: 0,
+};
+
+const Duration: React.FC<Props> = ({
+  name = '',
+  maxDurationDays,
+  minDurationHours,
+  defaultValues,
+}) => {
+  const defaults = {...durationDefaults, ...defaultValues};
+
   const {t} = useTranslation();
   const {control, getValues, setValue, trigger} = useFormContext();
   const [durationDays] = useWatch({control, name: [`${name}durationDays`]});
@@ -30,14 +46,14 @@ const Duration: React.FC<Props> = ({name = ''}) => {
     ) => {
       const value = Number(e.target.value);
       const durationHours = getValues(`${name}durationHours`);
-      if (value >= MAX_DURATION_DAYS) {
-        e.target.value = MAX_DURATION_DAYS.toString();
+      if (maxDurationDays !== undefined && value >= maxDurationDays) {
+        e.target.value = maxDurationDays.toString();
 
-        setValue(`${name}durationDays`, MAX_DURATION_DAYS.toString());
+        setValue(`${name}durationDays`, maxDurationDays.toString());
         setValue(`${name}durationHours`, '0');
         setValue(`${name}durationMinutes`, '0');
       } else if (value === 0 && durationHours === '0') {
-        setValue(`${name}durationHours`, MIN_DURATION_HOURS.toString());
+        setValue(`${name}durationHours`, minDurationHours.toString());
       }
       trigger([
         `${name}durationMinutes`,
@@ -46,7 +62,7 @@ const Duration: React.FC<Props> = ({name = ''}) => {
       ]);
       onChange(e);
     },
-    [getValues, name, setValue, trigger]
+    [getValues, maxDurationDays, minDurationHours, name, setValue, trigger]
   );
 
   const handleHoursChanged = useCallback(
@@ -68,9 +84,9 @@ const Duration: React.FC<Props> = ({name = ''}) => {
           );
         }
       } else if (value === 0 && durationDays === '0') {
-        setValue(`${name}durationHours`, MIN_DURATION_HOURS.toString());
+        setValue(`${name}durationHours`, minDurationHours.toString());
         setValue(`${name}durationMinutes`, '0');
-        e.target.value = MIN_DURATION_HOURS.toString();
+        e.target.value = minDurationHours.toString();
       }
       trigger([
         `${name}durationMinutes`,
@@ -79,7 +95,7 @@ const Duration: React.FC<Props> = ({name = ''}) => {
       ]);
       onChange(e);
     },
-    [getValues, name, setValue, trigger]
+    [getValues, minDurationHours, name, setValue, trigger]
   );
 
   const handleMinutesChanged = useCallback(
@@ -121,7 +137,7 @@ const Duration: React.FC<Props> = ({name = ''}) => {
       <Controller
         name={`${name}durationMinutes`}
         control={control}
-        defaultValue="0"
+        defaultValue={`${defaults.mins}`}
         rules={{
           required: t('errors.emptyDistributionMinutes'),
           validate: value =>
@@ -142,7 +158,9 @@ const Duration: React.FC<Props> = ({name = ''}) => {
               }
               placeholder={'0'}
               min="0"
-              disabled={durationDays === MAX_DURATION_DAYS.toString()}
+              {...(maxDurationDays && maxDurationDays === durationDays
+                ? {disabled: true}
+                : {disabled: false})}
             />
             {error?.message && (
               <AlertInline label={error.message} mode="critical" />
@@ -154,7 +172,7 @@ const Duration: React.FC<Props> = ({name = ''}) => {
       <Controller
         name={`${name}durationHours`}
         control={control}
-        defaultValue="0"
+        defaultValue={`${defaults.hours}`}
         rules={{required: t('errors.emptyDistributionHours')}}
         render={({
           field: {onBlur, onChange, value, name},
@@ -171,7 +189,9 @@ const Duration: React.FC<Props> = ({name = ''}) => {
               }
               placeholder={'0'}
               min="0"
-              disabled={durationDays === MAX_DURATION_DAYS.toString()}
+              {...(maxDurationDays && maxDurationDays === durationDays
+                ? {disabled: true}
+                : {disabled: false})}
             />
             {error?.message && (
               <AlertInline label={error.message} mode="critical" />
@@ -183,7 +203,7 @@ const Duration: React.FC<Props> = ({name = ''}) => {
       <Controller
         name={`${name}durationDays`}
         control={control}
-        defaultValue="1"
+        defaultValue={`${defaults.days}`}
         rules={{
           required: t('errors.emptyDistributionDays'),
           validate: value => (value >= 0 ? true : t('errors.distributionDays')),

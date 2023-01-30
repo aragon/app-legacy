@@ -1,16 +1,31 @@
 import {AlertInline, CheckboxListItem, Label} from '@aragon/ui-components';
 import React from 'react';
-import {Controller, useFormContext} from 'react-hook-form';
+import {Controller, useFormContext, useWatch} from 'react-hook-form';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 
 import DateTimeSelector from 'containers/dateTimeSelector';
 import Duration from 'containers/duration';
 import {FormSection} from '.';
+import {
+  MULTISIG_MAX_DURATION_DAYS,
+  MULTISIG_MIN_DURATION_HOURS,
+} from 'utils/constants';
 
 const SetupMultisigVotingForm: React.FC = () => {
   const {t} = useTranslation();
   const {control} = useFormContext();
+  const [durationDays, durationHours, durationMinutes] = useWatch({
+    control,
+    name: ['durationDays', 'durationHours', 'durationMinutes'],
+  });
+
+  const isMinDuration =
+    durationDays === '0' &&
+    durationHours === MULTISIG_MIN_DURATION_HOURS.toString() &&
+    durationMinutes === '0';
+
+  const isMaxDuration = Number(durationDays) >= MULTISIG_MAX_DURATION_DAYS;
 
   const startItems = [
     {label: t('newWithdraw.setupVoting.multisig.now'), selectValue: 'now'},
@@ -113,16 +128,21 @@ const SetupMultisigVotingForm: React.FC = () => {
                 }
               />
               {value === 'duration' ? (
-                <Duration name="expiration" />
+                <>
+                  <Duration
+                    defaultValues={{days: 5}}
+                    minDurationHours={MULTISIG_MIN_DURATION_HOURS}
+                  />
+                  <DurationLabel
+                    maxDuration={isMaxDuration}
+                    minDuration={isMinDuration}
+                  />
+                </>
               ) : (
                 <DateTimeSelector name="expiration" />
               )}
             </>
           )}
-        />
-        <AlertInline
-          mode="neutral"
-          label={t('newWithdraw.setupVoting.multisig.expirationAlert')}
         />
       </FormSection>
     </>
@@ -130,6 +150,28 @@ const SetupMultisigVotingForm: React.FC = () => {
 };
 
 export default SetupMultisigVotingForm;
+
+const DurationLabel: React.FC<{maxDuration?: boolean; minDuration?: boolean}> =
+  ({maxDuration, minDuration}) => {
+    const {t} = useTranslation();
+
+    if (minDuration) {
+      return (
+        <AlertInline label={t('alert.minExpirationAlert')} mode="critical" />
+      );
+    } else if (maxDuration) {
+      return (
+        <AlertInline label={t('alert.maxExpirationAlert')} mode="warning" />
+      );
+    } else {
+      return (
+        <AlertInline
+          mode="neutral"
+          label={t('newWithdraw.setupVoting.multisig.expirationAlert')}
+        />
+      );
+    }
+  };
 
 type Props = {
   items: Array<{
