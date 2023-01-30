@@ -1,4 +1,4 @@
 export interface RunContext {
-    runId: string;
+    sessionId: string;
     testData: Record<string, any>;
 }
