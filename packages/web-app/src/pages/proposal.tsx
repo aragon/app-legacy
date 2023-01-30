@@ -3,6 +3,7 @@ import {
   DaoAction,
   TokenVotingClient,
   TokenVotingProposal,
+  VotingMode,
   VotingSettings,
 } from '@aragon/sdk-client';
 import {
@@ -344,10 +345,12 @@ const Proposal: React.FC = () => {
 
   // vote button and status
   const [voteStatus, buttonLabel] = useMemo(() => {
+    const earlyExecution =
+      daoSettings.votingMode === VotingMode.EARLY_EXECUTION;
     return proposal
-      ? getVoteStatusAndLabel(proposal, voted, canVote, t)
+      ? getVoteStatusAndLabel(proposal, voted, canVote, earlyExecution, t)
       : ['', ''];
-  }, [proposal, voted, canVote, t]);
+  }, [daoSettings.votingMode, proposal, voted, canVote, t]);
 
   // vote button state and handler
   const {voteNowDisabled, onClick} = useMemo(() => {
