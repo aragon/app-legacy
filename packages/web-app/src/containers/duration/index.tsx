@@ -45,6 +45,9 @@ const Duration: React.FC<Props> = ({
       onChange: React.ChangeEventHandler
     ) => {
       const value = Number(e.target.value);
+
+      if (value === 0) e.target.value = '0';
+
       const durationHours = getValues(`${name}durationHours`);
       if (maxDurationDays !== undefined && value >= maxDurationDays) {
         e.target.value = maxDurationDays.toString();
@@ -71,6 +74,9 @@ const Duration: React.FC<Props> = ({
       onChange: React.ChangeEventHandler
     ) => {
       const value = Number(e.target.value);
+
+      if (value === 0) e.target.value = '0';
+
       const durationDays = getValues(`${name}durationDays`);
 
       if (value >= HOURS_IN_DAY) {
@@ -104,6 +110,8 @@ const Duration: React.FC<Props> = ({
       onChange: React.ChangeEventHandler
     ) => {
       const value = Number(e.target.value);
+
+      if (value === 0) e.target.value = '0';
 
       if (value >= MINS_IN_HOUR) {
         const [oldDays, oldHours] = getValues([
@@ -151,7 +159,7 @@ const Duration: React.FC<Props> = ({
             <TimeLabel>{t('createDAO.step4.minutes')}</TimeLabel>
             <NumberInput
               name={name}
-              value={value}
+              value={Number(value).toString()}
               onBlur={onBlur}
               onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                 handleMinutesChanged(e, onChange)
@@ -182,7 +190,7 @@ const Duration: React.FC<Props> = ({
             <TimeLabel>{t('createDAO.step4.hours')}</TimeLabel>
             <NumberInput
               name={name}
-              value={value}
+              value={Number(value).toString()}
               onBlur={onBlur}
               onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                 handleHoursChanged(e, onChange)
@@ -216,7 +224,7 @@ const Duration: React.FC<Props> = ({
             <TimeLabel>{t('createDAO.step4.days')}</TimeLabel>
             <NumberInput
               name={name}
-              value={value}
+              value={Number(value).toString()}
               onBlur={onBlur}
               onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                 handleDaysChanged(e, onChange)
