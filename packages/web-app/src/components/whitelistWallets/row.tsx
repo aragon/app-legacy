@@ -12,7 +12,7 @@ import {useTranslation} from 'react-i18next';
 import {Controller, useFormContext, useWatch} from 'react-hook-form';
 
 import {validateAddress} from 'utils/validators';
-import {WhitelistWallet} from 'pages/createDAO';
+import {WalletItem} from 'pages/createDAO';
 import {handleClipboardActions} from 'utils/library';
 import {useAlertContext} from 'context/alert';
 
@@ -32,13 +32,11 @@ export const Row = ({index, ...props}: WhitelistWalletsRowProps) => {
   const addressValidator = (address: string, index: number) => {
     let validationResult = validateAddress(address);
     if (whitelistWallets) {
-      whitelistWallets.forEach(
-        (wallet: WhitelistWallet, walletIndex: number) => {
-          if (address === wallet.address && index !== walletIndex) {
-            validationResult = t('errors.duplicateAddress');
-          }
+      whitelistWallets.forEach((wallet: WalletItem, walletIndex: number) => {
+        if (address === wallet.address && index !== walletIndex) {
+          validationResult = t('errors.duplicateAddress');
         }
-      );
+      });
     }
     return validationResult;
   };
@@ -78,6 +76,10 @@ export const Row = ({index, ...props}: WhitelistWalletsRowProps) => {
               <ButtonIcon
                 size="large"
                 mode="secondary"
+                /* TODO
+                for some reason the bgwhite makes the background gray which is teh correct color
+                */
+                bgWhite
                 icon={<IconMenuVertical />}
                 data-testid="trigger"
               />

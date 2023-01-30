@@ -210,10 +210,11 @@ const CreateDaoProvider: React.FC = ({children}) => {
     }, [getValues]);
 
   // get whiteList Plugin configuration
+  // TODO fix this for multisig
   const getAddresslistPluginParams: () => IAddresslistVotingPluginInstall['addresses'] =
     useCallback(() => {
-      const {whitelistWallets} = getValues();
-      return whitelistWallets?.map(wallet => wallet.address);
+      const {multisigWallets} = getValues();
+      return multisigWallets?.map(wallet => wallet.address);
     }, [getValues]);
 
   // Get dao setting configuration for creation process

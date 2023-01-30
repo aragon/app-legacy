@@ -11,7 +11,7 @@ import React, {useCallback} from 'react';
 import {Controller, useFormContext, useWatch} from 'react-hook-form';
 
 import {validateAddress} from 'utils/validators';
-import {WhitelistWallet} from 'pages/createDAO';
+import {WalletItem} from 'pages/createDAO';
 import {handleClipboardActions} from 'utils/library';
 import {useAlertContext} from 'context/alert';
 
@@ -74,7 +74,7 @@ export const AddressRow = ({
       let validationResult = validateAddress(address);
       if (memberWallets) {
         memberWallets.forEach(
-          (wallet: WhitelistWallet, walletIndex: number) => {
+          (wallet: WalletItem, walletIndex: number) => {
             if (address === wallet.address && index !== walletIndex) {
               validationResult = t('errors.duplicateAddress');
             }

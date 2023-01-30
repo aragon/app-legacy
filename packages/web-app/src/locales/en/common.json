@@ -143,7 +143,9 @@
       "resetAllEntries": "Reset All Addresses",
       "deleteAllEntries": "Delete All Addresses",
       "noWallets": "Choose a wallet to remove",
-      "addWalletsSubtitle": "Add a wallet to your DAO"
+      "addWalletsSubtitle": "Add a wallet to your DAO",
+      "totalWallets": "Total Wallets",
+      "summary": "Summary"
     },
     "review": {
       "blockchain": "Blockchain",
@@ -551,6 +553,17 @@
       "existingToken": "Yes",
       "existingTokenSubtitle": "Yes, we already have a token.",
       "tokenMembership": "Token holders",
+      "multisigMembership": "Multisig",
+      "multisigMembershipSubtitle": "Only Multisig members are entitled to participate. 1 wallet address equals 1 approve.",
+      "multisigMembers": "Multisig Members",
+      "multisigMembersHelptext": "Add as many addresses as you like to the DAO. These are authorised to create proposals, transactions or suggest changes to the DAO settings after its creation. Upload a CSV with",
+      "multisigMembersHelptextLink": "this template",
+      "multisigMembersHelptext2": "if you want.",
+      "multisigMembersWalletAlert": "Your connected Wallet got automatically added to the list.",
+      "multisigEligibilityTitle": "Proposal Creation",
+      "multisigEligibilitySubtitle": "Specify who is permitted to create proposals.",
+      "multisigEligibilityMobileTitle": "Who is elegible?",
+      "multisigEligibilityAlert": "With anyone being able to propose, there is a risk of proposal spam. Consider only authorised adresses.",
       "tokenName": "Token Name",
       "tokenMembershipSubtitle": "Tokens act as voting chips. The more tokens you hold, the more weight your vote has. Token holders can also create proposals. ",
       "walletMemberShip": "Authorized wallets",
@@ -571,6 +584,8 @@
       "eligibility": {
         "optionTitle": "Who is eligible?",
         "inputTitle": "Minimum Tokens Required",
+        "multisigMembers.title": "Multisig Members",
+        "multisigMembers.description": "Only the authorised addresses above are eligible to create proposals.",
         "tokenHolders.title": "Token Holders",
         "tokenHolders.description": "Only token holders with an certain amount are eligible to create proposals.",
         "anyone.title": "Anyone",
