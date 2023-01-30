@@ -4,7 +4,7 @@ module.exports = {
     '^.+\\.svg$': '<rootDir>/svgTransform.ts',
   },
   testEnvironment: 'jsdom',
-  testPathIgnorePatterns: ['/node_modules/'],
+  testPathIgnorePatterns: ['/node_modules/', '/tests/e2e'],
   collectCoverage: true,
   collectCoverageFrom: ['src/**/*.ts(x)'],
   setupFilesAfterEnv: ['<rootDir>/.jest/setup.ts'],
