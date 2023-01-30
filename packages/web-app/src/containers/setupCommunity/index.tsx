@@ -27,7 +27,7 @@ const SetupCommunityForm: React.FC = () => {
     } else if (membership === 'multisig') {
       setValue('eligibilityType', 'multisig');
     }
-  }, [membership]);
+  }, [membership, setValue]);
 
   const resetTokenFields = () => {
     resetField('tokenName');
