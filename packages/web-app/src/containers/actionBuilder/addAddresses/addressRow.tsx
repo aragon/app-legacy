@@ -73,13 +73,11 @@ export const AddressRow = ({
     (address: string, index: number) => {
       let validationResult = validateAddress(address);
       if (memberWallets) {
-        memberWallets.forEach(
-          (wallet: WalletItem, walletIndex: number) => {
-            if (address === wallet.address && index !== walletIndex) {
-              validationResult = t('errors.duplicateAddress');
-            }
+        memberWallets.forEach((wallet: WalletItem, walletIndex: number) => {
+          if (address === wallet.address && index !== walletIndex) {
+            validationResult = t('errors.duplicateAddress');
           }
-        );
+        });
       }
       return validationResult;
     },

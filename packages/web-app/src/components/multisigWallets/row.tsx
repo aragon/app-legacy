@@ -3,7 +3,6 @@ import {
   ButtonIcon,
   Dropdown,
   IconMenuVertical,
-  Link,
   ListItemAction,
   ValueInput,
 } from '@aragon/ui-components';

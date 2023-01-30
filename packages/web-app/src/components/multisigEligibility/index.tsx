@@ -1,6 +1,6 @@
 import React from 'react';
 import {CheckboxListItem} from '@aragon/ui-components';
-import {Controller, useFormContext, useWatch} from 'react-hook-form';
+import {Controller, useFormContext} from 'react-hook-form';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 import {AlertInline} from '@aragon/ui-components';
