@@ -13,6 +13,7 @@ import {useGlobalModalContext} from 'context/globalModals';
 import {
   MULTISIG_MAX_DURATION_DAYS,
   MULTISIG_MIN_DURATION_HOURS,
+  MULTISIG_REC_DURATION_DAYS,
 } from 'utils/constants';
 import {
   daysToMills,
@@ -321,7 +322,7 @@ const SetupMultisigVotingForm: React.FC = () => {
               />
               {value === 'duration' ? (
                 <Duration
-                  defaultValues={{days: 5}}
+                  defaultValues={{days: MULTISIG_REC_DURATION_DAYS}}
                   minDurationHours={MULTISIG_MIN_DURATION_HOURS}
                 />
               ) : (
@@ -330,7 +331,7 @@ const SetupMultisigVotingForm: React.FC = () => {
                     mode="end"
                     value={utcEnd}
                     validator={dateTimeValidator}
-                    defaultDateOffset={5}
+                    defaultDateOffset={MULTISIG_REC_DURATION_DAYS}
                     onUtcClicked={() => {
                       setUtcInstance('second');
                       open('utc');
@@ -346,7 +347,6 @@ const SetupMultisigVotingForm: React.FC = () => {
             </>
           )}
         />
-        <pre>{JSON.stringify(getValues(), null, 2)}</pre>
       </FormSection>
       <UtcMenu onTimezoneSelect={tzSelector} />
     </>

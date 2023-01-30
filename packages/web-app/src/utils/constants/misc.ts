@@ -106,6 +106,9 @@ export const MIN_DURATION_HOURS = 1;
 export const MULTISIG_MAX_DURATION_DAYS = 30;
 export const MULTISIG_MIN_DURATION_HOURS = 1;
 
+// recommended duration for multisig proposal
+export const MULTISIG_REC_DURATION_DAYS = 5;
+
 // date time
 export const HOURS_IN_DAY = 24;
 export const MINS_IN_HOUR = 60;

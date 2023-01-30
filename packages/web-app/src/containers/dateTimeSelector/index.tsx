@@ -23,7 +23,6 @@ const DateTimeSelector: React.FC<Props> = ({
   defaultDateOffset = 0,
 }) => {
   const {t} = useTranslation();
-
   const {control} = useFormContext();
 
   /*************************************************
