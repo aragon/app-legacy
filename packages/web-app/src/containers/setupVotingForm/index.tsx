@@ -66,7 +66,7 @@ export function isValid(errors: StringIndexed) {
     errors.startDate ||
     errors.startTime ||
     errors.endDate ||
-    errors.ednTime ||
+    errors.endTime ||
     errors.areSettingsLoading
   );
 }

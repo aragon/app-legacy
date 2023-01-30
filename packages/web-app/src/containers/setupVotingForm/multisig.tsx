@@ -79,25 +79,58 @@ const SetupMultisigVotingForm: React.FC = () => {
     },
   ];
 
-  // const {days, hours, minutes} = getDHMFromSeconds(pluginSettings.minDuration);
+  /*************************************************
+   *                   Handlers                    *
+   *************************************************/
+  // clears duration fields for end date
+  const resetDuration = useCallback(() => {
+    resetField('durationDays');
+    resetField('durationHours');
+    resetField('durationMinutes');
+  }, [resetField]);
 
-  // Initializes values for the form
-  // This is done here rather than in the defaulValues object as time can
-  // ellapse between the creation of the form context and this stage of the form.
-  useEffect(() => {
-    const currTimezone = timezones.find(tz => tz === getFormattedUtcOffset());
-    if (!currTimezone) {
-      setUtcStart(timezones[13]);
-      setUtcEnd(timezones[13]);
-      setValue('startUtc', timezones[13]);
-      setValue('endUtc', timezones[13]);
+  // clears specific date time fields for start date
+  const resetStartDate = useCallback(() => {
+    resetField('startDate');
+    resetField('startTime');
+    resetField('startUtc');
+  }, [resetField]);
+
+  // clears specific date time fields for end date
+  const resetEndDate = useCallback(() => {
+    resetField('endDate');
+    resetField('endTime');
+    resetField('endUtc');
+  }, [resetField]);
+
+  // sets the UTC values for the start and end date/time
+  const tzSelector = (tz: string) => {
+    if (utcInstance === 'first') {
+      // setUtcStart(tz);
+      setValue('startUtc', tz);
     } else {
-      setUtcStart(currTimezone);
-      setUtcEnd(currTimezone);
-      setValue('startUtc', currTimezone);
-      setValue('endUtc', currTimezone);
+      // setUtcEnd(tz);
+      setValue('endUtc', tz);
     }
-  }, []); //eslint-disable-line
+  };
+
+  const handleStartNowToggle = useCallback(
+    (changeValue, onChange: (value: string) => void) => {
+      onChange(changeValue);
+      if (changeValue === 'now') resetStartDate();
+    },
+    [resetStartDate]
+  );
+
+  const handleExpirationTimeToggle = useCallback(
+    (changeValue, onChange: (value: string) => void) => {
+      onChange(changeValue);
+
+      if (changeValue === 'duration') resetEndDate();
+      else resetDuration();
+    },
+    [resetDuration, resetEndDate]
+  );
 
   // Validates all fields (date, time and UTC) for both start and end
   // simultaneously. This is necessary, as all the fields are related to one
@@ -176,8 +209,28 @@ const SetupMultisigVotingForm: React.FC = () => {
     return !returnValue ? true : returnValue;
   }, [clearErrors, getValues, setError, setValue, t]);
 
-  // These effects trigger validation when UTC fields are changed.
+  /*************************************************
+   *                    Effects                    *
+   *************************************************/
+  // Initializes values for the form
+  // This is done here rather than in the defaultValues object as time can
+  // elapsed between the creation of the form context and this stage of the form.
+  useEffect(() => {
+    const currTimezone = timezones.find(tz => tz === getFormattedUtcOffset());
+    if (!currTimezone) {
+      setUtcStart(timezones[13]);
+      setUtcEnd(timezones[13]);
+      setValue('startUtc', timezones[13]);
+      setValue('endUtc', timezones[13]);
+    } else {
+      setUtcStart(currTimezone);
+      setUtcEnd(currTimezone);
+      setValue('startUtc', currTimezone);
+      setValue('endUtc', currTimezone);
+    }
+  }, []); //eslint-disable-line
 
+  // These effects trigger validation when UTC fields are changed.
   useEffect(() => {
     dateTimeValidator();
   }, [utcStart, dateTimeValidator]);
@@ -185,56 +238,6 @@ const SetupMultisigVotingForm: React.FC = () => {
   useEffect(() => {
     dateTimeValidator();
   }, [utcEnd, dateTimeValidator]); //eslint-disable-line
-
-  // sets the UTC values for the start and end date/time
-  const tzSelector = (tz: string) => {
-    if (utcInstance === 'first') {
-      setUtcStart(tz);
-      setValue('startUtc', tz);
-    } else {
-      setUtcEnd(tz);
-      setValue('endUtc', tz);
-    }
-  };
-
-  /*************************************************
-   *                   Handlers                    *
-   *************************************************/
-  const resetDuration = useCallback(() => {
-    resetField('durationDays');
-    resetField('durationHours');
-    resetField('durationMinutes');
-  }, [resetField]);
-
-  const resetStartDate = useCallback(() => {
-    resetField('startDate');
-    resetField('startTime');
-    resetField('startUtc');
-  }, [resetField]);
-
-  const resetEndDate = useCallback(() => {
-    resetField('endDate');
-    resetField('endTime');
-    resetField('endUtc');
-  }, [resetField]);
-
-  const handleStartNowToggle = useCallback(
-    (changeValue, onChange: (value: string) => void) => {
-      onChange(changeValue);
-      if (changeValue === 'now') resetStartDate();
-    },
-    [resetStartDate]
-  );
-
-  const handleExpirationTimeToggle = useCallback(
-    (changeValue, onChange: (value: string) => void) => {
-      onChange(changeValue);
-
-      if (changeValue === 'duration') resetEndDate();
-      else resetDuration();
-    },
-    [resetDuration, resetEndDate]
-  );
 
   /*************************************************
    *                      Render                   *
