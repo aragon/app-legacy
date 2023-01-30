@@ -166,11 +166,12 @@ const SetupMultisigVotingForm: React.FC = () => {
     const minEndDateTimeMills =
       startMills + hoursToMills(MULTISIG_MIN_DURATION_HOURS);
 
-    // I need youuuu
+    // set duration mills to avoid new calculation
     setValue('durationMills', endMills - startMills);
 
     let returnValue = '';
 
+    // TODO: update strings
     // check start constraints
     if (startMills < currMills) {
       setError('startTime', {
