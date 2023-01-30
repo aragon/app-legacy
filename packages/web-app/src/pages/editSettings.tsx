@@ -18,6 +18,7 @@ import {generatePath, useNavigate} from 'react-router-dom';
 import styled from 'styled-components';
 
 import {AccordionItem, AccordionMultiple} from 'components/accordionMethod';
+import {SelectEligibility} from 'components/selectEligibility';
 import {Loading} from 'components/temporary';
 import {PageWrapper} from 'components/wrappers';
 import ConfigureCommunity from 'containers/configureCommunity';
@@ -31,7 +32,7 @@ import {usePluginSettings} from 'hooks/usePluginSettings';
 import useScreen from 'hooks/useScreen';
 import {useTokenSupply} from 'hooks/useTokenSupply';
 import {getDHMFromSeconds} from 'utils/date';
-import {decodeVotingMode} from 'utils/library';
+import {decodeVotingMode, formatUnits} from 'utils/library';
 import {ProposeNewSettings} from 'utils/paths';
 import {Layout} from './settings';
 
@@ -68,6 +69,15 @@ const EditSettings: React.FC = () => {
 
   // TODO: fix when integrating multisig
   const daoSettings = data as VotingSettings;
+  const formattedProposerAmount = Math.ceil(
+    Number(
+      formatUnits(
+        daoSettings.minProposerVotingPower || 0,
+        daoToken?.decimals || 18
+      )
+    )
+  );
+  const formattedEligibilityType = formattedProposerAmount ? 'token' : 'anyone';
 
   const {days, hours, minutes} = getDHMFromSeconds(daoSettings.minDuration);
 
@@ -77,6 +87,8 @@ const EditSettings: React.FC = () => {
     daoLogo,
     minimumApproval,
     minimumParticipation,
+    eligibilityType,
+    eligibilityTokenAmount,
     durationDays,
     durationHours,
     durationMinutes,
@@ -90,6 +102,8 @@ const EditSettings: React.FC = () => {
       'daoLogo',
       'minimumApproval',
       'minimumParticipation',
+      'eligibilityType',
+      'eligibilityTokenAmount',
       'durationDays',
       'durationHours',
       'durationMinutes',
@@ -177,6 +191,10 @@ const EditSettings: React.FC = () => {
     earlyExecution !== daoVotingMode.earlyExecution ||
     voteReplacement !== daoVotingMode.voteReplacement;
 
+  const isCommunityChanged =
+    eligibilityTokenAmount !== formattedProposerAmount ||
+    eligibilityType !== formattedEligibilityType;
+
   const setCurrentMetadata = useCallback(() => {
     setValue('daoName', daoDetails?.metadata.name);
     setValue('daoSummary', daoDetails?.metadata.description);
@@ -204,6 +222,12 @@ const EditSettings: React.FC = () => {
     setValue,
     replace,
   ]);
+
+  const setCurrentCommunity = useCallback(() => {
+    setValue('eligibilityTokenAmount', formattedProposerAmount);
+    setValue('minimumTokenAmount', formattedProposerAmount);
+    setValue('eligibilityType', formattedEligibilityType);
+  }, [daoSettings.minProposerVotingPower, setValue]);
 
   const setCurrentGovernance = useCallback(() => {
     setValue('tokenTotalSupply', tokenSupply?.formatted);
@@ -243,15 +267,18 @@ const EditSettings: React.FC = () => {
     setValue,
   ]);
 
-  const settingsUnchanged = !isGovernanceChanged && !isMetadataChanged;
+  const settingsUnchanged =
+    !isGovernanceChanged && !isMetadataChanged && !isCommunityChanged;
 
   const handleResetChanges = () => {
     setCurrentMetadata();
+    setCurrentCommunity();
     setCurrentGovernance();
   };
 
   useEffect(() => {
     setCurrentMetadata();
+    setCurrentCommunity();
     setCurrentGovernance();
   }, [setCurrentGovernance, setCurrentMetadata]);
 
@@ -278,6 +305,18 @@ const EditSettings: React.FC = () => {
     },
   ];
 
+  const communityAction = [
+    {
+      component: (
+        <ListItemAction
+          title={t('settings.resetChanges')}
+          bgWhite
+          mode={isGovernanceChanged ? 'default' : 'disabled'}
+        />
+      ),
+      callback: setCurrentCommunity,
+    },
+  ];
   const governanceAction = [
     {
       component: (
@@ -319,6 +358,20 @@ const EditSettings: React.FC = () => {
               >
                 <AccordionContent>
                   <DefineMetadata bgWhite arrayName="daoLinks" />
+                </AccordionContent>
+              </AccordionItem>
+
+              <AccordionItem
+                type="action-builder"
+                name="community"
+                methodName={t('navLinks.community')}
+                alertLabel={
+                  isCommunityChanged ? t('settings.newSettings') : undefined
+                }
+                dropdownItems={communityAction}
+              >
+                <AccordionContent>
+                  <SelectEligibility />
                 </AccordionContent>
               </AccordionItem>
 
