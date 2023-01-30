@@ -127,6 +127,7 @@ const CreateDAO: React.FC = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+
   /*************************************************
    *             Step Validation States            *
    *************************************************/

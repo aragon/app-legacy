@@ -148,7 +148,8 @@
       "deleteAllEntries": "Delete All Addresses",
       "noWallets": "Choose a wallet to remove",
       "addWalletsSubtitle": "Add a wallet to your DAO",
-      "totalWallets": "Total Wallets"
+      "totalWallets": "Total Wallets",
+      "summary": "Summary"
     },
     "review": {
       "blockchain": "Blockchain",
@@ -575,7 +576,9 @@
       "multisigMembership": "Multisig",
       "multisigMembershipSubtitle": "Only Multisig members are entitled to participate. 1 wallet address equals 1 approve.",
       "multisigMembers": "Multisig Members",
-      "multisigMembersHelptext": "Add as many addresses as you like to the DAO. These are authorised to create proposals, transactions or suggest changes to the DAO settings after its creation. Upload a CSV with <a>this template</a> if you want.",
+      "multisigMembersHelptext": "Add as many addresses as you like to the DAO. These are authorised to create proposals, transactions or suggest changes to the DAO settings after its creation. Upload a CSV with",
+      "multisigMembersHelptextLink": "this template",
+      "multisigMembersHelptext2": "if you want.",
       "multisigMembersWalletAlert": "Your connected Wallet got automatically added to the list.",
       "multisigEligibilityTitle": "Proposal Creation",
       "multisigEligibilitySubtitle": "Specify who is permitted to create proposals.",

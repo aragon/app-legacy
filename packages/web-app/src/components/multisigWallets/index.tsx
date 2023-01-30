@@ -4,7 +4,7 @@ import {
   ButtonText,
   Dropdown,
   IconMenuVertical,
-  Label,
+  Link,
   ListItemAction,
 } from '@aragon/ui-components';
 import {useAlertContext} from 'context/alert';
@@ -88,11 +88,17 @@ export const MultisigWallets = () => {
   return (
     <Container>
       <DescriptionContainer>
-        <Label
-          label={t('createDAO.step3.multisigMembers')}
-          helpText={t('createDAO.step3.multisigMembersHelptext')}
-          renderHtml
-        />
+        <Title>{t('createDAO.step3.multisigMembers')}</Title>
+        <Subtitle>
+          {t('createDAO.step3.multisigMembersHelptext')}
+          &nbsp;
+          <Link
+            label={t('createDAO.step3.multisigMembersHelptextLink')}
+            href="https://to.do"
+          />
+          &nbsp;
+          {t('createDAO.step3.multisigMembersHelptext2')}
+        </Subtitle>
       </DescriptionContainer>
       <TableContainer>
         {!isMobile && (
@@ -102,7 +108,7 @@ export const MultisigWallets = () => {
         )}
         {controlledWallets.map((field, index) => (
           <div key={field.id}>
-            {(!isMobile || (isMobile && index !== 0)) && <Divider />}
+            {!isMobile && index !== 0 && <Divider />}
             <Row
               index={index}
               onResetEntry={handleResetEntry}
@@ -137,7 +143,6 @@ export const MultisigWallets = () => {
               <ButtonIcon
                 size="large"
                 mode="secondary"
-                bgWhite
                 icon={<IconMenuVertical />}
                 data-testid="trigger"
               />
@@ -166,7 +171,7 @@ export const MultisigWallets = () => {
         </ActionsContainer>
         <Divider />
         <SummaryContainer>
-          <Title>{t('labels.summary')}</Title>
+          <Title>{t('labels.whitelistWallets.summary')}</Title>
           <TotalWalletsContainer>
             <Text>{t('labels.whitelistWallets.totalWallets')}</Text>
             <Title>{controlledWallets.length}</Title>
@@ -199,6 +204,9 @@ const Title = styled.p.attrs({
 const Text = styled.p.attrs({
   className: 'ft-text-base  text-ui-600',
 })``;
+
+const Subtitle = styled.p.attrs({className: 'text-ui-600 ft-text-sm'})``;
+
 const Divider = styled.div.attrs(() => ({
   className: 'flex bg-ui-50 h-0.25',
 }))``;
@@ -210,7 +218,7 @@ const TextButtonsContainer = styled.div.attrs(() => ({
 }))``;
 
 const SummaryContainer = styled.div.attrs(() => ({
-  className: 'flex desktop:p-3 p-2 flex-col space-y-1.5',
+  className: 'flex desktop:p-3 p-2 pt-3 flex-col space-y-1.5',
 }))``;
 const TotalWalletsContainer = styled.div.attrs(() => ({
   className: 'flex place-content-between',

@@ -1,6 +1,6 @@
 import React from 'react';
-import {CheckboxListItem, Label} from '@aragon/ui-components';
-import {Controller, useFormContext} from 'react-hook-form';
+import {CheckboxListItem} from '@aragon/ui-components';
+import {Controller, useFormContext, useWatch} from 'react-hook-form';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 import {AlertInline} from '@aragon/ui-components';
@@ -11,24 +11,26 @@ export const MultisigEligibility = () => {
   const {t} = useTranslation();
   const {isMobile} = useScreen();
   return (
-    <OptionsContainers>
-      <TitleContainer>
-        <Label
-          label={t('createDAO.step3.multisigEligibilityTitle')}
-          helpText={t('createDAO.step3.multisigEligibilitySubtitle')}
-        />
-      </TitleContainer>
-      <Controller
-        name="eligibilityType"
-        control={control}
-        defaultValue={'multisig'}
-        render={({field: {onChange, value}}) => (
+    <Controller
+      name="eligibilityType"
+      control={control}
+      defaultValue={'multisig'}
+      render={({field: {onChange, value}}) => (
+        <OptionsContainers>
+          <TitleContainer>
+            <OptionsTitle>
+              {t('createDAO.step3.multisigEligibilityTitle')}
+            </OptionsTitle>
+            <OptionsSubtitle>
+              {t('createDAO.step3.multisigEligibilitySubtitle')}
+            </OptionsSubtitle>
+          </TitleContainer>
           <CheckboxContainer>
             <CheckboxItemsContainer>
               {isMobile && (
-                <Label
-                  label={t('createDAO.step3.multisigEligibilityMobileTitle')}
-                />
+                <Title>
+                  {t('createDAO.step3.multisigEligibilityMobileTitle')}
+                </Title>
               )}
               <CheckboxListItem
                 label={t('createDAO.step3.eligibility.multisigMembers.title')}
@@ -58,9 +60,9 @@ export const MultisigEligibility = () => {
               />
             )}
           </CheckboxContainer>
-        )}
-      />
-    </OptionsContainers>
+        </OptionsContainers>
+      )}
+    />
   );
 };
 
@@ -77,4 +79,13 @@ const CheckboxItemsContainer = styled.div.attrs({
 })``;
 const CheckboxContainer = styled.div.attrs({
   className: 'flex space-y-1.5 flex-col',
+})``;
+const OptionsTitle = styled.h2.attrs({
+  className: 'ft-text-base font-bold text-ui-800',
+})``;
+const OptionsSubtitle = styled.h2.attrs({
+  className: 'ft-text-sm text-ui-600',
+})``;
+const Title = styled.h2.attrs({
+  className: 'font-semibold ft-text-base text-ui-800',
 })``;

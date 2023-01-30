@@ -3,13 +3,14 @@ import {
   ButtonIcon,
   Dropdown,
   IconMenuVertical,
+  Link,
   ListItemAction,
   ValueInput,
 } from '@aragon/ui-components';
 import {useAlertContext} from 'context/alert';
 import useScreen from 'hooks/useScreen';
 import {WalletItem} from 'pages/createDAO';
-import React, {useCallback} from 'react';
+import React from 'react';
 import {Controller, useFormContext, useWatch} from 'react-hook-form';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
@@ -43,29 +44,18 @@ export const Row = ({index, ...props}: MultisigWalletsRowProps) => {
 
   const {isMobile} = useScreen();
 
-  const handleAdornmentClick = useCallback(
-    (value: string, onChange: (value: string) => void) => {
-      // when there is a value clear it
-      if (value) {
-        onChange('');
-        alert(t('alert.chip.inputCleared'));
-      } else handleClipboardActions(value, onChange, alert);
-    },
-    [alert, t]
-  );
-
   return (
-    <RowContainer>
-      {isMobile && <Title>{t('labels.whitelistWallets.address')}</Title>}
-      <Controller
-        name={`multisigWallets.${index}.address`}
-        defaultValue=""
-        control={control}
-        rules={{
-          required: t('errors.required.walletAddress'),
-          validate: value => addressValidator(value, index),
-        }}
-        render={({field: {onChange, value}, fieldState: {error}}) => (
+    <Controller
+      name={`multisigWallets.${index}.address`}
+      defaultValue=""
+      control={control}
+      rules={{
+        required: t('errors.required.walletAddress'),
+        validate: value => addressValidator(value, index),
+      }}
+      render={({field: {onChange, value}, fieldState: {error}}) => (
+        <RowContainer>
+          {isMobile && <Title>Address</Title>}
           <Container>
             <InputContainer>
               <ValueInput
@@ -75,8 +65,10 @@ export const Row = ({index, ...props}: MultisigWalletsRowProps) => {
                 }}
                 mode="default"
                 placeholder="0x..."
-                adornmentText={value ? t('labels.clear') : t('labels.paste')}
-                onAdornmentClick={() => handleAdornmentClick(value, onChange)}
+                adornmentText={value ? t('labels.copy') : t('labels.paste')}
+                onAdornmentClick={() =>
+                  handleClipboardActions(value, onChange, alert)
+                }
               />
               {error?.message && (
                 <AlertInline label={error.message} mode="critical" />
@@ -88,7 +80,6 @@ export const Row = ({index, ...props}: MultisigWalletsRowProps) => {
               sideOffset={4}
               trigger={
                 <ButtonIcon
-                  bgWhite
                   size="large"
                   mode="secondary"
                   icon={<IconMenuVertical />}
@@ -98,10 +89,7 @@ export const Row = ({index, ...props}: MultisigWalletsRowProps) => {
               listItems={[
                 {
                   component: (
-                    <ListItemAction
-                      title={t('labels.whitelistWallets.resetEntry')}
-                      bgWhite
-                    />
+                    <ListItemAction title={t('labels.copy')} bgWhite />
                   ),
                   callback: () => {
                     props.onResetEntry(index);
@@ -110,10 +98,7 @@ export const Row = ({index, ...props}: MultisigWalletsRowProps) => {
                 },
                 {
                   component: (
-                    <ListItemAction
-                      title={t('labels.whitelistWallets.deleteEntry')}
-                      bgWhite
-                    />
+                    <ListItemAction title={t('labels.copy')} bgWhite />
                   ),
                   callback: () => {
                     props.onDeleteEntry(index);
@@ -123,9 +108,9 @@ export const Row = ({index, ...props}: MultisigWalletsRowProps) => {
               ]}
             />
           </Container>
-        )}
-      />
-    </RowContainer>
+        </RowContainer>
+      )}
+    />
   );
 };
 

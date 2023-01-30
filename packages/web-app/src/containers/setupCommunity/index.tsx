@@ -1,4 +1,9 @@
-import {CheckboxListItem, Label} from '@aragon/ui-components';
+import {
+  AlertCard,
+  AlertInline,
+  CheckboxListItem,
+  Label,
+} from '@aragon/ui-components';
 import React, {useEffect} from 'react';
 import {Controller, useFormContext, useWatch} from 'react-hook-form';
 import {useTranslation} from 'react-i18next';
@@ -22,14 +27,15 @@ const SetupCommunityForm: React.FC = () => {
     } else if (membership === 'multisig') {
       setValue('eligibilityType', 'multisig');
     }
-  }, [membership, setValue]);
+  }, [membership]);
 
   const resetTokenFields = () => {
     resetField('tokenName');
     resetField('tokenSymbol');
     resetField('tokenAddress');
     resetField('tokenTotalSupply');
-    resetField('multisigWallets');
+    resetField('whitelistWallets');
+    resetField('multisigtWallets');
     resetField('wallets');
   };
 
