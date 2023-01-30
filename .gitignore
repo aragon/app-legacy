@@ -41,3 +41,4 @@ subgraph.yaml
 packages/ui-components/out*
 
 packages/web-app/tests/e2e/videos/*
+package-lock.json
