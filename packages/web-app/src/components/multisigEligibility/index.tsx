@@ -11,18 +11,18 @@ export const MultisigEligibility = () => {
   const {t} = useTranslation();
   const {isMobile} = useScreen();
   return (
-    <Controller
-      name="eligibilityType"
-      control={control}
-      defaultValue={'multisig'}
-      render={({field: {onChange, value}}) => (
-        <OptionsContainers>
-          <TitleContainer>
-            <Label
-              label={t('createDAO.step3.multisigEligibilityTitle')}
-              helpText={t('createDAO.step3.multisigEligibilitySubtitle')}
-            />
-          </TitleContainer>
+    <OptionsContainers>
+      <TitleContainer>
+        <Label
+          label={t('createDAO.step3.multisigEligibilityTitle')}
+          helpText={t('createDAO.step3.multisigEligibilitySubtitle')}
+        />
+      </TitleContainer>
+      <Controller
+        name="eligibilityType"
+        control={control}
+        defaultValue={'multisig'}
+        render={({field: {onChange, value}}) => (
           <CheckboxContainer>
             <CheckboxItemsContainer>
               {isMobile && (
@@ -58,9 +58,9 @@ export const MultisigEligibility = () => {
               />
             )}
           </CheckboxContainer>
-        </OptionsContainers>
-      )}
-    />
+        )}
+      />
+    </OptionsContainers>
   );
 };
 

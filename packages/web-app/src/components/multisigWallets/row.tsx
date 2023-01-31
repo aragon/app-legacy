@@ -44,17 +44,17 @@ export const Row = ({index, ...props}: MultisigWalletsRowProps) => {
   const {isMobile} = useScreen();
 
   return (
-    <Controller
-      name={`multisigWallets.${index}.address`}
-      defaultValue=""
-      control={control}
-      rules={{
-        required: t('errors.required.walletAddress'),
-        validate: value => addressValidator(value, index),
-      }}
-      render={({field: {onChange, value}, fieldState: {error}}) => (
-        <RowContainer>
-          {isMobile && <Title>Address</Title>}
+    <RowContainer>
+      {isMobile && <Title>{t('labels.whitelistWallets.address')}</Title>}
+      <Controller
+        name={`multisigWallets.${index}.address`}
+        defaultValue=""
+        control={control}
+        rules={{
+          required: t('errors.required.walletAddress'),
+          validate: value => addressValidator(value, index),
+        }}
+        render={({field: {onChange, value}, fieldState: {error}}) => (
           <Container>
             <InputContainer>
               <ValueInput
@@ -108,9 +108,9 @@ export const Row = ({index, ...props}: MultisigWalletsRowProps) => {
               ]}
             />
           </Container>
-        </RowContainer>
-      )}
-    />
+        )}
+      />
+    </RowContainer>
   );
 };
 

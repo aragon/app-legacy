@@ -102,7 +102,7 @@ export const MultisigWallets = () => {
         )}
         {controlledWallets.map((field, index) => (
           <div key={field.id}>
-            {!isMobile && index !== 0 && <Divider />}
+            {(!isMobile || (isMobile && index !== 0)) && <Divider />}
             <Row
               index={index}
               onResetEntry={handleResetEntry}
@@ -165,7 +165,7 @@ export const MultisigWallets = () => {
         </ActionsContainer>
         <Divider />
         <SummaryContainer>
-          <Title>{t('labels.whitelistWallets.summary')}</Title>
+          <Title>{t('labels.summary')}</Title>
           <TotalWalletsContainer>
             <Text>{t('labels.whitelistWallets.totalWallets')}</Text>
             <Title>{controlledWallets.length}</Title>
@@ -209,7 +209,7 @@ const TextButtonsContainer = styled.div.attrs(() => ({
 }))``;
 
 const SummaryContainer = styled.div.attrs(() => ({
-  className: 'flex desktop:p-3 p-2 pt-3 flex-col space-y-1.5',
+  className: 'flex desktop:p-3 p-2 flex-col space-y-1.5',
 }))``;
 const TotalWalletsContainer = styled.div.attrs(() => ({
   className: 'flex place-content-between',
