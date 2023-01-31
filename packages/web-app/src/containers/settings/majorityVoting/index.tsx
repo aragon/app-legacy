@@ -26,7 +26,7 @@ const MajorityVotingSettings: React.FC<IPluginSettings> = ({daoDetails}) => {
     daoDetails?.plugins[0].id as PluginTypes
   );
 
-  const {data: daoMembers, isLoading: isMembersLoading} = useDaoMembers(
+  const {data: daoMembers} = useDaoMembers(
     daoDetails?.plugins?.[0]?.instanceAddress || '',
     (daoDetails?.plugins?.[0]?.id as PluginTypes) || undefined
   );
