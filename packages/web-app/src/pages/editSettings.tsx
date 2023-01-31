@@ -227,7 +227,7 @@ const EditSettings: React.FC = () => {
     setValue('eligibilityTokenAmount', formattedProposerAmount);
     setValue('minimumTokenAmount', formattedProposerAmount);
     setValue('eligibilityType', formattedEligibilityType);
-  }, [daoSettings.minProposerVotingPower, setValue]);
+  }, [formattedEligibilityType, formattedProposerAmount, setValue]);
 
   const setCurrentGovernance = useCallback(() => {
     setValue('tokenTotalSupply', tokenSupply?.formatted);
@@ -280,7 +280,7 @@ const EditSettings: React.FC = () => {
     setCurrentMetadata();
     setCurrentCommunity();
     setCurrentGovernance();
-  }, [setCurrentGovernance, setCurrentMetadata]);
+  }, [setCurrentGovernance, setCurrentCommunity, setCurrentMetadata]);
 
   if (
     paramsAreLoading ||
