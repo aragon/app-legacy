@@ -148,8 +148,7 @@
       "deleteAllEntries": "Delete All Addresses",
       "noWallets": "Choose a wallet to remove",
       "addWalletsSubtitle": "Add a wallet to your DAO",
-      "totalWallets": "Total Wallets",
-      "summary": "Summary"
+      "totalWallets": "Total Wallets"
     },
     "review": {
       "blockchain": "Blockchain",
