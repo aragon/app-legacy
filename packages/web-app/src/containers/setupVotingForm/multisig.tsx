@@ -359,27 +359,29 @@ const SetupMultisigVotingForm: React.FC = () => {
 
 export default SetupMultisigVotingForm;
 
-const DurationLabel: React.FC<{maxDuration?: boolean; minDuration?: boolean}> =
-  ({maxDuration, minDuration}) => {
-    const {t} = useTranslation();
+type DurationLabelProps = {
+  maxDuration?: boolean;
+  minDuration?: boolean;
+};
 
-    if (minDuration) {
-      return (
-        <AlertInline label={t('alert.minExpirationAlert')} mode="critical" />
-      );
-    } else if (maxDuration) {
-      return (
-        <AlertInline label={t('alert.maxExpirationAlert')} mode="warning" />
-      );
-    } else {
-      return (
-        <AlertInline
-          mode="neutral"
-          label={t('newWithdraw.setupVoting.multisig.expirationAlert')}
-        />
-      );
-    }
-  };
+const DurationLabel: React.FC<DurationLabelProps> = props => {
+  const {t} = useTranslation();
+
+  if (props.minDuration) {
+    return (
+      <AlertInline label={t('alert.minExpirationAlert')} mode="critical" />
+    );
+  } else if (props.maxDuration) {
+    return <AlertInline label={t('alert.maxExpirationAlert')} mode="warning" />;
+  } else {
+    return (
+      <AlertInline
+        label={t('newWithdraw.setupVoting.multisig.expirationAlert')}
+        mode="neutral"
+      />
+    );
+  }
+};
 
 type Props = {
   items: Array<{
