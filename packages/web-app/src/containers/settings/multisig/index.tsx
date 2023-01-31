@@ -53,15 +53,6 @@ const MultisigSettings: React.FC<IPluginSettings> = ({daoDetails}) => {
             />
           </Dd>
         </Dl>
-
-        <Dl>
-          <Dt>{t('labels.proposalCreation')}</Dt>
-          <Dd>
-            {daoSettings?.onlyListed
-              ? t('createDAO.step3.multisigMembers')
-              : t('createDAO.step3.eligibility.anyone.title')}
-          </Dd>
-        </Dl>
       </DescriptionListContainer>
 
       {/* GOVERNANCE SECTION */}
@@ -72,6 +63,15 @@ const MultisigSettings: React.FC<IPluginSettings> = ({daoDetails}) => {
             {`${daoSettings?.minApprovals} of ${daoMembers?.members.length} ${t(
               'labels.authorisedWallets'
             )}`}
+          </Dd>
+        </Dl>
+
+        <Dl>
+          <Dt>{t('labels.proposalCreation')}</Dt>
+          <Dd>
+            {daoSettings?.onlyListed
+              ? t('createDAO.step3.multisigMembers')
+              : t('createDAO.step3.eligibility.anyone.title')}
           </Dd>
         </Dl>
       </DescriptionListContainer>

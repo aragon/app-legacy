@@ -107,20 +107,6 @@ const MajorityVotingSettings: React.FC<IPluginSettings> = ({daoDetails}) => {
             />
           </Dd>
         </Dl>
-        {isErc20Plugin && (
-          <Dl>
-            <Dt>{t('labels.review.proposalThreshold')}</Dt>
-            <Dd>
-              {t('labels.review.tokenHoldersWithTkns', {
-                tokenAmount: formatUnits(
-                  daoSettings?.minProposerVotingPower || 0,
-                  daoToken?.decimals || 18
-                ),
-                tokenSymbol: daoToken?.symbol,
-              })}
-            </Dd>
-          </Dl>
-        )}
       </DescriptionListContainer>
 
       {/* GOVERNANCE SECTION */}
@@ -164,6 +150,21 @@ const MajorityVotingSettings: React.FC<IPluginSettings> = ({daoDetails}) => {
           <Dt>{t('labels.review.voteReplacement')}</Dt>
           <Dd>{votingMode.voteReplacement}</Dd>
         </Dl>
+
+        {isErc20Plugin && (
+          <Dl>
+            <Dt>{t('labels.review.proposalThreshold')}</Dt>
+            <Dd>
+              {t('labels.review.tokenHoldersWithTkns', {
+                tokenAmount: formatUnits(
+                  daoSettings?.minProposerVotingPower || 0,
+                  daoToken?.decimals || 18
+                ),
+                tokenSymbol: daoToken?.symbol,
+              })}
+            </Dd>
+          </Dl>
+        )}
       </DescriptionListContainer>
     </div>
   );
