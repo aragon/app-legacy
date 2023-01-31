@@ -29,8 +29,7 @@ const SetupCommunityForm: React.FC = () => {
     resetField('tokenSymbol');
     resetField('tokenAddress');
     resetField('tokenTotalSupply');
-    resetField('whitelistWallets');
-    resetField('multisigtWallets');
+    resetField('multisigWallets');
     resetField('wallets');
   };
 
