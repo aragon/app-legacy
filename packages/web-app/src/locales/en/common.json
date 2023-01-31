@@ -99,7 +99,8 @@
     "label": "Name / Description",
     "logo": "Logo",
     "optional": "Optional",
-    "minimumApproval": "Approval threshold",
+    "minimumApprovalThreshold": "Approval threshold",
+    "minimumApproval": "Minimum Approval",
     "minimumParticipation": "Minimum Participation",
     "minimumDuration": "Minimum Duration",
     "voteReplacement": "Vote Replacement",
@@ -555,6 +556,7 @@
       "tokenMembershipSubtitle": "Tokens act as voting chips. The more tokens you hold, the more weight your vote has. Token holders can also create proposals. ",
       "walletMemberShip": "Authorized wallets",
       "walletMemberShipSubtitle": "Allowlist wallet addresses of trusted members, so voting is 1 wallet = 1 vote. Allowlisted wallets can also create proposals. ",
+      "multisigMembers": "Multisig Members",
       "nameSubtitle": "The full name of the token. Example: Uniswap",
       "symbolSubtitle": "The abbreviation of the token. Example: UNI",
       "addExistingTokenHelptext": "Hinterlege einen bestehenden Token, welcher deine Community für die Governance verwendet. To learn more about what it’s important if you use an existing Token, read first the ",
@@ -772,7 +774,7 @@
     "edit": "Edit Settings",
     "newSettings": "New settings",
     "oldSettings": "Old Settings",
-    "proposeSettingsInfo": "To make these changes, voters must approve the proposal."
+    "proposeSettingsInfo": "To make changes to the settings of this DAO, a vote must be taken via the community."
   },
   "dashboard": {
     "proposalsTitle": "Proposals created",

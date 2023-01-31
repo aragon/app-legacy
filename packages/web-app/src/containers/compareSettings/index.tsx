@@ -195,7 +195,7 @@ const CompareSettings: React.FC = () => {
         editLabel={t('settings.edit')}
       >
         <Dl>
-          <Dt>{t('labels.minimumApproval')}</Dt>
+          <Dt>{t('labels.minimumApprovalThreshold')}</Dt>
           <Dd>{displayedInfo.approvalThreshold}</Dd>
         </Dl>
         <Dl>

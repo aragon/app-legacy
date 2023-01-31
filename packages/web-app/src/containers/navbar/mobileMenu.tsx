@@ -21,7 +21,7 @@ const MobileNavMenu: React.FC = () => {
         <CardWrapper className="rounded-xl">
           <DaoSelector
             daoAddress={currentDao.ensDomain}
-            daoName={currentDao.metadata.name}
+            daoName={currentDao.metadata.name || currentDao.ensDomain}
             src={currentDao.metadata.avatar}
             onClick={() => {
               close('mobileMenu');
