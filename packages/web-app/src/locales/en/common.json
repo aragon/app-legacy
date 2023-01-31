@@ -356,6 +356,8 @@
     "minDurationAlert": "1 hour is the minimum duration in Majority Voting Systems.",
     "maxExpirationAlert": "[TBD] It’s recommended not to have long expiration time.",
     "minExpirationAlert": "One hour is the minimum expiration time.",
+    "expirationLTDurationAlert": "Duration cannot be less than one hour. Corrected to one hour from start time.",
+    "startDateInPastAlert": "Start time can’t be in the past. Corrected to now.",
     "wrongWalletNetwork": "Wrong Wallet Network",
     "wrongNetwork": {
       "title": "Wrong Network",
