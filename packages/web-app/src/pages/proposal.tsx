@@ -89,6 +89,7 @@ const Proposal: React.FC = () => {
 
   // TODO: fix when integrating multisig
   const daoSettings = data as VotingSettings;
+  const earlyExecution = daoSettings.votingMode === VotingMode.EARLY_EXECUTION;
 
   const {client} = useClient();
   const {set, get} = useCache();
@@ -345,12 +346,10 @@ const Proposal: React.FC = () => {
 
   // vote button and status
   const [voteStatus, buttonLabel] = useMemo(() => {
-    const earlyExecution =
-      daoSettings.votingMode === VotingMode.EARLY_EXECUTION;
     return proposal
       ? getVoteStatusAndLabel(proposal, voted, canVote, earlyExecution, t)
       : ['', ''];
-  }, [daoSettings.votingMode, proposal, voted, canVote, t]);
+  }, [proposal, voted, canVote, earlyExecution, t]);
 
   // vote button state and handler
   const {voteNowDisabled, onClick} = useMemo(() => {
@@ -379,13 +378,20 @@ const Proposal: React.FC = () => {
     }
 
     // member, not yet voted
-    else if (canVote) {
+    else if (canVote && !earlyExecution) {
       return {
         voteNowDisabled: false,
         onClick: () => setVotingInProcess(true),
       };
     } else return {voteNowDisabled: true};
-  }, [address, canVote, isOnWrongNetwork, open, proposal?.status]);
+  }, [
+    address,
+    canVote,
+    earlyExecution,
+    isOnWrongNetwork,
+    open,
+    proposal?.status,
+  ]);
 
   // alert message, only shown when not eligible to vote
   const alertMessage = useMemo(() => {
