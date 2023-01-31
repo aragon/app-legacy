@@ -1,4 +1,5 @@
 import {AlertInline, CheckboxListItem, Label} from '@aragon/ui-components';
+import format from 'date-fns/format';
 import {toDate} from 'date-fns-tz';
 import React, {useCallback, useEffect, useState} from 'react';
 import {Controller, useFormContext, useWatch} from 'react-hook-form';
@@ -20,6 +21,7 @@ import {
   getCanonicalUtcOffset,
   getFormattedUtcOffset,
   hoursToMills,
+  minutesToMills,
 } from 'utils/date';
 import {FormSection} from '.';
 import {DateTimeErrors} from './dateTimeErrors';
@@ -106,10 +108,10 @@ const SetupMultisigVotingForm: React.FC = () => {
   // sets the UTC values for the start and end date/time
   const tzSelector = (tz: string) => {
     if (utcInstance === 'first') {
-      // setUtcStart(tz);
+      setUtcStart(tz);
       setValue('startUtc', tz);
     } else {
-      // setUtcEnd(tz);
+      setUtcEnd(tz);
       setValue('endUtc', tz);
     }
   };
@@ -143,12 +145,16 @@ const SetupMultisigVotingForm: React.FC = () => {
   const dateTimeValidator = useCallback(() => {
     //build start date/time in utc mills
     // check end time using start and duration
-    const sDate = getValues('startDate');
-    const sTime = getValues('startTime');
-    const sUtc = getValues('startUtc');
+    let startDateTime: Date;
+    if (getValues('startNow') === 'date') {
+      const sDate = getValues('startDate');
+      const sTime = getValues('startTime');
+      const sUtc = getValues('startUtc');
 
-    const canonicalSUtc = getCanonicalUtcOffset(sUtc);
-    const startDateTime = toDate(sDate + 'T' + sTime + canonicalSUtc);
+      const canonicalSUtc = getCanonicalUtcOffset(sUtc);
+      startDateTime = toDate(sDate + 'T' + sTime + canonicalSUtc);
+    } else startDateTime = new Date();
+
     const startMills = startDateTime.valueOf();
 
     const currDateTime = new Date();
@@ -171,44 +177,43 @@ const SetupMultisigVotingForm: React.FC = () => {
 
     let returnValue = '';
 
-    // TODO: update strings
     // check start constraints
+    // start time in the past
     if (startMills < currMills) {
-      setError('startTime', {
-        type: 'validate',
-        message: t('errors.startPast'),
-      });
-      setError('startDate', {
-        type: 'validate',
-        message: t('errors.startPast'),
-      });
-      returnValue = t('errors.startPast');
+      returnValue = 'Start time can’t be in the past. Corrected to now.';
+
+      // automatically correct the start date to now
+      setValue('startDate', format(new Date(), 'yyyy-MM-dd'));
+      setValue(
+        'startTime',
+        format(new Date().getTime() + minutesToMills(10), 'HH:mm')
+      );
     }
+
+    // start datetime correct
     if (startMills >= currMills) {
       clearErrors('startDate');
       clearErrors('startTime');
     }
 
     //check end constraints
+    // end date before min duration
     if (endMills < minEndDateTimeMills) {
-      setError('endTime', {
-        type: 'validate',
-        message: t('errors.endPast'),
-      });
-      setError('endDate', {
-        type: 'validate',
-        message: t('errors.endPast'),
-      });
-      returnValue = t('errors.endPast');
+      returnValue = '1 hour is the minimum duration';
+
+      // automatically correct the end date to minimum
+      setValue('endDate', format(minEndDateTimeMills, 'yyyy-MM-dd'));
+      setValue('endTime', format(minEndDateTimeMills, 'HH:mm'));
     }
 
+    // end datetime correct
     if (endMills >= minEndDateTimeMills) {
       clearErrors('endDate');
       clearErrors('endTime');
     }
 
     return !returnValue ? true : returnValue;
-  }, [clearErrors, getValues, setError, setValue, t]);
+  }, [clearErrors, getValues, setValue]);
 
   /*************************************************
    *                    Effects                    *
@@ -353,6 +358,7 @@ const SetupMultisigVotingForm: React.FC = () => {
         />
       </FormSection>
       <UtcMenu onTimezoneSelect={tzSelector} />
+      <pre>{JSON.stringify(getValues(), null, 2)}</pre>
     </>
   );
 };
