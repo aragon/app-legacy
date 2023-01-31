@@ -4,7 +4,7 @@ import {
   ButtonText,
   Dropdown,
   IconMenuVertical,
-  Link,
+  Label,
   ListItemAction,
 } from '@aragon/ui-components';
 import {useAlertContext} from 'context/alert';
@@ -88,17 +88,11 @@ export const MultisigWallets = () => {
   return (
     <Container>
       <DescriptionContainer>
-        <Title>{t('createDAO.step3.multisigMembers')}</Title>
-        <Subtitle>
-          {t('createDAO.step3.multisigMembersHelptext')}
-          &nbsp;
-          <Link
-            label={t('createDAO.step3.multisigMembersHelptextLink')}
-            href="https://to.do"
-          />
-          &nbsp;
-          {t('createDAO.step3.multisigMembersHelptext2')}
-        </Subtitle>
+        <Label
+          label={t('createDAO.step3.multisigMembers')}
+          helpText={t('createDAO.step3.multisigMembersHelptext')}
+          renderHtml
+        />
       </DescriptionContainer>
       <TableContainer>
         {!isMobile && (
@@ -204,9 +198,6 @@ const Title = styled.p.attrs({
 const Text = styled.p.attrs({
   className: 'ft-text-base  text-ui-600',
 })``;
-
-const Subtitle = styled.p.attrs({className: 'text-ui-600 ft-text-sm'})``;
-
 const Divider = styled.div.attrs(() => ({
   className: 'flex bg-ui-50 h-0.25',
 }))``;

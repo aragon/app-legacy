@@ -79,6 +79,7 @@ export const Row = ({index, ...props}: MultisigWalletsRowProps) => {
               sideOffset={4}
               trigger={
                 <ButtonIcon
+                  bgWhite
                   size="large"
                   mode="secondary"
                   icon={<IconMenuVertical />}
