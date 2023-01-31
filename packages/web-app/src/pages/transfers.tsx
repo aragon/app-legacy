@@ -120,10 +120,10 @@ const Transfers: React.FC = () => {
                   value={TransferTypes.Withdraw}
                   label={t('labels.withdraw')}
                 />
-                <Option
+                {/* <Option
                   value="externalContract"
                   label={t('labels.externalContract')}
-                />
+                /> */}
               </ButtonGroup>
             </div>
           </div>
