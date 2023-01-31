@@ -89,7 +89,10 @@ export const Row = ({index, ...props}: MultisigWalletsRowProps) => {
               listItems={[
                 {
                   component: (
-                    <ListItemAction title={t('labels.copy')} bgWhite />
+                    <ListItemAction
+                      title={t('labels.whitelistWallets.resetEntry')}
+                      bgWhite
+                    />
                   ),
                   callback: () => {
                     props.onResetEntry(index);
@@ -98,7 +101,10 @@ export const Row = ({index, ...props}: MultisigWalletsRowProps) => {
                 },
                 {
                   component: (
-                    <ListItemAction title={t('labels.copy')} bgWhite />
+                    <ListItemAction
+                      title={t('labels.whitelistWallets.deleteEntry')}
+                      bgWhite
+                    />
                   ),
                   callback: () => {
                     props.onDeleteEntry(index);
