@@ -9,7 +9,7 @@ import {
 import {useAlertContext} from 'context/alert';
 import useScreen from 'hooks/useScreen';
 import {WalletItem} from 'pages/createDAO';
-import React from 'react';
+import React, { useCallback } from 'react';
 import {Controller, useFormContext, useWatch} from 'react-hook-form';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
@@ -43,6 +43,17 @@ export const Row = ({index, ...props}: MultisigWalletsRowProps) => {
 
   const {isMobile} = useScreen();
 
+  const handleAdornmentClick = useCallback(
+    (value: string, onChange: (value: string) => void) => {
+      // when there is a value clear it
+      if (value) {
+        onChange('');
+        alert(t('alert.chip.inputCleared'));
+      } else handleClipboardActions(value, onChange, alert);
+    },
+    [alert, t]
+  );
+
   return (
     <RowContainer>
       {isMobile && <Title>{t('labels.whitelistWallets.address')}</Title>}
@@ -64,9 +75,9 @@ export const Row = ({index, ...props}: MultisigWalletsRowProps) => {
                 }}
                 mode="default"
                 placeholder="0x..."
-                adornmentText={value ? t('labels.copy') : t('labels.paste')}
+                adornmentText={value ? t('labels.clear') : t('labels.paste')}
                 onAdornmentClick={() =>
-                  handleClipboardActions(value, onChange, alert)
+                  handleAdornmentClick(value, onChange)
                 }
               />
               {error?.message && (
