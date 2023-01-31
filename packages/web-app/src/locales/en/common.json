@@ -624,6 +624,8 @@
       "days": "Days",
       "hours": "Hours",
       "minutes": "Minutes",
+      "minimumApprovalSubtitle": "Participation is the amount of addresses in the authorised list that approve on a proposal. The minimum is how many have to approve for the result to be valid.",
+      "minApprovalAddressCount": "of {{count}} Addresses",
       "alerts": {
         "minimumApprovalAlert": "of {{amount}} Tokens",
         "minimumParticipationAlert": "Rounded up to {{percentage}}% equals {{walletCount}} Wallets have to vote",
