@@ -4,22 +4,32 @@ import {
   LinearProgress,
   NumberInput,
 } from '@aragon/ui-components';
-import React from 'react';
+import React, {useEffect} from 'react';
 import {Controller, useFormContext, useWatch} from 'react-hook-form';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 
 export const MultisigMinimumApproval = () => {
   const {t} = useTranslation();
-  const {control} = useFormContext();
-  const multisigWallets = useWatch({name: 'multisigWallets', control: control});
+  const {control, setValue} = useFormContext();
+  const [multisigWallets, multisigMinimumApprovals] = useWatch({
+    name: ['multisigWallets', 'multisigMinimumApprovals'],
+    control: control,
+  });
 
-  const validateminimumApprovals = (_value: number) => true;
+  useEffect(() => {
+    if (multisigMinimumApprovals > multisigWallets.length) {
+      setValue('multisigMinimumApprovals', multisigWallets.length);
+    }
+  }, [multisigMinimumApprovals, setValue]);
+
+  const validateminimumApprovals = (value: number) =>
+    value <= multisigWallets.length;
 
   return (
     <>
       <Label
-        label={t('labels.minimumApproval')}
+        label={t('labels.minimumApprovals')}
         helpText={t('createDAO.step4.minimumApprovalSubtitle')}
       />
       <Controller
@@ -49,7 +59,7 @@ export const MultisigMinimumApproval = () => {
                 <LinearProgressContainer>
                   <LinearProgress max={multisigWallets.length} value={value} />
                   <ProgressBarTick />
-                  <ProgressInfo1>
+                  <ProgressInfo>
                     <p
                       className="font-bold text-right text-primary-500"
                       style={{
@@ -63,7 +73,7 @@ export const MultisigMinimumApproval = () => {
                         count: multisigWallets.length,
                       })}
                     </p>
-                  </ProgressInfo1>
+                  </ProgressInfo>
                 </LinearProgressContainer>
               </div>
             </Container>
@@ -100,9 +110,6 @@ const ProgressBarTick = styled.div.attrs({
     'absolute left-1/2 w-1 h-2.5 border-r-2 border-l-2 transform -translate-x-1/2 bg-ui-300 border-ui-0',
 })``;
 const ProgressInfo = styled.div.attrs({
-  className: 'flex absolute -top-2.5 justify-end space-x-0.5 w-full text-sm',
-})``;
-const ProgressInfo1 = styled.div.attrs({
   className:
     'flex absolute -top-2.5 justify-between space-x-0.5 w-full text-sm',
 })``;

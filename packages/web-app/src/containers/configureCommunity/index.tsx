@@ -6,8 +6,9 @@ import {
   NumberInput,
   Tag,
 } from '@aragon/ui-components';
+import {MultisigEligibility} from 'components/multisigEligibility';
 import {MultisigMinimumApproval} from 'components/multisigMinimumApproval';
-import React, {useCallback, useMemo} from 'react';
+import React, {useCallback} from 'react';
 import {Controller, useFormContext, useWatch} from 'react-hook-form';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
@@ -142,9 +143,14 @@ const ConfigureCommunity: React.FC = () => {
   return (
     <>
       {membership === 'multisig' && (
-        <FormItem>
-          <MultisigMinimumApproval />
-        </FormItem>
+        <>
+          <FormItem>
+            <MultisigMinimumApproval />
+          </FormItem>
+          <FormItem>
+            <MultisigEligibility />
+          </FormItem>
+        </>
       )}
       {membership === 'token' && (
         <>
