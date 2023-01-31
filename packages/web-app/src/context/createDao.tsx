@@ -278,7 +278,7 @@ const CreateDaoProvider: React.FC = ({children}) => {
         metadataUri: ipfsUri || '',
         // TODO: We're using dao name without spaces for ens, We need to add alert
         // to inform this to user
-        ensSubdomain: daoName?.replace(/ /g, '_'),
+        ensSubdomain: daoName?.toLocaleLowerCase().replace(/ /g, '-'),
         plugins: [...plugins],
       };
     } catch {
