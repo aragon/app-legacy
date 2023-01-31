@@ -1,15 +1,9 @@
-import {
-  AlertCard,
-  AlertInline,
-  CheckboxListItem,
-  Label,
-} from '@aragon/ui-components';
+import {CheckboxListItem, Label} from '@aragon/ui-components';
 import React, {useEffect} from 'react';
 import {Controller, useFormContext, useWatch} from 'react-hook-form';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 
-import {WhitelistWallets} from 'components/whitelistWallets';
 import CreateNewToken from './createNewToken';
 import {MultisigWallets} from 'components/multisigWallets';
 import {MultisigEligibility} from 'components/multisigEligibility';
@@ -148,25 +142,6 @@ const SetupCommunityForm: React.FC = () => {
           />
         </FormItem>
       )}*/}
-      {membership === 'wallet' && (
-        <FormItem>
-          <Label
-            label={t('labels.authorisedWallets')}
-            helpText={t('createDAO.step3.authorisedWalletsSubtitle')}
-            renderHtml
-          />
-          <AlertCard
-            mode="warning"
-            title={t('createDAO.step3.warningTitle')}
-            helpText={t('createDAO.step3.warningSubtitle')}
-          />
-          <AlertInline
-            label={t('createDAO.step3.whiteListWalletAlertText')}
-            mode="neutral"
-          />
-          <WhitelistWallets />
-        </FormItem>
-      )}
 
       {membership === 'token' && <CreateNewToken />}
 
