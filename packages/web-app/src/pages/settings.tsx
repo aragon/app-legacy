@@ -32,7 +32,7 @@ const Settings: React.FC = () => {
 
   const {data: daoId, isLoading: isDaoParamLoading} = useDaoParam();
 
-  const {data: daoDetails, isLoading: isDetailsLoading} = useDaoDetails(daoId!);
+  const {data: daoDetails, isLoading: isDetailsLoading} = useDaoDetails(daoId);
 
   const networkInfo = CHAIN_METADATA[network];
   const chainLabel = networkInfo.name;
