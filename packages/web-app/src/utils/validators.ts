@@ -194,7 +194,9 @@ export function isDaoNameValid(
   // for better performance
   try {
     provider
-      ?.resolveName(`${value.toLocaleLowerCase().replaceAll(' ', '-')}.dao.eth`)
+      ?.resolveName(
+        `${value.toLocaleLowerCase().replaceAll(/[^a-zA-Z0-9]+/g, '-')}.dao.eth`
+      )
       .then(result => {
         const inputValue = getValues('daoName');
         // Check to see if the response belongs to current value
