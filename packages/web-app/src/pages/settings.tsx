@@ -48,8 +48,6 @@ const Settings: React.FC = () => {
     return <Loading />;
   }
 
-  console.log('settings==', daoDetails);
-
   return (
     <SettingsWrapper>
       <div className="mt-3 desktop:mt-8 space-y-5">
@@ -129,7 +127,7 @@ export const PluginSettingsWrapper: React.FC<IPluginSettings> = ({
   daoDetails,
 }) => {
   // TODO: Create support for multiple plugin DAO once design is ready.
-  const pluginType: PluginTypes = daoDetails?.plugins?.[0]?.id as PluginTypes;
+  const pluginType = daoDetails?.plugins?.[0]?.id as PluginTypes;
 
   switch (pluginType) {
     case 'token-voting.plugin.dao.eth':
