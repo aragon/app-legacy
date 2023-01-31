@@ -7,7 +7,7 @@ import {
   Tag,
 } from '@aragon/ui-components';
 import {MultisigMinimumApproval} from 'components/multisigMinimumApproval';
-import React, {useCallback} from 'react';
+import React, {useCallback, useMemo} from 'react';
 import {Controller, useFormContext, useWatch} from 'react-hook-form';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
