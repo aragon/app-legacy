@@ -39,9 +39,6 @@ const MajorityVotingSettings: React.FC<IPluginSettings> = ({daoDetails}) => {
   const daoSettings = votingSettings as VotingSettings;
 
   const {days, hours, minutes} = getDHMFromSeconds(daoSettings.minDuration);
-  const isErc20Plugin =
-    (daoDetails?.plugins?.[0]?.id as PluginTypes) ===
-    'token-voting.plugin.dao.eth';
 
   const votingMode = {
     // Note: This implies that earlyExecution and voteReplacement may never be
@@ -62,36 +59,30 @@ const MajorityVotingSettings: React.FC<IPluginSettings> = ({daoDetails}) => {
       <DescriptionListContainer title={t('navLinks.community')}>
         <Dl>
           <Dt>{t('labels.review.eligibleVoters')}</Dt>
+          <Dd>{t('createDAO.step3.tokenMembership')}</Dd>
+        </Dl>
+
+        <Dl>
+          <Dt>{t('votingTerminal.token')}</Dt>
           <Dd>
-            {isErc20Plugin
-              ? t('createDAO.step3.tokenMembership')
-              : t('createDAO.step3.walletMemberShip')}
+            <div className="flex items-center space-x-1.5">
+              <p>{daoToken?.name}</p>
+              <p>{daoToken?.symbol}</p>
+            </div>
           </Dd>
         </Dl>
-        {isErc20Plugin && (
-          <>
-            <Dl>
-              <Dt>{t('votingTerminal.token')}</Dt>
-              <Dd>
-                <div className="flex items-center space-x-1.5">
-                  <p>{daoToken?.name}</p>
-                  <p>{daoToken?.symbol}</p>
-                </div>
-              </Dd>
-            </Dl>
-            <Dl>
-              <Dt>{t('labels.supply')}</Dt>
-              <Dd>
-                <div className="flex items-center space-x-1.5">
-                  <p>
-                    {tokenSupply?.formatted} {daoToken?.symbol}
-                  </p>
-                  <Tag label={t('labels.mintable')} />
-                </div>
-              </Dd>
-            </Dl>
-          </>
-        )}
+        <Dl>
+          <Dt>{t('labels.supply')}</Dt>
+          <Dd>
+            <div className="flex items-center space-x-1.5">
+              <p>
+                {tokenSupply?.formatted} {daoToken?.symbol}
+              </p>
+              <Tag label={t('labels.mintable')} />
+            </div>
+          </Dd>
+        </Dl>
+
         <Dl>
           <Dt>{t('labels.review.distribution')}</Dt>
           <Dd>
@@ -120,17 +111,13 @@ const MajorityVotingSettings: React.FC<IPluginSettings> = ({daoDetails}) => {
         </Dl>
         <Dl>
           <Dt>{t('labels.minimumParticipation')}</Dt>
-          {isErc20Plugin ? (
-            <Dd>
-              {'≥'}
-              {Math.round(daoSettings?.minParticipation * 100)}% ({'≥'}
-              {daoSettings?.minParticipation *
-                (tokenSupply?.formatted || 0)}{' '}
-              {daoToken?.symbol})
-            </Dd>
-          ) : (
-            <Dd>{Math.round(daoSettings?.minParticipation * 100)}%</Dd>
-          )}
+
+          <Dd>
+            {'≥'}
+            {Math.round(daoSettings?.minParticipation * 100)}% ({'≥'}
+            {daoSettings?.minParticipation * (tokenSupply?.formatted || 0)}{' '}
+            {daoToken?.symbol})
+          </Dd>
         </Dl>
         <Dl>
           <Dt>{t('labels.minimumDuration')}</Dt>
@@ -151,20 +138,18 @@ const MajorityVotingSettings: React.FC<IPluginSettings> = ({daoDetails}) => {
           <Dd>{votingMode.voteReplacement}</Dd>
         </Dl>
 
-        {isErc20Plugin && (
-          <Dl>
-            <Dt>{t('labels.review.proposalThreshold')}</Dt>
-            <Dd>
-              {t('labels.review.tokenHoldersWithTkns', {
-                tokenAmount: formatUnits(
-                  daoSettings?.minProposerVotingPower || 0,
-                  daoToken?.decimals || 18
-                ),
-                tokenSymbol: daoToken?.symbol,
-              })}
-            </Dd>
-          </Dl>
-        )}
+        <Dl>
+          <Dt>{t('labels.review.proposalThreshold')}</Dt>
+          <Dd>
+            {t('labels.review.tokenHoldersWithTkns', {
+              tokenAmount: formatUnits(
+                daoSettings?.minProposerVotingPower || 0,
+                daoToken?.decimals || 18
+              ),
+              tokenSymbol: daoToken?.symbol,
+            })}
+          </Dd>
+        </Dl>
       </DescriptionListContainer>
     </div>
   );
