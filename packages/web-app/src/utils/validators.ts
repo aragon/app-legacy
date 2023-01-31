@@ -198,11 +198,11 @@ export function isDaoNameValid(
   try {
     provider
       ?.resolveName(
-        `${toAscii(value, {
+        `${toAscii(value.replaceAll(/[ .]/g, '-'), {
           transitional: true,
           useStd3ASCII: true,
           verifyDnsLength: true,
-        }).replaceAll('.', '-')}.dao.eth`
+        })}.dao.eth`
       )
       .then(result => {
         const inputValue = getValues('daoName');
