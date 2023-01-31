@@ -6,10 +6,11 @@ import {
   NumberInput,
   Tag,
 } from '@aragon/ui-components';
+import {MultisigEligibility} from 'components/multisigEligibility';
 import {MultisigMinimumApproval} from 'components/multisigMinimumApproval';
-import React, {useCallback, useMemo} from 'react';
+import React, {useCallback} from 'react';
 import {Controller, useFormContext, useWatch} from 'react-hook-form';
-import {Trans, useTranslation} from 'react-i18next';
+import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 
 import {
@@ -25,12 +26,9 @@ const ConfigureCommunity: React.FC = () => {
   const {t} = useTranslation();
   const {control, setValue, getValues, trigger} = useFormContext();
 
-  const defaultMinimumParticipation = 51;
   const [
     tokenTotalSupply,
     membership,
-    whitelistWallets,
-    minimumParticipation,
     earlyExecution,
     durationDays,
     durationHours,
@@ -39,8 +37,6 @@ const ConfigureCommunity: React.FC = () => {
     name: [
       'tokenTotalSupply',
       'membership',
-      'whitelistWallets',
-      'minimumParticipation',
       'earlyExecution',
       'durationDays',
       'durationHours',
@@ -141,30 +137,20 @@ const ConfigureCommunity: React.FC = () => {
     return value <= 100 && value >= 0 ? true : t('errors.percentage');
   };
 
-  const minimumParticipationPercent = useMemo(() => {
-    return (
-      Math.round(
-        ((100 *
-          Math.ceil(
-            ((minimumParticipation || defaultMinimumParticipation) *
-              whitelistWallets?.length) /
-              100
-          )) /
-          whitelistWallets?.length) *
-          100
-      ) / 100
-    );
-  }, [minimumParticipation, whitelistWallets?.length]);
-
   /*************************************************
    *                   Render                     *
    *************************************************/
   return (
     <>
       {membership === 'multisig' && (
-        <FormItem>
-          <MultisigMinimumApproval />
-        </FormItem>
+        <>
+          <FormItem>
+            <MultisigMinimumApproval />
+          </FormItem>
+          <FormItem>
+            <MultisigEligibility />
+          </FormItem>
+        </>
       )}
       {membership === 'token' && (
         <>
@@ -528,10 +514,6 @@ const ToggleCheckListItemWrapper = styled.div.attrs({className: 'flex-1'})``;
 
 const FormItem = styled.div.attrs({
   className: 'space-y-1.5',
-})``;
-
-const FormWrapper = styled.div.attrs({
-  className: 'w-1/2 tablet:w-1/3 pr-1.5',
 })``;
 
 const ApprovalWrapper = styled.div.attrs({
