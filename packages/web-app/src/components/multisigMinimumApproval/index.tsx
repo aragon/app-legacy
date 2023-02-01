@@ -4,6 +4,7 @@ import {
   LinearProgress,
   NumberInput,
 } from '@aragon/ui-components';
+import {m} from 'framer-motion';
 import React, {useEffect} from 'react';
 import {Controller, useFormContext, useWatch} from 'react-hook-form';
 import {useTranslation} from 'react-i18next';
@@ -60,14 +61,25 @@ export const MultisigMinimumApproval = () => {
                   <LinearProgress max={multisigWallets.length} value={value} />
                   <ProgressBarTick />
                   <ProgressInfo>
-                    <p
-                      className="font-bold text-right text-primary-500"
-                      style={{
-                        flexBasis: `${(value / multisigWallets.length) * 100}%`,
-                      }}
-                    >
-                      {value}
-                    </p>
+                    {multisigMinimumApprovals !== multisigWallets.length && (
+                      <p
+                        className="font-bold text-right text-primary-500"
+                        style={{
+                          flexBasis: `${
+                            (value / multisigWallets.length) * 100
+                          }%`,
+                        }}
+                      >
+                        {value}
+                      </p>
+                    )}
+                    {multisigMinimumApprovals === multisigWallets.length && (
+                      <p
+                        className="font-bold text-right text-primary-500"
+                      >
+                        {value}
+                      </p>
+                    )}
                     <p className="text-ui-600 ft-text-sm">
                       {t('createDAO.step4.minApprovalAddressCount', {
                         count: multisigWallets.length,

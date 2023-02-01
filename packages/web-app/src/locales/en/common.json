@@ -103,7 +103,7 @@
     "logo": "Logo",
     "optional": "Optional",
     "minimumApprovalThreshold": "Approval threshold",
-    "minimumApproval": "Approval threshold",
+    "minimumApproval": "Minimum Approval",
     "minimumParticipation": "Minimum Participation",
     "minimumDuration": "Minimum Duration",
     "voteReplacement": "Vote Replacement",
