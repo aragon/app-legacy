@@ -9,7 +9,7 @@ import {
 import {useAlertContext} from 'context/alert';
 import useScreen from 'hooks/useScreen';
 import {WalletItem} from 'pages/createDAO';
-import React, { useCallback } from 'react';
+import React, {useCallback} from 'react';
 import {Controller, useFormContext, useWatch} from 'react-hook-form';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
@@ -76,9 +76,7 @@ export const Row = ({index, ...props}: MultisigWalletsRowProps) => {
                 mode="default"
                 placeholder="0x..."
                 adornmentText={value ? t('labels.clear') : t('labels.paste')}
-                onAdornmentClick={() =>
-                  handleAdornmentClick(value, onChange)
-                }
+                onAdornmentClick={() => handleAdornmentClick(value, onChange)}
               />
               {error?.message && (
                 <AlertInline label={error.message} mode="critical" />
