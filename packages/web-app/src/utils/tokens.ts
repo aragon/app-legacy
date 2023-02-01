@@ -1,10 +1,11 @@
 /* eslint-disable no-empty */
 import {erc20TokenABI} from 'abis/erc20TokenABI';
-import {TokenWithMetadata} from './types';
+import {TokenWithMetadata, Transfer} from './types';
 import {constants, ethers, providers as EthersProviders} from 'ethers';
 
 import {formatUnits} from 'utils/library';
 import {NativeTokenData, TOKEN_AMOUNT_REGEX} from './constants';
+import { AssetBalance } from '@aragon/sdk-client';
 
 /**
  * This method sorts a list of array information. It is applicable to any field
@@ -242,4 +243,26 @@ export function abbreviateTokenAmount(amount: string): string {
   }
 
   return `${Number.parseInt(integers)}${symbol && ' ' + symbol}`;
+}
+
+export function historicalTokenBalances(transfers: Transfer[], tokenBalances: TokenWithMetadata[], pastIntervalMins: number) {
+  const historicalBalances = {} as Record<string, TokenWithMetadata>;
+  tokenBalances.forEach(bal => historicalBalances[bal.metadata.id] = {
+    balance: bal.balance,
+    metadata: { ...bal.metadata }
+  });
+  const nowMs = new Date().getTime();
+
+  // transfers assumed in reverse date order. Reverses effect on balances of all transactions which
+  // occurred in pastIntervalMins.
+  for (let i = 0; i < transfers.length; i++) {
+    const transferTimeMs = Number(transfers[i].transferTimestamp) * 1000;
+    if (nowMs - transferTimeMs > pastIntervalMins * 60000) break;
+
+    const tokenId = transfers[i].tokenAddress;
+    const curBalance = historicalBalances[tokenId];
+    historicalBalances[tokenId].balance -= BigInt(formatUnits(transfers[i].tokenAmount, curBalance.metadata.decimals));
+  }
+
+  return historicalBalances;
 }
