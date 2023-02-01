@@ -1,71 +1,105 @@
 import {AlertInline, NumberInput} from '@aragon/ui-components';
 import React, {useCallback} from 'react';
-import {Controller, useFormContext, useWatch} from 'react-hook-form';
+import {Controller, useFormContext} from 'react-hook-form';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
-
-import {HOURS_IN_DAY, MINS_IN_DAY, MINS_IN_HOUR} from 'utils/constants';
-import {getDaysHoursMins} from 'utils/date';
+import {
+  MAX_DURATION_DAYS,
+  HOURS_IN_DAY,
+  MINS_IN_HOUR,
+  MINS_IN_DAY,
+} from 'utils/constants';
+import {
+  Offset,
+  daysToMills,
+  hoursToMills,
+  minutesToMills,
+  getDaysHoursMins,
+} from 'utils/date';
 
 type Props = {
   name?: string;
-  maxDurationDays?: number;
-  minDurationHours: number;
-  defaultValues?: {
-    days?: number;
-    hours?: number;
-    mins?: number;
-  };
+  minDuration?: Offset;
+  defaultValues?: Offset;
 };
 
 const durationDefaults = {
   days: 0,
   hours: 0,
-  mins: 0,
+  minutes: 0,
 };
 
-const Duration: React.FC<Props> = ({
-  name = '',
-  maxDurationDays,
-  minDurationHours,
-  defaultValues,
-}) => {
+const Duration: React.FC<Props> = ({defaultValues, name = '', minDuration}) => {
   const defaults = {...durationDefaults, ...defaultValues};
+  const minimums = {...defaults, ...minDuration};
 
   const {t} = useTranslation();
   const {control, getValues, setValue, trigger} = useFormContext();
-  const [durationDays] = useWatch({control, name: [`${name}durationDays`]});
+
+  const daoMinDurationMills =
+    daysToMills(minimums.days) +
+    hoursToMills(minimums.hours) +
+    minutesToMills(minimums.minutes);
 
   /*************************************************
    *                   Handlers                    *
    *************************************************/
+  const durationLTMinimum = useCallback(
+    (durationOffset: Offset) => {
+      const duration =
+        daysToMills(durationOffset.days || 0) +
+        hoursToMills(durationOffset.hours || 0) +
+        minutesToMills(durationOffset.minutes || 0);
+
+      return duration < daoMinDurationMills;
+    },
+    [daoMinDurationMills]
+  );
+
+  const resetToMinDuration = useCallback(() => {
+    setValue('durationDays', minimums.days);
+    setValue('durationHours', minimums.hours);
+    setValue('durationMinutes', minimums.minutes);
+  }, [minimums.days, minimums.hours, minimums.minutes, setValue]);
+
   const handleDaysChanged = useCallback(
     (
       e: React.ChangeEvent<HTMLInputElement>,
       onChange: React.ChangeEventHandler
     ) => {
       const value = Number(e.target.value);
-
-      if (value === 0) e.target.value = '0';
-
-      const durationHours = getValues(`${name}durationHours`);
-      if (maxDurationDays !== undefined && value >= maxDurationDays) {
-        e.target.value = maxDurationDays.toString();
-
-        setValue(`${name}durationDays`, maxDurationDays.toString());
-        setValue(`${name}durationHours`, '0');
-        setValue(`${name}durationMinutes`, '0');
-      } else if (value === 0 && durationHours === '0') {
-        setValue(`${name}durationHours`, minDurationHours.toString());
-      }
-      trigger([
-        `${name}durationMinutes`,
-        `${name}durationHours`,
-        `${name}durationDays`,
+      const [formHours, formMins] = getValues([
+        'durationHours',
+        'durationMinutes',
       ]);
+
+      const formDuration = {
+        days: value,
+        hours: formHours,
+        minutes: formMins,
+      };
+
+      if (value >= MAX_DURATION_DAYS) {
+        e.target.value = MAX_DURATION_DAYS.toString();
+
+        setValue('durationDays', MAX_DURATION_DAYS.toString());
+        setValue('durationHours', '0');
+        setValue('durationMinutes', '0');
+      } else if (value < minimums.days && durationLTMinimum(formDuration)) {
+        resetToMinDuration();
+        e.target.value = minimums.days.toString() || '';
+      }
+      trigger(['durationMinutes', 'durationHours', 'durationDays']);
       onChange(e);
     },
-    [getValues, maxDurationDays, minDurationHours, name, setValue, trigger]
+    [
+      durationLTMinimum,
+      getValues,
+      minimums.days,
+      resetToMinDuration,
+      setValue,
+      trigger,
+    ]
   );
 
   const handleHoursChanged = useCallback(
@@ -75,9 +109,16 @@ const Duration: React.FC<Props> = ({
     ) => {
       const value = Number(e.target.value);
 
-      if (value === 0) e.target.value = '0';
+      const [formDays, formMins] = getValues([
+        'durationDays',
+        'durationMinutes',
+      ]);
 
-      const durationDays = getValues(`${name}durationDays`);
+      const formDuration = {
+        days: formDays,
+        hours: value,
+        minutes: formMins,
+      };
 
       if (value >= HOURS_IN_DAY) {
         const {days, hours} = getDaysHoursMins(value, 'hours');
@@ -85,23 +126,25 @@ const Duration: React.FC<Props> = ({
 
         if (days > 0) {
           setValue(
-            `${name}durationDays`,
-            (Number(durationDays) + days).toString()
+            'durationDays',
+            (Number(getValues('durationDays')) + days).toString()
           );
         }
-      } else if (value === 0 && durationDays === '0') {
-        setValue(`${name}durationHours`, minDurationHours.toString());
-        setValue(`${name}durationMinutes`, '0');
-        e.target.value = minDurationHours.toString();
+      } else if (value < minimums.hours! && durationLTMinimum(formDuration)) {
+        resetToMinDuration();
+        e.target.value = minimums.hours?.toString() || '';
       }
-      trigger([
-        `${name}durationMinutes`,
-        `${name}durationHours`,
-        `${name}durationDays`,
-      ]);
+      trigger(['durationMinutes', 'durationHours', 'durationDays']);
       onChange(e);
     },
-    [getValues, minDurationHours, name, setValue, trigger]
+    [
+      durationLTMinimum,
+      getValues,
+      minimums.hours,
+      resetToMinDuration,
+      setValue,
+      trigger,
+    ]
   );
 
   const handleMinutesChanged = useCallback(
@@ -111,30 +154,45 @@ const Duration: React.FC<Props> = ({
     ) => {
       const value = Number(e.target.value);
 
-      if (value === 0) e.target.value = '0';
+      const [formDays, formHours] = getValues([
+        'durationDays',
+        'durationHours',
+      ]);
+
+      const formDuration = {
+        days: formDays,
+        hours: formHours,
+        minutes: value,
+      };
 
       if (value >= MINS_IN_HOUR) {
         const [oldDays, oldHours] = getValues([
-          `${name}durationDays`,
-          `${name}durationHours`,
+          'durationDays',
+          'durationHours',
         ]);
 
         const totalMins =
           oldDays * MINS_IN_DAY + oldHours * MINS_IN_HOUR + value;
 
         const {days, hours, mins} = getDaysHoursMins(totalMins);
-        setValue(`${name}durationDays`, days.toString());
-        setValue(`${name}durationHours`, hours.toString());
+        setValue('durationDays', days.toString());
+        setValue('durationHours', hours.toString());
         e.target.value = mins.toString();
+      } else if (value < minimums.minutes && durationLTMinimum(formDuration)) {
+        resetToMinDuration();
+        e.target.value = minimums.minutes.toString();
       }
-      trigger([
-        `${name}durationMinutes`,
-        `${name}durationHours`,
-        `${name}durationDays`,
-      ]);
+      trigger(['durationMinutes', 'durationHours', 'durationDays']);
       onChange(e);
     },
-    [getValues, name, setValue, trigger]
+    [
+      durationLTMinimum,
+      getValues,
+      minimums.minutes,
+      resetToMinDuration,
+      setValue,
+      trigger,
+    ]
   );
 
   /*************************************************
@@ -145,7 +203,7 @@ const Duration: React.FC<Props> = ({
       <Controller
         name={`${name}durationMinutes`}
         control={control}
-        defaultValue={`${defaults.mins}`}
+        defaultValue={`${defaults.minutes}`}
         rules={{
           required: t('errors.emptyDistributionMinutes'),
           validate: value =>
@@ -166,9 +224,6 @@ const Duration: React.FC<Props> = ({
               }
               placeholder={'0'}
               min="0"
-              {...(maxDurationDays && maxDurationDays === durationDays
-                ? {disabled: true}
-                : {disabled: false})}
             />
             {error?.message && (
               <AlertInline label={error.message} mode="critical" />
@@ -197,9 +252,6 @@ const Duration: React.FC<Props> = ({
               }
               placeholder={'0'}
               min="0"
-              {...(maxDurationDays && maxDurationDays === durationDays
-                ? {disabled: true}
-                : {disabled: false})}
             />
             {error?.message && (
               <AlertInline label={error.message} mode="critical" />
