@@ -2,7 +2,6 @@
 import {useReactiveVar} from '@apollo/client';
 import {
   DaoCreationSteps,
-  IAddresslistVotingPluginInstall,
   CreateDaoParams,
   DaoMetadata,
   IPluginInstallItem,
@@ -10,9 +9,10 @@ import {
   TokenVotingClient,
   VotingMode,
   VotingSettings,
+  MultisigClient,
+  MultisigPluginInstallParams,
 } from '@aragon/sdk-client';
-import {BigNumber} from 'ethers';
-import {defaultAbiCoder, parseUnits, toUtf8Bytes} from 'ethers/lib/utils';
+import {parseUnits} from 'ethers/lib/utils';
 import React, {createContext, useCallback, useContext, useState} from 'react';
 import {useFormContext} from 'react-hook-form';
 import {useTranslation} from 'react-i18next';
@@ -43,16 +43,6 @@ import {usePrivacyContext} from './privacyContext';
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import {toAscii} from 'idna-uts46';
-
-// TODO: Copied from SDK. To be removed once SDK supports encoders for DAO creation
-function encodeRatio(ratio: number, digits: number): number {
-  if (ratio < 0 || ratio > 1) {
-    throw new Error('The ratio value should range between 0 and 1');
-  } else if (!Number.isInteger(digits) || digits < 1 || digits > 15) {
-    throw new Error('The number of digits should range between 1 and 15');
-  }
-  return Math.round(ratio * 10 ** digits);
-}
 
 function readFile(file: Blob): Promise<ArrayBuffer> {
   return new Promise((resolve, reject) => {
@@ -160,6 +150,19 @@ const CreateDaoProvider: React.FC = ({children}) => {
     }
   };
 
+  const getMultisigPluginInstallParams =
+    useCallback((): MultisigPluginInstallParams => {
+      const {multisigWallets, multisigMinimumApprovals, eligibilityType} =
+        getValues();
+      return {
+        members: multisigWallets.map(wallet => wallet.address),
+        votingSettings: {
+          minApprovals: multisigMinimumApprovals,
+          onlyListed: eligibilityType === 'multisig',
+        },
+      };
+    }, [getValues]);
+
   const getVoteSettings = useCallback((): VotingSettings => {
     const {
       minimumApproval,
@@ -212,49 +215,29 @@ const CreateDaoProvider: React.FC = ({children}) => {
       };
     }, [getValues]);
 
-  // get whiteList Plugin configuration
-  // TODO fix this for multisig
-  const getAddresslistPluginParams: () => IAddresslistVotingPluginInstall['addresses'] =
-    useCallback(() => {
-      const {multisigWallets} = getValues();
-      return multisigWallets?.map(wallet => wallet.address);
-    }, [getValues]);
-
   // Get dao setting configuration for creation process
   const getDaoSettings = useCallback(async (): Promise<CreateDaoParams> => {
     const {membership, daoName, daoSummary, daoLogo, links} = getValues();
     const plugins: IPluginInstallItem[] = [];
-    const votingSettings = getVoteSettings();
-
     switch (membership) {
-      case 'wallet': {
-        plugins.push({
-          id: '0xc0180304d365de704b6dc67a216213621eb2f44d',
-          data: toUtf8Bytes(
-            defaultAbiCoder.encode(
-              ['uint64', 'uint64', 'uint64', 'address[]'],
-              [
-                BigNumber.from(encodeRatio(votingSettings.minParticipation, 2)),
-                BigNumber.from(encodeRatio(votingSettings.supportThreshold, 2)),
-                BigNumber.from(votingSettings.minDuration),
-                getAddresslistPluginParams(),
-              ]
-            )
-          ),
-        });
+      case 'multisig': {
+        const params = getMultisigPluginInstallParams();
+        const multisigPlugin =
+          MultisigClient.encoding.getPluginInstallItem(params);
+        plugins.push(multisigPlugin);
         break;
       }
-      case 'token':
-        {
-          const tokenVotingPlugin =
-            TokenVotingClient.encoding.getPluginInstallItem({
-              votingSettings: votingSettings,
-              newToken: getErc20PluginParams(),
-            });
+      case 'token': {
+        const votingSettings = getVoteSettings();
+        const tokenVotingPlugin =
+          TokenVotingClient.encoding.getPluginInstallItem({
+            votingSettings: votingSettings,
+            newToken: getErc20PluginParams(),
+          });
 
-          plugins.push(tokenVotingPlugin);
-        }
+        plugins.push(tokenVotingPlugin);
         break;
+      }
       default:
         throw new Error(`Unknown dao type: ${membership}`);
     }
@@ -278,6 +261,7 @@ const CreateDaoProvider: React.FC = ({children}) => {
 
     try {
       const ipfsUri = await client?.methods.pinMetadata(metadata);
+      console.log('here');
       return {
         metadataUri: ipfsUri || '',
         // TODO: We're using dao name without spaces for ens, We need to add alert
@@ -295,10 +279,10 @@ const CreateDaoProvider: React.FC = ({children}) => {
   }, [
     client?.ipfs,
     client?.methods,
-    getAddresslistPluginParams,
     getErc20PluginParams,
     getValues,
     getVoteSettings,
+    getMultisigPluginInstallParams,
   ]);
 
   // estimate creation fees
@@ -322,7 +306,6 @@ const CreateDaoProvider: React.FC = ({children}) => {
     if (!client || !daoCreationData) {
       throw new Error('SDK client is not initialized correctly');
     }
-
     const createDaoIterator = client?.methods.createDao(daoCreationData);
 
     // Check if createDaoIterator function is initialized

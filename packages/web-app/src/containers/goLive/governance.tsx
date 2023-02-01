@@ -20,6 +20,9 @@ const Governance: React.FC = () => {
     reviewCheckError,
     earlyExecution,
     voteReplacement,
+    membership,
+    multisigMinimumApprovals,
+    multisigWallets,
   } = getValues();
 
   return (
@@ -42,42 +45,64 @@ const Governance: React.FC = () => {
           tagLabel={t('labels.changeableVote')}
           onChecked={() => onChange(!value)}
         >
-          <Dl>
-            <Dt>{t('labels.supportThreshold')}</Dt>
-            <Dd>&gt;{parseInt(minimumApproval)}%</Dd>
-          </Dl>
-          <Dl>
-            <Dt>{t('labels.minimumParticipation')}</Dt>
-            <Dd>
-              {'≥'}
-              {minimumParticipation}% (
-              {Math.ceil(tokenTotalSupply * (value / 100)) < tokenTotalSupply
-                ? '≥'
-                : ''}
-              {Math.ceil(tokenTotalSupply * (minimumParticipation / 100))}{' '}
-              {tokenSymbol})
-            </Dd>
-          </Dl>
-          <Dl>
-            <Dt>{t('labels.minimumDuration')}</Dt>
-            <Dd>
-              <div className="flex space-x-1.5">
-                <div>{t('createDAO.review.days', {days: durationDays})}</div>
-                <div>{t('createDAO.review.hours', {hours: durationHours})}</div>
-                <div>
-                  {t('createDAO.review.minutes', {minutes: durationMinutes})}
-                </div>
-              </div>
-            </Dd>
-          </Dl>
-          <Dl>
-            <Dt>{t('labels.earlyExecution')}</Dt>
-            <Dd>{earlyExecution ? t('labels.yes') : t('labels.no')}</Dd>
-          </Dl>
-          <Dl>
-            <Dt>{t('labels.voteReplacement')}</Dt>
-            <Dd>{voteReplacement ? t('labels.yes') : t('labels.no')}</Dd>
-          </Dl>
+          {membership === 'multisig' && (
+            <Dl>
+              <Dt>{t('labels.minimumApproval')}</Dt>
+              <Dd>
+                {multisigMinimumApprovals}&nbsp;
+                {t('labels.review.multisigMinimumApprovals', {
+                  count: multisigWallets.length,
+                })}
+              </Dd>
+            </Dl>
+          )}
+          {membership === 'token' && (
+            <>
+              <Dl>
+                <Dt>{t('labels.supportThreshold')}</Dt>
+                <Dd>&gt;{parseInt(minimumApproval)}%</Dd>
+              </Dl>
+              <Dl>
+                <Dt>{t('labels.minimumParticipation')}</Dt>
+                <Dd>
+                  {'≥'}
+                  {minimumParticipation}% (
+                  {Math.ceil(tokenTotalSupply * (value / 100)) <
+                  tokenTotalSupply
+                    ? '≥'
+                    : ''}
+                  {Math.ceil(tokenTotalSupply * (minimumParticipation / 100))}{' '}
+                  {tokenSymbol})
+                </Dd>
+              </Dl>
+              <Dl>
+                <Dt>{t('labels.minimumDuration')}</Dt>
+                <Dd>
+                  <div className="flex space-x-1.5">
+                    <div>
+                      {t('createDAO.review.days', {days: durationDays})}
+                    </div>
+                    <div>
+                      {t('createDAO.review.hours', {hours: durationHours})}
+                    </div>
+                    <div>
+                      {t('createDAO.review.minutes', {
+                        minutes: durationMinutes,
+                      })}
+                    </div>
+                  </div>
+                </Dd>
+              </Dl>
+              <Dl>
+                <Dt>{t('labels.earlyExecution')}</Dt>
+                <Dd>{earlyExecution ? t('labels.yes') : t('labels.no')}</Dd>
+              </Dl>
+              <Dl>
+                <Dt>{t('labels.voteReplacement')}</Dt>
+                <Dd>{voteReplacement ? t('labels.yes') : t('labels.no')}</Dd>
+              </Dl>
+            </>
+          )}
         </DescriptionListContainer>
       )}
     />

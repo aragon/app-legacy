@@ -104,6 +104,7 @@
     "logo": "Logo",
     "optional": "Optional",
     "minimumApprovalThreshold": "Approval threshold",
+    "multisigMembers": "Multisig Members",
     "minimumApproval": "Minimum Approval",
     "minimumParticipation": "Minimum Participation",
     "minimumDuration": "Minimum Duration",
@@ -137,6 +138,7 @@
     "changeableVote": "Changeable with a vote",
     "changeable": "Changeable",
     "etherscan": "Etherscan",
+    "anyone": "Anyone",
     "whitelistWallets": {
       "address": "Address",
       "addresses": "{{count}} Addresses",
@@ -165,7 +167,8 @@
       "proposalThreshold": "Proposal Threshold",
       "tokenHoldersWithTkns": "Token Holders with ≥{{tokenAmount}} {{tokenSymbol}}",
       "earlyExecution": "Early Execution",
-      "voteReplacement": "Vote Replacement"
+      "voteReplacement": "Vote Replacement",
+      "multisigMinimumApprovals": "of {{count}} Authorized Addresses"
     },
     "author": "Author",
     "sec": "sec",
