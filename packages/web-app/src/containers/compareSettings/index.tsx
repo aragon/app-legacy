@@ -132,9 +132,13 @@ const CompareSettings: React.FC = () => {
       } ${daoToken?.symbol})`,
       proposalEligibility: daoSettings.minProposerVotingPower
         ? t('labels.review.tokenHoldersWithTkns', {
-            tokenAmount: formatUnits(
-              daoSettings.minProposerVotingPower || 0,
-              daoToken?.decimals || 18
+            tokenAmount: Math.ceil(
+              Number(
+                formatUnits(
+                  daoSettings.minProposerVotingPower || 0,
+                  daoToken?.decimals || 18
+                )
+              )
             ),
             tokenSymbol: daoToken?.symbol,
           })
