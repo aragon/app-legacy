@@ -165,7 +165,7 @@ const SetupMultisigVotingForm: React.FC = () => {
     //build start date/time in utc mills
     // check end time using start and duration
     let startDateTime: Date;
-    if (getValues('startNow') === 'date') {
+    if (getValues('startSwitch') === 'date') {
       const sDate = getValues('startDate');
       const sTime = getValues('startTime');
       const sUtc = getValues('startUtc');
