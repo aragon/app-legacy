@@ -29,7 +29,14 @@ import {
   PENDING_PROPOSALS_KEY,
   TransactionState,
 } from 'utils/constants';
-import {getCanonicalDate, getCanonicalUtcOffset} from 'utils/date';
+import {
+  daysToMills,
+  getCanonicalDate,
+  getCanonicalUtcOffset,
+  getDHMFromSeconds,
+  hoursToMills,
+  minutesToMills,
+} from 'utils/date';
 import {customJSONReplacer} from 'utils/library';
 import {Proposal} from 'utils/paths';
 import {
@@ -82,6 +89,9 @@ const CreateProposalProvider: React.FC<Props> = ({
 
   const {client} = useClient();
   const pluginClient = usePluginClient(pluginType as PluginTypes);
+  const {days, hours, minutes} = getDHMFromSeconds(
+    (pluginSettings as VotingSettings).minDuration
+  );
 
   const [proposalCreationData, setProposalCreationData] =
     useState<ICreateProposalParams>();
@@ -232,26 +242,61 @@ const CreateProposalProvider: React.FC<Props> = ({
 
       const ipfsUri = await pluginClient?.methods.pinMetadata(metadata);
 
+      let proposalStartDate = new Date(
+        `${startDate}T${startTime}:00${getCanonicalUtcOffset(startUtc)}`
+      );
+
+      // check the start date to see if it passed already or not
+      const isStartDatePassed =
+        new Date(
+          `${startDate}T${startTime}:00${getCanonicalUtcOffset(startUtc)}`
+        ).valueOf() < new Date().valueOf();
+
+      if (isStartDatePassed) {
+        // Update the startDate + 30 sec for transaction time
+        const CurrenDate = new Date().setSeconds(new Date().getSeconds() + 30);
+        proposalStartDate = new Date(CurrenDate);
+      }
+
+      const minEndDateTimeMills =
+        proposalStartDate.valueOf() +
+        daysToMills(days || 0) +
+        hoursToMills(hours || 0) +
+        minutesToMills(minutes || 0);
+
+      let endMills =
+        durationSwitch === 'duration'
+          ? new Date(
+              `${getCanonicalDate({
+                days: duration,
+              })}T${startTime}:00${getCanonicalUtcOffset(endUtc)}`
+            ).valueOf()
+          : new Date(
+              `${endDate}T${endTime}:00${getCanonicalUtcOffset(endUtc)}`
+            ).valueOf();
+
+      if (endMills < minEndDateTimeMills) {
+        // Update the endDate + 30 sec for transaction time
+        endMills = endMills + (endMills - proposalStartDate.valueOf()) + 30000;
+      }
+
       // Ignore encoding if the proposal had no actions
       return {
         pluginAddress,
         metadataUri: ipfsUri || '',
-        startDate: new Date(
-          `${startDate}T${startTime}:00${getCanonicalUtcOffset(startUtc)}`
-        ),
-        endDate:
-          durationSwitch === 'duration'
-            ? new Date(
-                `${getCanonicalDate({
-                  days: duration,
-                })}T${startTime}:00${getCanonicalUtcOffset(endUtc)}`
-              )
-            : new Date(
-                `${endDate}T${endTime}:00${getCanonicalUtcOffset(endUtc)}`
-              ),
+        startDate: proposalStartDate,
+        endDate: new Date(endMills),
         actions,
       };
-    }, [encodeActions, getValues, pluginAddress, pluginClient?.methods]);
+    }, [
+      days,
+      encodeActions,
+      getValues,
+      hours,
+      minutes,
+      pluginAddress,
+      pluginClient?.methods,
+    ]);
 
   useEffect(() => {
     // set proposal creation data
