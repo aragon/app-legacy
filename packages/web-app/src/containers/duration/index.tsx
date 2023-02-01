@@ -86,7 +86,6 @@ const Duration: React.FC<Props> = ({defaultValues, name = '', minDuration}) => {
         setValue('durationHours', '0');
         setValue('durationMinutes', '0');
       } else if (value <= minimums.days && durationLTMinimum(formDuration)) {
-        console.log(value, MAX_DURATION_DAYS);
         resetToMinDuration();
         e.target.value = minimums.days.toString();
       }

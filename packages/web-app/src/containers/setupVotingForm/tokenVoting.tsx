@@ -155,7 +155,7 @@ const SetupTokenVotingForm: React.FC<Props> = ({pluginSettings}) => {
           helpText={t('newWithdraw.setupVoting.tokenVoting.endDateDescription')}
         />
         <Controller
-          name="expirationDuration"
+          name="durationSwitch"
           rules={{required: 'Validate'}}
           control={control}
           defaultValue="duration"

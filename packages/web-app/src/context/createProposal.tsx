@@ -208,10 +208,8 @@ const CreateProposalProvider: React.FC<Props> = ({
         endDate,
         endTime,
         endUtc,
-        duration,
         durationSwitch,
         startSwitch,
-        expirationDuration,
       ] = getValues([
         'proposalTitle',
         'proposalSummary',
@@ -223,10 +221,8 @@ const CreateProposalProvider: React.FC<Props> = ({
         'endDate',
         'endTime',
         'endUtc',
-        'duration',
         'durationSwitch',
         'startSwitch',
-        'expirationDuration',
       ]);
 
       const actions = await encodeActions();
@@ -244,7 +240,9 @@ const CreateProposalProvider: React.FC<Props> = ({
       const startDateTime =
         startSwitch === 'now'
           ? new Date(
-              `${getCanonicalDate()}T${getCanonicalTime()}:00${getCanonicalUtcOffset()}`
+              `${getCanonicalDate()}T${getCanonicalTime({
+                minutes: 1,
+              })}:00${getCanonicalUtcOffset()}`
             )
           : new Date(
               `${startDate}T${startTime}:00${getCanonicalUtcOffset(startUtc)}`
@@ -254,12 +252,6 @@ const CreateProposalProvider: React.FC<Props> = ({
       // once the token voting form has been updated to new designs
       let endDateTime;
       if (durationSwitch === 'duration') {
-        endDateTime = new Date(
-          `${getCanonicalDate({
-            days: duration,
-          })}T${startTime}:00${getCanonicalUtcOffset(endUtc)}`
-        );
-      } else if (expirationDuration === 'duration') {
         const [days, hours, mins] = getValues([
           'durationDays',
           'durationHours',

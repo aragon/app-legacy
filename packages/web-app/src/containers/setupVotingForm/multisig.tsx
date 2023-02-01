@@ -139,7 +139,7 @@ const SetupMultisigVotingForm: React.FC = () => {
           helpText={t('newWithdraw.setupVoting.multisig.expirationDescription')}
         />
         <Controller
-          name="expirationDuration"
+          name="durationSwitch"
           rules={{required: 'Validate'}}
           control={control}
           defaultValue="duration"
