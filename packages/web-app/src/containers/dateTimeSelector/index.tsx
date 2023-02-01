@@ -5,14 +5,20 @@ import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 
 import {SimplifiedTimeInput} from 'components/inputTime/inputTime';
-import {getCanonicalDate, getCanonicalTime} from 'utils/date';
+import {getCanonicalDate, getCanonicalTime, Offset} from 'utils/date';
 
 type Props = {
   mode?: 'start' | 'end';
   value: string;
   onUtcClicked: () => void;
   validator: () => string | boolean;
-  defaultDateOffset?: number;
+  defaultDateOffset?: Offset;
+};
+
+const defaultOffsets = {
+  days: 0,
+  hours: 0,
+  minutes: 0,
 };
 
 const DateTimeSelector: React.FC<Props> = ({
@@ -20,8 +26,10 @@ const DateTimeSelector: React.FC<Props> = ({
   value,
   onUtcClicked,
   validator,
-  defaultDateOffset = 0,
+  defaultDateOffset,
 }) => {
+  const {days, hours, minutes} = {...defaultOffsets, ...defaultDateOffset};
+
   const {t} = useTranslation();
   const {control} = useFormContext();
 
@@ -34,7 +42,7 @@ const DateTimeSelector: React.FC<Props> = ({
         <Controller
           name={`${mode}Date`}
           control={control}
-          defaultValue={getCanonicalDate({days: defaultDateOffset})}
+          defaultValue={getCanonicalDate({days})}
           rules={{
             required: t('errors.required.date'),
             validate: validator,
@@ -54,7 +62,7 @@ const DateTimeSelector: React.FC<Props> = ({
         <Controller
           name={`${mode}Time`}
           control={control}
-          defaultValue={getCanonicalTime({minutes: 10})}
+          defaultValue={getCanonicalTime({hours, minutes})}
           rules={{
             required: t('errors.required.time'),
             validate: validator,

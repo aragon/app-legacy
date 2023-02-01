@@ -296,6 +296,37 @@ const Duration: React.FC<Props> = ({defaultValues, name = '', minDuration}) => {
 
 export default Duration;
 
+export type DurationLabelProps = {
+  maxDuration?: boolean;
+  minDuration?: boolean;
+  limitOnMax?: boolean;
+  alerts?: {
+    minDuration: string;
+    maxDuration: string;
+    acceptableDuration: string;
+  };
+};
+
+export const DurationLabel: React.FC<DurationLabelProps> = ({
+  alerts,
+  ...props
+}) => {
+  if (props.minDuration && alerts?.minDuration) {
+    return <AlertInline label={alerts.minDuration} mode="critical" />;
+  } else if (props.maxDuration && alerts?.maxDuration) {
+    return (
+      <AlertInline
+        label={alerts.maxDuration}
+        mode={props.limitOnMax ? 'critical' : 'warning'}
+      />
+    );
+  } else {
+    return alerts?.acceptableDuration ? (
+      <AlertInline label={alerts.acceptableDuration} mode="neutral" />
+    ) : null;
+  }
+};
+
 const DurationContainer = styled.div.attrs({
   className:
     'flex flex-col tablet:flex-row space-y-1.5 tablet:space-y-0 tablet:space-x-1.5 p-3 bg-ui-0 rounded-xl',

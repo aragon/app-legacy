@@ -15,7 +15,7 @@ export const KNOWN_FORMATS = {
   proposals: 'yyyy/MM/dd hh:mm a',
 };
 
-type Offset = {
+export type Offset = {
   days?: number;
   hours?: number;
   minutes?: number;
