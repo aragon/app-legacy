@@ -6,6 +6,7 @@ import styled from 'styled-components';
 
 import CreateNewToken from './createNewToken';
 import {MultisigWallets} from 'components/multisigWallets';
+import {MultisigEligibility} from 'components/multisigEligibility';
 
 const SetupCommunityForm: React.FC = () => {
   const {t} = useTranslation();
@@ -83,9 +84,14 @@ const SetupCommunityForm: React.FC = () => {
       </FormItem>
 
       {membership === 'multisig' && (
-        <FormItem>
-          <MultisigWallets />
-        </FormItem>
+        <>
+          <FormItem>
+            <MultisigWallets />
+          </FormItem>
+          <FormItem>
+            <MultisigEligibility />
+          </FormItem>
+        </>
       )}
 
       {/* Token creation */}

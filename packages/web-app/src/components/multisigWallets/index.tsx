@@ -137,6 +137,7 @@ export const MultisigWallets = () => {
               <ButtonIcon
                 size="large"
                 mode="secondary"
+                bgWhite
                 icon={<IconMenuVertical />}
                 data-testid="trigger"
               />

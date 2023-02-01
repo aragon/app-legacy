@@ -21,7 +21,7 @@ export const MultisigMinimumApproval = () => {
     if (multisigMinimumApprovals > multisigWallets.length) {
       setValue('multisigMinimumApprovals', multisigWallets.length);
     }
-  }, [multisigMinimumApprovals, setValue]);
+  }, [multisigMinimumApprovals, setValue, multisigWallets.length]);
 
   const validateminimumApprovals = (value: number) =>
     value <= multisigWallets.length;
