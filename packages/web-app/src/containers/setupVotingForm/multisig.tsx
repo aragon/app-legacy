@@ -18,10 +18,11 @@ import {
 } from 'utils/constants';
 import {
   daysToMills,
+  getCanonicalDate,
+  getCanonicalTime,
   getCanonicalUtcOffset,
   getFormattedUtcOffset,
   hoursToMills,
-  minutesToMills,
 } from 'utils/date';
 import {FormSection} from '.';
 import {DateTimeErrors} from './dateTimeErrors';
@@ -171,7 +172,10 @@ const SetupMultisigVotingForm: React.FC = () => {
 
       const canonicalSUtc = getCanonicalUtcOffset(sUtc);
       startDateTime = toDate(sDate + 'T' + sTime + canonicalSUtc);
-    } else startDateTime = new Date();
+    } else
+      startDateTime = toDate(
+        getCanonicalDate() + 'T' + getCanonicalTime() + getCanonicalUtcOffset()
+      );
 
     const startMills = startDateTime.valueOf();
 
@@ -199,11 +203,8 @@ const SetupMultisigVotingForm: React.FC = () => {
       setValue('startTimeWarning', t('alert.startDateInPastAlert'));
 
       // automatically correct the start date to now
-      setValue('startDate', format(new Date(), 'yyyy-MM-dd'));
-      setValue(
-        'startTime',
-        format(new Date().getTime() + minutesToMills(10), 'HH:mm')
-      );
+      setValue('startDate', getCanonicalDate());
+      setValue('startTime', getCanonicalTime({minutes: 10}));
       setValue('startUtc', currTimezone);
 
       // only validate first one if there is an error
@@ -270,7 +271,7 @@ const SetupMultisigVotingForm: React.FC = () => {
           helpText={t('newWithdraw.setupVoting.multisig.startDescription')}
         />
         <Controller
-          name="startNow"
+          name="startSwitch"
           rules={{required: 'Validate'}}
           control={control}
           defaultValue="now"

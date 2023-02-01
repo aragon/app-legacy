@@ -29,7 +29,11 @@ import {
   PENDING_PROPOSALS_KEY,
   TransactionState,
 } from 'utils/constants';
-import {getCanonicalDate, getCanonicalUtcOffset} from 'utils/date';
+import {
+  getCanonicalDate,
+  getCanonicalTime,
+  getCanonicalUtcOffset,
+} from 'utils/date';
 import {customJSONReplacer} from 'utils/library';
 import {Proposal} from 'utils/paths';
 import {
@@ -206,6 +210,8 @@ const CreateProposalProvider: React.FC<Props> = ({
         endUtc,
         duration,
         durationSwitch,
+        startSwitch,
+        expirationDuration,
       ] = getValues([
         'proposalTitle',
         'proposalSummary',
@@ -219,6 +225,8 @@ const CreateProposalProvider: React.FC<Props> = ({
         'endUtc',
         'duration',
         'durationSwitch',
+        'startSwitch',
+        'expirationDuration',
       ]);
 
       const actions = await encodeActions();
@@ -232,23 +240,51 @@ const CreateProposalProvider: React.FC<Props> = ({
 
       const ipfsUri = await pluginClient?.methods.pinMetadata(metadata);
 
+      // getting dates
+      const startDateTime =
+        startSwitch === 'now'
+          ? new Date(
+              `${getCanonicalDate()}T${getCanonicalTime()}:00${getCanonicalUtcOffset()}`
+            )
+          : new Date(
+              `${startDate}T${startTime}:00${getCanonicalUtcOffset(startUtc)}`
+            );
+
+      // TODO: merge duration, durationSwitch and expirationDuration
+      // once the token voting form has been updated to new designs
+      let endDateTime;
+      if (durationSwitch === 'duration') {
+        endDateTime = new Date(
+          `${getCanonicalDate({
+            days: duration,
+          })}T${startTime}:00${getCanonicalUtcOffset(endUtc)}`
+        );
+      } else if (expirationDuration === 'duration') {
+        const [days, hours, mins] = getValues([
+          'durationDays',
+          'durationHours',
+          'durationMinutes',
+        ]);
+
+        endDateTime = new Date(
+          `${getCanonicalDate({
+            days,
+            hours,
+            minutes: mins,
+          })}T${getCanonicalTime()}:00${getCanonicalUtcOffset()}`
+        );
+      } else {
+        endDateTime = new Date(
+          `${endDate}T${endTime}:00${getCanonicalUtcOffset(endUtc)}`
+        );
+      }
+
       // Ignore encoding if the proposal had no actions
       return {
         pluginAddress,
         metadataUri: ipfsUri || '',
-        startDate: new Date(
-          `${startDate}T${startTime}:00${getCanonicalUtcOffset(startUtc)}`
-        ),
-        endDate:
-          durationSwitch === 'duration'
-            ? new Date(
-                `${getCanonicalDate({
-                  days: duration,
-                })}T${startTime}:00${getCanonicalUtcOffset(endUtc)}`
-              )
-            : new Date(
-                `${endDate}T${endTime}:00${getCanonicalUtcOffset(endUtc)}`
-              ),
+        startDate: startDateTime,
+        endDate: endDateTime,
         actions,
       };
     }, [encodeActions, getValues, pluginAddress, pluginClient?.methods]);
