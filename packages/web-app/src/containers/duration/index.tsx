@@ -31,7 +31,7 @@ const durationDefaults = {
 
 const Duration: React.FC<Props> = ({defaultValues, name = '', minDuration}) => {
   const defaults = {...durationDefaults, ...defaultValues};
-  const minimums = {...defaults, ...minDuration};
+  const minimums = {...durationDefaults, ...minDuration};
 
   const {t} = useTranslation();
   const {control, getValues, setValue, trigger} = useFormContext();
@@ -75,8 +75,8 @@ const Duration: React.FC<Props> = ({defaultValues, name = '', minDuration}) => {
 
       const formDuration = {
         days: value,
-        hours: formHours,
-        minutes: formMins,
+        hours: Number(formHours),
+        minutes: Number(formMins),
       };
 
       if (value >= MAX_DURATION_DAYS) {
@@ -85,9 +85,10 @@ const Duration: React.FC<Props> = ({defaultValues, name = '', minDuration}) => {
         setValue('durationDays', MAX_DURATION_DAYS.toString());
         setValue('durationHours', '0');
         setValue('durationMinutes', '0');
-      } else if (value < minimums.days && durationLTMinimum(formDuration)) {
+      } else if (value <= minimums.days && durationLTMinimum(formDuration)) {
+        console.log(value, MAX_DURATION_DAYS);
         resetToMinDuration();
-        e.target.value = minimums.days.toString() || '';
+        e.target.value = minimums.days.toString();
       }
       trigger(['durationMinutes', 'durationHours', 'durationDays']);
       onChange(e);
@@ -115,9 +116,9 @@ const Duration: React.FC<Props> = ({defaultValues, name = '', minDuration}) => {
       ]);
 
       const formDuration = {
-        days: formDays,
+        days: Number(formDays),
         hours: value,
-        minutes: formMins,
+        minutes: Number(formMins),
       };
 
       if (value >= HOURS_IN_DAY) {
@@ -130,9 +131,9 @@ const Duration: React.FC<Props> = ({defaultValues, name = '', minDuration}) => {
             (Number(getValues('durationDays')) + days).toString()
           );
         }
-      } else if (value < minimums.hours! && durationLTMinimum(formDuration)) {
+      } else if (value <= minimums.hours && durationLTMinimum(formDuration)) {
         resetToMinDuration();
-        e.target.value = minimums.hours?.toString() || '';
+        e.target.value = minimums.hours.toString();
       }
       trigger(['durationMinutes', 'durationHours', 'durationDays']);
       onChange(e);
@@ -160,8 +161,8 @@ const Duration: React.FC<Props> = ({defaultValues, name = '', minDuration}) => {
       ]);
 
       const formDuration = {
-        days: formDays,
-        hours: formHours,
+        days: Number(formDays),
+        hours: Number(formHours),
         minutes: value,
       };
 
@@ -178,7 +179,7 @@ const Duration: React.FC<Props> = ({defaultValues, name = '', minDuration}) => {
         setValue('durationDays', days.toString());
         setValue('durationHours', hours.toString());
         e.target.value = mins.toString();
-      } else if (value < minimums.minutes && durationLTMinimum(formDuration)) {
+      } else if (value <= minimums.minutes && durationLTMinimum(formDuration)) {
         resetToMinDuration();
         e.target.value = minimums.minutes.toString();
       }

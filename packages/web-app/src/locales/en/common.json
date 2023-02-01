@@ -73,8 +73,9 @@
     "days": "Days",
     "date": "Date",
     "time": "Time",
+    "now": "Now",
     "timezone": "Your Timezone",
-    "dateTime": "Date + Time",
+    "dateTime": "Specific Date + Time",
     "resourcesHelptext": "Share external resources here.",
     "submitWithdraw": "Publish Proposal",
     "sortBy": "Sort by",
@@ -351,12 +352,21 @@
     }
   },
   "alert": {
+    "tokenVoting": {
+      "proposalMinDuration": "{{days}} days, {{hours}} hours, and {{minutes}} minutes  is the lowest vote time.",
+      "proposalMaxDuration": "{{days}} days is the highest vote time. Consider lowering the duration, otherwise this proposal may never pass.",
+      "acceptableProposalDuration": "The minimum duration of {{days}} days, {{hours}} hours, and {{minutes}} minutes is defined by DAO Governance Settings",
+      "dateTimeMinDuration": "The proposal's end date cannot be less than {{days}} days, {{hours}} hours, and {{minutes}} minutes in the future."
+    },
+    "multisig": {
+      "proposalMinDuration": "One hour is the minimum expiration time.",
+      "proposalMaxDuration": "[TBD] It’s recommended not to have long expiration time.",
+      "accepTableProposalDuration": "It’s recommended to have an expiration time of five days, so you have a clean proposal list.",
+      "dateTimeMinDuration": "Duration cannot be less than one hour. Corrected to one hour from start time."
+    },
     "durationAlert": "We recommend a minimum duration of 1 day so members have the time to review and vote.",
     "maxDurationAlert": "365 days is the maximum duration in Majority Voting Systems.",
     "minDurationAlert": "1 hour is the minimum duration in Majority Voting Systems.",
-    "maxExpirationAlert": "[TBD] It’s recommended not to have long expiration time.",
-    "minExpirationAlert": "One hour is the minimum expiration time.",
-    "expirationLTDurationAlert": "Duration cannot be less than one hour. Corrected to one hour from start time.",
     "startDateInPastAlert": "Start time can’t be in the past. Corrected to now.",
     "wrongWalletNetwork": "Wrong Wallet Network",
     "wrongNetwork": {
@@ -508,6 +518,9 @@
         "title": "Yes, No, or Abstain",
         "helpText": "Let users vote for or against."
       },
+      "tokenVoting": {
+        "endDateDescription": "Define how long the voting should last in days or exact date and time."
+      },
       "multisig": {
         "optionDescription": "These are the following options for voting on this proposition.",
         "votingOption": {
@@ -518,11 +531,7 @@
         "startLabel": "Start Time",
         "startDescription": "Define when a proposal should be active to receive approvals. If now is selected, the proposal is immediately active after publishing.",
         "expiration": "Expiration Time",
-        "expirationDescription": "Define when a proposal should get expired, if the minimum approval threshold is never reached until then. After the expiration time, there is no way to approve or execute the proposal.",
-        "expirationAlert": "It’s recommended to have an expiration time of five days, so you have a clean proposal list.",
-        "now": "Now",
-        "dateTime": "Specific Date + Time",
-        "duration": "Duration"
+        "expirationDescription": "Define when a proposal should get expired, if the minimum approval threshold is never reached until then. After the expiration time, there is no way to approve or execute the proposal."
       }
     },
     "defineProposal": {
