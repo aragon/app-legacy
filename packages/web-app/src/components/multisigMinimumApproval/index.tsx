@@ -29,7 +29,7 @@ export const MultisigMinimumApproval = () => {
   return (
     <>
       <Label
-        label={t('labels.minimumApprovals')}
+        label={t('labels.minimumApproval')}
         helpText={t('createDAO.step4.minimumApprovalSubtitle')}
       />
       <Controller
