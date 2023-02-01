@@ -26,9 +26,9 @@ export const MultisigEligibility = () => {
           <CheckboxContainer>
             <CheckboxItemsContainer>
               {isMobile && (
-                <Title>
-                  {t('createDAO.step3.multisigEligibilityMobileTitle')}
-                </Title>
+                <Label
+                  label={t('createDAO.step3.multisigEligibilityMobileTitle')}
+                />
               )}
               <CheckboxListItem
                 label={t('createDAO.step3.eligibility.multisigMembers.title')}
@@ -77,7 +77,4 @@ const CheckboxItemsContainer = styled.div.attrs({
 })``;
 const CheckboxContainer = styled.div.attrs({
   className: 'flex space-y-1.5 flex-col',
-})``;
-const Title = styled.h2.attrs({
-  className: 'font-semibold ft-text-base text-ui-800',
 })``;
