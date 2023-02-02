@@ -4,14 +4,14 @@ import {
   LinearProgress,
   NumberInput,
 } from '@aragon/ui-components';
-import React, {useEffect} from 'react';
+import React from 'react';
 import {Controller, useFormContext, useWatch} from 'react-hook-form';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 
 export const MultisigMinimumApproval = () => {
   const {t} = useTranslation();
-  const {control, setValue} = useFormContext();
+  const {control} = useFormContext();
   const [multisigWallets, multisigMinimumApprovals] = useWatch({
     name: ['multisigWallets', 'multisigMinimumApprovals'],
     control: control,
