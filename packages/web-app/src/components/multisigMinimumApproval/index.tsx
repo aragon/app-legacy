@@ -18,7 +18,7 @@ export const MultisigMinimumApproval = () => {
   });
   const computeDefaultValue = () => {
     const ceiledApprovals = Math.ceil(multisigWallets.length / 2);
-    if (ceiledApprovals % 2) {
+    if (multisigWallets.length % 2) {
       return ceiledApprovals;
     }
     return ceiledApprovals + 1;
