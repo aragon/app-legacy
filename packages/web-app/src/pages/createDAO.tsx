@@ -52,6 +52,7 @@ export type CreateDaoFormData = {
   earlyExecution: boolean;
   voteReplacement: boolean;
   multisigWallets: WalletItem[];
+  multisigMinimumApprovals: number;
 };
 
 const defaultValues = {
@@ -205,7 +206,8 @@ const CreateDAO: React.FC = () => {
       errors.support ||
       errors.durationDays ||
       errors.durationHours ||
-      errors.durationMinutes
+      errors.durationMinutes ||
+      errors.multisigMinimumApprovals
     )
       return false;
     return true;
@@ -216,6 +218,7 @@ const CreateDAO: React.FC = () => {
     errors.minimumApproval,
     errors.minimumParticipation,
     errors.support,
+    errors.multisigMinimumApprovals,
   ]);
 
   const handleNextButtonTracking = (

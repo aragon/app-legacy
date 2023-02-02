@@ -5,7 +5,12 @@ import {
   NumberInput,
 } from '@aragon/ui-components';
 import React from 'react';
-import {Controller, useFormContext, useWatch} from 'react-hook-form';
+import {
+  Controller,
+  useFormContext,
+  useWatch,
+  ValidateResult,
+} from 'react-hook-form';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 
@@ -23,6 +28,16 @@ export const MultisigMinimumApproval = () => {
     }
     return ceiledApprovals + 1;
   };
+
+  const validateMinimumApprovals = (value: number): ValidateResult => {
+    if (value > multisigWallets.length) {
+      return t('errors.ltAmount', {amount: multisigWallets.length});
+    } else if (value < 0) {
+      return t('errors.lteZero');
+    }
+    return true;
+  };
+
   return (
     <>
       <Label
@@ -33,6 +48,9 @@ export const MultisigMinimumApproval = () => {
         name="multisigMinimumApprovals"
         control={control}
         defaultValue={computeDefaultValue}
+        rules={{
+          validate: value => validateMinimumApprovals(value),
+        }}
         render={({
           field: {onBlur, onChange, value, name},
           fieldState: {error},
@@ -85,17 +103,19 @@ export const MultisigMinimumApproval = () => {
             {error?.message && (
               <AlertInline label={error.message} mode="critical" />
             )}
-            {value <= multisigWallets.length / 2 ? (
+            {value <= multisigWallets.length / 2 && value >= 0 && (
               <AlertInline
                 label={t('createDAO.step4.alerts.minority')}
                 mode="warning"
               />
-            ) : (
-              <AlertInline
-                label={t('createDAO.step4.alerts.majority')}
-                mode="success"
-              />
             )}
+            {value > multisigWallets.length / 2 &&
+              value <= multisigWallets.length && (
+                <AlertInline
+                  label={t('createDAO.step4.alerts.majority')}
+                  mode="success"
+                />
+              )}
           </>
         )}
       />
