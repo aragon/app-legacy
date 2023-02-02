@@ -1,4 +1,5 @@
-import React from 'react';
+import React, {useEffect} from 'react';
+import {useFormContext} from 'react-hook-form';
 import styled from 'styled-components';
 
 import {Loading} from 'components/temporary';
@@ -27,10 +28,19 @@ const SetupVotingForm: React.FC = () => {
     daoDetails?.plugins[0].id as PluginTypes
   );
 
+  const {setError, clearErrors} = useFormContext();
+
   /*************************************************
    *                    Render                     *
    *************************************************/
-  // Data loading
+  useEffect(() => {
+    if (JSON.stringify(pluginSettings, customJSONReplacer) === '{}') {
+      setError('areSettingsLoading', {});
+    } else {
+      clearErrors('areSettingsLoading');
+    }
+  }, [clearErrors, pluginSettings, setError]);
+
   if (
     detailsLoading ||
     settingsLoading ||

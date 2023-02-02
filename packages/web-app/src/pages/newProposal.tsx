@@ -13,7 +13,11 @@ const NewProposal: React.FC = () => {
   const [showTxModal, setShowTxModal] = useState(false);
   const formMethods = useForm({
     mode: 'onChange',
-    defaultValues: {links: [{name: '', url: ''}]},
+    defaultValues: {
+      links: [{name: '', url: ''}],
+      startSwitch: 'now',
+      durationSwitch: 'duration',
+    },
   });
 
   const enableTxModal = () => {
