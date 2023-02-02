@@ -4,7 +4,7 @@ import {
   LinearProgress,
   NumberInput,
 } from '@aragon/ui-components';
-import React, {useCallback} from 'react';
+import React from 'react';
 import {Controller, useFormContext, useWatch} from 'react-hook-form';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
@@ -108,10 +108,6 @@ const Container = styled.div.attrs({
 })``;
 const LinearProgressContainer = styled.div.attrs({
   className: 'flex relative flex-1 items-center',
-})``;
-const ProgressBarTick = styled.div.attrs({
-  className:
-    'absolute left-1/2 w-1 h-2.5 border-r-2 border-l-2 transform -translate-x-1/2 bg-ui-300 border-ui-0',
 })``;
 const ProgressInfo = styled.div.attrs({
   className:
