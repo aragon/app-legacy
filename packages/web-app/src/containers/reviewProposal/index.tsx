@@ -27,6 +27,7 @@ import {
   getCanonicalUtcOffset,
   getFormattedUtcOffset,
   KNOWN_FORMATS,
+  minutesToMills,
 } from 'utils/date';
 import {
   getErc20VotingParticipation,
@@ -107,12 +108,13 @@ const ReviewProposal: React.FC<ReviewProposalProps> = ({
   );
 
   const formattedEndDate = useMemo(() => {
-    let endDateTime;
+    let endDateTime: Date;
     const {
       durationDays,
       durationHours,
       durationMinutes,
       durationSwitch,
+      startSwitch,
       endDate,
       endTime,
       endUtc,
@@ -122,14 +124,20 @@ const ReviewProposal: React.FC<ReviewProposalProps> = ({
       endDateTime = new Date(
         `${getCanonicalDate({
           days: durationDays,
+        })}T${getCanonicalTime({
           hours: durationHours,
           minutes: durationMinutes,
-        })}T${getCanonicalTime()}:00${getCanonicalUtcOffset()}`
+        })}:00${getCanonicalUtcOffset()}`
       );
     } else {
       endDateTime = new Date(
         `${endDate}T${endTime}:00${getCanonicalUtcOffset(endUtc)}`
       );
+    }
+
+    // adding 10 minutes to offset the 10 minutes added by starting now
+    if (startSwitch === 'now') {
+      endDateTime = new Date(endDateTime.getTime() + minutesToMills(10));
     }
 
     return `${format(

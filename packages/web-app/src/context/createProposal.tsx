@@ -33,6 +33,7 @@ import {
   getCanonicalDate,
   getCanonicalTime,
   getCanonicalUtcOffset,
+  minutesToMills,
 } from 'utils/date';
 import {customJSONReplacer} from 'utils/library';
 import {Proposal} from 'utils/paths';
@@ -241,7 +242,7 @@ const CreateProposalProvider: React.FC<Props> = ({
         startSwitch === 'now'
           ? new Date(
               `${getCanonicalDate()}T${getCanonicalTime({
-                minutes: 1,
+                minutes: 10,
               })}:00${getCanonicalUtcOffset()}`
             )
           : new Date(
@@ -251,7 +252,7 @@ const CreateProposalProvider: React.FC<Props> = ({
       // End date
       let endDateTime;
       if (durationSwitch === 'duration') {
-        const [days, hours, mins] = getValues([
+        const [days, hours, minutes] = getValues([
           'durationDays',
           'durationHours',
           'durationMinutes',
@@ -260,14 +261,19 @@ const CreateProposalProvider: React.FC<Props> = ({
         endDateTime = new Date(
           `${getCanonicalDate({
             days,
+          })}T${getCanonicalTime({
             hours,
-            minutes: mins,
-          })}T${getCanonicalTime()}:00${getCanonicalUtcOffset()}`
+            minutes,
+          })}:00${getCanonicalUtcOffset()}`
         );
       } else {
         endDateTime = new Date(
           `${endDate}T${endTime}:00${getCanonicalUtcOffset(endUtc)}`
         );
+      }
+
+      if (startSwitch === 'now') {
+        endDateTime = new Date(endDateTime.getTime() + minutesToMills(10));
       }
 
       // Ignore encoding if the proposal had no actions
