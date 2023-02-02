@@ -97,8 +97,8 @@ const CompareSettings: React.FC = () => {
         (parseInt(minimumParticipation) * (tokenTotalSupply || 0)) / 100
       } ${daoToken?.symbol})`,
       days: durationDays,
-      hours: durationMinutes,
-      minutes: durationHours,
+      hours: durationHours,
+      minutes: durationMinutes,
       votingMode: {
         earlyExecution: earlyExecution ? t('labels.yes') : t('labels.no'),
         voteReplacement: voteReplacement ? t('labels.yes') : t('labels.no'),
