@@ -1,18 +1,27 @@
 import {DateInput, DropdownInput} from '@aragon/ui-components';
-import React from 'react';
-import {Controller, useFormContext} from 'react-hook-form';
+import React, {useCallback, useMemo} from 'react';
+import {Controller, useFormContext, useWatch} from 'react-hook-form';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
+import {toDate} from 'date-fns-tz';
 
 import {SimplifiedTimeInput} from 'components/inputTime/inputTime';
-import {getCanonicalDate, getCanonicalTime, Offset} from 'utils/date';
+import {
+  getCanonicalDate,
+  getCanonicalTime,
+  getCanonicalUtcOffset,
+  getFormattedUtcOffset,
+  Offset,
+} from 'utils/date';
+import {timezones} from 'containers/utcMenu/utcData';
+import format from 'date-fns/format';
 
 type Props = {
   mode?: 'start' | 'end';
-  value: string;
   onUtcClicked: () => void;
-  validator: () => string | boolean;
   defaultDateOffset?: Offset;
+  minDurationAlert: string;
+  minDurationMills: number;
 };
 
 const defaultOffsets = {
@@ -23,15 +32,126 @@ const defaultOffsets = {
 
 const DateTimeSelector: React.FC<Props> = ({
   mode,
-  value,
   onUtcClicked,
-  validator,
   defaultDateOffset,
+  minDurationAlert,
+  minDurationMills,
 }) => {
   const {days, hours, minutes} = {...defaultOffsets, ...defaultDateOffset};
 
   const {t} = useTranslation();
-  const {control} = useFormContext();
+  const {control, getValues, clearErrors, setValue} = useFormContext();
+
+  const [value] = useWatch({control, name: [`${mode}Utc`]});
+
+  const currTimezone = useMemo(
+    () => timezones.find(tz => tz === getFormattedUtcOffset()) || timezones[13],
+    []
+  );
+
+  // Validates all fields (date, time and UTC) for both start and end
+  // simultaneously. This is necessary, as all the fields are related to one
+  // another. The validation gathers information from all start and end fields
+  // and constructs two date (start and end). The validation leads to a warning
+  // if the dates violate any of the following constraints:
+  //   - The start date is in the past
+  //   - The end date is before what should be the minimum duration based on
+  //     the start date.
+  // When these constraints are violated, the respective fields are automatically
+  // corrected. This does *not* return any errors.
+  // If the form is invalid, errors are set for the respective group of fields.
+  const validator = useCallback(() => {
+    //build start date/time in utc mills
+    // check end time using start and duration
+    let startDateTime: Date;
+    if (getValues('startSwitch') === 'date') {
+      const sDate = getValues('startDate');
+      const sTime = getValues('startTime');
+      const sUtc = getValues('startUtc');
+
+      const canonicalSUtc = getCanonicalUtcOffset(sUtc);
+      startDateTime = toDate(sDate + 'T' + sTime + canonicalSUtc);
+    } else {
+      // adding one minute to startTime so that by the time comparison
+      // rolls around, it's not in the past. Why is this so complicated?
+      startDateTime = toDate(
+        getCanonicalDate() +
+          'T' +
+          getCanonicalTime({minutes: 1}) +
+          getCanonicalUtcOffset()
+      );
+    }
+
+    const startMills = startDateTime.valueOf();
+
+    // get the current time
+    const currDateTime = new Date();
+    const currMills = currDateTime.getTime();
+
+    //build end date/time in utc mills
+    const eDate = getValues('endDate');
+    const eTime = getValues('endTime');
+    const eUtc = getValues('endUtc');
+
+    const canonicalEUtc = getCanonicalUtcOffset(eUtc);
+    const endDateTime = toDate(eDate + 'T' + eTime + canonicalEUtc);
+    const endMills = endDateTime.valueOf();
+
+    // get minimum end date time in mills
+    const minEndDateTimeMills = startMills + minDurationMills;
+
+    // set duration mills to avoid new calculation
+    setValue('durationMills', endMills - startMills);
+
+    // check start constraints
+    // start time in the past
+    if (startMills < currMills) {
+      setValue('startTimeWarning', t('alert.startDateInPastAlert'));
+
+      // automatically correct the start date to now
+      setValue('startDate', getCanonicalDate());
+      setValue('startTime', getCanonicalTime({minutes: 10}));
+      setValue('startUtc', currTimezone);
+
+      // only validate first one if there is an error
+      return true;
+    }
+
+    // start dateTime correct
+    if (startMills >= currMills) {
+      clearErrors('startDate');
+      clearErrors('startTime');
+      setValue('startTimeWarning', '');
+    }
+
+    //check end constraints
+    // end date before min duration
+    if (endMills < minEndDateTimeMills) {
+      setValue('endTimeWarning', minDurationAlert);
+
+      // automatically correct the end date to minimum
+      setValue('endDate', format(minEndDateTimeMills, 'yyyy-MM-dd'));
+      setValue('endTime', format(minEndDateTimeMills, 'HH:mm'));
+      setValue('endUtc', currTimezone);
+    }
+
+    // end dateTime correct
+    if (endMills >= minEndDateTimeMills) {
+      clearErrors('endDate');
+      clearErrors('endTime');
+      setValue('endTimeWarning', '');
+    }
+
+    return true;
+  }, [
+    clearErrors,
+    currTimezone,
+    getValues,
+    minDurationAlert,
+    minDurationMills,
+    setValue,
+    t,
+  ]);
 
   /*************************************************
    *                      Render                   *
