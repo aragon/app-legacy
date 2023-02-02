@@ -248,8 +248,7 @@ const CreateProposalProvider: React.FC<Props> = ({
               `${startDate}T${startTime}:00${getCanonicalUtcOffset(startUtc)}`
             );
 
-      // TODO: merge duration, durationSwitch and expirationDuration
-      // once the token voting form has been updated to new designs
+      // End date
       let endDateTime;
       if (durationSwitch === 'duration') {
         const [days, hours, mins] = getValues([

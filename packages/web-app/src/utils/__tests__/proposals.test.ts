@@ -18,6 +18,11 @@ const testCases = [
     expectedId: `${pluginAddress}_0x30`,
   },
   {
+    case: 'should prefix id without hex notation indicator (0x)',
+    proposalId: '3',
+    expectedId: `${pluginAddress}_0x3`,
+  },
+  {
     case: 'should return proposal id already prefixed with plugin address unchanged',
     proposalId: `${pluginAddress}_0x1`,
     expectedId: `${pluginAddress}_0x1`,
