@@ -66,7 +66,7 @@ const TokenList: React.FC<TokenListProps> = ({tokens}) => {
                   style: 'currency',
                   currency: 'USD',
                   signDisplay: 'always',
-                }).format(token.marketData.valueChangeDuringInterval),
+                }).format(token.marketData.valueChangeDuringInterval!),
               })}
         />
       ))}

@@ -60,7 +60,7 @@ export type TokenWithMarketData = TokenWithMetadata & {
     price: number; /** current market price */
     balanceValue: number; /** current balance value */
     priceChangeDuringInterval: number; /** change in price over interval */
-    valueChangeDuringInterval?: bigint; /** change in balance value over interval */
+    valueChangeDuringInterval?: number; /** change in balance value over interval */
     percentageChangedDuringInterval: number; /** percentage price change over interval */
   };
 };

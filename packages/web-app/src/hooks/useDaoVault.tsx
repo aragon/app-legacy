@@ -1,4 +1,5 @@
 import {useEffect, useState} from 'react';
+import { formatUnits } from 'utils/library';
 import { historicalTokenBalances, timeFilterToMinutes } from 'utils/tokens';
 
 import {PollTokenOptions, VaultToken} from 'utils/types';
@@ -35,7 +36,13 @@ export const useDaoVault = (daoAddress: string, options?: PollTokenOptions) => {
     if (options) {
       const tokenPreviousBalances = historicalTokenBalances(transfers, tokensWithMetadata, timeFilterToMinutes(options.filter));
       data.tokens.forEach(token => {
-        token.marketData!.valueChangeDuringInterval = token.balance - tokenPreviousBalances[token.metadata.id].balance
+        if (token.marketData) {
+          const prevBalance = tokenPreviousBalances[token.metadata.id].balance;
+          const prevPrice = token.marketData.price / token.marketData.priceChangeDuringInterval * 100;
+          const prevBalanceValue = Number(formatUnits(prevBalance, token.metadata.decimals)) * prevPrice;
+          token.marketData.valueChangeDuringInterval =
+            token.marketData.balanceValue - prevBalanceValue;
+        }
       });
     }
 
