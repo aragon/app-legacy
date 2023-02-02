@@ -587,6 +587,7 @@
       "tokenMembership": "Token holders",
       "multisigMembership": "Multisig",
       "multisigMembershipSubtitle": "Only Multisig members are entitled to participate. 1 wallet address equals 1 approve.",
+      "multisigMembers": "Multisig Members",
       "multisigMembersHelptext": "Add as many addresses as you like to the DAO. These are authorised to create proposals, transactions or suggest changes to the DAO settings after its creation. Upload a CSV with <a>this template</a> if you want.",
       "multisigMembersWalletAlert": "Your connected Wallet got automatically added to the list.",
       "multisigEligibilityTitle": "Proposal Creation",
