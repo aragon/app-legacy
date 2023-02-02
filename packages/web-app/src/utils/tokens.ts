@@ -1,11 +1,12 @@
 /* eslint-disable no-empty */
 import {erc20TokenABI} from 'abis/erc20TokenABI';
-import {TokenWithMetadata, Transfer} from './types';
+import {TokenWithMetadata} from './types';
 import {constants, ethers, providers as EthersProviders} from 'ethers';
 
 import {formatUnits} from 'utils/library';
-import {NativeTokenData, TOKEN_AMOUNT_REGEX} from './constants';
-import { AssetBalance } from '@aragon/sdk-client';
+import {NativeTokenData, TimeFilter, TOKEN_AMOUNT_REGEX} from './constants';
+import { add } from 'date-fns';
+import { TokenType, Transfer } from '@aragon/sdk-client/dist/interfaces';
 
 /**
  * This method sorts a list of array information. It is applicable to any field
@@ -247,22 +248,36 @@ export function abbreviateTokenAmount(amount: string): string {
 
 export function historicalTokenBalances(transfers: Transfer[], tokenBalances: TokenWithMetadata[], pastIntervalMins: number) {
   const historicalBalances = {} as Record<string, TokenWithMetadata>;
-  tokenBalances.forEach(bal => historicalBalances[bal.metadata.id] = {
-    balance: bal.balance,
-    metadata: { ...bal.metadata }
-  });
+  tokenBalances.forEach(bal => historicalBalances[bal.metadata.id] = { ...bal });
   const nowMs = new Date().getTime();
 
   // transfers assumed in reverse date order. Reverses effect on balances of all transactions which
   // occurred in pastIntervalMins.
   for (let i = 0; i < transfers.length; i++) {
-    const transferTimeMs = Number(transfers[i].transferTimestamp) * 1000;
+    const transfer = transfers[i];
+    const transferTimeMs = transfers[i].creationDate.getTime();
     if (nowMs - transferTimeMs > pastIntervalMins * 60000) break;
 
-    const tokenId = transfers[i].tokenAddress;
-    const curBalance = historicalBalances[tokenId];
-    historicalBalances[tokenId].balance -= BigInt(formatUnits(transfers[i].tokenAmount, curBalance.metadata.decimals));
+    const tokenId = transfer.tokenType === TokenType.ERC20
+      ? transfer.token.address
+      : constants.AddressZero;
+    historicalBalances[tokenId].balance -= transfers[i].amount;
   }
 
   return historicalBalances;
+}
+
+export function timeFilterToMinutes(tf: TimeFilter) {
+  const now = new Date();
+  switch (tf) {
+    case TimeFilter.day: return 60 * 24;
+    case TimeFilter.month:
+      const oneMonthAgo = add(now, { months: -1 });
+      return (now.getTime() - oneMonthAgo.getTime()) / 1000 / 60;
+    case TimeFilter.week:
+      return 60 * 24 * 7;
+    case TimeFilter.year:
+      const oneYearAgo = add(now, { years: -1 });
+      return (now.getTime() - oneYearAgo.getTime()) / 1000 / 60;
+  }
 }

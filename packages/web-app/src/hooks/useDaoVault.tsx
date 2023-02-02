@@ -1,4 +1,5 @@
 import {useEffect, useState} from 'react';
+import { historicalTokenBalances, timeFilterToMinutes } from 'utils/tokens';
 
 import {PollTokenOptions, VaultToken} from 'utils/types';
 import {useDaoBalances} from './useDaoBalances';
@@ -12,7 +13,7 @@ import {useTokenMetadata} from './useTokenMetadata';
  * to their corresponding USD market values, and calculating their treasury share percentage.
  * @param daoAddress Dao address
  * @param options.filter TimeFilter for market data
- * @param options.interval Delay in milliseconds
+ * @param options.interval Refresh interval in milliseconds
  * @returns A list of transfers and of tokens in the DAO treasury,
  * current USD sum value of all assets, and the price change in USD based on the filter.
  */
@@ -31,13 +32,20 @@ export const useDaoVault = (daoAddress: string, options?: PollTokenOptions) => {
       return;
     }
 
+    if (options) {
+      const tokenPreviousBalances = historicalTokenBalances(transfers, tokensWithMetadata, timeFilterToMinutes(options.filter));
+      data.tokens.forEach(token => {
+        token.marketData!.valueChangeDuringInterval = token.balance - tokenPreviousBalances[token.metadata.id].balance
+      });
+    }
+
     const values = data.tokens.map(token => {
       return {
         ...token,
-        ...(token.marketData?.treasuryShare
+        ...(token.marketData?.balanceValue
           ? {
               treasurySharePercentage:
-                (token.marketData.treasuryShare / data?.totalAssetValue) * 100,
+                (token.marketData.balanceValue / data?.totalAssetValue) * 100,
             }
           : {}),
       };
