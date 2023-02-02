@@ -103,7 +103,7 @@ export const InputImageSingle: React.FC<InputImageSingleProps> = ({
   } = useDropzone({
     onDrop,
     ...(maxFileSize && {maxSize: maxFileSize}),
-    accept: 'image/jpg, image/jpeg, image/png, image/gif, image/svg',
+    accept: 'image/jpg, image/jpeg, image/png, image/gif, image/svg+xml',
   });
 
   if (loading) {
