@@ -17,15 +17,6 @@ export const MultisigMinimumApproval = () => {
     control: control,
   });
 
-  useEffect(() => {
-    if (multisigMinimumApprovals > multisigWallets.length) {
-      setValue('multisigMinimumApprovals', multisigWallets.length);
-    }
-  }, [multisigMinimumApprovals, setValue, multisigWallets.length]);
-
-  const validateminimumApprovals = (value: number) =>
-    value <= multisigWallets.length;
-
   return (
     <>
       <Label
@@ -36,9 +27,6 @@ export const MultisigMinimumApproval = () => {
         name="multisigMinimumApprovals"
         control={control}
         defaultValue={Math.ceil(multisigWallets.length / 2)}
-        rules={{
-          validate: value => validateminimumApprovals(value),
-        }}
         render={({
           field: {onBlur, onChange, value, name},
           fieldState: {error},
@@ -52,6 +40,8 @@ export const MultisigMinimumApproval = () => {
                   onBlur={onBlur}
                   onChange={onChange}
                   placeholder={t('placeHolders.daoName')}
+                  max={multisigWallets.length}
+                  min={0}
                 />
               </div>
 
@@ -60,7 +50,7 @@ export const MultisigMinimumApproval = () => {
                   <LinearProgress max={multisigWallets.length} value={value} />
                   <ProgressBarTick />
                   <ProgressInfo>
-                    {multisigMinimumApprovals !== multisigWallets.length && (
+                    {multisigMinimumApprovals !== multisigWallets.length ? (
                       <p
                         className="font-bold text-right text-primary-500"
                         style={{
@@ -71,8 +61,7 @@ export const MultisigMinimumApproval = () => {
                       >
                         {value}
                       </p>
-                    )}
-                    {multisigMinimumApprovals === multisigWallets.length && (
+                    ) : (
                       <p className="font-bold text-right text-primary-500">
                         {value}
                       </p>
