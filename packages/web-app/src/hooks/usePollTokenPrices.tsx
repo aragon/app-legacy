@@ -42,9 +42,7 @@ export const usePollTokenPrices = (
   const transformData = useCallback(
     (fetchedMarketData: TokenPrices) => {
       let sum = 0;
-      let intervalChange = 0;
-      let treasuryShare: number;
-      let valueChangeDuringInterval: number;
+      let balanceValue: number;
       let tokenMarketData;
 
       // map tokens
@@ -53,36 +51,29 @@ export const usePollTokenPrices = (
 
         tokenMarketData = fetchedMarketData[token.metadata.apiId];
 
-        // calculate total volume
-        treasuryShare =
+        // calculate current balance value
+        balanceValue =
           tokenMarketData.price *
           Number(formatUnits(token.balance, token.metadata.decimals));
 
-        // calculate total change during interval
-        valueChangeDuringInterval =
-          treasuryShare * (tokenMarketData.percentages[options.filter] / 100);
-
-        sum += treasuryShare;
-        intervalChange += valueChangeDuringInterval;
+        sum += balanceValue;
 
         return {
           ...token,
           marketData: {
             price: tokenMarketData.price,
-            treasuryShare,
-            valueChangeDuringInterval,
+            balanceValue,
             percentageChangedDuringInterval:
               tokenMarketData.percentages[options.filter],
           },
-        };
+        } as TokenWithMarketData;
       });
 
       if (isMounted()) {
         setData({
           tokens,
-          totalAssetValue: sum,
-          totalAssetChange: intervalChange,
-        });
+          totalAssetValue: sum
+        } as PolledTokenPricing);
       }
     },
     [isMounted, options.filter, tokenList]
