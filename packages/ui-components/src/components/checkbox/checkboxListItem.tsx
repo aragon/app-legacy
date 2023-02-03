@@ -62,7 +62,7 @@ type ContainerTypes = {
 };
 
 const Container = styled.div.attrs(({disabled, type}: ContainerTypes) => ({
-  className: `py-1.5 px-2 flex-1 rounded-xl border-2 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 ${
+  className: `py-1.5 px-2 rounded-xl border-2 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 ${
     disabled
       ? 'bg-ui-100 border-ui-300'
       : `bg-ui-0 group hover:border-primary-500 cursor-pointer ${

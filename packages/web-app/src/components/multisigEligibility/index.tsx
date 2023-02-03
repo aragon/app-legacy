@@ -30,26 +30,30 @@ export const MultisigEligibility = () => {
                   label={t('createDAO.step3.multisigEligibilityMobileTitle')}
                 />
               )}
-              <CheckboxListItem
-                label={t('createDAO.step3.eligibility.multisigMembers.title')}
-                helptext={t(
-                  'createDAO.step3.eligibility.multisigMembers.description'
-                )}
-                multiSelect={false}
-                onClick={() => {
-                  onChange('multisig');
-                }}
-                {...(value === 'multisig' ? {type: 'active'} : {})}
-              />
-              <CheckboxListItem
-                label={t('createDAO.step3.eligibility.anyone.title')}
-                helptext={t('createDAO.step3.eligibility.anyone.description')}
-                onClick={() => {
-                  onChange('anyone');
-                }}
-                multiSelect={false}
-                {...(value === 'anyone' ? {type: 'active'} : {})}
-              />
+              <CheckboxListItemWrapper>
+                <CheckboxListItem
+                  label={t('createDAO.step3.eligibility.multisigMembers.title')}
+                  helptext={t(
+                    'createDAO.step3.eligibility.multisigMembers.description'
+                  )}
+                  multiSelect={false}
+                  onClick={() => {
+                    onChange('multisig');
+                  }}
+                  {...(value === 'multisig' ? {type: 'active'} : {})}
+                />
+              </CheckboxListItemWrapper>
+              <CheckboxListItemWrapper>
+                <CheckboxListItem
+                  label={t('createDAO.step3.eligibility.anyone.title')}
+                  helptext={t('createDAO.step3.eligibility.anyone.description')}
+                  onClick={() => {
+                    onChange('anyone');
+                  }}
+                  multiSelect={false}
+                  {...(value === 'anyone' ? {type: 'active'} : {})}
+                />
+              </CheckboxListItemWrapper>
             </CheckboxItemsContainer>
             {value === 'anyone' && (
               <AlertInline
@@ -71,10 +75,16 @@ const TitleContainer = styled.div.attrs({
 const OptionsContainers = styled.div.attrs({
   className: 'space-y-1.5',
 })``;
+
 const CheckboxItemsContainer = styled.div.attrs({
   className:
     'flex desktop:flex-row flex-col desktop:gap-2 desktop:bg-transparent bg-ui-0 gap-1 p-2 desktop:p-0 rounded-xl',
 })``;
+
 const CheckboxContainer = styled.div.attrs({
   className: 'flex space-y-1.5 flex-col',
+})``;
+
+const CheckboxListItemWrapper = styled.div.attrs({
+  className: 'flex-1',
 })``;
