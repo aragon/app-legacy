@@ -1,3 +1,4 @@
+import {ProposalStatus} from '@aragon/sdk-client';
 import {
   ButtonGroup,
   ButtonText,
@@ -23,7 +24,6 @@ import NoProposals from 'public/noProposals.svg';
 import {erc20VotingProposals_erc20VotingProposals} from 'queries/__generated__/erc20VotingProposals';
 import {trackEvent} from 'services/analytics';
 import {ProposalListItem} from 'utils/types';
-import {ProposalStatus} from '@aragon/sdk-client';
 
 const Governance: React.FC = () => {
   const {

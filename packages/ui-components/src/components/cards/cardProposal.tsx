@@ -1,13 +1,13 @@
 import React from 'react';
 import styled from 'styled-components';
 
-import {Tag} from '../tag';
-import {LinearProgress} from '../progress';
-import {Address, shortenAddress} from '../../utils/addresses';
-import {Link} from '../link';
-import {AvatarDao} from '../avatar';
-import {IconClock} from '../icons';
-import {AlertInline} from '../alerts';
+import { Address, shortenAddress } from '../../utils/addresses';
+import { AlertInline } from '../alerts';
+import { AvatarDao } from '../avatar';
+import { IconClock } from '../icons';
+import { Link } from '../link';
+import { LinearProgress } from '../progress';
+import { Tag } from '../tag';
 
 type ProposalUsecase = 'list' | 'explore';
 
@@ -54,7 +54,8 @@ export type CardProposalProps = {
   tokenSymbol?: string;
   /** Publish by sentence in any available languages */
   publishLabel: string;
-  /** Publisher's ethereum address, ENS name **or** DAO address when type is explore */
+  /** Publisher's ethereum address, ENS name **or** DAO address when type is
+   * explore */
   publisherAddress?: Address;
   /** DAO name to display when type is explore */
   daoName?: string;
