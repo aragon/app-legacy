@@ -261,7 +261,6 @@ const CreateDaoProvider: React.FC = ({children}) => {
 
     try {
       const ipfsUri = await client?.methods.pinMetadata(metadata);
-      console.log('here');
       return {
         metadataUri: ipfsUri || '',
         // TODO: We're using dao name without spaces for ens, We need to add alert

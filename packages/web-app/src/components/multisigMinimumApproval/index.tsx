@@ -4,27 +4,39 @@ import {
   LinearProgress,
   NumberInput,
 } from '@aragon/ui-components';
-import React, {useEffect} from 'react';
-import {Controller, useFormContext, useWatch} from 'react-hook-form';
+import React from 'react';
+import {
+  Controller,
+  useFormContext,
+  useWatch,
+  ValidateResult,
+} from 'react-hook-form';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 
 export const MultisigMinimumApproval = () => {
   const {t} = useTranslation();
-  const {control, setValue} = useFormContext();
+  const {control} = useFormContext();
   const [multisigWallets, multisigMinimumApprovals] = useWatch({
     name: ['multisigWallets', 'multisigMinimumApprovals'],
     control: control,
   });
-
-  useEffect(() => {
-    if (multisigMinimumApprovals > multisigWallets.length) {
-      setValue('multisigMinimumApprovals', multisigWallets.length);
+  const computeDefaultValue = () => {
+    const ceiledApprovals = Math.ceil(multisigWallets.length / 2);
+    if (multisigWallets.length % 2) {
+      return ceiledApprovals;
     }
-  }, [multisigMinimumApprovals, setValue, multisigWallets.length]);
+    return ceiledApprovals + 1;
+  };
 
-  const validateminimumApprovals = (value: number) =>
-    value <= multisigWallets.length;
+  const validateMinimumApprovals = (value: number): ValidateResult => {
+    if (value > multisigWallets.length) {
+      return t('errors.ltAmount', {amount: multisigWallets.length});
+    } else if (value < 0) {
+      return t('errors.lteZero');
+    }
+    return true;
+  };
 
   return (
     <>
@@ -35,9 +47,9 @@ export const MultisigMinimumApproval = () => {
       <Controller
         name="multisigMinimumApprovals"
         control={control}
-        defaultValue={Math.ceil(multisigWallets.length / 2)}
+        defaultValue={computeDefaultValue}
         rules={{
-          validate: value => validateminimumApprovals(value),
+          validate: value => validateMinimumApprovals(value),
         }}
         render={({
           field: {onBlur, onChange, value, name},
@@ -52,18 +64,20 @@ export const MultisigMinimumApproval = () => {
                   onBlur={onBlur}
                   onChange={onChange}
                   placeholder={t('placeHolders.daoName')}
+                  max={multisigWallets.length}
+                  min={0}
                 />
               </div>
 
               <div className="flex flex-1 items-center">
                 <LinearProgressContainer>
                   <LinearProgress max={multisigWallets.length} value={value} />
-                  <ProgressBarTick />
                   <ProgressInfo>
-                    {multisigMinimumApprovals !== multisigWallets.length && (
+                    {multisigMinimumApprovals !== multisigWallets.length ? (
                       <p
                         className="font-bold text-right text-primary-500"
                         style={{
+                          position: 'relative',
                           flexBasis: `${
                             (value / multisigWallets.length) * 100
                           }%`,
@@ -71,8 +85,7 @@ export const MultisigMinimumApproval = () => {
                       >
                         {value}
                       </p>
-                    )}
-                    {multisigMinimumApprovals === multisigWallets.length && (
+                    ) : (
                       <p className="font-bold text-right text-primary-500">
                         {value}
                       </p>
@@ -90,17 +103,19 @@ export const MultisigMinimumApproval = () => {
             {error?.message && (
               <AlertInline label={error.message} mode="critical" />
             )}
-            {value < multisigWallets.length / 2 ? (
+            {value <= multisigWallets.length / 2 && value >= 0 && (
               <AlertInline
                 label={t('createDAO.step4.alerts.minority')}
                 mode="warning"
               />
-            ) : (
-              <AlertInline
-                label={t('createDAO.step4.alerts.majority')}
-                mode="success"
-              />
             )}
+            {value > multisigWallets.length / 2 &&
+              value <= multisigWallets.length && (
+                <AlertInline
+                  label={t('createDAO.step4.alerts.majority')}
+                  mode="success"
+                />
+              )}
           </>
         )}
       />
@@ -114,11 +129,7 @@ const Container = styled.div.attrs({
 const LinearProgressContainer = styled.div.attrs({
   className: 'flex relative flex-1 items-center',
 })``;
-const ProgressBarTick = styled.div.attrs({
-  className:
-    'absolute left-1/2 w-1 h-2.5 border-r-2 border-l-2 transform -translate-x-1/2 bg-ui-300 border-ui-0',
-})``;
 const ProgressInfo = styled.div.attrs({
   className:
-    'flex absolute -top-2.5 justify-between space-x-0.5 w-full text-sm',
+    'flex absolute whitespace-nowrap -top-2.5 justify-between space-x-0.5 w-full text-sm',
 })``;
