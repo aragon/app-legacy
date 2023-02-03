@@ -25,6 +25,7 @@ import {erc20VotingProposals_erc20VotingProposals} from 'queries/__generated__/e
 import {trackEvent} from 'services/analytics';
 import {ProposalListItem} from 'utils/types';
 import {ProposalStatus} from '@aragon/sdk-client';
+import {customJSONReplacer} from 'utils/library';
 
 const Governance: React.FC = () => {
   const {data: dao, isLoading} = useDaoParam();
@@ -55,7 +56,8 @@ const Governance: React.FC = () => {
     } else {
       setEndReached(true);
     }
-  }, [proposals]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [JSON.stringify(proposals[0], customJSONReplacer)]);
 
   const {t} = useTranslation();
   const navigate = useNavigate();
