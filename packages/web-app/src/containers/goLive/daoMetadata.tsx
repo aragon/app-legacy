@@ -24,7 +24,6 @@ const DaoMetadata: React.FC = () => {
         <DescriptionListContainer
           title={t('labels.review.daoMetadata')}
           onEditClick={() => setStep(3)}
-          editLabel={t('settings.edit')}
           checkBoxErrorMessage={t('createDAO.review.acceptContent')}
           checkedState={
             value ? 'active' : reviewCheckError ? 'error' : 'default'
@@ -38,6 +37,7 @@ const DaoMetadata: React.FC = () => {
               <AvatarDao
                 {...{daoName}}
                 {...(daoLogo && {src: URL.createObjectURL(daoLogo)})}
+                size="small"
               />
             </Dd>
           </Dl>

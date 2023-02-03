@@ -49,7 +49,9 @@ export const DescriptionListContainer: React.FC<DescriptionListProps> = ({
         {onEditClick && (
           <ButtonText
             label={editLabel || t('labels.edit')}
-            mode="ghost"
+            mode="secondary"
+            size="large"
+            bgWhite
             onClick={onEditClick}
           />
         )}

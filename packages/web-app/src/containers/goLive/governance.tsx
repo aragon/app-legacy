@@ -37,7 +37,6 @@ const Governance: React.FC = () => {
         <DescriptionListContainer
           title={t('labels.review.votingParameters')}
           onEditClick={() => setStep(5)}
-          editLabel={t('settings.edit')}
           checkBoxErrorMessage={t('createDAO.review.acceptContent')}
           checkedState={
             value ? 'active' : reviewCheckError ? 'error' : 'default'

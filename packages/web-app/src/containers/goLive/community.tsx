@@ -38,7 +38,6 @@ const Community: React.FC = () => {
         <DescriptionListContainer
           title={t('labels.review.voters')}
           onEditClick={() => setStep(4)}
-          editLabel={t('settings.edit')}
           checkBoxErrorMessage={t('createDAO.review.acceptContent')}
           checkedState={
             value ? 'active' : reviewCheckError ? 'error' : 'default'
