@@ -1,11 +1,13 @@
 import {DateInput, DropdownInput} from '@aragon/ui-components';
+import {toDate} from 'date-fns-tz';
 import React, {useCallback, useMemo} from 'react';
 import {Controller, useFormContext, useWatch} from 'react-hook-form';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
-import {toDate} from 'date-fns-tz';
 
 import {SimplifiedTimeInput} from 'components/inputTime/inputTime';
+import {timezones} from 'containers/utcMenu/utcData';
+import format from 'date-fns/format';
 import {
   getCanonicalDate,
   getCanonicalTime,
@@ -13,8 +15,6 @@ import {
   getFormattedUtcOffset,
   Offset,
 } from 'utils/date';
-import {timezones} from 'containers/utcMenu/utcData';
-import format from 'date-fns/format';
 
 type Props = {
   mode?: 'start' | 'end';
@@ -22,6 +22,7 @@ type Props = {
   defaultDateOffset?: Offset;
   minDurationAlert: string;
   minDurationMills: number;
+  maxDurationMills?: number;
 };
 
 const defaultOffsets = {
@@ -36,6 +37,7 @@ const DateTimeSelector: React.FC<Props> = ({
   defaultDateOffset,
   minDurationAlert,
   minDurationMills,
+  maxDurationMills = 0,
 }) => {
   const {days, hours, minutes} = {...defaultOffsets, ...defaultDateOffset};
 
@@ -100,6 +102,9 @@ const DateTimeSelector: React.FC<Props> = ({
     // get minimum end date time in mills
     const minEndDateTimeMills = startMills + minDurationMills;
 
+    // get maximum end date time in mills
+    const maxEndDateTimeMills = startMills + maxDurationMills;
+
     // set duration mills to avoid new calculation
     setValue('durationMills', endMills - startMills);
 
@@ -125,13 +130,21 @@ const DateTimeSelector: React.FC<Props> = ({
     }
 
     //check end constraints
-    // end date before min duration
+    // end date before min duration + start time
     if (endMills < minEndDateTimeMills) {
       setValue('endTimeWarning', minDurationAlert);
 
       // automatically correct the end date to minimum
       setValue('endDate', format(minEndDateTimeMills, 'yyyy-MM-dd'));
       setValue('endTime', format(minEndDateTimeMills, 'HH:mm'));
+      setValue('endUtc', currTimezone);
+    }
+
+    // end date past maximum duration
+    if (endMills > maxEndDateTimeMills) {
+      // automatically correct the end date to maximum
+      setValue('endDate', format(maxEndDateTimeMills, 'yyyy-MM-dd'));
+      setValue('endTime', format(maxEndDateTimeMills, 'HH:mm'));
       setValue('endUtc', currTimezone);
     }
 
@@ -147,6 +160,7 @@ const DateTimeSelector: React.FC<Props> = ({
     clearErrors,
     currTimezone,
     getValues,
+    maxDurationMills,
     minDurationAlert,
     minDurationMills,
     setValue,

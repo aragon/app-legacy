@@ -268,6 +268,7 @@ const SetupTokenVotingForm: React.FC<Props> = ({pluginSettings}) => {
               mode="end"
               onUtcClicked={() => handleUtcClicked('second')}
               minDurationMills={minDurationMills}
+              maxDurationMills={MAX_DURATION_MILLS}
               minDurationAlert={t('alert.tokenVoting.dateTimeMinDuration', {
                 days,
                 hours,
