@@ -1,4 +1,4 @@
-import {VotingSettings} from '@aragon/sdk-client';
+import {MultisigVotingSettings, VotingSettings} from '@aragon/sdk-client';
 import React, {useCallback, useEffect, useRef} from 'react';
 import {Outlet} from 'react-router-dom';
 
@@ -18,25 +18,20 @@ import {formatUnits} from 'utils/library';
 import {fetchBalance} from 'utils/tokens';
 
 const ProtectedRoute: React.FC = () => {
+  const {open, close, isGatingOpen} = useGlobalModalContext();
   const {data: dao, isLoading: paramIsLoading} = useDaoParam();
   const {address, isConnected, status, isOnWrongNetwork} = useWallet();
-  const {data: daoDetails, isLoading: detailsAreLoading} = useDaoDetails(
-    dao || ''
-  );
-  const {data, isLoading: settingsAreLoading} = usePluginSettings(
+  const {data: daoDetails, isLoading: detailsAreLoading} = useDaoDetails(dao);
+  const {data: daoSettings, isLoading: settingsAreLoading} = usePluginSettings(
     daoDetails?.plugins[0].instanceAddress as string,
     daoDetails?.plugins[0].id as PluginTypes
   );
 
-  // TODO: fix when implementing multisig
-  const daoSettings = data as VotingSettings;
-
-  const {open, close} = useGlobalModalContext();
   const {
     data: {daoToken, filteredMembers},
-    isLoading: MembershipIsLoading,
+    isLoading: membersAreLoading,
   } = useDaoMembers(
-    daoDetails?.plugins[0].instanceAddress || '',
+    daoDetails?.plugins[0].instanceAddress as string,
     daoDetails?.plugins[0].id as PluginTypes,
     address as string
   );
@@ -46,7 +41,10 @@ const ProtectedRoute: React.FC = () => {
 
   const userWentThroughLoginFlow = useRef(false);
 
-  const checkIfTokenBasedMember = useCallback(async () => {
+  /*************************************************
+   *             Callbacks and Handlers            *
+   *************************************************/
+  const gateTokenBasedProposal = useCallback(async () => {
     if (daoToken && address && filteredMembers.length === 0) {
       const balance = await fetchBalance(
         daoToken?.address,
@@ -56,7 +54,7 @@ const ProtectedRoute: React.FC = () => {
       );
       const minProposalThreshold = Number(
         formatUnits(
-          daoSettings.minProposerVotingPower || 0,
+          (daoSettings as VotingSettings).minProposerVotingPower || 0,
           daoToken?.decimals || 18
         )
       );
@@ -67,7 +65,7 @@ const ProtectedRoute: React.FC = () => {
   }, [
     address,
     close,
-    daoSettings.minProposerVotingPower,
+    daoSettings,
     daoToken,
     filteredMembers.length,
     network,
@@ -75,12 +73,17 @@ const ProtectedRoute: React.FC = () => {
     provider,
   ]);
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const checkIfAllowlistedMember = useCallback(() => {
-    if (filteredMembers.length === 0 && !MembershipIsLoading) open('gating');
-    else close('gating');
-  }, [MembershipIsLoading, close, filteredMembers, open]);
+  const gateMultisigProposal = useCallback(() => {
+    if ((daoSettings as MultisigVotingSettings).onlyListed === false)
+      close('gating');
 
+    if (filteredMembers.length === 0 && !membersAreLoading) open('gating');
+    else close('gating');
+  }, [membersAreLoading, close, daoSettings, filteredMembers.length, open]);
+
+  /*************************************************
+   *                     Effects                   *
+   *************************************************/
   useEffect(() => {
     // show the wallet menu only if the user hasn't gone through the flow previously
     // and is currently logged out; this allows user to log out mid flow with
@@ -102,32 +105,41 @@ const ProtectedRoute: React.FC = () => {
   useEffect(() => {
     if (address && !isOnWrongNetwork && daoDetails?.plugins[0].id) {
       if (daoDetails?.plugins[0].id === 'token-voting.plugin.dao.eth') {
-        checkIfTokenBasedMember();
+        gateTokenBasedProposal();
       } else {
-        // checkIfAllowlistedMember();
+        gateMultisigProposal();
       }
 
       // user has gone through login flow allow them to log out in peace
       userWentThroughLoginFlow.current = true;
     }
-  }, [address, checkIfTokenBasedMember, daoDetails?.plugins, isOnWrongNetwork]);
+  }, [
+    address,
+    gateMultisigProposal,
+    gateTokenBasedProposal,
+    daoDetails?.plugins,
+    isOnWrongNetwork,
+  ]);
 
   useEffect(() => {
     // need to do this to close the modal upon user login
     if (address && userWentThroughLoginFlow.current === false) close('wallet');
   }, [address, close]);
 
+  /*************************************************
+   *                     Render                    *
+   *************************************************/
   if (
     paramIsLoading ||
     detailsAreLoading ||
-    MembershipIsLoading ||
+    membersAreLoading ||
     settingsAreLoading
   )
     return <Loading />;
 
   return (
     <>
-      <Outlet />
+      {!isGatingOpen && <Outlet />}
       <GatingMenu
         daoAddress={dao}
         pluginType={daoDetails?.plugins[0].id as PluginTypes}
