@@ -37,7 +37,6 @@ export const MultisigWallets = () => {
 
   useEffect(() => {
     if (address && !multisigWallets) {
-      console.log(address);
       append({address});
     }
   }, [address, append, multisigWallets]);
