@@ -11,7 +11,7 @@ import {timezones} from 'containers/utcMenu/utcData';
 import {useGlobalModalContext} from 'context/globalModals';
 import {
   MINS_IN_DAY,
-  MULTISIG_MAX_DURATION_DAYS,
+  MULTISIG_MAX_REC_DURATION_DAYS,
   MULTISIG_MIN_DURATION_HOURS,
   MULTISIG_REC_DURATION_DAYS,
 } from 'utils/constants';
@@ -24,7 +24,9 @@ import {
 import {FormSection} from '.';
 import {DateTimeErrors} from './dateTimeErrors';
 
-const MAX_DURATION_MILLS = MULTISIG_MAX_DURATION_DAYS * MINS_IN_DAY * 60 * 1000;
+const MAX_DURATION_MILLS =
+  MULTISIG_MAX_REC_DURATION_DAYS * MINS_IN_DAY * 60 * 1000;
+
 export type UtcInstance = 'first' | 'second';
 
 const SetupMultisigVotingForm: React.FC = () => {
@@ -133,7 +135,7 @@ const SetupMultisigVotingForm: React.FC = () => {
 
   // get the current proposal duration set by the user
   const getDuration = useCallback(() => {
-    if (getValues('expirationDuration') === 'duration') {
+    if (getValues('durationSwitch') === 'duration') {
       const [days, hours, mins] = getValues([
         'durationDays',
         'durationHours',
@@ -142,7 +144,10 @@ const SetupMultisigVotingForm: React.FC = () => {
 
       return daysToMills(days) + hoursToMills(hours) + minutesToMills(mins);
     } else {
-      return Number(getValues('durationMills')) || 0;
+      return (
+        Number(getValues('durationMills')) ||
+        daysToMills(MULTISIG_REC_DURATION_DAYS)
+      );
     }
   }, [getValues]);
 
@@ -254,7 +259,7 @@ const SetupMultisigVotingForm: React.FC = () => {
         )}
         {!endTimeWarning && !formState?.errors?.endDate && (
           <DurationLabel
-            maxDuration={getDuration() === MAX_DURATION_MILLS}
+            maxDuration={getDuration() >= MAX_DURATION_MILLS}
             minDuration={getDuration() === minDurationMills}
             alerts={durationAlerts}
           />
