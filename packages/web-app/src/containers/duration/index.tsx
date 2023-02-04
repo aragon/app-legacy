@@ -43,6 +43,9 @@ const Duration: React.FC<Props> = ({
     hoursToMills(minimums.hours) +
     minutesToMills(minimums.minutes);
 
+  const isMaxDurationDays =
+    Number(getValues('durationDays')) === maxDurationDays;
+
   /*************************************************
    *                   Handlers                    *
    *************************************************/
@@ -227,6 +230,7 @@ const Duration: React.FC<Props> = ({
               }
               placeholder={'0'}
               min="0"
+              disabled={isMaxDurationDays}
             />
             {error?.message && (
               <AlertInline label={error.message} mode="critical" />
@@ -255,6 +259,7 @@ const Duration: React.FC<Props> = ({
               }
               placeholder={'0'}
               min="0"
+              disabled={isMaxDurationDays}
             />
             {error?.message && (
               <AlertInline label={error.message} mode="critical" />
