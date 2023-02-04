@@ -72,7 +72,9 @@ const SetupTokenVotingForm: React.FC<Props> = ({pluginSettings}) => {
       hours,
       minutes,
     }),
-    maxDuration: t('alert.tokenVoting.proposalMaxDuration', {days}),
+    maxDuration: t('alert.tokenVoting.proposalMaxDuration', {
+      days: MAX_DURATION_DAYS,
+    }),
     acceptableDuration: t('alert.tokenVoting.acceptableProposalDuration', {
       days,
       hours,
@@ -146,7 +148,7 @@ const SetupTokenVotingForm: React.FC<Props> = ({pluginSettings}) => {
 
   // get the current proposal duration set by the user
   const getDuration = useCallback(() => {
-    if (getValues('expirationDuration') === 'duration') {
+    if (getValues('durationSwitch') === 'duration') {
       const [days, hours, mins] = getValues([
         'durationDays',
         'durationHours',
@@ -155,6 +157,8 @@ const SetupTokenVotingForm: React.FC<Props> = ({pluginSettings}) => {
 
       return daysToMills(days) + hoursToMills(hours) + minutesToMills(mins);
     } else {
+      // intentionally passing zero here because upon first load,
+      // the minimum duration set on the settings is automatically loaded
       return Number(getValues('durationMills')) || 0;
     }
   }, [getValues]);
@@ -167,6 +171,13 @@ const SetupTokenVotingForm: React.FC<Props> = ({pluginSettings}) => {
     },
     [open]
   );
+
+  // we don't want to show minDuration error when form first loads
+  const showMinDurationWarning =
+    getDuration() === minDurationMills &&
+    (formState.dirtyFields?.durationDays ||
+      formState.dirtyFields?.durationHours ||
+      formState.dirtyFields?.durationMinutes);
 
   /*************************************************
    *                    Render                     *
@@ -272,8 +283,8 @@ const SetupTokenVotingForm: React.FC<Props> = ({pluginSettings}) => {
         )}
         {!endTimeWarning && !formState?.errors?.endDate && (
           <DurationLabel
-            maxDuration={getDuration() === MAX_DURATION_MILLS}
-            minDuration={getDuration() === minDurationMills}
+            maxDuration={getDuration() >= MAX_DURATION_MILLS}
+            minDuration={showMinDurationWarning}
             limitOnMax
             alerts={durationAlerts}
           />
