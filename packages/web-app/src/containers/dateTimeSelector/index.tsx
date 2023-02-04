@@ -141,7 +141,7 @@ const DateTimeSelector: React.FC<Props> = ({
     }
 
     // end date past maximum duration
-    if (endMills > maxEndDateTimeMills) {
+    if (maxDurationMills !== 0 && endMills > maxEndDateTimeMills) {
       // automatically correct the end date to maximum
       setValue('endDate', format(maxEndDateTimeMills, 'yyyy-MM-dd'));
       setValue('endTime', format(maxEndDateTimeMills, 'HH:mm'));
