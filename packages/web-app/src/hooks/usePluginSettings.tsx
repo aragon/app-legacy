@@ -7,14 +7,14 @@ import {PluginTypes, usePluginClient} from './usePluginClient';
 export function isTokenVotingSettings(
   settings: SupportedVotingSettings | undefined
 ): settings is VotingSettings {
-  if (!settings) return false;
+  if (!settings || JSON.stringify(settings) === '{}') return false;
   return 'minDuration' in settings;
 }
 
 export function isMultisigVotingSettings(
   settings: SupportedVotingSettings | undefined
 ): settings is MultisigVotingSettings {
-  if (!settings) return false;
+  if (!settings || JSON.stringify(settings) === '{}') return false;
   return !('minDuration' in settings);
 }
 
