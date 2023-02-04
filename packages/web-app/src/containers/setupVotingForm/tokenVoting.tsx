@@ -260,6 +260,7 @@ const SetupTokenVotingForm: React.FC<Props> = ({pluginSettings}) => {
           <Duration
             defaultValues={{days, hours, minutes}}
             minDuration={{days, hours, minutes}}
+            maxDurationDays={MAX_DURATION_DAYS}
           />
         ) : (
           <>

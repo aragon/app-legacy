@@ -3,12 +3,8 @@ import React, {useCallback} from 'react';
 import {Controller, useFormContext} from 'react-hook-form';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
-import {
-  MAX_DURATION_DAYS,
-  HOURS_IN_DAY,
-  MINS_IN_HOUR,
-  MINS_IN_DAY,
-} from 'utils/constants';
+
+import {HOURS_IN_DAY, MINS_IN_HOUR, MINS_IN_DAY} from 'utils/constants';
 import {
   Offset,
   daysToMills,
@@ -20,6 +16,7 @@ import {
 type Props = {
   name?: string;
   minDuration?: Offset;
+  maxDurationDays?: number; // duration in days
   defaultValues?: Offset;
 };
 
@@ -29,7 +26,12 @@ const durationDefaults = {
   minutes: 0,
 };
 
-const Duration: React.FC<Props> = ({defaultValues, name = '', minDuration}) => {
+const Duration: React.FC<Props> = ({
+  defaultValues,
+  name = '',
+  minDuration,
+  maxDurationDays,
+}) => {
   const defaults = {...durationDefaults, ...defaultValues};
   const minimums = {...durationDefaults, ...minDuration};
 
@@ -79,10 +81,10 @@ const Duration: React.FC<Props> = ({defaultValues, name = '', minDuration}) => {
         minutes: Number(formMins),
       };
 
-      if (value >= MAX_DURATION_DAYS) {
-        e.target.value = MAX_DURATION_DAYS.toString();
+      if (maxDurationDays && value >= maxDurationDays) {
+        e.target.value = maxDurationDays.toString();
 
-        setValue('durationDays', MAX_DURATION_DAYS.toString());
+        setValue('durationDays', maxDurationDays.toString());
         setValue('durationHours', '0');
         setValue('durationMinutes', '0');
       } else if (value <= minimums.days && durationLTMinimum(formDuration)) {
@@ -95,6 +97,7 @@ const Duration: React.FC<Props> = ({defaultValues, name = '', minDuration}) => {
     [
       durationLTMinimum,
       getValues,
+      maxDurationDays,
       minimums.days,
       resetToMinDuration,
       setValue,
