@@ -72,7 +72,8 @@ export const usePollTokenPrices = (
       if (isMounted()) {
         setData({
           tokens,
-          totalAssetValue: sum
+          totalAssetValue: sum,
+          totalAssetChange: 0
         } as PolledTokenPricing);
       }
     },

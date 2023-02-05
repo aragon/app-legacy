@@ -6,7 +6,7 @@ import {constants, ethers, providers as EthersProviders} from 'ethers';
 import {formatUnits} from 'utils/library';
 import {NativeTokenData, TimeFilter, TOKEN_AMOUNT_REGEX} from './constants';
 import { add } from 'date-fns';
-import { TokenType, Transfer } from '@aragon/sdk-client/dist/interfaces';
+import { TokenType, Transfer } from '@aragon/sdk-client';
 
 /**
  * This method sorts a list of array information. It is applicable to any field

@@ -54,15 +54,24 @@ export type TokenWithMetadata = {
   };
 };
 
-/** Token populated with the current price, and price change percentage for given filter */
+/**
+ * Token current price, and price change percentage for given filter
+ * @property {number} price - current market price
+ * @property {number} balanceValue - current balance value in USD
+ * @property {number} priceChangeDuringInterval - change in market price from interval time in past until now
+ * @property {number} valueChangeDuringInterval - change in balance value from interval time in past until now
+ * @property {number} percentageChangedDuringInterval - percentage change from market price interval time ago to current market price 
+ */
+export interface MarketData {
+  price: number;
+  balanceValue: number;
+  priceChangeDuringInterval: number;
+  valueChangeDuringInterval?: number;
+  percentageChangedDuringInterval: number;
+}
+
 export type TokenWithMarketData = TokenWithMetadata & {
-  marketData?: {
-    price: number; /** current market price */
-    balanceValue: number; /** current balance value */
-    priceChangeDuringInterval: number; /** change in price over interval */
-    valueChangeDuringInterval?: number; /** change in balance value over interval */
-    percentageChangedDuringInterval: number; /** percentage price change over interval */
-  };
+  marketData?: MarketData;
 };
 
 /** Token populated with DAO treasury information; final iteration to be displayed */

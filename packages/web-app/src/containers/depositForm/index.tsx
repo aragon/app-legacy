@@ -74,7 +74,7 @@ const DepositForm: React.FC = () => {
           isNativeToken(tokenAddress)
             ? utils.formatEther(walletBalance || 0)
             : fetchBalance(tokenAddress, address, provider, nativeCurrency),
-          fetchTokenData(tokenAddress, client, network),
+          fetchTokenData(tokenAddress, client, network, tokenSymbol),
         ]);
 
         // use blockchain if api data unavailable
@@ -114,6 +114,7 @@ const DepositForm: React.FC = () => {
     provider,
     setValue,
     tokenAddress,
+    tokenSymbol,
     trigger,
     walletBalance,
     client,

@@ -36,7 +36,7 @@ export const usePollTransfersPrices = (
         // fetch token metadata from external api
         const metadata = await Promise.all(
           assetTransfers?.map(transfer => {
-            return fetchTokenData(transfer.tokenAddress, client, network);
+            return fetchTokenData(transfer.tokenAddress, client, network, transfer.tokenSymbol);
           })
         );
 

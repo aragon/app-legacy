@@ -7,6 +7,7 @@ import {useNetwork} from 'context/network';
 import {fetchTokenData} from 'services/prices';
 import {CHAIN_METADATA} from 'utils/constants';
 import {HookData, TokenWithMetadata} from 'utils/types';
+import { TOP_ETH_SYMBOL_ADDRESSES } from 'utils/constants/topSymbolAddresses';
 
 export const useTokenMetadata = (
   assets: AssetBalance[]
@@ -28,7 +29,8 @@ export const useTokenMetadata = (
             return fetchTokenData(
               asset.type === 'erc20' ? asset.address : constants.AddressZero,
               client,
-              network
+              network,
+              asset.type === 'erc20' ? asset.symbol : undefined
             );
           })
         );

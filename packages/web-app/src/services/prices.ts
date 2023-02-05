@@ -12,6 +12,7 @@ import {
 } from 'utils/constants';
 import {TOKEN_DATA_QUERY} from 'queries/coingecko/tokenData';
 import {isNativeToken} from 'utils/tokens';
+import { TOP_ETH_SYMBOL_ADDRESSES } from 'utils/constants/topSymbolAddresses';
 
 export type TokenPrices = {
   [key: string]: {
@@ -90,19 +91,30 @@ type TokenData = {
 async function fetchTokenData(
   address: Address,
   client: ApolloClient<object>,
-  network: SupportedNetworks
+  network: SupportedNetworks,
+  symbol?: string
 ): Promise<TokenData | undefined> {
   // check if token address is address zero, ie, native token of platform
   const nativeToken = isNativeToken(address);
+  let fetchAddress = address;
+  let fetchNetwork = network;
+
+  // override test network ERC20 with mainnet token address for top tokens
+  if (!nativeToken && symbol
+      && network === 'goerli'
+      && TOP_ETH_SYMBOL_ADDRESSES[symbol.toLowerCase()]) {
+    fetchAddress = TOP_ETH_SYMBOL_ADDRESSES[symbol.toLowerCase()];
+    fetchNetwork = 'ethereum';
+  }
 
   // network unsupported, or testnet
-  const platformId = ASSET_PLATFORMS[network];
+  const platformId = ASSET_PLATFORMS[fetchNetwork];
   if (!platformId && !nativeToken) return;
 
   // build url based on whether token is native token
   const url = nativeToken
-    ? `/coins/${getNativeTokenId(network)}`
-    : `/coins/${platformId}/contract/${address}`;
+    ? `/coins/${getNativeTokenId(fetchNetwork)}`
+    : `/coins/${platformId}/contract/${fetchAddress}`;
 
   const {data, error} = await client.query({
     query: TOKEN_DATA_QUERY,
