@@ -667,7 +667,6 @@ export function getVoteStatusAndLabel(
   proposal: DetailedProposal,
   voted: boolean,
   canVote: boolean,
-  earlyExecution: boolean,
   t: TFunction
 ) {
   let voteStatus = '';
@@ -677,7 +676,7 @@ export function getVoteStatusAndLabel(
   if (isMultisigProposal(proposal)) return [voteStatus, voteButtonLabel];
 
   voteButtonLabel = voted
-    ? canVote && !earlyExecution
+    ? canVote
       ? t('votingTerminal.status.revote')
       : t('votingTerminal.status.voteSubmitted')
     : t('votingTerminal.voteOver');
