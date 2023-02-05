@@ -3,6 +3,7 @@ import {
   DaoAction,
   TokenVotingClient,
   TokenVotingProposal,
+  VotingMode,
   VotingSettings,
 } from '@aragon/sdk-client';
 import {
@@ -88,6 +89,8 @@ const Proposal: React.FC = () => {
 
   // TODO: fix when integrating multisig
   const daoSettings = data as VotingSettings;
+
+  const earlyExecution = daoSettings.votingMode === VotingMode.EARLY_EXECUTION;
 
   const {client} = useClient();
   const {set, get} = useCache();
@@ -353,6 +356,8 @@ const Proposal: React.FC = () => {
   const {voteNowDisabled, onClick} = useMemo(() => {
     if (proposal?.status !== 'Active') return {voteNowDisabled: true};
 
+    if (earlyExecution && voteSubmitted) return {voteNowDisabled: true};
+
     // not logged in
     if (!address) {
       return {
@@ -382,7 +387,15 @@ const Proposal: React.FC = () => {
         onClick: () => setVotingInProcess(true),
       };
     } else return {voteNowDisabled: true};
-  }, [address, canVote, isOnWrongNetwork, open, proposal?.status]);
+  }, [
+    address,
+    canVote,
+    earlyExecution,
+    isOnWrongNetwork,
+    open,
+    proposal?.status,
+    voteSubmitted,
+  ]);
 
   // alert message, only shown when not eligible to vote
   const alertMessage = useMemo(() => {
