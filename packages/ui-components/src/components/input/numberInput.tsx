@@ -14,6 +14,8 @@ export type NumberInputProps = React.InputHTMLAttributes<HTMLInputElement> & {
   disabled?: boolean;
   width?: number;
   value: string;
+  disableIncrement?: boolean;
+  disableDecrement?: boolean;
   /** Determines whether decimal values are accepted */
   includeDecimal?: boolean;
 };
@@ -22,6 +24,8 @@ export const NumberInput: React.FC<NumberInputProps> = ({
   mode = 'default',
   view = 'default',
   disabled,
+  disableDecrement,
+  disableIncrement,
   width,
   value,
   includeDecimal,
@@ -93,7 +97,7 @@ export const NumberInput: React.FC<NumberInputProps> = ({
         bgWhite
         size="small"
         icon={<IconRemove />}
-        disabled={disabled}
+        disabled={disabled || disableDecrement}
         onClick={() => handleStepperChange('down')}
       />
       <InputWrapper>
@@ -126,7 +130,7 @@ export const NumberInput: React.FC<NumberInputProps> = ({
         bgWhite
         size="small"
         icon={<IconAdd />}
-        disabled={disabled}
+        disabled={disabled || disableIncrement}
         onClick={() => handleStepperChange('up')}
       />
     </Container>
