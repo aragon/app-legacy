@@ -1,9 +1,9 @@
 import {
-  NumberInputProps,
-  AlertInlineProps,
-  NumberInput,
-  LinearProgress,
   AlertInline,
+  AlertInlineProps,
+  LinearProgress,
+  NumberInput,
+  NumberInputProps,
 } from '@aragon/ui-components';
 import React from 'react';
 import {useTranslation} from 'react-i18next';
@@ -24,7 +24,13 @@ const MinimumApproval: React.FC<Props> = ({max, min, ...rest}) => {
     <>
       <Container>
         <InputWrapper>
-          <NumberInput {...rest} max={max} min={min} />
+          <NumberInput
+            {...rest}
+            max={max}
+            min={min}
+            disableIncrement={max === value}
+            disableDecrement={min === value}
+          />
         </InputWrapper>
 
         <ProgressWrapper>
