@@ -245,6 +245,7 @@
       "Pending": "Starts in {{timeDiff}}",
       "Active": "{{timeDiff}} left",
       "voteTitle": "Winning option",
+      "voteTitleMultisig": "Approval Progress",
       "states": {
         "draft": "Draft",
         "pending": "Pending",

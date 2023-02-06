@@ -5,15 +5,15 @@ import {
   IconGovernance,
   ListItemHeader,
 } from '@aragon/ui-components';
-import React from 'react';
+import React, {useMemo} from 'react';
 import {useTranslation} from 'react-i18next';
 import {generatePath, useNavigate} from 'react-router-dom';
 import styled from 'styled-components';
 
-import {mapToCardViewProposal} from 'components/proposalList';
+import {proposal2CardProps} from 'components/proposalList';
 import {StateEmpty} from 'components/stateEmpty';
 import {useNetwork} from 'context/network';
-import {Governance, NewProposal, Proposal} from 'utils/paths';
+import {Governance, NewProposal} from 'utils/paths';
 import {ProposalListItem} from 'utils/types';
 import {htmlIn} from 'utils/htmlIn';
 
@@ -23,6 +23,11 @@ const ProposalSnapshot: React.FC<Props> = ({dao, proposals}) => {
   const {t} = useTranslation();
   const navigate = useNavigate();
   const {network} = useNetwork();
+
+  const mappedProposals = useMemo(
+    () => proposals.map(p => proposal2CardProps(p, network, navigate)),
+    [proposals, network, navigate]
+  );
 
   if (proposals.length === 0) {
     return (
@@ -56,15 +61,8 @@ const ProposalSnapshot: React.FC<Props> = ({dao, proposals}) => {
         onClick={() => navigate(generatePath(NewProposal, {network, dao}))}
       />
 
-      {mapToCardViewProposal(proposals, network).map(p => (
-        <CardProposal
-          key={p.id}
-          type="list"
-          onClick={() =>
-            navigate(generatePath(Proposal, {network, dao, id: p.id}))
-          }
-          {...p}
-        />
+      {mappedProposals.map(({id, ...p}) => (
+        <CardProposal {...p} key={id} type="list" />
       ))}
 
       <ButtonText
