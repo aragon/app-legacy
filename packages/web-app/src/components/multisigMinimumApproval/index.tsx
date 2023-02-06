@@ -8,9 +8,10 @@ import {
   ValidateResult,
 } from 'react-hook-form';
 import {TFunction, useTranslation} from 'react-i18next';
+import {CORRECTION_DELAY} from 'utils/constants';
+
 import MinimumApproval from './minimumApproval';
 
-const CORRECTION_DELAY = 2000;
 const MIN_REQUIRED_APPROVALS = 1;
 
 export const MultisigMinimumApproval = () => {
