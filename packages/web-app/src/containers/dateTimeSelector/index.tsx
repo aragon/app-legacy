@@ -15,6 +15,7 @@ import {
   getFormattedUtcOffset,
   Offset,
 } from 'utils/date';
+import {CORRECTION_DELAY} from 'utils/constants';
 
 type Props = {
   mode?: 'start' | 'end';
@@ -113,10 +114,12 @@ const DateTimeSelector: React.FC<Props> = ({
     if (startMills < currMills) {
       setValue('startTimeWarning', t('alert.startDateInPastAlert'));
 
-      // automatically correct the start date to now
-      setValue('startDate', getCanonicalDate());
-      setValue('startTime', getCanonicalTime({minutes: 10}));
-      setValue('startUtc', currTimezone);
+      setTimeout(() => {
+        // automatically correct the start date to now
+        setValue('startDate', getCanonicalDate());
+        setValue('startTime', getCanonicalTime({minutes: 10}));
+        setValue('startUtc', currTimezone);
+      }, CORRECTION_DELAY);
 
       // only validate first one if there is an error
       return true;
@@ -134,18 +137,22 @@ const DateTimeSelector: React.FC<Props> = ({
     if (endMills < minEndDateTimeMills) {
       setValue('endTimeWarning', minDurationAlert);
 
-      // automatically correct the end date to minimum
-      setValue('endDate', format(minEndDateTimeMills, 'yyyy-MM-dd'));
-      setValue('endTime', format(minEndDateTimeMills, 'HH:mm'));
-      setValue('endUtc', currTimezone);
+      setTimeout(() => {
+        // automatically correct the end date to minimum
+        setValue('endDate', format(minEndDateTimeMills, 'yyyy-MM-dd'));
+        setValue('endTime', format(minEndDateTimeMills, 'HH:mm'));
+        setValue('endUtc', currTimezone);
+      }, CORRECTION_DELAY);
     }
 
     // end date past maximum duration
     if (maxDurationMills !== 0 && endMills > maxEndDateTimeMills) {
-      // automatically correct the end date to maximum
-      setValue('endDate', format(maxEndDateTimeMills, 'yyyy-MM-dd'));
-      setValue('endTime', format(maxEndDateTimeMills, 'HH:mm'));
-      setValue('endUtc', currTimezone);
+      setTimeout(() => {
+        // automatically correct the end date to maximum
+        setValue('endDate', format(maxEndDateTimeMills, 'yyyy-MM-dd'));
+        setValue('endTime', format(maxEndDateTimeMills, 'HH:mm'));
+        setValue('endUtc', currTimezone);
+      }, CORRECTION_DELAY);
     }
 
     // end dateTime correct
