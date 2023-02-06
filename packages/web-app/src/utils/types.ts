@@ -60,7 +60,7 @@ export type TokenWithMetadata = {
  * @property {number} balanceValue - current balance value in USD
  * @property {number} priceChangeDuringInterval - change in market price from interval time in past until now
  * @property {number} valueChangeDuringInterval - change in balance value from interval time in past until now
- * @property {number} percentageChangedDuringInterval - percentage change from market price interval time ago to current market price 
+ * @property {number} percentageChangedDuringInterval - percentage change from market price interval time ago to current market price
  */
 export interface MarketData {
   price: number;
