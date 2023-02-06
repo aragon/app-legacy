@@ -74,12 +74,17 @@ const ProtectedRoute: React.FC = () => {
   ]);
 
   const gateMultisigProposal = useCallback(() => {
-    if ((daoSettings as MultisigVotingSettings).onlyListed === false)
+    if ((daoSettings as MultisigVotingSettings).onlyListed === false) {
       close('gating');
-
-    if (filteredMembers.length === 0 && !membersAreLoading) open('gating');
-    else close('gating');
-  }, [membersAreLoading, close, daoSettings, filteredMembers.length, open]);
+    } else if (
+      !filteredMembers.some(mem => mem.address === address) &&
+      !membersAreLoading
+    ) {
+      open('gating');
+    } else {
+      close('gating');
+    }
+  }, [membersAreLoading, close, daoSettings, open, address, filteredMembers]);
 
   /*************************************************
    *                     Effects                   *
