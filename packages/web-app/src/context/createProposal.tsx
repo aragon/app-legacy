@@ -242,7 +242,7 @@ const CreateProposalProvider: React.FC<Props> = ({
 
       const ipfsUri = await pluginClient?.methods.pinMetadata(metadata);
 
-      let proposalStartDate = new Date(
+      let startDateTime = new Date(
         `${startDate}T${startTime}:00${getCanonicalUtcOffset(startUtc)}`
       );
 
@@ -255,11 +255,11 @@ const CreateProposalProvider: React.FC<Props> = ({
       if (isStartDatePassed) {
         // Update the startDate + 30 sec for transaction time
         const CurrenDate = new Date().setSeconds(new Date().getSeconds() + 30);
-        proposalStartDate = new Date(CurrenDate);
+        startDateTime = new Date(CurrenDate);
       }
 
       const minEndDateTimeMills =
-        proposalStartDate.valueOf() +
+        startDateTime.valueOf() +
         daysToMills(days || 0) +
         hoursToMills(hours || 0) +
         minutesToMills(minutes || 0);
@@ -277,14 +277,20 @@ const CreateProposalProvider: React.FC<Props> = ({
 
       if (endMills < minEndDateTimeMills) {
         // Update the endDate + 30 sec for transaction time
-        endMills = endMills + (endMills - proposalStartDate.valueOf()) + 30000;
+        const legacyStartDate = new Date(
+          `${startDate}T${startTime}:00${getCanonicalUtcOffset(startUtc)}`
+        );
+        endMills =
+          endMills +
+          (startDateTime.valueOf() - legacyStartDate.valueOf()) +
+          30000;
       }
 
       // Ignore encoding if the proposal had no actions
       return {
         pluginAddress,
         metadataUri: ipfsUri || '',
-        startDate: proposalStartDate,
+        startDate: startDateTime,
         endDate: new Date(endMills),
         actions,
       };
