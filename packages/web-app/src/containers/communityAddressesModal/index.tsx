@@ -19,7 +19,7 @@ const CommunityAddressesModal: React.FC<CommunityAddressesModalProps> = ({
   const [page, setPage] = useState<number>(1);
   const {getValues} = useFormContext();
   const {isAddressesOpen, close} = useGlobalModalContext();
-  const {wallets, tokenSymbol, whitelistWallets} = getValues();
+  const {wallets, tokenSymbol, multisigWallets} = getValues();
   const {t} = useTranslation();
 
   const filterValidator = useCallback(
@@ -34,7 +34,7 @@ const CommunityAddressesModal: React.FC<CommunityAddressesModalProps> = ({
   );
 
   const filteredAddressList = useMemo(() => {
-    return (tokenMembership ? wallets : whitelistWallets)
+    return (tokenMembership ? wallets : multisigWallets)
       ?.filter(filterValidator)
       .map(({address, amount}: {address: string; amount: string}) => ({
         wallet: getUserFriendlyWalletLabel(address, t),
@@ -43,7 +43,7 @@ const CommunityAddressesModal: React.FC<CommunityAddressesModalProps> = ({
   }, [
     tokenMembership,
     wallets,
-    whitelistWallets,
+    multisigWallets,
     filterValidator,
     t,
     tokenSymbol,

@@ -19,6 +19,7 @@ import {useDaoToken} from 'hooks/useDaoToken';
 import {PluginTypes} from 'hooks/usePluginClient';
 import {usePluginSettings} from 'hooks/usePluginSettings';
 import {getDHMFromSeconds} from 'utils/date';
+import {formatUnits} from 'utils/library';
 import {EditSettings} from 'utils/paths';
 import {ProposalResource} from 'utils/types';
 
@@ -58,7 +59,6 @@ const CompareSettings: React.FC = () => {
     return <Loading />;
   }
 
-  let displayedInfo;
   const [
     daoName,
     daoSummary,
@@ -66,6 +66,8 @@ const CompareSettings: React.FC = () => {
     daoLinks,
     minimumApproval,
     minimumParticipation,
+    eligibilityType,
+    eligibilityTokenAmount,
     tokenTotalSupply,
     durationDays,
     durationHours,
@@ -79,6 +81,8 @@ const CompareSettings: React.FC = () => {
     'daoLinks',
     'minimumApproval',
     'minimumParticipation',
+    'eligibilityType',
+    'eligibilityTokenAmount',
     'tokenTotalSupply',
     'durationDays',
     'durationHours',
@@ -86,6 +90,8 @@ const CompareSettings: React.FC = () => {
     'earlyExecution',
     'voteReplacement',
   ]);
+
+  let displayedInfo;
   if (selectedButton === 'new') {
     displayedInfo = {
       name: daoName,
@@ -96,9 +102,16 @@ const CompareSettings: React.FC = () => {
       minParticipation: `≥${minimumParticipation}% (≥${
         (parseInt(minimumParticipation) * (tokenTotalSupply || 0)) / 100
       } ${daoToken?.symbol})`,
+      proposalEligibility:
+        eligibilityType === 'token'
+          ? t('createDAO.review.proposalCreation', {
+              token: eligibilityTokenAmount,
+              symbol: daoToken?.symbol,
+            })
+          : t('createDAO.step3.eligibility.anyone.title'),
       days: durationDays,
-      hours: durationMinutes,
-      minutes: durationHours,
+      hours: durationHours,
+      minutes: durationMinutes,
       votingMode: {
         earlyExecution: earlyExecution ? t('labels.yes') : t('labels.no'),
         voteReplacement: voteReplacement ? t('labels.yes') : t('labels.no'),
@@ -117,6 +130,19 @@ const CompareSettings: React.FC = () => {
       )}% (≥${
         daoSettings.minParticipation * (tokenTotalSupply.formatted || 0)
       } ${daoToken?.symbol})`,
+      proposalEligibility: daoSettings.minProposerVotingPower
+        ? t('labels.review.tokenHoldersWithTkns', {
+            tokenAmount: Math.ceil(
+              Number(
+                formatUnits(
+                  daoSettings.minProposerVotingPower || 0,
+                  daoToken?.decimals || 18
+                )
+              )
+            ),
+            tokenSymbol: daoToken?.symbol,
+          })
+        : t('createDAO.step3.eligibility.anyone.title'),
       days: duration.days,
       hours: duration.hours,
       minutes: duration.minutes,
@@ -146,6 +172,7 @@ const CompareSettings: React.FC = () => {
         </ButtonGroup>
       </div>
 
+      {/* METADATA*/}
       <DescriptionListContainer
         title={t('labels.review.daoMetadata')}
         onEditClick={() =>
@@ -187,6 +214,21 @@ const CompareSettings: React.FC = () => {
         )}
       </DescriptionListContainer>
 
+      {/* COMMUNITY */}
+      <DescriptionListContainer
+        title={t('navLinks.community')}
+        onEditClick={() =>
+          navigate(generatePath(EditSettings, {network, dao: daoId}))
+        }
+        editLabel={t('settings.edit')}
+      >
+        <Dl>
+          <Dt>{t('labels.review.proposalThreshold')}</Dt>
+          <Dd>{displayedInfo.proposalEligibility}</Dd>
+        </Dl>
+      </DescriptionListContainer>
+
+      {/* GOVERNANCE */}
       <DescriptionListContainer
         title={t('labels.review.governance')}
         onEditClick={() =>
@@ -195,7 +237,7 @@ const CompareSettings: React.FC = () => {
         editLabel={t('settings.edit')}
       >
         <Dl>
-          <Dt>{t('labels.minimumApproval')}</Dt>
+          <Dt>{t('labels.minimumApprovalThreshold')}</Dt>
           <Dd>{displayedInfo.approvalThreshold}</Dd>
         </Dl>
         <Dl>

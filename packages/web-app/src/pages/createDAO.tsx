@@ -19,7 +19,7 @@ import {useWallet} from 'hooks/useWallet';
 import {Link} from '@aragon/ui-components';
 import {trackEvent} from 'services/analytics';
 
-export type WhitelistWallet = {
+export type WalletItem = {
   id: string;
   address: string;
 };
@@ -45,13 +45,14 @@ export type CreateDaoFormData = {
   durationDays: string;
   minimumApproval: string;
   minimumParticipation: string;
-  eligibilityType: 'token' | 'anyone';
+  eligibilityType: 'token' | 'anyone' | 'multisig';
   eligibilityTokenAmount: number | string;
   support: string;
   membership: string;
   earlyExecution: boolean;
   voteReplacement: boolean;
-  whitelistWallets: WhitelistWallet[];
+  multisigWallets: WalletItem[];
+  multisigMinimumApprovals: number;
 };
 
 const defaultValues = {
@@ -84,19 +85,21 @@ const CreateDAO: React.FC = () => {
   });
   const {errors, dirtyFields} = useFormState({control: formMethods.control});
   const [
-    whitelistWallets,
+    multisigWallets,
     isCustomToken,
     tokenTotalSupply,
     membership,
     daoName,
+    eligibilityType,
   ] = useWatch({
     control: formMethods.control,
     name: [
-      'whitelistWallets',
+      'multisigWallets',
       'isCustomToken',
       'tokenTotalSupply',
       'membership',
       'daoName',
+      'eligibilityType',
     ],
   });
 
@@ -144,13 +147,16 @@ const CreateDAO: React.FC = () => {
 
   const daoSetupCommunityIsValid = useMemo(() => {
     // required fields not dirty
-    // if wallet based dao
-    if (membership === 'wallet') {
+    // if multisig
+    if (membership === 'multisig') {
       if (
-        !whitelistWallets ||
-        errors.whitelistWallets ||
-        whitelistWallets?.length === 0
+        !multisigWallets ||
+        errors.multisigWallets ||
+        multisigWallets?.length === 0
       ) {
+        return false;
+      }
+      if (!['multisig', 'anyone'].includes(eligibilityType)) {
         return false;
       }
       return true;
@@ -177,8 +183,8 @@ const CreateDAO: React.FC = () => {
     }
   }, [
     membership,
-    whitelistWallets,
-    errors.whitelistWallets,
+    multisigWallets,
+    errors.multisigWallets,
     errors.wallets,
     errors.eligibilityTokenAmount,
     errors.tokenName,
@@ -190,6 +196,7 @@ const CreateDAO: React.FC = () => {
     dirtyFields.tokenSymbol,
     dirtyFields.tokenAddress,
     tokenTotalSupply,
+    eligibilityType,
   ]);
 
   const daoConfigureCommunity = useMemo(() => {
@@ -199,7 +206,8 @@ const CreateDAO: React.FC = () => {
       errors.support ||
       errors.durationDays ||
       errors.durationHours ||
-      errors.durationMinutes
+      errors.durationMinutes ||
+      errors.multisigMinimumApprovals
     )
       return false;
     return true;
@@ -210,6 +218,7 @@ const CreateDAO: React.FC = () => {
     errors.minimumApproval,
     errors.minimumParticipation,
     errors.support,
+    errors.multisigMinimumApprovals,
   ]);
 
   const handleNextButtonTracking = (
@@ -316,7 +325,7 @@ const CreateDAO: React.FC = () => {
                 token_name: formMethods.getValues('tokenName'),
                 symbol: formMethods.getValues('tokenSymbol'),
                 token_address: formMethods.getValues('tokenAddress'),
-                whitelistWallets: formMethods.getValues('whitelistWallets'),
+                multisigWallets: formMethods.getValues('multisigWallets'),
               })
             }
           >

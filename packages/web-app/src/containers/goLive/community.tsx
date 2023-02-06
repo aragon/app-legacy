@@ -20,7 +20,7 @@ const Community: React.FC = () => {
     isCustomToken,
     tokenSymbol,
     tokenTotalSupply,
-    whitelistWallets,
+    multisigWallets,
     reviewCheckError,
     eligibilityType,
     eligibilityTokenAmount,
@@ -38,7 +38,6 @@ const Community: React.FC = () => {
         <DescriptionListContainer
           title={t('labels.review.voters')}
           onEditClick={() => setStep(4)}
-          editLabel={t('settings.edit')}
           checkBoxErrorMessage={t('createDAO.review.acceptContent')}
           checkedState={
             value ? 'active' : reviewCheckError ? 'error' : 'default'
@@ -51,22 +50,32 @@ const Community: React.FC = () => {
             <Dd>
               {membership === 'token'
                 ? t('createDAO.step3.tokenMembership')
-                : t('labels.wallets')}
+                : t('labels.multisigMembers')}
             </Dd>
           </Dl>
 
-          {membership === 'wallet' && (
-            <Dl>
-              <Dt>{t('labels.review.distribution')}</Dt>
-              <Dd>
-                <Link
-                  label={t('labels.review.distributionLink', {
-                    walletCount: whitelistWallets.length,
-                  })}
-                  onClick={() => open('addresses')}
-                />
-              </Dd>
-            </Dl>
+          {membership === 'multisig' && (
+            <>
+              <Dl>
+                <Dt>{t('labels.review.distribution')}</Dt>
+                <Dd>
+                  <Link
+                    label={t('labels.review.distributionLink', {
+                      walletCount: multisigWallets.length,
+                    })}
+                    onClick={() => open('addresses')}
+                  />
+                </Dd>
+              </Dl>
+              <Dl>
+                <Dt>{t('labels.proposalCreation')}</Dt>
+                <Dd>
+                  {eligibilityType === 'anyone'
+                    ? t('labels.anyone')
+                    : t('labels.multisigMembers')}
+                </Dd>
+              </Dl>
+            </>
           )}
 
           {membership === 'token' && (

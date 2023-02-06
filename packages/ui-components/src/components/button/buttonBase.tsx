@@ -1,4 +1,4 @@
-import React, {ButtonHTMLAttributes} from 'react';
+import React, {ButtonHTMLAttributes, CSSProperties} from 'react';
 import styled from 'styled-components';
 
 import {IconType} from '../icons';
@@ -44,10 +44,16 @@ ButtonBase.displayName = 'ButtonBase';
 /**********************************
  *             STYLES             *
  **********************************/
-const sizeStyles = {
+const sizeClassNames = {
   small: 'h-4 space-x-1 rounded-lg',
   medium: 'h-5 space-x-1.5 rounded-larger',
   large: 'h-6 space-x-1.5 rounded-xl',
+};
+
+const sizeStyles = {
+  small: {minWidth: '32px'},
+  medium: {minWidth: '40px'},
+  large: {minWidth: '48px'},
 };
 
 const fontStyles = {
@@ -70,10 +76,13 @@ type SizeProps = {
 };
 
 const BaseStyledButton = styled.button.attrs(({size = 'medium'}: SizeProps) => {
-  const className = `${sizeStyles[size]} ${fontStyles[size]} 
+  const className = `${sizeClassNames[size]} ${fontStyles[size]} 
   flex justify-center items-center focus:outline-none focus-visible:ring-2 
   focus-visible:ring-primary-500`;
-  return {className};
+
+  const style = sizeStyles[size] as CSSProperties;
+
+  return {className, style};
 })<SizeProps>``;
 
 type LabelProps = {

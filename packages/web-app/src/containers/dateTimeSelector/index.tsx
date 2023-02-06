@@ -1,164 +1,157 @@
 import {DateInput, DropdownInput} from '@aragon/ui-components';
-import {toDate} from 'date-fns-tz';
-import React, {useCallback, useEffect, useState} from 'react';
-import {Controller, useFormContext} from 'react-hook-form';
+import React, {useCallback, useMemo} from 'react';
+import {Controller, useFormContext, useWatch} from 'react-hook-form';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
+import {toDate} from 'date-fns-tz';
 
 import {SimplifiedTimeInput} from 'components/inputTime/inputTime';
-import UtcMenu from 'containers/utcMenu';
-import {timezones} from 'containers/utcMenu/utcData';
-import {useGlobalModalContext} from 'context/globalModals';
 import {
   getCanonicalDate,
   getCanonicalTime,
   getCanonicalUtcOffset,
   getFormattedUtcOffset,
+  Offset,
 } from 'utils/date';
+import {timezones} from 'containers/utcMenu/utcData';
+import format from 'date-fns/format';
 
-type UtcInstance = 'first' | 'second';
-type Props = {name?: string};
+type Props = {
+  mode?: 'start' | 'end';
+  onUtcClicked: () => void;
+  defaultDateOffset?: Offset;
+  minDurationAlert: string;
+  minDurationMills: number;
+};
 
-const DateTimeSelector: React.FC<Props> = ({name}) => {
+const defaultOffsets = {
+  days: 0,
+  hours: 0,
+  minutes: 0,
+};
+
+const DateTimeSelector: React.FC<Props> = ({
+  mode,
+  onUtcClicked,
+  defaultDateOffset,
+  minDurationAlert,
+  minDurationMills,
+}) => {
+  const {days, hours, minutes} = {...defaultOffsets, ...defaultDateOffset};
+
   const {t} = useTranslation();
-  const {open} = useGlobalModalContext();
-  const {control, clearErrors, getValues, setError, setValue} =
-    useFormContext();
+  const {control, getValues, clearErrors, setValue} = useFormContext();
 
-  const [utcInstance, setUtcInstance] = useState<UtcInstance>('first');
-  const [utcStart, setUtcStart] = useState('');
-  const [utcEnd, setUtcEnd] = useState('');
+  const [value] = useWatch({control, name: [`${mode}Utc`]});
 
-  /*************************************************
-   *                   Handlers                    *
-   *************************************************/
+  const currTimezone = useMemo(
+    () => timezones.find(tz => tz === getFormattedUtcOffset()) || timezones[13],
+    []
+  );
+
   // Validates all fields (date, time and UTC) for both start and end
   // simultaneously. This is necessary, as all the fields are related to one
   // another. The validation gathers information from all start and end fields
-  // and constructs two date (start and end). The validation leads to an error
+  // and constructs two date (start and end). The validation leads to a warning
   // if the dates violate any of the following constraints:
   //   - The start date is in the past
-  //   - The end date is before the start date
-  // If the form is invalid, errors are set for the repsective group of fields.
-  const dateTimeValidator = useCallback(() => {
-    // get all time field values
-    const [sDate, sTime, sUtc, eDate, eTime, eUtc] = getValues([
-      `${name}startDate`,
-      `${name}startTime`,
-      `${name}startUtc`,
-      `${name}endDate`,
-      `${name}endTime`,
-      `${name}endUtc`,
-    ]);
-
+  //   - The end date is before what should be the minimum duration based on
+  //     the start date.
+  // When these constraints are violated, the respective fields are automatically
+  // corrected. This does *not* return any errors.
+  // If the form is invalid, errors are set for the respective group of fields.
+  const validator = useCallback(() => {
     //build start date/time in utc mills
-    const canonicalSUtc = getCanonicalUtcOffset(sUtc);
-    const startDateTime = toDate(sDate + 'T' + sTime + canonicalSUtc);
+    // check end time using start and duration
+    let startDateTime: Date;
+    if (getValues('startSwitch') === 'date') {
+      const sDate = getValues('startDate');
+      const sTime = getValues('startTime');
+      const sUtc = getValues('startUtc');
+
+      const canonicalSUtc = getCanonicalUtcOffset(sUtc);
+      startDateTime = toDate(sDate + 'T' + sTime + canonicalSUtc);
+    } else {
+      // adding one minute to startTime so that by the time comparison
+      // rolls around, it's not in the past. Why is this so complicated?
+      startDateTime = toDate(
+        getCanonicalDate() +
+          'T' +
+          getCanonicalTime({minutes: 1}) +
+          getCanonicalUtcOffset()
+      );
+    }
+
     const startMills = startDateTime.valueOf();
 
+    // get the current time
     const currDateTime = new Date();
     const currMills = currDateTime.getTime();
 
     //build end date/time in utc mills
+    const eDate = getValues('endDate');
+    const eTime = getValues('endTime');
+    const eUtc = getValues('endUtc');
+
     const canonicalEUtc = getCanonicalUtcOffset(eUtc);
     const endDateTime = toDate(eDate + 'T' + eTime + canonicalEUtc);
     const endMills = endDateTime.valueOf();
 
-    const minEndDateTimeMills = startMills + 0;
-    // TODO: handle min end dateTime
-    //   daysToMills(days || 0) +
-    //   hoursToMills(hours || 0) +
-    //   minutesToMills(minutes || 0);
+    // get minimum end date time in mills
+    const minEndDateTimeMills = startMills + minDurationMills;
 
-    let returnValue = '';
+    // set duration mills to avoid new calculation
+    setValue('durationMills', endMills - startMills);
 
     // check start constraints
+    // start time in the past
     if (startMills < currMills) {
-      setError(`${name}startTime`, {
-        type: 'validate',
-        message: t('errors.startPast'),
-      });
-      setError(`${name}startDate`, {
-        type: 'validate',
-        message: t('errors.startPast'),
-      });
-      returnValue = t('errors.endPast');
+      setValue('startTimeWarning', t('alert.startDateInPastAlert'));
+
+      // automatically correct the start date to now
+      setValue('startDate', getCanonicalDate());
+      setValue('startTime', getCanonicalTime({minutes: 10}));
+      setValue('startUtc', currTimezone);
+
+      // only validate first one if there is an error
+      return true;
     }
+
+    // start dateTime correct
     if (startMills >= currMills) {
       clearErrors('startDate');
       clearErrors('startTime');
+      setValue('startTimeWarning', '');
     }
 
     //check end constraints
+    // end date before min duration
     if (endMills < minEndDateTimeMills) {
-      setError(`${name}endTime`, {
-        type: 'validate',
-        message: t('errors.endPast'),
-      });
-      setError(`${name}endDate`, {
-        type: 'validate',
-        message: t('errors.endPast'),
-      });
-      returnValue = t('errors.endPast');
+      setValue('endTimeWarning', minDurationAlert);
+
+      // automatically correct the end date to minimum
+      setValue('endDate', format(minEndDateTimeMills, 'yyyy-MM-dd'));
+      setValue('endTime', format(minEndDateTimeMills, 'HH:mm'));
+      setValue('endUtc', currTimezone);
     }
 
+    // end dateTime correct
     if (endMills >= minEndDateTimeMills) {
-      clearErrors(`${name}endDate`);
-      clearErrors(`${name}endTime`);
+      clearErrors('endDate');
+      clearErrors('endTime');
+      setValue('endTimeWarning', '');
     }
 
-    return !returnValue ? true : returnValue;
-  }, [clearErrors, getValues, name, setError, t]);
-
-  // sets the UTC values for the start and end date/time
-  const tzSelector = (tz: string) => {
-    if (utcInstance === 'first') {
-      setUtcStart(tz);
-      setValue('startUtc', tz);
-    } else {
-      setUtcEnd(tz);
-      setValue('endUtc', tz);
-    }
-  };
-
-  /*************************************************
-   *               Hooks & Effects                 *
-   *************************************************/
-  // Initializes values for the form
-  // This is done here rather than in the defaultValues object as time can
-  // elapse between the creation of the form context and this stage of the form.
-  useEffect(() => {
-    const currTimezone = timezones.find(tz => tz === getFormattedUtcOffset());
-    if (!currTimezone) {
-      setUtcStart(timezones[13]);
-      setUtcEnd(timezones[13]);
-      setValue(`${name}startUtc`, timezones[13]);
-      setValue(`${name}endUtc`, timezones[13]);
-    } else {
-      setUtcStart(currTimezone);
-      setUtcEnd(currTimezone);
-      setValue(`${name}startUtc`, currTimezone);
-      setValue(`${name}endUtc`, currTimezone);
-    }
-  }, []); //eslint-disable-line
-
-  // These effects trigger validation when UTC fields are changed.
-
-  useEffect(() => {
-    dateTimeValidator();
-  }, [utcStart, dateTimeValidator]);
-
-  useEffect(() => {
-    dateTimeValidator();
-  }, [utcEnd, dateTimeValidator]); //eslint-disable-line
-
-  //   useEffect(() => {
-  //     if (!daoSettings.minDuration) {
-  //       setError('areSettingsLoading', {});
-  //     } else {
-  //       clearErrors('areSettingsLoading');
-  //     }
-  //   }, [clearErrors, daoSettings.minDuration, setError]);
+    return true;
+  }, [
+    clearErrors,
+    currTimezone,
+    getValues,
+    minDurationAlert,
+    minDurationMills,
+    setValue,
+    t,
+  ]);
 
   /*************************************************
    *                      Render                   *
@@ -167,12 +160,12 @@ const DateTimeSelector: React.FC<Props> = ({name}) => {
     <>
       <SpecificTimeContainer>
         <Controller
-          name="startDate"
+          name={`${mode}Date`}
           control={control}
-          defaultValue={getCanonicalDate({minutes: 10})}
+          defaultValue={getCanonicalDate({days})}
           rules={{
             required: t('errors.required.date'),
-            validate: dateTimeValidator,
+            validate: validator,
           }}
           render={({field: {name, value, onChange, onBlur}}) => (
             <InputWrapper>
@@ -187,12 +180,12 @@ const DateTimeSelector: React.FC<Props> = ({name}) => {
           )}
         />
         <Controller
-          name="startTime"
+          name={`${mode}Time`}
           control={control}
-          defaultValue={getCanonicalTime({minutes: 10})}
+          defaultValue={getCanonicalTime({hours, minutes})}
           rules={{
             required: t('errors.required.time'),
-            validate: dateTimeValidator,
+            validate: validator,
           }}
           render={({field: {name, value, onChange, onBlur}}) => (
             <InputWrapper>
@@ -208,17 +201,9 @@ const DateTimeSelector: React.FC<Props> = ({name}) => {
         />
         <InputWrapper>
           <LabelWrapper>{t('labels.timezone')}</LabelWrapper>
-          <DropdownInput
-            value={utcStart}
-            onClick={() => {
-              // TODO: Check on utc instance
-              setUtcInstance('first');
-              open('utc');
-            }}
-          />
+          <DropdownInput value={value} onClick={onUtcClicked} />
         </InputWrapper>
       </SpecificTimeContainer>
-      <UtcMenu onTimezoneSelect={tzSelector} />
     </>
   );
 };

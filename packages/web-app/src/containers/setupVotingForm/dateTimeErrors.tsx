@@ -1,13 +1,14 @@
 import {AlertInline} from '@aragon/ui-components';
 import React, {useEffect, useState} from 'react';
-import {useFormContext, FieldError} from 'react-hook-form';
+import {useFormContext, FieldError, useWatch} from 'react-hook-form';
 
 type DateTimeErrorsProps = {
   mode: 'start' | 'end';
 };
 
 export function DateTimeErrors({mode}: DateTimeErrorsProps) {
-  const {formState} = useFormContext();
+  const {control, formState} = useFormContext();
+  const [warning] = useWatch({control, name: [`${mode}TimeWarning`]});
 
   const [requiredErrors, setRequiredErrors] = useState<string[]>([]);
   const [validatedErrors, setValidatedErrors] = useState<string[]>([]);
@@ -57,6 +58,10 @@ export function DateTimeErrors({mode}: DateTimeErrorsProps) {
         <AlertInline label={validatedErrors[0]} mode="critical" />
       </div>
     );
+  }
+
+  if (warning && warning !== '') {
+    return <AlertInline label={warning} mode="critical" />;
   }
 
   return null;

@@ -1,5 +1,5 @@
 import {useReactiveVar} from '@apollo/client';
-import {ProposalSortBy, ProposalStatus} from '@aragon/sdk-client';
+import {ProposalStatus} from '@aragon/sdk-client';
 import {useCallback, useEffect, useState} from 'react';
 
 import {
@@ -23,7 +23,10 @@ import {PluginTypes, usePluginClient} from './usePluginClient';
  */
 export function useProposals(
   daoAddress: string,
-  type: PluginTypes
+  type: PluginTypes,
+  limit = 6,
+  skip = 0,
+  status?: ProposalStatus
 ): HookData<Array<ProposalListItem>> {
   const [data, setData] = useState<Array<ProposalListItem>>([]);
   const [error, setError] = useState<Error>();
@@ -88,8 +91,10 @@ export function useProposals(
         setIsLoading(true);
 
         const proposals = await client?.methods.getProposals({
-          sortBy: ProposalSortBy.CREATED_AT,
           daoAddressOrEns: daoAddress,
+          status,
+          limit,
+          skip,
         });
 
         setData([...augmentProposalsWithCache(proposals || [])]);
@@ -102,7 +107,14 @@ export function useProposals(
     }
 
     if (daoAddress) getDaoProposals();
-  }, [augmentProposalsWithCache, client?.methods, daoAddress]);
+  }, [
+    augmentProposalsWithCache,
+    client?.methods,
+    daoAddress,
+    limit,
+    skip,
+    status,
+  ]);
 
   return {data, error, isLoading};
 }

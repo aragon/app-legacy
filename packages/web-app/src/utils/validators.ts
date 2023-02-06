@@ -20,6 +20,9 @@ import {
   Nullable,
 } from './types';
 import {isOnlyWhitespace} from './library';
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
+import {toAscii} from 'idna-uts46';
 
 /**
  * Validate given token contract address
@@ -194,7 +197,13 @@ export function isDaoNameValid(
   // for better performance
   try {
     provider
-      ?.resolveName(`${value.toLocaleLowerCase().replaceAll(' ', '_')}.dao.eth`)
+      ?.resolveName(
+        `${toAscii(value.replaceAll(/[ .]/g, '-'), {
+          transitional: true,
+          useStd3ASCII: true,
+          verifyDnsLength: true,
+        })}.dao.eth`
+      )
       .then(result => {
         const inputValue = getValues('daoName');
         // Check to see if the response belongs to current value

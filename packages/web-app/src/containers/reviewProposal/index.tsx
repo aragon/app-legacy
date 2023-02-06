@@ -22,9 +22,12 @@ import {PluginTypes} from 'hooks/usePluginClient';
 import {usePluginSettings} from 'hooks/usePluginSettings';
 import {CHAIN_METADATA} from 'utils/constants';
 import {
+  getCanonicalDate,
+  getCanonicalTime,
   getCanonicalUtcOffset,
   getFormattedUtcOffset,
   KNOWN_FORMATS,
+  minutesToMills,
 } from 'utils/date';
 import {
   getErc20VotingParticipation,
@@ -80,15 +83,20 @@ const ReviewProposal: React.FC<ReviewProposalProps> = ({
     ],
   });
 
-  const startDate = useMemo(
-    () =>
-      Date.parse(
-        `${values.startDate}T${values.startTime}:00${getCanonicalUtcOffset(
-          values.startUtc
-        )}`
-      ),
-    [values.startDate, values.startTime, values.startUtc]
-  );
+  const startDate = useMemo(() => {
+    const {startSwitch, startDate, startTime, startUtc} = values;
+    if (startSwitch === 'now') {
+      return new Date(
+        `${getCanonicalDate()}T${getCanonicalTime({
+          minutes: 10,
+        })}:00${getCanonicalUtcOffset()}`
+      );
+    } else {
+      return Date.parse(
+        `${startDate}T${startTime}:00${getCanonicalUtcOffset(startUtc)}`
+      );
+    }
+  }, [values]);
 
   const formattedStartDate = useMemo(
     () =>
@@ -100,33 +108,43 @@ const ReviewProposal: React.FC<ReviewProposalProps> = ({
   );
 
   const formattedEndDate = useMemo(() => {
-    let endDate: number;
+    let endDateTime: Date;
+    const {
+      durationDays,
+      durationHours,
+      durationMinutes,
+      durationSwitch,
+      startSwitch,
+      endDate,
+      endTime,
+      endUtc,
+    } = values;
 
-    if (values.durationSwitch === 'duration') {
-      const tempStart = new Date(startDate);
-      endDate = tempStart.setDate(
-        tempStart.getDate() + parseInt(values.duration)
+    if (durationSwitch === 'duration') {
+      endDateTime = new Date(
+        `${getCanonicalDate({
+          days: durationDays,
+        })}T${getCanonicalTime({
+          hours: durationHours,
+          minutes: durationMinutes,
+        })}:00${getCanonicalUtcOffset()}`
       );
     } else {
-      endDate = Date.parse(
-        `${values.endDate}T${values.endTime}:00${getCanonicalUtcOffset(
-          values.endUtc
-        )}`
+      endDateTime = new Date(
+        `${endDate}T${endTime}:00${getCanonicalUtcOffset(endUtc)}`
       );
     }
 
+    // adding 10 minutes to offset the 10 minutes added by starting now
+    if (startSwitch === 'now') {
+      endDateTime = new Date(endDateTime.getTime() + minutesToMills(10));
+    }
+
     return `${format(
-      endDate,
+      endDateTime,
       KNOWN_FORMATS.proposals
     )} ${getFormattedUtcOffset()}`;
-  }, [
-    startDate,
-    values.duration,
-    values.durationSwitch,
-    values.endDate,
-    values.endTime,
-    values.endUtc,
-  ]);
+  }, [values]);
 
   /*************************************************
    *                    Hooks                      *

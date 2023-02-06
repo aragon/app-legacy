@@ -73,8 +73,9 @@
     "days": "Days",
     "date": "Date",
     "time": "Time",
+    "now": "Now",
     "timezone": "Your Timezone",
-    "dateTime": "Date + Time",
+    "dateTime": "Specific Date + Time",
     "resourcesHelptext": "Share external resources here.",
     "submitWithdraw": "Publish Proposal",
     "sortBy": "Sort by",
@@ -102,7 +103,9 @@
     "label": "Name / Description",
     "logo": "Logo",
     "optional": "Optional",
-    "minimumApproval": "Approval threshold",
+    "minimumApprovalThreshold": "Approval threshold",
+    "multisigMembers": "Multisig Members",
+    "minimumApproval": "Minimum Approval",
     "minimumParticipation": "Minimum Participation",
     "minimumDuration": "Minimum Duration",
     "voteReplacement": "Vote Replacement",
@@ -135,6 +138,7 @@
     "changeableVote": "Changeable with a vote",
     "changeable": "Changeable",
     "etherscan": "Etherscan",
+    "anyone": "Anyone",
     "whitelistWallets": {
       "address": "Address",
       "addresses": "{{count}} Addresses",
@@ -146,7 +150,8 @@
       "resetAllEntries": "Reset All Addresses",
       "deleteAllEntries": "Delete All Addresses",
       "noWallets": "Choose a wallet to remove",
-      "addWalletsSubtitle": "Add a wallet to your DAO"
+      "addWalletsSubtitle": "Add a wallet to your DAO",
+      "totalWallets": "Total Wallets"
     },
     "review": {
       "blockchain": "Blockchain",
@@ -162,7 +167,8 @@
       "proposalThreshold": "Proposal Threshold",
       "tokenHoldersWithTkns": "Token Holders with ≥{{tokenAmount}} {{tokenSymbol}}",
       "earlyExecution": "Early Execution",
-      "voteReplacement": "Vote Replacement"
+      "voteReplacement": "Vote Replacement",
+      "multisigMinimumApprovals": "of {{count}} Authorized Addresses"
     },
     "author": "Author",
     "sec": "sec",
@@ -349,9 +355,22 @@
     }
   },
   "alert": {
+    "tokenVoting": {
+      "proposalMinDuration": "{{days}} days, {{hours}} hours, and {{minutes}} minutes  is the lowest vote time.",
+      "proposalMaxDuration": "{{days}} days is the highest vote time. Consider lowering the duration, otherwise this proposal may never pass.",
+      "acceptableProposalDuration": "The minimum duration of {{days}} days, {{hours}} hours, and {{minutes}} minutes is defined by DAO Governance Settings",
+      "dateTimeMinDuration": "The proposal's end date cannot be less than {{days}} days, {{hours}} hours, and {{minutes}} minutes in the future."
+    },
+    "multisig": {
+      "proposalMinDuration": "One hour is the minimum expiration time.",
+      "proposalMaxDuration": "[TBD] It’s recommended not to have long expiration time.",
+      "accepTableProposalDuration": "It’s recommended to have an expiration time of five days, so you have a clean proposal list.",
+      "dateTimeMinDuration": "Duration cannot be less than one hour. Corrected to one hour from start time."
+    },
     "durationAlert": "We recommend a minimum duration of 1 day so members have the time to review and vote.",
     "maxDurationAlert": "365 days is the maximum duration in Majority Voting Systems.",
     "minDurationAlert": "1 hour is the minimum duration in Majority Voting Systems.",
+    "startDateInPastAlert": "Start time can’t be in the past. Corrected to now.",
     "wrongWalletNetwork": "Wrong Wallet Network",
     "wrongNetwork": {
       "title": "Wrong Network",
@@ -502,6 +521,9 @@
         "title": "Yes, No, or Abstain",
         "helpText": "Let users vote for or against."
       },
+      "tokenVoting": {
+        "endDateDescription": "Define how long the voting should last in days or exact date and time."
+      },
       "multisig": {
         "optionDescription": "These are the following options for voting on this proposition.",
         "votingOption": {
@@ -512,11 +534,7 @@
         "startLabel": "Start Time",
         "startDescription": "Define when a proposal should be active to receive approvals. If now is selected, the proposal is immediately active after publishing.",
         "expiration": "Expiration Time",
-        "expirationDescription": "Define when a proposal should get expired, if the minimum approval threshold is never reached until then. After the expiration time, there is no way to approve or execute the proposal.",
-        "expirationAlert": "It’s recommended to have an expiration time of five days, so you have a clean proposal list.",
-        "now": "Now",
-        "dateTime": "Specific Date + Time",
-        "duration": "Duration"
+        "expirationDescription": "Define when a proposal should get expired, if the minimum approval threshold is never reached until then. After the expiration time, there is no way to approve or execute the proposal."
       }
     },
     "defineProposal": {
@@ -570,6 +588,15 @@
       "existingToken": "Yes",
       "existingTokenSubtitle": "Yes, we already have a token.",
       "tokenMembership": "Token holders",
+      "multisigMembership": "Multisig",
+      "multisigMembershipSubtitle": "Only Multisig members are entitled to participate. 1 wallet address equals 1 approve.",
+      "multisigMembers": "Multisig Members",
+      "multisigMembersHelptext": "Add as many addresses as you like to the DAO. These are authorised to create proposals, transactions or suggest changes to the DAO settings after its creation. Upload a CSV with <a>this template</a> if you want.",
+      "multisigMembersWalletAlert": "Your connected Wallet got automatically added to the list.",
+      "multisigEligibilityTitle": "Proposal Creation",
+      "multisigEligibilitySubtitle": "Specify who is permitted to create proposals.",
+      "multisigEligibilityMobileTitle": "Who is elegible?",
+      "multisigEligibilityAlert": "With anyone being able to propose, there is a risk of proposal spam. Consider only authorised adresses.",
       "tokenName": "Token Name",
       "tokenMembershipSubtitle": "Tokens act as voting chips. The more tokens you hold, the more weight your vote has. Token holders can also create proposals. ",
       "walletMemberShip": "Authorized wallets",
@@ -590,6 +617,8 @@
       "eligibility": {
         "optionTitle": "Who is eligible?",
         "inputTitle": "Minimum Tokens Required",
+        "multisigMembers.title": "Multisig Members",
+        "multisigMembers.description": "Only the authorised addresses above are eligible to create proposals.",
         "tokenHolders.title": "Token Holders",
         "tokenHolders.description": "Only token holders with an certain amount are eligible to create proposals.",
         "anyone.title": "Anyone",
@@ -610,6 +639,8 @@
       "days": "Days",
       "hours": "Hours",
       "minutes": "Minutes",
+      "minimumApprovalSubtitle": "Participation is the amount of addresses in the authorised list that approve on a proposal. The minimum is how many have to approve for the result to be valid.",
+      "minApprovalAddressCount": "of {{count}} Addresses",
       "alerts": {
         "minimumApprovalAlert": "of {{amount}} Tokens",
         "minimumParticipationAlert": "Rounded up to {{percentage}}% equals {{walletCount}} Wallets have to vote",
@@ -791,7 +822,7 @@
     "edit": "Edit Settings",
     "newSettings": "New settings",
     "oldSettings": "Old Settings",
-    "proposeSettingsInfo": "To make these changes, voters must approve the proposal."
+    "proposeSettingsInfo": "To make changes to the settings of this DAO, a vote must be taken via the community."
   },
   "dashboard": {
     "proposalsTitle": "Proposals created",

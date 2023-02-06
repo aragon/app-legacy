@@ -1,10 +1,12 @@
+import {
+  AlertInline,
+  CheckboxListItem,
+  NumberInput,
+} from '@aragon/ui-components';
 import React, {useEffect} from 'react';
-import {useTranslation} from 'react-i18next';
 import {Controller, useFormContext, useWatch} from 'react-hook-form';
+import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
-
-import {CheckboxListItem, NumberInput} from '@aragon/ui-components';
-import {AlertInline} from '@aragon/ui-components';
 
 export const SelectEligibility = () => {
   const {control, getValues, resetField, setValue} = useFormContext();

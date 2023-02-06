@@ -130,6 +130,7 @@ module.exports = {
     },
     fontWeight: {
       normal: 500,
+      semibold: 600,
       bold: 700,
     },
     lineHeight: {

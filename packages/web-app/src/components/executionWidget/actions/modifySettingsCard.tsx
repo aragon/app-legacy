@@ -30,6 +30,13 @@ export const ModifySettingsCard: React.FC<{
     ]
   );
 
+  const minProposalThreshold = inputs.minProposerVotingPower
+    ? t('labels.review.tokenHoldersWithTkns', {
+        tokenAmount: inputs.minProposerVotingPower,
+        tokenSymbol: inputs.token?.symbol,
+      })
+    : t('createDAO.step3.eligibility.anyone.title');
+
   return (
     <AccordionMethod
       type="execution-widget"
@@ -46,6 +53,10 @@ export const ModifySettingsCard: React.FC<{
         <div>
           <Title>{t('labels.minimumParticipation')}</Title>
           <Value>{minParticipation}</Value>
+        </div>
+        <div>
+          <Title>{t('labels.review.proposalThreshold')}</Title>
+          <Value>{minProposalThreshold}</Value>
         </div>
         <div>
           <Title>{t('labels.minimumDuration')}</Title>

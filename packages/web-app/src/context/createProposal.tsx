@@ -32,10 +32,12 @@ import {
 import {
   daysToMills,
   getCanonicalDate,
+  getCanonicalTime,
   getCanonicalUtcOffset,
   getDHMFromSeconds,
   hoursToMills,
   minutesToMills,
+  offsetToMills,
 } from 'utils/date';
 import {customJSONReplacer} from 'utils/library';
 import {Proposal} from 'utils/paths';
@@ -89,9 +91,11 @@ const CreateProposalProvider: React.FC<Props> = ({
 
   const {client} = useClient();
   const pluginClient = usePluginClient(pluginType as PluginTypes);
-  const {days, hours, minutes} = getDHMFromSeconds(
-    (pluginSettings as VotingSettings).minDuration
-  );
+  const {
+    days: minDays,
+    hours: minHours,
+    minutes: minMinutes,
+  } = getDHMFromSeconds((pluginSettings as VotingSettings).minDuration);
 
   const [proposalCreationData, setProposalCreationData] =
     useState<ICreateProposalParams>();
@@ -214,8 +218,8 @@ const CreateProposalProvider: React.FC<Props> = ({
         endDate,
         endTime,
         endUtc,
-        duration,
         durationSwitch,
+        startSwitch,
       ] = getValues([
         'proposalTitle',
         'proposalSummary',
@@ -227,8 +231,8 @@ const CreateProposalProvider: React.FC<Props> = ({
         'endDate',
         'endTime',
         'endUtc',
-        'duration',
         'durationSwitch',
+        'startSwitch',
       ]);
 
       const actions = await encodeActions();
@@ -242,48 +246,69 @@ const CreateProposalProvider: React.FC<Props> = ({
 
       const ipfsUri = await pluginClient?.methods.pinMetadata(metadata);
 
-      let startDateTime = new Date(
-        `${startDate}T${startTime}:00${getCanonicalUtcOffset(startUtc)}`
-      );
+      // getting dates
+      let startDateTime =
+        startSwitch === 'now'
+          ? new Date(
+              `${getCanonicalDate()}T${getCanonicalTime({
+                minutes: 10,
+              })}:00${getCanonicalUtcOffset()}`
+            )
+          : new Date(
+              `${startDate}T${startTime}:00${getCanonicalUtcOffset(startUtc)}`
+            );
 
-      // check the start date to see if it passed already or not
-      const isStartDatePassed =
-        new Date(
-          `${startDate}T${startTime}:00${getCanonicalUtcOffset(startUtc)}`
-        ).valueOf() < new Date().valueOf();
+      // End date
+      let endDateTime;
+      if (durationSwitch === 'duration') {
+        const [days, hours, minutes] = getValues([
+          'durationDays',
+          'durationHours',
+          'durationMinutes',
+        ]);
 
-      if (isStartDatePassed) {
-        // Update the startDate + 30 sec for transaction time
-        const CurrenDate = new Date().setSeconds(new Date().getSeconds() + 30);
-        startDateTime = new Date(CurrenDate);
+        const endDateTimeMill =
+          startDateTime.valueOf() + offsetToMills({days, hours, minutes});
+
+        endDateTime = new Date(endDateTimeMill);
+      } else {
+        endDateTime = new Date(
+          `${endDate}T${endTime}:00${getCanonicalUtcOffset(endUtc)}`
+        );
       }
 
-      const minEndDateTimeMills =
-        startDateTime.valueOf() +
-        daysToMills(days || 0) +
-        hoursToMills(hours || 0) +
-        minutesToMills(minutes || 0);
+      if (startSwitch === 'now') {
+        endDateTime = new Date(endDateTime.getTime() + minutesToMills(10));
+      }
 
-      let endMills =
-        durationSwitch === 'duration'
-          ? new Date(
-              `${getCanonicalDate({
-                days: duration,
-              })}T${startTime}:00${getCanonicalUtcOffset(endUtc)}`
-            ).valueOf()
-          : new Date(
-              `${endDate}T${endTime}:00${getCanonicalUtcOffset(endUtc)}`
-            ).valueOf();
+      if (startSwitch !== 'now') {
+        if (startDateTime.valueOf() < new Date().valueOf()) {
+          startDateTime = new Date(
+            `${getCanonicalDate()}T${getCanonicalTime({
+              minutes: 10,
+            })}:00${getCanonicalUtcOffset()}`
+          );
+        }
 
-      if (endMills < minEndDateTimeMills) {
-        // Update the endDate + 30 sec for transaction time
-        const legacyStartDate = new Date(
-          `${startDate}T${startTime}:00${getCanonicalUtcOffset(startUtc)}`
-        );
-        endMills =
-          endMills +
-          (startDateTime.valueOf() - legacyStartDate.valueOf()) +
-          30000;
+        const minEndDateTimeMills =
+          startDateTime.valueOf() +
+          daysToMills(minDays || 0) +
+          hoursToMills(minHours || 0) +
+          minutesToMills(minMinutes || 0);
+
+        if (endDateTime.valueOf() < minEndDateTimeMills) {
+          // Update the endDate + 30 sec for transaction time
+          const legacyStartDate = new Date(
+            `${startDate}T${startTime}:00${getCanonicalUtcOffset(startUtc)}`
+          );
+          const endMills =
+            endDateTime.valueOf() +
+            (startDateTime.valueOf() - legacyStartDate.valueOf()) +
+            // 10 minutes in milliseconds
+            600000;
+
+          endDateTime = new Date(endMills);
+        }
       }
 
       // Ignore encoding if the proposal had no actions
@@ -291,15 +316,15 @@ const CreateProposalProvider: React.FC<Props> = ({
         pluginAddress,
         metadataUri: ipfsUri || '',
         startDate: startDateTime,
-        endDate: new Date(endMills),
+        endDate: endDateTime,
         actions,
       };
     }, [
-      days,
       encodeActions,
       getValues,
-      hours,
-      minutes,
+      minDays,
+      minHours,
+      minMinutes,
       pluginAddress,
       pluginClient?.methods,
     ]);
@@ -324,6 +349,8 @@ const CreateProposalProvider: React.FC<Props> = ({
       );
     }
     if (!proposalCreationData) return;
+
+    console.log('proposalCreationData', proposalCreationData);
 
     return pluginClient?.estimation.createProposal(proposalCreationData);
   }, [pluginClient, proposalCreationData]);

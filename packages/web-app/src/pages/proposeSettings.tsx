@@ -168,8 +168,8 @@ const ProposeSettingWrapper: React.FC<Props> = ({
   /*************************************************
    *                     Effects                   *
    *************************************************/
-  // Not a fan, but this sets the actions on the form
-  // context so that the Action Widget can read them
+  // Not a fan, but this sets the actions on the form context so that the Action
+  // Widget can read them
   useEffect(() => {
     {
       const [
@@ -178,6 +178,8 @@ const ProposeSettingWrapper: React.FC<Props> = ({
         daoLogo,
         minimumApproval,
         minimumParticipation,
+        eligibilityType,
+        eligibilityTokenAmount,
         earlyExecution,
         voteReplacement,
         durationDays,
@@ -190,6 +192,8 @@ const ProposeSettingWrapper: React.FC<Props> = ({
         'daoLogo',
         'minimumApproval',
         'minimumParticipation',
+        'eligibilityType',
+        'eligibilityTokenAmount',
         'earlyExecution',
         'voteReplacement',
         'durationDays',
@@ -221,6 +225,10 @@ const ProposeSettingWrapper: React.FC<Props> = ({
           ),
           supportThreshold: Number(minimumApproval) / 100,
           minParticipation: Number(minimumParticipation) / 100,
+          minProposerVotingPower:
+            eligibilityType === 'token'
+              ? BigInt(eligibilityTokenAmount)
+              : undefined,
           votingMode: earlyExecution
             ? VotingMode.EARLY_EXECUTION
             : voteReplacement

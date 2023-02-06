@@ -216,5 +216,5 @@ const StyledNumberInput = styled.input.attrs(
 `;
 
 const StyledIconButton = styled(ButtonIcon).attrs({
-  className: 'rounded-xl',
+  className: 'rounded-lg',
 })``;

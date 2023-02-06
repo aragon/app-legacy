@@ -1,31 +1,35 @@
-import {
-  AlertCard,
-  AlertInline,
-  CheckboxListItem,
-  Label,
-} from '@aragon/ui-components';
-import React from 'react';
+import {CheckboxListItem, Label} from '@aragon/ui-components';
+import React, {useEffect} from 'react';
 import {Controller, useFormContext, useWatch} from 'react-hook-form';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 
-import {WhitelistWallets} from 'components/whitelistWallets';
 import CreateNewToken from './createNewToken';
+import {MultisigWallets} from 'components/multisigWallets';
+import {MultisigEligibility} from 'components/multisigEligibility';
 
 const SetupCommunityForm: React.FC = () => {
   const {t} = useTranslation();
 
-  const {control, resetField} = useFormContext();
+  const {control, resetField, setValue} = useFormContext();
   const membership = useWatch({
     name: 'membership',
   });
+
+  useEffect(() => {
+    if (membership === 'token') {
+      setValue('eligibilityType', 'token');
+    } else if (membership === 'multisig') {
+      setValue('eligibilityType', 'multisig');
+    }
+  }, [membership, setValue]);
 
   const resetTokenFields = () => {
     resetField('tokenName');
     resetField('tokenSymbol');
     resetField('tokenAddress');
     resetField('tokenTotalSupply');
-    resetField('whitelistWallets');
+    resetField('multisigWallets');
     resetField('wallets');
   };
 
@@ -52,6 +56,17 @@ const SetupCommunityForm: React.FC = () => {
                 {...(value === 'token' ? {type: 'active'} : {})}
               />
 
+              <CheckboxListItem
+                label={t('createDAO.step3.multisigMembership')}
+                helptext={t('createDAO.step3.multisigMembershipSubtitle')}
+                onClick={() => {
+                  resetTokenFields();
+                  onChange('multisig');
+                }}
+                multiSelect={false}
+                {...(value === 'multisig' ? {type: 'active'} : {})}
+              />
+
               {/* Address List Dao has been disabled */}
               {/* <CheckboxListItem
                   label={t('createDAO.step3.walletMemberShip')}
@@ -67,6 +82,17 @@ const SetupCommunityForm: React.FC = () => {
           )}
         />
       </FormItem>
+
+      {membership === 'multisig' && (
+        <>
+          <FormItem>
+            <MultisigWallets />
+          </FormItem>
+          <FormItem>
+            <MultisigEligibility />
+          </FormItem>
+        </>
+      )}
 
       {/* Token creation */}
       {/* TODO: when validating, the two list items should be either wrapped in a component that takes care of the state
@@ -115,25 +141,6 @@ const SetupCommunityForm: React.FC = () => {
           />
         </FormItem>
       )}*/}
-      {membership === 'wallet' && (
-        <FormItem>
-          <Label
-            label={t('labels.authorisedWallets')}
-            helpText={t('createDAO.step3.authorisedWalletsSubtitle')}
-            renderHtml
-          />
-          <AlertCard
-            mode="warning"
-            title={t('createDAO.step3.warningTitle')}
-            helpText={t('createDAO.step3.warningSubtitle')}
-          />
-          <AlertInline
-            label={t('createDAO.step3.whiteListWalletAlertText')}
-            mode="neutral"
-          />
-          <WhitelistWallets />
-        </FormItem>
-      )}
 
       {membership === 'token' && <CreateNewToken />}
 
