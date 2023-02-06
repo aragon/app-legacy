@@ -47,7 +47,7 @@ type VariableAlignment = {
 
 const Container = styled.div.attrs(({horizontal}: VariableAlignment) => ({
   className:
-    'flex flex-wrap gap-1 tablet:gap-1.5 justify-between items-center ' +
+    'flex flex-wrap gap-1 tablet:gap-3 justify-between items-center ' +
     'p-2 tablet:p-3 bg-ui-0 rounded-xl border border-ui-100 ' +
     `${horizontal ? 'tablet:flex-nowrap :' : ''}`,
 }))<VariableAlignment>``;
