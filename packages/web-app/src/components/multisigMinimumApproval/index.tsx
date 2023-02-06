@@ -67,34 +67,6 @@ export const MultisigMinimumApproval = () => {
     onChange(event);
   };
 
-  const generateAlert = useCallback(
-    (
-      inputValue: string | number,
-      max: number,
-      t: TFunction,
-      error?: FieldError
-    ): AlertInlineProps => {
-      if (error?.message) return {label: error.message, mode: 'critical'};
-
-      const value = Number(inputValue);
-
-      // minority can pass proposal (0-50%)
-      if (value <= max / 2 && value > 0)
-        return {label: t('createDAO.step4.alerts.minority'), mode: 'warning'};
-
-      // majority to pass proposal (50% +1 -> 75%)
-      if (value < max * 0.75)
-        return {label: t('createDAO.step4.alerts.majority'), mode: 'success'};
-
-      // absolute majority
-      return {
-        label: t('createDAO.step4.alerts.absoluteMajority'),
-        mode: 'warning',
-      };
-    },
-    []
-  );
-
   /*************************************************
    *                      Effects                  *
    *************************************************/
@@ -138,3 +110,28 @@ export const MultisigMinimumApproval = () => {
     </>
   );
 };
+
+function generateAlert(
+  inputValue: string | number,
+  max: number,
+  t: TFunction,
+  error?: FieldError
+): AlertInlineProps {
+  if (error?.message) return {label: error.message, mode: 'critical'};
+
+  const value = Number(inputValue);
+
+  // minority can pass proposal (0-50%)
+  if (value <= max / 2 && value > 0)
+    return {label: t('createDAO.step4.alerts.minority'), mode: 'warning'};
+
+  // majority to pass proposal (50% +1 -> 75%)
+  if (value < max * 0.75)
+    return {label: t('createDAO.step4.alerts.majority'), mode: 'success'};
+
+  // absolute majority
+  return {
+    label: t('createDAO.step4.alerts.absoluteMajority'),
+    mode: 'warning',
+  };
+}
