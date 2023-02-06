@@ -55,6 +55,7 @@ const Title = styled.h1.attrs({
     'text-ui-0 font-bold ft-text-5xl desktop:text-left text-center desktop:leading-7.5 leading-4.5',
 })`
   font-family: Syne;
+  letter-spacing: -0.03em;
 `;
 
 const Subtitle = styled.h3.attrs({

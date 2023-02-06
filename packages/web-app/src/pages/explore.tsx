@@ -45,7 +45,7 @@ const ContentWrapper = styled.div.attrs({
 
 const StatisticsContainer = styled.div.attrs({
   className:
-    'bg-ui-0 grid grid-rows-2 grid-flow-col gap-y-2 py-2 px-3  rounded-xl desktop:flex desktop:justify-between desktop:px-10 desktop:py-3 ',
+    'bg-ui-0 grid grid-rows-2 grid-flow-col gap-2 py-2 px-3  rounded-xl desktop:flex desktop:justify-between desktop:px-10 desktop:py-3 text-center',
 })``;
 
 const Statistic = styled.div.attrs({
