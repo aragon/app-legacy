@@ -166,6 +166,7 @@ const ConfigureWithdrawForm: React.FC<ConfigureWithdrawFormProps> = ({
     network,
     daoAddress,
     nativeCurrency,
+    symbol,
   ]);
 
   /*************************************************

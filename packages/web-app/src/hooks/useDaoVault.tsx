@@ -1,7 +1,7 @@
 import {useEffect, useState} from 'react';
-import { TimeFilter } from 'utils/constants';
-import { formatUnits } from 'utils/library';
-import { historicalTokenBalances, timeFilterToMinutes } from 'utils/tokens';
+import {TimeFilter} from 'utils/constants';
+import {formatUnits} from 'utils/library';
+import {historicalTokenBalances, timeFilterToMinutes} from 'utils/tokens';
 
 import {PollTokenOptions, VaultToken} from 'utils/types';
 import {useDaoBalances} from './useDaoBalances';
@@ -19,7 +19,10 @@ import {useTokenMetadata} from './useTokenMetadata';
  * @returns A list of transfers and of tokens in the DAO treasury,
  * current USD sum value of all assets, and the price change in USD based on the filter.
  */
-export const useDaoVault = (daoAddress: string, options: PollTokenOptions = {filter: TimeFilter.day, interval: 300000}) => {
+export const useDaoVault = (
+  daoAddress: string,
+  options: PollTokenOptions = {filter: TimeFilter.day, interval: 300000}
+) => {
   const {data: balances} = useDaoBalances(daoAddress);
   const {data: tokensWithMetadata} = useTokenMetadata(balances || []);
   const {data} = usePollTokenPrices(tokensWithMetadata, options);
@@ -34,12 +37,19 @@ export const useDaoVault = (daoAddress: string, options: PollTokenOptions = {fil
       return;
     }
 
-    const tokenPreviousBalances = historicalTokenBalances(transfers, tokensWithMetadata, timeFilterToMinutes(options.filter));
+    const tokenPreviousBalances = historicalTokenBalances(
+      transfers,
+      tokensWithMetadata,
+      timeFilterToMinutes(options.filter)
+    );
     data.tokens.forEach(token => {
       if (token.marketData) {
         const prevBalance = tokenPreviousBalances[token.metadata.id].balance;
-        const prevPrice = token.marketData.price / (1 + token.marketData.percentageChangedDuringInterval / 100.0);
-        const prevBalanceValue = Number(formatUnits(prevBalance, token.metadata.decimals)) * prevPrice;
+        const prevPrice =
+          token.marketData.price /
+          (1 + token.marketData.percentageChangedDuringInterval / 100.0);
+        const prevBalanceValue =
+          Number(formatUnits(prevBalance, token.metadata.decimals)) * prevPrice;
         token.marketData.valueChangeDuringInterval =
           token.marketData.balanceValue - prevBalanceValue;
         data.totalAssetChange += token.marketData.valueChangeDuringInterval;
@@ -59,7 +69,14 @@ export const useDaoVault = (daoAddress: string, options: PollTokenOptions = {fil
     });
 
     setTokens(values);
-  }, [data.tokens, data?.totalAssetValue, tokensWithMetadata]);
+  }, [
+    data.tokens,
+    data?.totalAssetValue,
+    tokensWithMetadata,
+    data,
+    options.filter,
+    transfers,
+  ]);
 
   return {
     tokens,

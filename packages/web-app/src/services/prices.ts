@@ -12,7 +12,7 @@ import {
 } from 'utils/constants';
 import {TOKEN_DATA_QUERY} from 'queries/coingecko/tokenData';
 import {isNativeToken} from 'utils/tokens';
-import { TOP_ETH_SYMBOL_ADDRESSES } from 'utils/constants/topSymbolAddresses';
+import {TOP_ETH_SYMBOL_ADDRESSES} from 'utils/constants/topSymbolAddresses';
 
 export type TokenPrices = {
   [key: string]: {
@@ -100,9 +100,12 @@ async function fetchTokenData(
   let fetchNetwork = network;
 
   // override test network ERC20 with mainnet token address for top tokens
-  if (!nativeToken && symbol
-      && network === 'goerli'
-      && TOP_ETH_SYMBOL_ADDRESSES[symbol.toLowerCase()]) {
+  if (
+    !nativeToken &&
+    symbol &&
+    network === 'goerli' &&
+    TOP_ETH_SYMBOL_ADDRESSES[symbol.toLowerCase()]
+  ) {
     fetchAddress = TOP_ETH_SYMBOL_ADDRESSES[symbol.toLowerCase()];
     fetchNetwork = 'ethereum';
   }
