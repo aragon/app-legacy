@@ -26,42 +26,59 @@ import {CreateProposalProvider} from 'context/createProposal';
 import {useNetwork} from 'context/network';
 import {useDaoParam} from 'hooks/useDaoParam';
 import {Community} from 'utils/paths';
-import {ActionAddAddress, ActionRemoveAddress} from 'utils/types';
+import {
+  ActionAddAddress,
+  ActionRemoveAddress,
+  ActionUpdateMinimumApproval,
+} from 'utils/types';
+import UpdateMinimumApproval from 'containers/actionBuilder/updateMinimumApproval';
+import {useDaoDetails} from 'hooks/useDaoDetails';
+import {useDaoMembers} from 'hooks/useDaoMembers';
+import {PluginTypes} from 'hooks/usePluginClient';
+import {usePluginSettings} from 'hooks/usePluginSettings';
+import {MultisigVotingSettings} from '@aragon/sdk-client';
 
 const ManageMembers: React.FC = () => {
   const {data: dao, isLoading} = useDaoParam();
 
   const {t} = useTranslation();
   const {network} = useNetwork();
+
+  // dao data
+  const {data: daoDetails} = useDaoDetails(dao);
+
+  // plugin data
+  const {data: votingSettings} = usePluginSettings(
+    daoDetails?.plugins[0].instanceAddress as string,
+    daoDetails?.plugins[0].id as PluginTypes
+  );
+  const {data: daoMembers} = useDaoMembers(
+    daoDetails?.plugins?.[0]?.instanceAddress || '',
+    (daoDetails?.plugins?.[0]?.id as PluginTypes) || undefined
+  );
+  const multisigDAOSettings = votingSettings as MultisigVotingSettings;
+
   const formMethods = useForm({
     mode: 'onChange',
     defaultValues: {
       links: [{name: '', url: ''}],
+      proposalTitle: '',
       durationSwitch: 'date',
-      actions: [] as Array<ActionAddAddress | ActionRemoveAddress>,
+      actions: [] as Array<
+        ActionAddAddress | ActionRemoveAddress | ActionUpdateMinimumApproval
+      >,
     },
   });
   const {errors, dirtyFields} = useFormState({
     control: formMethods.control,
   });
 
-  const [formActions] = useWatch({
-    name: ['actions'],
+  const [formActions, proposalTitle] = useWatch({
     control: formMethods.control,
+    name: ['actions', 'proposalTitle'],
   });
 
   const [showTxModal, setShowTxModal] = useState(false);
-
-  const handleOnNextButtonClicked = useCallback(
-    (next: () => void) => {
-      if (formActions) {
-        formMethods.setValue('actions', getNonEmptyActions(formActions));
-      }
-
-      next();
-    },
-    [formActions, formMethods]
-  );
 
   /*************************************************
    *                    Render                     *
@@ -86,13 +103,28 @@ const ManageMembers: React.FC = () => {
             <Step
               wizardTitle={t('newProposal.manageWallets.title')}
               wizardDescription={t('newProposal.manageWallets.description')}
-              onNextButtonClicked={handleOnNextButtonClicked}
-              isNextButtonDisabled={!actionsAreValid(errors, formActions)}
+              isNextButtonDisabled={
+                !actionsAreValid(
+                  errors,
+                  formActions,
+                  multisigDAOSettings?.minApprovals
+                )
+              }
               onNextButtonDisabledClicked={() => formMethods.trigger('actions')}
             >
               <>
-                <AddAddresses actionIndex={0} useCustomHeader />
+                <AddAddresses
+                  actionIndex={0}
+                  useCustomHeader
+                  currentDaoMembers={daoMembers?.members}
+                />
                 <RemoveAddresses actionIndex={1} useCustomHeader />
+                <UpdateMinimumApproval
+                  actionIndex={2}
+                  useCustomHeader
+                  currentDaoMembers={daoMembers.members}
+                  currentMinimumApproval={multisigDAOSettings?.minApprovals}
+                />
               </>
             </Step>
             <Step
@@ -105,7 +137,9 @@ const ManageMembers: React.FC = () => {
             <Step
               wizardTitle={t('newWithdraw.defineProposal.heading')}
               wizardDescription={t('newWithdraw.defineProposal.description')}
-              isNextButtonDisabled={!defineProposalIsValid(dirtyFields, errors)}
+              isNextButtonDisabled={
+                !defineProposalIsValid(dirtyFields, errors, proposalTitle)
+              }
             >
               <DefineProposal />
             </Step>
@@ -136,48 +170,43 @@ export default withTransaction('ManageMembers', 'component')(ManageMembers);
  */
 function actionsAreValid(
   errors: FieldErrors,
-  formActions: Array<ActionAddAddress | ActionRemoveAddress>
+  formActions: Array<
+    ActionAddAddress | ActionRemoveAddress | ActionUpdateMinimumApproval
+  >,
+  minApprovals: number
 ) {
   if (errors.actions || !formActions) return false;
 
   let containsEmptyField = false;
   let removedWallets = 0;
+  let minimumApprovalChanged = false;
 
   for (let i = 0; i < formActions.length; i++) {
     if (formActions[i].name === 'add_address') {
-      containsEmptyField = formActions[i].inputs.memberWallets.some(
-        w => w.address === ''
-      );
+      containsEmptyField = (
+        formActions[i] as ActionAddAddress | ActionRemoveAddress
+      ).inputs?.memberWallets.some(w => w.address === '');
       continue;
     }
 
     if (formActions[i].name === 'remove_address') {
-      removedWallets += formActions[i].inputs.memberWallets.length;
+      removedWallets += (
+        formActions[i] as ActionAddAddress | ActionRemoveAddress
+      ).inputs.memberWallets.length;
       continue;
+    }
+
+    if (formActions[i].name === 'update_minimum_approval') {
+      const newMinimumAprroval = (formActions[i] as ActionUpdateMinimumApproval)
+        .inputs.minimumApproval;
+
+      minimumApprovalChanged = minApprovals != newMinimumAprroval;
     }
   }
 
-  return !containsEmptyField || (containsEmptyField && removedWallets > 0);
-}
-
-/**
- * Filter out all empty add/remove address actions
- * @param actions add/remove address actions
- * @returns list of non empty address
- */
-function getNonEmptyActions(
-  actions: Array<ActionAddAddress | ActionRemoveAddress>
-) {
-  let memberWallets;
-
-  return actions.filter(a => {
-    memberWallets = a.inputs.memberWallets;
-
-    return (
-      // at least one address to be removed
-      (a.name === 'remove_address' && memberWallets.length > 0) ||
-      // no empty address to be added
-      (a.name === 'add_address' && !memberWallets.some(w => w.address === ''))
-    );
-  });
+  return (
+    !containsEmptyField ||
+    minimumApprovalChanged ||
+    (containsEmptyField && removedWallets > 0)
+  );
 }

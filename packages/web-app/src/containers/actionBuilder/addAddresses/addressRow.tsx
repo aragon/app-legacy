@@ -8,12 +8,18 @@ import {
 import styled from 'styled-components';
 import {useTranslation} from 'react-i18next';
 import React, {useCallback} from 'react';
-import {Controller, useFormContext, useWatch} from 'react-hook-form';
+import {
+  Controller,
+  useFormContext,
+  useWatch,
+  ValidateResult,
+} from 'react-hook-form';
 
 import {validateAddress} from 'utils/validators';
 import {WalletItem} from 'pages/createDAO';
 import {handleClipboardActions} from 'utils/library';
 import {useAlertContext} from 'context/alert';
+import {BalanceMember, MultisigMember} from 'hooks/useDaoMembers';
 
 type Props = {
   actionIndex: number;
@@ -26,6 +32,7 @@ type Props = {
     component: React.ReactNode;
   }>;
   onClearRow?: (index: number) => void;
+  currentDaoMembers?: MultisigMember[] | BalanceMember[];
 };
 
 export const AddressRow = ({
@@ -34,6 +41,7 @@ export const AddressRow = ({
   fieldIndex,
   dropdownItems,
   onClearRow,
+  currentDaoMembers,
 }: Props) => {
   const {t} = useTranslation();
   const {alert} = useAlertContext();
@@ -71,7 +79,24 @@ export const AddressRow = ({
 
   const addressValidator = useCallback(
     (address: string, index: number) => {
-      let validationResult = validateAddress(address);
+      let validationResult: ValidateResult;
+
+      // check if input address is valid, only if address is provided
+      if (address !== '') {
+        validationResult = validateAddress(address);
+      }
+
+      // check if there is dublicated address in the multisig plugin
+      if (
+        currentDaoMembers &&
+        currentDaoMembers?.some(
+          member => member.address === address?.toLocaleLowerCase()
+        )
+      ) {
+        validationResult = t('errors.duplicateAddressOnCurrentMembersList');
+      }
+
+      // check if there is dublicated address in the form
       if (memberWallets) {
         memberWallets.forEach((wallet: WalletItem, walletIndex: number) => {
           if (address === wallet.address && index !== walletIndex) {
@@ -99,7 +124,6 @@ export const AddressRow = ({
       defaultValue=""
       control={control}
       rules={{
-        required: t('errors.required.walletAddress') as string,
         validate: value => addressValidator(value, fieldIndex),
       }}
       render={({field: {onChange, value}, fieldState: {error}}) => (

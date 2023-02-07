@@ -3,6 +3,8 @@ import {
   DaoAction,
   ICreateProposalParams,
   InstalledPluginListItem,
+  MultisigClient,
+  MultisigVotingSettings,
   ProposalCreationSteps,
   ProposalMetadata,
   TokenVotingClient,
@@ -38,6 +40,7 @@ import {
 import {customJSONReplacer} from 'utils/library';
 import {Proposal} from 'utils/paths';
 import {
+  getNonEmptyActions,
   mapToDetailedProposal,
   MapToDetailedProposalParams,
   prefixProposalIdWithPlgnAdr,
@@ -134,9 +137,9 @@ const CreateProposalProvider: React.FC<Props> = ({
     // return an empty array for undefined clients
     if (!pluginClient || !client) return Promise.resolve([] as DaoAction[]);
 
-    actionsFromForm.forEach((action: Action) => {
+    getNonEmptyActions(actionsFromForm).forEach((action: Action) => {
       switch (action.name) {
-        case 'withdraw_assets':
+        case 'withdraw_assets': {
           actions.push(
             client.encoding.withdrawAction(dao, {
               recipientAddress: action.to,
@@ -145,7 +148,8 @@ const CreateProposalProvider: React.FC<Props> = ({
             })
           );
           break;
-        case 'mint_tokens':
+        }
+        case 'mint_tokens': {
           action.inputs.mintTokensToWallets.forEach(mint => {
             actions.push(
               Promise.resolve(
@@ -160,34 +164,55 @@ const CreateProposalProvider: React.FC<Props> = ({
             );
           });
           break;
-
-        // TODO: convert to Multisig
-        // case 'add_address': {
-        //   const wallets = action.inputs.memberWallets.map(
-        //     wallet => wallet.address
-        //   );
-        //   actions.push(
-        //     Promise.resolve(
-        //       (
-        //         pluginClient as AddresslistVotingClient
-        //       ).encoding.addMembersAction(pluginAddress, wallets)
-        //     )
-        //   );
-        //   break;
-        // }
-        // case 'remove_address': {
-        //   const wallets = action.inputs.memberWallets.map(
-        //     wallet => wallet.address
-        //   );
-        //   actions.push(
-        //     Promise.resolve(
-        //       (
-        //         pluginClient as AddresslistVotingClient
-        //       ).encoding.removeMembersAction(pluginAddress, wallets)
-        //     )
-        //   );
-        //   break;
-        // }
+        }
+        case 'add_address': {
+          const wallets = action.inputs.memberWallets.map(
+            wallet => wallet.address
+          );
+          actions.push(
+            Promise.resolve(
+              (pluginClient as MultisigClient).encoding.addAddressesAction({
+                pluginAddress: pluginAddress,
+                members: wallets,
+              })
+            )
+          );
+          break;
+        }
+        case 'remove_address': {
+          const wallets = action.inputs.memberWallets.map(
+            wallet => wallet.address
+          );
+          if (wallets.length > 0)
+            actions.push(
+              Promise.resolve(
+                (pluginClient as MultisigClient).encoding.removeAddressesAction(
+                  {
+                    pluginAddress: pluginAddress,
+                    members: wallets,
+                  }
+                )
+              )
+            );
+          break;
+        }
+        case 'update_minimum_approval': {
+          actions.push(
+            Promise.resolve(
+              (
+                pluginClient as MultisigClient
+              ).encoding.updateMultisigVotingSettings({
+                pluginAddress: pluginAddress,
+                votingSettings: {
+                  minApprovals: action.inputs.minimumApproval,
+                  onlyListed: (pluginSettings as MultisigVotingSettings)
+                    .onlyListed,
+                },
+              })
+            )
+          );
+          break;
+        }
       }
     });
 

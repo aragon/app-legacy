@@ -35,7 +35,7 @@ export const MultisigMinimumApproval = () => {
 
   const validateMinimumApproval = (value: number): ValidateResult => {
     if (value > multisigWallets.length) {
-      return t('errors.minApprovalGtMembers');
+      return t('errors.minimumApproval.exceedMaxThreshold');
     } else if (value <= 0) {
       return t('errors.required.minApproval');
     }
@@ -112,7 +112,7 @@ export const MultisigMinimumApproval = () => {
   );
 };
 
-function generateAlert(
+export function generateAlert(
   inputValue: string | number,
   max: number,
   t: TFunction,
@@ -127,7 +127,7 @@ function generateAlert(
     return {label: t('createDAO.step4.alerts.minority'), mode: 'warning'};
 
   // majority to pass proposal (50% +1 -> 75%)
-  if (value < max * 0.75)
+  if (value > 0 && value < max * 0.75)
     return {label: t('createDAO.step4.alerts.majority'), mode: 'success'};
 
   // absolute majority

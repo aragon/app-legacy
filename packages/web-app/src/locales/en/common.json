@@ -27,6 +27,7 @@
     "connectWallet": "Login"
   },
   "labels": {
+    "approvals": "Approvals",
     "loading": "Loading...",
     "members": "Members",
     "tokenHolders": "Token Holders",
@@ -40,6 +41,7 @@
     "addWalletsDescription": "Wallets can create proposals, propose to send funds in and out of the treasury, and vote in your DAO.",
     "removeWalletsDescription": "Revoke these wallets' permissions.",
     "totalWallets": "Total Wallets",
+    "totalNewMembers": "Total New Members",
     "mintTokens": "Mint tokens",
     "seeAllHolders": "See All Holders",
     "seeCommunity": "See Community",
@@ -204,7 +206,11 @@
     "updateGovernanceActionDescription": "Change your DAO governance settings",
     "updateMetadataAction": "Update DAO Metadata",
     "updateMetadataActionDescription": "Change your DAO metadata",
-    "name": "Name"
+    "name": "Name",
+
+    "minimumApprovalDescription": "Participation is the amount of addresses in the authorised list that approve on a proposal. The minimum is how many have to approve for the result to be valid.",
+    "minimumApprovalAdditionalInfo": "When new wallets gets added or removed to the Multisig DAO, you have to review the Minimum Approval.",
+    "minimumApprovalProgressInfo": "of {{amount}} Addresses"
   },
   "placeHolders": {
     "selectToken": "Select a Token ...",
@@ -309,10 +315,10 @@
     "invalidAddress": "Invalid address",
     "lteZero": "The amount must be greater than zero",
     "ltAmount": "The amount must be less than {{amount}}",
-    "minApprovalGtMembers": "Minimum approval threshold cannot exceed total members.",
     "notERC20Token": "Token address is not ERC20 compliant",
     "noTokenSelected": "A token must be selected",
     "duplicateAddress": "Address must not be reused",
+    "duplicateAddressOnCurrentMembersList": "This wallet address is already a member of this Multisig.",
     "distributionMinutes": "Minutes should be between 0 and 59",
     "emptyDistributionMinutes": "Minutes can't be empty",
     "distributionHours": "Hours should be between 0 and 23",
@@ -354,6 +360,11 @@
     "fields": {
       "tokenName": "Token name",
       "tokenSymbol": "Token symbol"
+    },
+    "minimumApproval": {
+      "required": "Minimal approval has to be set.",
+      "lessThanOne": "Minimum approval can not be less than one address.",
+      "exceedMaxThreshold": "Minimum approval threshold cannot exceed total members."
     }
   },
   "alert": {

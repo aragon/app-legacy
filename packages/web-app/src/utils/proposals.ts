@@ -34,6 +34,7 @@ import {getFormattedUtcOffset, KNOWN_FORMATS} from './date';
 import {formatUnits} from './library';
 import {abbreviateTokenAmount} from './tokens';
 import {
+  Action,
   AddressListVote,
   DetailedProposal,
   Erc20ProposalVote,
@@ -793,4 +794,32 @@ export function getProposalExecutionStatus(
     default:
       return 'default';
   }
+}
+
+/**
+ * Filter out all empty add/remove address and minimul approval actions
+ * @param actions supported actions
+ * @returns list of non empty address
+ */
+export function getNonEmptyActions(
+  actions: Array<Action>,
+  minApprovals?: number
+) {
+  return actions.flatMap(action => {
+    if (action.name === 'update_minimum_approval') {
+      // minimum approval changed: return action or don't include
+      return action.inputs.minimumApproval !== minApprovals ? action : [];
+    } else if (action.name === 'add_address') {
+      // address added to the list: return action or don't include
+      return action.inputs.memberWallets.some(w => w.address === '')
+        ? []
+        : action;
+    } else if (action.name === 'remove_address') {
+      // address removed from the list: return action or don't include
+      return action.inputs.memberWallets.length > 0 ? action : [];
+    } else {
+      // all other actions can go through
+      return action;
+    }
+  });
 }

@@ -241,6 +241,17 @@ export type ActionRemoveAddress = {
   };
 };
 
+export type ActionUpdateMinimumApproval = {
+  name: 'update_minimum_approval';
+  inputs: {
+    minimumApproval: number;
+  };
+  summary: {
+    addedWallets: number;
+    removedWallets: number;
+  };
+};
+
 export type ActionMintToken = {
   name: 'mint_tokens';
   inputs: {
@@ -280,7 +291,8 @@ export type Action =
   | ActionRemoveAddress
   | ActionMintToken
   | ActionUpdatePluginSettings
-  | ActionUpdateMetadata;
+  | ActionUpdateMetadata
+  | ActionUpdateMinimumApproval;
 
 export type ParamType = {
   type: string;

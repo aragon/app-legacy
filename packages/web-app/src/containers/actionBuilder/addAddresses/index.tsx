@@ -17,16 +17,22 @@ import {ActionIndex} from 'utils/types';
 import AccordionSummary from './accordionSummary';
 import {AddressRow} from './addressRow';
 import {useAlertContext} from 'context/alert';
+import {BalanceMember, MultisigMember} from 'hooks/useDaoMembers';
 
 export type CustomHeaderProps = {
   useCustomHeader?: boolean;
 };
 
-type AddAddressesProps = ActionIndex & CustomHeaderProps;
+export type CurrentDaoMembers = {
+  currentDaoMembers?: MultisigMember[] | BalanceMember[];
+};
+
+type AddAddressesProps = ActionIndex & CustomHeaderProps & CurrentDaoMembers;
 
 const AddAddresses: React.FC<AddAddressesProps> = ({
   actionIndex,
   useCustomHeader = false,
+  currentDaoMembers,
 }) => {
   const {t} = useTranslation();
   const {removeAction} = useActionsContext();
@@ -177,6 +183,7 @@ const AddAddresses: React.FC<AddAddressesProps> = ({
               fieldIndex={fieldIndex}
               dropdownItems={rowActions}
               onClearRow={handleRowClear}
+              currentDaoMembers={currentDaoMembers}
             />
           </FormItem>
         );

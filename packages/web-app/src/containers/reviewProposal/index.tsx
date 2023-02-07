@@ -31,6 +31,7 @@ import {
 } from 'utils/date';
 import {
   getErc20VotingParticipation,
+  getNonEmptyActions,
   getWhitelistVoterParticipation,
 } from 'utils/proposals';
 import {getTokenInfo} from 'utils/tokens';
@@ -271,7 +272,7 @@ const ReviewProposal: React.FC<ReviewProposalProps> = ({
           />
 
           <ExecutionWidget
-            actions={values.actions}
+            actions={getNonEmptyActions(values.actions, 0)}
             onAddAction={
               addActionsStepNumber
                 ? () => setStep(addActionsStepNumber)
