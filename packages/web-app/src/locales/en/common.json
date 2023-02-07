@@ -359,7 +359,7 @@
       "proposalMinDuration": "{{days}} days, {{hours}} hours, and {{minutes}} minutes  is the lowest vote time.",
       "proposalMaxDuration": "{{days}} days is the highest vote time. Consider lowering the duration, otherwise this proposal may never pass.",
       "acceptableProposalDuration": "The minimum duration of {{days}} days, {{hours}} hours, and {{minutes}} minutes is defined by DAO Governance Settings",
-      "dateTimeMinDuration": "The proposal's end date cannot be less than {{days}} days, {{hours}} hours, and {{minutes}} minutes in the future."
+      "dateTimeMinDuration": "The proposal's end date cannot be less than {{days}} days, {{hours}} hours, and {{minutes}} minutes in the future. Corrected to minimum duration set on the DAO settings."
     },
     "multisig": {
       "proposalMinDuration": "One hour is the minimum expiration time.",
