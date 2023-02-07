@@ -267,6 +267,7 @@ const CreateProposalProvider: React.FC<Props> = ({
           'durationMinutes',
         ]);
 
+        // Calculate the end date using duration
         const endDateTimeMill =
           startDateTime.valueOf() + offsetToMills({days, hours, minutes});
 
@@ -303,9 +304,7 @@ const CreateProposalProvider: React.FC<Props> = ({
           );
           const endMills =
             endDateTime.valueOf() +
-            (startDateTime.valueOf() - legacyStartDate.valueOf()) +
-            // 10 minutes in milliseconds
-            600000;
+            (startDateTime.valueOf() - legacyStartDate.valueOf());
 
           endDateTime = new Date(endMills);
         }
