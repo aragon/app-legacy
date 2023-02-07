@@ -1,13 +1,13 @@
 import React from 'react';
 import styled from 'styled-components';
 
-import { Address, shortenAddress } from '../../utils/addresses';
-import { AlertInline } from '../alerts';
-import { AvatarDao } from '../avatar';
-import { IconClock } from '../icons';
-import { Link } from '../link';
-import { LinearProgress } from '../progress';
-import { Tag } from '../tag';
+import {Address, shortenAddress} from '../../utils/addresses';
+import {AlertInline} from '../alerts';
+import {AvatarDao} from '../avatar';
+import {IconClock} from '../icons';
+import {Link} from '../link';
+import {LinearProgress} from '../progress';
+import {Tag} from '../tag';
 
 type ProposalUsecase = 'list' | 'explore';
 
