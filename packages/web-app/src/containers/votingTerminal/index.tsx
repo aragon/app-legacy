@@ -99,7 +99,7 @@ export const VotingTerminal: React.FC<VotingTerminalProps> = ({
   const displayedVoters = useMemo(() => {
     return query === ''
       ? voters
-      : voters.filter(voter => voter.wallet.includes(query));
+      : voters.filter(voter => voter.wallet.includes(query.toLowerCase()));
   }, [query, voters]);
 
   const minimumReached = missingParticipation === 0;
@@ -139,7 +139,7 @@ export const VotingTerminal: React.FC<VotingTerminalProps> = ({
             placeholder={t('votingTerminal.inputPlaceholder')}
             value={query}
             onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-              setQuery(e.currentTarget.value)
+              setQuery(e.target.value.trim())
             }
           />
           {displayedVoters.length !== 0 ? (
