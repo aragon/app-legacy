@@ -11,10 +11,9 @@ import {
   Option,
   SearchInput,
   Tag,
+  VotersTable,
   VoterType,
 } from '@aragon/ui-components';
-
-import {VotersTable} from '@aragon/ui-components/src/components/table/votersTable';
 
 import {shortenAddress} from '@aragon/ui-components/src/utils/addresses';
 import React, {useMemo, useState} from 'react';
