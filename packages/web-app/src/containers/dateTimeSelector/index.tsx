@@ -1,5 +1,6 @@
 import {DateInput, DropdownInput} from '@aragon/ui-components';
 import {toDate} from 'date-fns-tz';
+import format from 'date-fns/format';
 import React, {useCallback, useMemo} from 'react';
 import {Controller, useFormContext, useWatch} from 'react-hook-form';
 import {useTranslation} from 'react-i18next';
@@ -7,7 +8,7 @@ import styled from 'styled-components';
 
 import {SimplifiedTimeInput} from 'components/inputTime/inputTime';
 import {timezones} from 'containers/utcMenu/utcData';
-import format from 'date-fns/format';
+import {CORRECTION_DELAY} from 'utils/constants';
 import {
   getCanonicalDate,
   getCanonicalTime,
@@ -15,7 +16,6 @@ import {
   getFormattedUtcOffset,
   Offset,
 } from 'utils/date';
-import {CORRECTION_DELAY} from 'utils/constants';
 
 type Props = {
   mode?: 'start' | 'end';

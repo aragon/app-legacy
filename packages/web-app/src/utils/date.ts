@@ -7,6 +7,7 @@ import {
   Locale,
 } from 'date-fns';
 import * as Locales from 'date-fns/locale';
+
 import {i18n} from '../../i18n.config';
 import {HOURS_IN_DAY, MINS_IN_DAY, MINS_IN_HOUR} from './constants';
 
@@ -185,10 +186,10 @@ export function getCanonicalUtcOffset(formattedUtcOffset?: string): string {
   if (time.includes(':')) {
     // if colon present only hours might need padding
     const [hours, minutes] = time.split(':');
-    canonicalOffset = (hours.length === 1 && '0') + hours + ':' + minutes;
+    canonicalOffset = (hours.length === 1 ? '0' : '') + hours + ':' + minutes;
   } else {
     // if no colon, need to add :00 and maybe padding to hours
-    canonicalOffset = (time.length === 1 && '0') + time + ':00';
+    canonicalOffset = (time.length === 1 ? '0' : '') + time + ':00';
   }
   return sign + canonicalOffset;
 }
