@@ -704,6 +704,7 @@
     "yes": "Yes",
     "abstain": "Abstain",
     "no": "No",
+    "approvedBy": "Approved by",
     "yesHelptext": "Your choice will be counted for option yes",
     "abstainHelptext": "Your choice will be counted for option abstain",
     "noHelptext": "Your choice will be counted for option no",

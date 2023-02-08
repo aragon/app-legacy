@@ -24,7 +24,7 @@ export type DaoMembers = {
 };
 
 // this type guard will need to evolve when there are more types
-export function isWalletListMember(
+export function isMultisigMember(
   member: BalanceMember | MultisigMember
 ): member is MultisigMember {
   return !('address' in member);
