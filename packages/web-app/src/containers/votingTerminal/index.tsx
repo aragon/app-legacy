@@ -8,13 +8,14 @@ import {
   IconClock,
   IconInfo,
   IconRadioCancel,
-  LinearProgress,
   Option,
   SearchInput,
   Tag,
-  VotersTable,
   VoterType,
 } from '@aragon/ui-components';
+
+import {VotersTable} from '@aragon/ui-components/src/components/table/votersTable';
+
 import {shortenAddress} from '@aragon/ui-components/src/utils/addresses';
 import React, {useMemo, useState} from 'react';
 import {useTranslation} from 'react-i18next';
@@ -22,6 +23,7 @@ import styled from 'styled-components';
 
 import {StateEmpty} from 'components/stateEmpty';
 import {abbreviateTokenAmount} from 'utils/tokens';
+import BreakdownTab, {MultisigBreakdown} from './breakdownTab';
 
 export type ProposalVoteResults = {
   yes: {value: string | number; percentage: number};
@@ -31,7 +33,8 @@ export type ProposalVoteResults = {
 
 export type TerminalTabs = 'voters' | 'breakdown' | 'info';
 
-// TODO: clean up props: some shouldn't be optional
+// TODO: clean up props: some shouldn't be optional;
+// also, make more generic and group props based on proposal type
 export type VotingTerminalProps = {
   breakdownTabDisabled?: boolean;
   votersTabDisabled?: boolean;
@@ -51,6 +54,7 @@ export type VotingTerminalProps = {
     name: string;
   };
   results?: ProposalVoteResults;
+  multisigResults?: MultisigBreakdown;
   votingInProcess?: boolean;
   onVoteClicked?: React.MouseEventHandler<HTMLButtonElement>;
   onVoteSubmitClicked?: (vote: VoteValues) => void;
@@ -71,6 +75,7 @@ export const VotingTerminal: React.FC<VotingTerminalProps> = ({
   supportThreshold,
   voters = [],
   results,
+  multisigResults,
   token,
   startDate,
   endDate,
@@ -86,6 +91,7 @@ export const VotingTerminal: React.FC<VotingTerminalProps> = ({
   selectedTab = 'info',
   onTabSelected,
 }) => {
+  const [page, setPage] = useState(1);
   const [query, setQuery] = useState('');
   const [selectedVote, setSelectedVote] = useState<VoteValues>();
   const {t} = useTranslation();
@@ -123,42 +129,12 @@ export const VotingTerminal: React.FC<VotingTerminalProps> = ({
       </Header>
 
       {selectedTab === 'breakdown' ? (
-        <VStackRelaxed>
-          <VStackNormal>
-            <HStack>
-              <VoteOption>{t('votingTerminal.yes')}</VoteOption>
-              <TokenValue>{`${abbreviateTokenAmount(
-                results?.yes.value as string
-              )} ${token ? token.symbol : t('labels.members')}`}</TokenValue>
-              <VotePercentage>{results?.yes.percentage}%</VotePercentage>
-            </HStack>
-            <LinearProgress max={100} value={results?.yes.percentage} />
-          </VStackNormal>
-
-          <VStackNormal>
-            <HStack>
-              <VoteOption>{t('votingTerminal.no')}</VoteOption>
-              <TokenValue>{`${abbreviateTokenAmount(
-                results?.no.value as string
-              )} ${token ? token.symbol : t('labels.members')}`}</TokenValue>
-              <VotePercentage>{results?.no.percentage}%</VotePercentage>
-            </HStack>
-            <LinearProgress max={100} value={results?.no.percentage} />
-          </VStackNormal>
-
-          <VStackNormal>
-            <HStack>
-              <VoteOption>{t('votingTerminal.abstain')}</VoteOption>
-              <TokenValue>{`${abbreviateTokenAmount(
-                results?.abstain.value as string
-              )} ${token ? token.symbol : t('labels.members')}`}</TokenValue>
-              <VotePercentage>{results?.abstain.percentage}%</VotePercentage>
-            </HStack>
-            <LinearProgress max={100} value={results?.abstain.percentage} />
-          </VStackNormal>
-        </VStackRelaxed>
+        <BreakdownTab
+          {...(results && token ? {tokenVoting: {results, token}} : {})}
+          multisig={multisigResults}
+        />
       ) : selectedTab === 'voters' ? (
-        <div className="space-y-2">
+        <VotersTabContainer>
           <SearchInput
             placeholder={t('votingTerminal.inputPlaceholder')}
             value={query}
@@ -170,9 +146,10 @@ export const VotingTerminal: React.FC<VotingTerminalProps> = ({
             <VotersTable
               voters={displayedVoters}
               showOption
-              showVotingPower
+              page={page}
+              showVotingPower={token !== undefined}
               showAmount={token !== undefined}
-              onLoadMore={() => console.log('load more clicked')}
+              onLoadMore={() => setPage(prev => prev + 1)}
             />
           ) : (
             <StateEmpty
@@ -192,7 +169,7 @@ export const VotingTerminal: React.FC<VotingTerminalProps> = ({
               }
             />
           )}
-        </div>
+        </VotersTabContainer>
       ) : (
         //=================== Info tab
         <>
@@ -367,28 +344,16 @@ const Container = styled.div.attrs({
 
 const Header = styled.div.attrs({
   className:
-    'tablet:flex tablet:justify-between pb-1 tablet:items-center space-y-2 tablet:space-y-0',
+    'tablet:flex tablet:justify-between tablet:items-center space-y-2 tablet:space-y-0',
 })``;
 
 const Heading1 = styled.h1.attrs({
   className: 'ft-text-xl font-bold text-ui-800 flex-grow',
 })``;
 
-const VStackRelaxed = styled.div.attrs({
-  className: 'space-y-3',
-})``;
-
-const VStackNormal = styled.div.attrs({
-  className: 'space-y-1.5',
-})``;
-
 const VStackSection = styled.div.attrs({
   className:
     'space-y-1.5 p-2 tablet:p-3 -mx-2 tablet:-mx-3 border-b border-ui-100' as string,
-})``;
-
-const HStack = styled.div.attrs({
-  className: 'flex space-x-1.5',
 })``;
 
 const InfoLine = styled.div.attrs({
@@ -425,16 +390,10 @@ const ButtonWrapper = styled.div.attrs({
     'flex flex-col tablet:flex-row space-y-2 space-x-0 tablet:space-y-0 tablet:space-x-2 w-full tablet:w-max',
 })``;
 
-const VotePercentage = styled.p.attrs({
-  className: 'w-8 font-bold text-right text-primary-500',
-})``;
-
-const TokenValue = styled.p.attrs({
-  className: 'flex-1 text-right text-ui-600',
-})``;
-
-const VoteOption = styled.p.attrs({className: 'font-bold text-primary-500'})``;
-
 const CurrentParticipationWrapper = styled.div.attrs({
   className: 'space-y-0.5 text-right',
+})``;
+
+const VotersTabContainer = styled.div.attrs({
+  className: 'mt-3 desktop:mt-5 space-y-2',
 })``;
