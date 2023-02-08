@@ -5,6 +5,7 @@ export const Loading: React.FC = () => {
   return (
     <div className="flex fixed top-1/3 right-px flex-col items-center w-full">
       <Spinner size="big" />
+      <p className="my-4 text-center text-md">Loading...</p>
     </div>
   );
 };
