@@ -24,8 +24,7 @@ import {AddressRow} from '../addAddresses/addressRow';
 import {useAlertContext} from 'context/alert';
 import {useDaoDetails} from 'hooks/useDaoDetails';
 
-type RemoveAddressesProps = ActionIndex &
-  CustomHeaderProps & {pluginInstanceAddress?: string};
+type RemoveAddressesProps = ActionIndex & CustomHeaderProps;
 
 // README: when uploading CSV be sure to check for duplicates
 
