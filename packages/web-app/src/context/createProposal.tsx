@@ -280,9 +280,7 @@ const CreateProposalProvider: React.FC<Props> = ({
 
       if (startSwitch === 'now') {
         endDateTime = new Date(endDateTime.getTime() + minutesToMills(10));
-      }
-
-      if (startSwitch !== 'now') {
+      } else {
         if (startDateTime.valueOf() < new Date().valueOf()) {
           startDateTime = new Date(
             `${getCanonicalDate()}T${getCanonicalTime({
@@ -298,7 +296,6 @@ const CreateProposalProvider: React.FC<Props> = ({
           minutesToMills(minMinutes || 0);
 
         if (endDateTime.valueOf() < minEndDateTimeMills) {
-          // Update the endDate + 30 sec for transaction time
           const legacyStartDate = new Date(
             `${startDate}T${startTime}:00${getCanonicalUtcOffset(startUtc)}`
           );
