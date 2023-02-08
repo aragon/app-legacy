@@ -410,6 +410,7 @@ const CreateDaoProvider: React.FC = ({children}) => {
         averageFee={averageFee}
         gasEstimationError={gasEstimationError}
         tokenPrice={tokenPrice}
+        disabledCallback={!daoCreationData}
       />
     </CreateDaoContext.Provider>
   );

@@ -459,6 +459,7 @@ const ProposalTransactionProvider: React.FC<Props> = ({children}) => {
         averageFee={averageFee}
         tokenPrice={tokenPrice}
         gasEstimationError={gasEstimationError}
+        disabledCallback={!(voteParams || executeParams)}
       />
     </ProposalTransactionContext.Provider>
   );
