@@ -7,6 +7,7 @@ export type TableCellProps = {
   subtext?: string;
   rightAligned?: boolean;
   bgWhite?: boolean;
+  className?: string;
   children?:
     | React.FunctionComponentElement<TagProps>
     | React.FunctionComponentElement<LinkProps>;
@@ -19,6 +20,7 @@ export const TableCell: React.FC<TableCellProps> = ({
   bgWhite = false,
   rightAligned = false,
   children,
+  className = '',
 }) => {
   if (type === 'foot') {
     return (
@@ -26,7 +28,7 @@ export const TableCell: React.FC<TableCellProps> = ({
         data-testid="tableCell"
         className={`px-2 py-1.5 bg-ui-100 ${
           rightAligned ? 'text-right' : 'text-left'
-        }`}
+        } ${className}`}
       >
         <p className="text-ui-600 ft-text-base">{text}</p>
         {subtext && <p className="text-ui-500 ft-text-sm">{subtext}</p>}
@@ -38,7 +40,7 @@ export const TableCell: React.FC<TableCellProps> = ({
         data-testid="tableCell"
         className={`px-2 py-1.75 bg-ui-100 ${
           rightAligned ? 'text-right' : 'text-left'
-        }`}
+        } ${className}`}
       >
         <p className="font-bold text-ui-800 ft-text-sm">{text}</p>
       </th>
@@ -49,7 +51,7 @@ export const TableCell: React.FC<TableCellProps> = ({
         data-testid="tableCell"
         className={`px-2 py-1.75 ${!bgWhite && 'bg-ui-0'} ${
           rightAligned ? 'text-right' : 'text-left'
-        }`}
+        } ${className}`}
       >
         <p className="font-bold text-primary-500 cursor-pointer ft-text-base">
           {children}
@@ -60,7 +62,7 @@ export const TableCell: React.FC<TableCellProps> = ({
     return (
       <td
         data-testid="tableCell"
-        className={`px-2 py-1.5 ${!bgWhite && 'bg-ui-0'}`}
+        className={`px-2 py-1.5 ${!bgWhite && 'bg-ui-0'} ${className}`}
       >
         {children}
       </td>
@@ -72,7 +74,7 @@ export const TableCell: React.FC<TableCellProps> = ({
       data-testid="tableCell"
       className={`px-2 py-1.5 ${!bgWhite && 'bg-ui-0'} ${
         rightAligned ? 'text-right' : 'text-left'
-      }`}
+      } ${className}`}
     >
       <p className="text-ui-600 ft-text-base">{text}</p>
       {subtext && <p className="text-ui-500 ft-text-sm">{subtext}</p>}
