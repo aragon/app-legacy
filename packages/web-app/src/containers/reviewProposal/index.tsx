@@ -270,7 +270,7 @@ const ReviewProposal: React.FC<ReviewProposalProps> = ({
                 : t('votingTerminal.tokenVoting')
             }
           />
-
+          {/* TODO: Sarkawt:Fabrice : add minApproval to `getNonEmptyActions()` once multisig voting setting is ready */}
           <ExecutionWidget
             actions={getNonEmptyActions(values.actions, 0)}
             onAddAction={

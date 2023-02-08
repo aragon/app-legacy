@@ -364,7 +364,8 @@
     "minimumApproval": {
       "required": "Minimal approval has to be set.",
       "lessThanOne": "Minimum approval can not be less than one address.",
-      "exceedMaxThreshold": "Minimum approval threshold cannot exceed total members."
+      "exceedMaxThreshold": "Minimum approval threshold cannot exceed total members.",
+      "membersRequired": "A multisig requires its members."
     }
   },
   "alert": {

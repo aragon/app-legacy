@@ -94,7 +94,9 @@ const UpdateMinimumApproval: React.FC<UpdateMinimumApprovalProps> = ({
    *************************************************/
 
   const validateMinimalApprovalInput = (value: number) => {
-    if (value < 1) {
+    if (totalMembers === 0) {
+      return t('errors.minimumApproval.membersRequired');
+    } else if (value < 1) {
       return t('errors.minimumApproval.lessThanOne');
     } else if (value > totalMembers) {
       return t('errors.minimumApproval.exceedMaxThreshold');
@@ -154,6 +156,7 @@ const UpdateMinimumApproval: React.FC<UpdateMinimumApprovalProps> = ({
             }}
             render={({field: {onChange, value}, fieldState: {error}}) => (
               <MinimumApproval
+                disabled={totalMembers === 0}
                 min={1}
                 max={totalMembers}
                 value={value}
