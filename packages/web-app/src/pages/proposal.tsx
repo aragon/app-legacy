@@ -350,17 +350,19 @@ const Proposal: React.FC = () => {
 
   // whether current user has voted
   const voted = useMemo(() => {
-    // TODO: updated with multisig
-    if (isMultisigProposal(proposal)) return false;
+    if (!address || !proposal) return false;
 
-    return address &&
-      proposal?.votes.some(
+    if (isMultisigProposal(proposal)) {
+      return proposal.approvals.some(
+        a => a.toLowerCase() === address.toLowerCase()
+      );
+    } else {
+      return proposal.votes.some(
         voter =>
           voter.address.toLowerCase() === address.toLowerCase() &&
           voter.vote !== undefined
-      )
-      ? true
-      : false;
+      );
+    }
   }, [address, proposal]);
 
   // vote button and status
