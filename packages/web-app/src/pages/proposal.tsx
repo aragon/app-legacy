@@ -61,7 +61,8 @@ import {
   getProposalExecutionStatus,
   getProposalStatusSteps,
   getTerminalProps,
-  getVoteStatusAndLabel,
+  getVoteButtonLabel,
+  getVoteStatus,
   isEarlyExecutable,
   isErc20VotingProposal,
   isMultisigProposal,
@@ -364,9 +365,14 @@ const Proposal: React.FC = () => {
 
   // vote button and status
   const [voteStatus, buttonLabel] = useMemo(() => {
-    return proposal
-      ? getVoteStatusAndLabel(proposal, voted, canVote, t)
-      : ['', ''];
+    if (proposal) {
+      return [
+        getVoteStatus(proposal, t),
+        getVoteButtonLabel(proposal, canVote, voted, t),
+      ];
+    }
+
+    return ['', ''];
   }, [proposal, voted, canVote, t]);
 
   // vote button state and handler

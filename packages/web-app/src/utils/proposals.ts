@@ -704,45 +704,14 @@ export function prefixProposalIdWithPlgnAdr(
   }
 }
 
-export function getVoteStatusAndLabel(
-  proposal: DetailedProposal,
-  votedOrApproved: boolean,
-  canVoteOrApprove: boolean,
-  t: TFunction
-) {
-  let voteStatus = '';
-  let voteButtonLabel = '';
-
-  // text for when a user is able to vote or approve
-  let voteOrApprovalEnabled = '';
-
-  // text for when a user has already voted or approved
-  let voteOrApprovalCasted = '';
-
-  // add the appropriate vote and voted keys
-  if (isMultisigProposal(proposal)) {
-    voteOrApprovalEnabled = t('votingTerminal.approve');
-    voteOrApprovalCasted = t('votingTerminal.status.approved');
-    voteButtonLabel = votedOrApproved
-      ? voteOrApprovalEnabled
-      : voteOrApprovalCasted;
-  } else if (isTokenBasedProposal(proposal)) {
-    voteOrApprovalEnabled = t('votingTerminal.voteNow');
-    voteOrApprovalCasted = t('votingTerminal.status.voteSubmitted');
-
-    voteButtonLabel = votedOrApproved
-      ? canVoteOrApprove
-        ? t('votingTerminal.status.revote')
-        : voteOrApprovalCasted
-      : t('votingTerminal.voteOver');
-  }
+export function getVoteStatus(proposal: DetailedProposal, t: TFunction) {
+  let label = '';
 
   switch (proposal.status) {
     case 'Pending':
       {
         const locale = (Locales as Record<string, Locale>)[i18n.language];
         const timeUntilNow = formatDistanceToNow(
-          //TODO: remove cast when start and end date comes for multisig
           (proposal as TokenVotingProposal).startDate || new Date(),
           {
             includeSeconds: true,
@@ -750,19 +719,8 @@ export function getVoteStatusAndLabel(
           }
         );
 
-        voteButtonLabel = voteOrApprovalEnabled;
-        voteStatus = t('votingTerminal.status.pending', {timeUntilNow});
+        label = t('votingTerminal.status.pending', {timeUntilNow});
       }
-      break;
-    case 'Succeeded':
-      voteStatus = t('votingTerminal.status.succeeded');
-      break;
-    case 'Executed':
-      voteStatus = t('votingTerminal.status.executed');
-      break;
-    case 'Defeated':
-      voteStatus = t('votingTerminal.status.defeated');
-
       break;
     case 'Active':
       {
@@ -775,14 +733,56 @@ export function getVoteStatusAndLabel(
           }
         );
 
-        voteStatus = t('votingTerminal.status.active', {timeUntilEnd});
-
-        // haven't voted
-        if (!votedOrApproved) voteButtonLabel = voteOrApprovalEnabled;
+        label = t('votingTerminal.status.active', {timeUntilEnd});
       }
       break;
+    case 'Succeeded':
+      label = t('votingTerminal.status.succeeded');
+
+      break;
+    case 'Executed':
+      label = t('votingTerminal.status.executed');
+
+      break;
+    case 'Defeated':
+      label = isMultisigProposal(proposal)
+        ? t('votingTerminal.status.expired')
+        : t('votingTerminal.status.defeated');
   }
-  return [voteStatus, voteButtonLabel];
+  return label;
+}
+
+export function getVoteButtonLabel(
+  proposal: DetailedProposal,
+  canVoteOrApprove: boolean,
+  votedOrApproved: boolean,
+  t: TFunction
+) {
+  let label = '';
+
+  if (isMultisigProposal(proposal)) {
+    label = votedOrApproved
+      ? t('votingTerminal.status.approved')
+      : t('votingTerminal.concluded');
+
+    if (proposal.status === 'Pending') label = t('votingTerminal.approve');
+    else if (proposal.status === 'Active' && !votedOrApproved)
+      label = t('votingTerminal.approve');
+  }
+
+  if (isTokenBasedProposal(proposal)) {
+    label = votedOrApproved
+      ? canVoteOrApprove
+        ? t('votingTerminal.status.revote')
+        : t('votingTerminal.status.voteSubmitted')
+      : t('votingTerminal.voteOver');
+
+    if (proposal.status === 'Pending') label = t('votingTerminal.voteNow');
+    else if (proposal.status === 'Active' && !votedOrApproved)
+      label = t('votingTerminal.voteNow');
+  }
+
+  return label;
 }
 
 export function isEarlyExecutable(
