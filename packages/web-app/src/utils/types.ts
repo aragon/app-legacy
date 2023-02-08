@@ -343,6 +343,8 @@ export type HookData<T> = {
 
 export type Nullable<T> = T | null;
 
+export type StrictlyExclude<T, U> = T extends U ? (U extends T ? never : T) : T;
+
 export type StringIndexed = {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   [key: string]: any;

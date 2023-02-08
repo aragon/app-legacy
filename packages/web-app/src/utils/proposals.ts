@@ -29,6 +29,7 @@ import {TFunction} from 'react-i18next';
 
 import {ProposalVoteResults} from 'containers/votingTerminal';
 import {CachedProposal} from 'context/apolloClient';
+import {MultisigMember} from 'hooks/useDaoMembers';
 import {i18n} from '../../i18n.config';
 import {getFormattedUtcOffset, KNOWN_FORMATS} from './date';
 import {formatUnits} from './library';
@@ -38,10 +39,18 @@ import {
   AddressListVote,
   DetailedProposal,
   Erc20ProposalVote,
+  StrictlyExclude,
   SupportedProposals,
 } from './types';
 
-export const MappedVotes: {[key in VoteValues]: VoterType['option']} = {
+type TokenVotingOptions = StrictlyExclude<
+  VoterType['option'],
+  'approved' | 'none'
+>;
+
+export const MappedVotes: {
+  [key in VoteValues]: TokenVotingOptions;
+} = {
   1: 'abstain',
   2: 'yes',
   3: 'no',
@@ -437,10 +446,11 @@ function getPublishedProposalStep(
 export function getTerminalProps(
   t: TFunction,
   proposal: DetailedProposal,
-  voter: string | null
+  voter: string | null,
+  members?: MultisigMember[]
 ) {
   let token;
-  let voters;
+  let voters: Array<VoterType>;
   let currentParticipation;
   let minParticipation;
   let missingParticipation;
@@ -521,8 +531,36 @@ export function getTerminalProps(
       )}  ${getFormattedUtcOffset()}`,
     };
   }
+  // This method's return needs to be typed properly
+  else if (isMultisigProposal(proposal)) {
+    voters = [
+      ...new Map(
+        // map multisig members to voterType
+        members
+          ?.map(m => ({wallet: m.address, option: 'none'} as VoterType))
 
-  // TODO: please add Multisig path
+          // map approvals to voterType all the while stripping
+          // the plugin address from the wallet address
+          .concat(
+            proposal.approvals.map(a => ({
+              wallet: stripPlgnAdrFromProposalId(a),
+              option: 'approved',
+            }))
+          )
+          .map(v => [v.wallet, v])
+      ).values(),
+    ];
+
+    return {
+      multisigResults: {
+        approvals: proposal.approvals,
+        percentage: members
+          ? (proposal.approvals.length / members?.length) * 100
+          : 0,
+      },
+      voters,
+    };
+  }
 }
 
 export type MapToDetailedProposalParams = {
