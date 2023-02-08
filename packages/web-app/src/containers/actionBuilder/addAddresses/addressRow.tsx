@@ -106,7 +106,7 @@ export const AddressRow = ({
       }
       return validationResult;
     },
-    [t, memberWallets]
+    [t, memberWallets, currentDaoMembers]
   );
 
   // gets the proper label for adornment button. ick.

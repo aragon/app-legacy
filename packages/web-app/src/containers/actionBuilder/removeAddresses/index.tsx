@@ -39,8 +39,8 @@ const RemoveAddresses: React.FC<RemoveAddressesProps> = ({
   const {alert} = useAlertContext();
 
   // DAO data
-  const {data: daoId, isLoading: isDaoParamLoading} = useDaoParam();
-  const {data: daoDetails, isLoading: isDetailsLoading} = useDaoDetails(daoId);
+  const {data: daoId} = useDaoParam();
+  const {data: daoDetails} = useDaoDetails(daoId);
 
   // plugin data
   const {data} = useDaoMembers(

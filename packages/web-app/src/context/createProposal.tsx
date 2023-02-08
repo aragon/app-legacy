@@ -217,7 +217,7 @@ const CreateProposalProvider: React.FC<Props> = ({
     });
 
     return Promise.all(actions);
-  }, [client, dao, getValues, pluginClient]);
+  }, [client, dao, getValues, pluginClient, pluginSettings, pluginAddress]);
 
   // Because getValues does NOT get updated on each render, leaving this as
   // a function to be called when data is needed instead of a memoized value

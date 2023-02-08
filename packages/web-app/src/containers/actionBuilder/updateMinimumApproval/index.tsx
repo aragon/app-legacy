@@ -4,14 +4,13 @@ import {useTranslation} from 'react-i18next';
 
 import {AccordionMethod} from 'components/accordionMethod';
 import {BalanceMember, MultisigMember} from 'hooks/useDaoMembers';
-import {ActionIndex} from 'utils/types';
+import {ActionAddAddress, ActionIndex, ActionRemoveAddress} from 'utils/types';
 import {CustomHeaderProps, FormItem} from '../addAddresses';
-import {useAlertContext} from 'context/alert';
 import styled from 'styled-components';
 import MinimumApproval from 'components/multisigMinimumApproval/minimumApproval';
 import {generateAlert} from 'components/multisigMinimumApproval';
 import {CORRECTION_DELAY} from 'utils/constants';
-import {Label} from '@aragon/ui-components';
+import {Address, Label} from '@aragon/ui-components';
 
 export type CurrentDaoMembers = {
   currentDaoMembers?: MultisigMember[] | BalanceMember[];
@@ -46,7 +45,7 @@ const UpdateMinimumApproval: React.FC<UpdateMinimumApprovalProps> = ({
   const newAddedWalletCount = useWatch({
     name: `actions.${addAcctionIndex}.inputs.memberWallets`,
     control,
-  })?.filter((wallet: any) => wallet?.address).length;
+  })?.filter((wallet: {address: Address}) => wallet?.address).length;
 
   const newRemovedWalletCount = useWatch({
     name: `actions.${removeAcctionIndex}.inputs.memberWallets`,
@@ -57,7 +56,7 @@ const UpdateMinimumApproval: React.FC<UpdateMinimumApprovalProps> = ({
     currentDaoMembers?.length + newAddedWalletCount - newRemovedWalletCount;
 
   const actions = useWatch({
-    name: `actions`,
+    name: 'actions',
     control,
   })?.length;
 
@@ -67,17 +66,17 @@ const UpdateMinimumApproval: React.FC<UpdateMinimumApprovalProps> = ({
   useEffect(() => {
     // validate and trigger minimum approval when wallets count changes.
     trigger(minimumApprovalKey);
-  }, [newRemovedWalletCount, newAddedWalletCount]);
+  }, [newRemovedWalletCount, newAddedWalletCount, minimumApprovalKey, trigger]);
 
   useEffect(() => {
     // find index of actions.
     if (actions && actions.length > 0) {
       const addActionIndex = actions
-        .map((a: any) => a.name)
+        .map((action: ActionAddAddress) => action.name)
         .indexOf('add_address');
 
       const removeActionIndex = actions
-        .map((a: any) => a.name)
+        .map((action: ActionRemoveAddress) => action.name)
         .indexOf('remove_address');
 
       setAddAcctionIndex(addActionIndex);
@@ -129,7 +128,7 @@ const UpdateMinimumApproval: React.FC<UpdateMinimumApprovalProps> = ({
     <>
       <AccordionMethod
         verified
-        type="action-builder"
+        type={'action-builder'}
         methodName={t('labels.minimumApproval')}
         smartContractName={t('labels.aragonCore')}
         // dropdownItems={methodActions}
@@ -167,7 +166,7 @@ const UpdateMinimumApproval: React.FC<UpdateMinimumApprovalProps> = ({
 
         {/* Summary */}
         <SummaryContainer>
-          <p className="font-bold text-ui-800">{t('labels.summary')}</p>
+          <p className={'font-bold text-ui-800'}>{t('labels.summary')}</p>
           <HStack>
             <SummaryLabel>{t('labels.addedMembers')}</SummaryLabel>
             <p>{newAddedWalletCount}</p>

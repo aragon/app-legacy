@@ -1,5 +1,5 @@
 import {withTransaction} from '@elastic/apm-rum-react';
-import React, {useCallback, useState} from 'react';
+import React, {useState} from 'react';
 import {
   FieldErrors,
   FormProvider,
@@ -63,7 +63,7 @@ const ManageMembers: React.FC = () => {
     defaultValues: {
       links: [{name: '', url: ''}],
       proposalTitle: '',
-      durationSwitch: 'date',
+      durationSwitch: 'duration',
       actions: [] as Array<
         ActionAddAddress | ActionRemoveAddress | ActionUpdateMinimumApproval
       >,
@@ -200,7 +200,7 @@ function actionsAreValid(
       const newMinimumAprroval = (formActions[i] as ActionUpdateMinimumApproval)
         .inputs.minimumApproval;
 
-      minimumApprovalChanged = minApprovals != newMinimumAprroval;
+      minimumApprovalChanged = minApprovals !== newMinimumAprroval;
     }
   }
 
