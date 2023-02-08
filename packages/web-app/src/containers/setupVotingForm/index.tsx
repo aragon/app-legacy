@@ -11,7 +11,6 @@ import {
   isTokenVotingSettings,
   usePluginSettings,
 } from 'hooks/usePluginSettings';
-import {customJSONReplacer} from 'utils/library';
 import {StringIndexed} from 'utils/types';
 import SetupMultisigVotingForm from './multisig';
 import SetupTokenVotingForm from './tokenVoting';
@@ -34,7 +33,7 @@ const SetupVotingForm: React.FC = () => {
    *                    Render                     *
    *************************************************/
   useEffect(() => {
-    if (JSON.stringify(pluginSettings, customJSONReplacer) === '{}') {
+    if (Object.keys(pluginSettings).length === 0) {
       setError('areSettingsLoading', {});
     } else {
       clearErrors('areSettingsLoading');
@@ -44,10 +43,7 @@ const SetupVotingForm: React.FC = () => {
   if (
     detailsLoading ||
     settingsLoading ||
-    // TODO: for whatever reason we don't allow plugin settings to be
-    // undefined. Creating a task to allow pluginSettings to be undefined
-    // so we don't make unnecessary stringify calls.
-    JSON.stringify(pluginSettings, customJSONReplacer) === '{}'
+    Object.keys(pluginSettings).length === 0
   ) {
     return <Loading />;
   }

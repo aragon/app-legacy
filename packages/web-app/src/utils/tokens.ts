@@ -6,7 +6,7 @@ import {constants, ethers, providers as EthersProviders} from 'ethers';
 import {formatUnits} from 'utils/library';
 import {NativeTokenData, TimeFilter, TOKEN_AMOUNT_REGEX} from './constants';
 import {add} from 'date-fns';
-import {TokenType, Transfer} from '@aragon/sdk-client';
+import {TokenType, Transfer, TransferType} from '@aragon/sdk-client';
 
 /**
  * This method sorts a list of array information. It is applicable to any field
@@ -268,7 +268,11 @@ export function historicalTokenBalances(
       transfer.tokenType === TokenType.ERC20
         ? transfer.token.address
         : constants.AddressZero;
-    historicalBalances[tokenId].balance -= transfers[i].amount;
+    // reverse change to balance from transfer
+    historicalBalances[tokenId].balance -=
+      transfers[i].type === TransferType.DEPOSIT
+        ? transfers[i].amount
+        : -transfers[i].amount;
   }
 
   return historicalBalances;
