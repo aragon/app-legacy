@@ -704,6 +704,7 @@
     "yes": "Yes",
     "abstain": "Abstain",
     "no": "No",
+    "approve": "Approve",
     "approvedBy": "Approved by",
     "yesHelptext": "Your choice will be counted for option yes",
     "abstainHelptext": "Your choice will be counted for option abstain",
@@ -742,7 +743,8 @@
       "ineligibleWhitelist": "You had to be a member before the proposal was created to be able to vote",
       "ineligibleTokenBased": "You had to hold {{token}} when proposal was created to be able to vote",
       "voteSubmitted": "Vote submitted",
-      "revote": "Revote"
+      "revote": "Revote",
+      "approved": "Approved"
     },
     "voteOver": "Vote over",
     "voteNow": "Vote now",

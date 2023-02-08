@@ -286,8 +286,9 @@ export const VotingTerminal: React.FC<VotingTerminalProps> = ({
               />
               <ButtonText
                 label={t('votingTerminal.cancel')}
-                mode="ghost"
+                mode="secondary"
                 size="large"
+                bgWhite
                 onClick={onCancelClicked}
               />
             </ButtonWrapper>
@@ -382,7 +383,7 @@ const CheckboxContainer = styled.div.attrs({
 
 const VoteContainer = styled.div.attrs({
   className:
-    'flex flex-col tablet:flex-row tablet:space-x-3 items-center tablet:items-center mt-3 space-y-2 tablet:space-y-0' as string,
+    'flex flex-col tablet:flex-row tablet:justify-between tablet:space-x-3 items-center tablet:items-center mt-3 space-y-2 tablet:space-y-0' as string,
 })``;
 
 const ButtonWrapper = styled.div.attrs({

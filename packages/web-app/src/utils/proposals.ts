@@ -559,6 +559,7 @@ export function getTerminalProps(
           : 0,
       },
       voters,
+      status: proposal.status,
     };
   }
 }
@@ -710,32 +711,51 @@ export function prefixProposalIdWithPlgnAdr(
 
 export function getVoteStatusAndLabel(
   proposal: DetailedProposal,
-  voted: boolean,
-  canVote: boolean,
+  votedOrApproved: boolean,
+  canVoteOrApprove: boolean,
   t: TFunction
 ) {
   let voteStatus = '';
   let voteButtonLabel = '';
 
-  // TODO: update with multisig props
-  if (isMultisigProposal(proposal)) return [voteStatus, voteButtonLabel];
+  // text for when a user is able to vote or approve
+  let voteOrApprovalEnabled = '';
 
-  voteButtonLabel = voted
-    ? canVote
-      ? t('votingTerminal.status.revote')
-      : t('votingTerminal.status.voteSubmitted')
-    : t('votingTerminal.voteOver');
+  // text for when a user has already voted or approved
+  let voteOrApprovalCasted = '';
+
+  // add the appropriate vote and voted keys
+  if (isMultisigProposal(proposal)) {
+    voteOrApprovalEnabled = t('votingTerminal.approve');
+    voteOrApprovalCasted = t('votingTerminal.status.approved');
+    voteButtonLabel = votedOrApproved
+      ? voteOrApprovalEnabled
+      : voteOrApprovalCasted;
+  } else if (isTokenBasedProposal(proposal)) {
+    voteOrApprovalEnabled = t('votingTerminal.voteNow');
+    voteOrApprovalCasted = t('votingTerminal.status.voteSubmitted');
+
+    voteButtonLabel = votedOrApproved
+      ? canVoteOrApprove
+        ? t('votingTerminal.status.revote')
+        : voteOrApprovalCasted
+      : t('votingTerminal.voteOver');
+  }
 
   switch (proposal.status) {
     case 'Pending':
       {
         const locale = (Locales as Record<string, Locale>)[i18n.language];
-        const timeUntilNow = formatDistanceToNow(proposal.startDate, {
-          includeSeconds: true,
-          locale,
-        });
+        const timeUntilNow = formatDistanceToNow(
+          //TODO: remove cast when start and end date comes for multisig
+          (proposal as TokenVotingProposal).startDate || new Date(),
+          {
+            includeSeconds: true,
+            locale,
+          }
+        );
 
-        voteButtonLabel = t('votingTerminal.voteNow');
+        voteButtonLabel = voteOrApprovalEnabled;
         voteStatus = t('votingTerminal.status.pending', {timeUntilNow});
       }
       break;
@@ -752,15 +772,18 @@ export function getVoteStatusAndLabel(
     case 'Active':
       {
         const locale = (Locales as Record<string, Locale>)[i18n.language];
-        const timeUntilEnd = formatDistanceToNow(proposal.endDate, {
-          includeSeconds: true,
-          locale,
-        });
+        const timeUntilEnd = formatDistanceToNow(
+          (proposal as TokenVotingProposal).endDate || new Date(),
+          {
+            includeSeconds: true,
+            locale,
+          }
+        );
 
         voteStatus = t('votingTerminal.status.active', {timeUntilEnd});
 
         // haven't voted
-        if (!voted) voteButtonLabel = t('votingTerminal.voteNow');
+        if (!votedOrApproved) voteButtonLabel = voteOrApprovalEnabled;
       }
       break;
   }

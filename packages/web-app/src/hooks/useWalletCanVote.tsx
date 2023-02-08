@@ -1,5 +1,5 @@
 import {useEffect, useState} from 'react';
-import {TokenVotingClient} from '@aragon/sdk-client';
+import {MultisigClient, TokenVotingClient} from '@aragon/sdk-client';
 
 import {stripPlgnAdrFromProposalId} from 'utils/proposals';
 import {HookData} from 'utils/types';
@@ -23,7 +23,10 @@ export const useWalletCanVote = (
   const [error, setError] = useState<Error>();
   const [isLoading, setIsLoading] = useState(false);
 
-  const client = usePluginClient(pluginType) as TokenVotingClient;
+  const isMultisigClient = pluginType === 'multisig.plugin.dao.eth';
+  const isTokenVotingClient = pluginType === 'token-voting.plugin.dao.eth';
+
+  const client = usePluginClient(pluginType);
 
   useEffect(() => {
     async function fetchCanVote() {
@@ -34,12 +37,21 @@ export const useWalletCanVote = (
 
       try {
         setIsLoading(true);
+        let canVote;
 
-        const canVote = await client?.methods.canVote({
-          address,
-          proposalId: stripPlgnAdrFromProposalId(proposalId),
-          pluginAddress,
-        });
+        if (isMultisigClient) {
+          canVote = await (client as MultisigClient)?.methods.canApprove({
+            proposalId: BigInt(stripPlgnAdrFromProposalId(proposalId)),
+            pluginAddress,
+            addressOrEns: address,
+          });
+        } else if (isTokenVotingClient) {
+          canVote = await (client as TokenVotingClient)?.methods.canVote({
+            address,
+            proposalId: stripPlgnAdrFromProposalId(proposalId),
+            pluginAddress,
+          });
+        }
 
         if (canVote !== undefined) setData(canVote);
         else setData(false);
@@ -52,7 +64,15 @@ export const useWalletCanVote = (
     }
 
     fetchCanVote();
-  }, [address, client?.methods, pluginAddress, pluginType, proposalId]);
+  }, [
+    address,
+    client,
+    isMultisigClient,
+    isTokenVotingClient,
+    pluginAddress,
+    pluginType,
+    proposalId,
+  ]);
 
   return {data, error, isLoading};
 };
