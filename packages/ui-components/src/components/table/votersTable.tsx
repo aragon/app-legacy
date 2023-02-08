@@ -9,107 +9,120 @@ import {shortenAddress} from '../../utils/addresses';
 
 export type VoterType = {
   wallet: string;
-  option: 'yes' | 'abstain' | 'no';
+  option: 'yes' | 'abstain' | 'no' | 'approved' | 'none';
   votingPower?: string;
   tokenAmount?: string;
 };
 
 export type VotersTableProps = {
   voters: Array<VoterType>;
+  page?: number;
   onLoadMore?: () => void;
   showOption?: boolean;
   showVotingPower?: boolean;
   showAmount?: boolean;
-  defaultRowCount?: number;
+  pageSize?: number; // number of rows to show
 };
 
 const colorScheme = (option: string) =>
-  option === 'yes' ? 'success' : option === 'no' ? 'critical' : 'neutral';
+  option === 'yes' || option === 'approved'
+    ? 'success'
+    : option === 'no'
+    ? 'critical'
+    : 'neutral';
 
 export const VotersTable: React.FC<VotersTableProps> = ({
   voters,
   onLoadMore,
+  page = 1,
   showOption = false,
   showVotingPower = false,
   showAmount = false,
-  defaultRowCount = 3,
+  pageSize = 3,
 }) => {
+  const displayedVoters = page * pageSize;
+
   return (
-    <Table data-testid="votersTable">
-      <thead>
-        <tr>
-          <TableCell type="head" text="Wallet" />
-          {showOption && <TableCell type="head" text="Option" />}
-          {showVotingPower && <TableCell type="head" text="Voting Power" />}
-          <TableCell type="head" text={showAmount ? 'Token Amount' : ''} />
-        </tr>
-      </thead>
-      <tbody>
-        {voters.map((voter, index) => (
-          <tr key={index}>
-            <TableCell type="text" text={shortenAddress(voter.wallet)} />
-            {showOption && (
-              <TableCell type="tag">
-                {voter.option && (
-                  <Tag
-                    label={voter.option}
-                    className="capitalize"
-                    colorScheme={colorScheme(voter.option)}
-                  />
-                )}
-              </TableCell>
-            )}
-            {showVotingPower && (
-              <TableCell type="text" text={voter.votingPower} rightAligned />
-            )}
-            <TableCell
-              type="text"
-              text={showAmount ? voter.tokenAmount : ''}
-              rightAligned
-            />
-          </tr>
-        ))}
-      </tbody>
-      <tfoot>
-        {onLoadMore && voters.length > defaultRowCount && (
+    <div className="overflow-x-auto">
+      <Table data-testid="votersTable">
+        <thead>
           <tr>
-            <TableCell type="link">
-              <Link
-                label="Load More"
-                iconRight={<IconChevronDown />}
-                onClick={onLoadMore}
+            <TableCell type="head" text="Wallet" className="w-1/2" />
+            {showOption && <TableCell type="head" text="Option" />}
+            {showVotingPower && (
+              <TableCell
+                type="head"
+                text="Voting Power"
+                className="text-center"
               />
-            </TableCell>
-            {showOption && <TableCell type="text" text="" />}
-            {showVotingPower && <TableCell type="text" text="" />}
-            <TableCell type="text" text="" />
+            )}
+            {showAmount && (
+              <TableCell type="head" text="Token Amount" rightAligned />
+            )}
           </tr>
-        )}
-      </tfoot>
-    </Table>
+        </thead>
+        <tbody>
+          {voters.slice(0, displayedVoters).map((voter, index) => (
+            <tr key={index}>
+              <TableCell type="text" text={shortenAddress(voter.wallet)} />
+              {showOption && (
+                <TableCell type="tag">
+                  {voter.option && (
+                    <span className="flex">
+                      <Tag
+                        label={voter.option}
+                        className="capitalize"
+                        colorScheme={colorScheme(voter.option)}
+                      />
+                    </span>
+                  )}
+                </TableCell>
+              )}
+              {showVotingPower && (
+                <TableCell type="text" text={voter.votingPower} rightAligned />
+              )}
+              {showAmount && (
+                <TableCell type="text" text={voter.tokenAmount} rightAligned />
+              )}
+            </tr>
+          ))}
+          {onLoadMore &&
+            voters.length > pageSize &&
+            displayedVoters < voters.length && (
+              <tr>
+                <TableCell type="link">
+                  <Link
+                    label="Load More"
+                    iconRight={<IconChevronDown />}
+                    onClick={onLoadMore}
+                  />
+                </TableCell>
+                {showOption && <TableCell type="text" text="" />}
+                {showVotingPower && <TableCell type="text" text="" />}
+                {showAmount && <TableCell type="text" text="" />}
+              </tr>
+            )}
+        </tbody>
+      </Table>
+    </div>
   );
 };
 
 export const Table = styled.table.attrs({
-  className: 'border-separate block overflow-auto whitespace-nowrap',
+  className: 'w-full border-separate whitespace-nowrap',
 })`
   border-spacing: 0;
-
-  th,
-  td {
-    width: 100%;
-  }
 
   tr th,
   tr td {
     border-bottom: 1px solid #e4e7eb;
   }
 
-  tr th:first-child {
+  tr td:first-child {
     border-left: 1px solid #e4e7eb;
   }
 
-  tr th:last-child {
+  tr td:last-child {
     border-right: 1px solid #e4e7eb;
   }
 
@@ -125,11 +138,11 @@ export const Table = styled.table.attrs({
     border-top-right-radius: 12px;
   }
 
-  tfoot td:first-child {
+  tr:last-child td:first-child {
     border-bottom-left-radius: 12px;
   }
 
-  tfoot td:last-child {
+  tr:last-child td:last-child {
     border-bottom-right-radius: 12px;
   }
 `;
