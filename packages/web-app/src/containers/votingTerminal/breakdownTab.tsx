@@ -1,48 +1,55 @@
-import {LinearProgress, VoterType} from '@aragon/ui-components';
+import {LinearProgress} from '@aragon/ui-components';
 import React from 'react';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
+import {TokenVotingOptions} from 'utils/proposals';
 import {abbreviateTokenAmount} from 'utils/tokens';
-import {StrictlyExclude} from 'utils/types';
-import {ProposalVoteResults} from '.';
-
-export type MultisigBreakdown = {approvals: string[]; percentage: number};
-export type TokenVotingBreakdown = {
-  token: {
-    symbol: string;
-    name: string;
-  };
-  results: ProposalVoteResults;
-};
+import {ProposalVoteResults, VotingTerminalProps} from '.';
 
 type BreakdownProps = {
-  multisig?: MultisigBreakdown;
-  tokenVoting?: TokenVotingBreakdown;
+  approvals?: string[];
+  memberCount?: number;
+  results?: ProposalVoteResults;
+  token?: VotingTerminalProps['token'];
 };
 
-const BreakdownTab: React.FC<BreakdownProps> = ({multisig, tokenVoting}) => {
+const BreakdownTab: React.FC<BreakdownProps> = ({
+  approvals,
+  memberCount,
+  token,
+  results,
+}) => {
   const {t} = useTranslation();
 
-  if (multisig) {
+  if (approvals) {
     return (
       <VStackRelaxed>
-        <ResultRow
-          option="approved"
-          percentage={multisig.percentage}
-          value={`${multisig?.approvals.length} ${t('labels.members')}`}
-        />
+        <VStackNormal>
+          <HStack>
+            <VoteOption>{t('votingTerminal.approvedBy')}</VoteOption>
+            <span className="flex flex-1">
+              <ResultValueMultisig>{approvals.length}</ResultValueMultisig>
+              <PercentageMultisig>
+                &nbsp;
+                {t('votingTerminal.ofMemberCount', {
+                  memberCount,
+                })}
+              </PercentageMultisig>
+            </span>
+          </HStack>
+          <LinearProgress max={memberCount} value={approvals.length} />
+        </VStackNormal>
       </VStackRelaxed>
     );
   }
 
-  if (tokenVoting) {
-    const {results, token} = tokenVoting;
+  if (token) {
     return (
       <VStackRelaxed>
-        {Object.entries(results).map(([key, result]) => (
+        {Object.entries(results || []).map(([key, result]) => (
           <ResultRow
             key={key}
-            option={key as ResultKey}
+            option={key as TokenVotingOptions}
             percentage={result.percentage}
             value={`${abbreviateTokenAmount(result.value.toString())} ${
               token.symbol
@@ -59,20 +66,17 @@ const BreakdownTab: React.FC<BreakdownProps> = ({multisig, tokenVoting}) => {
 export default BreakdownTab;
 
 // Proposal result row
-type ResultKey = StrictlyExclude<VoterType['option'], 'none'>;
-
 const ResultRow: React.FC<{
-  option: ResultKey;
+  option: TokenVotingOptions;
   value: string | number;
   percentage: string | number;
 }> = ({option, value, percentage}) => {
   const {t} = useTranslation();
 
-  const options: {[k in ResultKey]: string} = {
+  const options: {[k in TokenVotingOptions]: string} = {
     yes: t('votingTerminal.yes'),
     no: t('votingTerminal.no'),
     abstain: t('votingTerminal.abstain'),
-    approved: t('votingTerminal.approvedBy'),
   };
 
   return (
@@ -88,11 +92,19 @@ const ResultRow: React.FC<{
 };
 
 const VotePercentage = styled.p.attrs({
-  className: 'w-8 font-bold text-right text-primary-500',
+  className: 'w-8 font-bold text-right text-primary-500 ' as string,
 })``;
 
 const ResultValue = styled.p.attrs({
   className: 'flex-1 text-right text-ui-600',
+})``;
+
+const ResultValueMultisig = styled.p.attrs({
+  className: 'flex-1 text-right text-primary-500 font-semibold',
+})``;
+
+const PercentageMultisig = styled.p.attrs({
+  className: 'font-bold text-right text-ui-600',
 })``;
 
 const VoteOption = styled.p.attrs({className: 'font-bold text-primary-500'})``;

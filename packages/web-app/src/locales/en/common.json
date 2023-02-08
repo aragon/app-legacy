@@ -706,6 +706,7 @@
     "no": "No",
     "approve": "Approve",
     "approvedBy": "Approved by",
+    "ofMemberCount": " of {{memberCount}} Members",
     "yesHelptext": "Your choice will be counted for option yes",
     "abstainHelptext": "Your choice will be counted for option abstain",
     "noHelptext": "Your choice will be counted for option no",

@@ -23,7 +23,7 @@ import styled from 'styled-components';
 
 import {StateEmpty} from 'components/stateEmpty';
 import {abbreviateTokenAmount} from 'utils/tokens';
-import BreakdownTab, {MultisigBreakdown} from './breakdownTab';
+import BreakdownTab from './breakdownTab';
 
 export type ProposalVoteResults = {
   yes: {value: string | number; percentage: number};
@@ -54,7 +54,7 @@ export type VotingTerminalProps = {
     name: string;
   };
   results?: ProposalVoteResults;
-  multisigResults?: MultisigBreakdown;
+  approvals?: string[];
   votingInProcess?: boolean;
   onVoteClicked?: React.MouseEventHandler<HTMLButtonElement>;
   onVoteSubmitClicked?: (vote: VoteValues) => void;
@@ -75,7 +75,7 @@ export const VotingTerminal: React.FC<VotingTerminalProps> = ({
   supportThreshold,
   voters = [],
   results,
-  multisigResults,
+  approvals,
   token,
   startDate,
   endDate,
@@ -130,8 +130,10 @@ export const VotingTerminal: React.FC<VotingTerminalProps> = ({
 
       {selectedTab === 'breakdown' ? (
         <BreakdownTab
-          {...(results && token ? {tokenVoting: {results, token}} : {})}
-          multisig={multisigResults}
+          approvals={approvals}
+          memberCount={voters.length}
+          results={results}
+          token={token}
         />
       ) : selectedTab === 'voters' ? (
         <VotersTabContainer>

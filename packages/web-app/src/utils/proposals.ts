@@ -43,7 +43,7 @@ import {
   SupportedProposals,
 } from './types';
 
-type TokenVotingOptions = StrictlyExclude<
+export type TokenVotingOptions = StrictlyExclude<
   VoterType['option'],
   'approved' | 'none'
 >;
@@ -552,12 +552,7 @@ export function getTerminalProps(
     ];
 
     return {
-      multisigResults: {
-        approvals: proposal.approvals,
-        percentage: members
-          ? (proposal.approvals.length / members?.length) * 100
-          : 0,
-      },
+      approvals: proposal.approvals,
       voters,
       status: proposal.status,
     };
