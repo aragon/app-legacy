@@ -656,7 +656,7 @@ export function prefixProposalIdWithPlgnAdr(
 
   // proposal id is singular number without hex notation "2"
   if (parts.length === 1) {
-    return `${pluginAddress}_0x${parts[0]}`;
+    return `${pluginAddress}_0x${Number(parts[0]).toString(16)}`;
   }
 
   // proposal id is of the following format "0x1"

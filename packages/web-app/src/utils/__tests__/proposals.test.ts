@@ -23,6 +23,11 @@ const testCases = [
     expectedId: `${pluginAddress}_0x3`,
   },
   {
+    case: 'should convert raw string id to hexadecimal',
+    proposalId: '11',
+    expectedId: `${pluginAddress}_0xb`,
+  },
+  {
     case: 'should return proposal id already prefixed with plugin address unchanged',
     proposalId: `${pluginAddress}_0x1`,
     expectedId: `${pluginAddress}_0x1`,
