@@ -1,6 +1,7 @@
 import {useApolloClient} from '@apollo/client';
 import {
   DaoAction,
+  MultisigClient,
   TokenVotingClient,
   TokenVotingProposal,
   VotingMode,
@@ -51,9 +52,11 @@ import {useWallet} from 'hooks/useWallet';
 import {useWalletCanVote} from 'hooks/useWalletCanVote';
 import {CHAIN_METADATA} from 'utils/constants';
 import {
+  decodeAddMembersToAction,
   decodeMetadataToAction,
   decodeMintTokensToAction,
   decodePluginSettingsToAction,
+  decodeRemoveMembersToAction,
   decodeWithdrawToAction,
 } from 'utils/library';
 import {NotFound} from 'utils/paths';
@@ -205,17 +208,16 @@ const Proposal: React.FC = () => {
             }
             mintTokenActions.actions.push(action.data);
             return Promise.resolve({} as Action);
-
-          // case 'addAllowedUsers':
-          //   return decodeAddMembersToAction(
-          //     action.data,
-          //     pluginClient as AddresslistVotingClient
-          //   );
-          // case 'removeAllowedUsers':
-          //   return decodeRemoveMembersToAction(
-          //     action.data,
-          //     pluginClient as AddresslistVotingClient
-          //   );
+          case 'addAddresses':
+            return decodeAddMembersToAction(
+              action.data,
+              pluginClient as MultisigClient
+            );
+          case 'removeAddresses':
+            return decodeRemoveMembersToAction(
+              action.data,
+              pluginClient as MultisigClient
+            );
           case 'updateVotingSettings':
             // TODO add multisig option here or inside decoder
             return decodePluginSettingsToAction(
@@ -315,9 +317,7 @@ const Proposal: React.FC = () => {
         proposal,
         address,
         daoSettings,
-        isMultisigProposal(proposal)
-          ? (members as unknown as MultisigMember[])
-          : undefined
+        isMultisigProposal(proposal) ? (members as MultisigMember[]) : undefined
       );
   }, [address, daoSettings, members, proposal, t]);
 
