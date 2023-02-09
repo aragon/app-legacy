@@ -24,7 +24,7 @@
     "subtitle": "Go back to Explorer page"
   },
   "navButtons": {
-    "connectWallet": "Login"
+    "connectWallet": "Connect wallet"
   },
   "labels": {
     "approvals": "Approvals",
@@ -207,7 +207,6 @@
     "updateMetadataAction": "Update DAO Metadata",
     "updateMetadataActionDescription": "Change your DAO metadata",
     "name": "Name",
-
     "minimumApprovalDescription": "Participation is the amount of addresses in the authorised list that approve on a proposal. The minimum is how many have to approve for the result to be valid.",
     "minimumApprovalAdditionalInfo": "When new wallets gets added or removed to the Multisig DAO, you have to review the Minimum Approval.",
     "minimumApprovalProgressInfo": "of {{amount}} Addresses"
@@ -392,10 +391,10 @@
       "buttonLabel": "Switch to {{network}}"
     },
     "loginRequired": {
-      "headerTitle": "Login to continue",
+      "headerTitle": "Connect wallet to continue",
       "title": "Wallet connection",
       "description": "To continue with this action, a wallet must be connected.",
-      "buttonLabel": "Login Now"
+      "buttonLabel": "Connect wallet now"
     },
     "gatingUsers": {
       "tokenTitle": "Token not found",
@@ -755,7 +754,7 @@
   "explore": {
     "hero": {
       "title": "EXPLORE THE DAO WORLD",
-      "subtitle1": "Build your DAO, explore communities, and find inspiration for your project, all from one place."
+      "subtitle1": "Build your DAO, explore communities, and find inspiration for your project all in one place."
     },
     "explorer": {
       "title": "Explore DAOs",
@@ -818,7 +817,7 @@
     },
     "build": {
       "title": "Build faster",
-      "description": "Build something on open-source infrastructure with governance plugins.",
+      "description": "Use our governance plugins to build a DAO, dApp, or anything you can imagine on the Aragon OSx protocol.",
       "actionLabel": "Coming soon"
     },
     "404": {
