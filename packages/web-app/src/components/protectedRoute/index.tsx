@@ -77,7 +77,9 @@ const ProtectedRoute: React.FC = () => {
     if ((daoSettings as MultisigVotingSettings).onlyListed === false) {
       close('gating');
     } else if (
-      !filteredMembers.some(mem => mem.address === address) &&
+      !filteredMembers.some(
+        mem => mem.address.toLowerCase() === address?.toLowerCase()
+      ) &&
       !membersAreLoading
     ) {
       open('gating');
