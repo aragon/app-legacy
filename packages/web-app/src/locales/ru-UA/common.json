@@ -24,7 +24,7 @@
     "subtitle": "Go back to Explorer page"
   },
   "navButtons": {
-    "connectWallet": "Connect Wallet"
+    "connectWallet": "Login"
   },
   "labels": {
     "approvals": "Approvals",
@@ -391,10 +391,10 @@
       "buttonLabel": "Switch to {{network}}"
     },
     "loginRequired": {
-      "headerTitle": "Connect wallet to continue",
+      "headerTitle": "Login to continue",
       "title": "Wallet connection",
       "description": "To continue with this action, a wallet must be connected.",
-      "buttonLabel": "Connect wallet now"
+      "buttonLabel": "Login Now"
     },
     "gatingUsers": {
       "tokenTitle": "Token not found",
