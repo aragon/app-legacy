@@ -788,7 +788,7 @@
     "acceptAllCookies": "Accept all",
     "rejectAllCookies": "Reject all",
     "acceptSelectedCookies": "Accept",
-    "content": "We use cookies and similar technologies to improve your browsing experience in our application, enabling certain features, and analyzing our application usage. You may choose below to opt-out for some specific behaviors. Know more by reading our",
+    "content": "We use cookies and similar technologies to improve your experience, enable certain features, and analyze our application usage. You may opt-out of cookies here. Learn more in our {{link}}.",
     "transactionDetail": {
       "title": "Transaction Detail",
       "viewTransaction": "View on Block Explorer"
@@ -879,5 +879,6 @@
       "title": "Select Smart Contract",
       "description": "Select a smart contract to compose any actions or connect a new smart contract if ..."
     }
-  }
+  },
+  "privacyPolicy -> externalLinkLabel": "Privacy Policy"
 }
