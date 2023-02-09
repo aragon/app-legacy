@@ -51,9 +51,9 @@ const sizeClassNames = {
 };
 
 const sizeStyles = {
-  small: {minWidth: '32px'},
-  medium: {minWidth: '40px'},
-  large: {minWidth: '48px'},
+  small: {minWidth: '64px'},
+  medium: {minWidth: '80px'},
+  large: {minWidth: '112px'},
 };
 
 const fontStyles = {
