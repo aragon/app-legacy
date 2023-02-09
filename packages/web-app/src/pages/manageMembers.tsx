@@ -44,9 +44,9 @@ const ManageMembers: React.FC = () => {
   const {t} = useTranslation();
   const {network} = useNetwork();
 
+  // TODO: *** Should be in a global context ***
   // dao data
   const {data: daoDetails} = useDaoDetails(dao);
-
   // plugin data
   const {data: votingSettings} = usePluginSettings(
     daoDetails?.plugins[0].instanceAddress as string,
@@ -57,6 +57,8 @@ const ManageMembers: React.FC = () => {
     (daoDetails?.plugins?.[0]?.id as PluginTypes) || undefined
   );
   const multisigDAOSettings = votingSettings as MultisigVotingSettings;
+
+  // *** end of TODO ***
 
   const formMethods = useForm({
     mode: 'onChange',
@@ -118,11 +120,15 @@ const ManageMembers: React.FC = () => {
                   useCustomHeader
                   currentDaoMembers={daoMembers?.members}
                 />
-                <RemoveAddresses actionIndex={1} useCustomHeader />
+                <RemoveAddresses
+                  actionIndex={1}
+                  useCustomHeader
+                  currentDaoMembers={daoMembers?.members}
+                />
                 <UpdateMinimumApproval
                   actionIndex={2}
                   useCustomHeader
-                  currentDaoMembers={daoMembers.members}
+                  currentDaoMembers={daoMembers?.members}
                   currentMinimumApproval={multisigDAOSettings?.minApprovals}
                 />
               </>

@@ -15,37 +15,26 @@ import {StateEmpty} from 'components/stateEmpty';
 import ManageWalletsModal from 'containers/manageWalletsModal';
 import {useActionsContext} from 'context/actions';
 import {useGlobalModalContext} from 'context/globalModals';
-import {useDaoMembers} from 'hooks/useDaoMembers';
-import {useDaoParam} from 'hooks/useDaoParam';
 import {ActionIndex} from 'utils/types';
 import {CustomHeaderProps, FormItem} from '../addAddresses';
 import AccordionSummary from '../addAddresses/accordionSummary';
 import {AddressRow} from '../addAddresses/addressRow';
 import {useAlertContext} from 'context/alert';
-import {useDaoDetails} from 'hooks/useDaoDetails';
+import {CurrentDaoMembers} from '../updateMinimumApproval';
 
-type RemoveAddressesProps = ActionIndex & CustomHeaderProps;
+type RemoveAddressesProps = ActionIndex & CustomHeaderProps & CurrentDaoMembers;
 
 // README: when uploading CSV be sure to check for duplicates
 
 const RemoveAddresses: React.FC<RemoveAddressesProps> = ({
   actionIndex,
   useCustomHeader = false,
+  currentDaoMembers,
 }) => {
   const {t} = useTranslation();
   const {open} = useGlobalModalContext();
   const {removeAction} = useActionsContext();
   const {alert} = useAlertContext();
-
-  // DAO data
-  const {data: daoId} = useDaoParam();
-  const {data: daoDetails} = useDaoDetails(daoId);
-
-  // plugin data
-  const {data} = useDaoMembers(
-    daoDetails?.plugins[0].instanceAddress || '',
-    'multisig.plugin.dao.eth'
-  );
 
   // form context data & hooks
   const {control, setValue} = useFormContext();
@@ -225,7 +214,7 @@ const RemoveAddresses: React.FC<RemoveAddressesProps> = ({
 
         <ManageWalletsModal
           addWalletCallback={handleAddSelectedWallets}
-          wallets={data.members.map(member => member.address) || []}
+          wallets={currentDaoMembers?.map(member => member.address) || []}
           initialSelections={controlledWallets.map(field => field.address)}
         />
       </AccordionMethod>

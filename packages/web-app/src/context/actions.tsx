@@ -35,14 +35,48 @@ const ActionsProvider: React.FC<ActionsProviderProps> = ({daoId, children}) => {
   const {remove} = useFieldArray({control, name: 'actions'});
 
   const addAction = useCallback(newAction => {
-    setActions(oldActions => [...oldActions, newAction]);
+    setActions(oldActions => {
+      if (
+        (newAction.name === 'remove_address' ||
+          newAction.name === 'add_address') &&
+        !oldActions.some(a => a.name === 'update_minimum_approval')
+      ) {
+        return [...oldActions, newAction, {name: 'update_minimum_approval'}];
+      }
+
+      return [...oldActions, newAction];
+    });
   }, []);
 
   const removeAction = useCallback(
     (index: number) => {
-      const newActions = actions.filter((_, oldIndex) => oldIndex !== index);
+      let newActions = actions.filter((_, oldIndex) => oldIndex !== index);
+
+      if (
+        // check if there is min approval
+        newActions.some(a => a.name === 'update_minimum_approval') &&
+        // and no add or remove action is present
+        !newActions.some(
+          a => a.name === 'remove_address' || a.name === 'add_address'
+        )
+      ) {
+        const indexOfMinApproval = newActions.findIndex(
+          a => a.name === 'update_minimum_approval'
+        );
+
+        // remove from local context
+        newActions = newActions.filter(
+          (_, oldIndex) => oldIndex !== indexOfMinApproval
+        );
+
+        // remove from form
+        remove(indexOfMinApproval);
+      }
+
+      // update local context
       setActions(newActions);
 
+      // update form actions
       remove(index);
     },
     [actions, remove]

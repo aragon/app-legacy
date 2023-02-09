@@ -216,7 +216,8 @@ export type ActionsTypes =
   | 'mint_tokens'
   | 'external_contract'
   | 'modify_token_voting_settings'
-  | 'modify_metadata';
+  | 'modify_metadata'
+  | 'update_minimum_approval';
 
 // TODO Refactor ActionWithdraw With the new input structure
 export type ActionWithdraw = {

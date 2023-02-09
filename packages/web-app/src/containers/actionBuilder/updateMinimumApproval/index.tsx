@@ -18,7 +18,7 @@ export type CurrentDaoMembers = {
 
 type UpdateMinimumApprovalProps = ActionIndex &
   CustomHeaderProps &
-  CurrentDaoMembers & {currentMinimumApproval: number};
+  CurrentDaoMembers & {currentMinimumApproval?: number};
 
 const UpdateMinimumApproval: React.FC<UpdateMinimumApprovalProps> = ({
   actionIndex,
@@ -29,7 +29,7 @@ const UpdateMinimumApproval: React.FC<UpdateMinimumApprovalProps> = ({
   const {t} = useTranslation();
 
   // form context data & hooks
-  const {setValue, control, trigger} = useFormContext();
+  const {setValue, control, trigger, getValues} = useFormContext();
 
   const minimumApprovalKey = `actions.${actionIndex}.inputs.minimumApproval`;
 
@@ -39,34 +39,31 @@ const UpdateMinimumApproval: React.FC<UpdateMinimumApprovalProps> = ({
     control,
   });
 
-  const [addAcctionIndex, setAddAcctionIndex] = useState(0);
-  const [removeAcctionIndex, setRemoveAcctionIndex] = useState(1);
-
-  const newAddedWalletCount = useWatch({
-    name: `actions.${addAcctionIndex}.inputs.memberWallets`,
-    control,
-  })?.filter((wallet: {address: Address}) => wallet?.address).length;
-
-  const newRemovedWalletCount = useWatch({
-    name: `actions.${removeAcctionIndex}.inputs.memberWallets`,
-    control,
-  })?.length;
+  const [addActionCount, setAddAcctionCount] = useState(-1);
+  const [removeActionCount, setRemoveAcctionCount] = useState(-1);
 
   const totalMembers =
-    currentDaoMembers?.length + newAddedWalletCount - newRemovedWalletCount;
+    // Calculate add & remove & existing members
+    addActionCount > 0 ||
+    removeActionCount > 0 ||
+    (currentDaoMembers && currentDaoMembers.length > 0)
+      ? (currentDaoMembers?.length || 0) + (addActionCount - removeActionCount)
+      : 0;
 
   const actions = useWatch({
     name: 'actions',
     control,
-  })?.length;
+  });
 
   /*************************************************
    *                    Values                     *
    *************************************************/
+
   useEffect(() => {
-    // validate and trigger minimum approval when wallets count changes.
-    trigger(minimumApprovalKey);
-  }, [newRemovedWalletCount, newAddedWalletCount, minimumApprovalKey, trigger]);
+    if (currentMinimumApproval && !minimumApproval) {
+      setValue(minimumApprovalKey, currentMinimumApproval);
+    }
+  }, [currentMinimumApproval, minimumApprovalKey, minimumApproval, setValue]);
 
   useEffect(() => {
     // find index of actions.
@@ -79,10 +76,22 @@ const UpdateMinimumApproval: React.FC<UpdateMinimumApprovalProps> = ({
         .map((action: ActionRemoveAddress) => action.name)
         .indexOf('remove_address');
 
-      setAddAcctionIndex(addActionIndex);
-      setRemoveAcctionIndex(removeActionIndex);
+      const [newAddedWallet, newRemovedWallet] = getValues([
+        `actions.${addActionIndex}.inputs.memberWallets`,
+        `actions.${removeActionIndex}.inputs.memberWallets`,
+      ]);
+
+      const newAddedWalletCount =
+        newAddedWallet?.filter(
+          (wallet: {address: Address}) => wallet?.address !== ''
+        ).length || 0;
+
+      const newRemovedWalletCount = newRemovedWallet?.length || 0;
+
+      setAddAcctionCount(newAddedWalletCount);
+      setRemoveAcctionCount(newRemovedWalletCount);
     }
-  }, [actions]);
+  }, [actions, getValues]);
 
   useEffect(() => {
     setValue(`actions.${actionIndex}.name`, 'update_minimum_approval');
@@ -133,7 +142,6 @@ const UpdateMinimumApproval: React.FC<UpdateMinimumApprovalProps> = ({
         type={'action-builder'}
         methodName={t('labels.minimumApproval')}
         smartContractName={t('labels.aragonCore')}
-        // dropdownItems={methodActions}  // TODO: check if it is needed for the proposal flow
         customHeader={useCustomHeader && <CustomHeader />}
         methodDescription={t('labels.minimumApprovalDescription')}
         additionalInfo={t('labels.minimumApprovalAdditionalInfo')}
@@ -172,11 +180,11 @@ const UpdateMinimumApproval: React.FC<UpdateMinimumApprovalProps> = ({
           <p className={'font-bold text-ui-800'}>{t('labels.summary')}</p>
           <HStack>
             <SummaryLabel>{t('labels.addedMembers')}</SummaryLabel>
-            <p>{newAddedWalletCount}</p>
+            <p>{addActionCount}</p>
           </HStack>
           <HStack>
             <SummaryLabel>{t('labels.removedMembers')}</SummaryLabel>
-            <p>{newRemovedWalletCount}</p>
+            <p>{removeActionCount}</p>
           </HStack>
           <HStack>
             <SummaryLabel>{t('labels.totalNewMembers')}</SummaryLabel>

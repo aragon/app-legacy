@@ -19,6 +19,12 @@ import AddAddresses from './addAddresses';
 import MintTokens from './mintTokens';
 import RemoveAddresses from './removeAddresses';
 import WithdrawAction from './withdraw/withdrawAction';
+import UpdateMinimumApproval from './updateMinimumApproval';
+import {useDaoDetails} from 'hooks/useDaoDetails';
+import {usePluginSettings} from 'hooks/usePluginSettings';
+import {PluginTypes} from 'hooks/usePluginClient';
+import {useDaoMembers} from 'hooks/useDaoMembers';
+import {MultisigVotingSettings} from '@aragon/sdk-client';
 
 /**
  * This Component is responsible for generating all actions that append to pipeline context (actions)
@@ -32,6 +38,24 @@ type ActionsComponentProps = {
 } & ActionIndex;
 
 const Action: React.FC<ActionsComponentProps> = ({name, actionIndex}) => {
+  // TODO: *** Should be in a global context ***
+  // dao data
+  const {data: dao} = useDaoParam();
+  const {data: daoDetails} = useDaoDetails(dao);
+
+  // plugin data
+  const {data: votingSettings} = usePluginSettings(
+    daoDetails?.plugins[0].instanceAddress as string,
+    daoDetails?.plugins[0].id as PluginTypes
+  );
+  const {data: daoMembers} = useDaoMembers(
+    daoDetails?.plugins?.[0]?.instanceAddress || '',
+    (daoDetails?.plugins?.[0]?.id as PluginTypes) || undefined
+  );
+  const multisigDAOSettings = votingSettings as MultisigVotingSettings;
+
+  // *** end of TODO ***
+
   switch (name) {
     case 'withdraw_assets':
       return <WithdrawAction {...{actionIndex}} />;
@@ -46,9 +70,27 @@ const Action: React.FC<ActionsComponentProps> = ({name, actionIndex}) => {
         <TemporarySection purpose="It serves as a placeholder for not yet implemented external contract interaction component" />
       );
     case 'add_address':
-      return <AddAddresses {...{actionIndex}} />;
+      return (
+        <AddAddresses
+          actionIndex={actionIndex}
+          currentDaoMembers={daoMembers?.members}
+        />
+      );
     case 'remove_address':
-      return <RemoveAddresses {...{actionIndex}} />;
+      return (
+        <RemoveAddresses
+          actionIndex={actionIndex}
+          currentDaoMembers={daoMembers?.members}
+        />
+      );
+    case 'update_minimum_approval':
+      return (
+        <UpdateMinimumApproval
+          actionIndex={actionIndex}
+          currentDaoMembers={daoMembers?.members}
+          currentMinimumApproval={multisigDAOSettings?.minApprovals}
+        />
+      );
     default:
       throw Error('Action not found');
   }

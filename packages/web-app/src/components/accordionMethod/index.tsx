@@ -93,6 +93,7 @@ export const AccordionItem: React.FC<AccordionMethodType & {name: string}> = ({
                 side="bottom"
                 align="end"
                 listItems={dropdownItems}
+                disabled={dropdownItems.length === 0}
                 trigger={
                   <ButtonIcon
                     mode="ghost"

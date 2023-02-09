@@ -17,6 +17,7 @@ const NewProposal: React.FC = () => {
       links: [{name: '', url: ''}],
       startSwitch: 'now',
       durationSwitch: 'duration',
+      actions: [],
     },
   });
 

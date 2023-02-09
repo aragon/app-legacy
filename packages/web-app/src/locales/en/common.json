@@ -501,7 +501,9 @@
     "withdrawAssetsSubtitle": "Create a proposal to withdraw assets to a wallet.",
     "withdrawAssetsActionSubtitle": "Withdraw assets from the DAO treasury",
     "externalContract": "Interact with a contract",
-    "externalContractSubtitle": "Interact with an external contract on the chain your DAO is deployed on."
+    "externalContractSubtitle": "Interact with an external contract on the chain your DAO is deployed on.",
+    "changeMinimumApproval": "Change Minimum Approval",
+    "changeMinimumApprovalSubtitle": "Modify minimum approval of this DAO."
   },
   "newDeposit": {
     "depositAssets": "Deposit assets",
