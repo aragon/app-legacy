@@ -371,8 +371,6 @@ const CreateProposalProvider: React.FC<Props> = ({
     }
     if (!proposalCreationData) return;
 
-    console.log('proposalCreationData', proposalCreationData);
-
     return pluginClient?.estimation.createProposal(proposalCreationData);
   }, [pluginClient, proposalCreationData]);
 
