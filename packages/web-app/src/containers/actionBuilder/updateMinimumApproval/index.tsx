@@ -146,13 +146,14 @@ const UpdateMinimumApproval: React.FC<UpdateMinimumApprovalProps> = ({
         methodDescription={t('labels.minimumApprovalDescription')}
         additionalInfo={t('labels.minimumApprovalAdditionalInfo')}
       >
-        <FormItem
-          className={`desktop:block ${
-            useCustomHeader ? 'rounded-t-xl border-t pt-3' : 'py-1.5'
-          }`}
-        >
-          <Label label={t('labels.approvals')} />
-        </FormItem>
+        {useCustomHeader && (
+          <FormItem
+            className={'desktop:block pt-3 pb-1.5 rounded-t-xl border-t'}
+          >
+            <Label label={t('labels.approvals')} />
+          </FormItem>
+        )}
+
         <FormItem>
           <Controller
             name={minimumApprovalKey}
@@ -174,7 +175,6 @@ const UpdateMinimumApproval: React.FC<UpdateMinimumApprovalProps> = ({
             )}
           />
         </FormItem>
-
         {/* Summary */}
         <SummaryContainer>
           <p className={'font-bold text-ui-800'}>{t('labels.summary')}</p>
