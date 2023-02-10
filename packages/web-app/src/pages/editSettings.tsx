@@ -414,7 +414,7 @@ const EditSettings: React.FC = () => {
                 label={t('settings.resetChanges')}
                 mode="secondary"
                 size="large"
-                disabled={settingsUnchanged || !isValid}
+                disabled={settingsUnchanged}
                 onClick={handleResetChanges}
               />
             </HStack>
