@@ -62,7 +62,7 @@ const InfoTab: React.FC<Props> = ({
         </InfoLine>
 
         {/* Support threshold */}
-        {supportThreshold && (
+        {supportThreshold !== undefined && (
           <InfoLine>
             <p>{t('votingTerminal.supportThreshold')}</p>
             <Strong>{`> ${supportThreshold}%`}</Strong>
@@ -77,7 +77,7 @@ const InfoTab: React.FC<Props> = ({
         )}
 
         {/* Min approval */}
-        {minApproval && (
+        {minApproval !== undefined && (
           <InfoLine>
             <p>{t('labels.minimumApproval')}</p>
             <Strong>
@@ -155,7 +155,7 @@ const InfoTab: React.FC<Props> = ({
             </CurrentParticipationWrapper>
           </InfoLine>
         )}
-        {uniqueVoters && (
+        {uniqueVoters !== undefined && (
           <InfoLine>
             <p>{t('votingTerminal.uniqueVoters')}</p>
             <Strong>{uniqueVoters}</Strong>
