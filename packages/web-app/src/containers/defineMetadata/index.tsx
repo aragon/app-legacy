@@ -24,16 +24,20 @@ const DAO_LOGO = {
 
 export type DefineMetadataProps = {
   arrayName?: string;
+  currentDaoName?: string;
   bgWhite?: boolean;
 };
 
 const DefineMetadata: React.FC<DefineMetadataProps> = ({
   arrayName = 'links',
   bgWhite = false,
+  currentDaoName = '',
 }) => {
   const {t} = useTranslation();
   const {control, setError, clearErrors, getValues} = useFormContext();
   const {infura: provider} = useProviders();
+
+  const isMyName = currentDaoName === getValues('daoName');
 
   const handleImageError = useCallback(
     (error: {code: string; message: string}) => {
@@ -102,8 +106,19 @@ const DefineMetadata: React.FC<DefineMetadataProps> = ({
           defaultValue=""
           rules={{
             required: t('errors.required.name'),
-            validate: value =>
-              isDaoNameValid(value, provider, setError, clearErrors, getValues),
+            validate: value => {
+              if (isMyName) {
+                return true;
+              }
+
+              return isDaoNameValid(
+                value,
+                provider,
+                setError,
+                clearErrors,
+                getValues
+              );
+            },
           }}
           render={({
             field: {onBlur, onChange, value, name},
@@ -115,7 +130,7 @@ const DefineMetadata: React.FC<DefineMetadataProps> = ({
                 placeholder={t('placeHolders.daoName')}
               />
               <InputCount>{`${value.length}/128`}</InputCount>
-              <ErrorHandler {...{value, error}} />
+              {!isMyName && <ErrorHandler {...{value, error}} />}
             </>
           )}
         />
