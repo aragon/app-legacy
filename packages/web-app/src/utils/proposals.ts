@@ -448,7 +448,7 @@ function getPublishedProposalStep(
  * @param proposal
  * @returns transformed data for terminal
  */
-export function getTerminalProps(
+export function getLiveProposalTerminalProps(
   t: TFunction,
   proposal: DetailedProposal,
   voter: string | null,

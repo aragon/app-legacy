@@ -63,7 +63,7 @@ import {NotFound} from 'utils/paths';
 import {
   getProposalExecutionStatus,
   getProposalStatusSteps,
-  getTerminalProps,
+  getLiveProposalTerminalProps,
   getVoteButtonLabel,
   getVoteStatus,
   isEarlyExecutable,
@@ -312,7 +312,7 @@ const Proposal: React.FC = () => {
   // terminal props
   const mappedProps = useMemo(() => {
     if (proposal)
-      return getTerminalProps(
+      return getLiveProposalTerminalProps(
         t,
         proposal,
         address,
