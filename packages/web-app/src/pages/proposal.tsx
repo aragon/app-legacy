@@ -541,6 +541,7 @@ const Proposal: React.FC = () => {
           )}
 
           <VotingTerminal
+            status={proposal.status}
             statusLabel={voteStatus}
             selectedTab={terminalTab}
             alertMessage={alertMessage}

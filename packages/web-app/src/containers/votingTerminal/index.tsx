@@ -55,6 +55,7 @@ export type VotingTerminalProps = {
   results?: ProposalVoteResults;
   approvals?: string[];
   votingInProcess?: boolean;
+  voteOptions?: string;
   onVoteClicked?: React.MouseEventHandler<HTMLButtonElement>;
   onVoteSubmitClicked?: (vote: VoteValues) => void;
   onCancelClicked?: React.MouseEventHandler<HTMLButtonElement>;
@@ -82,6 +83,7 @@ export const VotingTerminal: React.FC<VotingTerminalProps> = ({
   status,
   statusLabel,
   strategy,
+  voteOptions = '',
   onVoteClicked,
   votingInProcess,
   onCancelClicked,
@@ -201,9 +203,7 @@ export const VotingTerminal: React.FC<VotingTerminalProps> = ({
           strategy={strategy}
           supportThreshold={supportThreshold}
           uniqueVoters={token ? voters.length : undefined}
-          voteOptions={
-            token ? t('votingTerminal.yes+no') : t('votingTerminal.approve')
-          }
+          voteOptions={voteOptions}
         />
       )}
 

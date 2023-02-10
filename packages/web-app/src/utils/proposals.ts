@@ -518,7 +518,6 @@ export function getTerminalProps(
     strategy = t('votingTerminal.tokenVoting');
     return {
       token,
-      status: proposal.status,
       voters,
       results,
       strategy,
@@ -526,6 +525,7 @@ export function getTerminalProps(
       minParticipation,
       currentParticipation,
       missingParticipation,
+      voteOptions: t('votingTerminal.yes+no'),
       startDate: `${format(
         proposal.startDate,
         KNOWN_FORMATS.proposals
@@ -563,8 +563,8 @@ export function getTerminalProps(
       approvals: proposal.approvals,
       minApproval: votingSettings.minApprovals,
       voters: [...mappedMembers.values()],
-      status: proposal.status,
       strategy: t('votingTerminal.multisig'),
+      voteOptions: t('votingTerminal.approve'),
     };
   }
 }
