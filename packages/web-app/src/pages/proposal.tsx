@@ -313,11 +313,12 @@ const Proposal: React.FC = () => {
         t,
         proposal,
         address,
+        daoSettings,
         isMultisigProposal(proposal)
           ? (members as unknown as MultisigMember[])
           : undefined
       );
-  }, [address, members, proposal, t]);
+  }, [address, daoSettings, members, proposal, t]);
 
   // get early execution status
   const canExecuteEarly = useMemo(

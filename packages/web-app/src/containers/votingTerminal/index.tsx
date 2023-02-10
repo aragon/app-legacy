@@ -10,7 +10,6 @@ import {
   IconRadioCancel,
   Option,
   SearchInput,
-  Tag,
   VotersTable,
   VoterType,
 } from '@aragon/ui-components';
@@ -21,8 +20,8 @@ import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 
 import {StateEmpty} from 'components/stateEmpty';
-import {abbreviateTokenAmount} from 'utils/tokens';
 import BreakdownTab from './breakdownTab';
+import InfoTab from './infoTab';
 
 export type ProposalVoteResults = {
   yes: {value: string | number; percentage: number};
@@ -40,6 +39,7 @@ export type VotingTerminalProps = {
   voteNowDisabled?: boolean;
   startDate?: string;
   endDate?: string;
+  minApproval?: number;
   minParticipation?: string;
   currentParticipation?: string;
   missingParticipation?: number;
@@ -69,6 +69,7 @@ export const VotingTerminal: React.FC<VotingTerminalProps> = ({
   votersTabDisabled = false,
   voteNowDisabled = false,
   currentParticipation,
+  minApproval,
   minParticipation,
   missingParticipation = 0,
   supportThreshold,
@@ -101,7 +102,20 @@ export const VotingTerminal: React.FC<VotingTerminalProps> = ({
       : voters.filter(voter => voter.wallet.includes(query.toLowerCase()));
   }, [query, voters]);
 
-  const minimumReached = missingParticipation === 0;
+  const minimumReached = useMemo(() => {
+    if (approvals && minApproval) {
+      return approvals.length >= minApproval;
+    } else {
+      return missingParticipation === 0;
+    }
+  }, [approvals, minApproval, missingParticipation]);
+
+  const missingApprovalOrParticipation =
+    approvals && minApproval
+      ? minimumReached
+        ? 0
+        : minApproval - approvals.length
+      : missingParticipation;
 
   return (
     <Container>
@@ -172,78 +186,24 @@ export const VotingTerminal: React.FC<VotingTerminalProps> = ({
           )}
         </VotersTabContainer>
       ) : (
-        //=================== Info tab
-        <>
-          <VStackSection>
-            <SectionHeader>{t('votingTerminal.decision')}</SectionHeader>
-            <InfoLine>
-              <p>{t('votingTerminal.options')}</p>
-              <Strong>{t('votingTerminal.yes+no')}</Strong>
-            </InfoLine>
-            <InfoLine>
-              <p>{t('votingTerminal.strategy')}</p>
-              <Strong>{strategy}</Strong>
-            </InfoLine>
-            <InfoLine>
-              <p>{t('votingTerminal.supportThreshold')}</p>
-              <Strong>{`> ${supportThreshold}%`}</Strong>
-            </InfoLine>
-            <InfoLine>
-              <p>{t('votingTerminal.minParticipation')}</p>
-              {minParticipation && <Strong>{`≥ ${minParticipation}`}</Strong>}
-            </InfoLine>
-          </VStackSection>
-          <VStackSection>
-            <SectionHeader>{t('votingTerminal.activity')}</SectionHeader>
-            <InfoLine>
-              <p className="flex-1">
-                {t('votingTerminal.currentParticipation')}
-              </p>
-
-              <CurrentParticipationWrapper>
-                <Strong>{currentParticipation}</Strong>
-                <div className="flex gap-x-1 justify-end">
-                  {minimumReached && (
-                    <Tag
-                      label={t('votingTerminal.reached')}
-                      colorScheme="success"
-                    />
-                  )}
-                  <p className="text-right text-ui-400 ft-text-sm">
-                    {minimumReached
-                      ? t('votingTerminal.noVotesMissing')
-                      : t('votingTerminal.missingVotes', {
-                          votes: abbreviateTokenAmount(
-                            parseFloat(
-                              missingParticipation.toFixed(2)
-                            ).toString()
-                          ),
-                        })}
-                  </p>
-                </div>
-              </CurrentParticipationWrapper>
-            </InfoLine>
-            <InfoLine>
-              <p>{t('votingTerminal.uniqueVoters')}</p>
-              <Strong>{voters.length}</Strong>
-            </InfoLine>
-          </VStackSection>
-          <VStackSection
-            className={
-              status ? '' : 'pb-0 tablet:pb-0 border-b-0 tablet:border-b-0 '
-            }
-          >
-            <SectionHeader>{t('votingTerminal.duration')}</SectionHeader>
-            <InfoLine>
-              <p>{t('votingTerminal.startDate')}</p>
-              <Strong>{startDate}</Strong>
-            </InfoLine>
-            <InfoLine>
-              <p>{t('votingTerminal.endDate')}</p>
-              <Strong>{endDate}</Strong>
-            </InfoLine>
-          </VStackSection>
-        </>
+        <InfoTab
+          currentParticipation={currentParticipation}
+          currentApprovals={approvals?.length}
+          endDate={endDate}
+          memberCount={voters.length}
+          minApproval={minApproval}
+          minimumReached={minimumReached}
+          minParticipation={minParticipation}
+          missingApprovalOrParticipation={missingApprovalOrParticipation}
+          startDate={startDate}
+          status={status}
+          strategy={strategy}
+          supportThreshold={supportThreshold}
+          uniqueVoters={token ? voters.length : undefined}
+          voteOptions={
+            token ? t('votingTerminal.yes+no') : t('votingTerminal.approve')
+          }
+        />
       )}
 
       {votingInProcess ? (
@@ -353,23 +313,6 @@ const Heading1 = styled.h1.attrs({
   className: 'ft-text-xl font-bold text-ui-800 flex-grow',
 })``;
 
-const VStackSection = styled.div.attrs({
-  className:
-    'space-y-1.5 p-2 tablet:p-3 -mx-2 tablet:-mx-3 border-b border-ui-100' as string,
-})``;
-
-const InfoLine = styled.div.attrs({
-  className: 'flex justify-between text-ui-600',
-})``;
-
-const Strong = styled.p.attrs({
-  className: 'font-bold text-ui-800',
-})``;
-
-const SectionHeader = styled.p.attrs({
-  className: 'font-bold text-ui-800 ft-text-lg',
-})``;
-
 const VotingContainer = styled.div.attrs({
   className: 'mt-6 tablet:mt-5',
 })``;
@@ -390,10 +333,6 @@ const VoteContainer = styled.div.attrs({
 const ButtonWrapper = styled.div.attrs({
   className:
     'flex flex-col tablet:flex-row space-y-2 space-x-0 tablet:space-y-0 tablet:space-x-2 w-full tablet:w-max',
-})``;
-
-const CurrentParticipationWrapper = styled.div.attrs({
-  className: 'space-y-0.5 text-right',
 })``;
 
 const VotersTabContainer = styled.div.attrs({

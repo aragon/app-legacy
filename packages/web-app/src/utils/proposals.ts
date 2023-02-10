@@ -41,7 +41,9 @@ import {
   Erc20ProposalVote,
   StrictlyExclude,
   SupportedProposals,
+  SupportedVotingSettings,
 } from './types';
+import {isMultisigVotingSettings} from 'hooks/usePluginSettings';
 
 export type TokenVotingOptions = StrictlyExclude<
   VoterType['option'],
@@ -447,6 +449,7 @@ export function getTerminalProps(
   t: TFunction,
   proposal: DetailedProposal,
   voter: string | null,
+  votingSettings: SupportedVotingSettings,
   members?: MultisigMember[]
 ) {
   let token;
@@ -532,7 +535,10 @@ export function getTerminalProps(
     };
   }
   // This method's return needs to be typed properly
-  else if (isMultisigProposal(proposal)) {
+  else if (
+    isMultisigProposal(proposal) &&
+    isMultisigVotingSettings(votingSettings)
+  ) {
     // add members to Map of VoterType
     const mappedMembers = new Map(
       // map multisig members to voterType
@@ -552,8 +558,10 @@ export function getTerminalProps(
 
     return {
       approvals: proposal.approvals,
+      minApproval: votingSettings.minApprovals,
       voters: [...mappedMembers.values()],
       status: proposal.status,
+      strategy: t('votingTerminal.multisig'),
     };
   }
 }
