@@ -533,27 +533,26 @@ export function getTerminalProps(
   }
   // This method's return needs to be typed properly
   else if (isMultisigProposal(proposal)) {
-    voters = [
-      ...new Map(
-        // map multisig members to voterType
-        members
-          ?.map(m => ({wallet: m.address, option: 'none'} as VoterType))
+    // add members to Map of VoterType
+    const mappedMembers = new Map(
+      // map multisig members to voterType
+      members
+        ?.map(m => ({wallet: m.address, option: 'none'} as VoterType))
+        .map(v => [v.wallet, v])
+    );
 
-          // map approvals to voterType all the while stripping
-          // the plugin address from the wallet address
-          .concat(
-            proposal.approvals.map(a => ({
-              wallet: stripPlgnAdrFromProposalId(a),
-              option: 'approved',
-            }))
-          )
-          .map(v => [v.wallet, v])
-      ).values(),
-    ];
+    // loop through approvals and update vote option to approved;
+    proposal.approvals.forEach(address => {
+      // considering only members can approve, no need to check if Map has the key
+      mappedMembers.set(address, {
+        wallet: stripPlgnAdrFromProposalId(address),
+        option: 'approved',
+      });
+    });
 
     return {
       approvals: proposal.approvals,
-      voters,
+      voters: mappedMembers.values(),
       status: proposal.status,
     };
   }
