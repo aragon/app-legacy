@@ -1,6 +1,6 @@
 import React from 'react';
 import {FormProvider, useForm} from 'react-hook-form';
-import {render, screen, fireEvent} from 'test-utils';
+import {render, screen} from 'test-utils';
 import {AlertProvider} from 'context/alert';
 
 import AddLinks from '..';
