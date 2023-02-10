@@ -250,7 +250,7 @@ const NewWithdraw: React.FC = () => {
               <Step
                 wizardTitle={t('newWithdraw.reviewProposal.heading')}
                 wizardDescription={t('newWithdraw.reviewProposal.description')}
-                nextButtonLabel={t('labels.submitWithdraw')}
+                nextButtonLabel={t('labels.submitProposal')}
                 onNextButtonClicked={() => {
                   trackEvent('newWithdraw_publishBtn_clicked', {
                     dao_address: dao,

@@ -71,7 +71,7 @@ const Community: React.FC = () => {
                 <Dt>{t('labels.proposalCreation')}</Dt>
                 <Dd>
                   {eligibilityType === 'anyone'
-                    ? t('labels.anyone')
+                    ? t('labels.anyWallet')
                     : t('labels.multisigMembers')}
                 </Dd>
               </Dl>
@@ -122,7 +122,7 @@ const Community: React.FC = () => {
                         token: eligibilityTokenAmount,
                         symbol: tokenSymbol,
                       })
-                    : t('createDAO.step3.eligibility.anyone.title')}
+                    : t('createDAO.step3.eligibility.anyWallet.title')}
                 </Dd>
               </Dl>
             </>

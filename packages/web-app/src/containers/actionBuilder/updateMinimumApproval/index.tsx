@@ -141,7 +141,7 @@ const UpdateMinimumApproval: React.FC<UpdateMinimumApprovalProps> = ({
         verified
         type={'action-builder'}
         methodName={t('labels.minimumApproval')}
-        smartContractName={t('labels.aragonCore')}
+        smartContractName={t('labels.aragonOSx')}
         customHeader={useCustomHeader && <CustomHeader />}
         methodDescription={t('labels.minimumApprovalDescription')}
         additionalInfo={t('labels.minimumApprovalAdditionalInfo')}

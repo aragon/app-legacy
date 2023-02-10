@@ -73,7 +73,7 @@ const MintTokens: React.FC<MintTokensProps> = ({actionIndex}) => {
     <AccordionMethod
       type="action-builder"
       methodName={t('labels.mintTokens')}
-      smartContractName={t('labels.aragonCore')}
+      smartContractName={t('labels.aragonOSx')}
       verified
       methodDescription={<MintTokenDescription />}
       additionalInfo={t('newProposal.mintTokens.additionalInfo')}

@@ -117,7 +117,7 @@ export const WalletMenu = () => {
           size="large"
           mode="ghost"
           iconLeft={<IconTurnOff />}
-          label={t('labels.logOut')}
+          label={t('labels.disconnectWallet')}
           onClick={handleDisconnect}
         />
       </ModalBody>

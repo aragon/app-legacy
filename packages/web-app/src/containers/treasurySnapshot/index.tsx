@@ -17,6 +17,7 @@ import {useTransactionDetailContext} from 'context/transactionDetail';
 import {AllTransfers} from 'utils/paths';
 import {abbreviateTokenAmount} from 'utils/tokens';
 import {Transfer} from 'utils/types';
+import {htmlIn} from 'utils/htmlIn';
 
 type Props = {
   dao: string;
@@ -45,7 +46,7 @@ const TreasurySnapshot: React.FC<Props> = ({
         hair={'cool'}
         sunglass={'thuglife'}
         title={t('dashboard.emptyTransfers.title')}
-        description={t('dashboard.emptyTransfers.description')}
+        description={htmlIn(t)('dashboard.emptyTransfers.description')}
         primaryButton={{
           label: t('dashboard.emptyTransfers.buttonLabel'),
           onClick: () => open(),

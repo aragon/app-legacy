@@ -108,7 +108,7 @@ const CompareSettings: React.FC = () => {
               token: eligibilityTokenAmount,
               symbol: daoToken?.symbol,
             })
-          : t('createDAO.step3.eligibility.anyone.title'),
+          : t('createDAO.step3.eligibility.anyWallet.title'),
       days: durationDays,
       hours: durationHours,
       minutes: durationMinutes,
@@ -142,7 +142,7 @@ const CompareSettings: React.FC = () => {
             ),
             tokenSymbol: daoToken?.symbol,
           })
-        : t('createDAO.step3.eligibility.anyone.title'),
+        : t('createDAO.step3.eligibility.anyWallet.title'),
       days: duration.days,
       hours: duration.hours,
       minutes: duration.minutes,

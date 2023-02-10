@@ -45,8 +45,10 @@ export const MultisigEligibility = () => {
               </CheckboxListItemWrapper>
               <CheckboxListItemWrapper>
                 <CheckboxListItem
-                  label={t('createDAO.step3.eligibility.anyone.title')}
-                  helptext={t('createDAO.step3.eligibility.anyone.description')}
+                  label={t('createDAO.step3.eligibility.anyWallet.title')}
+                  helptext={t(
+                    'createDAO.step3.eligibility.anyWallet.description'
+                  )}
                   onClick={() => {
                     onChange('anyone');
                   }}

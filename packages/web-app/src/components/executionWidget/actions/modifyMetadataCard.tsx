@@ -20,7 +20,7 @@ export const ModifyMetadataCard: React.FC<{action: ActionUpdateMetadata}> = ({
     <AccordionMethod
       type="execution-widget"
       methodName={t('labels.updateMetadataAction')}
-      smartContractName={t('labels.aragonCore')}
+      smartContractName={t('labels.aragonOSx')}
       methodDescription={t('labels.updateMetadataActionDescription')}
       verified
     >

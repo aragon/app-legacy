@@ -19,7 +19,7 @@ export const RemoveAddressCard: React.FC<{
     <AccordionMethod
       type="execution-widget"
       methodName={t('labels.removeWallets')}
-      smartContractName={t('labels.aragonCore')}
+      smartContractName={t('labels.aragonOSx')}
       verified
       methodDescription={t('labels.removeWalletsDescription')}
     >

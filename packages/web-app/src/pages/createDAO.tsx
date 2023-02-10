@@ -302,8 +302,8 @@ const CreateDAO: React.FC = () => {
               <>
                 {t('createDAO.step2.description')}
                 <Link
-                  href="https://aragon.org/how-to/how-to-build-a-dao-brand-identity"
-                  label={t('createDAO.step2.metadataOverviewGuide')}
+                  href={t('createDAO.step2.descriptionLinkURL')}
+                  label={t('createDAO.step2.descriptionLinkLabel')}
                 />
               </>
             }
@@ -347,8 +347,8 @@ const CreateDAO: React.FC = () => {
               <>
                 {t('createDAO.step4.description')}
                 <Link
-                  href="https://aragon.org/how-to/setting-dao-governance-thresholds"
-                  label={t('createDAO.step4.bestPractices')}
+                  href={t('createDAO.step4.descriptionLinkURL')}
+                  label={t('createDAO.step4.descriptionLinkLabel')}
                 />
               </>
             }

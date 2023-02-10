@@ -35,13 +35,13 @@ export const ModifySettingsCard: React.FC<{
         tokenAmount: inputs.minProposerVotingPower,
         tokenSymbol: inputs.token?.symbol,
       })
-    : t('createDAO.step3.eligibility.anyone.title');
+    : t('createDAO.step3.eligibility.anyWallet.title');
 
   return (
     <AccordionMethod
       type="execution-widget"
       methodName={t('labels.updateGovernanceAction')}
-      smartContractName={t('labels.aragonCore')}
+      smartContractName={t('labels.aragonOSx')}
       methodDescription={t('labels.updateGovernanceActionDescription')}
       verified
     >

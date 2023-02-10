@@ -22,7 +22,7 @@ export const AddAddressCard: React.FC<{
     <AccordionMethod
       type="execution-widget"
       methodName={t('labels.addWallets')}
-      smartContractName={t('labels.aragonCore')}
+      smartContractName={t('labels.aragonOSx')}
       verified
       methodDescription={t('labels.addWalletsDescription')}
     >

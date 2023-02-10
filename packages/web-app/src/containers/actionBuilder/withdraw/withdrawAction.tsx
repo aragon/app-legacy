@@ -63,7 +63,7 @@ const WithdrawAction: React.FC<WithdrawActionProps> = ({actionIndex}) => {
       type="action-builder"
       methodName={t('TransferModal.item2Title')}
       dropdownItems={methodActions}
-      smartContractName={t('labels.aragonCore')}
+      smartContractName={t('labels.aragonOSx')}
       methodDescription={t('AddActionModal.withdrawAssetsActionSubtitle')}
     >
       <FormItem className="py-3 space-y-3 rounded-b-xl">
