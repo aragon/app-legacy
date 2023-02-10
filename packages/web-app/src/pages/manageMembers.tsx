@@ -73,9 +73,9 @@ const ManageMembers: React.FC = () => {
     control: formMethods.control,
   });
 
-  const [formActions, proposalTitle] = useWatch({
+  const [formActions] = useWatch({
     control: formMethods.control,
-    name: ['actions', 'proposalTitle'],
+    name: ['actions'],
   });
 
   const [showTxModal, setShowTxModal] = useState(false);
@@ -137,9 +137,7 @@ const ManageMembers: React.FC = () => {
             <Step
               wizardTitle={t('newWithdraw.defineProposal.heading')}
               wizardDescription={t('newWithdraw.defineProposal.description')}
-              isNextButtonDisabled={
-                !defineProposalIsValid(dirtyFields, errors, proposalTitle)
-              }
+              isNextButtonDisabled={!defineProposalIsValid(dirtyFields, errors)}
             >
               <DefineProposal />
             </Step>
