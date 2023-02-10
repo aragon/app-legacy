@@ -110,12 +110,13 @@ export const VotingTerminal: React.FC<VotingTerminalProps> = ({
     }
   }, [approvals, minApproval, missingParticipation]);
 
-  const missingApprovalOrParticipation =
-    approvals && minApproval
-      ? minimumReached
-        ? 0
-        : minApproval - approvals.length
-      : missingParticipation;
+  const missingApprovalOrParticipation = useMemo(() => {
+    if (approvals && minApproval) {
+      return minimumReached ? 0 : minApproval - approvals.length;
+    } else {
+      return missingParticipation;
+    }
+  }, [approvals, minApproval, minimumReached, missingParticipation]);
 
   return (
     <Container>
