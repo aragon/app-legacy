@@ -25,7 +25,8 @@ jobs:
         if: endsWith(github.ref, '/main')
         id: envprod
         run: echo "environment=production" >> $GITHUB_OUTPUT
-  build-deploy:
+
+  build-and-deploy:
     runs-on: ubuntu-latest
     container: fleek/create-react-app:node-16
     needs: [set-environment]
@@ -35,8 +36,9 @@ jobs:
       run:
         working-directory: ${{env.working-directory}}
     steps:
-      - uses: actions/checkout@v3
-      - name: Install node
+      - name: Checkout code
+        uses: actions/checkout@v3
+      - name: Install NodeJS
         uses: actions/setup-node@v3
         with:
           node-version: 16
@@ -51,6 +53,8 @@ jobs:
         run: yarn install --pure-lockfile
       - name: Link ui-components
         run: yarn link @aragon/ui-components
+      # - name: Lint
+      #   run: yarn lint
       - name: Test
         run: yarn test
       - name: Build
@@ -62,19 +66,19 @@ jobs:
           VITE_IPFS_API_KEY: ${{secrets.VITE_IPFS_API_KEY}}
           VITE_ETHERSCAN_API_KEY: ${{secrets.VITE_ETHERSCAN_API_KEY}}
           NODE_OPTIONS: '--max-old-space-size=6656'
-      - name: Activate fleek
+      - name: Activate Fleek
         env:
           FLEEK_FILE: ${{ needs.set-environment.outputs.environment }}
         run: mv ../../.github/fleek/$FLEEK_FILE.json .fleek.json
-      - name: Deploy fleek
+      - name: Deploy through Fleek
         id: deploy
         uses: fleekhq/action-deploy@v1
         with:
           apiKey: ${{ secrets.FLEEK_API_KEY }}
           workDir: ${{ env.working-directory }}
-      - name: Get the output url
-        run: echo "Deploy url is ${{ steps.deploy.outputs.deployUrl }}"
-      - name: upload sourcemap to apm
+      - name: Get the Fleek output url
+        run: echo "The Fleek deploy url is ${{ steps.deploy.outputs.deployUrl }}"
+      - name: Upload sourcemap to Kibana sourcemap endpoint (APM)
         env:
           COMMIT_SHA: ${{ github.sha }}
         run: |

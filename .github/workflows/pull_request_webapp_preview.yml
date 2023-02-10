@@ -14,7 +14,7 @@ jobs:
       run:
         working-directory: packages/web-app
     steps:
-      - name: Find Previous Deployment
+      - name: Find a PR comment
         uses: peter-evans/find-comment@v2
         id: fc
         with:
@@ -31,8 +31,9 @@ jobs:
               owner: context.repo.owner,
               repo: context.repo.repo,
             })
-      - uses: actions/checkout@v3
-      - name: Install node
+      - name: Checkout code
+        uses: actions/checkout@v3
+      - name: Install NodeJS
         uses: actions/setup-node@v3
         with:
           node-version: 16
@@ -47,6 +48,8 @@ jobs:
         run: yarn install --pure-lockfile
       - name: Link ui-components
         run: yarn link @aragon/ui-components
+      # - name: Lint
+      #   run: yarn lint
       - name: Build
         run: yarn build
         env:
@@ -56,11 +59,12 @@ jobs:
           VITE_IPFS_API_KEY: ${{secrets.VITE_IPFS_API_KEY}}
           VITE_ETHERSCAN_API_KEY: ${{secrets.VITE_ETHERSCAN_API_KEY}}
           NODE_OPTIONS: '--max-old-space-size=6656'
-      - uses: actions/setup-python@v4
+      - name: Setup Python
+        uses: actions/setup-python@v4
         with:
           python-version: '3.x'
           architecture: 'x64'
-      - name: install pyyaml
+      - name: Install Python modules
         run: |
           pip install --user pyyaml packaging
       - name: Install ipfs-cluster-ctl
@@ -81,7 +85,7 @@ jobs:
           ipfsResult="$(./ipfs-cluster-ctl/ipfs-cluster-ctl --basic-auth '${{ secrets.IPFS_BASIC_AUTH }}' --host '${{ secrets.IPFS_HOST }}' add -r './dist/' | tail -1)"
           IFS=" " read -ra array <<< "$ipfsResult"
           echo "ipfsHash=${array[1]}" >> $GITHUB_OUTPUT
-      - name: Echo url
+      - name: Update the PR comment
         uses: peter-evans/create-or-update-comment@v2
         with:
           issue-number: ${{ github.event.pull_request.number }}

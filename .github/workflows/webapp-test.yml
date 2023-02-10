@@ -1,23 +1,27 @@
-name: WebApp Push
+name: WebApp Test
 on:
   workflow_dispatch:
   push:
     paths:
       - 'packages/web-app/**'
+    branches-ignore:  ## Ignore develop and main branches to avoid an unneeded 2nd build.
+      - 'develop'
+      - 'main'
 
 env:
   working-directory: packages/web-app
 
 jobs:
-  test:
+  build-and-test:
     runs-on: ubuntu-latest
     container: fleek/create-react-app:node-16
     defaults:
       run:
         working-directory: ${{env.working-directory}}
     steps:
-      - uses: actions/checkout@v3
-      - name: Install node
+      - name: Checkout code
+        uses: actions/checkout@v3
+      - name: Install NodeJS
         uses: actions/setup-node@v3
         with:
           node-version: 16
