@@ -552,7 +552,7 @@ export function getTerminalProps(
 
     return {
       approvals: proposal.approvals,
-      voters: mappedMembers.values(),
+      voters: [...mappedMembers.values()],
       status: proposal.status,
     };
   }
