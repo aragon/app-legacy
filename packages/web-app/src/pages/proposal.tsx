@@ -454,6 +454,7 @@ const Proposal: React.FC = () => {
       proposal?.creationDate
     ) {
       return getProposalStatusSteps(
+        t,
         proposal.status,
         proposal.startDate,
         proposal.endDate,
@@ -464,7 +465,7 @@ const Proposal: React.FC = () => {
         proposal.executionDate
       );
     } else return [];
-  }, [proposal, executionFailed]);
+  }, [proposal, executionFailed, t]);
 
   /*************************************************
    *                     Render                    *

@@ -316,6 +316,7 @@ export function getWhitelistResults(
  * @returns list of status steps based on proposal status
  */
 export function getProposalStatusSteps(
+  t: TFunction,
   status: ProposalStatus,
   startDate: Date,
   endDate: Date,
@@ -328,9 +329,9 @@ export function getProposalStatusSteps(
   switch (status) {
     case 'Active':
       return [
-        {...getPublishedProposalStep(creationDate, publishedBlock)},
+        {...getPublishedProposalStep(t, creationDate, publishedBlock)},
         {
-          label: i18n.t('governance.statusWidget.active'),
+          label: t('governance.statusWidget.active'),
           mode: 'active',
           date: `${format(
             startDate,
@@ -340,9 +341,9 @@ export function getProposalStatusSteps(
       ];
     case 'Defeated':
       return [
-        {...getPublishedProposalStep(creationDate, publishedBlock)},
+        {...getPublishedProposalStep(t, creationDate, publishedBlock)},
         {
-          label: i18n.t('governance.statusWidget.defeated'),
+          label: t('governance.statusWidget.defeated'),
           mode: 'failed',
           date: `${format(
             endDate,
@@ -353,9 +354,9 @@ export function getProposalStatusSteps(
     case 'Succeeded':
       if (executionFailed)
         return [
-          ...getPassedProposalSteps(creationDate, startDate, publishedBlock),
+          ...getPassedProposalSteps(t, creationDate, startDate, publishedBlock),
           {
-            label: i18n.t('governance.statusWidget.failed'),
+            label: t('governance.statusWidget.failed'),
             mode: 'failed',
             date: `${format(
               new Date(),
@@ -365,18 +366,18 @@ export function getProposalStatusSteps(
         ];
       else
         return [
-          ...getPassedProposalSteps(creationDate, startDate, publishedBlock),
+          ...getPassedProposalSteps(t, creationDate, startDate, publishedBlock),
           {
-            label: i18n.t('governance.statusWidget.succeeded'),
+            label: t('governance.statusWidget.succeeded'),
             mode: 'upcoming',
           },
         ];
     case 'Executed':
       if (executionDate)
         return [
-          ...getPassedProposalSteps(creationDate, startDate, publishedBlock),
+          ...getPassedProposalSteps(t, creationDate, startDate, publishedBlock),
           {
-            label: i18n.t('governance.statusWidget.executed'),
+            label: t('governance.statusWidget.executed'),
             mode: 'succeeded',
             date: `${format(
               executionDate,
@@ -387,16 +388,16 @@ export function getProposalStatusSteps(
         ];
       else
         return [
-          ...getPassedProposalSteps(creationDate, startDate, publishedBlock),
-          {label: i18n.t('governance.statusWidget.failed'), mode: 'failed'},
+          ...getPassedProposalSteps(t, creationDate, startDate, publishedBlock),
+          {label: t('governance.statusWidget.failed'), mode: 'failed'},
         ];
 
     // Pending by default
     default:
       return [
-        {...getPublishedProposalStep(creationDate, publishedBlock)},
+        {...getPublishedProposalStep(t, creationDate, publishedBlock)},
         {
-          label: i18n.t('governance.statusWidget.pending'),
+          label: t('governance.statusWidget.pending'),
           mode: 'upcoming',
           date: `${format(
             startDate,
@@ -408,14 +409,15 @@ export function getProposalStatusSteps(
 }
 
 function getPassedProposalSteps(
+  t: TFunction,
   creationDate: Date,
   startDate: Date,
   block: string
 ): Array<ProgressStatusProps> {
   return [
-    {...getPublishedProposalStep(creationDate, block)},
+    {...getPublishedProposalStep(t, creationDate, block)},
     {
-      label: i18n.t('governance.statusWidget.passed'),
+      label: t('governance.statusWidget.passed'),
       mode: 'done',
       date: `${format(
         startDate,
@@ -426,11 +428,12 @@ function getPassedProposalSteps(
 }
 
 function getPublishedProposalStep(
+  t: TFunction,
   creationDate: Date,
   block: string
 ): ProgressStatusProps {
   return {
-    label: i18n.t('governance.statusWidget.published'),
+    label: t('governance.statusWidget.published'),
     date: `${format(
       creationDate,
       KNOWN_FORMATS.proposals
