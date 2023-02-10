@@ -1,26 +1,28 @@
-import {InstalledPluginListItem, VotingSettings} from '@aragon/sdk-client';
-import {Link, Tag} from '@aragon/ui-components';
+import {Erc20TokenDetails, InstalledPluginListItem} from '@aragon/sdk-client';
+import {Link, Tag, VoterType} from '@aragon/ui-components';
 import TipTapLink from '@tiptap/extension-link';
 import {EditorContent, useEditor} from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import {format} from 'date-fns';
-import React, {useEffect, useMemo, useState} from 'react';
+import React, {useEffect, useMemo} from 'react';
 import {useFormContext} from 'react-hook-form';
-import {useTranslation} from 'react-i18next';
+import {TFunction, useTranslation} from 'react-i18next';
 import {useParams} from 'react-router-dom';
 import styled from 'styled-components';
 
 import {ExecutionWidget} from 'components/executionWidget';
 import {useFormStep} from 'components/fullScreenStepper';
 import ResourceList from 'components/resourceList';
-import {TerminalTabs, VotingTerminal} from 'containers/votingTerminal';
-import {useNetwork} from 'context/network';
-import {useSpecificProvider} from 'context/providers';
+import {VotingTerminal} from 'containers/votingTerminal';
 import {useDaoDetails} from 'hooks/useDaoDetails';
-import {useDaoMembers} from 'hooks/useDaoMembers';
+import {MultisigMember, useDaoMembers} from 'hooks/useDaoMembers';
 import {PluginTypes} from 'hooks/usePluginClient';
-import {usePluginSettings} from 'hooks/usePluginSettings';
-import {CHAIN_METADATA} from 'utils/constants';
+import {
+  isMultisigVotingSettings,
+  isTokenVotingSettings,
+  usePluginSettings,
+} from 'hooks/usePluginSettings';
+import {useTokenSupply} from 'hooks/useTokenSupply';
 import {
   getCanonicalDate,
   getCanonicalTime,
@@ -29,13 +31,9 @@ import {
   KNOWN_FORMATS,
   minutesToMills,
 } from 'utils/date';
-import {
-  getErc20VotingParticipation,
-  getNonEmptyActions,
-  getWhitelistVoterParticipation,
-} from 'utils/proposals';
-import {getTokenInfo} from 'utils/tokens';
-import {ProposalResource} from 'utils/types';
+import {getErc20VotingParticipation, getNonEmptyActions} from 'utils/proposals';
+import {ProposalResource, SupportedVotingSettings} from 'utils/types';
+import {Loading} from 'components/temporary';
 
 type ReviewProposalProps = {
   defineProposalStepNumber: number;
@@ -47,30 +45,25 @@ const ReviewProposal: React.FC<ReviewProposalProps> = ({
   addActionsStepNumber,
 }) => {
   const {t} = useTranslation();
-  const {network} = useNetwork();
   const {setStep} = useFormStep();
-  const provider = useSpecificProvider(CHAIN_METADATA[network].id);
 
   const {dao} = useParams();
   const {data: daoDetails} = useDaoDetails(dao!);
   const {id: pluginType, instanceAddress: pluginAddress} =
     daoDetails?.plugins[0] || ({} as InstalledPluginListItem);
 
+  const {data: daoSettings} = usePluginSettings(
+    pluginAddress,
+    pluginType as PluginTypes
+  );
+
   const {
     data: {members, daoToken},
   } = useDaoMembers(pluginAddress, pluginType as PluginTypes);
 
-  const {data} = usePluginSettings(pluginAddress, pluginType as PluginTypes);
-
-  // TODO: fix when implementing multisig
-  const daoSettings = data as VotingSettings;
+  const {data: totalSupply} = useTokenSupply(daoToken?.address as string);
 
   const {getValues, setValue} = useFormContext();
-  const [minParticipation, setMinParticipation] = useState('');
-  const [currentParticipation, setCurrentParticipation] = useState('');
-  const [missingParticipation, setMissingParticipation] = useState(0);
-  const [isWalletBased, setIsWalletBased] = useState(true);
-  const [terminalTab, setTerminalTab] = useState<TerminalTabs>('info');
   const values = getValues();
 
   const editor = useEditor({
@@ -147,71 +140,21 @@ const ReviewProposal: React.FC<ReviewProposalProps> = ({
     )} ${getFormattedUtcOffset()}`;
   }, [values]);
 
+  const terminalProps = useMemo(
+    () =>
+      getReviewProposalTerminalProps(
+        t,
+        daoSettings,
+        members,
+        daoToken,
+        totalSupply?.raw
+      ),
+    [daoSettings, daoToken, members, t, totalSupply?.raw]
+  );
+
   /*************************************************
-   *                    Hooks                      *
+   *                    Effects                    *
    *************************************************/
-  useEffect(() => {
-    async function mapToView() {
-      if (pluginType === 'multisig.plugin.dao.eth') {
-        setIsWalletBased(true);
-
-        // get voter participation
-        const {summary} = getWhitelistVoterParticipation([], members.length);
-        setMinParticipation(summary);
-      } else {
-        // token based
-        setIsWalletBased(false);
-
-        if (daoToken && daoSettings) {
-          // get voter participation
-          const {totalSupply} = await getTokenInfo(
-            daoToken.address,
-            provider,
-            CHAIN_METADATA[network].nativeCurrency
-          );
-
-          // calculate participation
-          const {
-            currentPart,
-            currentPercentage,
-            minPart,
-            missingPart,
-            totalWeight,
-          } = getErc20VotingParticipation(
-            daoSettings.minParticipation,
-            BigInt(0),
-            totalSupply,
-            daoToken.decimals
-          );
-
-          setCurrentParticipation(
-            t('votingTerminal.participationErc20', {
-              participation: currentPart,
-              totalWeight,
-              tokenSymbol: daoToken.symbol,
-              percentage: currentPercentage,
-            })
-          );
-
-          setMinParticipation(
-            t('votingTerminal.participationErc20', {
-              participation: minPart,
-              totalWeight,
-              tokenSymbol: daoToken.symbol,
-              percentage: Math.round(daoSettings.minParticipation * 100),
-            })
-          );
-
-          setMissingParticipation(missingPart);
-        }
-      }
-    }
-
-    if (members) {
-      mapToView();
-    }
-  }, [daoSettings, daoToken, members, network, pluginType, provider, t]);
-
   useEffect(() => {
     if (values.proposal === '<p></p>') {
       setValue('proposal', '');
@@ -224,6 +167,8 @@ const ReviewProposal: React.FC<ReviewProposalProps> = ({
   if (!editor) {
     return null;
   }
+
+  if (!terminalProps) return <Loading />;
 
   return (
     <>
@@ -253,26 +198,21 @@ const ReviewProposal: React.FC<ReviewProposalProps> = ({
             breakdownTabDisabled
             votersTabDisabled
             voteNowDisabled
-            selectedTab={terminalTab}
-            onTabSelected={setTerminalTab}
+            selectedTab="info"
             statusLabel={t('votingTerminal.status.draft')}
-            supportThreshold={
-              Math.round(daoSettings.supportThreshold * 100) || 0
-            }
-            minParticipation={minParticipation}
-            currentParticipation={currentParticipation}
-            missingParticipation={missingParticipation}
             startDate={formattedStartDate}
             endDate={formattedEndDate}
-            strategy={
-              isWalletBased
-                ? t('votingTerminal.multisig')
-                : t('votingTerminal.tokenVoting')
-            }
+            token={daoToken}
+            {...terminalProps}
           />
-          {/* TODO: Sarkawt:Fabrice : add minApproval to `getNonEmptyActions()` once multisig voting setting is ready */}
+
           <ExecutionWidget
-            actions={getNonEmptyActions(values.actions, 0)}
+            actions={getNonEmptyActions(
+              values.actions,
+              isMultisigVotingSettings(daoSettings)
+                ? daoSettings.minApprovals
+                : 0
+            )}
             onAddAction={
               addActionsStepNumber
                 ? () => setStep(addActionsStepNumber)
@@ -351,3 +291,58 @@ export const StyledEditorContent = styled(EditorContent)`
     }
   }
 `;
+
+// this is slightly different from
+function getReviewProposalTerminalProps(
+  t: TFunction,
+  daoSettings: SupportedVotingSettings,
+  daoMembers: Array<MultisigMember> | undefined,
+  daoToken: Erc20TokenDetails | undefined,
+  totalSupply: bigint | undefined
+) {
+  if (isMultisigVotingSettings(daoSettings)) {
+    return {
+      minApproval: daoSettings.minApprovals,
+      strategy: t('votingTerminal.multisig'),
+      voteOptions: t('votingTerminal.approve'),
+      approvals: [],
+      voters:
+        daoMembers?.map(
+          m => ({wallet: m.address, option: 'none'} as VoterType)
+        ) || [],
+    };
+  }
+
+  if (isTokenVotingSettings(daoSettings) && daoToken && totalSupply) {
+    // calculate participation
+    const {currentPart, currentPercentage, minPart, missingPart, totalWeight} =
+      getErc20VotingParticipation(
+        daoSettings.minParticipation,
+        BigInt(0),
+        totalSupply,
+        daoToken.decimals
+      );
+
+    return {
+      currentParticipation: t('votingTerminal.participationErc20', {
+        participation: currentPart,
+        totalWeight,
+        tokenSymbol: daoToken.symbol,
+        percentage: currentPercentage,
+      }),
+
+      minParticipation: t('votingTerminal.participationErc20', {
+        participation: minPart,
+        totalWeight,
+        tokenSymbol: daoToken.symbol,
+        percentage: Math.round(daoSettings.minParticipation * 100),
+      }),
+
+      missingParticipation: missingPart,
+
+      strategy: t('votingTerminal.tokenVoting'),
+      voteOptions: t('votingTerminal.yes+no'),
+      supportThreshold: Math.round(daoSettings.supportThreshold * 100),
+    };
+  }
+}
