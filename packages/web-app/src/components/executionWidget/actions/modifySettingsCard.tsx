@@ -1,9 +1,10 @@
+import {VotingMode} from '@aragon/sdk-client';
 import React, {useMemo} from 'react';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 
-import {VotingMode} from '@aragon/sdk-client';
 import {AccordionMethod} from 'components/accordionMethod';
+import {Dd, Dl, Dt} from 'components/descriptionList';
 import {getDHMFromSeconds} from 'utils/date';
 import {getErc20MinParticipation} from 'utils/proposals';
 import {ActionUpdatePluginSettings} from 'utils/types';
@@ -46,42 +47,44 @@ export const ModifySettingsCard: React.FC<{
       verified
     >
       <Container>
-        <div>
-          <Title>{t('labels.supportThreshold')}</Title>
-          <Value>&gt;{Math.round(inputs.supportThreshold * 100)}%</Value>
-        </div>
-        <div>
-          <Title>{t('labels.minimumParticipation')}</Title>
-          <Value>{minParticipation}</Value>
-        </div>
-        <div>
-          <Title>{t('labels.review.proposalThreshold')}</Title>
-          <Value>{minProposalThreshold}</Value>
-        </div>
-        <div>
-          <Title>{t('labels.minimumDuration')}</Title>
-          <Value className="space-x-1.5">
-            <span>{t('createDAO.review.days', {days})}</span>
-            <span>{t('createDAO.review.hours', {hours})}</span>
-            <span>{t('createDAO.review.minutes', {minutes})}</span>
-          </Value>
-        </div>
-        <div>
-          <Title>{t('labels.earlyExecution')}</Title>
-          <Value>
+        <Dl>
+          <Dt>{t('labels.supportThreshold')}</Dt>
+          <Dd>&gt;{Math.round(inputs.supportThreshold * 100)}%</Dd>
+        </Dl>
+        <Dl>
+          <Dt>{t('labels.minimumParticipation')}</Dt>
+          <Dd>{minParticipation}</Dd>
+        </Dl>
+        <Dl>
+          <Dt>{t('labels.review.proposalThreshold')}</Dt>
+          <Dd>{minProposalThreshold}</Dd>
+        </Dl>
+        <Dl>
+          <Dt>{t('labels.minimumDuration')}</Dt>
+          <Dd>
+            <div className="space-x-1.5">
+              <span>{t('createDAO.review.days', {days})}</span>
+              <span>{t('createDAO.review.hours', {hours})}</span>
+              <span>{t('createDAO.review.minutes', {minutes})}</span>
+            </div>
+          </Dd>
+        </Dl>
+        <Dl>
+          <Dt>{t('labels.earlyExecution')}</Dt>
+          <Dd>
             {inputs.votingMode === VotingMode.EARLY_EXECUTION
               ? t('labels.yes')
               : t('labels.no')}
-          </Value>
-        </div>
-        <div>
-          <Title>{t('labels.voteReplacement')}</Title>
-          <Value>
+          </Dd>
+        </Dl>
+        <Dl>
+          <Dt>{t('labels.voteReplacement')}</Dt>
+          <Dd>
             {inputs.votingMode === VotingMode.VOTE_REPLACEMENT
               ? t('labels.yes')
               : t('labels.no')}
-          </Value>
-        </div>
+          </Dd>
+        </Dl>
       </Container>
     </AccordionMethod>
   );
@@ -90,12 +93,4 @@ export const ModifySettingsCard: React.FC<{
 const Container = styled.div.attrs({
   className:
     'bg-ui-50 rounded-b-xl border border-t-0 border-ui-100 space-y-3 p-3',
-})``;
-
-const Title = styled.p.attrs({
-  className: 'font-bold text-ui-800 mb-1',
-})``;
-
-const Value = styled.span.attrs({
-  className: 'text-ui-600' as string,
 })``;
