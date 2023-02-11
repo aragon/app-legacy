@@ -1,10 +1,9 @@
 import {VotingMode} from '@aragon/sdk-client';
 import React, {useMemo} from 'react';
 import {useTranslation} from 'react-i18next';
-import styled from 'styled-components';
 
 import {AccordionMethod} from 'components/accordionMethod';
-import {Dd, Dl, Dt} from 'components/descriptionList';
+import {ActionCardDlContainer, Dd, Dl, Dt} from 'components/descriptionList';
 import {getDHMFromSeconds} from 'utils/date';
 import {getErc20MinParticipation} from 'utils/proposals';
 import {ActionUpdatePluginSettings} from 'utils/types';
@@ -46,7 +45,7 @@ export const ModifySettingsCard: React.FC<{
       methodDescription={t('labels.updateGovernanceActionDescription')}
       verified
     >
-      <Container>
+      <ActionCardDlContainer>
         <Dl>
           <Dt>{t('labels.supportThreshold')}</Dt>
           <Dd>&gt;{Math.round(inputs.supportThreshold * 100)}%</Dd>
@@ -85,12 +84,7 @@ export const ModifySettingsCard: React.FC<{
               : t('labels.no')}
           </Dd>
         </Dl>
-      </Container>
+      </ActionCardDlContainer>
     </AccordionMethod>
   );
 };
-
-const Container = styled.div.attrs({
-  className:
-    'bg-ui-50 rounded-b-xl border border-t-0 border-ui-100 space-y-3 p-3',
-})``;
