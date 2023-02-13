@@ -29,9 +29,9 @@ export const DateInput: React.FC<DateInputProps> = ({disabled, ...props}) => {
         {...props}
       />
 
-      {/* This is a temporary solution to hide default icon on firefox */}
       {!disabled && (
         <>
+          {/* This is a temporary solution to hide default icon on firefox */}
           {isFF && <Overlay />}
           <IconContainer disabled={disabled} onClick={handleClick}>
             <IconCalendar />
