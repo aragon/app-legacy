@@ -44,8 +44,8 @@ const UpdateMinimumApproval: React.FC<UpdateMinimumApprovalProps> = ({
 
   const totalMembers =
     // Calculate add & remove & existing members
-    addActionCount > 0 ||
-    removeActionCount > 0 ||
+    addActionCount >= 0 ||
+    removeActionCount >= 0 ||
     (currentDaoMembers && currentDaoMembers.length > 0)
       ? (currentDaoMembers?.length || 0) + (addActionCount - removeActionCount)
       : 0;
@@ -97,6 +97,18 @@ const UpdateMinimumApproval: React.FC<UpdateMinimumApprovalProps> = ({
     setValue(`actions.${actionIndex}.name`, 'update_minimum_approval');
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  // trigger when total members is changed
+  useEffect(() => {
+    if (removeActionCount !== -1 || addActionCount !== -1)
+      trigger(minimumApprovalKey);
+  }, [
+    addActionCount,
+    minimumApprovalKey,
+    removeActionCount,
+    totalMembers,
+    trigger,
+  ]);
 
   /*************************************************
    *             Callbacks and Handlers            *
