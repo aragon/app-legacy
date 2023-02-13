@@ -219,7 +219,6 @@ export type ActionsTypes =
   | 'external_contract'
   | 'modify_token_voting_settings'
   | 'modify_metadata'
-  | 'update_minimum_approval'
   | 'modify_multisig_voting_settings';
 
 // TODO Refactor ActionWithdraw With the new input structure
@@ -272,21 +271,6 @@ export type ActionMintToken = {
   };
 };
 
-// TODO: rename/merge with ActionUpdateMultisigPluginSettings
-export type ActionUpdateMinimumApproval = {
-  name: 'update_minimum_approval';
-  inputs: {
-    minimumApproval: number;
-  };
-
-  // these two are not needed since add and removed wallets are
-  // actions themselves.
-  summary: {
-    addedWallets: number;
-    removedWallets: number;
-  };
-};
-
 export type ActionUpdateMultisigPluginSettings = {
   name: 'modify_multisig_voting_settings';
   inputs: MultisigVotingSettings;
@@ -315,7 +299,6 @@ export type Action =
   | ActionMintToken
   | ActionUpdatePluginSettings
   | ActionUpdateMetadata
-  | ActionUpdateMinimumApproval // TODO: remove
   | ActionUpdateMultisigPluginSettings;
 
 export type ParamType = {

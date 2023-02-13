@@ -31,7 +31,7 @@ const UpdateMinimumApproval: React.FC<UpdateMinimumApprovalProps> = ({
   // form context data & hooks
   const {setValue, control, trigger, getValues} = useFormContext();
 
-  const minimumApprovalKey = `actions.${actionIndex}.inputs.minimumApproval`;
+  const minimumApprovalKey = `actions.${actionIndex}.inputs.minApprovals`;
 
   const minimumApproval = useWatch({
     name: minimumApprovalKey,
@@ -39,8 +39,8 @@ const UpdateMinimumApproval: React.FC<UpdateMinimumApprovalProps> = ({
     control,
   });
 
-  const [addActionCount, setAddAcctionCount] = useState(-1);
-  const [removeActionCount, setRemoveAcctionCount] = useState(-1);
+  const [addActionCount, setAddActionCount] = useState(-1);
+  const [removeActionCount, setRemoveActionCount] = useState(-1);
 
   const totalMembers =
     // Calculate add & remove & existing members
@@ -88,13 +88,13 @@ const UpdateMinimumApproval: React.FC<UpdateMinimumApprovalProps> = ({
 
       const newRemovedWalletCount = newRemovedWallet?.length || 0;
 
-      setAddAcctionCount(newAddedWalletCount);
-      setRemoveAcctionCount(newRemovedWalletCount);
+      setAddActionCount(newAddedWalletCount);
+      setRemoveActionCount(newRemovedWalletCount);
     }
   }, [actions, getValues]);
 
   useEffect(() => {
-    setValue(`actions.${actionIndex}.name`, 'update_minimum_approval');
+    setValue(`actions.${actionIndex}.name`, 'modify_multisig_voting_settings');
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -169,7 +169,7 @@ const UpdateMinimumApproval: React.FC<UpdateMinimumApprovalProps> = ({
         <FormItem>
           <Controller
             name={minimumApprovalKey}
-            defaultValue={minimumApproval}
+            defaultValue={minimumApproval || 1}
             control={control}
             rules={{
               required: t('errors.minimumApproval.required') as string,

@@ -83,7 +83,7 @@ const Action: React.FC<ActionsComponentProps> = ({name, actionIndex}) => {
           currentDaoMembers={daoMembers?.members}
         />
       );
-    case 'update_minimum_approval':
+    case 'modify_multisig_voting_settings':
       return (
         <UpdateMinimumApproval
           actionIndex={actionIndex}
