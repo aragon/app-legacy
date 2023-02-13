@@ -102,6 +102,38 @@ const DefineMetadata: React.FC<DefineMetadataProps> = ({
           defaultValue=""
           rules={{
             required: t('errors.required.name'),
+          }}
+          render={({
+            field: {onBlur, onChange, value, name},
+            fieldState: {error},
+          }) => (
+            <>
+              <TextInput
+                {...{name, value, onBlur, onChange}}
+                placeholder={t('placeHolders.daoName')}
+              />
+              <InputCount>{`${value.length}/128`}</InputCount>
+              {error?.message && (
+                <AlertInline label={error.message} mode="critical" />
+              )}
+            </>
+          )}
+        />
+      </FormItem>
+
+      {/* ENS Name */}
+      <FormItem>
+        <Label
+          label={t('labels.daoEnsName')}
+          helpText={t('createDAO.step2.ensNameSubtitle')}
+        />
+
+        <Controller
+          name="daoEnsName"
+          control={control}
+          defaultValue=""
+          rules={{
+            required: t('errors.required.name'),
             validate: value =>
               isDaoNameValid(value, provider, setError, clearErrors, getValues),
           }}
@@ -112,7 +144,7 @@ const DefineMetadata: React.FC<DefineMetadataProps> = ({
             <>
               <TextInput
                 {...{name, value, onBlur, onChange}}
-                placeholder={t('placeHolders.daoName')}
+                placeholder={t('placeHolders.ensName')}
               />
               <InputCount>{`${value.length}/128`}</InputCount>
               <ErrorHandler {...{value, error}} />
