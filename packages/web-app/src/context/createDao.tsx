@@ -81,6 +81,9 @@ const CreateDaoProvider: React.FC = ({children}) => {
     daoCreationData !== undefined &&
     creationProcessState === TransactionState.WAITING;
 
+  const disableActionButton =
+    !daoCreationData && creationProcessState !== TransactionState.SUCCESS;
+
   /*************************************************
    *                   Handlers                    *
    *************************************************/
@@ -404,7 +407,7 @@ const CreateDaoProvider: React.FC = ({children}) => {
         averageFee={averageFee}
         gasEstimationError={gasEstimationError}
         tokenPrice={tokenPrice}
-        disabledCallback={!daoCreationData}
+        disabledCallback={disableActionButton}
       />
     </CreateDaoContext.Provider>
   );
