@@ -20,9 +20,6 @@ import {
   Nullable,
 } from './types';
 import {isOnlyWhitespace} from './library';
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
-import {toAscii} from 'idna-uts46';
 
 /**
  * Validate given token contract address
@@ -207,7 +204,6 @@ export function isDaoNameValid(
       // Check to see if the response belongs to current value
       if (value === inputValue) {
         if (result) {
-          console.log('setResult', result);
           setError('daoEnsName', {
             type: 'validate',
             message: i18n.t('errors.ensDuplication'),

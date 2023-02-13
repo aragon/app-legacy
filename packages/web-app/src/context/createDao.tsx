@@ -40,9 +40,6 @@ import {
 import {useGlobalModalContext} from './globalModals';
 import {useNetwork} from './network';
 import {usePrivacyContext} from './privacyContext';
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
-import {toAscii} from 'idna-uts46';
 
 function readFile(file: Blob): Promise<ArrayBuffer> {
   return new Promise((resolve, reject) => {
