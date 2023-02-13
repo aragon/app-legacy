@@ -10,7 +10,8 @@ const DaoMetadata: React.FC = () => {
   const {control, getValues} = useFormContext();
   const {setStep} = useFormStep();
   const {t} = useTranslation();
-  const {daoLogo, daoName, daoSummary, links, reviewCheckError} = getValues();
+  const {daoLogo, daoName, daoEnsName, daoSummary, links, reviewCheckError} =
+    getValues();
 
   return (
     <Controller
@@ -44,6 +45,10 @@ const DaoMetadata: React.FC = () => {
           <Dl>
             <Dt>{t('labels.daoName')}</Dt>
             <Dd>{daoName}</Dd>
+          </Dl>
+          <Dl>
+            <Dt>{t('labels.daoEnsName')}</Dt>
+            <Dd>{daoEnsName}</Dd>
           </Dl>
           <Dl>
             <Dt>{t('labels.summary')}</Dt>

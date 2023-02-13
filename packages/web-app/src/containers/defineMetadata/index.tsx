@@ -24,12 +24,14 @@ const DAO_LOGO = {
 
 export type DefineMetadataProps = {
   arrayName?: string;
+  currentDaoEnsName?: string;
   bgWhite?: boolean;
 };
 
 const DefineMetadata: React.FC<DefineMetadataProps> = ({
   arrayName = 'links',
   bgWhite = false,
+  currentDaoEnsName = '',
 }) => {
   const {t} = useTranslation();
   const {control, setError, clearErrors, getValues} = useFormContext();
@@ -135,7 +137,14 @@ const DefineMetadata: React.FC<DefineMetadataProps> = ({
           rules={{
             required: t('errors.required.name'),
             validate: value =>
-              isDaoNameValid(value, provider, setError, clearErrors, getValues),
+              isDaoNameValid(
+                value,
+                provider,
+                setError,
+                clearErrors,
+                getValues,
+                currentDaoEnsName
+              ),
           }}
           render={({
             field: {onBlur, onChange, value, name},

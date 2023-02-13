@@ -48,7 +48,7 @@ const EditSettings: React.FC = () => {
     name: 'daoLinks',
     control,
   });
-  const {errors} = useFormState({control});
+  const {errors, isValid} = useFormState({control});
 
   const {data: daoDetails, isLoading: detailsAreLoading} = useDaoDetails(
     daoId!
@@ -83,6 +83,7 @@ const EditSettings: React.FC = () => {
 
   const [
     daoName,
+    daoEnsName,
     daoSummary,
     daoLogo,
     minimumApproval,
@@ -98,6 +99,7 @@ const EditSettings: React.FC = () => {
   ] = useWatch({
     name: [
       'daoName',
+      'daoEnsName',
       'daoSummary',
       'daoLogo',
       'minimumApproval',
@@ -170,6 +172,7 @@ const EditSettings: React.FC = () => {
   const isMetadataChanged =
     daoDetails?.metadata.name &&
     (daoName !== daoDetails.metadata.name ||
+      daoEnsName !== daoDetails.ensDomain ||
       daoSummary !== daoDetails.metadata.description ||
       daoLogo !== daoDetails.metadata.avatar ||
       !resourceLinksAreEqual);
@@ -197,6 +200,7 @@ const EditSettings: React.FC = () => {
 
   const setCurrentMetadata = useCallback(() => {
     setValue('daoName', daoDetails?.metadata.name);
+    setValue('daoEnsName', daoDetails?.ensDomain);
     setValue('daoSummary', daoDetails?.metadata.description);
     setValue('daoLogo', daoDetails?.metadata.avatar);
 
@@ -215,11 +219,12 @@ const EditSettings: React.FC = () => {
       replace([...daoDetails.metadata.links]);
     }
   }, [
-    daoDetails?.metadata.avatar,
-    daoDetails?.metadata.description,
-    daoDetails?.metadata.links,
-    daoDetails?.metadata.name,
     setValue,
+    daoDetails?.metadata.name,
+    daoDetails?.metadata.description,
+    daoDetails?.metadata.avatar,
+    daoDetails?.metadata.links,
+    daoDetails?.ensDomain,
     replace,
   ]);
 
@@ -357,7 +362,11 @@ const EditSettings: React.FC = () => {
                 dropdownItems={metadataAction}
               >
                 <AccordionContent>
-                  <DefineMetadata bgWhite arrayName="daoLinks" />
+                  <DefineMetadata
+                    bgWhite
+                    arrayName="daoLinks"
+                    currentDaoEnsName={daoDetails?.ensDomain || ''}
+                  />
                 </AccordionContent>
               </AccordionItem>
 
@@ -398,7 +407,7 @@ const EditSettings: React.FC = () => {
                 label={t('settings.reviewProposal')}
                 iconLeft={<IconGovernance />}
                 size="large"
-                disabled={settingsUnchanged}
+                disabled={settingsUnchanged || !isValid}
                 onClick={() =>
                   navigate(
                     generatePath(ProposeNewSettings, {network, dao: daoId})

@@ -180,8 +180,10 @@ export function isDaoNameValid(
   provider: InfuraProvider,
   setError: (name: string, error: FieldError) => void,
   clearError: (name?: string | string[]) => void,
-  getValues: (payload?: string | string[]) => Object
+  getValues: (payload?: string | string[]) => Object,
+  currentDaoEnsName: string
 ) {
+  if (value === currentDaoEnsName) return true;
   if (isOnlyWhitespace(value)) return i18n.t('errors.required.name');
   if (value.length > 128) return i18n.t('errors.ensNameLength');
 
