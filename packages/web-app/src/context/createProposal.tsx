@@ -116,6 +116,9 @@ const CreateProposalProvider: React.FC<Props> = ({
     [creationProcessState, proposalCreationData]
   );
 
+  const disableActionButton =
+    !proposalCreationData && creationProcessState !== TransactionState.SUCCESS;
+
   /*************************************************
    *                     Effects                   *
    *************************************************/
@@ -598,7 +601,7 @@ const CreateProposalProvider: React.FC<Props> = ({
         title={t('TransactionModal.createProposal')}
         buttonLabel={t('TransactionModal.createProposal')}
         buttonLabelSuccess={t('TransactionModal.goToProposal')}
-        disabledCallback={!proposalCreationData}
+        disabledCallback={disableActionButton}
       />
     </>
   );
