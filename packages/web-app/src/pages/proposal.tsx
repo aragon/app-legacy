@@ -66,6 +66,7 @@ import {
   isEarlyExecutable,
   isErc20VotingProposal,
   isMultisigProposal,
+  stripPlgnAdrFromProposalId,
 } from 'utils/proposals';
 import {Action} from 'utils/types';
 
@@ -355,7 +356,9 @@ const Proposal: React.FC = () => {
 
     if (isMultisigProposal(proposal)) {
       return proposal.approvals.some(
-        a => a.toLowerCase() === address.toLowerCase()
+        a =>
+          // remove the call to strip plugin address when sdk returns proper plugin address
+          stripPlgnAdrFromProposalId(a).toLowerCase() === address.toLowerCase()
       );
     } else {
       return proposal.votes.some(
@@ -427,10 +430,11 @@ const Proposal: React.FC = () => {
   const alertMessage = useMemo(() => {
     if (
       proposal &&
-      proposal.status === 'Active' &&
-      address &&
-      !isOnWrongNetwork &&
-      !canVote
+      proposal.status === 'Active' && // active proposal
+      address && // logged in
+      !isOnWrongNetwork && // on proper network
+      !voted && // haven't voted
+      !canVote // cannot vote
     ) {
       // presence of token delineates token voting proposal
       // people add types to these things!!
@@ -440,7 +444,7 @@ const Proposal: React.FC = () => {
           })
         : t('votingTerminal.status.ineligibleWhitelist');
     }
-  }, [address, canVote, isOnWrongNetwork, proposal, t]);
+  }, [address, canVote, isOnWrongNetwork, proposal, t, voted]);
 
   // status steps for proposal
   const proposalSteps = useMemo(() => {
