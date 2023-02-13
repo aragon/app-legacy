@@ -104,6 +104,8 @@ export const VotingTerminal: React.FC<VotingTerminalProps> = ({
       : voters.filter(voter => voter.wallet.includes(query.toLowerCase()));
   }, [query, voters]);
 
+  console.log(voters, approvals);
+
   const minimumReached = useMemo(() => {
     if (approvals && minApproval) {
       return approvals.length >= minApproval;
