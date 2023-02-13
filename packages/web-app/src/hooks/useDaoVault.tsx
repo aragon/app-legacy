@@ -42,6 +42,7 @@ export const useDaoVault = (
       tokensWithMetadata,
       timeFilterToMinutes(options.filter)
     );
+    data.totalAssetChange = 0;
     data.tokens.forEach(token => {
       if (token.marketData) {
         const prevBalance = tokenPreviousBalances[token.metadata.id].balance;
