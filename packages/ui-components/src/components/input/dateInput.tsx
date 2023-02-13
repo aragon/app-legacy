@@ -50,7 +50,7 @@ type InputContainerProps = Pick<DateInputProps, 'disabled'>;
 
 const InputContainer = styled.div.attrs(({disabled}: InputContainerProps) => {
   const baseClasses =
-    'flex items-center p-1 rounded-xl border-2 font-normal cursor-pointer';
+    'flex relative items-center p-1 rounded-xl border-2 font-normal cursor-pointer';
   let className = `${baseClasses}`;
 
   if (disabled) {
@@ -69,7 +69,7 @@ const Overlay = styled.div`
   width: 32px;
   height: 32px;
   position: absolute;
-  right: 58px;
+  right: 40px;
   background: white;
 `;
 
