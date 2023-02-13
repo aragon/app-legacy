@@ -179,7 +179,6 @@ const Proposal: React.FC = () => {
     }
   }, [editor, proposal]);
 
-  console.log(proposal?.actions);
   // decode proposal actions
   useEffect(() => {
     if (!proposal) return;
