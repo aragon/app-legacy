@@ -171,10 +171,10 @@
   dependencies:
     "@apollographql/graphql-language-service-types" "^2.0.0"
 
-"@aragon/core-contracts-ethers@^0.6.0-alpha":
-  version "0.6.0-alpha"
-  resolved "https://registry.yarnpkg.com/@aragon/core-contracts-ethers/-/core-contracts-ethers-0.6.0-alpha.tgz#d21f392605af7479517760d3e5d2544ccb409bf4"
-  integrity sha512-FXv2THDpfsxjFqxNjhSMqv6ayx31PLTeWLhGyHx4IqshOz8h12rERq53kGOOeuKZ3MqxpJGt6/1eCZwm67wPbQ==
+"@aragon/core-contracts-ethers@^0.7.1-alpha":
+  version "0.7.1-alpha"
+  resolved "https://registry.yarnpkg.com/@aragon/core-contracts-ethers/-/core-contracts-ethers-0.7.1-alpha.tgz#601e6a5f03361b3ccf9a659841d3a1712577fb8d"
+  integrity sha512-WFcse9/AjA6Wv27ppXP6qRKd/jhVeW/azbC++WhNST9C7n+V/iOPLA+BM8yn5gvDW5mHWzjVZG2L9fx31Tc1zQ==
   dependencies:
     ethers "^5.6.2"
 
@@ -187,13 +187,13 @@
     "@web3-react/types" "^6.0.7"
     tiny-warning "^1.0.3"
 
-"@aragon/sdk-client@^0.19.0-alpha":
-  version "0.19.0-alpha"
-  resolved "https://registry.yarnpkg.com/@aragon/sdk-client/-/sdk-client-0.19.0-alpha.tgz#49958d01784941f62a25738734c99850df494467"
-  integrity sha512-jJiNDVHbChPpKkfw790BNtt4QsQ6oLn6d1pa429BZCBYlxhP3YeaC1R8A8Pcla5JO3XpdGYkaFoKx+1TQVjh/Q==
+"@aragon/sdk-client@^0.20.0-beta":
+  version "0.20.0-beta"
+  resolved "https://registry.yarnpkg.com/@aragon/sdk-client/-/sdk-client-0.20.0-beta.tgz#eebec5f9a02a927b8693f41c8d453d5c73c55f61"
+  integrity sha512-vBCJS5ia81KbErGqzwLkyvgCTqWafqpCezD6oobQ63vmU8d0eJ5dQ7WAeZFNyoYnWQiK1KyFoOwt3Q3q+F2GSg==
   dependencies:
-    "@aragon/core-contracts-ethers" "^0.6.0-alpha"
-    "@aragon/sdk-common" "^0.9.2-alpha"
+    "@aragon/core-contracts-ethers" "^0.7.1-alpha"
+    "@aragon/sdk-common" "^0.10.0-beta"
     "@aragon/sdk-ipfs" "^0.2.0-alpha"
     "@ethersproject/abstract-signer" "^5.5.0"
     "@ethersproject/bignumber" "^5.6.0"
@@ -204,10 +204,10 @@
     graphql "^16.5.0"
     graphql-request "^4.3.0"
 
-"@aragon/sdk-common@^0.9.2-alpha":
-  version "0.9.2-alpha"
-  resolved "https://registry.yarnpkg.com/@aragon/sdk-common/-/sdk-common-0.9.2-alpha.tgz#880fbc33e1bd785b98669125b8106017b25038ca"
-  integrity sha512-7B/s7Y17O+aNunCYkgWbe68RnNPgQE3fNbcpiSH7srZS07KHb0bggmmisdeGLZOpn+Gjvp44PLroviMY0dJXaw==
+"@aragon/sdk-common@^0.10.0-beta":
+  version "0.10.0-beta"
+  resolved "https://registry.yarnpkg.com/@aragon/sdk-common/-/sdk-common-0.10.0-beta.tgz#c33af6b8983db18b0fbf8d60fe3836c93ce1e666"
+  integrity sha512-A0c46wEF6ubh7tRsMtd80POgkLrE2gcfHM0A19SKzEIod8UVdj/kgfzGush9wBAdx7THnXQLg28mnAU303IBRw==
 
 "@aragon/sdk-ipfs@^0.2.0-alpha":
   version "0.2.0-alpha"

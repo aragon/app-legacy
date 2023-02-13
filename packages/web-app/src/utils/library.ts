@@ -108,21 +108,24 @@ export async function decodeWithdrawToAction(
   client: Client | undefined,
   apolloClient: ApolloClient<object>,
   provider: providers.Provider,
-  network: SupportedNetworks
+  network: SupportedNetworks,
+  to: string,
+  value: bigint
 ): Promise<ActionWithdraw | undefined> {
   if (!client || !data) {
     console.error('SDK client is not initialized correctly');
     return;
   }
 
-  const decoded = client.decoding.withdrawAction(data);
+  const decoded = client.decoding.withdrawAction(to, value, data);
 
   if (!decoded) {
     console.error('Unable to decode withdraw action');
     return;
   }
 
-  const address = decoded?.tokenAddress || constants.AddressZero;
+  const address =
+    decoded.type === 'native' ? constants.AddressZero : decoded?.tokenAddress;
   try {
     const [response, apiResponse] = await Promise.all([
       getTokenInfo(address, provider, CHAIN_METADATA[network].nativeCurrency),
@@ -132,7 +135,7 @@ export async function decodeWithdrawToAction(
     return {
       amount: Number(formatUnits(decoded.amount, response.decimals)),
       name: 'withdraw_assets',
-      to: decoded.recipientAddress,
+      to: decoded.recipientAddressOrEns,
       tokenBalance: 0, // unnecessary?
       tokenAddress: address,
       tokenImgUrl: apiResponse?.imgUrl || '',

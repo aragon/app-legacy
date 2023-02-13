@@ -9,6 +9,7 @@ import {
   ProposalMetadata,
   TokenVotingClient,
   VotingSettings,
+  WithdrawParams,
 } from '@aragon/sdk-client';
 import React, {useCallback, useEffect, useMemo, useState} from 'react';
 import {useFormContext} from 'react-hook-form';
@@ -153,11 +154,11 @@ const CreateProposalProvider: React.FC<Props> = ({
       switch (action.name) {
         case 'withdraw_assets': {
           actions.push(
-            client.encoding.withdrawAction(dao, {
-              recipientAddress: action.to,
+            client.encoding.withdrawAction({
+              recipientAddressOrEns: action.to,
               amount: BigInt(Number(action.amount) * Math.pow(10, 18)),
               tokenAddress: action.tokenAddress,
-            })
+            } as WithdrawParams)
           );
           break;
         }
