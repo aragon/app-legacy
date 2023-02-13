@@ -56,6 +56,7 @@ import {
   decodeAddMembersToAction,
   decodeMetadataToAction,
   decodeMintTokensToAction,
+  decodeMultisigSettingsToAction,
   decodePluginSettingsToAction,
   decodeRemoveMembersToAction,
   decodeWithdrawToAction,
@@ -178,6 +179,7 @@ const Proposal: React.FC = () => {
     }
   }, [editor, proposal]);
 
+  console.log(proposal?.actions);
   // decode proposal actions
   useEffect(() => {
     if (!proposal) return;
@@ -223,12 +225,18 @@ const Proposal: React.FC = () => {
               pluginClient as MultisigClient
             );
           case 'updateVotingSettings':
-            // TODO add multisig option here or inside decoder
             return decodePluginSettingsToAction(
               action.data,
               pluginClient as TokenVotingClient,
               (proposal as TokenVotingProposal).totalVotingWeight as bigint,
               proposalErc20Token
+            );
+          case 'updateMultisigSettings':
+            return Promise.resolve(
+              decodeMultisigSettingsToAction(
+                action.data,
+                pluginClient as MultisigClient
+              )
             );
           case 'setMetadata':
             return decodeMetadataToAction(action.data, client);

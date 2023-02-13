@@ -25,6 +25,7 @@ import {
   ActionMintToken,
   ActionRemoveAddress,
   ActionUpdateMetadata,
+  ActionUpdateMultisigPluginSettings,
   ActionUpdatePluginSettings,
   ActionWithdraw,
 } from 'utils/types';
@@ -284,6 +285,21 @@ export async function decodePluginSettingsToAction(
       token,
       totalVotingWeight,
     },
+  };
+}
+
+export function decodeMultisigSettingsToAction(
+  data: Uint8Array | undefined,
+  client: MultisigClient
+): ActionUpdateMultisigPluginSettings | undefined {
+  if (!client || !data) {
+    console.error('SDK client is not initialized correctly');
+    return;
+  }
+
+  return {
+    name: 'modify_multisig_voting_settings',
+    inputs: client.decoding.updateMultisigVotingSettings(data),
   };
 }
 
