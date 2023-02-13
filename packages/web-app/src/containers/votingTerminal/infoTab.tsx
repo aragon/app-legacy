@@ -124,7 +124,7 @@ const InfoTab: React.FC<Props> = ({
         )}
 
         {/* Multisig current approvals */}
-        {currentApprovals !== undefined && memberCount && (
+        {currentApprovals !== undefined && minApproval && memberCount && (
           <InfoLine>
             <p className="flex-1">{t('votingTerminal.currentApproval')}</p>
 
@@ -134,7 +134,7 @@ const InfoTab: React.FC<Props> = ({
                   value: currentApprovals,
                   total: minApproval,
                 })} (${NumberFormatter.format(
-                  (currentApprovals / memberCount) * 100
+                  (currentApprovals / minApproval) * 100
                 )}%)`}
               </Strong>
               <div className="flex gap-x-1 justify-end">
