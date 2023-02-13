@@ -10,7 +10,9 @@ export type DateInputProps = React.InputHTMLAttributes<HTMLInputElement>;
 
 export const DateInput: React.FC<DateInputProps> = ({disabled, ...props}) => {
   const isFF = navigator.userAgent.indexOf('Firefox') !== -1;
-  const inputRef = useRef<HTMLInputElement>(null);
+  // Temorary add disabled linster for this line typescript cant detect that showPicker is exists on HTMLInputElement
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const inputRef = useRef<any>(null);
 
   const handleClick = () => {
     inputRef.current?.showPicker();
