@@ -22,7 +22,7 @@ export const Option: React.FC<OptionProps> = ({
       bgWhite={!bgWhite}
       mode="ghost"
       size="small"
-      className="flex-1 justify-center whitespace-nowrap"
+      className="justify-center whitespace-nowrap"
       disabled={disabled}
       onClick={() => onChange?.(value)}
     />

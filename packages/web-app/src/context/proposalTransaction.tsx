@@ -3,6 +3,7 @@ import {
   ExecuteProposalStep,
   IExecuteProposalParams,
   IVoteProposalParams,
+  MultisigClient,
   TokenVotingClient,
   VoteProposalStep,
   VoteValues,
@@ -101,10 +102,8 @@ const ProposalTransactionProvider: React.FC<Props> = ({children}) => {
   }, [daoDetails?.plugins]);
 
   const pluginClient = usePluginClient(
-    // TODO update context to work with multisig
-    // daoDetails?.plugins[0].id as PluginTypes
-    'token-voting.plugin.dao.eth'
-  ) as unknown as TokenVotingClient | undefined;
+    daoDetails?.plugins[0].id as PluginTypes
+  );
 
   const {preferences} = usePrivacyContext();
 
@@ -136,12 +135,21 @@ const ProposalTransactionProvider: React.FC<Props> = ({children}) => {
 
   // estimate voting fees
   const estimateVotingFees = useCallback(async () => {
-    if (voteParams)
-      return pluginClient?.estimation.voteProposal({
-        ...voteParams,
-        proposalId: stripPlgnAdrFromProposalId(voteParams.proposalId),
+    if (voteParams) {
+      if (tokenAddress) {
+        return (pluginClient as TokenVotingClient)?.estimation.voteProposal({
+          ...voteParams,
+          proposalId: stripPlgnAdrFromProposalId(voteParams.proposalId),
+        });
+      }
+
+      return (pluginClient as MultisigClient)?.estimation.approveProposal({
+        pluginAddress: voteParams.pluginAddress,
+        proposalId: BigInt(stripPlgnAdrFromProposalId(voteParams.proposalId)),
+        tryExecution: false,
       });
-  }, [pluginClient?.estimation, voteParams]);
+    }
+  }, [pluginClient, tokenAddress, voteParams]);
 
   const handleExecuteProposal = useCallback(() => {
     setExecuteParams({proposalId: id!, pluginAddress});
@@ -152,8 +160,11 @@ const ProposalTransactionProvider: React.FC<Props> = ({children}) => {
   // estimate proposal execution fees
   const estimateExecuteFees = useCallback(async () => {
     if (executeParams)
+      // TODO: Handle multisig and token voting case
       return pluginClient?.estimation.executeProposal({
         ...executeParams,
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
         proposalId: stripPlgnAdrFromProposalId(executeParams.proposalId),
       });
   }, [executeParams, pluginClient?.estimation]);
@@ -287,10 +298,21 @@ const ProposalTransactionProvider: React.FC<Props> = ({children}) => {
     }
 
     setVoteProcessState(TransactionState.LOADING);
-    const voteSteps = pluginClient?.methods.voteProposal({
-      ...voteParams,
-      proposalId: stripPlgnAdrFromProposalId(voteParams.proposalId),
-    });
+
+    let voteSteps;
+
+    if (!tokenAddress) {
+      voteSteps = (pluginClient as MultisigClient)?.methods.approveProposal({
+        pluginAddress: voteParams.pluginAddress,
+        proposalId: BigInt(stripPlgnAdrFromProposalId(voteParams.proposalId)),
+        tryExecution: false,
+      });
+    } else {
+      voteSteps = (pluginClient as TokenVotingClient)?.methods.voteProposal({
+        ...voteParams,
+        proposalId: stripPlgnAdrFromProposalId(voteParams.proposalId),
+      });
+    }
 
     if (!voteSteps) {
       throw new Error('Voting function is not initialized correctly');
@@ -315,7 +337,8 @@ const ProposalTransactionProvider: React.FC<Props> = ({children}) => {
     handleCloseVoteModal,
     onVoteSubmitted,
     pluginAddress,
-    pluginClient?.methods,
+    pluginClient,
+    tokenAddress,
     voteParams,
     voteProcessState,
   ]);
@@ -358,8 +381,11 @@ const ProposalTransactionProvider: React.FC<Props> = ({children}) => {
     }
 
     setExecuteProcessState(TransactionState.LOADING);
+    // TODO: Handle multisig and token voting case
     const executeSteps = pluginClient?.methods.executeProposal({
       ...executeParams,
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
       proposalId: stripPlgnAdrFromProposalId(executeParams.proposalId),
     });
 
