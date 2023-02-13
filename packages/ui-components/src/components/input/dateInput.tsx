@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useRef} from 'react';
 import styled from 'styled-components';
 
 import {IconCalendar} from '../icons';
@@ -10,19 +10,31 @@ export type DateInputProps = React.InputHTMLAttributes<HTMLInputElement>;
 
 export const DateInput: React.FC<DateInputProps> = ({disabled, ...props}) => {
   const isFF = navigator.userAgent.indexOf('Firefox') !== -1;
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  const handleClick = () => {
+    inputRef.current?.showPicker();
+  };
 
   return (
     <InputContainer data-testid="date-input" disabled={disabled}>
-      <StyledInput type={'date'} required disabled={disabled} {...props} />
-      {/* TODO Rework the whole icon business. The native icon is somehow
-      necessary on chrome to open the native date picker. So currently it's
-      being shown on chrome, although it is not the custom icon from the
-      designs. On the other hand, it doesn't exist on FF, so there, the custom
-      icon is shown.*/}
-      {isFF && (
-        <IconContainer disabled={disabled}>
-          <IconCalendar />
-        </IconContainer>
+      <StyledInput
+        id="date"
+        type={'date'}
+        required
+        disabled={disabled}
+        ref={inputRef}
+        {...props}
+      />
+
+      {/* This is a temporary solution to hide default icon on firefox */}
+      {!disabled && (
+        <>
+          {isFF && <Overlay />}
+          <IconContainer disabled={disabled} onClick={handleClick}>
+            <IconCalendar />
+          </IconContainer>
+        </>
       )}
     </InputContainer>
   );
@@ -35,7 +47,8 @@ allows for hover and active when disabled. */
 type InputContainerProps = Pick<DateInputProps, 'disabled'>;
 
 const InputContainer = styled.div.attrs(({disabled}: InputContainerProps) => {
-  const baseClasses = 'flex items-center p-1 rounded-xl border-2 font-normal';
+  const baseClasses =
+    'flex items-center p-1 rounded-xl border-2 font-normal cursor-pointer';
   let className = `${baseClasses}`;
 
   if (disabled) {
@@ -50,6 +63,14 @@ const InputContainer = styled.div.attrs(({disabled}: InputContainerProps) => {
   return {className, disabled};
 })<DateInputProps>``;
 
+const Overlay = styled.div`
+  width: 32px;
+  height: 32px;
+  position: absolute;
+  right: 58px;
+  background: white;
+`;
+
 const StyledInput = styled.input.attrs(() => {
   const baseClasses = 'w-full bg-transparent';
   const className = `${baseClasses}`;
@@ -57,8 +78,7 @@ const StyledInput = styled.input.attrs(() => {
   return {className};
 })<DateInputProps>`
   ::-webkit-calendar-picker-indicator {
-    margin-top: 4px;
-    margin-bottom: 4px;
+    display: none;
   }
 
   outline: 0;
