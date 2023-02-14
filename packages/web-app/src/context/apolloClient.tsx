@@ -22,6 +22,7 @@ import {
   PENDING_DAOS_KEY,
   PENDING_DEPOSITS_KEY,
   PENDING_EXECUTION_KEY,
+  PENDING_MULTISIG_VOTES_KEY,
   PENDING_PROPOSALS_KEY,
   PENDING_VOTES_KEY,
   SUBGRAPH_API_URL,
@@ -29,11 +30,7 @@ import {
   SupportedNetworks,
 } from 'utils/constants';
 import {customJSONReviver} from 'utils/library';
-import {
-  AddressListVote,
-  DetailedProposal,
-  Erc20ProposalVote,
-} from 'utils/types';
+import {DetailedProposal, Erc20ProposalVote} from 'utils/types';
 import {PRIVACY_KEY} from './privacyContext';
 
 const restLink = new RestLink({
@@ -167,13 +164,26 @@ const pendingDeposits = makeVar<Deposit[]>(depositTxs);
 // PENDING VOTES
 type PendingVotes = {
   /** key is: daoAddress_proposalId */
-  [key: string]: AddressListVote | Erc20ProposalVote;
+  [key: string]: Erc20ProposalVote;
 };
 const pendingVotes = JSON.parse(
   localStorage.getItem(PENDING_VOTES_KEY) || '{}',
   customJSONReviver
 );
+
 const pendingVotesVar = makeVar<PendingVotes>(pendingVotes);
+
+// MULTISIG
+type PendingMultisigVotes = {
+  /** key is: daoAddress_proposalId; value: wallet address */
+  [key: string]: string;
+};
+const pendingMultisigVotes = JSON.parse(
+  localStorage.getItem(PENDING_MULTISIG_VOTES_KEY) || '{}'
+);
+
+const pendingMultisigVotesVar =
+  makeVar<PendingMultisigVotes>(pendingMultisigVotes);
 
 // PENDING EXECUTION
 type PendingExecution = {
@@ -227,6 +237,7 @@ export {
   pendingDeposits,
   pendingProposalsVar,
   pendingVotesVar,
+  pendingMultisigVotesVar,
   pendingDaoCreationVar,
   pendingExecutionVar,
 };
