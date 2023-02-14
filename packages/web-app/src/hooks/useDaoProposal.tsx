@@ -3,7 +3,7 @@ import {ProposalStatus} from '@aragon/sdk-client';
 import {useCallback, useEffect, useState} from 'react';
 
 import {
-  pendingExecutionVar,
+  pendingTokenBasedExecutionVar,
   pendingMultisigApprovalsVar,
   pendingProposalsVar,
   pendingTokenBasedVotesVar,
@@ -38,7 +38,7 @@ export const useDaoProposal = (
   const cachedTokenBasedVotes = useReactiveVar(pendingTokenBasedVotesVar);
 
   const proposalCache = useReactiveVar(pendingProposalsVar);
-  const cachedExecutions = useReactiveVar(pendingExecutionVar);
+  const cachedExecutions = useReactiveVar(pendingTokenBasedExecutionVar);
 
   const augmentWithExecutionCache = useCallback(
     (proposal: DetailedProposal) => {
@@ -53,7 +53,7 @@ export const useDaoProposal = (
         delete newExecutionCache[id];
 
         // update cache
-        pendingExecutionVar(newExecutionCache);
+        pendingTokenBasedExecutionVar(newExecutionCache);
         if (preferences?.functional) {
           localStorage.setItem(
             PENDING_EXECUTION_KEY,

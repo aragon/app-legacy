@@ -37,7 +37,7 @@ import {customJSONReplacer, generateCachedProposalId} from 'utils/library';
 import {stripPlgnAdrFromProposalId} from 'utils/proposals';
 import {fetchBalance} from 'utils/tokens';
 import {
-  pendingExecutionVar,
+  pendingTokenBasedExecutionVar,
   pendingMultisigApprovalsVar,
   pendingTokenBasedVotesVar,
 } from './apolloClient';
@@ -81,7 +81,7 @@ const ProposalTransactionProvider: React.FC<Props> = ({children}) => {
   const [showVoteModal, setShowVoteModal] = useState(false);
   const [showExecuteModal, setShowExecuteModal] = useState(false);
 
-  const cachedExecution = useReactiveVar(pendingExecutionVar);
+  const cachedExecution = useReactiveVar(pendingTokenBasedExecutionVar);
   const cachedMultisigVotes = useReactiveVar(pendingMultisigApprovalsVar);
   const cachedTokenBasedVotes = useReactiveVar(pendingTokenBasedVotesVar);
 
@@ -281,7 +281,7 @@ const ProposalTransactionProvider: React.FC<Props> = ({children}) => {
         ...cachedExecution,
         [cachedProposalId]: true,
       };
-      pendingExecutionVar(newCache);
+      pendingTokenBasedExecutionVar(newCache);
 
       if (preferences?.functional) {
         localStorage.setItem(

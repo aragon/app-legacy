@@ -9,7 +9,7 @@ import {
 import {useCallback, useEffect, useState} from 'react';
 
 import {
-  pendingExecutionVar,
+  pendingTokenBasedExecutionVar,
   pendingMultisigApprovalsVar,
   pendingProposalsVar,
   pendingTokenBasedVotesVar,
@@ -51,7 +51,7 @@ export function useProposals(
   const cachedMultisigVotes = useReactiveVar(pendingMultisigApprovalsVar);
   const cachedTokenBasedVotes = useReactiveVar(pendingTokenBasedVotesVar);
 
-  const cachedExecutions = useReactiveVar(pendingExecutionVar);
+  const cachedExecutions = useReactiveVar(pendingTokenBasedExecutionVar);
   const proposalCache = useReactiveVar(pendingProposalsVar);
 
   const augmentProposalsWithCache = useCallback(
