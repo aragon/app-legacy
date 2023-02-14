@@ -34,6 +34,7 @@ export function useProposals(
 ): HookData<Array<ProposalListItem>> {
   const [data, setData] = useState<Array<ProposalListItem>>([]);
   const [error, setError] = useState<Error>();
+  const [isInitialLoading, setIsInitialLoading] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
 
   const client = usePluginClient(type);
@@ -103,12 +104,22 @@ export function useProposals(
           direction: SortDirection.DESC,
         });
 
+        console.log('proposals', {
+          daoAddressOrEns: daoAddress,
+          status,
+          limit,
+          skip,
+          sortBy: ProposalSortBy.CREATED_AT,
+          direction: SortDirection.DESC,
+        });
+
         setData([...augmentProposalsWithCache(proposals || [])]);
       } catch (err) {
         console.error(err);
         setError(err as Error);
       } finally {
         setIsLoading(false);
+        setIsInitialLoading(false);
       }
     }
 
@@ -122,5 +133,5 @@ export function useProposals(
     status,
   ]);
 
-  return {data, error, isLoading};
+  return {data, error, isLoading, isInitialLoading};
 }

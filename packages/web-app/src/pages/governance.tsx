@@ -34,7 +34,11 @@ const Governance: React.FC = () => {
   const [endReached, setEndReached] = useState(false);
   const [filterValue, setFilterValue] = useState<ProposalStatus | 'All'>('All');
 
-  const {data: proposals, isLoading: proposalsAreLoading} = useProposals(
+  const {
+    data: proposals,
+    isLoading: proposalsAreLoading,
+    isInitialLoading,
+  } = useProposals(
     daoDetails?.address as string,
     daoDetails?.plugins[0].id as PluginTypes,
     PROPOSALS_PER_PAGE,
@@ -43,9 +47,8 @@ const Governance: React.FC = () => {
   );
 
   // Show proposals loading when loading flag is true and list is empty
-  // Othervise it means there is a show more was clocked
-  const isProposalsLoading =
-    (proposalsAreLoading || isLoading) && !proposals?.length;
+  // Othervise it means there is a show more was clicked
+  const isPageInitialLoading = isInitialLoading || isLoading;
 
   const [displayedProposals, setDisplayedProposals] = useState<
     ProposalListItem[]
@@ -68,11 +71,16 @@ const Governance: React.FC = () => {
     if (!isLoading) setSkip(prev => prev + PROPOSALS_PER_PAGE);
   };
 
-  if (isProposalsLoading) {
+  if (isPageInitialLoading) {
     return <Loading />;
   }
 
-  if (!displayedProposals?.length && filterValue === 'All') {
+  if (
+    !isPageInitialLoading &&
+    !proposalsAreLoading &&
+    !displayedProposals?.length &&
+    filterValue === 'All'
+  ) {
     return (
       <>
         <Container>
