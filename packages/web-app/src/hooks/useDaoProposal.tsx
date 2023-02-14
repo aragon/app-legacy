@@ -2,10 +2,14 @@ import {useReactiveVar} from '@apollo/client';
 import {useEffect, useState} from 'react';
 
 import {
+  PendingMultisigApprovals,
   pendingMultisigApprovalsVar,
+  PendingMultisigExecution,
   pendingMultisigExecutionVar,
   pendingProposalsVar,
+  PendingTokenBasedExecution,
   pendingTokenBasedExecutionVar,
+  PendingTokenBasedVotes,
   pendingTokenBasedVotesVar,
 } from 'context/apolloClient';
 import {usePrivacyContext} from 'context/privacyContext';
@@ -59,42 +63,27 @@ export const useDaoProposal = (
 
         const cachedProposal = proposalCache[daoAddress]?.[proposalId];
         let cachedVotes;
-        let augmentedProposal;
+        let cachedExecutions;
 
         if (pluginType === 'multisig.plugin.dao.eth') {
           cachedVotes = cachedMultisigVotes;
+          cachedExecutions = cachedMultisigExecutions;
         } else {
           cachedVotes = cachedTokenBasedVotes;
+          cachedExecutions = cachedTokenBaseExecutions;
         }
 
         const proposal = await pluginClient?.methods.getProposal(proposalId);
         if (proposal) {
-          augmentedProposal = {
-            ...augmentProposalWithCachedVote(
+          setData(
+            getAugmentedProposal(
               proposal,
               daoAddress,
+              cachedExecutions,
               cachedVotes,
               preferences?.functional
-            ),
-            ...(isTokenBasedProposal(proposal)
-              ? augmentProposalWithCachedExecution(
-                  proposal,
-                  daoAddress,
-                  cachedTokenBaseExecutions,
-                  preferences?.functional,
-                  pendingTokenBasedExecutionVar,
-                  PENDING_EXECUTION_KEY
-                )
-              : augmentProposalWithCachedExecution(
-                  proposal,
-                  daoAddress,
-                  cachedMultisigExecutions,
-                  preferences?.functional,
-                  pendingMultisigExecutionVar,
-                  PENDING_MULTISIG_EXECUTION_KEY
-                )),
-          };
-          setData(augmentedProposal);
+            )
+          );
 
           // remove cached proposal if it exists
           if (cachedProposal) {
@@ -112,32 +101,15 @@ export const useDaoProposal = (
             }
           }
         } else if (cachedProposal) {
-          augmentedProposal = {
-            ...augmentProposalWithCachedVote(
+          setData(
+            getAugmentedProposal(
               cachedProposal as DetailedProposal,
               daoAddress,
+              cachedExecutions,
               cachedVotes,
               preferences?.functional
-            ),
-            ...(isTokenBasedProposal(cachedProposal)
-              ? augmentProposalWithCachedExecution(
-                  cachedProposal,
-                  daoAddress,
-                  cachedTokenBaseExecutions,
-                  preferences?.functional,
-                  pendingTokenBasedExecutionVar,
-                  PENDING_EXECUTION_KEY
-                )
-              : augmentProposalWithCachedExecution(
-                  cachedProposal as DetailedProposal,
-                  daoAddress,
-                  cachedMultisigExecutions,
-                  preferences?.functional,
-                  pendingMultisigExecutionVar,
-                  PENDING_MULTISIG_EXECUTION_KEY
-                )),
-          };
-          setData(augmentedProposal);
+            )
+          );
         }
       } catch (err) {
         console.error(err);
@@ -162,3 +134,49 @@ export const useDaoProposal = (
 
   return {data, error, isLoading};
 };
+
+// extracted for readability
+function getAugmentedProposal(
+  proposal: DetailedProposal,
+  daoAddress: string,
+  cachedExecutions: PendingTokenBasedExecution | PendingMultisigExecution,
+  cachedVotes: PendingTokenBasedVotes | PendingMultisigApprovals,
+  functionalCookiesEnabled: boolean | undefined
+): DetailedProposal {
+  if (isTokenBasedProposal(proposal)) {
+    return {
+      ...augmentProposalWithCachedVote(
+        proposal,
+        daoAddress,
+        cachedVotes,
+        functionalCookiesEnabled
+      ),
+
+      ...augmentProposalWithCachedExecution(
+        proposal,
+        daoAddress,
+        cachedExecutions,
+        functionalCookiesEnabled,
+        pendingTokenBasedExecutionVar,
+        PENDING_EXECUTION_KEY
+      ),
+    };
+  }
+
+  return {
+    ...augmentProposalWithCachedVote(
+      proposal,
+      daoAddress,
+      cachedVotes,
+      functionalCookiesEnabled
+    ),
+    ...augmentProposalWithCachedExecution(
+      proposal,
+      daoAddress,
+      cachedExecutions,
+      functionalCookiesEnabled,
+      pendingMultisigExecutionVar,
+      PENDING_MULTISIG_EXECUTION_KEY
+    ),
+  };
+}
