@@ -104,15 +104,6 @@ export function useProposals(
           direction: SortDirection.DESC,
         });
 
-        console.log('proposals', {
-          daoAddressOrEns: daoAddress,
-          status,
-          limit,
-          skip,
-          sortBy: ProposalSortBy.CREATED_AT,
-          direction: SortDirection.DESC,
-        });
-
         setData([...augmentProposalsWithCache(proposals || [])]);
       } catch (err) {
         console.error(err);
