@@ -1,17 +1,25 @@
 import {useReactiveVar} from '@apollo/client';
-import {ProposalStatus} from '@aragon/sdk-client';
-import {useCallback, useEffect, useState} from 'react';
+import {useEffect, useState} from 'react';
 
 import {
-  pendingTokenBasedExecutionVar,
   pendingMultisigApprovalsVar,
+  pendingMultisigExecutionVar,
   pendingProposalsVar,
+  pendingTokenBasedExecutionVar,
   pendingTokenBasedVotesVar,
 } from 'context/apolloClient';
 import {usePrivacyContext} from 'context/privacyContext';
-import {PENDING_EXECUTION_KEY, PENDING_PROPOSALS_KEY} from 'utils/constants';
-import {customJSONReplacer, generateCachedProposalId} from 'utils/library';
-import {augmentProposalWithVoteCache} from 'utils/proposals';
+import {
+  PENDING_EXECUTION_KEY,
+  PENDING_MULTISIG_EXECUTION_KEY,
+  PENDING_PROPOSALS_KEY,
+} from 'utils/constants';
+import {customJSONReplacer} from 'utils/library';
+import {
+  augmentProposalWithCachedExecution,
+  augmentProposalWithCachedVote,
+  isTokenBasedProposal,
+} from 'utils/proposals';
 import {DetailedProposal, HookData} from 'utils/types';
 import {PluginTypes, usePluginClient} from './usePluginClient';
 
@@ -38,60 +46,55 @@ export const useDaoProposal = (
   const cachedTokenBasedVotes = useReactiveVar(pendingTokenBasedVotesVar);
 
   const proposalCache = useReactiveVar(pendingProposalsVar);
-  const cachedExecutions = useReactiveVar(pendingTokenBasedExecutionVar);
 
-  const augmentWithExecutionCache = useCallback(
-    (proposal: DetailedProposal) => {
-      const id = generateCachedProposalId(daoAddress, proposalId);
-      const cachedExecution = cachedExecutions[id];
-
-      // no cache return original proposal
-      if (!cachedExecution) return proposal;
-
-      if (proposal.status === ProposalStatus.EXECUTED) {
-        const newExecutionCache = {...cachedExecutions};
-        delete newExecutionCache[id];
-
-        // update cache
-        pendingTokenBasedExecutionVar(newExecutionCache);
-        if (preferences?.functional) {
-          localStorage.setItem(
-            PENDING_EXECUTION_KEY,
-            JSON.stringify(newExecutionCache, customJSONReplacer)
-          );
-        }
-
-        return proposal;
-      } else {
-        return {...proposal, status: ProposalStatus.EXECUTED};
-      }
-    },
-    [cachedExecutions, daoAddress, preferences?.functional, proposalId]
+  const cachedTokenBaseExecutions = useReactiveVar(
+    pendingTokenBasedExecutionVar
   );
+  const cachedMultisigExecutions = useReactiveVar(pendingMultisigExecutionVar);
 
   useEffect(() => {
-    async function getDaoProposal() {
+    const getDaoProposal = async () => {
       try {
         setIsLoading(true);
 
         const cachedProposal = proposalCache[daoAddress]?.[proposalId];
+        let cachedVotes;
+        let augmentedProposal;
 
-        const cachedVotes =
-          pluginType === 'multisig.plugin.dao.eth'
-            ? cachedMultisigVotes
-            : cachedTokenBasedVotes;
+        if (pluginType === 'multisig.plugin.dao.eth') {
+          cachedVotes = cachedMultisigVotes;
+        } else {
+          cachedVotes = cachedTokenBasedVotes;
+        }
 
         const proposal = await pluginClient?.methods.getProposal(proposalId);
         if (proposal) {
-          setData({
-            ...augmentProposalWithVoteCache(
+          augmentedProposal = {
+            ...augmentProposalWithCachedVote(
               proposal,
               daoAddress,
               cachedVotes,
               preferences?.functional
             ),
-            ...augmentWithExecutionCache(proposal),
-          });
+            ...(isTokenBasedProposal(proposal)
+              ? augmentProposalWithCachedExecution(
+                  proposal,
+                  daoAddress,
+                  cachedTokenBaseExecutions,
+                  preferences?.functional,
+                  pendingTokenBasedExecutionVar,
+                  PENDING_EXECUTION_KEY
+                )
+              : augmentProposalWithCachedExecution(
+                  proposal,
+                  daoAddress,
+                  cachedMultisigExecutions,
+                  preferences?.functional,
+                  pendingMultisigExecutionVar,
+                  PENDING_MULTISIG_EXECUTION_KEY
+                )),
+          };
+          setData(augmentedProposal);
 
           // remove cached proposal if it exists
           if (cachedProposal) {
@@ -109,15 +112,32 @@ export const useDaoProposal = (
             }
           }
         } else if (cachedProposal) {
-          setData({
-            ...augmentProposalWithVoteCache(
+          augmentedProposal = {
+            ...augmentProposalWithCachedVote(
               cachedProposal as DetailedProposal,
               daoAddress,
               cachedVotes,
               preferences?.functional
             ),
-            ...augmentWithExecutionCache(cachedProposal as DetailedProposal),
-          });
+            ...(isTokenBasedProposal(cachedProposal)
+              ? augmentProposalWithCachedExecution(
+                  cachedProposal,
+                  daoAddress,
+                  cachedTokenBaseExecutions,
+                  preferences?.functional,
+                  pendingTokenBasedExecutionVar,
+                  PENDING_EXECUTION_KEY
+                )
+              : augmentProposalWithCachedExecution(
+                  cachedProposal as DetailedProposal,
+                  daoAddress,
+                  cachedMultisigExecutions,
+                  preferences?.functional,
+                  pendingMultisigExecutionVar,
+                  PENDING_MULTISIG_EXECUTION_KEY
+                )),
+          };
+          setData(augmentedProposal);
         }
       } catch (err) {
         console.error(err);
@@ -125,11 +145,12 @@ export const useDaoProposal = (
       } finally {
         setIsLoading(false);
       }
-    }
+    };
     if (proposalId) getDaoProposal();
   }, [
-    augmentWithExecutionCache,
+    cachedMultisigExecutions,
     cachedMultisigVotes,
+    cachedTokenBaseExecutions,
     cachedTokenBasedVotes,
     daoAddress,
     pluginClient?.methods,

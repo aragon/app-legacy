@@ -32,6 +32,8 @@ import {
   CachedProposal,
   PendingMultisigApprovals,
   pendingMultisigApprovalsVar,
+  PendingMultisigExecution,
+  PendingTokenBasedExecution,
   PendingTokenBasedVotes,
   pendingTokenBasedVotesVar,
 } from 'context/apolloClient';
@@ -53,7 +55,13 @@ import {
   SupportedProposals,
   SupportedVotingSettings,
 } from './types';
-import {PENDING_VOTES_KEY, PENDING_MULTISIG_VOTES_KEY} from './constants';
+import {
+  PENDING_VOTES_KEY,
+  PENDING_MULTISIG_VOTES_KEY,
+  PENDING_EXECUTION_KEY,
+  PENDING_MULTISIG_EXECUTION_KEY,
+} from './constants';
+import {ReactiveVar} from '@apollo/client';
 
 export type TokenVotingOptions = StrictlyExclude<
   VoterType['option'],
@@ -918,14 +926,14 @@ export function getNonEmptyActions(
 }
 
 /**
- * add cached vote to proposal and recalculate dependent info
+ * add cached vote to proposal
  * @param proposal Proposal
  * @param daoAddress dao address
  * @param cachedVotes votes cached
  * @param functionalCookiesEnabled whether functional cookies are enabled
  * @returns a proposal augmented with cached vote
  */
-export const augmentProposalWithVoteCache = (
+export const augmentProposalWithCachedVote = (
   proposal: DetailedProposal,
   daoAddress: string,
   cachedVotes: PendingTokenBasedVotes | PendingMultisigApprovals,
@@ -998,3 +1006,45 @@ export const augmentProposalWithVoteCache = (
     }
   }
 };
+
+/**
+ * Add cached execution to proposal
+ * @param proposal Proposal
+ * @param daoAddress dao address
+ * @param cachedExecutions executions cached
+ * @param functionalCookiesEnabled whether functional cookies are enabled
+ * @returns a proposal augmented with cached execution
+ */
+export function augmentProposalWithCachedExecution(
+  proposal: DetailedProposal,
+  daoAddress: string,
+  cachedExecutions: PendingTokenBasedExecution | PendingMultisigExecution,
+  functionalCookiesEnabled: boolean | undefined,
+  cache: ReactiveVar<PendingMultisigExecution | PendingTokenBasedExecution>,
+  cacheKey: typeof PENDING_EXECUTION_KEY | typeof PENDING_MULTISIG_EXECUTION_KEY
+) {
+  const id = generateCachedProposalId(daoAddress, proposal.id);
+
+  const cachedExecution = cachedExecutions[id];
+
+  // no cache return original proposal
+  if (!cachedExecution) return proposal;
+
+  if (proposal.status === ProposalStatus.EXECUTED) {
+    const newExecutionCache = {...cachedExecutions};
+    delete newExecutionCache[id];
+
+    // update cache
+    cache(newExecutionCache);
+    if (functionalCookiesEnabled) {
+      localStorage.setItem(
+        cacheKey,
+        JSON.stringify(newExecutionCache, customJSONReplacer)
+      );
+    }
+
+    return proposal;
+  } else {
+    return {...proposal, status: ProposalStatus.EXECUTED};
+  }
+}

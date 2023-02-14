@@ -201,7 +201,7 @@ const pendingMultisigApprovalsVar = makeVar<PendingMultisigApprovals>(
  *                PENDING EXECUTION              *
  *************************************************/
 // Token-based
-type PendingTokenBasedExecution = {
+export type PendingTokenBasedExecution = {
   /** key is: daoAddress_proposalId */
   [key: string]: boolean;
 };
@@ -214,7 +214,7 @@ const pendingTokenBasedExecutionVar = makeVar<PendingTokenBasedExecution>(
 );
 
 //================ Multisig
-type PendingMultisigExecution = {
+export type PendingMultisigExecution = {
   /** key is: daoAddress_proposalId */
   [key: string]: boolean;
 };

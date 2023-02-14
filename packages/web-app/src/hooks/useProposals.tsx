@@ -13,6 +13,7 @@ import {
   pendingMultisigApprovalsVar,
   pendingProposalsVar,
   pendingTokenBasedVotesVar,
+  pendingMultisigExecutionVar,
 } from 'context/apolloClient';
 import {usePrivacyContext} from 'context/privacyContext';
 import {PENDING_PROPOSALS_KEY} from 'utils/constants';
@@ -51,7 +52,11 @@ export function useProposals(
   const cachedMultisigVotes = useReactiveVar(pendingMultisigApprovalsVar);
   const cachedTokenBasedVotes = useReactiveVar(pendingTokenBasedVotesVar);
 
-  const cachedExecutions = useReactiveVar(pendingTokenBasedExecutionVar);
+  const cachedTokenBaseExecutions = useReactiveVar(
+    pendingTokenBasedExecutionVar
+  );
+  const cachedMultisigExecutions = useReactiveVar(pendingMultisigExecutionVar);
+
   const proposalCache = useReactiveVar(pendingProposalsVar);
 
   const augmentProposalsWithCache = useCallback(
@@ -78,12 +83,13 @@ export function useProposals(
         } else {
           // proposal not yet fetched, augment and add votes, execution status if necessary
           const id = generateCachedProposalId(daoAddress, proposalId);
-          const cachedProposal = cachedExecutions[id]
-            ? {...daoCache[proposalId], status: ProposalStatus.EXECUTED}
-            : {...daoCache[proposalId]};
 
-          // this is wild
+          // this is wild; add execution and vote
           if (type === 'token-voting.plugin.dao.eth') {
+            const cachedProposal = cachedTokenBaseExecutions[id]
+              ? {...daoCache[proposalId], status: ProposalStatus.EXECUTED}
+              : {...daoCache[proposalId]};
+
             augmentedProposals.unshift({
               ...(addVoteToProposal(
                 cachedProposal as TokenVotingProposal,
@@ -93,6 +99,10 @@ export function useProposals(
           }
 
           if (type === 'multisig.plugin.dao.eth') {
+            const cachedProposal = cachedMultisigExecutions[id]
+              ? {...daoCache[proposalId], status: ProposalStatus.EXECUTED}
+              : {...daoCache[proposalId]};
+
             augmentedProposals.unshift({
               ...(AddApprovalToMultisigToProposal(
                 cachedProposal as MultisigProposal,
