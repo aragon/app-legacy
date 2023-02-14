@@ -4,17 +4,14 @@ import {useCallback, useEffect, useState} from 'react';
 
 import {
   pendingExecutionVar,
+  pendingMultisigVotesVar,
   pendingProposalsVar,
-  pendingVotesVar,
+  pendingTokenBasedVotesVar,
 } from 'context/apolloClient';
 import {usePrivacyContext} from 'context/privacyContext';
-import {
-  PENDING_EXECUTION_KEY,
-  PENDING_PROPOSALS_KEY,
-  PENDING_VOTES_KEY,
-} from 'utils/constants';
+import {PENDING_EXECUTION_KEY, PENDING_PROPOSALS_KEY} from 'utils/constants';
 import {customJSONReplacer, generateCachedProposalId} from 'utils/library';
-import {addVoteToProposal, isErc20VotingProposal} from 'utils/proposals';
+import {augmentProposalWithVoteCache} from 'utils/proposals';
 import {DetailedProposal, HookData} from 'utils/types';
 import {PluginTypes, usePluginClient} from './usePluginClient';
 
@@ -36,47 +33,12 @@ export const useDaoProposal = (
   const pluginClient = usePluginClient(pluginType);
 
   const {preferences} = usePrivacyContext();
-  const cachedVotes = useReactiveVar(pendingVotesVar);
-  const cachedExecutions = useReactiveVar(pendingExecutionVar);
+
+  const cachedMultisigVotes = useReactiveVar(pendingMultisigVotesVar);
+  const cachedTokenBasedVotes = useReactiveVar(pendingTokenBasedVotesVar);
+
   const proposalCache = useReactiveVar(pendingProposalsVar);
-
-  // add cached vote to proposal and recalculate dependent info
-  const augmentWithVoteCache = useCallback(
-    (proposal: DetailedProposal) => {
-      const id = generateCachedProposalId(daoAddress, proposalId);
-      const cachedVote = cachedVotes[id];
-
-      // no cache return original proposal
-      if (!cachedVote) return proposal;
-
-      // vote in cache is returned from SDK, delete cache
-      if (
-        // TODO: Handle Multisig
-        isErc20VotingProposal(proposal) &&
-        proposal.votes.some(
-          v => v.address.toLowerCase() === cachedVote.address.toLowerCase()
-        )
-      ) {
-        const newVoteCache = {...cachedVotes};
-        delete newVoteCache[id];
-
-        // update cache
-        pendingVotesVar(newVoteCache);
-        if (preferences?.functional) {
-          localStorage.setItem(
-            PENDING_VOTES_KEY,
-            JSON.stringify(newVoteCache, customJSONReplacer)
-          );
-        }
-
-        return proposal;
-      } else {
-        // augment with cached vote
-        return addVoteToProposal(proposal, cachedVote);
-      }
-    },
-    [cachedVotes, daoAddress, preferences?.functional, proposalId]
-  );
+  const cachedExecutions = useReactiveVar(pendingExecutionVar);
 
   const augmentWithExecutionCache = useCallback(
     (proposal: DetailedProposal) => {
@@ -114,11 +76,20 @@ export const useDaoProposal = (
 
         const cachedProposal = proposalCache[daoAddress]?.[proposalId];
 
-        // TODO: for Demo purposes
+        const cachedVotes =
+          pluginType === 'multisig.plugin.dao.eth'
+            ? cachedMultisigVotes
+            : cachedTokenBasedVotes;
+
         const proposal = await pluginClient?.methods.getProposal(proposalId);
         if (proposal) {
           setData({
-            ...augmentWithVoteCache(proposal),
+            ...augmentProposalWithVoteCache(
+              proposal,
+              daoAddress,
+              cachedVotes,
+              preferences?.functional
+            ),
             ...augmentWithExecutionCache(proposal),
           });
 
@@ -139,7 +110,12 @@ export const useDaoProposal = (
           }
         } else if (cachedProposal) {
           setData({
-            ...augmentWithVoteCache(cachedProposal as DetailedProposal),
+            ...augmentProposalWithVoteCache(
+              cachedProposal as DetailedProposal,
+              daoAddress,
+              cachedVotes,
+              preferences?.functional
+            ),
             ...augmentWithExecutionCache(cachedProposal as DetailedProposal),
           });
         }
@@ -153,9 +129,11 @@ export const useDaoProposal = (
     if (proposalId) getDaoProposal();
   }, [
     augmentWithExecutionCache,
-    augmentWithVoteCache,
+    cachedMultisigVotes,
+    cachedTokenBasedVotes,
     daoAddress,
     pluginClient?.methods,
+    pluginType,
     preferences?.functional,
     proposalCache,
     proposalId,

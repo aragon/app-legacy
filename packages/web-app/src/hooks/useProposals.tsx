@@ -3,19 +3,25 @@ import {
   ProposalSortBy,
   ProposalStatus,
   SortDirection,
+  MultisigProposal,
+  TokenVotingProposal,
 } from '@aragon/sdk-client';
 import {useCallback, useEffect, useState} from 'react';
 
 import {
   pendingExecutionVar,
+  pendingMultisigVotesVar,
   pendingProposalsVar,
-  pendingVotesVar,
+  pendingTokenBasedVotesVar,
 } from 'context/apolloClient';
 import {usePrivacyContext} from 'context/privacyContext';
 import {PENDING_PROPOSALS_KEY} from 'utils/constants';
 import {customJSONReplacer, generateCachedProposalId} from 'utils/library';
-import {addVoteToProposal} from 'utils/proposals';
-import {DetailedProposal, HookData, ProposalListItem} from 'utils/types';
+import {
+  AddApprovalToMultisigToProposal,
+  addVoteToProposal,
+} from 'utils/proposals';
+import {HookData, ProposalListItem} from 'utils/types';
 import {PluginTypes, usePluginClient} from './usePluginClient';
 
 /**
@@ -41,7 +47,10 @@ export function useProposals(
   const client = usePluginClient(type);
 
   const {preferences} = usePrivacyContext();
-  const cachedVotes = useReactiveVar(pendingVotesVar);
+
+  const cachedMultisigVotes = useReactiveVar(pendingMultisigVotesVar);
+  const cachedTokenBasedVotes = useReactiveVar(pendingTokenBasedVotesVar);
+
   const cachedExecutions = useReactiveVar(pendingExecutionVar);
   const proposalCache = useReactiveVar(pendingProposalsVar);
 
@@ -73,12 +82,24 @@ export function useProposals(
             ? {...daoCache[proposalId], status: ProposalStatus.EXECUTED}
             : {...daoCache[proposalId]};
 
-          augmentedProposals.unshift({
-            ...(addVoteToProposal(
-              cachedProposal as DetailedProposal,
-              cachedVotes[id]
-            ) as ProposalListItem),
-          });
+          // this is wild
+          if (type === 'token-voting.plugin.dao.eth') {
+            augmentedProposals.unshift({
+              ...(addVoteToProposal(
+                cachedProposal as TokenVotingProposal,
+                cachedTokenBasedVotes[id]
+              ) as ProposalListItem),
+            });
+          }
+
+          if (type === 'multisig.plugin.dao.eth') {
+            augmentedProposals.unshift({
+              ...(AddApprovalToMultisigToProposal(
+                cachedProposal as MultisigProposal,
+                cachedMultisigVotes[id]
+              ) as ProposalListItem),
+            });
+          }
         }
       }
 
