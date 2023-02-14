@@ -29,13 +29,18 @@ import {useWallet} from 'hooks/useWallet';
 import {
   CHAIN_METADATA,
   PENDING_EXECUTION_KEY,
+  PENDING_MULTISIG_VOTES_KEY,
   PENDING_VOTES_KEY,
   TransactionState,
 } from 'utils/constants';
 import {customJSONReplacer, generateCachedProposalId} from 'utils/library';
 import {stripPlgnAdrFromProposalId} from 'utils/proposals';
 import {fetchBalance} from 'utils/tokens';
-import {pendingExecutionVar, pendingVotesVar} from './apolloClient';
+import {
+  pendingExecutionVar,
+  pendingMultisigVotesVar,
+  pendingTokenBasedVotesVar,
+} from './apolloClient';
 import {useNetwork} from './network';
 import {usePrivacyContext} from './privacyContext';
 import {useProviders} from './providers';
@@ -76,8 +81,10 @@ const ProposalTransactionProvider: React.FC<Props> = ({children}) => {
   const [showVoteModal, setShowVoteModal] = useState(false);
   const [showExecuteModal, setShowExecuteModal] = useState(false);
 
-  const cachedVotes = useReactiveVar(pendingVotesVar);
   const cachedExecution = useReactiveVar(pendingExecutionVar);
+  const cachedMultisigVotes = useReactiveVar(pendingMultisigVotesVar);
+  const cachedTokenBasedVotes = useReactiveVar(pendingTokenBasedVotesVar);
+
   const [voteParams, setVoteParams] = useState<IVoteProposalParams>();
   const [voteSubmitted, setVoteSubmitted] = useState(false);
   const [voteProcessState, setVoteProcessState] = useState<TransactionState>();
@@ -208,13 +215,39 @@ const ProposalTransactionProvider: React.FC<Props> = ({children}) => {
       let newCache;
       const cachedProposalId = generateCachedProposalId(daoAddress, proposalId);
 
-      // no token address, not tokenBased proposal
-      if (!tokenAddress) {
+      // cache multisig vote
+      if (pluginType === 'multisig.plugin.dao.eth') {
         newCache = {
-          ...cachedVotes,
-          [cachedProposalId]: {address, vote},
+          ...cachedMultisigVotes,
+          [cachedProposalId]: address,
         };
-        // pendingVotesVar(newCache);
+        pendingMultisigVotesVar(newCache);
+
+        if (preferences?.functional) {
+          localStorage.setItem(
+            PENDING_MULTISIG_VOTES_KEY,
+            JSON.stringify(newCache, customJSONReplacer)
+          );
+        }
+        return;
+      }
+
+      // cache token voting vote
+      if (pluginType === 'token-voting.plugin.dao.eth' && tokenAddress) {
+        // fetch token user balance, ie vote weight
+        const weight: BigNumber = await fetchBalance(
+          tokenAddress,
+          address!,
+          provider,
+          CHAIN_METADATA[network].nativeCurrency,
+          false
+        );
+
+        newCache = {
+          ...cachedTokenBasedVotes,
+          [cachedProposalId]: {address, vote, weight: weight.toBigInt()},
+        };
+        pendingTokenBasedVotesVar(newCache);
 
         if (preferences?.functional) {
           localStorage.setItem(
@@ -222,35 +255,15 @@ const ProposalTransactionProvider: React.FC<Props> = ({children}) => {
             JSON.stringify(newCache, customJSONReplacer)
           );
         }
-        return;
-      }
-
-      // fetch token user balance, ie vote weight
-      const weight: BigNumber = await fetchBalance(
-        tokenAddress,
-        address!,
-        provider,
-        CHAIN_METADATA[network].nativeCurrency,
-        false
-      );
-
-      newCache = {
-        ...cachedVotes,
-        [cachedProposalId]: {address, vote, weight: weight.toBigInt()},
-      };
-      pendingVotesVar(newCache);
-      if (preferences?.functional) {
-        localStorage.setItem(
-          PENDING_VOTES_KEY,
-          JSON.stringify(newCache, customJSONReplacer)
-        );
       }
     },
     [
       address,
-      cachedVotes,
+      cachedMultisigVotes,
+      cachedTokenBasedVotes,
       daoAddress,
       network,
+      pluginType,
       preferences?.functional,
       provider,
       tokenAddress,
