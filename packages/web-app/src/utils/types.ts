@@ -161,12 +161,9 @@ type ExecutionData = {
   amount: number;
 };
 
-export type AddressListVote = {
+export type Erc20ProposalVote = {
   address: string;
   vote: VoteValues;
-};
-
-export type Erc20ProposalVote = AddressListVote & {
   weight: bigint;
 };
 

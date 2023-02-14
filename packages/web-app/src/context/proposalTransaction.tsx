@@ -214,7 +214,7 @@ const ProposalTransactionProvider: React.FC<Props> = ({children}) => {
           ...cachedVotes,
           [cachedProposalId]: {address, vote},
         };
-        pendingVotesVar(newCache);
+        // pendingVotesVar(newCache);
 
         if (preferences?.functional) {
           localStorage.setItem(

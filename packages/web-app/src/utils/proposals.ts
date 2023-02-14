@@ -30,20 +30,19 @@ import {TFunction} from 'react-i18next';
 import {ProposalVoteResults} from 'containers/votingTerminal';
 import {CachedProposal} from 'context/apolloClient';
 import {MultisigMember} from 'hooks/useDaoMembers';
+import {isMultisigVotingSettings} from 'hooks/usePluginSettings';
 import {i18n} from '../../i18n.config';
 import {getFormattedUtcOffset, KNOWN_FORMATS} from './date';
 import {formatUnits} from './library';
 import {abbreviateTokenAmount} from './tokens';
 import {
   Action,
-  AddressListVote,
   DetailedProposal,
   Erc20ProposalVote,
   StrictlyExclude,
   SupportedProposals,
   SupportedVotingSettings,
 } from './types';
-import {isMultisigVotingSettings} from 'hooks/usePluginSettings';
 
 export type TokenVotingOptions = StrictlyExclude<
   VoterType['option'],
@@ -645,7 +644,7 @@ export function mapToDetailedProposal(params: MapToDetailedProposalParams) {
  */
 export function addVoteToProposal(
   proposal: DetailedProposal,
-  vote: AddressListVote | Erc20ProposalVote
+  vote: Erc20ProposalVote
 ): DetailedProposal {
   if (!vote) return proposal;
 
