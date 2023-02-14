@@ -213,6 +213,17 @@ const pendingTokenBasedExecutionVar = makeVar<PendingTokenBasedExecution>(
 );
 
 //================ Multisig
+type PendingMultisigExecution = {
+  /** key is: daoAddress_proposalId */
+  [key: string]: boolean;
+};
+const pendingMultisigExecution = JSON.parse(
+  localStorage.getItem(PENDING_EXECUTION_KEY) || '{}',
+  customJSONReviver
+);
+const pendingMultisigExecutionVar = makeVar<PendingMultisigExecution>(
+  pendingMultisigExecution
+);
 
 /*************************************************
  *                 PENDING PROPOSAL              *
@@ -260,4 +271,5 @@ export {
   pendingMultisigApprovalsVar,
   pendingDaoCreationVar,
   pendingTokenBasedExecutionVar,
+  pendingMultisigExecutionVar,
 };
