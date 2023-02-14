@@ -1,19 +1,19 @@
 import {useReactiveVar} from '@apollo/client';
 import {
+  MultisigProposal,
   ProposalSortBy,
   ProposalStatus,
   SortDirection,
-  MultisigProposal,
   TokenVotingProposal,
 } from '@aragon/sdk-client';
 import {useCallback, useEffect, useState} from 'react';
 
 import {
-  pendingTokenBasedExecutionVar,
   pendingMultisigApprovalsVar,
-  pendingProposalsVar,
-  pendingTokenBasedVotesVar,
   pendingMultisigExecutionVar,
+  pendingProposalsVar,
+  pendingTokenBasedExecutionVar,
+  pendingTokenBasedVotesVar,
 } from 'context/apolloClient';
 import {usePrivacyContext} from 'context/privacyContext';
 import {PENDING_PROPOSALS_KEY} from 'utils/constants';
