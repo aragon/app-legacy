@@ -13,7 +13,7 @@ import styled from 'styled-components';
 import AddLinks from 'components/addLinks';
 import {URL_PATTERN} from 'utils/constants';
 import {isOnlyWhitespace} from 'utils/library';
-import {isDaoNameValid} from 'utils/validators';
+import {isDaoEnsNameValid} from 'utils/validators';
 import {useProviders} from 'context/providers';
 
 const DAO_LOGO = {
@@ -36,6 +36,8 @@ const DefineMetadata: React.FC<DefineMetadataProps> = ({
   const {t} = useTranslation();
   const {control, setError, clearErrors, getValues} = useFormContext();
   const {infura: provider} = useProviders();
+
+  const isMyEnsName = currentDaoEnsName === getValues('daoEnsName');
 
   const handleImageError = useCallback(
     (error: {code: string; message: string}) => {
@@ -123,7 +125,7 @@ const DefineMetadata: React.FC<DefineMetadataProps> = ({
         />
       </FormItem>
 
-      {/* ENS Name */}
+      {/* ENS Ens Name */}
       <FormItem>
         <Label
           label={t('labels.daoEnsName')}
@@ -135,9 +137,9 @@ const DefineMetadata: React.FC<DefineMetadataProps> = ({
           control={control}
           defaultValue=""
           rules={{
-            required: t('errors.required.name'),
+            required: t('errors.required.ensName'),
             validate: value =>
-              isDaoNameValid(
+              isDaoEnsNameValid(
                 value,
                 provider,
                 setError,
@@ -154,6 +156,8 @@ const DefineMetadata: React.FC<DefineMetadataProps> = ({
               <TextInput
                 {...{name, value, onBlur, onChange}}
                 placeholder={t('placeHolders.ensName')}
+                // temporary disable DAO Ens name in setting page
+                disabled={isMyEnsName}
               />
               <InputCount>{`${value.length}/128`}</InputCount>
               <ErrorHandler {...{value, error}} />

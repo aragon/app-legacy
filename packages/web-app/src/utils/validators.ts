@@ -172,7 +172,7 @@ export function actionsAreValid(
   return isValid;
 }
 
-export function isDaoNameValid(
+export function isDaoEnsNameValid(
   value: string,
   provider: InfuraProvider,
   setError: (name: string, error: FieldError) => void,

@@ -353,6 +353,7 @@
       "time": "Time is required",
       "timezone": "Timezone is required",
       "name": "DAO name is mandatory",
+      "ensName" : "DAO Ens Subdomain is mandatory",
       "title": "Title is required",
       "summary": "Summary is required",
       "minApproval": "At least one authorized address is required in order to approve a proposal."
