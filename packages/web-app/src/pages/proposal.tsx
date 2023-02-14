@@ -2,6 +2,7 @@ import {useApolloClient} from '@apollo/client';
 import {
   DaoAction,
   MultisigClient,
+  MultisigProposal,
   TokenVotingClient,
   TokenVotingProposal,
   VoteValues,
@@ -335,13 +336,15 @@ const Proposal: React.FC = () => {
   // get early execution status
   const canExecuteEarly = useMemo(
     () =>
-      isTokenVotingSettings(daoSettings) &&
-      isEarlyExecutable(
-        mappedProps?.missingParticipation,
-        proposal,
-        mappedProps?.results,
-        daoSettings.votingMode
-      ),
+      isTokenVotingSettings(daoSettings)
+        ? isEarlyExecutable(
+            mappedProps?.missingParticipation,
+            proposal,
+            mappedProps?.results,
+            daoSettings.votingMode
+          )
+        : (proposal as MultisigProposal)?.approvals.length >=
+          daoSettings.minApprovals,
     [
       daoSettings,
       mappedProps?.missingParticipation,

@@ -133,6 +133,8 @@ export function mapToCardViewProposal(
       id: proposal.id,
       title: proposal.metadata.title,
       description: proposal.metadata.summary,
+      // TODO: Check if we have to include the process key
+      // process: proposal.status.toLowerCase() as CardProposalProps['process'],
       explorer: CHAIN_METADATA[network].explorer,
       publisherAddress: proposal.creatorAddress,
       publishLabel: i18n.t('governance.proposals.publishedBy'),
