@@ -29,6 +29,7 @@ import {useWallet} from 'hooks/useWallet';
 import {
   CHAIN_METADATA,
   PENDING_EXECUTION_KEY,
+  PENDING_MULTISIG_EXECUTION_KEY,
   PENDING_MULTISIG_VOTES_KEY,
   PENDING_VOTES_KEY,
   TransactionState,
@@ -40,6 +41,7 @@ import {
   pendingTokenBasedExecutionVar,
   pendingMultisigApprovalsVar,
   pendingTokenBasedVotesVar,
+  pendingMultisigExecutionVar,
 } from './apolloClient';
 import {useNetwork} from './network';
 import {usePrivacyContext} from './privacyContext';
@@ -81,9 +83,13 @@ const ProposalTransactionProvider: React.FC<Props> = ({children}) => {
   const [showVoteModal, setShowVoteModal] = useState(false);
   const [showExecuteModal, setShowExecuteModal] = useState(false);
 
-  const cachedExecution = useReactiveVar(pendingTokenBasedExecutionVar);
-  const cachedMultisigVotes = useReactiveVar(pendingMultisigApprovalsVar);
   const cachedTokenBasedVotes = useReactiveVar(pendingTokenBasedVotesVar);
+  const cachedMultisigApprovals = useReactiveVar(pendingMultisigApprovalsVar);
+
+  const cachedTokenBaseExecution = useReactiveVar(
+    pendingTokenBasedExecutionVar
+  );
+  const cachedMultisigExecution = useReactiveVar(pendingMultisigExecutionVar);
 
   const [voteParams, setVoteParams] = useState<IVoteProposalParams>();
   const [voteSubmitted, setVoteSubmitted] = useState(false);
@@ -213,23 +219,17 @@ const ProposalTransactionProvider: React.FC<Props> = ({children}) => {
       if (!address) return;
 
       let newCache;
+      let cacheKey = '';
       const cachedProposalId = generateCachedProposalId(daoAddress, proposalId);
 
       // cache multisig vote
       if (pluginType === 'multisig.plugin.dao.eth') {
         newCache = {
-          ...cachedMultisigVotes,
+          ...cachedMultisigApprovals,
           [cachedProposalId]: address,
         };
+        cacheKey = PENDING_MULTISIG_VOTES_KEY;
         pendingMultisigApprovalsVar(newCache);
-
-        if (preferences?.functional) {
-          localStorage.setItem(
-            PENDING_MULTISIG_VOTES_KEY,
-            JSON.stringify(newCache, customJSONReplacer)
-          );
-        }
-        return;
       }
 
       // cache token voting vote
@@ -247,19 +247,21 @@ const ProposalTransactionProvider: React.FC<Props> = ({children}) => {
           ...cachedTokenBasedVotes,
           [cachedProposalId]: {address, vote, weight: weight.toBigInt()},
         };
+        cacheKey = PENDING_VOTES_KEY;
         pendingTokenBasedVotesVar(newCache);
+      }
 
-        if (preferences?.functional) {
-          localStorage.setItem(
-            PENDING_VOTES_KEY,
-            JSON.stringify(newCache, customJSONReplacer)
-          );
-        }
+      // add to local storage
+      if (preferences?.functional) {
+        localStorage.setItem(
+          cacheKey,
+          JSON.stringify(newCache, customJSONReplacer)
+        );
       }
     },
     [
       address,
-      cachedMultisigVotes,
+      cachedMultisigApprovals,
       cachedTokenBasedVotes,
       daoAddress,
       network,
@@ -275,22 +277,46 @@ const ProposalTransactionProvider: React.FC<Props> = ({children}) => {
     async (proposalId: string) => {
       if (!address) return;
 
+      let newCache;
+      let cacheKey = '';
       const cachedProposalId = generateCachedProposalId(daoAddress, proposalId);
 
-      const newCache = {
-        ...cachedExecution,
-        [cachedProposalId]: true,
-      };
-      pendingTokenBasedExecutionVar(newCache);
+      // cache token based execution
+      if (pluginType === 'token-voting.plugin.dao.eth') {
+        newCache = {
+          ...cachedTokenBaseExecution,
+          [cachedProposalId]: true,
+        };
+        cacheKey = PENDING_EXECUTION_KEY;
+        pendingTokenBasedExecutionVar(newCache);
+      }
 
+      // cache multisig execution
+      if (pluginType === 'multisig.plugin.dao.eth') {
+        newCache = {
+          ...cachedMultisigExecution,
+          [cachedProposalId]: true,
+        };
+        cacheKey = PENDING_MULTISIG_EXECUTION_KEY;
+        pendingMultisigExecutionVar(newCache);
+      }
+
+      // add to local storage
       if (preferences?.functional) {
         localStorage.setItem(
-          PENDING_EXECUTION_KEY,
+          cacheKey,
           JSON.stringify(newCache, customJSONReplacer)
         );
       }
     },
-    [address, cachedExecution, daoAddress, preferences?.functional]
+    [
+      address,
+      cachedMultisigExecution,
+      cachedTokenBaseExecution,
+      daoAddress,
+      pluginType,
+      preferences?.functional,
+    ]
   );
 
   // handles vote submission/execution

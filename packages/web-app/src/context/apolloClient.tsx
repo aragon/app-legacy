@@ -22,6 +22,7 @@ import {
   PENDING_DAOS_KEY,
   PENDING_DEPOSITS_KEY,
   PENDING_EXECUTION_KEY,
+  PENDING_MULTISIG_EXECUTION_KEY,
   PENDING_MULTISIG_VOTES_KEY,
   PENDING_PROPOSALS_KEY,
   PENDING_VOTES_KEY,
@@ -218,7 +219,7 @@ type PendingMultisigExecution = {
   [key: string]: boolean;
 };
 const pendingMultisigExecution = JSON.parse(
-  localStorage.getItem(PENDING_EXECUTION_KEY) || '{}',
+  localStorage.getItem(PENDING_MULTISIG_EXECUTION_KEY) || '{}',
   customJSONReviver
 );
 const pendingMultisigExecutionVar = makeVar<PendingMultisigExecution>(
