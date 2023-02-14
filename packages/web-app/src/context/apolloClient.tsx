@@ -179,12 +179,13 @@ export type PendingMultisigApprovals = {
   /** key is: daoAddress_proposalId; value: wallet address */
   [key: string]: string;
 };
-const pendingMultisigVotes = JSON.parse(
+const pendingMultisigApprovals = JSON.parse(
   localStorage.getItem(PENDING_MULTISIG_VOTES_KEY) || '{}'
 );
 
-const pendingMultisigVotesVar =
-  makeVar<PendingMultisigApprovals>(pendingMultisigVotes);
+const pendingMultisigApprovalsVar = makeVar<PendingMultisigApprovals>(
+  pendingMultisigApprovals
+);
 
 // PENDING EXECUTION
 type PendingExecution = {
@@ -238,7 +239,7 @@ export {
   pendingDeposits,
   pendingProposalsVar,
   pendingTokenBasedVotesVar,
-  pendingMultisigVotesVar,
+  pendingMultisigApprovalsVar,
   pendingDaoCreationVar,
   pendingExecutionVar,
 };

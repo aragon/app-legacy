@@ -10,7 +10,7 @@ import {useCallback, useEffect, useState} from 'react';
 
 import {
   pendingExecutionVar,
-  pendingMultisigVotesVar,
+  pendingMultisigApprovalsVar,
   pendingProposalsVar,
   pendingTokenBasedVotesVar,
 } from 'context/apolloClient';
@@ -48,7 +48,7 @@ export function useProposals(
 
   const {preferences} = usePrivacyContext();
 
-  const cachedMultisigVotes = useReactiveVar(pendingMultisigVotesVar);
+  const cachedMultisigVotes = useReactiveVar(pendingMultisigApprovalsVar);
   const cachedTokenBasedVotes = useReactiveVar(pendingTokenBasedVotesVar);
 
   const cachedExecutions = useReactiveVar(pendingExecutionVar);

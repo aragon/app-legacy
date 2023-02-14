@@ -38,7 +38,7 @@ import {stripPlgnAdrFromProposalId} from 'utils/proposals';
 import {fetchBalance} from 'utils/tokens';
 import {
   pendingExecutionVar,
-  pendingMultisigVotesVar,
+  pendingMultisigApprovalsVar,
   pendingTokenBasedVotesVar,
 } from './apolloClient';
 import {useNetwork} from './network';
@@ -82,7 +82,7 @@ const ProposalTransactionProvider: React.FC<Props> = ({children}) => {
   const [showExecuteModal, setShowExecuteModal] = useState(false);
 
   const cachedExecution = useReactiveVar(pendingExecutionVar);
-  const cachedMultisigVotes = useReactiveVar(pendingMultisigVotesVar);
+  const cachedMultisigVotes = useReactiveVar(pendingMultisigApprovalsVar);
   const cachedTokenBasedVotes = useReactiveVar(pendingTokenBasedVotesVar);
 
   const [voteParams, setVoteParams] = useState<IVoteProposalParams>();
@@ -221,7 +221,7 @@ const ProposalTransactionProvider: React.FC<Props> = ({children}) => {
           ...cachedMultisigVotes,
           [cachedProposalId]: address,
         };
-        pendingMultisigVotesVar(newCache);
+        pendingMultisigApprovalsVar(newCache);
 
         if (preferences?.functional) {
           localStorage.setItem(

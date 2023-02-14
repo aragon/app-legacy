@@ -31,7 +31,7 @@ import {ProposalVoteResults} from 'containers/votingTerminal';
 import {
   CachedProposal,
   PendingMultisigApprovals,
-  pendingMultisigVotesVar,
+  pendingMultisigApprovalsVar,
   PendingTokenBasedVotes,
   pendingTokenBasedVotesVar,
 } from 'context/apolloClient';
@@ -984,7 +984,7 @@ export const augmentProposalWithVoteCache = (
       delete newVoteCache[id];
 
       // update cache
-      pendingMultisigVotesVar(newVoteCache);
+      pendingMultisigApprovalsVar(newVoteCache);
       if (functionalCookiesEnabled) {
         localStorage.setItem(
           PENDING_MULTISIG_VOTES_KEY,
