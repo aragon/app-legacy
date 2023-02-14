@@ -1,5 +1,5 @@
 import {useReactiveVar} from '@apollo/client';
-import {ProposalStatus} from '@aragon/sdk-client';
+import {ProposalSortBy, ProposalStatus} from '@aragon/sdk-client';
 import {useCallback, useEffect, useState} from 'react';
 
 import {
@@ -95,6 +95,7 @@ export function useProposals(
           status,
           limit,
           skip,
+          sortBy: ProposalSortBy.CREATED_AT,
         });
 
         setData([...augmentProposalsWithCache(proposals || [])]);
@@ -106,7 +107,7 @@ export function useProposals(
       }
     }
 
-    if (daoAddress) getDaoProposals();
+    if (daoAddress && client?.methods) getDaoProposals();
   }, [
     augmentProposalsWithCache,
     client?.methods,

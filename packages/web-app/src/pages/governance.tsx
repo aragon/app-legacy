@@ -16,7 +16,6 @@ import styled from 'styled-components';
 import ProposalList from 'components/proposalList';
 import {Loading} from 'components/temporary';
 import {PageWrapper} from 'components/wrappers';
-import {useDaoDetails} from 'hooks/useDaoDetails';
 import {useDaoParam} from 'hooks/useDaoParam';
 import {PluginTypes} from 'hooks/usePluginClient';
 import {useProposals} from 'hooks/useProposals';
@@ -25,11 +24,9 @@ import {erc20VotingProposals_erc20VotingProposals} from 'queries/__generated__/e
 import {trackEvent} from 'services/analytics';
 import {ProposalListItem} from 'utils/types';
 import {ProposalStatus} from '@aragon/sdk-client';
-import {customJSONReplacer} from 'utils/library';
 
 const Governance: React.FC = () => {
-  const {data: dao, isLoading} = useDaoParam();
-  const {data: daoDetails, isLoading: detailsAreLoading} = useDaoDetails(dao!);
+  const {data: dao, daoDetails: daoDetails, isLoading} = useDaoParam();
 
   // The number of proposals displayed on each page
   const PROPOSALS_PER_PAGE = 6;
@@ -45,19 +42,24 @@ const Governance: React.FC = () => {
     filterValue !== 'All' ? filterValue : undefined
   );
 
+  // Show proposals loading when loading flag is true and list is empty
+  // Othervise it means there is a show more was clocked
+  const isProposalsLoading =
+    (proposalsAreLoading || isLoading) && !proposals?.length;
+
   const [displayedProposals, setDisplayedProposals] = useState<
     ProposalListItem[]
   >([]);
 
   useEffect(() => {
-    if (proposals.length > 0) {
-      setDisplayedProposals(prev => [...prev, ...proposals]);
-      setEndReached(false);
-    } else {
-      setEndReached(true);
+    if (!proposalsAreLoading) {
+      if (proposals.length < PROPOSALS_PER_PAGE) {
+        setEndReached(true);
+      }
+
+      setDisplayedProposals(prev => [...(prev || []), ...proposals]);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [JSON.stringify(proposals[0], customJSONReplacer)]);
+  }, [proposals, proposalsAreLoading]);
 
   const {t} = useTranslation();
   const navigate = useNavigate();
@@ -66,18 +68,11 @@ const Governance: React.FC = () => {
     if (!isLoading) setSkip(prev => prev + PROPOSALS_PER_PAGE);
   };
 
-  if (
-    (proposalsAreLoading && displayedProposals.length === 0) ||
-    detailsAreLoading ||
-    isLoading
-  ) {
+  if (isProposalsLoading) {
     return <Loading />;
   }
 
-  if (
-    (!displayedProposals || displayedProposals.length === 0) &&
-    filterValue === 'All'
-  ) {
+  if (!displayedProposals?.length && filterValue === 'All') {
     return (
       <>
         <Container>
