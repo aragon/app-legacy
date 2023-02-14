@@ -24,7 +24,7 @@ import {
   augmentProposalWithCachedVote,
   isTokenBasedProposal,
 } from 'utils/proposals';
-import {DetailedProposal, HookData} from 'utils/types';
+import {DetailedProposal, HookData, ProposalId} from 'utils/types';
 import {PluginTypes, usePluginClient} from './usePluginClient';
 
 /**
@@ -35,7 +35,7 @@ import {PluginTypes, usePluginClient} from './usePluginClient';
  */
 export const useDaoProposal = (
   daoAddress: string,
-  proposalId: string,
+  proposalId: ProposalId,
   pluginType: PluginTypes
 ): HookData<DetailedProposal | undefined> => {
   const [data, setData] = useState<DetailedProposal>();
@@ -61,7 +61,8 @@ export const useDaoProposal = (
       try {
         setIsLoading(true);
 
-        const cachedProposal = proposalCache[daoAddress]?.[proposalId];
+        const cachedProposal =
+          proposalCache[daoAddress]?.[proposalId.toString()];
         let cachedVotes;
         let cachedExecutions;
 
@@ -73,7 +74,9 @@ export const useDaoProposal = (
           cachedExecutions = cachedTokenBaseExecutions;
         }
 
-        const proposal = await pluginClient?.methods.getProposal(proposalId);
+        const proposal = await pluginClient?.methods.getProposal(
+          proposalId.toString()
+        );
         if (proposal) {
           setData(
             getAugmentedProposal(
@@ -88,7 +91,7 @@ export const useDaoProposal = (
           // remove cached proposal if it exists
           if (cachedProposal) {
             const newCache = {...proposalCache};
-            delete newCache[daoAddress][proposalId];
+            delete newCache[daoAddress][proposalId.toString()];
 
             // update new values
             pendingProposalsVar(newCache);

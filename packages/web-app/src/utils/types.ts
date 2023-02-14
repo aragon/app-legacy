@@ -104,7 +104,7 @@ export type Deposit = BaseTransfer & {
   transferType: TransferTypes.Deposit;
 };
 export type Withdraw = BaseTransfer & {
-  proposalId: string;
+  proposalId: ProposalId;
   to: Address;
   transferType: TransferTypes.Withdraw;
 };
@@ -366,3 +366,35 @@ export type SmartContract = {
   logo?: string;
   name: string;
 };
+
+/**
+ * Opaque class encapsulating a proposal id, which can
+ * be globally unique or just unique per plugin address
+ */
+export class ProposalId {
+  private id: string;
+
+  constructor(val: Number | string) {
+    this.id = val.toString();
+  }
+
+  /** Returns proposal id in form needed for SDK */
+  export() {
+    return Number(this.id);
+  }
+
+  /** Make the proposal id globally unique by combining with an address (should be plugin address) */
+  makeGloballyUnique(address: string): string {
+    return `${address}_${this.id}`;
+  }
+
+  /** Return a string to be used as part of a url representing a proposal */
+  toUrlSlug(): string {
+    return this.id;
+  }
+
+  /** The proposal id as a string */
+  toString() {
+    return this.id;
+  }
+}

@@ -600,7 +600,7 @@ export type MapToDetailedProposalParams = {
   pluginSettings: VotingSettings;
   metadata: ProposalMetadata;
   proposalParams: ICreateProposalParams;
-  proposalId: string;
+  proposalGuid: string;
 };
 
 /**
@@ -617,7 +617,7 @@ export function mapToDetailedProposal(params: MapToDetailedProposalParams) {
     dao: {address: params.daoAddress, name: params.daoName},
     endDate: params.proposalParams.endDate!,
     startDate: params.proposalParams.startDate!,
-    id: params.proposalId,
+    id: params.proposalGuid,
     metadata: params.metadata,
     status: ProposalStatus.PENDING,
     votes: [],
@@ -644,6 +644,7 @@ export function mapToDetailedProposal(params: MapToDetailedProposalParams) {
       totalVotingWeight: params.totalVotingWeight as bigint,
       usedVotingWeight: BigInt(0),
       result: {yes: BigInt(0), no: BigInt(0), abstain: BigInt(0)},
+      executionTxHash: '',
     } as CachedProposal;
   } else {
     // addressList
@@ -651,6 +652,7 @@ export function mapToDetailedProposal(params: MapToDetailedProposalParams) {
       ...commonProps,
       totalVotingWeight: params.totalVotingWeight as number,
       result: {yes: 0, no: 0, abstain: 0},
+      executionTxHash: '',
     } as CachedProposal;
   }
 }
@@ -799,7 +801,7 @@ export function getVoteStatus(proposal: DetailedProposal, t: TFunction) {
 
 export function getVoteButtonLabel(
   proposal: DetailedProposal,
-  canVoteOrApprove: boolean,
+  canVoteOrApprove: boolean | boolean[],
   votedOrApproved: boolean,
   t: TFunction
 ) {
@@ -817,7 +819,11 @@ export function getVoteButtonLabel(
 
   if (isTokenBasedProposal(proposal)) {
     label = votedOrApproved
-      ? canVoteOrApprove
+      ? (
+          Array.isArray(canVoteOrApprove)
+            ? canVoteOrApprove.some(v => v)
+            : canVoteOrApprove
+        )
         ? t('votingTerminal.status.revote')
         : t('votingTerminal.status.voteSubmitted')
       : t('votingTerminal.voteOver');

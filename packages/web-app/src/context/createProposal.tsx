@@ -48,10 +48,9 @@ import {
   getNonEmptyActions,
   mapToDetailedProposal,
   MapToDetailedProposalParams,
-  prefixProposalIdWithPlgnAdr,
 } from 'utils/proposals';
 import {getTokenInfo} from 'utils/tokens';
-import {Action, ProposalResource} from 'utils/types';
+import {Action, ProposalId, ProposalResource} from 'utils/types';
 import {pendingProposalsVar} from './apolloClient';
 import {useGlobalModalContext} from './globalModals';
 import {useNetwork} from './network';
@@ -230,7 +229,7 @@ const CreateProposalProvider: React.FC<Props> = ({
     });
 
     return Promise.all(actions);
-  }, [client, dao, getValues, pluginClient, pluginSettings, pluginAddress]);
+  }, [client, getValues, pluginClient, pluginSettings, pluginAddress]);
 
   // Because getValues does NOT get updated on each render, leaving this as
   // a function to be called when data is needed instead of a memoized value
@@ -410,7 +409,7 @@ const CreateProposalProvider: React.FC<Props> = ({
   ]);
 
   const handleCacheProposal = useCallback(
-    (proposalId: string) => {
+    (proposalGuid: string) => {
       if (!address || !daoDetails || !pluginSettings || !proposalCreationData)
         return;
 
@@ -441,7 +440,7 @@ const CreateProposalProvider: React.FC<Props> = ({
         // TODO: fix when implementing multisig
         pluginSettings: pluginSettings as VotingSettings,
         proposalParams: proposalCreationData,
-        proposalId,
+        proposalGuid: proposalGuid,
         metadata: metadata,
       };
 
@@ -450,7 +449,7 @@ const CreateProposalProvider: React.FC<Props> = ({
         ...cachedProposals,
         [daoDetails.address]: {
           ...cachedProposals[daoDetails.address],
-          [proposalId]: {...cachedProposal},
+          [proposalGuid]: {...cachedProposal},
         },
       };
       pendingProposalsVar(newCache);
@@ -532,10 +531,9 @@ const CreateProposalProvider: React.FC<Props> = ({
             break;
           case ProposalCreationSteps.DONE: {
             //TODO: replace with step.proposal id when SDK returns proper format
-            const prefixedId = prefixProposalIdWithPlgnAdr(
-              step.proposalId.toString(),
-              pluginAddress
-            );
+            const prefixedId = new ProposalId(
+              step.proposalId
+            ).makeGloballyUnique(pluginAddress);
 
             setProposalId(prefixedId);
             setCreationProcessState(TransactionState.SUCCESS);

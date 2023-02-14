@@ -170,7 +170,7 @@ const DepositProvider = ({children}: {children: ReactNode}) => {
 
     setDepositState(TransactionState.WAITING);
     setShowModal(true);
-  }, [client?.methods, dao, getValues, setModalStep]);
+  }, [client?.methods, getValues, setModalStep]);
 
   // Handler for modal close; don't close modal if transaction is still running
   const handleCloseModal = useCallback(() => {

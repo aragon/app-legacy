@@ -237,7 +237,7 @@ export type CachedProposal = Omit<
 type PendingProposals = {
   // key is dao address
   [key: string]: {
-    // key is proposal id
+    // key is ProposalId.toString()
     [key: string]: CachedProposal;
   };
 };

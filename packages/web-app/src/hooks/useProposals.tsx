@@ -17,12 +17,17 @@ import {
 } from 'context/apolloClient';
 import {usePrivacyContext} from 'context/privacyContext';
 import {PENDING_PROPOSALS_KEY} from 'utils/constants';
-import {customJSONReplacer, generateCachedProposalId} from 'utils/library';
+import {customJSONReplacer} from 'utils/library';
 import {
   addApprovalToMultisigToProposal,
   addVoteToProposal,
 } from 'utils/proposals';
-import {HookData, ProposalListItem} from 'utils/types';
+import {
+  DetailedProposal,
+  HookData,
+  ProposalId,
+  ProposalListItem,
+} from 'utils/types';
 import {PluginTypes, usePluginClient} from './usePluginClient';
 
 /**
@@ -68,7 +73,7 @@ export function useProposals(
 
       for (const proposalId in daoCache) {
         // proposal already picked up; delete it
-        if (fetchedProposals.some(p => proposalId === p.id)) {
+        if (fetchedProposals.some(p => proposalId === p.id.toString())) {
           delete daoCache[proposalId];
 
           // cache and store new values
@@ -82,7 +87,7 @@ export function useProposals(
           }
         } else {
           // proposal not yet fetched, augment and add votes, execution status if necessary
-          const id = generateCachedProposalId(daoAddress, proposalId);
+          const id = new ProposalId(proposalId).makeGloballyUnique(daoAddress);
 
           // this is wild; add execution and vote
           if (type === 'token-voting.plugin.dao.eth') {

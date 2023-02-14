@@ -58,7 +58,7 @@ const TransactionDetail: React.FC<TransactionDetailProps> = ({
       generatePath(Proposal, {
         network,
         dao: daoAddress,
-        id: proposalId,
+        id: proposalId.toUrlSlug(),
       })
     );
     onClose();

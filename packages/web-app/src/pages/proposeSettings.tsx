@@ -43,12 +43,12 @@ import {EditSettings, Proposal} from 'utils/paths';
 import {
   mapToDetailedProposal,
   MapToDetailedProposalParams,
-  prefixProposalIdWithPlgnAdr,
 } from 'utils/proposals';
 import {
   Action,
   ActionUpdateMetadata,
   ActionUpdatePluginSettings,
+  ProposalId,
   ProposalResource,
 } from 'utils/types';
 
@@ -407,17 +407,16 @@ const ProposeSettingWrapper: React.FC<Props> = ({
             break;
           case ProposalCreationSteps.DONE: {
             //TODO: replace with step.proposal id when SDK returns proper format
-            const prefixedId = prefixProposalIdWithPlgnAdr(
-              step.proposalId.toString(),
-              pluginAddress
-            );
+            const proposalGuid = new ProposalId(
+              step.proposalId
+            ).makeGloballyUnique(pluginAddress);
 
-            console.log('proposal id', prefixedId);
-            setProposalId(prefixedId);
+            console.log('proposal id', proposalGuid);
+            setProposalId(proposalGuid);
             setCreationProcessState(TransactionState.SUCCESS);
 
             // cache proposal
-            handleCacheProposal(prefixedId);
+            handleCacheProposal(proposalGuid);
             break;
           }
         }
@@ -429,7 +428,7 @@ const ProposeSettingWrapper: React.FC<Props> = ({
   };
 
   const handleCacheProposal = useCallback(
-    (proposalId: string) => {
+    (proposalGuid: string) => {
       if (!address || !daoDetails || !pluginSettings || !proposalCreationData)
         return;
 
@@ -459,7 +458,7 @@ const ProposeSettingWrapper: React.FC<Props> = ({
         // TODO: Add multisig
         pluginSettings: pluginSettings as VotingSettings,
         proposalParams: proposalCreationData,
-        proposalId,
+        proposalGuid: proposalGuid,
         metadata: metadata,
       };
 
@@ -468,7 +467,7 @@ const ProposeSettingWrapper: React.FC<Props> = ({
         ...cachedProposals,
         [daoDetails.address]: {
           ...cachedProposals[daoDetails.address],
-          [proposalId]: {...cachedProposal},
+          [proposalGuid]: {...cachedProposal},
         },
       };
       pendingProposalsVar(newCache);
