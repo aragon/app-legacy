@@ -162,7 +162,8 @@ const depositTxs = JSON.parse(
 const pendingDeposits = makeVar<Deposit[]>(depositTxs);
 
 // PENDING VOTES
-type PendingVotes = {
+// Token-based
+export type PendingTokenBasedVotes = {
   /** key is: daoAddress_proposalId */
   [key: string]: Erc20ProposalVote;
 };
@@ -171,10 +172,10 @@ const pendingVotes = JSON.parse(
   customJSONReviver
 );
 
-const pendingVotesVar = makeVar<PendingVotes>(pendingVotes);
+const pendingTokenBasedVotesVar = makeVar<PendingTokenBasedVotes>(pendingVotes);
 
-// MULTISIG
-type PendingMultisigVotes = {
+// Multisig
+export type PendingMultisigVotes = {
   /** key is: daoAddress_proposalId; value: wallet address */
   [key: string]: string;
 };
@@ -236,7 +237,7 @@ export {
   selectedDaoVar,
   pendingDeposits,
   pendingProposalsVar,
-  pendingVotesVar,
+  pendingTokenBasedVotesVar,
   pendingMultisigVotesVar,
   pendingDaoCreationVar,
   pendingExecutionVar,
