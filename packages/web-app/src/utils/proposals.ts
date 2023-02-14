@@ -30,7 +30,7 @@ import {TFunction} from 'react-i18next';
 import {ProposalVoteResults} from 'containers/votingTerminal';
 import {
   CachedProposal,
-  PendingMultisigVotes,
+  PendingMultisigApprovals,
   pendingMultisigVotesVar,
   PendingTokenBasedVotes,
   pendingTokenBasedVotesVar,
@@ -928,7 +928,7 @@ export function getNonEmptyActions(
 export const augmentProposalWithVoteCache = (
   proposal: DetailedProposal,
   daoAddress: string,
-  cachedVotes: PendingTokenBasedVotes | PendingMultisigVotes,
+  cachedVotes: PendingTokenBasedVotes | PendingMultisigApprovals,
   functionalCookiesEnabled: boolean | undefined
 ) => {
   const id = generateCachedProposalId(daoAddress, proposal.id);
@@ -966,7 +966,7 @@ export const augmentProposalWithVoteCache = (
   }
 
   if (isMultisigProposal(proposal)) {
-    const cachedVote = (cachedVotes as PendingMultisigVotes)[id];
+    const cachedVote = (cachedVotes as PendingMultisigApprovals)[id];
 
     // no cache return original proposal
     if (!cachedVote) return proposal;
@@ -980,7 +980,7 @@ export const augmentProposalWithVoteCache = (
       )
     ) {
       // delete vote from cache
-      const newVoteCache = {...(cachedVotes as PendingMultisigVotes)};
+      const newVoteCache = {...(cachedVotes as PendingMultisigApprovals)};
       delete newVoteCache[id];
 
       // update cache

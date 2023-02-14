@@ -161,7 +161,7 @@ const depositTxs = JSON.parse(
 );
 const pendingDeposits = makeVar<Deposit[]>(depositTxs);
 
-// PENDING VOTES
+// PENDING VOTES & APPROVALS
 // Token-based
 export type PendingTokenBasedVotes = {
   /** key is: daoAddress_proposalId */
@@ -175,7 +175,7 @@ const pendingVotes = JSON.parse(
 const pendingTokenBasedVotesVar = makeVar<PendingTokenBasedVotes>(pendingVotes);
 
 // Multisig
-export type PendingMultisigVotes = {
+export type PendingMultisigApprovals = {
   /** key is: daoAddress_proposalId; value: wallet address */
   [key: string]: string;
 };
@@ -184,7 +184,7 @@ const pendingMultisigVotes = JSON.parse(
 );
 
 const pendingMultisigVotesVar =
-  makeVar<PendingMultisigVotes>(pendingMultisigVotes);
+  makeVar<PendingMultisigApprovals>(pendingMultisigVotes);
 
 // PENDING EXECUTION
 type PendingExecution = {
