@@ -235,7 +235,7 @@
       "proposalGuide": "read this guide",
       "description": "Get your community involved in the decision-making process. Learn more in our proposal guide {{link}}.",
       "descriptionLinkLabel": "proposal guide",
-      "descriptionLinkURL": "https://aragon.org/"
+      "descriptionLinkURL": "https://aragon.org/how-to/structure-dao-proposals-and-build-proposal-processes"
     },
     "proposals": {
       "publishedBy": "Published by",
@@ -376,7 +376,7 @@
     },
     "multisig": {
       "proposalMinDuration": "One hour is the minimum expiration time.",
-      "proposalMaxDuration": "[TBD] It’s recommended not to have long expiration time.",
+      "proposalMaxDuration": "To keep your DAO secure, it's not recommended to have an expiration time longer than 2 weeks. ",
       "accepTableProposalDuration": "It’s recommended to have an expiration time of five days, so you have a clean proposal list.",
       "dateTimeMinDuration": "Duration cannot be less than one hour. Corrected to one hour from start time."
     },
@@ -671,7 +671,7 @@
         "minimumParticipationAlert": "Rounded up to {{percentage}}% equals {{walletCount}} wallets have to vote",
         "minority": "Proposals could be approved by a minority rather than a majority.",
         "majority": "Proposal will be approved by majority",
-        "absoluteMajority": "[TBD] Keep in mind that with this approval threshold, you may never be able to pass a proposal."
+        "absoluteMajority": "This approval threshold might be too high to reach regularly. Consider setting something lower. "
       },
       "descriptionLinkLabel": "this guide",
       "descriptionLinkURL": "https://aragon.org/how-to/setting-dao-governance-thresholds",
@@ -805,7 +805,7 @@
     "acceptSelectedCookies": "Accept",
     "content": "We use cookies and similar technologies to improve your experience, enable certain features, and analyze our application usage. You may opt-out of cookies here. Learn more in our {{link}}.",
     "linkLabel": "Privacy policy",
-    "linkURL": "https://staging-app.aragon.org/"
+    "linkURL": "https://aragon.org/privacy-policy"
   },
   "transactionDetail": {
     "title": "Transaction detail",
