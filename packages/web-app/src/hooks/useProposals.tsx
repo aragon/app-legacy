@@ -1,5 +1,9 @@
 import {useReactiveVar} from '@apollo/client';
-import {ProposalSortBy, ProposalStatus} from '@aragon/sdk-client';
+import {
+  ProposalSortBy,
+  ProposalStatus,
+  SortDirection,
+} from '@aragon/sdk-client';
 import {useCallback, useEffect, useState} from 'react';
 
 import {
@@ -96,6 +100,7 @@ export function useProposals(
           limit,
           skip,
           sortBy: ProposalSortBy.CREATED_AT,
+          direction: SortDirection.DESC,
         });
 
         setData([...augmentProposalsWithCache(proposals || [])]);
