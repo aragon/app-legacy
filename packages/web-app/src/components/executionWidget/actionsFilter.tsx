@@ -6,7 +6,8 @@ import {Action} from 'utils/types';
 import {AddAddressCard} from './actions/addAddressCard';
 import {MintTokenCard} from './actions/mintTokenCard';
 import {ModifyMetadataCard} from './actions/modifyMetadataCard';
-import {ModifySettingsCard} from './actions/modifySettingsCard';
+import {ModifyMsSettingsCard} from './actions/modifyMsSettingsCard';
+import {ModifyMvSettingsCard} from './actions/modifySettingsCard';
 import {RemoveAddressCard} from './actions/removeAddressCard';
 import {WithdrawCard} from './actions/withdrawCard';
 
@@ -33,7 +34,9 @@ export const ActionsFilter: React.FC<ActionsFilterProps> = ({action}) => {
     case 'modify_metadata':
       return <ModifyMetadataCard action={action} />;
     case 'modify_token_voting_settings':
-      return <ModifySettingsCard action={action} />;
+      return <ModifyMvSettingsCard action={action} />;
+    case 'update_minimum_approval':
+      return <ModifyMsSettingsCard action={action} />;
     default:
       return <></>;
   }

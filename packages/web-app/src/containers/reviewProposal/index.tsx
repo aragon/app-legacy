@@ -13,6 +13,7 @@ import styled from 'styled-components';
 import {ExecutionWidget} from 'components/executionWidget';
 import {useFormStep} from 'components/fullScreenStepper';
 import ResourceList from 'components/resourceList';
+import {Loading} from 'components/temporary';
 import {VotingTerminal} from 'containers/votingTerminal';
 import {useDaoDetails} from 'hooks/useDaoDetails';
 import {MultisigMember, useDaoMembers} from 'hooks/useDaoMembers';
@@ -33,7 +34,6 @@ import {
 } from 'utils/date';
 import {getErc20VotingParticipation, getNonEmptyActions} from 'utils/proposals';
 import {ProposalResource, SupportedVotingSettings} from 'utils/types';
-import {Loading} from 'components/temporary';
 
 type ReviewProposalProps = {
   defineProposalStepNumber: number;

@@ -260,6 +260,7 @@ export type ActionUpdateMinimumApproval = {
   summary: {
     addedWallets: number;
     removedWallets: number;
+    totalWallets?: number;
   };
 };
 

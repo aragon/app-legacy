@@ -1,14 +1,14 @@
+import {VotingMode} from '@aragon/sdk-client';
 import React, {useMemo} from 'react';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 
-import {VotingMode} from '@aragon/sdk-client';
 import {AccordionMethod} from 'components/accordionMethod';
 import {getDHMFromSeconds} from 'utils/date';
 import {getErc20MinParticipation} from 'utils/proposals';
 import {ActionUpdatePluginSettings} from 'utils/types';
 
-export const ModifySettingsCard: React.FC<{
+export const ModifyMvSettingsCard: React.FC<{
   action: ActionUpdatePluginSettings;
 }> = ({action: {inputs}}) => {
   const {t} = useTranslation();
