@@ -100,15 +100,6 @@ export function useProposals(
           setIsLoadingMore(true);
         }
 
-        console.log('args', {
-          daoAddressOrEns: daoAddress,
-          status,
-          limit,
-          skip,
-          sortBy: ProposalSortBy.CREATED_AT,
-          direction: SortDirection.DESC,
-        });
-
         const proposals = await client?.methods.getProposals({
           daoAddressOrEns: daoAddress,
           status,
