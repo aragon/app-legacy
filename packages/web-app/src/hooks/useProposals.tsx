@@ -19,7 +19,7 @@ import {usePrivacyContext} from 'context/privacyContext';
 import {PENDING_PROPOSALS_KEY} from 'utils/constants';
 import {customJSONReplacer, generateCachedProposalId} from 'utils/library';
 import {
-  AddApprovalToMultisigToProposal,
+  addApprovalToMultisigToProposal,
   addVoteToProposal,
 } from 'utils/proposals';
 import {HookData, ProposalListItem} from 'utils/types';
@@ -104,7 +104,7 @@ export function useProposals(
               : {...daoCache[proposalId]};
 
             augmentedProposals.unshift({
-              ...(AddApprovalToMultisigToProposal(
+              ...(addApprovalToMultisigToProposal(
                 cachedProposal as MultisigProposal,
                 cachedMultisigVotes[id]
               ) as ProposalListItem),

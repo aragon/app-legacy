@@ -691,7 +691,7 @@ export function addVoteToProposal(
  * @param cachedApprovalAddress Cached vote
  * @returns a proposal augmented with a singular vote
  */
-export function AddApprovalToMultisigToProposal(
+export function addApprovalToMultisigToProposal(
   proposal: MultisigProposal,
   cachedApprovalAddress: string
 ) {
@@ -1002,7 +1002,7 @@ export const augmentProposalWithCachedVote = (
       return proposal;
     } else {
       // augment with cached vote
-      return AddApprovalToMultisigToProposal(proposal, cachedVote);
+      return addApprovalToMultisigToProposal(proposal, cachedVote);
     }
   }
 };
