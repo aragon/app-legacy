@@ -134,6 +134,7 @@ export const useDaoProposal = (
     preferences?.functional,
     proposalCache,
     proposalId,
+    pluginAddress,
   ]);
 
   return {data, error, isLoading};
