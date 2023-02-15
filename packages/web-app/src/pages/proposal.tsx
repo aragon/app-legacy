@@ -343,8 +343,8 @@ const Proposal: React.FC = () => {
             mappedProps?.results,
             daoSettings.votingMode
           )
-        : (proposal as MultisigProposal)?.approvals.length >=
-          daoSettings.minApprovals,
+        : (proposal as MultisigProposal)?.approvals?.length >=
+          daoSettings?.minApprovals,
     [
       daoSettings,
       mappedProps?.missingParticipation,
