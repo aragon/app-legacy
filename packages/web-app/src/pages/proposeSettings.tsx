@@ -7,7 +7,6 @@ import {
   ProposalMetadata,
   TokenVotingClient,
   VotingMode,
-  VotingSettings,
 } from '@aragon/sdk-client';
 import {withTransaction} from '@elastic/apm-rum-react';
 import React, {useCallback, useEffect, useState} from 'react';
@@ -22,28 +21,35 @@ import DefineProposal from 'containers/defineProposal';
 import ReviewProposal from 'containers/reviewProposal';
 import SetupVotingForm from 'containers/setupVotingForm';
 import PublishModal from 'containers/transactionModals/publishModal';
-import {pendingProposalsVar} from 'context/apolloClient';
+import {
+  pendingMultisigProposalsVar,
+  pendingTokenBasedProposalsVar,
+} from 'context/apolloClient';
 import {useGlobalModalContext} from 'context/globalModals';
 import {useNetwork} from 'context/network';
 import {usePrivacyContext} from 'context/privacyContext';
 import {useClient} from 'hooks/useClient';
 import {useDaoDetails} from 'hooks/useDaoDetails';
-import {useDaoMembers} from 'hooks/useDaoMembers';
 import {useDaoParam} from 'hooks/useDaoParam';
 import {useDaoToken} from 'hooks/useDaoToken';
 import {PluginTypes, usePluginClient} from 'hooks/usePluginClient';
-import {usePluginSettings} from 'hooks/usePluginSettings';
+import {
+  isMultisigVotingSettings,
+  isTokenVotingSettings,
+  usePluginSettings,
+} from 'hooks/usePluginSettings';
 import {usePollGasFee} from 'hooks/usePollGasfee';
 import {useTokenSupply} from 'hooks/useTokenSupply';
 import {useWallet} from 'hooks/useWallet';
-import {PENDING_PROPOSALS_KEY, TransactionState} from 'utils/constants';
+import {
+  PENDING_MULTISIG_PROPOSALS_KEY,
+  PENDING_PROPOSALS_KEY,
+  TransactionState,
+} from 'utils/constants';
 import {getCanonicalUtcOffset, getSecondsFromDHM} from 'utils/date';
 import {customJSONReplacer} from 'utils/library';
 import {EditSettings, Proposal} from 'utils/paths';
-import {
-  mapToDetailedProposal,
-  MapToDetailedProposalParams,
-} from 'utils/proposals';
+import {CacheProposalParams, mapToCacheProposal} from 'utils/proposals';
 import {
   Action,
   ActionUpdateMetadata,
@@ -115,6 +121,7 @@ type Props = {
   setShowTxModal: (value: boolean) => void;
 };
 
+// TODO: this is almost identical to CreateProposal wrapper, please merge if possible
 const ProposeSettingWrapper: React.FC<Props> = ({
   showTxModal,
   setShowTxModal,
@@ -133,9 +140,7 @@ const ProposeSettingWrapper: React.FC<Props> = ({
   const {data: daoDetails, isLoading: daoDetailsLoading} = useDaoDetails(dao);
   const {id: pluginType, instanceAddress: pluginAddress} =
     daoDetails?.plugins[0] || ({} as InstalledPluginListItem);
-  const {
-    data: {members},
-  } = useDaoMembers(pluginAddress, pluginType as PluginTypes);
+
   const {data: pluginSettings} = usePluginSettings(
     pluginAddress,
     pluginType as PluginTypes
@@ -159,7 +164,10 @@ const ProposeSettingWrapper: React.FC<Props> = ({
 
   const [proposalId, setProposalId] = useState<string>();
 
-  const cachedProposals = useReactiveVar(pendingProposalsVar);
+  const cachedMultisigProposals = useReactiveVar(pendingMultisigProposalsVar);
+  const cachedTokenBasedProposals = useReactiveVar(
+    pendingTokenBasedProposalsVar
+  );
 
   const shouldPoll =
     creationProcessState === TransactionState.WAITING &&
@@ -411,7 +419,6 @@ const ProposeSettingWrapper: React.FC<Props> = ({
               step.proposalId
             ).makeGloballyUnique(pluginAddress);
 
-            console.log('proposal id', proposalGuid);
             setProposalId(proposalGuid);
             setCreationProcessState(TransactionState.SUCCESS);
 
@@ -439,59 +446,73 @@ const ProposeSettingWrapper: React.FC<Props> = ({
         'links',
       ]);
 
-      const metadata: ProposalMetadata = {
-        title,
-        summary,
-        description,
-        resources: resources.filter((r: ProposalResource) => r.name && r.url),
-      };
+      let cacheKey = '';
+      let newCache;
+      let proposalToCache;
 
-      const proposalData: MapToDetailedProposalParams = {
+      let proposalData: CacheProposalParams = {
         creatorAddress: address,
         daoAddress: daoDetails?.address,
         daoName: daoDetails?.metadata.name,
-        daoToken,
-        totalVotingWeight:
-          pluginType === 'token-voting.plugin.dao.eth' && tokenSupply?.formatted
-            ? tokenSupply.formatted
-            : members.length,
-        // TODO: Add multisig
-        pluginSettings: pluginSettings as VotingSettings,
+        proposalGuid,
         proposalParams: proposalCreationData,
-        proposalGuid: proposalGuid,
-        metadata: metadata,
-      };
-
-      const cachedProposal = mapToDetailedProposal(proposalData);
-      const newCache = {
-        ...cachedProposals,
-        [daoDetails.address]: {
-          ...cachedProposals[daoDetails.address],
-          [proposalGuid]: {...cachedProposal},
+        metadata: {
+          title,
+          summary,
+          description,
+          resources: resources.filter((r: ProposalResource) => r.name && r.url),
         },
       };
-      pendingProposalsVar(newCache);
+
+      if (isTokenVotingSettings(pluginSettings)) {
+        proposalData = {
+          ...proposalData,
+          daoToken,
+          pluginSettings,
+          totalVotingWeight: tokenSupply?.raw,
+        };
+
+        cacheKey = PENDING_PROPOSALS_KEY;
+        proposalToCache = mapToCacheProposal(proposalData);
+        newCache = {
+          ...cachedTokenBasedProposals,
+          [daoDetails.address]: {
+            ...cachedTokenBasedProposals[daoDetails.address],
+            [proposalGuid]: {...proposalToCache},
+          },
+        };
+        pendingTokenBasedProposalsVar(newCache);
+      } else if (isMultisigVotingSettings(pluginSettings)) {
+        cacheKey = PENDING_MULTISIG_PROPOSALS_KEY;
+        proposalToCache = mapToCacheProposal(proposalData);
+        newCache = {
+          ...cachedMultisigProposals,
+          [daoDetails.address]: {
+            ...cachedMultisigProposals[daoDetails.address],
+            [proposalGuid]: {...proposalToCache},
+          },
+        };
+      }
 
       // persist new cache if functional cookies enabled
       if (preferences?.functional) {
         localStorage.setItem(
-          PENDING_PROPOSALS_KEY,
+          cacheKey,
           JSON.stringify(newCache, customJSONReplacer)
         );
       }
     },
     [
       address,
-      cachedProposals,
+      cachedMultisigProposals,
+      cachedTokenBasedProposals,
       daoDetails,
       daoToken,
       getValues,
-      members.length,
       pluginSettings,
-      pluginType,
       preferences?.functional,
       proposalCreationData,
-      tokenSupply?.formatted,
+      tokenSupply?.raw,
     ]
   );
 

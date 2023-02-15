@@ -399,6 +399,7 @@ const CreateProposalProvider: React.FC<Props> = ({
       let cacheKey = '';
       let newCache;
       let proposalToCache;
+
       let proposalData: CacheProposalParams = {
         creatorAddress: address,
         daoAddress: daoDetails?.address,
@@ -420,8 +421,8 @@ const CreateProposalProvider: React.FC<Props> = ({
           pluginSettings,
           totalVotingWeight: tokenSupply?.raw,
         };
-        cacheKey = PENDING_PROPOSALS_KEY;
 
+        cacheKey = PENDING_PROPOSALS_KEY;
         proposalToCache = mapToCacheProposal(proposalData);
         newCache = {
           ...cachedTokenBasedProposals,
