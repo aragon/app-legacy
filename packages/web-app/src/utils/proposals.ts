@@ -599,7 +599,7 @@ export type CacheProposalParams = {
   // TokenVoting props
   daoToken?: Erc20TokenDetails;
   pluginSettings?: VotingSettings;
-  totalVotingWeight?: number | bigint;
+  totalVotingWeight?: bigint;
 };
 
 /**
