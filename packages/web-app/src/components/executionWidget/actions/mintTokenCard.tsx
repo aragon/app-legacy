@@ -70,6 +70,13 @@ export const MintTokenCard: React.FC<{
               {newTotalSupply} {action.summary.daoTokenSymbol}
             </p>
           </HStack>
+          <HStack>
+            <Label>{t('labels.totalHolders')}</Label>
+            <p>
+              {action.summary.newHoldersCount +
+                (action.summary.totalMembers || 0)}
+            </p>
+          </HStack>
           {/* TODO add total amount of token holders here. */}
           <Link
             label={t('labels.seeCommunity')}

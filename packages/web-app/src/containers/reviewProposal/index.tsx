@@ -221,14 +221,14 @@ const ReviewProposal: React.FC<ReviewProposalProps> = ({
           />
         </ProposalContainer>
 
-        <AdditionalInfoContainer>
+        {/* <AdditionalInfoContainer>
           <ResourceList
             links={values.links.filter(
               (l: ProposalResource) => l.name && l.url
             )}
             emptyStateButtonClick={() => setStep(defineProposalStepNumber)}
           />
-        </AdditionalInfoContainer>
+        </AdditionalInfoContainer> */}
       </ContentContainer>
     </>
   );

@@ -26,6 +26,8 @@ import {fetchBalance, getTokenInfo} from 'utils/tokens';
 import {ActionIndex} from 'utils/types';
 import {AddressAndTokenRow} from './addressTokenRow';
 import {useAlertContext} from 'context/alert';
+import {useDaoMembers} from 'hooks/useDaoMembers';
+import {PluginTypes} from 'hooks/usePluginClient';
 
 type MintTokensProps = ActionIndex;
 
@@ -110,6 +112,14 @@ export const MintTokenForm: React.FC<MintTokenFormProps> = ({
     daoDetails?.plugins[0].instanceAddress || ''
   );
 
+  const {
+    data: {members},
+    isLoading: isMembersLoading,
+  } = useDaoMembers(
+    daoDetails?.plugins[0].instanceAddress as string,
+    daoDetails?.plugins[0].id as PluginTypes
+  );
+
   const {setValue, trigger, formState, control} = useFormContext();
   const {fields, append, remove, update} = useFieldArray({
     name: `actions.${actionIndex}.inputs.mintTokensToWallets`,
@@ -166,7 +176,7 @@ export const MintTokenForm: React.FC<MintTokenFormProps> = ({
 
   useEffect(() => {
     // Fetching necessary info about the token.
-    if (daoToken?.address) {
+    if (daoToken?.address && !isMembersLoading) {
       getTokenInfo(daoToken.address, infura, nativeCurrency)
         .then((r: Awaited<ReturnType<typeof getTokenInfo>>) => {
           const formattedNumber = parseFloat(
@@ -185,6 +195,11 @@ export const MintTokenForm: React.FC<MintTokenFormProps> = ({
             `actions.${actionIndex}.summary.daoTokenAddress`,
             daoToken.address
           );
+
+          setValue(
+            `actions.${actionIndex}.summary.totalMembers`,
+            members.length
+          );
         })
         .catch(e =>
           console.error('Error happened when fetching token infos: ', e)
@@ -197,6 +212,8 @@ export const MintTokenForm: React.FC<MintTokenFormProps> = ({
     setValue,
     actionIndex,
     daoToken?.symbol,
+    members.length,
+    isMembersLoading,
   ]);
 
   // Count number of addresses that don't yet own token
@@ -392,7 +409,7 @@ export const MintTokenForm: React.FC<MintTokenFormProps> = ({
           onClick={handleAddWallet}
         />
 
-        <label className="flex-1 tablet:flex-initial py-1.5 px-2 space-x-1.5 h-6 font-bold hover:text-primary-500 bg-ui-0 rounded-xl cursor-pointer ft-text-base">
+        <label className="flex-1 tablet:flex-initial py-1.5 px-2 space-x-1.5 h-6 font-bold rounded-xl cursor-pointer hover:text-primary-500 bg-ui-0 ft-text-base">
           {t('labels.whitelistWallets.uploadCSV')}
           <input
             type="file"
@@ -426,6 +443,10 @@ export const MintTokenForm: React.FC<MintTokenFormProps> = ({
               <p>...</p>
             )}
           </HStack>
+          <HStack>
+            <Label>{t('labels.totalHolders')}</Label>
+            <p>{newHoldersCount + (members?.length || 0)}</p>
+          </HStack>
           {/* TODO add total amount of token holders here. */}
         </SummaryContainer>
       )}
@@ -440,7 +461,7 @@ export const MintTokenDescription: React.FC = () => (
     <a
       href="data:text/csv;base64,QWRkcmVzcyxUb2tlbnMKMHgwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwLDEwLjUw"
       download="MintTokenTemplate.csv"
-      className="font-bold text-primary-500 hover:text-primary-700 rounded focus:ring-2 focus:ring-primary-500 focus:outline-none"
+      className="font-bold rounded focus:ring-2 focus:outline-none text-primary-500 hover:text-primary-700 focus:ring-primary-500"
     >
       this template
     </a>{' '}

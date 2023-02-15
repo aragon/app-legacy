@@ -76,7 +76,7 @@ export const MembershipSnapshot: React.FC<Props> = ({
         </div>
         <div className="space-y-2 w-2/3">
           <ListItemGrid>
-            <MembersList token={daoToken} members={members} />
+            {/* <MembersList token={daoToken} members={members} /> */}
           </ListItemGrid>
           <ButtonText
             mode="secondary"
@@ -106,7 +106,7 @@ export const MembershipSnapshot: React.FC<Props> = ({
         orientation="vertical"
         onClick={headerButtonHandler}
       />
-      <MembersList token={daoToken} members={members.slice(0, 3)} />
+      {/* <MembersList token={daoToken} members={members.slice(0, 3)} /> */}
       <ButtonText
         mode="secondary"
         size="large"
