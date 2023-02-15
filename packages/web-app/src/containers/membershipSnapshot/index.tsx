@@ -106,7 +106,7 @@ export const MembershipSnapshot: React.FC<Props> = ({
         orientation="vertical"
         onClick={headerButtonHandler}
       />
-      {/* <MembersList token={daoToken} members={members.slice(0, 3)} /> */}
+      <MembersList token={daoToken} members={members.slice(0, 3)} />
       <ButtonText
         mode="secondary"
         size="large"
