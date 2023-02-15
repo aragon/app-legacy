@@ -50,7 +50,8 @@ const TransactionDetail: React.FC<TransactionDetailProps> = ({
   const {data: proposal} = useDaoProposal(
     daoAddress,
     proposalId,
-    daoPlugin.id as PluginTypes
+    daoPlugin.id as PluginTypes,
+    daoPlugin.instanceAddress
   );
 
   const handleNavigateToProposal = useCallback(() => {

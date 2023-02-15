@@ -375,6 +375,9 @@ export class ProposalId {
   private id: string;
 
   constructor(val: Number | string) {
+    if (typeof val === 'string' && val.includes('_')) {
+      val = Number(val.split('_')[1].substring(2));
+    }
     this.id = val.toString();
   }
 
@@ -385,7 +388,8 @@ export class ProposalId {
 
   /** Make the proposal id globally unique by combining with an address (should be plugin address) */
   makeGloballyUnique(address: string): string {
-    return `${address}_${this.id}`;
+    const idHex = '0x' + Number(this.id).toString(16);
+    return `${address}_${idHex}`;
   }
 
   /** Return a string to be used as part of a url representing a proposal */

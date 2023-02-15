@@ -36,7 +36,8 @@ import {PluginTypes, usePluginClient} from './usePluginClient';
 export const useDaoProposal = (
   daoAddress: string,
   proposalId: ProposalId,
-  pluginType: PluginTypes
+  pluginType: PluginTypes,
+  pluginAddress: string
 ): HookData<DetailedProposal | undefined> => {
   const [data, setData] = useState<DetailedProposal>();
   const [error, setError] = useState<Error>();
@@ -75,7 +76,7 @@ export const useDaoProposal = (
         }
 
         const proposal = await pluginClient?.methods.getProposal(
-          proposalId.toString()
+          proposalId.makeGloballyUnique(pluginAddress)
         );
         if (proposal) {
           setData(
