@@ -7,6 +7,7 @@ import {
   MultisigVotingSettings,
   ProposalCreationSteps,
   ProposalMetadata,
+  TokenType,
   TokenVotingClient,
   VotingSettings,
   WithdrawParams,
@@ -49,7 +50,7 @@ import {
   mapToDetailedProposal,
   MapToDetailedProposalParams,
 } from 'utils/proposals';
-import {getTokenInfo} from 'utils/tokens';
+import {getTokenInfo, isNativeToken} from 'utils/tokens';
 import {Action, ProposalId, ProposalResource} from 'utils/types';
 import {pendingProposalsVar} from './apolloClient';
 import {useGlobalModalContext} from './globalModals';
@@ -154,9 +155,11 @@ const CreateProposalProvider: React.FC<Props> = ({
         case 'withdraw_assets': {
           actions.push(
             client.encoding.withdrawAction({
-              recipientAddressOrEns: action.to,
               amount: BigInt(Number(action.amount) * Math.pow(10, 18)),
-              tokenAddress: action.tokenAddress,
+              recipientAddressOrEns: action.to,
+              ...(isNativeToken(action.tokenAddress)
+                ? {type: TokenType.NATIVE}
+                : {type: TokenType.ERC20, tokenAddress: action.tokenAddress}),
             } as WithdrawParams)
           );
           break;
