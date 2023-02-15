@@ -35,6 +35,7 @@ export function useProposals(
   const [data, setData] = useState<Array<ProposalListItem>>([]);
   const [error, setError] = useState<Error>();
   const [isInitialLoading, setIsInitialLoading] = useState(true);
+  const [isLoadingMore, setIsLoadingMore] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
   const client = usePluginClient(type);
@@ -93,7 +94,20 @@ export function useProposals(
   useEffect(() => {
     async function getDaoProposals() {
       try {
-        setIsLoading(true);
+        if (skip === 0) {
+          setIsLoading(true);
+        } else {
+          setIsLoadingMore(true);
+        }
+
+        console.log({
+          daoAddressOrEns: daoAddress,
+          status,
+          limit,
+          skip,
+          sortBy: ProposalSortBy.CREATED_AT,
+          direction: SortDirection.DESC,
+        });
 
         const proposals = await client?.methods.getProposals({
           daoAddressOrEns: daoAddress,
@@ -111,6 +125,7 @@ export function useProposals(
       } finally {
         setIsLoading(false);
         setIsInitialLoading(false);
+        setIsLoadingMore(false);
       }
     }
 
@@ -124,5 +139,5 @@ export function useProposals(
     status,
   ]);
 
-  return {data, error, isLoading, isInitialLoading};
+  return {data, error, isLoading, isInitialLoading, isLoadingMore};
 }

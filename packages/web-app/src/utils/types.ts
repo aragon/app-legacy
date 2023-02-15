@@ -340,6 +340,7 @@ export type HookData<T> = {
   data: T;
   isLoading: boolean;
   isInitialLoading?: boolean;
+  isLoadingMore?: boolean;
   error?: Error;
 };
 

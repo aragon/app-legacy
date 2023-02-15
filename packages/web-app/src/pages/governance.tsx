@@ -26,18 +26,23 @@ import {ProposalListItem} from 'utils/types';
 import {ProposalStatus} from '@aragon/sdk-client';
 
 const Governance: React.FC = () => {
-  const {data: dao, daoDetails: daoDetails, isLoading} = useDaoParam();
+  const {
+    data: dao,
+    daoDetails: daoDetails,
+    isLoading: isDaoLoading,
+  } = useDaoParam();
 
   // The number of proposals displayed on each page
-  const PROPOSALS_PER_PAGE = 6;
+  const PROPOSALS_PER_PAGE = 1;
   const [skip, setSkip] = useState(0);
   const [endReached, setEndReached] = useState(false);
   const [filterValue, setFilterValue] = useState<ProposalStatus | 'All'>('All');
 
   const {
     data: proposals,
-    isLoading: proposalsAreLoading,
     isInitialLoading,
+    isLoading,
+    isLoadingMore,
   } = useProposals(
     daoDetails?.address as string,
     daoDetails?.plugins[0].id as PluginTypes,
@@ -46,38 +51,34 @@ const Governance: React.FC = () => {
     filterValue !== 'All' ? filterValue : undefined
   );
 
-  // Show proposals loading when loading flag is true and list is empty
-  // Othervise it means there is a show more was clicked
-  const isPageInitialLoading = isInitialLoading || isLoading;
-
   const [displayedProposals, setDisplayedProposals] = useState<
     ProposalListItem[]
   >([]);
 
   useEffect(() => {
-    if (!proposalsAreLoading) {
-      if (proposals.length < PROPOSALS_PER_PAGE) {
+    if (!isInitialLoading) {
+      if (!proposals.length) {
         setEndReached(true);
       }
 
       setDisplayedProposals(prev => [...(prev || []), ...proposals]);
     }
-  }, [proposals, proposalsAreLoading]);
+  }, [isInitialLoading, proposals]);
 
   const {t} = useTranslation();
   const navigate = useNavigate();
 
   const handleShowMoreClick = () => {
-    if (!isLoading) setSkip(prev => prev + PROPOSALS_PER_PAGE);
+    if (!isDaoLoading) setSkip(prev => prev + PROPOSALS_PER_PAGE);
   };
 
-  if (isPageInitialLoading) {
+  if (isInitialLoading) {
     return <Loading />;
   }
 
   if (
-    !isPageInitialLoading &&
-    !proposalsAreLoading &&
+    !isInitialLoading &&
+    !isLoading &&
     !displayedProposals?.length &&
     filterValue === 'All'
   ) {
@@ -118,12 +119,6 @@ const Governance: React.FC = () => {
     <>
       <PageWrapper
         title={'Proposals'}
-        //TODO: The current way of calculating active number of proposals is wrong. The subgraph has to return that
-        // description={
-        //   activeProposalCount === 1
-        //     ? t('governance.subtitleSingular')
-        //     : t('governance.subtitle', {activeProposalCount})
-        // }
         primaryBtnProps={{
           label: t('governance.action'),
           iconLeft: <IconAdd />,
@@ -155,19 +150,15 @@ const Governance: React.FC = () => {
           </ButtonGroup>
         </ButtonGroupContainer>
         <ListWrapper>
-          <ProposalList proposals={displayedProposals} />
+          <ProposalList proposals={displayedProposals} isLoading={isLoading} />
         </ListWrapper>
 
-        {!endReached && (
+        {!endReached && displayedProposals?.length > 0 && (
           <div className="mt-3">
             <ButtonText
               label={t('explore.explorer.showMore')}
               iconRight={
-                proposalsAreLoading ? (
-                  <Spinner size="xs" />
-                ) : (
-                  <IconChevronDown />
-                )
+                isLoadingMore ? <Spinner size="xs" /> : <IconChevronDown />
               }
               bgWhite
               mode="ghost"
@@ -175,23 +166,6 @@ const Governance: React.FC = () => {
             />
           </div>
         )}
-        {/* TODO: Switching to infinite pagination as the subgraph doesn't support counting number of proposals in each filterState for now */}
-        {/* <PaginationWrapper>
-          {displayedProposals.length > PROPOSALS_PER_PAGE && (
-            <Pagination
-              totalPages={
-                Math.ceil(
-                  displayedProposals.length / PROPOSALS_PER_PAGE
-                ) as number
-              }
-              activePage={page}
-              onChange={(activePage: number) => {
-                setPage(activePage);
-                window.scrollTo({top: 0, behavior: 'smooth'});
-              }}
-            />
-          )}
-        </PaginationWrapper> */}
       </PageWrapper>
     </>
   );
@@ -217,10 +191,6 @@ const ButtonGroupContainer = styled.div.attrs({
 const ListWrapper = styled.div.attrs({
   className: 'mt-3',
 })``;
-
-// const PaginationWrapper = styled.div.attrs({
-//   className: 'flex mt-8',
-// })``;
 
 export const EmptyStateContainer = styled.div.attrs({
   className:
