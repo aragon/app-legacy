@@ -588,16 +588,18 @@ export function getLiveProposalTerminalProps(
   }
 }
 
-export type MapToDetailedProposalParams = {
+export type CacheProposalParams = {
   creatorAddress: string;
   daoAddress: string;
   daoName: string;
-  daoToken?: Erc20TokenDetails;
-  totalVotingWeight: number | bigint;
-  pluginSettings: VotingSettings;
   metadata: ProposalMetadata;
   proposalParams: ICreateProposalParams;
   proposalGuid: string;
+
+  // TokenVoting props
+  daoToken?: Erc20TokenDetails;
+  pluginSettings?: VotingSettings;
+  totalVotingWeight?: number | bigint;
 };
 
 /**
@@ -605,7 +607,7 @@ export type MapToDetailedProposalParams = {
  * @param params necessary parameters to map newly created proposal to augmented DetailedProposal
  * @returns Detailed proposal, ready for caching and displaying
  */
-export function mapToDetailedProposal(params: MapToDetailedProposalParams) {
+export function mapToCacheProposal(params: CacheProposalParams) {
   // common properties
   const commonProps = {
     actions: params.proposalParams.actions || [],
@@ -617,19 +619,10 @@ export function mapToDetailedProposal(params: MapToDetailedProposalParams) {
     id: params.proposalGuid,
     metadata: params.metadata,
     status: ProposalStatus.PENDING,
-    votes: [],
-    settings: {
-      minSupport: params.pluginSettings.supportThreshold,
-      minTurnout: params.pluginSettings.minParticipation,
-      duration: differenceInSeconds(
-        params.proposalParams.startDate!,
-        params.proposalParams.endDate!
-      ),
-    },
   };
 
   // erc20
-  if (isErc20Token(params.daoToken)) {
+  if (isErc20Token(params.daoToken) && params.pluginSettings) {
     return {
       ...commonProps,
       token: {
@@ -638,17 +631,25 @@ export function mapToDetailedProposal(params: MapToDetailedProposalParams) {
         name: params.daoToken.name,
         symbol: params.daoToken.symbol,
       },
+      votes: [],
+      settings: {
+        minSupport: params.pluginSettings.supportThreshold,
+        minTurnout: params.pluginSettings.minParticipation,
+        duration: differenceInSeconds(
+          params.proposalParams.startDate!,
+          params.proposalParams.endDate!
+        ),
+      },
       totalVotingWeight: params.totalVotingWeight as bigint,
       usedVotingWeight: BigInt(0),
       result: {yes: BigInt(0), no: BigInt(0), abstain: BigInt(0)},
       executionTxHash: '',
     } as CachedProposal;
   } else {
-    // addressList
+    // multisig
     return {
       ...commonProps,
-      totalVotingWeight: params.totalVotingWeight as number,
-      result: {yes: 0, no: 0, abstain: 0},
+      approvals: [],
       executionTxHash: '',
     } as CachedProposal;
   }
