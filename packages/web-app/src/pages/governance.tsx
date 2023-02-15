@@ -33,7 +33,7 @@ const Governance: React.FC = () => {
   } = useDaoParam();
 
   // The number of proposals displayed on each page
-  const PROPOSALS_PER_PAGE = 1;
+  const PROPOSALS_PER_PAGE = 6;
   const [skip, setSkip] = useState(0);
   const [endReached, setEndReached] = useState(false);
   const [filterValue, setFilterValue] = useState<ProposalStatus | 'All'>('All');
