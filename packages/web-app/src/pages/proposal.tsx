@@ -493,7 +493,9 @@ const Proposal: React.FC = () => {
         proposal.startDate,
         proposal.endDate,
         proposal.creationDate,
-        NumberFormatter.format(proposal.creationBlockNumber),
+        proposal.creationBlockNumber
+          ? NumberFormatter.format(proposal.creationBlockNumber)
+          : '',
         executionFailed,
         NumberFormatter.format(proposal.executionBlockNumber),
         proposal.executionDate

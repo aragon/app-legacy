@@ -445,8 +445,9 @@ function getPassedProposalSteps(
 function getPublishedProposalStep(
   t: TFunction,
   creationDate: Date,
-  block: string
+  block: string | undefined
 ): ProgressStatusProps {
+  console.log(block);
   return {
     label: t('governance.statusWidget.published'),
     date: `${format(
@@ -454,7 +455,7 @@ function getPublishedProposalStep(
       KNOWN_FORMATS.proposals
     )}  ${getFormattedUtcOffset()}`,
     mode: 'done',
-    block,
+    ...(block && {block}),
   };
 }
 
@@ -994,7 +995,6 @@ export const augmentProposalWithCachedVote = (
       // delete vote from cache
       const newVoteCache = {...(cachedVotes as PendingMultisigApprovals)};
       delete newVoteCache[id];
-
       // update cache
       pendingMultisigApprovalsVar(newVoteCache);
       if (functionalCookiesEnabled) {
