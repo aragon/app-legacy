@@ -89,7 +89,10 @@ const Proposal: React.FC = () => {
 
   const navigate = useNavigate();
   const {id: urlId} = useParams();
-  const proposalId = urlId ? new ProposalId(urlId) : undefined;
+  const proposalId = useMemo(
+    () => (urlId ? new ProposalId(urlId) : undefined),
+    [urlId]
+  );
 
   const {data: dao} = useDaoParam();
   const {data: daoDetails, isLoading: detailsAreLoading} = useDaoDetails(dao);
