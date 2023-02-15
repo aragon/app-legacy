@@ -6,7 +6,7 @@ import {
   pendingMultisigApprovalsVar,
   PendingMultisigExecution,
   pendingMultisigExecutionVar,
-  pendingProposalsVar,
+  pendingTokenBasedProposalsVar,
   PendingTokenBasedExecution,
   pendingTokenBasedExecutionVar,
   PendingTokenBasedVotes,
@@ -50,7 +50,7 @@ export const useDaoProposal = (
   const cachedMultisigVotes = useReactiveVar(pendingMultisigApprovalsVar);
   const cachedTokenBasedVotes = useReactiveVar(pendingTokenBasedVotesVar);
 
-  const proposalCache = useReactiveVar(pendingProposalsVar);
+  const proposalCache = useReactiveVar(pendingTokenBasedProposalsVar);
 
   const cachedTokenBaseExecutions = useReactiveVar(
     pendingTokenBasedExecutionVar
@@ -95,7 +95,7 @@ export const useDaoProposal = (
             delete newCache[daoAddress][proposalId.toString()];
 
             // update new values
-            pendingProposalsVar(newCache);
+            pendingTokenBasedProposalsVar(newCache);
 
             if (preferences?.functional) {
               localStorage.setItem(

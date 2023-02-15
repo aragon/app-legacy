@@ -23,6 +23,7 @@ import {
   PENDING_DEPOSITS_KEY,
   PENDING_EXECUTION_KEY,
   PENDING_MULTISIG_EXECUTION_KEY,
+  PENDING_MULTISIG_PROPOSALS_KEY,
   PENDING_MULTISIG_VOTES_KEY,
   PENDING_PROPOSALS_KEY,
   PENDING_VOTES_KEY,
@@ -234,7 +235,7 @@ export type CachedProposal = Omit<
   DetailedProposal,
   'creationBlockNumber' | 'executionBlockNumber' | 'executionDate'
 >;
-type PendingProposals = {
+type PendingTokenBasedProposals = {
   // key is dao address
   [key: string]: {
     // key is ProposalId.toString()
@@ -242,12 +243,34 @@ type PendingProposals = {
   };
 };
 
-const pendingProposals = JSON.parse(
+const pendingTokenBasedProposals = JSON.parse(
   localStorage.getItem(PENDING_PROPOSALS_KEY) || '{}',
   customJSONReviver
 );
-const pendingProposalsVar = makeVar<PendingProposals>(pendingProposals);
+const pendingTokenBasedProposalsVar = makeVar<PendingTokenBasedProposals>(
+  pendingTokenBasedProposals
+);
 
+//================ Multisig
+type PendingMultisigProposals = {
+  // key is dao address
+  [key: string]: {
+    // key is proposal id
+    [key: string]: CachedProposal;
+  };
+};
+
+const pendingMultisigProposals = JSON.parse(
+  localStorage.getItem(PENDING_MULTISIG_PROPOSALS_KEY) || '{}',
+  customJSONReviver
+);
+const pendingMultisigProposalsVar = makeVar<PendingMultisigProposals>(
+  pendingMultisigProposals
+);
+
+/*************************************************
+ *                   PENDING DAOs                *
+ *************************************************/
 type PendingDaoCreation = {
   [key in SupportedNetworks]?: {
     // This key is the id of the newly created DAO
@@ -265,12 +288,16 @@ const pendingDaoCreationVar = makeVar<PendingDaoCreation>(pendingDaoCreation);
 export {
   client,
   favoriteDaosVar,
-  selectedDaoVar,
-  pendingDeposits,
-  pendingProposalsVar,
-  pendingTokenBasedVotesVar,
-  pendingMultisigApprovalsVar,
   pendingDaoCreationVar,
-  pendingTokenBasedExecutionVar,
+  pendingDeposits,
+  selectedDaoVar,
+  // votes
+  pendingMultisigApprovalsVar,
+  pendingTokenBasedVotesVar,
+  // executions
   pendingMultisigExecutionVar,
+  pendingTokenBasedExecutionVar,
+  // proposals
+  pendingMultisigProposalsVar,
+  pendingTokenBasedProposalsVar,
 };

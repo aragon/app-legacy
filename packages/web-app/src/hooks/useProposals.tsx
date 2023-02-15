@@ -11,8 +11,8 @@ import {useCallback, useEffect, useState} from 'react';
 import {
   pendingMultisigApprovalsVar,
   pendingMultisigExecutionVar,
-  pendingProposalsVar,
   pendingTokenBasedExecutionVar,
+  pendingTokenBasedProposalsVar,
   pendingTokenBasedVotesVar,
 } from 'context/apolloClient';
 import {usePrivacyContext} from 'context/privacyContext';
@@ -57,7 +57,7 @@ export function useProposals(
   );
   const cachedMultisigExecutions = useReactiveVar(pendingMultisigExecutionVar);
 
-  const proposalCache = useReactiveVar(pendingProposalsVar);
+  const proposalCache = useReactiveVar(pendingTokenBasedProposalsVar);
 
   const augmentProposalsWithCache = useCallback(
     (fetchedProposals: ProposalListItem[]) => {
@@ -73,7 +73,7 @@ export function useProposals(
 
           // cache and store new values
           const newCache = {...proposalCache, [daoAddress]: {...daoCache}};
-          pendingProposalsVar(newCache);
+          pendingTokenBasedProposalsVar(newCache);
           if (preferences?.functional) {
             localStorage.setItem(
               PENDING_PROPOSALS_KEY,
