@@ -1,16 +1,16 @@
 import React, {useEffect, useState} from 'react';
 import {Controller, useFormContext, useWatch} from 'react-hook-form';
 import {useTranslation} from 'react-i18next';
+import styled from 'styled-components';
 
+import {Address, Label} from '@aragon/ui-components';
 import {AccordionMethod} from 'components/accordionMethod';
+import {generateAlert} from 'components/multisigMinimumApproval';
+import MinimumApproval from 'components/multisigMinimumApproval/minimumApproval';
 import {BalanceMember, MultisigMember} from 'hooks/useDaoMembers';
+import {CORRECTION_DELAY, MULTISIG_LOWEST_MIN_APPROVAL} from 'utils/constants';
 import {ActionAddAddress, ActionIndex, ActionRemoveAddress} from 'utils/types';
 import {CustomHeaderProps, FormItem} from '../addAddresses';
-import styled from 'styled-components';
-import MinimumApproval from 'components/multisigMinimumApproval/minimumApproval';
-import {generateAlert} from 'components/multisigMinimumApproval';
-import {CORRECTION_DELAY} from 'utils/constants';
-import {Address, Label} from '@aragon/ui-components';
 
 export type CurrentDaoMembers = {
   currentDaoMembers?: MultisigMember[] | BalanceMember[];
@@ -169,7 +169,7 @@ const UpdateMinimumApproval: React.FC<UpdateMinimumApprovalProps> = ({
         <FormItem>
           <Controller
             name={minimumApprovalKey}
-            defaultValue={minimumApproval || 1}
+            defaultValue={minimumApproval || MULTISIG_LOWEST_MIN_APPROVAL}
             control={control}
             rules={{
               required: t('errors.minimumApproval.required') as string,
