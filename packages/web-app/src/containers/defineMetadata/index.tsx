@@ -24,18 +24,20 @@ const DAO_LOGO = {
 
 export type DefineMetadataProps = {
   arrayName?: string;
-  isSettingPage?: boolean;
+  currentDaoEnsName?: string;
   bgWhite?: boolean;
 };
 
 const DefineMetadata: React.FC<DefineMetadataProps> = ({
   arrayName = 'links',
   bgWhite = false,
-  isSettingPage,
+  currentDaoEnsName = '',
 }) => {
   const {t} = useTranslation();
   const {control, setError, clearErrors, getValues} = useFormContext();
   const {infura: provider} = useProviders();
+
+  const isMyEnsName = currentDaoEnsName === getValues('daoEnsName');
 
   const handleImageError = useCallback(
     (error: {code: string; message: string}) => {
@@ -124,44 +126,45 @@ const DefineMetadata: React.FC<DefineMetadataProps> = ({
       </FormItem>
 
       {/* ENS Ens Name */}
-      {!isSettingPage && (
-        <FormItem>
-          <Label
-            label={t('labels.daoEnsName')}
-            helpText={t('createDAO.step2.ensNameSubtitle')}
-          />
+      <FormItem>
+        <Label
+          label={t('labels.daoEnsName')}
+          helpText={t('createDAO.step2.ensNameSubtitle')}
+        />
 
-          <Controller
-            name="daoEnsName"
-            control={control}
-            defaultValue=""
-            rules={{
-              required: t('errors.required.ensName'),
-              validate: value =>
-                isDaoEnsNameValid(
-                  value,
-                  provider,
-                  setError,
-                  clearErrors,
-                  getValues
-                ),
-            }}
-            render={({
-              field: {onBlur, onChange, value, name},
-              fieldState: {error},
-            }) => (
-              <>
-                <TextInput
-                  {...{name, value, onBlur, onChange}}
-                  placeholder={t('placeHolders.ensName')}
-                />
-                <InputCount>{`${value.length}/128`}</InputCount>
-                <ErrorHandler {...{value, error}} />
-              </>
-            )}
-          />
-        </FormItem>
-      )}
+        <Controller
+          name="daoEnsName"
+          control={control}
+          defaultValue=""
+          rules={{
+            required: t('errors.required.ensName'),
+            validate: value =>
+              isDaoEnsNameValid(
+                value,
+                provider,
+                setError,
+                clearErrors,
+                getValues,
+                currentDaoEnsName
+              ),
+          }}
+          render={({
+            field: {onBlur, onChange, value, name},
+            fieldState: {error},
+          }) => (
+            <>
+              <TextInput
+                {...{name, value, onBlur, onChange}}
+                placeholder={t('placeHolders.ensName')}
+                // temporary disable DAO Ens name in setting page
+                disabled={isMyEnsName}
+              />
+              <InputCount>{`${value.length}/128`}</InputCount>
+              <ErrorHandler {...{value, error}} />
+            </>
+          )}
+        />
+      </FormItem>
 
       {/* Logo */}
       <FormItem>

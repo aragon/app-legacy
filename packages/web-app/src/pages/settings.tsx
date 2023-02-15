@@ -83,6 +83,10 @@ const Settings: React.FC = () => {
             <Dd>{daoDetails?.metadata.name}</Dd>
           </Dl>
           <Dl>
+            <Dt>{t('labels.daoEnsName')}</Dt>
+            <Dd>{daoDetails?.ensDomain}</Dd>
+          </Dl>
+          <Dl>
             <Dt>{t('labels.summary')}</Dt>
             <Dd>{daoDetails?.metadata.description}</Dd>
           </Dl>
