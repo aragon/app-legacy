@@ -159,15 +159,21 @@ const ProposalTransactionProvider: React.FC<Props> = ({children}) => {
 
   // estimate proposal execution fees
   const estimateExecuteFees = useCallback(async () => {
-    if (executeParams)
-      // TODO: Handle multisig and token voting case
-      return pluginClient?.estimation.executeProposal({
-        ...executeParams,
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore
-        proposalId: stripPlgnAdrFromProposalId(executeParams.proposalId),
+    if (executeParams) {
+      if (tokenAddress) {
+        return (pluginClient as TokenVotingClient)?.estimation.executeProposal({
+          ...executeParams,
+          proposalId: stripPlgnAdrFromProposalId(executeParams.proposalId),
+        });
+      }
+      return (pluginClient as MultisigClient)?.estimation.executeProposal({
+        pluginAddress: executeParams.pluginAddress,
+        proposalId: BigInt(
+          stripPlgnAdrFromProposalId(executeParams.proposalId)
+        ),
       });
-  }, [executeParams, pluginClient?.estimation]);
+    }
+  }, [executeParams, pluginClient, tokenAddress]);
 
   // estimation fees for voting on proposal/executing proposal
   const {
@@ -381,13 +387,23 @@ const ProposalTransactionProvider: React.FC<Props> = ({children}) => {
     }
 
     setExecuteProcessState(TransactionState.LOADING);
-    // TODO: Handle multisig and token voting case
-    const executeSteps = pluginClient?.methods.executeProposal({
-      ...executeParams,
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
-      proposalId: stripPlgnAdrFromProposalId(executeParams.proposalId),
-    });
+
+    let executeSteps;
+    if (tokenAddress) {
+      executeSteps = (
+        pluginClient as TokenVotingClient
+      )?.methods.executeProposal({
+        ...executeParams,
+        proposalId: stripPlgnAdrFromProposalId(executeParams.proposalId),
+      });
+    } else {
+      executeSteps = (pluginClient as MultisigClient)?.methods.executeProposal({
+        pluginAddress: executeParams.pluginAddress,
+        proposalId: BigInt(
+          stripPlgnAdrFromProposalId(executeParams.proposalId)
+        ),
+      });
+    }
 
     if (!executeSteps) {
       throw new Error('Voting function is not initialized correctly');
@@ -420,7 +436,8 @@ const ProposalTransactionProvider: React.FC<Props> = ({children}) => {
     isConnected,
     onExecutionSubmitted,
     pluginAddress,
-    pluginClient?.methods,
+    pluginClient,
+    tokenAddress,
   ]);
 
   const value = useMemo(
