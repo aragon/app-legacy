@@ -13,6 +13,7 @@ import {
   MultisigProposal,
   ProposalMetadata,
   ProposalStatus,
+  MultisigProposalListItem,
   TokenVotingProposal,
   TokenVotingProposalResult,
   VoteValues,
@@ -693,15 +694,19 @@ export function addVoteToProposal(
  * @returns a proposal augmented with a singular vote
  */
 export function addApprovalToMultisigToProposal(
-  proposal: MultisigProposal,
+  proposal: MultisigProposal | MultisigProposalListItem,
   cachedApprovalAddress: string
 ) {
   if (!cachedApprovalAddress) return proposal;
 
-  return {
-    ...proposal,
-    approvals: [...proposal.approvals, cachedApprovalAddress],
-  };
+  if (typeof proposal.approvals === 'number')
+    return {
+      ...proposal,
+      approvals:
+        typeof proposal.approvals === 'number'
+          ? proposal.approvals + 1
+          : [...proposal.approvals, cachedApprovalAddress],
+    };
 }
 
 /**

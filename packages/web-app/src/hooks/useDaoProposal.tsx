@@ -46,7 +46,6 @@ export const useDaoProposal = (
   const [isLoading, setIsLoading] = useState(false);
 
   const pluginClient = usePluginClient(pluginType);
-
   const {preferences} = usePrivacyContext();
 
   const cachedMultisigVotes = useReactiveVar(pendingMultisigApprovalsVar);
@@ -57,11 +56,12 @@ export const useDaoProposal = (
     pendingTokenBasedProposalsVar
   );
 
+  const cachedMultisigExecutions = useReactiveVar(pendingMultisigExecutionVar);
   const cachedTokenBaseExecutions = useReactiveVar(
     pendingTokenBasedExecutionVar
   );
-  const cachedMultisigExecutions = useReactiveVar(pendingMultisigExecutionVar);
 
+  // return cache keys and variables based on the type of plugin;
   const getCachedProposalData = useCallback(() => {
     if (pluginType === 'multisig.plugin.dao.eth') {
       return {
