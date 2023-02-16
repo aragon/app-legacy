@@ -8,7 +8,7 @@ import {AccordionMethod} from 'components/accordionMethod';
 import {generateAlert} from 'components/multisigMinimumApproval';
 import MinimumApproval from 'components/multisigMinimumApproval/minimumApproval';
 import {BalanceMember, MultisigMember} from 'hooks/useDaoMembers';
-import {CORRECTION_DELAY, MULTISIG_LOWEST_MIN_APPROVAL} from 'utils/constants';
+import {CORRECTION_DELAY} from 'utils/constants';
 import {ActionAddAddress, ActionIndex, ActionRemoveAddress} from 'utils/types';
 import {CustomHeaderProps, FormItem} from '../addAddresses';
 
@@ -169,7 +169,7 @@ const UpdateMinimumApproval: React.FC<UpdateMinimumApprovalProps> = ({
         <FormItem>
           <Controller
             name={minimumApprovalKey}
-            defaultValue={minimumApproval || MULTISIG_LOWEST_MIN_APPROVAL}
+            defaultValue={minimumApproval}
             control={control}
             rules={{
               required: t('errors.minimumApproval.required') as string,

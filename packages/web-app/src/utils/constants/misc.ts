@@ -110,9 +110,6 @@ export const MULTISIG_MIN_DURATION_HOURS = 1;
 export const MULTISIG_REC_DURATION_DAYS = 5;
 export const MULTISIG_MAX_REC_DURATION_DAYS = 30;
 
-// lowest minimum approvals on multisig
-export const MULTISIG_LOWEST_MIN_APPROVAL = 1;
-
 // delay for correcting invalid user inputs
 export const CORRECTION_DELAY = 2000;
 
