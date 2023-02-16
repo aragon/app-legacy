@@ -134,7 +134,7 @@ const ProposalStepper: React.FC<ProposalStepperType> = ({
       <Step
         wizardTitle={t('newWithdraw.reviewProposal.heading')}
         wizardDescription={t('newWithdraw.reviewProposal.description')}
-        nextButtonLabel={t('labels.submitWithdraw')}
+        nextButtonLabel={t('labels.submitProposal')}
         onNextButtonClicked={() => {
           trackEvent('newProposal_publishBtn_clicked', {dao_address: dao});
           enableTxModal();

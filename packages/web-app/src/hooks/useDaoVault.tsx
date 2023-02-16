@@ -37,11 +37,14 @@ export const useDaoVault = (
       return;
     }
 
+    const actualBalance = (bal: bigint, decimals: number) =>
+      Number(formatUnits(bal, decimals));
     const tokenPreviousBalances = historicalTokenBalances(
       transfers,
       tokensWithMetadata,
       timeFilterToMinutes(options.filter)
     );
+    data.totalAssetChange = 0;
     data.tokens.forEach(token => {
       if (token.marketData) {
         const prevBalance = tokenPreviousBalances[token.metadata.id].balance;
@@ -49,7 +52,7 @@ export const useDaoVault = (
           token.marketData.price /
           (1 + token.marketData.percentageChangedDuringInterval / 100.0);
         const prevBalanceValue =
-          Number(formatUnits(prevBalance, token.metadata.decimals)) * prevPrice;
+          actualBalance(prevBalance, token.metadata.decimals) * prevPrice;
         token.marketData.valueChangeDuringInterval =
           token.marketData.balanceValue - prevBalanceValue;
         data.totalAssetChange += token.marketData.valueChangeDuringInterval;

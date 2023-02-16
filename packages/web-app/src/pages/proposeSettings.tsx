@@ -105,7 +105,7 @@ const ProposeSettings: React.FC = () => {
         <Step
           wizardTitle={t('newWithdraw.reviewProposal.heading')}
           wizardDescription={t('newWithdraw.reviewProposal.description')}
-          nextButtonLabel={t('labels.submitWithdraw')}
+          nextButtonLabel={t('labels.submitProposal')}
           onNextButtonClicked={enableTxModal}
           fullWidth
         >

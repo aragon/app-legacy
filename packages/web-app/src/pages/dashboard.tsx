@@ -188,9 +188,7 @@ const Dashboard: React.FC = () => {
 
   if (waitingForSubgraph) {
     const buttonLabel = {
-      [DaoCreationState.ASSEMBLING_DAO]: t(
-        'dashboard.emptyState.assemblingDao'
-      ),
+      [DaoCreationState.ASSEMBLING_DAO]: t('dashboard.emptyState.buildingDAO'),
       [DaoCreationState.DAO_READY]: t('dashboard.emptyState.daoReady'),
       [DaoCreationState.OPEN_DAO]: t('dashboard.emptyState.openDao'),
     };

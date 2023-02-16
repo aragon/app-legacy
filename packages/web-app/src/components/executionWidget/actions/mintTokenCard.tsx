@@ -21,7 +21,7 @@ export const MintTokenCard: React.FC<{
     <AccordionMethod
       type="execution-widget"
       methodName={t('labels.mintTokens')}
-      smartContractName={t('labels.aragonCore')}
+      smartContractName={t('labels.aragonOSx')}
       verified
       methodDescription={<MintTokenDescription />}
       additionalInfo={t('newProposal.mintTokens.additionalInfo')}

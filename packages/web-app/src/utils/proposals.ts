@@ -876,9 +876,9 @@ export function getNonEmptyActions(
   minApprovals?: number
 ) {
   return actions.flatMap(action => {
-    if (action.name === 'update_minimum_approval') {
+    if (action.name === 'modify_multisig_voting_settings') {
       // minimum approval changed: return action or don't include
-      return action.inputs.minimumApproval !== minApprovals ? action : [];
+      return action.inputs.minApprovals !== minApprovals ? action : [];
     } else if (action.name === 'add_address') {
       // address added to the list: return action or don't include
       return action.inputs.memberWallets.some(w => w.address === '')

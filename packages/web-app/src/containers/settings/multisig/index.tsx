@@ -71,7 +71,7 @@ const MultisigSettings: React.FC<IPluginSettings> = ({daoDetails}) => {
           <Dd>
             {daoSettings?.onlyListed
               ? t('createDAO.step3.multisigMembers')
-              : t('createDAO.step3.eligibility.anyone.title')}
+              : t('createDAO.step3.eligibility.anyWallet.title')}
           </Dd>
         </Dl>
       </DescriptionListContainer>

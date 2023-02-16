@@ -15,7 +15,9 @@ export function useDaoParam() {
   const {dao} = useParams();
 
   // NOTE At this point, daoParam will always be defined.
-  const {error, isLoading, waitingForSubgraph} = useDaoDetails(dao as string);
+  const {data, error, isLoading, waitingForSubgraph} = useDaoDetails(
+    dao! as string
+  );
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -27,6 +29,7 @@ export function useDaoParam() {
   }, [dao, error, isLoading, navigate]);
 
   return {
+    daoDetails: data,
     data: (dao as string).toLowerCase(),
     error,
     isLoading,

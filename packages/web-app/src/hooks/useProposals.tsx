@@ -1,5 +1,9 @@
 import {useReactiveVar} from '@apollo/client';
-import {ProposalStatus} from '@aragon/sdk-client';
+import {
+  ProposalSortBy,
+  ProposalStatus,
+  SortDirection,
+} from '@aragon/sdk-client';
 import {useCallback, useEffect, useState} from 'react';
 
 import {
@@ -30,6 +34,8 @@ export function useProposals(
 ): HookData<Array<ProposalListItem>> {
   const [data, setData] = useState<Array<ProposalListItem>>([]);
   const [error, setError] = useState<Error>();
+  const [isInitialLoading, setIsInitialLoading] = useState(true);
+  const [isLoadingMore, setIsLoadingMore] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
   const client = usePluginClient(type);
@@ -88,13 +94,19 @@ export function useProposals(
   useEffect(() => {
     async function getDaoProposals() {
       try {
-        setIsLoading(true);
+        if (skip === 0) {
+          setIsLoading(true);
+        } else {
+          setIsLoadingMore(true);
+        }
 
         const proposals = await client?.methods.getProposals({
           daoAddressOrEns: daoAddress,
           status,
           limit,
           skip,
+          sortBy: ProposalSortBy.CREATED_AT,
+          direction: SortDirection.DESC,
         });
 
         setData([...augmentProposalsWithCache(proposals || [])]);
@@ -103,10 +115,12 @@ export function useProposals(
         setError(err as Error);
       } finally {
         setIsLoading(false);
+        setIsInitialLoading(false);
+        setIsLoadingMore(false);
       }
     }
 
-    if (daoAddress) getDaoProposals();
+    if (daoAddress && client?.methods) getDaoProposals();
   }, [
     augmentProposalsWithCache,
     client?.methods,
@@ -116,5 +130,5 @@ export function useProposals(
     status,
   ]);
 
-  return {data, error, isLoading};
+  return {data, error, isLoading, isInitialLoading, isLoadingMore};
 }

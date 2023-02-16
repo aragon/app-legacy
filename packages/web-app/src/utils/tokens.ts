@@ -253,7 +253,7 @@ export function historicalTokenBalances(
 ) {
   const historicalBalances = {} as Record<string, TokenWithMetadata>;
   tokenBalances.forEach(
-    bal => (historicalBalances[bal.metadata.id] = {...bal})
+    bal => (historicalBalances[bal.metadata.id.toLowerCase()] = {...bal})
   );
   const nowMs = new Date().getTime();
 
@@ -261,15 +261,18 @@ export function historicalTokenBalances(
   // occurred in pastIntervalMins.
   for (let i = 0; i < transfers.length; i++) {
     const transfer = transfers[i];
-    const transferTimeMs = transfers[i].creationDate.getTime();
-    if (nowMs - transferTimeMs > pastIntervalMins * 60000) break;
+    // a transfer without a creationDate is pending and so always included
+    const transferTimeMs = transfers[i].creationDate?.getTime();
+    if (transferTimeMs && nowMs - transferTimeMs > pastIntervalMins * 60000)
+      break;
 
     const tokenId =
       transfer.tokenType === TokenType.ERC20
         ? transfer.token.address
         : constants.AddressZero;
+
     // reverse change to balance from transfer
-    historicalBalances[tokenId].balance -=
+    historicalBalances[tokenId.toLowerCase()].balance -=
       transfers[i].type === TransferType.DEPOSIT
         ? transfers[i].amount
         : -transfers[i].amount;

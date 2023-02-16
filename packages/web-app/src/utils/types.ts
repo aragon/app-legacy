@@ -209,6 +209,8 @@ export type ActionParameter = {
 /**
  * All available types of action for DAOs
  */
+// TODO: rename actions types and names to be consistent
+// either update or modify
 export type ActionsTypes =
   | 'add_address'
   | 'remove_address'
@@ -217,6 +219,7 @@ export type ActionsTypes =
   | 'external_contract'
   | 'modify_token_voting_settings'
   | 'modify_metadata'
+  | 'modify_multisig_voting_settings'
   | 'update_minimum_approval';
 
 // TODO Refactor ActionWithdraw With the new input structure
@@ -281,6 +284,11 @@ export type ActionMintToken = {
   };
 };
 
+export type ActionUpdateMultisigPluginSettings = {
+  name: 'modify_multisig_voting_settings';
+  inputs: MultisigVotingSettings;
+};
+
 export type ActionUpdatePluginSettings = {
   name: 'modify_token_voting_settings';
   inputs: VotingSettings & {
@@ -304,7 +312,8 @@ export type Action =
   | ActionMintToken
   | ActionUpdatePluginSettings
   | ActionUpdateMetadata
-  | ActionUpdateMinimumApproval;
+  | ActionUpdateMinimumApproval
+  | ActionUpdateMultisigPluginSettings;
 
 export type ParamType = {
   type: string;
@@ -340,6 +349,8 @@ export type Dao = {
 export type HookData<T> = {
   data: T;
   isLoading: boolean;
+  isInitialLoading?: boolean;
+  isLoadingMore?: boolean;
   error?: Error;
 };
 
