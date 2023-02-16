@@ -8,6 +8,10 @@ import {MintTokenDescription} from 'containers/actionBuilder/mintTokens';
 import {useNetwork} from 'context/network';
 import {CHAIN_METADATA} from 'utils/constants';
 import {ActionMintToken} from 'utils/types';
+import {useDaoMembers} from 'hooks/useDaoMembers';
+import {useDaoDetails} from 'hooks/useDaoDetails';
+import {useDaoParam} from 'hooks/useDaoParam';
+import {PluginTypes} from 'hooks/usePluginClient';
 
 export const MintTokenCard: React.FC<{
   action: ActionMintToken;
@@ -16,6 +20,15 @@ export const MintTokenCard: React.FC<{
   const {network} = useNetwork();
 
   const newTotalSupply = action.summary.newTokens + action.summary.tokenSupply;
+  const {data: dao} = useDaoParam();
+  const {data: daoDetails} = useDaoDetails(dao);
+
+  const {
+    data: {members},
+  } = useDaoMembers(
+    daoDetails?.plugins[0].instanceAddress as string,
+    daoDetails?.plugins[0].id as PluginTypes
+  );
 
   return (
     <AccordionMethod
@@ -74,7 +87,7 @@ export const MintTokenCard: React.FC<{
             <Label>{t('labels.totalHolders')}</Label>
             <p>
               {action.summary.newHoldersCount +
-                (action.summary.totalMembers || 0)}
+                (action.summary.totalMembers || members?.length)}{' '}
             </p>
           </HStack>
           {/* TODO add total amount of token holders here. */}
