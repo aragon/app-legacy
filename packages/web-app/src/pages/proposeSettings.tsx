@@ -187,6 +187,7 @@ const ProposeSettingWrapper: React.FC<Props> = ({
         daoSummary,
         daoLogo,
         minimumApproval,
+        multisigMinimumApprovals,
         minimumParticipation,
         eligibilityType,
         eligibilityTokenAmount,
@@ -201,6 +202,7 @@ const ProposeSettingWrapper: React.FC<Props> = ({
         'daoSummary',
         'daoLogo',
         'minimumApproval',
+        'multisigMinimumApprovals',
         'minimumParticipation',
         'eligibilityType',
         'eligibilityTokenAmount',
@@ -252,18 +254,26 @@ const ProposeSettingWrapper: React.FC<Props> = ({
         const multisigSettingsAction: ActionUpdateMinimumApproval = {
           name: 'update_minimum_approval',
           inputs: {
-            minimumApproval: 1,
+            minimumApproval: multisigMinimumApprovals,
           },
           summary: {
             addedWallets: 0,
             removedWallets: 0,
+            totalWallets: members.length,
           },
         };
 
         setValue('actions', [metadataAction, multisigSettingsAction]);
       }
     }
-  }, [daoToken, getValues, setValue, tokenSupply?.raw]);
+  }, [
+    daoToken,
+    pluginSettings,
+    getValues,
+    setValue,
+    tokenSupply?.raw,
+    members.length,
+  ]);
 
   useEffect(() => {
     // encoding actions
