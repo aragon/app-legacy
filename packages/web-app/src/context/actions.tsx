@@ -39,9 +39,13 @@ const ActionsProvider: React.FC<ActionsProviderProps> = ({daoId, children}) => {
       if (
         (newAction.name === 'remove_address' ||
           newAction.name === 'add_address') &&
-        !oldActions.some(a => a.name === 'update_minimum_approval')
+        !oldActions.some(a => a.name === 'modify_multisig_voting_settings')
       ) {
-        return [...oldActions, newAction, {name: 'update_minimum_approval'}];
+        return [
+          ...oldActions,
+          newAction,
+          {name: 'modify_multisig_voting_settings'},
+        ];
       }
 
       return [...oldActions, newAction];
@@ -53,15 +57,15 @@ const ActionsProvider: React.FC<ActionsProviderProps> = ({daoId, children}) => {
       let newActions = actions.filter((_, oldIndex) => oldIndex !== index);
 
       if (
-        // check if there is min approval
-        newActions.some(a => a.name === 'update_minimum_approval') &&
+        // check if there is an update settings with min approval
+        newActions.some(a => a.name === 'modify_multisig_voting_settings') &&
         // and no add or remove action is present
         !newActions.some(
           a => a.name === 'remove_address' || a.name === 'add_address'
         )
       ) {
         const indexOfMinApproval = newActions.findIndex(
-          a => a.name === 'update_minimum_approval'
+          a => a.name === 'modify_multisig_voting_settings'
         );
 
         // remove from local context

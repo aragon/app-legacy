@@ -1,8 +1,8 @@
 import React from 'react';
-import styled from 'styled-components';
 
 import {AvatarDao, ListItemLink} from '@aragon/ui-components';
 import {AccordionMethod} from 'components/accordionMethod';
+import {ActionCardDlContainer, Dd, Dl, Dt} from 'components/descriptionList';
 import {useTranslation} from 'react-i18next';
 import {resolveDaoAvatarIpfsCid} from 'utils/library';
 import {ActionUpdateMetadata} from 'utils/types';
@@ -20,31 +20,33 @@ export const ModifyMetadataCard: React.FC<{action: ActionUpdateMetadata}> = ({
     <AccordionMethod
       type="execution-widget"
       methodName={t('labels.updateMetadataAction')}
-      smartContractName={t('labels.aragonCore')}
+      smartContractName={t('labels.aragonOSx')}
       methodDescription={t('labels.updateMetadataActionDescription')}
       verified
     >
-      <Container>
-        <div>
-          <Title>{t('labels.logo')}</Title>
-          <AvatarDao
-            daoName={inputs.name}
-            src={resolveDaoAvatarIpfsCid(inputs.avatar)}
-            size="medium"
-          />
-        </div>
-        <div>
-          <Title>{t('labels.name')}</Title>
-          <Value>{inputs.name}</Value>
-        </div>
-        <div>
-          <Title>{t('labels.description')}</Title>
-          <Value>{inputs.description}</Value>
-        </div>
+      <ActionCardDlContainer>
+        <Dl>
+          <Dt>{t('labels.logo')}</Dt>
+          <Dd>
+            <AvatarDao
+              daoName={inputs.name}
+              src={resolveDaoAvatarIpfsCid(inputs.avatar)}
+              size="small"
+            />
+          </Dd>
+        </Dl>
+        <Dl>
+          <Dt>{t('labels.name')}</Dt>
+          <Dd>{inputs.name}</Dd>
+        </Dl>
+        <Dl>
+          <Dt>{t('labels.description')}</Dt>
+          <Dd>{inputs.description}</Dd>
+        </Dl>
         {displayedLinks.length > 0 && (
-          <div>
-            <Title>{t('labels.links')}</Title>
-            <Value>
+          <Dl>
+            <Dt>{t('labels.links')}</Dt>
+            <Dd>
               {displayedLinks.map(link => (
                 <ListItemLink
                   key={link.url}
@@ -52,23 +54,10 @@ export const ModifyMetadataCard: React.FC<{action: ActionUpdateMetadata}> = ({
                   href={link.url}
                 />
               ))}
-            </Value>
-          </div>
+            </Dd>
+          </Dl>
         )}
-      </Container>
+      </ActionCardDlContainer>
     </AccordionMethod>
   );
 };
-
-const Container = styled.div.attrs({
-  className:
-    'bg-ui-50 rounded-b-xl border border-t-0 border-ui-100 space-y-3 p-3',
-})``;
-
-const Title = styled.p.attrs({
-  className: 'font-bold text-ui-800 mb-1',
-})``;
-
-const Value = styled.span.attrs({
-  className: 'text-ui-600' as string,
-})``;

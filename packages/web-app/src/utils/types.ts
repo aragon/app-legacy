@@ -161,12 +161,9 @@ type ExecutionData = {
   amount: number;
 };
 
-export type AddressListVote = {
+export type Erc20ProposalVote = {
   address: string;
   vote: VoteValues;
-};
-
-export type Erc20ProposalVote = AddressListVote & {
   weight: bigint;
 };
 
@@ -209,6 +206,8 @@ export type ActionParameter = {
 /**
  * All available types of action for DAOs
  */
+// TODO: rename actions types and names to be consistent
+// either update or modify
 export type ActionsTypes =
   | 'add_address'
   | 'remove_address'
@@ -217,7 +216,7 @@ export type ActionsTypes =
   | 'external_contract'
   | 'modify_token_voting_settings'
   | 'modify_metadata'
-  | 'update_minimum_approval';
+  | 'modify_multisig_voting_settings';
 
 // TODO Refactor ActionWithdraw With the new input structure
 export type ActionWithdraw = {
@@ -252,17 +251,6 @@ export type ActionRemoveAddress = {
   };
 };
 
-export type ActionUpdateMinimumApproval = {
-  name: 'update_minimum_approval';
-  inputs: {
-    minimumApproval: number;
-  };
-  summary: {
-    addedWallets: number;
-    removedWallets: number;
-  };
-};
-
 export type ActionMintToken = {
   name: 'mint_tokens';
   inputs: {
@@ -279,6 +267,11 @@ export type ActionMintToken = {
     daoTokenAddress: string;
     totalMembers?: number;
   };
+};
+
+export type ActionUpdateMultisigPluginSettings = {
+  name: 'modify_multisig_voting_settings';
+  inputs: MultisigVotingSettings;
 };
 
 export type ActionUpdatePluginSettings = {
@@ -304,7 +297,7 @@ export type Action =
   | ActionMintToken
   | ActionUpdatePluginSettings
   | ActionUpdateMetadata
-  | ActionUpdateMinimumApproval;
+  | ActionUpdateMultisigPluginSettings;
 
 export type ParamType = {
   type: string;
@@ -340,6 +333,8 @@ export type Dao = {
 export type HookData<T> = {
   data: T;
   isLoading: boolean;
+  isInitialLoading?: boolean;
+  isLoadingMore?: boolean;
   error?: Error;
 };
 

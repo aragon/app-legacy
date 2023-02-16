@@ -16,7 +16,6 @@ import styled from 'styled-components';
 import ProposalList from 'components/proposalList';
 import {Loading} from 'components/temporary';
 import {PageWrapper} from 'components/wrappers';
-import {useDaoDetails} from 'hooks/useDaoDetails';
 import {useDaoParam} from 'hooks/useDaoParam';
 import {PluginTypes} from 'hooks/usePluginClient';
 import {useProposals} from 'hooks/useProposals';
@@ -25,11 +24,13 @@ import {erc20VotingProposals_erc20VotingProposals} from 'queries/__generated__/e
 import {trackEvent} from 'services/analytics';
 import {ProposalListItem} from 'utils/types';
 import {ProposalStatus} from '@aragon/sdk-client';
-import {customJSONReplacer} from 'utils/library';
 
 const Governance: React.FC = () => {
-  const {data: dao, isLoading} = useDaoParam();
-  const {data: daoDetails, isLoading: detailsAreLoading} = useDaoDetails(dao!);
+  const {
+    data: dao,
+    daoDetails: daoDetails,
+    isLoading: isDaoLoading,
+  } = useDaoParam();
 
   // The number of proposals displayed on each page
   const PROPOSALS_PER_PAGE = 6;
@@ -37,7 +38,12 @@ const Governance: React.FC = () => {
   const [endReached, setEndReached] = useState(false);
   const [filterValue, setFilterValue] = useState<ProposalStatus | 'All'>('All');
 
-  const {data: proposals, isLoading: proposalsAreLoading} = useProposals(
+  const {
+    data: proposals,
+    isInitialLoading,
+    isLoading,
+    isLoadingMore,
+  } = useProposals(
     daoDetails?.address as string,
     daoDetails?.plugins[0].id as PluginTypes,
     PROPOSALS_PER_PAGE,
@@ -50,32 +56,30 @@ const Governance: React.FC = () => {
   >([]);
 
   useEffect(() => {
-    if (proposals.length > 0) {
-      setDisplayedProposals(prev => [...prev, ...proposals]);
-      setEndReached(false);
-    } else {
-      setEndReached(true);
+    if (!isInitialLoading) {
+      if (!proposals.length) {
+        setEndReached(true);
+      }
+
+      setDisplayedProposals(prev => [...(prev || []), ...proposals]);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [JSON.stringify(proposals[0], customJSONReplacer)]);
+  }, [isInitialLoading, proposals]);
 
   const {t} = useTranslation();
   const navigate = useNavigate();
 
   const handleShowMoreClick = () => {
-    if (!isLoading) setSkip(prev => prev + PROPOSALS_PER_PAGE);
+    if (!isDaoLoading) setSkip(prev => prev + PROPOSALS_PER_PAGE);
   };
 
-  if (
-    (proposalsAreLoading && displayedProposals.length === 0) ||
-    detailsAreLoading ||
-    isLoading
-  ) {
+  if (isInitialLoading) {
     return <Loading />;
   }
 
   if (
-    (!displayedProposals || displayedProposals.length === 0) &&
+    !isInitialLoading &&
+    !isLoading &&
+    !displayedProposals?.length &&
     filterValue === 'All'
   ) {
     return (
@@ -115,12 +119,6 @@ const Governance: React.FC = () => {
     <>
       <PageWrapper
         title={'Proposals'}
-        //TODO: The current way of calculating active number of proposals is wrong. The subgraph has to return that
-        // description={
-        //   activeProposalCount === 1
-        //     ? t('governance.subtitleSingular')
-        //     : t('governance.subtitle', {activeProposalCount})
-        // }
         primaryBtnProps={{
           label: t('governance.action'),
           iconLeft: <IconAdd />,
@@ -152,19 +150,15 @@ const Governance: React.FC = () => {
           </ButtonGroup>
         </ButtonGroupContainer>
         <ListWrapper>
-          <ProposalList proposals={displayedProposals} />
+          <ProposalList proposals={displayedProposals} isLoading={isLoading} />
         </ListWrapper>
 
-        {!endReached && (
+        {!endReached && displayedProposals?.length > 0 && (
           <div className="mt-3">
             <ButtonText
               label={t('explore.explorer.showMore')}
               iconRight={
-                proposalsAreLoading ? (
-                  <Spinner size="xs" />
-                ) : (
-                  <IconChevronDown />
-                )
+                isLoadingMore ? <Spinner size="xs" /> : <IconChevronDown />
               }
               bgWhite
               mode="ghost"
@@ -172,23 +166,6 @@ const Governance: React.FC = () => {
             />
           </div>
         )}
-        {/* TODO: Switching to infinite pagination as the subgraph doesn't support counting number of proposals in each filterState for now */}
-        {/* <PaginationWrapper>
-          {displayedProposals.length > PROPOSALS_PER_PAGE && (
-            <Pagination
-              totalPages={
-                Math.ceil(
-                  displayedProposals.length / PROPOSALS_PER_PAGE
-                ) as number
-              }
-              activePage={page}
-              onChange={(activePage: number) => {
-                setPage(activePage);
-                window.scrollTo({top: 0, behavior: 'smooth'});
-              }}
-            />
-          )}
-        </PaginationWrapper> */}
       </PageWrapper>
     </>
   );
@@ -214,10 +191,6 @@ const ButtonGroupContainer = styled.div.attrs({
 const ListWrapper = styled.div.attrs({
   className: 'mt-3',
 })``;
-
-// const PaginationWrapper = styled.div.attrs({
-//   className: 'flex mt-8',
-// })``;
 
 export const EmptyStateContainer = styled.div.attrs({
   className:

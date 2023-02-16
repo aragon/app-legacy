@@ -208,7 +208,7 @@ const CreateProposalProvider: React.FC<Props> = ({
             );
           break;
         }
-        case 'update_minimum_approval': {
+        case 'modify_multisig_voting_settings': {
           actions.push(
             Promise.resolve(
               (
@@ -216,7 +216,7 @@ const CreateProposalProvider: React.FC<Props> = ({
               ).encoding.updateMultisigVotingSettings({
                 pluginAddress: pluginAddress,
                 votingSettings: {
-                  minApprovals: action.inputs.minimumApproval,
+                  minApprovals: action.inputs.minApprovals,
                   onlyListed: (pluginSettings as MultisigVotingSettings)
                     .onlyListed,
                 },

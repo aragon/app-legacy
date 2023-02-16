@@ -6,7 +6,7 @@ import React, {useState} from 'react';
 import TokenList from 'components/tokenList';
 import {useDaoVault} from 'hooks/useDaoVault';
 import {PageWrapper} from 'components/wrappers';
-import {filterTokens} from 'utils/tokens';
+import {filterTokens, sortTokens} from 'utils/tokens';
 import type {VaultToken} from 'utils/types';
 import {useGlobalModalContext} from 'context/globalModals';
 import {Loading} from 'components/temporary';
@@ -22,6 +22,7 @@ const Tokens: React.FC = () => {
 
   const {tokens} = useDaoVault(dao);
   const filteredTokens: VaultToken[] = filterTokens(tokens, searchTerm);
+  sortTokens(filteredTokens, 'treasurySharePercentage', true);
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSearchTerm(event.target.value);

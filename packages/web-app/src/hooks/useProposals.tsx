@@ -1,17 +1,28 @@
 import {useReactiveVar} from '@apollo/client';
-import {ProposalStatus} from '@aragon/sdk-client';
+import {
+  ProposalSortBy,
+  ProposalStatus,
+  SortDirection,
+  MultisigProposal,
+  TokenVotingProposal,
+} from '@aragon/sdk-client';
 import {useCallback, useEffect, useState} from 'react';
 
 import {
-  pendingExecutionVar,
+  pendingTokenBasedExecutionVar,
+  pendingMultisigApprovalsVar,
   pendingProposalsVar,
-  pendingVotesVar,
+  pendingTokenBasedVotesVar,
+  pendingMultisigExecutionVar,
 } from 'context/apolloClient';
 import {usePrivacyContext} from 'context/privacyContext';
 import {PENDING_PROPOSALS_KEY} from 'utils/constants';
 import {customJSONReplacer, generateCachedProposalId} from 'utils/library';
-import {addVoteToProposal} from 'utils/proposals';
-import {DetailedProposal, HookData, ProposalListItem} from 'utils/types';
+import {
+  addApprovalToMultisigToProposal,
+  addVoteToProposal,
+} from 'utils/proposals';
+import {HookData, ProposalListItem} from 'utils/types';
 import {PluginTypes, usePluginClient} from './usePluginClient';
 
 /**
@@ -30,13 +41,22 @@ export function useProposals(
 ): HookData<Array<ProposalListItem>> {
   const [data, setData] = useState<Array<ProposalListItem>>([]);
   const [error, setError] = useState<Error>();
+  const [isInitialLoading, setIsInitialLoading] = useState(true);
+  const [isLoadingMore, setIsLoadingMore] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
   const client = usePluginClient(type);
 
   const {preferences} = usePrivacyContext();
-  const cachedVotes = useReactiveVar(pendingVotesVar);
-  const cachedExecutions = useReactiveVar(pendingExecutionVar);
+
+  const cachedMultisigVotes = useReactiveVar(pendingMultisigApprovalsVar);
+  const cachedTokenBasedVotes = useReactiveVar(pendingTokenBasedVotesVar);
+
+  const cachedTokenBaseExecutions = useReactiveVar(
+    pendingTokenBasedExecutionVar
+  );
+  const cachedMultisigExecutions = useReactiveVar(pendingMultisigExecutionVar);
+
   const proposalCache = useReactiveVar(pendingProposalsVar);
 
   const augmentProposalsWithCache = useCallback(
@@ -63,16 +83,33 @@ export function useProposals(
         } else {
           // proposal not yet fetched, augment and add votes, execution status if necessary
           const id = generateCachedProposalId(daoAddress, proposalId);
-          const cachedProposal = cachedExecutions[id]
-            ? {...daoCache[proposalId], status: ProposalStatus.EXECUTED}
-            : {...daoCache[proposalId]};
 
-          augmentedProposals.unshift({
-            ...(addVoteToProposal(
-              cachedProposal as DetailedProposal,
-              cachedVotes[id]
-            ) as ProposalListItem),
-          });
+          // this is wild; add execution and vote
+          if (type === 'token-voting.plugin.dao.eth') {
+            const cachedProposal = cachedTokenBaseExecutions[id]
+              ? {...daoCache[proposalId], status: ProposalStatus.EXECUTED}
+              : {...daoCache[proposalId]};
+
+            augmentedProposals.unshift({
+              ...(addVoteToProposal(
+                cachedProposal as TokenVotingProposal,
+                cachedTokenBasedVotes[id]
+              ) as ProposalListItem),
+            });
+          }
+
+          if (type === 'multisig.plugin.dao.eth') {
+            const cachedProposal = cachedMultisigExecutions[id]
+              ? {...daoCache[proposalId], status: ProposalStatus.EXECUTED}
+              : {...daoCache[proposalId]};
+
+            augmentedProposals.unshift({
+              ...(addApprovalToMultisigToProposal(
+                cachedProposal as MultisigProposal,
+                cachedMultisigVotes[id]
+              ) as ProposalListItem),
+            });
+          }
         }
       }
 
@@ -88,13 +125,19 @@ export function useProposals(
   useEffect(() => {
     async function getDaoProposals() {
       try {
-        setIsLoading(true);
+        if (skip === 0) {
+          setIsLoading(true);
+        } else {
+          setIsLoadingMore(true);
+        }
 
         const proposals = await client?.methods.getProposals({
           daoAddressOrEns: daoAddress,
           status,
           limit,
           skip,
+          sortBy: ProposalSortBy.CREATED_AT,
+          direction: SortDirection.DESC,
         });
 
         setData([...augmentProposalsWithCache(proposals || [])]);
@@ -103,10 +146,12 @@ export function useProposals(
         setError(err as Error);
       } finally {
         setIsLoading(false);
+        setIsInitialLoading(false);
+        setIsLoadingMore(false);
       }
     }
 
-    if (daoAddress) getDaoProposals();
+    if (daoAddress && client?.methods) getDaoProposals();
   }, [
     augmentProposalsWithCache,
     client?.methods,
@@ -116,5 +161,5 @@ export function useProposals(
     status,
   ]);
 
-  return {data, error, isLoading};
+  return {data, error, isLoading, isInitialLoading, isLoadingMore};
 }

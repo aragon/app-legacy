@@ -154,7 +154,7 @@ const AddAddresses: React.FC<AddAddressesProps> = ({
       verified
       type="action-builder"
       methodName={t('labels.addWallets')}
-      smartContractName={t('labels.aragonCore')}
+      smartContractName={t('labels.aragonOSx')}
       methodDescription={t('labels.addWalletsDescription')}
       dropdownItems={methodActions}
       customHeader={useCustomHeader && <CustomHeader />}

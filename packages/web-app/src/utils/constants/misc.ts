@@ -110,6 +110,9 @@ export const MULTISIG_MIN_DURATION_HOURS = 1;
 export const MULTISIG_REC_DURATION_DAYS = 5;
 export const MULTISIG_MAX_REC_DURATION_DAYS = 30;
 
+// lowest minimum approvals on multisig
+export const MULTISIG_LOWEST_MIN_APPROVAL = 1;
+
 // delay for correcting invalid user inputs
 export const CORRECTION_DELAY = 2000;
 
@@ -132,5 +135,7 @@ export const FAVORITE_DAOS_KEY = 'favoriteDaos';
 export const PENDING_DEPOSITS_KEY = 'pendingDeposits';
 export const PENDING_PROPOSALS_KEY = 'pendingProposals';
 export const PENDING_VOTES_KEY = 'pendingVotes';
+export const PENDING_MULTISIG_VOTES_KEY = 'pendingMultisigVotes';
 export const PENDING_DAOS_KEY = 'pendingDaos';
 export const PENDING_EXECUTION_KEY = 'pendingExecution';
+export const PENDING_MULTISIG_EXECUTION_KEY = 'pendingMultisigExecution';

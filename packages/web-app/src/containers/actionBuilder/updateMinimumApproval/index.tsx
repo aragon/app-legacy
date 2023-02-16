@@ -1,16 +1,16 @@
 import React, {useEffect, useState} from 'react';
 import {Controller, useFormContext, useWatch} from 'react-hook-form';
 import {useTranslation} from 'react-i18next';
+import styled from 'styled-components';
 
+import {Address, Label} from '@aragon/ui-components';
 import {AccordionMethod} from 'components/accordionMethod';
+import {generateAlert} from 'components/multisigMinimumApproval';
+import MinimumApproval from 'components/multisigMinimumApproval/minimumApproval';
 import {BalanceMember, MultisigMember} from 'hooks/useDaoMembers';
+import {CORRECTION_DELAY, MULTISIG_LOWEST_MIN_APPROVAL} from 'utils/constants';
 import {ActionAddAddress, ActionIndex, ActionRemoveAddress} from 'utils/types';
 import {CustomHeaderProps, FormItem} from '../addAddresses';
-import styled from 'styled-components';
-import MinimumApproval from 'components/multisigMinimumApproval/minimumApproval';
-import {generateAlert} from 'components/multisigMinimumApproval';
-import {CORRECTION_DELAY} from 'utils/constants';
-import {Address, Label} from '@aragon/ui-components';
 
 export type CurrentDaoMembers = {
   currentDaoMembers?: MultisigMember[] | BalanceMember[];
@@ -31,7 +31,7 @@ const UpdateMinimumApproval: React.FC<UpdateMinimumApprovalProps> = ({
   // form context data & hooks
   const {setValue, control, trigger, getValues} = useFormContext();
 
-  const minimumApprovalKey = `actions.${actionIndex}.inputs.minimumApproval`;
+  const minimumApprovalKey = `actions.${actionIndex}.inputs.minApprovals`;
 
   const minimumApproval = useWatch({
     name: minimumApprovalKey,
@@ -39,13 +39,13 @@ const UpdateMinimumApproval: React.FC<UpdateMinimumApprovalProps> = ({
     control,
   });
 
-  const [addActionCount, setAddAcctionCount] = useState(-1);
-  const [removeActionCount, setRemoveAcctionCount] = useState(-1);
+  const [addActionCount, setAddActionCount] = useState(-1);
+  const [removeActionCount, setRemoveActionCount] = useState(-1);
 
   const totalMembers =
     // Calculate add & remove & existing members
-    addActionCount > 0 ||
-    removeActionCount > 0 ||
+    addActionCount >= 0 ||
+    removeActionCount >= 0 ||
     (currentDaoMembers && currentDaoMembers.length > 0)
       ? (currentDaoMembers?.length || 0) + (addActionCount - removeActionCount)
       : 0;
@@ -88,15 +88,27 @@ const UpdateMinimumApproval: React.FC<UpdateMinimumApprovalProps> = ({
 
       const newRemovedWalletCount = newRemovedWallet?.length || 0;
 
-      setAddAcctionCount(newAddedWalletCount);
-      setRemoveAcctionCount(newRemovedWalletCount);
+      setAddActionCount(newAddedWalletCount);
+      setRemoveActionCount(newRemovedWalletCount);
     }
   }, [actions, getValues]);
 
   useEffect(() => {
-    setValue(`actions.${actionIndex}.name`, 'update_minimum_approval');
+    setValue(`actions.${actionIndex}.name`, 'modify_multisig_voting_settings');
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  // trigger when total members is changed
+  useEffect(() => {
+    if (removeActionCount !== -1 || addActionCount !== -1)
+      trigger(minimumApprovalKey);
+  }, [
+    addActionCount,
+    minimumApprovalKey,
+    removeActionCount,
+    totalMembers,
+    trigger,
+  ]);
 
   /*************************************************
    *             Callbacks and Handlers            *
@@ -141,7 +153,7 @@ const UpdateMinimumApproval: React.FC<UpdateMinimumApprovalProps> = ({
         verified
         type={'action-builder'}
         methodName={t('labels.minimumApproval')}
-        smartContractName={t('labels.aragonCore')}
+        smartContractName={t('labels.aragonOSx')}
         customHeader={useCustomHeader && <CustomHeader />}
         methodDescription={t('labels.minimumApprovalDescription')}
         additionalInfo={t('labels.minimumApprovalAdditionalInfo')}
@@ -157,7 +169,7 @@ const UpdateMinimumApproval: React.FC<UpdateMinimumApprovalProps> = ({
         <FormItem>
           <Controller
             name={minimumApprovalKey}
-            defaultValue={minimumApproval}
+            defaultValue={minimumApproval || MULTISIG_LOWEST_MIN_APPROVAL}
             control={control}
             rules={{
               required: t('errors.minimumApproval.required') as string,

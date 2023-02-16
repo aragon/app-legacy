@@ -195,8 +195,8 @@ const SetupTokenVotingForm: React.FC<Props> = ({pluginSettings}) => {
         />
         <AlertCard
           mode="info"
-          title={t('infos.newVotingTypes')}
-          helpText={t('infos.newTypesHelpText')}
+          title={t('infos.newVotingTypes.title')}
+          helpText={t('infos.newVotingTypes.description')}
         />
       </FormSection>
 

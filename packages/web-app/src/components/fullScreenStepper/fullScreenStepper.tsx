@@ -5,7 +5,7 @@ import {
   IconChevronRight,
   Breadcrumb,
 } from '@aragon/ui-components';
-import React, {createContext, useContext, useMemo} from 'react';
+import React, {createContext, useContext, useEffect, useMemo} from 'react';
 import {useTranslation} from 'react-i18next';
 import {useNavigate} from 'react-router-dom';
 import styled from 'styled-components';
@@ -87,6 +87,11 @@ export const FullScreenStepper: React.FC<FullScreenStepperProps> = ({
       return currentStep - previousHideWizards;
     }
   }, [currentStep, hideWizard, previousHideWizards]);
+
+  // Scroll Top each time the CurrentStep changed
+  useEffect(() => {
+    window.scrollTo({top: 0, behavior: 'smooth'});
+  }, [currentStep]);
 
   return (
     <FullScreenStepperContext.Provider value={value}>

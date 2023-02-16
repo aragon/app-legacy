@@ -111,7 +111,7 @@ const RemoveAddresses: React.FC<RemoveAddressesProps> = ({
         verified
         type="action-builder"
         methodName={t('labels.removeWallets')}
-        smartContractName={t('labels.aragonCore')}
+        smartContractName={t('labels.aragonOSx')}
         methodDescription={t('labels.removeWalletsDescription')}
         dropdownItems={methodActions}
         customHeader={useCustomHeader && <CustomHeader />}

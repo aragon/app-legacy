@@ -23,6 +23,9 @@ export type DescriptionListProps = {
 // passed in as children to this component, where they get wrapped in DLs
 // again). [VR 17-01-2023]
 
+// Also, the sizing is hardcoded and will fail when a term is less than 30% of
+// container size. [FF 11-02-2023]
+
 export const DescriptionListContainer: React.FC<DescriptionListProps> = ({
   title,
   children,
@@ -125,9 +128,16 @@ const DtContainer = styled.dt.attrs({
 })``;
 
 const DdContainer = styled.dd.attrs({
-  className: 'flex-shrink-0 tablet:w-3/4 text-ui-600',
-})``;
+  className: 'flex-shrink-0 text-ui-600',
+})`
+  width: 70%;
+`;
 
 const HStack = styled.div.attrs({
   className: 'flex justify-between items-center',
+})``;
+
+export const ActionCardDlContainer = styled.div.attrs({
+  className:
+    'bg-ui-50 rounded-b-xl border border-t-0 border-ui-100 space-y-2 p-3',
 })``;
