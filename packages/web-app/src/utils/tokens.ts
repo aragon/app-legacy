@@ -272,10 +272,13 @@ export function historicalTokenBalances(
         : constants.AddressZero;
 
     // reverse change to balance from transfer
-    historicalBalances[tokenId.toLowerCase()].balance -=
-      transfers[i].type === TransferType.DEPOSIT
-        ? transfers[i].amount
-        : -transfers[i].amount;
+    if (transfer.tokenType !== TokenType.ERC721) {
+      // TODO Handle ERC721
+      historicalBalances[tokenId.toLowerCase()].balance -=
+        transfer.type === TransferType.DEPOSIT
+          ? transfer.amount
+          : -transfer.amount;
+    }
   }
 
   return historicalBalances;

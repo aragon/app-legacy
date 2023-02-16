@@ -1,5 +1,5 @@
 import {useApolloClient} from '@apollo/client';
-import {TransferType} from '@aragon/sdk-client';
+import {TokenType, TransferType} from '@aragon/sdk-client';
 
 import {useNetwork} from 'context/network';
 import {constants} from 'ethers';
@@ -112,11 +112,18 @@ function mapToDaoTransfers(
               CHAIN_METADATA[network].nativeCurrency.decimals
             ),
           }
-        : {
+        : transfer.tokenType === TokenType.ERC20
+        ? {
             tokenName: transfer.token.name,
             tokenAddress: transfer.token.address,
             tokenSymbol: transfer.token.symbol,
             tokenAmount: formatUnits(transfer.amount, transfer.token.decimals),
+          }
+        : {
+            tokenName: transfer.token.name,
+            tokenAddress: transfer.token.address,
+            tokenSymbol: transfer.token.symbol,
+            tokenAmount: '', // TODO work out how to get this value
           }),
     };
 

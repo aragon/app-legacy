@@ -1,5 +1,5 @@
 import {useApolloClient} from '@apollo/client';
-import {AssetBalance} from '@aragon/sdk-client';
+import {AssetBalance, TokenType} from '@aragon/sdk-client';
 import {constants} from 'ethers';
 import {useEffect, useState} from 'react';
 
@@ -22,23 +22,27 @@ export const useTokenMetadata = (
       try {
         setLoading(true);
 
+        // TODO fix cases below for ERC721
+
         // fetch token metadata from external api
         const metadata = await Promise.all(
           assets?.map(asset => {
             return fetchTokenData(
-              asset.type === 'erc20' ? asset.address : constants.AddressZero,
+              asset.type !== TokenType.NATIVE
+                ? asset.address
+                : constants.AddressZero,
               client,
               network,
-              asset.type === 'erc20' ? asset.symbol : undefined
+              asset.type !== TokenType.NATIVE ? asset.symbol : undefined
             );
           })
         );
 
         // map metadata to token balances
         const tokensWithMetadata = assets?.map((asset, index) => ({
-          balance: asset.balance,
+          balance: asset.type !== TokenType.ERC721 ? asset.balance : BigInt(0),
           metadata: {
-            ...(asset.type === 'erc20'
+            ...(asset.type === TokenType.ERC20
               ? {
                   id: asset.address,
                   decimals: asset.decimals,
