@@ -129,6 +129,12 @@ const ProposalTransactionProvider: React.FC<Props> = ({children}) => {
     [executeParams, executeProcessState, voteParams, voteProcessState]
   );
 
+  const shouldDisableCallback = useMemo(() => {
+    if (voteProcessState === TransactionState.SUCCESS) return false;
+
+    return !(voteParams || executeParams);
+  }, [executeParams, voteParams, voteProcessState]);
+
   /*************************************************
    *                    Helpers                    *
    *************************************************/
@@ -487,6 +493,7 @@ const ProposalTransactionProvider: React.FC<Props> = ({children}) => {
       voteSubmitted,
     ]
   );
+
   /*************************************************
    *                    Render                     *
    *************************************************/
@@ -524,7 +531,7 @@ const ProposalTransactionProvider: React.FC<Props> = ({children}) => {
         averageFee={averageFee}
         tokenPrice={tokenPrice}
         gasEstimationError={gasEstimationError}
-        disabledCallback={!(voteParams || executeParams)}
+        disabledCallback={shouldDisableCallback}
       />
     </ProposalTransactionContext.Provider>
   );
