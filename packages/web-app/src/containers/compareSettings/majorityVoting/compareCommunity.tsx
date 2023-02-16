@@ -42,7 +42,7 @@ export const CompareMvCommunity: React.FC<CompareMyCommunityProps> = ({
               token: eligibilityTokenAmount,
               symbol: daoToken?.symbol,
             })
-          : t('createDAO.step3.eligibility.anyone.title'),
+          : 'Anyone',
     };
   } else {
     displayedInfo = {
@@ -58,7 +58,7 @@ export const CompareMvCommunity: React.FC<CompareMyCommunityProps> = ({
             ),
             tokenSymbol: daoToken?.symbol,
           })
-        : t('createDAO.step3.eligibility.anyone.title'),
+        : 'Anyone',
     };
   }
 

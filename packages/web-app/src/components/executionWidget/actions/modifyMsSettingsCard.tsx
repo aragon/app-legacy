@@ -14,7 +14,7 @@ export const ModifyMsSettingsCard: React.FC<{
     <AccordionMethod
       type="execution-widget"
       methodName={t('labels.minimumApproval')}
-      smartContractName={t('labels.aragonCore')}
+      smartContractName={t('labels.aragonOSx')}
       methodDescription={t('labels.minimumApprovalDescription')}
       verified
     >
