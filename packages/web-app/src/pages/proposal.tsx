@@ -396,6 +396,8 @@ const Proposal: React.FC = () => {
   const {voteNowDisabled, onClick} = useMemo(() => {
     if (proposal?.status !== 'Active') return {voteNowDisabled: true};
 
+    if (multisigDAO && voteSubmitted) return {voteNowDisabled: true};
+
     if (earlyExecution && voteSubmitted) return {voteNowDisabled: true};
 
     // not logged in
