@@ -14,7 +14,7 @@
     "check-types": "tsc --noemit",
     "codegen": "apollo client:codegen --target typescript --globalTypesFile=types/global_apollo.ts --includes=./src/queries/*.tsx  --endpoint 'https://api.thegraph.com/subgraphs/name/aragon/aragon-zaragoza-goerli'",
     "generate-abis-and-types": "node scripts/generate-abis-and-types.js && yarn typechain --target ethers-v5 --out-dir src/typechain './src/abis/*.json'",
-    "e2e": "env-cmd -f .env.development.local npx synpress run --configFile synpress.config.js",
+    "e2e": "env-cmd -f .env npx synpress run --configFile synpress.config.js",
     "e2e:reset": "cd tests/e2e && cpx default/runContext.json ."
   },
   "dependencies": {
