@@ -27,6 +27,7 @@ export type DepositFormData = TokenFormData & {
   from: Address;
   amount: string;
   reference: string;
+  daoName?: string;
 
   // Form metadata
   isCustomToken: boolean;
@@ -45,7 +46,7 @@ const defaultValues = {
 const NewDeposit: React.FC = () => {
   const {t} = useTranslation();
   const {network} = useNetwork();
-  const {data: dao, isLoading} = useDaoParam();
+  const {data: dao, daoDetails, isLoading} = useDaoParam();
 
   const {address} = useWallet();
   const {data: walletTokens} = useWalletTokens();
@@ -60,8 +61,10 @@ const NewDeposit: React.FC = () => {
     if (address && dao) {
       formMethods.setValue('from', address);
       formMethods.setValue('to', dao);
+      formMethods.setValue('to', dao);
+      formMethods.setValue('daoName', daoDetails?.metadata?.name);
     }
-  }, [address, dao, formMethods]);
+  }, [address, dao, formMethods, daoDetails]);
 
   /*************************************************
    *             Callbacks and Handlers            *
