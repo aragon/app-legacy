@@ -448,7 +448,6 @@ function getPublishedProposalStep(
   creationDate: Date,
   block: string | undefined
 ): ProgressStatusProps {
-  console.log(block);
   return {
     label: t('governance.statusWidget.published'),
     date: `${format(

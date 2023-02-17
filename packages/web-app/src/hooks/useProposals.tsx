@@ -80,31 +80,33 @@ export function useProposals(
     }
 
     // token voting
-    return {
-      proposalCacheKey: PENDING_PROPOSALS_KEY,
-      proposalCacheVar: pendingTokenBasedProposalsVar,
-      proposalCache: cachedTokenBasedProposals,
-      executions: cachedTokenBaseExecutions,
-    };
+    if (isTokenBasedPlugin) {
+      return {
+        proposalCacheKey: PENDING_PROPOSALS_KEY,
+        proposalCacheVar: pendingTokenBasedProposalsVar,
+        proposalCache: cachedTokenBasedProposals,
+        executions: cachedTokenBaseExecutions,
+      };
+    }
   }, [
     cachedMultisigExecutions,
     cachedMultisigProposals,
     cachedTokenBaseExecutions,
     cachedTokenBasedProposals,
     isMultisigPlugin,
+    isTokenBasedPlugin,
   ]);
 
   const augmentProposalsWithCache = useCallback(
     (fetchedProposals: ProposalListItem[]) => {
       // get proposal cached data
-      const {proposalCache, proposalCacheVar, proposalCacheKey, executions} =
-        getCachedProposalData();
+      const cachedData = getCachedProposalData();
 
       // no cache for current dao return proposals from subgraph
-      if (!proposalCache[daoAddress]) return fetchedProposals;
+      if (!cachedData?.proposalCache[daoAddress]) return fetchedProposals;
 
       // get all cached proposals for current dao
-      const daoCachedProposals = {...proposalCache[daoAddress]};
+      const daoCachedProposals = {...cachedData.proposalCache[daoAddress]};
       const augmentedProposals = [...fetchedProposals];
 
       for (const proposalId in daoCachedProposals) {
@@ -115,15 +117,15 @@ export function useProposals(
 
           // update cache to new values
           const newCache = {
-            ...proposalCache,
+            ...cachedData.proposalCache,
             [daoAddress]: {...daoCachedProposals},
           };
-          proposalCacheVar(newCache);
+          cachedData.proposalCacheVar(newCache);
 
           // update local storage to match cache
           if (preferences?.functional) {
             localStorage.setItem(
-              proposalCacheKey,
+              cachedData.proposalCacheKey,
               JSON.stringify(newCache, customJSONReplacer)
             );
           }
@@ -132,7 +134,7 @@ export function useProposals(
           const id = new ProposalId(proposalId).makeGloballyUnique(daoAddress);
 
           // check if proposal has been executed
-          const cachedProposal = executions[id]
+          const cachedProposal = cachedData.executions[id]
             ? {
                 ...daoCachedProposals[proposalId],
                 status: ProposalStatus.EXECUTED,

@@ -467,7 +467,6 @@ const ProposalTransactionProvider: React.FC<Props> = ({children}) => {
             setTransactionHash(step.txHash);
             break;
           case ExecuteProposalStep.DONE:
-            console.log(step.key);
             setExecuteParams(undefined);
             setExecutionFailed(false);
             setExecuteProcessState(TransactionState.SUCCESS);
