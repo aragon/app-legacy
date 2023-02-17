@@ -30,6 +30,13 @@ export const MintTokenCard: React.FC<{
     daoDetails?.plugins[0].id as PluginTypes
   );
 
+  const newHolders = action.inputs.mintTokensToWallets.filter(({address}) => {
+    return members.find(
+      (addr: {address: string}) =>
+        addr.address.toUpperCase() !== address.toUpperCase()
+    );
+  });
+
   return (
     <AccordionMethod
       type="execution-widget"
@@ -75,7 +82,7 @@ export const MintTokenCard: React.FC<{
           </HStack>
           <HStack>
             <Label>{t('labels.newHolders')}</Label>
-            <p>+{action.summary.newHoldersCount}</p>
+            <p>+{newHolders?.length}</p>
           </HStack>
           <HStack>
             <Label>{t('labels.totalTokens')}</Label>
@@ -86,7 +93,7 @@ export const MintTokenCard: React.FC<{
           <HStack>
             <Label>{t('labels.totalHolders')}</Label>
             <p>
-              {action.summary.newHoldersCount +
+              {newHolders?.length +
                 (action.summary.totalMembers || members?.length)}{' '}
             </p>
           </HStack>

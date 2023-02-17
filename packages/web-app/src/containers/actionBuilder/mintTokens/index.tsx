@@ -409,6 +409,7 @@ export const MintTokenForm: React.FC<MintTokenFormProps> = ({
           onClick={handleAddWallet}
         />
 
+        {/* eslint-disable-next-line tailwindcss/classnames-order */}
         <label className="flex-1 tablet:flex-initial py-1.5 px-2 space-x-1.5 h-6 font-bold rounded-xl cursor-pointer hover:text-primary-500 bg-ui-0 ft-text-base">
           {t('labels.whitelistWallets.uploadCSV')}
           <input
@@ -461,6 +462,7 @@ export const MintTokenDescription: React.FC = () => (
     <a
       href="data:text/csv;base64,QWRkcmVzcyxUb2tlbnMKMHgwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwLDEwLjUw"
       download="MintTokenTemplate.csv"
+      // eslint-disable-next-line tailwindcss/classnames-order
       className="font-bold rounded focus:ring-2 focus:outline-none text-primary-500 hover:text-primary-700 focus:ring-primary-500"
     >
       this template
