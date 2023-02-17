@@ -41,16 +41,13 @@ import {MultisigMember} from 'hooks/useDaoMembers';
 import {isMultisigVotingSettings} from 'hooks/usePluginSettings';
 import {i18n} from '../../i18n.config';
 import {getFormattedUtcOffset, KNOWN_FORMATS} from './date';
-import {
-  customJSONReplacer,
-  formatUnits,
-  generateCachedProposalId,
-} from './library';
+import {customJSONReplacer, formatUnits} from './library';
 import {abbreviateTokenAmount} from './tokens';
 import {
   Action,
   DetailedProposal,
   Erc20ProposalVote,
+  ProposalId,
   StrictlyExclude,
   SupportedProposals,
   SupportedVotingSettings,
@@ -945,7 +942,7 @@ export const augmentProposalWithCachedVote = (
   cachedVotes: PendingTokenBasedVotes | PendingMultisigApprovals,
   functionalCookiesEnabled: boolean | undefined
 ) => {
-  const id = generateCachedProposalId(daoAddress, proposal.id);
+  const id = new ProposalId(proposal.id).makeGloballyUnique(daoAddress);
 
   if (isErc20VotingProposal(proposal)) {
     const cachedVote = (cachedVotes as PendingTokenBasedVotes)[id];
@@ -1029,7 +1026,7 @@ export function augmentProposalWithCachedExecution(
   cache: ReactiveVar<PendingMultisigExecution | PendingTokenBasedExecution>,
   cacheKey: typeof PENDING_EXECUTION_KEY | typeof PENDING_MULTISIG_EXECUTION_KEY
 ) {
-  const id = generateCachedProposalId(daoAddress, proposal.id);
+  const id = new ProposalId(proposal.id).makeGloballyUnique(daoAddress);
 
   const cachedExecution = cachedExecutions[id];
 

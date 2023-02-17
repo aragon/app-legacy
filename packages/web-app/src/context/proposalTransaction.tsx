@@ -452,8 +452,7 @@ const ProposalTransactionProvider: React.FC<Props> = ({children}) => {
     } else {
       executeSteps = (pluginClient as MultisigClient)?.methods.executeProposal({
         pluginAddress: executeParams.pluginAddress,
-        proposalId: executeParams.proposalId
-        ),
+        proposalId: executeParams.proposalId,
       });
     }
 

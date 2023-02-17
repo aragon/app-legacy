@@ -22,12 +22,7 @@ import {
   addApprovalToMultisigToProposal,
   addVoteToProposal,
 } from 'utils/proposals';
-import {
-  DetailedProposal,
-  HookData,
-  ProposalId,
-  ProposalListItem,
-} from 'utils/types';
+import {HookData, ProposalId, ProposalListItem} from 'utils/types';
 import {PluginTypes, usePluginClient} from './usePluginClient';
 
 /**
@@ -92,8 +87,8 @@ export function useProposals(
           // this is wild; add execution and vote
           if (type === 'token-voting.plugin.dao.eth') {
             const cachedProposal = cachedTokenBaseExecutions[id]
-              ? {...daoCache[proposalId], status: ProposalStatus.EXECUTED}
-              : {...daoCache[proposalId]};
+              ? {...daoCache[id], status: ProposalStatus.EXECUTED}
+              : {...daoCache[id]};
 
             augmentedProposals.unshift({
               ...(addVoteToProposal(
@@ -105,14 +100,16 @@ export function useProposals(
 
           if (type === 'multisig.plugin.dao.eth') {
             const cachedProposal = cachedMultisigExecutions[id]
-              ? {...daoCache[proposalId], status: ProposalStatus.EXECUTED}
-              : {...daoCache[proposalId]};
+              ? {...daoCache[id], status: ProposalStatus.EXECUTED}
+              : {...daoCache[id]};
 
+            const multisigProposal = addApprovalToMultisigToProposal(
+              cachedProposal as MultisigProposal,
+              cachedMultisigVotes[id]
+            );
             augmentedProposals.unshift({
-              ...(addApprovalToMultisigToProposal(
-                cachedProposal as MultisigProposal,
-                cachedMultisigVotes[id]
-              ) as ProposalListItem),
+              ...multisigProposal,
+              approvals: multisigProposal.approvals.length,
             });
           }
         }
