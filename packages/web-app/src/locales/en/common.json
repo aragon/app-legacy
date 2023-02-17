@@ -82,6 +82,7 @@
     "popularity": "Popularity",
     "daoName": "DAO name",
     "daoEnsName": "ENS Subdomain",
+    "ens": "ENS",
     "summary": "Summary",
     "description": "Description",
     "addLink": "Add link",
