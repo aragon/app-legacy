@@ -58,7 +58,7 @@ export function useDaos(
           const sortBy =
             useCase === 'popular' ? DaoSortBy.POPULARITY : DaoSortBy.CREATED_AT;
 
-          let daos =
+          const daos =
             (await client?.methods.getDaos({
               sortBy,
               direction,
