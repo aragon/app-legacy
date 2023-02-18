@@ -58,7 +58,7 @@ export function useDaos(
           const sortBy =
             useCase === 'popular' ? DaoSortBy.POPULARITY : DaoSortBy.CREATED_AT;
 
-          const daos =
+          let daos =
             (await client?.methods.getDaos({
               sortBy,
               direction,
@@ -74,6 +74,11 @@ export function useDaos(
               } catch (err) {
                 dao.metadata.avatar = undefined;
               }
+            }
+            if (dao.plugins.length < 1) {
+              console.log(
+                `WARNING: DAO with zero plugins ignored ens: ${dao.ensDomain} address: ${dao.address}`
+              );
             }
           });
           setData(daos);
