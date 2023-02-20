@@ -876,12 +876,12 @@ export function isEarlyExecutable(
     proposal.token.decimals
   );
 
+  if (votes.yes.eq(Big(0))) return false;
+
   return (
     // participation reached
     missingParticipation === 0 &&
-    // support threshold met
-    votes.yes.div(votes.yes.add(votes.no)).gt(supportThreshold) &&
-    // even if absentees show up and all vote against, still cannot change outcome
+    // support threshold met even if absentees show up and all vote against, still cannot change outcome
     votes.yes.div(votes.yes.add(votes.no).add(absentee)).gt(supportThreshold)
   );
 }
