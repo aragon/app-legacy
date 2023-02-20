@@ -3,7 +3,10 @@ import React, {useMemo} from 'react';
 import {useTranslation} from 'react-i18next';
 import {NavigateFunction, useNavigate} from 'react-router-dom';
 
+import {MultisigProposalListItem} from '@aragon/sdk-client';
 import {useNetwork} from 'context/network';
+import {useDaoMembers} from 'hooks/useDaoMembers';
+import {PluginTypes} from 'hooks/usePluginClient';
 import {trackEvent} from 'services/analytics';
 import {
   CHAIN_METADATA,
@@ -12,27 +15,49 @@ import {
 } from 'utils/constants';
 import {translateProposalDate} from 'utils/date';
 import {formatUnits} from 'utils/library';
-import {isErc20VotingProposal, isMultisigProposal} from 'utils/proposals';
+import {isErc20VotingProposal} from 'utils/proposals';
 import {abbreviateTokenAmount} from 'utils/tokens';
 import {ProposalListItem} from 'utils/types';
 import {i18n} from '../../../i18n.config';
 
 type ProposalListProps = {
   proposals: Array<ProposalListItem>;
+  pluginAddress: string;
+  pluginType: PluginTypes;
   isLoading?: boolean;
 };
 
-const ProposalList: React.FC<ProposalListProps> = ({proposals, isLoading}) => {
+function isMultisigProposalListItem(
+  proposal: ProposalListItem | undefined
+): proposal is MultisigProposalListItem {
+  if (!proposal) return false;
+  return 'approvals' in proposal;
+}
+
+const ProposalList: React.FC<ProposalListProps> = ({
+  proposals,
+  pluginAddress,
+  pluginType,
+  isLoading,
+}) => {
   const {t} = useTranslation();
   const {network} = useNetwork();
   const navigate = useNavigate();
 
-  const mappedProposals: ({id: string} & CardProposalProps)[] = useMemo(
-    () => proposals.map(p => proposal2CardProps(p, network, navigate)),
-    [proposals, network, navigate]
+  const {data: members, isLoading: areMembersLoading} = useDaoMembers(
+    pluginAddress,
+    pluginType
   );
 
-  if (isLoading) {
+  const mappedProposals: ({id: string} & CardProposalProps)[] = useMemo(
+    () =>
+      proposals.map(p =>
+        proposal2CardProps(p, members.members.length, network, navigate)
+      ),
+    [proposals, network, navigate, members.members]
+  );
+
+  if (isLoading || areMembersLoading) {
     return (
       <div className="flex justify-center items-center h-7">
         <Spinner size="default" />
@@ -76,6 +101,7 @@ export type CardViewProposal = Omit<CardProposalProps, 'onClick'> & {
  */
 export function proposal2CardProps(
   proposal: ProposalListItem,
+  membersCount: number,
   network: SupportedNetworks,
   navigate: NavigateFunction
 ): {id: string} & CardProposalProps {
@@ -133,8 +159,9 @@ export function proposal2CardProps(
     } else {
       return {...props, ...specificProps};
     }
-  } else if (isMultisigProposal(proposal)) {
-    const startDate = proposal.creationDate;
+  } else if (isMultisigProposalListItem(proposal)) {
+    //TODO still don't have the date. Please mend when ready.
+    const startDate = new Date();
     const endDate = new Date();
 
     // Temporarily hardcode start as now and end as one day later. [VR 06-02-2023]
@@ -148,7 +175,7 @@ export function proposal2CardProps(
     };
     if (proposal.status.toLowerCase() === 'active') {
       const activeProps = {
-        voteProgress: relativeVoteCount(2, 3),
+        voteProgress: relativeVoteCount(proposal.approvals, membersCount),
         voteLabel: i18n.t(
           'newWithdraw.setupVoting.multisig.votingOption.label'
         ),
