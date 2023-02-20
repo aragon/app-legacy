@@ -150,7 +150,12 @@ const Governance: React.FC = () => {
           </ButtonGroup>
         </ButtonGroupContainer>
         <ListWrapper>
-          <ProposalList proposals={displayedProposals} isLoading={isLoading} />
+          <ProposalList
+            proposals={displayedProposals}
+            pluginAddress={daoDetails?.address as string}
+            pluginType={daoDetails?.plugins[0].id as PluginTypes}
+            isLoading={isLoading}
+          />
         </ListWrapper>
 
         {!endReached && displayedProposals?.length > 0 && (

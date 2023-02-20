@@ -13,23 +13,43 @@ import styled from 'styled-components';
 import {proposal2CardProps} from 'components/proposalList';
 import {StateEmpty} from 'components/stateEmpty';
 import {useNetwork} from 'context/network';
+import {useDaoMembers} from 'hooks/useDaoMembers';
+import {PluginTypes} from 'hooks/usePluginClient';
+import {htmlIn} from 'utils/htmlIn';
 import {Governance, NewProposal} from 'utils/paths';
 import {ProposalListItem} from 'utils/types';
-import {htmlIn} from 'utils/htmlIn';
 
-type Props = {dao: string; proposals: ProposalListItem[]};
+type Props = {
+  dao: string;
+  pluginAddress: string;
+  pluginType: PluginTypes;
+  proposals: ProposalListItem[];
+};
 
-const ProposalSnapshot: React.FC<Props> = ({dao, proposals}) => {
+const ProposalSnapshot: React.FC<Props> = ({
+  dao,
+  pluginAddress,
+  pluginType,
+  proposals,
+}) => {
   const {t} = useTranslation();
   const navigate = useNavigate();
   const {network} = useNetwork();
 
-  const mappedProposals = useMemo(
-    () => proposals.map(p => proposal2CardProps(p, network, navigate)),
-    [proposals, network, navigate]
+  const {data: members, isLoading: areMembersLoading} = useDaoMembers(
+    pluginAddress,
+    pluginType
   );
 
-  if (proposals.length === 0) {
+  const mappedProposals = useMemo(
+    () =>
+      proposals.map(p =>
+        proposal2CardProps(p, members.members.length, network, navigate)
+      ),
+    [proposals, network, navigate, members.members]
+  );
+
+  if (proposals.length === 0 || areMembersLoading) {
     return (
       <StateEmpty
         type="Human"
