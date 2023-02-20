@@ -342,6 +342,7 @@ export function getProposalStatusSteps(
   executionBlock?: string,
   executionDate?: Date
 ): Array<ProgressStatusProps> {
+  console.log('status', status);
   switch (status) {
     case 'Active':
       return [
@@ -370,7 +371,7 @@ export function getProposalStatusSteps(
     case 'Succeeded':
       if (executionFailed)
         return [
-          ...getPassedProposalSteps(t, creationDate, startDate, publishedBlock),
+          ...getPassedProposalSteps(t, creationDate, endDate, publishedBlock),
           {
             label: t('governance.statusWidget.failed'),
             mode: 'failed',
@@ -382,7 +383,7 @@ export function getProposalStatusSteps(
         ];
       else
         return [
-          ...getPassedProposalSteps(t, creationDate, startDate, publishedBlock),
+          ...getPassedProposalSteps(t, creationDate, endDate, publishedBlock),
           {
             label: t('governance.statusWidget.succeeded'),
             mode: 'upcoming',
@@ -391,7 +392,7 @@ export function getProposalStatusSteps(
     case 'Executed':
       if (executionDate)
         return [
-          ...getPassedProposalSteps(t, creationDate, startDate, publishedBlock),
+          ...getPassedProposalSteps(t, creationDate, endDate, publishedBlock),
           {
             label: t('governance.statusWidget.executed'),
             mode: 'succeeded',
@@ -404,7 +405,7 @@ export function getProposalStatusSteps(
         ];
       else
         return [
-          ...getPassedProposalSteps(t, creationDate, startDate, publishedBlock),
+          ...getPassedProposalSteps(t, creationDate, endDate, publishedBlock),
           {label: t('governance.statusWidget.failed'), mode: 'failed'},
         ];
 
@@ -427,7 +428,7 @@ export function getProposalStatusSteps(
 function getPassedProposalSteps(
   t: TFunction,
   creationDate: Date,
-  startDate: Date,
+  endDate: Date,
   block: string
 ): Array<ProgressStatusProps> {
   return [
@@ -436,7 +437,7 @@ function getPassedProposalSteps(
       label: t('governance.statusWidget.passed'),
       mode: 'done',
       date: `${format(
-        startDate,
+        endDate,
         KNOWN_FORMATS.proposals
       )}  ${getFormattedUtcOffset()}`,
     },

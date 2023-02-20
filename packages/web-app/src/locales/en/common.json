@@ -610,7 +610,7 @@
       "newTokenSubtitle": "No, I would like to create a token.",
       "existingToken": "Yes",
       "existingTokenSubtitle": "Yes, we already have a token.",
-      "tokenMembership": "token holders",
+      "tokenMembership": "Token holders",
       "multisigMembership": "Multisig members",
       "multisigMembershipSubtitle": "Only multisig members can vote. 1 wallet address equals 1 approval.",
       "multisigMembers": "Multisig members",
