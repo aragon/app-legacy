@@ -1,5 +1,5 @@
 import {CardProposal, CardProposalProps, Spinner} from '@aragon/ui-components';
-import {React, useMemo} from 'react';
+import React, {useMemo} from 'react';
 import {useTranslation} from 'react-i18next';
 import {NavigateFunction, useNavigate} from 'react-router-dom';
 
