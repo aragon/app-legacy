@@ -355,7 +355,12 @@ const DashboardContent: React.FC<DashboardContentProps> = ({
       <>
         {!transactionCount ? (
           <EqualDivide>
-            <ProposalSnapshot dao={dao} proposals={proposals} />
+            <ProposalSnapshot
+              dao={dao}
+              pluginAddress={pluginAddress}
+              pluginType={pluginType}
+              proposals={proposals}
+            />
             <TreasurySnapshot
               dao={dao}
               transfers={transfers}
@@ -365,7 +370,12 @@ const DashboardContent: React.FC<DashboardContentProps> = ({
         ) : (
           <>
             <LeftWideContent>
-              <ProposalSnapshot dao={dao} proposals={proposals} />
+              <ProposalSnapshot
+                dao={dao}
+                pluginAddress={pluginAddress}
+                pluginType={pluginType}
+                proposals={proposals}
+              />
             </LeftWideContent>
             <RightNarrowContent>
               <TreasurySnapshot
@@ -391,7 +401,12 @@ const DashboardContent: React.FC<DashboardContentProps> = ({
   return (
     <>
       <LeftWideContent>
-        <ProposalSnapshot dao={dao} proposals={proposals} />
+        <ProposalSnapshot
+          dao={dao}
+          pluginAddress={pluginAddress}
+          pluginType={pluginType}
+          proposals={proposals}
+        />
       </LeftWideContent>
       <RightNarrowContent>
         <TreasurySnapshot
@@ -441,7 +456,12 @@ const MobileDashboardContent: React.FC<DashboardContentProps> = ({
 }) => {
   return (
     <MobileLayout>
-      <ProposalSnapshot dao={dao} proposals={proposals} />
+      <ProposalSnapshot
+        dao={dao}
+        pluginAddress={pluginAddress}
+        pluginType={pluginType}
+        proposals={proposals}
+      />
       <TreasurySnapshot
         dao={dao}
         transfers={transfers}
