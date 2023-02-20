@@ -342,7 +342,6 @@ export function getProposalStatusSteps(
   executionBlock?: string,
   executionDate?: Date
 ): Array<ProgressStatusProps> {
-  console.log('status', status);
   switch (status) {
     case 'Active':
       return [
@@ -392,7 +391,13 @@ export function getProposalStatusSteps(
     case 'Executed':
       if (executionDate)
         return [
-          ...getPassedProposalSteps(t, creationDate, endDate, publishedBlock),
+          ...getPassedProposalSteps(
+            t,
+            creationDate,
+            endDate,
+            publishedBlock,
+            executionDate
+          ),
           {
             label: t('governance.statusWidget.executed'),
             mode: 'succeeded',
@@ -429,18 +434,28 @@ function getPassedProposalSteps(
   t: TFunction,
   creationDate: Date,
   endDate: Date,
-  block: string
+  block: string,
+  executionDate?: Date
 ): Array<ProgressStatusProps> {
   return [
     {...getPublishedProposalStep(t, creationDate, block)},
-    {
-      label: t('governance.statusWidget.passed'),
-      mode: 'done',
-      date: `${format(
-        endDate,
-        KNOWN_FORMATS.proposals
-      )}  ${getFormattedUtcOffset()}`,
-    },
+    executionDate! < endDate
+      ? {
+          label: t('governance.statusWidget.passed'),
+          mode: 'done',
+          date: `${format(
+            executionDate!,
+            KNOWN_FORMATS.proposals
+          )}  ${getFormattedUtcOffset()}`,
+        }
+      : {
+          label: t('governance.statusWidget.passed'),
+          mode: 'done',
+          date: `${format(
+            endDate,
+            KNOWN_FORMATS.proposals
+          )}  ${getFormattedUtcOffset()}`,
+        },
   ];
 }
 
