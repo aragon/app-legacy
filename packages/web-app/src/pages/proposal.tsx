@@ -112,9 +112,9 @@ const Proposal: React.FC = () => {
   const multisigDAO =
     (daoDetails?.plugins[0].id as PluginTypes) === 'multisig.plugin.dao.eth';
 
-  const earlyExecution =
+  const allowVoteReplacement =
     isTokenVotingSettings(daoSettings) &&
-    daoSettings.votingMode === VotingMode.EARLY_EXECUTION;
+    daoSettings.votingMode === VotingMode.VOTE_REPLACEMENT;
 
   const {client} = useClient();
   const {set, get} = useCache();
@@ -403,11 +403,15 @@ const Proposal: React.FC = () => {
 
   // vote button state and handler
   const {voteNowDisabled, onClick} = useMemo(() => {
+    // disable voting on non-active proposals
     if (proposal?.status !== 'Active') return {voteNowDisabled: true};
 
-    if (multisigDAO && voteSubmitted) return {voteNowDisabled: true};
+    // disable approval on multisig when wallet has voted
+    if (multisigDAO && (voted || voteSubmitted)) return {voteNowDisabled: true};
 
-    if (earlyExecution && voteSubmitted) return {voteNowDisabled: true};
+    // disable voting on mv with no vote replacement when wallet has voted
+    if (!allowVoteReplacement && (voted || voteSubmitted))
+      return {voteNowDisabled: true};
 
     // not logged in
     if (!address) {
@@ -432,7 +436,7 @@ const Proposal: React.FC = () => {
     }
 
     // member, not yet voted
-    else if (canVote) {
+    else if (Array.isArray(canVote) ? canVote.some(v => v) : canVote) {
       return {
         voteNowDisabled: false,
         onClick: () => {
@@ -446,14 +450,15 @@ const Proposal: React.FC = () => {
     } else return {voteNowDisabled: true};
   }, [
     address,
+    allowVoteReplacement,
     canVote,
-    earlyExecution,
     handleSubmitVote,
     isOnWrongNetwork,
     multisigDAO,
     open,
     proposal?.status,
     voteSubmitted,
+    voted,
   ]);
 
   // alert message, only shown when not eligible to vote
@@ -464,7 +469,7 @@ const Proposal: React.FC = () => {
       address && // logged in
       !isOnWrongNetwork && // on proper network
       !voted && // haven't voted
-      !canVote // cannot vote
+      !(Array.isArray(canVote) ? canVote.some(v => v) : canVote) // cannot vote
     ) {
       // presence of token delineates token voting proposal
       // people add types to these things!!
