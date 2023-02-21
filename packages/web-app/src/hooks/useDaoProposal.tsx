@@ -6,12 +6,12 @@ import {
   pendingMultisigApprovalsVar,
   PendingMultisigExecution,
   pendingMultisigExecutionVar,
-  pendingTokenBasedProposalsVar,
+  pendingMultisigProposalsVar,
   PendingTokenBasedExecution,
   pendingTokenBasedExecutionVar,
+  pendingTokenBasedProposalsVar,
   PendingTokenBasedVotes,
   pendingTokenBasedVotesVar,
-  pendingMultisigProposalsVar,
 } from 'context/apolloClient';
 import {usePrivacyContext} from 'context/privacyContext';
 import {
@@ -32,8 +32,10 @@ import {PluginTypes, usePluginClient} from './usePluginClient';
 
 /**
  * Retrieve a single detailed proposal
+ * @param daoAddress address used to create unique proposal id
  * @param proposalId id of proposal to retrieve
  * @param pluginType plugin type
+ * @param pluginAddress plugin address
  * @returns a detailed proposal
  */
 export const useDaoProposal = (
@@ -62,6 +64,8 @@ export const useDaoProposal = (
     pendingTokenBasedExecutionVar
   );
 
+  const proposalGuid = proposalId.makeGloballyUnique(pluginAddress);
+
   // return cache keys and variables based on the type of plugin;
   const getCachedProposalData = useCallback(() => {
     if (pluginType === 'multisig.plugin.dao.eth') {
@@ -69,7 +73,7 @@ export const useDaoProposal = (
         proposalCacheKey: PENDING_MULTISIG_PROPOSALS_KEY,
         proposalCacheVar: pendingMultisigProposalsVar,
         proposalCache: cachedMultisigProposals,
-        proposal: cachedMultisigProposals[daoAddress]?.[proposalId.toString()],
+        proposal: cachedMultisigProposals[daoAddress]?.[proposalGuid],
         votes: cachedMultisigVotes,
         executions: cachedMultisigExecutions,
       };
@@ -81,8 +85,7 @@ export const useDaoProposal = (
         proposalCacheKey: PENDING_PROPOSALS_KEY,
         proposalCacheVar: pendingTokenBasedProposalsVar,
         proposalCache: cachedTokenBasedProposals,
-        proposal:
-          cachedTokenBasedProposals[daoAddress]?.[proposalId.toString()],
+        proposal: cachedTokenBasedProposals[daoAddress]?.[proposalGuid],
         votes: cachedTokenBasedVotes,
         executions: cachedTokenBaseExecutions,
       };
@@ -96,7 +99,7 @@ export const useDaoProposal = (
     cachedTokenBasedVotes,
     daoAddress,
     pluginType,
-    proposalId,
+    proposalGuid,
   ]);
 
   useEffect(() => {
@@ -106,9 +109,8 @@ export const useDaoProposal = (
       try {
         setIsLoading(true);
 
-        const proposal = await pluginClient?.methods.getProposal(
-          proposalId.makeGloballyUnique(pluginAddress)
-        );
+        const proposal = null;
+        // await pluginClient?.methods.getProposal(proposalGuid);
 
         if (proposal && cacheData) {
           setData(
@@ -125,7 +127,7 @@ export const useDaoProposal = (
           // remove cached proposal if it exists
           if (cacheData.proposal) {
             const newCache = {...cacheData.proposalCache};
-            delete newCache[daoAddress][proposalId.toString()];
+            delete newCache[daoAddress][proposalGuid];
 
             // update new values
             cacheData.proposalCacheVar(newCache);
@@ -158,18 +160,14 @@ export const useDaoProposal = (
       }
     };
 
-    if (proposalId) getDaoProposal();
+    if (proposalGuid) getDaoProposal();
   }, [
-    cachedMultisigExecutions,
-    cachedMultisigVotes,
-    cachedTokenBaseExecutions,
-    cachedTokenBasedVotes,
     daoAddress,
     getCachedProposalData,
     pluginClient?.methods,
     pluginType,
     preferences?.functional,
-    proposalId,
+    proposalGuid,
     pluginAddress,
   ]);
 
@@ -186,15 +184,13 @@ function getAugmentedProposal(
 ): DetailedProposal {
   if (isTokenBasedProposal(proposal)) {
     return {
-      ...augmentProposalWithCachedVote(
-        proposal,
-        daoAddress,
-        cachedVotes,
-        functionalCookiesEnabled
-      ),
-
       ...augmentProposalWithCachedExecution(
-        proposal,
+        augmentProposalWithCachedVote(
+          proposal,
+          daoAddress,
+          cachedVotes,
+          functionalCookiesEnabled
+        ) as DetailedProposal,
         daoAddress,
         cachedExecutions,
         functionalCookiesEnabled,
@@ -206,14 +202,13 @@ function getAugmentedProposal(
 
   if (isMultisigProposal(proposal)) {
     return {
-      ...augmentProposalWithCachedVote(
-        proposal,
-        daoAddress,
-        cachedVotes,
-        functionalCookiesEnabled
-      ),
       ...augmentProposalWithCachedExecution(
-        proposal,
+        augmentProposalWithCachedVote(
+          proposal,
+          daoAddress,
+          cachedVotes,
+          functionalCookiesEnabled
+        ) as DetailedProposal,
         daoAddress,
         cachedExecutions,
         functionalCookiesEnabled,

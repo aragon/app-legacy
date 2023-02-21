@@ -433,6 +433,7 @@ const CreateProposalProvider: React.FC<Props> = ({
         };
         pendingTokenBasedProposalsVar(newCache);
       } else if (isMultisigVotingSettings(pluginSettings)) {
+        proposalData.minApprovals = pluginSettings.minApprovals;
         cacheKey = PENDING_MULTISIG_PROPOSALS_KEY;
         proposalToCache = mapToCacheProposal(proposalData);
         newCache = {
@@ -442,6 +443,7 @@ const CreateProposalProvider: React.FC<Props> = ({
             [proposalGuid]: {...proposalToCache},
           },
         };
+        pendingMultisigProposalsVar(newCache);
       }
 
       // persist new cache if functional cookies enabled

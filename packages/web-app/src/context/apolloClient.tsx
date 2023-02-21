@@ -12,6 +12,7 @@ import {
   DaoMetadata,
   InstalledPluginListItem,
   IPluginInstallItem,
+  VotingMode,
 } from '@aragon/sdk-client';
 import {RestLink} from 'apollo-link-rest';
 import {CachePersistor, LocalStorageWrapper} from 'apollo3-cache-persist';
@@ -233,8 +234,12 @@ const pendingMultisigExecutionVar = makeVar<PendingMultisigExecution>(
 // iffy about this structure
 export type CachedProposal = Omit<
   DetailedProposal,
-  'creationBlockNumber' | 'executionBlockNumber' | 'executionDate'
->;
+  'creationBlockNumber' | 'executionBlockNumber' | 'executionDate' | 'status'
+> & {
+  votingMode?: VotingMode;
+  minApprovals?: number;
+};
+
 type PendingTokenBasedProposals = {
   // key is dao address
   [key: string]: {

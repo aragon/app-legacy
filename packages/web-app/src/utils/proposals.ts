@@ -19,6 +19,7 @@ import {
   VoteValues,
   VotingMode,
   VotingSettings,
+  computeProposalStatus,
 } from '@aragon/sdk-client';
 import {ProgressStatusProps, VoterType} from '@aragon/ui-components';
 import Big from 'big.js';
@@ -613,6 +614,9 @@ export type CacheProposalParams = {
   proposalParams: ICreateProposalParams;
   proposalGuid: string;
 
+  // Multisig props
+  minApprovals?: number;
+
   // TokenVoting props
   daoToken?: Erc20TokenDetails;
   pluginSettings?: VotingSettings;
@@ -635,7 +639,6 @@ export function mapToCacheProposal(params: CacheProposalParams) {
     startDate: params.proposalParams.startDate!,
     id: params.proposalGuid,
     metadata: params.metadata,
-    status: ProposalStatus.PENDING,
   };
 
   // erc20
@@ -649,6 +652,7 @@ export function mapToCacheProposal(params: CacheProposalParams) {
         symbol: params.daoToken.symbol,
       },
       votes: [],
+      votingMode: params.pluginSettings.votingMode,
       settings: {
         minSupport: params.pluginSettings.supportThreshold,
         minTurnout: params.pluginSettings.minParticipation,
@@ -667,6 +671,7 @@ export function mapToCacheProposal(params: CacheProposalParams) {
     return {
       ...commonProps,
       approvals: [],
+      minApprovals: params.minApprovals,
       executionTxHash: '',
     } as CachedProposal;
   }
@@ -714,13 +719,12 @@ export function addApprovalToMultisigToProposal(
 ) {
   if (!cachedApprovalAddress) return proposal;
 
-  if (typeof proposal.approvals === 'number')
+  if (typeof proposal.approvals === 'number') {
+    return {...proposal, approvals: proposal.approvals + 1};
+  } else
     return {
       ...proposal,
-      approvals:
-        typeof proposal.approvals === 'number'
-          ? proposal.approvals + 1
-          : [...proposal.approvals, cachedApprovalAddress],
+      approvals: [...proposal.approvals, cachedApprovalAddress.toLowerCase()],
     };
 }
 
@@ -1052,7 +1056,15 @@ export function augmentProposalWithCachedExecution(
   const cachedExecution = cachedExecutions[id];
 
   // no cache return original proposal
-  if (!cachedExecution) return proposal;
+  if (!cachedExecution) {
+    // cached proposal coming in calculate status
+    if (!proposal.status) {
+      return {...proposal, status: calculateProposalStatus(proposal)};
+    }
+
+    // normal subgraph proposal return untouched
+    return proposal;
+  }
 
   if (proposal.status === ProposalStatus.EXECUTED) {
     const newExecutionCache = {...cachedExecutions};
@@ -1070,5 +1082,48 @@ export function augmentProposalWithCachedExecution(
     return proposal;
   } else {
     return {...proposal, status: ProposalStatus.EXECUTED};
+  }
+}
+
+/**
+ * Calculate a proposal's status
+ * @param proposal Proposal
+ * @returns status for proposal
+ */
+function calculateProposalStatus(proposal: DetailedProposal): ProposalStatus {
+  if (isErc20VotingProposal(proposal)) {
+    const results = getErc20Results(
+      proposal.result,
+      proposal.token.decimals,
+      proposal.totalVotingWeight
+    );
+
+    const {missingPart} = getErc20VotingParticipation(
+      proposal.settings.minTurnout,
+      proposal.usedVotingWeight,
+      proposal.totalVotingWeight,
+      proposal.token.decimals
+    );
+
+    return computeProposalStatus({
+      startDate: (proposal.startDate.getTime() / 1000).toString(),
+      endDate: (proposal.endDate.getTime() / 1000).toString(),
+      executed: false,
+      executable: isEarlyExecutable(
+        missingPart,
+        proposal,
+        results,
+        (proposal as CachedProposal).votingMode
+      ),
+    });
+  } else {
+    return computeProposalStatus({
+      startDate: (proposal.startDate.getTime() / 1000).toString(),
+      endDate: (proposal.endDate.getTime() / 1000).toString(),
+      executed: false,
+      executable:
+        (proposal as MultisigProposal)?.approvals?.length >=
+        ((proposal as CachedProposal)?.minApprovals || 1),
+    });
   }
 }
