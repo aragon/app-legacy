@@ -1,7 +1,7 @@
 import {CardProposal, CardProposalProps, Spinner} from '@aragon/ui-components';
 import React, {useMemo} from 'react';
 import {useTranslation} from 'react-i18next';
-import {NavigateFunction, useNavigate} from 'react-router-dom';
+import {generatePath, NavigateFunction, useNavigate} from 'react-router-dom';
 
 import {MultisigProposalListItem} from '@aragon/sdk-client';
 import {useNetwork} from 'context/network';
@@ -15,6 +15,7 @@ import {
 } from 'utils/constants';
 import {translateProposalDate} from 'utils/date';
 import {formatUnits} from 'utils/library';
+import {Proposal} from 'utils/paths';
 import {isErc20VotingProposal} from 'utils/proposals';
 import {abbreviateTokenAmount} from 'utils/tokens';
 import {ProposalListItem} from 'utils/types';
@@ -116,9 +117,15 @@ export function proposal2CardProps(
     onClick: () => {
       trackEvent('governance_viewProposal_clicked', {
         proposal_id: proposal.id,
-        dao_address: proposal.dao,
+        dao_address: proposal.dao.address,
       });
-      navigate(`proposals/${proposal.id}`);
+      navigate(
+        generatePath(Proposal, {
+          network,
+          dao: proposal.dao.address,
+          id: proposal.id,
+        })
+      );
     },
   };
 
@@ -176,9 +183,7 @@ export function proposal2CardProps(
     if (proposal.status.toLowerCase() === 'active') {
       const activeProps = {
         voteProgress: relativeVoteCount(proposal.approvals, membersCount),
-        voteLabel: i18n.t(
-          'newWithdraw.setupVoting.multisig.votingOption.label'
-        ),
+        voteLabel: i18n.t('votingTerminal.approvedBy'),
       };
       return {...props, ...specificProps, ...activeProps};
     } else {

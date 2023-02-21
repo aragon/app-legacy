@@ -152,7 +152,7 @@ const Governance: React.FC = () => {
         <ListWrapper>
           <ProposalList
             proposals={displayedProposals}
-            pluginAddress={daoDetails?.address as string}
+            pluginAddress={daoDetails?.plugins[0].instanceAddress as string}
             pluginType={daoDetails?.plugins[0].id as PluginTypes}
             isLoading={isLoading}
           />
