@@ -3,7 +3,7 @@ import {constants} from 'ethers';
 import {getAddress, hexZeroPad, Interface} from 'ethers/lib/utils';
 import {useEffect, useState} from 'react';
 
-import {AssetBalance} from '@aragon/sdk-client';
+import {AssetBalance, TokenType} from '@aragon/sdk-client';
 import {erc20TokenABI} from 'abis/erc20TokenABI';
 import {useNetwork} from 'context/network';
 import {useProviders} from 'context/providers';
@@ -163,13 +163,14 @@ export function useWalletTokens(): HookData<AssetBalance[]> {
           ?.map((_balance): AssetBalance => {
             if (_balance[1].id === constants.AddressZero) {
               return {
-                type: 'native',
+                type: TokenType.NATIVE,
                 balance: BigInt(_balance[0]),
                 updateDate: new Date(),
               };
             } else {
+              // TODO ERC721
               return {
-                type: 'erc20',
+                type: TokenType.ERC20,
                 address: _balance[1].id,
                 name: _balance[1].name,
                 symbol: _balance[1].symbol,
@@ -181,7 +182,7 @@ export function useWalletTokens(): HookData<AssetBalance[]> {
           })
           .filter(asset => {
             return (
-              asset.type === 'native' ||
+              asset.type !== TokenType.ERC20 ||
               (asset.name && asset.symbol && asset.decimals)
             );
           })

@@ -82,6 +82,7 @@
     "popularity": "Popularity",
     "daoName": "DAO name",
     "daoEnsName": "ENS Subdomain",
+    "ens": "ENS",
     "summary": "Summary",
     "description": "Description",
     "addLink": "Add link",
@@ -639,17 +640,19 @@
       "eligibility": {
         "optionTitle": "Who is eligible?",
         "inputTitle": "Minimum tokens Required",
-        "multisigMembers.title": "Multisig members",
-        "tokenHolders.title": "Token holders",
-        "anyone.warning": "With anyone being able to propose, there is a risk of proposal spam. Consider having a minimum token threshold.",
+        "anyone": {
+          "warning": "With anyone being able to propose, there is a risk of proposal spam. Consider having a minimum token threshold."
+        },
         "anyWallet": {
           "title": "Any wallet",
           "description": "Any wallet can create proposals."
         },
         "multisigMembers": {
+          "title": "Multisig members",
           "description": "Only the addresses added above can create proposals."
         },
         "tokenHolders": {
+          "title": "Token holders",
           "description": "Only token holders with an certain amount are eligible to create proposals."
         }
       },

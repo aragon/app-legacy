@@ -109,7 +109,7 @@ export const DaoExplorer = () => {
                 description={dao.metadata.description}
                 chainId={dao.chain || DEFAULT_CHAIN_ID} // Default to Goerli
                 daoType={
-                  (dao?.plugins[0].id as PluginTypes) ===
+                  (dao?.plugins?.[0]?.id as PluginTypes) ===
                   'token-voting.plugin.dao.eth'
                     ? 'token-based'
                     : 'wallet-based'

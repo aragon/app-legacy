@@ -39,3 +39,5 @@ generated
 subgraph.yaml
 .bin
 packages/ui-components/out*
+
+packages/web-app/tests/e2e/videos/*

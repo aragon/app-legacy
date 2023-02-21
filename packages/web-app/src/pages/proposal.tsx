@@ -2,6 +2,7 @@ import {useApolloClient} from '@apollo/client';
 import {
   DaoAction,
   MultisigClient,
+  MultisigProposal,
   TokenVotingClient,
   TokenVotingProposal,
   VoteValues,
@@ -73,7 +74,7 @@ import {
   isMultisigProposal,
   stripPlgnAdrFromProposalId,
 } from 'utils/proposals';
-import {Action} from 'utils/types';
+import {Action, ProposalId} from 'utils/types';
 
 // TODO: @Sepehr Please assign proper tags on action decoding
 const PROPOSAL_TAGS = ['Finance', 'Withdraw'];
@@ -87,7 +88,11 @@ const Proposal: React.FC = () => {
   const {breadcrumbs, tag} = useMappedBreadcrumbs();
 
   const navigate = useNavigate();
-  const {id: proposalId} = useParams();
+  const {id: urlId} = useParams();
+  const proposalId = useMemo(
+    () => (urlId ? new ProposalId(urlId) : undefined),
+    [urlId]
+  );
 
   const {data: dao} = useDaoParam();
   const {data: daoDetails, isLoading: detailsAreLoading} = useDaoDetails(dao);
@@ -137,7 +142,7 @@ const Proposal: React.FC = () => {
     data: proposal,
     error: proposalError,
     isLoading: proposalIsLoading,
-  } = useDaoProposal(dao, proposalId!, pluginType);
+  } = useDaoProposal(dao, proposalId!, pluginType, pluginAddress);
 
   const {data: canVote} = useWalletCanVote(
     address,
@@ -205,7 +210,9 @@ const Proposal: React.FC = () => {
               client,
               apolloClient,
               provider,
-              network
+              network,
+              action.to,
+              action.value
             );
           case 'mint':
             if (mintTokenActions.actions.length === 0) {
@@ -335,13 +342,15 @@ const Proposal: React.FC = () => {
   // get early execution status
   const canExecuteEarly = useMemo(
     () =>
-      isTokenVotingSettings(daoSettings) &&
-      isEarlyExecutable(
-        mappedProps?.missingParticipation,
-        proposal,
-        mappedProps?.results,
-        daoSettings.votingMode
-      ),
+      isTokenVotingSettings(daoSettings)
+        ? isEarlyExecutable(
+            mappedProps?.missingParticipation,
+            proposal,
+            mappedProps?.results,
+            daoSettings.votingMode
+          )
+        : (proposal as MultisigProposal)?.approvals?.length >=
+          daoSettings?.minApprovals,
     [
       daoSettings,
       mappedProps?.missingParticipation,
@@ -395,6 +404,8 @@ const Proposal: React.FC = () => {
   // vote button state and handler
   const {voteNowDisabled, onClick} = useMemo(() => {
     if (proposal?.status !== 'Active') return {voteNowDisabled: true};
+
+    if (multisigDAO && voteSubmitted) return {voteNowDisabled: true};
 
     if (earlyExecution && voteSubmitted) return {voteNowDisabled: true};
 
@@ -482,7 +493,9 @@ const Proposal: React.FC = () => {
         proposal.startDate,
         proposal.endDate,
         proposal.creationDate,
-        NumberFormatter.format(proposal.creationBlockNumber),
+        proposal.creationBlockNumber
+          ? NumberFormatter.format(proposal.creationBlockNumber)
+          : '',
         executionFailed,
         NumberFormatter.format(proposal.executionBlockNumber),
         proposal.executionDate

@@ -1,8 +1,11 @@
 import {useEffect, useState} from 'react';
-import {MultisigClient, TokenVotingClient} from '@aragon/sdk-client';
+import {
+  MultisigClient,
+  TokenVotingClient,
+  VoteValues,
+} from '@aragon/sdk-client';
 
-import {stripPlgnAdrFromProposalId} from 'utils/proposals';
-import {HookData} from 'utils/types';
+import {HookData, ProposalId} from 'utils/types';
 import {PluginTypes, usePluginClient} from './usePluginClient';
 
 /**
@@ -15,11 +18,13 @@ import {PluginTypes, usePluginClient} from './usePluginClient';
  */
 export const useWalletCanVote = (
   address: string | null,
-  proposalId: string,
+  proposalId: ProposalId,
   pluginAddress: string,
   pluginType?: PluginTypes
-): HookData<boolean> => {
-  const [data, setData] = useState(false);
+): HookData<boolean | boolean[]> => {
+  const [data, setData] = useState([false, false, false] as
+    | boolean[]
+    | boolean);
   const [error, setError] = useState<Error>();
   const [isLoading, setIsLoading] = useState(false);
 
@@ -40,21 +45,31 @@ export const useWalletCanVote = (
         let canVote;
 
         if (isMultisigClient) {
-          canVote = await (client as MultisigClient)?.methods.canApprove({
-            proposalId: BigInt(stripPlgnAdrFromProposalId(proposalId)),
-            pluginAddress,
-            addressOrEns: address,
-          });
+          canVote = [
+            await (client as MultisigClient)?.methods.canApprove({
+              proposalId: proposalId.export(),
+              pluginAddress,
+              addressOrEns: address,
+            }),
+          ];
         } else if (isTokenVotingClient) {
-          canVote = await (client as TokenVotingClient)?.methods.canVote({
-            address,
-            proposalId: stripPlgnAdrFromProposalId(proposalId),
-            pluginAddress,
+          const canVoteValuesPromises = [
+            VoteValues.ABSTAIN,
+            VoteValues.NO,
+            VoteValues.YES,
+          ].map(vote => {
+            return (client as TokenVotingClient)?.methods.canVote({
+              address,
+              proposalId: proposalId.export(),
+              pluginAddress,
+              vote,
+            });
           });
+          canVote = await Promise.all(canVoteValuesPromises);
         }
 
         if (canVote !== undefined) setData(canVote);
-        else setData(false);
+        else setData([false, false, false]);
       } catch (error) {
         console.error(error);
         setError(error as Error);

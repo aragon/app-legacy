@@ -75,6 +75,11 @@ export function useDaos(
                 dao.metadata.avatar = undefined;
               }
             }
+            if (dao.plugins.length < 1) {
+              console.log(
+                `WARNING: DAO with zero plugins ignored ens: ${dao.ensDomain} address: ${dao.address}`
+              );
+            }
           });
           setData(daos);
         }
