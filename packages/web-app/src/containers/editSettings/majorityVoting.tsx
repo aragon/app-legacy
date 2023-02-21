@@ -352,11 +352,7 @@ export const EditMvSettings: React.FC<EditMvSettingsProps> = ({
                 dropdownItems={metadataAction}
               >
                 <AccordionContent>
-                  <DefineMetadata
-                    bgWhite
-                    arrayName="daoLinks"
-                    currentDaoEnsName={daoDetails?.metadata?.name || ''}
-                  />
+                  <DefineMetadata bgWhite arrayName="daoLinks" isSettingPage />
                 </AccordionContent>
               </AccordionItem>
 
