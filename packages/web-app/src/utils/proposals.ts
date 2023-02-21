@@ -215,6 +215,7 @@ export function getErc20Voters(
       option: MappedVotes[vote.vote],
       votingPower,
       tokenAmount,
+      voteReplaced: vote.voteReplaced,
     };
   });
 }
