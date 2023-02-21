@@ -109,8 +109,7 @@ export const useDaoProposal = (
       try {
         setIsLoading(true);
 
-        const proposal = null;
-        // await pluginClient?.methods.getProposal(proposalGuid);
+        const proposal = await pluginClient?.methods.getProposal(proposalGuid);
 
         if (proposal && cacheData) {
           setData(

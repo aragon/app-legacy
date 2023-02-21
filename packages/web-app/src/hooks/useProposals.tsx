@@ -18,6 +18,8 @@ import {
 } from 'context/apolloClient';
 import {usePrivacyContext} from 'context/privacyContext';
 import {
+  PENDING_EXECUTION_KEY,
+  PENDING_MULTISIG_EXECUTION_KEY,
   PENDING_MULTISIG_PROPOSALS_KEY,
   PENDING_PROPOSALS_KEY,
 } from 'utils/constants';
@@ -25,8 +27,14 @@ import {customJSONReplacer} from 'utils/library';
 import {
   addApprovalToMultisigToProposal,
   addVoteToProposal,
+  augmentProposalWithCachedExecution,
 } from 'utils/proposals';
-import {HookData, ProposalId, ProposalListItem} from 'utils/types';
+import {
+  DetailedProposal,
+  HookData,
+  ProposalId,
+  ProposalListItem,
+} from 'utils/types';
 import {PluginTypes, usePluginClient} from './usePluginClient';
 
 /**
@@ -114,14 +122,12 @@ export function useProposals(
         // from the cache.
         if (fetchedProposals.some(p => proposalId === p.id.toString())) {
           delete daoCachedProposals[proposalId];
-
           // update cache to new values
           const newCache = {
             ...cachedData.proposalCache,
             [daoAddress]: {...daoCachedProposals},
           };
           cachedData.proposalCacheVar(newCache);
-
           // update local storage to match cache
           if (preferences?.functional) {
             localStorage.setItem(
@@ -133,31 +139,44 @@ export function useProposals(
           // proposal not yet fetched, add votes, execution and status if necessary
           const id = new ProposalId(proposalId).makeGloballyUnique(daoAddress);
 
-          // check if proposal has been executed
-          const cachedProposal = cachedData.executions[id]
-            ? {
-                ...daoCachedProposals[proposalId],
-                status: ProposalStatus.EXECUTED,
-              }
-            : {...daoCachedProposals[proposalId]};
-
-          // add cached approval to multisig proposal
+          // add cached approval and execution to multisig proposal=
           if (isMultisigPlugin) {
-            augmentedProposals.unshift({
-              ...(addApprovalToMultisigToProposal(
-                cachedProposal as MultisigProposal,
+            const augmentedProposal = augmentProposalWithCachedExecution(
+              addApprovalToMultisigToProposal(
+                daoCachedProposals[proposalId] as MultisigProposal,
                 cachedMultisigVotes[id]
-              ) as ProposalListItem),
+              ) as DetailedProposal,
+              daoAddress,
+              cachedData.executions,
+              preferences?.functional,
+              pendingMultisigExecutionVar,
+              PENDING_MULTISIG_EXECUTION_KEY
+            );
+
+            // TODO: Fix - SDK is still returning approvals as number and not array
+            augmentedProposals.unshift({
+              ...augmentedProposal,
+              approvals: (augmentedProposal as MultisigProposal).approvals
+                .length,
             });
           }
 
           // add cached votes to token based proposal
           if (isTokenBasedPlugin) {
-            augmentedProposals.unshift({
-              ...(addVoteToProposal(
-                cachedProposal as TokenVotingProposal,
+            const augmentedProposal = augmentProposalWithCachedExecution(
+              addVoteToProposal(
+                daoCachedProposals[proposalId] as TokenVotingProposal,
                 cachedTokenBasedVotes[id]
-              ) as ProposalListItem),
+              ),
+              daoAddress,
+              cachedData.executions,
+              preferences?.functional,
+              pendingTokenBasedExecutionVar,
+              PENDING_EXECUTION_KEY
+            ) as ProposalListItem;
+
+            augmentedProposals.unshift({
+              ...augmentedProposal,
             });
           }
         }
