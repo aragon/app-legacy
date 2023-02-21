@@ -40,11 +40,14 @@ export const useDaoProposal = (
   daoAddress: string,
   proposalId: ProposalId,
   pluginType: PluginTypes,
-  pluginAddress: string
+  pluginAddress: string,
+  intervalInMills?: number
 ): HookData<DetailedProposal | undefined> => {
   const [data, setData] = useState<DetailedProposal>();
   const [error, setError] = useState<Error>();
   const [isLoading, setIsLoading] = useState(false);
+  const [numberOfRuns, setNumberOfRuns] = useState(0);
+  const [intervalId, setIntervalId] = useState<NodeJS.Timer>();
 
   const pluginClient = usePluginClient(pluginType);
   const {preferences} = usePrivacyContext();
@@ -100,11 +103,32 @@ export const useDaoProposal = (
   ]);
 
   useEffect(() => {
+    if ((intervalInMills || 0) > 0) {
+      const id = setInterval(() => {
+        setNumberOfRuns(value => value + 1);
+      }, intervalInMills);
+
+      setIntervalId(id);
+    } else {
+      clearInterval(intervalId);
+    }
+
+    return () => {
+      clearInterval(intervalId);
+    };
+    // This effect only runs when intervalInMills will changed
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [intervalInMills]);
+
+  useEffect(() => {
     const getDaoProposal = async () => {
       const cacheData = getCachedProposalData();
 
       try {
-        setIsLoading(true);
+        // Do not show loader if page is already loaded
+        if (numberOfRuns === 0) {
+          setIsLoading(true);
+        }
 
         const proposal = await pluginClient?.methods.getProposal(
           proposalId.makeGloballyUnique(pluginAddress)
@@ -171,6 +195,7 @@ export const useDaoProposal = (
     preferences?.functional,
     proposalId,
     pluginAddress,
+    numberOfRuns,
   ]);
 
   return {data, error, isLoading};

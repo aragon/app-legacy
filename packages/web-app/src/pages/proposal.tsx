@@ -64,9 +64,9 @@ import {
 } from 'utils/library';
 import {NotFound} from 'utils/paths';
 import {
+  getLiveProposalTerminalProps,
   getProposalExecutionStatus,
   getProposalStatusSteps,
-  getLiveProposalTerminalProps,
   getVoteButtonLabel,
   getVoteStatus,
   isEarlyExecutable,
@@ -79,6 +79,8 @@ import {Action, ProposalId} from 'utils/types';
 // TODO: @Sepehr Please assign proper tags on action decoding
 const PROPOSAL_TAGS = ['Finance', 'Withdraw'];
 
+const PENDING_PROPOSAL_STATUS_INTERVAL = 1000 * 60 * 60;
+const PROPOSAL_STATUS_INTERVAL = 1000 * 60 * 2;
 const NumberFormatter = new Intl.NumberFormat('en-US');
 
 const Proposal: React.FC = () => {
@@ -86,7 +88,6 @@ const Proposal: React.FC = () => {
   const {open} = useGlobalModalContext();
   const {isDesktop} = useScreen();
   const {breadcrumbs, tag} = useMappedBreadcrumbs();
-
   const navigate = useNavigate();
   const {id: urlId} = useParams();
   const proposalId = useMemo(
@@ -124,6 +125,8 @@ const Proposal: React.FC = () => {
   const provider = useSpecificProvider(CHAIN_METADATA[network].id);
   const {address, isConnected, isOnWrongNetwork} = useWallet();
 
+  const [voteStatus, setVoteStatus] = useState('');
+  const [intervalInMills, setIntervalInMills] = useState(0);
   const [decodedActions, setDecodedActions] =
     useState<(Action | undefined)[]>();
 
@@ -142,7 +145,13 @@ const Proposal: React.FC = () => {
     data: proposal,
     error: proposalError,
     isLoading: proposalIsLoading,
-  } = useDaoProposal(dao, proposalId!, pluginType, pluginAddress);
+  } = useDaoProposal(
+    dao,
+    proposalId!,
+    pluginType,
+    pluginAddress,
+    intervalInMills
+  );
 
   const {data: canVote} = useWalletCanVote(
     address,
@@ -327,6 +336,29 @@ const Proposal: React.FC = () => {
     }
   }, [voteSubmitted]);
 
+  useEffect(() => {
+    if (proposal) {
+      // set the very first time
+      setVoteStatus(getVoteStatus(proposal, t));
+
+      const interval = setInterval(async () => {
+        // remove interval timer once the proposal has started
+        if (proposal.startDate.valueOf() >= new Date().valueOf()) {
+          clearInterval(interval);
+          setIntervalInMills(PROPOSAL_STATUS_INTERVAL);
+        } else if (proposal.status === 'Pending') {
+          // recalculate vote status for pending proposal
+          setVoteStatus(getVoteStatus(proposal, t));
+        }
+      }, PENDING_PROPOSAL_STATUS_INTERVAL);
+
+      return () => clearInterval(interval);
+    }
+  }, [proposal, t]);
+
+  /*************************************************
+   *              Handlers and Callbacks           *
+   *************************************************/
   // terminal props
   const mappedProps = useMemo(() => {
     if (proposal)
@@ -390,15 +422,10 @@ const Proposal: React.FC = () => {
   }, [address, proposal]);
 
   // vote button and status
-  const [voteStatus, buttonLabel] = useMemo(() => {
+  const buttonLabel = useMemo(() => {
     if (proposal) {
-      return [
-        getVoteStatus(proposal, t),
-        getVoteButtonLabel(proposal, canVote, voted, t),
-      ];
+      return getVoteButtonLabel(proposal, canVote, voted, t);
     }
-
-    return ['', ''];
   }, [proposal, voted, canVote, t]);
 
   // vote button state and handler
@@ -481,12 +508,7 @@ const Proposal: React.FC = () => {
     // TODO: add multisig option
     if (isMultisigProposal(proposal)) return [];
 
-    if (
-      proposal?.status &&
-      proposal?.startDate &&
-      proposal?.endDate &&
-      proposal?.creationDate
-    ) {
+    if (proposal) {
       return getProposalStatusSteps(
         t,
         proposal.status,
