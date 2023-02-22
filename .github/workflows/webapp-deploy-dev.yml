@@ -1,0 +1,138 @@
+name: WebApp Deploy DEV (Not Fleek)
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'packages/web-app/**'
+      - '!.github/**'
+    branches:
+      - 'develop'
+      - 'DOPS-445*'       ## temporal branch for testing only
+
+env:
+  working-directory: packages/web-app
+
+jobs:
+  setup-env-vars:
+    runs-on: ubuntu-latest
+    outputs:
+      environment: ${{ steps.envtest.outputs.environment }}${{ steps.envdev.outputs.environment }}
+      branch_prefix: ${{ steps.envtest.outputs.branch_prefix }}${{ steps.envdev.outputs.branch_prefix }}
+
+    steps:
+      - name: Set environment to TEST
+        if: contains(github.ref, '/DOPS-455')
+        id: envtest
+        run: |
+          echo "environment=staging" >> $GITHUB_OUTPUT
+          echo "branch_prefix=test" >> $GITHUB_OUTPUT
+
+      - name: Set environment to DEV
+        if: endsWith(github.ref, '/develop')
+        id: envdev
+        run: |
+          echo "environment=staging" >> $GITHUB_OUTPUT
+          echo "branch_prefix=develop" >> $GITHUB_OUTPUT
+
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    #container: fleek/create-react-app:node-16
+    needs: [setup-env-vars]
+    if: needs.setup-env-vars.outputs.environment != ''
+    environment: ${{ needs.setup-env-vars.outputs.environment }}
+    defaults:
+      run:
+        working-directory: ${{env.working-directory}}
+  
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Install NodeJS
+        uses: actions/setup-node@v3
+        with:
+          node-version: 16
+          cache: 'yarn'
+      
+      - name: Install deps, build and link ui-components
+        run: |
+          cd ../ui-components
+          yarn install --pure-lockfile
+          yarn build
+          yarn link
+      
+      - name: Install web-app deps
+        run: yarn install --pure-lockfile
+      
+      - name: Link web-app to ui-components
+        run: yarn link @aragon/ui-components
+
+      # - name: Lint web-app
+      #   run: yarn lint
+
+      - name: Test web-app
+        run: yarn test
+
+      - name: Build web-app
+        run: yarn build
+        env:
+          VITE_REACT_APP_DEPLOY_VERSION: ${{ github.sha }}
+          VITE_REACT_APP_DEPLOY_ENVIRONMENT: ${{ needs.setup-env-vars.outputs.environment }}
+          VITE_REACT_APP_ANALYTICS_KEY: ${{ secrets.VITE_REACT_APP_ANALYTICS_KEY }}
+          VITE_IPFS_API_KEY: ${{ secrets.VITE_IPFS_API_KEY }}
+          VITE_ETHERSCAN_API_KEY: ${{ secrets.VITE_ETHERSCAN_API_KEY }}
+          NODE_OPTIONS: '--max-old-space-size=6656'
+
+      - name: Setup Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v2
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Get Git hash and Timestamp in seconds
+        id: vars
+        run: |
+          echo "BRANCH_NAME=$(echo ${GITHUB_REF#refs/heads/} | tr '/' '-' )" >> $GITHUB_OUTPUT
+          echo "GIT_HASH_SHORT=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
+          echo "DATE_IN_SECS=$(date +%s)" >> $GITHUB_OUTPUT
+
+      - name: Build and Push to GitHub Container Registry
+        uses: docker/build-push-action@v4
+        with:
+          context: .
+          file: ./Dockerfile.webapp.dev
+          build-args: |
+            COMMIT_SHA=${{ steps.vars.outputs.GIT_HASH_SHORT }}
+            NODE_ENV=${{ needs.setup-env-vars.outputs.branch_prefix }}
+            ENVIRONMENT=${{ needs.setup-env-vars.outputs.branch_prefix }}
+            VITE_REACT_APP_DEPLOY_VERSION=${{ github.sha }}
+            VITE_REACT_APP_DEPLOY_ENVIRONMENT=${{ needs.setup-env-vars.outputs.environment }}
+            VITE_REACT_APP_ANALYTICS_KEY=${{ secrets.VITE_REACT_APP_ANALYTICS_KEY }}
+            VITE_IPFS_API_KEY=${{ secrets.VITE_IPFS_API_KEY }}
+            VITE_ETHERSCAN_API_KEY=${{ secrets.VITE_ETHERSCAN_API_KEY }}
+            NODE_OPTIONS='--max-old-space-size=6656'
+          push: ${{ github.event_name != 'pull_request' }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+          tags: |
+            ghcr.io/${{ github.repository }}:commit-${{ steps.vars.outputs.GIT_HASH_SHORT }}
+            ghcr.io/${{ github.repository }}:${{ needs.setup-env-vars.outputs.branch_prefix }}-${{ steps.vars.outputs.DATE_IN_SECS }}
+
+      # - name: Upload sourcemap to Kibana sourcemap endpoint (APM)
+      #   env:
+      #     COMMIT_SHA: ${{ github.sha }}
+      #   run: |
+      #     for f in $(find ./dist/assets/ -name *.js.map) ; do 
+      #       curl -X POST "https://kibana-sourcemaps.aragon.org/api/apm/sourcemaps" \
+      #         -H 'Content-Type: multipart/form-data' \
+      #         -H 'kbn-xsrf: true' \
+      #         -H 'Authorization: ApiKey ${{ secrets.APM_API_KEY }}' \
+      #         -F service_name="zaragoza" \
+      #         -F service_version="$COMMIT_SHA" \
+      #         -F bundle_filepath="http://localhost/assets/$(basename $f)" \
+      #         -F sourcemap=@$f
+      #     done

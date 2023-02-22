@@ -1,0 +1,44 @@
+# Static web site compiler
+FROM node:16 as builder
+
+ARG COMMIT_SHA
+ENV COMMIT_SHA=${COMMIT_SHA}
+ARG NODE_ENV
+ENV NODE_ENV=${NODE_ENV}
+ARG ENVIRONMENT
+ENV ENVIRONMENT=${ENVIRONMENT}
+ARG VITE_REACT_APP_DEPLOY_VERSION
+ENV VITE_REACT_APP_DEPLOY_VERSION=${VITE_REACT_APP_DEPLOY_VERSION}
+ARG VITE_REACT_APP_DEPLOY_ENVIRONMENT
+ENV VITE_REACT_APP_DEPLOY_ENVIRONMENT=${VITE_REACT_APP_DEPLOY_ENVIRONMENT}
+ARG VITE_REACT_APP_ANALYTICS_KEY
+ENV VITE_REACT_APP_ANALYTICS_KEY=${VITE_REACT_APP_ANALYTICS_KEY}
+ARG VITE_IPFS_API_KEY
+ENV VITE_IPFS_API_KEY=${VITE_IPFS_API_KEY}
+ARG VITE_ETHERSCAN_API_KEY
+ENV VITE_ETHERSCAN_API_KEY=${VITE_ETHERSCAN_API_KEY}
+ARG NODE_OPTIONS
+ENV NODE_OPTIONS=${NODE_OPTIONS}
+
+ADD . /app
+RUN rm -rf .git/ && rm -rf .github/ && rm -rf .env* && rm -rf .vscode
+WORKDIR /app
+RUN yarn
+
+## Install deps, build and link ui-components
+WORKDIR /app/packages/ui-components
+RUN yarn install --pure-lockfile && yarn build && yarn link
+
+## Install deps web-app
+WORKDIR /app/packages/web-app
+RUN yarn install --pure-lockfile
+
+## Link web-app to ui-components
+RUN yarn link @aragon/ui-components
+
+## Build web-app
+RUN yarn build
+
+## Launching web-app 
+EXPOSE 5000
+CMD ["npm", "run", "serve"]
