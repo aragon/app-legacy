@@ -62,7 +62,12 @@ export const CompareMetadata: React.FC<CompareMetadataProps> = ({
       <Dl>
         <Dt>{t('labels.logo')}</Dt>
         <Dd>
-          <AvatarDao daoName={displayedInfo.avatar} />
+          <AvatarDao
+            daoName={displayedInfo.name}
+            {...(displayedInfo.avatar && {
+              src: URL.createObjectURL(displayedInfo.avatar),
+            })}
+          />
         </Dd>
       </Dl>
       <Dl>
