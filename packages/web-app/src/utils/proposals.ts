@@ -786,13 +786,10 @@ export function getVoteStatus(proposal: DetailedProposal, t: TFunction) {
     case 'Pending':
       {
         const locale = (Locales as Record<string, Locale>)[i18n.language];
-        const timeUntilNow = formatDistanceToNow(
-          (proposal as TokenVotingProposal).startDate || new Date(),
-          {
-            includeSeconds: true,
-            locale,
-          }
-        );
+        const timeUntilNow = formatDistanceToNow(proposal.startDate, {
+          includeSeconds: true,
+          locale,
+        });
 
         label = t('votingTerminal.status.pending', {timeUntilNow});
       }
@@ -800,13 +797,10 @@ export function getVoteStatus(proposal: DetailedProposal, t: TFunction) {
     case 'Active':
       {
         const locale = (Locales as Record<string, Locale>)[i18n.language];
-        const timeUntilEnd = formatDistanceToNow(
-          (proposal as TokenVotingProposal).endDate || new Date(),
-          {
-            includeSeconds: true,
-            locale,
-          }
-        );
+        const timeUntilEnd = formatDistanceToNow(proposal.endDate, {
+          includeSeconds: true,
+          locale,
+        });
 
         label = t('votingTerminal.status.active', {timeUntilEnd});
       }

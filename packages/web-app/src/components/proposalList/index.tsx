@@ -167,18 +167,14 @@ export function proposal2CardProps(
       return {...props, ...specificProps};
     }
   } else if (isMultisigProposalListItem(proposal)) {
-    //TODO still don't have the date. Please mend when ready.
-    const startDate = new Date();
-    const endDate = new Date();
-
-    // Temporarily hardcode start as now and end as one day later. [VR 06-02-2023]
-    const startInMills = startDate.getTime();
-    endDate.setTime(startInMills + 86400000);
-
     const specificProps = {
       voteTitle: i18n.t('governance.proposals.voteTitleMultisig'),
       stateLabel: PROPOSAL_STATE_LABELS,
-      alertMessage: translateProposalDate(proposal.status, startDate, endDate),
+      alertMessage: translateProposalDate(
+        proposal.status,
+        proposal.startDate,
+        proposal.endDate
+      ),
     };
     if (proposal.status.toLowerCase() === 'active') {
       const activeProps = {
