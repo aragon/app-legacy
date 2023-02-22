@@ -187,13 +187,13 @@
     "@web3-react/types" "^6.0.7"
     tiny-warning "^1.0.3"
 
-"@aragon/sdk-client@^0.21.0-beta":
-  version "0.21.0-beta"
-  resolved "https://registry.yarnpkg.com/@aragon/sdk-client/-/sdk-client-0.21.0-beta.tgz#ff683d4c4a48ed0cbe090c138b8e214be3e1e60b"
-  integrity sha512-bxmrl3NonRVJQ1MqJ+/tbO/Ri54CJ+5+0pnKDS4av45UZzk0w0Ni2HZB1ZieknSkvfMis86zJ1+zTlIUOVBuzA==
+"@aragon/sdk-client@^0.21.2-beta":
+  version "0.21.2-beta"
+  resolved "https://registry.yarnpkg.com/@aragon/sdk-client/-/sdk-client-0.21.2-beta.tgz#f0ae13a3488ad21a5c85919a2e2bd34a9cf656b5"
+  integrity sha512-XtYG7/gjXrtilli3lFfttSFUpp+y4YmUzO8inKkQjyD8MoJeIHEEs3Uo1Qy0KKeDsoDGfXM0MBE8Ne5UeBxakw==
   dependencies:
     "@aragon/core-contracts-ethers" "^0.7.1-alpha"
-    "@aragon/sdk-common" "^0.10.0-beta"
+    "@aragon/sdk-common" "^0.10.1-beta"
     "@aragon/sdk-ipfs" "^0.2.0-alpha"
     "@ethersproject/abstract-signer" "^5.5.0"
     "@ethersproject/bignumber" "^5.6.0"
@@ -204,10 +204,10 @@
     graphql "^16.5.0"
     graphql-request "^4.3.0"
 
-"@aragon/sdk-common@^0.10.0-beta":
-  version "0.10.0-beta"
-  resolved "https://registry.yarnpkg.com/@aragon/sdk-common/-/sdk-common-0.10.0-beta.tgz#c33af6b8983db18b0fbf8d60fe3836c93ce1e666"
-  integrity sha512-A0c46wEF6ubh7tRsMtd80POgkLrE2gcfHM0A19SKzEIod8UVdj/kgfzGush9wBAdx7THnXQLg28mnAU303IBRw==
+"@aragon/sdk-common@^0.10.1-beta":
+  version "0.10.1-beta"
+  resolved "https://registry.yarnpkg.com/@aragon/sdk-common/-/sdk-common-0.10.1-beta.tgz#ede12923c371ec5429507247251e856ef6c6c1e1"
+  integrity sha512-d8GrJm2UIBQj2TYajua7Bs1UZoSN05DUBoV4TXJoO6I/H1oizeuQr8evzGJzyXdKxTJ9xqPyKtX4EwUjYuHR/Q==
 
 "@aragon/sdk-ipfs@^0.2.0-alpha":
   version "0.2.0-alpha"
