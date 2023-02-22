@@ -600,7 +600,7 @@ const Proposal: React.FC = () => {
             actions={decodedActions}
             status={executionStatus}
             onExecuteClicked={handleExecuteProposal}
-            txhash={transactionHash}
+            txhash={transactionHash || proposal?.executionTxHash}
           />
         </ProposalContainer>
         <AdditionalInfoContainer>

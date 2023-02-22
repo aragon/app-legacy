@@ -121,15 +121,16 @@ const WidgetFooter: React.FC<FooterProps> = ({
             size="large"
             onClick={onExecuteClicked}
           />
-          <StyledButtonText
-            label={t('governance.executionCard.seeTransaction')}
-            mode="secondary"
-            iconRight={<IconLinkExternal />}
-            size="large"
-            bgWhite
-            onClick={handleTxViewButtonClick}
-          />
-
+          {txhash && (
+            <StyledButtonText
+              label={t('governance.executionCard.seeTransaction')}
+              mode="secondary"
+              iconRight={<IconLinkExternal />}
+              size="large"
+              bgWhite
+              onClick={handleTxViewButtonClick}
+            />
+          )}
           <AlertInline
             label={t('governance.executionCard.status.failed')}
             mode="warning"
@@ -139,14 +140,16 @@ const WidgetFooter: React.FC<FooterProps> = ({
     case 'executed':
       return (
         <Footer>
-          <StyledButtonText
-            label={t('governance.executionCard.seeTransaction')}
-            mode="secondary"
-            iconRight={<IconLinkExternal />}
-            size="large"
-            bgWhite
-            onClick={handleTxViewButtonClick}
-          />
+          {txhash && (
+            <StyledButtonText
+              label={t('governance.executionCard.seeTransaction')}
+              mode="secondary"
+              iconRight={<IconLinkExternal />}
+              size="large"
+              bgWhite
+              onClick={handleTxViewButtonClick}
+            />
+          )}
 
           <AlertInline
             label={t('governance.executionCard.status.executed')}
