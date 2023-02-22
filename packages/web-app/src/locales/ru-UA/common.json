@@ -105,7 +105,7 @@
     "support": "Support",
     "duration": "Duration",
     "communityToken": "Does your community have a token?",
-    "authorisedWallets": "Authorised wallets / addresses",
+    "authorisedWallets": "Authorized wallets / addresses",
     "addExistingToken": "Add existing token",
     "tokenName": "Name",
     "tokenSymbol": "Symbol",
@@ -197,7 +197,7 @@
     "updateMetadataAction": "Update DAO metadata",
     "updateMetadataActionDescription": "Change your DAO metadata",
     "name": "Name",
-    "minimumApprovalDescription": "Participation is the amount of addresses in the authorised list that approve on a proposal. The minimum is how many have to approve for the result to be valid.",
+    "minimumApprovalDescription": "Participation is the number of addresses in the authorized list that approve a proposal. The minimum is how many have to approve it for the result to be valid.",
     "minimumApprovalAdditionalInfo": "When new wallets gets added or removed to the Multisig DAO, you have to review the Minimum Approval.",
     "minimumApprovalProgressInfo": "of {{amount}} addresses",
     "anyWallet": "Any wallet",
@@ -576,8 +576,9 @@
     "step1": {
       "label": "Step 1",
       "title": "Select blockchain",
-      "description": "The chain you choose is where your tokens and assets are stored. If you already have a token, choose the chain your token is minted on. <1> This cannot be changed later.</1> For help selecting your chain, read our guide on ",
-      "blockchainOverviewGuide.": "choosing the best blockchain for your DAO."
+      "description": "The chain you choose is where your tokens and assets are stored. If you already have a token, choose the chain your token is minted on. This cannot be changed later. For help selecting your chain, read our guide on choosing the best {{link}}.",
+      "descriptionLinkLabel": "blockchain for your DAO",
+      "descriptionLinkURL": "https://aragon.org/how-to/how-to-choose-the-right-blockchain-for-your-dao"
     },
     "step2": {
       "label": "Step 2",
