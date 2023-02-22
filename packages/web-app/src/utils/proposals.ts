@@ -601,6 +601,15 @@ export function getLiveProposalTerminalProps(
       voters: [...mappedMembers.values()],
       strategy: t('votingTerminal.multisig'),
       voteOptions: t('votingTerminal.approve'),
+      startDate: `${format(
+        proposal.startDate,
+        KNOWN_FORMATS.proposals
+      )}  ${getFormattedUtcOffset()}`,
+
+      endDate: `${format(
+        proposal.endDate,
+        KNOWN_FORMATS.proposals
+      )}  ${getFormattedUtcOffset()}`,
     };
   }
 }
