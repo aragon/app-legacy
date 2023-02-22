@@ -42,7 +42,6 @@ export const VotersTable: React.FC<VotersTableProps> = ({
   pageSize = 3,
 }) => {
   const displayedVoters = page * pageSize;
-  console.log('voters', voters, showOption);
 
   return (
     <div className="overflow-x-auto">
@@ -82,8 +81,14 @@ export const VotersTable: React.FC<VotersTableProps> = ({
                 </TableCell>
               )}
               {showOption && voter.voteReplaced === true ? (
-                <TableCell type="text" text="Edited" />
-              ) : undefined}
+                <TableCell type="tag">
+                  <span className="flex items-center -ml-2 text-xs text-ui-600">
+                    Edited
+                  </span>
+                </TableCell>
+              ) : (
+                <TableCell type="text" />
+              )}
               {showVotingPower && (
                 <TableCell type="text" text={voter.votingPower} rightAligned />
               )}
