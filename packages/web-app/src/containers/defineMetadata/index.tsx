@@ -155,7 +155,7 @@ const DefineMetadata: React.FC<DefineMetadataProps> = ({
                   {...{name, value, onBlur, onChange}}
                   placeholder={t('placeHolders.ensName')}
                   rightAdornment={
-                    <div className="flex items-center px-2 h-full bg-ui-50">
+                    <div className="flex items-center px-2 h-full rounded-r-xl bg-ui-50">
                       .dao.eth
                     </div>
                   }
