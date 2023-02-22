@@ -29,7 +29,6 @@ import {useNetwork} from 'context/network';
 import {usePrivacyContext} from 'context/privacyContext';
 import {useClient} from 'hooks/useClient';
 import {useDaoDetails} from 'hooks/useDaoDetails';
-import {useDaoMembers} from 'hooks/useDaoMembers';
 import {useDaoParam} from 'hooks/useDaoParam';
 import {useDaoToken} from 'hooks/useDaoToken';
 import {
@@ -58,7 +57,7 @@ import {CacheProposalParams, mapToCacheProposal} from 'utils/proposals';
 import {
   Action,
   ActionUpdateMetadata,
-  ActionUpdateMinimumApproval,
+  ActionUpdateMultisigPluginSettings,
   ActionUpdatePluginSettings,
   ProposalId,
   ProposalResource,
@@ -147,10 +146,6 @@ const ProposeSettingWrapper: React.FC<Props> = ({
 
   const {id: pluginType, instanceAddress: pluginAddress} =
     daoDetails?.plugins[0] || ({} as InstalledPluginListItem);
-
-  const {
-    data: {members},
-  } = useDaoMembers(pluginAddress, pluginType as PluginTypes);
 
   const {data: pluginSettings} = usePluginSettings(
     pluginAddress,
@@ -259,29 +254,18 @@ const ProposeSettingWrapper: React.FC<Props> = ({
         };
         setValue('actions', [metadataAction, voteSettingsAction]);
       } else {
-        const multisigSettingsAction: ActionUpdateMinimumApproval = {
-          name: 'update_minimum_approval',
+        const multisigSettingsAction: ActionUpdateMultisigPluginSettings = {
+          name: 'modify_multisig_voting_settings',
           inputs: {
-            minimumApproval: multisigMinimumApprovals,
-          },
-          summary: {
-            addedWallets: 0,
-            removedWallets: 0,
-            totalWallets: members.length,
+            minApprovals: multisigMinimumApprovals,
+            onlyListed: pluginSettings.onlyListed,
           },
         };
 
         setValue('actions', [metadataAction, multisigSettingsAction]);
       }
     }
-  }, [
-    daoToken,
-    pluginSettings,
-    getValues,
-    setValue,
-    tokenSupply?.raw,
-    members.length,
-  ]);
+  }, [daoToken, pluginSettings, getValues, setValue, tokenSupply?.raw]);
 
   useEffect(() => {
     // encoding actions
@@ -307,7 +291,7 @@ const ProposeSettingWrapper: React.FC<Props> = ({
             )
           );
         } else if (
-          action.name === 'update_minimum_approval' &&
+          action.name === 'modify_multisig_voting_settings' &&
           isMultisigClient(pluginClient)
         ) {
           actions.push(
@@ -315,8 +299,8 @@ const ProposeSettingWrapper: React.FC<Props> = ({
               pluginClient.encoding.updateMultisigVotingSettings({
                 pluginAddress,
                 votingSettings: {
-                  minApprovals: action.inputs.minimumApproval,
-                  onlyListed: true,
+                  minApprovals: action.inputs.minApprovals,
+                  onlyListed: action.inputs.onlyListed,
                 },
               })
             )
