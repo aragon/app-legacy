@@ -376,8 +376,9 @@ export class ProposalId {
 
   constructor(val: Number | string) {
     if (typeof val === 'string' && val.includes('_')) {
-      val = Number(val.split('_')[1].substring(2));
+      val = parseInt(val.split('_')[1].substring(2), 16);
     }
+
     this.id = val.toString();
   }
 
