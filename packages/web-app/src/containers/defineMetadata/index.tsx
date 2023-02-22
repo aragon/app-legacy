@@ -154,6 +154,11 @@ const DefineMetadata: React.FC<DefineMetadataProps> = ({
                 <TextInput
                   {...{name, value, onBlur, onChange}}
                   placeholder={t('placeHolders.ensName')}
+                  rightAdornment={
+                    <div className="flex items-center px-2 h-full bg-ui-50">
+                      .dao.eth
+                    </div>
+                  }
                 />
                 <InputCount>{`${value.length}/128`}</InputCount>
                 <ErrorHandler {...{value, error}} />
