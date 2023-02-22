@@ -899,5 +899,11 @@
       "title": "Select smart contract",
       "description": "Select a smart contract to compose any actions or connect a new smart contract if ..."
     }
+  },
+  "app": {
+    "feedback": {
+      "linkLabel": "Give feedback",
+      "linkURL": "https://form.typeform.com/to/apg4gHYO"
+    }
   }
 }
