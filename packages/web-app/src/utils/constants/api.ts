@@ -5,7 +5,7 @@ type SubgraphNetworkUrl = Record<SupportedNetworks, string | undefined>;
 export const SUBGRAPH_API_URL: SubgraphNetworkUrl = {
   ethereum: undefined,
   goerli:
-    'https://subgraph.satsuma-prod.com/aragon/core-goerli/version/v0.9.2-alpha-old-contr-sig-michel-fix/api',
+    'https://subgraph.satsuma-prod.com/qHR2wGfc5RLi6/aragon/core-goerli/api',
   polygon: undefined,
   mumbai:
     'https://api.thegraph.com/subgraphs/name/aragon/aragon-zaragoza-mumbai',
