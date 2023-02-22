@@ -26,7 +26,9 @@ export const TextInput: React.FC<TextInputProps> = ({
   return (
     <Container data-testid="input" {...{mode, disabled}}>
       {leftAdornment}
-      <StyledInput disabled={disabled} {...props} />
+      <InputWrapper {...{leftAdornment}}>
+        <StyledInput disabled={disabled} {...props} />
+      </InputWrapper>
       {rightAdornment}
     </Container>
   );
@@ -38,8 +40,8 @@ export const Container = styled.div.attrs(
   ({mode, disabled}: StyledContainerProps) => {
     let className = `${
       disabled ? 'bg-ui-100 border-ui-200 border-2' : 'bg-ui-0'
-    } flex items-center space-x-1.5 space-x-1.5 py-1.5 px-2
-    focus-within:ring-2 focus-within:ring-primary-500
+    } flex items-center focus-within:ring-2 
+    focus-within:ring-primary-500
     rounded-xl hover:border-ui-300 border-2 h-6
     active:border-primary-500 active:ring-0 `;
 
@@ -63,3 +65,11 @@ export const StyledInput = styled.input.attrs(() => {
 })`
   outline: 0;
 `;
+
+type StyledInputWrapper = Pick<TextInputProps, 'leftAdornment'>;
+
+const InputWrapper = styled.div.attrs(
+  ({leftAdornment}: StyledInputWrapper) => ({
+    className: `py-1.5 ${leftAdornment ? 'pr-2' : 'px-2'} w-full`,
+  })
+)``;

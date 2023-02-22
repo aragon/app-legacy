@@ -1,4 +1,5 @@
 import React from 'react';
+import styled from 'styled-components';
 
 import {IconClose, IconSearch} from '../icons';
 import {Spinner} from '../spinner';
@@ -25,9 +26,13 @@ export const SearchInput: React.FC<SearchInputProps> = ({
       data-testid="search-input"
       leftAdornment={
         isLoading ? (
-          <Spinner size={'small'} />
+          <AdornmentWrapper>
+            <Spinner size={'small'} />
+          </AdornmentWrapper>
         ) : (
-          <IconSearch className="text-ui-300" />
+          <AdornmentWrapper>
+            <IconSearch className="text-ui-300" />
+          </AdornmentWrapper>
         )
       }
       value={value}
@@ -54,3 +59,7 @@ export const SearchInput: React.FC<SearchInputProps> = ({
     />
   );
 };
+
+const AdornmentWrapper = styled.div.attrs({
+  className: 'pl-2 pr-1.5',
+})``;
