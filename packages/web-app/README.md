@@ -8,7 +8,6 @@ First, make sure you install dependencies by running:
 
 ```bash
 cd packages/web-app
-
 yarn install
 ```
 
