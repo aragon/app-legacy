@@ -30,6 +30,8 @@ yarn-error.log*
 .env.test.local
 .env.production.local
 .env
+docker.env
+docker-compose.yml
 
 # deployments
 deployments

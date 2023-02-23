@@ -1,4 +1,4 @@
-name: WebApp Deploy DEV (Not Fleek)
+name: WebApp Deploy DEV (no Fleek)
 on:
   workflow_dispatch:
   push:
@@ -6,11 +6,8 @@ on:
       - 'packages/web-app/**'
       - '!.github/**'
     branches:
-      #- 'develop'
+      - 'develop'
       - 'DOPS-445*'       ## temporal branch for testing only
-
-env:
-  working-directory: packages/web-app
 
 jobs:
   setup-env-vars:
@@ -24,66 +21,24 @@ jobs:
         if: contains(github.ref, '/DOPS-445')
         id: envtest
         run: |
-          echo "environment=staging" >> $GITHUB_OUTPUT
+          echo "environment=testing" >> $GITHUB_OUTPUT
           echo "branch_prefix=test" >> $GITHUB_OUTPUT
 
       - name: Set environment to DEV
         if: endsWith(github.ref, '/develop')
         id: envdev
         run: |
-          echo "environment=staging" >> $GITHUB_OUTPUT
+          echo "environment=development" >> $GITHUB_OUTPUT
           echo "branch_prefix=develop" >> $GITHUB_OUTPUT
 
   build-and-deploy:
     runs-on: ubuntu-latest
-    #container: fleek/create-react-app:node-16
     needs: [setup-env-vars]
     if: needs.setup-env-vars.outputs.environment != ''
-    environment: ${{ needs.setup-env-vars.outputs.environment }}
-    defaults:
-      run:
-        working-directory: ${{env.working-directory}}
   
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
-
-      - name: Install NodeJS
-        uses: actions/setup-node@v3
-        with:
-          node-version: 16
-          cache: 'yarn'
-      
-      - name: Install deps, build and link ui-components
-        run: |
-          cd ../ui-components
-          yarn install --pure-lockfile
-          yarn build
-          yarn link
-      
-      - name: Install web-app deps
-        run: yarn install --pure-lockfile
-      
-      - name: Link web-app to ui-components
-        run: yarn link @aragon/ui-components
-
-      # - name: Lint web-app
-      #   run: yarn lint
-
-      - name: Test web-app
-        run: yarn test
-
-      - name: Build web-app
-        run: yarn build
-        env:
-          VITE_REACT_APP_DEPLOY_VERSION: ${{ github.sha }}
-          VITE_REACT_APP_DEPLOY_ENVIRONMENT: ${{ needs.setup-env-vars.outputs.environment }}
-          VITE_REACT_APP_ANALYTICS_KEY: ${{ secrets.VITE_REACT_APP_ANALYTICS_KEY }}
-          VITE_IPFS_API_KEY: ${{ secrets.VITE_IPFS_API_KEY }}
-          VITE_ETHERSCAN_API_KEY: ${{ secrets.VITE_ETHERSCAN_API_KEY }}
-          #NODE_OPTIONS: '--max-old-space-size=6656'
-          #NODE_OPTIONS: '--max-old-space-size=8192'
-          NODE_OPTIONS: '--max-old-space-size=16384'
 
       - name: Setup Docker Buildx
         uses: docker/setup-buildx-action@v2
@@ -102,27 +57,59 @@ jobs:
           echo "GIT_HASH_SHORT=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
           echo "DATE_IN_SECS=$(date +%s)" >> $GITHUB_OUTPUT
 
-      - name: Build and Push to GitHub Container Registry
-        uses: docker/build-push-action@v4
+      - name: Set swap space on Runner
+        uses: pierotofy/set-swap-space@master
         with:
-          context: .
-          file: ./Dockerfile.webapp.dev
-          build-args: |
-            COMMIT_SHA=${{ steps.vars.outputs.GIT_HASH_SHORT }}
-            NODE_ENV=${{ needs.setup-env-vars.outputs.branch_prefix }}
-            ENVIRONMENT=${{ needs.setup-env-vars.outputs.branch_prefix }}
-            VITE_REACT_APP_DEPLOY_VERSION=${{ github.sha }}
-            VITE_REACT_APP_DEPLOY_ENVIRONMENT=${{ needs.setup-env-vars.outputs.environment }}
-            VITE_REACT_APP_ANALYTICS_KEY=${{ secrets.VITE_REACT_APP_ANALYTICS_KEY }}
-            VITE_IPFS_API_KEY=${{ secrets.VITE_IPFS_API_KEY }}
-            VITE_ETHERSCAN_API_KEY=${{ secrets.VITE_ETHERSCAN_API_KEY }}
-            NODE_OPTIONS='--max-old-space-size=6656'
-          push: ${{ github.event_name != 'pull_request' }}
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
-          tags: |
-            ghcr.io/${{ github.repository }}:commit-${{ steps.vars.outputs.GIT_HASH_SHORT }}
-            ghcr.io/${{ github.repository }}:webapp-${{ needs.setup-env-vars.outputs.branch_prefix }}-${{ steps.vars.outputs.DATE_IN_SECS }}
+          swap-size-gb: 12
+
+      ## Use this step instead of `docker/build-push-action@v4` to avoid JavaScript heap out memory error
+      ## Using 'docker buildx build ...' allows controlling memory and memory-swap
+      ## https://developer.ibm.com/articles/nodejs-memory-management-in-container-environments/
+      ## https://docs.docker.com/engine/reference/commandline/buildx_build/#build-arg
+      - name: Build Docker image from scratch
+        run: |
+          mkdir -p /tmp/docker-build-push-${{ steps.vars.outputs.DATE_IN_SECS }}/
+          docker buildx build . --file ./Dockerfile.webapp.dev --push \
+          --build-arg COMMIT_SHA=${{ steps.vars.outputs.GIT_HASH_SHORT }} \
+          --build-arg NODE_ENV=${{ needs.setup-env-vars.outputs.environment }} \
+          --build-arg ENVIRONMENT=${{ needs.setup-env-vars.outputs.branch_prefix }} \
+          --build-arg VITE_REACT_APP_DEPLOY_VERSION=${{ github.sha }} \
+          --build-arg VITE_REACT_APP_DEPLOY_ENVIRONMENT=${{ needs.setup-env-vars.outputs.environment }} \
+          --build-arg VITE_REACT_APP_ANALYTICS_KEY=${{ secrets.VITE_REACT_APP_ANALYTICS_KEY }} \
+          --build-arg VITE_IPFS_API_KEY=${{ secrets.VITE_IPFS_API_KEY }} \
+          --build-arg VITE_ETHERSCAN_API_KEY=${{ secrets.VITE_ETHERSCAN_API_KEY }} \
+          --build-arg NODE_OPTIONS='--max-old-space-size=6656' \
+          --cache-from type=gha \
+          --cache-to type=gha,mode=max \
+          --iidfile /tmp/docker-build-push-${{ steps.vars.outputs.DATE_IN_SECS }}/iidfile \
+          --provenance mode=max,builder-id=https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }} \
+          --metadata-file /tmp/docker-build-push-${{ steps.vars.outputs.DATE_IN_SECS }}/metadata-file \
+          --tag ghcr.io/${{ github.repository }}:${{ needs.setup-env-vars.outputs.branch_prefix }} \
+          --tag ghcr.io/${{ github.repository }}:commit-${{ steps.vars.outputs.GIT_HASH_SHORT }} \
+          --tag ghcr.io/${{ github.repository }}:webapp-${{ needs.setup-env-vars.outputs.branch_prefix }}-${{ steps.vars.outputs.DATE_IN_SECS }}
+
+      # - name: Build and Push to GitHub Container Registry
+      #   uses: docker/build-push-action@v4
+      #   with:
+      #     context: .
+      #     file: ./Dockerfile.webapp.dev
+      #     #shm-size: 8g
+      #     build-args: |
+      #       COMMIT_SHA=${{ steps.vars.outputs.GIT_HASH_SHORT }}
+      #       NODE_ENV=${{ needs.setup-env-vars.outputs.environment }}      ## if use 'production', NODEJS will not install tsdx or tsc
+      #       ENVIRONMENT=${{ needs.setup-env-vars.outputs.branch_prefix }}
+      #       VITE_REACT_APP_DEPLOY_VERSION=${{ github.sha }}
+      #       VITE_REACT_APP_DEPLOY_ENVIRONMENT=${{ needs.setup-env-vars.outputs.environment }}
+      #       VITE_REACT_APP_ANALYTICS_KEY=${{ secrets.VITE_REACT_APP_ANALYTICS_KEY }}
+      #       VITE_IPFS_API_KEY=${{ secrets.VITE_IPFS_API_KEY }}
+      #       VITE_ETHERSCAN_API_KEY=${{ secrets.VITE_ETHERSCAN_API_KEY }}
+      #       NODE_OPTIONS='--max-old-space-size=5763'
+      #     push: ${{ github.event_name != 'pull_request' }}
+      #     cache-from: type=gha
+      #     cache-to: type=gha,mode=max
+      #     tags: |
+      #       ghcr.io/${{ github.repository }}:commit-${{ steps.vars.outputs.GIT_HASH_SHORT }}
+      #       ghcr.io/${{ github.repository }}:webapp-${{ needs.setup-env-vars.outputs.branch_prefix }}-${{ steps.vars.outputs.DATE_IN_SECS }}
 
       # - name: Upload sourcemap to Kibana sourcemap endpoint (APM)
       #   env:
