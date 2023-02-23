@@ -4,7 +4,7 @@ This package holds the web-app that allows user to interact with Zaragoza. It is
 
 ## Getting Started
 
-First, make sure you install dependencies by running
+First, make sure you install dependencies by running:
 
 ```bash
 yarn install

@@ -21,7 +21,7 @@ jobs:
 
     steps:
       - name: Set environment to TEST
-        if: contains(github.ref, '/DOPS-455')
+        if: contains(github.ref, '/DOPS-445')
         id: envtest
         run: |
           echo "environment=staging" >> $GITHUB_OUTPUT
