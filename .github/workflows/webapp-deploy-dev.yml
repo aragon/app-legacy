@@ -6,7 +6,7 @@ on:
       - 'packages/web-app/**'
       - '!.github/**'
     branches:
-      - 'develop'
+      #- 'develop'
       - 'DOPS-445*'       ## temporal branch for testing only
 
 env:
@@ -81,7 +81,9 @@ jobs:
           VITE_REACT_APP_ANALYTICS_KEY: ${{ secrets.VITE_REACT_APP_ANALYTICS_KEY }}
           VITE_IPFS_API_KEY: ${{ secrets.VITE_IPFS_API_KEY }}
           VITE_ETHERSCAN_API_KEY: ${{ secrets.VITE_ETHERSCAN_API_KEY }}
-          NODE_OPTIONS: '--max-old-space-size=6656'
+          #NODE_OPTIONS: '--max-old-space-size=6656'
+          #NODE_OPTIONS: '--max-old-space-size=8192'
+          NODE_OPTIONS: '--max-old-space-size=16384'
 
       - name: Setup Docker Buildx
         uses: docker/setup-buildx-action@v2
@@ -120,7 +122,7 @@ jobs:
           cache-to: type=gha,mode=max
           tags: |
             ghcr.io/${{ github.repository }}:commit-${{ steps.vars.outputs.GIT_HASH_SHORT }}
-            ghcr.io/${{ github.repository }}:${{ needs.setup-env-vars.outputs.branch_prefix }}-${{ steps.vars.outputs.DATE_IN_SECS }}
+            ghcr.io/${{ github.repository }}:webapp-${{ needs.setup-env-vars.outputs.branch_prefix }}-${{ steps.vars.outputs.DATE_IN_SECS }}
 
       # - name: Upload sourcemap to Kibana sourcemap endpoint (APM)
       #   env:
