@@ -5,7 +5,7 @@ import {useDaoDetails} from './useDaoDetails';
 
 export function useDaoActions(dao: string): HookData<ActionParameter[]> {
   const {data: daoDetails, error, isLoading} = useDaoDetails(dao);
-  const addressList = daoDetails?.plugins[0].id === 'multisig.plugin.dao.eth';
+  const multisig = daoDetails?.plugins[0].id === 'multisig.plugin.dao.eth';
 
   const {t} = useTranslation();
 
@@ -16,15 +16,15 @@ export function useDaoActions(dao: string): HookData<ActionParameter[]> {
       subtitle: t('AddActionModal.withdrawAssetsSubtitle'),
       isReuseable: true,
     },
-    {
-      type: 'external_contract',
-      title: t('AddActionModal.externalContract'),
-      subtitle: t('AddActionModal.externalContractSubtitle'),
-      isReuseable: true,
-    },
+    // {
+    //   type: 'external_contract',
+    //   title: t('AddActionModal.externalContract'),
+    //   subtitle: t('AddActionModal.externalContractSubtitle'),
+    //   isReuseable: true,
+    // },
   ];
 
-  const addressListActions = baseActions.concat([
+  const multisigActions = baseActions.concat([
     {
       type: 'add_address',
       title: t('AddActionModal.addAddresses'),
@@ -37,7 +37,7 @@ export function useDaoActions(dao: string): HookData<ActionParameter[]> {
     },
   ]);
 
-  const erc20Actions = baseActions.concat([
+  const tokenVotingActions = baseActions.concat([
     {
       type: 'mint_tokens',
       title: t('AddActionModal.mintTokens'),
@@ -46,7 +46,7 @@ export function useDaoActions(dao: string): HookData<ActionParameter[]> {
   ]);
 
   return {
-    data: addressList ? addressListActions : erc20Actions,
+    data: multisig ? multisigActions : tokenVotingActions,
     isLoading,
     error,
   };
