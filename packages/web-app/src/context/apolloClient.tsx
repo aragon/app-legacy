@@ -22,6 +22,9 @@ import {
   PENDING_DAOS_KEY,
   PENDING_DEPOSITS_KEY,
   PENDING_EXECUTION_KEY,
+  PENDING_MULTISIG_EXECUTION_KEY,
+  PENDING_MULTISIG_PROPOSALS_KEY,
+  PENDING_MULTISIG_VOTES_KEY,
   PENDING_PROPOSALS_KEY,
   PENDING_VOTES_KEY,
   SUBGRAPH_API_URL,
@@ -29,11 +32,7 @@ import {
   SupportedNetworks,
 } from 'utils/constants';
 import {customJSONReviver} from 'utils/library';
-import {
-  AddressListVote,
-  DetailedProposal,
-  Erc20ProposalVote,
-} from 'utils/types';
+import {DetailedProposal, Erc20ProposalVote} from 'utils/types';
 import {PRIVACY_KEY} from './privacyContext';
 
 const restLink = new RestLink({
@@ -129,7 +128,9 @@ const client: Record<
   'arbitrum-test': arbitrumTestClient,
 };
 
-// FAVORITE & SELECTED DAOS
+/*************************************************
+ *            FAVORITE & SELECTED DAOS           *
+ *************************************************/
 // including description, type, and chain in anticipation for
 // showing these daos on explorer page
 export type NavigationDao = Omit<DaoListItem, 'metadata' | 'plugins'> & {
@@ -157,42 +158,101 @@ const selectedDaoVar = makeVar<NavigationDao>({
   plugins: [],
 });
 
-// PENDING DEPOSITS
+/*************************************************
+ *               PENDING DEPOSITS                *
+ *************************************************/
 const depositTxs = JSON.parse(
   localStorage.getItem(PENDING_DEPOSITS_KEY) || '[]',
   customJSONReviver
 );
 const pendingDeposits = makeVar<Deposit[]>(depositTxs);
 
-// PENDING VOTES
-type PendingVotes = {
+// TODO: Please switch keys from `daoAddress_proposalId` to
+//  `pluginAddress_proposalId` when migrating because DAOs may have
+// multiple installed plugins
+/*************************************************
+ *           PENDING VOTES & APPROVALS           *
+ *************************************************/
+// Token-based
+export type PendingTokenBasedVotes = {
   /** key is: daoAddress_proposalId */
-  [key: string]: AddressListVote | Erc20ProposalVote;
+  [key: string]: Erc20ProposalVote;
 };
 const pendingVotes = JSON.parse(
   localStorage.getItem(PENDING_VOTES_KEY) || '{}',
   customJSONReviver
 );
-const pendingVotesVar = makeVar<PendingVotes>(pendingVotes);
 
-// PENDING EXECUTION
-type PendingExecution = {
+const pendingTokenBasedVotesVar = makeVar<PendingTokenBasedVotes>(pendingVotes);
+
+//================ Multisig
+export type PendingMultisigApprovals = {
+  /** key is: daoAddress_proposalId; value: wallet address */
+  [key: string]: string;
+};
+const pendingMultisigApprovals = JSON.parse(
+  localStorage.getItem(PENDING_MULTISIG_VOTES_KEY) || '{}'
+);
+
+const pendingMultisigApprovalsVar = makeVar<PendingMultisigApprovals>(
+  pendingMultisigApprovals
+);
+
+/*************************************************
+ *                PENDING EXECUTION              *
+ *************************************************/
+// Token-based
+export type PendingTokenBasedExecution = {
   /** key is: daoAddress_proposalId */
   [key: string]: boolean;
 };
-const pendingExecution = JSON.parse(
+const pendingTokenBasedExecution = JSON.parse(
   localStorage.getItem(PENDING_EXECUTION_KEY) || '{}',
   customJSONReviver
 );
-const pendingExecutionVar = makeVar<PendingExecution>(pendingExecution);
+const pendingTokenBasedExecutionVar = makeVar<PendingTokenBasedExecution>(
+  pendingTokenBasedExecution
+);
 
-// PENDING PROPOSAL
+//================ Multisig
+export type PendingMultisigExecution = {
+  /** key is: daoAddress_proposalId */
+  [key: string]: boolean;
+};
+const pendingMultisigExecution = JSON.parse(
+  localStorage.getItem(PENDING_MULTISIG_EXECUTION_KEY) || '{}',
+  customJSONReviver
+);
+const pendingMultisigExecutionVar = makeVar<PendingMultisigExecution>(
+  pendingMultisigExecution
+);
+
+/*************************************************
+ *                 PENDING PROPOSAL              *
+ *************************************************/
 // iffy about this structure
 export type CachedProposal = Omit<
   DetailedProposal,
   'creationBlockNumber' | 'executionBlockNumber' | 'executionDate'
 >;
-type PendingProposals = {
+type PendingTokenBasedProposals = {
+  // key is dao address
+  [key: string]: {
+    // key is ProposalId.toString()
+    [key: string]: CachedProposal;
+  };
+};
+
+const pendingTokenBasedProposals = JSON.parse(
+  localStorage.getItem(PENDING_PROPOSALS_KEY) || '{}',
+  customJSONReviver
+);
+const pendingTokenBasedProposalsVar = makeVar<PendingTokenBasedProposals>(
+  pendingTokenBasedProposals
+);
+
+//================ Multisig
+type PendingMultisigProposals = {
   // key is dao address
   [key: string]: {
     // key is proposal id
@@ -200,12 +260,17 @@ type PendingProposals = {
   };
 };
 
-const pendingProposals = JSON.parse(
-  localStorage.getItem(PENDING_PROPOSALS_KEY) || '{}',
+const pendingMultisigProposals = JSON.parse(
+  localStorage.getItem(PENDING_MULTISIG_PROPOSALS_KEY) || '{}',
   customJSONReviver
 );
-const pendingProposalsVar = makeVar<PendingProposals>(pendingProposals);
+const pendingMultisigProposalsVar = makeVar<PendingMultisigProposals>(
+  pendingMultisigProposals
+);
 
+/*************************************************
+ *                   PENDING DAOs                *
+ *************************************************/
 type PendingDaoCreation = {
   [key in SupportedNetworks]?: {
     // This key is the id of the newly created DAO
@@ -223,10 +288,16 @@ const pendingDaoCreationVar = makeVar<PendingDaoCreation>(pendingDaoCreation);
 export {
   client,
   favoriteDaosVar,
-  selectedDaoVar,
-  pendingDeposits,
-  pendingProposalsVar,
-  pendingVotesVar,
   pendingDaoCreationVar,
-  pendingExecutionVar,
+  pendingDeposits,
+  selectedDaoVar,
+  // votes
+  pendingMultisigApprovalsVar,
+  pendingTokenBasedVotesVar,
+  // executions
+  pendingMultisigExecutionVar,
+  pendingTokenBasedExecutionVar,
+  // proposals
+  pendingMultisigProposalsVar,
+  pendingTokenBasedProposalsVar,
 };

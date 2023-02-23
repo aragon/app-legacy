@@ -104,7 +104,7 @@ export type Deposit = BaseTransfer & {
   transferType: TransferTypes.Deposit;
 };
 export type Withdraw = BaseTransfer & {
-  proposalId: string;
+  proposalId: ProposalId;
   to: Address;
   transferType: TransferTypes.Withdraw;
 };
@@ -161,12 +161,9 @@ type ExecutionData = {
   amount: number;
 };
 
-export type AddressListVote = {
+export type Erc20ProposalVote = {
   address: string;
   vote: VoteValues;
-};
-
-export type Erc20ProposalVote = AddressListVote & {
   weight: bigint;
 };
 
@@ -209,6 +206,8 @@ export type ActionParameter = {
 /**
  * All available types of action for DAOs
  */
+// TODO: rename actions types and names to be consistent
+// either update or modify
 export type ActionsTypes =
   | 'add_address'
   | 'remove_address'
@@ -217,7 +216,7 @@ export type ActionsTypes =
   | 'external_contract'
   | 'modify_token_voting_settings'
   | 'modify_metadata'
-  | 'update_minimum_approval';
+  | 'modify_multisig_voting_settings';
 
 // TODO Refactor ActionWithdraw With the new input structure
 export type ActionWithdraw = {
@@ -252,17 +251,6 @@ export type ActionRemoveAddress = {
   };
 };
 
-export type ActionUpdateMinimumApproval = {
-  name: 'update_minimum_approval';
-  inputs: {
-    minimumApproval: number;
-  };
-  summary: {
-    addedWallets: number;
-    removedWallets: number;
-  };
-};
-
 export type ActionMintToken = {
   name: 'mint_tokens';
   inputs: {
@@ -277,7 +265,13 @@ export type ActionMintToken = {
     newHoldersCount: number;
     daoTokenSymbol: string;
     daoTokenAddress: string;
+    totalMembers?: number;
   };
+};
+
+export type ActionUpdateMultisigPluginSettings = {
+  name: 'modify_multisig_voting_settings';
+  inputs: MultisigVotingSettings;
 };
 
 export type ActionUpdatePluginSettings = {
@@ -303,7 +297,7 @@ export type Action =
   | ActionMintToken
   | ActionUpdatePluginSettings
   | ActionUpdateMetadata
-  | ActionUpdateMinimumApproval;
+  | ActionUpdateMultisigPluginSettings;
 
 export type ParamType = {
   type: string;
@@ -339,6 +333,8 @@ export type Dao = {
 export type HookData<T> = {
   data: T;
   isLoading: boolean;
+  isInitialLoading?: boolean;
+  isLoadingMore?: boolean;
   error?: Error;
 };
 
@@ -370,3 +366,39 @@ export type SmartContract = {
   logo?: string;
   name: string;
 };
+
+/**
+ * Opaque class encapsulating a proposal id, which can
+ * be globally unique or just unique per plugin address
+ */
+export class ProposalId {
+  private id: string;
+
+  constructor(val: Number | string) {
+    if (typeof val === 'string' && val.includes('_')) {
+      val = Number(val.split('_')[1].substring(2));
+    }
+    this.id = val.toString();
+  }
+
+  /** Returns proposal id in form needed for SDK */
+  export() {
+    return Number(this.id);
+  }
+
+  /** Make the proposal id globally unique by combining with an address (should be plugin address) */
+  makeGloballyUnique(address: string): string {
+    const idHex = '0x' + Number(this.id).toString(16);
+    return `${address}_${idHex}`;
+  }
+
+  /** Return a string to be used as part of a url representing a proposal */
+  toUrlSlug(): string {
+    return this.id;
+  }
+
+  /** The proposal id as a string */
+  toString() {
+    return this.id;
+  }
+}

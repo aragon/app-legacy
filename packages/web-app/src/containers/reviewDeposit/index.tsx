@@ -55,7 +55,7 @@ const ReviewDeposit: React.FC = () => {
   return (
     <div className="space-y-1.5 desktop:space-y-3">
       <CardTransfer
-        to="DAO Name"
+        to={values?.daoName}
         from={values.from}
         toLabel={t('labels.to')}
         fromLabel={t('labels.from')}

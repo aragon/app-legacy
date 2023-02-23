@@ -42,7 +42,7 @@ const Finance: React.FC = () => {
   const {tokens, totalAssetChange, totalAssetValue, transfers} =
     useDaoVault(daoId);
 
-  sortTokens(tokens, 'treasurySharePercentage');
+  sortTokens(tokens, 'treasurySharePercentage', true);
 
   /*************************************************
    *                    Render                     *

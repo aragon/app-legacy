@@ -155,7 +155,11 @@ function App() {
 const NewSettingsWrapper: React.FC = () => {
   const formMethods = useForm({
     mode: 'onChange',
-    defaultValues: {links: [{name: '', url: ''}]},
+    defaultValues: {
+      links: [{name: '', url: ''}],
+      startSwitch: 'now',
+      durationSwitch: 'duration',
+    },
   });
 
   return (

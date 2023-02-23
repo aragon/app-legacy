@@ -29,7 +29,7 @@ import {Community} from 'utils/paths';
 import {
   ActionAddAddress,
   ActionRemoveAddress,
-  ActionUpdateMinimumApproval,
+  ActionUpdateMultisigPluginSettings,
 } from 'utils/types';
 import UpdateMinimumApproval from 'containers/actionBuilder/updateMinimumApproval';
 import {useDaoDetails} from 'hooks/useDaoDetails';
@@ -67,7 +67,9 @@ const ManageMembers: React.FC = () => {
       proposalTitle: '',
       durationSwitch: 'duration',
       actions: [] as Array<
-        ActionAddAddress | ActionRemoveAddress | ActionUpdateMinimumApproval
+        | ActionAddAddress
+        | ActionRemoveAddress
+        | ActionUpdateMultisigPluginSettings
       >,
     },
   });
@@ -175,7 +177,7 @@ export default withTransaction('ManageMembers', 'component')(ManageMembers);
 function actionsAreValid(
   errors: FieldErrors,
   formActions: Array<
-    ActionAddAddress | ActionRemoveAddress | ActionUpdateMinimumApproval
+    ActionAddAddress | ActionRemoveAddress | ActionUpdateMultisigPluginSettings
   >,
   minApprovals: number
 ) {
@@ -200,11 +202,12 @@ function actionsAreValid(
       continue;
     }
 
-    if (formActions[i].name === 'update_minimum_approval') {
-      const newMinimumAprroval = (formActions[i] as ActionUpdateMinimumApproval)
-        .inputs.minimumApproval;
+    if (formActions[i].name === 'modify_multisig_voting_settings') {
+      const newMinimumApproval = (
+        formActions[i] as ActionUpdateMultisigPluginSettings
+      ).inputs.minApprovals;
 
-      minimumApprovalChanged = minApprovals !== newMinimumAprroval;
+      minimumApprovalChanged = minApprovals !== newMinimumApproval;
     }
   }
 

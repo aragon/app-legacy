@@ -1,4 +1,5 @@
 import {AssetBalance} from '@aragon/sdk-client';
+import {DaoBalancesQueryParams} from '@aragon/sdk-client/dist/interfaces';
 import {useEffect, useState} from 'react';
 
 import {HookData} from 'utils/types';
@@ -17,7 +18,9 @@ export const useDaoBalances = (
     async function getBalances() {
       try {
         setIsLoading(true);
-        const balances = await client?.methods.getDaoBalances(daoAddressOrEns);
+        const balances = await client?.methods.getDaoBalances({
+          daoAddressOrEns,
+        } as DaoBalancesQueryParams);
         if (balances) setData(balances);
       } catch (error) {
         console.error(error);

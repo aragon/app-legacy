@@ -29,16 +29,23 @@ import {useWallet} from 'hooks/useWallet';
 import {
   CHAIN_METADATA,
   PENDING_EXECUTION_KEY,
+  PENDING_MULTISIG_EXECUTION_KEY,
+  PENDING_MULTISIG_VOTES_KEY,
   PENDING_VOTES_KEY,
   TransactionState,
 } from 'utils/constants';
-import {customJSONReplacer, generateCachedProposalId} from 'utils/library';
-import {stripPlgnAdrFromProposalId} from 'utils/proposals';
+import {customJSONReplacer} from 'utils/library';
 import {fetchBalance} from 'utils/tokens';
-import {pendingExecutionVar, pendingVotesVar} from './apolloClient';
+import {
+  pendingTokenBasedExecutionVar,
+  pendingMultisigApprovalsVar,
+  pendingTokenBasedVotesVar,
+  pendingMultisigExecutionVar,
+} from './apolloClient';
 import {useNetwork} from './network';
 import {usePrivacyContext} from './privacyContext';
 import {useProviders} from './providers';
+import {ProposalId} from 'utils/types';
 
 //TODO: currently a context, but considering there might only ever be one child,
 // might need to turn it into a wrapper that passes props to proposal page
@@ -66,7 +73,7 @@ const ProposalTransactionContext =
 
 const ProposalTransactionProvider: React.FC<Props> = ({children}) => {
   const {t} = useTranslation();
-  const {id} = useParams();
+  const {id: urlId} = useParams();
 
   const {address, isConnected} = useWallet();
   const {network} = useNetwork();
@@ -76,8 +83,14 @@ const ProposalTransactionProvider: React.FC<Props> = ({children}) => {
   const [showVoteModal, setShowVoteModal] = useState(false);
   const [showExecuteModal, setShowExecuteModal] = useState(false);
 
-  const cachedVotes = useReactiveVar(pendingVotesVar);
-  const cachedExecution = useReactiveVar(pendingExecutionVar);
+  const cachedTokenBasedVotes = useReactiveVar(pendingTokenBasedVotesVar);
+  const cachedMultisigApprovals = useReactiveVar(pendingMultisigApprovalsVar);
+
+  const cachedTokenBaseExecution = useReactiveVar(
+    pendingTokenBasedExecutionVar
+  );
+  const cachedMultisigExecution = useReactiveVar(pendingMultisigExecutionVar);
+
   const [voteParams, setVoteParams] = useState<IVoteProposalParams>();
   const [voteSubmitted, setVoteSubmitted] = useState(false);
   const [voteProcessState, setVoteProcessState] = useState<TransactionState>();
@@ -116,6 +129,12 @@ const ProposalTransactionProvider: React.FC<Props> = ({children}) => {
     [executeParams, executeProcessState, voteParams, voteProcessState]
   );
 
+  const shouldDisableCallback = useMemo(() => {
+    if (voteProcessState === TransactionState.SUCCESS) return false;
+
+    return !(voteParams || executeParams);
+  }, [executeParams, voteParams, voteProcessState]);
+
   /*************************************************
    *                    Helpers                    *
    *************************************************/
@@ -124,13 +143,17 @@ const ProposalTransactionProvider: React.FC<Props> = ({children}) => {
       // id should never be null as it is required to navigate to this page
       // Also, the proposal details page (child) navigates back to not-found
       // if the id is invalid
-      setVoteParams({proposalId: id!, pluginAddress, vote});
+      setVoteParams({
+        proposalId: new ProposalId(urlId!).export(),
+        pluginAddress,
+        vote,
+      });
 
       setTokenAddress(tokenAddress);
       setShowVoteModal(true);
       setVoteProcessState(TransactionState.WAITING);
     },
-    [id, pluginAddress]
+    [urlId, pluginAddress]
   );
 
   // estimate voting fees
@@ -139,35 +162,42 @@ const ProposalTransactionProvider: React.FC<Props> = ({children}) => {
       if (tokenAddress) {
         return (pluginClient as TokenVotingClient)?.estimation.voteProposal({
           ...voteParams,
-          proposalId: stripPlgnAdrFromProposalId(voteParams.proposalId),
+          proposalId: voteParams.proposalId,
         });
       }
 
       return (pluginClient as MultisigClient)?.estimation.approveProposal({
         pluginAddress: voteParams.pluginAddress,
-        proposalId: BigInt(stripPlgnAdrFromProposalId(voteParams.proposalId)),
+        proposalId: voteParams.proposalId,
         tryExecution: false,
       });
     }
   }, [pluginClient, tokenAddress, voteParams]);
 
   const handleExecuteProposal = useCallback(() => {
-    setExecuteParams({proposalId: id!, pluginAddress});
+    setExecuteParams({
+      proposalId: new ProposalId(urlId!).export(),
+      pluginAddress,
+    });
     setShowExecuteModal(true);
     setExecuteProcessState(TransactionState.WAITING);
-  }, [id, pluginAddress]);
+  }, [urlId, pluginAddress]);
 
   // estimate proposal execution fees
   const estimateExecuteFees = useCallback(async () => {
-    if (executeParams)
-      // TODO: Handle multisig and token voting case
-      return pluginClient?.estimation.executeProposal({
-        ...executeParams,
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore
-        proposalId: stripPlgnAdrFromProposalId(executeParams.proposalId),
+    if (executeParams) {
+      if (tokenAddress) {
+        return (pluginClient as TokenVotingClient)?.estimation.executeProposal({
+          ...executeParams,
+          proposalId: executeParams.proposalId,
+        });
+      }
+      return (pluginClient as MultisigClient)?.estimation.executeProposal({
+        pluginAddress: executeParams.pluginAddress,
+        proposalId: executeParams.proposalId,
       });
-  }, [executeParams, pluginClient?.estimation]);
+    }
+  }, [executeParams, pluginClient, tokenAddress]);
 
   // estimation fees for voting on proposal/executing proposal
   const {
@@ -198,7 +228,7 @@ const ProposalTransactionProvider: React.FC<Props> = ({children}) => {
 
   // set proper state and cache vote when transaction is successful
   const onVoteSubmitted = useCallback(
-    async (proposalId: string, vote: VoteValues) => {
+    async (proposalId: ProposalId, vote: VoteValues) => {
       setVoteParams(undefined);
       setVoteSubmitted(true);
       setVoteProcessState(TransactionState.SUCCESS);
@@ -206,51 +236,53 @@ const ProposalTransactionProvider: React.FC<Props> = ({children}) => {
       if (!address) return;
 
       let newCache;
-      const cachedProposalId = generateCachedProposalId(daoAddress, proposalId);
+      let cacheKey = '';
+      const cachedProposalId = proposalId.makeGloballyUnique(daoAddress);
 
-      // no token address, not tokenBased proposal
-      if (!tokenAddress) {
+      // cache multisig vote
+      if (pluginType === 'multisig.plugin.dao.eth') {
         newCache = {
-          ...cachedVotes,
-          [cachedProposalId]: {address, vote},
+          ...cachedMultisigApprovals,
+          [cachedProposalId]: address,
         };
-        pendingVotesVar(newCache);
-
-        if (preferences?.functional) {
-          localStorage.setItem(
-            PENDING_VOTES_KEY,
-            JSON.stringify(newCache, customJSONReplacer)
-          );
-        }
-        return;
+        cacheKey = PENDING_MULTISIG_VOTES_KEY;
+        pendingMultisigApprovalsVar(newCache);
       }
 
-      // fetch token user balance, ie vote weight
-      const weight: BigNumber = await fetchBalance(
-        tokenAddress,
-        address!,
-        provider,
-        CHAIN_METADATA[network].nativeCurrency,
-        false
-      );
+      // cache token voting vote
+      if (pluginType === 'token-voting.plugin.dao.eth' && tokenAddress) {
+        // fetch token user balance, ie vote weight
+        const weight: BigNumber = await fetchBalance(
+          tokenAddress,
+          address!,
+          provider,
+          CHAIN_METADATA[network].nativeCurrency,
+          false
+        );
 
-      newCache = {
-        ...cachedVotes,
-        [cachedProposalId]: {address, vote, weight: weight.toBigInt()},
-      };
-      pendingVotesVar(newCache);
+        newCache = {
+          ...cachedTokenBasedVotes,
+          [cachedProposalId]: {address, vote, weight: weight.toBigInt()},
+        };
+        cacheKey = PENDING_VOTES_KEY;
+        pendingTokenBasedVotesVar(newCache);
+      }
+
+      // add to local storage
       if (preferences?.functional) {
         localStorage.setItem(
-          PENDING_VOTES_KEY,
+          cacheKey,
           JSON.stringify(newCache, customJSONReplacer)
         );
       }
     },
     [
       address,
-      cachedVotes,
+      cachedMultisigApprovals,
+      cachedTokenBasedVotes,
       daoAddress,
       network,
+      pluginType,
       preferences?.functional,
       provider,
       tokenAddress,
@@ -259,25 +291,49 @@ const ProposalTransactionProvider: React.FC<Props> = ({children}) => {
 
   // set proper state and cache proposal execution when transaction is successful
   const onExecutionSubmitted = useCallback(
-    async (proposalId: string) => {
+    async (proposalId: ProposalId) => {
       if (!address) return;
 
-      const cachedProposalId = generateCachedProposalId(daoAddress, proposalId);
+      let newCache;
+      let cacheKey = '';
+      const cachedProposalId = proposalId.makeGloballyUnique(daoAddress);
 
-      const newCache = {
-        ...cachedExecution,
-        [cachedProposalId]: true,
-      };
-      pendingExecutionVar(newCache);
+      // cache token based execution
+      if (pluginType === 'token-voting.plugin.dao.eth') {
+        newCache = {
+          ...cachedTokenBaseExecution,
+          [cachedProposalId]: true,
+        };
+        cacheKey = PENDING_EXECUTION_KEY;
+        pendingTokenBasedExecutionVar(newCache);
+      }
 
+      // cache multisig execution
+      if (pluginType === 'multisig.plugin.dao.eth') {
+        newCache = {
+          ...cachedMultisigExecution,
+          [cachedProposalId]: true,
+        };
+        cacheKey = PENDING_MULTISIG_EXECUTION_KEY;
+        pendingMultisigExecutionVar(newCache);
+      }
+
+      // add to local storage
       if (preferences?.functional) {
         localStorage.setItem(
-          PENDING_EXECUTION_KEY,
+          cacheKey,
           JSON.stringify(newCache, customJSONReplacer)
         );
       }
     },
-    [address, cachedExecution, daoAddress, preferences?.functional]
+    [
+      address,
+      cachedMultisigExecution,
+      cachedTokenBaseExecution,
+      daoAddress,
+      pluginType,
+      preferences?.functional,
+    ]
   );
 
   // handles vote submission/execution
@@ -304,13 +360,13 @@ const ProposalTransactionProvider: React.FC<Props> = ({children}) => {
     if (!tokenAddress) {
       voteSteps = (pluginClient as MultisigClient)?.methods.approveProposal({
         pluginAddress: voteParams.pluginAddress,
-        proposalId: BigInt(stripPlgnAdrFromProposalId(voteParams.proposalId)),
+        proposalId: voteParams.proposalId,
         tryExecution: false,
       });
     } else {
       voteSteps = (pluginClient as TokenVotingClient)?.methods.voteProposal({
         ...voteParams,
-        proposalId: stripPlgnAdrFromProposalId(voteParams.proposalId),
+        proposalId: voteParams.proposalId,
       });
     }
 
@@ -325,7 +381,10 @@ const ProposalTransactionProvider: React.FC<Props> = ({children}) => {
             console.log(step.txHash);
             break;
           case VoteProposalStep.DONE:
-            onVoteSubmitted(voteParams.proposalId, voteParams.vote);
+            onVoteSubmitted(
+              new ProposalId(voteParams.proposalId),
+              voteParams.vote
+            );
             break;
         }
       }
@@ -381,13 +440,21 @@ const ProposalTransactionProvider: React.FC<Props> = ({children}) => {
     }
 
     setExecuteProcessState(TransactionState.LOADING);
-    // TODO: Handle multisig and token voting case
-    const executeSteps = pluginClient?.methods.executeProposal({
-      ...executeParams,
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
-      proposalId: stripPlgnAdrFromProposalId(executeParams.proposalId),
-    });
+
+    let executeSteps;
+    if (tokenAddress) {
+      executeSteps = (
+        pluginClient as TokenVotingClient
+      )?.methods.executeProposal({
+        ...executeParams,
+        proposalId: executeParams.proposalId,
+      });
+    } else {
+      executeSteps = (pluginClient as MultisigClient)?.methods.executeProposal({
+        pluginAddress: executeParams.pluginAddress,
+        proposalId: executeParams.proposalId,
+      });
+    }
 
     if (!executeSteps) {
       throw new Error('Voting function is not initialized correctly');
@@ -400,11 +467,10 @@ const ProposalTransactionProvider: React.FC<Props> = ({children}) => {
             setTransactionHash(step.txHash);
             break;
           case ExecuteProposalStep.DONE:
-            console.log(step.key);
             setExecuteParams(undefined);
             setExecutionFailed(false);
             setExecuteProcessState(TransactionState.SUCCESS);
-            onExecutionSubmitted(executeParams.proposalId);
+            onExecutionSubmitted(new ProposalId(executeParams.proposalId));
             break;
         }
       }
@@ -420,7 +486,8 @@ const ProposalTransactionProvider: React.FC<Props> = ({children}) => {
     isConnected,
     onExecutionSubmitted,
     pluginAddress,
-    pluginClient?.methods,
+    pluginClient,
+    tokenAddress,
   ]);
 
   const value = useMemo(
@@ -448,6 +515,7 @@ const ProposalTransactionProvider: React.FC<Props> = ({children}) => {
       voteSubmitted,
     ]
   );
+
   /*************************************************
    *                    Render                     *
    *************************************************/
@@ -485,7 +553,7 @@ const ProposalTransactionProvider: React.FC<Props> = ({children}) => {
         averageFee={averageFee}
         tokenPrice={tokenPrice}
         gasEstimationError={gasEstimationError}
-        disabledCallback={!(voteParams || executeParams)}
+        disabledCallback={shouldDisableCallback}
       />
     </ProposalTransactionContext.Provider>
   );

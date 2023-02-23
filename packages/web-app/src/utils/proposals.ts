@@ -13,6 +13,7 @@ import {
   MultisigProposal,
   ProposalMetadata,
   ProposalStatus,
+  MultisigProposalListItem,
   TokenVotingProposal,
   TokenVotingProposalResult,
   VoteValues,
@@ -28,22 +29,37 @@ import {BigNumber} from 'ethers';
 import {TFunction} from 'react-i18next';
 
 import {ProposalVoteResults} from 'containers/votingTerminal';
-import {CachedProposal} from 'context/apolloClient';
+import {
+  CachedProposal,
+  PendingMultisigApprovals,
+  pendingMultisigApprovalsVar,
+  PendingMultisigExecution,
+  PendingTokenBasedExecution,
+  PendingTokenBasedVotes,
+  pendingTokenBasedVotesVar,
+} from 'context/apolloClient';
 import {MultisigMember} from 'hooks/useDaoMembers';
+import {isMultisigVotingSettings} from 'hooks/usePluginSettings';
 import {i18n} from '../../i18n.config';
 import {getFormattedUtcOffset, KNOWN_FORMATS} from './date';
-import {formatUnits} from './library';
+import {customJSONReplacer, formatUnits} from './library';
 import {abbreviateTokenAmount} from './tokens';
 import {
   Action,
-  AddressListVote,
   DetailedProposal,
   Erc20ProposalVote,
+  ProposalId,
   StrictlyExclude,
   SupportedProposals,
   SupportedVotingSettings,
 } from './types';
-import {isMultisigVotingSettings} from 'hooks/usePluginSettings';
+import {
+  PENDING_VOTES_KEY,
+  PENDING_MULTISIG_VOTES_KEY,
+  PENDING_EXECUTION_KEY,
+  PENDING_MULTISIG_EXECUTION_KEY,
+} from './constants';
+import {ReactiveVar} from '@apollo/client';
 
 export type TokenVotingOptions = StrictlyExclude<
   VoterType['option'],
@@ -430,7 +446,7 @@ function getPassedProposalSteps(
 function getPublishedProposalStep(
   t: TFunction,
   creationDate: Date,
-  block: string
+  block: string | undefined
 ): ProgressStatusProps {
   return {
     label: t('governance.statusWidget.published'),
@@ -439,7 +455,7 @@ function getPublishedProposalStep(
       KNOWN_FORMATS.proposals
     )}  ${getFormattedUtcOffset()}`,
     mode: 'done',
-    block,
+    ...(block && {block}),
   };
 }
 
@@ -573,16 +589,18 @@ export function getLiveProposalTerminalProps(
   }
 }
 
-export type MapToDetailedProposalParams = {
+export type CacheProposalParams = {
   creatorAddress: string;
   daoAddress: string;
   daoName: string;
-  daoToken?: Erc20TokenDetails;
-  totalVotingWeight: number | bigint;
-  pluginSettings: VotingSettings;
   metadata: ProposalMetadata;
   proposalParams: ICreateProposalParams;
-  proposalId: string;
+  proposalGuid: string;
+
+  // TokenVoting props
+  daoToken?: Erc20TokenDetails;
+  pluginSettings?: VotingSettings;
+  totalVotingWeight?: bigint;
 };
 
 /**
@@ -590,7 +608,7 @@ export type MapToDetailedProposalParams = {
  * @param params necessary parameters to map newly created proposal to augmented DetailedProposal
  * @returns Detailed proposal, ready for caching and displaying
  */
-export function mapToDetailedProposal(params: MapToDetailedProposalParams) {
+export function mapToCacheProposal(params: CacheProposalParams) {
   // common properties
   const commonProps = {
     actions: params.proposalParams.actions || [],
@@ -599,22 +617,13 @@ export function mapToDetailedProposal(params: MapToDetailedProposalParams) {
     dao: {address: params.daoAddress, name: params.daoName},
     endDate: params.proposalParams.endDate!,
     startDate: params.proposalParams.startDate!,
-    id: params.proposalId,
+    id: params.proposalGuid,
     metadata: params.metadata,
     status: ProposalStatus.PENDING,
-    votes: [],
-    settings: {
-      minSupport: params.pluginSettings.supportThreshold,
-      minTurnout: params.pluginSettings.minParticipation,
-      duration: differenceInSeconds(
-        params.proposalParams.startDate!,
-        params.proposalParams.endDate!
-      ),
-    },
   };
 
   // erc20
-  if (isErc20Token(params.daoToken)) {
+  if (isErc20Token(params.daoToken) && params.pluginSettings) {
     return {
       ...commonProps,
       token: {
@@ -623,53 +632,80 @@ export function mapToDetailedProposal(params: MapToDetailedProposalParams) {
         name: params.daoToken.name,
         symbol: params.daoToken.symbol,
       },
+      votes: [],
+      settings: {
+        minSupport: params.pluginSettings.supportThreshold,
+        minTurnout: params.pluginSettings.minParticipation,
+        duration: differenceInSeconds(
+          params.proposalParams.startDate!,
+          params.proposalParams.endDate!
+        ),
+      },
       totalVotingWeight: params.totalVotingWeight as bigint,
       usedVotingWeight: BigInt(0),
       result: {yes: BigInt(0), no: BigInt(0), abstain: BigInt(0)},
+      executionTxHash: '',
     } as CachedProposal;
   } else {
-    // addressList
+    // multisig
     return {
       ...commonProps,
-      totalVotingWeight: params.totalVotingWeight as number,
-      result: {yes: 0, no: 0, abstain: 0},
+      approvals: [],
+      executionTxHash: '',
     } as CachedProposal;
   }
 }
 
 /**
- * Augment proposal with vote
+ * Augment TokenVoting proposal with vote
  * @param proposal proposal to be augmented with vote
  * @param vote
  * @returns a proposal augmented with a singular vote
  */
 export function addVoteToProposal(
-  proposal: DetailedProposal,
-  vote: AddressListVote | Erc20ProposalVote
+  proposal: TokenVotingProposal,
+  vote: Erc20ProposalVote
 ): DetailedProposal {
   if (!vote) return proposal;
 
   // calculate new vote values including cached ones
   const voteValue = MappedVotes[vote.vote];
-  if (isTokenBasedProposal(proposal)) {
-    // Token-based calculation
-    return {
-      ...proposal,
-      votes: [...proposal.votes, {...vote}],
-      result: {
-        ...proposal.result,
-        [voteValue]: BigNumber.from(proposal.result[voteValue])
-          .add((vote as Erc20ProposalVote).weight)
-          .toBigInt(),
-      },
-      usedVotingWeight: BigNumber.from(proposal.usedVotingWeight)
+
+  return {
+    ...proposal,
+    votes: [...proposal.votes, {...vote}],
+    result: {
+      ...proposal.result,
+      [voteValue]: BigNumber.from(proposal.result[voteValue])
         .add((vote as Erc20ProposalVote).weight)
         .toBigInt(),
-    } as TokenVotingProposal;
-  }
+    },
+    usedVotingWeight: BigNumber.from(proposal.usedVotingWeight)
+      .add((vote as Erc20ProposalVote).weight)
+      .toBigInt(),
+  } as TokenVotingProposal;
+}
 
-  // TODO please add multisig vote config
-  return {} as DetailedProposal;
+/**
+ * Augment Multisig proposal with vote
+ * @param proposal Multisig Proposal
+ * @param cachedApprovalAddress Cached vote
+ * @returns a proposal augmented with a singular vote
+ */
+export function addApprovalToMultisigToProposal(
+  proposal: MultisigProposal | MultisigProposalListItem,
+  cachedApprovalAddress: string
+) {
+  if (!cachedApprovalAddress) return proposal;
+
+  if (typeof proposal.approvals === 'number')
+    return {
+      ...proposal,
+      approvals:
+        typeof proposal.approvals === 'number'
+          ? proposal.approvals + 1
+          : [...proposal.approvals, cachedApprovalAddress],
+    };
 }
 
 /**
@@ -768,7 +804,7 @@ export function getVoteStatus(proposal: DetailedProposal, t: TFunction) {
 
 export function getVoteButtonLabel(
   proposal: DetailedProposal,
-  canVoteOrApprove: boolean,
+  canVoteOrApprove: boolean | boolean[],
   votedOrApproved: boolean,
   t: TFunction
 ) {
@@ -786,7 +822,11 @@ export function getVoteButtonLabel(
 
   if (isTokenBasedProposal(proposal)) {
     label = votedOrApproved
-      ? canVoteOrApprove
+      ? (
+          Array.isArray(canVoteOrApprove)
+            ? canVoteOrApprove.some(v => v)
+            : canVoteOrApprove
+        )
         ? t('votingTerminal.status.revote')
         : t('votingTerminal.status.voteSubmitted')
       : t('votingTerminal.voteOver');
@@ -836,12 +876,12 @@ export function isEarlyExecutable(
     proposal.token.decimals
   );
 
+  if (votes.yes.eq(Big(0))) return false;
+
   return (
     // participation reached
     missingParticipation === 0 &&
-    // support threshold met
-    votes.yes.div(votes.yes.add(votes.no)).gt(supportThreshold) &&
-    // even if absentees show up and all vote against, still cannot change outcome
+    // support threshold met even if absentees show up and all vote against, still cannot change outcome
     votes.yes.div(votes.yes.add(votes.no).add(absentee)).gt(supportThreshold)
   );
 }
@@ -876,9 +916,9 @@ export function getNonEmptyActions(
   minApprovals?: number
 ) {
   return actions.flatMap(action => {
-    if (action.name === 'update_minimum_approval') {
+    if (action.name === 'modify_multisig_voting_settings') {
       // minimum approval changed: return action or don't include
-      return action.inputs.minimumApproval !== minApprovals ? action : [];
+      return action.inputs.minApprovals !== minApprovals ? action : [];
     } else if (action.name === 'add_address') {
       // address added to the list: return action or don't include
       return action.inputs.memberWallets.some(w => w.address === '')
@@ -892,4 +932,127 @@ export function getNonEmptyActions(
       return action;
     }
   });
+}
+
+/**
+ * add cached vote to proposal
+ * @param proposal Proposal
+ * @param daoAddress dao address
+ * @param cachedVotes votes cached
+ * @param functionalCookiesEnabled whether functional cookies are enabled
+ * @returns a proposal augmented with cached vote
+ */
+export const augmentProposalWithCachedVote = (
+  proposal: DetailedProposal,
+  daoAddress: string,
+  cachedVotes: PendingTokenBasedVotes | PendingMultisigApprovals,
+  functionalCookiesEnabled: boolean | undefined
+) => {
+  const id = new ProposalId(proposal.id).makeGloballyUnique(daoAddress);
+
+  if (isErc20VotingProposal(proposal)) {
+    const cachedVote = (cachedVotes as PendingTokenBasedVotes)[id];
+
+    // no cache return original proposal
+    if (!cachedVote) return proposal;
+
+    // check if sdk has returned the vote in the cache
+    if (
+      proposal.votes.some(
+        v => v.address.toLowerCase() === cachedVote.address.toLowerCase()
+      )
+    ) {
+      // delete vote from cache
+      const newVoteCache = {...(cachedVotes as PendingTokenBasedVotes)};
+      delete newVoteCache[id];
+
+      // update cache
+      pendingTokenBasedVotesVar(newVoteCache);
+      if (functionalCookiesEnabled) {
+        localStorage.setItem(
+          PENDING_VOTES_KEY,
+          JSON.stringify(newVoteCache, customJSONReplacer)
+        );
+      }
+
+      return proposal;
+    } else {
+      // augment with cached vote
+      return addVoteToProposal(proposal, cachedVote);
+    }
+  }
+
+  if (isMultisigProposal(proposal)) {
+    const cachedVote = (cachedVotes as PendingMultisigApprovals)[id];
+
+    // no cache return original proposal
+    if (!cachedVote) return proposal;
+
+    // check if sdk has returned the vote in the cache
+    if (
+      proposal.approvals.some(
+        v =>
+          stripPlgnAdrFromProposalId(v).toLowerCase() ===
+          cachedVote.toLowerCase()
+      )
+    ) {
+      // delete vote from cache
+      const newVoteCache = {...(cachedVotes as PendingMultisigApprovals)};
+      delete newVoteCache[id];
+      // update cache
+      pendingMultisigApprovalsVar(newVoteCache);
+      if (functionalCookiesEnabled) {
+        localStorage.setItem(
+          PENDING_MULTISIG_VOTES_KEY,
+          JSON.stringify(newVoteCache, customJSONReplacer)
+        );
+      }
+      return proposal;
+    } else {
+      // augment with cached vote
+      return addApprovalToMultisigToProposal(proposal, cachedVote);
+    }
+  }
+};
+
+/**
+ * Add cached execution to proposal
+ * @param proposal Proposal
+ * @param daoAddress dao address
+ * @param cachedExecutions executions cached
+ * @param functionalCookiesEnabled whether functional cookies are enabled
+ * @returns a proposal augmented with cached execution
+ */
+export function augmentProposalWithCachedExecution(
+  proposal: DetailedProposal,
+  daoAddress: string,
+  cachedExecutions: PendingTokenBasedExecution | PendingMultisigExecution,
+  functionalCookiesEnabled: boolean | undefined,
+  cache: ReactiveVar<PendingMultisigExecution | PendingTokenBasedExecution>,
+  cacheKey: typeof PENDING_EXECUTION_KEY | typeof PENDING_MULTISIG_EXECUTION_KEY
+) {
+  const id = new ProposalId(proposal.id).makeGloballyUnique(daoAddress);
+
+  const cachedExecution = cachedExecutions[id];
+
+  // no cache return original proposal
+  if (!cachedExecution) return proposal;
+
+  if (proposal.status === ProposalStatus.EXECUTED) {
+    const newExecutionCache = {...cachedExecutions};
+    delete newExecutionCache[id];
+
+    // update cache
+    cache(newExecutionCache);
+    if (functionalCookiesEnabled) {
+      localStorage.setItem(
+        cacheKey,
+        JSON.stringify(newExecutionCache, customJSONReplacer)
+      );
+    }
+
+    return proposal;
+  } else {
+    return {...proposal, status: ProposalStatus.EXECUTED};
+  }
 }

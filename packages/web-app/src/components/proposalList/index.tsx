@@ -1,4 +1,4 @@
-import {CardProposal, CardProposalProps} from '@aragon/ui-components';
+import {CardProposal, CardProposalProps, Spinner} from '@aragon/ui-components';
 import React from 'react';
 import {useTranslation} from 'react-i18next';
 import {useNavigate, useParams} from 'react-router-dom';
@@ -19,16 +19,30 @@ import {i18n} from '../../../i18n.config';
 
 type ProposalListProps = {
   proposals: Array<ProposalListItem>;
+  isLoading?: boolean;
 };
 
-const ProposalList: React.FC<ProposalListProps> = ({proposals}) => {
+const ProposalList: React.FC<ProposalListProps> = ({proposals, isLoading}) => {
   const {t} = useTranslation();
   const {network} = useNetwork();
   const {dao} = useParams();
   const navigate = useNavigate();
 
-  if (proposals.length === 0)
-    return <p data-testid="proposalList">{t('governance.noProposals')}</p>;
+  if (isLoading) {
+    return (
+      <div className="flex justify-center items-center h-7">
+        <Spinner size="default" />
+      </div>
+    );
+  }
+
+  if (proposals.length === 0) {
+    return (
+      <div className="flex justify-center items-center h-7 text-gray-600">
+        <p data-testid="proposalList">{t('governance.noProposals')}</p>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-3" data-testid="proposalList">
@@ -119,6 +133,8 @@ export function mapToCardViewProposal(
       id: proposal.id,
       title: proposal.metadata.title,
       description: proposal.metadata.summary,
+      // TODO: Check if we have to include the process key
+      // process: proposal.status.toLowerCase() as CardProposalProps['process'],
       explorer: CHAIN_METADATA[network].explorer,
       publisherAddress: proposal.creatorAddress,
       publishLabel: i18n.t('governance.proposals.publishedBy'),

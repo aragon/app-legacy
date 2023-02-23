@@ -25,6 +25,7 @@ import {
   ActionMintToken,
   ActionRemoveAddress,
   ActionUpdateMetadata,
+  ActionUpdateMultisigPluginSettings,
   ActionUpdatePluginSettings,
   ActionWithdraw,
 } from 'utils/types';
@@ -107,21 +108,24 @@ export async function decodeWithdrawToAction(
   client: Client | undefined,
   apolloClient: ApolloClient<object>,
   provider: providers.Provider,
-  network: SupportedNetworks
+  network: SupportedNetworks,
+  to: string,
+  value: bigint
 ): Promise<ActionWithdraw | undefined> {
   if (!client || !data) {
     console.error('SDK client is not initialized correctly');
     return;
   }
 
-  const decoded = client.decoding.withdrawAction(data);
+  const decoded = client.decoding.withdrawAction(to, value, data);
 
   if (!decoded) {
     console.error('Unable to decode withdraw action');
     return;
   }
 
-  const address = decoded?.tokenAddress || constants.AddressZero;
+  const address =
+    decoded.type === 'native' ? constants.AddressZero : decoded?.tokenAddress;
   try {
     const [response, apiResponse] = await Promise.all([
       getTokenInfo(address, provider, CHAIN_METADATA[network].nativeCurrency),
@@ -131,7 +135,7 @@ export async function decodeWithdrawToAction(
     return {
       amount: Number(formatUnits(decoded.amount, response.decimals)),
       name: 'withdraw_assets',
-      to: decoded.recipientAddress,
+      to: decoded.recipientAddressOrEns,
       tokenBalance: 0, // unnecessary?
       tokenAddress: address,
       tokenImgUrl: apiResponse?.imgUrl || '',
@@ -287,6 +291,21 @@ export async function decodePluginSettingsToAction(
   };
 }
 
+export function decodeMultisigSettingsToAction(
+  data: Uint8Array | undefined,
+  client: MultisigClient
+): ActionUpdateMultisigPluginSettings | undefined {
+  if (!client || !data) {
+    console.error('SDK client is not initialized correctly');
+    return;
+  }
+
+  return {
+    name: 'modify_multisig_voting_settings',
+    inputs: client.decoding.updateMultisigVotingSettings(data),
+  };
+}
+
 /**
  * Decode update DAO metadata settings action
  * @param data Uint8Array action data
@@ -360,19 +379,6 @@ export const customJSONReviver = (_: string, value: any) => {
 
   return value;
 };
-
-/**
- * Get unique proposal key
- * @param daoAddress
- * @param proposalId
- * @returns key for proposal to cache
- */
-export function generateCachedProposalId(
-  daoAddress: string,
-  proposalId: string
-): string {
-  return `${daoAddress}_${proposalId}`;
-}
 
 type DecodedVotingMode = {
   earlyExecution: boolean;

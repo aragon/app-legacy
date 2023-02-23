@@ -1,6 +1,8 @@
 import {
   DaoDepositSteps,
-  IDepositParams,
+  DepositParams,
+  EnsureAllowanceParams,
+  TokenType,
   TransferType,
 } from '@aragon/sdk-client';
 import {useFormContext} from 'react-hook-form';
@@ -35,7 +37,7 @@ import {useReactiveVar} from '@apollo/client';
 import {pendingDeposits} from './apolloClient';
 import {trackEvent} from 'services/analytics';
 import {customJSONReplacer} from 'utils/library';
-import {BigNumber} from 'ethers';
+import {BigNumber, constants} from 'ethers';
 
 interface IDepositContextType {
   handleOpenModal: () => void;
@@ -59,7 +61,7 @@ const DepositProvider = ({children}: {children: ReactNode}) => {
 
   const {getValues} = useFormContext<DepositFormData>();
   const [depositState, setDepositState] = useState<TransactionState>();
-  const [depositParams, setDepositParams] = useState<IDepositParams>();
+  const [depositParams, setDepositParams] = useState<DepositParams>();
   const [modalParams, setModalParams] = useState<modalParamsType>({});
   const pendingDepositsTxs = useReactiveVar(pendingDeposits);
 
@@ -78,14 +80,11 @@ const DepositProvider = ({children}: {children: ReactNode}) => {
 
   const estimateDepositFees = useCallback(async () => {
     if (client && depositParams) {
-      if (
-        currentStep === 2 ||
-        isNativeToken(depositParams.tokenAddress as string)
-      ) {
-        return client?.estimation.deposit(depositParams as IDepositParams);
+      if (currentStep === 2 || depositParams.type === 'native') {
+        return client?.estimation.deposit(depositParams as DepositParams);
       } else
         return client?.estimation.updateAllowance(
-          depositParams as IDepositParams
+          depositParams as EnsureAllowanceParams
         );
     }
   }, [client, currentStep, depositParams]);
@@ -100,7 +99,7 @@ const DepositProvider = ({children}: {children: ReactNode}) => {
 
   const handleOpenModal = useCallback(async () => {
     // get deposit data from
-    const {amount, tokenAddress, to, reference, tokenSymbol} = getValues();
+    const {amount, tokenAddress, to, tokenSymbol} = getValues();
     const tokenAmount = BigInt(Number(amount) * Math.pow(10, 18));
 
     // validate and set deposit data
@@ -109,12 +108,20 @@ const DepositProvider = ({children}: {children: ReactNode}) => {
       return;
     }
 
-    setDepositParams({
-      daoAddressOrEns: to,
-      amount: tokenAmount,
-      tokenAddress,
-      reference,
-    });
+    setDepositParams(
+      tokenAddress === constants.AddressZero
+        ? {
+            type: TokenType.NATIVE,
+            daoAddressOrEns: to,
+            amount: tokenAmount,
+          }
+        : {
+            type: TokenType.ERC20,
+            tokenAddress,
+            daoAddressOrEns: to,
+            amount: tokenAmount,
+          }
+    );
 
     //add more information that aren't in the form
     setModalParams({
@@ -134,7 +141,7 @@ const DepositProvider = ({children}: {children: ReactNode}) => {
        * solve the token allowance history issue completely
        */
       const allowanceSteps = client?.methods.ensureAllowance({
-        daoAddress: dao as string,
+        daoAddressOrEns: to,
         amount: tokenAmount,
         tokenAddress,
       });
@@ -163,7 +170,7 @@ const DepositProvider = ({children}: {children: ReactNode}) => {
 
     setDepositState(TransactionState.WAITING);
     setShowModal(true);
-  }, [client?.methods, dao, getValues, setModalStep]);
+  }, [client?.methods, getValues, setModalStep]);
 
   // Handler for modal close; don't close modal if transaction is still running
   const handleCloseModal = useCallback(() => {
@@ -357,7 +364,11 @@ const DepositProvider = ({children}: {children: ReactNode}) => {
         gasEstimationError={gasEstimationError}
         closeOnDrag={depositState !== TransactionState.LOADING}
         depositAmount={depositParams?.amount as bigint}
-        tokenAddress={depositParams?.tokenAddress as string}
+        tokenAddress={
+          depositParams?.type === TokenType.NATIVE
+            ? constants.AddressZero
+            : (depositParams?.tokenAddress as string)
+        }
         ethPrice={tokenPrice}
       />
     </DepositContext.Provider>

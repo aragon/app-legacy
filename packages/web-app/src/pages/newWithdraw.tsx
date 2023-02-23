@@ -68,6 +68,8 @@ type WithdrawFormData = {
 
 export const defaultValues = {
   links: [{name: '', url: ''}],
+  startSwitch: 'now',
+  durationSwitch: 'duration',
   actions: [
     {
       name: 'withdraw_assets',

@@ -1,5 +1,5 @@
 import {useApolloClient} from '@apollo/client';
-import {TransferType} from '@aragon/sdk-client';
+import {TokenType, TransferType} from '@aragon/sdk-client';
 
 import {useNetwork} from 'context/network';
 import {constants} from 'ethers';
@@ -12,7 +12,7 @@ import {
 } from 'utils/constants';
 import {formatDate} from 'utils/date';
 import {formatUnits} from 'utils/library';
-import {HookData, Transfer} from 'utils/types';
+import {HookData, ProposalId, Transfer} from 'utils/types';
 import {i18n} from '../../i18n.config';
 import {IAssetTransfers} from './useDaoTransfers';
 
@@ -99,7 +99,6 @@ function mapToDaoTransfers(
       usdValue: '',
       tokenImgUrl: '',
       id: transfer.transactionId,
-      reference: transfer.reference,
       transaction: transfer.transactionId,
       transferTimestamp: transfer.creationDate?.getTime(),
 
@@ -113,11 +112,18 @@ function mapToDaoTransfers(
               CHAIN_METADATA[network].nativeCurrency.decimals
             ),
           }
-        : {
+        : transfer.tokenType === TokenType.ERC20
+        ? {
             tokenName: transfer.token.name,
             tokenAddress: transfer.token.address,
             tokenSymbol: transfer.token.symbol,
             tokenAmount: formatUnits(transfer.amount, transfer.token.decimals),
+          }
+        : {
+            tokenName: transfer.token.name,
+            tokenAddress: transfer.token.address,
+            tokenSymbol: transfer.token.symbol,
+            tokenAmount: '', // TODO work out how to get this value
           }),
     };
 
@@ -125,7 +131,7 @@ function mapToDaoTransfers(
     if (transfer.type === TransferType.DEPOSIT) {
       return {
         ...mappedTransfer,
-        title: transfer.reference || i18n.t('labels.deposit'),
+        title: i18n.t('labels.deposit'),
         sender: transfer.from,
         transferType: TransferTypes.Deposit as TransferTypes.Deposit,
         transferDate: transfer.creationDate
@@ -135,16 +141,16 @@ function mapToDaoTransfers(
     } else {
       return {
         ...mappedTransfer,
-        title: transfer.reference || i18n.t('labels.withdraw'),
+        title: i18n.t('labels.withdraw'),
         transferType: TransferTypes.Withdraw as TransferTypes.Withdraw,
         to: transfer.to,
-        proposalId: transfer.proposalId,
+        proposalId: new ProposalId(transfer.proposalId),
         isPending: false,
         transferDate: `${formatDate(
           transfer.creationDate.getTime() / 1000,
           'relative'
         )}`,
-      };
+      } as Transfer;
     }
   });
 }

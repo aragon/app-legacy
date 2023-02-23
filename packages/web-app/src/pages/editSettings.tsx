@@ -83,7 +83,6 @@ const EditSettings: React.FC = () => {
 
   const [
     daoName,
-    daoEnsName,
     daoSummary,
     daoLogo,
     minimumApproval,
@@ -99,7 +98,6 @@ const EditSettings: React.FC = () => {
   ] = useWatch({
     name: [
       'daoName',
-      'daoEnsName',
       'daoSummary',
       'daoLogo',
       'minimumApproval',
@@ -172,7 +170,6 @@ const EditSettings: React.FC = () => {
   const isMetadataChanged =
     daoDetails?.metadata.name &&
     (daoName !== daoDetails.metadata.name ||
-      daoEnsName !== daoDetails.ensDomain ||
       daoSummary !== daoDetails.metadata.description ||
       daoLogo !== daoDetails.metadata.avatar ||
       !resourceLinksAreEqual);
@@ -362,11 +359,7 @@ const EditSettings: React.FC = () => {
                 dropdownItems={metadataAction}
               >
                 <AccordionContent>
-                  <DefineMetadata
-                    bgWhite
-                    arrayName="daoLinks"
-                    currentDaoEnsName={daoDetails?.ensDomain || ''}
-                  />
+                  <DefineMetadata bgWhite arrayName="daoLinks" isSettingPage />
                 </AccordionContent>
               </AccordionItem>
 
