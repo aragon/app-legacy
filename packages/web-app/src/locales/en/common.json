@@ -81,6 +81,7 @@
     "security": "Security",
     "popularity": "Popularity",
     "daoName": "DAO name",
+    "ens": "ENS",
     "summary": "Summary",
     "description": "Description",
     "addLink": "Add link",
@@ -764,6 +765,7 @@
     "chooseOptionHelptext": "To vote, you must select one of the following options and confirm in your wallet. Once the transaction is completed, your vote will be counted and displayed.",
     "submit": "Submit your vote",
     "cancel": "Cancel",
+    "concluded": "Concluded",
     "status": {
       "draft": "Publish proposal to enable voting",
       "pending": "Voting begins in {{timeUntilNow}}",

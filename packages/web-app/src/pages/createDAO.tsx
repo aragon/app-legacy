@@ -1,6 +1,6 @@
 import React, {useEffect, useMemo} from 'react';
 import {withTransaction} from '@elastic/apm-rum-react';
-import {Trans, useTranslation} from 'react-i18next';
+import {useTranslation} from 'react-i18next';
 import {FormProvider, useForm, useFormState, useWatch} from 'react-hook-form';
 
 import {FullScreenStepper, Step} from 'components/fullScreenStepper';
@@ -16,8 +16,8 @@ import {CreateDaoProvider} from 'context/createDao';
 import {CHAIN_METADATA, getSupportedNetworkByChainId} from 'utils/constants';
 import {useNetwork} from 'context/network';
 import {useWallet} from 'hooks/useWallet';
-import {Link} from '@aragon/ui-components';
 import {trackEvent} from 'services/analytics';
+import {htmlIn} from 'utils/htmlIn';
 
 export type WalletItem = {
   id: string;
@@ -270,23 +270,11 @@ const CreateDAO: React.FC = () => {
           <Step
             wizardTitle={t('createDAO.step1.title')}
             wizardDescription={
-              <>
-                <Trans i18nKey={'createDAO.step1.description'}>
-                  This is the percentage of voters who need to cast a vote for a
-                  vote to be valid. For example, if you set quorum at 10% and
-                  only 9% of tokens in the network are cast, the vote is not
-                  valid and does not execute.{' '}
-                  <strong>
-                    Note: your DAO treasury does not count as a voter, so if all
-                    your tokens are in your DAO treasury, set this rate at 0%
-                    for now and you can change it later.
-                  </strong>
-                </Trans>
-                <Link
-                  href="https://aragon.org/how-to/how-to-choose-the-right-blockchain-for-your-dao"
-                  label={t('createDAO.step1.blockchainOverviewGuide.')}
-                />
-              </>
+              <div
+                dangerouslySetInnerHTML={{
+                  __html: htmlIn(t)('createDAO.step1.description'),
+                }}
+              ></div>
             }
             onNextButtonClicked={next =>
               handleNextButtonTracking(next, '1_select_blockchain', {
@@ -299,13 +287,11 @@ const CreateDAO: React.FC = () => {
           <Step
             wizardTitle={t('createDAO.step2.title')}
             wizardDescription={
-              <>
-                {t('createDAO.step2.description')}
-                <Link
-                  href={t('createDAO.step2.descriptionLinkURL')}
-                  label={t('createDAO.step2.descriptionLinkLabel')}
-                />
-              </>
+              <div
+                dangerouslySetInnerHTML={{
+                  __html: htmlIn(t)('createDAO.step2.description'),
+                }}
+              ></div>
             }
             isNextButtonDisabled={!daoMetadataIsValid}
             onNextButtonClicked={next =>
@@ -320,13 +306,11 @@ const CreateDAO: React.FC = () => {
           <Step
             wizardTitle={t('createDAO.step3.title')}
             wizardDescription={
-              <>
-                {t('createDAO.step3.description')}
-                <Link
-                  href="https://aragon.org/how-to/set-your-dao-governance"
-                  label={t('createDAO.step3.communityOverviewGuide')}
-                />
-              </>
+              <div
+                dangerouslySetInnerHTML={{
+                  __html: htmlIn(t)('createDAO.step3.description'),
+                }}
+              ></div>
             }
             isNextButtonDisabled={!daoSetupCommunityIsValid}
             onNextButtonClicked={next =>
@@ -344,13 +328,11 @@ const CreateDAO: React.FC = () => {
           <Step
             wizardTitle={t('createDAO.step4.title')}
             wizardDescription={
-              <>
-                {t('createDAO.step4.description')}
-                <Link
-                  href={t('createDAO.step4.descriptionLinkURL')}
-                  label={t('createDAO.step4.descriptionLinkLabel')}
-                />
-              </>
+              <div
+                dangerouslySetInnerHTML={{
+                  __html: htmlIn(t)('createDAO.step4.description'),
+                }}
+              ></div>
             }
             isNextButtonDisabled={!daoConfigureCommunity}
             onNextButtonClicked={next =>
