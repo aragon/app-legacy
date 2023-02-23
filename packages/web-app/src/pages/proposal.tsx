@@ -488,6 +488,19 @@ const Proposal: React.FC = () => {
     voted,
   ]);
 
+  // handler for execution
+  const handleExecuteNowClicked = () => {
+    if (!address) {
+      open('wallet');
+      statusRef.current.wasNotLoggedIn = true;
+    } else if (isOnWrongNetwork) {
+      // don't allow execution on wrong network
+      open('network');
+    } else {
+      handleExecuteProposal();
+    }
+  };
+
   // alert message, only shown when not eligible to vote
   const alertMessage = useMemo(() => {
     if (
@@ -626,7 +639,7 @@ const Proposal: React.FC = () => {
           <ExecutionWidget
             actions={decodedActions}
             status={executionStatus}
-            onExecuteClicked={handleExecuteProposal}
+            onExecuteClicked={handleExecuteNowClicked}
             txhash={transactionHash || proposal?.executionTxHash}
           />
         </ProposalContainer>
