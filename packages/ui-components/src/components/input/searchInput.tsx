@@ -26,13 +26,13 @@ export const SearchInput: React.FC<SearchInputProps> = ({
       data-testid="search-input"
       leftAdornment={
         isLoading ? (
-          <AdornmentWrapper>
+          <LeftAdornmentWrapper>
             <Spinner size={'small'} />
-          </AdornmentWrapper>
+          </LeftAdornmentWrapper>
         ) : (
-          <AdornmentWrapper>
+          <LeftAdornmentWrapper>
             <IconSearch className="text-ui-300" />
-          </AdornmentWrapper>
+          </LeftAdornmentWrapper>
         )
       }
       value={value}
@@ -51,7 +51,9 @@ export const SearchInput: React.FC<SearchInputProps> = ({
               }
             }}
           >
-            <IconClose className="text-ui-300" />
+            <RightAdornmentWrapper>
+              <IconClose className="text-ui-300" />
+            </RightAdornmentWrapper>
           </button>
         )
       }
@@ -60,6 +62,10 @@ export const SearchInput: React.FC<SearchInputProps> = ({
   );
 };
 
-const AdornmentWrapper = styled.div.attrs({
+const LeftAdornmentWrapper = styled.div.attrs({
   className: 'pl-2 pr-1.5',
+})``;
+
+const RightAdornmentWrapper = styled.div.attrs({
+  className: 'pr-2',
 })``;
