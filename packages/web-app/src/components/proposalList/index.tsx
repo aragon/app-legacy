@@ -178,7 +178,10 @@ export function proposal2CardProps(
     };
     if (proposal.status.toLowerCase() === 'active') {
       const activeProps = {
-        voteProgress: relativeVoteCount(proposal.approvals, membersCount),
+        voteProgress: relativeVoteCount(
+          proposal.approvals.length,
+          membersCount
+        ),
         voteLabel: i18n.t('votingTerminal.approvedBy'),
       };
       return {...props, ...specificProps, ...activeProps};

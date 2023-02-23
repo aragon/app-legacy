@@ -1,7 +1,7 @@
 import {useReactiveVar} from '@apollo/client';
 import {
   DaoAction,
-  ICreateProposalParams,
+  CreateMajorityVotingProposalParams,
   InstalledPluginListItem,
   ProposalCreationSteps,
   ProposalMetadata,
@@ -162,7 +162,7 @@ const ProposeSettingWrapper: React.FC<Props> = ({
   const pluginClient = usePluginClient(pluginType as PluginTypes);
 
   const [proposalCreationData, setProposalCreationData] =
-    useState<ICreateProposalParams>();
+    useState<CreateMajorityVotingProposalParams>();
 
   const [creationProcessState, setCreationProcessState] =
     useState<TransactionState>(TransactionState.WAITING);
@@ -311,7 +311,7 @@ const ProposeSettingWrapper: React.FC<Props> = ({
     };
 
     const getProposalCreationParams =
-      async (): Promise<ICreateProposalParams> => {
+      async (): Promise<CreateMajorityVotingProposalParams> => {
         const [
           title,
           summary,
@@ -520,6 +520,7 @@ const ProposeSettingWrapper: React.FC<Props> = ({
         pendingTokenBasedProposalsVar(newCache);
       } else if (isMultisigVotingSettings(pluginSettings)) {
         proposalData.minApprovals = pluginSettings.minApprovals;
+        proposalData.onlyListed = pluginSettings.onlyListed;
         cacheKey = PENDING_MULTISIG_PROPOSALS_KEY;
         proposalToCache = mapToCacheProposal(proposalData);
         newCache = {

@@ -388,23 +388,18 @@ export type SmartContract = {
 export class ProposalId {
   private id: string;
 
-  constructor(val: Number | string) {
-    if (typeof val === 'string' && val.includes('_')) {
-      val = parseInt(val.split('_')[1].substring(2), 16);
-    }
-
+  constructor(val: string) {
     this.id = val.toString();
   }
 
   /** Returns proposal id in form needed for SDK */
   export() {
-    return Number(this.id);
+    return this.id;
   }
 
   /** Make the proposal id globally unique by combining with an address (should be plugin address) */
   makeGloballyUnique(address: string): string {
-    const idHex = '0x' + Number(this.id).toString(16);
-    return `${address}_${idHex}`;
+    return `${address}_${this.id}`;
   }
 
   /** Return a string to be used as part of a url representing a proposal */

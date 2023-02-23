@@ -537,8 +537,10 @@ const Proposal: React.FC = () => {
           ? NumberFormatter.format(proposal.creationBlockNumber)
           : '',
         executionFailed,
-        NumberFormatter.format(proposal.executionBlockNumber),
-        proposal.executionDate
+        proposal.executionBlockNumber
+          ? NumberFormatter.format(proposal.executionBlockNumber!)
+          : '',
+        proposal.executionDate || undefined
       );
     } else return [];
   }, [proposal, executionFailed, t]);
@@ -640,7 +642,7 @@ const Proposal: React.FC = () => {
             actions={decodedActions}
             status={executionStatus}
             onExecuteClicked={handleExecuteNowClicked}
-            txhash={transactionHash || proposal?.executionTxHash}
+            txhash={transactionHash || proposal?.executionTxHash || undefined}
           />
         </ProposalContainer>
         <AdditionalInfoContainer>

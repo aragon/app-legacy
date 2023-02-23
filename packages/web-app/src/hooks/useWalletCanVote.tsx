@@ -48,8 +48,7 @@ export const useWalletCanVote = (
           canVote = [
             await (client as MultisigClient)?.methods.canApprove({
               proposalId: proposalId.export(),
-              pluginAddress,
-              addressOrEns: address,
+              approverAddressOrEns: address,
             }),
           ];
         } else if (isTokenVotingClient) {
@@ -59,9 +58,8 @@ export const useWalletCanVote = (
             VoteValues.YES,
           ].map(vote => {
             return (client as TokenVotingClient)?.methods.canVote({
-              address,
+              voterAddressOrEns: address,
               proposalId: proposalId.export(),
-              pluginAddress,
               vote,
             });
           });

@@ -1,7 +1,6 @@
 import {useReactiveVar} from '@apollo/client';
 import {
   ExecuteProposalStep,
-  IExecuteProposalParams,
   IVoteProposalParams,
   MultisigClient,
   TokenVotingClient,
@@ -95,7 +94,7 @@ const ProposalTransactionProvider: React.FC<Props> = ({children}) => {
   const [voteSubmitted, setVoteSubmitted] = useState(false);
   const [voteProcessState, setVoteProcessState] = useState<TransactionState>();
 
-  const [executeParams, setExecuteParams] = useState<IExecuteProposalParams>();
+  const [executeProposalId, setExecuteProposalId] = useState<ProposalId>();
   const [executeSubmitted, setExecuteSubmitted] = useState(false);
   const [executionFailed, setExecutionFailed] = useState(false);
   const [executeProcessState, setExecuteProcessState] =
@@ -124,16 +123,16 @@ const ProposalTransactionProvider: React.FC<Props> = ({children}) => {
     () =>
       (voteParams !== undefined &&
         voteProcessState === TransactionState.WAITING) ||
-      (executeParams !== undefined &&
+      (executeProposalId !== undefined &&
         executeProcessState === TransactionState.WAITING),
-    [executeParams, executeProcessState, voteParams, voteProcessState]
+    [executeProposalId, executeProcessState, voteParams, voteProcessState]
   );
 
   const shouldDisableCallback = useMemo(() => {
     if (voteProcessState === TransactionState.SUCCESS) return false;
 
-    return !(voteParams || executeParams);
-  }, [executeParams, voteParams, voteProcessState]);
+    return !(voteParams || executeProposalId);
+  }, [executeProposalId, voteParams, voteProcessState]);
 
   /*************************************************
    *                    Helpers                    *
@@ -145,7 +144,6 @@ const ProposalTransactionProvider: React.FC<Props> = ({children}) => {
       // if the id is invalid
       setVoteParams({
         proposalId: new ProposalId(urlId!).export(),
-        pluginAddress,
         vote,
       });
 
@@ -153,7 +151,7 @@ const ProposalTransactionProvider: React.FC<Props> = ({children}) => {
       setShowVoteModal(true);
       setVoteProcessState(TransactionState.WAITING);
     },
-    [urlId, pluginAddress]
+    [urlId]
   );
 
   // estimate voting fees
@@ -167,7 +165,6 @@ const ProposalTransactionProvider: React.FC<Props> = ({children}) => {
       }
 
       return (pluginClient as MultisigClient)?.estimation.approveProposal({
-        pluginAddress: voteParams.pluginAddress,
         proposalId: voteParams.proposalId,
         tryExecution: false,
       });
@@ -175,29 +172,24 @@ const ProposalTransactionProvider: React.FC<Props> = ({children}) => {
   }, [pluginClient, tokenAddress, voteParams]);
 
   const handleExecuteProposal = useCallback(() => {
-    setExecuteParams({
-      proposalId: new ProposalId(urlId!).export(),
-      pluginAddress,
-    });
+    setExecuteProposalId(new ProposalId(urlId!));
     setShowExecuteModal(true);
     setExecuteProcessState(TransactionState.WAITING);
-  }, [urlId, pluginAddress]);
+  }, [urlId]);
 
   // estimate proposal execution fees
   const estimateExecuteFees = useCallback(async () => {
-    if (executeParams) {
+    if (executeProposalId) {
       if (tokenAddress) {
-        return (pluginClient as TokenVotingClient)?.estimation.executeProposal({
-          ...executeParams,
-          proposalId: executeParams.proposalId,
-        });
+        return (pluginClient as TokenVotingClient)?.estimation.executeProposal(
+          executeProposalId.export()
+        );
       }
-      return (pluginClient as MultisigClient)?.estimation.executeProposal({
-        pluginAddress: executeParams.pluginAddress,
-        proposalId: executeParams.proposalId,
-      });
+      return (pluginClient as MultisigClient)?.estimation.executeProposal(
+        executeProposalId.export()
+      );
     }
-  }, [executeParams, pluginClient, tokenAddress]);
+  }, [executeProposalId, pluginClient, tokenAddress]);
 
   // estimation fees for voting on proposal/executing proposal
   const {
@@ -359,7 +351,6 @@ const ProposalTransactionProvider: React.FC<Props> = ({children}) => {
 
     if (!tokenAddress) {
       voteSteps = (pluginClient as MultisigClient)?.methods.approveProposal({
-        pluginAddress: voteParams.pluginAddress,
         proposalId: voteParams.proposalId,
         tryExecution: false,
       });
@@ -426,7 +417,10 @@ const ProposalTransactionProvider: React.FC<Props> = ({children}) => {
       handleCloseExecuteModal();
       return;
     }
-    if (!executeParams || executeProcessState === TransactionState.LOADING) {
+    if (
+      !executeProposalId ||
+      executeProcessState === TransactionState.LOADING
+    ) {
       console.log('Transaction is running');
       return;
     }
@@ -445,15 +439,11 @@ const ProposalTransactionProvider: React.FC<Props> = ({children}) => {
     if (tokenAddress) {
       executeSteps = (
         pluginClient as TokenVotingClient
-      )?.methods.executeProposal({
-        ...executeParams,
-        proposalId: executeParams.proposalId,
-      });
+      )?.methods.executeProposal(executeProposalId.export());
     } else {
-      executeSteps = (pluginClient as MultisigClient)?.methods.executeProposal({
-        pluginAddress: executeParams.pluginAddress,
-        proposalId: executeParams.proposalId,
-      });
+      executeSteps = (pluginClient as MultisigClient)?.methods.executeProposal(
+        executeProposalId.export()
+      );
     }
 
     if (!executeSteps) {
@@ -467,10 +457,10 @@ const ProposalTransactionProvider: React.FC<Props> = ({children}) => {
             setTransactionHash(step.txHash);
             break;
           case ExecuteProposalStep.DONE:
-            setExecuteParams(undefined);
+            setExecuteProposalId(undefined);
             setExecutionFailed(false);
             setExecuteProcessState(TransactionState.SUCCESS);
-            onExecutionSubmitted(new ProposalId(executeParams.proposalId));
+            onExecutionSubmitted(executeProposalId);
             break;
         }
       }
@@ -480,7 +470,7 @@ const ProposalTransactionProvider: React.FC<Props> = ({children}) => {
       setExecuteProcessState(TransactionState.ERROR);
     }
   }, [
-    executeParams,
+    executeProposalId,
     executeProcessState,
     handleCloseExecuteModal,
     isConnected,

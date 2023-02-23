@@ -1,7 +1,7 @@
 import {
   DaoDepositSteps,
   DepositParams,
-  EnsureAllowanceParams,
+  UpdateAllowanceParams,
   TokenType,
   TransferType,
 } from '@aragon/sdk-client';
@@ -84,7 +84,7 @@ const DepositProvider = ({children}: {children: ReactNode}) => {
         return client?.estimation.deposit(depositParams as DepositParams);
       } else
         return client?.estimation.updateAllowance(
-          depositParams as EnsureAllowanceParams
+          depositParams as UpdateAllowanceParams
         );
     }
   }, [client, currentStep, depositParams]);
@@ -140,7 +140,7 @@ const DepositProvider = ({children}: {children: ReactNode}) => {
        * It might not be perfect and needs some refactors later but for now will
        * solve the token allowance history issue completely
        */
-      const allowanceSteps = client?.methods.ensureAllowance({
+      const allowanceSteps = client?.methods.updateAllowance({
         daoAddressOrEns: to,
         amount: tokenAmount,
         tokenAddress,

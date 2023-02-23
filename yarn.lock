@@ -187,14 +187,14 @@
     "@web3-react/types" "^6.0.7"
     tiny-warning "^1.0.3"
 
-"@aragon/sdk-client@^0.21.2-beta":
-  version "0.21.2-beta"
-  resolved "https://registry.yarnpkg.com/@aragon/sdk-client/-/sdk-client-0.21.2-beta.tgz#f0ae13a3488ad21a5c85919a2e2bd34a9cf656b5"
-  integrity sha512-XtYG7/gjXrtilli3lFfttSFUpp+y4YmUzO8inKkQjyD8MoJeIHEEs3Uo1Qy0KKeDsoDGfXM0MBE8Ne5UeBxakw==
+"@aragon/sdk-client@^0.22.0-beta":
+  version "0.22.0-beta"
+  resolved "https://registry.yarnpkg.com/@aragon/sdk-client/-/sdk-client-0.22.0-beta.tgz#ed173d8f011dc8c28a8c73b94960da843bfa8f10"
+  integrity sha512-e9lV3lgbSPPgD9eVz0Ql7BJxGFMyo3QJVrURxSrPIBx6f7lOt1wpXqDUnX7cxLQEQUy61Fy/KLJjNFJRz1PLMQ==
   dependencies:
     "@aragon/core-contracts-ethers" "^0.7.1-alpha"
-    "@aragon/sdk-common" "^0.10.1-beta"
-    "@aragon/sdk-ipfs" "^0.2.0-alpha"
+    "@aragon/sdk-common" "^0.11.0-beta"
+    "@aragon/sdk-ipfs" "^0.3.0-beta"
     "@ethersproject/abstract-signer" "^5.5.0"
     "@ethersproject/bignumber" "^5.6.0"
     "@ethersproject/constants" "^5.6.0"
@@ -204,15 +204,15 @@
     graphql "^16.5.0"
     graphql-request "^4.3.0"
 
-"@aragon/sdk-common@^0.10.1-beta":
-  version "0.10.1-beta"
-  resolved "https://registry.yarnpkg.com/@aragon/sdk-common/-/sdk-common-0.10.1-beta.tgz#ede12923c371ec5429507247251e856ef6c6c1e1"
-  integrity sha512-d8GrJm2UIBQj2TYajua7Bs1UZoSN05DUBoV4TXJoO6I/H1oizeuQr8evzGJzyXdKxTJ9xqPyKtX4EwUjYuHR/Q==
+"@aragon/sdk-common@^0.11.0-beta":
+  version "0.11.0-beta"
+  resolved "https://registry.yarnpkg.com/@aragon/sdk-common/-/sdk-common-0.11.0-beta.tgz#96401ad2b1ff428df46379a321b752b257958dc2"
+  integrity sha512-kKTodkzCbm2RGKQbbi8Vh+pzFuv3HDFqkzK8pvB2swgejWPVgo1ie0kYMPtUJhC+f1Q9jkOLmONwLQXL3Q9ZJg==
 
-"@aragon/sdk-ipfs@^0.2.0-alpha":
-  version "0.2.0-alpha"
-  resolved "https://registry.yarnpkg.com/@aragon/sdk-ipfs/-/sdk-ipfs-0.2.0-alpha.tgz#f398018e3545abf36446638df29e3f7e0671a0f6"
-  integrity sha512-X/50RBJW+7lNcz2uyasXuqrx2RYrLIzYYmGAdnXjlblVmywVOc8adhsHRdGbrTsSGvH0EGWe/EXRSPMoeqDpdA==
+"@aragon/sdk-ipfs@^0.3.0-beta":
+  version "0.3.0-beta"
+  resolved "https://registry.yarnpkg.com/@aragon/sdk-ipfs/-/sdk-ipfs-0.3.0-beta.tgz#fd54f724ab80632ca9d3d72a0ac993ab6c03e23b"
+  integrity sha512-dMWlQk1A6E6g/VfoYshN6t53N25ZQPy32VqOhCUBJsEwiFhO9zPO3OF+Xu4YhnLuCF6eKC3jO9VlYXVNgc91ZA==
   dependencies:
     "@web-std/fetch" "^4.1.0"
     "@web-std/file" "^3.0.2"

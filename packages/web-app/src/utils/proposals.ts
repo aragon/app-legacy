@@ -9,7 +9,6 @@ import {
   AddresslistVotingProposal,
   AddresslistVotingProposalResult,
   Erc20TokenDetails,
-  ICreateProposalParams,
   MultisigProposal,
   ProposalMetadata,
   ProposalStatus,
@@ -20,6 +19,7 @@ import {
   VotingMode,
   VotingSettings,
   computeProposalStatus,
+  CreateMajorityVotingProposalParams,
 } from '@aragon/sdk-client';
 import {ProgressStatusProps, VoterType} from '@aragon/ui-components';
 import Big from 'big.js';
@@ -528,7 +528,7 @@ export function getLiveProposalTerminalProps(
     // calculate participation
     const {currentPart, currentPercentage, minPart, missingPart, totalWeight} =
       getErc20VotingParticipation(
-        proposal.settings.minTurnout,
+        proposal.settings.minParticipation,
         proposal.usedVotingWeight,
         proposal.totalVotingWeight,
         proposal.token.decimals
@@ -538,7 +538,7 @@ export function getLiveProposalTerminalProps(
       participation: minPart,
       totalWeight,
       tokenSymbol: token.symbol,
-      percentage: Math.round(proposal.settings.minTurnout * 100),
+      percentage: Math.round(proposal.settings.minParticipation * 100),
     });
 
     currentParticipation = t('votingTerminal.participationErc20', {
@@ -551,7 +551,7 @@ export function getLiveProposalTerminalProps(
     missingParticipation = missingPart;
 
     // support threshold
-    supportThreshold = Math.round(proposal.settings.minSupport * 100);
+    supportThreshold = Math.round(proposal.settings.supportThreshold * 100);
 
     // strategy
     strategy = t('votingTerminal.tokenVoting');
@@ -626,11 +626,12 @@ export type CacheProposalParams = {
   daoAddress: string;
   daoName: string;
   metadata: ProposalMetadata;
-  proposalParams: ICreateProposalParams;
+  proposalParams: CreateMajorityVotingProposalParams;
   proposalGuid: string;
 
   // Multisig props
   minApprovals?: number;
+  onlyListed?: boolean;
 
   // TokenVoting props
   daoToken?: Erc20TokenDetails;
@@ -669,8 +670,8 @@ export function mapToCacheProposal(params: CacheProposalParams) {
       votes: [],
       votingMode: params.pluginSettings.votingMode,
       settings: {
-        minSupport: params.pluginSettings.supportThreshold,
-        minTurnout: params.pluginSettings.minParticipation,
+        supportThreshold: params.pluginSettings.supportThreshold,
+        minParticipation: params.pluginSettings.minParticipation,
         duration: differenceInSeconds(
           params.proposalParams.startDate!,
           params.proposalParams.endDate!
@@ -688,6 +689,10 @@ export function mapToCacheProposal(params: CacheProposalParams) {
       approvals: [],
       minApprovals: params.minApprovals,
       executionTxHash: '',
+      settings: {
+        minApprovals: params.minApprovals,
+        onlyListed: params.onlyListed,
+      },
     } as CachedProposal;
   }
 }
@@ -897,7 +902,7 @@ export function isEarlyExecutable(
   }
 
   // renaming for clarity, should be renamed in later versions of sdk
-  const supportThreshold = proposal.settings.minSupport;
+  const supportThreshold = proposal.settings.supportThreshold;
 
   // those who didn't vote (this is NOT voting abstain)
   const absentee = formatUnits(
@@ -1108,7 +1113,7 @@ function calculateProposalStatus(proposal: DetailedProposal): ProposalStatus {
     );
 
     const {missingPart} = getErc20VotingParticipation(
-      proposal.settings.minTurnout,
+      proposal.settings.minParticipation,
       proposal.usedVotingWeight,
       proposal.totalVotingWeight,
       proposal.token.decimals

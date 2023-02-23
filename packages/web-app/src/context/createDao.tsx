@@ -150,18 +150,27 @@ const CreateDaoProvider: React.FC = ({children}) => {
     }
   };
 
-  const getMultisigPluginInstallParams =
-    useCallback((): MultisigPluginInstallParams => {
-      const {multisigWallets, multisigMinimumApprovals, eligibilityType} =
-        getValues();
-      return {
+  const getMultisigPluginInstallParams = useCallback((): [
+    MultisigPluginInstallParams,
+    'goerli' | 'mainnet'
+  ] => {
+    const {
+      blockchain,
+      multisigWallets,
+      multisigMinimumApprovals,
+      eligibilityType,
+    } = getValues();
+    return [
+      {
         members: multisigWallets.map(wallet => wallet.address),
         votingSettings: {
           minApprovals: multisigMinimumApprovals,
           onlyListed: eligibilityType === 'multisig',
         },
-      };
-    }, [getValues]);
+      },
+      blockchain.network === 'test' ? 'goerli' : 'mainnet',
+    ];
+  }, [getValues]);
 
   const getVoteSettings = useCallback((): VotingSettings => {
     const {
@@ -222,9 +231,11 @@ const CreateDaoProvider: React.FC = ({children}) => {
     const plugins: IPluginInstallItem[] = [];
     switch (membership) {
       case 'multisig': {
-        const params = getMultisigPluginInstallParams();
-        const multisigPlugin =
-          MultisigClient.encoding.getPluginInstallItem(params);
+        const [params, network] = getMultisigPluginInstallParams();
+        const multisigPlugin = MultisigClient.encoding.getPluginInstallItem(
+          params,
+          network
+        );
         plugins.push(multisigPlugin);
         break;
       }
