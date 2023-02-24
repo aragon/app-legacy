@@ -104,7 +104,7 @@ export type CardViewProposal = Omit<CardProposalProps, 'onClick'> & {
  */
 export function proposal2CardProps(
   proposal: ProposalListItem,
-  membersCount: number,
+  memberCount: number,
   network: SupportedNetworks,
   navigate: NavigateFunction,
   t: TFunction
@@ -205,7 +205,7 @@ export function proposal2CardProps(
     }
   } else if (isMultisigProposalListItem(proposal)) {
     const specificProps = {
-      voteTitle: t('governance.proposals.voteTitleMultisig'),
+      voteTitle: t('votingTerminal.approvedBy'), //  t('governance.proposals.voteTitleMultisig'),
       stateLabel: PROPOSAL_STATE_LABELS,
       alertMessage: translateProposalDate(
         proposal.status,
@@ -215,11 +215,12 @@ export function proposal2CardProps(
     };
     if (proposal.status.toLowerCase() === 'active') {
       const activeProps = {
-        voteProgress: relativeVoteCount(
-          proposal.approvals.length,
-          membersCount
-        ),
-        voteLabel: t('votingTerminal.approvedBy'),
+        voteProgress: relativeVoteCount(proposal.approvals.length, memberCount),
+        winningOptionValue: `${proposal.approvals.length} ${t(
+          'votingTerminal.ofMemberCount',
+          {memberCount}
+        )}`,
+        // voteLabel: t('votingTerminal.approvedBy'),
       };
       return {...props, ...specificProps, ...activeProps};
     } else {
