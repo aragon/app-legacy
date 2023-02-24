@@ -1,9 +1,4 @@
-import {
-  Client,
-  Context as SdkContext,
-  ContextParams,
-  SupportedNetworks,
-} from '@aragon/sdk-client';
+import {Client, Context as SdkContext, ContextParams} from '@aragon/sdk-client';
 import {useNetwork} from 'context/network';
 import React, {
   createContext,
@@ -51,7 +46,7 @@ export const UseClientProvider: React.FC = ({children}) => {
   useEffect(() => {
     const contextParams: ContextParams = {
       //TODO: replace ethereum with mainnet in activeNetworks
-      network: activeNetwork,
+      network: activeNetwork === 'ethereum' ? 'mainnet' : 'goerli',
       signer: signer || undefined,
       web3Providers: CHAIN_METADATA[activeNetwork].rpc[0],
       ipfsNodes: [
