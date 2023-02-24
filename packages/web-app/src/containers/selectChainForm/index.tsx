@@ -28,18 +28,18 @@ const SelectChainForm: React.FC = () => {
   // const [sortFilter, setFilter] = useState<SortFilter>('cost');
   const [networkType, setNetworkType] = useState<NetworkType>('test');
 
-  // moving this up so state change triggers translation changes
-  const labels = {
-    cost: {tag: t('labels.cheapest'), title: t('labels.networkCost')},
-    popularity: {
-      tag: t('labels.mostPopular'),
-      title: t('labels.popularity'),
-    },
-    security: {
-      tag: t('labels.safest'),
-      title: t('labels.security'),
-    },
-  };
+  // // moving this up so state change triggers translation changes
+  // const labels = {
+  //   cost: {tag: t('labels.cheapest'), title: t('labels.networkCost')},
+  //   popularity: {
+  //     tag: t('labels.mostPopular'),
+  //     title: t('labels.popularity'),
+  //   },
+  //   security: {
+  //     tag: t('labels.safest'),
+  //     title: t('labels.security'),
+  //   },
+  // };
 
   // const handleFilterChanged = useCallback(
   //   (e: Event) => {
