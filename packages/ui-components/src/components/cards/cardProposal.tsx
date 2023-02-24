@@ -48,6 +48,8 @@ export type CardProposalProps = {
   voteProgress?: number | string;
   /** Vote label that appears at bottom of the progress bar */
   voteLabel?: string;
+  /** Breakdown of the wining option */
+  winningOptionValue?: string;
   /** Proposal token amount */
   tokenAmount?: string;
   /** Proposal token symbol */
@@ -78,6 +80,7 @@ export const CardProposal: React.FC<CardProposalProps> = ({
   voteLabel,
   tokenAmount,
   tokenSymbol,
+  winningOptionValue,
   publishLabel,
   publisherAddress,
   explorer = 'https://etherscan.io/',
@@ -124,9 +127,11 @@ export const CardProposal: React.FC<CardProposalProps> = ({
         <LoadingContent>
           <ProgressInfoWrapper>
             <ProgressTitle>{voteTitle}</ProgressTitle>
-            <TokenAmount>
-              {tokenAmount} {tokenSymbol}
-            </TokenAmount>
+            <Amount>
+              {tokenAmount && tokenSymbol
+                ? `${tokenAmount} ${tokenSymbol}`
+                : winningOptionValue}
+            </Amount>
           </ProgressInfoWrapper>
           <LinearProgress max={100} value={voteProgress} />
           <ProgressInfoWrapper>
@@ -239,8 +244,8 @@ const ProgressTitle = styled.h3.attrs({
   className: 'text-ui-800 ft-text-base font-bold',
 })``;
 
-const TokenAmount = styled.span.attrs({
-  className: 'text-ui-500 ft-text-sm',
+const Amount = styled.span.attrs({
+  className: 'text-ui-500 ft-text-base',
 })``;
 
 const Vote = styled.span.attrs({
