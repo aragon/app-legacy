@@ -105,6 +105,7 @@ export const FullScreenStepper: React.FC<FullScreenStepperProps> = ({
               description={wizardDescription || ''}
               totalSteps={totalSteps}
               currentStep={currentFormStep}
+              renderHtml
               nav={
                 <Breadcrumb
                   crumbs={{

@@ -269,13 +269,7 @@ const CreateDAO: React.FC = () => {
           </Step>
           <Step
             wizardTitle={t('createDAO.step1.title')}
-            wizardDescription={
-              <div
-                dangerouslySetInnerHTML={{
-                  __html: htmlIn(t)('createDAO.step1.description'),
-                }}
-              ></div>
-            }
+            wizardDescription={htmlIn(t)('createDAO.step1.description')}
             onNextButtonClicked={next =>
               handleNextButtonTracking(next, '1_select_blockchain', {
                 network: formMethods.getValues('blockchain')?.network,
@@ -286,13 +280,7 @@ const CreateDAO: React.FC = () => {
           </Step>
           <Step
             wizardTitle={t('createDAO.step2.title')}
-            wizardDescription={
-              <div
-                dangerouslySetInnerHTML={{
-                  __html: htmlIn(t)('createDAO.step2.description'),
-                }}
-              ></div>
-            }
+            wizardDescription={htmlIn(t)('createDAO.step2.description')}
             isNextButtonDisabled={!daoMetadataIsValid}
             onNextButtonClicked={next =>
               handleNextButtonTracking(next, '2_define_metadata', {
@@ -305,13 +293,7 @@ const CreateDAO: React.FC = () => {
           </Step>
           <Step
             wizardTitle={t('createDAO.step3.title')}
-            wizardDescription={
-              <div
-                dangerouslySetInnerHTML={{
-                  __html: htmlIn(t)('createDAO.step3.description'),
-                }}
-              ></div>
-            }
+            wizardDescription={htmlIn(t)('createDAO.step3.description')}
             isNextButtonDisabled={!daoSetupCommunityIsValid}
             onNextButtonClicked={next =>
               handleNextButtonTracking(next, '3_setup_community', {
@@ -327,13 +309,7 @@ const CreateDAO: React.FC = () => {
           </Step>
           <Step
             wizardTitle={t('createDAO.step4.title')}
-            wizardDescription={
-              <div
-                dangerouslySetInnerHTML={{
-                  __html: htmlIn(t)('createDAO.step4.description'),
-                }}
-              ></div>
-            }
+            wizardDescription={htmlIn(t)('createDAO.step4.description')}
             isNextButtonDisabled={!daoConfigureCommunity}
             onNextButtonClicked={next =>
               handleNextButtonTracking(next, '4_configure_governance', {
