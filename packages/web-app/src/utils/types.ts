@@ -398,7 +398,8 @@ export class ProposalId {
   }
 
   /** Make the proposal id globally unique by combining with an address (should be plugin address) */
-  makeGloballyUnique(address: string): string {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  makeGloballyUnique(_: string): string {
     return this.id;
   }
 
