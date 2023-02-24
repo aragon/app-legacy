@@ -284,7 +284,6 @@ const ProposeSettingWrapper: React.FC<Props> = ({
   }, [daoToken, pluginSettings, getValues, setValue, tokenSupply?.raw]);
 
   useEffect(() => {
-    console.log('Is this even running?');
     // encoding actions
     const encodeActions = async (): Promise<DaoAction[]> => {
       // return an empty array for undefined clients
@@ -292,12 +291,8 @@ const ProposeSettingWrapper: React.FC<Props> = ({
       if (!pluginClient || !client) return Promise.all(actions);
 
       for (const action of getValues('actions') as Array<Action>) {
-        console.log('Current action: ');
-        console.log('[LOGGING] action ' + JSON.stringify(action, null, 2));
         if (action.name === 'modify_metadata') {
           const ipfsUri = await client.methods.pinMetadata(action.inputs);
-          console.log('[LOGGING] dao ' + dao);
-          console.log('[LOGGING] ipfsUri ' + ipfsUri);
           actions.push(client.encoding.updateDaoMetadataAction(dao, ipfsUri));
         } else if (
           action.name === 'modify_token_voting_settings' &&

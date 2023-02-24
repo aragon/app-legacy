@@ -323,8 +323,6 @@ export const EditMvSettings: React.FC<EditMvSettingsProps> = ({
     return <Loading />;
   }
 
-  console.log('[LOGGING] settingsUnchanged ' + settingsUnchanged);
-  console.log('[LOGGING] isValid ' + isValid);
   return (
     <PageWrapper
       title={t('settings.editDaoSettings')}
