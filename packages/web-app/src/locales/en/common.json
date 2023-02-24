@@ -208,7 +208,8 @@
     "submitProposal": "Publish proposal",
     "addWalletsDescriptionLinkLabel": "read our guide",
     "addWalletsDescription": "Wallets can create proposals, propose to send funds in and out of the treasury, and vote in your DAO.",
-    "daoEnsName": "ENS Subdomain"
+    "daoEnsName": "ENS Subdomain",
+    "ens": "ENS"
   },
   "placeHolders": {
     "selectToken": "Select a Token ...",
@@ -787,7 +788,8 @@
       "titleSearch": "No result found for {{query}}",
       "title": "No voters yet",
       "subtitle": "Search for another wallet address or ENS"
-    }
+    },
+    "concluded": "Concluded"
   },
   "explore": {
     "hero": {
