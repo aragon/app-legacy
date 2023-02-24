@@ -9,6 +9,7 @@ import {
 import {useCallback, useEffect, useState} from 'react';
 
 import {
+  CachedProposal,
   pendingMultisigApprovalsVar,
   pendingMultisigExecutionVar,
   pendingMultisigProposalsVar,
@@ -110,12 +111,16 @@ export function useProposals(
       // get proposal cached data
       const cachedData = getCachedProposalData();
 
-      // no cache for current dao return proposals from subgraph
-      if (!cachedData?.proposalCache[daoAddress]) return fetchedProposals;
+      // no cache for current plugin return proposals from subgraph
+      if (!cachedData) return fetchedProposals;
 
       // get all cached proposals for current dao
       const daoCachedProposals = {...cachedData.proposalCache[daoAddress]};
-      const augmentedProposals = [...fetchedProposals];
+
+      // fetched proposals + cached ones
+      const totalProposals: Array<CachedProposal | ProposalListItem> = [
+        ...fetchedProposals,
+      ];
 
       for (const proposalId in daoCachedProposals) {
         // if proposal already picked up by subgraph, remove it
@@ -136,51 +141,50 @@ export function useProposals(
             );
           }
         } else {
-          // proposal not yet fetched, add votes, execution and status if necessary
-          const id = new ProposalId(proposalId).makeGloballyUnique(daoAddress);
-
-          // add cached approval and execution to multisig proposal=
-          if (isMultisigPlugin) {
-            const augmentedProposal = augmentProposalWithCachedExecution(
-              addApprovalToMultisigToProposal(
-                daoCachedProposals[proposalId] as MultisigProposal,
-                cachedMultisigVotes[id]
-              ) as DetailedProposal,
-              daoAddress,
-              cachedData.executions,
-              preferences?.functional,
-              pendingMultisigExecutionVar,
-              PENDING_MULTISIG_EXECUTION_KEY
-            );
-
-            augmentedProposals.unshift({
-              ...augmentedProposal,
-              approvals: (augmentedProposal as MultisigProposal).approvals,
-            });
-          }
-
-          // add cached votes to token based proposal
-          if (isTokenBasedPlugin) {
-            const augmentedProposal = augmentProposalWithCachedExecution(
-              addVoteToProposal(
-                daoCachedProposals[proposalId] as TokenVotingProposal,
-                cachedTokenBasedVotes[id]
-              ),
-              daoAddress,
-              cachedData.executions,
-              preferences?.functional,
-              pendingTokenBasedExecutionVar,
-              PENDING_EXECUTION_KEY
-            ) as ProposalListItem;
-
-            augmentedProposals.unshift({
-              ...augmentedProposal,
-            });
-          }
+          // add cached proposal that is not in the list of fetched proposals to
+          // the list of total proposals
+          totalProposals.unshift({
+            ...daoCachedProposals[proposalId],
+          });
         }
       }
 
-      return augmentedProposals;
+      // augment all proposals with cached execution and vote/approval
+      return totalProposals.map(proposal => {
+        const id = new ProposalId(proposal.id).makeGloballyUnique(daoAddress);
+
+        // add cached approval and execution to multisig proposal=
+        if (isMultisigPlugin) {
+          return augmentProposalWithCachedExecution(
+            addApprovalToMultisigToProposal(
+              proposal as MultisigProposal,
+              cachedMultisigVotes[id]
+            ) as DetailedProposal,
+            daoAddress,
+            cachedData.executions,
+            preferences?.functional,
+            pendingMultisigExecutionVar,
+            PENDING_MULTISIG_EXECUTION_KEY
+          ) as ProposalListItem;
+        }
+
+        if (isTokenBasedPlugin) {
+          return augmentProposalWithCachedExecution(
+            addVoteToProposal(
+              proposal as TokenVotingProposal,
+              cachedTokenBasedVotes[id]
+            ),
+            daoAddress,
+            cachedData.executions,
+            preferences?.functional,
+            pendingTokenBasedExecutionVar,
+            PENDING_EXECUTION_KEY
+          ) as ProposalListItem;
+        }
+
+        // unsupported plugin really
+        return proposal as ProposalListItem;
+      });
     },
 
     // intentionally leaving out proposalCache so that this doesn't

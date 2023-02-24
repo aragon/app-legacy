@@ -604,7 +604,7 @@ export function getLiveProposalTerminalProps(
 
     return {
       approvals: proposal.approvals,
-      minApproval: votingSettings.minApprovals,
+      minApproval: proposal.settings.minApprovals,
       voters: [...mappedMembers.values()],
       strategy: t('votingTerminal.multisig'),
       voteOptions: t('votingTerminal.approve'),
