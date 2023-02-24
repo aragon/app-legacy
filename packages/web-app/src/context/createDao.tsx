@@ -172,8 +172,12 @@ const CreateDaoProvider: React.FC = ({children}) => {
     ];
   }, [getValues]);
 
-  const getVoteSettings = useCallback((): VotingSettings => {
+  const getVoteSettings = useCallback((): [
+    VotingSettings,
+    'goerli' | 'mainnet'
+  ] => {
     const {
+      blockchain,
       minimumApproval,
       minimumParticipation,
       durationDays,
@@ -193,20 +197,23 @@ const CreateDaoProvider: React.FC = ({children}) => {
     else if (earlyExecution) votingMode = VotingMode.EARLY_EXECUTION;
     else votingMode = VotingMode.STANDARD;
 
-    return {
-      minDuration: getSecondsFromDHM(
-        parseInt(durationDays),
-        parseInt(durationHours),
-        parseInt(durationMinutes)
-      ),
-      minParticipation: parseInt(minimumParticipation) / 100,
-      supportThreshold: parseInt(minimumApproval) / 100,
-      minProposerVotingPower:
-        eligibilityType === 'token'
-          ? parseUnits(eligibilityTokenAmount.toString(), 18).toBigInt()
-          : BigInt(0),
-      votingMode,
-    };
+    return [
+      {
+        minDuration: getSecondsFromDHM(
+          parseInt(durationDays),
+          parseInt(durationHours),
+          parseInt(durationMinutes)
+        ),
+        minParticipation: parseInt(minimumParticipation) / 100,
+        supportThreshold: parseInt(minimumApproval) / 100,
+        minProposerVotingPower:
+          eligibilityType === 'token'
+            ? parseUnits(eligibilityTokenAmount.toString(), 18).toBigInt()
+            : BigInt(0),
+        votingMode,
+      },
+      blockchain.network === 'test' ? 'goerli' : 'mainnet',
+    ];
   }, [getValues]);
 
   const getErc20PluginParams =
@@ -240,12 +247,15 @@ const CreateDaoProvider: React.FC = ({children}) => {
         break;
       }
       case 'token': {
-        const votingSettings = getVoteSettings();
+        const [votingSettings, network] = getVoteSettings();
         const tokenVotingPlugin =
-          TokenVotingClient.encoding.getPluginInstallItem({
-            votingSettings: votingSettings,
-            newToken: getErc20PluginParams(),
-          });
+          TokenVotingClient.encoding.getPluginInstallItem(
+            {
+              votingSettings: votingSettings,
+              newToken: getErc20PluginParams(),
+            },
+            network
+          );
 
         plugins.push(tokenVotingPlugin);
         break;

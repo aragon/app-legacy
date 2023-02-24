@@ -153,7 +153,6 @@ export function useProposals(
               PENDING_MULTISIG_EXECUTION_KEY
             );
 
-            // TODO: Fix - SDK is still returning approvals as number and not array
             augmentedProposals.unshift({
               ...augmentedProposal,
               approvals: (augmentedProposal as MultisigProposal).approvals,
