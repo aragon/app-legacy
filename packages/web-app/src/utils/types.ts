@@ -399,7 +399,7 @@ export class ProposalId {
 
   /** Make the proposal id globally unique by combining with an address (should be plugin address) */
   makeGloballyUnique(address: string): string {
-    return `${address}_${this.id}`;
+    return this.id;
   }
 
   /** Return a string to be used as part of a url representing a proposal */
