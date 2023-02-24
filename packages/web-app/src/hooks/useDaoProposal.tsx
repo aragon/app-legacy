@@ -40,7 +40,7 @@ import {PluginTypes, usePluginClient} from './usePluginClient';
  */
 export const useDaoProposal = (
   daoAddress: string,
-  proposalId: ProposalId,
+  proposalId: ProposalId | undefined,
   pluginType: PluginTypes,
   pluginAddress: string,
   intervalInMills?: number
@@ -67,43 +67,45 @@ export const useDaoProposal = (
     pendingTokenBasedExecutionVar
   );
 
-  const proposalGuid = proposalId.makeGloballyUnique(pluginAddress);
+  const proposalGuid = proposalId?.makeGloballyUnique(pluginAddress);
 
   // return cache keys and variables based on the type of plugin;
-  const getCachedProposalData = useCallback(() => {
-    if (pluginType === 'multisig.plugin.dao.eth') {
-      return {
-        proposalCacheKey: PENDING_MULTISIG_PROPOSALS_KEY,
-        proposalCacheVar: pendingMultisigProposalsVar,
-        proposalCache: cachedMultisigProposals,
-        proposal: cachedMultisigProposals[daoAddress]?.[proposalGuid],
-        votes: cachedMultisigVotes,
-        executions: cachedMultisigExecutions,
-      };
-    }
+  const getCachedProposalData = useCallback(
+    (proposalGuid: string) => {
+      if (pluginType === 'multisig.plugin.dao.eth') {
+        return {
+          proposalCacheKey: PENDING_MULTISIG_PROPOSALS_KEY,
+          proposalCacheVar: pendingMultisigProposalsVar,
+          proposalCache: cachedMultisigProposals,
+          proposal: cachedMultisigProposals[daoAddress]?.[proposalGuid],
+          votes: cachedMultisigVotes,
+          executions: cachedMultisigExecutions,
+        };
+      }
 
-    // token voting
-    if (pluginType === 'token-voting.plugin.dao.eth') {
-      return {
-        proposalCacheKey: PENDING_PROPOSALS_KEY,
-        proposalCacheVar: pendingTokenBasedProposalsVar,
-        proposalCache: cachedTokenBasedProposals,
-        proposal: cachedTokenBasedProposals[daoAddress]?.[proposalGuid],
-        votes: cachedTokenBasedVotes,
-        executions: cachedTokenBaseExecutions,
-      };
-    }
-  }, [
-    cachedMultisigExecutions,
-    cachedMultisigProposals,
-    cachedMultisigVotes,
-    cachedTokenBaseExecutions,
-    cachedTokenBasedProposals,
-    cachedTokenBasedVotes,
-    daoAddress,
-    pluginType,
-    proposalGuid,
-  ]);
+      // token voting
+      if (pluginType === 'token-voting.plugin.dao.eth') {
+        return {
+          proposalCacheKey: PENDING_PROPOSALS_KEY,
+          proposalCacheVar: pendingTokenBasedProposalsVar,
+          proposalCache: cachedTokenBasedProposals,
+          proposal: cachedTokenBasedProposals[daoAddress]?.[proposalGuid],
+          votes: cachedTokenBasedVotes,
+          executions: cachedTokenBaseExecutions,
+        };
+      }
+    },
+    [
+      cachedMultisigExecutions,
+      cachedMultisigProposals,
+      cachedMultisigVotes,
+      cachedTokenBaseExecutions,
+      cachedTokenBasedProposals,
+      cachedTokenBasedVotes,
+      daoAddress,
+      pluginType,
+    ]
+  );
 
   useEffect(() => {
     if ((intervalInMills || 0) > 0) {
@@ -124,8 +126,8 @@ export const useDaoProposal = (
   }, [intervalInMills]);
 
   useEffect(() => {
-    const getDaoProposal = async () => {
-      const cacheData = getCachedProposalData();
+    const getDaoProposal = async (proposalGuid: string) => {
+      const cacheData = getCachedProposalData(proposalGuid);
 
       try {
         // Do not show loader if page is already loaded
@@ -183,7 +185,7 @@ export const useDaoProposal = (
       }
     };
 
-    if (proposalGuid) getDaoProposal();
+    if (proposalGuid) getDaoProposal(proposalGuid);
   }, [
     daoAddress,
     getCachedProposalData,
