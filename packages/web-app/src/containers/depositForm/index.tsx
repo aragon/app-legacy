@@ -3,7 +3,6 @@ import {
   ButtonWallet,
   DropdownInput,
   Label,
-  TextareaSimple,
   ValueInput,
 } from '@aragon/ui-components';
 import {
@@ -320,27 +319,6 @@ const DepositForm: React.FC = () => {
                 )}
               </div>
             </>
-          )}
-        />
-      </FormItem>
-
-      {/* Token reference */}
-      <FormItem>
-        <Label
-          label={t('labels.description')}
-          helpText={t('newDeposit.referenceSubtitle')}
-          isOptional={true}
-        />
-        <Controller
-          name="reference"
-          control={control}
-          render={({field: {name, onBlur, onChange, value}}) => (
-            <TextareaSimple
-              name={name}
-              value={value}
-              onBlur={onBlur}
-              onChange={onChange}
-            />
           )}
         />
       </FormItem>
