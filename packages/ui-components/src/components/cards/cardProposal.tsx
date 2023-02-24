@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 
-import {Address, shortenAddress} from '../../utils/addresses';
+import {shortenAddress} from '../../utils/addresses';
 import {AlertInline} from '../alerts';
 import {AvatarDao} from '../avatar';
 import {IconClock} from '../icons';
@@ -9,12 +9,12 @@ import {Link} from '../link';
 import {LinearProgress} from '../progress';
 import {Tag} from '../tag';
 
-type ProposalUsecase = 'list' | 'explore';
+type ProposalUseCase = 'list' | 'explore';
 
 export function isExploreProposal(
-  proposalUsecase: ProposalUsecase
-): proposalUsecase is 'explore' {
-  return proposalUsecase === 'explore';
+  proposalUseCase: ProposalUseCase
+): proposalUseCase is 'explore' {
+  return proposalUseCase === 'explore';
 }
 
 export type CardProposalProps = {
@@ -39,7 +39,7 @@ export type CardProposalProps = {
     | 'executed'
     | 'defeated';
   /** Indicates whether the proposal is in being used in list or in its special form (see explore page) */
-  type?: ProposalUsecase;
+  type?: ProposalUseCase;
   /** Url for the dao avatar */
   daoLogo?: 'string';
   /** The title that appears at the top of the progress bar */
@@ -56,7 +56,7 @@ export type CardProposalProps = {
   publishLabel: string;
   /** Publisher's ethereum address, ENS name **or** DAO address when type is
    * explore */
-  publisherAddress?: Address;
+  publisherAddress?: string;
   /** DAO name to display when type is explore */
   daoName?: string;
   /** Blockchain explorer URL */
@@ -88,7 +88,7 @@ export const CardProposal: React.FC<CardProposalProps> = ({
   daoName,
   onClick,
 }: CardProposalProps) => {
-  const adressExploreUrl = `${explorer}address/${publisherAddress}`;
+  const addressExploreUrl = `${explorer}address/${publisherAddress}`;
 
   return (
     <Card data-testid="cardProposal" onClick={onClick}>
@@ -112,7 +112,7 @@ export const CardProposal: React.FC<CardProposalProps> = ({
 
           <Link
             external
-            href={adressExploreUrl}
+            href={addressExploreUrl}
             label={shortenAddress(
               (isExploreProposal(type) ? daoName : publisherAddress) || ''
             )}
@@ -120,7 +120,7 @@ export const CardProposal: React.FC<CardProposalProps> = ({
           />
         </Publisher>
       </TextContent>
-      {process === 'active' && (
+      {process === 'active' && voteProgress !== undefined && (
         <LoadingContent>
           <ProgressInfoWrapper>
             <ProgressTitle>{voteTitle}</ProgressTitle>
