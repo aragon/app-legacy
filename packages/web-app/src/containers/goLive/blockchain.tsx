@@ -5,12 +5,20 @@ import styled from 'styled-components';
 
 import {Dd, DescriptionListContainer, Dl, Dt} from 'components/descriptionList';
 import {useFormStep} from 'components/fullScreenStepper';
+import {CHAIN_METADATA} from 'utils/constants';
+import {useNetwork} from 'context/network';
 
 const Blockchain: React.FC = () => {
   const {control, getValues} = useFormContext();
   const {setStep} = useFormStep();
+  const {network} = useNetwork();
   const {blockchain, reviewCheckError} = getValues();
   const {t} = useTranslation();
+
+  const networkInfo = CHAIN_METADATA[network];
+  const networkType = networkInfo.testnet
+    ? t('labels.testNet')
+    : t('labels.mainNet');
 
   return (
     <Controller
@@ -33,8 +41,7 @@ const Blockchain: React.FC = () => {
         >
           <Dl>
             <Dt>{t('labels.review.network')}</Dt>
-            {/* FIXME using code from Settings page. */}
-            <Dd>{'Testnet'}</Dd>
+            <Dd>{networkType}</Dd>
           </Dl>
           <Dl>
             <Dt>{t('labels.review.blockchain')}</Dt>

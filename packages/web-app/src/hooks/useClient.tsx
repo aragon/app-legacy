@@ -1,4 +1,5 @@
 import {Client, Context as SdkContext, ContextParams} from '@aragon/sdk-client';
+import {useNetwork} from 'context/network';
 import React, {createContext, useContext, useEffect, useState} from 'react';
 import {CHAIN_METADATA, IPFS_ENDPOINT, SUBGRAPH_API_URL} from 'utils/constants';
 
@@ -23,12 +24,11 @@ export const useClient = () => {
 
 export const UseClientProvider: React.FC = ({children}) => {
   const {signer} = useWallet();
+  const {network} = useNetwork();
   const [client, setClient] = useState<Client>();
   const [context, setContext] = useState<SdkContext>();
-  // TODO hook this up to useNetwork once other networks become useable.
 
   useEffect(() => {
-    const network = 'goerli';
     const contextParams: ContextParams = {
       network: network,
       signer: signer || undefined,
@@ -52,7 +52,7 @@ export const UseClientProvider: React.FC = ({children}) => {
 
     setClient(new Client(sdkContext));
     setContext(sdkContext);
-  }, [signer]);
+  }, [network, signer]);
 
   const value: ClientContext = {
     client,

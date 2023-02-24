@@ -82,7 +82,6 @@
     "security": "Security",
     "popularity": "Popularity",
     "daoName": "DAO name",
-    "ens": "ENS",
     "summary": "Summary",
     "description": "Description",
     "addLink": "Add link",
@@ -788,8 +787,7 @@
       "titleSearch": "No result found for {{query}}",
       "title": "No voters yet",
       "subtitle": "Search for another wallet address or ENS"
-    },
-    "concluded": "Concluded"
+    }
   },
   "explore": {
     "hero": {
