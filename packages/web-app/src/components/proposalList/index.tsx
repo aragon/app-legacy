@@ -1,8 +1,5 @@
 import {MultisigProposalListItem} from '@aragon/sdk-client';
-import {
-  CardProposal,
-  CardProposalProps,
-} from '@aragon/ui-components/src/components/cards/cardProposal';
+import {CardProposal, CardProposalProps, Spinner} from '@aragon/ui-components';
 import {BigNumber} from 'ethers';
 import React, {useMemo} from 'react';
 import {TFunction, useTranslation} from 'react-i18next';
@@ -25,7 +22,6 @@ import {
   TokenVotingOptions,
 } from 'utils/proposals';
 import {ProposalListItem} from 'utils/types';
-import {Spinner} from '@aragon/ui-components';
 
 type ProposalListProps = {
   proposals: Array<ProposalListItem>;
