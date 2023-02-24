@@ -41,6 +41,7 @@ export const UseClientProvider: React.FC = ({children}) => {
           },
         },
       ],
+      daoFactoryAddress: '0xf401dbc7eEf9E8DE629E67154838e8a7D828D2A3',
       graphqlNodes: [
         {
           url: SUBGRAPH_API_URL[network]!,
