@@ -44,9 +44,9 @@ const ProposalSnapshot: React.FC<Props> = ({
   const mappedProposals = useMemo(
     () =>
       proposals.map(p =>
-        proposal2CardProps(p, members.members.length, network, navigate)
+        proposal2CardProps(p, members.members.length, network, navigate, t)
       ),
-    [proposals, network, navigate, members.members]
+    [proposals, members.members.length, network, navigate, t]
   );
 
   if (proposals.length === 0 || areMembersLoading) {
