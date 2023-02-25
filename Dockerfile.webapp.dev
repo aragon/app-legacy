@@ -48,10 +48,7 @@ RUN yarn link @aragon/ui-components
 
 ## Build web-app
 RUN yarn build
-RUN npm prune --production
-USER node
-ENV NODE_ENV production
 
 ## Launching web-app 
 EXPOSE 5000
-CMD ["npm", "run", "serve"]
+CMD ["npm", "run", "serve:docker"]

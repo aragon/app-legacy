@@ -8,6 +8,7 @@
     "dev": "vite",
     "build": "tsc && vite build --sourcemap true",
     "serve": "vite preview",
+    "serve:docker": "vite --host --port 5000",
     "test": "jest",
     "lint": "eslint src --max-warnings=0 && yarn check-types",
     "lint:fix": "eslint src --fix",
