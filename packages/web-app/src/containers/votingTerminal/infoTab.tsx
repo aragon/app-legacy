@@ -162,11 +162,7 @@ const InfoTab: React.FC<Props> = ({
           </InfoLine>
         )}
       </VStackSection>
-      <VStackSection
-        className={
-          status ? '' : 'pb-0 tablet:pb-0 border-b-0 tablet:border-b-0 '
-        }
-      >
+      <VStackSection isLast={status ? false : true}>
         <SectionHeader>{t('votingTerminal.duration')}</SectionHeader>
         <InfoLine>
           <p>{t('votingTerminal.startDate')}</p>
@@ -187,10 +183,11 @@ const CurrentParticipationWrapper = styled.div.attrs({
   className: 'space-y-0.5 text-right',
 })``;
 
-const VStackSection = styled.div.attrs({
-  className:
-    'space-y-1.5 p-2 tablet:p-3 -mx-2 tablet:-mx-3 border-b border-ui-100' as string,
-})``;
+const VStackSection = styled.div.attrs(({isLast}: {isLast?: boolean}) => ({
+  className: `space-y-1.5 p-2 tablet:p-3 -mx-2 tablet:-mx-3 ${
+    isLast ? 'pb-0 border-b-0' : 'border-b border-ui-100'
+  }`,
+}))<{isLast?: boolean}>``;
 
 const InfoLine = styled.div.attrs({
   className: 'flex justify-between text-ui-600',
