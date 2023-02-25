@@ -15,7 +15,6 @@ import {
   IconChevronUp,
   IconGovernance,
   Link,
-  Tag,
   WidgetStatus,
 } from '@aragon/ui-components';
 import {shortenAddress} from '@aragon/ui-components/src/utils/addresses';
@@ -77,7 +76,7 @@ import {
 import {Action, ProposalId} from 'utils/types';
 
 // TODO: @Sepehr Please assign proper tags on action decoding
-const PROPOSAL_TAGS = ['Finance', 'Withdraw'];
+// const PROPOSAL_TAGS = ['Finance', 'Withdraw'];
 
 const PENDING_PROPOSAL_STATUS_INTERVAL = 1000 * 60 * 60;
 const PROPOSAL_STATUS_INTERVAL = 1000 * 60 * 2;
@@ -571,11 +570,11 @@ const Proposal: React.FC = () => {
         )}
         <ProposalTitle>{proposal?.metadata.title}</ProposalTitle>
         <ContentWrapper>
-          <BadgeContainer>
+          {/* <BadgeContainer>
             {PROPOSAL_TAGS.map((tag: string) => (
               <Tag label={tag} key={tag} />
             ))}
-          </BadgeContainer>
+          </BadgeContainer> */}
           <ProposerLink>
             {t('governance.proposals.publishedBy')}{' '}
             <Link
@@ -672,9 +671,9 @@ const ContentWrapper = styled.div.attrs({
   className: 'flex flex-col tablet:flex-row gap-x-3 gap-y-1.5',
 })``;
 
-const BadgeContainer = styled.div.attrs({
-  className: 'flex flex-wrap gap-x-1.5',
-})``;
+// const BadgeContainer = styled.div.attrs({
+//   className: 'flex flex-wrap gap-x-1.5',
+// })``;
 
 const ProposerLink = styled.p.attrs({
   className: 'text-ui-500',

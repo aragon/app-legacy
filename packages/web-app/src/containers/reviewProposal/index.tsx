@@ -1,5 +1,5 @@
 import {Erc20TokenDetails, InstalledPluginListItem} from '@aragon/sdk-client';
-import {Link, Tag, VoterType} from '@aragon/ui-components';
+import {Link, VoterType} from '@aragon/ui-components';
 import TipTapLink from '@tiptap/extension-link';
 import {EditorContent, useEditor} from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
@@ -174,10 +174,6 @@ const ReviewProposal: React.FC<ReviewProposalProps> = ({
     <>
       <Header>{values.proposalTitle}</Header>
       <BadgeContainer>
-        <div className="flex space-x-1.5">
-          <Tag label="Finance" />
-          <Tag label="Withdraw" />
-        </div>
         <ProposerLink>
           {t('governance.proposals.publishedBy')}{' '}
           <Link external label={t('labels.you')} />
