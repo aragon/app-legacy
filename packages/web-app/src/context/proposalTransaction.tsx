@@ -129,10 +129,14 @@ const ProposalTransactionProvider: React.FC<Props> = ({children}) => {
   );
 
   const shouldDisableCallback = useMemo(() => {
-    if (voteProcessState === TransactionState.SUCCESS) return false;
+    if (
+      voteProcessState === TransactionState.SUCCESS ||
+      executeProcessState === TransactionState.SUCCESS
+    )
+      return false;
 
     return !(voteParams || executeProposalId);
-  }, [executeProposalId, voteParams, voteProcessState]);
+  }, [executeProcessState, executeProposalId, voteParams, voteProcessState]);
 
   /*************************************************
    *                    Helpers                    *
