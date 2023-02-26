@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 
-import {shortenAddress} from '../../utils/addresses';
+import {Address, shortenAddress} from '../../utils/addresses';
 import {AlertInline} from '../alerts';
 import {AvatarDao} from '../avatar';
 import {IconClock} from '../icons';
@@ -58,7 +58,7 @@ export type CardProposalProps = {
   publishLabel: string;
   /** Publisher's ethereum address, ENS name **or** DAO address when type is
    * explore */
-  publisherAddress?: string;
+  publisherAddress?: Address;
   /** DAO name to display when type is explore */
   daoName?: string;
   /** Blockchain explorer URL */
