@@ -544,7 +544,6 @@ const Proposal: React.FC = () => {
     } else return [];
   }, [proposal, executionFailed, t]);
 
-  console.log(proposal);
   /*************************************************
    *                     Render                    *
    *************************************************/
