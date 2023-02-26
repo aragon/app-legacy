@@ -205,7 +205,7 @@ export function proposal2CardProps(
     }
   } else if (isMultisigProposalListItem(proposal)) {
     const specificProps = {
-      voteTitle: t('votingTerminal.approvedBy'), //  t('governance.proposals.voteTitleMultisig'),
+      voteTitle: t('votingTerminal.approvedBy'),
       stateLabel: PROPOSAL_STATE_LABELS,
       alertMessage: translateProposalDate(
         proposal.status,
@@ -220,7 +220,6 @@ export function proposal2CardProps(
           'votingTerminal.ofMemberCount',
           {memberCount}
         )}`,
-        // voteLabel: t('votingTerminal.approvedBy'),
       };
       return {...props, ...specificProps, ...activeProps};
     } else {
