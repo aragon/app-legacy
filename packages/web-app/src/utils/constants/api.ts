@@ -7,7 +7,7 @@ export const FEEDBACK_FORM = 'https://form.typeform.com/to/apg4gHYO';
 export const SUBGRAPH_API_URL: SubgraphNetworkUrl = {
   ethereum: undefined,
   goerli:
-    'https://subgraph.satsuma-prod.com/qHR2wGfc5RLi6/aragon/core-goerli/api',
+    'https://subgraph.satsuma-prod.com/qHR2wGfc5RLi6/aragon/osx-goerli/api',
   polygon: undefined,
   mumbai:
     'https://api.thegraph.com/subgraphs/name/aragon/aragon-zaragoza-mumbai',
