@@ -365,6 +365,9 @@ const ProposalTransactionProvider: React.FC<Props> = ({children}) => {
       throw new Error('Voting function is not initialized correctly');
     }
 
+    // clear up previous submission state
+    setVoteSubmitted(false);
+
     try {
       for await (const step of voteSteps) {
         switch (step.key) {
