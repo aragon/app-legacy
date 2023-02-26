@@ -838,7 +838,7 @@ export function getVoteStatus(proposal: DetailedProposal, t: TFunction) {
 
 export function getVoteButtonLabel(
   proposal: DetailedProposal,
-  canVoteOrApprove: boolean | boolean[],
+  canVoteOrApprove: boolean,
   votedOrApproved: boolean,
   t: TFunction
 ) {
@@ -856,11 +856,7 @@ export function getVoteButtonLabel(
 
   if (isTokenBasedProposal(proposal)) {
     label = votedOrApproved
-      ? (
-          Array.isArray(canVoteOrApprove)
-            ? canVoteOrApprove.some(v => v)
-            : canVoteOrApprove
-        )
+      ? canVoteOrApprove
         ? t('votingTerminal.status.revote')
         : t('votingTerminal.status.voteSubmitted')
       : t('votingTerminal.voteOver');

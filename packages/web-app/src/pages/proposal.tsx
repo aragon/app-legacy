@@ -78,7 +78,7 @@ import {Action, ProposalId} from 'utils/types';
 // TODO: @Sepehr Please assign proper tags on action decoding
 // const PROPOSAL_TAGS = ['Finance', 'Withdraw'];
 
-const PENDING_PROPOSAL_STATUS_INTERVAL = 1000 * 60 * 60;
+const PENDING_PROPOSAL_STATUS_INTERVAL = 1000 * 5;
 const PROPOSAL_STATUS_INTERVAL = 1000 * 60 * 2;
 const NumberFormatter = new Intl.NumberFormat('en-US');
 
@@ -152,12 +152,16 @@ const Proposal: React.FC = () => {
     intervalInMills
   );
 
-  const {data: canVote} = useWalletCanVote(
+  const {data: walletCanVote} = useWalletCanVote(
     address,
     proposalId!,
     pluginAddress,
     pluginType
   );
+
+  const canVote = Array.isArray(walletCanVote)
+    ? walletCanVote.some(v => v)
+    : walletCanVote;
 
   const pluginClient = usePluginClient(pluginType);
 
@@ -462,7 +466,7 @@ const Proposal: React.FC = () => {
     }
 
     // member, not yet voted
-    else if (Array.isArray(canVote) ? canVote.some(v => v) : canVote) {
+    else if (canVote) {
       return {
         voteNowDisabled: false,
         onClick: () => {
@@ -508,7 +512,7 @@ const Proposal: React.FC = () => {
       address && // logged in
       !isOnWrongNetwork && // on proper network
       !voted && // haven't voted
-      !(Array.isArray(canVote) ? canVote.some(v => v) : canVote) // cannot vote
+      !canVote // cannot vote
     ) {
       // presence of token delineates token voting proposal
       // people add types to these things!!
