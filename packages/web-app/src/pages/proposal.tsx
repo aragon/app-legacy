@@ -152,12 +152,16 @@ const Proposal: React.FC = () => {
     intervalInMills
   );
 
-  const {data: canVote} = useWalletCanVote(
+  const {data: walletCanVote} = useWalletCanVote(
     address,
     proposalId!,
     pluginAddress,
     pluginType
   );
+
+  const canVote = Array.isArray(walletCanVote)
+    ? walletCanVote.some(v => v)
+    : walletCanVote;
 
   const pluginClient = usePluginClient(pluginType);
 
