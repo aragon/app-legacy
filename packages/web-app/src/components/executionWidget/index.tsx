@@ -163,7 +163,8 @@ const WidgetFooter: React.FC<FooterProps> = ({
 };
 
 const Card = styled.div.attrs({
-  className: 'w-84 flex-col bg-white rounded-xl p-3 space-y-3',
+  className:
+    'w-84 flex-col bg-white rounded-xl py-3 px-2 desktop:p-3 space-y-3',
 })``;
 
 const Header = styled.div.attrs({
