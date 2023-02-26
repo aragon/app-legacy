@@ -544,6 +544,7 @@ const Proposal: React.FC = () => {
     } else return [];
   }, [proposal, executionFailed, t]);
 
+  console.log(proposal);
   /*************************************************
    *                     Render                    *
    *************************************************/
@@ -660,7 +661,7 @@ const Container = styled.div.attrs({
 })``;
 
 const HeaderContainer = styled.div.attrs({
-  className: 'flex flex-col gap-y-2 desktop:p-0 px-2 tablet:px-3 pt-2',
+  className: 'flex flex-col gap-y-2 desktop:p-0 tablet:px-3 pt-2',
 })``;
 
 const ProposalTitle = styled.p.attrs({
