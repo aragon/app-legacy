@@ -21,7 +21,7 @@ export const useWalletCanVote = (
   proposalId: ProposalId,
   pluginAddress: string,
   pluginType?: PluginTypes
-): HookData<boolean | boolean[]> => {
+): HookData<boolean> => {
   const [data, setData] = useState([false, false, false] as
     | boolean[]
     | boolean);
@@ -87,5 +87,9 @@ export const useWalletCanVote = (
     proposalId,
   ]);
 
-  return {data, error, isLoading};
+  return {
+    data: Array.isArray(data) ? data.some(v => v) : data,
+    error,
+    isLoading,
+  };
 };

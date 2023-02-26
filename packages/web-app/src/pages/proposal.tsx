@@ -78,7 +78,7 @@ import {Action, ProposalId} from 'utils/types';
 // TODO: @Sepehr Please assign proper tags on action decoding
 // const PROPOSAL_TAGS = ['Finance', 'Withdraw'];
 
-const PENDING_PROPOSAL_STATUS_INTERVAL = 1000 * 5;
+const PENDING_PROPOSAL_STATUS_INTERVAL = 1000 * 60;
 const PROPOSAL_STATUS_INTERVAL = 1000 * 60 * 2;
 const NumberFormatter = new Intl.NumberFormat('en-US');
 
@@ -152,16 +152,12 @@ const Proposal: React.FC = () => {
     intervalInMills
   );
 
-  const {data: walletCanVote} = useWalletCanVote(
+  const {data: canVote} = useWalletCanVote(
     address,
     proposalId!,
     pluginAddress,
     pluginType
   );
-
-  const canVote = Array.isArray(walletCanVote)
-    ? walletCanVote.some(v => v)
-    : walletCanVote;
 
   const pluginClient = usePluginClient(pluginType);
 
