@@ -523,13 +523,11 @@ const Proposal: React.FC = () => {
 
   // status steps for proposal
   const proposalSteps = useMemo(() => {
-    // TODO: add multisig option
-    if (isMultisigProposal(proposal)) return [];
-
     if (proposal) {
       return getProposalStatusSteps(
         t,
         proposal.status,
+        pluginType,
         proposal.startDate,
         proposal.endDate,
         proposal.creationDate,
@@ -543,7 +541,7 @@ const Proposal: React.FC = () => {
         proposal.executionDate || undefined
       );
     } else return [];
-  }, [proposal, executionFailed, t]);
+  }, [proposal, t, pluginType, executionFailed]);
 
   /*************************************************
    *                     Render                    *
@@ -639,6 +637,7 @@ const Proposal: React.FC = () => {
           />
 
           <ExecutionWidget
+            pluginType={pluginType}
             actions={decodedActions}
             status={executionStatus}
             onExecuteClicked={handleExecuteNowClicked}

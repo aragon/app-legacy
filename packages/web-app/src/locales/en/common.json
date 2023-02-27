@@ -269,14 +269,13 @@
     },
     "noProposals": "No proposals found!",
     "statusWidget": {
-      "published": "Proposal published",
-      "pending": "Voting is pending",
-      "active": "Voting is active...",
-      "passed": "Proposal passed",
-      "failed": "Proposal execution failed",
-      "executed": "Proposal executed",
-      "succeeded": "Proposal is ready to execute",
-      "defeated": "Proposal has been defeated"
+      "published": "Published",
+      "active": "Running",
+      "failed": "Execution failed",
+      "executed": "Executed",
+      "succeeded": "Succeeded",
+      "defeated": "Rejected",
+      "expired": "Expired"
     },
     "executionCard": {
       "title": "Actions",
@@ -287,6 +286,7 @@
         "succeeded": "Proposal has passed and is ready to be executed",
         "executed": "Actions executed",
         "defeated": "Proposal defeated",
+        "expired": "Proposal expired",
         "failed": " Execution failed"
       }
     }

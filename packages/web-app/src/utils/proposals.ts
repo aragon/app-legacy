@@ -5,23 +5,24 @@
  * so open to suggestions.
  */
 
+import {ReactiveVar} from '@apollo/client';
 import {
   AddresslistVotingProposal,
   AddresslistVotingProposalResult,
+  computeProposalStatus,
+  CreateMajorityVotingProposalParams,
   Erc20TokenDetails,
   MultisigProposal,
+  MultisigProposalListItem,
   ProposalMetadata,
   ProposalStatus,
-  MultisigProposalListItem,
   TokenVotingProposal,
   TokenVotingProposalResult,
   VoteValues,
   VotingMode,
   VotingSettings,
-  computeProposalStatus,
-  CreateMajorityVotingProposalParams,
 } from '@aragon/sdk-client';
-import {ProgressStatusProps, VoterType} from '@aragon/ui-components';
+import {ModeType, ProgressStatusProps, VoterType} from '@aragon/ui-components';
 import Big from 'big.js';
 import {format, formatDistanceToNow, Locale} from 'date-fns';
 import differenceInSeconds from 'date-fns/fp/differenceInSeconds';
@@ -40,8 +41,15 @@ import {
   pendingTokenBasedVotesVar,
 } from 'context/apolloClient';
 import {MultisigMember} from 'hooks/useDaoMembers';
+import {PluginTypes} from 'hooks/usePluginClient';
 import {isMultisigVotingSettings} from 'hooks/usePluginSettings';
 import {i18n} from '../../i18n.config';
+import {
+  PENDING_EXECUTION_KEY,
+  PENDING_MULTISIG_EXECUTION_KEY,
+  PENDING_MULTISIG_VOTES_KEY,
+  PENDING_VOTES_KEY,
+} from './constants';
 import {getFormattedUtcOffset, KNOWN_FORMATS} from './date';
 import {customJSONReplacer, formatUnits} from './library';
 import {abbreviateTokenAmount} from './tokens';
@@ -54,13 +62,6 @@ import {
   SupportedProposals,
   SupportedVotingSettings,
 } from './types';
-import {
-  PENDING_VOTES_KEY,
-  PENDING_MULTISIG_VOTES_KEY,
-  PENDING_EXECUTION_KEY,
-  PENDING_MULTISIG_EXECUTION_KEY,
-} from './constants';
-import {ReactiveVar} from '@apollo/client';
 
 export type TokenVotingOptions = StrictlyExclude<
   VoterType['option'],
@@ -336,6 +337,7 @@ export function getWhitelistResults(
 export function getProposalStatusSteps(
   t: TFunction,
   status: ProposalStatus,
+  pluginType: PluginTypes,
   startDate: Date,
   endDate: Date,
   creationDate: Date,
@@ -345,23 +347,20 @@ export function getProposalStatusSteps(
   executionDate?: Date
 ): Array<ProgressStatusProps> {
   switch (status) {
-    case 'Active':
+    case ProposalStatus.ACTIVE:
       return [
         {...getPublishedProposalStep(t, creationDate, publishedBlock)},
-        {
-          label: t('governance.statusWidget.active'),
-          mode: 'active',
-          date: `${format(
-            startDate,
-            KNOWN_FORMATS.proposals
-          )}  ${getFormattedUtcOffset()}`,
-        },
+        {...getActiveProposalStep(t, startDate, 'active')},
       ];
-    case 'Defeated':
+    case ProposalStatus.DEFEATED:
       return [
         {...getPublishedProposalStep(t, creationDate, publishedBlock)},
+        {...getActiveProposalStep(t, startDate, 'done')},
         {
-          label: t('governance.statusWidget.defeated'),
+          label:
+            pluginType === 'token-voting.plugin.dao.eth'
+              ? t('governance.statusWidget.defeated')
+              : t('governance.statusWidget.expired'),
           mode: 'failed',
           date: `${format(
             endDate,
@@ -369,10 +368,16 @@ export function getProposalStatusSteps(
           )}  ${getFormattedUtcOffset()}`,
         },
       ];
-    case 'Succeeded':
+    case ProposalStatus.SUCCEEDED:
       if (executionFailed)
         return [
-          ...getPassedProposalSteps(t, creationDate, endDate, publishedBlock),
+          ...getEndedProposalSteps(
+            t,
+            creationDate,
+            startDate,
+            endDate,
+            publishedBlock
+          ),
           {
             label: t('governance.statusWidget.failed'),
             mode: 'failed',
@@ -384,21 +389,28 @@ export function getProposalStatusSteps(
         ];
       else
         return [
-          ...getPassedProposalSteps(t, creationDate, endDate, publishedBlock),
+          ...getEndedProposalSteps(
+            t,
+            creationDate,
+            startDate,
+            endDate,
+            publishedBlock
+          ),
           {
-            label: t('governance.statusWidget.succeeded'),
+            label: t('governance.statusWidget.executed'),
             mode: 'upcoming',
           },
         ];
-    case 'Executed':
+    case ProposalStatus.EXECUTED:
       if (executionDate)
         return [
-          ...getPassedProposalSteps(
+          ...getEndedProposalSteps(
             t,
             creationDate,
+            startDate,
             endDate,
             publishedBlock,
-            executionDate
+            executionDate || new Date()
           ),
           {
             label: t('governance.statusWidget.executed'),
@@ -412,52 +424,41 @@ export function getProposalStatusSteps(
         ];
       else
         return [
-          ...getPassedProposalSteps(t, creationDate, endDate, publishedBlock),
+          ...getEndedProposalSteps(
+            t,
+            creationDate,
+            startDate,
+            endDate,
+            publishedBlock
+          ),
           {label: t('governance.statusWidget.failed'), mode: 'failed'},
         ];
 
     // Pending by default
     default:
-      return [
-        {...getPublishedProposalStep(t, creationDate, publishedBlock)},
-        {
-          label: t('governance.statusWidget.pending'),
-          mode: 'upcoming',
-          date: `${format(
-            startDate,
-            KNOWN_FORMATS.proposals
-          )}  ${getFormattedUtcOffset()}`,
-        },
-      ];
+      return [{...getPublishedProposalStep(t, creationDate, publishedBlock)}];
   }
 }
 
-function getPassedProposalSteps(
+function getEndedProposalSteps(
   t: TFunction,
   creationDate: Date,
+  startDate: Date,
   endDate: Date,
   block: string,
   executionDate?: Date
 ): Array<ProgressStatusProps> {
   return [
     {...getPublishedProposalStep(t, creationDate, block)},
-    executionDate! < endDate
-      ? {
-          label: t('governance.statusWidget.passed'),
-          mode: 'done',
-          date: `${format(
-            executionDate!,
-            KNOWN_FORMATS.proposals
-          )}  ${getFormattedUtcOffset()}`,
-        }
-      : {
-          label: t('governance.statusWidget.passed'),
-          mode: 'done',
-          date: `${format(
-            endDate,
-            KNOWN_FORMATS.proposals
-          )}  ${getFormattedUtcOffset()}`,
-        },
+    {...getActiveProposalStep(t, startDate, 'done')},
+    {
+      label: t('governance.statusWidget.succeeded'),
+      mode: 'done',
+      date: `${format(
+        executionDate! < endDate ? executionDate! : endDate,
+        KNOWN_FORMATS.proposals
+      )}  ${getFormattedUtcOffset()}`,
+    },
   ];
 }
 
@@ -474,6 +475,17 @@ function getPublishedProposalStep(
     )}  ${getFormattedUtcOffset()}`,
     mode: 'done',
     ...(block && {block}),
+  };
+}
+
+function getActiveProposalStep(t: TFunction, startDate: Date, mode: ModeType) {
+  return {
+    label: t('governance.statusWidget.active'),
+    mode,
+    date: `${format(
+      startDate,
+      KNOWN_FORMATS.proposals
+    )}  ${getFormattedUtcOffset()}`,
   };
 }
 
