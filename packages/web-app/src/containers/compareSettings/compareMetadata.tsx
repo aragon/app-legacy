@@ -7,6 +7,7 @@ import {generatePath, useNavigate} from 'react-router-dom';
 
 import {Dd, DescriptionListContainer, Dl, Dt} from 'components/descriptionList';
 import {useNetwork} from 'context/network';
+import {URL_PATTERN} from 'utils/constants/regex';
 import {EditSettings} from 'utils/paths';
 import {ProposalResource} from 'utils/types';
 import {Views} from '.';
@@ -39,14 +40,12 @@ export const CompareMetadata: React.FC<CompareMetadataProps> = ({
     displayedInfo = {
       name: daoName,
       summary: daoSummary,
-      avatar: daoLogo,
       links: daoLinks.filter((l: ProposalResource) => l.name && l.url),
     };
   } else {
     displayedInfo = {
       name: daoDetails?.metadata.name,
       summary: daoDetails?.metadata.description,
-      avatar: daoDetails?.metadata.avatar,
       links: daoDetails?.metadata.links.filter(l => l.name && l.url),
     };
   }
@@ -62,12 +61,21 @@ export const CompareMetadata: React.FC<CompareMetadataProps> = ({
       <Dl>
         <Dt>{t('labels.logo')}</Dt>
         <Dd>
-          <AvatarDao
-            daoName={displayedInfo.name}
-            {...(displayedInfo.avatar && {
-              src: URL.createObjectURL(displayedInfo.avatar),
-            })}
-          />
+          {view === 'new' ? (
+            URL_PATTERN.test(daoLogo) ? (
+              <AvatarDao daoName={daoName} src={daoLogo} />
+            ) : (
+              <AvatarDao
+                {...{daoName}}
+                {...(daoLogo && {src: URL.createObjectURL(daoLogo)})}
+              />
+            )
+          ) : (
+            <AvatarDao
+              daoName={daoDetails?.metadata.name}
+              src={daoDetails?.metadata.avatar}
+            />
+          )}
         </Dd>
       </Dl>
       <Dl>
