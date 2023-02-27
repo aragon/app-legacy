@@ -425,7 +425,6 @@ const ConfigureCommunity: React.FC = () => {
             />
             <Controller
               name="earlyExecution"
-              rules={{required: 'Validate'}}
               control={control}
               render={({field: {onChange, value}}) => (
                 <ToggleCheckList
@@ -445,7 +444,6 @@ const ConfigureCommunity: React.FC = () => {
             />
             <Controller
               name="voteReplacement"
-              rules={{required: 'Validate'}}
               control={control}
               render={({field: {onChange, value}}) => (
                 <ToggleCheckList
