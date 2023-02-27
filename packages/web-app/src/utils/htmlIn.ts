@@ -10,7 +10,7 @@ export const htmlIn =
       const linkLabel = t((key + 'LinkLabel') as TParam0);
       value = value.replace(
         '<<link>>',
-        `<a class="font-bold truncate inline-flex items-center space-x-1.5 max-w-full rounded cursor-pointer hover:text-primary-700 active:text-primary-800 focus-visible:ring-2 focus-visible:ring-primary-500 text-primary-500" href="${linkUrl}">${linkLabel}</a>`
+        `<a class="font-bold truncate inline-flex items-center space-x-1.5 max-w-full rounded cursor-pointer hover:text-primary-700 active:text-primary-800 focus-visible:ring-2 focus-visible:ring-primary-500 text-primary-500" href="${linkUrl}" target=”_blank”>${linkLabel}</a>`
       );
     }
     return value;
