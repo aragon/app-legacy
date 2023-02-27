@@ -212,16 +212,6 @@ const Proposal: React.FC = () => {
           pluginClient?.decoding.findInterface(action.data);
 
         switch (functionParams?.functionName) {
-          case 'transfer':
-            return decodeWithdrawToAction(
-              action.data,
-              client,
-              apolloClient,
-              provider,
-              network,
-              action.to,
-              action.value
-            );
           case 'mint':
             if (mintTokenActions.actions.length === 0) {
               mintTokenActions.index = index;
@@ -255,7 +245,15 @@ const Proposal: React.FC = () => {
           case 'setMetadata':
             return decodeMetadataToAction(action.data, client);
           default:
-            return Promise.resolve({} as Action);
+            return decodeWithdrawToAction(
+              action.data,
+              client,
+              apolloClient,
+              provider,
+              network,
+              action.to,
+              action.value
+            );
         }
       }
     );
