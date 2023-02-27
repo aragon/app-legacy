@@ -96,9 +96,10 @@ const WrapperAnimationCSS = css`
 
 const Wrapper = styled.div.attrs(({isShown}: ContainerProps) => ({
   className: `fixed w-full flex items-center justify-center top-3 ${
-    isShown ? 'opacity-100 fixed z-50' : 'opacity-0 none z-0'
+    isShown ? 'opacity-100 fixed' : 'opacity-0 none'
   }`,
 }))`
+  z-index: ${props => (props.isShown ? '50' : '-50')};
   ${WrapperAnimationCSS}
 `;
 

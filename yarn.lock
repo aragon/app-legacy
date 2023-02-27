@@ -171,10 +171,10 @@
   dependencies:
     "@apollographql/graphql-language-service-types" "^2.0.0"
 
-"@aragon/core-contracts-ethers@^0.7.1-alpha":
-  version "0.7.1-alpha"
-  resolved "https://registry.yarnpkg.com/@aragon/core-contracts-ethers/-/core-contracts-ethers-0.7.1-alpha.tgz#601e6a5f03361b3ccf9a659841d3a1712577fb8d"
-  integrity sha512-WFcse9/AjA6Wv27ppXP6qRKd/jhVeW/azbC++WhNST9C7n+V/iOPLA+BM8yn5gvDW5mHWzjVZG2L9fx31Tc1zQ==
+"@aragon/core-contracts-ethers@^0.8.0-alpha":
+  version "0.8.0-alpha"
+  resolved "https://registry.yarnpkg.com/@aragon/core-contracts-ethers/-/core-contracts-ethers-0.8.0-alpha.tgz#f6e14207f3973b87fdfc83ad3abb0ad2343bc27a"
+  integrity sha512-zvx5wK0li9ytXLDFn5VWy3d/QYh8BfkeignWNr5QslWcp5yLAjJXPzjSqH1fpz3litdlLydsDX0YxUXyilswDQ==
   dependencies:
     ethers "^5.6.2"
 
@@ -187,12 +187,12 @@
     "@web3-react/types" "^6.0.7"
     tiny-warning "^1.0.3"
 
-"@aragon/sdk-client@^0.22.0-beta":
-  version "0.22.0-beta"
-  resolved "https://registry.yarnpkg.com/@aragon/sdk-client/-/sdk-client-0.22.0-beta.tgz#ed173d8f011dc8c28a8c73b94960da843bfa8f10"
-  integrity sha512-e9lV3lgbSPPgD9eVz0Ql7BJxGFMyo3QJVrURxSrPIBx6f7lOt1wpXqDUnX7cxLQEQUy61Fy/KLJjNFJRz1PLMQ==
+"@aragon/sdk-client@^0.23.0-beta":
+  version "0.23.0-beta"
+  resolved "https://registry.yarnpkg.com/@aragon/sdk-client/-/sdk-client-0.23.0-beta.tgz#4887c0ac4c2878340d06481e6de7289790946292"
+  integrity sha512-fUINDGPD5qdy1zlmdaJ6twyBlIBAXWRxibSYtlLmj8wsVXy/td5CAAe75PWb9U1ynKaRGWNve4MHuExSAayO4Q==
   dependencies:
-    "@aragon/core-contracts-ethers" "^0.7.1-alpha"
+    "@aragon/core-contracts-ethers" "^0.8.0-alpha"
     "@aragon/sdk-common" "^0.11.0-beta"
     "@aragon/sdk-ipfs" "^0.3.0-beta"
     "@ethersproject/abstract-signer" "^5.5.0"

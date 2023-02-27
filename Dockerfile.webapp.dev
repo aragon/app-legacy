@@ -1,5 +1,5 @@
-# Static web site compiler
-FROM node:16 as builder
+FROM node:16-bullseye-slim as builder
+#FROM node:16.17.0-bullseye-slim as builder
 
 ARG COMMIT_SHA
 ENV COMMIT_SHA=${COMMIT_SHA}
@@ -20,14 +20,21 @@ ENV VITE_ETHERSCAN_API_KEY=${VITE_ETHERSCAN_API_KEY}
 ARG NODE_OPTIONS
 ENV NODE_OPTIONS=${NODE_OPTIONS}
 
-ADD . /app
-RUN rm -rf .git/ && rm -rf .github/ && rm -rf .env* && rm -rf .vscode
+RUN apt-get update && apt-get install -y --no-install-recommends git ca-certificates && apt-get purge -y --auto-remove && rm -rf /var/lib/apt/lists/*
+
+## Install deps from parent folder
 WORKDIR /app
+COPY package*.json .
+COPY yarn.lock .
 RUN yarn
+COPY . .
+RUN rm -rf .git/ && rm -rf .github/ && rm -rf .env* && rm -rf .vscode
 
 ## Install deps, build and link ui-components
 WORKDIR /app/packages/ui-components
-RUN yarn install --pure-lockfile && yarn build && yarn link
+RUN yarn install --pure-lockfile 
+RUN yarn build 
+RUN yarn link
 
 ## Install deps web-app
 WORKDIR /app/packages/web-app
@@ -36,9 +43,12 @@ RUN yarn install --pure-lockfile
 ## Link web-app to ui-components
 RUN yarn link @aragon/ui-components
 
+## New stage to get slim image
+#FROM gcr.io/distroless/nodejs:16
+
 ## Build web-app
 RUN yarn build
 
 ## Launching web-app 
 EXPOSE 5000
-CMD ["npm", "run", "serve"]
+CMD ["npm", "run", "serve:docker"]

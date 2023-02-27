@@ -16,6 +16,8 @@ import {PluginTypes} from 'hooks/usePluginClient';
 import {useWallet} from 'hooks/useWallet';
 import {CHAIN_METADATA, getSupportedNetworkByChainId} from 'utils/constants';
 import {Dashboard} from 'utils/paths';
+import {useReactiveVar} from '@apollo/client';
+import {favoriteDaosVar} from 'context/apolloClient';
 
 const DEFAULT_CHAIN_ID = CHAIN_METADATA.goerli.id;
 const EXPLORE_FILTER = ['favorite', 'newest', 'popular'] as const;
@@ -35,8 +37,12 @@ export const DaoExplorer = () => {
   const navigate = useNavigate();
   const {address} = useWallet();
 
+  const favoritedDaos = useReactiveVar(favoriteDaosVar);
+  const loggedInAndHasFavoritedDaos =
+    address !== null && favoritedDaos.length > 0;
+
   const [filterValue, setFilterValue] = useState<ExploreFilter>(() =>
-    address ? 'favorite' : 'newest'
+    loggedInAndHasFavoritedDaos ? 'favorite' : 'newest'
   );
   const filterRef = useRef(filterValue);
 
@@ -82,21 +88,20 @@ export const DaoExplorer = () => {
       <MainContainer>
         <HeaderWrapper>
           <Title>{t('explore.explorer.title')}</Title>
-          <ButtonGroupContainer>
-            <ButtonGroup
-              defaultValue={filterValue}
-              onChange={v => handleFilterChange(v)}
-              bgWhite={false}
-            >
-              {address ? (
+          {loggedInAndHasFavoritedDaos && (
+            <ButtonGroupContainer>
+              <ButtonGroup
+                defaultValue={filterValue}
+                onChange={v => handleFilterChange(v)}
+                bgWhite={false}
+              >
                 <Option label={t('explore.explorer.myDaos')} value="favorite" />
-              ) : (
-                <></>
-              )}
-              <Option label={t('explore.explorer.popular')} value="popular" />
-              <Option label={t('explore.explorer.newest')} value="newest" />
-            </ButtonGroup>
-          </ButtonGroupContainer>
+
+                {/* <Option label={t('explore.explorer.popular')} value="popular" /> */}
+                <Option label={t('explore.explorer.newest')} value="newest" />
+              </ButtonGroup>
+            </ButtonGroupContainer>
+          )}
         </HeaderWrapper>
         <CardsWrapper>
           {filterWasChanged && isLoading ? (

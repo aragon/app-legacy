@@ -129,10 +129,14 @@ const ProposalTransactionProvider: React.FC<Props> = ({children}) => {
   );
 
   const shouldDisableCallback = useMemo(() => {
-    if (voteProcessState === TransactionState.SUCCESS) return false;
+    if (
+      voteProcessState === TransactionState.SUCCESS ||
+      executeProcessState === TransactionState.SUCCESS
+    )
+      return false;
 
     return !(voteParams || executeProposalId);
-  }, [executeProposalId, voteParams, voteProcessState]);
+  }, [executeProcessState, executeProposalId, voteParams, voteProcessState]);
 
   /*************************************************
    *                    Helpers                    *
@@ -364,6 +368,9 @@ const ProposalTransactionProvider: React.FC<Props> = ({children}) => {
     if (!voteSteps) {
       throw new Error('Voting function is not initialized correctly');
     }
+
+    // clear up previous submission state
+    setVoteSubmitted(false);
 
     try {
       for await (const step of voteSteps) {
