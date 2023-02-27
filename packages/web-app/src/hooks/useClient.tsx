@@ -1,12 +1,6 @@
 import {Client, Context as SdkContext, ContextParams} from '@aragon/sdk-client';
 import {useNetwork} from 'context/network';
-import React, {
-  createContext,
-  useContext,
-  useEffect,
-  useMemo,
-  useState,
-} from 'react';
+import React, {createContext, useContext, useEffect, useState} from 'react';
 import {CHAIN_METADATA, IPFS_ENDPOINT, SUBGRAPH_API_URL} from 'utils/constants';
 
 import {useWallet} from './useWallet';
@@ -29,26 +23,17 @@ export const useClient = () => {
 };
 
 export const UseClientProvider: React.FC = ({children}) => {
-  const {signer, chainId} = useWallet();
+  const {signer} = useWallet();
   const [client, setClient] = useState<Client>();
   const {network} = useNetwork();
   const [context, setContext] = useState<SdkContext>();
 
-  const activeNetwork = useMemo(() => {
-    if (['ethereum', 'goerli'].includes(network)) return network;
-
-    if (chainId === 5) return 'goerli';
-
-    //TODO: this should change to ethereum once the contract has been deployed
-    return 'goerli';
-  }, [chainId, network]);
-
   useEffect(() => {
     const contextParams: ContextParams = {
-      //TODO: replace ethereum with mainnet in activeNetworks
-      network: activeNetwork === 'ethereum' ? 'mainnet' : 'goerli',
+      //TODO: replace ethereum with mainnet for network
+      network: network === 'ethereum' ? 'mainnet' : network,
       signer: signer || undefined,
-      web3Providers: CHAIN_METADATA[activeNetwork].rpc[0],
+      web3Providers: CHAIN_METADATA[network].rpc[0],
       ipfsNodes: [
         {
           url: IPFS_ENDPOINT,
@@ -60,7 +45,7 @@ export const UseClientProvider: React.FC = ({children}) => {
       daoFactoryAddress: '0xf401dbc7eEf9E8DE629E67154838e8a7D828D2A3',
       graphqlNodes: [
         {
-          url: SUBGRAPH_API_URL[activeNetwork]!,
+          url: SUBGRAPH_API_URL[network]!,
         },
       ],
     };
@@ -69,7 +54,7 @@ export const UseClientProvider: React.FC = ({children}) => {
 
     setClient(new Client(sdkContext));
     setContext(sdkContext);
-  }, [activeNetwork, signer]);
+  }, [network, signer]);
 
   const value: ClientContext = {
     client,
