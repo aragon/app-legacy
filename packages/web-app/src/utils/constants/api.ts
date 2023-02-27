@@ -5,7 +5,9 @@ type SubgraphNetworkUrl = Record<SupportedNetworks, string | undefined>;
 export const FEEDBACK_FORM = 'https://form.typeform.com/to/apg4gHYO';
 
 export const SUBGRAPH_API_URL: SubgraphNetworkUrl = {
-  ethereum: undefined,
+  //TODO: This is a temporary subgraph for ethereum should be replace with the right one
+  ethereum:
+    'https://subgraph.satsuma-prod.com/qHR2wGfc5RLi6/aragon/core-goerli/api',
   goerli:
     'https://subgraph.satsuma-prod.com/qHR2wGfc5RLi6/aragon/core-goerli/api',
   polygon: undefined,

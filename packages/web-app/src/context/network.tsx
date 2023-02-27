@@ -45,7 +45,8 @@ export function NetworkProvider({children}: NetworkProviderProps) {
   const navigate = useNavigate();
 
   const [isNetworkFlexible, setIsNetworkFlexible] = useState<boolean>(false);
-  const [networkState, setNetworkState] = useState<SupportedNetworks>('goerli');
+  const [networkState, setNetworkState] =
+    useState<SupportedNetworks>('ethereum');
 
   const changeNetwork = useCallback(
     newNetwork => {

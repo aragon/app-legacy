@@ -26,7 +26,7 @@ const SelectChainForm: React.FC = () => {
 
   // const [isOpen, setIsOpen] = useState(false);
   // const [sortFilter, setFilter] = useState<SortFilter>('cost');
-  const [networkType, setNetworkType] = useState<NetworkType>('test');
+  const [networkType, setNetworkType] = useState<NetworkType>('main');
 
   // // moving this up so state change triggers translation changes
   // const labels = {
