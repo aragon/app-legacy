@@ -10,6 +10,7 @@ import styled from 'styled-components';
 
 import {StateEmpty} from 'components/stateEmpty';
 import {useNetwork} from 'context/network';
+import {PluginTypes} from 'hooks/usePluginClient';
 import {CHAIN_METADATA} from 'utils/constants';
 import {Action} from 'utils/types';
 import {ActionsFilter} from './actionsFilter';
@@ -22,6 +23,7 @@ export type ExecutionStatus =
   | 'default';
 
 type ExecutionWidgetProps = {
+  pluginType?: PluginTypes;
   txhash?: string;
   actions?: Array<Action | undefined>;
   status?: ExecutionStatus;
@@ -35,6 +37,7 @@ export const ExecutionWidget: React.FC<ExecutionWidgetProps> = ({
   txhash,
   onAddAction,
   onExecuteClicked,
+  pluginType,
 }) => {
   const {t} = useTranslation();
 
@@ -67,6 +70,7 @@ export const ExecutionWidget: React.FC<ExecutionWidgetProps> = ({
             })}
           </Content>
           <WidgetFooter
+            pluginType={pluginType}
             status={status}
             txhash={txhash}
             onExecuteClicked={onExecuteClicked}
@@ -79,13 +83,14 @@ export const ExecutionWidget: React.FC<ExecutionWidgetProps> = ({
 
 type FooterProps = Pick<
   ExecutionWidgetProps,
-  'status' | 'txhash' | 'onExecuteClicked'
+  'status' | 'txhash' | 'onExecuteClicked' | 'pluginType'
 >;
 
 const WidgetFooter: React.FC<FooterProps> = ({
   status = 'default',
   onExecuteClicked,
   txhash,
+  pluginType,
 }) => {
   const {t} = useTranslation();
   const {network} = useNetwork();
@@ -98,7 +103,11 @@ const WidgetFooter: React.FC<FooterProps> = ({
     case 'defeated':
       return (
         <AlertInline
-          label={t('governance.executionCard.status.defeated')}
+          label={
+            pluginType === 'multisig.plugin.dao.eth'
+              ? t('governance.executionCard.status.expired')
+              : t('governance.executionCard.status.defeated')
+          }
           mode={'warning'}
         />
       );
