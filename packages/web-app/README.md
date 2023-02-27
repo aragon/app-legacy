@@ -31,7 +31,7 @@ npm run build
 npm run test
 ```
 
-## Techstack
+## Tech stack
 
 The web-app is built using the following tools:
 
@@ -43,3 +43,9 @@ The web-app is built using the following tools:
 - [Tailwindcss](https://tailwindcss.com)
 - [Eslint](https://eslint.org)
 - [Prettier](https://prettier.io)
+
+### DevOps
+
+The CI/CD pipelines for the web-app use GitHub Actions, once completed successfully, the static site will be hosted on:
+* [Fleek](https://fleek.co/): suitable to deployment on IPFS Network
+* [Google Kubernetes Engine](https://cloud.google.com/kubernetes-engine): suitable for development and testing. 

@@ -28,7 +28,6 @@ COPY package*.json .
 COPY yarn.lock .
 RUN yarn
 COPY . .
-RUN rm -rf .git/ && rm -rf .github/ && rm -rf .env* && rm -rf .vscode
 
 ## Install deps, build and link ui-components
 WORKDIR /app/packages/ui-components
@@ -43,12 +42,11 @@ RUN yarn install --pure-lockfile
 ## Link web-app to ui-components
 RUN yarn link @aragon/ui-components
 
-## New stage to get slim image
-#FROM gcr.io/distroless/nodejs:16
-
-## Build web-app
+## Build web-app to generate static site in /dist
 RUN yarn build
 
-## Launching web-app 
-EXPOSE 5000
-CMD ["npm", "run", "serve:docker"]
+## New stage to server static site from Caddy
+FROM caddy:2.6.4-alpine
+COPY --from=builder /app/caddyfile.webapp.dev /etc/caddy/Caddyfile
+COPY --from=builder /app/packages/web-app/dist /website
+EXPOSE 9080
