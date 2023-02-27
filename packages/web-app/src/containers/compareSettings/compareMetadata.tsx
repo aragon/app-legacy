@@ -72,7 +72,7 @@ export const CompareMetadata: React.FC<CompareMetadataProps> = ({
             )
           ) : (
             <AvatarDao
-              daoName={daoDetails?.metadata.name}
+              daoName={daoDetails?.metadata.name || ''}
               src={daoDetails?.metadata.avatar}
             />
           )}
