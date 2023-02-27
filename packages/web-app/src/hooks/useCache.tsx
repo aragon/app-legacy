@@ -7,6 +7,7 @@ import React, {createContext, ReactNode, useContext, useState} from 'react';
 interface ICacheContext {
   set: (key: string, value: any) => void;
   get: (key: string) => any;
+  cache: Map<string, any>;
 }
 
 const UseCacheContext = createContext<ICacheContext>({} as ICacheContext);
@@ -32,6 +33,7 @@ export const UseCacheProvider = ({children}: {children: ReactNode}) => {
   const value = {
     get,
     set,
+    cache,
   };
   return (
     <UseCacheContext.Provider value={value}>

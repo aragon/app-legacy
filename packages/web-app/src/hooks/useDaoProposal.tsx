@@ -109,6 +109,8 @@ export const useDaoProposal = (
 
   useEffect(() => {
     if ((intervalInMills || 0) > 0) {
+      setNumberOfRuns(value => value + 1);
+
       const id = setInterval(() => {
         setNumberOfRuns(value => value + 1);
       }, intervalInMills);

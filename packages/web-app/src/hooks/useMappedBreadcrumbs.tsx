@@ -7,7 +7,7 @@ import {
   Tag,
   TagProps,
 } from '@aragon/ui-components';
-import React from 'react';
+import React, {useMemo} from 'react';
 import {useMatch} from 'react-router-dom';
 import useBreadcrumbs, {BreadcrumbData} from 'use-react-router-breadcrumbs';
 
@@ -39,8 +39,13 @@ function basePathIcons(path: string) {
 }
 
 export function useMappedBreadcrumbs(): MappedBreadcrumbs {
-  const {get} = useCache();
-  const proposalStatus = get('proposalStatus');
+  const {get, cache} = useCache();
+
+  // TODO this is temporary solution to update status in navigation bar
+  // This useCache should be removed in future
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const proposalStatus = useMemo(() => get('proposalStatus'), [get, cache]);
+
   const breadcrumbs = useBreadcrumbs(routes, {
     excludePaths: [
       Paths.Dashboard,
