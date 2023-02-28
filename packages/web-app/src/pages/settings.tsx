@@ -84,7 +84,7 @@ const Settings: React.FC = () => {
           </Dl>
           <Dl>
             <Dt>{t('labels.ens')}</Dt>
-            <Dd>{daoDetails?.ensDomain + '.dao.eth'}</Dd>
+            <Dd>{daoDetails?.ensDomain}</Dd>
           </Dl>
           <Dl>
             <Dt>{t('labels.summary')}</Dt>
