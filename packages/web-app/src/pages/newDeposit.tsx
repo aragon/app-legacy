@@ -90,9 +90,8 @@ const NewDeposit: React.FC = () => {
       else close('network');
     }
 
-    // Closes any open modal when the user goes back to /finance page
+    // Closes the network modal when the user goes back to /finance page
     return () => {
-      close('wallet');
       close('network');
     };
   }, [address, close, isConnected, isOnWrongNetwork, open, status]);
