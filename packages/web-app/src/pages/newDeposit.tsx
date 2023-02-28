@@ -75,6 +75,10 @@ const NewDeposit: React.FC = () => {
     // no lasting consequences considering status will be checked upon proposal creation
     // If we want to keep user logged in (I'm in favor of), remove ref throughout component
     // Fabrice F. - [12/07/2022]
+    if (address) {
+      userWentThroughLoginFlow.current = true;
+    }
+
     if (
       !isConnected &&
       status !== 'connecting' &&
@@ -85,7 +89,13 @@ const NewDeposit: React.FC = () => {
       if (isOnWrongNetwork) open('network');
       else close('network');
     }
-  }, [close, isConnected, isOnWrongNetwork, open, status]);
+
+    // Closes any open modal when the user goes back to /finance page
+    return () => {
+      close('wallet');
+      close('network');
+    };
+  }, [address, close, isConnected, isOnWrongNetwork, open, status]);
 
   /*************************************************
    *             Callbacks and Handlers            *
