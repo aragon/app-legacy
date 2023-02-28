@@ -75,7 +75,7 @@ export const GoLiveFooter: React.FC = () => {
   const {t} = useTranslation();
   const {handlePublishDao} = useCreateDaoContext();
   const {open} = useGlobalModalContext();
-  const {isConnected, provider} = useWallet();
+  const {isConnected, provider, isOnWrongNetwork} = useWallet();
 
   const IsButtonDisabled = () =>
     !Object.values(reviewCheck).every(v => v === true);
@@ -89,7 +89,15 @@ export const GoLiveFooter: React.FC = () => {
         governance_type: getValues('membership'),
       });
 
-    isConnected ? handlePublishDao() : open('wallet');
+    if (isConnected) {
+      if (isOnWrongNetwork) {
+        open('network');
+      } else {
+        handlePublishDao();
+      }
+    } else {
+      open('wallet');
+    }
   };
 
   const showInvalidFields = () => {
