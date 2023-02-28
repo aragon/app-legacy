@@ -121,7 +121,7 @@ const Proposal: React.FC = () => {
   const apolloClient = useApolloClient();
 
   const {network} = useNetwork();
-  const provider = useSpecificProvider(CHAIN_METADATA[network].id);
+  const provider = useSpecificProvider(CHAIN_METADATA[network].id, network);
   const {address, isConnected, isOnWrongNetwork} = useWallet();
 
   const [voteStatus, setVoteStatus] = useState('');

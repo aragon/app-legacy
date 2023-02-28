@@ -88,7 +88,10 @@ export const CHAIN_METADATA: ChainList = {
     logo: 'https://assets.coingecko.com/coins/images/279/large/ethereum.png?1595348880',
     explorer: 'https://etherscan.io/',
     testnet: false,
-    rpc: ['https://api.mycryptoapi.com/eth', 'https://cloudflare-eth.com'],
+    rpc: [
+      `https://mainnet.infura.io/v3/${INFURA_PROJECT_ID['ethereum']}`,
+      `wss://mainnet.infura.io/ws/v3/${INFURA_PROJECT_ID['ethereum']}`,
+    ],
     nativeCurrency: {
       name: 'Ether',
       symbol: 'ETH',
@@ -134,8 +137,8 @@ export const CHAIN_METADATA: ChainList = {
     explorer: 'https://goerli.etherscan.io/',
     testnet: true,
     rpc: [
-      `https://goerli.infura.io/v3/${INFURA_PROJECT_ID}`,
-      `wss://goerli.infura.io/ws/v3/${INFURA_PROJECT_ID}`,
+      `https://goerli.infura.io/v3/${INFURA_PROJECT_ID['goerli']}`,
+      `wss://goerli.infura.io/ws/v3/${INFURA_PROJECT_ID['goerli']}`,
     ],
     nativeCurrency: {
       name: 'Goerli Ether',
