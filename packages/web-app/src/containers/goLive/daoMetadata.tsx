@@ -48,7 +48,7 @@ const DaoMetadata: React.FC = () => {
           </Dl>
           <Dl>
             <Dt>{t('labels.daoEnsName')}</Dt>
-            <Dd>{daoEnsName}</Dd>
+            <Dd>{`${daoEnsName}.dao.eth`}</Dd>
           </Dl>
           <Dl>
             <Dt>{t('labels.summary')}</Dt>
