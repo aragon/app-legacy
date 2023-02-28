@@ -59,6 +59,7 @@ export function enableAnalytics() {
       {
         secureCookie: true,
         sendAdblockPage: true,
+        configUrl: 'https://rudderstack.aragon.org',
         sendAdblockPageOptions: {
           integrations: {
             All: false,
