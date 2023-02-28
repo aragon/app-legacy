@@ -171,10 +171,10 @@
   dependencies:
     "@apollographql/graphql-language-service-types" "^2.0.0"
 
-"@aragon/core-contracts-ethers@^0.8.0-alpha":
-  version "0.8.0-alpha"
-  resolved "https://registry.yarnpkg.com/@aragon/core-contracts-ethers/-/core-contracts-ethers-0.8.0-alpha.tgz#f6e14207f3973b87fdfc83ad3abb0ad2343bc27a"
-  integrity sha512-zvx5wK0li9ytXLDFn5VWy3d/QYh8BfkeignWNr5QslWcp5yLAjJXPzjSqH1fpz3litdlLydsDX0YxUXyilswDQ==
+"@aragon/osx-ethers@^1.0.0":
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/@aragon/osx-ethers/-/osx-ethers-1.0.0.tgz#fa45346a8e3904a296afbd9b77e82e2789089e0e"
+  integrity sha512-OmiyXG1TxvRYCLGThkEa2OHNEumWqZFYU8tzyzDFSskWmi70uTkoqR25ayaz8QaYOtYlVw9drzPFjJSX4RhZ/g==
   dependencies:
     ethers "^5.6.2"
 
@@ -187,14 +187,14 @@
     "@web3-react/types" "^6.0.7"
     tiny-warning "^1.0.3"
 
-"@aragon/sdk-client@^0.23.2-beta":
-  version "0.23.2-beta"
-  resolved "https://registry.yarnpkg.com/@aragon/sdk-client/-/sdk-client-0.23.2-beta.tgz#d656fbf83c2cf1048b6c958f03b60041fdba74ac"
-  integrity sha512-knstVPlaTvg1/bbNiav1Lp3HrIZUuLNKRPYX+0tBj44PRtAERBpC6a5dUcbh/sE7a56OBHUx8HdF12dM8EJ4XA==
+"@aragon/sdk-client@^1.0.0":
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/@aragon/sdk-client/-/sdk-client-1.0.0.tgz#a94ab34973f21f3812dcb589470c0e280a772fa0"
+  integrity sha512-LEaI13L+axoRooAi70H/zn6k0OSe7aAXDKKQpXzwcpXdujCw0kEQoqnQs9o6A36ccWx6iKaPUUUPLC5hzUIX6g==
   dependencies:
-    "@aragon/core-contracts-ethers" "^0.8.0-alpha"
-    "@aragon/sdk-common" "^0.12.0-beta"
-    "@aragon/sdk-ipfs" "^0.3.0-beta"
+    "@aragon/osx-ethers" "^1.0.0"
+    "@aragon/sdk-common" "^1.0.0"
+    "@aragon/sdk-ipfs" "^1.0.0"
     "@ethersproject/abstract-signer" "^5.5.0"
     "@ethersproject/bignumber" "^5.6.0"
     "@ethersproject/constants" "^5.6.0"
@@ -204,15 +204,15 @@
     graphql "^16.5.0"
     graphql-request "^4.3.0"
 
-"@aragon/sdk-common@^0.12.0-beta":
-  version "0.12.0-beta"
-  resolved "https://registry.yarnpkg.com/@aragon/sdk-common/-/sdk-common-0.12.0-beta.tgz#1cd1d957d9dd26b872eb7e897a9d6526c753a462"
-  integrity sha512-02cpwp6NwjMqCUM2h12/1IwgYOHXJ+D+F7tPwDFsI6O4vxBgUz+9Fcq4u4pgZvuC5HnZfmncgZljGyuX24m8bA==
+"@aragon/sdk-common@^1.0.0":
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/@aragon/sdk-common/-/sdk-common-1.0.0.tgz#e67585ee814221bc7d48575e885d312107449f68"
+  integrity sha512-Xy44sM//u0SBRYihmlwWOqgvM2mGEPLYYXjw3JgKugHbXM9+4UwLcsgZBcVReTvwKA/mXzsuz3ubu8jrWUKJMg==
 
-"@aragon/sdk-ipfs@^0.3.0-beta":
-  version "0.3.0-beta"
-  resolved "https://registry.yarnpkg.com/@aragon/sdk-ipfs/-/sdk-ipfs-0.3.0-beta.tgz#fd54f724ab80632ca9d3d72a0ac993ab6c03e23b"
-  integrity sha512-dMWlQk1A6E6g/VfoYshN6t53N25ZQPy32VqOhCUBJsEwiFhO9zPO3OF+Xu4YhnLuCF6eKC3jO9VlYXVNgc91ZA==
+"@aragon/sdk-ipfs@^1.0.0":
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/@aragon/sdk-ipfs/-/sdk-ipfs-1.0.0.tgz#83586d8c8125bd73321ee18a857680319b76469a"
+  integrity sha512-2Zh+ggJW42uHlZc1fyE1TG94A34l2kf9STW2gRZ7nMtqzD71JVt9rVl454H/lENX6RG4OUP/iSVii+WI7ZGJFQ==
   dependencies:
     "@web-std/fetch" "^4.1.0"
     "@web-std/file" "^3.0.2"

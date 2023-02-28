@@ -42,9 +42,6 @@ export const UseClientProvider: React.FC = ({children}) => {
           },
         },
       ],
-      ...(network === 'ethereum' && {
-        daoFactoryAddress: '0xA03C2182af8eC460D498108C92E8638a580b94d4',
-      }),
       graphqlNodes: [
         {
           url: SUBGRAPH_API_URL[network]!,
