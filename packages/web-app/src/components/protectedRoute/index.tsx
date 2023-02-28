@@ -37,7 +37,7 @@ const ProtectedRoute: React.FC = () => {
   );
 
   const {network} = useNetwork();
-  const provider = useSpecificProvider(CHAIN_METADATA[network].id, network);
+  const provider = useSpecificProvider(CHAIN_METADATA[network].id);
 
   const userWentThroughLoginFlow = useRef(false);
 

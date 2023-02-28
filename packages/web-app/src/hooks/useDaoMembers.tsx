@@ -62,7 +62,7 @@ export const useDaoMembers = (
   const [isLoading, setIsLoading] = useState(false);
 
   const {network} = useNetwork();
-  const provider = useSpecificProvider(CHAIN_METADATA[network].id, network);
+  const provider = useSpecificProvider(CHAIN_METADATA[network].id);
 
   const isTokenBased = pluginType === 'token-voting.plugin.dao.eth';
   const {data: daoToken} = useDaoToken(pluginAddress);

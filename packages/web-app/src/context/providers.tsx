@@ -4,6 +4,7 @@ import React, {createContext, useContext, useEffect, useState} from 'react';
 import {useWallet} from 'hooks/useWallet';
 import {
   CHAIN_METADATA,
+  getSupportedNetworkByChainId,
   INFURA_PROJECT_ID,
   SupportedChainID,
   SupportedNetworks,
@@ -83,10 +84,9 @@ function getInfuraProvider(
  * @param chainId network chain is
  * @returns infura provider
  */
-export function useSpecificProvider(
-  chainId: SupportedChainID,
-  network: SupportedNetworks
-): InfuraProvider {
+export function useSpecificProvider(chainId: SupportedChainID): InfuraProvider {
+  const network = getSupportedNetworkByChainId(chainId) as SupportedNetworks;
+
   const [infuraProvider, setInfuraProvider] = useState(
     getInfuraProvider(network, chainId)
   );

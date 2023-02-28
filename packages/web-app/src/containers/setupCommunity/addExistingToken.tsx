@@ -22,7 +22,6 @@ const DEFAULT_BLOCK_EXPLORER = 'https://etherscan.io/';
 const AddExistingToken: React.FC = () => {
   const {t} = useTranslation();
   const {control, setValue, trigger} = useFormContext();
-  const {network} = useNetwork();
 
   const [tokenAddress, blockchain, tokenName, tokenSymbol, tokenTotalSupply] =
     useWatch({
@@ -35,7 +34,7 @@ const AddExistingToken: React.FC = () => {
       ],
     });
 
-  const provider = useSpecificProvider(blockchain.id, network);
+  const provider = useSpecificProvider(blockchain.id);
   const explorer = useMemo(() => {
     if (blockchain.id) {
       const defaultNetwork =
@@ -47,6 +46,7 @@ const AddExistingToken: React.FC = () => {
     return DEFAULT_BLOCK_EXPLORER;
   }, [blockchain.id]);
 
+  const {network} = useNetwork();
   const nativeCurrency = CHAIN_METADATA[network].nativeCurrency;
 
   // Trigger address validation on network change

@@ -22,7 +22,7 @@ export const MembersList: React.FC<MembersListProps> = ({token, members}) => {
   const {network} = useNetwork();
   const [totalSupply, setTotalSupply] = useState<number>(0);
 
-  const provider = useSpecificProvider(CHAIN_METADATA[network].id, network);
+  const provider = useSpecificProvider(CHAIN_METADATA[network].id);
 
   useEffect(() => {
     async function fetchTotalSupply() {
