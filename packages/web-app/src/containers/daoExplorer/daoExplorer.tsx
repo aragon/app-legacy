@@ -52,6 +52,15 @@ export const DaoExplorer = () => {
   const [displayedDaos, setDisplayedDaos] = useState(data);
 
   useEffect(() => {
+    if (network && filterValue !== 'favorite') {
+      setDisplayedDaos([]);
+    }
+
+    // intentionally leaving filter value out
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [network]);
+
+  useEffect(() => {
     if (data) {
       if (filterRef.current !== filterValue) {
         setDisplayedDaos(data);
