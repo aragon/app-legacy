@@ -351,8 +351,6 @@ const Proposal: React.FC = () => {
           setIntervalInMills(PROPOSAL_STATUS_INTERVAL);
           setVoteStatus(v);
         } else if (proposal.status === 'Pending') {
-          console.log('getVoteStatus', v);
-
           setVoteStatus(v);
         }
       }, PENDING_PROPOSAL_STATUS_INTERVAL);
