@@ -410,7 +410,7 @@ export const MintTokenForm: React.FC<MintTokenFormProps> = ({
         />
 
         {/* eslint-disable-next-line tailwindcss/classnames-order */}
-        <label className="flex-1 tablet:flex-initial py-1.5 px-2 space-x-1.5 h-6 font-bold rounded-xl cursor-pointer hover:text-primary-500 bg-ui-0 ft-text-base">
+        {/* <label className="flex-1 tablet:flex-initial py-1.5 px-2 space-x-1.5 h-6 font-bold rounded-xl cursor-pointer hover:text-primary-500 bg-ui-0 ft-text-base">
           {t('labels.whitelistWallets.uploadCSV')}
           <input
             type="file"
@@ -419,7 +419,7 @@ export const MintTokenForm: React.FC<MintTokenFormProps> = ({
             onChange={handleCSVUpload}
             hidden
           />
-        </label>
+        </label> */}
       </ButtonContainer>
       {!daoTokenLoading && (
         <SummaryContainer>

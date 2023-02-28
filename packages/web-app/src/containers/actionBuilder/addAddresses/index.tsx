@@ -229,17 +229,17 @@ const AddAddresses: React.FC<AddAddressesProps> = ({
               ),
               callback: handleDeleteAll,
             },
-            {
-              component: (
-                <ListItemAction
-                  title={t('labels.whitelistWallets.uploadCSV')}
-                  bgWhite
-                  mode="disabled"
-                />
-              ),
-              // TODO: needs to be implemented later
-              callback: () => {},
-            },
+            // {
+            //   component: (
+            //     <ListItemAction
+            //       title={t('labels.whitelistWallets.uploadCSV')}
+            //       bgWhite
+            //       mode="disabled"
+            //     />
+            //   ),
+            //   // TODO: needs to be implemented later
+            //   callback: () => {},
+            // },
           ]}
         />
       </FormItem>
