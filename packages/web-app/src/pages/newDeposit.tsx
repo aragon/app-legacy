@@ -1,7 +1,7 @@
 import {Address} from '@aragon/ui-components/src/utils/addresses';
 import {useTranslation} from 'react-i18next';
 import {withTransaction} from '@elastic/apm-rum-react';
-import React, {useEffect} from 'react';
+import React, {useEffect, useRef} from 'react';
 import {useForm, FormProvider} from 'react-hook-form';
 
 import {Finance} from 'utils/paths';
@@ -20,6 +20,7 @@ import {useDaoParam} from 'hooks/useDaoParam';
 import {Loading} from 'components/temporary';
 import {DepositProvider} from 'context/deposit';
 import {trackEvent} from 'services/analytics';
+import {useGlobalModalContext} from 'context/globalModals';
 
 export type DepositFormData = TokenFormData & {
   // Deposit data
@@ -48,8 +49,10 @@ const NewDeposit: React.FC = () => {
   const {network} = useNetwork();
   const {data: dao, daoDetails, isLoading} = useDaoParam();
 
-  const {address} = useWallet();
+  const {address, isConnected, status, isOnWrongNetwork} = useWallet();
   const {data: walletTokens} = useWalletTokens();
+  const {open, close} = useGlobalModalContext();
+  const userWentThroughLoginFlow = useRef(false);
 
   const formMethods = useForm<DepositFormData>({
     defaultValues,
@@ -65,6 +68,24 @@ const NewDeposit: React.FC = () => {
       formMethods.setValue('daoName', daoDetails?.metadata?.name);
     }
   }, [address, dao, formMethods, daoDetails]);
+
+  useEffect(() => {
+    // show the wallet menu only if the user hasn't gone through the flow previously
+    // and is currently logged out; this allows user to log out mid flow with
+    // no lasting consequences considering status will be checked upon proposal creation
+    // If we want to keep user logged in (I'm in favor of), remove ref throughout component
+    // Fabrice F. - [12/07/2022]
+    if (
+      !isConnected &&
+      status !== 'connecting' &&
+      userWentThroughLoginFlow.current === false
+    )
+      open('wallet');
+    else {
+      if (isOnWrongNetwork) open('network');
+      else close('network');
+    }
+  }, [close, isConnected, isOnWrongNetwork, open, status]);
 
   /*************************************************
    *             Callbacks and Handlers            *
