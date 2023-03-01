@@ -62,7 +62,7 @@ const Menu = styled.nav.attrs({
 `;
 
 const LeftContent = styled.div.attrs({
-  className: 'col-span-2 flex items-center',
+  className: 'col-span-3 tablet:col-span-2 flex items-center',
 })``;
 
 const LogoContainer = styled.img.attrs({
