@@ -9,14 +9,15 @@ import {
   TextInput,
   ValueInput,
 } from '@aragon/ui-components';
+import Big from 'big.js';
 import {constants} from 'ethers';
 import React, {useState} from 'react';
 import {Controller, useFormContext, useWatch} from 'react-hook-form';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 
-import Big from 'big.js';
 import {useAlertContext} from 'context/alert';
+import {MAX_TOKEN_DECIMALS} from 'utils/constants';
 import {
   getUserFriendlyWalletLabel,
   handleClipboardActions,
@@ -91,8 +92,8 @@ const WalletRow: React.FC<WalletRowProps> = ({index, onDelete}) => {
 
     // Number of characters after decimal point greater than
     // the number of decimals in the token itself
-    if (amount.split('.')[1]?.length > 18)
-      return t('errors.exceedsFractionalParts', {decimals: 18});
+    if (amount.split('.')[1]?.length > MAX_TOKEN_DECIMALS)
+      return t('errors.exceedsFractionalParts', {decimals: MAX_TOKEN_DECIMALS});
 
     // show max amount error
     if (Big(amount).gt(constants.MaxInt256.toString()))
