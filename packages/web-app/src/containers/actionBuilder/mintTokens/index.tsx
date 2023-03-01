@@ -9,7 +9,7 @@ import {
   useFormContext,
   useWatch,
 } from 'react-hook-form';
-import {Trans, useTranslation} from 'react-i18next';
+import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 
 import {AccordionMethod} from 'components/accordionMethod';
