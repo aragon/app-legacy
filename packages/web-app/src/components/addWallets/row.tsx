@@ -1,27 +1,27 @@
 import {
   AlertInline,
   ButtonIcon,
+  Dropdown,
   IconMenuVertical,
   Label,
   ListItemAction,
-  Dropdown,
-  TextInput,
   NumberInput,
+  TextInput,
   ValueInput,
 } from '@aragon/ui-components';
-import styled from 'styled-components';
-import {BigNumber} from 'ethers';
+import {constants} from 'ethers';
 import React, {useState} from 'react';
-import {useTranslation} from 'react-i18next';
 import {Controller, useFormContext, useWatch} from 'react-hook-form';
+import {useTranslation} from 'react-i18next';
+import styled from 'styled-components';
 
+import Big from 'big.js';
+import {useAlertContext} from 'context/alert';
 import {
   getUserFriendlyWalletLabel,
   handleClipboardActions,
 } from 'utils/library';
 import {validateAddress} from 'utils/validators';
-import {MAX_TOKEN_AMOUNT} from 'utils/constants';
-import {useAlertContext} from 'context/alert';
 
 type WalletRowProps = {
   index: number;
@@ -46,7 +46,7 @@ const WalletRow: React.FC<WalletRowProps> = ({index, onDelete}) => {
 
     walletFieldArray?.forEach((wallet: WalletField) => {
       if (Number(wallet.amount) > 0) {
-        totalSupply = parseInt(wallet.amount) + totalSupply;
+        totalSupply = Number(wallet.amount) + totalSupply;
       }
     });
 
@@ -83,18 +83,23 @@ const WalletRow: React.FC<WalletRowProps> = ({index, onDelete}) => {
         minAmount = wallet.amount;
       }
       if (Number(wallet.amount) > 0)
-        totalSupply = parseInt(wallet.amount) + totalSupply;
+        totalSupply = Number(wallet.amount) + totalSupply;
     });
     setValue('tokenTotalSupply', totalSupply);
 
     if (eligibilityType === 'token') setValue('minimumTokenAmount', minAmount);
 
+    // Number of characters after decimal point greater than
+    // the number of decimals in the token itself
+    if (amount.split('.')[1]?.length > 18)
+      return t('errors.exceedsFractionalParts', {decimals: 18});
+
     // show max amount error
-    if (BigNumber.from(amount).gt(MAX_TOKEN_AMOUNT))
+    if (Big(amount).gt(constants.MaxInt256.toString()))
       return t('errors.ltAmount', {amount: '~ 2.69 * 10^49'});
 
     // show negative amount error
-    if (BigNumber.from(amount).lt(0)) return t('errors.lteZero');
+    if (Big(amount).lt(0)) return t('errors.lteZero');
     return totalSupply === 0 ? t('errors.totalSupplyZero') : true;
   };
 
