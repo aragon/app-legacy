@@ -5,14 +5,15 @@ import {
   // ListItemAction,
   ListItemBlockchain,
 } from '@aragon/ui-components';
-import styled from 'styled-components';
-import {useTranslation} from 'react-i18next';
-import {Controller, useFormContext} from 'react-hook-form';
 import React, {useState} from 'react';
+import {Controller, useFormContext} from 'react-hook-form';
+import {useTranslation} from 'react-i18next';
+import styled from 'styled-components';
 
+import {useNetwork} from 'context/network';
 import useScreen from 'hooks/useScreen';
 import {CHAIN_METADATA, SupportedNetworks} from 'utils/constants';
-import {useNetwork} from 'context/network';
+
 // import {trackEvent} from 'services/analytics';
 
 type NetworkType = 'main' | 'test';
@@ -21,12 +22,14 @@ type NetworkType = 'main' | 'test';
 const SelectChainForm: React.FC = () => {
   const {t} = useTranslation();
   const {isMobile} = useScreen();
-  const {setNetwork} = useNetwork();
+  const {setNetwork, network} = useNetwork();
   const {control} = useFormContext();
 
   // const [isOpen, setIsOpen] = useState(false);
   // const [sortFilter, setFilter] = useState<SortFilter>('cost');
-  const [networkType, setNetworkType] = useState<NetworkType>('main');
+  const [networkType, setNetworkType] = useState<NetworkType>(
+    CHAIN_METADATA[network].testnet ? 'test' : 'main'
+  );
 
   // // moving this up so state change triggers translation changes
   // const labels = {
