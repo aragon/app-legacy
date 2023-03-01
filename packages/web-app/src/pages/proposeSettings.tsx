@@ -62,7 +62,7 @@ import {
   minutesToMills,
   offsetToMills,
 } from 'utils/date';
-import {customJSONReplacer} from 'utils/library';
+import {customJSONReplacer, readFile} from 'utils/library';
 import {EditSettings, Proposal} from 'utils/paths';
 import {CacheProposalParams, mapToCacheProposal} from 'utils/proposals';
 import {
@@ -194,6 +194,9 @@ const ProposeSettingWrapper: React.FC<Props> = ({
     creationProcessState === TransactionState.WAITING &&
     proposalCreationData !== undefined;
 
+  const disableActionButton =
+    !proposalCreationData && creationProcessState !== TransactionState.SUCCESS;
+
   /*************************************************
    *                     Effects                   *
    *************************************************/
@@ -292,8 +295,33 @@ const ProposeSettingWrapper: React.FC<Props> = ({
 
       for (const action of getValues('actions') as Array<Action>) {
         if (action.name === 'modify_metadata') {
-          const ipfsUri = await client.methods.pinMetadata(action.inputs);
-          actions.push(client.encoding.updateDaoMetadataAction(dao, ipfsUri));
+          const preparedAction = {...action};
+
+          if (preparedAction.inputs.avatar) {
+            try {
+              const daoLogoBuffer = await readFile(
+                preparedAction.inputs.avatar as unknown as Blob
+              );
+
+              const logoCID = await client?.ipfs.add(
+                new Uint8Array(daoLogoBuffer)
+              );
+              await client?.ipfs.pin(logoCID!);
+              preparedAction.inputs.avatar = `ipfs://${logoCID}`;
+            } catch (e) {
+              preparedAction.inputs.avatar = undefined;
+            }
+          }
+
+          try {
+            const ipfsUri = await client.methods.pinMetadata(
+              preparedAction.inputs
+            );
+
+            actions.push(client.encoding.updateDaoMetadataAction(dao, ipfsUri));
+          } catch (error) {
+            throw Error('Could not pin metadata on IPFS');
+          }
         } else if (
           action.name === 'modify_token_voting_settings' &&
           isTokenVotingClient(pluginClient)
@@ -658,6 +686,7 @@ const ProposeSettingWrapper: React.FC<Props> = ({
         title={t('TransactionModal.createProposal')}
         buttonLabel={t('TransactionModal.createProposalNow')}
         buttonLabelSuccess={t('TransactionModal.launchGovernancePage')}
+        disabledCallback={disableActionButton}
       />
     </>
   );
