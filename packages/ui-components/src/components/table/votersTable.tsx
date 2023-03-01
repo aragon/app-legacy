@@ -50,12 +50,13 @@ export const VotersTable: React.FC<VotersTableProps> = ({
           <tr>
             <TableCell type="head" text="Wallet" className="w-1/2" />
             {showOption && <TableCell type="head" text="Option" />}
-            {showOption && <TableCell type="head" />}
+            <TableCell type="head" rightAligned />
             {showVotingPower && (
               <TableCell
                 type="head"
                 text="Voting Power"
                 className="text-center"
+                rightAligned
               />
             )}
             {showAmount && (
@@ -81,13 +82,13 @@ export const VotersTable: React.FC<VotersTableProps> = ({
                 </TableCell>
               )}
               {showOption && voter.voteReplaced === true ? (
-                <TableCell type="tag">
+                <TableCell type="tag" rightAligned>
                   <span className="flex items-center -ml-2 text-xs text-ui-600">
                     Edited
                   </span>
                 </TableCell>
               ) : (
-                <TableCell type="text" />
+                <TableCell type="text" rightAligned />
               )}
               {showVotingPower && (
                 <TableCell type="text" text={voter.votingPower} rightAligned />
