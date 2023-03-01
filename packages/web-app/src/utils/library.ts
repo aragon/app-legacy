@@ -409,3 +409,14 @@ export function resolveDaoAvatarIpfsCid(avatar?: string): string | undefined {
     }
   }
 }
+
+export function readFile(file: Blob): Promise<ArrayBuffer> {
+  return new Promise((resolve, reject) => {
+    const fr = new FileReader();
+    fr.onload = () => {
+      resolve(fr.result as ArrayBuffer);
+    };
+    fr.onerror = reject;
+    fr.readAsArrayBuffer(file);
+  });
+}

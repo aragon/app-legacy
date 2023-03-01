@@ -3,6 +3,7 @@ import {
   DaoAction,
   MultisigClient,
   MultisigProposal,
+  ProposalStatus,
   TokenVotingClient,
   TokenVotingProposal,
   VoteValues,
@@ -192,6 +193,14 @@ const Proposal: React.FC = () => {
       editor.commands.setContent(proposal.metadata.description, true);
     }
   }, [editor, proposal]);
+
+  useEffect(() => {
+    if (proposal?.status) {
+      setTerminalTab(
+        proposal.status === ProposalStatus.PENDING ? 'info' : 'breakdown'
+      );
+    }
+  }, [proposal?.status]);
 
   // decode proposal actions
   useEffect(() => {
