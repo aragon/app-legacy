@@ -21,8 +21,8 @@ jobs:
         if: contains(github.ref, '/DOPS-445')
         id: envtest
         run: |
-          echo "environment=development" >> $GITHUB_OUTPUT
-          echo "branch_prefix=test" >> $GITHUB_OUTPUT
+          echo "environment=development" >> $GITHUB_OUTPUT    ## temp, change it if have another env 
+          echo "branch_prefix=test" >> $GITHUB_OUTPUT         ## used it in docker tags
 
       - name: Set environment to DEV
         if: endsWith(github.ref, '/develop')
@@ -36,9 +36,49 @@ jobs:
     needs: [setup-env-vars]
     if: needs.setup-env-vars.outputs.environment != ''
     environment: ${{ needs.setup-env-vars.outputs.environment }}
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
+
+      - name: Setup NodeJS, install deps from parent folder
+        uses: actions/setup-node@v3
+        with:
+          node-version: 16
+          cache: 'yarn'
+        
+      - name: Install deps, build and link ui-components
+        run: |
+          cd packages/ui-components
+          yarn install --pure-lockfile
+          yarn build
+          yarn link
+    
+      - name: Install deps and link web-app
+        run: |
+          cd packages/web-app
+          yarn install --pure-lockfile
+          yarn link @aragon/ui-components
+
+      # - name: Run Lint and Test web-app
+      #   run: |
+      #     cd packages/web-app
+      #     yarn lint
+      #     yarn test
+
+      - name: Build web-app
+        run: |
+          cd packages/web-app 
+          yarn build
+        env:
+          VITE_REACT_APP_DEPLOY_VERSION: ${{ github.sha }}
+          VITE_REACT_APP_DEPLOY_ENVIRONMENT: ${{ needs.setup-env-vars.outputs.environment }}
+          VITE_REACT_APP_ANALYTICS_KEY: ${{ secrets.VITE_REACT_APP_ANALYTICS_KEY }}
+          VITE_IPFS_API_KEY: ${{ secrets.VITE_IPFS_API_KEY }}
+          VITE_ETHERSCAN_API_KEY: ${{ secrets.VITE_ETHERSCAN_API_KEY }}
+          VITE_INFURA_GOERLI_PROJECT_ID: ${{ secrets.VITE_INFURA_GOERLI_PROJECT_ID }}
+          VITE_INFURA_MAINNET_PROJECT_ID: ${{ secrets.VITE_INFURA_MAINNET_PROJECT_ID }}
+          NODE_OPTIONS: '--max-old-space-size=6656'
 
       - name: Setup Docker Buildx
         uses: docker/setup-buildx-action@v2
@@ -70,14 +110,13 @@ jobs:
         run: |
           mkdir -p /tmp/docker-build-push-${{ steps.vars.outputs.DATE_IN_SECS }}/
           docker buildx build . --file ./Dockerfile.webapp.dev --push \
-          --build-arg COMMIT_SHA=${{ steps.vars.outputs.GIT_HASH_SHORT }} \
-          --build-arg NODE_ENV=${{ needs.setup-env-vars.outputs.environment }} \
-          --build-arg ENVIRONMENT=${{ needs.setup-env-vars.outputs.environment }} \
           --build-arg VITE_REACT_APP_DEPLOY_VERSION=${{ github.sha }} \
           --build-arg VITE_REACT_APP_DEPLOY_ENVIRONMENT=${{ needs.setup-env-vars.outputs.environment }} \
           --build-arg VITE_REACT_APP_ANALYTICS_KEY=${{ secrets.VITE_REACT_APP_ANALYTICS_KEY }} \
           --build-arg VITE_IPFS_API_KEY=${{ secrets.VITE_IPFS_API_KEY }} \
           --build-arg VITE_ETHERSCAN_API_KEY=${{ secrets.VITE_ETHERSCAN_API_KEY }} \
+          --build-arg VITE_INFURA_GOERLI_PROJECT_ID=${{secrets.VITE_INFURA_GOERLI_PROJECT_ID}} \
+          --build-arg VITE_INFURA_MAINNET_PROJECT_ID=${{secrets.VITE_INFURA_MAINNET_PROJECT_ID}} \
           --build-arg NODE_OPTIONS='--max-old-space-size=6656' \
           --cache-from type=gha \
           --cache-to type=gha,mode=max \

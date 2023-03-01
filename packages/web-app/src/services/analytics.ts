@@ -57,9 +57,9 @@ export function enableAnalytics() {
       analyticsKey as string,
       'https://rudderstack.aragon.org',
       {
+        configUrl: 'https://rs-proxy.aragon.org',
         secureCookie: true,
         sendAdblockPage: true,
-        configUrl: 'https://rudderstack.aragon.org',
         sendAdblockPageOptions: {
           integrations: {
             All: false,

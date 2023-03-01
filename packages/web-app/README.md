@@ -48,4 +48,4 @@ The web-app is built using the following tools:
 
 The CI/CD pipelines for the web-app use GitHub Actions, once completed successfully, the static site will be hosted on:
 * [Fleek](https://fleek.co/): suitable to deployment on IPFS Network
-* [Google Kubernetes Engine](https://cloud.google.com/kubernetes-engine): suitable for development and testing. 
+* [Google Kubernetes Engine](https://cloud.google.com/kubernetes-engine): suitable for development and testing.
