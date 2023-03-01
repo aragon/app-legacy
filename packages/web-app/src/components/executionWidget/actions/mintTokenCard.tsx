@@ -4,7 +4,6 @@ import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 
 import {AccordionMethod} from 'components/accordionMethod';
-import {MintTokenDescription} from 'containers/actionBuilder/mintTokens';
 import {useNetwork} from 'context/network';
 import {CHAIN_METADATA} from 'utils/constants';
 import {ActionMintToken} from 'utils/types';
@@ -43,7 +42,7 @@ export const MintTokenCard: React.FC<{
       methodName={t('labels.mintTokens')}
       smartContractName={t('labels.aragonOSx')}
       verified
-      methodDescription={<MintTokenDescription />}
+      methodDescription={t('newProposal.mintTokens.methodDescription')}
       additionalInfo={t('newProposal.mintTokens.additionalInfo')}
     >
       <Container>

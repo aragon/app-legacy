@@ -13,10 +13,7 @@ import {generatePath} from 'react-router-dom';
 
 import {FullScreenStepper, Step} from 'components/fullScreenStepper';
 import {Loading} from 'components/temporary';
-import {
-  MintTokenDescription,
-  MintTokenForm,
-} from 'containers/actionBuilder/mintTokens';
+import {MintTokenForm} from 'containers/actionBuilder/mintTokens';
 import DefineProposal, {
   isValid as defineProposalIsValid,
 } from 'containers/defineProposal';
@@ -81,7 +78,7 @@ const MintToken: React.FC = () => {
           >
             <Step
               wizardTitle={t('labels.mintTokens')}
-              wizardDescription={<MintTokenDescription />}
+              wizardDescription={t('newProposal.mintTokens.methodDescription')}
               isNextButtonDisabled={!actionIsValid(errors, formActions)}
               onNextButtonDisabledClicked={() => formMethods.trigger('actions')}
             >

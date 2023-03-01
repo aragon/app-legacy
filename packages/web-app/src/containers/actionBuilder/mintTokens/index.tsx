@@ -77,7 +77,7 @@ const MintTokens: React.FC<MintTokensProps> = ({actionIndex}) => {
       methodName={t('labels.mintTokens')}
       smartContractName={t('labels.aragonOSx')}
       verified
-      methodDescription={<MintTokenDescription />}
+      methodDescription={t('newProposal.mintTokens.methodDescription')}
       additionalInfo={t('newProposal.mintTokens.additionalInfo')}
       dropdownItems={methodActions}
     >
@@ -454,22 +454,6 @@ export const MintTokenForm: React.FC<MintTokenFormProps> = ({
     </Container>
   );
 };
-
-export const MintTokenDescription: React.FC = () => (
-  <Trans i18nKey="newProposal.mintTokens.methodDescription">
-    Which wallet addresses should get tokens, and how many? Add the wallets you
-    want here, and then choose the distribution. Upload a CSV with
-    <a
-      href="data:text/csv;base64,QWRkcmVzcyxUb2tlbnMKMHgwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwLDEwLjUw"
-      download="MintTokenTemplate.csv"
-      // eslint-disable-next-line tailwindcss/classnames-order
-      className="font-bold rounded focus:ring-2 focus:outline-none text-primary-500 hover:text-primary-700 focus:ring-primary-500"
-    >
-      this template
-    </a>{' '}
-    if you want.
-  </Trans>
-);
 
 const Container = styled.div.attrs<{standAlone: boolean}>(({standAlone}) => ({
   className: `bg-white border divide-y border-ui-100 divide-ui-100 ${
