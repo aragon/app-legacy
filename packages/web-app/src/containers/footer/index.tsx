@@ -4,9 +4,7 @@ import styled from 'styled-components';
 
 import {GridLayout} from 'components/layout';
 import useScreen from 'hooks/useScreen';
-import Green from 'public/greenGradient.svg';
-import IconLogo from 'public/iconLogo.svg';
-import Purple from 'public/purpleGradient.svg';
+import IconLogoBlue from 'public/iconLogoBlue.svg';
 import {EXPLORE_NAV_LINKS, PRIVACY_NAV_LINKS} from 'utils/constants';
 
 const Footer: React.FC = () => {
@@ -14,13 +12,13 @@ const Footer: React.FC = () => {
 
   const ExploreNavLinks = EXPLORE_NAV_LINKS.map(item => (
     <li key={item.label}>
-      <Link href={item.path} label={item.label} type="secondary" />
+      <Link href={item.path} label={item.label} type="neutral" />
     </li>
   ));
 
   const PrivacyNavLinks = PRIVACY_NAV_LINKS.map(item => (
     <li key={item.label}>
-      <Link label={item.label} href={item.path} type="secondary" />
+      <Link label={item.label} href={item.path} type="neutral" />
     </li>
   ));
 
@@ -28,15 +26,11 @@ const Footer: React.FC = () => {
     <Section data-testid="footer">
       <GridLayout>
         <FullSpan>
-          <div className="relative">
-            <GradientGreen src={Green} />
-            <GradientPurple src={Purple} />
-          </div>
           <ActionContainer>
             {isDesktop ? (
               <>
                 <FlexDiv>
-                  <LogoContainer src={IconLogo} />
+                  <LogoContainer src={IconLogoBlue} />
                   <StyledNavList>{ExploreNavLinks}</StyledNavList>
                 </FlexDiv>
                 <FlexDiv>
@@ -48,7 +42,7 @@ const Footer: React.FC = () => {
               </>
             ) : (
               <>
-                <LogoContainer src={IconLogo} />
+                <LogoContainer src={IconLogoBlue} />
                 <StyledNavList>{ExploreNavLinks}</StyledNavList>
                 <StyledNavList>{PrivacyNavLinks}</StyledNavList>
                 <Copyright>
@@ -59,7 +53,7 @@ const Footer: React.FC = () => {
           </ActionContainer>
         </FullSpan>
       </GridLayout>
-      <div className="flex z-10 justify-center items-center py-0.5 space-x-1 text-sm text-ui-0 bg-primary-400">
+      <div className="flex z-10 justify-center items-center py-0.5 pb-8 desktop:pb-0 space-x-1 text-sm text-ui-0 bg-primary-400">
         <IconInfo />
         <span>Aragon App Public Beta</span>
       </div>
@@ -74,7 +68,7 @@ const FullSpan = styled.div.attrs({
 `;
 
 const Section = styled.section.attrs({
-  className: 'w-full bg-primary-400 overflow-hidden',
+  className: 'w-full overflow-hidden bg-ui-0 mt-8',
 })``;
 
 const ActionContainer = styled.div.attrs({
@@ -95,15 +89,7 @@ const StyledNavList = styled.ul.attrs({
 })``;
 
 const Copyright = styled.span.attrs({
-  className: 'text-ui-0 font-normal',
-})``;
-
-const GradientGreen = styled.img.attrs({
-  className: 'h-50 absolute -top-16 -left-16',
-})``;
-
-const GradientPurple = styled.img.attrs({
-  className: 'desktop:h-40 h-30 absolute -right-5 desktop:-top-11 top-16',
+  className: 'text-ui-600 font-normal',
 })``;
 
 export default Footer;

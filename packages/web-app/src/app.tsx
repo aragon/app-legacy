@@ -21,7 +21,7 @@ import '../i18n.config';
 // work properly on the pages.
 import {GridLayout} from 'components/layout';
 import {Loading} from 'components/temporary/loading';
-import Footer from 'containers/exploreFooter';
+import ExploreFooter from 'containers/exploreFooter';
 import DaoSelectMenu from 'containers/navbar/daoSelectMenu';
 import ExploreNav from 'containers/navbar/exploreNav';
 import NetworkErrorMenu from 'containers/networkErrorMenu';
@@ -35,6 +35,7 @@ import {FormProvider, useForm} from 'react-hook-form';
 import {NotFound} from 'utils/paths';
 import ProtectedRoute from 'components/protectedRoute';
 import {useTransactionDetailContext} from 'context/transactionDetail';
+import Footer from 'containers/footer';
 
 const DemoSCCPage = lazy(() => import('pages/demoScc'));
 const ExplorePage = lazy(() => import('pages/explore'));
@@ -185,7 +186,7 @@ const ExploreWrapper: React.FC = () => (
   <>
     <ExploreNav />
     <Outlet />
-    <Footer />
+    <ExploreFooter />
   </>
 );
 
@@ -201,7 +202,7 @@ const DaoWrapper: React.FC = () => {
   return (
     <>
       <Navbar />
-      <div className="pb-15">
+      <div className="min-h-screen">
         <GridLayout>
           <Outlet />
           <TransferMenu />
@@ -214,6 +215,7 @@ const DaoWrapper: React.FC = () => {
           )}
         </GridLayout>
       </div>
+      <Footer />
     </>
   );
 };
