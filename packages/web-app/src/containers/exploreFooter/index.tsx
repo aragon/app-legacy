@@ -81,7 +81,7 @@ const FlexDiv = styled.div.attrs({
 })``;
 
 const LogoContainer = styled.img.attrs({
-  className: 'h-5 w-5',
+  className: 'h-5',
 })``;
 
 const StyledNavList = styled.ul.attrs({
