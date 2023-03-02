@@ -158,7 +158,7 @@ const DefineMetadata: React.FC<DefineMetadataProps> = ({
                     onBlur,
                     onChange: event => {
                       event.target.value = event.target.value.toLowerCase();
-                      return onChange(event);
+                      onChange(event);
                     },
                   }}
                   placeholder={t('placeHolders.ensName')}
