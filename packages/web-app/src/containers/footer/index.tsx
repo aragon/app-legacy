@@ -56,9 +56,9 @@ const Footer: React.FC = () => {
         </FullSpan>
       </GridLayout>
       <div
-        className={`flex z-10 justify-center items-center py-0.5 ${
-          isOnWrongNetwork ? 'pb-11' : 'pb-8'
-        } desktop:pb-0 space-x-1 text-sm text-ui-0 bg-primary-400`}
+        className={`flex z-10 justify-center items-center py-0.5 desktop:pb-0 desktop:mb-0 space-x-1 text-sm text-ui-0 bg-primary-400 ${
+          isOnWrongNetwork ? 'mb-11 tablet:mb-15' : 'mb-8 tablet:mb-12'
+        }`}
       >
         <IconInfo />
         <span>Aragon App Public Beta</span>
