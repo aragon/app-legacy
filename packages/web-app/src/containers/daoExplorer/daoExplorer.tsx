@@ -120,6 +120,7 @@ export const DaoExplorer = () => {
             displayedDaos.map((dao, index) => (
               <DaoCard
                 name={dao.metadata.name}
+                ensName={dao.ensDomain}
                 logo={dao.metadata.avatar}
                 description={dao.metadata.description}
                 chainId={dao.chain || CHAIN_METADATA[network].id} // Default to Goerli

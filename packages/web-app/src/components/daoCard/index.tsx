@@ -8,6 +8,7 @@ import {getSupportedNetworkByChainId} from 'utils/constants';
 
 export interface IDaoCardProps {
   name: string;
+  ensName: string;
   logo?: string;
   description: string;
   chainId: number;
@@ -41,7 +42,12 @@ export const DaoCard = (props: IDaoCardProps) => {
       <DaoDataWrapper>
         <HeaderContainer>
           <AvatarDao daoName={props.name} src={props.logo} />
-          <Title>{props.name}</Title>
+          <div className="space-y-0.25 desktop:space-y-0.5 text-left">
+            <Title>{props.name}</Title>
+            <p className="font-semibold text-ui-500 ft-text-sm">
+              {props.ensName}
+            </p>
+          </div>
         </HeaderContainer>
         <Description isDesktop={isDesktop}>{props.description}</Description>
       </DaoDataWrapper>
