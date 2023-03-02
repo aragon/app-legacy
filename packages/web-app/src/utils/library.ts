@@ -2,6 +2,7 @@
 import {ApolloClient} from '@apollo/client';
 import {
   Client,
+  DaoDetails,
   Erc20TokenDetails,
   IMintTokenParams,
   MultisigClient,
@@ -10,6 +11,7 @@ import {
 } from '@aragon/sdk-client';
 import {resolveIpfsCid} from '@aragon/sdk-common';
 import {Address} from '@aragon/ui-components/dist/utils/addresses';
+import {NavigationDao} from 'context/apolloClient';
 import {BigNumber, BigNumberish, constants, ethers, providers} from 'ethers';
 import {TFunction} from 'react-i18next';
 
@@ -419,4 +421,27 @@ export function readFile(file: Blob): Promise<ArrayBuffer> {
     fr.onerror = reject;
     fr.readAsArrayBuffer(file);
   });
+}
+
+/**
+ * Map a detailed DAO to a structure that can be favorited
+ * @param dao - Detailed DAO fetched from SDK
+ * @param network - network on which this DAO resides
+ * @returns the DAO in it's favorited form
+ */
+export function mapDetailedDaoToFavoritedDao(
+  dao: DaoDetails,
+  network: SupportedNetworks
+): NavigationDao {
+  return {
+    address: dao.address.toLocaleLowerCase(),
+    chain: CHAIN_METADATA[network].id,
+    ensDomain: dao.ensDomain,
+    plugins: dao.plugins,
+    metadata: {
+      name: dao.metadata.name,
+      avatar: dao.metadata.avatar,
+      description: dao.metadata.description,
+    },
+  };
 }
