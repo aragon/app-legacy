@@ -6,9 +6,11 @@ import {GridLayout} from 'components/layout';
 import useScreen from 'hooks/useScreen';
 import IconLogoBlue from 'public/iconLogoBlue.svg';
 import {EXPLORE_NAV_LINKS, PRIVACY_NAV_LINKS} from 'utils/constants';
+import {useWallet} from 'hooks/useWallet';
 
 const Footer: React.FC = () => {
   const {isDesktop} = useScreen();
+  const {isOnWrongNetwork} = useWallet();
 
   const ExploreNavLinks = EXPLORE_NAV_LINKS.map(item => (
     <li key={item.label}>
@@ -53,7 +55,11 @@ const Footer: React.FC = () => {
           </ActionContainer>
         </FullSpan>
       </GridLayout>
-      <div className="flex z-10 justify-center items-center py-0.5 pb-8 desktop:pb-0 space-x-1 text-sm text-ui-0 bg-primary-400">
+      <div
+        className={`flex z-10 justify-center items-center py-0.5 ${
+          isOnWrongNetwork ? 'pb-11' : 'pb-8'
+        } desktop:pb-0 space-x-1 text-sm text-ui-0 bg-primary-400`}
+      >
         <IconInfo />
         <span>Aragon App Public Beta</span>
       </div>
