@@ -152,7 +152,15 @@ const DefineMetadata: React.FC<DefineMetadataProps> = ({
             }) => (
               <>
                 <TextInput
-                  {...{name, value, onBlur, onChange}}
+                  {...{
+                    name,
+                    value,
+                    onBlur,
+                    onChange: event => {
+                      event.target.value = event.target.value.toLowerCase();
+                      return onChange(event);
+                    },
+                  }}
                   placeholder={t('placeHolders.ensName')}
                   rightAdornment={
                     <div className="flex items-center px-2 h-full bg-ui-50 rounded-r-xl">
