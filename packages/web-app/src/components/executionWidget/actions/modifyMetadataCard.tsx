@@ -1,9 +1,9 @@
-import React from 'react';
-
 import {AvatarDao, ListItemLink} from '@aragon/ui-components';
+import React, {useMemo} from 'react';
+import {useTranslation} from 'react-i18next';
+
 import {AccordionMethod} from 'components/accordionMethod';
 import {ActionCardDlContainer, Dd, Dl, Dt} from 'components/descriptionList';
-import {useTranslation} from 'react-i18next';
 import {resolveDaoAvatarIpfsCid} from 'utils/library';
 import {ActionUpdateMetadata} from 'utils/types';
 
@@ -15,6 +15,17 @@ export const ModifyMetadataCard: React.FC<{action: ActionUpdateMetadata}> = ({
   const displayedLinks = inputs.links.filter(
     l => l.url !== '' && l.name !== ''
   );
+
+  const avatar = useMemo(() => {
+    if (typeof inputs.avatar === 'string')
+      return resolveDaoAvatarIpfsCid(inputs.avatar);
+
+    try {
+      return URL.createObjectURL(inputs.avatar as unknown as Blob);
+    } catch (err) {
+      console.error(err);
+    }
+  }, [inputs.avatar]);
 
   return (
     <AccordionMethod
@@ -28,11 +39,7 @@ export const ModifyMetadataCard: React.FC<{action: ActionUpdateMetadata}> = ({
         <Dl>
           <Dt>{t('labels.logo')}</Dt>
           <Dd>
-            <AvatarDao
-              daoName={inputs.name}
-              src={resolveDaoAvatarIpfsCid(inputs.avatar)}
-              size="small"
-            />
+            <AvatarDao daoName={inputs.name} src={avatar} size="small" />
           </Dd>
         </Dl>
         <Dl>

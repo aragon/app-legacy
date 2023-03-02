@@ -40,17 +40,7 @@ import {
 import {useGlobalModalContext} from './globalModals';
 import {useNetwork} from './network';
 import {usePrivacyContext} from './privacyContext';
-
-function readFile(file: Blob): Promise<ArrayBuffer> {
-  return new Promise((resolve, reject) => {
-    const fr = new FileReader();
-    fr.onload = () => {
-      resolve(fr.result as ArrayBuffer);
-    };
-    fr.onerror = reject;
-    fr.readAsArrayBuffer(file);
-  });
-}
+import {readFile} from 'utils/library';
 
 type CreateDaoContextType = {
   /** Prepares the creation data and awaits user confirmation to start process */
@@ -270,6 +260,7 @@ const CreateDaoProvider: React.FC = ({children}) => {
       links: links.filter(r => r.name && r.url),
     };
 
+    console.log(daoLogo);
     if (daoLogo) {
       try {
         const daoLogoBuffer = await readFile(daoLogo as Blob);
