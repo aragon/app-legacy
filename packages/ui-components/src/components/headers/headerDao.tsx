@@ -101,7 +101,7 @@ export const HeaderDao: React.FC<HeaderDaoProps> = ({
       <ContentWrapper>
         <Content>
           <Title>{daoName}</Title>
-          <p className="desktop:mt-0.5 font-semibold text-ui-500 mt-0.25">
+          <p className="mt-0.25 desktop:mt-0.5 font-semibold text-ui-500">
             {daoEnsName}
           </p>
           <Link
