@@ -275,6 +275,7 @@ const Dashboard: React.FC = () => {
       <HeaderWrapper>
         <HeaderDao
           daoName={dao.metadata.name}
+          daoEnsName={dao.ensDomain}
           daoAvatar={dao.metadata.avatar}
           daoUrl={`app.aragon.org/#/daos/${network}/${daoId}`}
           description={dao.metadata.description}

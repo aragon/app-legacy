@@ -22,6 +22,7 @@ const DEFAULT_LINKS_SHOWN = 3;
 
 export type HeaderDaoProps = {
   daoName: string;
+  daoEnsName: string;
   daoAvatar?: string;
   daoUrl: string;
   description: string;
@@ -47,6 +48,7 @@ type DescriptionProps = {
 
 export const HeaderDao: React.FC<HeaderDaoProps> = ({
   daoName,
+  daoEnsName,
   daoAvatar,
   daoUrl,
   description,
@@ -99,12 +101,16 @@ export const HeaderDao: React.FC<HeaderDaoProps> = ({
       <ContentWrapper>
         <Content>
           <Title>{daoName}</Title>
+          <p className="desktop:mt-0.5 font-semibold text-ui-500 mt-0.25">
+            {daoEnsName}
+          </p>
           <Link
             label={daoUrl}
             iconRight={<IconCopy />}
             onClick={copiedOnClick}
+            className="mt-1.5"
           />
-          <div>
+          <div className="mt-1.5">
             <Description ref={descriptionRef} {...{fullDescription: showAll}}>
               {description}
             </Description>
@@ -206,7 +212,7 @@ const ContentWrapper = styled.div.attrs({
 })``;
 
 const Content = styled.div.attrs({
-  className: 'col-span-10 space-y-1.5',
+  className: 'col-span-10',
 })``;
 
 const AvatarContainer = styled.div.attrs({
