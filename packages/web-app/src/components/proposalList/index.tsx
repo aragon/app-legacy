@@ -178,8 +178,7 @@ export function proposal2CardProps(
       // show winning vote option
       if (
         biggestVoteOption.percentage >
-        // TODO: Change this from hardcoded value
-        (proposal?.settings?.supportThreshold || 0.5) * 100
+        proposal.settings.supportThreshold * 100
       ) {
         const options: {[k in TokenVotingOptions]: string} = {
           yes: t('votingTerminal.yes'),
