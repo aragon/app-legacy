@@ -3,8 +3,11 @@ import {DaoDetails} from '@aragon/sdk-client';
 import {resolveIpfsCid} from '@aragon/sdk-common';
 import {useEffect, useState} from 'react';
 
-import {pendingDaoCreationVar} from 'context/apolloClient';
+import {favoriteDaosVar, pendingDaoCreationVar} from 'context/apolloClient';
 import {useNetwork} from 'context/network';
+import {usePrivacyContext} from 'context/privacyContext';
+import {CHAIN_METADATA, FAVORITE_DAOS_KEY} from 'utils/constants';
+import {customJSONReplacer, mapDetailedDaoToFavoritedDao} from 'utils/library';
 import {HookData} from 'utils/types';
 import {useClient} from './useClient';
 
@@ -25,6 +28,8 @@ export function useDaoDetails(
   const [waitingForSubgraph, setWaitingForSubgraph] = useState(false);
   const {network} = useNetwork();
   const cachedDaos = useReactiveVar(pendingDaoCreationVar);
+  const favoritedDaos = useReactiveVar(favoriteDaosVar);
+  const {preferences} = usePrivacyContext();
 
   useEffect(() => {
     async function getDaoMetadata() {
@@ -57,8 +62,43 @@ export function useDaoDetails(
             }
             setData(dao);
             setWaitingForSubgraph(false);
-          } else {
-            setData(null);
+
+            // check if current DAO is in the favorites cache
+            const indexOfCurrentDaoInFavorites = favoritedDaos.findIndex(
+              d =>
+                d.address === dao.address &&
+                d.chain === CHAIN_METADATA[network].id
+            );
+
+            // map currently fetched DAO to cached DAO type
+            const currentDaoAsFavoritedDao = mapDetailedDaoToFavoritedDao(
+              dao,
+              network
+            );
+
+            if (
+              // currently fetched dao is favorited
+              indexOfCurrentDaoInFavorites !== -1 &&
+              // the DAO data is different (post update metadata proposal execution)
+              JSON.stringify(favoritedDaos[indexOfCurrentDaoInFavorites]) !==
+                JSON.stringify(currentDaoAsFavoritedDao)
+            ) {
+              // update reactive cache with new DAO data
+              const newFavoriteCache = [...favoritedDaos];
+              newFavoriteCache[indexOfCurrentDaoInFavorites] = {
+                ...currentDaoAsFavoritedDao,
+              };
+
+              favoriteDaosVar(newFavoriteCache);
+
+              // update local storage
+              if (preferences?.functional) {
+                localStorage.setItem(
+                  FAVORITE_DAOS_KEY,
+                  JSON.stringify(newFavoriteCache, customJSONReplacer)
+                );
+              }
+            }
           }
         }
       } catch (err) {
@@ -70,7 +110,11 @@ export function useDaoDetails(
     }
 
     if (daoId) getDaoMetadata();
-  }, [cachedDaos, client?.methods, daoId, network]);
+
+    // intentionally keeping favoritedDaos out because this effect need not be
+    // rerun even if that variable changes
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [cachedDaos, client?.methods, daoId, network, preferences?.functional]);
 
   return {data, error, isLoading, waitingForSubgraph};
 }
