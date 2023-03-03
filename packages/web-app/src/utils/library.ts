@@ -403,7 +403,7 @@ export function resolveDaoAvatarIpfsCid(avatar?: string): string | undefined {
   if (avatar) {
     try {
       const logoCid = resolveIpfsCid(avatar);
-      return `https://ipfs.io/ipfs/${logoCid}`;
+      return `https://ipfs.eth.aragon.network/ipfs/${logoCid}`;
     } catch (err) {
       console.warn('Error resolving DAO avatar IPFS Cid', err);
     }

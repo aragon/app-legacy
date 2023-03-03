@@ -50,7 +50,7 @@ export function useDaoDetails(
             if (dao.metadata.avatar) {
               try {
                 const logoCid = resolveIpfsCid(dao.metadata.avatar);
-                dao.metadata.avatar = `https://ipfs.io/ipfs/${logoCid}`;
+                dao.metadata.avatar = `https://ipfs.eth.aragon.network/ipfs/${logoCid}`;
               } catch (err) {
                 dao.metadata.avatar = undefined;
               }
