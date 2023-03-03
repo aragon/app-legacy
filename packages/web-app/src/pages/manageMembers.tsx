@@ -65,6 +65,7 @@ const ManageMembers: React.FC = () => {
     defaultValues: {
       links: [{name: '', url: ''}],
       proposalTitle: '',
+      startSwitch: 'now',
       durationSwitch: 'duration',
       actions: [] as Array<
         | ActionAddAddress
