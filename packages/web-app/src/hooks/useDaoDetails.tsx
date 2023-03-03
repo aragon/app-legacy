@@ -16,10 +16,10 @@ import {useClient} from './useClient';
  */
 export function useDaoDetails(
   daoId: string
-): HookData<DaoDetails | undefined> & {waitingForSubgraph: boolean} {
+): HookData<DaoDetails | undefined | null> & {waitingForSubgraph: boolean} {
   const {client} = useClient();
 
-  const [data, setData] = useState<DaoDetails>();
+  const [data, setData] = useState<DaoDetails | null>();
   const [error, setError] = useState<Error>();
   const [isLoading, setIsLoading] = useState(false);
   const [waitingForSubgraph, setWaitingForSubgraph] = useState(false);
@@ -45,6 +45,7 @@ export function useDaoDetails(
           setWaitingForSubgraph(true);
         } else {
           const dao = await client?.methods.getDao(daoId.toLowerCase());
+
           if (dao) {
             if (dao.metadata.avatar) {
               try {
@@ -56,6 +57,8 @@ export function useDaoDetails(
             }
             setData(dao);
             setWaitingForSubgraph(false);
+          } else {
+            setData(null);
           }
         }
       } catch (err) {

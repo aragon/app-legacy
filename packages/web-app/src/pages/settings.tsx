@@ -124,7 +124,7 @@ const Settings: React.FC = () => {
 };
 
 export interface IPluginSettings {
-  daoDetails: DaoDetails | undefined;
+  daoDetails: DaoDetails | undefined | null;
 }
 
 export const PluginSettingsWrapper: React.FC<IPluginSettings> = ({

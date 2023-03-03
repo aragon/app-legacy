@@ -14,7 +14,7 @@ import {Views} from '.';
 
 type CompareMetadataProps = {
   daoId: string;
-  daoDetails?: DaoDetails;
+  daoDetails?: DaoDetails | null;
   view: Views;
 };
 
