@@ -23,10 +23,10 @@ export function useDaoParam() {
   useEffect(() => {
     if (isLoading) {
       return;
-    } else if (error) {
+    } else if (error || data === null) {
       navigate(NotFound, {replace: true, state: {incorrectDao: dao}});
     }
-  }, [dao, error, isLoading, navigate]);
+  }, [dao, data, error, isLoading, navigate]);
 
   return {
     daoDetails: data,
