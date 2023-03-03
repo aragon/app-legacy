@@ -38,7 +38,8 @@ const MintToken: React.FC = () => {
     mode: 'onChange',
     defaultValues: {
       links: [{name: '', url: ''}],
-      durationSwitch: 'date',
+      startSwitch: 'now',
+      durationSwitch: 'duration',
       actions: [] as Array<ActionMintToken>,
     },
   });
