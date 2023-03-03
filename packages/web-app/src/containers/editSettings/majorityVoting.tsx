@@ -166,12 +166,11 @@ export const EditMvSettings: React.FC<EditMvSettingsProps> = ({
   ]);
 
   // metadata setting changes
-  const isMetadataChanged =
-    daoDetails?.metadata.name &&
+  const isMetadataChanged = (daoDetails?.metadata.name &&
     (daoName !== daoDetails.metadata.name ||
       daoSummary !== daoDetails.metadata.description ||
       daoLogo !== daoDetails.metadata.avatar ||
-      !resourceLinksAreEqual);
+      !resourceLinksAreEqual)) as boolean;
 
   // governance
   const daoVotingMode = decodeVotingMode(
@@ -274,6 +273,15 @@ export const EditMvSettings: React.FC<EditMvSettingsProps> = ({
     setCurrentCommunity();
     setCurrentGovernance();
   };
+
+  useEffect(() => {
+    setValue('isMetadataChanged', isMetadataChanged);
+    setValue('areSettingsChanged', isCommunityChanged || isGovernanceChanged);
+
+    // intentionally using settingsUnchanged because it monitors all
+    // the setting changes
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [settingsUnchanged, setValue]);
 
   useEffect(() => {
     setCurrentMetadata();

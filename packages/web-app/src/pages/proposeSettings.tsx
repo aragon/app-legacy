@@ -78,11 +78,34 @@ const ProposeSettings: React.FC = () => {
   const {t} = useTranslation();
   const {data: daoId, isLoading: daoParamLoading} = useDaoParam();
   const {network} = useNetwork();
+
+  const {getValues, setValue} = useFormContext();
   const [showTxModal, setShowTxModal] = useState(false);
 
   const enableTxModal = () => {
     setShowTxModal(true);
   };
+
+  // filter actions making sure unchanged information is not bundled
+  // into the list of actions
+  const filterActions = useCallback(() => {
+    const [formActions, settingsChanged, metadataChanged] = getValues([
+      'actions',
+      'areSettingsChanged',
+      'isMetadataChanged',
+    ]);
+
+    const filteredActions = (formActions as Array<Action>).filter(action => {
+      if (action.name === 'modify_metadata' && metadataChanged) return action;
+      else if (
+        action.name === 'modify_token_voting_settings' &&
+        settingsChanged
+      )
+        return action;
+    });
+
+    setValue('actions', filteredActions);
+  }, [getValues, setValue]);
 
   if (daoParamLoading) {
     return <Loading />;
@@ -101,6 +124,10 @@ const ProposeSettings: React.FC = () => {
         <Step
           wizardTitle={t('settings.proposeSettings')}
           wizardDescription={t('settings.proposeSettingsSubtitle')}
+          onNextButtonClicked={next => {
+            filterActions();
+            next();
+          }}
         >
           <CompareSettings />
         </Step>
