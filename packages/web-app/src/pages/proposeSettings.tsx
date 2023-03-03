@@ -328,7 +328,10 @@ const ProposeSettingWrapper: React.FC<Props> = ({
         if (action.name === 'modify_metadata') {
           const preparedAction = {...action};
 
-          if (preparedAction.inputs.avatar) {
+          if (
+            preparedAction.inputs.avatar &&
+            typeof preparedAction.inputs.avatar !== 'string'
+          ) {
             try {
               const daoLogoBuffer = await readFile(
                 preparedAction.inputs.avatar as unknown as Blob
