@@ -190,6 +190,15 @@ export const EditMsSettings: React.FC<EditMsSettingsProps> = ({
   };
 
   useEffect(() => {
+    setValue('isMetadataChanged', isMetadataChanged);
+    setValue('areSettingsChanged', isGovernanceChanged);
+
+    // intentionally using settingsUnchanged because it monitors all
+    // the setting changes
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [settingsUnchanged, setValue]);
+
+  useEffect(() => {
     setCurrentMetadata();
     setCurrentGovernance();
   }, [setCurrentGovernance, setCurrentMetadata]);

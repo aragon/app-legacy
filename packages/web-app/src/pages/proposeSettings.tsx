@@ -95,13 +95,17 @@ const ProposeSettings: React.FC = () => {
       'isMetadataChanged',
     ]);
 
+    // ignore every action that is not modifying the metadata and voting settings
     const filteredActions = (formActions as Array<Action>).filter(action => {
-      if (action.name === 'modify_metadata' && metadataChanged) return action;
-      else if (
-        action.name === 'modify_token_voting_settings' &&
-        settingsChanged
-      )
+      if (action.name === 'modify_metadata' && metadataChanged) {
         return action;
+      } else if (
+        (action.name === 'modify_token_voting_settings' ||
+          action.name === 'modify_multisig_voting_settings') &&
+        settingsChanged
+      ) {
+        return action;
+      }
     });
 
     setValue('actions', filteredActions);
