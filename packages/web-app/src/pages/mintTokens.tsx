@@ -27,9 +27,17 @@ import {useNetwork} from 'context/network';
 import {useDaoParam} from 'hooks/useDaoParam';
 import {Community} from 'utils/paths';
 import {ActionMintToken} from 'utils/types';
+import {useDaoDetails} from 'hooks/useDaoDetails';
+import {PluginTypes} from 'hooks/usePluginClient';
+import {usePluginSettings} from 'hooks/usePluginSettings';
 
 const MintToken: React.FC = () => {
-  const {data: dao, isLoading} = useDaoParam();
+  const {data: dao} = useDaoParam();
+  const {data: daoDetails, isLoading} = useDaoDetails(dao);
+  const {data: pluginSettings, isLoading: settingsLoading} = usePluginSettings(
+    daoDetails?.plugins[0].instanceAddress as string,
+    daoDetails?.plugins[0].id as PluginTypes
+  );
 
   const {t} = useTranslation();
   const {network} = useNetwork();
@@ -61,7 +69,7 @@ const MintToken: React.FC = () => {
    *                    Render                     *
    *************************************************/
 
-  if (isLoading) {
+  if (isLoading || settingsLoading) {
     return <Loading />;
   }
 
@@ -96,7 +104,7 @@ const MintToken: React.FC = () => {
               wizardDescription={t('newWithdraw.setupVoting.description')}
               isNextButtonDisabled={!setupVotingIsValid(errors)}
             >
-              <SetupVotingForm />
+              <SetupVotingForm pluginSettings={pluginSettings} />
             </Step>
             <Step
               wizardTitle={t('newWithdraw.defineProposal.heading')}

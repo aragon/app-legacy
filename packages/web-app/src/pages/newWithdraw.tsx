@@ -30,6 +30,9 @@ import {getCanonicalUtcOffset} from 'utils/date';
 import {formatUnits} from 'utils/library';
 import {Finance} from 'utils/paths';
 import {BaseTokenInfo} from 'utils/types';
+import {useDaoDetails} from 'hooks/useDaoDetails';
+import {PluginTypes} from 'hooks/usePluginClient';
+import {usePluginSettings} from 'hooks/usePluginSettings';
 
 export type TokenFormData = {
   tokenName: string;
@@ -86,10 +89,17 @@ export const defaultValues = {
 
 const NewWithdraw: React.FC = () => {
   const {t} = useTranslation();
-  const {data: dao, isLoading} = useDaoParam();
   const {network} = useNetwork();
   const {address} = useWallet();
   const [showTxModal, setShowTxModal] = useState(false);
+
+  const {data: dao} = useDaoParam();
+  const {data: balances} = useDaoBalances(dao);
+  const {data: daoDetails, isLoading: detailsLoading} = useDaoDetails(dao);
+  const {data: pluginSettings, isLoading: settingsLoading} = usePluginSettings(
+    daoDetails?.plugins[0].instanceAddress as string,
+    daoDetails?.plugins[0].id as PluginTypes
+  );
 
   const formMethods = useForm<WithdrawFormData>({
     defaultValues,
@@ -102,8 +112,6 @@ const NewWithdraw: React.FC = () => {
     name: ['actions.0.tokenAddress'],
     control: formMethods.control,
   });
-
-  const {data: balances} = useDaoBalances(dao);
 
   /*************************************************
    *             Callbacks and Handlers            *
@@ -148,7 +156,7 @@ const NewWithdraw: React.FC = () => {
    *                    Render                     *
    *************************************************/
 
-  if (isLoading) {
+  if (detailsLoading || settingsLoading) {
     return <Loading />;
   }
 
@@ -225,7 +233,7 @@ const NewWithdraw: React.FC = () => {
                   next();
                 }}
               >
-                <SetupVotingForm />
+                <SetupVotingForm pluginSettings={pluginSettings} />
               </Step>
               <Step
                 wizardTitle={t('newWithdraw.defineProposal.heading')}

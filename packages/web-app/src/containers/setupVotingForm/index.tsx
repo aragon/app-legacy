@@ -2,31 +2,19 @@ import React, {useEffect} from 'react';
 import {useFormContext} from 'react-hook-form';
 import styled from 'styled-components';
 
-import {Loading} from 'components/temporary';
-import {useDaoDetails} from 'hooks/useDaoDetails';
-import {useDaoParam} from 'hooks/useDaoParam';
-import {PluginTypes} from 'hooks/usePluginClient';
 import {
   isMultisigVotingSettings,
   isTokenVotingSettings,
-  usePluginSettings,
 } from 'hooks/usePluginSettings';
-import {StringIndexed} from 'utils/types';
+import {StringIndexed, SupportedVotingSettings} from 'utils/types';
 import SetupMultisigVotingForm from './multisig';
 import SetupTokenVotingForm from './tokenVoting';
 
-const SetupVotingForm: React.FC = () => {
-  /*************************************************
-   *                    STATE                      *
-   *************************************************/
-  const {data: daoId} = useDaoParam();
+type Props = {
+  pluginSettings: SupportedVotingSettings;
+};
 
-  const {data: daoDetails, isLoading: detailsLoading} = useDaoDetails(daoId!);
-  const {data: pluginSettings, isLoading: settingsLoading} = usePluginSettings(
-    daoDetails?.plugins[0].instanceAddress as string,
-    daoDetails?.plugins[0].id as PluginTypes
-  );
-
+const SetupVotingForm: React.FC<Props> = ({pluginSettings}) => {
   const {setError, clearErrors} = useFormContext();
 
   /*************************************************
@@ -39,14 +27,6 @@ const SetupVotingForm: React.FC = () => {
       clearErrors('areSettingsLoading');
     }
   }, [clearErrors, pluginSettings, setError]);
-
-  if (
-    detailsLoading ||
-    settingsLoading ||
-    Object.keys(pluginSettings).length === 0
-  ) {
-    return <Loading />;
-  }
 
   // Display plugin screens
   if (isTokenVotingSettings(pluginSettings)) {

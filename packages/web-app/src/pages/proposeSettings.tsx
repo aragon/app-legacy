@@ -76,11 +76,17 @@ import {
 
 const ProposeSettings: React.FC = () => {
   const {t} = useTranslation();
-  const {data: daoId, isLoading: daoParamLoading} = useDaoParam();
   const {network} = useNetwork();
 
   const {getValues, setValue} = useFormContext();
   const [showTxModal, setShowTxModal] = useState(false);
+
+  const {data: daoId} = useDaoParam();
+  const {data: daoDetails, isLoading} = useDaoDetails(daoId);
+  const {data: pluginSettings, isLoading: settingsLoading} = usePluginSettings(
+    daoDetails?.plugins[0].instanceAddress as string,
+    daoDetails?.plugins[0].id as PluginTypes
+  );
 
   const enableTxModal = () => {
     setShowTxModal(true);
@@ -111,7 +117,7 @@ const ProposeSettings: React.FC = () => {
     setValue('actions', filteredActions);
   }, [getValues, setValue]);
 
-  if (daoParamLoading) {
+  if (isLoading || settingsLoading) {
     return <Loading />;
   }
 
@@ -145,7 +151,7 @@ const ProposeSettings: React.FC = () => {
           wizardTitle={t('newWithdraw.setupVoting.title')}
           wizardDescription={t('newWithdraw.setupVoting.description')}
         >
-          <SetupVotingForm />
+          <SetupVotingForm pluginSettings={pluginSettings} />
         </Step>
         <Step
           wizardTitle={t('newWithdraw.reviewProposal.heading')}

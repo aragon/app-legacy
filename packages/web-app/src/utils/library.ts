@@ -6,6 +6,7 @@ import {
   Erc20TokenDetails,
   IMintTokenParams,
   MultisigClient,
+  MultisigVotingSettings,
   TokenVotingClient,
   VotingMode,
 } from '@aragon/sdk-client';
@@ -23,6 +24,7 @@ import {
   SupportedNetworks,
 } from 'utils/constants';
 import {
+  Action,
   ActionAddAddress,
   ActionMintToken,
   ActionRemoveAddress,
@@ -444,4 +446,25 @@ export function mapDetailedDaoToFavoritedDao(
       description: dao.metadata.description,
     },
   };
+}
+
+/**
+ * Filters out action containing unchanged min approvals
+ * @param actions form actions
+ * @param pluginSettings DAO plugin settings
+ * @returns list of actions without update plugin settings action
+ * if Multisig DAO minimum approvals did not change
+ */
+export function removeUnchangedMinimumApprovalAction(
+  actions: Action[],
+  pluginSettings: MultisigVotingSettings
+) {
+  return actions.flatMap(action => {
+    if (
+      action.name === 'modify_multisig_voting_settings' &&
+      Number(action.inputs.minApprovals) === pluginSettings.minApprovals
+    )
+      return [];
+    else return action;
+  });
 }
