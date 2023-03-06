@@ -16,7 +16,6 @@ const CommunityAddressesModal: React.FC<CommunityAddressesModalProps> = ({
   tokenMembership,
 }) => {
   const [searchValue, setSearchValue] = useState('');
-  const [page, setPage] = useState<number>(1);
   const {getValues} = useFormContext();
   const {isAddressesOpen, close} = useGlobalModalContext();
   const {wallets, tokenSymbol, multisigWallets} = getValues();
@@ -68,13 +67,11 @@ const CommunityAddressesModal: React.FC<CommunityAddressesModalProps> = ({
         />
       </ModalHeader>
       <Container>
-        {filteredAddressList && filteredAddressList.length !== 0 ? (
+        {filteredAddressList?.length > 0 ? (
           <VotersTable
-            voters={filteredAddressList.slice(0, page * 5)}
+            voters={filteredAddressList}
             {...(tokenMembership && {showAmount: true})}
-            {...(page * 5 < filteredAddressList.length && {
-              onLoadMore: () => setPage(prePage => prePage + 1),
-            })}
+            pageSize={filteredAddressList.length}
           />
         ) : (
           // this view is temporary until designs arrive
