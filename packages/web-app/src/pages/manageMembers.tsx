@@ -1,5 +1,6 @@
+import {MultisigVotingSettings} from '@aragon/sdk-client';
 import {withTransaction} from '@elastic/apm-rum-react';
-import React, {useState} from 'react';
+import React, {useCallback, useState} from 'react';
 import {
   FieldErrors,
   FormProvider,
@@ -14,6 +15,7 @@ import {FullScreenStepper, Step} from 'components/fullScreenStepper';
 import {Loading} from 'components/temporary';
 import AddAddresses from 'containers/actionBuilder/addAddresses';
 import RemoveAddresses from 'containers/actionBuilder/removeAddresses';
+import UpdateMinimumApproval from 'containers/actionBuilder/updateMinimumApproval';
 import DefineProposal, {
   isValid as defineProposalIsValid,
 } from 'containers/defineProposal';
@@ -24,19 +26,22 @@ import SetupVotingForm, {
 import {ActionsProvider} from 'context/actions';
 import {CreateProposalProvider} from 'context/createProposal';
 import {useNetwork} from 'context/network';
+import {useDaoDetails} from 'hooks/useDaoDetails';
+import {useDaoMembers} from 'hooks/useDaoMembers';
 import {useDaoParam} from 'hooks/useDaoParam';
+import {PluginTypes} from 'hooks/usePluginClient';
+import {usePluginSettings} from 'hooks/usePluginSettings';
+import {removeUnchangedMinimumApprovalAction} from 'utils/library';
 import {Community} from 'utils/paths';
 import {
   ActionAddAddress,
   ActionRemoveAddress,
   ActionUpdateMultisigPluginSettings,
 } from 'utils/types';
-import UpdateMinimumApproval from 'containers/actionBuilder/updateMinimumApproval';
-import {useDaoDetails} from 'hooks/useDaoDetails';
-import {useDaoMembers} from 'hooks/useDaoMembers';
-import {PluginTypes} from 'hooks/usePluginClient';
-import {usePluginSettings} from 'hooks/usePluginSettings';
-import {MultisigVotingSettings} from '@aragon/sdk-client';
+
+type ManageMemberActionTypes = Array<
+  ActionAddAddress | ActionRemoveAddress | ActionUpdateMultisigPluginSettings
+>;
 
 const ManageMembers: React.FC = () => {
   const {data: dao, isLoading} = useDaoParam();
@@ -48,7 +53,7 @@ const ManageMembers: React.FC = () => {
   // dao data
   const {data: daoDetails} = useDaoDetails(dao);
   // plugin data
-  const {data: votingSettings} = usePluginSettings(
+  const {data: pluginSettings} = usePluginSettings(
     daoDetails?.plugins[0].instanceAddress as string,
     daoDetails?.plugins[0].id as PluginTypes
   );
@@ -56,7 +61,7 @@ const ManageMembers: React.FC = () => {
     daoDetails?.plugins?.[0]?.instanceAddress || '',
     (daoDetails?.plugins?.[0]?.id as PluginTypes) || undefined
   );
-  const multisigDAOSettings = votingSettings as MultisigVotingSettings;
+  const multisigDAOSettings = pluginSettings as MultisigVotingSettings;
 
   // *** end of TODO ***
 
@@ -67,11 +72,7 @@ const ManageMembers: React.FC = () => {
       proposalTitle: '',
       startSwitch: 'now',
       durationSwitch: 'duration',
-      actions: [] as Array<
-        | ActionAddAddress
-        | ActionRemoveAddress
-        | ActionUpdateMultisigPluginSettings
-      >,
+      actions: [] as ManageMemberActionTypes,
     },
   });
   const {errors, dirtyFields} = useFormState({
@@ -84,6 +85,20 @@ const ManageMembers: React.FC = () => {
   });
 
   const [showTxModal, setShowTxModal] = useState(false);
+
+  const handleGoToSetupVoting = useCallback(
+    (next: () => void) => {
+      formMethods.setValue(
+        'actions',
+        removeUnchangedMinimumApprovalAction(
+          formActions,
+          multisigDAOSettings
+        ) as ManageMemberActionTypes
+      );
+      next();
+    },
+    [formActions, formMethods, multisigDAOSettings]
+  );
 
   /*************************************************
    *                    Render                     *
@@ -115,6 +130,7 @@ const ManageMembers: React.FC = () => {
                   multisigDAOSettings?.minApprovals
                 )
               }
+              onNextButtonClicked={handleGoToSetupVoting}
               onNextButtonDisabledClicked={() => formMethods.trigger('actions')}
             >
               <>
@@ -141,7 +157,7 @@ const ManageMembers: React.FC = () => {
               wizardDescription={t('newWithdraw.setupVoting.description')}
               isNextButtonDisabled={!setupVotingIsValid(errors)}
             >
-              <SetupVotingForm />
+              <SetupVotingForm pluginSettings={pluginSettings} />
             </Step>
             <Step
               wizardTitle={t('newWithdraw.defineProposal.heading')}
@@ -191,15 +207,14 @@ function actionsAreValid(
   for (let i = 0; i < formActions.length; i++) {
     if (formActions[i].name === 'add_address') {
       containsEmptyField = (
-        formActions[i] as ActionAddAddress | ActionRemoveAddress
+        formActions[i] as ActionAddAddress
       ).inputs?.memberWallets.some(w => w.address === '');
       continue;
     }
 
     if (formActions[i].name === 'remove_address') {
-      removedWallets += (
-        formActions[i] as ActionAddAddress | ActionRemoveAddress
-      ).inputs.memberWallets.length;
+      removedWallets += (formActions[i] as ActionRemoveAddress).inputs
+        .memberWallets.length;
       continue;
     }
 
