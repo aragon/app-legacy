@@ -74,29 +74,22 @@ const DepositForm: React.FC = () => {
             ? utils.formatEther(walletBalance || 0)
             : fetchBalance(tokenAddress, address, provider, nativeCurrency),
           fetchTokenData(tokenAddress, client, network, tokenSymbol),
+          getTokenInfo(tokenAddress, provider, nativeCurrency),
         ]);
 
-        const [balance, data] = await allTokenInfoPromise;
-        if (data) {
-          setValue('tokenName', data.name);
-          setValue('tokenSymbol', data.symbol);
-          setValue('tokenImgUrl', data.imgUrl);
+        const [balance, apiData, chainData] = await allTokenInfoPromise;
+        if (apiData) {
+          setValue('tokenName', apiData.name);
+          setValue('tokenSymbol', apiData.symbol);
+          setValue('tokenImgUrl', apiData.imgUrl);
         }
 
-        // query blockchain because current api doesn't not contain token decimals
-        const {name, symbol, decimals} = await getTokenInfo(
-          tokenAddress,
-          provider,
-          nativeCurrency
-        );
-
-        // just in case api fails for whatever reason
-        if (!data) {
-          setValue('tokenName', name);
-          setValue('tokenSymbol', symbol);
+        if (!apiData) {
+          setValue('tokenName', chainData.name);
+          setValue('tokenSymbol', chainData.symbol);
         }
 
-        setValue('tokenDecimals', decimals);
+        setValue('tokenDecimals', Number(chainData.decimals));
         setValue('tokenBalance', balance);
       } catch (error) {
         /**

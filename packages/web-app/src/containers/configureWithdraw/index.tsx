@@ -116,29 +116,27 @@ const ConfigureWithdrawForm: React.FC<ConfigureWithdrawFormProps> = ({
             ? provider.getBalance(daoAddress)
             : fetchBalance(tokenAddress, daoAddress, provider, nativeCurrency),
           fetchTokenData(tokenAddress, client, network, tokenSymbol),
+          getTokenInfo(tokenAddress, provider, nativeCurrency),
         ]);
 
-        const [balance, data] = await allTokenInfoPromise;
-        if (data) {
-          setValue(`actions.${actionIndex}.tokenName`, data.name);
-          setValue(`actions.${actionIndex}.tokenSymbol`, data.symbol);
-          setValue(`actions.${actionIndex}.tokenImgUrl`, data.imgUrl);
-          setValue(`actions.${actionIndex}.tokenPrice`, data.price);
+        const [balance, apiData, chainData] = await allTokenInfoPromise;
+        if (apiData) {
+          setValue(`actions.${actionIndex}.tokenName`, apiData.name);
+          setValue(`actions.${actionIndex}.tokenSymbol`, apiData.symbol);
+          setValue(`actions.${actionIndex}.tokenImgUrl`, apiData.imgUrl);
+          setValue(`actions.${actionIndex}.tokenPrice`, apiData.price);
         }
 
-        // use blockchain if api data unavailable
-        const {name, symbol, decimals} = await getTokenInfo(
-          tokenAddress,
-          provider,
-          nativeCurrency
+        if (!apiData) {
+          setValue(`actions.${actionIndex}.tokenName`, chainData.name);
+          setValue(`actions.${actionIndex}.tokenSymbol`, chainData.symbol);
+        }
+
+        debugger;
+        setValue(
+          `actions.${actionIndex}.tokenDecimals`,
+          Number(chainData.decimals)
         );
-
-        if (!data) {
-          setValue(`actions.${actionIndex}.tokenName`, name);
-          setValue(`actions.${actionIndex}.tokenSymbol`, symbol);
-        }
-
-        setValue('tokenDecimals', decimals);
         setValue(`actions.${actionIndex}.tokenBalance`, balance);
       } catch (error) {
         /**
