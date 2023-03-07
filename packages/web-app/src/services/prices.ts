@@ -151,22 +151,36 @@ async function fetchTokenData(
  */
 async function fetchTokenPrice(
   address: Address,
-  network: SupportedNetworks
+  network: SupportedNetworks,
+  symbol?: string
 ): Promise<number | undefined> {
   // check if token address is address zero, ie, native token of platform
   const nativeToken = isNativeToken(address);
+  let fetchAddress = address;
+  let fetchNetwork = network;
+
+  // override test network ERC20 with mainnet token address for top tokens
+  if (
+    !nativeToken &&
+    symbol &&
+    network === 'goerli' &&
+    TOP_ETH_SYMBOL_ADDRESSES[symbol.toLowerCase()]
+  ) {
+    fetchAddress = TOP_ETH_SYMBOL_ADDRESSES[symbol.toLowerCase()];
+    fetchNetwork = 'ethereum';
+  }
 
   // network unsupported, or testnet
-  const platformId = ASSET_PLATFORMS[network];
+  const platformId = ASSET_PLATFORMS[fetchNetwork];
   if (!platformId && !nativeToken) return;
 
   // build url based on whether token is ethereum
   const endPoint = `/simple/token_price/${platformId}?vs_currencies=usd&contract_addresses=`;
   const url = nativeToken
     ? `${BASE_URL}/simple/price?ids=${getNativeTokenId(
-        network
+        fetchNetwork
       )}&vs_currencies=usd`
-    : `${BASE_URL}${endPoint}${address}`;
+    : `${BASE_URL}${endPoint}${fetchAddress}`;
 
   try {
     const res = await fetch(url);

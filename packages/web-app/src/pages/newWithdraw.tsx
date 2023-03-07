@@ -147,7 +147,7 @@ const NewWithdraw: React.FC = () => {
       formatUnits(token.count, token.decimals)
     );
 
-    fetchTokenPrice(token.address, network).then(price => {
+    fetchTokenPrice(token.address, network, token.symbol).then(price => {
       formMethods.setValue('actions.0.tokenPrice', price);
     });
 
