@@ -73,10 +73,10 @@ describe('Expiring Promise Cache', () => {
     cache.add('aaa', testPromise(10, 'morning'));
     const gotItem = cache.get('aaa');
     await gotItem;
-    await wait(20);
+    await wait(15);
     cache.add('qqq', testPromise(20, 'evening'));
     cache.add('yyy', testPromise(20, 'goodbye'));
-    const gotItem2 = cache.get('xxx');
+    const gotItem2 = cache.get('aaa');
     expect(gotItem2).toBeUndefined();
     const gotItem3 = cache.get('qqq');
     expect(gotItem3).not.toBeUndefined();
