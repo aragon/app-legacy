@@ -21,24 +21,26 @@ import {ActionsProvider} from 'context/actions';
 import {CreateProposalProvider} from 'context/createProposal';
 import {useNetwork} from 'context/network';
 import {useDaoBalances} from 'hooks/useDaoBalances';
+import {useDaoDetails} from 'hooks/useDaoDetails';
 import {useDaoParam} from 'hooks/useDaoParam';
+import {PluginTypes} from 'hooks/usePluginClient';
+import {usePluginSettings} from 'hooks/usePluginSettings';
 import {useWallet} from 'hooks/useWallet';
 import {generatePath} from 'react-router-dom';
 import {trackEvent} from 'services/analytics';
 import {fetchTokenPrice} from 'services/prices';
+import {MAX_TOKEN_DECIMALS} from 'utils/constants';
 import {getCanonicalUtcOffset} from 'utils/date';
 import {formatUnits} from 'utils/library';
 import {Finance} from 'utils/paths';
 import {BaseTokenInfo} from 'utils/types';
-import {useDaoDetails} from 'hooks/useDaoDetails';
-import {PluginTypes} from 'hooks/usePluginClient';
-import {usePluginSettings} from 'hooks/usePluginSettings';
 
 export type TokenFormData = {
   tokenName: string;
   tokenSymbol: string;
   tokenImgUrl: string;
   tokenAddress: Address;
+  tokenDecimals: number;
   tokenBalance: string;
   tokenPrice?: number;
   isCustomToken: boolean;
@@ -80,6 +82,7 @@ export const defaultValues = {
       from: '',
       amount: '',
       tokenAddress: '',
+      tokenDecimals: MAX_TOKEN_DECIMALS,
       tokenSymbol: '',
       tokenName: '',
       tokenImgUrl: '',
@@ -138,6 +141,7 @@ const NewWithdraw: React.FC = () => {
     formMethods.setValue('actions.0.tokenName', token.name);
     formMethods.setValue('actions.0.tokenImgUrl', token.imgUrl);
     formMethods.setValue('actions.0.tokenAddress', token.address);
+    formMethods.setValue('actions.0.tokenDecimals', token.decimals);
     formMethods.setValue(
       'actions.0.tokenBalance',
       formatUnits(token.count, token.decimals)

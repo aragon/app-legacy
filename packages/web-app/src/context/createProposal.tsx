@@ -141,7 +141,9 @@ const CreateProposalProvider: React.FC<Props> = ({
         case 'withdraw_assets': {
           actions.push(
             client.encoding.withdrawAction({
-              amount: BigInt(Number(action.amount) * Math.pow(10, 18)),
+              amount: BigInt(
+                Number(action.amount) * Math.pow(10, action.tokenDecimals)
+              ),
               recipientAddressOrEns: action.to,
               ...(isNativeToken(action.tokenAddress)
                 ? {type: TokenType.NATIVE}

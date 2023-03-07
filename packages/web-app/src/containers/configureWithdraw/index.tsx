@@ -56,7 +56,7 @@ const ConfigureWithdrawForm: React.FC<ConfigureWithdrawFormProps> = ({
     useFormContext();
 
   const {errors, dirtyFields} = useFormState({control});
-  const [name, from, tokenAddress, isCustomToken, tokenBalance, symbol] =
+  const [name, from, tokenAddress, isCustomToken, tokenBalance, tokenSymbol] =
     useWatch({
       name: [
         `actions.${actionIndex}.name`,
@@ -115,25 +115,30 @@ const ConfigureWithdrawForm: React.FC<ConfigureWithdrawFormProps> = ({
           isNativeToken(tokenAddress)
             ? provider.getBalance(daoAddress)
             : fetchBalance(tokenAddress, daoAddress, provider, nativeCurrency),
-          fetchTokenData(tokenAddress, client, network, symbol),
+          fetchTokenData(tokenAddress, client, network, tokenSymbol),
         ]);
 
-        // use blockchain if api data unavailable
         const [balance, data] = await allTokenInfoPromise;
         if (data) {
           setValue(`actions.${actionIndex}.tokenName`, data.name);
           setValue(`actions.${actionIndex}.tokenSymbol`, data.symbol);
           setValue(`actions.${actionIndex}.tokenImgUrl`, data.imgUrl);
           setValue(`actions.${actionIndex}.tokenPrice`, data.price);
-        } else {
-          const {name, symbol} = await getTokenInfo(
-            tokenAddress,
-            provider,
-            nativeCurrency
-          );
+        }
+
+        // use blockchain if api data unavailable
+        const {name, symbol, decimals} = await getTokenInfo(
+          tokenAddress,
+          provider,
+          nativeCurrency
+        );
+
+        if (!data) {
           setValue(`actions.${actionIndex}.tokenName`, name);
           setValue(`actions.${actionIndex}.tokenSymbol`, symbol);
         }
+
+        setValue('tokenDecimals', decimals);
         setValue(`actions.${actionIndex}.tokenBalance`, balance);
       } catch (error) {
         /**
@@ -166,7 +171,7 @@ const ConfigureWithdrawForm: React.FC<ConfigureWithdrawFormProps> = ({
     network,
     daoAddress,
     nativeCurrency,
-    symbol,
+    tokenSymbol,
   ]);
 
   /*************************************************
@@ -429,7 +434,9 @@ const ConfigureWithdrawForm: React.FC<ConfigureWithdrawFormProps> = ({
                 </div>
                 {tokenBalance && (
                   <TokenBalance>
-                    {`${t('labels.maxBalance')}: ${tokenBalance} ${symbol}`}
+                    {`${t(
+                      'labels.maxBalance'
+                    )}: ${tokenBalance} ${tokenSymbol}`}
                   </TokenBalance>
                 )}
               </div>

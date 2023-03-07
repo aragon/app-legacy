@@ -146,6 +146,7 @@ export async function decodeWithdrawToAction(
       tokenName: response.name,
       tokenPrice: apiResponse?.price || 0,
       tokenSymbol: response.symbol,
+      tokenDecimals: response.decimals,
       isCustomToken: false,
     };
   } catch (error) {
