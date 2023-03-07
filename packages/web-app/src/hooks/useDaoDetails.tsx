@@ -10,6 +10,9 @@ import {CHAIN_METADATA, FAVORITE_DAOS_KEY} from 'utils/constants';
 import {customJSONReplacer, mapDetailedDaoToFavoritedDao} from 'utils/library';
 import {HookData} from 'utils/types';
 import {useClient} from './useClient';
+import {ExpiringPromiseCache} from 'utils/expiringPromiseCache';
+
+const daoDetailsCache = new ExpiringPromiseCache<DaoDetails | null>(10000);
 
 /**
  * Get dao metadata
@@ -49,7 +52,11 @@ export function useDaoDetails(
           }
           setWaitingForSubgraph(true);
         } else {
-          const dao = await client?.methods.getDao(daoId.toLowerCase());
+          const daoKey = daoId.toLowerCase();
+          // if there's no cached promise to fetch this dao,
+          // create one and add it to the cache
+          const dao = await (daoDetailsCache.get(daoKey) ||
+            daoDetailsCache.add(daoKey, client?.methods.getDao(daoKey)));
 
           if (dao) {
             if (dao.metadata.avatar) {
