@@ -132,7 +132,6 @@ const ConfigureWithdrawForm: React.FC<ConfigureWithdrawFormProps> = ({
           setValue(`actions.${actionIndex}.tokenSymbol`, chainData.symbol);
         }
 
-        debugger;
         setValue(
           `actions.${actionIndex}.tokenDecimals`,
           Number(chainData.decimals)
