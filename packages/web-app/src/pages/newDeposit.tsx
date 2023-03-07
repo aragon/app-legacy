@@ -1,26 +1,27 @@
 import {Address} from '@aragon/ui-components/src/utils/addresses';
-import {useTranslation} from 'react-i18next';
 import {withTransaction} from '@elastic/apm-rum-react';
 import React, {useEffect, useRef} from 'react';
-import {useForm, FormProvider} from 'react-hook-form';
+import {FormProvider, useForm} from 'react-hook-form';
+import {useTranslation} from 'react-i18next';
 
-import {Finance} from 'utils/paths';
-import TokenMenu from 'containers/tokenMenu';
-import {useWallet} from 'hooks/useWallet';
-import DepositForm from 'containers/depositForm';
-import {formatUnits} from 'utils/library';
-import ReviewDeposit, {CustomFooter} from 'containers/reviewDeposit';
-import {BaseTokenInfo} from 'utils/types';
-import {TokenFormData} from './newWithdraw';
-import {useWalletTokens} from 'hooks/useWalletTokens';
 import {FullScreenStepper, Step} from 'components/fullScreenStepper';
-import {generatePath} from 'react-router-dom';
+import {Loading} from 'components/temporary';
+import DepositForm from 'containers/depositForm';
+import ReviewDeposit, {CustomFooter} from 'containers/reviewDeposit';
+import TokenMenu from 'containers/tokenMenu';
+import {DepositProvider} from 'context/deposit';
+import {useGlobalModalContext} from 'context/globalModals';
 import {useNetwork} from 'context/network';
 import {useDaoParam} from 'hooks/useDaoParam';
-import {Loading} from 'components/temporary';
-import {DepositProvider} from 'context/deposit';
+import {useWallet} from 'hooks/useWallet';
+import {useWalletTokens} from 'hooks/useWalletTokens';
+import {generatePath} from 'react-router-dom';
 import {trackEvent} from 'services/analytics';
-import {useGlobalModalContext} from 'context/globalModals';
+import {MAX_TOKEN_DECIMALS} from 'utils/constants';
+import {formatUnits} from 'utils/library';
+import {Finance} from 'utils/paths';
+import {BaseTokenInfo} from 'utils/types';
+import {TokenFormData} from './newWithdraw';
 
 export type DepositFormData = TokenFormData & {
   // Deposit data
@@ -31,6 +32,7 @@ export type DepositFormData = TokenFormData & {
   daoName?: string;
 
   // Form metadata
+  tokenDecimals: number;
   isCustomToken: boolean;
 };
 
@@ -39,6 +41,7 @@ const defaultValues = {
   reference: '',
   tokenName: '',
   tokenImgUrl: '',
+  tokenDecimals: MAX_TOKEN_DECIMALS,
   tokenAddress: '',
   tokenSymbol: '',
   isCustomToken: false,
@@ -63,7 +66,6 @@ const NewDeposit: React.FC = () => {
     // add form metadata
     if (address && dao) {
       formMethods.setValue('from', address);
-      formMethods.setValue('to', dao);
       formMethods.setValue('to', dao);
       formMethods.setValue('daoName', daoDetails?.metadata?.name);
     }
@@ -111,6 +113,7 @@ const NewDeposit: React.FC = () => {
       formMethods.resetField('tokenImgUrl');
       formMethods.resetField('tokenAddress');
       formMethods.resetField('tokenBalance');
+      formMethods.resetField('tokenDecimals');
       formMethods.clearErrors('amount');
       return;
     }
@@ -121,6 +124,7 @@ const NewDeposit: React.FC = () => {
     formMethods.setValue('tokenName', token.name);
     formMethods.setValue('tokenImgUrl', token.imgUrl);
     formMethods.setValue('tokenAddress', token.address);
+    formMethods.setValue('tokenDecimals', token.decimals);
     formMethods.setValue(
       'tokenBalance',
       formatUnits(token.count, token.decimals)

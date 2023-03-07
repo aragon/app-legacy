@@ -1,51 +1,47 @@
 import {
   DaoDepositSteps,
   DepositParams,
-  UpdateAllowanceParams,
   TokenType,
   TransferType,
+  UpdateAllowanceParams,
 } from '@aragon/sdk-client';
-import {useFormContext} from 'react-hook-form';
-import {Web3Provider} from '@ethersproject/providers';
-import {generatePath, useNavigate, useParams} from 'react-router-dom';
 import React, {
   createContext,
   ReactNode,
   useCallback,
-  useEffect,
   useContext,
+  useEffect,
   useMemo,
   useState,
 } from 'react';
+import {useFormContext} from 'react-hook-form';
+import {generatePath, useNavigate, useParams} from 'react-router-dom';
 
-import {Finance} from 'utils/paths';
-import {useClient} from 'hooks/useClient';
-import {useWallet} from 'hooks/useWallet';
-import {useNetwork} from './network';
+import {useReactiveVar} from '@apollo/client';
 import DepositModal from 'containers/transactionModals/DepositModal';
+import {BigNumber, constants} from 'ethers';
+import {useClient} from 'hooks/useClient';
+import {usePollGasFee} from 'hooks/usePollGasfee';
+import {useStepper} from 'hooks/useStepper';
+import {useWallet} from 'hooks/useWallet';
 import {DepositFormData} from 'pages/newDeposit';
+import {trackEvent} from 'services/analytics';
 import {
   CHAIN_METADATA,
+  MAX_TOKEN_DECIMALS,
   PENDING_DEPOSITS_KEY,
   TransactionState,
 } from 'utils/constants';
-import {getTokenInfo, isNativeToken} from 'utils/tokens';
-import {useStepper} from 'hooks/useStepper';
-import {usePollGasFee} from 'hooks/usePollGasfee';
-import {useGlobalModalContext} from './globalModals';
-import {useReactiveVar} from '@apollo/client';
-import {pendingDeposits} from './apolloClient';
-import {trackEvent} from 'services/analytics';
 import {customJSONReplacer} from 'utils/library';
-import {BigNumber, constants} from 'ethers';
+import {Finance} from 'utils/paths';
+import {isNativeToken} from 'utils/tokens';
+import {pendingDeposits} from './apolloClient';
+import {useGlobalModalContext} from './globalModals';
+import {useNetwork} from './network';
 
 interface IDepositContextType {
   handleOpenModal: () => void;
 }
-
-export type modalParamsType = {
-  tokenSymbol?: string;
-};
 
 const DepositContext = createContext<IDepositContextType | null>(null);
 
@@ -62,11 +58,15 @@ const DepositProvider = ({children}: {children: ReactNode}) => {
   const {getValues} = useFormContext<DepositFormData>();
   const [depositState, setDepositState] = useState<TransactionState>();
   const [depositParams, setDepositParams] = useState<DepositParams>();
-  const [modalParams, setModalParams] = useState<modalParamsType>({});
   const pendingDepositsTxs = useReactiveVar(pendingDeposits);
 
   const {client} = useClient();
   const {setStep: setModalStep, currentStep} = useStepper(2);
+
+  const [tokenSymbol, tokenDecimals] = getValues([
+    'tokenSymbol',
+    'tokenDecimals',
+  ]);
 
   const shouldPoll = useMemo(
     () =>
@@ -98,9 +98,11 @@ const DepositProvider = ({children}: {children: ReactNode}) => {
   } = usePollGasFee(estimateDepositFees, shouldPoll);
 
   const handleOpenModal = useCallback(async () => {
-    // get deposit data from
-    const {amount, tokenAddress, to, tokenSymbol} = getValues();
-    const tokenAmount = BigInt(Number(amount) * Math.pow(10, 18));
+    // get deposit data from form
+    const {amount, tokenAddress, to, tokenDecimals} = getValues();
+    const tokenAmount = BigInt(
+      Number(amount) * Math.pow(10, tokenDecimals || MAX_TOKEN_DECIMALS)
+    );
 
     // validate and set deposit data
     if (!to) {
@@ -122,11 +124,6 @@ const DepositProvider = ({children}: {children: ReactNode}) => {
             amount: tokenAmount,
           }
     );
-
-    //add more information that aren't in the form
-    setModalParams({
-      tokenSymbol,
-    });
 
     // determine whether to include approval step and show modal
     if (isNativeToken(tokenAddress)) {
@@ -252,12 +249,14 @@ const DepositProvider = ({children}: {children: ReactNode}) => {
   };
 
   const handleDeposit = async () => {
-    const {from, reference, tokenAddress, tokenName, tokenSymbol} = getValues();
-    const {decimals} = await getTokenInfo(
+    const {
+      from,
+      reference,
       tokenAddress,
-      provider as Web3Provider,
-      CHAIN_METADATA[network].nativeCurrency
-    );
+      tokenName,
+      tokenSymbol,
+      tokenDecimals,
+    } = getValues();
 
     let transactionHash = '';
 
@@ -290,7 +289,8 @@ const DepositProvider = ({children}: {children: ReactNode}) => {
                   address: tokenAddress,
                   name: tokenName,
                   symbol: tokenSymbol,
-                  decimals: '18',
+                  decimals:
+                    CHAIN_METADATA[network].nativeCurrency.decimals.toString(),
                 }
               : {
                   transactionId: transactionHash,
@@ -303,7 +303,7 @@ const DepositProvider = ({children}: {children: ReactNode}) => {
                     name: tokenName,
                     address: tokenAddress,
                     symbol: tokenSymbol,
-                    decimals: decimals,
+                    decimals: tokenDecimals,
                   },
                 },
           ];
@@ -353,7 +353,8 @@ const DepositProvider = ({children}: {children: ReactNode}) => {
           handleApproval,
           maxFee,
           averageFee,
-          modalParams,
+          tokenDecimals,
+          tokenSymbol,
           handleOpenModal,
         }}
         state={depositState || TransactionState.WAITING}

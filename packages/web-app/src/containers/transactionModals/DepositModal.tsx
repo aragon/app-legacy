@@ -1,4 +1,3 @@
-import React, {useMemo, useEffect, useState} from 'react';
 import {
   AlertInline,
   ButtonText,
@@ -7,13 +6,13 @@ import {
   Spinner,
 } from '@aragon/ui-components';
 import ModalBottomSheetSwitcher from 'components/modalBottomSheetSwitcher';
-import styled from 'styled-components';
-import {useTranslation} from 'react-i18next';
-import {CHAIN_METADATA, TransactionState} from 'utils/constants';
 import {useNetwork} from 'context/network';
+import React, {useEffect, useMemo, useState} from 'react';
+import {useTranslation} from 'react-i18next';
+import styled from 'styled-components';
+import {CHAIN_METADATA, TransactionState} from 'utils/constants';
 import {formatUnits} from 'utils/library';
 import {isNativeToken} from 'utils/tokens';
-import {modalParamsType} from 'context/deposit';
 
 type TransactionModalProps = {
   state: TransactionState;
@@ -29,8 +28,9 @@ type TransactionModalProps = {
   gasEstimationError?: Error;
   ethPrice: number;
   depositAmount: BigInt;
+  tokenDecimals: number;
   tokenAddress: string;
-  modalParams: modalParamsType;
+  tokenSymbol?: string;
   handleOpenModal: () => void;
 };
 
@@ -55,8 +55,9 @@ const DepositModal: React.FC<TransactionModalProps> = ({
   gasEstimationError,
   ethPrice,
   depositAmount,
+  tokenDecimals,
+  tokenSymbol,
   tokenAddress,
-  modalParams,
   handleOpenModal,
 }) => {
   const {t} = useTranslation();
@@ -75,7 +76,7 @@ const DepositModal: React.FC<TransactionModalProps> = ({
   const formattedAmount =
     depositAmount === undefined
       ? undefined
-      : Number(formatUnits(depositAmount.toString(), nativeCurrency.decimals));
+      : Number(formatUnits(depositAmount.toString(), tokenDecimals));
 
   const tokenPrice = isNativeToken(tokenAddress)
     ? new Intl.NumberFormat('en-US', {
@@ -172,7 +173,7 @@ const DepositModal: React.FC<TransactionModalProps> = ({
           </VStack>
           <VStack>
             <StrongText>
-              {formattedAmount} {modalParams?.tokenSymbol || ''}
+              {formattedAmount} {tokenSymbol || ''}
             </StrongText>
             <LightText>{tokenPrice}</LightText>
           </VStack>

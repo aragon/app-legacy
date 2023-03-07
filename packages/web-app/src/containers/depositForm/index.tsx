@@ -76,21 +76,27 @@ const DepositForm: React.FC = () => {
           fetchTokenData(tokenAddress, client, network, tokenSymbol),
         ]);
 
-        // use blockchain if api data unavailable
         const [balance, data] = await allTokenInfoPromise;
         if (data) {
           setValue('tokenName', data.name);
           setValue('tokenSymbol', data.symbol);
           setValue('tokenImgUrl', data.imgUrl);
-        } else {
-          const {name, symbol} = await getTokenInfo(
-            tokenAddress,
-            provider,
-            nativeCurrency
-          );
+        }
+
+        // query blockchain because current api doesn't not contain token decimals
+        const {name, symbol, decimals} = await getTokenInfo(
+          tokenAddress,
+          provider,
+          nativeCurrency
+        );
+
+        // just in case api fails for whatever reason
+        if (!data) {
           setValue('tokenName', name);
           setValue('tokenSymbol', symbol);
         }
+
+        setValue('tokenDecimals', decimals);
         setValue('tokenBalance', balance);
       } catch (error) {
         /**
@@ -136,6 +142,7 @@ const DepositForm: React.FC = () => {
         resetField('tokenImgUrl');
         resetField('tokenSymbol');
         resetField('tokenBalance');
+        resetField('tokenDecimals');
       }
 
       return validationResult;
@@ -200,7 +207,6 @@ const DepositForm: React.FC = () => {
           helpText={t('newDeposit.toSubtitle')}
         />
 
-        {/* TODO: Proper DAO address */}
         <ButtonWallet
           label={daoAddress}
           src={daoAddress}
