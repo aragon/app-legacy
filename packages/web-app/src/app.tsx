@@ -184,8 +184,10 @@ const NotFoundWrapper: React.FC = () => {
 
 const ExploreWrapper: React.FC = () => (
   <>
-    <ExploreNav />
-    <Outlet />
+    <div className="min-h-screen">
+      <ExploreNav />
+      <Outlet />
+    </div>
     <ExploreFooter />
   </>
 );
