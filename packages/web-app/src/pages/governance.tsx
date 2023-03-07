@@ -95,7 +95,7 @@ const Governance: React.FC = () => {
               {t('governance.emptyState.subtitleLine2')}{' '}
               <Link
                 label={t('governance.emptyState.proposalGuide')}
-                href="https://aragon.org/how-to/structure-dao-proposals-and-build-proposal-processes"
+                href="https://aragon.org/how-to-guides/how-to-structure-dao-proposals-and-build-proposal-processes"
               />
             </span>
             <ButtonText
