@@ -163,6 +163,7 @@ export async function decodeMintTokensToAction(
   data: Uint8Array[] | undefined,
   client: TokenVotingClient | undefined,
   daoTokenAddress: Address,
+  totalVotingWeight: bigint,
   provider: providers.Provider,
   network: SupportedNetworks
 ): Promise<ActionMintToken | undefined> {
@@ -173,7 +174,7 @@ export async function decodeMintTokensToAction(
 
   try {
     // get token info
-    const {totalSupply, symbol, decimals} = await getTokenInfo(
+    const {symbol, decimals} = await getTokenInfo(
       daoTokenAddress,
       provider,
       CHAIN_METADATA[network].nativeCurrency
@@ -200,7 +201,7 @@ export async function decodeMintTokensToAction(
       },
       summary: {
         newTokens: Number(formatUnits(newTokens, decimals)),
-        tokenSupply: parseFloat(formatUnits(totalSupply, decimals)),
+        tokenSupply: parseFloat(formatUnits(totalVotingWeight, decimals)),
         newHoldersCount: decoded.length,
         daoTokenSymbol: symbol,
         daoTokenAddress: daoTokenAddress,
