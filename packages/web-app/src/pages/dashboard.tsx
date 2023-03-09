@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 import {useReactiveVar} from '@apollo/client';
 import {
   ButtonText,
@@ -275,6 +276,7 @@ const Dashboard: React.FC = () => {
       <HeaderWrapper>
         <HeaderDao
           daoName={dao.metadata.name}
+          // @ts-ignore
           daoEnsName={dao.ensDomain}
           daoAvatar={dao.metadata.avatar}
           daoUrl={`app.aragon.org/#/daos/${network}/${daoId}`}

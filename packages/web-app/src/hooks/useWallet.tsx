@@ -1,69 +1,98 @@
-import {useSigner, SignerValue} from 'use-signer';
-import {useEffect, useState} from 'react';
+import {JsonRpcSigner, Web3Provider} from '@ethersproject/providers';
+import {
+  useAccount,
+  useSigner,
+  useDisconnect,
+  useBalance,
+  useEnsName,
+  useEnsAvatar,
+  useNetwork as useWagmiNetwork,
+} from 'wagmi';
 import {BigNumber} from 'ethers';
 import {useNetwork} from 'context/network';
 import {CHAIN_METADATA} from 'utils/constants';
 
-export interface IUseWallet extends SignerValue {
+import {useWeb3Modal} from '@web3modal/react';
+
+export interface IUseWallet {
   balance: BigNumber | null;
   ensAvatarUrl: string;
   ensName: string;
   isConnected: boolean;
-  /**
-   * Returns true iff the wallet is connected and it is on the wrong network
-   * (i.e., the chainId returned by the useSigner context does not agree with
-   * the network name returned by the useNetwork context).
-   */
   isOnWrongNetwork: boolean;
   network: string;
+  provider: Web3Provider | null;
+  signer: JsonRpcSigner | null;
+  status: 'connecting' | 'reconnecting' | 'connected' | 'disconnected';
+  address: string | null;
+  chainId: number;
+  methods: {
+    selectWallet: (
+      cacheProvider?: boolean,
+      networkId?: string
+    ) => Promise<void>;
+    refreshChainId: () => Promise<void>;
+    disconnect: () => Promise<void>;
+  };
 }
 
 export const useWallet = (): IUseWallet => {
   const {network} = useNetwork();
-  const {chainId, methods, signer, provider, address, status} = useSigner();
-  const [balance, setBalance] = useState<BigNumber | null>(null);
-  const [ensName, setEnsName] = useState<string>('');
-  const [ensAvatarUrl, setEnsAvatarUrl] = useState<string>('');
-  const [isConnected, setIsConnected] = useState<boolean>(false);
 
-  // Update balance
-  useEffect(() => {
-    if (address && provider) {
-      provider?.getBalance(address).then((newBalance: BigNumber) => {
-        setBalance(newBalance);
-      });
-    }
-  }, [provider, address]);
+  const {data: signer} = useSigner();
+  const {chain} = useWagmiNetwork();
+  const {address, status: wagmiStatus, isConnected} = useAccount();
+  const {disconnect} = useDisconnect();
+  const {open: openWeb3Modal} = useWeb3Modal();
 
-  // Update ENS name and avatar
-  useEffect(() => {
-    if (provider && address) {
-      provider?.lookupAddress(address).then((name: string | null) => {
-        name ? setEnsName(name) : setEnsName('');
-      });
-      provider?.getAvatar(address).then((avatarUrl: string | null) => {
-        avatarUrl ? setEnsAvatarUrl(avatarUrl) : setEnsAvatarUrl('');
-      });
-    }
-  }, [address, provider]);
+  const {data: wagmiBalance} = useBalance({
+    address,
+  });
 
-  // update isConnected
-  useEffect(() => {
-    setIsConnected(status === 'connected');
-  }, [status]);
+  const {data: ensName} = useEnsName({
+    address,
+  });
 
-  const isOnWrongNetwork =
+  const {data: ensAvatarUrl} = useEnsAvatar({
+    address,
+  });
+
+  const provider: Web3Provider = signer?.provider as Web3Provider;
+  const chainId: number = chain?.id || 0;
+  const balance: BigNumber | null = wagmiBalance?.value || null;
+  const isOnWrongNetwork: boolean =
     isConnected && CHAIN_METADATA[network].id !== chainId;
 
+  const methods = {
+    selectWallet: async (cacheProvider?: boolean, networkId?: string) => {
+      await new Promise(resolve => {
+        openWeb3Modal();
+        resolve({
+          networkId,
+          cacheProvider,
+        });
+      });
+    },
+    refreshChainId: async () => {
+      await new Promise(resolve => resolve(true));
+    },
+    disconnect: async () => {
+      await new Promise(resolve => {
+        disconnect();
+        resolve(true);
+      });
+    },
+  };
+
   return {
-    provider,
-    signer,
-    status,
-    address,
+    provider: provider as Web3Provider,
+    signer: signer as JsonRpcSigner,
+    status: wagmiStatus,
+    address: address as string,
     chainId,
     balance,
-    ensAvatarUrl,
-    ensName,
+    ensAvatarUrl: ensAvatarUrl as string,
+    ensName: ensName as string,
     isConnected,
     isOnWrongNetwork,
     methods,
