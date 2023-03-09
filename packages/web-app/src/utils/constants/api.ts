@@ -35,6 +35,7 @@ export const INFURA_PROJECT_ID: Record<
 };
 
 export const ARAGON_RPC = 'mainnet.eth.aragon.network';
+export const walletConnectProjectID = 'a405a1eafd0773a279ad607c01a546ae';
 
 export const IPFS_ENDPOINT_TEST =
   'https://testing-ipfs-0.aragon.network/api/v0';
