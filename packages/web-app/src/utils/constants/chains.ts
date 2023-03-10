@@ -72,7 +72,7 @@ export type ChainData = {
   etherscanApi: string;
 };
 
-export type ChainList = Record<typeof SUPPORTED_NETWORKS[number], ChainData>;
+export type ChainList = Record<SupportedNetworks, ChainData>;
 export const CHAIN_METADATA: ChainList = {
   arbitrum: {
     id: 42161,
@@ -173,5 +173,20 @@ export const CHAIN_METADATA: ChainList = {
       decimals: 18,
     },
     etherscanApi: 'https://api-testnet.polygonscan.com/api',
+  },
+  unsupported: {
+    id: 1,
+    name: 'Unsupported',
+    domain: 'L1 Blockchain',
+    logo: '',
+    explorer: '',
+    testnet: false,
+    rpc: [],
+    nativeCurrency: {
+      name: '',
+      symbol: '',
+      decimals: 18,
+    },
+    etherscanApi: '',
   },
 };

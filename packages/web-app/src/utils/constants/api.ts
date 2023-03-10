@@ -15,6 +15,7 @@ export const SUBGRAPH_API_URL: SubgraphNetworkUrl = {
     'https://api.thegraph.com/subgraphs/name/aragon/aragon-zaragoza-mumbai',
   arbitrum: undefined,
   'arbitrum-test': undefined,
+  unsupported: undefined,
 };
 
 export const BASE_URL = 'https://api.coingecko.com/api/v3';
@@ -32,6 +33,7 @@ export const INFURA_PROJECT_ID: Record<
   mumbai: undefined,
   arbitrum: undefined,
   'arbitrum-test': undefined,
+  unsupported: undefined,
 };
 
 export const ARAGON_RPC = 'mainnet.eth.aragon.network';
@@ -49,6 +51,7 @@ export const ASSET_PLATFORMS: Record<SupportedNetworks, string | null> = {
   goerli: null,
   polygon: 'polygon-pos',
   mumbai: null,
+  unsupported: null,
 };
 
 export const NATIVE_TOKEN_ID = {

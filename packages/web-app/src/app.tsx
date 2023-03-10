@@ -86,6 +86,10 @@ function App() {
     window.scrollTo(0, 0);
   }, [pathname]);
 
+  if (network === 'unsupported') {
+    return <Loading />;
+  }
+
   return (
     <>
       {/* TODO: replace with loading indicator */}
