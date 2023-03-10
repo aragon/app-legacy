@@ -25,6 +25,7 @@ import {
 import {Web3Modal} from '@web3modal/react';
 import {configureChains, createClient, mainnet, WagmiConfig} from 'wagmi';
 import {goerli} from 'wagmi/chains';
+import {LedgerConnector} from '@wagmi/connectors/ledger';
 
 import App from './app';
 
@@ -36,12 +37,17 @@ const {provider} = configureChains(chains, [
 ]);
 const wagmiClient = createClient({
   autoConnect: true,
-  connectors: modalConnectors({
-    projectId: walletConnectProjectID,
-    version: '2',
-    appName: 'Aragon',
-    chains,
-  }),
+  connectors: [
+    ...modalConnectors({
+      projectId: walletConnectProjectID,
+      version: '2',
+      appName: 'Aragon',
+      chains,
+    }),
+    new LedgerConnector({
+      chains: [mainnet],
+    }),
+  ],
   provider,
 });
 
