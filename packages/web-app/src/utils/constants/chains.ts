@@ -19,12 +19,20 @@ const SUPPORTED_NETWORKS = [
   'arbitrum',
   'arbitrum-test',
 ] as const;
-export type SupportedNetworks = typeof SUPPORTED_NETWORKS[number];
+export type SupportedNetworks =
+  | typeof SUPPORTED_NETWORKS[number]
+  | 'unsupported';
 
 export function isSupportedNetwork(
   network: string
 ): network is SupportedNetworks {
   return SUPPORTED_NETWORKS.some(n => n === network);
+}
+
+export function toSupportedNetwork(network: string): SupportedNetworks {
+  return SUPPORTED_NETWORKS.some(n => n === network)
+    ? (network as SupportedNetworks)
+    : 'unsupported';
 }
 
 /**
@@ -64,7 +72,7 @@ export type ChainData = {
   etherscanApi: string;
 };
 
-export type ChainList = Record<SupportedNetworks, ChainData>;
+export type ChainList = Record<typeof SUPPORTED_NETWORKS[number], ChainData>;
 export const CHAIN_METADATA: ChainList = {
   arbitrum: {
     id: 42161,
