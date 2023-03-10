@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/ban-ts-comment */
 import {
   IconChevronLeft,
   Wizard,
@@ -106,7 +105,6 @@ export const FullScreenStepper: React.FC<FullScreenStepperProps> = ({
               description={wizardDescription || ''}
               totalSteps={totalSteps}
               currentStep={currentFormStep}
-              //@ts-ignore
               renderHtml
               nav={
                 <Breadcrumb

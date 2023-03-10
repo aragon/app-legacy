@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/ban-ts-comment */
 import {useReactiveVar} from '@apollo/client';
 import {
   ButtonText,
