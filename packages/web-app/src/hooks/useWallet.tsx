@@ -31,7 +31,6 @@ export interface IUseWallet {
       cacheProvider?: boolean,
       networkId?: string
     ) => Promise<void>;
-    refreshChainId: () => Promise<void>;
     disconnect: () => Promise<void>;
   };
 }
@@ -72,9 +71,6 @@ export const useWallet = (): IUseWallet => {
           cacheProvider,
         });
       });
-    },
-    refreshChainId: async () => {
-      await new Promise(resolve => resolve(true));
     },
     disconnect: async () => {
       await new Promise(resolve => {
