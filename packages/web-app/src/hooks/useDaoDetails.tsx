@@ -23,7 +23,7 @@ const daoDetailsCache = new ExpiringPromiseCache<DaoDetails | null>(10000);
 export function useDaoDetails(
   daoId: string
 ): HookData<DaoDetails | undefined | null> & {waitingForSubgraph: boolean} {
-  const {client} = useClient();
+  const {client, context, network: clientNetwork} = useClient();
 
   const [data, setData] = useState<DaoDetails | null>();
   const [error, setError] = useState<Error>();
@@ -37,6 +37,14 @@ export function useDaoDetails(
   useEffect(() => {
     async function getDaoMetadata() {
       try {
+        // bail if client out of sync
+        if (clientNetwork !== network) {
+          console.log(
+            `client out of sync client: ${context?.network} network: ${network}`
+          );
+          return;
+        }
+
         setIsLoading(true);
 
         if (cachedDaos?.[network]?.[daoId.toLowerCase()]) {
@@ -53,10 +61,11 @@ export function useDaoDetails(
           setWaitingForSubgraph(true);
         } else {
           const daoKey = daoId.toLowerCase();
+          const cacheKey = `${daoKey}_${network}`;
           // if there's no cached promise to fetch this dao,
           // create one and add it to the cache
-          const dao = await (daoDetailsCache.get(daoKey) ||
-            daoDetailsCache.add(daoKey, client?.methods.getDao(daoKey)));
+          const dao = await (daoDetailsCache.get(cacheKey) ||
+            daoDetailsCache.add(cacheKey, client?.methods.getDao(daoKey)));
 
           if (dao) {
             if (dao.metadata.avatar) {

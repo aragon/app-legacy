@@ -7,6 +7,7 @@ import {
   IPFS_ENDPOINT_MAIN_1,
   IPFS_ENDPOINT_TEST,
   SUBGRAPH_API_URL,
+  SupportedNetworks,
 } from 'utils/constants';
 
 import {useWallet} from './useWallet';
@@ -14,7 +15,24 @@ import {useWallet} from './useWallet';
 interface ClientContext {
   client?: Client;
   context?: SdkContext;
+  network?: SupportedNetworks;
 }
+
+const translateNetwork = (
+  sdkNetwork: SdkContext['network']
+): SupportedNetworks => {
+  if (typeof sdkNetwork !== 'string') {
+    return 'unsupported';
+  }
+
+  switch (sdkNetwork) {
+    case 'mainnet':
+      return 'ethereum';
+    case 'goerli':
+      return 'goerli';
+  }
+  return 'unsupported';
+};
 
 const UseClientContext = createContext<ClientContext>({} as ClientContext);
 
@@ -24,6 +42,9 @@ export const useClient = () => {
     throw new Error(
       'useClient() can only be used on the descendants of <UseClientProvider />'
     );
+  }
+  if (client.context) {
+    client.network = translateNetwork(client.context.network);
   }
   return client;
 };
