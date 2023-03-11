@@ -17,12 +17,15 @@ import {useWallet} from 'hooks/useWallet';
 
 const Explore: React.FC = () => {
   const {setNetwork} = useNetwork();
+
+  /* useNetwork should take this into account
   const {chainId} = useWallet();
 
   useEffect(() => {
     const network = getSupportedNetworkByChainId(chainId) as SupportedNetworks;
     if (['ethereum', 'goerli'].includes(network)) setNetwork(network);
   }, [chainId, setNetwork]);
+  */
 
   return (
     <>

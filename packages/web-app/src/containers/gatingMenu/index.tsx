@@ -52,7 +52,7 @@ export const GatingMenu: React.FC<Props> = ({
   const {close, isGatingOpen} = useGlobalModalContext();
   const {t} = useTranslation();
   const navigate = useNavigate();
-  const {network} = useNetwork();
+  const {network} = useNetwork(); // TODO ensure this network is the dao network
 
   return (
     <ModalBottomSheetSwitcher isOpen={isGatingOpen}>

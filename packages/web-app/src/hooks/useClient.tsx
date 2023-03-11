@@ -56,6 +56,8 @@ export const UseClientProvider: React.FC = ({children}) => {
   const [context, setContext] = useState<SdkContext>();
 
   useEffect(() => {
+    if (network === 'unsupported') return;
+
     let ipfsNodes = [
       {
         url: IPFS_ENDPOINT_MAIN_0,

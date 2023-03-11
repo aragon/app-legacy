@@ -18,7 +18,7 @@ import {IPluginSettings} from 'pages/settings';
 
 const MajorityVotingSettings: React.FC<IPluginSettings> = ({daoDetails}) => {
   const {t} = useTranslation();
-  const {network} = useNetwork();
+  const {network} = useNetwork(); // TODO get the network from daoDetails
   const navigate = useNavigate();
 
   const {data: votingSettings} = usePluginSettings(

@@ -8,7 +8,7 @@ import {erc20TokenABI} from 'abis/erc20TokenABI';
 import {useNetwork} from 'context/network';
 import {useProviders} from 'context/providers';
 import {useWallet} from 'hooks/useWallet';
-import {CHAIN_METADATA} from 'utils/constants';
+import {CHAIN_METADATA, getSupportedNetworkByChainId} from 'utils/constants';
 import {fetchBalance, getTokenInfo, isNativeToken} from 'utils/tokens';
 import {HookData} from 'utils/types';
 
@@ -81,9 +81,9 @@ export function useUserTokenAddresses(): HookData<string[]> {
  * contract address it also returns the user's balance for each of the tokens.
  */
 export function useWalletTokens(): HookData<AssetBalance[]> {
-  const {address, balance} = useWallet();
+  const {address, balance, chainId} = useWallet();
   const {infura: provider} = useProviders();
-  const {network} = useNetwork();
+  const network = getSupportedNetworkByChainId(chainId)!;
   const nativeCurrency = CHAIN_METADATA[network].nativeCurrency;
 
   const {

@@ -40,7 +40,7 @@ export const EditMsSettings: React.FC<EditMsSettingsProps> = ({
 }) => {
   const {t} = useTranslation();
   const navigate = useNavigate();
-  const {network} = useNetwork();
+  const {network} = useNetwork(); // TODO get network from dao details
   const {isMobile} = useScreen();
 
   const {setValue, control} = useFormContext();

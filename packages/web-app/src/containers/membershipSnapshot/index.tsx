@@ -36,7 +36,7 @@ export const MembershipSnapshot: React.FC<Props> = ({
 }) => {
   const {t} = useTranslation();
   const navigate = useNavigate();
-  const {network} = useNetwork();
+  const {network} = useNetwork(); // TODO ensure this is the dao network
   const {isDesktop} = useScreen();
 
   const {
