@@ -77,7 +77,6 @@ export function useDaoDetails(
               }
             }
             setData(dao);
-            setWaitingForSubgraph(false);
 
             // check if current DAO is in the favorites cache
             const indexOfCurrentDaoInFavorites = favoritedDaos.findIndex(
@@ -115,7 +114,13 @@ export function useDaoDetails(
                 );
               }
             }
+          } else {
+            // no DAO with given address found on network
+            setData(null);
           }
+
+          // unless there is a pending DAO we are no longer waiting for subgraph
+          setWaitingForSubgraph(false);
         }
       } catch (err) {
         console.error(err);
