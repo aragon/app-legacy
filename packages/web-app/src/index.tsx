@@ -94,6 +94,7 @@ ReactDOM.render(
     <Web3Modal
       projectId={walletConnectProjectID}
       ethereumClient={ethereumClient}
+      themeMode="light"
     />
   </>,
   document.getElementById('root')
