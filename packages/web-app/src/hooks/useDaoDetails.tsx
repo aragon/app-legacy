@@ -6,7 +6,11 @@ import {useEffect, useState} from 'react';
 import {favoriteDaosVar, pendingDaoCreationVar} from 'context/apolloClient';
 import {useNetwork} from 'context/network';
 import {usePrivacyContext} from 'context/privacyContext';
-import {CHAIN_METADATA, FAVORITE_DAOS_KEY} from 'utils/constants';
+import {
+  AVATAR_IPFS_URL,
+  CHAIN_METADATA,
+  FAVORITE_DAOS_KEY,
+} from 'utils/constants';
 import {customJSONReplacer, mapDetailedDaoToFavoritedDao} from 'utils/library';
 import {HookData} from 'utils/types';
 import {useClient} from './useClient';
@@ -35,6 +39,24 @@ export function useDaoDetails(
   const {preferences} = usePrivacyContext();
 
   useEffect(() => {
+    // get the proper link to DAO avatar
+    function getDaoWithResolvedAvatar(daoKey: string) {
+      return client?.methods.getDao(daoKey).then(dao => {
+        if (dao) {
+          console.log(dao.metadata.avatar, daoDetailsCache);
+          if (dao.metadata.avatar) {
+            try {
+              const logoCid = resolveIpfsCid(dao.metadata.avatar);
+              dao.metadata.avatar = `${AVATAR_IPFS_URL}/${logoCid}`;
+            } catch (err) {
+              dao.metadata.avatar = undefined;
+            }
+          }
+        }
+        return dao;
+      });
+    }
+
     async function getDaoMetadata() {
       try {
         // bail if client out of sync
@@ -65,17 +87,9 @@ export function useDaoDetails(
           // if there's no cached promise to fetch this dao,
           // create one and add it to the cache
           const dao = await (daoDetailsCache.get(cacheKey) ||
-            daoDetailsCache.add(cacheKey, client?.methods.getDao(daoKey)));
+            daoDetailsCache.add(cacheKey, getDaoWithResolvedAvatar(daoKey)));
 
           if (dao) {
-            if (dao.metadata.avatar) {
-              try {
-                const logoCid = resolveIpfsCid(dao.metadata.avatar);
-                dao.metadata.avatar = `https://ipfs.eth.aragon.network/ipfs/${logoCid}`;
-              } catch (err) {
-                dao.metadata.avatar = undefined;
-              }
-            }
             setData(dao);
 
             // check if current DAO is in the favorites cache
