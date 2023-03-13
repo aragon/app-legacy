@@ -18,6 +18,7 @@ import {TFunction} from 'react-i18next';
 
 import {fetchTokenData} from 'services/prices';
 import {
+  AVATAR_IPFS_URL,
   BIGINT_PATTERN,
   CHAIN_METADATA,
   ISO_DATE_PATTERN,
@@ -408,7 +409,7 @@ export function resolveDaoAvatarIpfsCid(avatar?: string): string | undefined {
   if (avatar) {
     try {
       const logoCid = resolveIpfsCid(avatar);
-      return `https://ipfs.eth.aragon.network/ipfs/${logoCid}`;
+      return `${AVATAR_IPFS_URL}/${logoCid}`;
     } catch (err) {
       console.warn('Error resolving DAO avatar IPFS Cid', err);
     }

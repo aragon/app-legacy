@@ -5,7 +5,7 @@ import {useEffect, useState} from 'react';
 
 import {ExploreFilter} from 'containers/daoExplorer';
 import {favoriteDaosVar} from 'context/apolloClient';
-import {SupportedChainID} from 'utils/constants';
+import {AVATAR_IPFS_URL, SupportedChainID} from 'utils/constants';
 import {HookData} from 'utils/types';
 import {useClient} from './useClient';
 
@@ -70,7 +70,7 @@ export function useDaos(
             if (dao.metadata.avatar) {
               try {
                 const logoCid = resolveIpfsCid(dao.metadata.avatar);
-                dao.metadata.avatar = `https://ipfs.eth.aragon.network/ipfs/${logoCid}`;
+                dao.metadata.avatar = `${AVATAR_IPFS_URL}/${logoCid}`;
               } catch (err) {
                 dao.metadata.avatar = undefined;
               }
