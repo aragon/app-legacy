@@ -15,7 +15,7 @@ import {TransactionDetailProvider} from 'context/transactionDetail';
 import {WalletMenuProvider} from 'context/walletMenu';
 import {UseCacheProvider} from 'hooks/useCache';
 import {UseClientProvider} from 'hooks/useClient';
-import {walletConnectProjectID} from 'utils/constants';
+import {infuraApiKey, walletConnectProjectID} from 'utils/constants';
 
 import {
   EthereumClient,
@@ -26,7 +26,7 @@ import {Web3Modal} from '@web3modal/react';
 import {configureChains, createClient, mainnet, WagmiConfig} from 'wagmi';
 import {goerli} from 'wagmi/chains';
 import {LedgerConnector} from '@wagmi/connectors/ledger';
-// import {infuraProvider} from 'wagmi/providers/infura';
+import {infuraProvider} from 'wagmi/providers/infura';
 
 import App from './app';
 
@@ -35,7 +35,7 @@ const chains = [mainnet, goerli];
 // Wagmi client
 const {provider} = configureChains(chains, [
   walletConnectProvider({projectId: walletConnectProjectID}),
-  // infuraProvider({apiKey: 'yourInfuraApiKey'}),
+  infuraProvider({apiKey: infuraApiKey}),
 ]);
 const wagmiClient = createClient({
   autoConnect: true,

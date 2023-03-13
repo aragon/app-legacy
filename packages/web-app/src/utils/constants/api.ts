@@ -38,6 +38,7 @@ export const INFURA_PROJECT_ID: Record<
 
 export const ARAGON_RPC = 'mainnet.eth.aragon.network';
 export const walletConnectProjectID = '9d404838e4ab7b8afac81195f1a0bb1f';
+export const infuraApiKey = '481a4cdc7c774286b8627f21c6827f48';
 
 console.log(
   'import.meta.env.WALLET_CONNECT_PROJECT_ID',
