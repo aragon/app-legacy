@@ -127,7 +127,7 @@ const ConfigureWithdrawForm: React.FC<ConfigureWithdrawFormProps> = ({
           setValue(`actions.${actionIndex}.tokenPrice`, apiData.price);
         }
 
-        if (!apiData) {
+        if (!apiData && chainData) {
           setValue(`actions.${actionIndex}.tokenName`, chainData.name);
           setValue(`actions.${actionIndex}.tokenSymbol`, chainData.symbol);
         }
