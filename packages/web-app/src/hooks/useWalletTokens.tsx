@@ -5,7 +5,6 @@ import {useEffect, useState} from 'react';
 
 import {AssetBalance, TokenType} from '@aragon/sdk-client';
 import {erc20TokenABI} from 'abis/erc20TokenABI';
-import {useNetwork} from 'context/network';
 import {useProviders} from 'context/providers';
 import {useWallet} from 'hooks/useWallet';
 import {CHAIN_METADATA, getSupportedNetworkByChainId} from 'utils/constants';
