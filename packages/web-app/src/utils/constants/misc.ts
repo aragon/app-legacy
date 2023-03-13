@@ -60,11 +60,11 @@ export const NAV_LINKS_DATA: NavLinkData[] = [
 export const EXPLORE_NAV_LINKS = [
   {
     label: i18n.t('navLinks.explore'),
-    path: 'https://staging-app.aragon.org/',
+    path: '/',
   },
   {
     label: i18n.t('navLinks.learn'),
-    path: 'https://aragon.org/how-to',
+    path: 'https://aragon.org/education-portal',
   },
   {
     label: i18n.t('navLinks.build'),

@@ -63,8 +63,8 @@ ReactDOM.render(
         <APMProvider>
           <Router>
             <AlertProvider>
-              <NetworkProvider>
-                <WagmiConfig client={wagmiClient}>
+              <WagmiConfig client={wagmiClient}>
+                <NetworkProvider>
                   <UseClientProvider>
                     <UseCacheProvider>
                       <ProvidersProvider>
@@ -84,8 +84,8 @@ ReactDOM.render(
                       </ProvidersProvider>
                     </UseCacheProvider>
                   </UseClientProvider>
-                </WagmiConfig>
-              </NetworkProvider>
+                </NetworkProvider>
+              </WagmiConfig>
             </AlertProvider>
           </Router>
         </APMProvider>
@@ -94,6 +94,7 @@ ReactDOM.render(
     <Web3Modal
       projectId={walletConnectProjectID}
       ethereumClient={ethereumClient}
+      themeMode="light"
     />
   </>,
   document.getElementById('root')

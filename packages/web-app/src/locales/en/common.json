@@ -234,9 +234,9 @@
     "action": "New proposal",
     "emptyState": {
       "title": "Create your first proposal",
-      "subtitleLine1": "What's the first thing your community needs to decide?",
-      "subtitleLine2": "For ideas on how to structure proposals,",
-      "proposalGuide": "read this guide",
+      "subtitle": "What's the first thing your community needs to decide? For ideas on how to structure proposals, read this guide {{link}}.",
+      "subtitleLinkLabel": "read this guide",
+      "subtitleLinkURL": "https://aragon.org/how-to-guides/how-to-structure-dao-proposals-and-build-proposal-processes",
       "description": "Get your community involved in the decision-making process. Learn more in our proposal guide {{link}}.",
       "descriptionLinkLabel": "proposal guide",
       "descriptionLinkURL": "https://aragon.org/how-to/structure-dao-proposals-and-build-proposal-processes"

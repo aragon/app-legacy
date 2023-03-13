@@ -6,8 +6,14 @@ import React, {
   useState,
 } from 'react';
 import {useMatch, useNavigate} from 'react-router-dom';
+import {useAccount, useNetwork as useWagmiNetwork} from 'wagmi';
 
-import {isSupportedNetwork, SupportedNetworks} from 'utils/constants';
+import {
+  CHAIN_METADATA,
+  isSupportedChainId,
+  SupportedNetworks,
+  toSupportedNetwork,
+} from 'utils/constants';
 import {NotFound} from 'utils/paths';
 
 /* CONTEXT PROVIDER ========================================================= */
@@ -25,6 +31,38 @@ const NetworkContext = createContext<NetworkContext>({
 type NetworkProviderProps = {
   children: React.ReactNode;
 };
+
+/**
+ * Determine what the current network should be
+ * @param networkUrlSegment url segment specifying network if present
+ * @param chainId wallet chain id if connected
+ * @param status wallet status
+ * @returns network to use
+ */
+const determineNetwork = (
+  networkUrlSegment: string | undefined,
+  chainId: number,
+  status: 'disconnected' | 'connecting' | 'connected'
+): SupportedNetworks | 'unsupported' => {
+  if (networkUrlSegment) {
+    console.log(`*NETWORK from url = ${networkUrlSegment}`);
+    return toSupportedNetwork(networkUrlSegment);
+  } else if (status === 'connected') {
+    if (isSupportedChainId(chainId)) {
+      console.log(`*NETWORK from wallet chain = ${chainId}`);
+      return Object.entries(CHAIN_METADATA).find(
+        ([, v]) => v.id === chainId
+      )?.[0] as SupportedNetworks;
+    } else {
+      console.log('*NETWORK UNSUPPORTED');
+      return 'unsupported';
+    }
+  }
+
+  console.log('*NETWORK defaults to eth');
+  return 'ethereum';
+};
+
 /**
  * Returns the network on which the app operates.
  *
@@ -39,37 +77,38 @@ type NetworkProviderProps = {
  *
  */
 export function NetworkProvider({children}: NetworkProviderProps) {
-  const urlNetworkMatch = useMatch('daos/:network/*');
-  const urlNotFoundMatch = useMatch('not-found');
-  const urlCreateMatch = useMatch('create');
   const navigate = useNavigate();
+  const urlNetwork = useMatch('daos/:network/*');
+  const networkUrlSegment = urlNetwork?.params?.network;
+  const {chain} = useWagmiNetwork();
+  const chainId = chain?.id || 0;
+  const {status: wagmiStatus} = useAccount();
+  const status = wagmiStatus === 'reconnecting' ? 'connecting' : wagmiStatus;
+  const [networkState, setNetworkState] = useState<
+    SupportedNetworks | 'unsupported'
+  >(determineNetwork(networkUrlSegment, chainId, status));
 
-  const [isNetworkFlexible, setIsNetworkFlexible] = useState<boolean>(false);
-  const [networkState, setNetworkState] =
-    useState<SupportedNetworks>('ethereum');
+  useEffect(() => {
+    setNetworkState(determineNetwork(networkUrlSegment, chainId, status));
+  }, [chainId, networkUrlSegment, status]);
 
   const changeNetwork = useCallback(
-    newNetwork => {
-      if (isNetworkFlexible) setNetworkState(newNetwork);
-      else console.error('Network may not be changed on this page');
+    (network: SupportedNetworks) => {
+      if (networkUrlSegment) {
+        console.error('Network may not be changed on this page');
+      } else {
+        setNetworkState(network);
+      }
     },
-    [isNetworkFlexible]
+    [networkUrlSegment]
   );
 
   useEffect(() => {
-    const networkParam = urlNetworkMatch?.params?.network;
-    const isNotFound = urlNotFoundMatch !== null;
-    const isCreate = urlCreateMatch !== null;
-
-    if (isNotFound || isCreate || !networkParam) {
-      setIsNetworkFlexible(true);
-    } else if (!isSupportedNetwork(networkParam)) {
-      console.warn('network not found');
+    if (networkState === 'unsupported') {
+      console.warn('network unsupported');
       navigate(NotFound, {replace: true});
-    } else {
-      setNetworkState(networkParam);
     }
-  }, [urlNetworkMatch, urlNotFoundMatch, navigate, urlCreateMatch]);
+  }, [networkState, navigate]);
 
   return (
     <NetworkContext.Provider

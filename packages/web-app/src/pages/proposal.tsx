@@ -277,6 +277,7 @@ const Proposal: React.FC = () => {
         mintTokenActions.actions,
         pluginClient as TokenVotingClient,
         proposalErc20Token.address,
+        (proposal as TokenVotingProposal).totalVotingWeight,
         provider,
         network
       );

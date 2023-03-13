@@ -44,7 +44,7 @@ export const EditMvSettings: React.FC<EditMvSettingsProps> = ({
 }) => {
   const {t} = useTranslation();
   const navigate = useNavigate();
-  const {network} = useNetwork();
+  const {network} = useNetwork(); // TODO get network from daoDetails
   const {isMobile} = useScreen();
 
   const {setValue, control} = useFormContext();

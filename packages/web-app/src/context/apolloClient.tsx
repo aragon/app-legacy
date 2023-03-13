@@ -127,6 +127,7 @@ const client: Record<
   mumbai: mumbaiClient,
   arbitrum: undefined,
   'arbitrum-test': arbitrumTestClient,
+  unsupported: undefined,
 };
 
 /*************************************************

@@ -29,6 +29,7 @@ import {removeUnchangedMinimumApprovalAction} from 'utils/library';
 import {Governance} from 'utils/paths';
 import {Action} from 'utils/types';
 import {actionsAreValid} from 'utils/validators';
+import {useGlobalModalContext} from 'context/globalModals';
 
 type ProposalStepperType = {
   enableTxModal: () => void;
@@ -45,11 +46,12 @@ const ProposalStepper: React.FC<ProposalStepperType> = ({
   );
 
   const {actions} = useActionsContext();
+  const {open} = useGlobalModalContext();
 
   const {t} = useTranslation();
   const {network} = useNetwork();
   const {trigger, control, getValues, setValue} = useFormContext();
-  const {address} = useWallet();
+  const {address, isConnected} = useWallet();
 
   const [formActions] = useWatch({
     name: ['actions'],
@@ -157,8 +159,12 @@ const ProposalStepper: React.FC<ProposalStepperType> = ({
         wizardDescription={t('newWithdraw.reviewProposal.description')}
         nextButtonLabel={t('labels.submitProposal')}
         onNextButtonClicked={() => {
-          trackEvent('newProposal_publishBtn_clicked', {dao_address: dao});
-          enableTxModal();
+          if (!isConnected) {
+            open('wallet');
+          } else {
+            trackEvent('newProposal_publishBtn_clicked', {dao_address: dao});
+            enableTxModal();
+          }
         }}
         fullWidth
       >

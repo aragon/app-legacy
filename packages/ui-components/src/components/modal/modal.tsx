@@ -90,7 +90,7 @@ const ModalContainer = styled(Content).attrs(({style}: StyledContentProps) => {
     borderRadius: 12,
     width: '90vw',
     maxWidth: '448px',
-    maxHeight: '85vh',
+    maxHeight: '75vh',
     outline: 'none',
     overflow: 'auto',
   };

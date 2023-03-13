@@ -55,57 +55,61 @@ const DaoSelectMenu: React.FC = () => {
       onClose={() => close('selectDao')}
       onOpenAutoFocus={e => e.preventDefault()}
     >
-      <ModalHeader>
-        <ButtonIcon
-          mode="secondary"
-          size="small"
-          bgWhite
-          icon={<IconChevronLeft />}
-          onClick={handleBackButtonClick}
-        />
-        <Title>{t('daoSwitcher.title')}</Title>
-        <div role="presentation" className="w-4 h-4" />
-      </ModalHeader>
-      <ModalContentContainer>
-        <ListGroup>
-          <ListItemDao
-            selected
-            daoAddress={currentDao?.ensDomain}
-            daoName={currentDao?.metadata.name}
-            daoLogo={currentDao?.metadata.avatar}
-            onClick={() => close('selectDao')}
+      <div className="flex flex-col h-full" style={{maxHeight: '75vh'}}>
+        <ModalHeader>
+          <ButtonIcon
+            mode="secondary"
+            size="small"
+            bgWhite
+            icon={<IconChevronLeft />}
+            onClick={handleBackButtonClick}
           />
-          {favoriteDaoCache.flatMap(dao => {
-            if (
-              dao.address === currentDao.address &&
-              dao.chain === currentDao.chain
-            ) {
-              return [];
-            } else {
-              return (
-                <ListItemDao
-                  key={dao.address}
-                  daoAddress={dao.ensDomain}
-                  daoName={dao.metadata.name}
-                  daoLogo={dao.metadata.avatar}
-                  onClick={() => handleDaoSelect(dao)}
-                />
-              );
-            }
-          })}
-        </ListGroup>
-        <ButtonText
-          mode="secondary"
-          size="large"
-          label={t('daoSwitcher.subtitle')}
-          iconLeft={<IconLinkExternal />}
-          className="w-full"
-          onClick={() => {
-            navigate('/');
-            close('selectDao');
-          }}
-        />
-      </ModalContentContainer>
+          <Title>{t('daoSwitcher.title')}</Title>
+          <div role="presentation" className="w-4 h-4" />
+        </ModalHeader>
+        <ModalContentContainer>
+          <ListGroup>
+            <ListItemDao
+              selected
+              daoAddress={currentDao?.ensDomain}
+              daoName={currentDao?.metadata.name}
+              daoLogo={currentDao?.metadata.avatar}
+              onClick={() => close('selectDao')}
+            />
+            {favoriteDaoCache.flatMap(dao => {
+              if (
+                dao.address === currentDao.address &&
+                dao.chain === currentDao.chain
+              ) {
+                return [];
+              } else {
+                return (
+                  <ListItemDao
+                    key={dao.address}
+                    daoAddress={dao.ensDomain}
+                    daoName={dao.metadata.name}
+                    daoLogo={dao.metadata.avatar}
+                    onClick={() => handleDaoSelect(dao)}
+                  />
+                );
+              }
+            })}
+          </ListGroup>
+        </ModalContentContainer>
+        <div className="p-3">
+          <ButtonText
+            mode="secondary"
+            size="large"
+            label={t('daoSwitcher.subtitle')}
+            iconLeft={<IconLinkExternal />}
+            className="w-full"
+            onClick={() => {
+              navigate('/');
+              close('selectDao');
+            }}
+          />
+        </div>
+      </div>
     </ModalBottomSheetSwitcher>
   );
 };
@@ -124,7 +128,7 @@ const Title = styled.div.attrs({
 })``;
 
 const ModalContentContainer = styled.div.attrs({
-  className: 'p-3 space-y-3 tablet:w-50 desktop:w-auto',
+  className: 'p-3 pb-0 space-y-3 tablet:w-50 desktop:w-auto overflow-auto',
 })``;
 
 const ListGroup = styled.div.attrs({

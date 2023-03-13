@@ -19,12 +19,20 @@ const SUPPORTED_NETWORKS = [
   'arbitrum',
   'arbitrum-test',
 ] as const;
-export type SupportedNetworks = typeof SUPPORTED_NETWORKS[number];
+export type SupportedNetworks =
+  | typeof SUPPORTED_NETWORKS[number]
+  | 'unsupported';
 
 export function isSupportedNetwork(
   network: string
 ): network is SupportedNetworks {
   return SUPPORTED_NETWORKS.some(n => n === network);
+}
+
+export function toSupportedNetwork(network: string): SupportedNetworks {
+  return SUPPORTED_NETWORKS.some(n => n === network)
+    ? (network as SupportedNetworks)
+    : 'unsupported';
 }
 
 /**
@@ -165,5 +173,20 @@ export const CHAIN_METADATA: ChainList = {
       decimals: 18,
     },
     etherscanApi: 'https://api-testnet.polygonscan.com/api',
+  },
+  unsupported: {
+    id: 1,
+    name: 'Unsupported',
+    domain: 'L1 Blockchain',
+    logo: '',
+    explorer: '',
+    testnet: false,
+    rpc: [],
+    nativeCurrency: {
+      name: '',
+      symbol: '',
+      decimals: 18,
+    },
+    etherscanApi: '',
   },
 };

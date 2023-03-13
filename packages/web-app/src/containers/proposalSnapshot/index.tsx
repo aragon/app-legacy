@@ -34,7 +34,7 @@ const ProposalSnapshot: React.FC<Props> = ({
 }) => {
   const {t} = useTranslation();
   const navigate = useNavigate();
-  const {network} = useNetwork();
+  const {network} = useNetwork(); // TODO ensure this is the dao network
 
   const {data: members, isLoading: areMembersLoading} = useDaoMembers(
     pluginAddress,

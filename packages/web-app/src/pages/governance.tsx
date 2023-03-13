@@ -4,7 +4,6 @@ import {
   ButtonText,
   IconAdd,
   IconChevronDown,
-  Link,
   Option,
   Spinner,
 } from '@aragon/ui-components';
@@ -24,6 +23,7 @@ import NoProposals from 'public/noProposals.svg';
 import {erc20VotingProposals_erc20VotingProposals} from 'queries/__generated__/erc20VotingProposals';
 import {trackEvent} from 'services/analytics';
 import {ProposalListItem} from 'utils/types';
+import {htmlIn} from 'utils/htmlIn';
 
 const Governance: React.FC = () => {
   const {
@@ -90,14 +90,12 @@ const Governance: React.FC = () => {
             <EmptyStateHeading>
               {t('governance.emptyState.title')}
             </EmptyStateHeading>
-            <span className="mt-1.5 lg:w-1/2 text-center">
-              {t('governance.emptyState.subtitleLine1')}{' '}
-              {t('governance.emptyState.subtitleLine2')}{' '}
-              <Link
-                label={t('governance.emptyState.proposalGuide')}
-                href="https://aragon.org/how-to/structure-dao-proposals-and-build-proposal-processes"
-              />
-            </span>
+            <span
+              className="mt-1.5 lg:w-1/2 text-center"
+              dangerouslySetInnerHTML={{
+                __html: htmlIn(t)('governance.emptyState.subtitle'),
+              }}
+            ></span>
             <ButtonText
               size="large"
               label="New Proposal"
