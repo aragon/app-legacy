@@ -42,17 +42,15 @@ export function useDaoDetails(
     // get the proper link to DAO avatar
     function getDaoWithResolvedAvatar(daoKey: string) {
       return client?.methods.getDao(daoKey).then(dao => {
-        if (dao) {
-          console.log(dao.metadata.avatar, daoDetailsCache);
-          if (dao.metadata.avatar) {
-            try {
-              const logoCid = resolveIpfsCid(dao.metadata.avatar);
-              dao.metadata.avatar = `${AVATAR_IPFS_URL}/${logoCid}`;
-            } catch (err) {
-              dao.metadata.avatar = undefined;
-            }
+        if (dao?.metadata?.avatar) {
+          try {
+            const logoCid = resolveIpfsCid(dao.metadata.avatar);
+            dao.metadata.avatar = `${AVATAR_IPFS_URL}/${logoCid}`;
+          } catch (err) {
+            dao.metadata.avatar = undefined;
           }
         }
+
         return dao;
       });
     }
