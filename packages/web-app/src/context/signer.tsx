@@ -53,6 +53,7 @@ export function UseSignerProvider({
   providerOptions?: IProviderOptions;
   defaultChainId?: number;
 }) {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [instance, setInstance] = useState<any>(null);
   const [connecting, setConnecting] = useState(false);
   const [connected, setConnected] = useState(false);
@@ -61,7 +62,7 @@ export function UseSignerProvider({
   let web3Modal: Web3Modal | undefined;
 
   /** Opens the Web3 pop up. Throws an Error if something fails. */
-  const selectWallet = (cacheProvider: boolean = true, networkId?: string) => {
+  const selectWallet = (cacheProvider = true, networkId?: string) => {
     web3Modal = new Web3Modal({
       network: networkId,
       cacheProvider,
@@ -127,12 +128,12 @@ export function UseSignerProvider({
     });
 
     // chainId is a hex string
-    instance.on('chainChanged', (_chainId: string) => {
+    instance.on('chainChanged', () => {
       refreshChainId();
     });
 
     // chainId is a hex string
-    instance.on('connect', (_info: {chainId: number}) => {
+    instance.on('connect', () => {
       setConnected(true);
       refreshChainId();
     });
@@ -152,6 +153,7 @@ export function UseSignerProvider({
     return () => {
       instance?.removeAllListeners?.();
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [instance]);
 
   const provider = instance ? new Web3Provider(instance) : null;
