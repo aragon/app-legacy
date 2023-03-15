@@ -4,7 +4,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import {HashRouter as Router} from 'react-router-dom';
 import 'tailwindcss/tailwind.css';
-import {UseSignerProvider} from 'use-signer';
+import {UseSignerProvider} from 'context/signer';
 import {IProviderOptions} from 'web3modal';
 
 import {AlertProvider} from 'context/alert';
