@@ -67,7 +67,9 @@ const TextContainer = styled.div.attrs({
 
 const DaoName = styled.p.attrs({
   className: 'text-ui-800 font-bold truncate',
-})``;
+})`
+  max-width: 150px;
+`;
 
 const DaoAddress = styled.p.attrs({
   className: 'text-ui-500 ft-text-sm desktop:hidden truncate',
