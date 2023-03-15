@@ -6,7 +6,7 @@ import React, {
   useState,
 } from 'react';
 import {useMatch, useNavigate} from 'react-router-dom';
-import {useSigner} from 'use-signer';
+import {useSigner} from 'context/signer';
 
 import {
   CHAIN_METADATA,
