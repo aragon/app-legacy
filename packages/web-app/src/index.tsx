@@ -6,6 +6,7 @@ import {HashRouter as Router} from 'react-router-dom';
 import 'tailwindcss/tailwind.css';
 import {UseSignerProvider} from 'context/signer';
 import {IProviderOptions} from 'web3modal';
+import {loadConnectKit} from '@ledgerhq/connect-kit-loader';
 
 import {AlertProvider} from 'context/alert';
 import {client, goerliClient} from 'context/apolloClient';
@@ -18,14 +19,20 @@ import {TransactionDetailProvider} from 'context/transactionDetail';
 import {WalletMenuProvider} from 'context/walletMenu';
 import {UseCacheProvider} from 'hooks/useCache';
 import {UseClientProvider} from 'hooks/useClient';
-import {ARAGON_RPC} from 'utils/constants';
+import {infuraApiKey} from 'utils/constants';
 import App from './app';
 
 const providerOptions: IProviderOptions = {
   walletconnect: {
     package: WalletConnectProvider,
     options: {
-      infuraId: ARAGON_RPC,
+      infuraId: infuraApiKey,
+    },
+  },
+  ledger: {
+    package: loadConnectKit, // required
+    options: {
+      infuraId: infuraApiKey,
     },
   },
 };
