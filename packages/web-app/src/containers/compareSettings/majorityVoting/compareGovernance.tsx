@@ -52,8 +52,6 @@ export const CompareMvGovernance: React.FC<CompareMvGovernanceProps> = ({
     'voteReplacement',
   ]);
 
-  console.log(daoSettings, tokenTotalSupply);
-
   let displayedInfo;
   if (view === 'new') {
     displayedInfo = {
