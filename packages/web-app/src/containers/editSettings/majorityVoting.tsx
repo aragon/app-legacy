@@ -242,9 +242,9 @@ export const EditMvSettings: React.FC<EditMvSettingsProps> = ({
     setValue('earlyExecution', votingMode.earlyExecution);
     setValue('voteReplacement', votingMode.voteReplacement);
 
-    setValue('durationDays', days);
-    setValue('durationHours', hours);
-    setValue('durationMinutes', minutes);
+    setValue('durationDays', days?.toString());
+    setValue('durationHours', hours?.toString());
+    setValue('durationMinutes', minutes?.toString());
 
     // TODO: Alerts share will be added later
     setValue(

@@ -166,6 +166,9 @@ const NewSettingsWrapper: React.FC = () => {
       links: [{name: '', url: ''}],
       startSwitch: 'now',
       durationSwitch: 'duration',
+      durationDays: '1',
+      durationHours: '0',
+      durationMinutes: '0',
     },
   });
 
