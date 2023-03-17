@@ -51,7 +51,7 @@ export const DaoSelector: React.FC<DaoSelectorProps> = ({
 
 const Card = styled.div.attrs(() => ({
   className:
-    'flex desktop:inline-flex items-center space-x-3 bg-ui-0' +
+    'flex desktop:inline-flex items-center space-x-2 bg-ui-0' +
     ' desktop:bg-transparent p-3 desktop:p-0 rounded-xl cursor-pointer',
 }))``;
 
@@ -68,7 +68,7 @@ const TextContainer = styled.div.attrs({
 const DaoName = styled.p.attrs({
   className: 'text-ui-800 font-bold truncate',
 })`
-  max-width: 150px;
+  max-width: 88px;
 `;
 
 const DaoAddress = styled.p.attrs({
