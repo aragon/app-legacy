@@ -258,6 +258,7 @@ const SetupTokenVotingForm: React.FC<Props> = ({pluginSettings}) => {
         />
         {durationSwitch === 'duration' ? (
           <Duration
+            name="current"
             defaultValues={{days, hours, minutes}}
             minDuration={{days, hours, minutes}}
             maxDurationDays={MAX_DURATION_DAYS}

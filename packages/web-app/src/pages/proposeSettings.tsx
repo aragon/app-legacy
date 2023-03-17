@@ -10,14 +10,16 @@ import {
 } from '@aragon/sdk-client';
 import {withTransaction} from '@elastic/apm-rum-react';
 import React, {useCallback, useEffect, useState} from 'react';
-import {useFormContext} from 'react-hook-form';
+import {useFormContext, useFormState} from 'react-hook-form';
 import {useTranslation} from 'react-i18next';
 import {generatePath, useNavigate} from 'react-router-dom';
 
 import {FullScreenStepper, Step} from 'components/fullScreenStepper';
 import {Loading} from 'components/temporary';
 import CompareSettings from 'containers/compareSettings';
-import DefineProposal from 'containers/defineProposal';
+import DefineProposal, {
+  isValid as defineProposalIsValid,
+} from 'containers/defineProposal';
 import ReviewProposal from 'containers/reviewProposal';
 import SetupVotingForm from 'containers/setupVotingForm';
 import PublishModal from 'containers/transactionModals/publishModal';
@@ -78,8 +80,11 @@ const ProposeSettings: React.FC = () => {
   const {t} = useTranslation();
   const {network} = useNetwork();
 
-  const {getValues, setValue} = useFormContext();
+  const {getValues, setValue, control} = useFormContext();
   const [showTxModal, setShowTxModal] = useState(false);
+  const {errors, dirtyFields} = useFormState({
+    control,
+  });
 
   const {data: daoId} = useDaoParam();
   const {data: daoDetails, isLoading} = useDaoDetails(daoId);
@@ -144,6 +149,7 @@ const ProposeSettings: React.FC = () => {
         <Step
           wizardTitle={t('newWithdraw.defineProposal.heading')}
           wizardDescription={t('newWithdraw.defineProposal.description')}
+          isNextButtonDisabled={!defineProposalIsValid(dirtyFields, errors)}
         >
           <DefineProposal />
         </Step>
