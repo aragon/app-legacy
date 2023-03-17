@@ -2,7 +2,8 @@ import {SupportedNetworks} from './chains';
 
 type SubgraphNetworkUrl = Record<SupportedNetworks, string | undefined>;
 
-export const FEEDBACK_FORM = 'https://form.typeform.com/to/apg4gHYO';
+export const FEEDBACK_FORM =
+  'https://aragonassociation.atlassian.net/servicedesk/customer/portal/3';
 
 export const SUBGRAPH_API_URL: SubgraphNetworkUrl = {
   //TODO: This is a temporary subgraph for ethereum should be replace with the right one
