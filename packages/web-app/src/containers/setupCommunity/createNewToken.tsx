@@ -1,4 +1,4 @@
-import {AlertInline, Label, Link, TextInput} from '@aragon/ui-components';
+import {AlertInline, Label, TextInput} from '@aragon/ui-components';
 import React from 'react';
 import styled from 'styled-components';
 import {useTranslation} from 'react-i18next';
