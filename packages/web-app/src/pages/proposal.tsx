@@ -27,6 +27,7 @@ import React, {useEffect, useMemo, useRef, useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {generatePath, useNavigate, useParams} from 'react-router-dom';
 import styled from 'styled-components';
+import sanitizeHtml from 'sanitize-html';
 
 import {ExecutionWidget} from 'components/executionWidget';
 import ResourceList from 'components/resourceList';
@@ -190,7 +191,12 @@ const Proposal: React.FC = () => {
   // set editor data
   useEffect(() => {
     if (proposal && editor) {
-      editor.commands.setContent(proposal.metadata.description, true);
+      editor.commands.setContent(
+        sanitizeHtml(proposal.metadata.description, {
+          disallowedTagsMode: 'recursiveEscape',
+        }),
+        true
+      );
     }
   }, [editor, proposal]);
 
