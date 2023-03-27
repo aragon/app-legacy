@@ -1,6 +1,13 @@
-import {Client, Context as SdkContext, ContextParams} from '@aragon/sdk-client';
+import {
+  Client,
+  Context as SdkContext,
+  ContextParams,
+  SupportedNetworks as SdkSupportedNetworks,
+  SupportedNetworksArray,
+} from '@aragon/sdk-client';
 import {useNetwork} from 'context/network';
 import React, {createContext, useContext, useEffect, useState} from 'react';
+
 import {
   CHAIN_METADATA,
   IPFS_ENDPOINT_MAIN_0,
@@ -9,7 +16,6 @@ import {
   SUBGRAPH_API_URL,
   SupportedNetworks,
 } from 'utils/constants';
-
 import {useWallet} from './useWallet';
 
 interface ClientContext {
@@ -56,7 +62,13 @@ export const UseClientProvider: React.FC = ({children}) => {
   const [context, setContext] = useState<SdkContext>();
 
   useEffect(() => {
-    if (network === 'unsupported') return;
+    const translatedNetwork =
+      network === 'ethereum' ? 'mainnet' : (network as SdkSupportedNetworks);
+
+    // when network not supported by the SDK, don't set network
+    if (!SupportedNetworksArray.includes(translatedNetwork)) {
+      return;
+    }
 
     let ipfsNodes = [
       {
@@ -84,7 +96,7 @@ export const UseClientProvider: React.FC = ({children}) => {
     }
     const contextParams: ContextParams = {
       //TODO: replace ethereum with mainnet for network
-      network: network === 'ethereum' ? 'mainnet' : network,
+      network: translatedNetwork,
       signer: signer || undefined,
       web3Providers: CHAIN_METADATA[network].rpc[0],
       ipfsNodes,
