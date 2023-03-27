@@ -168,35 +168,43 @@ const CreateProposalProvider: React.FC<Props> = ({
           });
           break;
         }
+
         case 'add_address': {
           const wallets = action.inputs.memberWallets.map(
             wallet => wallet.address
           );
-          actions.push(
-            Promise.resolve(
-              (pluginClient as MultisigClient).encoding.addAddressesAction({
-                pluginAddress: pluginAddress,
-                members: wallets,
-              })
-            )
-          );
+          (pluginClient as MultisigClient).encoding
+            .addAddressesAction({
+              pluginAddress: pluginAddress,
+              members: wallets,
+              votingSettings: {
+                minApprovals: (pluginSettings as MultisigVotingSettings)
+                  .minApprovals, // TODO - Fix me when SDK updates
+                onlyListed: (pluginSettings as MultisigVotingSettings)
+                  .onlyListed,
+              },
+            })
+            .forEach(action => actions.push(Promise.resolve(action)));
           break;
         }
         case 'remove_address': {
           const wallets = action.inputs.memberWallets.map(
             wallet => wallet.address
           );
-          if (wallets.length > 0)
-            actions.push(
-              Promise.resolve(
-                (pluginClient as MultisigClient).encoding.removeAddressesAction(
-                  {
-                    pluginAddress: pluginAddress,
-                    members: wallets,
-                  }
-                )
-              )
-            );
+          if (wallets.length > 0) {
+            (pluginClient as MultisigClient).encoding
+              .removeAddressesAction({
+                pluginAddress: pluginAddress,
+                members: wallets,
+                votingSettings: {
+                  minApprovals: (pluginSettings as MultisigVotingSettings)
+                    .minApprovals, // TODO - Fix me when SDK updates
+                  onlyListed: (pluginSettings as MultisigVotingSettings)
+                    .onlyListed,
+                },
+              })
+              .forEach(action => actions.push(Promise.resolve(action)));
+          }
           break;
         }
         case 'modify_multisig_voting_settings': {
@@ -255,6 +263,7 @@ const CreateProposalProvider: React.FC<Props> = ({
       ]);
 
       const actions = await encodeActions();
+      console.log(actions);
 
       const metadata: ProposalMetadata = {
         title,
