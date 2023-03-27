@@ -171,10 +171,10 @@
   dependencies:
     "@apollographql/graphql-language-service-types" "^2.0.0"
 
-"@aragon/osx-ethers@^1.0.0":
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/@aragon/osx-ethers/-/osx-ethers-1.0.0.tgz#fa45346a8e3904a296afbd9b77e82e2789089e0e"
-  integrity sha512-OmiyXG1TxvRYCLGThkEa2OHNEumWqZFYU8tzyzDFSskWmi70uTkoqR25ayaz8QaYOtYlVw9drzPFjJSX4RhZ/g==
+"@aragon/osx-ethers@^1.2.0":
+  version "1.2.0"
+  resolved "https://registry.yarnpkg.com/@aragon/osx-ethers/-/osx-ethers-1.2.0.tgz#b7e58714394183372ddf25d97cfe326f18ce6f1d"
+  integrity sha512-XI/tJo5NSjOwtcRRXvlfDFRh6YTTSVLYwlbd+4QlBxbTB2WDwS/4lq7rFwnO1bPufCQ4pSqGsTXFR5pwDLS4Ig==
   dependencies:
     ethers "^5.6.2"
 
@@ -187,13 +187,13 @@
     "@web3-react/types" "^6.0.7"
     tiny-warning "^1.0.3"
 
-"@aragon/sdk-client@^1.0.0":
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/@aragon/sdk-client/-/sdk-client-1.0.0.tgz#a94ab34973f21f3812dcb589470c0e280a772fa0"
-  integrity sha512-LEaI13L+axoRooAi70H/zn6k0OSe7aAXDKKQpXzwcpXdujCw0kEQoqnQs9o6A36ccWx6iKaPUUUPLC5hzUIX6g==
+"@aragon/sdk-client@^1.2.0":
+  version "1.2.0"
+  resolved "https://registry.yarnpkg.com/@aragon/sdk-client/-/sdk-client-1.2.0.tgz#c6118904e29cfd3d4bf0ba57d094a22eed6cb8d0"
+  integrity sha512-qWULWvMIFJQBbt1PnOMglA9xPSX2IJ0SO/rfxoiYc7cDZO+9XnPvEccfW/WmyyEhPWdn3cXERm8Lm9Ku8vGXWg==
   dependencies:
-    "@aragon/osx-ethers" "^1.0.0"
-    "@aragon/sdk-common" "^1.0.0"
+    "@aragon/osx-ethers" "^1.2.0"
+    "@aragon/sdk-common" "^1.1.0"
     "@aragon/sdk-ipfs" "^1.0.0"
     "@ethersproject/abstract-signer" "^5.5.0"
     "@ethersproject/bignumber" "^5.6.0"
@@ -204,10 +204,10 @@
     graphql "^16.5.0"
     graphql-request "^4.3.0"
 
-"@aragon/sdk-common@^1.0.0":
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/@aragon/sdk-common/-/sdk-common-1.0.0.tgz#e67585ee814221bc7d48575e885d312107449f68"
-  integrity sha512-Xy44sM//u0SBRYihmlwWOqgvM2mGEPLYYXjw3JgKugHbXM9+4UwLcsgZBcVReTvwKA/mXzsuz3ubu8jrWUKJMg==
+"@aragon/sdk-common@^1.1.0":
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/@aragon/sdk-common/-/sdk-common-1.1.0.tgz#90cf9b8cff3a0ffd3d27f8dc269c2c7689265fae"
+  integrity sha512-6aRzwJV/hrBgElEKLbd3QjopynXie9Xl8Re5HWwHWr+V2BtQs6pKzAmJ7xOoaZhpA8O51tg27HxoOSdXTjvYNg==
 
 "@aragon/sdk-ipfs@^1.0.0":
   version "1.0.0"
