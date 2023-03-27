@@ -101,11 +101,12 @@ export function NetworkProvider({children}: NetworkProviderProps) {
   );
 
   useEffect(() => {
-    if (networkState === 'unsupported') {
+    // unsupported network based on the networkUrlSegment network
+    if (networkState === 'unsupported' && networkUrlSegment) {
       console.warn('network unsupported');
       navigate(NotFound, {replace: true});
     }
-  }, [networkState, navigate]);
+  }, [networkState, navigate, networkUrlSegment]);
 
   return (
     <NetworkContext.Provider

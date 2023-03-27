@@ -1,7 +1,7 @@
 // TODO: Remove when statistics are available
 /* eslint-disable @typescript-eslint/no-unused-vars */
 
-import React, {useEffect} from 'react';
+import React from 'react';
 import 'react-responsive-carousel/lib/styles/carousel.min.css';
 import styled from 'styled-components';
 
@@ -11,13 +11,8 @@ import Carousel from 'containers/carousel';
 import {DaoExplorer} from 'containers/daoExplorer';
 import Hero from 'containers/hero';
 import {i18n} from '../../i18n.config';
-import {useNetwork} from 'context/network';
-import {getSupportedNetworkByChainId, SupportedNetworks} from 'utils/constants';
-import {useWallet} from 'hooks/useWallet';
 
 const Explore: React.FC = () => {
-  const {setNetwork} = useNetwork();
-
   return (
     <>
       <Hero />
