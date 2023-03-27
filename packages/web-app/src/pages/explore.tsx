@@ -1,7 +1,8 @@
 // TODO: Remove when statistics are available
 /* eslint-disable @typescript-eslint/no-unused-vars */
 
-import React from 'react';
+import {SupportedNetworks, SupportedNetworksArray} from '@aragon/sdk-client';
+import React, {useEffect} from 'react';
 import 'react-responsive-carousel/lib/styles/carousel.min.css';
 import styled from 'styled-components';
 
@@ -10,9 +11,23 @@ import {GridLayout} from 'components/layout';
 import Carousel from 'containers/carousel';
 import {DaoExplorer} from 'containers/daoExplorer';
 import Hero from 'containers/hero';
+import {useNetwork} from 'context/network';
 import {i18n} from '../../i18n.config';
 
 const Explore: React.FC = () => {
+  const {network, setNetwork} = useNetwork();
+
+  useEffect(() => {
+    const translatedNetwork =
+      network === 'ethereum' ? 'mainnet' : (network as SupportedNetworks);
+
+    // when network not supported by the SDK, default to ethereum
+    if (!SupportedNetworksArray.includes(translatedNetwork)) {
+      console.warn('Unsupported network, defaulting to ethereum');
+      setNetwork('ethereum');
+    }
+  }, [network, setNetwork]);
+
   return (
     <>
       <Hero />
