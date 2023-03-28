@@ -20,7 +20,7 @@ const SUPPORTED_NETWORKS = [
   'arbitrum-test',
 ] as const;
 
-export type availableNetworks = 'mainnet' | 'goerli' | 'mumbai';
+export type availableNetworks = 'mainnet' | 'goerli' | 'polygon' | 'mumbai';
 
 export type SupportedNetworks =
   | typeof SUPPORTED_NETWORKS[number]
