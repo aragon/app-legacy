@@ -1,5 +1,5 @@
 import {AlertInline, NumberInput} from '@aragon/ui-components';
-import React, {useCallback} from 'react';
+import React, {useCallback, useEffect} from 'react';
 import {Controller, useFormContext} from 'react-hook-form';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
@@ -37,6 +37,12 @@ const Duration: React.FC<Props> = ({
 
   const {t} = useTranslation();
   const {control, getValues, setValue, trigger} = useFormContext();
+
+  useEffect(() => {
+    setValue('durationDays', defaults.days);
+    setValue('durationHours', defaults.hours);
+    setValue('durationMinutes', defaults.minutes);
+  }, [defaults.days, defaults.hours, defaults.minutes, setValue]);
 
   const daoMinDurationMills =
     daysToMills(minimums.days) +
