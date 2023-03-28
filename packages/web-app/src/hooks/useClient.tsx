@@ -3,7 +3,6 @@ import {
   Context as SdkContext,
   ContextParams,
   SupportedNetworks as SdkSupportedNetworks,
-  SupportedNetworksArray,
 } from '@aragon/sdk-client';
 import {useNetwork} from 'context/network';
 import React, {createContext, useContext, useEffect, useState} from 'react';
@@ -24,7 +23,7 @@ interface ClientContext {
   network?: SupportedNetworks;
 }
 
-const translateNetwork = (
+const translateToAppNetwork = (
   sdkNetwork: SdkContext['network']
 ): SupportedNetworks => {
   if (typeof sdkNetwork !== 'string') {
@@ -36,11 +35,32 @@ const translateNetwork = (
       return 'ethereum';
     case 'goerli':
       return 'goerli';
-    case 'mumbai':
+    case 'maticmum':
       return 'mumbai';
-    case 'polygon':
-      return 'mumbai';
+    case 'matic':
+      return 'polygon';
   }
+  return 'unsupported';
+};
+
+const translateToSdkNetwork = (
+  appNetwork: SupportedNetworks
+): SdkSupportedNetworks | 'unsupported' => {
+  if (typeof appNetwork !== 'string') {
+    return 'unsupported';
+  }
+
+  switch (appNetwork) {
+    case 'polygon':
+      return 'matic';
+    case 'mumbai':
+      return 'maticmum';
+    case 'ethereum':
+      return 'mainnet';
+    case 'goerli':
+      return 'goerli';
+  }
+
   return 'unsupported';
 };
 
@@ -54,7 +74,7 @@ export const useClient = () => {
     );
   }
   if (client.context) {
-    client.network = translateNetwork(client.context.network);
+    client.network = translateToAppNetwork(client.context.network);
   }
   return client;
 };
@@ -66,13 +86,14 @@ export const UseClientProvider: React.FC = ({children}) => {
   const [context, setContext] = useState<SdkContext>();
 
   useEffect(() => {
-    const translatedNetwork =
-      network === 'ethereum' ? 'mainnet' : (network as SdkSupportedNetworks);
+    const translatedNetwork = translateToSdkNetwork(network);
 
     // when network not supported by the SDK, don't set network
-    if (!SupportedNetworksArray.includes(translatedNetwork)) {
-      return;
-    }
+    // TODO: @sepehr2github please uncomment when sdk updates to include
+    // 'matic' and 'maticmum' in the list of supported networks
+    // if (!SupportedNetworksArray.includes(translatedNetwork)) {
+    //   return;
+    // }
 
     let ipfsNodes = [
       {
@@ -100,8 +121,8 @@ export const UseClientProvider: React.FC = ({children}) => {
     }
 
     const contextParams: ContextParams = {
-      //TODO: replace ethereum with mainnet for network
       network: translatedNetwork,
+      daoFactoryAddress: '0x5bDBaAfd90B908058567080513635f560F896918',
       signer: signer || undefined,
       web3Providers: CHAIN_METADATA[network].rpc[0],
       ipfsNodes,
@@ -112,11 +133,7 @@ export const UseClientProvider: React.FC = ({children}) => {
       ],
     };
 
-    console.log('check', contextParams);
-
     const sdkContext = new SdkContext(contextParams);
-
-    console.log('check2', sdkContext);
 
     setClient(new Client(sdkContext));
     setContext(sdkContext);
