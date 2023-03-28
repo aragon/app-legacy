@@ -255,7 +255,6 @@ const CreateProposalProvider: React.FC<Props> = ({
       ]);
 
       const actions = await encodeActions();
-      console.log(actions);
 
       const metadata: ProposalMetadata = {
         title,
