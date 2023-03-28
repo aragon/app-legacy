@@ -5,7 +5,7 @@ import {useWallet} from 'hooks/useWallet';
 import {
   CHAIN_METADATA,
   getSupportedNetworkByChainId,
-  INFURA_PROJECT_ID,
+  infuraApiKey,
   SupportedChainID,
   SupportedNetworks,
 } from 'utils/constants';
@@ -42,7 +42,7 @@ export function ProvidersProvider({children}: ProviderProviderProps) {
   const {network} = useNetwork();
 
   const [infuraProvider, setInfuraProvider] = useState(
-    new InfuraProvider(NW_ARB, INFURA_PROJECT_ID)
+    new InfuraProvider(NW_ARB, infuraApiKey)
   );
 
   useEffect(() => {
@@ -71,11 +71,11 @@ function getInfuraProvider(
   // I've tried it on a fresh project and had no problems there...
   // [VR 07-03-2022]
   if (givenChainId === 42161) {
-    return new InfuraProvider(NW_ARB, INFURA_PROJECT_ID);
+    return new InfuraProvider(NW_ARB, infuraApiKey);
   } else if (givenChainId === 421613) {
-    return new InfuraProvider(NW_ARB_GOERLI, INFURA_PROJECT_ID);
+    return new InfuraProvider(NW_ARB_GOERLI, infuraApiKey);
   } else {
-    return new InfuraProvider(givenChainId, INFURA_PROJECT_ID);
+    return new InfuraProvider(givenChainId, infuraApiKey);
   }
 }
 

@@ -1,6 +1,6 @@
 /* SUPPORTED NETWORK TYPES ================================================== */
 
-import {INFURA_PROJECT_ID} from './api';
+import {infuraApiKey} from './api';
 
 export const SUPPORTED_CHAIN_ID = [1, 5, 137, 80001, 42161, 421613] as const;
 export type SupportedChainID = typeof SUPPORTED_CHAIN_ID[number];
@@ -100,8 +100,8 @@ export const CHAIN_METADATA: ChainList = {
     explorer: 'https://etherscan.io/',
     testnet: false,
     rpc: [
-      `https://mainnet.infura.io/v3/${INFURA_PROJECT_ID}`,
-      `wss://mainnet.infura.io/ws/v3/${INFURA_PROJECT_ID}`,
+      `https://mainnet.infura.io/v3/${infuraApiKey}`,
+      `wss://mainnet.infura.io/ws/v3/${infuraApiKey}`,
     ],
     nativeCurrency: {
       name: 'Ether',
@@ -118,8 +118,8 @@ export const CHAIN_METADATA: ChainList = {
     explorer: 'https://polygonscan.com/',
     testnet: false,
     rpc: [
-      `https://polygon-mainnet.infura.io/v3/${INFURA_PROJECT_ID}`,
-      `wss://polygon-mainnet.infura.io/ws/v3/${INFURA_PROJECT_ID}`,
+      `https://polygon-mainnet.infura.io/v3/${infuraApiKey}`,
+      `wss://polygon-mainnet.infura.io/ws/v3/${infuraApiKey}`,
     ],
     nativeCurrency: {
       name: 'MATIC',
@@ -151,8 +151,8 @@ export const CHAIN_METADATA: ChainList = {
     explorer: 'https://goerli.etherscan.io/',
     testnet: true,
     rpc: [
-      `https://goerli.infura.io/v3/${INFURA_PROJECT_ID}`,
-      `wss://goerli.infura.io/ws/v3/${INFURA_PROJECT_ID}`,
+      `https://goerli.infura.io/v3/${infuraApiKey}`,
+      `wss://goerli.infura.io/ws/v3/${infuraApiKey}`,
     ],
     nativeCurrency: {
       name: 'Goerli Ether',
@@ -169,8 +169,8 @@ export const CHAIN_METADATA: ChainList = {
     explorer: 'https://mumbai.polygonscan.com/',
     testnet: true,
     rpc: [
-      `https://polygon-mumbai.infura.io/v3/${INFURA_PROJECT_ID}`,
-      `wss://polygon-mumbai.infura.io/ws/v3/${INFURA_PROJECT_ID}`,
+      `https://polygon-mumbai.infura.io/v3/${infuraApiKey}`,
+      `wss://polygon-mumbai.infura.io/ws/v3/${infuraApiKey}`,
     ],
     nativeCurrency: {
       name: 'MATIC',

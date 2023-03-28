@@ -22,10 +22,9 @@ export const SUBGRAPH_API_URL: SubgraphNetworkUrl = {
 export const BASE_URL = 'https://api.coingecko.com/api/v3';
 export const DEFAULT_CURRENCY = 'usd';
 
-export const INFURA_PROJECT_ID = import.meta.env.VITE_INFURA_MAINNET_PROJECT_ID;
-
 export const ARAGON_RPC = 'mainnet.eth.aragon.network';
-export const infuraApiKey = import.meta.env.VITE_INFURA_API_KEY as string;
+export const infuraApiKey = import.meta.env
+  .VITE_INFURA_MAINNET_PROJECT_ID as string;
 
 export const IPFS_ENDPOINT_TEST =
   'https://testing-ipfs-0.aragon.network/api/v0';
