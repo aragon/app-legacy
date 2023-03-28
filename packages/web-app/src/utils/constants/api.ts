@@ -30,8 +30,8 @@ export const INFURA_PROJECT_ID: Record<
 > = {
   ethereum: import.meta.env.VITE_INFURA_MAINNET_PROJECT_ID,
   goerli: import.meta.env.VITE_INFURA_GOERLI_PROJECT_ID,
-  polygon: undefined,
-  mumbai: undefined,
+  polygon: import.meta.env.VITE_INFURA_MAINNET_PROJECT_ID,
+  mumbai: import.meta.env.VITE_INFURA_MAINNET_PROJECT_ID,
   arbitrum: undefined,
   'arbitrum-test': undefined,
   unsupported: undefined,

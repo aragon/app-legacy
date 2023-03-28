@@ -30,6 +30,8 @@ const translateNetwork = (
       return 'ethereum';
     case 'goerli':
       return 'goerli';
+    case 'mumbai':
+      return 'mumbai';
   }
   return 'unsupported';
 };

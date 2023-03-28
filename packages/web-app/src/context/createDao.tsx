@@ -25,8 +25,10 @@ import {useWallet} from 'hooks/useWallet';
 import {CreateDaoFormData} from 'pages/createDAO';
 import {trackEvent} from 'services/analytics';
 import {
+  availableNetworks,
   CHAIN_METADATA,
   FAVORITE_DAOS_KEY,
+  getSupportedNetworkByChainId,
   PENDING_DAOS_KEY,
   TransactionState,
 } from 'utils/constants';
@@ -142,7 +144,8 @@ const CreateDaoProvider: React.FC = ({children}) => {
 
   const getMultisigPluginInstallParams = useCallback((): [
     MultisigPluginInstallParams,
-    'goerli' | 'mainnet'
+    // TODO: Must add supported network once all the network added
+    availableNetworks
   ] => {
     const {
       blockchain,
@@ -158,13 +161,15 @@ const CreateDaoProvider: React.FC = ({children}) => {
           onlyListed: eligibilityType === 'multisig',
         },
       },
-      blockchain.network === 'test' ? 'goerli' : 'mainnet',
+      getSupportedNetworkByChainId(blockchain.id) === 'ethereum'
+        ? 'mainnet'
+        : (blockchain.label?.toLowerCase() as availableNetworks),
     ];
   }, [getValues]);
 
   const getVoteSettings = useCallback((): [
     VotingSettings,
-    'goerli' | 'mainnet'
+    availableNetworks
   ] => {
     const {
       blockchain,
@@ -202,7 +207,9 @@ const CreateDaoProvider: React.FC = ({children}) => {
             : BigInt(0),
         votingMode,
       },
-      blockchain.network === 'test' ? 'goerli' : 'mainnet',
+      getSupportedNetworkByChainId(blockchain.id) === 'ethereum'
+        ? 'mainnet'
+        : (blockchain.label?.toLowerCase() as availableNetworks),
     ];
   }, [getValues]);
 

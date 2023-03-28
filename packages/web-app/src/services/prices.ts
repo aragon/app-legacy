@@ -103,7 +103,7 @@ async function fetchTokenData(
   if (
     !nativeToken &&
     symbol &&
-    network === 'goerli' &&
+    ['goerli', 'mumbai'].includes(network) &&
     TOP_ETH_SYMBOL_ADDRESSES[symbol.toLowerCase()]
   ) {
     fetchAddress = TOP_ETH_SYMBOL_ADDRESSES[symbol.toLowerCase()];
@@ -163,7 +163,7 @@ async function fetchTokenPrice(
   if (
     !nativeToken &&
     symbol &&
-    network === 'goerli' &&
+    ['goerli', 'mumbai'].includes(network) &&
     TOP_ETH_SYMBOL_ADDRESSES[symbol.toLowerCase()]
   ) {
     fetchAddress = TOP_ETH_SYMBOL_ADDRESSES[symbol.toLowerCase()];

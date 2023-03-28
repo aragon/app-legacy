@@ -19,6 +19,9 @@ const SUPPORTED_NETWORKS = [
   'arbitrum',
   'arbitrum-test',
 ] as const;
+
+export type availableNetworks = 'mainnet' | 'goerli' | 'mumbai';
+
 export type SupportedNetworks =
   | typeof SUPPORTED_NETWORKS[number]
   | 'unsupported';
@@ -114,7 +117,10 @@ export const CHAIN_METADATA: ChainList = {
     logo: 'https://assets.coingecko.com/coins/images/4713/large/matic-token-icon.png?1624446912',
     explorer: 'https://polygonscan.com/',
     testnet: false,
-    rpc: ['https://polygon-rpc.com/', 'https://rpc-mainnet.matic.network'],
+    rpc: [
+      `https://mainnet.infura.io/v3/${INFURA_PROJECT_ID['polygon']}`,
+      `wss://mainnet.infura.io/ws/v3/${INFURA_PROJECT_ID['polygon']}`,
+    ],
     nativeCurrency: {
       name: 'MATIC',
       symbol: 'MATIC',
@@ -163,9 +169,8 @@ export const CHAIN_METADATA: ChainList = {
     explorer: 'https://mumbai.polygonscan.com/',
     testnet: true,
     rpc: [
-      'https://matic-mumbai.chainstacklabs.com',
-      'https://rpc-mumbai.maticvigil.com',
-      'https://matic-testnet-archive-rpc.bwarelabs.com',
+      `https://mainnet.infura.io/v3/${INFURA_PROJECT_ID['mumbai']}`,
+      `wss://mainnet.infura.io/ws/v3/${INFURA_PROJECT_ID['mumbai']}`,
     ],
     nativeCurrency: {
       name: 'MATIC',
