@@ -48,10 +48,10 @@ const translateToSdkNetwork = (
   }
 
   switch (appNetwork) {
-    case 'polygon':
-      return 'matic';
-    case 'mumbai':
-      return 'maticmum';
+    // case 'polygon':
+    //   return 'matic';
+    // case 'mumbai':
+    //   return 'maticmum';
     case 'ethereum':
       return 'mainnet';
     case 'goerli':
