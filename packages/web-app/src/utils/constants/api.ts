@@ -22,20 +22,7 @@ export const SUBGRAPH_API_URL: SubgraphNetworkUrl = {
 export const BASE_URL = 'https://api.coingecko.com/api/v3';
 export const DEFAULT_CURRENCY = 'usd';
 
-// NOTE: These are dummy endpoints and API keys used as POC. They should be
-// replaced by env var secrets in an upcoming PR.
-export const INFURA_PROJECT_ID: Record<
-  SupportedNetworks,
-  string | boolean | undefined
-> = {
-  ethereum: import.meta.env.VITE_INFURA_MAINNET_PROJECT_ID,
-  goerli: import.meta.env.VITE_INFURA_GOERLI_PROJECT_ID,
-  polygon: import.meta.env.VITE_INFURA_MAINNET_PROJECT_ID,
-  mumbai: import.meta.env.VITE_INFURA_MAINNET_PROJECT_ID,
-  arbitrum: undefined,
-  'arbitrum-test': undefined,
-  unsupported: undefined,
-};
+export const INFURA_PROJECT_ID = import.meta.env.VITE_INFURA_MAINNET_PROJECT_ID;
 
 export const ARAGON_RPC = 'mainnet.eth.aragon.network';
 export const infuraApiKey = import.meta.env.VITE_INFURA_API_KEY as string;

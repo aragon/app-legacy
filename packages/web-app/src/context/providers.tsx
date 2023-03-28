@@ -42,7 +42,7 @@ export function ProvidersProvider({children}: ProviderProviderProps) {
   const {network} = useNetwork();
 
   const [infuraProvider, setInfuraProvider] = useState(
-    new InfuraProvider(NW_ARB, INFURA_PROJECT_ID[network])
+    new InfuraProvider(NW_ARB, INFURA_PROJECT_ID)
   );
 
   useEffect(() => {
@@ -71,11 +71,11 @@ function getInfuraProvider(
   // I've tried it on a fresh project and had no problems there...
   // [VR 07-03-2022]
   if (givenChainId === 42161) {
-    return new InfuraProvider(NW_ARB, INFURA_PROJECT_ID[network]);
+    return new InfuraProvider(NW_ARB, INFURA_PROJECT_ID);
   } else if (givenChainId === 421613) {
-    return new InfuraProvider(NW_ARB_GOERLI, INFURA_PROJECT_ID[network]);
+    return new InfuraProvider(NW_ARB_GOERLI, INFURA_PROJECT_ID);
   } else {
-    return new InfuraProvider(givenChainId, INFURA_PROJECT_ID[network]);
+    return new InfuraProvider(givenChainId, INFURA_PROJECT_ID);
   }
 }
 

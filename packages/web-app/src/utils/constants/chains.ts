@@ -100,8 +100,8 @@ export const CHAIN_METADATA: ChainList = {
     explorer: 'https://etherscan.io/',
     testnet: false,
     rpc: [
-      `https://mainnet.infura.io/v3/${INFURA_PROJECT_ID['ethereum']}`,
-      `wss://mainnet.infura.io/ws/v3/${INFURA_PROJECT_ID['ethereum']}`,
+      `https://mainnet.infura.io/v3/${INFURA_PROJECT_ID}`,
+      `wss://mainnet.infura.io/ws/v3/${INFURA_PROJECT_ID}`,
     ],
     nativeCurrency: {
       name: 'Ether',
@@ -118,8 +118,8 @@ export const CHAIN_METADATA: ChainList = {
     explorer: 'https://polygonscan.com/',
     testnet: false,
     rpc: [
-      `https://mainnet.infura.io/v3/${INFURA_PROJECT_ID['polygon']}`,
-      `wss://mainnet.infura.io/ws/v3/${INFURA_PROJECT_ID['polygon']}`,
+      `https://polygon-mainnet.infura.io/v3/${INFURA_PROJECT_ID}`,
+      `wss://polygon-mainnet.infura.io/ws/v3/${INFURA_PROJECT_ID}`,
     ],
     nativeCurrency: {
       name: 'MATIC',
@@ -151,8 +151,8 @@ export const CHAIN_METADATA: ChainList = {
     explorer: 'https://goerli.etherscan.io/',
     testnet: true,
     rpc: [
-      `https://goerli.infura.io/v3/${INFURA_PROJECT_ID['goerli']}`,
-      `wss://goerli.infura.io/ws/v3/${INFURA_PROJECT_ID['goerli']}`,
+      `https://goerli.infura.io/v3/${INFURA_PROJECT_ID}`,
+      `wss://goerli.infura.io/ws/v3/${INFURA_PROJECT_ID}`,
     ],
     nativeCurrency: {
       name: 'Goerli Ether',
@@ -169,8 +169,8 @@ export const CHAIN_METADATA: ChainList = {
     explorer: 'https://mumbai.polygonscan.com/',
     testnet: true,
     rpc: [
-      `https://mainnet.infura.io/v3/${INFURA_PROJECT_ID['mumbai']}`,
-      `wss://mainnet.infura.io/ws/v3/${INFURA_PROJECT_ID['mumbai']}`,
+      `https://polygon-mumbai.infura.io/v3/${INFURA_PROJECT_ID}`,
+      `wss://polygon-mumbai.infura.io/ws/v3/${INFURA_PROJECT_ID}`,
     ],
     nativeCurrency: {
       name: 'MATIC',
