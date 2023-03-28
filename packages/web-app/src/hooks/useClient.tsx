@@ -40,6 +40,27 @@ const translateNetwork = (
   return 'unsupported';
 };
 
+const translateToSdkNetwork = (
+  appNetwork: SupportedNetworks
+): SdkSupportedNetworks | 'unsupported' => {
+  if (typeof appNetwork !== 'string') {
+    return 'unsupported';
+  }
+
+  switch (appNetwork) {
+    case 'polygon':
+      return 'matic';
+    case 'mumbai':
+      return 'maticmum';
+    case 'ethereum':
+      return 'mainnet';
+    case 'goerli':
+      return 'goerli';
+  }
+
+  return 'unsupported';
+};
+
 const UseClientContext = createContext<ClientContext>({} as ClientContext);
 
 export const useClient = () => {
@@ -62,8 +83,9 @@ export const UseClientProvider: React.FC = ({children}) => {
   const [context, setContext] = useState<SdkContext>();
 
   useEffect(() => {
-    const translatedNetwork =
-      network === 'ethereum' ? 'mainnet' : (network as SdkSupportedNetworks);
+    const translatedNetwork = translateToSdkNetwork(
+      network
+    ) as SdkSupportedNetworks;
 
     // when network not supported by the SDK, don't set network
     if (!SupportedNetworksArray.includes(translatedNetwork)) {
