@@ -122,6 +122,8 @@ export const UseClientProvider: React.FC = ({children}) => {
 
     const contextParams: ContextParams = {
       network: translatedNetwork,
+
+      //TODO: remove when it comes back from the SDK
       daoFactoryAddress: '0x5bDBaAfd90B908058567080513635f560F896918',
       signer: signer || undefined,
       web3Providers: CHAIN_METADATA[network].rpc[0],
