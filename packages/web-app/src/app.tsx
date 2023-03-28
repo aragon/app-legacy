@@ -86,12 +86,6 @@ function App() {
     window.scrollTo(0, 0);
   }, [pathname]);
 
-  // This only happens as an intermediate state as unsupported network
-  // causes immediate navigation to 404 page
-  if (network === 'unsupported') {
-    return <Loading />;
-  }
-
   return (
     <>
       {/* TODO: replace with loading indicator */}

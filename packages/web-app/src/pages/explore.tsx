@@ -12,12 +12,16 @@ import Carousel from 'containers/carousel';
 import {DaoExplorer} from 'containers/daoExplorer';
 import Hero from 'containers/hero';
 import {useNetwork} from 'context/network';
+import {useWallet} from 'hooks/useWallet';
+import {getSupportedNetworkByChainId} from 'utils/constants';
 import {i18n} from '../../i18n.config';
 
 const Explore: React.FC = () => {
-  const {network, setNetwork} = useNetwork();
+  const {chainId} = useWallet();
+  const {setNetwork} = useNetwork();
 
   useEffect(() => {
+    const network = getSupportedNetworkByChainId(chainId);
     const translatedNetwork =
       network === 'ethereum' ? 'mainnet' : (network as SupportedNetworks);
 
@@ -26,7 +30,7 @@ const Explore: React.FC = () => {
       console.warn('Unsupported network, defaulting to ethereum');
       setNetwork('ethereum');
     }
-  }, [network, setNetwork]);
+  }, [chainId, setNetwork]);
 
   return (
     <>
