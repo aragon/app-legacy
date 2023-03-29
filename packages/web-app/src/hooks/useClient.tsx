@@ -2,6 +2,7 @@ import {
   Client,
   Context as SdkContext,
   ContextParams,
+  LIVE_CONTRACTS,
   SupportedNetworksArray,
 } from '@aragon/sdk-client';
 
@@ -50,8 +51,6 @@ export const UseClientProvider: React.FC = ({children}) => {
     const translatedNetwork = translateToSdkNetwork(network);
 
     // when network not supported by the SDK, don't set network
-    // TODO: @sepehr2github please uncomment when sdk updates to include
-    // 'matic' and 'maticmum' in the list of supported networks
     if (
       translatedNetwork === 'unsupported' ||
       !SupportedNetworksArray.includes(translatedNetwork)
@@ -85,6 +84,7 @@ export const UseClientProvider: React.FC = ({children}) => {
     }
 
     const contextParams: ContextParams = {
+      daoFactoryAddress: LIVE_CONTRACTS[translatedNetwork].daoFactory,
       network: translatedNetwork,
       signer: signer || undefined,
       web3Providers: CHAIN_METADATA[network].rpc[0],
