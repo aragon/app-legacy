@@ -1,6 +1,7 @@
 // TODO: Remove when statistics are available
 /* eslint-disable @typescript-eslint/no-unused-vars */
 
+import {SupportedNetworks, SupportedNetworksArray} from '@aragon/sdk-client';
 import React, {useEffect} from 'react';
 import 'react-responsive-carousel/lib/styles/carousel.min.css';
 import styled from 'styled-components';
@@ -10,13 +11,26 @@ import {GridLayout} from 'components/layout';
 import Carousel from 'containers/carousel';
 import {DaoExplorer} from 'containers/daoExplorer';
 import Hero from 'containers/hero';
-import {i18n} from '../../i18n.config';
 import {useNetwork} from 'context/network';
-import {getSupportedNetworkByChainId, SupportedNetworks} from 'utils/constants';
 import {useWallet} from 'hooks/useWallet';
+import {getSupportedNetworkByChainId} from 'utils/constants';
+import {i18n} from '../../i18n.config';
 
 const Explore: React.FC = () => {
+  const {chainId} = useWallet();
   const {setNetwork} = useNetwork();
+
+  useEffect(() => {
+    const network = getSupportedNetworkByChainId(chainId);
+    const translatedNetwork =
+      network === 'ethereum' ? 'mainnet' : (network as SupportedNetworks);
+
+    // when network not supported by the SDK, default to ethereum
+    if (!SupportedNetworksArray.includes(translatedNetwork)) {
+      console.warn('Unsupported network, defaulting to ethereum');
+      setNetwork('ethereum');
+    }
+  }, [chainId, setNetwork]);
 
   return (
     <>

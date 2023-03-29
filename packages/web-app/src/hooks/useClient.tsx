@@ -8,6 +8,7 @@ import {
 
 import {useNetwork} from 'context/network';
 import React, {createContext, useContext, useEffect, useState} from 'react';
+
 import {
   CHAIN_METADATA,
   IPFS_ENDPOINT_MAIN_0,
