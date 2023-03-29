@@ -11,10 +11,11 @@ import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 
 import AddLinks from 'components/addLinks';
-import {URL_PATTERN} from 'utils/constants';
+import {CHAIN_METADATA, URL_PATTERN} from 'utils/constants';
 import {isOnlyWhitespace} from 'utils/library';
 import {isDaoEnsNameValid} from 'utils/validators';
-import {useProviders} from 'context/providers';
+import {useSpecificProvider} from 'context/providers';
+import {useNetwork} from 'context/network';
 
 const DAO_LOGO = {
   maxDimension: 2400,
@@ -34,8 +35,12 @@ const DefineMetadata: React.FC<DefineMetadataProps> = ({
   isSettingPage,
 }) => {
   const {t} = useTranslation();
+  const {network} = useNetwork();
   const {control, setError, clearErrors, getValues} = useFormContext();
-  const {infura: provider} = useProviders();
+  // Use mainnet provider for polygon ENS validation
+  const provider = useSpecificProvider(
+    network === 'polygon' ? 1 : CHAIN_METADATA[network].id
+  );
 
   const handleImageError = useCallback(
     (error: {code: string; message: string}) => {
