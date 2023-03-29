@@ -124,7 +124,12 @@ export function UseSignerProvider({
 
     instance.on('accountsChanged', (accounts: string[]) => {
       // Return the new address
-      setAddress(accounts[0]);
+      if (accounts[0]) {
+        setAddress(accounts[0]);
+      } else {
+        setAddress(null);
+        setConnected(false);
+      }
     });
 
     // chainId is a hex string
