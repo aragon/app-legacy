@@ -38,16 +38,6 @@ export const useWallet = (): IUseWallet => {
 
   const provider = useMemo(() => {
     if (!['ethereum', 'goerli'].includes(network)) {
-      console.log(
-        'viewRPC',
-        new JsonRpcProvider(CHAIN_METADATA[network].rpc[0], {
-          chainId: CHAIN_METADATA[network].id,
-          name: translateToSdkNetwork(network),
-          ensAddress:
-            LIVE_CONTRACTS[translateToSdkNetwork(network) as SupportedNetworks]
-              .ensRegistry,
-        })
-      );
       return new JsonRpcProvider(CHAIN_METADATA[network].rpc[0], {
         chainId: CHAIN_METADATA[network].id,
         name: translateToSdkNetwork(network),
