@@ -192,7 +192,9 @@ const Proposal: React.FC = () => {
   useEffect(() => {
     if (proposal && editor) {
       editor.commands.setContent(
+        // Default list of allowed tags and attributes - https://www.npmjs.com/package/sanitize-html#default-options
         sanitizeHtml(proposal.metadata.description, {
+          // the disallowedTagsMode displays the disallowed tags to be rendered as a string
           disallowedTagsMode: 'recursiveEscape',
         }),
         true
