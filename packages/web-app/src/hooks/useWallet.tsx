@@ -1,8 +1,10 @@
 import {useSigner, SignerValue} from 'context/signer';
-import {useEffect, useState} from 'react';
+import {useEffect, useMemo, useState} from 'react';
 import {BigNumber} from 'ethers';
+import {StaticJsonRpcProvider, Web3Provider} from '@ethersproject/providers';
+
 import {useNetwork} from 'context/network';
-import {CHAIN_METADATA} from 'utils/constants';
+import {CHAIN_METADATA, translateToSdkNetwork} from 'utils/constants';
 
 export interface IUseWallet extends SignerValue {
   balance: BigNumber | null;
@@ -20,11 +22,28 @@ export interface IUseWallet extends SignerValue {
 
 export const useWallet = (): IUseWallet => {
   const {network} = useNetwork();
-  const {chainId, methods, signer, provider, address, status} = useSigner();
+  const {
+    chainId,
+    methods,
+    signer,
+    provider: SignerProvider,
+    address,
+    status,
+  } = useSigner();
   const [balance, setBalance] = useState<BigNumber | null>(null);
   const [ensName, setEnsName] = useState<string>('');
   const [ensAvatarUrl, setEnsAvatarUrl] = useState<string>('');
   const [isConnected, setIsConnected] = useState<boolean>(false);
+
+  const provider = useMemo(() => {
+    if (!['ethereum', 'goerli'].includes(network)) {
+      return new StaticJsonRpcProvider(CHAIN_METADATA[network].rpc[0], {
+        chainId: CHAIN_METADATA[network].id,
+        name: translateToSdkNetwork(network),
+        ensAddress: MATIC_ENS_REGISTRY_ADDRESS,
+      }) as Web3Provider;
+    } else return SignerProvider;
+  }, [SignerProvider, network]);
 
   // Update balance
   useEffect(() => {

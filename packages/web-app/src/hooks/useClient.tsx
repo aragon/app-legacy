@@ -1,9 +1,4 @@
-import {
-  Client,
-  Context as SdkContext,
-  ContextParams,
-  SupportedNetworks as SdkSupportedNetworks,
-} from '@aragon/sdk-client';
+import {Client, Context as SdkContext, ContextParams} from '@aragon/sdk-client';
 import {useNetwork} from 'context/network';
 import React, {createContext, useContext, useEffect, useState} from 'react';
 import {
@@ -13,6 +8,8 @@ import {
   IPFS_ENDPOINT_TEST,
   SUBGRAPH_API_URL,
   SupportedNetworks,
+  translateToAppNetwork,
+  translateToSdkNetwork,
 } from 'utils/constants';
 
 import {useWallet} from './useWallet';
@@ -22,47 +19,6 @@ interface ClientContext {
   context?: SdkContext;
   network?: SupportedNetworks;
 }
-
-const translateToAppNetwork = (
-  sdkNetwork: SdkContext['network']
-): SupportedNetworks => {
-  if (typeof sdkNetwork !== 'string') {
-    return 'unsupported';
-  }
-
-  switch (sdkNetwork) {
-    case 'mainnet':
-      return 'ethereum';
-    case 'goerli':
-      return 'goerli';
-    case 'maticmum':
-      return 'mumbai';
-    case 'matic':
-      return 'polygon';
-  }
-  return 'unsupported';
-};
-
-const translateToSdkNetwork = (
-  appNetwork: SupportedNetworks
-): SdkSupportedNetworks | 'unsupported' => {
-  if (typeof appNetwork !== 'string') {
-    return 'unsupported';
-  }
-
-  switch (appNetwork) {
-    case 'polygon':
-      return 'matic';
-    case 'mumbai':
-      return 'maticmum';
-    case 'ethereum':
-      return 'mainnet';
-    case 'goerli':
-      return 'goerli';
-  }
-
-  return 'unsupported';
-};
 
 const UseClientContext = createContext<ClientContext>({} as ClientContext);
 
