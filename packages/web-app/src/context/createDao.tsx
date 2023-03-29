@@ -11,6 +11,7 @@ import {
   VotingSettings,
   MultisigClient,
   MultisigPluginInstallParams,
+  SupportedNetworks as sdkSupportedNetworks,
 } from '@aragon/sdk-client';
 import {parseUnits} from 'ethers/lib/utils';
 import React, {createContext, useCallback, useContext, useState} from 'react';
@@ -25,12 +26,12 @@ import {useWallet} from 'hooks/useWallet';
 import {CreateDaoFormData} from 'pages/createDAO';
 import {trackEvent} from 'services/analytics';
 import {
-  availableNetworks,
   CHAIN_METADATA,
   FAVORITE_DAOS_KEY,
-  getSupportedNetworkByChainId,
   PENDING_DAOS_KEY,
+  SupportedNetworks,
   TransactionState,
+  translateToSdkNetwork,
 } from 'utils/constants';
 import {getSecondsFromDHM} from 'utils/date';
 import {Dashboard} from 'utils/paths';
@@ -144,8 +145,7 @@ const CreateDaoProvider: React.FC = ({children}) => {
 
   const getMultisigPluginInstallParams = useCallback((): [
     MultisigPluginInstallParams,
-    // TODO: Must add supported network once all the network added
-    availableNetworks
+    sdkSupportedNetworks
   ] => {
     const {
       blockchain,
@@ -153,6 +153,10 @@ const CreateDaoProvider: React.FC = ({children}) => {
       multisigMinimumApprovals,
       eligibilityType,
     } = getValues();
+    const translatedNetwork = translateToSdkNetwork(
+      blockchain.label?.toLowerCase() as SupportedNetworks
+    ) as sdkSupportedNetworks;
+
     return [
       {
         members: multisigWallets.map(wallet => wallet.address),
@@ -161,15 +165,13 @@ const CreateDaoProvider: React.FC = ({children}) => {
           onlyListed: eligibilityType === 'multisig',
         },
       },
-      getSupportedNetworkByChainId(blockchain.id) === 'ethereum'
-        ? 'mainnet'
-        : (blockchain.label?.toLowerCase() as availableNetworks),
+      translatedNetwork,
     ];
   }, [getValues]);
 
   const getVoteSettings = useCallback((): [
     VotingSettings,
-    availableNetworks
+    sdkSupportedNetworks
   ] => {
     const {
       blockchain,
@@ -191,6 +193,9 @@ const CreateDaoProvider: React.FC = ({children}) => {
     if (voteReplacement) votingMode = VotingMode.VOTE_REPLACEMENT;
     else if (earlyExecution) votingMode = VotingMode.EARLY_EXECUTION;
     else votingMode = VotingMode.STANDARD;
+    const translatedNetwork = translateToSdkNetwork(
+      blockchain.label?.toLowerCase() as SupportedNetworks
+    ) as sdkSupportedNetworks;
 
     return [
       {
@@ -207,9 +212,7 @@ const CreateDaoProvider: React.FC = ({children}) => {
             : BigInt(0),
         votingMode,
       },
-      getSupportedNetworkByChainId(blockchain.id) === 'ethereum'
-        ? 'mainnet'
-        : (blockchain.label?.toLowerCase() as availableNetworks),
+      translatedNetwork,
     ];
   }, [getValues]);
 
