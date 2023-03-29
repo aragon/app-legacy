@@ -1,7 +1,7 @@
 import {FieldError, FieldErrors, ValidateResult} from 'react-hook-form';
 import {isAddress, parseUnits} from 'ethers/lib/utils';
 import {BigNumber, providers as EthersProviders} from 'ethers';
-import {InfuraProvider} from '@ethersproject/providers';
+import {InfuraProvider, JsonRpcProvider} from '@ethersproject/providers';
 
 import {i18n} from '../../i18n.config';
 import {isERC20Token} from './tokens';
@@ -174,7 +174,7 @@ export function actionsAreValid(
 
 export function isDaoEnsNameValid(
   value: string,
-  provider: InfuraProvider,
+  provider: InfuraProvider | JsonRpcProvider,
   setError: (name: string, error: FieldError) => void,
   clearError: (name?: string | string[]) => void,
   getValues: (payload?: string | string[]) => Object

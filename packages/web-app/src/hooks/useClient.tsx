@@ -1,4 +1,10 @@
-import {Client, Context as SdkContext, ContextParams} from '@aragon/sdk-client';
+import {
+  Client,
+  Context as SdkContext,
+  ContextParams,
+  SupportedNetworksArray,
+} from '@aragon/sdk-client';
+
 import {useNetwork} from 'context/network';
 import React, {createContext, useContext, useEffect, useState} from 'react';
 import {
@@ -11,7 +17,6 @@ import {
   translateToAppNetwork,
   translateToSdkNetwork,
 } from 'utils/constants';
-
 import {useWallet} from './useWallet';
 
 interface ClientContext {
@@ -47,9 +52,12 @@ export const UseClientProvider: React.FC = ({children}) => {
     // when network not supported by the SDK, don't set network
     // TODO: @sepehr2github please uncomment when sdk updates to include
     // 'matic' and 'maticmum' in the list of supported networks
-    // if (!SupportedNetworksArray.includes(translatedNetwork)) {
-    //   return;
-    // }
+    if (
+      translatedNetwork === 'unsupported' ||
+      !SupportedNetworksArray.includes(translatedNetwork)
+    ) {
+      return;
+    }
 
     let ipfsNodes = [
       {
@@ -78,9 +86,6 @@ export const UseClientProvider: React.FC = ({children}) => {
 
     const contextParams: ContextParams = {
       network: translatedNetwork,
-
-      //TODO: remove when it comes back from the SDK
-      daoFactoryAddress: '0x5bDBaAfd90B908058567080513635f560F896918',
       signer: signer || undefined,
       web3Providers: CHAIN_METADATA[network].rpc[0],
       ipfsNodes,

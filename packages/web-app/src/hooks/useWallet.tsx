@@ -1,10 +1,11 @@
 import {useSigner, SignerValue} from 'context/signer';
 import {useEffect, useMemo, useState} from 'react';
 import {BigNumber} from 'ethers';
-import {StaticJsonRpcProvider, Web3Provider} from '@ethersproject/providers';
+import {JsonRpcProvider} from '@ethersproject/providers';
 
 import {useNetwork} from 'context/network';
 import {CHAIN_METADATA, translateToSdkNetwork} from 'utils/constants';
+import {LIVE_CONTRACTS, SupportedNetworks} from '@aragon/sdk-client';
 
 export interface IUseWallet extends SignerValue {
   balance: BigNumber | null;
@@ -26,7 +27,7 @@ export const useWallet = (): IUseWallet => {
     chainId,
     methods,
     signer,
-    provider: SignerProvider,
+    provider: signerProvider,
     address,
     status,
   } = useSigner();
@@ -37,13 +38,25 @@ export const useWallet = (): IUseWallet => {
 
   const provider = useMemo(() => {
     if (!['ethereum', 'goerli'].includes(network)) {
-      return new StaticJsonRpcProvider(CHAIN_METADATA[network].rpc[0], {
+      console.log(
+        'viewRPC',
+        new JsonRpcProvider(CHAIN_METADATA[network].rpc[0], {
+          chainId: CHAIN_METADATA[network].id,
+          name: translateToSdkNetwork(network),
+          ensAddress:
+            LIVE_CONTRACTS[translateToSdkNetwork(network) as SupportedNetworks]
+              .ensRegistry,
+        })
+      );
+      return new JsonRpcProvider(CHAIN_METADATA[network].rpc[0], {
         chainId: CHAIN_METADATA[network].id,
         name: translateToSdkNetwork(network),
-        ensAddress: MATIC_ENS_REGISTRY_ADDRESS,
-      }) as Web3Provider;
-    } else return SignerProvider;
-  }, [SignerProvider, network]);
+        ensAddress:
+          LIVE_CONTRACTS[translateToSdkNetwork(network) as SupportedNetworks]
+            .ensRegistry,
+      });
+    } else return signerProvider;
+  }, [signerProvider, network]);
 
   // Update balance
   useEffect(() => {
@@ -75,7 +88,7 @@ export const useWallet = (): IUseWallet => {
     isConnected && CHAIN_METADATA[network].id !== chainId;
 
   return {
-    provider,
+    provider: signerProvider,
     signer,
     status,
     address,

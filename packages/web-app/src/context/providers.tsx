@@ -1,4 +1,8 @@
-import {InfuraProvider, Web3Provider} from '@ethersproject/providers';
+import {
+  InfuraProvider,
+  JsonRpcProvider,
+  Web3Provider,
+} from '@ethersproject/providers';
 import React, {createContext, useContext, useEffect, useState} from 'react';
 
 import {useWallet} from 'hooks/useWallet';
@@ -8,9 +12,14 @@ import {
   infuraApiKey,
   SupportedChainID,
   SupportedNetworks,
+  translateToSdkNetwork,
 } from 'utils/constants';
 import {Nullable} from 'utils/types';
 import {useNetwork} from './network';
+import {
+  LIVE_CONTRACTS,
+  SupportedNetworks as sdkSupportedNetworks,
+} from '@aragon/sdk-client';
 
 const NW_ARB = {chainId: 42161, name: 'arbitrum'};
 const NW_ARB_GOERLI = {chainId: 421613, name: 'arbitrum-goerli'};
@@ -18,7 +27,7 @@ const NW_ARB_GOERLI = {chainId: 421613, name: 'arbitrum-goerli'};
 /* CONTEXT PROVIDER ========================================================= */
 
 type Providers = {
-  infura: InfuraProvider;
+  infura: InfuraProvider | JsonRpcProvider;
   web3: Nullable<Web3Provider>;
 };
 
@@ -41,7 +50,7 @@ export function ProvidersProvider({children}: ProviderProviderProps) {
   const {provider} = useWallet();
   const {network} = useNetwork();
 
-  const [infuraProvider, setInfuraProvider] = useState(
+  const [infuraProvider, setInfuraProvider] = useState<Providers['infura']>(
     new InfuraProvider(NW_ARB, infuraApiKey)
   );
 
@@ -75,7 +84,13 @@ function getInfuraProvider(
   } else if (givenChainId === 421613) {
     return new InfuraProvider(NW_ARB_GOERLI, infuraApiKey);
   } else {
-    return new InfuraProvider(givenChainId, infuraApiKey);
+    return new JsonRpcProvider(CHAIN_METADATA[network].rpc[0], {
+      chainId: CHAIN_METADATA[network].id,
+      name: translateToSdkNetwork(network),
+      ensAddress:
+        LIVE_CONTRACTS[translateToSdkNetwork(network) as sdkSupportedNetworks]
+          .ensRegistry,
+    });
   }
 }
 
@@ -84,7 +99,9 @@ function getInfuraProvider(
  * @param chainId network chain is
  * @returns infura provider
  */
-export function useSpecificProvider(chainId: SupportedChainID): InfuraProvider {
+export function useSpecificProvider(
+  chainId: SupportedChainID
+): Providers['infura'] {
   const network = getSupportedNetworkByChainId(chainId) as SupportedNetworks;
 
   const [infuraProvider, setInfuraProvider] = useState(
