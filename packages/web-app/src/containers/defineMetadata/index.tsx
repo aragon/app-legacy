@@ -11,7 +11,7 @@ import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 
 import AddLinks from 'components/addLinks';
-import {CHAIN_METADATA, URL_PATTERN} from 'utils/constants';
+import {URL_PATTERN} from 'utils/constants';
 import {isOnlyWhitespace} from 'utils/library';
 import {isDaoEnsNameValid} from 'utils/validators';
 import {useProviders} from 'context/providers';
