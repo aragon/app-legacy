@@ -7,7 +7,7 @@ on:
       - '!.github/**'
     branches:
       - 'develop'
-      - 'DOPS-445*'       ## temporal branch for testing only
+      - 'DOPS-445*' ## temporal branch for testing only
 
 jobs:
   setup-env-vars:
@@ -46,14 +46,14 @@ jobs:
         with:
           node-version: 16
           cache: 'yarn'
-        
+
       - name: Install deps, build and link ui-components
         run: |
           cd packages/ui-components
           yarn install --pure-lockfile
           yarn build
           yarn link
-    
+
       - name: Install deps and link web-app
         run: |
           cd packages/web-app
@@ -78,6 +78,8 @@ jobs:
           VITE_ETHERSCAN_API_KEY: ${{ secrets.VITE_ETHERSCAN_API_KEY }}
           VITE_INFURA_GOERLI_PROJECT_ID: ${{ secrets.VITE_INFURA_GOERLI_PROJECT_ID }}
           VITE_INFURA_MAINNET_PROJECT_ID: ${{ secrets.VITE_INFURA_MAINNET_PROJECT_ID }}
+          VITE_ALCHEMY_KEY_POLYGON_MUMBAI: ${{secrets.VITE_ALCHEMY_KEY_POLYGON_MUMBAI}}
+          VITE_ALCHEMY_KEY_POLYGON_MAINNET: ${{secrets.VITE_ALCHEMY_KEY_POLYGON_MUMBAI}}
           NODE_OPTIONS: '--max-old-space-size=6656'
 
       - name: Setup Docker Buildx
@@ -154,7 +156,7 @@ jobs:
       #   env:
       #     COMMIT_SHA: ${{ github.sha }}
       #   run: |
-      #     for f in $(find ./dist/assets/ -name *.js.map) ; do 
+      #     for f in $(find ./dist/assets/ -name *.js.map) ; do
       #       curl -X POST "https://kibana-sourcemaps.aragon.org/api/apm/sourcemaps" \
       #         -H 'Content-Type: multipart/form-data' \
       #         -H 'kbn-xsrf: true' \

@@ -69,6 +69,8 @@ jobs:
           VITE_INFURA_MAINNET_PROJECT_ID: ${{secrets.VITE_INFURA_MAINNET_PROJECT_ID}}
           VITE_WALLET_CONNECT_PROJECT_ID: ${{secrets.VITE_WALLET_CONNECT_PROJECT_ID}}
           VITE_INFURA_API_KEY: ${{secrets.VITE_INFURA_API_KEY}}
+          VITE_ALCHEMY_KEY_POLYGON_MUMBAI: ${{secrets.VITE_ALCHEMY_KEY_POLYGON_MUMBAI}}
+          VITE_ALCHEMY_KEY_POLYGON_MAINNET: ${{secrets.VITE_ALCHEMY_KEY_POLYGON_MUMBAI}}
           NODE_OPTIONS: '--max-old-space-size=6656'
       - name: Activate Fleek
         env:
