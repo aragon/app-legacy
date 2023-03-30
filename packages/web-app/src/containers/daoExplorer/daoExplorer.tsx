@@ -19,6 +19,7 @@ import {Dashboard} from 'utils/paths';
 import {useReactiveVar} from '@apollo/client';
 import {favoriteDaosVar} from 'context/apolloClient';
 import {useNetwork} from 'context/network';
+import {toDisplayEns} from 'utils/library';
 
 const EXPLORE_FILTER = ['favorite', 'newest', 'popular'] as const;
 
@@ -120,7 +121,7 @@ export const DaoExplorer = () => {
             displayedDaos.map((dao, index) => (
               <DaoCard
                 name={dao.metadata.name}
-                ensName={dao.ensDomain}
+                ensName={toDisplayEns(dao.ensDomain)}
                 logo={dao.metadata.avatar}
                 description={dao.metadata.description}
                 chainId={dao.chain || CHAIN_METADATA[network].id} // Default to Goerli

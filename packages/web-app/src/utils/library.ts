@@ -479,3 +479,10 @@ export function removeUnchangedMinimumApprovalAction(
     else return action;
   });
 }
+
+export function toDisplayEns(ensName?: string) {
+  if (ensName)
+    if (ensName === 'null.dao.eth') return '';
+    else return ensName;
+  else return '';
+}

@@ -41,6 +41,7 @@ import {formatDate} from 'utils/date';
 import {Dashboard as DashboardPath} from 'utils/paths';
 import {ProposalListItem, Transfer} from 'utils/types';
 import {Container, EmptyStateContainer, EmptyStateHeading} from './governance';
+import {toDisplayEns} from 'utils/library';
 
 let pollForDaoData: number | undefined;
 
@@ -179,14 +180,6 @@ const Dashboard: React.FC = () => {
     t,
   ]);
 
-  // This is for DAOs on polygon and mumbai the we get null.dao.eth from SDK
-  const daoEnsName = useMemo(() => {
-    if (dao?.ensDomain)
-      if (dao?.ensDomain === 'null.dao.eth') return '';
-      else return dao.ensDomain;
-    else return '';
-  }, [dao?.ensDomain]);
-
   /*************************************************
    *                    Render                     *
    *************************************************/
@@ -283,7 +276,7 @@ const Dashboard: React.FC = () => {
       <HeaderWrapper>
         <HeaderDao
           daoName={dao.metadata.name}
-          daoEnsName={daoEnsName}
+          daoEnsName={toDisplayEns(dao?.ensDomain)}
           daoAvatar={dao.metadata.avatar}
           daoUrl={`app.aragon.org/#/daos/${network}/${daoId}`}
           description={dao.metadata.description}

@@ -21,6 +21,7 @@ import {useGlobalModalContext} from 'context/globalModals';
 import useScreen from 'hooks/useScreen';
 import {getSupportedNetworkByChainId} from 'utils/constants';
 import {Dashboard} from 'utils/paths';
+import {toDisplayEns} from 'utils/library';
 
 const DaoSelectMenu: React.FC = () => {
   const {t} = useTranslation();
@@ -71,7 +72,7 @@ const DaoSelectMenu: React.FC = () => {
           <ListGroup>
             <ListItemDao
               selected
-              daoAddress={currentDao?.ensDomain}
+              daoAddress={toDisplayEns(currentDao?.ensDomain)}
               daoName={currentDao?.metadata.name}
               daoLogo={currentDao?.metadata.avatar}
               onClick={() => close('selectDao')}
