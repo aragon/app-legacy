@@ -31,7 +31,7 @@ import {
   PENDING_DAOS_KEY,
   SupportedNetworks,
   TransactionState,
-  translateToSdkNetwork,
+  translateToNetworkishName,
 } from 'utils/constants';
 import {getSecondsFromDHM} from 'utils/date';
 import {Dashboard} from 'utils/paths';
@@ -153,8 +153,7 @@ const CreateDaoProvider: React.FC = ({children}) => {
       multisigMinimumApprovals,
       eligibilityType,
     } = getValues();
-
-    const translatedNetwork = translateToSdkNetwork(
+    const translatedNetwork = translateToNetworkishName(
       blockchain.label?.toLowerCase() as SupportedNetworks
     ) as sdkSupportedNetworks;
 
@@ -194,7 +193,7 @@ const CreateDaoProvider: React.FC = ({children}) => {
     if (voteReplacement) votingMode = VotingMode.VOTE_REPLACEMENT;
     else if (earlyExecution) votingMode = VotingMode.EARLY_EXECUTION;
     else votingMode = VotingMode.STANDARD;
-    const translatedNetwork = translateToSdkNetwork(
+    const translatedNetwork = translateToNetworkishName(
       blockchain.label?.toLowerCase() as SupportedNetworks
     ) as sdkSupportedNetworks;
 

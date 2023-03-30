@@ -1,11 +1,11 @@
-import {useSigner, SignerValue} from 'context/signer';
-import {useEffect, useMemo, useState} from 'react';
-import {BigNumber} from 'ethers';
+import {LIVE_CONTRACTS, SupportedNetworks} from '@aragon/sdk-client';
 import {JsonRpcProvider} from '@ethersproject/providers';
+import {SignerValue, useSigner} from 'context/signer';
+import {BigNumber} from 'ethers';
+import {useEffect, useMemo, useState} from 'react';
 
 import {useNetwork} from 'context/network';
-import {CHAIN_METADATA, translateToSdkNetwork} from 'utils/constants';
-import {LIVE_CONTRACTS, SupportedNetworks} from '@aragon/sdk-client';
+import {CHAIN_METADATA, translateToNetworkishName} from 'utils/constants';
 
 export interface IUseWallet extends SignerValue {
   balance: BigNumber | null;
@@ -40,10 +40,11 @@ export const useWallet = (): IUseWallet => {
     if (!['ethereum', 'goerli'].includes(network)) {
       return new JsonRpcProvider(CHAIN_METADATA[network].rpc[0], {
         chainId: CHAIN_METADATA[network].id,
-        name: translateToSdkNetwork(network),
+        name: translateToNetworkishName(network),
         ensAddress:
-          LIVE_CONTRACTS[translateToSdkNetwork(network) as SupportedNetworks]
-            .ensRegistry,
+          LIVE_CONTRACTS[
+            translateToNetworkishName(network) as SupportedNetworks
+          ].ensRegistry,
       });
     } else return signerProvider;
   }, [signerProvider, network]);

@@ -77,7 +77,7 @@ export const translateToAppNetwork = (
   return 'unsupported';
 };
 
-export const translateToSdkNetwork = (
+export const translateToNetworkishName = (
   appNetwork: SupportedNetworks
 ): SdkSupportedNetworks | 'unsupported' => {
   if (typeof appNetwork !== 'string') {

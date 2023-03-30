@@ -17,7 +17,7 @@ import {
   SUBGRAPH_API_URL,
   SupportedNetworks,
   translateToAppNetwork,
-  translateToSdkNetwork,
+  translateToNetworkishName,
 } from 'utils/constants';
 import {useWallet} from './useWallet';
 
@@ -49,7 +49,7 @@ export const UseClientProvider: React.FC = ({children}) => {
   const [context, setContext] = useState<SdkContext>();
 
   useEffect(() => {
-    const translatedNetwork = translateToSdkNetwork(network);
+    const translatedNetwork = translateToNetworkishName(network);
 
     // when network not supported by the SDK, don't set network
     if (

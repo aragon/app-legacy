@@ -1,11 +1,11 @@
 import {Log} from '@ethersproject/providers';
 import {constants} from 'ethers';
 import {getAddress, hexZeroPad, Interface} from 'ethers/lib/utils';
-import {useEffect, useState} from 'react';
+import {useEffect, useMemo, useState} from 'react';
 
 import {AssetBalance, TokenType} from '@aragon/sdk-client';
 import {erc20TokenABI} from 'abis/erc20TokenABI';
-import {useProviders} from 'context/providers';
+import {getAlchemyProvider, useProviders} from 'context/providers';
 import {useWallet} from 'hooks/useWallet';
 import {CHAIN_METADATA, getSupportedNetworkByChainId} from 'utils/constants';
 import {fetchBalance, getTokenInfo, isNativeToken} from 'utils/tokens';
@@ -21,23 +21,27 @@ import {HookData} from 'utils/types';
  * has balance.
  */
 export function useUserTokenAddresses(): HookData<string[]> {
-  const {address} = useWallet();
+  const {address, chainId} = useWallet();
   const {web3} = useProviders();
 
   const [tokenList, setTokenList] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<Error | undefined>();
 
+  const alchemyProvider = useMemo(() => getAlchemyProvider(chainId), [chainId]);
+
   useEffect(() => {
     async function fetchTokenList() {
       setIsLoading(true);
+
       if (web3 && address) {
         try {
           const erc20Interface = new Interface(erc20TokenABI);
           const latestBlockNumber = await web3.getBlockNumber();
 
           // Get all transfers sent to the input address
-          const transfers: Log[] = await web3.getLogs({
+          // whenever possible, use alchemyProvider to scan logs from block 0 to current block
+          const transfers: Log[] = await (alchemyProvider || web3).getLogs({
             fromBlock: 0,
             toBlock: latestBlockNumber,
             topics: [
@@ -68,7 +72,7 @@ export function useUserTokenAddresses(): HookData<string[]> {
     }
 
     fetchTokenList();
-  }, [address, web3]);
+  }, [address, alchemyProvider, web3]);
 
   return {data: tokenList, isLoading, error};
 }

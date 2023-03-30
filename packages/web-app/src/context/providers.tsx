@@ -1,25 +1,27 @@
 import {
+  AlchemyProvider,
   InfuraProvider,
   JsonRpcProvider,
   Web3Provider,
 } from '@ethersproject/providers';
 import React, {createContext, useContext, useEffect, useState} from 'react';
 
+import {
+  LIVE_CONTRACTS,
+  SupportedNetworks as sdkSupportedNetworks,
+} from '@aragon/sdk-client';
 import {useWallet} from 'hooks/useWallet';
 import {
+  alchemyApiKeys,
   CHAIN_METADATA,
   getSupportedNetworkByChainId,
   infuraApiKey,
   SupportedChainID,
   SupportedNetworks,
-  translateToSdkNetwork,
+  translateToNetworkishName,
 } from 'utils/constants';
 import {Nullable} from 'utils/types';
 import {useNetwork} from './network';
-import {
-  LIVE_CONTRACTS,
-  SupportedNetworks as sdkSupportedNetworks,
-} from '@aragon/sdk-client';
 
 const NW_ARB = {chainId: 42161, name: 'arbitrum'};
 const NW_ARB_GOERLI = {chainId: 421613, name: 'arbitrum-goerli'};
@@ -86,12 +88,29 @@ function getInfuraProvider(
   } else {
     return new JsonRpcProvider(CHAIN_METADATA[network].rpc[0], {
       chainId: CHAIN_METADATA[network].id,
-      name: translateToSdkNetwork(network),
+      name: translateToNetworkishName(network),
       ensAddress:
-        LIVE_CONTRACTS[translateToSdkNetwork(network) as sdkSupportedNetworks]
-          .ensRegistry,
+        LIVE_CONTRACTS[
+          translateToNetworkishName(network) as sdkSupportedNetworks
+        ].ensRegistry,
     });
   }
+}
+
+/**
+ * Returns an AlchemyProvider instance for the given chain ID
+ * or null if the API key is not available.
+ * @param chainId - The numeric chain ID associated with the desired network.
+ * @returns An AlchemyProvider instance for the specified network or null if the API key is not found.
+ */
+export function getAlchemyProvider(chainId: number): AlchemyProvider | null {
+  const network = getSupportedNetworkByChainId(chainId) as SupportedNetworks;
+  const apiKey = alchemyApiKeys[network];
+  const translatedNetwork = translateToNetworkishName(network);
+
+  return apiKey && translatedNetwork !== 'unsupported'
+    ? new AlchemyProvider(translatedNetwork, apiKey)
+    : null;
 }
 
 /**

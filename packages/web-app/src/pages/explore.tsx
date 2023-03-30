@@ -16,7 +16,7 @@ import {useWallet} from 'hooks/useWallet';
 import {
   getSupportedNetworkByChainId,
   SupportedNetworks,
-  translateToSdkNetwork,
+  translateToNetworkishName,
 } from 'utils/constants';
 import {i18n} from '../../i18n.config';
 
@@ -26,7 +26,7 @@ const Explore: React.FC = () => {
 
   useEffect(() => {
     const network = getSupportedNetworkByChainId(chainId);
-    const translatedNetwork = translateToSdkNetwork(
+    const translatedNetwork = translateToNetworkishName(
       network as SupportedNetworks
     );
 

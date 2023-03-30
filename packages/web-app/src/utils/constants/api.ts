@@ -24,6 +24,18 @@ export const BASE_URL = 'https://api.coingecko.com/api/v3';
 export const DEFAULT_CURRENCY = 'usd';
 
 export const ARAGON_RPC = 'mainnet.eth.aragon.network';
+
+type AlchemyApiKeys = Record<SupportedNetworks, string | undefined>;
+export const alchemyApiKeys: AlchemyApiKeys = {
+  arbitrum: undefined,
+  'arbitrum-test': undefined,
+  ethereum: undefined,
+  goerli: undefined,
+  polygon: import.meta.env.VITE_ALCHEMY_KEY_POLYGON_MAINNET as string,
+  mumbai: import.meta.env.VITE_ALCHEMY_KEY_POLYGON_MUMBAI as string,
+  unsupported: undefined,
+};
+
 export const infuraApiKey = import.meta.env
   .VITE_INFURA_MAINNET_PROJECT_ID as string;
 
