@@ -179,6 +179,14 @@ const Dashboard: React.FC = () => {
     t,
   ]);
 
+  // This is for DAOs on polygon and mumbai the we get null.dao.eth from SDK
+  const daoEnsName = useMemo(() => {
+    if (dao?.ensDomain)
+      if (dao?.ensDomain === 'null.dao.eth') return '';
+      else return dao.ensDomain;
+    else return '';
+  }, [dao?.ensDomain]);
+
   /*************************************************
    *                    Render                     *
    *************************************************/
@@ -275,7 +283,7 @@ const Dashboard: React.FC = () => {
       <HeaderWrapper>
         <HeaderDao
           daoName={dao.metadata.name}
-          daoEnsName={dao.ensDomain}
+          daoEnsName={daoEnsName}
           daoAvatar={dao.metadata.avatar}
           daoUrl={`app.aragon.org/#/daos/${network}/${daoId}`}
           description={dao.metadata.description}

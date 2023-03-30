@@ -14,7 +14,7 @@ import AddLinks from 'components/addLinks';
 import {CHAIN_METADATA, URL_PATTERN} from 'utils/constants';
 import {isOnlyWhitespace} from 'utils/library';
 import {isDaoEnsNameValid} from 'utils/validators';
-import {useSpecificProvider} from 'context/providers';
+import {useProviders} from 'context/providers';
 import {useNetwork} from 'context/network';
 
 const DAO_LOGO = {
@@ -35,12 +35,9 @@ const DefineMetadata: React.FC<DefineMetadataProps> = ({
   isSettingPage,
 }) => {
   const {t} = useTranslation();
-  const {network} = useNetwork();
+  const {isL2Network} = useNetwork();
   const {control, setError, clearErrors, getValues} = useFormContext();
-  // Use mainnet provider for polygon ENS validation
-  const provider = useSpecificProvider(
-    network === 'polygon' ? 1 : CHAIN_METADATA[network].id
-  );
+  const {infura: provider} = useProviders();
 
   const handleImageError = useCallback(
     (error: {code: string; message: string}) => {
@@ -129,7 +126,7 @@ const DefineMetadata: React.FC<DefineMetadataProps> = ({
       </FormItem>
 
       {/* ENS Ens Name */}
-      {!isSettingPage && (
+      {!isSettingPage && !isL2Network && (
         <FormItem>
           <Label
             label={t('labels.daoEnsName')}

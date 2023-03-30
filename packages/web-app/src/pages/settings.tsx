@@ -27,7 +27,7 @@ import {CHAIN_METADATA} from 'utils/constants';
 
 const Settings: React.FC = () => {
   const {t} = useTranslation();
-  const {network} = useNetwork();
+  const {network, isL2Network} = useNetwork();
   const navigate = useNavigate();
 
   const {data: daoId, isLoading: isDaoParamLoading} = useDaoParam();
@@ -82,10 +82,12 @@ const Settings: React.FC = () => {
             <Dt>{t('labels.daoName')}</Dt>
             <Dd>{daoDetails?.metadata.name}</Dd>
           </Dl>
-          <Dl>
-            <Dt>{t('labels.ens')}</Dt>
-            <Dd>{daoDetails?.ensDomain}</Dd>
-          </Dl>
+          {!isL2Network && (
+            <Dl>
+              <Dt>{t('labels.ens')}</Dt>
+              <Dd>{daoDetails?.ensDomain}</Dd>
+            </Dl>
+          )}
           <Dl>
             <Dt>{t('labels.summary')}</Dt>
             <Dd>{daoDetails?.metadata.description}</Dd>

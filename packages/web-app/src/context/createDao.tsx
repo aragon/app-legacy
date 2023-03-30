@@ -153,6 +153,7 @@ const CreateDaoProvider: React.FC = ({children}) => {
       multisigMinimumApprovals,
       eligibilityType,
     } = getValues();
+
     const translatedNetwork = translateToSdkNetwork(
       blockchain.label?.toLowerCase() as SupportedNetworks
     ) as sdkSupportedNetworks;
@@ -270,7 +271,6 @@ const CreateDaoProvider: React.FC = ({children}) => {
       links: links.filter(r => r.name && r.url),
     };
 
-    console.log(daoLogo);
     if (daoLogo) {
       try {
         const daoLogoBuffer = await readFile(daoLogo as Blob);
@@ -288,7 +288,7 @@ const CreateDaoProvider: React.FC = ({children}) => {
         metadataUri: ipfsUri || '',
         // TODO: We're using dao name without spaces for ens, We need to add alert
         // to inform this to user
-        ensSubdomain: daoEnsName,
+        ensSubdomain: daoEnsName || '',
         plugins: [...plugins],
       };
     } catch {
@@ -375,7 +375,7 @@ const CreateDaoProvider: React.FC = ({children}) => {
             const newFavoriteDao: NavigationDao = {
               address: step.address.toLocaleLowerCase(),
               chain: CHAIN_METADATA[network].id,
-              ensDomain: daoCreationData.ensSubdomain,
+              ensDomain: daoCreationData.ensSubdomain || '',
               plugins: daoCreationData.plugins,
               metadata: {
                 name: metadata.name,

@@ -21,11 +21,13 @@ import {NotFound} from 'utils/paths';
 type NetworkContext = {
   network: SupportedNetworks;
   setNetwork: (network: SupportedNetworks) => void;
+  isL2Network: boolean;
 };
 
 const NetworkContext = createContext<NetworkContext>({
   network: 'ethereum',
   setNetwork: () => {},
+  isL2Network: false,
 });
 
 type NetworkProviderProps = {
@@ -89,6 +91,8 @@ export function NetworkProvider({children}: NetworkProviderProps) {
     setNetworkState(determineNetwork(networkUrlSegment, chainId, status));
   }, [chainId, networkUrlSegment, status]);
 
+  const isL2Network = ['polygon', 'mumbai'].includes(networkState);
+
   const changeNetwork = useCallback(
     (network: SupportedNetworks) => {
       if (networkUrlSegment) {
@@ -113,6 +117,7 @@ export function NetworkProvider({children}: NetworkProviderProps) {
       value={{
         network: networkState,
         setNetwork: changeNetwork,
+        isL2Network,
       }}
     >
       {children}
