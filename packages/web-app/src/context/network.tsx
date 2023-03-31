@@ -22,12 +22,14 @@ type NetworkContext = {
   network: SupportedNetworks;
   setNetwork: (network: SupportedNetworks) => void;
   isL2Network: boolean;
+  networkUrlSegment: string | undefined;
 };
 
 const NetworkContext = createContext<NetworkContext>({
   network: 'ethereum',
   setNetwork: () => {},
   isL2Network: false,
+  networkUrlSegment: undefined,
 });
 
 type NetworkProviderProps = {
@@ -118,6 +120,7 @@ export function NetworkProvider({children}: NetworkProviderProps) {
         network: networkState,
         setNetwork: changeNetwork,
         isL2Network,
+        networkUrlSegment,
       }}
     >
       {children}

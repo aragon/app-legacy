@@ -277,7 +277,7 @@ const pendingMultisigProposalsVar = makeVar<PendingMultisigProposals>(
 /*************************************************
  *                   PENDING DAOs                *
  *************************************************/
-type PendingDaoCreation = {
+export type PendingDaoCreation = {
   [key in SupportedNetworks]?: {
     // This key is the id of the newly created DAO
     [key: string]: {
