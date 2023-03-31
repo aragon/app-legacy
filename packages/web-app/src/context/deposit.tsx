@@ -70,13 +70,11 @@ const DepositProvider = ({children}: {children: ReactNode}) => {
 
   const shouldPoll = useMemo(
     () =>
-      depositParams !== undefined && depositState === TransactionState.WAITING,
+      depositParams !== undefined &&
+      (depositState === TransactionState.WAITING ||
+        depositState === TransactionState.ERROR),
     [depositParams, depositState]
   );
-
-  const depositIterator = useMemo(() => {
-    if (client && depositParams) return client.methods.deposit(depositParams);
-  }, [client, depositParams]);
 
   const estimateDepositFees = useCallback(async () => {
     if (client && depositParams) {
@@ -96,6 +94,130 @@ const DepositProvider = ({children}: {children: ReactNode}) => {
     stopPolling,
     error: gasEstimationError,
   } = usePollGasFee(estimateDepositFees, shouldPoll);
+
+  /*************************************************
+   *             Callbacks & Handlers              *
+   *************************************************/
+  const handleApproval = useCallback(async () => {
+    // Check if SDK initialized properly
+    if (!client) throw new Error('SDK client is not initialized correctly');
+
+    // Check if deposit params are provided
+    if (!depositParams) throw new Error('No deposit parameters given');
+
+    const iterator = client.methods.deposit(depositParams);
+    try {
+      setDepositState(TransactionState.LOADING);
+
+      // run approval steps
+      for (let step = 0; step < 3; step++) {
+        await iterator.next();
+      }
+
+      // update modal button and transaction state
+      setModalStep(2);
+      setDepositState(TransactionState.WAITING);
+    } catch (error) {
+      console.error(error);
+      setDepositState(TransactionState.ERROR);
+    }
+  }, [client, depositParams, setModalStep]);
+
+  const handleDeposit = useCallback(async () => {
+    const {
+      from,
+      reference,
+      tokenAddress,
+      tokenName,
+      tokenSymbol,
+      tokenDecimals,
+    } = getValues();
+
+    let transactionHash = '';
+
+    // Check if SDK initialized properly
+    if (!client) throw new Error('SDK client is not initialized correctly');
+
+    // Check if deposit params are provided
+    if (!depositParams) throw new Error('No deposit parameters given');
+
+    const iterator = client.methods.deposit(depositParams);
+
+    try {
+      setDepositState(TransactionState.LOADING);
+
+      for await (const step of iterator) {
+        if (step.key === DaoDepositSteps.DEPOSITING) {
+          transactionHash = step.txHash;
+          const depositTxs = [
+            ...pendingDepositsTxs,
+            isNativeToken(tokenAddress)
+              ? {
+                  transactionId: transactionHash,
+                  from,
+                  amount: depositParams?.amount,
+                  reference,
+                  type: TransferType.DEPOSIT,
+                  tokenType: 'native',
+                  address: tokenAddress,
+                  name: tokenName,
+                  symbol: tokenSymbol,
+                  decimals:
+                    CHAIN_METADATA[network].nativeCurrency.decimals.toString(),
+                }
+              : {
+                  transactionId: transactionHash,
+                  from,
+                  amount: depositParams?.amount,
+                  reference,
+                  type: TransferType.DEPOSIT,
+                  tokenType: 'erc20',
+                  token: {
+                    name: tokenName,
+                    address: tokenAddress,
+                    symbol: tokenSymbol,
+                    decimals: tokenDecimals,
+                  },
+                },
+          ];
+
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore
+          pendingDeposits(depositTxs);
+          localStorage.setItem(
+            PENDING_DEPOSITS_KEY,
+            JSON.stringify(depositTxs, customJSONReplacer)
+          );
+          trackEvent('newDeposit_transaction_signed', {
+            network,
+            wallet_provider: provider?.connection.url,
+          });
+        }
+      }
+
+      setDepositState(TransactionState.SUCCESS);
+      console.log(transactionHash);
+      trackEvent('newDeposit_transaction_success', {
+        network,
+        wallet_provider: provider?.connection.url,
+      });
+    } catch (error) {
+      console.error(error);
+      setDepositState(TransactionState.ERROR);
+      trackEvent('newDeposit_transaction_failed', {
+        network,
+        error,
+        wallet_provider: provider?.connection.url,
+      });
+    }
+  }, [
+    client,
+    depositParams,
+    getValues,
+    network,
+    pendingDepositsTxs,
+    provider?.connection.url,
+  ]);
 
   const handleOpenModal = useCallback(async () => {
     // get deposit data from form
@@ -219,125 +341,6 @@ const DepositProvider = ({children}: {children: ReactNode}) => {
     isOnWrongNetwork,
     open,
   ]);
-
-  const handleApproval = async () => {
-    // Check if SDK initialized properly
-    if (!client) {
-      throw new Error('SDK client is not initialized correctly');
-    }
-
-    // Check if deposit function is initialized
-    if (!depositIterator) {
-      throw new Error('deposit function is not initialized correctly');
-    }
-
-    try {
-      setDepositState(TransactionState.LOADING);
-
-      // run approval steps
-      for (let step = 0; step < 3; step++) {
-        await depositIterator.next();
-      }
-
-      // update modal button and transaction state
-      setModalStep(2);
-      setDepositState(TransactionState.WAITING);
-    } catch (error) {
-      console.error(error);
-      setDepositState(TransactionState.ERROR);
-    }
-  };
-
-  const handleDeposit = async () => {
-    const {
-      from,
-      reference,
-      tokenAddress,
-      tokenName,
-      tokenSymbol,
-      tokenDecimals,
-    } = getValues();
-
-    let transactionHash = '';
-
-    // Check if SDK initialized properly
-    if (!client) {
-      throw new Error('SDK client is not initialized correctly');
-    }
-
-    // Check if deposit function is initialized
-    if (!depositIterator) {
-      throw new Error('deposit function is not initialized correctly');
-    }
-
-    try {
-      setDepositState(TransactionState.LOADING);
-
-      for await (const step of depositIterator) {
-        if (step.key === DaoDepositSteps.DEPOSITING) {
-          transactionHash = step.txHash;
-          const depositTxs = [
-            ...pendingDepositsTxs,
-            isNativeToken(tokenAddress)
-              ? {
-                  transactionId: transactionHash,
-                  from,
-                  amount: depositParams?.amount,
-                  reference,
-                  type: TransferType.DEPOSIT,
-                  tokenType: 'native',
-                  address: tokenAddress,
-                  name: tokenName,
-                  symbol: tokenSymbol,
-                  decimals:
-                    CHAIN_METADATA[network].nativeCurrency.decimals.toString(),
-                }
-              : {
-                  transactionId: transactionHash,
-                  from,
-                  amount: depositParams?.amount,
-                  reference,
-                  type: TransferType.DEPOSIT,
-                  tokenType: 'erc20',
-                  token: {
-                    name: tokenName,
-                    address: tokenAddress,
-                    symbol: tokenSymbol,
-                    decimals: tokenDecimals,
-                  },
-                },
-          ];
-
-          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-          // @ts-ignore
-          pendingDeposits(depositTxs);
-          localStorage.setItem(
-            PENDING_DEPOSITS_KEY,
-            JSON.stringify(depositTxs, customJSONReplacer)
-          );
-          trackEvent('newDeposit_transaction_signed', {
-            network,
-            wallet_provider: provider?.connection.url,
-          });
-        }
-      }
-
-      setDepositState(TransactionState.SUCCESS);
-      console.log(transactionHash);
-      trackEvent('newDeposit_transaction_success', {
-        network,
-        wallet_provider: provider?.connection.url,
-      });
-    } catch (error) {
-      console.error(error);
-      setDepositState(TransactionState.ERROR);
-      trackEvent('newDeposit_transaction_failed', {
-        network,
-        error,
-        wallet_provider: provider?.connection.url,
-      });
-    }
-  };
 
   /*************************************************
    *                   Render                      *
