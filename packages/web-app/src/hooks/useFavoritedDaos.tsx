@@ -8,6 +8,7 @@ import {
 } from '@tanstack/react-query';
 
 import {favoriteDaosVar, NavigationDao} from 'context/apolloClient';
+import {useCallback} from 'react';
 import {getFavoritedDaosFromCache} from 'services/cache';
 import {resolveDaoAvatarIpfsCid} from 'utils/library';
 
@@ -31,7 +32,10 @@ export const useFavoritedDaosQuery = (
 
   return useQuery<NavigationDao[]>({
     queryKey: ['cachedDaos'],
-    queryFn: () => getFavoritedDaosFromCache(cachedDaos, {skip, limit}),
+    queryFn: useCallback(
+      () => getFavoritedDaosFromCache(cachedDaos, {skip, limit}),
+      [cachedDaos, limit, skip]
+    ),
     select: addAvatarToDaos,
     refetchOnWindowFocus: false,
   });
@@ -55,12 +59,15 @@ export const useFavoritedDaosInfiniteQuery = (
   return useInfiniteQuery({
     queryKey: ['infiniteCachedDaos'],
 
-    queryFn: ({pageParam = 0}) => {
-      return getFavoritedDaosFromCache(cachedDaos, {
-        skip: limit * pageParam,
-        limit,
-      });
-    },
+    queryFn: useCallback(
+      ({pageParam = 0}) => {
+        return getFavoritedDaosFromCache(cachedDaos, {
+          skip: limit * pageParam,
+          limit,
+        });
+      },
+      [cachedDaos, limit]
+    ),
 
     getNextPageParam: (
       lastPage: NavigationDao[],
