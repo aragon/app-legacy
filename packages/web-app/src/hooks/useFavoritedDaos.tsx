@@ -23,7 +23,7 @@ const DEFAULT_QUERY_PARAMS = {
  * @param limit The maximum number of DAOs to return. Fetches all available DAOs by default.
  * @returns result object containing an array of NavigationDao objects with added avatar information.
  */
-export const useCachedDaosQuery = (
+export const useFavoritedDaosQuery = (
   skip = 0,
   limit = -1
 ): UseQueryResult<NavigationDao[]> => {
@@ -44,7 +44,7 @@ export const useCachedDaosQuery = (
  * @returns an infinite query object that can be used to fetch and
  * display the cached DAOs.
  */
-export const useCachedDaosInfiniteQuery = (
+export const useFavoritedDaosInfiniteQuery = (
   enabled = true,
   {
     limit = DEFAULT_QUERY_PARAMS.limit,

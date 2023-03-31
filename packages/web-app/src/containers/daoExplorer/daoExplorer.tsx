@@ -13,7 +13,7 @@ import {generatePath, useNavigate} from 'react-router-dom';
 import styled from 'styled-components';
 
 import {DaoCard} from 'components/daoCard';
-import {useCachedDaosInfiniteQuery} from 'hooks/useCachedDaos';
+import {useFavoritedDaosInfiniteQuery} from 'hooks/useFavoritedDaos';
 import {
   AugmentedDaoListItem,
   ExploreFilter,
@@ -41,7 +41,7 @@ export const DaoExplorer = () => {
 
   // conditional api queries
   const fetchFavorited = filterValue === 'favorite';
-  const favoritedApi = useCachedDaosInfiniteQuery(fetchFavorited);
+  const favoritedApi = useFavoritedDaosInfiniteQuery(fetchFavorited);
   const daosApi = useDaosInfiniteQuery(fetchFavorited === false, {
     sortBy: toDaoSortBy(filterValue),
   });
