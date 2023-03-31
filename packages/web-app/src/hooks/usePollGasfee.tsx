@@ -39,6 +39,7 @@ export const usePollGasFee = (
         setTokenPrice(results[1] || 0);
         setMaxFee(results[0]?.max);
         setAverageFee(results[0]?.average);
+        setError(undefined);
       } catch (err) {
         setError(err as Error);
         setMaxFee(undefined);
