@@ -100,7 +100,7 @@ const WalletRow: React.FC<WalletRowProps> = ({index, onDelete}) => {
       return t('errors.ltAmount', {amount: '~ 2.69 * 10^49'});
 
     // show negative amount error
-    if (Big(amount).lt(0)) return t('errors.lteZero');
+    if (Big(amount).lt(1)) return t('errors.lteZero');
     return totalSupply === 0 ? t('errors.totalSupplyZero') : true;
   };
 
@@ -163,8 +163,8 @@ const WalletRow: React.FC<WalletRowProps> = ({index, onDelete}) => {
               name={field.name}
               onBlur={field.onBlur}
               onChange={field.onChange}
-              placeholder="0"
-              min={0}
+              placeholder="1"
+              min={1}
               includeDecimal
               disabled={isDuplicate}
               mode={error?.message ? 'critical' : 'default'}

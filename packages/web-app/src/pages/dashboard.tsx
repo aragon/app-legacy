@@ -266,7 +266,7 @@ const Dashboard: React.FC = () => {
 
   async function handleClipboardActions() {
     await navigator.clipboard.writeText(
-      `app.aragon.org/#/daos/${network}/${daoId}`
+      `https://app.aragon.org/#/daos/${network}/${daoId}`
     );
     alert(t('alert.chip.inputCopied'));
   }
