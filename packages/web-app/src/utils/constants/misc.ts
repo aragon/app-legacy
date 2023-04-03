@@ -59,31 +59,31 @@ export const NAV_LINKS_DATA: NavLinkData[] = [
 
 export const EXPLORE_NAV_LINKS = [
   {
-    label: i18n.t('navLinks.explore'),
-    path: '/',
+    label: i18n.t('navLinks.exploreLinkLabel'),
+    path: i18n.t('navLinks.exploreLinkURL'),
   },
   {
-    label: i18n.t('navLinks.learn'),
-    path: 'https://aragon.org/education-portal',
+    label: i18n.t('navLinks.learnLinkLabel'),
+    path: i18n.t('navLinks.learnLinkURL'),
   },
   {
-    label: i18n.t('navLinks.build'),
-    path: 'https://devs.aragon.org/',
+    label: i18n.t('navLinks.buildLinkLabel'),
+    path: i18n.t('navLinks.buildLinkURL'),
   },
   {
-    label: i18n.t('navLinks.help'),
-    path: 'https://documentation.aragon.org/aragon/readme',
+    label: i18n.t('navLinks.helpLinkLabel'),
+    path: i18n.t('navLinks.helpLinkURL'),
   },
 ];
 
 export const PRIVACY_NAV_LINKS = [
   {
-    label: i18n.t('navLinks.terms'),
-    path: 'https://aragon.org/terms-and-conditions',
+    label: i18n.t('navLinks.termsLinkLabel'),
+    path: i18n.t('navLinks.termsLinkURL'),
   },
   {
-    label: i18n.t('navLinks.privacy'),
-    path: 'https://aragon.org/privacy-policy',
+    label: i18n.t('navLinks.privacyLinkLabel'),
+    path: i18n.t('navLinks.privacyLinkURL'),
   },
 ];
 

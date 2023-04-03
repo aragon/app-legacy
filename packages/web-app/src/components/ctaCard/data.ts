@@ -17,8 +17,8 @@ const CTACards = [
   },
   {
     actionAvailable: true,
-    actionLabel: i18n.t('cta.learn.actionLabel'),
-    path: 'https://aragon.org/education-portal',
+    actionLabel: i18n.t('explore.learn.linkLabel'),
+    path: i18n.t('explore.learn.linkURL'),
     imgSrc: learnImg,
     subtitle: i18n.t('cta.learn.description'),
     title: i18n.t('cta.learn.title'),

@@ -12,6 +12,7 @@ const ExploreNav: React.FC = () => {
   const {t} = useTranslation();
   const {address, ensName, ensAvatarUrl, isConnected, methods} = useWallet();
   const {open} = useGlobalModalContext();
+  const path = t('logo.linkURL');
 
   const handleWalletButtonClick = () => {
     if (isConnected) {
@@ -32,7 +33,7 @@ const ExploreNav: React.FC = () => {
           <LeftContent>
             <LogoContainer
               src={Logo}
-              onClick={() => window.open('https://aragon.org/', '_blank')}
+              onClick={() => window.open(path, '_blank')}
             />
           </LeftContent>
           <RightContent>
