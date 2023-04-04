@@ -60,7 +60,7 @@ const defaultValues = {
   tokenName: '',
   tokenAddress: '',
   tokenSymbol: '',
-  tokenTotalSupply: 0,
+  tokenTotalSupply: 1,
   links: [{name: '', url: ''}],
 
   // Uncomment when DAO Treasury minting is supported
@@ -69,7 +69,7 @@ const defaultValues = {
   voteReplacement: false,
   membership: 'token',
   eligibilityType: 'token' as CreateDaoFormData['eligibilityType'],
-  eligibilityTokenAmount: 0,
+  eligibilityTokenAmount: 1,
   isCustomToken: true,
   durationDays: '1',
   durationHours: '0',
