@@ -17,29 +17,35 @@ export default function TokenBox({
 }: TokenProps) {
   return (
     <Box>
-      <TokenNameWrapper>
+      <AvatarTokenWrapper>
         <AvatarToken size="medium" src={tokenLogo} />
+      </AvatarTokenWrapper>
+      <TextWrapper>
         <Name>{tokenName}</Name>
-      </TokenNameWrapper>
-      <Price>{tokenBalance ? `${tokenBalance} ${tokenSymbol}` : '-'}</Price>
+        <Price>{tokenBalance ? `${tokenBalance} ${tokenSymbol}` : '-'}</Price>
+      </TextWrapper>
     </Box>
   );
 }
 
 const Box = styled.div.attrs({
-  className: `flex justify-between py-1.5 px-2 
+  className: `flex items-center gap-x-2 py-1.5 px-2 
     bg-white rounded-xl cursor-pointer
     hover:text-ui-800 hover:bg-ui-100`,
 })``;
 
-const TokenNameWrapper = styled.div.attrs({
-  className: 'flex space-x-2',
+const AvatarTokenWrapper = styled.span``;
+
+const TextWrapper = styled.div.attrs({
+  className: 'flex overflow-hidden gap-x-2 w-full',
 })``;
 
-const Name = styled.h2.attrs({
-  className: 'ft-text-lg text-ui-800 font-bold',
+const Name = styled.span.attrs({
+  className:
+    'ft-text-base font-semibold ft-text-base flex-1 text-left truncate text-ui-600',
 })``;
 
-const Price = styled.h2.attrs({
-  className: 'ft-text-lg text-ui-600',
+const Price = styled.span.attrs({
+  className:
+    'ft-text-base font-normal flex-none w-1/3 text-ui-500 text-right truncate',
 })``;
