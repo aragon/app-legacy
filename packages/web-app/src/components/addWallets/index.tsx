@@ -47,8 +47,8 @@ const AddWallets: React.FC = () => {
     controlledFields.forEach((_, index) => {
       setValue(`wallets.${index}.amount`, '1');
     });
-    resetField('tokenTotalSupply');
-    setValue('eligibilityTokenAmount', 1);
+    trigger('wallets');
+    resetField('eligibilityTokenAmount');
     alert(t('alert.chip.distributionReset'));
   };
 
@@ -56,7 +56,7 @@ const AddWallets: React.FC = () => {
   const handleAddWallet = () => {
     append({address: '', amount: '1'});
     setTimeout(() => {
-      trigger(`wallets.${controlledFields.length}.address`);
+      trigger(`wallets.${controlledFields.length}`);
     }, 50);
   };
 
@@ -112,8 +112,8 @@ const AddWallets: React.FC = () => {
               ),
               callback: () => {
                 remove();
-                resetField('tokenTotalSupply');
-                setValue('eligibilityTokenAmount', 1);
+                setValue('tokenTotalSupply', 0);
+                resetField('eligibilityTokenAmount');
                 alert(t('alert.chip.removedAllAddresses'));
               },
             },
