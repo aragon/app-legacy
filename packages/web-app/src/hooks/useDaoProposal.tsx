@@ -187,7 +187,7 @@ export const useDaoProposal = (
       }
     };
 
-    if (proposalGuid) getDaoProposal(proposalGuid);
+    if (proposalGuid && daoAddress) getDaoProposal(proposalGuid);
   }, [
     daoAddress,
     getCachedProposalData,

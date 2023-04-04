@@ -64,12 +64,12 @@ const NewDeposit: React.FC = () => {
 
   useEffect(() => {
     // add form metadata
-    if (address && dao) {
+    if (address && daoDetails?.address) {
       formMethods.setValue('from', address);
-      formMethods.setValue('to', dao);
+      formMethods.setValue('to', daoDetails?.address as string);
       formMethods.setValue('daoName', daoDetails?.metadata?.name);
     }
-  }, [address, dao, formMethods, daoDetails]);
+  }, [address, formMethods, daoDetails]);
 
   useEffect(() => {
     // show the wallet menu only if the user hasn't gone through the flow previously
@@ -157,7 +157,7 @@ const NewDeposit: React.FC = () => {
             isNextButtonDisabled={!formMethods.formState.isValid}
             onNextButtonClicked={next => {
               trackEvent('newDeposit_continueBtn_clicked', {
-                dao_address: dao,
+                dao_address: daoDetails?.address as string,
                 token_address: formMethods.getValues('tokenAddress'),
                 amount: formMethods.getValues('amount'),
                 reference: formMethods.getValues('reference'),

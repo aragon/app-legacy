@@ -167,7 +167,7 @@ const NewWithdraw: React.FC = () => {
   return (
     <>
       <FormProvider {...formMethods}>
-        <ActionsProvider daoId={dao}>
+        <ActionsProvider daoId={daoDetails?.address as string}>
           <CreateProposalProvider
             showTxModal={showTxModal}
             setShowTxModal={setShowTxModal}

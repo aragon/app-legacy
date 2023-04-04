@@ -125,7 +125,12 @@ export const DaoExplorer = () => {
                 logo={dao.metadata.avatar}
                 description={dao.metadata.description}
                 chainId={dao.chain}
-                onClick={() => handleDaoClicked(dao.address, dao.chain)}
+                onClick={() =>
+                  handleDaoClicked(
+                    toDisplayEns(dao.ensDomain) || dao.address,
+                    dao.chain
+                  )
+                }
                 daoType={
                   (dao?.plugins?.[0]?.id as PluginTypes) ===
                   'token-voting.plugin.dao.eth'

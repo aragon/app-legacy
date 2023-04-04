@@ -495,7 +495,7 @@ const CreateProposalProvider: React.FC<Props> = ({
     }
 
     trackEvent('newProposal_createNowBtn_clicked', {
-      dao_address: dao,
+      dao_address: daoDetails?.address as string,
       estimated_gwei_fee: averageFee,
       total_usd_cost: averageFee ? tokenPrice * Number(averageFee) : 0,
     });
@@ -504,7 +504,7 @@ const CreateProposalProvider: React.FC<Props> = ({
       pluginClient.methods.createProposal(proposalCreationData);
 
     trackEvent('newProposal_transaction_signed', {
-      dao_address: dao,
+      dao_address: daoDetails?.address as string,
       network: network,
       wallet_provider: provider?.connection.url,
     });
@@ -541,7 +541,7 @@ const CreateProposalProvider: React.FC<Props> = ({
             setProposalId(prefixedId);
             setCreationProcessState(TransactionState.SUCCESS);
             trackEvent('newProposal_transaction_success', {
-              dao_address: dao,
+              dao_address: daoDetails?.address as string,
               network: network,
               wallet_provider: provider?.connection.url,
               proposalId: prefixedId,
@@ -557,7 +557,7 @@ const CreateProposalProvider: React.FC<Props> = ({
       console.error(error);
       setCreationProcessState(TransactionState.ERROR);
       trackEvent('newProposal_transaction_failed', {
-        dao_address: dao,
+        dao_address: daoDetails?.address as string,
         network: network,
         wallet_provider: provider?.connection.url,
         error,
@@ -566,7 +566,6 @@ const CreateProposalProvider: React.FC<Props> = ({
   }, [
     averageFee,
     creationProcessState,
-    dao,
     handleCacheProposal,
     handleCloseModal,
     isOnWrongNetwork,
@@ -576,6 +575,7 @@ const CreateProposalProvider: React.FC<Props> = ({
     pluginClient,
     proposalCreationData,
     provider?.connection.url,
+    daoDetails?.address,
     tokenPrice,
   ]);
 

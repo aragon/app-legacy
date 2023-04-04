@@ -66,7 +66,7 @@ const CompareSettings: React.FC = () => {
 
       {/* METADATA*/}
       <CompareMetadata
-        daoId={daoId}
+        daoId={daoDetails?.address as string}
         daoDetails={daoDetails}
         view={selectedButton}
       />
@@ -75,13 +75,13 @@ const CompareSettings: React.FC = () => {
       {isTokenVotingSettings(pluginSettings) ? (
         <>
           <CompareMvCommunity
-            daoId={daoId}
+            daoId={daoDetails?.address as string}
             view={selectedButton}
             daoSettings={pluginSettings}
             daoToken={daoToken}
           />
           <CompareMvGovernance
-            daoId={daoId}
+            daoId={daoDetails?.address as string}
             view={selectedButton}
             daoSettings={pluginSettings}
             daoToken={daoToken}

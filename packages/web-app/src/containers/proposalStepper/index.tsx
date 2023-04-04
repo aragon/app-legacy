@@ -82,7 +82,7 @@ const ProposalStepper: React.FC<ProposalStepperType> = ({
         isNextButtonDisabled={!defineProposalIsValid(dirtyFields, errors)}
         onNextButtonClicked={next => {
           trackEvent('newProposal_nextBtn_clicked', {
-            dao_address: dao,
+            dao_address: daoDetails?.address as string,
             step: '1_define_proposal',
             settings: {
               author_address: address,
@@ -112,7 +112,7 @@ const ProposalStepper: React.FC<ProposalStepperType> = ({
               'endUtc',
             ]);
           trackEvent('newProposal_nextBtn_clicked', {
-            dao_address: dao,
+            dao_address: daoDetails?.address as string,
             step: '2_setup_voting',
             settings: {
               start: `${startDate}T${startTime}:00${getCanonicalUtcOffset(
@@ -142,7 +142,7 @@ const ProposalStepper: React.FC<ProposalStepperType> = ({
           }
 
           trackEvent('newProposal_nextBtn_clicked', {
-            dao_address: dao,
+            dao_address: daoDetails?.address as string,
             step: '3_configure_actions',
             settings: {
               actions: formActions.map((action: Action) => action.name),
@@ -162,7 +162,9 @@ const ProposalStepper: React.FC<ProposalStepperType> = ({
           if (!isConnected) {
             open('wallet');
           } else {
-            trackEvent('newProposal_publishBtn_clicked', {dao_address: dao});
+            trackEvent('newProposal_publishBtn_clicked', {
+              dao_address: daoDetails?.address as string,
+            });
             enableTxModal();
           }
         }}

@@ -364,7 +364,12 @@ const ProposeSettingWrapper: React.FC<Props> = ({
               preparedAction.inputs
             );
 
-            actions.push(client.encoding.updateDaoMetadataAction(dao, ipfsUri));
+            actions.push(
+              client.encoding.updateDaoMetadataAction(
+                daoDetails?.address as string,
+                ipfsUri
+              )
+            );
           } catch (error) {
             throw Error('Could not pin metadata on IPFS');
           }
@@ -516,7 +521,9 @@ const ProposeSettingWrapper: React.FC<Props> = ({
         setProposalCreationData(await getProposalCreationParams());
     }
 
-    setProposalData();
+    if (daoDetails?.address) {
+      setProposalData();
+    }
   }, [
     creationProcessState,
     showTxModal,
@@ -524,10 +531,10 @@ const ProposeSettingWrapper: React.FC<Props> = ({
     minDays,
     minHours,
     minMinutes,
-    dao,
     pluginAddress,
     pluginClient,
     client,
+    daoDetails?.address,
   ]);
 
   /*************************************************

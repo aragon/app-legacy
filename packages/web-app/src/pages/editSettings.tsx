@@ -19,9 +19,19 @@ const EditSettings: React.FC = () => {
   if (paramsAreLoading || detailsAreLoading) {
     return <Loading />;
   } else if (pluginType === 'multisig.plugin.dao.eth') {
-    return <EditMsSettings daoId={daoId!} daoDetails={daoDetails!} />;
+    return (
+      <EditMsSettings
+        daoId={daoDetails?.address as string}
+        daoDetails={daoDetails!}
+      />
+    );
   } else if (pluginType === 'token-voting.plugin.dao.eth') {
-    return <EditMvSettings daoId={daoId!} daoDetails={daoDetails!} />;
+    return (
+      <EditMvSettings
+        daoId={daoDetails?.address as string}
+        daoDetails={daoDetails!}
+      />
+    );
   } else {
     return <></>;
   }

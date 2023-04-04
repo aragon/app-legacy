@@ -26,11 +26,7 @@ import {ProposalListItem} from 'utils/types';
 import {htmlIn} from 'utils/htmlIn';
 
 const Governance: React.FC = () => {
-  const {
-    data: dao,
-    daoDetails: daoDetails,
-    isLoading: isDaoLoading,
-  } = useDaoParam();
+  const {daoDetails: daoDetails, isLoading: isDaoLoading} = useDaoParam();
 
   // The number of proposals displayed on each page
   const PROPOSALS_PER_PAGE = 6;
@@ -103,7 +99,7 @@ const Governance: React.FC = () => {
               className="mt-4"
               onClick={() => {
                 trackEvent('governance_newProposalBtn_clicked', {
-                  dao_address: dao,
+                  dao_address: daoDetails?.address as string,
                 });
                 navigate('new-proposal');
               }}
@@ -122,7 +118,7 @@ const Governance: React.FC = () => {
           iconLeft: <IconAdd />,
           onClick: () => {
             trackEvent('governance_newProposalBtn_clicked', {
-              dao_address: dao,
+              dao_address: daoDetails?.address as string,
             });
             navigate('new-proposal');
           },

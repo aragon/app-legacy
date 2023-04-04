@@ -9,7 +9,7 @@ import {CreateProposalProvider} from 'context/createProposal';
 import {useDaoParam} from 'hooks/useDaoParam';
 
 const NewProposal: React.FC = () => {
-  const {data: dao, isLoading} = useDaoParam();
+  const {daoDetails, isLoading} = useDaoParam();
   const [showTxModal, setShowTxModal] = useState(false);
   const formMethods = useForm({
     mode: 'onChange',
@@ -35,7 +35,7 @@ const NewProposal: React.FC = () => {
 
   return (
     <FormProvider {...formMethods}>
-      <ActionsProvider daoId={dao}>
+      <ActionsProvider daoId={daoDetails?.address as string}>
         <CreateProposalProvider
           showTxModal={showTxModal}
           setShowTxModal={setShowTxModal}
