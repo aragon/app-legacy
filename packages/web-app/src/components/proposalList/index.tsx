@@ -3,7 +3,7 @@ import {CardProposal, CardProposalProps, Spinner} from '@aragon/ui-components';
 import {BigNumber} from 'ethers';
 import React, {useMemo} from 'react';
 import {TFunction, useTranslation} from 'react-i18next';
-import {generatePath, NavigateFunction, useNavigate} from 'react-router-dom';
+import {NavigateFunction, generatePath, useNavigate} from 'react-router-dom';
 
 import {useNetwork} from 'context/network';
 import {useDaoMembers} from 'hooks/useDaoMembers';
@@ -17,9 +17,9 @@ import {
 import {translateProposalDate} from 'utils/date';
 import {Proposal} from 'utils/paths';
 import {
+  TokenVotingOptions,
   getErc20Results,
   isErc20VotingProposal,
-  TokenVotingOptions,
 } from 'utils/proposals';
 import {ProposalListItem} from 'utils/types';
 
@@ -28,6 +28,14 @@ type ProposalListProps = {
   pluginAddress: string;
   pluginType: PluginTypes;
   isLoading?: boolean;
+};
+
+type OptionResult = {
+  [K in TokenVotingOptions]: {
+    value: string | number;
+    percentage: number;
+    option: K;
+  };
 };
 
 function isMultisigProposalListItem(
@@ -154,32 +162,35 @@ export function proposal2CardProps(
         proposal.totalVotingWeight
       );
 
-      let biggestVoteOption;
-      if (
-        BigNumber.from(proposal.result.yes).gte(proposal.result.no) &&
-        BigNumber.from(proposal.result.yes).gte(proposal.result.abstain)
-      ) {
-        biggestVoteOption = {
-          ...results.yes,
-          option: 'yes' as TokenVotingOptions,
-        };
-      } else if (
-        BigNumber.from(proposal.result.no).gte(proposal.result.yes) &&
-        BigNumber.from(proposal.result.no).gte(proposal.result.abstain)
-      ) {
-        biggestVoteOption = {...results.no, option: 'no' as TokenVotingOptions};
-      } else {
-        biggestVoteOption = {
-          ...results.abstain,
-          option: 'abstain' as TokenVotingOptions,
-        };
+      // The winning option is the outcome of the proposal if duration was to be reached
+      // as is. Note that the "yes" option can only be "winning" if it has met the support
+      // threshold criteria (N_yes / (N_yes + N_no)) > supportThreshold
+      let winningOption: OptionResult[TokenVotingOptions] | undefined;
+
+      const yesNoCount = BigNumber.from(proposal.result.yes).add(
+        proposal.result.no
+      );
+
+      // if there are any votes find the winning option
+      if (yesNoCount.gt(0)) {
+        if (
+          BigNumber.from(proposal.result.yes).div(yesNoCount).toNumber() >
+          proposal.settings.supportThreshold
+        ) {
+          winningOption = {...results.yes, option: 'yes'};
+        } else {
+          // technically abstain never "wins" the vote, but showing on UI
+          // if there are more 'abstain' votes than 'no' votes
+          winningOption = BigNumber.from(proposal.result.no).gte(
+            proposal.result.abstain
+          )
+            ? {...results.no, option: 'no'}
+            : {...results.abstain, option: 'abstain'};
+        }
       }
 
       // show winning vote option
-      if (
-        biggestVoteOption.percentage >
-        proposal.settings.supportThreshold * 100
-      ) {
+      if (winningOption) {
         const options: {[k in TokenVotingOptions]: string} = {
           yes: t('votingTerminal.yes'),
           no: t('votingTerminal.no'),
@@ -187,11 +198,10 @@ export function proposal2CardProps(
         };
 
         const activeProps = {
-          voteProgress: biggestVoteOption.percentage,
-          voteLabel: options[biggestVoteOption.option],
-
+          voteProgress: winningOption.percentage,
+          voteLabel: options[winningOption.option],
           tokenSymbol: proposal.token.symbol,
-          tokenAmount: biggestVoteOption.value.toString(),
+          tokenAmount: winningOption.value.toString(),
         };
         return {...proposalProps, ...activeProps};
       }
