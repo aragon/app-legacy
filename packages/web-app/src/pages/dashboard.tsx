@@ -1,4 +1,3 @@
-import {useReactiveVar} from '@apollo/client';
 import {
   ButtonText,
   HeaderDao,
@@ -10,7 +9,7 @@ import {
 import {withTransaction} from '@elastic/apm-rum-react';
 import React, {useCallback, useEffect, useMemo, useState} from 'react';
 import {useTranslation} from 'react-i18next';
-import {generatePath, useNavigate} from 'react-router-dom';
+import {generatePath, useNavigate, useParams} from 'react-router-dom';
 import styled from 'styled-components';
 
 import {Loading} from 'components/temporary';
@@ -18,32 +17,24 @@ import {MembershipSnapshot} from 'containers/membershipSnapshot';
 import ProposalSnapshot from 'containers/proposalSnapshot';
 import TreasurySnapshot from 'containers/treasurySnapshot';
 import {useAlertContext} from 'context/alert';
-import {
-  favoriteDaosVar,
-  NavigationDao,
-  pendingDaoCreationVar,
-} from 'context/apolloClient';
+import {NavigationDao} from 'context/apolloClient';
 import {useNetwork} from 'context/network';
-import {usePrivacyContext} from 'context/privacyContext';
-import {useClient} from 'hooks/useClient';
-import {useDaoDetails} from 'hooks/useDaoDetails';
-import {useDaoParam} from 'hooks/useDaoParam';
+import {useDaoQuery} from 'hooks/useDaoDetailsQuery';
 import {useDaoVault} from 'hooks/useDaoVault';
+import {
+  useAddFavoriteDaoMutation,
+  useFavoritedDaosQuery,
+  useRemoveFavoriteDaoMutation,
+} from 'hooks/useFavoritedDaos';
+import {usePendingDao, useRemovePendingDaoMutation} from 'hooks/usePendingDao';
 import {PluginTypes} from 'hooks/usePluginClient';
 import {useProposals} from 'hooks/useProposals';
 import useScreen from 'hooks/useScreen';
-import {
-  CHAIN_METADATA,
-  FAVORITE_DAOS_KEY,
-  PENDING_DAOS_KEY,
-} from 'utils/constants';
+import {CHAIN_METADATA} from 'utils/constants';
 import {formatDate} from 'utils/date';
-import {Dashboard as DashboardPath} from 'utils/paths';
-import {ProposalListItem, Transfer} from 'utils/types';
-import {Container, EmptyStateContainer, EmptyStateHeading} from './governance';
 import {toDisplayEns} from 'utils/library';
-
-let pollForDaoData: number | undefined;
+import {Dashboard as DashboardPath, NotFound} from 'utils/paths';
+import {Container, EmptyStateContainer, EmptyStateHeading} from './governance';
 
 enum DaoCreationState {
   ASSEMBLING_DAO,
@@ -53,141 +44,146 @@ enum DaoCreationState {
 
 const Dashboard: React.FC = () => {
   const {t} = useTranslation();
-  const {network} = useNetwork();
-  const {isDesktop, isMobile} = useScreen();
   const {alert} = useAlertContext();
-  const {client} = useClient();
-  const {preferences, handleWithFunctionalPreferenceMenu} = usePrivacyContext();
-  const favoriteDaoCache = useReactiveVar(favoriteDaosVar);
+  const {isDesktop, isMobile} = useScreen();
 
-  const {
-    data: daoId,
-    isLoading: daoParamLoading,
-    waitingForSubgraph,
-  } = useDaoParam();
+  const navigate = useNavigate();
+  const {network} = useNetwork();
+  const {dao: daoAddressOrEns} = useParams();
 
+  const [pollInterval, setPollInterval] = useState(0);
   const [daoCreationState, setDaoCreationState] = useState<DaoCreationState>(
     DaoCreationState.ASSEMBLING_DAO
   );
-  const cachedDaoCreation = useReactiveVar(pendingDaoCreationVar);
-  const navigate = useNavigate();
 
-  const {transfers, totalAssetValue} = useDaoVault(daoId!);
-  const {data: dao, isLoading: detailsAreLoading} = useDaoDetails(daoId!);
-
-  const {data: topTen, isLoading: proposalsAreLoading} = useProposals(
-    daoId,
-    dao?.plugins[0]?.id as PluginTypes
+  // favoring DAOS
+  const addFavoriteDaoMutation = useAddFavoriteDaoMutation(() =>
+    alert(t('alert.chip.favorited'))
   );
 
-  const daoType =
-    (dao?.plugins[0]?.id as PluginTypes) === 'multisig.plugin.dao.eth'
-      ? t('explore.explorer.walletBased')
-      : t('explore.explorer.tokenBased');
+  const removeFavoriteDaoMutation = useRemoveFavoriteDaoMutation(() =>
+    alert(t('alert.chip.unfavorite'))
+  );
+
+  const {data: favoritedDaos, isLoading: favoritedDaosLoading} =
+    useFavoritedDaosQuery();
+
+  // pending DAO
+  const {data: pendingDao, isLoading: pendingDaoLoading} =
+    usePendingDao(daoAddressOrEns);
+
+  const removePendingDaoMutation = useRemovePendingDaoMutation(() =>
+    navigate(
+      generatePath(DashboardPath, {
+        network,
+        dao: daoAddressOrEns?.toLowerCase(),
+      })
+    )
+  );
+
+  // live DAO
+  const {
+    data: liveDao,
+    isLoading: liveDaoLoading,
+    isSuccess,
+  } = useDaoQuery(daoAddressOrEns, pollInterval);
 
   const favoriteDaoMatchPredicate = useCallback(
-    (favoriteDao: NavigationDao) =>
-      favoriteDao.address === daoId &&
-      favoriteDao.chain === CHAIN_METADATA[network].id,
-    [daoId, network]
+    (favoriteDao: NavigationDao) => {
+      return (
+        favoriteDao.address.toLowerCase() === liveDao?.address.toLowerCase() &&
+        favoriteDao.chain === CHAIN_METADATA[network].id
+      );
+    },
+    [liveDao?.address, network]
   );
 
-  const isFavoritedDao = useMemo(
-    () => favoriteDaoCache.some(favoriteDaoMatchPredicate),
-    [favoriteDaoCache, favoriteDaoMatchPredicate]
-  );
+  const isFavoritedDao = useMemo(() => {
+    if (liveDao?.address && favoritedDaos)
+      return Boolean(favoritedDaos.some(favoriteDaoMatchPredicate));
+    else return false;
+  }, [favoriteDaoMatchPredicate, favoritedDaos, liveDao?.address]);
 
   /*************************************************
    *                    Hooks                      *
    *************************************************/
   useEffect(() => {
+    // poll for the newly created DAO while waiting to be indexed
+    if (pendingDao && isSuccess && !liveDao) {
+      setPollInterval(1000);
+    }
+  }, [isSuccess, liveDao, pendingDao]);
+
+  useEffect(() => {
     if (
-      waitingForSubgraph &&
-      !pollForDaoData &&
+      pendingDao &&
+      liveDao &&
       daoCreationState === DaoCreationState.ASSEMBLING_DAO
     ) {
-      pollForDaoData = window.setInterval(async () => {
-        try {
-          const dao = await client?.methods.getDao(daoId);
-
-          if (dao) {
-            clearInterval(pollForDaoData);
-            pollForDaoData = undefined;
-
-            setDaoCreationState(DaoCreationState.DAO_READY);
-
-            setTimeout(
-              () => setDaoCreationState(DaoCreationState.OPEN_DAO),
-              3000
-            );
-          }
-        } catch (err) {
-          console.error(err);
-        }
-      }, 1000);
+      setPollInterval(0);
+      setDaoCreationState(DaoCreationState.DAO_READY);
+      setTimeout(() => setDaoCreationState(DaoCreationState.OPEN_DAO), 2000);
     }
-
-    return () => {
-      clearInterval(pollForDaoData);
-      pollForDaoData = undefined;
-    };
-  }, [client?.methods, daoCreationState, daoId, waitingForSubgraph]);
+  }, [liveDao, daoCreationState, pendingDao]);
 
   /*************************************************
    *                    Handlers                   *
    *************************************************/
-  const handleFavoriteClick = useCallback(() => {
-    if (!dao) return;
-
-    handleWithFunctionalPreferenceMenu(() => {
-      let newCache;
-
-      if (isFavoritedDao) {
-        newCache = favoriteDaoCache.filter(
-          fd => !favoriteDaoMatchPredicate(fd)
+  const handleOpenYourDaoClick = useCallback(async () => {
+    if (daoCreationState === DaoCreationState.OPEN_DAO) {
+      try {
+        await removePendingDaoMutation.mutateAsync({
+          network,
+          daoAddress: pendingDao?.address,
+        });
+      } catch (error) {
+        console.error(
+          `Error removing pending dao:${pendingDao?.address}`,
+          error
         );
-      } else {
-        const newFavoriteDao: NavigationDao = {
-          address: dao.address.toLowerCase(),
-          chain: CHAIN_METADATA[network].id,
-          ensDomain: dao.ensDomain,
-          plugins: dao.plugins,
-          metadata: {
-            name: dao.metadata.name,
-            avatar: dao.metadata.avatar,
-            description: dao.metadata.description,
-          },
-        };
-
-        newCache = [...favoriteDaoCache, newFavoriteDao];
       }
-
-      favoriteDaosVar(newCache);
-      localStorage.setItem(FAVORITE_DAOS_KEY, JSON.stringify(newCache));
-
-      isFavoritedDao
-        ? alert(t('alert.chip.unfavorite'))
-        : alert(t('alert.chip.favorited'));
-    });
+    }
   }, [
-    alert,
-    dao,
-    favoriteDaoCache,
-    favoriteDaoMatchPredicate,
-    handleWithFunctionalPreferenceMenu,
-    isFavoritedDao,
+    daoCreationState,
     network,
-    t,
+    pendingDao?.address,
+    removePendingDaoMutation,
   ]);
+
+  const handleClipboardActions = useCallback(async () => {
+    await navigator.clipboard.writeText(
+      `app.aragon.org/#/daos/${network}/${liveDao?.address}`
+    );
+    alert(t('alert.chip.inputCopied'));
+  }, [alert, liveDao?.address, network, t]);
+
+  const handleFavoriteClick = useCallback(
+    async (dao: NavigationDao) => {
+      try {
+        if (isFavoritedDao) {
+          await removeFavoriteDaoMutation.mutateAsync({dao});
+        } else {
+          await addFavoriteDaoMutation.mutateAsync({dao});
+        }
+      } catch (error) {
+        const action = isFavoritedDao
+          ? 'removing DAO from favorites'
+          : 'adding DAO to favorites';
+
+        console.error(`Error ${action}`, error);
+      }
+    },
+    [isFavoritedDao, removeFavoriteDaoMutation, addFavoriteDaoMutation]
+  );
 
   /*************************************************
    *                    Render                     *
    *************************************************/
-  if (proposalsAreLoading || detailsAreLoading || daoParamLoading) {
+  if (pendingDaoLoading || liveDaoLoading || favoritedDaosLoading) {
     return <Loading />;
   }
 
-  if (waitingForSubgraph) {
+  if (pendingDao) {
     const buttonLabel = {
       [DaoCreationState.ASSEMBLING_DAO]: t('dashboard.emptyState.buildingDAO'),
       [DaoCreationState.DAO_READY]: t('dashboard.emptyState.daoReady'),
@@ -234,95 +230,85 @@ const Dashboard: React.FC = () => {
             label={buttonLabel[daoCreationState]}
             iconLeft={buttonIcon[daoCreationState]}
             className={`mt-4 ${daoCreationState === 0 && 'bg-primary-800'}`}
-            onClick={() => {
-              if (daoCreationState === DaoCreationState.OPEN_DAO) {
-                const newCache = {...cachedDaoCreation};
-                delete newCache?.[network]?.[daoId];
-
-                pendingDaoCreationVar(newCache);
-
-                if (preferences?.functional) {
-                  localStorage.setItem(
-                    PENDING_DAOS_KEY,
-                    JSON.stringify(newCache)
-                  );
-                }
-
-                navigate(
-                  generatePath(DashboardPath, {
-                    network,
-                    dao: daoId,
-                  })
-                );
-              }
-            }}
+            onClick={handleOpenYourDaoClick}
           />
         </EmptyStateContainer>
       </Container>
     );
   }
 
-  if (!dao) return null;
+  if (liveDao) {
+    const daoType =
+      (liveDao?.plugins[0]?.id as PluginTypes) === 'multisig.plugin.dao.eth'
+        ? t('explore.explorer.walletBased')
+        : t('explore.explorer.tokenBased');
 
-  async function handleClipboardActions() {
-    await navigator.clipboard.writeText(
-      `https://app.aragon.org/#/daos/${network}/${daoId}`
-    );
-    alert(t('alert.chip.inputCopied'));
-  }
-
-  return (
-    <>
-      <HeaderWrapper>
-        <HeaderDao
-          daoName={dao.metadata.name}
-          daoEnsName={toDisplayEns(dao?.ensDomain)}
-          daoAvatar={dao.metadata.avatar}
-          daoUrl={`app.aragon.org/#/daos/${network}/${daoId}`}
-          description={dao.metadata.description}
-          created_at={formatDate(
-            dao.creationDate.getTime() / 1000,
-            'MMMM yyyy'
-          ).toString()}
-          daoChain={network}
-          daoType={daoType}
-          favorited={isFavoritedDao}
-          copiedOnClick={handleClipboardActions}
-          onFavoriteClick={handleFavoriteClick}
-          links={
-            dao?.metadata?.links?.flatMap(link => {
-              if (link.name !== '' && link.url !== '')
-                return {
+    return (
+      <>
+        <HeaderWrapper>
+          <HeaderDao
+            daoName={liveDao.metadata.name}
+            daoEnsName={toDisplayEns(liveDao.ensDomain)}
+            daoAvatar={liveDao.metadata.avatar}
+            daoUrl={`app.aragon.org/#/daos/${network}/${liveDao.address}`}
+            description={liveDao.metadata.description}
+            created_at={formatDate(
+              liveDao.creationDate.getTime() / 1000,
+              'MMMM yyyy'
+            ).toString()}
+            daoChain={network}
+            daoType={daoType}
+            favorited={isFavoritedDao}
+            copiedOnClick={handleClipboardActions}
+            onFavoriteClick={() =>
+              handleFavoriteClick({
+                address: liveDao.address.toLowerCase(),
+                chain: CHAIN_METADATA[network].id,
+                ensDomain: liveDao.ensDomain,
+                plugins: liveDao.plugins,
+                metadata: {
+                  name: liveDao.metadata.name,
+                  avatar: liveDao.metadata.avatar,
+                  description: liveDao.metadata.description,
+                },
+              })
+            }
+            links={
+              liveDao.metadata?.links
+                ?.filter(link => link.name !== '' && link.url !== '')
+                .map(link => ({
                   label: link.name,
                   href: link.url,
-                };
-              else return [];
-            }) || []
-          }
-        />
-      </HeaderWrapper>
+                })) || []
+            }
+          />
+        </HeaderWrapper>
 
-      {isDesktop ? (
-        <DashboardContent
-          dao={daoId}
-          proposals={topTen}
-          transfers={transfers}
-          totalAssetValue={totalAssetValue}
-          pluginType={dao?.plugins[0].id as PluginTypes}
-          pluginAddress={dao?.plugins[0].instanceAddress || ''}
-        />
-      ) : (
-        <MobileDashboardContent
-          dao={daoId}
-          proposals={topTen}
-          transfers={transfers}
-          totalAssetValue={totalAssetValue}
-          pluginType={dao?.plugins[0].id as PluginTypes}
-          pluginAddress={dao?.plugins[0].instanceAddress || ''}
-        />
-      )}
-    </>
-  );
+        {isDesktop ? (
+          <DashboardContent
+            dao={liveDao.address}
+            pluginType={liveDao.plugins[0].id as PluginTypes}
+            pluginAddress={liveDao.plugins[0].instanceAddress || ''}
+          />
+        ) : (
+          <MobileDashboardContent
+            dao={liveDao.address}
+            pluginType={liveDao.plugins[0].id as PluginTypes}
+            pluginAddress={liveDao.plugins[0].instanceAddress || ''}
+          />
+        )}
+      </>
+    );
+  } else if (!pendingDao && !liveDao) {
+    // if DAO isn't loading and there is no pending or live DAO, then
+    // navigate to notFound
+    navigate(NotFound, {
+      replace: true,
+      state: {incorrectDao: daoAddressOrEns},
+    });
+  }
+
+  return null;
 };
 
 const HeaderWrapper = styled.div.attrs({
@@ -334,21 +320,18 @@ const HeaderWrapper = styled.div.attrs({
 
 type DashboardContentProps = {
   dao: string;
-  proposals: ProposalListItem[];
-  transfers: Transfer[];
-  totalAssetValue: number;
   pluginType: PluginTypes;
   pluginAddress: string;
 };
 
 const DashboardContent: React.FC<DashboardContentProps> = ({
-  proposals,
-  transfers,
   dao,
-  totalAssetValue,
   pluginType,
   pluginAddress,
 }) => {
+  const {transfers, totalAssetValue} = useDaoVault(dao);
+  const {data: proposals} = useProposals(dao, pluginType);
+
   const proposalCount = proposals.length;
   const transactionCount = transfers.length;
 
@@ -450,12 +433,12 @@ const MembersWrapper = styled.div.attrs({
 
 const MobileDashboardContent: React.FC<DashboardContentProps> = ({
   dao,
-  proposals,
-  transfers,
-  totalAssetValue,
   pluginType,
   pluginAddress,
 }) => {
+  const {transfers, totalAssetValue} = useDaoVault(dao);
+  const {data: proposals} = useProposals(dao, pluginType);
+
   return (
     <MobileLayout>
       <ProposalSnapshot

@@ -1,16 +1,15 @@
 /* eslint-disable no-case-declarations */
-import {useReactiveVar} from '@apollo/client';
 import {
-  DaoCreationSteps,
   CreateDaoParams,
+  DaoCreationSteps,
   DaoMetadata,
   IPluginInstallItem,
   ITokenVotingPluginInstall,
+  MultisigClient,
+  MultisigPluginInstallParams,
   TokenVotingClient,
   VotingMode,
   VotingSettings,
-  MultisigClient,
-  MultisigPluginInstallParams,
   SupportedNetworks as sdkSupportedNetworks,
 } from '@aragon/sdk-client';
 import {parseUnits} from 'ethers/lib/utils';
@@ -21,28 +20,22 @@ import {generatePath, useNavigate} from 'react-router-dom';
 
 import PublishModal from 'containers/transactionModals/publishModal';
 import {useClient} from 'hooks/useClient';
+import {useAddFavoriteDaoMutation} from 'hooks/useFavoritedDaos';
+import {useAddPendingDaoMutation} from 'hooks/usePendingDao';
 import {usePollGasFee} from 'hooks/usePollGasfee';
 import {useWallet} from 'hooks/useWallet';
 import {CreateDaoFormData} from 'pages/createDAO';
 import {trackEvent} from 'services/analytics';
 import {
   CHAIN_METADATA,
-  FAVORITE_DAOS_KEY,
-  PENDING_DAOS_KEY,
   SupportedNetworks,
   TransactionState,
 } from 'utils/constants';
 import {getSecondsFromDHM} from 'utils/date';
+import {readFile, translateToNetworkishName} from 'utils/library';
 import {Dashboard} from 'utils/paths';
-import {
-  favoriteDaosVar,
-  NavigationDao,
-  pendingDaoCreationVar,
-} from './apolloClient';
 import {useGlobalModalContext} from './globalModals';
 import {useNetwork} from './network';
-import {usePrivacyContext} from './privacyContext';
-import {readFile, translateToNetworkishName} from 'utils/library';
 
 type CreateDaoContextType = {
   /** Prepares the creation data and awaits user confirmation to start process */
@@ -59,9 +52,9 @@ const CreateDaoProvider: React.FC = ({children}) => {
   const {t} = useTranslation();
   const {getValues} = useFormContext<CreateDaoFormData>();
   const {client} = useClient();
-  const cachedDaoCreation = useReactiveVar(pendingDaoCreationVar);
-  const favoriteDaoCache = useReactiveVar(favoriteDaosVar);
-  const {preferences} = usePrivacyContext();
+
+  const addFavoriteDaoMutation = useAddFavoriteDaoMutation();
+  const addPendingDaoMutation = useAddPendingDaoMutation();
 
   const [creationProcessState, setCreationProcessState] =
     useState<TransactionState>();
@@ -357,40 +350,35 @@ const CreateDaoProvider: React.FC = ({children}) => {
             setCreationProcessState(TransactionState.SUCCESS);
             setDaoAddress(step.address.toLowerCase());
 
-            const newCache = {
-              ...cachedDaoCreation,
-              [network]: {
-                ...cachedDaoCreation[network],
-                [step.address.toLocaleLowerCase()]: {
-                  daoCreationParams: daoCreationData,
-                  daoMetadata: metadata,
-                },
-              },
-            };
-
-            pendingDaoCreationVar(newCache);
-
-            const newFavoriteDao: NavigationDao = {
-              address: step.address.toLocaleLowerCase(),
-              chain: CHAIN_METADATA[network].id,
-              ensDomain: daoCreationData.ensSubdomain || '',
-              plugins: daoCreationData.plugins,
-              metadata: {
-                name: metadata.name,
-                avatar: metadata.avatar,
-                description: metadata.description,
-              },
-            };
-
-            const tempCache = [...favoriteDaoCache, newFavoriteDao];
-
-            favoriteDaosVar(tempCache);
-
-            if (preferences?.functional) {
-              localStorage.setItem(PENDING_DAOS_KEY, JSON.stringify(newCache));
-              localStorage.setItem(
-                FAVORITE_DAOS_KEY,
-                JSON.stringify(tempCache)
+            try {
+              await Promise.all([
+                addPendingDaoMutation.mutateAsync({
+                  daoAddress: step.address.toLowerCase(),
+                  network,
+                  daoDetails: {
+                    ...daoCreationData,
+                    metadata,
+                    creationDate: new Date(),
+                  },
+                }),
+                addFavoriteDaoMutation.mutateAsync({
+                  dao: {
+                    address: step.address.toLocaleLowerCase(),
+                    chain: CHAIN_METADATA[network].id,
+                    ensDomain: daoCreationData.ensSubdomain || '',
+                    plugins: daoCreationData.plugins,
+                    metadata: {
+                      name: metadata.name,
+                      avatar: metadata.avatar,
+                      description: metadata.description,
+                    },
+                  },
+                }),
+              ]);
+            } catch (error) {
+              console.warn(
+                'Error favoriting and adding newly created DAO to cache',
+                error
               );
             }
             break;
