@@ -74,7 +74,11 @@ export const useAddPendingDaoMutation = () => {
       return {previousPendingDao};
     },
 
-    onError: (_error, variables, context) => {
+    onError: (
+      _error,
+      variables,
+      context: {previousPendingDao: unknown} | undefined
+    ) => {
       const pendingDaoQueryKey = [
         'pendingDao',
         variables.daoAddress,
