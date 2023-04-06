@@ -1,15 +1,27 @@
-import {useReactiveVar} from '@apollo/client';
 import {IDaoQueryParams} from '@aragon/sdk-client';
 import {
   InfiniteData,
-  useInfiniteQuery,
-  useQuery,
   UseQueryResult,
+  useInfiniteQuery,
+  useMutation,
+  useQuery,
+  useQueryClient,
 } from '@tanstack/react-query';
 
-import {favoriteDaosVar, NavigationDao} from 'context/apolloClient';
+import {NavigationDao} from 'context/apolloClient';
 import {useCallback} from 'react';
-import {getFavoritedDaosFromCache} from 'services/cache';
+import {
+  addFavoriteDaoToCache,
+  getFavoritedDaoFromCache,
+  getFavoritedDaosFromCache,
+  removeFavoriteDaoFromCache,
+  updateFavoritedDaoInCache,
+} from 'services/cache';
+import {
+  CHAIN_METADATA,
+  SupportedNetworks,
+  getSupportedNetworkByChainId,
+} from 'utils/constants';
 import {resolveDaoAvatarIpfsCid} from 'utils/library';
 
 const DEFAULT_QUERY_PARAMS = {
@@ -25,17 +37,11 @@ const DEFAULT_QUERY_PARAMS = {
  * @returns result object containing an array of NavigationDao objects with added avatar information.
  */
 export const useFavoritedDaosQuery = (
-  skip = 0,
-  limit = -1
+  skip = 0
 ): UseQueryResult<NavigationDao[]> => {
-  const cachedDaos = useReactiveVar(favoriteDaosVar);
-
   return useQuery<NavigationDao[]>({
-    queryKey: ['cachedDaos'],
-    queryFn: useCallback(
-      () => getFavoritedDaosFromCache(cachedDaos, {skip, limit}),
-      [cachedDaos, limit, skip]
-    ),
+    queryKey: ['favoriteDaos'],
+    queryFn: useCallback(() => getFavoritedDaosFromCache({skip}), [skip]),
     select: addAvatarToDaos,
     refetchOnWindowFocus: false,
   });
@@ -54,19 +60,16 @@ export const useFavoritedDaosInfiniteQuery = (
     limit = DEFAULT_QUERY_PARAMS.limit,
   }: Partial<Pick<IDaoQueryParams, 'limit'>> = {}
 ) => {
-  const cachedDaos = useReactiveVar(favoriteDaosVar);
-
   return useInfiniteQuery({
-    queryKey: ['infiniteCachedDaos'],
+    queryKey: ['infiniteFavoriteDaos'],
 
     queryFn: useCallback(
-      ({pageParam = 0}) => {
-        return getFavoritedDaosFromCache(cachedDaos, {
+      ({pageParam = 0}) =>
+        getFavoritedDaosFromCache({
           skip: limit * pageParam,
           limit,
-        });
-      },
-      [cachedDaos, limit]
+        }),
+      [limit]
     ),
 
     getNextPageParam: (
@@ -77,6 +80,87 @@ export const useFavoritedDaosInfiniteQuery = (
     select: augmentCachedDaos,
     enabled,
     refetchOnWindowFocus: false,
+  });
+};
+
+/**
+ * Fetch a favorite DAO from the cache
+ * @param daoAddress address of the favorited DAO
+ * @param network network of the favorited DAO
+ * @returns favorited DAO with given address and network if available
+ */
+export const useFavoritedDaoQuery = (
+  daoAddress: string | undefined,
+  network: SupportedNetworks
+) => {
+  const chain = CHAIN_METADATA[network].id;
+
+  return useQuery({
+    queryKey: ['favoritedDao', daoAddress, network],
+    queryFn: () => getFavoritedDaoFromCache(daoAddress, chain),
+    enabled: !!daoAddress && !!network,
+  });
+};
+
+/**
+ * Update a favorited DAO in in the cache
+ */
+export const useUpdateFavoritedDaoMutation = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (variables: {dao: NavigationDao}) =>
+      updateFavoritedDaoInCache(variables.dao),
+
+    onSuccess: (_, variables) => {
+      const network = getSupportedNetworkByChainId(variables.dao.chain);
+
+      queryClient.invalidateQueries(['favoriteDaos']);
+      queryClient.invalidateQueries(['infiniteFavoriteDaos']);
+      queryClient.invalidateQueries([
+        'favoritedDao',
+        variables.dao.address,
+        network,
+      ]);
+    },
+  });
+};
+
+/**
+ * Add a favorited DAO to the cache
+ * @param onSuccess callback to run once DAO has been added to the cache
+ */
+export const useAddFavoriteDaoMutation = (onSuccess?: () => void) => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (variables: {dao: NavigationDao}) =>
+      addFavoriteDaoToCache(variables.dao),
+
+    onSuccess: () => {
+      onSuccess?.();
+      queryClient.invalidateQueries(['favoriteDaos']);
+      queryClient.invalidateQueries(['infiniteFavoriteDaos']);
+    },
+  });
+};
+
+/**
+ * Remove a favorited DAO from the cache
+ * @param onSuccess callback to run once favorited DAO has been removed successfully
+ */
+export const useRemoveFavoriteDaoMutation = (onSuccess?: () => void) => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (variables: {dao: NavigationDao}) =>
+      removeFavoriteDaoFromCache(variables.dao),
+
+    onSuccess: () => {
+      onSuccess?.();
+      queryClient.invalidateQueries(['favoriteDaos']);
+      queryClient.invalidateQueries(['infiniteFavoriteDaos']);
+    },
   });
 };
 

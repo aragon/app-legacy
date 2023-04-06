@@ -4,7 +4,11 @@
 // variables from Apollo-client
 import {DaoDetails} from '@aragon/sdk-client';
 
-import {NavigationDao, PendingDaoCreation} from 'context/apolloClient';
+import {
+  NavigationDao,
+  PendingDao,
+  PendingDaoCreation,
+} from 'context/apolloClient';
 import {
   FAVORITE_DAOS_KEY,
   PENDING_DAOS_KEY,
@@ -57,73 +61,6 @@ export async function getFavoritedDaoFromCache(
 }
 
 /**
- * Fetch the details of a pending DAO fro the cache, if available
- * @param cache cache object that holds the pending DAOs (remove when migrating to server)
- * @param network network in which the DAO is being created.
- * @param daoAddressOrEns the address or ens domain of the DAO
- * @returns
- */
-export async function getPendingDaoFromCache(
-  network: SupportedNetworks | undefined,
-  daoAddressOrEns: string | undefined
-): Promise<DaoDetails | null> {
-  if (!daoAddressOrEns)
-    return Promise.reject(new Error('daoAddressOrEns must be defined'));
-
-  if (!network) return Promise.reject(new Error('network must be defined'));
-
-  const pendingDaos = JSON.parse(
-    localStorage.getItem(PENDING_DAOS_KEY) || '{}'
-  ) as PendingDaoCreation;
-
-  const foundDao = pendingDaos?.[network]?.[daoAddressOrEns.toLowerCase()];
-
-  if (!foundDao) return null;
-
-  return {
-    address: daoAddressOrEns,
-    ensDomain: foundDao.daoCreationParams.ensSubdomain,
-    metadata: foundDao.daoMetadata,
-    plugins: [],
-    creationDate: new Date(),
-  };
-}
-
-/**
- * Get the cached DAOs
- * @returns Pending Daos cache
- */
-async function getPendingDaosFromCache(): Promise<PendingDaoCreation | null> {
-  const pendingDaos = localStorage.getItem(PENDING_DAOS_KEY) || '{}';
-
-  return pendingDaos === '{}'
-    ? Promise.resolve(null)
-    : Promise.resolve(JSON.parse(pendingDaos) as PendingDaoCreation);
-}
-
-/**
- * Remove a pending DAO from the cache
- * @param network network of the pending DAO to be removed
- * @param daoAddress address of the pending DAO to be removed
- * @returns an error if no address or network is given
- */
-export async function removePendingDaoFromCache(
-  network: SupportedNetworks | undefined,
-  daoAddress: string | undefined
-) {
-  if (!daoAddress)
-    return Promise.reject(new Error('daoAddress must be defined'));
-
-  if (!network) return Promise.reject(new Error('network must be defined'));
-
-  const cache = await getPendingDaosFromCache();
-  const newCache = {...cache};
-  delete newCache?.[network]?.[daoAddress];
-
-  localStorage.setItem(PENDING_DAOS_KEY, JSON.stringify(newCache));
-}
-
-/**
  * Favorite a DAO by adding it to the favorite DAOs cache
  * @param dao DAO being favorited
  * @returns an error if the dao to favorite is not provided
@@ -153,4 +90,123 @@ export async function removeFavoriteDaoFromCache(dao: NavigationDao) {
   );
 
   localStorage.setItem(FAVORITE_DAOS_KEY, JSON.stringify(newCache));
+}
+
+/**
+ * Update a DAO in the cache
+ * @param dao updated DAO; note dao.address & dao.chain should never be changed
+ * @returns an error if no DAO is provided
+ */
+export async function updateFavoritedDaoInCache(dao: NavigationDao) {
+  if (!dao) return Promise.reject(new Error('dao must be defined'));
+
+  const cache = await getFavoritedDaosFromCache({skip: 0});
+  const daoFound = cache.findIndex(
+    d => d.address === dao.address && d.chain === dao.chain
+  );
+
+  if (daoFound !== -1) {
+    const newCache = [...cache];
+    newCache[daoFound] = {...dao};
+
+    localStorage.setItem(FAVORITE_DAOS_KEY, JSON.stringify(newCache));
+  }
+}
+
+/**
+ * Fetch the details of a pending DAO fro the cache, if available
+ * @param cache cache object that holds the pending DAOs (remove when migrating to server)
+ * @param network network in which the DAO is being created.
+ * @param daoAddressOrEns the address or ens domain of the DAO
+ * @returns
+ */
+export async function getPendingDaoFromCache(
+  network: SupportedNetworks | undefined,
+  daoAddressOrEns: string | undefined
+): Promise<DaoDetails | null> {
+  if (!daoAddressOrEns)
+    return Promise.reject(new Error('daoAddressOrEns must be defined'));
+
+  if (!network) return Promise.reject(new Error('network must be defined'));
+
+  const pendingDaos = JSON.parse(
+    localStorage.getItem(PENDING_DAOS_KEY) || '{}'
+  ) as PendingDaoCreation;
+
+  const foundDao = pendingDaos?.[network]?.[daoAddressOrEns.toLowerCase()];
+
+  if (!foundDao) return null;
+
+  return {
+    address: daoAddressOrEns,
+    ensDomain: foundDao.ensSubdomain,
+    metadata: foundDao.metadata,
+    plugins: [],
+    creationDate: foundDao.creationDate,
+  };
+}
+
+/**
+ * Get the cached DAOs
+ * @returns Pending Daos cache
+ */
+async function getPendingDaosFromCache(): Promise<PendingDaoCreation | null> {
+  const pendingDaos = localStorage.getItem(PENDING_DAOS_KEY) || '{}';
+
+  return pendingDaos === '{}'
+    ? Promise.resolve(null)
+    : Promise.resolve(JSON.parse(pendingDaos) as PendingDaoCreation);
+}
+
+/**
+ * Add a pending DAO to the cache
+ * @param daoAddress address of pending DAO
+ * @param network network of the pending DAO
+ * @param daoDetails details of the pending DAO
+ */
+export async function addPendingDaoToCache(
+  daoAddress: string,
+  network: SupportedNetworks,
+  daoDetails: PendingDao
+) {
+  if (!daoAddress)
+    return Promise.reject(new Error('daoAddress must be defined'));
+
+  if (!daoDetails)
+    return Promise.reject(new Error('daoDetails must be defined'));
+
+  if (!network) return Promise.reject(new Error('network must be defined'));
+
+  const cache = (await getPendingDaosFromCache()) || {};
+  const newCache = {
+    ...cache,
+    [network]: {
+      ...cache[network],
+      [daoAddress.toLowerCase()]: {...daoDetails},
+    },
+  };
+
+  localStorage.setItem(PENDING_DAOS_KEY, JSON.stringify(newCache));
+}
+
+/**
+ * Remove a pending DAO from the cache
+ * @param network network of the pending DAO to be removed
+ * @param daoAddress address of the pending DAO to be removed
+ * @returns an error if no address or network is given
+ */
+export async function removePendingDaoFromCache(
+  network: SupportedNetworks | undefined,
+  daoAddress: string | undefined
+) {
+  if (!daoAddress)
+    return Promise.reject(new Error('daoAddress must be defined'));
+
+  if (!network) return Promise.reject(new Error('network must be defined'));
+
+  const cache = await getPendingDaosFromCache();
+  const newCache = {...cache};
+  delete newCache?.[network]?.[daoAddress];
+
+  localStorage.setItem(PENDING_DAOS_KEY, JSON.stringify(newCache));
 }
