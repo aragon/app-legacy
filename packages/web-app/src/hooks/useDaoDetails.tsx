@@ -72,10 +72,10 @@ export function useDaoDetails(
           if (pendingDAO) {
             setData({
               address: daoId,
-              ensDomain: pendingDAO.daoCreationParams.ensSubdomain,
-              metadata: pendingDAO.daoMetadata,
+              ensDomain: pendingDAO.ensSubdomain,
+              metadata: pendingDAO.metadata,
               plugins: [],
-              creationDate: new Date(),
+              creationDate: pendingDAO.creationDate,
             });
           }
           setWaitingForSubgraph(true);
