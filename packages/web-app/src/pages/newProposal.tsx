@@ -6,11 +6,13 @@ import {Loading} from 'components/temporary';
 import ProposalStepper from 'containers/proposalStepper';
 import {ActionsProvider} from 'context/actions';
 import {CreateProposalProvider} from 'context/createProposal';
-import {useDaoParam} from 'hooks/useDaoParam';
+import {useDaoDetailsQuery} from 'hooks/useDaoDetailsQuery';
 
 const NewProposal: React.FC = () => {
-  const {daoDetails, isLoading} = useDaoParam();
+  const {data, isLoading} = useDaoDetailsQuery();
+
   const [showTxModal, setShowTxModal] = useState(false);
+
   const formMethods = useForm({
     mode: 'onChange',
     defaultValues: {
@@ -28,14 +30,13 @@ const NewProposal: React.FC = () => {
   /*************************************************
    *                    Render                     *
    *************************************************/
+  if (isLoading) return <Loading />;
 
-  if (isLoading) {
-    return <Loading />;
-  }
+  if (!data) return null;
 
   return (
     <FormProvider {...formMethods}>
-      <ActionsProvider daoId={daoDetails?.address as string}>
+      <ActionsProvider daoId={data.address}>
         <CreateProposalProvider
           showTxModal={showTxModal}
           setShowTxModal={setShowTxModal}

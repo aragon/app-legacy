@@ -1,7 +1,7 @@
 import {useReactiveVar} from '@apollo/client';
 import {
-  DaoAction,
   CreateMajorityVotingProposalParams,
+  DaoAction,
   InstalledPluginListItem,
   ProposalCreationSteps,
   ProposalMetadata,
@@ -31,13 +31,12 @@ import {useGlobalModalContext} from 'context/globalModals';
 import {useNetwork} from 'context/network';
 import {usePrivacyContext} from 'context/privacyContext';
 import {useClient} from 'hooks/useClient';
-import {useDaoDetails} from 'hooks/useDaoDetails';
-import {useDaoParam} from 'hooks/useDaoParam';
+import {useDaoDetailsQuery} from 'hooks/useDaoDetailsQuery';
 import {useDaoToken} from 'hooks/useDaoToken';
 import {
+  PluginTypes,
   isMultisigClient,
   isTokenVotingClient,
-  PluginTypes,
   usePluginClient,
 } from 'hooks/usePluginClient';
 import {
@@ -75,7 +74,6 @@ import {
   ProposalId,
   ProposalResource,
 } from 'utils/types';
-import {useDaoDetailsQuery} from 'hooks/useDaoDetailsQuery';
 
 const ProposeSettings: React.FC = () => {
   const {t} = useTranslation();
@@ -87,8 +85,7 @@ const ProposeSettings: React.FC = () => {
     control,
   });
 
-  const {data: daoId} = useDaoParam();
-  const {data: daoDetails, isLoading} = useDaoDetails(daoId);
+  const {data: daoDetails, isLoading} = useDaoDetailsQuery();
   const {data: pluginSettings, isLoading: settingsLoading} = usePluginSettings(
     daoDetails?.plugins[0].instanceAddress as string,
     daoDetails?.plugins[0].id as PluginTypes
@@ -135,7 +132,10 @@ const ProposeSettings: React.FC = () => {
       <FullScreenStepper
         wizardProcessName={t('newProposal.title')}
         navLabel={t('navLinks.settings')}
-        returnPath={generatePath(EditSettings, {network, dao: daoId})}
+        returnPath={generatePath(EditSettings, {
+          network,
+          dao: daoDetails?.address,
+        })}
       >
         <Step
           wizardTitle={t('settings.proposeSettings')}

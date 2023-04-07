@@ -1,30 +1,29 @@
-import styled from 'styled-components';
-import * as Locales from 'date-fns/locale';
-import {format, Locale} from 'date-fns';
-import {useTranslation} from 'react-i18next';
+import {ButtonGroup, IconAdd, Option, SearchInput} from '@aragon/ui-components';
 import {withTransaction} from '@elastic/apm-rum-react';
-import {Option, ButtonGroup, SearchInput, IconAdd} from '@aragon/ui-components';
+import {Locale, format} from 'date-fns';
+import * as Locales from 'date-fns/locale';
 import React, {useCallback, useMemo, useState} from 'react';
+import {useTranslation} from 'react-i18next';
+import styled from 'styled-components';
 
-import {Transfer} from 'utils/types';
 import TransferList from 'components/transferList';
-import {PageWrapper} from 'components/wrappers';
-import useCategorizedTransfers from 'hooks/useCategorizedTransfers';
+import {PageWrapper, TransferSectionWrapper} from 'components/wrappers';
 import {useGlobalModalContext} from 'context/globalModals';
-import {TransferSectionWrapper} from 'components/wrappers';
-import {TransferTypes} from 'utils/constants';
-import {Loading} from 'components/temporary';
-import {useDaoParam} from 'hooks/useDaoParam';
 import {useTransactionDetailContext} from 'context/transactionDetail';
+import useCategorizedTransfers from 'hooks/useCategorizedTransfers';
+import {useDaoDetailsQuery} from 'hooks/useDaoDetails';
+import {TransferTypes} from 'utils/constants';
+import {Transfer} from 'utils/types';
 
 const Transfers: React.FC = () => {
   const {open} = useGlobalModalContext();
   const {t, i18n} = useTranslation();
-  const {data: dao, isLoading} = useDaoParam();
   const {handleTransferClicked} = useTransactionDetailContext();
 
-  const {data: categorizedTransfers, totalTransfers} =
-    useCategorizedTransfers(dao);
+  const {data: daoDetails} = useDaoDetailsQuery();
+  const {data: categorizedTransfers, totalTransfers} = useCategorizedTransfers(
+    daoDetails?.address ?? ''
+  );
 
   const [filterValue, setFilterValue] = useState('');
   const [searchValue, setSearchValue] = useState('');
@@ -79,10 +78,6 @@ const Transfers: React.FC = () => {
   );
 
   const SectionContainer = styled.div.attrs({className: 'my-3 desktop:my-5'})``;
-
-  if (isLoading) {
-    return <Loading />;
-  }
 
   /**
    * Note: We can add a nested iterator for both sections and transfer cards

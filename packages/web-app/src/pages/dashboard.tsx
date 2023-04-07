@@ -329,7 +329,7 @@ const DashboardContent: React.FC<DashboardContentProps> = ({
   pluginType,
   pluginAddress,
 }) => {
-  const {transfers, totalAssetValue} = useDaoVault(dao);
+  const {transfers, totalAssetValue} = useDaoVault();
   const {data: proposals} = useProposals(dao, pluginType);
 
   const proposalCount = proposals.length;
@@ -436,7 +436,7 @@ const MobileDashboardContent: React.FC<DashboardContentProps> = ({
   pluginType,
   pluginAddress,
 }) => {
-  const {transfers, totalAssetValue} = useDaoVault(dao);
+  const {transfers, totalAssetValue} = useDaoVault();
   const {data: proposals} = useProposals(dao, pluginType);
 
   return (

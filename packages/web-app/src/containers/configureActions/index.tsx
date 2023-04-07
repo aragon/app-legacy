@@ -1,6 +1,7 @@
 import {AlertInline, ButtonText, IconAdd, Label} from '@aragon/ui-components';
 import React from 'react';
 import {useTranslation} from 'react-i18next';
+import {useParams} from 'react-router-dom';
 import styled from 'styled-components';
 
 import {StateEmpty} from 'components/stateEmpty';
@@ -9,14 +10,13 @@ import AddActionMenu from 'containers/addActionMenu';
 import {useActionsContext} from 'context/actions';
 import {useGlobalModalContext} from 'context/globalModals';
 import {useDaoActions} from 'hooks/useDaoActions';
-import {useDaoParam} from 'hooks/useDaoParam';
 
 const ConfigureActions: React.FC = () => {
-  const {data: daoId} = useDaoParam();
+  const {data: daoId} = useParams();
   const {t} = useTranslation();
   const {open} = useGlobalModalContext();
   const {actions} = useActionsContext();
-  const {data: availableActions} = useDaoActions(daoId);
+  const {data: availableActions} = useDaoActions(daoId ?? '');
 
   return (
     <FormWrapper>

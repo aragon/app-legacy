@@ -1,11 +1,10 @@
+import {useApolloClient} from '@apollo/client';
 import {
   AlertInline,
   DropdownInput,
   Label,
   ValueInput,
 } from '@aragon/ui-components';
-
-import {useApolloClient} from '@apollo/client';
 import React, {useCallback, useEffect} from 'react';
 import {
   Controller,
@@ -18,11 +17,12 @@ import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 
 import {useActionsContext} from 'context/actions';
+import {useAlertContext} from 'context/alert';
 import {useGlobalModalContext} from 'context/globalModals';
 import {useNetwork} from 'context/network';
 import {useProviders} from 'context/providers';
 import {isAddress} from 'ethers/lib/utils';
-import {useDaoParam} from 'hooks/useDaoParam';
+import {useDaoDetailsQuery} from 'hooks/useDaoDetailsQuery';
 import {useWallet} from 'hooks/useWallet';
 import {WithdrawAction} from 'pages/newWithdraw';
 import {fetchTokenData} from 'services/prices';
@@ -35,7 +35,6 @@ import {
   validateTokenAddress,
   validateTokenAmount,
 } from 'utils/validators';
-import {useAlertContext} from 'context/alert';
 
 type ConfigureWithdrawFormProps = ActionIndex; //extend if necessary
 
@@ -48,11 +47,10 @@ const ConfigureWithdrawForm: React.FC<ConfigureWithdrawFormProps> = ({
   const {network} = useNetwork();
   const {address} = useWallet();
   const {infura: provider} = useProviders();
-
-  // load dao details
-  const {daoDetails} = useDaoParam();
   const {setSelectedActionIndex} = useActionsContext();
   const {alert} = useAlertContext();
+
+  const {data: daoDetails} = useDaoDetailsQuery();
 
   const {control, getValues, trigger, resetField, setFocus, setValue} =
     useFormContext();

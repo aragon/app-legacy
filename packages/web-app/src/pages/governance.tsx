@@ -16,17 +16,16 @@ import styled from 'styled-components';
 import ProposalList from 'components/proposalList';
 import {Loading} from 'components/temporary';
 import {PageWrapper} from 'components/wrappers';
-import {useDaoParam} from 'hooks/useDaoParam';
+import {useDaoDetailsQuery} from 'hooks/useDaoDetailsQuery';
 import {PluginTypes} from 'hooks/usePluginClient';
 import {useProposals} from 'hooks/useProposals';
 import NoProposals from 'public/noProposals.svg';
-import {erc20VotingProposals_erc20VotingProposals} from 'queries/__generated__/erc20VotingProposals';
 import {trackEvent} from 'services/analytics';
-import {ProposalListItem} from 'utils/types';
 import {htmlIn} from 'utils/htmlIn';
+import {ProposalListItem} from 'utils/types';
 
 const Governance: React.FC = () => {
-  const {daoDetails: daoDetails, isLoading: isDaoLoading} = useDaoParam();
+  const {data: daoDetails, isLoading: isDaoLoading} = useDaoDetailsQuery();
 
   // The number of proposals displayed on each page
   const PROPOSALS_PER_PAGE = 6;
@@ -99,7 +98,7 @@ const Governance: React.FC = () => {
               className="mt-4"
               onClick={() => {
                 trackEvent('governance_newProposalBtn_clicked', {
-                  dao_address: daoDetails?.address as string,
+                  dao_address: daoDetails?.address,
                 });
                 navigate('new-proposal');
               }}
@@ -118,7 +117,7 @@ const Governance: React.FC = () => {
           iconLeft: <IconAdd />,
           onClick: () => {
             trackEvent('governance_newProposalBtn_clicked', {
-              dao_address: daoDetails?.address as string,
+              dao_address: daoDetails?.address,
             });
             navigate('new-proposal');
           },
@@ -203,51 +202,3 @@ const ImageContainer = styled.img.attrs({
 export const EmptyStateHeading = styled.h1.attrs({
   className: 'mt-4 text-2xl font-bold text-ui-800 text-center',
 })``;
-
-export interface CategorizedProposal
-  extends erc20VotingProposals_erc20VotingProposals {
-  type: 'draft' | 'pending' | 'active' | 'succeeded' | 'executed' | 'defeated';
-}
-
-/**
- * Takes and uncategorized proposal and categorizes it according to definitions.
- * @param uncategorizedProposal
- * @returns categorized proposal (i.e., uncategorizedProposal with additional
- * type field)
- */
-export function categorizeProposal(
-  uncategorizedProposal: erc20VotingProposals_erc20VotingProposals
-): CategorizedProposal {
-  const now = Date.now();
-  //onchain data coming in as seconds. Convert to milliseconds to compare with now.
-  const start =
-    Number.parseInt(uncategorizedProposal.startDate as string) * 1000;
-  const end = Number.parseInt(uncategorizedProposal.endDate as string) * 1000;
-
-  if (start >= now) {
-    return {
-      ...uncategorizedProposal,
-      type: 'pending',
-    };
-  } else if (end >= now) {
-    return {
-      ...uncategorizedProposal,
-      type: 'active',
-    };
-  } else if (uncategorizedProposal.executed) {
-    return {
-      ...uncategorizedProposal,
-      type: 'executed',
-    };
-  } else if (uncategorizedProposal.yea > uncategorizedProposal.nay) {
-    return {
-      ...uncategorizedProposal,
-      type: 'succeeded',
-    };
-  } else {
-    return {
-      ...uncategorizedProposal,
-      type: 'defeated',
-    };
-  }
-}

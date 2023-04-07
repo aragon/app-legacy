@@ -12,13 +12,13 @@ import TokenMenu from 'containers/tokenMenu';
 import {DepositProvider} from 'context/deposit';
 import {useGlobalModalContext} from 'context/globalModals';
 import {useNetwork} from 'context/network';
-import {useDaoParam} from 'hooks/useDaoParam';
+import {useDaoDetailsQuery} from 'hooks/useDaoDetailsQuery';
 import {useWallet} from 'hooks/useWallet';
 import {useWalletTokens} from 'hooks/useWalletTokens';
 import {generatePath} from 'react-router-dom';
 import {trackEvent} from 'services/analytics';
 import {MAX_TOKEN_DECIMALS} from 'utils/constants';
-import {formatUnits} from 'utils/library';
+import {formatUnits, toDisplayEns} from 'utils/library';
 import {Finance} from 'utils/paths';
 import {BaseTokenInfo} from 'utils/types';
 import {TokenFormData} from './newWithdraw';
@@ -50,7 +50,7 @@ const defaultValues = {
 const NewDeposit: React.FC = () => {
   const {t} = useTranslation();
   const {network} = useNetwork();
-  const {data: dao, daoDetails, isLoading} = useDaoParam();
+  const {data: daoDetails, isLoading} = useDaoDetailsQuery();
 
   const {address, isConnected, status, isOnWrongNetwork} = useWallet();
   const {data: walletTokens} = useWalletTokens();
@@ -64,10 +64,10 @@ const NewDeposit: React.FC = () => {
 
   useEffect(() => {
     // add form metadata
-    if (address && daoDetails?.address) {
+    if (address && daoDetails) {
       formMethods.setValue('from', address);
-      formMethods.setValue('to', daoDetails?.address as string);
-      formMethods.setValue('daoName', daoDetails?.metadata?.name);
+      formMethods.setValue('to', daoDetails.address);
+      formMethods.setValue('daoName', daoDetails.metadata.name);
     }
   }, [address, formMethods, daoDetails]);
 
@@ -148,7 +148,10 @@ const NewDeposit: React.FC = () => {
       <DepositProvider>
         <FullScreenStepper
           navLabel={t('allTransfer.newTransfer')}
-          returnPath={generatePath(Finance, {network, dao})}
+          returnPath={generatePath(Finance, {
+            network,
+            dao: toDisplayEns(daoDetails?.ensDomain) || daoDetails?.address,
+          })}
           wizardProcessName={t('newDeposit.depositAssets')}
         >
           <Step
@@ -157,7 +160,7 @@ const NewDeposit: React.FC = () => {
             isNextButtonDisabled={!formMethods.formState.isValid}
             onNextButtonClicked={next => {
               trackEvent('newDeposit_continueBtn_clicked', {
-                dao_address: daoDetails?.address as string,
+                dao_address: daoDetails?.address,
                 token_address: formMethods.getValues('tokenAddress'),
                 amount: formMethods.getValues('amount'),
                 reference: formMethods.getValues('reference'),
