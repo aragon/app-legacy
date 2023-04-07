@@ -26,8 +26,8 @@ import StarterKit from '@tiptap/starter-kit';
 import React, {useEffect, useMemo, useRef, useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {generatePath, useNavigate, useParams} from 'react-router-dom';
-import styled from 'styled-components';
 import sanitizeHtml from 'sanitize-html';
+import styled from 'styled-components';
 
 import {ExecutionWidget} from 'components/executionWidget';
 import ResourceList from 'components/resourceList';
@@ -40,9 +40,8 @@ import {useProposalTransactionContext} from 'context/proposalTransaction';
 import {useSpecificProvider} from 'context/providers';
 import {useCache} from 'hooks/useCache';
 import {useClient} from 'hooks/useClient';
-import {useDaoDetails} from 'hooks/useDaoDetails';
+import {useDaoDetailsQuery} from 'hooks/useDaoDetailsQuery';
 import {MultisigMember, useDaoMembers} from 'hooks/useDaoMembers';
-import {useDaoParam} from 'hooks/useDaoParam';
 import {useDaoProposal} from 'hooks/useDaoProposal';
 import {useMappedBreadcrumbs} from 'hooks/useMappedBreadcrumbs';
 import {PluginTypes, usePluginClient} from 'hooks/usePluginClient';
@@ -90,15 +89,14 @@ const Proposal: React.FC = () => {
   const {isDesktop} = useScreen();
   const {breadcrumbs, tag} = useMappedBreadcrumbs();
   const navigate = useNavigate();
-  const {id: urlId} = useParams();
+
+  const {dao, id: urlId} = useParams();
   const proposalId = useMemo(
     () => (urlId ? new ProposalId(urlId) : undefined),
     [urlId]
   );
 
-  // load dao details
-  const {data: dao} = useDaoParam();
-  const {data: daoDetails, isLoading: detailsAreLoading} = useDaoDetails(dao);
+  const {data: daoDetails, isLoading: detailsAreLoading} = useDaoDetailsQuery();
 
   const {data: daoSettings} = usePluginSettings(
     daoDetails?.plugins[0].instanceAddress as string,

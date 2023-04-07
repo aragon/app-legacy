@@ -1,12 +1,12 @@
 import React, {useEffect, useMemo} from 'react';
-import {matchRoutes, useLocation, useParams} from 'react-router-dom';
+import {matchRoutes, useLocation} from 'react-router-dom';
 import styled from 'styled-components';
 
 import {selectedDaoVar} from 'context/apolloClient';
 import {useGlobalModalContext} from 'context/globalModals';
 import {useNetwork} from 'context/network';
 import {usePrivacyContext} from 'context/privacyContext';
-import {useDaoDetails} from 'hooks/useDaoDetails';
+import {useDaoDetailsQuery} from 'hooks/useDaoDetailsQuery';
 import useScreen from 'hooks/useScreen';
 import {useWallet} from 'hooks/useWallet';
 import {CHAIN_METADATA, FEEDBACK_FORM} from 'utils/constants';
@@ -76,8 +76,7 @@ const Navbar: React.FC = () => {
   const {methods, isConnected} = useWallet();
   const {handleWithFunctionalPreferenceMenu} = usePrivacyContext();
 
-  const {dao} = useParams();
-  const {data: daoDetails} = useDaoDetails(dao || '');
+  const {data: daoDetails} = useDaoDetailsQuery();
 
   // set current dao as selected dao
   useEffect(() => {

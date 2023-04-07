@@ -13,13 +13,11 @@ import {ProposalResource} from 'utils/types';
 import {Views} from '.';
 
 type CompareMetadataProps = {
-  daoId: string;
-  daoDetails?: DaoDetails | null;
+  daoDetails: DaoDetails;
   view: Views;
 };
 
 export const CompareMetadata: React.FC<CompareMetadataProps> = ({
-  daoId,
   daoDetails,
   view,
 }) => {
@@ -54,7 +52,7 @@ export const CompareMetadata: React.FC<CompareMetadataProps> = ({
     <DescriptionListContainer
       title={t('labels.review.daoMetadata')}
       onEditClick={() =>
-        navigate(generatePath(EditSettings, {network, dao: daoId}))
+        navigate(generatePath(EditSettings, {network, dao: daoDetails.address}))
       }
       editLabel={t('settings.edit')}
     >

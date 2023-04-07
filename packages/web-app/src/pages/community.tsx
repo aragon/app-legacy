@@ -16,9 +16,8 @@ import {StateEmpty} from 'components/stateEmpty';
 import {Loading} from 'components/temporary';
 import {PageWrapper} from 'components/wrappers';
 import {useNetwork} from 'context/network';
-import {useDaoDetails} from 'hooks/useDaoDetails';
+import {useDaoDetailsQuery} from 'hooks/useDaoDetailsQuery';
 import {useDaoMembers} from 'hooks/useDaoMembers';
-import {useDaoParam} from 'hooks/useDaoParam';
 import {useDebouncedState} from 'hooks/useDebouncedState';
 import {PluginTypes} from 'hooks/usePluginClient';
 import {CHAIN_METADATA} from 'utils/constants';
@@ -30,14 +29,10 @@ const Community: React.FC = () => {
   const {network} = useNetwork();
   const navigate = useNavigate();
 
-  const {data: daoId} = useDaoParam();
-  const {data: daoDetails, isLoading: detailsAreLoading} = useDaoDetails(
-    daoId!
-  );
-
   const [page, setPage] = useState(1);
   const [debouncedTerm, searchTerm, setSearchTerm] = useDebouncedState('');
 
+  const {data: daoDetails, isLoading: detailsAreLoading} = useDaoDetailsQuery();
   const {
     data: {members, filteredMembers, daoToken},
     isLoading: membersLoading,

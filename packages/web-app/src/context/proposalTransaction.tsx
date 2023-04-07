@@ -9,8 +9,8 @@ import {
 } from '@aragon/sdk-client';
 import {BigNumber} from 'ethers';
 import React, {
-  createContext,
   ReactNode,
+  createContext,
   useCallback,
   useContext,
   useMemo,
@@ -20,8 +20,7 @@ import {useTranslation} from 'react-i18next';
 import {useParams} from 'react-router-dom';
 
 import PublishModal from 'containers/transactionModals/publishModal';
-import {useDaoDetails} from 'hooks/useDaoDetails';
-import {useDaoParam} from 'hooks/useDaoParam';
+import {useDaoDetailsQuery} from 'hooks/useDaoDetailsQuery';
 import {PluginTypes, usePluginClient} from 'hooks/usePluginClient';
 import {usePollGasFee} from 'hooks/usePollGasfee';
 import {useWallet} from 'hooks/useWallet';
@@ -35,16 +34,16 @@ import {
 } from 'utils/constants';
 import {customJSONReplacer} from 'utils/library';
 import {fetchBalance} from 'utils/tokens';
+import {ProposalId} from 'utils/types';
 import {
-  pendingTokenBasedExecutionVar,
   pendingMultisigApprovalsVar,
-  pendingTokenBasedVotesVar,
   pendingMultisigExecutionVar,
+  pendingTokenBasedExecutionVar,
+  pendingTokenBasedVotesVar,
 } from './apolloClient';
 import {useNetwork} from './network';
 import {usePrivacyContext} from './privacyContext';
 import {useProviders} from './providers';
-import {ProposalId} from 'utils/types';
 
 //TODO: currently a context, but considering there might only ever be one child,
 // might need to turn it into a wrapper that passes props to proposal page
@@ -101,10 +100,7 @@ const ProposalTransactionProvider: React.FC<Props> = ({children}) => {
     useState<TransactionState>();
   const [transactionHash, setTransactionHash] = useState<string>('');
 
-  const {data: daoAddress, isLoading: paramIsLoading} = useDaoParam();
-  const {data: daoDetails, isLoading: detailsAreLoading} = useDaoDetails(
-    daoAddress || ''
-  );
+  const {data: daoDetails, isLoading} = useDaoDetailsQuery();
 
   const {pluginAddress, pluginType} = useMemo(() => {
     return {
@@ -225,6 +221,8 @@ const ProposalTransactionProvider: React.FC<Props> = ({children}) => {
   // set proper state and cache vote when transaction is successful
   const onVoteSubmitted = useCallback(
     async (proposalId: ProposalId, vote: VoteValues) => {
+      if (!daoDetails?.address) return;
+
       setVoteParams(undefined);
       setVoteSubmitted(true);
       setVoteProcessState(TransactionState.SUCCESS);
@@ -234,7 +232,7 @@ const ProposalTransactionProvider: React.FC<Props> = ({children}) => {
       let newCache;
       let cacheKey = '';
       const cachedProposalId = proposalId.makeGloballyUnique(
-        daoDetails?.address as string
+        daoDetails?.address
       );
 
       // cache multisig vote
@@ -290,12 +288,12 @@ const ProposalTransactionProvider: React.FC<Props> = ({children}) => {
   // set proper state and cache proposal execution when transaction is successful
   const onExecutionSubmitted = useCallback(
     async (proposalId: ProposalId) => {
-      if (!address) return;
+      if (!address || !daoDetails?.address) return;
 
       let newCache;
       let cacheKey = '';
       const cachedProposalId = proposalId.makeGloballyUnique(
-        daoDetails?.address as string
+        daoDetails.address
       );
 
       // cache token based execution
@@ -495,7 +493,7 @@ const ProposalTransactionProvider: React.FC<Props> = ({children}) => {
     () => ({
       handleSubmitVote,
       handleExecuteProposal,
-      isLoading: paramIsLoading || detailsAreLoading,
+      isLoading,
       pluginAddress,
       pluginType,
       voteSubmitted,
@@ -504,12 +502,11 @@ const ProposalTransactionProvider: React.FC<Props> = ({children}) => {
       transactionHash,
     }),
     [
-      detailsAreLoading,
+      isLoading,
       executeSubmitted,
       executionFailed,
       handleExecuteProposal,
       handleSubmitVote,
-      paramIsLoading,
       pluginAddress,
       pluginType,
       transactionHash,

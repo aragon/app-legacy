@@ -1,7 +1,6 @@
 import React from 'react';
 
-import {useDaoDetails} from 'hooks/useDaoDetails';
-import {useDaoParam} from 'hooks/useDaoParam';
+import {useDaoDetailsQuery} from 'hooks/useDaoDetailsQuery';
 import {Action} from 'utils/types';
 import {AddAddressCard} from './actions/addAddressCard';
 import {MintTokenCard} from './actions/mintTokenCard';
@@ -16,8 +15,7 @@ type ActionsFilterProps = {
 };
 
 export const ActionsFilter: React.FC<ActionsFilterProps> = ({action}) => {
-  const {data: daoId} = useDaoParam();
-  const {data: dao} = useDaoDetails(daoId);
+  const {data: dao} = useDaoDetailsQuery();
 
   // all actions have names
   switch (action.name) {

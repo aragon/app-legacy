@@ -1,8 +1,4 @@
-import React from 'react';
-import {generatePath, useNavigate, useParams} from 'react-router-dom';
-import styled from 'styled-components';
-import {useTranslation} from 'react-i18next';
-import {withTransaction} from '@elastic/apm-rum-react';
+import {DaoDetails} from '@aragon/sdk-client';
 import {
   AlertInline,
   AvatarDao,
@@ -10,29 +6,30 @@ import {
   IconGovernance,
   ListItemLink,
 } from '@aragon/ui-components';
-import {DaoDetails} from '@aragon/sdk-client';
+import {withTransaction} from '@elastic/apm-rum-react';
+import React from 'react';
+import {useTranslation} from 'react-i18next';
+import {generatePath, useNavigate, useParams} from 'react-router-dom';
+import styled from 'styled-components';
 
-import MajorityVotingSettings from 'containers/settings/majorityVoting';
-import MultisigSettings from 'containers/settings/multisig';
+import {Dd, DescriptionListContainer, Dl, Dt} from 'components/descriptionList';
 import {Loading} from 'components/temporary';
 import {PageWrapper} from 'components/wrappers';
-import {Dd, DescriptionListContainer, Dl, Dt} from 'components/descriptionList';
-import {useDaoDetails} from 'hooks/useDaoDetails';
-import {useDaoParam} from 'hooks/useDaoParam';
+import MajorityVotingSettings from 'containers/settings/majorityVoting';
+import MultisigSettings from 'containers/settings/multisig';
+import {useNetwork} from 'context/network';
+import {useDaoDetailsQuery} from 'hooks/useDaoDetailsQuery';
 import {PluginTypes} from 'hooks/usePluginClient';
 import useScreen from 'hooks/useScreen';
-import {useNetwork} from 'context/network';
-import {EditSettings} from 'utils/paths';
 import {CHAIN_METADATA} from 'utils/constants';
+import {EditSettings} from 'utils/paths';
 
 const Settings: React.FC = () => {
   const {t} = useTranslation();
   const {network, isL2Network} = useNetwork();
   const navigate = useNavigate();
 
-  const {data: daoId, isLoading: isDaoParamLoading} = useDaoParam();
-
-  const {data: daoDetails, isLoading: isDetailsLoading} = useDaoDetails(daoId);
+  const {data: daoDetails, isLoading} = useDaoDetailsQuery();
 
   const networkInfo = CHAIN_METADATA[network];
   const chainLabel = networkInfo.name;
@@ -44,7 +41,7 @@ const Settings: React.FC = () => {
     l => l.name && l.url
   );
 
-  if (isDaoParamLoading || isDetailsLoading) {
+  if (isLoading) {
     return <Loading />;
   }
 

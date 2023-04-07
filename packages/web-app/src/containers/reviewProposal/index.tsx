@@ -7,7 +7,6 @@ import {format} from 'date-fns';
 import React, {useEffect, useMemo} from 'react';
 import {useFormContext} from 'react-hook-form';
 import {TFunction, useTranslation} from 'react-i18next';
-import {useParams} from 'react-router-dom';
 import styled from 'styled-components';
 
 import {ExecutionWidget} from 'components/executionWidget';
@@ -15,7 +14,7 @@ import {useFormStep} from 'components/fullScreenStepper';
 import ResourceList from 'components/resourceList';
 import {Loading} from 'components/temporary';
 import {VotingTerminal} from 'containers/votingTerminal';
-import {useDaoDetails} from 'hooks/useDaoDetails';
+import {useDaoDetailsQuery} from 'hooks/useDaoDetailsQuery';
 import {MultisigMember, useDaoMembers} from 'hooks/useDaoMembers';
 import {PluginTypes} from 'hooks/usePluginClient';
 import {
@@ -25,11 +24,11 @@ import {
 } from 'hooks/usePluginSettings';
 import {useTokenSupply} from 'hooks/useTokenSupply';
 import {
+  KNOWN_FORMATS,
   getCanonicalDate,
   getCanonicalTime,
   getCanonicalUtcOffset,
   getFormattedUtcOffset,
-  KNOWN_FORMATS,
   minutesToMills,
 } from 'utils/date';
 import {getErc20VotingParticipation, getNonEmptyActions} from 'utils/proposals';
@@ -47,8 +46,7 @@ const ReviewProposal: React.FC<ReviewProposalProps> = ({
   const {t} = useTranslation();
   const {setStep} = useFormStep();
 
-  const {dao} = useParams();
-  const {data: daoDetails} = useDaoDetails(dao!);
+  const {data: daoDetails} = useDaoDetailsQuery();
   const {id: pluginType, instanceAddress: pluginAddress} =
     daoDetails?.plugins[0] || ({} as InstalledPluginListItem);
 

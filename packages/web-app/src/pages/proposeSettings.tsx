@@ -75,6 +75,7 @@ import {
   ProposalId,
   ProposalResource,
 } from 'utils/types';
+import {useDaoDetailsQuery} from 'hooks/useDaoDetailsQuery';
 
 const ProposeSettings: React.FC = () => {
   const {t} = useTranslation();
@@ -195,8 +196,7 @@ const ProposeSettingWrapper: React.FC<Props> = ({
   const {network} = useNetwork();
   const {address, isOnWrongNetwork} = useWallet();
 
-  const {data: dao, isLoading} = useDaoParam();
-  const {data: daoDetails, isLoading: daoDetailsLoading} = useDaoDetails(dao);
+  const {data: daoDetails, isLoading: daoDetailsLoading} = useDaoDetailsQuery();
 
   const {id: pluginType, instanceAddress: pluginAddress} =
     daoDetails?.plugins[0] || ({} as InstalledPluginListItem);
@@ -334,7 +334,8 @@ const ProposeSettingWrapper: React.FC<Props> = ({
     const encodeActions = async (): Promise<DaoAction[]> => {
       // return an empty array for undefined clients
       const actions: Array<Promise<DaoAction>> = [];
-      if (!pluginClient || !client) return Promise.all(actions);
+      if (!pluginClient || !client || !daoDetails?.address)
+        return Promise.all(actions);
 
       for (const action of getValues('actions') as Array<Action>) {
         if (action.name === 'modify_metadata') {
@@ -366,7 +367,7 @@ const ProposeSettingWrapper: React.FC<Props> = ({
 
             actions.push(
               client.encoding.updateDaoMetadataAction(
-                daoDetails?.address as string,
+                daoDetails.address,
                 ipfsUri
               )
             );
@@ -525,16 +526,16 @@ const ProposeSettingWrapper: React.FC<Props> = ({
       setProposalData();
     }
   }, [
+    client,
     creationProcessState,
-    showTxModal,
+    daoDetails?.address,
     getValues,
     minDays,
     minHours,
     minMinutes,
     pluginAddress,
     pluginClient,
-    client,
-    daoDetails?.address,
+    showTxModal,
   ]);
 
   /*************************************************
@@ -564,7 +565,13 @@ const ProposeSettingWrapper: React.FC<Props> = ({
       case TransactionState.LOADING:
         break;
       case TransactionState.SUCCESS:
-        navigate(generatePath(Proposal, {network, dao, id: proposalId}));
+        navigate(
+          generatePath(Proposal, {
+            network,
+            dao: daoDetails?.address,
+            id: proposalId,
+          })
+        );
         break;
       default: {
         setCreationProcessState(TransactionState.WAITING);
@@ -719,7 +726,7 @@ const ProposeSettingWrapper: React.FC<Props> = ({
    *                    Render                     *
    *************************************************/
 
-  if (isLoading || daoDetailsLoading || tokenSupplyIsLoading) {
+  if (daoDetailsLoading || tokenSupplyIsLoading) {
     return <Loading />;
   }
 

@@ -26,12 +26,14 @@ import SetupVotingForm, {
 import {ActionsProvider} from 'context/actions';
 import {CreateProposalProvider} from 'context/createProposal';
 import {useNetwork} from 'context/network';
-import {useDaoDetails} from 'hooks/useDaoDetails';
+import {useDaoDetailsQuery} from 'hooks/useDaoDetailsQuery';
 import {useDaoMembers} from 'hooks/useDaoMembers';
-import {useDaoParam} from 'hooks/useDaoParam';
 import {PluginTypes} from 'hooks/usePluginClient';
 import {usePluginSettings} from 'hooks/usePluginSettings';
-import {removeUnchangedMinimumApprovalAction} from 'utils/library';
+import {
+  removeUnchangedMinimumApprovalAction,
+  toDisplayEns,
+} from 'utils/library';
 import {Community} from 'utils/paths';
 import {
   ActionAddAddress,
@@ -44,14 +46,11 @@ type ManageMemberActionTypes = Array<
 >;
 
 const ManageMembers: React.FC = () => {
-  const {data: dao, isLoading} = useDaoParam();
-
   const {t} = useTranslation();
   const {network} = useNetwork();
 
-  // TODO: *** Should be in a global context ***
   // dao data
-  const {data: daoDetails} = useDaoDetails(dao);
+  const {data: daoDetails, isLoading} = useDaoDetailsQuery();
   // plugin data
   const {data: pluginSettings} = usePluginSettings(
     daoDetails?.plugins[0].instanceAddress as string,
@@ -62,8 +61,6 @@ const ManageMembers: React.FC = () => {
     (daoDetails?.plugins?.[0]?.id as PluginTypes) || undefined
   );
   const multisigDAOSettings = pluginSettings as MultisigVotingSettings;
-
-  // *** end of TODO ***
 
   const formMethods = useForm({
     mode: 'onChange',
@@ -108,9 +105,15 @@ const ManageMembers: React.FC = () => {
     return <Loading />;
   }
 
+  // this should never happen basically because useDaoDetailsQuery
+  // will navigate to NotFound page if the api returns null.
+  // using this so that typescript doesn't complain about daoDetails
+  // being possibly null. Unfortunately, I don't have a more elegant solution.
+  if (!daoDetails) return null;
+
   return (
     <FormProvider {...formMethods}>
-      <ActionsProvider daoId={daoDetails?.address as string}>
+      <ActionsProvider daoId={daoDetails.address}>
         <CreateProposalProvider
           showTxModal={showTxModal}
           setShowTxModal={setShowTxModal}
@@ -118,7 +121,10 @@ const ManageMembers: React.FC = () => {
           <FullScreenStepper
             wizardProcessName={t('newProposal.title')}
             navLabel={t('labels.manageMember')}
-            returnPath={generatePath(Community, {network, dao})}
+            returnPath={generatePath(Community, {
+              network,
+              dao: toDisplayEns(daoDetails.ensDomain) || daoDetails.address,
+            })}
           >
             <Step
               wizardTitle={t('newProposal.manageWallets.title')}

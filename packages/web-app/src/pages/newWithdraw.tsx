@@ -21,17 +21,16 @@ import {ActionsProvider} from 'context/actions';
 import {CreateProposalProvider} from 'context/createProposal';
 import {useNetwork} from 'context/network';
 import {useDaoBalances} from 'hooks/useDaoBalances';
-import {useDaoDetails} from 'hooks/useDaoDetails';
-import {useDaoParam} from 'hooks/useDaoParam';
+import {useDaoDetailsQuery} from 'hooks/useDaoDetailsQuery';
 import {PluginTypes} from 'hooks/usePluginClient';
 import {usePluginSettings} from 'hooks/usePluginSettings';
 import {useWallet} from 'hooks/useWallet';
-import {generatePath} from 'react-router-dom';
+import {generatePath, useParams} from 'react-router-dom';
 import {trackEvent} from 'services/analytics';
 import {fetchTokenPrice} from 'services/prices';
 import {MAX_TOKEN_DECIMALS} from 'utils/constants';
 import {getCanonicalUtcOffset} from 'utils/date';
-import {formatUnits} from 'utils/library';
+import {formatUnits, toDisplayEns} from 'utils/library';
 import {Finance} from 'utils/paths';
 import {BaseTokenInfo} from 'utils/types';
 
@@ -96,9 +95,9 @@ const NewWithdraw: React.FC = () => {
   const {address} = useWallet();
   const [showTxModal, setShowTxModal] = useState(false);
 
-  const {data: dao} = useDaoParam();
-  const {data: balances} = useDaoBalances(dao);
-  const {data: daoDetails, isLoading: detailsLoading} = useDaoDetails(dao);
+  const {dao} = useParams();
+  const {data: balances} = useDaoBalances(dao?.toLowerCase() as string);
+  const {data: daoDetails, isLoading: detailsLoading} = useDaoDetailsQuery();
   const {data: pluginSettings, isLoading: settingsLoading} = usePluginSettings(
     daoDetails?.plugins[0].instanceAddress as string,
     daoDetails?.plugins[0].id as PluginTypes
@@ -175,7 +174,10 @@ const NewWithdraw: React.FC = () => {
             <FullScreenStepper
               wizardProcessName={t('TransferModal.item2Title')}
               navLabel={t('allTransfer.newTransfer')}
-              returnPath={generatePath(Finance, {network, dao})}
+              returnPath={generatePath(Finance, {
+                network,
+                dao: toDisplayEns(daoDetails?.ensDomain) || daoDetails?.address,
+              })}
             >
               <Step
                 wizardTitle={t('newWithdraw.configureWithdraw.title')}
@@ -267,7 +269,7 @@ const NewWithdraw: React.FC = () => {
                 nextButtonLabel={t('labels.submitProposal')}
                 onNextButtonClicked={() => {
                   trackEvent('newWithdraw_publishBtn_clicked', {
-                    dao_address: dao,
+                    dao_address: daoDetails?.address,
                   });
                   setShowTxModal(true);
                 }}
