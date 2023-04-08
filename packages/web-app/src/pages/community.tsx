@@ -16,7 +16,7 @@ import {StateEmpty} from 'components/stateEmpty';
 import {Loading} from 'components/temporary';
 import {PageWrapper} from 'components/wrappers';
 import {useNetwork} from 'context/network';
-import {useDaoDetailsQuery} from 'hooks/useDaoDetailsQuery';
+import {useDaoDetailsQuery} from 'hooks/useDaoDetails';
 import {useDaoMembers} from 'hooks/useDaoMembers';
 import {useDebouncedState} from 'hooks/useDebouncedState';
 import {PluginTypes} from 'hooks/usePluginClient';

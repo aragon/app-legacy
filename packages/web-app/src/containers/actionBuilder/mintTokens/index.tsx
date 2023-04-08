@@ -17,7 +17,7 @@ import {useActionsContext} from 'context/actions';
 import {useAlertContext} from 'context/alert';
 import {useNetwork} from 'context/network';
 import {useProviders} from 'context/providers';
-import {useDaoDetailsQuery} from 'hooks/useDaoDetailsQuery';
+import {useDaoDetailsQuery} from 'hooks/useDaoDetails';
 import {useDaoMembers} from 'hooks/useDaoMembers';
 import {useDaoToken} from 'hooks/useDaoToken';
 import {PluginTypes} from 'hooks/usePluginClient';

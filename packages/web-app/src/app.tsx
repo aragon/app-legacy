@@ -20,7 +20,7 @@ import TransferMenu from 'containers/transferMenu';
 import {WalletMenu} from 'containers/walletMenu';
 import {ProposalTransactionProvider} from 'context/proposalTransaction';
 import {useTransactionDetailContext} from 'context/transactionDetail';
-import {useDaoDetailsQuery} from 'hooks/useDaoDetailsQuery';
+import {useDaoDetailsQuery} from 'hooks/useDaoDetails';
 import {useWallet} from 'hooks/useWallet';
 import CreateDAO from 'pages/createDAO';
 import {FormProvider, useForm} from 'react-hook-form';

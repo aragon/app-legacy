@@ -24,7 +24,7 @@ import SetupVotingForm, {
 import {ActionsProvider} from 'context/actions';
 import {CreateProposalProvider} from 'context/createProposal';
 import {useNetwork} from 'context/network';
-import {useDaoDetailsQuery} from 'hooks/useDaoDetailsQuery';
+import {useDaoDetailsQuery} from 'hooks/useDaoDetails';
 import {PluginTypes} from 'hooks/usePluginClient';
 import {usePluginSettings} from 'hooks/usePluginSettings';
 import {Community} from 'utils/paths';

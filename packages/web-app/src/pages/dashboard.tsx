@@ -19,7 +19,7 @@ import TreasurySnapshot from 'containers/treasurySnapshot';
 import {useAlertContext} from 'context/alert';
 import {NavigationDao} from 'context/apolloClient';
 import {useNetwork} from 'context/network';
-import {useDaoQuery} from 'hooks/useDaoDetailsQuery';
+import {useDaoQuery} from 'hooks/useDaoDetails';
 import {useDaoVault} from 'hooks/useDaoVault';
 import {
   useAddFavoriteDaoMutation,

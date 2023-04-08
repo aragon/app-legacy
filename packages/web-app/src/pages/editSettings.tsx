@@ -4,7 +4,7 @@ import React from 'react';
 import {Loading} from 'components/temporary';
 import {EditMvSettings} from 'containers/editSettings/majorityVoting';
 import {EditMsSettings} from 'containers/editSettings/multisig';
-import {useDaoDetailsQuery} from 'hooks/useDaoDetailsQuery';
+import {useDaoDetailsQuery} from 'hooks/useDaoDetails';
 import {PluginTypes} from 'hooks/usePluginClient';
 
 const EditSettings: React.FC = () => {

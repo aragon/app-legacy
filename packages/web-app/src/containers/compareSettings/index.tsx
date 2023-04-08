@@ -3,7 +3,7 @@ import React, {useState} from 'react';
 import {useTranslation} from 'react-i18next';
 
 import {Loading} from 'components/temporary';
-import {useDaoDetailsQuery} from 'hooks/useDaoDetailsQuery';
+import {useDaoDetailsQuery} from 'hooks/useDaoDetails';
 import {useDaoToken} from 'hooks/useDaoToken';
 import {PluginTypes} from 'hooks/usePluginClient';
 import {

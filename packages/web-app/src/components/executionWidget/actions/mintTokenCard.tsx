@@ -5,7 +5,7 @@ import styled from 'styled-components';
 
 import {AccordionMethod} from 'components/accordionMethod';
 import {useNetwork} from 'context/network';
-import {useDaoDetailsQuery} from 'hooks/useDaoDetailsQuery';
+import {useDaoDetailsQuery} from 'hooks/useDaoDetails';
 import {useDaoMembers} from 'hooks/useDaoMembers';
 import {PluginTypes} from 'hooks/usePluginClient';
 import {CHAIN_METADATA} from 'utils/constants';

@@ -18,7 +18,7 @@ import {PageWrapper} from 'components/wrappers';
 import MajorityVotingSettings from 'containers/settings/majorityVoting';
 import MultisigSettings from 'containers/settings/multisig';
 import {useNetwork} from 'context/network';
-import {useDaoDetailsQuery} from 'hooks/useDaoDetailsQuery';
+import {useDaoDetailsQuery} from 'hooks/useDaoDetails';
 import {PluginTypes} from 'hooks/usePluginClient';
 import useScreen from 'hooks/useScreen';
 import {CHAIN_METADATA} from 'utils/constants';

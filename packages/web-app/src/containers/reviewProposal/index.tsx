@@ -14,7 +14,7 @@ import {useFormStep} from 'components/fullScreenStepper';
 import ResourceList from 'components/resourceList';
 import {Loading} from 'components/temporary';
 import {VotingTerminal} from 'containers/votingTerminal';
-import {useDaoDetailsQuery} from 'hooks/useDaoDetailsQuery';
+import {useDaoDetailsQuery} from 'hooks/useDaoDetails';
 import {MultisigMember, useDaoMembers} from 'hooks/useDaoMembers';
 import {PluginTypes} from 'hooks/usePluginClient';
 import {

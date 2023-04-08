@@ -1,7 +1,7 @@
 import {useTranslation} from 'react-i18next';
 
 import {ActionParameter, HookData} from 'utils/types';
-import {useDaoQuery} from './useDaoDetailsQuery';
+import {useDaoQuery} from './useDaoDetails';
 
 export function useDaoActions(dao: string): HookData<ActionParameter[]> {
   const {data: daoDetails, error, isLoading} = useDaoQuery(dao);

@@ -12,7 +12,7 @@ import TokenMenu from 'containers/tokenMenu';
 import {DepositProvider} from 'context/deposit';
 import {useGlobalModalContext} from 'context/globalModals';
 import {useNetwork} from 'context/network';
-import {useDaoDetailsQuery} from 'hooks/useDaoDetailsQuery';
+import {useDaoDetailsQuery} from 'hooks/useDaoDetails';
 import {useWallet} from 'hooks/useWallet';
 import {useWalletTokens} from 'hooks/useWalletTokens';
 import {generatePath} from 'react-router-dom';
