@@ -7,9 +7,8 @@ import {GatingMenu} from 'containers/gatingMenu';
 import {useGlobalModalContext} from 'context/globalModals';
 import {useNetwork} from 'context/network';
 import {useSpecificProvider} from 'context/providers';
-import {useDaoDetails} from 'hooks/useDaoDetails';
+import {useDaoDetailsQuery} from 'hooks/useDaoDetailsQuery';
 import {useDaoMembers} from 'hooks/useDaoMembers';
-import {useDaoParam} from 'hooks/useDaoParam';
 import {PluginTypes} from 'hooks/usePluginClient';
 import {usePluginSettings} from 'hooks/usePluginSettings';
 import {useWallet} from 'hooks/useWallet';
@@ -19,12 +18,14 @@ import {fetchBalance} from 'utils/tokens';
 
 const ProtectedRoute: React.FC = () => {
   const {open, close, isGatingOpen} = useGlobalModalContext();
-  const {data: dao, isLoading: paramIsLoading} = useDaoParam();
-  const {address, isConnected, status, isOnWrongNetwork} = useWallet();
-  const {data: daoDetails, isLoading: detailsAreLoading} = useDaoDetails(dao);
+  const {address, status, isOnWrongNetwork} = useWallet();
+  const {data: daoDetails, isLoading: detailsAreLoading} = useDaoDetailsQuery();
+
+  const pluginType = daoDetails?.plugins[0].id as PluginTypes;
+
   const {data: daoSettings, isLoading: settingsAreLoading} = usePluginSettings(
     daoDetails?.plugins[0].instanceAddress as string,
-    daoDetails?.plugins[0].id as PluginTypes
+    pluginType
   );
 
   const {
@@ -32,14 +33,12 @@ const ProtectedRoute: React.FC = () => {
     isLoading: membersAreLoading,
   } = useDaoMembers(
     daoDetails?.plugins[0].instanceAddress as string,
-    daoDetails?.plugins[0].id as PluginTypes,
+    pluginType,
     address as string
   );
 
   const {network} = useNetwork();
   const provider = useSpecificProvider(CHAIN_METADATA[network].id);
-
-  const userWentThroughLoginFlow = useRef(false);
 
   /*************************************************
    *             Callbacks and Handlers            *
@@ -91,27 +90,37 @@ const ProtectedRoute: React.FC = () => {
   /*************************************************
    *                     Effects                   *
    *************************************************/
+  // The following hook and effects manage a seamless journey from login ->
+  // switch network -> authentication. The appropriate modals are shown in
+  // such a way to minimize user interaction
+  const userWentThroughLoginFlow = useRef(false);
   useEffect(() => {
     // show the wallet menu only if the user hasn't gone through the flow previously
     // and is currently logged out; this allows user to log out mid flow with
     // no lasting consequences considering status will be checked upon proposal creation
     // If we want to keep user logged in (I'm in favor of), remove ref throughout component
     // Fabrice F. - [12/07/2022]
-    if (
-      !isConnected &&
-      status !== 'connecting' &&
-      userWentThroughLoginFlow.current === false
-    )
-      open('wallet');
+    if (!address && userWentThroughLoginFlow.current === false) open('wallet');
     else {
       if (isOnWrongNetwork) open('network');
       else close('network');
     }
-  }, [close, isConnected, isOnWrongNetwork, open, status]);
+  }, [address, close, isOnWrongNetwork, open, status]);
 
+  // close the wallet modal when the wallet is connected
   useEffect(() => {
-    if (address && !isOnWrongNetwork && daoDetails?.plugins[0].id) {
-      if (daoDetails?.plugins[0].id === 'token-voting.plugin.dao.eth') {
+    if (
+      (status === 'connecting' || address) &&
+      userWentThroughLoginFlow.current === false
+    ) {
+      close('wallet');
+    }
+  }, [address, close, isOnWrongNetwork, status]);
+
+  // wallet connected and on right network, authenticate
+  useEffect(() => {
+    if (address && !isOnWrongNetwork && pluginType) {
+      if (pluginType === 'token-voting.plugin.dao.eth') {
         gateTokenBasedProposal();
       } else {
         gateMultisigProposal();
@@ -124,34 +133,26 @@ const ProtectedRoute: React.FC = () => {
     address,
     gateMultisigProposal,
     gateTokenBasedProposal,
-    daoDetails?.plugins,
     isOnWrongNetwork,
+    pluginType,
   ]);
-
-  useEffect(() => {
-    // need to do this to close the modal upon user login
-    if (address && userWentThroughLoginFlow.current === false) close('wallet');
-  }, [address, close]);
 
   /*************************************************
    *                     Render                    *
    *************************************************/
-  if (
-    paramIsLoading ||
-    detailsAreLoading ||
-    membersAreLoading ||
-    settingsAreLoading
-  )
+  if (detailsAreLoading || membersAreLoading || settingsAreLoading)
     return <Loading />;
 
   return (
     <>
-      {!isGatingOpen && <Outlet />}
-      <GatingMenu
-        daoAddress={dao}
-        pluginType={daoDetails?.plugins[0].id as PluginTypes}
-        tokenName={daoToken?.name}
-      />
+      {!isGatingOpen && userWentThroughLoginFlow.current && <Outlet />}
+      {daoDetails && (
+        <GatingMenu
+          daoAddress={daoDetails.address}
+          pluginType={daoDetails.plugins[0].id as PluginTypes}
+          tokenName={daoToken?.name}
+        />
+      )}
     </>
   );
 };
