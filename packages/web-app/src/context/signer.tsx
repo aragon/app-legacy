@@ -144,6 +144,15 @@ export function UseSignerProvider({
     });
 
     instance.on('disconnect', (error: {code: number; message: string}) => {
+      // @DEV: see https://github.com/MetaMask/metamask-extension/issues/13375
+      // 1013 indicates that MetaMask is attempting to reestablish the connection
+      // https://github.com/MetaMask/providers/releases/tag/v8.0.0
+      if (error.code === 1013) {
+        console.warn(
+          'MetaMask logged connection error 1013: "Try again later"'
+        );
+        return;
+      }
       console.log(error);
       setAddress(null);
       setConnected(false);
