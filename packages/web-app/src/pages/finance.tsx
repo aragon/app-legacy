@@ -1,6 +1,6 @@
 import {Breadcrumb, ButtonText, IconAdd, Tag} from '@aragon/ui-components';
 import {withTransaction} from '@elastic/apm-rum-react';
-import React, {useEffect} from 'react';
+import React from 'react';
 import {useTranslation} from 'react-i18next';
 import {useNavigate} from 'react-router-dom';
 import styled from 'styled-components';
@@ -21,9 +21,6 @@ import {useMappedBreadcrumbs} from 'hooks/useMappedBreadcrumbs';
 import useScreen from 'hooks/useScreen';
 import {trackEvent} from 'services/analytics';
 import {sortTokens} from 'utils/tokens';
-import {alchemyApiKeys, CHAIN_METADATA} from 'utils/constants';
-import {useNetwork} from 'context/network';
-import {formatUnits} from 'ethers/lib/utils';
 
 type Sign = -1 | 0 | 1;
 const colors: Record<Sign, string> = {
@@ -36,7 +33,6 @@ const Finance: React.FC = () => {
   const {t} = useTranslation();
   const {open} = useGlobalModalContext();
   const {isDesktop} = useScreen();
-  const {network} = useNetwork();
 
   const navigate = useNavigate();
   const {breadcrumbs, icon, tag} = useMappedBreadcrumbs();
@@ -45,41 +41,6 @@ const Finance: React.FC = () => {
   const {handleTransferClicked} = useTransactionDetailContext();
   const {tokens, totalAssetChange, totalAssetValue, transfers} =
     useDaoVault(daoId);
-
-  useEffect(() => {
-    async function fetchToken() {
-      // ALCHEMY URL --> Replace with your API Key at the end
-      const url = `https://polygon-mumbai.g.alchemy.com/v2/${alchemyApiKeys.mumbai}`;
-
-      // REQUEST OPTIONS
-      const options = {
-        method: 'POST',
-        headers: {
-          accept: 'application/json',
-          'content-type': 'application/json',
-        },
-        body: JSON.stringify({
-          id: 1,
-          jsonrpc: '2.0',
-          method: 'alchemy_getTokenBalances',
-          params: ['0x7777a16722612969b58d905556f93a221044e6e5'],
-        }),
-      };
-
-      // MAKE THE REQUEST AND PRINT THE RESPONSE
-      fetch(url, options)
-        .then(res => res.json())
-        .then(json =>
-          console.log(
-            'viewJson',
-            formatUnits(json.result.tokenBalances[0].tokenBalance, 18)
-          )
-        )
-        .catch(err => console.error('error:' + err));
-    }
-
-    fetchToken();
-  }, [daoId, network]);
 
   sortTokens(tokens, 'treasurySharePercentage', true);
 

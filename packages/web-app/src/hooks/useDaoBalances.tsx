@@ -6,7 +6,6 @@ import {HookData} from 'utils/types';
 import {getTokenInfo} from 'utils/tokens';
 import {useSpecificProvider} from 'context/providers';
 import {useNetwork} from 'context/network';
-import {formatUnits} from 'ethers/lib/utils';
 
 export const useDaoBalances = (
   daoAddressOrEns: string
@@ -44,14 +43,25 @@ export const useDaoBalances = (
 
         const res = await fetch(url, options);
         const tokenList = await res.json();
+        let nativeTokenBalances = [] as Array<AssetBalance>;
 
         const nonZeroBalances = tokenList.result.tokenBalances.filter(
           (token: {tokenBalance: string}) => {
-            return token.tokenBalance !== '0';
+            return BigInt(token.tokenBalance) !== BigInt(0);
           }
         );
 
-        const nativeTokenBalance = await provider.getBalance(daoAddressOrEns);
+        await provider.getBalance(daoAddressOrEns).then(balance => {
+          if (!balance.eq(0))
+            nativeTokenBalances = [
+              {
+                type: TokenType.NATIVE,
+                ...CHAIN_METADATA[network].nativeCurrency,
+                updateDate: new Date(),
+                balance: BigInt(balance.toString()),
+              },
+            ];
+        });
 
         const tokenListPromises = nonZeroBalances.map(
           async ({
@@ -78,17 +88,8 @@ export const useDaoBalances = (
           }
         );
 
-        const NativeTokenBalances = [
-          {
-            type: TokenType.NATIVE,
-            ...CHAIN_METADATA[network].nativeCurrency,
-            updateDate: new Date(),
-            balance: nativeTokenBalance,
-          },
-        ];
-
         const erc20balances = await Promise.all(tokenListPromises);
-        if (erc20balances) setData([...NativeTokenBalances, ...erc20balances]);
+        if (erc20balances) setData([...nativeTokenBalances, ...erc20balances]);
       } catch (error) {
         console.error(error);
         setError(error as Error);
