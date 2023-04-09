@@ -29,8 +29,8 @@ type AlchemyApiKeys = Record<SupportedNetworks, string | undefined>;
 export const alchemyApiKeys: AlchemyApiKeys = {
   arbitrum: undefined,
   'arbitrum-test': undefined,
-  ethereum: undefined,
-  goerli: undefined,
+  ethereum: import.meta.env.VITE_ALCHEMY_KEY_MAINNET as string,
+  goerli: import.meta.env.VITE_ALCHEMY_KEY_GOERLI as string,
   polygon: import.meta.env.VITE_ALCHEMY_KEY_POLYGON_MAINNET as string,
   mumbai: import.meta.env.VITE_ALCHEMY_KEY_POLYGON_MUMBAI as string,
   unsupported: undefined,
