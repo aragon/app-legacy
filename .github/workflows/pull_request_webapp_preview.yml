@@ -64,6 +64,8 @@ jobs:
           VITE_INFURA_API_KEY: ${{secrets.VITE_INFURA_API_KEY}}
           VITE_ALCHEMY_KEY_POLYGON_MUMBAI: ${{secrets.VITE_ALCHEMY_KEY_POLYGON_MUMBAI}}
           VITE_ALCHEMY_KEY_POLYGON_MAINNET: ${{secrets.VITE_ALCHEMY_KEY_POLYGON_MUMBAI}}
+          VITE_ALCHEMY_KEY_MAINNET: ${{secrets.VITE_ALCHEMY_KEY_MAINNET}}
+          VITE_ALCHEMY_KEY_GOERLI: ${{secrets.VITE_ALCHEMY_KEY_GOERLI}}
           NODE_OPTIONS: '--max-old-space-size=6656'
       - name: Setup Python
         uses: actions/setup-python@v4
