@@ -168,43 +168,35 @@ const CreateProposalProvider: React.FC<Props> = ({
           });
           break;
         }
-
         case 'add_address': {
           const wallets = action.inputs.memberWallets.map(
             wallet => wallet.address
           );
-          (pluginClient as MultisigClient).encoding
-            .addAddressesAction({
-              pluginAddress: pluginAddress,
-              members: wallets,
-              votingSettings: {
-                minApprovals: (pluginSettings as MultisigVotingSettings)
-                  .minApprovals, // TODO - Fix me when SDK updates
-                onlyListed: (pluginSettings as MultisigVotingSettings)
-                  .onlyListed,
-              },
-            })
-            .forEach(action => actions.push(Promise.resolve(action)));
+          actions.push(
+            Promise.resolve(
+              (pluginClient as MultisigClient).encoding.addAddressesAction({
+                pluginAddress: pluginAddress,
+                members: wallets,
+              })
+            )
+          );
           break;
         }
         case 'remove_address': {
           const wallets = action.inputs.memberWallets.map(
             wallet => wallet.address
           );
-          if (wallets.length > 0) {
-            (pluginClient as MultisigClient).encoding
-              .removeAddressesAction({
-                pluginAddress: pluginAddress,
-                members: wallets,
-                votingSettings: {
-                  minApprovals: (pluginSettings as MultisigVotingSettings)
-                    .minApprovals, // TODO - Fix me when SDK updates
-                  onlyListed: (pluginSettings as MultisigVotingSettings)
-                    .onlyListed,
-                },
-              })
-              .forEach(action => actions.push(Promise.resolve(action)));
-          }
+          if (wallets.length > 0)
+            actions.push(
+              Promise.resolve(
+                (pluginClient as MultisigClient).encoding.removeAddressesAction(
+                  {
+                    pluginAddress: pluginAddress,
+                    members: wallets,
+                  }
+                )
+              )
+            );
           break;
         }
         case 'modify_multisig_voting_settings': {
@@ -263,7 +255,6 @@ const CreateProposalProvider: React.FC<Props> = ({
       ]);
 
       const actions = await encodeActions();
-      console.log(actions);
 
       const metadata: ProposalMetadata = {
         title,
@@ -495,7 +486,7 @@ const CreateProposalProvider: React.FC<Props> = ({
     }
 
     trackEvent('newProposal_createNowBtn_clicked', {
-      dao_address: daoDetails?.address as string,
+      dao_address: dao,
       estimated_gwei_fee: averageFee,
       total_usd_cost: averageFee ? tokenPrice * Number(averageFee) : 0,
     });
@@ -504,7 +495,7 @@ const CreateProposalProvider: React.FC<Props> = ({
       pluginClient.methods.createProposal(proposalCreationData);
 
     trackEvent('newProposal_transaction_signed', {
-      dao_address: daoDetails?.address as string,
+      dao_address: dao,
       network: network,
       wallet_provider: provider?.connection.url,
     });
@@ -541,7 +532,7 @@ const CreateProposalProvider: React.FC<Props> = ({
             setProposalId(prefixedId);
             setCreationProcessState(TransactionState.SUCCESS);
             trackEvent('newProposal_transaction_success', {
-              dao_address: daoDetails?.address as string,
+              dao_address: dao,
               network: network,
               wallet_provider: provider?.connection.url,
               proposalId: prefixedId,
@@ -557,7 +548,7 @@ const CreateProposalProvider: React.FC<Props> = ({
       console.error(error);
       setCreationProcessState(TransactionState.ERROR);
       trackEvent('newProposal_transaction_failed', {
-        dao_address: daoDetails?.address as string,
+        dao_address: dao,
         network: network,
         wallet_provider: provider?.connection.url,
         error,
@@ -566,6 +557,7 @@ const CreateProposalProvider: React.FC<Props> = ({
   }, [
     averageFee,
     creationProcessState,
+    dao,
     handleCacheProposal,
     handleCloseModal,
     isOnWrongNetwork,
@@ -575,7 +567,6 @@ const CreateProposalProvider: React.FC<Props> = ({
     pluginClient,
     proposalCreationData,
     provider?.connection.url,
-    daoDetails?.address,
     tokenPrice,
   ]);
 
