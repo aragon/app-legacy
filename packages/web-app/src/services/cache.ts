@@ -14,8 +14,10 @@ import {
   PENDING_DAOS_KEY,
   SupportedChainID,
   SupportedNetworks,
+  VERIFIED_CONTRACTS_KEY,
 } from 'utils/constants';
 import {sleepFor} from 'utils/library';
+import {SmartContract, VerifiedContracts} from 'utils/types';
 
 /**
  * Fetch a list of favorited DAOs
@@ -209,4 +211,74 @@ export async function removePendingDaoFromCache(
   delete newCache?.[network]?.[daoAddress];
 
   localStorage.setItem(PENDING_DAOS_KEY, JSON.stringify(newCache));
+}
+
+/**
+ * Get verified smart contracts from caching service for the specified wallet address and optional chain ID.
+ * If the chain ID is not provided, the function returns all smart contracts across all chains.
+ *
+ * @param daoAddress DAO address for which to fetch the verified smart contracts.
+ * @param chainId (Optional) chain ID to filter the verified smart contracts by.
+ * @returns A promise that resolves to an array of verified smart contracts.
+ * @throws Will throw an error if the walletAddress parameter is not defined.
+ */
+export async function getVerifiedSmartContracts(
+  daoAddress: string | undefined,
+  chainId?: SupportedChainID
+): Promise<SmartContract[]> {
+  // Ensure the daoAddress parameter is defined
+  if (!daoAddress) {
+    return Promise.reject(new Error('daoAddress must be defined'));
+  }
+
+  const verifiedContracts = JSON.parse(
+    localStorage.getItem(VERIFIED_CONTRACTS_KEY) || '{}'
+  ) as VerifiedContracts;
+
+  // Get the contracts for the given DAO address
+  const daoContracts = verifiedContracts[daoAddress] || {};
+
+  // If a chainId is provided, return the contracts for that specific chain
+  if (chainId) {
+    return daoContracts[chainId] || [];
+  }
+
+  // If no chainId is provided, return all contracts across all chains for the specified wallet address
+  return Object.values(daoContracts).flatMap(contracts => contracts);
+}
+
+export async function addVerifiedSmartContract(
+  contract: SmartContract,
+  daoAddress: string | undefined,
+  chainId: SupportedChainID
+): Promise<void> {
+  // Ensure the contract, daoAddress, and chainId parameters are defined
+  if (!contract || !daoAddress || !chainId) {
+    return Promise.reject(
+      new Error('Contract, daoAddress, and chainId must be defined')
+    );
+  }
+
+  // get the contracts from local storage
+  const verifiedContracts = JSON.parse(
+    localStorage.getItem(VERIFIED_CONTRACTS_KEY) || '{}'
+  ) as VerifiedContracts;
+
+  // add the newly verified contract into the list
+  const updatedContracts = {
+    ...verifiedContracts,
+    [daoAddress]: {
+      ...verifiedContracts[daoAddress],
+      [chainId]: [
+        ...(verifiedContracts[daoAddress]?.[chainId] || []),
+        contract,
+      ],
+    },
+  };
+
+  // add the new contracts into storage
+  localStorage.setItem(
+    VERIFIED_CONTRACTS_KEY,
+    JSON.stringify(updatedContracts)
+  );
 }
