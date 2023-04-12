@@ -57,8 +57,7 @@ export function ProvidersProvider({children}: ProviderProviderProps) {
   );
 
   useEffect(() => {
-    const chainId = CHAIN_METADATA[network].id;
-    setInfuraProvider(getInfuraProvider(network, chainId as SupportedChainID));
+    setInfuraProvider(getInfuraProvider(network));
   }, [network]);
 
   return (
@@ -71,21 +70,18 @@ export function ProvidersProvider({children}: ProviderProviderProps) {
   );
 }
 
-function getInfuraProvider(
-  network: SupportedNetworks,
-  givenChainId?: SupportedChainID
-) {
+function getInfuraProvider(network: SupportedNetworks) {
   // NOTE Passing the chainIds from useWallet doesn't work in the case of
   // arbitrum and arbitrum-goerli. They need to be passed as objects.
   // However, I have no idea why this is necessary. Looking at the ethers
   // library, there's no reason why passing the chainId wouldn't work. Also,
   // I've tried it on a fresh project and had no problems there...
   // [VR 07-03-2022]
-  if (givenChainId === 42161) {
+  if (network === 'arbitrum') {
     return new InfuraProvider(NW_ARB, infuraApiKey);
-  } else if (givenChainId === 421613) {
+  } else if (network === 'arbitrum-test') {
     return new InfuraProvider(NW_ARB_GOERLI, infuraApiKey);
-  } else {
+  } else if (network === 'mumbai' || network === 'polygon') {
     return new JsonRpcProvider(CHAIN_METADATA[network].rpc[0], {
       chainId: CHAIN_METADATA[network].id,
       name: translateToNetworkishName(network),
@@ -94,6 +90,8 @@ function getInfuraProvider(
           translateToNetworkishName(network) as sdkSupportedNetworks
         ].ensRegistry,
     });
+  } else {
+    return new InfuraProvider(CHAIN_METADATA[network].id, infuraApiKey);
   }
 }
 
@@ -124,11 +122,11 @@ export function useSpecificProvider(
   const network = getSupportedNetworkByChainId(chainId) as SupportedNetworks;
 
   const [infuraProvider, setInfuraProvider] = useState(
-    getInfuraProvider(network, chainId)
+    getInfuraProvider(network)
   );
 
   useEffect(() => {
-    setInfuraProvider(getInfuraProvider(network, chainId));
+    setInfuraProvider(getInfuraProvider(network));
   }, [chainId, network]);
 
   return infuraProvider;

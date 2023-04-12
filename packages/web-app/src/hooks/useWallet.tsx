@@ -38,7 +38,7 @@ export const useWallet = (): IUseWallet => {
   const [isConnected, setIsConnected] = useState<boolean>(false);
 
   const provider = useMemo(() => {
-    if (!['ethereum', 'goerli'].includes(network)) {
+    if (['mumbai', 'polygon'].includes(network)) {
       return new JsonRpcProvider(CHAIN_METADATA[network].rpc[0], {
         chainId: CHAIN_METADATA[network].id,
         name: translateToNetworkishName(network),
