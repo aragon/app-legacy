@@ -386,6 +386,14 @@ export type SmartContract = {
   name: string;
 };
 
+export type VerifiedContracts = {
+  // key is DAO address
+  [key: string]: {
+    // key is chain id
+    [key: number]: Array<SmartContract>;
+  };
+};
+
 /**
  * Opaque class encapsulating a proposal id, which can
  * be globally unique or just unique per plugin address
