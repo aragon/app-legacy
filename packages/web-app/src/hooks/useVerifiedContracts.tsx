@@ -10,7 +10,11 @@ import {
   addVerifiedSmartContract,
   getVerifiedSmartContracts,
 } from 'services/cache';
-import {CHAIN_METADATA, SupportedNetworks} from 'utils/constants';
+import {
+  CHAIN_METADATA,
+  SupportedNetworks,
+  VERIFIED_CONTRACTS_KEY,
+} from 'utils/constants';
 import {SmartContract} from 'utils/types';
 
 type ContractSelector<T> = (contracts: SmartContract[]) => T;
@@ -19,6 +23,7 @@ type ContractSelector<T> = (contracts: SmartContract[]) => T;
  * A custom React hook that returns a list of verified smart contracts for a given DAO.
  *
  * @template T type of the smart contracts, default is SmartContract[].
+ * @param daoAddress DAO address for which to fetch smart contracts
  * @param select optional selector function to transform the result.
  * @returns query result object with the data and status.
  */
@@ -31,7 +36,7 @@ export function useDaoVerifiedContractsQuery<T = SmartContract[]>(
   const daoChain = CHAIN_METADATA[network].id;
 
   return useQuery({
-    queryKey: ['cachedVerifiedContracts', daoAddress, network],
+    queryKey: [VERIFIED_CONTRACTS_KEY, daoAddress, network],
     queryFn: () => getVerifiedSmartContracts(daoAddress, daoChain),
     select,
     enabled: !!network && !!daoChain,
@@ -39,11 +44,18 @@ export function useDaoVerifiedContractsQuery<T = SmartContract[]>(
   });
 }
 
-/** MutationVariables type represents the input variables for the useAddVerifiedSmartContract hook. */
+/**
+ * MutationVariables type represents the input variables
+ * for the useAddVerifiedSmartContract hook.
+ */
 type MutationVariables = {
   contract: SmartContract;
   daoAddress: string;
   network: SupportedNetworks;
+};
+
+type MutationContext = {
+  previousContracts: SmartContract[] | undefined;
 };
 
 /**
@@ -66,9 +78,13 @@ export const useAddVerifiedContractMutation = () => {
         CHAIN_METADATA[network].id
       ),
 
-    onMutate: async ({daoAddress, network, contract}) => {
+    onMutate: async ({
+      daoAddress,
+      network,
+      contract,
+    }): Promise<MutationContext> => {
       // query invalidated by current mutation
-      const invalidatedQuery = ['cachedVerifiedContracts', daoAddress, network];
+      const invalidatedQuery = [VERIFIED_CONTRACTS_KEY, daoAddress, network];
 
       await queryClient.cancelQueries(invalidatedQuery);
 
@@ -84,14 +100,14 @@ export const useAddVerifiedContractMutation = () => {
       return {previousContracts};
     },
 
-    onError: (error, {daoAddress, network}, context) => {
+    onError: (
+      error,
+      {daoAddress, network},
+      context: MutationContext | undefined
+    ) => {
       // revert the data to pre mutation state
       if (context?.previousContracts) {
-        const invalidatedQuery = [
-          'cachedVerifiedContracts',
-          daoAddress,
-          network,
-        ];
+        const invalidatedQuery = [VERIFIED_CONTRACTS_KEY, daoAddress, network];
         queryClient.setQueryData(invalidatedQuery, context.previousContracts);
       }
       console.error('Error adding the smart contract:', error);
@@ -99,7 +115,7 @@ export const useAddVerifiedContractMutation = () => {
 
     onSettled: (_data, _error, {daoAddress, network}) => {
       // invalidate query affected by mutation
-      const invalidatedQuery = ['cachedVerifiedContracts', daoAddress, network];
+      const invalidatedQuery = [VERIFIED_CONTRACTS_KEY, daoAddress, network];
       queryClient.invalidateQueries(invalidatedQuery);
     },
   });
