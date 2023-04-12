@@ -21,12 +21,18 @@ import styled from 'styled-components';
 import ModalBottomSheetSwitcher from 'components/modalBottomSheetSwitcher';
 import {useAlertContext} from 'context/alert';
 import {useNetwork} from 'context/network';
+import {
+  useAddVerifiedContractMutation,
+  useDaoVerifiedContractsQuery,
+} from 'hooks/useVerifiedContracts';
 import {SccFormData} from 'pages/demoScc';
 import {CHAIN_METADATA, TransactionState} from 'utils/constants';
 import {handleClipboardActions} from 'utils/library';
 import {EtherscanContractResponse} from 'utils/types';
 import {validateContract} from 'utils/validators';
 import ModalHeader from './modalHeader';
+
+const CUSTOM_DAO = '0xad6fc78da51c944595682784d346ca8bf98c37c6';
 
 type Props = {
   isOpen: boolean;
@@ -53,14 +59,12 @@ const ContractAddressValidation: React.FC<Props> = props => {
     TransactionState.WAITING
   );
 
-  const {control, setValue, resetField, setError} =
-    useFormContext<SccFormData>();
+  const {data: contracts} = useDaoVerifiedContractsQuery();
+  const addVerifiedContractMutation = useAddVerifiedContractMutation();
 
+  const {control, resetField, setError} = useFormContext<SccFormData>();
   const {errors} = useFormState({control});
-  const [addressField, contracts] = useWatch({
-    name: ['contractAddress', 'contracts'],
-    control,
-  });
+  const [addressField] = useWatch({name: ['contractAddress'], control});
 
   const isTransactionSuccessful =
     verificationState === TransactionState.SUCCESS;
@@ -74,17 +78,19 @@ const ContractAddressValidation: React.FC<Props> = props => {
   };
 
   const setContractValid = useCallback(
-    (value: EtherscanContractResponse) => {
+    async (value: EtherscanContractResponse) => {
       if (value) {
         setVerificationState(TransactionState.SUCCESS);
-        setValue('contracts', [
-          ...contracts,
-          {
+
+        await addVerifiedContractMutation.mutateAsync({
+          daoAddress: CUSTOM_DAO, // TODO: replace with proper DAO address
+          contract: {
             actions: JSON.parse(value.ABI),
             address: addressField,
             name: value.ContractName,
           },
-        ]);
+          network,
+        });
       } else {
         setVerificationState(TransactionState.WAITING);
         setError('contractAddress', {
@@ -93,7 +99,7 @@ const ContractAddressValidation: React.FC<Props> = props => {
         });
       }
     },
-    [addressField, contracts, setError, setValue, t]
+    [addVerifiedContractMutation, addressField, network, setError, t]
   );
 
   // clear field when there is a value, else paste
@@ -110,7 +116,7 @@ const ContractAddressValidation: React.FC<Props> = props => {
 
   const addressValidator = (value: string) => {
     // duplication: contract already connected
-    const addressExists = contracts.some(
+    const addressExists = contracts?.some(
       c => c.address.toLowerCase() === value.toLowerCase()
     );
 
@@ -159,7 +165,7 @@ const ContractAddressValidation: React.FC<Props> = props => {
             {t('scc.addressValidation.description')}{' '}
             <Link
               external
-              label={t('labels.etherscan') as string}
+              label={t('labels.etherscan')}
               href={`${CHAIN_METADATA[network].explorer}`}
             />
           </Description>
@@ -167,7 +173,7 @@ const ContractAddressValidation: React.FC<Props> = props => {
         <Controller
           name="contractAddress"
           rules={{
-            required: t('errors.required.tokenAddress') as string,
+            required: t('errors.required.tokenAddress'),
             validate: addressValidator,
           }}
           control={control}
@@ -197,7 +203,7 @@ const ContractAddressValidation: React.FC<Props> = props => {
           )}
         />
         <ButtonText
-          label={label[verificationState] as string}
+          label={label[verificationState]}
           onClick={async () => {
             setVerificationState(TransactionState.LOADING);
             setContractValid(await validateContract(addressField, network));
@@ -218,7 +224,7 @@ const ContractAddressValidation: React.FC<Props> = props => {
             <AlertInline
               label={
                 t('scc.addressValidation.successLabel', {
-                  contractName: contracts[contracts.length - 1]?.name,
+                  contractName: contracts?.[contracts.length - 1].name,
                 }) as string
               }
               mode="success"

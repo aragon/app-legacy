@@ -8,17 +8,14 @@ import {TemporarySection} from 'components/temporary';
 import ContractAddressValidation from 'containers/smartContractComposer/components/contractAddressValidation';
 import SmartContractList from 'containers/smartContractComposer/contractListModal';
 import EmptyState from 'containers/smartContractComposer/emptyStateModal/emptyState';
-import {SmartContract} from 'utils/types';
 
 const defaultValues = {
-  contracts: [],
   contractAddress: '',
 };
 
 // TODO please move to types
 export type SccFormData = {
   contractAddress: string;
-  contracts: Array<SmartContract>;
 };
 
 const SCC: React.FC = () => {

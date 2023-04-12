@@ -4,38 +4,42 @@ import {useFormContext} from 'react-hook-form';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 
-import {SmartContract} from 'utils/types';
+import {useDaoVerifiedContractsQuery} from 'hooks/useVerifiedContracts';
+import {Loading} from 'components/temporary';
 
-// NOTE: may come from form, not set in stone
-type SCCListGroupProps = {
-  contracts: Array<SmartContract>;
-};
-
-const SmartContractListGroup: React.FC<SCCListGroupProps> = ({contracts}) => {
+const SmartContractListGroup: React.FC = () => {
   const {t} = useTranslation();
   const {setValue} = useFormContext();
+
+  const {data: contracts, isLoading} = useDaoVerifiedContractsQuery();
 
   return (
     <ListGroup>
       <ContractNumberIndicator>
-        {contracts.length === 1
+        {contracts?.length === 1
           ? t('scc.labels.singleContractConnected')
           : t('scc.labels.nContractsConnected', {
-              numConnected: contracts.length,
+              numConnected: contracts?.length ?? 0,
             })}
       </ContractNumberIndicator>
-      {contracts.map(c => (
-        // TODO: replace with new listitem that takes image
-        // or custom component
-        <ListItemAction
-          key={c.address}
-          title={c.name}
-          subtitle={`${c.actions.length} Actions`}
-          bgWhite
-          iconRight={<IconChevronRight />}
-          onClick={() => setValue('selectedSC', c)}
-        />
-      ))}
+      {isLoading ? (
+        <div className="h-full">
+          <Loading />
+        </div>
+      ) : (
+        contracts?.map(c => (
+          // TODO: replace with new listitem that takes image
+          // or custom component
+          <ListItemAction
+            key={c.address}
+            title={c.name}
+            subtitle={`${c.actions.length} Actions`}
+            bgWhite
+            iconRight={<IconChevronRight />}
+            onClick={() => setValue('selectedSC', c)}
+          />
+        ))
+      )}
     </ListGroup>
   );
 };

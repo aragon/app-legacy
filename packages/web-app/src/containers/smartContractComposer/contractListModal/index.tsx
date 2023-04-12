@@ -15,10 +15,10 @@ import styled from 'styled-components';
 import BottomSheet from 'components/bottomSheet';
 import useScreen from 'hooks/useScreen';
 import {SmartContract} from 'utils/types';
+import ActionListGroup from '../components/actionListGroup';
 import SmartContractListGroup from '../components/smartContractListGroup';
 import DesktopModal from '../desktopModal';
 import {ActionSearchInput} from '../desktopModal/header';
-import ActionListGroup from '../components/actionListGroup';
 
 type Props = {
   isOpen: boolean;
@@ -31,15 +31,13 @@ const SmartContractList: React.FC<Props> = props => {
   const {t} = useTranslation();
   const {isDesktop} = useScreen();
 
-  const [contracts, selectedSC]: [Array<SmartContract>, SmartContract] =
-    useWatch({
-      name: ['contracts', 'selectedSC'],
-    });
+  const [selectedSC]: [SmartContract] = useWatch({
+    name: ['selectedSC'],
+  });
 
   if (isDesktop)
     return (
       <DesktopModal
-        contracts={contracts}
         isOpen={props.isOpen}
         onClose={props.onClose}
         onConnect={props.onConnect}
@@ -72,7 +70,7 @@ const SmartContractList: React.FC<Props> = props => {
           </div>
         ) : (
           <>
-            <SmartContractListGroup contracts={contracts} />
+            <SmartContractListGroup />
             <ButtonText
               mode="secondary"
               size="large"
