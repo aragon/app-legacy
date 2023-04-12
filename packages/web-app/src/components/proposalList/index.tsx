@@ -187,6 +187,9 @@ export function proposal2CardProps(
             ? {...results.no, option: 'no'}
             : {...results.abstain, option: 'abstain'};
         }
+      } else {
+        if (BigNumber.from(proposal.result.abstain).gt(0))
+          winningOption = {...results.abstain, option: 'abstain'};
       }
 
       // show winning vote option
