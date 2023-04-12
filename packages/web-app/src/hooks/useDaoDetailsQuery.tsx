@@ -1,6 +1,6 @@
 import {Client, DaoDetails} from '@aragon/sdk-client';
 import {useQuery} from '@tanstack/react-query';
-import {useCallback, useEffect} from 'react';
+import {useCallback, useEffect, useMemo} from 'react';
 import {useNavigate, useParams} from 'react-router-dom';
 
 import {useNetwork} from 'context/network';
@@ -41,7 +41,10 @@ export const useDaoQuery = (
   const {client, network: clientNetwork} = useClient();
 
   // if network is unsupported this will be caught when compared to client
-  const queryNetwork = networkUrlSegment ?? network;
+  const queryNetwork = useMemo(
+    () => networkUrlSegment ?? network,
+    [network, networkUrlSegment]
+  );
 
   // make sure that the network and the url match up with client network before making the request
   const enabled =
@@ -57,7 +60,7 @@ export const useDaoQuery = (
     select: addAvatarToDao,
     enabled,
     refetchOnWindowFocus: false,
-    refetchInterval: () => (refetchInterval ? refetchInterval : false),
+    refetchInterval,
   });
 };
 
