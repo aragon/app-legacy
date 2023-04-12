@@ -1,8 +1,12 @@
-import React from 'react';
-import styled from 'styled-components';
-import {useTranslation} from 'react-i18next';
-import {AccordionMethodType, AccordionType} from 'components/accordionMethod';
 import {IconLinkExternal, Link} from '@aragon/ui-components';
+import React, {useMemo} from 'react';
+import {useTranslation} from 'react-i18next';
+import {generatePath, useParams} from 'react-router-dom';
+import styled from 'styled-components';
+
+import {AccordionMethodType, AccordionType} from 'components/accordionMethod';
+import {useNetwork} from 'context/network';
+import {Community} from 'utils/paths';
 
 type AccordionSummaryPropsType = {
   type?: AccordionMethodType['type'];
@@ -16,6 +20,17 @@ const AccordionSummary: React.FC<AccordionSummaryPropsType> = ({
   IsRemove = false,
 }) => {
   const {t} = useTranslation();
+  const {dao} = useParams();
+  const {network} = useNetwork();
+
+  // get protocol and domain, add generated path
+  const membersHref = useMemo(
+    () =>
+      window.location.href
+        .split('#')[0]
+        .concat(`#${generatePath(Community, {dao, network})}`),
+    [dao, network]
+  );
 
   return (
     <Footer {...{type}}>
@@ -45,8 +60,8 @@ const AccordionSummary: React.FC<AccordionSummaryPropsType> = ({
             )}
           </div>
           <Link
+            href={membersHref}
             label={t('labels.seeCommunity')}
-            external
             iconRight={<IconLinkExternal />}
           />
         </div>
