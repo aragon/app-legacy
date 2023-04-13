@@ -21,10 +21,10 @@ export type Views = 'old' | 'new';
 
 const CompareSettings: React.FC = () => {
   const {t} = useTranslation();
-  const {data: daoId, isLoading: areParamsLoading} = useDaoParam();
+  const {data: daoAddressOrEns, isLoading: areParamsLoading} = useDaoParam();
 
   const {data: daoDetails, isLoading: areDetailsLoading} = useDaoDetails(
-    daoId!
+    daoAddressOrEns!
   );
   const {data: pluginSettings, isLoading: areSettingsLoading} =
     usePluginSettings(
@@ -66,7 +66,7 @@ const CompareSettings: React.FC = () => {
 
       {/* METADATA*/}
       <CompareMetadata
-        daoId={daoDetails?.address as string}
+        daoId={daoAddressOrEns}
         daoDetails={daoDetails}
         view={selectedButton}
       />
@@ -75,13 +75,13 @@ const CompareSettings: React.FC = () => {
       {isTokenVotingSettings(pluginSettings) ? (
         <>
           <CompareMvCommunity
-            daoId={daoDetails?.address as string}
+            daoId={daoAddressOrEns}
             view={selectedButton}
             daoSettings={pluginSettings}
             daoToken={daoToken}
           />
           <CompareMvGovernance
-            daoId={daoDetails?.address as string}
+            daoId={daoAddressOrEns}
             view={selectedButton}
             daoSettings={pluginSettings}
             daoToken={daoToken}
