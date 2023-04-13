@@ -36,6 +36,11 @@ type AlchemyTransfer = {
   hash: string;
 };
 
+/**
+ * @param daoAddressOrEns
+ * @returns List if transfers
+ */
+
 export const useDaoTransfers = (
   daoAddressOrEns: Address
 ): HookData<Transfer[]> => {
@@ -153,7 +158,8 @@ export const useDaoTransfers = (
             JSON.stringify(pendingDepositsTxs, customJSONReplacer)
           );
 
-          // filter the erc20 token deposits
+          /* ETH Transfers and withdraws exists in Subgraph therefore only erc20 transfers
+          fetched from alchemy api */
           const transfers = [
             ...pendingDepositsTxs,
             ...subgraphTransfers,
