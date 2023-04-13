@@ -23,6 +23,19 @@ import {useSpecificProvider} from 'context/providers';
 
 export type IAssetTransfers = Transfer[];
 
+type AlchemyTransfer = {
+  from: string;
+  rawContract: {
+    address: string;
+    value: string;
+    decimals: string;
+  };
+  metadata: {
+    blockTimestamp: string;
+  };
+  hash: string;
+};
+
 export const useDaoTransfers = (
   daoAddressOrEns: Address
 ): HookData<Transfer[]> => {
@@ -35,8 +48,13 @@ export const useDaoTransfers = (
   const pendingDepositsTxs = useReactiveVar(pendingDeposits);
   const provider = useSpecificProvider(CHAIN_METADATA[network].id);
 
+  function sortByCreatedAt(a: Transfer, b: Transfer): number {
+    return b.creationDate.getTime() - a.creationDate.getTime();
+  }
+
   const url = `${CHAIN_METADATA[network].alchemyApi}/${alchemyApiKeys[network]}`;
 
+  // Memoize options to prevent unnecessary re-renders
   const options = useMemo(
     () => ({
       method: 'POST',
@@ -65,7 +83,8 @@ export const useDaoTransfers = (
       try {
         setIsLoading(true);
 
-        const transfers = await client?.methods.getDaoTransfers({
+        // Fetch client transfers from the subgraph
+        const clientTransfers = await client?.methods.getDaoTransfers({
           sortBy: TransferSortBy.CREATED_AT,
           daoAddressOrEns,
           direction: SortDirection.DESC,
@@ -75,50 +94,48 @@ export const useDaoTransfers = (
         const res = await fetch(url, options);
         const alchemyTransfersList = await res.json();
 
-        // // Define a list of promises to fetch ERC20 token balances
+        // filter the erc20 token deposits
         const erc20TransfersListPromises =
-          alchemyTransfersList.result.transfers.map(async (transfer: any) => {
-            const {name} = await getTokenInfo(
-              transfer.rawContract.address,
-              provider,
-              CHAIN_METADATA[network].nativeCurrency
-            );
+          alchemyTransfersList.result.transfers.map(
+            async ({from, rawContract, metadata, hash}: AlchemyTransfer) => {
+              const {name, symbol, decimals} = await getTokenInfo(
+                rawContract.address,
+                provider,
+                CHAIN_METADATA[network].nativeCurrency
+              );
 
-            return {
-              type: 'deposit',
-              tokenType: 'erc20',
-              amount: BigInt(transfer.rawContract.value),
-              creationDate: new Date(transfer.metadata.blockTimestamp),
-              from: transfer.from,
-              to: daoAddressOrEns,
-              token: {
-                address: transfer.rawContract.address,
-                decimals: Number(transfer.rawContract.decimal),
-                name,
-                symbol: transfer.asset,
-              },
-              transactionId: transfer.hash,
-            };
-          });
+              console.log(
+                'view',
+                new Date(metadata.blockTimestamp),
+                metadata.blockTimestamp
+              );
+
+              return {
+                type: 'deposit',
+                tokenType: 'erc20',
+                amount: BigInt(rawContract.value),
+                creationDate: new Date(metadata.blockTimestamp),
+                from: from,
+                to: daoAddressOrEns,
+                token: {
+                  address: rawContract.address,
+                  decimals,
+                  name,
+                  symbol,
+                },
+                transactionId: hash,
+              };
+            }
+          );
 
         const erc20DepositsList = await Promise.all(erc20TransfersListPromises);
 
-        // console.log('transfersList', depositLists);
-
-        if (transfers?.length) {
-          const subgraphTransfers = transfers.filter(
+        if (clientTransfers?.length) {
+          const subgraphTransfers = clientTransfers.filter(
             t => t.type === TransferType.WITHDRAW || t.tokenType === 'native'
           );
 
-          console.log('deposits', subgraphTransfers, erc20DepositsList);
-        }
-
-        if (transfers?.length) {
-          const subgraphTransfers = transfers.filter(
-            t => t.type === TransferType.WITHDRAW || t.tokenType === 'native'
-          );
-
-          const deposits = transfers.filter(
+          const deposits = clientTransfers.filter(
             t => t.type === TransferType.DEPOSIT
           );
 
@@ -142,11 +159,14 @@ export const useDaoTransfers = (
             JSON.stringify(pendingDepositsTxs, customJSONReplacer)
           );
 
-          setData([
+          // filter the erc20 token deposits
+          const transfers = [
             ...pendingDepositsTxs,
             ...subgraphTransfers,
             ...erc20DepositsList,
-          ]);
+          ].sort(sortByCreatedAt);
+
+          setData(transfers);
         }
       } catch (error) {
         console.error(error);
