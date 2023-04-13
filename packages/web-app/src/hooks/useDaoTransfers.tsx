@@ -104,12 +104,6 @@ export const useDaoTransfers = (
                 CHAIN_METADATA[network].nativeCurrency
               );
 
-              console.log(
-                'view',
-                new Date(metadata.blockTimestamp),
-                metadata.blockTimestamp
-              );
-
               return {
                 type: 'deposit',
                 tokenType: 'erc20',
