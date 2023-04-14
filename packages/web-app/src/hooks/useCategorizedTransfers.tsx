@@ -51,7 +51,8 @@ export default function useCategorizedTransfers(
     const year: Transfer[] = [];
 
     transfers.forEach(t => {
-      const millisecondsTimestamp = (t.transferTimestamp as number) * 1000;
+      const millisecondsTimestamp = t.transferTimestamp as number;
+
       if (isThisWeek(millisecondsTimestamp)) {
         week.push(t);
       } else if (isThisMonth(millisecondsTimestamp)) {
