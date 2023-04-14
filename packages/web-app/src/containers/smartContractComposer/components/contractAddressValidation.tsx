@@ -76,7 +76,7 @@ const ContractAddressValidation: React.FC<Props> = props => {
   };
 
   const setContractValid = useCallback(
-    async (value: EtherscanContractResponse) => {
+    (value: EtherscanContractResponse) => {
       if (value) {
         setVerificationState(TransactionState.SUCCESS);
 
@@ -119,7 +119,7 @@ const ContractAddressValidation: React.FC<Props> = props => {
 
   const addressValidator = (value: string) => {
     // duplication: contract already connected
-    const addressExists = contracts?.some(
+    const addressExists = contracts.some(
       c => c.address.toLowerCase() === value.toLowerCase()
     );
 
@@ -227,7 +227,7 @@ const ContractAddressValidation: React.FC<Props> = props => {
             <AlertInline
               mode="success"
               label={t('scc.addressValidation.successLabel', {
-                contractName: contracts?.[contracts.length - 1]?.name,
+                contractName: contracts[contracts.length - 1]?.name,
               })}
             />
           </AlertInlineContainer>

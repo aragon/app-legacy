@@ -15,13 +15,13 @@ const SmartContractListGroup: React.FC = () => {
   return (
     <ListGroup>
       <ContractNumberIndicator>
-        {contracts?.length === 1
+        {contracts.length === 1
           ? t('scc.labels.singleContractConnected')
           : t('scc.labels.nContractsConnected', {
-              numConnected: contracts?.length ?? 0,
+              numConnected: contracts.length,
             })}
       </ContractNumberIndicator>
-      {contracts?.map(c => (
+      {contracts.map(c => (
         // TODO: replace with new listitem that takes image
         // or custom component
         <ListItemAction
