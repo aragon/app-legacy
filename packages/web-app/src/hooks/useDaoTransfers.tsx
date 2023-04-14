@@ -19,7 +19,7 @@ import {
 import {customJSONReplacer} from 'utils/library';
 import {useNetwork} from 'context/network';
 import {getTokenInfo} from 'utils/tokens';
-import {useSpecificProvider} from 'context/providers';
+import {useProviders} from 'context/providers';
 
 export type IAssetTransfers = Transfer[];
 
@@ -36,6 +36,10 @@ type AlchemyTransfer = {
   hash: string;
 };
 
+function sortByCreatedAt(a: Transfer, b: Transfer): number {
+  return b.creationDate.getTime() - a.creationDate.getTime();
+}
+
 /**
  * @param daoAddressOrEns
  * @returns List if transfers
@@ -51,11 +55,7 @@ export const useDaoTransfers = (
   const [error, setError] = useState<Error>();
   const [isLoading, setIsLoading] = useState(false);
   const pendingDepositsTxs = useReactiveVar(pendingDeposits);
-  const provider = useSpecificProvider(CHAIN_METADATA[network].id);
-
-  function sortByCreatedAt(a: Transfer, b: Transfer): number {
-    return b.creationDate.getTime() - a.creationDate.getTime();
-  }
+  const {infura: provider} = useProviders();
 
   const url = `${CHAIN_METADATA[network].alchemyApi}/${alchemyApiKeys[network]}`;
 
@@ -100,7 +100,7 @@ export const useDaoTransfers = (
         const alchemyTransfersList = await res.json();
 
         // filter the erc20 token deposits
-        const erc20TransfersListPromises =
+        const erc20DepositsListPromises =
           alchemyTransfersList.result.transfers.map(
             async ({from, rawContract, metadata, hash}: AlchemyTransfer) => {
               const {name, symbol, decimals} = await getTokenInfo(
@@ -127,7 +127,7 @@ export const useDaoTransfers = (
             }
           );
 
-        const erc20DepositsList = await Promise.all(erc20TransfersListPromises);
+        const erc20DepositsList = await Promise.all(erc20DepositsListPromises);
 
         if (clientTransfers?.length) {
           const subgraphTransfers = clientTransfers.filter(
