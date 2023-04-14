@@ -1,5 +1,5 @@
 import {MultisigVotingSettings, VotingSettings} from '@aragon/sdk-client';
-import React, {useCallback, useEffect, useRef} from 'react';
+import React, {useCallback, useEffect, useMemo, useRef} from 'react';
 import {Outlet} from 'react-router-dom';
 
 import {Loading} from 'components/temporary';
@@ -21,21 +21,23 @@ const ProtectedRoute: React.FC = () => {
   const {address, status, isOnWrongNetwork} = useWallet();
   const {data: daoDetails, isLoading: detailsAreLoading} = useDaoDetailsQuery();
 
-  const pluginType = daoDetails?.plugins[0].id as PluginTypes;
+  const [pluginType, pluginAddress] = useMemo(
+    () => [
+      daoDetails?.plugins[0].id as PluginTypes,
+      daoDetails?.plugins[0].instanceAddress as string,
+    ],
+    [daoDetails?.plugins]
+  );
 
   const {data: daoSettings, isLoading: settingsAreLoading} = usePluginSettings(
-    daoDetails?.plugins[0].instanceAddress as string,
+    pluginAddress,
     pluginType
   );
 
   const {
     data: {daoToken, filteredMembers},
     isLoading: membersAreLoading,
-  } = useDaoMembers(
-    daoDetails?.plugins[0].instanceAddress as string,
-    pluginType,
-    address as string
-  );
+  } = useDaoMembers(pluginAddress, pluginType, address as string);
 
   const {network} = useNetwork();
   const provider = useSpecificProvider(CHAIN_METADATA[network].id);
@@ -149,7 +151,7 @@ const ProtectedRoute: React.FC = () => {
       {daoDetails && (
         <GatingMenu
           daoAddress={daoDetails.address}
-          pluginType={daoDetails.plugins[0].id as PluginTypes}
+          pluginType={pluginType}
           tokenName={daoToken?.name}
         />
       )}
