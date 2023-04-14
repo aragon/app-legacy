@@ -387,7 +387,7 @@ export type SmartContract = {
 };
 
 export type VerifiedContracts = {
-  // key is DAO address
+  // key is wallet address
   [key: string]: {
     // key is chain id
     [key: number]: Array<SmartContract>;

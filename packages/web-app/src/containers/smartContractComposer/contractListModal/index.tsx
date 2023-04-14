@@ -31,9 +31,7 @@ const SmartContractList: React.FC<Props> = props => {
   const {t} = useTranslation();
   const {isDesktop} = useScreen();
 
-  const [selectedSC]: [SmartContract] = useWatch({
-    name: ['selectedSC'],
-  });
+  const selectedSC: SmartContract = useWatch({name: 'selectedSC'});
 
   if (isDesktop)
     return (
@@ -80,13 +78,6 @@ const SmartContractList: React.FC<Props> = props => {
             />
           </>
         )}
-        <ButtonText
-          mode="secondary"
-          size="large"
-          label={t('scc.labels.connect')}
-          className="w-full"
-          onClick={props.onConnect}
-        />
       </Content>
     </BottomSheet>
   );

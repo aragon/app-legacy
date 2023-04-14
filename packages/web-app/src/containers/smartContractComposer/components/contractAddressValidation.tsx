@@ -21,18 +21,14 @@ import styled from 'styled-components';
 import ModalBottomSheetSwitcher from 'components/modalBottomSheetSwitcher';
 import {useAlertContext} from 'context/alert';
 import {useNetwork} from 'context/network';
-import {
-  useAddVerifiedContractMutation,
-  useDaoVerifiedContractsQuery,
-} from 'hooks/useVerifiedContracts';
+import {useWallet} from 'hooks/useWallet';
 import {SccFormData} from 'pages/demoScc';
+import {addVerifiedSmartContract} from 'services/cache';
 import {CHAIN_METADATA, TransactionState} from 'utils/constants';
 import {handleClipboardActions} from 'utils/library';
 import {EtherscanContractResponse} from 'utils/types';
 import {validateContract} from 'utils/validators';
 import ModalHeader from './modalHeader';
-
-const CUSTOM_DAO = '0xad6fc78da51c944595682784d346ca8bf98c37c6';
 
 type Props = {
   isOpen: boolean;
@@ -53,18 +49,20 @@ const icons = {
 const ContractAddressValidation: React.FC<Props> = props => {
   const {t} = useTranslation();
   const {alert} = useAlertContext();
+  const {address} = useWallet();
   const {network} = useNetwork();
 
   const [verificationState, setVerificationState] = useState<TransactionState>(
     TransactionState.WAITING
   );
 
-  const {data: contracts} = useDaoVerifiedContractsQuery();
-  const addVerifiedContractMutation = useAddVerifiedContractMutation();
-
-  const {control, resetField, setError} = useFormContext<SccFormData>();
+  const {control, resetField, setValue, setError} =
+    useFormContext<SccFormData>();
   const {errors} = useFormState({control});
-  const [addressField] = useWatch({name: ['contractAddress'], control});
+  const [addressField, contracts] = useWatch({
+    name: ['contractAddress', 'contracts'],
+    control,
+  });
 
   const isTransactionSuccessful =
     verificationState === TransactionState.SUCCESS;
@@ -82,24 +80,29 @@ const ContractAddressValidation: React.FC<Props> = props => {
       if (value) {
         setVerificationState(TransactionState.SUCCESS);
 
-        await addVerifiedContractMutation.mutateAsync({
-          daoAddress: CUSTOM_DAO, // TODO: replace with proper DAO address
-          contract: {
-            actions: JSON.parse(value.ABI),
-            address: addressField,
-            name: value.ContractName,
-          },
-          network,
-        });
+        const verifiedContract = {
+          actions: JSON.parse(value.ABI),
+          address: addressField,
+          name: value.ContractName,
+        };
+
+        setValue('contracts', [...contracts, verifiedContract]);
+
+        // add to storage
+        addVerifiedSmartContract(
+          verifiedContract,
+          address,
+          CHAIN_METADATA[network].id
+        );
       } else {
         setVerificationState(TransactionState.WAITING);
         setError('contractAddress', {
           type: 'validate',
-          message: t('errors.notValidContractAddress') as string,
+          message: t('errors.notValidContractAddress'),
         });
       }
     },
-    [addVerifiedContractMutation, addressField, network, setError, t]
+    [address, addressField, contracts, network, setError, setValue, t]
   );
 
   // clear field when there is a value, else paste
@@ -124,7 +127,7 @@ const ContractAddressValidation: React.FC<Props> = props => {
 
     // check if address is valid address string
     if (isAddress(value)) return true;
-    else return t('errors.invalidAddress') as string;
+    else return t('errors.invalidAddress');
   };
 
   const adornmentText = useMemo(() => {
@@ -142,7 +145,7 @@ const ContractAddressValidation: React.FC<Props> = props => {
   return (
     <ModalBottomSheetSwitcher isOpen={props.isOpen} onClose={props.onClose}>
       <ModalHeader
-        title={t('scc.addressValidation.modalTitle') as string}
+        title={t('scc.addressValidation.modalTitle')}
         onClose={() => {
           // clear contract address field
           resetField('contractAddress');
@@ -222,12 +225,10 @@ const ContractAddressValidation: React.FC<Props> = props => {
         {isTransactionSuccessful && (
           <AlertInlineContainer>
             <AlertInline
-              label={
-                t('scc.addressValidation.successLabel', {
-                  contractName: contracts?.[contracts.length - 1].name,
-                }) as string
-              }
               mode="success"
+              label={t('scc.addressValidation.successLabel', {
+                contractName: contracts?.[contracts.length - 1]?.name,
+              })}
             />
           </AlertInlineContainer>
         )}

@@ -4,14 +4,13 @@ import {useFormContext} from 'react-hook-form';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 
-import {useDaoVerifiedContractsQuery} from 'hooks/useVerifiedContracts';
-import {Loading} from 'components/temporary';
+import {SccFormData} from 'pages/demoScc';
 
 const SmartContractListGroup: React.FC = () => {
   const {t} = useTranslation();
-  const {setValue} = useFormContext();
+  const {setValue, getValues} = useFormContext<SccFormData>();
 
-  const {data: contracts, isLoading} = useDaoVerifiedContractsQuery();
+  const contracts = getValues('contracts');
 
   return (
     <ListGroup>
@@ -22,24 +21,18 @@ const SmartContractListGroup: React.FC = () => {
               numConnected: contracts?.length ?? 0,
             })}
       </ContractNumberIndicator>
-      {isLoading ? (
-        <div className="h-full">
-          <Loading />
-        </div>
-      ) : (
-        contracts?.map(c => (
-          // TODO: replace with new listitem that takes image
-          // or custom component
-          <ListItemAction
-            key={c.address}
-            title={c.name}
-            subtitle={`${c.actions.length} Actions`}
-            bgWhite
-            iconRight={<IconChevronRight />}
-            onClick={() => setValue('selectedSC', c)}
-          />
-        ))
-      )}
+      {contracts?.map(c => (
+        // TODO: replace with new listitem that takes image
+        // or custom component
+        <ListItemAction
+          key={c.address}
+          title={c.name}
+          subtitle={`${c.actions.length} Actions`}
+          bgWhite
+          iconRight={<IconChevronRight />}
+          onClick={() => setValue('selectedSC', c)}
+        />
+      ))}
     </ListGroup>
   );
 };
