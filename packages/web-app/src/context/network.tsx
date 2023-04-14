@@ -47,11 +47,11 @@ const determineNetwork = (
   status: 'disconnected' | 'connecting' | 'connected'
 ): SupportedNetworks | 'unsupported' => {
   if (networkUrlSegment) {
-    console.log(`*NETWORK from url = ${networkUrlSegment}`);
+    // NETWORK from url
     return toSupportedNetwork(networkUrlSegment);
   } else if (status === 'connected') {
     if (isSupportedChainId(chainId)) {
-      console.log(`*NETWORK from wallet chain = ${chainId}`);
+      // NETWORK from wallet chain
       return Object.entries(CHAIN_METADATA).find(
         ([, v]) => v.id === chainId
       )?.[0] as SupportedNetworks;
@@ -61,7 +61,7 @@ const determineNetwork = (
     }
   }
 
-  console.log('*NETWORK defaults to eth');
+  //NETWORK defaults to eth
   return 'ethereum';
 };
 
