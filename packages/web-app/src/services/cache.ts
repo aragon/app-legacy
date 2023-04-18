@@ -230,9 +230,14 @@ export function getVerifiedSmartContracts(
     throw new Error('daoAddress must be defined');
   }
 
-  const verifiedContracts = JSON.parse(
-    localStorage.getItem(VERIFIED_CONTRACTS_KEY) || '{}'
-  ) as VerifiedContracts;
+  let verifiedContracts = {} as VerifiedContracts;
+  try {
+    verifiedContracts = JSON.parse(
+      localStorage.getItem(VERIFIED_CONTRACTS_KEY) || '{}'
+    );
+  } catch (error) {
+    console.error('Error parsing verified contracts from localStorage:', error);
+  }
 
   // Get the contracts for the given DAO address
   const walletContracts = verifiedContracts[walletAddress] || {};
@@ -257,25 +262,30 @@ export function addVerifiedSmartContract(
   }
 
   // get the contracts from local storage
-  const verifiedContracts = JSON.parse(
-    localStorage.getItem(VERIFIED_CONTRACTS_KEY) || '{}'
-  ) as VerifiedContracts;
+  let verifiedContracts = {} as VerifiedContracts;
+  try {
+    verifiedContracts = JSON.parse(
+      localStorage.getItem(VERIFIED_CONTRACTS_KEY) || '{}'
+    );
 
-  // add the newly verified contract into the list
-  const updatedContracts = {
-    ...verifiedContracts,
-    [walletAddress]: {
-      ...verifiedContracts[walletAddress],
-      [chainId]: [
-        ...(verifiedContracts[walletAddress]?.[chainId] || []),
-        contract,
-      ],
-    },
-  };
+    // add the newly verified contract into the list
+    const updatedContracts = {
+      ...verifiedContracts,
+      [walletAddress]: {
+        ...verifiedContracts[walletAddress],
+        [chainId]: [
+          ...(verifiedContracts[walletAddress]?.[chainId] || []),
+          contract,
+        ],
+      },
+    };
 
-  // add the new contracts into storage
-  localStorage.setItem(
-    VERIFIED_CONTRACTS_KEY,
-    JSON.stringify(updatedContracts)
-  );
+    // add the new contracts into storage
+    localStorage.setItem(
+      VERIFIED_CONTRACTS_KEY,
+      JSON.stringify(updatedContracts)
+    );
+  } catch (error) {
+    console.error('Error parsing verified contracts from localStorage:', error);
+  }
 }
