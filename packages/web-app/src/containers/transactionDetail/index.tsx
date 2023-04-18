@@ -24,15 +24,19 @@ import {CHAIN_METADATA, TransferTypes} from 'utils/constants';
 import {Proposal} from 'utils/paths';
 import {abbreviateTokenAmount} from 'utils/tokens';
 import {Withdraw} from 'utils/types';
+import {toDisplayEns} from 'utils/library';
 
+// TODO: merge these together or remove all props when updating to use react-query
 type TransactionDetailProps = {
   daoAddress: string;
+  daoEns?: string;
   daoName: string;
   daoPlugin: InstalledPluginListItem;
 };
 
 const TransactionDetail: React.FC<TransactionDetailProps> = ({
   daoAddress,
+  daoEns,
   daoName,
   daoPlugin,
 }) => {
@@ -61,12 +65,12 @@ const TransactionDetail: React.FC<TransactionDetailProps> = ({
     navigate(
       generatePath(Proposal, {
         network,
-        dao: daoAddress,
+        dao: toDisplayEns(daoEns) || daoAddress,
         id: proposalId!.toUrlSlug(), // only called for Withdrawals
       })
     );
     onClose();
-  }, [daoAddress, navigate, network, onClose, proposalId]);
+  }, [daoAddress, daoEns, navigate, network, onClose, proposalId]);
 
   return (
     <ModalBottomSheetSwitcher isOpen={isOpen} onClose={onClose}>

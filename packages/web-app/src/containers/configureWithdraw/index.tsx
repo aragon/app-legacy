@@ -48,7 +48,9 @@ const ConfigureWithdrawForm: React.FC<ConfigureWithdrawFormProps> = ({
   const {network} = useNetwork();
   const {address} = useWallet();
   const {infura: provider} = useProviders();
-  const {data: daoAddress} = useDaoParam();
+
+  // load dao details
+  const {daoDetails} = useDaoParam();
   const {setSelectedActionIndex} = useActionsContext();
   const {alert} = useAlertContext();
 
@@ -75,12 +77,12 @@ const ConfigureWithdrawForm: React.FC<ConfigureWithdrawFormProps> = ({
   useEffect(() => {
     if (isCustomToken) setFocus(`actions.${actionIndex}.tokenAddress`);
 
-    if (from === '') {
-      setValue(`actions.${actionIndex}.from`, daoAddress);
+    if (from === '' && daoDetails?.address) {
+      setValue(`actions.${actionIndex}.from`, daoDetails?.address);
     }
   }, [
     address,
-    daoAddress,
+    daoDetails?.address,
     from,
     actionIndex,
     isCustomToken,
@@ -113,8 +115,13 @@ const ConfigureWithdrawForm: React.FC<ConfigureWithdrawFormProps> = ({
         // fetch token balance and token metadata
         const allTokenInfoPromise = Promise.all([
           isNativeToken(tokenAddress)
-            ? provider.getBalance(daoAddress)
-            : fetchBalance(tokenAddress, daoAddress, provider, nativeCurrency),
+            ? provider.getBalance(daoDetails?.address as string)
+            : fetchBalance(
+                tokenAddress,
+                daoDetails?.address as string,
+                provider,
+                nativeCurrency
+              ),
           fetchTokenData(tokenAddress, client, network, tokenSymbol),
           getTokenInfo(tokenAddress, provider, nativeCurrency),
         ]);
@@ -153,7 +160,9 @@ const ConfigureWithdrawForm: React.FC<ConfigureWithdrawFormProps> = ({
         ]);
     };
 
-    fetchTokenInfo();
+    if (daoDetails?.address) {
+      fetchTokenInfo();
+    }
   }, [
     address,
     dirtyFields.amount,
@@ -166,7 +175,7 @@ const ConfigureWithdrawForm: React.FC<ConfigureWithdrawFormProps> = ({
     trigger,
     client,
     network,
-    daoAddress,
+    daoDetails?.address,
     nativeCurrency,
     tokenSymbol,
   ]);

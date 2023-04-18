@@ -233,7 +233,9 @@ const ProposalTransactionProvider: React.FC<Props> = ({children}) => {
 
       let newCache;
       let cacheKey = '';
-      const cachedProposalId = proposalId.makeGloballyUnique(daoAddress);
+      const cachedProposalId = proposalId.makeGloballyUnique(
+        daoDetails?.address as string
+      );
 
       // cache multisig vote
       if (pluginType === 'multisig.plugin.dao.eth') {
@@ -276,7 +278,7 @@ const ProposalTransactionProvider: React.FC<Props> = ({children}) => {
       address,
       cachedMultisigApprovals,
       cachedTokenBasedVotes,
-      daoAddress,
+      daoDetails?.address,
       network,
       pluginType,
       preferences?.functional,
@@ -292,7 +294,9 @@ const ProposalTransactionProvider: React.FC<Props> = ({children}) => {
 
       let newCache;
       let cacheKey = '';
-      const cachedProposalId = proposalId.makeGloballyUnique(daoAddress);
+      const cachedProposalId = proposalId.makeGloballyUnique(
+        daoDetails?.address as string
+      );
 
       // cache token based execution
       if (pluginType === 'token-voting.plugin.dao.eth') {
@@ -326,7 +330,7 @@ const ProposalTransactionProvider: React.FC<Props> = ({children}) => {
       address,
       cachedMultisigExecution,
       cachedTokenBaseExecution,
-      daoAddress,
+      daoDetails?.address,
       pluginType,
       preferences?.functional,
     ]

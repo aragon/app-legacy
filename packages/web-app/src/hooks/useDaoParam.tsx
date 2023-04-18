@@ -1,5 +1,8 @@
+import {isAddress} from '@ethersproject/address';
 import {useEffect} from 'react';
-import {useNavigate, useParams} from 'react-router-dom';
+import {useLocation, useNavigate, useParams} from 'react-router-dom';
+
+import {toDisplayEns} from 'utils/library';
 import {NotFound} from 'utils/paths';
 import {useDaoDetails} from './useDaoDetails';
 
@@ -13,20 +16,29 @@ import {useDaoDetails} from './useDaoDetails';
  */
 export function useDaoParam() {
   const {dao} = useParams();
+  const location = useLocation();
+  const navigate = useNavigate();
 
   // NOTE At this point, daoParam will always be defined.
   const {data, error, isLoading, waitingForSubgraph} = useDaoDetails(
     dao! as string
   );
-  const navigate = useNavigate();
 
   useEffect(() => {
     if (isLoading) {
       return;
     } else if (error || data === null) {
       navigate(NotFound, {replace: true, state: {incorrectDao: dao}});
+    } else if (dao && isAddress(dao) && toDisplayEns(data?.ensDomain)) {
+      const segments = location.pathname.split('/');
+      const daoIndex = segments.findIndex(segment => segment === dao);
+
+      if (daoIndex !== -1 && data?.ensDomain) {
+        segments[daoIndex] = data.ensDomain;
+        navigate(segments.join('/'));
+      }
     }
-  }, [dao, data, error, isLoading, navigate]);
+  }, [dao, data, error, isLoading, location.pathname, navigate]);
 
   return {
     daoDetails: data,

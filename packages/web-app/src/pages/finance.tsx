@@ -34,6 +34,7 @@ const Finance: React.FC = () => {
   const {open} = useGlobalModalContext();
   const {isDesktop} = useScreen();
 
+  // load dao details
   const navigate = useNavigate();
   const {breadcrumbs, icon, tag} = useMappedBreadcrumbs();
   const {data: daoId, isLoading} = useDaoParam();

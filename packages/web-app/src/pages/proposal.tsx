@@ -96,6 +96,7 @@ const Proposal: React.FC = () => {
     [urlId]
   );
 
+  // load dao details
   const {data: dao} = useDaoParam();
   const {data: daoDetails, isLoading: detailsAreLoading} = useDaoDetails(dao);
 
@@ -147,7 +148,7 @@ const Proposal: React.FC = () => {
     error: proposalError,
     isLoading: proposalIsLoading,
   } = useDaoProposal(
-    dao,
+    daoDetails?.address as string,
     proposalId!,
     pluginType,
     pluginAddress,
