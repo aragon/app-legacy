@@ -214,6 +214,7 @@ const DaoWrapper: React.FC = () => {
           {daoDetails && isOpen && (
             <TransactionDetail
               daoAddress={daoDetails.address}
+              daoEns={daoDetails.ensDomain}
               daoName={daoDetails.metadata.name}
               daoPlugin={daoDetails.plugins[0]}
             />

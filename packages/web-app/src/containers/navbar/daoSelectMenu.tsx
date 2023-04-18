@@ -37,7 +37,7 @@ const DaoSelectMenu: React.FC = () => {
       navigate(
         generatePath(Dashboard, {
           network: getSupportedNetworkByChainId(dao.chain),
-          dao: dao.address,
+          dao: toDisplayEns(dao.ensDomain) || dao.address,
         })
       );
       close('selectDao');
