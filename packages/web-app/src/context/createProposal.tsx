@@ -48,7 +48,7 @@ import {
   minutesToMills,
   offsetToMills,
 } from 'utils/date';
-import {customJSONReplacer} from 'utils/library';
+import {customJSONReplacer, isENSDomain} from 'utils/library';
 import {Proposal} from 'utils/paths';
 import {
   CacheProposalParams,
@@ -136,15 +136,22 @@ const CreateProposalProvider: React.FC<Props> = ({
     // return an empty array for undefined clients
     if (!pluginClient || !client) return Promise.resolve([] as DaoAction[]);
 
-    getNonEmptyActions(actionsFromForm).forEach((action: Action) => {
+    getNonEmptyActions(actionsFromForm).forEach(async (action: Action) => {
       switch (action.name) {
         case 'withdraw_assets': {
+          let receiver = action.to;
+          /* TODO: SDK doesn't accept ens names, this should be removed once they
+           fixed the issue */
+          if (isENSDomain(action.to)) {
+            receiver = (await provider?.resolveName(action.to)) as string;
+          }
+
           actions.push(
             client.encoding.withdrawAction({
               amount: BigInt(
                 Number(action.amount) * Math.pow(10, action.tokenDecimals)
               ),
-              recipientAddressOrEns: action.to,
+              recipientAddressOrEns: receiver,
               ...(isNativeToken(action.tokenAddress)
                 ? {type: TokenType.NATIVE}
                 : {type: TokenType.ERC20, tokenAddress: action.tokenAddress}),
