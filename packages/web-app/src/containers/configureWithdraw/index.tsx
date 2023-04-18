@@ -22,7 +22,7 @@ import {useGlobalModalContext} from 'context/globalModals';
 import {useNetwork} from 'context/network';
 import {useProviders} from 'context/providers';
 import {isAddress} from 'ethers/lib/utils';
-import {useDaoDetailsQuery} from 'hooks/useDaoDetailsQuery';
+import {useDaoDetailsQuery} from 'hooks/useDaoDetails';
 import {useWallet} from 'hooks/useWallet';
 import {WithdrawAction} from 'pages/newWithdraw';
 import {fetchTokenData} from 'services/prices';
