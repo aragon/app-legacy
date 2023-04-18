@@ -63,7 +63,7 @@ import {
   minutesToMills,
   offsetToMills,
 } from 'utils/date';
-import {customJSONReplacer, readFile} from 'utils/library';
+import {customJSONReplacer, readFile, toDisplayEns} from 'utils/library';
 import {EditSettings, Proposal} from 'utils/paths';
 import {CacheProposalParams, mapToCacheProposal} from 'utils/proposals';
 import {
@@ -568,7 +568,7 @@ const ProposeSettingWrapper: React.FC<Props> = ({
         navigate(
           generatePath(Proposal, {
             network,
-            dao: daoDetails?.address,
+            dao: toDisplayEns(daoDetails?.ensDomain) || daoDetails?.address,
             id: proposalId,
           })
         );
