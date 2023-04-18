@@ -2,7 +2,6 @@ import {useEffect, useState} from 'react';
 import {TimeFilter} from 'utils/constants';
 import {formatUnits} from 'utils/library';
 import {historicalTokenBalances, timeFilterToMinutes} from 'utils/tokens';
-import {useParams} from 'react-router-dom';
 
 import {PollTokenOptions, VaultToken} from 'utils/types';
 import {useDaoBalances} from './useDaoBalances';
@@ -21,11 +20,9 @@ import {useTokenMetadata} from './useTokenMetadata';
  * current USD sum value of all assets, and the price change in USD based on the filter.
  */
 export const useDaoVault = (
+  daoAddress: string,
   options: PollTokenOptions = {filter: TimeFilter.day, interval: 300000}
 ) => {
-  const {dao} = useParams();
-
-  const daoAddress = dao?.toLowerCase() ?? '';
   const {data: balances} = useDaoBalances(daoAddress);
   const {data: tokensWithMetadata} = useTokenMetadata(balances || []);
   const {data} = usePollTokenPrices(tokensWithMetadata, options);
