@@ -8,6 +8,7 @@ import {generatePath, useNavigate} from 'react-router-dom';
 import {Dd, DescriptionListContainer, Dl, Dt} from 'components/descriptionList';
 import {useNetwork} from 'context/network';
 import {URL_PATTERN} from 'utils/constants/regex';
+import {toDisplayEns} from 'utils/library';
 import {EditSettings} from 'utils/paths';
 import {ProposalResource} from 'utils/types';
 import {Views} from '.';
@@ -52,7 +53,12 @@ export const CompareMetadata: React.FC<CompareMetadataProps> = ({
     <DescriptionListContainer
       title={t('labels.review.daoMetadata')}
       onEditClick={() =>
-        navigate(generatePath(EditSettings, {network, dao: daoDetails.address}))
+        navigate(
+          generatePath(EditSettings, {
+            network,
+            dao: toDisplayEns(daoDetails.ensDomain) || daoDetails.address,
+          })
+        )
       }
       editLabel={t('settings.edit')}
     >

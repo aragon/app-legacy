@@ -47,7 +47,7 @@ import {
   minutesToMills,
   offsetToMills,
 } from 'utils/date';
-import {customJSONReplacer} from 'utils/library';
+import {customJSONReplacer, toDisplayEns} from 'utils/library';
 import {Proposal} from 'utils/paths';
 import {
   CacheProposalParams,
@@ -369,7 +369,7 @@ const CreateProposalProvider: React.FC<Props> = ({
         navigate(
           generatePath(Proposal, {
             network,
-            dao: daoDetails?.address,
+            dao: toDisplayEns(daoDetails?.ensDomain) || daoDetails?.address,
             id: proposalId,
           })
         );
@@ -383,6 +383,7 @@ const CreateProposalProvider: React.FC<Props> = ({
   }, [
     creationProcessState,
     daoDetails?.address,
+    daoDetails?.ensDomain,
     navigate,
     network,
     proposalId,

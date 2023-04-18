@@ -61,6 +61,7 @@ import {
   decodePluginSettingsToAction,
   decodeRemoveMembersToAction,
   decodeWithdrawToAction,
+  toDisplayEns,
 } from 'utils/library';
 import {NotFound} from 'utils/paths';
 import {
@@ -581,7 +582,12 @@ const Proposal: React.FC = () => {
         {!isDesktop && (
           <Breadcrumb
             onClick={(path: string) =>
-              navigate(generatePath(path, {network, dao}))
+              navigate(
+                generatePath(path, {
+                  network,
+                  dao: toDisplayEns(daoDetails?.ensDomain) || dao,
+                })
+              )
             }
             crumbs={breadcrumbs}
             icon={<IconGovernance />}

@@ -23,6 +23,7 @@ import NoProposals from 'public/noProposals.svg';
 import {trackEvent} from 'services/analytics';
 import {htmlIn} from 'utils/htmlIn';
 import {ProposalListItem} from 'utils/types';
+import {toDisplayEns} from 'utils/library';
 
 const Governance: React.FC = () => {
   const {data: daoDetails, isLoading: isDaoLoading} = useDaoDetailsQuery();
@@ -144,6 +145,10 @@ const Governance: React.FC = () => {
         </ButtonGroupContainer>
         <ListWrapper>
           <ProposalList
+            daoAddressOrEns={
+              toDisplayEns(daoDetails?.ensDomain) ||
+              (daoDetails?.address as string)
+            }
             proposals={displayedProposals}
             pluginAddress={daoDetails?.plugins[0].instanceAddress as string}
             pluginType={daoDetails?.plugins[0].id as PluginTypes}

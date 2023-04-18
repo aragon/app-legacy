@@ -20,14 +20,14 @@ import {Governance, NewProposal} from 'utils/paths';
 import {ProposalListItem} from 'utils/types';
 
 type Props = {
-  dao: string;
+  daoAddressOrEns: string;
   pluginAddress: string;
   pluginType: PluginTypes;
   proposals: ProposalListItem[];
 };
 
 const ProposalSnapshot: React.FC<Props> = ({
-  dao,
+  daoAddressOrEns,
   pluginAddress,
   pluginType,
   proposals,
@@ -44,9 +44,16 @@ const ProposalSnapshot: React.FC<Props> = ({
   const mappedProposals = useMemo(
     () =>
       proposals.map(p =>
-        proposal2CardProps(p, members.members.length, network, navigate, t)
+        proposal2CardProps(
+          p,
+          members.members.length,
+          network,
+          navigate,
+          t,
+          daoAddressOrEns
+        )
       ),
-    [proposals, members.members.length, network, navigate, t]
+    [proposals, members.members.length, network, navigate, t, daoAddressOrEns]
   );
 
   if (proposals.length === 0 || areMembersLoading) {
@@ -63,7 +70,10 @@ const ProposalSnapshot: React.FC<Props> = ({
         description={htmlIn(t)('governance.emptyState.description')}
         primaryButton={{
           label: t('TransactionModal.createProposal'),
-          onClick: () => navigate(generatePath(NewProposal, {network, dao})),
+          onClick: () =>
+            navigate(
+              generatePath(NewProposal, {network, dao: daoAddressOrEns})
+            ),
         }}
         renderHtml
       />
@@ -78,7 +88,9 @@ const ProposalSnapshot: React.FC<Props> = ({
         label={t('dashboard.proposalsTitle')}
         buttonText={t('newProposal.title')}
         orientation="horizontal"
-        onClick={() => navigate(generatePath(NewProposal, {network, dao}))}
+        onClick={() =>
+          navigate(generatePath(NewProposal, {network, dao: daoAddressOrEns}))
+        }
       />
 
       {mappedProposals.map(({id, ...p}) => (
@@ -90,7 +102,9 @@ const ProposalSnapshot: React.FC<Props> = ({
         size="large"
         iconRight={<IconChevronRight />}
         label={t('labels.seeAll')}
-        onClick={() => navigate(generatePath(Governance, {network, dao}))}
+        onClick={() =>
+          navigate(generatePath(Governance, {network, dao: daoAddressOrEns}))
+        }
       />
     </Container>
   );

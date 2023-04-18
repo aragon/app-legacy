@@ -42,10 +42,14 @@ const WalletContainer = () => {
   );
 };
 
-type Props = {daoAddress: string; pluginType: PluginTypes; tokenName?: string};
+type Props = {
+  daoAddressOrEns: string;
+  pluginType: PluginTypes;
+  tokenName?: string;
+};
 
 export const GatingMenu: React.FC<Props> = ({
-  daoAddress: dao,
+  daoAddressOrEns,
   pluginType,
   tokenName,
 }) => {
@@ -66,7 +70,7 @@ export const GatingMenu: React.FC<Props> = ({
         <ButtonText
           label={t('alert.gatingUsers.buttonLabel')}
           onClick={() => {
-            navigate(generatePath(Governance, {network, dao}));
+            navigate(generatePath(Governance, {network, dao: daoAddressOrEns}));
             close('gating');
           }}
           size="large"

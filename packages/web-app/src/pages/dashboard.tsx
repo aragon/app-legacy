@@ -49,7 +49,7 @@ const Dashboard: React.FC = () => {
 
   const navigate = useNavigate();
   const {network} = useNetwork();
-  const {dao: daoAddressOrEns} = useParams();
+  const {dao: urlAddressOrEns} = useParams();
 
   const [pollInterval, setPollInterval] = useState(0);
   const [daoCreationState, setDaoCreationState] = useState<DaoCreationState>(
@@ -68,25 +68,26 @@ const Dashboard: React.FC = () => {
   const {data: favoritedDaos, isLoading: favoritedDaosLoading} =
     useFavoritedDaosQuery();
 
-  // pending DAO
-  const {data: pendingDao, isLoading: pendingDaoLoading} =
-    usePendingDao(daoAddressOrEns);
-
-  const removePendingDaoMutation = useRemovePendingDaoMutation(() =>
-    navigate(
-      generatePath(DashboardPath, {
-        network,
-        dao: daoAddressOrEns?.toLowerCase(),
-      })
-    )
-  );
-
   // live DAO
   const {
     data: liveDao,
     isLoading: liveDaoLoading,
     isSuccess,
-  } = useDaoQuery(daoAddressOrEns, pollInterval);
+  } = useDaoQuery(urlAddressOrEns, pollInterval);
+  const liveAddressOrEns = toDisplayEns(liveDao?.ensDomain) || liveDao?.address;
+
+  // pending DAO
+  const {data: pendingDao, isLoading: pendingDaoLoading} =
+    usePendingDao(urlAddressOrEns);
+
+  const removePendingDaoMutation = useRemovePendingDaoMutation(() =>
+    navigate(
+      generatePath(DashboardPath, {
+        network,
+        dao: liveAddressOrEns,
+      })
+    )
+  );
 
   const favoriteDaoMatchPredicate = useCallback(
     (favoriteDao: NavigationDao) => {
@@ -152,10 +153,10 @@ const Dashboard: React.FC = () => {
 
   const handleClipboardActions = useCallback(async () => {
     await navigator.clipboard.writeText(
-      `app.aragon.org/#/daos/${network}/${liveDao?.address}`
+      `app.aragon.org/#/daos/${network}/${liveAddressOrEns}`
     );
     alert(t('alert.chip.inputCopied'));
-  }, [alert, liveDao?.address, network, t]);
+  }, [alert, liveAddressOrEns, network, t]);
 
   const handleFavoriteClick = useCallback(
     async (dao: NavigationDao) => {
@@ -237,7 +238,7 @@ const Dashboard: React.FC = () => {
     );
   }
 
-  if (liveDao) {
+  if (liveDao && liveAddressOrEns) {
     const daoType =
       (liveDao?.plugins[0]?.id as PluginTypes) === 'multisig.plugin.dao.eth'
         ? t('explore.explorer.walletBased')
@@ -250,7 +251,7 @@ const Dashboard: React.FC = () => {
             daoName={liveDao.metadata.name}
             daoEnsName={toDisplayEns(liveDao.ensDomain)}
             daoAvatar={liveDao.metadata.avatar}
-            daoUrl={`app.aragon.org/#/daos/${network}/${liveDao.address}`}
+            daoUrl={`app.aragon.org/#/daos/${network}/${liveAddressOrEns}`}
             description={liveDao.metadata.description}
             created_at={formatDate(
               liveDao.creationDate.getTime() / 1000,
@@ -286,13 +287,13 @@ const Dashboard: React.FC = () => {
 
         {isDesktop ? (
           <DashboardContent
-            dao={liveDao.address}
+            daoAddressOrEns={liveAddressOrEns}
             pluginType={liveDao.plugins[0].id as PluginTypes}
             pluginAddress={liveDao.plugins[0].instanceAddress || ''}
           />
         ) : (
           <MobileDashboardContent
-            dao={liveDao.address}
+            daoAddressOrEns={liveAddressOrEns}
             pluginType={liveDao.plugins[0].id as PluginTypes}
             pluginAddress={liveDao.plugins[0].instanceAddress || ''}
           />
@@ -304,7 +305,7 @@ const Dashboard: React.FC = () => {
     // navigate to notFound
     navigate(NotFound, {
       replace: true,
-      state: {incorrectDao: daoAddressOrEns},
+      state: {incorrectDao: urlAddressOrEns},
     });
   }
 
@@ -319,18 +320,18 @@ const HeaderWrapper = styled.div.attrs({
 /* DESKTOP DASHBOARD ======================================================== */
 
 type DashboardContentProps = {
-  dao: string;
+  daoAddressOrEns: string;
   pluginType: PluginTypes;
   pluginAddress: string;
 };
 
 const DashboardContent: React.FC<DashboardContentProps> = ({
-  dao,
+  daoAddressOrEns,
   pluginType,
   pluginAddress,
 }) => {
   const {transfers, totalAssetValue} = useDaoVault();
-  const {data: proposals} = useProposals(dao, pluginType);
+  const {data: proposals} = useProposals(daoAddressOrEns, pluginType);
 
   const proposalCount = proposals.length;
   const transactionCount = transfers.length;
@@ -341,13 +342,13 @@ const DashboardContent: React.FC<DashboardContentProps> = ({
         {!transactionCount ? (
           <EqualDivide>
             <ProposalSnapshot
-              dao={dao}
+              daoAddressOrEns={daoAddressOrEns}
               pluginAddress={pluginAddress}
               pluginType={pluginType}
               proposals={proposals}
             />
             <TreasurySnapshot
-              dao={dao}
+              daoAddressOrEns={daoAddressOrEns}
               transfers={transfers}
               totalAssetValue={totalAssetValue}
             />
@@ -356,7 +357,7 @@ const DashboardContent: React.FC<DashboardContentProps> = ({
           <>
             <LeftWideContent>
               <ProposalSnapshot
-                dao={dao}
+                daoAddressOrEns={daoAddressOrEns}
                 pluginAddress={pluginAddress}
                 pluginType={pluginType}
                 proposals={proposals}
@@ -364,7 +365,7 @@ const DashboardContent: React.FC<DashboardContentProps> = ({
             </LeftWideContent>
             <RightNarrowContent>
               <TreasurySnapshot
-                dao={dao}
+                daoAddressOrEns={daoAddressOrEns}
                 transfers={transfers}
                 totalAssetValue={totalAssetValue}
               />
@@ -373,7 +374,7 @@ const DashboardContent: React.FC<DashboardContentProps> = ({
         )}
         <MembersWrapper>
           <MembershipSnapshot
-            dao={dao}
+            daoAddressOrEns={daoAddressOrEns}
             pluginType={pluginType}
             pluginAddress={pluginAddress}
             horizontal
@@ -387,7 +388,7 @@ const DashboardContent: React.FC<DashboardContentProps> = ({
     <>
       <LeftWideContent>
         <ProposalSnapshot
-          dao={dao}
+          daoAddressOrEns={daoAddressOrEns}
           pluginAddress={pluginAddress}
           pluginType={pluginType}
           proposals={proposals}
@@ -395,12 +396,12 @@ const DashboardContent: React.FC<DashboardContentProps> = ({
       </LeftWideContent>
       <RightNarrowContent>
         <TreasurySnapshot
-          dao={dao}
+          daoAddressOrEns={daoAddressOrEns}
           transfers={transfers}
           totalAssetValue={totalAssetValue}
         />
         <MembershipSnapshot
-          dao={dao}
+          daoAddressOrEns={daoAddressOrEns}
           pluginType={pluginType}
           pluginAddress={pluginAddress}
         />
@@ -432,28 +433,28 @@ const MembersWrapper = styled.div.attrs({
 /* MOBILE DASHBOARD CONTENT ================================================= */
 
 const MobileDashboardContent: React.FC<DashboardContentProps> = ({
-  dao,
+  daoAddressOrEns,
   pluginType,
   pluginAddress,
 }) => {
   const {transfers, totalAssetValue} = useDaoVault();
-  const {data: proposals} = useProposals(dao, pluginType);
+  const {data: proposals} = useProposals(daoAddressOrEns, pluginType);
 
   return (
     <MobileLayout>
       <ProposalSnapshot
-        dao={dao}
+        daoAddressOrEns={daoAddressOrEns}
         pluginAddress={pluginAddress}
         pluginType={pluginType}
         proposals={proposals}
       />
       <TreasurySnapshot
-        dao={dao}
+        daoAddressOrEns={daoAddressOrEns}
         transfers={transfers}
         totalAssetValue={totalAssetValue}
       />
       <MembershipSnapshot
-        dao={dao}
+        daoAddressOrEns={daoAddressOrEns}
         pluginType={pluginType}
         pluginAddress={pluginAddress}
       />
