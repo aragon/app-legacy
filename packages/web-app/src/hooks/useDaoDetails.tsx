@@ -2,7 +2,7 @@ import {Client, DaoDetails} from '@aragon/sdk-client';
 import {isAddress} from '@ethersproject/address';
 import {useQuery} from '@tanstack/react-query';
 import {useCallback, useEffect, useMemo} from 'react';
-import {useNavigate, useParams} from 'react-router-dom';
+import {useLocation, useNavigate, useParams} from 'react-router-dom';
 
 import {useNetwork} from 'context/network';
 import {resolveDaoAvatarIpfsCid, toDisplayEns} from 'utils/library';
@@ -73,6 +73,7 @@ export const useDaoQuery = (
 export const useDaoDetailsQuery = () => {
   const {dao} = useParams();
   const navigate = useNavigate();
+  const location = useLocation();
 
   const daoAddressOrEns = dao?.toLowerCase();
   const apiResponse = useDaoQuery(daoAddressOrEns);
@@ -107,6 +108,7 @@ export const useDaoDetailsQuery = () => {
     apiResponse.error,
     apiResponse.isFetched,
     daoAddressOrEns,
+    location.pathname,
     navigate,
   ]);
 
