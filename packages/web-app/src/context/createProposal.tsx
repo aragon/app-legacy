@@ -48,7 +48,7 @@ import {
   minutesToMills,
   offsetToMills,
 } from 'utils/date';
-import {customJSONReplacer, isENSDomain} from 'utils/library';
+import {customJSONReplacer} from 'utils/library';
 import {Proposal} from 'utils/paths';
 import {
   CacheProposalParams,
@@ -65,6 +65,7 @@ import {useGlobalModalContext} from './globalModals';
 import {useNetwork} from './network';
 import {usePrivacyContext} from './privacyContext';
 import {useProviders} from './providers';
+import {isAddress} from 'ethers/lib/utils';
 
 type Props = {
   showTxModal: boolean;
@@ -144,7 +145,7 @@ const CreateProposalProvider: React.FC<Props> = ({
           let receiver = action.to;
           /* TODO: SDK doesn't accept ens names, this should be removed once they
            fixed the issue */
-          if (isENSDomain(action.to)) {
+          if (!isAddress(action.to)) {
             receiver = (await infura?.resolveName(action.to)) as string;
           }
 

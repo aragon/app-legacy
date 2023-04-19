@@ -557,15 +557,3 @@ export function toDisplayEns(ensName?: string) {
     else return ensName;
   else return '';
 }
-
-/**
- * display if the input is ensDomain or not
- * @param ensName ens name
- * @returns a boolean that indicates if the input is ens name or not
- */
-export function isENSDomain(ensName?: string) {
-  const ensDomainRegex = /^([a-zA-Z0-9-_]+\.)+eth$/;
-
-  if (ensName) return ensDomainRegex.test(ensName);
-  else return false;
-}
