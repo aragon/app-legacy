@@ -77,8 +77,6 @@ const Transfers: React.FC = () => {
     ]
   );
 
-  const SectionContainer = styled.div.attrs({className: 'my-3 desktop:my-5'})``;
-
   /**
    * Note: We can add a nested iterator for both sections and transfer cards
    */
@@ -181,3 +179,4 @@ const Transfers: React.FC = () => {
 };
 
 export default withTransaction('Transfers', 'component')(Transfers);
+const SectionContainer = styled.div.attrs({className: 'my-3 desktop:my-5'})``;
