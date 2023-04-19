@@ -64,6 +64,7 @@ import {
 import {useGlobalModalContext} from './globalModals';
 import {useNetwork} from './network';
 import {usePrivacyContext} from './privacyContext';
+import {useProviders} from './providers';
 
 type Props = {
   showTxModal: boolean;
@@ -84,6 +85,7 @@ const CreateProposalProvider: React.FC<Props> = ({
 
   const {network} = useNetwork();
   const {isOnWrongNetwork, provider, address} = useWallet();
+  const {infura} = useProviders();
 
   const {data: dao, isLoading} = useDaoParam();
   const {data: daoDetails, isLoading: daoDetailsLoading} = useDaoDetails(dao);
@@ -143,7 +145,7 @@ const CreateProposalProvider: React.FC<Props> = ({
           /* TODO: SDK doesn't accept ens names, this should be removed once they
            fixed the issue */
           if (isENSDomain(action.to)) {
-            receiver = (await provider?.resolveName(action.to)) as string;
+            receiver = (await infura?.resolveName(action.to)) as string;
           }
 
           actions.push(
@@ -227,7 +229,7 @@ const CreateProposalProvider: React.FC<Props> = ({
     });
 
     return Promise.all(actions);
-  }, [client, getValues, pluginClient, pluginSettings, pluginAddress]);
+  }, [getValues, pluginClient, client, infura, pluginAddress, pluginSettings]);
 
   // Because getValues does NOT get updated on each render, leaving this as
   // a function to be called when data is needed instead of a memoized value
