@@ -21,6 +21,8 @@ import {useMappedBreadcrumbs} from 'hooks/useMappedBreadcrumbs';
 import useScreen from 'hooks/useScreen';
 import {trackEvent} from 'services/analytics';
 import {sortTokens} from 'utils/tokens';
+import PageEmptyState from 'containers/pageEmptyState';
+import NoProposals from 'public/noProposals.svg';
 
 type Sign = -1 | 0 | 1;
 const colors: Record<Sign, string> = {
@@ -45,6 +47,8 @@ const Finance: React.FC = () => {
 
   sortTokens(tokens, 'treasurySharePercentage', true);
 
+  console.log('view', tokens);
+
   /*************************************************
    *                    Render                     *
    *************************************************/
@@ -52,78 +56,95 @@ const Finance: React.FC = () => {
     return <Loading />;
   }
 
+  if (tokens.length === 0)
+    return (
+      <PageEmptyState
+        title={'Deposit your very first funds'}
+        subtitle={
+          'governance.emptyState.subtitle' as unknown as TemplateStringsArray
+        }
+        src={NoProposals}
+        buttonLabel={'Deposit first funds'}
+        onClick={() => {
+          open('deposit');
+        }}
+      />
+    );
+
   return (
-    <PageWrapper
-      customHeader={
-        <HeaderContainer>
-          <Header>
-            {!isDesktop && (
-              <Breadcrumb
-                icon={icon}
-                crumbs={breadcrumbs}
-                tag={tag}
-                onClick={navigate}
-              />
-            )}
+    <>
+      <PageWrapper
+        customHeader={
+          <HeaderContainer>
+            <Header>
+              {!isDesktop && (
+                <Breadcrumb
+                  icon={icon}
+                  crumbs={breadcrumbs}
+                  tag={tag}
+                  onClick={navigate}
+                />
+              )}
 
-            {/* Main */}
-            <ContentContainer>
-              <TextContainer>
-                <Title>
-                  {new Intl.NumberFormat('en-US', {
-                    style: 'currency',
-                    currency: 'USD',
-                  }).format(totalAssetValue)}
-                </Title>
-
-                <SubtitleContainer>
-                  <Tag label="24h" />
-                  <Description
-                    className={colors[Math.sign(totalAssetChange) as Sign]}
-                  >
+              {/* Main */}
+              <ContentContainer>
+                <TextContainer>
+                  <Title>
                     {new Intl.NumberFormat('en-US', {
                       style: 'currency',
                       currency: 'USD',
-                      signDisplay: 'always',
-                    }).format(totalAssetChange)}
-                  </Description>
-                </SubtitleContainer>
-              </TextContainer>
+                    }).format(totalAssetValue)}
+                  </Title>
 
-              {/* Button */}
-              <ButtonText
-                size="large"
-                label={t('TransferModal.newTransfer')}
-                iconLeft={<IconAdd />}
-                className="w-full tablet:w-auto"
-                onClick={() => {
-                  trackEvent('finance_newTransferBtn_clicked', {
-                    dao_address: daoId,
-                  });
-                  open();
-                }}
-              />
-            </ContentContainer>
-          </Header>
-        </HeaderContainer>
-      }
-    >
-      <div className={'h-4'} />
-      <TokenSectionWrapper title={t('finance.tokenSection')}>
-        <ListContainer>
-          <TokenList tokens={tokens.slice(0, 5)} />
-        </ListContainer>
-      </TokenSectionWrapper>
-      <div className={'h-4'} />
-      <TransferSectionWrapper title={t('finance.transferSection')} showButton>
-        <ListContainer>
-          <TransferList
-            transfers={transfers.slice(0, 5)}
-            onTransferClick={handleTransferClicked}
-          />
-        </ListContainer>
-      </TransferSectionWrapper>
-    </PageWrapper>
+                  <SubtitleContainer>
+                    <Tag label="24h" />
+                    <Description
+                      className={colors[Math.sign(totalAssetChange) as Sign]}
+                    >
+                      {new Intl.NumberFormat('en-US', {
+                        style: 'currency',
+                        currency: 'USD',
+                        signDisplay: 'always',
+                      }).format(totalAssetChange)}
+                    </Description>
+                  </SubtitleContainer>
+                </TextContainer>
+
+                {/* Button */}
+                <ButtonText
+                  size="large"
+                  label={t('TransferModal.newTransfer')}
+                  iconLeft={<IconAdd />}
+                  className="w-full tablet:w-auto"
+                  onClick={() => {
+                    trackEvent('finance_newTransferBtn_clicked', {
+                      dao_address: daoId,
+                    });
+                    open();
+                  }}
+                />
+              </ContentContainer>
+            </Header>
+          </HeaderContainer>
+        }
+      >
+        <div className={'h-4'} />
+        <TokenSectionWrapper title={t('finance.tokenSection')}>
+          <ListContainer>
+            <TokenList tokens={tokens.slice(0, 5)} />
+          </ListContainer>
+        </TokenSectionWrapper>
+        <div className={'h-4'} />
+        <TransferSectionWrapper title={t('finance.transferSection')} showButton>
+          <ListContainer>
+            <TransferList
+              transfers={transfers.slice(0, 5)}
+              onTransferClick={handleTransferClicked}
+            />
+          </ListContainer>
+        </TransferSectionWrapper>
+      </PageWrapper>
+    </>
   );
 };
 

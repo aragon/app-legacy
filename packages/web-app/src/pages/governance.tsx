@@ -81,7 +81,9 @@ const Governance: React.FC = () => {
     return (
       <PageEmptyState
         title={t('governance.emptyState.title')}
-        subtitle={'governance.emptyState.subtitle'}
+        subtitle={
+          'governance.emptyState.subtitle' as unknown as TemplateStringsArray
+        }
         src={NoProposals}
         buttonLabel={t('newProposal.title')}
         onClick={() => {

@@ -7,7 +7,7 @@ import {useTranslation} from 'react-i18next';
 
 type PageEmptyStateProps = {
   title: string;
-  subtitle: string;
+  subtitle: TemplateStringsArray;
   src: string;
   onClick?: () => void;
   buttonLabel: string;

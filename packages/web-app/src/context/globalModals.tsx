@@ -20,6 +20,7 @@ type GlobalModalsContextType = {
   isMobileMenuOpen: boolean;
   isManageWalletOpen: boolean;
   isGatingOpen: boolean;
+  isDepositOpen: boolean;
   open: (arg?: MenuTypes) => void;
   close: (arg?: MenuTypes) => void;
 };
@@ -36,7 +37,8 @@ export type MenuTypes =
   | 'mobileMenu'
   | 'network'
   | 'manageWallet'
-  | 'gating';
+  | 'gating'
+  | 'deposit';
 
 type Props = Record<'children', ReactNode>;
 
@@ -67,6 +69,8 @@ const GlobalModalsProvider: React.FC<Props> = ({children}) => {
     useState<GlobalModalsContextType['isManageWalletOpen']>(false);
   const [isGatingOpen, setIsGatingOpen] =
     useState<GlobalModalsContextType['isGatingOpen']>(false);
+  const [isDepositOpen, setIsDepositOpen] =
+    useState<GlobalModalsContextType['isDepositOpen']>(false);
 
   const open = (type?: MenuTypes) => {
     switch (type) {
@@ -99,6 +103,9 @@ const GlobalModalsProvider: React.FC<Props> = ({children}) => {
         break;
       case 'gating':
         setIsGatingOpen(true);
+        break;
+      case 'deposit':
+        setIsDepositOpen(true);
         break;
       default:
         setIsTransferOpen(true);
@@ -138,6 +145,9 @@ const GlobalModalsProvider: React.FC<Props> = ({children}) => {
       case 'gating':
         setIsGatingOpen(false);
         break;
+      case 'deposit':
+        setIsDepositOpen(false);
+        break;
       default:
         setIsTransferOpen(false);
         break;
@@ -166,12 +176,14 @@ const GlobalModalsProvider: React.FC<Props> = ({children}) => {
       isMobileMenuOpen,
       isManageWalletOpen,
       isGatingOpen,
+      isDepositOpen,
       open,
       close,
     }),
     [
       isAddActionOpen,
       isAddressesOpen,
+      isDepositOpen,
       isGatingOpen,
       isManageWalletOpen,
       isMobileMenuOpen,

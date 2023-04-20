@@ -34,7 +34,11 @@ import {CHAIN_METADATA} from 'utils/constants';
 import {formatDate} from 'utils/date';
 import {toDisplayEns} from 'utils/library';
 import {Dashboard as DashboardPath, NotFound} from 'utils/paths';
-import {Container, EmptyStateContainer, EmptyStateHeading} from './governance';
+import {Container} from './governance';
+import {
+  EmptyStateContainer,
+  EmptyStateHeading,
+} from 'containers/pageEmptyState';
 
 enum DaoCreationState {
   ASSEMBLING_DAO,
