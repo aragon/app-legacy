@@ -3,6 +3,7 @@ import {
   IconLinkExternal,
   Link,
   WalletInput,
+  shortenAddress,
 } from '@aragon/ui-components';
 import ModalBottomSheetSwitcher from 'components/modalBottomSheetSwitcher';
 import {useGlobalModalContext} from 'context/globalModals';
@@ -40,6 +41,7 @@ const DepositModal: React.FC = () => {
               adornmentText={'Copy'}
               value={daoDetails?.ensDomain}
               onAdornmentClick={() => null}
+              disabledFilled
             />
             <Divider />
           </>
@@ -50,8 +52,9 @@ const DepositModal: React.FC = () => {
         <BodyWrapper>
           <WalletInput
             adornmentText={'Copy'}
-            value={daoDetails?.address}
+            value={shortenAddress(daoDetails?.address as string)}
             onAdornmentClick={() => null}
+            disabledFilled
           />
           <Link
             href={
