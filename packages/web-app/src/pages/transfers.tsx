@@ -6,6 +6,7 @@ import React, {useCallback, useMemo, useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 
+import {Loading} from 'components/temporary';
 import TransferList from 'components/transferList';
 import {PageWrapper, TransferSectionWrapper} from 'components/wrappers';
 import {useGlobalModalContext} from 'context/globalModals';
@@ -20,7 +21,7 @@ const Transfers: React.FC = () => {
   const {t, i18n} = useTranslation();
   const {handleTransferClicked} = useTransactionDetailContext();
 
-  const {data: daoDetails} = useDaoDetailsQuery();
+  const {data: daoDetails, isLoading} = useDaoDetailsQuery();
   const {data: categorizedTransfers, totalTransfers} = useCategorizedTransfers(
     daoDetails?.address ?? ''
   );
@@ -76,6 +77,10 @@ const Transfers: React.FC = () => {
       categorizedTransfers.year.length,
     ]
   );
+
+  if (isLoading) {
+    return <Loading />;
+  }
 
   /**
    * Note: We can add a nested iterator for both sections and transfer cards

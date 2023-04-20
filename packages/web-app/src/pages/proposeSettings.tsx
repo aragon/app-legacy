@@ -134,7 +134,7 @@ const ProposeSettings: React.FC = () => {
         navLabel={t('navLinks.settings')}
         returnPath={generatePath(EditSettings, {
           network,
-          dao: daoDetails?.address,
+          dao: toDisplayEns(daoDetails?.ensDomain) || daoDetails?.address,
         })}
       >
         <Step

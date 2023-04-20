@@ -11,7 +11,6 @@ import {useDaoDetailsQuery} from 'hooks/useDaoDetails';
 import {useDaoMembers} from 'hooks/useDaoMembers';
 import {PluginTypes} from 'hooks/usePluginClient';
 import {usePluginSettings} from 'hooks/usePluginSettings';
-import {useParams} from 'react-router-dom';
 import {fetchTokenPrice} from 'services/prices';
 import {formatUnits} from 'utils/library';
 import {
@@ -93,10 +92,10 @@ const Action: React.FC<ActionsComponentProps> = ({name, actionIndex}) => {
 };
 
 const ActionBuilder: React.FC = () => {
-  const {dao: daoAddressOrEns} = useParams();
+  const {data: daoDetails} = useDaoDetailsQuery();
   const {network} = useNetwork();
   const {selectedActionIndex: index, actions} = useActionsContext();
-  const {data: tokens} = useDaoBalances(daoAddressOrEns?.toLowerCase() || '');
+  const {data: tokens} = useDaoBalances(daoDetails?.address || '');
   const {setValue, resetField, clearErrors} = useFormContext();
 
   /*************************************************

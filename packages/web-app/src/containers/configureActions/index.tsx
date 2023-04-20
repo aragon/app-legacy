@@ -12,11 +12,11 @@ import {useGlobalModalContext} from 'context/globalModals';
 import {useDaoActions} from 'hooks/useDaoActions';
 
 const ConfigureActions: React.FC = () => {
-  const {data: daoId} = useParams();
+  const {data: daoAddressOrEns} = useParams();
   const {t} = useTranslation();
   const {open} = useGlobalModalContext();
   const {actions} = useActionsContext();
-  const {data: availableActions} = useDaoActions(daoId ?? '');
+  const {data: availableActions} = useDaoActions(daoAddressOrEns ?? '');
 
   return (
     <FormWrapper>
