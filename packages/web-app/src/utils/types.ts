@@ -376,8 +376,16 @@ export type SmartContractAction = {
   name: string;
   type: string;
   stateMutability: string;
-  // inputs:
+  inputs: Input[];
 };
+
+export interface Input {
+  name: string;
+  type: string;
+  indexed?: boolean;
+  components?: Input[];
+  internalType?: string;
+}
 
 export type SmartContract = {
   actions: Array<SmartContractAction>;

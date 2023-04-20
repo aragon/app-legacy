@@ -5,11 +5,12 @@ import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 
 import {StateEmpty} from 'components/stateEmpty';
-import {SmartContract, SmartContractAction} from 'utils/types';
+import {SmartContract} from 'utils/types';
 import ActionListGroup from '../components/actionListGroup';
 import {ListItemContract} from '../components/listItemContract';
 import SmartContractListGroup from '../components/smartContractListGroup';
 import Header from './header';
+import InputForm from '../components/inputForm';
 
 type DesktopModalProps = {
   isOpen: boolean;
@@ -20,10 +21,9 @@ type DesktopModalProps = {
 
 const DesktopModal: React.FC<DesktopModalProps> = props => {
   const {t} = useTranslation();
-  const [selectedSC, selectedAction]: [SmartContract, SmartContractAction] =
-    useWatch({
-      name: ['selectedSC', 'selectedAction'],
-    });
+  const [selectedSC]: [SmartContract] = useWatch({
+    name: ['selectedSC'],
+  });
 
   return (
     <StyledModal isOpen={props.isOpen} onClose={props.onClose}>
@@ -63,17 +63,7 @@ const DesktopModal: React.FC<DesktopModalProps> = props => {
           )}
         </Aside>
 
-        <Main>
-          {selectedSC ? (
-            selectedAction && (
-              <div className="p-6 h-full bg-white">
-                TBD: Form to collect inputs for {selectedAction.name} function
-              </div>
-            )
-          ) : (
-            <DesktopModalEmptyState />
-          )}
-        </Main>
+        <Main>{selectedSC ? <InputForm /> : <DesktopModalEmptyState />}</Main>
       </Wrapper>
     </StyledModal>
   );

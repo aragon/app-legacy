@@ -8,10 +8,10 @@ import {TemporarySection} from 'components/temporary';
 import ContractAddressValidation from 'containers/smartContractComposer/components/contractAddressValidation';
 import SmartContractList from 'containers/smartContractComposer/contractListModal';
 import EmptyState from 'containers/smartContractComposer/emptyStateModal/emptyState';
-import {useWallet} from 'hooks/useWallet';
+import {SmartContract, SmartContractAction} from 'utils/types';
 import {getVerifiedSmartContracts} from 'services/cache';
+import {useWallet} from 'hooks/useWallet';
 import {CHAIN_METADATA} from 'utils/constants';
-import {SmartContract} from 'utils/types';
 
 const defaultValues = {
   contractAddress: '',
@@ -23,6 +23,7 @@ export type SccFormData = {
   contractAddress: string;
   contracts: SmartContract[];
   selectedSC: SmartContract;
+  selectedAction: SmartContractAction;
 };
 
 const SCC: React.FC = () => {
