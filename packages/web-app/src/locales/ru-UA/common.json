@@ -248,7 +248,7 @@
       "title": "Create your first proposal",
       "subtitle": "What's the first thing your community needs to decide? For ideas on how to structure proposals, read this guide {{link}}.",
       "subtitleLinkLabel": "read this guide",
-      "subtitleLinkURL": "https://aragon.org/how-to-guides/how-to-structure-dao-proposals-and-build-proposal-processes",
+      "subtitleLinkURL": "https://aragon.org/how-to/how-to-structure-dao-proposals-and-build-proposal-processes",
       "description": "Get your community involved in the decision-making process. Learn more in our proposal guide {{link}}.",
       "descriptionLinkLabel": "proposal guide",
       "descriptionLinkURL": "https://aragon.org/how-to/structure-dao-proposals-and-build-proposal-processes"
@@ -651,7 +651,7 @@
       "whiteListWalletAlertText": "Your connected wallet was automatically added to the list. You can remove it if you like.",
       "createTokenHelptext": " Define the token details and distribute tokens to a core team and DAO treasury. For more on token minting best practices, ",
       "createTokenHelptextLinkLabel": "read this guide",
-      "createTokenHelptextLinkURL": "https://aragon.org/how-to-guides/how-to-mint-dao-governance-tokens",
+      "createTokenHelptextLinkURL": "https://aragon.org/how-to/how-to-mint-dao-governance-tokens",
       "membership": "Who can participate in governance?",
       "eligibility": {
         "optionTitle": "Who is eligible?",
