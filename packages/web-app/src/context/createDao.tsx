@@ -201,7 +201,7 @@ const CreateDaoProvider: React.FC = ({children}) => {
         minProposerVotingPower:
           eligibilityType === 'token' && eligibilityTokenAmount !== undefined
             ? parseUnits(eligibilityTokenAmount.toString(), 18).toBigInt()
-            : BigInt(0),
+            : BigInt(1000000000000000000),
         votingMode,
       },
       translatedNetwork,
