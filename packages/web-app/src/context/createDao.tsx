@@ -199,7 +199,7 @@ const CreateDaoProvider: React.FC = ({children}) => {
         minParticipation: parseInt(minimumParticipation) / 100,
         supportThreshold: parseInt(minimumApproval) / 100,
         minProposerVotingPower:
-          eligibilityType === 'token'
+          eligibilityType === 'token' && eligibilityTokenAmount !== undefined
             ? parseUnits(eligibilityTokenAmount.toString(), 18).toBigInt()
             : BigInt(0),
         votingMode,
