@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 import React, {ButtonHTMLAttributes} from 'react';
 
-import {IconType} from '../icons';
+import {AvatarDao} from '../avatar';
 
 type CustomButtonProps = Omit<
   ButtonHTMLAttributes<HTMLButtonElement>,
@@ -28,9 +28,9 @@ export type ListItemActionProps = CustomButtonProps & {
    */
   subtitle?: string;
   /** Left aligned. Both left and right icon can be present simultaneously */
-  iconLeft?: React.FunctionComponentElement<IconType>;
+  iconLeft?: React.ReactElement | string;
   /** Right aligned. Both left and right icon can be present simultaneously */
-  iconRight?: React.FunctionComponentElement<IconType>;
+  iconRight?: React.ReactElement;
 };
 
 export const ListItemAction: React.FC<ListItemActionProps> = ({
@@ -44,7 +44,7 @@ export const ListItemAction: React.FC<ListItemActionProps> = ({
   return (
     <Container {...props} mode={mode} data-testid="listItem-action">
       <LeftContent>
-        {iconLeft && <span>{iconLeft}</span>}
+        <RenderIconLeft icon={iconLeft} label={title} />
         {/* This could be done with label. However, I can't get the label's text
          to inherit the color (for example, when selected mode is on) */}
         <LabelContainer>
@@ -54,6 +54,22 @@ export const ListItemAction: React.FC<ListItemActionProps> = ({
       </LeftContent>
       {iconRight && <span>{iconRight}</span>}
     </Container>
+  );
+};
+
+// NOTE: Temporary, to be refactored with new version of ODS
+const RenderIconLeft: React.FC<{
+  icon?: ListItemActionProps['iconLeft'];
+  label?: string;
+}> = ({icon, label}) => {
+  if (!icon) {
+    return null;
+  }
+
+  return typeof icon === 'string' ? (
+    <AvatarDao daoName={label || icon} src={icon} size="small" />
+  ) : (
+    <span>{icon}</span>
   );
 };
 
