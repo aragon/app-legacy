@@ -8,10 +8,10 @@ import {TemporarySection} from 'components/temporary';
 import ContractAddressValidation from 'containers/smartContractComposer/components/contractAddressValidation';
 import SmartContractList from 'containers/smartContractComposer/contractListModal';
 import EmptyState from 'containers/smartContractComposer/emptyStateModal/emptyState';
-import {SmartContract} from 'utils/types';
-import {getVerifiedSmartContracts} from 'services/cache';
 import {useWallet} from 'hooks/useWallet';
+import {getVerifiedSmartContracts} from 'services/cache';
 import {CHAIN_METADATA} from 'utils/constants';
+import {SmartContract} from 'utils/types';
 
 const defaultValues = {
   contractAddress: '',

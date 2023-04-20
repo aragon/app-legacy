@@ -18,7 +18,7 @@ import ActionListGroup from '../components/actionListGroup';
 import SmartContractListGroup from '../components/smartContractListGroup';
 import DesktopModal from '../desktopModal';
 import {ActionSearchInput} from '../desktopModal/header';
-import {SCCListItemAction} from '../components/sccListItemAction';
+import {ListItemContract} from '../components/listItemContract';
 
 type Props = {
   isOpen: boolean;
@@ -50,7 +50,7 @@ const SmartContractList: React.FC<Props> = props => {
       <Content>
         {selectedSC ? (
           <div>
-            <SCCListItemAction
+            <ListItemContract
               key={selectedSC.address}
               title={selectedSC.name}
               subtitle={`${selectedSC.actions.length} Actions to compose`}

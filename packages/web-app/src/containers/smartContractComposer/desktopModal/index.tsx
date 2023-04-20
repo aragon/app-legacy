@@ -7,7 +7,7 @@ import styled from 'styled-components';
 import {StateEmpty} from 'components/stateEmpty';
 import {SmartContract, SmartContractAction} from 'utils/types';
 import ActionListGroup from '../components/actionListGroup';
-import {SCCListItemAction} from '../components/sccListItemAction';
+import {ListItemContract} from '../components/listItemContract';
 import SmartContractListGroup from '../components/smartContractListGroup';
 import Header from './header';
 
@@ -32,7 +32,7 @@ const DesktopModal: React.FC<DesktopModalProps> = props => {
         <Aside>
           {selectedSC ? (
             <>
-              <SCCListItemAction
+              <ListItemContract
                 key={selectedSC.address}
                 title={selectedSC.name}
                 subtitle={`${selectedSC.actions.length} Actions to compose`}

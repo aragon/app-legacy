@@ -159,11 +159,11 @@ const ContractAddressValidation: React.FC<Props> = props => {
 
   const addressValidator = (value: string) => {
     // duplication: contract already connected
-    // const addressExists = contracts.some(
-    //   c => c.address.toLowerCase() === value.toLowerCase()
-    // );
+    const addressExists = contracts.some(
+      c => c.address.toLowerCase() === value.toLowerCase()
+    );
 
-    // if (addressExists) return t('errors.duplicateContractAddress');
+    if (addressExists) return t('errors.duplicateContractAddress');
 
     // check if address is valid address string
     if (isAddress(value)) return true;
