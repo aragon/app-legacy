@@ -7,7 +7,6 @@ import {
 import ModalBottomSheetSwitcher from 'components/modalBottomSheetSwitcher';
 import {useGlobalModalContext} from 'context/globalModals';
 import {useNetwork} from 'context/network';
-import {useDaoDetails} from 'hooks/useDaoDetails';
 import {useDaoParam} from 'hooks/useDaoParam';
 import React from 'react';
 import {useTranslation} from 'react-i18next';
@@ -16,7 +15,7 @@ import {CHAIN_METADATA} from 'utils/constants';
 
 const DepositModal: React.FC = () => {
   const {t} = useTranslation();
-  const {isDepositOpen, close, open} = useGlobalModalContext();
+  const {isDepositOpen, close} = useGlobalModalContext();
   const {daoDetails} = useDaoParam();
   const {network} = useNetwork();
 
@@ -42,6 +41,7 @@ const DepositModal: React.FC = () => {
               value={daoDetails?.ensDomain}
               onAdornmentClick={() => null}
             />
+            <Divider />
           </>
         )}
         <AddressHeaderWrapper>
@@ -81,6 +81,16 @@ const DepositModal: React.FC = () => {
   );
 };
 
+const Divider: React.FC = () => {
+  return (
+    <DividerWrapper>
+      <hr className="w-full h-px bg-ui-200" />
+      <span className="px-1 text-ui-400">or</span>
+      <hr className="w-full h-px bg-ui-200" />
+    </DividerWrapper>
+  );
+};
+
 const Container = styled.div.attrs({
   className: 'p-3',
 })``;
@@ -107,6 +117,10 @@ const BodyWrapper = styled.div.attrs({
 
 const ActionWrapper = styled.div.attrs({
   className: 'flex space-x-1.5',
+})``;
+
+const DividerWrapper = styled.div.attrs({
+  className: 'flex items-center my-1',
 })``;
 
 export default DepositModal;
