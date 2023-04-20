@@ -139,7 +139,7 @@ const CreateProposalProvider: React.FC<Props> = ({
     // return an empty array for undefined clients
     if (!pluginClient || !client) return Promise.resolve([] as DaoAction[]);
 
-    getNonEmptyActions(actionsFromForm).forEach(async (action: Action) => {
+    for await (const action of getNonEmptyActions(actionsFromForm)) {
       switch (action.name) {
         case 'withdraw_assets': {
           let receiver = action.to;
@@ -227,7 +227,7 @@ const CreateProposalProvider: React.FC<Props> = ({
           break;
         }
       }
-    });
+    }
 
     return Promise.all(actions);
   }, [getValues, pluginClient, client, infura, pluginAddress, pluginSettings]);
@@ -381,6 +381,7 @@ const CreateProposalProvider: React.FC<Props> = ({
         navigate(generatePath(Proposal, {network, dao, id: proposalId}));
         break;
       default: {
+        setProposalCreationData(undefined);
         setCreationProcessState(TransactionState.WAITING);
         setShowTxModal(false);
         stopPolling();
