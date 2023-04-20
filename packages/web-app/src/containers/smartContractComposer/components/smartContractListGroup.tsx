@@ -1,10 +1,15 @@
-import {IconChevronRight, ListItemAction} from '@aragon/ui-components';
+import {
+  IconChevronRight,
+  // ListItemAction,
+} from '@aragon/ui-components';
+
 import React from 'react';
 import {useFormContext} from 'react-hook-form';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 
 import {SccFormData} from 'pages/demoScc';
+import {SCCListItemAction} from './sccListItemAction';
 
 const SmartContractListGroup: React.FC = () => {
   const {t} = useTranslation();
@@ -22,12 +27,11 @@ const SmartContractListGroup: React.FC = () => {
             })}
       </ContractNumberIndicator>
       {contracts.map(c => (
-        // TODO: replace with new listitem that takes image
-        // or custom component
-        <ListItemAction
+        <SCCListItemAction
           key={c.address}
           title={c.name}
           subtitle={`${c.actions.length} Actions`}
+          logo={c.logo}
           bgWhite
           iconRight={<IconChevronRight />}
           onClick={() => setValue('selectedSC', c)}

@@ -5,7 +5,6 @@ import {
   IconClose,
   IconHome,
   IconMenuVertical,
-  ListItemAction,
 } from '@aragon/ui-components';
 import React from 'react';
 import {useFormContext, useWatch} from 'react-hook-form';
@@ -19,6 +18,7 @@ import ActionListGroup from '../components/actionListGroup';
 import SmartContractListGroup from '../components/smartContractListGroup';
 import DesktopModal from '../desktopModal';
 import {ActionSearchInput} from '../desktopModal/header';
+import {SCCListItemAction} from '../components/sccListItemAction';
 
 type Props = {
   isOpen: boolean;
@@ -50,11 +50,12 @@ const SmartContractList: React.FC<Props> = props => {
       <Content>
         {selectedSC ? (
           <div>
-            <ListItemAction
+            <SCCListItemAction
               key={selectedSC.address}
               title={selectedSC.name}
               subtitle={`${selectedSC.actions.length} Actions to compose`}
               bgWhite
+              logo={selectedSC.logo}
               iconRight={<IconMenuVertical />}
             />
             <ActionListGroup
