@@ -72,6 +72,7 @@ const ProposalStepper: React.FC<ProposalStepperType> = ({
   return (
     <FullScreenStepper
       wizardProcessName={t('newProposal.title')}
+      processType="ProposalCreation"
       navLabel={t('newProposal.title')}
       returnPath={generatePath(Governance, {network, dao: daoDetails.address})}
     >

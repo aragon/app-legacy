@@ -255,6 +255,7 @@ const CreateDAO: React.FC = () => {
           wizardProcessName={t('createDAO.title')}
           navLabel={t('createDAO.title')}
           returnPath={Landing}
+          processType="DaoCreation"
         >
           <Step
             fullWidth

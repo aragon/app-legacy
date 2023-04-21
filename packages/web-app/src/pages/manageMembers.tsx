@@ -121,6 +121,7 @@ const ManageMembers: React.FC = () => {
           <FullScreenStepper
             wizardProcessName={t('newProposal.title')}
             navLabel={t('labels.manageMember')}
+            processType="ProposalCreation"
             returnPath={generatePath(Community, {
               network,
               dao: toDisplayEns(daoDetails.ensDomain) || daoDetails.address,

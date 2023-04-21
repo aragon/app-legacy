@@ -175,6 +175,7 @@ const NewWithdraw: React.FC = () => {
             <FullScreenStepper
               wizardProcessName={t('TransferModal.item2Title')}
               navLabel={t('allTransfer.newTransfer')}
+              processType="ProposalCreation"
               returnPath={generatePath(Finance, {
                 network,
                 dao: toDisplayEns(daoDetails?.ensDomain) || daoDetails?.address,
