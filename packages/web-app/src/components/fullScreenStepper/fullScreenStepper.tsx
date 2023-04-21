@@ -1,21 +1,30 @@
 import {
-  IconChevronLeft,
-  Wizard,
-  ButtonText,
-  IconChevronRight,
   Breadcrumb,
+  ButtonText,
+  IconChevronLeft,
+  IconChevronRight,
+  Wizard,
 } from '@aragon/ui-components';
-import React, {createContext, useContext, useEffect, useMemo} from 'react';
+import React, {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react';
 import {useTranslation} from 'react-i18next';
 import {useNavigate} from 'react-router-dom';
 import styled from 'styled-components';
 
-import {StepProps} from './step';
+import ExitProcessMenu, {ProcessType} from 'containers/exitProcessMenu';
 import {useStepper} from 'hooks/useStepper';
+import {StepProps} from './step';
 
 export type FullScreenStepperProps = {
   navLabel: string;
   returnPath: string;
+  processType?: ProcessType; // if no process type, don't use warning
   wizardProcessName: string;
   children: React.FunctionComponentElement<StepProps>[];
 };
@@ -36,6 +45,7 @@ export const useFormStep = () =>
 
 export const FullScreenStepper: React.FC<FullScreenStepperProps> = ({
   wizardProcessName,
+  processType,
   children,
   navLabel,
   returnPath,
@@ -43,6 +53,7 @@ export const FullScreenStepper: React.FC<FullScreenStepperProps> = ({
   const {t} = useTranslation();
   const navigate = useNavigate();
 
+  const [showExitProcessMenu, setShowExitProcessMenu] = useState(false);
   const {currentStep, prev, next, setStep} = useStepper(children.length);
 
   const currentIndex = currentStep - 1;
@@ -88,11 +99,33 @@ export const FullScreenStepper: React.FC<FullScreenStepperProps> = ({
     }
   }, [currentStep, hideWizard, previousHideWizards]);
 
+  /*************************************************
+   *                    Effects                    *
+   *************************************************/
   // Scroll Top each time the CurrentStep changed
   useEffect(() => {
     window.scrollTo({top: 0, behavior: 'smooth'});
   }, [currentStep]);
 
+  /*************************************************
+   *              Callbacks & Handlers             *
+   *************************************************/
+  const handleExitButtonClicked = useCallback(() => {
+    if (processType) {
+      setShowExitProcessMenu(true);
+    } else {
+      navigate(returnPath);
+    }
+  }, [processType, navigate, returnPath]);
+
+  const exitProcess = useCallback(() => {
+    setShowExitProcessMenu(false);
+    navigate(returnPath);
+  }, [navigate, returnPath]);
+
+  /*************************************************
+   *                     Render                    *
+   *************************************************/
   return (
     <FullScreenStepperContext.Provider value={value}>
       <Layout>
@@ -112,12 +145,15 @@ export const FullScreenStepper: React.FC<FullScreenStepperProps> = ({
                     label: navLabel,
                     path: returnPath,
                   }}
-                  onClick={(path: string) => navigate(path)}
+                  onClick={handleExitButtonClicked}
                 />
               }
             />
           )}
-          {customHeader}
+          {customHeader &&
+            React.cloneElement(customHeader, {
+              onExitButtonClick: handleExitButtonClicked,
+            })}
         </div>
         <FormLayout fullWidth={fullWidth || false}>
           {children[currentIndex]}
@@ -150,6 +186,14 @@ export const FullScreenStepper: React.FC<FullScreenStepperProps> = ({
           )}
         </FormLayout>
       </Layout>
+      {processType && (
+        <ExitProcessMenu
+          isOpen={showExitProcessMenu}
+          onClose={() => setShowExitProcessMenu(false)}
+          ctaCallback={exitProcess}
+          processType={processType}
+        />
+      )}
     </FullScreenStepperContext.Provider>
   );
 };
