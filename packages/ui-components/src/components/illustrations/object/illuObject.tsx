@@ -20,6 +20,7 @@ import {SmartContract} from './smartContract';
 import {Users} from './users';
 import {Wagmi} from './wagmi';
 import {Wallet} from './wallet';
+import {Warning} from './warning';
 
 export const objectNames = [
   'action',
@@ -39,6 +40,7 @@ export const objectNames = [
   'settings',
   'smart_contract',
   'users',
+  'warning',
   'wagmi',
   'wallet',
 ] as const;
@@ -89,6 +91,8 @@ export const IlluObject: React.FC<
       return <Wagmi {...rest} data-testid="illu-object" />;
     case 'wallet':
       return <Wallet {...rest} data-testid="illu-object" />;
+    case 'warning':
+      return <Warning {...rest} data-testid="illu-object" />;
     default:
       throw new UnknownIllustrationVariantError(object, 'expression');
   }

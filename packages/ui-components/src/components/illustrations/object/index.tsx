@@ -15,5 +15,6 @@ export {Security as security} from './security';
 export {Settings as settings} from './settings';
 export {SmartContract as smart_contract} from './smartContract';
 export {Users as users} from './users';
+export {Warning as warning} from './warning';
 export {Wagmi as wagmi} from './wagmi';
 export {Wallet as wallet} from './wallet';
