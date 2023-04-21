@@ -20,13 +20,13 @@ import {Transfer} from 'utils/types';
 import {htmlIn} from 'utils/htmlIn';
 
 type Props = {
-  dao: string;
+  daoAddressOrEns: string;
   transfers: Transfer[];
   totalAssetValue: number;
 };
 
 const TreasurySnapshot: React.FC<Props> = ({
-  dao,
+  daoAddressOrEns,
   transfers,
   totalAssetValue,
 }) => {
@@ -82,7 +82,9 @@ const TreasurySnapshot: React.FC<Props> = ({
         size="large"
         iconRight={<IconChevronRight />}
         label={t('labels.seeAll')}
-        onClick={() => navigate(generatePath(AllTransfers, {network, dao}))}
+        onClick={() =>
+          navigate(generatePath(AllTransfers, {network, dao: daoAddressOrEns}))
+        }
       />
     </Container>
   );

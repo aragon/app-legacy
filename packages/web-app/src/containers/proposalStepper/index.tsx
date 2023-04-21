@@ -14,9 +14,9 @@ import SetupVotingForm, {
   isValid as setupVotingIsValid,
 } from 'containers/setupVotingForm';
 import {useActionsContext} from 'context/actions';
+import {useGlobalModalContext} from 'context/globalModals';
 import {useNetwork} from 'context/network';
-import {useDaoDetails} from 'hooks/useDaoDetails';
-import {useDaoParam} from 'hooks/useDaoParam';
+import {useDaoDetailsQuery} from 'hooks/useDaoDetails';
 import {PluginTypes} from 'hooks/usePluginClient';
 import {
   isMultisigVotingSettings,
@@ -29,7 +29,6 @@ import {removeUnchangedMinimumApprovalAction} from 'utils/library';
 import {Governance} from 'utils/paths';
 import {Action} from 'utils/types';
 import {actionsAreValid} from 'utils/validators';
-import {useGlobalModalContext} from 'context/globalModals';
 
 type ProposalStepperType = {
   enableTxModal: () => void;
@@ -38,8 +37,7 @@ type ProposalStepperType = {
 const ProposalStepper: React.FC<ProposalStepperType> = ({
   enableTxModal,
 }: ProposalStepperType) => {
-  const {data: dao} = useDaoParam();
-  const {data: daoDetails, isLoading} = useDaoDetails(dao);
+  const {data: daoDetails, isLoading} = useDaoDetailsQuery();
   const {data: pluginSettings, isLoading: settingsLoading} = usePluginSettings(
     daoDetails?.plugins[0].instanceAddress as string,
     daoDetails?.plugins[0].id as PluginTypes
@@ -65,16 +63,17 @@ const ProposalStepper: React.FC<ProposalStepperType> = ({
   /*************************************************
    *                    Render                     *
    *************************************************/
-
   if (isLoading || settingsLoading) {
     return <Loading />;
   }
+
+  if (!daoDetails) return null;
 
   return (
     <FullScreenStepper
       wizardProcessName={t('newProposal.title')}
       navLabel={t('newProposal.title')}
-      returnPath={generatePath(Governance, {network, dao: dao})}
+      returnPath={generatePath(Governance, {network, dao: daoDetails.address})}
     >
       <Step
         wizardTitle={t('newWithdraw.defineProposal.heading')}
@@ -82,7 +81,7 @@ const ProposalStepper: React.FC<ProposalStepperType> = ({
         isNextButtonDisabled={!defineProposalIsValid(dirtyFields, errors)}
         onNextButtonClicked={next => {
           trackEvent('newProposal_nextBtn_clicked', {
-            dao_address: daoDetails?.address as string,
+            dao_address: daoDetails.address,
             step: '1_define_proposal',
             settings: {
               author_address: address,
@@ -112,7 +111,7 @@ const ProposalStepper: React.FC<ProposalStepperType> = ({
               'endUtc',
             ]);
           trackEvent('newProposal_nextBtn_clicked', {
-            dao_address: daoDetails?.address as string,
+            dao_address: daoDetails.address,
             step: '2_setup_voting',
             settings: {
               start: `${startDate}T${startTime}:00${getCanonicalUtcOffset(
@@ -142,7 +141,7 @@ const ProposalStepper: React.FC<ProposalStepperType> = ({
           }
 
           trackEvent('newProposal_nextBtn_clicked', {
-            dao_address: daoDetails?.address as string,
+            dao_address: daoDetails.address,
             step: '3_configure_actions',
             settings: {
               actions: formActions.map((action: Action) => action.name),
@@ -163,7 +162,7 @@ const ProposalStepper: React.FC<ProposalStepperType> = ({
             open('wallet');
           } else {
             trackEvent('newProposal_publishBtn_clicked', {
-              dao_address: daoDetails?.address as string,
+              dao_address: daoDetails.address,
             });
             enableTxModal();
           }

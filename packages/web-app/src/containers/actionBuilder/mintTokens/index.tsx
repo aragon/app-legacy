@@ -14,20 +14,19 @@ import styled from 'styled-components';
 
 import {AccordionMethod} from 'components/accordionMethod';
 import {useActionsContext} from 'context/actions';
+import {useAlertContext} from 'context/alert';
 import {useNetwork} from 'context/network';
 import {useProviders} from 'context/providers';
-import {useDaoDetails} from 'hooks/useDaoDetails';
-import {useDaoParam} from 'hooks/useDaoParam';
+import {useDaoDetailsQuery} from 'hooks/useDaoDetails';
+import {useDaoMembers} from 'hooks/useDaoMembers';
 import {useDaoToken} from 'hooks/useDaoToken';
+import {PluginTypes} from 'hooks/usePluginClient';
 import useScreen from 'hooks/useScreen';
 import {CHAIN_METADATA} from 'utils/constants';
 import {formatUnits} from 'utils/library';
 import {fetchBalance, getTokenInfo} from 'utils/tokens';
 import {ActionIndex} from 'utils/types';
 import {AddressAndTokenRow} from './addressTokenRow';
-import {useAlertContext} from 'context/alert';
-import {useDaoMembers} from 'hooks/useDaoMembers';
-import {PluginTypes} from 'hooks/usePluginClient';
 
 type MintTokensProps = ActionIndex;
 
@@ -101,13 +100,12 @@ export const MintTokenForm: React.FC<MintTokenFormProps> = ({
   standAlone = false,
 }) => {
   const {t} = useTranslation();
-  const {data: dao} = useDaoParam();
   const {isDesktop} = useScreen();
   const {network} = useNetwork();
   const {infura} = useProviders();
   const nativeCurrency = CHAIN_METADATA[network].nativeCurrency;
 
-  const {data: daoDetails} = useDaoDetails(dao);
+  const {data: daoDetails} = useDaoDetailsQuery();
   const {data: daoToken, isLoading: daoTokenLoading} = useDaoToken(
     daoDetails?.plugins[0].instanceAddress || ''
   );

@@ -1,154 +1,133 @@
-import {useReactiveVar} from '@apollo/client';
-import {DaoDetails} from '@aragon/sdk-client';
-import {resolveIpfsCid} from '@aragon/sdk-common';
-import {useEffect, useState} from 'react';
+import {Client, DaoDetails} from '@aragon/sdk-client';
+import {isAddress} from '@ethersproject/address';
+import {useQuery} from '@tanstack/react-query';
+import {useCallback, useEffect, useMemo} from 'react';
+import {useLocation, useNavigate, useParams} from 'react-router-dom';
 
-import {favoriteDaosVar, pendingDaoCreationVar} from 'context/apolloClient';
 import {useNetwork} from 'context/network';
-import {usePrivacyContext} from 'context/privacyContext';
-import {
-  AVATAR_IPFS_URL,
-  CHAIN_METADATA,
-  FAVORITE_DAOS_KEY,
-} from 'utils/constants';
-import {customJSONReplacer, mapDetailedDaoToFavoritedDao} from 'utils/library';
-import {HookData} from 'utils/types';
+import {resolveDaoAvatarIpfsCid, toDisplayEns} from 'utils/library';
+import {NotFound} from 'utils/paths';
 import {useClient} from './useClient';
-import {ExpiringPromiseCache} from 'utils/expiringPromiseCache';
-
-const daoDetailsCache = new ExpiringPromiseCache<DaoDetails | null>(10000);
 
 /**
- * Get dao metadata
- * Note: Please rename to useDaoMetadata once the other hook as been deprecated
- * @param daoId dao ens name or address
- * @returns dao metadata for given address
+ * Fetches DAO data for a given DAO address or ENS name using a given client.
+ * @param client - The client to use for the request.
+ * @param daoAddressOrEns - The DAO address or ENS name to fetch data for.
+ * @returns A Promise that resolves to the DAO data.
+ * @throws An error if the client is not defined or if the DAO address/ENS name is not defined.
  */
-export function useDaoDetails(
-  daoId: string
-): HookData<DaoDetails | undefined | null> & {waitingForSubgraph: boolean} {
-  const {client, context, network: clientNetwork} = useClient();
+async function fetchDaoDetails(
+  client: Client | undefined,
+  daoAddressOrEns: string | undefined
+): Promise<DaoDetails | null> {
+  if (!daoAddressOrEns)
+    return Promise.reject(new Error('daoAddressOrEns must be defined'));
 
-  const [data, setData] = useState<DaoDetails | null>();
-  const [error, setError] = useState<Error>();
-  const [isLoading, setIsLoading] = useState(false);
-  const [waitingForSubgraph, setWaitingForSubgraph] = useState(false);
-  const {network} = useNetwork();
-  const cachedDaos = useReactiveVar(pendingDaoCreationVar);
-  const favoritedDaos = useReactiveVar(favoriteDaosVar);
-  const {preferences} = usePrivacyContext();
+  if (!client) return Promise.reject(new Error('client must be defined'));
+
+  const daoDetails = await client.methods.getDao(daoAddressOrEns.toLowerCase());
+  return daoDetails;
+}
+
+/**
+ * Custom hook to fetch DAO details for a given DAO address or ENS name using the current network and client.
+ * @param daoAddressOrEns - The DAO address or ENS name to fetch details for.
+ * @returns An object with the status of the query and the DAO details, if available.
+ */
+export const useDaoQuery = (
+  daoAddressOrEns: string | undefined,
+  refetchInterval = 0
+) => {
+  const {network, networkUrlSegment} = useNetwork();
+  const {client, network: clientNetwork} = useClient();
+
+  // if network is unsupported this will be caught when compared to client
+  const queryNetwork = useMemo(
+    () => networkUrlSegment ?? network,
+    [network, networkUrlSegment]
+  );
+
+  // make sure that the network and the url match up with client network before making the request
+  const enabled =
+    !!daoAddressOrEns && !!client && clientNetwork === queryNetwork;
+
+  const queryFn = useCallback(() => {
+    return fetchDaoDetails(client, daoAddressOrEns);
+  }, [client, daoAddressOrEns]);
+
+  return useQuery<DaoDetails | null>({
+    queryKey: ['daoDetails', daoAddressOrEns, queryNetwork],
+    queryFn,
+    select: addAvatarToDao,
+    enabled,
+    refetchOnWindowFocus: false,
+    refetchInterval,
+  });
+};
+
+/**
+ * Custom hook to fetch DAO details for a given DAO address or ENS name using the current network and client.
+ * If no DAO details are available, the function navigates to the 404 page.
+ * @returns An object with the status of the query and the DAO details, if available.
+ */
+export const useDaoDetailsQuery = () => {
+  const {dao} = useParams();
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  const daoAddressOrEns = dao?.toLowerCase();
+  const apiResponse = useDaoQuery(daoAddressOrEns);
 
   useEffect(() => {
-    // get the proper link to DAO avatar
-    function getDaoWithResolvedAvatar(daoKey: string) {
-      return client?.methods.getDao(daoKey).then(dao => {
-        if (dao?.metadata?.avatar) {
-          try {
-            const logoCid = resolveIpfsCid(dao.metadata.avatar);
-            dao.metadata.avatar = `${AVATAR_IPFS_URL}/${logoCid}`;
-          } catch (err) {
-            dao.metadata.avatar = undefined;
-          }
+    if (apiResponse.isFetched) {
+      // navigate to 404 if the DAO is not found or there is some sort of error
+      if (apiResponse.error || apiResponse.data === null) {
+        navigate(NotFound, {
+          replace: true,
+          state: {incorrectDao: daoAddressOrEns},
+        });
+      }
+
+      //navigate to url with ens domain
+      else if (
+        isAddress(daoAddressOrEns as string) &&
+        toDisplayEns(apiResponse.data?.ensDomain)
+      ) {
+        const segments = location.pathname.split('/');
+        const daoIndex = segments.findIndex(
+          segment => segment === daoAddressOrEns
+        );
+        if (daoIndex !== -1 && apiResponse.data?.ensDomain) {
+          segments[daoIndex] = apiResponse.data.ensDomain;
+          navigate(segments.join('/'));
         }
-
-        return dao;
-      });
-    }
-
-    async function getDaoMetadata() {
-      try {
-        // bail if client out of sync
-        if (clientNetwork !== network) {
-          console.log(
-            `client out of sync client: ${context?.network} network: ${network}`
-          );
-          return;
-        }
-
-        setIsLoading(true);
-
-        if (cachedDaos?.[network]?.[daoId.toLowerCase()]) {
-          const pendingDAO = cachedDaos?.[network]?.[daoId.toLowerCase()];
-          if (pendingDAO) {
-            setData({
-              address: daoId,
-              ensDomain: pendingDAO.ensSubdomain,
-              metadata: pendingDAO.metadata,
-              plugins: [],
-              creationDate: pendingDAO.creationDate,
-            });
-          }
-          setWaitingForSubgraph(true);
-        } else {
-          const daoKey = daoId.toLowerCase();
-          const cacheKey = `${daoKey}_${network}`;
-          // if there's no cached promise to fetch this dao,
-          // create one and add it to the cache
-          const dao = await (daoDetailsCache.get(cacheKey) ||
-            daoDetailsCache.add(cacheKey, getDaoWithResolvedAvatar(daoKey)));
-
-          if (dao) {
-            setData(dao);
-
-            // check if current DAO is in the favorites cache
-            const indexOfCurrentDaoInFavorites = favoritedDaos.findIndex(
-              d =>
-                d.address === dao.address &&
-                d.chain === CHAIN_METADATA[network].id
-            );
-
-            // map currently fetched DAO to cached DAO type
-            const currentDaoAsFavoritedDao = mapDetailedDaoToFavoritedDao(
-              dao,
-              network
-            );
-
-            if (
-              // currently fetched dao is favorited
-              indexOfCurrentDaoInFavorites !== -1 &&
-              // the DAO data is different (post update metadata proposal execution)
-              JSON.stringify(favoritedDaos[indexOfCurrentDaoInFavorites]) !==
-                JSON.stringify(currentDaoAsFavoritedDao)
-            ) {
-              // update reactive cache with new DAO data
-              const newFavoriteCache = [...favoritedDaos];
-              newFavoriteCache[indexOfCurrentDaoInFavorites] = {
-                ...currentDaoAsFavoritedDao,
-              };
-
-              favoriteDaosVar(newFavoriteCache);
-
-              // update local storage
-              if (preferences?.functional) {
-                localStorage.setItem(
-                  FAVORITE_DAOS_KEY,
-                  JSON.stringify(newFavoriteCache, customJSONReplacer)
-                );
-              }
-            }
-          }
-          // else {
-          // no DAO with given address found on network
-          // setData(null);
-          // }
-
-          // unless there is a pending DAO we are no longer waiting for subgraph
-          setWaitingForSubgraph(false);
-        }
-      } catch (err) {
-        console.error(err);
-        setError(err as Error);
-      } finally {
-        setIsLoading(false);
       }
     }
+  }, [
+    apiResponse.data,
+    apiResponse.error,
+    apiResponse.isFetched,
+    daoAddressOrEns,
+    location.pathname,
+    navigate,
+  ]);
 
-    if (daoId) getDaoMetadata();
+  return apiResponse;
+};
 
-    // intentionally keeping favoritedDaos out because this effect need not be
-    // rerun even if that variable changes
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [cachedDaos, client?.methods, daoId, network, preferences?.functional]);
+/**
+ * Add resolved IPFS CID to DAO metadata
+ * @param dao DAO details
+ * @returns DAO details object augmented with a resolved IPFS avatar
+ */
+function addAvatarToDao(dao: DaoDetails | null) {
+  if (!dao) return null;
 
-  return {data, error, isLoading, waitingForSubgraph};
+  return {
+    ...dao,
+    metadata: {
+      ...dao?.metadata,
+      avatar: resolveDaoAvatarIpfsCid(dao?.metadata.avatar),
+    },
+  };
 }

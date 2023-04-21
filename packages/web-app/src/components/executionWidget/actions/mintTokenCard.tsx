@@ -5,12 +5,11 @@ import styled from 'styled-components';
 
 import {AccordionMethod} from 'components/accordionMethod';
 import {useNetwork} from 'context/network';
+import {useDaoDetailsQuery} from 'hooks/useDaoDetails';
+import {useDaoMembers} from 'hooks/useDaoMembers';
+import {PluginTypes} from 'hooks/usePluginClient';
 import {CHAIN_METADATA} from 'utils/constants';
 import {ActionMintToken} from 'utils/types';
-import {useDaoMembers} from 'hooks/useDaoMembers';
-import {useDaoDetails} from 'hooks/useDaoDetails';
-import {useDaoParam} from 'hooks/useDaoParam';
-import {PluginTypes} from 'hooks/usePluginClient';
 
 export const MintTokenCard: React.FC<{
   action: ActionMintToken;
@@ -18,9 +17,7 @@ export const MintTokenCard: React.FC<{
   const {t} = useTranslation();
   const {network} = useNetwork();
 
-  const newTotalSupply = action.summary.newTokens + action.summary.tokenSupply;
-  const {data: dao} = useDaoParam();
-  const {data: daoDetails} = useDaoDetails(dao);
+  const {data: daoDetails} = useDaoDetailsQuery();
 
   const {
     data: {members},
@@ -28,6 +25,8 @@ export const MintTokenCard: React.FC<{
     daoDetails?.plugins[0].instanceAddress as string,
     daoDetails?.plugins[0].id as PluginTypes
   );
+
+  const newTotalSupply = action.summary.newTokens + action.summary.tokenSupply;
 
   const newHolders = action.inputs.mintTokensToWallets.filter(({address}) => {
     return members.find(

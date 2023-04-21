@@ -6,8 +6,8 @@ import {
   UpdateAllowanceParams,
 } from '@aragon/sdk-client';
 import React, {
-  createContext,
   ReactNode,
+  createContext,
   useCallback,
   useContext,
   useEffect,
@@ -15,12 +15,13 @@ import React, {
   useState,
 } from 'react';
 import {useFormContext} from 'react-hook-form';
-import {generatePath, useNavigate, useParams} from 'react-router-dom';
+import {generatePath, useNavigate} from 'react-router-dom';
 
 import {useReactiveVar} from '@apollo/client';
 import DepositModal from 'containers/transactionModals/DepositModal';
 import {BigNumber, constants} from 'ethers';
 import {useClient} from 'hooks/useClient';
+import {useDaoDetailsQuery} from 'hooks/useDaoDetails';
 import {usePollGasFee} from 'hooks/usePollGasfee';
 import {useStepper} from 'hooks/useStepper';
 import {useWallet} from 'hooks/useWallet';
@@ -32,7 +33,7 @@ import {
   PENDING_DEPOSITS_KEY,
   TransactionState,
 } from 'utils/constants';
-import {customJSONReplacer} from 'utils/library';
+import {customJSONReplacer, toDisplayEns} from 'utils/library';
 import {Finance} from 'utils/paths';
 import {isNativeToken} from 'utils/tokens';
 import {pendingDeposits} from './apolloClient';
@@ -46,7 +47,8 @@ interface IDepositContextType {
 const DepositContext = createContext<IDepositContextType | null>(null);
 
 const DepositProvider = ({children}: {children: ReactNode}) => {
-  const {dao} = useParams();
+  const {data: daoDetails} = useDaoDetailsQuery();
+
   const navigate = useNavigate();
   const {network} = useNetwork();
   const {isOnWrongNetwork, provider} = useWallet();
@@ -297,9 +299,15 @@ const DepositProvider = ({children}: {children: ReactNode}) => {
       case TransactionState.LOADING:
         break;
       case TransactionState.SUCCESS:
-        navigate(generatePath(Finance, {network, dao}), {
-          state: {refetch: true},
-        });
+        navigate(
+          generatePath(Finance, {
+            network,
+            dao: toDisplayEns(daoDetails?.ensDomain) || daoDetails?.address,
+          }),
+          {
+            state: {refetch: true},
+          }
+        );
         break;
       default: {
         setShowModal(false);
@@ -307,7 +315,14 @@ const DepositProvider = ({children}: {children: ReactNode}) => {
         setDepositState(TransactionState.WAITING);
       }
     }
-  }, [dao, depositState, navigate, network, stopPolling]);
+  }, [
+    daoDetails?.address,
+    daoDetails?.ensDomain,
+    depositState,
+    navigate,
+    network,
+    stopPolling,
+  ]);
 
   /*************************************************
    *               Lifecycle hooks                 *

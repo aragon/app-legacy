@@ -25,6 +25,7 @@ import {ProposalListItem} from 'utils/types';
 
 type ProposalListProps = {
   proposals: Array<ProposalListItem>;
+  daoAddressOrEns: string;
   pluginAddress: string;
   pluginType: PluginTypes;
   isLoading?: boolean;
@@ -47,6 +48,7 @@ function isMultisigProposalListItem(
 
 const ProposalList: React.FC<ProposalListProps> = ({
   proposals,
+  daoAddressOrEns,
   pluginAddress,
   pluginType,
   isLoading,
@@ -63,9 +65,16 @@ const ProposalList: React.FC<ProposalListProps> = ({
   const mappedProposals: ({id: string} & CardProposalProps)[] = useMemo(
     () =>
       proposals.map(p =>
-        proposal2CardProps(p, members.members.length, network, navigate, t)
+        proposal2CardProps(
+          p,
+          members.members.length,
+          network,
+          navigate,
+          t,
+          daoAddressOrEns
+        )
       ),
-    [proposals, members.members.length, network, navigate, t]
+    [proposals, daoAddressOrEns, members.members.length, network, navigate, t]
   );
 
   if (isLoading || areMembersLoading) {
@@ -115,7 +124,8 @@ export function proposal2CardProps(
   memberCount: number,
   network: SupportedNetworks,
   navigate: NavigateFunction,
-  t: TFunction
+  t: TFunction,
+  daoAddressOrEns: string
 ): {id: string} & CardProposalProps {
   const props = {
     id: proposal.id,
@@ -133,7 +143,7 @@ export function proposal2CardProps(
       navigate(
         generatePath(Proposal, {
           network,
-          dao: proposal.dao.address,
+          dao: daoAddressOrEns,
           id: proposal.id,
         })
       );

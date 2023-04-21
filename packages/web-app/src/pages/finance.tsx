@@ -2,10 +2,9 @@ import {Breadcrumb, ButtonText, IconAdd, Tag} from '@aragon/ui-components';
 import {withTransaction} from '@elastic/apm-rum-react';
 import React from 'react';
 import {useTranslation} from 'react-i18next';
-import {useNavigate} from 'react-router-dom';
+import {useNavigate, useParams} from 'react-router-dom';
 import styled from 'styled-components';
 
-import {Loading} from 'components/temporary/loading';
 import TokenList from 'components/tokenList';
 import TransferList from 'components/transferList';
 import {
@@ -15,7 +14,6 @@ import {
 } from 'components/wrappers';
 import {useGlobalModalContext} from 'context/globalModals';
 import {useTransactionDetailContext} from 'context/transactionDetail';
-import {useDaoParam} from 'hooks/useDaoParam';
 import {useDaoVault} from 'hooks/useDaoVault';
 import {useMappedBreadcrumbs} from 'hooks/useMappedBreadcrumbs';
 import useScreen from 'hooks/useScreen';
@@ -31,27 +29,22 @@ const colors: Record<Sign, string> = {
 
 const Finance: React.FC = () => {
   const {t} = useTranslation();
+  const {dao} = useParams();
   const {open} = useGlobalModalContext();
   const {isDesktop} = useScreen();
 
   // load dao details
   const navigate = useNavigate();
   const {breadcrumbs, icon, tag} = useMappedBreadcrumbs();
-  const {data: daoId, isLoading} = useDaoParam();
 
   const {handleTransferClicked} = useTransactionDetailContext();
-  const {tokens, totalAssetChange, totalAssetValue, transfers} =
-    useDaoVault(daoId);
+  const {tokens, totalAssetChange, totalAssetValue, transfers} = useDaoVault();
 
   sortTokens(tokens, 'treasurySharePercentage', true);
 
   /*************************************************
    *                    Render                     *
    *************************************************/
-  if (isLoading) {
-    return <Loading />;
-  }
-
   return (
     <PageWrapper
       customHeader={
@@ -98,7 +91,7 @@ const Finance: React.FC = () => {
                 className="w-full tablet:w-auto"
                 onClick={() => {
                   trackEvent('finance_newTransferBtn_clicked', {
-                    dao_address: daoId,
+                    dao_address: dao,
                   });
                   open();
                 }}

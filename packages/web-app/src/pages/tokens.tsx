@@ -1,36 +1,28 @@
 import {IconAdd, SearchInput} from '@aragon/ui-components';
-import {useTranslation} from 'react-i18next';
 import {withTransaction} from '@elastic/apm-rum-react';
 import React, {useState} from 'react';
+import {useTranslation} from 'react-i18next';
 
 import TokenList from 'components/tokenList';
-import {useDaoVault} from 'hooks/useDaoVault';
 import {PageWrapper} from 'components/wrappers';
+import {useGlobalModalContext} from 'context/globalModals';
+import {useDaoVault} from 'hooks/useDaoVault';
 import {filterTokens, sortTokens} from 'utils/tokens';
 import type {VaultToken} from 'utils/types';
-import {useGlobalModalContext} from 'context/globalModals';
-import {Loading} from 'components/temporary';
-import {useDaoParam} from 'hooks/useDaoParam';
 
 const Tokens: React.FC = () => {
-  const {data: dao, isLoading} = useDaoParam();
-
   const {t} = useTranslation();
   const {open} = useGlobalModalContext();
 
   const [searchTerm, setSearchTerm] = useState('');
 
-  const {tokens} = useDaoVault(dao);
+  const {tokens} = useDaoVault();
   const filteredTokens: VaultToken[] = filterTokens(tokens, searchTerm);
   sortTokens(filteredTokens, 'treasurySharePercentage', true);
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSearchTerm(event.target.value);
   };
-
-  if (isLoading) {
-    return <Loading />;
-  }
 
   return (
     <PageWrapper
