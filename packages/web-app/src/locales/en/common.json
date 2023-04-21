@@ -898,6 +898,13 @@
   },
   "dashboard": {
     "proposalsTitle": "Proposals created",
+    "emptyTransfers": {
+      "title": "Initiate a token transfer",
+      "description": "Ready to distribute tokens or send funds? Initiate a token transfer here. For ideas on how to distribute your community's token, {{link}} on token distribution.",
+      "buttonLabel": "Initiate transfer",
+      "descriptionLinkLabel": "read our guide",
+      "descriptionLinkURL": "https://aragon.org/how-to/how-to-distribute-a-dao-governance-token"
+    },
     "emptyState": {
       "title": "We're building your DAO!",
       "subtitle": "The on-chain data is being deployed and published. This won't take very long.",

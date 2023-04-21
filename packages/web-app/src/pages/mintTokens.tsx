@@ -24,16 +24,15 @@ import SetupVotingForm, {
 import {ActionsProvider} from 'context/actions';
 import {CreateProposalProvider} from 'context/createProposal';
 import {useNetwork} from 'context/network';
-import {useDaoParam} from 'hooks/useDaoParam';
-import {Community} from 'utils/paths';
-import {ActionMintToken} from 'utils/types';
-import {useDaoDetails} from 'hooks/useDaoDetails';
+import {useDaoDetailsQuery} from 'hooks/useDaoDetails';
 import {PluginTypes} from 'hooks/usePluginClient';
 import {usePluginSettings} from 'hooks/usePluginSettings';
+import {Community} from 'utils/paths';
+import {ActionMintToken} from 'utils/types';
+import {toDisplayEns} from 'utils/library';
 
 const MintToken: React.FC = () => {
-  const {data: dao} = useDaoParam();
-  const {data: daoDetails, isLoading} = useDaoDetails(dao);
+  const {data: daoDetails, isLoading} = useDaoDetailsQuery();
   const {data: pluginSettings, isLoading: settingsLoading} = usePluginSettings(
     daoDetails?.plugins[0].instanceAddress as string,
     daoDetails?.plugins[0].id as PluginTypes
@@ -73,9 +72,9 @@ const MintToken: React.FC = () => {
     return <Loading />;
   }
 
-  return (
+  return daoDetails ? (
     <FormProvider {...formMethods}>
-      <ActionsProvider daoId={daoDetails?.address as string}>
+      <ActionsProvider daoId={daoDetails.address}>
         <CreateProposalProvider
           showTxModal={showTxModal}
           setShowTxModal={setShowTxModal}
@@ -83,7 +82,10 @@ const MintToken: React.FC = () => {
           <FullScreenStepper
             wizardProcessName={t('newProposal.title')}
             navLabel={t('labels.addMember')}
-            returnPath={generatePath(Community, {network, dao})}
+            returnPath={generatePath(Community, {
+              network,
+              dao: toDisplayEns(daoDetails.ensDomain) || daoDetails.address,
+            })}
           >
             <Step
               wizardTitle={t('labels.mintTokens')}
@@ -126,7 +128,7 @@ const MintToken: React.FC = () => {
         </CreateProposalProvider>
       </ActionsProvider>
     </FormProvider>
-  );
+  ) : null;
 };
 
 export default withTransaction('MintToken', 'component')(MintToken);

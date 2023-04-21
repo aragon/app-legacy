@@ -4,34 +4,20 @@ import React from 'react';
 import {Loading} from 'components/temporary';
 import {EditMvSettings} from 'containers/editSettings/majorityVoting';
 import {EditMsSettings} from 'containers/editSettings/multisig';
-import {useDaoDetails} from 'hooks/useDaoDetails';
-import {useDaoParam} from 'hooks/useDaoParam';
+import {useDaoDetailsQuery} from 'hooks/useDaoDetails';
 import {PluginTypes} from 'hooks/usePluginClient';
 
 const EditSettings: React.FC = () => {
-  const {data: daoId, isLoading: paramsAreLoading} = useDaoParam();
-  const {data: daoDetails, isLoading: detailsAreLoading} = useDaoDetails(
-    daoId!
-  );
+  const {data: daoDetails, isLoading: detailsAreLoading} = useDaoDetailsQuery();
 
   const pluginType = daoDetails?.plugins[0].id as PluginTypes;
 
-  if (paramsAreLoading || detailsAreLoading) {
+  if (detailsAreLoading) {
     return <Loading />;
-  } else if (pluginType === 'multisig.plugin.dao.eth') {
-    return (
-      <EditMsSettings
-        daoId={daoDetails?.address as string}
-        daoDetails={daoDetails!}
-      />
-    );
-  } else if (pluginType === 'token-voting.plugin.dao.eth') {
-    return (
-      <EditMvSettings
-        daoId={daoDetails?.address as string}
-        daoDetails={daoDetails!}
-      />
-    );
+  } else if (daoDetails && pluginType === 'multisig.plugin.dao.eth') {
+    return <EditMsSettings daoDetails={daoDetails} />;
+  } else if (daoDetails && pluginType === 'token-voting.plugin.dao.eth') {
+    return <EditMvSettings daoDetails={daoDetails} />;
   } else {
     return <></>;
   }

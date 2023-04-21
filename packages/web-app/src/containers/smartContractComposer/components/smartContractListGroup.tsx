@@ -4,16 +4,13 @@ import {useFormContext} from 'react-hook-form';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 
-import {SmartContract} from 'utils/types';
+import {SccFormData} from 'pages/demoScc';
 
-// NOTE: may come from form, not set in stone
-type SCCListGroupProps = {
-  contracts: Array<SmartContract>;
-};
-
-const SmartContractListGroup: React.FC<SCCListGroupProps> = ({contracts}) => {
+const SmartContractListGroup: React.FC = () => {
   const {t} = useTranslation();
-  const {setValue} = useFormContext();
+  const {setValue, getValues} = useFormContext<SccFormData>();
+
+  const contracts = getValues('contracts');
 
   return (
     <ListGroup>

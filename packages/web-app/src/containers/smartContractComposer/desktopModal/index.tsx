@@ -16,7 +16,6 @@ import Header from './header';
 import ActionListGroup from '../components/actionListGroup';
 
 type DesktopModalProps = {
-  contracts: Array<SmartContract>;
   isOpen: boolean;
   onClose: () => void;
   onConnect: () => void;
@@ -55,7 +54,7 @@ const DesktopModal: React.FC<DesktopModalProps> = props => {
             </>
           ) : (
             <>
-              <SmartContractListGroup contracts={props.contracts} />
+              <SmartContractListGroup />
               <ButtonText
                 mode="secondary"
                 size="large"

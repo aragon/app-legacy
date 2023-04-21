@@ -1,10 +1,10 @@
 import {useTranslation} from 'react-i18next';
 
 import {ActionParameter, HookData} from 'utils/types';
-import {useDaoDetails} from './useDaoDetails';
+import {useDaoQuery} from './useDaoDetails';
 
 export function useDaoActions(dao: string): HookData<ActionParameter[]> {
-  const {data: daoDetails, error, isLoading} = useDaoDetails(dao);
+  const {data: daoDetails, error, isLoading} = useDaoQuery(dao);
   const multisig = daoDetails?.plugins[0].id === 'multisig.plugin.dao.eth';
 
   const {t} = useTranslation();
@@ -48,6 +48,6 @@ export function useDaoActions(dao: string): HookData<ActionParameter[]> {
   return {
     data: multisig ? multisigActions : tokenVotingActions,
     isLoading,
-    error,
+    error: error as Error,
   };
 }

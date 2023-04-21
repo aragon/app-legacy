@@ -30,18 +30,14 @@ import useScreen from 'hooks/useScreen';
 import {useTokenSupply} from 'hooks/useTokenSupply';
 import {Layout} from 'pages/settings';
 import {getDHMFromSeconds} from 'utils/date';
-import {decodeVotingMode, formatUnits} from 'utils/library';
+import {decodeVotingMode, formatUnits, toDisplayEns} from 'utils/library';
 import {ProposeNewSettings} from 'utils/paths';
 
 type EditMvSettingsProps = {
-  daoId: string;
   daoDetails: DaoDetails;
 };
 
-export const EditMvSettings: React.FC<EditMvSettingsProps> = ({
-  daoId,
-  daoDetails,
-}) => {
+export const EditMvSettings: React.FC<EditMvSettingsProps> = ({daoDetails}) => {
   const {t} = useTranslation();
   const navigate = useNavigate();
   const {network} = useNetwork(); // TODO get network from daoDetails
@@ -402,7 +398,12 @@ export const EditMvSettings: React.FC<EditMvSettingsProps> = ({
                 disabled={settingsUnchanged || !isValid}
                 onClick={() =>
                   navigate(
-                    generatePath(ProposeNewSettings, {network, dao: daoId})
+                    generatePath(ProposeNewSettings, {
+                      network,
+                      dao:
+                        toDisplayEns(daoDetails.ensDomain) ||
+                        daoDetails.address,
+                    })
                   )
                 }
               />

@@ -52,7 +52,6 @@ export default function useCategorizedTransfers(
 
     transfers.forEach(t => {
       const millisecondsTimestamp = t.transferTimestamp as number;
-
       if (isThisWeek(millisecondsTimestamp)) {
         week.push(t);
       } else if (isThisMonth(millisecondsTimestamp)) {

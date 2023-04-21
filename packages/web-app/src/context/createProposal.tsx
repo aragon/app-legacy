@@ -1,7 +1,7 @@
 import {useReactiveVar} from '@apollo/client';
 import {
-  DaoAction,
   CreateMajorityVotingProposalParams,
+  DaoAction,
   InstalledPluginListItem,
   MultisigClient,
   MultisigVotingSettings,
@@ -20,8 +20,7 @@ import {generatePath, useNavigate} from 'react-router-dom';
 import {Loading} from 'components/temporary';
 import PublishModal from 'containers/transactionModals/publishModal';
 import {useClient} from 'hooks/useClient';
-import {useDaoDetails} from 'hooks/useDaoDetails';
-import {useDaoParam} from 'hooks/useDaoParam';
+import {useDaoDetailsQuery} from 'hooks/useDaoDetails';
 import {useDaoToken} from 'hooks/useDaoToken';
 import {PluginTypes, usePluginClient} from 'hooks/usePluginClient';
 import {
@@ -48,7 +47,7 @@ import {
   minutesToMills,
   offsetToMills,
 } from 'utils/date';
-import {customJSONReplacer} from 'utils/library';
+import {customJSONReplacer, toDisplayEns} from 'utils/library';
 import {Proposal} from 'utils/paths';
 import {
   CacheProposalParams,
@@ -85,8 +84,7 @@ const CreateProposalProvider: React.FC<Props> = ({
   const {network} = useNetwork();
   const {isOnWrongNetwork, provider, address} = useWallet();
 
-  const {data: dao, isLoading} = useDaoParam();
-  const {data: daoDetails, isLoading: daoDetailsLoading} = useDaoDetails(dao);
+  const {data: daoDetails, isLoading: daoDetailsLoading} = useDaoDetailsQuery();
   const {id: pluginType, instanceAddress: pluginAddress} =
     daoDetails?.plugins[0] || ({} as InstalledPluginListItem);
 
@@ -368,7 +366,13 @@ const CreateProposalProvider: React.FC<Props> = ({
       case TransactionState.LOADING:
         break;
       case TransactionState.SUCCESS:
-        navigate(generatePath(Proposal, {network, dao, id: proposalId}));
+        navigate(
+          generatePath(Proposal, {
+            network,
+            dao: toDisplayEns(daoDetails?.ensDomain) || daoDetails?.address,
+            id: proposalId,
+          })
+        );
         break;
       default: {
         setCreationProcessState(TransactionState.WAITING);
@@ -378,7 +382,8 @@ const CreateProposalProvider: React.FC<Props> = ({
     }
   }, [
     creationProcessState,
-    dao,
+    daoDetails?.address,
+    daoDetails?.ensDomain,
     navigate,
     network,
     proposalId,
@@ -486,7 +491,7 @@ const CreateProposalProvider: React.FC<Props> = ({
     }
 
     trackEvent('newProposal_createNowBtn_clicked', {
-      dao_address: dao,
+      dao_address: daoDetails?.address,
       estimated_gwei_fee: averageFee,
       total_usd_cost: averageFee ? tokenPrice * Number(averageFee) : 0,
     });
@@ -495,7 +500,7 @@ const CreateProposalProvider: React.FC<Props> = ({
       pluginClient.methods.createProposal(proposalCreationData);
 
     trackEvent('newProposal_transaction_signed', {
-      dao_address: dao,
+      dao_address: daoDetails?.address,
       network: network,
       wallet_provider: provider?.connection.url,
     });
@@ -532,7 +537,7 @@ const CreateProposalProvider: React.FC<Props> = ({
             setProposalId(prefixedId);
             setCreationProcessState(TransactionState.SUCCESS);
             trackEvent('newProposal_transaction_success', {
-              dao_address: dao,
+              dao_address: daoDetails?.address,
               network: network,
               wallet_provider: provider?.connection.url,
               proposalId: prefixedId,
@@ -548,7 +553,7 @@ const CreateProposalProvider: React.FC<Props> = ({
       console.error(error);
       setCreationProcessState(TransactionState.ERROR);
       trackEvent('newProposal_transaction_failed', {
-        dao_address: dao,
+        dao_address: daoDetails?.address,
         network: network,
         wallet_provider: provider?.connection.url,
         error,
@@ -557,7 +562,7 @@ const CreateProposalProvider: React.FC<Props> = ({
   }, [
     averageFee,
     creationProcessState,
-    dao,
+    daoDetails?.address,
     handleCacheProposal,
     handleCloseModal,
     isOnWrongNetwork,
@@ -587,7 +592,7 @@ const CreateProposalProvider: React.FC<Props> = ({
    *                    Render                     *
    *************************************************/
 
-  if (isLoading || daoDetailsLoading) {
+  if (daoDetailsLoading) {
     return <Loading />;
   }
 

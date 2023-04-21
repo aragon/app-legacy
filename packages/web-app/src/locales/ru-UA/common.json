@@ -12,7 +12,19 @@
     "help": "Help",
     "terms": "Terms of service",
     "privacy": "Privacy",
-    "settings": "Settings"
+    "settings": "Settings",
+    "exploreLinkLabel": "Explore",
+    "exploreLinkURL": "/",
+    "learnLinkLabel": "Learn",
+    "learnLinkURL": "https://aragon.org/education-portal",
+    "buildLinkLabel": "Build",
+    "buildLinkURL": "https://devs.aragon.org/",
+    "helpLinkLabel": "Help",
+    "helpLinkURL": "https://discord.gg/AhzsGmh7fK",
+    "termsLinkLabel": "Terms of service",
+    "termsLinkURL": "https://aragon.org/terms-and-conditions",
+    "privacyLinkLabel": "Privacy",
+    "privacyLinkURL": "https://aragon.org/privacy-policy"
   },
   "daoSwitcher": {
     "title": "Select your DAO",
@@ -207,7 +219,8 @@
     "submitProposal": "Publish proposal",
     "addWalletsDescriptionLinkLabel": "read our guide",
     "addWalletsDescription": "Wallets can create proposals, propose to send funds in and out of the treasury, and vote in your DAO.",
-    "daoEnsName": "ENS Subdomain"
+    "daoEnsName": "ENS Subdomain",
+    "ens": "ENS"
   },
   "placeHolders": {
     "selectToken": "Select a token …",
@@ -215,6 +228,7 @@
     "searchTokens": "Type to search …",
     "searchTransfers": "Type to filter …",
     "daoName": "Type your DAO's name …",
+    "ensName": "aragon",
     "daoDescription": "Type your summary …",
     "addResource": "Lens, Discord, etc."
   },
@@ -232,9 +246,9 @@
     "action": "New proposal",
     "emptyState": {
       "title": "Create your first proposal",
-      "subtitleLine1": "What's the first thing your community needs to decide?",
-      "subtitleLine2": "For ideas on how to structure proposals,",
-      "proposalGuide": "read this guide",
+      "subtitle": "What's the first thing your community needs to decide? For ideas on how to structure proposals, read this guide {{link}}.",
+      "subtitleLinkLabel": "read this guide",
+      "subtitleLinkURL": "https://aragon.org/how-to/how-to-structure-dao-proposals-and-build-proposal-processes",
       "description": "Get your community involved in the decision-making process. Learn more in our proposal guide {{link}}.",
       "descriptionLinkLabel": "proposal guide",
       "descriptionLinkURL": "https://aragon.org/how-to/structure-dao-proposals-and-build-proposal-processes"
@@ -244,6 +258,7 @@
       "Pending": "Starts in {{timeDiff}}",
       "Active": "{{timeDiff}} left",
       "voteTitle": "Winning option",
+      "voteTitleMultisig": "Approval progress",
       "states": {
         "draft": "Draft",
         "pending": "Pending",
@@ -267,13 +282,12 @@
     "noProposals": "No proposals found!",
     "statusWidget": {
       "published": "Proposal published",
-      "pending": "Voting is pending",
       "active": "Voting is active...",
-      "passed": "Proposal passed",
       "failed": "Proposal execution failed",
       "executed": "Proposal executed",
       "succeeded": "Proposal is ready to execute",
-      "defeated": "Proposal has been defeated"
+      "defeated": "Proposal has been defeated",
+      "expired": "Expired"
     },
     "executionCard": {
       "title": "Actions",
@@ -284,7 +298,8 @@
         "succeeded": "Proposal has passed and is ready to be executed",
         "executed": "Actions executed",
         "defeated": "Proposal defeated",
-        "failed": " Execution failed"
+        "failed": " Execution failed",
+        "expired": "Proposal expired"
       }
     }
   },
@@ -331,6 +346,7 @@
     "requiredTokenAddressZero": "Required token amount can not be 0",
     "onlyAlphaNumeric": "{{field}} can only contain alphanumeric characters",
     "ensDuplication": "DAO name is already taken. Try a different name.",
+    "ensNameInvalidFormat": "Please only use Lowercase letters, numbers, and the dash '-'",
     "ensNetworkIssue": "Failed to resolve ENS",
     "ensNameLength": "DAO name must be less than 128 characters",
     "notValidContractAddress": "Smart contract address not valid",
@@ -352,6 +368,7 @@
       "time": "Time is required",
       "timezone": "Timezone is required",
       "name": "DAO name is mandatory",
+      "ensName": "DAO Ens Subdomain is mandatory",
       "title": "Title is required",
       "summary": "Summary is required",
       "minApproval": "At least one authorized address is required in order to approve a proposal."
@@ -502,7 +519,9 @@
     "withdrawAssetsSubtitle": "Create a proposal to withdraw assets to a wallet.",
     "withdrawAssetsActionSubtitle": "Withdraw assets from the DAO treasury",
     "externalContract": "Interact with a contract",
-    "externalContractSubtitle": "Interact with an external contract on the chain your DAO is deployed on."
+    "externalContractSubtitle": "Interact with an external contract on the chain your DAO is deployed on.",
+    "changeMinimumApproval": "Change minimum approval",
+    "changeMinimumApprovalSubtitle": "Modify minimum approval of this DAO."
   },
   "newDeposit": {
     "depositAssets": "Deposit assets",
@@ -631,7 +650,8 @@
       "distributionWalletAlertText": "Your connected wallet was automatically added to the distribution list. You can remove it if you like.",
       "whiteListWalletAlertText": "Your connected wallet was automatically added to the list. You can remove it if you like.",
       "createTokenHelptext": " Define the token details and distribute tokens to a core team and DAO treasury. For more on token minting best practices, ",
-      "createTokenHelplink": "read this guide",
+      "createTokenHelptextLinkLabel": "read this guide",
+      "createTokenHelptextLinkURL": "https://aragon.org/how-to/how-to-mint-dao-governance-tokens",
       "membership": "Who can participate in governance?",
       "eligibility": {
         "optionTitle": "Who is eligible?",
@@ -725,6 +745,10 @@
     "yes": "Yes",
     "abstain": "Abstain",
     "no": "No",
+    "approve": "Approve",
+    "approvedBy": "Approved by",
+    "ofMemberCount": " of {{memberCount}} Members",
+    "ofAddressCount": "{{value}} of {{total}} Addresses",
     "yesHelptext": "Your choice will be counted for \"Yes\"",
     "abstainHelptext": "Your choice will be counted for \"Abstain\"",
     "noHelptext": "Your choice will be counted for \"No\"",
@@ -738,8 +762,11 @@
     "supportThreshold": "Support threshold",
     "minParticipation": "Minimum participation (Quorum)",
     "currentParticipation": "Current participation",
+    "currentApproval": "Current approval",
     "noVotesMissing": "No votes missing",
+    "noApprovalsMissing": "No approvals missing",
     "missingVotes": "{{votes}} missing votes",
+    "missingApprovals": "{{approvals}} Approvals missing",
     "reached": "Reached",
     "uniqueVoters": "Unique voters",
     "duration": "Duration",
@@ -752,6 +779,7 @@
     "chooseOptionHelptext": "To vote, you must select one of the following options and confirm in your wallet. Once the transaction is completed, your vote will be counted and displayed.",
     "submit": "Submit your vote",
     "cancel": "Cancel",
+    "concluded": "Concluded",
     "status": {
       "draft": "Publish proposal to enable voting",
       "pending": "Voting begins in {{timeUntilNow}}",
@@ -762,7 +790,9 @@
       "ineligibleWhitelist": "You had to be a member before the proposal was created to be able to vote",
       "ineligibleTokenBased": "You had to hold {{token}} when proposal was created to be able to vote",
       "voteSubmitted": "Vote submitted",
-      "revote": "Revote"
+      "revote": "Revote",
+      "expired": "Proposal has expired",
+      "approved": "Approved"
     },
     "voteOver": "Vote over",
     "voteNow": "Vote now",
@@ -797,6 +827,10 @@
       "aragonMembers": "Members in Aragon App DAOs",
       "activeProposals": "Active proposals",
       "securedByAragon": "Secured by Aragon OSx"
+    },
+    "learn": {
+      "linkLabel": "Learn about DAOs",
+      "linkURL": "https://aragon.org/education-portal"
     }
   },
   "privacyPolicy": {
@@ -879,7 +913,9 @@
       "connect": "Connect smart contract",
       "singleContractConnected": "One connected contract",
       "nContractsConnected": "{{numConnected}} Connected smart contracts",
-      "searchPlaceholder": "Type to find any action …"
+      "searchPlaceholder": "Type to find any action …",
+      "singleActionAvailable": "One write action",
+      "nActionsAvailable": "{{numConnected}} write actions"
     },
     "emptyState": {
       "modalTitle": "Smart contract composer",
@@ -906,5 +942,8 @@
       "linkLabel": "Give feedback",
       "linkURL": "https://form.typeform.com/to/apg4gHYO"
     }
+  },
+  "logo": {
+    "linkURL": "https://aragon.org/"
   }
 }

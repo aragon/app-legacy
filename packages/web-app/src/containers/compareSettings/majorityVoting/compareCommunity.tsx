@@ -11,14 +11,14 @@ import {EditSettings} from 'utils/paths';
 import {Views} from '..';
 
 type CompareMyCommunityProps = {
-  daoId: string;
+  daoAddressOrEns: string;
   daoToken?: Erc20TokenDetails;
   daoSettings?: VotingSettings;
   view: Views;
 };
 
 export const CompareMvCommunity: React.FC<CompareMyCommunityProps> = ({
-  daoId,
+  daoAddressOrEns,
   daoToken,
   daoSettings,
   view,
@@ -66,7 +66,7 @@ export const CompareMvCommunity: React.FC<CompareMyCommunityProps> = ({
     <DescriptionListContainer
       title={t('navLinks.community')}
       onEditClick={() =>
-        navigate(generatePath(EditSettings, {network, dao: daoId}))
+        navigate(generatePath(EditSettings, {network, dao: daoAddressOrEns}))
       }
       editLabel={t('settings.edit')}
     >

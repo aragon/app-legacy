@@ -22,14 +22,14 @@ import {
 } from 'utils/paths';
 
 type Props = {
-  dao: string;
+  daoAddressOrEns: string;
   pluginType: PluginTypes;
   pluginAddress: string;
   horizontal?: boolean;
 };
 
 export const MembershipSnapshot: React.FC<Props> = ({
-  dao,
+  daoAddressOrEns,
   pluginType,
   pluginAddress,
   horizontal,
@@ -49,8 +49,12 @@ export const MembershipSnapshot: React.FC<Props> = ({
 
   const headerButtonHandler = () => {
     walletBased
-      ? navigate(generatePath(ManageMembersProposal, {network, dao}))
-      : navigate(generatePath(MintTokensProposal, {network, dao}));
+      ? navigate(
+          generatePath(ManageMembersProposal, {network, dao: daoAddressOrEns})
+        )
+      : navigate(
+          generatePath(MintTokensProposal, {network, dao: daoAddressOrEns})
+        );
   };
 
   if (isLoading) return <Loading />;
@@ -83,7 +87,9 @@ export const MembershipSnapshot: React.FC<Props> = ({
             size="large"
             iconRight={<IconChevronRight />}
             label={t('labels.seeAll')}
-            onClick={() => navigate(generatePath(Community, {network, dao}))}
+            onClick={() =>
+              navigate(generatePath(Community, {network, dao: daoAddressOrEns}))
+            }
           />
         </div>
       </div>
@@ -112,7 +118,9 @@ export const MembershipSnapshot: React.FC<Props> = ({
         size="large"
         iconRight={<IconChevronRight />}
         label={t('labels.seeAll')}
-        onClick={() => navigate(generatePath(Community, {network, dao}))}
+        onClick={() =>
+          navigate(generatePath(Community, {network, dao: daoAddressOrEns}))
+        }
       />
     </VerticalContainer>
   );

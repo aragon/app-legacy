@@ -1,7 +1,7 @@
 import {useReactiveVar} from '@apollo/client';
 import {
-  DaoAction,
   CreateMajorityVotingProposalParams,
+  DaoAction,
   InstalledPluginListItem,
   ProposalCreationSteps,
   ProposalMetadata,
@@ -31,13 +31,12 @@ import {useGlobalModalContext} from 'context/globalModals';
 import {useNetwork} from 'context/network';
 import {usePrivacyContext} from 'context/privacyContext';
 import {useClient} from 'hooks/useClient';
-import {useDaoDetails} from 'hooks/useDaoDetails';
-import {useDaoParam} from 'hooks/useDaoParam';
+import {useDaoDetailsQuery} from 'hooks/useDaoDetails';
 import {useDaoToken} from 'hooks/useDaoToken';
 import {
+  PluginTypes,
   isMultisigClient,
   isTokenVotingClient,
-  PluginTypes,
   usePluginClient,
 } from 'hooks/usePluginClient';
 import {
@@ -64,7 +63,7 @@ import {
   minutesToMills,
   offsetToMills,
 } from 'utils/date';
-import {customJSONReplacer, readFile} from 'utils/library';
+import {customJSONReplacer, readFile, toDisplayEns} from 'utils/library';
 import {EditSettings, Proposal} from 'utils/paths';
 import {CacheProposalParams, mapToCacheProposal} from 'utils/proposals';
 import {
@@ -86,8 +85,7 @@ const ProposeSettings: React.FC = () => {
     control,
   });
 
-  const {data: daoId} = useDaoParam();
-  const {data: daoDetails, isLoading} = useDaoDetails(daoId);
+  const {data: daoDetails, isLoading} = useDaoDetailsQuery();
   const {data: pluginSettings, isLoading: settingsLoading} = usePluginSettings(
     daoDetails?.plugins[0].instanceAddress as string,
     daoDetails?.plugins[0].id as PluginTypes
@@ -134,7 +132,10 @@ const ProposeSettings: React.FC = () => {
       <FullScreenStepper
         wizardProcessName={t('newProposal.title')}
         navLabel={t('navLinks.settings')}
-        returnPath={generatePath(EditSettings, {network, dao: daoId})}
+        returnPath={generatePath(EditSettings, {
+          network,
+          dao: toDisplayEns(daoDetails?.ensDomain) || daoDetails?.address,
+        })}
       >
         <Step
           wizardTitle={t('settings.proposeSettings')}
@@ -195,8 +196,7 @@ const ProposeSettingWrapper: React.FC<Props> = ({
   const {network} = useNetwork();
   const {address, isOnWrongNetwork} = useWallet();
 
-  const {data: dao, isLoading} = useDaoParam();
-  const {data: daoDetails, isLoading: daoDetailsLoading} = useDaoDetails(dao);
+  const {data: daoDetails, isLoading: daoDetailsLoading} = useDaoDetailsQuery();
 
   const {id: pluginType, instanceAddress: pluginAddress} =
     daoDetails?.plugins[0] || ({} as InstalledPluginListItem);
@@ -334,7 +334,8 @@ const ProposeSettingWrapper: React.FC<Props> = ({
     const encodeActions = async (): Promise<DaoAction[]> => {
       // return an empty array for undefined clients
       const actions: Array<Promise<DaoAction>> = [];
-      if (!pluginClient || !client) return Promise.all(actions);
+      if (!pluginClient || !client || !daoDetails?.address)
+        return Promise.all(actions);
 
       for (const action of getValues('actions') as Array<Action>) {
         if (action.name === 'modify_metadata') {
@@ -366,7 +367,7 @@ const ProposeSettingWrapper: React.FC<Props> = ({
 
             actions.push(
               client.encoding.updateDaoMetadataAction(
-                daoDetails?.address as string,
+                daoDetails.address,
                 ipfsUri
               )
             );
@@ -525,16 +526,16 @@ const ProposeSettingWrapper: React.FC<Props> = ({
       setProposalData();
     }
   }, [
+    client,
     creationProcessState,
-    showTxModal,
+    daoDetails?.address,
     getValues,
     minDays,
     minHours,
     minMinutes,
     pluginAddress,
     pluginClient,
-    client,
-    daoDetails?.address,
+    showTxModal,
   ]);
 
   /*************************************************
@@ -564,7 +565,13 @@ const ProposeSettingWrapper: React.FC<Props> = ({
       case TransactionState.LOADING:
         break;
       case TransactionState.SUCCESS:
-        navigate(generatePath(Proposal, {network, dao, id: proposalId}));
+        navigate(
+          generatePath(Proposal, {
+            network,
+            dao: toDisplayEns(daoDetails?.ensDomain) || daoDetails?.address,
+            id: proposalId,
+          })
+        );
         break;
       default: {
         setCreationProcessState(TransactionState.WAITING);
@@ -719,7 +726,7 @@ const ProposeSettingWrapper: React.FC<Props> = ({
    *                    Render                     *
    *************************************************/
 
-  if (isLoading || daoDetailsLoading || tokenSupplyIsLoading) {
+  if (daoDetailsLoading || tokenSupplyIsLoading) {
     return <Loading />;
   }
 

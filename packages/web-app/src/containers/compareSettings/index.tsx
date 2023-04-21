@@ -3,8 +3,7 @@ import React, {useState} from 'react';
 import {useTranslation} from 'react-i18next';
 
 import {Loading} from 'components/temporary';
-import {useDaoDetails} from 'hooks/useDaoDetails';
-import {useDaoParam} from 'hooks/useDaoParam';
+import {useDaoDetailsQuery} from 'hooks/useDaoDetails';
 import {useDaoToken} from 'hooks/useDaoToken';
 import {PluginTypes} from 'hooks/usePluginClient';
 import {
@@ -16,16 +15,14 @@ import {CompareMetadata} from './compareMetadata';
 import {CompareMvCommunity} from './majorityVoting/compareCommunity';
 import {CompareMvGovernance} from './majorityVoting/compareGovernance';
 import {CompareMsGovernance} from './multisig/compareGovernance';
+import {toDisplayEns} from 'utils/library';
 
 export type Views = 'old' | 'new';
 
 const CompareSettings: React.FC = () => {
   const {t} = useTranslation();
-  const {data: daoAddressOrEns, isLoading: areParamsLoading} = useDaoParam();
 
-  const {data: daoDetails, isLoading: areDetailsLoading} = useDaoDetails(
-    daoAddressOrEns!
-  );
+  const {data: daoDetails, isLoading: areDetailsLoading} = useDaoDetailsQuery();
   const {data: pluginSettings, isLoading: areSettingsLoading} =
     usePluginSettings(
       daoDetails?.plugins[0].instanceAddress as string,
@@ -38,20 +35,18 @@ const CompareSettings: React.FC = () => {
 
   const [selectedButton, setSelectedButton] = useState<Views>('new');
 
+  const daoAddressOrEns =
+    toDisplayEns(daoDetails?.ensDomain) ?? daoDetails?.address;
+
   const onButtonGroupChangeHandler = () => {
     setSelectedButton(prev => (prev === 'new' ? 'old' : 'new'));
   };
 
-  if (
-    areParamsLoading ||
-    areDetailsLoading ||
-    areSettingsLoading ||
-    tokensAreLoading
-  ) {
+  if (areDetailsLoading || areSettingsLoading || tokensAreLoading) {
     return <Loading />;
   }
 
-  return (
+  return daoDetails ? (
     <div className="space-y-2">
       <div className="flex">
         <ButtonGroup
@@ -65,23 +60,19 @@ const CompareSettings: React.FC = () => {
       </div>
 
       {/* METADATA*/}
-      <CompareMetadata
-        daoId={daoAddressOrEns}
-        daoDetails={daoDetails}
-        view={selectedButton}
-      />
+      <CompareMetadata daoDetails={daoDetails} view={selectedButton} />
 
       {/* GOVERNANCE */}
       {isTokenVotingSettings(pluginSettings) ? (
         <>
           <CompareMvCommunity
-            daoId={daoAddressOrEns}
+            daoAddressOrEns={daoAddressOrEns}
             view={selectedButton}
             daoSettings={pluginSettings}
             daoToken={daoToken}
           />
           <CompareMvGovernance
-            daoId={daoAddressOrEns}
+            daoAddressOrEns={daoAddressOrEns}
             view={selectedButton}
             daoSettings={pluginSettings}
             daoToken={daoToken}
@@ -96,7 +87,7 @@ const CompareSettings: React.FC = () => {
         <></>
       )}
     </div>
-  );
+  ) : null;
 };
 
 export default CompareSettings;

@@ -28,16 +28,13 @@ import {usePluginSettings} from 'hooks/usePluginSettings';
 import useScreen from 'hooks/useScreen';
 import {Layout} from 'pages/settings';
 import {ProposeNewSettings} from 'utils/paths';
+import {toDisplayEns} from 'utils/library';
 
 type EditMsSettingsProps = {
-  daoId: string;
   daoDetails: DaoDetails;
 };
 
-export const EditMsSettings: React.FC<EditMsSettingsProps> = ({
-  daoId,
-  daoDetails,
-}) => {
+export const EditMsSettings: React.FC<EditMsSettingsProps> = ({daoDetails}) => {
   const {t} = useTranslation();
   const navigate = useNavigate();
   const {network} = useNetwork(); // TODO get network from dao details
@@ -289,7 +286,12 @@ export const EditMsSettings: React.FC<EditMsSettingsProps> = ({
                 disabled={settingsUnchanged || !isValid}
                 onClick={() =>
                   navigate(
-                    generatePath(ProposeNewSettings, {network, dao: daoId})
+                    generatePath(ProposeNewSettings, {
+                      network,
+                      dao:
+                        toDisplayEns(daoDetails.ensDomain) ||
+                        daoDetails.address,
+                    })
                   )
                 }
               />

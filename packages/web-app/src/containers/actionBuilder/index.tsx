@@ -1,12 +1,16 @@
 import React from 'react';
 import {useFormContext} from 'react-hook-form';
 
+import {MultisigVotingSettings} from '@aragon/sdk-client';
 import {TemporarySection} from 'components/temporary';
 import TokenMenu from 'containers/tokenMenu';
 import {useActionsContext} from 'context/actions';
 import {useNetwork} from 'context/network';
 import {useDaoBalances} from 'hooks/useDaoBalances';
-import {useDaoParam} from 'hooks/useDaoParam';
+import {useDaoDetailsQuery} from 'hooks/useDaoDetails';
+import {useDaoMembers} from 'hooks/useDaoMembers';
+import {PluginTypes} from 'hooks/usePluginClient';
+import {usePluginSettings} from 'hooks/usePluginSettings';
 import {fetchTokenPrice} from 'services/prices';
 import {formatUnits} from 'utils/library';
 import {
@@ -18,13 +22,8 @@ import {
 import AddAddresses from './addAddresses';
 import MintTokens from './mintTokens';
 import RemoveAddresses from './removeAddresses';
-import WithdrawAction from './withdraw/withdrawAction';
 import UpdateMinimumApproval from './updateMinimumApproval';
-import {useDaoDetails} from 'hooks/useDaoDetails';
-import {usePluginSettings} from 'hooks/usePluginSettings';
-import {PluginTypes} from 'hooks/usePluginClient';
-import {useDaoMembers} from 'hooks/useDaoMembers';
-import {MultisigVotingSettings} from '@aragon/sdk-client';
+import WithdrawAction from './withdraw/withdrawAction';
 
 /**
  * This Component is responsible for generating all actions that append to pipeline context (actions)
@@ -38,10 +37,8 @@ type ActionsComponentProps = {
 } & ActionIndex;
 
 const Action: React.FC<ActionsComponentProps> = ({name, actionIndex}) => {
-  // TODO: *** Should be in a global context ***
   // dao data
-  const {data: dao} = useDaoParam();
-  const {data: daoDetails} = useDaoDetails(dao);
+  const {data: daoDetails} = useDaoDetailsQuery();
 
   // plugin data
   const {data: votingSettings} = usePluginSettings(
@@ -53,8 +50,6 @@ const Action: React.FC<ActionsComponentProps> = ({name, actionIndex}) => {
     (daoDetails?.plugins?.[0]?.id as PluginTypes) || undefined
   );
   const multisigDAOSettings = votingSettings as MultisigVotingSettings;
-
-  // *** end of TODO ***
 
   switch (name) {
     case 'withdraw_assets':
@@ -97,10 +92,10 @@ const Action: React.FC<ActionsComponentProps> = ({name, actionIndex}) => {
 };
 
 const ActionBuilder: React.FC = () => {
-  const {data: daoAddress} = useDaoParam();
+  const {data: daoDetails} = useDaoDetailsQuery();
   const {network} = useNetwork();
   const {selectedActionIndex: index, actions} = useActionsContext();
-  const {data: tokens} = useDaoBalances(daoAddress);
+  const {data: tokens} = useDaoBalances(daoDetails?.address || '');
   const {setValue, resetField, clearErrors} = useFormContext();
 
   /*************************************************

@@ -9,19 +9,25 @@ import ContractAddressValidation from 'containers/smartContractComposer/componen
 import SmartContractList from 'containers/smartContractComposer/contractListModal';
 import EmptyState from 'containers/smartContractComposer/emptyStateModal/emptyState';
 import {SmartContract} from 'utils/types';
+import {getVerifiedSmartContracts} from 'services/cache';
+import {useWallet} from 'hooks/useWallet';
+import {CHAIN_METADATA} from 'utils/constants';
 
 const defaultValues = {
-  contracts: [],
   contractAddress: '',
+  contracts: [],
 };
 
 // TODO please move to types
 export type SccFormData = {
   contractAddress: string;
-  contracts: Array<SmartContract>;
+  contracts: SmartContract[];
+  selectedSC: SmartContract;
 };
 
 const SCC: React.FC = () => {
+  const {address} = useWallet();
+
   const [emptyStateIsOpen, setEmptyStateIsOpen] = useState(false);
   const [contractListIsOpen, setContractListIsOpen] = useState(false);
   const [addressValidationIsOpen, setAddressValidationIsOpen] = useState(false);
@@ -30,10 +36,21 @@ const SCC: React.FC = () => {
 
   // TODO: temporary, to make sure we validate using goerli;
   // remove when integrating
-  const {setNetwork} = useNetwork();
+  const {setNetwork, network} = useNetwork();
   useEffect(() => {
     setNetwork('goerli');
   }, [setNetwork]);
+
+  useEffect(() => {
+    if (address) {
+      const storedContracts = getVerifiedSmartContracts(
+        address,
+        CHAIN_METADATA[network].id
+      );
+
+      methods.setValue('contracts', storedContracts);
+    }
+  }, [address, methods, network]);
 
   return (
     <FormProvider {...methods}>
