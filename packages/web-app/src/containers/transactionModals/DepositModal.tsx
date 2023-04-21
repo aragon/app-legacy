@@ -8,7 +8,7 @@ import {
 import ModalBottomSheetSwitcher from 'components/modalBottomSheetSwitcher';
 import {useGlobalModalContext} from 'context/globalModals';
 import {useNetwork} from 'context/network';
-import {useDaoParam} from 'hooks/useDaoParam';
+import {useDaoDetailsQuery} from 'hooks/useDaoDetails';
 import React from 'react';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
@@ -17,7 +17,7 @@ import {CHAIN_METADATA} from 'utils/constants';
 const DepositModal: React.FC = () => {
   const {t} = useTranslation();
   const {isDepositOpen, close} = useGlobalModalContext();
-  const {daoDetails} = useDaoParam();
+  const {data: daoDetails} = useDaoDetailsQuery();
   const {network} = useNetwork();
 
   return (
