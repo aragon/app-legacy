@@ -381,7 +381,6 @@ const CreateProposalProvider: React.FC<Props> = ({
         navigate(generatePath(Proposal, {network, dao, id: proposalId}));
         break;
       default: {
-        setProposalCreationData(undefined);
         setCreationProcessState(TransactionState.WAITING);
         setShowTxModal(false);
         stopPolling();
@@ -589,6 +588,7 @@ const CreateProposalProvider: React.FC<Props> = ({
     async function setProposalData() {
       if (showTxModal && creationProcessState === TransactionState.WAITING)
         setProposalCreationData(await getProposalCreationParams());
+      else if (!showTxModal) setProposalCreationData(undefined);
     }
 
     setProposalData();
