@@ -1,10 +1,10 @@
 import {
-  IconType,
+  ButtonText,
+  ButtonTextProps,
   IlluHumanProps,
+  IlluObject,
   IlluObjectProps,
   IllustrationHuman,
-  IlluObject,
-  ButtonText,
 } from '@aragon/ui-components';
 import useScreen from 'hooks/useScreen';
 import React from 'react';
@@ -14,16 +14,9 @@ type BaseProps = {
   mode: 'card' | 'inline';
   title: string;
   description?: string;
-  primaryButton?: ButtonProps;
-  secondaryButton?: ButtonProps;
+  primaryButton?: Omit<ButtonTextProps, 'mode' | 'size'>;
+  secondaryButton?: Omit<ButtonTextProps, 'mode' | 'size'>;
   renderHtml?: boolean;
-};
-
-type ButtonProps = {
-  label: string;
-  onClick: () => void;
-  iconLeft?: React.FunctionComponentElement<IconType>;
-  iconRight?: React.FunctionComponentElement<IconType>;
 };
 
 type StateEmptyProps =
@@ -83,10 +76,8 @@ export const StateEmpty: React.FC<StateEmptyProps> = props => {
           <ActionContainer>
             {props.primaryButton && (
               <ButtonText
-                label={props.primaryButton.label}
-                onClick={props.primaryButton.onClick}
-                iconLeft={props.primaryButton.iconLeft}
-                iconRight={props.primaryButton.iconRight}
+                {...props.primaryButton}
+                mode="primary"
                 size="large"
                 {...(props.mode === 'inline' &&
                   (props.secondaryButton ? {} : {className: 'w-full'}))}
@@ -94,13 +85,10 @@ export const StateEmpty: React.FC<StateEmptyProps> = props => {
             )}
             {props.secondaryButton && (
               <ButtonText
-                label={props.secondaryButton.label}
-                onClick={props.secondaryButton.onClick}
-                iconLeft={props.secondaryButton.iconLeft}
-                iconRight={props.secondaryButton.iconRight}
+                {...props.secondaryButton}
                 mode="secondary"
                 size="large"
-                bgWhite
+                bgWhite={props.secondaryButton.bgWhite ?? true}
               />
             )}
           </ActionContainer>
