@@ -1,4 +1,4 @@
-import {ValueInput} from '@aragon/ui-components';
+import {NumberInput, ValueInput} from '@aragon/ui-components';
 import {useAlertContext} from 'context/alert';
 import {t} from 'i18next';
 import React from 'react';
@@ -16,7 +16,7 @@ const InputForm: React.FC = () => {
   });
 
   return (
-    <div className="p-6 h-full bg-white">
+    <div className="p-6 min-h-full bg-white">
       <p className="text-lg font-bold capitalize text-ui-800">
         {selectedAction.name}
       </p>
@@ -31,7 +31,11 @@ const InputForm: React.FC = () => {
             <div className="mb-1.5 text-base font-bold capitalize text-ui-800">
               {input.name}
             </div>
-            <ComponentForType key={input.name} input={input} />
+            <ComponentForType
+              key={input.name}
+              input={input}
+              functionName={selectedAction.name}
+            />
           </div>
         ))}
       </div>
@@ -41,9 +45,13 @@ const InputForm: React.FC = () => {
 
 type ComponentForTypeProps = {
   input: Input;
+  functionName: string;
 };
 
-const ComponentForType: React.FC<ComponentForTypeProps> = ({input}) => {
+const ComponentForType: React.FC<ComponentForTypeProps> = ({
+  input,
+  functionName,
+}) => {
   const {control} = useFormContext();
   const {alert} = useAlertContext();
 
@@ -52,7 +60,8 @@ const ComponentForType: React.FC<ComponentForTypeProps> = ({input}) => {
       return (
         <Controller
           defaultValue=""
-          name={'sccActions.address'}
+          // Check if we need to add "index" kind of variable to the "name"
+          name={`sccActions.${functionName}.${input.name}`}
           control={control}
           rules={{
             required: t('errors.required.walletAddress') as string,
@@ -79,8 +88,58 @@ const ComponentForType: React.FC<ComponentForTypeProps> = ({input}) => {
           )}
         />
       );
-    case 'uint' || 'int' || 'uint256':
+
+    case 'uint':
+    case 'int':
+    case 'uint256':
+    case 'int256':
+      return (
+        <Controller
+          defaultValue=""
+          name={`sccActions.${functionName}.${input.name}`}
+          control={control}
+          rules={{
+            required: t('errors.required.walletAddress') as string,
+            validate: value => validateAddress(value),
+          }}
+          render={({
+            field: {name, value, onBlur, onChange},
+            fieldState: {error},
+          }) => (
+            <NumberInput
+              name={name}
+              onBlur={onBlur}
+              onChange={onChange}
+              placeholder="0"
+              includeDecimal
+              mode={error?.message ? 'critical' : 'default'}
+              value={value}
+            />
+          )}
+        />
+      );
+
+    case 'tuple':
+      input.components?.map(component => (
+        <div key={component.name}>
+          <div className="mb-1.5 text-base font-bold capitalize text-ui-800">
+            {input.name}
+          </div>
+          <ComponentForType
+            key={component.name}
+            input={component}
+            functionName={input.name}
+          />
+        </div>
+      ));
       break;
+
+    default:
+      return (
+        <p>
+          {input.type}, {input.internalType}
+        </p>
+      );
   }
   return null;
 };
