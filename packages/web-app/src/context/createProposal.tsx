@@ -55,7 +55,7 @@ import {
   mapToCacheProposal,
 } from 'utils/proposals';
 import {isNativeToken} from 'utils/tokens';
-import {Action, ProposalId, ProposalResource} from 'utils/types';
+import {ProposalId, ProposalResource} from 'utils/types';
 import {
   pendingMultisigProposalsVar,
   pendingTokenBasedProposalsVar,
