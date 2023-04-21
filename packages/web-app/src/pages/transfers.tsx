@@ -78,8 +78,6 @@ const Transfers: React.FC = () => {
     ]
   );
 
-  const SectionContainer = styled.div.attrs({className: 'my-3 desktop:my-5'})``;
-
   if (isLoading) {
     return <Loading />;
   }
