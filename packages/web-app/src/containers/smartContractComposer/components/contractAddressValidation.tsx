@@ -69,6 +69,8 @@ const ContractAddressValidation: React.FC<Props> = props => {
   const {control, resetField, setValue, setError} =
     useFormContext<SccFormData>();
   const {errors} = useFormState({control});
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore
   const [addressField, contracts] = useWatch({
     name: ['contractAddress', 'contracts'],
     control,
