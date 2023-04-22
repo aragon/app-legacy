@@ -39,6 +39,11 @@ const Navbar: React.FC = () => {
 
   const {data: daoDetails} = useDaoDetailsQuery();
 
+  const processInfo = useMemo(() => {
+    const matches = matchRoutes(processPaths, pathname);
+    if (matches) return getProcessInfo(matches[0].route.path) as ProcessInfo;
+  }, [pathname]);
+
   // set current dao as selected dao
   useEffect(() => {
     if (daoDetails) {
@@ -77,14 +82,6 @@ const Navbar: React.FC = () => {
   const handleFeedbackButtonClick = () => {
     window.open(FEEDBACK_FORM, '_blank');
   };
-
-  const processInfo = useMemo(() => {
-    const matches = matchRoutes(processPaths, pathname);
-
-    if (matches) {
-      return getProcessInfo(matches[0].route.path, pathname) as ProcessInfo;
-    }
-  }, [pathname]);
 
   if (isDesktop) {
     return (
@@ -166,21 +163,20 @@ type ProcessInfo = {
 };
 
 function getProcessInfo(
-  processName: string | undefined,
-  pathName: string | undefined
+  processPath: string | undefined
 ): ProcessInfo | undefined {
-  if (processName) {
+  if (processPath) {
     return {
       isProcess: true,
-      ...processes[processName],
-      processName,
-      processType: getExitProcessType(pathName),
+      ...processes[processPath],
+      processName: processPath,
+      processType: getExitProcessType(processPath),
     };
   }
 }
 
-function getExitProcessType(path: string | undefined): ProcessType | undefined {
-  switch (path) {
+function getExitProcessType(processPath: string): ProcessType | undefined {
+  switch (processPath) {
     case CreateDAO:
       return 'DaoCreation';
 
