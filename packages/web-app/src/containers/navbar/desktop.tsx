@@ -1,19 +1,19 @@
+import {useReactiveVar} from '@apollo/client';
 import {
   Breadcrumb,
-  ButtonWallet,
   ButtonText,
+  ButtonWallet,
   IconFeedback,
 } from '@aragon/ui-components';
-
-import NavLinks from 'components/navLinks';
-import React, {useMemo} from 'react';
+import React, {useCallback, useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {generatePath, useNavigate, useParams} from 'react-router-dom';
 import styled from 'styled-components';
 
-import {useReactiveVar} from '@apollo/client';
 import {DaoSelector} from 'components/daoSelector';
 import {Container} from 'components/layout';
+import NavLinks from 'components/navLinks';
+import ExitProcessMenu, {ProcessType} from 'containers/exitProcessMenu';
 import {selectedDaoVar} from 'context/apolloClient';
 import {useNetwork} from 'context/network';
 import {useMappedBreadcrumbs} from 'hooks/useMappedBreadcrumbs';
@@ -24,7 +24,9 @@ import NetworkIndicator from './networkIndicator';
 const MIN_ROUTE_DEPTH_FOR_BREADCRUMBS = 2;
 
 type DesktopNavProp = {
+  isProcess?: boolean;
   returnURL?: string;
+  processType?: ProcessType;
   processLabel?: string;
   onDaoSelect: () => void;
   onWalletClick: () => void;
@@ -41,35 +43,54 @@ const DesktopNav: React.FC<DesktopNavProp> = props => {
 
   const currentDao = useReactiveVar(selectedDaoVar);
 
-  const isProcess = useMemo(
-    () => props.returnURL && props.processLabel,
-    [props.processLabel, props.returnURL]
-  );
+  const [showExitProcessMenu, setShowExitProcessMenu] = useState(false);
 
-  const clickHandler = (path: string) => {
-    navigate(generatePath(path, {network, dao}));
+  // Note: Obviously because of convoluted navigation, this is being handled here
+  // when it should have been in the wizard instead. That said, once new navigation
+  // is added, this should be deprecated and removed
+  const handleExitWithWarning = () => {
+    if (props.processType) {
+      setShowExitProcessMenu(true);
+    } else {
+      navigate(generatePath(props.returnURL!, {network, dao}));
+    }
   };
 
-  if (isProcess) {
-    return (
-      <Container data-testid="navbar">
-        <NetworkIndicator />
-        <Menu>
-          <Breadcrumb
-            crumbs={{label: props.processLabel!, path: props.returnURL!}}
-            onClick={clickHandler}
-          />
+  const exitProcess = useCallback(() => {
+    setShowExitProcessMenu(false);
+    navigate(generatePath(props.returnURL!, {network, dao}));
+  }, [dao, navigate, network, props.returnURL]);
 
-          <ButtonWallet
-            src={ensAvatarUrl || address}
-            onClick={props.onWalletClick}
-            isConnected={isConnected}
-            label={
-              isConnected ? ensName || address : t('navButtons.connectWallet')
-            }
+  if (props.isProcess) {
+    return (
+      <>
+        <Container data-testid="navbar">
+          <NetworkIndicator />
+          <Menu>
+            <Breadcrumb
+              crumbs={{label: props.processLabel!, path: props.returnURL!}}
+              onClick={handleExitWithWarning}
+            />
+
+            <ButtonWallet
+              src={ensAvatarUrl || address}
+              onClick={props.onWalletClick}
+              isConnected={isConnected}
+              label={
+                isConnected ? ensName || address : t('navButtons.connectWallet')
+              }
+            />
+          </Menu>
+        </Container>
+        {props.processType && (
+          <ExitProcessMenu
+            isOpen={showExitProcessMenu}
+            processType={props.processType}
+            onClose={() => setShowExitProcessMenu(false)}
+            ctaCallback={exitProcess}
           />
-        </Menu>
-      </Container>
+        )}
+      </>
     );
   }
 
@@ -93,7 +114,7 @@ const DesktopNav: React.FC<DesktopNavProp> = props => {
                 <Breadcrumb
                   icon={icon}
                   crumbs={breadcrumbs}
-                  onClick={clickHandler}
+                  onClick={path => navigate(generatePath(path, {network, dao}))}
                   tag={tag}
                 />
               </>
