@@ -1,29 +1,29 @@
-import React from 'react';
-import {useTranslation} from 'react-i18next';
 import {Breadcrumb, ButtonText, IconChevronRight} from '@aragon/ui-components';
 import {IlluObject} from '@aragon/ui-components/src/components/illustrations';
+import React from 'react';
+import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
-import {useNavigate} from 'react-router-dom';
 
 import CardWithImage from 'components/cardWithImage';
 import {useFormStep} from 'components/fullScreenStepper';
-import useScreen from 'hooks/useScreen';
 import {ActiveIndicator, Indicator, StyledCarousel} from 'containers/carousel';
-import {i18n} from '../../../i18n.config';
+import useScreen from 'hooks/useScreen';
 import {trackEvent} from 'services/analytics';
+import {i18n} from '../../../i18n.config';
 
 type OverviewDAOHeaderProps = {
   navLabel: string;
   returnPath: string;
+  onExitButtonClick?: () => void;
 };
 
 export const OverviewDAOHeader: React.FC<OverviewDAOHeaderProps> = ({
   navLabel,
   returnPath,
+  onExitButtonClick,
 }) => {
   const {t} = useTranslation();
   const {next} = useFormStep();
-  const navigate = useNavigate();
 
   const handleSetupClick = () => {
     trackEvent('daoCreation_setupDAO_clicked');
@@ -38,7 +38,7 @@ export const OverviewDAOHeader: React.FC<OverviewDAOHeaderProps> = ({
             label: navLabel,
             path: returnPath,
           }}
-          onClick={(path: string) => navigate(path)}
+          onClick={onExitButtonClick}
         />
       </div>
 
