@@ -6,6 +6,7 @@ import {
   IconChevronDown,
   Option,
   Spinner,
+  IllustrationHuman,
 } from '@aragon/ui-components';
 import {withTransaction} from '@elastic/apm-rum-react';
 import React, {useEffect, useState} from 'react';
@@ -19,14 +20,15 @@ import {PageWrapper} from 'components/wrappers';
 import {useDaoDetailsQuery} from 'hooks/useDaoDetails';
 import {PluginTypes} from 'hooks/usePluginClient';
 import {useProposals} from 'hooks/useProposals';
-import NoProposals from 'public/noProposals.svg';
 import {trackEvent} from 'services/analytics';
 import {ProposalListItem} from 'utils/types';
 import PageEmptyState from 'containers/pageEmptyState';
 import {toDisplayEns} from 'utils/library';
+import useScreen from 'hooks/useScreen';
 
 const Governance: React.FC = () => {
   const {data: daoDetails, isLoading: isDaoLoading} = useDaoDetailsQuery();
+  const {isMobile} = useScreen();
 
   // The number of proposals displayed on each page
   const PROPOSALS_PER_PAGE = 6;
@@ -84,7 +86,20 @@ const Governance: React.FC = () => {
         subtitle={
           'governance.emptyState.subtitle' as unknown as TemplateStringsArray
         }
-        src={NoProposals}
+        Illustration={
+          <IllustrationHuman
+            {...{
+              body: 'voting',
+              expression: 'smile',
+              hair: 'middle',
+              accessory: 'earrings_rhombus',
+              sunglass: 'big_rounded',
+            }}
+            {...(isMobile
+              ? {height: 165, width: 295}
+              : {height: 225, width: 400})}
+          />
+        }
         buttonLabel={t('newProposal.title')}
         onClick={() => {
           trackEvent('governance_newProposalBtn_clicked', {

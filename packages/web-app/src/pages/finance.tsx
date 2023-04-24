@@ -1,4 +1,11 @@
-import {Breadcrumb, ButtonText, IconAdd, Tag} from '@aragon/ui-components';
+import {
+  IllustrationHuman,
+  Breadcrumb,
+  ButtonText,
+  IconAdd,
+  Tag,
+  IlluObject,
+} from '@aragon/ui-components';
 import {withTransaction} from '@elastic/apm-rum-react';
 import React from 'react';
 import {useTranslation} from 'react-i18next';
@@ -20,7 +27,6 @@ import useScreen from 'hooks/useScreen';
 import {trackEvent} from 'services/analytics';
 import {sortTokens} from 'utils/tokens';
 import PageEmptyState from 'containers/pageEmptyState';
-import NoTransfers from 'public/noTransfers.svg';
 import {Loading} from 'components/temporary';
 import {useDaoDetailsQuery} from 'hooks/useDaoDetails';
 
@@ -35,7 +41,7 @@ const Finance: React.FC = () => {
   const {t} = useTranslation();
   const {data: daoDetails, isLoading} = useDaoDetailsQuery();
   const {open} = useGlobalModalContext();
-  const {isDesktop} = useScreen();
+  const {isMobile} = useScreen();
 
   // load dao details
   const navigate = useNavigate();
@@ -53,15 +59,29 @@ const Finance: React.FC = () => {
     return <Loading />;
   }
 
-  if (tokens.length === 0)
+  if (tokens.length === 0 && !isMobile)
     return (
       <PageEmptyState
-        title={'Deposit your very first funds'}
+        title={t('finance.emptyState.title')}
         subtitle={
-          'governance.emptyState.subtitle' as unknown as TemplateStringsArray
+          'finance.emptyState.description' as unknown as TemplateStringsArray
         }
-        src={NoTransfers}
-        buttonLabel={'Deposit first funds'}
+        Illustration={
+          <div className="flex">
+            <IllustrationHuman
+              {...{
+                body: 'chart',
+                expression: 'excited',
+                hair: 'bun',
+              }}
+              {...(isMobile
+                ? {height: 165, width: 295}
+                : {height: 225, width: 400})}
+            />
+            <IlluObject object={'wallet'} className="-ml-36" />
+          </div>
+        }
+        buttonLabel={t('finance.emptyState.buttonLabel')}
         onClick={() => {
           open('deposit');
         }}
@@ -74,7 +94,7 @@ const Finance: React.FC = () => {
         customHeader={
           <HeaderContainer>
             <Header>
-              {!isDesktop && (
+              {isMobile && (
                 <Breadcrumb
                   icon={icon}
                   crumbs={breadcrumbs}
@@ -125,21 +145,54 @@ const Finance: React.FC = () => {
           </HeaderContainer>
         }
       >
-        <div className={'h-4'} />
-        <TokenSectionWrapper title={t('finance.tokenSection')}>
-          <ListContainer>
-            <TokenList tokens={tokens.slice(0, 5)} />
-          </ListContainer>
-        </TokenSectionWrapper>
-        <div className={'h-4'} />
-        <TransferSectionWrapper title={t('finance.transferSection')} showButton>
-          <ListContainer>
-            <TransferList
-              transfers={transfers.slice(0, 5)}
-              onTransferClick={handleTransferClicked}
-            />
-          </ListContainer>
-        </TransferSectionWrapper>
+        {tokens.length === 0 ? (
+          <PageEmptyState
+            title={'Deposit your very first funds'}
+            subtitle={
+              'governance.emptyState.subtitle' as unknown as TemplateStringsArray
+            }
+            Illustration={
+              <div className="flex">
+                <IllustrationHuman
+                  {...{
+                    body: 'chart',
+                    expression: 'excited',
+                    hair: 'bun',
+                  }}
+                  {...(isMobile
+                    ? {height: 165, width: 295}
+                    : {height: 225, width: 400})}
+                />
+                <IlluObject object={'wallet'} className="-ml-32" />
+              </div>
+            }
+            buttonLabel={'Deposit first funds'}
+            onClick={() => {
+              open('deposit');
+            }}
+          />
+        ) : (
+          <>
+            <div className={'h-4'} />
+            <TokenSectionWrapper title={t('finance.tokenSection')}>
+              <ListContainer>
+                <TokenList tokens={tokens.slice(0, 5)} />
+              </ListContainer>
+            </TokenSectionWrapper>
+            <div className={'h-4'} />
+            <TransferSectionWrapper
+              title={t('finance.transferSection')}
+              showButton
+            >
+              <ListContainer>
+                <TransferList
+                  transfers={transfers.slice(0, 5)}
+                  onTransferClick={handleTransferClicked}
+                />
+              </ListContainer>
+            </TransferSectionWrapper>
+          </>
+        )}
       </PageWrapper>
     </>
   );

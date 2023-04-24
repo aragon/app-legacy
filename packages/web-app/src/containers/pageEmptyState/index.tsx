@@ -8,15 +8,15 @@ import {useTranslation} from 'react-i18next';
 type PageEmptyStateProps = {
   title: string;
   subtitle: TemplateStringsArray;
-  src: string;
   onClick?: () => void;
   buttonLabel: string;
+  Illustration: JSX.Element;
 };
 
 const PageEmptyState = ({
   title,
   subtitle,
-  src,
+  Illustration,
   onClick,
   buttonLabel,
 }: PageEmptyStateProps) => {
@@ -26,7 +26,7 @@ const PageEmptyState = ({
     <>
       <Container>
         <EmptyStateContainer>
-          <ImageContainer {...{src}} />
+          {Illustration}
           <EmptyStateHeading>{title}</EmptyStateHeading>
           <span
             className="mt-1.5 lg:w-1/2 text-center"
@@ -51,10 +51,6 @@ export default PageEmptyState;
 
 export const Container = styled.div.attrs({
   className: 'col-span-full desktop:col-start-3 desktop:col-end-11',
-})``;
-
-const ImageContainer = styled.img.attrs({
-  className: 'object-cover w-1/2',
 })``;
 
 export const EmptyStateHeading = styled.h1.attrs({
