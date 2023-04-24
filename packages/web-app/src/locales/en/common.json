@@ -961,8 +961,8 @@
       "description": "If you leave the process, you'll lose all the information you've put in. Would you like to exit the process?",
       "ctaLabel": "Yes, exit now",
       "cancelLabel": "No, stay",
-      "titleDaoCreation": "Exit DAO creation",
-      "titleProposalCreation": "Exit proposal creation"
+      "titleProposalCreation": "Exit proposal creation",
+      "titleDaoCreation": "Exit DAO creation"
     }
   }
 }

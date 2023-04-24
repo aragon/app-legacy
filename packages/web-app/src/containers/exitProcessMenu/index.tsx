@@ -38,7 +38,7 @@ const ExitProcessMenu: React.FC<Props> = ({
           }
           description={t('modal.exitProcess.description')}
           primaryButton={{
-            label: t('modal.exitProcess.ctaLabel '),
+            label: t('modal.exitProcess.ctaLabel'),
             onClick: ctaCallback,
           }}
           secondaryButton={{
