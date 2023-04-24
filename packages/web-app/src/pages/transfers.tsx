@@ -40,13 +40,20 @@ const Transfers: React.FC = () => {
   const filterValidator = useCallback(
     (transfer: Transfer) => {
       let returnValue = true;
+      let matchesFilter = true;
+      let matchesSearch = true;
+
       if (filterValue !== '') {
-        returnValue = Boolean(transfer.transferType === filterValue);
+        matchesFilter = (Boolean(transfer.transferType === filterValue));
       }
+
       if (searchValue !== '') {
         const re = new RegExp(searchValue, 'i');
-        returnValue = Boolean(transfer?.title.match(re) || transfer.tokenSymbol.match(re) || transfer.tokenAmount.match(re));
+        matchesSearch = Boolean(transfer?.title.match(re) || transfer.tokenSymbol.match(re) || transfer.tokenAmount.match(re));
       }
+
+      returnValue = matchesFilter && matchesSearch;
+
       return returnValue;
     },
     [searchValue, filterValue]
