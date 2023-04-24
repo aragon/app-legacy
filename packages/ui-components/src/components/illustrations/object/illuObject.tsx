@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {HTMLAttributes} from 'react';
 
 import {UnknownIllustrationVariantError} from '../../../utils/illustrations';
 import {Action} from './action';
@@ -47,7 +47,9 @@ export type IlluObjectProps = {
   object: typeof objectNames[number];
 };
 
-export const IlluObject: React.FC<IlluObjectProps> = ({object, ...rest}) => {
+export const IlluObject: React.FC<
+  IlluObjectProps & HTMLAttributes<HTMLElement>
+> = ({object, ...rest}) => {
   switch (object) {
     case 'action':
       return <Action {...rest} data-testid="illu-object" />;
