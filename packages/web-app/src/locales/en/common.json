@@ -956,6 +956,13 @@
       "ctaLabel": "View all transfers",
       "cancelLabel": "Cancel",
       "dividerLabel": "or"
+    },
+    "exitProcess": {
+      "description": "If you leave the process, you'll lose all the information you've put in. Would you like to exit the process?",
+      "ctaLabel": "Yes, exit now",
+      "cancelLabel": "No, stay",
+      "titleDaoCreation": "Exit DAO creation",
+      "titleProposalCreation": "Exit proposal creation"
     }
   }
 }
