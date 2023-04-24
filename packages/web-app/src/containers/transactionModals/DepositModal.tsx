@@ -6,54 +6,61 @@ import {
   shortenAddress,
 } from '@aragon/ui-components';
 import ModalBottomSheetSwitcher from 'components/modalBottomSheetSwitcher';
+import {useAlertContext} from 'context/alert';
 import {useGlobalModalContext} from 'context/globalModals';
 import {useNetwork} from 'context/network';
 import {useDaoDetailsQuery} from 'hooks/useDaoDetails';
 import React from 'react';
 import {useTranslation} from 'react-i18next';
+import {generatePath, useParams} from 'react-router-dom';
 import styled from 'styled-components';
 import {CHAIN_METADATA} from 'utils/constants';
+import {toDisplayEns} from 'utils/library';
+import {Finance} from 'utils/paths';
 
 const DepositModal: React.FC = () => {
   const {t} = useTranslation();
   const {isDepositOpen, close} = useGlobalModalContext();
   const {data: daoDetails} = useDaoDetailsQuery();
   const {network} = useNetwork();
+  const {alert} = useAlertContext();
+
+  const copyToClipboard = (value: string | undefined) => {
+    navigator.clipboard.writeText(value || '');
+    alert(t('alert.chip.inputCopied'));
+  };
 
   return (
     <ModalBottomSheetSwitcher
       isOpen={isDepositOpen}
       onClose={() => close('deposit')}
-      title={'Deposit assets'}
-      subtitle={'Send assets to the DAO treasury'}
+      title={t('modal.deposit.headerTitle')}
+      subtitle={t('modal.deposit.headerDescription')}
     >
       <Container>
-        {daoDetails?.ensDomain && (
+        {toDisplayEns(daoDetails?.ensDomain) !== '' && (
           <>
             <EnsHeaderWrapper>
-              <EnsTitle>ENS</EnsTitle>
-              <EnsSubtitle>
-                Copy the ENS or contract address below and use your wallet's
-                send feature to send money to your DAO's treasury.
-              </EnsSubtitle>
+              <EnsTitle>{t('modal.deposit.inputLabelEns')}</EnsTitle>
+              <EnsSubtitle>{t('modal.deposit.inputHelptextEns')}</EnsSubtitle>
             </EnsHeaderWrapper>
             <WalletInput
-              adornmentText={'Copy'}
+              adornmentText={t('labels.copy')}
               value={daoDetails?.ensDomain}
-              onAdornmentClick={() => null}
+              onAdornmentClick={() => copyToClipboard(daoDetails?.ensDomain)}
               disabledFilled
             />
             <Divider />
           </>
         )}
         <AddressHeaderWrapper>
-          <EnsTitle>Contract address</EnsTitle>
+          <EnsTitle>{t('modal.deposit.inputLabelContract')}</EnsTitle>
         </AddressHeaderWrapper>
         <BodyWrapper>
           <WalletInput
-            adornmentText={'Copy'}
+            adornmentText={t('labels.copy')}
             value={shortenAddress(daoDetails?.address as string)}
-            onAdornmentClick={() => null}
+            onAdornmentClick={() => copyToClipboard(daoDetails?.address)}
             disabledFilled
           />
           <Link
@@ -62,19 +69,23 @@ const DepositModal: React.FC = () => {
               '/address/' +
               daoDetails?.address
             }
-            label={'View on block explorer'}
+            label={t('modal.deposit.linkLabelBlockExplorer')}
             iconRight={<IconLinkExternal />}
           />
           <ActionWrapper>
             <ButtonText
               mode="primary"
               size="large"
-              label={'See all Transfers'}
+              label={t('modal.deposit.ctaLabel')}
+              onClick={() => {
+                close('deposit');
+                location.reload();
+              }}
             />
             <ButtonText
               mode="secondary"
               size="large"
-              label={t('labels.cancel')}
+              label={t('modal.deposit.cancelLabel')}
               onClick={() => close('deposit')}
             />
           </ActionWrapper>

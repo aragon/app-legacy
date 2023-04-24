@@ -2,7 +2,7 @@ import {Breadcrumb, ButtonText, IconAdd, Tag} from '@aragon/ui-components';
 import {withTransaction} from '@elastic/apm-rum-react';
 import React from 'react';
 import {useTranslation} from 'react-i18next';
-import {useNavigate, useParams} from 'react-router-dom';
+import {useNavigate} from 'react-router-dom';
 import styled from 'styled-components';
 
 import TokenList from 'components/tokenList';
@@ -20,7 +20,7 @@ import useScreen from 'hooks/useScreen';
 import {trackEvent} from 'services/analytics';
 import {sortTokens} from 'utils/tokens';
 import PageEmptyState from 'containers/pageEmptyState';
-import NoProposals from 'public/noProposals.svg';
+import NoTransfers from 'public/noTransfers.svg';
 import {Loading} from 'components/temporary';
 import {useDaoDetailsQuery} from 'hooks/useDaoDetails';
 
@@ -60,7 +60,7 @@ const Finance: React.FC = () => {
         subtitle={
           'governance.emptyState.subtitle' as unknown as TemplateStringsArray
         }
-        src={NoProposals}
+        src={NoTransfers}
         buttonLabel={'Deposit first funds'}
         onClick={() => {
           open('deposit');
