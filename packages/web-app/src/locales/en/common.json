@@ -241,7 +241,7 @@
     "emptyState": {
       "title": "Make your first deposit",
       "description": "Begin by making your first treasury deposit.\u2028 Learn more about managing a DAO treasury {{link}}.",
-      "descriptionLinkURL": "https://aragon.org/how-to/how-to-manage-a-dao-treasury",
+      "descriptionLinkURL": "https://aragon.org/how-to/manage-a-dao-treasury",
       "descriptionLinkLabel": "in this guide",
       "buttonLabel": "Deposit funds"
     }
@@ -255,10 +255,10 @@
       "title": "Create your first proposal",
       "subtitle": "What's the first thing your community needs to decide? For ideas on how to structure proposals, read this guide {{link}}.",
       "subtitleLinkLabel": "read this guide",
-      "subtitleLinkURL": "https://aragon.org/how-to/how-to-structure-dao-proposals-and-build-proposal-processes",
+      "subtitleLinkURL": "https://aragon.org/how-to/structure-dao-proposals-and-build-proposal-processes",
       "description": "Get your community involved in the decision-making process. Learn more in our proposal guide {{link}}.",
       "descriptionLinkLabel": "proposal guide",
-      "descriptionLinkURL": "https://aragon.org/how-to/how-to-structure-dao-proposals-and-build-proposal-processes"
+      "descriptionLinkURL": "https://aragon.org/how-to/structure-dao-proposals-and-build-proposal-processes"
     },
     "proposals": {
       "publishedBy": "Published by",
@@ -603,7 +603,7 @@
       "title": "Select blockchain",
       "description": "The chain you choose is where your tokens and assets are stored. If you already have a token, choose the chain your token is minted on. This cannot be changed later. For help selecting your chain, read our guide on choosing the best {{link}}.",
       "descriptionLinkLabel": "blockchain for your DAO",
-      "descriptionLinkURL": "https://aragon.org/how-to/how-to-choose-the-right-blockchain-for-your-dao"
+      "descriptionLinkURL": "https://aragon.org/how-to/choose-the-right-blockchain-for-your-dao"
     },
     "step2": {
       "label": "Step 2",
@@ -615,7 +615,7 @@
       "linksSubtitle": "Links to your DAO's website, social media profiles, Discord, or other places your community gathers.",
       "metadataOverviewGuide": "read our guide",
       "descriptionLinkLabel": "read our guide",
-      "descriptionLinkURL": "https://aragon.org/how-to/how-to-build-a-dao-brand-identity",
+      "descriptionLinkURL": "https://aragon.org/how-to/build-a-dao-brand-identity",
       "ensNameSubtitle": "This will be your DAO’s unique ENS subdomain, created automatically for you. Lowercase letters, numbers, and the dash '-' are all acceptable characters; ideally, the character count should be under 128."
     },
     "step3": {
@@ -656,7 +656,7 @@
       "whiteListWalletAlertText": "Your connected wallet was automatically added to the list. You can remove it if you like.",
       "createTokenHelptext": "Define the token details and distribute tokens to a core team and DAO treasury. For more on token minting best practices, {{link}}",
       "createTokenHelptextLinkLabel": "read this guide",
-      "createTokenHelptextLinkURL": "https://aragon.org/how-to/how-to-mint-dao-governance-tokens",
+      "createTokenHelptextLinkURL": "https://aragon.org/how-to/mint-dao-governance-tokens",
       "membership": "Who can participate in governance?",
       "eligibility": {
         "optionTitle": "Who is eligible?",
@@ -681,7 +681,7 @@
       "descriptionLinkLabel": "read this guide",
       "descriptionLinkURL": "https://aragon.org/how-to/set-up-your-dao-governance-in-8-steps",
       "distributeTokensHelpertextLinkLabel": "read our guide",
-      "distributeTokensHelpertextLinkURL": "https://aragon.org/how-to/how-to-distribute-a-dao-governance-token"
+      "distributeTokensHelpertextLinkURL": "https://aragon.org/how-to/distribute-a-dao-governance-token"
     },
     "step4": {
       "label": "Step 4",
@@ -898,13 +898,6 @@
   },
   "dashboard": {
     "proposalsTitle": "Proposals created",
-    "emptyTransfers": {
-      "title": "Initiate a token transfer",
-      "description": "Ready to distribute tokens or send funds? Initiate a token transfer here. For ideas on how to distribute your community's token, {{link}} on token distribution.",
-      "buttonLabel": "Initiate transfer",
-      "descriptionLinkLabel": "read our guide",
-      "descriptionLinkURL": "https://aragon.org/how-to/how-to-distribute-a-dao-governance-token"
-    },
     "emptyState": {
       "title": "We're building your DAO!",
       "subtitle": "The on-chain data is being deployed and published. This won't take very long.",
