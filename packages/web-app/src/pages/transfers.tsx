@@ -45,7 +45,7 @@ const Transfers: React.FC = () => {
       }
       if (searchValue !== '') {
         const re = new RegExp(searchValue, 'i');
-        returnValue = Boolean(transfer?.title.match(re));
+        returnValue = Boolean(transfer?.title.match(re) || transfer.tokenSymbol.match(re) || transfer.tokenAmount.match(re));
       }
       return returnValue;
     },
