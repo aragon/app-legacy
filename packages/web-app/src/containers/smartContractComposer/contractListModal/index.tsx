@@ -23,7 +23,7 @@ import {ListItemContract} from '../components/listItemContract';
 type Props = {
   isOpen: boolean;
   onClose: () => void;
-  onConnect: () => void;
+  onConnectNew: () => void;
   onBackButtonClicked: () => void;
 };
 
@@ -38,7 +38,7 @@ const SmartContractList: React.FC<Props> = props => {
       <DesktopModal
         isOpen={props.isOpen}
         onClose={props.onClose}
-        onConnect={props.onConnect}
+        onConnect={props.onConnectNew}
         onBackButtonClicked={props.onBackButtonClicked}
       />
     );
@@ -74,7 +74,7 @@ const SmartContractList: React.FC<Props> = props => {
               mode="secondary"
               size="large"
               label={t('scc.labels.connect')}
-              onClick={props.onConnect}
+              onClick={props.onConnectNew}
               className="w-full"
             />
           </>

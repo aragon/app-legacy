@@ -16,12 +16,12 @@ export function useDaoActions(dao: string): HookData<ActionParameter[]> {
       subtitle: t('AddActionModal.withdrawAssetsSubtitle'),
       isReuseable: true,
     },
-    // {
-    //   type: 'external_contract',
-    //   title: t('AddActionModal.externalContract'),
-    //   subtitle: t('AddActionModal.externalContractSubtitle'),
-    //   isReuseable: true,
-    // },
+    {
+      type: 'external_contract',
+      title: t('AddActionModal.externalContract'),
+      subtitle: t('AddActionModal.externalContractSubtitle'),
+      isReuseable: true,
+    },
   ];
 
   const multisigActions = baseActions.concat([

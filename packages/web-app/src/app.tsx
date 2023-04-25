@@ -29,7 +29,6 @@ import {NotFound} from 'utils/paths';
 import '../i18n.config';
 import DepositModal from 'containers/transactionModals/DepositModal';
 
-const DemoSCCPage = lazy(() => import('pages/demoScc'));
 const ExplorePage = lazy(() => import('pages/explore'));
 const NotFoundPage = lazy(() => import('pages/notFound'));
 
@@ -82,8 +81,6 @@ function App() {
       {/* TODO: replace with loading indicator */}
       <Suspense fallback={<Loading />}>
         <Routes>
-          <Route path="/scc" element={<DemoSCCPage />} />
-
           <Route element={<ExploreWrapper />}>
             <Route path="/" element={<ExplorePage />} />
           </Route>

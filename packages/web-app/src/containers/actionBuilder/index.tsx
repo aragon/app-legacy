@@ -24,6 +24,7 @@ import MintTokens from './mintTokens';
 import RemoveAddresses from './removeAddresses';
 import UpdateMinimumApproval from './updateMinimumApproval';
 import WithdrawAction from './withdraw/withdrawAction';
+import SCC from 'containers/smartContractComposer';
 
 /**
  * This Component is responsible for generating all actions that append to pipeline context (actions)
@@ -57,9 +58,7 @@ const Action: React.FC<ActionsComponentProps> = ({name, actionIndex}) => {
     case 'mint_tokens':
       return <MintTokens {...{actionIndex}} />;
     case 'external_contract':
-      return (
-        <TemporarySection purpose="It serves as a placeholder for not yet implemented external contract interaction component" />
-      );
+      return <SCC />;
     case 'modify_token_voting_settings':
       return (
         <TemporarySection purpose="It serves as a placeholder for not yet implemented external contract interaction component" />

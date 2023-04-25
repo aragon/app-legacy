@@ -40,6 +40,7 @@ type AugmentedEtherscanContractResponse = EtherscanContractResponse & {
 
 type Props = {
   isOpen: boolean;
+  onVerificationSuccess: () => void;
   onClose: () => void;
   onBackButtonClicked: () => void;
 };
@@ -249,7 +250,13 @@ const ContractAddressValidation: React.FC<Props> = props => {
         />
         <ButtonText
           label={label[verificationState]}
-          onClick={handleContractValidation}
+          onClick={async () => {
+            if (verificationState === TransactionState.SUCCESS) {
+              props.onVerificationSuccess();
+            } else {
+              handleContractValidation();
+            }
+          }}
           iconLeft={
             isTransactionLoading ? (
               <Spinner size="xs" color="white" />

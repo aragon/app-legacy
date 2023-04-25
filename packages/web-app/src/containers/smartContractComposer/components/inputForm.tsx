@@ -120,6 +120,7 @@ const ComponentForType: React.FC<ComponentForTypeProps> = ({
       );
 
     case 'tuple':
+      console.log(input.type);
       input.components?.map(component => (
         <div key={component.name}>
           <div className="mb-1.5 text-base font-bold capitalize text-ui-800">
@@ -135,11 +136,7 @@ const ComponentForType: React.FC<ComponentForTypeProps> = ({
       break;
 
     default:
-      return (
-        <p>
-          {input.type}, {input.internalType}
-        </p>
-      );
+      return <p>{input.type}</p>;
   }
   return null;
 };
