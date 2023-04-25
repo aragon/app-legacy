@@ -22,7 +22,7 @@ import ModalBottomSheetSwitcher from 'components/modalBottomSheetSwitcher';
 import {useAlertContext} from 'context/alert';
 import {useNetwork} from 'context/network';
 import {useWallet} from 'hooks/useWallet';
-import {SccFormData} from 'pages/demoScc';
+import {SccFormData} from 'containers/smartContractComposer';
 import {addVerifiedSmartContract} from 'services/cache';
 import {CHAIN_METADATA, TransactionState} from 'utils/constants';
 import {handleClipboardActions} from 'utils/library';
