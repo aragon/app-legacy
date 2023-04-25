@@ -17,7 +17,7 @@ const InputForm: React.FC = () => {
 
   return (
     <div className="p-6 min-h-full bg-white">
-      <p className="text-lg font-bold text-ui-800 capitalize">
+      <p className="text-lg font-bold capitalize text-ui-800">
         {selectedAction.name}
       </p>
       <p className="mt-1 text-sm text-ui-600">
@@ -25,10 +25,10 @@ const InputForm: React.FC = () => {
         NatSpec Format or if those are our smart contracts, by further
         implementation
       </p>
-      <div className="p-3 mt-5 space-y-2 bg-ui-50 rounded-xl border-ui-100 shadow-100">
+      <div className="p-3 mt-5 space-y-2 rounded-xl bg-ui-50 border-ui-100 shadow-100">
         {selectedAction.inputs.map(input => (
           <div key={input.name}>
-            <div className="mb-1.5 text-base font-bold text-ui-800 capitalize">
+            <div className="mb-1.5 text-base font-bold capitalize text-ui-800">
               {input.name}
             </div>
             <ComponentForType
@@ -123,7 +123,7 @@ const ComponentForType: React.FC<ComponentForTypeProps> = ({
       console.log(input.type);
       input.components?.map(component => (
         <div key={component.name}>
-          <div className="mb-1.5 text-base font-bold text-ui-800 capitalize">
+          <div className="mb-1.5 text-base font-bold capitalize text-ui-800">
             {input.name}
           </div>
           <ComponentForType
@@ -136,7 +136,7 @@ const ComponentForType: React.FC<ComponentForTypeProps> = ({
       break;
 
     default:
-      return <p>{input.type}</p>;
+      return <p>TBD: Implement &quot;{input.type}&quot; type</p>;
   }
   return null;
 };

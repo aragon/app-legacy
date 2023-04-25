@@ -7,6 +7,7 @@ import styled from 'styled-components';
 
 type Props = {
   isOpen: boolean;
+  onConnectNew: () => void;
   onClose: () => void;
   onBackButtonClicked: () => void;
 };
@@ -16,8 +17,6 @@ type Props = {
 // this as a "controlled" component
 const EmptyState: React.FC<Props> = props => {
   const {t} = useTranslation();
-
-  const handleConnectSCC = () => {};
 
   return (
     <ModalBottomSheetSwitcher isOpen={props.isOpen} onClose={props.onClose}>
@@ -35,7 +34,7 @@ const EmptyState: React.FC<Props> = props => {
           description={t('scc.emptyState.description')}
           primaryButton={{
             label: t('scc.emptyState.primaryBtnLabel'),
-            onClick: handleConnectSCC,
+            onClick: props.onConnectNew,
           }}
         />
       </Content>

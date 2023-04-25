@@ -26,7 +26,7 @@ export type SccFormData = {
 const SCC: React.FC = () => {
   const {address} = useWallet();
 
-  const [emptyStateIsOpen, setEmptyStateIsOpen] = useState(false);
+  const [emptyStateIsOpen, setEmptyStateIsOpen] = useState(true);
   const [contractListIsOpen, setContractListIsOpen] = useState(false);
   const [addressValidationIsOpen, setAddressValidationIsOpen] = useState(false);
 
@@ -48,13 +48,11 @@ const SCC: React.FC = () => {
   }, [address, network, setValue]);
 
   useEffect(() => {
-    if (connectedContracts) {
+    if (connectedContracts.length > 0 && !addressValidationIsOpen) {
+      setEmptyStateIsOpen(false);
       setContractListIsOpen(true);
-    } else {
-      setEmptyStateIsOpen(true);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [addressValidationIsOpen, connectedContracts.length]);
 
   return (
     <>
@@ -70,6 +68,10 @@ const SCC: React.FC = () => {
 
       <EmptyState
         isOpen={emptyStateIsOpen}
+        onConnectNew={() => {
+          setEmptyStateIsOpen(false);
+          setAddressValidationIsOpen(true);
+        }}
         onClose={() => setEmptyStateIsOpen(false)}
         onBackButtonClicked={() => setEmptyStateIsOpen(false)}
       />
