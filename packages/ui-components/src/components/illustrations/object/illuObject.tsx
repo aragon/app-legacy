@@ -21,6 +21,9 @@ import {Users} from './users';
 import {Wagmi} from './wagmi';
 import {Wallet} from './wallet';
 import {Warning} from './warning';
+import {NotFound} from './notFound';
+import {Goal} from './goal';
+import {Success} from './success';
 
 export const objectNames = [
   'action',
@@ -33,12 +36,15 @@ export const objectNames = [
   'error',
   'explore',
   'gas',
+  'goal',
   'labels',
   'lightbulb',
   'magnifying_glass',
+  'not_found',
   'security',
   'settings',
   'smart_contract',
+  'success',
   'users',
   'warning',
   'wagmi',
@@ -73,18 +79,24 @@ export const IlluObject: React.FC<
       return <Explore {...rest} data-testid="illu-object" />;
     case 'gas':
       return <Gas {...rest} data-testid="illu-object" />;
+    case 'goal':
+      return <Goal {...rest} data-testid="illu-object" />;
     case 'labels':
       return <Labels {...rest} data-testid="illu-object" />;
     case 'lightbulb':
       return <LightBulb {...rest} data-testid="illu-object" />;
     case 'magnifying_glass':
       return <MagnifyingGlass {...rest} data-testid="illu-object" />;
+    case 'not_found':
+      return <NotFound {...rest} data-testid="illu-object" />;
     case 'security':
       return <Security {...rest} data-testid="illu-object" />;
     case 'settings':
       return <Settings {...rest} data-testid="illu-object" />;
     case 'smart_contract':
       return <SmartContract {...rest} data-testid="illu-object" />;
+    case 'success':
+      return <Success {...rest} data-testid="illu-object" />;
     case 'users':
       return <Users {...rest} data-testid="illu-object" />;
     case 'wagmi':
