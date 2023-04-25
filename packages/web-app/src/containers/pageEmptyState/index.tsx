@@ -37,7 +37,6 @@ const PageEmptyState = ({
           <ButtonText
             size="large"
             label={buttonLabel}
-            iconLeft={<IconAdd />}
             className="mt-4"
             onClick={onClick}
           />

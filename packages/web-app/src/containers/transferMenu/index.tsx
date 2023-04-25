@@ -41,17 +41,17 @@ const TransferMenu: React.FC = () => {
     <ModalBottomSheetSwitcher
       isOpen={isTransferOpen}
       onClose={() => close('default')}
-      title={t('TransferModal.newTransfer') as string}
+      title={t('TransferModal.newTransfer')}
     >
       <Container>
         <ListItemAction
-          title={t('TransferModal.newTransfer') as string}
+          title={t('TransferModal.newTransfer')}
           iconRight={<IconChevronRight />}
           onClick={() => handleClick('deposit_assets')}
         />
         <ListItemAction
-          title={t('TransferModal.item2Title') as string}
-          subtitle={t('TransferModal.item2Subtitle') as string}
+          title={t('TransferModal.item2Title')}
+          subtitle={t('TransferModal.item2Subtitle')}
           iconRight={<IconChevronRight />}
           onClick={() => handleClick('withdraw_assets')}
         />
