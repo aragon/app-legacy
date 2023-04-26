@@ -25,6 +25,7 @@ import {ProposalListItem} from 'utils/types';
 import PageEmptyState from 'containers/pageEmptyState';
 import {toDisplayEns} from 'utils/library';
 import useScreen from 'hooks/useScreen';
+import {htmlIn} from 'utils/htmlIn';
 
 const Governance: React.FC = () => {
   const {data: daoDetails, isLoading: isDaoLoading} = useDaoDetailsQuery();
@@ -83,9 +84,7 @@ const Governance: React.FC = () => {
     return (
       <PageEmptyState
         title={t('governance.emptyState.title')}
-        subtitle={
-          'governance.emptyState.subtitle' as unknown as TemplateStringsArray
-        }
+        subtitle={htmlIn(t)('governance.emptyState.subtitle')}
         Illustration={
           <IllustrationHuman
             {...{

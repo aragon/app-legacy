@@ -1,13 +1,11 @@
 import React from 'react';
 import styled from 'styled-components';
 
-import {htmlIn} from 'utils/htmlIn';
 import {ButtonText} from '@aragon/ui-components';
-import {useTranslation} from 'react-i18next';
 
 type PageEmptyStateProps = {
   title: string;
-  subtitle: TemplateStringsArray;
+  subtitle: string;
   onClick?: () => void;
   buttonLabel: string;
   Illustration: JSX.Element;
@@ -20,19 +18,16 @@ const PageEmptyState = ({
   onClick,
   buttonLabel,
 }: PageEmptyStateProps) => {
-  const {t} = useTranslation();
-
   return (
     <>
       <Container>
         <EmptyStateContainer>
           {Illustration}
           <EmptyStateHeading>{title}</EmptyStateHeading>
+
           <span
             className="mt-1.5 lg:w-1/2 text-center"
-            dangerouslySetInnerHTML={{
-              __html: htmlIn(t)(subtitle),
-            }}
+            dangerouslySetInnerHTML={{__html: subtitle || ''}}
           ></span>
           <ButtonText
             size="large"

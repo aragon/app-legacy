@@ -28,6 +28,18 @@ const DepositModal: React.FC = () => {
     alert(t('alert.chip.inputCopied'));
   };
 
+  const Divider: React.FC = () => {
+    return (
+      <DividerWrapper>
+        <hr className="w-full h-px bg-ui-200" />
+        <span className="px-1 font-semibold text-ui-400">
+          {t('modal.deposit.dividerLabel')}
+        </span>
+        <hr className="w-full h-px bg-ui-200" />
+      </DividerWrapper>
+    );
+  };
+
   return (
     <ModalBottomSheetSwitcher
       isOpen={isDepositOpen}
@@ -90,16 +102,6 @@ const DepositModal: React.FC = () => {
         </BodyWrapper>
       </Container>
     </ModalBottomSheetSwitcher>
-  );
-};
-
-const Divider: React.FC = () => {
-  return (
-    <DividerWrapper>
-      <hr className="w-full h-px bg-ui-200" />
-      <span className="px-1 font-semibold text-ui-400">or</span>
-      <hr className="w-full h-px bg-ui-200" />
-    </DividerWrapper>
   );
 };
 

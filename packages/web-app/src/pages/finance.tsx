@@ -29,6 +29,7 @@ import {sortTokens} from 'utils/tokens';
 import PageEmptyState from 'containers/pageEmptyState';
 import {Loading} from 'components/temporary';
 import {useDaoDetailsQuery} from 'hooks/useDaoDetails';
+import {htmlIn} from 'utils/htmlIn';
 
 type Sign = -1 | 0 | 1;
 const colors: Record<Sign, string> = {
@@ -41,7 +42,7 @@ const Finance: React.FC = () => {
   const {t} = useTranslation();
   const {data: daoDetails, isLoading} = useDaoDetailsQuery();
   const {open} = useGlobalModalContext();
-  const {isMobile} = useScreen();
+  const {isMobile, isDesktop} = useScreen();
 
   // load dao details
   const navigate = useNavigate();
@@ -59,13 +60,11 @@ const Finance: React.FC = () => {
     return <Loading />;
   }
 
-  if (tokens.length === 0 && !isMobile)
+  if (tokens.length === 0 && isDesktop)
     return (
       <PageEmptyState
         title={t('finance.emptyState.title')}
-        subtitle={
-          'finance.emptyState.description' as unknown as TemplateStringsArray
-        }
+        subtitle={htmlIn(t)('finance.emptyState.description')}
         Illustration={
           <div className="flex">
             <IllustrationHuman
@@ -94,7 +93,7 @@ const Finance: React.FC = () => {
         customHeader={
           <HeaderContainer>
             <Header>
-              {isMobile && (
+              {!isDesktop && (
                 <Breadcrumb
                   icon={icon}
                   crumbs={breadcrumbs}
@@ -148,9 +147,7 @@ const Finance: React.FC = () => {
         {tokens.length === 0 ? (
           <PageEmptyState
             title={'Deposit your very first funds'}
-            subtitle={
-              'governance.emptyState.subtitle' as unknown as TemplateStringsArray
-            }
+            subtitle={htmlIn(t)('governance.emptyState.subtitle')}
             Illustration={
               <div className="flex">
                 <IllustrationHuman

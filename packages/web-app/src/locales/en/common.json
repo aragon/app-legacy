@@ -240,7 +240,7 @@
     "allocation": "Allocation",
     "emptyState": {
       "title": "Make your first deposit",
-      "description": "Begin by making your first treasury deposit.\u2028 Learn more about managing a DAO treasury {{link}}.",
+      "description": "Begin by making your first treasury deposit. Learn more about managing a DAO treasury {{link}}.",
       "descriptionLinkURL": "https://aragon.org/how-to/manage-a-dao-treasury",
       "descriptionLinkLabel": "in this guide",
       "buttonLabel": "Deposit funds"
@@ -954,7 +954,8 @@
       "inputHelptextContract": "Copy the contract address below and use your wallet's send feature to send money to your DAO's treasury.",
       "linkLabelBlockExplorer": "View on block explorer",
       "ctaLabel": "View all transfers",
-      "cancelLabel": "Cancel"
+      "cancelLabel": "Cancel",
+      "dividerLabel": "or"
     }
   }
 }

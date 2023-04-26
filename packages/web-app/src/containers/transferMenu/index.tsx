@@ -45,7 +45,8 @@ const TransferMenu: React.FC = () => {
     >
       <Container>
         <ListItemAction
-          title={t('TransferModal.newTransfer')}
+          title={t('modal.deposit.headerTitle')}
+          subtitle={t('modal.deposit.headerDescription')}
           iconRight={<IconChevronRight />}
           onClick={() => handleClick('deposit_assets')}
         />
