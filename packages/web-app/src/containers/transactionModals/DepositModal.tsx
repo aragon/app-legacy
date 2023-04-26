@@ -12,11 +12,9 @@ import {useNetwork} from 'context/network';
 import {useDaoDetailsQuery} from 'hooks/useDaoDetails';
 import React from 'react';
 import {useTranslation} from 'react-i18next';
-import {generatePath, useParams} from 'react-router-dom';
 import styled from 'styled-components';
 import {CHAIN_METADATA} from 'utils/constants';
 import {toDisplayEns} from 'utils/library';
-import {Finance} from 'utils/paths';
 
 const DepositModal: React.FC = () => {
   const {t} = useTranslation();
@@ -99,7 +97,7 @@ const Divider: React.FC = () => {
   return (
     <DividerWrapper>
       <hr className="w-full h-px bg-ui-200" />
-      <span className="px-1 text-ui-400">or</span>
+      <span className="px-1 font-semibold text-ui-400">or</span>
       <hr className="w-full h-px bg-ui-200" />
     </DividerWrapper>
   );

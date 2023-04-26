@@ -2,7 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 
 import {htmlIn} from 'utils/htmlIn';
-import {ButtonText, IconAdd} from '@aragon/ui-components';
+import {ButtonText} from '@aragon/ui-components';
 import {useTranslation} from 'react-i18next';
 
 type PageEmptyStateProps = {
