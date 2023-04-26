@@ -39,11 +39,12 @@ const TreasurySnapshot: React.FC<Props> = ({
   if (transfers.length === 0) {
     return (
       <StateEmpty
-        type="Human"
+        type="both"
         mode="card"
         body={'chart'}
         expression={'excited'}
         hair={'bun'}
+        object={'wallet'}
         title={t('finance.emptyState.title')}
         description={htmlIn(t)('finance.emptyState.description')}
         primaryButton={{

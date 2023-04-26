@@ -34,6 +34,11 @@ type StateEmptyProps =
   | (IlluObjectProps &
       BaseProps & {
         type: 'Object';
+      })
+  | (IlluObjectProps &
+      IlluHumanProps &
+      BaseProps & {
+        type: 'both';
       });
 
 export const StateEmpty: React.FC<StateEmptyProps> = props => {
@@ -41,22 +46,28 @@ export const StateEmpty: React.FC<StateEmptyProps> = props => {
 
   return (
     <Card mode={props.mode} type={props.type}>
-      {props.type === 'Human' ? (
-        <IllustrationHuman
-          {...{
-            body: props.body,
-            expression: props.expression,
-            hair: props.hair,
-            sunglass: props.sunglass,
-            accessory: props.accessory,
-          }}
-          {...(isMobile
-            ? {height: 165, width: 295}
-            : {height: 225, width: 400})}
-        />
-      ) : (
-        <IlluObject object={props.object} />
-      )}
+      <div className="flex">
+        {props.type !== 'Object' && (
+          <IllustrationHuman
+            {...{
+              body: props.body,
+              expression: props.expression,
+              hair: props.hair,
+              sunglass: props.sunglass,
+              accessory: props.accessory,
+            }}
+            {...(isMobile
+              ? {height: 165, width: 295}
+              : {height: 225, width: 400})}
+          />
+        )}
+        {props.type !== 'Human' && (
+          <IlluObject
+            object={props.object}
+            {...(isMobile ? {className: '-ml-32'} : {className: '-ml-36'})}
+          />
+        )}
+      </div>
       <ContentWrapper>
         <TextWrapper>
           <Title>{props.title}</Title>
@@ -111,7 +122,7 @@ const Card = styled.div.attrs<Pick<StateEmptyProps, 'mode' | 'type'>>(
       className += 'bg-ui-transparent ';
     }
 
-    if (type === 'Human') className += 'gap-y-3 ';
+    if (type === 'Human' || type === 'both') className += 'gap-y-3 ';
     return {className};
   }
 )<Pick<StateEmptyProps, 'mode' | 'type'>>``;

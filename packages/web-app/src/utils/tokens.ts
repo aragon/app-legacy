@@ -272,7 +272,11 @@ export function historicalTokenBalances(
         : constants.AddressZero;
 
     // reverse change to balance from transfer
-    if (transfer.tokenType !== TokenType.ERC721) {
+    if (
+      transfer.tokenType !== TokenType.ERC721 &&
+      // This condition will ignore the tokens that has history in transfer list but doesn't exist in balances
+      historicalBalances[tokenId?.toLowerCase()]
+    ) {
       // TODO Handle ERC721
       historicalBalances[tokenId.toLowerCase()].balance -=
         transfer.type === TransferType.DEPOSIT
