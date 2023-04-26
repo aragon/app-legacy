@@ -55,7 +55,7 @@ import {
   mapToCacheProposal,
 } from 'utils/proposals';
 import {isNativeToken} from 'utils/tokens';
-import {Action, ProposalId, ProposalResource} from 'utils/types';
+import {ProposalId, ProposalResource} from 'utils/types';
 import {
   pendingMultisigProposalsVar,
   pendingTokenBasedProposalsVar,
@@ -63,6 +63,8 @@ import {
 import {useGlobalModalContext} from './globalModals';
 import {useNetwork} from './network';
 import {usePrivacyContext} from './privacyContext';
+import {useProviders} from './providers';
+import {isAddress} from 'ethers/lib/utils';
 
 type Props = {
   showTxModal: boolean;
@@ -83,6 +85,7 @@ const CreateProposalProvider: React.FC<Props> = ({
 
   const {network} = useNetwork();
   const {isOnWrongNetwork, provider, address} = useWallet();
+  const {infura} = useProviders();
 
   const {data: daoDetails, isLoading: daoDetailsLoading} = useDaoDetailsQuery();
   const {id: pluginType, instanceAddress: pluginAddress} =
@@ -134,15 +137,22 @@ const CreateProposalProvider: React.FC<Props> = ({
     // return an empty array for undefined clients
     if (!pluginClient || !client) return Promise.resolve([] as DaoAction[]);
 
-    getNonEmptyActions(actionsFromForm).forEach((action: Action) => {
+    for await (const action of getNonEmptyActions(actionsFromForm)) {
       switch (action.name) {
         case 'withdraw_assets': {
+          let receiver = action.to;
+          /* TODO: SDK doesn't accept ens names, this should be removed once they
+           fixed the issue */
+          if (!isAddress(action.to)) {
+            receiver = (await infura?.resolveName(action.to)) as string;
+          }
+
           actions.push(
             client.encoding.withdrawAction({
               amount: BigInt(
                 Number(action.amount) * Math.pow(10, action.tokenDecimals)
               ),
-              recipientAddressOrEns: action.to,
+              recipientAddressOrEns: receiver,
               ...(isNativeToken(action.tokenAddress)
                 ? {type: TokenType.NATIVE}
                 : {type: TokenType.ERC20, tokenAddress: action.tokenAddress}),
@@ -215,10 +225,10 @@ const CreateProposalProvider: React.FC<Props> = ({
           break;
         }
       }
-    });
+    }
 
     return Promise.all(actions);
-  }, [client, getValues, pluginClient, pluginSettings, pluginAddress]);
+  }, [getValues, pluginClient, client, infura, pluginAddress, pluginSettings]);
 
   // Because getValues does NOT get updated on each render, leaving this as
   // a function to be called when data is needed instead of a memoized value
@@ -583,6 +593,7 @@ const CreateProposalProvider: React.FC<Props> = ({
     async function setProposalData() {
       if (showTxModal && creationProcessState === TransactionState.WAITING)
         setProposalCreationData(await getProposalCreationParams());
+      else if (!showTxModal) setProposalCreationData(undefined);
     }
 
     setProposalData();

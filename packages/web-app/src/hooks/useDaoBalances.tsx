@@ -8,7 +8,7 @@ import {useSpecificProvider} from 'context/providers';
 import {useNetwork} from 'context/network';
 
 export const useDaoBalances = (
-  daoAddressOrEns: string
+  daoAddress: string
 ): HookData<Array<AssetBalance> | undefined> => {
   const {network} = useNetwork();
 
@@ -33,10 +33,10 @@ export const useDaoBalances = (
         id: 1,
         jsonrpc: '2.0',
         method: 'alchemy_getTokenBalances',
-        params: [daoAddressOrEns],
+        params: [daoAddress],
       }),
     }),
-    [daoAddressOrEns]
+    [daoAddress]
   );
 
   // Use the useEffect hook to fetch DAO balances
@@ -51,13 +51,13 @@ export const useDaoBalances = (
         let nativeTokenBalances = [] as Array<AssetBalance>;
 
         // Filter out tokens with a zero balance
-        const nonZeroBalances = tokenList.result.tokenBalances.filter(
+        const nonZeroBalances = tokenList.result.tokenBalances?.filter(
           (token: {tokenBalance: string}) => {
             return BigInt(token.tokenBalance) !== BigInt(0);
           }
         );
 
-        const fetchNativeCurrencyBalance = provider.getBalance(daoAddressOrEns);
+        const fetchNativeCurrencyBalance = provider.getBalance(daoAddress);
 
         // Define a list of promises to fetch ERC20 token balances
         const tokenListPromises = nonZeroBalances.map(
@@ -112,8 +112,8 @@ export const useDaoBalances = (
       }
     }
 
-    getBalances();
-  }, [daoAddressOrEns, network, options, provider, url]);
+    if (daoAddress) getBalances();
+  }, [daoAddress, network, options, provider, url]);
 
   return {data, error, isLoading};
 };
