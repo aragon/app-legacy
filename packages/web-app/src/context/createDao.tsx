@@ -203,7 +203,7 @@ const CreateDaoProvider: React.FC = ({children}) => {
             ? parseUnits(eligibilityTokenAmount.toString(), 18).toBigInt()
             : eligibilityType === 'multisig'
             ? BigInt(0)
-            : BigInt(1000000000000000000),        
+            : parseUnits('1', 18).toBigInt(),        
         votingMode,
       },
       translatedNetwork,
