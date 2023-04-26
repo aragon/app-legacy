@@ -43,11 +43,15 @@ const Transfers: React.FC = () => {
       let matchesFilter = true;
       let matchesSearch = true;
       if (filterValue !== '') {
-        matchesFilter = (Boolean(transfer.transferType === filterValue));
+        matchesFilter = Boolean(transfer.transferType === filterValue);
       }
       if (searchValue !== '') {
         const re = new RegExp(searchValue, 'i');
-        matchesSearch = Boolean(transfer?.title.match(re) || transfer.tokenSymbol.match(re) || transfer.tokenAmount.match(re));
+        matchesSearch = Boolean(
+          transfer?.title.match(re) ||
+            transfer.tokenSymbol.match(re) ||
+            transfer.tokenAmount.match(re)
+        );
       }
       returnValue = matchesFilter && matchesSearch;
       return returnValue;
