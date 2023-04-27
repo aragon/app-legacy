@@ -57,7 +57,7 @@ export const StateEmpty: React.FC<StateEmptyProps> = props => {
         {props.type !== 'Human' && (
           <IlluObject
             object={props.object}
-            {...(isMobile ? {className: '-ml-32'} : {className: '-ml-36'})}
+            className={props.type === 'both' ? '-ml-32 desktop:-ml-36' : ''}
           />
         )}
       </div>
