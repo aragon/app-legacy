@@ -5,16 +5,19 @@ import {
   WalletInput,
   shortenAddress,
 } from '@aragon/ui-components';
+import React, {useCallback} from 'react';
+import {useTranslation} from 'react-i18next';
+import {generatePath, useNavigate} from 'react-router-dom';
+import styled from 'styled-components';
+
 import ModalBottomSheetSwitcher from 'components/modalBottomSheetSwitcher';
 import {useAlertContext} from 'context/alert';
 import {useGlobalModalContext} from 'context/globalModals';
 import {useNetwork} from 'context/network';
 import {useDaoDetailsQuery} from 'hooks/useDaoDetails';
-import React from 'react';
-import {useTranslation} from 'react-i18next';
-import styled from 'styled-components';
 import {CHAIN_METADATA} from 'utils/constants';
 import {toDisplayEns} from 'utils/library';
+import {AllTransfers} from 'utils/paths';
 
 const DepositModal: React.FC = () => {
   const {t} = useTranslation();
@@ -22,11 +25,22 @@ const DepositModal: React.FC = () => {
   const {data: daoDetails} = useDaoDetailsQuery();
   const {network} = useNetwork();
   const {alert} = useAlertContext();
+  const navigate = useNavigate();
 
   const copyToClipboard = (value: string | undefined) => {
     navigator.clipboard.writeText(value || '');
     alert(t('alert.chip.inputCopied'));
   };
+
+  const handleCtaClicked = useCallback(() => {
+    close('deposit');
+    navigate(
+      generatePath(AllTransfers, {
+        network,
+        dao: toDisplayEns(daoDetails?.ensDomain) ?? daoDetails?.address,
+      })
+    );
+  }, [close, daoDetails?.address, daoDetails?.ensDomain, navigate, network]);
 
   const Divider: React.FC = () => {
     return (
@@ -87,10 +101,7 @@ const DepositModal: React.FC = () => {
               mode="primary"
               size="large"
               label={t('modal.deposit.ctaLabel')}
-              onClick={() => {
-                close('deposit');
-                location.reload();
-              }}
+              onClick={handleCtaClicked}
             />
             <ButtonText
               mode="secondary"
