@@ -146,8 +146,8 @@ const Finance: React.FC = () => {
       >
         {tokens.length === 0 ? (
           <PageEmptyState
-            title={'Deposit your very first funds'}
-            subtitle={htmlIn(t)('governance.emptyState.subtitle')}
+            title={t('finance.emptyState.title')}
+            subtitle={htmlIn(t)('finance.emptyState.description')}
             Illustration={
               <div className="flex">
                 <IllustrationHuman
@@ -163,7 +163,7 @@ const Finance: React.FC = () => {
                 <IlluObject object={'wallet'} className="-ml-32" />
               </div>
             }
-            buttonLabel={'Deposit first funds'}
+            buttonLabel={t('finance.emptyState.buttonLabel')}
             onClick={() => {
               open('deposit');
             }}
