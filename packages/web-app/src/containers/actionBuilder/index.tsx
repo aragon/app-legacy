@@ -58,7 +58,7 @@ const Action: React.FC<ActionsComponentProps> = ({name, actionIndex}) => {
     case 'mint_tokens':
       return <MintTokens {...{actionIndex}} />;
     case 'external_contract':
-      return <SCC />;
+      return <SCC actionIndex={actionIndex} />;
     case 'modify_token_voting_settings':
       return (
         <TemporarySection purpose="It serves as a placeholder for not yet implemented external contract interaction component" />

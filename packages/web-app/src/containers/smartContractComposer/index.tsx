@@ -9,6 +9,7 @@ import {SmartContract, SmartContractAction} from 'utils/types';
 import {getVerifiedSmartContracts} from 'services/cache';
 import {useWallet} from 'hooks/useWallet';
 import {CHAIN_METADATA} from 'utils/constants';
+import {useActionsContext} from 'context/actions';
 
 const defaultValues = {
   contractAddress: '',
@@ -23,7 +24,11 @@ export type SccFormData = {
   selectedAction: SmartContractAction;
 };
 
-const SCC: React.FC = () => {
+type SCC = {
+  actionIndex: number;
+};
+
+const SCC: React.FC<SCC> = ({actionIndex}) => {
   const {address} = useWallet();
 
   const [emptyStateIsOpen, setEmptyStateIsOpen] = useState(true);
@@ -33,6 +38,7 @@ const SCC: React.FC = () => {
   const {network} = useNetwork();
   const {setValue} = useFormContext();
   const connectedContracts = useWatch({name: 'contracts'});
+  const {removeAction} = useActionsContext();
 
   useEffect(() => {
     if (address) {
@@ -62,8 +68,14 @@ const SCC: React.FC = () => {
           setContractListIsOpen(false);
           setAddressValidationIsOpen(true);
         }}
-        onClose={() => setContractListIsOpen(false)}
-        onBackButtonClicked={() => setContractListIsOpen(false)}
+        onClose={() => {
+          setContractListIsOpen(false);
+          removeAction(actionIndex);
+        }}
+        onBackButtonClicked={() => {
+          setContractListIsOpen(false);
+          removeAction(actionIndex);
+        }}
       />
 
       <EmptyState
@@ -89,11 +101,11 @@ const SCC: React.FC = () => {
   );
 };
 
-const SCCProvider: React.FC = () => {
+const SCCProvider: React.FC<SCC> = ({actionIndex}) => {
   const methods = useForm<SccFormData>({mode: 'onChange', defaultValues});
   return (
     <FormProvider {...methods}>
-      <SCC />
+      <SCC actionIndex={actionIndex} />
     </FormProvider>
   );
 };
