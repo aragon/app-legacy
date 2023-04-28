@@ -48,10 +48,10 @@ export const Container = styled.div.attrs({
 })``;
 
 export const EmptyStateHeading = styled.h1.attrs({
-  className: 'mt-4 text-2xl font-bold text-ui-800 text-center',
+  className: 'mt-4 ft-text-2xl font-bold text-ui-800 text-center',
 })``;
 
 export const EmptyStateContainer = styled.div.attrs({
   className:
-    'flex flex-col w-full items-center py-4 px-3 tablet:py-12 tablet:px-6 mx-auto mt-3 tablet:mt-5 text-lg bg-white rounded-xl text-ui-500',
+    'flex flex-col w-full items-center py-4 px-3 tablet:py-12 tablet:px-6 mx-auto mt-3 tablet:mt-5 ft-text-lg bg-white rounded-xl text-ui-500',
 })``;
