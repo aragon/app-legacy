@@ -95,6 +95,8 @@ export const useDaoTransfers = (
           direction: SortDirection.DESC,
         });
 
+        let subgraphTransfers: Transfer[] = [];
+
         // Fetch the token list using the Alchemy API
         const res = await fetch(url, options);
         const alchemyTransfersList = await res.json();
@@ -130,7 +132,7 @@ export const useDaoTransfers = (
         const erc20DepositsList = await Promise.all(erc20DepositsListPromises);
 
         if (clientTransfers?.length) {
-          const subgraphTransfers = clientTransfers.filter(
+          subgraphTransfers = clientTransfers.filter(
             t => t.type === TransferType.WITHDRAW || t.tokenType === 'native'
           );
 
@@ -157,17 +159,17 @@ export const useDaoTransfers = (
             PENDING_DEPOSITS_KEY,
             JSON.stringify(pendingDepositsTxs, customJSONReplacer)
           );
-
-          /* ETH Transfers and withdraws exists in Subgraph therefore only erc20 transfers
-          fetched from alchemy api */
-          const transfers = [
-            ...pendingDepositsTxs,
-            ...subgraphTransfers,
-            ...erc20DepositsList,
-          ].sort(sortByCreatedAt);
-
-          setData(transfers);
         }
+
+        /* ETH Transfers and withdraws exists in Subgraph therefore only erc20 transfers
+          fetched from alchemy api */
+        const transfers = [
+          ...pendingDepositsTxs,
+          ...subgraphTransfers,
+          ...erc20DepositsList,
+        ].sort(sortByCreatedAt);
+
+        setData(transfers);
       } catch (error) {
         console.error(error);
         setError(error as Error);

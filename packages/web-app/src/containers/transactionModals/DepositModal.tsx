@@ -37,7 +37,7 @@ const DepositModal: React.FC = () => {
     navigate(
       generatePath(AllTransfers, {
         network,
-        dao: toDisplayEns(daoDetails?.ensDomain) ?? daoDetails?.address,
+        dao: toDisplayEns(daoDetails?.ensDomain) || daoDetails?.address,
       })
     );
   }, [close, daoDetails?.address, daoDetails?.ensDomain, navigate, network]);
