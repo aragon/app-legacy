@@ -256,7 +256,7 @@
       "subtitle": "What's the first thing your community needs to decide? For ideas on how to structure proposals, {{link}}.",
       "subtitleLinkLabel": "read this guide",
       "subtitleLinkURL": "https://aragon.org/how-to/structure-dao-proposals-and-build-proposal-processes",
-      "description": "Get your community involved in the decision-making process. Learn more in our proposal guide {{link}}.",
+      "description": "Get your community involved in the decision-making process. Learn more in our {{link}}.",
       "descriptionLinkLabel": "proposal guide",
       "descriptionLinkURL": "https://aragon.org/how-to/structure-dao-proposals-and-build-proposal-processes"
     },
