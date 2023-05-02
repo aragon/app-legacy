@@ -1,4 +1,9 @@
-import {NumberInput, ValueInput} from '@aragon/ui-components';
+import {
+  ButtonText,
+  NumberInput,
+  TextInput,
+  WalletInput,
+} from '@aragon/ui-components';
 import {useAlertContext} from 'context/alert';
 import {t} from 'i18next';
 import React from 'react';
@@ -25,20 +30,26 @@ const InputForm: React.FC = () => {
         NatSpec Format or if those are our smart contracts, by further
         implementation
       </p>
-      <div className="p-3 mt-5 space-y-2 bg-ui-50 rounded-xl border-ui-100 shadow-100">
-        {selectedAction.inputs.map(input => (
-          <div key={input.name}>
-            <div className="mb-1.5 text-base font-bold text-ui-800 capitalize">
-              {input.name}
+      {selectedAction.inputs.length > 0 ? (
+        <div className="p-3 mt-5 space-y-2 bg-ui-50 rounded-xl border-ui-100 shadow-100">
+          {selectedAction.inputs.map(input => (
+            <div key={input.name}>
+              <div className="mb-1.5 text-base font-bold text-ui-800 capitalize">
+                {input.name}
+                <span className="ml-0.5 text-sm normal-case">
+                  ({input.type})
+                </span>
+              </div>
+              <ComponentForType
+                key={input.name}
+                input={input}
+                functionName={selectedAction.name}
+              />
             </div>
-            <ComponentForType
-              key={input.name}
-              input={input}
-              functionName={selectedAction.name}
-            />
-          </div>
-        ))}
-      </div>
+          ))}
+        </div>
+      ) : null}
+      <ButtonText label="Write" className="mt-5" />
     </div>
   );
 };
@@ -55,12 +66,12 @@ const ComponentForType: React.FC<ComponentForTypeProps> = ({
   const {control} = useFormContext();
   const {alert} = useAlertContext();
 
+  // Check if we need to add "index" kind of variable to the "name"
   switch (input.type) {
     case 'address':
       return (
         <Controller
           defaultValue=""
-          // Check if we need to add "index" kind of variable to the "name"
           name={`sccActions.${functionName}.${input.name}`}
           control={control}
           rules={{
@@ -71,7 +82,7 @@ const ComponentForType: React.FC<ComponentForTypeProps> = ({
             field: {name, value, onBlur, onChange},
             fieldState: {error},
           }) => (
-            <ValueInput
+            <WalletInput
               mode={error ? 'critical' : 'default'}
               name={name}
               value={getUserFriendlyWalletLabel(value, t)}
@@ -91,6 +102,10 @@ const ComponentForType: React.FC<ComponentForTypeProps> = ({
 
     case 'uint':
     case 'int':
+    case 'uint8':
+    case 'int8':
+    case 'uint32':
+    case 'int32':
     case 'uint256':
     case 'int256':
       return (
@@ -98,10 +113,6 @@ const ComponentForType: React.FC<ComponentForTypeProps> = ({
           defaultValue=""
           name={`sccActions.${functionName}.${input.name}`}
           control={control}
-          rules={{
-            required: t('errors.required.walletAddress') as string,
-            validate: value => validateAddress(value),
-          }}
           render={({
             field: {name, value, onBlur, onChange},
             fieldState: {error},
@@ -120,7 +131,6 @@ const ComponentForType: React.FC<ComponentForTypeProps> = ({
       );
 
     case 'tuple':
-      console.log(input.type);
       input.components?.map(component => (
         <div key={component.name}>
           <div className="mb-1.5 text-base font-bold text-ui-800 capitalize">
@@ -136,7 +146,26 @@ const ComponentForType: React.FC<ComponentForTypeProps> = ({
       break;
 
     default:
-      return <p>TBD: Implement &quot;{input.type}&quot; type</p>;
+      return (
+        <Controller
+          defaultValue=""
+          name={`sccActions.${functionName}.${input.name}`}
+          control={control}
+          render={({
+            field: {name, value, onBlur, onChange},
+            fieldState: {error},
+          }) => (
+            <TextInput
+              name={name}
+              onBlur={onBlur}
+              onChange={onChange}
+              placeholder={`${input.name} (${input.type})`}
+              mode={error?.message ? 'critical' : 'default'}
+              value={value}
+            />
+          )}
+        />
+      );
   }
   return null;
 };
