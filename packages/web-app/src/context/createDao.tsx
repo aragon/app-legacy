@@ -337,6 +337,11 @@ const CreateDaoProvider: React.FC = ({children}) => {
         switch (step.key) {
           case DaoCreationSteps.CREATING:
             console.log(step.txHash);
+            trackEvent('daoCreation_transaction_signed', {
+              network: getValues('blockchain')?.network,
+              wallet_provider: provider?.connection.url,
+              governance_type: getValues('membership'),
+            });
             break;
           case DaoCreationSteps.DONE:
             console.log(
