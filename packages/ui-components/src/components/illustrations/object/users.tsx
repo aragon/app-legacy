@@ -17,7 +17,7 @@ export const Users: IconType = ({height = 160, width = 160, ...props}) => {
       width={width}
       height={height}
       fill="none"
-      viewBox="0 0 210 297"
+      viewBox="0 43 210 297"
       {...props}
     >
       <circle
