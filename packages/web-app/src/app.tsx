@@ -28,6 +28,7 @@ import {identifyUser, trackPage} from 'services/analytics';
 import {NotFound} from 'utils/paths';
 import '../i18n.config';
 import DepositModal from 'containers/transactionModals/DepositModal';
+import PoapClaimModal from 'containers/poapClaiming/PoapClaimModal';
 
 const ExplorePage = lazy(() => import('pages/explore'));
 const NotFoundPage = lazy(() => import('pages/notFound'));
@@ -135,6 +136,7 @@ function App() {
       </Suspense>
       <DaoSelectMenu />
       <WalletMenu />
+      <PoapClaimModal />
       <NetworkErrorMenu />
     </>
   );

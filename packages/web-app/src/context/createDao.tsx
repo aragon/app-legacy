@@ -127,6 +127,12 @@ const CreateDaoProvider: React.FC = ({children}) => {
             dao: daoAddress,
           })
         );
+
+        const networkInfo = CHAIN_METADATA[network];
+        if (!networkInfo.testnet) {
+          open('poapClaim');
+        }
+
         break;
       default: {
         setShowModal(false);
