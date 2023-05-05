@@ -1,0 +1,9 @@
+https://app.local {
+    handle /* {
+        root * dist
+        file_server {
+            precompressed br gzip
+        }
+        try_files {path} /index.html
+    }
+}

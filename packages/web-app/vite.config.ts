@@ -53,7 +53,7 @@ export default defineConfig(({mode}) => {
             stdout: true,
             summaryOnly: true,
           }),
-          uglify(),
+          production && uglify(),
         ],
         output: {
           manualChunks: {
