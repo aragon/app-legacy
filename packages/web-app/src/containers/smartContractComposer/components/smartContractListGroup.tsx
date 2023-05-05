@@ -41,7 +41,7 @@ const SmartContractListGroup: React.FC = () => {
                   a.type === 'function' &&
                   (a.stateMutability === 'payable' ||
                     a.stateMutability === 'nonpayable')
-              )[0]
+              )?.[0]
             );
           }}
         />

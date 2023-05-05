@@ -1,6 +1,6 @@
 import {useNetwork} from 'context/network';
 import React, {useEffect, useState} from 'react';
-import {FormProvider, useForm, useFormContext, useWatch} from 'react-hook-form';
+import {useFormContext, useWatch} from 'react-hook-form';
 
 import ContractAddressValidation from 'containers/smartContractComposer/components/contractAddressValidation';
 import SmartContractList from 'containers/smartContractComposer/contractListModal';
@@ -10,11 +10,6 @@ import {getVerifiedSmartContracts} from 'services/cache';
 import {useWallet} from 'hooks/useWallet';
 import {CHAIN_METADATA} from 'utils/constants';
 import {useActionsContext} from 'context/actions';
-
-const defaultValues = {
-  contractAddress: '',
-  contracts: [],
-};
 
 // TODO please move to types
 export type SccFormData = {
@@ -36,7 +31,7 @@ const SCC: React.FC<SCC> = ({actionIndex}) => {
   const [addressValidationIsOpen, setAddressValidationIsOpen] = useState(false);
 
   const {network} = useNetwork();
-  const {setValue} = useFormContext();
+  const {setValue, resetField} = useFormContext();
   const connectedContracts = useWatch({name: 'contracts'});
   const {removeAction} = useActionsContext();
 
@@ -54,27 +49,39 @@ const SCC: React.FC<SCC> = ({actionIndex}) => {
   }, [address, network, setValue]);
 
   useEffect(() => {
-    if (connectedContracts.length > 0 && !addressValidationIsOpen) {
+    if (connectedContracts?.length > 0 && !addressValidationIsOpen) {
       setEmptyStateIsOpen(false);
       setContractListIsOpen(true);
     }
-  }, [addressValidationIsOpen, connectedContracts.length]);
+  }, [addressValidationIsOpen, connectedContracts?.length]);
 
   return (
     <>
       <SmartContractList
+        actionIndex={actionIndex}
         isOpen={contractListIsOpen}
         onConnectNew={() => {
           setContractListIsOpen(false);
           setAddressValidationIsOpen(true);
         }}
         onClose={() => {
+          setValue('selectedSC', null);
+          setValue('selectedAction', null);
           setContractListIsOpen(false);
+          resetField('sccActions');
           removeAction(actionIndex);
         }}
         onBackButtonClicked={() => {
+          setValue('selectedSC', null);
+          setValue('selectedAction', null);
           setContractListIsOpen(false);
+          resetField('sccActions');
           removeAction(actionIndex);
+        }}
+        onComposeButtonClicked={() => {
+          setContractListIsOpen(false);
+          setValue('selectedSC', null);
+          setValue('selectedAction', null);
         }}
       />
 
@@ -101,13 +108,4 @@ const SCC: React.FC<SCC> = ({actionIndex}) => {
   );
 };
 
-const SCCProvider: React.FC<SCC> = ({actionIndex}) => {
-  const methods = useForm<SccFormData>({mode: 'onChange', defaultValues});
-  return (
-    <FormProvider {...methods}>
-      <SCC actionIndex={actionIndex} />
-    </FormProvider>
-  );
-};
-
-export default SCCProvider;
+export default SCC;

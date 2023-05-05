@@ -14,9 +14,11 @@ import InputForm from '../components/inputForm';
 
 type DesktopModalProps = {
   isOpen: boolean;
+  actionIndex: number;
   onClose: () => void;
   onConnect: () => void;
   onBackButtonClicked: () => void;
+  onComposeButtonClicked: () => void;
 };
 
 const DesktopModal: React.FC<DesktopModalProps> = props => {
@@ -63,7 +65,16 @@ const DesktopModal: React.FC<DesktopModalProps> = props => {
           )}
         </Aside>
 
-        <Main>{selectedSC ? <InputForm /> : <DesktopModalEmptyState />}</Main>
+        <Main>
+          {selectedSC ? (
+            <InputForm
+              actionIndex={props.actionIndex}
+              onComposeButtonClicked={props.onComposeButtonClicked}
+            />
+          ) : (
+            <DesktopModalEmptyState />
+          )}
+        </Main>
       </Wrapper>
     </StyledModal>
   );

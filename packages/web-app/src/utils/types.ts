@@ -213,7 +213,8 @@ export type ActionsTypes =
   | 'remove_address'
   | 'withdraw_assets'
   | 'mint_tokens'
-  | 'external_contract'
+  | 'external_contract_modal'
+  | 'external_contract_action'
   | 'modify_token_voting_settings'
   | 'modify_metadata'
   | 'modify_multisig_voting_settings'
@@ -301,6 +302,14 @@ export type ActionUpdateMetadata = {
   inputs: DaoMetadata;
 };
 
+export type ActionSCC = {
+  name: 'external_contract_action';
+  contractName: string;
+  contractAddress: string;
+  functionName: string;
+  inputs: Array<Record<string, string>>;
+};
+
 // TODO: Consider making this a generic type that take other types of the form
 // like ActionAddAddress (or more generically, ActionItem...?) instead taking the
 // union of those subtypes. [VR 11-08-2022]
@@ -312,7 +321,8 @@ export type Action =
   | ActionUpdatePluginSettings
   | ActionUpdateMetadata
   | ActionUpdateMinimumApproval
-  | ActionUpdateMultisigPluginSettings;
+  | ActionUpdateMultisigPluginSettings
+  | ActionSCC;
 
 export type ParamType = {
   type: string;

@@ -22,9 +22,11 @@ import {ListItemContract} from '../components/listItemContract';
 
 type Props = {
   isOpen: boolean;
+  actionIndex: number;
   onClose: () => void;
   onConnectNew: () => void;
   onBackButtonClicked: () => void;
+  onComposeButtonClicked: () => void;
 };
 
 const SmartContractList: React.FC<Props> = props => {
@@ -36,10 +38,12 @@ const SmartContractList: React.FC<Props> = props => {
   if (isDesktop)
     return (
       <DesktopModal
+        actionIndex={props.actionIndex}
         isOpen={props.isOpen}
         onClose={props.onClose}
         onConnect={props.onConnectNew}
         onBackButtonClicked={props.onBackButtonClicked}
+        onComposeButtonClicked={props.onComposeButtonClicked}
       />
     );
 

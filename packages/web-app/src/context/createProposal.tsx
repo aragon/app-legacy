@@ -12,10 +12,12 @@ import {
   VotingSettings,
   WithdrawParams,
 } from '@aragon/sdk-client';
+import {hexToBytes} from '@aragon/sdk-common';
 import React, {useCallback, useEffect, useMemo, useState} from 'react';
 import {useFormContext} from 'react-hook-form';
 import {useTranslation} from 'react-i18next';
 import {generatePath, useNavigate} from 'react-router-dom';
+import {ethers} from 'ethers';
 
 import {Loading} from 'components/temporary';
 import PublishModal from 'containers/transactionModals/publishModal';
@@ -65,6 +67,7 @@ import {useNetwork} from './network';
 import {usePrivacyContext} from './privacyContext';
 import {useProviders} from './providers';
 import {isAddress} from 'ethers/lib/utils';
+import {getEtherscanVerifiedContract} from 'services/contractVerification';
 
 type Props = {
   showTxModal: boolean;
@@ -224,11 +227,42 @@ const CreateProposalProvider: React.FC<Props> = ({
           );
           break;
         }
+        case 'external_contract_action': {
+          const validatedContract = await getEtherscanVerifiedContract(
+            action.contractAddress,
+            network
+          );
+          if (validatedContract?.ABI) {
+            const functionParams = action.inputs.map(input => input.value);
+
+            const iface = new ethers.utils.Interface(validatedContract.ABI);
+            const hexData = iface.encodeFunctionData(
+              action.functionName,
+              functionParams
+            );
+            actions.push(
+              Promise.resolve({
+                to: action.contractAddress,
+                value: BigInt(0),
+                data: hexToBytes(hexData),
+              })
+            );
+          }
+          break;
+        }
       }
     }
 
     return Promise.all(actions);
-  }, [getValues, pluginClient, client, infura, pluginAddress, pluginSettings]);
+  }, [
+    getValues,
+    pluginClient,
+    client,
+    infura,
+    pluginAddress,
+    pluginSettings,
+    network,
+  ]);
 
   // Because getValues does NOT get updated on each render, leaving this as
   // a function to be called when data is needed instead of a memoized value
