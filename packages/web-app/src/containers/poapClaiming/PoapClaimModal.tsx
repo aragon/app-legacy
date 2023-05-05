@@ -1,6 +1,6 @@
 import {ButtonText, IconLinkExternal} from '@aragon/ui-components';
 import React from 'react';
-import {useTranslation} from 'react-i18next';
+// import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 import {useGlobalModalContext} from 'context/globalModals';
 
@@ -8,7 +8,7 @@ import ModalBottomSheetSwitcher from 'components/modalBottomSheetSwitcher';
 import {POAP_CLAIM_LINK} from 'utils/constants';
 
 const PoapClaimModal: React.FC = () => {
-  const {t} = useTranslation();
+  // const {t} = useTranslation();
   const {isPoapClaimOpen, close} = useGlobalModalContext();
 
   return (
