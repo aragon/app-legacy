@@ -86,7 +86,9 @@ export const UseClientProvider: React.FC = ({children}) => {
     const contextParams: ContextParams = {
       daoFactoryAddress: LIVE_CONTRACTS[translatedNetwork].daoFactory,
       network: translatedNetwork,
-      signer: signer || undefined,
+
+      // TODO: Investigate why signer has to be there
+      signer: signer,
       web3Providers: CHAIN_METADATA[network].rpc[0],
       ipfsNodes,
       graphqlNodes: [

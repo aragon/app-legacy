@@ -1127,11 +1127,12 @@ function calculateProposalStatus(proposal: DetailedProposal): ProposalStatus {
       proposal.token.decimals
     );
 
+    // TODO calculate potentially executable
     return computeProposalStatus({
       startDate: (proposal.startDate.getTime() / 1000).toString(),
       endDate: (proposal.endDate.getTime() / 1000).toString(),
       executed: false,
-      executable: isEarlyExecutable(
+      earlyExecutable: isEarlyExecutable(
         missingPart,
         proposal,
         results,
@@ -1143,7 +1144,7 @@ function calculateProposalStatus(proposal: DetailedProposal): ProposalStatus {
       startDate: (proposal.startDate.getTime() / 1000).toString(),
       endDate: (proposal.endDate.getTime() / 1000).toString(),
       executed: false,
-      executable:
+      earlyExecutable:
         (proposal as MultisigProposal)?.approvals?.length >=
         ((proposal as CachedProposal)?.minApprovals || 1),
     });
