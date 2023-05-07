@@ -74,6 +74,7 @@ export const useDaoDetailsQuery = () => {
   const {dao} = useParams();
   const navigate = useNavigate();
   const location = useLocation();
+  const {network} = useNetwork();
 
   const daoAddressOrEns = dao?.toLowerCase();
   const apiResponse = useDaoQuery(daoAddressOrEns);
@@ -90,6 +91,7 @@ export const useDaoDetailsQuery = () => {
 
       //navigate to url with ens domain
       else if (
+        (network === 'ethereum' || network === 'goerli') &&
         isAddress(daoAddressOrEns as string) &&
         toDisplayEns(apiResponse.data?.ensDomain)
       ) {
