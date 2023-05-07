@@ -187,14 +187,14 @@
     "@web3-react/types" "^6.0.7"
     tiny-warning "^1.0.3"
 
-"@aragon/sdk-client@^1.3.1":
-  version "1.3.1"
-  resolved "https://registry.yarnpkg.com/@aragon/sdk-client/-/sdk-client-1.3.1.tgz#b795292accf998f1bd4228dd32036f2034b0044a"
-  integrity sha512-J43xRUre3d2wBHNLDROEzwbsER8YsEw5rD9OVPzddOaSWRZf4n0kH3Bp3U6n3cTbbA55gWZFvMwLGJ2K3TJZ1w==
+"@aragon/sdk-client@^1.5.0":
+  version "1.5.0"
+  resolved "https://registry.yarnpkg.com/@aragon/sdk-client/-/sdk-client-1.5.0.tgz#8225eb471bb7055e4f1e44a07439067e5925c3d7"
+  integrity sha512-bP4T3QcQ4AN2Z6aX87F7OVHv6FAlWfiUMFSS8pNys5hm9wfNr6q2F8pGBIXqnmHOnR8Qo+TRnF9n+0eAH5zyAQ==
   dependencies:
     "@aragon/osx-ethers" "^1.2.1"
-    "@aragon/sdk-common" "^1.1.0"
-    "@aragon/sdk-ipfs" "^1.0.0"
+    "@aragon/sdk-common" "^1.2.0"
+    "@aragon/sdk-ipfs" "^1.1.0"
     "@ethersproject/abstract-signer" "^5.5.0"
     "@ethersproject/bignumber" "^5.6.0"
     "@ethersproject/constants" "^5.6.0"
@@ -204,15 +204,15 @@
     graphql "^16.5.0"
     graphql-request "^4.3.0"
 
-"@aragon/sdk-common@^1.1.0":
-  version "1.1.0"
-  resolved "https://registry.yarnpkg.com/@aragon/sdk-common/-/sdk-common-1.1.0.tgz#90cf9b8cff3a0ffd3d27f8dc269c2c7689265fae"
-  integrity sha512-6aRzwJV/hrBgElEKLbd3QjopynXie9Xl8Re5HWwHWr+V2BtQs6pKzAmJ7xOoaZhpA8O51tg27HxoOSdXTjvYNg==
+"@aragon/sdk-common@^1.2.0":
+  version "1.2.0"
+  resolved "https://registry.yarnpkg.com/@aragon/sdk-common/-/sdk-common-1.2.0.tgz#1672079119a17498b0fdf4beed3f2326ee348ffa"
+  integrity sha512-uBdsmCxINBnn4aTIGWeemtjZntAwXCnhyOTKEtC1IQThSMPssm+S++r4J9CHcZgKLISqnpBKvFtv5Q7zEDf2gQ==
 
-"@aragon/sdk-ipfs@^1.0.0":
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/@aragon/sdk-ipfs/-/sdk-ipfs-1.0.0.tgz#83586d8c8125bd73321ee18a857680319b76469a"
-  integrity sha512-2Zh+ggJW42uHlZc1fyE1TG94A34l2kf9STW2gRZ7nMtqzD71JVt9rVl454H/lENX6RG4OUP/iSVii+WI7ZGJFQ==
+"@aragon/sdk-ipfs@^1.1.0":
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/@aragon/sdk-ipfs/-/sdk-ipfs-1.1.0.tgz#178ee5ce840ce40b44ba0345dd5068e1b5608f9d"
+  integrity sha512-2uAh/QPcmaita4AfHYV93lESzAhrmGEZ6CL7pvOH86HTkU6j7LnePvD1ly+x0hxRznTb+zgVgSPPKUn0ArPycw==
   dependencies:
     "@web-std/fetch" "^4.1.0"
     "@web-std/file" "^3.0.2"
@@ -22696,16 +22696,7 @@ postcss@^6.0.9:
     source-map "^0.6.1"
     supports-color "^5.4.0"
 
-postcss@^8, postcss@^8.1.6, postcss@^8.2.15, postcss@^8.3.0, postcss@^8.3.5, postcss@^8.4.13:
-  version "8.4.21"
-  resolved "https://registry.yarnpkg.com/postcss/-/postcss-8.4.21.tgz#c639b719a57efc3187b13a1d765675485f4134f4"
-  integrity sha512-tP7u/Sn/dVxK2NnruI4H9BG+x+Wxz6oeZ1cJ8P6G/PZY0IKk4k/63TDsQf2kQq3+qoJeLm2kIBUNlZe3zgb4Zg==
-  dependencies:
-    nanoid "^3.3.4"
-    picocolors "^1.0.0"
-    source-map-js "^1.0.2"
-
-postcss@^8.3.11:
+postcss@^8, postcss@^8.1.6, postcss@^8.2.15, postcss@^8.3.0, postcss@^8.3.11, postcss@^8.3.5, postcss@^8.4.13:
   version "8.4.21"
   resolved "https://registry.yarnpkg.com/postcss/-/postcss-8.4.21.tgz#c639b719a57efc3187b13a1d765675485f4134f4"
   integrity sha512-tP7u/Sn/dVxK2NnruI4H9BG+x+Wxz6oeZ1cJ8P6G/PZY0IKk4k/63TDsQf2kQq3+qoJeLm2kIBUNlZe3zgb4Zg==
@@ -25460,11 +25451,6 @@ source-list-map@^2.0.0:
   version "2.0.1"
   resolved "https://registry.yarnpkg.com/source-list-map/-/source-list-map-2.0.1.tgz#3993bd873bfc48479cca9ea3a547835c7c154b34"
   integrity sha512-qnQ7gVMxGNxsiL4lEuJwe/To8UnK7fAnmbGEEH8RpLouuKbeEm0lhbQVFIrNSuB+G7tVrAlVsZgETT5nljf+Iw==
-
-source-map-js@^1.0.2:
-  version "1.0.2"
-  resolved "https://registry.yarnpkg.com/source-map-js/-/source-map-js-1.0.2.tgz#adbc361d9c62df380125e7f161f71c826f1e490c"
-  integrity sha512-R0XvVJ9WusLiqTCEiGCmICCMplcCkIwwR11mOSD9CR5u+IXYdiseeEuXCVAjS54zqwkLcPNnmU4OeJ6tUrWhDw==
 
 source-map-js@^1.0.2:
   version "1.0.2"
