@@ -503,12 +503,8 @@ export function sleepFor(time = 600) {
 export const translateToAppNetwork = (
   sdkNetwork: SdkContext['network']
 ): SupportedNetworks => {
-  if (typeof sdkNetwork !== 'string') {
-    return 'unsupported';
-  }
-
-  switch (sdkNetwork) {
-    case 'mainnet':
+  switch (sdkNetwork.name) {
+    case 'homestead':
       return 'ethereum';
     case 'goerli':
       return 'goerli';
@@ -538,7 +534,7 @@ export function translateToNetworkishName(
     case 'mumbai':
       return 'maticmum';
     case 'ethereum':
-      return 'mainnet';
+      return 'homestead';
     case 'goerli':
       return 'goerli';
   }
