@@ -87,8 +87,8 @@ export const UseClientProvider: React.FC = ({children}) => {
       daoFactoryAddress: LIVE_CONTRACTS[translatedNetwork].daoFactory,
       network: translatedNetwork,
 
-      // TODO: Investigate why signer has to be there
-      signer: signer,
+      // TODO: Will be optional next release (>1.5.0) [FF - 5/8/2023]
+      signer: signer!,
       web3Providers: CHAIN_METADATA[network].rpc[0],
       ipfsNodes,
       graphqlNodes: [
