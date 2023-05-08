@@ -1,21 +1,20 @@
 import {ButtonText, IconLinkExternal} from '@aragon/ui-components';
 import React from 'react';
-// import {useTranslation} from 'react-i18next';
+import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 import {useGlobalModalContext} from 'context/globalModals';
 
 import ModalBottomSheetSwitcher from 'components/modalBottomSheetSwitcher';
-import {POAP_CLAIM_LINK} from 'utils/constants';
 
 const PoapClaimModal: React.FC = () => {
-  // const {t} = useTranslation();
+  const {t} = useTranslation();
   const {isPoapClaimOpen, close} = useGlobalModalContext();
 
   return (
     <ModalBottomSheetSwitcher
       isOpen={isPoapClaimOpen}
       onClose={() => close('poapClaim')}
-      title={'Claim your DAO Builder POAP'}
+      title={t('modal.claimPoap.title')}
     >
       <Container>
         <BodyWrapper>
@@ -29,11 +28,11 @@ const PoapClaimModal: React.FC = () => {
           <ButtonText
             mode="primary"
             size="large"
-            label={'Claim POAP now'}
+            label={t('modal.claimPoap.ctaLabel')}
             className="w-full"
             iconRight={<IconLinkExternal />}
             onClick={() => {
-              window.open(POAP_CLAIM_LINK, '_blank');
+              window.open(t('modal.claimPoap.ctaURL'), '_blank');
               close('poapClaim');
             }}
           />
