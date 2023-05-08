@@ -1132,7 +1132,7 @@ function calculateProposalStatus(proposal: DetailedProposal): ProposalStatus {
       startDate: (proposal.startDate.getTime() / 1000).toString(),
       endDate: (proposal.endDate.getTime() / 1000).toString(),
       executed: false,
-      earlyExecutable: isEarlyExecutable(
+      potentiallyExecutable: isEarlyExecutable(
         missingPart,
         proposal,
         results,
@@ -1144,7 +1144,7 @@ function calculateProposalStatus(proposal: DetailedProposal): ProposalStatus {
       startDate: (proposal.startDate.getTime() / 1000).toString(),
       endDate: (proposal.endDate.getTime() / 1000).toString(),
       executed: false,
-      earlyExecutable:
+      potentiallyExecutable:
         (proposal as MultisigProposal)?.approvals?.length >=
         ((proposal as CachedProposal)?.minApprovals || 1),
     });
