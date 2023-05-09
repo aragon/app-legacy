@@ -117,7 +117,7 @@ const DateTimeSelector: React.FC<Props> = ({
       setTimeout(() => {
         // automatically correct the start date to now
         setValue('startDate', getCanonicalDate());
-        setValue('startTime', getCanonicalTime({minutes: 10}));
+        setValue('startTime', getCanonicalTime({minutes}));
         setValue('startUtc', currTimezone);
       }, CORRECTION_DELAY);
 
@@ -170,6 +170,7 @@ const DateTimeSelector: React.FC<Props> = ({
     maxDurationMills,
     minDurationAlert,
     minDurationMills,
+    minutes,
     setValue,
     t,
   ]);

@@ -448,16 +448,22 @@ const ProposeSettingWrapper: React.FC<Props> = ({
         const ipfsUri = await pluginClient?.methods.pinMetadata(metadata);
 
         // getting dates
-        let startDateTime =
-          startSwitch === 'now'
-            ? new Date(
-                `${getCanonicalDate()}T${getCanonicalTime({
-                  minutes: 10,
-                })}:00${getCanonicalUtcOffset()}`
-              )
-            : new Date(
-                `${startDate}T${startTime}:00${getCanonicalUtcOffset(startUtc)}`
-              );
+        let startDateTime: Date;
+        const startMinutesDelay = isMultisigVotingSettings(pluginSettings)
+          ? 0
+          : 10;
+
+        if (startSwitch === 'now') {
+          startDateTime = new Date(
+            `${getCanonicalDate()}T${getCanonicalTime({
+              minutes: startMinutesDelay,
+            })}:00${getCanonicalUtcOffset()}`
+          );
+        } else {
+          startDateTime = new Date(
+            `${startDate}T${startTime}:00${getCanonicalUtcOffset(startUtc)}`
+          );
+        }
 
         // End date
         let endDateTime;
@@ -480,12 +486,14 @@ const ProposeSettingWrapper: React.FC<Props> = ({
         }
 
         if (startSwitch === 'now') {
-          endDateTime = new Date(endDateTime.getTime() + minutesToMills(10));
+          endDateTime = new Date(
+            endDateTime.getTime() + minutesToMills(startMinutesDelay)
+          );
         } else {
           if (startDateTime.valueOf() < new Date().valueOf()) {
             startDateTime = new Date(
               `${getCanonicalDate()}T${getCanonicalTime({
-                minutes: 10,
+                minutes: startMinutesDelay,
               })}:00${getCanonicalUtcOffset()}`
             );
           }
@@ -535,6 +543,7 @@ const ProposeSettingWrapper: React.FC<Props> = ({
     minMinutes,
     pluginAddress,
     pluginClient,
+    pluginSettings,
     showTxModal,
   ]);
 

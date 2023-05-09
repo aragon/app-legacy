@@ -77,10 +77,12 @@ const ReviewProposal: React.FC<ReviewProposalProps> = ({
 
   const startDate = useMemo(() => {
     const {startSwitch, startDate, startTime, startUtc} = values;
+
     if (startSwitch === 'now') {
+      const startMinutesDelay = isMultisigVotingSettings(daoSettings) ? 0 : 10;
       return new Date(
         `${getCanonicalDate()}T${getCanonicalTime({
-          minutes: 10,
+          minutes: startMinutesDelay,
         })}:00${getCanonicalUtcOffset()}`
       );
     } else {
@@ -88,7 +90,7 @@ const ReviewProposal: React.FC<ReviewProposalProps> = ({
         `${startDate}T${startTime}:00${getCanonicalUtcOffset(startUtc)}`
       );
     }
-  }, [values]);
+  }, [daoSettings, values]);
 
   const formattedStartDate = useMemo(
     () =>
@@ -129,14 +131,17 @@ const ReviewProposal: React.FC<ReviewProposalProps> = ({
 
     // adding 10 minutes to offset the 10 minutes added by starting now
     if (startSwitch === 'now') {
-      endDateTime = new Date(endDateTime.getTime() + minutesToMills(10));
+      const startMinutesDelay = isMultisigVotingSettings(daoSettings) ? 0 : 10;
+      endDateTime = new Date(
+        endDateTime.getTime() + minutesToMills(startMinutesDelay)
+      );
     }
 
     return `${format(
       endDateTime,
       KNOWN_FORMATS.proposals
     )} ${getFormattedUtcOffset()}`;
-  }, [values]);
+  }, [daoSettings, values]);
 
   const terminalProps = useMemo(
     () =>
