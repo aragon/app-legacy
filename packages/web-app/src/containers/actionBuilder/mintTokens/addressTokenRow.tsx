@@ -30,15 +30,24 @@ type AddressAndTokenRowProps = IndexProps & {
   newTokenSupply: Big;
   onClear?: (index: number) => void;
   onDelete: (index: number) => void;
+  onEnterDaoAddress?: (index: number) => void;
+  daoAddress?: string;
+  ensName?: string;
 };
 
-type AddressFieldProps = IndexProps & {
-  onClear?: (index: number) => void;
-};
+type AddressFieldProps = IndexProps &
+  Pick<
+    AddressAndTokenRowProps,
+    'onClear' | 'onEnterDaoAddress' | 'daoAddress' | 'ensName'
+  >;
+
 const AddressField: React.FC<AddressFieldProps> = ({
   actionIndex,
   fieldIndex,
   onClear,
+  onEnterDaoAddress,
+  daoAddress,
+  ensName,
 }) => {
   const {t} = useTranslation();
   const {control} = useFormContext();
@@ -68,6 +77,14 @@ const AddressField: React.FC<AddressFieldProps> = ({
           validationResult = t('errors.duplicateAddress') as string;
         }
       });
+    }
+
+    if (
+      (address === daoAddress || address === ensName) &&
+      onEnterDaoAddress &&
+      !validationResult
+    ) {
+      onEnterDaoAddress(index);
     }
     return validationResult;
   };
@@ -228,6 +245,9 @@ export const AddressAndTokenRow: React.FC<AddressAndTokenRowProps> = ({
   onDelete,
   onClear,
   newTokenSupply,
+  onEnterDaoAddress,
+  daoAddress,
+  ensName,
 }) => {
   const {isDesktop} = useScreen();
   const {t} = useTranslation();
@@ -243,9 +263,14 @@ export const AddressAndTokenRow: React.FC<AddressAndTokenRowProps> = ({
       <Container>
         <HStack>
           <AddressField
-            actionIndex={actionIndex}
-            fieldIndex={fieldIndex}
-            onClear={onClear}
+            {...{
+              actionIndex,
+              fieldIndex,
+              onClear,
+              onEnterDaoAddress,
+              ensName,
+              daoAddress,
+            }}
           />
           <TokenField actionIndex={actionIndex} fieldIndex={fieldIndex} />
           <PercentageDistribution

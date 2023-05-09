@@ -1,5 +1,5 @@
-import React, {useState} from 'react';
-import {Controller, useFormContext} from 'react-hook-form';
+import React, {useCallback, useMemo, useState} from 'react';
+import {Controller, useFormContext, useWatch} from 'react-hook-form';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 import {
@@ -13,6 +13,7 @@ import {
 import ModalBottomSheetSwitcher from 'components/modalBottomSheetSwitcher';
 import {StateEmpty} from 'components/stateEmpty';
 import {validateAddress} from 'utils/validators';
+import {handleClipboardActions} from 'utils/library';
 
 const processes = ['DaoCreation', 'ProposalCreation'] as const;
 export type ProcessType = typeof processes[number];
@@ -20,25 +21,39 @@ export type ProcessType = typeof processes[number];
 type Props = {
   isOpen: boolean;
   onClose: () => void;
-  ctaCallback: () => void;
-  /** defaults to onClose */
-  cancelCallback?: () => void;
-  processType?: ProcessType;
+  onCloseReset: () => void;
+  daoAddress: {
+    address?: string;
+    ensName?: string;
+  };
 };
 
 const MintTokensToTreasuryMenu: React.FC<Props> = ({
   isOpen,
   onClose,
-  processType,
-  ctaCallback,
-  cancelCallback,
+  onCloseReset,
+  daoAddress,
 }) => {
   const {t} = useTranslation();
   const [step, setStep] = useState(0);
-  const {control, getValues} = useFormContext();
+  const {control} = useFormContext();
+  const treasuryAddress = useWatch({
+    name: 'mintTokensToTreasury',
+    control: control,
+  });
+
+  const isActionEnabled = useMemo(() => {
+    if (treasuryAddress !== '')
+      if (
+        treasuryAddress === daoAddress.address ||
+        treasuryAddress === daoAddress.ensName
+      )
+        return true;
+    return false;
+  }, [daoAddress.address, daoAddress.ensName, treasuryAddress]);
 
   return (
-    <ModalBottomSheetSwitcher isOpen={true} onClose={onClose}>
+    <ModalBottomSheetSwitcher {...{isOpen, onCloseReset}}>
       {step === 0 ? (
         <div className="px-2 pb-3">
           <StateEmpty
@@ -59,7 +74,8 @@ const MintTokensToTreasuryMenu: React.FC<Props> = ({
             primaryButton={{
               label: t('modal.mintTokensToTreasury.step1CtaLabel'),
               onClick: () => {
-                onClose();
+                onCloseReset();
+                setStep(0);
               },
             }}
             secondaryButton={{
@@ -94,7 +110,7 @@ const MintTokensToTreasuryMenu: React.FC<Props> = ({
             </FormHelpText>
             <Controller
               defaultValue=""
-              name={`mintTokensToTreasury`}
+              name={'mintTokensToTreasury'}
               control={control}
               rules={{
                 required: t('errors.required.walletAddress') as string,
@@ -104,43 +120,55 @@ const MintTokensToTreasuryMenu: React.FC<Props> = ({
                 field: {name, value, onBlur, onChange},
                 fieldState: {error},
               }) => (
-                <WalletInput
-                  mode={error ? 'critical' : 'default'}
-                  name={name}
-                  value={value}
-                  onBlur={onBlur}
-                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                    onChange(e.target.value);
-                  }}
-                  placeholder="0x"
-                  adornmentText={value ? t('labels.copy') : t('labels.paste')}
-                  onAdornmentClick={
-                    () => {}
-                    // handleClipboardActions(value, onChange, alert)
-                  }
-                />
+                <>
+                  <WalletInput
+                    mode={error ? 'critical' : 'default'}
+                    name={name}
+                    value={value}
+                    onBlur={onBlur}
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                      onChange(e.target.value);
+                    }}
+                    placeholder="0x"
+                    adornmentText={value ? t('labels.copy') : t('labels.paste')}
+                    onAdornmentClick={() =>
+                      handleClipboardActions(value, onChange, alert)
+                    }
+                  />
+                  <div className="mt-3 mb-1.5">
+                    <AlertCard
+                      mode="critical"
+                      title={t('modal.mintTokensToTreasury.alertTitle')}
+                      helpText={t(
+                        'modal.mintTokensToTreasury.alertDescription'
+                      )}
+                    />
+                  </div>
+                  <ActionContainer>
+                    <ButtonText
+                      label={t('modal.mintTokensToTreasury.step2CtaLabel')}
+                      mode="primary"
+                      size="large"
+                      onClick={() => {
+                        onClose();
+                        setStep(0);
+                      }}
+                      disabled={!isActionEnabled}
+                    />
+                    <ButtonText
+                      label={t('modal.mintTokensToTreasury.step2CancelLabel')}
+                      mode="secondary"
+                      size="large"
+                      bgWhite={false}
+                      onClick={() => {
+                        onCloseReset();
+                        setStep(0);
+                      }}
+                    />
+                  </ActionContainer>
+                </>
               )}
             />
-            <div className="mt-3 mb-1.5">
-              <AlertCard
-                mode="critical"
-                title={t('modal.mintTokensToTreasury.alertTitle')}
-                helpText={t('modal.mintTokensToTreasury.alertDescription')}
-              />
-            </div>
-            <ActionContainer>
-              <ButtonText
-                label={t('modal.mintTokensToTreasury.step2CtaLabel')}
-                mode="primary"
-                size="large"
-              />
-              <ButtonText
-                label={t('modal.mintTokensToTreasury.step2CancelLabel')}
-                mode="secondary"
-                size="large"
-                bgWhite={false}
-              />
-            </ActionContainer>
           </div>
         </>
       )}
