@@ -27,8 +27,6 @@ export type InputValue = {
 // Toggle type for value to show in textarea input
 type DisplayMode = 'address' | 'ensName';
 
-// TODO: add disbaled and disabledFilled stylings
-
 /**
  * WalletInputProps is a type that defines the properties for a wallet input component.
  * It extends the properties of an HTMLTextAreaElement, except for 'value' and 'onChange'.
@@ -109,6 +107,7 @@ export const WalletInput = React.forwardRef<
     {
       state,
       value,
+      disabled,
       blockExplorerURL,
       onFocus,
       onWheel,
@@ -124,7 +123,6 @@ export const WalletInput = React.forwardRef<
     },
     ref
   ) => {
-    //0xd5fb864ACfD6BB2f72939f122e89fF7F475924f5, phitest.eth
     const textareaRef = useRef<HTMLTextAreaElement>(null);
     const wasNotEditingRef = useRef(true);
 
@@ -148,6 +146,7 @@ export const WalletInput = React.forwardRef<
     // Only show see on scan button if the input is valid
     const showExternalButton =
       blockExplorerURL && (IsAddress(fullValue) || isEnsDomain(fullValue));
+    const adornmentsDisabled = disabled && !fullValue;
 
     // This displays the truncated address/ens when the value is not being
     // edited by the user, or in the case of ens, when the length of the name
@@ -408,7 +407,7 @@ export const WalletInput = React.forwardRef<
         <Container
           data-testid="input-wallet"
           state={state}
-          disabled={props.disabled}
+          disabled={disabled}
           onBlur={handleContainerBlur}
         >
           <InputWrapper>
@@ -420,6 +419,7 @@ export const WalletInput = React.forwardRef<
               onFocus={handleFocus}
               onWheel={handleOnWheel}
               onChange={handleChange}
+              disabled={disabled}
             />
           </InputWrapper>
 
@@ -431,6 +431,7 @@ export const WalletInput = React.forwardRef<
                 mode="secondary"
                 bgWhite
                 onClick={handlePasteFromClipboard}
+                disabled={disabled}
               />
             )}
             {displayedValue && isEditing && (
@@ -440,6 +441,7 @@ export const WalletInput = React.forwardRef<
                 mode="secondary"
                 bgWhite
                 onMouseDown={handleClearInput}
+                disabled={disabled}
               />
             )}
 
@@ -452,6 +454,7 @@ export const WalletInput = React.forwardRef<
                     mode="secondary"
                     bgWhite={true}
                     onClick={toggleDisplayMode}
+                    disabled={adornmentsDisabled}
                   />
                 )}
                 <ButtonIcon
@@ -460,6 +463,7 @@ export const WalletInput = React.forwardRef<
                   size="small"
                   bgWhite
                   onClick={handleCopyToClipboard}
+                  disabled={adornmentsDisabled}
                 />
                 {showExternalButton && (
                   <ButtonIcon
@@ -467,6 +471,7 @@ export const WalletInput = React.forwardRef<
                     mode="secondary"
                     size="small"
                     bgWhite
+                    disabled={adornmentsDisabled}
                     onClick={e => {
                       window.open(blockExplorerURL);
                       onViewExplorerButtonClick?.(e);
@@ -494,8 +499,12 @@ function getTextAreaHeight(element: HTMLTextAreaElement | null) {
 }
 
 export const StyledInput = styled.textarea.attrs(() => {
-  const className: string | undefined =
+  const baseClassName =
     'w-full items-center appearance-none bg-transparent border-none outline-none resize-none font-inherit p-0 m-0';
+  const disabledClassName = 'disabled:cursor-not-allowed';
+
+  const className: string | undefined = `${baseClassName} ${disabledClassName}`;
+
   return {className};
 })``;
 
@@ -524,9 +533,20 @@ const modeStyles = (state: WalletInputProps['state']) => {
   }
 };
 
-export const Container = styled.div.attrs(({state}: StyledContainerProps) => {
-  const baseClassName =
-    'border bg-ui-0 flex space-x-1.5 py-1 pr-1 pl-2 text-ui-600 rounded-xl focus-within:ring-2 focus-within:ring-primary-500';
-  const modeClassName = modeStyles(state);
-  return {className: `${baseClassName} ${modeClassName}`};
-})<StyledContainerProps>``;
+export const Container = styled.div.attrs(
+  ({state, disabled}: StyledContainerProps) => {
+    const baseClassName =
+      'border flex space-x-1.5 py-1 pr-1 pl-2 text-ui-600 rounded-xl';
+    const modeClassName = modeStyles(state);
+
+    const focusClass = disabled
+      ? 'cursor-not-allowed'
+      : 'focus-within:ring-2 focus-within:ring-primary-500';
+
+    const bgAndBorderColor = disabled ? 'bg-ui-100 border-ui-200' : 'bg-ui-0';
+
+    return {
+      className: `${baseClassName} ${modeClassName} ${focusClass} ${bgAndBorderColor}`,
+    };
+  }
+)<StyledContainerProps>``;
