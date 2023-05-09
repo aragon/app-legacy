@@ -963,6 +963,18 @@
       "cancelLabel": "No, stay",
       "titleProposalCreation": "Exit proposal creation",
       "titleDaoCreation": "Exit DAO creation"
+    },
+    "mintTokensToTreasury": {
+      "title": "Minting tokens to DAO treasury",
+      "description": "If you are minting tokens for your DAO treasury, you may brick your DAO because you will never again reach minimum participation and thus be unable to execute any proposal actions.",
+      "alertTitle": "Potential risk for your DAO",
+      "alertDescription": "Aragon doesn’t recommend to mint tokens to your DAO treasury. You are always able to make a proposal to distribute new tokens to new members.",
+      "step1CtaLabel": "OK, I have understood the risk",
+      "step1CancelLabel": "I want to proceed",
+      "inputLabel": "Confirm with DAO address",
+      "inputHelptext": "To confirm, fill the DAO contract address below.",
+      "step2CtaLabel": "Add DAO treasury now",
+      "step2CancelLabel": "Cancel now"
     }
   }
 }

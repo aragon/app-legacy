@@ -25,6 +25,7 @@ import RemoveAddresses from './removeAddresses';
 import UpdateMinimumApproval from './updateMinimumApproval';
 import WithdrawAction from './withdraw/withdrawAction';
 import SCC from 'containers/smartContractComposer';
+import MintTokensToTreasuryMenu from 'containers/mintTokensToTreasuryMenu';
 
 /**
  * This Component is responsible for generating all actions that append to pipeline context (actions)
@@ -144,6 +145,16 @@ const ActionBuilder: React.FC = () => {
         isWallet={false}
         onTokenSelect={handleTokenSelect}
         tokenBalances={tokens || []}
+      />
+
+      <MintTokensToTreasuryMenu
+        isOpen={false}
+        onClose={function (): void {
+          throw new Error('Function not implemented.');
+        }}
+        ctaCallback={function (): void {
+          throw new Error('Function not implemented.');
+        }}
       />
     </>
   );
