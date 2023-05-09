@@ -1,5 +1,5 @@
 module.exports = {
-  purge: false, // purge: ['./src/**/*.html', './src/**/*.tsx'], TODO: investigate
+  purge: ['./src/**/*.html', './src/**/*.tsx', '../ui-components/src/**/*.tsx'],
   darkMode: false,
   theme: {
     extend: {
