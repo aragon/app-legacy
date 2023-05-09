@@ -992,9 +992,6 @@
       "description": "Add a smart contract to interact with its actions",
       "primaryBtnLabel": "Connect smart contract",
       "ctaLabel": "Connect smart contract",
-      "title": "No smart contract added",
-      "description": "Add a smart contract to interact with it. To learn more, read {{link}}.",
-      "modalTitle": "Smart contract composer",
       "descriptionLinkURL": "https://",
       "descriptionLinkLabel": "our guide"
     },

@@ -50,10 +50,10 @@ const PoapImgContainer = styled.div.attrs({
   className: 'py-3 flex justify-center',
 })``;
 
-const PoapImg = styled.img`
-  width: 100%;
+const PoapImg = styled.img.attrs({
+  className: 'w-full h-full',
+})`
   max-width: 280px;
-  height: 100%;
   max-height: 280px;
 `;
 
