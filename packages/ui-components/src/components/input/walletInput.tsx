@@ -535,15 +535,16 @@ const modeStyles = (state: WalletInputProps['state']) => {
 
 export const Container = styled.div.attrs(
   ({state, disabled}: StyledContainerProps) => {
-    const baseClassName =
-      'border flex space-x-1.5 py-1 pr-1 pl-2 text-ui-600 rounded-xl';
+    const baseClassName = 'border flex space-x-1.5 py-1 pr-1 pl-2 rounded-xl';
     const modeClassName = modeStyles(state);
 
     const focusClass = disabled
       ? 'cursor-not-allowed'
       : 'focus-within:ring-2 focus-within:ring-primary-500';
 
-    const bgAndBorderColor = disabled ? 'bg-ui-100 border-ui-200' : 'bg-ui-0';
+    const bgAndBorderColor = disabled
+      ? 'bg-ui-100 border-ui-200 text-ui-700'
+      : 'bg-ui-0 text-ui-600';
 
     return {
       className: `${baseClassName} ${modeClassName} ${focusClass} ${bgAndBorderColor}`,
