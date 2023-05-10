@@ -24,7 +24,10 @@ export const useValidateContractEtherscan = (
     queryFn: () => {
       return fetch(url).then(res => res.json());
     },
-    enabled: verificationState === TransactionState.LOADING && !!network,
+    enabled:
+      contractAddress !== null &&
+      verificationState === TransactionState.LOADING &&
+      !!network,
   });
 };
 

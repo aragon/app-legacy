@@ -8,7 +8,13 @@ import {useActionsContext} from 'context/actions';
 import {useAlertContext} from 'context/alert';
 import {t} from 'i18next';
 import React, {useEffect} from 'react';
-import {Controller, useFormContext, useWatch} from 'react-hook-form';
+import {
+  Controller,
+  FormProvider,
+  useForm,
+  useFormContext,
+  useWatch,
+} from 'react-hook-form';
 import styled from 'styled-components';
 import {
   getUserFriendlyWalletLabel,
@@ -49,10 +55,10 @@ const InputForm: React.FC<InputFormProps> = ({
       <ActionName>{selectedAction.name}</ActionName>
       <ActionDescription>{selectedAction.notice}</ActionDescription>
       {selectedAction.inputs.length > 0 ? (
-        <div className="p-3 mt-5 space-y-2 bg-ui-50 rounded-xl border-ui-100 shadow-100">
+        <div className="p-3 mt-5 space-y-2 rounded-xl bg-ui-50 border-ui-100 shadow-100">
           {selectedAction.inputs.map(input => (
             <div key={input.name}>
-              <div className="text-base font-bold text-ui-800 capitalize">
+              <div className="text-base font-bold capitalize text-ui-800">
                 {input.name}
                 <span className="ml-0.5 text-sm normal-case">
                   ({input.type})
@@ -200,7 +206,7 @@ export const ComponentForType: React.FC<ComponentForTypeProps> = ({
     case 'tuple':
       input.components?.map(component => (
         <div key={component.name}>
-          <div className="mb-1.5 text-base font-bold text-ui-800 capitalize">
+          <div className="mb-1.5 text-base font-bold capitalize text-ui-800">
             {input.name}
           </div>
           <ComponentForType
@@ -236,6 +242,24 @@ export const ComponentForType: React.FC<ComponentForTypeProps> = ({
       );
   }
   return null;
+};
+
+export const ComponentForTypeWithFormProvider: React.FC<
+  ComponentForTypeProps
+> = ({input, functionName, formHandleName, defaultValue, disabled = false}) => {
+  const methods = useForm({mode: 'onChange'});
+  return (
+    <FormProvider {...methods}>
+      <ComponentForType
+        key={input.name}
+        input={input}
+        functionName={functionName}
+        disabled={disabled}
+        defaultValue={defaultValue}
+        formHandleName={formHandleName}
+      />
+    </FormProvider>
+  );
 };
 
 const ActionName = styled.p.attrs({

@@ -19,6 +19,7 @@ import {
   WidgetStatus,
 } from '@aragon/ui-components';
 import {shortenAddress} from '@aragon/ui-components/src/utils/addresses';
+import {bytesToHex} from '@aragon/sdk-common';
 import {withTransaction} from '@elastic/apm-rum-react';
 import TipTapLink from '@tiptap/extension-link';
 import {useEditor} from '@tiptap/react';
@@ -230,7 +231,6 @@ const Proposal: React.FC = () => {
           pluginClient?.decoding.findInterface(action.data);
 
         switch (functionParams?.functionName) {
-          case undefined:
           case 'transfer':
             return decodeWithdrawToAction(
               action.data,
@@ -274,7 +274,19 @@ const Proposal: React.FC = () => {
           case 'setMetadata':
             return decodeMetadataToAction(action.data, client);
           default:
-            return Promise.resolve({} as Action);
+            return Promise.resolve({
+              name: 'external_contract_action',
+              contractAddress: action.to,
+              contractName: 'TBD: Get contractName from contract address',
+              functionName: 'TBD: Get functionName from contract address',
+              inputs: [
+                {
+                  value: `TBD: Change data to readable form - ${bytesToHex(
+                    action.data
+                  )}`,
+                },
+              ],
+            });
         }
       }
     );

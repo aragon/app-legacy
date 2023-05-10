@@ -228,18 +228,25 @@ const CreateProposalProvider: React.FC<Props> = ({
           break;
         }
         case 'external_contract_action': {
-          const validatedContract = await getEtherscanVerifiedContract(
+          const etherscanData = await getEtherscanVerifiedContract(
             action.contractAddress,
             network
           );
-          if (validatedContract?.ABI) {
+
+          if (
+            etherscanData.status === '1' &&
+            etherscanData.result[0].ABI !== 'Contract source code not verified'
+          ) {
             const functionParams = action.inputs.map(input => input.value);
 
-            const iface = new ethers.utils.Interface(validatedContract.ABI);
+            const iface = new ethers.utils.Interface(
+              etherscanData.result[0].ABI
+            );
             const hexData = iface.encodeFunctionData(
               action.functionName,
               functionParams
             );
+
             actions.push(
               Promise.resolve({
                 to: action.contractAddress,
