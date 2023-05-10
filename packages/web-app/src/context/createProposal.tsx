@@ -67,7 +67,7 @@ import {useNetwork} from './network';
 import {usePrivacyContext} from './privacyContext';
 import {useProviders} from './providers';
 import {isAddress} from 'ethers/lib/utils';
-import {getEtherscanVerifiedContract} from 'services/contractVerification';
+import {getEtherscanVerifiedContract} from 'services/etherscanAPI';
 
 type Props = {
   showTxModal: boolean;
