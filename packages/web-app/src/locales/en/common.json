@@ -906,35 +906,6 @@
       "buildingDAO": "Building your DAO"
     }
   },
-  "scc": {
-    "labels": {
-      "connect": "Connect smart contract",
-      "singleContractConnected": "One connected contract",
-      "nContractsConnected": "{{numConnected}} Connected smart contracts",
-      "searchPlaceholder": "Type to find any action …",
-      "singleActionAvailable": "One write action",
-      "nActionsAvailable": "{{numConnected}} write actions"
-    },
-    "emptyState": {
-      "modalTitle": "Smart contract composer",
-      "title": "No smart contract",
-      "description": "Add a smart contract to interact with its actions",
-      "primaryBtnLabel": "Connect smart contract"
-    },
-    "addressValidation": {
-      "modalTitle": "Connect smart contract",
-      "title": "Smart contract address",
-      "description": "Enter the smart contract address. It's best to copy this address directly from",
-      "actionLabelWaiting": "Validate smart contract",
-      "actionLabelLoading": "Validating smart contract …",
-      "actionLabelSuccess": "Compose actions",
-      "successLabel": "Smart contract validated -> {{contractName}}"
-    },
-    "selectionEmptyState": {
-      "title": "Select smart contract",
-      "description": "Select a smart contract to compose any actions or connect a new smart contract if ..."
-    }
-  },
   "app": {
     "feedback": {
       "linkLabel": "Give feedback",
@@ -977,6 +948,95 @@
       "step2CancelLabel": "Cancel now",
       "alertChipCritical": "DAO treasury removed",
       "alertChipSuccess": "DAO treasury added"
+    },
+    "claimPoap": {
+      "ctaLabel": "Claim POAP now",
+      "ctaURL": "https://poap-claim-app.aragon.org/",
+      "title": "Claim your DAO Builder POAP"
+    }
+  },
+  "scc": {
+    "labels": {
+      "connect": "Connect smart contract",
+      "singleContractConnected": "One connected contract",
+      "nContractsConnected": "{{numConnected}} Connected smart contracts",
+      "searchPlaceholder": "Type to find any action …",
+      "singleActionAvailable": "One write action",
+      "nActionsAvailable": "{{numConnected}} write actions"
+    },
+    "addressValidation": {
+      "modalTitle": "Connect smart contract",
+      "title": "Smart contract address",
+      "description": "Enter the smart contract address. It's best to copy this address directly from",
+      "actionLabelWaiting": "Validate smart contract",
+      "actionLabelLoading": "Validating smart contract …",
+      "actionLabelSuccess": "Compose actions",
+      "successLabel": "Smart contract validated -> {{contractName}}"
+    },
+    "selectionEmptyState": {
+      "title": "Select smart contract",
+      "description": "Select a smart contract to compose any actions or connect a new smart contract if ..."
+    },
+    "validation": {
+      "sourcifyStatusPending": "Validating on Sourcify …",
+      "etherscanStatusPending": "Validating on Etherscan …",
+      "sourcifyStatusSuccess": "Verified on Sourcify",
+      "etherscanStatusSuccess": "Verified on Etherscan",
+      "sourcifyStatusWarning": "Partially verified on Sourcify",
+      "sourcifyStatusCritical": "Not verified on Sourcify",
+      "etherscanStatusCritical": "Not verified on Etherscan",
+      "addressInputHelp": "Enter the contract address. We recommend pasting it directly from a block explorer.",
+      "cancelLabel": "Cancel validation",
+      "explorerLinkLabel": "View details",
+      "ctaLabelWaiting": "Validate contract address",
+      "ctaLabelSuccess": "Create action",
+      "ctaLabelWarning": "Add ABI function",
+      "modalTitle": "Connect smart contract",
+      "addressInputLabel": "Contract address",
+      "addressInput": {
+        "alertCritical": "Address not valid."
+      },
+      "explorerLinkEtherscanURL": "https://etherscan.io/address/{contractAddress}#code",
+      "explorerLinkSourcifyURL": "https://sourcify.dev/#/lookup/{contractAddress}",
+      "explorerLinkPolyscanURL": "https://polygonscan.com/address/{contractAddress}#code"
+    },
+    "emptyState": {
+      "modalTitle": "Smart contract composer",
+      "title": "No smart contract",
+      "description": "Add a smart contract to interact with its actions",
+      "primaryBtnLabel": "Connect smart contract",
+      "ctaLabel": "Connect smart contract",
+      "descriptionLinkURL": "https://",
+      "descriptionLinkLabel": "our guide"
+    },
+    "abi": {
+      "abiInputLabel": "ABI function",
+      "abiInputHelp": "To generate actions for an unverified smart contract, add ABI functions. To learn how to add ABI functions, read {{link}}.",
+      "ctaLabelWaiting": "Validate ABI Function",
+      "ctaLabelLoading": "Validating ABI Function …",
+      "abiInputHelpLinkURL": "https://",
+      "abiInputHelpLinkLabel": "our guide",
+      "ctaLabelCritical": "Retry ABI validation",
+      "abiInput": {
+        "alertWarning": "Function validated",
+        "alertCritical": "Input failed. Try again."
+      }
+    },
+    "listContracts": {
+      "searchInputPlaceholder": "Type to find an action",
+      "pretitle": "{{amount}} connected smart contracts",
+      "contractAmountActions": "{{amount}} actions",
+      "ctaLabel": "Connect smart contract",
+      "learnLinkLabel": "Learn more",
+      "learnLinkURL": "https://"
+    },
+    "detailContract": {
+      "dropdownExplorerLinkLabel": "See on block explorer",
+      "dropdownExplorerLinkURL": "https://",
+      "dropdownCopyLabel": "Copy contract address",
+      "dropdownRemoveLabel": "Remove smart contract",
+      "ctaLabel": "Add action",
+      "checkboxMultipleLabel": "Add another action"
     }
   }
 }

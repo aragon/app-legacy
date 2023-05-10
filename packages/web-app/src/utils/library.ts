@@ -552,8 +552,8 @@ export function translateToNetworkishName(
  * @returns ens name or empty string if ens name is null.dao.eth
  */
 export function toDisplayEns(ensName?: string) {
-  if (ensName)
-    if (ensName === 'null.dao.eth') return '';
-    else return ensName;
-  else return '';
+  if (!ensName || ensName === 'null.dao.eth') return '';
+
+  if (!ensName.includes('.dao.eth')) return `${ensName}.dao.eth`;
+  return ensName;
 }
