@@ -120,7 +120,7 @@ export const MintTokenForm: React.FC<MintTokenFormProps> = ({
     daoDetails?.plugins[0].id as PluginTypes
   );
 
-  const {setValue, trigger, resetField, formState, control} = useFormContext();
+  const {setValue, trigger, formState, control} = useFormContext();
   const {fields, append, remove, update} = useFieldArray({
     name: `actions.${actionIndex}.inputs.mintTokensToWallets`,
   });
