@@ -20,8 +20,8 @@ import {AlertChip} from '../alerts';
 
 /** Input Wallet value type */
 export type InputValue = {
-  ensName: string | null;
-  address: string | null;
+  ensName: string;
+  address: string;
 };
 
 // Toggle type for value to show in textarea input
@@ -97,6 +97,22 @@ export type WalletInputProps = Omit<
   resolveAddressFromEnsName?: (
     ensName: string | Promise<string>
   ) => Promise<string | null>;
+
+  /**
+   * An optional event handler to be called with the newly resolved ENS name
+   */
+  onEnsResolved?: (ensName: string | null) => void;
+
+  /**
+   * An optional event handler to be called with the newly resolved ENS name
+   */
+  onAddressResolved?: (address: string | null) => void;
+
+  /**
+   * An optional event handler to be called when an error occurs while resolving
+   * an address or ENS name
+   */
+  onResolvingError?: (error: Error) => void;
 };
 
 export const WalletInput = React.forwardRef<
@@ -119,6 +135,9 @@ export const WalletInput = React.forwardRef<
       onViewExplorerButtonClick,
       resolveEnsNameFromAddress,
       resolveAddressFromEnsName,
+      onAddressResolved,
+      onEnsResolved,
+      onResolvingError,
       ...props
     },
     ref
@@ -131,12 +150,16 @@ export const WalletInput = React.forwardRef<
 
     const [truncate, setTruncate] = useState(false);
     const [isEditing, setIsEditing] = useState(false);
-    const [displayMode, setDisplayMode] = useState<DisplayMode>();
+    const [displayMode, setDisplayMode] = useState<DisplayMode>(() =>
+      value.address ? 'address' : 'ensName'
+    );
     const [initialHeight, setInitialHeight] = useState(0);
     const [resolvedValues, setResolvedValues] = useState<InputValue>();
 
     const canToggle = Boolean(value.address) && Boolean(value.ensName);
-    const togglerLabel = displayMode === 'address' ? 'ENS' : '0x...';
+    const togglerLabel = displayMode === 'address' ? 'ENS' : '0x…';
+    const ensSupported =
+      Boolean(resolveAddressFromEnsName) && Boolean(resolveEnsNameFromAddress);
 
     // holds the full format of the potentially shortened value in the input
     const fullValue: string = useMemo(() => {
@@ -185,28 +208,28 @@ export const WalletInput = React.forwardRef<
         const newValue = {...value};
 
         if (displayMode === 'address') {
-          // clear previous ens & fetch new resolved ens
-          newValue.ensName = '';
           try {
             // only fetch when it's a valid address
             if (IsAddress(fullValue)) {
               const result = await resolveEnsNameFromAddress?.(fullValue);
-              newValue.ensName = result?.toLowerCase() ?? null;
+              newValue.ensName = result?.toLowerCase() ?? '';
+              onEnsResolved?.(newValue.ensName);
             }
           } catch (error) {
-            console.warn('Unable to resolve ens subdomain');
+            onResolvingError?.(error as Error);
+            newValue.ensName = '';
           }
         } else if (resolveAddressFromEnsName) {
-          // clear previous address & fetch new address
-          newValue.address = '';
           try {
             // only fetch when it's a valid ens
             if (isEnsDomain(fullValue)) {
-              const result = await resolveAddressFromEnsName(fullValue);
-              newValue.address = result?.toLowerCase() ?? null;
+              const result = await resolveAddressFromEnsName?.(fullValue);
+              newValue.address = result?.toLowerCase() ?? '';
+              onAddressResolved?.(newValue.address);
             }
           } catch (error) {
-            console.warn('Unable to lookup address');
+            onResolvingError?.(error as Error);
+            newValue.address = '';
           }
         }
 
@@ -214,6 +237,7 @@ export const WalletInput = React.forwardRef<
       }
 
       if (
+        ensSupported &&
         displayMode &&
         value[displayMode] &&
         JSON.stringify(value) !== JSON.stringify(resolvedValues)
@@ -226,6 +250,10 @@ export const WalletInput = React.forwardRef<
       fullValue,
       resolvedValues,
       value,
+      ensSupported,
+      onEnsResolved,
+      onAddressResolved,
+      onResolvingError,
     ]);
 
     useEffect(() => {
@@ -342,7 +370,7 @@ export const WalletInput = React.forwardRef<
         }
 
         // set proper display mode based on the value
-        if (IsAddress(addressOrEns)) {
+        if (IsAddress(addressOrEns) || !ensSupported) {
           setDisplayMode('address');
           return {...value, address: addressOrEns.toLowerCase()};
         } else {
@@ -350,7 +378,7 @@ export const WalletInput = React.forwardRef<
           return {...value, ensName: addressOrEns.toLowerCase()};
         }
       },
-      [value]
+      [ensSupported, value]
     );
 
     const handleChange = useCallback(
@@ -547,7 +575,7 @@ export const Container = styled.div.attrs(
       : 'bg-ui-0 text-ui-600';
 
     return {
-      className: `${baseClassName} ${modeClassName} ${focusClass} ${bgAndBorderColor}`,
+      className: `${baseClassName} ${modeClassName} ${bgAndBorderColor} ${focusClass}`,
     };
   }
 )<StyledContainerProps>``;
