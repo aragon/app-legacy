@@ -53,7 +53,7 @@ const MintTokensToTreasuryMenu: React.FC<Props> = ({
   }, [daoAddress.address, daoAddress.ensName, treasuryAddress]);
 
   return (
-    <ModalBottomSheetSwitcher {...{isOpen, onCloseReset}}>
+    <ModalBottomSheetSwitcher isOpen={isOpen} {...{onCloseReset}}>
       {step === 0 ? (
         <div className="px-2 pb-3">
           <StateEmpty

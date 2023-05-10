@@ -974,7 +974,9 @@
       "inputLabel": "Confirm with DAO address",
       "inputHelptext": "To confirm, fill the DAO contract address below.",
       "step2CtaLabel": "Add DAO treasury now",
-      "step2CancelLabel": "Cancel now"
+      "step2CancelLabel": "Cancel now",
+      "alertChipCritical": "DAO treasury removed",
+      "alertChipSuccess": "DAO treasury added"
     }
   }
 }

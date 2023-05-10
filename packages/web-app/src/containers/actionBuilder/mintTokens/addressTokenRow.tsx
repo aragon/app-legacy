@@ -79,13 +79,11 @@ const AddressField: React.FC<AddressFieldProps> = ({
       });
     }
 
-    if (
-      (address === daoAddress || address === ensName) &&
-      onEnterDaoAddress &&
-      !validationResult
-    ) {
-      onEnterDaoAddress(index);
+    if (onEnterDaoAddress && validationResult === true) {
+      if (address === daoAddress || address === ensName)
+        onEnterDaoAddress(index);
     }
+
     return validationResult;
   };
 
@@ -295,7 +293,16 @@ export const AddressAndTokenRow: React.FC<AddressAndTokenRowProps> = ({
         <Label label={t('labels.whitelistWallets.address')} />
 
         <HStack>
-          <AddressField actionIndex={actionIndex} fieldIndex={fieldIndex} />
+          <AddressField
+            {...{
+              actionIndex,
+              fieldIndex,
+              onClear,
+              onEnterDaoAddress,
+              ensName,
+              daoAddress,
+            }}
+          />
           <DropdownMenu
             actionIndex={actionIndex}
             fieldIndex={fieldIndex}

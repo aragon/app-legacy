@@ -104,6 +104,7 @@ export const MintTokenForm: React.FC<MintTokenFormProps> = ({
   const {isDesktop} = useScreen();
   const {network} = useNetwork();
   const {infura} = useProviders();
+  const {alert} = useAlertContext();
   const nativeCurrency = CHAIN_METADATA[network].nativeCurrency;
 
   const {data: daoDetails} = useDaoDetailsQuery();
@@ -346,6 +347,7 @@ export const MintTokenForm: React.FC<MintTokenFormProps> = ({
   };
 
   const openMintoTreasuryModal = (index: number) => {
+    console.log('clicked');
     setMintTokensToTreasuryIndex(index);
   };
 
@@ -470,9 +472,11 @@ export const MintTokenForm: React.FC<MintTokenFormProps> = ({
             `actions.${actionIndex}.inputs.mintTokensToWallets.${mintTokensToTreasuryIndex}.address`,
             ''
           );
+          alert(t('modal.mintTokensToTreasury.alertChipCritical'));
         }}
         onClose={() => {
           setMintTokensToTreasuryIndex(undefined);
+          alert(t('modal.mintTokensToTreasury.alertChipSuccess'));
         }}
         daoAddress={{
           address: daoDetails?.address,
