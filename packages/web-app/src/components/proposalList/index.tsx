@@ -226,7 +226,7 @@ export function proposal2CardProps(
         const votedAlertLabel = proposal.votes?.some(
           v => v.address.toLowerCase() === address?.toLowerCase()
         )
-          ? 'You have already voted!'
+          ? t('governance.proposals.alert.voted')
           : undefined;
 
         const activeProps = {
@@ -260,7 +260,7 @@ export function proposal2CardProps(
         v =>
           stripPlgnAdrFromProposalId(v).toLowerCase() === address?.toLowerCase()
       )
-        ? 'You have already voted!'
+        ? t('governance.proposals.alert.voted')
         : undefined;
 
       const activeProps = {

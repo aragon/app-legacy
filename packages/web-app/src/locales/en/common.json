@@ -31,7 +31,7 @@
     "subtitle": "Go back to explorer page"
   },
   "navButtons": {
-    "connectWallet": "Connect wallet",
+    "connectWallet": "Login",
     "giveFeedback": "Give feedback"
   },
   "labels": {
@@ -161,7 +161,7 @@
     "review": {
       "blockchain": "Blockchain",
       "daoMetadata": "DAO details",
-      "voters": "Voters",
+      "voters": "voters",
       "votingParameters": "Voting parameters",
       "governance": "Governance",
       "network": "Network",
@@ -281,6 +281,9 @@
         "edit": "Edit proposal",
         "readFullProposal": "Read full proposal",
         "closeFullProposal": "Close full proposal"
+      },
+      "alert": {
+        "voted": "You have already voted."
       }
     },
     "settings": {
@@ -288,12 +291,12 @@
     },
     "noProposals": "No proposals found!",
     "statusWidget": {
-      "published": "Published",
-      "active": "Running",
-      "failed": "Execution failed",
-      "executed": "Executed",
-      "succeeded": "Succeeded",
-      "defeated": "Rejected",
+      "published": "Proposal published",
+      "active": "Voting is active...",
+      "failed": "Proposal execution failed",
+      "executed": "Proposal executed",
+      "succeeded": "Proposal is ready to execute",
+      "defeated": "Proposal has been defeated",
       "expired": "Expired"
     },
     "executionCard": {
@@ -352,7 +355,7 @@
     "totalSupplyZero": "Total token supply can not be 0",
     "requiredTokenAddressZero": "Required token amount can not be 0",
     "onlyAlphaNumeric": "{{field}} can only contain alphanumeric characters",
-    "ensDuplication": "ENS subdomain is already taken. Try a different name.",
+    "ensDuplication": "DAO name is already taken. Try a different name.",
     "ensNameInvalidFormat": "Please only use Lowercase letters, numbers, and the dash '-'",
     "ensNetworkIssue": "Failed to resolve ENS",
     "ensNameLength": "DAO name must be less than 128 characters",
@@ -403,13 +406,13 @@
     "multisig": {
       "proposalMinDuration": "One hour is the minimum expiration time.",
       "proposalMaxDuration": "To keep your DAO secure, it's not recommended to have an expiration time longer than 2 weeks. ",
-      "accepTableProposalDuration": "It's recommended to have an expiration time of five days, so you have a clean proposal list.",
+      "accepTableProposalDuration": "It’s recommended to have an expiration time of five days, so you have a clean proposal list.",
       "dateTimeMinDuration": "Duration cannot be less than one hour."
     },
     "durationAlert": "We recommend a minimum duration of at least one day so members have time to vote. You can always lengthen the duration when posting a proposal.",
     "maxDurationAlert": "The maximum duration is 365 days.",
     "minDurationAlert": "The minimum duration is one hour.",
-    "startDateInPastAlert": "Start time can't be in the past. ",
+    "startDateInPastAlert": "Start time can’t be in the past. ",
     "wrongWalletNetwork": "Wrong wallet network",
     "wrongNetwork": {
       "title": "Wrong network",
@@ -417,10 +420,10 @@
       "buttonLabel": "Switch to {{network}}"
     },
     "loginRequired": {
-      "headerTitle": "Connect wallet to continue",
+      "headerTitle": "Login to continue",
       "title": "Wallet connection",
       "description": "Connect your wallet to continue.",
-      "buttonLabel": "Connect wallet now"
+      "buttonLabel": "Login Now"
     },
     "gatingUsers": {
       "tokenTitle": "Token not found",
@@ -432,12 +435,12 @@
     "tokenBasedMembers": "The DAO members listed here have interacted with the DAO at least once",
     "chip": {
       "removedLink": "Link removed",
-      "removedAddress": "Address removed",
+      "removedAddress": "address removed",
       "distributionReset": "Token distribution reset",
       "removedAllAddresses": "All addresses removed",
       "duplicateAction": "Action duplicated",
       "resetAction": "Action reset",
-      "resetAddress": "Address reset",
+      "resetAddress": "address reset",
       "resetAllAddresses": "All addresses reset",
       "removedAction": "Action removed",
       "addressAdded": "New address added",
@@ -548,7 +551,8 @@
       "amountSubtitle": "Amount is calculated in number of tokens, not dollar value",
       "utcMenu": {
         "title": "Select a UTC timezone"
-      }
+      },
+      "ctaAddAnother": "Add another withdraw"
     },
     "setupVoting": {
       "title": "Initiate the vote",
@@ -654,7 +658,7 @@
       "proposalCreationHelpertext": "Specify who is permitted to create proposals and what the minimum token requirement is.",
       "distributionWalletAlertText": "Your connected wallet was automatically added to the distribution list. You can remove it if you like.",
       "whiteListWalletAlertText": "Your connected wallet was automatically added to the list. You can remove it if you like.",
-      "createTokenHelptext": "Define the token details and distribute tokens to a core team and DAO treasury. For more on token minting best practices, {{link}}",
+      "createTokenHelptext": " Define the token details and distribute tokens to a core team and DAO treasury. For more on token minting best practices, ",
       "createTokenHelptextLinkLabel": "read this guide",
       "createTokenHelptextLinkURL": "https://aragon.org/how-to/mint-dao-governance-tokens",
       "membership": "Who can participate in governance?",
@@ -679,7 +683,7 @@
       },
       "membershipSubtitle": "You can always start with a multisig and mint tokens later.",
       "descriptionLinkLabel": "read this guide",
-      "descriptionLinkURL": "https://aragon.org/how-to/set-up-your-dao-governance-in-8-steps",
+      "descriptionLinkURL": "https://aragon.org/how-to/set-your-dao-governance",
       "distributeTokensHelpertextLinkLabel": "read our guide",
       "distributeTokensHelpertextLinkURL": "https://aragon.org/how-to/distribute-a-dao-governance-token"
     },
@@ -705,7 +709,7 @@
         "absoluteMajority": "This approval threshold might be too high to reach regularly. Consider setting something lower. "
       },
       "descriptionLinkLabel": "this guide",
-      "descriptionLinkURL": "https://aragon.org/how-to/governance-ii-setting-dao-governance-thresholds",
+      "descriptionLinkURL": "https://aragon.org/how-to/setting-dao-governance-thresholds",
       "shortTitle": "Select governance settings"
     },
     "review": {
@@ -810,7 +814,7 @@
   "explore": {
     "hero": {
       "title": "Explore the DAO World",
-      "subtitle1": "Build your DAO, explore communities, and find inspiration for your project all in one place."
+      "subtitle1": "Build your DAO, explore communities, and find inspiration for your project, all from one place."
     },
     "explorer": {
       "title": "Explore DAOs",
@@ -875,7 +879,7 @@
     },
     "build": {
       "title": "Build faster",
-      "description": "Use our governance plugins to build a DAO, dApp, or anything you can imagine on the Aragon OSx protocol.",
+      "description": "Build something on open-source infrastructure with governance plugins.",
       "actionLabel": "Coming soon"
     },
     "404": {
@@ -935,48 +939,27 @@
       "titleProposalCreation": "Exit proposal creation",
       "titleDaoCreation": "Exit DAO creation"
     },
-    "mintTokensToTreasury": {
-      "title": "Minting tokens to DAO treasury",
-      "description": "If you are minting tokens for your DAO treasury, you may brick your DAO because you will never again reach minimum participation and thus be unable to execute any proposal actions.",
-      "alertTitle": "Potential risk for your DAO",
-      "alertDescription": "Aragon doesn’t recommend to mint tokens to your DAO treasury. You are always able to make a proposal to distribute new tokens to new members.",
-      "step1CtaLabel": "OK, I have understood the risk",
-      "step1CancelLabel": "I want to proceed",
-      "inputLabel": "Confirm with DAO address",
-      "inputHelptext": "To confirm, fill the DAO contract address below.",
-      "step2CtaLabel": "Add DAO treasury now",
-      "step2CancelLabel": "Cancel now",
-      "alertChipCritical": "DAO treasury removed",
-      "alertChipSuccess": "DAO treasury added"
-    },
     "claimPoap": {
       "ctaLabel": "Claim POAP now",
       "ctaURL": "https://poap-claim-app.aragon.org/",
       "title": "Claim your DAO Builder POAP"
+    },
+    "mintTokensToTreasury": {
+      "title": "Minting tokens to the DAO treasury",
+      "description": "The DAO cannot cast votes. Beware of minting too many tokens to your DAO treasury, because you may not be able to reach minimum participation and thus will be unable to execute any proposal actions.",
+      "alertTitle": "Potential risk for your DAO",
+      "alertDescription": "Instead of minting tokens to your DAO treasury, consider minting them to a member's wallet address so the tokens can be used for voting. ",
+      "step1CtaLabel": "Back to token minting",
+      "step1CancelLabel": "Proceed with DAO address",
+      "inputLabel": "Confirm with DAO address",
+      "inputHelptext": "To confirm, fill in the DAO contract address below.",
+      "step2CtaLabel": "Confirm",
+      "step2CancelLabel": "Cancel",
+      "alertChipSuccess": "DAO treasury removed",
+      "alertChipCritical": "DAO treasury added"
     }
   },
   "scc": {
-    "labels": {
-      "connect": "Connect smart contract",
-      "singleContractConnected": "One connected contract",
-      "nContractsConnected": "{{numConnected}} Connected smart contracts",
-      "searchPlaceholder": "Type to find any action …",
-      "singleActionAvailable": "One write action",
-      "nActionsAvailable": "{{numConnected}} write actions"
-    },
-    "addressValidation": {
-      "modalTitle": "Connect smart contract",
-      "title": "Smart contract address",
-      "description": "Enter the smart contract address. It's best to copy this address directly from",
-      "actionLabelWaiting": "Validate smart contract",
-      "actionLabelLoading": "Validating smart contract …",
-      "actionLabelSuccess": "Compose actions",
-      "successLabel": "Smart contract validated -> {{contractName}}"
-    },
-    "selectionEmptyState": {
-      "title": "Select smart contract",
-      "description": "Select a smart contract to compose any actions or connect a new smart contract if ..."
-    },
     "validation": {
       "sourcifyStatusPending": "Validating on Sourcify …",
       "etherscanStatusPending": "Validating on Etherscan …",
@@ -1001,11 +984,10 @@
       "explorerLinkPolyscanURL": "https://polygonscan.com/address/{contractAddress}#code"
     },
     "emptyState": {
-      "modalTitle": "Smart contract composer",
-      "title": "No smart contract",
-      "description": "Add a smart contract to interact with its actions",
-      "primaryBtnLabel": "Connect smart contract",
       "ctaLabel": "Connect smart contract",
+      "title": "No smart contract added",
+      "description": "Add a smart contract to interact with it. To learn more, read {{link}}.",
+      "modalTitle": "Smart contract composer",
       "descriptionLinkURL": "https://",
       "descriptionLinkLabel": "our guide"
     },
