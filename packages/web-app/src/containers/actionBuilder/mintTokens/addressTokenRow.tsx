@@ -81,9 +81,8 @@ const AddressField: React.FC<AddressFieldProps> = ({
       });
     }
 
-    console.log('view', isModalOpened);
-
     if (onEnterDaoAddress && validationResult === true) {
+      // do not open the modal for more than one time for the same address
       if ((address === daoAddress || address === ensName) && !isModalOpened) {
         onEnterDaoAddress(index);
       }

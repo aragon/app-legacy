@@ -2,7 +2,7 @@ import {ButtonText, ListItemAction} from '@aragon/ui-components';
 import Big from 'big.js';
 import {BigNumber} from 'ethers';
 import {isAddress} from 'ethers/lib/utils';
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useState, useMemo} from 'react';
 import {
   FieldError,
   useFieldArray,
@@ -151,6 +151,11 @@ export const MintTokenForm: React.FC<MintTokenFormProps> = ({
   }>({
     status: false,
   });
+
+  const isModalOpened = useMemo(
+    () => mintTokensToTreasuryModal.index !== undefined,
+    [mintTokensToTreasuryModal.index]
+  );
 
   /*************************************************
    *                    Effects                    *
@@ -410,7 +415,8 @@ export const MintTokenForm: React.FC<MintTokenFormProps> = ({
               onDelete={handleDeleteWallet}
               newTokenSupply={newTokens.plus(Big(tokenSupply))}
               onEnterDaoAddress={openMintoTreasuryModal}
-              isModalOpened={mintTokensToTreasuryModal.index !== undefined}
+              //isModalOpened indicated whether the modal is opened or not
+              isModalOpened={isModalOpened}
               daoAddress={daoDetails?.address}
               ensName={toDisplayEns(daoDetails?.ensDomain)}
             />
@@ -473,6 +479,7 @@ export const MintTokenForm: React.FC<MintTokenFormProps> = ({
       <MintTokensToTreasuryMenu
         isOpen={mintTokensToTreasuryModal.status}
         onCloseReset={() => {
+          // undefined index means that the modal was closed without confirming the contract address
           setMintTokensToTreasuryModal({
             status: false,
           });
