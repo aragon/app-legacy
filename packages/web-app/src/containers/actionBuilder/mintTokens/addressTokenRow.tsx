@@ -32,13 +32,14 @@ type AddressAndTokenRowProps = IndexProps & {
   onDelete: (index: number) => void;
   onEnterDaoAddress?: (index: number) => void;
   daoAddress?: string;
+  isModalOpened?: boolean;
   ensName?: string;
 };
 
 type AddressFieldProps = IndexProps &
   Pick<
     AddressAndTokenRowProps,
-    'onClear' | 'onEnterDaoAddress' | 'daoAddress' | 'ensName'
+    'onClear' | 'onEnterDaoAddress' | 'daoAddress' | 'ensName' | 'isModalOpened'
   >;
 
 const AddressField: React.FC<AddressFieldProps> = ({
@@ -46,6 +47,7 @@ const AddressField: React.FC<AddressFieldProps> = ({
   fieldIndex,
   onClear,
   onEnterDaoAddress,
+  isModalOpened,
   daoAddress,
   ensName,
 }) => {
@@ -79,9 +81,12 @@ const AddressField: React.FC<AddressFieldProps> = ({
       });
     }
 
+    console.log('view', isModalOpened);
+
     if (onEnterDaoAddress && validationResult === true) {
-      if (address === daoAddress || address === ensName)
+      if ((address === daoAddress || address === ensName) && !isModalOpened) {
         onEnterDaoAddress(index);
+      }
     }
 
     return validationResult;
@@ -244,6 +249,7 @@ export const AddressAndTokenRow: React.FC<AddressAndTokenRowProps> = ({
   onClear,
   newTokenSupply,
   onEnterDaoAddress,
+  isModalOpened,
   daoAddress,
   ensName,
 }) => {
@@ -266,6 +272,7 @@ export const AddressAndTokenRow: React.FC<AddressAndTokenRowProps> = ({
               fieldIndex,
               onClear,
               onEnterDaoAddress,
+              isModalOpened,
               ensName,
               daoAddress,
             }}
@@ -299,6 +306,7 @@ export const AddressAndTokenRow: React.FC<AddressAndTokenRowProps> = ({
               fieldIndex,
               onClear,
               onEnterDaoAddress,
+              isModalOpened,
               ensName,
               daoAddress,
             }}

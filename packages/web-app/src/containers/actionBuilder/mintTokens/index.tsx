@@ -145,9 +145,12 @@ export const MintTokenForm: React.FC<MintTokenFormProps> = ({
     () => new Set<string>()
   );
   const [newHoldersCount, setNewHoldersCount] = useState(0);
-  const [mintTokensToTreasuryIndex, setMintTokensToTreasuryIndex] = useState<
-    number | undefined
-  >();
+  const [mintTokensToTreasuryModal, setMintTokensToTreasuryModal] = useState<{
+    status: boolean;
+    index?: number;
+  }>({
+    status: false,
+  });
 
   /*************************************************
    *                    Effects                    *
@@ -347,8 +350,10 @@ export const MintTokenForm: React.FC<MintTokenFormProps> = ({
   };
 
   const openMintoTreasuryModal = (index: number) => {
-    console.log('clicked');
-    setMintTokensToTreasuryIndex(index);
+    setMintTokensToTreasuryModal({
+      status: true,
+      index,
+    });
   };
 
   // const handleCSVUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -405,6 +410,7 @@ export const MintTokenForm: React.FC<MintTokenFormProps> = ({
               onDelete={handleDeleteWallet}
               newTokenSupply={newTokens.plus(Big(tokenSupply))}
               onEnterDaoAddress={openMintoTreasuryModal}
+              isModalOpened={mintTokensToTreasuryModal.index !== undefined}
               daoAddress={daoDetails?.address}
               ensName={toDisplayEns(daoDetails?.ensDomain)}
             />
@@ -465,17 +471,22 @@ export const MintTokenForm: React.FC<MintTokenFormProps> = ({
         )}
       </Container>
       <MintTokensToTreasuryMenu
-        isOpen={mintTokensToTreasuryIndex !== undefined}
+        isOpen={mintTokensToTreasuryModal.status}
         onCloseReset={() => {
-          setMintTokensToTreasuryIndex(undefined);
+          setMintTokensToTreasuryModal({
+            status: false,
+          });
           setValue(
-            `actions.${actionIndex}.inputs.mintTokensToWallets.${mintTokensToTreasuryIndex}.address`,
+            `actions.${actionIndex}.inputs.mintTokensToWallets.${mintTokensToTreasuryModal.index}.address`,
             ''
           );
           alert(t('modal.mintTokensToTreasury.alertChipCritical'));
         }}
         onClose={() => {
-          setMintTokensToTreasuryIndex(undefined);
+          setMintTokensToTreasuryModal({
+            ...mintTokensToTreasuryModal,
+            status: false,
+          });
           alert(t('modal.mintTokensToTreasury.alertChipSuccess'));
         }}
         daoAddress={{
