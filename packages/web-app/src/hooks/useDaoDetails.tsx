@@ -8,6 +8,8 @@ import {useNetwork} from 'context/network';
 import {resolveDaoAvatarIpfsCid, toDisplayEns} from 'utils/library';
 import {NotFound} from 'utils/paths';
 import {useClient} from './useClient';
+import {useSpecificProvider} from 'context/providers';
+import {CHAIN_METADATA} from 'utils/constants';
 
 /**
  * Fetches DAO data for a given DAO address or ENS name using a given client.
@@ -75,43 +77,61 @@ export const useDaoDetailsQuery = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const {network} = useNetwork();
+  // for custom resolver registry
+  const provider = useSpecificProvider(CHAIN_METADATA[network].id);
 
   const daoAddressOrEns = dao?.toLowerCase();
   const apiResponse = useDaoQuery(daoAddressOrEns);
 
   useEffect(() => {
-    if (apiResponse.isFetched) {
-      // navigate to 404 if the DAO is not found or there is some sort of error
-      if (apiResponse.error || apiResponse.data === null) {
-        navigate(NotFound, {
-          replace: true,
-          state: {incorrectDao: daoAddressOrEns},
-        });
-      }
-
-      //navigate to url with ens domain
-      else if (
-        (network === 'ethereum' || network === 'goerli') &&
-        isAddress(daoAddressOrEns as string) &&
-        toDisplayEns(apiResponse.data?.ensDomain)
-      ) {
+    async function DaoNavigator() {
+      if (apiResponse.isFetched) {
         const segments = location.pathname.split('/');
         const daoIndex = segments.findIndex(
           segment => segment === daoAddressOrEns
         );
-        if (daoIndex !== -1 && apiResponse.data?.ensDomain) {
-          segments[daoIndex] = apiResponse.data.ensDomain;
-          navigate(segments.join('/'));
+        // navigate to 404 if the DAO is not found or there is some sort of error
+        if (apiResponse.error || apiResponse.data === null) {
+          if (
+            network === 'polygon' ||
+            (network === 'mumbai' && toDisplayEns(daoAddressOrEns))
+          ) {
+            const address = await provider.resolveName(
+              daoAddressOrEns as string
+            );
+            if (daoIndex !== -1 && address) {
+              segments[daoIndex] = address;
+              navigate(segments.join('/'));
+            }
+          } else {
+            navigate(NotFound, {
+              replace: true,
+              state: {incorrectDao: daoAddressOrEns},
+            });
+          }
+        }
+
+        //navigate to url with ens domain
+        else if (
+          isAddress(daoAddressOrEns as string) &&
+          toDisplayEns(apiResponse.data?.ensDomain)
+        ) {
+          if (daoIndex !== -1 && apiResponse.data?.ensDomain) {
+            segments[daoIndex] = apiResponse.data.ensDomain;
+            navigate(segments.join('/'));
+          }
         }
       }
     }
+
+    DaoNavigator();
   }, [
-    apiResponse.data,
-    apiResponse.error,
-    apiResponse.isFetched,
+    apiResponse,
     daoAddressOrEns,
-    location.pathname,
     navigate,
+    network,
+    location.pathname,
+    provider,
   ]);
 
   return apiResponse;
