@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import * as abiDecoder from '../abiDecoder';
 
 // Test Params

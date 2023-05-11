@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import {keccak256, toUtf8Bytes} from 'ethers/lib/utils';
 import {utils} from 'ethers';
 import {BigNumber} from 'ethers/lib/ethers';
