@@ -1,5 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import * as abiDecoder from '../abiDecoder';
+import {Abi} from '../abiDecoder';
+import {BigNumber, utils} from 'ethers';
 
 // Test Params
 const testABI = [
@@ -51,7 +53,7 @@ const testABI = [
     name: 'ContractInstantiation',
     anonymous: false,
   },
-];
+] as Abi[];
 const testArrNumbersABI = [
   {
     constant: false,
@@ -62,42 +64,79 @@ const testArrNumbersABI = [
     stateMutability: 'nonpayable',
     type: 'function',
   },
-];
+] as Abi[];
+
 const abiV2 = [
   {
     constant: false,
     inputs: [
-      {
+      utils.ParamType.fromObject({
         components: [
-          {
+          utils.ParamType.fromObject({
             components: [
-              {internalType: 'address', name: 'target', type: 'address'},
-              {internalType: 'uint256', name: 'gasLimit', type: 'uint256'},
-              {internalType: 'uint256', name: 'gasPrice', type: 'uint256'},
-              {internalType: 'bytes', name: 'encodedFunction', type: 'bytes'},
+              utils.ParamType.fromObject({
+                baseType: 'address',
+                name: 'target',
+                type: 'address',
+              }),
+              utils.ParamType.fromObject({
+                baseType: 'uint256',
+                name: 'gasLimit',
+                type: 'uint256',
+              }),
+              utils.ParamType.fromObject({
+                baseType: 'uint256',
+                name: 'gasPrice',
+                type: 'uint256',
+              }),
+              utils.ParamType.fromObject({
+                baseType: 'bytes',
+                name: 'encodedFunction',
+                type: 'bytes',
+              }),
             ],
-            internalType: 'struct EIP712Sig.CallData',
+            baseType: 'struct EIP712Sig.CallData',
             name: 'callData',
             type: 'tuple',
-          },
-          {
+          }),
+          utils.ParamType.fromObject({
             components: [
-              {internalType: 'address', name: 'senderAccount', type: 'address'},
-              {internalType: 'uint256', name: 'senderNonce', type: 'uint256'},
-              {internalType: 'address', name: 'relayAddress', type: 'address'},
-              {internalType: 'uint256', name: 'pctRelayFee', type: 'uint256'},
+              utils.ParamType.fromObject({
+                baseType: 'address',
+                name: 'senderAccount',
+                type: 'address',
+              }),
+              utils.ParamType.fromObject({
+                baseType: 'uint256',
+                name: 'senderNonce',
+                type: 'uint256',
+              }),
+              utils.ParamType.fromObject({
+                baseType: 'address',
+                name: 'relayAddress',
+                type: 'address',
+              }),
+              utils.ParamType.fromObject({
+                baseType: 'uint256',
+                name: 'pctRelayFee',
+                type: 'uint256',
+              }),
             ],
-            internalType: 'struct EIP712Sig.RelayData',
+            baseType: 'struct EIP712Sig.RelayData',
             name: 'relayData',
             type: 'tuple',
-          },
+          }),
         ],
-        internalType: 'struct EIP712Sig.RelayRequest',
+        baseType: 'struct EIP712Sig.RelayRequest',
         name: 'relayRequest',
         type: 'tuple',
-      },
-      {internalType: 'bytes', name: 'signature', type: 'bytes'},
-      {internalType: 'bytes', name: 'approvalData', type: 'bytes'},
+      }),
+      utils.ParamType.fromObject({
+        baseType: 'bytes',
+        name: 'signature',
+        type: 'bytes',
+      }),
+      {baseType: 'bytes', name: 'approvalData', type: 'bytes'},
     ],
     name: 'relayCall',
     outputs: [],
@@ -105,7 +144,7 @@ const abiV2 = [
     stateMutability: 'nonpayable',
     type: 'function',
   },
-];
+] as Abi[];
 
 describe('abi decoder', () => {
   it('get abis', () => {
@@ -143,8 +182,8 @@ describe('abi decoder', () => {
     expect(typeof decodedData!.name).toBe('string');
     expect(Array.isArray(decodedData!.params)).toBe(true);
     expect(decodedData!.params).toHaveLength(3);
-    const vals = decodedData!.params[0].value.map((i: any) =>
-      i.map((v: any) => v.toString())
+    const vals = (decodedData!.params[0].value as (string | BigNumber)[][]).map(
+      i => i.map((v: {}) => v.toString())
     );
     expect(vals).toEqual([
       [
@@ -198,9 +237,9 @@ describe('abi decoder', () => {
     expect(typeof decodedData!.name).toBe('string');
     expect(Array.isArray(decodedData!.params)).toBe(true);
     expect(decodedData!.params).toHaveLength(1);
-    expect(decodedData!.params[0].value[0]).toEqual('1');
-    expect(decodedData!.params[0].value[1]).toEqual('2');
-    expect(decodedData!.params[0].value[2]).toEqual('3');
+    expect((decodedData!.params[0].value as string[])[0]).toEqual('1');
+    expect((decodedData!.params[0].value as string[])[1]).toEqual('2');
+    expect((decodedData!.params[0].value as string[])[2]).toEqual('3');
     expect(decodedData!.params[0].name).toEqual('n');
     expect(decodedData!.params[0].type).toEqual('uint256[]');
   });
@@ -548,7 +587,7 @@ describe('abi decoder', () => {
         name: 'RequirementChange',
         anonymous: false,
       },
-    ];
+    ] as Abi[];
     abiDecoder.addABI(walletABI);
     const testLogs = [
       {
@@ -582,7 +621,6 @@ describe('abi decoder', () => {
   it('decode logs with indexed param and uint value', () => {
     const testABI = [
       {
-        anonymous: false,
         inputs: [
           {indexed: true, name: 'voter', type: 'address'},
           {indexed: true, name: 'pollId', type: 'uint256'},
@@ -591,7 +629,7 @@ describe('abi decoder', () => {
         name: 'Voted',
         type: 'event',
       },
-    ];
+    ] as Abi[];
     abiDecoder.addABI(testABI);
     const testLogs = [
       {

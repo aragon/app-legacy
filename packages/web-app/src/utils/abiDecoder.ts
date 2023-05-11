@@ -4,6 +4,22 @@ import {utils} from 'ethers';
 import {BigNumber} from 'ethers/lib/ethers';
 import BN from 'bn.js';
 
+export interface Abi {
+  name: string;
+  type: string;
+  inputs: utils.ParamType[];
+  outputs: utils.ParamType[];
+  constant: boolean;
+  payable: boolean;
+  stateMutability: string;
+}
+
+export interface DecodedParam {
+  name: string;
+  type: string;
+  value: object | string | BigNumber;
+}
+
 // Note: this code is dangerous if multiple ABIs are decoded at once in different
 // async call chains
 
@@ -14,25 +30,25 @@ import BN from 'bn.js';
 const abiCoder = new utils.AbiCoder();
 
 const state = {
-  savedABIs: [] as any[],
-  methodIDs: {} as Record<string, any>,
+  savedABIs: [] as Abi[],
+  methodIDs: {} as Record<string, Abi>,
 };
 
 export function getABIs() {
   return state.savedABIs;
 }
 
-export function typeToString(input: any) {
+export function typeToString(input: utils.ParamType): string {
   if (input.type === 'tuple') {
     return '(' + input.components.map(typeToString).join(',') + ')';
   }
   return input.type;
 }
 
-export function addABI(abiArray: any[]) {
+export function addABI(abiArray: Abi[]) {
   if (Array.isArray(abiArray)) {
     // Iterate new abi to generate method id"s
-    abiArray.map((abi: any) => {
+    abiArray.map((abi: Abi) => {
       if (abi.name) {
         const signature = keccak256(
           toUtf8Bytes(
@@ -53,17 +69,17 @@ export function addABI(abiArray: any[]) {
   }
 }
 
-export function removeABI(abiArray: any[]) {
+export function removeABI(abiArray: Abi[]) {
   if (Array.isArray(abiArray)) {
     // Iterate new abi to generate method id"s
-    abiArray.map((abi: any) => {
+    abiArray.map((abi: Abi) => {
       if (abi.name) {
         const signature = keccak256(
           toUtf8Bytes(
             abi.name +
               '(' +
               abi.inputs
-                .map((input: any) => {
+                .map((input: utils.ParamType) => {
                   return input.type;
                 })
                 .join(',') +
@@ -90,7 +106,7 @@ export function getMethodIDs() {
   return state.methodIDs;
 }
 
-export function decodeMethod(data: any) {
+export function decodeMethod(data: string) {
   const methodID = data.slice(2, 10);
   const abiItem = state.methodIDs[methodID];
   if (abiItem) {
@@ -98,7 +114,7 @@ export function decodeMethod(data: any) {
 
     const retData = {
       name: abiItem.name,
-      params: [] as any[],
+      params: [] as DecodedParam[],
     };
 
     for (let i = 0; i < decoded.length; i++) {
@@ -140,7 +156,13 @@ export function decodeMethod(data: any) {
   }
 }
 
-export function decodeLogs(logs: any[]) {
+export interface Log {
+  address: string;
+  data: string;
+  topics: string[];
+}
+
+export function decodeLogs(logs: Log[]) {
   return logs
     .filter(log => log.topics.length > 0)
     .map(logItem => {
@@ -148,12 +170,12 @@ export function decodeLogs(logs: any[]) {
       const method = state.methodIDs[methodID];
       if (method) {
         const logData = logItem.data;
-        const decodedParams = [] as any[];
+        const decodedParams = [] as DecodedParam[];
         let dataIndex = 0;
         let topicsIndex = 1;
 
-        const dataTypes = [] as any[];
-        method.inputs.map((input: any) => {
+        const dataTypes = [] as string[];
+        method.inputs.map(input => {
           if (!input.indexed) {
             dataTypes.push(input.type);
           }
@@ -162,12 +184,12 @@ export function decodeLogs(logs: any[]) {
         const decodedData = abiCoder.decode(dataTypes, '0x' + logData.slice(2));
 
         // Loop topic and data to get the params
-        method.inputs.map((param: any) => {
+        method.inputs.map(param => {
           const decodedP = {
             name: param.name,
             type: param.type,
-            value: '',
-          };
+            value: '' as string | BigNumber,
+          } as DecodedParam;
 
           if (param.indexed) {
             decodedP.value = logItem.topics[topicsIndex];
@@ -177,7 +199,7 @@ export function decodeLogs(logs: any[]) {
             dataIndex++;
           }
 
-          if (param.type === 'address') {
+          if (param.type === 'address' && typeof decodedP.value === 'string') {
             decodedP.value = decodedP.value.toLowerCase();
             // 42 because len(0x) + 40
             if (decodedP.value.length > 42) {
@@ -199,10 +221,10 @@ export function decodeLogs(logs: any[]) {
               decodedP.value.startsWith('0x')
             ) {
               decodedP.value = new BN(decodedP.value.slice(2), 16).toString(10);
-            } else if ((decodedP.value as any) instanceof BigNumber) {
+            } else if (decodedP.value instanceof BigNumber) {
               decodedP.value = decodedP.value.toString();
             } else {
-              decodedP.value = new BN(decodedP.value).toString(10);
+              decodedP.value = new BN(decodedP.value as string).toString(10);
             }
           }
 
