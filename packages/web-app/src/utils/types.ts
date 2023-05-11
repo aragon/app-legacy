@@ -10,6 +10,7 @@ import {
   VotingSettings,
 } from '@aragon/sdk-client';
 import {Address} from '@aragon/ui-components/src/utils/addresses';
+import {BigNumber} from 'ethers/lib/ethers';
 
 import {TimeFilter, TransferTypes} from './constants';
 
@@ -307,7 +308,12 @@ export type ActionSCC = {
   contractName: string;
   contractAddress: string;
   functionName: string;
-  inputs: Array<Record<string, string>>;
+  inputs: Array<{
+    name: string;
+    type: string;
+    notice?: string;
+    value: object | string | BigNumber;
+  }>;
 };
 
 // TODO: Consider making this a generic type that take other types of the form

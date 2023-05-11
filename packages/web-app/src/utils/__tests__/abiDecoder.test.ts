@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import * as abiDecoder from '../abiDecoder';
 import {Abi} from '../abiDecoder';
 import {BigNumber, utils} from 'ethers';
