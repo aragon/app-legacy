@@ -12,7 +12,7 @@ import {useGlobalModalContext} from 'context/globalModals';
 import {useDaoActions} from 'hooks/useDaoActions';
 
 const ConfigureActions: React.FC = () => {
-  const {data: daoAddressOrEns} = useParams();
+  const {dao: daoAddressOrEns} = useParams();
   const {t} = useTranslation();
   const {open} = useGlobalModalContext();
   const {actions} = useActionsContext();
