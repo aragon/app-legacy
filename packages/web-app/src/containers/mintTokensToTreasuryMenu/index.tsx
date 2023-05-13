@@ -14,9 +14,7 @@ import ModalBottomSheetSwitcher from 'components/modalBottomSheetSwitcher';
 import {StateEmpty} from 'components/stateEmpty';
 import {validateAddress} from 'utils/validators';
 import {handleClipboardActions} from 'utils/library';
-
-const processes = ['DaoCreation', 'ProposalCreation'] as const;
-export type ProcessType = typeof processes[number];
+import {useAlertContext} from 'context/alert';
 
 type Props = {
   isOpen: boolean;
@@ -37,6 +35,7 @@ const MintTokensToTreasuryMenu: React.FC<Props> = ({
   const {t} = useTranslation();
   const [step, setStep] = useState(0);
   const {control} = useFormContext();
+  const {alert} = useAlertContext();
   const treasuryAddress = useWatch({
     name: 'mintTokensToTreasury',
     control: control,
@@ -113,7 +112,7 @@ const MintTokensToTreasuryMenu: React.FC<Props> = ({
               name={'mintTokensToTreasury'}
               control={control}
               rules={{
-                required: t('errors.required.walletAddress') as string,
+                required: t('errors.required.walletAddress'),
                 validate: value => validateAddress(value),
               }}
               render={({

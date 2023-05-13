@@ -354,7 +354,7 @@ export const MintTokenForm: React.FC<MintTokenFormProps> = ({
     }, 450);
   };
 
-  const openMintoTreasuryModal = (index: number) => {
+  const openMintTreasuryModal = (index: number) => {
     setMintTokensToTreasuryModal({
       status: true,
       index,
@@ -414,7 +414,7 @@ export const MintTokenForm: React.FC<MintTokenFormProps> = ({
               onClear={handleClearWallet}
               onDelete={handleDeleteWallet}
               newTokenSupply={newTokens.plus(Big(tokenSupply))}
-              onEnterDaoAddress={openMintoTreasuryModal}
+              onEnterDaoAddress={openMintTreasuryModal}
               //isModalOpened indicated whether the modal is opened or not
               isModalOpened={isModalOpened}
               daoAddress={daoDetails?.address}
