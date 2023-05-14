@@ -1,7 +1,7 @@
 import {Client, DaoDetails} from '@aragon/sdk-client';
-import {isAddress} from '@ethersproject/address';
 import {JsonRpcProvider} from '@ethersproject/providers';
 import {useQuery} from '@tanstack/react-query';
+import {isAddress} from 'ethers/lib/utils';
 import {useCallback, useEffect, useMemo} from 'react';
 import {useLocation, useNavigate, useParams} from 'react-router-dom';
 
@@ -23,6 +23,7 @@ async function fetchDaoDetails(
   client: Client | undefined,
   daoAddressOrEns: string | undefined,
   provider: JsonRpcProvider,
+  isL2NetworkEns: boolean,
   redirectDaoToAddress: (address: string | null) => void
 ): Promise<DaoDetails | null> {
   if (!daoAddressOrEns)
@@ -30,10 +31,13 @@ async function fetchDaoDetails(
 
   if (!client) return Promise.reject(new Error('client must be defined'));
 
-  const address = await provider.resolveName(daoAddressOrEns as string);
-  redirectDaoToAddress(address);
+  if (isL2NetworkEns) {
+    const address = await provider.resolveName(daoAddressOrEns as string);
+    redirectDaoToAddress(address);
+  }
 
   const daoDetails = await client.methods.getDao(daoAddressOrEns.toLowerCase());
+  console.log('daoDetails', daoDetails);
   return daoDetails;
 }
 
@@ -59,8 +63,20 @@ export const useDaoQuery = (
     [network, networkUrlSegment]
   );
 
+  const isL2NetworkEns = useMemo(
+    () =>
+      (network === 'polygon' || network === 'mumbai') &&
+      !isAddress(daoAddressOrEns as string),
+    [daoAddressOrEns, network]
+  );
+
   const redirectDaoToAddress = useCallback(
     (address: string | null) => {
+      if (!address)
+        navigate(NotFound, {
+          replace: true,
+          state: {incorrectDao: daoAddressOrEns},
+        });
       const segments = location.pathname.split('/');
       const daoIndex = segments.findIndex(
         segment => segment === daoAddressOrEns
@@ -83,16 +99,21 @@ export const useDaoQuery = (
       client,
       daoAddressOrEns,
       provider,
+      isL2NetworkEns,
       redirectDaoToAddress
     );
-  }, [client, daoAddressOrEns, provider, redirectDaoToAddress]);
+  }, [client, daoAddressOrEns, isL2NetworkEns, provider, redirectDaoToAddress]);
 
   return useQuery<DaoDetails | null>({
     queryKey: ['daoDetails', daoAddressOrEns, queryNetwork],
     queryFn,
     select: addAvatarToDao,
     enabled,
-    refetchOnWindowFocus: false,
+    ...{
+      ...(isL2NetworkEns
+        ? {cacheTime: 0, refetchOnWindowFocus: true}
+        : {refetchOnWindowFocus: false}),
+    },
     refetchInterval,
   });
 };
