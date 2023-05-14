@@ -1,5 +1,5 @@
 import {AlertInline, ButtonText, IconAdd, Label} from '@aragon/ui-components';
-import React from 'react';
+import React, {useEffect, useMemo} from 'react';
 import {useTranslation} from 'react-i18next';
 import {useParams} from 'react-router-dom';
 import styled from 'styled-components';
@@ -10,17 +10,74 @@ import AddActionMenu from 'containers/addActionMenu';
 import {useActionsContext} from 'context/actions';
 import {useGlobalModalContext} from 'context/globalModals';
 import {useDaoActions} from 'hooks/useDaoActions';
+import {i18n} from '../../../i18n.config';
+import {ActionItem, ActionsTypes} from 'utils/types';
 
-const ConfigureActions: React.FC = () => {
+interface ConfigureActionsProps {
+  label?: string;
+  initialActions?: ActionsTypes[];
+  whitelistedActions?: ActionsTypes[];
+  hideAlert?: boolean;
+  addNewActionLabel?: string;
+  onAddNewActionClick?: (addAction: (action: ActionItem) => void) => void;
+  addExtraActionLabel?: string;
+  onAddExtraActionClick?: (addAction: (action: ActionItem) => void) => void;
+}
+
+const ConfigureActions: React.FC<ConfigureActionsProps> = ({
+  label = i18n.t('newProposal.configureActions.yesOption') || '',
+  initialActions = [],
+  whitelistedActions,
+  hideAlert = false,
+  addNewActionLabel = i18n.t('newProposal.configureActions.addAction') || '',
+  onAddNewActionClick,
+  addExtraActionLabel = i18n.t('newProposal.configureActions.addAction') || '',
+  onAddExtraActionClick,
+}) => {
   const {data: daoAddressOrEns} = useParams();
   const {t} = useTranslation();
   const {open} = useGlobalModalContext();
-  const {actions} = useActionsContext();
-  const {data: availableActions} = useDaoActions(daoAddressOrEns ?? '');
+  const {actions, addAction} = useActionsContext();
+  const {data: possibleActions} = useDaoActions(daoAddressOrEns ?? '');
+
+  const allowedActions = useMemo(() => {
+    if (!whitelistedActions) return possibleActions;
+    return possibleActions.filter(actionItem =>
+      whitelistedActions.includes(actionItem.type)
+    );
+  }, [possibleActions, whitelistedActions]);
+
+  /**
+   * Here we are adding initial actions in case they are not already in place.
+   */
+  useEffect(() => {
+    const existentActions = actions.map(actionItem => actionItem.name);
+
+    initialActions.forEach(actionType => {
+      const alreadyAddedActionIndex = existentActions.indexOf(actionType);
+
+      if (alreadyAddedActionIndex === -1) {
+        addAction({name: actionType});
+      } else {
+        existentActions.splice(alreadyAddedActionIndex, 1);
+      }
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const handleAddNewActionClick = () => {
+    if (onAddNewActionClick) onAddNewActionClick(addAction);
+    else open('addAction');
+  };
+
+  const handleExtraActionClick = () => {
+    if (onAddExtraActionClick) onAddExtraActionClick(addAction);
+    else open('addAction');
+  };
 
   return (
     <FormWrapper>
-      <Label label={t('newProposal.configureActions.yesOption')} isOptional />
+      {label && <Label label={label} isOptional />}
       {actions.length ? (
         <ActionsWrapper>
           <ActionBuilder />
@@ -28,9 +85,9 @@ const ConfigureActions: React.FC = () => {
             mode="ghost"
             size="large"
             bgWhite
-            label={t('newProposal.configureActions.addAction')}
+            label={addExtraActionLabel}
             iconLeft={<IconAdd />}
-            onClick={() => open('addAction')}
+            onClick={handleExtraActionClick}
             className="mt-2 w-full tablet:w-max"
           />
         </ActionsWrapper>
@@ -45,15 +102,19 @@ const ConfigureActions: React.FC = () => {
               'newProposal.configureActions.addFirstActionSubtitle'
             )}
             secondaryButton={{
-              label: t('newProposal.configureActions.addAction'),
-              onClick: () => open('addAction'),
+              label: addNewActionLabel,
+              onClick: handleAddNewActionClick,
               iconLeft: <IconAdd />,
             }}
           />
-          <AlertInline label={t('newProposal.configureActions.actionsInfo')} />
+          {!hideAlert && (
+            <AlertInline
+              label={t('newProposal.configureActions.actionsInfo')}
+            />
+          )}
         </>
       )}
-      <AddActionMenu actions={availableActions} />
+      <AddActionMenu actions={allowedActions} />
     </FormWrapper>
   );
 };

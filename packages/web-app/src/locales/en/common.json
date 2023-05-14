@@ -548,7 +548,8 @@
       "amountSubtitle": "Amount is calculated in number of tokens, not dollar value",
       "utcMenu": {
         "title": "Select a UTC timezone"
-      }
+      },
+      "ctaAddAnother": "Add another withdraw"
     },
     "setupVoting": {
       "title": "Initiate the vote",
