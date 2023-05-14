@@ -112,8 +112,12 @@ export const useDaoDetailsQuery = () => {
 
   useEffect(() => {
     if (apiResponse.isFetched) {
+      // navigate to 404 if the DAO is not found or there is some sort of error
       if (apiResponse.error || apiResponse.data === null) {
-        console.error('Failed to fetch DAO details');
+        navigate(NotFound, {
+          replace: true,
+          state: {incorrectDao: daoAddressOrEns},
+        });
       }
 
       //navigate to url with ens domain
