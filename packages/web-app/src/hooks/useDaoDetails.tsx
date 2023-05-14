@@ -31,13 +31,14 @@ async function fetchDaoDetails(
 
   if (!client) return Promise.reject(new Error('client must be defined'));
 
+  // if network is l2 and has ens name, resolve to address
   if (isL2NetworkEns) {
     const address = await provider.resolveName(daoAddressOrEns as string);
     redirectDaoToAddress(address);
   }
 
+  // Note: SDK doesn't support ens names in L2 chains so we need to resolve the address first
   const daoDetails = await client.methods.getDao(daoAddressOrEns.toLowerCase());
-  console.log('daoDetails', daoDetails);
   return daoDetails;
 }
 
@@ -73,10 +74,13 @@ export const useDaoQuery = (
   const redirectDaoToAddress = useCallback(
     (address: string | null) => {
       if (!address)
+        // if the the resolver doesn't have an address, redirect to 404
         navigate(NotFound, {
           replace: true,
           state: {incorrectDao: daoAddressOrEns},
         });
+
+      // replace the ens name with the address in the url
       const segments = location.pathname.split('/');
       const daoIndex = segments.findIndex(
         segment => segment === daoAddressOrEns
@@ -109,6 +113,9 @@ export const useDaoQuery = (
     queryFn,
     select: addAvatarToDao,
     enabled,
+    // useQuery will cache an empty data for ens names which is wrong, but this config
+    // will disable caching for ens names in L2 the caching is enabled for
+    // none l2 networks and l2 networks that are not ens names
     ...{
       ...(isL2NetworkEns
         ? {cacheTime: 0, refetchOnWindowFocus: true}
