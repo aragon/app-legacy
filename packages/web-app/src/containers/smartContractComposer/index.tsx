@@ -17,6 +17,7 @@ export type SccFormData = {
   contracts: SmartContract[];
   selectedSC: SmartContract;
   selectedAction: SmartContractAction;
+  ABIInput: string;
 };
 
 type SCC = {

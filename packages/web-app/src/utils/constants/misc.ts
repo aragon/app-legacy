@@ -27,6 +27,14 @@ export const enum TransactionState {
   ERROR = 'ERROR',
 }
 
+export const enum ManualABIFlowState {
+  NOT_STARTED = 'NOT_STARTED',
+  WAITING = 'WAITING',
+  ABI_INPUT = 'ABI_INPUT',
+  SUCCESS = 'SUCCESS',
+  ERROR = 'ERROR',
+}
+
 export type NavLinkData = {
   path: string;
   label: string;
