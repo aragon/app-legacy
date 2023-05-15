@@ -153,10 +153,7 @@ const SelectChainForm: React.FC = () => {
                     label: CHAIN_METADATA[selectedNetwork].name,
                     network: networkType,
                   });
-                  if (
-                    CHAIN_METADATA[selectedNetwork].name === 'Polygon' ||
-                    CHAIN_METADATA[selectedNetwork].name === 'Matic'
-                  ) {
+                  if (!CHAIN_METADATA[selectedNetwork].supportsEns) {
                     // reset daoEnsName if network changed to L2
                     resetField('daoEnsName');
                   }

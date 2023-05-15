@@ -66,7 +66,7 @@ export const useDaoQuery = (
 
   const isL2NetworkEns = useMemo(
     () =>
-      (network === 'polygon' || network === 'mumbai') &&
+      !CHAIN_METADATA[network].supportsEns &&
       !isAddress(daoAddressOrEns as string),
     [daoAddressOrEns, network]
   );

@@ -2,7 +2,7 @@ import {ButtonText, ListItemAction} from '@aragon/ui-components';
 import Big from 'big.js';
 import {BigNumber} from 'ethers';
 import {isAddress} from 'ethers/lib/utils';
-import React, {useEffect, useState, useMemo} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   FieldError,
   useFieldArray,
