@@ -42,10 +42,10 @@ const MintTokensToTreasuryMenu: React.FC<Props> = ({
   });
 
   const isActionEnabled = useMemo(() => {
-    if (treasuryAddress !== '')
+    if (treasuryAddress)
       if (
-        treasuryAddress === daoAddress.address ||
-        treasuryAddress === daoAddress.ensName
+        treasuryAddress.toLowerCase() === daoAddress.address?.toLowerCase() ||
+        treasuryAddress.toLowerCase() === daoAddress.ensName?.toLowerCase()
       )
         return true;
     return false;
