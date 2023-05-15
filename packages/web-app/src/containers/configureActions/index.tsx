@@ -11,7 +11,7 @@ import {useActionsContext} from 'context/actions';
 import {useGlobalModalContext} from 'context/globalModals';
 import {useDaoActions} from 'hooks/useDaoActions';
 import {i18n} from '../../../i18n.config';
-import {ActionItem, ActionsTypes} from 'utils/types';
+import {ActionsTypes} from 'utils/types';
 
 interface ConfigureActionsProps {
   label?: string;
@@ -19,9 +19,9 @@ interface ConfigureActionsProps {
   whitelistedActions?: ActionsTypes[];
   hideAlert?: boolean;
   addNewActionLabel?: string;
-  onAddNewActionClick?: (addAction: (action: ActionItem) => void) => void;
+  onAddNewActionClick?: () => void;
   addExtraActionLabel?: string;
-  onAddExtraActionClick?: (addAction: (action: ActionItem) => void) => void;
+  onAddExtraActionClick?: () => void;
 }
 
 const ConfigureActions: React.FC<ConfigureActionsProps> = ({
@@ -66,12 +66,12 @@ const ConfigureActions: React.FC<ConfigureActionsProps> = ({
   }, []);
 
   const handleAddNewActionClick = () => {
-    if (onAddNewActionClick) onAddNewActionClick(addAction);
+    if (onAddNewActionClick) onAddNewActionClick();
     else open('addAction');
   };
 
   const handleExtraActionClick = () => {
-    if (onAddExtraActionClick) onAddExtraActionClick(addAction);
+    if (onAddExtraActionClick) onAddExtraActionClick();
     else open('addAction');
   };
 

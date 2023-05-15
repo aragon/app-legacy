@@ -37,7 +37,7 @@ const WithdrawStepper: React.FC<WithdrawStepperProps> = ({
   const {t} = useTranslation();
   const {network} = useNetwork();
   const {address} = useWallet();
-  const {actions} = useActionsContext();
+  const {actions, addAction} = useActionsContext();
 
   const {control, getValues} = useFormContext();
 
@@ -70,7 +70,7 @@ const WithdrawStepper: React.FC<WithdrawStepperProps> = ({
             !actions.length || !actionsAreValid(formActions, actions, errors)
           }
           onNextButtonClicked={next => {
-            trackEvent('newWithdrawals_continueBtn_clicked', {
+            trackEvent('newWithdraw_continueBtn_clicked', {
               step: '1_configure_withdraw',
               settings: actions.map((item, itemIdx) => ({
                 to: getValues(`actions.${itemIdx}.to`),
@@ -85,15 +85,16 @@ const WithdrawStepper: React.FC<WithdrawStepperProps> = ({
             label=""
             initialActions={['withdraw_assets']}
             whitelistedActions={['withdraw_assets']}
-            onAddNewActionClick={addAction =>
-              addAction({name: 'withdraw_assets'})
-            }
+            onAddNewActionClick={() => addAction({name: 'withdraw_assets'})}
             addExtraActionLabel={t(
               'newWithdraw.configureWithdraw.ctaAddAnother'
             )}
-            onAddExtraActionClick={addAction =>
-              addAction({name: 'withdraw_assets'})
-            }
+            onAddExtraActionClick={() => {
+              addAction({name: 'withdraw_assets'});
+              trackEvent('newWithdraw_addAnother_clicked', {
+                dao_address: daoDetails.address,
+              });
+            }}
             hideAlert
           />
         </Step>
@@ -111,7 +112,7 @@ const WithdrawStepper: React.FC<WithdrawStepperProps> = ({
                 'endTime',
                 'endUtc',
               ]);
-            trackEvent('newWithdrawals_continueBtn_clicked', {
+            trackEvent('newWithdraw_continueBtn_clicked', {
               step: '2_setup_voting',
               settings: {
                 start: `${startDate}T${startTime}:00${getCanonicalUtcOffset(
@@ -130,7 +131,7 @@ const WithdrawStepper: React.FC<WithdrawStepperProps> = ({
           wizardDescription={t('newWithdraw.defineProposal.description')}
           isNextButtonDisabled={!defineProposalIsValid(dirtyFields, errors)}
           onNextButtonClicked={next => {
-            trackEvent('newWithdrawals_continueBtn_clicked', {
+            trackEvent('newWithdraw_continueBtn_clicked', {
               step: '3_define_proposal',
               settings: {
                 author_address: address,
@@ -150,7 +151,7 @@ const WithdrawStepper: React.FC<WithdrawStepperProps> = ({
           wizardDescription={t('newWithdraw.reviewProposal.description')}
           nextButtonLabel={t('labels.submitProposal')}
           onNextButtonClicked={() => {
-            trackEvent('newWithdrawals_publishBtn_clicked', {
+            trackEvent('newWithdraw_publishBtn_clicked', {
               dao_address: daoDetails?.address,
             });
             enableTxModal();
