@@ -92,16 +92,36 @@ const ReviewProposal: React.FC<ReviewProposalProps> = ({
     }
   }, [daoSettings, values]);
 
-  const formattedStartDate = useMemo(
-    () =>
-      `${format(
-        startDate,
-        KNOWN_FORMATS.proposals
-      )} ${getFormattedUtcOffset()}`,
-    [startDate]
-  );
+  const formattedStartDate = useMemo(() => {
+    const {startSwitch} = values;
+    if (startSwitch === 'now' || isMultisigVotingSettings(daoSettings)) {
+      return t('labels.now');
+    }
+
+    return `${format(
+      startDate,
+      KNOWN_FORMATS.proposals
+    )} ${getFormattedUtcOffset()}`;
+  }, [daoSettings, startDate, t, values]);
 
   const formattedEndDate = useMemo(() => {
+    const {durationDays, endDate, endTime, endUtc} = values;
+    let daysLeft = durationDays;
+
+    if (!durationDays) {
+      const endDateTime = new Date(
+        `${endDate}T${endTime}:00${getCanonicalUtcOffset(endUtc)}`
+      );
+
+      daysLeft = Math.floor(
+        (endDateTime.getTime() - Date.now()) / 1000 / 60 / 60 / 24
+      );
+    }
+
+    return `In ${daysLeft} ${t('labels.days')}`;
+  }, [t, values]);
+
+  const formattedPreciseEndDate = useMemo(() => {
     let endDateTime: Date;
     const {
       durationDays,
@@ -137,7 +157,7 @@ const ReviewProposal: React.FC<ReviewProposalProps> = ({
       );
     }
 
-    return `${format(
+    return `~${format(
       endDateTime,
       KNOWN_FORMATS.proposals
     )} ${getFormattedUtcOffset()}`;
@@ -201,6 +221,7 @@ const ReviewProposal: React.FC<ReviewProposalProps> = ({
             statusLabel={t('votingTerminal.status.draft')}
             startDate={formattedStartDate}
             endDate={formattedEndDate}
+            preciseEndDate={formattedPreciseEndDate}
             token={daoToken}
             {...terminalProps}
           />

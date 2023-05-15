@@ -342,11 +342,22 @@ const CreateProposalProvider: React.FC<Props> = ({
         }
       }
 
+      /**
+       * For multisig proposals, in case "now" as start time is selected, we want
+       * to keep startDate undefined, so it's automatically evaluated.
+       * If we just provide "Date.now()", than after user still goes through the flow
+       * it's going to be date from the past. And SC-call evaluation will fail.
+       */
+      const finalStartDate =
+        startSwitch === 'now' && isMultisigVotingSettings(pluginSettings)
+          ? undefined
+          : startDateTime;
+
       // Ignore encoding if the proposal had no actions
       return {
         pluginAddress,
         metadataUri: ipfsUri || '',
-        startDate: startDateTime,
+        startDate: finalStartDate,
         endDate: endDateTime,
         actions,
       };

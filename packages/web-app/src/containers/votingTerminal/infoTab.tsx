@@ -28,6 +28,7 @@ type Props = Pick<
   missingApprovalOrParticipation: number;
   uniqueVoters?: number;
   voteOptions: string;
+  preciseEndDate?: string;
 };
 
 const InfoTab: React.FC<Props> = ({
@@ -45,6 +46,7 @@ const InfoTab: React.FC<Props> = ({
   strategy,
   supportThreshold,
   uniqueVoters,
+  preciseEndDate,
 }) => {
   const {t} = useTranslation();
 
@@ -170,7 +172,16 @@ const InfoTab: React.FC<Props> = ({
         </InfoLine>
         <InfoLine>
           <p>{t('votingTerminal.endDate')}</p>
-          <Strong>{endDate}</Strong>
+          <EndDateWrapper>
+            <Strong>{endDate}</Strong>
+            {preciseEndDate && (
+              <div className="flex gap-x-1 justify-end">
+                <p className="text-right text-ui-400 ft-text-sm">
+                  {preciseEndDate}
+                </p>
+              </div>
+            )}
+          </EndDateWrapper>
         </InfoLine>
       </VStackSection>
     </>
@@ -178,6 +189,10 @@ const InfoTab: React.FC<Props> = ({
 };
 
 export default InfoTab;
+
+const EndDateWrapper = styled.div.attrs({
+  className: 'space-y-0.5 text-right',
+})``;
 
 const CurrentParticipationWrapper = styled.div.attrs({
   className: 'space-y-0.5 text-right',
