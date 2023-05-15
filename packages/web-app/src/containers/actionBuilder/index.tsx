@@ -155,7 +155,7 @@ const ActionBuilder: React.FC<ActionBuilderProps> = ({allowEmpty = true}) => {
           key={index}
           name={action?.name}
           actionIndex={index}
-          allowRemove={!index ? allowEmpty : true}
+          allowRemove={actions.length <= 1 ? allowEmpty : true}
         />
       ))}
 
