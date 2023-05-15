@@ -22,6 +22,7 @@ interface ConfigureActionsProps {
   onAddNewActionClick?: () => void;
   addExtraActionLabel?: string;
   onAddExtraActionClick?: () => void;
+  allowEmpty?: boolean;
 }
 
 const ConfigureActions: React.FC<ConfigureActionsProps> = ({
@@ -33,6 +34,7 @@ const ConfigureActions: React.FC<ConfigureActionsProps> = ({
   onAddNewActionClick,
   addExtraActionLabel = i18n.t('newProposal.configureActions.addAction') || '',
   onAddExtraActionClick,
+  allowEmpty = true,
 }) => {
   const {data: daoAddressOrEns} = useParams();
   const {t} = useTranslation();
@@ -80,7 +82,7 @@ const ConfigureActions: React.FC<ConfigureActionsProps> = ({
       {label && <Label label={label} isOptional />}
       {actions.length ? (
         <ActionsWrapper>
-          <ActionBuilder />
+          <ActionBuilder allowEmpty={allowEmpty} />
           <ButtonText
             mode="ghost"
             size="large"

@@ -85,7 +85,6 @@ const WithdrawStepper: React.FC<WithdrawStepperProps> = ({
             label=""
             initialActions={['withdraw_assets']}
             whitelistedActions={['withdraw_assets']}
-            onAddNewActionClick={() => addAction({name: 'withdraw_assets'})}
             addExtraActionLabel={t(
               'newWithdraw.configureWithdraw.ctaAddAnother'
             )}
@@ -96,6 +95,7 @@ const WithdrawStepper: React.FC<WithdrawStepperProps> = ({
               });
             }}
             hideAlert
+            allowEmpty={false}
           />
         </Step>
         <Step

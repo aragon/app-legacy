@@ -10,9 +10,12 @@ import {ActionIndex} from 'utils/types';
 import {FormItem} from '../addAddresses';
 import {useAlertContext} from 'context/alert';
 
-type WithdrawActionProps = ActionIndex;
+type WithdrawActionProps = ActionIndex & {allowRemove?: boolean};
 
-const WithdrawAction: React.FC<WithdrawActionProps> = ({actionIndex}) => {
+const WithdrawAction: React.FC<WithdrawActionProps> = ({
+  actionIndex,
+  allowRemove = true,
+}) => {
   const {t} = useTranslation();
   const {removeAction, duplicateAction} = useActionsContext();
   const {setValue, clearErrors, resetField} = useFormContext();
@@ -34,28 +37,37 @@ const WithdrawAction: React.FC<WithdrawActionProps> = ({actionIndex}) => {
     removeAction(actionIndex);
   };
 
-  const methodActions = [
-    {
-      component: <ListItemAction title={t('labels.duplicateAction')} bgWhite />,
-      callback: () => {
-        duplicateAction(actionIndex);
-        alert(t('alert.chip.duplicateAction'));
+  const methodActions = (() => {
+    const result = [
+      {
+        component: (
+          <ListItemAction title={t('labels.duplicateAction')} bgWhite />
+        ),
+        callback: () => {
+          duplicateAction(actionIndex);
+          alert(t('alert.chip.duplicateAction'));
+        },
       },
-    },
-    {
-      component: <ListItemAction title={t('labels.resetAction')} bgWhite />,
-      callback: resetWithdrawFields,
-    },
-    {
-      component: (
-        <ListItemAction title={t('labels.removeEntireAction')} bgWhite />
-      ),
-      callback: () => {
-        removeWithdrawFields(actionIndex);
-        alert(t('alert.chip.removedAction'));
+      {
+        component: <ListItemAction title={t('labels.resetAction')} bgWhite />,
+        callback: resetWithdrawFields,
       },
-    },
-  ];
+    ];
+
+    if (allowRemove) {
+      result.push({
+        component: (
+          <ListItemAction title={t('labels.removeEntireAction')} bgWhite />
+        ),
+        callback: () => {
+          removeWithdrawFields(actionIndex);
+          alert(t('alert.chip.removedAction'));
+        },
+      });
+    }
+
+    return result;
+  })();
 
   return (
     <AccordionMethod

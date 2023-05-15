@@ -10,7 +10,10 @@ import {FormItem} from '../addAddresses';
 import {useAlertContext} from 'context/alert';
 import {ComponentForType} from 'containers/smartContractComposer/components/inputForm';
 
-const SCCAction: React.FC<ActionIndex> = ({actionIndex}) => {
+const SCCAction: React.FC<ActionIndex & {allowRemove?: boolean}> = ({
+  actionIndex,
+  allowRemove = true,
+}) => {
   const {t} = useTranslation();
   const {removeAction} = useActionsContext();
   const [actionData] = useWatch({
@@ -18,17 +21,23 @@ const SCCAction: React.FC<ActionIndex> = ({actionIndex}) => {
   });
   const {alert} = useAlertContext();
 
-  const methodActions = [
-    {
-      component: (
-        <ListItemAction title={t('labels.removeEntireAction')} bgWhite />
-      ),
-      callback: () => {
-        removeAction(actionIndex);
-        alert(t('alert.chip.removedAction'));
-      },
-    },
-  ];
+  const methodActions = (() => {
+    const result = [];
+
+    if (allowRemove) {
+      result.push({
+        component: (
+          <ListItemAction title={t('labels.removeEntireAction')} bgWhite />
+        ),
+        callback: () => {
+          removeAction(actionIndex);
+          alert(t('alert.chip.removedAction'));
+        },
+      });
+    }
+
+    return result;
+  })();
 
   return (
     <AccordionMethod
@@ -45,7 +54,7 @@ const SCCAction: React.FC<ActionIndex> = ({actionIndex}) => {
           <div className="space-y-2">
             {(actionData.inputs as Input[]).map((input, index) => (
               <div key={input.name}>
-                <div className="mb-1.5 text-base font-bold text-ui-800 capitalize">
+                <div className="mb-1.5 text-base font-bold capitalize text-ui-800">
                   {input.name}
                   <span className="ml-0.5 text-sm normal-case">
                     ({input.type})

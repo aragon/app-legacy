@@ -27,12 +27,15 @@ export type CurrentDaoMembers = {
   currentDaoMembers?: MultisigMember[] | BalanceMember[];
 };
 
-type AddAddressesProps = ActionIndex & CustomHeaderProps & CurrentDaoMembers;
+type AddAddressesProps = ActionIndex &
+  CustomHeaderProps &
+  CurrentDaoMembers & {allowRemove?: boolean};
 
 const AddAddresses: React.FC<AddAddressesProps> = ({
   actionIndex,
   useCustomHeader = false,
   currentDaoMembers,
+  allowRemove = true,
 }) => {
   const {t} = useTranslation();
   const {removeAction} = useActionsContext();
@@ -130,21 +133,28 @@ const AddAddresses: React.FC<AddAddressesProps> = ({
     },
   ];
 
-  const methodActions = [
-    {
-      component: <ListItemAction title={t('labels.resetAction')} bgWhite />,
-      callback: handleResetAll,
-    },
-    {
-      component: (
-        <ListItemAction title={t('labels.removeEntireAction')} bgWhite />
-      ),
-      callback: () => {
-        removeAction(actionIndex);
-        alert(t('alert.chip.removedAction'));
+  const methodActions = (() => {
+    const result = [
+      {
+        component: <ListItemAction title={t('labels.resetAction')} bgWhite />,
+        callback: handleResetAll,
       },
-    },
-  ];
+    ];
+
+    if (allowRemove) {
+      result.push({
+        component: (
+          <ListItemAction title={t('labels.removeEntireAction')} bgWhite />
+        ),
+        callback: () => {
+          removeAction(actionIndex);
+          alert(t('alert.chip.removedAction'));
+        },
+      });
+    }
+
+    return result;
+  })();
 
   /*************************************************
    *                    Render                    *

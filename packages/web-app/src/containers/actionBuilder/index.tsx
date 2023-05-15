@@ -36,9 +36,14 @@ import SCCAction from './scc';
 
 type ActionsComponentProps = {
   name: ActionsTypes;
+  allowRemove?: boolean;
 } & ActionIndex;
 
-const Action: React.FC<ActionsComponentProps> = ({name, actionIndex}) => {
+const Action: React.FC<ActionsComponentProps> = ({
+  name,
+  actionIndex,
+  allowRemove = true,
+}) => {
   // dao data
   const {data: daoDetails} = useDaoDetailsQuery();
 
@@ -55,13 +60,13 @@ const Action: React.FC<ActionsComponentProps> = ({name, actionIndex}) => {
 
   switch (name) {
     case 'withdraw_assets':
-      return <WithdrawAction {...{actionIndex}} />;
+      return <WithdrawAction {...{actionIndex, allowRemove}} />;
     case 'mint_tokens':
-      return <MintTokens {...{actionIndex}} />;
+      return <MintTokens {...{actionIndex, allowRemove}} />;
     case 'external_contract_modal':
       return <SCC actionIndex={actionIndex} />;
     case 'external_contract_action':
-      return <SCCAction actionIndex={actionIndex} />;
+      return <SCCAction actionIndex={actionIndex} allowRemove={allowRemove} />;
     case 'modify_token_voting_settings':
       return (
         <TemporarySection purpose="It serves as a placeholder for not yet implemented external contract interaction component" />
@@ -71,6 +76,7 @@ const Action: React.FC<ActionsComponentProps> = ({name, actionIndex}) => {
         <AddAddresses
           actionIndex={actionIndex}
           currentDaoMembers={daoMembers?.members}
+          allowRemove={allowRemove}
         />
       );
     case 'remove_address':
@@ -78,6 +84,7 @@ const Action: React.FC<ActionsComponentProps> = ({name, actionIndex}) => {
         <RemoveAddresses
           actionIndex={actionIndex}
           currentDaoMembers={daoMembers?.members}
+          allowRemove={allowRemove}
         />
       );
     case 'modify_multisig_voting_settings':
@@ -93,7 +100,11 @@ const Action: React.FC<ActionsComponentProps> = ({name, actionIndex}) => {
   }
 };
 
-const ActionBuilder: React.FC = () => {
+interface ActionBuilderProps {
+  allowEmpty?: boolean;
+}
+
+const ActionBuilder: React.FC<ActionBuilderProps> = ({allowEmpty = true}) => {
   const {data: daoDetails} = useDaoDetailsQuery();
   const {network} = useNetwork();
   const {selectedActionIndex: index, actions} = useActionsContext();
@@ -140,7 +151,12 @@ const ActionBuilder: React.FC = () => {
   return (
     <>
       {actions?.map((action: ActionItem, index: number) => (
-        <Action key={index} name={action?.name} actionIndex={index} />
+        <Action
+          key={index}
+          name={action?.name}
+          actionIndex={index}
+          allowRemove={!index ? allowEmpty : true}
+        />
       ))}
 
       <TokenMenu

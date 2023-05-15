@@ -22,7 +22,9 @@ import {AddressRow} from '../addAddresses/addressRow';
 import {useAlertContext} from 'context/alert';
 import {CurrentDaoMembers} from '../updateMinimumApproval';
 
-type RemoveAddressesProps = ActionIndex & CustomHeaderProps & CurrentDaoMembers;
+type RemoveAddressesProps = ActionIndex &
+  CustomHeaderProps &
+  CurrentDaoMembers & {allowRemove?: boolean};
 
 // README: when uploading CSV be sure to check for duplicates
 
@@ -30,6 +32,7 @@ const RemoveAddresses: React.FC<RemoveAddressesProps> = ({
   actionIndex,
   useCustomHeader = false,
   currentDaoMembers,
+  allowRemove = true,
 }) => {
   const {t} = useTranslation();
   const {open} = useGlobalModalContext();
@@ -90,17 +93,23 @@ const RemoveAddresses: React.FC<RemoveAddressesProps> = ({
     },
   ];
 
-  const methodActions = [
-    {
-      component: (
-        <ListItemAction title={t('labels.removeEntireAction')} bgWhite />
-      ),
-      callback: () => {
-        removeAction(actionIndex);
-        alert(t('alert.chip.removedAction'));
-      },
-    },
-  ];
+  const methodActions = (() => {
+    const result = [];
+
+    if (allowRemove) {
+      result.push({
+        component: (
+          <ListItemAction title={t('labels.removeEntireAction')} bgWhite />
+        ),
+        callback: () => {
+          removeAction(actionIndex);
+          alert(t('alert.chip.removedAction'));
+        },
+      });
+    }
+
+    return result;
+  })();
 
   /*************************************************
    *                    Render                    *
