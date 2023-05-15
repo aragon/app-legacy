@@ -152,10 +152,7 @@ export const MintTokenForm: React.FC<MintTokenFormProps> = ({
     status: false,
   });
 
-  const isModalOpened = useMemo(
-    () => mintTokensToTreasuryModal.index !== undefined,
-    [mintTokensToTreasuryModal.index]
-  );
+  const isModalOpened = mintTokensToTreasuryModal.index !== undefined;
 
   /*************************************************
    *                    Effects                    *
