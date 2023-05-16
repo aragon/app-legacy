@@ -99,14 +99,14 @@ export type WalletInputProps = Omit<
   ) => Promise<string | null>;
 
   /**
-   * An optional event handler to be called with the newly resolved ENS name
+   * An optional event handler to be called when the corresponding address has been found
    */
   onEnsResolved?: (ensName: string | null) => void;
 
   /**
-   * An optional event handler to be called with the newly resolved ENS name
+   * An optional event handler to be called when the address has been validated
    */
-  onAddressResolved?: (address: string | null) => void;
+  onAddressValidated?: (address: string | null) => void;
 
   /**
    * An optional event handler to be called when an error occurs while resolving
@@ -135,7 +135,7 @@ export const WalletInput = React.forwardRef<
       onViewExplorerButtonClick,
       resolveEnsNameFromAddress,
       resolveAddressFromEnsName,
-      onAddressResolved,
+      onAddressValidated,
       onEnsResolved,
       onResolvingError,
       ...props
@@ -156,10 +156,10 @@ export const WalletInput = React.forwardRef<
     const [initialHeight, setInitialHeight] = useState(0);
     const [resolvedValues, setResolvedValues] = useState<InputValue>();
 
-    const canToggle = Boolean(value.address) && Boolean(value.ensName);
+    const canToggle = !!value.address && !!value.ensName;
     const togglerLabel = displayMode === 'address' ? 'ENS' : '0x…';
     const ensSupported =
-      Boolean(resolveAddressFromEnsName) && Boolean(resolveEnsNameFromAddress);
+      !!resolveAddressFromEnsName && !!resolveEnsNameFromAddress;
 
     // holds the full format of the potentially shortened value in the input
     const fullValue: string = useMemo(() => {
@@ -211,9 +211,11 @@ export const WalletInput = React.forwardRef<
           try {
             // only fetch when it's a valid address
             if (IsAddress(fullValue)) {
+              onAddressValidated?.(fullValue);
+
+              // resolve ens name
               const result = await resolveEnsNameFromAddress?.(fullValue);
               newValue.ensName = result?.toLowerCase() ?? '';
-              onEnsResolved?.(newValue.ensName);
             }
           } catch (error) {
             onResolvingError?.(error as Error);
@@ -225,7 +227,9 @@ export const WalletInput = React.forwardRef<
             if (isEnsDomain(fullValue)) {
               const result = await resolveAddressFromEnsName?.(fullValue);
               newValue.address = result?.toLowerCase() ?? '';
-              onAddressResolved?.(newValue.address);
+
+              // wait until the corresponding ens value is resolved
+              newValue.address && onEnsResolved?.(value.address);
             }
           } catch (error) {
             onResolvingError?.(error as Error);
@@ -237,28 +241,28 @@ export const WalletInput = React.forwardRef<
       }
 
       if (
-        ensSupported &&
-        displayMode &&
-        value[displayMode] &&
-        JSON.stringify(value) !== JSON.stringify(resolvedValues)
+        ensSupported && // network supports ens
+        displayMode && // not initial state/render
+        value[displayMode] && // the displayed value isn't empty
+        JSON.stringify(value) !== JSON.stringify(resolvedValues) // value and resolved values don't match
       )
         resolveValues();
     }, [
-      resolveEnsNameFromAddress,
       displayMode,
-      resolveAddressFromEnsName,
+      ensSupported,
       fullValue,
+      onAddressValidated,
+      onEnsResolved,
+      onResolvingError,
+      resolveAddressFromEnsName,
+      resolveEnsNameFromAddress,
       resolvedValues,
       value,
-      ensSupported,
-      onEnsResolved,
-      onAddressResolved,
-      onResolvingError,
     ]);
 
     useEffect(() => {
       if (resolvedValues) {
-        // update the controller value if it is not he same as the resolved values;
+        // update the controller value if it is not the same as the resolved values;
         // this works in conjunction with the previous hook
         const resolvedType = displayMode === 'address' ? 'ensName' : 'address';
         if (value[resolvedType] !== resolvedValues[resolvedType])
@@ -363,22 +367,26 @@ export const WalletInput = React.forwardRef<
 
     const setValue = useCallback(
       (addressOrEns: string) => {
-        // if clearing the input, clear resolved data as well
+        setResolvedValues(undefined);
+
         if (addressOrEns === '') {
-          setResolvedValues({ensName: '', address: ''});
           return {ensName: '', address: ''};
         }
 
         // set proper display mode based on the value
-        if (IsAddress(addressOrEns) || !ensSupported) {
+        if (
+          IsAddress(addressOrEns) ||
+          !ensSupported ||
+          addressOrEns.startsWith('0x')
+        ) {
           setDisplayMode('address');
-          return {...value, address: addressOrEns.toLowerCase()};
+          return {ensName: '', address: addressOrEns.toLowerCase()};
         } else {
           setDisplayMode('ensName');
-          return {...value, ensName: addressOrEns.toLowerCase()};
+          return {address: '', ensName: addressOrEns.toLowerCase()};
         }
       },
-      [ensSupported, value]
+      [ensSupported]
     );
 
     const handleChange = useCallback(
@@ -405,7 +413,7 @@ export const WalletInput = React.forwardRef<
         try {
           const clipboardData = await navigator.clipboard.readText();
 
-          setIsEditing(true);
+          setIsEditing(false);
           onValueChange(setValue(clipboardData));
           alert('Pasted');
           onPasteButtonClick?.(event);
@@ -563,11 +571,11 @@ const modeStyles = (state: WalletInputProps['state']) => {
 
 export const Container = styled.div.attrs(
   ({state, disabled}: StyledContainerProps) => {
-    const baseClassName = 'border flex space-x-1.5 py-1 pr-1 pl-2 rounded-xl';
+    const baseClassName = 'border-2 flex space-x-1.5 py-1 pr-1 pl-2 rounded-xl';
     const modeClassName = modeStyles(state);
 
     const focusClass = disabled
-      ? 'cursor-not-allowed'
+      ? ''
       : 'focus-within:ring-2 focus-within:ring-primary-500';
 
     const bgAndBorderColor = disabled

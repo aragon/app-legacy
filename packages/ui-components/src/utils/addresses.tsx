@@ -22,12 +22,13 @@ export function IsAddress(address: Address | null) {
 
 export function isEnsDomain(input: string | null): boolean {
   if (!input) return false;
-
   // The pattern for a valid ENS domain:
   // - starts with an alphanumeric character (case-insensitive)
   // - followed by zero or more alphanumeric characters, hyphens, or underscores (case-insensitive)
   // - ends with '.eth'
-  const ensPattern = /^[a-zA-Z0-9]([a-zA-Z0-9-_]*[a-zA-Z0-9])?\.eth$/;
+  const ensPattern = new RegExp(
+    '^([a-z0-9]+(-[a-z0-9]+)*.)*[a-z0-9]+(-[a-z0-9]+)*.eth$'
+  );
   return ensPattern.test(input);
 }
 
