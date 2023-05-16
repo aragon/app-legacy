@@ -147,7 +147,7 @@ const ContractAddressValidation: React.FC<Props> = props => {
         if (method) {
           action.notice = method[1].details;
           action?.inputs.filter(input => {
-            input.notice = method[1].params[input.name];
+            input.notice = method[1].params?.[input.name];
           });
         }
       }
