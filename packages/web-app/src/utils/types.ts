@@ -13,6 +13,7 @@ import {Address} from '@aragon/ui-components/src/utils/addresses';
 import {BigNumber} from 'ethers/lib/ethers';
 
 import {TimeFilter, TransferTypes} from './constants';
+import {Web3Address} from './library';
 
 /*************************************************
  *                   Finance types               *
@@ -221,11 +222,10 @@ export type ActionsTypes =
   | 'modify_multisig_voting_settings'
   | 'update_minimum_approval';
 
-// TODO Refactor ActionWithdraw With the new input structure
 export type ActionWithdraw = {
   amount: number;
   name: 'withdraw_assets';
-  to: Address;
+  to: Web3Address;
   tokenAddress: Address;
   tokenBalance: number;
   tokenDecimals: number;

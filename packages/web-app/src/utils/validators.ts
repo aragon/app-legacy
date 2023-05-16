@@ -131,7 +131,7 @@ export function actionsAreValid(
     switch (contextActions[index]?.name) {
       case 'withdraw_assets':
         return (
-          (formActions?.[index] as ActionWithdraw)?.to === '' ||
+          (formActions?.[index] as ActionWithdraw)?.to.address === '' ||
           (formActions?.[index] as ActionWithdraw)?.amount?.toString() === '' ||
           !(formActions?.[index] as ActionWithdraw)?.tokenAddress
         );

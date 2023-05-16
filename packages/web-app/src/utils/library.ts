@@ -15,6 +15,8 @@ import {
 } from '@aragon/sdk-client';
 import {bytesToHex, resolveIpfsCid} from '@aragon/sdk-common';
 import {Address} from '@aragon/ui-components/dist/utils/addresses';
+import {shortenAddress} from '@aragon/ui-components/src/utils/addresses';
+
 import {NavigationDao} from 'context/apolloClient';
 import {BigNumber, BigNumberish, constants, ethers, providers} from 'ethers';
 import {TFunction} from 'react-i18next';
@@ -136,37 +138,45 @@ export async function decodeWithdrawToAction(
     return;
   }
 
-  const address =
+  const tokenAddress =
     decoded.type === 'native' ? constants.AddressZero : decoded?.tokenAddress;
+
   try {
-    const response = await getTokenInfo(
-      address,
+    const recipient = await Web3Address.create(
       provider,
-      CHAIN_METADATA[network].nativeCurrency
+      decoded.recipientAddressOrEns
     );
 
+    const [tokenInfo] = await Promise.all([
+      getTokenInfo(
+        tokenAddress,
+        provider,
+        CHAIN_METADATA[network].nativeCurrency
+      ),
+    ]);
+
     const apiResponse = await fetchTokenData(
-      address,
+      tokenAddress,
       apolloClient,
       network,
-      response.symbol
+      tokenInfo.symbol
     );
 
     return {
-      amount: Number(formatUnits(decoded.amount, response.decimals)),
+      amount: Number(formatUnits(decoded.amount, tokenInfo.decimals)),
       name: 'withdraw_assets',
-      to: decoded.recipientAddressOrEns,
+      to: recipient,
       tokenBalance: 0, // unnecessary?
-      tokenAddress: address,
+      tokenAddress: tokenAddress,
       tokenImgUrl: apiResponse?.imgUrl || '',
-      tokenName: response.name,
+      tokenName: tokenInfo.name,
       tokenPrice: apiResponse?.price || 0,
-      tokenSymbol: response.symbol,
-      tokenDecimals: response.decimals,
+      tokenSymbol: tokenInfo.symbol,
+      tokenDecimals: tokenInfo.decimals,
       isCustomToken: false,
     };
   } catch (error) {
-    console.error('Error fetching token data', error);
+    console.error('Error decoding withdraw action', error);
   }
 }
 
@@ -631,4 +641,116 @@ export function getDefaultPayableAmountInput(
 
 export function getDefaultPayableAmountInputName(t: TFunction) {
   return t('scc.inputPayableAmount.label');
+}
+
+export class Web3Address {
+  // Declare private fields to hold the address, ENS name and the Ethereum provider
+  private _address: string | null;
+  private _ensName: string | null;
+  private _provider?: providers.Provider;
+
+  // Constructor for the Address class
+  constructor(
+    provider?: ethers.providers.Provider,
+    address?: string,
+    ensName?: string
+  ) {
+    // Initialize the provider, address and ENS name
+    this._provider = provider;
+    this._address = address || null;
+    this._ensName = ensName || null;
+  }
+
+  // Static method to create an Address instance
+  static async create(
+    provider?: providers.Provider,
+    addressOrEns?: {address?: string; ensName?: string} | string
+  ) {
+    // Determine whether we are dealing with an address, an ENS name or an object containing both
+    let addressToSet: string | undefined;
+    let ensNameToSet: string | undefined;
+    if (typeof addressOrEns === 'string') {
+      // If input is a string, treat it as address if it matches address structure, else treat as ENS name
+      if (ethers.utils.isAddress(addressOrEns)) {
+        addressToSet = addressOrEns;
+      } else {
+        ensNameToSet = addressOrEns;
+      }
+    } else {
+      addressToSet = addressOrEns?.address;
+      ensNameToSet = addressOrEns?.ensName;
+    }
+
+    // If no provider is given and no address is provided, throw an error
+    if (!provider && !addressToSet) {
+      throw new Error('If no provider is given, address must be provided');
+    }
+
+    // Create a new Address instance
+    const addressObj = new Web3Address(provider, addressToSet, ensNameToSet);
+
+    // If a provider is available, try to resolve the missing piece (address or ENS name)
+    if (provider) {
+      if (addressToSet && !ensNameToSet) {
+        ensNameToSet =
+          (await provider.lookupAddress(addressToSet)) ?? undefined;
+        if (ensNameToSet) {
+          addressObj._ensName = ensNameToSet;
+        }
+      } else if (!addressToSet && ensNameToSet) {
+        addressToSet = (await provider.resolveName(ensNameToSet)) ?? undefined;
+        if (addressToSet) {
+          addressObj._address = addressToSet;
+        }
+      }
+    }
+
+    // Return the Address instance
+    return addressObj;
+  }
+
+  // Method to check if the stored address is valid
+  isAddressValid(): boolean {
+    if (!this._address) {
+      return false;
+    }
+    return ethers.utils.isAddress(this._address);
+  }
+
+  // Method to check if the stored ENS name is valid (resolves to an address)
+  async isValidEnsName(): Promise<boolean> {
+    if (!this._provider || !this._ensName) {
+      return false;
+    }
+    const address = await this._provider.resolveName(this._ensName);
+    return !!address;
+  }
+
+  // Getter for the address
+  get address() {
+    return this._address;
+  }
+
+  // Getter for the ENS name
+  get ensName() {
+    return this._ensName;
+  }
+
+  display(
+    options: {
+      shorten: boolean;
+      prioritize: 'ensName' | 'address';
+    } = {
+      shorten: false,
+      prioritize: 'ensName',
+    }
+  ) {
+    return options.prioritize === 'ensName'
+      ? String(
+          this._ensName || options.shorten
+            ? shortenAddress(this._address)
+            : this._address
+        )
+      : String(this._address || this._ensName);
+  }
 }
