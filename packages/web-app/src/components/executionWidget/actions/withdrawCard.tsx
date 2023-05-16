@@ -1,8 +1,9 @@
-import {CardTransfer, CardToken} from '@aragon/ui-components';
-import {AccordionMethod} from 'components/accordionMethod';
+import {CardToken, CardTransfer} from '@aragon/ui-components';
 import React from 'react';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
+
+import {AccordionMethod} from 'components/accordionMethod';
 import {ActionWithdraw} from 'utils/types';
 
 export const WithdrawCard: React.FC<{
@@ -21,7 +22,7 @@ export const WithdrawCard: React.FC<{
     >
       <Container>
         <CardTransfer
-          to={action.to}
+          to={String(action.to.ensName || action.to.address)}
           from={daoName}
           toLabel={t('labels.to')}
           fromLabel={t('labels.from')}

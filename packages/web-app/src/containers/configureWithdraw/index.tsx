@@ -4,8 +4,10 @@ import {
   DropdownInput,
   Label,
   ValueInput,
+  WalletInput,
+  InputValue,
 } from '@aragon/ui-components';
-import React, {useCallback, useEffect} from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 import {
   Controller,
   FormState,
@@ -21,20 +23,15 @@ import {useAlertContext} from 'context/alert';
 import {useGlobalModalContext} from 'context/globalModals';
 import {useNetwork} from 'context/network';
 import {useProviders} from 'context/providers';
-import {isAddress} from 'ethers/lib/utils';
 import {useDaoDetailsQuery} from 'hooks/useDaoDetails';
 import {useWallet} from 'hooks/useWallet';
 import {WithdrawAction} from 'pages/newWithdraw';
 import {fetchTokenData} from 'services/prices';
-import {CHAIN_METADATA} from 'utils/constants';
-import {handleClipboardActions} from 'utils/library';
+import {CHAIN_METADATA, ENS_SUPPORTED_NETWORKS} from 'utils/constants';
+import {Web3Address, handleClipboardActions, toDisplayEns} from 'utils/library';
 import {fetchBalance, getTokenInfo, isNativeToken} from 'utils/tokens';
 import {ActionIndex} from 'utils/types';
-import {
-  validateAddress,
-  validateTokenAddress,
-  validateTokenAmount,
-} from 'utils/validators';
+import {validateTokenAddress, validateTokenAmount} from 'utils/validators';
 
 type ConfigureWithdrawFormProps = ActionIndex; //extend if necessary
 
@@ -49,6 +46,13 @@ const ConfigureWithdrawForm: React.FC<ConfigureWithdrawFormProps> = ({
   const {infura: provider} = useProviders();
   const {setSelectedActionIndex} = useActionsContext();
   const {alert} = useAlertContext();
+
+  const networkSupportsENS = ENS_SUPPORTED_NETWORKS.includes(network);
+
+  // once the translation of the ui-components has been dealt with,
+  // consider moving these inside the component itself.
+  const [addressValidated, setAddressValidated] = useState(false);
+  const [ensResolved, setEnsResolved] = useState(false);
 
   const {data: daoDetails} = useDaoDetailsQuery();
 
@@ -217,6 +221,22 @@ const ConfigureWithdrawForm: React.FC<ConfigureWithdrawFormProps> = ({
     [alert, t]
   );
 
+  const resolveEnsNameFromAddress = useCallback(
+    (address: string | Promise<string>) => provider.lookupAddress(address),
+    [provider]
+  );
+
+  const resolveAddressFromEnsName = useCallback(
+    (ensName: string | Promise<string>) => provider.resolveName(ensName),
+    [provider]
+  );
+
+  const handleValueChanged = useCallback(
+    (value: InputValue, onChange: (...event: unknown[]) => void) =>
+      onChange(value),
+    []
+  );
+
   /*************************************************
    *                Field Validators               *
    *************************************************/
@@ -268,23 +288,27 @@ const ConfigureWithdrawForm: React.FC<ConfigureWithdrawFormProps> = ({
   );
 
   const recipientValidator = useCallback(
-    async (recipient: string) => {
-      let ensAddress = null;
+    async (value: InputValue) => {
+      const recipient = new Web3Address(provider, value.address, value.ensName);
 
-      try {
-        ensAddress = await provider?.resolveName(recipient);
-      } catch (err) {
-        console.error('Error, fetching ens name', err);
+      // empty field
+      if (value.address === '' && value.ensName === '')
+        return t('errors.required.recipient');
 
-        if (isAddress(recipient)) return validateAddress(recipient);
-        return t('errors.ensUnsupported');
-      }
+      // withdrawing to DAO
+      if (
+        recipient.address === daoDetails?.address ||
+        recipient.ensName === toDisplayEns(daoDetails?.ensDomain)
+      )
+        return 'Cant withdraw to your own address';
 
-      // if no associating ensAddress, assume normal address and not ens name
-      if (ensAddress) return true;
-      return validateAddress(recipient);
+      if (recipient.ensName && !recipient.address)
+        return (await recipient.isValidEnsName()) ? true : 'Invalid ENS name';
+
+      if (recipient.address && !recipient.ensName)
+        return recipient.isAddressValid() ? true : t('errors.invalidAddress');
     },
-    [provider, t]
+    [daoDetails?.address, daoDetails?.ensDomain, provider, t]
   );
 
   /*************************************************
@@ -301,26 +325,52 @@ const ConfigureWithdrawForm: React.FC<ConfigureWithdrawFormProps> = ({
         <Controller
           name={`actions.${actionIndex}.to`}
           control={control}
-          defaultValue=""
-          rules={{
-            required: t('errors.required.recipient'),
-            validate: recipientValidator,
-          }}
+          defaultValue={{address: '', ensName: ''}}
+          rules={{validate: recipientValidator}}
           render={({
             field: {name, onBlur, onChange, value},
             fieldState: {error},
           }) => (
             <>
-              <ValueInput
-                mode={error ? 'critical' : 'default'}
+              <WalletInput
                 name={name}
+                state={error && 'critical'}
                 value={value}
                 onBlur={onBlur}
-                onChange={onChange}
-                placeholder={t('placeHolders.walletOrEns')}
-                adornmentText={value ? t('labels.clear') : t('labels.paste')}
-                onAdornmentClick={() => handleAdornmentClick(value, onChange)}
+                placeholder={networkSupportsENS ? 'ENS or 0x…' : '0x…'}
+                onValueChange={value => handleValueChanged(value, onChange)}
+                blockExplorerURL={CHAIN_METADATA[network].lookupURL}
+                onEnsResolved={() => {
+                  setAddressValidated(false);
+                  setEnsResolved(true);
+                }}
+                onAddressValidated={() => {
+                  setEnsResolved(false);
+                  setAddressValidated(true);
+                }}
+                {...(networkSupportsENS && {
+                  resolveEnsNameFromAddress,
+                  resolveAddressFromEnsName,
+                })}
               />
+              {!networkSupportsENS && (
+                <AlertInline
+                  label={'This network does not support ENS domains'}
+                  mode="warning"
+                />
+              )}
+              {!error?.message && ensResolved && (
+                <AlertInline
+                  label={'ENS resolved successfully'}
+                  mode="success"
+                />
+              )}
+              {!error?.message && addressValidated && (
+                <AlertInline
+                  label={'Address resolved successfully'}
+                  mode="success"
+                />
+              )}
               {error?.message && (
                 <AlertInline label={error.message} mode="critical" />
               )}

@@ -9,6 +9,7 @@ import {useDaoDetailsQuery} from 'hooks/useDaoDetails';
 import {PluginTypes} from 'hooks/usePluginClient';
 import {usePluginSettings} from 'hooks/usePluginSettings';
 import WithdrawStepper from 'containers/withdrawStepper';
+import {InputValue} from '@aragon/ui-components';
 
 export type TokenFormData = {
   tokenName: string;
@@ -22,7 +23,7 @@ export type TokenFormData = {
 };
 
 export type WithdrawAction = TokenFormData & {
-  to: Address;
+  to: InputValue;
   from: Address;
   amount: string;
   name: string; // This indicates the type of action; Deposit is NOT an action

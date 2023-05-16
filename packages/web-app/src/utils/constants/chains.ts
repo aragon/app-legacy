@@ -11,6 +11,8 @@ export function isSupportedChainId(
   return SUPPORTED_CHAIN_ID.some(id => id === chainId);
 }
 
+export const ENS_SUPPORTED_NETWORKS = ['ethereum', 'goerli'];
+
 const SUPPORTED_NETWORKS = [
   'ethereum',
   'goerli',

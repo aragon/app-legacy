@@ -13,11 +13,11 @@ import {
   WithdrawParams,
 } from '@aragon/sdk-client';
 import {hexToBytes} from '@aragon/sdk-common';
+import {ethers} from 'ethers';
 import React, {useCallback, useEffect, useMemo, useState} from 'react';
 import {useFormContext} from 'react-hook-form';
 import {useTranslation} from 'react-i18next';
 import {generatePath, useNavigate} from 'react-router-dom';
-import {ethers} from 'ethers';
 
 import {Loading} from 'components/temporary';
 import PublishModal from 'containers/transactionModals/publishModal';
@@ -34,6 +34,7 @@ import {usePollGasFee} from 'hooks/usePollGasfee';
 import {useTokenSupply} from 'hooks/useTokenSupply';
 import {useWallet} from 'hooks/useWallet';
 import {trackEvent} from 'services/analytics';
+import {getEtherscanVerifiedContract} from 'services/etherscanAPI';
 import {
   PENDING_MULTISIG_PROPOSALS_KEY,
   PENDING_PROPOSALS_KEY,
@@ -69,9 +70,6 @@ import {
 import {useGlobalModalContext} from './globalModals';
 import {useNetwork} from './network';
 import {usePrivacyContext} from './privacyContext';
-import {useProviders} from './providers';
-import {isAddress} from 'ethers/lib/utils';
-import {getEtherscanVerifiedContract} from 'services/etherscanAPI';
 
 type Props = {
   showTxModal: boolean;
@@ -92,7 +90,6 @@ const CreateProposalProvider: React.FC<Props> = ({
 
   const {network} = useNetwork();
   const {isOnWrongNetwork, provider, address} = useWallet();
-  const {infura} = useProviders();
 
   const {data: daoDetails, isLoading: daoDetailsLoading} = useDaoDetailsQuery();
   const {id: pluginType, instanceAddress: pluginAddress} =
@@ -147,19 +144,15 @@ const CreateProposalProvider: React.FC<Props> = ({
     for await (const action of getNonEmptyActions(actionsFromForm)) {
       switch (action.name) {
         case 'withdraw_assets': {
-          let receiver = action.to;
-          /* TODO: SDK doesn't accept ens names, this should be removed once they
-           fixed the issue */
-          if (!isAddress(action.to)) {
-            receiver = (await infura?.resolveName(action.to)) as string;
-          }
-
           actions.push(
             client.encoding.withdrawAction({
               amount: BigInt(
                 Number(action.amount) * Math.pow(10, action.tokenDecimals)
               ),
-              recipientAddressOrEns: receiver,
+
+              /* TODO: SDK doesn't accept ens names, this should be removed once they
+                 fixed the issue */
+              recipientAddressOrEns: action.to.address,
               ...(isNativeToken(action.tokenAddress)
                 ? {type: TokenType.NATIVE}
                 : {type: TokenType.ERC20, tokenAddress: action.tokenAddress}),
@@ -281,7 +274,6 @@ const CreateProposalProvider: React.FC<Props> = ({
     getValues,
     pluginClient,
     client,
-    infura,
     pluginAddress,
     pluginSettings,
     network,
