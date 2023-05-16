@@ -50,6 +50,8 @@ import {getTokenInfo} from 'utils/tokens';
 import {useProviders} from 'context/providers';
 import {useQueryClient} from '@tanstack/react-query';
 import {htmlIn} from 'utils/htmlIn';
+import {trackEvent} from 'services/analytics';
+import {useParams} from 'react-router-dom';
 
 type AugmentedEtherscanContractResponse = EtherscanContractResponse &
   SourcifyContractResponse & {
@@ -81,6 +83,7 @@ const ContractAddressValidation: React.FC<Props> = props => {
   const {network} = useNetwork();
   const {infura: provider} = useProviders();
   const queryClient = useQueryClient();
+  const {dao: daoAddressOrEns} = useParams();
 
   const {control, resetField, setValue, setError} =
     useFormContext<SccFormData>();
@@ -209,6 +212,39 @@ const ContractAddressValidation: React.FC<Props> = props => {
 
         setVerificationState(TransactionState.SUCCESS);
 
+        if (
+          sourcifyFullData ||
+          sourcifyPartialData ||
+          etherscanData.result[0].ABI !== 'Contract source code not verified'
+        ) {
+          const source = [];
+          let name;
+          if (sourcifyFullData || sourcifyPartialData) {
+            source.push('sourcify');
+            name =
+              sourcifyFullData?.output?.devdoc?.title ||
+              sourcifyPartialData?.output?.devdoc?.title;
+          }
+          if (
+            etherscanData.result[0].ABI !== 'Contract source code not verified'
+          ) {
+            source.push('etherscan');
+            name = etherscanData.result[0]?.ContractName;
+          }
+
+          trackEvent('newProposal_smartContractConnection_succeeded', {
+            dao_address: daoAddressOrEns,
+            smart_contract_address: addressField,
+            smart_contract_name: name,
+            source,
+          });
+        } else {
+          trackEvent('newProposal_smartContractConnection_failed', {
+            dao_address: daoAddressOrEns,
+            smart_contract_address: addressField,
+          });
+        }
+
         //prioritize sourcify over etherscan if sourcify data is available
         if (sourcifyFullData || sourcifyPartialData) {
           setVerifiedContract(
@@ -236,6 +272,7 @@ const ContractAddressValidation: React.FC<Props> = props => {
   }, [
     addressField,
     client,
+    daoAddressOrEns,
     etherscanData,
     etherscanLoading,
     isTransactionLoading,
@@ -551,7 +588,18 @@ const ContractAddressValidation: React.FC<Props> = props => {
                 // clear contract address field
                 resetField('contractAddress');
                 setVerificationState(TransactionState.WAITING);
+
+                trackEvent('newProposal_createAction_clicked', {
+                  dao_address: daoAddressOrEns,
+                  smart_contract_address: addressField,
+                  smart_contract_name: contractName,
+                });
               } else if (ABIFlowState === ManualABIFlowState.NOT_STARTED) {
+                // contract address entered for validation
+                trackEvent('newProposal_validateSmartContract_clicked', {
+                  dao_address: daoAddressOrEns,
+                  smart_contract_address: addressField,
+                });
                 setVerificationState(TransactionState.LOADING);
               } else if (ABIFlowState === ManualABIFlowState.SUCCESS) {
                 // Add ABI contract to verified contracts
@@ -568,6 +616,12 @@ const ContractAddressValidation: React.FC<Props> = props => {
                 resetField('ABIInput');
                 setVerificationState(TransactionState.WAITING);
                 setABIFlowState(ManualABIFlowState.NOT_STARTED);
+
+                trackEvent('newProposal_createAction_clicked', {
+                  dao_address: daoAddressOrEns,
+                  smart_contract_address: addressField,
+                  smart_contract_name: contractName,
+                });
               } else if (verificationState === TransactionState.ERROR) {
                 // Manual ABI flow starting
                 setABIFlowState(ManualABIFlowState.ABI_INPUT);

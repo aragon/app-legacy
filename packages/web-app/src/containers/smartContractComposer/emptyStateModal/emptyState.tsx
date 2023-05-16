@@ -4,6 +4,8 @@ import React from 'react';
 import ModalHeader from '../components/modalHeader';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
+import {trackEvent} from 'services/analytics';
+import {useParams} from 'react-router-dom';
 
 type Props = {
   isOpen: boolean;
@@ -17,6 +19,7 @@ type Props = {
 // this as a "controlled" component
 const EmptyState: React.FC<Props> = props => {
   const {t} = useTranslation();
+  const {dao: daoAddressOrEns} = useParams();
 
   return (
     <ModalBottomSheetSwitcher isOpen={props.isOpen} onClose={props.onClose}>
@@ -34,7 +37,12 @@ const EmptyState: React.FC<Props> = props => {
           description={t('scc.emptyState.description')}
           primaryButton={{
             label: t('scc.emptyState.primaryBtnLabel'),
-            onClick: props.onConnectNew,
+            onClick: () => {
+              trackEvent('newProposal_connectSmartContract_clicked', {
+                dao_address: daoAddressOrEns,
+              });
+              props.onConnectNew();
+            },
           }}
         />
       </Content>
