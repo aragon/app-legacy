@@ -3,11 +3,12 @@ import {Link, VoterType} from '@aragon/ui-components';
 import TipTapLink from '@tiptap/extension-link';
 import {EditorContent, useEditor} from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
-import {format} from 'date-fns';
+import {format, formatDistanceToNow, Locale} from 'date-fns';
 import React, {useEffect, useMemo} from 'react';
 import {useFormContext} from 'react-hook-form';
 import {TFunction, useTranslation} from 'react-i18next';
 import styled from 'styled-components';
+import * as Locales from 'date-fns/locale';
 
 import {ExecutionWidget} from 'components/executionWidget';
 import {useFormStep} from 'components/fullScreenStepper';
@@ -43,7 +44,7 @@ const ReviewProposal: React.FC<ReviewProposalProps> = ({
   defineProposalStepNumber,
   addActionsStepNumber,
 }) => {
-  const {t} = useTranslation();
+  const {t, i18n} = useTranslation();
   const {setStep} = useFormStep();
 
   const {data: daoDetails} = useDaoDetailsQuery();
@@ -105,21 +106,39 @@ const ReviewProposal: React.FC<ReviewProposalProps> = ({
   }, [daoSettings, startDate, t, values]);
 
   const formattedEndDate = useMemo(() => {
-    const {durationDays, endDate, endTime, endUtc} = values;
-    let daysLeft = durationDays;
+    const {
+      durationDays,
+      durationHours,
+      durationMinutes,
+      durationSwitch,
+      endDate,
+      endTime,
+      endUtc,
+    } = values;
 
-    if (!durationDays) {
-      const endDateTime = new Date(
-        `${endDate}T${endTime}:00${getCanonicalUtcOffset(endUtc)}`
+    let endDateTime: Date;
+    if (durationSwitch === 'duration') {
+      endDateTime = new Date(
+        `${getCanonicalDate({
+          days: durationDays,
+        })}T${getCanonicalTime({
+          hours: durationHours,
+          minutes: durationMinutes,
+        })}:00${getCanonicalUtcOffset()}`
       );
-
-      daysLeft = Math.floor(
-        (endDateTime.getTime() - Date.now()) / 1000 / 60 / 60 / 24
+    } else {
+      endDateTime = new Date(
+        `${endDate}T${endTime}:00${getCanonicalUtcOffset(endUtc)}`
       );
     }
 
-    return `In ${daysLeft} ${t('labels.days')}`;
-  }, [t, values]);
+    const locale = (Locales as Record<string, Locale>)[i18n.language];
+
+    return formatDistanceToNow(endDateTime, {
+      includeSeconds: true,
+      locale,
+    });
+  }, [i18n.language, values]);
 
   const formattedPreciseEndDate = useMemo(() => {
     let endDateTime: Date;
