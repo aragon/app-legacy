@@ -527,7 +527,7 @@ const ContractAddressValidation: React.FC<Props> = props => {
           ABIFlowState !== ManualABIFlowState.WAITING &&
           !isTransactionWaiting && (
             <>
-              <div className="mt-2 font-bold ft-text-base text-ui-700">
+              <div className="mt-2 font-bold text-ui-700 ft-text-base">
                 {t('scc.abi.abiInputLabel')}
               </div>
               <p
