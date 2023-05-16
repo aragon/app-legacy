@@ -7,7 +7,7 @@ import {
   ButtonIcon,
   ButtonText,
   IconChevronLeft,
-  WalletInput,
+  WalletInputLegacy,
 } from '@aragon/ui-components';
 
 import ModalBottomSheetSwitcher from 'components/modalBottomSheetSwitcher';
@@ -120,7 +120,7 @@ const MintTokensToTreasuryMenu: React.FC<Props> = ({
                 fieldState: {error},
               }) => (
                 <>
-                  <WalletInput
+                  <WalletInputLegacy
                     mode={error ? 'critical' : 'default'}
                     name={name}
                     value={value}
