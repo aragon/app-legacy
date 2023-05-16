@@ -2,7 +2,7 @@ import {
   ButtonText,
   IconLinkExternal,
   Link,
-  WalletInput,
+  WalletInputLegacy,
   shortenAddress,
 } from '@aragon/ui-components';
 import React, {useCallback} from 'react';
@@ -68,7 +68,7 @@ const DepositModal: React.FC = () => {
               <EnsTitle>{t('modal.deposit.inputLabelEns')}</EnsTitle>
               <EnsSubtitle>{t('modal.deposit.inputHelptextEns')}</EnsSubtitle>
             </EnsHeaderWrapper>
-            <WalletInput
+            <WalletInputLegacy
               adornmentText={t('labels.copy')}
               value={daoDetails?.ensDomain}
               onAdornmentClick={() => copyToClipboard(daoDetails?.ensDomain)}
@@ -81,7 +81,7 @@ const DepositModal: React.FC = () => {
           <EnsTitle>{t('modal.deposit.inputLabelContract')}</EnsTitle>
         </AddressHeaderWrapper>
         <BodyWrapper>
-          <WalletInput
+          <WalletInputLegacy
             adornmentText={t('labels.copy')}
             value={shortenAddress(daoDetails?.address as string)}
             onAdornmentClick={() => copyToClipboard(daoDetails?.address)}

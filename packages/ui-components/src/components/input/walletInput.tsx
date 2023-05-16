@@ -19,7 +19,7 @@ import {IconCopy, IconLinkExternal} from '../icons';
 import {AlertChip} from '../alerts';
 
 /** Input Wallet value type */
-export type InputValue = {
+export type WalletInputValue = {
   ensName: string;
   address: string;
 };
@@ -39,13 +39,13 @@ export type WalletInputProps = Omit<
   /**
    * The current value of the input field. Note that this is the full value.
    */
-  value: InputValue;
+  value: WalletInputValue;
 
   /**
    * A callback function that is called when the value of the input field changes.
    * It takes the new value as an argument.
    */
-  onValueChange: (newValue: InputValue) => void;
+  onValueChange: (newValue: WalletInputValue) => void;
 
   /**
    * Changes the input's color schema.
@@ -154,7 +154,7 @@ export const WalletInput = React.forwardRef<
       value.address ? 'address' : 'ensName'
     );
     const [initialHeight, setInitialHeight] = useState(0);
-    const [resolvedValues, setResolvedValues] = useState<InputValue>();
+    const [resolvedValues, setResolvedValues] = useState<WalletInputValue>();
 
     const canToggle = !!value.address && !!value.ensName;
     const togglerLabel = displayMode === 'address' ? 'ENS' : '0x…';

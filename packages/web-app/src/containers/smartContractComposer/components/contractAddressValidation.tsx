@@ -9,8 +9,8 @@ import {
   Link,
   Spinner,
   TextareaSimple,
-  WalletInput,
   shortenAddress,
+  WalletInputLegacy,
 } from '@aragon/ui-components';
 import {ethers} from 'ethers';
 import {isAddress} from 'ethers/lib/utils';
@@ -485,7 +485,7 @@ const ContractAddressValidation: React.FC<Props> = props => {
             fieldState: {error},
           }) => (
             <>
-              <WalletInput
+              <WalletInputLegacy
                 mode={error ? 'critical' : 'default'}
                 name={name}
                 onBlur={onBlur}

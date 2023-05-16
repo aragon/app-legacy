@@ -22,7 +22,13 @@ export {DateInput} from './dateInput';
 export type {DateInputProps} from './dateInput';
 
 export {WalletInput} from './walletInput';
-export type {WalletInputProps} from './walletInput';
+export type {
+  WalletInputProps,
+  WalletInputValue as InputValue,
+} from './walletInput';
+
+export {WalletInputLegacy} from './walletInputLegacy';
+export type {WalletInputLegacyProps} from './walletInputLegacy';
 
 export * from './inputImageSingle';
 export * from './valueInput';
