@@ -4,6 +4,11 @@ import tsconfigPaths from 'vite-tsconfig-paths';
 import {defineConfig, loadEnv} from 'vite';
 import {resolve} from 'path';
 import nodePolyfills from 'rollup-plugin-polyfill-node';
+import analyze from 'rollup-plugin-analyzer';
+import {uglify} from 'rollup-plugin-uglify';
+
+import {uglify} from 'rollup-plugin-uglify';
+
 const production = process.env.NODE_ENV === 'production';
 
 // https://vitejs.dev/config/
@@ -46,8 +51,25 @@ export default defineConfig(({mode}) => {
         plugins: [
           // ↓ Needed for build
           nodePolyfills(),
+          analyze({
+            stdout: true,
+            summaryOnly: true,
+          }),
+          production && uglify(),
         ],
+        output: {
+          manualChunks: {
+            'osx-ethers': ['@aragon/osx-ethers'],
+            tiptap: [
+              '@tiptap/extension-link',
+              '@tiptap/extension-placeholder',
+              '@tiptap/react',
+              '@tiptap/starter-kit',
+            ],
+          },
+        },
       },
+      // minify: false,
       // ↓ Needed for build if using WalletConnect and other providers
       commonjsOptions: {
         transformMixedEsModules: true,

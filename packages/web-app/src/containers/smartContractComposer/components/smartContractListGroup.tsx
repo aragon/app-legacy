@@ -13,7 +13,7 @@ const SmartContractListGroup: React.FC = () => {
 
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore
-  const contracts = getValues('contracts');
+  const contracts = getValues('contracts') || [];
 
   return (
     <ListGroup>

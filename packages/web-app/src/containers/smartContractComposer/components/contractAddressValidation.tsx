@@ -5,17 +5,19 @@ import {
   IconFeedback,
   IconRadioCancel,
   IconRadioMulti,
-  IconReload,
   IconSuccess,
   Link,
   Spinner,
+  TextareaSimple,
   WalletInput,
   shortenAddress,
 } from '@aragon/ui-components';
+import {ethers} from 'ethers';
 import {isAddress} from 'ethers/lib/utils';
 import React, {useCallback, useEffect, useMemo, useState} from 'react';
 import {
   Controller,
+  useController,
   useFormContext,
   useFormState,
   useWatch,
@@ -29,7 +31,11 @@ import {useNetwork} from 'context/network';
 import {useWallet} from 'hooks/useWallet';
 import {SccFormData} from 'containers/smartContractComposer';
 import {addVerifiedSmartContract} from 'services/cache';
-import {CHAIN_METADATA, TransactionState} from 'utils/constants';
+import {
+  CHAIN_METADATA,
+  TransactionState,
+  ManualABIFlowState,
+} from 'utils/constants';
 import {handleClipboardActions} from 'utils/library';
 import {
   EtherscanContractResponse,
@@ -43,6 +49,9 @@ import {useApolloClient} from '@apollo/client';
 import {getTokenInfo} from 'utils/tokens';
 import {useProviders} from 'context/providers';
 import {useQueryClient} from '@tanstack/react-query';
+import {htmlIn} from 'utils/htmlIn';
+import {trackEvent} from 'services/analytics';
+import {useParams} from 'react-router-dom';
 
 type AugmentedEtherscanContractResponse = EtherscanContractResponse &
   SourcifyContractResponse & {
@@ -60,7 +69,7 @@ const icons = {
   [TransactionState.WAITING]: undefined,
   [TransactionState.LOADING]: undefined,
   [TransactionState.SUCCESS]: <IconChevronRight />,
-  [TransactionState.ERROR]: <IconReload />,
+  [TransactionState.ERROR]: undefined,
 };
 
 // not exactly sure where opening will be happen or if
@@ -74,10 +83,15 @@ const ContractAddressValidation: React.FC<Props> = props => {
   const {network} = useNetwork();
   const {infura: provider} = useProviders();
   const queryClient = useQueryClient();
+  const {dao: daoAddressOrEns} = useParams();
 
   const {control, resetField, setValue, setError} =
     useFormContext<SccFormData>();
   const {errors} = useFormState({control});
+  const {
+    field: {value},
+    fieldState: {error},
+  } = useController({name: 'ABIInput'});
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore
   const [addressField, contracts] = useWatch({
@@ -88,6 +102,9 @@ const ContractAddressValidation: React.FC<Props> = props => {
     TransactionState.WAITING
   );
   const [contractName, setContractName] = useState<string | undefined>();
+  const [ABIFlowState, setABIFlowState] = useState<ManualABIFlowState>(
+    ManualABIFlowState.NOT_STARTED
+  );
 
   const {
     sourcifyFullData,
@@ -102,6 +119,17 @@ const ContractAddressValidation: React.FC<Props> = props => {
   const isTransactionLoading = verificationState === TransactionState.LOADING;
   const isTransactionWaiting = verificationState === TransactionState.WAITING;
   const isTransactionError = verificationState === TransactionState.ERROR;
+
+  const abiValidator = (abi: string) => {
+    try {
+      new ethers.utils.Interface(abi);
+      setABIFlowState(ManualABIFlowState.SUCCESS);
+      return t('scc.abi.abiInput.alertWarning');
+    } catch (e) {
+      setABIFlowState(ManualABIFlowState.ERROR);
+      return t('scc.abi.abiInput.alertCritical');
+    }
+  };
 
   function attachSourcifyNotice(
     value: AugmentedEtherscanContractResponse['output']
@@ -119,7 +147,7 @@ const ContractAddressValidation: React.FC<Props> = props => {
         if (method) {
           action.notice = method[1].details;
           action?.inputs.filter(input => {
-            input.notice = method[1].params[input.name];
+            input.notice = method[1].params?.[input.name];
           });
         }
       }
@@ -163,14 +191,11 @@ const ContractAddressValidation: React.FC<Props> = props => {
           CHAIN_METADATA[network].id
         );
       } else {
+        setContractName('');
         setVerificationState(TransactionState.WAITING);
-        setError('contractAddress', {
-          type: 'validate',
-          message: t('errors.notValidContractAddress'),
-        });
       }
     },
-    [address, addressField, contracts, network, setError, setValue, t]
+    [address, addressField, contracts, network, setValue]
   );
 
   useEffect(() => {
@@ -186,6 +211,39 @@ const ContractAddressValidation: React.FC<Props> = props => {
         });
 
         setVerificationState(TransactionState.SUCCESS);
+
+        if (
+          sourcifyFullData ||
+          sourcifyPartialData ||
+          etherscanData.result[0].ABI !== 'Contract source code not verified'
+        ) {
+          const source = [];
+          let name;
+          if (sourcifyFullData || sourcifyPartialData) {
+            source.push('sourcify');
+            name =
+              sourcifyFullData?.output?.devdoc?.title ||
+              sourcifyPartialData?.output?.devdoc?.title;
+          }
+          if (
+            etherscanData.result[0].ABI !== 'Contract source code not verified'
+          ) {
+            source.push('etherscan');
+            name = etherscanData.result[0]?.ContractName;
+          }
+
+          trackEvent('newProposal_smartContractConnection_succeeded', {
+            dao_address: daoAddressOrEns,
+            smart_contract_address: addressField,
+            smart_contract_name: name,
+            source,
+          });
+        } else {
+          trackEvent('newProposal_smartContractConnection_failed', {
+            dao_address: daoAddressOrEns,
+            smart_contract_address: addressField,
+          });
+        }
 
         //prioritize sourcify over etherscan if sourcify data is available
         if (sourcifyFullData || sourcifyPartialData) {
@@ -203,11 +261,9 @@ const ContractAddressValidation: React.FC<Props> = props => {
             tokenData?.imgUrl || ''
           );
         } else {
+          setContractName('');
           setVerificationState(TransactionState.ERROR);
-          setError('contractAddress', {
-            type: 'validate',
-            message: t('errors.notValidContractAddress'),
-          });
+          setABIFlowState(ManualABIFlowState.WAITING);
         }
       }
     }
@@ -216,6 +272,7 @@ const ContractAddressValidation: React.FC<Props> = props => {
   }, [
     addressField,
     client,
+    daoAddressOrEns,
     etherscanData,
     etherscanLoading,
     isTransactionLoading,
@@ -233,7 +290,14 @@ const ContractAddressValidation: React.FC<Props> = props => {
     [TransactionState.WAITING]: t('scc.validation.ctaLabelWaiting'),
     [TransactionState.LOADING]: '',
     [TransactionState.SUCCESS]: t('scc.validation.ctaLabelSuccess'),
-    [TransactionState.ERROR]: t('scc.validation.ctaLabelWaiting'),
+    [TransactionState.ERROR]: t('scc.validation.ctaLabelWarning'),
+  };
+
+  const ABIFlowLabel = {
+    [ManualABIFlowState.WAITING]: t('scc.validation.ctaLabelWarning'),
+    [ManualABIFlowState.ABI_INPUT]: t('scc.abi.ctaLabelWaiting'),
+    [ManualABIFlowState.SUCCESS]: t('scc.validation.ctaLabelSuccess'),
+    [ManualABIFlowState.ERROR]: t('scc.abi.ctaLabelCritical'),
   };
 
   // clear field when there is a value, else paste
@@ -264,7 +328,7 @@ const ContractAddressValidation: React.FC<Props> = props => {
   const adornmentText = useMemo(() => {
     if (isTransactionSuccessful || isTransactionLoading)
       return t('labels.copy');
-    if (addressField !== '') return t('labels.clear');
+    if (!!addressField && addressField !== '') return t('labels.clear');
     return t('labels.paste');
   }, [addressField, isTransactionLoading, isTransactionSuccessful, t]);
 
@@ -421,6 +485,79 @@ const ContractAddressValidation: React.FC<Props> = props => {
             </>
           )}
         />
+
+        {!isTransactionWaiting &&
+          (ABIFlowState === ManualABIFlowState.NOT_STARTED ||
+            ABIFlowState === ManualABIFlowState.WAITING) && (
+            <VerificationCard>
+              <VerificationTitle>
+                {/* if contract name is not available, show the address */}
+                {contractName || shortenAddress(addressField)}
+              </VerificationTitle>
+              <VerificationWrapper>
+                {sourcifyValidationStatus}
+                {!isTransactionLoading && (
+                  <Link
+                    external
+                    type="neutral"
+                    iconRight={<IconFeedback height={13} width={13} />}
+                    href={`https://sourcify.dev/#/lookup/${addressField}`}
+                    label={t('scc.validation.explorerLinkLabel')}
+                    className="ft-text-sm"
+                  />
+                )}
+              </VerificationWrapper>
+              <VerificationWrapper>
+                {etherscanValidationStatus}
+                {!isTransactionLoading && (
+                  <Link
+                    external
+                    type="neutral"
+                    iconRight={<IconFeedback height={13} width={13} />}
+                    href={`${CHAIN_METADATA[network].explorer}address/${addressField}#code`}
+                    label={t('scc.validation.explorerLinkLabel')}
+                    className="ft-text-sm"
+                  />
+                )}
+              </VerificationWrapper>
+            </VerificationCard>
+          )}
+
+        {ABIFlowState !== ManualABIFlowState.NOT_STARTED &&
+          ABIFlowState !== ManualABIFlowState.WAITING &&
+          !isTransactionWaiting && (
+            <>
+              <div className="mt-2 font-bold text-ui-700 ft-text-base">
+                {t('scc.abi.abiInputLabel')}
+              </div>
+              <p
+                className="mt-0.5 text-sm text-ui-600"
+                dangerouslySetInnerHTML={{
+                  __html: htmlIn(t)('scc.abi.abiInputHelp'),
+                }}
+              />
+              <div className="mt-1.5">
+                <Controller
+                  name="ABIInput"
+                  rules={{
+                    required: t('errors.required.summary'),
+                    validate: value => abiValidator(value),
+                  }}
+                  render={({field: {name, onBlur, onChange, value}}) => (
+                    <>
+                      <TextareaSimple
+                        name={name}
+                        value={value}
+                        onBlur={onBlur}
+                        onChange={onChange}
+                      />
+                    </>
+                  )}
+                />
+              </div>
+            </>
+          )}
+
         {isTransactionLoading ? (
           <ButtonText
             label={t('scc.validation.cancelLabel') as string}
@@ -440,15 +577,54 @@ const ContractAddressValidation: React.FC<Props> = props => {
           />
         ) : (
           <ButtonText
-            label={label[verificationState]}
+            label={
+              ABIFlowState !== ManualABIFlowState.NOT_STARTED
+                ? ABIFlowLabel[ABIFlowState]
+                : label[verificationState]
+            }
             onClick={async () => {
               if (verificationState === TransactionState.SUCCESS) {
                 props.onVerificationSuccess();
                 // clear contract address field
                 resetField('contractAddress');
                 setVerificationState(TransactionState.WAITING);
-              } else {
+
+                trackEvent('newProposal_createAction_clicked', {
+                  dao_address: daoAddressOrEns,
+                  smart_contract_address: addressField,
+                  smart_contract_name: contractName,
+                });
+              } else if (ABIFlowState === ManualABIFlowState.NOT_STARTED) {
+                // contract address entered for validation
+                trackEvent('newProposal_validateSmartContract_clicked', {
+                  dao_address: daoAddressOrEns,
+                  smart_contract_address: addressField,
+                });
                 setVerificationState(TransactionState.LOADING);
+              } else if (ABIFlowState === ManualABIFlowState.SUCCESS) {
+                // Add ABI contract to verified contracts
+                setVerifiedContract(
+                  'manualABI',
+                  {
+                    ABI: value,
+                    ContractName: addressField,
+                  } as AugmentedEtherscanContractResponse,
+                  ''
+                );
+                props.onVerificationSuccess();
+                resetField('contractAddress');
+                resetField('ABIInput');
+                setVerificationState(TransactionState.WAITING);
+                setABIFlowState(ManualABIFlowState.NOT_STARTED);
+
+                trackEvent('newProposal_createAction_clicked', {
+                  dao_address: daoAddressOrEns,
+                  smart_contract_address: addressField,
+                  smart_contract_name: contractName,
+                });
+              } else if (verificationState === TransactionState.ERROR) {
+                // Manual ABI flow starting
+                setABIFlowState(ManualABIFlowState.ABI_INPUT);
               }
             }}
             iconLeft={
@@ -463,39 +639,30 @@ const ContractAddressValidation: React.FC<Props> = props => {
             className="mt-3 w-full"
           />
         )}
-        {!isTransactionWaiting && (
-          <VerificationCard>
-            <VerificationTitle>
-              {/* if contract name is not available, show the address */}
-              {contractName || shortenAddress(addressField)}
-            </VerificationTitle>
-            <VerificationWrapper>
-              {sourcifyValidationStatus}
-              {!isTransactionLoading && (
-                <Link
-                  external
-                  type="neutral"
-                  iconRight={<IconFeedback height={13} width={13} />}
-                  href={`https://sourcify.dev/#/lookup/${addressField}`}
-                  label={t('scc.validation.explorerLinkLabel')}
-                  className="ft-text-sm"
-                />
-              )}
-            </VerificationWrapper>
-            <VerificationWrapper>
-              {etherscanValidationStatus}
-              {!isTransactionLoading && (
-                <Link
-                  external
-                  type="neutral"
-                  iconRight={<IconFeedback height={13} width={13} />}
-                  href={`${CHAIN_METADATA[network].explorer}address/${addressField}#code`}
-                  label={t('scc.validation.explorerLinkLabel')}
-                  className="ft-text-sm"
-                />
-              )}
-            </VerificationWrapper>
-          </VerificationCard>
+        {isTransactionError && ABIFlowState === ManualABIFlowState.WAITING && (
+          <ButtonText
+            label={t('scc.validation.cancelLabel')}
+            onClick={() => {
+              resetField('contractAddress');
+              setVerificationState(TransactionState.WAITING);
+              props.onClose();
+            }}
+            size="large"
+            className="mt-2 w-full"
+            mode="secondary"
+          />
+        )}
+        {error?.message && (
+          <div className="flex justify-center mt-2">
+            <AlertInline
+              label={error.message}
+              mode={
+                ABIFlowState === ManualABIFlowState.ERROR
+                  ? 'critical'
+                  : 'warning'
+              }
+            />
+          </div>
         )}
       </Content>
     </ModalBottomSheetSwitcher>

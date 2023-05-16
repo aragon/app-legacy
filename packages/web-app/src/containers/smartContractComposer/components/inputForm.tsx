@@ -15,6 +15,8 @@ import {
   useFormContext,
   useWatch,
 } from 'react-hook-form';
+import {useParams} from 'react-router-dom';
+import {trackEvent} from 'services/analytics';
 import styled from 'styled-components';
 import {
   getUserFriendlyWalletLabel,
@@ -39,6 +41,7 @@ const InputForm: React.FC<InputFormProps> = ({
   ] = useWatch({
     name: ['selectedAction', 'selectedSC', 'sccActions'],
   });
+  const {dao: daoAddressOrEns} = useParams();
   const {addAction, removeAction} = useActionsContext();
   const {setValue, resetField} = useFormContext();
 
@@ -104,6 +107,13 @@ const InputForm: React.FC<InputFormProps> = ({
           });
           resetField('sccActions');
           onComposeButtonClicked();
+
+          trackEvent('newProposal_composeAction_clicked', {
+            dao_address: daoAddressOrEns,
+            smart_contract_address: selectedSC.address,
+            smart_contract_name: selectedSC.name,
+            method_name: selectedAction.name,
+          });
         }}
       />
     </div>

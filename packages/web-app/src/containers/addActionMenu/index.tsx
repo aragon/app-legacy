@@ -7,12 +7,15 @@ import {useGlobalModalContext} from 'context/globalModals';
 import {useActionsContext} from 'context/actions';
 import ModalBottomSheetSwitcher from 'components/modalBottomSheetSwitcher';
 import {ActionParameter} from 'utils/types';
+import {trackEvent} from 'services/analytics';
+import {useParams} from 'react-router-dom';
 
 type AddActionMenuProps = {
   actions: ActionParameter[];
 };
 
 const AddActionMenu: React.FC<AddActionMenuProps> = ({actions}) => {
+  const {dao: daoAddressOrEns} = useParams();
   const {isAddActionOpen, close} = useGlobalModalContext();
   const {actions: usedActions, addAction} = useActionsContext();
   const {t} = useTranslation();
@@ -36,6 +39,10 @@ const AddActionMenu: React.FC<AddActionMenuProps> = ({actions}) => {
             }
             iconRight={<IconChevronRight />}
             onClick={() => {
+              trackEvent('newProposal_action_selected', {
+                dao_address: daoAddressOrEns,
+                action: a.type,
+              });
               addAction({
                 name: a.type,
               });

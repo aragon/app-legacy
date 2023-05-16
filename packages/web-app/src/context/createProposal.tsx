@@ -550,12 +550,6 @@ const CreateProposalProvider: React.FC<Props> = ({
     const proposalIterator =
       pluginClient.methods.createProposal(proposalCreationData);
 
-    trackEvent('newProposal_transaction_signed', {
-      dao_address: daoDetails?.address,
-      network: network,
-      wallet_provider: provider?.connection.url,
-    });
-
     if (creationProcessState === TransactionState.SUCCESS) {
       handleCloseModal();
       return;
@@ -578,6 +572,11 @@ const CreateProposalProvider: React.FC<Props> = ({
         switch (step.key) {
           case ProposalCreationSteps.CREATING:
             console.log(step.txHash);
+            trackEvent('newProposal_transaction_signed', {
+              dao_address: daoDetails?.address,
+              network: network,
+              wallet_provider: provider?.connection.url,
+            });
             break;
           case ProposalCreationSteps.DONE: {
             //TODO: replace with step.proposal id when SDK returns proper format

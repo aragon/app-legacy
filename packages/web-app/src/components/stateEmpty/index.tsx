@@ -14,9 +14,11 @@ type BaseProps = {
   mode: 'card' | 'inline';
   title: string;
   description?: string;
+  content?: JSX.Element;
   primaryButton?: Omit<ButtonTextProps, 'mode' | 'size'>;
   secondaryButton?: Omit<ButtonTextProps, 'mode' | 'size'>;
   renderHtml?: boolean;
+  actionsColumn?: boolean;
 };
 
 type StateEmptyProps =
@@ -72,8 +74,9 @@ export const StateEmpty: React.FC<StateEmptyProps> = props => {
             props.description && <Description>{props.description}</Description>
           )}
         </TextWrapper>
+        {props.content}
         {(props.primaryButton || props.secondaryButton) && (
-          <ActionContainer>
+          <ActionContainer actionsColumn={props.actionsColumn}>
             {props.primaryButton && (
               <ButtonText
                 {...props.primaryButton}
@@ -121,10 +124,14 @@ const TextWrapper = styled.div.attrs({
   className: 'space-y-1.5 text-center',
 })``;
 
-const ActionContainer = styled.div.attrs({
-  className: `flex w-full flex-col tablet:flex-row gap-y-1.5 tablet:gap-y-0 
-    tablet:justify-center tablet:gap-x-3`,
-})``;
+const ActionContainer = styled.div.attrs<Pick<BaseProps, 'actionsColumn'>>(
+  ({actionsColumn}) => ({
+    className: `flex w-full flex-col gap-y-1.5 ${
+      !actionsColumn &&
+      'tablet:flex-row tablet:gap-y-0 tablet:justify-center tablet:gap-x-3'
+    }`,
+  })
+)<Pick<BaseProps, 'actionsColumn'>>``;
 
 const Title = styled.h2.attrs({
   className: 'ft-text-xl font-bold text-ui-800',

@@ -30,15 +30,26 @@ type AddressAndTokenRowProps = IndexProps & {
   newTokenSupply: Big;
   onClear?: (index: number) => void;
   onDelete: (index: number) => void;
+  onEnterDaoAddress?: (index: number) => void;
+  daoAddress?: string;
+  isModalOpened?: boolean;
+  ensName?: string;
 };
 
-type AddressFieldProps = IndexProps & {
-  onClear?: (index: number) => void;
-};
+type AddressFieldProps = IndexProps &
+  Pick<
+    AddressAndTokenRowProps,
+    'onClear' | 'onEnterDaoAddress' | 'daoAddress' | 'ensName' | 'isModalOpened'
+  >;
+
 const AddressField: React.FC<AddressFieldProps> = ({
   actionIndex,
   fieldIndex,
   onClear,
+  onEnterDaoAddress,
+  isModalOpened,
+  daoAddress,
+  ensName,
 }) => {
   const {t} = useTranslation();
   const {control} = useFormContext();
@@ -69,6 +80,18 @@ const AddressField: React.FC<AddressFieldProps> = ({
         }
       });
     }
+
+    if (onEnterDaoAddress && validationResult === true) {
+      // do not open the modal for more than one time for the same address
+      if (
+        (address.toLowerCase() === daoAddress?.toLowerCase() ||
+          address.toLowerCase() === ensName?.toLowerCase()) &&
+        !isModalOpened
+      ) {
+        onEnterDaoAddress(index);
+      }
+    }
+
     return validationResult;
   };
 
@@ -228,6 +251,10 @@ export const AddressAndTokenRow: React.FC<AddressAndTokenRowProps> = ({
   onDelete,
   onClear,
   newTokenSupply,
+  onEnterDaoAddress,
+  isModalOpened,
+  daoAddress,
+  ensName,
 }) => {
   const {isDesktop} = useScreen();
   const {t} = useTranslation();
@@ -243,9 +270,15 @@ export const AddressAndTokenRow: React.FC<AddressAndTokenRowProps> = ({
       <Container>
         <HStack>
           <AddressField
-            actionIndex={actionIndex}
-            fieldIndex={fieldIndex}
-            onClear={onClear}
+            {...{
+              actionIndex,
+              fieldIndex,
+              onClear,
+              onEnterDaoAddress,
+              isModalOpened,
+              ensName,
+              daoAddress,
+            }}
           />
           <TokenField actionIndex={actionIndex} fieldIndex={fieldIndex} />
           <PercentageDistribution
@@ -270,7 +303,17 @@ export const AddressAndTokenRow: React.FC<AddressAndTokenRowProps> = ({
         <Label label={t('labels.whitelistWallets.address')} />
 
         <HStack>
-          <AddressField actionIndex={actionIndex} fieldIndex={fieldIndex} />
+          <AddressField
+            {...{
+              actionIndex,
+              fieldIndex,
+              onClear,
+              onEnterDaoAddress,
+              isModalOpened,
+              ensName,
+              daoAddress,
+            }}
+          />
           <DropdownMenu
             actionIndex={actionIndex}
             fieldIndex={fieldIndex}

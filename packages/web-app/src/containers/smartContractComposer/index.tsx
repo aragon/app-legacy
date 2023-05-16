@@ -17,6 +17,7 @@ export type SccFormData = {
   contracts: SmartContract[];
   selectedSC: SmartContract;
   selectedAction: SmartContractAction;
+  ABIInput: string;
 };
 
 type SCC = {
@@ -91,8 +92,14 @@ const SCC: React.FC<SCC> = ({actionIndex}) => {
           setEmptyStateIsOpen(false);
           setAddressValidationIsOpen(true);
         }}
-        onClose={() => setEmptyStateIsOpen(false)}
-        onBackButtonClicked={() => setEmptyStateIsOpen(false)}
+        onClose={() => {
+          setEmptyStateIsOpen(false);
+          removeAction(actionIndex);
+        }}
+        onBackButtonClicked={() => {
+          setEmptyStateIsOpen(false);
+          removeAction(actionIndex);
+        }}
       />
 
       <ContractAddressValidation
@@ -101,8 +108,14 @@ const SCC: React.FC<SCC> = ({actionIndex}) => {
           setAddressValidationIsOpen(false);
           setContractListIsOpen(true);
         }}
-        onClose={() => setAddressValidationIsOpen(false)}
-        onBackButtonClicked={() => setAddressValidationIsOpen(false)}
+        onClose={() => {
+          setAddressValidationIsOpen(false);
+          removeAction(actionIndex);
+        }}
+        onBackButtonClicked={() => {
+          setAddressValidationIsOpen(false);
+          removeAction(actionIndex);
+        }}
       />
     </>
   );
