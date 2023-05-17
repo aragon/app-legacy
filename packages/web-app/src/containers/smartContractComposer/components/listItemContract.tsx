@@ -6,5 +6,7 @@ type Props = Omit<ListItemActionProps, 'iconLeft'> & {
 };
 
 export const ListItemContract: React.FC<Props> = ({logo, ...rest}) => {
-  return <ListItemAction {...rest} iconLeft={logo || rest.title} />;
+  return (
+    <ListItemAction {...rest} iconLeft={logo || rest.title} truncateText />
+  );
 };

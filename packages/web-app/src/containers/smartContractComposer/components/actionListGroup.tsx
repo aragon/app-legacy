@@ -31,6 +31,7 @@ const ActionListGroup: React.FC<ActionListGroupProps> = ({actions}) => {
           bgWhite
           iconRight={<IconChevronRight />}
           onClick={() => setValue('selectedAction', a)}
+          truncateText
         />
       ))}
     </ListGroup>

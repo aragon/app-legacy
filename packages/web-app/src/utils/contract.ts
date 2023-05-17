@@ -116,7 +116,7 @@ export function scanNatspecBlock(
  * text may be quite long. Includes superClasses property for a contract to allow
  * retrieval of natspec data for functions which have the @inheritdoc tag.
  */
-export function extractNatspec(source: string) {
+export function extractNatSpec(source: string) {
   let pos = 0,
     posEnd = 0;
   let match = '';

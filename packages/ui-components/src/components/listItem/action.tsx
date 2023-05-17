@@ -31,6 +31,7 @@ export type ListItemActionProps = CustomButtonProps & {
   iconLeft?: React.ReactElement | string;
   /** Right aligned. Both left and right icon can be present simultaneously */
   iconRight?: React.ReactElement;
+  truncateText?: boolean;
 };
 
 export const ListItemAction: React.FC<ListItemActionProps> = ({
@@ -39,6 +40,7 @@ export const ListItemAction: React.FC<ListItemActionProps> = ({
   iconLeft,
   iconRight,
   mode = 'default',
+  truncateText = false,
   ...props
 }) => {
   return (
@@ -48,8 +50,18 @@ export const ListItemAction: React.FC<ListItemActionProps> = ({
         {/* This could be done with label. However, I can't get the label's text
          to inherit the color (for example, when selected mode is on) */}
         <LabelContainer>
-          <p className="font-bold truncate ft-text-base">{title}</p>
-          {subtitle && <p className="truncate ft-text-sm">{subtitle}</p>}
+          <p
+            className={`font-bold ft-text-base ${
+              truncateText ? 'truncate' : ''
+            }`}
+          >
+            {title}
+          </p>
+          {subtitle && (
+            <p className={`ft-text-sm ${truncateText ? 'truncate' : ''}`}>
+              {subtitle}
+            </p>
+          )}
         </LabelContainer>
       </LeftContent>
       {iconRight && <span>{iconRight}</span>}
