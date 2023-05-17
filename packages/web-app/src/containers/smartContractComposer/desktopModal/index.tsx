@@ -18,7 +18,7 @@ type DesktopModalProps = {
   isOpen: boolean;
   actionIndex: number;
   onClose: () => void;
-  onConnect: () => void;
+  onConnectNew: () => void;
   onBackButtonClicked: () => void;
   onComposeButtonClicked: () => void;
 };
@@ -65,7 +65,7 @@ const DesktopModal: React.FC<DesktopModalProps> = props => {
                   trackEvent('newProposal_connectSmartContract_clicked', {
                     dao_address: daoAddressOrEns,
                   });
-                  props.onConnect();
+                  props.onConnectNew();
                 }}
                 className="w-full"
               />

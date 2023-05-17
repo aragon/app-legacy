@@ -6,9 +6,14 @@ import styled from 'styled-components';
 
 import {SmartContract} from 'utils/types';
 
-type ActionListGroupProps = Pick<SmartContract, 'actions'>;
+type ActionListGroupProps = Pick<SmartContract, 'actions'> & {
+  onActionSelected?: () => void;
+};
 
-const ActionListGroup: React.FC<ActionListGroupProps> = ({actions}) => {
+const ActionListGroup: React.FC<ActionListGroupProps> = ({
+  actions,
+  onActionSelected,
+}) => {
   const {t} = useTranslation();
   const {setValue} = useFormContext();
 
@@ -30,7 +35,10 @@ const ActionListGroup: React.FC<ActionListGroupProps> = ({actions}) => {
           subtitle={a.name}
           bgWhite
           iconRight={<IconChevronRight />}
-          onClick={() => setValue('selectedAction', a)}
+          onClick={() => {
+            setValue('selectedAction', a);
+            onActionSelected?.();
+          }}
           truncateText
         />
       ))}
