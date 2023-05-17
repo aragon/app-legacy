@@ -105,6 +105,9 @@ const ReviewProposal: React.FC<ReviewProposalProps> = ({
     )} ${getFormattedUtcOffset()}`;
   }, [daoSettings, startDate, t, values]);
 
+  /**
+   * This is the primary (approximate) end date display which is rendered in Voting Terminal
+   */
   const formattedEndDate = useMemo(() => {
     const {
       durationDays,
@@ -134,12 +137,18 @@ const ReviewProposal: React.FC<ReviewProposalProps> = ({
 
     const locale = (Locales as Record<string, Locale>)[i18n.language];
 
-    return formatDistanceToNow(endDateTime, {
+    const resultDate = formatDistanceToNow(endDateTime, {
       includeSeconds: true,
       locale,
     });
-  }, [i18n.language, values]);
 
+    return `${t('votingTerminal.label.in')} ${resultDate}`;
+  }, [i18n.language, t, values]);
+
+  /**
+   * This is the secondary, supplementary (precisely clear) end date display which is rendered in Voting Terminal
+   * UNDER primary end date.
+   */
   const formattedPreciseEndDate = useMemo(() => {
     let endDateTime: Date;
     const {

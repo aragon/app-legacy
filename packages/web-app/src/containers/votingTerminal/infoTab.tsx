@@ -19,6 +19,7 @@ type Props = Pick<
   | 'missingParticipation'
   | 'startDate'
   | 'endDate'
+  | 'preciseEndDate'
   | 'status'
 > & {
   currentApprovals?: number;
@@ -28,7 +29,6 @@ type Props = Pick<
   missingApprovalOrParticipation: number;
   uniqueVoters?: number;
   voteOptions: string;
-  preciseEndDate?: string;
 };
 
 const InfoTab: React.FC<Props> = ({
@@ -173,9 +173,7 @@ const InfoTab: React.FC<Props> = ({
         <InfoLine>
           <p>{t('votingTerminal.endDate')}</p>
           <EndDateWrapper>
-            <Strong>
-              {t('votingTerminal.label.in')} {endDate}
-            </Strong>
+            <Strong>{endDate}</Strong>
             {preciseEndDate && (
               <div className="flex gap-x-1 justify-end">
                 <p className="text-right text-ui-400 ft-text-sm">
