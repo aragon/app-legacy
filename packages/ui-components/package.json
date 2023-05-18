@@ -4,7 +4,7 @@
   "description": "Ui components library for Aragon",
   "author": "Aragon Association",
   "repository": "https://github.com/aragon/Zaragoza",
-  "license": "MIT",
+  "license": "GNU",
   "main": "dist/index.js",
   "module": "dist/ui-components.esm.js",
   "typings": "dist/index.d.ts",

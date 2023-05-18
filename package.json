@@ -4,7 +4,7 @@
   "description": "Aragon DAO Clients",
   "repository": "https://github.com/aragon/apps",
   "author": "Aragon Association",
-  "license": "MIT",
+  "license": "GNU",
   "private": true,
   "workspaces": {
     "packages": [
