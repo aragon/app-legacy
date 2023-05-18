@@ -1113,6 +1113,14 @@ export function augmentProposalWithCachedExecution(
  * @returns status for proposal
  */
 function calculateProposalStatus(proposal: DetailedProposal): ProposalStatus {
+  /**
+   * Be aware, since sometimes this function receives CACHED proposal which can contain
+   * empty fields (which by type definition supposed to be non-empty), you should be aware
+   * that it might require some handling.
+   *
+   * Watch out for differences between: DetailedProposal and CreateMajorityVotingProposalParams types.
+   */
+
   if (isErc20VotingProposal(proposal)) {
     const results = getErc20Results(
       proposal.result,
@@ -1129,7 +1137,9 @@ function calculateProposalStatus(proposal: DetailedProposal): ProposalStatus {
 
     // TODO calculate potentially executable
     return computeProposalStatus({
-      startDate: (proposal.startDate.getTime() / 1000).toString(),
+      startDate: (
+        (proposal.startDate || new Date()).getTime() / 1000
+      ).toString(),
       endDate: (proposal.endDate.getTime() / 1000).toString(),
       executed: false,
       potentiallyExecutable: isEarlyExecutable(
@@ -1141,7 +1151,9 @@ function calculateProposalStatus(proposal: DetailedProposal): ProposalStatus {
     });
   } else {
     return computeProposalStatus({
-      startDate: (proposal.startDate.getTime() / 1000).toString(),
+      startDate: (
+        (proposal.startDate || new Date()).getTime() / 1000
+      ).toString(),
       endDate: (proposal.endDate.getTime() / 1000).toString(),
       executed: false,
       potentiallyExecutable:
