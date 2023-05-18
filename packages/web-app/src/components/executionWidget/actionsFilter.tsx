@@ -9,6 +9,7 @@ import {ModifyMultisigSettingsCard} from './actions/modifyMultisigSettingsCard';
 import {ModifyMvSettingsCard} from './actions/modifySettingsCard';
 import {RemoveAddressCard} from './actions/removeAddressCard';
 import {WithdrawCard} from './actions/withdrawCard';
+import {SCCExecutionCard} from './actions/sccExecutionWidget';
 
 type ActionsFilterProps = {
   action: Action;
@@ -35,6 +36,8 @@ export const ActionsFilter: React.FC<ActionsFilterProps> = ({action}) => {
       return <ModifyMvSettingsCard action={action} />;
     case 'modify_multisig_voting_settings':
       return <ModifyMultisigSettingsCard action={action} />;
+    case 'external_contract_action':
+      return <SCCExecutionCard action={action} />;
     default:
       return <></>;
   }

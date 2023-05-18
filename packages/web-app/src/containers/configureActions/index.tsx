@@ -10,9 +10,10 @@ import AddActionMenu from 'containers/addActionMenu';
 import {useActionsContext} from 'context/actions';
 import {useGlobalModalContext} from 'context/globalModals';
 import {useDaoActions} from 'hooks/useDaoActions';
+import {trackEvent} from 'services/analytics';
 
 const ConfigureActions: React.FC = () => {
-  const {data: daoAddressOrEns} = useParams();
+  const {dao: daoAddressOrEns} = useParams();
   const {t} = useTranslation();
   const {open} = useGlobalModalContext();
   const {actions} = useActionsContext();
@@ -30,7 +31,12 @@ const ConfigureActions: React.FC = () => {
             bgWhite
             label={t('newProposal.configureActions.addAction')}
             iconLeft={<IconAdd />}
-            onClick={() => open('addAction')}
+            onClick={() => {
+              trackEvent('newProposal_addAction_clicked', {
+                dao_address: daoAddressOrEns,
+              });
+              open('addAction');
+            }}
             className="mt-2 w-full tablet:w-max"
           />
         </ActionsWrapper>

@@ -11,16 +11,21 @@ import {ListItemContract} from '../components/listItemContract';
 import SmartContractListGroup from '../components/smartContractListGroup';
 import Header from './header';
 import InputForm from '../components/inputForm';
+import {trackEvent} from 'services/analytics';
+import {useParams} from 'react-router-dom';
 
 type DesktopModalProps = {
   isOpen: boolean;
+  actionIndex: number;
   onClose: () => void;
   onConnect: () => void;
   onBackButtonClicked: () => void;
+  onComposeButtonClicked: () => void;
 };
 
 const DesktopModal: React.FC<DesktopModalProps> = props => {
   const {t} = useTranslation();
+  const {dao: daoAddressOrEns} = useParams();
   const [selectedSC]: [SmartContract] = useWatch({
     name: ['selectedSC'],
   });
@@ -56,14 +61,28 @@ const DesktopModal: React.FC<DesktopModalProps> = props => {
                 mode="secondary"
                 size="large"
                 label={t('scc.labels.connect')}
-                onClick={props.onConnect}
+                onClick={() => {
+                  trackEvent('newProposal_connectSmartContract_clicked', {
+                    dao_address: daoAddressOrEns,
+                  });
+                  props.onConnect();
+                }}
                 className="w-full"
               />
             </>
           )}
         </Aside>
 
-        <Main>{selectedSC ? <InputForm /> : <DesktopModalEmptyState />}</Main>
+        <Main>
+          {selectedSC ? (
+            <InputForm
+              actionIndex={props.actionIndex}
+              onComposeButtonClicked={props.onComposeButtonClicked}
+            />
+          ) : (
+            <DesktopModalEmptyState />
+          )}
+        </Main>
       </Wrapper>
     </StyledModal>
   );

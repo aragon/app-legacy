@@ -19,6 +19,7 @@ import {
   WidgetStatus,
 } from '@aragon/ui-components';
 import {shortenAddress} from '@aragon/ui-components/src/utils/addresses';
+import {bytesToHex} from '@aragon/sdk-common';
 import {withTransaction} from '@elastic/apm-rum-react';
 import TipTapLink from '@tiptap/extension-link';
 import {useEditor} from '@tiptap/react';
@@ -76,6 +77,8 @@ import {
   stripPlgnAdrFromProposalId,
 } from 'utils/proposals';
 import {Action, ProposalId} from 'utils/types';
+import {getEtherscanVerifiedContract} from 'services/etherscanAPI';
+import {addABI, decodeMethod} from 'utils/abiDecoder';
 
 // TODO: @Sepehr Please assign proper tags on action decoding
 // const PROPOSAL_TAGS = ['Finance', 'Withdraw'];
@@ -230,7 +233,6 @@ const Proposal: React.FC = () => {
           pluginClient?.decoding.findInterface(action.data);
 
         switch (functionParams?.functionName) {
-          case undefined:
           case 'transfer':
             return decodeWithdrawToAction(
               action.data,
@@ -274,7 +276,28 @@ const Proposal: React.FC = () => {
           case 'setMetadata':
             return decodeMetadataToAction(action.data, client);
           default:
-            return Promise.resolve({} as Action);
+            return getEtherscanVerifiedContract(action.to, network).then(
+              etherscanData => {
+                if (
+                  etherscanData.status === '1' &&
+                  etherscanData.result[0].ABI !==
+                    'Contract source code not verified'
+                ) {
+                  addABI(JSON.parse(etherscanData.result[0].ABI));
+                  const decodedData = decodeMethod(bytesToHex(action.data));
+
+                  if (decodedData) {
+                    return {
+                      name: 'external_contract_action',
+                      contractAddress: action.to,
+                      contractName: etherscanData.result[0].ContractName,
+                      functionName: decodedData.name,
+                      inputs: decodedData.params,
+                    };
+                  }
+                }
+              }
+            );
         }
       }
     );

@@ -23,10 +23,11 @@ import {useDaoToken} from 'hooks/useDaoToken';
 import {PluginTypes} from 'hooks/usePluginClient';
 import useScreen from 'hooks/useScreen';
 import {CHAIN_METADATA} from 'utils/constants';
-import {formatUnits} from 'utils/library';
+import {formatUnits, toDisplayEns} from 'utils/library';
 import {fetchBalance, getTokenInfo} from 'utils/tokens';
 import {ActionIndex} from 'utils/types';
 import {AddressAndTokenRow} from './addressTokenRow';
+import MintTokensToTreasuryMenu from 'containers/mintTokensToTreasuryMenu';
 
 type MintTokensProps = ActionIndex;
 
@@ -103,6 +104,7 @@ export const MintTokenForm: React.FC<MintTokenFormProps> = ({
   const {isDesktop} = useScreen();
   const {network} = useNetwork();
   const {infura} = useProviders();
+  const {alert} = useAlertContext();
   const nativeCurrency = CHAIN_METADATA[network].nativeCurrency;
 
   const {data: daoDetails} = useDaoDetailsQuery();
@@ -143,6 +145,14 @@ export const MintTokenForm: React.FC<MintTokenFormProps> = ({
     () => new Set<string>()
   );
   const [newHoldersCount, setNewHoldersCount] = useState(0);
+  const [mintTokensToTreasuryModal, setMintTokensToTreasuryModal] = useState<{
+    status: boolean;
+    index?: number;
+  }>({
+    status: false,
+  });
+
+  const isModalOpened = mintTokensToTreasuryModal.index !== undefined;
 
   /*************************************************
    *                    Effects                    *
@@ -341,6 +351,13 @@ export const MintTokenForm: React.FC<MintTokenFormProps> = ({
     }, 450);
   };
 
+  const openMintTreasuryModal = (index: number) => {
+    setMintTokensToTreasuryModal({
+      status: true,
+      index,
+    });
+  };
+
   // const handleCSVUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
   //   if (e.target.files && e.target.files[0]) {
   //     const myFile = e.target.files[0];
@@ -370,45 +387,51 @@ export const MintTokenForm: React.FC<MintTokenFormProps> = ({
    *                    Render                    *
    *************************************************/
   return (
-    <Container standAlone={standAlone}>
-      {isDesktop && (
-        <div className="flex items-center p-2 tablet:p-3 space-x-2">
-          <p className="flex-1 font-bold">
-            {t('labels.whitelistWallets.address')}
-          </p>
-          <p className="flex-1 font-bold">{t('finance.tokens')}</p>
-          <p className="flex-1 font-bold" style={{maxWidth: '11ch'}}>
-            {t('finance.allocation')}
-          </p>
-          <div className="w-6" />
-        </div>
-      )}
+    <>
+      <Container standAlone={standAlone}>
+        {isDesktop && (
+          <div className="flex items-center p-2 tablet:p-3 space-x-2">
+            <p className="flex-1 font-bold">
+              {t('labels.whitelistWallets.address')}
+            </p>
+            <p className="flex-1 font-bold">{t('finance.tokens')}</p>
+            <p className="flex-1 font-bold" style={{maxWidth: '11ch'}}>
+              {t('finance.allocation')}
+            </p>
+            <div className="w-6" />
+          </div>
+        )}
 
-      {fields.map((field, index) => {
-        return (
-          <AddressAndTokenRow
-            key={field.id}
-            actionIndex={actionIndex}
-            fieldIndex={index}
-            onClear={handleClearWallet}
-            onDelete={handleDeleteWallet}
-            newTokenSupply={newTokens.plus(Big(tokenSupply))}
+        {fields.map((field, index) => {
+          return (
+            <AddressAndTokenRow
+              key={field.id}
+              actionIndex={actionIndex}
+              fieldIndex={index}
+              onClear={handleClearWallet}
+              onDelete={handleDeleteWallet}
+              newTokenSupply={newTokens.plus(Big(tokenSupply))}
+              onEnterDaoAddress={openMintTreasuryModal}
+              //isModalOpened indicated whether the modal is opened or not
+              isModalOpened={isModalOpened}
+              daoAddress={daoDetails?.address}
+              ensName={toDisplayEns(daoDetails?.ensDomain)}
+            />
+          );
+        })}
+
+        <ButtonContainer>
+          <ButtonText
+            label={t('labels.addWallet')}
+            mode="secondary"
+            size="large"
+            bgWhite
+            className="flex-1 tablet:flex-initial"
+            onClick={handleAddWallet}
           />
-        );
-      })}
 
-      <ButtonContainer>
-        <ButtonText
-          label={t('labels.addWallet')}
-          mode="secondary"
-          size="large"
-          bgWhite
-          className="flex-1 tablet:flex-initial"
-          onClick={handleAddWallet}
-        />
-
-        {/* eslint-disable-next-line tailwindcss/classnames-order */}
-        {/* <label className="flex-1 tablet:flex-initial py-1.5 px-2 space-x-1.5 h-6 font-bold rounded-xl cursor-pointer hover:text-primary-500 bg-ui-0 ft-text-base">
+          {/* eslint-disable-next-line tailwindcss/classnames-order */}
+          {/* <label className="flex-1 tablet:flex-initial py-1.5 px-2 space-x-1.5 h-6 font-bold rounded-xl cursor-pointer hover:text-primary-500 bg-ui-0 ft-text-base">
           {t('labels.whitelistWallets.uploadCSV')}
           <input
             type="file"
@@ -418,38 +441,64 @@ export const MintTokenForm: React.FC<MintTokenFormProps> = ({
             hidden
           />
         </label> */}
-      </ButtonContainer>
-      {!daoTokenLoading && (
-        <SummaryContainer>
-          <p className="font-bold text-ui-800">{t('labels.summary')}</p>
-          <HStack>
-            <Label>{t('labels.newTokens')}</Label>
-            <p>
-              +{'' + newTokens} {daoToken?.symbol}
-            </p>
-          </HStack>
-          <HStack>
-            <Label>{t('labels.newHolders')}</Label>
-            <p>+{newHoldersCount}</p>
-          </HStack>
-          <HStack>
-            <Label>{t('labels.totalTokens')}</Label>
-            {tokenSupply ? (
+        </ButtonContainer>
+        {!daoTokenLoading && (
+          <SummaryContainer>
+            <p className="font-bold text-ui-800">{t('labels.summary')}</p>
+            <HStack>
+              <Label>{t('labels.newTokens')}</Label>
               <p>
-                {'' + newTokens.plus(Big(tokenSupply))} {daoToken?.symbol}
+                +{'' + newTokens} {daoToken?.symbol}
               </p>
-            ) : (
-              <p>...</p>
-            )}
-          </HStack>
-          <HStack>
-            <Label>{t('labels.totalHolders')}</Label>
-            <p>{newHoldersCount + (members?.length || 0)}</p>
-          </HStack>
-          {/* TODO add total amount of token holders here. */}
-        </SummaryContainer>
-      )}
-    </Container>
+            </HStack>
+            <HStack>
+              <Label>{t('labels.newHolders')}</Label>
+              <p>+{newHoldersCount}</p>
+            </HStack>
+            <HStack>
+              <Label>{t('labels.totalTokens')}</Label>
+              {tokenSupply ? (
+                <p>
+                  {'' + newTokens.plus(Big(tokenSupply))} {daoToken?.symbol}
+                </p>
+              ) : (
+                <p>...</p>
+              )}
+            </HStack>
+            <HStack>
+              <Label>{t('labels.totalHolders')}</Label>
+              <p>{newHoldersCount + (members?.length || 0)}</p>
+            </HStack>
+            {/* TODO add total amount of token holders here. */}
+          </SummaryContainer>
+        )}
+      </Container>
+      <MintTokensToTreasuryMenu
+        isOpen={mintTokensToTreasuryModal.status}
+        onCloseReset={() => {
+          // undefined index means that the modal was closed without confirming the contract address
+          setMintTokensToTreasuryModal({
+            status: false,
+          });
+          setValue(
+            `actions.${actionIndex}.inputs.mintTokensToWallets.${mintTokensToTreasuryModal.index}.address`,
+            ''
+          );
+          alert(t('modal.mintTokensToTreasury.alertChipCritical'));
+        }}
+        onClose={() => {
+          setMintTokensToTreasuryModal({
+            ...mintTokensToTreasuryModal,
+            status: false,
+          });
+          alert(t('modal.mintTokensToTreasury.alertChipSuccess'));
+        }}
+        daoAddress={{
+          address: daoDetails?.address,
+          ensName: toDisplayEns(daoDetails?.ensDomain),
+        }}
+      />
+    </>
   );
 };
 

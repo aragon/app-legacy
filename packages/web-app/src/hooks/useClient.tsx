@@ -72,7 +72,8 @@ export const UseClientProvider: React.FC = ({children}) => {
         },
       },
     ];
-    if (network !== 'ethereum') {
+
+    if (CHAIN_METADATA[network].testnet) {
       ipfsNodes = [
         {
           url: IPFS_ENDPOINT_TEST,
@@ -86,14 +87,10 @@ export const UseClientProvider: React.FC = ({children}) => {
     const contextParams: ContextParams = {
       daoFactoryAddress: LIVE_CONTRACTS[translatedNetwork].daoFactory,
       network: translatedNetwork,
-      signer: signer || undefined,
+      signer: signer ?? undefined,
       web3Providers: CHAIN_METADATA[network].rpc[0],
       ipfsNodes,
-      graphqlNodes: [
-        {
-          url: SUBGRAPH_API_URL[network]!,
-        },
-      ],
+      graphqlNodes: [{url: SUBGRAPH_API_URL[network]!}],
     };
 
     const sdkContext = new SdkContext(contextParams);

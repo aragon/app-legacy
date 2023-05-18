@@ -55,16 +55,17 @@ export function enableAnalytics() {
   if (analyticsKey) {
     rudderAnalytics.load(
       analyticsKey as string,
-      'https://rudderstack.aragon.org',
+      'https://rs-proxy.aragon.org',
       {
         configUrl: 'https://rs-proxy.aragon.org',
         secureCookie: true,
-        sendAdblockPage: true,
+        sendAdblockPage: false,
         sendAdblockPageOptions: {
           integrations: {
             All: false,
           },
         },
+        destSDKBaseURL: 'https://rs-proxy.aragon.org/v1.1/js-integrations',
       }
     );
   }

@@ -1,6 +1,7 @@
 const images = require('@rollup/plugin-image');
 const postcss = require('rollup-plugin-postcss');
 const replace = require('@rollup/plugin-replace');
+const { uglify } = require('rollup-plugin-uglify');
 
 module.exports = {
   rollup(config, opts) {
@@ -33,6 +34,9 @@ module.exports = {
       images({include: ['**/*.png', '**/*.jpg', '**/*.svg']}),
       ...config.plugins,
     ];
+
+    config.plugins.push(uglify());
+
     return config;
   },
 };

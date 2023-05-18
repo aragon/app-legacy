@@ -170,8 +170,6 @@ export const DaoExplorer = () => {
  */
 function toDaoSortBy(filter: ExploreFilter) {
   switch (filter) {
-    case 'popular':
-      return DaoSortBy.POPULARITY;
     case 'newest':
       return DaoSortBy.CREATED_AT;
     default:

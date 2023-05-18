@@ -20,8 +20,10 @@ import {
   TokenVotingOptions,
   getErc20Results,
   isErc20VotingProposal,
+  stripPlgnAdrFromProposalId,
 } from 'utils/proposals';
 import {ProposalListItem} from 'utils/types';
+import {useWallet} from 'hooks/useWallet';
 
 type ProposalListProps = {
   proposals: Array<ProposalListItem>;
@@ -55,6 +57,7 @@ const ProposalList: React.FC<ProposalListProps> = ({
 }) => {
   const {t} = useTranslation();
   const {network} = useNetwork();
+  const {address} = useWallet();
   const navigate = useNavigate();
 
   const {data: members, isLoading: areMembersLoading} = useDaoMembers(
@@ -71,10 +74,19 @@ const ProposalList: React.FC<ProposalListProps> = ({
           network,
           navigate,
           t,
-          daoAddressOrEns
+          daoAddressOrEns,
+          address
         )
       ),
-    [proposals, daoAddressOrEns, members.members.length, network, navigate, t]
+    [
+      proposals,
+      members.members.length,
+      network,
+      navigate,
+      t,
+      daoAddressOrEns,
+      address,
+    ]
   );
 
   if (isLoading || areMembersLoading) {
@@ -125,7 +137,8 @@ export function proposal2CardProps(
   network: SupportedNetworks,
   navigate: NavigateFunction,
   t: TFunction,
-  daoAddressOrEns: string
+  daoAddressOrEns: string,
+  address: string | null
 ): {id: string} & CardProposalProps {
   const props = {
     id: proposal.id,
@@ -210,11 +223,18 @@ export function proposal2CardProps(
           abstain: t('votingTerminal.abstain'),
         };
 
+        const votedAlertLabel = proposal.votes?.some(
+          v => v.address.toLowerCase() === address?.toLowerCase()
+        )
+          ? t('governance.proposals.alert.voted')
+          : undefined;
+
         const activeProps = {
           voteProgress: winningOption.percentage,
           voteLabel: options[winningOption.option],
           tokenSymbol: proposal.token.symbol,
           tokenAmount: winningOption.value.toString(),
+          votedAlertLabel,
         };
         return {...proposalProps, ...activeProps};
       }
@@ -236,7 +256,15 @@ export function proposal2CardProps(
       ),
     };
     if (proposal.status.toLowerCase() === 'active') {
+      const votedAlertLabel = proposal.approvals?.some(
+        v =>
+          stripPlgnAdrFromProposalId(v).toLowerCase() === address?.toLowerCase()
+      )
+        ? t('governance.proposals.alert.voted')
+        : undefined;
+
       const activeProps = {
+        votedAlertLabel,
         voteProgress: relativeVoteCount(proposal.approvals.length, memberCount),
         winningOptionValue: `${proposal.approvals.length} ${t(
           'votingTerminal.ofMemberCount',

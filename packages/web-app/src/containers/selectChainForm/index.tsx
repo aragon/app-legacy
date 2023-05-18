@@ -23,7 +23,7 @@ const SelectChainForm: React.FC = () => {
   const {t} = useTranslation();
   const {isMobile} = useScreen();
   const {setNetwork, network} = useNetwork();
-  const {control} = useFormContext();
+  const {control, resetField} = useFormContext();
 
   // const [isOpen, setIsOpen] = useState(false);
   // const [sortFilter, setFilter] = useState<SortFilter>('cost');
@@ -153,6 +153,10 @@ const SelectChainForm: React.FC = () => {
                     label: CHAIN_METADATA[selectedNetwork].name,
                     network: networkType,
                   });
+                  if (!CHAIN_METADATA[selectedNetwork].supportsEns) {
+                    // reset daoEnsName if network changed to L2
+                    resetField('daoEnsName');
+                  }
                 }}
                 selected={CHAIN_METADATA[selectedNetwork].id === field.value.id}
                 // tag={index === 0 ? labels[sortFilter].tag : undefined}

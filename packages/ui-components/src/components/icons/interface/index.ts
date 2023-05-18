@@ -23,6 +23,7 @@ export {IconPerson} from './icon_person';
 export {IconRadioDefault} from './icon_radio_default';
 export {IconRadioCancel} from './radio';
 export {IconRadioSelected} from './icon_radio_selected';
+export {IconRadioMulti} from './icon_radio_multi';
 export {IconRemove} from './icon_remove';
 export {IconSearch} from './icon_search';
 export {IconSettings} from './icon_settings';

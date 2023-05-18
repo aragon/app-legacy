@@ -17,7 +17,7 @@ export function useDaoActions(dao: string): HookData<ActionParameter[]> {
       isReuseable: true,
     },
     {
-      type: 'external_contract',
+      type: 'external_contract_modal',
       title: t('AddActionModal.externalContract'),
       subtitle: t('AddActionModal.externalContractSubtitle'),
       isReuseable: true,

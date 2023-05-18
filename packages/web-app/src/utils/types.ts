@@ -10,6 +10,7 @@ import {
   VotingSettings,
 } from '@aragon/sdk-client';
 import {Address} from '@aragon/ui-components/src/utils/addresses';
+import {BigNumber} from 'ethers/lib/ethers';
 
 import {TimeFilter, TransferTypes} from './constants';
 
@@ -213,7 +214,8 @@ export type ActionsTypes =
   | 'remove_address'
   | 'withdraw_assets'
   | 'mint_tokens'
-  | 'external_contract'
+  | 'external_contract_modal'
+  | 'external_contract_action'
   | 'modify_token_voting_settings'
   | 'modify_metadata'
   | 'modify_multisig_voting_settings'
@@ -301,6 +303,19 @@ export type ActionUpdateMetadata = {
   inputs: DaoMetadata;
 };
 
+export type ActionSCC = {
+  name: 'external_contract_action';
+  contractName: string;
+  contractAddress: string;
+  functionName: string;
+  inputs: Array<{
+    name: string;
+    type: string;
+    notice?: string;
+    value: object | string | BigNumber;
+  }>;
+};
+
 // TODO: Consider making this a generic type that take other types of the form
 // like ActionAddAddress (or more generically, ActionItem...?) instead taking the
 // union of those subtypes. [VR 11-08-2022]
@@ -312,7 +327,8 @@ export type Action =
   | ActionUpdatePluginSettings
   | ActionUpdateMetadata
   | ActionUpdateMinimumApproval
-  | ActionUpdateMultisigPluginSettings;
+  | ActionUpdateMultisigPluginSettings
+  | ActionSCC;
 
 export type ParamType = {
   type: string;
@@ -372,11 +388,36 @@ export type EtherscanContractResponse = {
   SourceCode: string;
 };
 
+export type SourcifyContractResponse = {
+  output: {
+    abi: SmartContractAction[];
+    devdoc: {
+      title: string;
+      methods: {
+        // contract write method name with its input params
+        [key: string]: {
+          // description for each method
+          details: string;
+          params: {
+            // contract method input params
+            [key: string]: string;
+          };
+          returns: {
+            // contract method output params
+            [key: string]: string;
+          };
+        };
+      };
+    };
+  };
+};
+
 export type SmartContractAction = {
   name: string;
   type: string;
   stateMutability: string;
   inputs: Input[];
+  notice?: string;
 };
 
 export interface Input {
@@ -385,6 +426,7 @@ export interface Input {
   indexed?: boolean;
   components?: Input[];
   internalType?: string;
+  notice?: string;
 }
 
 export type SmartContract = {

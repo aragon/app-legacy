@@ -19,27 +19,34 @@ import SmartContractListGroup from '../components/smartContractListGroup';
 import DesktopModal from '../desktopModal';
 import {ActionSearchInput} from '../desktopModal/header';
 import {ListItemContract} from '../components/listItemContract';
+import {trackEvent} from 'services/analytics';
+import {useParams} from 'react-router-dom';
 
 type Props = {
   isOpen: boolean;
+  actionIndex: number;
   onClose: () => void;
   onConnectNew: () => void;
   onBackButtonClicked: () => void;
+  onComposeButtonClicked: () => void;
 };
 
 const SmartContractList: React.FC<Props> = props => {
   const {t} = useTranslation();
   const {isDesktop} = useScreen();
+  const {dao: daoAddressOrEns} = useParams();
 
   const selectedSC: SmartContract = useWatch({name: 'selectedSC'});
 
   if (isDesktop)
     return (
       <DesktopModal
+        actionIndex={props.actionIndex}
         isOpen={props.isOpen}
         onClose={props.onClose}
         onConnect={props.onConnectNew}
         onBackButtonClicked={props.onBackButtonClicked}
+        onComposeButtonClicked={props.onComposeButtonClicked}
       />
     );
 
@@ -74,7 +81,12 @@ const SmartContractList: React.FC<Props> = props => {
               mode="secondary"
               size="large"
               label={t('scc.labels.connect')}
-              onClick={props.onConnectNew}
+              onClick={() => {
+                trackEvent('newProposal_connectSmartContract_clicked', {
+                  dao_address: daoAddressOrEns,
+                });
+                props.onConnectNew();
+              }}
               className="w-full"
             />
           </>
