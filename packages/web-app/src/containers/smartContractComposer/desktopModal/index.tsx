@@ -40,7 +40,14 @@ const DesktopModal: React.FC<DesktopModalProps> = props => {
               <ListItemContract
                 key={selectedSC.address}
                 title={selectedSC.name}
-                subtitle={`${selectedSC.actions.length} Actions to compose`}
+                subtitle={`${
+                  selectedSC.actions.filter(
+                    a =>
+                      a.type === 'function' &&
+                      (a.stateMutability === 'payable' ||
+                        a.stateMutability === 'nonpayable')
+                  ).length
+                } Actions to compose`}
                 logo={selectedSC.logo}
                 bgWhite
                 iconRight={<IconMenuVertical />}

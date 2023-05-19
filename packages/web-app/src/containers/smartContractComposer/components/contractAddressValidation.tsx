@@ -52,7 +52,6 @@ import {useQueryClient} from '@tanstack/react-query';
 import {htmlIn} from 'utils/htmlIn';
 import {trackEvent} from 'services/analytics';
 import {useParams} from 'react-router-dom';
-import {extractNatSpec, flattenNatSpecTags} from 'utils/contract';
 
 type AugmentedEtherscanContractResponse = EtherscanContractResponse &
   SourcifyContractResponse & {
@@ -174,11 +173,6 @@ const ContractAddressValidation: React.FC<Props> = props => {
           };
           setContractName(value.output.devdoc.title as string);
         } else {
-          if (type === 'etherscanMatch') {
-            const NatSpec = extractNatSpec(value.SourceCode);
-            console.log('NatSpec', flattenNatSpecTags(NatSpec));
-          }
-
           verifiedContract = {
             actions: JSON.parse(value?.ABI || ''),
             address: addressField,
