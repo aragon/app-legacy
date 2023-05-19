@@ -151,14 +151,14 @@
     "@web3-react/types" "^6.0.7"
     tiny-warning "^1.0.3"
 
-"@aragon/sdk-client@^1.3.1":
-  version "1.3.1"
-  resolved "https://registry.yarnpkg.com/@aragon/sdk-client/-/sdk-client-1.3.1.tgz#b795292accf998f1bd4228dd32036f2034b0044a"
-  integrity sha512-J43xRUre3d2wBHNLDROEzwbsER8YsEw5rD9OVPzddOaSWRZf4n0kH3Bp3U6n3cTbbA55gWZFvMwLGJ2K3TJZ1w==
+"@aragon/sdk-client@^1.6.0":
+  version "1.6.0"
+  resolved "https://registry.yarnpkg.com/@aragon/sdk-client/-/sdk-client-1.6.0.tgz#cdcfec2edcead0e54db0ecec2cc142f62240a85c"
+  integrity sha512-Cqyw5SqGifbshD2fi+NYQpNwe9WKt1cASmbW1bD0PO/9o5LGFe62t1GJcm5K/hg8ssrbfbWNVnSLn0ZqUEBmGw==
   dependencies:
     "@aragon/osx-ethers" "^1.2.1"
-    "@aragon/sdk-common" "^1.1.0"
-    "@aragon/sdk-ipfs" "^1.0.0"
+    "@aragon/sdk-common" "^1.2.0"
+    "@aragon/sdk-ipfs" "^1.1.0"
     "@ethersproject/abstract-signer" "^5.5.0"
     "@ethersproject/bignumber" "^5.6.0"
     "@ethersproject/constants" "^5.6.0"
@@ -168,15 +168,15 @@
     graphql "^16.5.0"
     graphql-request "^4.3.0"
 
-"@aragon/sdk-common@^1.1.0":
-  version "1.1.0"
-  resolved "https://registry.yarnpkg.com/@aragon/sdk-common/-/sdk-common-1.1.0.tgz#90cf9b8cff3a0ffd3d27f8dc269c2c7689265fae"
-  integrity sha512-6aRzwJV/hrBgElEKLbd3QjopynXie9Xl8Re5HWwHWr+V2BtQs6pKzAmJ7xOoaZhpA8O51tg27HxoOSdXTjvYNg==
+"@aragon/sdk-common@^1.2.0":
+  version "1.2.0"
+  resolved "https://registry.yarnpkg.com/@aragon/sdk-common/-/sdk-common-1.2.0.tgz#1672079119a17498b0fdf4beed3f2326ee348ffa"
+  integrity sha512-uBdsmCxINBnn4aTIGWeemtjZntAwXCnhyOTKEtC1IQThSMPssm+S++r4J9CHcZgKLISqnpBKvFtv5Q7zEDf2gQ==
 
-"@aragon/sdk-ipfs@^1.0.0":
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/@aragon/sdk-ipfs/-/sdk-ipfs-1.0.0.tgz#83586d8c8125bd73321ee18a857680319b76469a"
-  integrity sha512-2Zh+ggJW42uHlZc1fyE1TG94A34l2kf9STW2gRZ7nMtqzD71JVt9rVl454H/lENX6RG4OUP/iSVii+WI7ZGJFQ==
+"@aragon/sdk-ipfs@^1.1.0":
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/@aragon/sdk-ipfs/-/sdk-ipfs-1.1.0.tgz#178ee5ce840ce40b44ba0345dd5068e1b5608f9d"
+  integrity sha512-2uAh/QPcmaita4AfHYV93lESzAhrmGEZ6CL7pvOH86HTkU6j7LnePvD1ly+x0hxRznTb+zgVgSPPKUn0ArPycw==
   dependencies:
     "@web-std/fetch" "^4.1.0"
     "@web-std/file" "^3.0.2"

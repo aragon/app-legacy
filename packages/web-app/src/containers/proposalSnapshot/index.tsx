@@ -18,6 +18,7 @@ import {PluginTypes} from 'hooks/usePluginClient';
 import {htmlIn} from 'utils/htmlIn';
 import {Governance, NewProposal} from 'utils/paths';
 import {ProposalListItem} from 'utils/types';
+import {useWallet} from 'hooks/useWallet';
 
 type Props = {
   daoAddressOrEns: string;
@@ -34,6 +35,7 @@ const ProposalSnapshot: React.FC<Props> = ({
 }) => {
   const {t} = useTranslation();
   const navigate = useNavigate();
+  const {address} = useWallet();
   const {network} = useNetwork(); // TODO ensure this is the dao network
 
   const {data: members, isLoading: areMembersLoading} = useDaoMembers(
@@ -50,10 +52,19 @@ const ProposalSnapshot: React.FC<Props> = ({
           network,
           navigate,
           t,
-          daoAddressOrEns
+          daoAddressOrEns,
+          address
         )
       ),
-    [proposals, members.members.length, network, navigate, t, daoAddressOrEns]
+    [
+      proposals,
+      members.members.length,
+      network,
+      navigate,
+      t,
+      daoAddressOrEns,
+      address,
+    ]
   );
 
   if (proposals.length === 0 || areMembersLoading) {

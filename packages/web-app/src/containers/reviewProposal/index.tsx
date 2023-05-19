@@ -3,11 +3,12 @@ import {Link, VoterType} from '@aragon/ui-components';
 import TipTapLink from '@tiptap/extension-link';
 import {EditorContent, useEditor} from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
-import {format} from 'date-fns';
+import {format, formatDistanceToNow, Locale} from 'date-fns';
 import React, {useEffect, useMemo} from 'react';
 import {useFormContext} from 'react-hook-form';
 import {TFunction, useTranslation} from 'react-i18next';
 import styled from 'styled-components';
+import * as Locales from 'date-fns/locale';
 
 import {ExecutionWidget} from 'components/executionWidget';
 import {useFormStep} from 'components/fullScreenStepper';
@@ -43,7 +44,7 @@ const ReviewProposal: React.FC<ReviewProposalProps> = ({
   defineProposalStepNumber,
   addActionsStepNumber,
 }) => {
-  const {t} = useTranslation();
+  const {t, i18n} = useTranslation();
   const {setStep} = useFormStep();
 
   const {data: daoDetails} = useDaoDetailsQuery();
@@ -77,10 +78,12 @@ const ReviewProposal: React.FC<ReviewProposalProps> = ({
 
   const startDate = useMemo(() => {
     const {startSwitch, startDate, startTime, startUtc} = values;
+
     if (startSwitch === 'now') {
+      const startMinutesDelay = isMultisigVotingSettings(daoSettings) ? 0 : 10;
       return new Date(
         `${getCanonicalDate()}T${getCanonicalTime({
-          minutes: 10,
+          minutes: startMinutesDelay,
         })}:00${getCanonicalUtcOffset()}`
       );
     } else {
@@ -88,18 +91,65 @@ const ReviewProposal: React.FC<ReviewProposalProps> = ({
         `${startDate}T${startTime}:00${getCanonicalUtcOffset(startUtc)}`
       );
     }
-  }, [values]);
+  }, [daoSettings, values]);
 
-  const formattedStartDate = useMemo(
-    () =>
-      `${format(
-        startDate,
-        KNOWN_FORMATS.proposals
-      )} ${getFormattedUtcOffset()}`,
-    [startDate]
-  );
+  const formattedStartDate = useMemo(() => {
+    const {startSwitch} = values;
+    if (startSwitch === 'now' || isMultisigVotingSettings(daoSettings)) {
+      return t('labels.now');
+    }
 
+    return `${format(
+      startDate,
+      KNOWN_FORMATS.proposals
+    )} ${getFormattedUtcOffset()}`;
+  }, [daoSettings, startDate, t, values]);
+
+  /**
+   * This is the primary (approximate) end date display which is rendered in Voting Terminal
+   */
   const formattedEndDate = useMemo(() => {
+    const {
+      durationDays,
+      durationHours,
+      durationMinutes,
+      durationSwitch,
+      endDate,
+      endTime,
+      endUtc,
+    } = values;
+
+    let endDateTime: Date;
+    if (durationSwitch === 'duration') {
+      endDateTime = new Date(
+        `${getCanonicalDate({
+          days: durationDays,
+        })}T${getCanonicalTime({
+          hours: durationHours,
+          minutes: durationMinutes,
+        })}:00${getCanonicalUtcOffset()}`
+      );
+    } else {
+      endDateTime = new Date(
+        `${endDate}T${endTime}:00${getCanonicalUtcOffset(endUtc)}`
+      );
+    }
+
+    const locale = (Locales as Record<string, Locale>)[i18n.language];
+
+    const resultDate = formatDistanceToNow(endDateTime, {
+      includeSeconds: true,
+      locale,
+    });
+
+    return `${t('votingTerminal.label.in')} ${resultDate}`;
+  }, [i18n.language, t, values]);
+
+  /**
+   * This is the secondary, supplementary (precisely clear) end date display which is rendered in Voting Terminal
+   * UNDER primary end date.
+   */
+  const formattedPreciseEndDate = useMemo(() => {
     let endDateTime: Date;
     const {
       durationDays,
@@ -129,14 +179,17 @@ const ReviewProposal: React.FC<ReviewProposalProps> = ({
 
     // adding 10 minutes to offset the 10 minutes added by starting now
     if (startSwitch === 'now') {
-      endDateTime = new Date(endDateTime.getTime() + minutesToMills(10));
+      const startMinutesDelay = isMultisigVotingSettings(daoSettings) ? 0 : 10;
+      endDateTime = new Date(
+        endDateTime.getTime() + minutesToMills(startMinutesDelay)
+      );
     }
 
-    return `${format(
+    return `~${format(
       endDateTime,
       KNOWN_FORMATS.proposals
     )} ${getFormattedUtcOffset()}`;
-  }, [values]);
+  }, [daoSettings, values]);
 
   const terminalProps = useMemo(
     () =>
@@ -196,6 +249,7 @@ const ReviewProposal: React.FC<ReviewProposalProps> = ({
             statusLabel={t('votingTerminal.status.draft')}
             startDate={formattedStartDate}
             endDate={formattedEndDate}
+            preciseEndDate={formattedPreciseEndDate}
             token={daoToken}
             {...terminalProps}
           />

@@ -39,6 +39,7 @@ export type VotingTerminalProps = {
   voteNowDisabled?: boolean;
   startDate?: string;
   endDate?: string;
+  preciseEndDate?: string;
   minApproval?: number;
   minParticipation?: string;
   currentParticipation?: string;
@@ -80,6 +81,7 @@ export const VotingTerminal: React.FC<VotingTerminalProps> = ({
   token,
   startDate,
   endDate,
+  preciseEndDate,
   status,
   statusLabel,
   strategy,
@@ -193,6 +195,7 @@ export const VotingTerminal: React.FC<VotingTerminalProps> = ({
           currentParticipation={currentParticipation}
           currentApprovals={approvals?.length}
           endDate={endDate}
+          preciseEndDate={preciseEndDate}
           memberCount={voters.length}
           minApproval={minApproval}
           minimumReached={minimumReached}

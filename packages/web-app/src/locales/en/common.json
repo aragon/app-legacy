@@ -281,6 +281,9 @@
         "edit": "Edit proposal",
         "readFullProposal": "Read full proposal",
         "closeFullProposal": "Close full proposal"
+      },
+      "alert": {
+        "voted": "You have already voted."
       }
     },
     "settings": {
@@ -806,6 +809,9 @@
       "titleSearch": "No result found for {{query}}",
       "title": "No voters yet",
       "subtitle": "Search for another wallet address or ENS"
+    },
+    "label": {
+      "in": "In"
     }
   },
   "explore": {
