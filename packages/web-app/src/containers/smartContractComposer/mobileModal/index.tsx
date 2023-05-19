@@ -41,7 +41,15 @@ const MobileModal: React.FC<Props> = props => {
 
   return (
     <BottomSheet isOpen={props.isOpen} onClose={props.onClose}>
-      <CustomMobileHeader onBackButtonClicked={props.onBackButtonClicked} />
+      <CustomMobileHeader
+        onBackButtonClicked={() => {
+          if (isActionSelected) {
+            setIsActionSelected(false);
+          } else {
+            props.onBackButtonClicked();
+          }
+        }}
+      />
       <Content>
         {!isActionSelected ? (
           selectedSC ? (
@@ -49,7 +57,14 @@ const MobileModal: React.FC<Props> = props => {
               <ListItemContract
                 key={selectedSC.address}
                 title={selectedSC.name}
-                subtitle={`${selectedSC.actions.length} Actions to compose`}
+                subtitle={`${
+                  selectedSC.actions.filter(
+                    a =>
+                      a.type === 'function' &&
+                      (a.stateMutability === 'payable' ||
+                        a.stateMutability === 'nonpayable')
+                  ).length
+                } Actions to compose`}
                 bgWhite
                 logo={selectedSC.logo}
                 iconRight={<IconMenuVertical />}

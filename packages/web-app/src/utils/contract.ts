@@ -255,3 +255,17 @@ export const skipWhitespace = (str: string, start: number) => {
   while (' \t\n\r\v'.indexOf(str[pos]) > -1 && pos < str.length) pos++;
   return pos;
 };
+
+export const flattenNatSpecTags = (
+  NatSpec: Record<string, NatspecContract>
+) => {
+  const flatTags: Record<string, unknown> = {};
+
+  Object.values(NatSpec).map(contract => {
+    Object.values(contract.details).map(
+      details => (flatTags[details.name] = details.tags)
+    );
+  });
+
+  return flatTags;
+};
