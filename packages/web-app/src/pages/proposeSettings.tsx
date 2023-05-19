@@ -679,7 +679,10 @@ const ProposeSettingWrapper: React.FC<Props> = ({
         daoAddress: daoDetails?.address,
         daoName: daoDetails?.metadata.name,
         proposalGuid,
-        proposalParams: proposalCreationData,
+        proposalParams: {
+          ...proposalCreationData,
+          startDate: proposalCreationData.startDate || new Date(), // important to fallback to avoid passing undefined
+        },
         metadata: {
           title,
           summary,
