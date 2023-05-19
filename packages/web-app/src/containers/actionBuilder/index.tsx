@@ -76,7 +76,6 @@ const Action: React.FC<ActionsComponentProps> = ({
         <AddAddresses
           actionIndex={actionIndex}
           currentDaoMembers={daoMembers?.members}
-          allowRemove={allowRemove}
         />
       );
     case 'remove_address':
