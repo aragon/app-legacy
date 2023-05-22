@@ -40,6 +40,7 @@ import {handleClipboardActions} from 'utils/library';
 import {
   EtherscanContractResponse,
   SmartContract,
+  SmartContractAction,
   SourcifyContractResponse,
 } from 'utils/types';
 import ModalHeader from './modalHeader';
@@ -52,6 +53,7 @@ import {useQueryClient} from '@tanstack/react-query';
 import {htmlIn} from 'utils/htmlIn';
 import {trackEvent} from 'services/analytics';
 import {useParams} from 'react-router-dom';
+import {extractNatspec} from 'utils/contract';
 
 type AugmentedEtherscanContractResponse = EtherscanContractResponse &
   SourcifyContractResponse & {
@@ -156,6 +158,23 @@ const ContractAddressValidation: React.FC<Props> = props => {
     });
   }
 
+  function attachEtherNotice(
+    SourceCode: AugmentedEtherscanContractResponse['SourceCode'],
+    ContractName: string,
+    ABI: SmartContractAction[]
+  ): SmartContractAction[] {
+    const EtherNotice = extractNatspec(SourceCode);
+    const notices = EtherNotice[ContractName]?.details;
+
+    return ABI.map(action => {
+      if (action.type === 'function' && notices[action.name]) {
+        action.notice = notices[action.name].tags.notice as string;
+      }
+
+      return action;
+    });
+  }
+
   const setVerifiedContract = useCallback(
     (type: string, value: AugmentedEtherscanContractResponse, logo: string) => {
       if (value) {
@@ -173,10 +192,16 @@ const ContractAddressValidation: React.FC<Props> = props => {
           };
           setContractName(value.output.devdoc.title as string);
         } else {
+          const actions = attachEtherNotice(
+            value.SourceCode,
+            value.ContractName,
+            JSON.parse(value?.ABI || '')
+          );
+
           verifiedContract = {
-            actions: JSON.parse(value?.ABI || ''),
+            actions: actions,
             address: addressField,
-            name: value?.ContractName,
+            name: value.ContractName,
             logo,
           };
           setContractName(value?.ContractName);
