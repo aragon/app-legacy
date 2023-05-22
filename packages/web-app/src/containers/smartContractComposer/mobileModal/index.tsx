@@ -42,6 +42,7 @@ const MobileModal: React.FC<Props> = props => {
   return (
     <BottomSheet isOpen={props.isOpen} onClose={props.onClose}>
       <CustomMobileHeader
+        onClose={props.onClose}
         onBackButtonClicked={() => {
           if (isActionSelected) {
             setIsActionSelected(false);
@@ -129,8 +130,8 @@ const CustomMobileHeader: React.FC<CustomHeaderProps> = props => {
           icon={<IconChevronLeft />}
           bgWhite
           onClick={() => {
-            setValue('selectedSC', null);
             setValue('selectedAction', null);
+            props.onBackButtonClicked();
           }}
         />
       ) : (
@@ -146,7 +147,7 @@ const CustomMobileHeader: React.FC<CustomHeaderProps> = props => {
         mode="secondary"
         size="small"
         icon={<IconClose />}
-        onClick={props.onBackButtonClicked}
+        onClick={props.onClose}
         bgWhite
       />
     </Header>
