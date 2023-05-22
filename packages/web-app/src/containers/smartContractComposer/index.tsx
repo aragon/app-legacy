@@ -84,6 +84,13 @@ const SCC: React.FC<SCC> = ({actionIndex}) => {
           setValue('selectedSC', null);
           setValue('selectedAction', null);
         }}
+        onRemoveContract={() => {
+          setValue('selectedSC', null);
+          setValue('selectedAction', null);
+          setContractListIsOpen(false);
+          resetField('sccActions');
+          removeAction(actionIndex);
+        }}
       />
 
       <EmptyState

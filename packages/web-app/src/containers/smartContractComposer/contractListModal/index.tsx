@@ -11,6 +11,7 @@ type Props = {
   onConnectNew: () => void;
   onBackButtonClicked: () => void;
   onComposeButtonClicked: () => void;
+  onRemoveContract: (address: string) => void;
 };
 
 const SmartContractList: React.FC<Props> = props => {

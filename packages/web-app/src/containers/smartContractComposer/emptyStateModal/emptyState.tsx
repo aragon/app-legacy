@@ -6,6 +6,7 @@ import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 import {trackEvent} from 'services/analytics';
 import {useParams} from 'react-router-dom';
+import {IconFeedback, Link} from '@aragon/ui-components';
 
 type Props = {
   isOpen: boolean;
@@ -36,7 +37,7 @@ const EmptyState: React.FC<Props> = props => {
           title={t('scc.emptyState.title')}
           description={t('scc.emptyState.description')}
           primaryButton={{
-            label: t('scc.emptyState.primaryBtnLabel'),
+            label: t('scc.emptyState.ctaLabel'),
             onClick: () => {
               trackEvent('newProposal_connectSmartContract_clicked', {
                 dao_address: daoAddressOrEns,

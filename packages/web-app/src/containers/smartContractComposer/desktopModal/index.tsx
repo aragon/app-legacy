@@ -1,5 +1,11 @@
-import {ButtonText, IconMenuVertical, Modal} from '@aragon/ui-components';
-import React from 'react';
+import {
+  ButtonText,
+  IconFeedback,
+  IconMenuVertical,
+  Link,
+  Modal,
+} from '@aragon/ui-components';
+import React, {useState} from 'react';
 import {useWatch} from 'react-hook-form';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
@@ -13,6 +19,7 @@ import Header from './header';
 import InputForm from '../components/inputForm';
 import {trackEvent} from 'services/analytics';
 import {useParams} from 'react-router-dom';
+import {actionsFilter} from 'utils/contract';
 
 type DesktopModalProps = {
   isOpen: boolean;
@@ -29,10 +36,15 @@ const DesktopModal: React.FC<DesktopModalProps> = props => {
   const [selectedSC]: [SmartContract] = useWatch({
     name: ['selectedSC'],
   });
+  const [search, setSearch] = useState('');
 
   return (
     <StyledModal isOpen={props.isOpen} onClose={props.onClose}>
-      <Header onClose={props.onClose} selectedContract={selectedSC?.name} />
+      <Header
+        onClose={props.onClose}
+        selectedContract={selectedSC?.name}
+        onSearch={setSearch}
+      />
       <Wrapper>
         <Aside>
           {selectedSC ? (
@@ -40,25 +52,21 @@ const DesktopModal: React.FC<DesktopModalProps> = props => {
               <ListItemContract
                 key={selectedSC.address}
                 title={selectedSC.name}
-                subtitle={`${
-                  selectedSC.actions.filter(
+                subtitle={t('scc.listContracts.contractAmountActions', {
+                  amount: selectedSC.actions.filter(
                     a =>
                       a.type === 'function' &&
                       (a.stateMutability === 'payable' ||
                         a.stateMutability === 'nonpayable')
                   ).length
-                } Actions to compose`}
+                .toString(),
+                })}
                 logo={selectedSC.logo}
                 bgWhite
                 iconRight={<IconMenuVertical />}
               />
               <ActionListGroup
-                actions={selectedSC.actions.filter(
-                  a =>
-                    a.type === 'function' &&
-                    (a.stateMutability === 'payable' ||
-                      a.stateMutability === 'nonpayable')
-                )}
+                actions={selectedSC.actions.filter(actionsFilter(search))}
               />
             </>
           ) : (
@@ -75,6 +83,14 @@ const DesktopModal: React.FC<DesktopModalProps> = props => {
                   props.onConnectNew();
                 }}
                 className="w-full"
+              />
+              <Link
+                external
+                type="primary"
+                iconRight={<IconFeedback height={13} width={13} />}
+                href={t('scc.listContracts.learnLinkURL')}
+                label={t('scc.listContracts.learnLinkLabel')}
+                className="justify-center w-full"
               />
             </>
           )}
