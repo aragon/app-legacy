@@ -37,7 +37,7 @@ const ConfigureActions: React.FC<ConfigureActionsProps> = ({
   onAddExtraActionClick,
   allowEmpty = true,
 }) => {
-  const {data: daoAddressOrEns} = useParams();
+  const {dao: daoAddressOrEns} = useParams();
   const {t} = useTranslation();
   const {open} = useGlobalModalContext();
   const {actions, addAction} = useActionsContext();
