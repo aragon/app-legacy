@@ -167,7 +167,7 @@ const ContractAddressValidation: React.FC<Props> = props => {
     const notices = EtherNotice[ContractName]?.details;
 
     return ABI.map(action => {
-      if (action.type === 'function' && notices[action.name]) {
+      if (action.type === 'function' && notices?.[action.name]) {
         action.notice = notices[action.name].tags.notice as string;
       }
 
