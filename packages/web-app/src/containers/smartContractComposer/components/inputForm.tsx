@@ -1,5 +1,6 @@
 import {
   ButtonText,
+  IconSuccess,
   NumberInput,
   TextInput,
   WalletInput,
@@ -57,8 +58,20 @@ const InputForm: React.FC<InputFormProps> = ({
 
   return (
     <div className="desktop:p-6 min-h-full bg-ui-50 desktop:bg-white">
-      <ActionName>{selectedAction.name}</ActionName>
+      <div className="desktop:flex items-baseline space-x-3">
+        <ActionName>{selectedAction.name}</ActionName>
+        <div className="hidden desktop:flex items-center space-x-1 text-primary-600">
+          <p className="text-sm font-bold text-primary-500">
+            {selectedSC.name}
+          </p>
+          <IconSuccess />
+        </div>
+      </div>
       <ActionDescription>{selectedAction.notice}</ActionDescription>
+      <div className="flex desktop:hidden items-center mt-1 space-x-1 text-primary-600">
+        <p className="text-sm font-bold text-primary-500">{selectedSC.name}</p>
+        <IconSuccess />
+      </div>
       {selectedAction.inputs.length > 0 ? (
         <div className="p-3 mt-5 space-y-2 bg-white desktop:bg-ui-50 rounded-xl border-ui-100 shadow-100">
           {selectedAction.inputs.map(input => (
