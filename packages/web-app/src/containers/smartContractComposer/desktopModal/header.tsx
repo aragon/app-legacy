@@ -12,6 +12,7 @@ import styled from 'styled-components';
 type DesktopModalHeaderProps = {
   onClose?: () => void;
   selectedContract?: string; // Note: may come from form, not set in stone
+  onSearch?: (search: string) => void;
 };
 
 const DesktopModalHeader: React.FC<DesktopModalHeaderProps> = props => {
@@ -41,6 +42,7 @@ const DesktopModalHeader: React.FC<DesktopModalHeaderProps> = props => {
         <ActionSearchInput
           type="text"
           placeholder={t('scc.labels.searchPlaceholder')}
+          onChange={e => props.onSearch?.(e.target.value)}
         />
       </LeftContent>
       <ButtonIcon

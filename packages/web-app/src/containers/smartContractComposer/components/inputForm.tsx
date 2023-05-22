@@ -189,7 +189,7 @@ const InputForm: React.FC<InputFormProps> = ({
         <div className="p-3 mt-5 space-y-2 bg-white desktop:bg-ui-50 rounded-xl border border-ui-100 shadow-100">
           {actionInputs.map(input => (
             <div key={input.name}>
-              <div className="text-base font-bold text-ui-800 capitalize">
+              <div className="text-base font-bold capitalize text-ui-800">
                 {input.name}
                 <span className="ml-0.5 text-sm normal-case">
                   ({input.type})
@@ -317,6 +317,22 @@ export const ComponentForType: React.FC<ComponentForTypeProps> = ({
           )}
         />
       );
+
+    case 'tuple':
+      input.components?.map(component => (
+        <div key={component.name}>
+          <div className="mb-1.5 text-base font-bold capitalize text-ui-800">
+            {input.name}
+          </div>
+          <ComponentForType
+            key={component.name}
+            input={component}
+            functionName={input.name}
+            disabled={disabled}
+          />
+        </div>
+      ));
+      break;
 
     default:
       return (
