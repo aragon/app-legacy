@@ -20,7 +20,7 @@ jobs:
         if: contains(github.ref, '/DOPS-')
         id: envtest
         run: |
-          echo "environment=development" >> $GITHUB_OUTPUT    ## temp, change it if have another env 
+          echo "environment=development" >> $GITHUB_OUTPUT    ## temp, change it if have another env
 
       - name: Set environment to DEV
         if: endsWith(github.ref, '/develop')
@@ -103,10 +103,11 @@ jobs:
           VITE_REACT_APP_ANALYTICS_KEY: ${{ secrets.VITE_REACT_APP_ANALYTICS_KEY }}
           VITE_IPFS_API_KEY: ${{ secrets.VITE_IPFS_API_KEY }}
           VITE_ETHERSCAN_API_KEY: ${{ secrets.VITE_ETHERSCAN_API_KEY }}
+          VITE_POLYGONSCAN_API_KEY: ${{secrets.VITE_POLYGONSCAN_API_KEY}}
           VITE_INFURA_GOERLI_PROJECT_ID: ${{ secrets.VITE_INFURA_GOERLI_PROJECT_ID }}
           VITE_INFURA_MAINNET_PROJECT_ID: ${{ secrets.VITE_INFURA_MAINNET_PROJECT_ID }}
           VITE_INFURA_API_KEY: ${{ secrets.VITE_INFURA_API_KEY }}
-          VITE_WALLET_CONNECT_PROJECT_ID: ${{ secrets.VITE_WALLET_CONNECT_PROJECT_ID }} 
+          VITE_WALLET_CONNECT_PROJECT_ID: ${{ secrets.VITE_WALLET_CONNECT_PROJECT_ID }}
           VITE_ALCHEMY_KEY_POLYGON_MUMBAI: ${{ secrets.VITE_ALCHEMY_KEY_POLYGON_MUMBAI }}
           VITE_ALCHEMY_KEY_POLYGON_MAINNET: ${{ secrets.VITE_ALCHEMY_KEY_POLYGON_MUMBAI }}
           VITE_ALCHEMY_KEY_MAINNET: ${{ secrets.VITE_ALCHEMY_KEY_MAINNET }}
@@ -168,7 +169,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      ## The 'fs' scan mode requires *.lock files in order to scan for vulns 
+      ## The 'fs' scan mode requires *.lock files in order to scan for vulns
       ## and to collect license info of packages you should run npm install before.
       - name: Setup NodeJS before scanning with Trivy
         uses: actions/setup-node@v3
@@ -246,7 +247,7 @@ jobs:
         with:
           scan-type: image
           scanners: vuln,secret,config
-          image-ref: ghcr.io/${{ github.repository }}:${{ needs.build-and-deploy.outputs.CONTAINER_TAG }} 
+          image-ref: ghcr.io/${{ github.repository }}:${{ needs.build-and-deploy.outputs.CONTAINER_TAG }}
           format: table
         env:
           TRIVY_USERNAME: ${{ github.repository_owner }}
@@ -257,7 +258,7 @@ jobs:
         with:
           scan-type: image
           scanners: vuln,secret,config
-          image-ref: ghcr.io/${{ github.repository }}:${{ needs.build-and-deploy.outputs.CONTAINER_TAG }} 
+          image-ref: ghcr.io/${{ github.repository }}:${{ needs.build-and-deploy.outputs.CONTAINER_TAG }}
           format: template
           template: '@/contrib/html.tpl'
           output: trivy-results-docker-${{ needs.build-and-deploy.outputs.GIT_HASH_SHORT }}.html
@@ -270,7 +271,7 @@ jobs:
         with:
           scan-type: image
           scanners: vuln,secret,config
-          image-ref: ghcr.io/${{ github.repository }}:${{ needs.build-and-deploy.outputs.CONTAINER_TAG }} 
+          image-ref: ghcr.io/${{ github.repository }}:${{ needs.build-and-deploy.outputs.CONTAINER_TAG }}
           format: sarif
           output: trivy-results-docker-${{ needs.build-and-deploy.outputs.GIT_HASH_SHORT }}.sarif
         env:
