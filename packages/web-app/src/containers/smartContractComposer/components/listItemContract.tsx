@@ -1,12 +1,10 @@
 import {
-  ButtonIcon,
   Dropdown,
   IconMenuVertical,
   ListItemAction,
   ListItemActionProps,
   ListItemProps,
 } from '@aragon/ui-components';
-import {t} from 'i18next';
 import React from 'react';
 
 type Props = Omit<ListItemActionProps, 'iconLeft'> & {

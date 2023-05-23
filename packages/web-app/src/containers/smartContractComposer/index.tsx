@@ -6,7 +6,10 @@ import ContractAddressValidation from 'containers/smartContractComposer/componen
 import SmartContractList from 'containers/smartContractComposer/contractListModal';
 import EmptyState from 'containers/smartContractComposer/emptyStateModal/emptyState';
 import {SmartContract, SmartContractAction} from 'utils/types';
-import {getVerifiedSmartContracts} from 'services/cache';
+import {
+  getVerifiedSmartContracts,
+  removeVerifiedSmartContract,
+} from 'services/cache';
 import {useWallet} from 'hooks/useWallet';
 import {CHAIN_METADATA} from 'utils/constants';
 import {useActionsContext} from 'context/actions';
@@ -32,7 +35,7 @@ const SCC: React.FC<SCC> = ({actionIndex}) => {
   const [addressValidationIsOpen, setAddressValidationIsOpen] = useState(false);
 
   const {network} = useNetwork();
-  const {setValue, resetField} = useFormContext();
+  const {setValue, getValues, resetField} = useFormContext();
   const connectedContracts = useWatch({name: 'contracts'});
   const {removeAction} = useActionsContext();
 
@@ -84,12 +87,23 @@ const SCC: React.FC<SCC> = ({actionIndex}) => {
           setValue('selectedSC', null);
           setValue('selectedAction', null);
         }}
-        onRemoveContract={() => {
+        onRemoveContract={scAddress => {
           setValue('selectedSC', null);
           setValue('selectedAction', null);
-          setContractListIsOpen(false);
           resetField('sccActions');
-          removeAction(actionIndex);
+          removeVerifiedSmartContract(
+            scAddress,
+            address,
+            CHAIN_METADATA[network].id
+          );
+          const currentContracts = getValues('contracts') as SmartContract[];
+          const removeIdx = currentContracts.findIndex(
+            ({address}) => address === scAddress
+          );
+          if (removeIdx !== -1) {
+            currentContracts.splice(removeIdx, 1);
+            setValue('contracts', currentContracts);
+          }
         }}
       />
 

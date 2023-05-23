@@ -1,10 +1,4 @@
-import {
-  ButtonText,
-  IconFeedback,
-  IconMenuVertical,
-  Link,
-  Modal,
-} from '@aragon/ui-components';
+import {ButtonText, IconFeedback, Link, Modal} from '@aragon/ui-components';
 import React, {useState} from 'react';
 import {useWatch} from 'react-hook-form';
 import {useTranslation} from 'react-i18next';
@@ -13,13 +7,13 @@ import styled from 'styled-components';
 import {StateEmpty} from 'components/stateEmpty';
 import {SmartContract} from 'utils/types';
 import ActionListGroup from '../components/actionListGroup';
-import {ListItemContract} from '../components/listItemContract';
 import SmartContractListGroup from '../components/smartContractListGroup';
 import Header from './header';
 import InputForm from '../components/inputForm';
 import {trackEvent} from 'services/analytics';
 import {useParams} from 'react-router-dom';
 import {actionsFilter} from 'utils/contract';
+import {ListHeaderContract} from '../components/listHeaderContract';
 
 type DesktopModalProps = {
   isOpen: boolean;
@@ -28,6 +22,7 @@ type DesktopModalProps = {
   onConnectNew: () => void;
   onBackButtonClicked: () => void;
   onComposeButtonClicked: () => void;
+  onRemoveContract: (address: string) => void;
 };
 
 const DesktopModal: React.FC<DesktopModalProps> = props => {
@@ -49,21 +44,10 @@ const DesktopModal: React.FC<DesktopModalProps> = props => {
         <Aside>
           {selectedSC ? (
             <>
-              <ListItemContract
+              <ListHeaderContract
                 key={selectedSC.address}
-                title={selectedSC.name}
-                subtitle={t('scc.listContracts.contractAmountActions', {
-                  amount: selectedSC.actions.filter(
-                    a =>
-                      a.type === 'function' &&
-                      (a.stateMutability === 'payable' ||
-                        a.stateMutability === 'nonpayable')
-                  ).length
-                .toString(),
-                })}
-                logo={selectedSC.logo}
-                bgWhite
-                iconRight={<IconMenuVertical />}
+                sc={selectedSC}
+                onRemoveContract={props.onRemoveContract}
               />
               <ActionListGroup
                 actions={selectedSC.actions.filter(actionsFilter(search))}

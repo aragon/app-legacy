@@ -26,6 +26,7 @@ const SmartContractList: React.FC<Props> = props => {
         onConnectNew={props.onConnectNew}
         onBackButtonClicked={props.onBackButtonClicked}
         onComposeButtonClicked={props.onComposeButtonClicked}
+        onRemoveContract={props.onRemoveContract}
       />
     );
 

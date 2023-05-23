@@ -289,3 +289,39 @@ export function addVerifiedSmartContract(
     console.error('Error parsing verified contracts from localStorage:', error);
   }
 }
+
+export function removeVerifiedSmartContract(
+  contractAddress: string,
+  walletAddress: string | null,
+  chainId: SupportedChainID
+): void {
+  // Ensure the contract, daoAddress, and chainId parameters are defined
+  if (!contractAddress || !walletAddress || !chainId) {
+    throw new Error('Contract, daoAddress, and chainId must be defined');
+  }
+
+  // get the contracts from local storage
+  let verifiedContracts = {} as VerifiedContracts;
+  try {
+    verifiedContracts = JSON.parse(
+      localStorage.getItem(VERIFIED_CONTRACTS_KEY) || '{}'
+    );
+
+    // remove the contract from the list
+    const walletChainContracts = verifiedContracts[walletAddress]?.[chainId];
+    if (!walletChainContracts) return;
+
+    const idxContract = walletChainContracts.findIndex(
+      c => c.address === contractAddress
+    );
+    if (idxContract >= 0) walletChainContracts.splice(idxContract, 1);
+
+    // add the new contracts into storage
+    localStorage.setItem(
+      VERIFIED_CONTRACTS_KEY,
+      JSON.stringify(verifiedContracts)
+    );
+  } catch (error) {
+    console.error('Error parsing verified contracts from localStorage:', error);
+  }
+}
