@@ -73,9 +73,13 @@ export type ChainData = {
   rpc: string[];
   nativeCurrency: NativeTokenData;
   etherscanApi: string;
+  etherscanApiKey?: string;
   alchemyApi: string;
   supportsEns: boolean;
 };
+
+const etherscanApiKey = import.meta.env.VITE_ETHERSCAN_API_KEY;
+const polygonscanApiKey = import.meta.env.VITE_POLYGONSCAN_API_KEY;
 
 export type ChainList = Record<SupportedNetworks, ChainData>;
 export const CHAIN_METADATA: ChainList = {
@@ -113,6 +117,7 @@ export const CHAIN_METADATA: ChainList = {
       decimals: 18,
     },
     etherscanApi: 'https://api.etherscan.io/api',
+    etherscanApiKey: etherscanApiKey,
     alchemyApi: 'https://eth-mainnet.g.alchemy.com/v2',
     supportsEns: true,
   },
@@ -133,6 +138,7 @@ export const CHAIN_METADATA: ChainList = {
       decimals: 18,
     },
     etherscanApi: 'https://api.polygonscan.com/api',
+    etherscanApiKey: polygonscanApiKey,
     alchemyApi: 'https://polygon-mainnet.g.alchemy.com/v2',
     supportsEns: false,
   },
@@ -170,6 +176,7 @@ export const CHAIN_METADATA: ChainList = {
       decimals: 18,
     },
     etherscanApi: 'https://api-goerli.etherscan.io/api',
+    etherscanApiKey: etherscanApiKey,
     alchemyApi: 'https://eth-goerli.g.alchemy.com/v2',
     supportsEns: true,
   },
@@ -190,6 +197,7 @@ export const CHAIN_METADATA: ChainList = {
       decimals: 18,
     },
     etherscanApi: 'https://api-testnet.polygonscan.com/api',
+    etherscanApiKey: polygonscanApiKey,
     alchemyApi: 'https://polygon-mumbai.g.alchemy.com/v2',
     supportsEns: false,
   },

@@ -16,8 +16,7 @@ export const useValidateContractEtherscan = (
   network: SupportedNetworks,
   verificationState: TransactionState
 ) => {
-  const apiKey = import.meta.env.VITE_ETHERSCAN_API_KEY;
-  const url = `${CHAIN_METADATA[network].etherscanApi}?module=contract&action=getsourcecode&address=${contractAddress}&apikey=${apiKey}`;
+  const url = `${CHAIN_METADATA[network].etherscanApi}?module=contract&action=getsourcecode&address=${contractAddress}&apikey=${CHAIN_METADATA[network].etherscanApiKey}`;
 
   return useQuery({
     queryKey: ['verifyContractEtherscan', contractAddress, network],
