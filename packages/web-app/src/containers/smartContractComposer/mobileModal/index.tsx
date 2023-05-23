@@ -33,6 +33,7 @@ type Props = {
 const MobileModal: React.FC<Props> = props => {
   const {t} = useTranslation();
   const {dao: daoAddressOrEns} = useParams();
+  const {setValue} = useFormContext();
   const [isActionSelected, setIsActionSelected] = useState(false);
 
   const [selectedSC]: [SmartContract] = useWatch({
@@ -45,7 +46,10 @@ const MobileModal: React.FC<Props> = props => {
         onClose={props.onClose}
         onBackButtonClicked={() => {
           if (isActionSelected) {
+            setValue('selectedAction', null);
             setIsActionSelected(false);
+          } else if (selectedSC !== null) {
+            setValue('selectedSC', null);
           } else {
             props.onBackButtonClicked();
           }
@@ -118,7 +122,7 @@ type CustomHeaderProps = {
 };
 const CustomMobileHeader: React.FC<CustomHeaderProps> = props => {
   const {t} = useTranslation();
-  const {setValue} = useFormContext();
+
   const selectedSC: SmartContract = useWatch({name: 'selectedSC'});
 
   return (
@@ -129,10 +133,7 @@ const CustomMobileHeader: React.FC<CustomHeaderProps> = props => {
           size="small"
           icon={<IconChevronLeft />}
           bgWhite
-          onClick={() => {
-            setValue('selectedAction', null);
-            props.onBackButtonClicked();
-          }}
+          onClick={props.onBackButtonClicked}
         />
       ) : (
         <ButtonIcon mode="secondary" size="small" icon={<IconHome />} bgWhite />
