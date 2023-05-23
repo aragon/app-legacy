@@ -52,7 +52,7 @@ const SCCAction: React.FC<ActionIndex & {allowRemove?: boolean}> = ({
       >
         <FormItem className="space-y-3 rounded-b-xl">
           {actionData.inputs?.length > 0 ? (
-            <div className="space-y-2">
+            <div className="pb-1.5 space-y-2">
               {(actionData.inputs as Input[]).map((input, index) => (
                 <div key={input.name}>
                   <div className="text-base font-bold text-ui-800 capitalize">
