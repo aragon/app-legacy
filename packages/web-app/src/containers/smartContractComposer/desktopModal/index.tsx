@@ -1,6 +1,6 @@
 import {ButtonText, IconFeedback, Link, Modal} from '@aragon/ui-components';
 import React, {useState} from 'react';
-import {useWatch} from 'react-hook-form';
+import {useFormContext, useWatch} from 'react-hook-form';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 
@@ -14,6 +14,7 @@ import {trackEvent} from 'services/analytics';
 import {useParams} from 'react-router-dom';
 import {actionsFilter} from 'utils/contract';
 import {ListHeaderContract} from '../components/listHeaderContract';
+import {SccFormData} from '..';
 
 type DesktopModalProps = {
   isOpen: boolean;
@@ -32,6 +33,11 @@ const DesktopModal: React.FC<DesktopModalProps> = props => {
     name: ['selectedSC'],
   });
   const [search, setSearch] = useState('');
+  const {getValues} = useFormContext<SccFormData>();
+
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore
+  const contracts = getValues('contracts') || [];
 
   return (
     <StyledModal isOpen={props.isOpen} onClose={props.onClose}>
@@ -55,7 +61,24 @@ const DesktopModal: React.FC<DesktopModalProps> = props => {
             </>
           ) : (
             <>
-              <SmartContractListGroup />
+              {contracts.length !== 1 ? (
+                <SmartContractListGroup />
+              ) : (
+                <>
+                  <div>
+                    <ListHeaderContract
+                      key={contracts[0].address}
+                      sc={contracts[0]}
+                      onRemoveContract={props.onRemoveContract}
+                    />
+                    <ActionListGroup
+                      actions={contracts[0].actions.filter(
+                        actionsFilter(search)
+                      )}
+                    />
+                  </div>
+                </>
+              )}
               <ButtonText
                 mode="secondary"
                 size="large"
