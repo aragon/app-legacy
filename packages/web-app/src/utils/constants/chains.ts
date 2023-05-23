@@ -73,7 +73,6 @@ export type ChainData = {
   rpc: string[];
   nativeCurrency: NativeTokenData;
   etherscanApi: string;
-  etherscanApiKeyName: string;
   alchemyApi: string;
   supportsEns: boolean;
 };
@@ -94,7 +93,6 @@ export const CHAIN_METADATA: ChainList = {
       decimals: 18,
     },
     etherscanApi: 'https://api.arbiscan.io/api',
-    etherscanApiKeyName: '',
     alchemyApi: 'https://arb-mainnet.g.alchemy.com/v2',
     supportsEns: false,
   },
@@ -115,7 +113,6 @@ export const CHAIN_METADATA: ChainList = {
       decimals: 18,
     },
     etherscanApi: 'https://api.etherscan.io/api',
-    etherscanApiKeyName: 'VITE_ETHERSCAN_API_KEY',
     alchemyApi: 'https://eth-mainnet.g.alchemy.com/v2',
     supportsEns: true,
   },
@@ -136,7 +133,6 @@ export const CHAIN_METADATA: ChainList = {
       decimals: 18,
     },
     etherscanApi: 'https://api.polygonscan.com/api',
-    etherscanApiKeyName: 'VITE_POLYGONSCAN_API_KEY',
     alchemyApi: 'https://polygon-mainnet.g.alchemy.com/v2',
     supportsEns: false,
   },
@@ -154,7 +150,6 @@ export const CHAIN_METADATA: ChainList = {
       decimals: 18,
     },
     etherscanApi: 'https://api-goerli.arbiscan.io/api',
-    etherscanApiKeyName: '',
     alchemyApi: 'https://arb-goerli.g.alchemy.com/v2',
     supportsEns: false,
   },
@@ -175,7 +170,6 @@ export const CHAIN_METADATA: ChainList = {
       decimals: 18,
     },
     etherscanApi: 'https://api-goerli.etherscan.io/api',
-    etherscanApiKeyName: 'VITE_ETHERSCAN_API_KEY',
     alchemyApi: 'https://eth-goerli.g.alchemy.com/v2',
     supportsEns: true,
   },
@@ -196,7 +190,6 @@ export const CHAIN_METADATA: ChainList = {
       decimals: 18,
     },
     etherscanApi: 'https://api-testnet.polygonscan.com/api',
-    etherscanApiKeyName: 'VITE_POLYGONSCAN_API_KEY',
     alchemyApi: 'https://polygon-mumbai.g.alchemy.com/v2',
     supportsEns: false,
   },
@@ -214,7 +207,6 @@ export const CHAIN_METADATA: ChainList = {
       decimals: 18,
     },
     etherscanApi: '',
-    etherscanApiKeyName: '',
     alchemyApi: '',
     supportsEns: false,
   },
