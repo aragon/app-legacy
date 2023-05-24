@@ -53,7 +53,7 @@ import {useQueryClient} from '@tanstack/react-query';
 import {htmlIn} from 'utils/htmlIn';
 import {trackEvent} from 'services/analytics';
 import {useParams} from 'react-router-dom';
-import {extractNatspec, parseSourceCode} from 'utils/contract';
+import {extractNatSpec, parseSourceCode} from 'utils/contract';
 
 type AugmentedEtherscanContractResponse = EtherscanContractResponse &
   SourcifyContractResponse & {
@@ -164,7 +164,7 @@ const ContractAddressValidation: React.FC<Props> = props => {
     ABI: SmartContractAction[]
   ): SmartContractAction[] {
     const parsedSourceCode = parseSourceCode(SourceCode);
-    const EtherNotice = extractNatspec(parsedSourceCode);
+    const EtherNotice = extractNatSpec(parsedSourceCode);
     const notices = EtherNotice[ContractName]?.details;
 
     return ABI.map(action => {
