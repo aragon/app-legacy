@@ -18,7 +18,7 @@ type DesktopModalProps = {
   isOpen: boolean;
   actionIndex: number;
   onClose: () => void;
-  onConnect: () => void;
+  onConnectNew: () => void;
   onBackButtonClicked: () => void;
   onComposeButtonClicked: () => void;
 };
@@ -40,7 +40,14 @@ const DesktopModal: React.FC<DesktopModalProps> = props => {
               <ListItemContract
                 key={selectedSC.address}
                 title={selectedSC.name}
-                subtitle={`${selectedSC.actions.length} Actions to compose`}
+                subtitle={`${
+                  selectedSC.actions.filter(
+                    a =>
+                      a.type === 'function' &&
+                      (a.stateMutability === 'payable' ||
+                        a.stateMutability === 'nonpayable')
+                  ).length
+                } Actions to compose`}
                 logo={selectedSC.logo}
                 bgWhite
                 iconRight={<IconMenuVertical />}
@@ -65,7 +72,7 @@ const DesktopModal: React.FC<DesktopModalProps> = props => {
                   trackEvent('newProposal_connectSmartContract_clicked', {
                     dao_address: daoAddressOrEns,
                   });
-                  props.onConnect();
+                  props.onConnectNew();
                 }}
                 className="w-full"
               />

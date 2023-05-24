@@ -1,13 +1,17 @@
 import {
+  AlertInline,
   ButtonText,
+  IconSuccess,
   NumberInput,
   TextInput,
   WalletInput,
 } from '@aragon/ui-components';
 import {useActionsContext} from 'context/actions';
 import {useAlertContext} from 'context/alert';
+import {useNetwork} from 'context/network';
+import {ethers} from 'ethers';
 import {t} from 'i18next';
-import React, {useEffect} from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 import {
   Controller,
   FormProvider,
@@ -15,8 +19,10 @@ import {
   useFormContext,
   useWatch,
 } from 'react-hook-form';
+import {useTranslation} from 'react-i18next';
 import {useParams} from 'react-router-dom';
 import {trackEvent} from 'services/analytics';
+import {getEtherscanVerifiedContract} from 'services/etherscanAPI';
 import styled from 'styled-components';
 import {
   getUserFriendlyWalletLabel,
@@ -34,6 +40,8 @@ const InputForm: React.FC<InputFormProps> = ({
   actionIndex,
   onComposeButtonClicked,
 }) => {
+  const {t} = useTranslation();
+  const {network} = useNetwork();
   const [selectedAction, selectedSC, sccActions]: [
     SmartContractAction,
     SmartContract,
@@ -44,21 +52,108 @@ const InputForm: React.FC<InputFormProps> = ({
   const {dao: daoAddressOrEns} = useParams();
   const {addAction, removeAction} = useActionsContext();
   const {setValue, resetField} = useFormContext();
+  const [formError, setFormError] = useState(false);
+
+  useEffect(() => setFormError(false), [selectedAction]);
+
+  const composeAction = useCallback(async () => {
+    setFormError(false);
+
+    const etherscanData = await getEtherscanVerifiedContract(
+      selectedSC.address,
+      network
+    );
+
+    if (
+      etherscanData.status === '1' &&
+      etherscanData.result[0].ABI !== 'Contract source code not verified'
+    ) {
+      const functionParams = selectedAction.inputs?.map(
+        input => sccActions[selectedSC.address][selectedAction.name][input.name]
+      );
+
+      const iface = new ethers.utils.Interface(etherscanData.result[0].ABI);
+
+      try {
+        iface.encodeFunctionData(selectedAction.name, functionParams);
+
+        removeAction(actionIndex);
+        addAction({
+          name: 'external_contract_action',
+        });
+
+        resetField(`actions.${actionIndex}`);
+        setValue(`actions.${actionIndex}.name`, 'external_contract_action');
+        setValue(`actions.${actionIndex}.contractAddress`, selectedSC.address);
+        setValue(`actions.${actionIndex}.contractName`, selectedSC.name);
+        setValue(`actions.${actionIndex}.functionName`, selectedAction.name);
+        setValue(`actions.${actionIndex}.notice`, selectedAction.notice);
+
+        selectedAction.inputs?.map((input, index) => {
+          setValue(`actions.${actionIndex}.inputs.${index}`, {
+            ...selectedAction.inputs[index],
+            value:
+              sccActions[selectedSC.address][selectedAction.name][input.name],
+          });
+        });
+        resetField('sccActions');
+        onComposeButtonClicked();
+
+        trackEvent('newProposal_composeAction_clicked', {
+          dao_address: daoAddressOrEns,
+          smart_contract_address: selectedSC.address,
+          smart_contract_name: selectedSC.name,
+          method_name: selectedAction.name,
+        });
+      } catch (e) {
+        // Invalid input data being passed to the action
+        setFormError(true);
+        console.error('Error invalidating action inputs', e);
+      }
+    }
+  }, [
+    actionIndex,
+    addAction,
+    daoAddressOrEns,
+    network,
+    onComposeButtonClicked,
+    removeAction,
+    resetField,
+    sccActions,
+    selectedAction.inputs,
+    selectedAction.name,
+    selectedAction.notice,
+    selectedSC.address,
+    selectedSC.name,
+    setValue,
+  ]);
 
   if (!selectedAction) {
     return (
-      <div className="p-6 min-h-full bg-white">
+      <div className="desktop:p-6 min-h-full bg-ui-50 desktop:bg-white">
         Sorry, no public Write functions were found for this contract.
       </div>
     );
   }
 
   return (
-    <div className="p-6 min-h-full bg-white">
-      <ActionName>{selectedAction.name}</ActionName>
+    <div className="desktop:p-6 min-h-full bg-ui-50 desktop:bg-white">
+      <div className="desktop:flex items-baseline space-x-3">
+        <ActionName>{selectedAction.name}</ActionName>
+        <div className="hidden desktop:flex items-center space-x-1 text-primary-600">
+          <p className="text-sm font-bold text-primary-500">
+            {selectedSC.name}
+          </p>
+          <IconSuccess />
+        </div>
+      </div>
       <ActionDescription>{selectedAction.notice}</ActionDescription>
+      <div className="flex desktop:hidden items-center mt-1 space-x-1 text-primary-600">
+        <p className="text-sm font-bold text-primary-500">{selectedSC.name}</p>
+        <IconSuccess />
+      </div>
       {selectedAction.inputs.length > 0 ? (
-        <div className="p-3 mt-5 space-y-2 bg-ui-50 rounded-xl border-ui-100 shadow-100">
+        <div className="p-3 mt-5 space-y-2 bg-white desktop:bg-ui-50 rounded-xl border border-ui-100 shadow-100">
           {selectedAction.inputs.map(input => (
             <div key={input.name}>
               <div className="text-base font-bold text-ui-800 capitalize">
@@ -81,43 +176,22 @@ const InputForm: React.FC<InputFormProps> = ({
       ) : null}
 
       <ButtonText
-        label="Compose"
-        className="mt-5"
-        onClick={() => {
-          removeAction(actionIndex);
-          addAction({
-            name: 'external_contract_action',
-          });
-
-          resetField(`actions.${actionIndex}`);
-          setValue(`actions.${actionIndex}.name`, 'external_contract_action');
-          setValue(
-            `actions.${actionIndex}.contractAddress`,
-            selectedSC.address
-          );
-          setValue(`actions.${actionIndex}.contractName`, selectedSC.name);
-          setValue(`actions.${actionIndex}.functionName`, selectedAction.name);
-
-          selectedAction.inputs?.map((input, index) => {
-            setValue(`actions.${actionIndex}.inputs.${index}`, {
-              ...selectedAction.inputs[index],
-              value:
-                sccActions[selectedSC.address][selectedAction.name][input.name],
-            });
-          });
-          resetField('sccActions');
-          onComposeButtonClicked();
-
-          trackEvent('newProposal_composeAction_clicked', {
-            dao_address: daoAddressOrEns,
-            smart_contract_address: selectedSC.address,
-            smart_contract_name: selectedSC.name,
-            method_name: selectedAction.name,
-          });
-        }}
+        label={t('scc.detailContract.ctaLabel')}
+        className="mt-5 mb-2 w-full desktop:w-max"
+        onClick={composeAction}
       />
+
+      {formError && (
+        <AlertInline label="Error with the inputs" mode="critical" />
+      )}
     </div>
   );
+};
+
+const classifyInputType = (inputName: string) => {
+  if (inputName.includes('int') && inputName.includes('[]') === false) {
+    return 'int';
+  } else return inputName;
 };
 
 type ComponentForTypeProps = {
@@ -150,7 +224,7 @@ export const ComponentForType: React.FC<ComponentForTypeProps> = ({
   }, []);
 
   // Check if we need to add "index" kind of variable to the "name"
-  switch (input.type) {
+  switch (classifyInputType(input.type)) {
     case 'address':
       return (
         <Controller
@@ -183,14 +257,12 @@ export const ComponentForType: React.FC<ComponentForTypeProps> = ({
         />
       );
 
-    case 'uint':
     case 'int':
     case 'uint8':
     case 'int8':
     case 'uint32':
     case 'int32':
     case 'uint256':
-    case 'int256':
       return (
         <Controller
           defaultValue=""
@@ -212,22 +284,6 @@ export const ComponentForType: React.FC<ComponentForTypeProps> = ({
           )}
         />
       );
-
-    case 'tuple':
-      input.components?.map(component => (
-        <div key={component.name}>
-          <div className="mb-1.5 text-base font-bold text-ui-800 capitalize">
-            {input.name}
-          </div>
-          <ComponentForType
-            key={component.name}
-            input={component}
-            functionName={input.name}
-            disabled={disabled}
-          />
-        </div>
-      ));
-      break;
 
     default:
       return (
@@ -251,7 +307,6 @@ export const ComponentForType: React.FC<ComponentForTypeProps> = ({
         />
       );
   }
-  return null;
 };
 
 export const ComponentForTypeWithFormProvider: React.FC<

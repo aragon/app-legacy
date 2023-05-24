@@ -1,16 +1,24 @@
 import {IconChevronRight, ListItemAction} from '@aragon/ui-components';
 import React from 'react';
-import {useFormContext} from 'react-hook-form';
+import {useFormContext, useWatch} from 'react-hook-form';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 
-import {SmartContract} from 'utils/types';
+import {SmartContract, SmartContractAction} from 'utils/types';
 
-type ActionListGroupProps = Pick<SmartContract, 'actions'>;
+type ActionListGroupProps = Pick<SmartContract, 'actions'> & {
+  onActionSelected?: () => void;
+};
 
-const ActionListGroup: React.FC<ActionListGroupProps> = ({actions}) => {
+const ActionListGroup: React.FC<ActionListGroupProps> = ({
+  actions,
+  onActionSelected,
+}) => {
   const {t} = useTranslation();
   const {setValue} = useFormContext();
+  const [selectedAction]: [SmartContractAction] = useWatch({
+    name: ['selectedAction'],
+  });
 
   return (
     <ListGroup>
@@ -28,9 +36,14 @@ const ActionListGroup: React.FC<ActionListGroupProps> = ({actions}) => {
           key={a.name}
           title={a.name}
           subtitle={a.name}
-          bgWhite
           iconRight={<IconChevronRight />}
-          onClick={() => setValue('selectedAction', a)}
+          onClick={() => {
+            setValue('selectedAction', a);
+            onActionSelected?.();
+          }}
+          bgWhite={selectedAction === a ? false : true}
+          mode={selectedAction === a ? 'selected' : 'default'}
+          truncateText
         />
       ))}
     </ListGroup>

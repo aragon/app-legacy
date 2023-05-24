@@ -31,6 +31,7 @@ export type ListItemActionProps = CustomButtonProps & {
   iconLeft?: React.ReactElement | string;
   /** Right aligned. Both left and right icon can be present simultaneously */
   iconRight?: React.ReactElement;
+  truncateText?: boolean;
 };
 
 export const ListItemAction: React.FC<ListItemActionProps> = ({
@@ -39,6 +40,7 @@ export const ListItemAction: React.FC<ListItemActionProps> = ({
   iconLeft,
   iconRight,
   mode = 'default',
+  truncateText = false,
   ...props
 }) => {
   return (
@@ -48,8 +50,22 @@ export const ListItemAction: React.FC<ListItemActionProps> = ({
         {/* This could be done with label. However, I can't get the label's text
          to inherit the color (for example, when selected mode is on) */}
         <LabelContainer>
-          <p className="font-bold truncate ft-text-base">{title}</p>
-          {subtitle && <p className="truncate ft-text-sm">{subtitle}</p>}
+          <p
+            className={`font-bold ft-text-base ${
+              truncateText ? 'truncate' : ''
+            }`}
+          >
+            {title}
+          </p>
+          {subtitle && (
+            <p
+              className={`ft-text-sm text-ui-500 ${
+                truncateText ? 'truncate' : ''
+              }`}
+            >
+              {subtitle}
+            </p>
+          )}
         </LabelContainer>
       </LeftContent>
       {iconRight && <span>{iconRight}</span>}
@@ -78,14 +94,15 @@ type InputContainerProps = Pick<ListItemActionProps, 'mode' | 'bgWhite'>;
 const Container = styled.button.attrs(
   ({mode, bgWhite = false}: InputContainerProps) => {
     const baseLayoutClasses = 'flex items-center gap-x-1.5 w-full';
-    const baseStyleClasses = 'py-1.5 px-2 rounded-xl font-normal';
+    const baseStyleClasses =
+      'py-1.5 px-2 rounded-xl font-normal border-2 border-transparent';
     let className:
       | string
       | undefined = `${baseLayoutClasses} ${baseStyleClasses}`;
 
     switch (mode) {
       case 'disabled':
-        className += ' text-ui-300 border-ui-200';
+        className += ' text-ui-300';
         className += bgWhite ? ' bg-ui-0' : ' bg-ui-50';
         break;
       case 'selected':

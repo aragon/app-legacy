@@ -39,7 +39,7 @@ const providerOptions: IProviderOptions = {
   },
 };
 // React-Query client
-const queryClient = new QueryClient();
+export const queryClient = new QueryClient();
 
 const CACHE_VERSION = 1;
 const onLoad = () => {
