@@ -7,6 +7,7 @@ import {
   WalletInput,
 } from '@aragon/ui-components';
 import {ethers} from 'ethers';
+import {t} from 'i18next';
 import React, {useCallback, useEffect, useMemo, useState} from 'react';
 import {
   Controller,
