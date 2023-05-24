@@ -10,7 +10,7 @@ type Props = {
   onClose: () => void;
   onConnectNew: () => void;
   onBackButtonClicked: () => void;
-  onComposeButtonClicked: () => void;
+  onComposeButtonClicked: (another: boolean) => void;
   onRemoveContract: (address: string) => void;
 };
 

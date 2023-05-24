@@ -17,7 +17,6 @@ import {SmartContract} from 'utils/types';
 import ActionListGroup from '../components/actionListGroup';
 import SmartContractListGroup from '../components/smartContractListGroup';
 import {ActionSearchInput} from '../desktopModal/header';
-import {ListItemContract} from '../components/listItemContract';
 import {trackEvent} from 'services/analytics';
 import {useParams} from 'react-router-dom';
 import InputForm from '../components/inputForm';

@@ -59,6 +59,7 @@ const InputForm: React.FC<InputFormProps> = ({
   const {addAction, removeAction} = useActionsContext();
   const {setValue, resetField} = useFormContext();
   const [formError, setFormError] = useState(false);
+  const [another, setAnother] = useState(false);
 
   useEffect(() => setFormError(false), [selectedAction]);
 
@@ -130,7 +131,7 @@ const InputForm: React.FC<InputFormProps> = ({
           });
         });
         resetField('sccActions');
-        onComposeButtonClicked(false);
+        onComposeButtonClicked(another);
 
         trackEvent('newProposal_composeAction_clicked', {
           dao_address: daoAddressOrEns,
@@ -145,6 +146,7 @@ const InputForm: React.FC<InputFormProps> = ({
       }
     }
   }, [
+    another,
     actionIndex,
     addAction,
     daoAddressOrEns,
@@ -161,7 +163,6 @@ const InputForm: React.FC<InputFormProps> = ({
     selectedSC.name,
     setValue,
   ]);
-  const [another, setAnother] = useState(false);
 
   if (!selectedAction) {
     return (
