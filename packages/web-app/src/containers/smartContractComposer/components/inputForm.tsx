@@ -342,22 +342,24 @@ export const ComponentForType: React.FC<ComponentForTypeProps> = ({
   }
 };
 
-export const ComponentForTypeWithFormProvider: React.FC<ComponentForTypeProps> =
-  ({input, functionName, formHandleName, defaultValue, disabled = false}) => {
-    const methods = useForm({mode: 'onChange'});
-    return (
-      <FormProvider {...methods}>
-        <ComponentForType
-          key={input.name}
-          input={input}
-          functionName={functionName}
-          disabled={disabled}
-          defaultValue={defaultValue}
-          formHandleName={formHandleName}
-        />
-      </FormProvider>
-    );
-  };
+export const ComponentForTypeWithFormProvider: React.FC<
+  ComponentForTypeProps
+> = ({input, functionName, formHandleName, defaultValue, disabled = false}) => {
+  const methods = useForm({mode: 'onChange'});
+
+  return (
+    <FormProvider {...methods}>
+      <ComponentForType
+        key={input.name}
+        input={input}
+        functionName={functionName}
+        disabled={disabled}
+        defaultValue={defaultValue}
+        formHandleName={formHandleName}
+      />
+    </FormProvider>
+  );
+};
 
 const ActionName = styled.p.attrs({
   className: 'text-lg font-bold text-ui-800 capitalize',
