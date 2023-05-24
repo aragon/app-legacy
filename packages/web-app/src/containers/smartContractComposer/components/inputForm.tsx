@@ -68,9 +68,15 @@ const InputForm: React.FC<InputFormProps> = ({
       etherscanData.status === '1' &&
       etherscanData.result[0].ABI !== 'Contract source code not verified'
     ) {
-      const functionParams = selectedAction.inputs?.map(
-        input => sccActions[selectedSC.address][selectedAction.name][input.name]
-      );
+      const functionParams = selectedAction.inputs?.map(input => {
+        const param =
+          sccActions[selectedSC.address][selectedAction.name][input.name];
+
+        if (typeof param === 'string' && param.includes('[')) {
+          return JSON.parse(param);
+        }
+        return param;
+      });
 
       const iface = new ethers.utils.Interface(etherscanData.result[0].ABI);
 
