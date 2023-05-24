@@ -33,6 +33,10 @@ export const ListItemContract: React.FC<Props> = ({
     );
   }
   return (
-    <ListItemAction {...{iconRight, ...rest}} iconLeft={logo || rest.title} truncateText/>
+    <ListItemAction
+      {...{iconRight, ...rest}}
+      iconLeft={logo || rest.title}
+      truncateText
+    />
   );
 };

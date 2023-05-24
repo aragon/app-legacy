@@ -41,7 +41,6 @@ const SCC: React.FC<SCC> = ({actionIndex}) => {
   const connectedContracts = useWatch({name: 'contracts'});
   const {addAction, removeAction} = useActionsContext();
   const {alert} = useAlertContext();
-  const {open} = useGlobalModalContext();
 
   useEffect(() => {
     if (address) {
