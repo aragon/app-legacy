@@ -98,7 +98,7 @@ const InputForm: React.FC<InputFormProps> = ({
           });
         });
         resetField('sccActions');
-        onComposeButtonClicked();
+        onComposeButtonClicked(false);
 
         trackEvent('newProposal_composeAction_clicked', {
           dao_address: daoAddressOrEns,
@@ -327,19 +327,23 @@ export const ComponentForType: React.FC<ComponentForTypeProps> = ({
       );
 
     case 'tuple':
-      input.components?.map(component => (
-        <div key={component.name}>
-          <div className="mb-1.5 text-base font-bold capitalize text-ui-800">
-            {input.name}
-          </div>
-          <ComponentForType
-            key={component.name}
-            input={component}
-            functionName={input.name}
-            disabled={disabled}
-          />
-        </div>
-      ));
+      return (
+        <>
+          {input.components?.map(component => (
+            <div key={component.name}>
+              <div className="mb-1.5 text-base font-bold capitalize text-ui-800">
+                {input.name}
+              </div>
+              <ComponentForType
+                key={component.name}
+                input={component}
+                functionName={input.name}
+                disabled={disabled}
+              />
+            </div>
+          ))}
+        </>
+      );
       break;
 
     default:
@@ -393,7 +397,7 @@ const ActionDescription = styled.p.attrs({
 })``;
 
 const HStack = styled.div.attrs({
-  className: 'flex justify-between space-x-3 mt-5',
+  className: 'flex justify-between items-center space-x-3 mt-5 ft-text-base',
 })``;
 
 export default InputForm;

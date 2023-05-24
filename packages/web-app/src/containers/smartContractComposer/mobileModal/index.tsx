@@ -3,8 +3,9 @@ import {
   ButtonText,
   IconChevronLeft,
   IconClose,
+  IconFeedback,
   IconHome,
-  IconMenuVertical,
+  Link,
 } from '@aragon/ui-components';
 import React, {useState} from 'react';
 import {useFormContext, useWatch} from 'react-hook-form';
@@ -20,6 +21,9 @@ import {ListItemContract} from '../components/listItemContract';
 import {trackEvent} from 'services/analytics';
 import {useParams} from 'react-router-dom';
 import InputForm from '../components/inputForm';
+import {SccFormData} from '..';
+import {ListHeaderContract} from '../components/listHeaderContract';
+import {actionsFilter} from 'utils/contract';
 
 type Props = {
   isOpen: boolean;
@@ -27,7 +31,8 @@ type Props = {
   onClose: () => void;
   onConnectNew: () => void;
   onBackButtonClicked: () => void;
-  onComposeButtonClicked: () => void;
+  onComposeButtonClicked: (addAnother: boolean) => void;
+  onRemoveContract: (address: string) => void;
 };
 
 const MobileModal: React.FC<Props> = props => {
@@ -39,6 +44,12 @@ const MobileModal: React.FC<Props> = props => {
   const [selectedSC]: [SmartContract] = useWatch({
     name: ['selectedSC'],
   });
+  const [search, setSearch] = useState('');
+  const {getValues} = useFormContext<SccFormData>();
+
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore
+  const contracts = getValues('contracts') || [];
 
   return (
     <BottomSheet isOpen={props.isOpen} onClose={props.onClose}>
@@ -54,39 +65,39 @@ const MobileModal: React.FC<Props> = props => {
             props.onBackButtonClicked();
           }
         }}
+        onSearch={setSearch}
       />
       <Content>
         {!isActionSelected ? (
           selectedSC ? (
             <div>
-              <ListItemContract
+              <ListHeaderContract
                 key={selectedSC.address}
-                title={selectedSC.name}
-                subtitle={`${
-                  selectedSC.actions.filter(
-                    a =>
-                      a.type === 'function' &&
-                      (a.stateMutability === 'payable' ||
-                        a.stateMutability === 'nonpayable')
-                  ).length
-                } Actions to compose`}
-                bgWhite
-                logo={selectedSC.logo}
-                iconRight={<IconMenuVertical />}
+                sc={selectedSC}
+                onRemoveContract={props.onRemoveContract}
               />
               <ActionListGroup
-                actions={selectedSC.actions.filter(
-                  a =>
-                    a.type === 'function' &&
-                    (a.stateMutability === 'payable' ||
-                      a.stateMutability === 'nonpayable')
-                )}
+                actions={selectedSC.actions.filter(actionsFilter(search))}
                 onActionSelected={() => setIsActionSelected(true)}
               />
             </div>
           ) : (
             <>
-              <SmartContractListGroup />
+              {contracts.length !== 1 ? (
+                <SmartContractListGroup />
+              ) : (
+                <div>
+                  <ListHeaderContract
+                    key={contracts[0].address}
+                    sc={contracts[0]}
+                    onRemoveContract={props.onRemoveContract}
+                  />
+                  <ActionListGroup
+                    actions={contracts[0].actions.filter(actionsFilter(search))}
+                    onActionSelected={() => setIsActionSelected(true)}
+                  />
+                </div>
+              )}
               <ButtonText
                 mode="secondary"
                 size="large"
@@ -98,6 +109,14 @@ const MobileModal: React.FC<Props> = props => {
                   props.onConnectNew();
                 }}
                 className="w-full"
+              />
+              <Link
+                external
+                type="primary"
+                iconRight={<IconFeedback height={13} width={13} />}
+                href={t('scc.listContracts.learnLinkURL')}
+                label={t('scc.listContracts.learnLinkLabel')}
+                className="justify-center w-full"
               />
             </>
           )
@@ -119,6 +138,7 @@ export default MobileModal;
 type CustomHeaderProps = {
   onBackButtonClicked: () => void;
   onClose?: () => void;
+  onSearch: (search: string) => void;
 };
 const CustomMobileHeader: React.FC<CustomHeaderProps> = props => {
   const {t} = useTranslation();
@@ -141,6 +161,7 @@ const CustomMobileHeader: React.FC<CustomHeaderProps> = props => {
       <ActionSearchInput
         type="text"
         placeholder={t('scc.labels.searchPlaceholder')}
+        onChange={ev => props.onSearch(ev.target.value)}
       />
 
       <ButtonIcon
