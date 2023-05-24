@@ -22,7 +22,7 @@ type DesktopModalProps = {
   onClose: () => void;
   onConnectNew: () => void;
   onBackButtonClicked: () => void;
-  onComposeButtonClicked: () => void;
+  onComposeButtonClicked: (addAnother: boolean) => void;
   onRemoveContract: (address: string) => void;
 };
 

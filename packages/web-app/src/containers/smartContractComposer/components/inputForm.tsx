@@ -2,6 +2,7 @@ import {
   AlertInline,
   ButtonText,
   IconSuccess,
+  CheckboxListItem,
   NumberInput,
   TextInput,
   WalletInput,
@@ -33,7 +34,7 @@ import {validateAddress} from 'utils/validators';
 
 type InputFormProps = {
   actionIndex: number;
-  onComposeButtonClicked: () => void;
+  onComposeButtonClicked: (addAnother: boolean) => void;
 };
 
 const InputForm: React.FC<InputFormProps> = ({
@@ -127,6 +128,7 @@ const InputForm: React.FC<InputFormProps> = ({
     selectedSC.name,
     setValue,
   ]);
+  const [another, setAnother] = useState(false);
 
   if (!selectedAction) {
     return (
@@ -175,15 +177,54 @@ const InputForm: React.FC<InputFormProps> = ({
         </div>
       ) : null}
 
-      <ButtonText
-        label={t('scc.detailContract.ctaLabel')}
-        className="mt-5 mb-2 w-full desktop:w-max"
-        onClick={composeAction}
-      />
+      <HStack>
+        <ButtonText
+          label={t('scc.detailContract.ctaLabel')}
+          onClick={() => {
+            removeAction(actionIndex);
+            addAction({
+              name: 'external_contract_action',
+            });
 
-      {formError && (
-        <AlertInline label="Error with the inputs" mode="critical" />
-      )}
+            resetField(`actions.${actionIndex}`);
+            setValue(`actions.${actionIndex}.name`, 'external_contract_action');
+            setValue(
+              `actions.${actionIndex}.contractAddress`,
+              selectedSC.address
+            );
+            setValue(`actions.${actionIndex}.contractName`, selectedSC.name);
+            setValue(
+              `actions.${actionIndex}.functionName`,
+              selectedAction.name
+            );
+
+            selectedAction.inputs?.map((input, index) => {
+              setValue(`actions.${actionIndex}.inputs.${index}`, {
+                ...selectedAction.inputs[index],
+                value:
+                  sccActions[selectedSC.address][selectedAction.name][
+                    input.name
+                  ],
+              });
+            });
+            resetField('sccActions');
+            onComposeButtonClicked(another);
+
+            trackEvent('newProposal_composeAction_clicked', {
+              dao_address: daoAddressOrEns,
+              smart_contract_address: selectedSC.address,
+              smart_contract_name: selectedSC.name,
+              method_name: selectedAction.name,
+            });
+          }}
+        />
+        <CheckboxListItem
+          label={t('scc.detailContract.checkboxMultipleLabel')}
+          multiSelect
+          onClick={() => setAnother(!another)}
+          type={another ? 'active' : 'default'}
+        />
+      </HStack>
     </div>
   );
 };
@@ -349,6 +390,10 @@ const ActionName = styled.p.attrs({
 
 const ActionDescription = styled.p.attrs({
   className: 'mt-1 text-sm text-ui-600',
+})``;
+
+const HStack = styled.div.attrs({
+  className: 'flex justify-between space-x-3 mt-5',
 })``;
 
 export default InputForm;
