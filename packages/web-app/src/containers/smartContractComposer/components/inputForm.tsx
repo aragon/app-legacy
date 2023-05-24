@@ -1,5 +1,4 @@
 import {
-  AlertInline,
   ButtonText,
   IconSuccess,
   CheckboxListItem,
@@ -53,7 +52,7 @@ const InputForm: React.FC<InputFormProps> = ({
   const {dao: daoAddressOrEns} = useParams();
   const {addAction, removeAction} = useActionsContext();
   const {setValue, resetField} = useFormContext();
-  const [formError, setFormError] = useState(false);
+  const [, setFormError] = useState(false);
   const [another, setAnother] = useState(false);
 
   useEffect(() => setFormError(false), [selectedAction]);
@@ -99,6 +98,7 @@ const InputForm: React.FC<InputFormProps> = ({
           });
         });
         resetField('sccActions');
+
         onComposeButtonClicked(another);
 
         trackEvent('newProposal_composeAction_clicked', {

@@ -14,12 +14,13 @@ import {useWallet} from 'hooks/useWallet';
 import {CHAIN_METADATA} from 'utils/constants';
 import {useActionsContext} from 'context/actions';
 import {useAlertContext} from 'context/alert';
+import {useGlobalModalContext} from 'context/globalModals';
 
 // TODO please move to types
 export type SccFormData = {
   contractAddress: string;
   contracts: SmartContract[];
-  selectedSC: SmartContract;
+  selectedSC: SmartContract | null;
   selectedAction: SmartContractAction;
   ABIInput: string;
 };
@@ -38,8 +39,9 @@ const SCC: React.FC<SCC> = ({actionIndex}) => {
   const {network} = useNetwork();
   const {setValue, getValues, resetField} = useFormContext();
   const connectedContracts = useWatch({name: 'contracts'});
-  const {removeAction} = useActionsContext();
+  const {addAction, removeAction} = useActionsContext();
   const {alert} = useAlertContext();
+  const {open} = useGlobalModalContext();
 
   useEffect(() => {
     if (address) {
@@ -85,9 +87,14 @@ const SCC: React.FC<SCC> = ({actionIndex}) => {
           removeAction(actionIndex);
         }}
         onComposeButtonClicked={(another: boolean) => {
-          setContractListIsOpen(another);
+          if (!another) setContractListIsOpen(false);
           // CrowdIn needed
-          if (another) alert('Smart contract action added successfully');
+          if (another) {
+            alert('Smart contract action added successfully');
+            addAction({
+              name: 'external_contract_modal',
+            });
+          }
           setValue('selectedSC', null);
           setValue('selectedAction', null);
         }}
