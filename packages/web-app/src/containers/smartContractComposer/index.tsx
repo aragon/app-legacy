@@ -13,6 +13,7 @@ import {
 import {useWallet} from 'hooks/useWallet';
 import {CHAIN_METADATA} from 'utils/constants';
 import {useActionsContext} from 'context/actions';
+import {useAlertContext} from 'context/alert';
 
 // TODO please move to types
 export type SccFormData = {
@@ -38,6 +39,7 @@ const SCC: React.FC<SCC> = ({actionIndex}) => {
   const {setValue, getValues, resetField} = useFormContext();
   const connectedContracts = useWatch({name: 'contracts'});
   const {removeAction} = useActionsContext();
+  const {alert} = useAlertContext();
 
   useEffect(() => {
     if (address) {
@@ -82,8 +84,10 @@ const SCC: React.FC<SCC> = ({actionIndex}) => {
           resetField('sccActions');
           removeAction(actionIndex);
         }}
-        onComposeButtonClicked={() => {
-          setContractListIsOpen(false);
+        onComposeButtonClicked={(another: boolean) => {
+          setContractListIsOpen(another);
+          // CrowdIn needed
+          if (another) alert('Smart contract action added successfully');
           setValue('selectedSC', null);
           setValue('selectedAction', null);
         }}
