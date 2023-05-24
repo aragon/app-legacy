@@ -314,6 +314,7 @@ export type ActionSCC = {
     notice?: string;
     value: object | string | BigNumber;
   }>;
+  value?: string;
 };
 
 // TODO: Consider making this a generic type that take other types of the form
