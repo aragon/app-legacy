@@ -6,12 +6,8 @@ import {
   TextInput,
   WalletInput,
 } from '@aragon/ui-components';
-import {useActionsContext} from 'context/actions';
-import {useAlertContext} from 'context/alert';
-import {useNetwork} from 'context/network';
 import {ethers} from 'ethers';
-import {t} from 'i18next';
-import React, {useCallback, useEffect, useState} from 'react';
+import React, {useCallback, useEffect, useMemo, useState} from 'react';
 import {
   Controller,
   FormProvider,
@@ -21,14 +17,22 @@ import {
 } from 'react-hook-form';
 import {useTranslation} from 'react-i18next';
 import {useParams} from 'react-router-dom';
+import styled from 'styled-components';
+
+import {useActionsContext} from 'context/actions';
+import {useAlertContext} from 'context/alert';
+import {useNetwork} from 'context/network';
 import {trackEvent} from 'services/analytics';
 import {getEtherscanVerifiedContract} from 'services/etherscanAPI';
-import styled from 'styled-components';
+import {
+  PAYABLE_VALUE_INPUT,
+  PAYABLE_VALUE_INPUT_NAME,
+} from 'utils/constants/scc';
 import {
   getUserFriendlyWalletLabel,
   handleClipboardActions,
 } from 'utils/library';
-import {SmartContractAction, Input, SmartContract} from 'utils/types';
+import {Input, SmartContract, SmartContractAction} from 'utils/types';
 import {validateAddress} from 'utils/validators';
 
 type InputFormProps = {
@@ -56,6 +60,13 @@ const InputForm: React.FC<InputFormProps> = ({
 
   useEffect(() => setFormError(false), [selectedAction]);
 
+  // add payable input to the selected action if it is a payable method
+  const actionInputs = useMemo(() => {
+    return selectedAction.stateMutability === 'payable'
+      ? [...selectedAction.inputs, {...PAYABLE_VALUE_INPUT}]
+      : selectedAction.inputs;
+  }, [selectedAction.inputs, selectedAction.stateMutability]);
+
   const composeAction = useCallback(async () => {
     setFormError(false);
 
@@ -68,6 +79,9 @@ const InputForm: React.FC<InputFormProps> = ({
       etherscanData.status === '1' &&
       etherscanData.result[0].ABI !== 'Contract source code not verified'
     ) {
+      // looping through selectedAction.inputs instead of the actionInputs
+      // will allow us to ignore the payable input so that encoding using
+      // the ABI does not complain
       const functionParams = selectedAction.inputs?.map(input => {
         const param =
           sccActions[selectedSC.address][selectedAction.name][input.name];
@@ -95,9 +109,20 @@ const InputForm: React.FC<InputFormProps> = ({
         setValue(`actions.${actionIndex}.functionName`, selectedAction.name);
         setValue(`actions.${actionIndex}.notice`, selectedAction.notice);
 
-        selectedAction.inputs?.map((input, index) => {
+        // loop through all the inputs so we pick up the payable one as well
+        // and keep it on the form
+        actionInputs?.map((input, index) => {
+          // add the payable value to the action value directly
+          if (input.name === PAYABLE_VALUE_INPUT_NAME) {
+            setValue(
+              `actions.${actionIndex}.value`,
+              sccActions[selectedSC.address][selectedAction.name][input.name]
+            );
+          }
+
+          // set the form data
           setValue(`actions.${actionIndex}.inputs.${index}`, {
-            ...selectedAction.inputs[index],
+            ...actionInputs[index],
             value:
               sccActions[selectedSC.address][selectedAction.name][input.name],
           });
@@ -129,6 +154,7 @@ const InputForm: React.FC<InputFormProps> = ({
     selectedAction.inputs,
     selectedAction.name,
     selectedAction.notice,
+    actionInputs,
     selectedSC.address,
     selectedSC.name,
     setValue,
@@ -158,9 +184,9 @@ const InputForm: React.FC<InputFormProps> = ({
         <p className="text-sm font-bold text-primary-500">{selectedSC.name}</p>
         <IconSuccess />
       </div>
-      {selectedAction.inputs.length > 0 ? (
+      {actionInputs.length > 0 ? (
         <div className="p-3 mt-5 space-y-2 bg-white desktop:bg-ui-50 rounded-xl border border-ui-100 shadow-100">
-          {selectedAction.inputs.map(input => (
+          {actionInputs.map(input => (
             <div key={input.name}>
               <div className="text-base font-bold text-ui-800 capitalize">
                 {input.name}
@@ -315,23 +341,22 @@ export const ComponentForType: React.FC<ComponentForTypeProps> = ({
   }
 };
 
-export const ComponentForTypeWithFormProvider: React.FC<
-  ComponentForTypeProps
-> = ({input, functionName, formHandleName, defaultValue, disabled = false}) => {
-  const methods = useForm({mode: 'onChange'});
-  return (
-    <FormProvider {...methods}>
-      <ComponentForType
-        key={input.name}
-        input={input}
-        functionName={functionName}
-        disabled={disabled}
-        defaultValue={defaultValue}
-        formHandleName={formHandleName}
-      />
-    </FormProvider>
-  );
-};
+export const ComponentForTypeWithFormProvider: React.FC<ComponentForTypeProps> =
+  ({input, functionName, formHandleName, defaultValue, disabled = false}) => {
+    const methods = useForm({mode: 'onChange'});
+    return (
+      <FormProvider {...methods}>
+        <ComponentForType
+          key={input.name}
+          input={input}
+          functionName={functionName}
+          disabled={disabled}
+          defaultValue={defaultValue}
+          formHandleName={formHandleName}
+        />
+      </FormProvider>
+    );
+  };
 
 const ActionName = styled.p.attrs({
   className: 'text-lg font-bold text-ui-800 capitalize',

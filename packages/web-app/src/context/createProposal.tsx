@@ -68,6 +68,7 @@ import {usePrivacyContext} from './privacyContext';
 import {useProviders} from './providers';
 import {isAddress} from 'ethers/lib/utils';
 import {getEtherscanVerifiedContract} from 'services/etherscanAPI';
+import {PAYABLE_VALUE_INPUT_NAME} from 'utils/constants/scc';
 
 type Props = {
   showTxModal: boolean;
@@ -238,6 +239,8 @@ const CreateProposalProvider: React.FC<Props> = ({
             etherscanData.result[0].ABI !== 'Contract source code not verified'
           ) {
             const functionParams = action.inputs.map(input => {
+              if (input.name === PAYABLE_VALUE_INPUT_NAME) return [];
+
               const param = input.value;
 
               if (typeof param === 'string' && param.indexOf('[') === 0) {
@@ -257,7 +260,7 @@ const CreateProposalProvider: React.FC<Props> = ({
             actions.push(
               Promise.resolve({
                 to: action.contractAddress,
-                value: BigInt(0),
+                value: ethers.utils.parseEther(action.value || '0').toBigInt(),
                 data: hexToBytes(hexData),
               })
             );
