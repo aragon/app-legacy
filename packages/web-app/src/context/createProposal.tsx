@@ -237,7 +237,14 @@ const CreateProposalProvider: React.FC<Props> = ({
             etherscanData.status === '1' &&
             etherscanData.result[0].ABI !== 'Contract source code not verified'
           ) {
-            const functionParams = action.inputs.map(input => input.value);
+            const functionParams = action.inputs.map(input => {
+              const param = input.value;
+
+              if (typeof param === 'string' && param.indexOf('[') === 0) {
+                return JSON.parse(param);
+              }
+              return param;
+            });
 
             const iface = new ethers.utils.Interface(
               etherscanData.result[0].ABI
