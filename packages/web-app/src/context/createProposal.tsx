@@ -238,7 +238,8 @@ const CreateProposalProvider: React.FC<Props> = ({
             etherscanData.status === '1' &&
             etherscanData.result[0].ABI !== 'Contract source code not verified'
           ) {
-            const functionParams = action.inputs.map(input => {
+            const functionParams = action.inputs.flatMap(input => {
+              // ignore payable value
               if (input.name === PAYABLE_VALUE_INPUT_NAME) return [];
 
               const param = input.value;
