@@ -156,7 +156,7 @@ const InputForm: React.FC<InputFormProps> = ({
         <IconSuccess />
       </div>
       {selectedAction.inputs.length > 0 ? (
-        <div className="p-3 mt-5 space-y-2 bg-white desktop:bg-ui-50 rounded-xl border border-ui-100 shadow-100">
+        <div className="p-3 mt-5 space-y-2 bg-white rounded-xl border desktop:bg-ui-50 border-ui-100 shadow-100">
           {selectedAction.inputs.map(input => (
             <div key={input.name}>
               <div className="text-base font-bold capitalize text-ui-800">
@@ -181,43 +181,7 @@ const InputForm: React.FC<InputFormProps> = ({
       <HStack>
         <ButtonText
           label={t('scc.detailContract.ctaLabel')}
-          onClick={() => {
-            removeAction(actionIndex);
-            addAction({
-              name: 'external_contract_action',
-            });
-
-            resetField(`actions.${actionIndex}`);
-            setValue(`actions.${actionIndex}.name`, 'external_contract_action');
-            setValue(
-              `actions.${actionIndex}.contractAddress`,
-              selectedSC.address
-            );
-            setValue(`actions.${actionIndex}.contractName`, selectedSC.name);
-            setValue(
-              `actions.${actionIndex}.functionName`,
-              selectedAction.name
-            );
-
-            selectedAction.inputs?.map((input, index) => {
-              setValue(`actions.${actionIndex}.inputs.${index}`, {
-                ...selectedAction.inputs[index],
-                value:
-                  sccActions[selectedSC.address][selectedAction.name][
-                    input.name
-                  ],
-              });
-            });
-            resetField('sccActions');
-            onComposeButtonClicked(another);
-
-            trackEvent('newProposal_composeAction_clicked', {
-              dao_address: daoAddressOrEns,
-              smart_contract_address: selectedSC.address,
-              smart_contract_name: selectedSC.name,
-              method_name: selectedAction.name,
-            });
-          }}
+          onClick={composeAction}
         />
         <CheckboxListItem
           label={t('scc.detailContract.checkboxMultipleLabel')}
