@@ -14,7 +14,6 @@ import {useWallet} from 'hooks/useWallet';
 import {CHAIN_METADATA} from 'utils/constants';
 import {useActionsContext} from 'context/actions';
 import {useAlertContext} from 'context/alert';
-import {useGlobalModalContext} from 'context/globalModals';
 
 // TODO please move to types
 export type SccFormData = {

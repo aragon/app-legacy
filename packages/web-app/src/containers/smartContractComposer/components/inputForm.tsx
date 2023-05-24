@@ -156,10 +156,10 @@ const InputForm: React.FC<InputFormProps> = ({
         <IconSuccess />
       </div>
       {selectedAction.inputs.length > 0 ? (
-        <div className="p-3 mt-5 space-y-2 bg-white rounded-xl border desktop:bg-ui-50 border-ui-100 shadow-100">
+        <div className="p-3 mt-5 space-y-2 bg-white desktop:bg-ui-50 rounded-xl border border-ui-100 shadow-100">
           {selectedAction.inputs.map(input => (
             <div key={input.name}>
-              <div className="text-base font-bold capitalize text-ui-800">
+              <div className="text-base font-bold text-ui-800 capitalize">
                 {input.name}
                 <span className="ml-0.5 text-sm normal-case">
                   ({input.type})
@@ -296,7 +296,7 @@ export const ComponentForType: React.FC<ComponentForTypeProps> = ({
         <>
           {input.components?.map(component => (
             <div key={component.name}>
-              <div className="mb-1.5 text-base font-bold capitalize text-ui-800">
+              <div className="mb-1.5 text-base font-bold text-ui-800 capitalize">
                 {input.name}
               </div>
               <ComponentForType
