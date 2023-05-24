@@ -7,7 +7,7 @@ import {
   IconHome,
   Link,
 } from '@aragon/ui-components';
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {useFormContext, useWatch} from 'react-hook-form';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
@@ -49,6 +49,11 @@ const MobileModal: React.FC<Props> = props => {
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore
   const contracts = getValues('contracts') || [];
+  const autoSelectedContract = contracts.length === 1 ? contracts[0] : null;
+
+  useEffect(() => {
+    setValue('selectedSC', autoSelectedContract);
+  }, [autoSelectedContract, setValue]);
 
   return (
     <BottomSheet isOpen={props.isOpen} onClose={props.onClose}>
@@ -82,21 +87,7 @@ const MobileModal: React.FC<Props> = props => {
             </div>
           ) : (
             <>
-              {contracts.length !== 1 ? (
-                <SmartContractListGroup />
-              ) : (
-                <div>
-                  <ListHeaderContract
-                    key={contracts[0].address}
-                    sc={contracts[0]}
-                    onRemoveContract={props.onRemoveContract}
-                  />
-                  <ActionListGroup
-                    actions={contracts[0].actions.filter(actionsFilter(search))}
-                    onActionSelected={() => setIsActionSelected(true)}
-                  />
-                </div>
-              )}
+              <SmartContractListGroup />
               <ButtonText
                 mode="secondary"
                 size="large"
