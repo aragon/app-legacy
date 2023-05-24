@@ -255,3 +255,23 @@ export const skipWhitespace = (str: string, start: number) => {
   while (' \t\n\r\v'.indexOf(str[pos]) > -1 && pos < str.length) pos++;
   return pos;
 };
+
+export function parseSourceCode(input: string) {
+  input = input.trim();
+
+  if (input.startsWith('{')) {
+    const sources_obj = JSON.parse(input.slice(1, input.length - 1)).sources;
+    let sources = '';
+
+    for (const method_name in sources_obj) {
+      // eslint-disable-next-line no-prototype-builtins
+      if (sources_obj.hasOwnProperty(method_name)) {
+        sources = sources + sources_obj[method_name].content;
+      }
+    }
+
+    return sources;
+  } else {
+    return input;
+  }
+}
