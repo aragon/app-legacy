@@ -11,8 +11,9 @@ import {
   TokenVotingClient,
   VotingMode,
   Context as SdkContext,
+  DaoAction,
 } from '@aragon/sdk-client';
-import {resolveIpfsCid} from '@aragon/sdk-common';
+import {bytesToHex, resolveIpfsCid} from '@aragon/sdk-common';
 import {Address} from '@aragon/ui-components/dist/utils/addresses';
 import {NavigationDao} from 'context/apolloClient';
 import {BigNumber, BigNumberish, constants, ethers, providers} from 'ethers';
@@ -31,6 +32,7 @@ import {
   ActionAddAddress,
   ActionMintToken,
   ActionRemoveAddress,
+  ActionSCC,
   ActionUpdateMetadata,
   ActionUpdateMultisigPluginSettings,
   ActionUpdatePluginSettings,
@@ -38,6 +40,9 @@ import {
 } from 'utils/types';
 import {i18n} from '../../i18n.config';
 import {getTokenInfo} from './tokens';
+import {getEtherscanVerifiedContract} from 'services/etherscanAPI';
+import {addABI, decodeMethod} from './abiDecoder';
+import {PAYABLE_VALUE_INPUT} from './constants/scc';
 
 export function formatUnits(amount: BigNumberish, decimals: number) {
   if (amount.toString().includes('.') || !decimals) {
@@ -347,6 +352,62 @@ export async function decodeMetadataToAction(
     };
   } catch (error) {
     console.error('Error decoding update dao metadata action', error);
+  }
+}
+
+/**
+ * Decodes the provided DAO action into a smart contract compatible action.
+ *
+ * @param action - A DAO action to decode.
+ * @param network - The network on which the action is to be performed.
+ *
+ * @returns A promise that resolves to the decoded action
+ * or undefined if the action could not be decoded.
+ */
+export async function decodeSCCToAction(
+  action: DaoAction,
+  network: SupportedNetworks
+): Promise<ActionSCC | undefined> {
+  try {
+    const etherscanData = await getEtherscanVerifiedContract(
+      action.to,
+      network
+    );
+
+    // Check if the contract data was fetched successfully and if the contract has a verified source code
+    if (
+      etherscanData.status === '1' &&
+      etherscanData.result[0].ABI !== 'Contract source code not verified'
+    ) {
+      addABI(JSON.parse(etherscanData.result[0].ABI));
+      const decodedData = decodeMethod(bytesToHex(action.data));
+
+      // Check if the action data was decoded successfully
+      if (decodedData) {
+        const actionSCC: ActionSCC = {
+          name: 'external_contract_action',
+          contractAddress: action.to,
+          contractName: etherscanData.result[0].ContractName,
+          functionName: decodedData.name,
+          inputs: decodedData.params,
+        };
+
+        // Conditionally add PAYABLE_VALUE_INPUT if action.value is greater than zero
+        if (BigNumber.from(action.value).gt(0)) {
+          actionSCC.inputs.push({
+            ...PAYABLE_VALUE_INPUT,
+            value: formatUnits(
+              action.value,
+              CHAIN_METADATA[network].nativeCurrency.decimals
+            ),
+          });
+        }
+
+        return actionSCC;
+      }
+    }
+  } catch (error) {
+    console.error('Failed to decode SCC DAO action:', error);
   }
 }
 
