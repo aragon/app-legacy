@@ -88,7 +88,14 @@ export const ListHeaderContract: React.FC<Props> = ({
   const liaProps = {
     title: sc.name,
     subtitle: t('scc.listContracts.contractAmountActions', {
-      amount: sc.actions.length.toString(),
+      amount: sc.actions
+        .filter(
+          a =>
+            a.type === 'function' &&
+            (a.stateMutability === 'payable' ||
+              a.stateMutability === 'nonpayable')
+        )
+        .length.toString(),
     }),
     bgWhite: true,
     logo: sc.logo,
