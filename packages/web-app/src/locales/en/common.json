@@ -1061,7 +1061,7 @@
       "contractAmountActions": "{{amount}} actions",
       "ctaLabel": "Connect smart contract",
       "learnLinkLabel": "Learn more",
-      "learnLinkURL": "https://"
+      "learnLinkURL": "https://aragon.org/how-to/interact-with-external-contracts-from-your-dao"
     },
     "detailContract": {
       "dropdownExplorerLinkLabel": "See on block explorer",
