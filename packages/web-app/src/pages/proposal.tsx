@@ -274,7 +274,7 @@ const Proposal: React.FC = () => {
           case 'setMetadata':
             return decodeMetadataToAction(action.data, client);
           default:
-            return decodeSCCToAction(action, network);
+            return decodeSCCToAction(action, network, t);
         }
       }
     );
@@ -301,7 +301,7 @@ const Proposal: React.FC = () => {
     Promise.all(actionPromises).then(value => {
       setDecodedActions(value);
     });
-  }, [apolloClient, client, network, pluginClient, proposal, provider]);
+  }, [apolloClient, client, network, pluginClient, proposal, provider, t]);
 
   // caches the status for breadcrumb
   useEffect(() => {

@@ -49,7 +49,11 @@ import {
   minutesToMills,
   offsetToMills,
 } from 'utils/date';
-import {customJSONReplacer, toDisplayEns} from 'utils/library';
+import {
+  customJSONReplacer,
+  getDefaultPayableAmountInputName,
+  toDisplayEns,
+} from 'utils/library';
 import {Proposal} from 'utils/paths';
 import {
   CacheProposalParams,
@@ -68,7 +72,6 @@ import {usePrivacyContext} from './privacyContext';
 import {useProviders} from './providers';
 import {isAddress} from 'ethers/lib/utils';
 import {getEtherscanVerifiedContract} from 'services/etherscanAPI';
-import {PAYABLE_VALUE_INPUT_NAME} from 'utils/constants/scc';
 
 type Props = {
   showTxModal: boolean;
@@ -241,7 +244,7 @@ const CreateProposalProvider: React.FC<Props> = ({
             const functionParams = action.inputs
               .filter(
                 // ignore payable value
-                input => input.name !== PAYABLE_VALUE_INPUT_NAME
+                input => input.name !== getDefaultPayableAmountInputName(t)
               )
               .map(input => {
                 const param = input.value;
@@ -282,6 +285,7 @@ const CreateProposalProvider: React.FC<Props> = ({
     pluginAddress,
     pluginSettings,
     network,
+    t,
   ]);
 
   // Because getValues does NOT get updated on each render, leaving this as

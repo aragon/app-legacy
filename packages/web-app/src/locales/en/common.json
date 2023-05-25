@@ -1039,11 +1039,14 @@
     },
     "detailContract": {
       "dropdownExplorerLinkLabel": "See on block explorer",
-      "dropdownExplorerLinkURL": "https://",
       "dropdownCopyLabel": "Copy contract address",
       "dropdownRemoveLabel": "Remove smart contract",
       "ctaLabel": "Add action",
       "checkboxMultipleLabel": "Add another action"
+    },
+    "inputPayableAmount": {
+      "description": "Enter the required amount of {{tokenSymbol}} to be paid.",
+      "label": "Payable Amount"
     }
   }
 }

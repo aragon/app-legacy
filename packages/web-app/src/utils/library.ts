@@ -2,16 +2,16 @@
 import {ApolloClient} from '@apollo/client';
 import {
   Client,
+  DaoAction,
   DaoDetails,
   Erc20TokenDetails,
   IMintTokenParams,
   MultisigClient,
   MultisigVotingSettings,
+  Context as SdkContext,
   SupportedNetworks as SdkSupportedNetworks,
   TokenVotingClient,
   VotingMode,
-  Context as SdkContext,
-  DaoAction,
 } from '@aragon/sdk-client';
 import {bytesToHex, resolveIpfsCid} from '@aragon/sdk-common';
 import {Address} from '@aragon/ui-components/dist/utils/addresses';
@@ -19,6 +19,7 @@ import {NavigationDao} from 'context/apolloClient';
 import {BigNumber, BigNumberish, constants, ethers, providers} from 'ethers';
 import {TFunction} from 'react-i18next';
 
+import {getEtherscanVerifiedContract} from 'services/etherscanAPI';
 import {fetchTokenData} from 'services/prices';
 import {
   AVATAR_IPFS_URL,
@@ -37,12 +38,11 @@ import {
   ActionUpdateMultisigPluginSettings,
   ActionUpdatePluginSettings,
   ActionWithdraw,
+  Input,
 } from 'utils/types';
 import {i18n} from '../../i18n.config';
-import {getTokenInfo} from './tokens';
-import {getEtherscanVerifiedContract} from 'services/etherscanAPI';
 import {addABI, decodeMethod} from './abiDecoder';
-import {PAYABLE_VALUE_INPUT} from './constants/scc';
+import {getTokenInfo} from './tokens';
 
 export function formatUnits(amount: BigNumberish, decimals: number) {
   if (amount.toString().includes('.') || !decimals) {
@@ -366,7 +366,8 @@ export async function decodeMetadataToAction(
  */
 export async function decodeSCCToAction(
   action: DaoAction,
-  network: SupportedNetworks
+  network: SupportedNetworks,
+  t: TFunction
 ): Promise<ActionSCC | undefined> {
   try {
     const etherscanData = await getEtherscanVerifiedContract(
@@ -395,7 +396,7 @@ export async function decodeSCCToAction(
         // Conditionally add PAYABLE_VALUE_INPUT if action.value is greater than zero
         if (BigNumber.from(action.value).gt(0)) {
           actionSCC.inputs.push({
-            ...PAYABLE_VALUE_INPUT,
+            ...getDefaultPayableAmountInput(t, network),
             value: formatUnits(
               action.value,
               CHAIN_METADATA[network].nativeCurrency.decimals
@@ -613,4 +614,21 @@ export function toDisplayEns(ensName?: string) {
 
   if (!ensName.includes('.dao.eth')) return `${ensName}.dao.eth`;
   return ensName;
+}
+
+export function getDefaultPayableAmountInput(
+  t: TFunction,
+  network: SupportedNetworks
+): Input {
+  return {
+    name: getDefaultPayableAmountInputName(t),
+    type: 'uint256',
+    notice: t('scc.inputPayableAmount.description', {
+      tokenSymbol: CHAIN_METADATA[network].nativeCurrency.symbol,
+    }),
+  };
+}
+
+export function getDefaultPayableAmountInputName(t: TFunction) {
+  return t('scc.inputPayableAmount.label');
 }
