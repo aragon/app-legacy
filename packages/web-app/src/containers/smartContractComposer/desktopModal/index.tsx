@@ -69,26 +69,28 @@ const DesktopModal: React.FC<DesktopModalProps> = props => {
           ) : (
             <>
               <SmartContractListGroup />
-              <ButtonText
-                mode="secondary"
-                size="large"
-                label={t('scc.labels.connect')}
-                onClick={() => {
-                  trackEvent('newProposal_connectSmartContract_clicked', {
-                    dao_address: daoAddressOrEns,
-                  });
-                  props.onConnectNew();
-                }}
-                className="w-full"
-              />
-              <Link
-                external
-                type="primary"
-                iconRight={<IconFeedback height={13} width={13} />}
-                href={t('scc.listContracts.learnLinkURL')}
-                label={t('scc.listContracts.learnLinkLabel')}
-                className="justify-center w-full"
-              />
+              <div>
+                <ButtonText
+                  mode="secondary"
+                  size="large"
+                  label={t('scc.labels.connect')}
+                  onClick={() => {
+                    trackEvent('newProposal_connectSmartContract_clicked', {
+                      dao_address: daoAddressOrEns,
+                    });
+                    props.onConnectNew();
+                  }}
+                  className="w-full"
+                />
+                <Link
+                  external
+                  type="primary"
+                  iconRight={<IconFeedback height={13} width={13} />}
+                  href={t('scc.listContracts.learnLinkURL')}
+                  label={t('scc.listContracts.learnLinkLabel')}
+                  className="justify-center mt-2 w-full"
+                />
+              </div>
             </>
           )}
         </Aside>

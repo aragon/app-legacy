@@ -23,6 +23,7 @@ import InputForm from '../components/inputForm';
 import {SccFormData} from '..';
 import {ListHeaderContract} from '../components/listHeaderContract';
 import {actionsFilter} from 'utils/contract';
+import {StateEmpty} from 'components/stateEmpty';
 
 type Props = {
   isOpen: boolean;
@@ -37,14 +38,13 @@ type Props = {
 const MobileModal: React.FC<Props> = props => {
   const {t} = useTranslation();
   const {dao: daoAddressOrEns} = useParams();
-  const {setValue} = useFormContext();
   const [isActionSelected, setIsActionSelected] = useState(false);
 
   const [selectedSC]: [SmartContract] = useWatch({
     name: ['selectedSC'],
   });
   const [search, setSearch] = useState('');
-  const {getValues} = useFormContext<SccFormData>();
+  const {setValue, getValues} = useFormContext<SccFormData>();
 
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore
@@ -61,6 +61,8 @@ const MobileModal: React.FC<Props> = props => {
         onClose={props.onClose}
         onBackButtonClicked={() => {
           if (isActionSelected) {
+            //eslint-disable-next-line
+            //@ts-ignore
             setValue('selectedAction', null);
             setIsActionSelected(false);
           } else if (selectedSC !== null) {
@@ -87,27 +89,33 @@ const MobileModal: React.FC<Props> = props => {
             </div>
           ) : (
             <>
-              <SmartContractListGroup />
-              <ButtonText
-                mode="secondary"
-                size="large"
-                label={t('scc.labels.connect')}
-                onClick={() => {
-                  trackEvent('newProposal_connectSmartContract_clicked', {
-                    dao_address: daoAddressOrEns,
-                  });
-                  props.onConnectNew();
-                }}
-                className="w-full"
-              />
-              <Link
-                external
-                type="primary"
-                iconRight={<IconFeedback height={13} width={13} />}
-                href={t('scc.listContracts.learnLinkURL')}
-                label={t('scc.listContracts.learnLinkLabel')}
-                className="justify-center w-full"
-              />
+              {contracts.length === 0 ? (
+                <MobileModalEmptyState />
+              ) : (
+                <SmartContractListGroup />
+              )}
+              <div>
+                <ButtonText
+                  mode="secondary"
+                  size="large"
+                  label={t('scc.labels.connect')}
+                  onClick={() => {
+                    trackEvent('newProposal_connectSmartContract_clicked', {
+                      dao_address: daoAddressOrEns,
+                    });
+                    props.onConnectNew();
+                  }}
+                  className="w-full"
+                />
+                <Link
+                  external
+                  type="primary"
+                  iconRight={<IconFeedback height={13} width={13} />}
+                  href={t('scc.listContracts.learnLinkURL')}
+                  label={t('scc.listContracts.learnLinkLabel')}
+                  className="justify-center mt-2 w-full"
+                />
+              </div>
             </>
           )
         ) : (
@@ -124,6 +132,27 @@ const MobileModal: React.FC<Props> = props => {
 };
 
 export default MobileModal;
+
+const MobileModalEmptyState: React.FC = () => {
+  const {t} = useTranslation();
+
+  return (
+    <Container>
+      <StateEmpty
+        mode="inline"
+        type="Object"
+        object="smart_contract"
+        title={t('scc.selectionEmptyState.title')}
+        description={t('scc.selectionEmptyState.description')}
+      />
+    </Container>
+  );
+};
+
+const Container = styled.div.attrs({
+  'data-test-id': 'empty-container',
+  className: 'flex h-full bg-ui-0 p-6 pt-0 justify-center items-center',
+})``;
 
 type CustomHeaderProps = {
   onBackButtonClicked: () => void;
