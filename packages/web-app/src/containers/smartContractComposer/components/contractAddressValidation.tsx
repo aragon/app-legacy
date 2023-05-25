@@ -254,6 +254,18 @@ const ContractAddressValidation: React.FC<Props> = props => {
 
         //prioritize sourcify over etherscan if sourcify data is available
         if (sourcifyFullData || sourcifyPartialData) {
+          if (sourcifyFullData) {
+            sourcifyFullData.output.devdoc.title =
+              sourcifyFullData.output.devdoc.title ||
+              etherscanData.result[0].ContractName;
+          }
+
+          if (sourcifyPartialData) {
+            sourcifyPartialData.output.devdoc.title =
+              sourcifyPartialData.output.devdoc.title ||
+              etherscanData.result[0].ContractName;
+          }
+
           setVerifiedContract(
             'sourcifyMatch',
             sourcifyFullData || sourcifyPartialData,
