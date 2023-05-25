@@ -190,9 +190,9 @@ const InputForm: React.FC<InputFormProps> = ({
         <p className="text-sm font-bold text-primary-500">{selectedSC.name}</p>
         <IconSuccess />
       </div>
-      {selectedAction.inputs.length > 0 ? (
+      {actionInputs.length > 0 ? (
         <div className="p-3 mt-5 space-y-2 bg-white desktop:bg-ui-50 rounded-xl border border-ui-100 shadow-100">
-          {selectedAction.inputs.map(input => (
+          {actionInputs.map(input => (
             <div key={input.name}>
               <div className="text-base font-bold text-ui-800 capitalize">
                 {input.name}
