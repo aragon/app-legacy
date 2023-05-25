@@ -36,7 +36,7 @@ const EmptyState: React.FC<Props> = props => {
           title={t('scc.emptyState.title')}
           description={t('scc.emptyState.description')}
           primaryButton={{
-            label: t('scc.emptyState.primaryBtnLabel'),
+            label: t('scc.emptyState.ctaLabel'),
             onClick: () => {
               trackEvent('newProposal_connectSmartContract_clicked', {
                 dao_address: daoAddressOrEns,

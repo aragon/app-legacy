@@ -1,7 +1,7 @@
 import {
-  AlertInline,
   ButtonText,
   IconSuccess,
+  CheckboxListItem,
   NumberInput,
   TextInput,
   WalletInput,
@@ -36,7 +36,7 @@ import {validateAddress} from 'utils/validators';
 
 type InputFormProps = {
   actionIndex: number;
-  onComposeButtonClicked: () => void;
+  onComposeButtonClicked: (addAnother: boolean) => void;
 };
 
 const InputForm: React.FC<InputFormProps> = ({
@@ -55,7 +55,8 @@ const InputForm: React.FC<InputFormProps> = ({
   const {dao: daoAddressOrEns} = useParams();
   const {addAction, removeAction} = useActionsContext();
   const {setValue, resetField} = useFormContext();
-  const [formError, setFormError] = useState(false);
+  const [, setFormError] = useState(false);
+  const [another, setAnother] = useState(false);
 
   useEffect(() => setFormError(false), [selectedAction]);
 
@@ -130,7 +131,8 @@ const InputForm: React.FC<InputFormProps> = ({
           });
         });
         resetField('sccActions');
-        onComposeButtonClicked();
+
+        onComposeButtonClicked(another);
 
         trackEvent('newProposal_composeAction_clicked', {
           dao_address: daoAddressOrEns,
@@ -145,6 +147,7 @@ const InputForm: React.FC<InputFormProps> = ({
       }
     }
   }, [
+    another,
     actionIndex,
     actionInputs,
     addAction,
@@ -187,9 +190,9 @@ const InputForm: React.FC<InputFormProps> = ({
         <p className="text-sm font-bold text-primary-500">{selectedSC.name}</p>
         <IconSuccess />
       </div>
-      {actionInputs.length > 0 ? (
+      {selectedAction.inputs.length > 0 ? (
         <div className="p-3 mt-5 space-y-2 bg-white desktop:bg-ui-50 rounded-xl border border-ui-100 shadow-100">
-          {actionInputs.map(input => (
+          {selectedAction.inputs.map(input => (
             <div key={input.name}>
               <div className="text-base font-bold text-ui-800 capitalize">
                 {input.name}
@@ -210,15 +213,18 @@ const InputForm: React.FC<InputFormProps> = ({
         </div>
       ) : null}
 
-      <ButtonText
-        label={t('scc.detailContract.ctaLabel')}
-        className="mt-5 mb-2 w-full desktop:w-max"
-        onClick={composeAction}
-      />
-
-      {formError && (
-        <AlertInline label="Error with the inputs" mode="critical" />
-      )}
+      <HStack>
+        <ButtonText
+          label={t('scc.detailContract.ctaLabel')}
+          onClick={composeAction}
+        />
+        <CheckboxListItem
+          label={t('scc.detailContract.checkboxMultipleLabel')}
+          multiSelect
+          onClick={() => setAnother(!another)}
+          type={another ? 'active' : 'default'}
+        />
+      </HStack>
     </div>
   );
 };
@@ -320,6 +326,26 @@ export const ComponentForType: React.FC<ComponentForTypeProps> = ({
         />
       );
 
+    case 'tuple':
+      return (
+        <>
+          {input.components?.map(component => (
+            <div key={component.name}>
+              <div className="mb-1.5 text-base font-bold text-ui-800 capitalize">
+                {input.name}
+              </div>
+              <ComponentForType
+                key={component.name}
+                input={component}
+                functionName={input.name}
+                disabled={disabled}
+              />
+            </div>
+          ))}
+        </>
+      );
+      break;
+
     default:
       return (
         <Controller
@@ -369,6 +395,10 @@ const ActionName = styled.p.attrs({
 
 const ActionDescription = styled.p.attrs({
   className: 'mt-1 text-sm text-ui-600',
+})``;
+
+const HStack = styled.div.attrs({
+  className: 'flex justify-between items-center space-x-3 mt-5 ft-text-base',
 })``;
 
 export default InputForm;

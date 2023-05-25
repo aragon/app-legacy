@@ -10,7 +10,8 @@ type Props = {
   onClose: () => void;
   onConnectNew: () => void;
   onBackButtonClicked: () => void;
-  onComposeButtonClicked: () => void;
+  onComposeButtonClicked: (another: boolean) => void;
+  onRemoveContract: (address: string) => void;
 };
 
 const SmartContractList: React.FC<Props> = props => {
@@ -25,6 +26,7 @@ const SmartContractList: React.FC<Props> = props => {
         onConnectNew={props.onConnectNew}
         onBackButtonClicked={props.onBackButtonClicked}
         onComposeButtonClicked={props.onComposeButtonClicked}
+        onRemoveContract={props.onRemoveContract}
       />
     );
 
@@ -37,6 +39,7 @@ const SmartContractList: React.FC<Props> = props => {
       onConnectNew={props.onConnectNew}
       onBackButtonClicked={props.onBackButtonClicked}
       onComposeButtonClicked={props.onComposeButtonClicked}
+      onRemoveContract={props.onRemoveContract}
     />
   );
 };

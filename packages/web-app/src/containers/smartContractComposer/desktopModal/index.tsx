@@ -1,18 +1,20 @@
-import {ButtonText, IconMenuVertical, Modal} from '@aragon/ui-components';
-import React from 'react';
-import {useWatch} from 'react-hook-form';
+import {ButtonText, IconFeedback, Link, Modal} from '@aragon/ui-components';
+import React, {useEffect, useState} from 'react';
+import {useFormContext, useWatch} from 'react-hook-form';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 
 import {StateEmpty} from 'components/stateEmpty';
 import {SmartContract} from 'utils/types';
 import ActionListGroup from '../components/actionListGroup';
-import {ListItemContract} from '../components/listItemContract';
 import SmartContractListGroup from '../components/smartContractListGroup';
 import Header from './header';
 import InputForm from '../components/inputForm';
 import {trackEvent} from 'services/analytics';
 import {useParams} from 'react-router-dom';
+import {actionsFilter} from 'utils/contract';
+import {ListHeaderContract} from '../components/listHeaderContract';
+import {SccFormData} from '..';
 
 type DesktopModalProps = {
   isOpen: boolean;
@@ -20,7 +22,8 @@ type DesktopModalProps = {
   onClose: () => void;
   onConnectNew: () => void;
   onBackButtonClicked: () => void;
-  onComposeButtonClicked: () => void;
+  onComposeButtonClicked: (addAnother: boolean) => void;
+  onRemoveContract: (address: string) => void;
 };
 
 const DesktopModal: React.FC<DesktopModalProps> = props => {
@@ -29,59 +32,71 @@ const DesktopModal: React.FC<DesktopModalProps> = props => {
   const [selectedSC]: [SmartContract] = useWatch({
     name: ['selectedSC'],
   });
+  const [search, setSearch] = useState('');
+  const {getValues, setValue} = useFormContext<SccFormData>();
+  const [isActionSelected, setIsActionSelected] = useState(false);
+
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore
+  const contracts = getValues('contracts') || [];
+  const autoSelectedContract = contracts.length === 1 ? contracts[0] : null;
+
+  useEffect(() => {
+    setValue('selectedSC', autoSelectedContract);
+  }, [autoSelectedContract, setValue]);
 
   return (
     <StyledModal isOpen={props.isOpen} onClose={props.onClose}>
-      <Header onClose={props.onClose} selectedContract={selectedSC?.name} />
+      <Header
+        onClose={props.onClose}
+        selectedContract={selectedSC?.name}
+        onSearch={setSearch}
+      />
       <Wrapper>
         <Aside>
           {selectedSC ? (
             <>
-              <ListItemContract
+              <ListHeaderContract
                 key={selectedSC.address}
-                title={selectedSC.name}
-                subtitle={`${
-                  selectedSC.actions.filter(
-                    a =>
-                      a.type === 'function' &&
-                      (a.stateMutability === 'payable' ||
-                        a.stateMutability === 'nonpayable')
-                  ).length
-                } Actions to compose`}
-                logo={selectedSC.logo}
-                bgWhite
-                iconRight={<IconMenuVertical />}
+                sc={selectedSC}
+                onRemoveContract={props.onRemoveContract}
               />
               <ActionListGroup
-                actions={selectedSC.actions.filter(
-                  a =>
-                    a.type === 'function' &&
-                    (a.stateMutability === 'payable' ||
-                      a.stateMutability === 'nonpayable')
-                )}
+                actions={selectedSC.actions.filter(actionsFilter(search))}
+                onActionSelected={() => setIsActionSelected(true)}
               />
             </>
           ) : (
             <>
               <SmartContractListGroup />
-              <ButtonText
-                mode="secondary"
-                size="large"
-                label={t('scc.labels.connect')}
-                onClick={() => {
-                  trackEvent('newProposal_connectSmartContract_clicked', {
-                    dao_address: daoAddressOrEns,
-                  });
-                  props.onConnectNew();
-                }}
-                className="w-full"
-              />
+              <div>
+                <ButtonText
+                  mode="secondary"
+                  size="large"
+                  label={t('scc.labels.connect')}
+                  onClick={() => {
+                    trackEvent('newProposal_connectSmartContract_clicked', {
+                      dao_address: daoAddressOrEns,
+                    });
+                    props.onConnectNew();
+                  }}
+                  className="w-full"
+                />
+                <Link
+                  external
+                  type="primary"
+                  iconRight={<IconFeedback height={13} width={13} />}
+                  href={t('scc.listContracts.learnLinkURL')}
+                  label={t('scc.listContracts.learnLinkLabel')}
+                  className="justify-center mt-2 w-full"
+                />
+              </div>
             </>
           )}
         </Aside>
 
         <Main>
-          {selectedSC ? (
+          {selectedSC && isActionSelected ? (
             <InputForm
               actionIndex={props.actionIndex}
               onComposeButtonClicked={props.onComposeButtonClicked}

@@ -3,6 +3,11 @@
 import {AugmentedEtherscanContractResponse} from 'containers/smartContractComposer/components/contractAddressValidation';
 import {SmartContractAction} from './types';
 
+export const actionsFilter = (search: string) => (a: SmartContractAction) =>
+  a.type === 'function' &&
+  (a.stateMutability === 'payable' || a.stateMutability === 'nonpayable') &&
+  a.name.toLowerCase().includes(search.toLowerCase());
+
 export interface NatspecDetails {
   keyword: string;
   name: string;
