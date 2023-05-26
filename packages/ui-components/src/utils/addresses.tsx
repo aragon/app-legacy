@@ -35,7 +35,7 @@ export function isEnsDomain(input: string | null): boolean {
 export function shortenENS(input: string | null): string {
   if (!input || !isEnsDomain(input)) return input as string;
 
-  const [subdomain] = input.split('.eth');
-  const shortenedSubdomain = subdomain.slice(0, 7);
-  return `${shortenedSubdomain}…eth`;
+  const [name] = input.split('.eth');
+  const shortenedName = name.slice(0, 7);
+  return `${shortenedName}…eth`;
 }

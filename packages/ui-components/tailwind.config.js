@@ -178,7 +178,6 @@ module.exports = {
       ringWidth: ['active', 'focus-visible', 'disabled'],
       outline: ['focus-visible', 'active', 'focus', 'hover'],
       rounded: ['focus-visible'],
-      cursor: ['disabled'],
     },
     fluidType: ['responsive'],
   },

@@ -690,23 +690,30 @@ export class Web3Address {
     const addressObj = new Web3Address(provider, addressToSet, ensNameToSet);
 
     // If a provider is available, try to resolve the missing piece (address or ENS name)
-    if (provider) {
-      if (addressToSet && !ensNameToSet) {
-        ensNameToSet =
-          (await provider.lookupAddress(addressToSet)) ?? undefined;
-        if (ensNameToSet) {
-          addressObj._ensName = ensNameToSet;
-        }
-      } else if (!addressToSet && ensNameToSet) {
-        addressToSet = (await provider.resolveName(ensNameToSet)) ?? undefined;
-        if (addressToSet) {
-          addressObj._address = addressToSet;
+    try {
+      if (provider) {
+        if (addressToSet && !ensNameToSet) {
+          ensNameToSet =
+            (await provider.lookupAddress(addressToSet)) ?? undefined;
+          if (ensNameToSet) {
+            addressObj._ensName = ensNameToSet;
+          }
+        } else if (!addressToSet && ensNameToSet) {
+          addressToSet =
+            (await provider.resolveName(ensNameToSet)) ?? undefined;
+          if (addressToSet) {
+            addressObj._address = addressToSet;
+          }
         }
       }
-    }
 
-    // Return the Address instance
-    return addressObj;
+      // Return the Address instance
+      return addressObj;
+    } catch (error) {
+      throw new Error(
+        `Failed to create Web3Address: ${(error as Error).message}`
+      );
+    }
   }
 
   // Method to check if the stored address is valid
