@@ -14,9 +14,6 @@ import {
   VotingMode,
 } from '@aragon/sdk-client';
 import {bytesToHex, resolveIpfsCid} from '@aragon/sdk-common';
-import {Address} from '@aragon/ui-components/dist/utils/addresses';
-import {shortenAddress} from '@aragon/ui-components/src/utils/addresses';
-
 import {NavigationDao} from 'context/apolloClient';
 import {BigNumber, BigNumberish, constants, ethers, providers} from 'ethers';
 import {TFunction} from 'react-i18next';
@@ -45,6 +42,7 @@ import {
 import {i18n} from '../../i18n.config';
 import {addABI, decodeMethod} from './abiDecoder';
 import {getTokenInfo} from './tokens';
+import {isAddress} from 'ethers/lib/utils';
 
 export function formatUnits(amount: BigNumberish, decimals: number) {
   if (amount.toString().includes('.') || !decimals) {
@@ -189,7 +187,7 @@ export async function decodeWithdrawToAction(
 export async function decodeMintTokensToAction(
   data: Uint8Array[] | undefined,
   client: TokenVotingClient | undefined,
-  daoTokenAddress: Address,
+  daoTokenAddress: string,
   totalVotingWeight: bigint,
   provider: providers.Provider,
   network: SupportedNetworks
@@ -255,7 +253,7 @@ export async function decodeAddMembersToAction(
   }
 
   const addresses: {
-    address: Address;
+    address: string;
   }[] = client.decoding.addAddressesAction(data)?.map(address => ({
     address,
   }));
@@ -283,7 +281,7 @@ export async function decodeRemoveMembersToAction(
     return;
   }
   const addresses: {
-    address: Address;
+    address: string;
   }[] = client.decoding.removeAddressesAction(data)?.map(address => ({
     address,
   }));
@@ -760,4 +758,15 @@ export class Web3Address {
         )
       : String(this._address || this._ensName);
   }
+}
+
+export function shortenAddress(address: string | null) {
+  if (address === null) return '';
+  if (isAddress(address))
+    return (
+      address.substring(0, 5) +
+      '…' +
+      address.substring(address.length - 4, address.length)
+    );
+  else return address;
 }

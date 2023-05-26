@@ -10,16 +10,15 @@ import {
   IconRadioCancel,
   Option,
   SearchInput,
-  VotersTable,
   VoterType,
+  VotersTable,
 } from '@aragon/ui-components';
-
-import {shortenAddress} from '@aragon/ui-components/src/utils/addresses';
 import React, {useMemo, useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 
 import {StateEmpty} from 'components/stateEmpty';
+import {shortenAddress} from 'utils/library';
 import BreakdownTab from './breakdownTab';
 import InfoTab from './infoTab';
 

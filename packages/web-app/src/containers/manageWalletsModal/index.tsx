@@ -1,16 +1,16 @@
-import React, {useEffect, useState, useMemo} from 'react';
 import {
-  SearchInput,
-  CheckboxListItem,
   ButtonText,
+  CheckboxListItem,
   CheckboxSimple,
+  SearchInput,
 } from '@aragon/ui-components';
-import styled from 'styled-components';
+import React, {useEffect, useMemo, useState} from 'react';
 import {useTranslation} from 'react-i18next';
+import styled from 'styled-components';
 
 import ModalBottomSheetSwitcher from 'components/modalBottomSheetSwitcher';
 import {useGlobalModalContext} from 'context/globalModals';
-import {shortenAddress} from '@aragon/ui-components/src/utils/addresses';
+import {shortenAddress} from 'utils/library';
 
 type ManageWalletsModalProps = {
   addWalletCallback: (wallets: Array<string>) => void;

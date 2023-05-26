@@ -1,4 +1,3 @@
-import React, {useEffect} from 'react';
 import {
   Avatar,
   ButtonIcon,
@@ -9,18 +8,18 @@ import {
   IconTurnOff,
 } from '@aragon/ui-components';
 import {useGlobalModalContext} from 'context/globalModals';
-import styled from 'styled-components';
+import React, {useEffect} from 'react';
 import {useTranslation} from 'react-i18next';
+import styled from 'styled-components';
 
-import {useWallet} from 'hooks/useWallet';
 import ModalBottomSheetSwitcher from 'components/modalBottomSheetSwitcher';
-import {shortenAddress} from '@aragon/ui-components/src/utils/addresses';
-import {handleClipboardActions} from 'utils/library';
-import useScreen from 'hooks/useScreen';
-import {CHAIN_METADATA} from 'utils/constants';
-import {LoginRequired} from './LoginRequired';
-import {trackEvent} from 'services/analytics';
 import {useAlertContext} from 'context/alert';
+import useScreen from 'hooks/useScreen';
+import {useWallet} from 'hooks/useWallet';
+import {trackEvent} from 'services/analytics';
+import {CHAIN_METADATA} from 'utils/constants';
+import {handleClipboardActions, shortenAddress} from 'utils/library';
+import {LoginRequired} from './LoginRequired';
 
 export const WalletMenu = () => {
   const {close, isWalletOpen} = useGlobalModalContext();

@@ -18,7 +18,6 @@ import {
   Link,
   WidgetStatus,
 } from '@aragon/ui-components';
-import {shortenAddress} from '@aragon/ui-components/src/utils/addresses';
 import {withTransaction} from '@elastic/apm-rum-react';
 import TipTapLink from '@tiptap/extension-link';
 import {useEditor} from '@tiptap/react';
@@ -62,6 +61,7 @@ import {
   decodeRemoveMembersToAction,
   decodeSCCToAction,
   decodeWithdrawToAction,
+  shortenAddress,
   toDisplayEns,
 } from 'utils/library';
 import {NotFound} from 'utils/paths';

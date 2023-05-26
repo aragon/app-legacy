@@ -1,4 +1,3 @@
-import React from 'react';
 import {
   Avatar,
   ButtonIcon,
@@ -6,19 +5,19 @@ import {
   IconClose,
   IconCopy,
 } from '@aragon/ui-components';
-import {useGlobalModalContext} from 'context/globalModals';
-import styled from 'styled-components';
-import {useWallet} from 'hooks/useWallet';
 import ModalBottomSheetSwitcher from 'components/modalBottomSheetSwitcher';
-import {shortenAddress} from '@aragon/ui-components/src/utils/addresses';
-import {handleClipboardActions} from 'utils/library';
-import useScreen from 'hooks/useScreen';
-import {useTranslation, Trans} from 'react-i18next';
-import WalletIcon from 'public/wallet.svg';
-import {useNetwork} from 'context/network';
-import {useSwitchNetwork} from 'hooks/useSwitchNetwork';
-import {CHAIN_METADATA} from 'utils/constants';
 import {useAlertContext} from 'context/alert';
+import {useGlobalModalContext} from 'context/globalModals';
+import {useNetwork} from 'context/network';
+import useScreen from 'hooks/useScreen';
+import {useSwitchNetwork} from 'hooks/useSwitchNetwork';
+import {useWallet} from 'hooks/useWallet';
+import WalletIcon from 'public/wallet.svg';
+import React from 'react';
+import {Trans, useTranslation} from 'react-i18next';
+import styled from 'styled-components';
+import {CHAIN_METADATA} from 'utils/constants';
+import {handleClipboardActions, shortenAddress} from 'utils/library';
 
 const NetworkErrorMenu = () => {
   const {isNetworkOpen, close} = useGlobalModalContext();

@@ -1,9 +1,5 @@
-// NOTE Eventually have these types expressed as string patterns [VR 22-11-2021].
-export type Address = string;
-export type EnsName = string;
-
 // get truncated address
-export function shortenAddress(address: Address | null) {
+export function shortenAddress(address: string | null) {
   if (address === null) return '';
   if (IsAddress(address))
     return (
@@ -15,7 +11,7 @@ export function shortenAddress(address: Address | null) {
 }
 
 // check label type
-export function IsAddress(address: Address | null) {
+export function IsAddress(address: string | null) {
   const re = /0x[a-fA-F0-9]{40}/g;
   return Boolean(address?.match(re));
 }
