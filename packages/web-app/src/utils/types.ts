@@ -9,7 +9,6 @@ import {
   VoteValues,
   VotingSettings,
 } from '@aragon/sdk-client';
-import {Address} from '@aragon/ui-components/src/utils/addresses';
 import {BigNumber} from 'ethers/lib/ethers';
 
 import {TimeFilter, TransferTypes} from './constants';
@@ -23,7 +22,7 @@ import {Web3Address} from './library';
  * Market information is not included
  */
 export type BaseTokenInfo = {
-  address: Address;
+  address: string;
   count: bigint;
   decimals: number;
   id?: string; // for api call, optional because custom tokens have no id
@@ -102,12 +101,12 @@ export type BaseTransfer = {
 };
 
 export type Deposit = BaseTransfer & {
-  sender: Address;
+  sender: string;
   transferType: TransferTypes.Deposit;
 };
 export type Withdraw = BaseTransfer & {
   proposalId: ProposalId;
-  to: Address;
+  to: string;
   transferType: TransferTypes.Withdraw;
 };
 
@@ -158,8 +157,8 @@ export type VotingData = {
 };
 
 type ExecutionData = {
-  from: Address;
-  to: Address;
+  from: string;
+  to: string;
   amount: number;
 };
 
@@ -226,7 +225,7 @@ export type ActionWithdraw = {
   amount: number;
   name: 'withdraw_assets';
   to: Web3Address;
-  tokenAddress: Address;
+  tokenAddress: string;
   tokenBalance: number;
   tokenDecimals: number;
   tokenImgUrl: string;
@@ -241,7 +240,7 @@ export type ActionAddAddress = {
   name: 'add_address';
   inputs: {
     memberWallets: {
-      address: Address;
+      address: string;
     }[];
   };
 };
@@ -250,7 +249,7 @@ export type ActionRemoveAddress = {
   name: 'remove_address';
   inputs: {
     memberWallets: {
-      address: Address;
+      address: string;
     }[];
   };
 };
@@ -350,7 +349,7 @@ export type TransactionItem = {
   data: {
     sender: string;
     amount: number;
-    tokenContract: Address;
+    tokenContract: string;
   };
 };
 

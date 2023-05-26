@@ -2,14 +2,14 @@ import React from 'react';
 import styled from 'styled-components';
 
 import {AvatarDao} from '../avatar';
-import {Address, shortenAddress} from '../../utils/addresses';
+import {shortenAddress} from '../../utils/addresses';
 import {IconRadioDefault, IconSuccess} from '../icons';
 
 // TODO: Refactor to use input type radio for accessibility
 
 export type ListItemDaoProps = {
   /** Dao's ethereum address **or** ENS name */
-  daoAddress: Address;
+  daoAddress: string;
   daoLogo?: string;
   daoName: string;
   selected?: boolean;

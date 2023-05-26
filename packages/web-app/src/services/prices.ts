@@ -1,4 +1,3 @@
-import {Address} from '@aragon/ui-components/dist/utils/addresses';
 import {ApolloClient} from '@apollo/client';
 
 import {
@@ -76,7 +75,7 @@ type TokenData = {
   name: string;
   symbol: string;
   imgUrl: string;
-  address: Address;
+  address: string;
   price: number;
 };
 
@@ -89,7 +88,7 @@ type TokenData = {
  * @returns Basic information about the token or undefined if data could not be fetched
  */
 async function fetchTokenData(
-  address: Address,
+  address: string,
   client: ApolloClient<object>,
   network: SupportedNetworks,
   symbol?: string
@@ -150,7 +149,7 @@ async function fetchTokenData(
  * @returns a USD price as a number
  */
 async function fetchTokenPrice(
-  address: Address,
+  address: string,
   network: SupportedNetworks,
   symbol?: string
 ): Promise<number | undefined> {

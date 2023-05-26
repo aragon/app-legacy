@@ -1,4 +1,3 @@
-import {Address} from '@aragon/ui-components/dist/utils/addresses';
 import React, {
   createContext,
   useCallback,
@@ -13,7 +12,7 @@ import {ActionItem} from 'utils/types';
 const ActionsContext = createContext<ActionsContextType | null>(null);
 
 type ActionsContextType = {
-  daoAddress: Address;
+  daoAddress: string;
   actions: ActionItem[];
   selectedActionIndex: number;
   setSelectedActionIndex: React.Dispatch<React.SetStateAction<number>>;
@@ -23,7 +22,7 @@ type ActionsContextType = {
 };
 
 type ActionsProviderProps = {
-  daoId: Address;
+  daoId: string;
 };
 
 const ActionsProvider: React.FC<ActionsProviderProps> = ({daoId, children}) => {
