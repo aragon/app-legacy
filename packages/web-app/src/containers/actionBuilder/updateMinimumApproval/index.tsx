@@ -3,7 +3,7 @@ import {Controller, useFormContext, useWatch} from 'react-hook-form';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 
-import {Address, Label} from '@aragon/ui-components';
+import {Label} from '@aragon/ui-components';
 import {AccordionMethod} from 'components/accordionMethod';
 import {generateAlert} from 'components/multisigMinimumApproval';
 import MinimumApproval from 'components/multisigMinimumApproval/minimumApproval';
@@ -83,7 +83,7 @@ const UpdateMinimumApproval: React.FC<UpdateMinimumApprovalProps> = ({
 
       const newAddedWalletCount =
         newAddedWallet?.filter(
-          (wallet: {address: Address}) => wallet?.address !== ''
+          (wallet: {address: string}) => wallet?.address !== ''
         ).length || 0;
 
       const newRemovedWalletCount = newRemovedWallet?.length || 0;

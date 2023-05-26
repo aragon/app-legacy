@@ -1,5 +1,4 @@
 import {
-  Address,
   AvatarDao,
   AvatarDaoProps,
   ButtonIcon,
@@ -14,7 +13,7 @@ import useScreen from 'hooks/useScreen';
 type DaoSelectorProps = {
   daoName: string;
   /** Dao's ethereum address **or** ENS name */
-  daoAddress: Address;
+  daoAddress: string;
   /** Handler for the switch button. Will be called when the button is clicked. */
   onClick: () => void;
 } & Pick<AvatarDaoProps, 'src'>;
