@@ -2,7 +2,7 @@ import {Meta, Story} from '@storybook/react';
 import React, {useState} from 'react';
 
 import {WalletInput, WalletInputProps} from '../src';
-import {InputValue} from '../src/components/input/walletInput';
+import {WalletInputValue} from '../src/components/input/walletInput';
 
 export default {
   title: 'Components/Input/Wallet',
@@ -10,7 +10,10 @@ export default {
 } as Meta;
 
 const Template: Story<WalletInputProps> = args => {
-  const [value, setValue] = useState<InputValue>({address: '', ensName: ''});
+  const [value, setValue] = useState<WalletInputValue>({
+    address: '',
+    ensName: '',
+  });
 
   return <WalletInput {...args} value={value} onValueChange={setValue} />;
 };

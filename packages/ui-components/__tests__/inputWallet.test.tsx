@@ -1,7 +1,7 @@
 import React from 'react';
 import {render, screen} from '@testing-library/react';
 
-import {Wallet as WalletInput} from '../stories/inputWallet.stories';
+import {Default as WalletInput} from '../stories/inputWallet.stories';
 
 describe('WalletInput', () => {
   // eslint-disable-next-line
