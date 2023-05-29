@@ -2,8 +2,8 @@ import {
   AlertInline,
   Label,
   Link,
-  SearchInput,
-  TextInput,
+  WalletInput,
+  AlertCard,
 } from '@aragon/ui-components';
 import React, {useCallback, useEffect, useMemo} from 'react';
 import {Controller, useFormContext, useWatch} from 'react-hook-form';
@@ -16,6 +16,7 @@ import {getTokenInfo} from 'utils/tokens';
 import {validateTokenAddress} from 'utils/validators';
 import {useNetwork} from 'context/network';
 import {CHAIN_METADATA, getSupportedNetworkByChainId} from 'utils/constants';
+import {Dd, Dl, Dt} from 'components/descriptionList';
 
 const DEFAULT_BLOCK_EXPLORER = 'https://etherscan.io/';
 
@@ -90,20 +91,21 @@ const AddExistingToken: React.FC = () => {
   return (
     <>
       <DescriptionContainer>
-        <Title>{t('labels.addExistingToken')}</Title>
+        <Title>{t('createDAO.step3.existingToken.title')}</Title>
         <Subtitle>
-          {t('createDAO.step3.addExistingTokenHelptext')}
-          <Link label={t('createDAO.step3.tokenHelptextLink')} href="" />.
+          {t('createDAO.step3.existingToken.description')}
+          <Link
+            label={t('createDAO.step3.existingToken.descriptionLinkLabel')}
+            href=""
+          />
+          .
         </Subtitle>
       </DescriptionContainer>
       <FormItem>
         <DescriptionContainer>
-          <Label label={t('labels.address')} />
+          <Label label={t('createDAO.step3.existingToken.inputLabel')} />
           <p>
-            <span>{t('createDAO.step3.tokenContractSubtitlePart1')}</span>
-            <Link label="block explorer" href={explorer} />
-            {'. '}
-            <span>{t('createDAO.step3.tokenContractSubtitlePart2')}</span>
+            <span>{t('createDAO.step3.existingToken.inputDescription')}</span>
           </p>
         </DescriptionContainer>
         <Controller
@@ -119,7 +121,7 @@ const AddExistingToken: React.FC = () => {
             fieldState: {error, isDirty, invalid},
           }) => (
             <>
-              <SearchInput
+              <WalletInput
                 {...{name, value, onBlur, onChange}}
                 placeholder="0x..."
               />
@@ -132,28 +134,44 @@ const AddExistingToken: React.FC = () => {
             </>
           )}
         />
-        {tokenName && tokenAddress && (
-          <TokenInfoContainer>
-            <InfoContainer>
-              <Label label={t('labels.tokenName')} />
-              <TextInput disabled value={tokenName || ''} />
-            </InfoContainer>
-            <InfoContainer>
-              <Label label={t('labels.tokenSymbol')} />
-              <TextInput disabled value={tokenSymbol || ''} />
-            </InfoContainer>
-            <InfoContainer>
-              <Label label={t('labels.supply')} />
-              <TextInput
-                disabled
-                defaultValue=""
-                value={new Intl.NumberFormat('en-US', {
-                  maximumFractionDigits: 4,
-                }).format(tokenTotalSupply)}
-              />
-            </InfoContainer>
-          </TokenInfoContainer>
-        )}
+        <VerifyContainer>
+          <VerifyTitle>Aragon Network Token (ANT)</VerifyTitle>
+          <VerifyItemsWrapper>
+            <Dl>
+              <Dt>
+                {t('createDAO.step3.existingToken.verificationLabelStandard')}
+              </Dt>
+              <Dd>ERC-20</Dd>
+            </Dl>
+            <Dl>
+              <Dt>
+                {t('createDAO.step3.existingToken.verificationLabelSupply')}
+              </Dt>
+              <Dd>43,166,685 ANT</Dd>
+            </Dl>
+            <Dl>
+              <Dt>
+                {t('createDAO.step3.existingToken.verificationLabelHolders')}
+              </Dt>
+              <Dd>14,579</Dd>
+            </Dl>
+            <Dl>
+              <Dt>
+                {t('createDAO.step3.existingToken.verificationLabelGovernance')}
+              </Dt>
+              <Dd>Supported</Dd>
+            </Dl>
+          </VerifyItemsWrapper>
+          <AlertCard
+            mode="success"
+            title={t(
+              'createDAO.step3.existingToken.verificationAlertSuccessTitle'
+            )}
+            helpText={t(
+              'createDAO.step3.existingToken.verificationAlertSuccessDescription'
+            )}
+          />
+        </VerifyContainer>
       </FormItem>
     </>
   );
@@ -173,9 +191,16 @@ const Title = styled.p.attrs({className: 'text-lg font-bold text-ui-800'})``;
 
 const Subtitle = styled.p.attrs({className: 'text-ui-600 text-bold'})``;
 
-const TokenInfoContainer = styled.div.attrs({
-  className:
-    'flex flex-col tablet:flex-row tablet:gap-x-2 gap-y-2 tablet:justify-between tablet:items-center p-2 bg-ui-0 rounded-xl',
+const VerifyContainer = styled.div.attrs({
+  className: 'flex flex-col space-y-3 p-3 bg-ui-0 rounded-xl',
+})``;
+
+const VerifyTitle = styled.h2.attrs({
+  className: 'ft-text-lg font-bold text-ui-800',
+})``;
+
+const VerifyItemsWrapper = styled.div.attrs({
+  className: 'flex flex-col tablet:gap-x-2 gap-y-1.5',
 })``;
 
 const InfoContainer = styled.div.attrs({
