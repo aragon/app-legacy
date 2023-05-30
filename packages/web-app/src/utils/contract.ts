@@ -234,10 +234,8 @@ export function collapseNatspec(
   contract: string
 ): NatspecContract {
   const collapsed = {...natspec[contract]};
-  if (collapsed === undefined) {
-    throw new Error(`Contract ${contract} not found in natspec.`);
-  }
   for (const superClass of collapsed.superClasses) {
+    if (!natspec[superClass]) continue;
     const superNatspec = collapseNatspec(natspec, superClass);
     collapsed.details = Object.fromEntries(
       Object.entries(collapsed.details).map(([name, details]) => {
@@ -343,7 +341,8 @@ export function attachEtherNotice(
 ): SmartContractAction[] {
   const parsedSourceCode = parseSourceCode(SourceCode);
   const EtherNotice = extractNatSpec(parsedSourceCode);
-  const notices = EtherNotice[ContractName]?.details;
+  const collapsedNatspec = collapseNatspec(EtherNotice, ContractName);
+  const notices = collapsedNatspec.details;
 
   return ABI.map(action => {
     if (action.type === 'function' && notices?.[action.name]) {
