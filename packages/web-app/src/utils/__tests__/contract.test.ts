@@ -1,4 +1,9 @@
-import {NatspecDetails, extractNatSpec, scanNatspecBlock} from 'utils/contract';
+import {
+  NatspecDetails,
+  collapseNatspec,
+  extractNatSpec,
+  scanNatspecBlock,
+} from 'utils/contract';
 
 describe('Natspec Block', () => {
   test('empty', () => {
@@ -90,6 +95,86 @@ describe('Natspec Block', () => {
     expect(block.tags).toStrictEqual({
       notice: 'abc\n- def',
     });
+  });
+  test('collapseNatspec', () => {
+    const source = `
+      /// @notice SuperParent
+      contract SuperParent {
+        /// @notice q
+        function q() public {
+        }
+      }
+
+      /// @notice Parent
+      contract Parent is SuperParent {
+        /// @notice x
+        function x() public {
+        }
+      }
+
+      contract InheritFrom {
+        /// @notice z
+        function z() public {
+        }
+      }
+
+      /// @notice Child
+      contract Child is Parent {
+        /// @notice y
+        function y() public {
+        }
+
+        /// @inheritdoc InheritFrom
+        function z() public {
+        }
+      }
+    `;
+    const natspec = extractNatSpec(source);
+    const collapsed = collapseNatspec(natspec, 'Child');
+    expect(collapsed.details.q.tags.notice).toStrictEqual('q');
+    expect(collapsed.details.x.tags.notice).toStrictEqual('x');
+    expect(collapsed.details.y.tags.notice).toStrictEqual('y');
+    expect(collapsed.details.z.tags.notice).toStrictEqual('z');
+  });
+
+  test('collapseNatspec no inheritdoc', () => {
+    const source = `
+      /// @notice SuperParent
+      contract SuperParent {
+        /// @notice q
+        function q() public {
+        }
+      }
+
+      /// @notice Parent
+      contract Parent is SuperParent {
+        /// @notice x
+        function x() public {
+        }
+      }
+
+      contract InheritFrom {
+        /// @notice z
+        function z() public {
+        }
+      }
+
+      /// @notice Child
+      contract Child is Parent {
+        /// @notice y
+        function y() public {
+        }
+
+        /// @inheritdoc InheritFromZ
+        function z() public {
+        }
+      }
+    `;
+    const natspec = extractNatSpec(source);
+    const collapsed = collapseNatspec(natspec, 'Child');
+    expect(collapsed.details.q.tags.notice).toStrictEqual('q');
+    expect(collapsed.details.x.tags.notice).toStrictEqual('x');
+    expect(collapsed.details.y.tags.notice).toStrictEqual('y');
   });
 });
 

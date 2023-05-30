@@ -223,6 +223,44 @@ export function extractNatSpec(source: string) {
   return natspec;
 }
 
+/**
+ * Collapse inheritance tree of a map of NatspecContracts into a single NatspecDetails object.
+ * @param natspec The map of NatspecContracts to collapse.
+ * @param contract The name of the contract to collapse.
+ * @returns The contract with the NatspecDetails added for all inherited functions.
+ */
+export function collapseNatspec(
+  natspec: Record<string, NatspecContract>,
+  contract: string
+): NatspecContract {
+  const collapsed = {...natspec[contract]};
+  if (collapsed === undefined) {
+    throw new Error(`Contract ${contract} not found in natspec.`);
+  }
+  for (const superClass of collapsed.superClasses) {
+    const superNatspec = collapseNatspec(natspec, superClass);
+    collapsed.details = Object.fromEntries(
+      Object.entries(collapsed.details).map(([name, details]) => {
+        if (details.tags['inheritdoc'] !== undefined) {
+          const inheritDetails =
+            natspec[details.tags['inheritdoc'] as string]?.details[name];
+          if (inheritDetails !== undefined) {
+            delete details.tags['inheritdoc'];
+            details.tags = {...inheritDetails.tags, ...details.tags};
+          }
+        }
+        if (Object.keys(details.tags).length === 0) {
+          const superDetails = superNatspec.details[name];
+          return [name, superDetails !== undefined ? superDetails : details];
+        }
+        return [name, details];
+      })
+    );
+    collapsed.details = {...superNatspec.details, ...collapsed.details};
+  }
+  return collapsed;
+}
+
 /** Starts scanning str at start to find the first match from searches. If multiple matches complete at the
  * same position in str, it prefers the one which is listed first in searches.
  */
