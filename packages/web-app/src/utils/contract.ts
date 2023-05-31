@@ -147,6 +147,7 @@ export function extractNatSpec(source: string) {
       '/*',
       '//',
       'contract ',
+      'interface ',
       'function ',
       'error ',
       'event ',
@@ -173,7 +174,8 @@ export function extractNatSpec(source: string) {
           [match, pos] = scanFirst(source, pos, ['\n']);
         }
         break;
-      case 'contract ': {
+      case 'contract ':
+      case 'interface ': {
         pos = skipWhitespace(source, pos);
         let name: string;
         [pos, name] = scanWord(source, pos);
@@ -320,20 +322,6 @@ export function parseSourceCode(input: string) {
   }
 }
 
-export const flattenNatSpecTags = (
-  NatSpec: Record<string, NatspecContract>
-) => {
-  const flatTags: Record<string, unknown> = {};
-
-  Object.values(NatSpec).map(contract => {
-    Object.values(contract.details).map(
-      details => (flatTags[details.name] = details.tags)
-    );
-  });
-
-  return flatTags;
-};
-
 export function attachEtherNotice(
   SourceCode: AugmentedEtherscanContractResponse['SourceCode'],
   ContractName: string,
@@ -347,6 +335,12 @@ export function attachEtherNotice(
   return ABI.map(action => {
     if (action.type === 'function' && notices?.[action.name]) {
       action.notice = notices[action.name].tags.notice as string;
+      action.inputs.forEach(
+        input =>
+          (input.notice = (
+            notices[action.name].tags['param'] as Record<string, string>
+          )?.[input.name] as string)
+      );
     }
 
     return action;

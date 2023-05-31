@@ -96,6 +96,37 @@ describe('Natspec Block', () => {
       notice: 'abc\n- def',
     });
   });
+
+  test('interfaces and abstract', () => {
+    const source = `
+      abstract contract Parent {
+        /// @notice x
+        function x() public virtual;
+      }
+
+      interface InheritFrom {
+        /// @notice z
+        function z() public {
+        }
+      }
+
+      /// @notice Child
+      contract Child is Parent {
+        /// @notice y
+        function y() public {
+        }
+
+        /// @inheritdoc InheritFrom
+        function z() public {
+        }
+      }
+    `;
+    const natspec = extractNatSpec(source);
+    const collapsed = collapseNatspec(natspec, 'Child');
+    expect(collapsed.details.x.tags.notice).toStrictEqual('x');
+    expect(collapsed.details.y.tags.notice).toStrictEqual('y');
+    expect(collapsed.details.z.tags.notice).toStrictEqual('z');
+  });
   test('collapseNatspec', () => {
     const source = `
       /// @notice SuperParent

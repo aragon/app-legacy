@@ -9,8 +9,10 @@ import {
   ListItemActionProps,
 } from '@aragon/ui-components';
 import {useAlertContext} from 'context/alert';
+import {useNetwork} from 'context/network';
 import {t} from 'i18next';
 import React from 'react';
+import {chainExplorerAddressLink} from 'utils/constants/chains';
 import {handleClipboardActions} from 'utils/library';
 import {SmartContract} from 'utils/types';
 
@@ -25,6 +27,7 @@ export const ListHeaderContract: React.FC<Props> = ({
   ...rest
 }) => {
   const {alert} = useAlertContext();
+  const {network} = useNetwork();
 
   const iconRight = (
     <Dropdown
@@ -44,7 +47,7 @@ export const ListHeaderContract: React.FC<Props> = ({
               iconRight={
                 <IconFeedback height={13} width={13} className="ml-4" />
               }
-              href={`https://etherscan.io/address/${sc.address}#code`}
+              href={chainExplorerAddressLink(network, sc.address) + '#code'}
               label={t('scc.detailContract.dropdownExplorerLinkLabel', {
                 address: sc.address,
               })}
