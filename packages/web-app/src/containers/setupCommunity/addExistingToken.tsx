@@ -203,6 +203,6 @@ const VerifyItemsWrapper = styled.div.attrs({
   className: 'flex flex-col tablet:gap-x-2 gap-y-1.5',
 })``;
 
-const InfoContainer = styled.div.attrs({
-  className: 'space-y-1',
+const Dt = styled.dt.attrs({
+  className: 'flex items-center text-ui-800',
 })``;

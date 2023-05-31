@@ -114,10 +114,7 @@ const SetupCommunityForm: React.FC = () => {
       {/* for some reason the default value of the use form is not setting up correctly
       and is initialized to null or '' so the condition cannot be membership === 'token'  */}
       <FormSection>
-        <Label
-          label={t('newWithdraw.setupVoting.multisig.startLabel')}
-          helpText={t('newWithdraw.setupVoting.multisig.startDescription')}
-        />
+        <Label label={t('createDAO.step3.existingToken.questionLabel')} />
         <Controller
           name="existingToken"
           rules={{required: 'Validate'}}
