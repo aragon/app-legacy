@@ -397,10 +397,6 @@ const ActionDescription = styled.p.attrs({
   className: 'mt-1 text-sm text-ui-600',
 })``;
 
-const ParamDescription = styled.p.attrs({
-  className: 'mt-1 text-sm text-ui-600',
-})``;
-
 const HStack = styled.div.attrs({
   className: 'flex justify-between items-center space-x-3 mt-5 ft-text-base',
 })``;
