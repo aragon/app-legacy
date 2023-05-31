@@ -390,11 +390,8 @@ export const ComponentForTypeWithFormProvider: React.FC<
 };
 
 const ActionName = styled.p.attrs({
-  className: 'text-lg font-bold text-ui-800 capitalize',
-})`
-  overflow: hidden;
-  text-overflow: ellipsis;
-`;
+  className: 'text-lg font-bold text-ui-800 capitalize truncate',
+})``;
 
 const ActionDescription = styled.p.attrs({
   className: 'mt-1 text-sm text-ui-600',
