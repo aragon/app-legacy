@@ -2,7 +2,7 @@ import {
   AlertInline,
   Label,
   Link,
-  WalletInput,
+  WalletInputLegacy,
   AlertCard,
   InputValue,
 } from '@aragon/ui-components';
@@ -12,23 +12,15 @@ import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 
 import {useSpecificProvider} from 'context/providers';
-import {formatUnits} from 'utils/library';
-import {getTokenInfo} from 'utils/tokens';
-import {
-  validateGovernanceTokenAddress,
-  tokenType,
-  validateTokenType,
-} from 'utils/validators';
+import {validateGovernanceTokenAddress, tokenType} from 'utils/validators';
 import {useNetwork} from 'context/network';
-import {CHAIN_METADATA, ENS_SUPPORTED_NETWORKS} from 'utils/constants';
+import {CHAIN_METADATA} from 'utils/constants';
 import {Dd, Dl} from 'components/descriptionList';
 
 const AddExistingToken: React.FC = () => {
   const {t} = useTranslation();
   const {network} = useNetwork();
   const {control, setValue, trigger} = useFormContext();
-
-  const networkSupportsENS = ENS_SUPPORTED_NETWORKS.includes(network);
 
   // once the translation of the ui-components has been dealt with,
   // consider moving these inside the component itself.
@@ -73,9 +65,7 @@ const AddExistingToken: React.FC = () => {
         setTokenType
       );
 
-      if (isErc20Valid !== true) {
-        await validateTokenType(contractAddress, provider, setTokenType);
-      }
+      console.log('isErc20Valid', isErc20Valid);
 
       return isErc20Valid;
     },
@@ -114,17 +104,17 @@ const AddExistingToken: React.FC = () => {
           }}
           render={({
             field: {name, value, onBlur, onChange},
-            fieldState: {error, isDirty, invalid},
+            fieldState: {error},
           }) => (
             <>
-              <WalletInput
+              <WalletInputLegacy
                 name={name}
-                state={error && 'critical'}
+                // state={error && 'critical'}
                 value={value}
                 onBlur={onBlur}
-                placeholder={networkSupportsENS ? 'ENS or 0x…' : '0x…'}
-                onValueChange={value => handleValueChanged(value, onChange)}
-                blockExplorerURL={CHAIN_METADATA[network].lookupURL}
+                placeholder={'0x…'}
+                onChange={onChange}
+                // blockExplorerURL={CHAIN_METADATA[network].lookupURL}
               />
               {error?.message && (
                 <AlertInline label={error.message} mode="critical" />

@@ -59,41 +59,23 @@ export async function validateGovernanceTokenAddress(
   provider: EthersProviders.Provider,
   setTokenType: (value: tokenType) => void
 ): Promise<ValidateResult> {
-  const result = validateAddress(address);
+  setTokenType(undefined);
+  const isAddress = validateAddress(address);
 
-  if (result === true) {
-    if (await isERC20Token(address, provider)) {
-      if (await isERC20Governance(address, provider))
-        setTokenType('governanceERC20');
-      else setTokenType('ERC20');
-      return true;
-    } else return i18n.t('errors.notERC20Token') as string;
+  if (isAddress === true) {
+    const interfaces = await Promise.all([
+      isERC20Token(address, provider),
+      isERC20Governance(address, provider),
+      isERC721(address, provider),
+      isERC1155(address, provider),
+    ]);
+
+    if (interfaces[3]) setTokenType('ERC1155');
+    else if (interfaces[2]) setTokenType('ERC721');
+    else if (interfaces[1]) setTokenType('governanceERC20');
+    else if (interfaces[0]) setTokenType('ERC20');
+    else setTokenType('unknown');
   } else return i18n.t('errors.notERC20Token') as string;
-}
-
-/**
- * Validate given token contract address
- *
- * @param address token contract address
- * @param provider rpc provider
- * @returns true when valid, or an error message when invalid
- */
-export async function validateTokenType(
-  address: string,
-  provider: EthersProviders.Provider,
-  setTokenType: (value: tokenType) => void
-): Promise<ValidateResult> {
-  const result = validateAddress(address);
-
-  if (result === true) {
-    if (await isERC721(address, provider)) setTokenType('ERC721');
-
-    if (await isERC1155(address, provider)) setTokenType('ERC1155');
-
-    setTokenType('unknown');
-  } else {
-    return result;
-  }
 }
 
 /**
