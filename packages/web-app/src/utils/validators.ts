@@ -4,7 +4,7 @@ import {BigNumber, providers as EthersProviders} from 'ethers';
 import {InfuraProvider, JsonRpcProvider} from '@ethersproject/providers';
 
 import {i18n} from '../../i18n.config';
-import {isERC20Token} from './tokens';
+import {isERC1155, isERC20Governance, isERC20Token, isERC721} from './tokens';
 import {ALPHA_NUMERIC_PATTERN} from './constants';
 import {
   ActionItem,
@@ -16,6 +16,14 @@ import {
   Nullable,
 } from './types';
 import {isOnlyWhitespace} from './library';
+
+export type tokenType =
+  | 'ERC20'
+  | 'governanceERC20'
+  | 'ERC721'
+  | 'ERC1155'
+  | 'unknown'
+  | undefined;
 
 /**
  * Validate given token contract address
@@ -34,6 +42,55 @@ export async function validateTokenAddress(
     return (await isERC20Token(address, provider))
       ? true
       : (i18n.t('errors.notERC20Token') as string);
+  } else {
+    return result;
+  }
+}
+
+/**
+ * Validate given token contract address
+ *
+ * @param address token contract address
+ * @param provider rpc provider
+ * @returns true when valid, or an error message when invalid
+ */
+export async function validateGovernanceTokenAddress(
+  address: string,
+  provider: EthersProviders.Provider,
+  setTokenType: (value: tokenType) => void
+): Promise<ValidateResult> {
+  const result = validateAddress(address);
+
+  if (result === true) {
+    if (await isERC20Token(address, provider)) {
+      if (await isERC20Governance(address, provider))
+        setTokenType('governanceERC20');
+      else setTokenType('ERC20');
+      return true;
+    } else return i18n.t('errors.notERC20Token') as string;
+  } else return i18n.t('errors.notERC20Token') as string;
+}
+
+/**
+ * Validate given token contract address
+ *
+ * @param address token contract address
+ * @param provider rpc provider
+ * @returns true when valid, or an error message when invalid
+ */
+export async function validateTokenType(
+  address: string,
+  provider: EthersProviders.Provider,
+  setTokenType: (value: tokenType) => void
+): Promise<ValidateResult> {
+  const result = validateAddress(address);
+
+  if (result === true) {
+    if (await isERC721(address, provider)) setTokenType('ERC721');
+
+    if (await isERC1155(address, provider)) setTokenType('ERC1155');
+
+    setTokenType('unknown');
   } else {
     return result;
   }

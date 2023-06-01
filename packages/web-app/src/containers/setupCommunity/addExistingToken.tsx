@@ -4,8 +4,9 @@ import {
   Link,
   WalletInput,
   AlertCard,
+  InputValue,
 } from '@aragon/ui-components';
-import React, {useCallback, useEffect, useMemo} from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 import {Controller, useFormContext, useWatch} from 'react-hook-form';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
@@ -13,16 +14,25 @@ import styled from 'styled-components';
 import {useSpecificProvider} from 'context/providers';
 import {formatUnits} from 'utils/library';
 import {getTokenInfo} from 'utils/tokens';
-import {validateTokenAddress} from 'utils/validators';
+import {
+  validateGovernanceTokenAddress,
+  tokenType,
+  validateTokenType,
+} from 'utils/validators';
 import {useNetwork} from 'context/network';
-import {CHAIN_METADATA, getSupportedNetworkByChainId} from 'utils/constants';
-import {Dd, Dl, Dt} from 'components/descriptionList';
-
-const DEFAULT_BLOCK_EXPLORER = 'https://etherscan.io/';
+import {CHAIN_METADATA, ENS_SUPPORTED_NETWORKS} from 'utils/constants';
+import {Dd, Dl} from 'components/descriptionList';
 
 const AddExistingToken: React.FC = () => {
   const {t} = useTranslation();
+  const {network} = useNetwork();
   const {control, setValue, trigger} = useFormContext();
+
+  const networkSupportsENS = ENS_SUPPORTED_NETWORKS.includes(network);
+
+  // once the translation of the ui-components has been dealt with,
+  // consider moving these inside the component itself.
+  const [tokenType, setTokenType] = useState<tokenType>(undefined);
 
   const [tokenAddress, blockchain, tokenName, tokenSymbol, tokenTotalSupply] =
     useWatch({
@@ -36,18 +46,13 @@ const AddExistingToken: React.FC = () => {
     });
 
   const provider = useSpecificProvider(blockchain.id);
-  const explorer = useMemo(() => {
-    if (blockchain.id) {
-      const defaultNetwork =
-        getSupportedNetworkByChainId(blockchain.id) || 'ethereum';
-      const explorerUrl = CHAIN_METADATA[defaultNetwork].explorer;
-      return explorerUrl || DEFAULT_BLOCK_EXPLORER;
-    }
 
-    return DEFAULT_BLOCK_EXPLORER;
-  }, [blockchain.id]);
+  const handleValueChanged = useCallback(
+    (value: InputValue, onChange: (...event: unknown[]) => void) =>
+      onChange(value),
+    []
+  );
 
-  const {network} = useNetwork();
   const nativeCurrency = CHAIN_METADATA[network].nativeCurrency;
 
   // Trigger address validation on network change
@@ -62,31 +67,22 @@ const AddExistingToken: React.FC = () => {
    *************************************************/
   const addressValidator = useCallback(
     async contractAddress => {
-      const isValid = await validateTokenAddress(contractAddress, provider);
+      const isErc20Valid = await validateGovernanceTokenAddress(
+        contractAddress,
+        provider,
+        setTokenType
+      );
 
-      if (isValid) {
-        try {
-          const res = await getTokenInfo(
-            contractAddress,
-            provider,
-            nativeCurrency
-          );
-
-          setValue('tokenName', res.name);
-          setValue('tokenSymbol', res.symbol);
-          setValue(
-            'tokenTotalSupply',
-            formatUnits(res.totalSupply, res.decimals)
-          );
-        } catch (error) {
-          console.error('Error fetching token information', error);
-        }
+      if (isErc20Valid !== true) {
+        await validateTokenType(contractAddress, provider, setTokenType);
       }
 
-      return isValid;
+      return isErc20Valid;
     },
-    [provider, setValue, nativeCurrency]
+    [provider]
   );
+
+  console.log('tokenType-->', tokenType);
 
   return (
     <>
@@ -109,7 +105,7 @@ const AddExistingToken: React.FC = () => {
           </p>
         </DescriptionContainer>
         <Controller
-          name="tokenAddress"
+          name="existingContractAddress"
           control={control}
           defaultValue=""
           rules={{
@@ -122,14 +118,16 @@ const AddExistingToken: React.FC = () => {
           }) => (
             <>
               <WalletInput
-                {...{name, value, onBlur, onChange}}
-                placeholder="0x..."
+                name={name}
+                state={error && 'critical'}
+                value={value}
+                onBlur={onBlur}
+                placeholder={networkSupportsENS ? 'ENS or 0x…' : '0x…'}
+                onValueChange={value => handleValueChanged(value, onChange)}
+                blockExplorerURL={CHAIN_METADATA[network].lookupURL}
               />
               {error?.message && (
                 <AlertInline label={error.message} mode="critical" />
-              )}
-              {!invalid && isDirty && tokenSymbol && (
-                <AlertInline label={t('success.contract')} mode="success" />
               )}
             </>
           )}

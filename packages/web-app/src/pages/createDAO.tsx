@@ -50,7 +50,8 @@ export type CreateDaoFormData = {
   eligibilityTokenAmount: number | string;
   support: string;
   membership: string;
-  existenceToken: boolean;
+  existingToken: boolean;
+  existingContractAddress: string;
   earlyExecution: boolean;
   voteReplacement: boolean;
   multisigWallets: WalletItem[];
@@ -69,7 +70,8 @@ const defaultValues = {
   earlyExecution: true,
   voteReplacement: false,
   membership: 'token',
-  existenceToken: false,
+  existingToken: false,
+  existingContractAddress: '',
   eligibilityType: 'token' as CreateDaoFormData['eligibilityType'],
   eligibilityTokenAmount: 1,
   isCustomToken: true,

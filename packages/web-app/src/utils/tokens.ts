@@ -7,6 +7,9 @@ import {formatUnits} from 'utils/library';
 import {NativeTokenData, TimeFilter, TOKEN_AMOUNT_REGEX} from './constants';
 import {add} from 'date-fns';
 import {TokenType, Transfer, TransferType} from '@aragon/sdk-client';
+import {votesUpgradeableABI} from 'abis/governanceWrappedERC20TokenABI';
+import {erc1155TokenABI} from 'abis/erc1155TokenABI';
+import {erc721TokenABI} from 'abis/erc721TokenABI';
 
 /**
  * This method sorts a list of array information. It is applicable to any field
@@ -87,6 +90,80 @@ export async function isERC20Token(
     return false;
   }
 }
+
+/**
+ * This Validation function checks if the existing token contract
+ * is compatible or not
+ *
+ * @param address contract Address
+ * @param provider Eth provider
+ * @returns boolean determines whether it is compatible or not
+ */
+
+export async function isERC20Governance(
+  address: string,
+  provider: EthersProviders.Provider
+) {
+  const contract = new ethers.Contract(address, votesUpgradeableABI, provider);
+  try {
+    await Promise.all([
+      contract.delegates(address),
+      contract.getVotes(address),
+    ]);
+    return true;
+  } catch (err) {
+    return false;
+  }
+}
+
+/**
+ * This Validation function checks if the existing token contract
+ * is ERC721 or not
+ *
+ * @param address contract Address
+ * @param provider Eth provider
+ * @returns boolean determines whether it is compatible or not
+ */
+
+export async function isERC721(
+  address: string,
+  provider: EthersProviders.Provider
+) {
+  const contract = new ethers.Contract(address, erc721TokenABI, provider);
+  try {
+    await Promise.all([contract.balanceOf(address), contract.ownerOf(0)]);
+    return true;
+  } catch (err) {
+    return false;
+  }
+}
+
+/**
+ * This Validation function checks if the existing token contract
+ * is ERC1155 or not
+ *
+ * @param address contract Address
+ * @param provider Eth provider
+ * @returns boolean determines whether it is compatible or not
+ */
+
+export async function isERC1155(
+  address: string,
+  provider: EthersProviders.Provider
+) {
+  const contract = new ethers.Contract(address, erc1155TokenABI, provider);
+  try {
+    await Promise.all([
+      contract.balanceOf(address),
+      contract.balanceOfBatch([address], [0]),
+      contract.balanceOf(address, address),
+    ]);
+    return true;
+  } catch (err) {
+    return false;
+  }
+}
+
 /**
  * This Function is necessary because
  * you can't fetch decimals from the api
