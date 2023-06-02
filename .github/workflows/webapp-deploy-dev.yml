@@ -160,6 +160,21 @@ jobs:
           --tag ghcr.io/${{ github.repository }}:commit-${{ steps.myvars.outputs.GIT_HASH_SHORT }} \
           --tag ghcr.io/${{ github.repository }}:webapp-${{ steps.myvars.outputs.BRANCH_NAME }}-${{ steps.myvars.outputs.DATE_IN_SECS }}
 
+      - name: Upload sourcemap to Kibana sourcemap endpoint (APM)
+        env:
+          COMMIT_SHA: ${{ github.sha }}
+        run: |
+          for f in $(find ./packages/web-app/dist/assets/ -name *.js.map) ; do 
+            curl -X POST "https://kibana-sourcemaps.aragon.org/api/apm/sourcemaps" \
+              -H 'Content-Type: multipart/form-data' \
+              -H 'kbn-xsrf: true' \
+              -H 'Authorization: ApiKey ${{ secrets.APM_API_KEY }}' \
+              -F service_name="aragon-app" \
+              -F service_version="$COMMIT_SHA" \
+              -F bundle_filepath="http://localhost/assets/$(basename $f)" \
+              -F sourcemap=@$f
+          done
+
   scan-vulns-repo:
     name: Scan Vulnerabilities in Repo
     runs-on: ubuntu-latest
