@@ -662,7 +662,13 @@
         "verificationLinkLabel": "View details",
         "verificationAlertSuccessTitle": "Compatible for governance",
         "verificationAlertSuccessDescription": "This token can be used for direct use of onchain governance (support of ERC20Votes standard).",
+        "verificationAlertWarningTitle": "Not compatible for governance",
+        "verificationAlertWarningDescription": "This token isn’t able to be used directly for onchain governance. But we provide a wrapping functionality, so you are still able to use it.",
+        "verificationAlertCriticalTitle": "Not supported token",
+        "verificationAlertCriticalDescription": "This token is yet not supported for governance in the Aragon App. Try a different one or create a new token with the App.",
         "verificationGovernanceSuccess": "Supported",
+        "verificationValueGovernancePositive": "Supported",
+        "verificationValueGovernanceNegative": "Not supported",
         "verificationLoading": "Verifying governance compatibility …"
       },
       "existingTokenSubtitle": "Yes, we already have a token.",

@@ -3,8 +3,6 @@ import {
   Label,
   Link,
   WalletInputLegacy,
-  AlertCard,
-  InputValue,
 } from '@aragon/ui-components';
 import React, {useCallback, useEffect, useState} from 'react';
 import {Controller, useFormContext, useWatch} from 'react-hook-form';
@@ -15,64 +13,95 @@ import {useSpecificProvider} from 'context/providers';
 import {validateGovernanceTokenAddress, tokenType} from 'utils/validators';
 import {useNetwork} from 'context/network';
 import {CHAIN_METADATA} from 'utils/constants';
-import {Dd, Dl} from 'components/descriptionList';
+import VerificationCard from 'components/verificationCard';
+import {getTokenInfo} from 'utils/tokens';
+import {formatUnits} from 'ethers/lib/utils';
+
+export type tokenParams = {
+  name?: string;
+  symbol?: string;
+  type?: string;
+  totalSupply?: number;
+  totalHolders?: number;
+  status: string;
+};
 
 const AddExistingToken: React.FC = () => {
   const {t} = useTranslation();
   const {network} = useNetwork();
-  const {control, setValue, trigger} = useFormContext();
+  const {control, trigger} = useFormContext();
+  const [tokenParams, setTokenParams] = useState<tokenParams>({
+    name: '',
+    symbol: '',
+    type: '',
+    totalSupply: 0,
+    totalHolders: 0,
+    status: '',
+  });
 
   // once the translation of the ui-components has been dealt with,
   // consider moving these inside the component itself.
   const [tokenType, setTokenType] = useState<tokenType>(undefined);
 
-  const [tokenAddress, blockchain, tokenName, tokenSymbol, tokenTotalSupply] =
-    useWatch({
-      name: [
-        'tokenAddress',
-        'blockchain',
-        'tokenName',
-        'tokenSymbol',
-        'tokenTotalSupply',
-      ],
-    });
+  const [existingContractAddress, blockchain] = useWatch({
+    name: ['existingContractAddress', 'blockchain'],
+  });
 
   const provider = useSpecificProvider(blockchain.id);
-
-  const handleValueChanged = useCallback(
-    (value: InputValue, onChange: (...event: unknown[]) => void) =>
-      onChange(value),
-    []
-  );
 
   const nativeCurrency = CHAIN_METADATA[network].nativeCurrency;
 
   // Trigger address validation on network change
   useEffect(() => {
-    if (blockchain.id && tokenAddress !== '') {
-      trigger('tokenAddress');
+    if (blockchain.id && existingContractAddress !== '') {
+      trigger('existingContractAddress');
     }
-  }, [blockchain.id, tokenAddress, trigger, nativeCurrency]);
+  }, [blockchain.id, trigger, nativeCurrency, existingContractAddress]);
 
   /*************************************************
    *            Functions and Callbacks            *
    *************************************************/
   const addressValidator = useCallback(
     async contractAddress => {
+      setTokenParams({status: 'loading'});
+
       const isErc20Valid = await validateGovernanceTokenAddress(
         contractAddress,
         provider,
         setTokenType
       );
 
-      console.log('isErc20Valid', isErc20Valid);
+      if (isErc20Valid === true) {
+        const {totalSupply, decimals, symbol, name} = await getTokenInfo(
+          contractAddress,
+          provider,
+          CHAIN_METADATA[network].nativeCurrency
+        );
+
+        setTokenParams({
+          name: name,
+          symbol: symbol,
+          type:
+            tokenType === 'ERC-20' || tokenType === 'governance-ERC20'
+              ? 'ERC-20'
+              : tokenType,
+          totalSupply: Number(formatUnits(totalSupply, decimals)),
+          totalHolders: 0,
+          status:
+            tokenType === 'governance-ERC20'
+              ? t(
+                  'createDAO.step3.existingToken.verificationValueGovernancePositive'
+                )
+              : t(
+                  'createDAO.step3.existingToken.verificationValueGovernanceNegative'
+                ),
+        });
+      }
 
       return isErc20Valid;
     },
-    [provider]
+    [network, provider, t, tokenType]
   );
-
-  console.log('tokenType-->', tokenType);
 
   return (
     <>
@@ -119,47 +148,15 @@ const AddExistingToken: React.FC = () => {
               {error?.message && (
                 <AlertInline label={error.message} mode="critical" />
               )}
+              {!error?.message && (
+                <VerificationCard
+                  {...{tokenType, tokenParams}}
+                  tokenAddress={value}
+                />
+              )}
             </>
           )}
         />
-        <VerifyContainer>
-          <VerifyTitle>Aragon Network Token (ANT)</VerifyTitle>
-          <VerifyItemsWrapper>
-            <Dl>
-              <Dt>
-                {t('createDAO.step3.existingToken.verificationLabelStandard')}
-              </Dt>
-              <Dd>ERC-20</Dd>
-            </Dl>
-            <Dl>
-              <Dt>
-                {t('createDAO.step3.existingToken.verificationLabelSupply')}
-              </Dt>
-              <Dd>43,166,685 ANT</Dd>
-            </Dl>
-            <Dl>
-              <Dt>
-                {t('createDAO.step3.existingToken.verificationLabelHolders')}
-              </Dt>
-              <Dd>14,579</Dd>
-            </Dl>
-            <Dl>
-              <Dt>
-                {t('createDAO.step3.existingToken.verificationLabelGovernance')}
-              </Dt>
-              <Dd>Supported</Dd>
-            </Dl>
-          </VerifyItemsWrapper>
-          <AlertCard
-            mode="success"
-            title={t(
-              'createDAO.step3.existingToken.verificationAlertSuccessTitle'
-            )}
-            helpText={t(
-              'createDAO.step3.existingToken.verificationAlertSuccessDescription'
-            )}
-          />
-        </VerifyContainer>
       </FormItem>
     </>
   );
@@ -178,19 +175,3 @@ const DescriptionContainer = styled.div.attrs({
 const Title = styled.p.attrs({className: 'text-lg font-bold text-ui-800'})``;
 
 const Subtitle = styled.p.attrs({className: 'text-ui-600 text-bold'})``;
-
-const VerifyContainer = styled.div.attrs({
-  className: 'flex flex-col space-y-3 p-3 bg-ui-0 rounded-xl',
-})``;
-
-const VerifyTitle = styled.h2.attrs({
-  className: 'ft-text-lg font-bold text-ui-800',
-})``;
-
-const VerifyItemsWrapper = styled.div.attrs({
-  className: 'flex flex-col tablet:gap-x-2 gap-y-1.5',
-})``;
-
-const Dt = styled.dt.attrs({
-  className: 'flex items-center text-ui-800',
-})``;

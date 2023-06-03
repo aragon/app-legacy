@@ -18,10 +18,10 @@ import {
 import {isOnlyWhitespace} from './library';
 
 export type tokenType =
-  | 'ERC20'
-  | 'governanceERC20'
-  | 'ERC721'
-  | 'ERC1155'
+  | 'ERC-20'
+  | 'governance-ERC20'
+  | 'ERC-721'
+  | 'ERC-1155'
   | 'unknown'
   | undefined;
 
@@ -59,10 +59,11 @@ export async function validateGovernanceTokenAddress(
   provider: EthersProviders.Provider,
   setTokenType: (value: tokenType) => void
 ): Promise<ValidateResult> {
-  setTokenType(undefined);
   const isAddress = validateAddress(address);
 
-  if (isAddress === true) {
+  if (isAddress !== true) {
+    return isAddress;
+  } else {
     const interfaces = await Promise.all([
       isERC20Token(address, provider),
       isERC20Governance(address, provider),
@@ -70,12 +71,14 @@ export async function validateGovernanceTokenAddress(
       isERC1155(address, provider),
     ]);
 
-    if (interfaces[3]) setTokenType('ERC1155');
-    else if (interfaces[2]) setTokenType('ERC721');
-    else if (interfaces[1]) setTokenType('governanceERC20');
-    else if (interfaces[0]) setTokenType('ERC20');
+    if (interfaces[3]) setTokenType('ERC-1155');
+    else if (interfaces[2]) setTokenType('ERC-721');
+    else if (interfaces[1]) setTokenType('governance-ERC20');
+    else if (interfaces[0]) setTokenType('ERC-20');
     else setTokenType('unknown');
-  } else return i18n.t('errors.notERC20Token') as string;
+
+    return true;
+  }
 }
 
 /**
