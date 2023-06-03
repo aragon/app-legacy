@@ -3,7 +3,6 @@ import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 import {AlertCard, Spinner, shortenAddress} from '@aragon/ui-components';
 
-import {tokenType} from 'utils/validators';
 import {Dd, Dl} from 'components/descriptionList';
 import {tokenParams} from 'containers/setupCommunity/addExistingToken';
 
@@ -87,7 +86,11 @@ const VerificationCard: React.FC<TransferListProps> = ({
           <Dt>
             {t('createDAO.step3.existingToken.verificationLabelStandard')}
           </Dt>
-          <Dd>{tokenParams.type}</Dd>
+          <Dd>
+            {tokenParams.type === 'governance-ERC20'
+              ? 'ERC-20'
+              : tokenParams.type}
+          </Dd>
         </Dl>
         <Dl>
           <Dt>{t('createDAO.step3.existingToken.verificationLabelSupply')}</Dt>

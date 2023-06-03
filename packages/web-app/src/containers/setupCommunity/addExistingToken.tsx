@@ -29,7 +29,7 @@ export type tokenParams = {
 const AddExistingToken: React.FC = () => {
   const {t} = useTranslation();
   const {network} = useNetwork();
-  const {control, trigger} = useFormContext();
+  const {control, trigger, clearErrors} = useFormContext();
   const [tokenParams, setTokenParams] = useState<tokenParams>({
     name: '',
     symbol: '',
@@ -59,6 +59,7 @@ const AddExistingToken: React.FC = () => {
   const addressValidator = useCallback(
     async contractAddress => {
       setTokenParams({status: 'loading'});
+      clearErrors('existingContractAddress');
 
       const {verificationResult, type} = await validateGovernanceTokenAddress(
         contractAddress,
@@ -91,7 +92,7 @@ const AddExistingToken: React.FC = () => {
 
       return verificationResult;
     },
-    [network, provider, t]
+    [clearErrors, network, provider, t]
   );
 
   return (
