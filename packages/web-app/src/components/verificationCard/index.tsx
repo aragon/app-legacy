@@ -8,20 +8,18 @@ import {Dd, Dl} from 'components/descriptionList';
 import {tokenParams} from 'containers/setupCommunity/addExistingToken';
 
 type TransferListProps = {
-  tokenType: tokenType;
   tokenParams: tokenParams;
   tokenAddress: string;
 };
 
 const VerificationCard: React.FC<TransferListProps> = ({
-  tokenType,
   tokenParams,
   tokenAddress,
 }) => {
   const {t} = useTranslation();
 
   const Alert = useMemo(() => {
-    switch (tokenType) {
+    switch (tokenParams.type) {
       case 'ERC-20':
         return (
           <AlertCard
@@ -62,9 +60,9 @@ const VerificationCard: React.FC<TransferListProps> = ({
       default:
         return null;
     }
-  }, [t, tokenType]);
+  }, [t, tokenParams.type]);
 
-  if (!tokenType) return null;
+  if (tokenParams.status === null) return null;
 
   if (tokenParams.status === 'loading')
     return (

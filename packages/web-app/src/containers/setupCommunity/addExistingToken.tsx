@@ -23,7 +23,7 @@ export type tokenParams = {
   type?: string;
   totalSupply?: number;
   totalHolders?: number;
-  status: string;
+  status?: string;
 };
 
 const AddExistingToken: React.FC = () => {
@@ -36,12 +36,7 @@ const AddExistingToken: React.FC = () => {
     type: '',
     totalSupply: 0,
     totalHolders: 0,
-    status: '',
   });
-
-  // once the translation of the ui-components has been dealt with,
-  // consider moving these inside the component itself.
-  const [tokenType, setTokenType] = useState<tokenType>(undefined);
 
   const [existingContractAddress, blockchain] = useWatch({
     name: ['existingContractAddress', 'blockchain'],
@@ -65,13 +60,12 @@ const AddExistingToken: React.FC = () => {
     async contractAddress => {
       setTokenParams({status: 'loading'});
 
-      const isErc20Valid = await validateGovernanceTokenAddress(
+      const {verificationResult, type} = await validateGovernanceTokenAddress(
         contractAddress,
-        provider,
-        setTokenType
+        provider
       );
 
-      if (isErc20Valid === true) {
+      if (verificationResult === true) {
         const {totalSupply, decimals, symbol, name} = await getTokenInfo(
           contractAddress,
           provider,
@@ -81,14 +75,11 @@ const AddExistingToken: React.FC = () => {
         setTokenParams({
           name: name,
           symbol: symbol,
-          type:
-            tokenType === 'ERC-20' || tokenType === 'governance-ERC20'
-              ? 'ERC-20'
-              : tokenType,
+          type,
           totalSupply: Number(formatUnits(totalSupply, decimals)),
           totalHolders: 0,
           status:
-            tokenType === 'governance-ERC20'
+            type === 'governance-ERC20'
               ? t(
                   'createDAO.step3.existingToken.verificationValueGovernancePositive'
                 )
@@ -98,9 +89,9 @@ const AddExistingToken: React.FC = () => {
         });
       }
 
-      return isErc20Valid;
+      return verificationResult;
     },
-    [network, provider, t, tokenType]
+    [network, provider, t]
   );
 
   return (
@@ -149,10 +140,7 @@ const AddExistingToken: React.FC = () => {
                 <AlertInline label={error.message} mode="critical" />
               )}
               {!error?.message && (
-                <VerificationCard
-                  {...{tokenType, tokenParams}}
-                  tokenAddress={value}
-                />
+                <VerificationCard {...{tokenParams}} tokenAddress={value} />
               )}
             </>
           )}

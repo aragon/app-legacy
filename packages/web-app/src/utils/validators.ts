@@ -56,13 +56,18 @@ export async function validateTokenAddress(
  */
 export async function validateGovernanceTokenAddress(
   address: string,
-  provider: EthersProviders.Provider,
-  setTokenType: (value: tokenType) => void
-): Promise<ValidateResult> {
+  provider: EthersProviders.Provider
+): Promise<{
+  verificationResult: ValidateResult;
+  type: string;
+}> {
   const isAddress = validateAddress(address);
 
   if (isAddress !== true) {
-    return isAddress;
+    return {
+      verificationResult: isAddress,
+      type: 'unknown',
+    };
   } else {
     const interfaces = await Promise.all([
       isERC20Token(address, provider),
@@ -71,13 +76,32 @@ export async function validateGovernanceTokenAddress(
       isERC1155(address, provider),
     ]);
 
-    if (interfaces[3]) setTokenType('ERC-1155');
-    else if (interfaces[2]) setTokenType('ERC-721');
-    else if (interfaces[1]) setTokenType('governance-ERC20');
-    else if (interfaces[0]) setTokenType('ERC-20');
-    else setTokenType('unknown');
-
-    return true;
+    if (interfaces[3])
+      return {
+        verificationResult: true,
+        type: 'ERC-1155',
+      };
+    else if (interfaces[2])
+      return {
+        verificationResult: true,
+        type: 'ERC-721',
+      };
+    else if (interfaces[1])
+      return {
+        verificationResult: true,
+        type: 'governance-ERC20',
+      };
+    else if (interfaces[0])
+      return {
+        verificationResult: true,
+        type: 'ERC-20',
+      };
+    else {
+      return {
+        verificationResult: true,
+        type: 'unknown',
+      };
+    }
   }
 }
 
