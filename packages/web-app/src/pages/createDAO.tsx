@@ -37,6 +37,7 @@ export type CreateDaoFormData = {
   tokenName: string;
   tokenSymbol: string;
   tokenTotalSupply: number;
+  tokenType: string | undefined;
   isCustomToken: boolean;
   links: {name: string; url: string}[];
   wallets: WalletField[];
@@ -50,8 +51,6 @@ export type CreateDaoFormData = {
   eligibilityTokenAmount: number | string;
   support: string;
   membership: string;
-  existingToken: boolean;
-  existingContractAddress: string;
   earlyExecution: boolean;
   voteReplacement: boolean;
   multisigWallets: WalletItem[];
@@ -63,6 +62,7 @@ const defaultValues = {
   tokenAddress: '',
   tokenSymbol: '',
   tokenTotalSupply: 1,
+  tokenType: undefined,
   links: [{name: '', url: ''}],
 
   // Uncomment when DAO Treasury minting is supported
@@ -70,8 +70,6 @@ const defaultValues = {
   earlyExecution: true,
   voteReplacement: false,
   membership: 'token',
-  existingToken: false,
-  existingContractAddress: '',
   eligibilityType: 'token' as CreateDaoFormData['eligibilityType'],
   eligibilityTokenAmount: 1,
   isCustomToken: true,
@@ -93,6 +91,7 @@ const CreateDAO: React.FC = () => {
     multisigWallets,
     isCustomToken,
     tokenTotalSupply,
+    tokenType,
     membership,
     daoName,
     daoEnsName,
@@ -103,6 +102,7 @@ const CreateDAO: React.FC = () => {
       'multisigWallets',
       'isCustomToken',
       'tokenTotalSupply',
+      'tokenType',
       'membership',
       'daoName',
       'daoEnsName',
@@ -193,7 +193,13 @@ const CreateDAO: React.FC = () => {
           ? false
           : true;
       } else {
-        if (!dirtyFields.tokenAddress || errors.tokenAddress) return false;
+        if (
+          !dirtyFields.tokenAddress ||
+          errors.tokenAddress ||
+          !tokenType ||
+          tokenTotalSupply === 0
+        )
+          return false;
         return true;
       }
     }
@@ -206,13 +212,14 @@ const CreateDAO: React.FC = () => {
     errors.tokenName,
     errors.tokenSymbol,
     errors.tokenAddress,
+    eligibilityType,
     isCustomToken,
     dirtyFields.tokenName,
     dirtyFields.wallets,
     dirtyFields.tokenSymbol,
     dirtyFields.tokenAddress,
     tokenTotalSupply,
-    eligibilityType,
+    tokenType,
   ]);
 
   const daoConfigureCommunity = useMemo(() => {

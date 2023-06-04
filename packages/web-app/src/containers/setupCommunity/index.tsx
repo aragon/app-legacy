@@ -15,15 +15,17 @@ const SetupCommunityForm: React.FC = () => {
   const {t} = useTranslation();
 
   const {control, resetField, setValue} = useFormContext();
-  const [membership, existingToken] = useWatch({
-    name: ['membership', 'existingToken'],
+  const [membership, isCustomToken] = useWatch({
+    name: ['membership', 'isCustomToken'],
   });
 
   const existingTokenItems = [
-    {label: t('labels.yes'), selectValue: true},
+    // Yes mean It's not a custom Token should be false
+    {label: t('labels.yes'), selectValue: false},
+    // No mean It's a custom Token so It should be true
     {
       label: t('labels.no'),
-      selectValue: false,
+      selectValue: true,
     },
   ];
 
@@ -116,10 +118,10 @@ const SetupCommunityForm: React.FC = () => {
       <FormSection>
         <Label label={t('createDAO.step3.existingToken.questionLabel')} />
         <Controller
-          name="existingToken"
+          name="isCustomToken"
           rules={{required: 'Validate'}}
           control={control}
-          defaultValue={false}
+          defaultValue={true}
           render={({field: {value, onChange}}) => (
             <ToggleCheckList
               items={existingTokenItems}
@@ -131,7 +133,7 @@ const SetupCommunityForm: React.FC = () => {
       </FormSection>
 
       {membership === 'token' &&
-        (existingToken ? <AddExistingToken /> : <CreateNewToken />)}
+        (isCustomToken ? <CreateNewToken /> : <AddExistingToken />)}
     </>
   );
 };

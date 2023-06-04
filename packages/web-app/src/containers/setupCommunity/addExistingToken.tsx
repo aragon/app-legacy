@@ -10,36 +10,21 @@ import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 
 import {useSpecificProvider} from 'context/providers';
-import {validateGovernanceTokenAddress, tokenType} from 'utils/validators';
+import {validateGovernanceTokenAddress} from 'utils/validators';
 import {useNetwork} from 'context/network';
 import {CHAIN_METADATA} from 'utils/constants';
 import VerificationCard from 'components/verificationCard';
 import {getTokenInfo} from 'utils/tokens';
 import {formatUnits} from 'ethers/lib/utils';
 
-export type tokenParams = {
-  name?: string;
-  symbol?: string;
-  type?: string;
-  totalSupply?: number;
-  totalHolders?: number;
-  status?: string;
-};
-
 const AddExistingToken: React.FC = () => {
   const {t} = useTranslation();
   const {network} = useNetwork();
-  const {control, trigger, clearErrors} = useFormContext();
-  const [tokenParams, setTokenParams] = useState<tokenParams>({
-    name: '',
-    symbol: '',
-    type: '',
-    totalSupply: 0,
-    totalHolders: 0,
-  });
+  const {control, trigger, clearErrors, setValue, resetField} =
+    useFormContext();
 
-  const [existingContractAddress, blockchain] = useWatch({
-    name: ['existingContractAddress', 'blockchain'],
+  const [tokenAddress, blockchain] = useWatch({
+    name: ['tokenAddress', 'blockchain'],
   });
 
   const provider = useSpecificProvider(blockchain.id);
@@ -48,18 +33,18 @@ const AddExistingToken: React.FC = () => {
 
   // Trigger address validation on network change
   useEffect(() => {
-    if (blockchain.id && existingContractAddress !== '') {
-      trigger('existingContractAddress');
+    if (blockchain.id && tokenAddress !== '') {
+      trigger('tokenAddress');
     }
-  }, [blockchain.id, trigger, nativeCurrency, existingContractAddress]);
+  }, [blockchain.id, trigger, nativeCurrency, tokenAddress]);
 
   /*************************************************
    *            Functions and Callbacks            *
    *************************************************/
   const addressValidator = useCallback(
     async contractAddress => {
-      setTokenParams({status: 'loading'});
-      clearErrors('existingContractAddress');
+      clearErrors('tokenAddress');
+      resetField('tokenType');
 
       const {verificationResult, type} = await validateGovernanceTokenAddress(
         contractAddress,
@@ -73,26 +58,18 @@ const AddExistingToken: React.FC = () => {
           CHAIN_METADATA[network].nativeCurrency
         );
 
-        setTokenParams({
-          name: name,
-          symbol: symbol,
-          type,
-          totalSupply: Number(formatUnits(totalSupply, decimals)),
-          totalHolders: 0,
-          status:
-            type === 'governance-ERC20'
-              ? t(
-                  'createDAO.step3.existingToken.verificationValueGovernancePositive'
-                )
-              : t(
-                  'createDAO.step3.existingToken.verificationValueGovernanceNegative'
-                ),
-        });
+        setValue('tokenName', name);
+        setValue('tokenSymbol', symbol);
+        setValue(
+          'tokenTotalSupply',
+          Number(formatUnits(totalSupply, decimals))
+        );
+        setValue('tokenType', type);
       }
 
       return verificationResult;
     },
-    [clearErrors, network, provider, t]
+    [clearErrors, network, provider, resetField, setValue]
   );
 
   return (
@@ -116,7 +93,7 @@ const AddExistingToken: React.FC = () => {
           </p>
         </DescriptionContainer>
         <Controller
-          name="existingContractAddress"
+          name="tokenAddress"
           control={control}
           defaultValue=""
           rules={{
@@ -141,7 +118,7 @@ const AddExistingToken: React.FC = () => {
                 <AlertInline label={error.message} mode="critical" />
               )}
               {!error?.message && isDirty && (
-                <VerificationCard {...{tokenParams}} tokenAddress={value} />
+                <VerificationCard tokenAddress={value} />
               )}
             </>
           )}

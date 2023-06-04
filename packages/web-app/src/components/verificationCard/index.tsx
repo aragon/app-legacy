@@ -4,21 +4,22 @@ import styled from 'styled-components';
 import {AlertCard, Spinner, shortenAddress} from '@aragon/ui-components';
 
 import {Dd, Dl} from 'components/descriptionList';
-import {tokenParams} from 'containers/setupCommunity/addExistingToken';
+import {useFormContext, useWatch} from 'react-hook-form';
 
 type TransferListProps = {
-  tokenParams: tokenParams;
   tokenAddress: string;
 };
 
-const VerificationCard: React.FC<TransferListProps> = ({
-  tokenParams,
-  tokenAddress,
-}) => {
+const VerificationCard: React.FC<TransferListProps> = ({tokenAddress}) => {
   const {t} = useTranslation();
+  const {control} = useFormContext();
+  const [tokenName, tokenSymbol, tokenTotalSupply, tokenType] = useWatch({
+    name: ['tokenName', 'tokenSymbol', 'tokenTotalSupply', 'tokenType'],
+    control: control,
+  });
 
   const Alert = useMemo(() => {
-    switch (tokenParams.type) {
+    switch (tokenType) {
       case 'ERC-20':
         return (
           <AlertCard
@@ -59,11 +60,9 @@ const VerificationCard: React.FC<TransferListProps> = ({
       default:
         return null;
     }
-  }, [t, tokenParams.type]);
+  }, [t, tokenType]);
 
-  if (tokenParams.status === null) return null;
-
-  if (tokenParams.status === 'loading')
+  if (!tokenType)
     return (
       <VerifyContainer>
         <VerifyTitle>{shortenAddress(tokenAddress)}</VerifyTitle>
@@ -77,8 +76,8 @@ const VerificationCard: React.FC<TransferListProps> = ({
   return (
     <VerifyContainer>
       <VerifyTitle>
-        {tokenParams.name
-          ? `${tokenParams.name} (${tokenParams.symbol})`
+        {tokenName !== ''
+          ? `${tokenName} (${tokenSymbol})`
           : shortenAddress(tokenAddress)}
       </VerifyTitle>
       <VerifyItemsWrapper>
@@ -86,16 +85,12 @@ const VerificationCard: React.FC<TransferListProps> = ({
           <Dt>
             {t('createDAO.step3.existingToken.verificationLabelStandard')}
           </Dt>
-          <Dd>
-            {tokenParams.type === 'governance-ERC20'
-              ? 'ERC-20'
-              : tokenParams.type}
-          </Dd>
+          <Dd>{tokenType === 'governance-ERC20' ? 'ERC-20' : tokenType}</Dd>
         </Dl>
         <Dl>
           <Dt>{t('createDAO.step3.existingToken.verificationLabelSupply')}</Dt>
           <Dd>
-            {tokenParams.totalSupply} {tokenParams.symbol}
+            {tokenTotalSupply} {tokenSymbol}
           </Dd>
         </Dl>
         <Dl>
@@ -106,7 +101,15 @@ const VerificationCard: React.FC<TransferListProps> = ({
           <Dt>
             {t('createDAO.step3.existingToken.verificationLabelGovernance')}
           </Dt>
-          <Dd>{tokenParams.status}</Dd>
+          <Dd>
+            {tokenType === 'governance-ERC20'
+              ? t(
+                  'createDAO.step3.existingToken.verificationValueGovernancePositive'
+                )
+              : t(
+                  'createDAO.step3.existingToken.verificationValueGovernanceNegative'
+                )}
+          </Dd>
         </Dl>
       </VerifyItemsWrapper>
       {Alert}
