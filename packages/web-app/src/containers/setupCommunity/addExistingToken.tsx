@@ -4,7 +4,7 @@ import {
   Link,
   WalletInputLegacy,
 } from '@aragon/ui-components';
-import React, {useCallback, useEffect, useState} from 'react';
+import React, {useCallback, useEffect} from 'react';
 import {Controller, useFormContext, useWatch} from 'react-hook-form';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
