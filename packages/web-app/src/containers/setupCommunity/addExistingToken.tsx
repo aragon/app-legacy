@@ -125,7 +125,7 @@ const AddExistingToken: React.FC = () => {
           }}
           render={({
             field: {name, value, onBlur, onChange},
-            fieldState: {error},
+            fieldState: {error, isDirty},
           }) => (
             <>
               <WalletInputLegacy
@@ -140,7 +140,7 @@ const AddExistingToken: React.FC = () => {
               {error?.message && (
                 <AlertInline label={error.message} mode="critical" />
               )}
-              {!error?.message && (
+              {!error?.message && isDirty && (
                 <VerificationCard {...{tokenParams}} tokenAddress={value} />
               )}
             </>
