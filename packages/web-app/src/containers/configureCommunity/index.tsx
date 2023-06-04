@@ -27,6 +27,7 @@ const ConfigureCommunity: React.FC = () => {
 
   const [
     tokenTotalSupply,
+    tokenSymbol,
     membership,
     earlyExecution,
     durationDays,
@@ -35,6 +36,7 @@ const ConfigureCommunity: React.FC = () => {
   ] = useWatch({
     name: [
       'tokenTotalSupply',
+      'tokenSymbol',
       'membership',
       'earlyExecution',
       'durationDays',
@@ -281,6 +283,7 @@ const ConfigureCommunity: React.FC = () => {
                           <p className="flex-shrink-0 text-ui-600">
                             {t('createDAO.step4.alerts.minimumApprovalAlert', {
                               amount: Math.round(tokenTotalSupply),
+                              symbol: tokenSymbol,
                             })}
                           </p>
                         </ProgressInfo2>

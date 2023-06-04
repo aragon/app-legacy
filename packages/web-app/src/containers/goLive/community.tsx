@@ -1,4 +1,4 @@
-import {Link, Tag} from '@aragon/ui-components';
+import {IconFeedback, Link, Tag} from '@aragon/ui-components';
 import React from 'react';
 import {Controller, useFormContext} from 'react-hook-form';
 import {useTranslation} from 'react-i18next';
@@ -7,18 +7,22 @@ import {Dd, DescriptionListContainer, Dl, Dt} from 'components/descriptionList';
 import {useFormStep} from 'components/fullScreenStepper';
 import CommunityAddressesModal from 'containers/communityAddressesModal';
 import {useGlobalModalContext} from 'context/globalModals';
+import {CHAIN_METADATA} from 'utils/constants';
+import {useNetwork} from 'context/network';
 
 const Community: React.FC = () => {
   const {control, getValues} = useFormContext();
   const {setStep} = useFormStep();
   const {open} = useGlobalModalContext();
   const {t} = useTranslation();
+  const {network} = useNetwork();
   const {
     membership,
     tokenName,
     wallets,
     isCustomToken,
     tokenSymbol,
+    tokenAddress,
     tokenTotalSupply,
     multisigWallets,
     reviewCheckError,
@@ -86,6 +90,8 @@ const Community: React.FC = () => {
                   <div className="flex items-center space-x-1.5">
                     <span>{tokenName}</span>
                     <span>{tokenSymbol}</span>
+                    {/* TODO: check the owner for token contract, if it belongs to
+                    dao add this */}
                     {isCustomToken && (
                       <Tag label={t('labels.new')} colorScheme="info" />
                     )}
@@ -99,19 +105,44 @@ const Community: React.FC = () => {
                     <p>
                       {tokenTotalSupply} {tokenSymbol}
                     </p>
-                    <Tag label={t('labels.mintable')} colorScheme="neutral" />
+                    {isCustomToken && (
+                      <Tag label={t('labels.mintable')} colorScheme="neutral" />
+                    )}
                   </div>
                 </Dd>
               </Dl>
+              {!isCustomToken && (
+                <Dl>
+                  <Dt>{t('labels.review.existingTokens.currentHolders')}</Dt>
+                  <Dd>
+                    <div className="flex items-center space-x-1.5">
+                      <p>0</p>
+                    </div>
+                  </Dd>
+                </Dl>
+              )}
               <Dl>
                 <Dt>{t('labels.review.distribution')}</Dt>
                 <Dd>
-                  <Link
-                    label={t('createDAO.review.distributionLink', {
-                      count: wallets?.length,
-                    })}
-                    onClick={() => open('addresses')}
-                  />
+                  {isCustomToken ? (
+                    <Link
+                      label={t('createDAO.review.distributionLink', {
+                        count: wallets?.length,
+                      })}
+                      onClick={() => open('addresses')}
+                    />
+                  ) : (
+                    <Link
+                      label={t('labels.review.distributionLinkLabel')}
+                      href={
+                        CHAIN_METADATA[network].explorer +
+                        '/token/tokenholderchart/' +
+                        tokenAddress
+                      }
+                      iconRight={<IconFeedback />}
+                      external
+                    />
+                  )}
                 </Dd>
               </Dl>
               <Dl>
