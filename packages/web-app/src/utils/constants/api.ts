@@ -38,6 +38,8 @@ export const alchemyApiKeys: AlchemyApiKeys = {
 export const infuraApiKey = import.meta.env
   .VITE_INFURA_MAINNET_PROJECT_ID as string;
 
+export const COVALENT_API_KEY = import.meta.env.VITE_COVALENT_API_KEY as string;
+
 export const IPFS_ENDPOINT_TEST =
   'https://testing-ipfs-0.aragon.network/api/v0';
 export const IPFS_ENDPOINT_MAIN_0 = 'https://ipfs-0.aragon.network/api/v0';

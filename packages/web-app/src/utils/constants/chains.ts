@@ -76,6 +76,7 @@ export type ChainData = {
   nativeCurrency: NativeTokenData;
   etherscanApi: string;
   etherscanApiKey?: string;
+  covalentApi?: string;
   alchemyApi: string;
   supportsEns: boolean;
   lookupURL?: string;
@@ -122,6 +123,7 @@ export const CHAIN_METADATA: ChainList = {
     lookupURL: 'https://etherscan.io/name-lookup-search?id=',
     etherscanApi: 'https://api.etherscan.io/api',
     etherscanApiKey: etherscanApiKey,
+    covalentApi: 'https://api.covalenthq.com/v1/eth-mainnet',
     alchemyApi: 'https://eth-mainnet.g.alchemy.com/v2',
     supportsEns: true,
   },
@@ -143,6 +145,7 @@ export const CHAIN_METADATA: ChainList = {
     },
     etherscanApi: 'https://api.polygonscan.com/api',
     etherscanApiKey: polygonscanApiKey,
+    covalentApi: 'https://api.covalenthq.com/v1/matic-mainnet',
     alchemyApi: 'https://polygon-mainnet.g.alchemy.com/v2',
     supportsEns: false,
   },
@@ -181,6 +184,7 @@ export const CHAIN_METADATA: ChainList = {
     },
     etherscanApi: 'https://api-goerli.etherscan.io/api',
     etherscanApiKey: etherscanApiKey,
+    covalentApi: 'https://api.covalenthq.com/v1/eth-goerli',
     alchemyApi: 'https://eth-goerli.g.alchemy.com/v2',
     supportsEns: true,
   },
@@ -202,6 +206,7 @@ export const CHAIN_METADATA: ChainList = {
     },
     etherscanApi: 'https://api-testnet.polygonscan.com/api',
     etherscanApiKey: polygonscanApiKey,
+    covalentApi: 'https://api.covalenthq.com/v1/matic-mumbai',
     alchemyApi: 'https://polygon-mumbai.g.alchemy.com/v2',
     supportsEns: false,
   },

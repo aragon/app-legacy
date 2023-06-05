@@ -112,6 +112,7 @@ jobs:
           VITE_ALCHEMY_KEY_POLYGON_MAINNET: ${{ secrets.VITE_ALCHEMY_KEY_POLYGON_MUMBAI }}
           VITE_ALCHEMY_KEY_MAINNET: ${{ secrets.VITE_ALCHEMY_KEY_MAINNET }}
           VITE_ALCHEMY_KEY_GOERLI: ${{ secrets.VITE_ALCHEMY_KEY_GOERLI }}
+          VITE_COVALENT_API_KEY: ${{secrets.VITE_COVALENT_API_KEY}}
           NODE_OPTIONS: '--max-old-space-size=6656'
 
       - name: Setup Docker Buildx
@@ -150,6 +151,7 @@ jobs:
           --build-arg VITE_ALCHEMY_KEY_POLYGON_MAINNET=${{ secrets.VITE_ALCHEMY_KEY_POLYGON_MAINNET }} \
           --build-arg VITE_ALCHEMY_KEY_MAINNET=${{ secrets.VITE_ALCHEMY_KEY_MAINNET }} \
           --build-arg VITE_ALCHEMY_KEY_GOERLI=${{ secrets.VITE_ALCHEMY_KEY_GOERLI }} \
+          --build-arg VITE_COVALENT_API_KEY=${{secrets.VITE_COVALENT_API_KEY}} \
           --build-arg NODE_OPTIONS='--max-old-space-size=6656' \
           --cache-from type=gha \
           --cache-to type=gha,mode=max \
