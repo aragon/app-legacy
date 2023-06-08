@@ -3,8 +3,12 @@ import {TFunction} from 'react-i18next';
 type TParam0 = Parameters<TFunction<'translation', undefined>>[0];
 
 export const htmlIn =
-  (t: TFunction<'translation', undefined>) => (key: TParam0) => {
-    let value = t(key, {link: '<<link>>'}) as string;
+  (t: TFunction<'translation', undefined>) =>
+  (
+    key: TParam0,
+    args: Record<string, string | number | null | undefined> = {}
+  ) => {
+    let value = t(key, {...args, link: '<<link>>'}) as string;
     if (value.includes('<<link>>')) {
       const linkUrl = t((key + 'LinkURL') as TParam0);
       const linkLabel = t((key + 'LinkLabel') as TParam0);

@@ -29,6 +29,7 @@ import {NotFound} from 'utils/paths';
 import '../i18n.config';
 import DepositModal from 'containers/transactionModals/DepositModal';
 import PoapClaimModal from 'containers/poapClaiming/PoapClaimModal';
+import {GovTokensWrappingProvider} from 'context/govTokensWrapping';
 
 const ExplorePage = lazy(() => import('pages/explore'));
 const NotFoundPage = lazy(() => import('pages/notFound'));
@@ -193,7 +194,7 @@ const DaoWrapper: React.FC = () => {
   const {isOpen} = useTransactionDetailContext();
 
   return (
-    <>
+    <GovTokensWrappingProvider>
       <Navbar />
       <div className="min-h-screen">
         <GridLayout>
@@ -211,7 +212,7 @@ const DaoWrapper: React.FC = () => {
         </GridLayout>
       </div>
       <Footer />
-    </>
+    </GovTokensWrappingProvider>
   );
 };
 

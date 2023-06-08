@@ -257,6 +257,15 @@
       "buttonLabel": "Deposit funds"
     }
   },
+  "community": {
+    "emptyState": {
+      "title": "Be the first member",
+      "description": "Wrap your {{tokenSymbol}} to be the first to join the DAO community and participate in governance. Learn more about {{link}}.",
+      "descriptionLinkURL": "https://aragon.org/how-to/manage-a-dao-treasury",
+      "descriptionLinkLabel": "in our guide",
+      "buttonLabel": "Join the community"
+    }
+  },
   "governance": {
     "title": "Proposals",
     "subtitle": "{{activeProposalCount}} active proposals",

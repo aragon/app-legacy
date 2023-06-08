@@ -211,13 +211,13 @@ const SubtitleContainer = styled.div.attrs({
 })``;
 
 const Header = styled.div.attrs({
-  className: `p-2 desktop:p-0 pb-3 desktop:mt-5 space-y-2 tablet:space-y-3 
+  className: `p-2 desktop:p-0 pb-3 desktop:mt-5 space-y-2 tablet:space-y-3
    bg-ui-0 desktop:bg-transparent tablet:rounded-xl tablet:border
    tablet:border-ui-100 desktop:border-none tablet:shadow-100 desktop:shadow-none`,
 })``;
 
 const ContentContainer = styled.div.attrs({
-  className: `flex flex-col tablet:flex-row tablet:gap-x-6 gap-y-2 
+  className: `flex flex-col tablet:flex-row tablet:gap-x-6 gap-y-2
      tablet: gap - y - 3 tablet: items - start desktop: items - center`,
 })``;
 
