@@ -115,25 +115,27 @@ const SetupCommunityForm: React.FC = () => {
       {/* Membership type */}
       {/* for some reason the default value of the use form is not setting up correctly
       and is initialized to null or '' so the condition cannot be membership === 'token'  */}
-      <FormSection>
-        <Label label={t('createDAO.step3.existingToken.questionLabel')} />
-        <Controller
-          name="isCustomToken"
-          rules={{required: 'Validate'}}
-          control={control}
-          defaultValue={true}
-          render={({field: {value, onChange}}) => (
-            <ToggleCheckList
-              items={existingTokenItems}
-              value={value}
-              onChange={onChange}
+      {membership === 'token' && (
+        <>
+          <FormSection>
+            <Label label={t('createDAO.step3.existingToken.questionLabel')} />
+            <Controller
+              name="isCustomToken"
+              rules={{required: 'Validate'}}
+              control={control}
+              defaultValue={true}
+              render={({field: {value, onChange}}) => (
+                <ToggleCheckList
+                  items={existingTokenItems}
+                  value={value}
+                  onChange={onChange}
+                />
+              )}
             />
-          )}
-        />
-      </FormSection>
-
-      {membership === 'token' &&
-        (isCustomToken ? <CreateNewToken /> : <AddExistingToken />)}
+          </FormSection>
+          {isCustomToken ? <CreateNewToken /> : <AddExistingToken />}
+        </>
+      )}
     </>
   );
 };

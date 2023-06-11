@@ -312,10 +312,11 @@ const CreateDaoProvider: React.FC = ({children}) => {
   }, [
     client?.ipfs,
     client?.methods,
+    getErc20PluginParams,
+    getMultisigPluginInstallParams,
     getNewErc20PluginParams,
     getValues,
     getVoteSettings,
-    getMultisigPluginInstallParams,
   ]);
 
   // estimate creation fees
