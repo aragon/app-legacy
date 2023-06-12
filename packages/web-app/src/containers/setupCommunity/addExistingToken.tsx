@@ -52,18 +52,20 @@ const AddExistingToken: React.FC = () => {
       );
 
       if (verificationResult === true) {
-        const {totalSupply, decimals, symbol, name} = await getTokenInfo(
-          contractAddress,
-          provider,
-          CHAIN_METADATA[network].nativeCurrency
-        );
+        if (type !== 'Unknown') {
+          const {totalSupply, decimals, symbol, name} = await getTokenInfo(
+            contractAddress,
+            provider,
+            CHAIN_METADATA[network].nativeCurrency
+          );
 
-        setValue('tokenName', name);
-        setValue('tokenSymbol', symbol);
-        setValue(
-          'tokenTotalSupply',
-          Number(formatUnits(totalSupply, decimals))
-        );
+          setValue('tokenName', name);
+          setValue('tokenSymbol', symbol);
+          setValue(
+            'tokenTotalSupply',
+            Number(formatUnits(totalSupply, decimals))
+          );
+        }
         setValue('tokenType', type);
       }
 

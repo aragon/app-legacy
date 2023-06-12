@@ -58,6 +58,18 @@ const VerificationCard: React.FC<TransferListProps> = ({tokenAddress}) => {
             )}
           />
         );
+      case 'Unknown':
+        return (
+          <AlertCard
+            mode="critical"
+            title={t(
+              'createDAO.step3.existingToken.verificationAlertCriticalTitle'
+            )}
+            helpText={t(
+              'createDAO.step3.existingToken.verificationAlertCriticalDescription'
+            )}
+          />
+        );
       default:
         return null;
     }
@@ -89,20 +101,24 @@ const VerificationCard: React.FC<TransferListProps> = ({tokenAddress}) => {
             </Dt>
             <Dd>{tokenType === 'governance-ERC20' ? 'ERC-20' : tokenType}</Dd>
           </Dl>
-          <Dl>
-            <Dt>
-              {t('createDAO.step3.existingToken.verificationLabelSupply')}
-            </Dt>
-            <Dd>
-              {tokenTotalSupply} {tokenSymbol}
-            </Dd>
-          </Dl>
-          <Dl>
-            <Dt>
-              {t('createDAO.step3.existingToken.verificationLabelHolders')}
-            </Dt>
-            <Dd>14,579</Dd>
-          </Dl>
+          {tokenType !== 'Unknown' && (
+            <>
+              <Dl>
+                <Dt>
+                  {t('createDAO.step3.existingToken.verificationLabelSupply')}
+                </Dt>
+                <Dd>
+                  {tokenTotalSupply} {tokenSymbol}
+                </Dd>
+              </Dl>
+              <Dl>
+                <Dt>
+                  {t('createDAO.step3.existingToken.verificationLabelHolders')}
+                </Dt>
+                <Dd>14,579</Dd>
+              </Dl>
+            </>
+          )}
           <Dl>
             <Dt>
               {t('createDAO.step3.existingToken.verificationLabelGovernance')}

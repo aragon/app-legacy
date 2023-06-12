@@ -22,7 +22,7 @@ export type tokenType =
   | 'governance-ERC20'
   | 'ERC-721'
   | 'ERC-1155'
-  | 'unknown'
+  | 'Unknown'
   | undefined;
 
 /**
@@ -66,7 +66,7 @@ export async function validateGovernanceTokenAddress(
   if (isAddress !== true) {
     return {
       verificationResult: isAddress,
-      type: 'unknown',
+      type: 'Unknown',
     };
   } else {
     const interfaces = await Promise.all([
@@ -99,7 +99,7 @@ export async function validateGovernanceTokenAddress(
     else {
       return {
         verificationResult: true,
-        type: 'unknown',
+        type: 'Unknown',
       };
     }
   }
