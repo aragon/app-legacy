@@ -59,11 +59,12 @@ const AddExistingToken: React.FC = () => {
             CHAIN_METADATA[network].nativeCurrency
           );
 
-          setValue('tokenName', name);
-          setValue('tokenSymbol', symbol);
+          setValue('tokenName', name, {shouldDirty: true});
+          setValue('tokenSymbol', symbol, {shouldDirty: true});
           setValue(
             'tokenTotalSupply',
-            Number(formatUnits(totalSupply, decimals))
+            Number(formatUnits(totalSupply, decimals)),
+            {shouldDirty: true}
           );
         }
         setValue('tokenType', type);

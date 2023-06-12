@@ -195,8 +195,10 @@ const CreateDAO: React.FC = () => {
       } else {
         if (
           !dirtyFields.tokenAddress ||
+          !dirtyFields.tokenName ||
           errors.tokenAddress ||
           !tokenType ||
+          tokenType === 'Unknown' ||
           tokenTotalSupply === 0
         )
           return false;

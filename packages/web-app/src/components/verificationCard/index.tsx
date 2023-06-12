@@ -115,7 +115,7 @@ const VerificationCard: React.FC<TransferListProps> = ({tokenAddress}) => {
                 <Dt>
                   {t('createDAO.step3.existingToken.verificationLabelHolders')}
                 </Dt>
-                <Dd>14,579</Dd>
+                <Dd>-</Dd>
               </Dl>
             </>
           )}
@@ -136,13 +136,15 @@ const VerificationCard: React.FC<TransferListProps> = ({tokenAddress}) => {
         </VerifyItemsWrapper>
         {Alert}
       </VerifyContainer>
-      <div>
-        <Label
-          label={t('labels.proposalCreation')}
-          helpText={t('createDAO.step3.proposalCreationHelpertext')}
-        />
-        <SelectEligibility />
-      </div>
+      {tokenType === 'governance-ERC20' && (
+        <div>
+          <Label
+            label={t('labels.proposalCreation')}
+            helpText={t('createDAO.step3.proposalCreationHelpertext')}
+          />
+          <SelectEligibility />
+        </div>
+      )}
     </VerifyWrapper>
   );
 };
