@@ -1,4 +1,4 @@
-import React, {useMemo} from 'react';
+import React, {useMemo, useEffect} from 'react';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 import {AlertCard, Label, Spinner, shortenAddress} from '@aragon/ui-components';
@@ -13,11 +13,15 @@ type TransferListProps = {
 
 const VerificationCard: React.FC<TransferListProps> = ({tokenAddress}) => {
   const {t} = useTranslation();
-  const {control} = useFormContext();
+  const {control, setValue} = useFormContext();
   const [tokenName, tokenSymbol, tokenTotalSupply, tokenType] = useWatch({
     name: ['tokenName', 'tokenSymbol', 'tokenTotalSupply', 'tokenType'],
     control: control,
   });
+
+  useEffect(() => {
+    if (tokenType === 'governance-ERC20') setValue('eligibilityTokenAmount', 1);
+  }, [tokenType, setValue]);
 
   const Alert = useMemo(() => {
     switch (tokenType) {
