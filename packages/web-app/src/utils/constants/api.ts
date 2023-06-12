@@ -40,14 +40,6 @@ export const infuraApiKey = import.meta.env
 
 export const COVALENT_API_KEY = import.meta.env.VITE_COVALENT_API_KEY as string;
 
-export const IPFS_ENDPOINT_TEST =
-  'https://testing-ipfs-0.aragon.network/api/v0';
-export const IPFS_ENDPOINT_MAIN_0 = 'https://ipfs-0.aragon.network/api/v0';
-export const IPFS_ENDPOINT_MAIN_1 = 'https://ipfs-1.aragon.network/api/v0';
-
-// using Aragon node for avatar resolving
-export const AVATAR_IPFS_URL = 'https://ipfs.eth.aragon.network/ipfs';
-
 // Coingecko Api specific asset platform keys
 export const ASSET_PLATFORMS: Record<SupportedNetworks, string | null> = {
   arbitrum: 'arbitrum-one',

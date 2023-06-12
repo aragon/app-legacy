@@ -186,7 +186,13 @@ function addAvatarToDaos<T extends NavigationDao>(daos: T[]): T[] {
     const {metadata} = dao;
     return {
       ...dao,
-      metadata: {...metadata, avatar: resolveDaoAvatarIpfsCid(metadata.avatar)},
+      metadata: {
+        ...metadata,
+        avatar: resolveDaoAvatarIpfsCid(
+          getSupportedNetworkByChainId(dao.chain) || 'unsupported',
+          metadata.avatar
+        ),
+      },
     } as T;
   });
 }

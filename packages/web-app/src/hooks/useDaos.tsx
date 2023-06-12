@@ -7,7 +7,11 @@ import {
 } from '@aragon/sdk-client';
 import {InfiniteData, useInfiniteQuery} from '@tanstack/react-query';
 
-import {CHAIN_METADATA, SupportedChainID} from 'utils/constants';
+import {
+  CHAIN_METADATA,
+  SupportedChainID,
+  getSupportedNetworkByChainId,
+} from 'utils/constants';
 import {resolveDaoAvatarIpfsCid} from 'utils/library';
 import {useClient} from './useClient';
 
@@ -100,17 +104,20 @@ function toAugmentedDaoListItem(
   return {
     pageParams: data.pageParams,
     pages: data.pages.flatMap(page =>
-      page.map(
-        dao =>
-          ({
-            ...dao,
-            metadata: {
-              ...dao.metadata,
-              avatar: resolveDaoAvatarIpfsCid(dao.metadata.avatar),
-            },
-            chain: (dao as AugmentedDaoListItem).chain || chain,
-          } as AugmentedDaoListItem)
-      )
+      page.map(dao => {
+        const chainId = (dao as AugmentedDaoListItem).chain || chain;
+        return {
+          ...dao,
+          metadata: {
+            ...dao.metadata,
+            avatar: resolveDaoAvatarIpfsCid(
+              getSupportedNetworkByChainId(chainId) || 'unsupported',
+              dao.metadata.avatar
+            ),
+          },
+          chain: chainId,
+        } as AugmentedDaoListItem;
+      })
     ),
   };
 }
