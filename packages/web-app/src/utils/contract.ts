@@ -236,27 +236,29 @@ export function collapseNatspec(
   contract: string
 ): NatspecContract {
   const collapsed = {...natspec[contract]};
-  for (const superClass of collapsed.superClasses) {
-    if (!natspec[superClass]) continue;
-    const superNatspec = collapseNatspec(natspec, superClass);
-    collapsed.details = Object.fromEntries(
-      Object.entries(collapsed.details).map(([name, details]) => {
-        if (details.tags['inheritdoc'] !== undefined) {
-          const inheritDetails =
-            natspec[details.tags['inheritdoc'] as string]?.details[name];
-          if (inheritDetails !== undefined) {
-            delete details.tags['inheritdoc'];
-            details.tags = {...inheritDetails.tags, ...details.tags};
+  if (collapsed.superClasses) {
+    for (const superClass of collapsed.superClasses) {
+      if (!natspec[superClass]) continue;
+      const superNatspec = collapseNatspec(natspec, superClass);
+      collapsed.details = Object.fromEntries(
+        Object.entries(collapsed.details).map(([name, details]) => {
+          if (details.tags['inheritdoc'] !== undefined) {
+            const inheritDetails =
+              natspec[details.tags['inheritdoc'] as string]?.details[name];
+            if (inheritDetails !== undefined) {
+              delete details.tags['inheritdoc'];
+              details.tags = {...inheritDetails.tags, ...details.tags};
+            }
           }
-        }
-        if (Object.keys(details.tags).length === 0) {
-          const superDetails = superNatspec.details[name];
-          return [name, superDetails !== undefined ? superDetails : details];
-        }
-        return [name, details];
-      })
-    );
-    collapsed.details = {...superNatspec.details, ...collapsed.details};
+          if (Object.keys(details.tags).length === 0) {
+            const superDetails = superNatspec.details[name];
+            return [name, superDetails !== undefined ? superDetails : details];
+          }
+          return [name, details];
+        })
+      );
+      collapsed.details = {...superNatspec.details, ...collapsed.details};
+    }
   }
   return collapsed;
 }
@@ -306,17 +308,21 @@ export function parseSourceCode(input: string) {
   input = input.trim();
 
   if (input.startsWith('{')) {
-    const sources_obj = JSON.parse(input.slice(1, input.length - 1)).sources;
-    let sources = '';
+    try {
+      const sources_obj = JSON.parse(input.slice(1, input.length - 1)).sources;
+      let sources = '';
 
-    for (const method_name in sources_obj) {
-      // eslint-disable-next-line no-prototype-builtins
-      if (sources_obj.hasOwnProperty(method_name)) {
-        sources = sources + sources_obj[method_name].content;
+      for (const method_name in sources_obj) {
+        // eslint-disable-next-line no-prototype-builtins
+        if (sources_obj.hasOwnProperty(method_name)) {
+          sources = sources + sources_obj[method_name].content;
+        }
       }
-    }
 
-    return sources;
+      return sources;
+    } catch {
+      return input;
+    }
   } else {
     return input;
   }

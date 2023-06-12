@@ -275,11 +275,11 @@ export default SetupMultisigVotingForm;
 type Props = {
   items: Array<{
     label: string;
-    selectValue: string;
+    selectValue: string | boolean;
   }>;
 
   value: string;
-  onChange: (value: string) => void;
+  onChange: (value: string | boolean) => void;
 };
 
 export const ToggleCheckList: React.FC<Props> = ({onChange, items, value}) => {

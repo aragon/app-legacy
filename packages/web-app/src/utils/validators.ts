@@ -4,7 +4,7 @@ import {BigNumber, providers as EthersProviders} from 'ethers';
 import {InfuraProvider, JsonRpcProvider} from '@ethersproject/providers';
 
 import {i18n} from '../../i18n.config';
-import {isERC20Token} from './tokens';
+import {isERC1155, isERC20Governance, isERC20Token, isERC721} from './tokens';
 import {ALPHA_NUMERIC_PATTERN} from './constants';
 import {
   ActionItem,
@@ -16,6 +16,14 @@ import {
   Nullable,
 } from './types';
 import {isOnlyWhitespace} from './library';
+
+export type tokenType =
+  | 'ERC-20'
+  | 'governance-ERC20'
+  | 'ERC-721'
+  | 'ERC-1155'
+  | 'Unknown'
+  | undefined;
 
 /**
  * Validate given token contract address
@@ -36,6 +44,64 @@ export async function validateTokenAddress(
       : (i18n.t('errors.notERC20Token') as string);
   } else {
     return result;
+  }
+}
+
+/**
+ * Validate given token contract address
+ *
+ * @param address token contract address
+ * @param provider rpc provider
+ * @returns true when valid, or an error message when invalid
+ */
+export async function validateGovernanceTokenAddress(
+  address: string,
+  provider: EthersProviders.Provider
+): Promise<{
+  verificationResult: ValidateResult;
+  type: string;
+}> {
+  const isAddress = validateAddress(address);
+
+  if (isAddress !== true) {
+    return {
+      verificationResult: isAddress,
+      type: 'Unknown',
+    };
+  } else {
+    const interfaces = await Promise.all([
+      isERC20Token(address, provider),
+      isERC20Governance(address, provider),
+      isERC721(address, provider),
+      isERC1155(address, provider),
+    ]);
+
+    if (interfaces[3])
+      return {
+        verificationResult: true,
+        type: 'ERC-1155',
+      };
+    else if (interfaces[2])
+      return {
+        verificationResult: true,
+        type: 'ERC-721',
+      };
+    else if (interfaces[1])
+      return {
+        verificationResult: true,
+        type: 'governance-ERC20',
+      };
+    else if (interfaces[0])
+      return {
+        verificationResult: true,
+        type: 'ERC-20',
+      };
+    else {
+      return {
+        verificationResult: true,
+        type: 'Unknown',
+      };
+    }
   }
 }
 
