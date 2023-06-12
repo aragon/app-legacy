@@ -223,3 +223,10 @@ export const CHAIN_METADATA: ChainList = {
     supportsEns: false,
   },
 };
+
+export const chainExplorerAddressLink = (
+  network: SupportedNetworks,
+  address: string
+) => {
+  return `${CHAIN_METADATA[network].explorer}address/${address}`;
+};

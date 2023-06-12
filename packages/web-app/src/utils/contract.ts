@@ -147,6 +147,7 @@ export function extractNatSpec(source: string) {
       '/*',
       '//',
       'contract ',
+      'interface ',
       'function ',
       'error ',
       'event ',
@@ -173,7 +174,8 @@ export function extractNatSpec(source: string) {
           [match, pos] = scanFirst(source, pos, ['\n']);
         }
         break;
-      case 'contract ': {
+      case 'contract ':
+      case 'interface ': {
         pos = skipWhitespace(source, pos);
         let name: string;
         [pos, name] = scanWord(source, pos);
@@ -223,6 +225,44 @@ export function extractNatSpec(source: string) {
   return natspec;
 }
 
+/**
+ * Collapse inheritance tree of a map of NatspecContracts into a single NatspecDetails object.
+ * @param natspec The map of NatspecContracts to collapse.
+ * @param contract The name of the contract to collapse.
+ * @returns The contract with the NatspecDetails added for all inherited functions.
+ */
+export function collapseNatspec(
+  natspec: Record<string, NatspecContract>,
+  contract: string
+): NatspecContract {
+  const collapsed = {...natspec[contract]};
+  if (collapsed.superClasses) {
+    for (const superClass of collapsed.superClasses) {
+      if (!natspec[superClass]) continue;
+      const superNatspec = collapseNatspec(natspec, superClass);
+      collapsed.details = Object.fromEntries(
+        Object.entries(collapsed.details).map(([name, details]) => {
+          if (details.tags['inheritdoc'] !== undefined) {
+            const inheritDetails =
+              natspec[details.tags['inheritdoc'] as string]?.details[name];
+            if (inheritDetails !== undefined) {
+              delete details.tags['inheritdoc'];
+              details.tags = {...inheritDetails.tags, ...details.tags};
+            }
+          }
+          if (Object.keys(details.tags).length === 0) {
+            const superDetails = superNatspec.details[name];
+            return [name, superDetails !== undefined ? superDetails : details];
+          }
+          return [name, details];
+        })
+      );
+      collapsed.details = {...superNatspec.details, ...collapsed.details};
+    }
+  }
+  return collapsed;
+}
+
 /** Starts scanning str at start to find the first match from searches. If multiple matches complete at the
  * same position in str, it prefers the one which is listed first in searches.
  */
@@ -268,35 +308,25 @@ export function parseSourceCode(input: string) {
   input = input.trim();
 
   if (input.startsWith('{')) {
-    const sources_obj = JSON.parse(input.slice(1, input.length - 1)).sources;
-    let sources = '';
+    try {
+      const sources_obj = JSON.parse(input.slice(1, input.length - 1)).sources;
+      let sources = '';
 
-    for (const method_name in sources_obj) {
-      // eslint-disable-next-line no-prototype-builtins
-      if (sources_obj.hasOwnProperty(method_name)) {
-        sources = sources + sources_obj[method_name].content;
+      for (const method_name in sources_obj) {
+        // eslint-disable-next-line no-prototype-builtins
+        if (sources_obj.hasOwnProperty(method_name)) {
+          sources = sources + sources_obj[method_name].content;
+        }
       }
-    }
 
-    return sources;
+      return sources;
+    } catch {
+      return input;
+    }
   } else {
     return input;
   }
 }
-
-export const flattenNatSpecTags = (
-  NatSpec: Record<string, NatspecContract>
-) => {
-  const flatTags: Record<string, unknown> = {};
-
-  Object.values(NatSpec).map(contract => {
-    Object.values(contract.details).map(
-      details => (flatTags[details.name] = details.tags)
-    );
-  });
-
-  return flatTags;
-};
 
 export function attachEtherNotice(
   SourceCode: AugmentedEtherscanContractResponse['SourceCode'],
@@ -305,11 +335,18 @@ export function attachEtherNotice(
 ): SmartContractAction[] {
   const parsedSourceCode = parseSourceCode(SourceCode);
   const EtherNotice = extractNatSpec(parsedSourceCode);
-  const notices = EtherNotice[ContractName]?.details;
+  const collapsedNatspec = collapseNatspec(EtherNotice, ContractName);
+  const notices = collapsedNatspec.details;
 
   return ABI.map(action => {
     if (action.type === 'function' && notices?.[action.name]) {
       action.notice = notices[action.name].tags.notice as string;
+      action.inputs.forEach(
+        input =>
+          (input.notice = (
+            notices[action.name].tags['param'] as Record<string, string>
+          )?.[input.name] as string)
+      );
     }
 
     return action;

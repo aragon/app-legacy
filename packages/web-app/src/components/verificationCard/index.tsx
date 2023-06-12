@@ -154,7 +154,7 @@ const VerifyContainer = styled.div.attrs({
 })``;
 
 const VerifyWrapper = styled.div.attrs({
-  className: 'space-y-3',
+  className: 'space-y-6',
 })``;
 
 const LoadingWrapper = styled.div.attrs({

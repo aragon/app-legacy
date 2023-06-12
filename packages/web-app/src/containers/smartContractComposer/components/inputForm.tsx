@@ -390,7 +390,7 @@ export const ComponentForTypeWithFormProvider: React.FC<
 };
 
 const ActionName = styled.p.attrs({
-  className: 'text-lg font-bold text-ui-800 capitalize',
+  className: 'text-lg font-bold text-ui-800 capitalize truncate',
 })``;
 
 const ActionDescription = styled.p.attrs({

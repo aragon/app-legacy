@@ -41,12 +41,20 @@ const DesktopModal: React.FC<DesktopModalProps> = props => {
   const contracts = getValues('contracts') || [];
   const autoSelectedContract = contracts.length === 1 ? contracts[0] : null;
 
+  const handleInteractOutside = () => {
+    // Do nothing when interacting outside the modal
+  };
+
   useEffect(() => {
     setValue('selectedSC', autoSelectedContract);
   }, [autoSelectedContract, setValue]);
 
   return (
-    <StyledModal isOpen={props.isOpen} onClose={props.onClose}>
+    <StyledModal
+      isOpen={props.isOpen}
+      onClose={props.onClose}
+      onInteractOutside={handleInteractOutside}
+    >
       <Header
         onClose={props.onClose}
         selectedContract={selectedSC?.name}
