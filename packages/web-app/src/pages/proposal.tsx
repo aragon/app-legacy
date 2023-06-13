@@ -230,6 +230,18 @@ const Proposal: React.FC = () => {
           client?.decoding.findInterface(action.data) ||
           pluginClient?.decoding.findInterface(action.data);
 
+        if (!functionParams && action.to && action.value) {
+          return decodeWithdrawToAction(
+            action.data,
+            client,
+            apolloClient,
+            provider,
+            network,
+            action.to,
+            action.value
+          );
+        }
+
         switch (functionParams?.functionName) {
           case 'transfer':
             return decodeWithdrawToAction(
