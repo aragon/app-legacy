@@ -230,18 +230,6 @@ const Proposal: React.FC = () => {
           client?.decoding.findInterface(action.data) ||
           pluginClient?.decoding.findInterface(action.data);
 
-        if (!functionParams && action.to && action.value) {
-          return decodeWithdrawToAction(
-            action.data,
-            client,
-            apolloClient,
-            provider,
-            network,
-            action.to,
-            action.value
-          );
-        }
-
         switch (functionParams?.functionName) {
           case 'transfer':
             return decodeWithdrawToAction(
@@ -285,8 +273,33 @@ const Proposal: React.FC = () => {
             );
           case 'setMetadata':
             return decodeMetadataToAction(action.data, client);
-          default:
-            return decodeSCCToAction(action, network, t);
+          default: {
+            const withdrawAction = decodeWithdrawToAction(
+              action.data,
+              client,
+              apolloClient,
+              provider,
+              network,
+              action.to,
+              action.value
+            );
+
+            const isPossiblyWithdrawAction =
+              !functionParams && action.to && action.value;
+
+            return decodeSCCToAction(action, network, t)
+              .then(result => {
+                if (!result && isPossiblyWithdrawAction) {
+                  return withdrawAction as unknown as Action;
+                }
+                return result;
+              })
+              .catch(() => {
+                if (isPossiblyWithdrawAction) {
+                  return withdrawAction;
+                }
+              });
+          }
         }
       }
     );
