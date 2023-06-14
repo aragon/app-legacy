@@ -1,4 +1,5 @@
 import {Erc20TokenDetails} from '@aragon/sdk-client';
+import {QueryClient} from '@tanstack/react-query';
 import {useNetwork} from 'context/network';
 import {useSpecificProvider} from 'context/providers';
 import {useEffect, useState} from 'react';
@@ -8,6 +9,7 @@ import {fetchBalance} from 'utils/tokens';
 import {HookData} from 'utils/types';
 import {useDaoToken} from './useDaoToken';
 import {PluginTypes, usePluginClient} from './usePluginClient';
+import {getTokenHoldersPaged} from 'services/covalentAPI';
 
 export type MultisigMember = {
   address: string;
@@ -66,6 +68,24 @@ export const useDaoMembers = (
 
   const isTokenBased = pluginType === 'token-voting.plugin.dao.eth';
   const {data: daoToken} = useDaoToken(pluginAddress);
+
+  const queryClient = new QueryClient();
+
+  useEffect(() => {
+    let holders;
+    const tokenContract = '0xAa8cdB8c5C679803155AF1dcDa83415Bcbae9e97';
+    async function fetch() {
+      holders = await getTokenHoldersPaged(
+        queryClient,
+        tokenContract,
+        'goerli',
+        0,
+        100
+      );
+      console.log('holders', holders);
+    }
+    if (daoToken?.address) fetch();
+  });
 
   const client = usePluginClient(pluginType);
 
