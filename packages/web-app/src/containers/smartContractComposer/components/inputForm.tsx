@@ -168,14 +168,14 @@ const InputForm: React.FC<InputFormProps> = ({
 
   if (!selectedAction) {
     return (
-      <div className="desktop:p-6 min-h-full bg-ui-50 desktop:bg-white">
+      <div className="desktop:p-6 min-h-full desktop:bg-white bg-ui-50">
         Sorry, no public Write functions were found for this contract.
       </div>
     );
   }
 
   return (
-    <div className="desktop:p-6 min-h-full bg-ui-50 desktop:bg-white">
+    <div className="desktop:p-6 min-h-full desktop:bg-white bg-ui-50">
       <div className="desktop:flex items-baseline space-x-3">
         <ActionName>{selectedAction.name}</ActionName>
         <div className="hidden desktop:flex items-center space-x-1 text-primary-600">
@@ -191,10 +191,10 @@ const InputForm: React.FC<InputFormProps> = ({
         <IconSuccess />
       </div>
       {actionInputs.length > 0 ? (
-        <div className="p-3 mt-5 space-y-2 bg-white desktop:bg-ui-50 rounded-xl border border-ui-100 shadow-100">
+        <div className="p-3 mt-5 space-y-2 bg-white rounded-xl border desktop:bg-ui-50 border-ui-100 shadow-100">
           {actionInputs.map(input => (
             <div key={input.name}>
-              <div className="text-base font-bold text-ui-800 capitalize">
+              <div className="text-base font-bold capitalize text-ui-800">
                 {input.name}
                 <span className="ml-0.5 text-sm normal-case">
                   ({input.type})
@@ -242,6 +242,38 @@ type ComponentForTypeProps = {
   defaultValue?: unknown;
   disabled?: boolean;
 };
+
+function augmentUint256FieldValue(changedValue: string): string {
+  const [beforeDecimalPart, afterDecimalPart] = changedValue.split('.');
+
+  const finalBeforeDecimalsPart =
+    !!beforeDecimalPart && beforeDecimalPart.length && beforeDecimalPart !== '-'
+      ? beforeDecimalPart
+      : '0';
+
+  let finalAfterDecimalsPart = afterDecimalPart;
+
+  let amountZerosToAdd: number;
+
+  if (
+    !afterDecimalPart ||
+    !afterDecimalPart.length ||
+    afterDecimalPart.toLowerCase().startsWith('e') ||
+    afterDecimalPart.startsWith('-')
+  ) {
+    finalAfterDecimalsPart = '';
+    amountZerosToAdd = 18;
+  } else {
+    finalAfterDecimalsPart = afterDecimalPart.substring(0, 18);
+    amountZerosToAdd = 18 - finalAfterDecimalsPart.length;
+  }
+
+  for (let i = 0; i < amountZerosToAdd; i++) {
+    finalAfterDecimalsPart += '0';
+  }
+
+  return `${finalBeforeDecimalsPart}.${finalAfterDecimalsPart}`;
+}
 
 export const ComponentForType: React.FC<ComponentForTypeProps> = ({
   input,
@@ -315,7 +347,15 @@ export const ComponentForType: React.FC<ComponentForTypeProps> = ({
             <NumberInput
               name={name}
               onBlur={onBlur}
-              onChange={onChange}
+              onChange={e => {
+                onChange({
+                  ...e,
+                  target: {
+                    ...e.target,
+                    value: augmentUint256FieldValue(e.target.value),
+                  },
+                });
+              }}
               placeholder="0"
               includeDecimal
               disabled={disabled}
@@ -331,7 +371,7 @@ export const ComponentForType: React.FC<ComponentForTypeProps> = ({
         <>
           {input.components?.map(component => (
             <div key={component.name}>
-              <div className="mb-1.5 text-base font-bold text-ui-800 capitalize">
+              <div className="mb-1.5 text-base font-bold capitalize text-ui-800">
                 {input.name}
               </div>
               <ComponentForType
