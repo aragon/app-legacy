@@ -58,6 +58,7 @@ const MajorityVotingSettings: React.FC<IPluginSettings> = ({daoDetails}) => {
         : t('labels.no'),
   };
 
+  // TODO: this should transform into a hook when the wrapped token dao added
   useEffect(() => {
     async function fetch() {
       const daoTokenView = await getDaoTokenOwner(
