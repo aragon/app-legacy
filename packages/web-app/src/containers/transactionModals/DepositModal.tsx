@@ -42,17 +42,17 @@ const DepositModal: React.FC = () => {
     >
       <Container>
         <div>
-          <Title>Blockchain</Title>
-          <Subtitle>
-            Use the appropriate blockchain. Funds cannot be restored once they
-            have been sent.
-          </Subtitle>
+          <Title>{t('modal.deposit.inputLabelBlockchain')}</Title>
+          <Subtitle>{t('modal.deposit.inputHelptextBlockchain')}</Subtitle>
           <NetworkDetailsWrapper>
             <HStack>
               <Logo src={CHAIN_METADATA[network].logo} />
               <NetworkName>{CHAIN_METADATA[network].name}</NetworkName>
               {status === 'connected' && !isOnWrongNetwork ? (
-                <AlertInline label="Connected" mode="success" />
+                <AlertInline
+                  label={t('modal.deposit.statusBlockchain')}
+                  mode="success"
+                />
               ) : (
                 <ConnectButton
                   onClick={() => {
@@ -60,7 +60,7 @@ const DepositModal: React.FC = () => {
                     open('network');
                   }}
                 >
-                  Connect
+                  {t('modal.deposit.ctaBlockchain')}
                 </ConnectButton>
               )}
             </HStack>
@@ -68,7 +68,7 @@ const DepositModal: React.FC = () => {
         </div>
 
         <div>
-          <Title>DAO treasury</Title>
+          <Title>{t('modal.deposit.inputLabelEns')}</Title>
           <Subtitle>{t('modal.deposit.inputHelptextEns')}</Subtitle>
           <WalletInput
             value={{
