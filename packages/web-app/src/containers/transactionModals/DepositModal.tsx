@@ -47,27 +47,24 @@ const DepositModal: React.FC = () => {
             Use the appropriate blockchain. Funds cannot be restored once they
             have been sent.
           </Subtitle>
-          <div className="py-1.5 px-2 bg-white rounded-xl">
-            <div className="flex space-x-1.5">
+          <NetworkDetailsWrapper>
+            <HStack>
               <Logo src={CHAIN_METADATA[network].logo} />
-              <p className="flex-1 font-semibold text-ui-800">
-                {CHAIN_METADATA[network].name}
-              </p>
+              <NetworkName>{CHAIN_METADATA[network].name}</NetworkName>
               {status === 'connected' && !isOnWrongNetwork ? (
                 <AlertInline label="Connected" mode="success" />
               ) : (
-                <button
-                  className="font-semibold text-primary-500"
+                <ConnectButton
                   onClick={() => {
                     close('deposit');
                     open('network');
                   }}
                 >
                   Connect
-                </button>
+                </ConnectButton>
               )}
-            </div>
-          </div>
+            </HStack>
+          </NetworkDetailsWrapper>
         </div>
 
         <div>
@@ -84,7 +81,7 @@ const DepositModal: React.FC = () => {
           />
         </div>
 
-        <ActionWrapper>
+        <HStack>
           <ButtonText
             mode="primary"
             size="large"
@@ -97,7 +94,7 @@ const DepositModal: React.FC = () => {
             label={t('modal.deposit.cancelLabel')}
             onClick={() => close('deposit')}
           />
-        </ActionWrapper>
+        </HStack>
       </Container>
     </ModalBottomSheetSwitcher>
   );
@@ -115,7 +112,19 @@ const Subtitle = styled.p.attrs({
   className: 'mt-0.5 text-ui-600 ft-text-sm mb-1.5',
 })``;
 
-const ActionWrapper = styled.div.attrs({
+const NetworkName = styled.p.attrs({
+  className: 'flex-1 font-semibold text-ui-800',
+})``;
+
+const ConnectButton = styled.button.attrs({
+  className: 'font-semibold text-primary-500',
+})``;
+
+const NetworkDetailsWrapper = styled.div.attrs({
+  className: 'py-1.5 px-2 bg-white rounded-xl',
+})``;
+
+const HStack = styled.div.attrs({
   className: 'flex space-x-1.5',
 })``;
 
