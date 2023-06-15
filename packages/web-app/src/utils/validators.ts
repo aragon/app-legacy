@@ -1,21 +1,22 @@
-import {FieldError, FieldErrors, ValidateResult} from 'react-hook-form';
-import {isAddress, parseUnits} from 'ethers/lib/utils';
-import {BigNumber, providers as EthersProviders} from 'ethers';
 import {InfuraProvider, JsonRpcProvider} from '@ethersproject/providers';
+import {BigNumber, providers as EthersProviders} from 'ethers';
+import {isAddress, parseUnits} from 'ethers/lib/utils';
+import {FieldError, FieldErrors, ValidateResult} from 'react-hook-form';
+import {TFunction} from 'react-i18next';
 
 import {i18n} from '../../i18n.config';
-import {isERC1155, isERC20Governance, isERC20Token, isERC721} from './tokens';
 import {ALPHA_NUMERIC_PATTERN} from './constants';
+import {Web3Address, isOnlyWhitespace} from './library';
+import {isERC1155, isERC20Governance, isERC20Token, isERC721} from './tokens';
 import {
-  ActionItem,
   Action,
-  ActionWithdraw,
-  ActionMintToken,
   ActionAddAddress,
+  ActionItem,
+  ActionMintToken,
   ActionRemoveAddress,
+  ActionWithdraw,
   Nullable,
 } from './types';
-import {isOnlyWhitespace} from './library';
 
 export type tokenType =
   | 'ERC-20'
@@ -278,4 +279,33 @@ export function isDaoEnsNameValid(
   } catch (err) {
     return i18n.t('errors.ensNetworkIssue') as string;
   }
+}
+
+/**
+ * Validates a web3Address
+ * @param address instance of Web3Address to validate
+ * @param requiredErrorMessage error message to return when address is empty
+ * @param t translation function
+ * @returns true if address is valid and an error message if not
+ */
+export async function validateWeb3Address(
+  address: Web3Address,
+  requiredErrorMessage: string,
+  t: TFunction
+): Promise<ValidateResult> {
+  // empty field
+  if (address.address === '' && address.ensName === '')
+    return requiredErrorMessage;
+
+  // invalid ens
+  if (address.ensName && !address.address)
+    return (await address.isValidEnsName())
+      ? true
+      : t('inputWallet.ensAlertCirtical');
+
+  // invalid address
+  if (address.address && !address.ensName)
+    return address.isAddressValid()
+      ? true
+      : t('inputWallet.addressAlertCritical');
 }

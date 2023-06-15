@@ -156,7 +156,7 @@ export const CHAIN_METADATA: ChainList = {
     name: 'Arbitrum Goerli',
     domain: 'L2 Blockchain',
     logo: 'https://bridge.arbitrum.io/logo.png',
-    explorer: 'https://goerli-rollup-explorer.arbitrum.io/',
+    explorer: 'https://testnet.arbiscan.io/',
     testnet: true,
     rpc: ['https://goerli-rollup.arbitrum.io/rpc'],
     nativeCurrency: {
