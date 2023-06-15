@@ -229,7 +229,7 @@ const CreateDaoProvider: React.FC = ({children}) => {
     useCallback((): ITokenVotingPluginInstall['useToken'] => {
       const {tokenAddress, tokenName, tokenSymbol} = getValues();
       return {
-        tokenAddress: tokenAddress as string, // contract address of the token to use as the voting token
+        tokenAddress: tokenAddress.address, // contract address of the token to use as the voting token
         wrappedToken: {
           name: tokenName, // the name of your token
           symbol: tokenSymbol, // the symbol for your token. shouldn't be more than 5 letters
