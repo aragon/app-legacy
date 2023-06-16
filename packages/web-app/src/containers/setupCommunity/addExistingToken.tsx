@@ -84,7 +84,6 @@ const AddExistingToken: React.FC = () => {
             label={t('createDAO.step3.existingToken.descriptionLinkLabel')}
             href=""
           />
-          .
         </Subtitle>
       </DescriptionContainer>
       <FormItem>
