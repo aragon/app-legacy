@@ -964,14 +964,14 @@
     "deposit": {
       "headerTitle": "Deposit assets",
       "headerDescription": "Send assets to the DAO treasury",
-      "inputLabelEns": "ENS",
+      "inputLabelEns": "DAO treasury",
       "inputHelptextEns": "Copy the ENS or address below and use your wallet's send feature to send money to your DAO's treasury.",
-      "inputLabelContract": "Contract address",
-      "inputHelptextContract": "Copy the contract address below and use your wallet's send feature to send money to your DAO's treasury.",
-      "linkLabelBlockExplorer": "View on block explorer",
       "ctaLabel": "View all transfers",
       "cancelLabel": "Cancel",
-      "dividerLabel": "or"
+      "inputLabelBlockchain": "Blockchain",
+      "inputHelptextBlockchain": "Use the appropriate blockchain. Funds cannot be restored once they have been sent.",
+      "ctaBlockchain": "Connect",
+      "statusBlockchain": "Connected"
     },
     "exitProcess": {
       "description": "If you leave the process, you'll lose all the information you've put in. Would you like to exit the process?",

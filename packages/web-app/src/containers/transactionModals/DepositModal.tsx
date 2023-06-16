@@ -56,8 +56,13 @@ const DepositModal: React.FC = () => {
               ) : (
                 <ConnectButton
                   onClick={() => {
-                    close('deposit');
-                    open('network');
+                    if (status === 'connected') {
+                      close('deposit');
+                      open('network');
+                    } else {
+                      close('deposit');
+                      open('wallet');
+                    }
                   }}
                 >
                   {t('modal.deposit.ctaBlockchain')}
