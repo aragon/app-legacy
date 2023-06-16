@@ -65,7 +65,7 @@ export const WrappedWalletInput: React.FC<WrappedWalletInputProps> = ({
   return (
     <>
       <WalletInput
-        blockExplorerURL={CHAIN_METADATA[network].domainLookupURL}
+        blockExplorerURL={CHAIN_METADATA[network].explorer + 'address/'}
         onAddressValidated={handleAddressValidated}
         onEnsResolved={handleEnsResolved}
         onClearButtonClick={() => alert(t('alert.chip.inputCleared'))}
