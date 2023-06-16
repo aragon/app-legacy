@@ -49,7 +49,6 @@ function initializeAPM(setAnalytics: boolean | undefined) {
     import.meta.env.VITE_REACT_APP_DEPLOY_ENVIRONMENT
   ) {
     return initApm({
-      //serviceName: 'zaragoza',
       serviceName: 'aragon-app',
       serverUrl: 'https://apm-monitoring.aragon.org',
       serviceVersion: import.meta.env.VITE_REACT_APP_DEPLOY_VERSION as string,
