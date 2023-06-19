@@ -1,9 +1,4 @@
-import {
-  AlertInline,
-  Label,
-  Link,
-  WalletInputLegacy,
-} from '@aragon/ui-components';
+import {AlertInline, Label, WalletInputLegacy} from '@aragon/ui-components';
 import React, {useCallback, useEffect} from 'react';
 import {Controller, useFormContext, useWatch} from 'react-hook-form';
 import {useTranslation} from 'react-i18next';
@@ -16,6 +11,7 @@ import {CHAIN_METADATA} from 'utils/constants';
 import VerificationCard from 'components/verificationCard';
 import {getTokenInfo} from 'utils/tokens';
 import {formatUnits} from 'ethers/lib/utils';
+import {htmlIn} from 'utils/htmlIn';
 
 const AddExistingToken: React.FC = () => {
   const {t} = useTranslation();
@@ -79,13 +75,11 @@ const AddExistingToken: React.FC = () => {
     <>
       <DescriptionContainer>
         <Title>{t('createDAO.step3.existingToken.title')}</Title>
-        <Subtitle>
-          {t('createDAO.step3.existingToken.description')}
-          <Link
-            label={t('createDAO.step3.existingToken.descriptionLinkLabel')}
-            href=""
-          />
-        </Subtitle>
+        <Subtitle
+          dangerouslySetInnerHTML={{
+            __html: htmlIn(t)('createDAO.step3.existingToken.description'),
+          }}
+        />
       </DescriptionContainer>
       <FormItem>
         <DescriptionContainer>
