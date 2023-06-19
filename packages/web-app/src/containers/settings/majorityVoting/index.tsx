@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {generatePath, useNavigate} from 'react-router-dom';
 import {VotingMode, VotingSettings} from '@aragon/sdk-client';
@@ -15,11 +15,15 @@ import {getDHMFromSeconds} from 'utils/date';
 import {formatUnits} from 'utils/library';
 import {Community} from 'utils/paths';
 import {IPluginSettings} from 'pages/settings';
+import {getDaoTokenOwner} from 'utils/tokens';
+import {useProviders} from 'context/providers';
 
 const MajorityVotingSettings: React.FC<IPluginSettings> = ({daoDetails}) => {
+  const [showMintOption, setShowMintOption] = useState(false);
   const {t} = useTranslation();
   const {network} = useNetwork(); // TODO get the network from daoDetails
   const navigate = useNavigate();
+  const {infura: provider} = useProviders();
 
   const {data: votingSettings} = usePluginSettings(
     daoDetails?.plugins[0].instanceAddress as string,
@@ -34,6 +38,7 @@ const MajorityVotingSettings: React.FC<IPluginSettings> = ({daoDetails}) => {
   const {data: daoToken} = useDaoToken(
     daoDetails?.plugins?.[0]?.instanceAddress || ''
   );
+
   const {data: tokenSupply} = useTokenSupply(daoToken?.address || '');
 
   const daoSettings = votingSettings as VotingSettings;
@@ -52,6 +57,22 @@ const MajorityVotingSettings: React.FC<IPluginSettings> = ({daoDetails}) => {
         ? t('labels.yes')
         : t('labels.no'),
   };
+
+  // TODO: this should transform into a hook when the wrapped token dao added
+  useEffect(() => {
+    async function fetch() {
+      const daoTokenView = await getDaoTokenOwner(
+        daoToken?.address || '',
+        provider
+      );
+
+      setShowMintOption(
+        daoTokenView?.toLocaleLowerCase() === daoDetails?.address
+      );
+    }
+
+    fetch();
+  }, [daoDetails?.address, daoToken?.address, provider]);
 
   return (
     <div className="space-y-5">
@@ -78,7 +99,7 @@ const MajorityVotingSettings: React.FC<IPluginSettings> = ({daoDetails}) => {
               <p>
                 {tokenSupply?.formatted} {daoToken?.symbol}
               </p>
-              <Tag label={t('labels.mintable')} />
+              {showMintOption && <Tag label={t('labels.mintable')} />}
             </div>
           </Dd>
         </Dl>

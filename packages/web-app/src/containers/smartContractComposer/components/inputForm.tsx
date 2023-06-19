@@ -243,6 +243,38 @@ type ComponentForTypeProps = {
   disabled?: boolean;
 };
 
+function augmentUint256FieldValue(changedValue: string): string {
+  const [beforeDecimalPart, afterDecimalPart] = changedValue.split('.');
+
+  const finalBeforeDecimalsPart =
+    !!beforeDecimalPart && beforeDecimalPart.length && beforeDecimalPart !== '-'
+      ? beforeDecimalPart
+      : '0';
+
+  let finalAfterDecimalsPart = afterDecimalPart;
+
+  let amountZerosToAdd: number;
+
+  if (
+    !afterDecimalPart ||
+    !afterDecimalPart.length ||
+    afterDecimalPart.toLowerCase().startsWith('e') ||
+    afterDecimalPart.startsWith('-')
+  ) {
+    finalAfterDecimalsPart = '';
+    amountZerosToAdd = 18;
+  } else {
+    finalAfterDecimalsPart = afterDecimalPart.substring(0, 18);
+    amountZerosToAdd = 18 - finalAfterDecimalsPart.length;
+  }
+
+  for (let i = 0; i < amountZerosToAdd; i++) {
+    finalAfterDecimalsPart += '0';
+  }
+
+  return `${finalBeforeDecimalsPart}.${finalAfterDecimalsPart}`;
+}
+
 export const ComponentForType: React.FC<ComponentForTypeProps> = ({
   input,
   functionName,
@@ -314,8 +346,24 @@ export const ComponentForType: React.FC<ComponentForTypeProps> = ({
           }) => (
             <NumberInput
               name={name}
-              onBlur={onBlur}
-              onChange={onChange}
+              onBlur={() => {
+                if (value) onChange(augmentUint256FieldValue(value));
+                onBlur();
+              }}
+              onChange={e => {
+                /* To augment uint256 with decimals when increment/decrement clicked */
+                const prevValue = value || '0';
+                const newValue = e.target.value;
+                const isControlsUsed =
+                  newValue &&
+                  Math.abs(Number(prevValue) - Number(newValue)) === 1;
+
+                if (isControlsUsed) {
+                  onChange(augmentUint256FieldValue(newValue));
+                } else {
+                  onChange(newValue);
+                }
+              }}
               placeholder="0"
               includeDecimal
               disabled={disabled}

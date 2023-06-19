@@ -11,9 +11,6 @@ import React, {createContext, useContext, useEffect, useState} from 'react';
 
 import {
   CHAIN_METADATA,
-  IPFS_ENDPOINT_MAIN_0,
-  IPFS_ENDPOINT_MAIN_1,
-  IPFS_ENDPOINT_TEST,
   SUBGRAPH_API_URL,
   SupportedNetworks,
 } from 'utils/constants';
@@ -58,31 +55,14 @@ export const UseClientProvider: React.FC = ({children}) => {
       return;
     }
 
-    let ipfsNodes = [
+    const ipfsNodes = [
       {
-        url: IPFS_ENDPOINT_MAIN_0,
-        headers: {
-          'X-API-KEY': (import.meta.env.VITE_IPFS_API_KEY as string) || '',
-        },
-      },
-      {
-        url: IPFS_ENDPOINT_MAIN_1,
+        url: `${CHAIN_METADATA[network].ipfs}/api/v0`,
         headers: {
           'X-API-KEY': (import.meta.env.VITE_IPFS_API_KEY as string) || '',
         },
       },
     ];
-
-    if (CHAIN_METADATA[network].testnet) {
-      ipfsNodes = [
-        {
-          url: IPFS_ENDPOINT_TEST,
-          headers: {
-            'X-API-KEY': (import.meta.env.VITE_IPFS_API_KEY as string) || '',
-          },
-        },
-      ];
-    }
 
     const contextParams: ContextParams = {
       daoFactoryAddress: LIVE_CONTRACTS[translatedNetwork].daoFactory,

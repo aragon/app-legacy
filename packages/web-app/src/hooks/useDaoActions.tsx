@@ -2,10 +2,43 @@ import {useTranslation} from 'react-i18next';
 
 import {ActionParameter, HookData} from 'utils/types';
 import {useDaoQuery} from './useDaoDetails';
+import {getDaoTokenOwner} from 'utils/tokens';
+import {useDaoToken} from './useDaoToken';
+import {useProviders} from 'context/providers';
+import {useEffect, useState} from 'react';
 
 export function useDaoActions(dao: string): HookData<ActionParameter[]> {
   const {data: daoDetails, error, isLoading} = useDaoQuery(dao);
   const multisig = daoDetails?.plugins[0].id === 'multisig.plugin.dao.eth';
+  const [showMintOption, setShowMintOption] = useState(false);
+
+  const {infura: provider} = useProviders();
+
+  const {data: daoToken} = useDaoToken(
+    daoDetails?.plugins[0].instanceAddress || ''
+  );
+
+  useEffect(() => {
+    async function fetch() {
+      const daoTokenView = await getDaoTokenOwner(
+        daoToken?.address || '',
+        provider
+      );
+
+      setShowMintOption(
+        daoTokenView?.toLocaleLowerCase() === daoDetails?.address
+      );
+    }
+
+    fetch();
+  }, [
+    dao,
+    daoDetails,
+    daoDetails?.address,
+    daoToken?.address,
+    provider,
+    showMintOption,
+  ]);
 
   const {t} = useTranslation();
 
@@ -37,13 +70,15 @@ export function useDaoActions(dao: string): HookData<ActionParameter[]> {
     },
   ]);
 
-  const tokenVotingActions = baseActions.concat([
-    {
-      type: 'mint_tokens',
-      title: t('AddActionModal.mintTokens'),
-      subtitle: t('AddActionModal.mintTokensSubtitle'),
-    },
-  ]);
+  const tokenVotingActions = showMintOption
+    ? baseActions.concat([
+        {
+          type: 'mint_tokens',
+          title: t('AddActionModal.mintTokens'),
+          subtitle: t('AddActionModal.mintTokensSubtitle'),
+        },
+      ])
+    : baseActions;
 
   return {
     data: multisig ? multisigActions : tokenVotingActions,

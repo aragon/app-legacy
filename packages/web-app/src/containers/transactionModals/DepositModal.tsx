@@ -1,36 +1,25 @@
-import {
-  ButtonText,
-  IconLinkExternal,
-  Link,
-  WalletInputLegacy,
-  shortenAddress,
-} from '@aragon/ui-components';
+import {AlertInline, ButtonText, WalletInput} from '@aragon/ui-components';
 import React, {useCallback} from 'react';
 import {useTranslation} from 'react-i18next';
 import {generatePath, useNavigate} from 'react-router-dom';
 import styled from 'styled-components';
 
 import ModalBottomSheetSwitcher from 'components/modalBottomSheetSwitcher';
-import {useAlertContext} from 'context/alert';
 import {useGlobalModalContext} from 'context/globalModals';
 import {useNetwork} from 'context/network';
 import {useDaoDetailsQuery} from 'hooks/useDaoDetails';
 import {CHAIN_METADATA} from 'utils/constants';
 import {toDisplayEns} from 'utils/library';
 import {AllTransfers} from 'utils/paths';
+import {useWallet} from 'hooks/useWallet';
 
 const DepositModal: React.FC = () => {
   const {t} = useTranslation();
-  const {isDepositOpen, close} = useGlobalModalContext();
+  const {isDepositOpen, open, close} = useGlobalModalContext();
   const {data: daoDetails} = useDaoDetailsQuery();
   const {network} = useNetwork();
-  const {alert} = useAlertContext();
   const navigate = useNavigate();
-
-  const copyToClipboard = (value: string | undefined) => {
-    navigator.clipboard.writeText(value || '');
-    alert(t('alert.chip.inputCopied'));
-  };
+  const {status, isOnWrongNetwork} = useWallet();
 
   const handleCtaClicked = useCallback(() => {
     close('deposit');
@@ -42,17 +31,7 @@ const DepositModal: React.FC = () => {
     );
   }, [close, daoDetails?.address, daoDetails?.ensDomain, navigate, network]);
 
-  const Divider: React.FC = () => {
-    return (
-      <DividerWrapper>
-        <hr className="w-full h-px bg-ui-200" />
-        <span className="px-1 font-semibold text-ui-400">
-          {t('modal.deposit.dividerLabel')}
-        </span>
-        <hr className="w-full h-px bg-ui-200" />
-      </DividerWrapper>
-    );
-  };
+  if (!daoDetails) return null;
 
   return (
     <ModalBottomSheetSwitcher
@@ -62,90 +41,98 @@ const DepositModal: React.FC = () => {
       subtitle={t('modal.deposit.headerDescription')}
     >
       <Container>
-        {toDisplayEns(daoDetails?.ensDomain) !== '' && (
-          <>
-            <EnsHeaderWrapper>
-              <EnsTitle>{t('modal.deposit.inputLabelEns')}</EnsTitle>
-              <EnsSubtitle>{t('modal.deposit.inputHelptextEns')}</EnsSubtitle>
-            </EnsHeaderWrapper>
-            <WalletInputLegacy
-              adornmentText={t('labels.copy')}
-              value={daoDetails?.ensDomain}
-              onAdornmentClick={() => copyToClipboard(daoDetails?.ensDomain)}
-              disabledFilled
-            />
-            <Divider />
-          </>
-        )}
-        <AddressHeaderWrapper>
-          <EnsTitle>{t('modal.deposit.inputLabelContract')}</EnsTitle>
-        </AddressHeaderWrapper>
-        <BodyWrapper>
-          <WalletInputLegacy
-            adornmentText={t('labels.copy')}
-            value={shortenAddress(daoDetails?.address as string)}
-            onAdornmentClick={() => copyToClipboard(daoDetails?.address)}
-            disabledFilled
+        <div>
+          <Title>{t('modal.deposit.inputLabelBlockchain')}</Title>
+          <Subtitle>{t('modal.deposit.inputHelptextBlockchain')}</Subtitle>
+          <NetworkDetailsWrapper>
+            <HStack>
+              <Logo src={CHAIN_METADATA[network].logo} />
+              <NetworkName>{CHAIN_METADATA[network].name}</NetworkName>
+              {status === 'connected' && !isOnWrongNetwork ? (
+                <AlertInline
+                  label={t('modal.deposit.statusBlockchain')}
+                  mode="success"
+                />
+              ) : (
+                <ConnectButton
+                  onClick={() => {
+                    if (status === 'connected') {
+                      close('deposit');
+                      open('network');
+                    } else {
+                      close('deposit');
+                      open('wallet');
+                    }
+                  }}
+                >
+                  {t('modal.deposit.ctaBlockchain')}
+                </ConnectButton>
+              )}
+            </HStack>
+          </NetworkDetailsWrapper>
+        </div>
+
+        <div>
+          <Title>{t('modal.deposit.inputLabelEns')}</Title>
+          <Subtitle>{t('modal.deposit.inputHelptextEns')}</Subtitle>
+          <WalletInput
+            value={{
+              ensName: daoDetails.ensDomain,
+              address: daoDetails.address,
+            }}
+            onValueChange={() => {}}
+            blockExplorerURL={CHAIN_METADATA[network].lookupURL}
+            disabled
           />
-          <Link
-            href={
-              CHAIN_METADATA[network].explorer +
-              '/address/' +
-              daoDetails?.address
-            }
-            label={t('modal.deposit.linkLabelBlockExplorer')}
-            iconRight={<IconLinkExternal />}
+        </div>
+
+        <HStack>
+          <ButtonText
+            mode="primary"
+            size="large"
+            label={t('modal.deposit.ctaLabel')}
+            onClick={handleCtaClicked}
           />
-          <ActionWrapper>
-            <ButtonText
-              mode="primary"
-              size="large"
-              label={t('modal.deposit.ctaLabel')}
-              onClick={handleCtaClicked}
-            />
-            <ButtonText
-              mode="secondary"
-              size="large"
-              label={t('modal.deposit.cancelLabel')}
-              onClick={() => close('deposit')}
-            />
-          </ActionWrapper>
-        </BodyWrapper>
+          <ButtonText
+            mode="secondary"
+            size="large"
+            label={t('modal.deposit.cancelLabel')}
+            onClick={() => close('deposit')}
+          />
+        </HStack>
       </Container>
     </ModalBottomSheetSwitcher>
   );
 };
 
 const Container = styled.div.attrs({
-  className: 'p-3',
+  className: 'p-3 space-y-3',
 })``;
 
-const EnsHeaderWrapper = styled.div.attrs({
-  className: 'space-y-0.5 mb-1.5',
-})``;
-
-const EnsTitle = styled.h2.attrs({
+const Title = styled.h2.attrs({
   className: 'ft-text-base font-bold text-ui-800',
 })``;
 
-const EnsSubtitle = styled.p.attrs({
-  className: 'text-ui-600 ft-text-sm',
+const Subtitle = styled.p.attrs({
+  className: 'mt-0.5 text-ui-600 ft-text-sm mb-1.5',
 })``;
 
-const AddressHeaderWrapper = styled.div.attrs({
-  className: 'mb-1',
+const NetworkName = styled.p.attrs({
+  className: 'flex-1 font-semibold text-ui-800',
 })``;
 
-const BodyWrapper = styled.div.attrs({
-  className: 'space-y-3',
+const ConnectButton = styled.button.attrs({
+  className: 'font-semibold text-primary-500',
 })``;
 
-const ActionWrapper = styled.div.attrs({
+const NetworkDetailsWrapper = styled.div.attrs({
+  className: 'py-1.5 px-2 bg-white rounded-xl',
+})``;
+
+const HStack = styled.div.attrs({
   className: 'flex space-x-1.5',
 })``;
 
-const DividerWrapper = styled.div.attrs({
-  className: 'flex items-center my-1',
-})``;
+const Logo = styled.img.attrs({className: 'w-3 h-3 rounded-full'})``;
 
 export default DepositModal;

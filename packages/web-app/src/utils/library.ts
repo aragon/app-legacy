@@ -21,7 +21,6 @@ import {TFunction} from 'react-i18next';
 import {getEtherscanVerifiedContract} from 'services/etherscanAPI';
 import {fetchTokenData} from 'services/prices';
 import {
-  AVATAR_IPFS_URL,
   BIGINT_PATTERN,
   CHAIN_METADATA,
   ISO_DATE_PATTERN,
@@ -487,12 +486,15 @@ export function decodeVotingMode(mode: VotingMode): DecodedVotingMode {
  * the function will return a fully resolved URL.
  * @returns the url to the DAO avatar
  */
-export function resolveDaoAvatarIpfsCid(avatar?: string): string | undefined {
+export function resolveDaoAvatarIpfsCid(
+  network: SupportedNetworks,
+  avatar?: string
+): string | undefined {
   if (avatar) {
     if (/^ipfs/.test(avatar)) {
       try {
         const logoCid = resolveIpfsCid(avatar);
-        return `${AVATAR_IPFS_URL}/${logoCid}`;
+        return `${CHAIN_METADATA[network].ipfs}/ipfs/${logoCid}`;
       } catch (err) {
         console.warn('Error resolving DAO avatar IPFS Cid', err);
       }
