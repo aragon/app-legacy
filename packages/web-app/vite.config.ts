@@ -7,8 +7,6 @@ import nodePolyfills from 'rollup-plugin-polyfill-node';
 import analyze from 'rollup-plugin-analyzer';
 import {uglify} from 'rollup-plugin-uglify';
 
-import {uglify} from 'rollup-plugin-uglify';
-
 const production = process.env.NODE_ENV === 'production';
 
 // https://vitejs.dev/config/

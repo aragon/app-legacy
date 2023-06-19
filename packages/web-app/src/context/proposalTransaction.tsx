@@ -7,7 +7,7 @@ import {
   VoteProposalStep,
   VoteValues,
 } from '@aragon/sdk-client';
-import {BigNumber} from 'ethers';
+import {BigNumber} from '@ethersproject/bignumber';
 import React, {
   ReactNode,
   createContext,

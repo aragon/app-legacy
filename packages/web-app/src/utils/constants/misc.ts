@@ -6,7 +6,7 @@ import {
   IconType,
   IconSettings,
 } from '@aragon/ui-components';
-import {BigNumber} from 'ethers';
+import {BigNumber} from '@ethersproject/bignumber';
 
 import {i18n} from '../../../i18n.config';
 import {Dashboard, Community, Finance, Governance, Settings} from '../paths';

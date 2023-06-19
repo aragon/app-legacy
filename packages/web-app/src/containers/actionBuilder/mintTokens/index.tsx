@@ -1,6 +1,6 @@
 import {ButtonText, ListItemAction} from '@aragon/ui-components';
 import Big from 'big.js';
-import {BigNumber} from 'ethers';
+import {BigNumber} from '@ethersproject/bignumber';
 import {isAddress} from 'ethers/lib/utils';
 import React, {useEffect, useState} from 'react';
 import {
