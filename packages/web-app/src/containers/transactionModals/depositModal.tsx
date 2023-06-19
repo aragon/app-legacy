@@ -125,6 +125,7 @@ const DepositModal: React.FC = () => {
             }}
             onChange={() => {}}
             disabled
+            showResolvedLabels={false}
           />
         </div>
 

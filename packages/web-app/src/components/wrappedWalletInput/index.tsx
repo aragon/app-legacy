@@ -15,6 +15,7 @@ import {CHAIN_METADATA, ENS_SUPPORTED_NETWORKS} from 'utils/constants/chains';
 type WrappedWalletInputProps = {
   onChange: (...event: unknown[]) => void;
   error?: string;
+  showResolvedLabels?: boolean;
 } & Omit<WalletInputProps, 'onValueChange'>;
 
 /**
@@ -24,6 +25,7 @@ type WrappedWalletInputProps = {
 export const WrappedWalletInput: React.FC<WrappedWalletInputProps> = ({
   onChange,
   error,
+  showResolvedLabels = true,
   ...props
 }) => {
   const {t} = useTranslation();
@@ -79,13 +81,13 @@ export const WrappedWalletInput: React.FC<WrappedWalletInputProps> = ({
         })}
         {...props}
       />
-      {!networkSupportsENS && (
+      {showResolvedLabels && !networkSupportsENS && (
         <AlertInline label={t('inputWallet.ensAlertWarning')} mode="warning" />
       )}
-      {!error && ensResolved && (
+      {showResolvedLabels && !error && ensResolved && (
         <AlertInline label={t('inputWallet.ensAlertSuccess')} mode="success" />
       )}
-      {!error && addressValidated && (
+      {showResolvedLabels && !error && addressValidated && (
         <AlertInline
           label={t('inputWallet.addressAlertSuccess')}
           mode="success"
