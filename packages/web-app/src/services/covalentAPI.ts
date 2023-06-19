@@ -8,6 +8,7 @@ import {
 
 export interface TokenHolder {
   balance: number;
+  address: string;
   total_supply: number;
   contract_decimals: number;
 }

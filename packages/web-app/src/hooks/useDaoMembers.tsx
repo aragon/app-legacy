@@ -9,7 +9,8 @@ import {fetchBalance} from 'utils/tokens';
 import {HookData} from 'utils/types';
 import {useDaoToken} from './useDaoToken';
 import {PluginTypes, usePluginClient} from './usePluginClient';
-import {getTokenHoldersPaged} from 'services/covalentAPI';
+import {TokenHoldersResponse, getTokenHoldersPaged} from 'services/covalentAPI';
+import {formatUnits} from 'ethers/lib/utils';
 
 export type MultisigMember = {
   address: string;
@@ -69,45 +70,55 @@ export const useDaoMembers = (
   const isTokenBased = pluginType === 'token-voting.plugin.dao.eth';
   const {data: daoToken} = useDaoToken(pluginAddress);
 
-  const queryClient = new QueryClient();
-
-  useEffect(() => {
-    let holders;
-    const tokenContract = '0xAa8cdB8c5C679803155AF1dcDa83415Bcbae9e97';
-    async function fetch() {
-      holders = await getTokenHoldersPaged(
-        queryClient,
-        tokenContract,
-        'goerli',
-        0,
-        100
-      );
-      console.log('holders', holders);
-    }
-    if (daoToken?.address) fetch();
-  });
-
   const client = usePluginClient(pluginType);
 
   // Fetch the list of members for a this DAO.
   useEffect(() => {
     async function fetchMembers() {
       try {
-        setIsLoading(true);
-
         if (!pluginType) {
           setData([] as BalanceMember[] | MultisigMember[]);
           return;
         }
-        const response = await client?.methods.getMembers(pluginAddress);
+        if (pluginType === 'multisig.plugin.dao.eth') {
+          setIsLoading(true);
 
-        if (!response) {
-          setData([] as BalanceMember[] | MultisigMember[]);
-          return;
+          const response = await client?.methods.getMembers(pluginAddress);
+
+          if (!response) {
+            setData([] as BalanceMember[] | MultisigMember[]);
+            return;
+          }
+
+          setRawMembers(response);
+        } else {
+          const queryClient = new QueryClient();
+
+          if (!daoToken) {
+            setData([] as BalanceMember[] | MultisigMember[]);
+            return;
+          }
+
+          //TODO: pagination should be added later here
+          const rawMembers: TokenHoldersResponse = await getTokenHoldersPaged(
+            queryClient,
+            daoToken?.address,
+            network,
+            0,
+            100
+          );
+
+          const members = rawMembers.data.items.map(m => {
+            return {
+              address: m.address,
+              balance: Number(formatUnits(m.balance, m.contract_decimals)),
+            } as BalanceMember;
+          });
+
+          members.sort(sortMembers);
+          setData(members);
         }
-
         setIsLoading(false);
-        setRawMembers(response);
         setError(undefined);
       } catch (err) {
         console.error(err);
@@ -116,7 +127,14 @@ export const useDaoMembers = (
     }
 
     fetchMembers();
-  }, [client?.methods, pluginAddress, pluginType]);
+  }, [
+    client?.methods,
+    daoToken,
+    daoToken?.address,
+    network,
+    pluginAddress,
+    pluginType,
+  ]);
 
   // map the members to the desired structure
   // Doing this separately to get rid of duplicate calls
@@ -189,7 +207,7 @@ export const useDaoMembers = (
 function sortMembers<T extends BalanceMember | MultisigMember>(a: T, b: T) {
   if (isBalanceMember(a)) {
     if (a.balance === (b as BalanceMember).balance) return 0;
-    return a.balance > (b as BalanceMember).balance ? 1 : -1;
+    return a.balance > (b as BalanceMember).balance ? -1 : 1;
   } else {
     if (a.address === (b as MultisigMember).address) return 0;
     return a.address > (b as MultisigMember).address ? 1 : -1;
