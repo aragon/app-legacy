@@ -7,7 +7,6 @@ import styled from 'styled-components';
 import ModalBottomSheetSwitcher from 'components/modalBottomSheetSwitcher';
 import {useGlobalModalContext} from 'context/globalModals';
 import {useNetwork} from 'context/network';
-import {useWallet} from 'hooks/useWallet';
 import {trackEvent} from 'services/analytics';
 import {NewWithDraw} from 'utils/paths';
 
@@ -19,7 +18,6 @@ const TransferMenu: React.FC = () => {
   const {network} = useNetwork();
   const {dao} = useParams();
   const navigate = useNavigate();
-  const {isConnected} = useWallet();
 
   const handleClick = (action: Action) => {
     trackEvent('newTransfer_modalBtn_clicked', {
@@ -27,9 +25,7 @@ const TransferMenu: React.FC = () => {
       action,
     });
 
-    if (!isConnected) {
-      open('wallet');
-    } else if (action === 'deposit_assets') {
+    if (action === 'deposit_assets') {
       open('deposit');
     } else {
       navigate(generatePath(NewWithDraw, {network: network, dao: dao}));
