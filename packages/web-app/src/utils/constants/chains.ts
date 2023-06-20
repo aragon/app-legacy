@@ -79,7 +79,6 @@ export type ChainData = {
   covalentApi?: string;
   alchemyApi: string;
   supportsEns: boolean;
-  lookupURL?: string;
   ipfs?: string;
 };
 
@@ -122,7 +121,6 @@ export const CHAIN_METADATA: ChainList = {
       symbol: 'ETH',
       decimals: 18,
     },
-    lookupURL: 'https://etherscan.io/name-lookup-search?id=',
     etherscanApi: 'https://api.etherscan.io/api',
     etherscanApiKey: etherscanApiKey,
     covalentApi: 'https://api.covalenthq.com/v1/eth-mainnet',
