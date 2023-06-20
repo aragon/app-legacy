@@ -9,7 +9,6 @@ import {useNetwork} from 'context/network';
 import {usePrivacyContext} from 'context/privacyContext';
 import {useDaoDetailsQuery} from 'hooks/useDaoDetails';
 import useScreen from 'hooks/useScreen';
-import {useWallet} from 'hooks/useWallet';
 import {CHAIN_METADATA, FEEDBACK_FORM} from 'utils/constants';
 import {
   Community,
@@ -34,7 +33,6 @@ const Navbar: React.FC = () => {
   const {pathname} = useLocation();
   const {isDesktop} = useScreen();
   const {network} = useNetwork();
-  const {methods, isConnected} = useWallet();
   const {handleWithFunctionalPreferenceMenu} = usePrivacyContext();
 
   const {data: daoDetails} = useDaoDetailsQuery();
@@ -68,15 +66,7 @@ const Navbar: React.FC = () => {
   };
 
   const handleWalletButtonClick = () => {
-    if (isConnected) {
-      open('wallet');
-      return;
-    }
-    methods.selectWallet().catch((err: Error) => {
-      // To be implemented: maybe add an error message when
-      // the error is different from closing the window
-      console.error(err);
-    });
+    open('wallet');
   };
 
   const handleFeedbackButtonClick = () => {
