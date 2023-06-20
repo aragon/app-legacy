@@ -117,7 +117,7 @@ const Community: React.FC = () => {
                   <Dt>{t('labels.review.existingTokens.currentHolders')}</Dt>
                   <Dd>
                     <div className="flex items-center space-x-1.5">
-                      <p>{tokenTotalHolders}</p>
+                      <p>{tokenTotalHolders || '-'}</p>
                     </div>
                   </Dd>
                 </Dl>

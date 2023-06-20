@@ -45,6 +45,8 @@ const AddExistingToken: React.FC = () => {
     async contractAddress => {
       clearErrors('tokenAddress');
       resetField('tokenType');
+      resetField('tokenName');
+      resetField('tokenTotalSupply');
 
       const {verificationResult, type} = await validateGovernanceTokenAddress(
         contractAddress,

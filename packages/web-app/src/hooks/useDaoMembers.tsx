@@ -80,7 +80,7 @@ export const useDaoMembers = (
           setData([] as BalanceMember[] | MultisigMember[]);
           return;
         }
-        if (pluginType === 'multisig.plugin.dao.eth') {
+        if (pluginType === 'multisig.plugin.dao.eth' || network === 'goerli') {
           setIsLoading(true);
 
           const response = await client?.methods.getMembers(pluginAddress);

@@ -36,14 +36,14 @@ const VerificationCard: React.FC<TransferListProps> = ({tokenAddress}) => {
   const {network} = useNetwork();
 
   useEffect(() => {
-    async function fetch() {
+    async function fetchTotalHolders() {
       resetField('tokenTotalHolders');
       const queryClient = new QueryClient();
       const total = await getTotalHolders(queryClient, tokenAddress, network);
       setValue('tokenTotalHolders', total);
     }
 
-    fetch();
+    fetchTotalHolders();
   }, [network, resetField, setValue, tokenAddress]);
 
   useEffect(() => {
@@ -106,7 +106,7 @@ const VerificationCard: React.FC<TransferListProps> = ({tokenAddress}) => {
     }
   }, [t, tokenType]);
 
-  if (!tokenType || !tokenTotalHolders)
+  if (!tokenType)
     return (
       <VerifyContainer>
         <VerifyTitle>{shortenAddress(tokenAddress)}</VerifyTitle>
@@ -146,7 +146,7 @@ const VerificationCard: React.FC<TransferListProps> = ({tokenAddress}) => {
                 <Dt>
                   {t('createDAO.step3.existingToken.verificationLabelHolders')}
                 </Dt>
-                <Dd>{tokenTotalHolders}</Dd>
+                <Dd>{tokenTotalHolders || '-'}</Dd>
               </Dl>
             </>
           )}
