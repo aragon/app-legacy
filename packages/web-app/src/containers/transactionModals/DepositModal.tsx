@@ -81,7 +81,7 @@ const DepositModal: React.FC = () => {
               address: daoDetails.address,
             }}
             onValueChange={() => {}}
-            blockExplorerURL={CHAIN_METADATA[network].lookupURL}
+            blockExplorerURL={CHAIN_METADATA[network].explorer + 'address/'}
             disabled
           />
         </div>
