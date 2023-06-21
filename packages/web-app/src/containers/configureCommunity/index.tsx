@@ -11,6 +11,7 @@ import React, {useCallback} from 'react';
 import {Controller, useFormContext, useWatch} from 'react-hook-form';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
+import {MinParticipation} from './minParticipation';
 
 import {
   MAX_DURATION_DAYS,
@@ -26,8 +27,6 @@ const ConfigureCommunity: React.FC = () => {
   const {control, setValue, getValues, trigger} = useFormContext();
 
   const [
-    tokenTotalSupply,
-    tokenSymbol,
     membership,
     earlyExecution,
     durationDays,
@@ -35,8 +34,6 @@ const ConfigureCommunity: React.FC = () => {
     durationMinutes,
   ] = useWatch({
     name: [
-      'tokenTotalSupply',
-      'tokenSymbol',
       'membership',
       'earlyExecution',
       'durationDays',
@@ -135,7 +132,9 @@ const ConfigureCommunity: React.FC = () => {
   );
 
   const percentageInputValidator = (value: string | number) => {
-    return value <= 100 && value >= 0 ? true : t('errors.percentage');
+    return Number(value) <= 100 && Number(value) >= 0
+      ? true
+      : t('errors.percentage');
   };
 
   /*************************************************
@@ -227,77 +226,9 @@ const ConfigureCommunity: React.FC = () => {
 
           {/* Minimum Participation */}
           <FormItem>
-            <Label
-              label={t('labels.minimumParticipation')}
-              helpText={t('createDAO.step4.minimumParticipationSubtitle')}
-            />
-            <Controller
-              name="minimumParticipation"
-              control={control}
-              defaultValue="15"
-              rules={{
-                validate: value => percentageInputValidator(value),
-              }}
-              render={({
-                field: {onBlur, onChange, value, name},
-                fieldState: {error},
-              }) => (
-                <>
-                  <ParticipationContainer>
-                    <ApprovalWrapper>
-                      <div className="w-1/3">
-                        <NumberInput
-                          name={name}
-                          value={value}
-                          onBlur={onBlur}
-                          onChange={onChange}
-                          placeholder={t('placeHolders.daoName')}
-                          view="percentage"
-                        />
-                      </div>
-
-                      <LinearProgressContainer>
-                        <LinearProgress
-                          max={tokenTotalSupply}
-                          value={Math.ceil(tokenTotalSupply * (value / 100))}
-                        />
-
-                        <ProgressInfo2>
-                          <p
-                            className="font-bold text-right text-primary-500"
-                            style={{
-                              flexBasis: `${
-                                (Math.ceil(tokenTotalSupply * (value / 100)) /
-                                  tokenTotalSupply) *
-                                100
-                              }%`,
-                            }}
-                          >
-                            {Math.ceil(tokenTotalSupply * (value / 100)) <
-                            tokenTotalSupply
-                              ? '≥'
-                              : ''}
-                            {Math.ceil(tokenTotalSupply * (value / 100))}
-                          </p>
-
-                          <p className="flex-shrink-0 text-ui-600">
-                            {t('createDAO.step4.alerts.minimumApprovalAlert', {
-                              amount: Math.round(tokenTotalSupply),
-                              symbol: tokenSymbol,
-                            })}
-                          </p>
-                        </ProgressInfo2>
-                      </LinearProgressContainer>
-                    </ApprovalWrapper>
-                  </ParticipationContainer>
-
-                  {error?.message && (
-                    <AlertInline label={error.message} mode="critical" />
-                  )}
-                </>
-              )}
-            />
+            <MinParticipation />
           </FormItem>
+
           {/* Min Duration */}
           <FormItem>
             <Label
@@ -511,11 +442,6 @@ const FormItem = styled.div.attrs({
   className: 'space-y-1.5',
 })``;
 
-const ApprovalWrapper = styled.div.attrs({
-  className:
-    'flex flex-col tablet:flex-row space-y-1.5 tablet:space-y-0 tablet:space-x-3',
-})``;
-
 const DurationContainer = styled.div.attrs({
   className:
     'flex flex-col tablet:flex-row space-y-1.5 tablet:space-y-0 tablet:space-x-1.5 p-3 bg-ui-0 rounded-xl',
@@ -533,10 +459,6 @@ const ApprovalContainer = styled.div.attrs({
   className: 'flex items-center p-3 space-x-3 rounded-xl bg-ui-0',
 })``;
 
-const ParticipationContainer = styled.div.attrs({
-  className: 'p-3 space-x-3 rounded-xl bg-ui-0',
-})``;
-
 const LinearProgressContainer = styled.div.attrs({
   className: 'flex relative flex-1 items-center',
 })``;
@@ -549,8 +471,4 @@ const ProgressBarTick = styled.div.attrs({
 const ProgressInfo1 = styled.div.attrs({
   className:
     'flex absolute -top-2.5 justify-between space-x-0.5 w-full text-sm',
-})``;
-
-const ProgressInfo2 = styled.div.attrs({
-  className: 'flex absolute -top-1 justify-between space-x-0.5 w-full text-sm',
 })``;

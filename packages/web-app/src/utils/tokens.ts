@@ -420,3 +420,7 @@ export function timeFilterToMinutes(tf: TimeFilter) {
     }
   }
 }
+
+export function gTokenSymbol(tokenSymbol: string): string {
+  return `g${tokenSymbol}`;
+}

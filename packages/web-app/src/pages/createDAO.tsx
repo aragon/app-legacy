@@ -72,10 +72,12 @@ const defaultValues = {
   membership: 'token',
   eligibilityType: 'token' as CreateDaoFormData['eligibilityType'],
   eligibilityTokenAmount: 1,
+  minimumTokenAmount: 1,
   isCustomToken: true,
   durationDays: '1',
   durationHours: '0',
   durationMinutes: '0',
+  minimumParticipation: '15',
 };
 
 const CreateDAO: React.FC = () => {

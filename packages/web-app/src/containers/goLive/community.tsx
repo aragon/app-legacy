@@ -9,6 +9,8 @@ import CommunityAddressesModal from 'containers/communityAddressesModal';
 import {useGlobalModalContext} from 'context/globalModals';
 import {CHAIN_METADATA} from 'utils/constants';
 import {useNetwork} from 'context/network';
+import {gTokenSymbol} from 'utils/tokens';
+import numeral from 'numeral';
 
 const Community: React.FC = () => {
   const {control, getValues} = useFormContext();
@@ -19,6 +21,7 @@ const Community: React.FC = () => {
   const {
     membership,
     tokenName,
+    tokenType,
     wallets,
     isCustomToken,
     tokenSymbol,
@@ -29,6 +32,14 @@ const Community: React.FC = () => {
     eligibilityType,
     eligibilityTokenAmount,
   } = getValues();
+
+  const isGovTokenRequiresWrapping =
+    !isCustomToken &&
+    (tokenType === 'ERC-20' || tokenType === 'governance-ERC20');
+
+  const govTokenSymbol = isGovTokenRequiresWrapping
+    ? gTokenSymbol(tokenSymbol)
+    : tokenSymbol;
 
   return (
     <Controller
@@ -89,34 +100,63 @@ const Community: React.FC = () => {
                 <Dd>
                   <div className="flex items-center space-x-1.5">
                     <span>{tokenName}</span>
-                    <span>{tokenSymbol}</span>
+                    <span>({govTokenSymbol})</span>
+
                     {/* TODO: check the owner for token contract, if it belongs to
                     dao add this */}
                     {isCustomToken && (
                       <Tag label={t('labels.new')} colorScheme="info" />
                     )}
-                  </div>
-                </Dd>
-              </Dl>
-              <Dl>
-                <Dt>{t('labels.supply')}</Dt>
-                <Dd>
-                  <div className="flex items-center space-x-1.5">
-                    <p>
-                      {tokenTotalSupply} {tokenSymbol}
-                    </p>
-                    {isCustomToken && (
-                      <Tag label={t('labels.mintable')} colorScheme="neutral" />
+
+                    {isGovTokenRequiresWrapping && (
+                      <Tag
+                        label={t('labels.review.tokenWrapped')}
+                        colorScheme="info"
+                      />
                     )}
                   </div>
                 </Dd>
               </Dl>
-              {!isCustomToken && (
+              {!isGovTokenRequiresWrapping && (
+                <Dl>
+                  <Dt>{t('labels.supply')}</Dt>
+                  <Dd>
+                    <div className="flex items-center space-x-1.5">
+                      <p>
+                        {tokenTotalSupply} {tokenSymbol}
+                      </p>
+                      {isCustomToken && (
+                        <Tag
+                          label={t('labels.mintable')}
+                          colorScheme="neutral"
+                        />
+                      )}
+                    </div>
+                  </Dd>
+                </Dl>
+              )}
+              {!isCustomToken && !isGovTokenRequiresWrapping && (
                 <Dl>
                   <Dt>{t('labels.review.existingTokens.currentHolders')}</Dt>
                   <Dd>
                     <div className="flex items-center space-x-1.5">
                       <p>0</p>
+                    </div>
+                  </Dd>
+                </Dl>
+              )}
+              {isGovTokenRequiresWrapping && (
+                <Dl>
+                  <Dt>{t('labels.supplyPotential')}</Dt>
+                  <Dd>
+                    <div className="space-y-0.5">
+                      <div>
+                        {numeral(tokenTotalSupply).format('0,0')}{' '}
+                        {govTokenSymbol}
+                      </div>
+                      <div className="ft-text-sm text-ui-400">
+                        {t('labels.supplyPotentialHelptext', {tokenSymbol})}
+                      </div>
                     </div>
                   </Dd>
                 </Dl>
@@ -151,7 +191,7 @@ const Community: React.FC = () => {
                   {eligibilityType === 'token'
                     ? t('createDAO.review.proposalCreation', {
                         token: eligibilityTokenAmount,
-                        symbol: tokenSymbol,
+                        symbol: govTokenSymbol,
                       })
                     : t('createDAO.step3.eligibility.anyWallet.title')}
                 </Dd>

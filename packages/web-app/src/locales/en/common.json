@@ -179,7 +179,8 @@
       },
       "distributionLinkLabel": "View on block explorer",
       "no": "No",
-      "yes": "Yes"
+      "yes": "Yes",
+      "tokenWrapped": "Wrapped"
     },
     "author": "Author",
     "sec": "sec",
@@ -209,8 +210,8 @@
     "yes": "Yes",
     "no": "No",
     "earlyExecution": "Early execution",
-    "earlyExecutionDescription": "Allow proposal execution before the vote ends if the requirements are met and the vote outcome cannot be changed by more voters participating.",
-    "voteReplacementDescription": "This setting allows voters to change their vote during the voting period. If you enabled early execution, this setting is automatically turned off.",
+    "earlyExecutionDescription": "Allows a proposal to be executed before the voting period ends if the support threshold is surpassed, the minimum participation is met, and the outcome cannot be changed by more voters participating.",
+    "voteReplacementDescription": "Allows voters to change their vote during the voting period. This setting can’t be enabled if early execution is enabled.",
     "updateGovernanceAction": "Update governance settings",
     "updateGovernanceActionDescription": "Change your DAO governance settings",
     "updateMetadataAction": "Update DAO metadata",
@@ -231,7 +232,9 @@
     "helptext": {
       "snapshot": "Based on this proposal snapshot"
     },
-    "currentHolders": "Current holders"
+    "currentHolders": "Current holders",
+    "supplyPotential": "Potential supply",
+    "supplyPotentialHelptext": "Based on {{tokenSymbol}} Total Supply"
   },
   "placeHolders": {
     "selectToken": "Select a token …",
@@ -420,7 +423,7 @@
       "accepTableProposalDuration": "It’s recommended to have an expiration time of five days, so you have a clean proposal list.",
       "dateTimeMinDuration": "Duration cannot be less than one hour."
     },
-    "durationAlert": "We recommend a minimum duration of at least one day so members have time to vote. You can always lengthen the duration when posting a proposal.",
+    "durationAlert": "Set this to a duration that is long enough for your members to have sufficient time to vote. It’s recommended to set this to at least 1 day.",
     "maxDurationAlert": "The maximum duration is 365 days.",
     "minDurationAlert": "The minimum duration is one hour.",
     "startDateInPastAlert": "Start time can’t be in the past. ",
@@ -563,7 +566,7 @@
       "utcMenu": {
         "title": "Select a UTC timezone"
       },
-      "ctaAddAnother": "Add another withdraw"
+      "ctaAddAnother": "Add another withdrawal"
     },
     "setupVoting": {
       "title": "Initiate the vote",
@@ -647,10 +650,10 @@
       "warningSubtitle": "If you want to add addresses after creating your DAO, you will need to create a proposal to be voted by the members.",
       "newTokenSubtitle": "No, I would like to create a token.",
       "existingToken": {
-        "title": "Use an existing token",
-        "description": "Use an ERC20 token that is already issued. To learn more about what it’s important if you use an existing Token, read first {{link}}.",
+        "title": "Import your existing token",
+        "description": "Import the existing ERC-20 token  that your community uses for governance. We recommend to read about why this is important {{link}}.",
         "descriptionLinkLabel": "our guide",
-        "questionLabel": "Does your community already have an ERC20 token?",
+        "questionLabel": "Does your community already have an ERC-20 token to govern your DAO?",
         "answerNegative": "No",
         "answerPositive": "Yes",
         "inputLabel": "Contract address",
@@ -658,18 +661,16 @@
         "verificationLabelStandard": "Standard",
         "verificationLabelSupply": "Total supply",
         "verificationLabelHolders": "Current holders",
-        "verificationLabelGovernance": "Governance",
-        "verificationLinkLabel": "View details",
-        "verificationAlertSuccessTitle": "Compatible for governance",
-        "verificationAlertSuccessDescription": "This token can be used for direct use of onchain governance (support of ERC20Votes standard).",
-        "verificationAlertWarningTitle": "Not compatible for governance",
-        "verificationAlertWarningDescription": "This token isn’t able to be used directly for onchain governance. But we provide a wrapping functionality, so you are still able to use it.",
+        "verificationAlertSuccessTitle": "Supported token",
+        "verificationAlertSuccessDescription": "This token can be used to participate in your DAO's governance because it follows the ERC20Votes extension to the ERC-20 standard.",
+        "verificationLoading": "Verifying governance compatibility …",
+        "verificationStandardUnknown": "Unknown",
+        "verificationGovernanceSupported": "Supported",
+        "verificationAlertWarningTitle": "Requires wrapping",
         "verificationAlertCriticalTitle": "Not supported token",
-        "verificationAlertCriticalDescription": "This token is yet not supported for governance in the Aragon App. Try a different one or create a new token with the App.",
-        "verificationGovernanceSuccess": "Supported",
-        "verificationValueGovernancePositive": "Supported",
-        "verificationValueGovernanceNegative": "Not supported",
-        "verificationLoading": "Verifying governance compatibility …"
+        "verificationAlertWarningDescription": "This token must be wrapped by its holders to be participate in your DAO's governance.\n\nToken holders can wrap their tokens within the Aragon App at any time to receive equivalent governance tokens (1 {{tokenSymbol}} = 1 {{gTokenSymbol}}). These can then be used to vote on proposals in your DAO. They can unwrap at any time to receive their original tokens.",
+        "verificationAlertCriticalDescription": "This token is not supported in the Aragon App. Please try a different token or specify that you don't have a governance token yet.",
+        "descriptionLinkURL": "https://"
       },
       "existingTokenSubtitle": "Yes, we already have a token.",
       "tokenMembership": "Token holders",
@@ -702,7 +703,7 @@
       "membership": "Who can participate in governance?",
       "eligibility": {
         "optionTitle": "Who is eligible?",
-        "inputTitle": "Minimum tokens Required",
+        "inputTitle": "Minimum tokens required",
         "anyWallet": {
           "title": "Any wallet",
           "description": "Any wallet can create proposals."
@@ -712,7 +713,7 @@
           "title": "Multisig members"
         },
         "tokenHolders": {
-          "description": "Only token holders with a certain number of tokens are eligible to create proposals.",
+          "description": "Only token holders with at least a certain number of tokens can create proposals.",
           "title": "Token holders"
         },
         "anyone": {
@@ -728,19 +729,19 @@
     "step4": {
       "label": "Step 4",
       "title": "Select governance settings",
-      "description": "These settings determine how voting works in your DAO. Read best practices for governance settings in {{link}}.",
+      "description": "These are the rules that define how decisions are made in your DAO. How many people have to participate? How much support is needed? How long are proposals open for voting? Learn more about in {{link}}.",
       "bestPractices": "best practices on governance",
-      "supportThresholdSubtitle": "Support threshold is the percentage of tokens or that are required to vote “Yes” for a proposal to be approved, calculated based on total tokens that voted.",
-      "minimumParticipationSubtitle": "Minimum participation is the percentage of the token supply that must vote on a proposal for the vote to be valid. Make sure you set this at a low level that your DAO can meet, so you don't lock your voting process.",
+      "supportThresholdSubtitle": "The percentage of tokens that vote \"Yes\" in support of a proposal, out of all tokens that have voted, must be greater than this value for the proposal to pass.",
+      "minimumParticipationSubtitle": "The percentage of tokens that participate in a proposal, out of the total {{gTokenSymbol}} supply, must be greater than or equal to this value for the proposal to pass.",
       "supportSubtitle": "Support is the relative percentage of tokens or wallets that are required to vote “Yes” for a proposal to be approved.",
-      "durationSubtitle": "Minimum duration is the shortest length of time a proposal can be open for voting. You can extend the duration for each proposal but not shorten it.",
+      "durationSubtitle": "The shortest period of time a proposal is open for voting. Proposals can be created with a longer duration, but not shorter.",
       "days": "Days",
       "hours": "Hours",
       "minutes": "Minutes",
       "minimumApprovalSubtitle": "Minimum approval is the amount of addresses in the authorized list that must approve a proposal for it to pass. ",
       "minApprovalAddressCount": "of {{count}} addresses",
       "alerts": {
-        "minimumApprovalAlert": "of {{amount}} {{symbol}}",
+        "minimumApprovalAlert": "of {{amount}} tokens",
         "minimumParticipationAlert": "Rounded up to {{percentage}}% equals {{walletCount}} wallets have to vote",
         "minority": "Proposals could be approved by a minority rather than a majority.",
         "majority": "Proposal will be approved by majority",
@@ -748,7 +749,20 @@
       },
       "descriptionLinkLabel": "this guide",
       "descriptionLinkURL": "https://aragon.org/how-to/governance-ii-setting-dao-governance-thresholds",
-      "shortTitle": "Select governance settings"
+      "shortTitle": "Select governance settings",
+      "wrappedReferenceTitle": "Reference values",
+      "wrappedReferenceDesc": "The amount of {{gTokenSymbol}} that must vote to meet minimum participation depends on the amount of {{tokenSymbol}} that is wrapped. The values on this screen with an asterisk are for reference only. You can evaluate different scenarios by adjusting the following value. Learn more about {{link}}.",
+      "wrappedReferenceAlertInfo": "These values are for reference only and do not affect your \"governance settings\"!",
+      "wrappedReferenceLabel": "Amount of wrapped {{tokenSymbol}}",
+      "wrappedReferenceSupply": "Total supply {{tokenSymbol}}",
+      "wrappedReferenceFullParticipation": "Full participation",
+      "wrappedReferenceParticipationDesc": "100% of {{gTokenSymbol}} total supply",
+      "wrappedReferenceMinParticipation": "Minimum participation",
+      "wrappedReferenceMinParticipationDesc": "{{minParticipationValue}} of {{gTokenSymbol}} total supply",
+      "wrappedReferenceDescLinkLabel": "in our guide",
+      "wrappedReferenceDescLinkURL": "https://",
+      "wrappedReferenceValueLabel": "{{tokenSymbol}}",
+      "wrappedReferenceParticipationValueLabel": "{{gTokenSymbol}} *"
     },
     "review": {
       "title": "Deploy your DAO",
@@ -806,7 +820,7 @@
     "strategy": "Strategy",
     "tokenVoting": "1 token → 1 vote",
     "multisig": "1 wallet → 1 vote",
-    "supportThreshold": "Support threshold",
+    "supportThreshold": "Minimum support",
     "minParticipation": "Minimum participation (Quorum)",
     "currentParticipation": "Current participation",
     "currentApproval": "Current approval",
@@ -998,6 +1012,36 @@
       "step2CancelLabel": "Cancel",
       "alertChipSuccess": "DAO treasury removed",
       "alertChipCritical": "DAO treasury added"
+    },
+    "wrapToken": {
+      "title": "Join the DAO",
+      "desc": "Wrap {{tokenSymbol}} to get {{gTokenSymbol}}, which is used to participate in governance. You can unwrap {{gTokenSymbol}} at any time (1 {{tokenSymbol}} = 1 {{gTokenSymbol}}).",
+      "inputModeLabel": "What do you want to do with your tokens?",
+      "inputSelectWrap": "Wrap",
+      "inputSelectUnwrap": "Unwrap",
+      "inputAmountLabel": "Amount",
+      "inputAmountDesc": "Define amount to wrap to get your governance-compatible {{tokenSymbol}}.",
+      "inputAmountBalance": "Your balance: {{amount}} {{tokenSymbol}}",
+      "footerTitle": "Approve tokens",
+      "footerSteps": "Step {{step}} of {{steps}}",
+      "footerDesc": "To wrap this {{tokenSymbol}}, you must first approve the amount to be usable by Aragon App.",
+      "footerCtaFirst": "Approve tokens",
+      "footerCtaSecond": "Wrap tokens",
+      "footerCtaError": "Try again",
+      "footerAlertCriticalApprove": "Error while approving your tokens. Try again.",
+      "footerAlertCriticalWrap": "Error while wrapping your tokens. Try again.",
+      "successTitle": "Tokens successfully wrapped",
+      "successDesc": "You have received {{amount}}  {{gTokenSymbol}} in your wallet. You are now a member of the DAO can use these tokens to participate in governance.",
+      "successCtaLabel": "See community",
+      "successBtnSecondaryLabel": "Add token symbol",
+      "inputAmountBalanceWrapped": "Your balance: {{amount}} g{{tokenSymbol}}",
+      "footerWrappedCancelLabel": "Cancel",
+      "footerWrappedCtaLabel": "Unwrap tokens"
+    },
+    "unwrapToken": {
+      "successTitle": "Tokens successfully unwrapped",
+      "successDesc": "You have received {{amount}} {{tokenSymbol}} in your wallet.",
+      "successCtaLabel": "See community"
     }
   },
   "scc": {
@@ -1075,7 +1119,7 @@
       "learnLinkURL": "https://aragon.org/how-to/interact-with-external-contracts-from-your-dao"
     },
     "detailContract": {
-      "dropdownExplorerLinkLabel": "See on block explorer",
+      "dropdownExplorerLinkLabel": "View on block explorer",
       "dropdownCopyLabel": "Copy contract address",
       "dropdownRemoveLabel": "Remove smart contract",
       "ctaLabel": "Add action",
@@ -1099,6 +1143,28 @@
       "title": "Another proposal is active",
       "description": "Beware of another proposal that mints additional tokens. This implies that the token supply may not be the final one and that it may affect future votes.",
       "ctaLabel": "OK, understood"
+    }
+  },
+  "community": {
+    "emptyState": {
+      "title": "Become the first member",
+      "desc": "Wrap your {{tokenSymbol}} to become a member of the DAO community. This will enable you to participate in governance. Learn more about it {{link}}.",
+      "ctaLabel": "Join the DAO",
+      "descLinkLabel": "in our guide",
+      "descLinkURL": "https://"
+    },
+    "ctaMain": {
+      "wrappedLabel": "Join the DAO"
+    }
+  },
+  "modalAlert": {
+    "wrapToken": {
+      "title": "No governance tokens found",
+      "desc": "Wrap your {{tokenSymbol}} to become a member of the DAO community. This will enable you to participate in governance. Learn more {{link}}.",
+      "ctaLabel": "Wrap tokens",
+      "cancleLabel": "Cancel",
+      "descLinkLabel": "our guide",
+      "descLinkURL": "https://"
     }
   }
 }

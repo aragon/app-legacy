@@ -23,7 +23,13 @@ const Governance: React.FC = () => {
     membership,
     multisigMinimumApprovals,
     multisigWallets,
+    isCustomToken,
+    tokenType,
   } = getValues();
+
+  const isGovTokenRequiresWrapping =
+    !isCustomToken &&
+    (tokenType === 'ERC-20' || tokenType === 'governance-ERC20');
 
   return (
     <Controller
@@ -65,13 +71,20 @@ const Governance: React.FC = () => {
                 <Dt>{t('labels.minimumParticipation')}</Dt>
                 <Dd>
                   {'≥'}
-                  {minimumParticipation}% (
-                  {Math.ceil(tokenTotalSupply * (value / 100)) <
-                  tokenTotalSupply
-                    ? '≥'
-                    : ''}
-                  {Math.ceil(tokenTotalSupply * (minimumParticipation / 100))}{' '}
-                  {tokenSymbol})
+                  {minimumParticipation}%
+                  {!isGovTokenRequiresWrapping && (
+                    <span>
+                      (
+                      {Math.ceil(tokenTotalSupply * (value / 100)) <
+                      tokenTotalSupply
+                        ? '≥'
+                        : ''}
+                      {Math.ceil(
+                        tokenTotalSupply * (minimumParticipation / 100)
+                      )}{' '}
+                      {tokenSymbol})
+                    </span>
+                  )}
                 </Dd>
               </Dl>
               <Dl>

@@ -1,13 +1,9 @@
-import {
-  AlertInline,
-  Label,
-  Link,
-  WalletInputLegacy,
-} from '@aragon/ui-components';
+import {AlertInline, Label, WalletInputLegacy} from '@aragon/ui-components';
 import React, {useCallback, useEffect} from 'react';
 import {Controller, useFormContext, useWatch} from 'react-hook-form';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
+import {SelectEligibility} from 'components/selectEligibility';
 
 import {useSpecificProvider} from 'context/providers';
 import {validateGovernanceTokenAddress} from 'utils/validators';
@@ -16,6 +12,7 @@ import {CHAIN_METADATA} from 'utils/constants';
 import VerificationCard from 'components/verificationCard';
 import {getTokenInfo} from 'utils/tokens';
 import {formatUnits} from 'ethers/lib/utils';
+import {htmlIn} from 'utils/htmlIn';
 
 const AddExistingToken: React.FC = () => {
   const {t} = useTranslation();
@@ -23,8 +20,8 @@ const AddExistingToken: React.FC = () => {
   const {control, trigger, clearErrors, setValue, resetField} =
     useFormContext();
 
-  const [tokenAddress, blockchain] = useWatch({
-    name: ['tokenAddress', 'blockchain'],
+  const [tokenAddress, blockchain, tokenType] = useWatch({
+    name: ['tokenAddress', 'blockchain', 'tokenType'],
   });
 
   const provider = useSpecificProvider(blockchain.id);
@@ -75,18 +72,18 @@ const AddExistingToken: React.FC = () => {
     [clearErrors, network, provider, resetField, setValue]
   );
 
+  const isAllowedToConfigureVotingEligibility =
+    tokenType === 'ERC-20' || tokenType === 'governance-ERC20';
+
   return (
     <>
       <DescriptionContainer>
         <Title>{t('createDAO.step3.existingToken.title')}</Title>
-        <Subtitle>
-          {t('createDAO.step3.existingToken.description')}
-          <Link
-            label={t('createDAO.step3.existingToken.descriptionLinkLabel')}
-            href=""
-          />
-          .
-        </Subtitle>
+        <Subtitle
+          dangerouslySetInnerHTML={{
+            __html: htmlIn(t)('createDAO.step3.existingToken.description'),
+          }}
+        />
       </DescriptionContainer>
       <FormItem>
         <DescriptionContainer>
@@ -127,6 +124,17 @@ const AddExistingToken: React.FC = () => {
           )}
         />
       </FormItem>
+      {isAllowedToConfigureVotingEligibility && (
+        <FormItem>
+          <DescriptionContainer>
+            <Label
+              label={t('labels.proposalCreation')}
+              helpText={t('createDAO.step3.proposalCreationHelpertext')}
+            />
+          </DescriptionContainer>
+          <SelectEligibility />
+        </FormItem>
+      )}
     </>
   );
 };
