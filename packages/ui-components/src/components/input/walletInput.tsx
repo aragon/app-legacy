@@ -151,7 +151,7 @@ export const WalletInput = React.forwardRef<
     const [truncate, setTruncate] = useState(false);
     const [isEditing, setIsEditing] = useState(false);
     const [displayMode, setDisplayMode] = useState<DisplayMode>(() =>
-      value.address ? 'address' : 'ensName'
+      value.ensName ? 'ensName' : 'address'
     );
     const [initialHeight, setInitialHeight] = useState(0);
     const [resolvedValues, setResolvedValues] = useState<WalletInputValue>();
@@ -175,6 +175,7 @@ export const WalletInput = React.forwardRef<
     // edited by the user, or in the case of ens, when the length of the name
     // would have otherwise overflown
     const displayedValue = useMemo(() => {
+      // show full value if user is editing
       if (isEditing) return fullValue;
 
       if (displayMode === 'address') return shortenAddress(value.address);
