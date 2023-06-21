@@ -7,6 +7,9 @@ import {Dd, Dl} from 'components/descriptionList';
 import {useFormContext, useWatch} from 'react-hook-form';
 import {SelectEligibility} from 'components/selectEligibility';
 import {gTokenSymbol} from 'utils/tokens';
+import {getTotalHolders} from 'services/covalentAPI';
+import {useNetwork} from 'context/network';
+import {QueryClient} from '@tanstack/react-query';
 
 type TransferListProps = {
   tokenAddress: string;
@@ -14,11 +17,35 @@ type TransferListProps = {
 
 const VerificationCard: React.FC<TransferListProps> = ({tokenAddress}) => {
   const {t} = useTranslation();
-  const {control, setValue} = useFormContext();
-  const [tokenName, tokenSymbol, tokenTotalSupply, tokenType] = useWatch({
-    name: ['tokenName', 'tokenSymbol', 'tokenTotalSupply', 'tokenType'],
+  const {control, setValue, resetField} = useFormContext();
+  const [
+    tokenName,
+    tokenSymbol,
+    tokenTotalSupply,
+    tokenTotalHolders,
+    tokenType,
+  ] = useWatch({
+    name: [
+      'tokenName',
+      'tokenSymbol',
+      'tokenTotalSupply',
+      'tokenTotalHolders',
+      'tokenType',
+    ],
     control: control,
   });
+  const {network} = useNetwork();
+
+  useEffect(() => {
+    async function fetchTotalHolders() {
+      resetField('tokenTotalHolders');
+      const queryClient = new QueryClient();
+      const total = await getTotalHolders(queryClient, tokenAddress, network);
+      setValue('tokenTotalHolders', total);
+    }
+
+    fetchTotalHolders();
+  }, [network, resetField, setValue, tokenAddress]);
 
   useEffect(() => {
     if (tokenType === 'governance-ERC20') setValue('eligibilityTokenAmount', 1);
@@ -124,7 +151,7 @@ const VerificationCard: React.FC<TransferListProps> = ({tokenAddress}) => {
                 <Dt>
                   {t('createDAO.step3.existingToken.verificationLabelHolders')}
                 </Dt>
-                <Dd>-</Dd>
+                <Dd>{tokenTotalHolders || '-'}</Dd>
               </Dl>
             </>
           )}

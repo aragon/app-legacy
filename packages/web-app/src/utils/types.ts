@@ -9,7 +9,7 @@ import {
   VoteValues,
   VotingSettings,
 } from '@aragon/sdk-client';
-import {BigNumber} from '@ethersproject/bignumber';
+import {BigNumber} from 'ethers';
 
 import {TimeFilter, TransferTypes} from './constants';
 import {Web3Address} from './library';

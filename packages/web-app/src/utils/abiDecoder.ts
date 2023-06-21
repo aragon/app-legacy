@@ -1,6 +1,6 @@
 import {keccak256, toUtf8Bytes} from 'ethers/lib/utils';
 import {utils} from 'ethers';
-import {BigNumber} from '@ethersproject/bignumber';
+import {BigNumber} from 'ethers';
 import BN from 'bn.js';
 
 export interface Abi {

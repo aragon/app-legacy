@@ -27,6 +27,7 @@ const Community: React.FC = () => {
     tokenSymbol,
     tokenAddress,
     tokenTotalSupply,
+    tokenTotalHolders,
     multisigWallets,
     reviewCheckError,
     eligibilityType,
@@ -140,7 +141,7 @@ const Community: React.FC = () => {
                   <Dt>{t('labels.review.existingTokens.currentHolders')}</Dt>
                   <Dd>
                     <div className="flex items-center space-x-1.5">
-                      <p>0</p>
+                      <p>{tokenTotalHolders || '-'}</p>
                     </div>
                   </Dd>
                 </Dl>
