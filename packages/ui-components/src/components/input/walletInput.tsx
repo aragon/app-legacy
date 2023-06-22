@@ -510,7 +510,7 @@ export const WalletInput = React.forwardRef<
                     bgWhite
                     disabled={adornmentsDisabled}
                     onClick={e => {
-                      window.open(blockExplorerURL);
+                      window.open(blockExplorerURL + fullValue);
                       onViewExplorerButtonClick?.(e);
                     }}
                   />
