@@ -339,7 +339,7 @@ const ConfigureWithdrawForm: React.FC<ConfigureWithdrawFormProps> = ({
                 onBlur={onBlur}
                 placeholder={networkSupportsENS ? 'ENS or 0x…' : '0x…'}
                 onValueChange={value => handleValueChanged(value, onChange)}
-                blockExplorerURL={CHAIN_METADATA[network] + 'address/'}
+                blockExplorerURL={CHAIN_METADATA[network].explorer + 'address/'}
                 onEnsResolved={() => {
                   setAddressValidated(false);
                   setEnsResolved(true);
