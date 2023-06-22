@@ -9,7 +9,7 @@ import {useGlobalModalContext} from 'context/globalModals';
 import {useNetwork} from 'context/network';
 import {useDaoDetailsQuery} from 'hooks/useDaoDetails';
 import {useWallet} from 'hooks/useWallet';
-import {CHAIN_METADATA} from 'utils/constants';
+import {CHAIN_METADATA, ENS_SUPPORTED_NETWORKS} from 'utils/constants';
 import {toDisplayEns} from 'utils/library';
 import {AllTransfers} from 'utils/paths';
 
@@ -22,10 +22,15 @@ const DepositModal: React.FC = () => {
 
   const {data: daoDetails} = useDaoDetailsQuery();
 
+  const networkSupportsENS = ENS_SUPPORTED_NETWORKS.includes(network);
+
   // NOTE: This login => network flow can and should be extracted
   // if later on we have a component that requires the same process
   const loginFlowTriggeredRef = useRef(false);
 
+  /*************************************************
+   *                Hooks & Effects                *
+   *************************************************/
   // Show login modal or network modal based on connection status
   useEffect(() => {
     if (loginFlowTriggeredRef.current) {
@@ -54,6 +59,9 @@ const DepositModal: React.FC = () => {
     }
   }, [isConnected, isOnWrongNetwork, open]);
 
+  /*************************************************
+   *             Callbacks and Handlers            *
+   *************************************************/
   const handleCtaClicked = useCallback(() => {
     close('deposit');
     navigate(
@@ -70,6 +78,9 @@ const DepositModal: React.FC = () => {
     loginFlowTriggeredRef.current = true;
   }, [close]);
 
+  /*************************************************
+   *                     Render                    *
+   *************************************************/
   if (!daoDetails) return null;
 
   return (
@@ -106,7 +117,9 @@ const DepositModal: React.FC = () => {
           <Subtitle>{t('modal.deposit.inputHelptextEns')}</Subtitle>
           <WalletInput
             value={{
-              ensName: daoDetails.ensDomain,
+              ensName: networkSupportsENS
+                ? toDisplayEns(daoDetails.ensDomain)
+                : '',
               address: daoDetails.address,
             }}
             onValueChange={() => {}}
