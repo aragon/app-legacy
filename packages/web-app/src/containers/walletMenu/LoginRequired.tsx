@@ -1,12 +1,10 @@
-import React from 'react';
 import {ButtonIcon, ButtonText, IconClose} from '@aragon/ui-components';
-import {useGlobalModalContext} from 'context/globalModals';
-import styled from 'styled-components';
 import {useWallet} from 'hooks/useWallet';
-import ModalBottomSheetSwitcher from 'components/modalBottomSheetSwitcher';
-import useScreen from 'hooks/useScreen';
+import React, {useCallback} from 'react';
 import {useTranslation} from 'react-i18next';
-import WalletIcon from 'public/wallet.svg';
+import styled from 'styled-components';
+
+import ModalBottomSheetSwitcher from 'components/modalBottomSheetSwitcher';
 import {
   ModalBody,
   StyledImage,
@@ -14,18 +12,32 @@ import {
   WarningContainer,
   WarningTitle,
 } from 'containers/networkErrorMenu';
+import {useGlobalModalContext} from 'context/globalModals';
+import useScreen from 'hooks/useScreen';
+import WalletIcon from 'public/wallet.svg';
 
-export const LoginRequired = () => {
+type Props = {
+  isOpen?: boolean;
+  onClose?: () => void;
+};
+
+export const LoginRequired: React.FC<Props> = props => {
   const {close, isWalletOpen} = useGlobalModalContext();
   const {t} = useTranslation();
   const {isDesktop} = useScreen();
   const {methods} = useWallet();
 
+  // allow modal to be used both via global modal context &&
+  // as individually controlled component.
+  const showModal = props.isOpen ?? isWalletOpen;
+
+  const handleClose = useCallback(() => {
+    if (props.onClose) props.onClose();
+    else close('wallet');
+  }, [close, props]);
+
   return (
-    <ModalBottomSheetSwitcher
-      isOpen={isWalletOpen}
-      onClose={() => close('wallet')}
-    >
+    <ModalBottomSheetSwitcher isOpen={showModal} onClose={handleClose}>
       <ModalHeader>
         <Title>{t('alert.loginRequired.headerTitle')}</Title>
         {isDesktop && (
@@ -33,7 +45,7 @@ export const LoginRequired = () => {
             mode="ghost"
             icon={<IconClose />}
             size="small"
-            onClick={() => close('wallet')}
+            onClick={handleClose}
           />
         )}
       </ModalHeader>

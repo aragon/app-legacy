@@ -1,5 +1,5 @@
 import {AlertInline, ButtonText, WalletInput} from '@aragon/ui-components';
-import React, {useCallback} from 'react';
+import React, {useCallback, useEffect, useRef} from 'react';
 import {useTranslation} from 'react-i18next';
 import {generatePath, useNavigate} from 'react-router-dom';
 import styled from 'styled-components';
@@ -8,19 +8,60 @@ import ModalBottomSheetSwitcher from 'components/modalBottomSheetSwitcher';
 import {useGlobalModalContext} from 'context/globalModals';
 import {useNetwork} from 'context/network';
 import {useDaoDetailsQuery} from 'hooks/useDaoDetails';
-import {CHAIN_METADATA} from 'utils/constants';
+import {useWallet} from 'hooks/useWallet';
+import {CHAIN_METADATA, ENS_SUPPORTED_NETWORKS} from 'utils/constants';
 import {toDisplayEns} from 'utils/library';
 import {AllTransfers} from 'utils/paths';
-import {useWallet} from 'hooks/useWallet';
 
 const DepositModal: React.FC = () => {
   const {t} = useTranslation();
-  const {isDepositOpen, open, close} = useGlobalModalContext();
-  const {data: daoDetails} = useDaoDetailsQuery();
-  const {network} = useNetwork();
   const navigate = useNavigate();
-  const {status, isOnWrongNetwork} = useWallet();
+  const {network} = useNetwork();
+  const {isDepositOpen, open, close} = useGlobalModalContext();
+  const {status, isConnected, isOnWrongNetwork} = useWallet();
 
+  const {data: daoDetails} = useDaoDetailsQuery();
+
+  const networkSupportsENS = ENS_SUPPORTED_NETWORKS.includes(network);
+
+  // NOTE: This login => network flow can and should be extracted
+  // if later on we have a component that requires the same process
+  const loginFlowTriggeredRef = useRef(false);
+
+  /*************************************************
+   *                Hooks & Effects                *
+   *************************************************/
+  // Show login modal or network modal based on connection status
+  useEffect(() => {
+    if (loginFlowTriggeredRef.current) {
+      if (!isConnected) open('wallet');
+      else {
+        if (isOnWrongNetwork) open('network');
+        else close('network');
+      }
+    }
+  }, [close, isConnected, isOnWrongNetwork, open]);
+
+  // Close the login modal once the status is connecting
+  useEffect(() => {
+    if (loginFlowTriggeredRef.current) {
+      if (status === 'connecting' || isConnected) close('wallet');
+    }
+  }, [close, isConnected, isOnWrongNetwork, open, status]);
+
+  // show the deposit modal again when user on right network and logged in
+  useEffect(() => {
+    if (loginFlowTriggeredRef.current) {
+      if (isConnected && !isOnWrongNetwork) {
+        open('deposit');
+        loginFlowTriggeredRef.current = false;
+      }
+    }
+  }, [isConnected, isOnWrongNetwork, open]);
+
+  /*************************************************
+   *             Callbacks and Handlers            *
+   *************************************************/
   const handleCtaClicked = useCallback(() => {
     close('deposit');
     navigate(
@@ -31,6 +72,15 @@ const DepositModal: React.FC = () => {
     );
   }, [close, daoDetails?.address, daoDetails?.ensDomain, navigate, network]);
 
+  // close modal and initiate the login/wrong network flow
+  const handleConnectClick = useCallback(() => {
+    close('deposit');
+    loginFlowTriggeredRef.current = true;
+  }, [close]);
+
+  /*************************************************
+   *                     Render                    *
+   *************************************************/
   if (!daoDetails) return null;
 
   return (
@@ -54,17 +104,7 @@ const DepositModal: React.FC = () => {
                   mode="success"
                 />
               ) : (
-                <ConnectButton
-                  onClick={() => {
-                    if (status === 'connected') {
-                      close('deposit');
-                      open('network');
-                    } else {
-                      close('deposit');
-                      open('wallet');
-                    }
-                  }}
-                >
+                <ConnectButton onClick={handleConnectClick}>
                   {t('modal.deposit.ctaBlockchain')}
                 </ConnectButton>
               )}
@@ -77,11 +117,13 @@ const DepositModal: React.FC = () => {
           <Subtitle>{t('modal.deposit.inputHelptextEns')}</Subtitle>
           <WalletInput
             value={{
-              ensName: daoDetails.ensDomain,
+              ensName: networkSupportsENS
+                ? toDisplayEns(daoDetails.ensDomain)
+                : '',
               address: daoDetails.address,
             }}
             onValueChange={() => {}}
-            blockExplorerURL={CHAIN_METADATA[network].lookupURL}
+            blockExplorerURL={CHAIN_METADATA[network].explorer + 'address/'}
             disabled
           />
         </div>

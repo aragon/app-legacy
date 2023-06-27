@@ -1,6 +1,6 @@
 import {MultisigVotingSettings, VotingSettings} from '@aragon/sdk-client';
-import React, {useCallback, useEffect, useMemo, useRef} from 'react';
-import {Outlet} from 'react-router-dom';
+import React, {useCallback, useEffect, useMemo, useRef, useState} from 'react';
+import {Outlet, useNavigate} from 'react-router-dom';
 
 import {Loading} from 'components/temporary';
 import {GatingMenu} from 'containers/gatingMenu';
@@ -15,11 +15,15 @@ import {useWallet} from 'hooks/useWallet';
 import {CHAIN_METADATA} from 'utils/constants';
 import {formatUnits, toDisplayEns} from 'utils/library';
 import {fetchBalance} from 'utils/tokens';
+import {LoginRequired} from 'containers/walletMenu/LoginRequired';
 
 const ProtectedRoute: React.FC = () => {
+  const navigate = useNavigate();
   const {open, close, isGatingOpen} = useGlobalModalContext();
   const {address, status, isOnWrongNetwork, isModalOpen} = useWallet();
   const {data: daoDetails, isLoading: detailsAreLoading} = useDaoDetailsQuery();
+
+  const [showLoginModal, setShowLoginModal] = useState(false);
 
   const [pluginType, pluginAddress] = useMemo(
     () => [
@@ -45,6 +49,13 @@ const ProtectedRoute: React.FC = () => {
   /*************************************************
    *             Callbacks and Handlers            *
    *************************************************/
+  const handleCloseLoginModal = useCallback(() => {
+    setShowLoginModal(false);
+
+    // navigate back to the page the user came from
+    navigate(-1);
+  }, [navigate]);
+
   const gateTokenBasedProposal = useCallback(async () => {
     if (daoToken && address && filteredMembers.length === 0) {
       const balance = await fetchBalance(
@@ -119,7 +130,7 @@ const ProtectedRoute: React.FC = () => {
       ((status === 'connecting' && isModalOpen === true) || address) &&
       userWentThroughLoginFlow.current === false
     ) {
-      close('wallet');
+      setShowLoginModal(false);
     }
   }, [address, close, isModalOpen, isOnWrongNetwork, status]);
 
@@ -161,6 +172,7 @@ const ProtectedRoute: React.FC = () => {
           tokenName={daoToken?.name}
         />
       )}
+      <LoginRequired isOpen={showLoginModal} onClose={handleCloseLoginModal} />
     </>
   );
 };
