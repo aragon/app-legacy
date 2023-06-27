@@ -49,8 +49,6 @@ export default defineConfig(({mode}) => {
           nested: resolve(__dirname, 'ipfs-404.html'),
         },
         plugins: [
-          // ↓ Needed for build
-          // nodePolyfills(),
           analyze({
             stdout: true,
             summaryOnly: true,
