@@ -21,6 +21,7 @@ import {useDaoMembers} from 'hooks/useDaoMembers';
 import {useDebouncedState} from 'hooks/useDebouncedState';
 import {PluginTypes} from 'hooks/usePluginClient';
 import {CHAIN_METADATA} from 'utils/constants';
+import {useExistingToken} from 'hooks/useExistingToken';
 
 const MEMBERS_PER_PAGE = 20;
 
@@ -40,6 +41,11 @@ const Community: React.FC = () => {
     daoDetails?.plugins[0].instanceAddress as string,
     daoDetails?.plugins[0].id as PluginTypes,
     debouncedTerm
+  );
+
+  const {isTokenMintable} = useExistingToken(
+    daoToken?.address,
+    daoDetails?.address
   );
 
   const totalMemberCount = members.length;
@@ -89,13 +95,21 @@ const Community: React.FC = () => {
               onClick: handlePrimaryClick,
             },
           }
-        : {
+        : isTokenMintable
+        ? {
             description: t('explore.explorer.tokenBased'),
             primaryBtnProps: {
               label: t('labels.mintTokens'),
               iconLeft: <IconAdd />,
               onClick: handlePrimaryClick,
             },
+            secondaryBtnProps: {
+              label: t('labels.seeAllHolders'),
+              iconLeft: <IconLinkExternal />,
+              onClick: handleSecondaryButtonClick,
+            },
+          }
+        : {
             secondaryBtnProps: {
               label: t('labels.seeAllHolders'),
               iconLeft: <IconLinkExternal />,

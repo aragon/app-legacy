@@ -49,7 +49,7 @@ const TreasurySnapshot: React.FC<Props> = ({
         description={htmlIn(t)('finance.emptyState.description')}
         primaryButton={{
           label: t('finance.emptyState.buttonLabel'),
-          onClick: () => open(),
+          onClick: () => open('deposit'),
         }}
         renderHtml
       />

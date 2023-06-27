@@ -653,7 +653,8 @@
         "title": "Import your existing token",
         "description": "Import the existing ERC-20 token  that your community uses for governance. We recommend to read about why this is important {{link}}.",
         "descriptionLinkLabel": "our guide",
-        "questionLabel": "Does your community already have an ERC-20 token to govern your DAO?",
+        "descriptionLinkURL": "https://aragon.org/how-to/build-a-dao-brand-identity",
+        "questionLabel": "Does your community already have an ERC20 token?",
         "answerNegative": "No",
         "answerPositive": "Yes",
         "inputLabel": "Contract address",
@@ -669,8 +670,7 @@
         "verificationAlertWarningTitle": "Requires wrapping",
         "verificationAlertCriticalTitle": "Not supported token",
         "verificationAlertWarningDescription": "This token must be wrapped by its holders to be participate in your DAO's governance.\n\nToken holders can wrap their tokens within the Aragon App at any time to receive equivalent governance tokens (1 {{tokenSymbol}} = 1 {{gTokenSymbol}}). These can then be used to vote on proposals in your DAO. They can unwrap at any time to receive their original tokens.",
-        "verificationAlertCriticalDescription": "This token is not supported in the Aragon App. Please try a different token or specify that you don't have a governance token yet.",
-        "descriptionLinkURL": "https://"
+        "verificationAlertCriticalDescription": "This token is not supported in the Aragon App. Please try a different token or specify that you don't have a governance token yet."
       },
       "existingTokenSubtitle": "Yes, we already have a token.",
       "tokenMembership": "Token holders",

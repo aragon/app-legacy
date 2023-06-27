@@ -33,9 +33,7 @@ export const MinParticipation: FC = () => {
     ],
   });
 
-  const isGovTokenRequiresWrapping =
-    !isCustomToken &&
-    (tokenType === 'ERC-20' || tokenType === 'governance-ERC20');
+  const isGovTokenRequiresWrapping = !isCustomToken && tokenType === 'ERC-20';
 
   const [
     simulatedWrappedTokensPercentage,
@@ -148,7 +146,7 @@ export const MinParticipation: FC = () => {
                           label={t('createDAO.step4.wrappedReferenceTitle')}
                         />
                         <div
-                          className="ft-text-sm text-ui-600"
+                          className="text-ui-600 ft-text-sm"
                           dangerouslySetInnerHTML={{
                             __html: htmlIn(t)(
                               'createDAO.step4.wrappedReferenceDesc',

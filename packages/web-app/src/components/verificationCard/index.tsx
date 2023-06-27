@@ -1,11 +1,10 @@
 import React, {useMemo, useEffect} from 'react';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
-import {AlertCard, Label, Spinner, shortenAddress} from '@aragon/ui-components';
+import {AlertCard, Spinner, shortenAddress} from '@aragon/ui-components';
 
 import {Dd, Dl} from 'components/descriptionList';
 import {useFormContext, useWatch} from 'react-hook-form';
-import {SelectEligibility} from 'components/selectEligibility';
 import {gTokenSymbol} from 'utils/tokens';
 import {getTotalHolders} from 'services/covalentAPI';
 import {useNetwork} from 'context/network';
@@ -158,15 +157,6 @@ const VerificationCard: React.FC<TransferListProps> = ({tokenAddress}) => {
         </VerifyItemsWrapper>
         {Alert}
       </VerifyContainer>
-      {tokenType === 'governance-ERC20' && (
-        <div>
-          <Label
-            label={t('labels.proposalCreation')}
-            helpText={t('createDAO.step3.proposalCreationHelpertext')}
-          />
-          <SelectEligibility />
-        </div>
-      )}
     </VerifyWrapper>
   );
 };

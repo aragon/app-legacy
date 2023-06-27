@@ -27,9 +27,7 @@ const Governance: React.FC = () => {
     tokenType,
   } = getValues();
 
-  const isGovTokenRequiresWrapping =
-    !isCustomToken &&
-    (tokenType === 'ERC-20' || tokenType === 'governance-ERC20');
+  const isGovTokenRequiresWrapping = !isCustomToken && tokenType === 'ERC-20';
 
   return (
     <Controller

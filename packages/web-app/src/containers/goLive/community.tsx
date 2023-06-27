@@ -34,9 +34,7 @@ const Community: React.FC = () => {
     eligibilityTokenAmount,
   } = getValues();
 
-  const isGovTokenRequiresWrapping =
-    !isCustomToken &&
-    (tokenType === 'ERC-20' || tokenType === 'governance-ERC20');
+  const isGovTokenRequiresWrapping = !isCustomToken && tokenType === 'ERC-20';
 
   const govTokenSymbol = isGovTokenRequiresWrapping
     ? gTokenSymbol(tokenSymbol)
@@ -155,7 +153,7 @@ const Community: React.FC = () => {
                         {numeral(tokenTotalSupply).format('0,0')}{' '}
                         {govTokenSymbol}
                       </div>
-                      <div className="ft-text-sm text-ui-400">
+                      <div className="text-ui-400 ft-text-sm">
                         {t('labels.supplyPotentialHelptext', {tokenSymbol})}
                       </div>
                     </div>
