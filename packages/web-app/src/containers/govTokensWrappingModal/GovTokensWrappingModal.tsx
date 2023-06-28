@@ -23,6 +23,7 @@ import {
 import {StateEmpty} from 'components/stateEmpty';
 import {Erc20TokenDetails} from '@aragon/sdk-client';
 import type {WrappingFormParams} from 'context/govTokensWrapping';
+import {gTokenSymbol} from 'utils/tokens';
 
 interface GovTokensWrappingModalProps {
   isOpen: boolean;
@@ -45,9 +46,6 @@ interface GovTokensWrappingModalProps {
   handleUnwrap: () => void;
 }
 
-/**
- * @todo->Nikita Refine I18N
- */
 const GovTokensWrappingModal: FC<GovTokensWrappingModalProps> = ({
   isOpen,
   onClose,
@@ -92,14 +90,24 @@ const GovTokensWrappingModal: FC<GovTokensWrappingModalProps> = ({
     const tokenBalance = isWrapMode ? balances.unwrapped : balances.wrapped;
     const tokenSymbol = targetToken?.symbol || 'ANT';
 
-    let title = 'Join the community';
-    let subtitle = `Wrap ${tokenSymbol} and get g${tokenSymbol} in exchange to participate in this DAO. You can unwrap g${tokenSymbol} at any time and get your ${tokenSymbol} back (1 ${tokenSymbol} = 1 w${tokenSymbol})`;
+    let title = t('modal.wrapToken.title');
+    let subtitle = t('modal.wrapToken.desc', {
+      tokenSymbol,
+      gTokenSymbol: tokenSymbol,
+    });
+
     const finishedTitle = isWrapMode
-      ? 'Tokens successfully wrapped'
-      : 'Tokens successfully unwrapped';
+      ? t('modal.wrapToken.successTitle')
+      : t('modal.unwrapToken.successTitle');
     const finishedDescription = isWrapMode
-      ? `You successfully wrapped ${amount} gANT and received it in your wallet. You can now participate in the governance of this DAO.`
-      : `You successfully unwrapped ${amount} ANT and received it in your wallet. We are sorry to see you leave and you are no longer able to participate in this DAO.`;
+      ? t('modal.wrapToken.successDesc', {
+          amount,
+          gTokenSymbol: gTokenSymbol(tokenSymbol),
+        })
+      : t('modal.unwrapToken.successDesc', {
+          amount,
+          tokenSymbol,
+        });
 
     if (isFinished) {
       title = '';
@@ -108,26 +116,45 @@ const GovTokensWrappingModal: FC<GovTokensWrappingModalProps> = ({
 
     const wrapSteps = [
       {
-        title: 'Approve tokens',
+        title: t('modal.wrapToken.footerTitle'),
+        helpText: t('modal.wrapToken.footerDesc', {tokenSymbol}),
       },
       {
-        title: 'Wrap tokens',
+        title: t('modal.wrapToken.footerTitle'),
+        helpText: t('modal.wrapToken.footerDesc', {tokenSymbol}),
       },
     ];
+
+    const userBalanceDisplay = isWrapMode
+      ? t('modal.wrapToken.inputAmountBalance', {
+          amount: balances.unwrapped,
+          tokenSymbol,
+        })
+      : t('modal.wrapToken.inputAmountBalanceWrapped', {
+          amount: balances.wrapped,
+          tokenSymbol,
+        });
 
     return {
       targetToken,
       tokenBalance,
       title,
       subtitle,
-      amountHelpText: `Define amount to wrap to get your governance-compatible ${tokenSymbol}. The conversion is 1 ${tokenSymbol} = 1 ${tokenSymbol}.`,
-      stepsHelpText:
-        'To get your wrapped tokens, you must lock your tokens in the Aragon App to participate in the DAO.',
       steps: isWrapMode ? wrapSteps : [],
       finishedTitle,
       finishedDescription,
+      userBalanceDisplay,
     };
-  }, [daoToken, balances, amount, isFinished, isWrapMode, wrappedDaoToken]);
+  }, [
+    amount,
+    balances.unwrapped,
+    balances.wrapped,
+    daoToken,
+    isFinished,
+    isWrapMode,
+    t,
+    wrappedDaoToken,
+  ]);
 
   /* Token amount field handling */
   const amountValidator = useCallback(
@@ -179,15 +206,15 @@ const GovTokensWrappingModal: FC<GovTokensWrappingModalProps> = ({
           description={modeData.finishedDescription}
           primaryButton={{
             label: isWrapMode
-              ? 'See community'
-              : t('alert.gatingUsers.buttonLabel'),
+              ? t('modal.wrapToken.successCtaLabel')
+              : t('modal.unwrapToken.successCtaLabel'),
             className: 'w-full',
             onClick: onClose,
           }}
           secondaryButton={
             isWrapMode
               ? {
-                  label: 'Add token symbol',
+                  label: t('modal.wrapToken.successBtnSecondaryLabel'),
                   className: 'w-full',
                   onClick: handleAddWrappedTokenToWallet,
                 }
@@ -200,7 +227,7 @@ const GovTokensWrappingModal: FC<GovTokensWrappingModalProps> = ({
             <form {...form} className="space-y-3">
               {/* Action selection */}
               <FormItem>
-                <Label label="What do you want to do with your token?" />
+                <Label label={t('modal.wrapToken.inputModeLabel')} />
                 <Controller
                   name="mode"
                   control={form.control}
@@ -210,14 +237,14 @@ const GovTokensWrappingModal: FC<GovTokensWrappingModalProps> = ({
                       <CheckboxSimple
                         state={value === 'wrap' ? 'active' : 'default'}
                         disabled={isUserInputDisabled}
-                        label="Wrap"
+                        label={t('modal.wrapToken.inputSelectWrap')}
                         multiSelect={false}
                         onClick={() => onChange('wrap')}
                       />
                       <CheckboxSimple
                         state={value === 'unwrap' ? 'active' : 'default'}
                         disabled={isUserInputDisabled}
-                        label="Unwrap"
+                        label={t('modal.wrapToken.inputSelectUnwrap')}
                         multiSelect={false}
                         onClick={() => onChange('unwrap')}
                       />
@@ -228,7 +255,7 @@ const GovTokensWrappingModal: FC<GovTokensWrappingModalProps> = ({
 
               {/* Token amount */}
               <FormItem>
-                <Label label={'Amount'} helpText={modeData.amountHelpText} />
+                <Label label={t('modal.wrapToken.inputAmountLabel')} />
                 <Controller
                   name={'amount'}
                   control={form.control}
@@ -265,9 +292,7 @@ const GovTokensWrappingModal: FC<GovTokensWrappingModalProps> = ({
                         </div>
                         {modeData.tokenBalance && (
                           <TokenBalance>
-                            {`${t('labels.maxBalance')}: ${
-                              modeData.tokenBalance
-                            } ${modeData.targetToken?.symbol}`}
+                            {modeData.userBalanceDisplay}
                           </TokenBalance>
                         )}
                       </div>
@@ -285,14 +310,19 @@ const GovTokensWrappingModal: FC<GovTokensWrappingModalProps> = ({
                     {modeData.steps[currentStep - 1].title}
                   </ProgressTitle>
                   <ProgressSteps>
-                    Step {currentStep} of {modeData.steps.length}
+                    {t('modal.wrapToken.footerSteps', {
+                      step: currentStep,
+                      steps: modeData.steps.length,
+                    })}
                   </ProgressSteps>
                 </ProgressHeader>
                 <LinearProgress
                   value={currentStep}
                   max={modeData.steps.length}
                 />
-                <ProgressHelpText>{modeData.stepsHelpText}</ProgressHelpText>
+                <ProgressHelpText>
+                  {modeData.steps[currentStep - 1].helpText}
+                </ProgressHelpText>
               </ProgressContainer>
             )}
 
@@ -312,7 +342,11 @@ const GovTokensWrappingModal: FC<GovTokensWrappingModalProps> = ({
                       ) : undefined
                     }
                     size="large"
-                    label={isTokenApproveError ? 'Try Again' : 'Approve tokens'}
+                    label={
+                      isTokenApproveError
+                        ? t('modal.wrapToken.footerCtaError')
+                        : t('modal.wrapToken.footerCtaFirst')
+                    }
                     className="w-full"
                     onClick={handleApprove}
                   />
@@ -328,7 +362,11 @@ const GovTokensWrappingModal: FC<GovTokensWrappingModalProps> = ({
                       ) : undefined
                     }
                     size="large"
-                    label={isTokenWrapError ? 'Try Again' : 'Wrap token'}
+                    label={
+                      isTokenWrapError
+                        ? t('modal.wrapToken.footerCtaError')
+                        : t('modal.wrapToken.footerCtaSecond')
+                    }
                     className="w-full"
                     onClick={handleWrap}
                   />
@@ -347,14 +385,18 @@ const GovTokensWrappingModal: FC<GovTokensWrappingModalProps> = ({
                       ) : undefined
                     }
                     size="large"
-                    label={isTokenUnwrapError ? 'Try Again' : 'Unwrap token'}
+                    label={
+                      isTokenUnwrapError
+                        ? t('modal.wrapToken.footerCtaError')
+                        : t('modal.wrapToken.footerWrappedCtaLabel')
+                    }
                     className="w-full"
                     onClick={handleUnwrap}
                   />
                   <ButtonText
                     mode="secondary"
                     size="large"
-                    label={'Cancel'}
+                    label={t('modal.wrapToken.footerWrappedCancelLabel')}
                     className="w-full"
                     onClick={onClose}
                   />
@@ -367,11 +409,11 @@ const GovTokensWrappingModal: FC<GovTokensWrappingModalProps> = ({
                 <AlertInline
                   label={
                     isTokenApproveError
-                      ? 'Error while approving'
+                      ? t('modal.wrapToken.footerAlertCriticalApprove')
                       : isTokenWrapError
-                      ? 'Error while wrapping tokens'
+                      ? t('modal.wrapToken.footerAlertCriticalWrap')
                       : isTokenUnwrapError
-                      ? 'Error while unwrapping tokens'
+                      ? t('TransactionModal.errorLabel')
                       : ''
                   }
                   mode="critical"
