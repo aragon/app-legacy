@@ -1,3 +1,4 @@
+import {InputValue} from '@aragon/ui-components';
 import {withTransaction} from '@elastic/apm-rum-react';
 import React, {useEffect, useMemo} from 'react';
 import {FormProvider, useForm, useFormState, useWatch} from 'react-hook-form';
@@ -17,8 +18,8 @@ import {trackEvent} from 'services/analytics';
 import {CHAIN_METADATA, getSupportedNetworkByChainId} from 'utils/constants';
 import {htmlIn} from 'utils/htmlIn';
 import {Landing} from 'utils/paths';
+import {TokenType} from 'utils/validators';
 import {WalletField} from '../components/addWallets/row';
-import {InputValue} from '@aragon/ui-components';
 
 export type WalletItem = {
   id: string;
@@ -39,7 +40,7 @@ export type CreateDaoFormData = {
   tokenSymbol: string;
   tokenTotalSupply: number;
   tokenTotalHolders: number | undefined;
-  tokenType: string | undefined;
+  tokenType: TokenType;
   isCustomToken: boolean;
   links: {name: string; url: string}[];
   wallets: WalletField[];
