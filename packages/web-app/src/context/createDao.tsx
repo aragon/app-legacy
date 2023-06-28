@@ -3,14 +3,14 @@ import {
   CreateDaoParams,
   DaoCreationSteps,
   DaoMetadata,
-  IPluginInstallItem,
-  ITokenVotingPluginInstall,
+  PluginInstallItem,
+  TokenVotingPluginInstall,
   MultisigClient,
   MultisigPluginInstallParams,
   TokenVotingClient,
   VotingMode,
   VotingSettings,
-  SupportedNetworks as sdkSupportedNetworks,
+  SupportedNetwork as sdkSupportedNetworks,
 } from '@aragon/sdk-client';
 import {parseUnits} from 'ethers/lib/utils';
 import React, {createContext, useCallback, useContext, useState} from 'react';
@@ -211,7 +211,7 @@ const CreateDaoProvider: React.FC = ({children}) => {
   }, [getValues]);
 
   const getNewErc20PluginParams =
-    useCallback((): ITokenVotingPluginInstall['newToken'] => {
+    useCallback((): TokenVotingPluginInstall['newToken'] => {
       const {tokenName, tokenSymbol, wallets} = getValues();
       return {
         name: tokenName,
@@ -226,7 +226,7 @@ const CreateDaoProvider: React.FC = ({children}) => {
     }, [getValues]);
 
   const getErc20PluginParams =
-    useCallback((): ITokenVotingPluginInstall['useToken'] => {
+    useCallback((): TokenVotingPluginInstall['useToken'] => {
       const {tokenAddress, tokenName, tokenSymbol} = getValues();
       return {
         tokenAddress: tokenAddress.address, // contract address of the token to use as the voting token
@@ -249,7 +249,7 @@ const CreateDaoProvider: React.FC = ({children}) => {
       isCustomToken,
       links,
     } = getValues();
-    const plugins: IPluginInstallItem[] = [];
+    const plugins: PluginInstallItem[] = [];
     switch (membership) {
       case 'multisig': {
         const [params, network] = getMultisigPluginInstallParams();

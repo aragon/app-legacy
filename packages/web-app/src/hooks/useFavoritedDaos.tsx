@@ -1,4 +1,4 @@
-import {IDaoQueryParams} from '@aragon/sdk-client';
+import {DaoQueryParams} from '@aragon/sdk-client';
 import {
   InfiniteData,
   UseQueryResult,
@@ -58,7 +58,7 @@ export const useFavoritedDaosInfiniteQuery = (
   enabled = true,
   {
     limit = DEFAULT_QUERY_PARAMS.limit,
-  }: Partial<Pick<IDaoQueryParams, 'limit'>> = {}
+  }: Partial<Pick<DaoQueryParams, 'limit'>> = {}
 ) => {
   return useInfiniteQuery({
     queryKey: ['infiniteFavoriteDaos'],

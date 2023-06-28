@@ -11,7 +11,7 @@ import {
   CreateDaoParams,
   DaoMetadata,
   InstalledPluginListItem,
-  IPluginInstallItem,
+  PluginInstallItem,
   VotingMode,
 } from '@aragon/sdk-client';
 import {RestLink} from 'apollo-link-rest';
@@ -142,7 +142,7 @@ export type NavigationDao = Omit<DaoListItem, 'metadata' | 'plugins'> & {
     avatar?: string;
     description?: string;
   };
-  plugins: InstalledPluginListItem[] | IPluginInstallItem[];
+  plugins: InstalledPluginListItem[] | PluginInstallItem[];
 };
 const favoriteDaos = JSON.parse(
   localStorage.getItem(FAVORITE_DAOS_KEY) || '[]'

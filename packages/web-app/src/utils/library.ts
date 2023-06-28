@@ -5,11 +5,11 @@ import {
   DaoAction,
   DaoDetails,
   Erc20TokenDetails,
-  IMintTokenParams,
+  MintTokenParams,
   MultisigClient,
   MultisigVotingSettings,
   Context as SdkContext,
-  SupportedNetworks as SdkSupportedNetworks,
+  SupportedNetwork as SdkSupportedNetworks,
   TokenVotingClient,
   VotingMode,
 } from '@aragon/sdk-client';
@@ -209,7 +209,7 @@ export async function decodeMintTokensToAction(
 
     const decoded = data.map(action => {
       // decode action
-      const {amount, address}: IMintTokenParams =
+      const {amount, address}: MintTokenParams =
         client.decoding.mintTokenAction(action);
 
       // update new tokens count
