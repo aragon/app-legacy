@@ -147,6 +147,7 @@ export const useDaoMembers = (
 
       let members;
 
+      //TODO: A general type guard should be added later
       if (isTokenBased && daoToken?.address) {
         const balances = await Promise.all(
           rawMembers.map(m => {
