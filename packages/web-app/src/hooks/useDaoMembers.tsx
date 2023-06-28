@@ -171,7 +171,7 @@ export const useDaoMembers = (
         members = rawMembers.map(
           (m, index) =>
             ({
-              address: m,
+              address: (m as TokenVotingMember).address,
               balance: Number(balances[index]),
             } as BalanceMember)
         );
