@@ -215,6 +215,8 @@ const CreateDaoProvider: React.FC = ({children}) => {
   const getNewErc20PluginParams =
     useCallback((): TokenVotingPluginInstall['newToken'] => {
       const {tokenName, tokenSymbol, wallets} = getValues();
+      console.log(tokenName, wallets);
+
       return {
         name: tokenName,
         symbol: tokenSymbol,
@@ -230,6 +232,7 @@ const CreateDaoProvider: React.FC = ({children}) => {
   const getErc20PluginParams =
     useCallback((): TokenVotingPluginInstall['useToken'] => {
       const {tokenAddress, tokenName, tokenSymbol} = getValues();
+      console.log(tokenName, tokenSymbol);
       return {
         tokenAddress: tokenAddress.address, // contract address of the token to use as the voting token
         wrappedToken: {
@@ -264,11 +267,13 @@ const CreateDaoProvider: React.FC = ({children}) => {
       }
       case 'token': {
         const [votingSettings, network] = getVoteSettings();
+
         const tokenVotingPlugin =
           TokenVotingClient.encoding.getPluginInstallItem(
             {
               votingSettings: votingSettings,
-              ...(tokenType === 'governance-ERC20' && !isCustomToken
+              ...((tokenType === 'governance-ERC20' || tokenType === 'ERC20') &&
+              !isCustomToken
                 ? {useToken: getErc20PluginParams()}
                 : {newToken: getNewErc20PluginParams()}),
             },
