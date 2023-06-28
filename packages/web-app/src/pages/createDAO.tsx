@@ -23,7 +23,10 @@ import {WalletField} from '../components/addWallets/row';
 
 export type WalletItem = {
   id: string;
-  address: string;
+  web3Address: {
+    address: string;
+    ensName: string;
+  };
 };
 
 export type CreateDaoFormData = {
