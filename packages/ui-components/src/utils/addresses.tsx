@@ -1,6 +1,6 @@
 // get truncated address
 export function shortenAddress(address: string | null) {
-  if (address === null) return '';
+  if (!address) return '';
   if (IsAddress(address))
     return (
       address.substring(0, 5) +
@@ -12,8 +12,9 @@ export function shortenAddress(address: string | null) {
 
 // check label type
 export function IsAddress(address: string | null) {
+  if (!address) return false;
   const re = /0x[a-fA-F0-9]{40}/g;
-  return Boolean(address?.match(re));
+  return Boolean(address?.match?.(re));
 }
 
 export function isEnsDomain(input: string | null): boolean {
