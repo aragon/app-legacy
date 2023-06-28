@@ -1,11 +1,12 @@
-import ModalBottomSheetSwitcher from 'components/modalBottomSheetSwitcher';
-import {StateEmpty} from 'components/stateEmpty';
 import React from 'react';
-import ModalHeader from '../components/modalHeader';
 import {useTranslation} from 'react-i18next';
-import styled from 'styled-components';
-import {trackEvent} from 'services/analytics';
 import {useParams} from 'react-router-dom';
+import {trackEvent} from 'services/analytics';
+import styled from 'styled-components';
+
+import ModalBottomSheetSwitcher from 'components/modalBottomSheetSwitcher';
+import ModalHeader from 'components/modalHeader';
+import {StateEmpty} from 'components/stateEmpty';
 
 type Props = {
   isOpen: boolean;

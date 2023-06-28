@@ -31,7 +31,7 @@
     "subtitle": "Go back to explorer page"
   },
   "navButtons": {
-    "connectWallet": "Connect wallet",
+    "connectWallet": "Login",
     "giveFeedback": "Give feedback"
   },
   "labels": {
@@ -161,7 +161,7 @@
     "review": {
       "blockchain": "Blockchain",
       "daoMetadata": "DAO details",
-      "voters": "Voters",
+      "voters": "voters",
       "votingParameters": "Voting parameters",
       "governance": "Governance",
       "network": "Network",
@@ -305,12 +305,12 @@
     },
     "noProposals": "No proposals found!",
     "statusWidget": {
-      "published": "Published",
-      "active": "Running",
-      "failed": "Execution failed",
-      "executed": "Executed",
-      "succeeded": "Succeeded",
-      "defeated": "Rejected",
+      "published": "Proposal published",
+      "active": "Voting is active...",
+      "failed": "Proposal execution failed",
+      "executed": "Proposal executed",
+      "succeeded": "Proposal is ready to execute",
+      "defeated": "Proposal has been defeated",
       "expired": "Expired"
     },
     "executionCard": {
@@ -369,7 +369,7 @@
     "totalSupplyZero": "Total token supply can not be 0",
     "requiredTokenAddressZero": "Required token amount can not be 0",
     "onlyAlphaNumeric": "{{field}} can only contain alphanumeric characters",
-    "ensDuplication": "ENS subdomain is already taken. Try a different name.",
+    "ensDuplication": "DAO name is already taken. Try a different name.",
     "ensNameInvalidFormat": "Please only use Lowercase letters, numbers, and the dash '-'",
     "ensNetworkIssue": "Failed to resolve ENS",
     "ensNameLength": "DAO name must be less than 128 characters",
@@ -434,10 +434,10 @@
       "buttonLabel": "Switch to {{network}}"
     },
     "loginRequired": {
-      "headerTitle": "Connect wallet to continue",
+      "headerTitle": "Login to continue",
       "title": "Wallet connection",
       "description": "Connect your wallet to continue.",
-      "buttonLabel": "Connect wallet now"
+      "buttonLabel": "Login Now"
     },
     "gatingUsers": {
       "tokenTitle": "Token not found",
@@ -449,12 +449,12 @@
     "tokenBasedMembers": "The DAO members listed here have interacted with the DAO at least once",
     "chip": {
       "removedLink": "Link removed",
-      "removedAddress": "Address removed",
+      "removedAddress": "address removed",
       "distributionReset": "Token distribution reset",
       "removedAllAddresses": "All addresses removed",
       "duplicateAction": "Action duplicated",
       "resetAction": "Action reset",
-      "resetAddress": "Address reset",
+      "resetAddress": "address reset",
       "resetAllAddresses": "All addresses reset",
       "removedAction": "Action removed",
       "addressAdded": "New address added",
@@ -543,7 +543,13 @@
     "externalContract": "Smart contract composer",
     "externalContractSubtitle": "Interact with an external contract on the chain your DAO is deployed on.",
     "changeMinimumApproval": "Change minimum approval",
-    "changeMinimumApprovalSubtitle": "Modify minimum approval of this DAO."
+    "changeMinimumApprovalSubtitle": "Modify minimum approval of this DAO.",
+    "connectdAppsTitle": "Connect dApps",
+    "withdrawAddresses": {
+      "subtitle": "Create a proposal to withdraw assets to a wallet."
+    },
+    "withdrawAssets": "Withdraw assets",
+    "connectdAppsSubtitle": "Interact with external dApps via WalletConnect on the chain your DAO is deployed on."
   },
   "newDeposit": {
     "depositAssets": "Deposit assets",
@@ -697,7 +703,7 @@
       "proposalCreationHelpertext": "Specify who is permitted to create proposals and what the minimum token requirement is.",
       "distributionWalletAlertText": "Your connected wallet was automatically added to the distribution list. You can remove it if you like.",
       "whiteListWalletAlertText": "Your connected wallet was automatically added to the list. You can remove it if you like.",
-      "createTokenHelptext": "Define the token details and distribute tokens to a core team and DAO treasury. For more on token minting best practices, {{link}}",
+      "createTokenHelptext": " Define the token details and distribute tokens to a core team and DAO treasury. For more on token minting best practices, ",
       "createTokenHelptextLinkLabel": "read this guide",
       "createTokenHelptextLinkURL": "https://aragon.org/how-to/mint-dao-governance-tokens",
       "membership": "Who can participate in governance?",
@@ -722,7 +728,7 @@
       },
       "membershipSubtitle": "You can always start with a multisig and mint tokens later.",
       "descriptionLinkLabel": "read this guide",
-      "descriptionLinkURL": "https://aragon.org/how-to/set-up-your-dao-governance-in-8-steps",
+      "descriptionLinkURL": "https://aragon.org/how-to/set-your-dao-governance",
       "distributeTokensHelpertextLinkLabel": "read our guide",
       "distributeTokensHelpertextLinkURL": "https://aragon.org/how-to/distribute-a-dao-governance-token"
     },
@@ -787,7 +793,19 @@
       "addFirstAction": "Add action",
       "addFirstActionSubtitle": "This action will execute if the vote passes. A common automatic action is transferring funds to a guild or person if their proposal passes a vote.",
       "addAction": "Add action",
-      "actionsInfo": "More options for parameters are coming soon. "
+      "actionsInfo": "More options for parameters are coming soon. ",
+      "actionAlertCritical": {
+        "title": "Action may fail",
+        "desc": "Even if the proposal was approved, this action may fail if it is not executed within the time limit."
+      },
+      "addFirstActionTitle": "Add first Action",
+      "addFirstActionDesc": "Add your very first optional action if you wish to peform on-chain executions",
+      "alertInfo": "Based on the voting options setup, it is only possible to add actions to the option \"Yes\".",
+      "stepCounter": "Step {{x}} of {{x}}",
+      "actionAlertWarning": {
+        "title": "Action not decoded",
+        "desc": "Because the smart contract is not verified, the actions could not be decoded."
+      }
     },
     "mintTokens": {
       "methodDescription": "Create a proposal to mint more governance tokens. Select the wallets that should receive tokens and determine how many.",
@@ -869,7 +887,7 @@
   "explore": {
     "hero": {
       "title": "Explore the DAO World",
-      "subtitle1": "Build your DAO, explore communities, and find inspiration for your project all in one place."
+      "subtitle1": "Build your DAO, explore communities, and find inspiration for your project, all from one place."
     },
     "explorer": {
       "title": "Explore DAOs",
@@ -934,7 +952,7 @@
     },
     "build": {
       "title": "Build faster",
-      "description": "Use our governance plugins to build a DAO, dApp, or anything you can imagine on the Aragon OSx protocol.",
+      "description": "Build something on open-source infrastructure with governance plugins.",
       "actionLabel": "Coming soon"
     },
     "404": {
@@ -1165,6 +1183,60 @@
       "cancleLabel": "Cancel",
       "descLinkLabel": "our guide",
       "descLinkURL": "https://"
+    }
+  },
+  "wc": {
+    "emptyState": {
+      "modalTitle": "Connect dApps",
+      "title": "WalletConnect",
+      "desc": "Connect any dApps to add its actions to your proposal. Learn more about {{link}}.",
+      "ctaLabel": "Connect first dApp",
+      "descLinkLabel": "in our guide",
+      "descLinkURL": "https://"
+    },
+    "listdApps": {
+      "pretitle": {
+        "searchResults": "{{amount}} dApps results"
+      },
+      "emptyStateSearch": {
+        "title": "No results to show",
+        "desc": "No connected dApps found for this search term.",
+        "ctaLabel": "Reset search"
+      },
+      "listTitle": "{{amount}} connected dApps",
+      "learnLinkURL": "https://",
+      "learnLinkLabel": "Learn more",
+      "ctaLabelDefault": "Connect dApp"
+    },
+    "validation": {
+      "modalTitle": "Connect dApp",
+      "codeInputHelp": "Copy the QR Code to your Clipboard and past it below to connect to your desired dApp.",
+      "codeInputLabel": "WalletConnect QR code",
+      "codeInputPlaceholder": "wc: …",
+      "ctaLabel": "Connect dApp",
+      "addressInput": {
+        "alertCritical": "Failure in connecting the dApp. Try again"
+      },
+      "codeInput": {
+        "statusSuccess": "{{dappName}} connected"
+      },
+      "ctaLabelSuccess": "Start adding actions",
+      "ctaLabelCritical": "Retry",
+      "ctaLabelVerifying": "Connecting dApp …"
+    },
+    "detaildApp": {
+      "spinnerLabel": "Listening for actions...",
+      "desc": "Simply open {{dappName}} and interact with it. The actions will be added to this proposal.",
+      "noActionsTag": "No actions received yet",
+      "amountActionsTag": "{{amountActions}} actions received",
+      "ctaLabel": {
+        "opendApp": "Open {{dappName}}",
+        "disconnectdApp": "Disconnect {{dappName}}",
+        "addAmountActions": "Add {{amountActions}} actions"
+      }
+    },
+    "modalHeaderSearch": {
+      "placeholder": "Type to find any action …"
     }
   }
 }

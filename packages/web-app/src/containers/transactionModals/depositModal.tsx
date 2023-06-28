@@ -1,10 +1,11 @@
-import {AlertInline, ButtonText, WalletInput} from '@aragon/ui-components';
+import {AlertInline, ButtonText} from '@aragon/ui-components';
 import React, {useCallback, useEffect, useRef} from 'react';
 import {useTranslation} from 'react-i18next';
 import {generatePath, useNavigate} from 'react-router-dom';
 import styled from 'styled-components';
 
 import ModalBottomSheetSwitcher from 'components/modalBottomSheetSwitcher';
+import {WrappedWalletInput} from 'components/wrappedWalletInput';
 import {useGlobalModalContext} from 'context/globalModals';
 import {useNetwork} from 'context/network';
 import {useDaoDetailsQuery} from 'hooks/useDaoDetails';
@@ -115,16 +116,16 @@ const DepositModal: React.FC = () => {
         <div>
           <Title>{t('modal.deposit.inputLabelEns')}</Title>
           <Subtitle>{t('modal.deposit.inputHelptextEns')}</Subtitle>
-          <WalletInput
+          <WrappedWalletInput
             value={{
               ensName: networkSupportsENS
                 ? toDisplayEns(daoDetails.ensDomain)
                 : '',
               address: daoDetails.address,
             }}
-            onValueChange={() => {}}
-            blockExplorerURL={CHAIN_METADATA[network].explorer + 'address/'}
+            onChange={() => {}}
             disabled
+            showResolvedLabels={false}
           />
         </div>
 

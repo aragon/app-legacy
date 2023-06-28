@@ -34,34 +34,17 @@ type StateEmptyProps =
       IlluHumanProps &
       BaseProps & {
         type: 'both';
-      });
+      })
+  | (BaseProps & {
+      type: 'custom';
+      src: string;
+    });
 
 export const StateEmpty: React.FC<StateEmptyProps> = props => {
-  const {isMobile} = useScreen();
-
   return (
     <Card mode={props.mode} type={props.type}>
       <div className="flex">
-        {props.type !== 'Object' && (
-          <IllustrationHuman
-            {...{
-              body: props.body,
-              expression: props.expression,
-              hair: props.hair,
-              sunglass: props.sunglass,
-              accessory: props.accessory,
-            }}
-            {...(isMobile
-              ? {height: 165, width: 295}
-              : {height: 225, width: 400})}
-          />
-        )}
-        {props.type !== 'Human' && (
-          <IlluObject
-            object={props.object}
-            className={props.type === 'both' ? '-ml-32 desktop:-ml-36' : ''}
-          />
-        )}
+        <RenderIllustration {...props} />
       </div>
       <ContentWrapper>
         <TextWrapper>
@@ -98,6 +81,43 @@ export const StateEmpty: React.FC<StateEmptyProps> = props => {
         )}
       </ContentWrapper>
     </Card>
+  );
+};
+
+const RenderIllustration: React.FC<StateEmptyProps> = props => {
+  const {isMobile} = useScreen();
+
+  if (props.type === 'custom') {
+    return (
+      <ImageWrapper>
+        <img src={props.src} />
+      </ImageWrapper>
+    );
+  }
+
+  return (
+    <>
+      {props.type !== 'Object' && (
+        <IllustrationHuman
+          {...{
+            body: props.body,
+            expression: props.expression,
+            hair: props.hair,
+            sunglass: props.sunglass,
+            accessory: props.accessory,
+          }}
+          {...(isMobile
+            ? {height: 165, width: 295}
+            : {height: 225, width: 400})}
+        />
+      )}
+      {props.type !== 'Human' && (
+        <IlluObject
+          object={props.object}
+          className={props.type === 'both' ? '-ml-32 desktop:-ml-36' : ''}
+        />
+      )}
+    </>
   );
 };
 
@@ -144,3 +164,7 @@ const Description = styled.p.attrs({
     color: #003bf5;
     font-weight: 700;
 `;
+
+const ImageWrapper = styled.div.attrs({
+  className: 'flex justify-center pt-4 desktop:pt-6 pb-4 desktop:pb-8',
+})``;

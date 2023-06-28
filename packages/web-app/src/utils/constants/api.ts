@@ -38,6 +38,9 @@ export const alchemyApiKeys: AlchemyApiKeys = {
 export const infuraApiKey = import.meta.env
   .VITE_INFURA_MAINNET_PROJECT_ID as string;
 
+export const walletConnectProjectID = import.meta.env
+  .VITE_WALLET_CONNECT_PROJECT_ID as string;
+
 export const COVALENT_API_KEY = import.meta.env.VITE_COVALENT_API_KEY as string;
 
 // Coingecko Api specific asset platform keys

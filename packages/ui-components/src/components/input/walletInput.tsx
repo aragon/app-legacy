@@ -16,7 +16,6 @@ import {
 } from '../../utils/addresses';
 import {ButtonIcon, ButtonText} from '../button';
 import {IconCopy, IconLinkExternal} from '../icons';
-import {AlertChip} from '../alerts';
 
 /** Input Wallet value type */
 export type WalletInputValue = {
@@ -76,10 +75,15 @@ export type WalletInputProps = Omit<
   /**
    * An optional event handler that is called when the view explorer button is clicked.
    */
-  onViewExplorerButtonClick?: ReactEventHandler<HTMLButtonElement>;
+  onViewExplorerButtonClick?: (
+    e: React.MouseEvent<HTMLButtonElement>,
+    addressOrEns: string
+  ) => void;
 
   /**
    * The URL to be used for opening the ENS name and address in an external block explorer.
+   * This requires a format where the ENS name or address can be appended to the end of the
+   * given URL
    */
   blockExplorerURL?: string;
 
@@ -144,9 +148,6 @@ export const WalletInput = React.forwardRef<
   ) => {
     const textareaRef = useRef<HTMLTextAreaElement>(null);
     const wasNotEditingRef = useRef(true);
-
-    const [showAlert, setShowAlert] = useState(false);
-    const [alertLabel, setAlertLabel] = useState('');
 
     const [truncate, setTruncate] = useState(false);
     const [isEditing, setIsEditing] = useState(false);
@@ -318,15 +319,6 @@ export const WalletInput = React.forwardRef<
     /*************************************************
      *             Callbacks and handlers            *
      *************************************************/
-    const alert = useCallback((label: string) => {
-      setAlertLabel(label);
-      setShowAlert(true);
-
-      setTimeout(() => {
-        setShowAlert(false);
-      }, 1200);
-    }, []);
-
     // Show ens or address
     const toggleDisplayMode = useCallback(
       (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -403,10 +395,9 @@ export const WalletInput = React.forwardRef<
         event.preventDefault();
         onValueChange(setValue(''));
         setIsEditing(true);
-        alert('Cleared');
         onClearButtonClick?.(event);
       },
-      [alert, onClearButtonClick, onValueChange, setValue]
+      [onClearButtonClick, onValueChange, setValue]
     );
 
     const handlePasteFromClipboard = useCallback(
@@ -416,13 +407,12 @@ export const WalletInput = React.forwardRef<
 
           setIsEditing(false);
           onValueChange(setValue(clipboardData));
-          alert('Pasted');
           onPasteButtonClick?.(event);
         } catch (err) {
           console.error('Failed to read clipboard contents: ', err);
         }
       },
-      [alert, onPasteButtonClick, onValueChange, setValue]
+      [onPasteButtonClick, onValueChange, setValue]
     );
 
     const handleCopyToClipboard = useCallback(
@@ -430,10 +420,17 @@ export const WalletInput = React.forwardRef<
         navigator.clipboard.writeText(
           (displayMode === 'address' ? value.address : value.ensName) || ''
         );
-        alert('Copied');
         onCopyButtonClick?.(event);
       },
-      [alert, displayMode, onCopyButtonClick, value.address, value.ensName]
+      [displayMode, onCopyButtonClick, value.address, value.ensName]
+    );
+
+    const handleViewOnExplorer = useCallback(
+      (event: React.MouseEvent<HTMLButtonElement>) => {
+        window.open(blockExplorerURL + fullValue);
+        onViewExplorerButtonClick?.(event, fullValue);
+      },
+      [blockExplorerURL, fullValue, onViewExplorerButtonClick]
     );
 
     /*************************************************
@@ -509,19 +506,13 @@ export const WalletInput = React.forwardRef<
                     size="small"
                     bgWhite
                     disabled={adornmentsDisabled}
-                    onClick={e => {
-                      window.open(blockExplorerURL + fullValue);
-                      onViewExplorerButtonClick?.(e);
-                    }}
+                    onClick={handleViewOnExplorer}
                   />
                 )}
               </AdornmentWrapper>
             )}
           </div>
         </Container>
-        <div className="absolute right-0 w-full">
-          <AlertChip label={alertLabel} isShown={showAlert} />
-        </div>
       </>
     );
   }

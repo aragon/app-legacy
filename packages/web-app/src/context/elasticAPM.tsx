@@ -1,5 +1,5 @@
 import {init as initApm, ApmBase} from '@elastic/apm-rum';
-import React, {useState, useMemo, useContext} from 'react';
+import React, {useState, useContext, useEffect} from 'react';
 
 import {usePrivacyContext} from './privacyContext';
 
@@ -14,16 +14,14 @@ const UseAPMContext = React.createContext<IAPMContext>({
 
 const APMProvider: React.FC = ({children}) => {
   const {preferences} = usePrivacyContext();
-  const [apm, setApm] = useState<ApmBase | null>(() =>
-    initializeAPM(preferences?.analytics)
-  );
+  const [apm, setApm] = useState<ApmBase | null>(null);
 
-  const contextValue = useMemo(() => {
-    return {apm, setApm};
-  }, [apm, setApm]);
+  useEffect(() => {
+    setApm(initializeAPM(preferences?.analytics));
+  }, [preferences?.analytics]);
 
   return (
-    <UseAPMContext.Provider value={contextValue}>
+    <UseAPMContext.Provider value={{apm, setApm}}>
       {children}
     </UseAPMContext.Provider>
   );
@@ -51,7 +49,7 @@ function initializeAPM(setAnalytics: boolean | undefined) {
     import.meta.env.VITE_REACT_APP_DEPLOY_ENVIRONMENT
   ) {
     return initApm({
-      serviceName: 'zaragoza',
+      serviceName: 'aragon-app',
       serverUrl: 'https://apm-monitoring.aragon.org',
       serviceVersion: import.meta.env.VITE_REACT_APP_DEPLOY_VERSION as string,
       environment: import.meta.env.VITE_REACT_APP_DEPLOY_ENVIRONMENT as string,
