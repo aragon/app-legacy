@@ -1,13 +1,12 @@
 import {useReactiveVar} from '@apollo/client';
 import {
   CreateMajorityVotingProposalParams,
-  DaoAction,
   InstalledPluginListItem,
   ProposalCreationSteps,
-  ProposalMetadata,
   VotingMode,
   VotingSettings,
 } from '@aragon/sdk-client';
+import {DaoAction, ProposalMetadata} from '@aragon/sdk-client-common';
 import {withTransaction} from '@elastic/apm-rum-react';
 import React, {useCallback, useEffect, useState} from 'react';
 import {useFormContext, useFormState} from 'react-hook-form';

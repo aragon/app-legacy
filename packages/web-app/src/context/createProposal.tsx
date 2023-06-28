@@ -1,17 +1,19 @@
 import {useReactiveVar} from '@apollo/client';
 import {
   CreateMajorityVotingProposalParams,
-  DaoAction,
   InstalledPluginListItem,
   MultisigClient,
   MultisigVotingSettings,
   ProposalCreationSteps,
-  ProposalMetadata,
-  TokenType,
   TokenVotingClient,
   VotingSettings,
   WithdrawParams,
 } from '@aragon/sdk-client';
+import {
+  DaoAction,
+  TokenType,
+  ProposalMetadata,
+} from '@aragon/sdk-client-common';
 import {hexToBytes} from '@aragon/sdk-common';
 import {ethers} from 'ethers';
 import React, {useCallback, useEffect, useMemo, useState} from 'react';

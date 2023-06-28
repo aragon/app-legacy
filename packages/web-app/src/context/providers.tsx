@@ -9,7 +9,7 @@ import React, {createContext, useContext, useEffect, useState} from 'react';
 import {
   LIVE_CONTRACTS,
   SupportedNetwork as sdkSupportedNetworks,
-} from '@aragon/sdk-client';
+} from '@aragon/sdk-client-common';
 import {useWallet} from 'hooks/useWallet';
 import {
   alchemyApiKeys,

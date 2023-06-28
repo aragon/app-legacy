@@ -3,15 +3,17 @@ import {
   CreateDaoParams,
   DaoCreationSteps,
   DaoMetadata,
-  PluginInstallItem,
   TokenVotingPluginInstall,
   MultisigClient,
   MultisigPluginInstallParams,
   TokenVotingClient,
   VotingMode,
   VotingSettings,
-  SupportedNetwork as sdkSupportedNetworks,
 } from '@aragon/sdk-client';
+import {
+  PluginInstallItem,
+  SupportedNetwork as sdkSupportedNetworks,
+} from '@aragon/sdk-client-common';
 import {parseUnits} from 'ethers/lib/utils';
 import React, {createContext, useCallback, useContext, useState} from 'react';
 import {useFormContext} from 'react-hook-form';

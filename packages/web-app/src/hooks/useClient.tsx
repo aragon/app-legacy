@@ -1,10 +1,8 @@
+import {Client, Context as SdkContext, ContextParams} from '@aragon/sdk-client';
 import {
-  Client,
-  Context as SdkContext,
-  ContextParams,
   LIVE_CONTRACTS,
   SupportedNetworksArray,
-} from '@aragon/sdk-client';
+} from '@aragon/sdk-client-common';
 
 import {useNetwork} from 'context/network';
 import React, {createContext, useContext, useEffect, useState} from 'react';

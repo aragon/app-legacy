@@ -1,5 +1,5 @@
 import {useMemo} from 'react';
-import {LIVE_CONTRACTS, SupportedNetwork} from '@aragon/sdk-client';
+import {LIVE_CONTRACTS, SupportedNetwork} from '@aragon/sdk-client-common';
 import {JsonRpcSigner, Web3Provider} from '@ethersproject/providers';
 import {JsonRpcProvider} from '@ethersproject/providers';
 import {

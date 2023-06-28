@@ -1,7 +1,7 @@
 import {useReactiveVar} from '@apollo/client';
 import {useCallback, useEffect, useState} from 'react';
 
-import {ProposalStatus} from '@aragon/sdk-client';
+import {ProposalStatus} from '@aragon/sdk-client-common';
 import {
   PendingMultisigApprovals,
   pendingMultisigApprovalsVar,

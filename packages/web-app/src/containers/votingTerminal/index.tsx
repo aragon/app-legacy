@@ -1,4 +1,5 @@
-import {ProposalStatus, VoteValues} from '@aragon/sdk-client';
+import {VoteValues} from '@aragon/sdk-client';
+import {ProposalStatus} from '@aragon/sdk-client-common';
 import {
   AlertCard,
   AlertInline,

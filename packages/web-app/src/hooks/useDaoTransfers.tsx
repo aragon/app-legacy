@@ -1,10 +1,6 @@
 import {useReactiveVar} from '@apollo/client';
-import {
-  SortDirection,
-  Transfer,
-  TransferSortBy,
-  TransferType,
-} from '@aragon/sdk-client';
+import {Transfer, TransferSortBy, TransferType} from '@aragon/sdk-client';
+import {SortDirection} from '@aragon/sdk-client-common';
 import {useEffect, useMemo, useState} from 'react';
 
 import {pendingDeposits} from 'context/apolloClient';
@@ -132,11 +128,12 @@ export const useDaoTransfers = (
 
         if (clientTransfers?.length) {
           subgraphTransfers = clientTransfers.filter(
-            t => t.type === TransferType.WITHDRAW || t.tokenType === 'native'
+            (t: Transfer) =>
+              t.type === TransferType.WITHDRAW || t.tokenType === 'native'
           );
 
           const deposits = clientTransfers.filter(
-            t => t.type === TransferType.DEPOSIT
+            (t: Transfer) => t.type === TransferType.DEPOSIT
           );
 
           for (let i = 0; i < pendingDepositsTxs.length; ) {

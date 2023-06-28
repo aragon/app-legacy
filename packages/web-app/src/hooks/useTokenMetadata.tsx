@@ -1,5 +1,6 @@
 import {useApolloClient} from '@apollo/client';
-import {AssetBalance, TokenType} from '@aragon/sdk-client';
+import {AssetBalance} from '@aragon/sdk-client';
+import {TokenType} from '@aragon/sdk-client-common';
 import {constants} from 'ethers';
 import {useEffect, useState} from 'react';
 

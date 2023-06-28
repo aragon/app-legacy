@@ -11,9 +11,9 @@ import {
   CreateDaoParams,
   DaoMetadata,
   InstalledPluginListItem,
-  PluginInstallItem,
   VotingMode,
 } from '@aragon/sdk-client';
+import {PluginInstallItem} from '@aragon/sdk-client-common';
 import {RestLink} from 'apollo-link-rest';
 import {CachePersistor, LocalStorageWrapper} from 'apollo3-cache-persist';
 

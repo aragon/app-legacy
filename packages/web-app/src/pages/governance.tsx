@@ -1,4 +1,4 @@
-import {ProposalStatus} from '@aragon/sdk-client';
+import {ProposalStatus} from '@aragon/sdk-client-common';
 import {
   ButtonGroup,
   ButtonText,

@@ -1,14 +1,13 @@
 import {useApolloClient} from '@apollo/client';
 import {
-  DaoAction,
   MultisigClient,
   MultisigProposal,
-  ProposalStatus,
   TokenVotingClient,
   TokenVotingProposal,
   VoteValues,
   VotingMode,
 } from '@aragon/sdk-client';
+import {DaoAction, ProposalStatus} from '@aragon/sdk-client-common';
 import {
   Breadcrumb,
   ButtonText,

@@ -2,17 +2,20 @@
 import {ApolloClient} from '@apollo/client';
 import {
   Client,
-  DaoAction,
   DaoDetails,
   Erc20TokenDetails,
   MintTokenParams,
   MultisigClient,
   MultisigVotingSettings,
   Context as SdkContext,
-  SupportedNetwork as SdkSupportedNetworks,
   TokenVotingClient,
   VotingMode,
 } from '@aragon/sdk-client';
+
+import {
+  DaoAction,
+  SupportedNetwork as SdkSupportedNetworks,
+} from '@aragon/sdk-client-common';
 import {bytesToHex, resolveIpfsCid} from '@aragon/sdk-common';
 import {NavigationDao} from 'context/apolloClient';
 import {BigNumber, BigNumberish, constants, ethers, providers} from 'ethers';
@@ -602,13 +605,13 @@ export function translateToNetworkishName(
 
   switch (appNetwork) {
     case 'polygon':
-      return 'matic';
+      return SdkSupportedNetworks.POLYGON;
     case 'mumbai':
-      return 'maticmum';
+      return SdkSupportedNetworks.MUMBAI;
     case 'ethereum':
-      return 'homestead';
+      return SdkSupportedNetworks.MAINNET;
     case 'goerli':
-      return 'goerli';
+      return SdkSupportedNetworks.GOERLI;
   }
 
   return 'unsupported';
