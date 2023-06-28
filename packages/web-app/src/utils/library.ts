@@ -763,6 +763,17 @@ export class Web3Address {
         )
       : String(this._address || this._ensName);
   }
+
+  toString() {
+    return {address: this._address, ensName: this.ensName};
+  }
+
+  isEqual(valueToCompare: Web3Address) {
+    return (
+      valueToCompare.address === this._address &&
+      valueToCompare._ensName === this._ensName
+    );
+  }
 }
 
 export function shortenAddress(address: string | null) {

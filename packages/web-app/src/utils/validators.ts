@@ -294,8 +294,7 @@ export async function validateWeb3Address(
   t: TFunction
 ): Promise<ValidateResult> {
   // empty field
-  if (address.address === '' && address.ensName === '')
-    return requiredErrorMessage;
+  if (!address.address && !address.ensName) return requiredErrorMessage;
 
   // invalid ens
   if (address.ensName && !address.address)
