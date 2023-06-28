@@ -215,6 +215,8 @@ const CreateDaoProvider: React.FC = ({children}) => {
   const getNewErc20PluginParams =
     useCallback((): TokenVotingPluginInstall['newToken'] => {
       const {tokenName, tokenSymbol, wallets} = getValues();
+      console.log(tokenName, wallets);
+
       return {
         name: tokenName,
         symbol: tokenSymbol,
@@ -231,10 +233,10 @@ const CreateDaoProvider: React.FC = ({children}) => {
     useCallback((): TokenVotingPluginInstall['useToken'] => {
       const {tokenAddress, tokenName, tokenSymbol} = getValues();
       return {
-        tokenAddress: tokenAddress.address, // contract address of the token to use as the voting token
+        tokenAddress: tokenAddress.address, // contract address of underlying token
         wrappedToken: {
-          name: tokenName, // the name of your token
-          symbol: tokenSymbol, // the symbol for your token. shouldn't be more than 5 letters
+          name: 'g' + tokenName, // the name of the wrapped token (gToken)
+          symbol: 'g' + tokenSymbol, // the symbol of the wrapped token (gTokenSymbol)
         },
       };
     }, [getValues]);
@@ -264,11 +266,14 @@ const CreateDaoProvider: React.FC = ({children}) => {
       }
       case 'token': {
         const [votingSettings, network] = getVoteSettings();
+
         const tokenVotingPlugin =
           TokenVotingClient.encoding.getPluginInstallItem(
             {
               votingSettings: votingSettings,
-              ...(tokenType === 'governance-ERC20' && !isCustomToken
+              ...((tokenType === 'governance-ERC20' || // token can be used as is
+                tokenType === 'ERC-20') && // token can/will be wrapped
+              !isCustomToken // not a new token (existing token)
                 ? {useToken: getErc20PluginParams()}
                 : {newToken: getNewErc20PluginParams()}),
             },

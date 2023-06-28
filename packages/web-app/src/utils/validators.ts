@@ -18,7 +18,7 @@ import {
   Nullable,
 } from './types';
 
-export type tokenType =
+export type TokenType =
   | 'ERC-20'
   | 'governance-ERC20'
   | 'ERC-721'
