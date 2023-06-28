@@ -6,11 +6,13 @@ import {AccordionMethod} from 'components/accordionMethod';
 import {ActionCardDlContainer, Dd, Dl, Dt} from 'components/descriptionList';
 import {resolveDaoAvatarIpfsCid} from 'utils/library';
 import {ActionUpdateMetadata} from 'utils/types';
+import {useNetwork} from 'context/network';
 
 export const ModifyMetadataCard: React.FC<{action: ActionUpdateMetadata}> = ({
   action: {inputs},
 }) => {
   const {t} = useTranslation();
+  const {network} = useNetwork();
 
   const displayedLinks = inputs.links.filter(
     l => l.url !== '' && l.name !== ''
@@ -18,14 +20,14 @@ export const ModifyMetadataCard: React.FC<{action: ActionUpdateMetadata}> = ({
 
   const avatar = useMemo(() => {
     if (typeof inputs.avatar === 'string')
-      return resolveDaoAvatarIpfsCid(inputs.avatar);
+      return resolveDaoAvatarIpfsCid(network, inputs.avatar);
 
     try {
       return URL.createObjectURL(inputs.avatar as unknown as Blob);
     } catch (err) {
       console.error(err);
     }
-  }, [inputs.avatar]);
+  }, [network, inputs.avatar]);
 
   return (
     <AccordionMethod

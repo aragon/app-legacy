@@ -7,13 +7,13 @@ export const FEEDBACK_FORM =
 
 export const SUBGRAPH_API_URL: SubgraphNetworkUrl = {
   ethereum:
-    'https://subgraph.satsuma-prod.com/qHR2wGfc5RLi6/aragon/osx-mainnet/version/v1.1.1/api',
+    'https://subgraph.satsuma-prod.com/qHR2wGfc5RLi6/aragon/osx-mainnet/version/v1.2.0/api',
   goerli:
-    'https://subgraph.satsuma-prod.com/qHR2wGfc5RLi6/aragon/osx-goerli/version/v1.1.1/api',
+    'https://subgraph.satsuma-prod.com/qHR2wGfc5RLi6/aragon/osx-goerli/version/v1.2.0/api',
   polygon:
-    'https://subgraph.satsuma-prod.com/qHR2wGfc5RLi6/aragon/osx-polygon/version/v1.1.1/api',
+    'https://subgraph.satsuma-prod.com/qHR2wGfc5RLi6/aragon/osx-polygon/version/v1.2.0/api',
   mumbai:
-    'https://subgraph.satsuma-prod.com/qHR2wGfc5RLi6/aragon/osx-mumbai/version/v1.1.1/api',
+    'https://subgraph.satsuma-prod.com/qHR2wGfc5RLi6/aragon/osx-mumbai/version/v1.2.0/api',
   arbitrum: undefined,
   'arbitrum-test': undefined,
   unsupported: undefined,
@@ -38,13 +38,10 @@ export const alchemyApiKeys: AlchemyApiKeys = {
 export const infuraApiKey = import.meta.env
   .VITE_INFURA_MAINNET_PROJECT_ID as string;
 
-export const IPFS_ENDPOINT_TEST =
-  'https://testing-ipfs-0.aragon.network/api/v0';
-export const IPFS_ENDPOINT_MAIN_0 = 'https://ipfs-0.aragon.network/api/v0';
-export const IPFS_ENDPOINT_MAIN_1 = 'https://ipfs-1.aragon.network/api/v0';
+export const walletConnectProjectID = import.meta.env
+  .VITE_WALLET_CONNECT_PROJECT_ID as string;
 
-// using Aragon node for avatar resolving
-export const AVATAR_IPFS_URL = 'https://ipfs.eth.aragon.network/ipfs';
+export const COVALENT_API_KEY = import.meta.env.VITE_COVALENT_API_KEY as string;
 
 // Coingecko Api specific asset platform keys
 export const ASSET_PLATFORMS: Record<SupportedNetworks, string | null> = {

@@ -1,23 +1,24 @@
-import React, {useEffect, useMemo} from 'react';
 import {withTransaction} from '@elastic/apm-rum-react';
-import {useTranslation} from 'react-i18next';
+import React, {useEffect, useMemo} from 'react';
 import {FormProvider, useForm, useFormState, useWatch} from 'react-hook-form';
+import {useTranslation} from 'react-i18next';
 
 import {FullScreenStepper, Step} from 'components/fullScreenStepper';
-import {OverviewDAOHeader, OverviewDAOStep} from 'containers/daoOverview';
-import SelectChain from 'containers/selectChainForm';
-import DefineMetadata from 'containers/defineMetadata';
 import ConfigureCommunity from 'containers/configureCommunity';
+import {OverviewDAOHeader, OverviewDAOStep} from 'containers/daoOverview';
+import DefineMetadata from 'containers/defineMetadata';
+import GoLive, {GoLiveFooter, GoLiveHeader} from 'containers/goLive';
+import SelectChain from 'containers/selectChainForm';
 import SetupCommunity from 'containers/setupCommunity';
-import GoLive, {GoLiveHeader, GoLiveFooter} from 'containers/goLive';
-import {WalletField} from '../components/addWallets/row';
-import {Landing} from 'utils/paths';
 import {CreateDaoProvider} from 'context/createDao';
-import {CHAIN_METADATA, getSupportedNetworkByChainId} from 'utils/constants';
 import {useNetwork} from 'context/network';
 import {useWallet} from 'hooks/useWallet';
 import {trackEvent} from 'services/analytics';
+import {CHAIN_METADATA, getSupportedNetworkByChainId} from 'utils/constants';
 import {htmlIn} from 'utils/htmlIn';
+import {Landing} from 'utils/paths';
+import {WalletField} from '../components/addWallets/row';
+import {InputValue} from '@aragon/ui-components';
 
 export type WalletItem = {
   id: string;
@@ -37,10 +38,12 @@ export type CreateDaoFormData = {
   tokenName: string;
   tokenSymbol: string;
   tokenTotalSupply: number;
+  tokenTotalHolders: number | undefined;
+  tokenType: string | undefined;
   isCustomToken: boolean;
   links: {name: string; url: string}[];
   wallets: WalletField[];
-  tokenAddress: string;
+  tokenAddress: InputValue;
   durationMinutes: string;
   durationHours: string;
   durationDays: string;
@@ -58,9 +61,11 @@ export type CreateDaoFormData = {
 
 const defaultValues = {
   tokenName: '',
-  tokenAddress: '',
+  tokenAddress: {address: '', ensName: ''},
   tokenSymbol: '',
   tokenTotalSupply: 1,
+  tokenTotalHolders: undefined,
+  tokenType: undefined,
   links: [{name: '', url: ''}],
 
   // Uncomment when DAO Treasury minting is supported
@@ -70,10 +75,12 @@ const defaultValues = {
   membership: 'token',
   eligibilityType: 'token' as CreateDaoFormData['eligibilityType'],
   eligibilityTokenAmount: 1,
+  minimumTokenAmount: 1,
   isCustomToken: true,
   durationDays: '1',
   durationHours: '0',
   durationMinutes: '0',
+  minimumParticipation: '15',
 };
 
 const CreateDAO: React.FC = () => {
@@ -89,6 +96,7 @@ const CreateDAO: React.FC = () => {
     multisigWallets,
     isCustomToken,
     tokenTotalSupply,
+    tokenType,
     membership,
     daoName,
     daoEnsName,
@@ -99,6 +107,7 @@ const CreateDAO: React.FC = () => {
       'multisigWallets',
       'isCustomToken',
       'tokenTotalSupply',
+      'tokenType',
       'membership',
       'daoName',
       'daoEnsName',
@@ -189,7 +198,15 @@ const CreateDAO: React.FC = () => {
           ? false
           : true;
       } else {
-        if (!dirtyFields.tokenAddress || errors.tokenAddress) return false;
+        if (
+          !dirtyFields.tokenAddress ||
+          !dirtyFields.tokenName ||
+          errors.tokenAddress ||
+          !tokenType ||
+          tokenType === 'Unknown' ||
+          tokenTotalSupply === 0
+        )
+          return false;
         return true;
       }
     }
@@ -202,13 +219,14 @@ const CreateDAO: React.FC = () => {
     errors.tokenName,
     errors.tokenSymbol,
     errors.tokenAddress,
+    eligibilityType,
     isCustomToken,
     dirtyFields.tokenName,
     dirtyFields.wallets,
     dirtyFields.tokenSymbol,
     dirtyFields.tokenAddress,
     tokenTotalSupply,
-    eligibilityType,
+    tokenType,
   ]);
 
   const daoConfigureCommunity = useMemo(() => {
@@ -303,7 +321,7 @@ const CreateDAO: React.FC = () => {
                 governance_type: formMethods.getValues('membership'),
                 token_name: formMethods.getValues('tokenName'),
                 symbol: formMethods.getValues('tokenSymbol'),
-                token_address: formMethods.getValues('tokenAddress'),
+                token_address: formMethods.getValues('tokenAddress.address'),
                 multisigWallets: formMethods.getValues('multisigWallets'),
               })
             }

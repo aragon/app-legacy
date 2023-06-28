@@ -23,7 +23,7 @@ const NetworkErrorMenu = () => {
   const {isNetworkOpen, close} = useGlobalModalContext();
   const {network} = useNetwork();
   const {switchWalletNetwork} = useSwitchNetwork();
-  const {address, ensName, ensAvatarUrl, provider} = useWallet();
+  const {address, ensName, ensAvatarUrl, connectorName} = useWallet();
   const {isDesktop} = useScreen();
   const {t} = useTranslation();
   const {alert} = useAlertContext();
@@ -74,7 +74,7 @@ const NetworkErrorMenu = () => {
             </Trans>
           </WarningDescription>
         </WarningContainer>
-        {provider?.connection.url === 'metamask' && (
+        {connectorName === 'MetaMask' && (
           <ButtonText
             label={t('alert.wrongNetwork.buttonLabel', {
               network: CHAIN_METADATA[network].name,

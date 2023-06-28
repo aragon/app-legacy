@@ -79,9 +79,9 @@ const TokenMenu: React.FC<TokenMenuProps> = ({
     ) {
       return 1;
     } else {
-      return a.metadata.name
-        .toLowerCase()
-        .localeCompare(b.metadata.name.toLowerCase());
+      const aName = (a.metadata.name || '').toLowerCase();
+      const bName = (b.metadata.name || '').toLowerCase();
+      return aName.localeCompare(bName);
     }
   };
 

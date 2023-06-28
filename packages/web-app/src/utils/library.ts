@@ -2,17 +2,20 @@
 import {ApolloClient} from '@apollo/client';
 import {
   Client,
-  DaoAction,
   DaoDetails,
   Erc20TokenDetails,
-  IMintTokenParams,
+  MintTokenParams,
   MultisigClient,
   MultisigVotingSettings,
   Context as SdkContext,
-  SupportedNetworks as SdkSupportedNetworks,
   TokenVotingClient,
   VotingMode,
 } from '@aragon/sdk-client';
+
+import {
+  DaoAction,
+  SupportedNetwork as SdkSupportedNetworks,
+} from '@aragon/sdk-client-common';
 import {bytesToHex, resolveIpfsCid} from '@aragon/sdk-common';
 import {NavigationDao} from 'context/apolloClient';
 import {BigNumber, BigNumberish, constants, ethers, providers} from 'ethers';
@@ -21,7 +24,6 @@ import {TFunction} from 'react-i18next';
 import {getEtherscanVerifiedContract} from 'services/etherscanAPI';
 import {fetchTokenData} from 'services/prices';
 import {
-  AVATAR_IPFS_URL,
   BIGINT_PATTERN,
   CHAIN_METADATA,
   ISO_DATE_PATTERN,
@@ -210,7 +212,7 @@ export async function decodeMintTokensToAction(
 
     const decoded = data.map(action => {
       // decode action
-      const {amount, address}: IMintTokenParams =
+      const {amount, address}: MintTokenParams =
         client.decoding.mintTokenAction(action);
 
       // update new tokens count
@@ -487,12 +489,15 @@ export function decodeVotingMode(mode: VotingMode): DecodedVotingMode {
  * the function will return a fully resolved URL.
  * @returns the url to the DAO avatar
  */
-export function resolveDaoAvatarIpfsCid(avatar?: string): string | undefined {
+export function resolveDaoAvatarIpfsCid(
+  network: SupportedNetworks,
+  avatar?: string
+): string | undefined {
   if (avatar) {
     if (/^ipfs/.test(avatar)) {
       try {
         const logoCid = resolveIpfsCid(avatar);
-        return `${AVATAR_IPFS_URL}/${logoCid}`;
+        return `${CHAIN_METADATA[network].ipfs}/ipfs/${logoCid}`;
       } catch (err) {
         console.warn('Error resolving DAO avatar IPFS Cid', err);
       }
@@ -600,13 +605,13 @@ export function translateToNetworkishName(
 
   switch (appNetwork) {
     case 'polygon':
-      return 'matic';
+      return SdkSupportedNetworks.POLYGON;
     case 'mumbai':
-      return 'maticmum';
+      return SdkSupportedNetworks.MUMBAI;
     case 'ethereum':
-      return 'homestead';
+      return SdkSupportedNetworks.MAINNET;
     case 'goerli':
-      return 'goerli';
+      return SdkSupportedNetworks.GOERLI;
   }
 
   return 'unsupported';

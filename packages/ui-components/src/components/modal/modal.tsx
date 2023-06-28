@@ -31,6 +31,8 @@ export interface ModalProps {
   onClose?: () => void;
 
   onOpenAutoFocus?: (e: Event) => void;
+
+  onInteractOutside?: () => void;
 }
 
 /**
@@ -43,6 +45,7 @@ export const Modal: React.FC<ModalProps> = ({
   isOpen = true,
   onClose,
   onOpenAutoFocus = e => e.preventDefault(),
+  onInteractOutside = onClose,
   ...props
 }) => {
   return (
@@ -52,7 +55,7 @@ export const Modal: React.FC<ModalProps> = ({
           <Backdrop visible={isOpen} />
           <ModalContainer
             data-testid="modal-content"
-            onInteractOutside={onClose}
+            onInteractOutside={onInteractOutside}
             onEscapeKeyDown={onClose}
             onOpenAutoFocus={onOpenAutoFocus}
             {...props}

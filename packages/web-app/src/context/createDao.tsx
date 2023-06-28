@@ -3,15 +3,17 @@ import {
   CreateDaoParams,
   DaoCreationSteps,
   DaoMetadata,
-  IPluginInstallItem,
-  ITokenVotingPluginInstall,
+  TokenVotingPluginInstall,
   MultisigClient,
   MultisigPluginInstallParams,
   TokenVotingClient,
   VotingMode,
   VotingSettings,
-  SupportedNetworks as sdkSupportedNetworks,
 } from '@aragon/sdk-client';
+import {
+  PluginInstallItem,
+  SupportedNetwork as sdkSupportedNetworks,
+} from '@aragon/sdk-client-common';
 import {parseUnits} from 'ethers/lib/utils';
 import React, {createContext, useCallback, useContext, useState} from 'react';
 import {useFormContext} from 'react-hook-form';
@@ -210,8 +212,8 @@ const CreateDaoProvider: React.FC = ({children}) => {
     ];
   }, [getValues]);
 
-  const getErc20PluginParams =
-    useCallback((): ITokenVotingPluginInstall['newToken'] => {
+  const getNewErc20PluginParams =
+    useCallback((): TokenVotingPluginInstall['newToken'] => {
       const {tokenName, tokenSymbol, wallets} = getValues();
       return {
         name: tokenName,
@@ -225,11 +227,31 @@ const CreateDaoProvider: React.FC = ({children}) => {
       };
     }, [getValues]);
 
+  const getErc20PluginParams =
+    useCallback((): TokenVotingPluginInstall['useToken'] => {
+      const {tokenAddress, tokenName, tokenSymbol} = getValues();
+      return {
+        tokenAddress: tokenAddress.address, // contract address of the token to use as the voting token
+        wrappedToken: {
+          name: tokenName, // the name of your token
+          symbol: tokenSymbol, // the symbol for your token. shouldn't be more than 5 letters
+        },
+      };
+    }, [getValues]);
+
   // Get dao setting configuration for creation process
   const getDaoSettings = useCallback(async (): Promise<CreateDaoParams> => {
-    const {membership, daoName, daoEnsName, daoSummary, daoLogo, links} =
-      getValues();
-    const plugins: IPluginInstallItem[] = [];
+    const {
+      membership,
+      daoName,
+      daoEnsName,
+      daoSummary,
+      daoLogo,
+      tokenType,
+      isCustomToken,
+      links,
+    } = getValues();
+    const plugins: PluginInstallItem[] = [];
     switch (membership) {
       case 'multisig': {
         const [params, network] = getMultisigPluginInstallParams();
@@ -246,7 +268,9 @@ const CreateDaoProvider: React.FC = ({children}) => {
           TokenVotingClient.encoding.getPluginInstallItem(
             {
               votingSettings: votingSettings,
-              newToken: getErc20PluginParams(),
+              ...(tokenType === 'governance-ERC20' && !isCustomToken
+                ? {useToken: getErc20PluginParams()}
+                : {newToken: getNewErc20PluginParams()}),
             },
             network
           );
@@ -291,9 +315,10 @@ const CreateDaoProvider: React.FC = ({children}) => {
     client?.ipfs,
     client?.methods,
     getErc20PluginParams,
+    getMultisigPluginInstallParams,
+    getNewErc20PluginParams,
     getValues,
     getVoteSettings,
-    getMultisigPluginInstallParams,
   ]);
 
   // estimate creation fees

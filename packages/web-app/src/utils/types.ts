@@ -9,7 +9,7 @@ import {
   VoteValues,
   VotingSettings,
 } from '@aragon/sdk-client';
-import {BigNumber} from 'ethers/lib/ethers';
+import {BigNumber} from 'ethers';
 
 import {TimeFilter, TransferTypes} from './constants';
 import {Web3Address} from './library';
@@ -216,6 +216,7 @@ export type ActionsTypes =
   | 'mint_tokens'
   | 'external_contract_modal'
   | 'external_contract_action'
+  | 'wallet_connect_modal'
   | 'modify_token_voting_settings'
   | 'modify_metadata'
   | 'modify_multisig_voting_settings'

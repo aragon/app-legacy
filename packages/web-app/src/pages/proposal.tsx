@@ -1,14 +1,13 @@
 import {useApolloClient} from '@apollo/client';
 import {
-  DaoAction,
   MultisigClient,
   MultisigProposal,
-  ProposalStatus,
   TokenVotingClient,
   TokenVotingProposal,
   VoteValues,
   VotingMode,
 } from '@aragon/sdk-client';
+import {DaoAction, ProposalStatus} from '@aragon/sdk-client-common';
 import {
   Breadcrumb,
   ButtonText,
@@ -273,8 +272,33 @@ const Proposal: React.FC = () => {
             );
           case 'setMetadata':
             return decodeMetadataToAction(action.data, client);
-          default:
-            return decodeSCCToAction(action, network, t);
+          default: {
+            const withdrawAction = decodeWithdrawToAction(
+              action.data,
+              client,
+              apolloClient,
+              provider,
+              network,
+              action.to,
+              action.value
+            );
+
+            const isPossiblyWithdrawAction =
+              !functionParams && action.to && action.value;
+
+            return decodeSCCToAction(action, network, t)
+              .then(result => {
+                if (!result && isPossiblyWithdrawAction) {
+                  return withdrawAction as unknown as Action;
+                }
+                return result;
+              })
+              .catch(() => {
+                if (isPossiblyWithdrawAction) {
+                  return withdrawAction;
+                }
+              });
+          }
         }
       }
     );

@@ -26,6 +26,7 @@ import PageEmptyState from 'containers/pageEmptyState';
 import {htmlIn} from 'utils/htmlIn';
 import useScreen from 'hooks/useScreen';
 import {useGovTokensWrapping} from 'context/govTokensWrapping';
+import {useExistingToken} from 'hooks/useExistingToken';
 
 const MEMBERS_PER_PAGE = 20;
 
@@ -47,6 +48,11 @@ const Community: React.FC = () => {
     daoDetails?.plugins[0].instanceAddress as string,
     daoDetails?.plugins[0].id as PluginTypes,
     debouncedTerm
+  );
+
+  const {isTokenMintable} = useExistingToken(
+    daoToken?.address,
+    daoDetails?.address
   );
 
   const totalMemberCount = members.length;
@@ -85,14 +91,11 @@ const Community: React.FC = () => {
    *************************************************/
   if (detailsAreLoading || membersLoading) return <Loading />;
 
-  /**
-   * @todo->Nikita: Refine the I18N
-   */
   if (!totalMemberCount) {
     return (
       <PageEmptyState
         title={t('community.emptyState.title')}
-        subtitle={htmlIn(t)('community.emptyState.description', {
+        subtitle={htmlIn(t)('community.emptyState.desc', {
           tokenSymbol: daoToken?.symbol,
         })}
         Illustration={
@@ -111,7 +114,7 @@ const Community: React.FC = () => {
             />
           </div>
         }
-        buttonLabel={t('community.emptyState.buttonLabel')}
+        buttonLabel={t('community.emptyState.ctaLabel')}
         onClick={handleOpenModal}
       />
     );
@@ -128,13 +131,21 @@ const Community: React.FC = () => {
               onClick: handlePrimaryClick,
             },
           }
-        : {
+        : isTokenMintable
+        ? {
             description: t('explore.explorer.tokenBased'),
             primaryBtnProps: {
               label: t('labels.mintTokens'),
               iconLeft: <IconAdd />,
               onClick: handlePrimaryClick,
             },
+            secondaryBtnProps: {
+              label: t('labels.seeAllHolders'),
+              iconLeft: <IconLinkExternal />,
+              onClick: handleSecondaryButtonClick,
+            },
+          }
+        : {
             secondaryBtnProps: {
               label: t('labels.seeAllHolders'),
               iconLeft: <IconLinkExternal />,

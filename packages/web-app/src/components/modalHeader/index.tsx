@@ -14,9 +14,9 @@ type Props = {
 // keeping it here so we can progressively build it up as needed
 // Also, because this will be ui-component, it is encouraged for now
 // to use classNames to hide if necessary instead of useScreen and JS
-const Header: React.FC<Props> = props => {
+const ModalHeader: React.FC<Props> = props => {
   return (
-    <ModalHeader>
+    <Header>
       <ButtonWrapper className="w-4 h-4">
         {props.showBackButton && (
           <ButtonIcon
@@ -42,13 +42,13 @@ const Header: React.FC<Props> = props => {
           />
         )}
       </ButtonWrapper>
-    </ModalHeader>
+    </Header>
   );
 };
 
-export default Header;
+export default ModalHeader;
 
-const ModalHeader = styled.div.attrs({
+const Header = styled.div.attrs({
   className:
     'flex items-center rounded-xl space-x-2 desktop:space-x-3 p-2 desktop:p-3 bg-ui-0',
 })`

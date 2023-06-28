@@ -74,6 +74,7 @@ jobs:
           VITE_ALCHEMY_KEY_POLYGON_MAINNET: ${{secrets.VITE_ALCHEMY_KEY_POLYGON_MUMBAI}}
           VITE_ALCHEMY_KEY_MAINNET: ${{secrets.VITE_ALCHEMY_KEY_MAINNET}}
           VITE_ALCHEMY_KEY_GOERLI: ${{secrets.VITE_ALCHEMY_KEY_GOERLI}}
+          VITE_COVALENT_API_KEY: ${{secrets.VITE_COVALENT_API_KEY}}
           NODE_OPTIONS: '--max-old-space-size=6656'
       - name: Activate Fleek
         env:

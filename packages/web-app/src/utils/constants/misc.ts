@@ -6,7 +6,6 @@ import {
   IconType,
   IconSettings,
 } from '@aragon/ui-components';
-import {BigNumber} from 'ethers';
 
 import {i18n} from '../../../i18n.config';
 import {Dashboard, Community, Finance, Governance, Settings} from '../paths';
@@ -99,12 +98,6 @@ export const enum TransferTypes {
   Deposit = 'VaultDeposit',
   Withdraw = 'VaultWithdraw',
 }
-
-// largest decimal that can be represented in 224 bits
-// before adding the 18 decimals
-export const MAX_TOKEN_AMOUNT = BigNumber.from(
-  '26959946667150600000000000000000000000000000000000'
-);
 
 export const MAX_TOKEN_DECIMALS = 18;
 

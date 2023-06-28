@@ -42,7 +42,7 @@ import {
   SmartContract,
   SourcifyContractResponse,
 } from 'utils/types';
-import ModalHeader from './modalHeader';
+import ModalHeader from 'components/modalHeader';
 import {useValidateContract} from 'hooks/useValidateContract';
 import {fetchTokenData} from 'services/prices';
 import {useApolloClient} from '@apollo/client';

@@ -12,4 +12,5 @@ module.exports = {
   // moduleDirectories overrides default jest package lookup behavior
   // using this to include utils folder so jest is aware of where the test-utils file resides
   moduleDirectories: ['node_modules', 'utils', __dirname],
+  setupFiles: ['dotenv/config'],
 };

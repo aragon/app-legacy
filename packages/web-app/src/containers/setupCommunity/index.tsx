@@ -7,14 +7,27 @@ import styled from 'styled-components';
 import CreateNewToken from './createNewToken';
 import {MultisigWallets} from 'components/multisigWallets';
 import {MultisigEligibility} from 'components/multisigEligibility';
+import {FormSection} from 'containers/setupVotingForm';
+import {ToggleCheckList} from 'containers/setupVotingForm/multisig';
+import AddExistingToken from './addExistingToken';
 
 const SetupCommunityForm: React.FC = () => {
   const {t} = useTranslation();
 
   const {control, resetField, setValue} = useFormContext();
-  const membership = useWatch({
-    name: 'membership',
+  const [membership, isCustomToken] = useWatch({
+    name: ['membership', 'isCustomToken'],
   });
+
+  const existingTokenItems = [
+    // Yes mean It's not a custom Token should be false
+    {label: t('labels.yes'), selectValue: false},
+    // No mean It's a custom Token so It should be true
+    {
+      label: t('labels.no'),
+      selectValue: true,
+    },
+  ];
 
   useEffect(() => {
     if (membership === 'token') {
@@ -102,52 +115,27 @@ const SetupCommunityForm: React.FC = () => {
       {/* Membership type */}
       {/* for some reason the default value of the use form is not setting up correctly
       and is initialized to null or '' so the condition cannot be membership === 'token'  */}
-      {/* {membership !== 'wallet' && (
-        <FormItem>
-          <Label label={t('labels.communityToken')} />
-          <Controller
-            name="isCustomToken"
-            defaultValue={null}
-            control={control}
-            render={({field: {onChange, value}}) => (
-              <CheckboxListItem
-                label={t('createDAO.step3.newToken')}
-                helptext={t('createDAO.step3.newTokenSubtitle')}
-                multiSelect={false}
-                onClick={() => {
-                  resetTokenFields();
-                  onChange(true);
-                }}
-                type={value ? 'active' : 'default'}
-              />
-            )}
-          />
-          <Controller
-            control={control}
-            name="isCustomToken"
-            defaultValue={null}
-            render={({field: {onChange, value}}) => (
-              <CheckboxListItem
-                label={t('createDAO.step3.existingToken')}
-                helptext={t('createDAO.step3.existingTokenSubtitle')}
-                type={value === false ? 'active' : 'default'}
-                multiSelect={false}
-                onClick={() => {
-                  onChange(false);
-                  resetTokenFields();
-                }}
-              />
-            )}
-          />
-        </FormItem>
-      )}*/}
-
-      {membership === 'token' && <CreateNewToken />}
-
-      {/* Add existing token */}
-      {/*{isNewToken === false && membership === 'token' && (
-        <ExistingTokenPartialForm />
-      )} */}
+      {membership === 'token' && (
+        <>
+          <FormSection>
+            <Label label={t('createDAO.step3.existingToken.questionLabel')} />
+            <Controller
+              name="isCustomToken"
+              rules={{required: 'Validate'}}
+              control={control}
+              defaultValue={true}
+              render={({field: {value, onChange}}) => (
+                <ToggleCheckList
+                  items={existingTokenItems}
+                  value={value}
+                  onChange={onChange}
+                />
+              )}
+            />
+          </FormSection>
+          {isCustomToken ? <CreateNewToken /> : <AddExistingToken />}
+        </>
+      )}
     </>
   );
 };

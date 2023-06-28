@@ -4,7 +4,6 @@ import React from 'react';
 import {I18nextProvider} from 'react-i18next';
 import {HashRouter as Router} from 'react-router-dom';
 
-import {WalletProvider} from 'context/augmentedWallet';
 import {WalletMenuProvider} from 'context/walletMenu';
 import {i18n} from '../../i18n.config';
 
@@ -52,13 +51,11 @@ export function renderWithClient(ui: React.ReactElement) {
 
 const AllProviders: React.FC = ({children}) => {
   return (
-    <WalletProvider>
-      <WalletMenuProvider>
-        <I18nextProvider i18n={i18n}>
-          <Router>{children}</Router>
-        </I18nextProvider>
-      </WalletMenuProvider>
-    </WalletProvider>
+    <WalletMenuProvider>
+      <I18nextProvider i18n={i18n}>
+        <Router>{children}</Router>
+      </I18nextProvider>
+    </WalletMenuProvider>
   );
 };
 

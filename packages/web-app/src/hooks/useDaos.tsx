@@ -2,12 +2,16 @@ import {
   Client,
   DaoListItem,
   DaoSortBy,
-  IDaoQueryParams,
-  SortDirection,
+  DaoQueryParams,
 } from '@aragon/sdk-client';
+import {SortDirection} from '@aragon/sdk-client-common';
 import {InfiniteData, useInfiniteQuery} from '@tanstack/react-query';
 
-import {CHAIN_METADATA, SupportedChainID} from 'utils/constants';
+import {
+  CHAIN_METADATA,
+  SupportedChainID,
+  getSupportedNetworkByChainId,
+} from 'utils/constants';
 import {resolveDaoAvatarIpfsCid} from 'utils/library';
 import {useClient} from './useClient';
 
@@ -31,7 +35,7 @@ const DEFAULT_QUERY_PARAMS = {
  * @param options query parameters for fetching the DAOs
  * @returns list of DAOs based on given params
  */
-async function fetchDaos(client: Client | undefined, options: IDaoQueryParams) {
+async function fetchDaos(client: Client | undefined, options: DaoQueryParams) {
   return client
     ? client.methods.getDaos(options)
     : Promise.reject(new Error('Client not defined'));
@@ -54,7 +58,7 @@ export const useDaosInfiniteQuery = (
     sortBy = DEFAULT_QUERY_PARAMS.sortBy,
     direction = DEFAULT_QUERY_PARAMS.direction,
     limit = DEFAULT_QUERY_PARAMS.limit,
-  }: Partial<Pick<IDaoQueryParams, 'direction' | 'limit' | 'sortBy'>> = {}
+  }: Partial<Pick<DaoQueryParams, 'direction' | 'limit' | 'sortBy'>> = {}
 ) => {
   const {client, network: clientNetwork} = useClient();
 
@@ -100,17 +104,20 @@ function toAugmentedDaoListItem(
   return {
     pageParams: data.pageParams,
     pages: data.pages.flatMap(page =>
-      page.map(
-        dao =>
-          ({
-            ...dao,
-            metadata: {
-              ...dao.metadata,
-              avatar: resolveDaoAvatarIpfsCid(dao.metadata.avatar),
-            },
-            chain: (dao as AugmentedDaoListItem).chain || chain,
-          } as AugmentedDaoListItem)
-      )
+      page.map(dao => {
+        const chainId = (dao as AugmentedDaoListItem).chain || chain;
+        return {
+          ...dao,
+          metadata: {
+            ...dao.metadata,
+            avatar: resolveDaoAvatarIpfsCid(
+              getSupportedNetworkByChainId(chainId) || 'unsupported',
+              dao.metadata.avatar
+            ),
+          },
+          chain: chainId,
+        } as AugmentedDaoListItem;
+      })
     ),
   };
 }

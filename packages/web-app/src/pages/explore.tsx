@@ -1,7 +1,10 @@
 // TODO: Remove when statistics are available
 /* eslint-disable @typescript-eslint/no-unused-vars */
 
-import {SupportedNetworksArray, SupportedNetworks} from '@aragon/sdk-client';
+import {
+  SupportedNetworksArray,
+  SupportedNetwork,
+} from '@aragon/sdk-client-common';
 import React, {useEffect} from 'react';
 import 'react-responsive-carousel/lib/styles/carousel.min.css';
 import styled from 'styled-components';
@@ -22,7 +25,7 @@ const Explore: React.FC = () => {
     //FIXME: temporarily when network not supported by the SDK, default to ethereum
     const translatedNetwork = translateToNetworkishName(
       network
-    ) as SupportedNetworks;
+    ) as SupportedNetwork;
 
     // when network not supported by the SDK, don't set network
     if (!SupportedNetworksArray.includes(translatedNetwork)) {

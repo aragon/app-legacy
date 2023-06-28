@@ -1,160 +1,150 @@
-import {
-  AlertInline,
-  Label,
-  Link,
-  SearchInput,
-  TextInput,
-} from '@aragon/ui-components';
-import React, {useCallback, useEffect, useMemo} from 'react';
+import {InputValue, Label} from '@aragon/ui-components';
+import {formatUnits} from 'ethers/lib/utils';
+import React, {useCallback, useEffect} from 'react';
 import {Controller, useFormContext, useWatch} from 'react-hook-form';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
+import {SelectEligibility} from 'components/selectEligibility';
 
-import {useSpecificProvider} from 'context/providers';
-import {formatUnits} from 'utils/library';
-import {getTokenInfo} from 'utils/tokens';
-import {validateTokenAddress} from 'utils/validators';
+import VerificationCard from 'components/verificationCard';
+import {WrappedWalletInput} from 'components/wrappedWalletInput';
 import {useNetwork} from 'context/network';
-import {CHAIN_METADATA, getSupportedNetworkByChainId} from 'utils/constants';
-
-const DEFAULT_BLOCK_EXPLORER = 'https://etherscan.io/';
+import {useSpecificProvider} from 'context/providers';
+import {CHAIN_METADATA} from 'utils/constants';
+import {htmlIn} from 'utils/htmlIn';
+import {Web3Address} from 'utils/library';
+import {getTokenInfo} from 'utils/tokens';
+import {validateGovernanceTokenAddress} from 'utils/validators';
 
 const AddExistingToken: React.FC = () => {
   const {t} = useTranslation();
-  const {control, setValue, trigger} = useFormContext();
+  const {network} = useNetwork();
+  const {control, trigger, clearErrors, setValue, resetField} =
+    useFormContext();
 
-  const [tokenAddress, blockchain, tokenName, tokenSymbol, tokenTotalSupply] =
-    useWatch({
-      name: [
-        'tokenAddress',
-        'blockchain',
-        'tokenName',
-        'tokenSymbol',
-        'tokenTotalSupply',
-      ],
-    });
+  const [tokenAddress, blockchain, tokenType] = useWatch({
+    name: ['tokenAddress', 'blockchain', 'tokenType'],
+  });
 
   const provider = useSpecificProvider(blockchain.id);
-  const explorer = useMemo(() => {
-    if (blockchain.id) {
-      const defaultNetwork =
-        getSupportedNetworkByChainId(blockchain.id) || 'ethereum';
-      const explorerUrl = CHAIN_METADATA[defaultNetwork].explorer;
-      return explorerUrl || DEFAULT_BLOCK_EXPLORER;
-    }
-
-    return DEFAULT_BLOCK_EXPLORER;
-  }, [blockchain.id]);
-
-  const {network} = useNetwork();
   const nativeCurrency = CHAIN_METADATA[network].nativeCurrency;
+  const tokenAddressBlockExplorerURL =
+    CHAIN_METADATA[network].explorer + 'token/';
 
   // Trigger address validation on network change
   useEffect(() => {
-    if (blockchain.id && tokenAddress !== '') {
+    if (blockchain.id && tokenAddress.address !== '') {
       trigger('tokenAddress');
     }
-  }, [blockchain.id, tokenAddress, trigger, nativeCurrency]);
+  }, [blockchain.id, trigger, nativeCurrency, tokenAddress]);
 
   /*************************************************
    *            Functions and Callbacks            *
    *************************************************/
   const addressValidator = useCallback(
-    async contractAddress => {
-      const isValid = await validateTokenAddress(contractAddress, provider);
+    async (value: InputValue) => {
+      clearErrors('tokenAddress');
+      resetField('tokenType');
+      resetField('tokenName');
+      resetField('tokenTotalSupply');
 
-      if (isValid) {
-        try {
-          const res = await getTokenInfo(
-            contractAddress,
+      const tokenContract = new Web3Address(
+        provider,
+        value.address,
+        value.ensName
+      );
+
+      const {verificationResult, type} = await validateGovernanceTokenAddress(
+        tokenContract.address as string,
+        provider
+      );
+
+      if (verificationResult === true) {
+        if (type !== 'Unknown') {
+          const {totalSupply, decimals, symbol, name} = await getTokenInfo(
+            tokenContract.address as string,
             provider,
-            nativeCurrency
+            CHAIN_METADATA[network].nativeCurrency
           );
 
-          setValue('tokenName', res.name);
-          setValue('tokenSymbol', res.symbol);
+          setValue('tokenName', name, {shouldDirty: true});
+          setValue('tokenSymbol', symbol, {shouldDirty: true});
           setValue(
             'tokenTotalSupply',
-            formatUnits(res.totalSupply, res.decimals)
+            Number(formatUnits(totalSupply, decimals)),
+            {shouldDirty: true}
           );
-        } catch (error) {
-          console.error('Error fetching token information', error);
         }
+        setValue('tokenType', type);
       }
 
-      return isValid;
+      return verificationResult;
     },
-    [provider, setValue, nativeCurrency]
+    [clearErrors, network, provider, resetField, setValue]
   );
+
+  const isAllowedToConfigureVotingEligibility =
+    tokenType === 'ERC-20' || tokenType === 'governance-ERC20';
 
   return (
     <>
       <DescriptionContainer>
-        <Title>{t('labels.addExistingToken')}</Title>
-        <Subtitle>
-          {t('createDAO.step3.addExistingTokenHelptext')}
-          <Link label={t('createDAO.step3.tokenHelptextLink')} href="" />.
-        </Subtitle>
+        <Title>{t('createDAO.step3.existingToken.title')}</Title>
+        <Subtitle
+          dangerouslySetInnerHTML={{
+            __html: htmlIn(t)('createDAO.step3.existingToken.description'),
+          }}
+        />
       </DescriptionContainer>
       <FormItem>
         <DescriptionContainer>
-          <Label label={t('labels.address')} />
+          <Label label={t('createDAO.step3.existingToken.inputLabel')} />
           <p>
-            <span>{t('createDAO.step3.tokenContractSubtitlePart1')}</span>
-            <Link label="block explorer" href={explorer} />
-            {'. '}
-            <span>{t('createDAO.step3.tokenContractSubtitlePart2')}</span>
+            <span>{t('createDAO.step3.existingToken.inputDescription')}</span>
           </p>
         </DescriptionContainer>
         <Controller
           name="tokenAddress"
           control={control}
-          defaultValue=""
+          defaultValue={{address: '', ensName: ''}}
           rules={{
             required: t('errors.required.tokenAddress'),
             validate: addressValidator,
           }}
           render={({
             field: {name, value, onBlur, onChange},
-            fieldState: {error, isDirty, invalid},
+            fieldState: {error, isDirty},
           }) => (
             <>
-              <SearchInput
-                {...{name, value, onBlur, onChange}}
-                placeholder="0x..."
+              <WrappedWalletInput
+                name={name}
+                state={error && 'critical'}
+                value={value}
+                onBlur={onBlur}
+                placeholder={'0x…'}
+                onChange={onChange}
+                error={error?.message}
+                blockExplorerURL={tokenAddressBlockExplorerURL}
+                showResolvedLabels={false}
               />
-              {error?.message && (
-                <AlertInline label={error.message} mode="critical" />
-              )}
-              {!invalid && isDirty && tokenSymbol && (
-                <AlertInline label={t('success.contract')} mode="success" />
+              {!error?.message && isDirty && value.address && (
+                <VerificationCard tokenAddress={value.address} />
               )}
             </>
           )}
         />
-        {tokenName && tokenAddress && (
-          <TokenInfoContainer>
-            <InfoContainer>
-              <Label label={t('labels.tokenName')} />
-              <TextInput disabled value={tokenName || ''} />
-            </InfoContainer>
-            <InfoContainer>
-              <Label label={t('labels.tokenSymbol')} />
-              <TextInput disabled value={tokenSymbol || ''} />
-            </InfoContainer>
-            <InfoContainer>
-              <Label label={t('labels.supply')} />
-              <TextInput
-                disabled
-                defaultValue=""
-                value={new Intl.NumberFormat('en-US', {
-                  maximumFractionDigits: 4,
-                }).format(tokenTotalSupply)}
-              />
-            </InfoContainer>
-          </TokenInfoContainer>
-        )}
       </FormItem>
+      {isAllowedToConfigureVotingEligibility && (
+        <FormItem>
+          <DescriptionContainer>
+            <Label
+              label={t('labels.proposalCreation')}
+              helpText={t('createDAO.step3.proposalCreationHelpertext')}
+            />
+          </DescriptionContainer>
+          <SelectEligibility />
+        </FormItem>
+      )}
     </>
   );
 };
@@ -172,12 +162,3 @@ const DescriptionContainer = styled.div.attrs({
 const Title = styled.p.attrs({className: 'text-lg font-bold text-ui-800'})``;
 
 const Subtitle = styled.p.attrs({className: 'text-ui-600 text-bold'})``;
-
-const TokenInfoContainer = styled.div.attrs({
-  className:
-    'flex flex-col tablet:flex-row tablet:gap-x-2 gap-y-2 tablet:justify-between tablet:items-center p-2 bg-ui-0 rounded-xl',
-})``;
-
-const InfoContainer = styled.div.attrs({
-  className: 'space-y-1',
-})``;

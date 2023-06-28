@@ -3,7 +3,9 @@ import {useFormContext} from 'react-hook-form';
 
 import {MultisigVotingSettings} from '@aragon/sdk-client';
 import {TemporarySection} from 'components/temporary';
+import SCC from 'containers/smartContractComposer';
 import TokenMenu from 'containers/tokenMenu';
+import WalletConnect from 'containers/walletConnect';
 import {useActionsContext} from 'context/actions';
 import {useNetwork} from 'context/network';
 import {useDaoBalances} from 'hooks/useDaoBalances';
@@ -22,10 +24,9 @@ import {
 import AddAddresses from './addAddresses';
 import MintTokens from './mintTokens';
 import RemoveAddresses from './removeAddresses';
+import SCCAction from './scc';
 import UpdateMinimumApproval from './updateMinimumApproval';
 import WithdrawAction from './withdraw/withdrawAction';
-import SCC from 'containers/smartContractComposer';
-import SCCAction from './scc';
 
 /**
  * This Component is responsible for generating all actions that append to pipeline context (actions)
@@ -95,6 +96,8 @@ const Action: React.FC<ActionsComponentProps> = ({
           currentMinimumApproval={multisigDAOSettings?.minApprovals}
         />
       );
+    case 'wallet_connect_modal':
+      return <WalletConnect actionIndex={actionIndex} />;
     default:
       throw Error('Action not found');
   }

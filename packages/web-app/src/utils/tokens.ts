@@ -6,7 +6,13 @@ import {constants, ethers, providers as EthersProviders} from 'ethers';
 import {formatUnits} from 'utils/library';
 import {NativeTokenData, TimeFilter, TOKEN_AMOUNT_REGEX} from './constants';
 import {add} from 'date-fns';
-import {TokenType, Transfer, TransferType} from '@aragon/sdk-client';
+import {Transfer, TransferType} from '@aragon/sdk-client';
+import {TokenType} from '@aragon/sdk-client-common';
+import {ownableABI} from 'abis/ownableABI';
+import {votesUpgradeableABI} from 'abis/governanceWrappedERC20TokenABI';
+import {erc1155TokenABI} from 'abis/erc1155TokenABI';
+import {erc721TokenABI} from 'abis/erc721TokenABI';
+import {aragonTokenABI} from 'abis/aragonTokenABI';
 
 /**
  * This method sorts a list of array information. It is applicable to any field
@@ -67,6 +73,42 @@ export function filterTokens(tokens: TokenWithMetadata[], searchTerm: string) {
 }
 
 /**
+ * Gets the owner of a contract or null if the contract is not ownable
+ * @param address Address of the contract
+ * @param provider Ethers provider to use
+ * @returns address of the owner or null if the contract is not ownable
+ */
+export async function getOwner(
+  address: string,
+  provider: EthersProviders.Provider
+) {
+  const contract = new ethers.Contract(address, ownableABI, provider);
+  try {
+    return (await contract.owner()) as string;
+  } catch (err) {
+    return null;
+  }
+}
+
+/**
+ * Get the aragon dao token Owner
+ * @param address Address of the contract
+ * @param provider Ethers provider to use
+ * @returns address of the owner or null if the contract is not ownable
+ */
+export async function getDaoTokenOwner(
+  address: string,
+  provider: EthersProviders.Provider
+) {
+  const contract = new ethers.Contract(address, aragonTokenABI, provider);
+  try {
+    return (await contract.dao()) as string;
+  } catch (err) {
+    return null;
+  }
+}
+
+/**
  * This Validation function prevents sending broken
  * addresses that may cause subgraph crash
  *
@@ -87,6 +129,80 @@ export async function isERC20Token(
     return false;
   }
 }
+
+/**
+ * This Validation function checks if the existing token contract
+ * is compatible or not
+ *
+ * @param address contract Address
+ * @param provider Eth provider
+ * @returns boolean determines whether it is compatible or not
+ */
+
+export async function isERC20Governance(
+  address: string,
+  provider: EthersProviders.Provider
+) {
+  const contract = new ethers.Contract(address, votesUpgradeableABI, provider);
+  try {
+    await Promise.all([
+      contract.delegates(address),
+      contract.getVotes(address),
+    ]);
+    return true;
+  } catch (err) {
+    return false;
+  }
+}
+
+/**
+ * This Validation function checks if the existing token contract
+ * is ERC721 or not
+ *
+ * @param address contract Address
+ * @param provider Eth provider
+ * @returns boolean determines whether it is compatible or not
+ */
+
+export async function isERC721(
+  address: string,
+  provider: EthersProviders.Provider
+) {
+  const contract = new ethers.Contract(address, erc721TokenABI, provider);
+  try {
+    await Promise.all([contract.balanceOf(address), contract.ownerOf(0)]);
+    return true;
+  } catch (err) {
+    return false;
+  }
+}
+
+/**
+ * This Validation function checks if the existing token contract
+ * is ERC1155 or not
+ *
+ * @param address contract Address
+ * @param provider Eth provider
+ * @returns boolean determines whether it is compatible or not
+ */
+
+export async function isERC1155(
+  address: string,
+  provider: EthersProviders.Provider
+) {
+  const contract = new ethers.Contract(address, erc1155TokenABI, provider);
+  try {
+    await Promise.all([
+      contract.balanceOf(address),
+      contract.balanceOfBatch([address], [0]),
+      contract.balanceOf(address, address),
+    ]);
+    return true;
+  } catch (err) {
+    return false;
+  }
+}
+
 /**
  * This Function is necessary because
  * you can't fetch decimals from the api
@@ -304,4 +420,8 @@ export function timeFilterToMinutes(tf: TimeFilter) {
       return (now.getTime() - oneYearAgo.getTime()) / 1000 / 60;
     }
   }
+}
+
+export function gTokenSymbol(tokenSymbol: string): string {
+  return `g${tokenSymbol}`;
 }

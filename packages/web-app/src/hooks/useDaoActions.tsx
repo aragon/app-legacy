@@ -2,10 +2,43 @@ import {useTranslation} from 'react-i18next';
 
 import {ActionParameter, HookData} from 'utils/types';
 import {useDaoQuery} from './useDaoDetails';
+import {getDaoTokenOwner} from 'utils/tokens';
+import {useDaoToken} from './useDaoToken';
+import {useProviders} from 'context/providers';
+import {useEffect, useState} from 'react';
 
 export function useDaoActions(dao: string): HookData<ActionParameter[]> {
   const {data: daoDetails, error, isLoading} = useDaoQuery(dao);
   const multisig = daoDetails?.plugins[0].id === 'multisig.plugin.dao.eth';
+  const [showMintOption, setShowMintOption] = useState(false);
+
+  const {infura: provider} = useProviders();
+
+  const {data: daoToken} = useDaoToken(
+    daoDetails?.plugins[0].instanceAddress || ''
+  );
+
+  useEffect(() => {
+    async function fetch() {
+      const daoTokenView = await getDaoTokenOwner(
+        daoToken?.address || '',
+        provider
+      );
+
+      setShowMintOption(
+        daoTokenView?.toLocaleLowerCase() === daoDetails?.address
+      );
+    }
+
+    fetch();
+  }, [
+    dao,
+    daoDetails,
+    daoDetails?.address,
+    daoToken?.address,
+    provider,
+    showMintOption,
+  ]);
 
   const {t} = useTranslation();
 
@@ -17,6 +50,12 @@ export function useDaoActions(dao: string): HookData<ActionParameter[]> {
       isReuseable: true,
     },
     {
+      type: 'wallet_connect_modal',
+      title: t('AddActionModal.connectdAppsTitle'),
+      subtitle: t('AddActionModal.connectdAppsSubtitle'),
+      isReuseable: true,
+    },
+    {
       type: 'external_contract_modal',
       title: t('AddActionModal.externalContract'),
       subtitle: t('AddActionModal.externalContractSubtitle'),
@@ -24,7 +63,7 @@ export function useDaoActions(dao: string): HookData<ActionParameter[]> {
     },
   ];
 
-  const multisigActions = baseActions.concat([
+  const multisigActions = [
     {
       type: 'add_address',
       title: t('AddActionModal.addAddresses'),
@@ -35,15 +74,17 @@ export function useDaoActions(dao: string): HookData<ActionParameter[]> {
       title: t('AddActionModal.removeAddresses'),
       subtitle: t('AddActionModal.removeAddressesSubtitle'),
     },
-  ]);
+  ].concat(baseActions) as ActionParameter[];
 
-  const tokenVotingActions = baseActions.concat([
-    {
-      type: 'mint_tokens',
-      title: t('AddActionModal.mintTokens'),
-      subtitle: t('AddActionModal.mintTokensSubtitle'),
-    },
-  ]);
+  const tokenVotingActions = showMintOption
+    ? ([
+        {
+          type: 'mint_tokens',
+          title: t('AddActionModal.mintTokens'),
+          subtitle: t('AddActionModal.mintTokensSubtitle'),
+        },
+      ].concat(baseActions) as ActionParameter[])
+    : baseActions;
 
   return {
     data: multisig ? multisigActions : tokenVotingActions,

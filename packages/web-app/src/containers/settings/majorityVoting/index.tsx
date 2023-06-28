@@ -15,6 +15,7 @@ import {getDHMFromSeconds} from 'utils/date';
 import {formatUnits} from 'utils/library';
 import {Community} from 'utils/paths';
 import {IPluginSettings} from 'pages/settings';
+import {useExistingToken} from 'hooks/useExistingToken';
 
 const MajorityVotingSettings: React.FC<IPluginSettings> = ({daoDetails}) => {
   const {t} = useTranslation();
@@ -34,6 +35,12 @@ const MajorityVotingSettings: React.FC<IPluginSettings> = ({daoDetails}) => {
   const {data: daoToken} = useDaoToken(
     daoDetails?.plugins?.[0]?.instanceAddress || ''
   );
+
+  const {isTokenMintable} = useExistingToken(
+    daoToken?.address,
+    daoDetails?.address
+  );
+
   const {data: tokenSupply} = useTokenSupply(daoToken?.address || '');
 
   const daoSettings = votingSettings as VotingSettings;
@@ -78,7 +85,7 @@ const MajorityVotingSettings: React.FC<IPluginSettings> = ({daoDetails}) => {
               <p>
                 {tokenSupply?.formatted} {daoToken?.symbol}
               </p>
-              <Tag label={t('labels.mintable')} />
+              {isTokenMintable && <Tag label={t('labels.mintable')} />}
             </div>
           </Dd>
         </Dl>

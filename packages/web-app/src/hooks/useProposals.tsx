@@ -2,10 +2,9 @@ import {useReactiveVar} from '@apollo/client';
 import {
   MultisigProposal,
   ProposalSortBy,
-  ProposalStatus,
-  SortDirection,
   TokenVotingProposal,
 } from '@aragon/sdk-client';
+import {ProposalStatus, SortDirection} from '@aragon/sdk-client-common';
 import {useCallback, useEffect, useState} from 'react';
 
 import {
