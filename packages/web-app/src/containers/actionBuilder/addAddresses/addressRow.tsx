@@ -99,7 +99,7 @@ export const AddressRow = ({
       // check if there is dublicated address in the form
       if (memberWallets) {
         memberWallets.forEach((wallet: WalletItem, walletIndex: number) => {
-          if (address === wallet.address && index !== walletIndex) {
+          if (address === wallet.web3Address && index !== walletIndex) {
             validationResult = t('errors.duplicateAddress');
           }
         });

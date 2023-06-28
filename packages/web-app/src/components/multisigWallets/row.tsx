@@ -1,20 +1,22 @@
 import {
-  AlertInline,
   ButtonIcon,
   Dropdown,
   IconMenuVertical,
+  InputValue,
   ListItemAction,
-  ValueInput,
 } from '@aragon/ui-components';
-import {useAlertContext} from 'context/alert';
-import useScreen from 'hooks/useScreen';
-import {WalletItem} from 'pages/createDAO';
-import React, {useCallback} from 'react';
+import React from 'react';
 import {Controller, useFormContext, useWatch} from 'react-hook-form';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
-import {handleClipboardActions} from 'utils/library';
-import {validateAddress} from 'utils/validators';
+
+import {WrappedWalletInput} from 'components/wrappedWalletInput';
+import {useAlertContext} from 'context/alert';
+import {useProviders} from 'context/providers';
+import useScreen from 'hooks/useScreen';
+import {WalletItem} from 'pages/createDAO';
+import {Web3Address} from 'utils/library';
+import {validateWeb3Address} from 'utils/validators';
 
 type MultisigWalletsRowProps = {
   index: number;
@@ -25,62 +27,63 @@ type MultisigWalletsRowProps = {
 export const Row = ({index, ...props}: MultisigWalletsRowProps) => {
   const {t} = useTranslation();
   const {alert} = useAlertContext();
+  const {isMobile} = useScreen();
+  const {infura: provider} = useProviders();
 
-  const {control} = useFormContext();
+  const {control, trigger} = useFormContext();
   const multisigWallets = useWatch({name: 'multisigWallets', control});
 
-  const addressValidator = (address: string, index: number) => {
-    let validationResult = validateAddress(address);
+  const addressValidator = async (value: InputValue, index: number) => {
+    const wallet = new Web3Address(provider, value?.address, value?.ensName);
+
+    let validationResult = await validateWeb3Address(
+      wallet,
+      t('errors.required.walletAddress'),
+      t
+    );
+
     if (multisigWallets) {
-      multisigWallets.forEach((wallet: WalletItem, walletIndex: number) => {
-        if (address === wallet.address && index !== walletIndex) {
-          validationResult = t('errors.duplicateAddress');
+      multisigWallets.forEach(
+        ({web3Address: {address, ensName}}: WalletItem, itemIndex: number) => {
+          if (
+            (address === wallet.address || ensName === wallet.ensName) &&
+            itemIndex !== index
+          ) {
+            validationResult = t('errors.duplicateAddress');
+          }
         }
-      });
+      );
     }
     return validationResult;
   };
-
-  const {isMobile} = useScreen();
-
-  const handleAdornmentClick = useCallback(
-    (value: string, onChange: (value: string) => void) => {
-      // when there is a value clear it
-      if (value) {
-        onChange('');
-        alert(t('alert.chip.inputCleared'));
-      } else handleClipboardActions(value, onChange, alert);
-    },
-    [alert, t]
-  );
 
   return (
     <RowContainer>
       {isMobile && <Title>{t('labels.whitelistWallets.address')}</Title>}
       <Controller
-        name={`multisigWallets.${index}.address`}
-        defaultValue=""
+        name={`multisigWallets.${index}.web3Address`}
+        defaultValue={{address: '', ensName: ''}}
         control={control}
-        rules={{
-          required: t('errors.required.walletAddress'),
-          validate: value => addressValidator(value, index),
-        }}
-        render={({field: {onChange, value}, fieldState: {error}}) => (
+        rules={{validate: value => addressValidator(value, index)}}
+        render={({
+          field: {onChange, value, onBlur, ref},
+          fieldState: {error},
+        }) => (
           <Container>
             <InputContainer>
-              <ValueInput
+              <WrappedWalletInput
+                state={error && 'critical'}
                 value={value}
-                onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                  onChange(e.target.value);
+                onBlur={onBlur}
+                onChange={onChange}
+                error={error?.message}
+                showResolvedLabels={false}
+                ref={ref}
+                onClearButtonClick={() => {
+                  alert(t('alert.chip.inputCleared'));
+                  setTimeout(() => trigger('multisigWallets'), 50);
                 }}
-                mode="default"
-                placeholder="0x..."
-                adornmentText={value ? t('labels.clear') : t('labels.paste')}
-                onAdornmentClick={() => handleAdornmentClick(value, onChange)}
               />
-              {error?.message && (
-                <AlertInline label={error.message} mode="critical" />
-              )}
             </InputContainer>
             <Dropdown
               side="bottom"

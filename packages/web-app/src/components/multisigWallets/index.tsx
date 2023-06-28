@@ -7,21 +7,25 @@ import {
   Label,
   ListItemAction,
 } from '@aragon/ui-components';
-import {useAlertContext} from 'context/alert';
-import useScreen from 'hooks/useScreen';
-import {useWallet} from 'hooks/useWallet';
 import React, {useEffect} from 'react';
 import {useFieldArray, useFormContext, useWatch} from 'react-hook-form';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
+
+import {useAlertContext} from 'context/alert';
+import {useProviders} from 'context/providers';
+import useScreen from 'hooks/useScreen';
+import {useWallet} from 'hooks/useWallet';
+import {Web3Address} from 'utils/library';
 import {Row} from './row';
 
 export const MultisigWallets = () => {
   const {t} = useTranslation();
   const {address} = useWallet();
   const {alert} = useAlertContext();
+  const {infura: provider} = useProviders();
 
-  const {control, trigger} = useFormContext();
+  const {control, trigger, setFocus} = useFormContext();
   const multisigWallets = useWatch({name: 'multisigWallets', control});
   const {fields, update, replace, append, remove} = useFieldArray({
     control,
@@ -36,17 +40,35 @@ export const MultisigWallets = () => {
   });
 
   useEffect(() => {
-    if (address && !multisigWallets) {
-      append({address});
+    async function appendConnectedWallet() {
+      if (address && !multisigWallets) {
+        try {
+          const addressToAppend = await Web3Address.create(provider, {address});
+
+          append({
+            web3Address: {
+              address: addressToAppend.address,
+              ensName: addressToAppend.ensName,
+            },
+          });
+          setFocus('multisigWallets');
+        } catch (error) {
+          console.error(error);
+        }
+      }
     }
-  }, [address, append, multisigWallets]);
+
+    appendConnectedWallet();
+  }, [address, append, multisigWallets, provider]);
 
   // add empty wallet
   const handleAdd = () => {
-    append({address: ''});
+    append({web3Address: {address: '', ensName: ''}});
     alert(t('alert.chip.addressAdded'));
+    const id = `multisigWallets.${controlledWallets.length}.web3Address`;
     setTimeout(() => {
-      trigger(`multisigWallets.${controlledWallets.length}.address`);
+      setFocus(id);
+      trigger(id);
     }, 50);
   };
 
@@ -54,18 +76,18 @@ export const MultisigWallets = () => {
   const handleDeleteEntry = (index: number) => {
     remove(index);
     alert(t('alert.chip.removedAddress'));
-    trigger('multisigWallets');
+    setTimeout(() => trigger('multisigWallets'), 50);
   };
 
   // remove all wallets
   const handleDeleteAll = () => {
     alert(t('alert.chip.removedAllAddresses'));
-    replace([{address: address}]);
+    replace([{web3Address: {address: '', ensName: ''}}]);
   };
 
   // reset wallet
   const handleResetEntry = (index: number) => {
-    update(index, {address: ''});
+    update(index, {web3Address: {address: '', ensName: ''}});
     alert(t('alert.chip.resetAddress'));
     trigger('multisigWallets');
   };
@@ -75,7 +97,7 @@ export const MultisigWallets = () => {
     controlledWallets.forEach((_, index) => {
       // skip the first one because is the own address
       if (index > 0) {
-        update(index, {address: ''});
+        update(index, {web3Address: {address: '', ensName: ''}});
       }
     });
     alert(t('alert.chip.resetAllAddresses'));
@@ -86,6 +108,7 @@ export const MultisigWallets = () => {
 
   return (
     <Container>
+      <pre>{JSON.stringify(controlledWallets, null, 2)}</pre>
       <DescriptionContainer>
         <Label
           label={t('createDAO.step3.multisigMembers')}
