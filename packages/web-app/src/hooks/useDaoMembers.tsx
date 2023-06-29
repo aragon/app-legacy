@@ -79,16 +79,17 @@ export const useDaoMembers = (
     async function fetchMembers() {
       try {
         if (!pluginType) {
-          setData([] as BalanceMember[] | MultisigMember[]);
+          setData([]);
           return;
         }
+
         if (pluginType === 'multisig.plugin.dao.eth' || network === 'goerli') {
           setIsLoading(true);
 
           const response = await client?.methods.getMembers(pluginAddress);
 
           if (!response) {
-            setData([] as BalanceMember[] | MultisigMember[]);
+            setData([]);
             return;
           }
 
@@ -143,25 +144,18 @@ export const useDaoMembers = (
   // when raw members present, but no token details yet
   useEffect(() => {
     async function mapMembers() {
-      if (!rawMembers) return;
+      if (!rawMembers || !daoToken?.address) return;
 
       let members;
 
       //TODO: A general type guard should be added later
-      if (isTokenBased && daoToken?.address) {
+      if (isTokenBased) {
         const balances = await Promise.all(
           rawMembers.map(m => {
             if ((m as TokenVotingMember)?.address)
               return fetchBalance(
-                daoToken?.address,
-                (m as TokenVotingMember)?.address,
-                provider,
-                CHAIN_METADATA[network].nativeCurrency
-              );
-            else
-              return fetchBalance(
-                daoToken?.address,
-                m as string,
+                daoToken.address,
+                (m as TokenVotingMember).address,
                 provider,
                 CHAIN_METADATA[network].nativeCurrency
               );
@@ -171,7 +165,7 @@ export const useDaoMembers = (
         members = rawMembers.map(
           (m, index) =>
             ({
-              address: m,
+              address: (m as TokenVotingMember).address,
               balance: Number(balances[index]),
             } as BalanceMember)
         );
