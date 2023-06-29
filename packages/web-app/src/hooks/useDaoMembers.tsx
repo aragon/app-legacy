@@ -144,12 +144,12 @@ export const useDaoMembers = (
   // when raw members present, but no token details yet
   useEffect(() => {
     async function mapMembers() {
-      if (!rawMembers || !daoToken?.address) return;
+      if (!rawMembers || (isTokenBased && !daoToken?.address)) return;
 
       let members;
 
       //TODO: A general type guard should be added later
-      if (isTokenBased) {
+      if (isTokenBased && daoToken?.address) {
         const balances = await Promise.all(
           rawMembers.map(m => {
             if ((m as TokenVotingMember)?.address)
