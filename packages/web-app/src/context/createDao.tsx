@@ -215,8 +215,6 @@ const CreateDaoProvider: React.FC = ({children}) => {
   const getNewErc20PluginParams =
     useCallback((): TokenVotingPluginInstall['newToken'] => {
       const {tokenName, tokenSymbol, wallets} = getValues();
-      console.log(tokenName, wallets);
-
       return {
         name: tokenName,
         symbol: tokenSymbol,
@@ -231,13 +229,24 @@ const CreateDaoProvider: React.FC = ({children}) => {
 
   const getErc20PluginParams =
     useCallback((): TokenVotingPluginInstall['useToken'] => {
-      const {tokenAddress, tokenName, tokenSymbol} = getValues();
+      const {tokenAddress, tokenName, tokenSymbol, tokenType} = getValues();
+
+      let name, symbol;
+
+      if (tokenType === 'ERC-20') {
+        name = `Governance ${tokenName}`;
+        symbol = `g${tokenSymbol}`;
+      } else {
+        // considering this is called only when token type is
+        // erc20 or governance erc20 we can assume here to be
+        // type governance erc20
+        name = tokenName;
+        symbol = tokenSymbol;
+      }
+
       return {
         tokenAddress: tokenAddress.address, // contract address of underlying token
-        wrappedToken: {
-          name: 'g' + tokenName, // the name of the wrapped token (gToken)
-          symbol: 'g' + tokenSymbol, // the symbol of the wrapped token (gTokenSymbol)
-        },
+        wrappedToken: {name, symbol},
       };
     }, [getValues]);
 
