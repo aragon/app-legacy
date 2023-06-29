@@ -57,9 +57,8 @@ export const MinParticipation: FC = () => {
     tokenTotalSupply,
   ]);
 
-  const minParticipationTokensAmount = Math.ceil(
-    govTokenTotalSupply * (Number(minimumParticipationPercentage) / 100)
-  );
+  const minParticipationTokensAmount =
+    govTokenTotalSupply * (Number(minimumParticipationPercentage) / 100);
 
   const percentageInputValidator = (value: string | number) => {
     return Number(value) <= 100 && Number(value) >= 0
@@ -104,7 +103,7 @@ export const MinParticipation: FC = () => {
                   <LinearProgressContainer>
                     <LinearProgress
                       max={govTokenTotalSupply}
-                      value={Math.ceil(govTokenTotalSupply * (value / 100))}
+                      value={govTokenTotalSupply * (value / 100)}
                     />
 
                     <ProgressInfo2>
@@ -121,12 +120,17 @@ export const MinParticipation: FC = () => {
                         {minParticipationTokensAmount < govTokenTotalSupply
                           ? '≥'
                           : ''}
-                        {numeral(minParticipationTokensAmount).format('0.[0]a')}
+
+                        {numeral(minParticipationTokensAmount).format(
+                          govTokenTotalSupply < 100 ? '0.[000]' : '0.[0]a'
+                        )}
                       </p>
 
                       <p className="flex-shrink-0 text-ui-600">
                         {t('createDAO.step4.alerts.minimumApprovalAlert', {
-                          amount: numeral(govTokenTotalSupply).format('0.[0]a'),
+                          amount: numeral(govTokenTotalSupply).format(
+                            govTokenTotalSupply < 100 ? '0.[000]' : '0.[0]a'
+                          ),
                           tokenSymbol: govTokenSymbol,
                         })}
                       </p>
@@ -196,7 +200,9 @@ export const MinParticipation: FC = () => {
                         />
 
                         <StatItemValue>
-                          {numeral(tokenTotalSupply).format('0,0')}{' '}
+                          {numeral(tokenTotalSupply).format(
+                            tokenTotalSupply < 100 ? '0,0.[000]' : '0,0'
+                          )}{' '}
                           {t('createDAO.step4.wrappedReferenceValueLabel', {
                             tokenSymbol,
                           })}
@@ -219,7 +225,9 @@ export const MinParticipation: FC = () => {
                         />
 
                         <StatItemValue>
-                          {numeral(govTokenTotalSupply).format('0,0')}{' '}
+                          {numeral(govTokenTotalSupply).format(
+                            govTokenTotalSupply < 100 ? '0,0.[000]' : '0,0'
+                          )}{' '}
                           {t(
                             'createDAO.step4.wrappedReferenceParticipationValueLabel',
                             {
@@ -246,7 +254,11 @@ export const MinParticipation: FC = () => {
                         />
 
                         <StatItemValue>
-                          {numeral(minParticipationTokensAmount).format('0,0')}{' '}
+                          {numeral(minParticipationTokensAmount).format(
+                            minParticipationTokensAmount < 100
+                              ? '0,0.[000]'
+                              : '0,0'
+                          )}{' '}
                           {t(
                             'createDAO.step4.wrappedReferenceParticipationValueLabel',
                             {
