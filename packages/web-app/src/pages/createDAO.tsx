@@ -38,6 +38,7 @@ export type CreateDaoFormData = {
   daoSummary: string;
   tokenName: string;
   tokenSymbol: string;
+  tokenDecimals: number;
   tokenTotalSupply: number;
   tokenTotalHolders: number | undefined;
   tokenType: TokenType;
@@ -64,6 +65,7 @@ const defaultValues = {
   tokenName: '',
   tokenAddress: {address: '', ensName: ''},
   tokenSymbol: '',
+  tokenDecimals: 18,
   tokenTotalSupply: 1,
   tokenTotalHolders: undefined,
   tokenType: undefined,

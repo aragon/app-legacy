@@ -69,6 +69,7 @@ const AddExistingToken: React.FC = () => {
 
           setValue('tokenName', name, {shouldDirty: true});
           setValue('tokenSymbol', symbol, {shouldDirty: true});
+          setValue('tokenDecimals', decimals, {shouldDirty: true});
           setValue(
             'tokenTotalSupply',
             Number(formatUnits(totalSupply, decimals)),

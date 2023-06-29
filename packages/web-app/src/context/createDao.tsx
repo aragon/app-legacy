@@ -39,6 +39,8 @@ import {Dashboard} from 'utils/paths';
 import {useGlobalModalContext} from './globalModals';
 import {useNetwork} from './network';
 
+const DEFAULT_TOKEN_DECIMALS = 18;
+
 type CreateDaoContextType = {
   /** Prepares the creation data and awaits user confirmation to start process */
   handlePublishDao: () => void;
@@ -178,6 +180,8 @@ const CreateDaoProvider: React.FC = ({children}) => {
       eligibilityTokenAmount,
       voteReplacement,
       earlyExecution,
+      isCustomToken,
+      tokenDecimals,
     } = getValues();
 
     let votingMode;
@@ -191,6 +195,12 @@ const CreateDaoProvider: React.FC = ({children}) => {
       blockchain.label?.toLowerCase() as SupportedNetworks
     ) as sdkSupportedNetworks;
 
+    let decimals = DEFAULT_TOKEN_DECIMALS;
+
+    if (!isCustomToken) {
+      decimals = tokenDecimals;
+    }
+
     return [
       {
         minDuration: getSecondsFromDHM(
@@ -202,10 +212,10 @@ const CreateDaoProvider: React.FC = ({children}) => {
         supportThreshold: parseInt(minimumApproval) / 100,
         minProposerVotingPower:
           eligibilityType === 'token' && eligibilityTokenAmount !== undefined
-            ? parseUnits(eligibilityTokenAmount.toString(), 18).toBigInt()
+            ? parseUnits(eligibilityTokenAmount.toString(), decimals).toBigInt()
             : eligibilityType === 'multisig'
             ? BigInt(0)
-            : parseUnits('1', 18).toBigInt(),
+            : parseUnits('1', decimals).toBigInt(),
         votingMode,
       },
       translatedNetwork,
@@ -215,16 +225,15 @@ const CreateDaoProvider: React.FC = ({children}) => {
   const getNewErc20PluginParams =
     useCallback((): TokenVotingPluginInstall['newToken'] => {
       const {tokenName, tokenSymbol, wallets} = getValues();
-      console.log(tokenName, wallets);
 
       return {
         name: tokenName,
         symbol: tokenSymbol,
-        decimals: 18,
+        decimals: DEFAULT_TOKEN_DECIMALS,
         // minter: '0x...', // optionally, define a minter
         balances: wallets?.map(wallet => ({
           address: wallet.address,
-          balance: parseUnits(wallet.amount, 18).toBigInt(),
+          balance: parseUnits(wallet.amount, DEFAULT_TOKEN_DECIMALS).toBigInt(),
         })),
       };
     }, [getValues]);
