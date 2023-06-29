@@ -24,6 +24,7 @@ import {StateEmpty} from 'components/stateEmpty';
 import {Erc20TokenDetails} from '@aragon/sdk-client';
 import type {WrappingFormParams} from 'context/govTokensWrapping';
 import {gTokenSymbol} from 'utils/tokens';
+import numeral from 'numeral';
 
 interface GovTokensWrappingModalProps {
   isOpen: boolean;
@@ -127,12 +128,12 @@ const GovTokensWrappingModal: FC<GovTokensWrappingModalProps> = ({
 
     const userBalanceDisplay = isWrapMode
       ? t('modal.wrapToken.inputAmountBalance', {
-          amount: balances.unwrapped,
-          tokenSymbol,
+          amount: numeral(balances.unwrapped).format('0,0.[000000]'),
+          tokenSymbol: daoToken?.symbol,
         })
       : t('modal.wrapToken.inputAmountBalanceWrapped', {
-          amount: balances.wrapped,
-          tokenSymbol,
+          amount: numeral(balances.wrapped).format('0,0.[000000]'),
+          tokenSymbol: daoToken?.symbol,
         });
 
     return {
@@ -224,7 +225,7 @@ const GovTokensWrappingModal: FC<GovTokensWrappingModalProps> = ({
       ) : (
         <Container>
           <BodyWrapper>
-            <form {...form} className="space-y-3">
+            <form className="space-y-2">
               {/* Action selection */}
               <FormItem>
                 <Label label={t('modal.wrapToken.inputModeLabel')} />
@@ -279,7 +280,14 @@ const GovTokensWrappingModal: FC<GovTokensWrappingModalProps> = ({
                         onBlur={onBlur}
                         onChange={onChange}
                         adornmentText={t('labels.max')}
-                        onAdornmentClick={() => handleMaxClicked(onChange)}
+                        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                        // @ts-ignore
+                        onAdornmentClick={(e: Event) => {
+                          // Needed to prevent page reload when MAX clicked.
+                          e?.preventDefault?.();
+                          e?.stopPropagation?.();
+                          handleMaxClicked(onChange);
+                        }}
                       />
                       <div className="flex justify-between items-start">
                         <div className="space-y-1">
@@ -432,7 +440,7 @@ const Container = styled.div.attrs({
 })``;
 
 const BodyWrapper = styled.div.attrs({
-  className: 'space-y-3',
+  className: 'space-y-2',
 })``;
 
 const LoadingContainer = styled.div.attrs({

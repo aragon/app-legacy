@@ -17,6 +17,7 @@ import React, {
 import {fetchBalance} from 'utils/tokens';
 import {useForm, useWatch} from 'react-hook-form';
 import {
+  Erc20WrapperTokenDetails,
   InstalledPluginListItem,
   SetAllowanceSteps,
   TokenVotingClient,
@@ -25,7 +26,7 @@ import {
 } from '@aragon/sdk-client';
 import {PluginTypes, usePluginClient} from 'hooks/usePluginClient';
 import {useClient} from 'hooks/useClient';
-import {generatePath, useNavigate} from 'react-router-dom';
+import {generatePath, useLocation, useNavigate} from 'react-router-dom';
 import {Community} from 'utils/paths';
 import {toDisplayEns} from 'utils/library';
 
@@ -45,6 +46,7 @@ const GovTokensWrappingProvider: FC<{children: ReactNode}> = ({children}) => {
   const navigate = useNavigate();
   const {address: userAddress} = useWallet();
   const {network} = useNetwork();
+  const loc = useLocation();
   const provider = useSpecificProvider(CHAIN_METADATA[network].id);
 
   const {data: daoDetails, isLoading: isDaoDetailsLoading} =
@@ -54,18 +56,20 @@ const GovTokensWrappingProvider: FC<{children: ReactNode}> = ({children}) => {
   const {client} = useClient();
   const pluginClient = usePluginClient(pluginType as PluginTypes);
 
-  /* Dao token */
-  const {data: daoToken, isLoading: isTokenDataLoading} = useDaoToken(
+  /* Underlying token */
+  const {data: daoTokenData, isLoading: isTokenDataLoading} = useDaoToken(
     daoDetails?.plugins?.[0]?.instanceAddress || ''
   );
+  const underlyingToken = (daoTokenData as Erc20WrapperTokenDetails)
+    ?.underlyingToken;
   const [daoTokenBalance, setDaoTokenBalance] = useState('');
 
   /* Wrapped token */
-  const wrappedDaoToken = daoToken;
+  const wrappedDaoToken = daoTokenData;
   const isWrappedDaoTokenDataLoading = isTokenDataLoading;
   const [wrappedDaoTokenBalance, setWrappedDaoTokenBalance] = useState('');
 
-  const [isModalVisible, setModalVisible] = useState(true);
+  const [isModalVisible, setModalVisible] = useState(false);
   const isLoading =
     isDaoDetailsLoading || isTokenDataLoading || isWrappedDaoTokenDataLoading;
 
@@ -79,7 +83,7 @@ const GovTokensWrappingProvider: FC<{children: ReactNode}> = ({children}) => {
     mode: 'onChange',
     defaultValues: {
       mode: 'wrap',
-      amount: '',
+      amount: '0',
     },
   });
 
@@ -93,23 +97,42 @@ const GovTokensWrappingProvider: FC<{children: ReactNode}> = ({children}) => {
    *************************************************/
 
   const loadDaoTokenBalance = useCallback(async () => {
-    if (!daoToken || !userAddress) return;
+    if (!underlyingToken || !userAddress) return;
     try {
       const balanceResult = await fetchBalance(
-        daoToken.address,
+        underlyingToken.address,
         userAddress,
         provider,
         CHAIN_METADATA[network].nativeCurrency
       );
-      setDaoTokenBalance(balanceResult);
+
+      // To exclude from showing super small balances like 1e^x
+      if (Number(balanceResult) && Number(balanceResult) >= 0.000001) {
+        setDaoTokenBalance(balanceResult);
+      }
     } catch (e) {
       console.error(e);
     }
-  }, [daoToken, network, provider, userAddress]);
+  }, [underlyingToken, network, provider, userAddress]);
 
   const loadWrappedDaoTokenBalance = useCallback(async () => {
-    setWrappedDaoTokenBalance('');
-  }, []);
+    if (!wrappedDaoToken || !userAddress) return;
+    try {
+      const balanceResult = await fetchBalance(
+        wrappedDaoToken.address,
+        userAddress,
+        provider,
+        CHAIN_METADATA[network].nativeCurrency
+      );
+
+      // To exclude from showing super small balances like 1e^x
+      if (Number(balanceResult) && Number(balanceResult) >= 0.000001) {
+        setWrappedDaoTokenBalance(balanceResult);
+      }
+    } catch (e) {
+      console.error(e);
+    }
+  }, [network, provider, userAddress, wrappedDaoToken]);
 
   const reset = useCallback(() => {
     setIsFlowFinished(false);
@@ -133,26 +156,37 @@ const GovTokensWrappingProvider: FC<{children: ReactNode}> = ({children}) => {
     reset();
 
     if (isFlowFinished && daoDetails) {
-      navigate(
-        generatePath(Community, {
-          network,
-          dao: toDisplayEns(daoDetails.ensDomain) || daoDetails.address,
-        })
-      );
+      const communityPagePath = generatePath(Community, {
+        network,
+        dao: toDisplayEns(daoDetails.ensDomain) || daoDetails.address,
+      });
+
+      const isOnCommunityPage = communityPagePath === loc.pathname;
+
+      if (isOnCommunityPage) {
+        location.reload();
+      } else {
+        navigate(
+          generatePath(Community, {
+            network,
+            dao: toDisplayEns(daoDetails.ensDomain) || daoDetails.address,
+          })
+        );
+      }
     }
-  }, [isTxLoading, reset, isFlowFinished, daoDetails, navigate, network]);
+  }, [isTxLoading, reset, isFlowFinished, daoDetails, network, loc, navigate]);
 
   const handleApprove = useCallback(async () => {
-    if (isTxLoading || !wrappedDaoToken || !daoToken) return;
+    if (isTxLoading || !wrappedDaoToken || !underlyingToken) return;
     if (!client) throw new Error('SDK client is not initialized correctly');
 
     setIsTxError(false);
     setIsTxLoading(true);
 
     const setAllowanceSteps = client.methods.setAllowance({
-      amount: BigInt(Number(amount)),
+      amount: BigInt(Number(amount) * Math.pow(10, wrappedDaoToken.decimals)),
       spender: wrappedDaoToken.address,
-      tokenAddress: daoToken.address,
+      tokenAddress: underlyingToken.address,
     });
 
     try {
@@ -174,7 +208,7 @@ const GovTokensWrappingProvider: FC<{children: ReactNode}> = ({children}) => {
     } finally {
       setIsTxLoading(false);
     }
-  }, [amount, client, daoToken, isTxLoading, wrappedDaoToken]);
+  }, [amount, client, underlyingToken, isTxLoading, wrappedDaoToken]);
 
   const handleWrap = useCallback(async () => {
     if (isTxLoading || !wrappedDaoToken || !pluginClient) return;
@@ -185,7 +219,7 @@ const GovTokensWrappingProvider: FC<{children: ReactNode}> = ({children}) => {
       pluginClient as TokenVotingClient
     ).methods.wrapTokens({
       wrappedTokenAddress: wrappedDaoToken.address,
-      amount: BigInt(Number(amount)),
+      amount: BigInt(Number(amount) * Math.pow(10, wrappedDaoToken.decimals)),
     });
 
     try {
@@ -239,7 +273,7 @@ const GovTokensWrappingProvider: FC<{children: ReactNode}> = ({children}) => {
       pluginClient as TokenVotingClient
     ).methods.unwrapTokens({
       wrappedTokenAddress: wrappedDaoToken.address,
-      amount: BigInt(Number(amount)),
+      amount: BigInt(Number(amount) * Math.pow(10, wrappedDaoToken.decimals)),
     });
 
     try {
@@ -292,7 +326,7 @@ const GovTokensWrappingProvider: FC<{children: ReactNode}> = ({children}) => {
         isOpen={isModalVisible}
         onClose={handleCloseModal}
         isLoading={isLoading}
-        daoToken={daoToken}
+        daoToken={underlyingToken}
         wrappedDaoToken={wrappedDaoToken}
         balances={{
           wrapped: wrappedDaoTokenBalance,

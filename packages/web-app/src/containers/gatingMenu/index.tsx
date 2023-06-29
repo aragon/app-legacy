@@ -15,7 +15,16 @@ import {useGlobalModalContext} from 'context/globalModals';
 import {useNetwork} from 'context/network';
 import {PluginTypes} from 'hooks/usePluginClient';
 import WalletIcon from 'public/wallet.svg';
-import {Governance} from 'utils/paths';
+import {Governance, Community} from 'utils/paths';
+import {
+  DaoDetails,
+  Erc20TokenDetails,
+  Erc20WrapperTokenDetails,
+} from '@aragon/sdk-client';
+import {toDisplayEns} from 'utils/library';
+import {useExistingToken} from 'hooks/useExistingToken';
+import {htmlIn} from 'utils/htmlIn';
+import {useGovTokensWrapping} from 'context/govTokensWrapping';
 
 const TokenContainer = ({tokenName}: {tokenName: string}) => {
   const {t} = useTranslation();
@@ -25,6 +34,25 @@ const TokenContainer = ({tokenName}: {tokenName: string}) => {
       <WarningTitle>{t('alert.gatingUsers.tokenTitle')}</WarningTitle>
       <WarningDescription>
         {t('alert.gatingUsers.tokenDescription', {tokenName})}
+      </WarningDescription>
+    </WarningContainer>
+  );
+};
+
+const WrappingRequiredContainer = ({tokenSymbol}: {tokenSymbol: string}) => {
+  const {t} = useTranslation();
+
+  return (
+    <WarningContainer>
+      <WarningTitle>{t('modalAlert.wrapToken.title')}</WarningTitle>
+      <WarningDescription>
+        <span
+          dangerouslySetInnerHTML={{
+            __html: htmlIn(t)('modalAlert.wrapToken.desc', {
+              tokenSymbol,
+            }),
+          }}
+        />
       </WarningDescription>
     </WarningContainer>
   );
@@ -43,38 +71,98 @@ const WalletContainer = () => {
 };
 
 type Props = {
-  daoAddressOrEns: string;
+  daoDetails: DaoDetails;
   pluginType: PluginTypes;
-  tokenName?: string;
+  daoToken?: Erc20TokenDetails | Erc20WrapperTokenDetails;
 };
 
 export const GatingMenu: React.FC<Props> = ({
-  daoAddressOrEns,
+  daoDetails,
   pluginType,
-  tokenName,
+  daoToken,
 }) => {
   const {close, isGatingOpen} = useGlobalModalContext();
   const {t} = useTranslation();
   const navigate = useNavigate();
   const {network} = useNetwork(); // TODO ensure this network is the dao network
+  const {handleOpenModal} = useGovTokensWrapping();
+
+  const {isTokenMintable} = useExistingToken(
+    daoToken?.address,
+    daoDetails?.address
+  );
+
+  const isTokenAbsenceAlert = pluginType === 'token-voting.plugin.dao.eth';
 
   return (
     <ModalBottomSheetSwitcher isOpen={isGatingOpen}>
       <ModalBody>
         <StyledImage src={WalletIcon} />
         {pluginType === 'token-voting.plugin.dao.eth' ? (
-          <TokenContainer tokenName={tokenName || ''} />
+          <>
+            {isTokenMintable ? (
+              <TokenContainer tokenName={daoToken?.name || ''} />
+            ) : (
+              <WrappingRequiredContainer
+                tokenSymbol={
+                  (daoToken as Erc20WrapperTokenDetails | undefined)
+                    ?.underlyingToken?.symbol || ''
+                }
+              />
+            )}
+          </>
         ) : (
           <WalletContainer />
         )}
-        <ButtonText
-          label={t('alert.gatingUsers.buttonLabel')}
-          onClick={() => {
-            navigate(generatePath(Governance, {network, dao: daoAddressOrEns}));
-            close('gating');
-          }}
-          size="large"
-        />
+
+        {isTokenAbsenceAlert && !isTokenMintable ? (
+          <div className="grid grid-cols-2 gap-3">
+            <ButtonText
+              label={t('modalAlert.wrapToken.ctaLabel')}
+              onClick={() => {
+                close('gating');
+                handleOpenModal();
+                navigate(
+                  generatePath(Community, {
+                    network,
+                    dao:
+                      toDisplayEns(daoDetails.ensDomain) || daoDetails.address,
+                  })
+                );
+              }}
+              size="large"
+            />
+            <ButtonText
+              label={t('modalAlert.wrapToken.cancleLabel')}
+              mode="secondary"
+              onClick={() => {
+                navigate(
+                  generatePath(Governance, {
+                    network,
+                    dao:
+                      toDisplayEns(daoDetails.ensDomain) || daoDetails.address,
+                  })
+                );
+                close('gating');
+              }}
+              size="large"
+            />
+          </div>
+        ) : (
+          <ButtonText
+            label={t('alert.gatingUsers.buttonLabel')}
+            onClick={() => {
+              navigate(
+                generatePath(Governance, {
+                  network,
+                  dao: toDisplayEns(daoDetails.ensDomain) || daoDetails.address,
+                })
+              );
+              close('gating');
+            }}
+            size="large"
+          />
+        )}
       </ModalBody>
     </ModalBottomSheetSwitcher>
   );

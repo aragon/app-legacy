@@ -165,11 +165,9 @@ const ProtectedRoute: React.FC = () => {
       {!isGatingOpen && userWentThroughLoginFlow.current && <Outlet />}
       {daoDetails && (
         <GatingMenu
-          daoAddressOrEns={
-            toDisplayEns(daoDetails.ensDomain) || daoDetails.address
-          }
+          daoDetails={daoDetails}
           pluginType={pluginType}
-          tokenName={daoToken?.name}
+          daoToken={daoToken}
         />
       )}
       <LoginRequired isOpen={showLoginModal} onClose={handleCloseLoginModal} />

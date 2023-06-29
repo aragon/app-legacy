@@ -81,8 +81,10 @@ const Community: React.FC = () => {
   const handlePrimaryClick = () => {
     if (walletBased) {
       navigate('manage-members');
-    } else {
+    } else if (isTokenMintable) {
       navigate('mint-tokens');
+    } else {
+      handleOpenModal();
     }
   };
 
@@ -146,6 +148,11 @@ const Community: React.FC = () => {
             },
           }
         : {
+            description: t('explore.explorer.tokenBased'),
+            primaryBtnProps: {
+              label: t('community.ctaMain.wrappedLabel'),
+              onClick: handlePrimaryClick,
+            },
             secondaryBtnProps: {
               label: t('labels.seeAllHolders'),
               iconLeft: <IconLinkExternal />,
