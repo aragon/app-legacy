@@ -20,6 +20,9 @@ import {
   ManageMembersProposal,
   MintTokensProposal,
 } from 'utils/paths';
+import {useDaoDetailsQuery} from 'hooks/useDaoDetails';
+import {useExistingToken} from 'hooks/useExistingToken';
+import {useGovTokensWrapping} from 'context/govTokensWrapping';
 
 type Props = {
   daoAddressOrEns: string;
@@ -38,12 +41,20 @@ export const MembershipSnapshot: React.FC<Props> = ({
   const navigate = useNavigate();
   const {network} = useNetwork(); // TODO ensure this is the dao network
   const {isDesktop} = useScreen();
+  const {handleOpenModal} = useGovTokensWrapping();
 
   const {
     data: {members, daoToken},
     isLoading,
   } = useDaoMembers(pluginAddress, pluginType);
   const totalMemberCount = members.length;
+
+  const {data: daoDetails} = useDaoDetailsQuery();
+
+  const {isTokenMintable} = useExistingToken(
+    daoToken?.address,
+    daoDetails?.address
+  );
 
   const walletBased = pluginType === 'multisig.plugin.dao.eth';
 
@@ -52,9 +63,11 @@ export const MembershipSnapshot: React.FC<Props> = ({
       ? navigate(
           generatePath(ManageMembersProposal, {network, dao: daoAddressOrEns})
         )
-      : navigate(
+      : isTokenMintable
+      ? navigate(
           generatePath(MintTokensProposal, {network, dao: daoAddressOrEns})
-        );
+        )
+      : handleOpenModal();
   };
 
   if (isLoading) return <Loading />;
@@ -72,7 +85,11 @@ export const MembershipSnapshot: React.FC<Props> = ({
                 : t('explore.explorer.tokenBased')
             }
             buttonText={
-              walletBased ? t('labels.manageMember') : t('labels.addMember')
+              walletBased
+                ? t('labels.manageMember')
+                : isTokenMintable
+                ? t('labels.addMember')
+                : t('community.ctaMain.wrappedLabel')
             }
             orientation="vertical"
             onClick={headerButtonHandler}
@@ -107,7 +124,11 @@ export const MembershipSnapshot: React.FC<Props> = ({
             : t('explore.explorer.tokenBased')
         }
         buttonText={
-          walletBased ? t('labels.manageMember') : t('labels.addMember')
+          walletBased
+            ? t('labels.manageMember')
+            : isTokenMintable
+            ? t('labels.addMember')
+            : t('community.ctaMain.wrappedLabel')
         }
         orientation="vertical"
         onClick={headerButtonHandler}
