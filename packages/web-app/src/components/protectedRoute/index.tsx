@@ -13,7 +13,7 @@ import {PluginTypes} from 'hooks/usePluginClient';
 import {usePluginSettings} from 'hooks/usePluginSettings';
 import {useWallet} from 'hooks/useWallet';
 import {CHAIN_METADATA} from 'utils/constants';
-import {formatUnits, toDisplayEns} from 'utils/library';
+import {formatUnits} from 'utils/library';
 import {fetchBalance} from 'utils/tokens';
 import {LoginRequired} from 'containers/walletMenu/LoginRequired';
 
