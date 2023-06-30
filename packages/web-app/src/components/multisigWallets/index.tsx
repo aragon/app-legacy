@@ -79,9 +79,26 @@ export const MultisigWallets = () => {
   };
 
   // remove all wallets
-  const handleDeleteAll = () => {
-    alert(t('alert.chip.removedAllAddresses'));
-    replace([{web3Address: {address: '', ensName: ''}}]);
+  const handleDeleteAll = async () => {
+    try {
+      if (address) {
+        const addressToAppend = await Web3Address.create(provider, {address});
+        replace([
+          {
+            web3Address: {
+              address: addressToAppend.address,
+              ensName: addressToAppend.ensName,
+            },
+          },
+        ]);
+        alert(t('alert.chip.removedAllAddresses'));
+      } else {
+        replace([{web3Address: {address: '', ensName: ''}}]);
+        alert(t('alert.chip.removedAllAddresses'));
+      }
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   // reset wallet
@@ -107,7 +124,6 @@ export const MultisigWallets = () => {
 
   return (
     <Container>
-      <pre>{JSON.stringify(controlledWallets, null, 2)}</pre>
       <DescriptionContainer>
         <Label
           label={t('createDAO.step3.multisigMembers')}

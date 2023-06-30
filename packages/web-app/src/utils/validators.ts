@@ -283,28 +283,28 @@ export function isDaoEnsNameValid(
 
 /**
  * Validates a web3Address
- * @param address instance of Web3Address to validate
+ * @param web3Address instance of Web3Address to validate
  * @param requiredErrorMessage error message to return when address is empty
  * @param t translation function
  * @returns true if address is valid and an error message if not
  */
 export async function validateWeb3Address(
-  address: Web3Address,
+  web3Address: Web3Address,
   requiredErrorMessage: string,
   t: TFunction
 ): Promise<ValidateResult> {
   // empty field
-  if (!address.address && !address.ensName) return requiredErrorMessage;
+  if (!web3Address.address && !web3Address.ensName) return requiredErrorMessage;
 
   // invalid ens
-  if (address.ensName && !address.address)
-    return (await address.isValidEnsName())
+  if (web3Address.ensName && !web3Address.address)
+    return (await web3Address.isValidEnsName())
       ? true
       : t('inputWallet.ensAlertCirtical');
 
   // invalid address
-  if (address.address && !address.ensName)
-    return address.isAddressValid()
+  if (web3Address.address && !web3Address.ensName)
+    return web3Address.isAddressValid()
       ? true
       : t('inputWallet.addressAlertCritical');
 }
