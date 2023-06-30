@@ -260,7 +260,11 @@ export function useProposals(
       }
     }
 
-    if (daoAddress && client?.methods && daoToken) {
+    if (
+      daoAddress &&
+      client?.methods &&
+      (isMultisigPlugin || (isTokenBasedPlugin && daoToken))
+    ) {
       getDaoProposals();
     }
   }, [
@@ -268,6 +272,8 @@ export function useProposals(
     client?.methods,
     daoAddress,
     daoToken,
+    isMultisigPlugin,
+    isTokenBasedPlugin,
     limit,
     skip,
     status,
