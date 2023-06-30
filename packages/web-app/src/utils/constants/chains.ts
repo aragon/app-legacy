@@ -126,9 +126,7 @@ export const CHAIN_METADATA: ChainList = {
     covalentApi: 'https://api.covalenthq.com/v1/eth-mainnet',
     alchemyApi: 'https://eth-mainnet.g.alchemy.com/v2',
     supportsEns: true,
-    //TODO: revert back when issue is fixed
-    // ipfs: 'https://prod.ipfs.aragon.network',
-    ipfs: 'https://test.ipfs.aragon.network',
+    ipfs: 'https://prod.ipfs.aragon.network',
   },
   polygon: {
     id: 137,
@@ -151,9 +149,7 @@ export const CHAIN_METADATA: ChainList = {
     covalentApi: 'https://api.covalenthq.com/v1/matic-mainnet',
     alchemyApi: 'https://polygon-mainnet.g.alchemy.com/v2',
     supportsEns: false,
-    //TODO: revert back when issue is fixed
-    // ipfs: 'https://prod.ipfs.aragon.network',
-    ipfs: 'https://test.ipfs.aragon.network',
+    ipfs: 'https://prod.ipfs.aragon.network',
   },
   'arbitrum-test': {
     id: 421613,
