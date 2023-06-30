@@ -45,8 +45,8 @@ const ProposalSnapshot: React.FC<Props> = ({
 
   const mappedProposals = useMemo(
     () =>
-      proposals.map(p =>
-        proposal2CardProps(
+      proposals.map(p => {
+        return proposal2CardProps(
           p,
           members.members.length,
           network,
@@ -54,8 +54,8 @@ const ProposalSnapshot: React.FC<Props> = ({
           t,
           daoAddressOrEns,
           address
-        )
-      ),
+        );
+      }),
     [
       proposals,
       members.members.length,

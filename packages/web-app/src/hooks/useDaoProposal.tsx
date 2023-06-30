@@ -30,6 +30,8 @@ import {
 } from 'utils/proposals';
 import {DetailedProposal, HookData, ProposalId} from 'utils/types';
 import {PluginTypes, usePluginClient} from './usePluginClient';
+import {useDaoDetailsQuery} from './useDaoDetails';
+import {useDaoToken} from './useDaoToken';
 
 /**
  * Retrieve a single detailed proposal
@@ -55,6 +57,11 @@ export const useDaoProposal = (
 
   const pluginClient = usePluginClient(pluginType);
   const {preferences} = usePrivacyContext();
+
+  const {data: daoDetails} = useDaoDetailsQuery();
+  const {data: daoToken} = useDaoToken(
+    daoDetails?.plugins[0].instanceAddress || ''
+  );
 
   const cachedMultisigVotes = useReactiveVar(pendingMultisigApprovalsVar);
   const cachedTokenBasedVotes = useReactiveVar(pendingTokenBasedVotesVar);
@@ -139,9 +146,16 @@ export const useDaoProposal = (
           setIsLoading(true);
         }
 
-        const proposal = recalculateStatus(
+        let proposal = recalculateStatus(
           await pluginClient?.methods.getProposal(proposalGuid)
         );
+
+        if (isTokenBasedProposal(proposal)) {
+          proposal = {
+            ...proposal,
+            token: proposal.token || daoToken || null,
+          };
+        }
 
         if (proposal && cacheData) {
           setData(
@@ -191,7 +205,7 @@ export const useDaoProposal = (
       }
     };
 
-    if (proposalGuid && daoAddress) getDaoProposal(proposalGuid);
+    if (proposalGuid && daoAddress && daoToken) getDaoProposal(proposalGuid);
   }, [
     daoAddress,
     getCachedProposalData,
@@ -201,6 +215,7 @@ export const useDaoProposal = (
     proposalGuid,
     pluginAddress,
     numberOfRuns,
+    daoToken,
   ]);
 
   return {data, error, isLoading};

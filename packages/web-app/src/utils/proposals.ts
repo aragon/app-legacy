@@ -77,7 +77,7 @@ export const MappedVotes: {
 
 // this type guard will need to evolve when there are more types
 export function isTokenBasedProposal(
-  proposal: SupportedProposals | undefined
+  proposal: SupportedProposals | undefined | null
 ): proposal is TokenVotingProposal {
   if (!proposal) return false;
   return 'token' in proposal;

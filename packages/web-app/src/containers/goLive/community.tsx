@@ -98,8 +98,10 @@ const Community: React.FC = () => {
                 <Dt>{t('votingTerminal.token')}</Dt>
                 <Dd>
                   <div className="flex items-center space-x-1.5">
-                    <span>{tokenName}</span>
-                    <span>({govTokenSymbol})</span>
+                    <span>
+                      {t('labels.review.tokenSymbolGovernance')} {tokenName} (
+                      {govTokenSymbol})
+                    </span>
 
                     {/* TODO: check the owner for token contract, if it belongs to
                     dao add this */}
@@ -175,8 +177,8 @@ const Community: React.FC = () => {
                       label={t('labels.review.distributionLinkLabel')}
                       href={
                         CHAIN_METADATA[network].explorer +
-                        '/token/tokenholderchart/' +
-                        tokenAddress
+                          '/token/tokenholderchart/' +
+                          tokenAddress?.address || tokenAddress
                       }
                       iconRight={<IconFeedback />}
                       external

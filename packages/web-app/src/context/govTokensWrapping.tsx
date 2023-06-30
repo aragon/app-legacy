@@ -29,6 +29,7 @@ import {useClient} from 'hooks/useClient';
 import {generatePath, useLocation, useNavigate} from 'react-router-dom';
 import {Community} from 'utils/paths';
 import {toDisplayEns} from 'utils/library';
+import {ethers} from 'ethers';
 
 interface IGovTokensWrappingContextType {
   handleOpenModal: () => void;
@@ -83,7 +84,7 @@ const GovTokensWrappingProvider: FC<{children: ReactNode}> = ({children}) => {
     mode: 'onChange',
     defaultValues: {
       mode: 'wrap',
-      amount: '0',
+      amount: '',
     },
   });
 
@@ -184,7 +185,9 @@ const GovTokensWrappingProvider: FC<{children: ReactNode}> = ({children}) => {
     setIsTxLoading(true);
 
     const setAllowanceSteps = client.methods.setAllowance({
-      amount: BigInt(Number(amount) * Math.pow(10, wrappedDaoToken.decimals)),
+      amount: BigInt(
+        ethers.utils.parseUnits(amount, wrappedDaoToken.decimals).toString()
+      ),
       spender: wrappedDaoToken.address,
       tokenAddress: underlyingToken.address,
     });
@@ -219,7 +222,9 @@ const GovTokensWrappingProvider: FC<{children: ReactNode}> = ({children}) => {
       pluginClient as TokenVotingClient
     ).methods.wrapTokens({
       wrappedTokenAddress: wrappedDaoToken.address,
-      amount: BigInt(Number(amount) * Math.pow(10, wrappedDaoToken.decimals)),
+      amount: BigInt(
+        ethers.utils.parseUnits(amount, wrappedDaoToken.decimals).toString()
+      ),
     });
 
     try {
@@ -273,7 +278,9 @@ const GovTokensWrappingProvider: FC<{children: ReactNode}> = ({children}) => {
       pluginClient as TokenVotingClient
     ).methods.unwrapTokens({
       wrappedTokenAddress: wrappedDaoToken.address,
-      amount: BigInt(Number(amount) * Math.pow(10, wrappedDaoToken.decimals)),
+      amount: BigInt(
+        ethers.utils.parseUnits(amount, wrappedDaoToken.decimals).toString()
+      ),
     });
 
     try {

@@ -94,7 +94,7 @@ const GovTokensWrappingModal: FC<GovTokensWrappingModalProps> = ({
     let title = t('modal.wrapToken.title');
     let subtitle = t('modal.wrapToken.desc', {
       tokenSymbol,
-      gTokenSymbol: tokenSymbol,
+      gTokenSymbol: gTokenSymbol(tokenSymbol),
     });
 
     const finishedTitle = isWrapMode
@@ -103,11 +103,11 @@ const GovTokensWrappingModal: FC<GovTokensWrappingModalProps> = ({
     const finishedDescription = isWrapMode
       ? t('modal.wrapToken.successDesc', {
           amount,
-          gTokenSymbol: gTokenSymbol(tokenSymbol),
+          gTokenSymbol: wrappedDaoToken?.symbol,
         })
       : t('modal.unwrapToken.successDesc', {
           amount,
-          tokenSymbol,
+          tokenSymbol: daoToken?.symbol,
         });
 
     if (isFinished) {
@@ -325,7 +325,7 @@ const GovTokensWrappingModal: FC<GovTokensWrappingModalProps> = ({
                   </ProgressSteps>
                 </ProgressHeader>
                 <LinearProgress
-                  value={currentStep}
+                  value={currentStep - 1}
                   max={modeData.steps.length}
                 />
                 <ProgressHelpText>

@@ -29,6 +29,7 @@ import {
   addVoteToProposal,
   augmentProposalWithCachedExecution,
   isMultisigProposal,
+  isTokenBasedProposal,
 } from 'utils/proposals';
 import {
   DetailedProposal,
@@ -37,6 +38,8 @@ import {
   ProposalListItem,
 } from 'utils/types';
 import {PluginTypes, usePluginClient} from './usePluginClient';
+import {useDaoDetailsQuery} from './useDaoDetails';
+import {useDaoToken} from './useDaoToken';
 
 /**
  * Retrieves list of proposals from SDK
@@ -57,6 +60,11 @@ export function useProposals(
   const [isInitialLoading, setIsInitialLoading] = useState(true);
   const [isLoadingMore, setIsLoadingMore] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+
+  const {data: daoDetails} = useDaoDetailsQuery();
+  const {data: daoToken} = useDaoToken(
+    daoDetails?.plugins[0].instanceAddress || ''
+  );
 
   const client = usePluginClient(type);
   const {preferences} = usePrivacyContext();
@@ -228,6 +236,13 @@ export function useProposals(
               return {...proposal, status: ProposalStatus.DEFEATED};
           }
 
+          if (isTokenBasedProposal(proposal)) {
+            return {
+              ...proposal,
+              token: proposal.token || daoToken || null,
+            };
+          }
+
           return proposal;
         });
         /*************************************************************/
@@ -243,11 +258,14 @@ export function useProposals(
       }
     }
 
-    if (daoAddress && client?.methods) getDaoProposals();
+    if (daoAddress && client?.methods && daoToken) {
+      getDaoProposals();
+    }
   }, [
     augmentProposalsWithCache,
     client?.methods,
     daoAddress,
+    daoToken,
     limit,
     skip,
     status,

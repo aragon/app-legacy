@@ -31,7 +31,7 @@
     "subtitle": "Go back to explorer page"
   },
   "navButtons": {
-    "connectWallet": "Login",
+    "connectWallet": "Connect wallet",
     "giveFeedback": "Give feedback"
   },
   "labels": {
@@ -161,7 +161,7 @@
     "review": {
       "blockchain": "Blockchain",
       "daoMetadata": "DAO details",
-      "voters": "voters",
+      "voters": "Voters",
       "votingParameters": "Voting parameters",
       "governance": "Governance",
       "network": "Network",
@@ -180,7 +180,8 @@
       "distributionLinkLabel": "View on block explorer",
       "no": "No",
       "yes": "Yes",
-      "tokenWrapped": "Wrapped"
+      "tokenWrapped": "Wrapped",
+      "tokenSymbolGovernance": "Governance"
     },
     "author": "Author",
     "sec": "sec",
@@ -305,12 +306,12 @@
     },
     "noProposals": "No proposals found!",
     "statusWidget": {
-      "published": "Proposal published",
-      "active": "Voting is active...",
-      "failed": "Proposal execution failed",
-      "executed": "Proposal executed",
-      "succeeded": "Proposal is ready to execute",
-      "defeated": "Proposal has been defeated",
+      "published": "Published",
+      "active": "Running",
+      "failed": "Execution failed",
+      "executed": "Executed",
+      "succeeded": "Succeeded",
+      "defeated": "Rejected",
       "expired": "Expired"
     },
     "executionCard": {
@@ -369,7 +370,7 @@
     "totalSupplyZero": "Total token supply can not be 0",
     "requiredTokenAddressZero": "Required token amount can not be 0",
     "onlyAlphaNumeric": "{{field}} can only contain alphanumeric characters",
-    "ensDuplication": "DAO name is already taken. Try a different name.",
+    "ensDuplication": "ENS subdomain is already taken. Try a different name.",
     "ensNameInvalidFormat": "Please only use Lowercase letters, numbers, and the dash '-'",
     "ensNetworkIssue": "Failed to resolve ENS",
     "ensNameLength": "DAO name must be less than 128 characters",
@@ -434,10 +435,10 @@
       "buttonLabel": "Switch to {{network}}"
     },
     "loginRequired": {
-      "headerTitle": "Login to continue",
+      "headerTitle": "Connect wallet to continue",
       "title": "Wallet connection",
       "description": "Connect your wallet to continue.",
-      "buttonLabel": "Login Now"
+      "buttonLabel": "Connect wallet now"
     },
     "gatingUsers": {
       "tokenTitle": "Token not found",
@@ -449,12 +450,12 @@
     "tokenBasedMembers": "The DAO members listed here have interacted with the DAO at least once",
     "chip": {
       "removedLink": "Link removed",
-      "removedAddress": "address removed",
+      "removedAddress": "Address removed",
       "distributionReset": "Token distribution reset",
       "removedAllAddresses": "All addresses removed",
       "duplicateAction": "Action duplicated",
       "resetAction": "Action reset",
-      "resetAddress": "address reset",
+      "resetAddress": "Address reset",
       "resetAllAddresses": "All addresses reset",
       "removedAction": "Action removed",
       "addressAdded": "New address added",
@@ -591,7 +592,7 @@
         "optionDescription": "Options for voting",
         "votingOption": {
           "label": "Approve",
-          "description": "Each multisig member has the ability to approve the proposal and any associated optional actions. The proposal will be executed if three out of four members approve it.",
+          "description": "Each multisig member has the ability to approve the proposal and any associated optional actions. The proposal will be executed if {{amountMembers}} out of {{totalAmountMembers}} members approve it.",
           "alert": "Approval is the only option for Multisig DAOs."
         },
         "startLabel": "Start time",
@@ -657,10 +658,9 @@
       "newTokenSubtitle": "No, I would like to create a token.",
       "existingToken": {
         "title": "Import your existing token",
-        "description": "Import the existing ERC-20 token  that your community uses for governance. We recommend to read about why this is important {{link}}.",
+        "description": "Import the existing ERC-20 token  that your community uses for governance. We recommend to read about why this is important in {{link}}.",
         "descriptionLinkLabel": "our guide",
-        "descriptionLinkURL": "https://aragon.org/how-to/build-a-dao-brand-identity",
-        "questionLabel": "Does your community already have an ERC20 token?",
+        "questionLabel": "Does your community already have an ERC-20 token to govern your DAO?",
         "answerNegative": "No",
         "answerPositive": "Yes",
         "inputLabel": "Contract address",
@@ -676,7 +676,11 @@
         "verificationAlertWarningTitle": "Requires wrapping",
         "verificationAlertCriticalTitle": "Not supported token",
         "verificationAlertWarningDescription": "This token must be wrapped by its holders to be participate in your DAO's governance.\n\nToken holders can wrap their tokens within the Aragon App at any time to receive equivalent governance tokens (1 {{tokenSymbol}} = 1 {{gTokenSymbol}}). These can then be used to vote on proposals in your DAO. They can unwrap at any time to receive their original tokens.",
-        "verificationAlertCriticalDescription": "This token is not supported in the Aragon App. Please try a different token or specify that you don't have a governance token yet."
+        "verificationAlertCriticalDescription": "This token is not supported in the Aragon App. Try a different token or specify that you don't have a governance token yet.",
+        "descriptionLinkURL": "https://aragon.org/how-to/import-existing-tokens",
+        "verificationLabelBlockchain": "Blockchain",
+        "verificationAlertCriticalBlockchainTitle": "Incorrect blockchain",
+        "verificationAlertCriticalBlockchainDescription": "This token is deployed on a different blockchain than the one you chose for your DAO. Use a token deployed on {{blockchainName}}."
       },
       "existingTokenSubtitle": "Yes, we already have a token.",
       "tokenMembership": "Token holders",
@@ -703,7 +707,7 @@
       "proposalCreationHelpertext": "Specify who is permitted to create proposals and what the minimum token requirement is.",
       "distributionWalletAlertText": "Your connected wallet was automatically added to the distribution list. You can remove it if you like.",
       "whiteListWalletAlertText": "Your connected wallet was automatically added to the list. You can remove it if you like.",
-      "createTokenHelptext": " Define the token details and distribute tokens to a core team and DAO treasury. For more on token minting best practices, ",
+      "createTokenHelptext": "Define the token details and distribute tokens to a core team and DAO treasury. For more on token minting best practices, {{link}}",
       "createTokenHelptextLinkLabel": "read this guide",
       "createTokenHelptextLinkURL": "https://aragon.org/how-to/mint-dao-governance-tokens",
       "membership": "Who can participate in governance?",
@@ -728,7 +732,7 @@
       },
       "membershipSubtitle": "You can always start with a multisig and mint tokens later.",
       "descriptionLinkLabel": "read this guide",
-      "descriptionLinkURL": "https://aragon.org/how-to/set-your-dao-governance",
+      "descriptionLinkURL": "https://aragon.org/how-to/set-up-your-dao-governance-in-8-steps",
       "distributeTokensHelpertextLinkLabel": "read our guide",
       "distributeTokensHelpertextLinkURL": "https://aragon.org/how-to/distribute-a-dao-governance-token"
     },
@@ -766,7 +770,7 @@
       "wrappedReferenceMinParticipation": "Minimum participation",
       "wrappedReferenceMinParticipationDesc": "{{minParticipationValue}} of {{gTokenSymbol}} total supply",
       "wrappedReferenceDescLinkLabel": "in our guide",
-      "wrappedReferenceDescLinkURL": "https://",
+      "wrappedReferenceDescLinkURL": "https://aragon.org/how-to/import-existing-tokens",
       "wrappedReferenceValueLabel": "{{tokenSymbol}}",
       "wrappedReferenceParticipationValueLabel": "{{gTokenSymbol}} *"
     },
@@ -887,7 +891,7 @@
   "explore": {
     "hero": {
       "title": "Explore the DAO World",
-      "subtitle1": "Build your DAO, explore communities, and find inspiration for your project, all from one place."
+      "subtitle1": "Build your DAO, explore communities, and find inspiration for your project all in one place."
     },
     "explorer": {
       "title": "Explore DAOs",
@@ -952,7 +956,7 @@
     },
     "build": {
       "title": "Build faster",
-      "description": "Build something on open-source infrastructure with governance plugins.",
+      "description": "Use our governance plugins to build a DAO, dApp, or anything you can imagine on the Aragon OSx protocol.",
       "actionLabel": "Coming soon"
     },
     "404": {
@@ -1169,7 +1173,7 @@
       "desc": "Wrap your {{tokenSymbol}} to become a member of the DAO community. This will enable you to participate in governance. Learn more about it {{link}}.",
       "ctaLabel": "Join the DAO",
       "descLinkLabel": "in our guide",
-      "descLinkURL": "https://"
+      "descLinkURL": "https://aragon.org/how-to/import-existing-tokens"
     },
     "ctaMain": {
       "wrappedLabel": "Join the DAO"
@@ -1182,7 +1186,7 @@
       "ctaLabel": "Wrap tokens",
       "cancleLabel": "Cancel",
       "descLinkLabel": "our guide",
-      "descLinkURL": "https://"
+      "descLinkURL": "https://aragon.org/how-to/import-existing-tokens"
     }
   },
   "wc": {
