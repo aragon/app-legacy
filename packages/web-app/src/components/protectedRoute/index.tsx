@@ -20,7 +20,12 @@ import {fetchBalance} from 'utils/tokens';
 const ProtectedRoute: React.FC = () => {
   const navigate = useNavigate();
   const {open, close, isGatingOpen} = useGlobalModalContext();
-  const {address, status, isOnWrongNetwork, isModalOpen} = useWallet();
+  const {
+    address,
+    status,
+    isOnWrongNetwork,
+    isModalOpen: web3ModalIsShown,
+  } = useWallet();
   const {data: daoDetails, isLoading: detailsAreLoading} = useDaoDetailsQuery();
 
   const [showLoginModal, setShowLoginModal] = useState(false);
@@ -106,37 +111,51 @@ const ProtectedRoute: React.FC = () => {
   // The following hook and effects manage a seamless journey from login ->
   // switch network -> authentication. The appropriate modals are shown in
   // such a way to minimize user interaction
-  const userWentThroughLoginFlow = useRef(false);
+  const userWentThroughLoginFlowRef = useRef(false);
+  const web3ModalWasShownRef = useRef(false);
+
   useEffect(() => {
     // show the wallet menu only if the user hasn't gone through the flow previously
     // and is currently logged out; this allows user to log out mid flow with
     // no lasting consequences considering status will be checked upon proposal creation
     // If we want to keep user logged in (I'm in favor of), remove ref throughout component
     // Fabrice F. - [12/07/2022]
-    if (
-      (!address && isModalOpen === false) ||
-      (!address && userWentThroughLoginFlow.current === false)
-    )
-      open('wallet');
-    else {
+    if (!address && userWentThroughLoginFlowRef.current === false) {
+      setShowLoginModal(true);
+    } else {
       if (isOnWrongNetwork) open('network');
       else close('network');
     }
-  }, [address, close, isModalOpen, isOnWrongNetwork, open, status]);
+  }, [address, close, isOnWrongNetwork, open]);
 
-  // close the wallet modal when the wallet is connected
+  // close the LoginRequired modal when web3Modal is shown
+  useEffect(() => {
+    if (web3ModalIsShown) setShowLoginModal(false);
+  }, [close, web3ModalIsShown]);
+
+  // a weird state happens when the web3Modal has been closed
+  // by the user without logging in. The status is set to
+  // "connecting" instead of "disconnected". Regardless, this
+  // state set to be the same as the user closing the LoginRequired
+  // modal manually [FF-07/03/2023]
   useEffect(() => {
     if (
-      ((status === 'connecting' && isModalOpen === true) || address) &&
-      userWentThroughLoginFlow.current === false
-    ) {
-      setShowLoginModal(false);
-    }
-  }, [address, close, isModalOpen, isOnWrongNetwork, status]);
+      status === 'connecting' &&
+      !showLoginModal &&
+      !web3ModalIsShown &&
+      web3ModalWasShownRef.current
+    )
+      navigate(-1);
+  }, [navigate, showLoginModal, status, web3ModalIsShown]);
+
+  // update the reference whenever the web3Modal is shown
+  useEffect(() => {
+    if (web3ModalIsShown) web3ModalWasShownRef.current = true;
+  }, [web3ModalIsShown]);
 
   // wallet connected and on right network, authenticate
   useEffect(() => {
-    if (address && !isOnWrongNetwork && pluginType) {
+    if (status === 'connected' && !isOnWrongNetwork && pluginType) {
       if (pluginType === 'token-voting.plugin.dao.eth') {
         gateTokenBasedProposal();
       } else {
@@ -144,14 +163,14 @@ const ProtectedRoute: React.FC = () => {
       }
 
       // user has gone through login flow allow them to log out in peace
-      userWentThroughLoginFlow.current = true;
+      userWentThroughLoginFlowRef.current = true;
     }
   }, [
-    address,
     gateMultisigProposal,
     gateTokenBasedProposal,
     isOnWrongNetwork,
     pluginType,
+    status,
   ]);
 
   /*************************************************
@@ -162,7 +181,7 @@ const ProtectedRoute: React.FC = () => {
 
   return (
     <>
-      {!isGatingOpen && userWentThroughLoginFlow.current && <Outlet />}
+      {!isGatingOpen && userWentThroughLoginFlowRef.current && <Outlet />}
       {daoDetails && (
         <GatingMenu
           daoDetails={daoDetails}
