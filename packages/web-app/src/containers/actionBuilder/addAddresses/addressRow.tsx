@@ -5,21 +5,26 @@ import {
   IconMenuVertical,
   ValueInput,
 } from '@aragon/ui-components';
-import styled from 'styled-components';
-import {useTranslation} from 'react-i18next';
 import React, {useCallback} from 'react';
 import {
   Controller,
+  ValidateResult,
   useFormContext,
   useWatch,
-  ValidateResult,
 } from 'react-hook-form';
+import {useTranslation} from 'react-i18next';
+import styled from 'styled-components';
 
-import {validateAddress} from 'utils/validators';
-import {WalletItem} from 'pages/createDAO';
-import {handleClipboardActions} from 'utils/library';
 import {useAlertContext} from 'context/alert';
 import {BalanceMember, MultisigMember} from 'hooks/useDaoMembers';
+import {handleClipboardActions} from 'utils/library';
+import {validateAddress} from 'utils/validators';
+
+// temporary until the ens input is used
+type WalletItem = {
+  id: string;
+  address: string;
+};
 
 type Props = {
   actionIndex: number;
@@ -86,7 +91,7 @@ export const AddressRow = ({
         validationResult = validateAddress(address);
       }
 
-      // check if there is dublicated address in the multisig plugin
+      // check if there is duplicated address in the multisig plugin
       if (
         currentDaoMembers &&
         currentDaoMembers?.some(
@@ -99,7 +104,7 @@ export const AddressRow = ({
       // check if there is dublicated address in the form
       if (memberWallets) {
         memberWallets.forEach((wallet: WalletItem, walletIndex: number) => {
-          if (address === wallet.web3Address && index !== walletIndex) {
+          if (address === wallet.address && index !== walletIndex) {
             validationResult = t('errors.duplicateAddress');
           }
         });

@@ -1,10 +1,12 @@
-import React, {useState, useCallback, useMemo} from 'react';
-import {VotersTable, SearchInput} from '@aragon/ui-components';
-import styled from 'styled-components';
+import {SearchInput, VoterType, VotersTable} from '@aragon/ui-components';
+import React, {useCallback, useMemo, useState} from 'react';
 import {useFormContext} from 'react-hook-form';
 import {useTranslation} from 'react-i18next';
+import styled from 'styled-components';
 
+import {WalletField} from 'components/addWallets/row';
 import ModalBottomSheetSwitcher from 'components/modalBottomSheetSwitcher';
+import {WalletItem} from 'components/multisigWallets/row';
 import {useGlobalModalContext} from 'context/globalModals';
 import {getUserFriendlyWalletLabel} from 'utils/library';
 
@@ -18,27 +20,42 @@ const CommunityAddressesModal: React.FC<CommunityAddressesModalProps> = ({
   const [searchValue, setSearchValue] = useState('');
   const {getValues} = useFormContext();
   const {isAddressesOpen, close} = useGlobalModalContext();
-  const {wallets, tokenSymbol, multisigWallets} = getValues();
+  const [wallets, tokenSymbol, multisigWallets] = getValues([
+    'wallets',
+    'tokenSymbol',
+    'multisigWallets',
+  ]);
   const {t} = useTranslation();
 
   const filterValidator = useCallback(
-    wallet => {
+    (wallet: WalletField | WalletItem) => {
       if (searchValue !== '') {
         const re = new RegExp(searchValue, 'i');
-        return wallet?.address?.match(re);
+
+        return tokenMembership
+          ? (wallet as WalletField)?.address?.match(re)
+          : (wallet as WalletItem)?.web3Address?.address?.match(re);
       }
       return true;
     },
-    [searchValue]
+    [searchValue, tokenMembership]
   );
 
   const filteredAddressList = useMemo(() => {
-    return (tokenMembership ? wallets : multisigWallets)
-      ?.filter(filterValidator)
-      .map(({address, amount}: {address: string; amount: string}) => ({
-        wallet: getUserFriendlyWalletLabel(address, t),
-        tokenAmount: `${amount} ${tokenSymbol}`,
-      }));
+    if (tokenMembership) {
+      return (wallets as WalletField[]).filter(filterValidator).map(
+        ({address, amount}) =>
+          ({
+            wallet: getUserFriendlyWalletLabel(address, t),
+            tokenAmount: `${amount} ${tokenSymbol}`,
+          } as VoterType)
+      );
+    }
+
+    // multisig
+    return (multisigWallets as WalletItem[])
+      .filter(filterValidator)
+      .map(({web3Address}) => ({wallet: web3Address.address} as VoterType));
   }, [
     tokenMembership,
     wallets,

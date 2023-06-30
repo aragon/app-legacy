@@ -51,7 +51,6 @@ export const MultisigWallets = () => {
               ensName: addressToAppend.ensName,
             },
           });
-          setFocus('multisigWallets');
         } catch (error) {
           console.error(error);
         }

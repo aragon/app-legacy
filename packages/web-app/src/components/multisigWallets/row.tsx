@@ -14,9 +14,16 @@ import {WrappedWalletInput} from 'components/wrappedWalletInput';
 import {useAlertContext} from 'context/alert';
 import {useProviders} from 'context/providers';
 import useScreen from 'hooks/useScreen';
-import {WalletItem} from 'pages/createDAO';
 import {Web3Address} from 'utils/library';
 import {validateWeb3Address} from 'utils/validators';
+
+export type WalletItem = {
+  id: string;
+  web3Address: {
+    address: string;
+    ensName: string;
+  };
+};
 
 type MultisigWalletsRowProps = {
   index: number;

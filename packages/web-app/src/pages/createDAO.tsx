@@ -4,7 +4,9 @@ import React, {useEffect, useMemo} from 'react';
 import {FormProvider, useForm, useFormState, useWatch} from 'react-hook-form';
 import {useTranslation} from 'react-i18next';
 
+import {WalletField} from 'components/addWallets/row';
 import {FullScreenStepper, Step} from 'components/fullScreenStepper';
+import {WalletItem} from 'components/multisigWallets/row';
 import ConfigureCommunity from 'containers/configureCommunity';
 import {OverviewDAOHeader, OverviewDAOStep} from 'containers/daoOverview';
 import DefineMetadata from 'containers/defineMetadata';
@@ -19,15 +21,6 @@ import {CHAIN_METADATA, getSupportedNetworkByChainId} from 'utils/constants';
 import {htmlIn} from 'utils/htmlIn';
 import {Landing} from 'utils/paths';
 import {TokenType} from 'utils/validators';
-import {WalletField} from '../components/addWallets/row';
-
-export type WalletItem = {
-  id: string;
-  web3Address: {
-    address: string;
-    ensName: string;
-  };
-};
 
 export type CreateDaoFormData = {
   blockchain: {

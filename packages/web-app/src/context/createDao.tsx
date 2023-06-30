@@ -155,7 +155,7 @@ const CreateDaoProvider: React.FC = ({children}) => {
 
     return [
       {
-        members: multisigWallets.map(wallet => wallet.web3Address),
+        members: multisigWallets.map(wallet => wallet.web3Address.address),
         votingSettings: {
           minApprovals: multisigMinimumApprovals,
           onlyListed: eligibilityType === 'multisig',
