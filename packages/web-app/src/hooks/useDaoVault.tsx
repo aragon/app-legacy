@@ -48,7 +48,8 @@ export const useDaoVault = (
     data.totalAssetChange = 0;
     data.tokens.forEach(token => {
       if (token.marketData) {
-        const prevBalance = tokenPreviousBalances[token.metadata.id].balance;
+        const prevBalance =
+          tokenPreviousBalances[token.metadata.id]?.balance || BigInt(0);
         const prevPrice =
           token.marketData.price /
           (1 + token.marketData.percentageChangedDuringInterval / 100.0);
