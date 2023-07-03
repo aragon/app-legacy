@@ -87,7 +87,16 @@ export const MinParticipation: FC = () => {
         }) => (
           <>
             <div>
-              <Container>
+              <Container
+                style={
+                  isGovTokenRequiresWrapping
+                    ? {
+                        boxShadow:
+                          '0px 0px 1px 0px hsla(210, 24%, 16%, 0.04), 0px 0px 2px 0px hsla(210, 24%, 16%, 0.06), 0px 4px 8px 0px hsla(210, 24%, 16%, 0.04)',
+                      }
+                    : {}
+                }
+              >
                 <ApprovalWrapper>
                   <div className="tablet:w-1/3">
                     <NumberInput
@@ -284,7 +293,7 @@ export const MinParticipation: FC = () => {
 };
 
 const Container = styled.div.attrs({
-  className: 'p-3 space-x-3 rounded-xl bg-ui-0',
+  className: 'p-3 space-x-3 rounded-xl bg-ui-0 relative z-10',
 })``;
 
 const SubContainerWrapper = styled.div.attrs({

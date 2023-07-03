@@ -1,7 +1,7 @@
 import {
   AlertInline,
   ButtonText,
-  CheckboxSimple,
+  CheckboxListItem,
   IconReload,
   Label,
   LinearProgress,
@@ -235,20 +235,24 @@ const GovTokensWrappingModal: FC<GovTokensWrappingModalProps> = ({
                   defaultValue="wrap"
                   render={({field: {onChange, value}}) => (
                     <ModeActionSelection>
-                      <CheckboxSimple
-                        state={value === 'wrap' ? 'active' : 'default'}
-                        disabled={isUserInputDisabled}
-                        label={t('modal.wrapToken.inputSelectWrap')}
-                        multiSelect={false}
-                        onClick={() => onChange('wrap')}
-                      />
-                      <CheckboxSimple
-                        state={value === 'unwrap' ? 'active' : 'default'}
-                        disabled={isUserInputDisabled}
-                        label={t('modal.wrapToken.inputSelectUnwrap')}
-                        multiSelect={false}
-                        onClick={() => onChange('unwrap')}
-                      />
+                      <div className="flex-1">
+                        <CheckboxListItem
+                          type={value === 'wrap' ? 'active' : 'default'}
+                          disabled={isUserInputDisabled}
+                          label={t('modal.wrapToken.inputSelectWrap')}
+                          multiSelect={false}
+                          onClick={() => onChange('wrap')}
+                        />
+                      </div>
+                      <div className="flex-1">
+                        <CheckboxListItem
+                          type={value === 'unwrap' ? 'active' : 'default'}
+                          disabled={isUserInputDisabled}
+                          label={t('modal.wrapToken.inputSelectUnwrap')}
+                          multiSelect={false}
+                          onClick={() => onChange('unwrap')}
+                        />
+                      </div>
                     </ModeActionSelection>
                   )}
                 />

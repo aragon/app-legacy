@@ -8,21 +8,25 @@ const styles = {
     icon: <IconInfo className="text-info-500" height={20} width={20} />,
     color: 'text-info-800',
     borderColor: 'border-info-400',
+    bgColor: 'bg-info-100',
   },
   success: {
     icon: <IconSuccess className="text-success-500" height={20} width={20} />,
     color: 'text-success-800',
     borderColor: 'border-success-400',
+    bgColor: 'bg-success-100',
   },
   warning: {
     icon: <IconWarning className="text-warning-500" height={20} width={20} />,
     color: 'text-warning-800',
     borderColor: 'border-warning-400',
+    bgColor: 'bg-warning-100',
   },
   critical: {
     icon: <IconWarning className="text-critical-500" height={20} width={20} />,
     color: 'text-critical-800',
     borderColor: 'border-critical-400',
+    bgColor: 'bg-critical-100',
   },
 };
 
@@ -55,7 +59,7 @@ type ContainerProps = {
   mode: NonNullable<AlertCardProps['mode']>;
 };
 const Container = styled.div.attrs(({mode}: ContainerProps) => ({
-  className: `flex gap-1.5 box-border px-2 py-1.5 border-2 rounded-xl bg-ui-0 ${styles[mode].borderColor}`,
+  className: `flex gap-1.5 box-border px-2 py-1.5 border-2 rounded-xl ${styles[mode].bgColor} ${styles[mode].borderColor}`,
 }))<ContainerProps>``;
 
 const TextContainer = styled.div.attrs(() => ({

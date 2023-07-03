@@ -10,7 +10,7 @@ import {usePluginClient} from './usePluginClient';
 
 export function useDaoToken(
   pluginAddress: string
-): HookData<Erc20TokenDetails | undefined> {
+): HookData<Erc20TokenDetails | Erc20WrapperTokenDetails | undefined> {
   const [data, setData] = useState<
     Erc20TokenDetails | Erc20WrapperTokenDetails
   >();

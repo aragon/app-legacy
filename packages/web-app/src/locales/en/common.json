@@ -751,7 +751,7 @@
       "minimumApprovalSubtitle": "Minimum approval is the amount of addresses in the authorized list that must approve a proposal for it to pass. ",
       "minApprovalAddressCount": "of {{count}} addresses",
       "alerts": {
-        "minimumApprovalAlert": "of {{amount}} tokens",
+        "minimumApprovalAlert": "of {{amount}} {{tokenSymbol}}",
         "minimumParticipationAlert": "Rounded up to {{percentage}}% equals {{walletCount}} wallets have to vote",
         "minority": "Proposals could be approved by a minority rather than a majority.",
         "majority": "Proposal will be approved by majority",

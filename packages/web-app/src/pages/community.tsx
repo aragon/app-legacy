@@ -27,6 +27,7 @@ import {htmlIn} from 'utils/htmlIn';
 import useScreen from 'hooks/useScreen';
 import {useGovTokensWrapping} from 'context/govTokensWrapping';
 import {useExistingToken} from 'hooks/useExistingToken';
+import {Erc20WrapperTokenDetails} from '@aragon/sdk-client';
 
 const MEMBERS_PER_PAGE = 20;
 
@@ -98,7 +99,9 @@ const Community: React.FC = () => {
       <PageEmptyState
         title={t('community.emptyState.title')}
         subtitle={htmlIn(t)('community.emptyState.desc', {
-          tokenSymbol: daoToken?.symbol,
+          tokenSymbol:
+            (daoToken as Erc20WrapperTokenDetails)?.underlyingToken?.symbol ||
+            daoToken?.symbol,
         })}
         Illustration={
           <div className="flex">
