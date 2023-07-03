@@ -1,7 +1,12 @@
 import React, {useMemo, useEffect} from 'react';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
-import {AlertCard, Spinner, shortenAddress} from '@aragon/ui-components';
+import {
+  AlertCard,
+  IconSpinner,
+  Spinner,
+  shortenAddress,
+} from '@aragon/ui-components';
 
 import {Dd, Dl} from 'components/descriptionList';
 import {useFormContext, useWatch} from 'react-hook-form';
@@ -150,7 +155,13 @@ const VerificationCard: React.FC<TransferListProps> = ({tokenAddress}) => {
                 <Dt>
                   {t('createDAO.step3.existingToken.verificationLabelHolders')}
                 </Dt>
-                <Dd>{tokenTotalHolders || '-'}</Dd>
+                {tokenTotalHolders ? (
+                  <Dd>{tokenTotalHolders}</Dd>
+                ) : (
+                  <dd className="flex items-center" style={{width: '70%'}}>
+                    <IconSpinner className="w-1.5 desktop:w-2 h-1.5 desktop:h-2 animate-spin text-primary-500" />
+                  </dd>
+                )}
               </Dl>
             </>
           )}
