@@ -11,6 +11,7 @@ import {useDaoToken} from './useDaoToken';
 import {PluginTypes, usePluginClient} from './usePluginClient';
 import {TokenHoldersResponse, getTokenHoldersPaged} from 'services/covalentAPI';
 import {formatUnits} from 'ethers/lib/utils';
+import {useWallet} from './useWallet';
 
 export type MultisigMember = {
   address: string;
@@ -74,6 +75,8 @@ export const useDaoMembers = (
 
   const client = usePluginClient(pluginType);
 
+  const {address} = useWallet();
+
   // Fetch the list of members for a this DAO.
   useEffect(() => {
     async function fetchMembers() {
@@ -91,6 +94,30 @@ export const useDaoMembers = (
           if (!response) {
             setData([]);
             return;
+          }
+
+          if (!response.length && daoToken && address) {
+            const balance = await fetchBalance(
+              daoToken?.address,
+              address,
+              provider,
+              CHAIN_METADATA[network].nativeCurrency,
+              false
+            );
+
+            const balanceNumber = Number(
+              formatUnits(balance, daoToken.decimals)
+            );
+
+            if (balanceNumber > 0) {
+              (response as TokenVotingMember[]).push({
+                address,
+                balance: balance.toBigInt(),
+                delegatee: null,
+                delegators: [],
+                votingPower: balance.toBigInt(),
+              } as TokenVotingMember);
+            }
           }
 
           setRawMembers(response);
@@ -131,12 +158,14 @@ export const useDaoMembers = (
 
     fetchMembers();
   }, [
+    address,
     client?.methods,
     daoToken,
     daoToken?.address,
     network,
     pluginAddress,
     pluginType,
+    provider,
   ]);
 
   // map the members to the desired structure

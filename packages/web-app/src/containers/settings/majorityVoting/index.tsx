@@ -36,10 +36,7 @@ const MajorityVotingSettings: React.FC<IPluginSettings> = ({daoDetails}) => {
     daoDetails?.plugins?.[0]?.instanceAddress || ''
   );
 
-  const {isTokenMintable} = useExistingToken(
-    daoToken?.address,
-    daoDetails?.address
-  );
+  const {isTokenMintable} = useExistingToken({daoToken, daoDetails});
 
   const {data: tokenSupply} = useTokenSupply(daoToken?.address || '');
 

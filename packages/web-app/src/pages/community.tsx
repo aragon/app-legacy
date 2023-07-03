@@ -50,10 +50,10 @@ const Community: React.FC = () => {
     debouncedTerm
   );
 
-  const {isTokenMintable} = useExistingToken(
-    daoToken?.address,
-    daoDetails?.address
-  );
+  const {isDAOTokenWrapped, isTokenMintable} = useExistingToken({
+    daoToken,
+    daoDetails,
+  });
 
   const totalMemberCount = members.length;
   const filteredMemberCount = filteredMembers.length;
@@ -81,10 +81,10 @@ const Community: React.FC = () => {
   const handlePrimaryClick = () => {
     if (walletBased) {
       navigate('manage-members');
+    } else if (isDAOTokenWrapped) {
+      handleOpenModal();
     } else if (isTokenMintable) {
       navigate('mint-tokens');
-    } else {
-      handleOpenModal();
     }
   };
 
@@ -133,6 +133,19 @@ const Community: React.FC = () => {
               onClick: handlePrimaryClick,
             },
           }
+        : isDAOTokenWrapped
+        ? {
+            description: t('explore.explorer.tokenBased'),
+            primaryBtnProps: {
+              label: t('community.ctaMain.wrappedLabel'),
+              onClick: handlePrimaryClick,
+            },
+            secondaryBtnProps: {
+              label: t('labels.seeAllHolders'),
+              iconLeft: <IconLinkExternal />,
+              onClick: handleSecondaryButtonClick,
+            },
+          }
         : isTokenMintable
         ? {
             description: t('explore.explorer.tokenBased'),
@@ -149,10 +162,6 @@ const Community: React.FC = () => {
           }
         : {
             description: t('explore.explorer.tokenBased'),
-            primaryBtnProps: {
-              label: t('community.ctaMain.wrappedLabel'),
-              onClick: handlePrimaryClick,
-            },
             secondaryBtnProps: {
               label: t('labels.seeAllHolders'),
               iconLeft: <IconLinkExternal />,

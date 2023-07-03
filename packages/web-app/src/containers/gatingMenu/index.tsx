@@ -87,10 +87,7 @@ export const GatingMenu: React.FC<Props> = ({
   const {network} = useNetwork(); // TODO ensure this network is the dao network
   const {handleOpenModal} = useGovTokensWrapping();
 
-  const {isTokenMintable} = useExistingToken(
-    daoToken?.address,
-    daoDetails?.address
-  );
+  const {isDAOTokenWrapped} = useExistingToken({daoDetails, daoToken});
 
   const isTokenAbsenceAlert = pluginType === 'token-voting.plugin.dao.eth';
 
@@ -100,22 +97,22 @@ export const GatingMenu: React.FC<Props> = ({
         <StyledImage src={WalletIcon} />
         {pluginType === 'token-voting.plugin.dao.eth' ? (
           <>
-            {isTokenMintable ? (
-              <TokenContainer tokenName={daoToken?.name || ''} />
-            ) : (
+            {isDAOTokenWrapped ? (
               <WrappingRequiredContainer
                 tokenSymbol={
                   (daoToken as Erc20WrapperTokenDetails | undefined)
                     ?.underlyingToken?.symbol || ''
                 }
               />
+            ) : (
+              <TokenContainer tokenName={daoToken?.name || ''} />
             )}
           </>
         ) : (
           <WalletContainer />
         )}
 
-        {isTokenAbsenceAlert && !isTokenMintable ? (
+        {isTokenAbsenceAlert && isDAOTokenWrapped ? (
           <div className="grid grid-cols-2 gap-3">
             <ButtonText
               label={t('modalAlert.wrapToken.ctaLabel')}

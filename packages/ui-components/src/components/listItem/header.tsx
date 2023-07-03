@@ -7,6 +7,8 @@ import {IconType} from '../icons';
 export type ListItemHeaderProps = {
   /** Action title */
   buttonText: string;
+  /** Action state */
+  disabled?: boolean;
   /** Icon to display */
   icon: React.FunctionComponentElement<IconType>;
   /** Label to display */
@@ -20,6 +22,7 @@ export type ListItemHeaderProps = {
 
 export const ListItemHeader: React.FC<ListItemHeaderProps> = ({
   orientation = 'vertical',
+  disabled = false,
   ...props
 }) => {
   const horizontal = orientation === 'horizontal';
@@ -29,7 +32,11 @@ export const ListItemHeader: React.FC<ListItemHeaderProps> = ({
       <IconWrapper>{props.icon}</IconWrapper>
 
       <ButtonWrapper horizontal={horizontal}>
-        <ButtonText label={props.buttonText} onClick={props.onClick} />
+        <ButtonText
+          label={props.buttonText}
+          onClick={props.onClick}
+          disabled={disabled}
+        />
       </ButtonWrapper>
 
       <Break horizontal={horizontal} />

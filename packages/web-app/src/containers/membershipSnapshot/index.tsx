@@ -51,10 +51,10 @@ export const MembershipSnapshot: React.FC<Props> = ({
 
   const {data: daoDetails} = useDaoDetailsQuery();
 
-  const {isTokenMintable} = useExistingToken(
-    daoToken?.address,
-    daoDetails?.address
-  );
+  const {isDAOTokenWrapped, isTokenMintable} = useExistingToken({
+    daoToken,
+    daoDetails,
+  });
 
   const walletBased = pluginType === 'multisig.plugin.dao.eth';
 
@@ -63,11 +63,13 @@ export const MembershipSnapshot: React.FC<Props> = ({
       ? navigate(
           generatePath(ManageMembersProposal, {network, dao: daoAddressOrEns})
         )
+      : isDAOTokenWrapped
+      ? handleOpenModal()
       : isTokenMintable
       ? navigate(
           generatePath(MintTokensProposal, {network, dao: daoAddressOrEns})
         )
-      : handleOpenModal();
+      : navigate(generatePath(Community, {network, dao: daoAddressOrEns}));
   };
 
   if (isLoading) return <Loading />;
@@ -87,9 +89,11 @@ export const MembershipSnapshot: React.FC<Props> = ({
             buttonText={
               walletBased
                 ? t('labels.manageMember')
+                : isDAOTokenWrapped
+                ? t('community.ctaMain.wrappedLabel')
                 : isTokenMintable
                 ? t('labels.addMember')
-                : t('community.ctaMain.wrappedLabel')
+                : t('labels.seeCommunity')
             }
             orientation="vertical"
             onClick={headerButtonHandler}
@@ -126,9 +130,11 @@ export const MembershipSnapshot: React.FC<Props> = ({
         buttonText={
           walletBased
             ? t('labels.manageMember')
+            : isDAOTokenWrapped
+            ? t('community.ctaMain.wrappedLabel')
             : isTokenMintable
             ? t('labels.addMember')
-            : t('community.ctaMain.wrappedLabel')
+            : t('labels.seeCommunity')
         }
         orientation="vertical"
         onClick={headerButtonHandler}
