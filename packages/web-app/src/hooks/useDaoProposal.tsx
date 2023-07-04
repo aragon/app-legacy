@@ -77,6 +77,8 @@ export const useDaoProposal = (
   );
 
   const proposalGuid = proposalId?.makeGloballyUnique(pluginAddress);
+  const isMultisigPlugin = pluginType === 'multisig.plugin.dao.eth';
+  const isTokenBasedPlugin = pluginType === 'token-voting.plugin.dao.eth';
 
   // return cache keys and variables based on the type of plugin;
   const getCachedProposalData = useCallback(
@@ -205,7 +207,12 @@ export const useDaoProposal = (
       }
     };
 
-    if (proposalGuid && daoAddress && daoToken) getDaoProposal(proposalGuid);
+    if (
+      daoAddress &&
+      proposalGuid &&
+      (isMultisigPlugin || (isTokenBasedPlugin && daoToken))
+    )
+      getDaoProposal(proposalGuid);
   }, [
     daoAddress,
     getCachedProposalData,
@@ -216,6 +223,8 @@ export const useDaoProposal = (
     pluginAddress,
     numberOfRuns,
     daoToken,
+    isMultisigPlugin,
+    isTokenBasedPlugin,
   ]);
 
   return {data, error, isLoading};
