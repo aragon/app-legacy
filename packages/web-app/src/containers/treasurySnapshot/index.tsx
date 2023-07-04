@@ -47,7 +47,7 @@ const TreasurySnapshot: React.FC<Props> = ({
         object={'wallet'}
         title={t('finance.emptyState.title')}
         description={htmlIn(t)('finance.emptyState.description')}
-        primaryButton={{
+        secondaryButton={{
           label: t('finance.emptyState.buttonLabel'),
           onClick: () => open('deposit'),
         }}

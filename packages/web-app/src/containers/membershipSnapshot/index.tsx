@@ -74,6 +74,8 @@ export const MembershipSnapshot: React.FC<Props> = ({
 
   if (isLoading) return <Loading />;
 
+  if (members.length === 0) return null;
+
   if (horizontal && isDesktop) {
     return (
       <div className="flex space-x-3">
