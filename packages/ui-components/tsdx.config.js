@@ -1,9 +1,20 @@
 const images = require('@rollup/plugin-image');
 const postcss = require('rollup-plugin-postcss');
+const replace = require('@rollup/plugin-replace');
 const {uglify} = require('rollup-plugin-uglify');
 
 module.exports = {
-  rollup(config) {
+  rollup(config, opts) {
+    // suppress prevent assignment warning
+    config.plugins = config.plugins.map(plugin =>
+      plugin.name === 'replace'
+        ? replace({
+            'process.env.NODE_ENV': JSON.stringify(opts.env),
+            preventAssignment: true,
+          })
+        : plugin
+    );
+
     config.plugins = [
       // postcss config
       postcss({
