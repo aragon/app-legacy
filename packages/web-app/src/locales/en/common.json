@@ -241,7 +241,6 @@
     "selectToken": "Select a token …",
     "walletOrEns": "Type wallet address or ENS …",
     "searchTokens": "Type to search …",
-    "searchTransfers": "Type to filter …",
     "daoName": "Type your DAO's name …",
     "ensName": "aragon",
     "daoDescription": "Type your summary …",

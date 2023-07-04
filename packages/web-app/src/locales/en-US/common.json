@@ -144,7 +144,6 @@
     "selectToken": "Select a Token ...",
     "walletOrEns": "Type wallet address or ENS ...",
     "searchTokens": "Type to search ...",
-    "searchTransfers": "Type to filter ...",
     "daoName": "Type your DAOs name ...",
     "daoDescription": "Type your summary ..."
   },
