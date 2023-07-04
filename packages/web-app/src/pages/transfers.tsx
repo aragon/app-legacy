@@ -1,4 +1,4 @@
-import {ButtonGroup, IconAdd, Option, SearchInput} from '@aragon/ui-components';
+import {ButtonGroup, IconAdd, Option} from '@aragon/ui-components';
 import {withTransaction} from '@elastic/apm-rum-react';
 import {Locale, format} from 'date-fns';
 import * as Locales from 'date-fns/locale';
@@ -26,37 +26,20 @@ const Transfers: React.FC = () => {
     daoDetails?.address ?? ''
   );
 
-  const [filterValue, setFilterValue] = useState('');
-  const [searchValue, setSearchValue] = useState('');
+  const [filterValue, setFilterValue] = useState<string>();
 
   /*************************************************
    *             Callbacks and Handlers            *
    *************************************************/
   const handleButtonGroupChange = (selected: string) => {
-    const val = selected === 'all' ? '' : selected;
+    const val = selected === 'all' ? undefined : selected;
     setFilterValue(val);
   };
 
   const filterValidator = useCallback(
-    (transfer: Transfer) => {
-      let returnValue = true;
-      let matchesFilter = true;
-      let matchesSearch = true;
-      if (filterValue !== '') {
-        matchesFilter = Boolean(transfer.transferType === filterValue);
-      }
-      if (searchValue !== '') {
-        const re = new RegExp(searchValue, 'i');
-        matchesSearch = Boolean(
-          transfer?.title.match(re) ||
-            transfer.tokenSymbol.match(re) ||
-            transfer.tokenAmount.match(re)
-        );
-      }
-      returnValue = matchesFilter && matchesSearch;
-      return returnValue;
-    },
-    [searchValue, filterValue]
+    (transfer: Transfer) =>
+      filterValue == null || transfer.transferType === filterValue,
+    [filterValue]
   );
 
   const displayedTransfers = useMemo(
@@ -105,13 +88,6 @@ const Transfers: React.FC = () => {
       >
         <div className="mt-3 desktop:mt-8">
           <div className="space-y-1.5">
-            <SearchInput
-              value={searchValue}
-              onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                setSearchValue(e.target.value)
-              }
-              placeholder={t('placeHolders.searchTransfers')}
-            />
             <div className="flex">
               <ButtonGroup
                 bgWhite
