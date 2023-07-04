@@ -126,7 +126,6 @@ export const AccordionItem: React.FC<AccordionMethodType & {name: string}> = ({
     ) : (
       <>{customHeader}</>
     )}
-
     <Accordion.Content>{children}</Accordion.Content>
   </Accordion.Item>
 );
