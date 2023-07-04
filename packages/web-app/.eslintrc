@@ -26,7 +26,13 @@
     "plugin:prettier/recommended",
     "plugin:tailwindcss/recommended"
   ],
-  "plugins": ["react", "react-hooks", "@typescript-eslint", "tailwindcss", "prettier"],
+  "plugins": [
+    "react",
+    "react-hooks",
+    "@typescript-eslint",
+    "tailwindcss",
+    "prettier"
+  ],
   "rules": {
     "react-hooks/rules-of-hooks": "error",
     "react-hooks/exhaustive-deps": "warn",
@@ -37,7 +43,7 @@
     "tailwindcss/no-contradicting-classname": "error",
     "prettier/prettier": "error",
     "block-scoped-var": "error",
-    "eqeqeq": "error",
+    "eqeqeq": ["error", "always", {"null": "ignore"}],
     "no-var": "error",
     "prefer-const": "error",
     "eol-last": "error",
