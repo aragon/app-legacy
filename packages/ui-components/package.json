@@ -17,7 +17,7 @@
   },
   "scripts": {
     "start": "tsdx watch",
-    "build": "tsdx build",
+    "build": "tsdx build --format esm",
     "test": "tsdx test --passWithNoTests",
     "lint": "eslint '**/*.{ts,tsx}' --max-warnings=0",
     "fix": "eslint '**/*.{ts,tsx}' --fix",
