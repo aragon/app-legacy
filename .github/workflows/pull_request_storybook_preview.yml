@@ -20,7 +20,7 @@ jobs:
         id: fc
         with:
           issue-number: ${{ github.event.pull_request.number }}
-          body-includes: "Storybook IPFS Hash: "
+          body-includes: 'Storybook IPFS Hash: '
       - name: Delete Comment
         continue-on-error: true
         uses: actions/github-script@v6
@@ -38,11 +38,10 @@ jobs:
         with:
           node-version: 16
           cache: 'yarn'
-      - name: Build ui-components
-        run: |
-          cd ../ui-components
-          yarn install --pure-lockfile
-          yarn build-storybook
+      - name: Install depdendencies
+        run: yarn install --pure-lockfile
+      - name: Build storybook
+        run: yarn build-storybook
       - uses: actions/setup-python@v4
         with:
           python-version: '3.x'

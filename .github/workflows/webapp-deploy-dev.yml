@@ -80,18 +80,13 @@ jobs:
           node-version: 16
           cache: 'yarn'
 
-      - name: Install deps, build and link ui-components
+      - name: Install depdendencies
+        run: yarn install --pure-lockfile
+
+      - name: Build ui-components
         run: |
           cd packages/ui-components
-          yarn install --pure-lockfile
           yarn build
-          yarn link
-
-      - name: Install deps and link web-app
-        run: |
-          cd packages/web-app
-          yarn install --pure-lockfile
-          yarn link @aragon/ui-components
 
       - name: Build web-app
         run: |
@@ -194,15 +189,8 @@ jobs:
           node-version: 16
           cache: 'yarn'
 
-      - name: Install deps before scanning with Trivy
-        run: |
-          cd packages/ui-components
-          yarn install --pure-lockfile
-          yarn link
-          cd ../../
-          cd packages/web-app
-          yarn install --pure-lockfile
-          yarn link @aragon/ui-components
+      - name: Install depdendencies
+        run: yarn install --pure-lockfile
 
       - name: Scan in Repo (html)
         uses: aquasecurity/trivy-action@master

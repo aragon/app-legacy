@@ -43,18 +43,14 @@ jobs:
         with:
           node-version: 16
           cache: 'yarn'
+      - name: Install depdendencies
+        run: yarn install --pure-lockfile
       - name: Build ui-components
         run: |
           cd ../ui-components
-          yarn install --pure-lockfile
           yarn build
-          yarn link
-      - name: Install depdendencies
-        run: yarn install --pure-lockfile
-      - name: Link ui-components
-        run: yarn link @aragon/ui-components
-      # - name: Lint
-      #   run: yarn lint
+      - name: Lint
+        run: yarn lint
       - name: Test
         run: yarn test
       - name: Build

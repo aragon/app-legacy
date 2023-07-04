@@ -21,7 +21,6 @@
     "test": "tsdx test --passWithNoTests",
     "lint": "eslint '**/*.{ts,tsx}' --max-warnings=0",
     "fix": "eslint '**/*.{ts,tsx}' --fix",
-    "prepare": "tsdx build",
     "size": "size-limit",
     "analyze": "size-limit --why",
     "storybook": "start-storybook -p 6006",

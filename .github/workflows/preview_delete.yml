@@ -1,9 +1,9 @@
 name: Delete Preview
 on:
   pull_request:
-     types:
-       - unlabeled
-       - closed
+    types:
+      - unlabeled
+      - closed
 
 jobs:
   remove_preview:
@@ -22,7 +22,7 @@ jobs:
         id: fcwebapp
         with:
           issue-number: ${{ github.event.pull_request.number }}
-          body-includes: "WebApp IPFS Hash: "
+          body-includes: 'WebApp IPFS Hash: '
       - name: Unpin Webapp
         if: steps.fcwebapp.outputs.comment-id != 0
         run: |
@@ -45,7 +45,7 @@ jobs:
         id: fcui
         with:
           issue-number: ${{ github.event.pull_request.number }}
-          body-includes: "Storybook IPFS Hash: "
+          body-includes: 'Storybook IPFS Hash: '
       - name: Unpin UI-Components
         if: steps.fcui.outputs.comment-id != 0
         run: |
