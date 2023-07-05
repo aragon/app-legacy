@@ -3,6 +3,7 @@ import {
   IconChevronRight,
   IconClose,
   IconHome,
+  IconType,
 } from '@aragon/ui-components';
 import React from 'react';
 import {useFormContext} from 'react-hook-form';
@@ -13,6 +14,7 @@ type DesktopModalHeaderProps = {
   onClose?: () => void;
   selectedContract?: string; // Note: may come from form, not set in stone
   onSearch?: (search: string) => void;
+  buttonIcon?: React.FunctionComponentElement<IconType>;
 };
 
 const DesktopModalHeader: React.FC<DesktopModalHeaderProps> = props => {
@@ -23,7 +25,7 @@ const DesktopModalHeader: React.FC<DesktopModalHeaderProps> = props => {
     <Container>
       <LeftContent>
         <ButtonIcon
-          icon={<IconHome />}
+          icon={props.buttonIcon || <IconHome />}
           mode="secondary"
           bgWhite
           onClick={() => {

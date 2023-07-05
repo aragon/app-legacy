@@ -217,6 +217,7 @@ export type ActionsTypes =
   | 'external_contract_modal'
   | 'external_contract_action'
   | 'wallet_connect_modal'
+  | 'wallet_connect_action'
   | 'modify_token_voting_settings'
   | 'modify_metadata'
   | 'modify_multisig_voting_settings'
@@ -317,6 +318,20 @@ export type ActionSCC = {
   value?: string;
 };
 
+export type ActionWC = {
+  name: 'wallet_connect_action';
+  contractName: string;
+  contractAddress: string;
+  functionName: string;
+  inputs: Array<{
+    name: string;
+    type: string;
+    notice?: string;
+    value: object | string | BigNumber;
+  }>;
+  value?: string;
+};
+
 // TODO: Consider making this a generic type that take other types of the form
 // like ActionAddAddress (or more generically, ActionItem...?) instead taking the
 // union of those subtypes. [VR 11-08-2022]
@@ -329,7 +344,8 @@ export type Action =
   | ActionUpdateMetadata
   | ActionUpdateMinimumApproval
   | ActionUpdateMultisigPluginSettings
-  | ActionSCC;
+  | ActionSCC
+  | ActionWC;
 
 export type ParamType = {
   type: string;

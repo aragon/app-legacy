@@ -23,7 +23,7 @@ import {CHAIN_METADATA, SUPPORTED_CHAIN_ID} from 'utils/constants';
 import usePrevious from 'hooks/usePrevious';
 
 export interface UseWalletConnectInterceptorOptions {
-  onActionRequest: (request: WcRequest) => void;
+  onActionRequest?: (request: WcRequest) => void;
   onConnectionProposal?: (payload: {
     approve: () => void;
     reject: () => void;
@@ -50,7 +50,9 @@ export function useWalletConnectInterceptor({
   const prevNetwork = usePrevious(network);
 
   const [client, setClient] = useState<WcClient | null>(null);
+  // TODO: Determine if currentWcRecord and archivedURIs needs to stay or removed
   const [currentWcRecord, setCurrentWcRecord] = useState<WcRecord | null>(null);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [archivedURIs, setArchivedURIs] = useState<string[]>([]);
 
   const activeNetworkData = useMemo(() => CHAIN_METADATA[network], [network]);
@@ -81,12 +83,13 @@ export function useWalletConnectInterceptor({
       }
 
       try {
-        await connect(client, restOptions.uri);
+        const connection = await connect(client, restOptions.uri);
 
         setCurrentWcRecord({
           autoApprove: true,
           ...restOptions,
         });
+        return connection;
       } catch (e) {
         onError(e as Error);
       }
@@ -100,28 +103,28 @@ export function useWalletConnectInterceptor({
         throw new Error('The WalletConnect client must be initialized');
       }
 
-      if (!currentWcRecord) {
-        throw new Error(
-          'To approve the connection, you must initiate it first'
-        );
-      }
+      // if (!currentWcRecord) {
+      //   throw new Error(
+      //     'To approve the connection, you must initiate it first'
+      //   );
+      // }
 
-      if (!topic && !currentWcRecord.topic) {
+      if (!topic && !currentWcRecord?.topic) {
         throw new Error(
           'Topic must be provided either by currently approved session or as argument'
         );
       }
 
       try {
-        await disconnect(client, topic || currentWcRecord.topic || '');
+        await disconnect(client, topic || currentWcRecord?.topic || '');
       } catch (e) {
         console.error(e);
       } finally {
-        setArchivedURIs([...archivedURIs, currentWcRecord.uri]);
+        // setArchivedURIs([...archivedURIs, currentWcRecord?.uri]);
         setCurrentWcRecord(null);
       }
     },
-    [archivedURIs, client, currentWcRecord]
+    [client, currentWcRecord]
   );
 
   const handleApprove = useCallback(
@@ -193,19 +196,19 @@ export function useWalletConnectInterceptor({
         throw new Error('The WalletConnect client must be initialized');
       }
 
-      if (!currentWcRecord) {
-        throw new Error(
-          'To approve the request, you must initiate the connection first'
-        );
-      }
+      // if (!currentWcRecord) {
+      //   throw new Error(
+      //     'To approve the request, you must initiate the connection first'
+      //   );
+      // }
 
-      if (event.topic !== currentWcRecord.topic) return;
+      // if (event.topic !== currentWcRecord?.topic) return;
 
       if (event.params.chainId === `eip155:${activeNetworkData.id}`) {
-        onActionRequest(event.params.request);
+        onActionRequest?.(event.params.request);
       }
     },
-    [activeNetworkData, client, currentWcRecord, onActionRequest]
+    [activeNetworkData, client, onActionRequest]
   );
 
   const handleDisconnect = useCallback(
@@ -219,6 +222,10 @@ export function useWalletConnectInterceptor({
     },
     [currentWcRecord, wcDisconnect]
   );
+
+  const getActiveSessions = useCallback(() => {
+    return client?.getActiveSessions();
+  }, [client]);
 
   useEffect(() => {
     makeClient().then(setClient);
@@ -262,5 +269,6 @@ export function useWalletConnectInterceptor({
     wcDisconnect,
     canConnect,
     canDisconnect,
+    getActiveSessions,
   };
 }
