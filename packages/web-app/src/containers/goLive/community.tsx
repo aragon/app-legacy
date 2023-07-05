@@ -1,5 +1,5 @@
 import {IconFeedback, Link, Tag} from '@aragon/ui-components';
-import React from 'react';
+import React, {useMemo} from 'react';
 import {Controller, useFormContext} from 'react-hook-form';
 import {useTranslation} from 'react-i18next';
 
@@ -39,6 +39,28 @@ const Community: React.FC = () => {
   const govTokenSymbol = isGovTokenRequiresWrapping
     ? gTokenSymbol(tokenSymbol)
     : tokenSymbol;
+
+  const formattedTotalSupply = useMemo(() => {
+    // More than 100 trillion (otherwise formatting fails on bigger numbers)
+    if (tokenTotalSupply > 1e14) {
+      return '> 100t';
+    }
+
+    return numeral(tokenTotalSupply).format(
+      tokenTotalSupply < 100 ? '0,0.[000]' : '0,0'
+    );
+  }, [tokenTotalSupply]);
+
+  const formattedTotalHolders = useMemo(() => {
+    if (!tokenTotalHolders) return '-';
+
+    // More than 100 trillion (otherwise formatting fails on bigger numbers)
+    if (tokenTotalHolders > 1e14) {
+      return '> 100t';
+    }
+
+    return numeral(tokenTotalHolders).format('0,0');
+  }, [tokenTotalHolders]);
 
   return (
     <Controller
@@ -124,7 +146,7 @@ const Community: React.FC = () => {
                   <Dd>
                     <div className="flex items-center space-x-1.5">
                       <p>
-                        {tokenTotalSupply} {tokenSymbol}
+                        {formattedTotalSupply} {tokenSymbol}
                       </p>
                       {isCustomToken && (
                         <Tag
@@ -141,7 +163,7 @@ const Community: React.FC = () => {
                   <Dt>{t('labels.review.existingTokens.currentHolders')}</Dt>
                   <Dd>
                     <div className="flex items-center space-x-1.5">
-                      <p>{tokenTotalHolders || '-'}</p>
+                      <p>{formattedTotalHolders}</p>
                     </div>
                   </Dd>
                 </Dl>
@@ -152,8 +174,7 @@ const Community: React.FC = () => {
                   <Dd>
                     <div className="space-y-0.5">
                       <div>
-                        {numeral(tokenTotalSupply).format('0,0')}{' '}
-                        {govTokenSymbol}
+                        {formattedTotalSupply} {govTokenSymbol}
                       </div>
                       <div className="text-ui-400 ft-text-sm">
                         {t('labels.supplyPotentialHelptext', {tokenSymbol})}

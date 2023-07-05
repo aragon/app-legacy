@@ -93,8 +93,8 @@ const GovTokensWrappingModal: FC<GovTokensWrappingModalProps> = ({
 
     let title = t('modal.wrapToken.title');
     let subtitle = t('modal.wrapToken.desc', {
-      tokenSymbol,
-      gTokenSymbol: gTokenSymbol(tokenSymbol),
+      tokenSymbol: daoToken?.symbol || 'ANT',
+      gTokenSymbol: wrappedDaoToken?.symbol || 'ANT',
     });
 
     const finishedTitle = isWrapMode

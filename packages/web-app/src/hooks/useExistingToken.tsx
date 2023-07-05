@@ -8,6 +8,7 @@ import {
   Erc20TokenDetails,
   Erc20WrapperTokenDetails,
 } from '@aragon/sdk-client';
+import {validateGovernanceTokenAddress} from 'utils/validators';
 
 export const useExistingToken = ({
   daoDetails,
@@ -48,10 +49,32 @@ export const useExistingToken = ({
   }, [dao, provider, token]);
 
   useEffect(() => {
-    if ((token as Erc20WrapperTokenDetails | undefined)?.underlyingToken) {
-      setIsDAOTokenWrapped(true);
+    async function detectWhetherGovTokenIsWrapped(
+      token: Erc20WrapperTokenDetails | undefined
+    ) {
+      if (!token) return;
+
+      let tokenType = '';
+      const isUnderlyingTokenExists = !!token.underlyingToken;
+
+      if (isUnderlyingTokenExists) {
+        const {type} = await validateGovernanceTokenAddress(
+          token.underlyingToken.address,
+          provider
+        );
+
+        tokenType = type;
+      }
+
+      setIsDAOTokenWrapped(
+        tokenType !== 'governance-ERC20' && isUnderlyingTokenExists
+      );
     }
-  }, [token]);
+
+    detectWhetherGovTokenIsWrapped(
+      token as Erc20WrapperTokenDetails | undefined
+    );
+  }, [provider, token]);
 
   return {
     isTokenMintable,

@@ -1,4 +1,4 @@
-import React, {useMemo, useEffect} from 'react';
+import React, {useMemo, useEffect, useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 import {
@@ -14,6 +14,7 @@ import {gTokenSymbol} from 'utils/tokens';
 import {getTotalHolders} from 'services/covalentAPI';
 import {useNetwork} from 'context/network';
 import {QueryClient} from '@tanstack/react-query';
+import numeral from 'numeral';
 
 type TransferListProps = {
   tokenAddress: string;
@@ -40,12 +41,21 @@ const VerificationCard: React.FC<TransferListProps> = ({tokenAddress}) => {
   });
   const {network} = useNetwork();
 
+  const [isTotalHoldersLoading, setIsTotalHoldersLoading] = useState(true);
+
   useEffect(() => {
     async function fetchTotalHolders() {
-      resetField('tokenTotalHolders');
-      const queryClient = new QueryClient();
-      const total = await getTotalHolders(queryClient, tokenAddress, network);
-      setValue('tokenTotalHolders', total);
+      try {
+        setIsTotalHoldersLoading(true);
+        resetField('tokenTotalHolders');
+        const queryClient = new QueryClient();
+        const total = await getTotalHolders(queryClient, tokenAddress, network);
+        setValue('tokenTotalHolders', total);
+      } catch (e) {
+        console.error(e);
+      } finally {
+        setIsTotalHoldersLoading(false);
+      }
     }
 
     fetchTotalHolders();
@@ -115,6 +125,41 @@ const VerificationCard: React.FC<TransferListProps> = ({tokenAddress}) => {
     }
   }, [t, tokenSymbol, tokenType]);
 
+  const formattedTokenTotalSupply = useMemo(() => {
+    if (tokenTotalSupply < 100) {
+      return numeral(tokenTotalSupply).format('0,0.[000]');
+    }
+
+    // More than 100 trillion (otherwise formatting fails on bigger numbers)
+    if (tokenTotalSupply > 1e14) {
+      return '> 100t';
+    }
+
+    const totalSupplyString = tokenTotalSupply.toLocaleString('fullwide', {
+      useGrouping: false,
+    });
+
+    return numeral(totalSupplyString).format('0.[00]a');
+  }, [tokenTotalSupply]);
+
+  const formattedTokenTotalHolders = useMemo(() => {
+    if (!tokenTotalHolders) return '-';
+
+    // More than 100 trillion (otherwise formatting fails on bigger numbers)
+    if (tokenTotalHolders > 1e14) {
+      return '> 100t';
+    }
+
+    const tokenTotalHoldersString = tokenTotalHolders.toLocaleString(
+      'fullwide',
+      {
+        useGrouping: false,
+      }
+    );
+
+    return numeral(tokenTotalHoldersString).format('0.[00]a');
+  }, [tokenTotalHolders]);
+
   if (!tokenType)
     return (
       <VerifyContainer>
@@ -148,19 +193,19 @@ const VerificationCard: React.FC<TransferListProps> = ({tokenAddress}) => {
                   {t('createDAO.step3.existingToken.verificationLabelSupply')}
                 </Dt>
                 <Dd>
-                  {tokenTotalSupply} {tokenSymbol}
+                  {formattedTokenTotalSupply} {tokenSymbol}
                 </Dd>
               </Dl>
               <Dl>
                 <Dt>
                   {t('createDAO.step3.existingToken.verificationLabelHolders')}
                 </Dt>
-                {tokenTotalHolders ? (
-                  <Dd>{tokenTotalHolders}</Dd>
-                ) : (
+                {isTotalHoldersLoading ? (
                   <dd className="flex items-center" style={{width: '70%'}}>
-                    <IconSpinner className="w-1.5 desktop:w-2 h-1.5 desktop:h-2 text-primary-500 animate-spin" />
+                    <IconSpinner className="w-1.5 desktop:w-2 h-1.5 desktop:h-2 animate-spin text-primary-500" />
                   </dd>
+                ) : (
+                  <Dd>{formattedTokenTotalHolders}</Dd>
                 )}
               </Dl>
             </>

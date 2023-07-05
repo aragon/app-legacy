@@ -94,7 +94,7 @@ const Community: React.FC = () => {
    *************************************************/
   if (detailsAreLoading || membersLoading) return <Loading />;
 
-  if (!totalMemberCount) {
+  if (!totalMemberCount && isDAOTokenWrapped) {
     return (
       <PageEmptyState
         title={t('community.emptyState.title')}

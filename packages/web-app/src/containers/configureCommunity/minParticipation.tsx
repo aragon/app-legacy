@@ -66,6 +66,64 @@ export const MinParticipation: FC = () => {
       : t('errors.percentage');
   };
 
+  const formattedProgressMinParticipation = useMemo(() => {
+    const prefix =
+      minParticipationTokensAmount < govTokenTotalSupply ? '≥' : '';
+
+    // More than 100 trillion (otherwise formatting fails on bigger numbers)
+    if (minParticipationTokensAmount > 1e14) {
+      return `${prefix}100t`;
+    }
+
+    return `${prefix}${numeral(minParticipationTokensAmount).format(
+      govTokenTotalSupply < 100 ? '0.[000]' : '0.[0]a'
+    )}`;
+  }, [govTokenTotalSupply, minParticipationTokensAmount]);
+
+  const formattedProgressTotalSupply = useMemo(() => {
+    // More than 100 trillion (otherwise formatting fails on bigger numbers)
+    if (govTokenTotalSupply > 1e14) {
+      return '> 100t';
+    }
+
+    return numeral(govTokenTotalSupply).format(
+      govTokenTotalSupply < 100 ? '0.[000]' : '0.[0]a'
+    );
+  }, [govTokenTotalSupply]);
+
+  const formattedTotalSupply = useMemo(() => {
+    // More than 100 trillion (otherwise formatting fails on bigger numbers)
+    if (tokenTotalSupply > 1e14) {
+      return '> 100t';
+    }
+
+    return numeral(tokenTotalSupply).format(
+      tokenTotalSupply < 100 ? '0,0.[000]' : '0,0'
+    );
+  }, [tokenTotalSupply]);
+
+  const formattedGovTokenTotalSupply = useMemo(() => {
+    // More than 100 trillion (otherwise formatting fails on bigger numbers)
+    if (govTokenTotalSupply > 1e14) {
+      return '> 100t';
+    }
+
+    return numeral(govTokenTotalSupply).format(
+      govTokenTotalSupply < 100 ? '0,0.[000]' : '0,0'
+    );
+  }, [govTokenTotalSupply]);
+
+  const formattedMinParticipationTokensAmount = useMemo(() => {
+    // More than 100 trillion (otherwise formatting fails on bigger numbers)
+    if (minParticipationTokensAmount > 1e14) {
+      return '> 100t';
+    }
+
+    return numeral(minParticipationTokensAmount).format(
+      minParticipationTokensAmount < 100 ? '0,0.[000]' : '0,0'
+    );
+  }, [minParticipationTokensAmount]);
+
   return (
     <>
       <Label
@@ -126,20 +184,12 @@ export const MinParticipation: FC = () => {
                           }%`,
                         }}
                       >
-                        {minParticipationTokensAmount < govTokenTotalSupply
-                          ? '≥'
-                          : ''}
-
-                        {numeral(minParticipationTokensAmount).format(
-                          govTokenTotalSupply < 100 ? '0.[000]' : '0.[0]a'
-                        )}
+                        {formattedProgressMinParticipation}
                       </p>
 
                       <p className="flex-shrink-0 text-ui-600">
                         {t('createDAO.step4.alerts.minimumApprovalAlert', {
-                          amount: numeral(govTokenTotalSupply).format(
-                            govTokenTotalSupply < 100 ? '0.[000]' : '0.[0]a'
-                          ),
+                          amount: formattedProgressTotalSupply,
                           tokenSymbol: govTokenSymbol,
                         })}
                       </p>
@@ -209,9 +259,7 @@ export const MinParticipation: FC = () => {
                         />
 
                         <StatItemValue>
-                          {numeral(tokenTotalSupply).format(
-                            tokenTotalSupply < 100 ? '0,0.[000]' : '0,0'
-                          )}{' '}
+                          {formattedTotalSupply}{' '}
                           {t('createDAO.step4.wrappedReferenceValueLabel', {
                             tokenSymbol,
                           })}
@@ -234,9 +282,7 @@ export const MinParticipation: FC = () => {
                         />
 
                         <StatItemValue>
-                          {numeral(govTokenTotalSupply).format(
-                            govTokenTotalSupply < 100 ? '0,0.[000]' : '0,0'
-                          )}{' '}
+                          {formattedGovTokenTotalSupply}{' '}
                           {t(
                             'createDAO.step4.wrappedReferenceParticipationValueLabel',
                             {
@@ -263,11 +309,7 @@ export const MinParticipation: FC = () => {
                         />
 
                         <StatItemValue>
-                          {numeral(minParticipationTokensAmount).format(
-                            minParticipationTokensAmount < 100
-                              ? '0,0.[000]'
-                              : '0,0'
-                          )}{' '}
+                          {formattedMinParticipationTokensAmount}{' '}
                           {t(
                             'createDAO.step4.wrappedReferenceParticipationValueLabel',
                             {
