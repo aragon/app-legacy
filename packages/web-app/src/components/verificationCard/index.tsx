@@ -202,7 +202,7 @@ const VerificationCard: React.FC<TransferListProps> = ({tokenAddress}) => {
                 </Dt>
                 {isTotalHoldersLoading ? (
                   <dd className="flex items-center" style={{width: '70%'}}>
-                    <IconSpinner className="w-1.5 desktop:w-2 h-1.5 desktop:h-2 animate-spin text-primary-500" />
+                    <IconSpinner className="w-1.5 desktop:w-2 h-1.5 desktop:h-2 text-primary-500 animate-spin" />
                   </dd>
                 ) : (
                   <Dd>{formattedTokenTotalHolders}</Dd>

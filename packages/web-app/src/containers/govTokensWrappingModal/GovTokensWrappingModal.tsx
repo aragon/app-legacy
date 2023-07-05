@@ -23,7 +23,6 @@ import {
 import {StateEmpty} from 'components/stateEmpty';
 import {Erc20TokenDetails} from '@aragon/sdk-client';
 import type {WrappingFormParams} from 'context/govTokensWrapping';
-import {gTokenSymbol} from 'utils/tokens';
 import numeral from 'numeral';
 
 interface GovTokensWrappingModalProps {
