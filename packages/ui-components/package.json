@@ -19,7 +19,7 @@
     "start": "tsdx watch",
     "build": "tsdx build --transpileOnly",
     "test": "tsdx test --passWithNoTests",
-    "lint": "eslint --max-warnings=0 && yarn type-check",
+    "lint": "eslint '**/*.{ts,tsx}' --max-warnings=0 && yarn type-check",
     "lint:fix": "eslint '**/*.{ts,tsx}' --fix",
     "type-check": "tsc --noemit",
     "size": "size-limit",
