@@ -83,6 +83,7 @@ const WalletConnect: React.FC<WalletConnectProps> = ({actionIndex}) => {
   }, [actionIndex, removeAction, resetField]);
 
   const handledAppValidationBackClick = useCallback(() => {
+    resetField(WC_URI_INPUT_NAME);
     setdAppValidationIsOpen(false);
     setListeningActionsIsOpen(false);
 
@@ -93,15 +94,16 @@ const WalletConnect: React.FC<WalletConnectProps> = ({actionIndex}) => {
     } else {
       setEmptyStateIsOpen(true);
     }
-  }, [getActiveSessions]);
+  }, [getActiveSessions, resetField]);
 
   const handleOnConnectionSuccess = useCallback(
     (session: SessionTypes.Struct) => {
+      resetField(WC_URI_INPUT_NAME);
       setdAppValidationIsOpen(false);
       setListeningActionsIsOpen(true);
       setSelectedSession(session);
     },
-    []
+    [resetField]
   );
 
   /*************************************************
@@ -115,7 +117,7 @@ const WalletConnect: React.FC<WalletConnectProps> = ({actionIndex}) => {
   ) {
     return (
       <ModalBottomSheetSwitcher isOpen={true}>
-        <div className="h-20" />
+        <div className="h-40" />
       </ModalBottomSheetSwitcher>
     );
   }
