@@ -6,6 +6,7 @@ import {ActionWC, Input} from 'utils/types';
 import styled from 'styled-components';
 import {AlertCard} from '@aragon/ui-components';
 import {DisplayComponentForType} from 'containers/smartContractComposer/components/inputForm';
+import {shortenAddress} from 'utils/library';
 
 type WCActionCardActionCardProps = Pick<AccordionMethodType, 'type'> & {
   action: ActionWC;
@@ -27,9 +28,9 @@ export const WCActionCard: React.FC<WCActionCardActionCardProps> = ({
       type={type}
       methodName={action.functionName}
       dropdownItems={methodActions}
-      smartContractName={action.contractName}
+      smartContractName={shortenAddress(action.contractName)}
       verified={!!action.verified}
-      //   methodDescription={action.notice}
+      methodDescription={action.notice}
     >
       <Content>
         {action.inputs?.length > 0 ? (

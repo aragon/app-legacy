@@ -318,20 +318,14 @@ export type ActionSCC = {
   value?: string;
 };
 
-export type ActionWC = {
+// Alias
+export type ActionExternalContract = ActionWC;
+
+export type ActionWC = Omit<ActionSCC, 'name'> & {
   name: 'wallet_connect_action';
-  contractName: string;
-  contractAddress: string;
-  functionName: string;
+  notice?: string;
   verified: boolean;
   decoded: boolean;
-  inputs: Array<{
-    name: string;
-    type: string;
-    notice?: string;
-    value: object | string | BigNumber;
-  }>;
-  value?: string;
   // considering we have the raw action directly from WC, there
   // is no need to decode it, re-encode it, only to decode it again
   // when displaying on the proposal details page

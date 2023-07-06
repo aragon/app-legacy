@@ -14,11 +14,8 @@ import {useWalletConnectInterceptor} from 'hooks/useWalletConnectInterceptor';
 import {getEtherscanVerifiedContract} from 'services/etherscanAPI';
 import {WcRequest} from 'services/walletConnectInterceptor';
 import {addABI, decodeMethod} from 'utils/abiDecoder';
-import {
-  getEncodedActionInputs,
-  getWCPayableAmount,
-  shortenAddress,
-} from 'utils/library';
+import {attachEtherNotice} from 'utils/contract';
+import {getEncodedActionInputs, getWCPayableAmount} from 'utils/library';
 
 type Props = {
   onBackButtonClicked: () => void;
@@ -71,6 +68,7 @@ const ActionListenerModal: React.FC<Props> = ({
 
       // name, raw action and contract address set on every action
       addAction({name: 'wallet_connect_action'});
+      setValue(`actions.${actionIndex}.name`, 'wallet_connect_action');
       setValue(`actions.${index}.raw`, action.params[0]);
       setValue(`actions.${index}.contractAddress`, action.params[0].to);
 
@@ -93,13 +91,30 @@ const ActionListenerModal: React.FC<Props> = ({
           );
           setValue(`actions.${index}.functionName`, decodedData.name);
 
+          // get notices using etherscan abi parser
+          const notices = attachEtherNotice(
+            etherscanData.result[0].SourceCode,
+            etherscanData.result[0].ContractName,
+            JSON.parse(etherscanData.result[0].ABI)
+          ).find(notice => notice.name === decodedData.name);
+
+          // attach notice to input
+          const inputs = decodedData.params.map(param => {
+            return {
+              ...param,
+              notice: notices?.inputs.find(
+                notice =>
+                  notice.name === param.name && notice.type === param.type
+              )?.notice,
+            };
+          });
+
           // add payable field as it is NOT present on the method itself
           setValue(`actions.${index}.inputs`, [
-            ...decodedData.params,
+            ...inputs,
             {...getWCPayableAmount(t, action.params[0].value, network)},
           ]);
-          // TODO: Add NatSpec
-          // setValue(`actions.${actionIndex}.notice`, );
+          setValue(`actions.${actionIndex}.notice`, notices?.notice);
         } else {
           // Verified but failed to decode
           setValue(`actions.${index}.decoded`, false);
@@ -118,10 +133,7 @@ const ActionListenerModal: React.FC<Props> = ({
         // unverified & encoded
         setValue(`actions.${index}.decoded`, false);
         setValue(`actions.${index}.verified`, false);
-        setValue(
-          `actions.${index}.contractName`,
-          shortenAddress(action.params[0].to)
-        );
+        setValue(`actions.${index}.contractName`, action.params[0].to);
         setValue(`actions.${index}.functionName`, action.method);
 
         setValue(

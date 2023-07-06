@@ -21,6 +21,7 @@ import {NavigationDao} from 'context/apolloClient';
 import {BigNumber, BigNumberish, constants, ethers, providers} from 'ethers';
 import {TFunction} from 'react-i18next';
 
+import {isAddress} from 'ethers/lib/utils';
 import {getEtherscanVerifiedContract} from 'services/etherscanAPI';
 import {fetchTokenData} from 'services/prices';
 import {
@@ -32,9 +33,9 @@ import {
 import {
   Action,
   ActionAddAddress,
+  ActionExternalContract,
   ActionMintToken,
   ActionRemoveAddress,
-  ActionSCC,
   ActionUpdateMetadata,
   ActionUpdateMultisigPluginSettings,
   ActionUpdatePluginSettings,
@@ -43,8 +44,8 @@ import {
 } from 'utils/types';
 import {i18n} from '../../i18n.config';
 import {addABI, decodeMethod} from './abiDecoder';
+import {attachEtherNotice} from './contract';
 import {getTokenInfo} from './tokens';
-import {isAddress} from 'ethers/lib/utils';
 
 export function formatUnits(amount: BigNumberish, decimals: number) {
   if (amount.toString().includes('.') || !decimals) {
@@ -366,7 +367,8 @@ export async function decodeMetadataToAction(
 }
 
 /**
- * Decodes the provided DAO action into a smart contract compatible action.
+ * Decodes the provided DAO action into an external action
+ * (SCC or Wallet Connect).
  *
  * @param action - A DAO action to decode.
  * @param network - The network on which the action is to be performed.
@@ -374,11 +376,11 @@ export async function decodeMetadataToAction(
  * @returns A promise that resolves to the decoded action
  * or undefined if the action could not be decoded.
  */
-export async function decodeSCCToAction(
+export async function decodeToExternalAction(
   action: DaoAction,
   network: SupportedNetworks,
   t: TFunction
-): Promise<ActionSCC | undefined> {
+): Promise<ActionExternalContract | undefined> {
   try {
     const etherscanData = await getEtherscanVerifiedContract(
       action.to,
@@ -395,30 +397,68 @@ export async function decodeSCCToAction(
 
       // Check if the action data was decoded successfully
       if (decodedData) {
-        const actionSCC: ActionSCC = {
-          name: 'external_contract_action',
-          contractAddress: action.to,
-          contractName: etherscanData.result[0].ContractName,
-          functionName: decodedData.name,
-          inputs: decodedData.params,
-        };
+        const notices = attachEtherNotice(
+          etherscanData.result[0].SourceCode,
+          etherscanData.result[0].ContractName,
+          JSON.parse(etherscanData.result[0].ABI)
+        ).find(notice => notice.name === decodedData.name);
 
-        // Conditionally add PAYABLE_VALUE_INPUT if action.value is greater than zero
+        const inputs = decodedData.params.map(param => {
+          return {
+            ...param,
+            notice: notices?.inputs.find(
+              // multiple inputs may have the same name
+              notice => notice.name === param.name && notice.type === param.type
+            )?.notice,
+          };
+        });
+
         if (BigNumber.from(action.value).gt(0)) {
-          actionSCC.inputs.push({
+          inputs.push({
             ...getDefaultPayableAmountInput(t, network),
-            value: formatUnits(
-              action.value,
+            type: 'string',
+            value: `${formatUnits(
+              BigNumber.from(action.value),
               CHAIN_METADATA[network].nativeCurrency.decimals
-            ),
+            )} ${CHAIN_METADATA[network].nativeCurrency.symbol}`,
           });
         }
 
-        return actionSCC;
+        return {
+          name: 'wallet_connect_action',
+          contractAddress: action.to,
+          contractName: etherscanData.result[0].ContractName,
+          functionName: decodedData.name,
+          inputs,
+          verified: true,
+          decoded: true,
+          notice: notices?.notice,
+        };
+      } else {
+        // verified but unable to be decoded
+        return {
+          name: 'wallet_connect_action',
+          contractAddress: action.to,
+          contractName: etherscanData.result[0].ContractName,
+          functionName: t('Unknown'),
+          inputs: getEncodedActionInputs(action, network, t),
+          verified: true,
+          decoded: false,
+        };
       }
+    } else {
+      return {
+        name: 'wallet_connect_action',
+        contractAddress: action.to,
+        contractName: action.to,
+        functionName: t('Unknown'),
+        verified: false,
+        decoded: false,
+        inputs: getEncodedActionInputs(action, network, t),
+      };
     }
   } catch (error) {
-    console.error('Failed to decode SCC DAO action:', error);
+    console.error('Failed to decode external contract action:', error);
   }
 }
 
@@ -644,6 +684,51 @@ export function getDefaultPayableAmountInput(
 
 export function getDefaultPayableAmountInputName(t: TFunction) {
   return t('scc.inputPayableAmount.label');
+}
+
+export function getWCPayableAmount(
+  t: TFunction,
+  value: string,
+  network: SupportedNetworks
+) {
+  return {
+    name: t('Raw Amount'),
+    type: 'string',
+    notice: t('The number of the tokens to transfer'),
+    value: `${formatUnits(
+      BigNumber.from(value),
+      CHAIN_METADATA[network].nativeCurrency.decimals
+    )} ${CHAIN_METADATA[network].nativeCurrency.symbol}`,
+  };
+}
+
+export function getEncodedActionInputs(
+  action: DaoAction,
+  network: SupportedNetworks,
+  t: TFunction
+) {
+  return Object.keys(action).flatMap(fieldName => {
+    switch (fieldName) {
+      case 'value':
+        return getWCPayableAmount(t, action.value.toString(), network);
+      case 'to':
+        return {
+          name: t('Dst'),
+          type: 'address',
+          notice: t('The address of the destination account'),
+          value: action[fieldName],
+        };
+      case 'data':
+        return {
+          name: t('Data'),
+          type: 'encodedData',
+          notice: t('Encoded EVM call to the smart contract'),
+          value: action[fieldName],
+        };
+      default:
+        return [];
+    }
+  });
 }
 
 export class Web3Address {
