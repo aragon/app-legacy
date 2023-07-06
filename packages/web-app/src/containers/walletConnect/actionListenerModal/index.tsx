@@ -1,19 +1,24 @@
-import React, {useState} from 'react';
-import styled from 'styled-components';
-import {SessionTypes} from '@walletconnect/types';
-import {useTranslation} from 'react-i18next';
 import {AvatarDao, ButtonText, Spinner, Tag} from '@aragon/ui-components';
+import {SessionTypes} from '@walletconnect/types';
+import React, {useCallback, useState} from 'react';
 import {useFormContext} from 'react-hook-form';
+import {useTranslation} from 'react-i18next';
+import styled from 'styled-components';
 
 import ModalBottomSheetSwitcher from 'components/modalBottomSheetSwitcher';
 import ModalHeader from 'components/modalHeader';
+import {useActionsContext} from 'context/actions';
+import {useNetwork} from 'context/network';
 import useScreen from 'hooks/useScreen';
 import {useWalletConnectInterceptor} from 'hooks/useWalletConnectInterceptor';
-import {WcRequest} from 'services/walletConnectInterceptor';
-import {useActionsContext} from 'context/actions';
 import {getEtherscanVerifiedContract} from 'services/etherscanAPI';
-import {useNetwork} from 'context/network';
+import {WcRequest} from 'services/walletConnectInterceptor';
 import {addABI, decodeMethod} from 'utils/abiDecoder';
+import {
+  getEncodedActionInputs,
+  getWCPayableAmount,
+  shortenAddress,
+} from 'utils/library';
 
 type Props = {
   onBackButtonClicked: () => void;
@@ -30,19 +35,23 @@ const ActionListenerModal: React.FC<Props> = ({
   selectedSession,
   isOpen,
 }) => {
-  const {isDesktop} = useScreen();
-  const {network} = useNetwork();
   const {t} = useTranslation();
-  const [actionsReceived, setActionsReceived] = useState<Array<WcRequest>>([]);
-  const {addAction, removeAction} = useActionsContext();
-  const {setValue, resetField} = useFormContext();
+  const {network} = useNetwork();
+  const {isDesktop} = useScreen();
 
-  function onActionRequest(request: WcRequest) {
-    setActionsReceived([...actionsReceived, request]);
-  }
-  const {wcDisconnect} = useWalletConnectInterceptor({
-    onActionRequest: onActionRequest,
-  });
+  const {setValue, resetField} = useFormContext();
+  const {addAction, removeAction} = useActionsContext();
+
+  const [actionsReceived, setActionsReceived] = useState<Array<WcRequest>>([]);
+
+  const onActionRequest = useCallback(
+    (request: WcRequest) => {
+      setActionsReceived([...actionsReceived, request]);
+    },
+    [actionsReceived]
+  );
+
+  const {wcDisconnect} = useWalletConnectInterceptor({onActionRequest});
 
   /*************************************************
    *             Callbacks and Handlers            *
@@ -50,41 +59,75 @@ const ActionListenerModal: React.FC<Props> = ({
   const handleAddActions = () => {
     resetField(`actions.${actionIndex}`);
 
-    actionsReceived.map(async action => {
+    actionsReceived.map(async (action, currentIndex) => {
+      // verify and decode
       const etherscanData = await getEtherscanVerifiedContract(
         action.params[0].to,
         network
       );
 
+      // increment the index so multiple actions can be added at once
+      const index = actionIndex + currentIndex;
+
+      // name, raw action and contract address set on every action
+      addAction({name: 'wallet_connect_action'});
+      setValue(`actions.${index}.raw`, action.params[0]);
+      setValue(`actions.${index}.contractAddress`, action.params[0].to);
+
+      // fill out the wallet connect action based on verification/encoded status
       if (
         etherscanData.status === '1' &&
         etherscanData.result[0].ABI !== 'Contract source code not verified'
       ) {
+        setValue(`actions.${index}.verified`, true);
+
         addABI(JSON.parse(etherscanData.result[0].ABI));
         const decodedData = decodeMethod(action.params[0].data);
 
         if (decodedData) {
-          addAction({
-            name: 'external_contract_action',
-          });
-          setValue(`actions.${actionIndex}.name`, 'wallet_connect_action');
+          //verified & decoded, use decoded params
+          setValue(`actions.${index}.decoded`, true);
           setValue(
-            `actions.${actionIndex}.contractAddress`,
-            action.params[0].to
-          );
-          setValue(
-            `actions.${actionIndex}.contractName`,
+            `actions.${index}.contractName`,
             etherscanData.result[0].ContractName
           );
-          setValue(`actions.${actionIndex}.functionName`, decodedData.name);
-          setValue(`actions.${actionIndex}.inputs`, decodedData.params);
+          setValue(`actions.${index}.functionName`, decodedData.name);
+
+          // add payable field as it is NOT present on the method itself
+          setValue(`actions.${index}.inputs`, [
+            ...decodedData.params,
+            {...getWCPayableAmount(t, action.params[0].value, network)},
+          ]);
           // TODO: Add NatSpec
           // setValue(`actions.${actionIndex}.notice`, );
         } else {
-          //TODO: Failed to decode flow
+          // Verified but failed to decode
+          setValue(`actions.${index}.decoded`, false);
+          setValue(
+            `actions.${index}.contractName`,
+            etherscanData.result[0].ContractName
+          );
+
+          setValue(`actions.${index}.functionName`, action.method);
+          setValue(
+            `actions.${index}.inputs`,
+            getEncodedActionInputs(action.params[0], network, t)
+          );
         }
       } else {
-        //TODO: Failed to fetch ABI - failed to decode flow
+        // unverified & encoded
+        setValue(`actions.${index}.decoded`, false);
+        setValue(`actions.${index}.verified`, false);
+        setValue(
+          `actions.${index}.contractName`,
+          shortenAddress(action.params[0].to)
+        );
+        setValue(`actions.${index}.functionName`, action.method);
+
+        setValue(
+          `actions.${index}.inputs`,
+          getEncodedActionInputs(action.params[0], network, t)
+        );
       }
     });
 
