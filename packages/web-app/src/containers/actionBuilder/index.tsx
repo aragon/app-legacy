@@ -26,6 +26,7 @@ import MintTokens from './mintTokens';
 import RemoveAddresses from './removeAddresses';
 import SCCAction from './scc';
 import UpdateMinimumApproval from './updateMinimumApproval';
+import WalletConnectAction from './walletConnect';
 import WithdrawAction from './withdraw/withdrawAction';
 
 /**
@@ -99,8 +100,12 @@ const Action: React.FC<ActionsComponentProps> = ({
     case 'wallet_connect_modal':
       return <WalletConnect actionIndex={actionIndex} />;
     case 'wallet_connect_action':
-      //TODO: Create a separate action-builder accordion for Wallet Connect Actions to handle the non-decodable flow and AlertCards
-      return <SCCAction actionIndex={actionIndex} allowRemove={allowRemove} />;
+      return (
+        <WalletConnectAction
+          actionIndex={actionIndex}
+          allowRemove={allowRemove}
+        />
+      );
     default:
       throw Error('Action not found');
   }
