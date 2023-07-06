@@ -8,8 +8,9 @@ import {ModifyMetadataCard} from './actions/modifyMetadataCard';
 import {ModifyMultisigSettingsCard} from './actions/modifyMultisigSettingsCard';
 import {ModifyMvSettingsCard} from './actions/modifySettingsCard';
 import {RemoveAddressCard} from './actions/removeAddressCard';
-import {WithdrawCard} from './actions/withdrawCard';
 import {SCCExecutionCard} from './actions/sccExecutionWidget';
+import {WCActionCard} from './actions/walletConnectActionCard';
+import {WithdrawCard} from './actions/withdrawCard';
 
 type ActionsFilterProps = {
   action: Action;
@@ -38,6 +39,8 @@ export const ActionsFilter: React.FC<ActionsFilterProps> = ({action}) => {
       return <ModifyMultisigSettingsCard action={action} />;
     case 'external_contract_action':
       return <SCCExecutionCard action={action} />;
+    case 'wallet_connect_action':
+      return <WCActionCard action={action} type="execution-widget" />;
     default:
       return <></>;
   }
