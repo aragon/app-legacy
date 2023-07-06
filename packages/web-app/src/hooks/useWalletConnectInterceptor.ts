@@ -1,5 +1,7 @@
 import {useNetwork} from 'context/network';
 import {useCallback, useState, useEffect, useMemo} from 'react';
+import {SessionTypes} from '@walletconnect/types';
+
 import {
   WcClient,
   WcConnectProposalEvent,
@@ -54,6 +56,9 @@ export function useWalletConnectInterceptor({
   const [currentWcRecord, setCurrentWcRecord] = useState<WcRecord | null>(null);
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [archivedURIs, setArchivedURIs] = useState<string[]>([]);
+
+  const [activeSessions, setActiveSessions] =
+    useState<Record<string, SessionTypes.Struct>>();
 
   const activeNetworkData = useMemo(() => CHAIN_METADATA[network], [network]);
 
@@ -152,6 +157,8 @@ export function useWalletConnectInterceptor({
         topic: response.topic,
       });
 
+      setActiveSessions(client.getActiveSessions());
+
       return response;
     },
     [client, currentWcRecord]
@@ -213,18 +220,18 @@ export function useWalletConnectInterceptor({
 
   const handleDisconnect = useCallback(
     (event: WcDisconnectEvent) => {
-      if (event.topic !== currentWcRecord?.topic) {
-        console.error('Connection is not established');
-        return;
-      }
-
-      wcDisconnect(event.topic);
+      // if (event.topic !== currentWcRecord?.topic) {
+      //   console.error('Connection is not established');
+      //   return;
+      // }
+      console.log('handleDisconnect', event);
+      console.log(client.getActiveSessions());
     },
-    [currentWcRecord, wcDisconnect]
+    [client]
   );
 
   const getActiveSessions = useCallback(() => {
-    return client?.getActiveSessions();
+    return client?.getActiveSessions() as Record<string, SessionTypes.Struct>;
   }, [client]);
 
   useEffect(() => {
@@ -269,6 +276,7 @@ export function useWalletConnectInterceptor({
     wcDisconnect,
     canConnect,
     canDisconnect,
+    activeSessions,
     getActiveSessions,
   };
 }

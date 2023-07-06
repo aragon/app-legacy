@@ -89,7 +89,7 @@ const WCConnectedApps: React.FC<Props> = props => {
             <ButtonText
               mode="secondary"
               size="large"
-              label={'Connect new dApp'}
+              label={t('wc.listdApps.ctaLabelDefault')}
               onClick={() => {
                 props.onConnectNewdApp();
               }}

@@ -2,7 +2,7 @@ import React, {useState} from 'react';
 import styled from 'styled-components';
 import {SessionTypes} from '@walletconnect/types';
 import {useTranslation} from 'react-i18next';
-import {AvatarDao, ButtonText, IconSpinner, Tag} from '@aragon/ui-components';
+import {AvatarDao, ButtonText, Spinner, Tag} from '@aragon/ui-components';
 import {useFormContext} from 'react-hook-form';
 
 import ModalBottomSheetSwitcher from 'components/modalBottomSheetSwitcher';
@@ -98,28 +98,28 @@ const ActionListenerModal: React.FC<Props> = ({
     return null;
   }
 
+  const metadataName = selectedSession.peer.metadata.name;
+  const metadataIcon = selectedSession.peer.metadata.icons[0];
+  const metadataURL = selectedSession.peer.metadata.url;
+
   return (
     <ModalBottomSheetSwitcher isOpen={isOpen} onClose={onClose}>
       <ModalHeader
-        title={selectedSession.peer.metadata.name}
+        title={metadataName}
         showBackButton
         onBackButtonClicked={onBackButtonClicked}
         {...(isDesktop ? {showCloseButton: true, onClose} : {})}
       />
       <Content>
         <div className="flex flex-col items-center space-y-1.5">
-          <AvatarDao
-            daoName={selectedSession.peer.metadata.name}
-            src={selectedSession.peer.metadata.icons[0]}
-            size="medium"
-          />
+          <AvatarDao daoName={metadataName} src={metadataIcon} size="medium" />
           <div className="flex justify-center items-center font-bold text-center text-ui-800">
-            <IconSpinner className="mr-2 w-1.75 desktop:w-2.5 h-1.75 desktop:h-2.5 animate-spin" />
-            {t('wc.detaildApp.spinnerLabel')}
+            <Spinner size={'xs'} />
+            <p className="ml-2">{t('wc.detaildApp.spinnerLabel')}</p>
           </div>
           <p className="desktop:px-5 text-sm text-center text-ui-500">
             {t('wc.detaildApp.desc', {
-              dappName: selectedSession.peer.metadata.name,
+              dappName: metadataName,
             })}
           </p>
           {actionsReceived.length > 0 ? (
@@ -146,20 +146,21 @@ const ActionListenerModal: React.FC<Props> = ({
           ) : null}
           <ButtonText
             label={t('wc.detaildApp.ctaLabel.opendApp', {
-              dappName: selectedSession.peer.metadata.name,
+              dappName: metadataName,
             })}
-            onClick={() =>
-              window.open(selectedSession.peer.metadata.url, '_blank')
-            }
+            onClick={() => window.open(metadataURL, '_blank')}
             mode="ghost"
             bgWhite
             className="w-full"
           />
           <ButtonText
             label={t('wc.detaildApp.ctaLabel.disconnectdApp', {
-              dappName: selectedSession.peer.metadata.name,
+              dappName: metadataName,
             })}
-            onClick={() => wcDisconnect(selectedSession.topic)}
+            onClick={async () => {
+              await wcDisconnect(selectedSession.topic);
+              onBackButtonClicked();
+            }}
             mode="ghost"
             className="w-full"
           />

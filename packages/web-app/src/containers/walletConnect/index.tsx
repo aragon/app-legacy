@@ -3,7 +3,7 @@ import {useFormContext} from 'react-hook-form';
 import {SessionTypes} from '@walletconnect/types';
 
 import {useActionsContext} from 'context/actions';
-import WCdAppValidation, {WC_CODE_INPUT_NAME} from './dAppValidationModal';
+import WCdAppValidation, {WC_URI_INPUT_NAME} from './dAppValidationModal';
 import EmptyState from './emptyStateModal';
 import {useWalletConnectInterceptor} from 'hooks/useWalletConnectInterceptor';
 import WCConnectedApps from './connectedAppsModal';
@@ -78,7 +78,7 @@ const WalletConnect: React.FC<WalletConnectProps> = ({actionIndex}) => {
   /* ******* dApp Validation handlers ******* */
   const handleClosedAppValidation = useCallback(() => {
     removeAction(actionIndex);
-    resetField(WC_CODE_INPUT_NAME);
+    resetField(WC_URI_INPUT_NAME);
     setdAppValidationIsOpen(false);
   }, [actionIndex, removeAction, resetField]);
 
@@ -87,6 +87,7 @@ const WalletConnect: React.FC<WalletConnectProps> = ({actionIndex}) => {
     setListeningActionsIsOpen(false);
 
     const sessions = getActiveSessions();
+    setActiveSessions(sessions);
     if (sessions && Object.keys(sessions).length > 0) {
       setdAppsListIsOpen(true);
     } else {
@@ -94,10 +95,14 @@ const WalletConnect: React.FC<WalletConnectProps> = ({actionIndex}) => {
     }
   }, [getActiveSessions]);
 
-  const handleOnConnectionSuccess = useCallback(() => {
-    setdAppValidationIsOpen(false);
-    setListeningActionsIsOpen(true);
-  }, []);
+  const handleOnConnectionSuccess = useCallback(
+    (session: SessionTypes.Struct) => {
+      setdAppValidationIsOpen(false);
+      setListeningActionsIsOpen(true);
+      setSelectedSession(session);
+    },
+    []
+  );
 
   /*************************************************
    *                     Render                    *
@@ -136,13 +141,15 @@ const WalletConnect: React.FC<WalletConnectProps> = ({actionIndex}) => {
         onBackButtonClicked={handledAppValidationBackClick}
         onClose={handleClosedAppValidation}
       />
-      <ActionListenerModal
-        onBackButtonClicked={handledAppValidationBackClick}
-        onClose={handleClosedAppValidation}
-        isOpen={listeningActionsIsOpen}
-        selectedSession={selectedSession as SessionTypes.Struct}
-        actionIndex={actionIndex}
-      />
+      {selectedSession && (
+        <ActionListenerModal
+          onBackButtonClicked={handledAppValidationBackClick}
+          onClose={handleClosedAppValidation}
+          isOpen={listeningActionsIsOpen}
+          selectedSession={selectedSession}
+          actionIndex={actionIndex}
+        />
+      )}
     </>
   );
 };

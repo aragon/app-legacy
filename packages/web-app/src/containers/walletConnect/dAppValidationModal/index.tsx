@@ -2,11 +2,11 @@ import {
   AlertInline,
   ButtonText,
   IconReload,
-  IconSpinner,
   Label,
+  Spinner,
   WalletInputLegacy,
 } from '@aragon/ui-components';
-import React, {useCallback, useMemo, useState} from 'react';
+import React, {useCallback, useEffect, useMemo, useState} from 'react';
 import {
   Controller,
   useFormContext,
@@ -15,7 +15,7 @@ import {
 } from 'react-hook-form';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
-import {PairingTypes} from '@walletconnect/types';
+import {PairingTypes, SessionTypes} from '@walletconnect/types';
 
 import ModalBottomSheetSwitcher from 'components/modalBottomSheetSwitcher';
 import ModalHeader from 'components/modalHeader';
@@ -28,13 +28,13 @@ import {useDaoDetailsQuery} from 'hooks/useDaoDetails';
 
 type Props = {
   onBackButtonClicked: () => void;
-  onConnectionSuccess: (connection: PairingTypes.Struct) => void;
+  onConnectionSuccess: (session: SessionTypes.Struct) => void;
   onClose: () => void;
   isOpen: boolean;
 };
 
 // Wallet connect id input name
-export const WC_CODE_INPUT_NAME = 'wcID';
+export const WC_URI_INPUT_NAME = 'wcID';
 
 const WCdAppValidation: React.FC<Props> = props => {
   const {t} = useTranslation();
@@ -47,12 +47,27 @@ const WCdAppValidation: React.FC<Props> = props => {
     ConnectionState.WAITING
   );
   const [connection, setConnection] = useState<PairingTypes.Struct>();
+  const [session, setSession] = useState<SessionTypes.Struct>();
 
-  const {wcConnect, canConnect} = useWalletConnectInterceptor({});
+  const {wcConnect, canConnect, activeSessions} = useWalletConnectInterceptor(
+    {}
+  );
 
   const {control} = useFormContext();
   const {errors} = useFormState({control});
-  const [uri] = useWatch({name: [WC_CODE_INPUT_NAME], control});
+  const [uri] = useWatch({name: [WC_URI_INPUT_NAME], control});
+
+  useEffect(() => {
+    if (activeSessions && connection) {
+      const newSession = Object.values(activeSessions).filter(
+        session => session.pairingTopic === connection.topic
+      )[0];
+      if (newSession) {
+        setConnectionStatus(ConnectionState.SUCCESS);
+        setSession(newSession);
+      }
+    }
+  }, [activeSessions, connection]);
 
   const ctaLabel = useMemo(() => {
     switch (connectionStatus) {
@@ -83,7 +98,8 @@ const WCdAppValidation: React.FC<Props> = props => {
   const disableCta =
     !uri ||
     (!canConnect(uri) && connectionStatus === ConnectionState.WAITING) ||
-    Boolean(errors[WC_CODE_INPUT_NAME]);
+    connectionStatus === ConnectionState.LOADING ||
+    Boolean(errors[WC_URI_INPUT_NAME]);
 
   /*************************************************
    *             Callbacks and Handlers            *
@@ -107,7 +123,7 @@ const WCdAppValidation: React.FC<Props> = props => {
 
   const handleConnectDApp = useCallback(async () => {
     if (connectionStatus === ConnectionState.SUCCESS) {
-      props.onConnectionSuccess(connection as PairingTypes.Struct);
+      props.onConnectionSuccess(session as SessionTypes.Struct);
     }
 
     setConnectionStatus(ConnectionState.LOADING);
@@ -120,19 +136,11 @@ const WCdAppValidation: React.FC<Props> = props => {
     });
 
     if (c) {
-      setConnectionStatus(ConnectionState.SUCCESS);
       setConnection(c);
     } else {
       setConnectionStatus(ConnectionState.ERROR);
     }
-  }, [
-    connection,
-    connectionStatus,
-    daoDetails?.address,
-    props,
-    uri,
-    wcConnect,
-  ]);
+  }, [connectionStatus, daoDetails?.address, props, session, uri, wcConnect]);
   /*************************************************
    *                     Render                    *
    *************************************************/
@@ -152,7 +160,7 @@ const WCdAppValidation: React.FC<Props> = props => {
           />
           {/* TODO: Please add validation when format of wc Code is known */}
           <Controller
-            name={WC_CODE_INPUT_NAME}
+            name={WC_URI_INPUT_NAME}
             control={control}
             defaultValue=""
             render={({
@@ -180,7 +188,7 @@ const WCdAppValidation: React.FC<Props> = props => {
           disabled={disableCta}
           className="w-full"
           {...(connectionStatus === ConnectionState.LOADING && {
-            iconLeft: <IconSpinner />,
+            iconLeft: <Spinner size={'xs'} />,
             isActive: true,
           })}
           {...(connectionStatus === ConnectionState.ERROR && {
@@ -191,7 +199,9 @@ const WCdAppValidation: React.FC<Props> = props => {
         {connectionStatus === ConnectionState.SUCCESS && (
           <AlertWrapper>
             <AlertInline
-              label={t('wc.validation.codeInput.statusSuccess')}
+              label={t('wc.validation.codeInput.statusSuccess', {
+                dappName: session?.peer.metadata.name,
+              })}
               mode="success"
             />
           </AlertWrapper>

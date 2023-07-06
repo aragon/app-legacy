@@ -114,7 +114,7 @@ export function unsubscribeDisconnect(
 }
 
 export async function connect(client: WcClient, uri: string) {
-  return client.core.pairing.pair({uri, activatePairing: true});
+  return client.core.pairing.pair({uri});
 }
 
 export async function approveSession(
