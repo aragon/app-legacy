@@ -58,7 +58,7 @@ import {
   decodeMultisigSettingsToAction,
   decodePluginSettingsToAction,
   decodeRemoveMembersToAction,
-  decodeSCCToAction,
+  decodeToExternalAction,
   decodeWithdrawToAction,
   shortenAddress,
   toDisplayEns,
@@ -286,7 +286,7 @@ const Proposal: React.FC = () => {
             const isPossiblyWithdrawAction =
               !functionParams && action.to && action.value;
 
-            return decodeSCCToAction(action, network, t)
+            return decodeToExternalAction(action, network, t)
               .then(result => {
                 if (!result && isPossiblyWithdrawAction) {
                   return withdrawAction as unknown as Action;
@@ -694,6 +694,7 @@ const Proposal: React.FC = () => {
             onExecuteClicked={handleExecuteNowClicked}
             txhash={transactionHash || proposal?.executionTxHash || undefined}
           />
+          <ButtonText label={'execute'} onClick={handleExecuteNowClicked} />
         </ProposalContainer>
         <AdditionalInfoContainer>
           <ResourceList links={proposal?.metadata.resources} />
