@@ -323,6 +323,8 @@ export type ActionWC = {
   contractName: string;
   contractAddress: string;
   functionName: string;
+  verified: boolean;
+  decoded: boolean;
   inputs: Array<{
     name: string;
     type: string;
@@ -330,6 +332,11 @@ export type ActionWC = {
     value: object | string | BigNumber;
   }>;
   value?: string;
+  // considering we have the raw action directly from WC, there
+  // is no need to decode it, re-encode it, only to decode it again
+  // when displaying on the proposal details page
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  raw?: any;
 };
 
 // TODO: Consider making this a generic type that take other types of the form
@@ -444,6 +451,7 @@ export interface Input {
   components?: Input[];
   internalType?: string;
   notice?: string;
+  value?: string;
 }
 
 export type SmartContract = {
