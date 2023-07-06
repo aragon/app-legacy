@@ -961,10 +961,18 @@ export function getNonEmptyActions(
       // minimum approval changed: return action or don't include
       return action.inputs.minApprovals !== minApprovals ? action : [];
     } else if (action.name === 'add_address') {
-      // address added to the list: return action or don't include
-      return action.inputs.memberWallets.some(w => w.address === '')
-        ? []
-        : action;
+      // strip empty inputs off
+
+      const finalAction = {
+        ...action,
+        inputs: {
+          memberWallets: action.inputs.memberWallets.filter(
+            item => !!item.address
+          ),
+        },
+      };
+
+      return finalAction.inputs.memberWallets.length > 0 ? finalAction : [];
     } else if (action.name === 'remove_address') {
       // address removed from the list: return action or don't include
       return action.inputs.memberWallets.length > 0 ? action : [];
