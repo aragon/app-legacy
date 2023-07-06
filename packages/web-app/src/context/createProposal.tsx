@@ -11,8 +11,8 @@ import {
 } from '@aragon/sdk-client';
 import {
   DaoAction,
-  TokenType,
   ProposalMetadata,
+  TokenType,
 } from '@aragon/sdk-client-common';
 import {hexToBytes} from '@aragon/sdk-common';
 import {ethers} from 'ethers';
@@ -268,6 +268,17 @@ const CreateProposalProvider: React.FC<Props> = ({
           }
           break;
         }
+        case 'wallet_connect_action':
+          // wallet connect actions come with a raw field
+          // which is just the data passed by wc itself
+          actions.push(
+            Promise.resolve({
+              // include value in case action does not
+              value: BigInt(0),
+              ...action.raw,
+            })
+          );
+          break;
       }
     }
 
