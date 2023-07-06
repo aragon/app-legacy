@@ -419,6 +419,76 @@ export const ComponentForType: React.FC<ComponentForTypeProps> = ({
   }
 };
 
+/** This version of the component returns uncontrolled inputs */
+export const DisplayComponentForType: React.FC<{
+  input: Input;
+  disabled?: boolean;
+}> = ({input, disabled}) => {
+  const {alert} = useAlertContext();
+
+  // Check if we need to add "index" kind of variable to the "name"
+  switch (classifyInputType(input.type)) {
+    case 'address':
+    case 'encodedData': // custom type for the data field which is encoded bytes
+      return (
+        <WalletInputLegacy
+          name={input.name}
+          value={input.value}
+          onChange={() => {}}
+          placeholder="0x"
+          adornmentText={t('labels.copy')}
+          disabledFilled={disabled}
+          onAdornmentClick={() =>
+            handleClipboardActions(input.value as string, () => {}, alert)
+          }
+        />
+      );
+
+    case 'int':
+    case 'uint8':
+    case 'int8':
+    case 'uint32':
+    case 'int32':
+    case 'uint256':
+      return (
+        <NumberInput
+          name={input.name}
+          placeholder="0"
+          includeDecimal
+          disabled={disabled}
+          value={input.value as string}
+        />
+      );
+
+    case 'tuple':
+      return (
+        <>
+          {input.components?.map(component => (
+            <div key={component.name}>
+              <div className="mb-1.5 text-base font-bold text-ui-800 capitalize">
+                {input.name}
+              </div>
+              <DisplayComponentForType
+                key={component.name}
+                input={component}
+                disabled={disabled}
+              />
+            </div>
+          ))}
+        </>
+      );
+    default:
+      return (
+        <TextInput
+          name={input.name}
+          placeholder={`${input.name} (${input.type})`}
+          value={input.value}
+          disabled={disabled}
+        />
+      );
+  }
+};
+
 export const ComponentForTypeWithFormProvider: React.FC<ComponentForTypeProps> =
   ({input, functionName, formHandleName, defaultValue, disabled = false}) => {
     const methods = useForm({mode: 'onChange'});
