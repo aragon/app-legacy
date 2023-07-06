@@ -1,7 +1,7 @@
 import {
   ButtonText,
-  IconSuccess,
   CheckboxListItem,
+  IconSuccess,
   NumberInput,
   TextInput,
   WalletInputLegacy,
@@ -299,6 +299,7 @@ export const ComponentForType: React.FC<ComponentForTypeProps> = ({
   // Check if we need to add "index" kind of variable to the "name"
   switch (classifyInputType(input.type)) {
     case 'address':
+    case 'encodedData':
       return (
         <Controller
           defaultValue=""
@@ -418,24 +419,23 @@ export const ComponentForType: React.FC<ComponentForTypeProps> = ({
   }
 };
 
-export const ComponentForTypeWithFormProvider: React.FC<
-  ComponentForTypeProps
-> = ({input, functionName, formHandleName, defaultValue, disabled = false}) => {
-  const methods = useForm({mode: 'onChange'});
+export const ComponentForTypeWithFormProvider: React.FC<ComponentForTypeProps> =
+  ({input, functionName, formHandleName, defaultValue, disabled = false}) => {
+    const methods = useForm({mode: 'onChange'});
 
-  return (
-    <FormProvider {...methods}>
-      <ComponentForType
-        key={input.name}
-        input={input}
-        functionName={functionName}
-        disabled={disabled}
-        defaultValue={defaultValue}
-        formHandleName={formHandleName}
-      />
-    </FormProvider>
-  );
-};
+    return (
+      <FormProvider {...methods}>
+        <ComponentForType
+          key={input.name}
+          input={input}
+          functionName={functionName}
+          disabled={disabled}
+          defaultValue={defaultValue}
+          formHandleName={formHandleName}
+        />
+      </FormProvider>
+    );
+  };
 
 const ActionName = styled.p.attrs({
   className: 'text-lg font-bold text-ui-800 capitalize truncate',
