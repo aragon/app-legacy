@@ -1,5 +1,5 @@
 import {useTranslation} from 'react-i18next';
-import React from 'react';
+import React, {useMemo} from 'react';
 
 import {AccordionMethod, AccordionMethodType} from 'components/accordionMethod';
 import {ActionWC, Input} from 'utils/types';
@@ -7,6 +7,7 @@ import styled from 'styled-components';
 import {AlertCard} from '@aragon/ui-components';
 import {DisplayComponentForType} from 'containers/smartContractComposer/components/inputForm';
 import {shortenAddress} from 'utils/library';
+import {POTENTIALLY_TIME_SENSITIVE_FIELDS} from 'utils/constants/misc';
 
 type WCActionCardActionCardProps = Pick<AccordionMethodType, 'type'> & {
   action: ActionWC;
@@ -22,6 +23,17 @@ export const WCActionCard: React.FC<WCActionCardActionCardProps> = ({
   type,
 }) => {
   const {t} = useTranslation();
+
+  const showTimeSensitiveWarning = useMemo(() => {
+    for (let i = 0; i < action.inputs.length; i++) {
+      if (
+        POTENTIALLY_TIME_SENSITIVE_FIELDS.has(
+          action.inputs[i].name.toLowerCase()
+        )
+      )
+        return true;
+    }
+  }, [action.inputs]);
 
   return (
     <AccordionMethod
@@ -55,6 +67,15 @@ export const WCActionCard: React.FC<WCActionCardActionCardProps> = ({
             title={t('newProposal.configureActions.actionAlertWarning.title')}
             helpText={t('newProposal.configureActions.actionAlertWarning.desc')}
             mode="warning"
+          />
+        )}
+        {showTimeSensitiveWarning && (
+          <AlertCard
+            title={t('newProposal.configureActions.actionAlertCritical.title')}
+            helpText={t(
+              'newProposal.configureActions.actionAlertCritical.desc'
+            )}
+            mode="critical"
           />
         )}
       </Content>

@@ -694,7 +694,6 @@ const Proposal: React.FC = () => {
             onExecuteClicked={handleExecuteNowClicked}
             txhash={transactionHash || proposal?.executionTxHash || undefined}
           />
-          <ButtonText label={'execute'} onClick={handleExecuteNowClicked} />
         </ProposalContainer>
         <AdditionalInfoContainer>
           <ResourceList links={proposal?.metadata.resources} />
