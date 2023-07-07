@@ -44,7 +44,7 @@ export const WCActionCard: React.FC<WCActionCardActionCardProps> = ({
       verified={!!action.verified}
       methodDescription={action.notice}
     >
-      <Content>
+      <Content type={type}>
         {action.inputs?.length > 0 ? (
           <div className="pb-1.5 space-y-2">
             {(action.inputs as Input[]).map(input => (
@@ -83,10 +83,13 @@ export const WCActionCard: React.FC<WCActionCardActionCardProps> = ({
   );
 };
 
-const Content = styled.div.attrs({
-  className:
-    'p-3 bg-ui-0 border border-ui-100 border-t-0 space-y-3 rounded-b-xl',
-})``;
+type ContentProps = Pick<WCActionCardActionCardProps, 'type'>;
+
+const Content = styled.div.attrs(({type}: ContentProps) => ({
+  className: `p-3 border border-ui-100 border-t-0 space-y-3 rounded-b-xl ${
+    type === 'action-builder' ? 'bg-ui-0' : 'bg-ui-50'
+  }`,
+}))<ContentProps>``;
 
 const InputName = styled.div.attrs({
   className: 'text-base font-bold text-ui-800 capitalize',
