@@ -220,14 +220,14 @@ export function useWalletConnectInterceptor({
 
   const handleDisconnect = useCallback(
     (event: WcDisconnectEvent) => {
-      // if (event.topic !== currentWcRecord?.topic) {
-      //   console.error('Connection is not established');
-      //   return;
-      // }
-      console.log('handleDisconnect', event);
-      console.log(client.getActiveSessions());
+      if (event.topic !== currentWcRecord?.topic) {
+        console.error('Connection is not established');
+        return;
+      }
+      // console.log('handleDisconnect', event);
+      // console.log(client.getActiveSessions());
     },
-    [client]
+    [currentWcRecord?.topic]
   );
 
   const getActiveSessions = useCallback(() => {
