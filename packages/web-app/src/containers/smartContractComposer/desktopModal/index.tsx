@@ -4,17 +4,17 @@ import {useFormContext, useWatch} from 'react-hook-form';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 
+import Header from 'components/modalHeader/searchHeader';
 import {StateEmpty} from 'components/stateEmpty';
-import {SmartContract} from 'utils/types';
-import ActionListGroup from '../components/actionListGroup';
-import SmartContractListGroup from '../components/smartContractListGroup';
-import Header from './header';
-import InputForm from '../components/inputForm';
-import {trackEvent} from 'services/analytics';
 import {useParams} from 'react-router-dom';
+import {trackEvent} from 'services/analytics';
 import {actionsFilter} from 'utils/contract';
-import {ListHeaderContract} from '../components/listHeaderContract';
+import {SmartContract} from 'utils/types';
 import {SccFormData} from '..';
+import ActionListGroup from '../components/actionListGroup';
+import InputForm from '../components/inputForm';
+import {ListHeaderContract} from '../components/listHeaderContract';
+import SmartContractListGroup from '../components/smartContractListGroup';
 
 type DesktopModalProps = {
   isOpen: boolean;
@@ -33,7 +33,7 @@ const DesktopModal: React.FC<DesktopModalProps> = props => {
     name: ['selectedSC'],
   });
   const [search, setSearch] = useState('');
-  const {getValues, setValue} = useFormContext<SccFormData>();
+  const {getValues, setValue, resetField} = useFormContext<SccFormData>();
   const [isActionSelected, setIsActionSelected] = useState(false);
 
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -57,8 +57,12 @@ const DesktopModal: React.FC<DesktopModalProps> = props => {
     >
       <Header
         onClose={props.onClose}
-        selectedContract={selectedSC?.name}
+        selectedValue={selectedSC?.name}
         onSearch={setSearch}
+        onHomeButtonClick={() => {
+          resetField('selectedSC');
+          resetField('selectedAction');
+        }}
       />
       <Wrapper>
         <Aside>

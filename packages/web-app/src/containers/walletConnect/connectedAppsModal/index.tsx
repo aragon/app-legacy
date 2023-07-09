@@ -1,6 +1,3 @@
-import React, {useState} from 'react';
-import styled from 'styled-components';
-import {SessionTypes} from '@walletconnect/types';
 import {
   ButtonText,
   IconChevronRight,
@@ -10,10 +7,13 @@ import {
   Link,
   ListItemAction,
 } from '@aragon/ui-components';
+import {SessionTypes} from '@walletconnect/types';
+import React, {useState} from 'react';
 import {useTranslation} from 'react-i18next';
+import styled from 'styled-components';
 
 import ModalBottomSheetSwitcher from 'components/modalBottomSheetSwitcher';
-import Header from 'containers/smartContractComposer/desktopModal/header';
+import Header from 'components/modalHeader/searchHeader';
 import {StateEmpty} from 'components/stateEmpty';
 
 type Props = {
