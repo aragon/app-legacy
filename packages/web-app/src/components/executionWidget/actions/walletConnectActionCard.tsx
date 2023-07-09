@@ -1,13 +1,13 @@
-import {useTranslation} from 'react-i18next';
+import {AlertCard} from '@aragon/ui-components';
 import React, {useMemo} from 'react';
+import {useTranslation} from 'react-i18next';
+import styled from 'styled-components';
 
 import {AccordionMethod, AccordionMethodType} from 'components/accordionMethod';
-import {ActionWC, Input} from 'utils/types';
-import styled from 'styled-components';
-import {AlertCard} from '@aragon/ui-components';
-import {DisplayComponentForType} from 'containers/smartContractComposer/components/inputForm';
-import {shortenAddress} from 'utils/library';
+import {FormlessComponentForType} from 'containers/smartContractComposer/components/inputForm';
 import {POTENTIALLY_TIME_SENSITIVE_FIELDS} from 'utils/constants/misc';
+import {shortenAddress} from 'utils/library';
+import {ActionWC, Input} from 'utils/types';
 
 type WCActionCardActionCardProps = Pick<AccordionMethodType, 'type'> & {
   action: ActionWC;
@@ -25,12 +25,8 @@ export const WCActionCard: React.FC<WCActionCardActionCardProps> = ({
   const {t} = useTranslation();
 
   const showTimeSensitiveWarning = useMemo(() => {
-    for (let i = 0; i < action.inputs.length; i++) {
-      if (
-        POTENTIALLY_TIME_SENSITIVE_FIELDS.has(
-          action.inputs[i].name.toLowerCase()
-        )
-      )
+    for (const i of action.inputs) {
+      if (POTENTIALLY_TIME_SENSITIVE_FIELDS.has(i.name.toLowerCase()))
         return true;
     }
   }, [action.inputs]);
@@ -53,7 +49,7 @@ export const WCActionCard: React.FC<WCActionCardActionCardProps> = ({
                 <div className="mt-0.5 mb-1.5">
                   <span className="text-ui-600 ft-text-sm">{input.notice}</span>
                 </div>
-                <DisplayComponentForType
+                <FormlessComponentForType
                   disabled
                   key={input.name}
                   input={input}

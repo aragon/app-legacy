@@ -420,10 +420,15 @@ export const ComponentForType: React.FC<ComponentForTypeProps> = ({
 };
 
 /** This version of the component returns uncontrolled inputs */
-export const DisplayComponentForType: React.FC<{
+type FormlessComponentForTypeProps = {
   input: Input;
   disabled?: boolean;
-}> = ({input, disabled}) => {
+};
+
+export function FormlessComponentForType({
+  input,
+  disabled,
+}: FormlessComponentForTypeProps) {
   const {alert} = useAlertContext();
 
   // Check if we need to add "index" kind of variable to the "name"
@@ -468,7 +473,7 @@ export const DisplayComponentForType: React.FC<{
               <div className="mb-1.5 text-base font-bold text-ui-800 capitalize">
                 {input.name}
               </div>
-              <DisplayComponentForType
+              <FormlessComponentForType
                 key={component.name}
                 input={component}
                 disabled={disabled}
@@ -487,25 +492,30 @@ export const DisplayComponentForType: React.FC<{
         />
       );
   }
-};
+}
 
-export const ComponentForTypeWithFormProvider: React.FC<ComponentForTypeProps> =
-  ({input, functionName, formHandleName, defaultValue, disabled = false}) => {
-    const methods = useForm({mode: 'onChange'});
+export function ComponentForTypeWithFormProvider({
+  input,
+  functionName,
+  formHandleName,
+  defaultValue,
+  disabled = false,
+}: ComponentForTypeProps) {
+  const methods = useForm({mode: 'onChange'});
 
-    return (
-      <FormProvider {...methods}>
-        <ComponentForType
-          key={input.name}
-          input={input}
-          functionName={functionName}
-          disabled={disabled}
-          defaultValue={defaultValue}
-          formHandleName={formHandleName}
-        />
-      </FormProvider>
-    );
-  };
+  return (
+    <FormProvider {...methods}>
+      <ComponentForType
+        key={input.name}
+        input={input}
+        functionName={functionName}
+        disabled={disabled}
+        defaultValue={defaultValue}
+        formHandleName={formHandleName}
+      />
+    </FormProvider>
+  );
+}
 
 const ActionName = styled.p.attrs({
   className: 'text-lg font-bold text-ui-800 capitalize truncate',

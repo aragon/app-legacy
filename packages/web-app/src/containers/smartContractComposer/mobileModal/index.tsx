@@ -10,20 +10,19 @@ import {
 import React, {useEffect, useState} from 'react';
 import {useFormContext, useWatch} from 'react-hook-form';
 import {useTranslation} from 'react-i18next';
+import {useParams} from 'react-router-dom';
 import styled from 'styled-components';
 
 import BottomSheet from 'components/bottomSheet';
-import {SmartContract} from 'utils/types';
-import ActionListGroup from '../components/actionListGroup';
-import SmartContractListGroup from '../components/smartContractListGroup';
-import {ActionSearchInput} from '../desktopModal/header';
-import {trackEvent} from 'services/analytics';
-import {useParams} from 'react-router-dom';
-import InputForm from '../components/inputForm';
-import {SccFormData} from '..';
-import {ListHeaderContract} from '../components/listHeaderContract';
-import {actionsFilter} from 'utils/contract';
 import {StateEmpty} from 'components/stateEmpty';
+import {trackEvent} from 'services/analytics';
+import {actionsFilter} from 'utils/contract';
+import {SmartContract} from 'utils/types';
+import {SccFormData} from '..';
+import ActionListGroup from '../components/actionListGroup';
+import InputForm from '../components/inputForm';
+import {ListHeaderContract} from '../components/listHeaderContract';
+import SmartContractListGroup from '../components/smartContractListGroup';
 
 type Props = {
   isOpen: boolean;
@@ -206,3 +205,7 @@ const Content = styled.div.attrs({
 })`
   max-height: 70vh;
 `;
+
+const ActionSearchInput = styled.input.attrs({
+  className: 'flex-1 text-ui-300 bg-ui-0 ft-text-base focus:outline-none',
+})``;
