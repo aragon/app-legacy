@@ -309,17 +309,18 @@ export type ActionSCC = {
   contractName: string;
   contractAddress: string;
   functionName: string;
-  inputs: Array<{
-    name: string;
-    type: string;
-    notice?: string;
-    value: object | string | BigNumber;
-  }>;
+  inputs: Array<ExternalActionInput>;
   value?: string;
 };
 
 // Alias
 export type ActionExternalContract = ActionWC;
+export type ExternalActionInput = {
+  name: string;
+  type: string;
+  notice?: string;
+  value: object | string | BigNumber;
+};
 
 export type ActionWC = Omit<ActionSCC, 'name'> & {
   name: 'wallet_connect_action';

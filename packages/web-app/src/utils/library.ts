@@ -40,6 +40,7 @@ import {
   ActionUpdateMultisigPluginSettings,
   ActionUpdatePluginSettings,
   ActionWithdraw,
+  ExternalActionInput,
   Input,
 } from 'utils/types';
 import {i18n} from '../../i18n.config';
@@ -403,7 +404,7 @@ export async function decodeToExternalAction(
           JSON.parse(etherscanData.result[0].ABI)
         ).find(notice => notice.name === decodedData.name);
 
-        const inputs = decodedData.params.map(param => {
+        const inputs: ExternalActionInput[] = decodedData.params.map(param => {
           return {
             ...param,
             notice: notices?.inputs.find(
@@ -421,7 +422,7 @@ export async function decodeToExternalAction(
               BigNumber.from(action.value),
               CHAIN_METADATA[network].nativeCurrency.decimals
             )} ${CHAIN_METADATA[network].nativeCurrency.symbol}`,
-          });
+          } as ExternalActionInput);
         }
 
         return {
