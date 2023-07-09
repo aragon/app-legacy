@@ -6,20 +6,19 @@ import {
   IconType,
 } from '@aragon/ui-components';
 import React from 'react';
-import {useFormContext} from 'react-hook-form';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 
-type DesktopModalHeaderProps = {
+type SearchHeader = {
   onClose?: () => void;
-  selectedContract?: string; // Note: may come from form, not set in stone
+  selectedValue?: string;
   onSearch?: (search: string) => void;
   buttonIcon?: React.FunctionComponentElement<IconType>;
+  onHomeButtonClick?: () => void;
 };
 
-const DesktopModalHeader: React.FC<DesktopModalHeaderProps> = props => {
+const SearchHeader: React.FC<SearchHeader> = props => {
   const {t} = useTranslation();
-  const {setValue} = useFormContext();
 
   return (
     <Container>
@@ -28,15 +27,12 @@ const DesktopModalHeader: React.FC<DesktopModalHeaderProps> = props => {
           icon={props.buttonIcon || <IconHome />}
           mode="secondary"
           bgWhite
-          onClick={() => {
-            setValue('selectedSC', null);
-            setValue('selectedAction', null);
-          }}
+          onClick={props.onHomeButtonClick}
         />
         <IconChevronRight />
-        {props.selectedContract && (
+        {props.selectedValue && (
           <>
-            <SelectedContract>{props.selectedContract}</SelectedContract>
+            <SelectedValue>{props.selectedValue}</SelectedValue>
             <IconChevronRight />
           </>
         )}
@@ -57,7 +53,7 @@ const DesktopModalHeader: React.FC<DesktopModalHeaderProps> = props => {
   );
 };
 
-export default DesktopModalHeader;
+export default SearchHeader;
 
 const Container = styled.div.attrs({
   className:
@@ -68,7 +64,7 @@ const LeftContent = styled.div.attrs({
   className: 'flex gap-x-1 items-center text-ui-300 ft-text-base',
 })``;
 
-const SelectedContract = styled.p.attrs({
+const SelectedValue = styled.p.attrs({
   className: 'font-bold text-ui-600 ft-text-base',
 })``;
 
