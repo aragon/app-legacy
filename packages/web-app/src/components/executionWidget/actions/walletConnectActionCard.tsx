@@ -1,4 +1,4 @@
-import {AlertCard} from '@aragon/ui-components';
+import {AlertCard, Label} from '@aragon/ui-components';
 import React, {useMemo} from 'react';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
@@ -6,7 +6,7 @@ import styled from 'styled-components';
 import {AccordionMethod, AccordionMethodType} from 'components/accordionMethod';
 import {FormlessComponentForType} from 'containers/smartContractComposer/components/inputForm';
 import {POTENTIALLY_TIME_SENSITIVE_FIELDS} from 'utils/constants/misc';
-import {shortenAddress} from 'utils/library';
+import {capitalizeFirstLetter, shortenAddress} from 'utils/library';
 import {ActionWC, Input} from 'utils/types';
 
 type WCActionCardActionCardProps = Pick<AccordionMethodType, 'type'> & {
@@ -47,21 +47,24 @@ export const WCActionCard: React.FC<WCActionCardActionCardProps> = ({
     >
       <Content type={type}>
         {action.inputs?.length > 0 ? (
-          <div className="pb-1.5 space-y-2">
-            {(action.inputs as Input[]).map(input => (
-              <div key={input.name}>
-                <InputName>{input.name}</InputName>
-                <div className="mt-0.5 mb-1.5">
-                  <span className="text-ui-600 ft-text-sm">{input.notice}</span>
-                </div>
-                <FormlessComponentForType
-                  disabled
-                  key={input.name}
-                  input={input}
-                />
-              </div>
-            ))}
-          </div>
+          <FormGroup>
+            {action.inputs.map(input => {
+              if (!input.name) return null;
+              return (
+                <FormItem key={input.name}>
+                  <Label
+                    label={capitalizeFirstLetter(input.name)}
+                    helpText={input.notice}
+                  />
+                  <FormlessComponentForType
+                    disabled
+                    key={input.name}
+                    input={input as Input}
+                  />
+                </FormItem>
+              );
+            })}
+          </FormGroup>
         ) : null}
         {!action.decoded && (
           <AlertCard
@@ -87,11 +90,15 @@ export const WCActionCard: React.FC<WCActionCardActionCardProps> = ({
 type ContentProps = Pick<WCActionCardActionCardProps, 'type'>;
 
 const Content = styled.div.attrs(({type}: ContentProps) => ({
-  className: `p-3 border border-ui-100 border-t-0 space-y-3 rounded-b-xl ${
+  className: `px-2 desktop:px-3 p-3 border border-ui-100 border-t-0 space-y-2 desktop:space-y-3 rounded-b-xl ${
     type === 'action-builder' ? 'bg-ui-0' : 'bg-ui-50'
   }`,
 }))<ContentProps>``;
 
-const InputName = styled.div.attrs({
-  className: 'text-base font-bold text-ui-800 capitalize',
+const FormGroup = styled.div.attrs({
+  className: 'space-y-2 desktop:space-y-3',
+})``;
+
+const FormItem = styled.div.attrs({
+  className: 'space-y-1.5',
 })``;
