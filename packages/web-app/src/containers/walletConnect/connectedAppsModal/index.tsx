@@ -4,8 +4,10 @@ import {SessionTypes} from '@walletconnect/types';
 import {
   ButtonText,
   IconChevronRight,
+  IconFeedback,
   IconReload,
   IconSearch,
+  Link,
   ListItemAction,
 } from '@aragon/ui-components';
 import {useTranslation} from 'react-i18next';
@@ -95,6 +97,14 @@ const WCConnectedApps: React.FC<Props> = props => {
               }}
               className="mt-3 w-full"
             />
+            <div className="mt-2 text-center">
+              <Link
+                label={t('wc.listdApps.learnLinkLabel')}
+                href="/"
+                external
+                iconRight={<IconFeedback />}
+              />
+            </div>
           </>
         )}
       </Content>
