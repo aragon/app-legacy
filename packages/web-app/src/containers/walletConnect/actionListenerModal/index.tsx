@@ -76,7 +76,7 @@ const ActionListenerModal: React.FC<Props> = ({
 
       // name, raw action and contract address set on every action
       addAction({name: 'wallet_connect_action'});
-      setValue(`actions.${actionIndex}.name`, 'wallet_connect_action');
+      setValue(`actions.${index}.name`, 'wallet_connect_action');
       setValue(`actions.${index}.raw`, action.params[0]);
       setValue(`actions.${index}.contractAddress`, action.params[0].to);
 
