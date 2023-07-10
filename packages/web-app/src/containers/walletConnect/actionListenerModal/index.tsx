@@ -53,9 +53,17 @@ const ActionListenerModal: React.FC<Props> = ({
   /*************************************************
    *             Callbacks and Handlers            *
    *************************************************/
-  const handleAddActions = () => {
+  const handleAddActions = useCallback(() => {
     resetField(`actions.${actionIndex}`);
 
+    // NOTE: this is slightly inefficient and can be optimized
+    // by wrapping the map in a Promise.all, but as of now,
+    // I am unsure if the getEtherscanVerifiedContract will always
+    // be ran with the same parameters given each batch of actions
+    // will be coming from only one dApp at a time. If that is indeed
+    // the case, then both the Etherscan data and notices can be fetched
+    // and parsed outside of the map, getting rid of the unnecessary
+    // async requests.
     actionsReceived.map(async (action, currentIndex) => {
       // verify and decode
       const etherscanData = await getEtherscanVerifiedContract(
@@ -144,7 +152,16 @@ const ActionListenerModal: React.FC<Props> = ({
     });
 
     removeAction(actionIndex);
-  };
+  }, [
+    actionIndex,
+    actionsReceived,
+    addAction,
+    network,
+    removeAction,
+    resetField,
+    setValue,
+    t,
+  ]);
 
   /*************************************************
    *                     Render                    *
