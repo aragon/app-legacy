@@ -441,7 +441,7 @@ export async function decodeToExternalAction(
           name: 'wallet_connect_action',
           contractAddress: action.to,
           contractName: etherscanData.result[0].ContractName,
-          functionName: t('Unknown'),
+          functionName: 'Unable to decode function name', // FIXME: crowdin key,
           inputs: getEncodedActionInputs(action, network, t),
           verified: true,
           decoded: false,
@@ -452,7 +452,7 @@ export async function decodeToExternalAction(
         name: 'wallet_connect_action',
         contractAddress: action.to,
         contractName: action.to,
-        functionName: t('Unknown'),
+        functionName: 'Unable to decode function name', // FIXME: crowdin key,
         verified: false,
         decoded: false,
         inputs: getEncodedActionInputs(action, network, t),
@@ -693,9 +693,9 @@ export function getWCPayableAmount(
   network: SupportedNetworks
 ) {
   return {
-    name: t('Raw Amount'),
+    name: 'Raw Amount', // FIXME: crowdin key
     type: 'string',
-    notice: t('The number of the tokens to transfer'),
+    notice: 'The number of the tokens to transfer', // FIXME: crowdin key,
     value: `${formatUnits(
       BigNumber.from(value),
       CHAIN_METADATA[network].nativeCurrency.decimals
@@ -714,16 +714,16 @@ export function getEncodedActionInputs(
         return getWCPayableAmount(t, action.value.toString(), network);
       case 'to':
         return {
-          name: t('Dst'),
+          name: 'Dst', // FIXME: crowdin key,
           type: 'address',
-          notice: t('The address of the destination account'),
+          notice: 'The address of the destination account', // FIXME: crowdin key,
           value: action[fieldName],
         };
       case 'data':
         return {
-          name: t('Data'),
+          name: 'Data', // t('Data'),
           type: 'encodedData',
-          notice: t('Encoded EVM call to the smart contract'),
+          notice: 'Encoded EVM call to the smart contract', // FIXME: crowdin key,
           value: action[fieldName],
         };
       default:
