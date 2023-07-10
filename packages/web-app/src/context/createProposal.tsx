@@ -149,7 +149,9 @@ const CreateProposalProvider: React.FC<Props> = ({
           actions.push(
             client.encoding.withdrawAction({
               amount: BigInt(
-                Number(action.amount) * Math.pow(10, action.tokenDecimals)
+                ethers.utils
+                  .parseUnits(action.amount.toString(), action.tokenDecimals)
+                  .toString()
               ),
 
               /* TODO: SDK doesn't accept ens names, this should be removed once they
@@ -170,7 +172,11 @@ const CreateProposalProvider: React.FC<Props> = ({
                   action.summary.daoTokenAddress as string,
                   {
                     address: mint.address,
-                    amount: BigInt(Number(mint.amount) * Math.pow(10, 18)),
+                    amount: BigInt(
+                      ethers.utils
+                        .parseUnits(mint.amount.toString(), 18)
+                        .toString()
+                    ),
                   }
                 )
               )
