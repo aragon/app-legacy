@@ -25,10 +25,15 @@ export const WCActionCard: React.FC<WCActionCardActionCardProps> = ({
   const {t} = useTranslation();
 
   const showTimeSensitiveWarning = useMemo(() => {
-    for (const i of action.inputs) {
-      if (POTENTIALLY_TIME_SENSITIVE_FIELDS.has(i.name.toLowerCase()))
-        return true;
+    // Note: need to check whether the inputs exist because the decoding
+    // and form setting might take a while
+    if (action.inputs) {
+      for (const i of action.inputs) {
+        if (POTENTIALLY_TIME_SENSITIVE_FIELDS.has(i.name.toLowerCase()))
+          return true;
+      }
     }
+    return false;
   }, [action.inputs]);
 
   return (
