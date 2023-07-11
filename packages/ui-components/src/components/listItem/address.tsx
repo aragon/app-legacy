@@ -1,8 +1,7 @@
 import React, {ButtonHTMLAttributes, FC} from 'react';
 import styled from 'styled-components';
-import {constants} from 'ethers';
 
-import {IsAddress, shortenAddress} from '../../utils/addresses';
+import {shortenAddress} from '../../utils/addresses';
 import {AvatarWallet} from '../avatar';
 import {IconLinkExternal, IconPerson} from '../icons';
 
@@ -53,7 +52,7 @@ type AvatarProps = Pick<ListItemAddressProps, 'src'>;
 
 const Avatar: FC<AvatarProps> = ({src}) => {
   if (!src) return <IconPerson className="w-2.5 h-2.5" />;
-  return <AvatarWallet src={IsAddress(src) ? src : constants.AddressZero} />;
+  return <AvatarWallet src={src} />;
 };
 
 const Container = styled.button.attrs(() => {
