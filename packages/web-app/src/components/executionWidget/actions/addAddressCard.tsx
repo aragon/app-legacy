@@ -17,36 +17,41 @@ export const AddAddressCard: React.FC<{
   const {t} = useTranslation();
   const {network} = useNetwork();
   const {infura: provider} = useProviders();
-  const filteredMemberWallets = action.inputs.memberWallets.filter(
-    wallet => wallet.address
+
+  const [displayedAddresses, setDisplayedAddresses] = useState<Web3Address[]>(
+    []
   );
 
-  const [displayedWallets, setDisplayedWallets] = useState<Web3Address[]>([]);
-
+  /*************************************************
+   *                    Effects                    *
+   *************************************************/
   useEffect(() => {
-    async function filterMembers() {
-      let wallets: ActionAddAddress['inputs']['memberWallets'] | Web3Address[] =
-        action.inputs.memberWallets.filter(wallet => wallet.address);
+    async function filterAddresses() {
+      let memberAddresses:
+        | ActionAddAddress['inputs']['memberWallets']
+        | Array<Web3Address> = action.inputs.memberWallets.filter(
+        wallet => wallet.address
+      );
 
       try {
-        wallets = await Promise.all(
-          wallets.map(async wallet => {
-            return await Web3Address.create(provider, {
-              address: wallet.address as string,
-              ensName: wallet.ensName as string,
-            });
+        memberAddresses = await Promise.all(
+          memberAddresses.map(async ({address, ensName}) => {
+            return await Web3Address.create(provider, {address, ensName});
           })
         );
       } catch (error) {
         console.error('Error creating Web3Addresses', error);
       }
 
-      setDisplayedWallets(wallets as Array<Web3Address>);
+      setDisplayedAddresses(memberAddresses as Array<Web3Address>);
     }
 
-    if (action.inputs.memberWallets) filterMembers();
+    if (action.inputs.memberWallets) filterAddresses();
   }, [action.inputs.memberWallets, provider]);
 
+  /*************************************************
+   *             Callbacks and Handlers            *
+   *************************************************/
   const handleAddressClick = useCallback(
     (addressOrEns: string | null) =>
       window.open(
@@ -56,6 +61,9 @@ export const AddAddressCard: React.FC<{
     [network]
   );
 
+  /*************************************************
+   *                    Render                    *
+   *************************************************/
   return (
     <AccordionMethod
       type="execution-widget"
@@ -65,7 +73,7 @@ export const AddAddressCard: React.FC<{
       methodDescription={t('labels.addWalletsDescription')}
     >
       <Container>
-        {displayedWallets.map(({address, avatar, ensName}) => (
+        {displayedAddresses.map(({address, avatar, ensName}) => (
           <ListItemAddress
             label={ensName || address}
             src={avatar || address}
@@ -76,7 +84,7 @@ export const AddAddressCard: React.FC<{
       </Container>
       <AccordionSummary
         type="execution-widget"
-        total={filteredMemberWallets.length}
+        total={displayedAddresses.length}
       />
     </AccordionMethod>
   );
