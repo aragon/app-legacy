@@ -34,11 +34,13 @@
     }
   },
   "peerDependencies": {
+    "@aragon/ods": "^0.1.4",
     "react": ">=16",
     "styled-components": ">=5",
     "tailwindcss": ">=2"
   },
   "devDependencies": {
+    "@aragon/ods": "^0.1.4",
     "@babel/core": "^7.16.0",
     "@rollup/plugin-image": "^2.1.1",
     "@size-limit/preset-small-lib": "^6.0.4",

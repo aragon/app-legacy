@@ -1,12 +1,8 @@
 import {Meta, Story} from '@storybook/react';
 import React from 'react';
-import {
-  ButtonText,
-  IconChevronDown,
-  TableCell,
-  TableCellProps,
-  Tag,
-} from '../src';
+import {Tag} from '@aragon/ods';
+
+import {ButtonText, IconChevronDown, TableCell, TableCellProps} from '../src';
 
 export default {
   title: 'Components/Table/Cell',
@@ -25,7 +21,7 @@ Default.args = {
 
 const TagTemplate: Story<TableCellProps> = args => (
   <TableCell {...args}>
-    <Tag label="Tag" colorScheme="critical" />
+    <Tag colorScheme="critical">Tag</Tag>
   </TableCell>
 );
 export const Tagged = TagTemplate.bind({});

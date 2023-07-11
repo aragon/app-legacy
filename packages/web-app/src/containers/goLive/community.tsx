@@ -1,4 +1,5 @@
-import {IconFeedback, Link, Tag} from '@aragon/ui-components';
+import {IconFeedback, Link} from '@aragon/ui-components';
+import {Tag} from '@aragon/ods';
 import React, {useMemo} from 'react';
 import {Controller, useFormContext} from 'react-hook-form';
 import {useTranslation} from 'react-i18next';
@@ -128,14 +129,13 @@ const Community: React.FC = () => {
                     {/* TODO: check the owner for token contract, if it belongs to
                     dao add this */}
                     {isCustomToken && (
-                      <Tag label={t('labels.new')} colorScheme="info" />
+                      <Tag colorScheme="info">{t('labels.new')}</Tag>
                     )}
 
                     {isGovTokenRequiresWrapping && (
-                      <Tag
-                        label={t('labels.review.tokenWrapped')}
-                        colorScheme="info"
-                      />
+                      <Tag colorScheme="info">
+                        {t('labels.review.tokenWrapped')}
+                      </Tag>
                     )}
                   </div>
                 </Dd>
@@ -149,10 +149,7 @@ const Community: React.FC = () => {
                         {formattedTotalSupply} {tokenSymbol}
                       </p>
                       {isCustomToken && (
-                        <Tag
-                          label={t('labels.mintable')}
-                          colorScheme="neutral"
-                        />
+                        <Tag colorScheme="neutral">{t('labels.mintable')}</Tag>
                       )}
                     </div>
                   </Dd>

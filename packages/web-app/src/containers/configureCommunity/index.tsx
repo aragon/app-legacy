@@ -4,8 +4,8 @@ import {
   Label,
   LinearProgress,
   NumberInput,
-  Tag,
 } from '@aragon/ui-components';
+import {Tag} from '@aragon/ods';
 import {MultisigMinimumApproval} from 'components/multisigMinimumApproval';
 import React, {useCallback} from 'react';
 import {Controller, useFormContext, useWatch} from 'react-hook-form';
@@ -181,12 +181,9 @@ const ConfigureCommunity: React.FC = () => {
                     </div>
 
                     <div className="flex flex-1 items-center">
-                      <Tag
-                        label={t('labels.yes')}
-                        colorScheme="primary"
-                        className="mr-1.5 w-6"
-                      />
-
+                      <Tag className="mr-1.5 w-6" colorScheme="primary">
+                        {t('labels.yes')}
+                      </Tag>
                       <LinearProgressContainer>
                         <LinearProgress max={100} value={value} />
                         <ProgressBarTick />
@@ -201,7 +198,7 @@ const ConfigureCommunity: React.FC = () => {
                         </ProgressInfo1>
                       </LinearProgressContainer>
 
-                      <Tag label={t('labels.no')} className="ml-1.5 w-6" />
+                      <Tag className="ml-1.5 w-6">{t('labels.no')}</Tag>
                     </div>
                   </ApprovalContainer>
 

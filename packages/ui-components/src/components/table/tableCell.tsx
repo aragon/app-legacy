@@ -1,5 +1,6 @@
 import React from 'react';
-import {TagProps, LinkProps} from '../..';
+import {ITagProps} from '@aragon/ods';
+import {LinkProps} from '../..';
 
 export type TableCellProps = {
   type: 'text' | 'foot' | 'head' | 'link' | 'tag';
@@ -9,7 +10,7 @@ export type TableCellProps = {
   bgWhite?: boolean;
   className?: string;
   children?:
-    | React.FunctionComponentElement<TagProps>
+    | React.FunctionComponentElement<ITagProps>
     | React.FunctionComponentElement<LinkProps>;
 };
 

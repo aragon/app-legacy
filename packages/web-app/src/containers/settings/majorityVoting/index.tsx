@@ -2,7 +2,8 @@ import React from 'react';
 import {useTranslation} from 'react-i18next';
 import {generatePath, useNavigate} from 'react-router-dom';
 import {VotingMode, VotingSettings} from '@aragon/sdk-client';
-import {Link, Tag} from '@aragon/ui-components';
+import {Link} from '@aragon/ui-components';
+import {Tag} from '@aragon/ods';
 
 import {Dd, DescriptionListContainer, Dl, Dt} from 'components/descriptionList';
 import {useNetwork} from 'context/network';
@@ -82,7 +83,7 @@ const MajorityVotingSettings: React.FC<IPluginSettings> = ({daoDetails}) => {
               <p>
                 {tokenSupply?.formatted} {daoToken?.symbol}
               </p>
-              {isTokenMintable && <Tag label={t('labels.mintable')} />}
+              {isTokenMintable && <Tag>{t('labels.mintable')}</Tag>}
             </div>
           </Dd>
         </Dl>

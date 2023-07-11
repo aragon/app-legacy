@@ -18,7 +18,6 @@ export * from './components/pagination';
 export * from './components/progress';
 export * from './components/spinner';
 export * from './components/table';
-export * from './components/tag';
 export * from './components/textarea';
 export * from './components/tokenListItem';
 export * from './components/transferListItem';

@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import {Tag} from '../tag';
+import {Tag} from '@aragon/ods';
 
 export type LabelProps = {
   label: string;
@@ -25,7 +25,7 @@ export const Label: React.FC<LabelProps> = ({
         ) : (
           <Heading>{label}</Heading>
         )}
-        {isOptional && <Tag label={tagLabel || 'Optional'} />}
+        {isOptional && <Tag>{tagLabel || 'Optional'}</Tag>}
       </LabelLine>
       {renderHtml && helpText ? (
         <HelpText dangerouslySetInnerHTML={{__html: helpText}} />

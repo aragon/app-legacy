@@ -1,15 +1,14 @@
 import React, {ReactComponentElement} from 'react';
 import styled from 'styled-components';
-
+import {ITagProps} from '@aragon/ods';
 import {IconType} from '../icons';
-import {TagProps} from '../tag';
 
 type CrumbProps = {
   first?: boolean;
   label: string;
   last?: boolean;
   icon?: ReactComponentElement<IconType>;
-  tag?: React.FunctionComponentElement<TagProps>;
+  tag?: React.FunctionComponentElement<ITagProps>;
   onClick?: React.MouseEventHandler;
 };
 

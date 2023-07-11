@@ -1,5 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
+import {Tag} from '@aragon/ods';
 
 import {shortenAddress} from '../../utils/addresses';
 import {AlertInline} from '../alerts';
@@ -7,7 +8,6 @@ import {AvatarDao} from '../avatar';
 import {IconClock} from '../icons';
 import {Link} from '../link';
 import {LinearProgress} from '../progress';
-import {Tag} from '../tag';
 
 type ProposalUseCase = 'list' | 'explore';
 
@@ -169,11 +169,11 @@ const HeaderOptions: React.VFC<HeaderOptionProps> = ({
 }) => {
   switch (process) {
     case 'draft':
-      return <Tag label={stateLabel[0]} />;
+      return <Tag>{stateLabel[0]}</Tag>;
     case 'pending':
       return (
         <>
-          <Tag label={stateLabel[1]} />
+          <Tag>{stateLabel[1]}</Tag>
           {alertMessage && (
             <AlertInline
               label={alertMessage}
@@ -187,7 +187,7 @@ const HeaderOptions: React.VFC<HeaderOptionProps> = ({
       return (
         <>
           {!isExploreProposal(type) && (
-            <Tag label={stateLabel[2]} colorScheme={'info'} />
+            <Tag colorScheme="info">{stateLabel[2]}</Tag>
           )}
           {alertMessage && (
             <AlertInline
@@ -199,11 +199,11 @@ const HeaderOptions: React.VFC<HeaderOptionProps> = ({
         </>
       );
     case 'executed':
-      return <Tag label={stateLabel[3]} colorScheme={'success'} />;
+      return <Tag colorScheme="success">{stateLabel[3]}</Tag>;
     case 'succeeded':
-      return <Tag label={stateLabel[4]} colorScheme={'success'} />;
+      return <Tag colorScheme="success">{stateLabel[4]}</Tag>;
     case 'defeated':
-      return <Tag label={stateLabel[5]} colorScheme={'critical'} />;
+      return <Tag colorScheme="critical">{stateLabel[5]}</Tag>;
     default:
       return null;
   }

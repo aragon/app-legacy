@@ -1,4 +1,4 @@
-import {Tag} from '@aragon/ui-components';
+import {Tag} from '@aragon/ods';
 import React from 'react';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
@@ -104,10 +104,7 @@ const InfoTab: React.FC<Props> = ({
               <Strong>{currentParticipation}</Strong>
               <div className="flex gap-x-1 justify-end">
                 {minimumReached && (
-                  <Tag
-                    label={t('votingTerminal.reached')}
-                    colorScheme="success"
-                  />
+                  <Tag colorScheme="success">{t('votingTerminal.reached')}</Tag>
                 )}
                 <p className="text-right text-ui-400 ft-text-sm">
                   {minimumReached
@@ -141,10 +138,7 @@ const InfoTab: React.FC<Props> = ({
               </Strong>
               <div className="flex gap-x-1 justify-end">
                 {minimumReached && (
-                  <Tag
-                    label={t('votingTerminal.reached')}
-                    colorScheme="success"
-                  />
+                  <Tag colorScheme="success">{t('votingTerminal.reached')}</Tag>
                 )}
                 <p className="text-right text-ui-400 ft-text-sm">
                   {minimumReached

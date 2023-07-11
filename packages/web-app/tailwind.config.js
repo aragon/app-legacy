@@ -77,6 +77,7 @@ module.exports = {
       },
       // extends spacing according to design system
       spacing: {
+        0.1: '1px',
         0.25: '2px',
         0.5: '4px',
         0.75: '6px',

@@ -1,4 +1,5 @@
-import {AvatarDao, ButtonText, Spinner, Tag} from '@aragon/ui-components';
+import {AvatarDao, ButtonText, Spinner} from '@aragon/ui-components';
+import {Tag} from '@aragon/ods';
 import {SessionTypes} from '@walletconnect/types';
 import React, {useCallback, useState} from 'react';
 import {useFormContext} from 'react-hook-form';
@@ -195,13 +196,13 @@ const ActionListenerModal: React.FC<Props> = ({
             })}
           </p>
           {actionsReceived.length > 0 ? (
-            <Tag
-              label={t('wc.detaildApp.amountActionsTag', {
+            <Tag>
+              {t('wc.detaildApp.amountActionsTag', {
                 amountActions: actionsReceived.length,
               })}
-            />
+            </Tag>
           ) : (
-            <Tag label={t('wc.detaildApp.noActionsTag')} />
+            <Tag>{t('wc.detaildApp.noActionsTag')}</Tag>
           )}
         </div>
 

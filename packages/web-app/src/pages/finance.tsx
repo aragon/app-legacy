@@ -3,9 +3,9 @@ import {
   Breadcrumb,
   ButtonText,
   IconAdd,
-  Tag,
   IlluObject,
 } from '@aragon/ui-components';
+import {Tag} from '@aragon/ods';
 import {withTransaction} from '@elastic/apm-rum-react';
 import React from 'react';
 import {useTranslation} from 'react-i18next';
@@ -113,7 +113,7 @@ const Finance: React.FC = () => {
                   </Title>
 
                   <SubtitleContainer>
-                    <Tag label="24h" />
+                    <Tag>24h</Tag>
                     <Description
                       className={colors[Math.sign(totalAssetChange) as Sign]}
                     >

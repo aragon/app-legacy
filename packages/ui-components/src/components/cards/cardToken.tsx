@@ -1,7 +1,6 @@
 import styled from 'styled-components';
 import React, {SyntheticEvent} from 'react';
-
-import {Tag} from '../tag';
+import {Tag} from '@aragon/ods';
 import FallbackImg from '../../assets/avatar-token.svg';
 
 export type CardTokenProps = {
@@ -42,7 +41,7 @@ export const CardToken: React.FC<CardTokenProps> = ({
             <CoinName>{props.tokenName}</CoinName>
             <ToggleMobileVisibility visible={false}>
               {props.treasurySharePercentage && isVault && (
-                <Tag label={props.treasurySharePercentage} />
+                <Tag>{props.treasurySharePercentage}</Tag>
               )}
             </ToggleMobileVisibility>
           </CoinNameAndAllocation>
@@ -92,11 +91,12 @@ export const CardToken: React.FC<CardTokenProps> = ({
               )}
               {props.percentageChangeDuringInterval && (
                 <Tag
-                  label={props.percentageChangeDuringInterval}
                   colorScheme={
                     changeType === 'Positive' ? 'success' : 'critical'
                   }
-                />
+                >
+                  {props.percentageChangeDuringInterval}
+                </Tag>
               )}
             </>
           ) : (
