@@ -3,8 +3,8 @@ import {
   ButtonText,
   CheckboxListItem,
   CheckboxListItemProps,
+  Tag,
 } from '@aragon/ui-components';
-import {Tag} from '@aragon/ods';
 import React from 'react';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
@@ -45,7 +45,7 @@ export const DescriptionListContainer: React.FC<DescriptionListProps> = ({
           <TitleText>{title}</TitleText>
           {badgeLabel && (
             <div>
-              <Tag colorScheme="info">{badgeLabel}</Tag>
+              <Tag label={badgeLabel || ''} colorScheme="info" />
             </div>
           )}
         </TitleContainer>

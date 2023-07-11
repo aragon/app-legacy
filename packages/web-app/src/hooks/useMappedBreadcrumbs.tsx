@@ -4,8 +4,9 @@ import {
   IconFinance,
   IconGovernance,
   IconSettings,
+  Tag,
+  TagProps,
 } from '@aragon/ui-components';
-import {Tag, ITagProps} from '@aragon/ods';
 import React, {useMemo} from 'react';
 import {useMatch} from 'react-router-dom';
 import useBreadcrumbs, {BreadcrumbData} from 'use-react-router-breadcrumbs';
@@ -18,7 +19,7 @@ type MappedBreadcrumbs = {
     path: string;
     label: string;
   }[];
-  tag?: React.FunctionComponentElement<ITagProps>;
+  tag?: React.FunctionComponentElement<TagProps>;
   icon: JSX.Element;
 };
 
@@ -70,7 +71,7 @@ export function useMappedBreadcrumbs(): MappedBreadcrumbs {
 
   let tag;
   if (isProposalDetail && proposalStatus)
-    tag = <Tag className="capitalize">{proposalStatus}</Tag>;
+    tag = <Tag label={proposalStatus} className="capitalize" />;
 
   return {breadcrumbs, icon, tag};
 }

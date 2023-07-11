@@ -1,7 +1,8 @@
 import React, {ReactComponentElement} from 'react';
 import styled from 'styled-components';
-import {ITagProps} from '@aragon/ods';
+
 import Crumb from './crumb';
+import {TagProps} from '../tag';
 import {ButtonIcon} from '../button';
 import {IconChevronLeft, IconChevronRight, IconType} from '../icons';
 
@@ -28,7 +29,7 @@ export type ProcessCrumbProps = {
 
 export type BreadcrumbProps = {
   /** Tag shown at the end of the list of breadcrumbs */
-  tag?: React.FunctionComponentElement<ITagProps>;
+  tag?: React.FunctionComponentElement<TagProps>;
 
   /** Callback returning the path value of the breadcrumb clicked */
   onClick?: (path: string) => void;

@@ -1,8 +1,8 @@
 import React from 'react';
 import styled from 'styled-components';
-import {Tag} from '@aragon/ods';
 
 import {TableCell} from './tableCell';
+import {Tag} from '../tag';
 import {IconChevronDown} from '../icons';
 import {Link} from '../link';
 import {shortenAddress} from '../../utils/addresses';
@@ -73,11 +73,10 @@ export const VotersTable: React.FC<VotersTableProps> = ({
                   {voter.option && (
                     <span className="flex">
                       <Tag
+                        label={voter.option}
                         className="capitalize"
                         colorScheme={colorScheme(voter.option)}
-                      >
-                        {voter.option}
-                      </Tag>
+                      />
                     </span>
                   )}
                 </TableCell>
