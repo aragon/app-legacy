@@ -241,18 +241,20 @@ export type ActionWithdraw = {
 export type ActionAddAddress = {
   name: 'add_address';
   inputs: {
-    memberWallets: {
+    memberWallets: Array<{
       address: string;
-    }[];
+      ensName: string;
+    }>;
   };
 };
 
 export type ActionRemoveAddress = {
   name: 'remove_address';
   inputs: {
-    memberWallets: {
+    memberWallets: Array<{
       address: string;
-    }[];
+      ensName: string;
+    }>;
   };
 };
 
