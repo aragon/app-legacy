@@ -1,4 +1,4 @@
-import React, {ReactNode} from 'react';
+import React, {ReactNode, useEffect} from 'react';
 import styled, {CSSProperties} from 'styled-components';
 
 export interface BackdropProps {
@@ -26,6 +26,34 @@ export const Backdrop: React.FC<BackdropProps> = ({
   ...props
 }) => {
   // TODO:Implement Backdrop to use as wrapper
+
+  useEffect(() => {
+    const html = document.querySelector('html');
+    return () => {
+      if (html) html.style.overflow = 'auto';
+    };
+  }, []);
+
+  useEffect(() => {
+    const html = document.querySelector('html');
+    if (!html) return;
+    html.style.overflow = visible ? 'hidden' : 'auto';
+  }, [visible]);
+
+  useEffect(() => {
+    function lockScrollOnResize() {
+      const html = document.querySelector('html');
+      if (!visible || !html) return;
+      html.style.overflow = 'hidden';
+    }
+
+    window?.addEventListener?.('resize', lockScrollOnResize);
+
+    return () => {
+      window?.removeEventListener?.('resize', lockScrollOnResize);
+    };
+  }, [visible]);
+
   return (
     <StyledBackdrop
       data-testid="backdrop-container"
