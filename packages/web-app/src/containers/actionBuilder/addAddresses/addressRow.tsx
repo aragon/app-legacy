@@ -1,30 +1,21 @@
 import {
-  AlertInline,
   ButtonIcon,
   Dropdown,
   IconMenuVertical,
-  ValueInput,
+  InputValue as WalletInputValue,
 } from '@aragon/ui-components';
 import React, {useCallback} from 'react';
-import {
-  Controller,
-  ValidateResult,
-  useFormContext,
-  useWatch,
-} from 'react-hook-form';
+import {Controller, useFormContext, useWatch} from 'react-hook-form';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 
+import {WrappedWalletInput} from 'components/wrappedWalletInput';
 import {useAlertContext} from 'context/alert';
+import {useProviders} from 'context/providers';
 import {BalanceMember, MultisigMember} from 'hooks/useDaoMembers';
-import {handleClipboardActions} from 'utils/library';
-import {validateAddress} from 'utils/validators';
-
-// temporary until the ens input is used
-type WalletItem = {
-  id: string;
-  address: string;
-};
+import {Web3Address} from 'utils/library';
+import {ActionAddAddress} from 'utils/types';
+import {validateWeb3Address} from 'utils/validators';
 
 type Props = {
   actionIndex: number;
@@ -36,7 +27,8 @@ type Props = {
     callback: (index: number) => void;
     component: React.ReactNode;
   }>;
-  onClearRow?: (index: number) => void;
+  onBlur?: () => void;
+  onClearRow?: () => void;
   currentDaoMembers?: MultisigMember[] | BalanceMember[];
 };
 
@@ -45,16 +37,18 @@ export const AddressRow = ({
   isRemove = false,
   fieldIndex,
   dropdownItems,
+  onBlur,
   onClearRow,
   currentDaoMembers,
 }: Props) => {
   const {t} = useTranslation();
   const {alert} = useAlertContext();
+  const {infura: provider} = useProviders();
 
   const {control} = useFormContext();
 
   const memberWalletsKey = `actions.${actionIndex}.inputs.memberWallets`;
-  const memberWallets = useWatch({
+  const memberWallets: ActionAddAddress['inputs']['memberWallets'] = useWatch({
     name: memberWalletsKey,
     control,
   });
@@ -62,92 +56,70 @@ export const AddressRow = ({
   /*************************************************
    *             Callbacks and Handlers            *
    *************************************************/
-  const handleAdornmentClick = useCallback(
-    (value: string, onChange: (value: string) => void) => {
-      // allow the user to copy the address even when input is disabled
-      if (isRemove) {
-        handleClipboardActions(value, onChange, alert);
-        return;
-      }
-
-      // if the input is not disabled, when there is a value clear it,
-      // paste from clipboard, and set the value
-      if (value) {
-        onClearRow?.(fieldIndex) || onChange('');
-        alert(t('alert.chip.inputCleared'));
-      } else {
-        handleClipboardActions(value, onChange, alert);
-      }
-    },
-    [alert, fieldIndex, isRemove, onClearRow, t]
-  );
+  const handleRowClear = useCallback(() => {
+    alert(t('alert.chip.inputCleared'));
+    onClearRow?.();
+  }, [alert, onClearRow, t]);
 
   const addressValidator = useCallback(
-    (address: string, index: number) => {
-      let validationResult: ValidateResult;
+    async ({address, ensName}: WalletInputValue, index: number) => {
+      const web3Address = new Web3Address(provider, address, ensName);
 
-      // check if input address is valid, only if address is provided
-      if (address !== '') {
-        validationResult = validateAddress(address);
-      }
+      // check if address is valid
+      let validationResult = await validateWeb3Address(
+        new Web3Address(provider, address, ensName),
+        t('errors.required.walletAddress'),
+        t
+      );
 
-      // check if there is duplicated address in the multisig plugin
+      // check if there is duplicated address in the Multisig plugin
       if (
-        currentDaoMembers &&
         currentDaoMembers?.some(
-          member => member.address === address?.toLocaleLowerCase()
+          member =>
+            member.address.toLowerCase() === web3Address.address?.toLowerCase()
         )
-      ) {
+      )
         validationResult = t('errors.duplicateAddressOnCurrentMembersList');
-      }
 
-      // check if there is dublicated address in the form
-      if (memberWallets) {
-        memberWallets.forEach((wallet: WalletItem, walletIndex: number) => {
-          if (address === wallet.address && index !== walletIndex) {
-            validationResult = t('errors.duplicateAddress');
-          }
-        });
-      }
+      // check if there is a duplicate in the form
+      if (
+        memberWallets?.some(
+          ({address, ensName}, memberWalletIndex) =>
+            (address === web3Address.address ||
+              ensName === web3Address.ensName) &&
+            memberWalletIndex !== index
+        )
+      )
+        validationResult = t('errors.duplicateAddress');
+
       return validationResult;
     },
-    [t, memberWallets, currentDaoMembers]
+    [currentDaoMembers, memberWallets, provider, t]
   );
-
-  // gets the proper label for adornment button. ick.
-  const getAdornmentText = (value: string) => {
-    if (isRemove) return t('labels.copy');
-    return value ? t('labels.clear') : t('labels.paste');
-  };
 
   /*************************************************
    *                    Render                    *
    *************************************************/
   return (
     <Controller
-      name={`${memberWalletsKey}.${fieldIndex}.address`}
-      defaultValue=""
+      name={`${memberWalletsKey}.${fieldIndex}`}
+      defaultValue={{address: '', ensName: ''}}
       control={control}
-      rules={{
-        validate: value => addressValidator(value, fieldIndex),
-      }}
-      render={({field: {onChange, value}, fieldState: {error}}) => (
+      rules={{validate: value => addressValidator(value, fieldIndex)}}
+      render={({field: {onChange, ref, value}, fieldState: {error}}) => (
         <Container>
           <InputContainer>
-            <ValueInput
-              mode={error ? 'critical' : 'default'}
-              value={value}
-              onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                onChange(e.target.value);
-              }}
-              placeholder="0x..."
-              adornmentText={getAdornmentText(value)}
-              onAdornmentClick={() => handleAdornmentClick(value, onChange)}
+            <WrappedWalletInput
+              state={error && 'critical'}
               disabled={isRemove}
+              value={value}
+              onBlur={onBlur}
+              onChange={onChange}
+              error={error?.message}
+              showResolvedLabels={false}
+              ref={ref}
+              onClearButtonClick={handleRowClear}
             />
-            {error?.message && (
-              <AlertInline label={error.message} mode="critical" />
-            )}
           </InputContainer>
           <Dropdown
             disabled={memberWallets?.length === 1 && !isRemove}

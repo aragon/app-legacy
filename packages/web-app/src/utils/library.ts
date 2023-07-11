@@ -839,6 +839,7 @@ export class Web3Address {
     return this._ensName;
   }
 
+  // Getter for the avatar
   get avatar() {
     return this._avatar;
   }
@@ -865,10 +866,10 @@ export class Web3Address {
     return {address: this._address, ensName: this.ensName};
   }
 
-  isEqual(valueToCompare: Web3Address) {
+  isEqual(valueToCompare: Web3Address | {address: string; ensName: string}) {
     return (
       valueToCompare.address === this._address &&
-      valueToCompare._ensName === this._ensName
+      valueToCompare.ensName === this._ensName
     );
   }
 }

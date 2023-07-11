@@ -6,7 +6,7 @@ import {
   Label,
   ListItemAction,
 } from '@aragon/ui-components';
-import React, {useEffect} from 'react';
+import React, {useCallback, useEffect} from 'react';
 import {useFieldArray, useFormContext, useWatch} from 'react-hook-form';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
@@ -66,7 +66,7 @@ const AddAddresses: React.FC<AddAddressesProps> = ({
    *************************************************/
   useEffect(() => {
     if (controlledWallets.length === 0) {
-      append({address: ''});
+      append({address: '', ensName: ''});
     }
 
     setValue(`actions.${actionIndex}.name`, 'add_address');
@@ -77,44 +77,51 @@ const AddAddresses: React.FC<AddAddressesProps> = ({
    *************************************************/
   // if there are more than one address, trigger validation
   // to fix duplicate address error
-  const validateFields = () => {
+  const validateFields = useCallback(() => {
     if (controlledWallets.length > 1) {
       setTimeout(() => {
         trigger(memberListKey);
       }, 50);
     }
-  };
-
-  // reset all rows
-  const handleResetAll = () => {
-    controlledWallets.forEach((_, index) => {
-      update(index, {address: ''});
-    });
-    alert(t('alert.chip.resetAction'));
-  };
-
-  // reset single row
-  const handleRowClear = (index: number) => {
-    update(index, {address: ''});
-    validateFields();
-  };
-
-  // remove all rows
-  const handleDeleteAll = () => {
-    remove();
-    alert(t('alert.chip.removedAllAddresses'));
-  };
-
-  // remove single row
-  const handleRowDelete = (index: number) => {
-    remove(index);
-    validateFields();
-  };
+  }, [controlledWallets.length, memberListKey, trigger]);
 
   // add empty wallet
-  const handleAdd = () => {
-    append({address: ''});
-  };
+  const handleAdd = useCallback(() => {
+    append({address: '', ensName: ''});
+    setTimeout(() => {
+      trigger(
+        `actions.${actionIndex}.inputs.memberWallets.${controlledWallets.length}`
+      );
+    }, 50);
+  }, [actionIndex, append, controlledWallets.length, trigger]);
+
+  // remove single row
+  const handleRowDelete = useCallback(
+    (index: number) => {
+      remove(index);
+      validateFields();
+    },
+    [remove, validateFields]
+  );
+
+  // remove all rows
+  const handleDeleteAll = useCallback(() => {
+    remove();
+    alert(t('alert.chip.removedAllAddresses'));
+  }, [alert, remove, t]);
+
+  // reset single row
+  const handleRowClear = useCallback(() => {
+    validateFields();
+  }, [validateFields]);
+
+  // reset all rows
+  const handleResetAll = useCallback(() => {
+    controlledWallets.forEach((_, index) => {
+      update(index, {address: '', ensName: ''});
+    });
+    alert(t('alert.chip.resetAction'));
+  }, [alert, controlledWallets, t, update]);
 
   // TODO: extract actions out of component
   // separating this because rows sometimes don't have the same actions
@@ -193,6 +200,7 @@ const AddAddresses: React.FC<AddAddressesProps> = ({
               fieldIndex={fieldIndex}
               dropdownItems={rowActions}
               onClearRow={handleRowClear}
+              onBlur={validateFields}
               currentDaoMembers={currentDaoMembers}
             />
           </FormItem>
