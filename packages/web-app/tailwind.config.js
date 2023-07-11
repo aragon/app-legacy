@@ -1,5 +1,10 @@
 module.exports = {
-  purge: ['./src/**/*.html', './src/**/*.tsx', '../ui-components/src/**/*.tsx'],
+  purge: [
+    './src/**/*.html',
+    './src/**/*.tsx',
+    '../ui-components/src/**/*.tsx',
+    '../../node_modules/@aragon/ods/**/*.cjs.js',
+  ],
   darkMode: false,
   theme: {
     extend: {
