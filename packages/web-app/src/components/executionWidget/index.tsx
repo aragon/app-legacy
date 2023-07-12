@@ -1,4 +1,5 @@
 import {
+  AlertCard,
   AlertInline,
   ButtonText,
   IconAdd,
@@ -100,17 +101,21 @@ const WidgetFooter: React.FC<FooterProps> = ({
   };
 
   switch (status) {
-    case 'defeated':
-      return (
+    case 'defeated': {
+      return pluginType === 'multisig.plugin.dao.eth' ? (
+        <AlertCard
+          mode="info"
+          title={t('governance.executionCard.statusMultisig.title')}
+          helpText={t('governance.executionCard.statusMultisig.expiredDesc')}
+        />
+      ) : (
         <AlertInline
-          label={
-            pluginType === 'multisig.plugin.dao.eth'
-              ? t('governance.executionCard.status.expired')
-              : t('governance.executionCard.status.defeated')
-          }
+          label={t('governance.executionCard.status.defeated')}
           mode={'warning'}
         />
       );
+    }
+
     case 'executable':
       return (
         <Footer>
