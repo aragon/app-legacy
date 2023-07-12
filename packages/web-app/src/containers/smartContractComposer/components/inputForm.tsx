@@ -6,7 +6,7 @@ import {
   TextInput,
   WalletInputLegacy,
 } from '@aragon/ui-components';
-import {ethers} from 'ethers';
+import {BigNumber, ethers} from 'ethers';
 import {t} from 'i18next';
 import React, {useCallback, useEffect, useMemo, useState} from 'react';
 import {
@@ -466,22 +466,43 @@ export function FormlessComponentForType({
       );
 
     case 'tuple':
-      return (
-        <>
-          {input.components?.map(component => (
-            <div key={component.name}>
-              <div className="mb-1.5 text-base font-bold text-ui-800 capitalize">
-                {input.name}
+      if (input?.components)
+        return (
+          <>
+            {input.components?.map(component => (
+              <div key={component.name}>
+                <div className="mb-1.5 text-base font-bold text-ui-800 capitalize">
+                  {input.name}
+                </div>
+                <FormlessComponentForType
+                  key={component.name}
+                  input={component}
+                  disabled={disabled}
+                />
               </div>
-              <FormlessComponentForType
-                key={component.name}
-                input={component}
-                disabled={disabled}
-              />
-            </div>
-          ))}
-        </>
-      );
+            ))}
+          </>
+        );
+      else {
+        return (
+          <>
+            {Object.entries(input.value as {}).map((value, index) => {
+              return (
+                <div key={index}>
+                  <div className="mb-1.5 text-base font-bold text-ui-800 capitalize">
+                    {value[0]}
+                  </div>
+                  <FormlessComponentForType
+                    key={index}
+                    input={{value: value[1], type: typeof value[1]} as Input}
+                    disabled={disabled}
+                  />
+                </div>
+              );
+            })}
+          </>
+        );
+      }
     default:
       return (
         <TextInput
