@@ -1,5 +1,5 @@
 import React from 'react';
-// import {AlertBanner} from '@aragon/ods';
+import {AlertBanner} from '@aragon/ods';
 import {useTranslation} from 'react-i18next';
 import {useWallet} from 'hooks/useWallet';
 
@@ -9,8 +9,7 @@ const NetworkIndicator: React.FC = () => {
 
   if (isOnWrongNetwork)
     return (
-      // <AlertBanner label={t('alert.wrongWalletNetwork')} mode={'warning'} />
-      <div />
+      <AlertBanner label={t('alert.wrongWalletNetwork')} mode={'warning'} />
     );
   return null;
 };
