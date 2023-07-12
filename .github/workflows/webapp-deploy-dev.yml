@@ -2,9 +2,6 @@ name: WebApp Deploy DEV (no Fleek)
 on:
   workflow_dispatch:
   push:
-    paths:
-      - 'packages/web-app/**'
-      #- '!.github/**'
     branches:
       - 'develop'
       - 'DOPS-*' ## temporal branch for testing only
@@ -84,9 +81,7 @@ jobs:
         run: yarn install --pure-lockfile
 
       - name: Build web-app
-        run: |
-          cd packages/web-app
-          yarn build
+        run: yarn build
         env:
           VITE_REACT_APP_DEPLOY_VERSION: ${{ github.sha }}
           VITE_REACT_APP_DEPLOY_ENVIRONMENT: ${{ needs.setup-env-vars.outputs.environment }}
@@ -156,7 +151,7 @@ jobs:
         env:
           COMMIT_SHA: ${{ github.sha }}
         run: |
-          for f in $(find ./packages/web-app/dist/assets/ -name *.js.map) ; do 
+          for f in $(find ./dist/assets/ -name *.js.map) ; do 
             curl -X POST "https://kibana-sourcemaps.aragon.org/api/apm/sourcemaps" \
               -H 'Content-Type: multipart/form-data' \
               -H 'kbn-xsrf: true' \

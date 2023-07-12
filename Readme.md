@@ -1,21 +1,45 @@
-# Aragon DAO UI
+# Aragon Web App
 
-This workspace contains all packages related to the Aragon DAO app UI - the human centered approach to DAOs.
+This package holds the web-app that allows user to interact with Zaragoza. It is a [ReactJS](https://reactjs.org) based webapp.
 
-For more information on the individual packages, please read the respective `Readme.md`.
+## Getting Started
 
-## Setup
+Start a Vite development server at http://localhost:3000 using
 
-start by running `yarn install` in the root.
+```bash
+yarn dev
+```
 
-### Dependencies
+Other available commands include
 
-Most of the UI components used in the web-app are defined in a separate package called ui-components. Since the repo was set up as yarn workspace, all the linking is done automatically. The only thing you need to run the web-app is a build of that package. To do that `cd packages/ui-components` and then simply `yarn build`.
+```bash
+npm run lint
+```
 
-### Web-app
+```bash
+npm run build
+```
 
-To run the web-app, change into the respective package folder and run `yarn dev`.
+```bash
+npm run test
+```
 
-### Storybook
+## Tech stack
 
-To run the story book that documents the `ui-components`, change into the respective package folder and run `yarn storybook`.
+The web-app is built using the following tools:
+
+- [ReactJS](https://reactjs.org)
+- [Vite](https://vitejs.dev)
+- [TypeScript](https://www.typescriptlang.org)
+- [Jest](https://jestjs.io)
+- [Testing Library](https://testing-library.com)
+- [Tailwindcss](https://tailwindcss.com)
+- [Eslint](https://eslint.org)
+- [Prettier](https://prettier.io)
+
+### DevOps
+
+The CI/CD pipelines for the Aragon Web App use GitHub Actions, once completed successfully, the static site generated will be hosted on:
+
+- [Fleek](https://fleek.co/): For stagging on IPFS Network.
+- [Google Kubernetes Engine](https://cloud.google.com/kubernetes-engine): For development and testing.

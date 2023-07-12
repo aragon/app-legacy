@@ -40,26 +40,3 @@ jobs:
               owner: context.repo.owner,
               repo: context.repo.repo,
             })
-      - name: Find Previous UI-Components Deployment
-        uses: peter-evans/find-comment@v2
-        id: fcui
-        with:
-          issue-number: ${{ github.event.pull_request.number }}
-          body-includes: 'Storybook IPFS Hash: '
-      - name: Unpin UI-Components
-        if: steps.fcui.outputs.comment-id != 0
-        run: |
-          COMMENT='${{ steps.fcui.outputs.comment-body }}'
-          IFS=" " read -ra array <<< "$COMMENT"
-          hash=${array[3]}
-          ./ipfs-cluster-ctl/ipfs-cluster-ctl --basic-auth '${{ secrets.IPFS_BASIC_AUTH }}' --host '${{ secrets.IPFS_HOST }}' pin rm $hash
-      - name: Delete Comment
-        uses: actions/github-script@v6
-        if: steps.fcui.outputs.comment-id != 0
-        with:
-          script: |
-            github.rest.issues.deleteComment({
-              comment_id: ${{ steps.fcui.outputs.comment-id }},
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-            })

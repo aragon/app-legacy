@@ -2,14 +2,9 @@ name: WebApp Deploy
 on:
   workflow_dispatch:
   push:
-    paths:
-      - 'packages/web-app/**'
     branches:
       - 'develop'
       - 'main'
-
-env:
-  working-directory: packages/web-app
 
 jobs:
   set-environment:
@@ -32,9 +27,6 @@ jobs:
     needs: [set-environment]
     if: needs.set-environment.outputs.environment != ''
     environment: ${{ needs.set-environment.outputs.environment }}
-    defaults:
-      run:
-        working-directory: ${{env.working-directory}}
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
@@ -69,7 +61,7 @@ jobs:
       - name: Activate Fleek
         env:
           FLEEK_FILE: ${{ needs.set-environment.outputs.environment }}
-        run: mv ../../.github/fleek/$FLEEK_FILE.json .fleek.json
+        run: mv ./.github/fleek/$FLEEK_FILE.json .fleek.json
       - name: Deploy through Fleek
         id: deploy
         uses: fleekhq/action-deploy@v1

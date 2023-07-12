@@ -1,8 +1,6 @@
 name: Pull Request WebApp Preview
 on:
   pull_request:
-    paths:
-      - 'packages/web-app/**'
     types:
       - labeled
       - synchronize
@@ -10,9 +8,6 @@ jobs:
   webapp-preview:
     if: contains(github.event.pull_request.labels.*.name, 'preview')
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: packages/web-app
     steps:
       - name: Find a PR comment
         uses: peter-evans/find-comment@v2
