@@ -29,13 +29,6 @@ export const Backdrop: React.FC<BackdropProps> = ({
 
   useEffect(() => {
     const html = document.querySelector('html');
-    return () => {
-      if (html) html.style.overflow = 'auto';
-    };
-  }, []);
-
-  useEffect(() => {
-    const html = document.querySelector('html');
     if (!html) return;
     html.style.overflow = visible ? 'hidden' : 'auto';
   }, [visible]);
@@ -70,11 +63,12 @@ type StyledBackdropProps = {
   visible: boolean;
 };
 
-const StyledBackdrop = styled.div.attrs(({visible}: StyledBackdropProps) => {
+export const BackdropStyles = ({visible}: {visible: boolean}) => {
   const className: string = visible
     ? 'visible opacity-100 z-20'
     : 'invisible opacity-0';
-  const style: CSSProperties = {
+
+  const css: CSSProperties = {
     position: 'fixed',
     top: 0,
     left: 0,
@@ -88,5 +82,10 @@ const StyledBackdrop = styled.div.attrs(({visible}: StyledBackdropProps) => {
     marginTop: 0,
   };
 
-  return {className, style};
+  return {className, css};
+};
+
+const StyledBackdrop = styled.div.attrs(({visible}: StyledBackdropProps) => {
+  const {className, css} = BackdropStyles({visible});
+  return {className, style: css};
 })<StyledBackdropProps>``;
