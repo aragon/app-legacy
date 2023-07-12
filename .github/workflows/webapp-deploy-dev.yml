@@ -83,11 +83,6 @@ jobs:
       - name: Install depdendencies
         run: yarn install --pure-lockfile
 
-      - name: Build ui-components
-        run: |
-          cd packages/ui-components
-          yarn build
-
       - name: Build web-app
         run: |
           cd packages/web-app

@@ -45,10 +45,6 @@ jobs:
           cache: 'yarn'
       - name: Install depdendencies
         run: yarn install --pure-lockfile
-      - name: Build ui-components
-        run: |
-          cd ../ui-components
-          yarn build
       - name: Test
         run: yarn test
       - name: Build
