@@ -57,6 +57,7 @@ import {
   DetailedProposal,
   Erc20ProposalVote,
   ProposalId,
+  ProposalListItem,
   StrictlyExclude,
   SupportedProposals,
   SupportedVotingSettings,
@@ -1168,4 +1169,25 @@ function calculateProposalStatus(proposal: DetailedProposal): ProposalStatus {
         ((proposal as CachedProposal)?.minApprovals || 1),
     });
   }
+}
+
+export function recalculateStatus<
+  T extends DetailedProposal | ProposalListItem
+>(proposal: T | null | undefined): T | null | undefined {
+  if (proposal?.status === ProposalStatus.SUCCEEDED) {
+    // prioritize active state over succeeded one if end time has yet
+    // to be met
+    if (proposal?.endDate.getTime() >= Date.now())
+      return {...proposal, status: ProposalStatus.ACTIVE};
+
+    // for a multisig, make sure a vote has actually been cast
+    if (isMultisigProposal(proposal)) {
+      if (
+        proposal.endDate.getTime() < Date.now() ||
+        proposal.approvals.length === 0
+      )
+        return {...proposal, status: ProposalStatus.DEFEATED};
+    }
+  }
+  return proposal;
 }

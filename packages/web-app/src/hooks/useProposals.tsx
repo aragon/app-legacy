@@ -28,8 +28,8 @@ import {
   addApprovalToMultisigToProposal,
   addVoteToProposal,
   augmentProposalWithCachedExecution,
-  isMultisigProposal,
   isTokenBasedProposal,
+  recalculateStatus,
 } from 'utils/proposals';
 import {
   DetailedProposal,
@@ -37,9 +37,9 @@ import {
   ProposalId,
   ProposalListItem,
 } from 'utils/types';
-import {PluginTypes, usePluginClient} from './usePluginClient';
 import {useDaoDetailsQuery} from './useDaoDetails';
 import {useDaoToken} from './useDaoToken';
+import {PluginTypes, usePluginClient} from './usePluginClient';
 
 /**
  * Retrieves list of proposals from SDK
@@ -234,21 +234,8 @@ export function useProposals(
             };
           }
 
-          if (proposal.status === ProposalStatus.SUCCEEDED) {
-            // prioritize active state over succeeded one if end time has yet
-            // to be met
-            if (proposal.endDate.getTime() > Date.now())
-              return {...proposal, status: ProposalStatus.ACTIVE};
-
-            // for a multisig, make sure a vote has actually been cast
-            if (isMultisigProposal(proposal) && proposal.approvals.length === 0)
-              return {...proposal, status: ProposalStatus.DEFEATED};
-          }
-
-          return proposal;
+          return recalculateStatus(proposal) as ProposalListItem;
         });
-        /*************************************************************/
-
         setData([...augmentProposalsWithCache(proposals || [])]);
       } catch (err) {
         console.error(err);

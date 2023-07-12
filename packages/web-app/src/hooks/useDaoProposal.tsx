@@ -1,7 +1,6 @@
 import {useReactiveVar} from '@apollo/client';
 import {useCallback, useEffect, useState} from 'react';
 
-import {ProposalStatus} from '@aragon/sdk-client-common';
 import {
   PendingMultisigApprovals,
   pendingMultisigApprovalsVar,
@@ -27,11 +26,12 @@ import {
   augmentProposalWithCachedVote,
   isMultisigProposal,
   isTokenBasedProposal,
+  recalculateStatus,
 } from 'utils/proposals';
 import {DetailedProposal, HookData, ProposalId} from 'utils/types';
-import {PluginTypes, usePluginClient} from './usePluginClient';
 import {useDaoDetailsQuery} from './useDaoDetails';
 import {useDaoToken} from './useDaoToken';
+import {PluginTypes, usePluginClient} from './usePluginClient';
 
 /**
  * Retrieve a single detailed proposal
@@ -274,21 +274,5 @@ function getAugmentedProposal(
     };
   }
 
-  return proposal;
-}
-
-function recalculateStatus<T extends DetailedProposal>(
-  proposal: T | null | undefined
-): T | null | undefined {
-  if (proposal?.status === ProposalStatus.SUCCEEDED) {
-    // prioritize active state over succeeded one if end time has yet
-    // to be met
-    if (proposal?.endDate.getTime() >= Date.now())
-      return {...proposal, status: ProposalStatus.ACTIVE};
-
-    // for a multisig, make sure a vote has actually been cast
-    if (isMultisigProposal(proposal) && proposal.approvals.length === 0)
-      return {...proposal, status: ProposalStatus.DEFEATED};
-  }
   return proposal;
 }
