@@ -1,4 +1,4 @@
-import {IconAdd, SearchInput} from '@aragon/ui-components';
+import {IconAdd, SearchInput} from '@aragon/ods';
 import {withTransaction} from '@elastic/apm-rum-react';
 import React, {useState} from 'react';
 import {useTranslation} from 'react-i18next';

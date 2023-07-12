@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import {useTranslation} from 'react-i18next';
-import {ListItemAction, IconChevronRight} from '@aragon/ui-components';
+import {ListItemAction, IconChevronRight} from '@aragon/ods';
 
 import {useGlobalModalContext} from 'context/globalModals';
 import {useActionsContext} from 'context/actions';

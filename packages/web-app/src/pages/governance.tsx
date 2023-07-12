@@ -7,7 +7,7 @@ import {
   Option,
   Spinner,
   IllustrationHuman,
-} from '@aragon/ui-components';
+} from '@aragon/ods';
 import {withTransaction} from '@elastic/apm-rum-react';
 import React, {useEffect, useState} from 'react';
 import {useTranslation} from 'react-i18next';

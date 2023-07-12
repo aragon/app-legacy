@@ -4,7 +4,7 @@ import {
   IconMenuVertical,
   InputValue,
   ListItemAction,
-} from '@aragon/ui-components';
+} from '@aragon/ods';
 import React from 'react';
 import {Controller, useFormContext, useWatch} from 'react-hook-form';
 import {useTranslation} from 'react-i18next';

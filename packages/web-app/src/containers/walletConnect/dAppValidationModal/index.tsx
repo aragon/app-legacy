@@ -5,7 +5,7 @@ import {
   Label,
   Spinner,
   WalletInputLegacy,
-} from '@aragon/ui-components';
+} from '@aragon/ods';
 import React, {useCallback, useEffect, useMemo, useState} from 'react';
 import {
   Controller,

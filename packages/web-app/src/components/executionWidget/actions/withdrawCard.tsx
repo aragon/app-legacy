@@ -1,4 +1,4 @@
-import {CardToken, CardTransfer} from '@aragon/ui-components';
+import {CardToken, CardTransfer} from '@aragon/ods';
 import React from 'react';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';

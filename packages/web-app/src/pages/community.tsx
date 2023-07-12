@@ -5,7 +5,7 @@ import {
   Pagination,
   SearchInput,
   IllustrationHuman,
-} from '@aragon/ui-components';
+} from '@aragon/ods';
 import {withTransaction} from '@elastic/apm-rum-react';
 import React, {useState} from 'react';
 import {useTranslation} from 'react-i18next';

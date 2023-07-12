@@ -5,7 +5,7 @@ import {
   IconGovernance,
   IconType,
   IconSettings,
-} from '@aragon/ui-components';
+} from '@aragon/ods';
 
 import {i18n} from '../../../i18n.config';
 import {Dashboard, Community, Finance, Governance, Settings} from '../paths';

@@ -4,7 +4,7 @@ import {
   Label,
   TextareaSimple,
   TextInput,
-} from '@aragon/ui-components';
+} from '@aragon/ods';
 import React, {useCallback} from 'react';
 import {Controller, FieldError, useFormContext} from 'react-hook-form';
 import {useTranslation} from 'react-i18next';

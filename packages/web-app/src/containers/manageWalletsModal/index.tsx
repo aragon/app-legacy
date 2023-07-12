@@ -3,7 +3,7 @@ import {
   CheckboxListItem,
   CheckboxSimple,
   SearchInput,
-} from '@aragon/ui-components';
+} from '@aragon/ods';
 import React, {useEffect, useMemo, useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';

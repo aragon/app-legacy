@@ -5,7 +5,7 @@ import {
   IconChevronDown,
   Option,
   Spinner,
-} from '@aragon/ui-components';
+} from '@aragon/ods';
 import {UseInfiniteQueryResult} from '@tanstack/react-query';
 import React, {useEffect, useMemo, useState} from 'react';
 import {useTranslation} from 'react-i18next';

@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import {useTranslation} from 'react-i18next';
-import {ButtonIcon, ButtonText, IconClose} from '@aragon/ui-components';
+import {ButtonIcon, ButtonText, IconClose} from '@aragon/ods';
 
 import ModalBottomSheetSwitcher from 'components/modalBottomSheetSwitcher';
 

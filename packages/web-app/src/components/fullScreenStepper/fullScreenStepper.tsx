@@ -4,7 +4,7 @@ import {
   IconChevronLeft,
   IconChevronRight,
   Wizard,
-} from '@aragon/ui-components';
+} from '@aragon/ods';
 import React, {
   createContext,
   useCallback,

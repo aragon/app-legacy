@@ -1,5 +1,5 @@
 import React from 'react';
-import {CardToken} from '@aragon/ui-components';
+import {CardToken} from '@aragon/ods';
 import {formatUnits} from 'ethers/lib/utils';
 import {useTranslation} from 'react-i18next';
 

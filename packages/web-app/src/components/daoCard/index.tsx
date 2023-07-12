@@ -1,4 +1,4 @@
-import {AvatarDao, IconBlock, IconCommunity} from '@aragon/ui-components';
+import {AvatarDao, IconBlock, IconCommunity} from '@aragon/ods';
 import React from 'react';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';

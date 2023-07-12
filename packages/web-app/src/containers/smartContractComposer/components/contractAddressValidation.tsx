@@ -11,7 +11,7 @@ import {
   TextareaSimple,
   shortenAddress,
   WalletInputLegacy,
-} from '@aragon/ui-components';
+} from '@aragon/ods';
 import {ethers} from 'ethers';
 import {isAddress} from 'ethers/lib/utils';
 import React, {useCallback, useEffect, useMemo, useState} from 'react';

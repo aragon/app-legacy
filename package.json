@@ -8,7 +8,7 @@
   "private": true,
   "workspaces": {
     "packages": [
-      "packages/*"
+      "packages/web-app"
     ]
   },
   "engines": {

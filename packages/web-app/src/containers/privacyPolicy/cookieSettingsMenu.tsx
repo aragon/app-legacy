@@ -3,7 +3,7 @@ import {
   ButtonText,
   CheckboxListItem,
   IconChevronLeft,
-} from '@aragon/ui-components';
+} from '@aragon/ods';
 import styled from 'styled-components';
 import {useTranslation} from 'react-i18next';
 import React, {useState} from 'react';

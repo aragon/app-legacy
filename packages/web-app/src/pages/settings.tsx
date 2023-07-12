@@ -5,7 +5,7 @@ import {
   ButtonText,
   IconGovernance,
   ListItemLink,
-} from '@aragon/ui-components';
+} from '@aragon/ods';
 import {withTransaction} from '@elastic/apm-rum-react';
 import React from 'react';
 import {useTranslation} from 'react-i18next';

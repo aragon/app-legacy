@@ -5,12 +5,7 @@ import {useFormContext} from 'react-hook-form';
 // import {DAOFactory} from 'typechain';
 // TODO reintroduce this by adding back the postInstall script in packages.json
 // that executes the generate-abis-and-types command.
-import {
-  AlertCard,
-  Breadcrumb,
-  ButtonText,
-  IconChevronRight,
-} from '@aragon/ui-components';
+import {AlertCard, Breadcrumb, ButtonText, IconChevronRight} from '@aragon/ods';
 import {useNavigate} from 'react-router-dom';
 
 import Blockchain from './blockchain';

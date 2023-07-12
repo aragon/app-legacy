@@ -1,4 +1,4 @@
-import {AlertInline} from '@aragon/ui-components';
+import {AlertInline} from '@aragon/ods';
 import React, {useEffect, useState} from 'react';
 import {useFormContext, FieldError, useWatch} from 'react-hook-form';
 

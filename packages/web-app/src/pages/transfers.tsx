@@ -1,4 +1,4 @@
-import {ButtonGroup, IconAdd, Option} from '@aragon/ui-components';
+import {ButtonGroup, IconAdd, Option} from '@aragon/ods';
 import {withTransaction} from '@elastic/apm-rum-react';
 import {Locale, format} from 'date-fns';
 import * as Locales from 'date-fns/locale';

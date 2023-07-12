@@ -7,7 +7,7 @@ import {
   LinearProgress,
   Spinner,
   ValueInput,
-} from '@aragon/ui-components';
+} from '@aragon/ods';
 import React, {useCallback, useMemo, FC} from 'react';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';

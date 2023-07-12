@@ -1,4 +1,4 @@
-import {SearchInput, VoterType, VotersTable} from '@aragon/ui-components';
+import {SearchInput, VoterType, VotersTable} from '@aragon/ods';
 import React, {useCallback, useMemo, useState} from 'react';
 import {useFormContext} from 'react-hook-form';
 import {useTranslation} from 'react-i18next';

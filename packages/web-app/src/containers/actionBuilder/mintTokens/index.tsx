@@ -1,4 +1,4 @@
-import {ButtonText, ListItemAction} from '@aragon/ui-components';
+import {ButtonText, ListItemAction} from '@aragon/ods';
 import Big from 'big.js';
 import {BigNumber} from 'ethers';
 import {isAddress} from 'ethers/lib/utils';

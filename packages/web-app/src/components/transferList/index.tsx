@@ -1,4 +1,4 @@
-import {TransferListItem} from '@aragon/ui-components';
+import {TransferListItem} from '@aragon/ods';
 import React from 'react';
 import {useTranslation} from 'react-i18next';
 import {useParams} from 'react-router-dom';

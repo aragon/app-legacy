@@ -1,4 +1,4 @@
-import {ButtonText, IconFeedback, Link, Modal} from '@aragon/ui-components';
+import {ButtonText, IconFeedback, Link, Modal} from '@aragon/ods';
 import React, {useEffect, useState} from 'react';
 import {useFormContext, useWatch} from 'react-hook-form';
 import {useTranslation} from 'react-i18next';
@@ -168,7 +168,7 @@ const StyledModal = styled(Modal).attrs({
     height: '708px',
     outline: 'none',
     overflow: 'auto',
-    boxShadow: `0px 24px 32px rgba(31, 41, 51, 0.04), 
+    boxShadow: `0px 24px 32px rgba(31, 41, 51, 0.04),
        0px 16px 24px rgba(31, 41, 51, 0.04),
        0px 4px 8px rgba(31, 41, 51, 0.04),
        0px 0px 1px rgba(31, 41, 51, 0.04)`,

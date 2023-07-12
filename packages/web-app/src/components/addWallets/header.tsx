@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import {Label} from '@aragon/ui-components';
+import {Label} from '@aragon/ods';
 import {useTranslation} from 'react-i18next';
 
 const AddWalletsHeader: React.FC = () => {

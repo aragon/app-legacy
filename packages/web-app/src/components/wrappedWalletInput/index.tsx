@@ -1,8 +1,4 @@
-import {
-  AlertInline,
-  WalletInput,
-  WalletInputProps,
-} from '@aragon/ui-components';
+import {AlertInline, WalletInput, WalletInputProps} from '@aragon/ods';
 import React, {Ref, forwardRef, useCallback, useState} from 'react';
 import {useTranslation} from 'react-i18next';
 

@@ -1,4 +1,4 @@
-import {AvatarDao, ListItemLink} from '@aragon/ui-components';
+import {AvatarDao, ListItemLink} from '@aragon/ods';
 import React, {useMemo} from 'react';
 import {useTranslation} from 'react-i18next';
 

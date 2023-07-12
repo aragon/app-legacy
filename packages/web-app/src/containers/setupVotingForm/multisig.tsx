@@ -1,4 +1,4 @@
-import {AlertInline, CheckboxListItem, Label} from '@aragon/ui-components';
+import {AlertInline, CheckboxListItem, Label} from '@aragon/ods';
 import React, {useCallback, useMemo, useState} from 'react';
 import {Controller, useFormContext, useWatch} from 'react-hook-form';
 import {useTranslation} from 'react-i18next';

@@ -8,7 +8,7 @@ import {
   NumberInput,
   TextInput,
   InputValue as WalletInputValue,
-} from '@aragon/ui-components';
+} from '@aragon/ods';
 import Big from 'big.js';
 import {constants} from 'ethers';
 import React, {useCallback, useState} from 'react';

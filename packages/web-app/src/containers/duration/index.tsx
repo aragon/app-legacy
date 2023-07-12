@@ -1,4 +1,4 @@
-import {AlertInline, NumberInput} from '@aragon/ui-components';
+import {AlertInline, NumberInput} from '@aragon/ods';
 import React, {useCallback, useEffect} from 'react';
 import {Controller, useFormContext} from 'react-hook-form';
 import {useTranslation} from 'react-i18next';

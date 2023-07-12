@@ -4,7 +4,7 @@ import {
   Dropdown,
   IconMenuVertical,
   ListItemAction,
-} from '@aragon/ui-components';
+} from '@aragon/ods';
 import React, {useEffect} from 'react';
 import {useFieldArray, useFormContext, useWatch} from 'react-hook-form';
 import {useTranslation} from 'react-i18next';

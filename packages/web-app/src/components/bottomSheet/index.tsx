@@ -1,6 +1,6 @@
 import React, {useEffect, ReactNode} from 'react';
 import {motion, PanInfo, useAnimation} from 'framer-motion';
-import {Backdrop} from '@aragon/ui-components';
+import {Backdrop} from '@aragon/ods';
 import styled from 'styled-components';
 
 import usePrevious from 'hooks/usePrevious';

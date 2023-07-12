@@ -1,4 +1,4 @@
-import {ButtonIcon, IconChevronLeft, IconClose} from '@aragon/ui-components';
+import {ButtonIcon, IconChevronLeft, IconClose} from '@aragon/ods';
 import React from 'react';
 import styled from 'styled-components';
 

@@ -1,10 +1,4 @@
-import {
-  Avatar,
-  ButtonIcon,
-  ButtonText,
-  IconClose,
-  IconCopy,
-} from '@aragon/ui-components';
+import {Avatar, ButtonIcon, ButtonText, IconClose, IconCopy} from '@aragon/ods';
 import ModalBottomSheetSwitcher from 'components/modalBottomSheetSwitcher';
 import {useAlertContext} from 'context/alert';
 import {useGlobalModalContext} from 'context/globalModals';

@@ -9,7 +9,7 @@ import {
   NumberInput,
   TextInput,
   ValueInput,
-} from '@aragon/ui-components';
+} from '@aragon/ods';
 import Big from 'big.js';
 import {useTranslation} from 'react-i18next';
 import {Controller, useFormContext, useWatch} from 'react-hook-form';

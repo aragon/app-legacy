@@ -5,7 +5,7 @@ import {
   LinearProgress,
   NumberInput,
   Tag,
-} from '@aragon/ui-components';
+} from '@aragon/ods';
 import {MultisigMinimumApproval} from 'components/multisigMinimumApproval';
 import React, {useCallback} from 'react';
 import {Controller, useFormContext, useWatch} from 'react-hook-form';

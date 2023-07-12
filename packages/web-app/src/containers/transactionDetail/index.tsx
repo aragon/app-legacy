@@ -8,7 +8,7 @@ import {
   IconClose,
   IconLinkExternal,
   ListItemAction,
-} from '@aragon/ui-components';
+} from '@aragon/ods';
 import React, {useCallback} from 'react';
 import {useTranslation} from 'react-i18next';
 import {generatePath, useNavigate} from 'react-router-dom';

@@ -1,4 +1,4 @@
-import {CardProposalProps} from '@aragon/ui-components';
+import {CardProposalProps} from '@aragon/ods';
 
 /**
  * Stub hook for querying subgraph to get dao proposals

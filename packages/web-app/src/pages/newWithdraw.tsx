@@ -8,7 +8,7 @@ import {useDaoDetailsQuery} from 'hooks/useDaoDetails';
 import {PluginTypes} from 'hooks/usePluginClient';
 import {usePluginSettings} from 'hooks/usePluginSettings';
 import WithdrawStepper from 'containers/withdrawStepper';
-import {InputValue} from '@aragon/ui-components';
+import {InputValue} from '@aragon/ods';
 
 export type TokenFormData = {
   tokenName: string;

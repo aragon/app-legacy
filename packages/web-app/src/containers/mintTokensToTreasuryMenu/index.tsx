@@ -8,7 +8,7 @@ import {
   ButtonText,
   IconChevronLeft,
   WalletInputLegacy,
-} from '@aragon/ui-components';
+} from '@aragon/ods';
 
 import ModalBottomSheetSwitcher from 'components/modalBottomSheetSwitcher';
 import {StateEmpty} from 'components/stateEmpty';

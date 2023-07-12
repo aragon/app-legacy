@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import {ButtonText} from '@aragon/ui-components';
+import {ButtonText} from '@aragon/ods';
 import {useTranslation} from 'react-i18next';
 
 export type EndDateType = 'duration' | 'date';

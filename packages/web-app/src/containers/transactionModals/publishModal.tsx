@@ -1,10 +1,5 @@
 import React, {useMemo} from 'react';
-import {
-  AlertInline,
-  ButtonText,
-  IconReload,
-  Spinner,
-} from '@aragon/ui-components';
+import {AlertInline, ButtonText, IconReload, Spinner} from '@aragon/ods';
 import styled from 'styled-components';
 import {useTranslation} from 'react-i18next';
 

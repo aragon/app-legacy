@@ -1,4 +1,4 @@
-import {ListItemAction} from '@aragon/ui-components';
+import {ListItemAction} from '@aragon/ods';
 import React from 'react';
 import {useWatch} from 'react-hook-form';
 import {useTranslation} from 'react-i18next';

@@ -5,7 +5,7 @@ import {
   NumberInput,
   TextInput,
   WalletInputLegacy,
-} from '@aragon/ui-components';
+} from '@aragon/ods';
 import {ethers} from 'ethers';
 import {t} from 'i18next';
 import React, {useCallback, useEffect, useMemo, useState} from 'react';

@@ -1,4 +1,4 @@
-import {ButtonText, CardProposal, IconChevronDown} from '@aragon/ui-components';
+import {ButtonText, CardProposal, IconChevronDown} from '@aragon/ods';
 import React, {useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';

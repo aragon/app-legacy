@@ -7,7 +7,7 @@ import {
   Link,
   ListItemAction,
   ListItemActionProps,
-} from '@aragon/ui-components';
+} from '@aragon/ods';
 import {useAlertContext} from 'context/alert';
 import {useNetwork} from 'context/network';
 import {t} from 'i18next';

@@ -1,4 +1,4 @@
-import {ButtonIcon, ButtonText, IconClose} from '@aragon/ui-components';
+import {ButtonIcon, ButtonText, IconClose} from '@aragon/ods';
 import {useWallet} from 'hooks/useWallet';
 import React, {useCallback} from 'react';
 import {useTranslation} from 'react-i18next';

@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import {withTransaction} from '@elastic/apm-rum-react';
 import {useNavigate} from 'react-router-dom';
 import {useTranslation} from 'react-i18next';
-import {ButtonText} from '@aragon/ui-components';
+import {ButtonText} from '@aragon/ods';
 
 import {Container, GridLayout} from 'components/layout';
 import Logo from 'public/logoBlue.svg';

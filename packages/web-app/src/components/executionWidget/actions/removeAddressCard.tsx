@@ -1,4 +1,4 @@
-import {ListItemAddress} from '@aragon/ui-components';
+import {ListItemAddress} from '@aragon/ods';
 import React, {useCallback, useEffect, useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';

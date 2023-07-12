@@ -1,11 +1,6 @@
 import React, {FC, useState, useMemo} from 'react';
 import {Controller, useFormContext, useWatch} from 'react-hook-form';
-import {
-  AlertInline,
-  Label,
-  LinearProgress,
-  NumberInput,
-} from '@aragon/ui-components';
+import {AlertInline, Label, LinearProgress, NumberInput} from '@aragon/ods';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 import {htmlIn} from 'utils/htmlIn';

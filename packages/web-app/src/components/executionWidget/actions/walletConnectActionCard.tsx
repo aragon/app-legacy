@@ -1,4 +1,4 @@
-import {AlertCard, Label} from '@aragon/ui-components';
+import {AlertCard, Label} from '@aragon/ods';
 import React, {useMemo} from 'react';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';

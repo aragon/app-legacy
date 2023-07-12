@@ -1,4 +1,4 @@
-import {IconLinkExternal, Link} from '@aragon/ui-components';
+import {IconLinkExternal, Link} from '@aragon/ods';
 import React, {useMemo} from 'react';
 import {useTranslation} from 'react-i18next';
 import {generatePath, useParams} from 'react-router-dom';

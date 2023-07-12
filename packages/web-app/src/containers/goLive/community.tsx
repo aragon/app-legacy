@@ -1,4 +1,4 @@
-import {IconFeedback, Link, Tag} from '@aragon/ui-components';
+import {IconFeedback, Link, Tag} from '@aragon/ods';
 import React, {useMemo} from 'react';
 import {Controller, useFormContext} from 'react-hook-form';
 import {useTranslation} from 'react-i18next';

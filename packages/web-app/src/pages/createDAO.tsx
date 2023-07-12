@@ -1,4 +1,4 @@
-import {InputValue} from '@aragon/ui-components';
+import {InputValue} from '@aragon/ods';
 import {withTransaction} from '@elastic/apm-rum-react';
 import React, {useEffect, useMemo} from 'react';
 import {FormProvider, useForm, useFormState, useWatch} from 'react-hook-form';

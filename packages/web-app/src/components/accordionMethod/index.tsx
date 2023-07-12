@@ -9,7 +9,7 @@ import {
   IconWarning,
   Dropdown,
   ListItemProps,
-} from '@aragon/ui-components';
+} from '@aragon/ods';
 import styled from 'styled-components';
 
 export type AccordionMethodType = {

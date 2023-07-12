@@ -4,7 +4,7 @@ import {
   ButtonText,
   IconAdd,
   IconLinkExternal,
-} from '@aragon/ui-components';
+} from '@aragon/ods';
 import React from 'react';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';

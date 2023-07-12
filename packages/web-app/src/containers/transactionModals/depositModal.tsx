@@ -1,4 +1,4 @@
-import {AlertInline, ButtonText} from '@aragon/ui-components';
+import {AlertInline, ButtonText} from '@aragon/ods';
 import React, {useCallback, useEffect, useRef} from 'react';
 import {useTranslation} from 'react-i18next';
 import {generatePath, useNavigate} from 'react-router-dom';

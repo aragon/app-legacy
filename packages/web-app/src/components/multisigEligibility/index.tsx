@@ -1,9 +1,9 @@
 import React from 'react';
-import {CheckboxListItem, Label} from '@aragon/ui-components';
+import {CheckboxListItem, Label} from '@aragon/ods';
 import {Controller, useFormContext} from 'react-hook-form';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
-import {AlertInline} from '@aragon/ui-components';
+import {AlertInline} from '@aragon/ods';
 import useScreen from 'hooks/useScreen';
 
 export const MultisigEligibility = () => {
