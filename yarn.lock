@@ -41,10 +41,10 @@
     tslib "^2.3.0"
     zen-observable-ts "^1.2.0"
 
-"@aragon/ods@^0.2.3":
-  version "0.2.3"
-  resolved "https://registry.yarnpkg.com/@aragon/ods/-/ods-0.2.3.tgz#df4784146273410e2b074cf09cde848496120eff"
-  integrity sha512-UVPcTcLkG2o0Pu+o/RGaUDRXMJ2X6vDGhLx+ekU3Jn6VAdBW1wP5FipiTnOJlkv6JmwQKEubZvgUUYR07qFxVw==
+"@aragon/ods@^0.2.4":
+  version "0.2.4"
+  resolved "https://registry.yarnpkg.com/@aragon/ods/-/ods-0.2.4.tgz#79168e7b39fe3fe7637791ac7adc59f386da6ae0"
+  integrity sha512-6PV1YO5JYXPBuIkMmAKrYUAuPaR8pDJUl4UITTrQChqVMzlP/ejnl5aUAxHR32edxz6Hfob+NfBru6ZNryUCFQ==
   dependencies:
     "@radix-ui/react-dialog" "^0.1.2"
     "@radix-ui/react-dropdown-menu" "^0.1.4"
