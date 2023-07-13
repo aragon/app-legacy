@@ -324,6 +324,10 @@
         "defeated": "Proposal defeated",
         "failed": " Execution failed",
         "expired": "Proposal expired"
+      },
+      "statusMultisig": {
+        "expiredTitle": "Execution not anymore available",
+        "expiredDesc": "The execution is no longer possible because the expiration time has passed. If you want to carry out this action, you must create a new proposal and possibly set a longer expiration time."
       }
     }
   },

@@ -105,7 +105,7 @@ const WidgetFooter: React.FC<FooterProps> = ({
       return pluginType === 'multisig.plugin.dao.eth' ? (
         <AlertCard
           mode="info"
-          title={t('governance.executionCard.statusMultisig.title')}
+          title={t('governance.executionCard.statusMultisig.expiredTitle')}
           helpText={t('governance.executionCard.statusMultisig.expiredDesc')}
         />
       ) : (
