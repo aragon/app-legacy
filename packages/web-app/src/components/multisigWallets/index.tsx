@@ -13,17 +13,14 @@ import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 
 import {useAlertContext} from 'context/alert';
-import {useProviders} from 'context/providers';
 import useScreen from 'hooks/useScreen';
 import {useWallet} from 'hooks/useWallet';
-import {Web3Address} from 'utils/library';
 import {Row} from './row';
 
 export const MultisigWallets = () => {
   const {t} = useTranslation();
-  const {address} = useWallet();
   const {alert} = useAlertContext();
-  const {infura: provider} = useProviders();
+  const {address, ensName} = useWallet();
 
   const {control, trigger, setFocus} = useFormContext();
   const multisigWallets = useWatch({name: 'multisigWallets', control});
@@ -40,31 +37,16 @@ export const MultisigWallets = () => {
   });
 
   useEffect(() => {
-    async function appendConnectedWallet() {
-      if (address && !multisigWallets) {
-        try {
-          const addressToAppend = await Web3Address.create(provider, {address});
-
-          append({
-            web3Address: {
-              address: addressToAppend.address,
-              ensName: addressToAppend.ensName,
-            },
-          });
-        } catch (error) {
-          console.error(error);
-        }
-      }
+    if (address && !multisigWallets) {
+      append({address, ensName});
     }
-
-    appendConnectedWallet();
-  }, [address, append, multisigWallets, provider]);
+  }, [address, append, ensName, multisigWallets]);
 
   // add empty wallet
   const handleAdd = () => {
-    append({web3Address: {address: '', ensName: ''}});
+    append({address: '', ensName: ''});
     alert(t('alert.chip.addressAdded'));
-    const id = `multisigWallets.${controlledWallets.length}.web3Address`;
+    const id = `multisigWallets.${controlledWallets.length}`;
     setTimeout(() => {
       setFocus(id);
       trigger(id);
@@ -79,31 +61,15 @@ export const MultisigWallets = () => {
   };
 
   // remove all wallets
-  const handleDeleteAll = async () => {
-    try {
-      if (address) {
-        const addressToAppend = await Web3Address.create(provider, {address});
-        replace([
-          {
-            web3Address: {
-              address: addressToAppend.address,
-              ensName: addressToAppend.ensName,
-            },
-          },
-        ]);
-        alert(t('alert.chip.removedAllAddresses'));
-      } else {
-        replace([{web3Address: {address: '', ensName: ''}}]);
-        alert(t('alert.chip.removedAllAddresses'));
-      }
-    } catch (error) {
-      console.error(error);
-    }
+  const handleDeleteAll = () => {
+    replace([{address, ensName}]);
+    alert(t('alert.chip.removedAllAddresses'));
+    setTimeout(() => trigger('multisigWallets'), 50);
   };
 
   // reset wallet
   const handleResetEntry = (index: number) => {
-    update(index, {web3Address: {address: '', ensName: ''}});
+    update(index, {address: '', ensName: ''});
     alert(t('alert.chip.resetAddress'));
     trigger('multisigWallets');
   };
@@ -113,7 +79,7 @@ export const MultisigWallets = () => {
     controlledWallets.forEach((_, index) => {
       // skip the first one because is the own address
       if (index > 0) {
-        update(index, {web3Address: {address: '', ensName: ''}});
+        update(index, {address: '', ensName: ''});
       }
     });
     alert(t('alert.chip.resetAllAddresses'));

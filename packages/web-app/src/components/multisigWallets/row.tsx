@@ -17,12 +17,10 @@ import useScreen from 'hooks/useScreen';
 import {Web3Address} from 'utils/library';
 import {validateWeb3Address} from 'utils/validators';
 
-export type WalletItem = {
+export type MultisigWalletField = {
   id: string;
-  web3Address: {
-    address: string;
-    ensName: string;
-  };
+  address: string;
+  ensName: string;
 };
 
 type MultisigWalletsRowProps = {
@@ -51,7 +49,7 @@ export const Row = ({index, ...props}: MultisigWalletsRowProps) => {
 
     if (multisigWallets) {
       multisigWallets.forEach(
-        ({web3Address: {address, ensName}}: WalletItem, itemIndex: number) => {
+        ({address, ensName}: MultisigWalletField, itemIndex: number) => {
           if (
             (address === wallet.address || ensName === wallet.ensName) &&
             itemIndex !== index
@@ -68,7 +66,7 @@ export const Row = ({index, ...props}: MultisigWalletsRowProps) => {
     <RowContainer>
       {isMobile && <Title>{t('labels.whitelistWallets.address')}</Title>}
       <Controller
-        name={`multisigWallets.${index}.web3Address`}
+        name={`multisigWallets.${index}`}
         defaultValue={{address: '', ensName: ''}}
         control={control}
         rules={{validate: value => addressValidator(value, index)}}
