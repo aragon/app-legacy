@@ -18,12 +18,18 @@ import styled from 'styled-components';
 import {handleClipboardActions} from 'utils/library';
 import useScreen from 'hooks/useScreen';
 import {validateAddress} from 'utils/validators';
-import {WalletField} from 'components/addWallets/row';
 import {ActionIndex} from 'utils/types';
 import {useAlertContext} from 'context/alert';
 
 type IndexProps = ActionIndex & {
   fieldIndex: number;
+};
+
+// TODO: Remove when using address ens input
+type TokenVotingWalletField = {
+  id: string;
+  address: string;
+  amount: string;
 };
 
 type AddressAndTokenRowProps = IndexProps & {
@@ -71,14 +77,16 @@ const AddressField: React.FC<AddressFieldProps> = ({
   const addressValidator = (address: string, index: number) => {
     let validationResult = validateAddress(address);
     if (walletFieldArray) {
-      walletFieldArray.forEach((wallet: WalletField, walletIndex: number) => {
-        if (
-          address.toLowerCase() === wallet.address.toLowerCase() &&
-          index !== walletIndex
-        ) {
-          validationResult = t('errors.duplicateAddress') as string;
+      walletFieldArray.forEach(
+        (wallet: TokenVotingWalletField, walletIndex: number) => {
+          if (
+            address.toLowerCase() === wallet.address.toLowerCase() &&
+            index !== walletIndex
+          ) {
+            validationResult = t('errors.duplicateAddress') as string;
+          }
         }
-      });
+      );
     }
 
     if (onEnterDaoAddress && validationResult === true) {
