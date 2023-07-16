@@ -1,24 +1,24 @@
-import React, {useEffect} from 'react';
-import styled from 'styled-components';
 import {
-  ButtonText,
-  ListItemAction,
-  IconMenuVertical,
   ButtonIcon,
+  ButtonText,
   Dropdown,
+  IconMenuVertical,
+  ListItemAction,
 } from '@aragon/ui-components';
+import React, {useEffect} from 'react';
+import {useFieldArray, useFormContext, useWatch} from 'react-hook-form';
 import {useTranslation} from 'react-i18next';
-import {useFormContext, useFieldArray, useWatch} from 'react-hook-form';
+import styled from 'styled-components';
 
-import Row from './row';
-import Header from './header';
-import Footer from './footer';
-import {useWallet} from 'hooks/useWallet';
 import {useAlertContext} from 'context/alert';
+import {useWallet} from 'hooks/useWallet';
+import Footer from './footer';
+import Header from './header';
+import Row from './row';
 
 const AddWallets: React.FC = () => {
   const {t} = useTranslation();
-  const {address} = useWallet();
+  const {address, ensName} = useWallet();
 
   const {control, setValue, resetField, trigger} = useFormContext();
   const wallets = useWatch({name: 'wallets', control: control});
@@ -39,13 +39,13 @@ const AddWallets: React.FC = () => {
     if (address && !wallets) {
       // uncomment when minting to treasury is ready
       // insert(1, {address: address, amount: '0'});
-      append({address, amount: '1'});
+      append({address, ensName, amount: 1});
     }
-  }, [address, append, wallets]);
+  }, [address, append, ensName, wallets]);
 
   const resetDistribution = () => {
     controlledFields.forEach((_, index) => {
-      setValue(`wallets.${index}.amount`, '1');
+      setValue(`wallets.${index}.amount`, 1);
     });
     trigger('wallets');
     resetField('eligibilityTokenAmount');
@@ -54,10 +54,17 @@ const AddWallets: React.FC = () => {
 
   // setTimeout added because instant trigger not working
   const handleAddWallet = () => {
-    append({address: '', amount: '1'});
+    append({address: '', ensName: '', amount: 1});
     setTimeout(() => {
       trigger(`wallets.${controlledFields.length}`);
     }, 50);
+  };
+
+  const handleDeleteRow = (index: number) => {
+    remove(index);
+    setTimeout(() => {
+      trigger('wallets');
+    });
   };
 
   return (
@@ -71,7 +78,7 @@ const AddWallets: React.FC = () => {
               index={index}
               // Replace when minting to treasury is supported
               // {...(index !== 0 ? {onDelete: () => remove(index)} : {})}
-              onDelete={() => remove(index)}
+              onDelete={handleDeleteRow}
             />
           );
         })}
@@ -79,7 +86,7 @@ const AddWallets: React.FC = () => {
       </ListGroup>
       <ActionsWrapper>
         <ButtonText
-          label={t('labels.addWallet') as string}
+          label={t('labels.addWallet')}
           mode="secondary"
           size="large"
           onClick={handleAddWallet}

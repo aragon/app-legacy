@@ -7,141 +7,172 @@ import {
   ListItemAction,
   NumberInput,
   TextInput,
-  ValueInput,
+  InputValue as WalletInputValue,
 } from '@aragon/ui-components';
 import Big from 'big.js';
 import {constants} from 'ethers';
-import React, {useState} from 'react';
+import React, {useCallback, useState} from 'react';
 import {Controller, useFormContext, useWatch} from 'react-hook-form';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 
+import {WrappedWalletInput} from 'components/wrappedWalletInput';
 import {useAlertContext} from 'context/alert';
+import {useProviders} from 'context/providers';
 import {MAX_TOKEN_DECIMALS} from 'utils/constants';
-import {
-  getUserFriendlyWalletLabel,
-  handleClipboardActions,
-} from 'utils/library';
-import {validateAddress} from 'utils/validators';
+import {Web3Address} from 'utils/library';
+import {validateWeb3Address} from 'utils/validators';
+import {MultisigWalletField} from 'components/multisigWallets/row';
 
 type WalletRowProps = {
   index: number;
   onDelete?: (index: number) => void;
 };
 
-export type WalletField = {
-  id: string;
-  address: string;
+export type TokenVotingWalletField = MultisigWalletField & {
   amount: string;
 };
 
 const WalletRow: React.FC<WalletRowProps> = ({index, onDelete}) => {
   const {t} = useTranslation();
-  const [isDuplicate, setIsDuplicate] = useState<boolean>(false);
-  const {control, getValues, setValue, trigger} = useFormContext();
-  const walletFieldArray = useWatch({name: 'wallets', control});
   const {alert} = useAlertContext();
+  const {infura: provider} = useProviders();
 
-  const calculateTotalTokenSupply = (value: number) => {
-    let totalSupply = 0;
+  const {control, getValues, setValue, trigger} = useFormContext();
+  const walletFieldArray: TokenVotingWalletField[] = useWatch({
+    name: 'wallets',
+    control,
+  });
 
-    walletFieldArray?.forEach((wallet: WalletField) => {
-      if (Number(wallet.amount) > 0) {
-        totalSupply = Number(wallet.amount) + totalSupply;
-      }
-    });
+  const [isDuplicate, setIsDuplicate] = useState<boolean>(false);
 
-    if (value < 0) return '';
+  const calculateTotalTokenSupply = useCallback(
+    (value: number) => {
+      let totalSupply = 0;
 
-    const CalculateNaN = Math.floor((value / totalSupply) * 100);
-    return totalSupply && !isNaN(CalculateNaN) ? CalculateNaN + '%' : '';
-  };
-
-  const addressValidator = (address: string, index: number) => {
-    let validationResult = validateAddress(address);
-    setIsDuplicate(false);
-    if (walletFieldArray) {
-      walletFieldArray.forEach((wallet: WalletField, walletIndex: number) => {
-        if (address === wallet.address && index !== walletIndex) {
-          validationResult = t('errors.duplicateAddress') as string;
-          setIsDuplicate(true);
+      walletFieldArray?.forEach((wallet: TokenVotingWalletField) => {
+        if (Number(wallet.amount) > 0) {
+          totalSupply = Number(wallet.amount) + totalSupply;
         }
       });
-    }
-    return validationResult;
-  };
 
-  const amountValidation = (amount: string) => {
-    let totalSupply = 0;
-    let minAmount = walletFieldArray[0]?.amount;
-    const address = getValues(`wallets.${index}.address`);
-    const eligibilityType = getValues('eligibilityType');
-    if (address === '') trigger(`wallets.${index}.address`);
+      if (value < 0) return '';
 
-    // calculate total token supply disregarding error invalid fields
-    walletFieldArray.forEach((wallet: WalletField) => {
-      if (Number(wallet.amount) < minAmount) {
-        minAmount = wallet.amount;
+      const CalculateNaN = Math.floor((value / totalSupply) * 100);
+      return totalSupply && !isNaN(CalculateNaN) ? CalculateNaN + '%' : '';
+    },
+    [walletFieldArray]
+  );
+
+  console.log('LOOPING');
+
+  const addressValidator = useCallback(
+    async ({address, ensName}: WalletInputValue, index: number) => {
+      const web3Address = new Web3Address(provider, address, ensName);
+
+      // check if address is valid
+      let validationResult = await validateWeb3Address(
+        web3Address,
+        t('errors.required.walletAddress'),
+        t
+      );
+
+      // check if address is duplicated
+      setIsDuplicate(false);
+
+      if (
+        walletFieldArray?.some(
+          (wallet, walletIndex) =>
+            (wallet.address === web3Address.address ||
+              wallet.ensName === web3Address.ensName) &&
+            walletIndex !== index
+        )
+      ) {
+        setIsDuplicate(true);
+        validationResult = t('errors.duplicateAddress');
       }
-      if (Number(wallet.amount) > 0)
-        totalSupply = Number(wallet.amount) + totalSupply;
-    });
-    setValue('tokenTotalSupply', totalSupply);
 
-    if (eligibilityType === 'token') setValue('minimumTokenAmount', minAmount);
+      return validationResult;
+    },
+    [provider, t, walletFieldArray]
+  );
 
-    // Number of characters after decimal point greater than
-    // the number of decimals in the token itself
-    if (amount.split('.')[1]?.length > MAX_TOKEN_DECIMALS)
-      return t('errors.exceedsFractionalParts', {decimals: MAX_TOKEN_DECIMALS});
+  const amountValidation = useCallback(
+    (amount: string) => {
+      let totalSupply = 0;
+      let minAmount = walletFieldArray[0]?.amount;
+      const address = getValues(`wallets.${index}.address`);
+      const eligibilityType = getValues('eligibilityType');
+      if (address === '') trigger(`wallets.${index}.address`);
 
-    // show max amount error
-    if (Big(amount).gt(constants.MaxInt256.toString()))
-      return t('errors.ltAmount', {amount: '~ 2.69 * 10^49'});
+      // calculate total token supply disregarding error invalid fields
+      walletFieldArray.forEach((wallet: TokenVotingWalletField) => {
+        if (Number(wallet.amount) < Number(minAmount)) {
+          minAmount = wallet.amount;
+        }
+        if (Number(wallet.amount) > 0)
+          totalSupply = Number(wallet.amount) + totalSupply;
+      });
+      setValue('tokenTotalSupply', totalSupply);
 
-    // show negative amount error
-    if (Big(amount).lt(1)) return t('errors.lteZero');
-    return totalSupply === 0 ? t('errors.totalSupplyZero') : true;
-  };
+      if (eligibilityType === 'token')
+        setValue('minimumTokenAmount', minAmount);
+
+      // Number of characters after decimal point greater than
+      // the number of decimals in the token itself
+      if (amount.split('.')[1]?.length > MAX_TOKEN_DECIMALS)
+        return t('errors.exceedsFractionalParts', {
+          decimals: MAX_TOKEN_DECIMALS,
+        });
+
+      // show max amount error
+      if (Big(amount).gt(constants.MaxInt256.toString()))
+        return t('errors.ltAmount', {amount: '~ 2.69 * 10^49'});
+
+      // show negative amount error
+      if (Big(amount).lt(1)) return t('errors.lteZero');
+      return totalSupply === 0 ? t('errors.totalSupplyZero') : true;
+    },
+    [getValues, index, setValue, t, trigger, walletFieldArray]
+  );
+
+  const handleOnChange = useCallback(
+    // to avoid nesting the InputWallet value, add the existing amount
+    // when the value of the address/ens changes
+    (e: unknown, onChange: (e: unknown) => void) => {
+      onChange({
+        ...(e as WalletInputValue),
+        amount: walletFieldArray[index].amount,
+      });
+    },
+    [index, walletFieldArray]
+  );
 
   return (
     <Container data-testid="wallet-row">
       <Controller
-        defaultValue=""
-        name={`wallets.${index}.address`}
+        defaultValue={{address: '', ensName: ''}}
+        name={`wallets.${index}`}
         control={control}
-        rules={{
-          required: t('errors.required.walletAddress') as string,
-          validate: value => addressValidator(value, index),
-        }}
+        rules={{validate: value => addressValidator(value, index)}}
         render={({
-          field: {name, value, onBlur, onChange},
+          field: {name, ref, value, onBlur, onChange},
           fieldState: {error},
         }) => (
           <AddressWrapper>
             <LabelWrapper>
               <Label label={t('labels.whitelistWallets.address')} />
             </LabelWrapper>
-            <ValueInput
-              mode={error ? 'critical' : 'default'}
-              name={name}
-              value={getUserFriendlyWalletLabel(value, t)}
+            <WrappedWalletInput
+              state={error && 'critical'}
+              value={value}
               onBlur={onBlur}
-              onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                onChange(e.target.value);
-              }}
-              // Uncomment when minting to DAO Treasury is supported
-              // disabled={index === 0}
-              adornmentText={value ? t('labels.copy') : t('labels.paste')}
-              onAdornmentClick={() =>
-                handleClipboardActions(value, onChange, alert)
-              }
+              onChange={e => handleOnChange(e, onChange)}
+              error={error?.message}
+              showResolvedLabels={false}
+              ref={ref}
+              name={name}
             />
-            {error?.message && (
-              <ErrorContainer>
-                <AlertInline label={error.message} mode="critical" />
-              </ErrorContainer>
-            )}
           </AddressWrapper>
         )}
       />
@@ -153,6 +184,7 @@ const WalletRow: React.FC<WalletRowProps> = ({index, onDelete}) => {
           required: t('errors.required.amount'),
           validate: amountValidation,
         }}
+        defaultValue={1}
         render={({field, fieldState: {error}}) => (
           <AmountsWrapper>
             <LabelWrapper>
@@ -188,7 +220,9 @@ const WalletRow: React.FC<WalletRowProps> = ({index, onDelete}) => {
         </LabelWrapper>
         <PercentageInputDisplay
           name={`wallets.${index}.amount`}
-          value={calculateTotalTokenSupply(walletFieldArray[index].amount)}
+          value={calculateTotalTokenSupply(
+            Number(walletFieldArray[index].amount)
+          )}
           mode="default"
           disabled
         />
@@ -236,10 +270,10 @@ const WalletRow: React.FC<WalletRowProps> = ({index, onDelete}) => {
                   if (eligibilityType === 'token') {
                     if (eligibilityTokenAmount === amount) {
                       let minAmount = walletFieldArray[0]?.amount;
-                      (walletFieldArray as WalletField[]).map(
+                      (walletFieldArray as TokenVotingWalletField[]).map(
                         (wallet, mapIndex) => {
                           if (mapIndex !== index)
-                            if (Number(wallet.amount) < minAmount) {
+                            if (Number(wallet.amount) < Number(minAmount)) {
                               minAmount = wallet.amount;
                             }
                         }
