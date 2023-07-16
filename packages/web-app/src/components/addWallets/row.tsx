@@ -64,8 +64,6 @@ const WalletRow: React.FC<WalletRowProps> = ({index, onDelete}) => {
     [walletFieldArray]
   );
 
-  console.log('LOOPING');
-
   const addressValidator = useCallback(
     async ({address, ensName}: WalletInputValue, index: number) => {
       const web3Address = new Web3Address(provider, address, ensName);
