@@ -393,7 +393,6 @@ export const ComponentForType: React.FC<ComponentForTypeProps> = ({
           ))}
         </>
       );
-      break;
 
     default:
       return (
@@ -483,26 +482,24 @@ export function FormlessComponentForType({
             ))}
           </>
         );
-      else {
-        return (
-          <>
-            {Object.entries(input.value as {}).map((value, index) => {
-              return (
-                <div key={index}>
-                  <div className="mb-1.5 text-base font-bold text-ui-800 capitalize">
-                    {value[0]}
-                  </div>
-                  <FormlessComponentForType
-                    key={index}
-                    input={{value: value[1], type: typeof value[1]} as Input}
-                    disabled={disabled}
-                  />
+      return (
+        <>
+          {Object.entries(input.value as {}).map((value, index) => {
+            return (
+              <div key={index}>
+                <div className="mb-1.5 text-base font-bold text-ui-800 capitalize">
+                  {value[0]}
                 </div>
-              );
-            })}
-          </>
-        );
-      }
+                <FormlessComponentForType
+                  key={index}
+                  input={{value: value[1], type: typeof value[1]} as Input}
+                  disabled={disabled}
+                />
+              </div>
+            );
+          })}
+        </>
+      );
     default:
       return (
         <TextInput
