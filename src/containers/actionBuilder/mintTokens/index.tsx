@@ -171,7 +171,7 @@ export const MintTokenForm: React.FC<MintTokenFormProps> = ({
   useEffect(() => {
     // set-up form on first load/reset
     if (fields.length === 0) {
-      append({address: '', amount: '0'});
+      append({address: '', ensName: '', amount: '0'});
     }
 
     if (!actionName) {
@@ -347,11 +347,11 @@ export const MintTokenForm: React.FC<MintTokenFormProps> = ({
    *             Callbacks and Handlers            *
    *************************************************/
   const handleAddWallet = () => {
-    append({address: '', amount: '0'});
+    append({address: '', ensName: '', amount: '0'});
   };
 
   const handleClearWallet = (index: number) => {
-    update(index, {address: '', amount: mints[index].amount});
+    update(index, {address: '', ensName: '', amount: mints[index].amount});
   };
 
   const handleDeleteWallet = (index: number) => {
@@ -404,8 +404,8 @@ export const MintTokenForm: React.FC<MintTokenFormProps> = ({
             <p className="flex-1 font-bold">
               {t('labels.whitelistWallets.address')}
             </p>
-            <p className="flex-1 font-bold">{t('finance.tokens')}</p>
-            <p className="flex-1 font-bold" style={{maxWidth: '11ch'}}>
+            <p className="flex-1 w-25 font-bold">{t('finance.tokens')}</p>
+            <p className="flex-1 w-10 font-bold" style={{maxWidth: '11ch'}}>
               {t('finance.allocation')}
             </p>
             <div className="w-6" />
