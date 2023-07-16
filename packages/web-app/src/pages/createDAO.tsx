@@ -4,9 +4,9 @@ import React, {useEffect, useMemo} from 'react';
 import {FormProvider, useForm, useFormState, useWatch} from 'react-hook-form';
 import {useTranslation} from 'react-i18next';
 
-import {WalletField} from 'components/addWallets/row';
+import {TokenVotingWalletField} from 'components/addWallets/row';
 import {FullScreenStepper, Step} from 'components/fullScreenStepper';
-import {WalletItem} from 'components/multisigWallets/row';
+import {MultisigWalletField} from 'components/multisigWallets/row';
 import ConfigureCommunity from 'containers/configureCommunity';
 import {OverviewDAOHeader, OverviewDAOStep} from 'containers/daoOverview';
 import DefineMetadata from 'containers/defineMetadata';
@@ -40,7 +40,7 @@ export type CreateDaoFormData = {
   tokenType: TokenType;
   isCustomToken: boolean;
   links: {name: string; url: string}[];
-  wallets: WalletField[];
+  wallets: TokenVotingWalletField[];
   tokenAddress: InputValue;
   durationMinutes: string;
   durationHours: string;
@@ -53,7 +53,7 @@ export type CreateDaoFormData = {
   membership: string;
   earlyExecution: boolean;
   voteReplacement: boolean;
-  multisigWallets: WalletItem[];
+  multisigWallets: MultisigWalletField[];
   multisigMinimumApprovals: number;
 };
 
