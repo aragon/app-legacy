@@ -4,9 +4,9 @@ import {useFormContext} from 'react-hook-form';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 
-import {WalletField} from 'components/addWallets/row';
+import {TokenVotingWalletField} from 'components/addWallets/row';
 import ModalBottomSheetSwitcher from 'components/modalBottomSheetSwitcher';
-import {WalletItem} from 'components/multisigWallets/row';
+import {MultisigWalletField} from 'components/multisigWallets/row';
 import {useGlobalModalContext} from 'context/globalModals';
 import {getUserFriendlyWalletLabel} from 'utils/library';
 
@@ -28,41 +28,39 @@ const CommunityAddressesModal: React.FC<CommunityAddressesModalProps> = ({
   const {t} = useTranslation();
 
   const filterValidator = useCallback(
-    (wallet: WalletField | WalletItem) => {
+    (wallet: TokenVotingWalletField | MultisigWalletField) => {
       if (searchValue !== '') {
         const re = new RegExp(searchValue, 'i');
 
-        return tokenMembership
-          ? (wallet as WalletField)?.address?.match(re)
-          : (wallet as WalletItem)?.web3Address?.address?.match(re);
+        return wallet?.address?.match(re) || wallet?.ensName.match(re);
       }
       return true;
     },
-    [searchValue, tokenMembership]
+    [searchValue]
   );
 
   const filteredAddressList = useMemo(() => {
     if (tokenMembership) {
-      return (wallets as WalletField[]).filter(filterValidator).map(
-        ({address, amount}) =>
+      return (wallets as TokenVotingWalletField[]).filter(filterValidator).map(
+        ({address, amount, ensName}) =>
           ({
-            wallet: getUserFriendlyWalletLabel(address, t),
+            wallet: ensName || getUserFriendlyWalletLabel(address, t),
             tokenAmount: `${amount} ${tokenSymbol}`,
           } as VoterType)
       );
     }
 
     // multisig
-    return (multisigWallets as WalletItem[])
+    return (multisigWallets as MultisigWalletField[])
       .filter(filterValidator)
-      .map(({web3Address}) => ({wallet: web3Address.address} as VoterType));
+      .map(({address, ensName}) => ({wallet: ensName || address} as VoterType));
   }, [
-    tokenMembership,
-    wallets,
-    multisigWallets,
     filterValidator,
+    multisigWallets,
     t,
+    tokenMembership,
     tokenSymbol,
+    wallets,
   ]);
 
   /*************************************************
