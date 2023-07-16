@@ -275,6 +275,7 @@ export type ActionMintToken = {
   inputs: {
     mintTokensToWallets: {
       address: string;
+      ensName: string;
       amount: string | number;
     }[];
   };

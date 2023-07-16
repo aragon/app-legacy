@@ -203,6 +203,8 @@ export async function decodeMintTokensToAction(
   }
 
   try {
+    //@sepehr2github is there any reason why we don't just pass
+    // the token info into this function
     // get token info
     const {symbol, decimals} = await getTokenInfo(
       daoTokenAddress,
@@ -220,7 +222,11 @@ export async function decodeMintTokensToAction(
 
       // update new tokens count
       newTokens = newTokens.add(amount);
-      return {address, amount: Number(formatUnits(amount, decimals))};
+      return {
+        address,
+        ensName: '',
+        amount: Number(formatUnits(amount, decimals)),
+      };
     });
 
     //TODO: That's technically not correct. The minting could go to addresses who already hold that token.
@@ -774,7 +780,11 @@ export class Web3Address {
     }
 
     // Create a new Address instance
-    const addressObj = new Web3Address(provider, addressToSet, ensNameToSet);
+    const addressObj = new Web3Address(
+      provider,
+      addressToSet?.toLowerCase(),
+      ensNameToSet?.toLowerCase()
+    );
 
     // If a provider is available, try to resolve the missing piece (address or ENS name)
     try {
@@ -783,13 +793,13 @@ export class Web3Address {
           ensNameToSet =
             (await provider.lookupAddress(addressToSet)) ?? undefined;
           if (ensNameToSet) {
-            addressObj._ensName = ensNameToSet;
+            addressObj._ensName = ensNameToSet.toLowerCase();
           }
         } else if (!addressToSet && ensNameToSet) {
           addressToSet =
             (await provider.resolveName(ensNameToSet)) ?? undefined;
           if (addressToSet) {
-            addressObj._address = addressToSet;
+            addressObj._address = addressToSet.toLowerCase();
           }
         }
 
