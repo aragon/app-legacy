@@ -128,7 +128,7 @@ const AddressField: React.FC<AddressFieldProps> = ({
         field: {name, ref, value, onBlur, onChange},
         fieldState: {error},
       }) => (
-        <div className="flex-1">
+        <InputContainer>
           <WrappedWalletInput
             name={name}
             state={error && 'critical'}
@@ -139,7 +139,7 @@ const AddressField: React.FC<AddressFieldProps> = ({
             resolveLabels="onBlur"
             ref={ref}
           />
-        </div>
+        </InputContainer>
       )}
     />
   );
@@ -381,3 +381,5 @@ const HStack = styled.div.attrs({
 const HStackWithPadding = styled.div.attrs({
   className: 'flex tablet:pr-8 space-x-2',
 })``;
+
+const InputContainer = styled.div.attrs({className: 'flex-1 space-y-1'})``;

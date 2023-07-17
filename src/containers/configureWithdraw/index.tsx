@@ -311,6 +311,7 @@ const ConfigureWithdrawForm: React.FC<ConfigureWithdrawFormProps> = ({
               onBlur={onBlur}
               onChange={onChange}
               error={error?.message}
+              resolveLabels="enabled"
             />
           )}
         />

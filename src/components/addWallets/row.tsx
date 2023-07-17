@@ -161,16 +161,18 @@ const WalletRow: React.FC<WalletRowProps> = ({index, onDelete}) => {
             <LabelWrapper>
               <Label label={t('labels.whitelistWallets.address')} />
             </LabelWrapper>
-            <WrappedWalletInput
-              state={error && 'critical'}
-              value={value}
-              onBlur={onBlur}
-              onChange={e => handleOnChange(e, onChange)}
-              error={error?.message}
-              resolveLabels="onBlur"
-              ref={ref}
-              name={name}
-            />
+            <InputContainer>
+              <WrappedWalletInput
+                state={error && 'critical'}
+                value={value}
+                onBlur={onBlur}
+                onChange={e => handleOnChange(e, onChange)}
+                error={error?.message}
+                resolveLabels="onBlur"
+                ref={ref}
+                name={name}
+              />
+            </InputContainer>
           </AddressWrapper>
         )}
       />
@@ -327,3 +329,7 @@ const Break = styled.hr.attrs({
 const DropdownMenuWrapper = styled.div.attrs({
   className: 'flex order-2 tablet:order-5 mt-3.5 tablet:mt-0 w-6',
 })``;
+
+const InputContainer = styled.div.attrs(() => ({
+  className: 'space-y-1',
+}))``;

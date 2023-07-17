@@ -57,7 +57,7 @@ export const RemoveAddressCard: React.FC<{
   );
 
   /*************************************************
-   *                    Render                    *
+   *                    Render                     *
    *************************************************/
   return (
     <AccordionMethod
