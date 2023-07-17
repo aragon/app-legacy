@@ -376,21 +376,41 @@ export const ComponentForType: React.FC<ComponentForTypeProps> = ({
       );
 
     case 'tuple':
+      if (input?.components)
+        return (
+          <>
+            {input.components?.map(component => (
+              <div key={component.name}>
+                <div className="mb-1.5 text-base font-bold text-ui-800 capitalize">
+                  {input.name}
+                </div>
+                <ComponentForType
+                  key={component.name}
+                  input={component}
+                  functionName={input.name}
+                  disabled={disabled}
+                />
+              </div>
+            ))}
+          </>
+        );
       return (
         <>
-          {input.components?.map(component => (
-            <div key={component.name}>
-              <div className="mb-1.5 text-base font-bold text-ui-800 capitalize">
-                {input.name}
+          {Object.entries(input.value as {}).map((value, index) => {
+            return (
+              <div key={index}>
+                <div className="mb-1.5 text-base font-bold text-ui-800 capitalize">
+                  {value[0]}
+                </div>
+                <ComponentForType
+                  key={index}
+                  functionName={value[0]}
+                  input={{value: value[1], type: typeof value[1]} as Input}
+                  disabled={disabled}
+                />
               </div>
-              <ComponentForType
-                key={component.name}
-                input={component}
-                functionName={input.name}
-                disabled={disabled}
-              />
-            </div>
-          ))}
+            );
+          })}
         </>
       );
 
