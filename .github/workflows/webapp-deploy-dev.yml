@@ -66,7 +66,7 @@ jobs:
             echo "BRANCH_NAME=test" >> $GITHUB_OUTPUT
             echo "CURRENT_ENVIRONMENT=testing" >> $GITHUB_OUTPUT
             ## Set DEV since we haven't set vars for TEST
-            echo "SHORT_ENV_OUT=DEV" >> $GITHUB_OUTPUT      
+            echo "SHORT_ENV_OUT=DEV" >> $GITHUB_OUTPUT
           fi
           containertag="commit-$githashshort"
           echo "CONTAINER_TAG=$containertag" >> $GITHUB_OUTPUT
@@ -81,7 +81,7 @@ jobs:
         run: yarn install --pure-lockfile
 
       - name: Build web-app
-        run: yarn build
+        run: yarn build --mode ${{ needs.setup-env-vars.outputs.environment }}
         env:
           VITE_REACT_APP_DEPLOY_VERSION: ${{ github.sha }}
           VITE_REACT_APP_DEPLOY_ENVIRONMENT: ${{ needs.setup-env-vars.outputs.environment }}
@@ -151,7 +151,7 @@ jobs:
         env:
           COMMIT_SHA: ${{ github.sha }}
         run: |
-          for f in $(find ./dist/assets/ -name *.js.map) ; do 
+          for f in $(find ./dist/assets/ -name *.js.map) ; do
             curl -X POST "https://kibana-sourcemaps.aragon.org/api/apm/sourcemaps" \
               -H 'Content-Type: multipart/form-data' \
               -H 'kbn-xsrf: true' \

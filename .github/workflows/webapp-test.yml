@@ -25,7 +25,7 @@ jobs:
       - name: Test
         run: yarn test
       - name: Build
-        run: yarn build
+        run: yarn build --mode staging
         env:
           VITE_REACT_APP_DEPLOY_VERSION: ${{ github.sha }}
           VITE_REACT_APP_DEPLOY_ENVIRONMENT: ${{ needs.set-environment.outputs.environment }}
