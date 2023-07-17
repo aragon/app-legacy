@@ -30,6 +30,7 @@ import '../i18n.config';
 import DepositModal from 'containers/transactionModals/depositModal';
 import PoapClaimModal from 'containers/poapClaiming/PoapClaimModal';
 import {GovTokensWrappingProvider} from 'context/govTokensWrapping';
+import {featureFlags} from 'utils/featureFlags';
 
 const ExplorePage = lazy(() => import('pages/explore'));
 const NotFoundPage = lazy(() => import('pages/notFound'));
@@ -57,6 +58,9 @@ function App() {
   // further refactoring of layout (see further below).
   const {pathname} = useLocation();
   const {methods, status, network, address, provider} = useWallet();
+
+  // Initialize feature flags using the initial URL
+  useEffect(() => featureFlags.initializeFeatureFlags(), []);
 
   useEffect(() => {
     if (status === 'connected') {

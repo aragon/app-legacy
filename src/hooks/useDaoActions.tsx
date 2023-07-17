@@ -6,6 +6,7 @@ import {getDaoTokenOwner} from 'utils/tokens';
 import {useDaoToken} from './useDaoToken';
 import {useProviders} from 'context/providers';
 import {useEffect, useState} from 'react';
+import {featureFlags} from 'utils/featureFlags';
 
 export function useDaoActions(dao: string): HookData<ActionParameter[]> {
   const {data: daoDetails, error, isLoading} = useDaoQuery(dao);
@@ -55,7 +56,8 @@ export function useDaoActions(dao: string): HookData<ActionParameter[]> {
       subtitle: t('AddActionModal.connectdAppsSubtitle'),
       isReuseable: true,
       isDisabled:
-        import.meta.env.VITE_FEATURE_FLAG_DAO_WALLET_CONNECT === 'false',
+        featureFlags.getValue('VITE_FEATURE_FLAG_DAO_WALLET_CONNECT') ===
+        'false',
     },
     {
       type: 'external_contract_modal',

@@ -31,9 +31,6 @@ export class ExpiringCache<T, K = string> {
     this.expireItems();
     this.cache.set(key, item);
     this.expiryQueue.push(key);
-    console.log(
-      `CACHE ADD ${key} items: ${this.cache.size} expiryQ: ${this.expiryQueue.length}`
-    );
   }
 
   get(key: K): T {
@@ -41,9 +38,6 @@ export class ExpiringCache<T, K = string> {
     if (foundItem) {
       foundItem._timestamp = new Date().getTime(); // update timestamp
       this.cache.set(key, foundItem);
-      console.log(`CACHE HIT ${key}`);
-    } else {
-      console.log(`CACHE MISS ${key}`);
     }
     return foundItem as T;
   }
