@@ -23,7 +23,6 @@ type WrappedWalletInputProps = {
 export const WrappedWalletInput = forwardRef(
   (
     {
-      onBlur,
       onChange,
       error,
       resolveLabels = 'disabled',
@@ -79,6 +78,19 @@ export const WrappedWalletInput = forwardRef(
       }
     }, [ref]);
 
+    const removeLabels = useCallback(() => {
+      setTimeout(() => {
+        setEnsResolved(false);
+        setAddressValidated(false);
+      }, RESOLVED_LABEL_DELAY);
+    }, []);
+
+    useEffect(() => {
+      if (!isFocused && resolveLabels === 'onBlur') {
+        removeLabels();
+      }
+    }, [isFocused, removeLabels, resolveLabels]);
+
     /*************************************************
      *             Callbacks and Handlers            *
      *************************************************/
@@ -106,19 +118,6 @@ export const WrappedWalletInput = forwardRef(
       }
     }, [isFocused, showResolvedLabels]);
 
-    const handleBlur = useCallback(
-      (event: React.FocusEvent<HTMLTextAreaElement, Element>) => {
-        if (resolveLabels === 'onBlur') {
-          setTimeout(() => {
-            setEnsResolved(false);
-            setAddressValidated(false);
-          }, RESOLVED_LABEL_DELAY);
-        }
-        onBlur?.(event);
-      },
-      [onBlur, resolveLabels]
-    );
-
     /*************************************************
      *                    Render                     *
      *************************************************/
@@ -127,7 +126,6 @@ export const WrappedWalletInput = forwardRef(
         <WalletInput
           blockExplorerURL={CHAIN_METADATA[network].explorer + 'address/'}
           onAddressValidated={handleAddressValidated}
-          onBlur={handleBlur}
           onEnsResolved={handleEnsResolved}
           onClearButtonClick={() => alert(t('alert.chip.inputCleared'))}
           onCopyButtonClick={() => alert(t('alert.chip.inputCopied'))}
