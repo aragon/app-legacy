@@ -1,7 +1,9 @@
 import {IconLinkExternal, Link, ListItemAddress} from '@aragon/ods';
+import {fetchEnsAvatar} from '@wagmi/core';
 import React, {useCallback, useEffect, useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
+import {GetEnsAvatarReturnType} from 'viem/ens';
 
 import {AccordionMethod} from 'components/accordionMethod';
 import {useNetwork} from 'context/network';
@@ -10,15 +12,12 @@ import {useDaoMembers} from 'hooks/useDaoMembers';
 import {PluginTypes} from 'hooks/usePluginClient';
 import {CHAIN_METADATA} from 'utils/constants';
 import {ActionMintToken} from 'utils/types';
-import {Web3Address} from 'utils/library';
-import {useProviders} from 'context/providers';
 
 export const MintTokenCard: React.FC<{
   action: ActionMintToken;
 }> = ({action}) => {
   const {t} = useTranslation();
   const {network} = useNetwork();
-  const {infura: provider} = useProviders();
 
   const {data: daoDetails} = useDaoDetailsQuery();
 
@@ -29,9 +28,7 @@ export const MintTokenCard: React.FC<{
     daoDetails?.plugins[0].id as PluginTypes
   );
 
-  const [displayedAddresses, setDisplayedAddresses] = useState<Web3Address[]>(
-    []
-  );
+  const [avatars, setAvatars] = useState<GetEnsAvatarReturnType[]>([]);
 
   const newTotalSupply = action.summary.newTokens + action.summary.tokenSupply;
 
@@ -46,27 +43,25 @@ export const MintTokenCard: React.FC<{
    *                    Effects                    *
    *************************************************/
   useEffect(() => {
-    async function mapMembers() {
-      let memberAddresses:
-        | ActionMintToken['inputs']['mintTokensToWallets']
-        | Array<Web3Address> = action.inputs.mintTokensToWallets;
+    async function fetchAvatars() {
+      const chainId = CHAIN_METADATA[network].id;
 
       try {
-        memberAddresses = await Promise.all(
-          memberAddresses.map(
-            async ({address, ensName}) =>
-              await Web3Address.create(provider, {address, ensName})
-          )
+        const avatars = await Promise.all(
+          action.inputs.mintTokensToWallets.map(async ({ensName: name}) => {
+            if (name) return await fetchEnsAvatar({name, chainId});
+            else return null;
+          })
         );
-      } catch (error) {
-        console.error('Error creating Web3Addresses', error);
-      }
 
-      setDisplayedAddresses(memberAddresses as Array<Web3Address>);
+        setAvatars(avatars);
+      } catch (error) {
+        console.error('Error fetching ENS avatar', error);
+      }
     }
 
-    if (action.inputs.mintTokensToWallets) mapMembers();
-  }, [action.inputs.mintTokensToWallets, provider]);
+    if (action.inputs.mintTokensToWallets) fetchAvatars();
+  }, [action.inputs.mintTokensToWallets, network]);
 
   /*************************************************
    *             Callbacks and Handlers            *
@@ -94,26 +89,19 @@ export const MintTokenCard: React.FC<{
     >
       <Container>
         <div className="p-2 tablet:p-3 space-y-2 bg-ui-50">
-          {displayedAddresses.map((wallet, index) => {
-            const percentage =
-              (Number(action.inputs.mintTokensToWallets[index].amount) /
-                newTotalSupply) *
-              100;
+          {action.inputs.mintTokensToWallets.map((wallet, index) => {
+            const percentage = (Number(wallet.amount) / newTotalSupply) * 100;
 
             return wallet.address ? (
               <ListItemAddress
                 key={wallet.address}
                 label={wallet.ensName || wallet.address}
-                src={wallet.avatar || wallet.address}
+                src={avatars[index] || wallet.address}
                 onClick={() =>
                   handleAddressClick(wallet.ensName || wallet.address)
                 }
                 tokenInfo={{
-                  amount: parseFloat(
-                    Number(
-                      action.inputs.mintTokensToWallets[index].amount
-                    ).toFixed(2)
-                  ),
+                  amount: parseFloat(Number(wallet.amount).toFixed(2)),
                   symbol: action.summary.daoTokenSymbol || '',
                   percentage: parseFloat(percentage.toFixed(2)),
                 }}
