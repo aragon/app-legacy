@@ -7,10 +7,13 @@ import {useNetwork} from 'context/network';
 import {useProviders} from 'context/providers';
 import {CHAIN_METADATA, ENS_SUPPORTED_NETWORKS} from 'utils/constants/chains';
 
+// delay (in ms) to remove the resolved/verified labels
+const RESOLVED_LABEL_DELAY = 800;
+
 type WrappedWalletInputProps = {
   onChange: (...event: unknown[]) => void;
   error?: string;
-  showResolvedLabels?: boolean;
+  resolveLabels?: 'enabled' | 'disabled' | 'onBlur';
 } & Omit<WalletInputProps, 'onValueChange'>;
 
 /**
@@ -20,9 +23,10 @@ type WrappedWalletInputProps = {
 export const WrappedWalletInput = forwardRef(
   (
     {
+      onBlur,
       onChange,
       error,
-      showResolvedLabels = true,
+      resolveLabels = 'disabled',
       ...props
     }: WrappedWalletInputProps,
     ref: Ref<HTMLTextAreaElement> | undefined
@@ -55,13 +59,29 @@ export const WrappedWalletInput = forwardRef(
       setAddressValidated(true);
     }, []);
 
+    const handleBlur = useCallback(
+      (event: React.FocusEvent<HTMLTextAreaElement, Element>) => {
+        if (resolveLabels === 'onBlur') {
+          setTimeout(() => {
+            setEnsResolved(false);
+            setAddressValidated(false);
+          }, RESOLVED_LABEL_DELAY);
+        }
+        onBlur?.(event);
+      },
+      [onBlur, resolveLabels]
+    );
+
     const networkSupportsENS = ENS_SUPPORTED_NETWORKS.includes(network);
+    const showResolvedLabels =
+      resolveLabels === 'enabled' || resolveLabels === 'onBlur';
 
     return (
       <>
         <WalletInput
           blockExplorerURL={CHAIN_METADATA[network].explorer + 'address/'}
           onAddressValidated={handleAddressValidated}
+          onBlur={handleBlur}
           onEnsResolved={handleEnsResolved}
           onClearButtonClick={() => alert(t('alert.chip.inputCleared'))}
           onCopyButtonClick={() => alert(t('alert.chip.inputCopied'))}

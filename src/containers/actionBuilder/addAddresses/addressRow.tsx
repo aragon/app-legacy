@@ -116,7 +116,7 @@ export const AddressRow = ({
               onBlur={onBlur}
               onChange={onChange}
               error={error?.message}
-              showResolvedLabels={false}
+              resolveLabels="onBlur"
               ref={ref}
               onClearButtonClick={handleRowClear}
             />

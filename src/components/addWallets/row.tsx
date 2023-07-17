@@ -167,7 +167,7 @@ const WalletRow: React.FC<WalletRowProps> = ({index, onDelete}) => {
               onBlur={onBlur}
               onChange={e => handleOnChange(e, onChange)}
               error={error?.message}
-              showResolvedLabels={false}
+              resolveLabels="onBlur"
               ref={ref}
               name={name}
             />

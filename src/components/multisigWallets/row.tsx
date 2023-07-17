@@ -82,7 +82,7 @@ export const Row = ({index, ...props}: MultisigWalletsRowProps) => {
                 onBlur={onBlur}
                 onChange={onChange}
                 error={error?.message}
-                showResolvedLabels={false}
+                resolveLabels="onBlur"
                 ref={ref}
                 onClearButtonClick={() => {
                   alert(t('alert.chip.inputCleared'));

@@ -126,7 +126,6 @@ const AddExistingToken: React.FC = () => {
                 onChange={onChange}
                 error={error?.message}
                 blockExplorerURL={tokenAddressBlockExplorerURL}
-                showResolvedLabels={false}
               />
               {!error?.message && isDirty && value.address && (
                 <VerificationCard tokenAddress={value.address} />

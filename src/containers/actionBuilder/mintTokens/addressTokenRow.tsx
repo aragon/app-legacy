@@ -136,7 +136,7 @@ const AddressField: React.FC<AddressFieldProps> = ({
             onBlur={onBlur}
             onChange={e => handleOnChange(e, onChange)}
             error={error?.message}
-            showResolvedLabels={false}
+            resolveLabels="onBlur"
             ref={ref}
           />
         </div>
@@ -165,7 +165,7 @@ const TokenField: React.FC<IndexProps> = ({actionIndex, fieldIndex}) => {
         field: {name, value, onBlur, onChange},
         fieldState: {error},
       }) => (
-        <div className="flex-1 w-25">
+        <div className="flex-1">
           <NumberInput
             name={name}
             value={value}
@@ -249,7 +249,7 @@ const PercentageDistribution: React.FC<
   }
 
   return (
-    <div className="w-10" style={{maxWidth: '12ch'}}>
+    <div style={{maxWidth: '12ch'}}>
       <TextInput
         className="text-right"
         name={`actions.${actionIndex}.inputs.mintTokensToWallets.${fieldIndex}.amount`}
