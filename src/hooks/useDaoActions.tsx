@@ -54,6 +54,8 @@ export function useDaoActions(dao: string): HookData<ActionParameter[]> {
       title: t('AddActionModal.connectdAppsTitle'),
       subtitle: t('AddActionModal.connectdAppsSubtitle'),
       isReuseable: true,
+      isDisabled:
+        import.meta.env.VITE_FEATURE_FLAG_DAO_WALLET_CONNECT === 'false',
     },
     {
       type: 'external_contract_modal',
@@ -86,8 +88,12 @@ export function useDaoActions(dao: string): HookData<ActionParameter[]> {
       ].concat(baseActions) as ActionParameter[])
     : baseActions;
 
+  const actions = (multisig ? multisigActions : tokenVotingActions).filter(
+    ({isDisabled}) => isDisabled !== true
+  );
+
   return {
-    data: multisig ? multisigActions : tokenVotingActions,
+    data: actions,
     isLoading,
     error: error as Error,
   };

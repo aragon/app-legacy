@@ -187,6 +187,9 @@ export type ActionIndex = {
  * declared locally.
  */
 export type ActionParameter = {
+  /**
+   * Type of the action.
+   */
   type: ActionsTypes;
   /**
    * Name displayed in the UI
@@ -202,6 +205,10 @@ export type ActionParameter = {
    * be changed to a number if the rules for reuseability become more complex.
    */
   isReuseable?: boolean;
+  /**
+   * Hides the action from the action menu when set to true.
+   */
+  isDisabled?: boolean;
 };
 
 /**
