@@ -46,7 +46,7 @@ type AddressFieldProps = IndexProps &
 const AddressField: React.FC<AddressFieldProps> = ({
   actionIndex,
   fieldIndex,
-  // onClear,
+  onClear,
   onEnterDaoAddress,
   isModalOpened,
   daoAddress,
@@ -54,6 +54,7 @@ const AddressField: React.FC<AddressFieldProps> = ({
 }) => {
   const {t} = useTranslation();
   const {infura: provider} = useProviders();
+  const {alert} = useAlertContext();
 
   const {control} = useFormContext();
   const walletFieldArray: ActionMintToken['inputs']['mintTokensToWallets'] =
@@ -61,6 +62,11 @@ const AddressField: React.FC<AddressFieldProps> = ({
       name: `actions.${actionIndex}.inputs.mintTokensToWallets`,
       control,
     });
+
+  const handleClearClick = useCallback(() => {
+    alert(t('alert.chip.inputCleared'));
+    onClear?.(fieldIndex);
+  }, [alert, fieldIndex, onClear, t]);
 
   const handleChange = useCallback(
     (value: InputValue, onChange: (e: InputValue) => void) => {
@@ -125,10 +131,10 @@ const AddressField: React.FC<AddressFieldProps> = ({
             state={error && 'critical'}
             value={value}
             onBlur={onBlur}
-            // onChange={onChange}
             onChange={e => handleChange(e as InputValue, onChange)}
             error={error?.message}
             resolveLabels="onBlur"
+            onClearButtonClick={handleClearClick}
             ref={ref}
           />
         </InputContainer>
