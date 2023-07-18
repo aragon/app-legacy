@@ -527,15 +527,21 @@ export function decodeVotingMode(mode: VotingMode): DecodedVotingMode {
  * the function will return a fully resolved URL.
  * @returns the url to the DAO avatar
  */
-export function resolveDaoAvatarIpfsCid(
-  network: SupportedNetworks,
-  avatar?: string
-): string | undefined {
+export async function resolveDaoAvatarIpfsCid(
+  client: Client | undefined,
+  avatar?: string | Blob
+): Promise<string | undefined> {
   if (avatar) {
-    if (/^ipfs/.test(avatar)) {
+    if (typeof avatar !== 'string') {
+      return URL.createObjectURL(avatar);
+    } else if (/^ipfs/.test(avatar) && client) {
       try {
-        const logoCid = resolveIpfsCid(avatar);
-        return `${CHAIN_METADATA[network].ipfs}/ipfs/${logoCid}`;
+        const cid = resolveIpfsCid(avatar);
+        const ipfsClient = client.ipfs.getClient();
+        const imageBytes = await ipfsClient.cat(cid); // Uint8Array
+        const imageBlob = new Blob(imageBytes as unknown as BlobPart[]);
+
+        return URL.createObjectURL(imageBlob);
       } catch (err) {
         console.warn('Error resolving DAO avatar IPFS Cid', err);
       }

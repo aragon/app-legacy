@@ -22,7 +22,6 @@ import {
   SupportedNetworks,
   getSupportedNetworkByChainId,
 } from 'utils/constants';
-import {resolveDaoAvatarIpfsCid} from 'utils/library';
 
 const DEFAULT_QUERY_PARAMS = {
   skip: 0,
@@ -188,10 +187,7 @@ function addAvatarToDaos<T extends NavigationDao>(daos: T[]): T[] {
       ...dao,
       metadata: {
         ...metadata,
-        avatar: resolveDaoAvatarIpfsCid(
-          getSupportedNetworkByChainId(dao.chain) || 'unsupported',
-          metadata.avatar
-        ),
+        avatar: metadata.avatar,
       },
     } as T;
   });

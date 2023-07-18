@@ -16,6 +16,7 @@ import useScreen from 'hooks/useScreen';
 import {useWallet} from 'hooks/useWallet';
 import MobileMenu from './mobileMenu';
 import NetworkIndicator from './networkIndicator';
+import {useResolveDaoAvatar} from 'hooks/useResolveDaoAvatar';
 
 type MobileNavProps = {
   isProcess?: boolean;
@@ -30,6 +31,10 @@ const MobileNav: React.FC<MobileNavProps> = props => {
   const {isMobile} = useScreen();
   const currentDao = useReactiveVar(selectedDaoVar);
   const {isConnected, address, ensName, ensAvatarUrl} = useWallet();
+
+  const {avatar: currentDaoAvatar} = useResolveDaoAvatar(
+    currentDao?.metadata?.avatar
+  );
 
   if (props.isProcess)
     return (
@@ -63,7 +68,7 @@ const MobileNav: React.FC<MobileNavProps> = props => {
           <FlexOne className="justify-center">
             <DaoContainer>
               <AvatarDao
-                src={currentDao.metadata.avatar}
+                src={currentDaoAvatar}
                 daoName={currentDao.metadata.name}
                 onClick={props.onDaoSelect}
               />

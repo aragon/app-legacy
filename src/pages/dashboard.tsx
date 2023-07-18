@@ -40,6 +40,7 @@ import {
   EmptyStateHeading,
 } from 'containers/pageEmptyState';
 import {useGlobalModalContext} from 'context/globalModals';
+import {useResolveDaoAvatar} from 'hooks/useResolveDaoAvatar';
 
 enum DaoCreationState {
   ASSEMBLING_DAO,
@@ -81,6 +82,10 @@ const Dashboard: React.FC = () => {
     isSuccess,
   } = useDaoQuery(urlAddressOrEns, pollInterval);
   const liveAddressOrEns = toDisplayEns(liveDao?.ensDomain) || liveDao?.address;
+
+  const {avatar: liveDaoAvatar} = useResolveDaoAvatar(
+    liveDao?.metadata?.avatar
+  );
 
   // pending DAO
   const {data: pendingDao, isLoading: pendingDaoLoading} =
@@ -260,7 +265,7 @@ const Dashboard: React.FC = () => {
           <HeaderDao
             daoName={liveDao.metadata.name}
             daoEnsName={toDisplayEns(liveDao.ensDomain)}
-            daoAvatar={liveDao.metadata.avatar}
+            daoAvatar={liveDaoAvatar}
             daoUrl={`app.aragon.org/#/daos/${network}/${liveAddressOrEns}`}
             description={liveDao.metadata.description}
             created_at={formatDate(
@@ -279,7 +284,7 @@ const Dashboard: React.FC = () => {
                 plugins: liveDao.plugins,
                 metadata: {
                   name: liveDao.metadata.name,
-                  avatar: liveDao.metadata.avatar,
+                  avatar: liveDaoAvatar,
                   description: liveDao.metadata.description,
                 },
               })

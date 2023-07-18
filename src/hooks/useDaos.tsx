@@ -7,12 +7,7 @@ import {
 import {SortDirection} from '@aragon/sdk-client-common';
 import {InfiniteData, useInfiniteQuery} from '@tanstack/react-query';
 
-import {
-  CHAIN_METADATA,
-  SupportedChainID,
-  getSupportedNetworkByChainId,
-} from 'utils/constants';
-import {resolveDaoAvatarIpfsCid} from 'utils/library';
+import {CHAIN_METADATA, SupportedChainID} from 'utils/constants';
 import {useClient} from './useClient';
 
 export const EXPLORE_FILTER = ['favorite', 'newest', 'popular'] as const;
@@ -90,8 +85,7 @@ export const useDaosInfiniteQuery = (
 };
 
 /**
- * Function that augments an array of `DaoListItem` by adding
- * the avatar IPFS CID and the chainID
+ * Function that augments an array of `DaoListItem`
  * @param data array of `DaoListItem`
  * @param chain chain id
  * @returns augmented DAO with avatar link and proper chain
@@ -110,10 +104,7 @@ function toAugmentedDaoListItem(
           ...dao,
           metadata: {
             ...dao.metadata,
-            avatar: resolveDaoAvatarIpfsCid(
-              getSupportedNetworkByChainId(chainId) || 'unsupported',
-              dao.metadata.avatar
-            ),
+            avatar: dao.metadata.avatar,
           },
           chain: chainId,
         } as AugmentedDaoListItem;

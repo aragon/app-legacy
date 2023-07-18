@@ -4,6 +4,7 @@ import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 
 import useScreen from 'hooks/useScreen';
+import {useResolveDaoAvatar} from 'hooks/useResolveDaoAvatar';
 import {getSupportedNetworkByChainId} from 'utils/constants';
 
 export interface IDaoCardProps {
@@ -37,11 +38,13 @@ export const DaoCard = (props: IDaoCardProps) => {
   const {isDesktop} = useScreen();
   const daoType = useGetDaoType(props.daoType);
 
+  const {avatar} = useResolveDaoAvatar(props.logo);
+
   return (
     <Container data-testid="daoCard" onClick={props.onClick}>
       <DaoDataWrapper>
         <HeaderContainer>
-          <AvatarDao daoName={props.name} src={props.logo} />
+          <AvatarDao daoName={props.name} src={avatar} />
           <div className="space-y-0.25 desktop:space-y-0.5 text-left">
             <Title>{props.name}</Title>
             <p className="font-semibold text-ui-500 ft-text-sm">

@@ -27,6 +27,7 @@ import {
 import {i18n} from '../../../i18n.config';
 import DesktopNav from './desktop';
 import MobileNav from './mobile';
+import {useResolveDaoAvatar} from 'hooks/useResolveDaoAvatar';
 
 const Navbar: React.FC = () => {
   const {open} = useGlobalModalContext();
@@ -36,6 +37,10 @@ const Navbar: React.FC = () => {
   const {handleWithFunctionalPreferenceMenu} = usePrivacyContext();
 
   const {data: daoDetails} = useDaoDetailsQuery();
+
+  const {avatar: daoDetailsAvatar} = useResolveDaoAvatar(
+    daoDetails?.metadata?.avatar
+  );
 
   const processInfo = useMemo(() => {
     const matches = matchRoutes(processPaths, pathname);
@@ -50,13 +55,13 @@ const Navbar: React.FC = () => {
         ensDomain: daoDetails.ensDomain,
         metadata: {
           name: daoDetails.metadata.name,
-          avatar: daoDetails.metadata.avatar,
+          avatar: daoDetailsAvatar,
         },
         chain: CHAIN_METADATA[network].id,
         plugins: daoDetails.plugins,
       });
     }
-  }, [daoDetails, network]);
+  }, [daoDetails, daoDetailsAvatar, network]);
 
   /*************************************************
    *                   Handlers                    *

@@ -29,6 +29,7 @@ import useScreen from 'hooks/useScreen';
 import {Layout} from 'pages/settings';
 import {ProposeNewSettings} from 'utils/paths';
 import {toDisplayEns} from 'utils/library';
+import {useResolveDaoAvatar} from 'hooks/useResolveDaoAvatar';
 
 type EditMsSettingsProps = {
   daoDetails: DaoDetails;
@@ -56,6 +57,10 @@ export const EditMsSettings: React.FC<EditMsSettingsProps> = ({daoDetails}) => {
   const {data: members, isLoading: membersAreLoading} = useDaoMembers(
     daoDetails?.plugins[0].instanceAddress as string,
     daoDetails?.plugins[0].id as PluginTypes
+  );
+
+  const {avatar: daoDetailsAvatar} = useResolveDaoAvatar(
+    daoDetails?.metadata?.avatar
   );
 
   const [
@@ -142,7 +147,7 @@ export const EditMsSettings: React.FC<EditMsSettingsProps> = ({daoDetails}) => {
   const setCurrentMetadata = useCallback(() => {
     setValue('daoName', daoDetails?.metadata.name);
     setValue('daoSummary', daoDetails?.metadata.description);
-    setValue('daoLogo', daoDetails?.metadata.avatar);
+    setValue('daoLogo', daoDetailsAvatar);
 
     /**
      * FIXME - this is the dumbest workaround: because there is an internal
@@ -159,11 +164,11 @@ export const EditMsSettings: React.FC<EditMsSettingsProps> = ({daoDetails}) => {
       replace([...daoDetails.metadata.links]);
     }
   }, [
-    daoDetails?.metadata.avatar,
-    daoDetails?.metadata.description,
-    daoDetails?.metadata.links,
-    daoDetails?.metadata.name,
     setValue,
+    daoDetails.metadata.name,
+    daoDetails.metadata.description,
+    daoDetails.metadata.links,
+    daoDetailsAvatar,
     replace,
   ]);
 

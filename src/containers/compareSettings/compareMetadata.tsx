@@ -12,6 +12,7 @@ import {toDisplayEns} from 'utils/library';
 import {EditSettings} from 'utils/paths';
 import {ProposalResource} from 'utils/types';
 import {Views} from '.';
+import {useResolveDaoAvatar} from 'hooks/useResolveDaoAvatar';
 
 type CompareMetadataProps = {
   daoDetails: DaoDetails;
@@ -49,6 +50,10 @@ export const CompareMetadata: React.FC<CompareMetadataProps> = ({
     };
   }
 
+  const {avatar: daoDetailsAvatar} = useResolveDaoAvatar(
+    daoDetails?.metadata?.avatar
+  );
+
   return (
     <DescriptionListContainer
       title={t('labels.review.daoMetadata')}
@@ -77,7 +82,7 @@ export const CompareMetadata: React.FC<CompareMetadataProps> = ({
           ) : (
             <AvatarDao
               daoName={daoDetails?.metadata.name || ''}
-              src={daoDetails?.metadata.avatar}
+              src={daoDetailsAvatar}
             />
           )}
         </Dd>

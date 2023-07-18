@@ -15,6 +15,7 @@ import {useMappedBreadcrumbs} from 'hooks/useMappedBreadcrumbs';
 import {useWallet} from 'hooks/useWallet';
 import {NavlinksDropdown} from './breadcrumbDropdown';
 import NetworkIndicator from './networkIndicator';
+import {useResolveDaoAvatar} from 'hooks/useResolveDaoAvatar';
 
 const MIN_ROUTE_DEPTH_FOR_BREADCRUMBS = 2;
 
@@ -37,6 +38,9 @@ const DesktopNav: React.FC<DesktopNavProp> = props => {
   const {address, ensName, ensAvatarUrl, isConnected} = useWallet();
 
   const currentDao = useReactiveVar(selectedDaoVar);
+  const {avatar: currentDaoAvatar} = useResolveDaoAvatar(
+    currentDao?.metadata?.avatar
+  );
 
   const [showExitProcessMenu, setShowExitProcessMenu] = useState(false);
 
@@ -97,7 +101,7 @@ const DesktopNav: React.FC<DesktopNavProp> = props => {
           <DaoSelector
             daoAddress={currentDao.ensDomain}
             daoName={currentDao?.metadata?.name || currentDao?.ensDomain}
-            src={currentDao.metadata.avatar}
+            src={currentDaoAvatar}
             onClick={props.onDaoSelect}
           />
           <LinksWrapper>

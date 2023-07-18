@@ -1,33 +1,22 @@
 import {AvatarDao, ListItemLink} from '@aragon/ods';
-import React, {useMemo} from 'react';
+import React from 'react';
 import {useTranslation} from 'react-i18next';
 
 import {AccordionMethod} from 'components/accordionMethod';
 import {ActionCardDlContainer, Dd, Dl, Dt} from 'components/descriptionList';
-import {resolveDaoAvatarIpfsCid} from 'utils/library';
 import {ActionUpdateMetadata} from 'utils/types';
-import {useNetwork} from 'context/network';
+import {useResolveDaoAvatar} from 'hooks/useResolveDaoAvatar';
 
 export const ModifyMetadataCard: React.FC<{action: ActionUpdateMetadata}> = ({
   action: {inputs},
 }) => {
   const {t} = useTranslation();
-  const {network} = useNetwork();
 
   const displayedLinks = inputs.links.filter(
     l => l.url !== '' && l.name !== ''
   );
 
-  const avatar = useMemo(() => {
-    if (typeof inputs.avatar === 'string')
-      return resolveDaoAvatarIpfsCid(network, inputs.avatar);
-
-    try {
-      return URL.createObjectURL(inputs.avatar as unknown as Blob);
-    } catch (err) {
-      console.error(err);
-    }
-  }, [network, inputs.avatar]);
+  const {avatar} = useResolveDaoAvatar(inputs.avatar);
 
   return (
     <AccordionMethod

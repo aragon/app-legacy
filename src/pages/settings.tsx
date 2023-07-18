@@ -23,6 +23,7 @@ import {PluginTypes} from 'hooks/usePluginClient';
 import useScreen from 'hooks/useScreen';
 import {CHAIN_METADATA} from 'utils/constants';
 import {EditSettings} from 'utils/paths';
+import {useResolveDaoAvatar} from 'hooks/useResolveDaoAvatar';
 
 const Settings: React.FC = () => {
   const {t} = useTranslation();
@@ -30,6 +31,9 @@ const Settings: React.FC = () => {
   const navigate = useNavigate();
 
   const {data: daoDetails, isLoading} = useDaoDetailsQuery();
+  const {avatar: daoDetailsAvatar} = useResolveDaoAvatar(
+    daoDetails?.metadata?.avatar
+  );
 
   const networkInfo = CHAIN_METADATA[network];
   const chainLabel = networkInfo.name;
@@ -71,7 +75,7 @@ const Settings: React.FC = () => {
               <AvatarDao
                 size={'small'}
                 daoName={daoDetails?.metadata.name || ''}
-                src={daoDetails?.metadata.avatar}
+                src={daoDetailsAvatar}
               />
             </Dd>
           </Dl>

@@ -6,11 +6,11 @@ import {useCallback, useEffect, useMemo} from 'react';
 import {useLocation, useNavigate, useParams} from 'react-router-dom';
 
 import {useNetwork} from 'context/network';
-import {resolveDaoAvatarIpfsCid, toDisplayEns} from 'utils/library';
+import {, toDisplayEns} from 'utils/library';
 import {NotFound} from 'utils/paths';
 import {useClient} from './useClient';
 import {useSpecificProvider} from 'context/providers';
-import {CHAIN_METADATA, SupportedNetworks} from 'utils/constants';
+import {CHAIN_METADATA} from 'utils/constants';
 
 /**
  * Fetches DAO data for a given DAO address or ENS name using a given client.
@@ -111,7 +111,7 @@ export const useDaoQuery = (
   return useQuery<DaoDetails | null>({
     queryKey: ['daoDetails', daoAddressOrEns, queryNetwork],
     queryFn,
-    select: addAvatarToDao(network),
+    select: addAvatarToDao(),
     enabled,
     // useQuery will cache an empty data for ens names which is wrong, but this config
     // will disable caching for ens names in L2 the caching is enabled for
@@ -176,19 +176,18 @@ export const useDaoDetailsQuery = () => {
 };
 
 /**
- * Add resolved IPFS CID to DAO metadata
+ * Adds avatar to DAO
  * @param dao DAO details
  * @returns DAO details object augmented with a resolved IPFS avatar
  */
-const addAvatarToDao =
-  (network: SupportedNetworks) => (dao: DaoDetails | null) => {
-    if (!dao) return null;
+const addAvatarToDao = () => (dao: DaoDetails | null) => {
+  if (!dao) return null;
 
-    return {
-      ...dao,
-      metadata: {
-        ...dao?.metadata,
-        avatar: resolveDaoAvatarIpfsCid(network, dao?.metadata.avatar),
-      },
-    };
+  return {
+    ...dao,
+    metadata: {
+      ...dao?.metadata,
+      avatar: dao?.metadata.avatar,
+    },
   };
+};
