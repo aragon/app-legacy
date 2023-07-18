@@ -23,6 +23,8 @@ VITE_FEATURE_FLAG_DISCOVER_DAO=true
 
 In the above example, the `VITE_FEATURE_FLAG_DISCOVER_DAO` feature flag is enabled in the development and staging environments but disabled in production.
 
+**NOTE:** Feature flags must start with the `VITE_FEATURE_FLAG_` prefix to work correctly.
+
 ## Overriding Feature Flags
 
 To override a feature flag for the current environment, simply append the key and value of the feature flag to the URL as a query parameter and start using the Aragon App:
