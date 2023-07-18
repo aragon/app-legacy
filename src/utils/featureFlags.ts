@@ -1,7 +1,7 @@
 /**
  * Utility class to retrieve the feature flags set for the current environment.
  */
-class FeatureFlags {
+export class FeatureFlags {
   private featureFlagPrefix = 'VITE_FEATURE_FLAG';
   private isInitialized = false;
 
