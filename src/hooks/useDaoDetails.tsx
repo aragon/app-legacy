@@ -6,7 +6,7 @@ import {useCallback, useEffect, useMemo} from 'react';
 import {useLocation, useNavigate, useParams} from 'react-router-dom';
 
 import {useNetwork} from 'context/network';
-import {, toDisplayEns} from 'utils/library';
+import {toDisplayEns} from 'utils/library';
 import {NotFound} from 'utils/paths';
 import {useClient} from './useClient';
 import {useSpecificProvider} from 'context/providers';
