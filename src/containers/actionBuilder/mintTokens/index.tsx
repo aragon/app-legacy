@@ -2,7 +2,7 @@ import {ButtonText, ListItemAction, Label as FormLabel} from '@aragon/ods';
 import Big from 'big.js';
 import {BigNumber} from 'ethers';
 import {isAddress} from 'ethers/lib/utils';
-import React, {useEffect, useState} from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 import {
   FieldError,
   useFieldArray,
@@ -130,7 +130,7 @@ export const MintTokenForm: React.FC<MintTokenFormProps> = ({
     daoDetails?.plugins[0].id as PluginTypes
   );
 
-  const {setValue, trigger, formState, control} = useFormContext();
+  const {setValue, trigger, formState, control, resetField} = useFormContext();
   const {fields, append, remove, update} = useFieldArray({
     name: `actions.${actionIndex}.inputs.mintTokensToWallets`,
   });
@@ -163,6 +163,7 @@ export const MintTokenForm: React.FC<MintTokenFormProps> = ({
   });
 
   const isModalOpened = mintTokensToTreasuryModal.index !== undefined;
+  const treasuryKey = `actions.${actionIndex}.inputs.mintTokensToWallets.${mintTokensToTreasuryModal.index}.web3Address`;
 
   /*************************************************
    *                    Effects                    *
@@ -371,6 +372,39 @@ export const MintTokenForm: React.FC<MintTokenFormProps> = ({
     });
   };
 
+  const handleCancelTreasuryMinting = useCallback(() => {
+    // undefined index means that the modal was closed without confirming the contract address
+    setMintTokensToTreasuryModal({status: false});
+
+    resetField(treasuryKey, {defaultValue: {address: '', ensName: ''}});
+
+    alert(t('modal.mintTokensToTreasury.alertChipSuccess'));
+  }, [alert, resetField, t, treasuryKey]);
+
+  const handleMintToTreasury = useCallback(() => {
+    setMintTokensToTreasuryModal({
+      ...mintTokensToTreasuryModal,
+      status: false,
+    });
+
+    setValue(treasuryKey, {
+      address: daoDetails?.address,
+      ensName: toDisplayEns(daoDetails?.ensDomain),
+    });
+
+    setTimeout(() => trigger(treasuryKey), 50);
+    alert(t('modal.mintTokensToTreasury.alertChipCritical'));
+  }, [
+    alert,
+    daoDetails?.address,
+    daoDetails?.ensDomain,
+    mintTokensToTreasuryModal,
+    setValue,
+    t,
+    treasuryKey,
+    trigger,
+  ]);
+
   // const handleCSVUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
   //   if (e.target.files && e.target.files[0]) {
   //     const myFile = e.target.files[0];
@@ -410,7 +444,7 @@ export const MintTokenForm: React.FC<MintTokenFormProps> = ({
             <div className="w-23">
               <FormLabel label={t('finance.tokens')} />
             </div>
-            <div className="w-11">
+            <div className="w-12">
               <FormLabel label={t('finance.allocation')} />
             </div>
             <div className="w-6" />
@@ -490,24 +524,8 @@ export const MintTokenForm: React.FC<MintTokenFormProps> = ({
       </Container>
       <MintTokensToTreasuryMenu
         isOpen={mintTokensToTreasuryModal.status}
-        onCloseReset={() => {
-          // undefined index means that the modal was closed without confirming the contract address
-          setMintTokensToTreasuryModal({
-            status: false,
-          });
-          setValue(
-            `actions.${actionIndex}.inputs.mintTokensToWallets.${mintTokensToTreasuryModal.index}.web3Address`,
-            ''
-          );
-          alert(t('modal.mintTokensToTreasury.alertChipCritical'));
-        }}
-        onClose={() => {
-          setMintTokensToTreasuryModal({
-            ...mintTokensToTreasuryModal,
-            status: false,
-          });
-          alert(t('modal.mintTokensToTreasury.alertChipSuccess'));
-        }}
+        onClose={handleMintToTreasury}
+        onCloseReset={handleCancelTreasuryMinting}
         daoAddress={{
           address: daoDetails?.address,
           ensName: toDisplayEns(daoDetails?.ensDomain),

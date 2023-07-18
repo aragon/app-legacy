@@ -3,6 +3,7 @@ import {
   ButtonIcon,
   Dropdown,
   IconMenuVertical,
+  InputValue,
   Label,
   ListItemAction,
   NumberInput,
@@ -14,7 +15,6 @@ import {Controller, useFormContext, useWatch} from 'react-hook-form';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 
-import {WalletInputValue} from '@aragon/ui-components/dist/components/input/walletInput';
 import {WrappedWalletInput} from 'components/wrappedWalletInput';
 import {useAlertContext} from 'context/alert';
 import {useProviders} from 'context/providers';
@@ -46,11 +46,11 @@ type AddressFieldProps = IndexProps &
 const AddressField: React.FC<AddressFieldProps> = ({
   actionIndex,
   fieldIndex,
-  onClear,
+  // onClear,
   onEnterDaoAddress,
   isModalOpened,
   daoAddress,
-  ensName,
+  ensName: daoEnsName,
 }) => {
   const {t} = useTranslation();
   const {infura: provider} = useProviders();
@@ -62,9 +62,30 @@ const AddressField: React.FC<AddressFieldProps> = ({
       control,
     });
 
+  const handleChange = useCallback(
+    (value: InputValue, onChange: (e: InputValue) => void) => {
+      // do not open the modal for more than one time for the same address
+      if (
+        (value.address === daoAddress?.toLowerCase() ||
+          value.ensName === daoEnsName?.toLowerCase()) &&
+        !isModalOpened
+      ) {
+        onEnterDaoAddress?.(fieldIndex);
+        onChange({address: '', ensName: ''});
+      } else {
+        onChange(value);
+      }
+    },
+    [daoAddress, daoEnsName, fieldIndex, isModalOpened, onEnterDaoAddress]
+  );
+
   const addressValidator = useCallback(
-    async (address, index) => {
-      const web3Address = new Web3Address(provider, address, ensName);
+    async (value: InputValue) => {
+      const web3Address = new Web3Address(
+        provider,
+        value.address,
+        value.ensName
+      );
 
       // check if address is valid
       let validationResult = await validateWeb3Address(
@@ -76,54 +97,24 @@ const AddressField: React.FC<AddressFieldProps> = ({
       // check if address is duplicated
       if (
         walletFieldArray?.some(
-          (wallet, walletIndex) =>
+          ({web3Address: wallet}, walletIndex) =>
             (wallet.address === web3Address.address ||
               wallet.ensName === web3Address.ensName) &&
-            walletIndex !== index
+            walletIndex !== fieldIndex
         )
       )
         validationResult = t('errors.duplicateAddress');
 
-      if (onEnterDaoAddress && validationResult === true) {
-        // do not open the modal for more than one time for the same address
-        if (
-          (web3Address.address === daoAddress?.toLowerCase() ||
-            web3Address.ensName === ensName?.toLowerCase()) &&
-          !isModalOpened
-        ) {
-          onEnterDaoAddress(index);
-        }
-      }
       return validationResult;
     },
-    [
-      daoAddress,
-      ensName,
-      isModalOpened,
-      onEnterDaoAddress,
-      provider,
-      t,
-      walletFieldArray,
-    ]
-  );
-
-  const handleOnChange = useCallback(
-    // to avoid nesting the InputWallet value, add the existing amount
-    // when the value of the address/ens changes
-    (e: unknown, onChange: (e: unknown) => void) => {
-      onChange({
-        ...(e as WalletInputValue),
-        amount: walletFieldArray[fieldIndex].amount,
-      });
-    },
-    [fieldIndex, walletFieldArray]
+    [fieldIndex, provider, t, walletFieldArray]
   );
 
   return (
     <Controller
       defaultValue={{address: '', ensName: ''}}
-      name={`actions.${actionIndex}.inputs.mintTokensToWallets.${fieldIndex}`}
-      rules={{validate: value => addressValidator(value, fieldIndex)}}
+      name={`actions.${actionIndex}.inputs.mintTokensToWallets.${fieldIndex}.web3Address`}
+      rules={{validate: addressValidator}}
       render={({
         field: {name, ref, value, onBlur, onChange},
         fieldState: {error},
@@ -134,7 +125,8 @@ const AddressField: React.FC<AddressFieldProps> = ({
             state={error && 'critical'}
             value={value}
             onBlur={onBlur}
-            onChange={e => handleOnChange(e, onChange)}
+            // onChange={onChange}
+            onChange={e => handleChange(e as InputValue, onChange)}
             error={error?.message}
             resolveLabels="onBlur"
             ref={ref}
@@ -165,7 +157,7 @@ const TokenField: React.FC<IndexProps> = ({actionIndex, fieldIndex}) => {
         field: {name, value, onBlur, onChange},
         fieldState: {error},
       }) => (
-        <div className="flex-1">
+        <div className="w-23">
           <NumberInput
             name={name}
             value={value}
@@ -249,7 +241,7 @@ const PercentageDistribution: React.FC<
   }
 
   return (
-    <div style={{maxWidth: '12ch'}}>
+    <div className="w-12">
       <TextInput
         className="text-right"
         name={`actions.${actionIndex}.inputs.mintTokensToWallets.${fieldIndex}.amount`}

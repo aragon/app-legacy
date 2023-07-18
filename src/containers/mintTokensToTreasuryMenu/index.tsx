@@ -1,20 +1,21 @@
-import React, {useMemo, useState} from 'react';
-import {Controller, useFormContext, useWatch} from 'react-hook-form';
-import {useTranslation} from 'react-i18next';
-import styled from 'styled-components';
 import {
   AlertCard,
   ButtonIcon,
   ButtonText,
   IconChevronLeft,
-  WalletInputLegacy,
+  InputValue,
 } from '@aragon/ods';
+import React, {useCallback, useMemo, useState} from 'react';
+import {Controller, useFormContext, useWatch} from 'react-hook-form';
+import {useTranslation} from 'react-i18next';
+import styled from 'styled-components';
 
 import ModalBottomSheetSwitcher from 'components/modalBottomSheetSwitcher';
 import {StateEmpty} from 'components/stateEmpty';
-import {validateAddress} from 'utils/validators';
-import {handleClipboardActions} from 'utils/library';
-import {useAlertContext} from 'context/alert';
+import {WrappedWalletInput} from 'components/wrappedWalletInput';
+import {useProviders} from 'context/providers';
+import {Web3Address} from 'utils/library';
+import {validateWeb3Address} from 'utils/validators';
 
 type Props = {
   isOpen: boolean;
@@ -30,26 +31,35 @@ const MintTokensToTreasuryMenu: React.FC<Props> = ({
   isOpen,
   onClose,
   onCloseReset,
-  daoAddress,
+  daoAddress: dao,
 }) => {
   const {t} = useTranslation();
   const [step, setStep] = useState(0);
-  const {control} = useFormContext();
-  const {alert} = useAlertContext();
-  const treasuryAddress = useWatch({
-    name: 'mintTokensToTreasury',
-    control: control,
-  });
+  const {infura: provider} = useProviders();
+
+  const {control, resetField} = useFormContext();
+  const treasury = useWatch({name: 'mintTokensToTreasury', control: control});
 
   const isActionEnabled = useMemo(() => {
-    if (treasuryAddress)
+    if (treasury)
       if (
-        treasuryAddress.toLowerCase() === daoAddress.address?.toLowerCase() ||
-        treasuryAddress.toLowerCase() === daoAddress.ensName?.toLowerCase()
+        treasury.address.toLowerCase() === dao.address?.toLowerCase() ||
+        treasury.ensName.toLowerCase() === dao.ensName?.toLowerCase()
       )
         return true;
     return false;
-  }, [daoAddress.address, daoAddress.ensName, treasuryAddress]);
+  }, [dao.address, dao.ensName, treasury]);
+
+  const validateAddress = useCallback(
+    async (value: InputValue) => {
+      return validateWeb3Address(
+        new Web3Address(provider, value.address, value.ensName),
+        t('errors.required.walletAddress'),
+        t
+      );
+    },
+    [provider, t]
+  );
 
   return (
     <ModalBottomSheetSwitcher isOpen={isOpen} {...{onCloseReset}}>
@@ -96,6 +106,7 @@ const MintTokensToTreasuryMenu: React.FC<Props> = ({
               icon={<IconChevronLeft />}
               onClick={() => {
                 setStep(0);
+                resetField('mintTokensToTreasury');
               }}
               bgWhite
             />
@@ -108,32 +119,27 @@ const MintTokensToTreasuryMenu: React.FC<Props> = ({
               {t('modal.mintTokensToTreasury.inputHelptext')}
             </FormHelpText>
             <Controller
-              defaultValue=""
+              defaultValue={{address: '', ensName: ''}}
               name={'mintTokensToTreasury'}
               control={control}
-              rules={{
-                required: t('errors.required.walletAddress'),
-                validate: value => validateAddress(value),
-              }}
+              rules={{validate: validateAddress}}
               render={({
-                field: {name, value, onBlur, onChange},
+                field: {name, ref, value, onBlur, onChange},
                 fieldState: {error},
               }) => (
                 <>
-                  <WalletInputLegacy
-                    mode={error ? 'critical' : 'default'}
-                    name={name}
-                    value={value}
-                    onBlur={onBlur}
-                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                      onChange(e.target.value);
-                    }}
-                    placeholder="0x"
-                    adornmentText={value ? t('labels.copy') : t('labels.paste')}
-                    onAdornmentClick={() =>
-                      handleClipboardActions(value, onChange, alert)
-                    }
-                  />
+                  <InputContainer>
+                    <WrappedWalletInput
+                      name={name}
+                      state={error && 'critical'}
+                      value={value}
+                      onBlur={onBlur}
+                      onChange={onChange}
+                      error={error?.message}
+                      resolveLabels="onBlur"
+                      ref={ref}
+                    />
+                  </InputContainer>
                   <div className="mt-3 mb-1.5">
                     <AlertCard
                       mode="critical"
@@ -160,6 +166,7 @@ const MintTokensToTreasuryMenu: React.FC<Props> = ({
                       size="large"
                       bgWhite={false}
                       onClick={() => {
+                        resetField('mintTokensToTreasury');
                         onCloseReset();
                         setStep(0);
                       }}
@@ -197,5 +204,7 @@ const FormHelpText = styled.p.attrs({
 const ActionContainer = styled.div.attrs({
   className: 'flex flex-col w-full space-y-1.5',
 })``;
+
+const InputContainer = styled.div.attrs({className: 'flex-1 space-y-1'})``;
 
 export default MintTokensToTreasuryMenu;
