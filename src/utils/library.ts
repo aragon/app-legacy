@@ -223,8 +223,10 @@ export async function decodeMintTokensToAction(
       // update new tokens count
       newTokens = newTokens.add(amount);
       return {
-        address,
-        ensName: '',
+        web3Address: {
+          address,
+          ensName: '',
+        },
         amount: Number(formatUnits(amount, decimals)),
       };
     });
