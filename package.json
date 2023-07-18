@@ -1,9 +1,10 @@
 {
-  "name": "@aragon/apps-web",
-  "description": "Webapp to interact with Aragon Core",
+  "name": "@aragon/app",
+  "description": "Web application to interact with Aragon OSx",
   "version": "0.1.0",
   "private": true,
   "author": "Aragon Association",
+  "license": "GPL-3.0",
   "scripts": {
     "dev": "vite",
     "build": "tsc && cross-env NODE_ENV=production node --max_old_space_size=16384 ./node_modules/vite/bin/vite.js build --sourcemap true > build.txt",
