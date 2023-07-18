@@ -4,9 +4,6 @@ import tsconfigPaths from 'vite-tsconfig-paths';
 import {defineConfig, loadEnv} from 'vite';
 import {resolve} from 'path';
 import analyze from 'rollup-plugin-analyzer';
-//import {uglify} from 'rollup-plugin-uglify';
-
-//const production = process.env.NODE_ENV === 'production';
 
 // https://vitejs.dev/config/
 export default defineConfig(({mode}) => {
@@ -56,7 +53,6 @@ export default defineConfig(({mode}) => {
             stdout: true,
             summaryOnly: true,
           }),
-          //production && uglify(),
         ],
         output: {
           manualChunks: {
