@@ -136,7 +136,6 @@ const MintTokensToTreasuryMenu: React.FC<Props> = ({
                       onBlur={onBlur}
                       onChange={onChange}
                       error={error?.message}
-                      resolveLabels="onBlur"
                       ref={ref}
                     />
                   </InputContainer>
