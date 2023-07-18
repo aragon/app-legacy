@@ -2,7 +2,7 @@
 
 Please include a summary of the change and be sure you follow the contributions rules we do provide [here](./CONTRIBUTIONS.md)
 
-Task: [ID]()
+Task: [APP-0000](https://aragonassociation.atlassian.net/browse/APP-0000)
 
 ## Type of change
 
@@ -21,5 +21,5 @@ Task: [ID]()
 - [ ] My changes generate no new warnings.
 - [ ] Any dependent changes have been merged and published in downstream modules.
 - [ ] I ran all tests with success and extended them if necessary.
-- [ ] I have updated the ``CHANGELOG.md`` file in the root folder.
+- [ ] I have updated the `CHANGELOG.md` file in the root folder.
 - [ ] I have tested my code on the test network.
