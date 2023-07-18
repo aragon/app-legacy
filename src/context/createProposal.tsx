@@ -171,7 +171,7 @@ const CreateProposalProvider: React.FC<Props> = ({
                 (pluginClient as TokenVotingClient).encoding.mintTokenAction(
                   action.summary.daoTokenAddress as string,
                   {
-                    address: mint.address,
+                    address: mint.web3Address.address,
                     amount: BigInt(
                       ethers.utils
                         .parseUnits(mint.amount.toString(), 18)

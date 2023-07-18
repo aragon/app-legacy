@@ -1,4 +1,4 @@
-import {ButtonText, ListItemAction} from '@aragon/ods';
+import {ButtonText, ListItemAction, Label as FormLabel} from '@aragon/ods';
 import Big from 'big.js';
 import {BigNumber} from 'ethers';
 import {isAddress} from 'ethers/lib/utils';
@@ -171,7 +171,7 @@ export const MintTokenForm: React.FC<MintTokenFormProps> = ({
   useEffect(() => {
     // set-up form on first load/reset
     if (fields.length === 0) {
-      append({address: '', ensName: '', amount: '0'});
+      append({web3Address: {address: '', ensName: ''}, amount: '0'});
     }
 
     if (!actionName) {
@@ -347,11 +347,14 @@ export const MintTokenForm: React.FC<MintTokenFormProps> = ({
    *             Callbacks and Handlers            *
    *************************************************/
   const handleAddWallet = () => {
-    append({address: '', ensName: '', amount: '0'});
+    append({web3Address: {address: '', ensName: ''}, amount: '0'});
   };
 
   const handleClearWallet = (index: number) => {
-    update(index, {address: '', ensName: '', amount: mints[index].amount});
+    update(index, {
+      web3Address: {address: '', ensName: ''},
+      amount: mints[index].amount,
+    });
   };
 
   const handleDeleteWallet = (index: number) => {
@@ -400,14 +403,16 @@ export const MintTokenForm: React.FC<MintTokenFormProps> = ({
     <>
       <Container standAlone={standAlone}>
         {isDesktop && (
-          <div className="flex items-center p-2 tablet:p-3 space-x-2">
-            <p className="flex-1 font-bold">
-              {t('labels.whitelistWallets.address')}
-            </p>
-            <p className="flex-1 w-25 font-bold">{t('finance.tokens')}</p>
-            <p className="flex-1 w-10 font-bold" style={{maxWidth: '11ch'}}>
-              {t('finance.allocation')}
-            </p>
+          <div className="flex items-center p-2 tablet:p-3 space-x-2 ">
+            <div className="flex-1">
+              <FormLabel label={t('labels.whitelistWallets.address')} />
+            </div>
+            <div className="w-23">
+              <FormLabel label={t('finance.tokens')} />
+            </div>
+            <div className="w-11">
+              <FormLabel label={t('finance.allocation')} />
+            </div>
             <div className="w-6" />
           </div>
         )}
@@ -491,7 +496,7 @@ export const MintTokenForm: React.FC<MintTokenFormProps> = ({
             status: false,
           });
           setValue(
-            `actions.${actionIndex}.inputs.mintTokensToWallets.${mintTokensToTreasuryModal.index}.address`,
+            `actions.${actionIndex}.inputs.mintTokensToWallets.${mintTokensToTreasuryModal.index}.web3Address`,
             ''
           );
           alert(t('modal.mintTokensToTreasury.alertChipCritical'));

@@ -274,8 +274,10 @@ export type ActionMintToken = {
   name: 'mint_tokens';
   inputs: {
     mintTokensToWallets: {
-      address: string;
-      ensName: string;
+      web3Address: {
+        address: string;
+        ensName: string;
+      };
       amount: string | number;
     }[];
   };

@@ -32,12 +32,14 @@ export const MintTokenCard: React.FC<{
 
   const newTotalSupply = action.summary.newTokens + action.summary.tokenSupply;
 
-  const newHolders = action.inputs.mintTokensToWallets.filter(({address}) => {
-    return members.find(
-      (addr: {address: string}) =>
-        addr.address.toUpperCase() !== address.toUpperCase()
-    );
-  });
+  const newHolders = action.inputs.mintTokensToWallets.filter(
+    ({web3Address: {address}}) => {
+      return members.find(
+        (addr: {address: string}) =>
+          addr.address.toLowerCase() !== address.toLowerCase()
+      );
+    }
+  );
 
   /*************************************************
    *                    Effects                    *
@@ -48,10 +50,12 @@ export const MintTokenCard: React.FC<{
 
       try {
         const avatars = await Promise.all(
-          action.inputs.mintTokensToWallets.map(async ({ensName: name}) => {
-            if (name) return await fetchEnsAvatar({name, chainId});
-            else return null;
-          })
+          action.inputs.mintTokensToWallets.map(
+            async ({web3Address: {ensName: name}}) => {
+              if (name) return await fetchEnsAvatar({name, chainId});
+              else return null;
+            }
+          )
         );
 
         setAvatars(avatars);
@@ -89,25 +93,29 @@ export const MintTokenCard: React.FC<{
     >
       <Container>
         <div className="p-2 tablet:p-3 space-y-2 bg-ui-50">
-          {action.inputs.mintTokensToWallets.map((wallet, index) => {
-            const percentage = (Number(wallet.amount) / newTotalSupply) * 100;
+          {action.inputs.mintTokensToWallets.map(
+            ({web3Address, amount}, index) => {
+              const percentage = (Number(amount) / newTotalSupply) * 100;
 
-            return wallet.address ? (
-              <ListItemAddress
-                key={wallet.address}
-                label={wallet.ensName || wallet.address}
-                src={avatars[index] || wallet.address}
-                onClick={() =>
-                  handleAddressClick(wallet.ensName || wallet.address)
-                }
-                tokenInfo={{
-                  amount: parseFloat(Number(wallet.amount).toFixed(2)),
-                  symbol: action.summary.daoTokenSymbol || '',
-                  percentage: parseFloat(percentage.toFixed(2)),
-                }}
-              />
-            ) : null;
-          })}
+              return web3Address.address ? (
+                <ListItemAddress
+                  key={web3Address.address}
+                  label={web3Address.ensName || web3Address.address}
+                  src={avatars[index] || web3Address.address}
+                  onClick={() =>
+                    handleAddressClick(
+                      web3Address.ensName || web3Address.address
+                    )
+                  }
+                  tokenInfo={{
+                    amount: parseFloat(Number(amount).toFixed(2)),
+                    symbol: action.summary.daoTokenSymbol || '',
+                    percentage: parseFloat(percentage.toFixed(2)),
+                  }}
+                />
+              ) : null;
+            }
+          )}
         </div>
 
         <SummaryContainer>

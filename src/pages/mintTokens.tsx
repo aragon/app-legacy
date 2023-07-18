@@ -100,6 +100,7 @@ const MintToken: React.FC = () => {
                   mode="neutral"
                 />
                 <MintTokenForm actionIndex={0} standAlone />
+                <pre>{JSON.stringify(formMethods.getValues(), null, 2)}</pre>
               </div>
             </Step>
             <Step
@@ -147,6 +148,6 @@ function actionIsValid(
   if (errors.actions || !formActions[0]) return false;
 
   return !formActions[0]?.inputs?.mintTokensToWallets?.some(
-    wallet => wallet.address === '' || Number(wallet.amount) === 0
+    wallet => wallet.web3Address.address === '' || Number(wallet.amount) === 0
   );
 }
