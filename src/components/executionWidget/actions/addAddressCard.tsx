@@ -1,14 +1,14 @@
 import {ListItemAddress} from '@aragon/ods';
-import {fetchEnsAvatar} from '@wagmi/core';
 import React, {useCallback, useEffect, useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
-import {GetEnsAvatarReturnType} from 'viem/ens';
 
 import {AccordionMethod} from 'components/accordionMethod';
 import AccordionSummary from 'containers/actionBuilder/addAddresses/accordionSummary';
 import {useNetwork} from 'context/network';
+import {useProviders} from 'context/providers';
 import {CHAIN_METADATA} from 'utils/constants';
+import {Web3Address} from 'utils/library';
 import {ActionAddAddress} from 'utils/types';
 
 export const AddAddressCard: React.FC<{
@@ -16,32 +16,31 @@ export const AddAddressCard: React.FC<{
 }> = ({action: {inputs}}) => {
   const {t} = useTranslation();
   const {network} = useNetwork();
+  const {infura: provider} = useProviders();
 
-  const [avatars, setAvatars] = useState<GetEnsAvatarReturnType[]>([]);
+  const [addresses, setAddresses] = useState<Web3Address[]>([]);
 
   /*************************************************
    *                    Effects                    *
    *************************************************/
   useEffect(() => {
-    async function fetchAvatars() {
-      const chainId = CHAIN_METADATA[network].id;
-
+    async function mapToWeb3Addresses() {
       try {
-        const avatars = await Promise.all(
-          inputs.memberWallets.map(async ({ensName: name}) => {
-            if (name) return await fetchEnsAvatar({name, chainId});
-            else return null;
-          })
+        const response = await Promise.all(
+          inputs.memberWallets.map(
+            async ({address, ensName}) =>
+              await Web3Address.create(provider, {address, ensName})
+          )
         );
 
-        setAvatars(avatars);
+        setAddresses(response);
       } catch (error) {
-        console.error('Error fetching ENS avatar', error);
+        console.error('Error creating Web3Addresses', error);
       }
     }
 
-    if (inputs.memberWallets) fetchAvatars();
-  }, [inputs.memberWallets, network]);
+    if (inputs.memberWallets) mapToWeb3Addresses();
+  }, [inputs.memberWallets, network, provider]);
 
   /*************************************************
    *             Callbacks and Handlers            *
@@ -67,14 +66,18 @@ export const AddAddressCard: React.FC<{
       methodDescription={t('labels.addWalletsDescription')}
     >
       <Container>
-        {inputs.memberWallets.map(({address, ensName}, index) => (
-          <ListItemAddress
-            label={ensName || address}
-            src={avatars[index] || address}
-            key={address}
-            onClick={() => handleAddressClick(ensName || address)}
-          />
-        ))}
+        {inputs.memberWallets.map(({address, ensName}, index) => {
+          const label = ensName || addresses[index]?.ensName || address;
+
+          return (
+            <ListItemAddress
+              label={label}
+              src={addresses[index]?.avatar || address}
+              key={address}
+              onClick={() => handleAddressClick(label)}
+            />
+          );
+        })}
       </Container>
       <AccordionSummary
         type="execution-widget"
