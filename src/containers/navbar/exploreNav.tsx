@@ -1,18 +1,31 @@
 import React from 'react';
 import styled from 'styled-components';
-import {ButtonWallet} from '@aragon/ods';
+import {
+  ButtonIcon,
+  ButtonText,
+  ButtonWallet,
+  IconFeedback,
+  useScreen,
+} from '@aragon/ods';
 import {useTranslation} from 'react-i18next';
 
 import {useWallet} from 'hooks/useWallet';
 import Logo from 'public/logo.svg';
 import {useGlobalModalContext} from 'context/globalModals';
 import {Container, GridLayout} from 'components/layout';
+import {FEEDBACK_FORM} from 'utils/constants';
 
 const ExploreNav: React.FC = () => {
   const {t} = useTranslation();
   const {address, ensName, ensAvatarUrl, isConnected, methods} = useWallet();
   const {open} = useGlobalModalContext();
+  const {isDesktop} = useScreen();
+
   const path = t('logo.linkURL');
+
+  const handleFeedbackButtonClick = () => {
+    window.open(FEEDBACK_FORM, '_blank');
+  };
 
   const handleWalletButtonClick = () => {
     if (isConnected) {
@@ -38,6 +51,22 @@ const ExploreNav: React.FC = () => {
           </LeftContent>
           <RightContent>
             <ActionsWrapper>
+              {isDesktop ? (
+                <ButtonText
+                  size="large"
+                  label={t('navButtons.giveFeedback')}
+                  mode="secondary"
+                  iconRight={<IconFeedback />}
+                  onClick={handleFeedbackButtonClick}
+                />
+              ) : (
+                <ButtonIcon
+                  size="large"
+                  mode="secondary"
+                  icon={<IconFeedback />}
+                  onClick={handleFeedbackButtonClick}
+                />
+              )}
               <ButtonWallet
                 src={ensAvatarUrl || address}
                 onClick={handleWalletButtonClick}
@@ -76,7 +105,7 @@ const RightContent = styled.div.attrs({
 })``;
 
 const ActionsWrapper = styled.div.attrs({
-  className: 'flex space-x-3 items-center',
+  className: 'flex space-x-1.5 tablet:space-x-3 items-center',
 })``;
 
 export default ExploreNav;
