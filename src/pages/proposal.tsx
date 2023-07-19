@@ -286,7 +286,12 @@ const Proposal: React.FC = () => {
             const isPossiblyWithdrawAction =
               !functionParams && action.to && action.value;
 
-            return decodeToExternalAction(action, network, t)
+            return decodeToExternalAction(
+              action,
+              proposal.dao.address,
+              network,
+              t
+            )
               .then(result => {
                 if (!result && isPossiblyWithdrawAction) {
                   return withdrawAction as unknown as Action;

@@ -15,7 +15,11 @@ import {getEtherscanVerifiedContract} from 'services/etherscanAPI';
 import {WcRequest} from 'services/walletConnectInterceptor';
 import {addABI, decodeMethod} from 'utils/abiDecoder';
 import {attachEtherNotice} from 'utils/contract';
-import {getEncodedActionInputs, getWCPayableAmount} from 'utils/library';
+import {
+  getEncodedActionInputs,
+  getWCEncodedFunctionName,
+  getWCNativeToField,
+} from 'utils/library';
 
 type Props = {
   onBackButtonClicked: () => void;
@@ -120,7 +124,7 @@ const ActionListenerModal: React.FC<Props> = ({
           // add payable field as it is NOT present on the method itself
           setValue(`actions.${index}.inputs`, [
             ...inputs,
-            {...getWCPayableAmount(t, action.params[0].value, network)},
+            {...getWCNativeToField(t, action.params[0].value, network)},
           ]);
           setValue(`actions.${actionIndex}.notice`, notices?.notice);
         } else {
@@ -131,7 +135,10 @@ const ActionListenerModal: React.FC<Props> = ({
             etherscanData.result[0].ContractName
           );
 
-          setValue(`actions.${index}.functionName`, action.method);
+          setValue(
+            `actions.${index}.functionName`,
+            getWCEncodedFunctionName(action.method)
+          );
           setValue(
             `actions.${index}.inputs`,
             getEncodedActionInputs(action.params[0], network, t)
@@ -142,7 +149,10 @@ const ActionListenerModal: React.FC<Props> = ({
         setValue(`actions.${index}.decoded`, false);
         setValue(`actions.${index}.verified`, false);
         setValue(`actions.${index}.contractName`, action.params[0].to);
-        setValue(`actions.${index}.functionName`, action.method);
+        setValue(
+          `actions.${index}.functionName`,
+          getWCEncodedFunctionName(action.method)
+        );
 
         setValue(
           `actions.${index}.inputs`,
