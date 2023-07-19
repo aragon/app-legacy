@@ -28,7 +28,11 @@ import {fetchTokenData} from 'services/prices';
 import {
   BIGINT_PATTERN,
   CHAIN_METADATA,
+  ETH_TRANSACTION_CALL_LABEL,
   ISO_DATE_PATTERN,
+  PERSONAL_SIGH_BYTES,
+  PERSONAL_SIGH_SIGNATURE,
+  PERSONAL_SIGN_LABEL,
   SupportedNetworks,
 } from 'utils/constants';
 import {
@@ -771,9 +775,9 @@ export function getWCEncodedFunctionName(
   // handle string name
   if (typeof actionOrName === 'string') {
     if (actionOrName === 'eth_sendTransaction') {
-      return 'ETH transaction call';
+      return ETH_TRANSACTION_CALL_LABEL;
     } else {
-      return 'Sign message';
+      return PERSONAL_SIGN_LABEL;
     }
   } else {
     // handle DaoAction
@@ -789,9 +793,10 @@ export function getWCEncodedFunctionName(
     const {to, data} = actionOrName;
 
     // the encoded message hash for personal_sign call is 32 bytes
-    const isPersonalSignLength = data.length === 32;
+    const isPersonalSignLength = data.length === PERSONAL_SIGH_BYTES;
 
-    const isPersonalSignSignature = hexlify(data).slice(0, 10) === '0x20c13b0b';
+    const isPersonalSignSignature =
+      hexlify(data).slice(0, 10) === PERSONAL_SIGH_SIGNATURE;
 
     // the 'to' field of the personal_sign call is usually the wallet address or set to '0x'
     const toIsEmptyOrOwnAddress =
@@ -800,8 +805,8 @@ export function getWCEncodedFunctionName(
     return isPersonalSignLength &&
       toIsEmptyOrOwnAddress &&
       isPersonalSignSignature
-      ? 'Sign message'
-      : 'ETH transaction call';
+      ? PERSONAL_SIGN_LABEL
+      : ETH_TRANSACTION_CALL_LABEL;
   }
 }
 
