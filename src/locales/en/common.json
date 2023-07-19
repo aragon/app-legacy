@@ -821,6 +821,14 @@
     "manageWallets": {
       "title": "Add or remove wallets",
       "description": "Authorized wallets can create proposals, propose to move funds in and out of the treasury, and vote in your DAO"
+    },
+    "configureActionsEncoded": {
+      "inputDestLabel": "To",
+      "inputDestDesc": "Receiver of tokens",
+      "inputValueLabel": "Amount",
+      "inputValueDesc": "Amount of tokens to transfer",
+      "inputDataLabel": "Data",
+      "inputDataDesc": "Encoded EVM call data for the smart contract"
     }
   },
   "votingTerminal": {

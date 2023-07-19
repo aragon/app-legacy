@@ -22,7 +22,7 @@ import {NavigationDao} from 'context/apolloClient';
 import {BigNumber, BigNumberish, constants, ethers, providers} from 'ethers';
 import {TFunction} from 'react-i18next';
 
-import {isAddress} from 'ethers/lib/utils';
+import {hexlify, isAddress} from 'ethers/lib/utils';
 import {getEtherscanVerifiedContract} from 'services/etherscanAPI';
 import {fetchTokenData} from 'services/prices';
 import {
@@ -376,6 +376,7 @@ export async function decodeMetadataToAction(
  */
 export async function decodeToExternalAction(
   action: DaoAction,
+  daoAddress: string,
   network: SupportedNetworks,
   t: TFunction
 ): Promise<ActionExternalContract | undefined> {
@@ -438,7 +439,7 @@ export async function decodeToExternalAction(
           name: 'wallet_connect_action',
           contractAddress: action.to,
           contractName: etherscanData.result[0].ContractName,
-          functionName: 'Unable to decode function name', // FIXME: crowdin key,
+          functionName: getWCEncodedFunctionName(action, daoAddress),
           inputs: getEncodedActionInputs(action, network, t),
           verified: true,
           decoded: false,
@@ -449,7 +450,7 @@ export async function decodeToExternalAction(
         name: 'wallet_connect_action',
         contractAddress: action.to,
         contractName: action.to,
-        functionName: 'Unable to decode function name', // FIXME: crowdin key,
+        functionName: getWCEncodedFunctionName(action, daoAddress),
         verified: false,
         decoded: false,
         inputs: getEncodedActionInputs(action, network, t),
@@ -684,15 +685,15 @@ export function getDefaultPayableAmountInputName(t: TFunction) {
   return t('scc.inputPayableAmount.label');
 }
 
-export function getWCPayableAmount(
+export function getWCNativeToField(
   t: TFunction,
   value: string,
   network: SupportedNetworks
 ) {
   return {
-    name: 'Raw Amount', // FIXME: crowdin key
+    name: t('newProposal.configureActionsEncoded.inputValueLabel'),
     type: 'string',
-    notice: 'The number of the tokens to transfer', // FIXME: crowdin key,
+    notice: t('newProposal.configureActionsEncoded.inputValueDesc'),
     value: `${formatUnits(
       BigNumber.from(value),
       CHAIN_METADATA[network].nativeCurrency.decimals
@@ -708,25 +709,100 @@ export function getEncodedActionInputs(
   return Object.keys(action).flatMap(fieldName => {
     switch (fieldName) {
       case 'value':
-        return getWCPayableAmount(t, action.value.toString(), network);
+        return getWCNativeToField(t, action.value.toString(), network);
       case 'to':
         return {
-          name: 'Dst', // FIXME: crowdin key,
+          name: t('newProposal.configureActionsEncoded.inputDestLabel'),
           type: 'address',
-          notice: 'The address of the destination account', // FIXME: crowdin key,
+          notice: t('newProposal.configureActionsEncoded.inputDestDesc'),
           value: action[fieldName],
         };
+
       case 'data':
         return {
-          name: 'Data', // t('Data'),
+          name: t('newProposal.configureActionsEncoded.inputDataLabel'),
           type: 'encodedData',
-          notice: 'Encoded EVM call to the smart contract', // FIXME: crowdin key,
+          notice: t('newProposal.configureActionsEncoded.inputDataDesc'),
           value: action[fieldName],
         };
       default:
         return [];
     }
   });
+}
+
+/**
+ * Gets the encoded function name for a given string action or name.
+ *
+ * @param name - The name to prettify.
+ * @returns The encoded function name.
+ * @throws {Error} When the input `name` is not a valid string action or name.
+ */
+export function getWCEncodedFunctionName(name: string): string;
+
+/**
+ * Gets the encoded function name for a given DaoAction object.
+ *
+ * @param action - The DaoAction object for which to get the encoded function name.
+ * @param daoAddress - The address of the Dao associated with the action.
+ * @returns The encoded function name.
+ * @throws {Error} When `daoAddress` is not provided.
+ */
+export function getWCEncodedFunctionName(
+  action: DaoAction,
+  daoAddress: string
+): string;
+
+/**
+ * Gets the encoded function name for a given action or name.
+ * If `actionOrName` is a string, the `daoAddress` parameter is not required.
+ * If `actionOrName` is a DaoAction object, the `daoAddress` parameter is mandatory.
+ *
+ * @param actionOrName - The action object or name for which to get the encoded function name.
+ * @param daoAddress - The address of the Dao when `actionOrName` is a DaoAction object.
+ * @returns The encoded function name.
+ * @throws {Error} When `actionOrName` is a DaoAction and `daoAddress` is not provided.
+ * @throws {Error} When `actionOrName` is not a valid string action or name.
+ */
+export function getWCEncodedFunctionName(
+  actionOrName: DaoAction | string,
+  daoAddress?: string
+): string {
+  // handle string name
+  if (typeof actionOrName === 'string') {
+    if (actionOrName === 'eth_sendTransaction') {
+      return 'ETH transaction call';
+    } else {
+      return 'Sign message';
+    }
+  } else {
+    // handle DaoAction
+    if (!daoAddress) {
+      throw new Error(
+        'daoAddress is required when actionOrName is a DaoAction'
+      );
+    }
+
+    // Note: unless the data field is decoded, we are never 100% sure of what the
+    // method name is, but these checks can help determine whether the transaction
+    // is a personal_sign or eth_call (the only ones supported by the current wc interceptor)
+    const {to, data} = actionOrName;
+
+    // the encoded message hash for personal_sign call is 32 bytes
+    const isPersonalSignLength = data.length === 32;
+
+    const isPersonalSignSignature = hexlify(data).slice(0, 10) === '0x20c13b0b';
+
+    // the 'to' field of the personal_sign call is usually the wallet address or set to '0x'
+    const toIsEmptyOrOwnAddress =
+      to.toLowerCase() === daoAddress.toLowerCase() || to === '0x';
+
+    return isPersonalSignLength &&
+      toIsEmptyOrOwnAddress &&
+      isPersonalSignSignature
+      ? 'Sign message'
+      : 'ETH transaction call';
+  }
 }
 
 export class Web3Address {
