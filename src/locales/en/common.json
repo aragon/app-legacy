@@ -235,12 +235,15 @@
     },
     "currentHolders": "Current holders",
     "supplyPotential": "Potential supply",
-    "supplyPotentialHelptext": "Based on {{tokenSymbol}} Total Supply"
+    "supplyPotentialHelptext": "Based on {{tokenSymbol}} Total Supply",
+    "type": "Type",
+    "select": "Select"
   },
   "placeHolders": {
     "selectToken": "Select a token …",
     "walletOrEns": "Type wallet address or ENS …",
     "searchTokens": "Type to search …",
+    "searchTransfers": "Type to filter …",
     "daoName": "Type your DAO's name …",
     "ensName": "aragon",
     "daoDescription": "Type your summary …",
@@ -258,6 +261,22 @@
       "descriptionLinkURL": "https://aragon.org/how-to/manage-a-dao-treasury",
       "descriptionLinkLabel": "in this guide",
       "buttonLabel": "Deposit funds"
+    },
+    "modalExport": {
+      "headerLabel": "Export to CSV",
+      "headerDesc": "Select the date range you would like to export",
+      "ctaLabelGenerateCSV": "Generate CSV",
+      "ctaLabelGenerating": "Generating CSV …",
+      "ctaLabelRetry": "Retry generating CSV",
+      "ctaLabelSave": "Save CSV",
+      "ctaLabelContinue": "Continue to Finance",
+      "ctaLabelCancel": "Cancel",
+      "alertCritical": "Export failed. Try again!",
+      "statusSuccess": "Export generated successfully",
+      "feedback": {
+        "title": "File saved!",
+        "desc": "The CSV should now be saved on your device."
+      }
     }
   },
   "governance": {
@@ -803,7 +822,7 @@
       "actionsInfo": "More options for parameters are coming soon. ",
       "actionAlertCritical": {
         "title": "Action may fail",
-        "desc": "Even if the proposal was approved, this action may fail if it is not executed within the time limit."
+        "desc": "Even if the proposal passes, this action may fail if it is not executed within the time limit."
       },
       "addFirstActionTitle": "Add first Action",
       "addFirstActionDesc": "Add your very first optional action if you wish to peform on-chain executions",
@@ -811,7 +830,7 @@
       "stepCounter": "Step {{x}} of {{x}}",
       "actionAlertWarning": {
         "title": "Action not decoded",
-        "desc": "Because the smart contract is not verified, the actions could not be decoded."
+        "desc": "This action can't be decoded because the smart contract is not verified."
       }
     },
     "mintTokens": {
@@ -1225,7 +1244,7 @@
     },
     "validation": {
       "modalTitle": "Connect dApp",
-      "codeInputHelp": "Copy the QR Code to your Clipboard and past it below to connect to your desired dApp.",
+      "codeInputHelp": "Copy the QR Code to your Clipboard and paste it below to connect to your desired dApp.",
       "codeInputLabel": "WalletConnect QR code",
       "codeInputPlaceholder": "wc: …",
       "ctaLabel": "Connect dApp",
@@ -1251,7 +1270,14 @@
       }
     },
     "modalHeaderSearch": {
-      "placeholder": "Type to find any action …"
+      "placeholder": "Type to find a dApp …"
     }
+  },
+  "label": {
+    "exportCSV": "Export to CSV"
+  },
+  "tokenAmount": {
+    "InputLabel": "Tokens",
+    "inputDesc": "Select the token and the amount that you would like to withdraw"
   }
 }
