@@ -23,6 +23,7 @@ import {
 } from 'services/walletConnectInterceptor';
 import {CHAIN_METADATA, SUPPORTED_CHAIN_ID} from 'utils/constants';
 import usePrevious from 'hooks/usePrevious';
+import {useWallet} from './useWallet';
 
 export interface UseWalletConnectInterceptorOptions {
   onActionRequest?: (request: WcRequest) => void;
@@ -49,13 +50,12 @@ export function useWalletConnectInterceptor({
   onConnectionProposal = () => {},
 }: UseWalletConnectInterceptorOptions) {
   const {network} = useNetwork();
+  const {address} = useWallet();
   const prevNetwork = usePrevious(network);
 
   const [client, setClient] = useState<WcClient | null>(null);
   // TODO: Determine if currentWcRecord and archivedURIs needs to stay or removed
   const [currentWcRecord, setCurrentWcRecord] = useState<WcRecord | null>(null);
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [archivedURIs, setArchivedURIs] = useState<string[]>([]);
 
   const [activeSessions, setActiveSessions] =
     useState<Record<string, SessionTypes.Struct>>();
@@ -67,14 +67,9 @@ export function useWalletConnectInterceptor({
 
   const canConnect = useCallback(
     (uri: string) => {
-      return (
-        isWcReady &&
-        !isWcConnected &&
-        !!uri.length &&
-        !archivedURIs.includes(uri)
-      );
+      return isWcReady && !isWcConnected && !!uri.length;
     },
-    [archivedURIs, isWcConnected, isWcReady]
+    [isWcConnected, isWcReady]
   );
 
   const canDisconnect = useCallback(() => {
@@ -90,10 +85,7 @@ export function useWalletConnectInterceptor({
       try {
         const connection = await connect(client, restOptions.uri);
 
-        setCurrentWcRecord({
-          autoApprove: true,
-          ...restOptions,
-        });
+        setCurrentWcRecord({autoApprove: true, ...restOptions});
         return connection;
       } catch (e) {
         onError(e as Error);
@@ -108,12 +100,6 @@ export function useWalletConnectInterceptor({
         throw new Error('The WalletConnect client must be initialized');
       }
 
-      // if (!currentWcRecord) {
-      //   throw new Error(
-      //     'To approve the connection, you must initiate it first'
-      //   );
-      // }
-
       if (!topic && !currentWcRecord?.topic) {
         throw new Error(
           'Topic must be provided either by currently approved session or as argument'
@@ -125,7 +111,6 @@ export function useWalletConnectInterceptor({
       } catch (e) {
         console.error(e);
       } finally {
-        // setArchivedURIs([...archivedURIs, currentWcRecord?.uri]);
         setCurrentWcRecord(null);
       }
     },
@@ -171,7 +156,6 @@ export function useWalletConnectInterceptor({
       }
 
       await rejectSession(client, data);
-
       setCurrentWcRecord(null);
     },
     [client]
@@ -203,14 +187,6 @@ export function useWalletConnectInterceptor({
         throw new Error('The WalletConnect client must be initialized');
       }
 
-      // if (!currentWcRecord) {
-      //   throw new Error(
-      //     'To approve the request, you must initiate the connection first'
-      //   );
-      // }
-
-      // if (event.topic !== currentWcRecord?.topic) return;
-
       if (event.params.chainId === `eip155:${activeNetworkData.id}`) {
         onActionRequest?.(event.params.request);
       }
@@ -224,19 +200,29 @@ export function useWalletConnectInterceptor({
         console.error('Connection is not established');
         return;
       }
-      // console.log('handleDisconnect', event);
-      // console.log(client.getActiveSessions());
     },
     [currentWcRecord?.topic]
   );
 
   const getActiveSessions = useCallback(() => {
-    return client?.getActiveSessions() as Record<string, SessionTypes.Struct>;
-  }, [client]);
+    const activeSessions = client?.getActiveSessions() ?? {};
+    return Object.values(activeSessions).filter(session =>
+      session.namespaces['eip155'].accounts.every(
+        account => address == null || !account.includes(address)
+      )
+    );
+  }, [client, address]);
 
   useEffect(() => {
-    makeClient().then(setClient);
-  }, []);
+    const initClient = async () => {
+      console.log('init from: ', name);
+      const client = await makeClient();
+      console.log(client.getActiveSessions());
+      setClient(client);
+    };
+
+    initClient();
+  }, [name]);
 
   useEffect(() => {
     if (!client) return;

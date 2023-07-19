@@ -24,8 +24,7 @@ const WalletConnect: React.FC<WalletConnectProps> = ({actionIndex}) => {
   const [dAppValidationIsOpen, setdAppValidationIsOpen] = useState(false);
   const [listeningActionsIsOpen, setListeningActionsIsOpen] = useState(false);
   const [selectedSession, setSelectedSession] = useState<SessionTypes.Struct>();
-  const [activeSessions, setActiveSessions] =
-    useState<Record<string, SessionTypes.Struct>>();
+  const [activeSessions, setActiveSessions] = useState<SessionTypes.Struct[]>();
   const {getActiveSessions} = useWalletConnectInterceptor({});
 
   /*************************************************

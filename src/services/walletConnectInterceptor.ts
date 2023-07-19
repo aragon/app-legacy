@@ -1,53 +1,13 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-import {walletConnectProjectID} from 'utils/constants';
 import {Core} from '@walletconnect/core';
 import {buildApprovedNamespaces, getSdkError} from '@walletconnect/utils';
-import {Web3Wallet} from '@walletconnect/web3wallet';
+import Web3WalletClient, {Web3Wallet} from '@walletconnect/web3wallet';
+import {Web3WalletTypes} from '@walletconnect/web3wallet';
+import {ProposalTypes} from '@walletconnect/types';
 
-export type WcClient = any;
-
-export interface WcConnectProposalEvent {
-  id: number;
-  params: {
-    id: number;
-    expiry: number;
-    relays: Array<{
-      protocol: string;
-      data?: string;
-    }>;
-    proposer: {
-      publicKey: string;
-      metadata: {
-        name: string;
-        description: string;
-        url: string;
-        icons: string[];
-      };
-    };
-    requiredNamespaces: Record<
-      string,
-      {
-        chains: string[];
-        methods: string[];
-        events: string[];
-      }
-    >;
-    pairingTopic?: string;
-  };
-}
-
-export interface WcRequestEvent {
-  id: number;
-  topic: string;
-  params: {
-    request: {
-      method: string;
-      params: any;
-    };
-    chainId: string;
-  };
-}
-
+export type WcClient = Web3WalletClient;
+export type WcRequestEvent = Web3WalletTypes.SessionRequest;
+export type WcConnectProposalEvent =
+  Web3WalletTypes.BaseEventArgs<ProposalTypes.Struct>;
 export type WcRequest = WcRequestEvent['params']['request'];
 
 export interface WcDisconnectEvent {
@@ -56,15 +16,11 @@ export interface WcDisconnectEvent {
 }
 
 export async function makeClient(): Promise<WcClient> {
-  const core = new Core({
-    projectId: 'a312303bfee4d9c1cdbc5e638e8aa438' || walletConnectProjectID,
-  });
-
   return Web3Wallet.init({
-    core,
+    core: new Core({projectId: 'a312303bfee4d9c1cdbc5e638e8aa438'}),
     metadata: {
-      name: 'Aragon',
-      description: 'Aragon WalletConnect',
+      name: 'Aragon DAO',
+      description: 'Aragon DAO',
       url: 'https://aragon.org',
       icons: ['https://walletconnect.org/walletconnect-logo.png'],
     },
@@ -124,7 +80,7 @@ export async function approveSession(
   supportedChains: number[] | readonly number[] = []
 ) {
   const approvedNamespaces = buildApprovedNamespaces({
-    proposal: proposal.params as any,
+    proposal: proposal.params,
     supportedNamespaces: {
       eip155: {
         chains: supportedChains.map(id => `eip155:${id}`),
