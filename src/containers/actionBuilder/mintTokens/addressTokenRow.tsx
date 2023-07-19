@@ -163,7 +163,7 @@ const TokenField: React.FC<IndexProps> = ({actionIndex, fieldIndex}) => {
         field: {name, value, onBlur, onChange},
         fieldState: {error},
       }) => (
-        <div className="w-23">
+        <div className="flex-1 desktop:flex-none desktop:w-23">
           <NumberInput
             name={name}
             value={value}
@@ -338,15 +338,7 @@ export const AddressAndTokenRow: React.FC<AddressAndTokenRowProps> = ({
       </VStack>
 
       <VStack>
-        <div className="flex space-x-2">
-          <div className="flex-1">
-            <Label label={t('finance.tokens')} />
-          </div>
-          <div className="flex-1" style={{maxWidth: '12ch'}}>
-            <Label label={t('finance.allocation')} />
-          </div>
-        </div>
-
+        <Label label={t('finance.tokens')} />
         <HStackWithPadding>
           <TokenField actionIndex={actionIndex} fieldIndex={fieldIndex} />
           <PercentageDistribution
