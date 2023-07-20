@@ -30,8 +30,8 @@ import {
   CHAIN_METADATA,
   ETH_TRANSACTION_CALL_LABEL,
   ISO_DATE_PATTERN,
-  PERSONAL_SIGH_BYTES,
-  PERSONAL_SIGH_SIGNATURE,
+  PERSONAL_SIGN_BYTES,
+  PERSONAL_SIGN_SIGNATURE,
   PERSONAL_SIGN_LABEL,
   SupportedNetworks,
 } from 'utils/constants';
@@ -793,10 +793,10 @@ export function getWCEncodedFunctionName(
     const {to, data} = actionOrName;
 
     // the encoded message hash for personal_sign call is 32 bytes
-    const isPersonalSignLength = data.length === PERSONAL_SIGH_BYTES;
+    const isPersonalSignLength = data.length === PERSONAL_SIGN_BYTES;
 
     const isPersonalSignSignature =
-      hexlify(data).slice(0, 10) === PERSONAL_SIGH_SIGNATURE;
+      hexlify(data).slice(0, 10) === PERSONAL_SIGN_SIGNATURE;
 
     // the 'to' field of the personal_sign call is usually the wallet address or set to '0x'
     const toIsEmptyOrOwnAddress =
