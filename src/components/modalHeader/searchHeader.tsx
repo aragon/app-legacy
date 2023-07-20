@@ -6,7 +6,6 @@ import {
   IconType,
 } from '@aragon/ods';
 import React from 'react';
-import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 
 type SearchHeader = {
@@ -19,8 +18,6 @@ type SearchHeader = {
 };
 
 const SearchHeader: React.FC<SearchHeader> = props => {
-  const {t} = useTranslation();
-
   return (
     <Container>
       <LeftContent>
