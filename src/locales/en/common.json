@@ -770,6 +770,18 @@
       "descriptionLinkURL": "https://aragon.org/how-to/set-up-your-dao-governance-in-8-steps",
       "distributeTokensHelpertextLinkLabel": "read our guide",
       "distributeTokensHelpertextLinkURL": "https://aragon.org/how-to/distribute-a-dao-governance-token",
+      "votingType": {
+        "title": "Should voting take place on-chain or off-chain",
+        "onChain": {
+          "title": "On-chain",
+          "subtitle": "The voting process and the execution of actions binded to a proposal are both on-chain"
+        },
+        "offChain": {
+          "title": "Off-chain",
+          "subtitle": "The voting process is off-chain, while the proof of all votes and the execution are done by a multisig called \"Guardians\""
+        }
+
+      },
       "blockChainVoting": {
         "label": "On what blockchain will community voting take place?",
         "optionOnchainLabel": "{{blockchainName}}",
@@ -1616,8 +1628,8 @@
       "alertTitle": "Some updates may be unsafe",
       "alertDesc": "One or more actions aren't in the Aragon Update Registry, indicating that this update could be potentially harmful.",
       "desc": "All actions are listed in the Aragon Update Registry, which is managed by the Aragon team. However, always exercise caution when evaluating updates. To learn more about Aragon OSx updates, {{link}}.",
-      "descLinkLabel": "read more in our guides",
-      "descLinkURL": "https://aragon.org/how-to/update-your-aragon-dao"
+      "descLinkLabel": "Read more",
+      "descLinkUrl": "https://"
     },
     "proposal": {
       "bannerTitle": "Verified Aragon App Update"

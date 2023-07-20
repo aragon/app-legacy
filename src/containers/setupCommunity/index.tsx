@@ -103,6 +103,39 @@ const SetupCommunityForm: React.FC = () => {
         />
       </FormItem>
 
+      <FormSection>
+        <Label label={t('createDAO.step3.votingType.title')} />
+        <Controller
+          name="votingType"
+          rules={{required: 'Validate'}}
+          control={control}
+          defaultValue="onChain"
+          render={({field: {onChange, value}}) => (
+            <>
+              <CheckboxListItem
+                label={t('createDAO.step3.votingType.onChain.title')}
+                helptext={t('createDAO.step3.votingType.onChain.subtitle')}
+                multiSelect={false}
+                onClick={() => {
+                  onChange('onChain');
+                }}
+                {...(value === 'onChain' ? {type: 'active'} : {})}
+              />
+
+              <CheckboxListItem
+                label={t('createDAO.step3.votingType.offChain.title')}
+                helptext={t('createDAO.step3.votingType.offChain.subtitle')}
+                onClick={() => {
+                  onChange('offChain');
+                }}
+                multiSelect={false}
+                {...(value === 'offChain' ? {type: 'active'} : {})}
+              />
+            </>
+          )}
+        />
+      </FormSection>
+
       {membership === 'multisig' && (
         <>
           <FormItem>
