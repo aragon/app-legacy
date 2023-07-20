@@ -92,9 +92,6 @@ const AddExistingToken: React.FC = () => {
     [clearErrors, network, pluginClient, provider, resetField, setValue]
   );
 
-  const isAllowedToConfigureVotingEligibility =
-    tokenType === 'ERC-20' || tokenType === 'governance-ERC20';
-
   return (
     <>
       <DescriptionContainer>
@@ -142,11 +139,6 @@ const AddExistingToken: React.FC = () => {
           )}
         />
       </FormItem>
-      {isAllowedToConfigureVotingEligibility && (
-        <FormItem>
-          <SelectEligibility />
-        </FormItem>
-      )}
     </>
   );
 };

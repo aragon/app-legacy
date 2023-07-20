@@ -21,6 +21,7 @@ import {
   MIN_DURATION_HOURS,
 } from 'utils/constants';
 import {getDaysHoursMins} from 'utils/date';
+import {ProposalCreation} from './proposalCreation';
 
 export type ConfigureCommunityProps = {
   isSettingPage?: boolean;
@@ -399,6 +400,9 @@ const ConfigureCommunity: React.FC<ConfigureCommunityProps> = ({
           </FormItem>
         </>
       )}
+      <FormItem>
+        <ProposalCreation />
+      </FormItem>
     </>
   );
 };

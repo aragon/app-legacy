@@ -141,9 +141,6 @@ const SetupCommunityForm: React.FC = () => {
           <FormItem>
             <MultisigWallets />
           </FormItem>
-          <FormItem>
-            <MultisigEligibility />
-          </FormItem>
         </>
       )}
 

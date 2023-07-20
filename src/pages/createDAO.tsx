@@ -266,6 +266,7 @@ export const CreateDAO: React.FC = () => {
       break;
   }
 
+  // todo(kon): check for rebase validation b794a88a
   const daoCommunityConfigurationIsValid = useMemo(() => {
     if (
       errors.minimumApproval ||

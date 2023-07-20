@@ -102,9 +102,6 @@ const CreateNewToken: React.FC = () => {
         />
         <AddWallets />
       </FormItem>
-      <FormItem>
-        <SelectEligibility />
-      </FormItem>
     </>
   );
 };
