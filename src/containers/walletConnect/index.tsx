@@ -118,7 +118,7 @@ const WalletConnect: React.FC<WalletConnectProps> = ({actionIndex}) => {
   ) {
     return (
       <ModalBottomSheetSwitcher isOpen={true}>
-        <div className="h-40">
+        <div className="pb-36">
           <Loading />
         </div>
       </ModalBottomSheetSwitcher>
