@@ -215,14 +215,12 @@ export function useWalletConnectInterceptor({
 
   useEffect(() => {
     const initClient = async () => {
-      console.log('init from: ', name);
       const client = await makeClient();
-      console.log(client.getActiveSessions());
       setClient(client);
     };
 
     initClient();
-  }, [name]);
+  }, []);
 
   useEffect(() => {
     if (!client) return;
