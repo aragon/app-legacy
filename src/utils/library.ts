@@ -539,7 +539,7 @@ export async function resolveDaoAvatarIpfsCid(
         const cid = resolveIpfsCid(avatar);
         const ipfsClient = client.ipfs.getClient();
         const imageBytes = await ipfsClient.cat(cid); // Uint8Array
-        const imageBlob = new Blob(imageBytes as unknown as BlobPart[]);
+        const imageBlob = new Blob([imageBytes] as unknown as BlobPart[]);
 
         return URL.createObjectURL(imageBlob);
       } catch (err) {
