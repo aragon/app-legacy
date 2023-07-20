@@ -1,6 +1,8 @@
-import {useWalletConnectInterceptor} from 'hooks/useWalletConnectInterceptor';
+import {
+  WcActionRequest,
+  useWalletConnectInterceptor,
+} from 'hooks/useWalletConnectInterceptor';
 import React, {useState} from 'react';
-import {WcRequest} from 'services/walletConnectInterceptor';
 
 export const ExampleWalletConnectInterceptor: React.FC = () => {
   const [address, setAddress] = useState(
@@ -8,14 +10,15 @@ export const ExampleWalletConnectInterceptor: React.FC = () => {
   );
   const [uri, setUri] = useState('');
 
-  function onActionRequest(request: WcRequest) {
+  function onActionRequest(request: WcActionRequest) {
     console.log(request);
   }
 
-  const {wcConnect, canConnect, canDisconnect, wcDisconnect} =
-    useWalletConnectInterceptor({
+  const {activeSessions, wcConnect, wcDisconnect} = useWalletConnectInterceptor(
+    {
       onActionRequest,
-    });
+    }
+  );
 
   return (
     <div>
@@ -32,18 +35,20 @@ export const ExampleWalletConnectInterceptor: React.FC = () => {
         type="text"
       />
       <button
-        disabled={!canConnect(uri)}
+        disabled={uri == null}
         onClick={() =>
           wcConnect({
             uri,
-            address,
             onError: e => console.log(e),
           })
         }
       >
         Connect
       </button>
-      <button disabled={!canDisconnect()} onClick={() => wcDisconnect()}>
+      <button
+        disabled={activeSessions.length > 0}
+        onClick={() => wcDisconnect(activeSessions[0].topic)}
+      >
         Disconnect
       </button>
     </div>

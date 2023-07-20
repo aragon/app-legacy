@@ -10,9 +10,11 @@ import ModalHeader from 'components/modalHeader';
 import {useActionsContext} from 'context/actions';
 import {useNetwork} from 'context/network';
 import useScreen from 'hooks/useScreen';
-import {useWalletConnectInterceptor} from 'hooks/useWalletConnectInterceptor';
+import {
+  WcActionRequest,
+  useWalletConnectInterceptor,
+} from 'hooks/useWalletConnectInterceptor';
 import {getEtherscanVerifiedContract} from 'services/etherscanAPI';
-import {WcRequest} from 'services/walletConnectInterceptor';
 import {addABI, decodeMethod} from 'utils/abiDecoder';
 import {attachEtherNotice} from 'utils/contract';
 import {
@@ -43,10 +45,10 @@ const ActionListenerModal: React.FC<Props> = ({
   const {setValue, resetField} = useFormContext();
   const {addAction, removeAction} = useActionsContext();
 
-  const [actionsReceived, setActionsReceived] = useState<Array<WcRequest>>([]);
+  const [actionsReceived, setActionsReceived] = useState<WcActionRequest[]>([]);
 
   const onActionRequest = useCallback(
-    (request: WcRequest) => {
+    (request: WcActionRequest) => {
       setActionsReceived([...actionsReceived, request]);
     },
     [actionsReceived]
