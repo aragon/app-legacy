@@ -9,6 +9,7 @@ import {useWalletConnectInterceptor} from 'hooks/useWalletConnectInterceptor';
 import WCConnectedApps from './connectedAppsModal';
 import ModalBottomSheetSwitcher from 'components/modalBottomSheetSwitcher';
 import ActionListenerModal from './actionListenerModal';
+import {Loading} from 'components/temporary';
 
 type WalletConnectProps = {
   actionIndex: number;
@@ -117,7 +118,9 @@ const WalletConnect: React.FC<WalletConnectProps> = ({actionIndex}) => {
   ) {
     return (
       <ModalBottomSheetSwitcher isOpen={true}>
-        <div className="h-40" />
+        <div className="h-40">
+          <Loading />
+        </div>
       </ModalBottomSheetSwitcher>
     );
   }

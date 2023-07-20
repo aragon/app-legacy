@@ -1217,7 +1217,7 @@
     },
     "validation": {
       "modalTitle": "Connect dApp",
-      "codeInputHelp": "Copy the QR Code to your Clipboard and past it below to connect to your desired dApp.",
+      "codeInputHelp": "Copy the QR Code to your Clipboard and paste it below to connect to your desired dApp.",
       "codeInputLabel": "WalletConnect QR code",
       "codeInputPlaceholder": "wc: …",
       "ctaLabel": "Connect dApp",

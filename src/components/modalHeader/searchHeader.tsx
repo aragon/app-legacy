@@ -14,6 +14,7 @@ type SearchHeader = {
   selectedValue?: string;
   onSearch?: (search: string) => void;
   buttonIcon?: React.FunctionComponentElement<IconType>;
+  searchPlaceholder: string;
   onHomeButtonClick?: () => void;
 };
 
@@ -39,7 +40,7 @@ const SearchHeader: React.FC<SearchHeader> = props => {
 
         <ActionSearchInput
           type="text"
-          placeholder={t('scc.labels.searchPlaceholder')}
+          placeholder={props.searchPlaceholder}
           onChange={e => props.onSearch?.(e.target.value)}
         />
       </LeftContent>

@@ -59,6 +59,7 @@ const DesktopModal: React.FC<DesktopModalProps> = props => {
         onClose={props.onClose}
         selectedValue={selectedSC?.name}
         onSearch={setSearch}
+        searchPlaceholder={t('scc.labels.searchPlaceholder')}
         onHomeButtonClick={() => {
           resetField('selectedSC');
           resetField('selectedAction');

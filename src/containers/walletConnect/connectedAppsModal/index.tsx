@@ -45,6 +45,7 @@ const WCConnectedApps: React.FC<Props> = props => {
       <Header
         onClose={props.onClose}
         onSearch={setSearch}
+        searchPlaceholder={t('wc.modalHeaderSearch.placeholder')}
         buttonIcon={search ? <IconSearch /> : undefined}
       />
       <Content>
