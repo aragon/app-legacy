@@ -68,7 +68,7 @@ const ActionListenerModal: React.FC<Props> = ({
     // the case, then both the Etherscan data and notices can be fetched
     // and parsed outside of the map, getting rid of the unnecessary
     // async requests. F.F. - [07-10-2023]
-    actionsReceived.map(async (action, currentIndex) => {
+    actionsReceived.forEach(async (action, currentIndex) => {
       // verify and decode
       const etherscanData = await getEtherscanVerifiedContract(
         action.params[0].to,

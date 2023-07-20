@@ -86,7 +86,9 @@ export const Row = ({index, ...props}: MultisigWalletsRowProps) => {
                 ref={ref}
                 onClearButtonClick={() => {
                   alert(t('alert.chip.inputCleared'));
-                  setTimeout(() => trigger('multisigWallets'), 50);
+                  setTimeout(() => {
+                    trigger('multisigWallets');
+                  }, 50);
                 }}
               />
             </InputContainer>

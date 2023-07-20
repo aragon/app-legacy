@@ -57,14 +57,18 @@ export const MultisigWallets = () => {
   const handleDeleteEntry = (index: number) => {
     remove(index);
     alert(t('alert.chip.removedAddress'));
-    setTimeout(() => trigger('multisigWallets'), 50);
+    setTimeout(() => {
+      trigger('multisigWallets');
+    }, 50);
   };
 
   // remove all wallets
   const handleDeleteAll = () => {
     replace([{address, ensName}]);
     alert(t('alert.chip.removedAllAddresses'));
-    setTimeout(() => trigger('multisigWallets'), 50);
+    setTimeout(() => {
+      trigger('multisigWallets');
+    }, 50);
   };
 
   // reset wallet
