@@ -15,9 +15,7 @@ export const ExampleWalletConnectInterceptor: React.FC = () => {
   }
 
   const {activeSessions, wcConnect, wcDisconnect} = useWalletConnectInterceptor(
-    {
-      onActionRequest,
-    }
+    {onActionRequest}
   );
 
   return (

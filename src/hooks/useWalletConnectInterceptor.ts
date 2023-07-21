@@ -1,5 +1,5 @@
 import {useNetwork} from 'context/network';
-import {useCallback, useState, useEffect, useMemo} from 'react';
+import {useCallback, useState, useEffect} from 'react';
 import {SessionTypes} from '@walletconnect/types';
 
 import {walletConnectInterceptor} from 'services/walletConnectInterceptor';
@@ -8,16 +8,12 @@ import usePrevious from 'hooks/usePrevious';
 import {Web3WalletTypes} from '@walletconnect/web3wallet';
 import {useDaoDetailsQuery} from './useDaoDetails';
 
+export type WcSession = SessionTypes.Struct;
 export type WcActionRequest =
   Web3WalletTypes.SessionRequest['params']['request'];
 
 export interface UseWalletConnectInterceptorOptions {
   onActionRequest?: (request: WcActionRequest) => void;
-  onConnectionProposal?: (payload: {
-    approve: () => void;
-    reject: () => void;
-  }) => void;
-  autoApprove?: boolean;
 }
 
 export interface WcConnectOptions {
@@ -25,14 +21,10 @@ export interface WcConnectOptions {
   onError?: (e: Error) => void;
 }
 
-type WcSession = SessionTypes.Struct;
-type ActiveSessionListener = (sessions: WcSession[]) => void;
-const activeSessionsListeners = new Set<ActiveSessionListener>();
+const activeSessionsListeners = new Set<(sessions: WcSession[]) => void>();
 
 export function useWalletConnectInterceptor({
   onActionRequest,
-  onConnectionProposal,
-  autoApprove = true,
 }: UseWalletConnectInterceptorOptions) {
   const {network} = useNetwork();
   const prevNetwork = usePrevious(network);
@@ -41,13 +33,12 @@ export function useWalletConnectInterceptor({
 
   const [activeSessions, setActiveSessions] = useState<WcSession[]>([]);
 
-  const activeNetworkData = useMemo(() => CHAIN_METADATA[network], [network]);
-
   const updateActiveSessions = useCallback(() => {
     const newSessions = walletConnectInterceptor.getActiveSessions(
       daoDetails?.address
     );
 
+    // Update active-sessions for all hook instances
     activeSessionsListeners.forEach(listener => listener(newSessions));
   }, [daoDetails]);
 
@@ -87,34 +78,18 @@ export function useWalletConnectInterceptor({
     [daoDetails, updateActiveSessions]
   );
 
-  const handleReject = useCallback(
-    async (data: Web3WalletTypes.SessionProposal) => {
-      await walletConnectInterceptor.rejectSession(data);
-    },
-    []
-  );
-
   const handleConnectProposal = useCallback(
-    async (event: Web3WalletTypes.SessionProposal) => {
-      if (autoApprove) {
-        handleApprove(event);
-      } else {
-        onConnectionProposal?.({
-          approve: () => handleApprove(event),
-          reject: () => handleReject(event),
-        });
-      }
-    },
-    [autoApprove, onConnectionProposal, handleApprove, handleReject]
+    async (event: Web3WalletTypes.SessionProposal) => handleApprove(event),
+    [handleApprove]
   );
 
   const handleRequest = useCallback(
     (event: Web3WalletTypes.SessionRequest) => {
-      if (event.params.chainId === `eip155:${activeNetworkData.id}`) {
+      if (event.params.chainId === `eip155:${CHAIN_METADATA[network].id}`) {
         onActionRequest?.(event.params.request);
       }
     },
-    [activeNetworkData, onActionRequest]
+    [network, onActionRequest]
   );
 
   const handleDisconnect = useCallback(
@@ -166,10 +141,10 @@ export function useWalletConnectInterceptor({
       walletConnectInterceptor.changeNetwork(
         session.topic,
         session.namespaces['eip155'].accounts,
-        activeNetworkData.id
+        CHAIN_METADATA[network].id
       );
     });
-  }, [activeNetworkData, network, prevNetwork, activeSessions]);
+  }, [network, prevNetwork, activeSessions]);
 
   return {wcConnect, wcDisconnect, activeSessions};
 }

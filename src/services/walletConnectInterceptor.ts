@@ -111,7 +111,9 @@ class WalletConnectInterceptor {
     const sessions = this.client?.getActiveSessions() ?? {};
     const filteredSessions = Object.values(sessions).filter(
       ({self, namespaces}) => {
+        // Only sessions for Aragon DAO client
         const clientNameMatch = self.metadata.name === this.clientMetadata.name;
+        // Only sessions matching the given address if given
         const addressMatch =
           address == null ||
           namespaces['eip155']?.accounts.some(eipAccount =>
