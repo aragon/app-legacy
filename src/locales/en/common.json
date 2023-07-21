@@ -143,6 +143,7 @@
     "changeableVote": "Changeable with a vote",
     "changeable": "Changeable",
     "etherscan": "Etherscan",
+    "executiveCommitteeMembers": "Executive committee members",
     "whitelistWallets": {
       "address": "Address",
       "addresses": "{{count}} addresses",
@@ -457,6 +458,10 @@
       "proposalMaxDuration": "To keep your DAO secure, it's not recommended to have an expiration time longer than 2 weeks. ",
       "accepTableProposalDuration": "It’s recommended to have an expiration time of five days, so you have a clean proposal list.",
       "dateTimeMinDuration": "Duration cannot be less than one hour."
+    },
+    "committee": {
+      "automaticallyAdded": "Your connected Wallet got automatically added to the list.",
+      "minimumDuration": "The minimum duration of {{days}} is defined by DAO Governance Settings."
     },
     "durationAlert": "Set this to a duration that is long enough for your members to have sufficient time to vote. It’s recommended to set this to at least 1 day.",
     "maxDurationAlert": "The maximum duration is 365 days.",
@@ -827,6 +832,16 @@
       "wrappedReferenceDescLinkURL": "https://aragon.org/how-to/import-existing-tokens",
       "wrappedReferenceValueLabel": "{{tokenSymbol}}",
       "wrappedReferenceParticipationValueLabel": "{{gTokenSymbol}} *"
+    },
+    "step5": {
+      "label": "Step 5",
+      "title": "Define your executive committee",
+      "description": "To bring the offchain results onchain, a executive committee is needed to validate the results and perform the optional actions of a proposal. Learn more about the council and its tasks {{ link }}.",
+      "descriptionLinkLabel": "in our guide",
+      "descriptionLinkURL": "https://aragon.org/how-to/governance-ii-setting-dao-governance-thresholds",
+      "executiveCommitteeMembersSubtitle" : "Add as many addresses as you like to the DAO. These are authorised to create proposals, transactions or suggest changes to the DAO settings after its creation. Upload a CSV with {{link}} if you want.",
+      "executiveCommitteeMembersSubtitleLinkLabel" : "this template",
+      "executiveCommitteeMembersSubtitleLinkURL" : "https://aragon.org/how-to/governance-ii-setting-dao-governance-thresholds"
     },
     "review": {
       "title": "Review details",
