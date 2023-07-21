@@ -67,7 +67,7 @@ class WalletConnectInterceptor {
       supportedNamespaces: {
         eip155: {
           chains: supportedChains.map(id => `eip155:${id}`),
-          methods: ['eth_sendTransaction', 'personal_sign'],
+          methods: proposal.params.requiredNamespaces['eip155'].methods,
           events: ['accountsChanged', 'chainChanged'],
           accounts: supportedChains.map(id => `eip155:${id}:${accountAddress}`),
         },
