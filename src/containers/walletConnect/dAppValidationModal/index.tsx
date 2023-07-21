@@ -6,7 +6,7 @@ import {
   Spinner,
   WalletInputLegacy,
 } from '@aragon/ods';
-import React, {useCallback, useMemo, useState} from 'react';
+import React, {useCallback, useEffect, useMemo, useState} from 'react';
 import {
   Controller,
   useFormContext,
@@ -79,7 +79,7 @@ const WCdAppValidation: React.FC<Props> = props => {
     return t('labels.paste');
   }, [connectionStatus, t, uri]);
 
-  const session = activeSessions.find(
+  const currentSession = activeSessions.find(
     ({pairingTopic}) => pairingTopic === sessionTopic
   );
 
@@ -103,36 +103,52 @@ const WCdAppValidation: React.FC<Props> = props => {
     [alert, connectionStatus, t]
   );
 
+  const resetConnectionState = useCallback(() => {
+    setConnectionStatus(ConnectionState.WAITING);
+    setSessionTopic(undefined);
+  }, []);
+
+  const handleBackClick = useCallback(() => {
+    onBackButtonClicked();
+    resetConnectionState();
+  }, [onBackButtonClicked, resetConnectionState]);
+
+  const handleConnectionSuccess = useCallback(() => {
+    onConnectionSuccess(currentSession as SessionTypes.Struct);
+    resetConnectionState();
+  }, [onConnectionSuccess, currentSession, resetConnectionState]);
+
   const handleConnectDApp = useCallback(async () => {
-    if (connectionStatus === ConnectionState.SUCCESS) {
-      onConnectionSuccess(session as SessionTypes.Struct);
-      setConnectionStatus(ConnectionState.WAITING);
-      setSessionTopic(undefined);
-
-      return;
-    }
-
     setConnectionStatus(ConnectionState.LOADING);
-
     const wcConnection = await wcConnect({uri});
 
     if (wcConnection) {
-      setConnectionStatus(ConnectionState.SUCCESS);
       setSessionTopic(wcConnection.topic);
     } else {
       setConnectionStatus(ConnectionState.ERROR);
     }
-  }, [onConnectionSuccess, session, connectionStatus, uri, wcConnect]);
+  }, [uri, wcConnect]);
 
-  const displayLoadingState =
-    connectionStatus === ConnectionState.LOADING ||
-    (connectionStatus === ConnectionState.SUCCESS && session == null);
-
-  const displaySuccessState =
-    connectionStatus === ConnectionState.SUCCESS && session != null;
+  // Update connectionStatus to SUCCESS as soon as the connection is established and the session
+  // with the connection topic is returned as active session
+  useEffect(() => {
+    if (
+      connectionStatus === ConnectionState.LOADING &&
+      currentSession != null
+    ) {
+      setConnectionStatus(ConnectionState.SUCCESS);
+    }
+  }, [connectionStatus, currentSession]);
 
   const disableCta =
-    uri == null || displayLoadingState || Boolean(errors[WC_URI_INPUT_NAME]);
+    uri == null ||
+    connectionStatus === ConnectionState.LOADING ||
+    Boolean(errors[WC_URI_INPUT_NAME]);
+
+  const ctaHandler =
+    connectionStatus === ConnectionState.SUCCESS
+      ? handleConnectionSuccess
+      : handleConnectDApp;
 
   /*************************************************
    *                     Render                    *
@@ -142,7 +158,7 @@ const WCdAppValidation: React.FC<Props> = props => {
       <ModalHeader
         title={t('wc.validation.modalTitle')}
         showBackButton
-        onBackButtonClicked={onBackButtonClicked}
+        onBackButtonClicked={handleBackClick}
         {...(isDesktop ? {showCloseButton: true, onClose} : {})}
       />
       <Content>
@@ -160,18 +176,16 @@ const WCdAppValidation: React.FC<Props> = props => {
               field: {name, onBlur, onChange, value},
               fieldState: {error},
             }) => (
-              <>
-                <WalletInputLegacy
-                  mode={error ? 'critical' : 'default'}
-                  name={name}
-                  onBlur={onBlur}
-                  onChange={onChange}
-                  value={value}
-                  placeholder={t('wc.validation.codeInputPlaceholder')}
-                  adornmentText={adornmentText}
-                  onAdornmentClick={() => handleAdornmentClick(value, onChange)}
-                />
-              </>
+              <WalletInputLegacy
+                mode={error ? 'critical' : 'default'}
+                name={name}
+                onBlur={onBlur}
+                onChange={onChange}
+                value={value}
+                placeholder={t('wc.validation.codeInputPlaceholder')}
+                adornmentText={adornmentText}
+                onAdornmentClick={() => handleAdornmentClick(value, onChange)}
+              />
             )}
           />
         </FormGroup>
@@ -180,20 +194,20 @@ const WCdAppValidation: React.FC<Props> = props => {
           label={ctaLabel}
           disabled={disableCta}
           className="w-full"
-          {...(displayLoadingState && {
+          {...(connectionStatus === ConnectionState.LOADING && {
             iconLeft: <Spinner size={'xs'} />,
             isActive: true,
           })}
           {...(connectionStatus === ConnectionState.ERROR && {
             iconLeft: <IconReload />,
           })}
-          onClick={handleConnectDApp}
+          onClick={ctaHandler}
         />
-        {displaySuccessState && (
+        {connectionStatus === ConnectionState.SUCCESS && (
           <AlertWrapper>
             <AlertInline
               label={t('wc.validation.codeInput.statusSuccess', {
-                dappName: session?.peer.metadata.name,
+                dappName: currentSession?.peer.metadata.name,
               })}
               mode="success"
             />
