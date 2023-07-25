@@ -211,6 +211,7 @@ const DefineMetadata: React.FC<DefineMetadataProps> = ({
                     {...{DAO_LOGO, preview}}
                     onError={handleImageError}
                     onChange={onChange}
+                    acceptableFileFormat="image/jpg, image/jpeg, image/png, image/gif"
                     onlySquare
                   />
                 </LogoContainer>
