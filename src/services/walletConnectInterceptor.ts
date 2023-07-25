@@ -110,7 +110,7 @@ class WalletConnectInterceptor {
   getActiveSessions = (address?: string) => {
     const sessions = this.client?.getActiveSessions() ?? {};
     const filteredSessions = Object.values(sessions).filter(
-      ({self, namespaces, acknowledged}) => {
+      ({self, namespaces}) => {
         // Only sessions for Aragon DAO client
         const clientNameMatch = self.metadata.name === this.clientMetadata.name;
         // Only sessions matching the given address if given
@@ -120,7 +120,7 @@ class WalletConnectInterceptor {
             eipAccount.includes(address)
           );
 
-        return clientNameMatch && addressMatch && acknowledged;
+        return clientNameMatch && addressMatch;
       }
     );
 

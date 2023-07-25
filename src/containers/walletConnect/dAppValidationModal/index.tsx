@@ -47,7 +47,7 @@ const WCdAppValidation: React.FC<Props> = props => {
     ConnectionState.WAITING
   );
 
-  const {wcConnect, activeSessions} = useWalletConnectInterceptor({});
+  const {wcConnect, sessions} = useWalletConnectInterceptor({});
 
   const {control} = useFormContext();
   const {errors} = useFormState({control});
@@ -79,7 +79,7 @@ const WCdAppValidation: React.FC<Props> = props => {
     return t('labels.paste');
   }, [connectionStatus, t, uri]);
 
-  const currentSession = activeSessions.find(
+  const currentSession = sessions.find(
     ({pairingTopic}) => pairingTopic === sessionTopic
   );
 
@@ -136,7 +136,11 @@ const WCdAppValidation: React.FC<Props> = props => {
       connectionStatus === ConnectionState.LOADING &&
       currentSession != null
     ) {
-      setConnectionStatus(ConnectionState.SUCCESS);
+      setConnectionStatus(
+        currentSession.acknowledged
+          ? ConnectionState.SUCCESS
+          : ConnectionState.ERROR
+      );
     }
   }, [connectionStatus, currentSession]);
 
