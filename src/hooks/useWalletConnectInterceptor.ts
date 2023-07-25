@@ -45,6 +45,7 @@ export function useWalletConnectInterceptor({
   const wcConnect = useCallback(async ({onError, uri}: WcConnectOptions) => {
     try {
       const connection = await walletConnectInterceptor.connect(uri);
+
       return connection;
     } catch (e) {
       onError?.(e as Error);
@@ -65,15 +66,13 @@ export function useWalletConnectInterceptor({
 
   const handleApprove = useCallback(
     async (data: Web3WalletTypes.SessionProposal) => {
-      const response = await walletConnectInterceptor.approveSession(
+      await walletConnectInterceptor.approveSession(
         data,
         daoDetails?.address as string,
         SUPPORTED_CHAIN_ID
       );
 
       updateActiveSessions();
-
-      return response;
     },
     [daoDetails, updateActiveSessions]
   );
