@@ -48,3 +48,4 @@ subgraph.yaml
 
 tests/e2e/videos/*
 test.http
+.idea

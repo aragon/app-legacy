@@ -402,6 +402,7 @@
     "distributionDays": "Days can't be negative",
     "emptyDistributionDays": "Days can't be empty",
     "percentage": "Percentage amount should be between 0 and 100",
+    "minimumApprovalCommittee": "Minimum approval should be between 1 and {{max}}",
     "totalSupplyZero": "Total token supply can not be 0",
     "requiredTokenAddressZero": "Required token amount can not be 0",
     "onlyAlphaNumeric": "{{field}} can only contain alphanumeric characters",
@@ -841,7 +842,11 @@
       "descriptionLinkURL": "https://aragon.org/how-to/governance-ii-setting-dao-governance-thresholds",
       "executiveCommitteeMembersSubtitle" : "Add as many addresses as you like to the DAO. These are authorised to create proposals, transactions or suggest changes to the DAO settings after its creation. Upload a CSV with {{link}} if you want.",
       "executiveCommitteeMembersSubtitleLinkLabel" : "this template",
-      "executiveCommitteeMembersSubtitleLinkURL" : "https://aragon.org/how-to/governance-ii-setting-dao-governance-thresholds"
+      "executiveCommitteeMembersSubtitleLinkURL" : "https://aragon.org/how-to/governance-ii-setting-dao-governance-thresholds",
+      "minimumAprovalDescritpion": "Participation is the amount of addresses in the authorised list that approve on a proposal. The minimum is how many have to approve for the result to be valid.",
+      "alerts": {
+        "ofAddresses": "of {{count}} Addresses"
+      }
     },
     "review": {
       "title": "Review details",
