@@ -124,10 +124,10 @@ const ActionListenerModal: React.FC<Props> = ({
           });
 
           // add payable field as it is NOT present on the method itself
-          setValue(`actions.${index}.inputs`, [
-            ...inputs,
-            {...getWCNativeToField(t, action.params[0].value, network)},
-          ]);
+          if (action.params[0].value) {
+            inputs.push(getWCNativeToField(t, action.params[0].value, network));
+          }
+          setValue(`actions.${index}.inputs`, [...inputs]);
           setValue(`actions.${actionIndex}.notice`, notices?.notice);
         } else {
           // Verified but failed to decode
