@@ -41,6 +41,7 @@ const defaultValues = {
 
   // Uncomment when DAO Treasury minting is supported
   // wallets: [{address: constants.AddressZero, amount: '0'}],
+  committee: [],
   earlyExecution: true,
   voteReplacement: false,
   membership: 'token' as CreateDaoFormData['membership'],
@@ -88,6 +89,7 @@ export const CreateDAO: React.FC = () => {
     daoName,
     daoEnsName,
     eligibilityType,
+    committee,
     isCustomToken,
     tokenAddress,
     tokenName,
@@ -113,6 +115,12 @@ export const CreateDAO: React.FC = () => {
       'wallets',
       'tokenTotalSupply',
       'tokenType',
+      'membership',
+      'daoName',
+      'daoEnsName',
+      'eligibilityType',
+      'votingType',
+      'committee',
     ],
   });
   const prevFormChain = useRef<number>(formChain);
