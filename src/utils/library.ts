@@ -1,5 +1,3 @@
-// Library utils / Ethers for now
-import {ApolloClient} from '@apollo/client';
 import {
   Client,
   DaoDetails,
@@ -24,7 +22,7 @@ import {TFunction} from 'react-i18next';
 
 import {hexlify, isAddress} from 'ethers/lib/utils';
 import {getEtherscanVerifiedContract} from 'services/etherscanAPI';
-import {fetchTokenData} from 'services/prices';
+import {tokenService} from 'services/token';
 import {
   BIGINT_PATTERN,
   CHAIN_METADATA,
@@ -119,7 +117,6 @@ export const toHex = (num: number | string) => {
  * DecodeWithdrawToAction
  * @param data Uint8Array action data
  * @param client SDK client, Fetched using useClient
- * @param apolloClient Apollo client, Fetched using useApolloClient
  * @param provider Eth provider
  * @param network network of the dao
  * @returns Return Decoded Withdraw action
@@ -127,7 +124,6 @@ export const toHex = (num: number | string) => {
 export async function decodeWithdrawToAction(
   data: Uint8Array | undefined,
   client: Client | undefined,
-  apolloClient: ApolloClient<object>,
   provider: providers.Provider,
   network: SupportedNetworks,
   to: string,
@@ -162,12 +158,11 @@ export async function decodeWithdrawToAction(
       ),
     ]);
 
-    const apiResponse = await fetchTokenData(
-      tokenAddress,
-      apolloClient,
+    const apiResponse = await tokenService.fetchTokenData({
+      address: tokenAddress,
       network,
-      tokenInfo.symbol
-    );
+      symbol: tokenInfo.symbol,
+    });
 
     return {
       amount: Number(formatUnits(decoded.amount, tokenInfo.decimals)),

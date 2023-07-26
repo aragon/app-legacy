@@ -44,8 +44,7 @@ import {
 } from 'utils/types';
 import ModalHeader from 'components/modalHeader';
 import {useValidateContract} from 'hooks/useValidateContract';
-import {fetchTokenData} from 'services/prices';
-import {useApolloClient} from '@apollo/client';
+import {tokenService} from 'services/token';
 import {getTokenInfo} from 'utils/tokens';
 import {useProviders} from 'context/providers';
 import {useQueryClient} from '@tanstack/react-query';
@@ -79,7 +78,6 @@ const icons = {
 const ContractAddressValidation: React.FC<Props> = props => {
   const {t} = useTranslation();
   const {alert} = useAlertContext();
-  const client = useApolloClient();
   const {address} = useWallet();
   const {network} = useNetwork();
   const {infura: provider} = useProviders();
@@ -214,7 +212,11 @@ const ContractAddressValidation: React.FC<Props> = props => {
           provider,
           CHAIN_METADATA[network].nativeCurrency
         ).then(value => {
-          return fetchTokenData(addressField, client, network, value.symbol);
+          return tokenService.fetchTokenData({
+            address: addressField,
+            network,
+            symbol: value.symbol,
+          });
         });
 
         setVerificationState(TransactionState.SUCCESS);
@@ -290,7 +292,6 @@ const ContractAddressValidation: React.FC<Props> = props => {
     setData();
   }, [
     addressField,
-    client,
     daoAddressOrEns,
     etherscanData,
     etherscanLoading,

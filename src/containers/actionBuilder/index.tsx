@@ -13,7 +13,7 @@ import {useDaoDetailsQuery} from 'hooks/useDaoDetails';
 import {useDaoMembers} from 'hooks/useDaoMembers';
 import {PluginTypes} from 'hooks/usePluginClient';
 import {usePluginSettings} from 'hooks/usePluginSettings';
-import {fetchTokenPrice} from 'services/prices';
+import {tokenService} from 'services/token';
 import {formatUnits} from 'utils/library';
 import {
   ActionIndex,
@@ -154,9 +154,11 @@ const ActionBuilder: React.FC<ActionBuilderProps> = ({allowEmpty = true}) => {
       formatUnits(token.count, token.decimals)
     );
 
-    fetchTokenPrice(token.address, network, token.symbol).then(price => {
-      setValue(`actions.${index}.tokenPrice`, price);
-    });
+    tokenService
+      .fetchTokenPrice({address: token.address, network, symbol: token.symbol})
+      .then(price => {
+        setValue(`actions.${index}.tokenPrice`, price);
+      });
   };
 
   return (

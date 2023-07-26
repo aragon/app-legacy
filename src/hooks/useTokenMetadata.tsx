@@ -1,18 +1,16 @@
-import {useApolloClient} from '@apollo/client';
 import {AssetBalance} from '@aragon/sdk-client';
 import {TokenType} from '@aragon/sdk-client-common';
 import {constants} from 'ethers';
 import {useEffect, useState} from 'react';
 
 import {useNetwork} from 'context/network';
-import {fetchTokenData} from 'services/prices';
+import {tokenService} from 'services/token';
 import {CHAIN_METADATA} from 'utils/constants';
 import {HookData, TokenWithMetadata} from 'utils/types';
 
 export const useTokenMetadata = (
   assets: AssetBalance[]
 ): HookData<TokenWithMetadata[]> => {
-  const client = useApolloClient();
   const {network} = useNetwork();
   const [data, setData] = useState<TokenWithMetadata[]>([]);
   const [loading, setLoading] = useState(false);
@@ -28,14 +26,15 @@ export const useTokenMetadata = (
         // fetch token metadata from external api
         const metadata = await Promise.all(
           assets?.map(asset => {
-            return fetchTokenData(
-              asset.type !== TokenType.NATIVE
-                ? asset.address
-                : constants.AddressZero,
-              client,
+            return tokenService.fetchTokenData({
+              address:
+                asset.type !== TokenType.NATIVE
+                  ? asset.address
+                  : constants.AddressZero,
               network,
-              asset.type !== TokenType.NATIVE ? asset.symbol : undefined
-            );
+              symbol:
+                asset.type !== TokenType.NATIVE ? asset.symbol : undefined,
+            });
           })
         );
 
@@ -77,7 +76,7 @@ export const useTokenMetadata = (
     };
 
     if (assets) fetchMetadata();
-  }, [assets, network, client]);
+  }, [assets, network]);
 
   return {data, isLoading: loading, error};
 };

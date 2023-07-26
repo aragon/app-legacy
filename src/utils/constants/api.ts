@@ -43,8 +43,8 @@ export const walletConnectProjectID = import.meta.env
 
 export const COVALENT_API_KEY = import.meta.env.VITE_COVALENT_API_KEY as string;
 
-// Coingecko Api specific asset platform keys
-export const ASSET_PLATFORMS: Record<SupportedNetworks, string | null> = {
+// Map from supported-networks to coingecko platform to use their API
+export const coingeckoPlatforms: Record<SupportedNetworks, string | null> = {
   arbitrum: 'arbitrum-one',
   'arbitrum-test': null,
   ethereum: 'ethereum',
@@ -54,7 +54,7 @@ export const ASSET_PLATFORMS: Record<SupportedNetworks, string | null> = {
   unsupported: null,
 };
 
-export const NATIVE_TOKEN_ID = {
+export const coingeckoNativeTokenId = {
   default: 'ethereum',
   polygon: 'matic-network',
 };

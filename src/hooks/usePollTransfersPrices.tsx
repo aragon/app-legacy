@@ -1,11 +1,10 @@
-import {useApolloClient} from '@apollo/client';
 import {TransferType} from '@aragon/sdk-client';
 import {TokenType} from '@aragon/sdk-client-common';
 
 import {useNetwork} from 'context/network';
 import {constants} from 'ethers';
 import {useEffect, useState} from 'react';
-import {fetchTokenData} from 'services/prices';
+import {tokenService} from 'services/token';
 import {
   CHAIN_METADATA,
   SupportedNetworks,
@@ -20,7 +19,6 @@ import {IAssetTransfers} from './useDaoTransfers';
 export const usePollTransfersPrices = (
   transfers: IAssetTransfers
 ): HookData<{transfers: Transfer[]; totalTransfersValue: string}> => {
-  const client = useApolloClient();
   const {network} = useNetwork();
 
   const [data, setData] = useState<Transfer[]>([]);
@@ -37,12 +35,11 @@ export const usePollTransfersPrices = (
         // fetch token metadata from external api
         const metadata = await Promise.all(
           assetTransfers?.map(transfer => {
-            return fetchTokenData(
-              transfer.tokenAddress,
-              client,
+            return tokenService.fetchTokenData({
+              address: transfer.tokenAddress,
               network,
-              transfer.tokenSymbol
-            );
+              symbol: transfer.tokenSymbol,
+            });
           })
         );
 
@@ -75,7 +72,7 @@ export const usePollTransfersPrices = (
     };
 
     if (transfers) fetchMetadata(mapToDaoTransfers(transfers, network));
-  }, [network, client, transfers]);
+  }, [network, transfers]);
 
   return {
     data: {transfers: data, totalTransfersValue},

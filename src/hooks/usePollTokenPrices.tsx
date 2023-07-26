@@ -10,7 +10,7 @@ import useInterval from 'hooks/useInterval';
 import useIsMounted from 'hooks/useIsMounted';
 import {TimeFilter} from 'utils/constants';
 import {formatUnits} from 'utils/library';
-import {fetchTokenMarketData, TokenPrices} from 'services/prices';
+import {tokenService, TokenPrices} from 'services/token';
 
 type PolledTokenPricing = {
   tokens: TokenWithMarketData[];
@@ -85,8 +85,12 @@ export const usePollTokenPrices = (
     setIsLoading(true);
 
     try {
-      const tokenIds = tokenList.map(token => token.metadata.apiId).join(',');
-      const tokenMarketData = await fetchTokenMarketData(tokenIds);
+      const tokenIds = tokenList
+        .filter(token => token.metadata.apiId != null)
+        .map(token => token.metadata.apiId!);
+      const tokenMarketData = await tokenService.fetchTokenMarketData({
+        tokenIds,
+      });
 
       if (tokenMarketData) transformData(tokenMarketData);
     } catch (error) {

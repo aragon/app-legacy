@@ -1,10 +1,4 @@
-import {
-  ApolloClient,
-  HttpLink,
-  InMemoryCache,
-  makeVar,
-  NormalizedCacheObject,
-} from '@apollo/client';
+import {InMemoryCache, makeVar} from '@apollo/client';
 import {
   DaoListItem,
   Deposit,
@@ -14,11 +8,9 @@ import {
   VotingMode,
 } from '@aragon/sdk-client';
 import {PluginInstallItem} from '@aragon/sdk-client-common';
-import {RestLink} from 'apollo-link-rest';
 import {CachePersistor, LocalStorageWrapper} from 'apollo3-cache-persist';
 
 import {
-  BASE_URL,
   FAVORITE_DAOS_KEY,
   PENDING_DAOS_KEY,
   PENDING_DEPOSITS_KEY,
@@ -28,17 +20,12 @@ import {
   PENDING_MULTISIG_VOTES_KEY,
   PENDING_PROPOSALS_KEY,
   PENDING_VOTES_KEY,
-  SUBGRAPH_API_URL,
   SupportedChainID,
   SupportedNetworks,
 } from 'utils/constants';
 import {customJSONReviver} from 'utils/library';
 import {DetailedProposal, Erc20ProposalVote} from 'utils/types';
 import {PRIVACY_KEY} from './privacyContext';
-
-const restLink = new RestLink({
-  uri: BASE_URL,
-});
 
 const cache = new InMemoryCache();
 
@@ -100,35 +87,6 @@ if (value && JSON.parse(value).functional) {
 
   restoreApolloCache();
 }
-
-export const goerliClient = new ApolloClient({
-  cache,
-  link: restLink.concat(new HttpLink({uri: SUBGRAPH_API_URL['goerli']})),
-});
-
-const mumbaiClient = new ApolloClient({
-  cache,
-  link: restLink.concat(new HttpLink({uri: SUBGRAPH_API_URL['mumbai']})),
-});
-
-const arbitrumTestClient = new ApolloClient({
-  cache,
-  link: restLink.concat(new HttpLink({uri: SUBGRAPH_API_URL['arbitrum-test']})),
-});
-
-// TODO: remove undefined when all clients are defined
-const client: Record<
-  SupportedNetworks,
-  ApolloClient<NormalizedCacheObject> | undefined
-> = {
-  ethereum: undefined,
-  goerli: goerliClient,
-  polygon: undefined,
-  mumbai: mumbaiClient,
-  arbitrum: undefined,
-  'arbitrum-test': arbitrumTestClient,
-  unsupported: undefined,
-};
 
 /*************************************************
  *            FAVORITE & SELECTED DAOS           *
@@ -294,7 +252,6 @@ const pendingDaoCreation = JSON.parse(
 const pendingDaoCreationVar = makeVar<PendingDaoCreation>(pendingDaoCreation);
 
 export {
-  client,
   favoriteDaosVar,
   pendingDaoCreationVar,
   pendingDeposits,

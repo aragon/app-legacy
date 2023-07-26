@@ -2,7 +2,7 @@ import {constants} from 'ethers';
 import {useCallback, useEffect, useState} from 'react';
 
 import {useNetwork} from 'context/network';
-import {fetchTokenPrice} from 'services/prices';
+import {tokenService} from 'services/token';
 import {GasFeeEstimation} from '@aragon/sdk-client-common';
 
 /**
@@ -33,7 +33,10 @@ export const usePollGasFee = (
       try {
         const results = await Promise.all([
           estimationFunction(),
-          fetchTokenPrice(constants.AddressZero, network),
+          tokenService.fetchTokenPrice({
+            address: constants.AddressZero,
+            network,
+          }),
         ]);
 
         setTokenPrice(results[1] || 0);

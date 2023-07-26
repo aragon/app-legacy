@@ -1,4 +1,3 @@
-import {ApolloProvider} from '@apollo/client';
 import {QueryClient, QueryClientProvider} from '@tanstack/react-query';
 import {ReactQueryDevtools} from '@tanstack/react-query-devtools';
 import React from 'react';
@@ -7,7 +6,6 @@ import {HashRouter as Router} from 'react-router-dom';
 import 'tailwindcss/tailwind.css';
 
 import {AlertProvider} from 'context/alert';
-import {client, goerliClient} from 'context/apolloClient';
 import {APMProvider} from 'context/elasticAPM';
 import {GlobalModalsProvider} from 'context/globalModals';
 import {NetworkProvider} from 'context/network';
@@ -93,14 +91,8 @@ ReactDOM.render(
                           <TransactionDetailProvider>
                             <WalletMenuProvider>
                               <GlobalModalsProvider>
-                                {/* By default, goerli client is chosen, each useQuery needs to pass the network client it needs as argument
-                      For REST queries using apollo, there's no need to pass a different client to useQuery  */}
-                                <ApolloProvider
-                                  client={client['goerli'] || goerliClient} //TODO remove fallback when all clients are defined
-                                >
-                                  <App />
-                                  <ReactQueryDevtools initialIsOpen={false} />
-                                </ApolloProvider>
+                                <App />
+                                <ReactQueryDevtools initialIsOpen={false} />
                               </GlobalModalsProvider>
                             </WalletMenuProvider>
                           </TransactionDetailProvider>

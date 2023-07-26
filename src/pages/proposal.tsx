@@ -1,4 +1,3 @@
-import {useApolloClient} from '@apollo/client';
 import {
   MultisigClient,
   MultisigProposal,
@@ -120,7 +119,6 @@ const Proposal: React.FC = () => {
 
   const {client} = useClient();
   const {set, get} = useCache();
-  const apolloClient = useApolloClient();
 
   const {network} = useNetwork();
   const provider = useSpecificProvider(CHAIN_METADATA[network].id);
@@ -234,7 +232,6 @@ const Proposal: React.FC = () => {
             return decodeWithdrawToAction(
               action.data,
               client,
-              apolloClient,
               provider,
               network,
               action.to,
@@ -276,7 +273,6 @@ const Proposal: React.FC = () => {
             const withdrawAction = decodeWithdrawToAction(
               action.data,
               client,
-              apolloClient,
               provider,
               network,
               action.to,
@@ -330,7 +326,7 @@ const Proposal: React.FC = () => {
     Promise.all(actionPromises).then(value => {
       setDecodedActions(value);
     });
-  }, [apolloClient, client, network, pluginClient, proposal, provider, t]);
+  }, [client, network, pluginClient, proposal, provider, t]);
 
   // caches the status for breadcrumb
   useEffect(() => {
