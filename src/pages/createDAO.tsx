@@ -55,6 +55,9 @@ const defaultValues = {
   votingType: 'onChain' | 'offChain';
   committee: MultisigWalletField[];
   committeeMinimumApproval: string;
+  executionExpirationMinutes: string;
+  executionExpirationHours: string;
+  executionExpirationDays: string;
 };
 
 export const CreateDAO: React.FC = () => {

@@ -6,14 +6,13 @@ import {
   NumberInput,
   Tag,
 } from '@aragon/ods';
-import {MultisigMinimumApproval} from 'components/multisigMinimumApproval';
 import React, {useCallback} from 'react';
 import {Controller, useFormContext, useWatch} from 'react-hook-form';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 
-import AddWallets from 'components/addWallets';
 import AddCommitteeMembers from 'components/addCommitteeMembers';
+import ExecutionExpirationtime from 'components/executionExpirationtime';
 
 const DefineCommittee: React.FC = () => {
   const {t} = useTranslation();
@@ -129,6 +128,15 @@ const DefineCommittee: React.FC = () => {
             </>
           )}
         />
+      </FormItem>
+
+      {/* Execution Expiration Time */}
+      <FormItem>
+        <Label
+          label={t('labels.executionExpirationTime')}
+          helpText={t('createDAO.step5.executionTimeSubtitle')}
+        />
+        <ExecutionExpirationtime />
       </FormItem>
     </>
   );

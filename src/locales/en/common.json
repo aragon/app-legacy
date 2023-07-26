@@ -113,6 +113,7 @@
     "minimumApproval": "Minimum approval",
     "minimumParticipation": "Minimum participation",
     "minimumDuration": "Minimum duration",
+    "executionExpirationTime": "Execution expiration time",
     "voteReplacement": "Vote change",
     "support": "Support",
     "duration": "Duration",
@@ -467,6 +468,7 @@
     "durationAlert": "Set this to a duration that is long enough for your members to have sufficient time to vote. It’s recommended to set this to at least 1 day.",
     "maxDurationAlert": "The maximum duration is 365 days.",
     "minDurationAlert": "The minimum duration is one hour.",
+    "executionDurationAlert": "Set this to a duration that your executive committee can approve the results. It’s recommended to set this to at least 1 day.",
     "startDateInPastAlert": "Start time can’t be in the past. ",
     "wrongWalletNetwork": "Wrong wallet network",
     "wrongNetwork": {
@@ -846,7 +848,8 @@
       "minimumAprovalDescritpion": "Participation is the amount of addresses in the authorised list that approve on a proposal. The minimum is how many have to approve for the result to be valid.",
       "alerts": {
         "ofAddresses": "of {{count}} Addresses"
-      }
+      },
+      "executionTimeSubtitle": "Define how long the voting should last in days or exact date and time."
     },
     "review": {
       "title": "Review details",
