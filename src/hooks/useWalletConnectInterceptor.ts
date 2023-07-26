@@ -92,7 +92,7 @@ export function useWalletConnectInterceptor({
     if (activeSessionsListeners.size > 0) {
       return;
     }
-    console.log('add listeners');
+
     walletConnectInterceptor.subscribeConnectProposal(handleApprove);
     walletConnectInterceptor.subscribeRequest(handleRequest);
     walletConnectInterceptor.subscribeDisconnect(updateActiveSessions);
@@ -102,7 +102,7 @@ export function useWalletConnectInterceptor({
     if (activeSessionsListeners.size > 0) {
       return;
     }
-    console.log('remove listeners');
+
     walletConnectInterceptor.unsubscribeConnectProposal(handleApprove);
     walletConnectInterceptor.unsubscribeRequest(handleRequest);
     walletConnectInterceptor.unsubscribeDisconnect(updateActiveSessions);
