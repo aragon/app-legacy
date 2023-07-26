@@ -235,6 +235,7 @@ export const EditMvSettings: React.FC<EditMvSettingsProps> = ({daoDetails}) => {
       'minimumParticipation',
       Math.round(daoSettings.minParticipation * 100)
     );
+    setValue('tokenDecimals', daoToken?.decimals || 18);
 
     const votingMode = decodeVotingMode(
       daoSettings?.votingMode || VotingMode.STANDARD
@@ -255,15 +256,16 @@ export const EditMvSettings: React.FC<EditMvSettingsProps> = ({daoDetails}) => {
         : 'wallet'
     );
   }, [
-    daoDetails?.plugins,
+    setValue,
+    tokenSupply?.formatted,
     daoSettings.supportThreshold,
-    daoSettings.votingMode,
     daoSettings.minParticipation,
+    daoSettings?.votingMode,
+    daoToken?.decimals,
     days,
     hours,
     minutes,
-    tokenSupply?.formatted,
-    setValue,
+    daoDetails?.plugins,
   ]);
 
   const settingsUnchanged =

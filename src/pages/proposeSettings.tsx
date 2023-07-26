@@ -73,6 +73,7 @@ import {
   ProposalId,
   ProposalResource,
 } from 'utils/types';
+import {parseUnits} from 'ethers/lib/utils';
 
 const ProposeSettings: React.FC = () => {
   const {t} = useTranslation();
@@ -261,6 +262,7 @@ const ProposeSettingWrapper: React.FC<Props> = ({
         durationHours,
         durationMinutes,
         resourceLinks,
+        tokenDecimals,
       ] = getValues([
         'daoName',
         'daoSummary',
@@ -276,6 +278,7 @@ const ProposeSettingWrapper: React.FC<Props> = ({
         'durationHours',
         'durationMinutes',
         'daoLinks',
+        'tokenDecimals',
       ]);
 
       const metadataAction: ActionUpdateMetadata = {
@@ -304,7 +307,10 @@ const ProposeSettingWrapper: React.FC<Props> = ({
             minParticipation: Number(minimumParticipation) / 100,
             minProposerVotingPower:
               eligibilityType === 'token'
-                ? BigInt(eligibilityTokenAmount)
+                ? parseUnits(
+                    eligibilityTokenAmount.toString(),
+                    tokenDecimals
+                  ).toBigInt()
                 : undefined,
             votingMode: earlyExecution
               ? VotingMode.EARLY_EXECUTION
