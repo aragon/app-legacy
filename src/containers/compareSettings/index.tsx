@@ -68,13 +68,13 @@ const CompareSettings: React.FC = () => {
       {isTokenVotingSettings(pluginSettings) ? (
         <>
           <CompareMvCommunity
-            daoAddressOrEns={daoAddressOrEns}
+            daoAddressOrEns={daoAddressOrEns as string}
             view={selectedButton}
             daoSettings={pluginSettings}
             daoToken={daoToken}
           />
           <CompareMvGovernance
-            daoAddressOrEns={daoAddressOrEns}
+            daoAddressOrEns={daoAddressOrEns as string}
             view={selectedButton}
             daoSettings={pluginSettings}
             daoToken={daoToken}
