@@ -185,7 +185,7 @@ const WCdAppValidation: React.FC<Props> = props => {
                 name={name}
                 onBlur={onBlur}
                 onChange={onChange}
-                value={value}
+                value={value ?? ''}
                 placeholder={t('wc.validation.codeInputPlaceholder')}
                 adornmentText={adornmentText}
                 onAdornmentClick={() => handleAdornmentClick(value, onChange)}
