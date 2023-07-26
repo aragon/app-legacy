@@ -223,10 +223,18 @@ export const EditMvSettings: React.FC<EditMvSettingsProps> = ({daoDetails}) => {
   ]);
 
   const setCurrentCommunity = useCallback(() => {
-    setValue('eligibilityTokenAmount', formattedProposerAmount);
+    if (!eligibilityTokenAmount || !eligibilityType) {
+      setValue('eligibilityTokenAmount', formattedProposerAmount);
+      setValue('eligibilityType', formattedEligibilityType);
+    }
     setValue('minimumTokenAmount', formattedProposerAmount);
-    setValue('eligibilityType', formattedEligibilityType);
-  }, [formattedEligibilityType, formattedProposerAmount, setValue]);
+  }, [
+    eligibilityTokenAmount,
+    eligibilityType,
+    formattedEligibilityType,
+    formattedProposerAmount,
+    setValue,
+  ]);
 
   const setCurrentGovernance = useCallback(() => {
     setValue('tokenTotalSupply', tokenSupply?.formatted);
@@ -375,7 +383,7 @@ export const EditMvSettings: React.FC<EditMvSettingsProps> = ({daoDetails}) => {
                 dropdownItems={communityAction}
               >
                 <AccordionContent>
-                  <SelectEligibility />
+                  <SelectEligibility isSettingPage />
                 </AccordionContent>
               </AccordionItem>
 

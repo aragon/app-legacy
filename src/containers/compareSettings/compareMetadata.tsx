@@ -40,7 +40,7 @@ export const CompareMetadata: React.FC<CompareMetadataProps> = ({
     displayedInfo = {
       name: daoName,
       summary: daoSummary,
-      links: daoLinks.filter((l: ProposalResource) => l.name && l.url),
+      links: daoLinks?.filter((l: ProposalResource) => l.name && l.url),
     };
   } else {
     displayedInfo = {
