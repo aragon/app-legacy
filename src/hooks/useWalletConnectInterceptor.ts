@@ -30,8 +30,9 @@ export function useWalletConnectInterceptor({
   const prevNetwork = usePrevious(network);
 
   const {data: daoDetails} = useDaoDetailsQuery();
-
-  const [sessions, setSessions] = useState<WcSession[]>([]);
+  const [sessions, setSessions] = useState<WcSession[]>(
+    walletConnectInterceptor.getActiveSessions(daoDetails?.address)
+  );
   const activeSessions = sessions.filter(session => session.acknowledged);
 
   const updateActiveSessions = useCallback(() => {
@@ -41,7 +42,7 @@ export function useWalletConnectInterceptor({
 
     // Update active-sessions for all hook instances
     activeSessionsListeners.forEach(listener => listener(newSessions));
-  }, [daoDetails]);
+  }, [daoDetails?.address]);
 
   const wcConnect = useCallback(async ({onError, uri}: WcConnectOptions) => {
     try {
@@ -75,12 +76,7 @@ export function useWalletConnectInterceptor({
 
       updateActiveSessions();
     },
-    [daoDetails, updateActiveSessions]
-  );
-
-  const handleConnectProposal = useCallback(
-    async (event: Web3WalletTypes.SessionProposal) => handleApprove(event),
-    [handleApprove]
+    [daoDetails?.address, updateActiveSessions]
   );
 
   const handleRequest = useCallback(
@@ -92,45 +88,36 @@ export function useWalletConnectInterceptor({
     [network, onActionRequest]
   );
 
-  const handleDisconnect = useCallback(
-    (event: Web3WalletTypes.SessionDelete) => wcDisconnect(event.topic),
-    [wcDisconnect]
-  );
+  const addListeners = useCallback(() => {
+    if (activeSessionsListeners.size > 0) {
+      return;
+    }
+    console.log('add listeners');
+    walletConnectInterceptor.subscribeConnectProposal(handleApprove);
+    walletConnectInterceptor.subscribeRequest(handleRequest);
+    walletConnectInterceptor.subscribeDisconnect(updateActiveSessions);
+  }, [handleApprove, handleRequest, updateActiveSessions]);
 
+  const removeListeners = useCallback(() => {
+    if (activeSessionsListeners.size > 0) {
+      return;
+    }
+    console.log('remove listeners');
+    walletConnectInterceptor.unsubscribeConnectProposal(handleApprove);
+    walletConnectInterceptor.unsubscribeRequest(handleRequest);
+    walletConnectInterceptor.unsubscribeDisconnect(updateActiveSessions);
+  }, [handleApprove, handleRequest, updateActiveSessions]);
+
+  // Listen for active-session changes and subscribe / unsubscribe to client changes
   useEffect(() => {
+    addListeners();
     activeSessionsListeners.add(setSessions);
 
     return () => {
       activeSessionsListeners.delete(setSessions);
+      removeListeners();
     };
-  }, []);
-
-  // Initialize active sessions
-  useEffect(() => {
-    updateActiveSessions();
-  }, [updateActiveSessions]);
-
-  useEffect(() => {
-    walletConnectInterceptor.subscribeConnectProposal(handleConnectProposal);
-
-    return () =>
-      walletConnectInterceptor.unsubscribeConnectProposal(
-        handleConnectProposal
-      );
-  }, [handleConnectProposal]);
-
-  useEffect(() => {
-    walletConnectInterceptor.subscribeRequest(handleRequest);
-
-    return () => walletConnectInterceptor.unsubscribeRequest(handleRequest);
-  }, [handleRequest]);
-
-  useEffect(() => {
-    walletConnectInterceptor.subscribeDisconnect(handleDisconnect);
-
-    return () =>
-      walletConnectInterceptor.unsubscribeDisconnect(handleDisconnect);
-  }, [handleDisconnect]);
+  }, [addListeners, removeListeners]);
 
   useEffect(() => {
     if (prevNetwork === network) {
