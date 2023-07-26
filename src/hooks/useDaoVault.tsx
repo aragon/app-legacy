@@ -32,8 +32,6 @@ export const useDaoVault = (
   const {data: transferPrices} = usePollTransfersPrices(transfers);
 
   const tokens: VaultToken[] = useMemo(() => {
-    console.log({tokenPrices, tokensWithMetadata});
-
     if (tokenPrices?.tokens?.length === 0) {
       return tokensWithMetadata;
     }
