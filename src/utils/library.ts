@@ -22,7 +22,7 @@ import {TFunction} from 'react-i18next';
 
 import {hexlify, isAddress} from 'ethers/lib/utils';
 import {getEtherscanVerifiedContract} from 'services/etherscanAPI';
-import {tokenService} from 'services/token';
+import {Token} from 'services/token';
 import {
   BIGINT_PATTERN,
   CHAIN_METADATA,
@@ -50,6 +50,7 @@ import {i18n} from '../../i18n.config';
 import {addABI, decodeMethod} from './abiDecoder';
 import {attachEtherNotice} from './contract';
 import {getTokenInfo} from './tokens';
+import {IFetchTokenParams} from 'services/token/token-service.api';
 
 export function formatUnits(amount: BigNumberish, decimals: number) {
   if (amount.toString().includes('.') || !decimals) {
@@ -127,7 +128,8 @@ export async function decodeWithdrawToAction(
   provider: providers.Provider,
   network: SupportedNetworks,
   to: string,
-  value: bigint
+  value: bigint,
+  fetchToken: (params: IFetchTokenParams) => Promise<Token>
 ): Promise<ActionWithdraw | undefined> {
   if (!client || !data) {
     console.error('SDK client is not initialized correctly');
@@ -158,7 +160,7 @@ export async function decodeWithdrawToAction(
       ),
     ]);
 
-    const apiResponse = await tokenService.fetchTokenData({
+    const apiResponse = await fetchToken({
       address: tokenAddress,
       network,
       symbol: tokenInfo.symbol,
@@ -170,9 +172,9 @@ export async function decodeWithdrawToAction(
       to: recipient,
       tokenBalance: 0, // unnecessary?
       tokenAddress: tokenAddress,
-      tokenImgUrl: apiResponse?.imgUrl || '',
+      tokenImgUrl: apiResponse?.imgUrl ?? '',
       tokenName: tokenInfo.name,
-      tokenPrice: apiResponse?.price || 0,
+      tokenPrice: apiResponse?.price ?? 0,
       tokenSymbol: tokenInfo.symbol,
       tokenDecimals: tokenInfo.decimals,
       isCustomToken: false,

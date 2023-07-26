@@ -8,13 +8,18 @@ import {
 } from 'utils/constants';
 import {isNativeToken} from 'utils/tokens';
 import {TOP_ETH_SYMBOL_ADDRESSES} from 'utils/constants/topSymbolAddresses';
-import {CoingeckoTokenData, CoingeckoTokenPrice, TokenPrices} from './domain';
-import {TokenData} from './domain/token-data';
 import {
-  IFetchTokenDataParams,
+  CoingeckoToken,
+  Token,
+  CoingeckoTokenPrice,
+  TokenPrices,
+} from './domain';
+import {
+  IFetchTokenParams,
   IFetchTokenMarketDataParams,
   IFetchTokenPriceParams,
 } from './token-service.api';
+import {CoingeckoError} from './domain/coingecko-error';
 
 class TokenService {
   /**
@@ -54,11 +59,11 @@ class TokenService {
    * @param network Network of the token
    * @returns Basic information about the token or undefined if token data cannot be fetched
    */
-  fetchTokenData = async ({
+  fetchToken = async ({
     address,
     network,
     symbol,
-  }: IFetchTokenDataParams): Promise<TokenData | undefined> => {
+  }: IFetchTokenParams): Promise<Token> => {
     // Use mainnet token network and address for top ERC20 tokens
     const useMainnet =
       !isNativeToken(address) &&
@@ -73,7 +78,11 @@ class TokenService {
 
     // network unsupported, or testnet
     const platformId = coingeckoPlatforms[fetchNetwork];
-    if (!platformId && !isNativeToken(address)) return;
+    if (!platformId && !isNativeToken(address)) {
+      throw Error(
+        `fetchToken: network ${fetchNetwork} not supported by Coingecko`
+      );
+    }
 
     // build url based on whether token is native token
     const endpoint = isNativeToken(address)
@@ -83,7 +92,13 @@ class TokenService {
     const url = `${BASE_URL}${endpoint}`;
 
     const res = await fetch(url);
-    const data: CoingeckoTokenData = await res.json();
+    const jsonData: CoingeckoToken | CoingeckoError = await res.json();
+
+    if ((jsonData as CoingeckoError).error != null) {
+      throw Error('fetchToken: Coingecko returned error');
+    }
+
+    const data = jsonData as CoingeckoToken;
 
     return {
       id: data.id,
@@ -110,7 +125,7 @@ class TokenService {
     address,
     network,
     symbol,
-  }: IFetchTokenPriceParams): Promise<number | undefined> => {
+  }: IFetchTokenPriceParams): Promise<number> => {
     // Use mainnet token network and address for top ERC20 tokens
     const useMainnet =
       !isNativeToken(address) &&
@@ -125,7 +140,11 @@ class TokenService {
 
     // network unsupported, or testnet
     const platformId = coingeckoPlatforms[fetchNetwork];
-    if (!platformId && !isNativeToken(address)) return;
+    if (!platformId && !isNativeToken(address)) {
+      throw Error(
+        `fetchTokenPrice: network ${fetchNetwork} not supported by Coingecko`
+      );
+    }
 
     // build url based on whether token is ethereum
     const endPoint = `/simple/token_price/${platformId}?vs_currencies=usd&contract_addresses=`;

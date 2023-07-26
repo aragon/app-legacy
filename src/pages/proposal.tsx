@@ -75,6 +75,7 @@ import {
   stripPlgnAdrFromProposalId,
 } from 'utils/proposals';
 import {Action, ProposalId} from 'utils/types';
+import {useTokenAsync} from 'services/token/queries/use-token';
 
 // TODO: @Sepehr Please assign proper tags on action decoding
 // const PROPOSAL_TAGS = ['Finance', 'Withdraw'];
@@ -89,6 +90,7 @@ const Proposal: React.FC = () => {
   const {isDesktop} = useScreen();
   const {breadcrumbs, tag} = useMappedBreadcrumbs();
   const navigate = useNavigate();
+  const fetchToken = useTokenAsync();
 
   const {dao, id: urlId} = useParams();
   const proposalId = useMemo(
@@ -235,7 +237,8 @@ const Proposal: React.FC = () => {
               provider,
               network,
               action.to,
-              action.value
+              action.value,
+              fetchToken
             );
           case 'mint':
             if (mintTokenActions.actions.length === 0) {
@@ -276,7 +279,8 @@ const Proposal: React.FC = () => {
               provider,
               network,
               action.to,
-              action.value
+              action.value,
+              fetchToken
             );
 
             const isPossiblyWithdrawAction =
@@ -326,7 +330,7 @@ const Proposal: React.FC = () => {
     Promise.all(actionPromises).then(value => {
       setDecodedActions(value);
     });
-  }, [client, network, pluginClient, proposal, provider, t]);
+  }, [client, network, pluginClient, proposal, provider, fetchToken, t]);
 
   // caches the status for breadcrumb
   useEffect(() => {

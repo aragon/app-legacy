@@ -1,82 +1,63 @@
 import {AssetBalance} from '@aragon/sdk-client';
 import {TokenType} from '@aragon/sdk-client-common';
 import {constants} from 'ethers';
-import {useEffect, useState} from 'react';
-
+import {useMemo} from 'react';
 import {useNetwork} from 'context/network';
-import {tokenService} from 'services/token';
 import {CHAIN_METADATA} from 'utils/constants';
 import {HookData, TokenWithMetadata} from 'utils/types';
+import {useTokenList} from 'services/token/queries/use-token';
 
 export const useTokenMetadata = (
-  assets: AssetBalance[]
+  assets: AssetBalance[] = []
 ): HookData<TokenWithMetadata[]> => {
   const {network} = useNetwork();
-  const [data, setData] = useState<TokenWithMetadata[]>([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<Error>();
 
-  useEffect(() => {
-    const fetchMetadata = async () => {
-      try {
-        setLoading(true);
+  const tokenListParams = assets.map(asset => ({
+    address:
+      asset.type !== TokenType.NATIVE ? asset.address : constants.AddressZero,
+    network,
+    symbol: asset.type !== TokenType.NATIVE ? asset.symbol : undefined,
+  }));
+  const tokenResults = useTokenList(tokenListParams);
 
-        // TODO fix cases below for ERC721
+  const isLoading = tokenResults.some(result => result.isLoading);
+  const isError = tokenResults.some(result => result.isError);
+  const tokens = tokenResults.map(result => result.data);
 
-        // fetch token metadata from external api
-        const metadata = await Promise.all(
-          assets?.map(asset => {
-            return tokenService.fetchTokenData({
-              address:
-                asset.type !== TokenType.NATIVE
-                  ? asset.address
-                  : constants.AddressZero,
-              network,
+  const processedTokens = useMemo(() => {
+    if (isLoading) {
+      return [];
+    }
+
+    const tokensWithMetadata = assets.map((asset, index) => ({
+      balance: asset.type !== TokenType.ERC721 ? asset.balance : BigInt(0),
+      metadata: {
+        ...(asset.type === TokenType.ERC20
+          ? {
+              id: asset.address,
+              decimals: asset.decimals,
+              name: tokens[index]?.name ?? asset.name,
+              symbol: tokens[index]?.symbol ?? asset.symbol,
+            }
+          : {
+              id: constants.AddressZero,
+              decimals: CHAIN_METADATA[network].nativeCurrency.decimals,
+              name:
+                tokens[index]?.name ??
+                CHAIN_METADATA[network].nativeCurrency.name,
               symbol:
-                asset.type !== TokenType.NATIVE ? asset.symbol : undefined,
-            });
-          })
-        );
+                tokens[index]?.symbol ??
+                CHAIN_METADATA[network].nativeCurrency.symbol,
+            }),
 
-        // map metadata to token balances
-        const tokensWithMetadata = assets?.map((asset, index) => ({
-          balance: asset.type !== TokenType.ERC721 ? asset.balance : BigInt(0),
-          metadata: {
-            ...(asset.type === TokenType.ERC20
-              ? {
-                  id: asset.address,
-                  decimals: asset.decimals,
-                  name: metadata[index]?.name || asset.name,
-                  symbol: metadata[index]?.symbol || asset.symbol,
-                }
-              : {
-                  id: constants.AddressZero,
-                  decimals: CHAIN_METADATA[network].nativeCurrency.decimals,
-                  name:
-                    metadata[index]?.name ||
-                    CHAIN_METADATA[network].nativeCurrency.name,
-                  symbol:
-                    metadata[index]?.symbol ||
-                    CHAIN_METADATA[network].nativeCurrency.symbol,
-                }),
+        price: tokens[index]?.price,
+        apiId: tokens[index]?.id,
+        imgUrl: tokens[index]?.imgUrl ?? '',
+      },
+    }));
 
-            price: metadata[index]?.price,
-            apiId: metadata[index]?.id,
-            imgUrl: metadata[index]?.imgUrl || '',
-          },
-        }));
+    return tokensWithMetadata;
+  }, [assets, tokens, isLoading, network]);
 
-        setData(tokensWithMetadata);
-      } catch (error) {
-        console.error(error);
-        setError(error as Error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    if (assets) fetchMetadata();
-  }, [assets, network]);
-
-  return {data, isLoading: loading, error};
+  return {data: processedTokens, isLoading, isError};
 };

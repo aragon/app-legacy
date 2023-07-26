@@ -1,4 +1,4 @@
-export type CoingeckoTokenData = {
+export type CoingeckoToken = {
   id: string;
   name: string;
   symbol: string;

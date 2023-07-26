@@ -1,22 +1,26 @@
-import {useCallback, useState} from 'react';
+import {useCallback, useMemo} from 'react';
 
 import type {
   PollTokenOptions,
   TokenWithMarketData,
   TokenWithMetadata,
 } from 'utils/types';
-
-import useInterval from 'hooks/useInterval';
-import useIsMounted from 'hooks/useIsMounted';
 import {TimeFilter} from 'utils/constants';
 import {formatUnits} from 'utils/library';
-import {tokenService, TokenPrices} from 'services/token';
+import {TokenPrices} from 'services/token';
+import {useTokenMarketData} from 'services/token/queries/use-token-market-data';
 
 type PolledTokenPricing = {
   tokens: TokenWithMarketData[];
   totalAssetValue: number;
   totalAssetChange: number;
 };
+
+export interface IUsePollTokenPricesResult {
+  data: PolledTokenPricing;
+  isLoading: boolean;
+  error: unknown;
+}
 
 /**
  * Hook for fetching token prices at specified intervals
@@ -29,27 +33,29 @@ type PolledTokenPricing = {
 export const usePollTokenPrices = (
   tokenList: TokenWithMetadata[],
   options: PollTokenOptions = {filter: TimeFilter.day, interval: 300000}
-) => {
-  const isMounted = useIsMounted();
-  const [data, setData] = useState<PolledTokenPricing>({
-    tokens: tokenList as TokenWithMarketData[],
-    totalAssetChange: 0,
-    totalAssetValue: 0,
-  });
-  const [error, setError] = useState<Error>();
-  const [isLoading, setIsLoading] = useState<boolean>(false);
+): IUsePollTokenPricesResult => {
+  const tokenIds = tokenList
+    .filter(token => token.metadata.apiId != null)
+    .map(token => token.metadata.apiId!);
+  const {
+    error,
+    isLoading,
+    data: marketData,
+  } = useTokenMarketData(
+    {tokenIds},
+    {refetchInterval: options.interval, enabled: tokenIds.length > 0}
+  );
 
   const transformData = useCallback(
-    (fetchedMarketData: TokenPrices) => {
+    (fetchedMarketData: TokenPrices | undefined) => {
       let sum = 0;
       let balanceValue: number;
-      let tokenMarketData;
 
       // map tokens
       const tokens: TokenWithMarketData[] = tokenList.map(token => {
-        if (!token.metadata.apiId) return token;
+        const tokenMarketData = fetchedMarketData?.[token.metadata.apiId ?? ''];
 
-        tokenMarketData = fetchedMarketData[token.metadata.apiId];
+        if (!token.metadata.apiId || !tokenMarketData) return token;
 
         // calculate current balance value
         balanceValue =
@@ -69,42 +75,18 @@ export const usePollTokenPrices = (
         } as TokenWithMarketData;
       });
 
-      if (isMounted()) {
-        setData({
-          tokens,
-          totalAssetValue: sum,
-          totalAssetChange: 0,
-        } as PolledTokenPricing);
-      }
+      return {tokens, totalAssetValue: sum, totalAssetChange: 0};
     },
-    [isMounted, options.filter, tokenList]
+    [options.filter, tokenList]
   );
 
-  // fetch token market data and calculate changes over time period
-  const calculatePricing = useCallback(async () => {
-    setIsLoading(true);
-
-    try {
-      const tokenIds = tokenList
-        .filter(token => token.metadata.apiId != null)
-        .map(token => token.metadata.apiId!);
-      const tokenMarketData = await tokenService.fetchTokenMarketData({
-        tokenIds,
-      });
-
-      if (tokenMarketData) transformData(tokenMarketData);
-    } catch (error) {
-      setError(error as Error);
-      console.error(error);
-    } finally {
-      setIsLoading(false);
-    }
-  }, [tokenList, transformData]);
-
-  useInterval(() => calculatePricing(), options.interval, tokenList.length > 0);
+  const processedData = useMemo(
+    () => transformData(marketData),
+    [transformData, marketData]
+  );
 
   return {
-    data,
+    data: processedData,
     error,
     isLoading,
   };

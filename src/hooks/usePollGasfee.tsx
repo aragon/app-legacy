@@ -2,8 +2,8 @@ import {constants} from 'ethers';
 import {useCallback, useEffect, useState} from 'react';
 
 import {useNetwork} from 'context/network';
-import {tokenService} from 'services/token';
 import {GasFeeEstimation} from '@aragon/sdk-client-common';
+import {useTokenPrice} from 'services/token/queries/use-token-price';
 
 /**
  * This hook returns the gas estimation for a particular transaction and
@@ -25,23 +25,22 @@ export const usePollGasFee = (
   const [error, setError] = useState<Error | undefined>();
   const [maxFee, setMaxFee] = useState<BigInt | undefined>(BigInt(0));
   const [averageFee, setAverageFee] = useState<BigInt | undefined>(BigInt(0));
-  const [tokenPrice, setTokenPrice] = useState<number>(0);
+
+  const {data: tokenPrice = 0} = useTokenPrice(
+    {
+      address: constants.AddressZero,
+      network,
+    },
+    {enabled: shouldPoll}
+  );
 
   // estimate gas for DAO creation
   useEffect(() => {
     async function getFeesAndPrice() {
       try {
-        const results = await Promise.all([
-          estimationFunction(),
-          tokenService.fetchTokenPrice({
-            address: constants.AddressZero,
-            network,
-          }),
-        ]);
-
-        setTokenPrice(results[1] || 0);
-        setMaxFee(results[0]?.max);
-        setAverageFee(results[0]?.average);
+        const estimation = await estimationFunction();
+        setMaxFee(estimation?.max);
+        setAverageFee(estimation?.average);
         setError(undefined);
       } catch (err) {
         setError(err as Error);
@@ -58,7 +57,6 @@ export const usePollGasFee = (
   const stopPolling = useCallback(() => {
     setMaxFee(BigInt(0));
     setAverageFee(BigInt(0));
-    setTokenPrice(0);
   }, []);
   return {error, tokenPrice, maxFee, averageFee, stopPolling};
 };

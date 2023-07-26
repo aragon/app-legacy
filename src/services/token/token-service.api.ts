@@ -4,7 +4,7 @@ export interface IFetchTokenMarketDataParams {
   tokenIds: string[];
 }
 
-export interface IFetchTokenDataParams {
+export interface IFetchTokenParams {
   address: string;
   network: SupportedNetworks;
   symbol?: string;
