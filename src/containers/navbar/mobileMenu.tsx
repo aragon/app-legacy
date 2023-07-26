@@ -11,6 +11,7 @@ import {useGlobalModalContext} from 'context/globalModals';
 import {usePrivacyContext} from 'context/privacyContext';
 import {ButtonText, IconFeedback} from '@aragon/ods';
 import {useResolveDaoAvatar} from 'hooks/useResolveDaoAvatar';
+import {toDisplayEns} from 'utils/library';
 
 type MobileNavMenuProps = {
   onFeedbackClick: () => void;
@@ -32,8 +33,10 @@ const MobileNavMenu = (props: MobileNavMenuProps) => {
       <div className="tablet:w-50">
         <CardWrapper className="rounded-xl">
           <DaoSelector
-            daoAddress={currentDao.ensDomain}
-            daoName={currentDao?.metadata?.name || currentDao?.ensDomain}
+            daoAddress={toDisplayEns(currentDao?.ensDomain)}
+            daoName={
+              currentDao?.metadata?.name || toDisplayEns(currentDao?.ensDomain)
+            }
             src={currentDaoAvatar}
             onClick={() => {
               close('mobileMenu');
