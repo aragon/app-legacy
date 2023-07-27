@@ -129,7 +129,7 @@ export async function decodeWithdrawToAction(
   network: SupportedNetworks,
   to: string,
   value: bigint,
-  fetchToken: (params: IFetchTokenParams) => Promise<Token>
+  fetchToken: (params: IFetchTokenParams) => Promise<Token | null>
 ): Promise<ActionWithdraw | undefined> {
   if (!client || !data) {
     console.error('SDK client is not initialized correctly');

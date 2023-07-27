@@ -11,7 +11,7 @@ import {Token} from '../domain';
 
 export const useToken = (
   params: IFetchTokenParams,
-  options?: UseQueryOptions<Token>
+  options?: UseQueryOptions<Token | null>
 ) => {
   return useQuery(
     tokenQueryKeys.token(params),
@@ -32,13 +32,12 @@ export const useTokenAsync = () => {
 
 export const useTokenList = (
   paramsList: IFetchTokenParams[],
-  options?: Array<UseQueryOptions<Token>>
+  options?: UseQueryOptions<Token | null>
 ) => {
-  const queries = paramsList.map((params, index) => ({
+  const queries = paramsList.map(params => ({
     queryKey: tokenQueryKeys.token(params),
     queryFn: () => tokenService.fetchToken(params),
-    retry: 0,
-    ...options?.[index],
+    ...options,
   }));
 
   return useQueries({queries});

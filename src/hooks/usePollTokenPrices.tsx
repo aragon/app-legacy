@@ -1,26 +1,21 @@
-import {useCallback, useMemo} from 'react';
+import {useMemo} from 'react';
 
 import type {
+  HookData,
   PollTokenOptions,
   TokenWithMarketData,
   TokenWithMetadata,
 } from 'utils/types';
 import {TimeFilter} from 'utils/constants';
 import {formatUnits} from 'utils/library';
-import {TokenPrices} from 'services/token';
-import {useTokenMarketData} from 'services/token/queries/use-token-market-data';
+import {useTokenList} from 'services/token/queries/use-token';
+import {useNetwork} from 'context/network';
 
 type PolledTokenPricing = {
   tokens: TokenWithMarketData[];
   totalAssetValue: number;
   totalAssetChange: number;
 };
-
-export interface IUsePollTokenPricesResult {
-  data: PolledTokenPricing;
-  isLoading: boolean;
-  error: unknown;
-}
 
 /**
  * Hook for fetching token prices at specified intervals
@@ -33,61 +28,59 @@ export interface IUsePollTokenPricesResult {
 export const usePollTokenPrices = (
   tokenList: TokenWithMetadata[],
   options: PollTokenOptions = {filter: TimeFilter.day, interval: 300000}
-): IUsePollTokenPricesResult => {
-  const tokenIds = tokenList
-    .filter(token => token.metadata.apiId != null)
-    .map(token => token.metadata.apiId!);
-  const {
-    error,
-    isLoading,
-    data: marketData,
-  } = useTokenMarketData(
-    {tokenIds},
-    {refetchInterval: options.interval, enabled: tokenIds.length > 0}
-  );
+): HookData<PolledTokenPricing> => {
+  const {network} = useNetwork();
 
-  const transformData = useCallback(
-    (fetchedMarketData: TokenPrices | undefined) => {
-      let sum = 0;
-      let balanceValue: number;
+  const tokenListParams = tokenList.map(({metadata}) => ({
+    address: metadata.id,
+    network,
+    symbol: metadata.symbol,
+  }));
 
-      // map tokens
-      const tokens: TokenWithMarketData[] = tokenList.map(token => {
-        const tokenMarketData = fetchedMarketData?.[token.metadata.apiId ?? ''];
+  const tokenResults = useTokenList(tokenListParams, {
+    refetchInterval: options.interval,
+  });
 
-        if (!token.metadata.apiId || !tokenMarketData) return token;
+  const isLoading = tokenResults.some(result => result.isLoading);
+  const isError = tokenResults.some(result => result.isError);
+  const fetchedTokens = tokenResults.map(result => result.data);
 
-        // calculate current balance value
-        balanceValue =
-          tokenMarketData.price *
-          Number(formatUnits(token.balance, token.metadata.decimals));
+  const processedTokens = useMemo(() => {
+    let sum = 0;
+    let balanceValue: number;
 
-        sum += balanceValue;
+    // map tokens
+    const tokens: TokenWithMarketData[] = tokenList.map((token, index) => {
+      const tokenMarketData = fetchedTokens[index];
 
-        return {
-          ...token,
-          marketData: {
-            price: tokenMarketData.price,
-            balanceValue,
-            percentageChangedDuringInterval:
-              tokenMarketData.percentages[options.filter],
-          },
-        } as TokenWithMarketData;
-      });
+      if (tokenMarketData == null) {
+        return token;
+      }
 
-      return {tokens, totalAssetValue: sum, totalAssetChange: 0};
-    },
-    [options.filter, tokenList]
-  );
+      // calculate current balance value
+      balanceValue =
+        tokenMarketData.price *
+        Number(formatUnits(token.balance, token.metadata.decimals));
 
-  const processedData = useMemo(
-    () => transformData(marketData),
-    [transformData, marketData]
-  );
+      sum += balanceValue;
+
+      return {
+        ...token,
+        marketData: {
+          price: tokenMarketData.price,
+          balanceValue,
+          percentageChangedDuringInterval:
+            tokenMarketData.priceChange[options.filter],
+        },
+      } as TokenWithMarketData;
+    });
+
+    return {tokens, totalAssetValue: sum, totalAssetChange: 0};
+  }, [fetchedTokens, options.filter, tokenList]);
 
   return {
-    data: processedData,
-    error,
+    data: processedTokens,
+    isError,
     isLoading,
   };
 };

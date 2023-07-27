@@ -20,7 +20,6 @@ export const SUBGRAPH_API_URL: SubgraphNetworkUrl = {
 };
 
 export const BASE_URL = 'https://api.coingecko.com/api/v3';
-export const DEFAULT_CURRENCY = 'usd';
 
 export const ARAGON_RPC = 'mainnet.eth.aragon.network';
 
@@ -43,18 +42,47 @@ export const walletConnectProjectID = import.meta.env
 
 export const COVALENT_API_KEY = import.meta.env.VITE_COVALENT_API_KEY as string;
 
-// Map from supported-networks to coingecko platform to use their API
-export const coingeckoPlatforms: Record<SupportedNetworks, string | null> = {
-  arbitrum: 'arbitrum-one',
-  'arbitrum-test': null,
-  ethereum: 'ethereum',
-  goerli: null,
-  polygon: 'polygon-pos',
-  mumbai: null,
-  unsupported: null,
+export type CoingeckoMetadata = {
+  /**
+   * Id of the network as defined by Coingecko.
+   */
+  networkId: string;
+  /**
+   * Id of the native token as defined by Coingecko.
+   */
+  nativeTokenId: string;
 };
 
-export const coingeckoNativeTokenId = {
-  default: 'ethereum',
-  polygon: 'matic-network',
-};
+/**
+ * Metadata for Coingecko API, use mainnet endpoints for testnets.
+ */
+export const coingeckoMetadata: Record<
+  SupportedNetworks,
+  CoingeckoMetadata | null
+> = {
+  arbitrum: {
+    networkId: 'arbitrum-one',
+    nativeTokenId: 'arbitrum',
+  },
+  'arbitrum-test': {
+    networkId: 'arbitrum-one',
+    nativeTokenId: 'arbitrum',
+  },
+  ethereum: {
+    networkId: 'ethereum',
+    nativeTokenId: 'ethereum',
+  },
+  goerli: {
+    networkId: 'ethereum',
+    nativeTokenId: 'ethereum',
+  },
+  polygon: {
+    networkId: 'polygon-pos',
+    nativeTokenId: 'matic-network',
+  },
+  mumbai: {
+    networkId: 'polygon-pos',
+    nativeTokenId: 'matic-network',
+  },
+  unsupported: null,
+} as const;

@@ -1,100 +1,58 @@
-import {
-  coingeckoPlatforms,
-  BASE_URL,
-  CHAIN_METADATA,
-  DEFAULT_CURRENCY,
-  coingeckoNativeTokenId,
-  SupportedNetworks,
-} from 'utils/constants';
+import {BASE_URL, CHAIN_METADATA, coingeckoMetadata} from 'utils/constants';
 import {isNativeToken} from 'utils/tokens';
 import {TOP_ETH_SYMBOL_ADDRESSES} from 'utils/constants/topSymbolAddresses';
-import {
-  CoingeckoToken,
-  Token,
-  CoingeckoTokenPrice,
-  TokenPrices,
-} from './domain';
-import {
-  IFetchTokenParams,
-  IFetchTokenMarketDataParams,
-} from './token-service.api';
+import {CoingeckoToken, Token} from './domain';
+import {IFetchTokenParams} from './token-service.api';
 import {CoingeckoError} from './domain/coingecko-error';
 
 class TokenService {
   /**
-   * Returns token USD value along with price changes for 1 day, 1 week, 1 month, 1 year
-   * @param id Coingecko id or a list of comma separated ids for multiple tokens
-   */
-  fetchTokenMarketData = async ({
-    tokenIds,
-  }: IFetchTokenMarketDataParams): Promise<TokenPrices> => {
-    const endPoint = '/coins/markets';
-    const url = `${BASE_URL}${endPoint}?vs_currency=${DEFAULT_CURRENCY}&ids=${tokenIds}&price_change_percentage=24h%2C7d%2C30d%2C1y`;
-
-    const response = await fetch(url);
-    const data: CoingeckoTokenPrice[] = await response.json();
-    const tokenPrices = data.reduce(
-      (current, token) => ({
-        ...current,
-        [token.id]: {
-          price: token.current_price,
-          percentages: {
-            day: token.price_change_percentage_24h_in_currency,
-            week: token.price_change_percentage_7d_in_currency,
-            month: token.price_change_percentage_30d_in_currency,
-            year: token.price_change_percentage_1y_in_currency,
-          },
-        },
-      }),
-      {}
-    );
-
-    return tokenPrices;
-  };
-
-  /**
-   * fetch token data from external api.
+   * Fetch token data from external api.
    * @param address Address of the token
    * @param network Network of the token
+   * @param symbol Symbol of the token (optional)
    * @returns Basic information about the token or undefined if token data cannot be fetched
    */
   fetchToken = async ({
     address,
     network,
     symbol,
-  }: IFetchTokenParams): Promise<Token> => {
-    // Use mainnet token network and address for top ERC20 tokens
-    const useMainnet =
-      !isNativeToken(address) &&
-      symbol &&
-      ['goerli', 'mumbai'].includes(network) &&
-      TOP_ETH_SYMBOL_ADDRESSES[symbol.toLowerCase()];
+  }: IFetchTokenParams): Promise<Token | null> => {
+    // Use token data from ethereum mainnet when trying to fetch a testnet
+    // token that is one of the top ERC20 tokens
+    const useEthereumMainnet =
+      CHAIN_METADATA[network].testnet &&
+      symbol != null &&
+      TOP_ETH_SYMBOL_ADDRESSES[symbol.toLowerCase()] != null;
 
-    const fetchAddress = useMainnet
+    const processedAddress = useEthereumMainnet
       ? TOP_ETH_SYMBOL_ADDRESSES[symbol.toLowerCase()]
       : address;
-    const fetchNetwork = useMainnet ? 'ethereum' : network;
 
-    // network unsupported, or testnet
-    const platformId = coingeckoPlatforms[fetchNetwork];
-    if (!platformId && !isNativeToken(address)) {
-      throw Error(
-        `fetchToken - network ${fetchNetwork} not supported by Coingecko`
+    const processedNetwork = useEthereumMainnet ? 'ethereum' : network;
+
+    const {networkId, nativeTokenId} =
+      coingeckoMetadata[processedNetwork] ?? {};
+
+    if (!networkId || !nativeTokenId) {
+      console.error(
+        `fetchToken - network ${processedNetwork} not supported by Coingecko`
       );
+      return null;
     }
 
     // build url based on whether token is native token
     const endpoint = isNativeToken(address)
-      ? `/coins/${this.getNativeTokenId(fetchNetwork)}`
-      : `/coins/${platformId}/contract/${fetchAddress}`;
+      ? `/coins/${nativeTokenId}`
+      : `/coins/${networkId}/contract/${processedAddress}`;
 
     const url = `${BASE_URL}${endpoint}`;
-
     const res = await fetch(url);
     const data: CoingeckoToken | CoingeckoError = await res.json();
 
     if (this.isErrorCoingeckoResponse(data)) {
-      throw Error(`fetchToken - Coingecko returned error: ${data.error}`);
+      console.error(`fetchToken - Coingecko returned error: ${data.error}`);
+      return null;
     }
 
     return {
@@ -116,19 +74,6 @@ class TokenService {
         year: data.market_data.price_change_percentage_1y_in_currency.usd,
       },
     };
-  };
-
-  /**
-   * Get the native token ID for a given platform and network
-   * @param network Network of the token
-   * @returns The native token ID
-   */
-  private getNativeTokenId = (network: SupportedNetworks): string => {
-    if (network === 'polygon' || network === 'mumbai') {
-      return coingeckoNativeTokenId.polygon;
-    }
-
-    return coingeckoNativeTokenId.default;
   };
 
   /**
