@@ -1,4 +1,4 @@
-import React, {useCallback, useState} from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 import {useFormContext} from 'react-hook-form';
 import {SessionTypes} from '@walletconnect/types';
 
@@ -83,6 +83,21 @@ const WalletConnect: React.FC<WalletConnectProps> = ({actionIndex}) => {
     },
     [resetField]
   );
+
+  // Close listeningActions modal when session is terminated on the dApp
+  useEffect(() => {
+    if (!selectedSession) {
+      return;
+    }
+
+    const isSelectedSessionActive =
+      activeSessions.find(({topic}) => topic === selectedSession.topic) != null;
+
+    if (!isSelectedSessionActive) {
+      setSelectedSession(undefined);
+      setListeningActionsIsOpen(false);
+    }
+  }, [activeSessions, selectedSession]);
 
   /*************************************************
    *                     Render                    *

@@ -1,6 +1,6 @@
 import {AvatarDao, ButtonText, Spinner, Tag} from '@aragon/ods';
 import {SessionTypes} from '@walletconnect/types';
-import React, {useCallback, useEffect, useState} from 'react';
+import React, {useCallback, useState} from 'react';
 import {useFormContext} from 'react-hook-form';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
@@ -54,7 +54,7 @@ const ActionListenerModal: React.FC<Props> = ({
     [actionsReceived]
   );
 
-  const {wcDisconnect, activeSessions} = useWalletConnectInterceptor({
+  const {wcDisconnect} = useWalletConnectInterceptor({
     onActionRequest,
   });
 
@@ -176,16 +176,6 @@ const ActionListenerModal: React.FC<Props> = ({
     setValue,
     t,
   ]);
-
-  // Go to previous step if session is terminated on the dApp
-  useEffect(() => {
-    const isSelectedSessionActive =
-      activeSessions.find(({topic}) => topic === selectedSession.topic) != null;
-
-    if (!isSelectedSessionActive && isOpen) {
-      onBackButtonClicked();
-    }
-  }, [activeSessions, selectedSession, onBackButtonClicked, isOpen]);
 
   /*************************************************
    *                     Render                    *

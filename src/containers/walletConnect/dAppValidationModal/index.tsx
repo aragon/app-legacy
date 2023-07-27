@@ -129,20 +129,22 @@ const WCdAppValidation: React.FC<Props> = props => {
     }
   }, [uri, wcConnect]);
 
-  // Update connectionStatus to SUCCESS as soon as the connection is established and the session
-  // with the connection topic is returned as active session
+  // Update connectionStatus to SUCCESS when the session is active and acknowledged or reset
+  // the connection state if the session has been terminated on the dApp
   useEffect(() => {
-    if (
-      connectionStatus === ConnectionState.LOADING &&
-      currentSession != null
-    ) {
+    const isLoading = connectionStatus === ConnectionState.LOADING;
+    const isSuccess = connectionStatus === ConnectionState.SUCCESS;
+
+    if (isLoading && currentSession != null) {
       setConnectionStatus(
         currentSession.acknowledged
           ? ConnectionState.SUCCESS
           : ConnectionState.ERROR
       );
+    } else if (isSuccess && currentSession == null) {
+      resetConnectionState();
     }
-  }, [connectionStatus, currentSession]);
+  }, [connectionStatus, currentSession, resetConnectionState]);
 
   const disableCta =
     uri == null ||
