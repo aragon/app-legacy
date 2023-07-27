@@ -59,6 +59,8 @@ const defaultValues = {
   executionExpirationMinutes: string;
   executionExpirationHours: string;
   executionExpirationDays: string;
+  committee: MultisigWalletField[];
+  committeeMinimumApproval: string;
 };
 
 export const CreateDAO: React.FC = () => {
@@ -89,6 +91,7 @@ export const CreateDAO: React.FC = () => {
     daoName,
     daoEnsName,
     eligibilityType,
+    votingType,
     committee,
     isCustomToken,
     tokenAddress,
@@ -386,6 +389,50 @@ export const CreateDAO: React.FC = () => {
           >
             <ConfigureCommunity />
           </Step>
+          {/*Todo(kon): how to create a conditional step?*/}
+          {/*{votingType === 'offChain' ? ( */}
+          <Step
+            wizardTitle={t('createDAO.step5.title')}
+            wizardDescription={htmlIn(t)('createDAO.step5.description')}
+            isNextButtonDisabled={!defineCommitteeIsValid}
+            onNextButtonClicked={next => {
+              handleNextButtonTracking(next, '5_define_executive_committee', {
+                committee: formMethods.getValues('committee'),
+                committeeMinimumApproval: formMethods.getValues(
+                  'committeeMinimumApproval'
+                ),
+                executionExpirationMinutes: formMethods.getValues(
+                  'executionExpirationMinutes'
+                ),
+                executionExpirationHours: formMethods.getValues(
+                  'executionExpirationHours'
+                ),
+                executionExpirationDays: formMethods.getValues(
+                  'executionExpirationDays'
+                ),
+              });
+            }}
+          >
+            <DefineCommittee />
+          </Step>
+          {/*) : (*/}
+          {/*  <></>*/}
+          {/*)}*/}
+          <Step
+            wizardTitle={'dummy'}
+            wizardDescription={'dummy desc'}
+            isNextButtonDisabled={
+              //todo
+              true
+            }
+            onNextButtonClicked={next => {
+              //todo
+              return;
+            }}
+          >
+            <ConfirmDaoCreation />
+          </Step>
+
           <Step
             hideWizard
             fullWidth
