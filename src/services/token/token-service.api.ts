@@ -9,9 +9,3 @@ export interface IFetchTokenParams {
   network: SupportedNetworks;
   symbol?: string;
 }
-
-export interface IFetchTokenPriceParams {
-  address: string;
-  network: SupportedNetworks;
-  symbol?: string;
-}

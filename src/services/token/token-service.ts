@@ -17,7 +17,6 @@ import {
 import {
   IFetchTokenParams,
   IFetchTokenMarketDataParams,
-  IFetchTokenPriceParams,
 } from './token-service.api';
 import {CoingeckoError} from './domain/coingecko-error';
 
@@ -80,7 +79,7 @@ class TokenService {
     const platformId = coingeckoPlatforms[fetchNetwork];
     if (!platformId && !isNativeToken(address)) {
       throw Error(
-        `fetchToken: network ${fetchNetwork} not supported by Coingecko`
+        `fetchToken - network ${fetchNetwork} not supported by Coingecko`
       );
     }
 
@@ -92,13 +91,11 @@ class TokenService {
     const url = `${BASE_URL}${endpoint}`;
 
     const res = await fetch(url);
-    const jsonData: CoingeckoToken | CoingeckoError = await res.json();
+    const data: CoingeckoToken | CoingeckoError = await res.json();
 
-    if ((jsonData as CoingeckoError).error != null) {
-      throw Error('fetchToken: Coingecko returned error');
+    if (this.isErrorCoingeckoResponse(data)) {
+      throw Error(`fetchToken - Coingecko returned error: ${data.error}`);
     }
-
-    const data = jsonData as CoingeckoToken;
 
     return {
       id: data.id,
@@ -112,52 +109,13 @@ class TokenService {
       imgUrl: data.image.large,
       address: address,
       price: data.market_data.current_price.usd,
+      priceChange: {
+        day: data.market_data.price_change_percentage_24h_in_currency.usd,
+        week: data.market_data.price_change_percentage_7d_in_currency.usd,
+        month: data.market_data.price_change_percentage_30d_in_currency.usd,
+        year: data.market_data.price_change_percentage_1y_in_currency.usd,
+      },
     };
-  };
-
-  /**
-   * Fetch the price of the given token
-   * @param address Address of the token
-   * @param network Network of the token
-   * @returns the USD price of the token as number
-   */
-  fetchTokenPrice = async ({
-    address,
-    network,
-    symbol,
-  }: IFetchTokenPriceParams): Promise<number> => {
-    // Use mainnet token network and address for top ERC20 tokens
-    const useMainnet =
-      !isNativeToken(address) &&
-      symbol &&
-      ['goerli', 'mumbai'].includes(network) &&
-      TOP_ETH_SYMBOL_ADDRESSES[symbol.toLowerCase()];
-
-    const fetchAddress = useMainnet
-      ? TOP_ETH_SYMBOL_ADDRESSES[symbol.toLowerCase()]
-      : address;
-    const fetchNetwork = useMainnet ? 'ethereum' : network;
-
-    // network unsupported, or testnet
-    const platformId = coingeckoPlatforms[fetchNetwork];
-    if (!platformId && !isNativeToken(address)) {
-      throw Error(
-        `fetchTokenPrice: network ${fetchNetwork} not supported by Coingecko`
-      );
-    }
-
-    // build url based on whether token is ethereum
-    const endPoint = `/simple/token_price/${platformId}?vs_currencies=usd&contract_addresses=`;
-    const url = isNativeToken(address)
-      ? `${BASE_URL}/simple/price?ids=${this.getNativeTokenId(
-          fetchNetwork
-        )}&vs_currencies=usd`
-      : `${BASE_URL}${endPoint}${fetchAddress}`;
-
-    const res = await fetch(url);
-    const data: object = await res.json();
-
-    return Object.values(data)[0]?.usd as number;
   };
 
   /**
@@ -171,6 +129,17 @@ class TokenService {
     }
 
     return coingeckoNativeTokenId.default;
+  };
+
+  /**
+   * Checks if the given object is a Coingecko error object.
+   * @param data Result from a Coingecko API request
+   * @returns true if the object is an error object, false otherwise
+   */
+  private isErrorCoingeckoResponse = <TData extends object>(
+    data: TData | CoingeckoError
+  ): data is CoingeckoError => {
+    return Object.hasOwn(data, 'error');
   };
 }
 

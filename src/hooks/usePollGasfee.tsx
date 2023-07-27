@@ -3,7 +3,7 @@ import {useCallback, useEffect, useState} from 'react';
 
 import {useNetwork} from 'context/network';
 import {GasFeeEstimation} from '@aragon/sdk-client-common';
-import {useTokenPrice} from 'services/token/queries/use-token-price';
+import {useToken} from 'services/token/queries/use-token';
 
 /**
  * This hook returns the gas estimation for a particular transaction and
@@ -26,13 +26,12 @@ export const usePollGasFee = (
   const [maxFee, setMaxFee] = useState<BigInt | undefined>(BigInt(0));
   const [averageFee, setAverageFee] = useState<BigInt | undefined>(BigInt(0));
 
-  const {data: tokenPrice = 0} = useTokenPrice(
-    {
-      address: constants.AddressZero,
-      network,
-    },
+  const {data: token} = useToken(
+    {address: constants.AddressZero, network},
     {enabled: shouldPoll}
   );
+
+  const {price: tokenPrice = 0} = token ?? {};
 
   // estimate gas for DAO creation
   useEffect(() => {

@@ -1,3 +1,5 @@
+import {TokenPriceChange} from './token-price-change';
+
 export type Token = {
   id: string;
   name: string;
@@ -5,4 +7,5 @@ export type Token = {
   imgUrl: string;
   address: string;
   price: number;
+  priceChange: TokenPriceChange;
 };
