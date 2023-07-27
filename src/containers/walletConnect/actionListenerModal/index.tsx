@@ -54,9 +54,7 @@ const ActionListenerModal: React.FC<Props> = ({
     [actionsReceived]
   );
 
-  const {wcDisconnect} = useWalletConnectInterceptor({
-    onActionRequest,
-  });
+  const {wcDisconnect} = useWalletConnectInterceptor({onActionRequest});
 
   /*************************************************
    *             Callbacks and Handlers            *
