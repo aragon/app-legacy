@@ -54,6 +54,7 @@ import {i18n} from '../../i18n.config';
 import {addABI, decodeMethod} from './abiDecoder';
 import {attachEtherNotice} from './contract';
 import {getTokenInfo} from './tokens';
+import {IFetchTokenParams} from 'services/token/token-service.api';
 
 export function formatUnits(amount: BigNumberish, decimals: number) {
   if (amount.toString().includes('.') || !decimals) {
@@ -1011,3 +1012,20 @@ export function clearWagmiCache(): void {
   localStorage.removeItem('wagmi.store');
   localStorage.removeItem('wagmi.wallet');
 }
+
+/**
+ * Check if a wallet exists on a wallets list
+ *
+ * @param walletsList{MultisigWalletField[]} Wallets list where to look for
+ * @param wallet{Web3Address} The wallet you want to find
+ * @returns {boolean} true if the wallet exists on the wallets list
+ */
+export const walletInWalletList = (
+  wallet: Web3Address,
+  walletsList: MultisigWalletField[]
+) =>
+  walletsList?.some(
+    w =>
+      w.address.toLowerCase() === wallet.address?.toLowerCase() ||
+      w.ensName.toLowerCase() === wallet.ensName?.toLowerCase()
+  );

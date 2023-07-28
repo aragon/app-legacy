@@ -1,5 +1,5 @@
 import {AlertInline, Label, LinearProgress, NumberInput} from '@aragon/ods';
-import React, {useCallback} from 'react';
+import React, {useCallback, useEffect} from 'react';
 import {Controller, useFormContext, useWatch} from 'react-hook-form';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
@@ -38,6 +38,13 @@ const DefineCommittee: React.FC = () => {
     },
     [committeeCount, setValue, trigger]
   );
+
+  // This is used to update the committeeMinimumApproval when a wallet is deleted
+  useEffect(() => {
+    if (committeeMinimumApproval > committeeCount) {
+      setValue('committeeMinimumApproval', committeeCount.toString());
+    }
+  }, [committeeCount, committeeMinimumApproval]);
 
   return (
     <>

@@ -414,6 +414,7 @@
     "notValidContractAddress": "Smart contract address not valid",
     "duplicateContractAddress": "Smart contract has already been added",
     "biggerThanTotalSupply": "Minimum tokens must be less than total supply",
+    "addressNotElegible": "The address is not on the DAO community",
     "required": {
       "tokenAddress": "Token address is required",
       "tokenName": "Token name is required",

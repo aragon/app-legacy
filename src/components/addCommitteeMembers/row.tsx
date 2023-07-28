@@ -1,17 +1,12 @@
 import {
-  AlertInline,
   ButtonIcon,
   Dropdown,
   IconMenuVertical,
   Label,
   ListItemAction,
-  NumberInput,
-  TextInput,
   InputValue as WalletInputValue,
 } from '@aragon/ods';
-import Big from 'big.js';
-import {constants} from 'ethers';
-import React, {useCallback, useState} from 'react';
+import React, {useCallback} from 'react';
 import {Controller, useFormContext, useWatch} from 'react-hook-form';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
@@ -19,8 +14,7 @@ import styled from 'styled-components';
 import {WrappedWalletInput} from 'components/wrappedWalletInput';
 import {useAlertContext} from 'context/alert';
 import {useProviders} from 'context/providers';
-import {MAX_TOKEN_DECIMALS} from 'utils/constants';
-import {Web3Address} from 'utils/library';
+import {walletInWalletList, Web3Address} from 'utils/library';
 import {validateWeb3Address} from 'utils/validators';
 import {MultisigWalletField} from 'components/multisigWallets/row';
 
@@ -35,12 +29,15 @@ const WalletRow: React.FC<WalletRowProps> = ({index, onDelete}) => {
   const {infura: provider} = useProviders();
 
   const {control} = useFormContext();
-  const walletFieldArray: MultisigWalletField[] = useWatch({
-    name: 'committee',
+  const [committee, multisigWallets, wallets, membership]: [
+    MultisigWalletField[],
+    MultisigWalletField[],
+    MultisigWalletField[],
+    'multisig' | 'token'
+  ] = useWatch({
+    name: ['committee', 'multisigWallets', 'wallets', 'membership'],
     control,
   });
-
-  const [isDuplicate, setIsDuplicate] = useState<boolean>(false);
 
   const addressValidator = useCallback(
     async ({address, ensName}: WalletInputValue, index: number) => {
@@ -53,24 +50,29 @@ const WalletRow: React.FC<WalletRowProps> = ({index, onDelete}) => {
         t
       );
 
-      // check if address is duplicated
-      setIsDuplicate(false);
+      if (validationResult && validationResult !== true)
+        return validationResult;
 
       if (
-        walletFieldArray?.some(
+        committee?.some(
           (wallet, walletIndex) =>
-            (wallet.address === web3Address.address ||
-              wallet.ensName === web3Address.ensName) &&
+            ((web3Address.address && wallet.address === web3Address.address) ||
+              (web3Address.ensName &&
+                wallet.ensName === web3Address.ensName)) &&
             walletIndex !== index
         )
       ) {
-        setIsDuplicate(true);
         validationResult = t('errors.duplicateAddress');
+      } else if (
+        (membership === 'multisig' &&
+          !walletInWalletList(web3Address, multisigWallets)) ||
+        (membership === 'token' && !walletInWalletList(web3Address, wallets))
+      ) {
+        validationResult = t('errors.addressNotElegible');
       }
-
       return validationResult;
     },
-    [provider, t, walletFieldArray]
+    [provider, t, committee]
   );
 
   const handleOnChange = useCallback(
@@ -81,7 +83,7 @@ const WalletRow: React.FC<WalletRowProps> = ({index, onDelete}) => {
         ...(e as WalletInputValue),
       });
     },
-    [index, walletFieldArray]
+    [index, committee]
   );
 
   return (

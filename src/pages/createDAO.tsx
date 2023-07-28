@@ -41,7 +41,6 @@ const defaultValues = {
 
   // Uncomment when DAO Treasury minting is supported
   // wallets: [{address: constants.AddressZero, amount: '0'}],
-  committee: [],
   earlyExecution: true,
   voteReplacement: false,
   membership: 'token' as CreateDaoFormData['membership'],
@@ -282,6 +281,39 @@ export const CreateDAO: React.FC = () => {
         : validateExistingTokenCommunity();
       break;
   }
+  const defineCommitteeIsValid = useMemo(() => {
+    if (
+      !committee ||
+      !committee.length ||
+      errors.committee ||
+      errors.committeeMinimumApproval ||
+      errors.executionExpirationMinutes ||
+      errors.executionExpirationHours ||
+      errors.executionExpirationDays
+    )
+      return false;
+    return true;
+  }, [
+    committee,
+    errors.committee,
+    errors.committeeMinimumApproval,
+    errors.executionExpirationMinutes,
+    errors.executionExpirationHours,
+    errors.executionExpirationDays,
+  ]);
+
+  const proposalCreationIsValid = useMemo(() => {
+    // required fields not dirty
+    // if multisig
+    if (membership === 'multisig') {
+      if (!['multisig', 'anyone'].includes(eligibilityType)) {
+        return false;
+      }
+      return true;
+    } else {
+      return !errors.eligibilityTokenAmount;
+    }
+  }, [eligibilityType, errors.eligibilityTokenAmount, membership]);
 
   // todo(kon): check for rebase validation b794a88a
   const daoCommunityConfigurationIsValid = useMemo(() => {
