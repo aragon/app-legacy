@@ -68,9 +68,7 @@ class TokenService {
     const isNative = isNativeToken(address);
 
     if (!networkId || !nativeTokenId) {
-      console.debug(
-        `fetchToken - network ${network} not supported by Covalent`
-      );
+      console.info(`fetchToken - network ${network} not supported by Covalent`);
       return null;
     }
 
@@ -78,15 +76,15 @@ class TokenService {
     const endpoint = `/pricing/historical_by_addresses_v2/${networkId}/${this.defaultCurrency}/${processedAddress}/`;
 
     const url = `${this.baseUrl.covalent}${endpoint}`;
-    const headers: HeadersInit = {
-      Authorization: window.btoa(`${COVALENT_API_KEY}:`),
-    };
+    const authToken = window.btoa(`${COVALENT_API_KEY}:`);
+    const headers = {Authorization: `Basic ${authToken}`};
+
     const res = await fetch(url, {headers});
     const parsed: CovalentResponse<CovalentToken[] | null> = await res.json();
     const data = parsed.data?.[0];
 
     if (parsed.error || data == null) {
-      console.debug(
+      console.info(
         `fetchToken - Covalent returned error: ${parsed.error_message}`
       );
       return null;
@@ -119,7 +117,7 @@ class TokenService {
     const isNative = isNativeToken(address);
 
     if (!networkId || !nativeTokenId) {
-      console.debug(
+      console.info(
         `fetchToken - network ${network} not supported by Coingecko`
       );
       return null;
@@ -128,13 +126,13 @@ class TokenService {
     const endpoint = isNative
       ? `/coins/${nativeTokenId}`
       : `/coins/${networkId}/contract/${address}`;
-
     const url = `${this.baseUrl.coingecko}${endpoint}`;
+
     const res = await fetch(url);
     const data: CoingeckoToken | CoingeckoError = await res.json();
 
     if (this.isErrorCoingeckoResponse(data)) {
-      console.debug(`fetchToken - Coingecko returned error: ${data.error}`);
+      console.info(`fetchToken - Coingecko returned error: ${data.error}`);
       return null;
     }
 
