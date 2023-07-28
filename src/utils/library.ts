@@ -22,7 +22,7 @@ import {TFunction} from 'react-i18next';
 
 import {hexlify, isAddress} from 'ethers/lib/utils';
 import {getEtherscanVerifiedContract} from 'services/etherscanAPI';
-import {Token} from 'services/token';
+import {Token} from 'services/token/domain';
 import {
   BIGINT_PATTERN,
   CHAIN_METADATA,

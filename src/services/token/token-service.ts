@@ -1,11 +1,19 @@
-import {BASE_URL, CHAIN_METADATA, coingeckoMetadata} from 'utils/constants';
+import {
+  CHAIN_METADATA,
+  SupportedNetworks,
+  coingeckoMetadata,
+} from 'utils/constants';
 import {isNativeToken} from 'utils/tokens';
 import {TOP_ETH_SYMBOL_ADDRESSES} from 'utils/constants/topSymbolAddresses';
-import {CoingeckoToken, Token} from './domain';
+import {CoingeckoToken, Token, CoingeckoError} from './domain';
 import {IFetchTokenParams} from './token-service.api';
-import {CoingeckoError} from './domain/coingecko-error';
 
 class TokenService {
+  private baseUrl = {
+    coingecko: 'https://api.coingecko.com/api/v3',
+    covalent: 'https://api.covalenthq.com/v1',
+  };
+
   /**
    * Fetch token data from external api.
    * @param address Address of the token
@@ -25,28 +33,43 @@ class TokenService {
       symbol != null &&
       TOP_ETH_SYMBOL_ADDRESSES[symbol.toLowerCase()] != null;
 
+    const processedNetwork = useEthereumMainnet ? 'ethereum' : network;
     const processedAddress = useEthereumMainnet
       ? TOP_ETH_SYMBOL_ADDRESSES[symbol.toLowerCase()]
       : address;
 
-    const processedNetwork = useEthereumMainnet ? 'ethereum' : network;
+    const token = this.fetchCoingeckoToken(processedNetwork, processedAddress);
 
-    const {networkId, nativeTokenId} =
-      coingeckoMetadata[processedNetwork] ?? {};
+    return token;
+  };
+
+  private fetchCovalentToken = async (
+    network: SupportedNetworks,
+    address: string
+  ): Promise<Token | null> => {
+    // TODO
+
+    return {} as Token;
+  };
+
+  private fetchCoingeckoToken = async (
+    network: SupportedNetworks,
+    address: string
+  ): Promise<Token | null> => {
+    const {networkId, nativeTokenId} = coingeckoMetadata[network] ?? {};
 
     if (!networkId || !nativeTokenId) {
       console.error(
-        `fetchToken - network ${processedNetwork} not supported by Coingecko`
+        `fetchToken - network ${network} not supported by Coingecko`
       );
       return null;
     }
 
-    // build url based on whether token is native token
     const endpoint = isNativeToken(address)
       ? `/coins/${nativeTokenId}`
-      : `/coins/${networkId}/contract/${processedAddress}`;
+      : `/coins/${networkId}/contract/${address}`;
 
-    const url = `${BASE_URL}${endpoint}`;
+    const url = `${this.baseUrl.coingecko}${endpoint}`;
     const res = await fetch(url);
     const data: CoingeckoToken | CoingeckoError = await res.json();
 
@@ -55,15 +78,14 @@ class TokenService {
       return null;
     }
 
+    const {nativeCurrency} = CHAIN_METADATA[network];
+
     return {
       id: data.id,
-      ...(isNativeToken(address)
-        ? CHAIN_METADATA[network].nativeCurrency
-        : {
-            name: data.name,
-            symbol: data.symbol.toUpperCase(),
-          }),
-
+      name: isNativeToken(address) ? nativeCurrency.name : data.name,
+      symbol: isNativeToken(address)
+        ? nativeCurrency.symbol
+        : data.symbol.toUpperCase(),
       imgUrl: data.image.large,
       address: address,
       price: data.market_data.current_price.usd,

@@ -19,8 +19,6 @@ export const SUBGRAPH_API_URL: SubgraphNetworkUrl = {
   unsupported: undefined,
 };
 
-export const BASE_URL = 'https://api.coingecko.com/api/v3';
-
 export const ARAGON_RPC = 'mainnet.eth.aragon.network';
 
 type AlchemyApiKeys = Record<SupportedNetworks, string | undefined>;
