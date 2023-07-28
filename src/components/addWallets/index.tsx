@@ -40,8 +40,11 @@ const AddWallets: React.FC = () => {
       // uncomment when minting to treasury is ready
       // insert(1, {address: address, amount: '0'});
       append({address, ensName, amount: '0'});
+      setTimeout(() => {
+        trigger('wallets[0]');
+      }, 50);
     }
-  }, [address, append, ensName, wallets]);
+  }, [address, append, ensName, trigger, wallets]);
 
   const resetDistribution = () => {
     controlledFields.forEach((_, index) => {
