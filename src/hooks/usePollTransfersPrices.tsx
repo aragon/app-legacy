@@ -3,7 +3,7 @@ import {TokenType} from '@aragon/sdk-client-common';
 
 import {useNetwork} from 'context/network';
 import {constants} from 'ethers';
-import {useEffect, useMemo} from 'react';
+import {useMemo} from 'react';
 import {
   CHAIN_METADATA,
   SupportedNetworks,

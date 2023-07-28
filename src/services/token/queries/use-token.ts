@@ -8,6 +8,7 @@ import {
   useQueries,
 } from '@tanstack/react-query';
 import {Token} from '../domain';
+import {useCallback} from 'react';
 
 export const useToken = (
   params: IFetchTokenParams,
@@ -23,11 +24,16 @@ export const useToken = (
 export const useTokenAsync = () => {
   const queryClient = useQueryClient();
 
-  return (params: IFetchTokenParams) =>
-    queryClient.fetchQuery({
-      queryKey: tokenQueryKeys.token(params),
-      queryFn: () => tokenService.fetchToken(params),
-    });
+  const fetchTokenAsync = useCallback(
+    (params: IFetchTokenParams) =>
+      queryClient.fetchQuery({
+        queryKey: tokenQueryKeys.token(params),
+        queryFn: () => tokenService.fetchToken(params),
+      }),
+    [queryClient]
+  );
+
+  return fetchTokenAsync;
 };
 
 export const useTokenList = (
