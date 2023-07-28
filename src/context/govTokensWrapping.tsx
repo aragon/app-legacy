@@ -1,10 +1,20 @@
+import {
+  Erc20WrapperTokenDetails,
+  InstalledPluginListItem,
+  SetAllowanceSteps,
+  TokenVotingClient,
+  UnwrapTokensStep,
+  WrapTokensStep,
+} from '@aragon/sdk-client';
 import GovTokensWrappingModal from 'containers/govTokensWrappingModal/GovTokensWrappingModal';
+import {useNetwork} from 'context/network';
+import {useProviders} from 'context/providers';
+import {ethers} from 'ethers';
+import {useClient} from 'hooks/useClient';
 import {useDaoDetailsQuery} from 'hooks/useDaoDetails';
 import {useDaoToken} from 'hooks/useDaoToken';
+import {PluginTypes, usePluginClient} from 'hooks/usePluginClient';
 import {useWallet} from 'hooks/useWallet';
-import {useNetwork} from 'context/network';
-import {useSpecificProvider} from 'context/providers';
-import {CHAIN_METADATA} from 'utils/constants';
 import React, {
   FC,
   ReactNode,
@@ -14,22 +24,12 @@ import React, {
   useEffect,
   useState,
 } from 'react';
-import {fetchBalance} from 'utils/tokens';
 import {useForm, useWatch} from 'react-hook-form';
-import {
-  Erc20WrapperTokenDetails,
-  InstalledPluginListItem,
-  SetAllowanceSteps,
-  TokenVotingClient,
-  UnwrapTokensStep,
-  WrapTokensStep,
-} from '@aragon/sdk-client';
-import {PluginTypes, usePluginClient} from 'hooks/usePluginClient';
-import {useClient} from 'hooks/useClient';
 import {generatePath, useLocation, useNavigate} from 'react-router-dom';
-import {Community} from 'utils/paths';
+import {CHAIN_METADATA} from 'utils/constants';
 import {toDisplayEns} from 'utils/library';
-import {ethers} from 'ethers';
+import {Community} from 'utils/paths';
+import {fetchBalance} from 'utils/tokens';
 
 interface IGovTokensWrappingContextType {
   handleOpenModal: () => void;
@@ -48,7 +48,7 @@ const GovTokensWrappingProvider: FC<{children: ReactNode}> = ({children}) => {
   const {address: userAddress} = useWallet();
   const {network} = useNetwork();
   const loc = useLocation();
-  const provider = useSpecificProvider(CHAIN_METADATA[network].id);
+  const {api: provider} = useProviders();
 
   const {data: daoDetails, isLoading: isDaoDetailsLoading} =
     useDaoDetailsQuery();
@@ -357,4 +357,4 @@ function useGovTokensWrapping(): IGovTokensWrappingContextType {
   return useContext(GovTokensWrappingContext) as IGovTokensWrappingContextType;
 }
 
-export {useGovTokensWrapping, GovTokensWrappingProvider};
+export {GovTokensWrappingProvider, useGovTokensWrapping};

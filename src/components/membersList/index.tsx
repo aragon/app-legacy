@@ -1,14 +1,14 @@
-import {Erc20TokenDetails} from '@aragon/sdk-client';
 import {ListItemAddress} from '@aragon/ods';
+import {Erc20TokenDetails} from '@aragon/sdk-client';
 import {formatUnits, isAddress} from 'ethers/lib/utils';
 import React, {useEffect, useState} from 'react';
 
 import {useNetwork} from 'context/network';
-import {useSpecificProvider} from 'context/providers';
+import {useProviders} from 'context/providers';
 import {
   BalanceMember,
-  isBalanceMember,
   MultisigMember,
+  isBalanceMember,
 } from 'hooks/useDaoMembers';
 import {CHAIN_METADATA} from 'utils/constants';
 import {getTokenInfo} from 'utils/tokens';
@@ -21,12 +21,11 @@ type MembersListProps = {
 export const MembersList: React.FC<MembersListProps> = ({token, members}) => {
   const {network} = useNetwork();
   const [totalSupply, setTotalSupply] = useState<number>(0);
-
-  const provider = useSpecificProvider(CHAIN_METADATA[network].id);
+  const {api: provider} = useProviders();
 
   useEffect(() => {
     async function fetchTotalSupply() {
-      if (token) {
+      if (provider && token) {
         const {totalSupply: supply, decimals} = await getTokenInfo(
           token.address,
           provider,

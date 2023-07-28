@@ -113,7 +113,7 @@ export const MintTokenForm: React.FC<MintTokenFormProps> = ({
   const {t} = useTranslation();
   const {isDesktop} = useScreen();
   const {network} = useNetwork();
-  const {infura} = useProviders();
+  const {api: infura} = useProviders();
   const {alert} = useAlertContext();
   const nativeCurrency = CHAIN_METADATA[network].nativeCurrency;
 

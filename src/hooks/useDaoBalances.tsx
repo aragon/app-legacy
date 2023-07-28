@@ -1,23 +1,22 @@
 import {AssetBalance} from '@aragon/sdk-client';
 import {TokenType} from '@aragon/sdk-client-common';
 import {useEffect, useMemo, useState} from 'react';
-import {alchemyApiKeys, CHAIN_METADATA} from 'utils/constants';
+import {CHAIN_METADATA, alchemyApiKeys} from 'utils/constants';
 
-import {HookData} from 'utils/types';
-import {getTokenInfo} from 'utils/tokens';
-import {useSpecificProvider} from 'context/providers';
 import {useNetwork} from 'context/network';
+import {useProviders} from 'context/providers';
+import {getTokenInfo} from 'utils/tokens';
+import {HookData} from 'utils/types';
 
 export const useDaoBalances = (
   daoAddress: string
 ): HookData<Array<AssetBalance> | undefined> => {
   const {network} = useNetwork();
+  const {api: provider} = useProviders();
 
   const [data, setData] = useState<Array<AssetBalance>>([]);
   const [error, setError] = useState<Error>();
   const [isLoading, setIsLoading] = useState(false);
-
-  const provider = useSpecificProvider(CHAIN_METADATA[network].id);
 
   // Construct the Alchemy API URL
   const url = `${CHAIN_METADATA[network].alchemyApi}/${alchemyApiKeys[network]}`;

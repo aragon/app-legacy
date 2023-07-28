@@ -50,7 +50,7 @@ export const useDaoTransfers = (
   const [error, setError] = useState<Error>();
   const [isLoading, setIsLoading] = useState(false);
   const pendingDepositsTxs = useReactiveVar(pendingDeposits);
-  const {infura: provider} = useProviders();
+  const {api: provider} = useProviders();
 
   const url = `${CHAIN_METADATA[network].alchemyApi}/${alchemyApiKeys[network]}`;
 

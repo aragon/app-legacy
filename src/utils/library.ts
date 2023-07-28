@@ -17,10 +17,14 @@ import {
 } from '@aragon/sdk-client-common';
 import {bytesToHex, resolveIpfsCid} from '@aragon/sdk-common';
 import {NavigationDao} from 'context/apolloClient';
-import {BigNumber, BigNumberish, constants, ethers, providers} from 'ethers';
+import {BigNumber, BigNumberish, constants, providers} from 'ethers';
+import {
+  formatUnits as ethersFormatUnits,
+  hexlify,
+  isAddress,
+} from 'ethers/lib/utils';
 import {TFunction} from 'react-i18next';
 
-import {hexlify, isAddress} from 'ethers/lib/utils';
 import {getEtherscanVerifiedContract} from 'services/etherscanAPI';
 import {Token} from 'services/token/domain';
 import {
@@ -29,8 +33,8 @@ import {
   ETH_TRANSACTION_CALL_LABEL,
   ISO_DATE_PATTERN,
   PERSONAL_SIGN_BYTES,
-  PERSONAL_SIGN_SIGNATURE,
   PERSONAL_SIGN_LABEL,
+  PERSONAL_SIGN_SIGNATURE,
   SupportedNetworks,
 } from 'utils/constants';
 import {
@@ -56,7 +60,7 @@ export function formatUnits(amount: BigNumberish, decimals: number) {
   if (amount.toString().includes('.') || !decimals) {
     return amount.toString();
   }
-  return ethers.utils.formatUnits(amount, decimals);
+  return ethersFormatUnits(amount, decimals);
 }
 
 // (Temporary) Should be moved to ui-component perhaps
@@ -641,6 +645,10 @@ export const translateToAppNetwork = (
       return 'mumbai';
     case 'matic':
       return 'polygon';
+    case 'base': // TODO: get SDK name
+      return 'base';
+    case 'base-goerli': // TODO: get SDK name
+      return 'base-goerli';
   }
   return 'unsupported';
 };
@@ -658,14 +666,18 @@ export function translateToNetworkishName(
   }
 
   switch (appNetwork) {
-    case 'polygon':
-      return SdkSupportedNetworks.POLYGON;
-    case 'mumbai':
-      return SdkSupportedNetworks.MUMBAI;
+    case 'base':
+      return 'unsupported'; // TODO: get SDK name
+    case 'base-goerli':
+      return 'unsupported'; // TODO: get SDK name
     case 'ethereum':
       return SdkSupportedNetworks.MAINNET;
     case 'goerli':
       return SdkSupportedNetworks.GOERLI;
+    case 'mumbai':
+      return SdkSupportedNetworks.MUMBAI;
+    case 'polygon':
+      return SdkSupportedNetworks.POLYGON;
   }
 
   return 'unsupported';
@@ -830,7 +842,7 @@ export class Web3Address {
 
   // Constructor for the Address class
   constructor(
-    provider?: ethers.providers.Provider,
+    provider?: providers.Provider,
     address?: string,
     ensName?: string
   ) {
@@ -850,7 +862,7 @@ export class Web3Address {
     let ensNameToSet: string | undefined;
     if (typeof addressOrEns === 'string') {
       // If input is a string, treat it as address if it matches address structure, else treat as ENS name
-      if (ethers.utils.isAddress(addressOrEns)) {
+      if (isAddress(addressOrEns)) {
         addressToSet = addressOrEns;
       } else {
         ensNameToSet = addressOrEns;
@@ -913,7 +925,7 @@ export class Web3Address {
     if (!this._address) {
       return false;
     }
-    return ethers.utils.isAddress(this._address);
+    return isAddress(this._address);
   }
 
   // Method to check if the stored ENS name is valid (resolves to an address)

@@ -80,7 +80,7 @@ const ContractAddressValidation: React.FC<Props> = props => {
   const {alert} = useAlertContext();
   const {address} = useWallet();
   const {network} = useNetwork();
-  const {infura: provider} = useProviders();
+  const {api: provider} = useProviders();
   const queryClient = useQueryClient();
   const {dao: daoAddressOrEns} = useParams();
 

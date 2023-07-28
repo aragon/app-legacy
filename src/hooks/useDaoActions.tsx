@@ -13,7 +13,7 @@ export function useDaoActions(dao: string): HookData<ActionParameter[]> {
   const multisig = daoDetails?.plugins[0].id === 'multisig.plugin.dao.eth';
   const [showMintOption, setShowMintOption] = useState(false);
 
-  const {infura: provider} = useProviders();
+  const {api: provider} = useProviders();
 
   const {data: daoToken} = useDaoToken(
     daoDetails?.plugins[0].instanceAddress || ''

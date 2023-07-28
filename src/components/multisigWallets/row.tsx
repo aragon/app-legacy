@@ -33,7 +33,7 @@ export const Row = ({index, ...props}: MultisigWalletsRowProps) => {
   const {t} = useTranslation();
   const {alert} = useAlertContext();
   const {isMobile} = useScreen();
-  const {infura: provider} = useProviders();
+  const {api: provider} = useProviders();
 
   const {control, trigger} = useFormContext();
   const multisigWallets = useWatch({name: 'multisigWallets', control});

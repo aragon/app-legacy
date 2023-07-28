@@ -1,139 +1,236 @@
 import {
-  AlchemyProvider,
-  InfuraProvider,
-  JsonRpcProvider,
-  Web3Provider,
-} from '@ethersproject/providers';
-import React, {createContext, useContext, useEffect, useState} from 'react';
-
-import {
   LIVE_CONTRACTS,
   SupportedNetwork as sdkSupportedNetworks,
 } from '@aragon/sdk-client-common';
+import {
+  AlchemyProvider,
+  InfuraProvider,
+  JsonRpcProvider,
+  Networkish,
+  Web3Provider,
+} from '@ethersproject/providers';
+import React, {
+  createContext,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react';
+
 import {useWallet} from 'hooks/useWallet';
 import {
-  alchemyApiKeys,
   CHAIN_METADATA,
-  getSupportedNetworkByChainId,
-  infuraApiKey,
+  NETWORKS_WITH_CUSTOM_REGISTRY,
   SupportedChainID,
   SupportedNetworks,
+  alchemyApiKeys,
+  getSupportedNetworkByChainId,
+  infuraApiKey,
 } from 'utils/constants';
+import {translateToNetworkishName} from 'utils/library';
 import {Nullable} from 'utils/types';
 import {useNetwork} from './network';
-import {translateToNetworkishName} from 'utils/library';
-
-const NW_ARB = {chainId: 42161, name: 'arbitrum'};
-const NW_ARB_GOERLI = {chainId: 421613, name: 'arbitrum-goerli'};
 
 /* CONTEXT PROVIDER ========================================================= */
 
 type Providers = {
-  infura: InfuraProvider | JsonRpcProvider;
+  api: JsonRpcProvider | AlchemyProvider | InfuraProvider;
   web3: Nullable<Web3Provider>;
 };
 
-const ProviderContext = createContext<Nullable<Providers>>(null);
+const ProvidersContext = createContext<Nullable<Providers>>(null);
 
-type ProviderProviderProps = {
+type ProvidersContextProps = {
   children: React.ReactNode;
 };
 
-/**
- * Returns two blockchain providers.
- *
- * The infura provider is always available, regardless of whether or not a
- * wallet is connected.
- *
- * The web3 provider, however, is based on the conencted and wallet and will
- * therefore be null if no wallet is connected.
- */
-export function ProvidersProvider({children}: ProviderProviderProps) {
-  const {provider} = useWallet();
+export function ProvidersContextProvider({children}: ProvidersContextProps) {
   const {network} = useNetwork();
+  const {provider} = useWallet();
+  const apiProvider = useSpecificProvider(network);
 
-  const [infuraProvider, setInfuraProvider] = useState<Providers['infura']>(
-    new InfuraProvider(NW_ARB, infuraApiKey)
+  // given that nothing should work on unsupported networks,
+  // asserting that apiProvider is always non null.
+  const contextValue = useMemo(
+    () => ({api: apiProvider!, web3: provider}),
+    [apiProvider, provider]
   );
-
-  useEffect(() => {
-    setInfuraProvider(getInfuraProvider(network));
-  }, [network]);
 
   return (
-    <ProviderContext.Provider
-      // TODO: remove casting once useSigner has updated its version of the ethers library
-      value={{infura: infuraProvider, web3: (provider as Web3Provider) || null}}
-    >
+    <ProvidersContext.Provider value={contextValue}>
       {children}
-    </ProviderContext.Provider>
+    </ProvidersContext.Provider>
   );
-}
-
-function getInfuraProvider(network: SupportedNetworks) {
-  // NOTE Passing the chainIds from useWallet doesn't work in the case of
-  // arbitrum and arbitrum-goerli. They need to be passed as objects.
-  // However, I have no idea why this is necessary. Looking at the ethers
-  // library, there's no reason why passing the chainId wouldn't work. Also,
-  // I've tried it on a fresh project and had no problems there...
-  // [VR 07-03-2022]
-  if (network === 'arbitrum') {
-    return new InfuraProvider(NW_ARB, infuraApiKey);
-  } else if (network === 'arbitrum-test') {
-    return new InfuraProvider(NW_ARB_GOERLI, infuraApiKey);
-  } else if (network === 'mumbai' || network === 'polygon') {
-    return new JsonRpcProvider(CHAIN_METADATA[network].rpc[0], {
-      chainId: CHAIN_METADATA[network].id,
-      name: translateToNetworkishName(network),
-      ensAddress:
-        LIVE_CONTRACTS[
-          translateToNetworkishName(network) as sdkSupportedNetworks
-        ].ensRegistry,
-    });
-  } else {
-    return new InfuraProvider(CHAIN_METADATA[network].id, infuraApiKey);
-  }
-}
-
-/**
- * Returns an AlchemyProvider instance for the given chain ID
- * or null if the API key is not available.
- * @param chainId - The numeric chain ID associated with the desired network.
- * @returns An AlchemyProvider instance for the specified network or null if the API key is not found.
- */
-export function getAlchemyProvider(chainId: number): AlchemyProvider | null {
-  const network = getSupportedNetworkByChainId(chainId) as SupportedNetworks;
-  const apiKey = alchemyApiKeys[network];
-  const translatedNetwork = translateToNetworkishName(network);
-
-  return apiKey && translatedNetwork !== 'unsupported'
-    ? new AlchemyProvider(translatedNetwork, apiKey)
-    : null;
-}
-
-/**
- * Returns provider based on the given chain id
- * @param chainId network chain is
- * @returns infura provider
- */
-export function useSpecificProvider(
-  chainId: SupportedChainID
-): Providers['infura'] {
-  const network = getSupportedNetworkByChainId(chainId) as SupportedNetworks;
-
-  const [infuraProvider, setInfuraProvider] = useState(
-    getInfuraProvider(network)
-  );
-
-  useEffect(() => {
-    setInfuraProvider(getInfuraProvider(network));
-  }, [chainId, network]);
-
-  return infuraProvider;
 }
 
 /* CONTEXT CONSUMER ========================================================= */
 
 export function useProviders(): NonNullable<Providers> {
-  return useContext(ProviderContext) as Providers;
+  const context = useContext(ProvidersContext);
+
+  // Check if context is defined
+  if (context === undefined) {
+    throw new Error(
+      'useProviders must be used within a ProvidersContextProvider'
+    );
+  }
+
+  return context as Providers;
+}
+
+/**
+ * React hook that provides a blockchain provider based on the given chain ID or network.
+ *
+ * @param chainIdOrNetwork - The chain ID or network to get the provider for.
+ * @returns A blockchain provider, which may be an AlchemyProvider, InfuraProvider,
+ * JsonRpcProvider, or null if no suitable provider can be found.
+ */
+export function useSpecificProvider(
+  chainIdOrNetwork: SupportedChainID | SupportedNetworks
+): AlchemyProvider | InfuraProvider | JsonRpcProvider | null {
+  const [provider, setProvider] = useState<
+    AlchemyProvider | InfuraProvider | JsonRpcProvider | null
+  >(null);
+
+  useEffect(() => {
+    setProvider(getApiProvider(chainIdOrNetwork));
+  }, [chainIdOrNetwork]);
+
+  return provider;
+}
+
+/**
+ * Returns an AlchemyProvider instance for the given chain ID or network.
+ * If the network is unsupported or the API key for the supported network
+ * is not available, the function returns `null`.
+ *
+ * @param chainIdOrNetwork - The numeric chain ID or network string associated
+ * with the desired network.
+ * @returns An `AlchemyProvider` instance for the specified network or `null`
+ * if the API key is not found or the network is unsupported
+ */
+export function getAlchemyProvider(
+  chainIdOrNetwork: SupportedChainID | SupportedNetworks
+): AlchemyProvider | null {
+  const network = toNetwork(chainIdOrNetwork);
+
+  if (!network || network === 'unsupported') {
+    return null;
+  }
+
+  const apiKey = alchemyApiKeys[network];
+  if (!apiKey) {
+    return null;
+  }
+
+  const networkishOptions: Networkish = {
+    chainId: CHAIN_METADATA[network]?.id,
+    name: translateToNetworkishName(network),
+  };
+
+  if (NETWORKS_WITH_CUSTOM_REGISTRY.includes(network)) {
+    networkishOptions.ensAddress =
+      LIVE_CONTRACTS[
+        networkishOptions.name as sdkSupportedNetworks
+      ].ensRegistry;
+  }
+
+  return new AlchemyProvider(networkishOptions, apiKey);
+}
+
+/**
+ * Returns an InfuraProvider instance for the given chain ID or network,
+ * or `null` if the network is not supported.
+ *
+ * @param chainIdOrNetwork - The numeric chain ID or network string associated
+ *  with the desired network.
+ * @returns An `InfuraProvider` instance for the specified network or `null`
+ *  if the network is unsupported.
+ */
+export function getInfuraProvider(
+  chainIdOrNetwork: SupportedChainID | SupportedNetworks
+): InfuraProvider | null {
+  const InfuraUnsupportedNetworks = ['base', 'base-goerli', 'unsupported'];
+  const network = toNetwork(chainIdOrNetwork);
+
+  if (!network || InfuraUnsupportedNetworks.includes(network)) {
+    return null;
+  }
+
+  const networkishOptions: Networkish = {
+    chainId: CHAIN_METADATA[network]?.id,
+    name: translateToNetworkishName(network),
+  };
+
+  if (NETWORKS_WITH_CUSTOM_REGISTRY.includes(network)) {
+    networkishOptions.ensAddress =
+      LIVE_CONTRACTS[
+        networkishOptions.name as sdkSupportedNetworks
+      ].ensRegistry;
+  }
+
+  return new InfuraProvider(networkishOptions, infuraApiKey);
+}
+
+/**
+ * Creates a JSON-RPC provider for the given chain ID or network.
+ * @remarks This is mostly intended for networks not supported by Alchemy and Infura
+ * @param chainIdOrNetwork - The chain ID or network to create the provider for.
+ * @returns The JSON-RPC provider instance or null if the chain or network is unsupported.
+ */
+export function getJsonRpcProvider(
+  chainIdOrNetwork: SupportedChainID | SupportedNetworks
+): JsonRpcProvider | null {
+  const network = toNetwork(chainIdOrNetwork);
+
+  // return null if the network is not supported or cannot be determined.
+  if (!network || network === 'unsupported') {
+    return null;
+  }
+
+  const networkishOptions: Networkish = {
+    chainId: CHAIN_METADATA[network]?.id,
+    name: translateToNetworkishName(network),
+  };
+
+  if (NETWORKS_WITH_CUSTOM_REGISTRY.includes(network)) {
+    networkishOptions.ensAddress =
+      LIVE_CONTRACTS[
+        networkishOptions.name as sdkSupportedNetworks
+      ].ensRegistry;
+  }
+
+  return new JsonRpcProvider(
+    CHAIN_METADATA[network]?.rpc?.[0],
+    networkishOptions
+  );
+}
+
+function getApiProvider(
+  chainIdOrNetwork: SupportedChainID | SupportedNetworks
+): AlchemyProvider | InfuraProvider | JsonRpcProvider | null {
+  let provider;
+
+  provider = getInfuraProvider(chainIdOrNetwork);
+  if (provider) {
+    return provider;
+  }
+
+  provider = getAlchemyProvider(chainIdOrNetwork);
+  if (provider) {
+    return provider;
+  }
+
+  provider = getJsonRpcProvider(chainIdOrNetwork);
+  return provider;
+}
+
+function toNetwork(
+  chainIdOrNetwork: SupportedChainID | SupportedNetworks
+): SupportedNetworks | null {
+  if (typeof chainIdOrNetwork === 'number') {
+    return getSupportedNetworkByChainId(chainIdOrNetwork) ?? null;
+  } else if (typeof chainIdOrNetwork === 'string') {
+    return chainIdOrNetwork;
+  } else return null;
 }

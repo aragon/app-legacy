@@ -36,7 +36,7 @@ export type TokenVotingWalletField = MultisigWalletField & {
 const WalletRow: React.FC<WalletRowProps> = ({index, onDelete}) => {
   const {t} = useTranslation();
   const {alert} = useAlertContext();
-  const {infura: provider} = useProviders();
+  const {api: provider} = useProviders();
 
   const {control, getValues, setValue, trigger} = useFormContext();
   const walletFieldArray: TokenVotingWalletField[] = useWatch({

@@ -1,16 +1,16 @@
 import {Erc20TokenDetails, TokenVotingMember} from '@aragon/sdk-client';
 import {QueryClient} from '@tanstack/react-query';
 import {useNetwork} from 'context/network';
-import {useSpecificProvider} from 'context/providers';
+import {useProviders} from 'context/providers';
 import {useEffect, useState} from 'react';
 import {CHAIN_METADATA} from 'utils/constants';
 import {fetchBalance} from 'utils/tokens';
 
+import {formatUnits} from 'ethers/lib/utils';
+import {TokenHoldersResponse, getTokenHoldersPaged} from 'services/covalentAPI';
 import {HookData} from 'utils/types';
 import {useDaoToken} from './useDaoToken';
 import {PluginTypes, usePluginClient} from './usePluginClient';
-import {TokenHoldersResponse, getTokenHoldersPaged} from 'services/covalentAPI';
-import {formatUnits} from 'ethers/lib/utils';
 import {useWallet} from './useWallet';
 
 export type MultisigMember = {
@@ -68,7 +68,7 @@ export const useDaoMembers = (
   const [isLoading, setIsLoading] = useState(false);
 
   const {network} = useNetwork();
-  const provider = useSpecificProvider(CHAIN_METADATA[network].id);
+  const {api: provider} = useProviders();
 
   const isTokenBased = pluginType === 'token-voting.plugin.dao.eth';
   const {data: daoToken} = useDaoToken(pluginAddress);
@@ -86,6 +86,8 @@ export const useDaoMembers = (
           return;
         }
 
+        // for the multisig plugin and the goerli network, fetch members from
+        // the subgraph
         if (pluginType === 'multisig.plugin.dao.eth' || network === 'goerli') {
           setIsLoading(true);
 
@@ -122,6 +124,7 @@ export const useDaoMembers = (
 
           setRawMembers(response);
         } else {
+          // fetch members from covalent api
           const queryClient = new QueryClient();
 
           if (!daoToken) {

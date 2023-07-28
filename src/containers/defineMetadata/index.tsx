@@ -37,7 +37,7 @@ const DefineMetadata: React.FC<DefineMetadataProps> = ({
   const {t} = useTranslation();
   const {isL2Network} = useNetwork();
   const {control, setError, clearErrors, getValues} = useFormContext();
-  const {infura: provider} = useProviders();
+  const {api: provider} = useProviders();
 
   const handleImageError = useCallback(
     (error: {code: string; message: string}) => {
