@@ -156,8 +156,8 @@ const ActionBuilder: React.FC<ActionBuilderProps> = ({allowEmpty = true}) => {
     );
 
     fetchToken({address: token.address, network, symbol: token.symbol}).then(
-      price => {
-        setValue(`actions.${index}.tokenPrice`, price);
+      token => {
+        setValue(`actions.${index}.tokenPrice`, token?.price);
       }
     );
   };

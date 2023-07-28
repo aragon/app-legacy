@@ -73,7 +73,8 @@ export type ChainData = {
   id: SupportedChainID;
   name: string;
   domain: NetworkDomain;
-  testnet: boolean;
+  isTestnet: boolean;
+  mainnet?: SupportedNetworks;
   explorer: string;
   logo: string;
   rpc: string[];
@@ -97,7 +98,7 @@ export const CHAIN_METADATA: ChainList = {
     domain: 'L2 Blockchain',
     logo: 'https://bridge.arbitrum.io/logo.png',
     explorer: 'https://arbiscan.io/',
-    testnet: false,
+    isTestnet: false,
     rpc: ['https://arb1.arbitrum.io/rpc', 'wss://arb1.arbitrum.io/ws'],
     nativeCurrency: {
       name: 'Ether',
@@ -115,7 +116,7 @@ export const CHAIN_METADATA: ChainList = {
     domain: 'L2 Blockchain',
     logo: 'https://mirror-media.imgix.net/publication-images/cgqxxPdUFBDjgKna_dDir.png?h=250&w=250',
     explorer: 'https://basescan.org',
-    testnet: false,
+    isTestnet: false,
     rpc: ['https://developer-access-mainnet.base.org'],
     nativeCurrency: {
       name: 'Base',
@@ -135,7 +136,8 @@ export const CHAIN_METADATA: ChainList = {
     domain: 'L2 Blockchain',
     logo: 'https://mirror-media.imgix.net/publication-images/cgqxxPdUFBDjgKna_dDir.png?h=250&w=250',
     explorer: 'https://goerli.basescan.org',
-    testnet: true,
+    isTestnet: true,
+    mainnet: 'base',
     rpc: ['https://goerli.base.org'],
     nativeCurrency: {
       name: 'Base Goerli',
@@ -155,7 +157,7 @@ export const CHAIN_METADATA: ChainList = {
     domain: 'L1 Blockchain',
     logo: 'https://assets.coingecko.com/coins/images/279/large/ethereum.png?1595348880',
     explorer: 'https://etherscan.io/',
-    testnet: false,
+    isTestnet: false,
     rpc: [
       `https://mainnet.infura.io/v3/${infuraApiKey}`,
       `wss://mainnet.infura.io/ws/v3/${infuraApiKey}`,
@@ -178,7 +180,7 @@ export const CHAIN_METADATA: ChainList = {
     domain: 'L2 Blockchain',
     logo: 'https://assets.coingecko.com/coins/images/4713/large/matic-token-icon.png?1624446912',
     explorer: 'https://polygonscan.com/',
-    testnet: false,
+    isTestnet: false,
     rpc: [
       `https://polygon-mainnet.infura.io/v3/${infuraApiKey}`,
       `wss://polygon-mainnet.infura.io/ws/v3/${infuraApiKey}`,
@@ -201,7 +203,8 @@ export const CHAIN_METADATA: ChainList = {
     domain: 'L2 Blockchain',
     logo: 'https://bridge.arbitrum.io/logo.png',
     explorer: 'https://testnet.arbiscan.io/',
-    testnet: true,
+    isTestnet: true,
+    mainnet: 'arbitrum',
     rpc: ['https://goerli-rollup.arbitrum.io/rpc'],
     nativeCurrency: {
       name: 'Goerli Ether',
@@ -219,7 +222,8 @@ export const CHAIN_METADATA: ChainList = {
     domain: 'L1 Blockchain',
     logo: 'https://assets.coingecko.com/coins/images/279/large/ethereum.png?1595348880',
     explorer: 'https://goerli.etherscan.io/',
-    testnet: true,
+    isTestnet: true,
+    mainnet: 'ethereum',
     rpc: [
       `https://goerli.infura.io/v3/${infuraApiKey}`,
       `wss://goerli.infura.io/ws/v3/${infuraApiKey}`,
@@ -242,7 +246,8 @@ export const CHAIN_METADATA: ChainList = {
     domain: 'L2 Blockchain',
     logo: 'https://assets.coingecko.com/coins/images/4713/large/matic-token-icon.png?1624446912',
     explorer: 'https://mumbai.polygonscan.com/',
-    testnet: true,
+    isTestnet: true,
+    mainnet: 'polygon',
     rpc: [
       `https://polygon-mumbai.infura.io/v3/${infuraApiKey}`,
       `wss://polygon-mumbai.infura.io/ws/v3/${infuraApiKey}`,
@@ -265,7 +270,7 @@ export const CHAIN_METADATA: ChainList = {
     domain: 'L1 Blockchain',
     logo: '',
     explorer: '',
-    testnet: false,
+    isTestnet: false,
     rpc: [],
     nativeCurrency: {
       name: '',

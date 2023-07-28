@@ -16,7 +16,7 @@ const Blockchain: React.FC = () => {
   const {t} = useTranslation();
 
   const networkInfo = CHAIN_METADATA[network];
-  const networkType = networkInfo.testnet
+  const networkType = networkInfo.isTestnet
     ? t('labels.testNet')
     : t('labels.mainNet');
 

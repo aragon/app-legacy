@@ -1,14 +1,19 @@
 import {
   CHAIN_METADATA,
+  COVALENT_API_KEY,
   SupportedNetworks,
   coingeckoMetadata,
+  covalentMetadata,
 } from 'utils/constants';
 import {isNativeToken} from 'utils/tokens';
 import {TOP_ETH_SYMBOL_ADDRESSES} from 'utils/constants/topSymbolAddresses';
 import {CoingeckoToken, Token, CoingeckoError} from './domain';
 import {IFetchTokenParams} from './token-service.api';
+import {CovalentToken} from './domain/covalent-token';
+import {CovalentResponse} from './domain/covalent-response';
 
 class TokenService {
+  private defaultCurrency = 'USD';
   private baseUrl = {
     coingecko: 'https://api.coingecko.com/api/v3',
     covalent: 'https://api.covalenthq.com/v1',
@@ -29,16 +34,27 @@ class TokenService {
     // Use token data from ethereum mainnet when trying to fetch a testnet
     // token that is one of the top ERC20 tokens
     const useEthereumMainnet =
-      CHAIN_METADATA[network].testnet &&
+      CHAIN_METADATA[network].isTestnet &&
       symbol != null &&
       TOP_ETH_SYMBOL_ADDRESSES[symbol.toLowerCase()] != null;
 
-    const processedNetwork = useEthereumMainnet ? 'ethereum' : network;
+    // Fetch the price from the mainnet when network is a testnet for native tokens
+    const useNativeMainnet =
+      CHAIN_METADATA[network].isTestnet && isNativeToken(address);
+
+    const processedNetwork = useEthereumMainnet
+      ? 'ethereum'
+      : useNativeMainnet
+      ? CHAIN_METADATA[network].mainnet!
+      : network;
     const processedAddress = useEthereumMainnet
       ? TOP_ETH_SYMBOL_ADDRESSES[symbol.toLowerCase()]
       : address;
 
-    const token = this.fetchCoingeckoToken(processedNetwork, processedAddress);
+    const token =
+      processedNetwork === 'base' || processedNetwork === 'base-goerli'
+        ? this.fetchCovalentToken(processedNetwork, processedAddress)
+        : this.fetchCoingeckoToken(processedNetwork, processedAddress);
 
     return token;
   };
@@ -47,9 +63,51 @@ class TokenService {
     network: SupportedNetworks,
     address: string
   ): Promise<Token | null> => {
-    // TODO
+    const {networkId, nativeTokenId} = covalentMetadata[network] ?? {};
+    const {nativeCurrency} = CHAIN_METADATA[network];
+    const isNative = isNativeToken(address);
 
-    return {} as Token;
+    if (!networkId || !nativeTokenId) {
+      console.debug(
+        `fetchToken - network ${network} not supported by Covalent`
+      );
+      return null;
+    }
+
+    const processedAddress = isNative ? nativeTokenId : address;
+    const endpoint = `/pricing/historical_by_addresses_v2/${networkId}/${this.defaultCurrency}/${processedAddress}/`;
+
+    const url = `${this.baseUrl.covalent}${endpoint}`;
+    const headers: HeadersInit = {
+      Authorization: window.btoa(`${COVALENT_API_KEY}:`),
+    };
+    const res = await fetch(url, {headers});
+    const parsed: CovalentResponse<CovalentToken[] | null> = await res.json();
+    const data = parsed.data?.[0];
+
+    if (parsed.error || data == null) {
+      console.debug(
+        `fetchToken - Covalent returned error: ${parsed.error_message}`
+      );
+      return null;
+    }
+
+    return {
+      id: address,
+      name: isNative ? nativeCurrency.name : data.contract_name,
+      symbol: isNative
+        ? nativeCurrency.symbol
+        : data.contract_ticker_symbol.toUpperCase(),
+      imgUrl: data.logo_url,
+      address: address,
+      price: data.prices[0].price,
+      priceChange: {
+        day: 0,
+        week: 0,
+        month: 0,
+        year: 0,
+      },
+    };
   };
 
   private fetchCoingeckoToken = async (
@@ -57,15 +115,17 @@ class TokenService {
     address: string
   ): Promise<Token | null> => {
     const {networkId, nativeTokenId} = coingeckoMetadata[network] ?? {};
+    const {nativeCurrency} = CHAIN_METADATA[network];
+    const isNative = isNativeToken(address);
 
     if (!networkId || !nativeTokenId) {
-      console.error(
+      console.debug(
         `fetchToken - network ${network} not supported by Coingecko`
       );
       return null;
     }
 
-    const endpoint = isNativeToken(address)
+    const endpoint = isNative
       ? `/coins/${nativeTokenId}`
       : `/coins/${networkId}/contract/${address}`;
 
@@ -74,18 +134,14 @@ class TokenService {
     const data: CoingeckoToken | CoingeckoError = await res.json();
 
     if (this.isErrorCoingeckoResponse(data)) {
-      console.error(`fetchToken - Coingecko returned error: ${data.error}`);
+      console.debug(`fetchToken - Coingecko returned error: ${data.error}`);
       return null;
     }
 
-    const {nativeCurrency} = CHAIN_METADATA[network];
-
     return {
       id: data.id,
-      name: isNativeToken(address) ? nativeCurrency.name : data.name,
-      symbol: isNativeToken(address)
-        ? nativeCurrency.symbol
-        : data.symbol.toUpperCase(),
+      name: isNative ? nativeCurrency.name : data.name,
+      symbol: isNative ? nativeCurrency.symbol : data.symbol.toUpperCase(),
       imgUrl: data.image.large,
       address: address,
       price: data.market_data.current_price.usd,

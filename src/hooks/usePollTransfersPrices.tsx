@@ -3,7 +3,7 @@ import {TokenType} from '@aragon/sdk-client-common';
 
 import {useNetwork} from 'context/network';
 import {constants} from 'ethers';
-import {useMemo} from 'react';
+import {useEffect, useMemo} from 'react';
 import {
   CHAIN_METADATA,
   SupportedNetworks,
@@ -21,7 +21,11 @@ export const usePollTransfersPrices = (
 ): HookData<{transfers: Transfer[]; totalTransfersValue: string}> => {
   const {network} = useNetwork();
 
-  const assetTransfers = mapToDaoTransfers(transfers, network);
+  const assetTransfers = useMemo(
+    () => mapToDaoTransfers(transfers, network),
+    [transfers, network]
+  );
+
   const tokenListParams = assetTransfers?.map(transfer => ({
     address: transfer.tokenAddress,
     network,
@@ -49,7 +53,7 @@ export const usePollTransfersPrices = (
         return {
           ...transfer,
           usdValue: `$${calculatedPrice.toFixed(2)}`,
-          tokenImgUrl: tokens[index]?.imgUrl || '',
+          tokenImgUrl: tokens[index]?.imgUrl ?? '',
         };
       }
     );

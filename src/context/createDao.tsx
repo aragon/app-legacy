@@ -132,7 +132,7 @@ const CreateDaoProvider: React.FC = ({children}) => {
           })
         );
         if (network === 'ethereum') {
-          // (!networkInfo.testnet) {
+          // (!networkInfo.isTestnet) {
           open('poapClaim');
         }
         break;

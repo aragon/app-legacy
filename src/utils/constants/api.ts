@@ -44,13 +44,13 @@ export const walletConnectProjectID = import.meta.env
 
 export const COVALENT_API_KEY = import.meta.env.VITE_COVALENT_API_KEY as string;
 
-export type CoingeckoMetadata = {
+export type ApiMetadata = {
   /**
-   * Id of the network as defined by Coingecko.
+   * Id of the network as defined by the API.
    */
   networkId: string;
   /**
-   * Id of the native token as defined by Coingecko.
+   * Id of the native token as defined by the API.
    */
   nativeTokenId: string;
 };
@@ -58,35 +58,39 @@ export type CoingeckoMetadata = {
 /**
  * Metadata for Coingecko API, use mainnet endpoints for testnets.
  */
-export const coingeckoMetadata: Record<
-  SupportedNetworks,
-  CoingeckoMetadata | null
-> = {
-  arbitrum: {
-    networkId: 'arbitrum-one',
-    nativeTokenId: 'arbitrum',
+export const coingeckoMetadata: Record<SupportedNetworks, ApiMetadata | null> =
+  {
+    arbitrum: {
+      networkId: 'arbitrum-one',
+      nativeTokenId: 'arbitrum',
+    },
+    'arbitrum-test': null,
+    ethereum: {
+      networkId: 'ethereum',
+      nativeTokenId: 'ethereum',
+    },
+    goerli: null,
+    polygon: {
+      networkId: 'polygon-pos',
+      nativeTokenId: 'matic-network',
+    },
+    mumbai: null,
+    base: null,
+    'base-goerli': null,
+    unsupported: null,
+  };
+
+export const covalentMetadata: Record<SupportedNetworks, ApiMetadata | null> = {
+  arbitrum: null,
+  'arbitrum-test': null,
+  ethereum: null,
+  goerli: null,
+  polygon: null,
+  mumbai: null,
+  base: {
+    networkId: 'base-mainnet',
+    nativeTokenId: '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee',
   },
-  'arbitrum-test': {
-    networkId: 'arbitrum-one',
-    nativeTokenId: 'arbitrum',
-  },
-  ethereum: {
-    networkId: 'ethereum',
-    nativeTokenId: 'ethereum',
-  },
-  goerli: {
-    networkId: 'ethereum',
-    nativeTokenId: 'ethereum',
-  },
-  polygon: {
-    networkId: 'polygon-pos',
-    nativeTokenId: 'matic-network',
-  },
-  mumbai: {
-    networkId: 'polygon-pos',
-    nativeTokenId: 'matic-network',
-  },
-  base: null,
   'base-goerli': null,
   unsupported: null,
-} as const;
+};

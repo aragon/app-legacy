@@ -131,7 +131,7 @@ const CreateDAO: React.FC = () => {
     formMethods.setValue('blockchain', {
       id: CHAIN_METADATA[defaultNetwork].id,
       label: CHAIN_METADATA[defaultNetwork].name,
-      network: CHAIN_METADATA[defaultNetwork].testnet ? 'test' : 'main',
+      network: CHAIN_METADATA[defaultNetwork].isTestnet ? 'test' : 'main',
     });
 
     // intentionally disabling this next line so that changing the
