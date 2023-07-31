@@ -3,10 +3,10 @@ import {
   CreateDaoParams,
   DaoCreationSteps,
   DaoMetadata,
-  TokenVotingPluginInstall,
   MultisigClient,
   MultisigPluginInstallParams,
   TokenVotingClient,
+  TokenVotingPluginInstall,
   VotingMode,
   VotingSettings,
 } from '@aragon/sdk-client';
@@ -30,7 +30,6 @@ import {CreateDaoFormData} from 'pages/createDAO';
 import {trackEvent} from 'services/analytics';
 import {
   CHAIN_METADATA,
-  SupportedNetworks,
   TransactionState,
   getSupportedNetworkByChainId,
 } from 'utils/constants';
@@ -155,20 +154,6 @@ const CreateDaoProvider: React.FC = ({children}) => {
       eligibilityType,
     } = getValues();
 
-    // get network
-    const selectedNetwork = getSupportedNetworkByChainId(blockchain.id);
-    let translatedNetwork: sdkSupportedNetworks;
-
-    if (selectedNetwork) {
-      translatedNetwork = translateToNetworkishName(
-        selectedNetwork
-      ) as sdkSupportedNetworks;
-    } else {
-      throw new Error(
-        'No network selected. A supported network must be selected'
-      );
-    }
-
     return [
       {
         members: multisigWallets.map(wallet => wallet.address),
@@ -177,7 +162,7 @@ const CreateDaoProvider: React.FC = ({children}) => {
           onlyListed: eligibilityType === 'multisig',
         },
       },
-      translatedNetwork,
+      formNetworkToNetworkish(blockchain.id),
     ];
   }, [getValues]);
 
@@ -207,9 +192,6 @@ const CreateDaoProvider: React.FC = ({children}) => {
     if (voteReplacement) votingMode = VotingMode.VOTE_REPLACEMENT;
     else if (earlyExecution) votingMode = VotingMode.EARLY_EXECUTION;
     else votingMode = VotingMode.STANDARD;
-    const translatedNetwork = translateToNetworkishName(
-      blockchain.label?.toLowerCase() as SupportedNetworks
-    ) as sdkSupportedNetworks;
 
     let decimals = DEFAULT_TOKEN_DECIMALS;
 
@@ -234,7 +216,7 @@ const CreateDaoProvider: React.FC = ({children}) => {
             : parseUnits('1', decimals).toBigInt(),
         votingMode,
       },
-      translatedNetwork,
+      formNetworkToNetworkish(blockchain.id),
     ];
   }, [getValues]);
 
@@ -293,6 +275,7 @@ const CreateDaoProvider: React.FC = ({children}) => {
     switch (membership) {
       case 'multisig': {
         const [params, network] = getMultisigPluginInstallParams();
+
         const multisigPlugin = MultisigClient.encoding.getPluginInstallItem(
           params,
           network
@@ -498,4 +481,16 @@ function useCreateDaoContext(): CreateDaoContextType {
   return useContext(CreateDaoContext) as CreateDaoContextType;
 }
 
-export {useCreateDaoContext, CreateDaoProvider};
+export {CreateDaoProvider, useCreateDaoContext};
+
+function formNetworkToNetworkish(chainId: number) {
+  const selectedNetwork = getSupportedNetworkByChainId(chainId);
+
+  if (selectedNetwork) {
+    return translateToNetworkishName(selectedNetwork) as sdkSupportedNetworks;
+  } else {
+    throw new Error(
+      'No network selected. A supported network must be selected'
+    );
+  }
+}
