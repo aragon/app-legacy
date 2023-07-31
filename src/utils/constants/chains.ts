@@ -21,6 +21,7 @@ export const NETWORKS_WITH_CUSTOM_REGISTRY = [
   'mumbai',
   'polygon',
 ];
+export const L2_NETWORKS = NETWORKS_WITH_CUSTOM_REGISTRY;
 
 const SUPPORTED_NETWORKS = [
   'arbitrum',
