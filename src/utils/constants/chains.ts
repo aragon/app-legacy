@@ -69,6 +69,11 @@ export type NativeTokenData = {
   decimals: number;
 };
 
+export type ApiMetadata = {
+  networkId: string;
+  nativeTokenId: string;
+};
+
 export type ChainData = {
   id: SupportedChainID;
   name: string;
@@ -81,7 +86,8 @@ export type ChainData = {
   nativeCurrency: NativeTokenData;
   etherscanApi: string;
   etherscanApiKey?: string;
-  covalentApi?: string;
+  covalent?: ApiMetadata;
+  coingecko?: ApiMetadata;
   alchemyApi: string;
   supportsEns: boolean;
   ipfs?: string;
@@ -107,6 +113,10 @@ export const CHAIN_METADATA: ChainList = {
     },
     etherscanApi: 'https://api.arbiscan.io/api',
     alchemyApi: 'https://arb-mainnet.g.alchemy.com/v2',
+    coingecko: {
+      networkId: 'arbitrum-one',
+      nativeTokenId: 'arbitrum',
+    },
     supportsEns: false,
     ipfs: 'https://prod.ipfs.aragon.network',
   },
@@ -125,7 +135,10 @@ export const CHAIN_METADATA: ChainList = {
     },
     etherscanApi: 'https://api.basescan.org/api',
     etherscanApiKey: '',
-    covalentApi: '',
+    covalent: {
+      networkId: 'base-mainnet',
+      nativeTokenId: '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee',
+    },
     alchemyApi: '',
     supportsEns: false,
     ipfs: 'https://prod.ipfs.aragon.network',
@@ -146,7 +159,6 @@ export const CHAIN_METADATA: ChainList = {
     },
     etherscanApi: 'https://api.basescan.org/api',
     etherscanApiKey: '',
-    covalentApi: '',
     alchemyApi: '',
     supportsEns: false,
     ipfs: 'https://prod.ipfs.aragon.network',
@@ -169,7 +181,14 @@ export const CHAIN_METADATA: ChainList = {
     },
     etherscanApi: 'https://api.etherscan.io/api',
     etherscanApiKey: etherscanApiKey,
-    covalentApi: 'https://api.covalenthq.com/v1/eth-mainnet',
+    coingecko: {
+      networkId: 'ethereum',
+      nativeTokenId: 'ethereum',
+    },
+    covalent: {
+      networkId: 'eth-mainnet',
+      nativeTokenId: '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee',
+    },
     alchemyApi: 'https://eth-mainnet.g.alchemy.com/v2',
     supportsEns: true,
     ipfs: 'https://prod.ipfs.aragon.network',
@@ -192,7 +211,14 @@ export const CHAIN_METADATA: ChainList = {
     },
     etherscanApi: 'https://api.polygonscan.com/api',
     etherscanApiKey: polygonscanApiKey,
-    covalentApi: 'https://api.covalenthq.com/v1/matic-mainnet',
+    coingecko: {
+      networkId: 'polygon-pos',
+      nativeTokenId: 'matic-network',
+    },
+    covalent: {
+      networkId: 'matic-mainnet',
+      nativeTokenId: '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee',
+    },
     alchemyApi: 'https://polygon-mainnet.g.alchemy.com/v2',
     supportsEns: false,
     ipfs: 'https://prod.ipfs.aragon.network',
@@ -235,7 +261,10 @@ export const CHAIN_METADATA: ChainList = {
     },
     etherscanApi: 'https://api-goerli.etherscan.io/api',
     etherscanApiKey: etherscanApiKey,
-    covalentApi: 'https://api.covalenthq.com/v1/eth-goerli',
+    covalent: {
+      networkId: 'eth-goerli',
+      nativeTokenId: '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee',
+    },
     alchemyApi: 'https://eth-goerli.g.alchemy.com/v2',
     supportsEns: true,
     ipfs: 'https://test.ipfs.aragon.network',
@@ -259,7 +288,10 @@ export const CHAIN_METADATA: ChainList = {
     },
     etherscanApi: 'https://api-testnet.polygonscan.com/api',
     etherscanApiKey: polygonscanApiKey,
-    covalentApi: 'https://api.covalenthq.com/v1/matic-mumbai',
+    covalent: {
+      networkId: 'matic-mumbai',
+      nativeTokenId: '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee',
+    },
     alchemyApi: 'https://polygon-mumbai.g.alchemy.com/v2',
     supportsEns: false,
     ipfs: 'https://test.ipfs.aragon.network',

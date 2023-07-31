@@ -2,8 +2,6 @@ import {
   CHAIN_METADATA,
   COVALENT_API_KEY,
   SupportedNetworks,
-  coingeckoMetadata,
-  covalentMetadata,
 } from 'utils/constants';
 import {isNativeToken} from 'utils/tokens';
 import {TOP_ETH_SYMBOL_ADDRESSES} from 'utils/constants/topSymbolAddresses';
@@ -63,7 +61,7 @@ class TokenService {
     network: SupportedNetworks,
     address: string
   ): Promise<Token | null> => {
-    const {networkId, nativeTokenId} = covalentMetadata[network] ?? {};
+    const {networkId, nativeTokenId} = CHAIN_METADATA[network].covalent ?? {};
     const {nativeCurrency} = CHAIN_METADATA[network];
     const isNative = isNativeToken(address);
 
@@ -112,7 +110,7 @@ class TokenService {
     network: SupportedNetworks,
     address: string
   ): Promise<Token | null> => {
-    const {networkId, nativeTokenId} = coingeckoMetadata[network] ?? {};
+    const {networkId, nativeTokenId} = CHAIN_METADATA[network].coingecko ?? {};
     const {nativeCurrency} = CHAIN_METADATA[network];
     const isNative = isNativeToken(address);
 
