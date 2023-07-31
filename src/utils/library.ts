@@ -8,6 +8,7 @@ import {
   Context as SdkContext,
   TokenVotingClient,
   VotingMode,
+  WithdrawParams,
 } from '@aragon/sdk-client';
 import {fetchEnsAvatar} from '@wagmi/core';
 
@@ -140,7 +141,13 @@ export async function decodeWithdrawToAction(
     return;
   }
 
-  const decoded = client.decoding.withdrawAction(to, value, data);
+  // FIXME remove custom type when NFT withdraws are supported
+  type DecodedWithdraw = WithdrawParams & {amount?: bigint};
+  const decoded = client.decoding.withdrawAction(
+    to,
+    value,
+    data
+  ) as DecodedWithdraw;
 
   if (!decoded) {
     console.error('Unable to decode withdraw action');
@@ -171,7 +178,7 @@ export async function decodeWithdrawToAction(
     });
 
     return {
-      amount: Number(formatUnits(decoded.amount, tokenInfo.decimals)),
+      amount: Number(formatUnits(decoded.amount ?? '0', tokenInfo.decimals)),
       name: 'withdraw_assets',
       to: recipient,
       tokenBalance: 0, // unnecessary?
@@ -640,8 +647,8 @@ export const translateToAppNetwork = (
     // TODO: uncomment when sdk is ready
     // case SdkSupportedNetworks.BASE:
     //   return 'base';
-    // case SdkSupportedNetworks.BASE_GOERLI:
-    //   return 'base-goerli';
+    case SdkSupportedNetworks.BASE_GOERLI:
+      return 'base-goerli';
     case SdkSupportedNetworks.MAINNET:
       return 'ethereum';
     case SdkSupportedNetworks.GOERLI:
@@ -671,7 +678,7 @@ export function translateToNetworkishName(
     case 'base':
       return 'unsupported'; // TODO: get SDK name
     case 'base-goerli':
-      return 'unsupported'; // TODO: get SDK name
+      return SdkSupportedNetworks.BASE_GOERLI;
     case 'ethereum':
       return SdkSupportedNetworks.MAINNET;
     case 'goerli':
