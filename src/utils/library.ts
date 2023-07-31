@@ -1033,7 +1033,7 @@ export function parseWCIconUrl(
   }
 
   if (parsedUrl && parsedUrl.startsWith('/')) {
-    parsedUrl = new URL(parsedUrl, dAppUrl).toString();
+    parsedUrl = `${dAppUrl}${parsedUrl}`;
   }
 
   return parsedUrl;

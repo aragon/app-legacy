@@ -237,15 +237,17 @@ const ActionListenerModal: React.FC<Props> = ({
               className="w-full"
             />
           ) : null}
-          <ButtonText
-            label={t('wc.detaildApp.ctaLabel.opendApp', {
-              dappName: metadataName,
-            })}
-            onClick={() => window.open(metadataURL, '_blank')}
-            mode="ghost"
-            bgWhite
-            className="w-full"
-          />
+          {metadataURL && (
+            <ButtonText
+              label={t('wc.detaildApp.ctaLabel.opendApp', {
+                dappName: metadataName,
+              })}
+              onClick={() => window.open(metadataURL, '_blank')}
+              mode="ghost"
+              bgWhite
+              className="w-full"
+            />
+          )}
           <ButtonText
             label={t('wc.detaildApp.ctaLabel.disconnectdApp', {
               dappName: metadataName,
