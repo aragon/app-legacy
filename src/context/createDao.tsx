@@ -32,6 +32,7 @@ import {
   CHAIN_METADATA,
   SupportedNetworks,
   TransactionState,
+  getSupportedNetworkByChainId,
 } from 'utils/constants';
 import {getSecondsFromDHM} from 'utils/date';
 import {readFile, translateToNetworkishName} from 'utils/library';
@@ -153,9 +154,20 @@ const CreateDaoProvider: React.FC = ({children}) => {
       multisigMinimumApprovals,
       eligibilityType,
     } = getValues();
-    const translatedNetwork = translateToNetworkishName(
-      blockchain.label?.toLowerCase() as SupportedNetworks
-    ) as sdkSupportedNetworks;
+
+    // get network
+    const selectedNetwork = getSupportedNetworkByChainId(blockchain.id);
+    let translatedNetwork: sdkSupportedNetworks;
+
+    if (selectedNetwork) {
+      translatedNetwork = translateToNetworkishName(
+        selectedNetwork
+      ) as sdkSupportedNetworks;
+    } else {
+      throw new Error(
+        'No network selected. A supported network must be selected'
+      );
+    }
 
     return [
       {

@@ -15,7 +15,12 @@ export function isSupportedChainId(
 }
 
 export const ENS_SUPPORTED_NETWORKS = ['ethereum', 'goerli'];
-export const NETWORKS_WITH_CUSTOM_REGISTRY = ['mumbai', 'polygon'];
+export const NETWORKS_WITH_CUSTOM_REGISTRY = [
+  'base',
+  'base-goerli',
+  'mumbai',
+  'polygon',
+];
 
 const SUPPORTED_NETWORKS = [
   'arbitrum',
