@@ -86,9 +86,14 @@ export const useDaoMembers = (
           return;
         }
 
-        // for the multisig plugin and the goerli network, fetch members from
-        // the subgraph
-        if (pluginType === 'multisig.plugin.dao.eth' || network === 'goerli') {
+        // Fetch members from the subgraph for the multisig plugin and for the goerli, base
+        // and base-goerli networks.
+        if (
+          pluginType === 'multisig.plugin.dao.eth' ||
+          network === 'goerli' ||
+          network === 'base' ||
+          network === 'base-goerli'
+        ) {
           setIsLoading(true);
 
           const response = await client?.methods.getMembers(pluginAddress);
