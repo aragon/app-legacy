@@ -9,13 +9,7 @@ import {
   Networkish,
   Web3Provider,
 } from '@ethersproject/providers';
-import React, {
-  createContext,
-  useContext,
-  useEffect,
-  useMemo,
-  useState,
-} from 'react';
+import React, {createContext, useContext, useMemo} from 'react';
 
 import {useWallet} from 'hooks/useWallet';
 import {
@@ -69,7 +63,7 @@ export function useProviders(): NonNullable<Providers> {
   const context = useContext(ProvidersContext);
 
   // Check if context is defined
-  if (context === undefined) {
+  if (context == null) {
     throw new Error(
       'useProviders must be used within a ProvidersContextProvider'
     );
@@ -88,14 +82,10 @@ export function useProviders(): NonNullable<Providers> {
 export function useSpecificProvider(
   chainIdOrNetwork: SupportedChainID | SupportedNetworks
 ): AlchemyProvider | InfuraProvider | JsonRpcProvider | null {
-  const [provider, setProvider] = useState<
-    AlchemyProvider | InfuraProvider | JsonRpcProvider | null
-  >(null);
-
-  useEffect(() => {
-    setProvider(getApiProvider(chainIdOrNetwork));
-  }, [chainIdOrNetwork]);
-
+  const provider = useMemo(
+    () => getApiProvider(chainIdOrNetwork),
+    [chainIdOrNetwork]
+  );
   return provider;
 }
 

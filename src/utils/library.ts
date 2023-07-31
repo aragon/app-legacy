@@ -636,21 +636,23 @@ export function sleepFor(time = 600) {
 export const translateToAppNetwork = (
   sdkNetwork: SdkContext['network']
 ): SupportedNetworks => {
-  switch (sdkNetwork.name) {
-    case 'homestead':
+  switch (sdkNetwork.name as SdkSupportedNetworks) {
+    // TODO: uncomment when sdk is ready
+    // case SdkSupportedNetworks.BASE:
+    //   return 'base';
+    // case SdkSupportedNetworks.BASE_GOERLI:
+    //   return 'base-goerli';
+    case SdkSupportedNetworks.MAINNET:
       return 'ethereum';
-    case 'goerli':
+    case SdkSupportedNetworks.GOERLI:
       return 'goerli';
-    case 'maticmum':
+    case SdkSupportedNetworks.MUMBAI:
       return 'mumbai';
-    case 'matic':
+    case SdkSupportedNetworks.POLYGON:
       return 'polygon';
-    case 'base': // TODO: get SDK name
-      return 'base';
-    case 'base-goerli': // TODO: get SDK name
-      return 'base-goerli';
+    default:
+      return 'unsupported';
   }
-  return 'unsupported';
 };
 
 /**

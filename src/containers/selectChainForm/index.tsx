@@ -196,16 +196,17 @@ type SelectableNetworks = Record<
   }
 >;
 
+// TODO: enable base in the network selection
 const networks: SelectableNetworks = {
   main: {
-    cost: ['polygon', 'base', 'ethereum'],
-    // cost: ['polygon', 'arbitrum', 'ethereum'],
+    cost: ['polygon', 'ethereum'],
+    // cost: ['polygon', 'base', 'ethereum'],
     popularity: ['polygon', 'ethereum', 'arbitrum'],
     security: ['ethereum', 'arbitrum', 'polygon'],
   },
   test: {
-    cost: ['mumbai', 'base-goerli', 'goerli'],
-    // cost: ['mumbai', 'arbitrum-test', 'goerli'],
+    cost: ['mumbai', 'goerli'],
+    // cost: ['mumbai', 'base-goerli', 'goerli'],
     popularity: ['mumbai', 'goerli', 'arbitrum-test'],
     security: ['goerli', 'arbitrum-test', 'mumbai'],
   },
