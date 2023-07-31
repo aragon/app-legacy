@@ -1005,3 +1005,36 @@ export function capitalizeFirstLetter(str: string) {
 
   return str.charAt(0).toUpperCase() + str.slice(1);
 }
+
+/**
+ * Parse WalletConnect icon URL
+ *
+ * This function is used to parse the icon URL coming from WalletConnect.
+ * In case of SVG icons (e.g., Gnosis Safe), it extracts the href attribute value.
+ * If the icon path is relative, it prepends it with the dApp URL.
+ *
+ * @export
+ * @param dAppUrl - The URL of the dApp
+ * @param icon - The icon URL or SVG string
+ * @returns the parsed URL of the icon,
+ * or the original icon value if no modifications were necessary.
+ */
+export function parseWCIconUrl(
+  dAppUrl: string,
+  icon: string | undefined
+): string | undefined {
+  let parsedUrl = icon;
+
+  if (icon && icon.startsWith('<')) {
+    const match = icon.match(/<image href="([^"]*)"/);
+    if (match && match[1]) {
+      parsedUrl = match[1];
+    }
+  }
+
+  if (parsedUrl && parsedUrl.startsWith('/')) {
+    parsedUrl = new URL(parsedUrl, dAppUrl).toString();
+  }
+
+  return parsedUrl;
+}

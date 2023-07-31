@@ -21,6 +21,7 @@ import {
   getEncodedActionInputs,
   getWCEncodedFunctionName,
   getWCNativeToField,
+  parseWCIconUrl,
 } from 'utils/library';
 
 type Props = {
@@ -59,7 +60,7 @@ const ActionListenerModal: React.FC<Props> = ({
   /*************************************************
    *             Callbacks and Handlers            *
    *************************************************/
-  const handleAddActions = useCallback(() => {
+  const handleAddActions = useCallback(async () => {
     resetField(`actions.${actionIndex}`);
 
     // NOTE: this is slightly inefficient and can be optimized
@@ -68,9 +69,14 @@ const ActionListenerModal: React.FC<Props> = ({
     // will always be ran with the same parameters given each batch of actions
     // will be coming from only one dApp at a time. If that is indeed
     // the case, then both the Etherscan data and notices can be fetched
-    // and parsed outside of the map, getting rid of the unnecessary
+    // and parsed outside of the loop, getting rid of the unnecessary
     // async requests. F.F. - [07-10-2023]
-    actionsReceived.forEach(async (action, currentIndex) => {
+    for (const {action, index: currentIndex} of actionsReceived.map(
+      (action, index) => ({
+        action,
+        index,
+      })
+    )) {
       // verify and decode
       const etherscanData = await getEtherscanVerifiedContract(
         action.params[0].to,
@@ -161,7 +167,7 @@ const ActionListenerModal: React.FC<Props> = ({
           getEncodedActionInputs(action.params[0], network, t)
         );
       }
-    });
+    }
 
     removeAction(actionIndex);
   }, [
@@ -183,8 +189,11 @@ const ActionListenerModal: React.FC<Props> = ({
   }
 
   const metadataName = selectedSession.peer.metadata.name;
-  const metadataIcon = selectedSession.peer.metadata.icons[0];
   const metadataURL = selectedSession.peer.metadata.url;
+  const metadataIcon = parseWCIconUrl(
+    metadataURL,
+    selectedSession.peer.metadata.icons[0]
+  );
 
   return (
     <ModalBottomSheetSwitcher isOpen={isOpen} onClose={onClose}>
