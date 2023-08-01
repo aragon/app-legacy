@@ -66,7 +66,7 @@ export const CompareMetadata: React.FC<CompareMetadataProps> = ({
         <Dt>{t('labels.logo')}</Dt>
         <Dd>
           {view === 'new' ? (
-            URL_PATTERN.test(daoLogo) || daoLogo?.startsWith('blob') ? (
+            URL_PATTERN.test(daoLogo) || daoLogo?.startsWith?.('blob') ? (
               <AvatarDao daoName={daoName} src={daoLogo} />
             ) : (
               <AvatarDao

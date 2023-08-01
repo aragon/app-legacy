@@ -246,92 +246,102 @@ const ProposeSettingWrapper: React.FC<Props> = ({
   // Not a fan, but this sets the actions on the form context so that the Action
   // Widget can read them
   useEffect(() => {
-    {
-      const [
-        daoName,
-        daoSummary,
-        daoLogo,
-        minimumApproval,
-        multisigMinimumApprovals,
-        minimumParticipation,
-        eligibilityType,
-        eligibilityTokenAmount,
-        earlyExecution,
-        voteReplacement,
-        durationDays,
-        durationHours,
-        durationMinutes,
-        resourceLinks,
-        tokenDecimals,
-      ] = getValues([
-        'daoName',
-        'daoSummary',
-        'daoLogo',
-        'minimumApproval',
-        'multisigMinimumApprovals',
-        'minimumParticipation',
-        'eligibilityType',
-        'eligibilityTokenAmount',
-        'earlyExecution',
-        'voteReplacement',
-        'durationDays',
-        'durationHours',
-        'durationMinutes',
-        'daoLinks',
-        'tokenDecimals',
-      ]);
+    async function SetSettingActions() {
+      {
+        const [
+          daoName,
+          daoSummary,
+          daoLogo,
+          minimumApproval,
+          multisigMinimumApprovals,
+          minimumParticipation,
+          eligibilityType,
+          eligibilityTokenAmount,
+          earlyExecution,
+          voteReplacement,
+          durationDays,
+          durationHours,
+          durationMinutes,
+          resourceLinks,
+          tokenDecimals,
+        ] = getValues([
+          'daoName',
+          'daoSummary',
+          'daoLogo',
+          'minimumApproval',
+          'multisigMinimumApprovals',
+          'minimumParticipation',
+          'eligibilityType',
+          'eligibilityTokenAmount',
+          'earlyExecution',
+          'voteReplacement',
+          'durationDays',
+          'durationHours',
+          'durationMinutes',
+          'daoLinks',
+          'tokenDecimals',
+        ]);
 
-      const metadataAction: ActionUpdateMetadata = {
-        name: 'modify_metadata',
-        inputs: {
-          name: daoName,
-          description: daoSummary,
-          avatar: daoLogo,
-          links: resourceLinks,
-        },
-      };
+        let daoLogoFile = '';
 
-      if (isTokenVotingSettings(pluginSettings)) {
-        const voteSettingsAction: ActionUpdatePluginSettings = {
-          name: 'modify_token_voting_settings',
+        if (daoLogo.startsWith('blob'))
+          daoLogoFile = (await fetch(daoLogo).then(r => r.blob())) as string;
+        else daoLogoFile = daoLogo;
+
+        const metadataAction: ActionUpdateMetadata = {
+          name: 'modify_metadata',
           inputs: {
-            token: daoToken,
-            totalVotingWeight: tokenSupply?.raw || BigInt(0),
-
-            minDuration: getSecondsFromDHM(
-              durationDays,
-              durationHours,
-              durationMinutes
-            ),
-            supportThreshold: Number(minimumApproval) / 100,
-            minParticipation: Number(minimumParticipation) / 100,
-            minProposerVotingPower:
-              eligibilityType === 'token'
-                ? parseUnits(
-                    eligibilityTokenAmount.toString(),
-                    tokenDecimals
-                  ).toBigInt()
-                : undefined,
-            votingMode: earlyExecution
-              ? VotingMode.EARLY_EXECUTION
-              : voteReplacement
-              ? VotingMode.VOTE_REPLACEMENT
-              : VotingMode.STANDARD,
-          },
-        };
-        setValue('actions', [metadataAction, voteSettingsAction]);
-      } else {
-        const multisigSettingsAction: ActionUpdateMultisigPluginSettings = {
-          name: 'modify_multisig_voting_settings',
-          inputs: {
-            minApprovals: multisigMinimumApprovals,
-            onlyListed: pluginSettings.onlyListed,
+            name: daoName,
+            description: daoSummary,
+            avatar: daoLogoFile,
+            links: resourceLinks,
           },
         };
 
-        setValue('actions', [metadataAction, multisigSettingsAction]);
+        if (isTokenVotingSettings(pluginSettings)) {
+          const voteSettingsAction: ActionUpdatePluginSettings = {
+            name: 'modify_token_voting_settings',
+            inputs: {
+              token: daoToken,
+              totalVotingWeight: tokenSupply?.raw || BigInt(0),
+
+              minDuration: getSecondsFromDHM(
+                durationDays,
+                durationHours,
+                durationMinutes
+              ),
+              supportThreshold: Number(minimumApproval) / 100,
+              minParticipation: Number(minimumParticipation) / 100,
+              minProposerVotingPower:
+                eligibilityType === 'token'
+                  ? parseUnits(
+                      eligibilityTokenAmount.toString(),
+                      tokenDecimals
+                    ).toBigInt()
+                  : undefined,
+              votingMode: earlyExecution
+                ? VotingMode.EARLY_EXECUTION
+                : voteReplacement
+                ? VotingMode.VOTE_REPLACEMENT
+                : VotingMode.STANDARD,
+            },
+          };
+          setValue('actions', [metadataAction, voteSettingsAction]);
+        } else {
+          const multisigSettingsAction: ActionUpdateMultisigPluginSettings = {
+            name: 'modify_multisig_voting_settings',
+            inputs: {
+              minApprovals: multisigMinimumApprovals,
+              onlyListed: pluginSettings.onlyListed,
+            },
+          };
+
+          setValue('actions', [metadataAction, multisigSettingsAction]);
+        }
       }
     }
+
+    SetSettingActions();
   }, [daoToken, pluginSettings, getValues, setValue, tokenSupply?.raw]);
 
   useEffect(() => {
