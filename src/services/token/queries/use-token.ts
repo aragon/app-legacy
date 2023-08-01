@@ -8,7 +8,7 @@ import {
 import {useCallback} from 'react';
 
 import {Token} from '../domain';
-import {tokenQueryKeys} from '../query-keys';
+import {tokenBalancesQueryKeys, tokenQueryKeys} from '../query-keys';
 import {tokenService} from '../token-service';
 import type {
   IFetchTokenBalancesParams,
@@ -59,7 +59,7 @@ export const useTokenBalances = (
   options?: UseQueryOptions<AssetBalance[] | null>
 ) => {
   return useQuery(
-    tokenQueryKeys.token(params),
+    tokenBalancesQueryKeys.address(params),
     () => tokenService.fetchTokenBalances(params),
     options
   );

@@ -91,40 +91,43 @@ export const useDaoTransfers = (
         });
 
         let subgraphTransfers: Transfer[] = [];
+        let erc20DepositsList = [];
 
-        // Fetch the token list using the Alchemy API
-        const res = await fetch(url, options);
-        const alchemyTransfersList = await res.json();
-        const transfersData = alchemyTransfersList.result?.transfers ?? [];
+        if (CHAIN_METADATA[network].alchemyApi) {
+          // Fetch the token list using the Alchemy API
+          const res = await fetch(url, options);
+          const alchemyTransfersList = await res.json();
+          const transfersData = alchemyTransfersList.result?.transfers ?? [];
 
-        // filter the erc20 token deposits
-        const erc20DepositsListPromises = transfersData.map(
-          async ({from, rawContract, metadata, hash}: AlchemyTransfer) => {
-            const {name, symbol, decimals} = await getTokenInfo(
-              rawContract.address,
-              provider,
-              CHAIN_METADATA[network].nativeCurrency
-            );
+          // filter the erc20 token deposits
+          const erc20DepositsListPromises = transfersData.map(
+            async ({from, rawContract, metadata, hash}: AlchemyTransfer) => {
+              const {name, symbol, decimals} = await getTokenInfo(
+                rawContract.address,
+                provider,
+                CHAIN_METADATA[network].nativeCurrency
+              );
 
-            return {
-              type: 'deposit',
-              tokenType: 'erc20',
-              amount: BigInt(rawContract.value),
-              creationDate: new Date(metadata.blockTimestamp),
-              from: from,
-              to: daoAddressOrEns,
-              token: {
-                address: rawContract.address,
-                decimals,
-                name,
-                symbol,
-              },
-              transactionId: hash,
-            };
-          }
-        );
+              return {
+                type: 'deposit',
+                tokenType: 'erc20',
+                amount: BigInt(rawContract.value),
+                creationDate: new Date(metadata.blockTimestamp),
+                from: from,
+                to: daoAddressOrEns,
+                token: {
+                  address: rawContract.address,
+                  decimals,
+                  name,
+                  symbol,
+                },
+                transactionId: hash,
+              };
+            }
+          );
 
-        const erc20DepositsList = await Promise.all(erc20DepositsListPromises);
+          erc20DepositsList = await Promise.all(erc20DepositsListPromises);
+        }
 
         if (clientTransfers?.length) {
           subgraphTransfers = clientTransfers.filter(
