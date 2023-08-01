@@ -447,21 +447,6 @@ export const CreateDAO: React.FC = () => {
             <DefineCommittee />
           </Step>
           <Step
-            wizardTitle={'dummy'}
-            wizardDescription={'dummy desc'}
-            isNextButtonDisabled={
-              //todo
-              true
-            }
-            onNextButtonClicked={next => {
-              //todo
-              return;
-            }}
-          >
-            <ConfirmDaoCreation />
-          </Step>
-
-          <Step
             hideWizard
             fullWidth
             customHeader={<GoLiveHeader />}
