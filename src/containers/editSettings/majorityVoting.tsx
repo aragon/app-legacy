@@ -33,6 +33,10 @@ import {getDHMFromSeconds} from 'utils/date';
 import {decodeVotingMode, formatUnits, toDisplayEns} from 'utils/library';
 import {ProposeNewSettings} from 'utils/paths';
 
+type EditMvSettingsProps = {
+  daoDetails: DaoDetails;
+};
+
 export const EditMvSettings: React.FC<EditMvSettingsProps> = ({daoDetails}) => {
   const {t} = useTranslation();
   const navigate = useNavigate();
