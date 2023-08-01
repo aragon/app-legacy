@@ -32,11 +32,6 @@ import {Layout} from 'pages/settings';
 import {getDHMFromSeconds} from 'utils/date';
 import {decodeVotingMode, formatUnits, toDisplayEns} from 'utils/library';
 import {ProposeNewSettings} from 'utils/paths';
-import {useResolveDaoAvatar} from 'hooks/useResolveDaoAvatar';
-
-type EditMvSettingsProps = {
-  daoDetails: DaoDetails;
-};
 
 export const EditMvSettings: React.FC<EditMvSettingsProps> = ({daoDetails}) => {
   const {t} = useTranslation();
@@ -53,10 +48,6 @@ export const EditMvSettings: React.FC<EditMvSettingsProps> = ({daoDetails}) => {
 
   const {data: daoToken, isLoading: tokensAreLoading} = useDaoToken(
     daoDetails?.plugins?.[0]?.instanceAddress || ''
-  );
-
-  const {avatar: daoDetailsAvatar} = useResolveDaoAvatar(
-    daoDetails?.metadata?.avatar
   );
 
   const {data: tokenSupply, isLoading: tokenSupplyIsLoading} = useTokenSupply(
@@ -197,7 +188,7 @@ export const EditMvSettings: React.FC<EditMvSettingsProps> = ({daoDetails}) => {
   const setCurrentMetadata = useCallback(() => {
     setValue('daoName', daoDetails?.metadata.name);
     setValue('daoSummary', daoDetails?.metadata.description);
-    setValue('daoLogo', daoDetailsAvatar);
+    setValue('daoLogo', daoDetails?.metadata?.avatar);
 
     /**
      * FIXME - this is the dumbest workaround: because there is an internal
@@ -214,12 +205,12 @@ export const EditMvSettings: React.FC<EditMvSettingsProps> = ({daoDetails}) => {
       replace([...daoDetails.metadata.links]);
     }
   }, [
-    setValue,
-    daoDetails.metadata.name,
+    daoDetails.metadata?.avatar,
     daoDetails.metadata.description,
     daoDetails.metadata.links,
-    daoDetailsAvatar,
+    daoDetails.metadata.name,
     replace,
+    setValue,
   ]);
 
   const setCurrentCommunity = useCallback(() => {

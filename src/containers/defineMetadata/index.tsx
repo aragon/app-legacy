@@ -195,7 +195,7 @@ const DefineMetadata: React.FC<DefineMetadataProps> = ({
 
             try {
               // in case url does not need to be created
-              if (URL_PATTERN.test(value)) {
+              if (URL_PATTERN.test(value) || value?.startsWith?.('blob')) {
                 preview = value;
               } else {
                 preview = value ? URL.createObjectURL(value) : '';

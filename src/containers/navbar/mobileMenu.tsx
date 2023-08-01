@@ -10,7 +10,6 @@ import {selectedDaoVar} from 'context/apolloClient';
 import {useGlobalModalContext} from 'context/globalModals';
 import {usePrivacyContext} from 'context/privacyContext';
 import {ButtonText, IconFeedback} from '@aragon/ods';
-import {useResolveDaoAvatar} from 'hooks/useResolveDaoAvatar';
 import {toDisplayEns} from 'utils/library';
 
 type MobileNavMenuProps = {
@@ -24,10 +23,6 @@ const MobileNavMenu = (props: MobileNavMenuProps) => {
 
   const {handleWithFunctionalPreferenceMenu} = usePrivacyContext();
 
-  const {avatar: currentDaoAvatar} = useResolveDaoAvatar(
-    currentDao?.metadata?.avatar
-  );
-
   return (
     <BottomSheet isOpen={isMobileMenuOpen} onClose={() => close('mobileMenu')}>
       <div className="tablet:w-50">
@@ -37,7 +32,7 @@ const MobileNavMenu = (props: MobileNavMenuProps) => {
             daoName={
               currentDao?.metadata?.name || toDisplayEns(currentDao?.ensDomain)
             }
-            src={currentDaoAvatar}
+            src={currentDao?.metadata?.avatar}
             onClick={() => {
               close('mobileMenu');
               handleWithFunctionalPreferenceMenu(() => open('selectDao'));
