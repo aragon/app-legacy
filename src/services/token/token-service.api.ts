@@ -5,3 +5,8 @@ export interface IFetchTokenParams {
   network: SupportedNetworks;
   symbol?: string;
 }
+
+export interface IFetchTokenBalancesParams {
+  address: string;
+  network: SupportedNetworks;
+}

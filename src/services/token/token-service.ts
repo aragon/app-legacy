@@ -1,14 +1,21 @@
+import {AssetBalance} from '@aragon/sdk-client';
+import {TokenType} from '@aragon/sdk-client-common';
+import {AddressZero} from '@ethersproject/constants';
+
 import {
   CHAIN_METADATA,
   COVALENT_API_KEY,
   SupportedNetworks,
 } from 'utils/constants';
-import {isNativeToken} from 'utils/tokens';
 import {TOP_ETH_SYMBOL_ADDRESSES} from 'utils/constants/topSymbolAddresses';
-import {CoingeckoToken, Token, CoingeckoError} from './domain';
-import {IFetchTokenParams} from './token-service.api';
-import {CovalentToken} from './domain/covalent-token';
+import {isNativeToken} from 'utils/tokens';
+import {CoingeckoError, CoingeckoToken, Token} from './domain';
 import {CovalentResponse} from './domain/covalent-response';
+import {CovalentToken, CovalentTokenBalance} from './domain/covalent-token';
+import {
+  IFetchTokenParams,
+  IFetchTokenBalancesParams,
+} from './token-service.api';
 
 class TokenService {
   private defaultCurrency = 'USD';
@@ -148,6 +155,62 @@ class TokenService {
         year: data.market_data.price_change_percentage_1y_in_currency.usd,
       },
     };
+  };
+
+  // Note: Purposefully not including a function to fetch token balances
+  // via Alchemy because we want to slowly remove the Alchemy dependency
+  // F.F. [01/01/2023]
+  fetchTokenBalances = async ({
+    address,
+    network,
+  }: IFetchTokenBalancesParams): Promise<AssetBalance[] | null> => {
+    const {networkId} = CHAIN_METADATA[network].covalent ?? {};
+
+    if (!networkId) {
+      console.info(
+        `fetchWalletToken - network ${network} not supported by Covalent`
+      );
+      return null;
+    }
+
+    const {nativeCurrency} = CHAIN_METADATA[network];
+
+    const endpoint = `/${networkId}/address/${address}/balances_v2/?quote-currency=${this.defaultCurrency}`;
+    const url = `${this.baseUrl.covalent}${endpoint}`;
+    const authToken = window.btoa(`${COVALENT_API_KEY}:`);
+    const headers = {Authorization: `Basic ${authToken}`};
+
+    const res = await fetch(url, {headers});
+    const parsed: CovalentResponse<CovalentTokenBalance | null> =
+      await res.json();
+    const data = parsed.data;
+
+    if (parsed.error || data == null) {
+      console.info(
+        `fetchToken - Covalent returned error: ${parsed.error_message}`
+      );
+      return null;
+    }
+
+    return data.items.map(({native_token, ...item}) => {
+      return {
+        address: native_token ? AddressZero : item.contract_address,
+        name: native_token ? nativeCurrency.name : item.contract_name,
+        symbol: native_token
+          ? nativeCurrency.symbol
+          : item.contract_ticker_symbol.toUpperCase(),
+        decimals: native_token
+          ? nativeCurrency.decimals
+          : item.contract_decimals,
+        type: native_token
+          ? TokenType.NATIVE
+          : item.nft_data
+          ? TokenType.ERC721
+          : TokenType.ERC20,
+        balance: BigInt(item.balance),
+        updateDate: new Date(data.updated_at),
+      };
+    });
   };
 
   /**

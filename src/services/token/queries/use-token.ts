@@ -1,14 +1,19 @@
-import type {IFetchTokenParams} from '../token-service.api';
-import {tokenQueryKeys} from '../query-keys';
-import {tokenService} from '../token-service';
+import {AssetBalance} from '@aragon/sdk-client';
 import {
   UseQueryOptions,
+  useQueries,
   useQuery,
   useQueryClient,
-  useQueries,
 } from '@tanstack/react-query';
-import {Token} from '../domain';
 import {useCallback} from 'react';
+
+import {Token} from '../domain';
+import {tokenQueryKeys} from '../query-keys';
+import {tokenService} from '../token-service';
+import type {
+  IFetchTokenBalancesParams,
+  IFetchTokenParams,
+} from '../token-service.api';
 
 export const useToken = (
   params: IFetchTokenParams,
@@ -47,4 +52,15 @@ export const useTokenList = (
   }));
 
   return useQueries({queries});
+};
+
+export const useTokenBalances = (
+  params: IFetchTokenBalancesParams,
+  options?: UseQueryOptions<AssetBalance[] | null>
+) => {
+  return useQuery(
+    tokenQueryKeys.token(params),
+    () => tokenService.fetchTokenBalances(params),
+    options
+  );
 };
