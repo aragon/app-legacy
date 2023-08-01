@@ -47,7 +47,7 @@ const ConfigureWithdrawForm: React.FC<ConfigureWithdrawFormProps> = ({
   const {open} = useGlobalModalContext();
   const {network} = useNetwork();
   const {address} = useWallet();
-  const {infura: provider} = useProviders();
+  const {api: provider} = useProviders();
   const {setSelectedActionIndex} = useActionsContext();
   const {alert} = useAlertContext();
 

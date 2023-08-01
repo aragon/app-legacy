@@ -1,282 +1,137 @@
 import {useNetwork} from 'context/network';
-import {useCallback, useState, useEffect, useMemo} from 'react';
+import {useCallback, useState, useEffect} from 'react';
 import {SessionTypes} from '@walletconnect/types';
 
-import {
-  WcClient,
-  WcConnectProposalEvent,
-  WcDisconnectEvent,
-  WcRequestEvent,
-  approveSession,
-  rejectSession,
-  connect,
-  makeClient,
-  subscribeConnectProposal,
-  subscribeDisconnect,
-  subscribeRequest,
-  unsubscribeConnectProposal,
-  unsubscribeDisconnect,
-  unsubscribeRequest,
-  disconnect,
-  changeNetwork,
-  WcRequest,
-} from 'services/walletConnectInterceptor';
+import {walletConnectInterceptor} from 'services/walletConnectInterceptor';
 import {CHAIN_METADATA, SUPPORTED_CHAIN_ID} from 'utils/constants';
 import usePrevious from 'hooks/usePrevious';
+import {Web3WalletTypes} from '@walletconnect/web3wallet';
+import {useDaoDetailsQuery} from './useDaoDetails';
+
+export type WcSession = SessionTypes.Struct;
+export type WcActionRequest =
+  Web3WalletTypes.SessionRequest['params']['request'];
 
 export interface UseWalletConnectInterceptorOptions {
-  onActionRequest?: (request: WcRequest) => void;
-  onConnectionProposal?: (payload: {
-    approve: () => void;
-    reject: () => void;
-  }) => void;
+  onActionRequest?: (request: WcActionRequest) => void;
 }
-
-export type WcRecord = Required<Omit<WcConnectOptions, 'onError'>> & {
-  topic?: string;
-  id?: number;
-};
 
 export interface WcConnectOptions {
   uri: string;
-  address: string;
-  autoApprove?: boolean;
   onError?: (e: Error) => void;
 }
 
+const activeSessionsListeners = new Set<(sessions: WcSession[]) => void>();
+
 export function useWalletConnectInterceptor({
   onActionRequest,
-  onConnectionProposal = () => {},
 }: UseWalletConnectInterceptorOptions) {
   const {network} = useNetwork();
   const prevNetwork = usePrevious(network);
 
-  const [client, setClient] = useState<WcClient | null>(null);
-  // TODO: Determine if currentWcRecord and archivedURIs needs to stay or removed
-  const [currentWcRecord, setCurrentWcRecord] = useState<WcRecord | null>(null);
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [archivedURIs, setArchivedURIs] = useState<string[]>([]);
-
-  const [activeSessions, setActiveSessions] =
-    useState<Record<string, SessionTypes.Struct>>();
-
-  const activeNetworkData = useMemo(() => CHAIN_METADATA[network], [network]);
-
-  const isWcReady = useMemo(() => !!client, [client]);
-  const isWcConnected = useMemo(() => !!currentWcRecord, [currentWcRecord]);
-
-  const canConnect = useCallback(
-    (uri: string) => {
-      return (
-        isWcReady &&
-        !isWcConnected &&
-        !!uri.length &&
-        !archivedURIs.includes(uri)
-      );
-    },
-    [archivedURIs, isWcConnected, isWcReady]
+  const {data: daoDetails} = useDaoDetailsQuery();
+  const [sessions, setSessions] = useState<WcSession[]>(
+    walletConnectInterceptor.getActiveSessions(daoDetails?.address)
   );
+  const activeSessions = sessions.filter(session => session.acknowledged);
 
-  const canDisconnect = useCallback(() => {
-    return isWcReady && isWcConnected;
-  }, [isWcConnected, isWcReady]);
+  const updateActiveSessions = useCallback(() => {
+    const newSessions = walletConnectInterceptor.getActiveSessions(
+      daoDetails?.address
+    );
 
-  const wcConnect = useCallback(
-    async ({onError = () => {}, ...restOptions}: WcConnectOptions) => {
-      if (!client) {
-        throw new Error('The WalletConnect client must be initialized');
-      }
+    // Update active-sessions for all hook instances
+    activeSessionsListeners.forEach(listener => listener(newSessions));
+  }, [daoDetails?.address]);
 
-      try {
-        const connection = await connect(client, restOptions.uri);
+  const wcConnect = useCallback(async ({onError, uri}: WcConnectOptions) => {
+    try {
+      const connection = await walletConnectInterceptor.connect(uri);
 
-        setCurrentWcRecord({
-          autoApprove: true,
-          ...restOptions,
-        });
-        return connection;
-      } catch (e) {
-        onError(e as Error);
-      }
-    },
-    [client]
-  );
+      return connection;
+    } catch (e) {
+      onError?.(e as Error);
+    }
+  }, []);
 
   const wcDisconnect = useCallback(
-    async (topic?: string) => {
-      if (!client) {
-        throw new Error('The WalletConnect client must be initialized');
-      }
-
-      // if (!currentWcRecord) {
-      //   throw new Error(
-      //     'To approve the connection, you must initiate it first'
-      //   );
-      // }
-
-      if (!topic && !currentWcRecord?.topic) {
-        throw new Error(
-          'Topic must be provided either by currently approved session or as argument'
-        );
-      }
-
+    async (topic: string) => {
       try {
-        await disconnect(client, topic || currentWcRecord?.topic || '');
+        await walletConnectInterceptor.disconnect(topic);
+        updateActiveSessions();
       } catch (e) {
-        console.error(e);
-      } finally {
-        // setArchivedURIs([...archivedURIs, currentWcRecord?.uri]);
-        setCurrentWcRecord(null);
+        console.error('Error disconnecting the dApp: ', e);
       }
     },
-    [client, currentWcRecord]
+    [updateActiveSessions]
   );
 
   const handleApprove = useCallback(
-    async (data: WcConnectProposalEvent) => {
-      if (!client) {
-        throw new Error('The WalletConnect client must be initialized');
-      }
-
-      if (!currentWcRecord) {
-        throw new Error(
-          'To approve the connection, you must initiate it first'
-        );
-      }
-
-      const response = await approveSession(
-        client,
+    async (data: Web3WalletTypes.SessionProposal) => {
+      await walletConnectInterceptor.approveSession(
         data,
-        currentWcRecord.address,
+        daoDetails?.address as string,
         SUPPORTED_CHAIN_ID
       );
 
-      setCurrentWcRecord({
-        ...currentWcRecord,
-        id: data.id,
-        topic: response.topic,
-      });
-
-      setActiveSessions(client.getActiveSessions());
-
-      return response;
+      updateActiveSessions();
     },
-    [client, currentWcRecord]
-  );
-
-  const handleReject = useCallback(
-    async (data: WcConnectProposalEvent) => {
-      if (!client) {
-        throw new Error('The WalletConnect client must be initialized');
-      }
-
-      await rejectSession(client, data);
-
-      setCurrentWcRecord(null);
-    },
-    [client]
-  );
-
-  const handleConnectProposal = useCallback(
-    (event: WcConnectProposalEvent) => {
-      if (!currentWcRecord) {
-        throw new Error(
-          'Unexpected error: Connection proposal established but currentConnectRecord is null'
-        );
-      }
-
-      if (currentWcRecord.autoApprove) {
-        handleApprove(event);
-      } else {
-        onConnectionProposal({
-          approve: () => handleApprove(event),
-          reject: () => handleReject(event),
-        });
-      }
-    },
-    [currentWcRecord, onConnectionProposal, handleApprove, handleReject]
+    [daoDetails?.address, updateActiveSessions]
   );
 
   const handleRequest = useCallback(
-    (event: WcRequestEvent) => {
-      if (!client) {
-        throw new Error('The WalletConnect client must be initialized');
-      }
-
-      // if (!currentWcRecord) {
-      //   throw new Error(
-      //     'To approve the request, you must initiate the connection first'
-      //   );
-      // }
-
-      // if (event.topic !== currentWcRecord?.topic) return;
-
-      if (event.params.chainId === `eip155:${activeNetworkData.id}`) {
+    (event: Web3WalletTypes.SessionRequest) => {
+      if (event.params.chainId === `eip155:${CHAIN_METADATA[network].id}`) {
         onActionRequest?.(event.params.request);
       }
     },
-    [activeNetworkData, client, onActionRequest]
+    [network, onActionRequest]
   );
 
-  const handleDisconnect = useCallback(
-    (event: WcDisconnectEvent) => {
-      if (event.topic !== currentWcRecord?.topic) {
-        console.error('Connection is not established');
-        return;
-      }
-      // console.log('handleDisconnect', event);
-      // console.log(client.getActiveSessions());
-    },
-    [currentWcRecord?.topic]
-  );
-
-  const getActiveSessions = useCallback(() => {
-    return client?.getActiveSessions() as Record<string, SessionTypes.Struct>;
-  }, [client]);
-
-  useEffect(() => {
-    makeClient().then(setClient);
-  }, []);
-
-  useEffect(() => {
-    if (!client) return;
-    subscribeConnectProposal(client, handleConnectProposal);
-    return () => unsubscribeConnectProposal(client, handleConnectProposal);
-  }, [client, handleConnectProposal]);
-
-  useEffect(() => {
-    if (!client) return;
-    subscribeRequest(client, handleRequest);
-    return () => unsubscribeRequest(client, handleRequest);
-  }, [client, handleRequest]);
-
-  useEffect(() => {
-    if (!client) return;
-    subscribeDisconnect(client, handleDisconnect);
-    return () => unsubscribeDisconnect(client, handleDisconnect);
-  }, [client, handleDisconnect]);
-
-  useEffect(() => {
-    if (!client || !currentWcRecord || !currentWcRecord.topic) return;
-
-    if (prevNetwork !== network) {
-      changeNetwork(
-        client,
-        currentWcRecord.topic,
-        currentWcRecord.address,
-        activeNetworkData.id
-      );
+  const addListeners = useCallback(() => {
+    if (activeSessionsListeners.size > 0) {
+      return;
     }
-  }, [activeNetworkData, client, currentWcRecord, network, prevNetwork]);
 
-  return {
-    isWcReady,
-    isWcConnected,
-    wcConnect,
-    wcDisconnect,
-    canConnect,
-    canDisconnect,
-    activeSessions,
-    getActiveSessions,
-  };
+    walletConnectInterceptor.subscribeConnectProposal(handleApprove);
+    walletConnectInterceptor.subscribeRequest(handleRequest);
+    walletConnectInterceptor.subscribeDisconnect(updateActiveSessions);
+  }, [handleApprove, handleRequest, updateActiveSessions]);
+
+  const removeListeners = useCallback(() => {
+    if (activeSessionsListeners.size > 0) {
+      return;
+    }
+
+    walletConnectInterceptor.unsubscribeConnectProposal(handleApprove);
+    walletConnectInterceptor.unsubscribeRequest(handleRequest);
+    walletConnectInterceptor.unsubscribeDisconnect(updateActiveSessions);
+  }, [handleApprove, handleRequest, updateActiveSessions]);
+
+  // Listen for active-session changes and subscribe / unsubscribe to client changes
+  useEffect(() => {
+    addListeners();
+    activeSessionsListeners.add(setSessions);
+
+    return () => {
+      activeSessionsListeners.delete(setSessions);
+      removeListeners();
+    };
+  }, [addListeners, removeListeners]);
+
+  useEffect(() => {
+    if (prevNetwork === network) {
+      return;
+    }
+
+    activeSessions.forEach(session => {
+      walletConnectInterceptor.changeNetwork(
+        session.topic,
+        session.namespaces['eip155'].accounts,
+        CHAIN_METADATA[network].id
+      );
+    });
+  }, [network, prevNetwork, activeSessions]);
+
+  return {wcConnect, wcDisconnect, sessions, activeSessions};
 }

@@ -35,7 +35,7 @@ const MintTokensToTreasuryMenu: React.FC<Props> = ({
 }) => {
   const {t} = useTranslation();
   const [step, setStep] = useState(0);
-  const {infura: provider} = useProviders();
+  const {api: provider} = useProviders();
 
   const {control, resetField} = useFormContext();
   const treasury = useWatch({name: 'mintTokensToTreasury', control: control});

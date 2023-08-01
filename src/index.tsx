@@ -1,10 +1,22 @@
 import {ApolloProvider} from '@apollo/client';
 import {QueryClient, QueryClientProvider} from '@tanstack/react-query';
 import {ReactQueryDevtools} from '@tanstack/react-query-devtools';
+import {EthereumClient, w3mConnectors, w3mProvider} from '@web3modal/ethereum';
+import {Web3Modal} from '@web3modal/react';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import {HashRouter as Router} from 'react-router-dom';
 import 'tailwindcss/tailwind.css';
+import {WagmiConfig, configureChains, createConfig} from 'wagmi';
+import {
+  base,
+  baseGoerli,
+  goerli,
+  mainnet,
+  polygon,
+  polygonMumbai,
+} from 'wagmi/chains';
+import {infuraProvider} from 'wagmi/providers/infura';
 
 import {AlertProvider} from 'context/alert';
 import {client, goerliClient} from 'context/apolloClient';
@@ -12,7 +24,7 @@ import {APMProvider} from 'context/elasticAPM';
 import {GlobalModalsProvider} from 'context/globalModals';
 import {NetworkProvider} from 'context/network';
 import {PrivacyContextProvider} from 'context/privacyContext';
-import {ProvidersProvider} from 'context/providers';
+import {ProvidersContextProvider} from 'context/providers';
 import {TransactionDetailProvider} from 'context/transactionDetail';
 import {WalletMenuProvider} from 'context/walletMenu';
 import {UseCacheProvider} from 'hooks/useCache';
@@ -20,13 +32,7 @@ import {UseClientProvider} from 'hooks/useClient';
 import {infuraApiKey, walletConnectProjectID} from 'utils/constants';
 import App from './app';
 
-import {EthereumClient, w3mConnectors, w3mProvider} from '@web3modal/ethereum';
-import {Web3Modal} from '@web3modal/react';
-import {configureChains, createConfig, WagmiConfig} from 'wagmi';
-import {mainnet, goerli, polygon, polygonMumbai} from 'wagmi/chains';
-import {infuraProvider} from 'wagmi/providers/infura';
-
-const chains = [mainnet, goerli, polygon, polygonMumbai];
+const chains = [base, baseGoerli, goerli, mainnet, polygon, polygonMumbai];
 
 const {publicClient} = configureChains(chains, [
   w3mProvider({projectId: walletConnectProjectID}),
@@ -48,7 +54,17 @@ const wagmiConfig = createConfig({
 const ethereumClient = new EthereumClient(wagmiConfig, chains);
 
 // React-Query client
-export const queryClient = new QueryClient();
+export const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      cacheTime: 1000 * 60 * 5, // 5min
+      staleTime: 1000 * 60 * 2, // 2min
+      retry: 0,
+      refetchOnWindowFocus: false,
+      refetchOnReconnect: true,
+    },
+  },
+});
 
 const CACHE_VERSION = 1;
 const onLoad = () => {
@@ -79,7 +95,7 @@ ReactDOM.render(
                   <NetworkProvider>
                     <UseClientProvider>
                       <UseCacheProvider>
-                        <ProvidersProvider>
+                        <ProvidersContextProvider>
                           <TransactionDetailProvider>
                             <WalletMenuProvider>
                               <GlobalModalsProvider>
@@ -94,7 +110,7 @@ ReactDOM.render(
                               </GlobalModalsProvider>
                             </WalletMenuProvider>
                           </TransactionDetailProvider>
-                        </ProvidersProvider>
+                        </ProvidersContextProvider>
                       </UseCacheProvider>
                     </UseClientProvider>
                   </NetworkProvider>

@@ -10,9 +10,11 @@ import ModalHeader from 'components/modalHeader';
 import {useActionsContext} from 'context/actions';
 import {useNetwork} from 'context/network';
 import useScreen from 'hooks/useScreen';
-import {useWalletConnectInterceptor} from 'hooks/useWalletConnectInterceptor';
+import {
+  WcActionRequest,
+  useWalletConnectInterceptor,
+} from 'hooks/useWalletConnectInterceptor';
 import {getEtherscanVerifiedContract} from 'services/etherscanAPI';
-import {WcRequest} from 'services/walletConnectInterceptor';
 import {addABI, decodeMethod} from 'utils/abiDecoder';
 import {attachEtherNotice} from 'utils/contract';
 import {
@@ -43,10 +45,10 @@ const ActionListenerModal: React.FC<Props> = ({
   const {setValue, resetField} = useFormContext();
   const {addAction, removeAction} = useActionsContext();
 
-  const [actionsReceived, setActionsReceived] = useState<Array<WcRequest>>([]);
+  const [actionsReceived, setActionsReceived] = useState<WcActionRequest[]>([]);
 
   const onActionRequest = useCallback(
-    (request: WcRequest) => {
+    (request: WcActionRequest) => {
       setActionsReceived([...actionsReceived, request]);
     },
     [actionsReceived]
@@ -122,10 +124,10 @@ const ActionListenerModal: React.FC<Props> = ({
           });
 
           // add payable field as it is NOT present on the method itself
-          setValue(`actions.${index}.inputs`, [
-            ...inputs,
-            {...getWCNativeToField(t, action.params[0].value, network)},
-          ]);
+          if (action.params[0].value) {
+            inputs.push(getWCNativeToField(t, action.params[0].value, network));
+          }
+          setValue(`actions.${index}.inputs`, [...inputs]);
           setValue(`actions.${actionIndex}.notice`, notices?.notice);
         } else {
           // Verified but failed to decode

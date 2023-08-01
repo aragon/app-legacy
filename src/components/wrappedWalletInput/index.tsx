@@ -35,7 +35,7 @@ export const WrappedWalletInput = forwardRef(
     const {t} = useTranslation();
     const {alert} = useAlertContext();
     const {network} = useNetwork();
-    const {infura: provider} = useProviders();
+    const {api: provider} = useProviders();
 
     const [isFocused, setIsFocused] = useState(false);
     const [ensResolved, setEnsResolved] = useState(false);

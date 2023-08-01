@@ -98,8 +98,10 @@ const Dashboard: React.FC = () => {
         dao: liveAddressOrEns,
       })
     );
-    const networkInfo = CHAIN_METADATA[network];
-    if (!networkInfo.testnet) {
+    // Temporary restriction to Eth mainnet only as spamming was happening on Polygon
+    //const networkInfo = CHAIN_METADATA[network];
+    if (network === 'ethereum') {
+      // (!networkInfo.testnet) {
       open('poapClaim');
     }
   });

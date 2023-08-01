@@ -122,7 +122,10 @@ const LinkRow: React.FC<LinkRowProps & BgWhite> = ({
                 <Label label={t('labels.label')} />
               </LabelWrapper>
               <TextInput
-                {...field}
+                name={field.name}
+                value={field.value}
+                onBlur={field.onBlur}
+                onChange={field.onChange}
                 placeholder={t('placeHolders.addResource')}
                 mode={error?.message ? 'critical' : 'default'}
               />

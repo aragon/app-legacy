@@ -16,7 +16,7 @@ export const AddAddressCard: React.FC<{
 }> = ({action: {inputs}}) => {
   const {t} = useTranslation();
   const {network} = useNetwork();
-  const {infura: provider} = useProviders();
+  const {api: provider} = useProviders();
 
   const [addresses, setAddresses] = useState<Web3Address[]>([]);
 

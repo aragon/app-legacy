@@ -43,7 +43,7 @@ export const AddressRow = ({
 }: Props) => {
   const {t} = useTranslation();
   const {alert} = useAlertContext();
-  const {infura: provider} = useProviders();
+  const {api: provider} = useProviders();
 
   const {control} = useFormContext();
 

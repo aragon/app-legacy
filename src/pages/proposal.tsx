@@ -1,14 +1,5 @@
 import {useApolloClient} from '@apollo/client';
 import {
-  MultisigClient,
-  MultisigProposal,
-  TokenVotingClient,
-  TokenVotingProposal,
-  VoteValues,
-  VotingMode,
-} from '@aragon/sdk-client';
-import {DaoAction, ProposalStatus} from '@aragon/sdk-client-common';
-import {
   Breadcrumb,
   ButtonText,
   IconChevronDown,
@@ -17,6 +8,15 @@ import {
   Link,
   WidgetStatus,
 } from '@aragon/ods';
+import {
+  MultisigClient,
+  MultisigProposal,
+  TokenVotingClient,
+  TokenVotingProposal,
+  VoteValues,
+  VotingMode,
+} from '@aragon/sdk-client';
+import {DaoAction, ProposalStatus} from '@aragon/sdk-client-common';
 import {withTransaction} from '@elastic/apm-rum-react';
 import TipTapLink from '@tiptap/extension-link';
 import {useEditor} from '@tiptap/react';
@@ -33,9 +33,8 @@ import {Loading} from 'components/temporary';
 import {StyledEditorContent} from 'containers/reviewProposal';
 import {TerminalTabs, VotingTerminal} from 'containers/votingTerminal';
 import {useGlobalModalContext} from 'context/globalModals';
-import {useNetwork} from 'context/network';
 import {useProposalTransactionContext} from 'context/proposalTransaction';
-import {useSpecificProvider} from 'context/providers';
+import {useProviders} from 'context/providers';
 import {useCache} from 'hooks/useCache';
 import {useClient} from 'hooks/useClient';
 import {useDaoDetailsQuery} from 'hooks/useDaoDetails';
@@ -76,6 +75,7 @@ import {
   stripPlgnAdrFromProposalId,
 } from 'utils/proposals';
 import {Action, ProposalId} from 'utils/types';
+import {useNetwork} from 'context/network';
 
 // TODO: @Sepehr Please assign proper tags on action decoding
 // const PROPOSAL_TAGS = ['Finance', 'Withdraw'];
@@ -123,7 +123,7 @@ const Proposal: React.FC = () => {
   const apolloClient = useApolloClient();
 
   const {network} = useNetwork();
-  const provider = useSpecificProvider(CHAIN_METADATA[network].id);
+  const {api: provider} = useProviders();
   const {address, isConnected, isOnWrongNetwork} = useWallet();
 
   const [voteStatus, setVoteStatus] = useState('');

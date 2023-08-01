@@ -117,6 +117,7 @@ const arbitrumTestClient = new ApolloClient({
 });
 
 // TODO: remove undefined when all clients are defined
+// NOTE: Consider deprecating since subgraph calls are made via SDK
 const client: Record<
   SupportedNetworks,
   ApolloClient<NormalizedCacheObject> | undefined
@@ -127,6 +128,8 @@ const client: Record<
   mumbai: mumbaiClient,
   arbitrum: undefined,
   'arbitrum-test': arbitrumTestClient,
+  base: undefined,
+  'base-goerli': undefined,
   unsupported: undefined,
 };
 

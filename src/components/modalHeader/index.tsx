@@ -15,28 +15,37 @@ type Props = {
 // Also, because this will be ui-component, it is encouraged for now
 // to use classNames to hide if necessary instead of useScreen and JS
 const ModalHeader: React.FC<Props> = props => {
+  const {
+    showBackButton,
+    showCloseButton,
+    onBackButtonClicked,
+    onClose,
+    title,
+    ...otherProps
+  } = props;
+
   return (
     <Header>
       <ButtonWrapper className="w-4 h-4">
-        {props.showBackButton && (
+        {showBackButton && (
           <ButtonIcon
             mode="secondary"
             size="small"
             icon={<IconChevronLeft />}
-            onClick={props.onBackButtonClicked}
+            onClick={onBackButtonClicked}
             bgWhite
-            {...props}
+            {...otherProps}
           />
         )}
       </ButtonWrapper>
-      <Title>{props.title}</Title>
+      <Title>{title}</Title>
       <ButtonWrapper className="w-4 h-4">
-        {props.showCloseButton && (
+        {showCloseButton && (
           <ButtonIcon
             mode="secondary"
             size="small"
             icon={<IconClose />}
-            onClick={props.onClose}
+            onClick={onClose}
             bgWhite
             className="hidden desktop:block"
           />

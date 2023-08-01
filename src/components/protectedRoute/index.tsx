@@ -7,7 +7,7 @@ import {GatingMenu} from 'containers/gatingMenu';
 import {LoginRequired} from 'containers/walletMenu/LoginRequired';
 import {useGlobalModalContext} from 'context/globalModals';
 import {useNetwork} from 'context/network';
-import {useSpecificProvider} from 'context/providers';
+import {useProviders} from 'context/providers';
 import {useDaoDetailsQuery} from 'hooks/useDaoDetails';
 import {useDaoMembers} from 'hooks/useDaoMembers';
 import {PluginTypes} from 'hooks/usePluginClient';
@@ -49,7 +49,7 @@ const ProtectedRoute: React.FC = () => {
   } = useDaoMembers(pluginAddress, pluginType, address as string);
 
   const {network} = useNetwork();
-  const provider = useSpecificProvider(CHAIN_METADATA[network].id);
+  const {api: provider} = useProviders();
 
   /*************************************************
    *             Callbacks and Handlers            *

@@ -26,7 +26,9 @@ const AddExistingToken: React.FC = () => {
     name: ['tokenAddress', 'blockchain', 'tokenType'],
   });
 
-  const provider = useSpecificProvider(blockchain.id);
+  // non-null assertion because blockchain comes from the list of
+  // supported chains
+  const provider = useSpecificProvider(blockchain.id)!;
   const nativeCurrency = CHAIN_METADATA[network].nativeCurrency;
   const tokenAddressBlockExplorerURL =
     CHAIN_METADATA[network].explorer + 'token/';

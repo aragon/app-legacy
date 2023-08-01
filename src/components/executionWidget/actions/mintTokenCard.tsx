@@ -18,7 +18,7 @@ export const MintTokenCard: React.FC<{
 }> = ({action}) => {
   const {t} = useTranslation();
   const {network} = useNetwork();
-  const {infura: provider} = useProviders();
+  const {api: provider} = useProviders();
 
   const {data: daoDetails} = useDaoDetailsQuery();
 

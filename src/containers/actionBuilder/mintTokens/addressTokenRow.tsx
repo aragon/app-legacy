@@ -53,7 +53,7 @@ const AddressField: React.FC<AddressFieldProps> = ({
   ensName: daoEnsName,
 }) => {
   const {t} = useTranslation();
-  const {infura: provider} = useProviders();
+  const {api: provider} = useProviders();
   const {alert} = useAlertContext();
 
   const {control} = useFormContext();

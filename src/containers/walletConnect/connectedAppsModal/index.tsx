@@ -17,7 +17,7 @@ import Header from 'components/modalHeader/searchHeader';
 import {StateEmpty} from 'components/stateEmpty';
 
 type Props = {
-  sessions: Record<string, SessionTypes.Struct> | undefined;
+  sessions: SessionTypes.Struct[];
   onConnectNewdApp: () => void;
   onSelectExistingdApp: (session: SessionTypes.Struct) => void;
   onClose: () => void;
@@ -28,13 +28,9 @@ const WCConnectedApps: React.FC<Props> = props => {
   const [search, setSearch] = useState('');
   const {t} = useTranslation();
 
-  let filteredSessions: Array<SessionTypes.Struct> = [];
-
-  if (props.sessions) {
-    filteredSessions = Object.values(props.sessions).filter(session =>
-      session.peer.metadata.name.toLowerCase().includes(search.toLowerCase())
-    );
-  }
+  const filteredSessions = props.sessions.filter(session =>
+    session.peer.metadata.name.toLowerCase().includes(search.toLowerCase())
+  );
 
   const handleResetSearch = () => setSearch('');
   /*************************************************
@@ -49,7 +45,7 @@ const WCConnectedApps: React.FC<Props> = props => {
         buttonIcon={search ? <IconSearch /> : undefined}
       />
       <Content>
-        {props.sessions !== undefined && filteredSessions.length === 0 ? (
+        {props.sessions.length > 0 && filteredSessions.length === 0 ? (
           <StateEmpty
             mode="inline"
             type="Object"

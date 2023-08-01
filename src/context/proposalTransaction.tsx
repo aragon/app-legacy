@@ -75,7 +75,7 @@ const ProposalTransactionProvider: React.FC<Props> = ({children}) => {
 
   const {address, isConnected} = useWallet();
   const {network} = useNetwork();
-  const {infura: provider} = useProviders();
+  const {api: provider} = useProviders();
 
   const [tokenAddress, setTokenAddress] = useState<string>();
   const [showVoteModal, setShowVoteModal] = useState(false);

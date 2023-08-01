@@ -17,7 +17,7 @@ export const useExistingToken = ({
   daoDetails?: DaoDetails | null | undefined;
   daoToken?: Erc20TokenDetails | Erc20WrapperTokenDetails | undefined;
 } = {}) => {
-  const {infura: provider} = useProviders();
+  const {api: provider} = useProviders();
   const {data: daoDetailsFetched} = useDaoDetailsQuery();
 
   const dao = useMemo(

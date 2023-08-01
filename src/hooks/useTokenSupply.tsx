@@ -16,7 +16,7 @@ export function useTokenSupply(
   tokenAddress: string
 ): HookData<TokenSupplyData | undefined> {
   const {network} = useNetwork();
-  const {infura} = useProviders();
+  const {api: provider} = useProviders();
 
   const [data, setData] = useState<TokenSupplyData>();
   const [error, setError] = useState<Error>();
@@ -24,7 +24,11 @@ export function useTokenSupply(
 
   useEffect(() => {
     if (tokenAddress) {
-      getTokenInfo(tokenAddress, infura, CHAIN_METADATA[network].nativeCurrency)
+      getTokenInfo(
+        tokenAddress,
+        provider,
+        CHAIN_METADATA[network].nativeCurrency
+      )
         .then((r: Awaited<ReturnType<typeof getTokenInfo>>) => {
           const formatted = parseFloat(formatUnits(r.totalSupply, r.decimals));
           setData({
@@ -35,7 +39,7 @@ export function useTokenSupply(
         })
         .catch(setError);
     }
-  }, [tokenAddress, infura, network]);
+  }, [tokenAddress, provider, network]);
 
   return {data, error, isLoading};
 }
