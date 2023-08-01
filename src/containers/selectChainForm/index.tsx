@@ -138,7 +138,7 @@ const SelectChainForm: React.FC = () => {
         </SortFilter> */}
       </Header>
       <FormItem>
-        {networks[networkType]['cost'].map(selectedNetwork => (
+        {networks[networkType]['popularity'].map(selectedNetwork => (
           <Controller
             key={selectedNetwork}
             name="blockchain"
@@ -199,14 +199,13 @@ type SelectableNetworks = Record<
 // TODO: enable base in the network selection
 const networks: SelectableNetworks = {
   main: {
-    cost: ['polygon', 'ethereum'],
-    // cost: ['polygon', 'base', 'ethereum'],
-    popularity: ['polygon', 'ethereum', 'arbitrum'],
-    security: ['ethereum', 'arbitrum', 'polygon'],
+    cost: ['polygon', 'base', 'ethereum'],
+    popularity: ['ethereum', 'polygon'],
+    security: ['ethereum', 'base', 'polygon'],
   },
   test: {
     cost: ['mumbai', 'base-goerli', 'goerli'],
-    popularity: ['mumbai', 'goerli', 'arbitrum-test'],
-    security: ['goerli', 'arbitrum-test', 'mumbai'],
+    popularity: ['goerli', 'mumbai', 'base-goerli'],
+    security: ['goerli', 'base-goerli', 'mumbai'],
   },
 };
