@@ -128,7 +128,7 @@ const WalletRow: React.FC<WalletRowProps> = ({index, onDelete}) => {
         return t('errors.ltAmount', {amount: '~ 2.69 * 10^49'});
 
       // show negative amount error
-      if (Big(amount).lt(1)) return t('errors.lteZero');
+      if (Big(amount).lte(0)) return t('errors.lteZero');
       return totalSupply === 0 ? t('errors.totalSupplyZero') : true;
     },
     [getValues, index, setValue, t, trigger, walletFieldArray]
