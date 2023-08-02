@@ -179,7 +179,7 @@ class TokenService {
 
     if (!networkId) {
       console.info(
-        `fetchWalletToken - network ${network} not supported by Covalent`
+        `fetchTokenBalances - network ${network} not supported by Covalent`
       );
       return null;
     }
@@ -198,7 +198,7 @@ class TokenService {
 
     if (parsed.error || data == null) {
       console.info(
-        `fetchWalletToken - Covalent returned error: ${parsed.error_message}`
+        `fetchTokenBalances - Covalent returned error: ${parsed.error_message}`
       );
       return null;
     }
