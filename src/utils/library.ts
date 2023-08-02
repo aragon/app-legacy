@@ -644,9 +644,8 @@ export const translateToAppNetwork = (
   sdkNetwork: SdkContext['network']
 ): SupportedNetworks => {
   switch (sdkNetwork.name as SdkSupportedNetworks) {
-    // TODO: uncomment when sdk is ready
-    // case SdkSupportedNetworks.BASE:
-    //   return 'base';
+    case SdkSupportedNetworks.BASE:
+      return 'base';
     case SdkSupportedNetworks.BASE_GOERLI:
       return 'base-goerli';
     case SdkSupportedNetworks.MAINNET:
@@ -676,7 +675,7 @@ export function translateToNetworkishName(
 
   switch (appNetwork) {
     case 'base':
-      return 'unsupported'; // TODO: get SDK name
+      return SdkSupportedNetworks.BASE;
     case 'base-goerli':
       return SdkSupportedNetworks.BASE_GOERLI;
     case 'ethereum':
