@@ -67,7 +67,8 @@ export const useDaoVault = (
     const values = tokenPrices.tokens.map(token => {
       return {
         ...token,
-        ...(token.marketData?.balanceValue !== undefined
+        ...(token.marketData?.balanceValue !== undefined &&
+        tokenPrices.totalAssetValue > 0
           ? {
               treasurySharePercentage:
                 (token.marketData.balanceValue / tokenPrices?.totalAssetValue) *
