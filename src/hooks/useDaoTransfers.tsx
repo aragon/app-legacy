@@ -1,192 +1,131 @@
-import {useReactiveVar} from '@apollo/client';
-import {Transfer, TransferSortBy, TransferType} from '@aragon/sdk-client';
-import {SortDirection} from '@aragon/sdk-client-common';
-import {useEffect, useMemo, useState} from 'react';
+import {
+  Client,
+  Deposit,
+  Transfer,
+  TransferQueryParams,
+  TransferSortBy,
+  TransferType,
+} from '@aragon/sdk-client';
+import {SortDirection, TokenType} from '@aragon/sdk-client-common';
+import {useQuery} from '@tanstack/react-query';
+import {useMemo} from 'react';
 
-import {pendingDeposits} from 'context/apolloClient';
+import {useNetwork} from 'context/network';
+import {useErc20Deposits} from 'services/token/queries/use-token';
 import {HookData} from 'utils/types';
 import {useClient} from './useClient';
-import {
-  CHAIN_METADATA,
-  PENDING_DEPOSITS_KEY,
-  alchemyApiKeys,
-} from 'utils/constants';
-import {customJSONReplacer} from 'utils/library';
-import {useNetwork} from 'context/network';
-import {getTokenInfo} from 'utils/tokens';
-import {useProviders} from 'context/providers';
 
 export type IAssetTransfers = Transfer[];
 
-type AlchemyTransfer = {
-  from: string;
-  rawContract: {
-    address: string;
-    value: string;
-    decimals: string;
-  };
-  metadata: {
-    blockTimestamp: string;
-  };
-  hash: string;
-};
+// fetch transfers from Subgraph
+async function fetchTransfers(
+  client: Client | undefined,
+  params: TransferQueryParams
+) {
+  return client
+    ? client.methods.getDaoTransfers(params)
+    : Promise.reject(new Error('Client not defined'));
+}
 
 function sortByCreatedAt(a: Transfer, b: Transfer): number {
   return b.creationDate.getTime() - a.creationDate.getTime();
 }
 
 /**
- * @param daoAddressOrEns
- * @returns List if transfers
+ * React hook to retrieve and sort the list of transfers associated with a given DAO address or ENS name.
+ * Fetches the Withdraws and Native deposit transfers from the subgraph
+ * and the other transfers from external APIs
+ * @param daoAddressOrEns - The address or ENS name of the DAO.
+ *
+ * @returns An object containing:
+ * - `data`: A list of transfers associated with the DAO, or an empty list if no such transfers exist. The list is sorted according to the creation date of each transfer.
+ * - `isLoading`: A boolean value indicating whether the data is currently being fetched.
+ * - `error`: An error that occurred during the data fetching process, or null if no error occurred.
  */
-
 export const useDaoTransfers = (
   daoAddressOrEns: string
 ): HookData<Transfer[]> => {
-  const {client} = useClient();
   const {network} = useNetwork();
 
-  const [data, setData] = useState<Transfer[]>([]);
-  const [error, setError] = useState<Error>();
-  const [isLoading, setIsLoading] = useState(false);
-  const pendingDepositsTxs = useReactiveVar(pendingDeposits);
-  const {api: provider} = useProviders();
-
-  const url = `${CHAIN_METADATA[network].alchemyApi}/${alchemyApiKeys[network]}`;
-
-  // Memoize options to prevent unnecessary re-renders
-  const options = useMemo(
-    () => ({
-      method: 'POST',
-      headers: {accept: 'application/json', 'content-type': 'application/json'},
-      body: JSON.stringify({
-        id: 1,
-        jsonrpc: '2.0',
-        method: 'alchemy_getAssetTransfers',
-        params: [
-          {
-            fromBlock: '0x0',
-            toBlock: 'latest',
-            toAddress: daoAddressOrEns,
-            category: ['erc20'],
-            withMetadata: true,
-            excludeZeroValue: true,
-          },
-        ],
-      }),
-    }),
-    [daoAddressOrEns]
+  const {
+    data: erc20Deposits,
+    error: erc20DepositsQueryError,
+    isLoading: isErc20DepositsLoading,
+  } = useErc20Deposits(
+    {address: daoAddressOrEns, network},
+    {enabled: !!daoAddressOrEns}
   );
 
-  useEffect(() => {
-    async function getTransfers() {
-      try {
-        setIsLoading(true);
+  const {
+    data: subgraphTransfers,
+    error: subgraphQueryError,
+    isLoading: isSubgraphQueryLoading,
+  } = useSubgraphDaoTransfersQuery(daoAddressOrEns);
 
-        // Fetch client transfers from the subgraph
-        const clientTransfers = await client?.methods.getDaoTransfers({
-          sortBy: TransferSortBy.CREATED_AT,
-          daoAddressOrEns,
-          direction: SortDirection.DESC,
-        });
+  const error = (erc20DepositsQueryError || subgraphQueryError) as Error;
+  const isLoading = isErc20DepositsLoading || isSubgraphQueryLoading;
 
-        let subgraphTransfers: Transfer[] = [];
-        let erc20DepositsList = [];
+  const memoizedTransfers = useMemo(
+    () => filterAndSortTransfers(erc20Deposits, subgraphTransfers),
+    [erc20Deposits, subgraphTransfers]
+  );
 
-        if (CHAIN_METADATA[network].alchemyApi) {
-          // Fetch the token list using the Alchemy API
-          const res = await fetch(url, options);
-          const alchemyTransfersList = await res.json();
-          const transfersData = alchemyTransfersList.result?.transfers ?? [];
+  return {data: memoizedTransfers ?? [], isLoading, error};
+};
 
-          // filter the erc20 token deposits
-          const erc20DepositsListPromises = transfersData.map(
-            async ({from, rawContract, metadata, hash}: AlchemyTransfer) => {
-              const {name, symbol, decimals} = await getTokenInfo(
-                rawContract.address,
-                provider,
-                CHAIN_METADATA[network].nativeCurrency
-              );
+/**
+ * useSubgraphDaoTransfersQuery is a React hook that uses the useQuery hook from the React Query library.
+ * It fetches transfers of DAO tokens from the subgraph endpoint and returns the query results.
+ *
+ * @param daoAddressOrEns - The DAO address or ENS name for which to fetch transfers.
+ * @param options - An optional object containing parameters for the transfers query.
+ * @param options.sortBy - The parameter by which to sort the fetched transfers. The default is 'CREATED_AT'.
+ * @param options.direction - The direction in which to sort the fetched transfers. The default is 'DESC'.
+ * @param options.limit - The maximum number of transfers to fetch.
+ *
+ * @returns A query result object that contains the status of the query ('isLoading', 'isError', etc.) and the data.
+ */
+const useSubgraphDaoTransfersQuery = (
+  daoAddressOrEns: string,
+  {
+    sortBy = TransferSortBy.CREATED_AT,
+    direction = SortDirection.DESC,
+    limit,
+  }: Partial<Pick<TransferQueryParams, 'direction' | 'limit' | 'sortBy'>> = {}
+) => {
+  const {client, network: clientNetwork} = useClient();
 
-              return {
-                type: 'deposit',
-                tokenType: 'erc20',
-                amount: BigInt(rawContract.value),
-                creationDate: new Date(metadata.blockTimestamp),
-                from: from,
-                to: daoAddressOrEns,
-                token: {
-                  address: rawContract.address,
-                  decimals,
-                  name,
-                  symbol,
-                },
-                transactionId: hash,
-              };
-            }
-          );
+  return useQuery({
+    queryKey: ['Subgraph Transfers', daoAddressOrEns, clientNetwork],
+    queryFn: () =>
+      fetchTransfers(client, {daoAddressOrEns, sortBy, direction, limit}),
+    enabled: Boolean(daoAddressOrEns),
+  });
+};
 
-          erc20DepositsList = await Promise.all(erc20DepositsListPromises);
-        }
+/**
+ * Filters and sorts arrays of ERC20 deposits and subgraph transfers.
+ *
+ * This function filters the subgraph transfers to include native transfers and
+ * withdraws only, merges it with ERC20 deposits and sorts the resulting array.
+ * The sorting is done based on the 'createdAt' field of the transfers.
+ *
+ * @param erc20Deposits - An array of ERC20 deposits,
+ * @param subgraphTransfers - An array of subgraph transfers,
+ *
+ * @return - An array of filtered and sorted transfers.
+ */
+const filterAndSortTransfers = (
+  erc20Deposits: Deposit[] | null | undefined,
+  subgraphTransfers: Transfer[] | null | undefined
+): Transfer[] => {
+  const parsedSubgraphTx = subgraphTransfers?.filter(
+    t =>
+      t.type === TransferType.WITHDRAW ||
+      (t.type === TransferType.DEPOSIT && t.tokenType === TokenType.NATIVE)
+  );
 
-        if (clientTransfers?.length) {
-          subgraphTransfers = clientTransfers.filter(
-            (t: Transfer) =>
-              t.type === TransferType.WITHDRAW || t.tokenType === 'native'
-          );
-
-          const deposits = clientTransfers.filter(
-            (t: Transfer) => t.type === TransferType.DEPOSIT
-          );
-
-          for (let i = 0; i < pendingDepositsTxs.length; ) {
-            const tx = pendingDepositsTxs[i];
-
-            for (let j = 0; j < deposits.length; j++) {
-              const deposit = deposits[j];
-              if (deposit.transactionId === tx.transactionId) {
-                pendingDepositsTxs.splice(i, 1);
-                break;
-              }
-              if (j === deposits.length - 1) {
-                i++;
-              }
-            }
-          }
-
-          localStorage.setItem(
-            PENDING_DEPOSITS_KEY,
-            JSON.stringify(pendingDepositsTxs, customJSONReplacer)
-          );
-        }
-
-        /* ETH Transfers and withdraws exists in Subgraph therefore only erc20 transfers
-          fetched from alchemy api */
-        const transfers = [
-          ...pendingDepositsTxs,
-          ...subgraphTransfers,
-          ...erc20DepositsList,
-        ].sort(sortByCreatedAt);
-
-        setData(transfers);
-      } catch (error) {
-        console.error(error);
-        setError(error as Error);
-      } finally {
-        setIsLoading(false);
-      }
-    }
-
-    getTransfers();
-  }, [
-    client?.methods,
-    daoAddressOrEns,
-    network,
-    options,
-    pendingDepositsTxs,
-    provider,
-    url,
-  ]);
-
-  return {data, error, isLoading};
+  return [...(erc20Deposits ?? []), ...(parsedSubgraphTx ?? [])].sort(
+    sortByCreatedAt
+  );
 };
