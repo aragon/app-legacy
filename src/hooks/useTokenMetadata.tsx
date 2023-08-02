@@ -25,10 +25,6 @@ export const useTokenMetadata = (
   const tokens = tokenResults.map(result => result.data);
 
   const processedTokens = useMemo(() => {
-    if (isLoading) {
-      return [];
-    }
-
     const tokensWithMetadata = assets.map((asset, index) => ({
       balance: asset.type !== TokenType.ERC721 ? asset.balance : BigInt(0),
       metadata: {
@@ -57,7 +53,7 @@ export const useTokenMetadata = (
     }));
 
     return tokensWithMetadata;
-  }, [assets, tokens, isLoading, network]);
+  }, [assets, tokens, network]);
 
   return {data: processedTokens, isLoading, isError};
 };
