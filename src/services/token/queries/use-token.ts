@@ -1,4 +1,4 @@
-import {AssetBalance} from '@aragon/sdk-client';
+import {AssetBalance, Deposit} from '@aragon/sdk-client';
 import {
   UseQueryOptions,
   useQueries,
@@ -8,11 +8,12 @@ import {
 import {useCallback} from 'react';
 
 import {Token} from '../domain';
-import {tokenBalancesQueryKeys, tokenQueryKeys} from '../query-keys';
+import {tokenQueryKeys} from '../query-keys';
 import {tokenService} from '../token-service';
 import type {
   IFetchTokenBalancesParams,
   IFetchTokenParams,
+  IFetchTokenTransfersParams,
 } from '../token-service.api';
 
 export const useToken = (
@@ -59,8 +60,19 @@ export const useTokenBalances = (
   options?: UseQueryOptions<AssetBalance[] | null>
 ) => {
   return useQuery(
-    tokenBalancesQueryKeys.address(params),
+    tokenQueryKeys.balances(params),
     () => tokenService.fetchTokenBalances(params),
+    options
+  );
+};
+
+export const useErc20Deposits = (
+  params: IFetchTokenTransfersParams,
+  options?: UseQueryOptions<Deposit[] | null>
+) => {
+  return useQuery(
+    tokenQueryKeys.transfers(params),
+    () => tokenService.fetchErc20Deposits(params),
     options
   );
 };

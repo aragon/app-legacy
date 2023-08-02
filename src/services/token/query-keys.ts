@@ -6,8 +6,9 @@ import type {
 } from './token-service.api';
 
 export enum TokenQueryItem {
-  TOKEN = 'TOKEN',
   BALANCES = 'TOKEN_BALANCES',
+  TOKEN = 'TOKEN',
+  TRANSFERS = 'TOKEN_TRANSFERS',
 }
 
 export const tokenQueryKeys = {
@@ -15,11 +16,12 @@ export const tokenQueryKeys = {
     TokenQueryItem.TOKEN,
     params,
   ],
-};
-
-export const tokenBalancesQueryKeys = {
-  address: (params: IFetchTokenBalancesParams): QueryKey => [
+  balances: (params: IFetchTokenBalancesParams): QueryKey => [
     TokenQueryItem.BALANCES,
+    params,
+  ],
+  transfers: (params: IFetchTokenBalancesParams): QueryKey => [
+    TokenQueryItem.TRANSFERS,
     params,
   ],
 };

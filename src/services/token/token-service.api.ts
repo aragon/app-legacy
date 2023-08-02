@@ -9,4 +9,10 @@ export interface IFetchTokenParams {
 export interface IFetchTokenBalancesParams {
   address: string;
   network: SupportedNetworks;
+  ignoreZeroBalances?: boolean;
+}
+
+export interface IFetchTokenTransfersParams {
+  address: string;
+  network: SupportedNetworks;
 }
