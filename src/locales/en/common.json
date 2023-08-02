@@ -773,7 +773,7 @@
       "minimumApprovalSubtitle": "Minimum approval is the amount of addresses in the authorized list that must approve a proposal for it to pass. ",
       "minApprovalAddressCount": "of {{count}} addresses",
       "alerts": {
-        "minimumApprovalAlert": "of {{amount}} {{tokenSymbol}}",
+        "minimumApprovalAlert": "of {{amount}} tokens",
         "minimumParticipationAlert": "Rounded up to {{percentage}}% equals {{walletCount}} wallets have to vote",
         "minority": "Proposals could be approved by a minority rather than a majority.",
         "majority": "Proposal will be approved by majority",
@@ -822,7 +822,7 @@
       "actionsInfo": "More options for parameters are coming soon. ",
       "actionAlertCritical": {
         "title": "Action may fail",
-        "desc": "Even if the proposal passes, this action may fail if it is not executed within the time limit."
+        "desc": "Even if the proposal was approved, this action may fail if it is not executed within the time limit."
       },
       "addFirstActionTitle": "Add first Action",
       "addFirstActionDesc": "Add your very first optional action if you wish to peform on-chain executions",
@@ -830,7 +830,7 @@
       "stepCounter": "Step {{x}} of {{x}}",
       "actionAlertWarning": {
         "title": "Action not decoded",
-        "desc": "This action can't be decoded because the smart contract is not verified."
+        "desc": "Because the smart contract is not verified, the actions could not be decoded."
       }
     },
     "mintTokens": {
@@ -1244,7 +1244,7 @@
     },
     "validation": {
       "modalTitle": "Connect dApp",
-      "codeInputHelp": "Copy the QR Code to your Clipboard and paste it below to connect to your desired dApp.",
+      "codeInputHelp": "Copy the QR Code to your Clipboard and past it below to connect to your desired dApp.",
       "codeInputLabel": "WalletConnect QR code",
       "codeInputPlaceholder": "wc: …",
       "ctaLabel": "Connect dApp",
