@@ -5,7 +5,7 @@ import {
   IconLinkExternal,
   ListItemDao,
 } from '@aragon/ods';
-import React, {useCallback, useMemo} from 'react';
+import React, {useCallback} from 'react';
 import {useTranslation} from 'react-i18next';
 import {generatePath, useNavigate} from 'react-router-dom';
 import styled from 'styled-components';
@@ -77,7 +77,7 @@ const DaoSelectMenu: React.FC = () => {
               daoLogo={currentDao?.metadata?.avatar}
               onClick={() => close('selectDao')}
             />
-            {favoriteDaoCache.flatMap((dao, daoIdx) => {
+            {favoriteDaoCache.flatMap(dao => {
               if (
                 dao.address === currentDao.address &&
                 dao.chain === currentDao.chain
