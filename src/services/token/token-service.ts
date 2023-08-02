@@ -1,6 +1,7 @@
 import {AssetBalance} from '@aragon/sdk-client';
 import {TokenType} from '@aragon/sdk-client-common';
 import {AddressZero} from '@ethersproject/constants';
+import {BigNumber} from 'ethers';
 
 import {
   CHAIN_METADATA,
@@ -13,8 +14,8 @@ import {CoingeckoError, CoingeckoToken, Token} from './domain';
 import {CovalentResponse} from './domain/covalent-response';
 import {CovalentToken, CovalentTokenBalance} from './domain/covalent-token';
 import {
-  IFetchTokenParams,
   IFetchTokenBalancesParams,
+  IFetchTokenParams,
 } from './token-service.api';
 
 class TokenService {
@@ -192,7 +193,10 @@ class TokenService {
       return null;
     }
 
-    return data.items.map(({native_token, ...item}) => {
+    return data.items.flatMap(({native_token, ...item}) => {
+      // ignore zero balances
+      if (BigNumber.from(item.balance).isZero()) return [];
+
       return {
         address: native_token ? AddressZero : item.contract_address,
         name: native_token ? nativeCurrency.name : item.contract_name,
