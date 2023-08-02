@@ -8,7 +8,7 @@ export const FEEDBACK_FORM =
 export const SUBGRAPH_API_URL: SubgraphNetworkUrl = {
   arbitrum: undefined,
   'arbitrum-test': undefined,
-  base: 'https://subgraph.satsuma-prod.com/qHR2wGfc5RLi6/aragon/osx-baseMainnet/version/v1.2.2/api',
+  base: 'https://subgraph.satsuma-prod.com/qHR2wGfc5RLi6/aragon/osx-baseMainnet/api',
   'base-goerli':
     'https://subgraph.satsuma-prod.com/qHR2wGfc5RLi6/aragon/osx-baseGoerli/version/v1.2.2/api',
   ethereum:
