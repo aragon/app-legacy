@@ -86,6 +86,8 @@ export function useWalletConnectInterceptor(): WcInterceptorValues {
 
   const handleRequest = useCallback(
     (event: Web3WalletTypes.SessionRequest) => {
+      console.log('handle request', {event});
+
       const isSignRequest = walletConnectInterceptor.signRequests.includes(
         event.params.request.method
       );
