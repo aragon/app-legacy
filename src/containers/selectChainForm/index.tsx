@@ -45,8 +45,6 @@ const SelectChainForm: React.FC = () => {
     [networkType]
   );
 
-  console.log(availableNetworks);
-
   // // moving this up so state change triggers translation changes
   // const labels = {
   //   cost: {tag: t('labels.cheapest'), title: t('labels.networkCost')},
