@@ -392,7 +392,7 @@ export const EditMvSettings: React.FC<EditMvSettingsProps> = ({daoDetails}) => {
                 dropdownItems={governanceAction}
               >
                 <AccordionContent>
-                  <ConfigureCommunity />
+                  <ConfigureCommunity isSettingPage />
                 </AccordionContent>
               </AccordionItem>
             </AccordionMultiple>

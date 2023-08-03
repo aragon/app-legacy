@@ -284,7 +284,7 @@ const ProposeSettingWrapper: React.FC<Props> = ({
 
         let daoLogoFile = '';
 
-        if (daoLogo.startsWith('blob'))
+        if (daoLogo?.startsWith?.('blob'))
           daoLogoFile = (await fetch(daoLogo).then(r => r.blob())) as string;
         else daoLogoFile = daoLogo;
 

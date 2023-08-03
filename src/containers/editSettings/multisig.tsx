@@ -127,17 +127,29 @@ export const EditMsSettings: React.FC<EditMsSettingsProps> = ({daoDetails}) => {
     resourceLinks,
   ]);
 
-  // metadata setting changes
-  const isMetadataChanged =
-    daoDetails?.metadata.name &&
-    (daoName !== daoDetails.metadata.name ||
+  const isMetadataChanged = useMemo(() => {
+    if (!daoDetails?.metadata.name || !daoName || daoName === '') return false;
+    return (
+      daoName !== daoDetails.metadata.name ||
       daoSummary !== daoDetails.metadata.description ||
       daoLogo !== daoDetails.metadata.avatar ||
-      !resourceLinksAreEqual);
+      !resourceLinksAreEqual
+    );
+  }, [
+    daoDetails.metadata.avatar,
+    daoDetails.metadata.description,
+    daoDetails.metadata.name,
+    daoLogo,
+    daoName,
+    daoSummary,
+    resourceLinksAreEqual,
+  ]);
 
-  // TODO: We need to force forms to only use one type, Number or string
-  const isGovernanceChanged =
-    multisigMinimumApprovals !== settings.minApprovals;
+  const isGovernanceChanged = useMemo(() => {
+    if (!settings.minApprovals || !multisigMinimumApprovals) return false;
+
+    return multisigMinimumApprovals !== settings.minApprovals;
+  }, [multisigMinimumApprovals, settings.minApprovals]);
 
   const setCurrentMetadata = useCallback(() => {
     setValue('daoName', daoDetails?.metadata.name);
@@ -196,9 +208,14 @@ export const EditMsSettings: React.FC<EditMsSettingsProps> = ({daoDetails}) => {
   }, [settingsUnchanged, setValue]);
 
   useEffect(() => {
-    setCurrentMetadata();
-    setCurrentGovernance();
-  }, [setCurrentGovernance, setCurrentMetadata]);
+    if (!isMetadataChanged) setCurrentMetadata();
+    if (!isGovernanceChanged) setCurrentGovernance();
+  }, [
+    isGovernanceChanged,
+    isMetadataChanged,
+    setCurrentGovernance,
+    setCurrentMetadata,
+  ]);
 
   const metadataAction = [
     {
@@ -270,7 +287,7 @@ export const EditMsSettings: React.FC<EditMsSettingsProps> = ({daoDetails}) => {
                 dropdownItems={governanceAction}
               >
                 <AccordionContent>
-                  <ConfigureCommunity />
+                  <ConfigureCommunity isSettingPage />
                 </AccordionContent>
               </AccordionItem>
             </AccordionMultiple>
