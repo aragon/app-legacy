@@ -1,7 +1,7 @@
 import {
   ButtonText,
   IconChevronRight,
-  IconFeedback,
+  IconLinkExternal,
   IconReload,
   IconSearch,
   Link,
@@ -99,7 +99,7 @@ const WCConnectedApps: React.FC<Props> = props => {
                 label={t('wc.listdApps.learnLinkLabel')}
                 href="/"
                 external
-                iconRight={<IconFeedback />}
+                iconRight={<IconLinkExternal />}
               />
             </div>
           </>

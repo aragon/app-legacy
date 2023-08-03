@@ -2,7 +2,6 @@ import {
   AlertInline,
   ButtonText,
   IconChevronRight,
-  IconFeedback,
   IconRadioCancel,
   IconRadioMulti,
   IconSuccess,
@@ -11,6 +10,7 @@ import {
   TextareaSimple,
   shortenAddress,
   WalletInputLegacy,
+  IconLinkExternal,
 } from '@aragon/ods';
 import {ethers} from 'ethers';
 import {isAddress} from 'ethers/lib/utils';
@@ -494,7 +494,7 @@ const ContractAddressValidation: React.FC<Props> = props => {
                 name={name}
                 onBlur={onBlur}
                 value={value}
-                onChange={onChange}
+                onChange={e => onChange(e.target.value.trim())}
                 disabledFilled={isTransactionSuccessful || isTransactionLoading}
                 placeholder="0x ..."
                 adornmentText={adornmentText}
@@ -523,7 +523,7 @@ const ContractAddressValidation: React.FC<Props> = props => {
                   <Link
                     external
                     type="neutral"
-                    iconRight={<IconFeedback height={13} width={13} />}
+                    iconRight={<IconLinkExternal height={13} width={13} />}
                     href={`https://sourcify.dev/#/lookup/${addressField}`}
                     label={t('scc.validation.explorerLinkLabel')}
                     className="ft-text-sm"
@@ -536,7 +536,7 @@ const ContractAddressValidation: React.FC<Props> = props => {
                   <Link
                     external
                     type="neutral"
-                    iconRight={<IconFeedback height={13} width={13} />}
+                    iconRight={<IconLinkExternal height={13} width={13} />}
                     href={`${CHAIN_METADATA[network].explorer}address/${addressField}#code`}
                     label={t('scc.validation.explorerLinkLabel')}
                     className="ft-text-sm"

@@ -71,9 +71,9 @@ export default defineConfig(({mode}) => {
       commonjsOptions: {
         transformMixedEsModules: true,
       },
-      resolve: {
-        preserveSymlinks: true,
-      },
+    },
+    resolve: {
+      preserveSymlinks: true,
     },
   };
 });

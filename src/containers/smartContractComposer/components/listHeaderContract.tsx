@@ -2,7 +2,7 @@ import {
   Dropdown,
   IconClose,
   IconCopy,
-  IconFeedback,
+  IconLinkExternal,
   IconMenuVertical,
   Link,
   ListItemAction,
@@ -45,7 +45,7 @@ export const ListHeaderContract: React.FC<Props> = ({
               external
               type="neutral"
               iconRight={
-                <IconFeedback height={13} width={13} className="ml-4" />
+                <IconLinkExternal height={13} width={13} className="ml-4" />
               }
               href={chainExplorerAddressLink(network, sc.address) + '#code'}
               label={t('scc.detailContract.dropdownExplorerLinkLabel', {
