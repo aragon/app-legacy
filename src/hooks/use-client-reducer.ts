@@ -2,8 +2,9 @@ import {Signer} from '@ethersproject/abstract-signer';
 import {Wallet} from '@ethersproject/wallet';
 import {AccountData, EnvOptions, VocdoniSDKClient} from '@vocdoni/sdk';
 import {Reducer, useReducer} from 'react';
-import {ClientProviderProps} from './client';
-import {errorToString} from './utils';
+import {ClientProviderProps} from './useVocdoniSdk';
+import {errorToString} from 'utils/vocdoniUtils';
+// import {errorToString} from './utils';
 
 export const ClientAccountError = 'client:account:error';
 export const ClientAccountFetch = 'client:account:fetch';

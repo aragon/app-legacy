@@ -1,16 +1,14 @@
-import {ToastProvider} from '@chakra-ui/toast';
 import {Signer} from '@ethersproject/abstract-signer';
 import {Wallet} from '@ethersproject/wallet';
 import {Account, EnvOptions, VocdoniSDKClient} from '@vocdoni/sdk';
-import {PropsWithChildren, createContext, useContext, useEffect} from 'react';
-import merge from 'ts-deepmerge';
-import {locales} from './i18n/locales';
-import {
-  LocaleProvider,
-  LocaleProviderProps,
-  useLocalize,
-} from './i18n/localize';
+import React, {
+  PropsWithChildren,
+  createContext,
+  useContext,
+  useEffect,
+} from 'react';
 import {ClientEnvSetPayload, useClientReducer} from './use-client-reducer';
+import {useWallet} from './useWallet';
 
 export type ClientProviderProps = {
   client?: VocdoniSDKClient;
@@ -23,7 +21,6 @@ export const useClientProvider = ({
   env: e,
   signer: s,
 }: ClientProviderProps) => {
-  const localize = useLocalize();
   const {actions, state} = useClientReducer({
     client: c,
     env: e,
@@ -171,7 +168,6 @@ export const useClientProvider = ({
     fetchAccount,
     fetchBalance,
     setClient: actions.setClient,
-    localize,
     setSigner: actions.setSigner,
     generateSigner,
   };
@@ -197,41 +193,25 @@ export const useClient = <T extends VocdoniSDKClient>() => {
   };
 };
 
-export type InternalClientProviderComponentProps =
-  PropsWithChildren<ClientProviderProps>;
 export type ClientProviderComponentProps =
-  InternalClientProviderComponentProps & LocaleProviderProps;
+  PropsWithChildren<ClientProviderProps>;
 
-/**
- * Required internal client provider so we can use useLocalize in useClientProvider.
- */
-const InternalClientProvider = ({
+export const ClientProvider = ({
   env,
   client,
   signer,
   ...rest
-}: InternalClientProviderComponentProps) => {
+}: ClientProviderComponentProps) => {
   const value = useClientProvider({env, client, signer});
 
   return <ClientContext.Provider value={value} {...rest} />;
 };
 
-export const ClientProvider = ({
-  locale,
-  datesLocale,
-  ...rest
-}: ClientProviderComponentProps) => {
-  const loc = {
-    locale: merge(locales, locale || {}),
-    datesLocale,
-  };
-
+export const UseVocdoniClientProvider: React.FC = ({children}) => {
+  const {signer} = useWallet();
   return (
-    <LocaleProvider {...loc}>
-      <>
-        <ToastProvider />
-        <InternalClientProvider {...rest} />
-      </>
-    </LocaleProvider>
+    <ClientProvider env="stg" signer={signer as Signer}>
+      {children}
+    </ClientProvider>
   );
 };

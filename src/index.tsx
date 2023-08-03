@@ -29,6 +29,8 @@ import {WalletMenuProvider} from 'context/walletMenu';
 import {UseCacheProvider} from 'hooks/useCache';
 import {UseClientProvider} from 'hooks/useClient';
 import {infuraApiKey, walletConnectProjectID} from 'utils/constants';
+import {UseVocdoniClientProvider} from './hooks/useVocdoniSdk';
+
 import {App} from './app';
 
 const chains = [base, baseGoerli, goerli, mainnet, polygon, polygonMumbai];
@@ -114,8 +116,10 @@ root.render(
                         <TransactionDetailProvider>
                           <WalletMenuProvider>
                             <GlobalModalsProvider>
-                              <App />
-                              <ReactQueryDevtools initialIsOpen={false} />
+                              <UseVocdoniClientProvider>
+                                <App />
+                                <ReactQueryDevtools initialIsOpen={false} />
+                              </UseVocdoniClientProvider>
                             </GlobalModalsProvider>
                           </WalletMenuProvider>
                         </TransactionDetailProvider>
