@@ -135,7 +135,7 @@ export const CHAIN_METADATA: ChainList = {
     name: 'Base',
     domain: 'L2 Blockchain',
     logo: 'https://mirror-media.imgix.net/publication-images/cgqxxPdUFBDjgKna_dDir.png?h=250&w=250',
-    explorer: 'https://basescan.org',
+    explorer: 'https://basescan.org/',
     isTestnet: false,
     rpc: ['https://developer-access-mainnet.base.org'],
     nativeCurrency: {
@@ -158,7 +158,7 @@ export const CHAIN_METADATA: ChainList = {
     name: 'Base Goerli',
     domain: 'L2 Blockchain',
     logo: 'https://mirror-media.imgix.net/publication-images/cgqxxPdUFBDjgKna_dDir.png?h=250&w=250',
-    explorer: 'https://goerli.basescan.org',
+    explorer: 'https://goerli.basescan.org/',
     isTestnet: true,
     mainnet: 'base',
     rpc: ['https://goerli.base.org'],

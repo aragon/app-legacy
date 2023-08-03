@@ -37,8 +37,10 @@ const SelectChainForm: React.FC = () => {
       networks[networkType]['popularity'].filter(
         n =>
           // uppercase SupportedNetwork name is used for the flag
-          featureFlags.getValue(`VITE_FEATURE_FLAG_${n.toUpperCase()}`) !==
-          'false'
+          // also replace hyphens with underscores
+          featureFlags.getValue(
+            `VITE_FEATURE_FLAG_${n.replace(/-/g, '_').toUpperCase()}`
+          ) !== 'false'
       ),
     [networkType]
   );
