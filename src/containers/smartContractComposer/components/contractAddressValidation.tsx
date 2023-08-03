@@ -313,11 +313,11 @@ const ContractAddressValidation: React.FC<Props> = props => {
     [TransactionState.WAITING]: t('scc.validation.ctaLabelWaiting'),
     [TransactionState.LOADING]: '',
     [TransactionState.SUCCESS]: t('scc.validation.ctaLabelSuccess'),
-    [TransactionState.ERROR]: t('scc.validation.ctaLabelWarning'),
+    [TransactionState.ERROR]: '',
   };
 
   const ABIFlowLabel = {
-    [ManualABIFlowState.WAITING]: t('scc.validation.ctaLabelWarning'),
+    [ManualABIFlowState.WAITING]: t('TransactionModal.tryAgain'),
     [ManualABIFlowState.ABI_INPUT]: t('scc.abi.ctaLabelWaiting'),
     [ManualABIFlowState.SUCCESS]: t('scc.validation.ctaLabelSuccess'),
     [ManualABIFlowState.ERROR]: t('scc.abi.ctaLabelCritical'),
@@ -445,16 +445,26 @@ const ContractAddressValidation: React.FC<Props> = props => {
   }, [etherscanData, etherscanLoading, isTransactionError, t]);
 
   return (
-    <ModalBottomSheetSwitcher isOpen={props.isOpen} onClose={props.onClose}>
+    <ModalBottomSheetSwitcher
+      isOpen={props.isOpen}
+      onClose={() => {
+        resetField('contractAddress');
+        setVerificationState(TransactionState.WAITING);
+        props.onClose();
+      }}
+    >
       <ModalHeader
         title={t('scc.validation.modalTitle')}
         onClose={() => {
-          // clear contract address field
           resetField('contractAddress');
           setVerificationState(TransactionState.WAITING);
           props.onClose();
         }}
-        onBackButtonClicked={props.onBackButtonClicked}
+        onBackButtonClicked={() => {
+          resetField('contractAddress');
+          setVerificationState(TransactionState.WAITING);
+          props.onBackButtonClicked();
+        }}
         showBackButton={
           !(
             verificationState === TransactionState.LOADING ||
@@ -647,7 +657,12 @@ const ContractAddressValidation: React.FC<Props> = props => {
                 });
               } else if (verificationState === TransactionState.ERROR) {
                 // Manual ABI flow starting
-                setABIFlowState(ManualABIFlowState.ABI_INPUT);
+                // setABIFlowState(ManualABIFlowState.ABI_INPUT);
+
+                //Retry
+                resetField('contractAddress', {defaultValue: ''});
+                setVerificationState(TransactionState.WAITING);
+                setABIFlowState(ManualABIFlowState.NOT_STARTED);
               }
             }}
             iconLeft={
