@@ -85,7 +85,8 @@ export function useWalletConnectInterceptor(): WcInterceptorValues {
   const handleSignRequest = useCallback(
     async (event: Web3WalletTypes.SessionRequest) => {
       const {id, params, topic} = event;
-      const message = params.request.params[1];
+      const isTypedData = params.request.method.includes('signTypedData');
+      const message = params.request.params[isTypedData ? 1 : 0];
       const signature = await signMessageAsync({message});
       const signResponse = {id, result: signature, jsonrpc: '2.0'};
       walletConnectInterceptor.respondRequest(topic, signResponse);
