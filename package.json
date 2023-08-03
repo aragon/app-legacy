@@ -35,7 +35,7 @@
     "@tiptap/pm": "^2.0.3",
     "@tiptap/react": "^2.0.3",
     "@tiptap/starter-kit": "^2.0.3",
-    "@vocdoni/sdk": "^0.0.17",
+    "@vocdoni/sdk": "^0.0.18",
     "@walletconnect/core": "^2.8.3",
     "@walletconnect/utils": "^2.8.3",
     "@walletconnect/web3wallet": "^1.8.2",
