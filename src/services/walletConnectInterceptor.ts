@@ -2,6 +2,7 @@ import {Core} from '@walletconnect/core';
 import {buildApprovedNamespaces, getSdkError} from '@walletconnect/utils';
 import Web3WalletClient, {Web3Wallet} from '@walletconnect/web3wallet';
 import {AuthClientTypes} from '@walletconnect/auth-client';
+import {JsonRpcResponse} from '@walletconnect/jsonrpc-utils';
 import {Web3WalletTypes} from '@walletconnect/web3wallet';
 import {SessionTypes} from '@walletconnect/types';
 
@@ -12,6 +13,13 @@ class WalletConnectInterceptor {
     url: 'https://aragon.org',
     icons: ['https://walletconnect.org/walletconnect-logo.png'],
   };
+
+  signRequests = [
+    'personal_sign',
+    'eth_signTypedData',
+    'eth_signTypedData_v4',
+    'eth_sign',
+  ];
 
   client: Web3WalletClient | undefined;
 
@@ -67,17 +75,23 @@ class WalletConnectInterceptor {
       supportedNamespaces: {
         eip155: {
           chains: supportedChains.map(id => `eip155:${id}`),
-          methods: proposal.params.requiredNamespaces['eip155'].methods,
+          methods: ['eth_sendTransaction', ...this.signRequests],
           events: ['accountsChanged', 'chainChanged'],
           accounts: supportedChains.map(id => `eip155:${id}:${accountAddress}`),
         },
       },
     });
 
+    console.log('approve session', {proposal, approvedNamespaces});
+
     return this.client?.approveSession({
       id: proposal.id,
       namespaces: approvedNamespaces,
     });
+  }
+
+  respondRequest(topic: string, response: JsonRpcResponse) {
+    this.client?.respondSessionRequest({topic, response});
   }
 
   rejectSession(

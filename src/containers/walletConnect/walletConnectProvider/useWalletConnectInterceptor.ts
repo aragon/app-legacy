@@ -6,6 +6,7 @@ import {walletConnectInterceptor} from 'services/walletConnectInterceptor';
 import {CHAIN_METADATA, SUPPORTED_CHAIN_ID} from 'utils/constants';
 import {Web3WalletTypes} from '@walletconnect/web3wallet';
 import {useDaoDetailsQuery} from 'hooks/useDaoDetails';
+import {useSignMessage} from 'wagmi';
 
 export type WcSession = SessionTypes.Struct;
 export type WcActionRequest =
@@ -28,8 +29,11 @@ export type WcInterceptorValues = {
 
 export function useWalletConnectInterceptor(): WcInterceptorValues {
   const {network} = useNetwork();
+  const {data, signMessage} = useSignMessage();
 
   const {data: daoDetails} = useDaoDetailsQuery();
+  const [signRequest, setSignRequest] =
+    useState<Web3WalletTypes.SessionRequest>();
   const [sessions, setSessions] = useState<WcSession[]>(
     walletConnectInterceptor.getActiveSessions(daoDetails?.address)
   );
@@ -82,12 +86,31 @@ export function useWalletConnectInterceptor(): WcInterceptorValues {
 
   const handleRequest = useCallback(
     (event: Web3WalletTypes.SessionRequest) => {
-      if (event.params.chainId === `eip155:${CHAIN_METADATA[network].id}`) {
+      const isSignRequest = walletConnectInterceptor.signRequests.includes(
+        event.params.request.method
+      );
+
+      if (isSignRequest) {
+        setSignRequest(event);
+        const message = event.params.request.params[0];
+        signMessage({message});
+      } else if (
+        event.params.chainId === `eip155:${CHAIN_METADATA[network].id}`
+      ) {
         setActions(current => current.concat(event.params.request));
       }
     },
-    [network]
+    [network, signMessage]
   );
+
+  useEffect(() => {
+    if (data && signRequest) {
+      const {id, topic} = signRequest;
+      const signResponse = {id, result: data, jsonrpc: '2.0'};
+      console.log('respond request', {topic, signResponse});
+      walletConnectInterceptor.respondRequest(topic, signResponse);
+    }
+  }, [data, signRequest]);
 
   // Listen for active-session changes and subscribe / unsubscribe to client changes
   useEffect(() => {
@@ -103,9 +126,11 @@ export function useWalletConnectInterceptor(): WcInterceptorValues {
   // Always subscribe to the request event as the onActionRequest property might differ
   // between hook instances
   useEffect(() => {
+    console.log('action request listener');
     walletConnectInterceptor.subscribeRequest(handleRequest);
 
     return () => {
+      console.log('remove action request listener');
       walletConnectInterceptor.unsubscribeRequest(handleRequest);
     };
   }, [handleRequest]);
