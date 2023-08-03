@@ -29,11 +29,9 @@ export type WcInterceptorValues = {
 
 export function useWalletConnectInterceptor(): WcInterceptorValues {
   const {network} = useNetwork();
-  const {data, signMessage} = useSignMessage();
+  const {signMessageAsync} = useSignMessage();
 
   const {data: daoDetails} = useDaoDetailsQuery();
-  const [signRequest, setSignRequest] =
-    useState<Web3WalletTypes.SessionRequest>();
   const [sessions, setSessions] = useState<WcSession[]>(
     walletConnectInterceptor.getActiveSessions(daoDetails?.address)
   );
@@ -84,6 +82,18 @@ export function useWalletConnectInterceptor(): WcInterceptorValues {
     [daoDetails?.address, updateActiveSessions]
   );
 
+  const handleSignRequest = useCallback(
+    async (event: Web3WalletTypes.SessionRequest) => {
+      const {id, params, topic} = event;
+      const message = params.request.params[1];
+      const signature = await signMessageAsync({message});
+      const signResponse = {id, result: signature, jsonrpc: '2.0'};
+      walletConnectInterceptor.respondRequest(topic, signResponse);
+      console.log('send response request: ', {event, message, signResponse});
+    },
+    [signMessageAsync]
+  );
+
   const handleRequest = useCallback(
     (event: Web3WalletTypes.SessionRequest) => {
       console.log('handle request', {event});
@@ -93,26 +103,15 @@ export function useWalletConnectInterceptor(): WcInterceptorValues {
       );
 
       if (isSignRequest) {
-        setSignRequest(event);
-        const message = event.params.request.params[0];
-        signMessage({message});
+        handleSignRequest(event);
       } else if (
         event.params.chainId === `eip155:${CHAIN_METADATA[network].id}`
       ) {
         setActions(current => current.concat(event.params.request));
       }
     },
-    [network, signMessage]
+    [network, handleSignRequest]
   );
-
-  useEffect(() => {
-    if (data && signRequest) {
-      const {id, topic} = signRequest;
-      const signResponse = {id, result: data, jsonrpc: '2.0'};
-      console.log('respond request', {topic, signResponse});
-      walletConnectInterceptor.respondRequest(topic, signResponse);
-    }
-  }, [data, signRequest]);
 
   // Listen for active-session changes and subscribe / unsubscribe to client changes
   useEffect(() => {
