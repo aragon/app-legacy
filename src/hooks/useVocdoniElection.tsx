@@ -1,12 +1,12 @@
-import {ChakraProps} from '@chakra-ui/system';
 import {
+  areEqualHexStrings,
   CensusType,
   CspVote,
   PublishedElection,
   VocdoniSDKClient,
   Vote,
 } from '@vocdoni/sdk';
-import {
+import React, {
   ComponentType,
   PropsWithChildren,
   createContext,
@@ -16,19 +16,7 @@ import {
   useState,
 } from 'react';
 import {FieldValues} from 'react-hook-form';
-import {useClient} from '../../client';
-import {areEqualHexStrings} from '../../utils';
-import {HR} from '../layout';
-import {ElectionActions} from './Actions';
-import {ElectionDescription} from './Description';
-import {ElectionFormError} from './FormError';
-import {ElectionHeader} from './Header';
-import {ElectionQuestions} from './Questions';
-import {ElectionResults} from './Results';
-import {ElectionSchedule} from './Schedule';
-import {ElectionStatusBadge} from './StatusBadge';
-import {ElectionTitle} from './Title';
-import {VoteButton} from './VoteButton';
+import {useClient} from './useVocdoniSdk';
 
 export type ElectionProviderProps = {
   id?: string;
@@ -49,7 +37,7 @@ export const useElectionProvider = ({
   autoUpdate,
   ...rest
 }: ElectionProviderProps) => {
-  const {client: c, localize} = useClient();
+  const {client: c} = useClient();
   const [client, setClient] = useState<VocdoniSDKClient>(c);
   const [loading, setLoading] = useState<boolean>(false);
   const [voting, setVoting] = useState<boolean>(false);
@@ -426,7 +414,6 @@ export const useElectionProvider = ({
     loading,
     setClient,
     setFormError,
-    localize,
     vote,
     voted,
     votesLeft,
@@ -451,13 +438,10 @@ export const useElection = () => {
   return ctxt;
 };
 
-export type ElectionProviderComponentProps = ElectionProviderProps &
-  ChakraProps;
-
 export const ElectionProvider = ({
   children,
   ...rest
-}: PropsWithChildren<ElectionProviderComponentProps>) => {
+}: PropsWithChildren<ElectionProviderProps>) => {
   const value = useElectionProvider(rest);
 
   return (
@@ -467,20 +451,3 @@ export const ElectionProvider = ({
   );
 };
 ElectionProvider.displayName = 'ElectionProvider';
-
-export const Election = (props: ElectionProviderComponentProps) => (
-  <ElectionProvider {...props} fetchCensus>
-    <ElectionHeader />
-    <ElectionTitle />
-    <ElectionSchedule />
-    <ElectionStatusBadge />
-    <ElectionActions />
-    <ElectionDescription />
-    <HR />
-    <ElectionQuestions />
-    <ElectionFormError />
-    <VoteButton />
-    <ElectionResults />
-  </ElectionProvider>
-);
-Election.displayName = 'Election';
