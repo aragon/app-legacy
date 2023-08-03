@@ -146,7 +146,7 @@ export const EditMsSettings: React.FC<EditMsSettingsProps> = ({daoDetails}) => {
   ]);
 
   const isGovernanceChanged = useMemo(() => {
-    if (!settings.minApprovals || !multisigMinimumApprovals) return false;
+    if (!multisigMinimumApprovals) return false;
 
     return multisigMinimumApprovals !== settings.minApprovals;
   }, [multisigMinimumApprovals, settings.minApprovals]);
