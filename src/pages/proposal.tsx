@@ -75,7 +75,7 @@ import {
   isMultisigProposal,
   stripPlgnAdrFromProposalId,
 } from 'utils/proposals';
-import {Action, ActionWithdraw, ProposalId} from 'utils/types';
+import {Action, ProposalId} from 'utils/types';
 
 // TODO: @Sepehr Please assign proper tags on action decoding
 // const PROPOSAL_TAGS = ['Finance', 'Withdraw'];
@@ -259,9 +259,8 @@ const Proposal: React.FC = () => {
         case 'setMetadata':
           return decodeMetadataToAction(action.data, client);
         default: {
-          let decodedAction: ActionWithdraw | undefined;
           try {
-            decodedAction = await decodeWithdrawToAction(
+            const decodedAction = await decodeWithdrawToAction(
               action.data,
               client,
               provider,
@@ -270,6 +269,15 @@ const Proposal: React.FC = () => {
               action.value,
               fetchToken
             );
+
+            // assume that the action is a valid native withdraw
+            // if the token name is the same as the chain native token
+            if (
+              decodedAction?.tokenName.toLowerCase() ===
+              CHAIN_METADATA[network].nativeCurrency.name.toLowerCase()
+            ) {
+              return decodedAction;
+            }
           } catch (error) {
             console.warn(
               'decodeWithdrawToAction failed, trying decodeToExternalAction'
@@ -281,15 +289,6 @@ const Proposal: React.FC = () => {
               network,
               t
             );
-          }
-
-          // assume that the action is a valid native withdraw
-          // if the token name is the same as the chain native token
-          if (
-            decodedAction?.tokenName.toLowerCase() ===
-            CHAIN_METADATA[network].nativeCurrency.name.toLowerCase()
-          ) {
-            return decodedAction;
           }
         }
       }
