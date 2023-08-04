@@ -200,12 +200,11 @@ export const EditMsSettings: React.FC<EditMsSettingsProps> = ({daoDetails}) => {
 
   useEffect(() => {
     setValue('isMetadataChanged', isMetadataChanged);
-    setValue('areSettingsChanged', isGovernanceChanged);
+    setValue('areSettingsChanged', isMetadataChanged || isGovernanceChanged);
 
     // intentionally using settingsUnchanged because it monitors all
     // the setting changes
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [settingsUnchanged, setValue]);
+  }, [isGovernanceChanged, isMetadataChanged, setValue]);
 
   useEffect(() => {
     if (!isMetadataChanged) setCurrentMetadata();
