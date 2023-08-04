@@ -26,6 +26,7 @@ import PageEmptyState from 'containers/pageEmptyState';
 import {toDisplayEns} from 'utils/library';
 import useScreen from 'hooks/useScreen';
 import {htmlIn} from 'utils/htmlIn';
+import uniqBy from 'lodash/uniqBy';
 
 const Governance: React.FC = () => {
   const {data: daoDetails, isLoading: isDaoLoading} = useDaoDetailsQuery();
@@ -60,7 +61,10 @@ const Governance: React.FC = () => {
         setEndReached(true);
       }
 
-      setDisplayedProposals(prev => [...(prev || []), ...proposals]);
+      setDisplayedProposals(prev => {
+        const resultProposals = [...(prev || []), ...proposals];
+        return uniqBy(resultProposals, 'id');
+      });
     }
   }, [isInitialLoading, proposals]);
 
