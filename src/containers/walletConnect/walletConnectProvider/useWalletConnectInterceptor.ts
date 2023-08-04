@@ -7,6 +7,7 @@ import {CHAIN_METADATA, SUPPORTED_CHAIN_ID} from 'utils/constants';
 import {Web3WalletTypes} from '@walletconnect/web3wallet';
 import {useDaoDetailsQuery} from 'hooks/useDaoDetails';
 import {useSignMessage} from 'wagmi';
+import {utils} from 'ethers';
 
 export type WcSession = SessionTypes.Struct;
 export type WcActionRequest =
@@ -89,8 +90,16 @@ export function useWalletConnectInterceptor(): WcInterceptorValues {
       const message = params.request.params[isTypedData ? 1 : 0];
       const signature = await signMessageAsync({message});
       const signResponse = {id, result: signature, jsonrpc: '2.0'};
+      const hash = utils.hashMessage(message);
+      const recoveredAddress = utils.recoverAddress(hash, signature);
       walletConnectInterceptor.respondRequest(topic, signResponse);
-      console.log('send response request: ', {event, message, signResponse});
+      console.log('send response request: ', {
+        event,
+        message,
+        signResponse,
+        hash,
+        recoveredAddress,
+      });
     },
     [signMessageAsync]
   );
