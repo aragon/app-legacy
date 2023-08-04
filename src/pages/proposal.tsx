@@ -75,7 +75,7 @@ import {
   isMultisigProposal,
   stripPlgnAdrFromProposalId,
 } from 'utils/proposals';
-import {Action, ProposalId} from 'utils/types';
+import {Action, ActionWithdraw, ProposalId} from 'utils/types';
 
 // TODO: @Sepehr Please assign proper tags on action decoding
 // const PROPOSAL_TAGS = ['Finance', 'Withdraw'];
@@ -259,15 +259,23 @@ const Proposal: React.FC = () => {
         case 'setMetadata':
           return decodeMetadataToAction(action.data, client);
         default: {
-          const withdrawAction = await decodeWithdrawToAction(
-            action.data,
-            client,
-            provider,
-            network,
-            action.to,
-            action.value,
-            fetchToken
-          );
+          let withdrawAction: ActionWithdraw | undefined;
+          try {
+            withdrawAction = await decodeWithdrawToAction(
+              action.data,
+              client,
+              provider,
+              network,
+              action.to,
+              action.value,
+              fetchToken
+            );
+          } catch (error) {
+            // Note: Intentionally swallowing this error because
+            // the SDK decoding function throws an error if the action
+            // passed in is not the expected native withdraw.
+            // F.F. [08/04/2023]
+          }
 
           // assume that the withdraw action is valid native token withdraw
           // if it has a token balance
