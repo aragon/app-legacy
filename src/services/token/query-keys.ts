@@ -1,6 +1,7 @@
 import type {QueryKey} from '@tanstack/query-core';
 
 import type {
+  FetchErc20DepositParams,
   IFetchTokenBalancesParams,
   IFetchTokenParams,
 } from './token-service.api';
@@ -20,7 +21,7 @@ export const tokenQueryKeys = {
     TokenQueryItem.BALANCES,
     params,
   ],
-  transfers: (params: IFetchTokenBalancesParams): QueryKey => [
+  transfers: (params: FetchErc20DepositParams): QueryKey => [
     TokenQueryItem.TRANSFERS,
     params,
   ],

@@ -14,18 +14,17 @@ import {TOP_ETH_SYMBOL_ADDRESSES} from 'utils/constants/topSymbolAddresses';
 import {getTokenInfo, isNativeToken} from 'utils/tokens';
 import {CoingeckoError, CoingeckoToken, Token} from './domain';
 import {CovalentResponse} from './domain/covalent-response';
-import {
-  CovalentToken,
-  CovalentTokenBalance,
-  CovalentTokenTransfer,
-  CovalentTransferInfo,
-} from './domain/covalent-token';
+import {CovalentToken, CovalentTokenBalance} from './domain/covalent-token';
 import {
   IFetchTokenBalancesParams,
   IFetchTokenParams,
   IFetchTokenTransfersParams,
 } from './token-service.api';
-import {AlchemyTransfer} from './domain/alchemy-token';
+import {AlchemyTransfer} from './domain/alchemy-transfer';
+import {
+  CovalentTokenTransfer,
+  CovalentTransferInfo,
+} from './domain/covalent-transfer';
 
 class TokenService {
   private defaultCurrency = 'USD';
@@ -231,15 +230,17 @@ class TokenService {
   fetchErc20Deposits = async ({
     address,
     network,
+    assets,
   }: IFetchTokenTransfersParams) => {
     return network === 'base' || network === 'base-goerli'
-      ? this.fetchCovalentErc20Deposits(address, network)
+      ? this.fetchCovalentErc20Deposits(address, network, assets)
       : this.fetchAlchemyErc20Deposits(address, network);
   };
 
   private fetchCovalentErc20Deposits = async (
     address: string,
-    network: SupportedNetworks
+    network: SupportedNetworks,
+    assets: AssetBalance[]
   ): Promise<Deposit[] | null> => {
     const {networkId} = CHAIN_METADATA[network].covalent ?? {};
 
@@ -251,12 +252,7 @@ class TokenService {
       return null;
     }
     // fetch all balances
-    const assetsBalances = await this.fetchTokenBalances({
-      address,
-      network,
-      ignoreZeroBalances: false,
-    });
-    if (!assetsBalances || assetsBalances.length === 0) {
+    if (!assets || assets.length === 0) {
       return [];
     }
 
@@ -265,7 +261,7 @@ class TokenService {
     const headers = {Authorization: `Basic ${authToken}`};
 
     const assetTransfers = await Promise.all(
-      assetsBalances
+      assets
         // filter out the native deposit
         .filter(asset => asset.type !== TokenType.NATIVE)
         .map(async asset => {

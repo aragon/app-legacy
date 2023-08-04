@@ -11,9 +11,9 @@ import {Token} from '../domain';
 import {tokenQueryKeys} from '../query-keys';
 import {tokenService} from '../token-service';
 import type {
+  FetchErc20DepositParams,
   IFetchTokenBalancesParams,
   IFetchTokenParams,
-  IFetchTokenTransfersParams,
 } from '../token-service.api';
 
 export const useToken = (
@@ -67,12 +67,17 @@ export const useTokenBalances = (
 };
 
 export const useErc20Deposits = (
-  params: IFetchTokenTransfersParams,
+  params: FetchErc20DepositParams,
   options?: UseQueryOptions<Deposit[] | null>
 ) => {
+  const {data: assets, isFetched: areAssetsFetched} = useTokenBalances(
+    {...params, ignoreZeroBalances: false},
+    {enabled: !!params.address}
+  );
+
   return useQuery(
     tokenQueryKeys.transfers(params),
-    () => tokenService.fetchErc20Deposits(params),
-    options
+    () => tokenService.fetchErc20Deposits({...params, assets: assets ?? []}),
+    {...options, enabled: options?.enabled !== false && areAssetsFetched}
   );
 };

@@ -1,3 +1,4 @@
+import {AssetBalance} from '@aragon/sdk-client';
 import {SupportedNetworks} from 'utils/constants';
 
 export interface IFetchTokenParams {
@@ -15,4 +16,10 @@ export interface IFetchTokenBalancesParams {
 export interface IFetchTokenTransfersParams {
   address: string;
   network: SupportedNetworks;
+  assets: AssetBalance[];
 }
+
+export type FetchErc20DepositParams = Omit<
+  IFetchTokenTransfersParams,
+  'assets'
+>;
