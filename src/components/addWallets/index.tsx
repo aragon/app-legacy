@@ -79,6 +79,7 @@ const AddWallets: React.FC = () => {
             <Row
               key={field.id}
               index={index}
+              suppressAddressWarnings
               // Replace when minting to treasury is supported
               // {...(index !== 0 ? {onDelete: () => remove(index)} : {})}
               onDelete={handleDeleteRow}

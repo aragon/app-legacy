@@ -14,6 +14,7 @@ type WrappedWalletInputProps = {
   onChange: (...event: unknown[]) => void;
   error?: string;
   resolveLabels?: 'enabled' | 'disabled' | 'onBlur';
+  suppressWarningLabels?: boolean;
 } & Omit<WalletInputProps, 'onValueChange'>;
 
 /**
@@ -26,6 +27,7 @@ export const WrappedWalletInput = forwardRef(
       onChange,
       error,
       resolveLabels = 'disabled',
+      suppressWarningLabels = false,
       ...props
     }: WrappedWalletInputProps,
     ref: Ref<HTMLTextAreaElement> | undefined
@@ -141,12 +143,14 @@ export const WrappedWalletInput = forwardRef(
           {...props}
           ref={areaRef}
         />
-        {showResolvedLabels && !networkSupportsENS && (
-          <AlertInline
-            label={t('inputWallet.ensAlertWarning')}
-            mode="warning"
-          />
-        )}
+        {showResolvedLabels &&
+          !networkSupportsENS &&
+          !suppressWarningLabels && (
+            <AlertInline
+              label={t('inputWallet.ensAlertWarning')}
+              mode="warning"
+            />
+          )}
         {showResolvedLabels && !error && ensResolved && (
           <AlertInline
             label={t('inputWallet.ensAlertSuccess')}
