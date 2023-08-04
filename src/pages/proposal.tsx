@@ -284,7 +284,7 @@ const Proposal: React.FC = () => {
           }
 
           // assume that the action is a valid native withdraw
-          // if it has a token balance
+          // if the token name is the same as the chain native token
           if (
             decodedAction?.tokenName.toLowerCase() ===
             CHAIN_METADATA[network].nativeCurrency.name.toLowerCase()
