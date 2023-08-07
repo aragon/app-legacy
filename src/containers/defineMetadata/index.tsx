@@ -11,11 +11,11 @@ import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 
 import AddLinks from 'components/addLinks';
-import {URL_PATTERN} from 'utils/constants';
+import {useNetwork} from 'context/network';
+import {useProviders} from 'context/providers';
+import {ENS_SUPPORTED_NETWORKS, URL_PATTERN} from 'utils/constants';
 import {isOnlyWhitespace} from 'utils/library';
 import {isDaoEnsNameValid} from 'utils/validators';
-import {useProviders} from 'context/providers';
-import {useNetwork} from 'context/network';
 
 const DAO_LOGO = {
   maxDimension: 2400,
@@ -35,9 +35,11 @@ const DefineMetadata: React.FC<DefineMetadataProps> = ({
   isSettingPage,
 }) => {
   const {t} = useTranslation();
-  const {isL2Network} = useNetwork();
+  const {network} = useNetwork();
   const {control, setError, clearErrors, getValues} = useFormContext();
   const {api: provider} = useProviders();
+
+  const supportsENS = ENS_SUPPORTED_NETWORKS.includes(network);
 
   const handleImageError = useCallback(
     (error: {code: string; message: string}) => {
@@ -126,7 +128,7 @@ const DefineMetadata: React.FC<DefineMetadataProps> = ({
       </FormItem>
 
       {/* ENS Ens Name */}
-      {!isSettingPage && !isL2Network && (
+      {!isSettingPage && supportsENS && (
         <FormItem>
           <Label
             label={t('labels.daoEnsName')}

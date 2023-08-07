@@ -1,8 +1,5 @@
-// import {getDateSections} from 'utils/date';
-
 import {isThisMonth, isThisWeek} from 'date-fns';
-import {useEffect, useState} from 'react';
-
+import {useMemo} from 'react';
 import {HookData, Transfer} from 'utils/types';
 import {useDaoTransfers} from './useDaoTransfers';
 import {usePollTransfersPrices} from './usePollTransfersPrices';
@@ -31,21 +28,7 @@ export default function useCategorizedTransfers(
     data: {transfers, totalTransfersValue},
   } = usePollTransfersPrices(daoTransfers);
 
-  // const sections = getDateSections(); // Sections will dynamically set based
-  // on today date
-
-  // Instead of using hard-coded data, this hook should eventually  get its data
-  // from a graphQL client.
-
-  const init: CategorizedTransfer = {
-    week: [],
-    month: [],
-    year: [],
-  };
-  const [categorizedTransfers, setCategorizedTransfers] =
-    useState<CategorizedTransfer>(init);
-
-  useEffect(() => {
+  const categorizedTransfers = useMemo(() => {
     const week: Transfer[] = [];
     const month: Transfer[] = [];
     const year: Transfer[] = [];
@@ -60,12 +43,9 @@ export default function useCategorizedTransfers(
         year.push(t);
       }
     });
-    setCategorizedTransfers({
-      week,
-      month,
-      year,
-    });
-  }, [transfers, setCategorizedTransfers]);
+
+    return {week, month, year};
+  }, [transfers]);
 
   return {
     data: categorizedTransfers,

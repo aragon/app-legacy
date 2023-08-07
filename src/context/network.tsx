@@ -11,6 +11,7 @@ import {useAccount, useNetwork as useWagmiNetwork} from 'wagmi';
 import {
   CHAIN_METADATA,
   isSupportedChainId,
+  L2_NETWORKS,
   SupportedNetworks,
   toSupportedNetwork,
 } from 'utils/constants';
@@ -96,7 +97,7 @@ export function NetworkProvider({children}: NetworkProviderProps) {
     setNetworkState(determineNetwork(networkUrlSegment, chainId, status));
   }, [chainId, networkUrlSegment, status]);
 
-  const isL2Network = ['polygon', 'mumbai'].includes(networkState);
+  const isL2Network = L2_NETWORKS.includes(networkState);
 
   const changeNetwork = useCallback(
     (network: SupportedNetworks) => {

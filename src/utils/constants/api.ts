@@ -8,8 +8,9 @@ export const FEEDBACK_FORM =
 export const SUBGRAPH_API_URL: SubgraphNetworkUrl = {
   arbitrum: undefined,
   'arbitrum-test': undefined,
-  base: undefined, //TODO: add subgraph url when available
-  'base-goerli': undefined, //TODO: add subgraph url when available
+  base: 'https://subgraph.satsuma-prod.com/qHR2wGfc5RLi6/aragon/osx-baseMainnet/api',
+  'base-goerli':
+    'https://subgraph.satsuma-prod.com/qHR2wGfc5RLi6/aragon/osx-baseGoerli/api',
   ethereum:
     'https://subgraph.satsuma-prod.com/qHR2wGfc5RLi6/aragon/osx-mainnet/version/v1.2.1/api',
   goerli:
@@ -20,9 +21,6 @@ export const SUBGRAPH_API_URL: SubgraphNetworkUrl = {
     'https://subgraph.satsuma-prod.com/qHR2wGfc5RLi6/aragon/osx-polygon/version/v1.2.1/api',
   unsupported: undefined,
 };
-
-export const BASE_URL = 'https://api.coingecko.com/api/v3';
-export const DEFAULT_CURRENCY = 'usd';
 
 export const ARAGON_RPC = 'mainnet.eth.aragon.network';
 
@@ -46,21 +44,3 @@ export const walletConnectProjectID = import.meta.env
   .VITE_WALLET_CONNECT_PROJECT_ID as string;
 
 export const COVALENT_API_KEY = import.meta.env.VITE_COVALENT_API_KEY as string;
-
-// Coingecko Api specific asset platform keys
-export const ASSET_PLATFORMS: Record<SupportedNetworks, string | null> = {
-  arbitrum: 'arbitrum-one',
-  'arbitrum-test': null,
-  base: 'base',
-  'base-goerli': null,
-  ethereum: 'ethereum',
-  goerli: null,
-  polygon: 'polygon-pos',
-  mumbai: null,
-  unsupported: null,
-};
-
-export const NATIVE_TOKEN_ID = {
-  default: 'ethereum',
-  polygon: 'matic-network',
-};

@@ -1,4 +1,4 @@
-import {useEffect, useState} from 'react';
+import {useMemo} from 'react';
 import {TimeFilter} from 'utils/constants';
 import {formatUnits} from 'utils/library';
 import {historicalTokenBalances, timeFilterToMinutes} from 'utils/tokens';
@@ -24,29 +24,30 @@ export const useDaoVault = (
 ) => {
   const {data: daoDetails} = useDaoDetailsQuery();
 
-  const {data: balances} = useDaoBalances(daoDetails?.address || '');
-  const {data: tokensWithMetadata} = useTokenMetadata(balances || []);
-  const {data} = usePollTokenPrices(tokensWithMetadata, options);
+  const {data: balances} = useDaoBalances(daoDetails?.address ?? '');
+  const {data: tokensWithMetadata} = useTokenMetadata(balances);
+  const {data: tokenPrices} = usePollTokenPrices(tokensWithMetadata, options);
 
-  const {data: transfers} = useDaoTransfers(daoDetails?.address || '');
+  const {data: transfers} = useDaoTransfers(daoDetails?.address ?? '');
   const {data: transferPrices} = usePollTransfersPrices(transfers);
-  const [tokens, setTokens] = useState<VaultToken[]>([]);
 
-  useEffect(() => {
-    if (data?.tokens?.length === 0) {
-      setTokens(tokensWithMetadata as VaultToken[]);
-      return;
+  const tokens: VaultToken[] = useMemo(() => {
+    if (tokenPrices?.tokens?.length === 0) {
+      return tokensWithMetadata;
     }
 
     const actualBalance = (bal: bigint, decimals: number) =>
       Number(formatUnits(bal, decimals));
+
     const tokenPreviousBalances = historicalTokenBalances(
       transfers,
       tokensWithMetadata,
       timeFilterToMinutes(options.filter)
     );
-    data.totalAssetChange = 0;
-    data.tokens.forEach(token => {
+
+    tokenPrices.totalAssetChange = 0;
+
+    tokenPrices.tokens.forEach(token => {
       if (token.marketData) {
         const prevBalance =
           tokenPreviousBalances[token.metadata.id]?.balance || BigInt(0);
@@ -55,47 +56,35 @@ export const useDaoVault = (
           (1 + token.marketData.percentageChangedDuringInterval / 100.0);
         const prevBalanceValue =
           actualBalance(prevBalance, token.metadata.decimals) * prevPrice;
+
         token.marketData.valueChangeDuringInterval =
           token.marketData.balanceValue - prevBalanceValue;
-        data.totalAssetChange += token.marketData.valueChangeDuringInterval;
+        tokenPrices.totalAssetChange +=
+          token.marketData.valueChangeDuringInterval;
       }
     });
 
-    const values = data.tokens.map(token => {
+    const values = tokenPrices.tokens.map(token => {
       return {
         ...token,
-        ...(token.marketData?.balanceValue !== undefined
+        ...(token.marketData?.balanceValue !== undefined &&
+        tokenPrices.totalAssetValue > 0
           ? {
               treasurySharePercentage:
-                (token.marketData.balanceValue / data?.totalAssetValue) * 100,
+                (token.marketData.balanceValue / tokenPrices?.totalAssetValue) *
+                100,
             }
           : {}),
       };
     });
 
-    setTokens(values);
-  }, [
-    data.tokens,
-    data?.totalAssetValue,
-    tokensWithMetadata,
-    data,
-    options.filter,
-    transfers,
-    daoDetails?.address,
-  ]);
+    return values;
+  }, [options.filter, tokenPrices, tokensWithMetadata, transfers]);
 
-  // TODO: this is temporary. undo when refactoring hook with react query
-  return daoDetails?.address
-    ? {
-        tokens,
-        totalAssetValue: data.totalAssetValue,
-        totalAssetChange: data.totalAssetChange,
-        transfers: transferPrices.transfers,
-      }
-    : {
-        tokens: [],
-        totalAssetValue: 0,
-        totalAssetChange: 0,
-        transfers: [],
-      };
+  return {
+    tokens,
+    totalAssetValue: tokenPrices.totalAssetValue,
+    totalAssetChange: tokenPrices.totalAssetChange,
+    transfers: transferPrices.transfers,
+  };
 };

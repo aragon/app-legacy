@@ -28,9 +28,20 @@ export const WCActionCard: React.FC<WCActionCardActionCardProps> = ({
     // Note: need to check whether the inputs exist because the decoding
     // and form setting might take a while
     if (action.inputs) {
-      for (const i of action.inputs) {
-        if (POTENTIALLY_TIME_SENSITIVE_FIELDS.has(i.name.toLowerCase()))
+      for (const input of action.inputs) {
+        if (POTENTIALLY_TIME_SENSITIVE_FIELDS.has(input.name.toLowerCase())) {
           return true;
+        }
+
+        // for tuples
+        if (input.type === 'tuple' && Array.isArray(input.value)) {
+          // for whatever reason the name is coming as the array index??
+          for (const name in input.value as {}) {
+            if (POTENTIALLY_TIME_SENSITIVE_FIELDS.has(name.toLowerCase())) {
+              return true;
+            }
+          }
+        }
       }
     }
     return false;

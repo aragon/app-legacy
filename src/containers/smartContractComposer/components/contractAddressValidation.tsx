@@ -44,8 +44,6 @@ import {
 } from 'utils/types';
 import ModalHeader from 'components/modalHeader';
 import {useValidateContract} from 'hooks/useValidateContract';
-import {fetchTokenData} from 'services/prices';
-import {useApolloClient} from '@apollo/client';
 import {getTokenInfo} from 'utils/tokens';
 import {useProviders} from 'context/providers';
 import {useQueryClient} from '@tanstack/react-query';
@@ -53,6 +51,7 @@ import {htmlIn} from 'utils/htmlIn';
 import {trackEvent} from 'services/analytics';
 import {useParams} from 'react-router-dom';
 import {attachEtherNotice} from 'utils/contract';
+import {useTokenAsync} from 'services/token/queries/use-token';
 
 export type AugmentedEtherscanContractResponse = EtherscanContractResponse &
   SourcifyContractResponse & {
@@ -79,12 +78,13 @@ const icons = {
 const ContractAddressValidation: React.FC<Props> = props => {
   const {t} = useTranslation();
   const {alert} = useAlertContext();
-  const client = useApolloClient();
   const {address} = useWallet();
   const {network} = useNetwork();
   const {api: provider} = useProviders();
   const queryClient = useQueryClient();
   const {dao: daoAddressOrEns} = useParams();
+
+  const fetchToken = useTokenAsync();
 
   const {control, resetField, setValue, setError} =
     useFormContext<SccFormData>();
@@ -214,7 +214,11 @@ const ContractAddressValidation: React.FC<Props> = props => {
           provider,
           CHAIN_METADATA[network].nativeCurrency
         ).then(value => {
-          return fetchTokenData(addressField, client, network, value.symbol);
+          return fetchToken({
+            address: addressField,
+            network,
+            symbol: value.symbol,
+          });
         });
 
         setVerificationState(TransactionState.SUCCESS);
@@ -290,10 +294,10 @@ const ContractAddressValidation: React.FC<Props> = props => {
     setData();
   }, [
     addressField,
-    client,
     daoAddressOrEns,
     etherscanData,
     etherscanLoading,
+    fetchToken,
     isTransactionLoading,
     network,
     provider,

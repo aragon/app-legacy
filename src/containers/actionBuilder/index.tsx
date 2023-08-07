@@ -13,7 +13,6 @@ import {useDaoDetailsQuery} from 'hooks/useDaoDetails';
 import {useDaoMembers} from 'hooks/useDaoMembers';
 import {PluginTypes} from 'hooks/usePluginClient';
 import {usePluginSettings} from 'hooks/usePluginSettings';
-import {fetchTokenPrice} from 'services/prices';
 import {formatUnits} from 'utils/library';
 import {
   ActionIndex,
@@ -28,6 +27,7 @@ import SCCAction from './scc';
 import UpdateMinimumApproval from './updateMinimumApproval';
 import WalletConnectAction from './walletConnect';
 import WithdrawAction from './withdraw/withdrawAction';
+import {useTokenAsync} from 'services/token/queries/use-token';
 
 /**
  * This Component is responsible for generating all actions that append to pipeline context (actions)
@@ -121,6 +121,7 @@ const ActionBuilder: React.FC<ActionBuilderProps> = ({allowEmpty = true}) => {
   const {selectedActionIndex: index, actions} = useActionsContext();
   const {data: tokens} = useDaoBalances(daoDetails?.address || '');
   const {setValue, resetField, clearErrors} = useFormContext();
+  const fetchToken = useTokenAsync();
 
   /*************************************************
    *             Callbacks and Handlers            *
@@ -154,9 +155,11 @@ const ActionBuilder: React.FC<ActionBuilderProps> = ({allowEmpty = true}) => {
       formatUnits(token.count, token.decimals)
     );
 
-    fetchTokenPrice(token.address, network, token.symbol).then(price => {
-      setValue(`actions.${index}.tokenPrice`, price);
-    });
+    fetchToken({address: token.address, network, symbol: token.symbol}).then(
+      token => {
+        setValue(`actions.${index}.tokenPrice`, token?.price);
+      }
+    );
   };
 
   return (

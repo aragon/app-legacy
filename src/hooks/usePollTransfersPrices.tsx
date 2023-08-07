@@ -1,11 +1,9 @@
-import {useApolloClient} from '@apollo/client';
 import {TransferType} from '@aragon/sdk-client';
 import {TokenType} from '@aragon/sdk-client-common';
 
 import {useNetwork} from 'context/network';
 import {constants} from 'ethers';
-import {useEffect, useState} from 'react';
-import {fetchTokenData} from 'services/prices';
+import {useMemo} from 'react';
 import {
   CHAIN_METADATA,
   SupportedNetworks,
@@ -16,71 +14,59 @@ import {formatUnits} from 'utils/library';
 import {HookData, ProposalId, Transfer} from 'utils/types';
 import {i18n} from '../../i18n.config';
 import {IAssetTransfers} from './useDaoTransfers';
+import {useTokenList} from 'services/token/queries/use-token';
 
 export const usePollTransfersPrices = (
   transfers: IAssetTransfers
 ): HookData<{transfers: Transfer[]; totalTransfersValue: string}> => {
-  const client = useApolloClient();
   const {network} = useNetwork();
 
-  const [data, setData] = useState<Transfer[]>([]);
-  const [error, setError] = useState<Error>();
-  const [loading, setLoading] = useState(false);
-  const [totalTransfersValue, setTotalTransfersValue] = useState('');
+  const assetTransfers = useMemo(
+    () => mapToDaoTransfers(transfers, network),
+    [transfers, network]
+  );
 
-  useEffect(() => {
-    const fetchMetadata = async (assetTransfers: Transfer[]) => {
-      try {
-        setLoading(true);
-        let total = 0;
+  const tokenListParams = assetTransfers?.map(transfer => ({
+    address: transfer.tokenAddress,
+    network,
+    symbol: transfer.tokenSymbol,
+  }));
+  const tokenResults = useTokenList(tokenListParams);
 
-        // fetch token metadata from external api
-        const metadata = await Promise.all(
-          assetTransfers?.map(transfer => {
-            return fetchTokenData(
-              transfer.tokenAddress,
-              client,
-              network,
-              transfer.tokenSymbol
-            );
-          })
-        );
+  const isLoading = tokenResults.some(result => result.isLoading);
+  const isError = tokenResults.some(result => result.isError);
+  const tokens = tokenResults.map(result => result.data);
 
-        // map metadata to token balances
-        const tokensWithMetadata: Transfer[] = assetTransfers?.map(
-          (transfer, index: number) => {
-            let calculatedPrice = 0;
+  const processedData = useMemo(() => {
+    let total = 0;
 
-            if (metadata[index]?.price) {
-              calculatedPrice =
-                Number(transfer.tokenAmount) * Number(metadata[index]?.price);
-              total = total + calculatedPrice;
-            }
+    const tokensWithMetadata = assetTransfers?.map(
+      (transfer, index: number) => {
+        let calculatedPrice = 0;
 
-            return {
-              ...transfer,
-              usdValue: `$${calculatedPrice.toFixed(2)}`,
-              tokenImgUrl: metadata[index]?.imgUrl || '',
-            };
-          }
-        );
-        setData(tokensWithMetadata);
-        setTotalTransfersValue(`$${total.toFixed(2)}`);
-      } catch (error) {
-        console.error(error);
-        setError(error as Error);
+        if (tokens[index]?.price) {
+          calculatedPrice =
+            Number(transfer.tokenAmount) * Number(tokens[index]?.price);
+          total = total + calculatedPrice;
+        }
+
+        return {
+          ...transfer,
+          usdValue: `$${calculatedPrice.toFixed(2)}`,
+          tokenImgUrl: tokens[index]?.imgUrl ?? '',
+        };
       }
+    );
 
-      setLoading(false);
-    };
+    const totalTransfersValue = `$${total.toFixed(2)}`;
 
-    if (transfers) fetchMetadata(mapToDaoTransfers(transfers, network));
-  }, [network, client, transfers]);
+    return {transfers: tokensWithMetadata, totalTransfersValue};
+  }, [assetTransfers, tokens]);
 
   return {
-    data: {transfers: data, totalTransfersValue},
-    error,
-    isLoading: loading,
+    data: processedData,
+    isError,
+    isLoading,
   };
 };
 

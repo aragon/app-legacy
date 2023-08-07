@@ -33,7 +33,7 @@ const Settings: React.FC = () => {
 
   const networkInfo = CHAIN_METADATA[network];
   const chainLabel = networkInfo.name;
-  const networkType = networkInfo.testnet
+  const networkType = networkInfo.isTestnet
     ? t('labels.testNet')
     : t('labels.mainNet');
 

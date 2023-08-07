@@ -37,7 +37,9 @@ export const getTokenHoldersPaged = async (
   page: number,
   pageSize: 100 | 1000
 ) => {
-  const url = `${CHAIN_METADATA[network].covalentApi}/tokens/${tokenContractAddress}/token_holders_v2/?page-number=${page}&page-size=${pageSize}`;
+  const baseUrl = 'https://api.covalenthq.com/v1/';
+  const {networkId} = CHAIN_METADATA[network].covalent ?? {};
+  const url = `${baseUrl}${networkId}/tokens/${tokenContractAddress}/token_holders_v2/?page-number=${page}&page-size=${pageSize}`;
 
   return await queryClient.fetchQuery({
     queryKey: [

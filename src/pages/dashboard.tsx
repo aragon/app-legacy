@@ -96,7 +96,7 @@ const Dashboard: React.FC = () => {
     // Temporary restriction to Eth mainnet only as spamming was happening on Polygon
     //const networkInfo = CHAIN_METADATA[network];
     if (network === 'ethereum') {
-      // (!networkInfo.testnet) {
+      // (!networkInfo.isTestnet) {
       open('poapClaim');
     }
   });

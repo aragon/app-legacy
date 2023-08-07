@@ -1,16 +1,15 @@
-import {useCallback, useState} from 'react';
+import {useMemo} from 'react';
 
 import type {
+  HookData,
   PollTokenOptions,
   TokenWithMarketData,
   TokenWithMetadata,
 } from 'utils/types';
-
-import useInterval from 'hooks/useInterval';
-import useIsMounted from 'hooks/useIsMounted';
 import {TimeFilter} from 'utils/constants';
 import {formatUnits} from 'utils/library';
-import {fetchTokenMarketData, TokenPrices} from 'services/prices';
+import {useTokenList} from 'services/token/queries/use-token';
+import {useNetwork} from 'context/network';
 
 type PolledTokenPricing = {
   tokens: TokenWithMarketData[];
@@ -29,79 +28,59 @@ type PolledTokenPricing = {
 export const usePollTokenPrices = (
   tokenList: TokenWithMetadata[],
   options: PollTokenOptions = {filter: TimeFilter.day, interval: 300000}
-) => {
-  const isMounted = useIsMounted();
-  const [data, setData] = useState<PolledTokenPricing>({
-    tokens: tokenList as TokenWithMarketData[],
-    totalAssetChange: 0,
-    totalAssetValue: 0,
+): HookData<PolledTokenPricing> => {
+  const {network} = useNetwork();
+
+  const tokenListParams = tokenList.map(({metadata}) => ({
+    address: metadata.id,
+    network,
+    symbol: metadata.symbol,
+  }));
+
+  const tokenResults = useTokenList(tokenListParams, {
+    refetchInterval: options.interval,
   });
-  const [error, setError] = useState<Error>();
-  const [isLoading, setIsLoading] = useState<boolean>(false);
 
-  const transformData = useCallback(
-    (fetchedMarketData: TokenPrices) => {
-      let sum = 0;
-      let balanceValue: number;
-      let tokenMarketData;
+  const isLoading = tokenResults.some(result => result.isLoading);
+  const isError = tokenResults.some(result => result.isError);
+  const fetchedTokens = tokenResults.map(result => result.data);
 
-      // map tokens
-      const tokens: TokenWithMarketData[] = tokenList.map(token => {
-        if (!token.metadata.apiId) return token;
+  const processedTokens = useMemo(() => {
+    let sum = 0;
+    let balanceValue: number;
 
-        tokenMarketData = fetchedMarketData[token.metadata.apiId];
+    // map tokens
+    const tokens: TokenWithMarketData[] = tokenList.map((token, index) => {
+      const tokenMarketData = fetchedTokens[index];
 
-        // calculate current balance value
-        balanceValue =
-          tokenMarketData.price *
-          Number(formatUnits(token.balance, token.metadata.decimals));
-
-        sum += balanceValue;
-
-        return {
-          ...token,
-          marketData: {
-            price: tokenMarketData.price,
-            balanceValue,
-            percentageChangedDuringInterval:
-              tokenMarketData.percentages[options.filter],
-          },
-        } as TokenWithMarketData;
-      });
-
-      if (isMounted()) {
-        setData({
-          tokens,
-          totalAssetValue: sum,
-          totalAssetChange: 0,
-        } as PolledTokenPricing);
+      if (tokenMarketData == null) {
+        return token;
       }
-    },
-    [isMounted, options.filter, tokenList]
-  );
 
-  // fetch token market data and calculate changes over time period
-  const calculatePricing = useCallback(async () => {
-    setIsLoading(true);
+      // calculate current balance value
+      balanceValue =
+        tokenMarketData.price *
+        Number(formatUnits(token.balance, token.metadata.decimals));
 
-    try {
-      const tokenIds = tokenList.map(token => token.metadata.apiId).join(',');
-      const tokenMarketData = await fetchTokenMarketData(tokenIds);
+      sum += balanceValue;
 
-      if (tokenMarketData) transformData(tokenMarketData);
-    } catch (error) {
-      setError(error as Error);
-      console.error(error);
-    } finally {
-      setIsLoading(false);
-    }
-  }, [tokenList, transformData]);
+      return {
+        ...token,
+        marketData: {
+          price: tokenMarketData.price,
+          balanceValue,
+          percentageChangedDuringInterval:
+            tokenMarketData.priceChange[options.filter],
+        },
+      } as TokenWithMarketData;
+    });
 
-  useInterval(() => calculatePricing(), options.interval, tokenList.length > 0);
+    return {tokens, totalAssetValue: sum, totalAssetChange: 0};
+  }, [fetchedTokens, options.filter, tokenList]);
 
   return {
-    data,
-    error,
+    data: processedTokens,
+    isError,
     isLoading,
   };
 };

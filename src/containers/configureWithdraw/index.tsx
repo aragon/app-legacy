@@ -1,4 +1,3 @@
-import {useApolloClient} from '@apollo/client';
 import {
   AlertInline,
   DropdownInput,
@@ -26,7 +25,6 @@ import {useProviders} from 'context/providers';
 import {useDaoDetailsQuery} from 'hooks/useDaoDetails';
 import {useWallet} from 'hooks/useWallet';
 import {WithdrawAction} from 'pages/newWithdraw';
-import {fetchTokenData} from 'services/prices';
 import {CHAIN_METADATA} from 'utils/constants';
 import {Web3Address, handleClipboardActions, toDisplayEns} from 'utils/library';
 import {fetchBalance, getTokenInfo, isNativeToken} from 'utils/tokens';
@@ -36,6 +34,7 @@ import {
   validateTokenAmount,
   validateWeb3Address,
 } from 'utils/validators';
+import {useTokenAsync} from 'services/token/queries/use-token';
 
 type ConfigureWithdrawFormProps = ActionIndex; //extend if necessary
 
@@ -43,15 +42,15 @@ const ConfigureWithdrawForm: React.FC<ConfigureWithdrawFormProps> = ({
   actionIndex,
 }) => {
   const {t} = useTranslation();
-  const client = useApolloClient();
   const {open} = useGlobalModalContext();
   const {network} = useNetwork();
   const {address} = useWallet();
   const {api: provider} = useProviders();
   const {setSelectedActionIndex} = useActionsContext();
   const {alert} = useAlertContext();
-
   const {data: daoDetails} = useDaoDetailsQuery();
+
+  const fetchTokenAsync = useTokenAsync();
 
   const {control, getValues, trigger, resetField, setFocus, setValue} =
     useFormContext();
@@ -121,7 +120,11 @@ const ConfigureWithdrawForm: React.FC<ConfigureWithdrawFormProps> = ({
                 provider,
                 nativeCurrency
               ),
-          fetchTokenData(tokenAddress, client, network, tokenSymbol),
+          fetchTokenAsync({
+            address: tokenAddress,
+            network,
+            symbol: tokenSymbol,
+          }),
           getTokenInfo(tokenAddress, provider, nativeCurrency),
         ]);
 
@@ -170,9 +173,9 @@ const ConfigureWithdrawForm: React.FC<ConfigureWithdrawFormProps> = ({
     isCustomToken,
     provider,
     setValue,
+    fetchTokenAsync,
     tokenAddress,
     trigger,
-    client,
     network,
     daoDetails?.address,
     nativeCurrency,

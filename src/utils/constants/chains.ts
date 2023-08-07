@@ -15,7 +15,13 @@ export function isSupportedChainId(
 }
 
 export const ENS_SUPPORTED_NETWORKS = ['ethereum', 'goerli'];
-export const NETWORKS_WITH_CUSTOM_REGISTRY = ['mumbai', 'polygon'];
+export const NETWORKS_WITH_CUSTOM_REGISTRY = [
+  'base',
+  'base-goerli',
+  'mumbai',
+  'polygon',
+];
+export const L2_NETWORKS = NETWORKS_WITH_CUSTOM_REGISTRY;
 
 const SUPPORTED_NETWORKS = [
   'arbitrum',
@@ -69,18 +75,25 @@ export type NativeTokenData = {
   decimals: number;
 };
 
+export type ApiMetadata = {
+  networkId: string;
+  nativeTokenId: string;
+};
+
 export type ChainData = {
   id: SupportedChainID;
   name: string;
   domain: NetworkDomain;
-  testnet: boolean;
+  isTestnet: boolean;
+  mainnet?: SupportedNetworks;
   explorer: string;
   logo: string;
   rpc: string[];
   nativeCurrency: NativeTokenData;
   etherscanApi: string;
   etherscanApiKey?: string;
-  covalentApi?: string;
+  covalent?: ApiMetadata;
+  coingecko?: ApiMetadata;
   alchemyApi: string;
   supportsEns: boolean;
   ipfs?: string;
@@ -97,7 +110,7 @@ export const CHAIN_METADATA: ChainList = {
     domain: 'L2 Blockchain',
     logo: 'https://bridge.arbitrum.io/logo.png',
     explorer: 'https://arbiscan.io/',
-    testnet: false,
+    isTestnet: false,
     rpc: ['https://arb1.arbitrum.io/rpc', 'wss://arb1.arbitrum.io/ws'],
     nativeCurrency: {
       name: 'Ether',
@@ -106,6 +119,14 @@ export const CHAIN_METADATA: ChainList = {
     },
     etherscanApi: 'https://api.arbiscan.io/api',
     alchemyApi: 'https://arb-mainnet.g.alchemy.com/v2',
+    coingecko: {
+      networkId: 'arbitrum-one',
+      nativeTokenId: 'arbitrum',
+    },
+    covalent: {
+      networkId: 'arbitrum-mainnet',
+      nativeTokenId: '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee',
+    },
     supportsEns: false,
     ipfs: 'https://prod.ipfs.aragon.network',
   },
@@ -114,17 +135,20 @@ export const CHAIN_METADATA: ChainList = {
     name: 'Base',
     domain: 'L2 Blockchain',
     logo: 'https://mirror-media.imgix.net/publication-images/cgqxxPdUFBDjgKna_dDir.png?h=250&w=250',
-    explorer: 'https://basescan.org',
-    testnet: false,
+    explorer: 'https://basescan.org/',
+    isTestnet: false,
     rpc: ['https://developer-access-mainnet.base.org'],
     nativeCurrency: {
-      name: 'Base',
+      name: 'Ether',
       symbol: 'ETH',
       decimals: 18,
     },
     etherscanApi: 'https://api.basescan.org/api',
     etherscanApiKey: '',
-    covalentApi: '',
+    covalent: {
+      networkId: 'base-mainnet',
+      nativeTokenId: '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee',
+    },
     alchemyApi: '',
     supportsEns: false,
     ipfs: 'https://prod.ipfs.aragon.network',
@@ -134,17 +158,21 @@ export const CHAIN_METADATA: ChainList = {
     name: 'Base Goerli',
     domain: 'L2 Blockchain',
     logo: 'https://mirror-media.imgix.net/publication-images/cgqxxPdUFBDjgKna_dDir.png?h=250&w=250',
-    explorer: 'https://goerli.basescan.org',
-    testnet: true,
+    explorer: 'https://goerli.basescan.org/',
+    isTestnet: true,
+    mainnet: 'base',
     rpc: ['https://goerli.base.org'],
     nativeCurrency: {
-      name: 'Base Goerli',
+      name: 'Ether',
       symbol: 'ETH',
       decimals: 18,
     },
     etherscanApi: 'https://api.basescan.org/api',
     etherscanApiKey: '',
-    covalentApi: '',
+    covalent: {
+      networkId: 'base-testnet',
+      nativeTokenId: '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee',
+    },
     alchemyApi: '',
     supportsEns: false,
     ipfs: 'https://prod.ipfs.aragon.network',
@@ -155,7 +183,7 @@ export const CHAIN_METADATA: ChainList = {
     domain: 'L1 Blockchain',
     logo: 'https://assets.coingecko.com/coins/images/279/large/ethereum.png?1595348880',
     explorer: 'https://etherscan.io/',
-    testnet: false,
+    isTestnet: false,
     rpc: [
       `https://mainnet.infura.io/v3/${infuraApiKey}`,
       `wss://mainnet.infura.io/ws/v3/${infuraApiKey}`,
@@ -167,7 +195,14 @@ export const CHAIN_METADATA: ChainList = {
     },
     etherscanApi: 'https://api.etherscan.io/api',
     etherscanApiKey: etherscanApiKey,
-    covalentApi: 'https://api.covalenthq.com/v1/eth-mainnet',
+    coingecko: {
+      networkId: 'ethereum',
+      nativeTokenId: 'ethereum',
+    },
+    covalent: {
+      networkId: 'eth-mainnet',
+      nativeTokenId: '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee',
+    },
     alchemyApi: 'https://eth-mainnet.g.alchemy.com/v2',
     supportsEns: true,
     ipfs: 'https://prod.ipfs.aragon.network',
@@ -178,7 +213,7 @@ export const CHAIN_METADATA: ChainList = {
     domain: 'L2 Blockchain',
     logo: 'https://assets.coingecko.com/coins/images/4713/large/matic-token-icon.png?1624446912',
     explorer: 'https://polygonscan.com/',
-    testnet: false,
+    isTestnet: false,
     rpc: [
       `https://polygon-mainnet.infura.io/v3/${infuraApiKey}`,
       `wss://polygon-mainnet.infura.io/ws/v3/${infuraApiKey}`,
@@ -190,7 +225,14 @@ export const CHAIN_METADATA: ChainList = {
     },
     etherscanApi: 'https://api.polygonscan.com/api',
     etherscanApiKey: polygonscanApiKey,
-    covalentApi: 'https://api.covalenthq.com/v1/matic-mainnet',
+    coingecko: {
+      networkId: 'polygon-pos',
+      nativeTokenId: 'matic-network',
+    },
+    covalent: {
+      networkId: 'matic-mainnet',
+      nativeTokenId: '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee',
+    },
     alchemyApi: 'https://polygon-mainnet.g.alchemy.com/v2',
     supportsEns: false,
     ipfs: 'https://prod.ipfs.aragon.network',
@@ -201,7 +243,8 @@ export const CHAIN_METADATA: ChainList = {
     domain: 'L2 Blockchain',
     logo: 'https://bridge.arbitrum.io/logo.png',
     explorer: 'https://testnet.arbiscan.io/',
-    testnet: true,
+    isTestnet: true,
+    mainnet: 'arbitrum',
     rpc: ['https://goerli-rollup.arbitrum.io/rpc'],
     nativeCurrency: {
       name: 'Goerli Ether',
@@ -210,6 +253,10 @@ export const CHAIN_METADATA: ChainList = {
     },
     etherscanApi: 'https://api-goerli.arbiscan.io/api',
     alchemyApi: 'https://arb-goerli.g.alchemy.com/v2',
+    covalent: {
+      networkId: 'arbitrum-goerli',
+      nativeTokenId: '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee',
+    },
     supportsEns: false,
     ipfs: 'https://test.ipfs.aragon.network',
   },
@@ -219,7 +266,8 @@ export const CHAIN_METADATA: ChainList = {
     domain: 'L1 Blockchain',
     logo: 'https://assets.coingecko.com/coins/images/279/large/ethereum.png?1595348880',
     explorer: 'https://goerli.etherscan.io/',
-    testnet: true,
+    isTestnet: true,
+    mainnet: 'ethereum',
     rpc: [
       `https://goerli.infura.io/v3/${infuraApiKey}`,
       `wss://goerli.infura.io/ws/v3/${infuraApiKey}`,
@@ -231,7 +279,10 @@ export const CHAIN_METADATA: ChainList = {
     },
     etherscanApi: 'https://api-goerli.etherscan.io/api',
     etherscanApiKey: etherscanApiKey,
-    covalentApi: 'https://api.covalenthq.com/v1/eth-goerli',
+    covalent: {
+      networkId: 'eth-goerli',
+      nativeTokenId: '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee',
+    },
     alchemyApi: 'https://eth-goerli.g.alchemy.com/v2',
     supportsEns: true,
     ipfs: 'https://test.ipfs.aragon.network',
@@ -242,7 +293,8 @@ export const CHAIN_METADATA: ChainList = {
     domain: 'L2 Blockchain',
     logo: 'https://assets.coingecko.com/coins/images/4713/large/matic-token-icon.png?1624446912',
     explorer: 'https://mumbai.polygonscan.com/',
-    testnet: true,
+    isTestnet: true,
+    mainnet: 'polygon',
     rpc: [
       `https://polygon-mumbai.infura.io/v3/${infuraApiKey}`,
       `wss://polygon-mumbai.infura.io/ws/v3/${infuraApiKey}`,
@@ -254,7 +306,10 @@ export const CHAIN_METADATA: ChainList = {
     },
     etherscanApi: 'https://api-testnet.polygonscan.com/api',
     etherscanApiKey: polygonscanApiKey,
-    covalentApi: 'https://api.covalenthq.com/v1/matic-mumbai',
+    covalent: {
+      networkId: 'matic-mumbai',
+      nativeTokenId: '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee',
+    },
     alchemyApi: 'https://polygon-mumbai.g.alchemy.com/v2',
     supportsEns: false,
     ipfs: 'https://test.ipfs.aragon.network',
@@ -265,7 +320,7 @@ export const CHAIN_METADATA: ChainList = {
     domain: 'L1 Blockchain',
     logo: '',
     explorer: '',
-    testnet: false,
+    isTestnet: false,
     rpc: [],
     nativeCurrency: {
       name: '',
