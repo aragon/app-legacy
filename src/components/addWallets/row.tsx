@@ -26,7 +26,6 @@ import {MultisigWalletField} from 'components/multisigWallets/row';
 
 type WalletRowProps = {
   index: number;
-  suppressAddressWarnings?: boolean;
   onDelete?: (index: number) => void;
 };
 
@@ -34,11 +33,7 @@ export type TokenVotingWalletField = MultisigWalletField & {
   amount: string;
 };
 
-const WalletRow: React.FC<WalletRowProps> = ({
-  index,
-  onDelete,
-  suppressAddressWarnings = false,
-}) => {
+const WalletRow: React.FC<WalletRowProps> = ({index, onDelete}) => {
   const {t} = useTranslation();
   const {alert} = useAlertContext();
   const {api: provider} = useProviders();
@@ -176,7 +171,6 @@ const WalletRow: React.FC<WalletRowProps> = ({
                 resolveLabels="onBlur"
                 ref={ref}
                 name={name}
-                suppressWarningLabels={suppressAddressWarnings}
               />
             </InputContainer>
           </AddressWrapper>

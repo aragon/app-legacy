@@ -14,7 +14,6 @@ type WrappedWalletInputProps = {
   onChange: (...event: unknown[]) => void;
   error?: string;
   resolveLabels?: 'enabled' | 'disabled' | 'onBlur';
-  suppressWarningLabels?: boolean;
 } & Omit<WalletInputProps, 'onValueChange'>;
 
 /**
@@ -27,7 +26,6 @@ export const WrappedWalletInput = forwardRef(
       onChange,
       error,
       resolveLabels = 'disabled',
-      suppressWarningLabels = false,
       ...props
     }: WrappedWalletInputProps,
     ref: Ref<HTMLTextAreaElement> | undefined
@@ -44,6 +42,11 @@ export const WrappedWalletInput = forwardRef(
     const [addressValidated, setAddressValidated] = useState(false);
 
     const networkSupportsENS = ENS_SUPPORTED_NETWORKS.includes(network);
+
+    const inputValue = props.value.ensName || props.value.address;
+    const isEnsAttemptedInput =
+      !!inputValue && inputValue.toLowerCase().includes('.eth');
+
     const showResolvedLabels =
       resolveLabels === 'enabled' || resolveLabels === 'onBlur';
 
@@ -143,14 +146,12 @@ export const WrappedWalletInput = forwardRef(
           {...props}
           ref={areaRef}
         />
-        {showResolvedLabels &&
-          !networkSupportsENS &&
-          !suppressWarningLabels && (
-            <AlertInline
-              label={t('inputWallet.ensAlertWarning')}
-              mode="warning"
-            />
-          )}
+        {showResolvedLabels && !networkSupportsENS && isEnsAttemptedInput && (
+          <AlertInline
+            label={t('inputWallet.ensAlertWarning')}
+            mode="warning"
+          />
+        )}
         {showResolvedLabels && !error && ensResolved && (
           <AlertInline
             label={t('inputWallet.ensAlertSuccess')}
