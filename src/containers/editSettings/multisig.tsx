@@ -67,7 +67,7 @@ export const EditMsSettings: React.FC<EditMsSettingsProps> = ({daoDetails}) => {
     daoSummary,
     daoLogo,
     resourceLinks,
-    eligibleProposer,
+    formEligibleProposer,
     multisigMinimumApprovals,
   ] = useWatch({
     name: [
@@ -157,13 +157,12 @@ export const EditMsSettings: React.FC<EditMsSettingsProps> = ({daoDetails}) => {
     return multisigMinimumApprovals !== settings.minApprovals;
   }, [multisigMinimumApprovals, settings.minApprovals]);
 
-  let isCommunityChanged = false;
-  let parsedEligibleProposer: MultisigProposerEligibility = 'multisig';
-
-  if (Object.hasOwn(settings, 'onlyListed')) {
-    parsedEligibleProposer = settings.onlyListed ? 'multisig' : 'anyone';
-    isCommunityChanged = eligibleProposer !== parsedEligibleProposer;
+  let daoEligibleProposer: MultisigProposerEligibility = formEligibleProposer;
+  if (Object.keys(settings).length !== 0 && settings.constructor === Object) {
+    daoEligibleProposer = settings.onlyListed ? 'multisig' : 'anyone';
   }
+
+  const isCommunityChanged = daoEligibleProposer !== formEligibleProposer;
 
   const setCurrentMetadata = useCallback(() => {
     setValue('daoName', daoDetails?.metadata.name);
@@ -194,8 +193,8 @@ export const EditMsSettings: React.FC<EditMsSettingsProps> = ({daoDetails}) => {
   ]);
 
   const setCurrentCommunity = useCallback(() => {
-    setValue('eligibilityType', parsedEligibleProposer);
-  }, [parsedEligibleProposer, setValue]);
+    setValue('eligibilityType', daoEligibleProposer);
+  }, [daoEligibleProposer, setValue]);
 
   const setCurrentGovernance = useCallback(() => {
     const multisigWallets = members.members as MultisigMember[];
@@ -224,17 +223,10 @@ export const EditMsSettings: React.FC<EditMsSettingsProps> = ({daoDetails}) => {
   }, [isCommunityChanged, isGovernanceChanged, isMetadataChanged, setValue]);
 
   useEffect(() => {
-    if (!isMetadataChanged) setCurrentMetadata();
-    if (!isGovernanceChanged) setCurrentGovernance();
-    if (!isCommunityChanged) setCurrentCommunity();
-  }, [
-    isCommunityChanged,
-    isGovernanceChanged,
-    isMetadataChanged,
-    setCurrentCommunity,
-    setCurrentGovernance,
-    setCurrentMetadata,
-  ]);
+    setCurrentMetadata();
+    setCurrentGovernance();
+    setCurrentCommunity();
+  }, [setCurrentCommunity, setCurrentGovernance, setCurrentMetadata]);
 
   const metadataAction = [
     {
