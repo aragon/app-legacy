@@ -11,11 +11,12 @@ import {
   isTokenVotingSettings,
   usePluginSettings,
 } from 'hooks/usePluginSettings';
+import {toDisplayEns} from 'utils/library';
 import {CompareMetadata} from './compareMetadata';
 import {CompareMvCommunity} from './majorityVoting/compareCommunity';
 import {CompareMvGovernance} from './majorityVoting/compareGovernance';
+import {CompareMsCommunity} from './multisig/compareCommunity';
 import {CompareMsGovernance} from './multisig/compareGovernance';
-import {toDisplayEns} from 'utils/library';
 
 export type Views = 'old' | 'new';
 
@@ -81,10 +82,17 @@ const CompareSettings: React.FC = () => {
           />
         </>
       ) : isMultisigVotingSettings(pluginSettings) ? (
-        <CompareMsGovernance
-          daoSettings={pluginSettings}
-          view={selectedButton}
-        />
+        <>
+          <CompareMsCommunity
+            daoAddressOrEns={daoAddressOrEns as string}
+            daoSettings={pluginSettings}
+            view={selectedButton}
+          />
+          <CompareMsGovernance
+            daoSettings={pluginSettings}
+            view={selectedButton}
+          />
+        </>
       ) : (
         <></>
       )}

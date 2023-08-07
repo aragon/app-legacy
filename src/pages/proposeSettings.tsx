@@ -335,7 +335,7 @@ const ProposeSettingWrapper: React.FC<Props> = ({
             name: 'modify_multisig_voting_settings',
             inputs: {
               minApprovals: multisigMinimumApprovals,
-              onlyListed: pluginSettings.onlyListed,
+              onlyListed: eligibilityType === 'multisig',
             },
           };
 

@@ -1,10 +1,10 @@
-import {DaoDetails, MultisigVotingSettings} from '@aragon/sdk-client';
 import {
   AlertInline,
   ButtonText,
   IconGovernance,
   ListItemAction,
 } from '@aragon/ods';
+import {DaoDetails, MultisigVotingSettings} from '@aragon/sdk-client';
 import React, {useCallback, useEffect, useMemo} from 'react';
 import {
   useFieldArray,
@@ -17,6 +17,10 @@ import {generatePath, useNavigate} from 'react-router-dom';
 import styled from 'styled-components';
 
 import {AccordionItem, AccordionMultiple} from 'components/accordionMethod';
+import {
+  MultisigEligibility,
+  MultisigProposerEligibility,
+} from 'components/multisigEligibility';
 import {Loading} from 'components/temporary';
 import {PageWrapper} from 'components/wrappers';
 import ConfigureCommunity from 'containers/configureCommunity';
@@ -27,8 +31,8 @@ import {PluginTypes} from 'hooks/usePluginClient';
 import {usePluginSettings} from 'hooks/usePluginSettings';
 import useScreen from 'hooks/useScreen';
 import {Layout} from 'pages/settings';
-import {ProposeNewSettings} from 'utils/paths';
 import {toDisplayEns} from 'utils/library';
+import {ProposeNewSettings} from 'utils/paths';
 
 type EditMsSettingsProps = {
   daoDetails: DaoDetails;
@@ -63,6 +67,7 @@ export const EditMsSettings: React.FC<EditMsSettingsProps> = ({daoDetails}) => {
     daoSummary,
     daoLogo,
     resourceLinks,
+    eligibleProposer,
     multisigMinimumApprovals,
   ] = useWatch({
     name: [
@@ -70,6 +75,7 @@ export const EditMsSettings: React.FC<EditMsSettingsProps> = ({daoDetails}) => {
       'daoSummary',
       'daoLogo',
       'daoLinks',
+      'eligibilityType',
       'multisigMinimumApprovals',
     ],
     control,
@@ -151,6 +157,14 @@ export const EditMsSettings: React.FC<EditMsSettingsProps> = ({daoDetails}) => {
     return multisigMinimumApprovals !== settings.minApprovals;
   }, [multisigMinimumApprovals, settings.minApprovals]);
 
+  let isCommunityChanged = false;
+  let parsedEligibleProposer: MultisigProposerEligibility = 'multisig';
+
+  if (Object.hasOwn(settings, 'onlyListed')) {
+    parsedEligibleProposer = settings.onlyListed ? 'multisig' : 'anyone';
+    isCommunityChanged = eligibleProposer !== parsedEligibleProposer;
+  }
+
   const setCurrentMetadata = useCallback(() => {
     setValue('daoName', daoDetails?.metadata.name);
     setValue('daoSummary', daoDetails?.metadata.description);
@@ -179,6 +193,10 @@ export const EditMsSettings: React.FC<EditMsSettingsProps> = ({daoDetails}) => {
     replace,
   ]);
 
+  const setCurrentCommunity = useCallback(() => {
+    setValue('eligibilityType', parsedEligibleProposer);
+  }, [parsedEligibleProposer, setValue]);
+
   const setCurrentGovernance = useCallback(() => {
     const multisigWallets = members.members as MultisigMember[];
     setValue('multisigMinimumApprovals', settings.minApprovals);
@@ -191,27 +209,29 @@ export const EditMsSettings: React.FC<EditMsSettingsProps> = ({daoDetails}) => {
     );
   }, [daoDetails?.plugins, members.members, settings.minApprovals, setValue]);
 
-  const settingsUnchanged = !isGovernanceChanged && !isMetadataChanged;
+  const settingsUnchanged =
+    !isGovernanceChanged && !isMetadataChanged && !isCommunityChanged;
 
   const handleResetChanges = () => {
     setCurrentMetadata();
+    setCurrentCommunity();
     setCurrentGovernance();
   };
 
   useEffect(() => {
     setValue('isMetadataChanged', isMetadataChanged);
-    setValue('areSettingsChanged', isMetadataChanged || isGovernanceChanged);
-
-    // intentionally using settingsUnchanged because it monitors all
-    // the setting changes
-  }, [isGovernanceChanged, isMetadataChanged, setValue]);
+    setValue('areSettingsChanged', isCommunityChanged || isGovernanceChanged);
+  }, [isCommunityChanged, isGovernanceChanged, isMetadataChanged, setValue]);
 
   useEffect(() => {
     if (!isMetadataChanged) setCurrentMetadata();
     if (!isGovernanceChanged) setCurrentGovernance();
+    if (!isCommunityChanged) setCurrentCommunity();
   }, [
+    isCommunityChanged,
     isGovernanceChanged,
     isMetadataChanged,
+    setCurrentCommunity,
     setCurrentGovernance,
     setCurrentMetadata,
   ]);
@@ -226,6 +246,19 @@ export const EditMsSettings: React.FC<EditMsSettingsProps> = ({daoDetails}) => {
         />
       ),
       callback: setCurrentMetadata,
+    },
+  ];
+
+  const communityAction = [
+    {
+      component: (
+        <ListItemAction
+          title={t('settings.resetChanges')}
+          bgWhite
+          mode={isCommunityChanged ? 'default' : 'disabled'}
+        />
+      ),
+      callback: setCurrentCommunity,
     },
   ];
 
@@ -276,6 +309,21 @@ export const EditMsSettings: React.FC<EditMsSettingsProps> = ({daoDetails}) => {
                   <DefineMetadata bgWhite arrayName="daoLinks" isSettingPage />
                 </AccordionContent>
               </AccordionItem>
+
+              <AccordionItem
+                type="action-builder"
+                name="community"
+                methodName={t('navLinks.community')}
+                alertLabel={
+                  isCommunityChanged ? t('settings.newSettings') : undefined
+                }
+                dropdownItems={communityAction}
+              >
+                <AccordionContent>
+                  <MultisigEligibility />
+                </AccordionContent>
+              </AccordionItem>
+
               <AccordionItem
                 type="action-builder"
                 name="governance"
