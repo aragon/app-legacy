@@ -69,6 +69,13 @@ import {ProposalFormData, ProposalId, ProposalResource} from 'utils/types';
 import {useGlobalModalContext} from './globalModals';
 import {useNetwork} from './network';
 import {useProviders} from './providers';
+import {
+  proposalToElection,
+  UseCreateElectionProps,
+} from 'hooks/useVocdoniElection';
+import {useClient as useVocdoniClient} from 'hooks/useVocdoniSdk';
+import {Election, UnpublishedElection} from '@vocdoni/sdk';
+
 
 type Props = {
   showTxModal: boolean;
@@ -293,47 +300,49 @@ const CreateProposalWrapper: React.FC<Props> = ({
   ]);
 
   // Because getValues does NOT get updated on each render, leaving this as
-  // a function to be called when data is needed instead of a memoized value
-  const getProposalCreationParams =
-    useCallback(async (): Promise<CreateMajorityVotingProposalParams> => {
-      const [
-        title,
-        summary,
-        description,
-        resources,
-        startDate,
-        startTime,
-        startUtc,
-        endDate,
-        endTime,
-        endUtc,
-        durationSwitch,
-        startSwitch,
-      ] = getValues([
-        'proposalTitle',
-        'proposalSummary',
-        'proposal',
-        'links',
-        'startDate',
-        'startTime',
-        'startUtc',
-        'endDate',
-        'endTime',
-        'endUtc',
-        'durationSwitch',
-        'startSwitch',
-      ]);
+  // a function to be called when data is needed instead of a memorized value
+  const getProposalCreationParams = useCallback(async (): Promise<{
+    params: CreateMajorityVotingProposalParams;
+    metadata: ProposalMetadata;
+  }> => {
+    const [
+      title,
+      summary,
+      description,
+      resources,
+      startDate,
+      startTime,
+      startUtc,
+      endDate,
+      endTime,
+      endUtc,
+      durationSwitch,
+      startSwitch,
+    ] = getValues([
+      'proposalTitle',
+      'proposalSummary',
+      'proposal',
+      'links',
+      'startDate',
+      'startTime',
+      'startUtc',
+      'endDate',
+      'endTime',
+      'endUtc',
+      'durationSwitch',
+      'startSwitch',
+    ]);
 
-      const actions = await encodeActions();
+    const actions = await encodeActions();
 
-      const metadata: ProposalMetadata = {
-        title,
-        summary,
-        description,
-        resources: resources.filter((r: ProposalResource) => r.name && r.url),
-      };
+    const metadata: ProposalMetadata = {
+      title,
+      summary,
+      description,
+      resources: resources.filter((r: ProposalResource) => r.name && r.url),
+    };
 
-      const ipfsUri = await pluginClient?.methods.pinMetadata(metadata);
+    const ipfsUri = await pluginClient?.methods.pinMetadata(metadata);
 
       // getting dates
       let startDateTime: Date;
@@ -415,9 +424,9 @@ const CreateProposalWrapper: React.FC<Props> = ({
             endDateTime.valueOf() +
             (startDateTime.valueOf() - legacyStartDate.valueOf());
 
-          endDateTime = new Date(endMills);
-        }
+        endDateTime = new Date(endMills);
       }
+    }
 
       /**
        * In case "now" as start time is selected, we want
@@ -704,15 +713,68 @@ const CreateProposalWrapper: React.FC<Props> = ({
     tokenPrice,
   ]);
 
+  const {client: vocdoniClient, census3Client} = useVocdoniClient();
+
+  const createVocdoniElection = useCallback(
+    async (electionData: UseCreateElectionProps) => {
+      const election: UnpublishedElection = Election.from({
+        title: electionData.title,
+        description: electionData.description,
+        endDate: electionData.endDate,
+        startDate: electionData.startDate,
+        census: electionData.census,
+      });
+      election.addQuestion(electionData.question, '', [
+        {title: 'Yes', value: 0},
+        {title: 'No', value: 1},
+        {title: 'Abstain', value: 2},
+      ]);
+      return await vocdoniClient.createElection(election);
+    },
+    [vocdoniClient]
+  );
+
+  const handleOffChainProposal = useCallback(async () => {
+    const {params, metadata} = await getProposalCreationParams();
+
+    if (!pluginClient || !daoToken) {
+      return new Error('ERC20 SDK client is not initialized correctly');
+    }
+
+    // Check if the census is already sync
+    const censusToken = await census3Client.getToken(daoToken?.address);
+    // todo(kon): handle token is not sync
+    if (!censusToken.status.synced) {
+      return new Error('Census token is not already calculated');
+    }
+
+    // todo(kon): Check if the account is already created, if not, create it
+
+    // Create the vocdoni election¡
+    const census = await census3Client.createTokenCensus(censusToken.id);
+    const electionId = await createVocdoniElection(
+      proposalToElection({metadata, data: params, census})
+    );
+
+    // todo(kon) Register election on the DAO
+  }, [
+    census3Client,
+    createVocdoniElection,
+    daoToken,
+    getProposalCreationParams,
+    pluginClient,
+  ]);
+
   /*************************************************
    *                     Effects                   *
    *************************************************/
   useEffect(() => {
     // set proposal creation data
     async function setProposalData() {
-      if (showTxModal && creationProcessState === TransactionState.WAITING)
-        setProposalCreationData(await getProposalCreationParams());
-      else if (!showTxModal) setProposalCreationData(undefined);
+      if (showTxModal && creationProcessState === TransactionState.WAITING) {
+        const {params} = await getProposalCreationParams();
+        setProposalCreationData(params);
+      } else if (!showTxModal) setProposalCreationData(undefined);
     }
 
     setProposalData();
