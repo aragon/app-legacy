@@ -5,7 +5,7 @@ import styled from 'styled-components';
 
 import useScreen from 'hooks/useScreen';
 import {useResolveDaoAvatar} from 'hooks/useResolveDaoAvatar';
-import {getSupportedNetworkByChainId} from 'utils/constants';
+import {CHAIN_METADATA, getSupportedNetworkByChainId} from 'utils/constants';
 
 export interface IDaoCardProps {
   name: string;
@@ -39,6 +39,7 @@ export const DaoCard = (props: IDaoCardProps) => {
   const daoType = useGetDaoType(props.daoType);
 
   const {avatar} = useResolveDaoAvatar(props.logo);
+  const network = getSupportedNetworkByChainId(props.chainId) ?? 'unsupported';
 
   return (
     <Container data-testid="daoCard" onClick={props.onClick}>
@@ -57,7 +58,7 @@ export const DaoCard = (props: IDaoCardProps) => {
       <DaoMetadataWrapper>
         <IconWrapper>
           <StyledIconBlock />
-          <IconLabel>{getSupportedNetworkByChainId(props.chainId)}</IconLabel>
+          <IconLabel>{CHAIN_METADATA[network].name}</IconLabel>
         </IconWrapper>
         <IconWrapper>
           <StyledIconCommunity />
