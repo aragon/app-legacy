@@ -63,7 +63,7 @@ import {
   offsetToMills,
 } from 'utils/date';
 import {customJSONReplacer, readFile, toDisplayEns} from 'utils/library';
-import {EditSettings, Proposal} from 'utils/paths';
+import {EditSettings, Proposal, Settings} from 'utils/paths';
 import {CacheProposalParams, mapToCacheProposal} from 'utils/proposals';
 import {
   Action,
@@ -284,6 +284,9 @@ const ProposeSettingWrapper: React.FC<Props> = ({
 
         let daoLogoFile = '';
 
+        if (daoDetails && !daoName)
+          navigate(generatePath(Settings, {network, dao: daoDetails?.address}));
+
         if (daoLogo?.startsWith?.('blob'))
           daoLogoFile = (await fetch(daoLogo).then(r => r.blob())) as string;
         else daoLogoFile = daoLogo;
@@ -342,7 +345,16 @@ const ProposeSettingWrapper: React.FC<Props> = ({
     }
 
     SetSettingActions();
-  }, [daoToken, pluginSettings, getValues, setValue, tokenSupply?.raw]);
+  }, [
+    daoToken,
+    pluginSettings,
+    getValues,
+    setValue,
+    tokenSupply?.raw,
+    daoDetails,
+    navigate,
+    network,
+  ]);
 
   useEffect(() => {
     // encoding actions
