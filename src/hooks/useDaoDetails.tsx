@@ -42,8 +42,8 @@ async function fetchDaoDetails(
   const daoDetails = await client.methods.getDao(daoAddressOrEns.toLowerCase());
   const avatar = daoDetails?.metadata.avatar;
   if (avatar)
-    if (avatar && typeof avatar !== 'string') {
-      daoDetails!.metadata.avatar = URL.createObjectURL(avatar);
+    if (typeof avatar !== 'string') {
+      daoDetails.metadata.avatar = URL.createObjectURL(avatar);
     } else if (/^ipfs/.test(avatar) && client) {
       try {
         const cid = resolveIpfsCid(avatar);
@@ -51,12 +51,12 @@ async function fetchDaoDetails(
         const imageBytes = await ipfsClient.cat(cid); // Uint8Array
         const imageBlob = new Blob([imageBytes] as unknown as BlobPart[]);
 
-        daoDetails!.metadata.avatar = URL.createObjectURL(imageBlob);
+        daoDetails.metadata.avatar = URL.createObjectURL(imageBlob);
       } catch (err) {
         console.warn('Error resolving DAO avatar IPFS Cid', err);
       }
     } else {
-      daoDetails!.metadata.avatar = avatar;
+      daoDetails.metadata.avatar = avatar;
     }
 
   return daoDetails;

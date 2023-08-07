@@ -128,7 +128,7 @@ export const EditMsSettings: React.FC<EditMsSettingsProps> = ({daoDetails}) => {
   ]);
 
   const isMetadataChanged = useMemo(() => {
-    if (!daoDetails?.metadata.name || !daoName || daoName === '') return false;
+    if (!daoDetails?.metadata.name || !daoName?.trim()) return false;
     return (
       daoName !== daoDetails.metadata.name ||
       daoSummary !== daoDetails.metadata.description ||
