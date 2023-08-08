@@ -1,13 +1,12 @@
 import {useNetwork} from 'context/network';
 import {useCallback, useState, useEffect} from 'react';
 import {PairingTypes, SessionTypes} from '@walletconnect/types';
-
+import * as encoding from '@walletconnect/encoding';
 import {walletConnectInterceptor} from 'services/walletConnectInterceptor';
 import {CHAIN_METADATA, SUPPORTED_CHAIN_ID} from 'utils/constants';
 import {Web3WalletTypes} from '@walletconnect/web3wallet';
 import {useDaoDetailsQuery} from 'hooks/useDaoDetails';
-import {useSignMessage} from 'wagmi';
-import {utils} from 'ethers';
+import {useSignMessage, useSignTypedData} from 'wagmi';
 
 export type WcSession = SessionTypes.Struct;
 export type WcActionRequest =
@@ -31,6 +30,7 @@ export type WcInterceptorValues = {
 export function useWalletConnectInterceptor(): WcInterceptorValues {
   const {network} = useNetwork();
   const {signMessageAsync} = useSignMessage();
+  const {signTypedDataAsync} = useSignTypedData();
 
   const {data: daoDetails} = useDaoDetailsQuery();
   const [sessions, setSessions] = useState<WcSession[]>(
@@ -86,24 +86,27 @@ export function useWalletConnectInterceptor(): WcInterceptorValues {
   const handleSignRequest = useCallback(
     async (event: Web3WalletTypes.SessionRequest) => {
       const {id, params, topic} = event;
+
       const isPersonalSign = params.request.method === 'personal_sign';
+      const isTypedMessage = params.request.method.includes('signTypedData');
+
       const message = params.request.params[isPersonalSign ? 0 : 1];
-      const signature = await signMessageAsync({message});
-      const signResponse = {id, result: signature, jsonrpc: '2.0'};
-      const hash = utils.hashMessage(message);
-      const recoveredAddress = utils.recoverAddress(hash, signature);
-      const verifyMessage = utils.verifyMessage(message, signature);
+      const signResponse = {id, result: '', jsonrpc: '2.0'};
+
+      if (!isTypedMessage) {
+        const encodedMessage = encoding.hexToUtf8(message);
+        signResponse.result = await signMessageAsync({message: encodedMessage});
+      } else if (isTypedMessage) {
+        const typedMessage = JSON.parse(message);
+        signResponse.result = await signTypedDataAsync(typedMessage);
+      }
+
       walletConnectInterceptor.respondRequest(topic, signResponse);
       console.log('send response request: ', {
-        event,
-        message,
         signResponse,
-        hash,
-        recoveredAddress,
-        verifyMessage,
       });
     },
-    [signMessageAsync]
+    [signMessageAsync, signTypedDataAsync]
   );
 
   const handleRequest = useCallback(
