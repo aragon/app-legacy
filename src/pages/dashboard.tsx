@@ -165,7 +165,7 @@ const Dashboard: React.FC = () => {
 
   const handleClipboardActions = useCallback(async () => {
     await navigator.clipboard.writeText(
-      `app.aragon.org/#/daos/${network}/${liveAddressOrEns}`
+      `https://app.aragon.org/#/daos/${network}/${liveAddressOrEns}`
     );
     alert(t('alert.chip.inputCopied'));
   }, [alert, liveAddressOrEns, network, t]);
