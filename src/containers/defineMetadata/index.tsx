@@ -23,6 +23,8 @@ const DAO_LOGO = {
   maxFileSize: 3000000,
 };
 
+const BYTES_IN_MB = 1000000;
+
 export type DefineMetadataProps = {
   arrayName?: string;
   isSettingPage?: boolean;
@@ -45,13 +47,19 @@ const DefineMetadata: React.FC<DefineMetadataProps> = ({
     (error: {code: string; message: string}) => {
       const imgError: FieldError = {type: 'manual'};
       const {minDimension, maxDimension, maxFileSize} = DAO_LOGO;
-
       switch (error.code) {
         case 'file-invalid-type':
           imgError.message = t('errors.invalidImageType');
           break;
         case 'file-too-large':
-          imgError.message = t('errors.imageTooLarge', {maxFileSize});
+          {
+            // convert to mb
+            const sizeInMb = maxFileSize / BYTES_IN_MB;
+            imgError.message = t('errors.imageTooLarge', {
+              maxFileSize: sizeInMb,
+            });
+          }
+
           break;
         case 'wrong-dimension':
           imgError.message = t('errors.imageDimensions', {
@@ -211,6 +219,7 @@ const DefineMetadata: React.FC<DefineMetadataProps> = ({
                 <LogoContainer>
                   <InputImageSingle
                     {...{DAO_LOGO, preview}}
+                    maxFileSize={DAO_LOGO.maxFileSize}
                     onError={handleImageError}
                     onChange={onChange}
                     acceptableFileFormat="image/jpg, image/jpeg, image/png, image/gif"
