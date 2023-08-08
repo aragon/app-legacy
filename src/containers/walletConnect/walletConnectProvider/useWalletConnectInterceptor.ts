@@ -86,12 +86,13 @@ export function useWalletConnectInterceptor(): WcInterceptorValues {
   const handleSignRequest = useCallback(
     async (event: Web3WalletTypes.SessionRequest) => {
       const {id, params, topic} = event;
-      const isTypedData = params.request.method.includes('signTypedData');
-      const message = params.request.params[isTypedData ? 1 : 0];
+      const isPersonalSign = params.request.method === 'personal_sign';
+      const message = params.request.params[isPersonalSign ? 0 : 1];
       const signature = await signMessageAsync({message});
       const signResponse = {id, result: signature, jsonrpc: '2.0'};
       const hash = utils.hashMessage(message);
       const recoveredAddress = utils.recoverAddress(hash, signature);
+      const verifyMessage = utils.verifyMessage(message, signature);
       walletConnectInterceptor.respondRequest(topic, signResponse);
       console.log('send response request: ', {
         event,
@@ -99,6 +100,7 @@ export function useWalletConnectInterceptor(): WcInterceptorValues {
         signResponse,
         hash,
         recoveredAddress,
+        verifyMessage,
       });
     },
     [signMessageAsync]
