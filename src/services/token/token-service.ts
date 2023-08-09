@@ -26,6 +26,9 @@ import {
   CovalentTransferInfo,
 } from './domain/covalent-transfer';
 
+const REPLACEMENT_BASE_ETHER_LOGO_URL =
+  'https://assets.coingecko.com/coins/images/279/large/ethereum.png';
+
 class TokenService {
   private defaultCurrency = 'USD';
   private baseUrl = {
@@ -110,7 +113,11 @@ class TokenService {
       symbol: isNative
         ? nativeCurrency.symbol
         : data.contract_ticker_symbol.toUpperCase(),
-      imgUrl: data.logo_url,
+      imgUrl:
+        // Please replace once the Covalent API decides to be reasonable
+        isNative && (network === 'base' || network === 'base-goerli')
+          ? REPLACEMENT_BASE_ETHER_LOGO_URL
+          : data.logo_url,
       address: address,
       price: data.prices[0].price,
       priceChange: {
