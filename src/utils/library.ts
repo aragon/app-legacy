@@ -10,14 +10,12 @@ import {
   VotingMode,
   WithdrawParams,
 } from '@aragon/sdk-client';
-import {fetchEnsAvatar} from '@wagmi/core';
-
 import {
   DaoAction,
   SupportedNetwork as SdkSupportedNetworks,
 } from '@aragon/sdk-client-common';
 import {bytesToHex, resolveIpfsCid} from '@aragon/sdk-common';
-import {NavigationDao} from 'context/apolloClient';
+import {fetchEnsAvatar} from '@wagmi/core';
 import {BigNumber, BigNumberish, constants, providers} from 'ethers';
 import {
   formatUnits as ethersFormatUnits,
@@ -26,8 +24,10 @@ import {
 } from 'ethers/lib/utils';
 import {TFunction} from 'react-i18next';
 
+import {NavigationDao} from 'context/apolloClient';
 import {getEtherscanVerifiedContract} from 'services/etherscanAPI';
 import {Token} from 'services/token/domain';
+import {IFetchTokenParams} from 'services/token/token-service.api';
 import {
   BIGINT_PATTERN,
   CHAIN_METADATA,
@@ -55,7 +55,6 @@ import {i18n} from '../../i18n.config';
 import {addABI, decodeMethod} from './abiDecoder';
 import {attachEtherNotice} from './contract';
 import {getTokenInfo} from './tokens';
-import {IFetchTokenParams} from 'services/token/token-service.api';
 
 export function formatUnits(amount: BigNumberish, decimals: number) {
   if (amount.toString().includes('.') || !decimals) {
@@ -1040,4 +1039,18 @@ export function parseWCIconUrl(
   }
 
   return parsedUrl;
+}
+
+/**
+ * Checks if the given value exists (i.e., is neither undefined, null, nor an empty string).
+ * Note: The number `0` is still considered a value by this function.
+ *
+ * @param value - The value to be checked.
+ * @returns Returns true if the value exists and isn't an empty string, otherwise false.
+ */
+export function hasValue(value: unknown): boolean {
+  if (typeof value === 'string') {
+    return value.trim() !== '';
+  }
+  return value !== undefined && value !== null;
 }
