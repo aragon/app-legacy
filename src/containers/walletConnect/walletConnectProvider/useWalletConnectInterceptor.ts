@@ -6,7 +6,7 @@ import {walletConnectInterceptor} from 'services/walletConnectInterceptor';
 import {CHAIN_METADATA, SUPPORTED_CHAIN_ID} from 'utils/constants';
 import {Web3WalletTypes} from '@walletconnect/web3wallet';
 import {useDaoDetailsQuery} from 'hooks/useDaoDetails';
-import {useSignMessage, useSignTypedData} from 'wagmi';
+import {useSignMessage, useWalletClient} from 'wagmi';
 
 export type WcSession = SessionTypes.Struct;
 export type WcActionRequest =
@@ -30,7 +30,7 @@ export type WcInterceptorValues = {
 export function useWalletConnectInterceptor(): WcInterceptorValues {
   const {network} = useNetwork();
   const {signMessageAsync} = useSignMessage();
-  const {signTypedDataAsync} = useSignTypedData();
+  const {data: walletClient} = useWalletClient();
 
   const {data: daoDetails} = useDaoDetailsQuery();
   const [sessions, setSessions] = useState<WcSession[]>(
@@ -98,7 +98,7 @@ export function useWalletConnectInterceptor(): WcInterceptorValues {
         signResponse.result = await signMessageAsync({message: encodedMessage});
       } else if (isTypedMessage) {
         const typedMessage = JSON.parse(message);
-        signResponse.result = await signTypedDataAsync(typedMessage);
+        signResponse.result = await walletClient!.signTypedData(typedMessage);
       }
 
       walletConnectInterceptor.respondRequest(topic, signResponse);
@@ -106,7 +106,7 @@ export function useWalletConnectInterceptor(): WcInterceptorValues {
         signResponse,
       });
     },
-    [signMessageAsync, signTypedDataAsync]
+    [signMessageAsync, walletClient]
   );
 
   const handleRequest = useCallback(
