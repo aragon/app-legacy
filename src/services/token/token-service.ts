@@ -27,7 +27,7 @@ import {
 } from './domain/covalent-transfer';
 
 const REPLACEMENT_BASE_ETHER_LOGO_URL =
-  'https://assets.coingecko.com/coins/images/279/large/ethereum.png';
+  'https://assets.coingecko.com/coins/images/279/large/ethereum.png?1595348880';
 
 class TokenService {
   private defaultCurrency = 'USD';
