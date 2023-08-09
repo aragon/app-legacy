@@ -39,7 +39,7 @@ const AddWallets: React.FC = () => {
     if (address && !wallets) {
       // uncomment when minting to treasury is ready
       // insert(1, {address: address, amount: '0'});
-      append({address, amount: '0'});
+      append({address, amount: '1'});
       setTimeout(() => {
         trigger('wallets[0]');
       }, 50);
