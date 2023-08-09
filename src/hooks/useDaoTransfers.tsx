@@ -89,8 +89,8 @@ const useSubgraphDaoTransfersQuery = (
   daoAddressOrEns: string,
   {
     sortBy = TransferSortBy.CREATED_AT,
-    direction = SortDirection.DESC,
-    limit,
+    direction = SortDirection.ASC,
+    limit = 1000,
   }: Partial<Pick<TransferQueryParams, 'direction' | 'limit' | 'sortBy'>> = {}
 ) => {
   const {client, network: clientNetwork} = useClient();
