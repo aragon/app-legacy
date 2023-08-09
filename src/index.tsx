@@ -50,6 +50,7 @@ const wagmiConfig = createConfig({
     new LedgerConnector({
       chains: ledgerChains,
       options: {
+        walletConnectVersion: 2,
         enableDebugLogs: false,
         projectId: walletConnectProjectID,
       },
