@@ -74,7 +74,7 @@ import {
   UseCreateElectionProps,
 } from 'hooks/useVocdoniElection';
 import {useClient as useVocdoniClient} from 'hooks/useVocdoniSdk';
-import {Election, UnpublishedElection} from '@vocdoni/sdk';
+import {AccountData, Election, UnpublishedElection} from '@vocdoni/sdk';
 
 
 type Props = {
@@ -748,7 +748,17 @@ const CreateProposalWrapper: React.FC<Props> = ({
       return new Error('Census token is not already calculated');
     }
 
-    // todo(kon): Check if the account is already created, if not, create it
+    // Check if the account is already created, if not, create it
+    let account: AccountData;
+    try {
+      account = await vocdoniClient.fetchAccountInfo();
+    } catch (e) {
+      account = await vocdoniClient.createAccount();
+    }
+
+    if (!account) {
+      throw Error('Cannot create a Vocdoni account');
+    }
 
     // Create the vocdoni election¡
     const census = await census3Client.createTokenCensus(censusToken.id);
