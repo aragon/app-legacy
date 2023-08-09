@@ -16,6 +16,7 @@ import {
   polygonMumbai,
 } from 'wagmi/chains';
 import {infuraProvider} from 'wagmi/providers/infura';
+import {LedgerConnector} from 'wagmi/connectors/ledger';
 
 import {AlertProvider} from 'context/alert';
 import {APMProvider} from 'context/elasticAPM';
@@ -31,6 +32,7 @@ import {infuraApiKey, walletConnectProjectID} from 'utils/constants';
 import App from './app';
 
 const chains = [base, baseGoerli, goerli, mainnet, polygon, polygonMumbai];
+const ledgerChains = [goerli, mainnet, polygon, polygonMumbai];
 
 const {publicClient} = configureChains(chains, [
   w3mProvider({projectId: walletConnectProjectID}),
@@ -39,11 +41,20 @@ const {publicClient} = configureChains(chains, [
 
 const wagmiConfig = createConfig({
   autoConnect: true,
-  connectors: w3mConnectors({
-    projectId: walletConnectProjectID,
-    version: 2,
-    chains,
-  }),
+  connectors: [
+    ...w3mConnectors({
+      projectId: walletConnectProjectID,
+      version: 2,
+      chains,
+    }),
+    new LedgerConnector({
+      chains: ledgerChains,
+      options: {
+        enableDebugLogs: false,
+        projectId: walletConnectProjectID,
+      },
+    }),
+  ],
 
   publicClient,
 });
