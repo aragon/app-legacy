@@ -37,18 +37,13 @@ const AddWallets: React.FC = () => {
 
   useEffect(() => {
     if (address && !wallets) {
-      // uncomment when minting to treasury is ready
-      // insert(1, {address: address, amount: '0'});
       append({address, amount: '1'});
-      setTimeout(() => {
-        trigger('wallets[0]');
-      }, 50);
     }
   }, [address, append, trigger, wallets]);
 
   const resetDistribution = () => {
     controlledFields.forEach((_, index) => {
-      setValue(`wallets.${index}.amount`, '0');
+      setValue(`wallets.${index}.amount`, '1');
     });
     trigger('wallets');
     resetField('eligibilityTokenAmount');
@@ -57,7 +52,7 @@ const AddWallets: React.FC = () => {
 
   // setTimeout added because instant trigger not working
   const handleAddWallet = () => {
-    append({address: '', ensName: '', amount: '0'});
+    append({address: '', ensName: '', amount: '1'});
     setTimeout(() => {
       trigger(`wallets.${controlledFields.length}`);
     }, 50);

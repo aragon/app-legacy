@@ -11,8 +11,52 @@ import {
 } from '@aragon/sdk-client';
 import {BigNumber} from 'ethers';
 
+import {InputValue} from '@aragon/ods';
+import {TokenVotingWalletField} from 'components/addWallets/row';
+import {MultisigWalletField} from 'components/multisigWallets/row';
 import {TimeFilter, TransferTypes} from './constants';
 import {Web3Address} from './library';
+import {TokenType} from './validators';
+
+/*************************************************
+ *                 DAO Creation types            *
+ *************************************************/
+type DAOMembership = 'token' | 'multisig';
+type ProposalCreationEligibility = 'token' | 'anyone' | 'multisig';
+export type CreateDaoFormData = {
+  blockchain: {
+    id: number;
+    label: string;
+    network: string;
+  };
+  daoLogo: Blob;
+  daoName: string;
+  daoEnsName: string;
+  daoSummary: string;
+  tokenName: string;
+  tokenSymbol: string;
+  tokenDecimals: number;
+  tokenTotalSupply: number;
+  tokenTotalHolders: number | undefined;
+  tokenType: TokenType;
+  isCustomToken: boolean;
+  links: {name: string; url: string}[];
+  wallets: TokenVotingWalletField[];
+  tokenAddress: InputValue;
+  durationMinutes: string;
+  durationHours: string;
+  durationDays: string;
+  minimumApproval: string;
+  minimumParticipation: string;
+  eligibilityType: ProposalCreationEligibility;
+  eligibilityTokenAmount: number | string;
+  support: string;
+  membership: DAOMembership;
+  earlyExecution: boolean;
+  voteReplacement: boolean;
+  multisigWallets: MultisigWalletField[];
+  multisigMinimumApprovals: number;
+};
 
 /*************************************************
  *                   Finance types               *
