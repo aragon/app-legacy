@@ -388,7 +388,8 @@ const CreateDaoProvider: React.FC<{children: ReactNode}> = ({children}) => {
       throw new Error('deposit function is not initialized correctly');
     }
 
-    const {daoName, daoSummary, daoLogo, links, votingType} = getValues();
+    const {daoName, daoSummary, daoLogo, links, votingType, membership} =
+      getValues();
     const metadata: DaoMetadata = {
       name: daoName,
       description: daoSummary,
@@ -448,6 +449,7 @@ const CreateDaoProvider: React.FC<{children: ReactNode}> = ({children}) => {
               ]).then(async () => {
                 if (
                   votingType === 'offChain' &&
+                  membership === 'token' &&
                   !(await census3Client.getToken(step.address.toLowerCase()))
                 ) {
                   await createDAOCensus3();

@@ -422,7 +422,7 @@ export const CreateDAO: React.FC = () => {
             <ConfigureCommunity />
           </Step>
           <Step
-            hideWizard={votingType !== 'offChain'}
+            hideWizard={membership !== 'token' || votingType !== 'offChain'}
             wizardTitle={t('createDAO.step5.title')}
             wizardDescription={htmlIn(t)('createDAO.step5.description')}
             isNextButtonDisabled={!defineCommitteeIsValid}
