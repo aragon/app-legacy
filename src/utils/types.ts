@@ -122,6 +122,13 @@ export type ProposalData = UncategorizedProposalData & {
 
 type Seconds = string;
 
+export type ExecutionStatus =
+  | 'defeated'
+  | 'executed'
+  | 'executable'
+  | 'executable-failed'
+  | 'default';
+
 export type UncategorizedProposalData = {
   id: string;
   metadata: ProposalMetadata;

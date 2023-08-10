@@ -7,7 +7,7 @@ import {AccordionMethod, AccordionMethodType} from 'components/accordionMethod';
 import {FormlessComponentForType} from 'containers/smartContractComposer/components/inputForm';
 import {POTENTIALLY_TIME_SENSITIVE_FIELDS} from 'utils/constants/misc';
 import {capitalizeFirstLetter, shortenAddress} from 'utils/library';
-import {ActionWC, Input} from 'utils/types';
+import {ActionWC, ExecutionStatus, Input} from 'utils/types';
 
 type WCActionCardActionCardProps = Pick<AccordionMethodType, 'type'> & {
   action: ActionWC;
@@ -15,11 +15,13 @@ type WCActionCardActionCardProps = Pick<AccordionMethodType, 'type'> & {
     component: React.ReactNode;
     callback: () => void;
   }>;
+  status: ExecutionStatus | undefined;
 };
 
 export const WCActionCard: React.FC<WCActionCardActionCardProps> = ({
   action,
   methodActions,
+  status,
   type,
 }) => {
   const {t} = useTranslation();
@@ -84,7 +86,7 @@ export const WCActionCard: React.FC<WCActionCardActionCardProps> = ({
             mode="warning"
           />
         )}
-        {showTimeSensitiveWarning && (
+        {status !== 'executed' && showTimeSensitiveWarning && (
           <AlertCard
             title={t('newProposal.configureActions.actionAlertCritical.title')}
             helpText={t(

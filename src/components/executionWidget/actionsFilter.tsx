@@ -1,7 +1,7 @@
 import React from 'react';
 
 import {useDaoDetailsQuery} from 'hooks/useDaoDetails';
-import {Action} from 'utils/types';
+import {Action, ExecutionStatus} from 'utils/types';
 import {AddAddressCard} from './actions/addAddressCard';
 import {MintTokenCard} from './actions/mintTokenCard';
 import {ModifyMetadataCard} from './actions/modifyMetadataCard';
@@ -14,9 +14,13 @@ import {WithdrawCard} from './actions/withdrawCard';
 
 type ActionsFilterProps = {
   action: Action;
+  status: ExecutionStatus | undefined;
 };
 
-export const ActionsFilter: React.FC<ActionsFilterProps> = ({action}) => {
+export const ActionsFilter: React.FC<ActionsFilterProps> = ({
+  action,
+  status,
+}) => {
   const {data: dao} = useDaoDetailsQuery();
 
   // all actions have names
@@ -40,7 +44,9 @@ export const ActionsFilter: React.FC<ActionsFilterProps> = ({action}) => {
     case 'external_contract_action':
       return <SCCExecutionCard action={action} />;
     case 'wallet_connect_action':
-      return <WCActionCard action={action} type="execution-widget" />;
+      return (
+        <WCActionCard action={action} type="execution-widget" status={status} />
+      );
     default:
       return <></>;
   }
