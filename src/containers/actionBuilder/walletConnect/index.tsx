@@ -1,6 +1,6 @@
 import {ListItemAction} from '@aragon/ods';
 import React from 'react';
-import {useWatch} from 'react-hook-form';
+import {useFormContext} from 'react-hook-form';
 import {useTranslation} from 'react-i18next';
 
 import {WCActionCard} from 'components/executionWidget/actions/walletConnectActionCard';
@@ -14,8 +14,9 @@ const WalletConnectAction: React.FC<ActionIndex & {allowRemove?: boolean}> = ({
 }) => {
   const {t} = useTranslation();
   const {alert} = useAlertContext();
+  const {watch} = useFormContext();
 
-  const [actionData] = useWatch({name: [`actions.${actionIndex}`]});
+  const actionData = watch(`actions.${actionIndex}`);
   const {removeAction} = useActionsContext();
 
   const methodActions = (() => {
