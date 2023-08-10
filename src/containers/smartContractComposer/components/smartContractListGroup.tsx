@@ -28,7 +28,14 @@ const SmartContractListGroup: React.FC = () => {
         <ListItemContract
           key={c.address}
           title={c.name}
-          subtitle={`${c.actions.length} Actions`}
+          subtitle={`${
+            c.actions.filter(
+              a =>
+                a.type === 'function' &&
+                (a.stateMutability === 'payable' ||
+                  a.stateMutability === 'nonpayable')
+            ).length
+          } Actions`}
           logo={c.logo}
           bgWhite
           iconRight={<IconChevronRight />}

@@ -1,9 +1,11 @@
 import {
+  ButtonText,
   Dropdown,
   IconClose,
   IconCopy,
   IconLinkExternal,
   IconMenuVertical,
+  IconSwitch,
   Link,
   ListItemAction,
   ListItemActionProps,
@@ -12,6 +14,7 @@ import {useAlertContext} from 'context/alert';
 import {useNetwork} from 'context/network';
 import {t} from 'i18next';
 import React from 'react';
+import {useFormContext} from 'react-hook-form';
 import {chainExplorerAddressLink} from 'utils/constants/chains';
 import {handleClipboardActions} from 'utils/library';
 import {SmartContract} from 'utils/types';
@@ -28,6 +31,7 @@ export const ListHeaderContract: React.FC<Props> = ({
 }) => {
   const {alert} = useAlertContext();
   const {network} = useNetwork();
+  const {setValue} = useFormContext();
 
   const iconRight = (
     <Dropdown
@@ -39,6 +43,43 @@ export const ListHeaderContract: React.FC<Props> = ({
       }
       sideOffset={8}
       listItems={[
+        {
+          component: (
+            <ButtonText
+              iconRight={<IconSwitch />}
+              label={
+                sc.implementationData
+                  ? 'Write as proxy'
+                  : "Don't write as proxy"
+              }
+            />
+          ),
+          callback: () => {
+            if (sc.implementationData) {
+              setValue('selectedSC', sc.implementationData as SmartContract);
+              setValue(
+                'selectedAction',
+                (sc.implementationData as SmartContract).actions.filter(
+                  a =>
+                    a.type === 'function' &&
+                    (a.stateMutability === 'payable' ||
+                      a.stateMutability === 'nonpayable')
+                )?.[0]
+              );
+            } else {
+              setValue('selectedSC', sc.address);
+              setValue(
+                'selectedAction',
+                sc.actions.filter(
+                  a =>
+                    a.type === 'function' &&
+                    (a.stateMutability === 'payable' ||
+                      a.stateMutability === 'nonpayable')
+                )?.[0]
+              );
+            }
+          },
+        },
         {
           component: (
             <Link
@@ -81,7 +122,11 @@ export const ListHeaderContract: React.FC<Props> = ({
             />
           ),
           callback: () => {
-            onRemoveContract(sc.address);
+            if (sc.implementationData) {
+              onRemoveContract(sc.proxyAddress as string);
+            } else {
+              onRemoveContract(sc.address);
+            }
           },
         },
       ]}
@@ -90,16 +135,7 @@ export const ListHeaderContract: React.FC<Props> = ({
 
   const liaProps = {
     title: sc.name,
-    subtitle: t('scc.listContracts.contractAmountActions', {
-      amount: sc.actions
-        .filter(
-          a =>
-            a.type === 'function' &&
-            (a.stateMutability === 'payable' ||
-              a.stateMutability === 'nonpayable')
-        )
-        .length.toString(),
-    }),
+    subtitle: sc.address,
     bgWhite: true,
     logo: sc.logo,
     iconRight,

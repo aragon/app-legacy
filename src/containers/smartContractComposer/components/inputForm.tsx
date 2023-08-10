@@ -166,14 +166,6 @@ const InputForm: React.FC<InputFormProps> = ({
     t,
   ]);
 
-  if (!selectedAction) {
-    return (
-      <div className="desktop:p-6 min-h-full bg-ui-50 desktop:bg-white">
-        Sorry, no public Write functions were found for this contract.
-      </div>
-    );
-  }
-
   return (
     <div className="desktop:p-6 min-h-full bg-ui-50 desktop:bg-white">
       <div className="desktop:flex items-baseline space-x-3">

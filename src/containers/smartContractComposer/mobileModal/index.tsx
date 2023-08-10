@@ -17,7 +17,7 @@ import BottomSheet from 'components/bottomSheet';
 import {StateEmpty} from 'components/stateEmpty';
 import {trackEvent} from 'services/analytics';
 import {actionsFilter} from 'utils/contract';
-import {SmartContract} from 'utils/types';
+import {SmartContract, SmartContractAction} from 'utils/types';
 import {SccFormData} from '..';
 import ActionListGroup from '../components/actionListGroup';
 import InputForm from '../components/inputForm';
@@ -37,11 +37,11 @@ type Props = {
 const MobileModal: React.FC<Props> = props => {
   const {t} = useTranslation();
   const {dao: daoAddressOrEns} = useParams();
-  const [isActionSelected, setIsActionSelected] = useState(false);
 
-  const [selectedSC]: [SmartContract] = useWatch({
-    name: ['selectedSC'],
-  });
+  const [selectedSC, selectedAction]: [SmartContract, SmartContractAction] =
+    useWatch({
+      name: ['selectedSC', 'selectedAction'],
+    });
   const [search, setSearch] = useState('');
   const {setValue, getValues} = useFormContext<SccFormData>();
 
@@ -70,11 +70,10 @@ const MobileModal: React.FC<Props> = props => {
       <CustomMobileHeader
         onClose={props.onClose}
         onBackButtonClicked={() => {
-          if (isActionSelected) {
+          if (selectedAction) {
             //eslint-disable-next-line
             //@ts-ignore
             setValue('selectedAction', null);
-            setIsActionSelected(false);
           } else if (selectedSC !== null) {
             setValue('selectedSC', null);
           } else {
@@ -84,7 +83,7 @@ const MobileModal: React.FC<Props> = props => {
         onSearch={setSearch}
       />
       <Content>
-        {!isActionSelected ? (
+        {!selectedAction ? (
           selectedSC ? (
             <div>
               <ListHeaderContract
@@ -94,7 +93,6 @@ const MobileModal: React.FC<Props> = props => {
               />
               <ActionListGroup
                 actions={selectedSC.actions.filter(actionsFilter(search))}
-                onActionSelected={() => setIsActionSelected(true)}
               />
             </div>
           ) : (

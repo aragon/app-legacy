@@ -471,7 +471,8 @@ export type EtherscanContractResponse = {
   SourceCode: string;
   Proxy?: string;
   Implementation?: string;
-  proxyImplementation?: Record<string, unknown>;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  proxyImplementation?: any;
 };
 
 export type SourcifyContractResponse = {
@@ -523,7 +524,14 @@ export type SmartContract = {
   name: string;
   proxy?: string;
   implementation?: string;
-  proxyImplementation?: Record<string, unknown>;
+  implementationData?: {
+    actions: Array<SmartContractAction>;
+    address: string;
+    name: string;
+    proxyAddress: string;
+    logo?: string;
+  };
+  proxyAddress?: string;
 };
 
 export type VerifiedContracts = {
