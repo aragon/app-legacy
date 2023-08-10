@@ -52,6 +52,17 @@ const MobileModal: React.FC<Props> = props => {
 
   useEffect(() => {
     setValue('selectedSC', autoSelectedContract);
+    if (autoSelectedContract) {
+      setValue(
+        'selectedAction',
+        autoSelectedContract.actions.filter(
+          a =>
+            a.type === 'function' &&
+            (a.stateMutability === 'payable' ||
+              a.stateMutability === 'nonpayable')
+        )?.[0]
+      );
+    }
   }, [autoSelectedContract, setValue]);
 
   return (

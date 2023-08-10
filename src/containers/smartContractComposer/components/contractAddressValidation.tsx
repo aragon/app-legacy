@@ -185,6 +185,9 @@ const ContractAddressValidation: React.FC<Props> = props => {
             address: addressField,
             name: value.ContractName,
             logo,
+            proxy: value.Proxy,
+            implementation: value.Implementation,
+            proxyImplementation: value.proxyImplementation,
           };
           setContractName(value?.ContractName);
         }

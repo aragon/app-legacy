@@ -469,6 +469,9 @@ export type EtherscanContractResponse = {
   EVMVersion: string;
   LicenseType: string;
   SourceCode: string;
+  Proxy?: string;
+  Implementation?: string;
+  proxyImplementation?: Record<string, unknown>;
 };
 
 export type SourcifyContractResponse = {
@@ -518,6 +521,9 @@ export type SmartContract = {
   address: string;
   logo?: string;
   name: string;
+  proxy?: string;
+  implementation?: string;
+  proxyImplementation?: Record<string, unknown>;
 };
 
 export type VerifiedContracts = {

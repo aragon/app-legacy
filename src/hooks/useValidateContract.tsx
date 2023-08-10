@@ -27,7 +27,10 @@ export const useValidateContractEtherscan = (
           if (data.result[0].Proxy === '1') {
             return fetch(
               `${CHAIN_METADATA[network].etherscanApi}?module=contract&action=getsourcecode&address=${data.result[0].Implementation}&apikey=${CHAIN_METADATA[network].etherscanApiKey}`
-            ).then(r => r.json());
+            ).then(async r => {
+              data.result[0].proxyImplementation = await r.json();
+              return data;
+            });
           }
           return data;
         });
