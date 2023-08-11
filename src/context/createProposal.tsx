@@ -74,7 +74,13 @@ import {
   UseCreateElectionProps,
 } from 'hooks/useVocdoniElection';
 import {useClient as useVocdoniClient} from 'hooks/useVocdoniSdk';
-import {AccountData, Election, UnpublishedElection} from '@vocdoni/sdk';
+import {
+  AccountData,
+  Election,
+  ErrAccountNotFound,
+  ErrAPI,
+  UnpublishedElection,
+} from '@vocdoni/sdk';
 
 
 type Props = {
@@ -735,36 +741,66 @@ const CreateProposalWrapper: React.FC<Props> = ({
   );
 
   const handleOffChainProposal = useCallback(async () => {
+    console.log('DEBUG', 'handleOffChainProposal');
     const {params, metadata} = await getProposalCreationParams();
 
     if (!pluginClient || !daoToken) {
       return new Error('ERC20 SDK client is not initialized correctly');
     }
 
+    console.log('DEBUG', 'ERC20 initialized', daoToken);
+
     // Check if the census is already sync
+    try {
+      await census3Client.createToken(daoToken?.address, 'erc20');
+    } catch (e) {
+      // todo(kon): replace error handling when the api return code error is fixed. Now is a generic 500
+      if (
+        e instanceof ErrAPI &&
+        e.message.includes('error creating token with address')
+      ) {
+        console.log('DEBUG', 'Token already created');
+      } else {
+        throw e;
+      }
+    }
+
+    const blah = await census3Client.createTokenCensus(daoToken?.address);
+    console.log('DEBUG', 'census3 created', blah);
+
     const censusToken = await census3Client.getToken(daoToken?.address);
+
+    console.log('DEBUG', 'Census', censusToken);
     // todo(kon): handle token is not sync
     if (!censusToken.status.synced) {
       return new Error('Census token is not already calculated');
     }
 
     // Check if the account is already created, if not, create it
-    let account: AccountData;
+    let account: AccountData | null = null;
     try {
+      console.log('DEBUG', 'get  account info');
       account = await vocdoniClient.fetchAccountInfo();
     } catch (e) {
-      account = await vocdoniClient.createAccount();
+      // todo(kon): replace error handling when the api return code error is fixed. Now is a generic 500
+      if (e instanceof ErrAccountNotFound) {
+        console.log('DEBUG', 'Account not found, creating it');
+        account = await vocdoniClient.createAccount();
+      }
     }
 
     if (!account) {
-      throw Error('Cannot create a Vocdoni account');
+      throw Error('Error creating a Vocdoni account');
     }
 
     // Create the vocdoni election¡
+    console.log('DEBUG', 'Creating vocdoni election');
     const census = await census3Client.createTokenCensus(censusToken.id);
     const electionId = await createVocdoniElection(
       proposalToElection({metadata, data: params, census})
     );
+
+    console.log('DEBUG', 'Election created', electionId);
 
     // todo(kon) Register election on the DAO
   }, [
@@ -809,7 +845,7 @@ const CreateProposalWrapper: React.FC<Props> = ({
         state={creationProcessState || TransactionState.WAITING}
         isOpen={showTxModal}
         onClose={handleCloseModal}
-        callback={handlePublishProposal}
+        callback={handleOffChainProposal}
         closeOnDrag={creationProcessState !== TransactionState.LOADING}
         maxFee={maxFee}
         averageFee={averageFee}
