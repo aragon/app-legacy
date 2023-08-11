@@ -7,7 +7,6 @@ import {
   VotingSettings,
 } from '@aragon/sdk-client';
 import {DaoAction, ProposalMetadata} from '@aragon/sdk-client-common';
-import {withTransaction} from '@elastic/apm-rum-react';
 import React, {useCallback, useEffect, useState} from 'react';
 import {useFormContext, useFormState} from 'react-hook-form';
 import {useTranslation} from 'react-i18next';
@@ -75,7 +74,7 @@ import {
 } from 'utils/types';
 import {parseUnits} from 'ethers/lib/utils';
 
-const ProposeSettings: React.FC = () => {
+export const ProposeSettings: React.FC = () => {
   const {t} = useTranslation();
   const {network} = useNetwork();
 
@@ -173,8 +172,6 @@ const ProposeSettings: React.FC = () => {
     </ProposeSettingWrapper>
   );
 };
-
-export default withTransaction('ProposeSettings', 'component')(ProposeSettings);
 
 type Props = {
   showTxModal: boolean;

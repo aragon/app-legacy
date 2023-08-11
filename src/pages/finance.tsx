@@ -6,7 +6,6 @@ import {
   Tag,
   IlluObject,
 } from '@aragon/ods';
-import {withTransaction} from '@elastic/apm-rum-react';
 import React from 'react';
 import {useTranslation} from 'react-i18next';
 import {useNavigate} from 'react-router-dom';
@@ -38,7 +37,7 @@ const colors: Record<Sign, string> = {
   '0': 'text-ui-600',
 };
 
-const Finance: React.FC = () => {
+export const Finance: React.FC = () => {
   const {t} = useTranslation();
   const {data: daoDetails, isLoading} = useDaoDetailsQuery();
   const {open} = useGlobalModalContext();
@@ -194,8 +193,6 @@ const Finance: React.FC = () => {
     </>
   );
 };
-
-export default withTransaction('Finance', 'component')(Finance);
 
 const ListContainer = styled.div.attrs({
   className: 'py-2 space-y-2',

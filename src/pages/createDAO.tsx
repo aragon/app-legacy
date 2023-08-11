@@ -1,5 +1,4 @@
 import {InputValue} from '@aragon/ods';
-import {withTransaction} from '@elastic/apm-rum-react';
 import React, {useEffect, useMemo} from 'react';
 import {FormProvider, useForm, useFormState, useWatch} from 'react-hook-form';
 import {useTranslation} from 'react-i18next';
@@ -82,7 +81,7 @@ const defaultValues = {
   minimumParticipation: '15',
 };
 
-const CreateDAO: React.FC = () => {
+export const CreateDAO: React.FC = () => {
   const {t} = useTranslation();
   const {chainId} = useWallet();
   const {setNetwork, isL2Network} = useNetwork();
@@ -357,5 +356,3 @@ const CreateDAO: React.FC = () => {
     </FormProvider>
   );
 };
-
-export default withTransaction('CreateDAO', 'component')(CreateDAO);

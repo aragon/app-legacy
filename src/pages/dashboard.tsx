@@ -6,7 +6,6 @@ import {
   IlluObject,
   IllustrationHuman,
 } from '@aragon/ods';
-import {withTransaction} from '@elastic/apm-rum-react';
 import React, {useCallback, useEffect, useMemo, useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {generatePath, useNavigate, useParams} from 'react-router-dom';
@@ -47,7 +46,7 @@ enum DaoCreationState {
   OPEN_DAO,
 }
 
-const Dashboard: React.FC = () => {
+export const Dashboard: React.FC = () => {
   const {t} = useTranslation();
   const {alert} = useAlertContext();
   const {isDesktop, isMobile} = useScreen();
@@ -477,5 +476,3 @@ const MobileDashboardContent: React.FC<DashboardContentProps> = ({
 const MobileLayout = styled.div.attrs({
   className: 'col-span-full space-y-5',
 })``;
-
-export default withTransaction('Dashboard', 'component')(Dashboard);
