@@ -505,7 +505,11 @@ const ContractAddressValidation: React.FC<Props> = props => {
                 onBlur={onBlur}
                 value={value}
                 onChange={e => onChange(e.target.value.trim())}
-                disabledFilled={isTransactionSuccessful || isTransactionLoading}
+                disabled={
+                  isTransactionSuccessful ||
+                  isTransactionLoading ||
+                  isTransactionError
+                }
                 placeholder="0x ..."
                 adornmentText={adornmentText}
                 onAdornmentClick={() => handleAdornmentClick(value, onChange)}
