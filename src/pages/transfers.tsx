@@ -111,7 +111,7 @@ export const Transfers: React.FC = () => {
         primaryBtnProps={{
           label: t('TransferModal.newTransfer'),
           iconLeft: <IconAdd />,
-          onClick: () => open(),
+          onClick: () => open('transfer'),
         }}
       >
         <div className="mt-3 desktop:mt-8">

@@ -67,7 +67,7 @@ const TreasurySnapshot: React.FC<Props> = ({
         label={t('labels.treasuryValue')}
         buttonText={t('allTransfer.newTransfer')}
         orientation="vertical"
-        onClick={() => open()}
+        onClick={() => open('transfer')}
       />
       {transfers.slice(0, 3).map(({tokenAmount, tokenSymbol, ...rest}) => (
         <TransferListItem

@@ -1,6 +1,5 @@
 import {ApmRoutes} from '@elastic/apm-rum-react';
 import React, {Suspense, lazy, useEffect} from 'react';
-import {FormProvider, useForm} from 'react-hook-form';
 import {Navigate, Outlet, Route, useLocation} from 'react-router-dom';
 
 import {GridLayout} from 'components/layout';
@@ -12,22 +11,24 @@ import Navbar from 'containers/navbar';
 import DaoSelectMenu from 'containers/navbar/daoSelectMenu';
 import ExploreNav from 'containers/navbar/exploreNav';
 import NetworkErrorMenu from 'containers/networkErrorMenu';
-import PoapClaimModal from 'containers/poapClaiming/PoapClaimModal';
 import TransactionDetail from 'containers/transactionDetail';
-import DepositModal from 'containers/transactionModals/depositModal';
 import TransferMenu from 'containers/transferMenu';
 import {WalletMenu} from 'containers/walletMenu';
-import {GovTokensWrappingProvider} from 'context/govTokensWrapping';
 import {ProposalTransactionProvider} from 'context/proposalTransaction';
 import {useTransactionDetailContext} from 'context/transactionDetail';
-import {useDaoDetailsQuery} from 'hooks/useDaoDetails';
+import {FormProvider, useForm} from 'react-hook-form';
+import DepositModal from 'containers/transactionModals/depositModal';
+import PoapClaimModal from 'containers/poapClaiming/PoapClaimModal';
+import {GovTokensWrappingProvider} from 'context/govTokensWrapping';
 import {useMonitoring} from 'hooks/useMonitoring';
 import {useWallet} from 'hooks/useWallet';
 import {identifyUser, trackPage} from 'services/analytics';
 import {featureFlags} from 'utils/featureFlags';
 import {NotFound} from 'utils/paths';
+import {DelegateVotingMenu} from 'containers/delegateVotingMenu';
 import '../i18n.config';
 import {ProposalSettingsFormData} from 'utils/types';
+import {GatingMenu} from 'containers/gatingMenu';
 
 export const App: React.FC = () => {
   // TODO this needs to be inside a Routes component. Will be moved there with
@@ -170,8 +171,6 @@ const ExploreWrapper: React.FC = () => (
 );
 
 const DaoWrapper: React.FC = () => {
-  const {data: daoDetails} = useDaoDetailsQuery();
-
   // using isOpen to conditionally render TransactionDetail so that
   // api call is not made on mount regardless of whether the user
   // wants to open the modal
@@ -185,14 +184,9 @@ const DaoWrapper: React.FC = () => {
           <Outlet />
           <TransferMenu />
           <DepositModal />
-          {daoDetails && isOpen && (
-            <TransactionDetail
-              daoAddress={daoDetails.address}
-              daoEns={daoDetails.ensDomain}
-              daoName={daoDetails.metadata.name}
-              daoPlugin={daoDetails.plugins[0]}
-            />
-          )}
+          <GatingMenu />
+          <DelegateVotingMenu />
+          {isOpen && <TransactionDetail />}
         </GridLayout>
       </div>
       <Footer />

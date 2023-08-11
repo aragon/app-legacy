@@ -177,7 +177,7 @@ export const Finance: React.FC = () => {
                       trackEvent('finance_newTransferBtn_clicked', {
                         dao_address: daoDetails?.address,
                       });
-                      open();
+                      open('transfer');
                     }}
                   />
                 </ContentContainer>
@@ -312,7 +312,7 @@ export const Finance: React.FC = () => {
                   trackEvent('finance_newTransferBtn_clicked', {
                     dao_address: daoDetails?.address,
                   });
-                  open();
+                  open('transfer');
                 }}
               />
             </ContentContainer>

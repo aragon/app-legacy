@@ -5,7 +5,7 @@ import {HookData} from 'utils/types';
 import {usePluginClient} from './usePluginClient';
 
 export function useDaoToken(
-  pluginAddress: string
+  pluginAddress?: string
 ): HookData<Erc20TokenDetails | Erc20WrapperTokenDetails | undefined> {
   const [data, setData] = useState<
     Erc20TokenDetails | Erc20WrapperTokenDetails
@@ -16,11 +16,11 @@ export function useDaoToken(
   const pluginClient = usePluginClient('token-voting.plugin.dao.eth');
 
   useEffect(() => {
-    async function getDaoMetadata() {
+    async function getTokenMetadata(address: string) {
       try {
         setIsLoading(true);
 
-        const response = await pluginClient?.methods.getToken(pluginAddress);
+        const response = await pluginClient?.methods.getToken(address);
 
         if (response) {
           setData(response as Erc20TokenDetails | Erc20WrapperTokenDetails);
@@ -33,7 +33,9 @@ export function useDaoToken(
       }
     }
 
-    if (pluginAddress) getDaoMetadata();
+    if (pluginAddress) {
+      getTokenMetadata(pluginAddress);
+    }
   }, [pluginAddress, pluginClient]);
 
   return {data, error, isLoading};
