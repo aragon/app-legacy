@@ -257,9 +257,7 @@ const ReviewProposal: React.FC<ReviewProposalProps> = ({
           <ExecutionWidget
             actions={getNonEmptyActions(
               values.actions,
-              isMultisigVotingSettings(daoSettings)
-                ? daoSettings.minApprovals
-                : 0
+              isMultisigVotingSettings(daoSettings) ? daoSettings : undefined
             )}
             onAddAction={
               addActionsStepNumber

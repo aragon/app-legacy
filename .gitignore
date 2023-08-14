@@ -45,3 +45,4 @@ subgraph.yaml
 .bin
 
 tests/e2e/videos/*
+test.http

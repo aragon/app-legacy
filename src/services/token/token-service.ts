@@ -1,14 +1,33 @@
+import {AssetBalance, Deposit, TransferType} from '@aragon/sdk-client';
+import {TokenType} from '@aragon/sdk-client-common';
+import {AddressZero} from '@ethersproject/constants';
+import {BigNumber} from 'ethers';
+
+import {getAlchemyProvider} from 'context/providers';
 import {
   CHAIN_METADATA,
   COVALENT_API_KEY,
   SupportedNetworks,
+  alchemyApiKeys,
 } from 'utils/constants';
-import {isNativeToken} from 'utils/tokens';
 import {TOP_ETH_SYMBOL_ADDRESSES} from 'utils/constants/topSymbolAddresses';
-import {CoingeckoToken, Token, CoingeckoError} from './domain';
-import {IFetchTokenParams} from './token-service.api';
-import {CovalentToken} from './domain/covalent-token';
+import {getTokenInfo, isNativeToken} from 'utils/tokens';
+import {CoingeckoError, CoingeckoToken, Token} from './domain';
 import {CovalentResponse} from './domain/covalent-response';
+import {CovalentToken, CovalentTokenBalance} from './domain/covalent-token';
+import {
+  IFetchTokenBalancesParams,
+  IFetchTokenParams,
+  IFetchTokenTransfersParams,
+} from './token-service.api';
+import {AlchemyTransfer} from './domain/alchemy-transfer';
+import {
+  CovalentTokenTransfer,
+  CovalentTransferInfo,
+} from './domain/covalent-transfer';
+
+const REPLACEMENT_BASE_ETHER_LOGO_URL =
+  'https://assets.coingecko.com/coins/images/279/large/ethereum.png?1595348880';
 
 class TokenService {
   private defaultCurrency = 'USD';
@@ -94,7 +113,11 @@ class TokenService {
       symbol: isNative
         ? nativeCurrency.symbol
         : data.contract_ticker_symbol.toUpperCase(),
-      imgUrl: data.logo_url,
+      imgUrl:
+        // Please replace once the Covalent API decides to be reasonable
+        isNative && (network === 'base' || network === 'base-goerli')
+          ? REPLACEMENT_BASE_ETHER_LOGO_URL
+          : data.logo_url,
       address: address,
       price: data.prices[0].price,
       priceChange: {
@@ -150,6 +173,174 @@ class TokenService {
     };
   };
 
+  // Note: Purposefully not including a function to fetch token balances
+  // via Alchemy because we want to slowly remove the Alchemy dependency
+  // F.F. [01/01/2023]
+  fetchTokenBalances = async ({
+    address,
+    network,
+    ignoreZeroBalances = true,
+  }: IFetchTokenBalancesParams): Promise<AssetBalance[] | null> => {
+    const {networkId} = CHAIN_METADATA[network].covalent ?? {};
+
+    if (!networkId) {
+      console.info(
+        `fetchTokenBalances - network ${network} not supported by Covalent`
+      );
+      return null;
+    }
+
+    const {nativeCurrency} = CHAIN_METADATA[network];
+
+    const endpoint = `/${networkId}/address/${address}/balances_v2/?quote-currency=${this.defaultCurrency}`;
+    const url = `${this.baseUrl.covalent}${endpoint}`;
+    const authToken = window.btoa(`${COVALENT_API_KEY}:`);
+    const headers = {Authorization: `Basic ${authToken}`};
+
+    const res = await fetch(url, {headers});
+    const parsed: CovalentResponse<CovalentTokenBalance | null> =
+      await res.json();
+    const data = parsed.data;
+
+    if (parsed.error || data == null) {
+      console.info(
+        `fetchTokenBalances - Covalent returned error: ${parsed.error_message}`
+      );
+      return null;
+    }
+
+    return data.items.flatMap(({native_token, ...item}) => {
+      // ignore zero balances if indicated
+      if (ignoreZeroBalances && BigNumber.from(item.balance).isZero())
+        return [];
+
+      return {
+        address: native_token ? AddressZero : item.contract_address,
+        name: native_token ? nativeCurrency.name : item.contract_name,
+        symbol: native_token
+          ? nativeCurrency.symbol
+          : item.contract_ticker_symbol.toUpperCase(),
+        decimals: native_token
+          ? nativeCurrency.decimals
+          : item.contract_decimals,
+        type: native_token
+          ? TokenType.NATIVE
+          : item.nft_data
+          ? TokenType.ERC721
+          : TokenType.ERC20,
+        balance: BigInt(item.balance),
+        updateDate: new Date(data.updated_at),
+      };
+    });
+  };
+
+  fetchErc20Deposits = async ({
+    address,
+    network,
+    assets,
+  }: IFetchTokenTransfersParams) => {
+    return network === 'base' || network === 'base-goerli'
+      ? this.fetchCovalentErc20Deposits(address, network, assets)
+      : this.fetchAlchemyErc20Deposits(address, network);
+  };
+
+  private fetchCovalentErc20Deposits = async (
+    address: string,
+    network: SupportedNetworks,
+    assets: AssetBalance[]
+  ): Promise<Deposit[] | null> => {
+    const {networkId} = CHAIN_METADATA[network].covalent ?? {};
+
+    // check if network is supported
+    if (!networkId) {
+      console.info(
+        `fetchCovalentErc20Deposits - network ${network} not supported by Covalent`
+      );
+      return null;
+    }
+    // fetch all balances
+    if (!assets || assets.length === 0) {
+      return [];
+    }
+
+    // fetch all transfers for the previously fetched assets
+    const authToken = window.btoa(`${COVALENT_API_KEY}:`);
+    const headers = {Authorization: `Basic ${authToken}`};
+
+    const assetTransfers = await Promise.all(
+      assets
+        // filter out the native deposit
+        .filter(asset => asset.type !== TokenType.NATIVE)
+        .map(async asset => {
+          // this cast is necessary because filtering native tokens first
+          // means we only have tokens with actual addresses left.
+          const tokenAddress = (asset as AssetBalance & {address: string})
+            .address;
+
+          // fetch and parse transfers
+          const endpoint = `/${networkId}/address/${address}/transfers_v2/?contract-address=${tokenAddress}`;
+          const url = `${this.baseUrl.covalent}${endpoint}`;
+          const response = await fetch(url, {headers});
+          const parsed: CovalentResponse<CovalentTokenTransfer> =
+            await response.json();
+          return parsed;
+        })
+    );
+
+    // flatten and transform the deposits
+    return assetTransfers
+      .flatMap(
+        t =>
+          t.data?.items.flatMap(
+            item =>
+              item.transfers?.map(t =>
+                this.transformCovalentDeposit(address, t)
+              ) ?? []
+          ) ?? []
+      )
+      .filter(Boolean) as Deposit[];
+  };
+
+  private fetchAlchemyErc20Deposits = async (
+    walletAddress: string,
+    network: SupportedNetworks
+  ): Promise<Deposit[] | null> => {
+    const apiKey = alchemyApiKeys[network];
+
+    if (!apiKey) return null;
+
+    const url = `${CHAIN_METADATA[network].alchemyApi}/${apiKey}`;
+    const options = {
+      method: 'POST',
+      headers: {accept: 'application/json', 'content-type': 'application/json'},
+      body: JSON.stringify({
+        id: 1,
+        jsonrpc: '2.0',
+        method: 'alchemy_getAssetTransfers',
+        params: [
+          {
+            fromBlock: '0x0',
+            toBlock: 'latest',
+            toAddress: walletAddress,
+            category: ['erc20'],
+            withMetadata: true,
+            excludeZeroValue: true,
+          },
+        ],
+      }),
+    };
+
+    const res = await fetch(url, options);
+    const parsed = await res.json();
+    const transfers: AlchemyTransfer[] = parsed?.result?.transfers || [];
+
+    return await Promise.all(
+      transfers.map(transfer =>
+        this.transformAlchemyDeposit(transfer, network, walletAddress)
+      )
+    );
+  };
+
   /**
    * Checks if the given object is a Coingecko error object.
    * @param data Result from a Coingecko API request
@@ -159,6 +350,67 @@ class TokenService {
     data: TData | CoingeckoError
   ): data is CoingeckoError => {
     return Object.hasOwn(data, 'error');
+  };
+
+  private transformCovalentDeposit = (
+    address: string,
+    deposit: CovalentTransferInfo
+  ): Deposit | null => {
+    if (deposit.transfer_type === 'OUT') {
+      return null;
+    }
+
+    return {
+      type: TransferType.DEPOSIT,
+      tokenType: TokenType.ERC20,
+      amount: BigInt(deposit.delta),
+      creationDate: new Date(deposit.block_signed_at),
+      from: deposit.from_address,
+      to: address,
+      token: {
+        address: deposit.contract_address,
+        decimals: deposit.contract_decimals,
+        name: deposit.contract_name,
+        symbol: deposit.contract_ticker_symbol,
+      },
+      transactionId: deposit.tx_hash,
+    };
+  };
+
+  private transformAlchemyDeposit = async (
+    transfer: AlchemyTransfer,
+    network: SupportedNetworks,
+    address: string
+  ): Promise<
+    Deposit & {
+      tokenType: TokenType.ERC20;
+    }
+  > => {
+    const {rawContract, metadata, from, hash} = transfer;
+    const provider = getAlchemyProvider(network)!;
+
+    // fetch token info
+    const {decimals, name, symbol} = await getTokenInfo(
+      rawContract.address,
+      provider,
+      CHAIN_METADATA[network].nativeCurrency
+    );
+
+    return {
+      type: TransferType.DEPOSIT,
+      tokenType: TokenType.ERC20,
+      amount: BigInt(rawContract.value),
+      creationDate: new Date(metadata.blockTimestamp),
+      from,
+      to: address,
+      token: {
+        address: rawContract.address,
+        decimals,
+        name,
+        symbol,
+      },
+      transactionId: hash,
+    };
   };
 }
 

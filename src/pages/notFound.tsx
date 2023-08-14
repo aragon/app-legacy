@@ -1,6 +1,5 @@
 import React from 'react';
 import styled from 'styled-components';
-import {withTransaction} from '@elastic/apm-rum-react';
 import {useNavigate} from 'react-router-dom';
 import {useTranslation} from 'react-i18next';
 import {ButtonText} from '@aragon/ods';
@@ -12,7 +11,7 @@ import Green from 'public/circleGreenGradient.svg';
 import Purple from 'public/purpleGradient.svg';
 import {Landing} from 'utils/paths';
 
-const NotFound: React.FC = () => {
+export const NotFound: React.FC = () => {
   const navigate = useNavigate();
   const {t} = useTranslation();
 
@@ -68,8 +67,6 @@ const NotFound: React.FC = () => {
     </>
   );
 };
-
-export default withTransaction('NotFound', 'component')(NotFound);
 
 const Menu = styled.nav.attrs({
   className: 'py-2 desktop:py-4',

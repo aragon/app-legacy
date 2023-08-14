@@ -6,12 +6,10 @@ import {
   IconGovernance,
   ListItemLink,
 } from '@aragon/ods';
-import {withTransaction} from '@elastic/apm-rum-react';
 import React from 'react';
 import {useTranslation} from 'react-i18next';
 import {generatePath, useNavigate, useParams} from 'react-router-dom';
 import styled from 'styled-components';
-
 import {Dd, DescriptionListContainer, Dl, Dt} from 'components/descriptionList';
 import {Loading} from 'components/temporary';
 import {PageWrapper} from 'components/wrappers';
@@ -23,17 +21,13 @@ import {PluginTypes} from 'hooks/usePluginClient';
 import useScreen from 'hooks/useScreen';
 import {CHAIN_METADATA} from 'utils/constants';
 import {EditSettings} from 'utils/paths';
-import {useResolveDaoAvatar} from 'hooks/useResolveDaoAvatar';
 
-const Settings: React.FC = () => {
+export const Settings: React.FC = () => {
   const {t} = useTranslation();
   const {network, isL2Network} = useNetwork();
   const navigate = useNavigate();
 
   const {data: daoDetails, isLoading} = useDaoDetailsQuery();
-  const {avatar: daoDetailsAvatar} = useResolveDaoAvatar(
-    daoDetails?.metadata?.avatar
-  );
 
   const networkInfo = CHAIN_METADATA[network];
   const chainLabel = networkInfo.name;
@@ -75,7 +69,7 @@ const Settings: React.FC = () => {
               <AvatarDao
                 size={'small'}
                 daoName={daoDetails?.metadata.name || ''}
-                src={daoDetailsAvatar}
+                src={daoDetails?.metadata?.avatar}
               />
             </Dd>
           </Dl>
@@ -181,5 +175,3 @@ export const Layout = styled.div.attrs({
   className:
     'col-span-full desktop:col-start-4 desktop:col-end-10 text-ui-600' as string,
 })``;
-
-export default withTransaction('Settings', 'component')(Settings);

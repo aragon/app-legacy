@@ -12,7 +12,6 @@ import {toDisplayEns} from 'utils/library';
 import {EditSettings} from 'utils/paths';
 import {ProposalResource} from 'utils/types';
 import {Views} from '.';
-import {useResolveDaoAvatar} from 'hooks/useResolveDaoAvatar';
 
 type CompareMetadataProps = {
   daoDetails: DaoDetails;
@@ -40,7 +39,7 @@ export const CompareMetadata: React.FC<CompareMetadataProps> = ({
     displayedInfo = {
       name: daoName,
       summary: daoSummary,
-      links: daoLinks.filter((l: ProposalResource) => l.name && l.url),
+      links: daoLinks?.filter((l: ProposalResource) => l.name && l.url),
     };
   } else {
     displayedInfo = {
@@ -49,10 +48,6 @@ export const CompareMetadata: React.FC<CompareMetadataProps> = ({
       links: daoDetails?.metadata.links.filter(l => l.name && l.url),
     };
   }
-
-  const {avatar: daoDetailsAvatar} = useResolveDaoAvatar(
-    daoDetails?.metadata?.avatar
-  );
 
   return (
     <DescriptionListContainer
@@ -71,7 +66,7 @@ export const CompareMetadata: React.FC<CompareMetadataProps> = ({
         <Dt>{t('labels.logo')}</Dt>
         <Dd>
           {view === 'new' ? (
-            URL_PATTERN.test(daoLogo) ? (
+            URL_PATTERN.test(daoLogo) || daoLogo?.startsWith?.('blob') ? (
               <AvatarDao daoName={daoName} src={daoLogo} />
             ) : (
               <AvatarDao
@@ -82,7 +77,7 @@ export const CompareMetadata: React.FC<CompareMetadataProps> = ({
           ) : (
             <AvatarDao
               daoName={daoDetails?.metadata.name || ''}
-              src={daoDetailsAvatar}
+              src={daoDetails?.metadata?.avatar}
             />
           )}
         </Dd>

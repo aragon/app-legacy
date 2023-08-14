@@ -1,4 +1,3 @@
-import {withTransaction} from '@elastic/apm-rum-react';
 import React, {useState} from 'react';
 import {FormProvider, useForm} from 'react-hook-form';
 import {Loading} from 'components/temporary';
@@ -53,7 +52,7 @@ export const defaultValues = {
   actions: [],
 };
 
-const NewWithdraw: React.FC = () => {
+export const NewWithdraw: React.FC = () => {
   const [showTxModal, setShowTxModal] = useState(false);
 
   const {data: daoDetails, isLoading: detailsLoading} = useDaoDetailsQuery();
@@ -94,5 +93,3 @@ const NewWithdraw: React.FC = () => {
     </>
   );
 };
-
-export default withTransaction('NewWithdraw', 'component')(NewWithdraw);

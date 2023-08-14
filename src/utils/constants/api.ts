@@ -8,8 +8,9 @@ export const FEEDBACK_FORM =
 export const SUBGRAPH_API_URL: SubgraphNetworkUrl = {
   arbitrum: undefined,
   'arbitrum-test': undefined,
-  base: undefined, //TODO: add subgraph url when available
-  'base-goerli': undefined, //TODO: add subgraph url when available
+  base: 'https://subgraph.satsuma-prod.com/qHR2wGfc5RLi6/aragon/osx-baseMainnet/api',
+  'base-goerli':
+    'https://subgraph.satsuma-prod.com/qHR2wGfc5RLi6/aragon/osx-baseGoerli/api',
   ethereum:
     'https://subgraph.satsuma-prod.com/qHR2wGfc5RLi6/aragon/osx-mainnet/version/v1.2.1/api',
   goerli:

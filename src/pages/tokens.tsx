@@ -1,8 +1,6 @@
 import {IconAdd, SearchInput} from '@aragon/ods';
-import {withTransaction} from '@elastic/apm-rum-react';
 import React, {useState} from 'react';
 import {useTranslation} from 'react-i18next';
-
 import TokenList from 'components/tokenList';
 import {PageWrapper} from 'components/wrappers';
 import {useGlobalModalContext} from 'context/globalModals';
@@ -10,7 +8,7 @@ import {useDaoVault} from 'hooks/useDaoVault';
 import {filterTokens, sortTokens} from 'utils/tokens';
 import type {VaultToken} from 'utils/types';
 
-const Tokens: React.FC = () => {
+export const Tokens: React.FC = () => {
   const {t} = useTranslation();
   const {open} = useGlobalModalContext();
 
@@ -49,5 +47,3 @@ const Tokens: React.FC = () => {
     </PageWrapper>
   );
 };
-
-export default withTransaction('Tokens', 'component')(Tokens);

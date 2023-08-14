@@ -18,7 +18,7 @@ import {useNetwork} from 'context/network';
 import {translateToNetworkishName} from 'utils/library';
 import {i18n} from '../../i18n.config';
 
-const Explore: React.FC = () => {
+export const Explore: React.FC = () => {
   const {network, setNetwork} = useNetwork();
 
   useEffect(() => {
@@ -105,5 +105,3 @@ const statistics: Stats[] = [
     statValue: '$19M+',
   },
 ];
-
-export default Explore;

@@ -7,7 +7,6 @@ import {
   ListItemAction,
   Option,
 } from '@aragon/ods';
-import {withTransaction} from '@elastic/apm-rum-react';
 import {Locale, format} from 'date-fns';
 import * as Locales from 'date-fns/locale';
 import React, {useCallback, useMemo, useState} from 'react';
@@ -25,7 +24,7 @@ import {TransferTypes} from 'utils/constants';
 import {Transfer} from 'utils/types';
 import ExportCsvModal from 'containers/exportCsvModal/ExportCsvModal';
 
-const Transfers: React.FC = () => {
+export const Transfers: React.FC = () => {
   const {open} = useGlobalModalContext();
   const {t, i18n} = useTranslation();
   const {handleTransferClicked} = useTransactionDetailContext();
@@ -209,5 +208,4 @@ const Transfers: React.FC = () => {
   );
 };
 
-export default withTransaction('Transfers', 'component')(Transfers);
 const SectionContainer = styled.div.attrs({className: 'my-3 desktop:my-5'})``;

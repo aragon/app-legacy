@@ -1,7 +1,7 @@
 import {
   ButtonText,
   IconChevronRight,
-  IconFeedback,
+  IconLinkExternal,
   IconReload,
   IconSearch,
   Link,
@@ -15,6 +15,7 @@ import styled from 'styled-components';
 import ModalBottomSheetSwitcher from 'components/modalBottomSheetSwitcher';
 import Header from 'components/modalHeader/searchHeader';
 import {StateEmpty} from 'components/stateEmpty';
+import {parseWCIconUrl} from 'utils/library';
 
 type Props = {
   sessions: SessionTypes.Struct[];
@@ -77,7 +78,10 @@ const WCConnectedApps: React.FC<Props> = props => {
                   key={session.topic}
                   title={session.peer.metadata.name}
                   subtitle={session.peer.metadata.description}
-                  iconLeft={session.peer.metadata.icons[0]}
+                  iconLeft={parseWCIconUrl(
+                    session.peer.metadata.url,
+                    session.peer.metadata.icons[0]
+                  )}
                   bgWhite
                   iconRight={<IconChevronRight />}
                   truncateText
@@ -99,7 +103,7 @@ const WCConnectedApps: React.FC<Props> = props => {
                 label={t('wc.listdApps.learnLinkLabel')}
                 href="/"
                 external
-                iconRight={<IconFeedback />}
+                iconRight={<IconLinkExternal />}
               />
             </div>
           </>

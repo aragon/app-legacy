@@ -1,14 +1,20 @@
-import type {IFetchTokenParams} from '../token-service.api';
-import {tokenQueryKeys} from '../query-keys';
-import {tokenService} from '../token-service';
+import {AssetBalance, Deposit} from '@aragon/sdk-client';
 import {
   UseQueryOptions,
+  useQueries,
   useQuery,
   useQueryClient,
-  useQueries,
 } from '@tanstack/react-query';
-import {Token} from '../domain';
 import {useCallback} from 'react';
+
+import {Token} from '../domain';
+import {tokenQueryKeys} from '../query-keys';
+import {tokenService} from '../token-service';
+import type {
+  FetchErc20DepositParams,
+  IFetchTokenBalancesParams,
+  IFetchTokenParams,
+} from '../token-service.api';
 
 export const useToken = (
   params: IFetchTokenParams,
@@ -47,4 +53,31 @@ export const useTokenList = (
   }));
 
   return useQueries({queries});
+};
+
+export const useTokenBalances = (
+  params: IFetchTokenBalancesParams,
+  options?: UseQueryOptions<AssetBalance[] | null>
+) => {
+  return useQuery(
+    tokenQueryKeys.balances(params),
+    () => tokenService.fetchTokenBalances(params),
+    options
+  );
+};
+
+export const useErc20Deposits = (
+  params: FetchErc20DepositParams,
+  options?: UseQueryOptions<Deposit[] | null>
+) => {
+  const {data: assets, isFetched: areAssetsFetched} = useTokenBalances(
+    {...params, ignoreZeroBalances: false},
+    {enabled: !!params.address}
+  );
+
+  return useQuery(
+    tokenQueryKeys.transfers(params),
+    () => tokenService.fetchErc20Deposits({...params, assets: assets ?? []}),
+    {...options, enabled: options?.enabled !== false && areAssetsFetched}
+  );
 };

@@ -2,7 +2,6 @@ import {
   AlertInline,
   ButtonText,
   IconChevronRight,
-  IconFeedback,
   IconRadioCancel,
   IconRadioMulti,
   IconSuccess,
@@ -11,6 +10,7 @@ import {
   TextareaSimple,
   shortenAddress,
   WalletInputLegacy,
+  IconLinkExternal,
 } from '@aragon/ods';
 import {ethers} from 'ethers';
 import {isAddress} from 'ethers/lib/utils';
@@ -313,11 +313,11 @@ const ContractAddressValidation: React.FC<Props> = props => {
     [TransactionState.WAITING]: t('scc.validation.ctaLabelWaiting'),
     [TransactionState.LOADING]: '',
     [TransactionState.SUCCESS]: t('scc.validation.ctaLabelSuccess'),
-    [TransactionState.ERROR]: t('scc.validation.ctaLabelWarning'),
+    [TransactionState.ERROR]: '',
   };
 
   const ABIFlowLabel = {
-    [ManualABIFlowState.WAITING]: t('scc.validation.ctaLabelWarning'),
+    [ManualABIFlowState.WAITING]: t('TransactionModal.tryAgain'),
     [ManualABIFlowState.ABI_INPUT]: t('scc.abi.ctaLabelWaiting'),
     [ManualABIFlowState.SUCCESS]: t('scc.validation.ctaLabelSuccess'),
     [ManualABIFlowState.ERROR]: t('scc.abi.ctaLabelCritical'),
@@ -445,16 +445,26 @@ const ContractAddressValidation: React.FC<Props> = props => {
   }, [etherscanData, etherscanLoading, isTransactionError, t]);
 
   return (
-    <ModalBottomSheetSwitcher isOpen={props.isOpen} onClose={props.onClose}>
+    <ModalBottomSheetSwitcher
+      isOpen={props.isOpen}
+      onClose={() => {
+        resetField('contractAddress');
+        setVerificationState(TransactionState.WAITING);
+        props.onClose();
+      }}
+    >
       <ModalHeader
         title={t('scc.validation.modalTitle')}
         onClose={() => {
-          // clear contract address field
           resetField('contractAddress');
           setVerificationState(TransactionState.WAITING);
           props.onClose();
         }}
-        onBackButtonClicked={props.onBackButtonClicked}
+        onBackButtonClicked={() => {
+          resetField('contractAddress');
+          setVerificationState(TransactionState.WAITING);
+          props.onBackButtonClicked();
+        }}
         showBackButton={
           !(
             verificationState === TransactionState.LOADING ||
@@ -494,8 +504,12 @@ const ContractAddressValidation: React.FC<Props> = props => {
                 name={name}
                 onBlur={onBlur}
                 value={value}
-                onChange={onChange}
-                disabledFilled={isTransactionSuccessful || isTransactionLoading}
+                onChange={e => onChange(e.target.value.trim())}
+                disabled={
+                  isTransactionSuccessful ||
+                  isTransactionLoading ||
+                  isTransactionError
+                }
                 placeholder="0x ..."
                 adornmentText={adornmentText}
                 onAdornmentClick={() => handleAdornmentClick(value, onChange)}
@@ -523,7 +537,7 @@ const ContractAddressValidation: React.FC<Props> = props => {
                   <Link
                     external
                     type="neutral"
-                    iconRight={<IconFeedback height={13} width={13} />}
+                    iconRight={<IconLinkExternal height={13} width={13} />}
                     href={`https://sourcify.dev/#/lookup/${addressField}`}
                     label={t('scc.validation.explorerLinkLabel')}
                     className="ft-text-sm"
@@ -536,7 +550,7 @@ const ContractAddressValidation: React.FC<Props> = props => {
                   <Link
                     external
                     type="neutral"
-                    iconRight={<IconFeedback height={13} width={13} />}
+                    iconRight={<IconLinkExternal height={13} width={13} />}
                     href={`${CHAIN_METADATA[network].explorer}address/${addressField}#code`}
                     label={t('scc.validation.explorerLinkLabel')}
                     className="ft-text-sm"
@@ -647,7 +661,12 @@ const ContractAddressValidation: React.FC<Props> = props => {
                 });
               } else if (verificationState === TransactionState.ERROR) {
                 // Manual ABI flow starting
-                setABIFlowState(ManualABIFlowState.ABI_INPUT);
+                // setABIFlowState(ManualABIFlowState.ABI_INPUT);
+
+                //Retry
+                resetField('contractAddress', {defaultValue: ''});
+                setVerificationState(TransactionState.WAITING);
+                setABIFlowState(ManualABIFlowState.NOT_STARTED);
               }
             }}
             iconLeft={

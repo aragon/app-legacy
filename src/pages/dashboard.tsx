@@ -6,7 +6,6 @@ import {
   IlluObject,
   IllustrationHuman,
 } from '@aragon/ods';
-import {withTransaction} from '@elastic/apm-rum-react';
 import React, {useCallback, useEffect, useMemo, useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {generatePath, useNavigate, useParams} from 'react-router-dom';
@@ -40,7 +39,6 @@ import {
   EmptyStateHeading,
 } from 'containers/pageEmptyState';
 import {useGlobalModalContext} from 'context/globalModals';
-import {useResolveDaoAvatar} from 'hooks/useResolveDaoAvatar';
 
 enum DaoCreationState {
   ASSEMBLING_DAO,
@@ -48,7 +46,7 @@ enum DaoCreationState {
   OPEN_DAO,
 }
 
-const Dashboard: React.FC = () => {
+export const Dashboard: React.FC = () => {
   const {t} = useTranslation();
   const {alert} = useAlertContext();
   const {isDesktop, isMobile} = useScreen();
@@ -82,10 +80,6 @@ const Dashboard: React.FC = () => {
     isSuccess,
   } = useDaoQuery(urlAddressOrEns, pollInterval);
   const liveAddressOrEns = toDisplayEns(liveDao?.ensDomain) || liveDao?.address;
-
-  const {avatar: liveDaoAvatar} = useResolveDaoAvatar(
-    liveDao?.metadata?.avatar
-  );
 
   // pending DAO
   const {data: pendingDao, isLoading: pendingDaoLoading} =
@@ -170,7 +164,7 @@ const Dashboard: React.FC = () => {
 
   const handleClipboardActions = useCallback(async () => {
     await navigator.clipboard.writeText(
-      `app.aragon.org/#/daos/${network}/${liveAddressOrEns}`
+      `https://app.aragon.org/#/daos/${network}/${liveAddressOrEns}`
     );
     alert(t('alert.chip.inputCopied'));
   }, [alert, liveAddressOrEns, network, t]);
@@ -267,14 +261,14 @@ const Dashboard: React.FC = () => {
           <HeaderDao
             daoName={liveDao.metadata.name}
             daoEnsName={toDisplayEns(liveDao.ensDomain)}
-            daoAvatar={liveDaoAvatar}
+            daoAvatar={liveDao?.metadata?.avatar}
             daoUrl={`app.aragon.org/#/daos/${network}/${liveAddressOrEns}`}
             description={liveDao.metadata.description}
             created_at={formatDate(
               liveDao.creationDate.getTime() / 1000,
               'MMMM yyyy'
             ).toString()}
-            daoChain={network}
+            daoChain={CHAIN_METADATA[network].name}
             daoType={daoType}
             favorited={isFavoritedDao}
             copiedOnClick={handleClipboardActions}
@@ -286,7 +280,7 @@ const Dashboard: React.FC = () => {
                 plugins: liveDao.plugins,
                 metadata: {
                   name: liveDao.metadata.name,
-                  avatar: liveDaoAvatar,
+                  avatar: liveDao?.metadata?.avatar,
                   description: liveDao.metadata.description,
                 },
               })
@@ -482,5 +476,3 @@ const MobileDashboardContent: React.FC<DashboardContentProps> = ({
 const MobileLayout = styled.div.attrs({
   className: 'col-span-full space-y-5',
 })``;
-
-export default withTransaction('Dashboard', 'component')(Dashboard);

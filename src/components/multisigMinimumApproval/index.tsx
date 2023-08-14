@@ -11,10 +11,13 @@ import {TFunction, useTranslation} from 'react-i18next';
 import {CORRECTION_DELAY} from 'utils/constants';
 
 import MinimumApproval from './minimumApproval';
+import {ConfigureCommunityProps} from 'containers/configureCommunity';
 
 const MIN_REQUIRED_APPROVALS = 1;
 
-export const MultisigMinimumApproval = () => {
+export const MultisigMinimumApproval = ({
+  isSettingPage,
+}: ConfigureCommunityProps) => {
   const {t} = useTranslation();
   const {control, clearErrors, setValue, trigger} = useFormContext();
   const [multisigWallets] = useWatch({
@@ -72,8 +75,9 @@ export const MultisigMinimumApproval = () => {
    *                      Effects                  *
    *************************************************/
   useEffect(() => {
-    setValue('multisigMinimumApprovals', computeDefaultValue());
-  }, [computeDefaultValue, setValue]);
+    if (!isSettingPage)
+      setValue('multisigMinimumApprovals', computeDefaultValue());
+  }, [computeDefaultValue, isSettingPage, setValue]);
 
   /*************************************************
    *                     Render                    *

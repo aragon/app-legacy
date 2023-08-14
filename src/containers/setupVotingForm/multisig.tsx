@@ -278,7 +278,7 @@ type Props = {
     selectValue: string | boolean;
   }>;
 
-  value: string;
+  value: string | boolean;
   onChange: (value: string | boolean) => void;
 };
 

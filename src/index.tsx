@@ -16,9 +16,8 @@ import {
   polygonMumbai,
 } from 'wagmi/chains';
 import {infuraProvider} from 'wagmi/providers/infura';
-
+import {LedgerConnector} from 'wagmi/connectors/ledger';
 import {AlertProvider} from 'context/alert';
-import {APMProvider} from 'context/elasticAPM';
 import {GlobalModalsProvider} from 'context/globalModals';
 import {NetworkProvider} from 'context/network';
 import {PrivacyContextProvider} from 'context/privacyContext';
@@ -28,9 +27,10 @@ import {WalletMenuProvider} from 'context/walletMenu';
 import {UseCacheProvider} from 'hooks/useCache';
 import {UseClientProvider} from 'hooks/useClient';
 import {infuraApiKey, walletConnectProjectID} from 'utils/constants';
-import App from './app';
+import {App} from './app';
 
 const chains = [base, baseGoerli, goerli, mainnet, polygon, polygonMumbai];
+const ledgerChains = [goerli, mainnet, polygon, polygonMumbai];
 
 const {publicClient} = configureChains(chains, [
   w3mProvider({projectId: walletConnectProjectID}),
@@ -39,11 +39,21 @@ const {publicClient} = configureChains(chains, [
 
 const wagmiConfig = createConfig({
   autoConnect: true,
-  connectors: w3mConnectors({
-    projectId: walletConnectProjectID,
-    version: 2,
-    chains,
-  }),
+  connectors: [
+    ...w3mConnectors({
+      projectId: walletConnectProjectID,
+      version: 2,
+      chains,
+    }),
+    new LedgerConnector({
+      chains: ledgerChains,
+      options: {
+        walletConnectVersion: 2,
+        enableDebugLogs: false,
+        projectId: walletConnectProjectID,
+      },
+    }),
+  ],
 
   publicClient,
 });
@@ -82,42 +92,38 @@ const onLoad = () => {
 onLoad();
 
 ReactDOM.render(
-  <>
-    <React.StrictMode>
-      <QueryClientProvider client={queryClient}>
-        <PrivacyContextProvider>
-          <APMProvider>
-            <Router>
-              <AlertProvider>
-                <WagmiConfig config={wagmiConfig}>
-                  <NetworkProvider>
-                    <UseClientProvider>
-                      <UseCacheProvider>
-                        <ProvidersContextProvider>
-                          <TransactionDetailProvider>
-                            <WalletMenuProvider>
-                              <GlobalModalsProvider>
-                                <App />
-                                <ReactQueryDevtools initialIsOpen={false} />
-                              </GlobalModalsProvider>
-                            </WalletMenuProvider>
-                          </TransactionDetailProvider>
-                        </ProvidersContextProvider>
-                      </UseCacheProvider>
-                    </UseClientProvider>
-                  </NetworkProvider>
-                </WagmiConfig>
-              </AlertProvider>
-            </Router>
-          </APMProvider>
-        </PrivacyContextProvider>
-      </QueryClientProvider>
-    </React.StrictMode>
+  <React.StrictMode>
+    <QueryClientProvider client={queryClient}>
+      <PrivacyContextProvider>
+        <Router>
+          <AlertProvider>
+            <WagmiConfig config={wagmiConfig}>
+              <NetworkProvider>
+                <UseClientProvider>
+                  <UseCacheProvider>
+                    <ProvidersContextProvider>
+                      <TransactionDetailProvider>
+                        <WalletMenuProvider>
+                          <GlobalModalsProvider>
+                            <App />
+                            <ReactQueryDevtools initialIsOpen={false} />
+                          </GlobalModalsProvider>
+                        </WalletMenuProvider>
+                      </TransactionDetailProvider>
+                    </ProvidersContextProvider>
+                  </UseCacheProvider>
+                </UseClientProvider>
+              </NetworkProvider>
+            </WagmiConfig>
+          </AlertProvider>
+        </Router>
+      </PrivacyContextProvider>
+    </QueryClientProvider>
     <Web3Modal
       projectId={walletConnectProjectID}
       ethereumClient={ethereumClient}
       themeMode="light"
     />
-  </>,
+  </React.StrictMode>,
   document.getElementById('root')
 );

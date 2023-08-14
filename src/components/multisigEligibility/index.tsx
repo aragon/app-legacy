@@ -6,6 +6,8 @@ import styled from 'styled-components';
 import {AlertInline} from '@aragon/ods';
 import useScreen from 'hooks/useScreen';
 
+export type MultisigProposerEligibility = 'multisig' | 'anyone';
+
 export const MultisigEligibility = () => {
   const {control} = useFormContext();
   const {t} = useTranslation();

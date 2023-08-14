@@ -8,7 +8,6 @@ import {
   Spinner,
   IllustrationHuman,
 } from '@aragon/ods';
-import {withTransaction} from '@elastic/apm-rum-react';
 import React, {useEffect, useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {useNavigate} from 'react-router-dom';
@@ -27,7 +26,7 @@ import {toDisplayEns} from 'utils/library';
 import useScreen from 'hooks/useScreen';
 import {htmlIn} from 'utils/htmlIn';
 
-const Governance: React.FC = () => {
+export const Governance: React.FC = () => {
   const {data: daoDetails, isLoading: isDaoLoading} = useDaoDetailsQuery();
   const {isMobile} = useScreen();
 
@@ -173,8 +172,6 @@ const Governance: React.FC = () => {
     </>
   );
 };
-
-export default withTransaction('Governance', 'component')(Governance);
 
 export const Container = styled.div.attrs({
   className: 'col-span-full desktop:col-start-3 desktop:col-end-11',

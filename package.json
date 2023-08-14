@@ -21,10 +21,10 @@
   },
   "dependencies": {
     "@apollo/client": "^3.5.8",
-    "@aragon/ods": "^0.2.9",
-    "@aragon/sdk-client": "^1.10.1-rc1",
-    "@elastic/apm-rum-react": "^1.3.1",
-    "@radix-ui/react-accordion": "^0.1.6",
+    "@aragon/ods": "^0.2.10",
+    "@aragon/sdk-client": "^1.12.0-rc1",
+    "@elastic/apm-rum-react": "^2.0.0",
+    "@radix-ui/react-accordion": "^1.1.2",
     "@tanstack/react-query": "^4.26.1",
     "@tanstack/react-query-devtools": "^4.26.1",
     "@tiptap/extension-link": "^2.0.3",
@@ -59,7 +59,7 @@
     "sanitize-html": "^2.10.0",
     "styled-components": "^5.3.1",
     "use-react-router-breadcrumbs": "^3.0.1",
-    "viem": "^1.4.1",
+    "viem": "^1.4.2",
     "wagmi": "^1.3.9"
   },
   "devDependencies": {
@@ -67,7 +67,6 @@
     "@babel/preset-env": "^7.14.7",
     "@babel/preset-react": "^7.14.5",
     "@babel/preset-typescript": "^7.14.5",
-    "@rollup/plugin-typescript": "^8.3.0",
     "@synthetixio/synpress": "^3.5.1",
     "@tailwindcss/line-clamp": "^0.4.0",
     "@testing-library/jest-dom": "^5.14.1",
@@ -104,8 +103,8 @@
     "tailwindcss": "^2.2.4",
     "tailwindcss-fluid-type": "^1.3.1",
     "typescript": "^5.1.3",
-    "vite": "^4.4.7",
-    "vite-tsconfig-paths": "^3.3.17"
+    "vite": "^4.4.8",
+    "vite-tsconfig-paths": "^4.2.0"
   },
   "engines": {
     "node": ">=16.0.0"

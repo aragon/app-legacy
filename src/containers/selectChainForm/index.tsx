@@ -5,7 +5,7 @@ import {
   // ListItemAction,
   ListItemBlockchain,
 } from '@aragon/ods';
-import React, {useState} from 'react';
+import React, {useMemo, useState} from 'react';
 import {Controller, useFormContext} from 'react-hook-form';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
@@ -13,6 +13,7 @@ import styled from 'styled-components';
 import {useNetwork} from 'context/network';
 import useScreen from 'hooks/useScreen';
 import {CHAIN_METADATA, SupportedNetworks} from 'utils/constants';
+import {featureFlags} from 'utils/featureFlags';
 
 // import {trackEvent} from 'services/analytics';
 
@@ -29,6 +30,19 @@ const SelectChainForm: React.FC = () => {
   // const [sortFilter, setFilter] = useState<SortFilter>('cost');
   const [networkType, setNetworkType] = useState<NetworkType>(
     CHAIN_METADATA[network].isTestnet ? 'test' : 'main'
+  );
+
+  const availableNetworks = useMemo(
+    () =>
+      networks[networkType]['popularity'].filter(
+        n =>
+          // uppercase SupportedNetwork name is used for the flag
+          // also replace hyphens with underscores
+          featureFlags.getValue(
+            `VITE_FEATURE_FLAG_${n.replace(/-/g, '_').toUpperCase()}`
+          ) !== 'false'
+      ),
+    [networkType]
   );
 
   // // moving this up so state change triggers translation changes
@@ -138,7 +152,7 @@ const SelectChainForm: React.FC = () => {
         </SortFilter> */}
       </Header>
       <FormItem>
-        {networks[networkType]['cost'].map(selectedNetwork => (
+        {availableNetworks.map(selectedNetwork => (
           <Controller
             key={selectedNetwork}
             name="blockchain"
@@ -199,15 +213,13 @@ type SelectableNetworks = Record<
 // TODO: enable base in the network selection
 const networks: SelectableNetworks = {
   main: {
-    cost: ['polygon', 'ethereum'],
-    // cost: ['polygon', 'base', 'ethereum'],
-    popularity: ['polygon', 'ethereum', 'arbitrum'],
-    security: ['ethereum', 'arbitrum', 'polygon'],
+    cost: ['polygon', 'base', 'ethereum'],
+    popularity: ['ethereum', 'polygon', 'base'],
+    security: ['ethereum', 'base', 'polygon'],
   },
   test: {
-    cost: ['mumbai', 'goerli'],
-    // cost: ['mumbai', 'base-goerli', 'goerli'],
-    popularity: ['mumbai', 'goerli', 'arbitrum-test'],
-    security: ['goerli', 'arbitrum-test', 'mumbai'],
+    cost: ['mumbai', 'base-goerli', 'goerli'],
+    popularity: ['goerli', 'mumbai', 'base-goerli'],
+    security: ['goerli', 'base-goerli', 'mumbai'],
   },
 };

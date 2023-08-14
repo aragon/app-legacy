@@ -8,15 +8,14 @@ import {
   Context as SdkContext,
   TokenVotingClient,
   VotingMode,
+  WithdrawParams,
 } from '@aragon/sdk-client';
-import {fetchEnsAvatar} from '@wagmi/core';
-
 import {
   DaoAction,
   SupportedNetwork as SdkSupportedNetworks,
 } from '@aragon/sdk-client-common';
 import {bytesToHex, resolveIpfsCid} from '@aragon/sdk-common';
-import {NavigationDao} from 'context/apolloClient';
+import {fetchEnsAvatar} from '@wagmi/core';
 import {BigNumber, BigNumberish, constants, providers} from 'ethers';
 import {
   formatUnits as ethersFormatUnits,
@@ -25,8 +24,10 @@ import {
 } from 'ethers/lib/utils';
 import {TFunction} from 'react-i18next';
 
+import {NavigationDao} from 'context/apolloClient';
 import {getEtherscanVerifiedContract} from 'services/etherscanAPI';
 import {Token} from 'services/token/domain';
+import {IFetchTokenParams} from 'services/token/token-service.api';
 import {
   BIGINT_PATTERN,
   CHAIN_METADATA,
@@ -54,7 +55,6 @@ import {i18n} from '../../i18n.config';
 import {addABI, decodeMethod} from './abiDecoder';
 import {attachEtherNotice} from './contract';
 import {getTokenInfo} from './tokens';
-import {IFetchTokenParams} from 'services/token/token-service.api';
 
 export function formatUnits(amount: BigNumberish, decimals: number) {
   if (amount.toString().includes('.') || !decimals) {
@@ -140,7 +140,13 @@ export async function decodeWithdrawToAction(
     return;
   }
 
-  const decoded = client.decoding.withdrawAction(to, value, data);
+  // FIXME remove custom type when NFT withdraws are supported
+  type DecodedWithdraw = WithdrawParams & {amount?: bigint};
+  const decoded = client.decoding.withdrawAction(
+    to,
+    value,
+    data
+  ) as DecodedWithdraw;
 
   if (!decoded) {
     console.error('Unable to decode withdraw action');
@@ -171,7 +177,7 @@ export async function decodeWithdrawToAction(
     });
 
     return {
-      amount: Number(formatUnits(decoded.amount, tokenInfo.decimals)),
+      amount: Number(formatUnits(decoded.amount ?? '0', tokenInfo.decimals)),
       name: 'withdraw_assets',
       to: recipient,
       tokenBalance: 0, // unnecessary?
@@ -637,11 +643,10 @@ export const translateToAppNetwork = (
   sdkNetwork: SdkContext['network']
 ): SupportedNetworks => {
   switch (sdkNetwork.name as SdkSupportedNetworks) {
-    // TODO: uncomment when sdk is ready
-    // case SdkSupportedNetworks.BASE:
-    //   return 'base';
-    // case SdkSupportedNetworks.BASE_GOERLI:
-    //   return 'base-goerli';
+    case SdkSupportedNetworks.BASE:
+      return 'base';
+    case SdkSupportedNetworks.BASE_GOERLI:
+      return 'base-goerli';
     case SdkSupportedNetworks.MAINNET:
       return 'ethereum';
     case SdkSupportedNetworks.GOERLI:
@@ -669,9 +674,9 @@ export function translateToNetworkishName(
 
   switch (appNetwork) {
     case 'base':
-      return 'unsupported'; // TODO: get SDK name
+      return SdkSupportedNetworks.BASE;
     case 'base-goerli':
-      return 'unsupported'; // TODO: get SDK name
+      return SdkSupportedNetworks.BASE_GOERLI;
     case 'ethereum':
       return SdkSupportedNetworks.MAINNET;
     case 'goerli':
@@ -1001,4 +1006,51 @@ export function capitalizeFirstLetter(str: string) {
   }
 
   return str.charAt(0).toUpperCase() + str.slice(1);
+}
+
+/**
+ * Parse WalletConnect icon URL
+ *
+ * This function is used to parse the icon URL coming from WalletConnect.
+ * In case of SVG icons (e.g., Gnosis Safe), it extracts the href attribute value.
+ * If the icon path is relative, it prepends it with the dApp URL.
+ *
+ * @export
+ * @param dAppUrl - The URL of the dApp
+ * @param icon - The icon URL or SVG string
+ * @returns the parsed URL of the icon,
+ * or the original icon value if no modifications were necessary.
+ */
+export function parseWCIconUrl(
+  dAppUrl: string,
+  icon: string | undefined
+): string | undefined {
+  let parsedUrl = icon;
+
+  if (icon && icon.startsWith('<')) {
+    const match = icon.match(/<image href="([^"]*)"/);
+    if (match && match[1]) {
+      parsedUrl = match[1];
+    }
+  }
+
+  if (parsedUrl && parsedUrl.startsWith('/')) {
+    parsedUrl = `${dAppUrl}${parsedUrl}`;
+  }
+
+  return parsedUrl;
+}
+
+/**
+ * Checks if the given value exists (i.e., is neither undefined, null, nor an empty string).
+ * Note: The number `0` is still considered a value by this function.
+ *
+ * @param value - The value to be checked.
+ * @returns Returns true if the value exists and isn't an empty string, otherwise false.
+ */
+export function hasValue(value: unknown): boolean {
+  if (typeof value === 'string') {
+    return value.trim() !== '';
+  }
+  return value !== undefined && value !== null;
 }

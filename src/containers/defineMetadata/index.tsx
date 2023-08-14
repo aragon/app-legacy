@@ -11,17 +11,19 @@ import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 
 import AddLinks from 'components/addLinks';
-import {URL_PATTERN} from 'utils/constants';
+import {useNetwork} from 'context/network';
+import {useProviders} from 'context/providers';
+import {ENS_SUPPORTED_NETWORKS, URL_PATTERN} from 'utils/constants';
 import {isOnlyWhitespace} from 'utils/library';
 import {isDaoEnsNameValid} from 'utils/validators';
-import {useProviders} from 'context/providers';
-import {useNetwork} from 'context/network';
 
 const DAO_LOGO = {
   maxDimension: 2400,
   minDimension: 256,
   maxFileSize: 3000000,
 };
+
+const BYTES_IN_MB = 1000000;
 
 export type DefineMetadataProps = {
   arrayName?: string;
@@ -35,21 +37,29 @@ const DefineMetadata: React.FC<DefineMetadataProps> = ({
   isSettingPage,
 }) => {
   const {t} = useTranslation();
-  const {isL2Network} = useNetwork();
+  const {network} = useNetwork();
   const {control, setError, clearErrors, getValues} = useFormContext();
   const {api: provider} = useProviders();
+
+  const supportsENS = ENS_SUPPORTED_NETWORKS.includes(network);
 
   const handleImageError = useCallback(
     (error: {code: string; message: string}) => {
       const imgError: FieldError = {type: 'manual'};
       const {minDimension, maxDimension, maxFileSize} = DAO_LOGO;
-
       switch (error.code) {
         case 'file-invalid-type':
           imgError.message = t('errors.invalidImageType');
           break;
         case 'file-too-large':
-          imgError.message = t('errors.imageTooLarge', {maxFileSize});
+          {
+            // convert to mb
+            const sizeInMb = maxFileSize / BYTES_IN_MB;
+            imgError.message = t('errors.imageTooLarge', {
+              maxFileSize: sizeInMb,
+            });
+          }
+
           break;
         case 'wrong-dimension':
           imgError.message = t('errors.imageDimensions', {
@@ -126,7 +136,7 @@ const DefineMetadata: React.FC<DefineMetadataProps> = ({
       </FormItem>
 
       {/* ENS Ens Name */}
-      {!isSettingPage && !isL2Network && (
+      {!isSettingPage && supportsENS && (
         <FormItem>
           <Label
             label={t('labels.daoEnsName')}
@@ -195,7 +205,7 @@ const DefineMetadata: React.FC<DefineMetadataProps> = ({
 
             try {
               // in case url does not need to be created
-              if (URL_PATTERN.test(value)) {
+              if (URL_PATTERN.test(value) || value?.startsWith?.('blob')) {
                 preview = value;
               } else {
                 preview = value ? URL.createObjectURL(value) : '';
@@ -209,6 +219,7 @@ const DefineMetadata: React.FC<DefineMetadataProps> = ({
                 <LogoContainer>
                   <InputImageSingle
                     {...{DAO_LOGO, preview}}
+                    maxFileSize={DAO_LOGO.maxFileSize}
                     onError={handleImageError}
                     onChange={onChange}
                     acceptableFileFormat="image/jpg, image/jpeg, image/png, image/gif"

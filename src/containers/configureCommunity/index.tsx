@@ -22,7 +22,13 @@ import {
 } from 'utils/constants';
 import {getDaysHoursMins} from 'utils/date';
 
-const ConfigureCommunity: React.FC = () => {
+export type ConfigureCommunityProps = {
+  isSettingPage?: boolean;
+};
+
+const ConfigureCommunity: React.FC<ConfigureCommunityProps> = ({
+  isSettingPage = false,
+}) => {
   const {t} = useTranslation();
   const {control, setValue, getValues, trigger} = useFormContext();
 
@@ -144,7 +150,7 @@ const ConfigureCommunity: React.FC = () => {
     <>
       {membership === 'multisig' && (
         <FormItem>
-          <MultisigMinimumApproval />
+          <MultisigMinimumApproval {...{isSettingPage}} />
         </FormItem>
       )}
       {membership === 'token' && (

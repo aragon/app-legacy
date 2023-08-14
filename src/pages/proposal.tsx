@@ -16,7 +16,6 @@ import {
   VotingMode,
 } from '@aragon/sdk-client';
 import {DaoAction, ProposalStatus} from '@aragon/sdk-client-common';
-import {withTransaction} from '@elastic/apm-rum-react';
 import TipTapLink from '@tiptap/extension-link';
 import {useEditor} from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
@@ -32,6 +31,7 @@ import {Loading} from 'components/temporary';
 import {StyledEditorContent} from 'containers/reviewProposal';
 import {TerminalTabs, VotingTerminal} from 'containers/votingTerminal';
 import {useGlobalModalContext} from 'context/globalModals';
+import {useNetwork} from 'context/network';
 import {useProposalTransactionContext} from 'context/proposalTransaction';
 import {useProviders} from 'context/providers';
 import {useCache} from 'hooks/useCache';
@@ -48,6 +48,7 @@ import {
 import useScreen from 'hooks/useScreen';
 import {useWallet} from 'hooks/useWallet';
 import {useWalletCanVote} from 'hooks/useWalletCanVote';
+import {useTokenAsync} from 'services/token/queries/use-token';
 import {CHAIN_METADATA} from 'utils/constants';
 import {
   decodeAddMembersToAction,
@@ -74,8 +75,6 @@ import {
   stripPlgnAdrFromProposalId,
 } from 'utils/proposals';
 import {Action, ProposalId} from 'utils/types';
-import {useTokenAsync} from 'services/token/queries/use-token';
-import {useNetwork} from 'context/network';
 
 // TODO: @Sepehr Please assign proper tags on action decoding
 // const PROPOSAL_TAGS = ['Finance', 'Withdraw'];
@@ -84,7 +83,7 @@ const PENDING_PROPOSAL_STATUS_INTERVAL = 1000 * 10;
 const PROPOSAL_STATUS_INTERVAL = 1000 * 60;
 const NumberFormatter = new Intl.NumberFormat('en-US');
 
-const Proposal: React.FC = () => {
+export const Proposal: React.FC = () => {
   const {t} = useTranslation();
   const {open} = useGlobalModalContext();
   const {isDesktop} = useScreen();
@@ -214,24 +213,53 @@ const Proposal: React.FC = () => {
   useEffect(() => {
     if (!proposal) return;
 
-    const mintTokenActions: {
-      actions: Uint8Array[];
-      index: number;
-    } = {actions: [], index: 0};
-
+    let mintTokenActionsIndex = 0;
+    const mintTokenActionsData: Uint8Array[] = [];
     const proposalErc20Token = isErc20VotingProposal(proposal)
       ? proposal.token
       : undefined;
 
-    const actionPromises: Promise<Action | undefined>[] = proposal.actions.map(
-      (action: DaoAction, index) => {
-        const functionParams =
-          client?.decoding.findInterface(action.data) ||
-          pluginClient?.decoding.findInterface(action.data);
+    const multisigClient = pluginClient as MultisigClient;
+    const tokenVotingClient = pluginClient as TokenVotingClient;
 
-        switch (functionParams?.functionName) {
-          case 'transfer':
-            return decodeWithdrawToAction(
+    const getAction = async (action: DaoAction, index: number) => {
+      const functionParams =
+        client?.decoding.findInterface(action.data) ||
+        pluginClient?.decoding.findInterface(action.data);
+
+      switch (functionParams?.functionName) {
+        case 'transfer':
+          return decodeWithdrawToAction(
+            action.data,
+            client,
+            provider,
+            network,
+            action.to,
+            action.value,
+            fetchToken
+          );
+        case 'mint':
+          if (mintTokenActionsData.length === 0) mintTokenActionsIndex = index;
+          mintTokenActionsData.push(action.data);
+          return;
+        case 'addAddresses':
+          return decodeAddMembersToAction(action.data, multisigClient);
+        case 'removeAddresses':
+          return decodeRemoveMembersToAction(action.data, multisigClient);
+        case 'updateVotingSettings':
+          return decodePluginSettingsToAction(
+            action.data,
+            tokenVotingClient,
+            (proposal as TokenVotingProposal).totalVotingWeight as bigint,
+            proposalErc20Token
+          );
+        case 'updateMultisigSettings':
+          return decodeMultisigSettingsToAction(action.data, multisigClient);
+        case 'setMetadata':
+          return decodeMetadataToAction(action.data, client);
+        default: {
+          try {
+            const decodedAction = await decodeWithdrawToAction(
               action.data,
               client,
               provider,
@@ -240,96 +268,55 @@ const Proposal: React.FC = () => {
               action.value,
               fetchToken
             );
-          case 'mint':
-            if (mintTokenActions.actions.length === 0) {
-              mintTokenActions.index = index;
+
+            // assume that the action is a valid native withdraw
+            // if the token name is the same as the chain native token
+            if (
+              decodedAction?.tokenName.toLowerCase() ===
+              CHAIN_METADATA[network].nativeCurrency.name.toLowerCase()
+            ) {
+              return decodedAction;
             }
-            mintTokenActions.actions.push(action.data);
-            return Promise.resolve({} as Action);
-          case 'addAddresses':
-            return decodeAddMembersToAction(
-              action.data,
-              pluginClient as MultisigClient
+          } catch (error) {
+            console.warn(
+              'decodeWithdrawToAction failed, trying decodeToExternalAction'
             );
-          case 'removeAddresses':
-            return decodeRemoveMembersToAction(
-              action.data,
-              pluginClient as MultisigClient
-            );
-          case 'updateVotingSettings':
-            return decodePluginSettingsToAction(
-              action.data,
-              pluginClient as TokenVotingClient,
-              (proposal as TokenVotingProposal).totalVotingWeight as bigint,
-              proposalErc20Token
-            );
-          case 'updateMultisigSettings':
-            return Promise.resolve(
-              decodeMultisigSettingsToAction(
-                action.data,
-                pluginClient as MultisigClient
-              )
-            );
-          case 'setMetadata':
-            return decodeMetadataToAction(action.data, client);
-          default: {
-            const withdrawAction = decodeWithdrawToAction(
-              action.data,
-              client,
-              provider,
-              network,
-              action.to,
-              action.value,
-              fetchToken
-            );
-
-            const isPossiblyWithdrawAction =
-              !functionParams && action.to && action.value;
 
             return decodeToExternalAction(
               action,
               proposal.dao.address,
               network,
               t
-            )
-              .then(result => {
-                if (!result && isPossiblyWithdrawAction) {
-                  return withdrawAction as unknown as Action;
-                }
-                return result;
-              })
-              .catch(() => {
-                if (isPossiblyWithdrawAction) {
-                  return withdrawAction;
-                }
-              });
+            );
           }
         }
       }
-    );
+    };
 
-    if (proposalErc20Token && mintTokenActions.actions.length !== 0) {
-      // Decode all the mint actions into one action with several addresses
-      const decodedMintToken = decodeMintTokensToAction(
-        mintTokenActions.actions,
-        pluginClient as TokenVotingClient,
-        proposalErc20Token.address,
-        (proposal as TokenVotingProposal).totalVotingWeight,
-        provider,
-        network
-      );
+    const processActions = async () => {
+      const actionPromises: Promise<Action | undefined>[] =
+        proposal.actions.map(getAction);
 
-      // splice them back to the actions array with all the other actions
-      actionPromises.splice(
-        mintTokenActions.index,
-        mintTokenActions.actions.length,
-        decodedMintToken
-      );
-    }
+      // decode mint tokens actions with all the addresses together
+      if (proposalErc20Token && mintTokenActionsData.length !== 0) {
+        const decodedMintToken = decodeMintTokensToAction(
+          mintTokenActionsData,
+          pluginClient as TokenVotingClient,
+          proposalErc20Token.address,
+          (proposal as TokenVotingProposal).totalVotingWeight,
+          provider,
+          network
+        );
 
-    Promise.all(actionPromises).then(value => {
-      setDecodedActions(value);
-    });
+        actionPromises[mintTokenActionsIndex] =
+          Promise.resolve(decodedMintToken);
+      }
+
+      const results = await Promise.all(actionPromises);
+      setDecodedActions(results);
+    };
+
+    processActions();
   }, [client, network, pluginClient, proposal, provider, fetchToken, t]);
 
   // caches the status for breadcrumb
@@ -708,8 +695,6 @@ const Proposal: React.FC = () => {
     </Container>
   );
 };
-
-export default withTransaction('Proposal', 'component')(Proposal);
 
 const Container = styled.div.attrs({
   className: 'col-span-full desktop:col-start-2 desktop:col-end-12',

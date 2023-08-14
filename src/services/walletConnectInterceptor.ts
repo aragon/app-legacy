@@ -96,17 +96,6 @@ class WalletConnectInterceptor {
     });
   }
 
-  changeNetwork(topic: string, addresses: string[], chainId: number) {
-    return this.client?.emitSessionEvent({
-      topic: topic,
-      event: {
-        name: 'chainChanged',
-        data: addresses,
-      },
-      chainId: `eip155:${chainId}`,
-    });
-  }
-
   getActiveSessions = (address?: string) => {
     const sessions = this.client?.getActiveSessions() ?? {};
     const filteredSessions = Object.values(sessions).filter(
