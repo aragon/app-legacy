@@ -138,21 +138,19 @@ const Transfers: React.FC = () => {
                 /> */}
               </ButtonGroup>
 
-              {dropdownActions.length && (
-                <Dropdown
-                  side="bottom"
-                  align="end"
-                  listItems={dropdownActions}
-                  disabled={dropdownActions.length === 0}
-                  trigger={
-                    <ButtonIcon
-                      mode="secondary"
-                      size="medium"
-                      icon={<IconMenuVertical />}
-                    />
-                  }
-                />
-              )}
+              <Dropdown
+                side="bottom"
+                align="end"
+                listItems={dropdownActions}
+                disabled={dropdownActions.length === 0}
+                trigger={
+                  <ButtonIcon
+                    mode="secondary"
+                    size="medium"
+                    icon={<IconMenuVertical />}
+                  />
+                }
+              />
             </div>
           </div>
           {noTransfers ? (

@@ -20,9 +20,6 @@ import {Transfer, Deposit, Withdraw} from 'utils/types';
 import {TransferTypes} from 'utils/constants';
 import {DaoDetails} from '@aragon/sdk-client';
 import {toDisplayEns} from 'utils/library';
-import {generatePath, useNavigate} from 'react-router-dom';
-import {Finance} from 'utils/paths';
-import {useNetwork} from 'context/network';
 
 interface ExportCsvModalProps {
   transfers: Transfer[];
@@ -50,8 +47,6 @@ const ExportCsvModal: React.FC<ExportCsvModalProps> = ({
 }) => {
   const {t} = useTranslation();
   const {isExportCsvOpen, close} = useGlobalModalContext();
-  const navigate = useNavigate();
-  const {network} = useNetwork();
 
   const form = useForm({
     mode: 'onChange',
@@ -88,7 +83,7 @@ const ExportCsvModal: React.FC<ExportCsvModalProps> = ({
         );
       })
       .sort((transferA, transferB) => {
-        // Latest transfers first
+        // Latest transfers last
         const transferATimestamp =
           Number(transferA.transferTimestamp) ||
           new Date(transferA.transferDate).valueOf();
@@ -98,9 +93,9 @@ const ExportCsvModal: React.FC<ExportCsvModalProps> = ({
           new Date(transferB.transferDate).valueOf();
 
         return transferATimestamp > transferBTimestamp
-          ? 1
-          : transferATimestamp < transferBTimestamp
           ? -1
+          : transferATimestamp < transferBTimestamp
+          ? 1
           : 0;
       });
   }, [endDate, startDate, transfers]);
@@ -188,19 +183,7 @@ const ExportCsvModal: React.FC<ExportCsvModalProps> = ({
 
   const handleFlowFinish = useCallback(() => {
     handleClose();
-    navigate(
-      generatePath(Finance, {
-        network,
-        dao: toDisplayEns(daoDetails?.ensDomain) || daoDetails?.address,
-      })
-    );
-  }, [
-    daoDetails?.address,
-    daoDetails?.ensDomain,
-    handleClose,
-    navigate,
-    network,
-  ]);
+  }, [handleClose]);
 
   return (
     <ModalBottomSheetSwitcher
