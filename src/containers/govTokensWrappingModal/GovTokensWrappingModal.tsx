@@ -22,8 +22,8 @@ import {
 } from 'react-hook-form';
 import {StateEmpty} from 'components/stateEmpty';
 import {Erc20TokenDetails} from '@aragon/sdk-client';
-import type {WrappingFormParams} from 'context/govTokensWrapping';
 import numeral from 'numeral';
+import {TokensWrappingFormData} from 'utils/types';
 
 interface GovTokensWrappingModalProps {
   isOpen: boolean;
@@ -35,7 +35,7 @@ interface GovTokensWrappingModalProps {
     wrapped: string;
     unwrapped: string;
   };
-  form: UseFormReturn<WrappingFormParams, object>;
+  form: UseFormReturn<TokensWrappingFormData, object>;
   isFinished: boolean;
   currentStep: number;
   isTxLoading: boolean;

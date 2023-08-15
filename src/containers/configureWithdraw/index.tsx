@@ -24,11 +24,10 @@ import {useNetwork} from 'context/network';
 import {useProviders} from 'context/providers';
 import {useDaoDetailsQuery} from 'hooks/useDaoDetails';
 import {useWallet} from 'hooks/useWallet';
-import {WithdrawAction} from 'pages/newWithdraw';
 import {CHAIN_METADATA} from 'utils/constants';
 import {Web3Address, handleClipboardActions, toDisplayEns} from 'utils/library';
 import {fetchBalance, getTokenInfo, isNativeToken} from 'utils/tokens';
-import {ActionIndex} from 'utils/types';
+import {ActionIndex, WithdrawFormDataAction} from 'utils/types';
 import {
   validateTokenAddress,
   validateTokenAmount,
@@ -453,8 +452,8 @@ export default ConfigureWithdrawForm;
  * @returns Whether the screen is valid
  */
 export function isValid(
-  dirtyFields?: FormState<WithdrawAction>['dirtyFields'],
-  errors?: FormState<WithdrawAction>['errors'],
+  dirtyFields?: FormState<WithdrawFormDataAction>['dirtyFields'],
+  errors?: FormState<WithdrawFormDataAction>['errors'],
   tokenAddress?: string
 ) {
   // check if fields are dirty

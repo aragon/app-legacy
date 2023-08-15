@@ -17,7 +17,7 @@ import {trackEvent} from 'services/analytics';
 import {getCanonicalUtcOffset} from 'utils/date';
 import {toDisplayEns} from 'utils/library';
 import {Finance} from 'utils/paths';
-import {SupportedVotingSettings} from 'utils/types';
+import {ProposalFormData, SupportedVotingSettings} from 'utils/types';
 import ConfigureActions from 'containers/configureActions';
 import {actionsAreValid} from 'utils/validators';
 import {useActionsContext} from 'context/actions';
@@ -39,7 +39,7 @@ const WithdrawStepper: React.FC<WithdrawStepperProps> = ({
   const {address} = useWallet();
   const {actions, addAction} = useActionsContext();
 
-  const {control, getValues} = useFormContext();
+  const {control, getValues} = useFormContext<ProposalFormData>();
 
   const {errors, dirtyFields} = useFormState({control: control});
 

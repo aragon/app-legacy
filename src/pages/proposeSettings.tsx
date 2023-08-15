@@ -72,13 +72,15 @@ import {
   ActionUpdatePluginSettings,
   ProposalId,
   ProposalResource,
+  ProposalSettingsFormData,
 } from 'utils/types';
 
 export const ProposeSettings: React.FC = () => {
   const {t} = useTranslation();
   const {network} = useNetwork();
 
-  const {getValues, setValue, control} = useFormContext();
+  const {getValues, setValue, control} =
+    useFormContext<ProposalSettingsFormData>();
   const [showTxModal, setShowTxModal] = useState(false);
   const {errors, dirtyFields} = useFormState({
     control,

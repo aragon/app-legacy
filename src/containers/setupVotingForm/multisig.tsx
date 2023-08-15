@@ -23,6 +23,7 @@ import {
 } from 'utils/date';
 import {FormSection} from '.';
 import {DateTimeErrors} from './dateTimeErrors';
+import {ProposalFormData} from 'utils/types';
 
 const MAX_DURATION_MILLS =
   MULTISIG_MAX_REC_DURATION_DAYS * MINS_IN_DAY * 60 * 1000;
@@ -35,7 +36,7 @@ const SetupMultisigVotingForm: React.FC = () => {
 
   const [utcInstance, setUtcInstance] = useState<UtcInstance>('first');
   const {control, formState, getValues, resetField, setValue, trigger} =
-    useFormContext();
+    useFormContext<ProposalFormData>();
 
   const [endTimeWarning, startSwitch, durationSwitch] = useWatch({
     control,
@@ -142,7 +143,11 @@ const SetupMultisigVotingForm: React.FC = () => {
         'durationMinutes',
       ]);
 
-      return daysToMills(days) + hoursToMills(hours) + minutesToMills(mins);
+      return (
+        daysToMills(Number(days)) +
+        hoursToMills(Number(hours)) +
+        minutesToMills(Number(mins))
+      );
     } else {
       return (
         Number(getValues('durationMills')) ||

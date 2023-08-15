@@ -27,6 +27,7 @@ import {featureFlags} from 'utils/featureFlags';
 import {Pages} from 'pages';
 import {useMonitoring} from 'hooks/useMonitoring';
 import '../i18n.config';
+import {ProposalSettingsFormData} from 'utils/types';
 
 export const App: React.FC = () => {
   // TODO this needs to be inside a Routes component. Will be moved there with
@@ -139,7 +140,7 @@ export const App: React.FC = () => {
 };
 
 const NewSettingsWrapper: React.FC = () => {
-  const formMethods = useForm({
+  const formMethods = useForm<ProposalSettingsFormData>({
     mode: 'onChange',
     defaultValues: {
       links: [{name: '', url: ''}],
