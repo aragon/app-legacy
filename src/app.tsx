@@ -1,4 +1,8 @@
 import {ApmRoutes} from '@elastic/apm-rum-react';
+import React, {Suspense, lazy, useEffect} from 'react';
+import {FormProvider, useForm} from 'react-hook-form';
+import {Navigate, Outlet, Route, useLocation} from 'react-router-dom';
+
 import {GridLayout} from 'components/layout';
 import ProtectedRoute from 'components/protectedRoute';
 import {Loading} from 'components/temporary/loading';
@@ -19,9 +23,6 @@ import {useTransactionDetailContext} from 'context/transactionDetail';
 import {useDaoDetailsQuery} from 'hooks/useDaoDetails';
 import {useMonitoring} from 'hooks/useMonitoring';
 import {useWallet} from 'hooks/useWallet';
-import React, {Suspense, lazy, useEffect} from 'react';
-import {FormProvider, useForm} from 'react-hook-form';
-import {Navigate, Outlet, Route, useLocation} from 'react-router-dom';
 import {identifyUser, trackPage} from 'services/analytics';
 import {featureFlags} from 'utils/featureFlags';
 import {NotFound} from 'utils/paths';
@@ -198,6 +199,9 @@ const DaoWrapper: React.FC = () => {
   );
 };
 
+// NOTE: these have to be lazy loaded here unfortunately because the
+// TipTap Editor behaves weirdly when they are imported from a different
+// file. - F.F. [08/15/2023]
 // PAGES
 const CommunityPage = lazy(() =>
   import('pages/community').then(module => ({default: module.Community}))
