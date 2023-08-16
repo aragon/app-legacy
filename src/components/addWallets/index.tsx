@@ -9,16 +9,27 @@ import React, {useEffect} from 'react';
 import {useFieldArray, useFormContext, useWatch} from 'react-hook-form';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
+import {Address, useEnsName} from 'wagmi';
 
 import {useAlertContext} from 'context/alert';
+import {useNetwork} from 'context/network';
 import {useWallet} from 'hooks/useWallet';
+import {CHAIN_METADATA} from 'utils/constants';
 import Footer from './footer';
 import Header from './header';
 import Row from './row';
 
 const AddWallets: React.FC = () => {
   const {t} = useTranslation();
+  const {alert} = useAlertContext();
+
+  const {network} = useNetwork();
   const {address} = useWallet();
+
+  const {data: ensName} = useEnsName({
+    address: address as Address,
+    chainId: CHAIN_METADATA[network].id,
+  });
 
   const {control, setValue, resetField, trigger} = useFormContext();
   const wallets = useWatch({name: 'wallets', control: control});
@@ -26,7 +37,6 @@ const AddWallets: React.FC = () => {
     name: 'wallets',
     control,
   });
-  const {alert} = useAlertContext();
 
   const controlledFields = fields.map((field, index) => {
     return {
@@ -36,10 +46,10 @@ const AddWallets: React.FC = () => {
   });
 
   useEffect(() => {
-    if (address && !wallets) {
-      append({address, amount: '1'});
+    if (address && controlledFields?.length === 0) {
+      append({address, amount: '1', ensName});
     }
-  }, [address, append, trigger, wallets]);
+  }, [address, append, controlledFields?.length, ensName]);
 
   const resetDistribution = () => {
     controlledFields.forEach((_, index) => {
