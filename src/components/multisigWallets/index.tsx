@@ -7,7 +7,7 @@ import {
   Label,
   ListItemAction,
 } from '@aragon/ods';
-import React, {useEffect} from 'react';
+import React, {useCallback, useEffect, useRef} from 'react';
 import {useFieldArray, useFormContext, useWatch} from 'react-hook-form';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
@@ -23,6 +23,7 @@ import {Row} from './row';
 export const MultisigWallets = () => {
   const {t} = useTranslation();
   const {alert} = useAlertContext();
+  const appendConnectedAddress = useRef(true);
 
   const {network} = useNetwork();
   const {address} = useWallet();
@@ -47,10 +48,21 @@ export const MultisigWallets = () => {
   });
 
   useEffect(() => {
-    if (address && controlledWallets?.length === 0) {
+    if (
+      address &&
+      controlledWallets?.length === 0 &&
+      appendConnectedAddress.current === true
+    ) {
       append({address, ensName});
     }
   }, [address, append, controlledWallets?.length, ensName]);
+
+  const isConnectedAddress = useCallback(
+    (index: number) =>
+      controlledWallets[index].address.toLowerCase() === address?.toLowerCase(),
+
+    [address, controlledWallets]
+  );
 
   // add empty wallet
   const handleAdd = () => {
@@ -65,7 +77,12 @@ export const MultisigWallets = () => {
 
   // remove wallet
   const handleDeleteEntry = (index: number) => {
+    if (isConnectedAddress(index)) {
+      appendConnectedAddress.current = false;
+    }
+
     remove(index);
+
     alert(t('alert.chip.removedAddress'));
     setTimeout(() => {
       trigger('multisigWallets');
@@ -83,6 +100,10 @@ export const MultisigWallets = () => {
 
   // reset wallet
   const handleResetEntry = (index: number) => {
+    if (isConnectedAddress(index)) {
+      appendConnectedAddress.current = false;
+    }
+
     update(index, {address: '', ensName: ''});
     alert(t('alert.chip.resetAddress'));
     trigger('multisigWallets');
