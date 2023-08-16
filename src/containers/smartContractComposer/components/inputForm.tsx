@@ -1,4 +1,5 @@
 import {
+  AlertInline,
   ButtonText,
   CheckboxListItem,
   IconSuccess,
@@ -14,6 +15,7 @@ import {
   FormProvider,
   useForm,
   useFormContext,
+  useFormState,
   useWatch,
 } from 'react-hook-form';
 import {useTranslation} from 'react-i18next';
@@ -54,9 +56,12 @@ const InputForm: React.FC<InputFormProps> = ({
   });
   const {dao: daoAddressOrEns} = useParams();
   const {addAction, removeAction} = useActionsContext();
-  const {setValue, resetField} = useFormContext();
+  const {setValue, resetField, trigger} = useFormContext();
+  const {errors} = useFormState();
   const [, setFormError] = useState(false);
   const [another, setAnother] = useState(false);
+
+  console.log('errors', errors);
 
   useEffect(() => setFormError(false), [selectedAction]);
 
@@ -71,6 +76,7 @@ const InputForm: React.FC<InputFormProps> = ({
   }, [network, selectedAction.inputs, selectedAction.stateMutability, t]);
 
   const composeAction = useCallback(async () => {
+    trigger('sccActions');
     setFormError(false);
 
     const etherscanData = await getEtherscanVerifiedContract(
@@ -147,22 +153,23 @@ const InputForm: React.FC<InputFormProps> = ({
       }
     }
   }, [
-    another,
-    actionIndex,
-    actionInputs,
-    addAction,
-    daoAddressOrEns,
+    trigger,
+    selectedSC.address,
+    selectedSC.name,
     network,
-    onComposeButtonClicked,
-    removeAction,
-    resetField,
-    sccActions,
     selectedAction.inputs,
     selectedAction.name,
     selectedAction.notice,
-    selectedSC.address,
-    selectedSC.name,
+    sccActions,
+    removeAction,
+    actionIndex,
+    addAction,
+    resetField,
     setValue,
+    actionInputs,
+    onComposeButtonClicked,
+    another,
+    daoAddressOrEns,
     t,
   ]);
 
@@ -208,6 +215,9 @@ const InputForm: React.FC<InputFormProps> = ({
       <HStack>
         <ButtonText
           label={t('scc.detailContract.ctaLabel')}
+          disabled={
+            errors?.['sccActions']?.[selectedSC.address]?.[selectedAction.name]
+          }
           onClick={composeAction}
         />
         <CheckboxListItem
@@ -217,6 +227,12 @@ const InputForm: React.FC<InputFormProps> = ({
           type={another ? 'active' : 'default'}
         />
       </HStack>
+      {errors?.['sccActions']?.[selectedSC.address]?.[selectedAction.name] && (
+        <AlertInline
+          label="Please fill in all the required fields"
+          mode="critical"
+        />
+      )}
     </div>
   );
 };
@@ -301,6 +317,9 @@ export const ComponentForType: React.FC<ComponentForTypeProps> = ({
         <Controller
           defaultValue=""
           name={formName}
+          rules={{
+            required: t('errors.required.walletAddress') as string,
+          }}
           render={({
             field: {name, value, onBlur, onChange},
             fieldState: {error},
@@ -312,7 +331,7 @@ export const ComponentForType: React.FC<ComponentForTypeProps> = ({
               placeholder="0"
               includeDecimal
               disabled={disabled}
-              mode={error?.message ? 'critical' : 'default'}
+              mode={error ? 'critical' : 'default'}
               value={value}
             />
           )}
@@ -363,6 +382,9 @@ export const ComponentForType: React.FC<ComponentForTypeProps> = ({
         <Controller
           defaultValue=""
           name={formName}
+          rules={{
+            required: t('errors.required.walletAddress') as string,
+          }}
           render={({
             field: {name, value, onBlur, onChange},
             fieldState: {error},
@@ -372,7 +394,7 @@ export const ComponentForType: React.FC<ComponentForTypeProps> = ({
               onBlur={onBlur}
               onChange={onChange}
               placeholder={`${input.name} (${input.type})`}
-              mode={error?.message ? 'critical' : 'default'}
+              mode={error ? 'critical' : 'default'}
               value={value}
               disabled={disabled}
             />
@@ -508,7 +530,8 @@ const ActionDescription = styled.p.attrs({
 })``;
 
 const HStack = styled.div.attrs({
-  className: 'flex justify-between items-center space-x-3 mt-5 ft-text-base',
+  className:
+    'flex justify-between items-center space-x-3 mt-5 ft-text-base mb-1',
 })``;
 
 export default InputForm;
