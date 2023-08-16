@@ -1,8 +1,16 @@
-import React, {useEffect, useMemo} from 'react';
-import {FormProvider, useForm, useFormState, useWatch} from 'react-hook-form';
+import React, {useEffect, useMemo, useRef} from 'react';
+import {
+  FormProvider,
+  useFieldArray,
+  useForm,
+  useFormState,
+  useWatch,
+} from 'react-hook-form';
 import {useTranslation} from 'react-i18next';
 
+import {TokenVotingWalletField} from 'components/addWallets/row';
 import {FullScreenStepper, Step} from 'components/fullScreenStepper';
+import {MultisigWalletField} from 'components/multisigWallets/row';
 import ConfigureCommunity from 'containers/configureCommunity';
 import {OverviewDAOHeader, OverviewDAOStep} from 'containers/daoOverview';
 import DefineMetadata from 'containers/defineMetadata';
@@ -11,6 +19,7 @@ import SelectChain from 'containers/selectChainForm';
 import SetupCommunity from 'containers/setupCommunity';
 import {CreateDaoProvider} from 'context/createDao';
 import {useNetwork} from 'context/network';
+import {ApiProvider, useProviders} from 'context/providers';
 import {useWallet} from 'hooks/useWallet';
 import {trackEvent} from 'services/analytics';
 import {CHAIN_METADATA, getSupportedNetworkByChainId} from 'utils/constants';
@@ -48,13 +57,28 @@ const defaultValues = {
 export const CreateDAO: React.FC = () => {
   const {t} = useTranslation();
   const {chainId} = useWallet();
+  const {api: provider} = useProviders();
   const {setNetwork, isL2Network} = useNetwork();
+
   const formMethods = useForm<CreateDaoFormData>({
     mode: 'onChange',
     defaultValues,
   });
+
+  const {update: updateMultisigFields} = useFieldArray({
+    control: formMethods.control,
+    name: 'multisigWallets',
+  });
+
+  const {update: updateTokenFields} = useFieldArray({
+    name: 'wallets',
+    control: formMethods.control,
+  });
+
   const {errors, dirtyFields} = useFormState({control: formMethods.control});
+
   const [
+    formChain,
     daoName,
     daoEnsName,
     eligibilityType,
@@ -70,6 +94,7 @@ export const CreateDAO: React.FC = () => {
   ] = useWatch({
     control: formMethods.control,
     name: [
+      'blockchain.id',
       'daoName',
       'daoEnsName',
       'eligibilityType',
@@ -84,6 +109,7 @@ export const CreateDAO: React.FC = () => {
       'tokenType',
     ],
   });
+  const prevFormChain = useRef<number>(formChain);
 
   /*************************************************
    *                     Effects                   *
@@ -112,6 +138,27 @@ export const CreateDAO: React.FC = () => {
     // wallet network doesn't cause effect to run
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  useEffect(() => {
+    const refetchWalletsENS = async () => {
+      if (multisigWallets) {
+        updateWalletsENS(multisigWallets, provider, updateMultisigFields);
+      }
+
+      if (tokenWallets) {
+        updateWalletsENS(tokenWallets, provider, updateTokenFields);
+      }
+    };
+
+    if (prevFormChain.current !== formChain) {
+      prevFormChain.current = formChain;
+      refetchWalletsENS();
+    }
+
+    // intentionally setting only formChain as the dependency
+    // since this update needs to happen only on form network change
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [formChain]);
 
   /*************************************************
    *                    Callbacks                  *
@@ -335,4 +382,34 @@ export const CreateDAO: React.FC = () => {
       </CreateDaoProvider>
     </FormProvider>
   );
+};
+
+type UpdateFunction = (
+  index: number,
+  value: Partial<MultisigWalletField> | Partial<TokenVotingWalletField>
+) => void;
+
+/**
+ * Utility function to fetch ENS names for given wallets and
+ * update them using the provided update function.
+ *
+ * @param wallets - List of wallets to fetch ENS names for
+ * @param provider - Web3 provider
+ * @param updateFunction - Function to update each wallet with its ENS name
+ */
+const updateWalletsENS = async (
+  wallets: Array<MultisigWalletField | TokenVotingWalletField>,
+  provider: ApiProvider,
+  updateFunction: UpdateFunction
+) => {
+  const ensNames = await Promise.all(
+    wallets.map(w => provider.lookupAddress(w.address))
+  );
+
+  wallets.forEach((wallet, index) => {
+    updateFunction(index, {
+      ...wallet,
+      ensName: ensNames[index] ?? '',
+    });
+  });
 };
