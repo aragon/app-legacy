@@ -49,7 +49,7 @@ export const EditMsSettings: React.FC<EditMsSettingsProps> = ({daoDetails}) => {
     name: 'daoLinks',
     control,
   });
-  const {errors, isValid} = useFormState({control});
+  const {errors, isValid, isDirty} = useFormState({control});
 
   const {data, isLoading: settingsAreLoading} = usePluginSettings(
     daoDetails?.plugins[0].instanceAddress as string,
@@ -61,6 +61,10 @@ export const EditMsSettings: React.FC<EditMsSettingsProps> = ({daoDetails}) => {
     daoDetails?.plugins[0].instanceAddress as string,
     daoDetails?.plugins[0].id as PluginTypes
   );
+
+  const isLoading = membersAreLoading || settingsAreLoading;
+
+  const dataFetched = !!(!isLoading && members && settings.minApprovals);
 
   const [
     daoName,
@@ -133,23 +137,11 @@ export const EditMsSettings: React.FC<EditMsSettingsProps> = ({daoDetails}) => {
     resourceLinks,
   ]);
 
-  const isMetadataChanged = useMemo(() => {
-    if (!daoDetails?.metadata.name || !daoName?.trim()) return false;
-    return (
-      daoName !== daoDetails.metadata.name ||
+  const isMetadataChanged = (daoDetails?.metadata.name &&
+    (daoName !== daoDetails.metadata.name ||
       daoSummary !== daoDetails.metadata.description ||
       daoLogo !== daoDetails.metadata.avatar ||
-      !resourceLinksAreEqual
-    );
-  }, [
-    daoDetails.metadata.avatar,
-    daoDetails.metadata.description,
-    daoDetails.metadata.name,
-    daoLogo,
-    daoName,
-    daoSummary,
-    resourceLinksAreEqual,
-  ]);
+      !resourceLinksAreEqual)) as boolean;
 
   const isGovernanceChanged = useMemo(() => {
     if (!multisigMinimumApprovals) return false;
@@ -223,10 +215,19 @@ export const EditMsSettings: React.FC<EditMsSettingsProps> = ({daoDetails}) => {
   }, [isCommunityChanged, isGovernanceChanged, isMetadataChanged, setValue]);
 
   useEffect(() => {
-    setCurrentMetadata();
-    setCurrentGovernance();
-    setCurrentCommunity();
-  }, [setCurrentCommunity, setCurrentGovernance, setCurrentMetadata]);
+    if (dataFetched && !isDirty) {
+      setCurrentMetadata();
+      setCurrentGovernance();
+      setCurrentCommunity();
+    }
+  }, [
+    dataFetched,
+    isDirty,
+    setCurrentCommunity,
+    setCurrentGovernance,
+    setCurrentMetadata,
+    settingsUnchanged,
+  ]);
 
   const metadataAction = [
     {
@@ -267,11 +268,13 @@ export const EditMsSettings: React.FC<EditMsSettingsProps> = ({daoDetails}) => {
     },
   ];
 
-  if (settingsAreLoading || membersAreLoading) {
+  if (isLoading) {
     return <Loading />;
   }
 
-  return (
+  // Note: using isDirty here to allow time for form to fill up before
+  // rendering a value or else there will be noticeable render with blank form.
+  return isDirty ? (
     <PageWrapper
       title={t('settings.editDaoSettings')}
       description={t('settings.editSubtitle')}
@@ -312,7 +315,9 @@ export const EditMsSettings: React.FC<EditMsSettingsProps> = ({daoDetails}) => {
                 dropdownItems={communityAction}
               >
                 <AccordionContent>
-                  <MultisigEligibility />
+                  <EligibilityWrapper>
+                    <MultisigEligibility />
+                  </EligibilityWrapper>
                 </AccordionContent>
               </AccordionItem>
 
@@ -365,6 +370,8 @@ export const EditMsSettings: React.FC<EditMsSettingsProps> = ({daoDetails}) => {
         </Layout>
       }
     />
+  ) : (
+    <Loading />
   );
 };
 
@@ -384,3 +391,5 @@ const HStack = styled.div.attrs({
 const Footer = styled.div.attrs({
   className: 'mt-5 desktop:mt-8 space-y-2',
 })``;
+
+const EligibilityWrapper = styled.div.attrs({})``;
