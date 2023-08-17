@@ -237,7 +237,10 @@
     "supplyPotential": "Potential supply",
     "supplyPotentialHelptext": "Based on {{tokenSymbol}} Total Supply",
     "type": "Type",
-    "select": "Select"
+    "select": "Select",
+    "codeInput": {
+      "address0x": "0x …"
+    }
   },
   "placeHolders": {
     "selectToken": "Select a token …",
@@ -247,7 +250,8 @@
     "daoName": "Type your DAO's name …",
     "ensName": "aragon",
     "daoDescription": "Type your summary …",
-    "addResource": "Lens, Discord, etc."
+    "addResource": "Lens, Discord, etc.",
+    "searchWalletAddress": "Filter by ENS or wallet address …"
   },
   "finance": {
     "tokenSection": "Tokens",
@@ -277,6 +281,12 @@
         "title": "File saved!",
         "desc": "The CSV should now be saved on your device."
       }
+    },
+    "treasuryEmptyState": {
+      "desc": "To add funds to your DAO, make a deposit. Learn more about it {{link}}.",
+      "title": "No tokens found",
+      "descLinkLabel": "in this guide",
+      "descLinkURL": "https://aragon.org/how-to/manage-a-dao-treasury"
     }
   },
   "governance": {
@@ -348,7 +358,8 @@
         "expiredTitle": "Execution not anymore available",
         "expiredDesc": "The execution is no longer possible because the expiration time has passed. If you want to carry out this action, you must create a new proposal and possibly set a longer expiration time."
       }
-    }
+    },
+    "actionSecondary": "Delegate"
   },
   "infos": {
     "voteDuration": "The minimum duration of {{days}} days is defined by DAO governance settings. To change the minimum duration a vote is required.",
@@ -372,7 +383,7 @@
     "insufficientBalance": "Insufficient balance",
     "invalidURL": "Invalid URL",
     "invalidImage": "Invalid image",
-    "invalidImageType": "Invalid file type. Please provide either a JPG, PNG or GIF",
+    "invalidImageType": "Invalid file type. Please provide either a SVG, JPG, PNG or GIF",
     "imageDimensions": "Please provide a squared image with size between {{minDimension}}px and {{maxDimension}}px on each side",
     "imageTooLarge": "Please provide an image of max {{maxFileSize}}MB in size",
     "invalidAddress": "Invalid address",
@@ -660,7 +671,7 @@
       "title": "Describe your DAO",
       "description": "Name and define your DAO so new contributors know they've come to the right place. This information is displayed on the DAO Explore page and can be changed with a vote. For ideas on DAO branding, {{link}}.",
       "nameSubtitle": "Maximum of 128 characters",
-      "logoSubtitle": "JPG, PNG, or GIF of no more than 3MB. We recommend 1024x1024px.",
+      "logoSubtitle": "JPG, PNG, GIF, or SVG of no more than 3MB. We recommend 1024x1024px.",
       "descriptionSubtitle": "Describe your DAO's purpose in a few sentences. This is listed on the Explore page so new contributors can find you.",
       "linksSubtitle": "Links to your DAO's website, social media profiles, Discord, or other places your community gathers.",
       "metadataOverviewGuide": "read our guide",
@@ -822,7 +833,7 @@
       "actionsInfo": "More options for parameters are coming soon. ",
       "actionAlertCritical": {
         "title": "Action may fail",
-        "desc": "Even if the proposal was approved, this action may fail if it is not executed within the time limit."
+        "desc": "Even if the proposal passes, this action may fail if it is not executed within the time limit."
       },
       "addFirstActionTitle": "Add first Action",
       "addFirstActionDesc": "Add your very first optional action if you wish to peform on-chain executions",
@@ -830,7 +841,7 @@
       "stepCounter": "Step {{x}} of {{x}}",
       "actionAlertWarning": {
         "title": "Action not decoded",
-        "desc": "Because the smart contract is not verified, the actions could not be decoded."
+        "desc": "This action can't be decoded because the smart contract is not verified."
       }
     },
     "mintTokens": {
@@ -1066,7 +1077,6 @@
       "alertChipCritical": "DAO treasury added"
     },
     "wrapToken": {
-      "title": "Join the DAO",
       "desc": "Wrap {{tokenSymbol}} to get {{gTokenSymbol}}, which is used to participate in governance. You can unwrap {{gTokenSymbol}} at any time (1 {{tokenSymbol}} = 1 {{gTokenSymbol}}).",
       "inputModeLabel": "What do you want to do with your tokens?",
       "inputSelectWrap": "Wrap",
@@ -1088,12 +1098,49 @@
       "successBtnSecondaryLabel": "Add token symbol",
       "inputAmountBalanceWrapped": "Your balance: {{amount}} g{{tokenSymbol}}",
       "footerWrappedCancelLabel": "Cancel",
-      "footerWrappedCtaLabel": "Unwrap tokens"
+      "footerWrappedCtaLabel": "Unwrap tokens",
+      "successBtnGhostLabel": "Delegate voting power",
+      "label": "Join the DAO"
     },
     "unwrapToken": {
       "successTitle": "Tokens successfully unwrapped",
       "successDesc": "You have received {{amount}} {{tokenSymbol}} in your wallet.",
       "successCtaLabel": "See community"
+    },
+    "delegationActive": {
+      "CtaLabel": "Reclaim voting power",
+      "BtnSecondaryLabel": "No, I’m good",
+      "label": "Delegation",
+      "title": "Delegation is active",
+      "desc": "You have currently delegated your votes of {{balance}} {{tokenSymbol}} to the <b>{{walletAddressDelegation}}</b>.\nIf you want to participate at future proposals, you have to reclaim your voting power. "
+    },
+    "delegation": {
+      "label": "Delegation",
+      "optionsLabel": "What do you want to do with your delegation?",
+      "checkbox": {
+        "delegateTo": "Delegate to somebody",
+        "reclaim": "Reclaim your voting power"
+      },
+      "codeInputLabel": "Your delegation",
+      "codeInputDesc": "Enter a wallet address to delegate your votes.",
+      "codeInputPlaceholder": "ENS or 0x ...",
+      "alertCard": {
+        "title": "How does delegation work?",
+        "desc": "Delegating increases the voting power of the address you indicate above by your current or future {{tokenSymbol}} balance. If you are delegating to somebody else, you will be unable to vote until you reclaim your voting power."
+      },
+      "ctaLabelDelegating": "Delegating …",
+      "ctaLabelReclaiming": "Reclaming …",
+      "ctaLabelReclaim": "Reclaim now",
+      "ctaLabelDelegateNow": "Delegate now",
+      "successCtaLabel": "See community",
+      "successBtnSecondaryLabel": "See transaction",
+      "successDelegateTitle": "Voting power successfully delegated",
+      "successDelegateDesc": "You have delegated all your voting power of {{balance}} {{tokenSymbol}} to the <b>{{delegateEns}}</b>. You have the option to revoke this at any time.",
+      "successReclaimTitle": "Reclaimed your voting power successfully",
+      "successReclaimDesc": "You have reclaimed your voting power of {{balance}} {{tokenSymbol}} back. Your votes will be available for future proposals, and not for currently active.",
+      "alertCriticalDelegate": "Delegating went wrong. Try again.",
+      "alertCriticalReclaim": "Reclaiming went wrong. Try again.",
+      "ctaLabelRetry": "Retry"
     }
   },
   "scc": {
@@ -1116,7 +1163,7 @@
     },
     "selectionEmptyState": {
       "title": "Select smart contract",
-      "description": "Select a smart contract to compose any actions or connect a new smart contract if ..."
+      "description": "Create your own action to attach to your proposal by selecting any smart contract on {{networkName}}."
     },
     "validation": {
       "sourcifyStatusPending": "Validating on Sourcify …",
@@ -1168,7 +1215,9 @@
       "contractAmountActions": "{{amount}} actions",
       "ctaLabel": "Connect smart contract",
       "learnLinkLabel": "Learn more",
-      "learnLinkURL": "https://aragon.org/how-to/interact-with-external-contracts-from-your-dao"
+      "learnLinkURL": "https://aragon.org/how-to/interact-with-external-contracts-from-your-dao",
+      "proxyContractAddressLabel": "{{contractAddress}} as proxy",
+      "noActionsFound": "No write actions found"
     },
     "detailContract": {
       "dropdownExplorerLinkLabel": "View on block explorer",
@@ -1180,6 +1229,15 @@
     "inputPayableAmount": {
       "description": "Enter the required amount of {{tokenSymbol}} to be paid.",
       "label": "Payable Amount"
+    },
+    "writeContractEmptyState": {
+      "title": "Write contract",
+      "desc": "No public write actions were found.",
+      "ctaLabel": "Write as proxy"
+    },
+    "writeProxy": {
+      "dropdownDontWriteLabel": "Don’t write as proxy",
+      "dropdownWriteAsProxyLabel": "Write as proxy"
     }
   },
   "inputWallet": {
@@ -1207,6 +1265,18 @@
     },
     "ctaMain": {
       "wrappedLabel": "Join the DAO"
+    },
+    "sortDropdown": {
+      "label": "Sorted by Voting power",
+      "optionVotingPower": "Sort by voting power",
+      "optionDelegations": "Sort by delegations",
+      "optionBalance": "Sort by balance"
+    },
+    "actionItemDropdown": {
+      "optionCopyAddress": "Copy address",
+      "optionBlockExplorer": "View on block explorer",
+      "optionDelegate": "Delegate to",
+      "optionUndelegate": "Undelegate"
     }
   },
   "modalAlert": {
@@ -1217,6 +1287,10 @@
       "cancleLabel": "Cancel",
       "descLinkLabel": "our guide",
       "descLinkURL": "https://aragon.org/how-to/import-existing-tokens"
+    },
+    "noTokensFound": {
+      "title": "Tokens not found",
+      "ctaLabel": "Ok, understood"
     }
   },
   "wc": {
@@ -1244,7 +1318,7 @@
     },
     "validation": {
       "modalTitle": "Connect dApp",
-      "codeInputHelp": "Copy the QR Code to your Clipboard and past it below to connect to your desired dApp.",
+      "codeInputHelp": "Copy the QR Code to your Clipboard and paste it below to connect to your desired dApp.",
       "codeInputLabel": "WalletConnect QR code",
       "codeInputPlaceholder": "wc: …",
       "ctaLabel": "Connect dApp",
@@ -1279,5 +1353,9 @@
   "tokenAmount": {
     "InputLabel": "Tokens",
     "inputDesc": "Select the token and the amount that you would like to withdraw"
+  },
+  "tagWallet": {
+    "labelYourDelegate": "Your delegate",
+    "labelYou": "You"
   }
 }
