@@ -94,39 +94,37 @@ export const Finance: React.FC = () => {
     if (tokens.length === 0) {
       return (
         <PageWrapper includeHeader={false}>
-          <>
-            <div className="mt-5 mb-8">
-              <StateEmpty
-                type="Human"
-                mode="card"
-                body="blocks"
-                expression="surprised"
-                sunglass="small_intellectual"
-                hair="long"
-                accessory="flushed"
-                title={t('finance.treasuryEmptyState.title')}
-                description={htmlIn(t)('finance.treasuryEmptyState.desc')}
-                renderHtml
-                primaryButton={{
-                  label: t('finance.emptyState.buttonLabel'),
-                  onClick: () => {
-                    open('deposit');
-                  },
-                }}
+          <div className="mt-5 mb-8">
+            <StateEmpty
+              type="Human"
+              mode="card"
+              body="blocks"
+              expression="surprised"
+              sunglass="small_intellectual"
+              hair="long"
+              accessory="flushed"
+              title={t('finance.treasuryEmptyState.title')}
+              description={htmlIn(t)('finance.treasuryEmptyState.desc')}
+              renderHtml
+              primaryButton={{
+                label: t('finance.emptyState.buttonLabel'),
+                onClick: () => {
+                  open('deposit');
+                },
+              }}
+            />
+          </div>
+          <TransferSectionWrapper
+            title={t('finance.transferSection')}
+            showButton
+          >
+            <ListContainer>
+              <TransferList
+                transfers={transfers.slice(0, 5)}
+                onTransferClick={handleTransferClicked}
               />
-            </div>
-            <TransferSectionWrapper
-              title={t('finance.transferSection')}
-              showButton
-            >
-              <ListContainer>
-                <TransferList
-                  transfers={transfers.slice(0, 5)}
-                  onTransferClick={handleTransferClicked}
-                />
-              </ListContainer>
-            </TransferSectionWrapper>
-          </>
+            </ListContainer>
+          </TransferSectionWrapper>
         </PageWrapper>
       );
     }
