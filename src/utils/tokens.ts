@@ -432,7 +432,9 @@ export function shortenStr(
   endSymbols = 0,
   separation = '...'
 ): string {
-  if (!str) return str;
+  if (!str) {
+    return str;
+  }
 
   if (str.length < startSymbols + endSymbols) return str;
 
