@@ -15,7 +15,7 @@ import {useGlobalModalContext} from 'context/globalModals';
 import {useNetwork} from 'context/network';
 import {useTransactionDetailContext} from 'context/transactionDetail';
 import {AllTransfers} from 'utils/paths';
-import {abbreviateTokenAmount} from 'utils/tokens';
+import {abbreviateTokenAmount, shortenLongTokenSymbol} from 'utils/tokens';
 import {Transfer} from 'utils/types';
 import {htmlIn} from 'utils/htmlIn';
 
@@ -69,12 +69,15 @@ const TreasurySnapshot: React.FC<Props> = ({
         orientation="vertical"
         onClick={() => open()}
       />
-      {transfers.slice(0, 3).map(({tokenAmount, ...rest}) => (
+      {transfers.slice(0, 3).map(({tokenAmount, tokenSymbol, ...rest}) => (
         <TransferListItem
           key={rest.id}
           tokenAmount={abbreviateTokenAmount(tokenAmount)}
+          tokenSymbol={shortenLongTokenSymbol(tokenSymbol)}
           {...rest}
-          onClick={() => handleTransferClicked({tokenAmount, ...rest})}
+          onClick={() =>
+            handleTransferClicked({tokenAmount, tokenSymbol, ...rest})
+          }
         />
       ))}
       <ButtonText
