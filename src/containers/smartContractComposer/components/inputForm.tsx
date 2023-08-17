@@ -15,7 +15,6 @@ import {
   FormProvider,
   useForm,
   useFormContext,
-  useFormState,
   useWatch,
 } from 'react-hook-form';
 import {useTranslation} from 'react-i18next';
@@ -57,13 +56,12 @@ const InputForm: React.FC<InputFormProps> = ({
   const {dao: daoAddressOrEns} = useParams();
   const {addAction, removeAction} = useActionsContext();
   const {setValue, resetField, trigger} = useFormContext();
-  const {errors} = useFormState();
-  const [, setFormError] = useState(false);
+  const [isValid, setIsValid] = useState(true);
   const [another, setAnother] = useState(false);
 
-  console.log('errors', errors);
-
-  useEffect(() => setFormError(false), [selectedAction]);
+  useEffect(() => {
+    setIsValid(true);
+  }, [selectedAction]);
 
   // add payable input to the selected action if it is a payable method
   const actionInputs = useMemo(() => {
@@ -76,8 +74,8 @@ const InputForm: React.FC<InputFormProps> = ({
   }, [network, selectedAction.inputs, selectedAction.stateMutability, t]);
 
   const composeAction = useCallback(async () => {
-    trigger('sccActions');
-    setFormError(false);
+    const isValid = await trigger('sccActions');
+    setIsValid(isValid);
 
     const etherscanData = await getEtherscanVerifiedContract(
       selectedSC.address,
@@ -148,7 +146,6 @@ const InputForm: React.FC<InputFormProps> = ({
         });
       } catch (e) {
         // Invalid input data being passed to the action
-        setFormError(true);
         console.error('Error invalidating action inputs', e);
       }
     }
@@ -206,6 +203,7 @@ const InputForm: React.FC<InputFormProps> = ({
                 key={input.name}
                 input={input}
                 functionName={`${selectedSC.address}.${selectedAction.name}`}
+                isValid={isValid}
               />
             </div>
           ))}
@@ -215,9 +213,6 @@ const InputForm: React.FC<InputFormProps> = ({
       <HStack>
         <ButtonText
           label={t('scc.detailContract.ctaLabel')}
-          disabled={
-            errors?.['sccActions']?.[selectedSC.address]?.[selectedAction.name]
-          }
           onClick={composeAction}
         />
         <CheckboxListItem
@@ -227,7 +222,7 @@ const InputForm: React.FC<InputFormProps> = ({
           type={another ? 'active' : 'default'}
         />
       </HStack>
-      {errors?.['sccActions']?.[selectedSC.address]?.[selectedAction.name] && (
+      {!isValid && (
         <AlertInline
           label="Please fill in all the required fields"
           mode="critical"
@@ -249,6 +244,7 @@ type ComponentForTypeProps = {
   formHandleName?: string;
   defaultValue?: unknown;
   disabled?: boolean;
+  isValid?: boolean;
 };
 
 export const ComponentForType: React.FC<ComponentForTypeProps> = ({
@@ -257,6 +253,7 @@ export const ComponentForType: React.FC<ComponentForTypeProps> = ({
   formHandleName,
   defaultValue,
   disabled = false,
+  isValid = true,
 }) => {
   const {alert} = useAlertContext();
   const {setValue} = useFormContext();
@@ -284,12 +281,9 @@ export const ComponentForType: React.FC<ComponentForTypeProps> = ({
             required: t('errors.required.walletAddress') as string,
             validate: value => validateAddress(value),
           }}
-          render={({
-            field: {name, value, onBlur, onChange},
-            fieldState: {error},
-          }) => (
+          render={({field: {name, value, onBlur, onChange}}) => (
             <WalletInputLegacy
-              mode={error ? 'critical' : 'default'}
+              mode={!isValid && !value ? 'critical' : 'default'}
               name={name}
               value={getUserFriendlyWalletLabel(value, t)}
               onBlur={onBlur}
@@ -320,10 +314,7 @@ export const ComponentForType: React.FC<ComponentForTypeProps> = ({
           rules={{
             required: t('errors.required.walletAddress') as string,
           }}
-          render={({
-            field: {name, value, onBlur, onChange},
-            fieldState: {error},
-          }) => (
+          render={({field: {name, value, onBlur, onChange}}) => (
             <NumberInput
               name={name}
               onBlur={onBlur}
@@ -331,7 +322,13 @@ export const ComponentForType: React.FC<ComponentForTypeProps> = ({
               placeholder="0"
               includeDecimal
               disabled={disabled}
-              mode={error ? 'critical' : 'default'}
+              mode={
+                !isValid &&
+                !value &&
+                input.name !== getDefaultPayableAmountInputName(t)
+                  ? 'critical'
+                  : 'default'
+              }
               value={value}
             />
           )}
@@ -385,16 +382,13 @@ export const ComponentForType: React.FC<ComponentForTypeProps> = ({
           rules={{
             required: t('errors.required.walletAddress') as string,
           }}
-          render={({
-            field: {name, value, onBlur, onChange},
-            fieldState: {error},
-          }) => (
+          render={({field: {name, value, onBlur, onChange}}) => (
             <TextInput
               name={name}
               onBlur={onBlur}
               onChange={onChange}
               placeholder={`${input.name} (${input.type})`}
-              mode={error ? 'critical' : 'default'}
+              mode={!isValid && !value ? 'critical' : 'default'}
               value={value}
               disabled={disabled}
             />
