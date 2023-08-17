@@ -26,7 +26,6 @@ import {useAddFavoriteDaoMutation} from 'hooks/useFavoritedDaos';
 import {useAddPendingDaoMutation} from 'hooks/usePendingDao';
 import {usePollGasFee} from 'hooks/usePollGasfee';
 import {useWallet} from 'hooks/useWallet';
-import {CreateDaoFormData} from 'pages/createDAO';
 import {trackEvent} from 'services/analytics';
 import {
   CHAIN_METADATA,
@@ -36,6 +35,7 @@ import {
 import {getSecondsFromDHM} from 'utils/date';
 import {readFile, translateToNetworkishName} from 'utils/library';
 import {Dashboard} from 'utils/paths';
+import {CreateDaoFormData} from 'utils/types';
 import {useGlobalModalContext} from './globalModals';
 import {useNetwork} from './network';
 

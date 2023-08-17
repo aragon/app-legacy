@@ -1,4 +1,4 @@
-import {ButtonText, IconFeedback, Link, Modal} from '@aragon/ods';
+import {ButtonText, IconLinkExternal, Link, Modal} from '@aragon/ods';
 import React, {useEffect, useState} from 'react';
 import {useFormContext, useWatch} from 'react-hook-form';
 import {useTranslation} from 'react-i18next';
@@ -98,7 +98,7 @@ const DesktopModal: React.FC<DesktopModalProps> = props => {
                 <Link
                   external
                   type="primary"
-                  iconRight={<IconFeedback height={13} width={13} />}
+                  iconRight={<IconLinkExternal height={13} width={13} />}
                   href={t('scc.listContracts.learnLinkURL')}
                   label={t('scc.listContracts.learnLinkLabel')}
                   className="justify-center mt-2 w-full"

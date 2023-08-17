@@ -1,14 +1,12 @@
-import {withTransaction} from '@elastic/apm-rum-react';
 import React, {useState} from 'react';
 import {FormProvider, useForm} from 'react-hook-form';
-
 import {Loading} from 'components/temporary';
 import ProposalStepper from 'containers/proposalStepper';
 import {ActionsProvider} from 'context/actions';
 import {CreateProposalProvider} from 'context/createProposal';
 import {useDaoDetailsQuery} from 'hooks/useDaoDetails';
 
-const NewProposal: React.FC = () => {
+export const NewProposal: React.FC = () => {
   const {data, isLoading} = useDaoDetailsQuery();
 
   const [showTxModal, setShowTxModal] = useState(false);
@@ -47,5 +45,3 @@ const NewProposal: React.FC = () => {
     </FormProvider>
   );
 };
-
-export default withTransaction('NewProposal', 'component')(NewProposal);

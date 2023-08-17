@@ -1,11 +1,8 @@
-// FIXME: Change route to ApmRoute once package has been updated to be
-// compatible with react-router-dom v6
-import React, {lazy, Suspense, useEffect} from 'react';
-import {Navigate, Outlet, Route, Routes, useLocation} from 'react-router-dom';
+import {ApmRoutes} from '@elastic/apm-rum-react';
+import React, {Suspense, lazy, useEffect} from 'react';
+import {FormProvider, useForm} from 'react-hook-form';
+import {Navigate, Outlet, Route, useLocation} from 'react-router-dom';
 
-// HACK: All pages MUST be exported with the withTransaction function
-// from the '@elastic/apm-rum-react' package in order for analytics to
-// work properly on the pages.
 import {GridLayout} from 'components/layout';
 import ProtectedRoute from 'components/protectedRoute';
 import {Loading} from 'components/temporary/loading';
@@ -15,49 +12,28 @@ import Navbar from 'containers/navbar';
 import DaoSelectMenu from 'containers/navbar/daoSelectMenu';
 import ExploreNav from 'containers/navbar/exploreNav';
 import NetworkErrorMenu from 'containers/networkErrorMenu';
+import PoapClaimModal from 'containers/poapClaiming/PoapClaimModal';
 import TransactionDetail from 'containers/transactionDetail';
+import DepositModal from 'containers/transactionModals/depositModal';
 import TransferMenu from 'containers/transferMenu';
 import {WalletMenu} from 'containers/walletMenu';
+import {GovTokensWrappingProvider} from 'context/govTokensWrapping';
 import {ProposalTransactionProvider} from 'context/proposalTransaction';
 import {useTransactionDetailContext} from 'context/transactionDetail';
 import {useDaoDetailsQuery} from 'hooks/useDaoDetails';
+import {useMonitoring} from 'hooks/useMonitoring';
 import {useWallet} from 'hooks/useWallet';
-import CreateDAO from 'pages/createDAO';
-import {FormProvider, useForm} from 'react-hook-form';
 import {identifyUser, trackPage} from 'services/analytics';
+import {featureFlags} from 'utils/featureFlags';
 import {NotFound} from 'utils/paths';
 import '../i18n.config';
-import DepositModal from 'containers/transactionModals/depositModal';
-import PoapClaimModal from 'containers/poapClaiming/PoapClaimModal';
-import {GovTokensWrappingProvider} from 'context/govTokensWrapping';
-import {featureFlags} from 'utils/featureFlags';
 
-const ExplorePage = lazy(() => import('pages/explore'));
-const NotFoundPage = lazy(() => import('pages/notFound'));
-
-const DashboardPage = lazy(() => import('pages/dashboard'));
-const FinancePage = lazy(() => import('pages/finance'));
-const GovernancePage = lazy(() => import('pages/governance'));
-const CommunityPage = lazy(() => import('pages/community'));
-const SettingsPage = lazy(() => import('pages/settings'));
-const EditSettingsPage = lazy(() => import('pages/editSettings'));
-const ProposeSettingsPage = lazy(() => import('pages/proposeSettings'));
-
-const TokensPage = lazy(() => import('pages/tokens'));
-const TransfersPage = lazy(() => import('pages/transfers'));
-const NewWithdrawPage = lazy(() => import('pages/newWithdraw'));
-
-const NewProposalPage = lazy(() => import('pages/newProposal'));
-const ProposalPage = lazy(() => import('pages/proposal'));
-
-const MintTokensProposalPage = lazy(() => import('pages/mintTokens'));
-const ManageMembersProposalPage = lazy(() => import('pages/manageMembers'));
-
-function App() {
+export const App: React.FC = () => {
   // TODO this needs to be inside a Routes component. Will be moved there with
   // further refactoring of layout (see further below).
   const {pathname} = useLocation();
   const {methods, status, network, address, provider} = useWallet();
+  useMonitoring();
 
   // Initialize feature flags using the initial URL
   useEffect(() => featureFlags.initializeFeatureFlags(), []);
@@ -86,12 +62,12 @@ function App() {
     <>
       {/* TODO: replace with loading indicator */}
       <Suspense fallback={<Loading />}>
-        <Routes>
+        <ApmRoutes>
           <Route element={<ExploreWrapper />}>
             <Route path="/" element={<ExplorePage />} />
           </Route>
           <Route element={<DaoWrapper />}>
-            <Route path="/create" element={<CreateDAO />} />
+            <Route path="/create" element={<CreateDaoPage />} />
           </Route>
           <Route path="/daos/:network/:dao">
             <Route element={<DaoWrapper />}>
@@ -136,8 +112,17 @@ function App() {
             </Route>
           </Route>
           <Route path={NotFound} element={<NotFoundPage />} />
-          <Route path="*" element={<NotFoundWrapper />} />
-        </Routes>
+          <Route
+            path="*"
+            element={
+              <Navigate
+                to={NotFound}
+                state={{incorrectPath: pathname}}
+                replace={true}
+              />
+            }
+          />
+        </ApmRoutes>
       </Suspense>
       <DaoSelectMenu />
       <WalletMenu />
@@ -145,7 +130,7 @@ function App() {
       <NetworkErrorMenu />
     </>
   );
-}
+};
 
 const NewSettingsWrapper: React.FC = () => {
   const formMethods = useForm({
@@ -172,12 +157,6 @@ const ProposalDetailsWrapper: React.FC = () => (
     <ProposalPage />
   </ProposalTransactionProvider>
 );
-
-const NotFoundWrapper: React.FC = () => {
-  const {pathname} = useLocation();
-
-  return <Navigate to={NotFound} state={{incorrectPath: pathname}} replace />;
-};
 
 const ExploreWrapper: React.FC = () => (
   <>
@@ -220,4 +199,62 @@ const DaoWrapper: React.FC = () => {
   );
 };
 
-export default App;
+// NOTE: these have to be lazy loaded here unfortunately because the
+// TipTap Editor behaves weirdly when they are imported from a different
+// file. - F.F. [08/15/2023]
+// PAGES
+const CommunityPage = lazy(() =>
+  import('pages/community').then(module => ({default: module.Community}))
+);
+const CreateDaoPage = lazy(() =>
+  import('pages/createDAO').then(module => ({default: module.CreateDAO}))
+);
+const DashboardPage = lazy(() =>
+  import('pages/dashboard').then(module => ({default: module.Dashboard}))
+);
+const EditSettingsPage = lazy(() =>
+  import('pages/editSettings').then(module => ({default: module.EditSettings}))
+);
+const ExplorePage = lazy(() =>
+  import('pages/explore').then(module => ({default: module.Explore}))
+);
+const FinancePage = lazy(() =>
+  import('pages/finance').then(module => ({default: module.Finance}))
+);
+const GovernancePage = lazy(() =>
+  import('pages/governance').then(module => ({default: module.Governance}))
+);
+const ManageMembersProposalPage = lazy(() =>
+  import('pages/manageMembers').then(module => ({
+    default: module.ManageMembers,
+  }))
+);
+const MintTokensProposalPage = lazy(() =>
+  import('pages/mintTokens').then(module => ({default: module.MintToken}))
+);
+const NewProposalPage = lazy(() =>
+  import('pages/newProposal').then(module => ({default: module.NewProposal}))
+);
+const NewWithdrawPage = lazy(() =>
+  import('pages/newWithdraw').then(module => ({default: module.NewWithdraw}))
+);
+const NotFoundPage = lazy(() =>
+  import('pages/notFound').then(module => ({default: module.NotFound}))
+);
+const ProposalPage = lazy(() =>
+  import('pages/proposal').then(module => ({default: module.Proposal}))
+);
+const ProposeSettingsPage = lazy(() =>
+  import('pages/proposeSettings').then(module => ({
+    default: module.ProposeSettings,
+  }))
+);
+const SettingsPage = lazy(() =>
+  import('pages/settings').then(module => ({default: module.Settings}))
+);
+const TokensPage = lazy(() =>
+  import('pages/tokens').then(module => ({default: module.Tokens}))
+);
+const TransfersPage = lazy(() =>
+  import('pages/transfers').then(module => ({default: module.Transfers}))
+);

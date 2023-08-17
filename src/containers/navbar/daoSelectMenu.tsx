@@ -5,7 +5,7 @@ import {
   IconLinkExternal,
   ListItemDao,
 } from '@aragon/ods';
-import React, {useCallback, useMemo} from 'react';
+import React, {useCallback} from 'react';
 import {useTranslation} from 'react-i18next';
 import {generatePath, useNavigate} from 'react-router-dom';
 import styled from 'styled-components';
@@ -22,7 +22,6 @@ import useScreen from 'hooks/useScreen';
 import {getSupportedNetworkByChainId} from 'utils/constants';
 import {Dashboard} from 'utils/paths';
 import {toDisplayEns} from 'utils/library';
-import {useResolveDaoAvatar} from 'hooks/useResolveDaoAvatar';
 
 const DaoSelectMenu: React.FC = () => {
   const {t} = useTranslation();
@@ -31,18 +30,6 @@ const DaoSelectMenu: React.FC = () => {
   const currentDao = useReactiveVar(selectedDaoVar);
   const favoriteDaoCache = useReactiveVar(favoriteDaosVar);
   const {isSelectDaoOpen, close, open} = useGlobalModalContext();
-
-  const {avatar: currentDaoAvatar} = useResolveDaoAvatar(
-    currentDao?.metadata?.avatar
-  );
-
-  const favoriteDaoAvatarsInput = useMemo(
-    () => favoriteDaoCache.map(dao => dao.metadata.avatar || ''),
-    [favoriteDaoCache]
-  );
-  const {avatars: favoriteDaosAvatars} = useResolveDaoAvatar(
-    favoriteDaoAvatarsInput
-  );
 
   const handleDaoSelect = useCallback(
     (dao: NavigationDao) => {
@@ -87,10 +74,10 @@ const DaoSelectMenu: React.FC = () => {
               selected
               daoAddress={toDisplayEns(currentDao?.ensDomain)}
               daoName={currentDao?.metadata.name}
-              daoLogo={currentDaoAvatar}
+              daoLogo={currentDao?.metadata?.avatar}
               onClick={() => close('selectDao')}
             />
-            {favoriteDaoCache.flatMap((dao, daoIdx) => {
+            {favoriteDaoCache.flatMap(dao => {
               if (
                 dao.address === currentDao.address &&
                 dao.chain === currentDao.chain
@@ -102,7 +89,7 @@ const DaoSelectMenu: React.FC = () => {
                     key={dao.address}
                     daoAddress={toDisplayEns(dao.ensDomain)}
                     daoName={dao.metadata.name}
-                    daoLogo={favoriteDaosAvatars[daoIdx]}
+                    daoLogo={dao.metadata.avatar}
                     onClick={() => handleDaoSelect(dao)}
                   />
                 );

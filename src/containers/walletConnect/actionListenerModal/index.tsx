@@ -84,7 +84,7 @@ const ActionListenerModal: React.FC<Props> = ({
       );
 
       // increment the index so multiple actions can be added at once
-      const index = actionIndex + currentIndex;
+      const index = actionIndex + (currentIndex + 1);
 
       // name, raw action and contract address set on every action
       addAction({name: 'wallet_connect_action'});

@@ -1,5 +1,4 @@
 import {AlertInline} from '@aragon/ods';
-import {withTransaction} from '@elastic/apm-rum-react';
 import React, {useState} from 'react';
 import {
   FieldErrors,
@@ -31,7 +30,7 @@ import {Community} from 'utils/paths';
 import {ActionMintToken} from 'utils/types';
 import {toDisplayEns} from 'utils/library';
 
-const MintToken: React.FC = () => {
+export const MintToken: React.FC = () => {
   const {data: daoDetails, isLoading} = useDaoDetailsQuery();
   const {data: pluginSettings, isLoading: settingsLoading} = usePluginSettings(
     daoDetails?.plugins[0].instanceAddress as string,
@@ -131,8 +130,6 @@ const MintToken: React.FC = () => {
     </FormProvider>
   ) : null;
 };
-
-export default withTransaction('MintToken', 'component')(MintToken);
 
 /**
  * Check whether the mint tokens action is valid

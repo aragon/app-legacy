@@ -20,7 +20,7 @@ import {Row} from './row';
 export const MultisigWallets = () => {
   const {t} = useTranslation();
   const {alert} = useAlertContext();
-  const {address, ensName} = useWallet();
+  const {address} = useWallet();
 
   const {control, trigger, setFocus} = useFormContext();
   const multisigWallets = useWatch({name: 'multisigWallets', control});
@@ -38,9 +38,9 @@ export const MultisigWallets = () => {
 
   useEffect(() => {
     if (address && !multisigWallets) {
-      append({address, ensName});
+      append({address});
     }
-  }, [address, append, ensName, multisigWallets]);
+  }, [address, append, multisigWallets]);
 
   // add empty wallet
   const handleAdd = () => {
@@ -64,7 +64,7 @@ export const MultisigWallets = () => {
 
   // remove all wallets
   const handleDeleteAll = () => {
-    replace([{address, ensName}]);
+    replace([{address}]);
     alert(t('alert.chip.removedAllAddresses'));
     setTimeout(() => {
       trigger('multisigWallets');

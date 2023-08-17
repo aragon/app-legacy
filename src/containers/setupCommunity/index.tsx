@@ -4,18 +4,20 @@ import {Controller, useFormContext, useWatch} from 'react-hook-form';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 
-import CreateNewToken from './createNewToken';
-import {MultisigWallets} from 'components/multisigWallets';
 import {MultisigEligibility} from 'components/multisigEligibility';
+import {MultisigWallets} from 'components/multisigWallets';
 import {FormSection} from 'containers/setupVotingForm';
 import {ToggleCheckList} from 'containers/setupVotingForm/multisig';
+import {CreateDaoFormData} from 'utils/types';
 import AddExistingToken from './addExistingToken';
+import CreateNewToken from './createNewToken';
 
 const SetupCommunityForm: React.FC = () => {
   const {t} = useTranslation();
 
-  const {control, resetField, setValue} = useFormContext();
+  const {control, resetField, setValue} = useFormContext<CreateDaoFormData>();
   const [membership, isCustomToken] = useWatch({
+    control,
     name: ['membership', 'isCustomToken'],
   });
 
@@ -42,8 +44,23 @@ const SetupCommunityForm: React.FC = () => {
     resetField('tokenSymbol');
     resetField('tokenAddress');
     resetField('tokenTotalSupply');
-    resetField('multisigWallets');
     resetField('wallets');
+  };
+
+  const resetMultisigFields = () => {
+    resetField('multisigWallets');
+  };
+
+  const handleCheckBoxSelected = (
+    membership: CreateDaoFormData['membership'],
+    onChange: (...event: unknown[]) => void
+  ) => {
+    if (membership === 'token') {
+      resetMultisigFields();
+    } else {
+      resetTokenFields();
+    }
+    onChange(membership);
   };
 
   return (
@@ -62,20 +79,14 @@ const SetupCommunityForm: React.FC = () => {
                 label={t('createDAO.step3.tokenMembership')}
                 helptext={t('createDAO.step3.tokenMembershipSubtitle')}
                 multiSelect={false}
-                onClick={() => {
-                  resetTokenFields();
-                  onChange('token');
-                }}
+                onClick={() => handleCheckBoxSelected('token', onChange)}
                 {...(value === 'token' ? {type: 'active'} : {})}
               />
 
               <CheckboxListItem
                 label={t('createDAO.step3.multisigMembership')}
                 helptext={t('createDAO.step3.multisigMembershipSubtitle')}
-                onClick={() => {
-                  resetTokenFields();
-                  onChange('multisig');
-                }}
+                onClick={() => handleCheckBoxSelected('multisig', onChange)}
                 multiSelect={false}
                 {...(value === 'multisig' ? {type: 'active'} : {})}
               />

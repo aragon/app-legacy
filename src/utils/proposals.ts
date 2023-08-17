@@ -13,6 +13,7 @@ import {
   Erc20TokenDetails,
   MultisigProposal,
   MultisigProposalListItem,
+  MultisigVotingSettings,
   TokenVotingProposal,
   TokenVotingProposalResult,
   VoteValues,
@@ -954,12 +955,15 @@ export function getProposalExecutionStatus(
  */
 export function getNonEmptyActions(
   actions: Array<Action>,
-  minApprovals?: number
+  msVoteSettings?: MultisigVotingSettings
 ) {
   return actions.flatMap(action => {
     if (action.name === 'modify_multisig_voting_settings') {
-      // minimum approval changed: return action or don't include
-      return action.inputs.minApprovals !== minApprovals ? action : [];
+      // minimum approval or onlyListed changed: return action or don't include
+      return action.inputs.minApprovals !== msVoteSettings?.minApprovals ||
+        action.inputs.onlyListed !== msVoteSettings.onlyListed
+        ? action
+        : [];
     } else if (action.name === 'add_address') {
       // strip empty inputs off
 

@@ -1,5 +1,4 @@
 import {MultisigVotingSettings} from '@aragon/sdk-client';
-import {withTransaction} from '@elastic/apm-rum-react';
 import React, {useCallback, useState} from 'react';
 import {
   FieldErrors,
@@ -45,7 +44,7 @@ type ManageMemberActionTypes = Array<
   ActionAddAddress | ActionRemoveAddress | ActionUpdateMultisigPluginSettings
 >;
 
-const ManageMembers: React.FC = () => {
+export const ManageMembers: React.FC = () => {
   const {t} = useTranslation();
   const {network} = useNetwork();
 
@@ -188,8 +187,6 @@ const ManageMembers: React.FC = () => {
     </FormProvider>
   );
 };
-
-export default withTransaction('ManageMembers', 'component')(ManageMembers);
 
 // Note: Keeping the following helpers here because they are very specific to this flow
 /**

@@ -4,7 +4,13 @@ import {Controller, useFormContext, useWatch} from 'react-hook-form';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 
-export const SelectEligibility = () => {
+export type SelectEligibilityProps = {
+  isSettingPage?: boolean;
+};
+
+export const SelectEligibility = ({
+  isSettingPage = false,
+}: SelectEligibilityProps) => {
   const {control, getValues, resetField, setValue} = useFormContext();
   const {t} = useTranslation();
   const {tokenTotalSupply} = getValues();
@@ -29,8 +35,8 @@ export const SelectEligibility = () => {
   }
 
   useEffect(() => {
-    setValue('eligibilityTokenAmount', minimumTokenAmount);
-  }, [minimumTokenAmount, setValue]);
+    if (!isSettingPage) setValue('eligibilityTokenAmount', minimumTokenAmount);
+  }, [isSettingPage, minimumTokenAmount, setValue]);
 
   /**
    * Current Types like token or anyone are dummies and may refactor later

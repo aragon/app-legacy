@@ -309,3 +309,17 @@ export async function validateWeb3Address(
       ? true
       : t('inputWallet.addressAlertCritical');
 }
+
+/**
+ * Determines if a given error value is present.
+ * The function is designed to take either a standard `FieldError` from React Hook Form
+ * or a custom error type and check if it's truthy.
+ * In the context of form validation, the absence of an error (undefined) means the field is valid.
+ *
+ * @template T - The type of the custom error structure.
+ * @param error - The error value to check.
+ * @returns Returns true if the error is not present, otherwise false.
+ */
+export function isFieldValid<T>(error: FieldError | T | undefined): boolean {
+  return !error;
+}

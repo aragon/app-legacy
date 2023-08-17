@@ -6,7 +6,6 @@ import {
   SearchInput,
   IllustrationHuman,
 } from '@aragon/ods';
-import {withTransaction} from '@elastic/apm-rum-react';
 import React, {useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {useNavigate} from 'react-router-dom';
@@ -31,7 +30,7 @@ import {Erc20WrapperTokenDetails} from '@aragon/sdk-client';
 
 const MEMBERS_PER_PAGE = 20;
 
-const Community: React.FC = () => {
+export const Community: React.FC = () => {
   const {t} = useTranslation();
   const {network} = useNetwork();
   const navigate = useNavigate();
@@ -260,5 +259,3 @@ const PaginationWrapper = styled.div.attrs({
 const InputWrapper = styled.div.attrs({
   className: 'space-y-1',
 })``;
-
-export default withTransaction('Community', 'component')(Community);

@@ -1,12 +1,8 @@
-import {InputValue} from '@aragon/ods';
-import {withTransaction} from '@elastic/apm-rum-react';
 import React, {useEffect, useMemo} from 'react';
 import {FormProvider, useForm, useFormState, useWatch} from 'react-hook-form';
 import {useTranslation} from 'react-i18next';
 
-import {TokenVotingWalletField} from 'components/addWallets/row';
 import {FullScreenStepper, Step} from 'components/fullScreenStepper';
-import {MultisigWalletField} from 'components/multisigWallets/row';
 import ConfigureCommunity from 'containers/configureCommunity';
 import {OverviewDAOHeader, OverviewDAOStep} from 'containers/daoOverview';
 import DefineMetadata from 'containers/defineMetadata';
@@ -19,43 +15,10 @@ import {useWallet} from 'hooks/useWallet';
 import {trackEvent} from 'services/analytics';
 import {CHAIN_METADATA, getSupportedNetworkByChainId} from 'utils/constants';
 import {htmlIn} from 'utils/htmlIn';
+import {hasValue} from 'utils/library';
 import {Landing} from 'utils/paths';
-import {TokenType} from 'utils/validators';
-
-export type CreateDaoFormData = {
-  blockchain: {
-    id: number;
-    label: string;
-    network: string;
-  };
-  daoLogo: Blob;
-  daoName: string;
-  daoEnsName: string;
-  daoSummary: string;
-  tokenName: string;
-  tokenSymbol: string;
-  tokenDecimals: number;
-  tokenTotalSupply: number;
-  tokenTotalHolders: number | undefined;
-  tokenType: TokenType;
-  isCustomToken: boolean;
-  links: {name: string; url: string}[];
-  wallets: TokenVotingWalletField[];
-  tokenAddress: InputValue;
-  durationMinutes: string;
-  durationHours: string;
-  durationDays: string;
-  minimumApproval: string;
-  minimumParticipation: string;
-  eligibilityType: 'token' | 'anyone' | 'multisig';
-  eligibilityTokenAmount: number | string;
-  support: string;
-  membership: string;
-  earlyExecution: boolean;
-  voteReplacement: boolean;
-  multisigWallets: MultisigWalletField[];
-  multisigMinimumApprovals: number;
-};
+import {CreateDaoFormData} from 'utils/types';
+import {isFieldValid} from 'utils/validators';
 
 const defaultValues = {
   tokenName: '',
@@ -71,7 +34,7 @@ const defaultValues = {
   // wallets: [{address: constants.AddressZero, amount: '0'}],
   earlyExecution: true,
   voteReplacement: false,
-  membership: 'token',
+  membership: 'token' as CreateDaoFormData['membership'],
   eligibilityType: 'token' as CreateDaoFormData['eligibilityType'],
   eligibilityTokenAmount: 1,
   minimumTokenAmount: 1,
@@ -82,7 +45,7 @@ const defaultValues = {
   minimumParticipation: '15',
 };
 
-const CreateDAO: React.FC = () => {
+export const CreateDAO: React.FC = () => {
   const {t} = useTranslation();
   const {chainId} = useWallet();
   const {setNetwork, isL2Network} = useNetwork();
@@ -92,28 +55,39 @@ const CreateDAO: React.FC = () => {
   });
   const {errors, dirtyFields} = useFormState({control: formMethods.control});
   const [
-    multisigWallets,
-    isCustomToken,
-    tokenTotalSupply,
-    tokenType,
-    membership,
     daoName,
     daoEnsName,
     eligibilityType,
+    isCustomToken,
+    tokenAddress,
+    tokenName,
+    tokenSymbol,
+    membership,
+    multisigWallets,
+    tokenWallets,
+    tokenTotalSupply,
+    tokenType,
   ] = useWatch({
     control: formMethods.control,
     name: [
-      'multisigWallets',
-      'isCustomToken',
-      'tokenTotalSupply',
-      'tokenType',
-      'membership',
       'daoName',
       'daoEnsName',
       'eligibilityType',
+      'isCustomToken',
+      'tokenAddress',
+      'tokenName',
+      'tokenSymbol',
+      'membership',
+      'multisigWallets',
+      'wallets',
+      'tokenTotalSupply',
+      'tokenType',
     ],
   });
 
+  /*************************************************
+   *                     Effects                   *
+   *************************************************/
   // Note: The wallet network determines the expected network when entering
   // the flow so that the process is more convenient for already logged in
   // users and so that the process doesn't start with a warning. Afterwards,
@@ -138,6 +112,73 @@ const CreateDAO: React.FC = () => {
     // wallet network doesn't cause effect to run
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  /*************************************************
+   *                    Callbacks                  *
+   *************************************************/
+  const handleNextButtonTracking = (
+    next: () => void,
+    stepName: string,
+    properties: Record<string, unknown>
+  ) => {
+    trackEvent('daoCreation_continueBtn', {
+      step: stepName,
+      settings: properties,
+    });
+    next();
+  };
+
+  /**
+   * Validates multisig community values.
+   * - Ensures multisig includes at least one wallet.
+   * - Checks all multisig wallets are valid.
+   * - Verifies proposal creation eligibility type is set appropriately.
+   *
+   * @returns True if multisig values are valid, false otherwise.
+   */
+  const validateMultisigCommunity = () =>
+    multisigWallets?.length > 0 &&
+    isFieldValid(errors.multisigWallets) &&
+    ['anyone', 'multisig'].includes(eligibilityType);
+
+  /**
+   * Validates custom token values for DAO community.
+   * - Ensures tokens are minted to at least one wallet.
+   * - Validates all token wallets.
+   * - Checks if custom token values are filled and without errors.
+   * - Ensures proposal creation eligibility type is set correctly.
+   * - Validates token supply is greater than zero.
+   *
+   * @returns True if custom token values are valid, false otherwise.
+   */
+  const validateCustomTokenCommunity = () =>
+    tokenWallets?.length > 0 &&
+    isFieldValid(errors.wallets) &&
+    hasValue(tokenName) &&
+    isFieldValid(errors.tokenName) &&
+    hasValue(tokenSymbol) &&
+    isFieldValid(errors.tokenSymbol) &&
+    ['anyone', 'token'].includes(eligibilityType) &&
+    isFieldValid(errors.eligibilityTokenAmount) &&
+    tokenTotalSupply > 0;
+
+  /**
+   * Validates existing token values for DAO community.
+   * - Ensures token address and name are valid.
+   * - Validates the type of the existing token.
+   * - Ensures token supply is greater than zero.
+   *
+   * @returns True if existing token values are valid, false otherwise.
+   */
+  const validateExistingTokenCommunity = () =>
+    hasValue(tokenAddress?.address) &&
+    isFieldValid(errors.tokenAddress?.address) &&
+    hasValue(tokenName) &&
+    isFieldValid(errors.tokenName) &&
+    hasValue(tokenType) &&
+    isFieldValid(errors.tokenType) &&
+    tokenType !== 'Unknown' &&
+    tokenTotalSupply > 0;
 
   /*************************************************
    *             Step Validation States            *
@@ -165,70 +206,20 @@ const CreateDAO: React.FC = () => {
     isL2Network,
   ]);
 
-  const daoSetupCommunityIsValid = useMemo(() => {
-    // required fields not dirty
-    // if multisig
-    if (membership === 'multisig') {
-      if (
-        !multisigWallets ||
-        errors.multisigWallets ||
-        multisigWallets?.length === 0
-      ) {
-        return false;
-      }
-      if (!['multisig', 'anyone'].includes(eligibilityType)) {
-        return false;
-      }
-      return true;
-      // if token based dao
-    } else {
-      if (isCustomToken === true) {
-        if (
-          !dirtyFields.tokenName ||
-          !dirtyFields.wallets ||
-          !dirtyFields.tokenSymbol ||
-          errors.wallets ||
-          errors.eligibilityTokenAmount ||
-          tokenTotalSupply === 0
-          ///////// !(eligibilityType === 'token' && eligibilityTokenAmount !== 0)
-        )
-          return false;
-        return errors.tokenName || errors.tokenSymbol || errors.wallets
-          ? false
-          : true;
-      } else {
-        if (
-          !dirtyFields.tokenAddress ||
-          !dirtyFields.tokenName ||
-          errors.tokenAddress ||
-          !tokenType ||
-          tokenType === 'Unknown' ||
-          tokenTotalSupply === 0
-        )
-          return false;
-        return true;
-      }
-    }
-  }, [
-    membership,
-    multisigWallets,
-    errors.multisigWallets,
-    errors.wallets,
-    errors.eligibilityTokenAmount,
-    errors.tokenName,
-    errors.tokenSymbol,
-    errors.tokenAddress,
-    eligibilityType,
-    isCustomToken,
-    dirtyFields.tokenName,
-    dirtyFields.wallets,
-    dirtyFields.tokenSymbol,
-    dirtyFields.tokenAddress,
-    tokenTotalSupply,
-    tokenType,
-  ]);
+  let daoCommunitySetupIsValid = false;
 
-  const daoConfigureCommunity = useMemo(() => {
+  switch (membership) {
+    case 'multisig':
+      daoCommunitySetupIsValid = validateMultisigCommunity();
+      break;
+    case 'token':
+      daoCommunitySetupIsValid = isCustomToken
+        ? validateCustomTokenCommunity()
+        : validateExistingTokenCommunity();
+      break;
+  }
+
+  const daoCommunityConfigurationIsValid = useMemo(() => {
     if (
       errors.minimumApproval ||
       errors.minimumParticipation ||
@@ -249,18 +240,6 @@ const CreateDAO: React.FC = () => {
     errors.support,
     errors.multisigMinimumApprovals,
   ]);
-
-  const handleNextButtonTracking = (
-    next: () => void,
-    stepName: string,
-    properties: Record<string, unknown>
-  ) => {
-    trackEvent('daoCreation_continueBtn', {
-      step: stepName,
-      settings: properties,
-    });
-    next();
-  };
 
   /*************************************************
    *                    Render                     *
@@ -314,7 +293,7 @@ const CreateDAO: React.FC = () => {
           <Step
             wizardTitle={t('createDAO.step3.title')}
             wizardDescription={htmlIn(t)('createDAO.step3.description')}
-            isNextButtonDisabled={!daoSetupCommunityIsValid}
+            isNextButtonDisabled={!daoCommunitySetupIsValid}
             onNextButtonClicked={next =>
               handleNextButtonTracking(next, '3_setup_community', {
                 governance_type: formMethods.getValues('membership'),
@@ -330,7 +309,7 @@ const CreateDAO: React.FC = () => {
           <Step
             wizardTitle={t('createDAO.step4.title')}
             wizardDescription={htmlIn(t)('createDAO.step4.description')}
-            isNextButtonDisabled={!daoConfigureCommunity}
+            isNextButtonDisabled={!daoCommunityConfigurationIsValid}
             onNextButtonClicked={next =>
               handleNextButtonTracking(next, '4_configure_governance', {
                 minimum_approval: formMethods.getValues('minimumApproval'),
@@ -357,5 +336,3 @@ const CreateDAO: React.FC = () => {
     </FormProvider>
   );
 };
-
-export default withTransaction('CreateDAO', 'component')(CreateDAO);

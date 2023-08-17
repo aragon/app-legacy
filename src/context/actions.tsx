@@ -53,36 +53,36 @@ const ActionsProvider: React.FC<ActionsProviderProps> = ({daoId, children}) => {
 
   const removeAction = useCallback(
     (index: number) => {
-      let newActions = actions.filter((_, oldIndex) => oldIndex !== index);
+      setActions(current => {
+        let newActions = current.filter((_, oldIndex) => oldIndex !== index);
 
-      if (
-        // check if there is an update settings with min approval
-        newActions.some(a => a.name === 'modify_multisig_voting_settings') &&
-        // and no add or remove action is present
-        !newActions.some(
-          a => a.name === 'remove_address' || a.name === 'add_address'
-        )
-      ) {
-        const indexOfMinApproval = newActions.findIndex(
-          a => a.name === 'modify_multisig_voting_settings'
-        );
+        if (
+          // check if there is an update settings with min approval
+          newActions.some(a => a.name === 'modify_multisig_voting_settings') &&
+          // and no add or remove action is present
+          !newActions.some(
+            a => a.name === 'remove_address' || a.name === 'add_address'
+          )
+        ) {
+          const indexOfMinApproval = newActions.findIndex(
+            a => a.name === 'modify_multisig_voting_settings'
+          );
 
-        // remove from local context
-        newActions = newActions.filter(
-          (_, oldIndex) => oldIndex !== indexOfMinApproval
-        );
+          // remove from local context
+          newActions = newActions.filter(
+            (_, oldIndex) => oldIndex !== indexOfMinApproval
+          );
 
-        // remove from form
-        remove(indexOfMinApproval);
-      }
+          // remove from form
+          remove(indexOfMinApproval);
+        }
 
-      // update local context
-      setActions(newActions);
+        remove(index);
 
-      // update form actions
-      remove(index);
+        return newActions;
+      });
     },
-    [actions, remove]
+    [remove]
   );
 
   const duplicateAction = useCallback((index: number) => {

@@ -7,6 +7,7 @@ import {ActionCardDlContainer, Dd, Dl, Dt} from 'components/descriptionList';
 import {getDHMFromSeconds} from 'utils/date';
 import {getErc20MinParticipation} from 'utils/proposals';
 import {ActionUpdatePluginSettings} from 'utils/types';
+import {formatUnits} from 'ethers/lib/utils';
 
 export const ModifyMvSettingsCard: React.FC<{
   action: ActionUpdatePluginSettings;
@@ -32,7 +33,10 @@ export const ModifyMvSettingsCard: React.FC<{
 
   const minProposalThreshold = inputs.minProposerVotingPower
     ? t('labels.review.tokenHoldersWithTkns', {
-        tokenAmount: inputs.minProposerVotingPower,
+        tokenAmount: formatUnits(
+          inputs.minProposerVotingPower,
+          inputs.token?.decimals
+        ),
         tokenSymbol: inputs.token?.symbol,
       })
     : t('createDAO.step3.eligibility.anyWallet.title');

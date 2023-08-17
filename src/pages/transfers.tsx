@@ -1,5 +1,12 @@
-import {ButtonGroup, IconAdd, Option} from '@aragon/ods';
-import {withTransaction} from '@elastic/apm-rum-react';
+import {
+  ButtonGroup,
+  ButtonIcon,
+  Dropdown,
+  IconAdd,
+  IconMenuVertical,
+  ListItemAction,
+  Option,
+} from '@aragon/ods';
 import {Locale, format} from 'date-fns';
 import * as Locales from 'date-fns/locale';
 import React, {useCallback, useMemo, useState} from 'react';
@@ -15,8 +22,9 @@ import useCategorizedTransfers from 'hooks/useCategorizedTransfers';
 import {useDaoDetailsQuery} from 'hooks/useDaoDetails';
 import {TransferTypes} from 'utils/constants';
 import {Transfer} from 'utils/types';
+import ExportCsvModal from 'containers/exportCsvModal/ExportCsvModal';
 
-const Transfers: React.FC = () => {
+export const Transfers: React.FC = () => {
   const {open} = useGlobalModalContext();
   const {t, i18n} = useTranslation();
   const {handleTransferClicked} = useTransactionDetailContext();
@@ -72,11 +80,31 @@ const Transfers: React.FC = () => {
     return <Loading />;
   }
 
+  const dropdownActions = [
+    {
+      component: <ListItemAction title={t('label.exportCSV')} bgWhite />,
+      callback: () => {
+        // Otherwise modal doesn't open proper;y on desktop
+        setTimeout(() => {
+          open('exportCsv');
+        }, 100);
+      },
+    },
+  ];
+
   /**
    * Note: We can add a nested iterator for both sections and transfer cards
    */
   return (
     <>
+      <ExportCsvModal
+        daoDetails={daoDetails}
+        transfers={[
+          ...categorizedTransfers.year,
+          ...categorizedTransfers.month,
+          ...categorizedTransfers.week,
+        ]}
+      />
       <PageWrapper
         title={t('TransferModal.allTransfers')}
         description={`${totalTransfers} Total Volume`}
@@ -88,7 +116,7 @@ const Transfers: React.FC = () => {
       >
         <div className="mt-3 desktop:mt-8">
           <div className="space-y-1.5">
-            <div className="flex">
+            <div className="flex gap-2 justify-between items-center">
               <ButtonGroup
                 bgWhite
                 defaultValue="all"
@@ -108,6 +136,20 @@ const Transfers: React.FC = () => {
                   label={t('labels.externalContract')}
                 /> */}
               </ButtonGroup>
+
+              <Dropdown
+                side="bottom"
+                align="end"
+                listItems={dropdownActions}
+                disabled={dropdownActions.length === 0}
+                trigger={
+                  <ButtonIcon
+                    mode="secondary"
+                    size="medium"
+                    icon={<IconMenuVertical />}
+                  />
+                }
+              />
             </div>
           </div>
           {noTransfers ? (
@@ -166,5 +208,4 @@ const Transfers: React.FC = () => {
   );
 };
 
-export default withTransaction('Transfers', 'component')(Transfers);
 const SectionContainer = styled.div.attrs({className: 'my-3 desktop:my-5'})``;

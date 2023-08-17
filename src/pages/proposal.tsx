@@ -16,7 +16,6 @@ import {
   VotingMode,
 } from '@aragon/sdk-client';
 import {DaoAction, ProposalStatus} from '@aragon/sdk-client-common';
-import {withTransaction} from '@elastic/apm-rum-react';
 import TipTapLink from '@tiptap/extension-link';
 import {useEditor} from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
@@ -84,7 +83,7 @@ const PENDING_PROPOSAL_STATUS_INTERVAL = 1000 * 10;
 const PROPOSAL_STATUS_INTERVAL = 1000 * 60;
 const NumberFormatter = new Intl.NumberFormat('en-US');
 
-const Proposal: React.FC = () => {
+export const Proposal: React.FC = () => {
   const {t} = useTranslation();
   const {open} = useGlobalModalContext();
   const {isDesktop} = useScreen();
@@ -696,8 +695,6 @@ const Proposal: React.FC = () => {
     </Container>
   );
 };
-
-export default withTransaction('Proposal', 'component')(Proposal);
 
 const Container = styled.div.attrs({
   className: 'col-span-full desktop:col-start-2 desktop:col-end-12',

@@ -1,4 +1,4 @@
-import {IconFeedback, Link, Tag} from '@aragon/ods';
+import {IconLinkExternal, Link, Tag} from '@aragon/ods';
 import React, {useMemo} from 'react';
 import {Controller, useFormContext} from 'react-hook-form';
 import {useTranslation} from 'react-i18next';
@@ -201,7 +201,7 @@ const Community: React.FC = () => {
                           '/token/tokenholderchart/' +
                           tokenAddress?.address || tokenAddress
                       }
-                      iconRight={<IconFeedback />}
+                      iconRight={<IconLinkExternal />}
                       external
                     />
                   )}

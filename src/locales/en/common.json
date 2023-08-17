@@ -372,7 +372,7 @@
     "insufficientBalance": "Insufficient balance",
     "invalidURL": "Invalid URL",
     "invalidImage": "Invalid image",
-    "invalidImageType": "Invalid file type. Please provide either a SVG, JPG, PNG or GIF",
+    "invalidImageType": "Invalid file type. Please provide either a JPG, PNG or GIF",
     "imageDimensions": "Please provide a squared image with size between {{minDimension}}px and {{maxDimension}}px on each side",
     "imageTooLarge": "Please provide an image of max {{maxFileSize}}MB in size",
     "invalidAddress": "Invalid address",
@@ -660,7 +660,7 @@
       "title": "Describe your DAO",
       "description": "Name and define your DAO so new contributors know they've come to the right place. This information is displayed on the DAO Explore page and can be changed with a vote. For ideas on DAO branding, {{link}}.",
       "nameSubtitle": "Maximum of 128 characters",
-      "logoSubtitle": "JPG, PNG, GIF, or SVG of no more than 3MB. We recommend 1024x1024px.",
+      "logoSubtitle": "JPG, PNG, or GIF of no more than 3MB. We recommend 1024x1024px.",
       "descriptionSubtitle": "Describe your DAO's purpose in a few sentences. This is listed on the Explore page so new contributors can find you.",
       "linksSubtitle": "Links to your DAO's website, social media profiles, Discord, or other places your community gathers.",
       "metadataOverviewGuide": "read our guide",
@@ -773,7 +773,7 @@
       "minimumApprovalSubtitle": "Minimum approval is the amount of addresses in the authorized list that must approve a proposal for it to pass. ",
       "minApprovalAddressCount": "of {{count}} addresses",
       "alerts": {
-        "minimumApprovalAlert": "of {{amount}} {{tokenSymbol}}",
+        "minimumApprovalAlert": "of {{amount}} tokens",
         "minimumParticipationAlert": "Rounded up to {{percentage}}% equals {{walletCount}} wallets have to vote",
         "minority": "Proposals could be approved by a minority rather than a majority.",
         "majority": "Proposal will be approved by majority",
@@ -822,7 +822,7 @@
       "actionsInfo": "More options for parameters are coming soon. ",
       "actionAlertCritical": {
         "title": "Action may fail",
-        "desc": "Even if the proposal passes, this action may fail if it is not executed within the time limit."
+        "desc": "Even if the proposal was approved, this action may fail if it is not executed within the time limit."
       },
       "addFirstActionTitle": "Add first Action",
       "addFirstActionDesc": "Add your very first optional action if you wish to peform on-chain executions",
@@ -830,7 +830,7 @@
       "stepCounter": "Step {{x}} of {{x}}",
       "actionAlertWarning": {
         "title": "Action not decoded",
-        "desc": "This action can't be decoded because the smart contract is not verified."
+        "desc": "Because the smart contract is not verified, the actions could not be decoded."
       }
     },
     "mintTokens": {
@@ -1244,7 +1244,7 @@
     },
     "validation": {
       "modalTitle": "Connect dApp",
-      "codeInputHelp": "Copy the QR Code to your Clipboard and paste it below to connect to your desired dApp.",
+      "codeInputHelp": "Copy the QR Code to your Clipboard and past it below to connect to your desired dApp.",
       "codeInputLabel": "WalletConnect QR code",
       "codeInputPlaceholder": "wc: …",
       "ctaLabel": "Connect dApp",

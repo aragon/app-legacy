@@ -13,15 +13,8 @@ import {StateEmpty} from 'components/stateEmpty';
 import {useNetwork} from 'context/network';
 import {PluginTypes} from 'hooks/usePluginClient';
 import {CHAIN_METADATA} from 'utils/constants';
-import {Action} from 'utils/types';
+import {Action, ExecutionStatus} from 'utils/types';
 import {ActionsFilter} from './actionsFilter';
-
-export type ExecutionStatus =
-  | 'defeated'
-  | 'executed'
-  | 'executable'
-  | 'executable-failed'
-  | 'default';
 
 type ExecutionWidgetProps = {
   pluginType?: PluginTypes;
@@ -67,7 +60,13 @@ export const ExecutionWidget: React.FC<ExecutionWidgetProps> = ({
           <Content>
             {actions.map(action => {
               if (action)
-                return <ActionsFilter action={action} key={action.name} />;
+                return (
+                  <ActionsFilter
+                    action={action}
+                    key={action.name}
+                    status={status}
+                  />
+                );
             })}
           </Content>
           <WidgetFooter

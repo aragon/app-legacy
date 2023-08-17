@@ -120,12 +120,17 @@ export function offsetToMills(offset: Offset) {
  *
  * This date format is necessary when working with html inputs of type "date".
  */
-export function getCanonicalDate(offset?: Offset): string {
+export function getCanonicalDate(
+  offset?: Offset,
+  isOffsetBackwards = false
+): string {
   const currDate = new Date();
 
   //add offset
   const offsetMills = offset ? offsetToMills(offset) : 0;
-  const offsetTime = currDate.getTime() + offsetMills;
+  const offsetTime = isOffsetBackwards
+    ? currDate.getTime() - offsetMills
+    : currDate.getTime() + offsetMills;
   const offsetDateTime = new Date(offsetTime);
 
   //format date
