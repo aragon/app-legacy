@@ -19,7 +19,7 @@ export type PageWrapperProps = Omit<
 
 export const PageWrapper: React.FC<PageWrapperProps> = ({
   title,
-  includeHeader: includeHeader = true,
+  includeHeader = true,
   ...props
 }) => {
   const navigate = useNavigate();

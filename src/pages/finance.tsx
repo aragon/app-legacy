@@ -1,16 +1,18 @@
 import {
-  IllustrationHuman,
   Breadcrumb,
   ButtonText,
   IconAdd,
-  Tag,
   IlluObject,
+  IllustrationHuman,
+  Tag,
 } from '@aragon/ods';
 import React from 'react';
 import {useTranslation} from 'react-i18next';
 import {useNavigate} from 'react-router-dom';
 import styled from 'styled-components';
 
+import {StateEmpty} from 'components/stateEmpty';
+import {Loading} from 'components/temporary';
 import TokenList from 'components/tokenList';
 import TransferList from 'components/transferList';
 import {
@@ -18,17 +20,16 @@ import {
   TokenSectionWrapper,
   TransferSectionWrapper,
 } from 'components/wrappers';
+import PageEmptyState from 'containers/pageEmptyState';
 import {useGlobalModalContext} from 'context/globalModals';
 import {useTransactionDetailContext} from 'context/transactionDetail';
+import {useDaoDetailsQuery} from 'hooks/useDaoDetails';
 import {useDaoVault} from 'hooks/useDaoVault';
 import {useMappedBreadcrumbs} from 'hooks/useMappedBreadcrumbs';
 import useScreen from 'hooks/useScreen';
 import {trackEvent} from 'services/analytics';
-import {sortTokens} from 'utils/tokens';
-import PageEmptyState from 'containers/pageEmptyState';
-import {Loading} from 'components/temporary';
-import {useDaoDetailsQuery} from 'hooks/useDaoDetails';
 import {htmlIn} from 'utils/htmlIn';
+import {sortTokens} from 'utils/tokens';
 
 type Sign = -1 | 0 | 1;
 const colors: Record<Sign, string> = {
@@ -59,91 +60,133 @@ export const Finance: React.FC = () => {
     return <Loading />;
   }
 
-  if (tokens.length === 0 && isDesktop)
-    return (
-      <PageEmptyState
-        title={t('finance.emptyState.title')}
-        subtitle={htmlIn(t)('finance.emptyState.description')}
-        Illustration={
-          <div className="flex">
-            <IllustrationHuman
-              {...{
-                body: 'chart',
-                expression: 'excited',
-                hair: 'bun',
-              }}
-              {...(isMobile
-                ? {height: 165, width: 295}
-                : {height: 225, width: 400})}
-            />
-            <IlluObject object={'wallet'} className="-ml-36" />
-          </div>
-        }
-        buttonLabel={t('finance.emptyState.buttonLabel')}
-        onClick={() => {
-          open('deposit');
-        }}
-      />
-    );
+  if (isDesktop) {
+    // full page empty state
+    if (tokens.length === 0 && transfers.length === 0) {
+      return (
+        <PageEmptyState
+          title={t('finance.emptyState.title')}
+          subtitle={htmlIn(t)('finance.emptyState.description')}
+          Illustration={
+            <div className="flex">
+              <IllustrationHuman
+                {...{
+                  body: 'chart',
+                  expression: 'excited',
+                  hair: 'bun',
+                }}
+                {...(isMobile
+                  ? {height: 165, width: 295}
+                  : {height: 225, width: 400})}
+              />
+              <IlluObject object={'wallet'} className="-ml-36" />
+            </div>
+          }
+          buttonLabel={t('finance.emptyState.buttonLabel')}
+          onClick={() => {
+            open('deposit');
+          }}
+        />
+      );
+    }
 
-  return (
-    <>
-      <PageWrapper
-        customHeader={
-          <HeaderContainer>
-            <Header>
-              {!isDesktop && (
+    // tokens only empty state
+    if (tokens.length === 0) {
+      return (
+        <PageWrapper includeHeader={false}>
+          <>
+            <div className="mt-5 mb-8">
+              <StateEmpty
+                type="Human"
+                mode="card"
+                body="blocks"
+                expression="surprised"
+                sunglass="small_intellectual"
+                hair="long"
+                accessory="flushed"
+                title={t('finance.treasuryEmptyState.title')}
+                description={htmlIn(t)('finance.treasuryEmptyState.desc')}
+                renderHtml
+                primaryButton={{
+                  label: t('finance.emptyState.buttonLabel'),
+                  onClick: () => {
+                    open('deposit');
+                  },
+                }}
+              />
+            </div>
+            <TransferSectionWrapper
+              title={t('finance.transferSection')}
+              showButton
+            >
+              <ListContainer>
+                <TransferList
+                  transfers={transfers.slice(0, 5)}
+                  onTransferClick={handleTransferClicked}
+                />
+              </ListContainer>
+            </TransferSectionWrapper>
+          </>
+        </PageWrapper>
+      );
+    }
+  }
+
+  if (isMobile) {
+    // full page empty state
+    if (tokens.length === 0 && transfers.length === 0) {
+      return (
+        <PageWrapper
+          customHeader={
+            <HeaderContainer>
+              <Header>
                 <Breadcrumb
                   icon={icon}
                   crumbs={breadcrumbs}
                   tag={tag}
                   onClick={navigate}
                 />
-              )}
-
-              {/* Main */}
-              <ContentContainer>
-                <TextContainer>
-                  <Title>
-                    {new Intl.NumberFormat('en-US', {
-                      style: 'currency',
-                      currency: 'USD',
-                    }).format(totalAssetValue)}
-                  </Title>
-
-                  <SubtitleContainer>
-                    <Tag label="24h" />
-                    <Description
-                      className={colors[Math.sign(totalAssetChange) as Sign]}
-                    >
+                <ContentContainer>
+                  <TextContainer>
+                    <Title>
                       {new Intl.NumberFormat('en-US', {
                         style: 'currency',
                         currency: 'USD',
-                        signDisplay: 'always',
-                      }).format(totalAssetChange)}
-                    </Description>
-                  </SubtitleContainer>
-                </TextContainer>
+                      }).format(totalAssetValue)}
+                    </Title>
 
-                {/* Button */}
-                <ButtonText
-                  size="large"
-                  label={t('TransferModal.newTransfer')}
-                  iconLeft={<IconAdd />}
-                  className="w-full tablet:w-auto"
-                  onClick={() => {
-                    trackEvent('finance_newTransferBtn_clicked', {
-                      dao_address: daoDetails?.address,
-                    });
-                    open();
-                  }}
-                />
-              </ContentContainer>
-            </Header>
-          </HeaderContainer>
-        }
-      >
-        {tokens.length === 0 ? (
+                    <SubtitleContainer>
+                      <Tag label="24h" />
+                      <Description
+                        className={colors[Math.sign(totalAssetChange) as Sign]}
+                      >
+                        {new Intl.NumberFormat('en-US', {
+                          style: 'currency',
+                          currency: 'USD',
+                          signDisplay: 'always',
+                        }).format(totalAssetChange)}
+                      </Description>
+                    </SubtitleContainer>
+                  </TextContainer>
+
+                  {/* Button */}
+                  <ButtonText
+                    size="large"
+                    label={t('TransferModal.newTransfer')}
+                    iconLeft={<IconAdd />}
+                    className="w-full tablet:w-auto"
+                    onClick={() => {
+                      trackEvent('finance_newTransferBtn_clicked', {
+                        dao_address: daoDetails?.address,
+                      });
+                      open();
+                    }}
+                  />
+                </ContentContainer>
+              </Header>
+            </HeaderContainer>
+          }
+        >
           <PageEmptyState
             title={t('finance.emptyState.title')}
             subtitle={htmlIn(t)('finance.emptyState.description')}
@@ -167,15 +210,46 @@ export const Finance: React.FC = () => {
               open('deposit');
             }}
           />
-        ) : (
-          <>
-            <div className={'h-4'} />
-            <TokenSectionWrapper title={t('finance.tokenSection')}>
-              <ListContainer>
-                <TokenList tokens={tokens.slice(0, 5)} />
-              </ListContainer>
-            </TokenSectionWrapper>
-            <div className={'h-4'} />
+        </PageWrapper>
+      );
+    }
+
+    // tokens only empty state
+    if (tokens.length === 0) {
+      return (
+        <PageWrapper
+          customHeader={
+            <HeaderContainer>
+              <Header>
+                <Breadcrumb
+                  icon={icon}
+                  crumbs={breadcrumbs}
+                  tag={tag}
+                  onClick={navigate}
+                />
+                <StateEmpty
+                  type="Human"
+                  mode="inline"
+                  body="blocks"
+                  expression="surprised"
+                  sunglass="small_intellectual"
+                  hair="long"
+                  accessory="flushed"
+                  title={t('finance.treasuryEmptyState.title')}
+                  description={htmlIn(t)('finance.treasuryEmptyState.desc')}
+                  renderHtml
+                  primaryButton={{
+                    label: t('finance.emptyState.buttonLabel'),
+                    onClick: () => {
+                      open('deposit');
+                    },
+                  }}
+                />
+              </Header>
+            </HeaderContainer>
+          }
+        >
+          <div className="mt-1">
             <TransferSectionWrapper
               title={t('finance.transferSection')}
               showButton
@@ -187,10 +261,83 @@ export const Finance: React.FC = () => {
                 />
               </ListContainer>
             </TransferSectionWrapper>
-          </>
-        )}
-      </PageWrapper>
-    </>
+          </div>
+        </PageWrapper>
+      );
+    }
+  }
+
+  // tokens and transfers are available
+  return (
+    <PageWrapper
+      customHeader={
+        <HeaderContainer>
+          <Header>
+            {!isDesktop && (
+              <Breadcrumb
+                icon={icon}
+                crumbs={breadcrumbs}
+                tag={tag}
+                onClick={navigate}
+              />
+            )}
+            <ContentContainer>
+              <TextContainer>
+                <Title>
+                  {new Intl.NumberFormat('en-US', {
+                    style: 'currency',
+                    currency: 'USD',
+                  }).format(totalAssetValue)}
+                </Title>
+
+                <SubtitleContainer>
+                  <Tag label="24h" />
+                  <Description
+                    className={colors[Math.sign(totalAssetChange) as Sign]}
+                  >
+                    {new Intl.NumberFormat('en-US', {
+                      style: 'currency',
+                      currency: 'USD',
+                      signDisplay: 'always',
+                    }).format(totalAssetChange)}
+                  </Description>
+                </SubtitleContainer>
+              </TextContainer>
+
+              {/* Button */}
+              <ButtonText
+                size="large"
+                label={t('TransferModal.newTransfer')}
+                iconLeft={<IconAdd />}
+                className="w-full tablet:w-auto"
+                onClick={() => {
+                  trackEvent('finance_newTransferBtn_clicked', {
+                    dao_address: daoDetails?.address,
+                  });
+                  open();
+                }}
+              />
+            </ContentContainer>
+          </Header>
+        </HeaderContainer>
+      }
+    >
+      <div className={'mt-1 tablet:mt-5 mb-3 tablet:mb-8'}>
+        <TokenSectionWrapper title={t('finance.tokenSection')}>
+          <ListContainer>
+            <TokenList tokens={tokens.slice(0, 5)} />
+          </ListContainer>
+        </TokenSectionWrapper>
+      </div>
+      <TransferSectionWrapper title={t('finance.transferSection')} showButton>
+        <ListContainer>
+          <TransferList
+            transfers={transfers.slice(0, 5)}
+            onTransferClick={handleTransferClicked}
+          />
+        </ListContainer>
+      </TransferSectionWrapper>
+    </PageWrapper>
   );
 };
 
