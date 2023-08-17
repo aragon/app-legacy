@@ -175,7 +175,7 @@ const ConfigureCommunity: React.FC<ConfigureCommunityProps> = ({
               }) => (
                 <>
                   <ApprovalContainer>
-                    <div className="w-1/3">
+                    <div className="tablet:w-1/3">
                       <NumberInput
                         name={name}
                         value={value}
@@ -190,7 +190,7 @@ const ConfigureCommunity: React.FC<ConfigureCommunityProps> = ({
                       <Tag
                         label={t('labels.yes')}
                         colorScheme="primary"
-                        className="mr-1.5 w-6"
+                        className="justify-center mr-1.5 w-6"
                       />
 
                       <LinearProgressContainer>
@@ -207,7 +207,10 @@ const ConfigureCommunity: React.FC<ConfigureCommunityProps> = ({
                         </ProgressInfo1>
                       </LinearProgressContainer>
 
-                      <Tag label={t('labels.no')} className="ml-1.5 w-6" />
+                      <Tag
+                        label={t('labels.no')}
+                        className="justify-center ml-1.5 w-6"
+                      />
                     </div>
                   </ApprovalContainer>
 
@@ -454,7 +457,7 @@ const DurationContainer = styled.div.attrs({
 })``;
 
 const TimeLabelWrapper = styled.div.attrs({
-  className: 'w-1/2 tablet:w-full space-y-0.5',
+  className: 'w-full tablet:w-1/2 space-y-0.5',
 })``;
 
 const TimeLabel = styled.span.attrs({
@@ -462,7 +465,8 @@ const TimeLabel = styled.span.attrs({
 })``;
 
 const ApprovalContainer = styled.div.attrs({
-  className: 'flex items-center p-3 space-x-3 rounded-xl bg-ui-0',
+  className:
+    'flex flex-col flex-col-reverse tablet:flex-row tablet:items-center p-3 pt-4 tablet:p-3 space-y-3 space-y-reverse tablet:space-y-0 tablet:space-x-3 rounded-xl bg-ui-0',
 })``;
 
 const LinearProgressContainer = styled.div.attrs({
