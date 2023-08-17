@@ -144,12 +144,6 @@ const AddExistingToken: React.FC = () => {
       </FormItem>
       {isAllowedToConfigureVotingEligibility && (
         <FormItem>
-          <DescriptionContainer>
-            <Label
-              label={t('labels.proposalCreation')}
-              helpText={t('createDAO.step3.proposalCreationHelpertext')}
-            />
-          </DescriptionContainer>
           <SelectEligibility />
         </FormItem>
       )}
