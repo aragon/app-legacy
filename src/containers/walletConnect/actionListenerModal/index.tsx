@@ -61,7 +61,12 @@ const ActionListenerModal: React.FC<Props> = ({
     // the case, then both the Etherscan data and notices can be fetched
     // and parsed outside of the loop, getting rid of the unnecessary
     // async requests. F.F. - [07-10-2023]
-    actionsReceived.forEach(async (action, currentIndex) => {
+    for (const {action, index: currentIndex} of actionsReceived.map(
+      (action, index) => ({
+        action,
+        index,
+      })
+    )) {
       // verify and decode
       const etherscanData = await getEtherscanVerifiedContract(
         action.params[0].to,
@@ -152,7 +157,7 @@ const ActionListenerModal: React.FC<Props> = ({
           getEncodedActionInputs(action.params[0], network, t)
         );
       }
-    });
+    }
 
     removeAction(actionIndex);
   }, [
