@@ -1,5 +1,5 @@
 import {CheckboxListItem, Label} from '@aragon/ods';
-import React, {useEffect} from 'react';
+import React from 'react';
 import {Controller, useFormContext, useWatch} from 'react-hook-form';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
@@ -31,14 +31,6 @@ const SetupCommunityForm: React.FC = () => {
     {label: t('labels.yes'), selectValue: false},
   ];
 
-  useEffect(() => {
-    if (membership === 'token') {
-      setValue('eligibilityType', 'token');
-    } else if (membership === 'multisig') {
-      setValue('eligibilityType', 'multisig');
-    }
-  }, [membership, setValue]);
-
   const resetTokenFields = () => {
     resetField('tokenName');
     resetField('tokenSymbol');
@@ -55,10 +47,14 @@ const SetupCommunityForm: React.FC = () => {
     membership: CreateDaoFormData['membership'],
     onChange: (...event: unknown[]) => void
   ) => {
+    // reset opposite fields and set default eligibility for
+    // proposal creation
     if (membership === 'token') {
       resetMultisigFields();
+      setValue('eligibilityType', 'token');
     } else {
       resetTokenFields();
+      setValue('eligibilityType', 'multisig');
     }
     onChange(membership);
   };
