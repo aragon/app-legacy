@@ -7,6 +7,7 @@
   "license": "GPL-3.0",
   "scripts": {
     "dev": "vite --host",
+    "dev:watch": "cross-env WATCH=true vite --host ",
     "build": "tsc && cross-env NODE_ENV=production node --max_old_space_size=16384 ./node_modules/vite/bin/vite.js build --sourcemap true > build.txt",
     "serve": "vite preview",
     "prepbrotli": "brotli-cli compress --glob \"dist/assets/*.*\"",
