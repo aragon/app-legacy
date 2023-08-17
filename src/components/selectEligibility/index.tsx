@@ -1,16 +1,12 @@
-import {AlertInline, CheckboxListItem, NumberInput} from '@aragon/ods';
+import {AlertInline, CheckboxListItem, Label, NumberInput} from '@aragon/ods';
 import React, {useEffect} from 'react';
 import {Controller, useFormContext, useWatch} from 'react-hook-form';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 
-export type SelectEligibilityProps = {
-  isSettingPage?: boolean;
-};
+export type TokenVotingProposalEligibility = 'token' | 'anyone';
 
-export const SelectEligibility = ({
-  isSettingPage = false,
-}: SelectEligibilityProps) => {
+export const SelectEligibility = () => {
   const {control, getValues, resetField, setValue} = useFormContext();
   const {t} = useTranslation();
   const {tokenTotalSupply} = getValues();
@@ -18,6 +14,8 @@ export const SelectEligibility = ({
     name: ['eligibilityType', 'minimumTokenAmount'],
     control,
   });
+
+  const anyoneIsEligible = eligibilityType === 'anyone';
 
   function eligibilityValidator(value: string) {
     if (value === '') return t('errors.required.amount');
@@ -35,8 +33,12 @@ export const SelectEligibility = ({
   }
 
   useEffect(() => {
-    if (!isSettingPage) setValue('eligibilityTokenAmount', minimumTokenAmount);
-  }, [isSettingPage, minimumTokenAmount, setValue]);
+    if (eligibilityType === 'token') {
+      setValue('eligibilityTokenAmount', minimumTokenAmount);
+    } else {
+      setValue('eligibilityTokenAmount', 0);
+    }
+  }, [eligibilityType, minimumTokenAmount, setValue]);
 
   /**
    * Current Types like token or anyone are dummies and may refactor later
@@ -45,6 +47,12 @@ export const SelectEligibility = ({
 
   return (
     <>
+      <DescriptionContainer>
+        <Label
+          label={t('labels.proposalCreation')}
+          helpText={t('createDAO.step3.proposalCreationHelpertext')}
+        />
+      </DescriptionContainer>
       <Container>
         <Controller
           name="eligibilityType"
@@ -95,10 +103,10 @@ export const SelectEligibility = ({
               </OptionsTitle>
               <NumberInput
                 value={value}
-                view="bigger"
+                view={anyoneIsEligible ? 'default' : 'bigger'}
                 onChange={onChange}
                 max={tokenTotalSupply}
-                disabled={eligibilityType === 'anyone'}
+                disabled={anyoneIsEligible}
               />
               {error?.message && (
                 <AlertInline label={error.message} mode="critical" />
@@ -107,7 +115,7 @@ export const SelectEligibility = ({
           )}
         />
       </Container>
-      {eligibilityType === 'anyone' && (
+      {anyoneIsEligible && (
         <AlertInline
           label={t('createDAO.step3.eligibility.anyone.warning')}
           mode="warning"
@@ -128,4 +136,8 @@ const OptionsContainers = styled.div.attrs({
 
 const OptionsTitle = styled.h2.attrs({
   className: 'ft-text-base font-bold text-ui-800',
+})``;
+
+const DescriptionContainer = styled.div.attrs({
+  className: 'space-y-0.5 mb-1.5',
 })``;
