@@ -1,7 +1,7 @@
 # Local Development with Linked ODS Library
 
 To facilitate testing and development of the Aragon ODS library locally, you can create a link to the `@aragon/ods`
-package and integrate it into your Aragon App environment. Follow these steps:
+package and integrate it into your Aragon App environment. In order to do so, follow the steps below:
 
 1.  Navigate to the `@aragon/ods` directory and execute the following commands to create a link to the package and initiate
     continuous building in watch mode:
@@ -17,7 +17,7 @@ package and integrate it into your Aragon App environment. Follow these steps:
     watch mode using the following commands:
 
         ```
-        yarn link `@aragon/ods`
+        yarn link @aragon/ods
         yarn dev:watch
         ```
 
