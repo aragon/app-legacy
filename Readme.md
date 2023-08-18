@@ -73,7 +73,7 @@ The CI/CD pipelines for the Aragon App use GitHub Actions, and once completed su
 - [Fleek](https://fleek.co): For staging and production environments.
 - [Google Kubernetes Engine](https://cloud.google.com/kubernetes-engine): For the development environment.
 
-## Tech Stack
+## Documentation
 
 The Aragon App is built using the following tools to ensure a seamless user experience:
 
@@ -86,17 +86,19 @@ The Aragon App is built using the following tools to ensure a seamless user expe
 - [ESLint](https://eslint.org)
 - [Prettier](https://prettier.io)
 
-## Learn More
-
-For more information about Aragon and its ecosystem, please visit the [Aragon website](https://aragon.org/) and explore our [Developer Portal](https://devs.aragon.org/).
-
-Join our [Developer Community](https://aragonproject.typeform.com/to/LngekEhU) to stay updated and contribute to the growth of decentralized governance.
+For more technical information about the Aragon App, please check the [Aragon App Documentation](./docs/index.md).
 
 ## Contributing
 
 Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
 
 Please make sure to update tests as appropriate.
+
+## Learn More
+
+For more information about Aragon and its ecosystem, please visit the [Aragon website](https://aragon.org/) and explore our [Developer Portal](https://devs.aragon.org/).
+
+Join our [Developer Community](https://aragonproject.typeform.com/to/LngekEhU) to stay updated and contribute to the growth of decentralized governance.
 
 ## License
 
