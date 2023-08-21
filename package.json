@@ -22,7 +22,7 @@
   "dependencies": {
     "@apollo/client": "^3.5.8",
     "@aragon/ods": "^0.2.10",
-    "@aragon/sdk-client": "^1.12.0-rc1",
+    "@aragon/sdk-client": "^1.13.1-rc1",
     "@elastic/apm-rum-react": "^2.0.0",
     "@radix-ui/react-accordion": "^1.1.2",
     "@tanstack/react-query": "^4.26.1",
@@ -73,8 +73,8 @@
     "@testing-library/jest-dom": "^5.14.1",
     "@testing-library/react": "^12.0.0",
     "@types/big.js": "^6.1.5",
-    "@types/lodash": "^4.14.196",
     "@types/file-saver": "^2.0.5",
+    "@types/lodash": "^4.14.196",
     "@types/node": "^16.18.11",
     "@types/numeral": "^2.0.2",
     "@types/react": "^17.0.14",

@@ -3,11 +3,12 @@ import {BigNumber, providers as EthersProviders} from 'ethers';
 import {isAddress, parseUnits} from 'ethers/lib/utils';
 import {FieldError, FieldErrors, ValidateResult} from 'react-hook-form';
 import {TFunction} from 'react-i18next';
+import {TokenVotingClient} from '@aragon/sdk-client';
 
 import {i18n} from '../../i18n.config';
 import {ALPHA_NUMERIC_PATTERN} from './constants';
 import {Web3Address, isOnlyWhitespace} from './library';
-import {isERC1155, isERC20Governance, isERC20Token, isERC721} from './tokens';
+import {isERC1155, isERC20Token, isERC721} from './tokens';
 import {
   Action,
   ActionAddAddress,
@@ -57,7 +58,8 @@ export async function validateTokenAddress(
  */
 export async function validateGovernanceTokenAddress(
   address: string,
-  provider: EthersProviders.Provider
+  provider: EthersProviders.Provider,
+  pluginClient: TokenVotingClient
 ): Promise<{
   verificationResult: ValidateResult;
   type: string;
@@ -70,38 +72,42 @@ export async function validateGovernanceTokenAddress(
       type: 'Unknown',
     };
   } else {
-    const interfaces = await Promise.all([
-      isERC20Token(address, provider),
-      isERC20Governance(address, provider),
-      isERC721(address, provider),
-      isERC1155(address, provider),
-    ]);
+    const isGovernanceCompatible =
+      await pluginClient.methods.isTokenVotingCompatibleToken(address);
 
-    if (interfaces[3])
-      return {
-        verificationResult: true,
-        type: 'ERC-1155',
-      };
-    else if (interfaces[2])
-      return {
-        verificationResult: true,
-        type: 'ERC-721',
-      };
-    else if (interfaces[1])
+    // I should've used TokenVotingTokenCompatibility enum but It isn't exported
+    if (isGovernanceCompatible === 'compatible')
       return {
         verificationResult: true,
         type: 'governance-ERC20',
       };
-    else if (interfaces[0])
+    else if (isGovernanceCompatible === 'needsWrapping')
       return {
         verificationResult: true,
         type: 'ERC-20',
       };
     else {
-      return {
-        verificationResult: true,
-        type: 'Unknown',
-      };
+      const interfaces = await Promise.all([
+        isERC721(address, provider),
+        isERC1155(address, provider),
+      ]);
+
+      if (interfaces[1])
+        return {
+          verificationResult: true,
+          type: 'ERC-1155',
+        };
+      else if (interfaces[0])
+        return {
+          verificationResult: true,
+          type: 'ERC-721',
+        };
+      else {
+        return {
+          verificationResult: true,
+          type: 'Unknown',
+        };
+      }
     }
   }
 }
