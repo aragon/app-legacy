@@ -64,7 +64,7 @@ export const useWallet = (): IUseWallet => {
         name: translateToNetworkishName(network),
         ensAddress:
           LIVE_CONTRACTS[translateToNetworkishName(network) as SupportedNetwork]
-            .ensRegistry,
+            .ensRegistryAddress,
       });
     } else return signer?.provider;
   }, [network, signer?.provider]);

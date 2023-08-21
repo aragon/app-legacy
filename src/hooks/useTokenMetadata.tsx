@@ -4,7 +4,12 @@ import {constants} from 'ethers';
 import {useMemo} from 'react';
 import {useNetwork} from 'context/network';
 import {CHAIN_METADATA} from 'utils/constants';
-import {HookData, TokenWithMetadata} from 'utils/types';
+import {
+  BaseTokenInfo,
+  HookData,
+  TokenBalance,
+  TokenWithMetadata,
+} from 'utils/types';
 import {useTokenList} from 'services/token/queries/use-token';
 
 export const useTokenMetadata = (
@@ -16,7 +21,10 @@ export const useTokenMetadata = (
     address:
       asset.type !== TokenType.NATIVE ? asset.address : constants.AddressZero,
     network,
-    symbol: asset.type !== TokenType.NATIVE ? asset.symbol : undefined,
+    symbol:
+      asset.type !== TokenType.NATIVE
+        ? (asset as unknown as BaseTokenInfo).symbol
+        : undefined,
   }));
   const tokenResults = useTokenList(tokenListParams);
 
@@ -30,7 +38,10 @@ export const useTokenMetadata = (
     }
 
     const tokensWithMetadata = assets.map((asset, index) => ({
-      balance: asset.type !== TokenType.ERC721 ? asset.balance : BigInt(0),
+      balance:
+        asset.type !== TokenType.ERC721
+          ? (asset as unknown as TokenBalance).balance
+          : BigInt(0),
       metadata: {
         ...(asset.type === TokenType.ERC20
           ? {

@@ -29,6 +29,8 @@ import {
 const REPLACEMENT_BASE_ETHER_LOGO_URL =
   'https://assets.coingecko.com/coins/images/279/large/ethereum.png?1595348880';
 
+type tokenType = TokenType.NATIVE | TokenType.ERC20;
+
 class TokenService {
   private defaultCurrency = 'USD';
   private baseUrl = {
@@ -215,6 +217,7 @@ class TokenService {
         return [];
 
       return {
+        id: native_token ? AddressZero : item.contract_address,
         address: native_token ? AddressZero : item.contract_address,
         name: native_token ? nativeCurrency.name : item.contract_name,
         symbol: native_token
@@ -223,11 +226,11 @@ class TokenService {
         decimals: native_token
           ? nativeCurrency.decimals
           : item.contract_decimals,
-        type: native_token
+        type: (native_token
           ? TokenType.NATIVE
           : item.nft_data
           ? TokenType.ERC721
-          : TokenType.ERC20,
+          : TokenType.ERC20) as tokenType,
         balance: BigInt(item.balance),
         updateDate: new Date(data.updated_at),
       };
