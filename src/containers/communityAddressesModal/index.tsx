@@ -87,6 +87,7 @@ const CommunityAddressesModal: React.FC<CommunityAddressesModalProps> = ({
             voters={filteredAddressList}
             {...(tokenMembership && {showAmount: true})}
             pageSize={filteredAddressList.length}
+            LoadMoreLabel={'Load more'}
           />
         ) : (
           // this view is temporary until designs arrive
