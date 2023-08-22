@@ -178,6 +178,8 @@ const GovTokensWrappingProvider: FC<{children: ReactNode}> = ({children}) => {
     [isTxLoading, reset, isFlowFinished, daoDetails, network, loc, navigate]
   );
 
+  // Invalidate wagmi balance cache to display the correct token balances after
+  // the wrap / unwrap processes
   const invalidateDaoTokenBalanceCache = useCallback(() => {
     queryClient.invalidateQueries([
       {
