@@ -24,10 +24,11 @@ import {StateEmpty} from 'components/stateEmpty';
 import {Erc20TokenDetails} from '@aragon/sdk-client';
 import numeral from 'numeral';
 import {TokensWrappingFormData} from 'utils/types';
+import {useGlobalModalContext} from 'context/globalModals';
 
 interface GovTokensWrappingModalProps {
   isOpen: boolean;
-  onClose: () => void;
+  onClose: (redirectPage?: boolean) => void;
   isLoading: boolean;
   daoToken: Erc20TokenDetails | undefined;
   wrappedDaoToken: Erc20TokenDetails | undefined;
@@ -64,8 +65,8 @@ const GovTokensWrappingModal: FC<GovTokensWrappingModalProps> = ({
   handleUnwrap,
 }) => {
   const {t} = useTranslation();
-
   const {isValid, dirtyFields} = useFormState({control: form.control});
+  const {open} = useGlobalModalContext();
 
   const [mode, amount] = useWatch({
     name: ['mode', 'amount'],
@@ -178,6 +179,11 @@ const GovTokensWrappingModal: FC<GovTokensWrappingModalProps> = ({
     [modeData.tokenBalance]
   );
 
+  const handleDelegateClick = () => {
+    onClose(false);
+    open('delegateVoting');
+  };
+
   return (
     <ModalBottomSheetSwitcher
       isOpen={isOpen}
@@ -204,6 +210,7 @@ const GovTokensWrappingModal: FC<GovTokensWrappingModalProps> = ({
           accessory="buddha"
           title={modeData.finishedTitle}
           description={modeData.finishedDescription}
+          actionsColumn={isWrapMode}
           primaryButton={{
             label: isWrapMode
               ? t('modal.wrapToken.successCtaLabel')
@@ -217,6 +224,15 @@ const GovTokensWrappingModal: FC<GovTokensWrappingModalProps> = ({
                   label: t('modal.wrapToken.successBtnSecondaryLabel'),
                   className: 'w-full',
                   onClick: handleAddWrappedTokenToWallet,
+                }
+              : undefined
+          }
+          tertiaryButton={
+            isWrapMode
+              ? {
+                  label: t('modal.wrapToken.successBtnGhostLabel'),
+                  className: 'w-full',
+                  onClick: handleDelegateClick,
                 }
               : undefined
           }

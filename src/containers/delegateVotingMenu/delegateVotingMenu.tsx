@@ -55,7 +55,7 @@ export const DelegateVotingMenu: React.FC = () => {
     daoDetails?.plugins[0].instanceAddress ?? ''
   );
 
-  const {data: tokenBalance} = useBalance({
+  const {data: tokenBalance, isLoading: isLoadingBalance} = useBalance({
     address: address as Address,
     token: daoToken?.address as Address,
     chainId: CHAIN_METADATA[network as SupportedNetworks].id,
@@ -153,11 +153,23 @@ export const DelegateVotingMenu: React.FC = () => {
 
   // Open gating menu when user has no tokens for this DAO
   useEffect(() => {
-    if (isConnected && isDelegateVotingOpen && tokenBalance?.value === 0n) {
+    if (
+      isConnected &&
+      isDelegateVotingOpen &&
+      !isLoadingBalance &&
+      tokenBalance?.value === 0n
+    ) {
       open('gating');
       close('delegateVoting');
     }
-  }, [isConnected, tokenBalance?.value, isDelegateVotingOpen, close, open]);
+  }, [
+    isConnected,
+    tokenBalance?.value,
+    isLoadingBalance,
+    isDelegateVotingOpen,
+    close,
+    open,
+  ]);
 
   if (!isConnected && isDelegateVotingOpen) {
     return <LoginRequired isOpen={true} onClose={handleCloseLogin} />;

@@ -34,7 +34,8 @@ export const GatingMenu: React.FC = () => {
 
   const {data: daoDetails} = useDaoDetailsQuery();
   const {plugins, ensDomain, address} = daoDetails ?? {};
-  const daoName = toDisplayEns(ensDomain) ?? address;
+  const daoName =
+    toDisplayEns(ensDomain) !== '' ? toDisplayEns(ensDomain) : address;
 
   const {data: daoToken} = useDaoToken(plugins?.[0].instanceAddress);
   const {isDAOTokenWrapped} = useExistingToken({daoDetails, daoToken});

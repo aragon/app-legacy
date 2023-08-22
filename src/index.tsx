@@ -37,8 +37,22 @@ const {publicClient} = configureChains(chains, [
   infuraProvider({apiKey: infuraApiKey}),
 ]);
 
+// React-Query client
+export const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      cacheTime: 1000 * 60 * 5, // 5min
+      staleTime: 1000 * 60 * 2, // 2min
+      retry: 0,
+      refetchOnWindowFocus: false,
+      refetchOnReconnect: true,
+    },
+  },
+});
+
 const wagmiConfig = createConfig({
   autoConnect: true,
+  queryClient,
   connectors: [
     ...w3mConnectors({
       projectId: walletConnectProjectID,
@@ -60,19 +74,6 @@ const wagmiConfig = createConfig({
 
 // Web3Modal Ethereum Client
 const ethereumClient = new EthereumClient(wagmiConfig, chains);
-
-// React-Query client
-export const queryClient = new QueryClient({
-  defaultOptions: {
-    queries: {
-      cacheTime: 1000 * 60 * 5, // 5min
-      staleTime: 1000 * 60 * 2, // 2min
-      retry: 0,
-      refetchOnWindowFocus: false,
-      refetchOnReconnect: true,
-    },
-  },
-});
 
 const CACHE_VERSION = 1;
 const onLoad = () => {

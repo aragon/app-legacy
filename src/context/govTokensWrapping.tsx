@@ -6,6 +6,7 @@ import {
   UnwrapTokensStep,
   WrapTokensStep,
 } from '@aragon/sdk-client';
+import {useQueryClient} from '@tanstack/react-query';
 import GovTokensWrappingModal from 'containers/govTokensWrappingModal/GovTokensWrappingModal';
 import {useNetwork} from 'context/network';
 import {useProviders} from 'context/providers';
@@ -44,6 +45,7 @@ const GovTokensWrappingProvider: FC<{children: ReactNode}> = ({children}) => {
   const {address: userAddress} = useWallet();
   const {network} = useNetwork();
   const loc = useLocation();
+  const queryClient = useQueryClient();
   const {api: provider} = useProviders();
 
   const {data: daoDetails, isLoading: isDaoDetailsLoading} =
@@ -147,31 +149,51 @@ const GovTokensWrappingProvider: FC<{children: ReactNode}> = ({children}) => {
     setModalVisible(true);
   }, [loadDaoTokenBalance, loadWrappedDaoTokenBalance]);
 
-  const handleCloseModal = useCallback(() => {
-    if (isTxLoading) return;
-    setModalVisible(false);
-    reset();
+  const handleCloseModal = useCallback(
+    (redirectPage = true) => {
+      if (isTxLoading) return;
+      setModalVisible(false);
+      reset();
 
-    if (isFlowFinished && daoDetails) {
-      const communityPagePath = generatePath(Community, {
-        network,
-        dao: toDisplayEns(daoDetails.ensDomain) || daoDetails.address,
-      });
+      if (isFlowFinished && daoDetails && redirectPage) {
+        const communityPagePath = generatePath(Community, {
+          network,
+          dao: toDisplayEns(daoDetails.ensDomain) || daoDetails.address,
+        });
 
-      const isOnCommunityPage = communityPagePath === loc.pathname;
+        const isOnCommunityPage = communityPagePath === loc.pathname;
 
-      if (isOnCommunityPage) {
-        location.reload();
-      } else {
-        navigate(
-          generatePath(Community, {
-            network,
-            dao: toDisplayEns(daoDetails.ensDomain) || daoDetails.address,
-          })
-        );
+        if (isOnCommunityPage) {
+          location.reload();
+        } else {
+          navigate(
+            generatePath(Community, {
+              network,
+              dao: toDisplayEns(daoDetails.ensDomain) || daoDetails.address,
+            })
+          );
+        }
       }
-    }
-  }, [isTxLoading, reset, isFlowFinished, daoDetails, network, loc, navigate]);
+    },
+    [isTxLoading, reset, isFlowFinished, daoDetails, network, loc, navigate]
+  );
+
+  const invalidateDaoTokenBalanceCache = useCallback(() => {
+    queryClient.invalidateQueries([
+      {
+        entity: 'balance',
+        address: userAddress,
+        token: wrappedDaoToken?.address,
+      },
+    ]);
+    queryClient.invalidateQueries([
+      {
+        entity: 'balance',
+        address: userAddress,
+        token: daoTokenData?.address,
+      },
+    ]);
+  }, [queryClient, userAddress, wrappedDaoToken, daoTokenData]);
 
   const handleApprove = useCallback(async () => {
     if (isTxLoading || !wrappedDaoToken || !underlyingToken) return;
@@ -207,7 +229,14 @@ const GovTokensWrappingProvider: FC<{children: ReactNode}> = ({children}) => {
     } finally {
       setIsTxLoading(false);
     }
-  }, [amount, client, underlyingToken, isTxLoading, wrappedDaoToken]);
+  }, [
+    amount,
+    client,
+    underlyingToken,
+    isTxLoading,
+    wrappedDaoToken,
+    invalidateDaoTokenBalanceCache,
+  ]);
 
   const handleWrap = useCallback(async () => {
     if (isTxLoading || !wrappedDaoToken || !pluginClient) return;
@@ -230,6 +259,7 @@ const GovTokensWrappingProvider: FC<{children: ReactNode}> = ({children}) => {
             case WrapTokensStep.DONE: {
               setIsTxError(false);
               setIsFlowFinished(true);
+              invalidateDaoTokenBalanceCache();
               break;
             }
           }
@@ -243,7 +273,13 @@ const GovTokensWrappingProvider: FC<{children: ReactNode}> = ({children}) => {
     } finally {
       setIsTxLoading(false);
     }
-  }, [amount, isTxLoading, pluginClient, wrappedDaoToken]);
+  }, [
+    amount,
+    isTxLoading,
+    pluginClient,
+    wrappedDaoToken,
+    invalidateDaoTokenBalanceCache,
+  ]);
 
   const handleAddWrappedTokenToWallet = useCallback(async () => {
     if (!window.ethereum || !wrappedDaoToken) return;
@@ -286,6 +322,7 @@ const GovTokensWrappingProvider: FC<{children: ReactNode}> = ({children}) => {
             case UnwrapTokensStep.DONE: {
               setIsTxError(false);
               setIsFlowFinished(true);
+              invalidateDaoTokenBalanceCache();
               break;
             }
           }
@@ -299,7 +336,13 @@ const GovTokensWrappingProvider: FC<{children: ReactNode}> = ({children}) => {
     } finally {
       setIsTxLoading(false);
     }
-  }, [amount, isTxLoading, pluginClient, wrappedDaoToken]);
+  }, [
+    amount,
+    isTxLoading,
+    pluginClient,
+    wrappedDaoToken,
+    invalidateDaoTokenBalanceCache,
+  ]);
 
   /*************************************************
    *               Lifecycle hooks                 *
