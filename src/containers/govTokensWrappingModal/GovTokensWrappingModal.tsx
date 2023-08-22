@@ -216,7 +216,7 @@ const GovTokensWrappingModal: FC<GovTokensWrappingModalProps> = ({
               ? t('modal.wrapToken.successCtaLabel')
               : t('modal.unwrapToken.successCtaLabel'),
             className: 'w-full',
-            onClick: onClose,
+            onClick: () => onClose(),
           }}
           secondaryButton={
             isWrapMode
@@ -425,7 +425,7 @@ const GovTokensWrappingModal: FC<GovTokensWrappingModalProps> = ({
                     size="large"
                     label={t('modal.wrapToken.footerWrappedCancelLabel')}
                     className="w-full"
-                    onClick={onClose}
+                    onClick={() => onClose()}
                   />
                 </>
               )}
