@@ -36,7 +36,6 @@
     "@walletconnect/web3wallet": "^1.8.2",
     "@web3modal/ethereum": "^2.4.7",
     "@web3modal/react": "^2.4.7",
-    "apollo3-cache-persist": "^0.14.0",
     "big.js": "^6.2.1",
     "date-fns": "^2.28.0",
     "date-fns-tz": "^2.0.0",
