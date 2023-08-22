@@ -229,14 +229,7 @@ const GovTokensWrappingProvider: FC<{children: ReactNode}> = ({children}) => {
     } finally {
       setIsTxLoading(false);
     }
-  }, [
-    amount,
-    client,
-    underlyingToken,
-    isTxLoading,
-    wrappedDaoToken,
-    invalidateDaoTokenBalanceCache,
-  ]);
+  }, [amount, client, underlyingToken, isTxLoading, wrappedDaoToken]);
 
   const handleWrap = useCallback(async () => {
     if (isTxLoading || !wrappedDaoToken || !pluginClient) return;
