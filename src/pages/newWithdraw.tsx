@@ -7,43 +7,7 @@ import {useDaoDetailsQuery} from 'hooks/useDaoDetails';
 import {PluginTypes} from 'hooks/usePluginClient';
 import {usePluginSettings} from 'hooks/usePluginSettings';
 import WithdrawStepper from 'containers/withdrawStepper';
-import {InputValue} from '@aragon/ods';
-
-export type TokenFormData = {
-  tokenName: string;
-  tokenSymbol: string;
-  tokenImgUrl: string;
-  tokenAddress: string;
-  tokenDecimals: number;
-  tokenBalance: string;
-  tokenPrice?: number;
-  isCustomToken: boolean;
-};
-
-export type WithdrawAction = TokenFormData & {
-  to: InputValue;
-  from: string;
-  amount: string;
-  name: string; // This indicates the type of action; Deposit is NOT an action
-};
-
-type WithdrawFormData = {
-  actions: WithdrawAction[];
-
-  // Proposal data
-  startDate: string;
-  startTime: string;
-  endDate: string;
-  endTime: string;
-  duration: number;
-  startUtc: string;
-  endUtc: string;
-  durationSwitch: string;
-  proposalTitle: string;
-  proposalSummary: string;
-  proposal: unknown;
-  links: unknown;
-};
+import {WithdrawFormData} from 'utils/types';
 
 export const defaultValues = {
   links: [{name: '', url: ''}],

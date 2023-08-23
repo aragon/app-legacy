@@ -122,7 +122,7 @@ export function getAlchemyProvider(
     networkishOptions.ensAddress =
       LIVE_CONTRACTS[
         networkishOptions.name as sdkSupportedNetworks
-      ].ensRegistry;
+      ].ensRegistryAddress;
   }
 
   return new AlchemyProvider(networkishOptions, apiKey);
@@ -156,7 +156,7 @@ export function getInfuraProvider(
     networkishOptions.ensAddress =
       LIVE_CONTRACTS[
         networkishOptions.name as sdkSupportedNetworks
-      ].ensRegistry;
+      ].ensRegistryAddress;
   }
 
   return new InfuraProvider(networkishOptions, infuraApiKey);
@@ -187,7 +187,7 @@ export function getJsonRpcProvider(
     networkishOptions.ensAddress =
       LIVE_CONTRACTS[
         networkishOptions.name as sdkSupportedNetworks
-      ].ensRegistry;
+      ].ensRegistryAddress;
   }
 
   return new JsonRpcProvider(

@@ -30,13 +30,13 @@ const TransferMenu: React.FC = () => {
     } else {
       navigate(generatePath(NewWithDraw, {network: network, dao: dao}));
     }
-    close('default');
+    close('transfer');
   };
 
   return (
     <ModalBottomSheetSwitcher
       isOpen={isTransferOpen}
-      onClose={() => close('default')}
+      onClose={() => close('transfer')}
       title={t('TransferModal.newTransfer')}
     >
       <Container>

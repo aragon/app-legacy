@@ -330,7 +330,7 @@ export const MinParticipation: FC = () => {
 };
 
 const Container = styled.div.attrs({
-  className: 'p-3 space-x-3 rounded-xl bg-ui-0 relative z-10',
+  className: 'pt-4 desktop:pt-3 p-3 space-x-3 rounded-xl bg-ui-0 relative z-10',
 })``;
 
 const SubContainerWrapper = styled.div.attrs({
@@ -360,7 +360,7 @@ const StatItemValue = styled.div.attrs({
 
 const ApprovalWrapper = styled.div.attrs({
   className:
-    'flex flex-col tablet:flex-row space-y-1.5 tablet:space-y-0 tablet:space-x-3',
+    'flex flex-col flex-col-reverse tablet:flex-row space-y-3 space-y-reverse tablet:space-y-0 tablet:space-x-3',
 })``;
 
 const LinearProgressContainer = styled.div.attrs({
@@ -368,5 +368,6 @@ const LinearProgressContainer = styled.div.attrs({
 })``;
 
 const ProgressInfo2 = styled.div.attrs({
-  className: 'flex absolute -top-1 justify-between space-x-0.5 w-full text-sm',
+  className:
+    'flex absolute -top-2.5 desktop:-top-1 justify-between space-x-0.5 w-full text-sm',
 })``;

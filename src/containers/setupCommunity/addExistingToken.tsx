@@ -15,6 +15,8 @@ import {htmlIn} from 'utils/htmlIn';
 import {Web3Address} from 'utils/library';
 import {getTokenInfo} from 'utils/tokens';
 import {validateGovernanceTokenAddress} from 'utils/validators';
+import {usePluginClient} from 'hooks/usePluginClient';
+import {TokenVotingClient} from '@aragon/sdk-client';
 
 const AddExistingToken: React.FC = () => {
   const {t} = useTranslation();
@@ -32,6 +34,9 @@ const AddExistingToken: React.FC = () => {
   const nativeCurrency = CHAIN_METADATA[network].nativeCurrency;
   const tokenAddressBlockExplorerURL =
     CHAIN_METADATA[network].explorer + 'token/';
+
+  // get plugin Client
+  const pluginClient = usePluginClient('token-voting.plugin.dao.eth');
 
   // Trigger address validation on network change
   useEffect(() => {
@@ -58,7 +63,8 @@ const AddExistingToken: React.FC = () => {
 
       const {verificationResult, type} = await validateGovernanceTokenAddress(
         tokenContract.address as string,
-        provider
+        provider,
+        pluginClient as TokenVotingClient
       );
 
       if (verificationResult === true) {
@@ -83,7 +89,7 @@ const AddExistingToken: React.FC = () => {
 
       return verificationResult;
     },
-    [clearErrors, network, provider, resetField, setValue]
+    [clearErrors, network, pluginClient, provider, resetField, setValue]
   );
 
   const isAllowedToConfigureVotingEligibility =

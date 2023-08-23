@@ -22,13 +22,13 @@ const SetupCommunityForm: React.FC = () => {
   });
 
   const existingTokenItems = [
-    // Yes mean It's not a custom Token should be false
-    {label: t('labels.yes'), selectValue: false},
     // No mean It's a custom Token so It should be true
     {
       label: t('labels.no'),
       selectValue: true,
     },
+    // Yes mean It's not a custom Token should be false
+    {label: t('labels.yes'), selectValue: false},
   ];
 
   useEffect(() => {

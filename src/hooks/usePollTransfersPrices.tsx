@@ -11,7 +11,7 @@ import {
 } from 'utils/constants';
 import {formatDate} from 'utils/date';
 import {formatUnits} from 'utils/library';
-import {HookData, ProposalId, Transfer} from 'utils/types';
+import {BaseTokenInfo, HookData, ProposalId, Transfer} from 'utils/types';
 import {i18n} from '../../i18n.config';
 import {IAssetTransfers} from './useDaoTransfers';
 import {useTokenList} from 'services/token/queries/use-token';
@@ -107,9 +107,9 @@ function mapToDaoTransfers(
             tokenAmount: formatUnits(transfer.amount, transfer.token.decimals),
           }
         : {
-            tokenName: transfer.token.name,
+            tokenName: (transfer.token as BaseTokenInfo).name,
             tokenAddress: transfer.token.address,
-            tokenSymbol: transfer.token.symbol,
+            tokenSymbol: (transfer.token as BaseTokenInfo).symbol,
             tokenAmount: '', // TODO work out how to get this value
           }),
     };

@@ -20,6 +20,7 @@ import {
 } from 'utils/date';
 import {DateTimeErrors} from './dateTimeErrors';
 import {ToggleCheckList, UtcInstance} from './multisig';
+import {ProposalFormData} from 'utils/types';
 
 type Props = {
   pluginSettings: VotingSettings;
@@ -33,7 +34,7 @@ const SetupTokenVotingForm: React.FC<Props> = ({pluginSettings}) => {
 
   const [utcInstance, setUtcInstance] = useState<UtcInstance>('first');
   const {control, formState, getValues, resetField, setValue, trigger} =
-    useFormContext();
+    useFormContext<ProposalFormData>();
 
   const [endTimeWarning, startSwitch, durationSwitch] = useWatch({
     control,
@@ -155,7 +156,11 @@ const SetupTokenVotingForm: React.FC<Props> = ({pluginSettings}) => {
         'durationMinutes',
       ]);
 
-      return daysToMills(days) + hoursToMills(hours) + minutesToMills(mins);
+      return (
+        daysToMills(Number(days)) +
+        hoursToMills(Number(hours)) +
+        minutesToMills(Number(mins))
+      );
     } else {
       // intentionally passing zero here because upon first load,
       // the minimum duration set on the settings is automatically loaded

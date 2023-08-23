@@ -14,23 +14,29 @@ export type PageWrapperProps = Omit<
   customBody?: React.ReactNode;
   description?: string;
   title?: string;
+  includeHeader?: boolean;
 };
 
-export const PageWrapper: React.FC<PageWrapperProps> = ({title, ...props}) => {
+export const PageWrapper: React.FC<PageWrapperProps> = ({
+  title,
+  includeHeader = true,
+  ...props
+}) => {
   const navigate = useNavigate();
   const {breadcrumbs: crumbs, icon} = useMappedBreadcrumbs();
 
   return (
     <>
-      {props.customHeader || (
-        <HeaderContainer>
-          <HeaderPage
-            {...props}
-            title={title || ''}
-            breadCrumbs={{crumbs, icon, onClick: navigate}}
-          />
-        </HeaderContainer>
-      )}
+      {includeHeader &&
+        (props.customHeader || (
+          <HeaderContainer>
+            <HeaderPage
+              {...props}
+              title={title || ''}
+              breadCrumbs={{crumbs, icon, onClick: navigate}}
+            />
+          </HeaderContainer>
+        ))}
 
       {props.customBody || <BodyContainer>{props.children}</BodyContainer>}
     </>
