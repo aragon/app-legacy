@@ -1,10 +1,21 @@
 import {UseQueryOptions, useQuery} from '@tanstack/react-query';
 import {aragonSdkQueryKeys} from '../query-keys';
-import {aragonSdkService} from '../aragon-sdk-service';
 import type {IFetchDelegateeParams} from '../aragon-sdk-service.api';
 import {usePluginClient} from 'hooks/usePluginClient';
 import {useWallet} from 'hooks/useWallet';
 import {SupportedNetworks} from 'utils/constants';
+import {TokenVotingClient} from '@aragon/sdk-client';
+import {invariant} from 'utils/invariant';
+
+const fetchDelegatee = async (
+  params: IFetchDelegateeParams,
+  client?: TokenVotingClient
+): Promise<string | null> => {
+  invariant(client != null, 'fetchDelegatee: client is not defined');
+  const data = await client.methods.getDelegatee(params.tokenAddress);
+
+  return data;
+};
 
 export const useDelegatee = (
   params: IFetchDelegateeParams,
@@ -23,7 +34,7 @@ export const useDelegatee = (
 
   return useQuery(
     aragonSdkQueryKeys.delegatee(baseParams, params),
-    () => aragonSdkService.fetchDelegatee(params, client),
+    () => fetchDelegatee(params, client),
     options
   );
 };
