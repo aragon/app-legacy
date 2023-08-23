@@ -1207,6 +1207,24 @@
     },
     "ctaMain": {
       "wrappedLabel": "Join the DAO"
+    },
+    "sortDropdown": {
+      "label": "Sorted by Voting power",
+      "optionVotingPower": "Sort by voting power",
+      "optionDelegations": "Sort by delegations",
+      "optionBalance": "Sort by balance"
+    },
+    "actionItemDropdown": {
+      "optionCopyAddress": "Copy address",
+      "optionBlockExplorer": "View on block explorer",
+      "optionDelegate": "Delegate to",
+      "optionUndelegate": "Undelegate"
+    },
+    "actionItemVoter": {
+      "labelVoteWasChanged": "Vote was changed"
+    },
+    "votersTable": {
+      "loadMore": "Load More"
     }
   },
   "modalAlert": {

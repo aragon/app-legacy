@@ -23,6 +23,8 @@ import {Web3Address, shortenAddress} from 'utils/library';
 import BreakdownTab from './breakdownTab';
 import InfoTab from './infoTab';
 import {useProviders} from 'context/providers';
+import {useNetwork} from 'context/network';
+import {CHAIN_METADATA} from 'utils/constants';
 
 export type ProposalVoteResults = {
   yes: {value: string | number; percentage: number};
@@ -102,6 +104,7 @@ export const VotingTerminal: React.FC<VotingTerminalProps> = ({
   const [displayedVoters, setDisplayedVoters] = useState<Array<VoterType>>([]);
   const {api: provider} = useProviders();
   const {t} = useTranslation();
+  const {network} = useNetwork();
 
   useEffect(() => {
     // fetch avatar fpr each voter
@@ -112,7 +115,7 @@ export const VotingTerminal: React.FC<VotingTerminalProps> = ({
           return {
             ...voter,
             wallet: (wallet.ensName ?? wallet.address) as string,
-            src: wallet.avatar || wallet.address,
+            src: (wallet.avatar || wallet.address) as string,
           };
         })
       );
@@ -193,7 +196,8 @@ export const VotingTerminal: React.FC<VotingTerminalProps> = ({
               page={page}
               showAmount={token !== undefined}
               onLoadMore={() => setPage(prev => prev + 1)}
-              LoadMoreLabel={'Load more'}
+              LoadMoreLabel={t('community.votersTable.loadMore')}
+              explorerURL={CHAIN_METADATA[network].explorer}
             />
           ) : (
             <StateEmpty
