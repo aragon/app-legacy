@@ -22,14 +22,33 @@ import {useTokenMetadata} from './useTokenMetadata';
 export const useDaoVault = (
   options: PollTokenOptions = {filter: TimeFilter.day, interval: 300000}
 ) => {
-  const {data: daoDetails} = useDaoDetailsQuery();
+  const {data: daoDetails, isLoading: isDaoDetailsLoading} =
+    useDaoDetailsQuery();
 
-  const {data: balances} = useDaoBalances(daoDetails?.address ?? '');
-  const {data: tokensWithMetadata} = useTokenMetadata(balances);
-  const {data: tokenPrices} = usePollTokenPrices(tokensWithMetadata, options);
+  const {data: balances, isLoading: isBalancesLoading} = useDaoBalances(
+    daoDetails?.address ?? ''
+  );
+  const {data: tokensWithMetadata, isLoading: isTokensMetadataLoading} =
+    useTokenMetadata(balances);
+  const {data: tokenPrices, isLoading: isTokensPricesLoading} =
+    usePollTokenPrices(tokensWithMetadata, options);
 
-  const {data: transfers} = useDaoTransfers(daoDetails?.address ?? '');
-  const {data: transferPrices} = usePollTransfersPrices(transfers);
+  const {data: transfers, isLoading: isCoreTransfersLoading} = useDaoTransfers(
+    daoDetails?.address ?? ''
+  );
+  const {data: transferPrices, isLoading: isTransferPricesLoading} =
+    usePollTransfersPrices(transfers);
+
+  const isTransfersLoading =
+    isDaoDetailsLoading || isCoreTransfersLoading || isTransferPricesLoading;
+
+  const isCumulativeStatsLoading =
+    isDaoDetailsLoading ||
+    isBalancesLoading ||
+    isTokensMetadataLoading ||
+    isTokensPricesLoading;
+
+  const isTokensLoading = isCumulativeStatsLoading || isTransfersLoading;
 
   const tokens: VaultToken[] = useMemo(() => {
     if (tokenPrices?.tokens?.length === 0) {
@@ -86,5 +105,8 @@ export const useDaoVault = (
     totalAssetValue: tokenPrices.totalAssetValue,
     totalAssetChange: tokenPrices.totalAssetChange,
     transfers: transferPrices.transfers,
+    isTokensLoading,
+    isTransfersLoading,
+    isCumulativeStatsLoading,
   };
 };
