@@ -213,6 +213,7 @@ export function getErc20Voters(
     )} ${tokenSymbol}`;
 
     return {
+      src: vote.address,
       wallet: vote.address,
       option: MappedVotes[vote.vote],
       votingPower,
@@ -235,6 +236,7 @@ export function getWhitelistVoterParticipation(
   const voters = votes.flatMap(voter => {
     return voter.vote !== undefined
       ? {
+          src: voter.address,
           wallet: voter.address,
           option: MappedVotes[voter.vote],
           votingPower: '1',
@@ -609,6 +611,7 @@ export function getLiveProposalTerminalProps(
 
       // considering only members can approve, no need to check if Map has the key
       mappedMembers.set(approvalAddress, {
+        src: approvalAddress,
         wallet: approvalAddress,
         option: 'approved',
       });
