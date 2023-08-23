@@ -28,7 +28,6 @@ interface ExportCsvModalProps {
 
 interface TransferCsvEntity {
   Txhash: string;
-  Blockno: string;
   UnixTimestamp: string | number;
   DateTime: string;
   Type: string;
@@ -38,7 +37,6 @@ interface TransferCsvEntity {
   Quantity: string;
   USDvalue: string;
   ProposalId: string;
-  ProposalName: string;
 }
 
 const ExportCsvModal: React.FC<ExportCsvModalProps> = ({
@@ -112,7 +110,6 @@ const ExportCsvModal: React.FC<ExportCsvModalProps> = ({
 
       return {
         Txhash: item.transaction,
-        Blockno: '-',
         UnixTimestamp: String(Math.floor(transferDateTimeStamp / 1000)),
         DateTime: new Date(transferDateTimeStamp)
           .toUTCString()
@@ -130,7 +127,6 @@ const ExportCsvModal: React.FC<ExportCsvModalProps> = ({
         Quantity: item.tokenAmount,
         USDvalue: item.usdValue,
         ProposalId: (item as Withdraw)?.proposalId?.toString() || '-',
-        ProposalName: '-',
       };
     });
 
