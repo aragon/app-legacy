@@ -7,8 +7,10 @@ import {
   DaoDetails,
   Erc20TokenDetails,
   Erc20WrapperTokenDetails,
+  TokenVotingClient,
 } from '@aragon/sdk-client';
 import {validateGovernanceTokenAddress} from 'utils/validators';
+import {usePluginClient} from './usePluginClient';
 
 export const useExistingToken = ({
   daoDetails,
@@ -28,6 +30,8 @@ export const useExistingToken = ({
   const {data: daoTokenFetched} = useDaoToken(
     dao?.plugins?.[0]?.instanceAddress || ''
   );
+
+  const pluginClient = usePluginClient('token-voting.plugin.dao.eth');
 
   const token = useMemo(
     () => daoToken || daoTokenFetched,
@@ -60,7 +64,8 @@ export const useExistingToken = ({
       if (isUnderlyingTokenExists) {
         const {type} = await validateGovernanceTokenAddress(
           token.underlyingToken.address,
-          provider
+          provider,
+          pluginClient as TokenVotingClient
         );
 
         tokenType = type;
@@ -74,7 +79,7 @@ export const useExistingToken = ({
     detectWhetherGovTokenIsWrapped(
       token as Erc20WrapperTokenDetails | undefined
     );
-  }, [provider, token]);
+  }, [pluginClient, provider, token]);
 
   return {
     isTokenMintable,

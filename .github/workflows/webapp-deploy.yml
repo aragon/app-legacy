@@ -64,7 +64,7 @@ jobs:
         run: mv ./.github/fleek/$FLEEK_FILE.json .fleek.json
       - name: Deploy through Fleek
         id: deploy
-        uses: fleekhq/action-deploy@v1
+        uses: fleekhq/action-deploy@v1.0.1
         with:
           apiKey: ${{ secrets.FLEEK_API_KEY }}
           workDir: ${{ env.working-directory }}

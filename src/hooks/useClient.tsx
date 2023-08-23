@@ -63,7 +63,7 @@ export const UseClientProvider: React.FC = ({children}) => {
     ];
 
     const contextParams: ContextParams = {
-      daoFactoryAddress: LIVE_CONTRACTS[translatedNetwork].daoFactory,
+      daoFactoryAddress: LIVE_CONTRACTS[translatedNetwork].daoFactoryAddress,
       network: translatedNetwork,
       signer: signer ?? undefined,
       web3Providers: CHAIN_METADATA[network].rpc[0],

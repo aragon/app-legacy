@@ -4,6 +4,7 @@ import React, {
   useState,
   useMemo,
   ReactNode,
+  useCallback,
 } from 'react';
 
 const GlobalModalsContext = createContext<GlobalModalsContextType | null>(null);
@@ -22,16 +23,18 @@ type GlobalModalsContextType = {
   isGatingOpen: boolean;
   isDepositOpen: boolean;
   isPoapClaimOpen: boolean;
-  open: (arg?: MenuTypes) => void;
-  close: (arg?: MenuTypes) => void;
+  isExportCsvOpen: boolean;
+  isDelegateVotingOpen: boolean;
+  open: (menu: MenuTypes) => void;
+  close: (menu: MenuTypes) => void;
 };
 
 export type MenuTypes =
+  | 'transfer'
   | 'token'
   | 'utc'
   | 'addAction'
   | 'selectDao'
-  | 'default'
   | 'addresses'
   | 'wallet'
   | 'network'
@@ -40,7 +43,9 @@ export type MenuTypes =
   | 'manageWallet'
   | 'gating'
   | 'deposit'
-  | 'poapClaim';
+  | 'poapClaim'
+  | 'exportCsv'
+  | 'delegateVoting';
 
 type Props = Record<'children', ReactNode>;
 
@@ -48,7 +53,7 @@ type Props = Record<'children', ReactNode>;
 instead of one boolean state for each of the menus. This can be done based on a
 type like MenuType. Then this context can be extended simply by adding a new
 type to MenuTypes. */
-const GlobalModalsProvider: React.FC<Props> = ({children}) => {
+export const GlobalModalsProvider: React.FC<Props> = ({children}) => {
   const [isTransferOpen, setIsTransferOpen] =
     useState<GlobalModalsContextType['isTransferOpen']>(false);
   const [isTokenOpen, setIsTokenOpen] =
@@ -75,94 +80,66 @@ const GlobalModalsProvider: React.FC<Props> = ({children}) => {
     useState<GlobalModalsContextType['isDepositOpen']>(false);
   const [isPoapClaimOpen, setIsPoapClaimOpen] =
     useState<GlobalModalsContextType['isPoapClaimOpen']>(false);
+  const [isExportCsvOpen, setIsExportCsvOpen] =
+    useState<GlobalModalsContextType['isExportCsvOpen']>(false);
+  const [isDelegateVotingOpen, setIsDelegateVotingOpen] =
+    useState<GlobalModalsContextType['isDelegateVotingOpen']>(false);
 
-  const open = (type?: MenuTypes) => {
+  const toggle = useCallback((type: MenuTypes, isOpen = true) => {
     switch (type) {
       case 'token':
-        setIsTokenOpen(true);
+        setIsTokenOpen(isOpen);
         break;
       case 'utc':
-        setIsUtcOpen(true);
+        setIsUtcOpen(isOpen);
         break;
       case 'addAction':
-        setIsAddActionOpen(true);
+        setIsAddActionOpen(isOpen);
         break;
       case 'selectDao':
-        setIsSelectDaoOpen(true);
+        setIsSelectDaoOpen(isOpen);
         break;
       case 'addresses':
-        setAddressesOpen(true);
+        setAddressesOpen(isOpen);
         break;
       case 'wallet':
-        setWalletOpen(true);
+        setWalletOpen(isOpen);
         break;
       case 'network':
-        setNetworkOpen(true);
+        setNetworkOpen(isOpen);
         break;
       case 'mobileMenu':
-        setMobileMenuOpen(true);
+        setMobileMenuOpen(isOpen);
         break;
       case 'manageWallet':
-        setManageWalletOpen(true);
+        setManageWalletOpen(isOpen);
         break;
       case 'gating':
-        setIsGatingOpen(true);
+        setIsGatingOpen(isOpen);
         break;
       case 'deposit':
-        setIsDepositOpen(true);
+        setIsDepositOpen(isOpen);
         break;
       case 'poapClaim':
-        setIsPoapClaimOpen(true);
+        setIsPoapClaimOpen(isOpen);
+        break;
+      case 'delegateVoting':
+        setIsDelegateVotingOpen(isOpen);
+        break;
+      case 'transfer':
+        setIsTransferOpen(isOpen);
+        break;
+      case 'exportCsv':
+        setIsExportCsvOpen(true);
         break;
       default:
-        setIsTransferOpen(true);
-        break;
+        throw new Error(`GlobalModals: modal ${type} unsupported`);
     }
-  };
+  }, []);
 
-  const close = (type?: MenuTypes) => {
-    switch (type) {
-      case 'token':
-        setIsTokenOpen(false);
-        break;
-      case 'utc':
-        setIsUtcOpen(false);
-        break;
-      case 'addAction':
-        setIsAddActionOpen(false);
-        break;
-      case 'selectDao':
-        setIsSelectDaoOpen(false);
-        break;
-      case 'addresses':
-        setAddressesOpen(false);
-        break;
-      case 'wallet':
-        setWalletOpen(false);
-        break;
-      case 'network':
-        setNetworkOpen(false);
-        break;
-      case 'mobileMenu':
-        setMobileMenuOpen(false);
-        break;
-      case 'manageWallet':
-        setManageWalletOpen(false);
-        break;
-      case 'gating':
-        setIsGatingOpen(false);
-        break;
-      case 'deposit':
-        setIsDepositOpen(false);
-        break;
-      case 'poapClaim':
-        setIsPoapClaimOpen(false);
-        break;
-      default:
-        setIsTransferOpen(false);
-        break;
-    }
-  };
+  const close = useCallback((type: MenuTypes) => toggle(type, false), [toggle]);
+  const open = useCallback((type: MenuTypes) => toggle(type, true), [toggle]);
+
   /**
    * TODO: ==============================================
    * I used this context for managing all modals but we should
@@ -188,6 +165,8 @@ const GlobalModalsProvider: React.FC<Props> = ({children}) => {
       isGatingOpen,
       isDepositOpen,
       isPoapClaimOpen,
+      isExportCsvOpen,
+      isDelegateVotingOpen,
       open,
       close,
     }),
@@ -195,6 +174,7 @@ const GlobalModalsProvider: React.FC<Props> = ({children}) => {
       isAddActionOpen,
       isAddressesOpen,
       isDepositOpen,
+      isExportCsvOpen,
       isGatingOpen,
       isManageWalletOpen,
       isMobileMenuOpen,
@@ -205,6 +185,9 @@ const GlobalModalsProvider: React.FC<Props> = ({children}) => {
       isTransferOpen,
       isUtcOpen,
       isWalletOpen,
+      isDelegateVotingOpen,
+      open,
+      close,
     ]
   );
 
@@ -215,8 +198,14 @@ const GlobalModalsProvider: React.FC<Props> = ({children}) => {
   );
 };
 
-function useGlobalModalContext(): GlobalModalsContextType {
-  return useContext(GlobalModalsContext) as GlobalModalsContextType;
-}
+export const useGlobalModalContext = (): GlobalModalsContextType => {
+  const values = useContext(GlobalModalsContext);
 
-export {useGlobalModalContext, GlobalModalsProvider};
+  if (values == null) {
+    throw new Error(
+      'GlobalModals: hook must be used inside the GlobalModalContext in order to work properly.'
+    );
+  }
+
+  return values;
+};

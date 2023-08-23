@@ -25,16 +25,25 @@ import PageEmptyState from 'containers/pageEmptyState';
 import {toDisplayEns} from 'utils/library';
 import useScreen from 'hooks/useScreen';
 import {htmlIn} from 'utils/htmlIn';
+import uniqBy from 'lodash/uniqBy';
+import {useGlobalModalContext} from 'context/globalModals';
+
+// The number of proposals displayed on each page
+const PROPOSALS_PER_PAGE = 6;
 
 export const Governance: React.FC = () => {
   const {data: daoDetails, isLoading: isDaoLoading} = useDaoDetailsQuery();
   const {isMobile} = useScreen();
+  const {open} = useGlobalModalContext();
 
-  // The number of proposals displayed on each page
-  const PROPOSALS_PER_PAGE = 6;
   const [skip, setSkip] = useState(0);
   const [endReached, setEndReached] = useState(false);
   const [filterValue, setFilterValue] = useState<ProposalStatus | 'All'>('All');
+
+  const isTokenBasedDao =
+    daoDetails?.plugins[0].id === 'token-voting.plugin.dao.eth';
+  const displayDelegation =
+    isTokenBasedDao && import.meta.env.VITE_FEATURE_FLAG_DELEGATION === 'true';
 
   const {
     data: proposals,
@@ -59,7 +68,10 @@ export const Governance: React.FC = () => {
         setEndReached(true);
       }
 
-      setDisplayedProposals(prev => [...(prev || []), ...proposals]);
+      setDisplayedProposals(prev => {
+        const resultProposals = [...(prev || []), ...proposals];
+        return uniqBy(resultProposals, 'id');
+      });
     }
   }, [isInitialLoading, proposals]);
 
@@ -108,6 +120,7 @@ export const Governance: React.FC = () => {
       />
     );
   }
+
   return (
     <>
       <PageWrapper
@@ -122,6 +135,14 @@ export const Governance: React.FC = () => {
             navigate('new-proposal');
           },
         }}
+        secondaryBtnProps={
+          displayDelegation
+            ? {
+                label: t('governance.actionSecondary'),
+                onClick: () => open('delegateVoting'),
+              }
+            : undefined
+        }
       >
         <ButtonGroupContainer>
           <ButtonGroup

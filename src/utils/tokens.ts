@@ -425,3 +425,21 @@ export function timeFilterToMinutes(tf: TimeFilter) {
 export function gTokenSymbol(tokenSymbol: string): string {
   return `g${tokenSymbol}`;
 }
+
+export function shortenStr(
+  str: string,
+  startSymbols = 3,
+  endSymbols = 0,
+  separation = '...'
+): string {
+  if (str.length < startSymbols + endSymbols) return str;
+
+  const openingLetters = str.slice(0, startSymbols);
+  const closingLetters = str.slice(-endSymbols);
+
+  return `${openingLetters}${separation}${closingLetters}`;
+}
+
+export function shortenLongTokenSymbol(tokenSymbol: string): string {
+  return shortenStr(tokenSymbol, 4, 3);
+}

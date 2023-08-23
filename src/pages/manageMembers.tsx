@@ -38,11 +38,8 @@ import {
   ActionAddAddress,
   ActionRemoveAddress,
   ActionUpdateMultisigPluginSettings,
+  ManageMembersFormData,
 } from 'utils/types';
-
-type ManageMemberActionTypes = Array<
-  ActionAddAddress | ActionRemoveAddress | ActionUpdateMultisigPluginSettings
->;
 
 export const ManageMembers: React.FC = () => {
   const {t} = useTranslation();
@@ -61,14 +58,14 @@ export const ManageMembers: React.FC = () => {
   );
   const multisigDAOSettings = pluginSettings as MultisigVotingSettings;
 
-  const formMethods = useForm({
+  const formMethods = useForm<ManageMembersFormData>({
     mode: 'onChange',
     defaultValues: {
       links: [{name: '', url: ''}],
       proposalTitle: '',
       startSwitch: 'now',
       durationSwitch: 'duration',
-      actions: [] as ManageMemberActionTypes,
+      actions: [],
     },
   });
   const {errors, dirtyFields} = useFormState({
@@ -89,7 +86,7 @@ export const ManageMembers: React.FC = () => {
         removeUnchangedMinimumApprovalAction(
           formActions,
           multisigDAOSettings
-        ) as ManageMemberActionTypes
+        ) as ManageMembersFormData['actions']
       );
       next();
     },
@@ -197,9 +194,7 @@ export const ManageMembers: React.FC = () => {
  */
 function actionsAreValid(
   errors: FieldErrors,
-  formActions: Array<
-    ActionAddAddress | ActionRemoveAddress | ActionUpdateMultisigPluginSettings
-  >,
+  formActions: ManageMembersFormData['actions'],
   minApprovals: number
 ) {
   if (errors.actions || !formActions) return false;

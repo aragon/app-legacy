@@ -64,7 +64,7 @@ import {
   mapToCacheProposal,
 } from 'utils/proposals';
 import {isNativeToken} from 'utils/tokens';
-import {ProposalId, ProposalResource} from 'utils/types';
+import {ProposalFormData, ProposalId, ProposalResource} from 'utils/types';
 import {
   pendingMultisigProposalsVar,
   pendingTokenBasedProposalsVar,
@@ -88,7 +88,7 @@ const CreateProposalProvider: React.FC<Props> = ({
   const {preferences} = usePrivacyContext();
 
   const navigate = useNavigate();
-  const {getValues} = useFormContext();
+  const {getValues} = useFormContext<ProposalFormData>();
 
   const {network} = useNetwork();
   const {isOnWrongNetwork, provider, address} = useWallet();
@@ -371,7 +371,12 @@ const CreateProposalProvider: React.FC<Props> = ({
 
         // Calculate the end date using duration
         const endDateTimeMill =
-          startDateTime.valueOf() + offsetToMills({days, hours, minutes});
+          startDateTime.valueOf() +
+          offsetToMills({
+            days: Number(days),
+            hours: Number(hours),
+            minutes: Number(minutes),
+          });
 
         endDateTime = new Date(endDateTimeMill);
       } else {

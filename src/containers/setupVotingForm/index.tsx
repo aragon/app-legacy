@@ -6,7 +6,11 @@ import {
   isMultisigVotingSettings,
   isTokenVotingSettings,
 } from 'hooks/usePluginSettings';
-import {StringIndexed, SupportedVotingSettings} from 'utils/types';
+import {
+  ProposalFormData,
+  StringIndexed,
+  SupportedVotingSettings,
+} from 'utils/types';
 import SetupMultisigVotingForm from './multisig';
 import SetupTokenVotingForm from './tokenVoting';
 
@@ -15,7 +19,7 @@ type Props = {
 };
 
 const SetupVotingForm: React.FC<Props> = ({pluginSettings}) => {
-  const {setError, clearErrors} = useFormContext();
+  const {setError, clearErrors} = useFormContext<ProposalFormData>();
 
   /*************************************************
    *                    Render                     *

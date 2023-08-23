@@ -1,6 +1,7 @@
-import React, {Suspense, useEffect} from 'react';
-import {Navigate, Outlet, Route, useLocation} from 'react-router-dom';
 import {ApmRoutes} from '@elastic/apm-rum-react';
+import React, {Suspense, lazy, useEffect} from 'react';
+import {Navigate, Outlet, Route, useLocation} from 'react-router-dom';
+
 import {GridLayout} from 'components/layout';
 import ProtectedRoute from 'components/protectedRoute';
 import {Loading} from 'components/temporary/loading';
@@ -15,18 +16,19 @@ import TransferMenu from 'containers/transferMenu';
 import {WalletMenu} from 'containers/walletMenu';
 import {ProposalTransactionProvider} from 'context/proposalTransaction';
 import {useTransactionDetailContext} from 'context/transactionDetail';
-import {useDaoDetailsQuery} from 'hooks/useDaoDetails';
-import {useWallet} from 'hooks/useWallet';
 import {FormProvider, useForm} from 'react-hook-form';
-import {identifyUser, trackPage} from 'services/analytics';
-import {NotFound} from 'utils/paths';
 import DepositModal from 'containers/transactionModals/depositModal';
 import PoapClaimModal from 'containers/poapClaiming/PoapClaimModal';
 import {GovTokensWrappingProvider} from 'context/govTokensWrapping';
-import {featureFlags} from 'utils/featureFlags';
-import {Pages} from 'pages';
 import {useMonitoring} from 'hooks/useMonitoring';
+import {useWallet} from 'hooks/useWallet';
+import {identifyUser, trackPage} from 'services/analytics';
+import {featureFlags} from 'utils/featureFlags';
+import {NotFound} from 'utils/paths';
+import {DelegateVotingMenu} from 'containers/delegateVotingMenu';
 import '../i18n.config';
+import {ProposalSettingsFormData} from 'utils/types';
+import {GatingMenu} from 'containers/gatingMenu';
 
 export const App: React.FC = () => {
   // TODO this needs to be inside a Routes component. Will be moved there with
@@ -64,60 +66,54 @@ export const App: React.FC = () => {
       <Suspense fallback={<Loading />}>
         <ApmRoutes>
           <Route element={<ExploreWrapper />}>
-            <Route path="/" element={<Pages.ExplorePage />} />
+            <Route path="/" element={<ExplorePage />} />
           </Route>
           <Route element={<DaoWrapper />}>
-            <Route path="/create" element={<Pages.CreateDaoPage />} />
+            <Route path="/create" element={<CreateDaoPage />} />
           </Route>
           <Route path="/daos/:network/:dao">
             <Route element={<DaoWrapper />}>
-              <Route path="dashboard" element={<Pages.DashboardPage />} />
-              <Route path="finance" element={<Pages.FinancePage />} />
-              <Route path="finance/tokens" element={<Pages.TokensPage />} />
-              <Route
-                path="finance/transfers"
-                element={<Pages.TransfersPage />}
-              />
+              <Route path="dashboard" element={<DashboardPage />} />
+              <Route path="finance" element={<FinancePage />} />
+              <Route path="finance/tokens" element={<TokensPage />} />
+              <Route path="finance/transfers" element={<TransfersPage />} />
               <Route element={<ProtectedRoute />}>
                 <Route
                   path="finance/new-withdrawal"
-                  element={<Pages.NewWithdrawPage />}
+                  element={<NewWithdrawPage />}
                 />
                 <Route
                   path="governance/new-proposal"
-                  element={<Pages.NewProposalPage />}
+                  element={<NewProposalPage />}
                 />
                 <Route element={<NewSettingsWrapper />}>
-                  <Route
-                    path="settings/edit"
-                    element={<Pages.EditSettingsPage />}
-                  />
+                  <Route path="settings/edit" element={<EditSettingsPage />} />
                   <Route
                     path="settings/new-proposal"
-                    element={<Pages.ProposeSettingsPage />}
+                    element={<ProposeSettingsPage />}
                   />
                 </Route>
                 <Route
                   path="community/mint-tokens"
-                  element={<Pages.MintTokensProposalPage />}
+                  element={<MintTokensProposalPage />}
                 />
                 <Route
                   path="community/manage-members"
-                  element={<Pages.ManageMembersProposalPage />}
+                  element={<ManageMembersProposalPage />}
                 />
               </Route>
-              <Route path="governance" element={<Pages.GovernancePage />} />
+              <Route path="governance" element={<GovernancePage />} />
               <Route
                 path="governance/proposals/:id"
                 element={<ProposalDetailsWrapper />}
               />
-              <Route path="community" element={<Pages.CommunityPage />} />
-              <Route path="settings" element={<Pages.SettingsPage />} />
+              <Route path="community" element={<CommunityPage />} />
+              <Route path="settings" element={<SettingsPage />} />
               {/* Redirects the user to the dashboard page by default if no dao-specific page is specified. */}
               <Route index element={<Navigate to={'dashboard'} replace />} />
             </Route>
           </Route>
-          <Route path={NotFound} element={<Pages.NotFoundPage />} />
+          <Route path={NotFound} element={<NotFoundPage />} />
           <Route
             path="*"
             element={
@@ -139,7 +135,7 @@ export const App: React.FC = () => {
 };
 
 const NewSettingsWrapper: React.FC = () => {
-  const formMethods = useForm({
+  const formMethods = useForm<ProposalSettingsFormData>({
     mode: 'onChange',
     defaultValues: {
       links: [{name: '', url: ''}],
@@ -160,7 +156,7 @@ const NewSettingsWrapper: React.FC = () => {
 
 const ProposalDetailsWrapper: React.FC = () => (
   <ProposalTransactionProvider>
-    <Pages.ProposalPage />
+    <ProposalPage />
   </ProposalTransactionProvider>
 );
 
@@ -175,8 +171,6 @@ const ExploreWrapper: React.FC = () => (
 );
 
 const DaoWrapper: React.FC = () => {
-  const {data: daoDetails} = useDaoDetailsQuery();
-
   // using isOpen to conditionally render TransactionDetail so that
   // api call is not made on mount regardless of whether the user
   // wants to open the modal
@@ -190,17 +184,72 @@ const DaoWrapper: React.FC = () => {
           <Outlet />
           <TransferMenu />
           <DepositModal />
-          {daoDetails && isOpen && (
-            <TransactionDetail
-              daoAddress={daoDetails.address}
-              daoEns={daoDetails.ensDomain}
-              daoName={daoDetails.metadata.name}
-              daoPlugin={daoDetails.plugins[0]}
-            />
-          )}
+          <GatingMenu />
+          <DelegateVotingMenu />
+          {isOpen && <TransactionDetail />}
         </GridLayout>
       </div>
       <Footer />
     </GovTokensWrappingProvider>
   );
 };
+
+// NOTE: these have to be lazy loaded here unfortunately because the
+// TipTap Editor behaves weirdly when they are imported from a different
+// file. - F.F. [08/15/2023]
+// PAGES
+const CommunityPage = lazy(() =>
+  import('pages/community').then(module => ({default: module.Community}))
+);
+const CreateDaoPage = lazy(() =>
+  import('pages/createDAO').then(module => ({default: module.CreateDAO}))
+);
+const DashboardPage = lazy(() =>
+  import('pages/dashboard').then(module => ({default: module.Dashboard}))
+);
+const EditSettingsPage = lazy(() =>
+  import('pages/editSettings').then(module => ({default: module.EditSettings}))
+);
+const ExplorePage = lazy(() =>
+  import('pages/explore').then(module => ({default: module.Explore}))
+);
+const FinancePage = lazy(() =>
+  import('pages/finance').then(module => ({default: module.Finance}))
+);
+const GovernancePage = lazy(() =>
+  import('pages/governance').then(module => ({default: module.Governance}))
+);
+const ManageMembersProposalPage = lazy(() =>
+  import('pages/manageMembers').then(module => ({
+    default: module.ManageMembers,
+  }))
+);
+const MintTokensProposalPage = lazy(() =>
+  import('pages/mintTokens').then(module => ({default: module.MintToken}))
+);
+const NewProposalPage = lazy(() =>
+  import('pages/newProposal').then(module => ({default: module.NewProposal}))
+);
+const NewWithdrawPage = lazy(() =>
+  import('pages/newWithdraw').then(module => ({default: module.NewWithdraw}))
+);
+const NotFoundPage = lazy(() =>
+  import('pages/notFound').then(module => ({default: module.NotFound}))
+);
+const ProposalPage = lazy(() =>
+  import('pages/proposal').then(module => ({default: module.Proposal}))
+);
+const ProposeSettingsPage = lazy(() =>
+  import('pages/proposeSettings').then(module => ({
+    default: module.ProposeSettings,
+  }))
+);
+const SettingsPage = lazy(() =>
+  import('pages/settings').then(module => ({default: module.Settings}))
+);
+const TokensPage = lazy(() =>
+  import('pages/tokens').then(module => ({default: module.Tokens}))
+);
+const TransfersPage = lazy(() =>
+  import('pages/transfers').then(module => ({default: module.Transfers}))
+);

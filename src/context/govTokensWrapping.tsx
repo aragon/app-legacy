@@ -30,14 +30,10 @@ import {CHAIN_METADATA} from 'utils/constants';
 import {toDisplayEns} from 'utils/library';
 import {Community} from 'utils/paths';
 import {fetchBalance} from 'utils/tokens';
+import {TokensWrappingFormData} from 'utils/types';
 
 interface IGovTokensWrappingContextType {
   handleOpenModal: () => void;
-}
-
-export interface WrappingFormParams {
-  mode: 'wrap' | 'unwrap';
-  amount: string;
 }
 
 const GovTokensWrappingContext =
@@ -80,7 +76,7 @@ const GovTokensWrappingProvider: FC<{children: ReactNode}> = ({children}) => {
   const [isTxError, setIsTxError] = useState(false);
 
   /* User-Input data configuration */
-  const form = useForm<WrappingFormParams>({
+  const form = useForm<TokensWrappingFormData>({
     mode: 'onChange',
     defaultValues: {
       mode: 'wrap',

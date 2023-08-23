@@ -3,7 +3,6 @@ import React, {useCallback, useEffect, useMemo, useRef, useState} from 'react';
 import {Outlet, useNavigate} from 'react-router-dom';
 
 import {Loading} from 'components/temporary';
-import {GatingMenu} from 'containers/gatingMenu';
 import {LoginRequired} from 'containers/walletMenu/LoginRequired';
 import {useGlobalModalContext} from 'context/globalModals';
 import {useNetwork} from 'context/network';
@@ -176,19 +175,13 @@ const ProtectedRoute: React.FC = () => {
   /*************************************************
    *                     Render                    *
    *************************************************/
-  if (detailsAreLoading || membersAreLoading || settingsAreLoading)
+  if (detailsAreLoading || membersAreLoading || settingsAreLoading) {
     return <Loading />;
+  }
 
   return (
     <>
       {!isGatingOpen && userWentThroughLoginFlowRef.current && <Outlet />}
-      {daoDetails && (
-        <GatingMenu
-          daoDetails={daoDetails}
-          pluginType={pluginType}
-          daoToken={daoToken}
-        />
-      )}
       <LoginRequired isOpen={showLoginModal} onClose={handleCloseLoginModal} />
     </>
   );

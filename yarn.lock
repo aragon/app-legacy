@@ -69,10 +69,10 @@
   dependencies:
     ethers "^5.6.2"
 
-"@aragon/sdk-client-common@^1.4.0-rc0":
-  version "1.4.0-rc0"
-  resolved "https://registry.yarnpkg.com/@aragon/sdk-client-common/-/sdk-client-common-1.4.0-rc0.tgz#3b40285a96c794483a763c2fb3584adb7d08d4af"
-  integrity sha512-x9DU3cwRaD9d3B0NvE5x/lS7wPnqzhfj+H3TwI9Hdel+tgNMtxv23/Krz17+lAAkrTrH8S7/Fp4UlgkxKwwnPA==
+"@aragon/sdk-client-common@^1.5.0-rc0":
+  version "1.5.0-rc0"
+  resolved "https://registry.yarnpkg.com/@aragon/sdk-client-common/-/sdk-client-common-1.5.0-rc0.tgz#a1f5329f317b936422fdd5c2d0d93d1ee64b6d49"
+  integrity sha512-kDC7zYNNqrE5ZUiXnCwZBnv5hY40BQj6u47D+UZbvcj848gPz8ab/G+lPyTzL6heyoSgkfcgOC6e2QQQxMheDQ==
   dependencies:
     "@aragon/osx-ethers" "^1.3.0-rc0.2"
     "@aragon/sdk-common" "^1.5.0"
@@ -86,14 +86,14 @@
     graphql "^16.5.0"
     graphql-request "^4.3.0"
 
-"@aragon/sdk-client@^1.12.0-rc1":
-  version "1.12.0-rc1"
-  resolved "https://registry.yarnpkg.com/@aragon/sdk-client/-/sdk-client-1.12.0-rc1.tgz#bab93f6109c4d73b993ee46342ac72ddae1300f7"
-  integrity sha512-DvNS3ue4/dZDqsyLRt1yEILNmdUm4y3wCPgRXv//UKH5BiF0kMiGVDO4He62XQAA8sM027Po75s921X82xhhUg==
+"@aragon/sdk-client@^1.13.1-rc1":
+  version "1.13.1-rc1"
+  resolved "https://registry.yarnpkg.com/@aragon/sdk-client/-/sdk-client-1.13.1-rc1.tgz#4d32da9a642997873142c31d9daadf0b70ee21b0"
+  integrity sha512-4Isv/K9zcyfyEAxrG1wdzQuik4VjRDzGxtmMRQjsljpfR/BFF7eBWfLFBgXKscLnipnV7gs5CdnJLXhklNZBnQ==
   dependencies:
     "@aragon/osx-ethers" "1.3.0-rc0.2"
-    "@aragon/sdk-client-common" "^1.4.0-rc0"
-    "@aragon/sdk-common" "^1.5.0"
+    "@aragon/sdk-client-common" "^1.5.0-rc0"
+    "@aragon/sdk-common" "^1.6.0"
     "@aragon/sdk-ipfs" "^1.1.0"
     "@ethersproject/abstract-signer" "^5.5.0"
     "@ethersproject/bignumber" "^5.6.0"
@@ -101,7 +101,8 @@
     "@ethersproject/contracts" "^5.5.0"
     "@ethersproject/providers" "^5.5.0"
     "@ethersproject/wallet" "^5.6.0"
-    "@openzeppelin/contracts" "^4.9.2"
+    "@openzeppelin/contracts" "^4.8.1"
+    "@openzeppelin/contracts-upgradeable" "^4.8.1"
     graphql "^16.5.0"
     graphql-request "^4.3.0"
 
@@ -109,6 +110,11 @@
   version "1.5.0"
   resolved "https://registry.yarnpkg.com/@aragon/sdk-common/-/sdk-common-1.5.0.tgz#321d5861a18d3d50b79aebb888ab77c830022be9"
   integrity sha512-3dV1ATZamBOaDhEPlXM1thIl6BzjerqArFjd0MvajEyjbVBkFFAVM5PZRSYs243o+91iSNdVPGFml+TSonCZTg==
+
+"@aragon/sdk-common@^1.6.0":
+  version "1.6.0"
+  resolved "https://registry.yarnpkg.com/@aragon/sdk-common/-/sdk-common-1.6.0.tgz#ffa0c8815378fe489ded5b7887fb3e7c80a5d963"
+  integrity sha512-RnXrqBXb6Mf79lgCDNQTgbwqslIo9xE3Kmzz+L3t8XAMPbrFqpgL/KhZQUUYClG6n7w6ar3K5lyqWk+GaXzjJQ==
 
 "@aragon/sdk-ipfs@^1.1.0":
   version "1.1.0"
@@ -2971,7 +2977,12 @@
     "@nodelib/fs.scandir" "2.1.5"
     fastq "^1.6.0"
 
-"@openzeppelin/contracts@^4.9.2":
+"@openzeppelin/contracts-upgradeable@^4.8.1":
+  version "4.9.3"
+  resolved "https://registry.yarnpkg.com/@openzeppelin/contracts-upgradeable/-/contracts-upgradeable-4.9.3.tgz#ff17a80fb945f5102571f8efecb5ce5915cc4811"
+  integrity sha512-jjaHAVRMrE4UuZNfDwjlLGDxTHWIOwTJS2ldnc278a0gevfXfPr8hxKEVBGFBE96kl2G3VHDZhUimw/+G3TG2A==
+
+"@openzeppelin/contracts@^4.8.1":
   version "4.9.3"
   resolved "https://registry.yarnpkg.com/@openzeppelin/contracts/-/contracts-4.9.3.tgz#00d7a8cf35a475b160b3f0293a6403c511099364"
   integrity sha512-He3LieZ1pP2TNt5JbkPA4PNT9WC3gOTOlDcFGJW4Le4QKqwmiNJCRt44APfxMxvq7OugU/cqYuPcSBzOw38DAg==
@@ -4253,6 +4264,11 @@
     "@types/qs" "*"
     "@types/serve-static" "*"
 
+"@types/file-saver@^2.0.5":
+  version "2.0.5"
+  resolved "https://registry.yarnpkg.com/@types/file-saver/-/file-saver-2.0.5.tgz#9ee342a5d1314bb0928375424a2f162f97c310c7"
+  integrity sha512-zv9kNf3keYegP5oThGLaPk8E081DFDuwfqjtiTzm6PoxChdJ1raSuADf2YGCVIyrSynLrgc8JWv296s7Q7pQSQ==
+
 "@types/graceful-fs@^4.1.2":
   version "4.1.5"
   resolved "https://registry.yarnpkg.com/@types/graceful-fs/-/graceful-fs-4.1.5.tgz#21ffba0d98da4350db64891f92a9e5db3cdb4e15"
@@ -4338,6 +4354,11 @@
   integrity sha512-BQ5aZNSCpj7D6K2ksrRCTmKRLEpnPvWDiLPfoGyhZ++8YtiK9d/3DBKPJgry359X/P1PfruyYwvnvwFjuEiEIg==
   dependencies:
     "@types/node" "*"
+
+"@types/lodash@^4.14.196":
+  version "4.14.196"
+  resolved "https://registry.yarnpkg.com/@types/lodash/-/lodash-4.14.196.tgz#a7c3d6fc52d8d71328b764e28e080b4169ec7a95"
+  integrity sha512-22y3o88f4a94mKljsZcanlNWPzO0uBsBdzLAngf2tp533LzZcQzb6+eZPJ+vCTt+bqF2XnvT9gejTLsAcJAJyQ==
 
 "@types/mime@*":
   version "3.0.1"
@@ -5978,11 +5999,6 @@ apollo-utilities@^1.3.4:
     fast-json-stable-stringify "^2.0.0"
     ts-invariant "^0.4.0"
     tslib "^1.10.0"
-
-apollo3-cache-persist@^0.14.0:
-  version "0.14.0"
-  resolved "https://registry.yarnpkg.com/apollo3-cache-persist/-/apollo3-cache-persist-0.14.0.tgz#457519f548698fb1e70f99d81e59652fc289ab19"
-  integrity sha512-jT3wkB3IJGNyK1XTtS2WbaAyD/Z9Z4HuFEsU0kIpYceqdtT8gV1kNSX+4YMBt0XgS954zMKY6cs8Q4zt7NNPeQ==
 
 append-transform@^2.0.0:
   version "2.0.0"
@@ -10941,6 +10957,11 @@ file-entry-cache@^6.0.1:
   integrity sha512-7Gps/XWymbLk2QLYK4NzpMOrYjMhdIxXuIvy2QBsLE6ljuodKvdkWs/cpyJJ3CVIVpH0Oi1Hvg1ovbMzLdFBBg==
   dependencies:
     flat-cache "^3.0.4"
+
+file-saver@^2.0.5:
+  version "2.0.5"
+  resolved "https://registry.yarnpkg.com/file-saver/-/file-saver-2.0.5.tgz#d61cfe2ce059f414d899e9dd6d4107ee25670c38"
+  integrity sha512-P9bmyZ3h/PRG+Nzga+rbdI4OEpNDzAVyy74uVO9ATgzLK6VtAsYybF/+TOCvrc0MO793d6+42lLyZTw7/ArVzA==
 
 file-selector@^0.2.2:
   version "0.2.4"
