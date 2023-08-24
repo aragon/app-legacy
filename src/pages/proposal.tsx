@@ -49,7 +49,7 @@ import useScreen from 'hooks/useScreen';
 import {useWallet} from 'hooks/useWallet';
 import {useWalletCanVote} from 'hooks/useWalletCanVote';
 import {useTokenAsync} from 'services/token/queries/use-token';
-import {CHAIN_METADATA} from 'utils/constants';
+import {CHAIN_METADATA, SupportedNetworks} from 'utils/constants';
 import {
   decodeAddMembersToAction,
   decodeMetadataToAction,
@@ -75,8 +75,10 @@ import {
   stripPlgnAdrFromProposalId,
 } from 'utils/proposals';
 import {Action, ProposalId} from 'utils/types';
-import {useDelegatee} from 'services/aragon-sdk/queries/use-delegatee';
 import {useDaoToken} from 'hooks/useDaoToken';
+import {BigNumber} from 'ethers';
+import {getVotingPower} from 'utils/tokens';
+import {Address, useBalance} from 'wagmi';
 
 // TODO: @Sepehr Please assign proper tags on action decoding
 // const PROPOSAL_TAGS = ['Finance', 'Withdraw'];
@@ -131,6 +133,7 @@ export const Proposal: React.FC = () => {
   const {address, isConnected, isOnWrongNetwork} = useWallet();
 
   const [voteStatus, setVoteStatus] = useState('');
+  const [votingPower, setVoginPower] = useState(BigNumber.from('0'));
   const [intervalInMills, setIntervalInMills] = useState(0);
   const [decodedActions, setDecodedActions] =
     useState<(Action | undefined)[]>();
@@ -166,13 +169,6 @@ export const Proposal: React.FC = () => {
     proposal?.status as string
   );
 
-  const {data: delegateData} = useDelegatee(
-    {tokenAddress: daoToken?.address as string},
-    {enabled: daoToken != null}
-  );
-  const currentDelegate =
-    delegateData === null ? (address as string) : delegateData;
-
   const pluginClient = usePluginClient(pluginType);
 
   // ref used to hold "memories" of previous "state"
@@ -184,6 +180,10 @@ export const Proposal: React.FC = () => {
   const [terminalTab, setTerminalTab] = useState<TerminalTabs>('info');
   const [votingInProcess, setVotingInProcess] = useState(false);
   const [expandedProposal, setExpandedProposal] = useState(false);
+
+  // Display the voting-power gating dialog when user has can vote but has no voting
+  // power, meaning that the user delegated his voting power to another address
+  const displayVotingGate = canVote && votingPower.lte(BigNumber.from('0'));
 
   const editor = useEditor({
     editable: false,
@@ -212,6 +212,21 @@ export const Proposal: React.FC = () => {
       );
     }
   }, [editor, proposal]);
+
+  useEffect(() => {
+    const fetchVotingPower = async () => {
+      if (daoToken != null && address != null) {
+        const result = await getVotingPower(
+          daoToken.address,
+          address,
+          provider
+        );
+        setVoginPower(result);
+      }
+    };
+
+    fetchVotingPower();
+  }, [daoToken, address, provider]);
 
   useEffect(() => {
     if (proposal?.status) {
@@ -513,7 +528,7 @@ export const Proposal: React.FC = () => {
     }
 
     // needs voting power
-    else if (!multisigDAO && currentDelegate !== address) {
+    else if (!multisigDAO && displayVotingGate) {
       return {
         voteNowDisabled: false,
         onClick: () => open('delegationGating'),
@@ -536,6 +551,7 @@ export const Proposal: React.FC = () => {
   }, [
     address,
     allowVoteReplacement,
+    displayVotingGate,
     canVote,
     handleSubmitVote,
     isOnWrongNetwork,
@@ -544,7 +560,6 @@ export const Proposal: React.FC = () => {
     proposal?.status,
     voteSubmitted,
     voted,
-    currentDelegate,
   ]);
 
   // handler for execution

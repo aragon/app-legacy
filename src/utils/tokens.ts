@@ -1,7 +1,12 @@
 /* eslint-disable no-empty */
 import {erc20TokenABI} from 'abis/erc20TokenABI';
 import {TokenWithMetadata} from './types';
-import {constants, ethers, providers as EthersProviders} from 'ethers';
+import {
+  BigNumber,
+  constants,
+  ethers,
+  providers as EthersProviders,
+} from 'ethers';
 
 import {formatUnits} from 'utils/library';
 import {NativeTokenData, TimeFilter, TOKEN_AMOUNT_REGEX} from './constants';
@@ -87,6 +92,26 @@ export async function getOwner(
     return (await contract.owner()) as string;
   } catch (err) {
     return null;
+  }
+}
+
+/**
+ * Returns the voting power for the specified address
+ * @param address Address of the contract
+ * @param account Address to check the voting power
+ * @param provider Ethers provider to use
+ * @returns voting power of the account or 0
+ */
+export async function getVotingPower(
+  address: string,
+  account: string,
+  provider: EthersProviders.Provider
+) {
+  const contract = new ethers.Contract(address, votesUpgradeableABI, provider);
+  try {
+    return (await contract.getVotes(account)) as BigNumber;
+  } catch (err) {
+    return BigNumber.from('0');
   }
 }
 
