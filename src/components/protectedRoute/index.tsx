@@ -14,7 +14,7 @@ import {usePluginSettings} from 'hooks/usePluginSettings';
 import {useWallet} from 'hooks/useWallet';
 import {CHAIN_METADATA} from 'utils/constants';
 import {formatUnits} from 'utils/library';
-import {fetchBalance} from 'utils/tokens';
+import {fetchBalance, fetchVotingPower} from 'utils/tokens';
 
 const ProtectedRoute: React.FC = () => {
   const navigate = useNavigate();
@@ -62,19 +62,38 @@ const ProtectedRoute: React.FC = () => {
 
   const gateTokenBasedProposal = useCallback(async () => {
     if (daoToken && address && filteredMembers.length === 0) {
-      const balance = await fetchBalance(
-        daoToken?.address,
-        address,
-        provider,
-        CHAIN_METADATA[network].nativeCurrency
-      );
+      let balance = '0';
+      let votingPower = '0';
+
+      try {
+        balance = await fetchBalance(
+          daoToken?.address,
+          address,
+          provider,
+          CHAIN_METADATA[network].nativeCurrency
+        );
+
+        votingPower = await fetchVotingPower(
+          daoToken?.address,
+          address,
+          provider,
+          CHAIN_METADATA[network].nativeCurrency
+        );
+      } catch (e) {
+        console.error(e);
+      }
+
       const minProposalThreshold = Number(
         formatUnits(
           (daoSettings as VotingSettings).minProposerVotingPower || 0,
           daoToken?.decimals || 18
         )
       );
-      if (minProposalThreshold && Number(balance) < minProposalThreshold) {
+      if (
+        minProposalThreshold &&
+        Number(balance) < minProposalThreshold &&
+        Number(votingPower) < minProposalThreshold
+      ) {
         open('gating');
       } else close('gating');
     }
