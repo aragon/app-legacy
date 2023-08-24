@@ -180,9 +180,10 @@ export const Proposal: React.FC = () => {
   const [votingInProcess, setVotingInProcess] = useState(false);
   const [expandedProposal, setExpandedProposal] = useState(false);
 
-  // Display the voting-power gating dialog when user has can vote but has no voting
+  // Display the voting-power gating dialog when user can vote but has no voting
   // power, meaning that the user delegated his voting power to another address
-  const displayVotingGate = canVote && votingPower.lte(BigNumber.from('0'));
+  const displayVotingGate =
+    !multisigDAO && canVote && votingPower.lte(BigNumber.from('0'));
 
   const editor = useEditor({
     editable: false,
@@ -224,8 +225,10 @@ export const Proposal: React.FC = () => {
       }
     };
 
-    fetchVotingPower();
-  }, [daoToken, address, provider]);
+    if (!multisigDAO) {
+      fetchVotingPower();
+    }
+  }, [daoToken, address, provider, multisigDAO]);
 
   useEffect(() => {
     if (proposal?.status) {
@@ -527,7 +530,7 @@ export const Proposal: React.FC = () => {
     }
 
     // needs voting power
-    else if (!multisigDAO && displayVotingGate) {
+    else if (displayVotingGate) {
       return {
         voteNowDisabled: false,
         onClick: () => open('delegationGating'),
