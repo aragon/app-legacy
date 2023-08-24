@@ -105,7 +105,12 @@ export const DelegateVotingMenu: React.FC = () => {
     };
     const params = {tokenAddress: daoToken?.address as string};
     const queryKey = aragonSdkQueryKeys.delegatee(baseParams, params);
+    const votingPowerKey = aragonSdkQueryKeys.votingPower({
+      address: baseParams.address,
+      tokenAddress: daoToken?.address as string,
+    });
     queryClient.invalidateQueries(queryKey);
+    queryClient.invalidateQueries(votingPowerKey);
   };
 
   const handleDelegateTokensSuccess = async (

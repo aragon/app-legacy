@@ -77,7 +77,7 @@ import {
 import {Action, ProposalId} from 'utils/types';
 import {useDaoToken} from 'hooks/useDaoToken';
 import {BigNumber} from 'ethers';
-import {getVotingPower} from 'utils/tokens';
+import {useVotingPower} from 'services/aragon-sdk/queries/use-voting-power';
 
 // TODO: @Sepehr Please assign proper tags on action decoding
 // const PROPOSAL_TAGS = ['Finance', 'Withdraw'];
@@ -132,7 +132,6 @@ export const Proposal: React.FC = () => {
   const {address, isConnected, isOnWrongNetwork} = useWallet();
 
   const [voteStatus, setVoteStatus] = useState('');
-  const [votingPower, setVoginPower] = useState(BigNumber.from('0'));
   const [intervalInMills, setIntervalInMills] = useState(0);
   const [decodedActions, setDecodedActions] =
     useState<(Action | undefined)[]>();
@@ -166,6 +165,14 @@ export const Proposal: React.FC = () => {
     pluginAddress,
     pluginType,
     proposal?.status as string
+  );
+
+  const {data: votingPower = BigNumber.from('0')} = useVotingPower(
+    {
+      address: address as string,
+      tokenAddress: daoToken?.address as string,
+    },
+    {enabled: address != null && daoToken != null}
   );
 
   const pluginClient = usePluginClient(pluginType);
@@ -212,23 +219,6 @@ export const Proposal: React.FC = () => {
       );
     }
   }, [editor, proposal]);
-
-  useEffect(() => {
-    const fetchVotingPower = async () => {
-      if (daoToken != null && address != null) {
-        const result = await getVotingPower(
-          daoToken.address,
-          address,
-          provider
-        );
-        setVoginPower(result);
-      }
-    };
-
-    if (!multisigDAO) {
-      fetchVotingPower();
-    }
-  }, [daoToken, address, provider, multisigDAO]);
 
   useEffect(() => {
     if (proposal?.status) {
