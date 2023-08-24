@@ -32,10 +32,11 @@ export const useDelegatee = (
     options.enabled = false;
   }
 
+  // Make sure that the signer is set on the client before
+  // querying and caching the result
   try {
-    if (client != null) {
-      client?.web3.getSigner();
-    }
+    const signer = client?.web3.getSigner();
+    options.enabled = signer != null;
   } catch (error: unknown) {
     options.enabled = false;
   }

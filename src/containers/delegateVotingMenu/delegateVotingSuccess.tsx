@@ -46,8 +46,8 @@ export const DelegateVotingSuccess: React.FC<IDelegateVotingSuccessProps> =
 
     const tokenAmount = abbreviateTokenAmount(tokenBalance);
 
-    const daoName =
-      toDisplayEns(daoDetails?.ensDomain) ?? (daoDetails?.address as string);
+    const daoEns = toDisplayEns(daoDetails?.ensDomain);
+    const daoName = daoEns !== '' ? daoEns : daoDetails?.address;
 
     const handleCommunityClick = () => {
       const pathParams = {network, dao: daoName};

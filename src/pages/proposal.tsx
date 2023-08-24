@@ -167,7 +167,7 @@ export const Proposal: React.FC = () => {
     proposal?.status as string
   );
 
-  const {data: votingPower = BigNumber.from('0')} = usePastVotingPower(
+  const {data: pastVotingPower = BigNumber.from('0')} = usePastVotingPower(
     {
       address: address as string,
       tokenAddress: daoToken?.address as string,
@@ -188,10 +188,10 @@ export const Proposal: React.FC = () => {
   const [votingInProcess, setVotingInProcess] = useState(false);
   const [expandedProposal, setExpandedProposal] = useState(false);
 
-  // Display the voting-power gating dialog when user can vote but has no voting
-  // power, meaning that the user delegated his voting power to another address
+  // Display the voting-power gating dialog when user can vote but had no
+  // voting power at the proposal creation
   const displayVotingGate =
-    !multisigDAO && canVote && votingPower.lte(BigNumber.from('0'));
+    !multisigDAO && canVote && pastVotingPower.lte(BigNumber.from('0'));
 
   const editor = useEditor({
     editable: false,
