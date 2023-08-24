@@ -49,7 +49,7 @@ import useScreen from 'hooks/useScreen';
 import {useWallet} from 'hooks/useWallet';
 import {useWalletCanVote} from 'hooks/useWalletCanVote';
 import {useTokenAsync} from 'services/token/queries/use-token';
-import {CHAIN_METADATA, SupportedNetworks} from 'utils/constants';
+import {CHAIN_METADATA} from 'utils/constants';
 import {
   decodeAddMembersToAction,
   decodeMetadataToAction,
@@ -78,7 +78,6 @@ import {Action, ProposalId} from 'utils/types';
 import {useDaoToken} from 'hooks/useDaoToken';
 import {BigNumber} from 'ethers';
 import {getVotingPower} from 'utils/tokens';
-import {Address, useBalance} from 'wagmi';
 
 // TODO: @Sepehr Please assign proper tags on action decoding
 // const PROPOSAL_TAGS = ['Finance', 'Withdraw'];
