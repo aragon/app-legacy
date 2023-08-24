@@ -75,6 +75,8 @@ import {
   stripPlgnAdrFromProposalId,
 } from 'utils/proposals';
 import {Action, ProposalId} from 'utils/types';
+import {useDelegatee} from 'services/aragon-sdk/queries/use-delegatee';
+import {useDaoToken} from 'hooks/useDaoToken';
 
 // TODO: @Sepehr Please assign proper tags on action decoding
 // const PROPOSAL_TAGS = ['Finance', 'Withdraw'];
@@ -98,6 +100,9 @@ export const Proposal: React.FC = () => {
   );
 
   const {data: daoDetails, isLoading: detailsAreLoading} = useDaoDetailsQuery();
+  const {data: daoToken} = useDaoToken(
+    daoDetails?.plugins[0].instanceAddress ?? ''
+  );
 
   const {data: daoSettings} = usePluginSettings(
     daoDetails?.plugins[0].instanceAddress as string,
@@ -160,6 +165,13 @@ export const Proposal: React.FC = () => {
     pluginType,
     proposal?.status as string
   );
+
+  const {data: delegateData} = useDelegatee(
+    {tokenAddress: daoToken?.address as string},
+    {enabled: daoToken != null}
+  );
+  const currentDelegate =
+    delegateData === null ? (address as string) : delegateData;
 
   const pluginClient = usePluginClient(pluginType);
 
@@ -500,6 +512,14 @@ export const Proposal: React.FC = () => {
       };
     }
 
+    // needs voting power
+    else if (!multisigDAO && currentDelegate !== address) {
+      return {
+        voteNowDisabled: false,
+        onClick: () => open('delegationGating'),
+      };
+    }
+
     // member, not yet voted
     else if (canVote) {
       return {
@@ -524,6 +544,7 @@ export const Proposal: React.FC = () => {
     proposal?.status,
     voteSubmitted,
     voted,
+    currentDelegate,
   ]);
 
   // handler for execution

@@ -26,6 +26,7 @@ import {
 } from './delegateVotingUtils';
 
 export interface IDelegateVotingFormProps {
+  initialMode?: 'delegate' | 'reclaim';
   onDelegateTokens: () => void;
   onCancel: () => void;
   status: 'idle' | 'loading' | 'error' | 'success';
@@ -46,7 +47,7 @@ const getDelegateLabel = (
 };
 
 export const DelegateVotingForm: React.FC<IDelegateVotingFormProps> = props => {
-  const {onDelegateTokens, onCancel, status} = props;
+  const {onDelegateTokens, onCancel, initialMode = 'delegate', status} = props;
 
   const {t} = useTranslation();
   const {address, ensName, isOnWrongNetwork} = useWallet();
@@ -58,9 +59,7 @@ export const DelegateVotingForm: React.FC<IDelegateVotingFormProps> = props => {
     name: DelegateVotingFormField.TOKEN_DELEGATE,
     control: control,
   });
-  const [delegateSelection, setDelegateSelection] = useState<
-    'delegate' | 'reclaim'
-  >('delegate');
+  const [delegateSelection, setDelegateSelection] = useState(initialMode);
 
   const {data: daoDetails} = useDaoDetailsQuery();
   const {data: daoToken} = useDaoToken(

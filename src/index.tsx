@@ -52,7 +52,6 @@ export const queryClient = new QueryClient({
 
 const wagmiConfig = createConfig({
   autoConnect: true,
-  queryClient,
   connectors: [
     ...w3mConnectors({
       projectId: walletConnectProjectID,

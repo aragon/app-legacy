@@ -6,7 +6,6 @@ import {
   UnwrapTokensStep,
   WrapTokensStep,
 } from '@aragon/sdk-client';
-import {useQueryClient} from '@tanstack/react-query';
 import GovTokensWrappingModal from 'containers/govTokensWrappingModal/GovTokensWrappingModal';
 import {useNetwork} from 'context/network';
 import {useProviders} from 'context/providers';
@@ -32,6 +31,7 @@ import {toDisplayEns} from 'utils/library';
 import {Community} from 'utils/paths';
 import {fetchBalance} from 'utils/tokens';
 import {TokensWrappingFormData} from 'utils/types';
+import {useQueryClient} from 'wagmi';
 
 interface IGovTokensWrappingContextType {
   handleOpenModal: () => void;
@@ -45,7 +45,7 @@ const GovTokensWrappingProvider: FC<{children: ReactNode}> = ({children}) => {
   const {address: userAddress} = useWallet();
   const {network} = useNetwork();
   const loc = useLocation();
-  const queryClient = useQueryClient();
+  const wagmiQueryClient = useQueryClient();
   const {api: provider} = useProviders();
 
   const {data: daoDetails, isLoading: isDaoDetailsLoading} =
@@ -181,21 +181,21 @@ const GovTokensWrappingProvider: FC<{children: ReactNode}> = ({children}) => {
   // Invalidate wagmi balance cache to display the correct token balances after
   // the wrap / unwrap processes
   const invalidateDaoTokenBalanceCache = useCallback(() => {
-    queryClient.invalidateQueries([
+    wagmiQueryClient.invalidateQueries([
       {
         entity: 'balance',
         address: userAddress,
         token: wrappedDaoToken?.address,
       },
     ]);
-    queryClient.invalidateQueries([
+    wagmiQueryClient.invalidateQueries([
       {
         entity: 'balance',
         address: userAddress,
         token: daoTokenData?.address,
       },
     ]);
-  }, [queryClient, userAddress, wrappedDaoToken, daoTokenData]);
+  }, [wagmiQueryClient, userAddress, wrappedDaoToken, daoTokenData]);
 
   const handleApprove = useCallback(async () => {
     if (isTxLoading || !wrappedDaoToken || !underlyingToken) return;
