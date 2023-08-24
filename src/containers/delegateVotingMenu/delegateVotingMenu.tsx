@@ -98,18 +98,18 @@ export const DelegateVotingMenu: React.FC = () => {
     }
   };
 
-  const invalidateDelegateeQuery = () => {
+  const invalidateDelegateQueries = () => {
     const baseParams = {
       address: address as string,
       network: network as SupportedNetworks,
     };
     const params = {tokenAddress: daoToken?.address as string};
-    const queryKey = aragonSdkQueryKeys.delegatee(baseParams, params);
+    const delegateKey = aragonSdkQueryKeys.delegatee(baseParams, params);
     const votingPowerKey = aragonSdkQueryKeys.votingPower({
       address: baseParams.address,
       tokenAddress: daoToken?.address as string,
     });
-    queryClient.invalidateQueries(queryKey);
+    queryClient.invalidateQueries(delegateKey);
     queryClient.invalidateQueries(votingPowerKey);
   };
 
@@ -122,7 +122,7 @@ export const DelegateVotingMenu: React.FC = () => {
       if (step.key === 'delegating') {
         delegateHash = step.txHash;
       } else if (step.key === 'done') {
-        invalidateDelegateeQuery();
+        invalidateDelegateQueries();
         setTxHash(delegateHash);
       }
     }

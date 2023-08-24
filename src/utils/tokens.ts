@@ -96,7 +96,29 @@ export async function getOwner(
 }
 
 /**
- * Returns the voting power for the specified address
+ * Returns the voting power for the specified address at the specified block number
+ * @param address Address of the contract
+ * @param account Address to check the voting power
+ * @param blockNumber Block number to check for voting power
+ * @param provider Ethers provider to use
+ * @returns voting power of the account or 0
+ */
+export async function getPastVotingPower(
+  address: string,
+  account: string,
+  blockNumber: number,
+  provider: EthersProviders.Provider
+) {
+  const contract = new ethers.Contract(address, votesUpgradeableABI, provider);
+  try {
+    return (await contract.getPastVotes(account, blockNumber)) as BigNumber;
+  } catch (err) {
+    return BigNumber.from('0');
+  }
+}
+
+/**
+ * Returns the voting power for the specified address at the current time
  * @param address Address of the contract
  * @param account Address to check the voting power
  * @param provider Ethers provider to use

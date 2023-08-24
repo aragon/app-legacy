@@ -77,7 +77,7 @@ import {
 import {Action, ProposalId} from 'utils/types';
 import {useDaoToken} from 'hooks/useDaoToken';
 import {BigNumber} from 'ethers';
-import {useVotingPower} from 'services/aragon-sdk/queries/use-voting-power';
+import {usePastVotingPower} from 'services/aragon-sdk/queries/use-past-voting-power';
 
 // TODO: @Sepehr Please assign proper tags on action decoding
 // const PROPOSAL_TAGS = ['Finance', 'Withdraw'];
@@ -167,12 +167,13 @@ export const Proposal: React.FC = () => {
     proposal?.status as string
   );
 
-  const {data: votingPower = BigNumber.from('0')} = useVotingPower(
+  const {data: votingPower = BigNumber.from('0')} = usePastVotingPower(
     {
       address: address as string,
       tokenAddress: daoToken?.address as string,
+      blockNumber: proposal?.creationBlockNumber as number,
     },
-    {enabled: address != null && daoToken != null}
+    {enabled: address != null && daoToken != null && proposal != null}
   );
 
   const pluginClient = usePluginClient(pluginType);
