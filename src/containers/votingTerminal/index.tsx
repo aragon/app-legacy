@@ -119,7 +119,6 @@ export const VotingTerminal: React.FC<VotingTerminalProps> = ({
           };
         })
       );
-
       setDisplayedVoters(response);
     }
 
