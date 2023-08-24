@@ -222,7 +222,7 @@ class TokenService {
         name: native_token ? nativeCurrency.name : item.contract_name,
         symbol: native_token
           ? nativeCurrency.symbol
-          : item.contract_ticker_symbol.toUpperCase(),
+          : item.contract_ticker_symbol?.toUpperCase(),
         decimals: native_token
           ? nativeCurrency.decimals
           : item.contract_decimals,
