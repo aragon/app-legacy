@@ -10,7 +10,7 @@ import {useDaoDetailsQuery} from 'hooks/useDaoDetails';
 import {useDaoToken} from 'hooks/useDaoToken';
 import {useWallet} from 'hooks/useWallet';
 import React from 'react';
-import {Trans, useTranslation} from 'react-i18next';
+import {useTranslation} from 'react-i18next';
 import {generatePath, useNavigate} from 'react-router-dom';
 import styled from 'styled-components';
 import {CHAIN_METADATA} from 'utils/constants';
@@ -81,17 +81,13 @@ export const DelegateVotingSuccess: React.FC<IDelegateVotingSuccessProps> =
           <p className="text-xl text-ui-800">
             {t(`modal.delegation.${title}`)}
           </p>
-          <Trans
-            className="text-ui-600"
-            i18nKey={`modal.delegation.${description}`}
-            components={{b: <strong />}}
-            parent={props => <p {...props} />}
-            values={{
+          <p className="text-ui-600">
+            {t(`modal.delegation.${description}`, {
               balance: tokenAmount,
               tokenSymbol: daoToken?.symbol,
               delegateEns: delegateName,
-            }}
-          ></Trans>
+            })}
+          </p>
         </FormGroup>
         <FormGroup>
           <ButtonText
