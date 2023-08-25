@@ -5,7 +5,7 @@ import {
   IconMenuVertical,
   ListItemAction,
 } from '@aragon/ods';
-import React, {useCallback, useEffect, useRef} from 'react';
+import React, {useEffect, useRef} from 'react';
 import {useFieldArray, useFormContext, useWatch} from 'react-hook-form';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
@@ -22,7 +22,7 @@ import Row from './row';
 const AddWallets: React.FC = () => {
   const {t} = useTranslation();
   const {alert} = useAlertContext();
-  const appendConnectedAddress = useRef(true);
+  const appendConnectedAddress = useRef<boolean>(true);
 
   const {network} = useNetwork();
   const {address} = useWallet();
@@ -53,15 +53,12 @@ const AddWallets: React.FC = () => {
       appendConnectedAddress.current === true
     ) {
       append({address, amount: '1', ensName});
+      appendConnectedAddress.current = false;
+      setTimeout(() => {
+        trigger('wallets.0');
+      }, 50);
     }
-  }, [address, append, controlledFields?.length, ensName]);
-
-  const isConnectedAddress = useCallback(
-    (index: number) =>
-      controlledFields[index].address.toLowerCase() === address?.toLowerCase(),
-
-    [address, controlledFields]
-  );
+  }, [address, append, controlledFields?.length, ensName, trigger]);
 
   const resetDistribution = () => {
     controlledFields.forEach((_, index) => {
@@ -81,14 +78,10 @@ const AddWallets: React.FC = () => {
   };
 
   const handleDeleteRow = (index: number) => {
-    if (isConnectedAddress(index)) {
-      appendConnectedAddress.current = false;
-    }
-
     remove(index);
     setTimeout(() => {
       trigger('wallets');
-    });
+    }, 50);
   };
 
   return (

@@ -265,7 +265,11 @@ const WalletRow: React.FC<WalletRowProps> = ({index, onDelete}) => {
                     'eligibilityTokenAmount',
                   ]);
 
-                  setValue('tokenTotalSupply', totalSupply - amount);
+                  const newTotalSupply = Number(totalSupply) - Number(amount);
+                  setValue(
+                    'tokenTotalSupply',
+                    newTotalSupply < 0 ? 0 : newTotalSupply
+                  );
                   onDelete(index);
                   if (eligibilityType === 'token') {
                     if (eligibilityTokenAmount === amount) {

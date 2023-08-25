@@ -7,7 +7,7 @@ import {
   Label,
   ListItemAction,
 } from '@aragon/ods';
-import React, {useCallback, useEffect, useRef} from 'react';
+import React, {useEffect, useRef} from 'react';
 import {useFieldArray, useFormContext, useWatch} from 'react-hook-form';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
@@ -54,15 +54,9 @@ export const MultisigWallets = () => {
       appendConnectedAddress.current === true
     ) {
       append({address, ensName});
+      appendConnectedAddress.current = false;
     }
   }, [address, append, controlledWallets?.length, ensName]);
-
-  const isConnectedAddress = useCallback(
-    (index: number) =>
-      controlledWallets[index].address.toLowerCase() === address?.toLowerCase(),
-
-    [address, controlledWallets]
-  );
 
   // add empty wallet
   const handleAdd = () => {
@@ -77,10 +71,6 @@ export const MultisigWallets = () => {
 
   // remove wallet
   const handleDeleteEntry = (index: number) => {
-    if (isConnectedAddress(index)) {
-      appendConnectedAddress.current = false;
-    }
-
     remove(index);
 
     alert(t('alert.chip.removedAddress'));
@@ -100,10 +90,6 @@ export const MultisigWallets = () => {
 
   // reset wallet
   const handleResetEntry = (index: number) => {
-    if (isConnectedAddress(index)) {
-      appendConnectedAddress.current = false;
-    }
-
     update(index, {address: '', ensName: ''});
     alert(t('alert.chip.resetAddress'));
     trigger('multisigWallets');
