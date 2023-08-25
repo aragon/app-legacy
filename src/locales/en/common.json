@@ -1135,7 +1135,7 @@
       "successCtaLabel": "See community",
       "successBtnSecondaryLabel": "See transaction",
       "successDelegateTitle": "Voting power successfully delegated",
-      "successDelegateDesc": "You have delegated all your voting power of {{balance}} {{tokenSymbol}} to the <b>{{delegateEns}}</b>. You have the option to revoke this at any time.",
+      "successDelegateDesc": "You have delegated all your voting power of {{balance}} {{tokenSymbol}} to <b>{{delegateEns}}</b>. You have the option to revoke this at any time.",
       "successReclaimTitle": "Reclaimed your voting power successfully",
       "successReclaimDesc": "You have reclaimed your voting power of {{balance}} {{tokenSymbol}} back. Your votes will be available for future proposals, and not for currently active.",
       "alertCriticalDelegate": "Delegating went wrong. Try again.",
