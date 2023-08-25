@@ -2,7 +2,7 @@ import ModalBottomSheetSwitcher from 'components/modalBottomSheetSwitcher';
 import {useGlobalModalContext} from 'context/globalModals';
 import styled from 'styled-components';
 import React from 'react';
-import {Trans, useTranslation} from 'react-i18next';
+import {useTranslation} from 'react-i18next';
 import {ButtonText, IllustrationHuman, shortenAddress} from '@aragon/ods';
 import {useDaoDetailsQuery} from 'hooks/useDaoDetails';
 import {useDaoToken} from 'hooks/useDaoToken';
@@ -76,17 +76,13 @@ export const DelegationGatingMenu: React.FC = () => {
           <p className="text-xl text-ui-800">
             {t(`modal.${delegationLabel}.title`)}
           </p>
-          <Trans
-            className="text-ui-600"
-            i18nKey={`modal.${delegationLabel}.desc`}
-            components={{b: <strong />}}
-            parent={props => <p {...props} />}
-            values={{
+          <p className="text-ui-600">
+            {t(`modal.${delegationLabel}.desc`, {
               balance: tokenAmount,
               tokenSymbol: daoToken?.symbol,
               walletAddressDelegation: delegateName,
-            }}
-          ></Trans>
+            })}
+          </p>
         </ContentGroup>
         <ContentGroup>
           <ButtonText
