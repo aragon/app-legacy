@@ -78,6 +78,13 @@ export const Governance: React.FC = () => {
   const {t} = useTranslation();
   const navigate = useNavigate();
 
+  const handleNewProposalClick = () => {
+    trackEvent('governance_newProposalBtn_clicked', {
+      dao_address: daoDetails?.address as string,
+    });
+    navigate('new-proposal');
+  };
+
   const handleShowMoreClick = () => {
     if (!isDaoLoading) setSkip(prev => prev + PROPOSALS_PER_PAGE);
   };
@@ -110,13 +117,18 @@ export const Governance: React.FC = () => {
               : {height: 225, width: 400})}
           />
         }
-        buttonLabel={t('newProposal.title')}
-        onClick={() => {
-          trackEvent('governance_newProposalBtn_clicked', {
-            dao_address: daoDetails?.address as string,
-          });
-          navigate('new-proposal');
+        primaryButton={{
+          label: t('newProposal.title'),
+          onClick: handleNewProposalClick,
         }}
+        secondaryButton={
+          displayDelegation
+            ? {
+                label: t('governance.actionSecondary'),
+                onClick: () => open('delegateVoting'),
+              }
+            : undefined
+        }
       />
     );
   }

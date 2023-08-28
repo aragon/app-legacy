@@ -82,9 +82,9 @@ export const Finance: React.FC = () => {
               <IlluObject object={'wallet'} className="-ml-36" />
             </div>
           }
-          buttonLabel={t('finance.emptyState.buttonLabel')}
-          onClick={() => {
-            open('deposit');
+          primaryButton={{
+            label: t('finance.emptyState.buttonLabel'),
+            onClick: () => open('deposit'),
           }}
         />
       );
@@ -203,9 +203,9 @@ export const Finance: React.FC = () => {
                 <IlluObject object={'wallet'} className="-ml-32" />
               </div>
             }
-            buttonLabel={t('finance.emptyState.buttonLabel')}
-            onClick={() => {
-              open('deposit');
+            primaryButton={{
+              label: t('finance.emptyState.buttonLabel'),
+              onClick: () => open('deposit'),
             }}
           />
         </PageWrapper>
