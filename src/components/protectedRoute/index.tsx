@@ -75,16 +75,14 @@ const ProtectedRoute: React.FC = () => {
           CHAIN_METADATA[network].nativeCurrency
         );
 
-        const votinPowerWei = await fetchVotingPower({
+        const votingPowerWei = await fetchVotingPower({
           address,
           tokenAddress: daoToken?.address,
         });
-        votingPower = formatUnits(votinPowerWei, daoToken.decimals);
+        votingPower = formatUnits(votingPowerWei, daoToken.decimals);
       } catch (e) {
         console.error(e);
       }
-
-      console.log({balance, votingPower});
 
       const minProposalThreshold = Number(
         formatUnits(
