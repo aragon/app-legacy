@@ -50,9 +50,7 @@ export const FullScreenStepper: React.FC<FullScreenStepperProps> = ({
   navLabel,
   returnPath,
 }) => {
-  const skipSteps = useMemo(() => {
-    return children.filter(child => child.props.skipStep !== true);
-  }, [children]);
+  const skipSteps = children.filter(child => child.props.skipStep !== true);
 
   const {t} = useTranslation();
   const navigate = useNavigate();
