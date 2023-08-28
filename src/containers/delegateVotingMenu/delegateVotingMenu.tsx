@@ -152,7 +152,7 @@ export const DelegateVotingMenu: React.FC = () => {
         ensName: currentDelegateEns,
       });
     }
-  }, [setValue, currentDelegate, currentDelegateEns, address]);
+  }, [setValue, currentDelegate, currentDelegateEns]);
 
   // Set the token-delegate form field to connected address when the dialog
   // is opened in reclaim mode
