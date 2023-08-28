@@ -48,7 +48,6 @@
     "removedMembers": "Removed members",
     "removeWalletsDescription": "Revoke these wallets' permissions.",
     "totalWallets": "Total wallets",
-    "totalNewMembers": "Total new members",
     "mintTokens": "Mint tokens",
     "seeAllHolders": "See all holders",
     "seeCommunity": "See community",
@@ -240,7 +239,8 @@
     "select": "Select",
     "codeInput": {
       "address0x": "0x …"
-    }
+    },
+    "totalMembers": "Total members"
   },
   "placeHolders": {
     "selectToken": "Select a token …",
@@ -355,8 +355,8 @@
         "expired": "Proposal expired"
       },
       "statusMultisig": {
-        "expiredTitle": "Execution not anymore available",
-        "expiredDesc": "The execution is no longer possible because the expiration time has passed. If you want to carry out this action, you must create a new proposal and possibly set a longer expiration time."
+        "expiredTitle": "Execution no longer available",
+        "expiredDesc": "This proposal action can no longer be executed because the expiration time has passed. If you want to reattempt executing this action, you must create a new proposal, pass it, and execute it within the expiration time."
       }
     },
     "actionSecondary": "Delegate"
@@ -383,7 +383,7 @@
     "insufficientBalance": "Insufficient balance",
     "invalidURL": "Invalid URL",
     "invalidImage": "Invalid image",
-    "invalidImageType": "Invalid file type. Please provide either a SVG, JPG, PNG or GIF",
+    "invalidImageType": "Invalid file type. Please provide either a JPG, PNG or GIF",
     "imageDimensions": "Please provide a squared image with size between {{minDimension}}px and {{maxDimension}}px on each side",
     "imageTooLarge": "Please provide an image of max {{maxFileSize}}MB in size",
     "invalidAddress": "Invalid address",
@@ -671,7 +671,7 @@
       "title": "Describe your DAO",
       "description": "Name and define your DAO so new contributors know they've come to the right place. This information is displayed on the DAO Explore page and can be changed with a vote. For ideas on DAO branding, {{link}}.",
       "nameSubtitle": "Maximum of 128 characters",
-      "logoSubtitle": "JPG, PNG, GIF, or SVG of no more than 3MB. We recommend 1024x1024px.",
+      "logoSubtitle": "JPG, PNG or GIF of no more than 3MB. We recommend 1024x1024px.",
       "descriptionSubtitle": "Describe your DAO's purpose in a few sentences. This is listed on the Explore page so new contributors can find you.",
       "linksSubtitle": "Links to your DAO's website, social media profiles, Discord, or other places your community gathers.",
       "metadataOverviewGuide": "read our guide",
@@ -808,8 +808,8 @@
       "wrappedReferenceParticipationValueLabel": "{{gTokenSymbol}} *"
     },
     "review": {
-      "title": "Deploy your DAO",
-      "description": "Double-check that everything is correct before launching your organization.",
+      "title": "Review details",
+      "description": "Double-check that everything is correct before deploying your DAO.",
       "network": "{{network}} net",
       "distributionLink": "See {{count}} addresses",
       "days": "{{days}} days",
@@ -819,6 +819,31 @@
       "acceptContent": "Accept proposed content.",
       "valuesCorrect": "These values are correct",
       "proposalCreation": "Token holders with ≥{{token}} {{symbol}}"
+    },
+    "deployDAO": {
+      "title": "Deploy your DAO",
+      "description": "The only cost to deploy your DAO are the {{networkName}} network's gas fee. Confirm the transaction to deploy your DAO and we'll start assembling it right away.",
+      "label": {
+        "estimatedGasfees": "Estimated gas fee",
+        "unknown": "Unknown",
+        "awaitingWallet": "Awaiting wallet confirmation",
+        "confirmingTransaction": "Confirming your transaction",
+        "publishingData": "Publishing DAO data onchain",
+        "DAOready": "Your DAO is ready",
+        "details": "Details"
+      },
+      "alertCritical": {
+        "noConfirmationReceived": "No confirmation received …",
+        "dontClosePage": "Don't close this page while in progress.",
+        "confirmationFailed": "Confirmation failed …"
+      },
+      "POAPtitle": "You are now an Aragon DAO Builder!",
+      "POAPlink": "Claim your POAP",
+      "ctaLabel": {
+        "openDAO": "Open your DAO",
+        "deployYourDAO": "Deploy your DAO",
+        "tryAgain": "Try again"
+      }
     }
   },
   "newProposal": {
@@ -842,7 +867,8 @@
       "actionAlertWarning": {
         "title": "Action not decoded",
         "desc": "This action can't be decoded because the smart contract is not verified."
-      }
+      },
+      "alertCritical": "All fields are required"
     },
     "mintTokens": {
       "methodDescription": "Create a proposal to mint more governance tokens. Select the wallets that should receive tokens and determine how many.",
@@ -1108,39 +1134,42 @@
       "successCtaLabel": "See community"
     },
     "delegationActive": {
-      "CtaLabel": "Reclaim voting power",
+      "CtaLabel": "Claim voting power",
       "BtnSecondaryLabel": "No, I’m good",
       "label": "Delegation",
-      "title": "Delegation is active",
-      "desc": "You have currently delegated your votes of {{balance}} {{tokenSymbol}} to the <b>{{walletAddressDelegation}}</b>.\nIf you want to participate at future proposals, you have to reclaim your voting power. "
+      "title": "You have no voting power",
+      "desc": "You are delegating your voting power of {{balance}} {{tokenSymbol}} to the {{walletAddressDelegation}}.\nIf you want to participate in future proposals, you have to claim your voting power. "
     },
     "delegation": {
       "label": "Delegation",
       "optionsLabel": "What do you want to do with your delegation?",
       "checkbox": {
         "delegateTo": "Delegate to somebody",
-        "reclaim": "Reclaim your voting power"
+        "claim": "Claim your voting power"
       },
       "codeInputLabel": "Your delegation",
       "codeInputDesc": "Enter a wallet address to delegate your votes.",
       "codeInputPlaceholder": "ENS or 0x ...",
       "alertCard": {
         "title": "How does delegation work?",
-        "desc": "Delegating increases the voting power of the address you indicate above by your current or future {{tokenSymbol}} balance. If you are delegating to somebody else, you will be unable to vote until you reclaim your voting power."
+        "desc": "Delegating increases the voting power of the address you indicate above by your current or future {{tokenSymbol}} balance. If you are delegating to somebody else, you will be unable to vote until you claim your voting power."
       },
       "ctaLabelDelegating": "Delegating …",
-      "ctaLabelReclaiming": "Reclaming …",
-      "ctaLabelReclaim": "Reclaim now",
-      "ctaLabelDelegateNow": "Delegate now",
+      "ctaLabelReclaiming": "Claiming …",
+      "ctaLabelReclaim": "Claim now",
+      "ctaLabelDelegateNow": "Delegate voting power",
       "successCtaLabel": "See community",
       "successBtnSecondaryLabel": "See transaction",
       "successDelegateTitle": "Voting power successfully delegated",
-      "successDelegateDesc": "You have delegated all your voting power of {{balance}} {{tokenSymbol}} to {{delegateEns}}. You have the option to revoke this at any time.",
-      "successReclaimTitle": "Reclaimed your voting power successfully",
-      "successReclaimDesc": "You have reclaimed your voting power of {{balance}} {{tokenSymbol}} back. Your votes will be available for future proposals, and not for currently active.",
+      "successDelegateDesc": "You have delegated all your voting power of {{balance}} {{tokenSymbol}} to the <b>{{delegateEns}}</b>. You have the option to revoke this at any time.",
+      "successReclaimDesc": "You have claimed your voting power of {{balance}} {{tokenSymbol}}. Your voting power will be available in future proposals, but not for those that are already active.",
       "alertCriticalDelegate": "Delegating went wrong. Try again.",
-      "alertCriticalReclaim": "Reclaiming went wrong. Try again.",
+      "alertCriticalReclaim": "Claiming went wrong. Try again.",
       "ctaLabelRetry": "Retry"
+    },
+    "delegationInactive": {
+      "title": "You have no voting power",
+      "desc": "You haven't delegated your voting power of {{balance}} {{tokenSymbol}} to any address. If you want to participate in future proposals, you have to claim your voting power for yourself or delegate to another address."
     }
   },
   "scc": {
@@ -1363,5 +1392,6 @@
   "tagWallet": {
     "labelYourDelegate": "Your delegate",
     "labelYou": "You"
-  }
+  },
+  "Voting power claimed successfully": "Claimed your voting power successfully"
 }

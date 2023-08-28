@@ -199,7 +199,7 @@ const UpdateMinimumApproval: React.FC<UpdateMinimumApprovalProps> = ({
             <p>{removeActionCount}</p>
           </HStack>
           <HStack>
-            <SummaryLabel>{t('labels.totalNewMembers')}</SummaryLabel>
+            <SummaryLabel>{t('labels.totalMembers')}</SummaryLabel>
             <p>{totalMembers}</p>
           </HStack>
         </SummaryContainer>

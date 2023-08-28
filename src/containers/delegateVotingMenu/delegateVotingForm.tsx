@@ -127,7 +127,7 @@ export const DelegateVotingForm: React.FC<IDelegateVotingFormProps> = props => {
           disabled={isLoading}
         />
         <CheckboxListItem
-          label={t('modal.delegation.checkbox.reclaim')}
+          label={t('modal.delegation.checkbox.claim')}
           type={isReclaimMode ? 'active' : 'default'}
           onClick={handleReclaimSelection}
           disabled={isLoading}
