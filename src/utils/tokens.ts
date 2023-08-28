@@ -332,40 +332,6 @@ export const fetchBalance = async (
 };
 
 /**
- * @param tokenAddress address of token contract
- * @param ownerAddress owner address / wallet address
- * @param provider interface to node
- * @param nativeCurrency native currency of active chain
- * @param shouldFormat whether value is returned in human readable format
- * @returns a promise that will return a voting power
- */
-export const fetchVotingPower = async (
-  tokenAddress: string,
-  ownerAddress: string,
-  provider: EthersProviders.Provider,
-  nativeCurrency: NativeTokenData,
-  shouldFormat = true
-) => {
-  const contract = new ethers.Contract(
-    tokenAddress,
-    votesUpgradeableABI,
-    provider
-  );
-  const votes = await contract.getVotes(ownerAddress);
-
-  if (shouldFormat) {
-    const {decimals} = await getTokenInfo(
-      tokenAddress,
-      provider,
-      nativeCurrency
-    );
-    return formatUnits(votes, decimals);
-  }
-
-  return votes;
-};
-
-/**
  * Check if token is the chain native token; the distinction is made
  * especially in terms of whether the contract address
  * is that of an ERC20 token

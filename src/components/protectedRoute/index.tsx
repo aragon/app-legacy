@@ -14,7 +14,8 @@ import {usePluginSettings} from 'hooks/usePluginSettings';
 import {useWallet} from 'hooks/useWallet';
 import {CHAIN_METADATA} from 'utils/constants';
 import {formatUnits} from 'utils/library';
-import {fetchBalance, fetchVotingPower} from 'utils/tokens';
+import {fetchBalance} from 'utils/tokens';
+import {useVotingPowerAsync} from 'services/aragon-sdk/queries/use-voting-power';
 
 const ProtectedRoute: React.FC = () => {
   const navigate = useNavigate();
@@ -26,6 +27,7 @@ const ProtectedRoute: React.FC = () => {
     isModalOpen: web3ModalIsShown,
   } = useWallet();
   const {data: daoDetails, isLoading: detailsAreLoading} = useDaoDetailsQuery();
+  const fetchVotingPower = useVotingPowerAsync();
 
   const [showLoginModal, setShowLoginModal] = useState(false);
 
@@ -73,15 +75,16 @@ const ProtectedRoute: React.FC = () => {
           CHAIN_METADATA[network].nativeCurrency
         );
 
-        votingPower = await fetchVotingPower(
-          daoToken?.address,
+        const votinPowerWei = await fetchVotingPower({
           address,
-          provider,
-          CHAIN_METADATA[network].nativeCurrency
-        );
+          tokenAddress: daoToken?.address,
+        });
+        votingPower = formatUnits(votinPowerWei, daoToken.decimals);
       } catch (e) {
         console.error(e);
       }
+
+      console.log({balance, votingPower});
 
       const minProposalThreshold = Number(
         formatUnits(
@@ -99,6 +102,7 @@ const ProtectedRoute: React.FC = () => {
     }
   }, [
     address,
+    fetchVotingPower,
     close,
     daoSettings,
     daoToken,
