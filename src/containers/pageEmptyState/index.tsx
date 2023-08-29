@@ -48,7 +48,7 @@ const PageEmptyState = ({
 
 export default PageEmptyState;
 
-export const Container = styled.div.attrs({
+const Container = styled.div.attrs({
   className: 'col-span-full desktop:col-start-3 desktop:col-end-11',
 })``;
 
@@ -61,7 +61,7 @@ export const EmptyStateContainer = styled.div.attrs({
     'flex flex-col w-full items-center py-4 px-3 tablet:py-12 tablet:px-6 mx-auto mt-3 tablet:mt-5 ft-text-lg bg-white rounded-xl text-ui-500',
 })``;
 
-export const ActionsContainer = styled.div.attrs({
+const ActionsContainer = styled.div.attrs({
   className:
     'flex flex-col tablet:flex-row tablet:gap-x-3 gap-y-1.5 tablet:justify-center mt-4 w-full',
 })``;

@@ -27,13 +27,6 @@ export type DaoMembers = {
   daoToken?: Erc20TokenDetails;
 };
 
-// this type guard will need to evolve when there are more types
-export function isMultisigMember(
-  member: BalanceMember | MultisigMember
-): member is MultisigMember {
-  return !('address' in member);
-}
-
 export function isBalanceMember(
   member: BalanceMember | MultisigMember
 ): member is BalanceMember {

@@ -34,7 +34,7 @@ type PrivacyContextType = {
 
 const PrivacyContext = createContext<PrivacyContextType | null>(null);
 
-export const PRIVACY_KEY = 'privacy-policy-preferences';
+const PRIVACY_KEY = 'privacy-policy-preferences';
 
 const PrivacyContextProvider: React.FC = ({children}) => {
   // 'cache' for the privacy preferences to reduce storage usage and increase speed

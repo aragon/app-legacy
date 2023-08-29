@@ -124,9 +124,7 @@ export interface IPluginSettings {
   daoDetails: DaoDetails | undefined | null;
 }
 
-export const PluginSettingsWrapper: React.FC<IPluginSettings> = ({
-  daoDetails,
-}) => {
+const PluginSettingsWrapper: React.FC<IPluginSettings> = ({daoDetails}) => {
   // TODO: Create support for multiple plugin DAO once design is ready.
   const pluginType = daoDetails?.plugins?.[0]?.id as PluginTypes;
 
@@ -143,7 +141,7 @@ export const PluginSettingsWrapper: React.FC<IPluginSettings> = ({
   }
 };
 
-export const SettingsWrapper: React.FC = ({children}) => {
+const SettingsWrapper: React.FC = ({children}) => {
   const {t} = useTranslation();
   const {isMobile} = useScreen();
 

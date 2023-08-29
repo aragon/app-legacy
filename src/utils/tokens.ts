@@ -13,7 +13,6 @@ import {NativeTokenData, TimeFilter, TOKEN_AMOUNT_REGEX} from './constants';
 import {add} from 'date-fns';
 import {Transfer, TransferType} from '@aragon/sdk-client';
 import {TokenType} from '@aragon/sdk-client-common';
-import {ownableABI} from 'abis/ownableABI';
 import {votesUpgradeableABI} from 'abis/governanceWrappedERC20TokenABI';
 import {erc1155TokenABI} from 'abis/erc1155TokenABI';
 import {erc721TokenABI} from 'abis/erc721TokenABI';
@@ -75,24 +74,6 @@ export function filterTokens(tokens: TokenWithMetadata[], searchTerm: string) {
   if (!searchTerm) return tokens;
 
   return tokens.filter(t => tokenInfoMatches(t, searchTerm));
-}
-
-/**
- * Gets the owner of a contract or null if the contract is not ownable
- * @param address Address of the contract
- * @param provider Ethers provider to use
- * @returns address of the owner or null if the contract is not ownable
- */
-export async function getOwner(
-  address: string,
-  provider: EthersProviders.Provider
-) {
-  const contract = new ethers.Contract(address, ownableABI, provider);
-  try {
-    return (await contract.owner()) as string;
-  } catch (err) {
-    return null;
-  }
 }
 
 /**
@@ -171,31 +152,6 @@ export async function isERC20Token(
   const contract = new ethers.Contract(address, erc20TokenABI, provider);
   try {
     await Promise.all([contract.balanceOf(address), contract.totalSupply()]);
-    return true;
-  } catch (err) {
-    return false;
-  }
-}
-
-/**
- * This Validation function checks if the existing token contract
- * is compatible or not
- *
- * @param address contract Address
- * @param provider Eth provider
- * @returns boolean determines whether it is compatible or not
- */
-
-export async function isERC20Governance(
-  address: string,
-  provider: EthersProviders.Provider
-) {
-  const contract = new ethers.Contract(address, votesUpgradeableABI, provider);
-  try {
-    await Promise.all([
-      contract.delegates(address),
-      contract.getVotes(address),
-    ]);
     return true;
   } catch (err) {
     return false;
@@ -473,7 +429,7 @@ export function gTokenSymbol(tokenSymbol: string): string {
   return `g${tokenSymbol}`;
 }
 
-export function shortenStr(
+function shortenStr(
   str: string,
   startSymbols = 3,
   endSymbols = 0,

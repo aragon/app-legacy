@@ -3,26 +3,12 @@ import {getAlchemyProvider} from 'context/providers';
 import {
   getTokenHoldersPaged,
   getTotalHolders,
-  getTotalSupply,
 } from 'services/covalentAPI';
 import {CHAIN_METADATA} from 'utils/constants';
-import {getOwner} from 'utils/tokens';
 
 // Slow tests, only use adhoc
 
 describe('token info', () => {
-  it('get owner succeed', async () => {
-    const provider = getAlchemyProvider(CHAIN_METADATA['goerli'].id)!;
-    const contractAddress = '0x565407E688c6D9688C21eF97D7BFc7470BC9ed2F';
-    const owner = await getOwner(contractAddress, provider);
-    expect(owner).toBe('0x759674E0545Cc92B04d0E1C18c159B9D0eB8548C');
-  });
-  it('get owner failed', async () => {
-    const provider = getAlchemyProvider(CHAIN_METADATA['mumbai'].id)!;
-    const contractAddress = '0x4eF4099E172874Ab2c4EdbBb88c173bf88509bD6';
-    const owner = await getOwner(contractAddress, provider);
-    expect(owner).toBe(null);
-  });
   it('get token owners paged', async () => {
     const tokenContract = '0xa117000000f279D81A1D3cc75430fAA017FA5A2e'; // ANT contract
     const queryClient = new QueryClient();
@@ -35,13 +21,6 @@ describe('token info', () => {
     );
     expect(holders.data.items.length).toBe(100);
     expect(holders.error).toBeFalsy();
-  });
-  it('get token total supply', async () => {
-    const tokenContract = '0xa117000000f279D81A1D3cc75430fAA017FA5A2e'; // ANT contract
-    const queryClient = new QueryClient();
-    const supply = await getTotalSupply(queryClient, tokenContract, 'ethereum');
-    expect(supply).toBeGreaterThan(10000);
-    expect(supply).toBeLessThan(100000000);
   });
   it('get token holders count', async () => {
     const tokenContract = '0xa117000000f279D81A1D3cc75430fAA017FA5A2e'; // ANT contract

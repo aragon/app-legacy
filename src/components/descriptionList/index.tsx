@@ -93,15 +93,6 @@ export const Dl: React.FC = ({children}) => (
   </DlContainer>
 );
 
-const DescriptionList = {
-  Container: DescriptionListContainer,
-  Dl,
-  Dt,
-  Dd,
-};
-
-export default DescriptionList;
-
 const Container = styled.div.attrs({
   className: 'p-2 tablet:p-3 space-y-3 rounded-xl bg-ui-0',
 })``;

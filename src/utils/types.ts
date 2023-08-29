@@ -173,7 +173,7 @@ export type ExecutionStatus =
   | 'executable-failed'
   | 'default';
 
-export type UncategorizedProposalData = {
+type UncategorizedProposalData = {
   id: string;
   metadata: ProposalMetadata;
   vote: VotingData;
@@ -199,7 +199,7 @@ type BlockChainInteraction = {
   block: string;
 };
 
-export type VotingData = {
+type VotingData = {
   start: Seconds;
   end: Seconds;
   total: number;
@@ -426,15 +426,6 @@ export type ActionItem = {
   inputs?: ParamType[];
 };
 
-export type TransactionItem = {
-  type: TransferTypes;
-  data: {
-    sender: string;
-    amount: number;
-    tokenContract: string;
-  };
-};
-
 /* MISCELLANEOUS TYPES ======================================================= */
 export type Dao = {
   address: string;
@@ -637,7 +628,7 @@ interface TokenFormData {
   isCustomToken: boolean;
 }
 
-export type WithdrawFormDataAction = TokenFormData & {
+type WithdrawFormDataAction = TokenFormData & {
   to: InputValue;
   from: string;
   amount: string;

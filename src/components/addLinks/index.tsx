@@ -8,7 +8,7 @@ import styled from 'styled-components';
 import Header from './header';
 import Row from './row';
 
-export type AddLinks = {
+type AddLinksProps = {
   /** Name of the fieldArray that is the target of the link inputs. Defaults to
    * 'links' */
   arrayName?: string;
@@ -17,7 +17,7 @@ export type AddLinks = {
   bgWhite?: boolean;
 };
 
-const AddLinks: React.FC<AddLinks> = ({
+const AddLinks: React.FC<AddLinksProps> = ({
   buttonPlusIcon,
   buttonLabel,
   arrayName = 'links',

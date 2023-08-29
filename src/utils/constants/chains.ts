@@ -38,12 +38,6 @@ export type SupportedNetworks =
   | typeof SUPPORTED_NETWORKS[number]
   | 'unsupported';
 
-export function isSupportedNetwork(
-  network: string
-): network is SupportedNetworks {
-  return SUPPORTED_NETWORKS.some(n => n === network);
-}
-
 export function toSupportedNetwork(network: string): SupportedNetworks {
   return SUPPORTED_NETWORKS.some(n => n === network)
     ? (network as SupportedNetworks)

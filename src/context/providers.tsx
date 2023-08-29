@@ -139,7 +139,7 @@ export function getAlchemyProvider(
  * @returns An `InfuraProvider` instance for the specified network or `null`
  *  if the network is unsupported.
  */
-export function getInfuraProvider(
+function getInfuraProvider(
   chainIdOrNetwork: SupportedChainID | SupportedNetworks
 ): InfuraProvider | null {
   const InfuraUnsupportedNetworks = ['base', 'base-goerli', 'unsupported'];
@@ -170,7 +170,7 @@ export function getInfuraProvider(
  * @param chainIdOrNetwork - The chain ID or network to create the provider for.
  * @returns The JSON-RPC provider instance or null if the chain or network is unsupported.
  */
-export function getJsonRpcProvider(
+function getJsonRpcProvider(
   chainIdOrNetwork: SupportedChainID | SupportedNetworks
 ): JsonRpcProvider | null {
   const network = toNetwork(chainIdOrNetwork);

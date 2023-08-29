@@ -61,25 +61,6 @@ export const getTokenHoldersPaged = async (
   });
 };
 
-export const getTotalSupply = async (
-  queryClient: QueryClient,
-  tokenContractAddress: string,
-  network: SupportedNetworks
-) => {
-  const page0 = await getTokenHoldersPaged(
-    queryClient,
-    tokenContractAddress,
-    network,
-    0,
-    100
-  );
-
-  return (
-    page0.data.items[0].total_supply /
-    10 ** page0.data.items[0].contract_decimals
-  );
-};
-
 export const getTotalHolders = async (
   queryClient: QueryClient,
   tokenContractAddress: string,

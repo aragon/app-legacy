@@ -1,6 +1,5 @@
 import {
   Client,
-  DaoDetails,
   Erc20TokenDetails,
   MintTokenParams,
   MultisigClient,
@@ -24,7 +23,6 @@ import {
 } from 'ethers/lib/utils';
 import {TFunction} from 'react-i18next';
 
-import {NavigationDao} from 'context/apolloClient';
 import {getEtherscanVerifiedContract} from 'services/etherscanAPI';
 import {Token} from 'services/token/domain';
 import {IFetchTokenParams} from 'services/token/token-service.api';
@@ -583,29 +581,6 @@ export function readFile(file: Blob): Promise<ArrayBuffer> {
 }
 
 /**
- * Map a detailed DAO to a structure that can be favorited
- * @param dao - Detailed DAO fetched from SDK
- * @param network - network on which this DAO resides
- * @returns the DAO in it's favorited form
- */
-export function mapDetailedDaoToFavoritedDao(
-  dao: DaoDetails,
-  network: SupportedNetworks
-): NavigationDao {
-  return {
-    address: dao.address.toLocaleLowerCase(),
-    chain: CHAIN_METADATA[network].id,
-    ensDomain: dao.ensDomain,
-    plugins: dao.plugins,
-    metadata: {
-      name: dao.metadata.name,
-      avatar: dao.metadata.avatar,
-      description: dao.metadata.description,
-    },
-  };
-}
-
-/**
  * Filters out action containing unchanged min approvals
  * @param actions form actions
  * @param pluginSettings DAO plugin settings
@@ -959,33 +934,8 @@ export class Web3Address {
     return this._avatar;
   }
 
-  display(
-    options: {
-      shorten: boolean;
-      prioritize: 'ensName' | 'address';
-    } = {
-      shorten: false,
-      prioritize: 'ensName',
-    }
-  ) {
-    return options.prioritize === 'ensName'
-      ? String(
-          this._ensName || options.shorten
-            ? shortenAddress(this._address)
-            : this._address
-        )
-      : String(this._address || this._ensName);
-  }
-
   toString() {
     return {address: this._address, ensName: this.ensName};
-  }
-
-  isEqual(valueToCompare: Web3Address | {address: string; ensName: string}) {
-    return (
-      valueToCompare.address === this._address &&
-      valueToCompare.ensName === this._ensName
-    );
   }
 }
 

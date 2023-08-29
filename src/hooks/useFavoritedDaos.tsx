@@ -12,16 +12,9 @@ import {NavigationDao} from 'context/apolloClient';
 import {useCallback} from 'react';
 import {
   addFavoriteDaoToCache,
-  getFavoritedDaoFromCache,
   getFavoritedDaosFromCache,
   removeFavoriteDaoFromCache,
-  updateFavoritedDaoInCache,
 } from 'services/cache';
-import {
-  CHAIN_METADATA,
-  SupportedNetworks,
-  getSupportedNetworkByChainId,
-} from 'utils/constants';
 
 const DEFAULT_QUERY_PARAMS = {
   skip: 0,
@@ -79,49 +72,6 @@ export const useFavoritedDaosInfiniteQuery = (
     select: augmentCachedDaos,
     enabled,
     refetchOnWindowFocus: false,
-  });
-};
-
-/**
- * Fetch a favorite DAO from the cache
- * @param daoAddress address of the favorited DAO
- * @param network network of the favorited DAO
- * @returns favorited DAO with given address and network if available
- */
-export const useFavoritedDaoQuery = (
-  daoAddress: string | undefined,
-  network: SupportedNetworks
-) => {
-  const chain = CHAIN_METADATA[network].id;
-
-  return useQuery({
-    queryKey: ['favoritedDao', daoAddress, network],
-    queryFn: () => getFavoritedDaoFromCache(daoAddress, chain),
-    enabled: !!daoAddress && !!network,
-  });
-};
-
-/**
- * Update a favorited DAO in in the cache
- */
-export const useUpdateFavoritedDaoMutation = () => {
-  const queryClient = useQueryClient();
-
-  return useMutation({
-    mutationFn: (variables: {dao: NavigationDao}) =>
-      updateFavoritedDaoInCache(variables.dao),
-
-    onSuccess: (_, variables) => {
-      const network = getSupportedNetworkByChainId(variables.dao.chain);
-
-      queryClient.invalidateQueries(['favoriteDaos']);
-      queryClient.invalidateQueries(['infiniteFavoriteDaos']);
-      queryClient.invalidateQueries([
-        'favoritedDao',
-        variables.dao.address,
-        network,
-      ]);
-    },
   });
 };
 

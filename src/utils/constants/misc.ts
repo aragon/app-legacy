@@ -132,7 +132,6 @@ export const PROPOSAL_STATE_LABELS = [
 
 // Storage and cacheing keys
 export const FAVORITE_DAOS_KEY = 'favoriteDaos';
-export const PENDING_DEPOSITS_KEY = 'pendingDeposits';
 export const PENDING_PROPOSALS_KEY = 'pendingProposals';
 export const PENDING_MULTISIG_PROPOSALS_KEY = 'pendingMultisigProposals';
 export const PENDING_VOTES_KEY = 'pendingVotes';

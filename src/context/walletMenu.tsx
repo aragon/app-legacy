@@ -1,10 +1,4 @@
-import React, {
-  createContext,
-  useContext,
-  useState,
-  useMemo,
-  ReactNode,
-} from 'react';
+import React, {createContext, useState, useMemo, ReactNode} from 'react';
 
 const WalletMenuContext = createContext<WalletMenuContextType | null>(null);
 
@@ -38,8 +32,4 @@ const WalletMenuProvider: React.FC<Props> = ({children}) => {
   );
 };
 
-function useWalletMenuContext(): WalletMenuContextType {
-  return useContext(WalletMenuContext) as WalletMenuContextType;
-}
-
-export {useWalletMenuContext, WalletMenuProvider};
+export {WalletMenuProvider};

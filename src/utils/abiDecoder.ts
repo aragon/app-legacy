@@ -37,7 +37,7 @@ export function getABIs() {
   return state.savedABIs;
 }
 
-export function typeToString(input: utils.ParamType): string {
+function typeToString(input: utils.ParamType): string {
   if (input.type === 'tuple') {
     return '(' + input.components.map(typeToString).join(',') + ')';
   }

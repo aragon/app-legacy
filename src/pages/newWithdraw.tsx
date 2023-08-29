@@ -9,7 +9,7 @@ import {useVotingSettings} from 'hooks/useVotingSettings';
 import WithdrawStepper from 'containers/withdrawStepper';
 import {WithdrawFormData} from 'utils/types';
 
-export const defaultValues = {
+const defaultValues = {
   links: [{name: '', url: ''}],
   startSwitch: 'now',
   durationSwitch: 'duration',

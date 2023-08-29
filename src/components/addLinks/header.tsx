@@ -23,12 +23,12 @@ const AddLinksHeader: React.FC<BgWhite> = ({bgWhite}) => {
 
 export default AddLinksHeader;
 
-export const Container = styled.div.attrs(({bgWhite}: BgWhite) => ({
+const Container = styled.div.attrs(({bgWhite}: BgWhite) => ({
   className: `hidden tablet:flex p-2 space-x-2 ${
     bgWhite ? 'bg-ui-50 border border-ui-100 rounded-t-xl' : 'bg-ui-0'
   }`,
 }))<BgWhite>``;
 
-export const HeaderItem = styled.div.attrs({
+const HeaderItem = styled.div.attrs({
   className: 'flex-1',
 })``;

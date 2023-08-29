@@ -22,8 +22,6 @@ export const SUBGRAPH_API_URL: SubgraphNetworkUrl = {
   unsupported: undefined,
 };
 
-export const ARAGON_RPC = 'mainnet.eth.aragon.network';
-
 type AlchemyApiKeys = Record<SupportedNetworks, string | undefined>;
 export const alchemyApiKeys: AlchemyApiKeys = {
   arbitrum: undefined,

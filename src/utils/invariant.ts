@@ -1,4 +1,4 @@
-export const INVARIANT_ERROR = 'Invariant';
+const INVARIANT_ERROR = 'Invariant';
 
 export function invariant(
   condition: boolean,

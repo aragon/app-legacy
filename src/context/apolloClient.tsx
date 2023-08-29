@@ -1,7 +1,6 @@
 import {makeVar} from '@apollo/client';
 import {
   DaoListItem,
-  Deposit,
   CreateDaoParams,
   DaoMetadata,
   InstalledPluginListItem,
@@ -11,8 +10,6 @@ import {PluginInstallItem} from '@aragon/sdk-client-common';
 
 import {
   FAVORITE_DAOS_KEY,
-  PENDING_DAOS_KEY,
-  PENDING_DEPOSITS_KEY,
   PENDING_EXECUTION_KEY,
   PENDING_MULTISIG_EXECUTION_KEY,
   PENDING_MULTISIG_PROPOSALS_KEY,
@@ -54,15 +51,6 @@ const selectedDaoVar = makeVar<NavigationDao>({
   chain: 5,
   plugins: [],
 });
-
-/*************************************************
- *               PENDING DEPOSITS                *
- *************************************************/
-const depositTxs = JSON.parse(
-  localStorage.getItem(PENDING_DEPOSITS_KEY) || '[]',
-  customJSONReviver
-);
-const pendingDeposits = makeVar<Deposit[]>(depositTxs);
 
 // TODO: Please switch keys from `daoAddress_proposalId` to
 //  `pluginAddress_proposalId` when migrating because DAOs may have
@@ -183,15 +171,9 @@ export type PendingDaoCreation = {
     [key: string]: PendingDao;
   };
 };
-const pendingDaoCreation = JSON.parse(
-  localStorage.getItem(PENDING_DAOS_KEY) || '{}'
-);
-const pendingDaoCreationVar = makeVar<PendingDaoCreation>(pendingDaoCreation);
 
 export {
   favoriteDaosVar,
-  pendingDaoCreationVar,
-  pendingDeposits,
   selectedDaoVar,
   // votes
   pendingMultisigApprovalsVar,

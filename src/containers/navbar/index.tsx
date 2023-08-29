@@ -1,6 +1,5 @@
 import React, {useEffect, useMemo} from 'react';
 import {matchRoutes, useLocation} from 'react-router-dom';
-import styled from 'styled-components';
 
 import {ProcessType} from 'containers/exitProcessMenu';
 import {selectedDaoVar} from 'context/apolloClient';
@@ -98,15 +97,10 @@ const Navbar: React.FC = () => {
 
 export default Navbar;
 
-export const NavigationBar = styled.nav.attrs({
-  className: `flex tablet:order-1 h-12 justify-between items-center px-2 pb-2 pt-1.5
-    tablet:py-2 tablet:px-3 desktop:py-3 desktop:px-5 wide:px-25 text-ui-600`,
-})``;
-
 /* PROCESS ================================================================= */
 type StringIndexed = {[key: string]: {processLabel: string; returnURL: string}};
 
-export const processPaths = [
+const processPaths = [
   {path: NewDeposit},
   {path: NewWithDraw},
   {path: CreateDAO},
@@ -116,7 +110,7 @@ export const processPaths = [
   {path: ManageMembersProposal},
 ];
 
-export const processes: StringIndexed = {
+const processes: StringIndexed = {
   [CreateDAO]: {processLabel: i18n.t('createDAO.title'), returnURL: Landing},
   [NewDeposit]: {
     processLabel: i18n.t('allTransfer.newTransfer'),
