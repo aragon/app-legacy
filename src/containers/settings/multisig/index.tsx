@@ -17,15 +17,10 @@ const MultisigSettings: React.FC<IPluginSettings> = ({daoDetails}) => {
   const {network} = useNetwork(); // TODO get the network from daoDetails
   const navigate = useNavigate();
 
-  const {data: votingSettings} = useVotingSettings(
-    daoDetails?.plugins[0].instanceAddress as string,
-    daoDetails?.plugins[0].id as PluginTypes
-  );
-
-  const {data: daoMembers} = useDaoMembers(
-    daoDetails?.plugins?.[0]?.instanceAddress || '',
-    (daoDetails?.plugins?.[0]?.id as PluginTypes) || undefined
-  );
+  const pluginAddress = daoDetails?.plugins?.[0]?.instanceAddress as string;
+  const pluginType = daoDetails?.plugins?.[0]?.id as PluginTypes;
+  const {data: votingSettings} = useVotingSettings({pluginAddress, pluginType});
+  const {data: daoMembers} = useDaoMembers(pluginAddress, pluginType);
 
   const daoSettings = votingSettings as MultisigVotingSettings;
 

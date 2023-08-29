@@ -24,15 +24,14 @@ const CompareSettings: React.FC = () => {
   const {t} = useTranslation();
 
   const {data: daoDetails, isLoading: areDetailsLoading} = useDaoDetailsQuery();
-  const {data: pluginSettings, isLoading: areSettingsLoading} =
-    useVotingSettings(
-      daoDetails?.plugins[0].instanceAddress as string,
-      daoDetails?.plugins[0].id as PluginTypes
-    );
+  const pluginAddress = daoDetails?.plugins?.[0]?.instanceAddress as string;
+  const pluginType = daoDetails?.plugins?.[0]?.id as PluginTypes;
 
-  const {data: daoToken, isLoading: tokensAreLoading} = useDaoToken(
-    daoDetails?.plugins?.[0]?.instanceAddress || ''
-  );
+  const {data: votingSettings, isLoading: areSettingsLoading} =
+    useVotingSettings({pluginAddress, pluginType});
+
+  const {data: daoToken, isLoading: tokensAreLoading} =
+    useDaoToken(pluginAddress);
 
   const [selectedButton, setSelectedButton] = useState<Views>('new');
 
@@ -66,30 +65,30 @@ const CompareSettings: React.FC = () => {
       <CompareMetadata daoDetails={daoDetails} view={selectedButton} />
 
       {/* GOVERNANCE */}
-      {isTokenVotingSettings(pluginSettings) ? (
+      {isTokenVotingSettings(votingSettings) ? (
         <>
           <CompareMvCommunity
             daoAddressOrEns={daoAddressOrEns as string}
             view={selectedButton}
-            daoSettings={pluginSettings}
+            daoSettings={votingSettings}
             daoToken={daoToken}
           />
           <CompareMvGovernance
             daoAddressOrEns={daoAddressOrEns as string}
             view={selectedButton}
-            daoSettings={pluginSettings}
+            daoSettings={votingSettings}
             daoToken={daoToken}
           />
         </>
-      ) : isMultisigVotingSettings(pluginSettings) ? (
+      ) : isMultisigVotingSettings(votingSettings) ? (
         <>
           <CompareMsCommunity
             daoAddressOrEns={daoAddressOrEns as string}
-            daoSettings={pluginSettings}
+            daoSettings={votingSettings}
             view={selectedButton}
           />
           <CompareMsGovernance
-            daoSettings={pluginSettings}
+            daoSettings={votingSettings}
             view={selectedButton}
           />
         </>

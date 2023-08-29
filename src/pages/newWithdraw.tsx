@@ -20,10 +20,10 @@ export const NewWithdraw: React.FC = () => {
   const [showTxModal, setShowTxModal] = useState(false);
 
   const {data: daoDetails, isLoading: detailsLoading} = useDaoDetailsQuery();
-  const {data: pluginSettings, isLoading: settingsLoading} = useVotingSettings(
-    daoDetails?.plugins[0].instanceAddress as string,
-    daoDetails?.plugins[0].id as PluginTypes
-  );
+  const {data: pluginSettings, isLoading: settingsLoading} = useVotingSettings({
+    pluginAddress: daoDetails?.plugins[0].instanceAddress as string,
+    pluginType: daoDetails?.plugins[0].id as PluginTypes,
+  });
 
   const formMethods = useForm<WithdrawFormData>({
     defaultValues,

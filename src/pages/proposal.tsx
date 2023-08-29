@@ -42,6 +42,7 @@ import {useDaoProposal} from 'hooks/useDaoProposal';
 import {useMappedBreadcrumbs} from 'hooks/useMappedBreadcrumbs';
 import {PluginTypes, usePluginClient} from 'hooks/usePluginClient';
 import {
+  isMultisigVotingSettings,
   isTokenVotingSettings,
   useVotingSettings,
 } from 'hooks/usePluginSettings';
@@ -104,28 +105,20 @@ export const Proposal: React.FC = () => {
   );
 
   const {data: daoDetails, isLoading: detailsAreLoading} = useDaoDetailsQuery();
-  const {data: daoToken} = useDaoToken(
-    daoDetails?.plugins[0].instanceAddress ?? ''
-  );
+  const pluginAddress = daoDetails?.plugins?.[0]?.instanceAddress as string;
+  const pluginType = daoDetails?.plugins?.[0]?.id as PluginTypes;
+  const isMultisigDAO = pluginType === 'multisig.plugin.dao.eth';
 
-  const {data: daoSettings} = useVotingSettings(
-    daoDetails?.plugins[0].instanceAddress as string,
-    daoDetails?.plugins[0].id as PluginTypes
-  );
+  const {data: daoToken} = useDaoToken(pluginAddress);
+  const {data: votingSettings} = useVotingSettings({pluginAddress, pluginType});
 
   const {
     data: {members},
-  } = useDaoMembers(
-    daoDetails?.plugins[0].instanceAddress as string,
-    daoDetails?.plugins[0].id as PluginTypes
-  );
-
-  const multisigDAO =
-    (daoDetails?.plugins[0].id as PluginTypes) === 'multisig.plugin.dao.eth';
+  } = useDaoMembers(pluginAddress, pluginType);
 
   const allowVoteReplacement =
-    isTokenVotingSettings(daoSettings) &&
-    daoSettings.votingMode === VotingMode.VOTE_REPLACEMENT;
+    isTokenVotingSettings(votingSettings) &&
+    votingSettings.votingMode === VotingMode.VOTE_REPLACEMENT;
 
   const {client} = useClient();
   const {set, get} = useCache();
@@ -143,8 +136,6 @@ export const Proposal: React.FC = () => {
     handleSubmitVote,
     handleExecuteProposal,
     isLoading: paramsAreLoading,
-    pluginAddress,
-    pluginType,
     voteSubmitted,
     executionFailed,
     transactionHash,
@@ -432,35 +423,33 @@ export const Proposal: React.FC = () => {
    *************************************************/
   // terminal props
   const mappedProps = useMemo(() => {
-    if (proposal)
+    if (proposal && votingSettings)
       return getLiveProposalTerminalProps(
         t,
         proposal,
         address,
-        daoSettings,
+        votingSettings,
         isMultisigProposal(proposal) ? (members as MultisigMember[]) : undefined
       );
-  }, [address, daoSettings, members, proposal, t]);
+  }, [address, votingSettings, members, proposal, t]);
 
   // get early execution status
-  const canExecuteEarly = useMemo(
-    () =>
-      isTokenVotingSettings(daoSettings)
-        ? isEarlyExecutable(
-            mappedProps?.missingParticipation,
-            proposal,
-            mappedProps?.results,
-            daoSettings.votingMode
-          )
-        : (proposal as MultisigProposal)?.approvals?.length >=
-          daoSettings?.minApprovals,
-    [
-      daoSettings,
-      mappedProps?.missingParticipation,
-      mappedProps?.results,
-      proposal,
-    ]
-  );
+  let canExecuteEarly = false;
+
+  if (votingSettings && proposal && mappedProps) {
+    if (isTokenVotingSettings(votingSettings)) {
+      canExecuteEarly = isEarlyExecutable(
+        mappedProps?.missingParticipation,
+        proposal,
+        mappedProps?.results,
+        votingSettings.votingMode
+      );
+    } else if (isMultisigVotingSettings(votingSettings)) {
+      canExecuteEarly =
+        (proposal as MultisigProposal)?.approvals?.length >=
+        votingSettings?.minApprovals;
+    }
+  }
 
   // proposal execution status
   const executionStatus = useMemo(
@@ -505,7 +494,8 @@ export const Proposal: React.FC = () => {
     if (proposal?.status !== 'Active') return {voteNowDisabled: true};
 
     // disable approval on multisig when wallet has voted
-    if (multisigDAO && (voted || voteSubmitted)) return {voteNowDisabled: true};
+    if (isMultisigDAO && (voted || voteSubmitted))
+      return {voteNowDisabled: true};
 
     // disable voting on mv with no vote replacement when wallet has voted
     if (!allowVoteReplacement && (voted || voteSubmitted))
@@ -546,7 +536,7 @@ export const Proposal: React.FC = () => {
       return {
         voteNowDisabled: false,
         onClick: () => {
-          if (multisigDAO) {
+          if (isMultisigDAO) {
             handleSubmitVote(VoteValues.YES);
           } else {
             setVotingInProcess(true);
@@ -561,7 +551,7 @@ export const Proposal: React.FC = () => {
     canVote,
     handleSubmitVote,
     isOnWrongNetwork,
-    multisigDAO,
+    isMultisigDAO,
     open,
     proposal?.status,
     voteSubmitted,

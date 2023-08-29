@@ -48,16 +48,13 @@ const Action: React.FC<ActionsComponentProps> = ({
 }) => {
   // dao data
   const {data: daoDetails} = useDaoDetailsQuery();
+  const pluginAddress = daoDetails?.plugins?.[0]?.instanceAddress as string;
+  const pluginType = daoDetails?.plugins?.[0]?.id as PluginTypes;
 
   // plugin data
-  const {data: votingSettings} = useVotingSettings(
-    daoDetails?.plugins[0].instanceAddress as string,
-    daoDetails?.plugins[0].id as PluginTypes
-  );
-  const {data: daoMembers} = useDaoMembers(
-    daoDetails?.plugins?.[0]?.instanceAddress || '',
-    (daoDetails?.plugins?.[0]?.id as PluginTypes) || undefined
-  );
+  const {data: votingSettings} = useVotingSettings({pluginAddress, pluginType});
+
+  const {data: daoMembers} = useDaoMembers(pluginAddress, pluginType);
   const multisigDAOSettings = votingSettings as MultisigVotingSettings;
 
   switch (name) {

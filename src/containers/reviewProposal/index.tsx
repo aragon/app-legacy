@@ -1,14 +1,14 @@
-import {Erc20TokenDetails, InstalledPluginListItem} from '@aragon/sdk-client';
 import {Link, VoterType} from '@aragon/ods';
+import {Erc20TokenDetails} from '@aragon/sdk-client';
 import TipTapLink from '@tiptap/extension-link';
 import {EditorContent, useEditor} from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
-import {format, formatDistanceToNow, Locale} from 'date-fns';
+import {Locale, format, formatDistanceToNow} from 'date-fns';
+import * as Locales from 'date-fns/locale';
 import React, {useEffect, useMemo} from 'react';
 import {useFormContext} from 'react-hook-form';
 import {TFunction, useTranslation} from 'react-i18next';
 import styled from 'styled-components';
-import * as Locales from 'date-fns/locale';
 
 import {ExecutionWidget} from 'components/executionWidget';
 import {useFormStep} from 'components/fullScreenStepper';
@@ -48,17 +48,14 @@ const ReviewProposal: React.FC<ReviewProposalProps> = ({
   const {setStep} = useFormStep();
 
   const {data: daoDetails} = useDaoDetailsQuery();
-  const {id: pluginType, instanceAddress: pluginAddress} =
-    daoDetails?.plugins[0] || ({} as InstalledPluginListItem);
+  const pluginAddress = daoDetails?.plugins?.[0]?.instanceAddress as string;
+  const pluginType = daoDetails?.plugins?.[0]?.id as PluginTypes;
 
-  const {data: daoSettings} = useVotingSettings(
-    pluginAddress,
-    pluginType as PluginTypes
-  );
+  const {data: votingSettings} = useVotingSettings({pluginAddress, pluginType});
 
   const {
     data: {members, daoToken},
-  } = useDaoMembers(pluginAddress, pluginType as PluginTypes);
+  } = useDaoMembers(pluginAddress, pluginType);
 
   const {data: totalSupply} = useTokenSupply(daoToken?.address as string);
 
@@ -80,7 +77,9 @@ const ReviewProposal: React.FC<ReviewProposalProps> = ({
     const {startSwitch, startDate, startTime, startUtc} = values;
 
     if (startSwitch === 'now') {
-      const startMinutesDelay = isMultisigVotingSettings(daoSettings) ? 0 : 10;
+      const startMinutesDelay = isMultisigVotingSettings(votingSettings)
+        ? 0
+        : 10;
       return new Date(
         `${getCanonicalDate()}T${getCanonicalTime({
           minutes: startMinutesDelay,
@@ -91,11 +90,11 @@ const ReviewProposal: React.FC<ReviewProposalProps> = ({
         `${startDate}T${startTime}:00${getCanonicalUtcOffset(startUtc)}`
       );
     }
-  }, [daoSettings, values]);
+  }, [votingSettings, values]);
 
   const formattedStartDate = useMemo(() => {
     const {startSwitch} = values;
-    if (startSwitch === 'now' || isMultisigVotingSettings(daoSettings)) {
+    if (startSwitch === 'now' || isMultisigVotingSettings(votingSettings)) {
       return t('labels.now');
     }
 
@@ -103,7 +102,7 @@ const ReviewProposal: React.FC<ReviewProposalProps> = ({
       startDate,
       KNOWN_FORMATS.proposals
     )} ${getFormattedUtcOffset()}`;
-  }, [daoSettings, startDate, t, values]);
+  }, [votingSettings, startDate, t, values]);
 
   /**
    * This is the primary (approximate) end date display which is rendered in Voting Terminal
@@ -179,7 +178,9 @@ const ReviewProposal: React.FC<ReviewProposalProps> = ({
 
     // adding 10 minutes to offset the 10 minutes added by starting now
     if (startSwitch === 'now') {
-      const startMinutesDelay = isMultisigVotingSettings(daoSettings) ? 0 : 10;
+      const startMinutesDelay = isMultisigVotingSettings(votingSettings)
+        ? 0
+        : 10;
       endDateTime = new Date(
         endDateTime.getTime() + minutesToMills(startMinutesDelay)
       );
@@ -189,19 +190,19 @@ const ReviewProposal: React.FC<ReviewProposalProps> = ({
       endDateTime,
       KNOWN_FORMATS.proposals
     )} ${getFormattedUtcOffset()}`;
-  }, [daoSettings, values]);
+  }, [votingSettings, values]);
 
-  const terminalProps = useMemo(
-    () =>
-      getReviewProposalTerminalProps(
+  const terminalProps = useMemo(() => {
+    if (votingSettings) {
+      return getReviewProposalTerminalProps(
         t,
-        daoSettings,
+        votingSettings,
         members,
         daoToken,
         totalSupply?.raw
-      ),
-    [daoSettings, daoToken, members, t, totalSupply?.raw]
-  );
+      );
+    }
+  }, [votingSettings, daoToken, members, t, totalSupply?.raw]);
 
   /*************************************************
    *                    Effects                    *
@@ -257,7 +258,9 @@ const ReviewProposal: React.FC<ReviewProposalProps> = ({
           <ExecutionWidget
             actions={getNonEmptyActions(
               values.actions,
-              isMultisigVotingSettings(daoSettings) ? daoSettings : undefined
+              isMultisigVotingSettings(votingSettings)
+                ? votingSettings
+                : undefined
             )}
             onAddAction={
               addActionsStepNumber

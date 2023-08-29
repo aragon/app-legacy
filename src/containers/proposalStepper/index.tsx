@@ -38,10 +38,11 @@ const ProposalStepper: React.FC<ProposalStepperType> = ({
   enableTxModal,
 }: ProposalStepperType) => {
   const {data: daoDetails, isLoading} = useDaoDetailsQuery();
-  const {data: pluginSettings, isLoading: settingsLoading} = useVotingSettings(
-    daoDetails?.plugins[0].instanceAddress as string,
-    daoDetails?.plugins[0].id as PluginTypes
-  );
+
+  const {data: votingSettings, isLoading: settingsLoading} = useVotingSettings({
+    pluginAddress: daoDetails?.plugins?.[0]?.instanceAddress as string,
+    pluginType: daoDetails?.plugins?.[0]?.id as PluginTypes,
+  });
 
   const {actions} = useActionsContext();
   const {open} = useGlobalModalContext();
@@ -67,7 +68,7 @@ const ProposalStepper: React.FC<ProposalStepperType> = ({
     return <Loading />;
   }
 
-  if (!daoDetails) return null;
+  if (!daoDetails || !votingSettings) return null;
 
   return (
     <FullScreenStepper
@@ -124,7 +125,7 @@ const ProposalStepper: React.FC<ProposalStepperType> = ({
           next();
         }}
       >
-        <SetupVotingForm pluginSettings={pluginSettings} />
+        <SetupVotingForm pluginSettings={votingSettings} />
       </Step>
       <Step
         wizardTitle={t('newProposal.configureActions.heading')}
@@ -134,10 +135,10 @@ const ProposalStepper: React.FC<ProposalStepperType> = ({
           trigger('actions');
         }}
         onNextButtonClicked={next => {
-          if (isMultisigVotingSettings(pluginSettings)) {
+          if (isMultisigVotingSettings(votingSettings)) {
             setValue(
               'actions',
-              removeUnchangedMinimumApprovalAction(formActions, pluginSettings)
+              removeUnchangedMinimumApprovalAction(formActions, votingSettings)
             );
           }
 

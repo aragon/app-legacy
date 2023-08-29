@@ -47,16 +47,13 @@ export const ManageMembers: React.FC = () => {
 
   // dao data
   const {data: daoDetails, isLoading} = useDaoDetailsQuery();
+  const pluginAddress = daoDetails?.plugins?.[0]?.instanceAddress as string;
+  const pluginType = daoDetails?.plugins?.[0]?.id as PluginTypes;
+
   // plugin data
-  const {data: pluginSettings} = useVotingSettings(
-    daoDetails?.plugins[0].instanceAddress as string,
-    daoDetails?.plugins[0].id as PluginTypes
-  );
-  const {data: daoMembers} = useDaoMembers(
-    daoDetails?.plugins?.[0]?.instanceAddress || '',
-    (daoDetails?.plugins?.[0]?.id as PluginTypes) || undefined
-  );
-  const multisigDAOSettings = pluginSettings as MultisigVotingSettings;
+  const {data: daoMembers} = useDaoMembers(pluginAddress, pluginType);
+  const {data: pluginSettings} = useVotingSettings({pluginAddress, pluginType});
+  const multisigVotingSettings = pluginSettings as MultisigVotingSettings;
 
   const formMethods = useForm<ManageMembersFormData>({
     mode: 'onChange',
@@ -85,12 +82,12 @@ export const ManageMembers: React.FC = () => {
         'actions',
         removeUnchangedMinimumApprovalAction(
           formActions,
-          multisigDAOSettings
+          multisigVotingSettings
         ) as ManageMembersFormData['actions']
       );
       next();
     },
-    [formActions, formMethods, multisigDAOSettings]
+    [formActions, formMethods, multisigVotingSettings]
   );
 
   /*************************************************
@@ -130,7 +127,7 @@ export const ManageMembers: React.FC = () => {
                 !actionsAreValid(
                   errors,
                   formActions,
-                  multisigDAOSettings?.minApprovals
+                  multisigVotingSettings?.minApprovals
                 )
               }
               onNextButtonClicked={handleGoToSetupVoting}
@@ -151,7 +148,7 @@ export const ManageMembers: React.FC = () => {
                   actionIndex={2}
                   useCustomHeader
                   currentDaoMembers={daoMembers?.members}
-                  currentMinimumApproval={multisigDAOSettings?.minApprovals}
+                  currentMinimumApproval={multisigVotingSettings?.minApprovals}
                 />
               </>
             </Step>
@@ -160,7 +157,7 @@ export const ManageMembers: React.FC = () => {
               wizardDescription={t('newWithdraw.setupVoting.description')}
               isNextButtonDisabled={!setupVotingIsValid(errors)}
             >
-              <SetupVotingForm pluginSettings={pluginSettings} />
+              <SetupVotingForm pluginSettings={multisigVotingSettings} />
             </Step>
             <Step
               wizardTitle={t('newWithdraw.defineProposal.heading')}

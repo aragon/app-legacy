@@ -45,26 +45,25 @@ export const EditMsSettings: React.FC<EditMsSettingsProps> = ({daoDetails}) => {
   const {isMobile} = useScreen();
 
   const {setValue, control} = useFormContext();
-  const {fields, replace} = useFieldArray({
-    name: 'daoLinks',
-    control,
-  });
+  const {fields, replace} = useFieldArray({name: 'daoLinks', control});
   const {errors, isValid, isDirty} = useFormState({control});
 
-  const {data, isLoading: settingsAreLoading} = useVotingSettings(
-    daoDetails?.plugins[0].instanceAddress as string,
-    daoDetails?.plugins[0].id as PluginTypes
-  );
-  const settings = data as MultisigVotingSettings;
+  const pluginAddress = daoDetails?.plugins?.[0]?.instanceAddress as string;
+  const pluginType: PluginTypes = 'multisig.plugin.dao.eth';
+  const {data, isLoading: settingsAreLoading} = useVotingSettings({
+    pluginAddress,
+    pluginType,
+  });
 
   const {data: members, isLoading: membersAreLoading} = useDaoMembers(
-    daoDetails?.plugins[0].instanceAddress as string,
-    daoDetails?.plugins[0].id as PluginTypes
+    pluginAddress,
+    pluginType
   );
 
   const isLoading = membersAreLoading || settingsAreLoading;
 
-  const dataFetched = !!(!isLoading && members && settings.minApprovals);
+  const votingSettings = data as MultisigVotingSettings;
+  const dataFetched = !!(!isLoading && members && votingSettings.minApprovals);
 
   const [
     daoName,
@@ -146,12 +145,12 @@ export const EditMsSettings: React.FC<EditMsSettingsProps> = ({daoDetails}) => {
   const isGovernanceChanged = useMemo(() => {
     if (!multisigMinimumApprovals) return false;
 
-    return multisigMinimumApprovals !== settings.minApprovals;
-  }, [multisigMinimumApprovals, settings.minApprovals]);
+    return multisigMinimumApprovals !== votingSettings.minApprovals;
+  }, [multisigMinimumApprovals, votingSettings.minApprovals]);
 
   let daoEligibleProposer: MultisigProposerEligibility = formEligibleProposer;
-  if (Object.keys(settings).length !== 0 && settings.constructor === Object) {
-    daoEligibleProposer = settings.onlyListed ? 'multisig' : 'anyone';
+  if (votingSettings) {
+    daoEligibleProposer = votingSettings.onlyListed ? 'multisig' : 'anyone';
   }
 
   const isCommunityChanged = daoEligibleProposer !== formEligibleProposer;
@@ -190,7 +189,7 @@ export const EditMsSettings: React.FC<EditMsSettingsProps> = ({daoDetails}) => {
 
   const setCurrentGovernance = useCallback(() => {
     const multisigWallets = members.members as MultisigMember[];
-    setValue('multisigMinimumApprovals', settings.minApprovals);
+    setValue('multisigMinimumApprovals', votingSettings.minApprovals);
     setValue('multisigWallets', multisigWallets);
     setValue(
       'membership',
@@ -198,7 +197,12 @@ export const EditMsSettings: React.FC<EditMsSettingsProps> = ({daoDetails}) => {
         ? 'token'
         : 'multisig'
     );
-  }, [daoDetails?.plugins, members.members, settings.minApprovals, setValue]);
+  }, [
+    daoDetails?.plugins,
+    members.members,
+    votingSettings.minApprovals,
+    setValue,
+  ]);
 
   const settingsUnchanged =
     !isGovernanceChanged && !isMetadataChanged && !isCommunityChanged;

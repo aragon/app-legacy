@@ -1,7 +1,10 @@
 import React from 'react';
 import {useTranslation} from 'react-i18next';
 import {generatePath, useNavigate} from 'react-router-dom';
-import {VotingMode, VotingSettings} from '@aragon/sdk-client';
+import {
+  MajorityVotingSettings as VotingSettings,
+  VotingMode,
+} from '@aragon/sdk-client';
 import {Link, Tag} from '@aragon/ods';
 
 import {Dd, DescriptionListContainer, Dl, Dt} from 'components/descriptionList';
@@ -22,37 +25,31 @@ const MajorityVotingSettings: React.FC<IPluginSettings> = ({daoDetails}) => {
   const {network} = useNetwork(); // TODO get the network from daoDetails
   const navigate = useNavigate();
 
-  const {data: votingSettings} = useVotingSettings(
-    daoDetails?.plugins[0].instanceAddress as string,
-    daoDetails?.plugins[0].id as PluginTypes
-  );
+  const pluginAddress = daoDetails?.plugins?.[0]?.instanceAddress as string;
+  const pluginType = daoDetails?.plugins?.[0]?.id as PluginTypes;
 
-  const {data: daoMembers} = useDaoMembers(
-    daoDetails?.plugins?.[0]?.instanceAddress || '',
-    (daoDetails?.plugins?.[0]?.id as PluginTypes) || undefined
-  );
-
-  const {data: daoToken} = useDaoToken(
-    daoDetails?.plugins?.[0]?.instanceAddress || ''
-  );
+  const {data: votingSettings} = useVotingSettings({pluginAddress, pluginType});
+  const {data: daoMembers} = useDaoMembers(pluginAddress, pluginType);
+  const {data: daoToken} = useDaoToken(pluginAddress);
 
   const {isTokenMintable} = useExistingToken({daoToken, daoDetails});
+  const {data: tokenSupply} = useTokenSupply(daoToken?.address ?? '');
 
-  const {data: tokenSupply} = useTokenSupply(daoToken?.address || '');
+  const daoVotingSettings = votingSettings as VotingSettings;
 
-  const daoSettings = votingSettings as VotingSettings;
-
-  const {days, hours, minutes} = getDHMFromSeconds(daoSettings.minDuration);
+  const {days, hours, minutes} = getDHMFromSeconds(
+    daoVotingSettings.minDuration
+  );
 
   const votingMode = {
     // Note: This implies that earlyExecution and voteReplacement may never be
     // both true at the same time, as they shouldn't.
     earlyExecution:
-      daoSettings?.votingMode === VotingMode.EARLY_EXECUTION
+      daoVotingSettings?.votingMode === VotingMode.EARLY_EXECUTION
         ? t('labels.yes')
         : t('labels.no'),
     voteReplacement:
-      daoSettings?.votingMode === VotingMode.VOTE_REPLACEMENT
+      daoVotingSettings?.votingMode === VotingMode.VOTE_REPLACEMENT
         ? t('labels.yes')
         : t('labels.no'),
   };
@@ -110,7 +107,7 @@ const MajorityVotingSettings: React.FC<IPluginSettings> = ({daoDetails}) => {
           <Dt>{t('labels.minimumApprovalThreshold')}</Dt>
           <Dd>
             {'>'}
-            {Math.round(daoSettings?.supportThreshold * 100)}%
+            {Math.round(daoVotingSettings?.supportThreshold * 100)}%
           </Dd>
         </Dl>
         <Dl>
@@ -118,8 +115,9 @@ const MajorityVotingSettings: React.FC<IPluginSettings> = ({daoDetails}) => {
 
           <Dd>
             {'≥'}
-            {Math.round(daoSettings?.minParticipation * 100)}% ({'≥'}
-            {daoSettings?.minParticipation * (tokenSupply?.formatted || 0)}{' '}
+            {Math.round(daoVotingSettings?.minParticipation * 100)}% ({'≥'}
+            {daoVotingSettings?.minParticipation *
+              (tokenSupply?.formatted || 0)}{' '}
             {daoToken?.symbol})
           </Dd>
         </Dl>
@@ -147,7 +145,7 @@ const MajorityVotingSettings: React.FC<IPluginSettings> = ({daoDetails}) => {
           <Dd>
             {t('labels.review.tokenHoldersWithTkns', {
               tokenAmount: formatUnits(
-                daoSettings?.minProposerVotingPower || 0,
+                daoVotingSettings?.minProposerVotingPower || 0,
                 daoToken?.decimals || 18
               ),
               tokenSymbol: daoToken?.symbol,

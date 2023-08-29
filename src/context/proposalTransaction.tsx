@@ -51,8 +51,6 @@ type ProposalTransactionContextType = {
   /** handles voting on proposal */
   handleSubmitVote: (vote: VoteValues, token?: string) => void;
   handleExecuteProposal: () => void;
-  pluginAddress: string;
-  pluginType: PluginTypes;
   isLoading: boolean;
   voteSubmitted: boolean;
   executeSubmitted: boolean;
@@ -494,8 +492,6 @@ const ProposalTransactionProvider: React.FC<Props> = ({children}) => {
       handleSubmitVote,
       handleExecuteProposal,
       isLoading,
-      pluginAddress,
-      pluginType,
       voteSubmitted,
       executeSubmitted,
       executionFailed,
@@ -507,8 +503,6 @@ const ProposalTransactionProvider: React.FC<Props> = ({children}) => {
       executionFailed,
       handleExecuteProposal,
       handleSubmitVote,
-      pluginAddress,
-      pluginType,
       transactionHash,
       voteSubmitted,
     ]
