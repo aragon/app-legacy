@@ -9,10 +9,10 @@ import {
   Dl,
   Dt,
 } from '../../components/descriptionList';
-import {IconFeedback, Link, Tag} from '@aragon/ods';
+import {IconFeedback, Link} from '@aragon/ods';
 import {CHAIN_METADATA} from '../../utils/constants';
-import CommunityAddressesModal from '../communityAddressesModal';
 import React from 'react';
+import CommitteeAddressesModal from '../committeeAddressesModal';
 
 const Committee = () => {
   const {control, getValues} = useFormContext();
@@ -40,7 +40,7 @@ const Committee = () => {
       }}
       render={({field: {onChange, value}}) => (
         <DescriptionListContainer
-          title={'Executive committee'}
+          title={t('createDAO.review.executiveCommittee')}
           onEditClick={() => setStep(6)}
           checkBoxErrorMessage={t('createDAO.review.acceptContent')}
           checkedState={
@@ -49,16 +49,23 @@ const Committee = () => {
           tagLabel={t('labels.changeableVote')}
           onChecked={() => onChange(!value)}
         >
-          {/*todo(kon): intl*/}
           <Dl>
-            <Dt>{t('labels.review.distribution')}</Dt>
+            <Dt>{t('labels.review.eligableMembers')}</Dt>
+            <Dd>
+              {isCustomToken
+                ? t('createDAO.step3.tokenMembership')
+                : t('createDAO.step3.multisigMembership')}
+            </Dd>
+          </Dl>
+          <Dl>
+            <Dt>{t('labels.review.members')}</Dt>
             <Dd>
               {isCustomToken ? (
                 <Link
                   label={t('createDAO.review.distributionLink', {
                     count: committee?.length,
                   })}
-                  onClick={() => open('addresses')}
+                  onClick={() => open('committeeMembers')}
                 />
               ) : (
                 <Link
@@ -74,17 +81,15 @@ const Committee = () => {
               )}
             </Dd>
           </Dl>
-          {/*todo(kon): intl */}
           <Dl>
             <Dt>{t('labels.minimumApproval')}</Dt>
             <Dd>
-              {committeeMinimumApproval}&nbsp;
               {t('labels.review.multisigMinimumApprovals', {
-                count: committee.length,
+                count: committeeMinimumApproval,
+                total: committee.length,
               })}
             </Dd>
           </Dl>
-          {/*todo(kon): intl*/}
           <Dl>
             <Dt>{t('labels.minimumDuration')}</Dt>
             <Dd>
@@ -92,21 +97,25 @@ const Committee = () => {
                 <div>
                   {t('createDAO.review.days', {days: executionExpirationDays})}
                 </div>
-                <div>
-                  {t('createDAO.review.hours', {
-                    hours: executionExpirationHours,
-                  })}
-                </div>
-                <div>
-                  {t('createDAO.review.minutes', {
-                    minutes: executionExpirationMinutes,
-                  })}
-                </div>
+                {executionExpirationHours > 0 && (
+                  <div>
+                    {t('createDAO.review.hours', {
+                      hours: executionExpirationHours,
+                    })}
+                  </div>
+                )}
+                {executionExpirationMinutes > 0 && (
+                  <div>
+                    {t('createDAO.review.minutes', {
+                      minutes: executionExpirationMinutes,
+                    })}
+                  </div>
+                )}
               </div>
             </Dd>
           </Dl>
 
-          {/*<CommunityAddressesModal tokenMembership={membership === 'token'} />*/}
+          <CommitteeAddressesModal />
         </DescriptionListContainer>
       )}
     />

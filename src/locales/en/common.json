@@ -167,14 +167,15 @@
       "governance": "Governance",
       "network": "Network",
       "eligibleVoters": "Eligible voters",
-      "distribution": "Distribution",
+      "members": "Members",
+      "eligableMembers": "Eligable members",
       "distributionLink": "See all {{walletCount}} addresses",
       "minimumParticipation": "{{walletCount}} wallets",
       "proposalThreshold": "Proposal threshold",
       "tokenHoldersWithTkns": "Members with ≥ {{tokenAmount}} {{tokenSymbol}} voting power or balance",
       "earlyExecution": "Early execution",
       "voteReplacement": "Vote change",
-      "multisigMinimumApprovals": "of {{count}} authorized addresses",
+      "multisigMinimumApprovals": "{{count}} of {{total}} authorized addresses",
       "existingTokens": {
         "currentHolders": "Current Holders"
       },
@@ -855,6 +856,7 @@
     "review": {
       "title": "Review details",
       "description": "Double-check that everything is correct before deploying your DAO.",
+      "executiveCommittee": "Executive Committee",
       "network": "{{network}} net",
       "distributionLink": "See {{count}} addresses",
       "days": "{{days}} days",
