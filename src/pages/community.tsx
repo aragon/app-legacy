@@ -118,8 +118,10 @@ export const Community: React.FC = () => {
             />
           </div>
         }
-        buttonLabel={t('community.emptyState.ctaLabel')}
-        onClick={handleOpenModal}
+        primaryButton={{
+          label: t('community.emptyState.ctaLabel'),
+          onClick: handleOpenModal,
+        }}
       />
     );
   }

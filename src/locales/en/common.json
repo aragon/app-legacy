@@ -1138,7 +1138,7 @@
       "BtnSecondaryLabel": "No, I’m good",
       "label": "Delegation",
       "title": "You have no voting power",
-      "desc": "You are delegating your voting power of {{balance}} {{tokenSymbol}} to the {{walletAddressDelegation}}.\nIf you want to participate in future proposals, you have to claim your voting power. "
+      "desc": "You are delegating your voting power of {{balance}} {{tokenSymbol}} to {{walletAddressDelegation}}. If you want to participate in future proposals, you have to claim your voting power. "
     },
     "delegation": {
       "label": "Delegation",
@@ -1161,11 +1161,12 @@
       "successCtaLabel": "See community",
       "successBtnSecondaryLabel": "See transaction",
       "successDelegateTitle": "Voting power successfully delegated",
-      "successDelegateDesc": "You have delegated all your voting power of {{balance}} {{tokenSymbol}} to the <b>{{delegateEns}}</b>. You have the option to revoke this at any time.",
+      "successDelegateDesc": "You have delegated all your voting power of {{balance}} {{tokenSymbol}} to {{delegateEns}}. You have the option to revoke this at any time.",
       "successReclaimDesc": "You have claimed your voting power of {{balance}} {{tokenSymbol}}. Your voting power will be available in future proposals, but not for those that are already active.",
       "alertCriticalDelegate": "Delegating went wrong. Try again.",
       "alertCriticalReclaim": "Claiming went wrong. Try again.",
-      "ctaLabelRetry": "Retry"
+      "ctaLabelRetry": "Retry",
+      "successReclaimTitle": "Claimed your voting power successfully"
     },
     "delegationInactive": {
       "title": "You have no voting power",

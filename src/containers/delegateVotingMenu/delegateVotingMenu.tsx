@@ -28,10 +28,15 @@ const formSettings: UseFormProps<IDelegateVotingFormValues> = {
   },
 };
 
+type DelegateVotingMenuState = {
+  reclaimMode?: boolean;
+};
+
 export const DelegateVotingMenu: React.FC = () => {
   const {t} = useTranslation();
   const queryClient = useQueryClient();
-  const {close, open, isDelegateVotingOpen} = useGlobalModalContext();
+  const {close, open, modalState, isDelegateVotingOpen} =
+    useGlobalModalContext<DelegateVotingMenuState>();
 
   const formValues = useForm<IDelegateVotingFormValues>(formSettings);
   const {setValue, control} = formValues;
@@ -45,6 +50,7 @@ export const DelegateVotingMenu: React.FC = () => {
     isModalOpen: isWeb3ModalOpen,
     network,
     address,
+    ensName,
     isOnWrongNetwork,
   } = useWallet();
 
@@ -55,7 +61,7 @@ export const DelegateVotingMenu: React.FC = () => {
     daoDetails?.plugins[0].instanceAddress ?? ''
   );
 
-  const {data: tokenBalance} = useBalance({
+  const {data: tokenBalance, isLoading: isLoadingBalance} = useBalance({
     address: address as Address,
     token: daoToken?.address as Address,
     chainId: CHAIN_METADATA[network as SupportedNetworks].id,
@@ -92,14 +98,19 @@ export const DelegateVotingMenu: React.FC = () => {
     }
   };
 
-  const invalidateDelegateeQuery = () => {
+  const invalidateDelegateQueries = () => {
     const baseParams = {
       address: address as string,
       network: network as SupportedNetworks,
     };
     const params = {tokenAddress: daoToken?.address as string};
-    const queryKey = aragonSdkQueryKeys.delegatee(baseParams, params);
-    queryClient.invalidateQueries(queryKey);
+    const delegateKey = aragonSdkQueryKeys.delegatee(baseParams, params);
+    const votingPowerKey = aragonSdkQueryKeys.votingPower({
+      address: baseParams.address,
+      tokenAddress: daoToken?.address as string,
+    });
+    queryClient.invalidateQueries(delegateKey);
+    queryClient.invalidateQueries(votingPowerKey);
   };
 
   const handleDelegateTokensSuccess = async (
@@ -111,7 +122,7 @@ export const DelegateVotingMenu: React.FC = () => {
       if (step.key === 'delegating') {
         delegateHash = step.txHash;
       } else if (step.key === 'done') {
-        invalidateDelegateeQuery();
+        invalidateDelegateQueries();
         setTxHash(delegateHash);
       }
     }
@@ -143,6 +154,17 @@ export const DelegateVotingMenu: React.FC = () => {
     }
   }, [setValue, currentDelegate, currentDelegateEns, address]);
 
+  // Set the token-delegate form field to connected address when the dialog
+  // is opened in reclaim mode
+  useEffect(() => {
+    if (modalState?.reclaimMode && address != null) {
+      setValue(DelegateVotingFormField.TOKEN_DELEGATE, {
+        address,
+        ensName,
+      });
+    }
+  }, [modalState?.reclaimMode, address, ensName, setValue]);
+
   // Open wrong-network menu when user is on the wrong network
   useEffect(() => {
     if (isConnected && isDelegateVotingOpen && isOnWrongNetwork) {
@@ -153,11 +175,23 @@ export const DelegateVotingMenu: React.FC = () => {
 
   // Open gating menu when user has no tokens for this DAO
   useEffect(() => {
-    if (isConnected && isDelegateVotingOpen && tokenBalance?.value === 0n) {
+    if (
+      isConnected &&
+      isDelegateVotingOpen &&
+      !isLoadingBalance &&
+      tokenBalance?.value === 0n
+    ) {
       open('gating');
       close('delegateVoting');
     }
-  }, [isConnected, tokenBalance?.value, isDelegateVotingOpen, close, open]);
+  }, [
+    isConnected,
+    tokenBalance?.value,
+    isLoadingBalance,
+    isDelegateVotingOpen,
+    close,
+    open,
+  ]);
 
   if (!isConnected && isDelegateVotingOpen) {
     return <LoginRequired isOpen={true} onClose={handleCloseLogin} />;
@@ -180,6 +214,7 @@ export const DelegateVotingMenu: React.FC = () => {
             />
           ) : (
             <DelegateVotingForm
+              initialMode={modalState?.reclaimMode ? 'reclaim' : 'delegate'}
               onDelegateTokens={handleDelegateTokens}
               onCancel={handleCloseMenu}
               status={delegationStatus}

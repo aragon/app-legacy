@@ -75,6 +75,9 @@ import {
   stripPlgnAdrFromProposalId,
 } from 'utils/proposals';
 import {Action, ProposalId} from 'utils/types';
+import {useDaoToken} from 'hooks/useDaoToken';
+import {BigNumber} from 'ethers';
+import {usePastVotingPower} from 'services/aragon-sdk/queries/use-past-voting-power';
 
 // TODO: @Sepehr Please assign proper tags on action decoding
 // const PROPOSAL_TAGS = ['Finance', 'Withdraw'];
@@ -98,6 +101,9 @@ export const Proposal: React.FC = () => {
   );
 
   const {data: daoDetails, isLoading: detailsAreLoading} = useDaoDetailsQuery();
+  const {data: daoToken} = useDaoToken(
+    daoDetails?.plugins[0].instanceAddress ?? ''
+  );
 
   const {data: daoSettings} = usePluginSettings(
     daoDetails?.plugins[0].instanceAddress as string,
@@ -161,6 +167,15 @@ export const Proposal: React.FC = () => {
     proposal?.status as string
   );
 
+  const {data: pastVotingPower = BigNumber.from('0')} = usePastVotingPower(
+    {
+      address: address as string,
+      tokenAddress: daoToken?.address as string,
+      blockNumber: proposal?.creationBlockNumber as number,
+    },
+    {enabled: address != null && daoToken != null && proposal != null}
+  );
+
   const pluginClient = usePluginClient(pluginType);
 
   // ref used to hold "memories" of previous "state"
@@ -172,6 +187,11 @@ export const Proposal: React.FC = () => {
   const [terminalTab, setTerminalTab] = useState<TerminalTabs>('info');
   const [votingInProcess, setVotingInProcess] = useState(false);
   const [expandedProposal, setExpandedProposal] = useState(false);
+
+  // Display the voting-power gating dialog when user can vote but had no
+  // voting power at the proposal creation
+  const displayVotingGate =
+    !multisigDAO && canVote && pastVotingPower.lte(BigNumber.from('0'));
 
   const editor = useEditor({
     editable: false,
@@ -500,6 +520,14 @@ export const Proposal: React.FC = () => {
       };
     }
 
+    // needs voting power
+    else if (displayVotingGate) {
+      return {
+        voteNowDisabled: false,
+        onClick: () => open('delegationGating'),
+      };
+    }
+
     // member, not yet voted
     else if (canVote) {
       return {
@@ -516,6 +544,7 @@ export const Proposal: React.FC = () => {
   }, [
     address,
     allowVoteReplacement,
+    displayVotingGate,
     canVote,
     handleSubmitVote,
     isOnWrongNetwork,

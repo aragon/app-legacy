@@ -32,6 +32,15 @@ export const useDelegatee = (
     options.enabled = false;
   }
 
+  // Make sure that the signer is set on the client before
+  // querying and caching the result
+  try {
+    const signer = client?.web3.getSigner();
+    options.enabled = signer != null;
+  } catch (error: unknown) {
+    options.enabled = false;
+  }
+
   return useQuery(
     aragonSdkQueryKeys.delegatee(baseParams, params),
     () => fetchDelegatee(params, client),

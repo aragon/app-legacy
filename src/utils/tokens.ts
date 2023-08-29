@@ -1,7 +1,12 @@
 /* eslint-disable no-empty */
 import {erc20TokenABI} from 'abis/erc20TokenABI';
 import {TokenWithMetadata} from './types';
-import {constants, ethers, providers as EthersProviders} from 'ethers';
+import {
+  BigNumber,
+  constants,
+  ethers,
+  providers as EthersProviders,
+} from 'ethers';
 
 import {formatUnits} from 'utils/library';
 import {NativeTokenData, TimeFilter, TOKEN_AMOUNT_REGEX} from './constants';
@@ -87,6 +92,48 @@ export async function getOwner(
     return (await contract.owner()) as string;
   } catch (err) {
     return null;
+  }
+}
+
+/**
+ * Returns the voting power for the specified address at the specified block number
+ * @param address Address of the contract
+ * @param account Address to check the voting power
+ * @param blockNumber Block number to check for voting power
+ * @param provider Ethers provider to use
+ * @returns voting power of the account or 0
+ */
+export async function getPastVotingPower(
+  address: string,
+  account: string,
+  blockNumber: number,
+  provider: EthersProviders.Provider
+) {
+  const contract = new ethers.Contract(address, votesUpgradeableABI, provider);
+  try {
+    return (await contract.getPastVotes(account, blockNumber)) as BigNumber;
+  } catch (err) {
+    return BigNumber.from('0');
+  }
+}
+
+/**
+ * Returns the voting power for the specified address at the current time
+ * @param address Address of the contract
+ * @param account Address to check the voting power
+ * @param provider Ethers provider to use
+ * @returns voting power of the account or 0
+ */
+export async function getVotingPower(
+  address: string,
+  account: string,
+  provider: EthersProviders.Provider
+) {
+  const contract = new ethers.Contract(address, votesUpgradeableABI, provider);
+  try {
+    return (await contract.getVotes(account)) as BigNumber;
+  } catch (err) {
+    return BigNumber.from('0');
   }
 }
 
@@ -282,40 +329,6 @@ export const fetchBalance = async (
     return formatUnits(balance, decimals);
   }
   return balance;
-};
-
-/**
- * @param tokenAddress address of token contract
- * @param ownerAddress owner address / wallet address
- * @param provider interface to node
- * @param nativeCurrency native currency of active chain
- * @param shouldFormat whether value is returned in human readable format
- * @returns a promise that will return a voting power
- */
-export const fetchVotingPower = async (
-  tokenAddress: string,
-  ownerAddress: string,
-  provider: EthersProviders.Provider,
-  nativeCurrency: NativeTokenData,
-  shouldFormat = true
-) => {
-  const contract = new ethers.Contract(
-    tokenAddress,
-    votesUpgradeableABI,
-    provider
-  );
-  const votes = await contract.getVotes(ownerAddress);
-
-  if (shouldFormat) {
-    const {decimals} = await getTokenInfo(
-      tokenAddress,
-      provider,
-      nativeCurrency
-    );
-    return formatUnits(votes, decimals);
-  }
-
-  return votes;
 };
 
 /**

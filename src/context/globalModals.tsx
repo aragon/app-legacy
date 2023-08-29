@@ -9,7 +9,7 @@ import React, {
 
 const GlobalModalsContext = createContext<GlobalModalsContextType | null>(null);
 
-type GlobalModalsContextType = {
+type GlobalModalsContextType<TState = Record<string, unknown>> = {
   isTransferOpen: boolean;
   isTokenOpen: boolean;
   isUtcOpen: boolean;
@@ -25,7 +25,9 @@ type GlobalModalsContextType = {
   isPoapClaimOpen: boolean;
   isExportCsvOpen: boolean;
   isDelegateVotingOpen: boolean;
-  open: (menu: MenuTypes) => void;
+  isDelegationGatingOpen: boolean;
+  modalState?: TState;
+  open: (menu: MenuTypes, state?: Record<string, unknown>) => void;
   close: (menu: MenuTypes) => void;
 };
 
@@ -45,7 +47,8 @@ export type MenuTypes =
   | 'deposit'
   | 'poapClaim'
   | 'exportCsv'
-  | 'delegateVoting';
+  | 'delegateVoting'
+  | 'delegationGating';
 
 type Props = Record<'children', ReactNode>;
 
@@ -84,6 +87,10 @@ export const GlobalModalsProvider: React.FC<Props> = ({children}) => {
     useState<GlobalModalsContextType['isExportCsvOpen']>(false);
   const [isDelegateVotingOpen, setIsDelegateVotingOpen] =
     useState<GlobalModalsContextType['isDelegateVotingOpen']>(false);
+  const [isDelegationGatingOpen, setIsDelegationGatingOpen] =
+    useState<GlobalModalsContextType['isDelegateVotingOpen']>(false);
+
+  const [modalState, setModalState] = useState<Record<string, unknown>>();
 
   const toggle = useCallback((type: MenuTypes, isOpen = true) => {
     switch (type) {
@@ -132,13 +139,28 @@ export const GlobalModalsProvider: React.FC<Props> = ({children}) => {
       case 'exportCsv':
         setIsExportCsvOpen(isOpen);
         break;
+      case 'delegationGating':
+        setIsDelegationGatingOpen(isOpen);
+        break;
       default:
         throw new Error(`GlobalModals: modal ${type} unsupported`);
     }
   }, []);
 
-  const close = useCallback((type: MenuTypes) => toggle(type, false), [toggle]);
-  const open = useCallback((type: MenuTypes) => toggle(type, true), [toggle]);
+  const close = useCallback(
+    (type: MenuTypes) => {
+      toggle(type, false);
+      setModalState(undefined);
+    },
+    [toggle]
+  );
+  const open = useCallback(
+    (type: MenuTypes, state?: Record<string, unknown>) => {
+      toggle(type, true);
+      setModalState(state);
+    },
+    [toggle]
+  );
 
   /**
    * TODO: ==============================================
@@ -167,6 +189,8 @@ export const GlobalModalsProvider: React.FC<Props> = ({children}) => {
       isPoapClaimOpen,
       isExportCsvOpen,
       isDelegateVotingOpen,
+      isDelegationGatingOpen,
+      modalState,
       open,
       close,
     }),
@@ -186,6 +210,8 @@ export const GlobalModalsProvider: React.FC<Props> = ({children}) => {
       isUtcOpen,
       isWalletOpen,
       isDelegateVotingOpen,
+      isDelegationGatingOpen,
+      modalState,
       open,
       close,
     ]
@@ -198,7 +224,9 @@ export const GlobalModalsProvider: React.FC<Props> = ({children}) => {
   );
 };
 
-export const useGlobalModalContext = (): GlobalModalsContextType => {
+export const useGlobalModalContext = <
+  TState extends object
+>(): GlobalModalsContextType<TState> => {
   const values = useContext(GlobalModalsContext);
 
   if (values == null) {
@@ -207,5 +235,5 @@ export const useGlobalModalContext = (): GlobalModalsContextType => {
     );
   }
 
-  return values;
+  return {...values, modalState: values.modalState as TState};
 };
