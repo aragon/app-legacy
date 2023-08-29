@@ -26,7 +26,7 @@ type WalletRowProps = {
 const WalletRow: React.FC<WalletRowProps> = ({index, onDelete}) => {
   const {t} = useTranslation();
   const {alert} = useAlertContext();
-  const {infura: provider} = useProviders();
+  const {api: provider} = useProviders();
 
   const {control} = useFormContext();
   const [committee, multisigWallets, wallets, membership]: [
@@ -107,7 +107,7 @@ const WalletRow: React.FC<WalletRowProps> = ({index, onDelete}) => {
               onBlur={onBlur}
               onChange={e => handleOnChange(e, onChange)}
               error={error?.message}
-              showResolvedLabels={false}
+              resolveLabels="onBlur"
               ref={ref}
               name={name}
             />
