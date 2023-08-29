@@ -1,5 +1,5 @@
-import {ListItemAction} from '@aragon/ods';
-import React from 'react';
+import {AlertInline, ListItemAction} from '@aragon/ods';
+import React, {useState} from 'react';
 import {useWatch} from 'react-hook-form';
 import {useTranslation} from 'react-i18next';
 
@@ -9,6 +9,8 @@ import {ActionIndex, Input} from 'utils/types';
 import {FormItem} from '../addAddresses';
 import {useAlertContext} from 'context/alert';
 import {ComponentForType} from 'containers/smartContractComposer/components/inputForm';
+import {useNetwork} from 'context/network';
+import {validateSCCAction} from 'utils/validators';
 
 const SCCAction: React.FC<ActionIndex & {allowRemove?: boolean}> = ({
   actionIndex,
@@ -20,6 +22,10 @@ const SCCAction: React.FC<ActionIndex & {allowRemove?: boolean}> = ({
     name: [`actions.${actionIndex}`],
   });
   const {alert} = useAlertContext();
+  const {network} = useNetwork();
+  const [isValid, setIsValid] = useState(true);
+
+  validateSCCAction(actionData, network).then(res => setIsValid(res));
 
   const methodActions = (() => {
     const result = [];
@@ -71,9 +77,16 @@ const SCCAction: React.FC<ActionIndex & {allowRemove?: boolean}> = ({
                     input={input}
                     functionName={actionData.name}
                     formHandleName={`actions.${actionIndex}.inputs.${index}.value`}
+                    isValid={isValid}
                   />
                 </div>
               ))}
+              {!isValid && (
+                <AlertInline
+                  label="Please fill in all the required fields"
+                  mode="critical"
+                />
+              )}{' '}
             </div>
           ) : null}
         </FormItem>

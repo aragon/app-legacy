@@ -1,13 +1,17 @@
 import {InfuraProvider, JsonRpcProvider} from '@ethersproject/providers';
-import {BigNumber, providers as EthersProviders} from 'ethers';
+import {BigNumber, providers as EthersProviders, ethers} from 'ethers';
 import {isAddress, parseUnits} from 'ethers/lib/utils';
 import {FieldError, FieldErrors, ValidateResult} from 'react-hook-form';
 import {TFunction} from 'react-i18next';
 import {TokenVotingClient} from '@aragon/sdk-client';
 
 import {i18n} from '../../i18n.config';
-import {ALPHA_NUMERIC_PATTERN} from './constants';
-import {Web3Address, isOnlyWhitespace} from './library';
+import {ALPHA_NUMERIC_PATTERN, SupportedNetworks} from './constants';
+import {
+  Web3Address,
+  getDefaultPayableAmountInputName,
+  isOnlyWhitespace,
+} from './library';
 import {isERC1155, isERC20Token, isERC721} from './tokens';
 import {
   Action,
@@ -15,9 +19,11 @@ import {
   ActionItem,
   ActionMintToken,
   ActionRemoveAddress,
+  ActionSCC,
   ActionWithdraw,
   Nullable,
 } from './types';
+import {getEtherscanVerifiedContract} from 'services/etherscanAPI';
 
 export type TokenType =
   | 'ERC-20'
@@ -185,10 +191,11 @@ export const alphaNumericValidator = (
  * @param errors List of fields with errors
  * @returns Whether the screen is valid
  */
-export function actionsAreValid(
+export async function actionsAreValid(
   formActions: Nullable<Action[]>,
   contextActions: ActionItem[],
-  errors: FieldErrors
+  errors: FieldErrors,
+  network: SupportedNetworks
 ) {
   // proposals can go through without any actions
   if (contextActions?.length === 0) return true;
@@ -196,10 +203,10 @@ export function actionsAreValid(
   // mismatch between action form list and actions context
   if (contextActions.length !== formActions?.length) return false;
 
-  let isValid = false;
+  let isInValid = true;
 
   // @Sepehr might need to make affirmative instead at some point - F.F. 2022-08-18
-  function actionIsInvalid(index: number) {
+  async function actionIsInvalid(index: number) {
     if (errors.actions) return true;
     switch (contextActions[index]?.name) {
       case 'withdraw_assets':
@@ -229,17 +236,63 @@ export function actionsAreValid(
           (formActions?.[index] as ActionAddAddress)?.inputs.memberWallets
             ?.length === 0
         );
+      case 'external_contract_action': {
+        const SCCAction = formActions?.[index] as ActionSCC;
+        const result = await validateSCCAction(SCCAction, network);
+        return !result;
+      }
       default:
         return false;
     }
   }
 
   for (let i = 0; i < formActions?.length; i++) {
-    isValid = !actionIsInvalid(i);
-    if (isValid === false) break;
+    isInValid = await actionIsInvalid(i);
+    if (isInValid === true) {
+      break;
+    }
   }
 
-  return isValid;
+  return !isInValid;
+}
+
+export async function validateSCCAction(
+  SCCAction: ActionSCC,
+  network: SupportedNetworks
+) {
+  const etherscanData = await getEtherscanVerifiedContract(
+    SCCAction.contractAddress,
+    network
+  );
+
+  if (
+    etherscanData.status === '1' &&
+    etherscanData.result[0].ABI !== 'Contract source code not verified'
+  ) {
+    // looping through selectedAction.inputs instead of the actionInputs
+    // will allow us to ignore the payable input so that encoding using
+    // the ABI does not complain
+    const functionParams = SCCAction.inputs
+      ?.filter(input => input.name !== getDefaultPayableAmountInputName(i18n.t))
+      .map(input => {
+        const param = input.value;
+
+        if (typeof param === 'string' && param.indexOf('[') === 0) {
+          return JSON.parse(param);
+        }
+        return param;
+      });
+
+    const iface = new ethers.utils.Interface(etherscanData.result[0].ABI);
+
+    try {
+      iface.encodeFunctionData(SCCAction.functionName, functionParams);
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
+  return false;
 }
 
 export function isDaoEnsNameValid(
