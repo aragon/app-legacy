@@ -4,24 +4,22 @@ import {
   TokenVotingClient,
   VotingSettings,
 } from '@aragon/sdk-client';
-import {useEffect, useState} from 'react';
-import {HookData, SupportedVotingSettings} from 'utils/types';
-
 import {UseQueryOptions, useQuery} from '@tanstack/react-query';
+
+import {SupportedVotingSettings} from 'utils/types';
 import {PluginTypes, usePluginClient} from './usePluginClient';
 
+// type guards
 export function isTokenVotingSettings(
-  settings: SupportedVotingSettings | undefined
+  settings: SupportedVotingSettings | undefined | null
 ): settings is VotingSettings {
-  if (!settings || Object.keys(settings).length === 0) return false;
-  return 'minDuration' in settings;
+  return settings ? 'minDuration' in settings : false;
 }
 
 export function isMultisigVotingSettings(
-  settings: SupportedVotingSettings | undefined
+  settings: SupportedVotingSettings | undefined | null
 ): settings is MultisigVotingSettings {
-  if (!settings || Object.keys(settings).length === 0) return false;
-  return !('minDuration' in settings);
+  return settings ? 'minApprovals' in settings : false;
 }
 
 type FetchVotingSettingsParams = {
@@ -65,43 +63,4 @@ export function useVotingSettings(
     queryFn: () => fetchVotingSettings(params, client),
     ...options,
   });
-}
-
-/**
- * Retrieves plugin governance settings from SDK
- * @param pluginAddress plugin from which proposals will be retrieved
- * @param type plugin type
- * @returns plugin governance settings
- */
-export function useVotingSettingsbak(
-  pluginAddress: string,
-  type: PluginTypes
-): HookData<SupportedVotingSettings> {
-  const [data, setData] = useState<SupportedVotingSettings>(
-    {} as SupportedVotingSettings
-  );
-  const [error, setError] = useState<Error>();
-  const [isLoading, setIsLoading] = useState(false);
-
-  const client = usePluginClient(type);
-
-  useEffect(() => {
-    async function getPluginSettings() {
-      try {
-        setIsLoading(true);
-
-        const settings = await client?.methods.getVotingSettings(pluginAddress);
-        if (settings) setData(settings as VotingSettings);
-      } catch (err) {
-        console.error(err);
-        setError(err as Error);
-      } finally {
-        setIsLoading(false);
-      }
-    }
-
-    getPluginSettings();
-  }, [client?.methods, pluginAddress]);
-
-  return {data, error, isLoading};
 }
