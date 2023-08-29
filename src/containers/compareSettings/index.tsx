@@ -9,7 +9,7 @@ import {PluginTypes} from 'hooks/usePluginClient';
 import {
   isMultisigVotingSettings,
   isTokenVotingSettings,
-  usePluginSettings,
+  useVotingSettings,
 } from 'hooks/usePluginSettings';
 import {toDisplayEns} from 'utils/library';
 import {CompareMetadata} from './compareMetadata';
@@ -25,7 +25,7 @@ const CompareSettings: React.FC = () => {
 
   const {data: daoDetails, isLoading: areDetailsLoading} = useDaoDetailsQuery();
   const {data: pluginSettings, isLoading: areSettingsLoading} =
-    usePluginSettings(
+    useVotingSettings(
       daoDetails?.plugins[0].instanceAddress as string,
       daoDetails?.plugins[0].id as PluginTypes
     );

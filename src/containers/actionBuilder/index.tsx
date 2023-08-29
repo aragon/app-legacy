@@ -12,7 +12,7 @@ import {useDaoBalances} from 'hooks/useDaoBalances';
 import {useDaoDetailsQuery} from 'hooks/useDaoDetails';
 import {useDaoMembers} from 'hooks/useDaoMembers';
 import {PluginTypes} from 'hooks/usePluginClient';
-import {usePluginSettings} from 'hooks/usePluginSettings';
+import {useVotingSettings} from 'hooks/usePluginSettings';
 import {formatUnits} from 'utils/library';
 import {
   ActionIndex,
@@ -50,7 +50,7 @@ const Action: React.FC<ActionsComponentProps> = ({
   const {data: daoDetails} = useDaoDetailsQuery();
 
   // plugin data
-  const {data: votingSettings} = usePluginSettings(
+  const {data: votingSettings} = useVotingSettings(
     daoDetails?.plugins[0].instanceAddress as string,
     daoDetails?.plugins[0].id as PluginTypes
   );

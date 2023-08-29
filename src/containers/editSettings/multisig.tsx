@@ -28,7 +28,7 @@ import DefineMetadata from 'containers/defineMetadata';
 import {useNetwork} from 'context/network';
 import {MultisigMember, useDaoMembers} from 'hooks/useDaoMembers';
 import {PluginTypes} from 'hooks/usePluginClient';
-import {usePluginSettings} from 'hooks/usePluginSettings';
+import {useVotingSettings} from 'hooks/usePluginSettings';
 import useScreen from 'hooks/useScreen';
 import {Layout} from 'pages/settings';
 import {toDisplayEns} from 'utils/library';
@@ -51,7 +51,7 @@ export const EditMsSettings: React.FC<EditMsSettingsProps> = ({daoDetails}) => {
   });
   const {errors, isValid, isDirty} = useFormState({control});
 
-  const {data, isLoading: settingsAreLoading} = usePluginSettings(
+  const {data, isLoading: settingsAreLoading} = useVotingSettings(
     daoDetails?.plugins[0].instanceAddress as string,
     daoDetails?.plugins[0].id as PluginTypes
   );

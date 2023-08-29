@@ -20,7 +20,7 @@ import {useDaoDetailsQuery} from 'hooks/useDaoDetails';
 import {PluginTypes} from 'hooks/usePluginClient';
 import {
   isMultisigVotingSettings,
-  usePluginSettings,
+  useVotingSettings,
 } from 'hooks/usePluginSettings';
 import {useWallet} from 'hooks/useWallet';
 import {trackEvent} from 'services/analytics';
@@ -38,7 +38,7 @@ const ProposalStepper: React.FC<ProposalStepperType> = ({
   enableTxModal,
 }: ProposalStepperType) => {
   const {data: daoDetails, isLoading} = useDaoDetailsQuery();
-  const {data: pluginSettings, isLoading: settingsLoading} = usePluginSettings(
+  const {data: pluginSettings, isLoading: settingsLoading} = useVotingSettings(
     daoDetails?.plugins[0].instanceAddress as string,
     daoDetails?.plugins[0].id as PluginTypes
   );

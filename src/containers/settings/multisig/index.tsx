@@ -8,7 +8,7 @@ import {Dd, DescriptionListContainer, Dl, Dt} from 'components/descriptionList';
 import {useNetwork} from 'context/network';
 import {useDaoMembers} from 'hooks/useDaoMembers';
 import {Community} from 'utils/paths';
-import {usePluginSettings} from 'hooks/usePluginSettings';
+import {useVotingSettings} from 'hooks/usePluginSettings';
 import {PluginTypes} from 'hooks/usePluginClient';
 import {IPluginSettings} from 'pages/settings';
 
@@ -17,7 +17,7 @@ const MultisigSettings: React.FC<IPluginSettings> = ({daoDetails}) => {
   const {network} = useNetwork(); // TODO get the network from daoDetails
   const navigate = useNavigate();
 
-  const {data: votingSettings} = usePluginSettings(
+  const {data: votingSettings} = useVotingSettings(
     daoDetails?.plugins[0].instanceAddress as string,
     daoDetails?.plugins[0].id as PluginTypes
   );

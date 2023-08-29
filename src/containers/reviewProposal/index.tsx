@@ -21,7 +21,7 @@ import {PluginTypes} from 'hooks/usePluginClient';
 import {
   isMultisigVotingSettings,
   isTokenVotingSettings,
-  usePluginSettings,
+  useVotingSettings,
 } from 'hooks/usePluginSettings';
 import {useTokenSupply} from 'hooks/useTokenSupply';
 import {
@@ -51,7 +51,7 @@ const ReviewProposal: React.FC<ReviewProposalProps> = ({
   const {id: pluginType, instanceAddress: pluginAddress} =
     daoDetails?.plugins[0] || ({} as InstalledPluginListItem);
 
-  const {data: daoSettings} = usePluginSettings(
+  const {data: daoSettings} = useVotingSettings(
     pluginAddress,
     pluginType as PluginTypes
   );

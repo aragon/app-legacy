@@ -30,7 +30,7 @@ import {PluginTypes, usePluginClient} from 'hooks/usePluginClient';
 import {
   isMultisigVotingSettings,
   isTokenVotingSettings,
-  usePluginSettings,
+  useVotingSettings,
 } from 'hooks/usePluginSettings';
 import {usePollGasFee} from 'hooks/usePollGasfee';
 import {useTokenSupply} from 'hooks/useTokenSupply';
@@ -99,7 +99,7 @@ const CreateProposalProvider: React.FC<Props> = ({
 
   const {data: daoToken} = useDaoToken(pluginAddress);
   const {data: tokenSupply} = useTokenSupply(daoToken?.address || '');
-  const {data: pluginSettings} = usePluginSettings(
+  const {data: pluginSettings} = useVotingSettings(
     pluginAddress,
     pluginType as PluginTypes
   );

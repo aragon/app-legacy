@@ -43,7 +43,7 @@ import {useMappedBreadcrumbs} from 'hooks/useMappedBreadcrumbs';
 import {PluginTypes, usePluginClient} from 'hooks/usePluginClient';
 import {
   isTokenVotingSettings,
-  usePluginSettings,
+  useVotingSettings,
 } from 'hooks/usePluginSettings';
 import useScreen from 'hooks/useScreen';
 import {useWallet} from 'hooks/useWallet';
@@ -108,7 +108,7 @@ export const Proposal: React.FC = () => {
     daoDetails?.plugins[0].instanceAddress ?? ''
   );
 
-  const {data: daoSettings} = usePluginSettings(
+  const {data: daoSettings} = useVotingSettings(
     daoDetails?.plugins[0].instanceAddress as string,
     daoDetails?.plugins[0].id as PluginTypes
   );

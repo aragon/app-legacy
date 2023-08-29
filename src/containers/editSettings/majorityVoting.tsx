@@ -29,7 +29,7 @@ import DefineMetadata from 'containers/defineMetadata';
 import {useNetwork} from 'context/network';
 import {useDaoToken} from 'hooks/useDaoToken';
 import {PluginTypes} from 'hooks/usePluginClient';
-import {usePluginSettings} from 'hooks/usePluginSettings';
+import {useVotingSettings} from 'hooks/usePluginSettings';
 import useScreen from 'hooks/useScreen';
 import {useTokenSupply} from 'hooks/useTokenSupply';
 import {Layout} from 'pages/settings';
@@ -64,7 +64,7 @@ export const EditMvSettings: React.FC<EditMvSettingsProps> = ({daoDetails}) => {
     daoToken?.address || ''
   );
 
-  const {data, isLoading: settingsAreLoading} = usePluginSettings(
+  const {data, isLoading: settingsAreLoading} = useVotingSettings(
     daoDetails?.plugins[0].instanceAddress as string,
     daoDetails?.plugins[0].id as PluginTypes
   );

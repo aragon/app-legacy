@@ -41,7 +41,7 @@ import {
 import {
   isMultisigVotingSettings,
   isTokenVotingSettings,
-  usePluginSettings,
+  useVotingSettings,
 } from 'hooks/usePluginSettings';
 import {usePollGasFee} from 'hooks/usePollGasfee';
 import {useTokenSupply} from 'hooks/useTokenSupply';
@@ -87,7 +87,7 @@ export const ProposeSettings: React.FC = () => {
   });
 
   const {data: daoDetails, isLoading} = useDaoDetailsQuery();
-  const {data: pluginSettings, isLoading: settingsLoading} = usePluginSettings(
+  const {data: pluginSettings, isLoading: settingsLoading} = useVotingSettings(
     daoDetails?.plugins[0].instanceAddress as string,
     daoDetails?.plugins[0].id as PluginTypes
   );
@@ -200,7 +200,7 @@ const ProposeSettingWrapper: React.FC<Props> = ({
   const {id: pluginType, instanceAddress: pluginAddress} =
     daoDetails?.plugins[0] || ({} as InstalledPluginListItem);
 
-  const {data: pluginSettings} = usePluginSettings(
+  const {data: pluginSettings} = useVotingSettings(
     pluginAddress,
     pluginType as PluginTypes
   );

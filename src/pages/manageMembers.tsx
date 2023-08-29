@@ -28,7 +28,7 @@ import {useNetwork} from 'context/network';
 import {useDaoDetailsQuery} from 'hooks/useDaoDetails';
 import {useDaoMembers} from 'hooks/useDaoMembers';
 import {PluginTypes} from 'hooks/usePluginClient';
-import {usePluginSettings} from 'hooks/usePluginSettings';
+import {useVotingSettings} from 'hooks/usePluginSettings';
 import {
   removeUnchangedMinimumApprovalAction,
   toDisplayEns,
@@ -48,7 +48,7 @@ export const ManageMembers: React.FC = () => {
   // dao data
   const {data: daoDetails, isLoading} = useDaoDetailsQuery();
   // plugin data
-  const {data: pluginSettings} = usePluginSettings(
+  const {data: pluginSettings} = useVotingSettings(
     daoDetails?.plugins[0].instanceAddress as string,
     daoDetails?.plugins[0].id as PluginTypes
   );

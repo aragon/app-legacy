@@ -25,14 +25,14 @@ import {CreateProposalProvider} from 'context/createProposal';
 import {useNetwork} from 'context/network';
 import {useDaoDetailsQuery} from 'hooks/useDaoDetails';
 import {PluginTypes} from 'hooks/usePluginClient';
-import {usePluginSettings} from 'hooks/usePluginSettings';
+import {useVotingSettings} from 'hooks/usePluginSettings';
 import {Community} from 'utils/paths';
 import {MintTokensFormData} from 'utils/types';
 import {toDisplayEns} from 'utils/library';
 
 export const MintToken: React.FC = () => {
   const {data: daoDetails, isLoading} = useDaoDetailsQuery();
-  const {data: pluginSettings, isLoading: settingsLoading} = usePluginSettings(
+  const {data: pluginSettings, isLoading: settingsLoading} = useVotingSettings(
     daoDetails?.plugins[0].instanceAddress as string,
     daoDetails?.plugins[0].id as PluginTypes
   );

@@ -10,7 +10,7 @@ import {useProviders} from 'context/providers';
 import {useDaoDetailsQuery} from 'hooks/useDaoDetails';
 import {useDaoMembers} from 'hooks/useDaoMembers';
 import {PluginTypes} from 'hooks/usePluginClient';
-import {usePluginSettings} from 'hooks/usePluginSettings';
+import {useVotingSettings} from 'hooks/usePluginSettings';
 import {useWallet} from 'hooks/useWallet';
 import {CHAIN_METADATA} from 'utils/constants';
 import {formatUnits} from 'utils/library';
@@ -39,7 +39,7 @@ const ProtectedRoute: React.FC = () => {
     [daoDetails?.plugins]
   );
 
-  const {data: daoSettings, isLoading: settingsAreLoading} = usePluginSettings(
+  const {data: daoSettings, isLoading: settingsAreLoading} = useVotingSettings(
     pluginAddress,
     pluginType
   );
