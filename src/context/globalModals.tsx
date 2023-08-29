@@ -130,7 +130,7 @@ export const GlobalModalsProvider: React.FC<Props> = ({children}) => {
         setIsTransferOpen(isOpen);
         break;
       case 'exportCsv':
-        setIsExportCsvOpen(true);
+        setIsExportCsvOpen(isOpen);
         break;
       default:
         throw new Error(`GlobalModals: modal ${type} unsupported`);
