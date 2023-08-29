@@ -2,6 +2,7 @@ import ModalBottomSheetSwitcher from 'components/modalBottomSheetSwitcher';
 import {useGlobalModalContext} from 'context/globalModals';
 import styled from 'styled-components';
 import React from 'react';
+import {constants} from 'ethers';
 import {useTranslation} from 'react-i18next';
 import {ButtonText, IllustrationHuman, shortenAddress} from '@aragon/ods';
 import {useDaoDetailsQuery} from 'hooks/useDaoDetails';
@@ -36,8 +37,7 @@ export const DelegationGatingMenu: React.FC = () => {
     {tokenAddress: daoToken?.address as string},
     {enabled: daoToken != null}
   );
-  const isDelegationActive =
-    delegateData !== '0x0000000000000000000000000000000000000000';
+  const isDelegationActive = delegateData !== constants.AddressZero;
   // The useDelegatee hook returns null when current delegate is connected address
   const currentDelegate =
     delegateData === null ? (address as string) : delegateData;
