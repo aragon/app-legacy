@@ -34,7 +34,8 @@ export type DialogType =
   | 'poapClaim'
   | 'exportCsv'
   | 'delegateVoting'
-  | 'delegationGating';
+  | 'delegationGating'
+  | 'committeeMembers';
 
 type Props = Record<'children', ReactNode>;
 
@@ -73,16 +74,9 @@ export const GlobalModalsProvider: React.FC<Props> = ({children}) => {
   );
 };
 
-export const useGlobalModalContext = <TState extends object>(
-  dialog?: DialogType
-): GlobalModalsContextType<TState> => {
-  const values = useContext(GlobalModalsContext);
-
-  if (values == null) {
-    throw new Error(
-      'GlobalModals: hook must be used inside the GlobalModalContext in order to work properly.'
-    );
-  }
+function useGlobalModalContext(): GlobalModalsContextType {
+  return useContext(GlobalModalsContext) as GlobalModalsContextType;
+}
 
   return {
     ...values,

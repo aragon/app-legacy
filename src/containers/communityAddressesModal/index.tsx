@@ -1,4 +1,4 @@
-import {SearchInput, VoterType, VotersTable} from '@aragon/ods-old';
+import {SearchInput, VoterType, VotersTable} from '@aragon/ods';
 import React, {useCallback, useMemo, useState} from 'react';
 import {useFormContext} from 'react-hook-form';
 import {useTranslation} from 'react-i18next';
@@ -69,6 +69,7 @@ const CommunityAddressesModal: React.FC<CommunityAddressesModalProps> = ({
   /*************************************************
    *                    Render                     *
    *************************************************/
+  // todo(kon): rebase see filtered address list 5270429c
   return (
     <ModalBottomSheetSwitcher
       isOpen={isOpen}
