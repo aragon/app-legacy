@@ -22,7 +22,7 @@ import {fetchBalance} from 'utils/tokens';
 
 const ProtectedRoute: React.FC = () => {
   const navigate = useNavigate();
-  const {open, close, isGatingOpen} = useGlobalModalContext();
+  const {open, close, isOpen} = useGlobalModalContext('gating');
   const {
     address,
     status,
@@ -95,7 +95,7 @@ const ProtectedRoute: React.FC = () => {
         Number(votingPower) < minProposalThreshold
       ) {
         open('gating');
-      } else close('gating');
+      } else close();
     }
   }, [
     address,
@@ -111,7 +111,7 @@ const ProtectedRoute: React.FC = () => {
 
   const gateMultisigProposal = useCallback(() => {
     if ((votingSettings as MultisigVotingSettings)?.onlyListed === false) {
-      close('gating');
+      close();
     } else if (
       !filteredMembers.some(
         mem => mem.address.toLowerCase() === address?.toLowerCase()
@@ -120,7 +120,7 @@ const ProtectedRoute: React.FC = () => {
     ) {
       open('gating');
     } else {
-      close('gating');
+      close();
     }
   }, [
     membersAreLoading,
@@ -150,7 +150,7 @@ const ProtectedRoute: React.FC = () => {
       setShowLoginModal(true);
     } else {
       if (isOnWrongNetwork) open('network');
-      else close('network');
+      else close();
     }
   }, [address, close, isOnWrongNetwork, open]);
 
@@ -208,7 +208,7 @@ const ProtectedRoute: React.FC = () => {
 
   return (
     <>
-      {!isGatingOpen && userWentThroughLoginFlowRef.current && <Outlet />}
+      {!isOpen && userWentThroughLoginFlowRef.current && <Outlet />}
       <LoginRequired isOpen={showLoginModal} onClose={handleCloseLoginModal} />
     </>
   );

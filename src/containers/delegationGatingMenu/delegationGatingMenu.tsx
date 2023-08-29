@@ -15,7 +15,7 @@ import {useWallet} from 'hooks/useWallet';
 
 export const DelegationGatingMenu: React.FC = () => {
   const {t} = useTranslation();
-  const {isDelegationGatingOpen, close, open} = useGlobalModalContext();
+  const {isOpen, close, open} = useGlobalModalContext('delegationGating');
 
   const {network, address} = useWallet();
 
@@ -53,14 +53,14 @@ export const DelegationGatingMenu: React.FC = () => {
     : 'delegationInactive';
 
   const handleReclaimClick = () => {
-    close('delegationGating');
+    close();
     open('delegateVoting', {reclaimMode: true});
   };
 
   return (
     <ModalBottomSheetSwitcher
-      onClose={() => close('delegationGating')}
-      isOpen={isDelegationGatingOpen}
+      onClose={close}
+      isOpen={isOpen}
       title={t('modal.delegationActive.title')}
     >
       <div className="flex flex-col gap-3 py-3 px-2 text-center">
@@ -95,7 +95,7 @@ export const DelegationGatingMenu: React.FC = () => {
             label={t('modal.delegationActive.BtnSecondaryLabel')}
             mode="secondary"
             size="large"
-            onClick={() => close('delegationGating')}
+            onClick={close}
           />
         </ContentGroup>
       </div>

@@ -25,7 +25,7 @@ import {useDaoDetailsQuery} from 'hooks/useDaoDetails';
 import {useDaoToken} from 'hooks/useDaoToken';
 
 export const GatingMenu: React.FC = () => {
-  const {close, isGatingOpen} = useGlobalModalContext();
+  const {close, isOpen} = useGlobalModalContext('gating');
 
   const {t} = useTranslation();
   const navigate = useNavigate();
@@ -43,13 +43,13 @@ export const GatingMenu: React.FC = () => {
   const handleCloseMenu = () => {
     const governancePath = generatePath(Governance, {network, dao: daoName});
     navigate(governancePath);
-    close('gating');
+    close();
   };
 
   const handleWrapTokens = () => {
     const communityPath = generatePath(Community, {network, dao: daoName});
     navigate(communityPath);
-    close('gating');
+    close();
     handleOpenModal();
   };
 
@@ -62,7 +62,7 @@ export const GatingMenu: React.FC = () => {
       ?.symbol || '';
 
   return (
-    <ModalBottomSheetSwitcher isOpen={isGatingOpen} onClose={handleCloseMenu}>
+    <ModalBottomSheetSwitcher isOpen={isOpen} onClose={handleCloseMenu}>
       <ModalBody>
         <StyledImage src={WalletIcon} />
 

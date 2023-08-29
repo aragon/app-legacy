@@ -13,7 +13,7 @@ import {NewWithDraw} from 'utils/paths';
 type Action = 'deposit_assets' | 'withdraw_assets';
 
 const TransferMenu: React.FC = () => {
-  const {isTransferOpen, close, open} = useGlobalModalContext();
+  const {isOpen, close, open} = useGlobalModalContext('transfer');
   const {t} = useTranslation();
   const {network} = useNetwork();
   const {dao} = useParams();
@@ -30,13 +30,13 @@ const TransferMenu: React.FC = () => {
     } else {
       navigate(generatePath(NewWithDraw, {network: network, dao: dao}));
     }
-    close('transfer');
+    close();
   };
 
   return (
     <ModalBottomSheetSwitcher
-      isOpen={isTransferOpen}
-      onClose={() => close('transfer')}
+      isOpen={isOpen}
+      onClose={close}
       title={t('TransferModal.newTransfer')}
     >
       <Container>

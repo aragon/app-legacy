@@ -18,13 +18,13 @@ type MobileNavMenuProps = {
 
 const MobileNavMenu = (props: MobileNavMenuProps) => {
   const currentDao = useReactiveVar(selectedDaoVar);
-  const {open, close, isMobileMenuOpen} = useGlobalModalContext();
+  const {open, close, isOpen} = useGlobalModalContext('mobileMenu');
   const {t} = useTranslation();
 
   const {handleWithFunctionalPreferenceMenu} = usePrivacyContext();
 
   return (
-    <BottomSheet isOpen={isMobileMenuOpen} onClose={() => close('mobileMenu')}>
+    <BottomSheet isOpen={Boolean(isOpen)} onClose={close}>
       <div className="tablet:w-50">
         <CardWrapper className="rounded-xl">
           <DaoSelector
@@ -34,13 +34,13 @@ const MobileNavMenu = (props: MobileNavMenuProps) => {
             }
             src={currentDao?.metadata?.avatar}
             onClick={() => {
-              close('mobileMenu');
+              close();
               handleWithFunctionalPreferenceMenu(() => open('selectDao'));
             }}
           />
         </CardWrapper>
         <div className="py-3 px-2 space-y-3">
-          <NavLinks onItemClick={() => close('mobileMenu')} />
+          <NavLinks onItemClick={close} />
 
           <ButtonText
             className="w-full"

@@ -22,7 +22,7 @@ import {handleClipboardActions, shortenAddress} from 'utils/library';
 import {LoginRequired} from './LoginRequired';
 
 export const WalletMenu = () => {
-  const {close, isWalletOpen} = useGlobalModalContext();
+  const {close, isOpen} = useGlobalModalContext('wallet');
   const {
     address,
     ensName,
@@ -53,7 +53,7 @@ export const WalletMenu = () => {
           wallet_provider: provider?.connection.url,
         });
         localStorage.removeItem('WEB3_CONNECT_CACHED_PROVIDER');
-        close('wallet');
+        close();
         alert(t('alert.chip.walletDisconnected'));
       })
       .catch((e: Error) => {
@@ -75,10 +75,7 @@ export const WalletMenu = () => {
   if (!isConnected) return <LoginRequired />;
 
   return (
-    <ModalBottomSheetSwitcher
-      onClose={() => close('wallet')}
-      isOpen={isWalletOpen}
-    >
+    <ModalBottomSheetSwitcher onClose={close} isOpen={isOpen}>
       <ModalHeader>
         <AvatarAddressContainer>
           <Avatar src={ensAvatarUrl || address || ''} size="small" />
@@ -100,7 +97,7 @@ export const WalletMenu = () => {
             mode="ghost"
             icon={<IconClose />}
             size="small"
-            onClick={() => close('wallet')}
+            onClick={close}
           />
         )}
       </ModalHeader>

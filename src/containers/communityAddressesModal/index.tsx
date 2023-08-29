@@ -22,7 +22,7 @@ const CommunityAddressesModal: React.FC<CommunityAddressesModalProps> = ({
   const [searchValue, setSearchValue] = useState('');
   const {getValues} = useFormContext();
   const {network} = useNetwork();
-  const {isAddressesOpen, close} = useGlobalModalContext();
+  const {isOpen, close} = useGlobalModalContext('addresses');
   const [wallets, tokenSymbol, multisigWallets] = getValues([
     'wallets',
     'tokenSymbol',
@@ -71,8 +71,8 @@ const CommunityAddressesModal: React.FC<CommunityAddressesModalProps> = ({
    *************************************************/
   return (
     <ModalBottomSheetSwitcher
-      isOpen={isAddressesOpen}
-      onClose={() => close('addresses')}
+      isOpen={isOpen}
+      onClose={close}
       data-testid="communityModal"
     >
       <ModalHeader>

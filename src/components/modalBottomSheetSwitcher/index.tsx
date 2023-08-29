@@ -3,7 +3,10 @@ import {Modal, ModalProps} from '@aragon/ods';
 import BottomSheet, {BottomSheetProps} from 'components/bottomSheet';
 import useScreen from 'hooks/useScreen';
 
-const ModalBottomSheetSwitcher: React.FC<ModalProps & BottomSheetProps> = ({
+type ModalBottomSheetSwitcherProps = ModalProps &
+  Omit<BottomSheetProps, 'isOpen'>;
+
+const ModalBottomSheetSwitcher: React.FC<ModalBottomSheetSwitcherProps> = ({
   title,
   subtitle,
   isOpen,

@@ -35,8 +35,8 @@ type DelegateVotingMenuState = {
 export const DelegateVotingMenu: React.FC = () => {
   const {t} = useTranslation();
   const queryClient = useQueryClient();
-  const {close, open, modalState, isDelegateVotingOpen} =
-    useGlobalModalContext<DelegateVotingMenuState>();
+  const {isOpen, close, open, modalState} =
+    useGlobalModalContext<DelegateVotingMenuState>('delegateVoting');
 
   const formValues = useForm<IDelegateVotingFormValues>(formSettings);
   const {setValue, control} = formValues;
@@ -88,13 +88,13 @@ export const DelegateVotingMenu: React.FC = () => {
       ensName: currentDelegateEns,
     });
     setTxHash(undefined);
-    close('delegateVoting');
+    close();
     resetDelegateProcess();
   };
 
   const handleCloseLogin = () => {
     if (!isWeb3ModalOpen) {
-      close('delegateVoting');
+      close();
     }
   };
 
@@ -167,40 +167,33 @@ export const DelegateVotingMenu: React.FC = () => {
 
   // Open wrong-network menu when user is on the wrong network
   useEffect(() => {
-    if (isConnected && isDelegateVotingOpen && isOnWrongNetwork) {
+    if (isConnected && isOpen && isOnWrongNetwork) {
       open('network');
-      close('delegateVoting');
+      close();
     }
-  }, [isConnected, isDelegateVotingOpen, isOnWrongNetwork, open, close]);
+  }, [isConnected, isOpen, isOnWrongNetwork, open, close]);
 
   // Open gating menu when user has no tokens for this DAO
   useEffect(() => {
     if (
       isConnected &&
-      isDelegateVotingOpen &&
+      isOpen &&
       !isLoadingBalance &&
       tokenBalance?.value === 0n
     ) {
       open('gating');
-      close('delegateVoting');
+      close();
     }
-  }, [
-    isConnected,
-    tokenBalance?.value,
-    isLoadingBalance,
-    isDelegateVotingOpen,
-    close,
-    open,
-  ]);
+  }, [isConnected, tokenBalance?.value, isLoadingBalance, isOpen, close, open]);
 
-  if (!isConnected && isDelegateVotingOpen) {
+  if (!isConnected && isOpen) {
     return <LoginRequired isOpen={true} onClose={handleCloseLogin} />;
   }
 
   return (
     <ModalBottomSheetSwitcher
       onClose={handleCloseMenu}
-      isOpen={isDelegateVotingOpen}
+      isOpen={isOpen}
       title={t('modal.delegation.label')}
     >
       <FormProvider {...formValues}>

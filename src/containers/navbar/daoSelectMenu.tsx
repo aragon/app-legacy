@@ -29,7 +29,7 @@ const DaoSelectMenu: React.FC = () => {
   const navigate = useNavigate();
   const currentDao = useReactiveVar(selectedDaoVar);
   const favoriteDaoCache = useReactiveVar(favoriteDaosVar);
-  const {isSelectDaoOpen, close, open} = useGlobalModalContext();
+  const {isOpen, close, open} = useGlobalModalContext('selectDao');
 
   const handleDaoSelect = useCallback(
     (dao: NavigationDao) => {
@@ -40,20 +40,20 @@ const DaoSelectMenu: React.FC = () => {
           dao: toDisplayEns(dao.ensDomain) || dao.address,
         })
       );
-      close('selectDao');
+      close();
     },
     [close, navigate]
   );
 
   const handleBackButtonClick = useCallback(() => {
-    close('selectDao');
+    close();
     if (!isDesktop) open('mobileMenu');
   }, [close, isDesktop, open]);
 
   return (
     <ModalBottomSheetSwitcher
-      isOpen={isSelectDaoOpen}
-      onClose={() => close('selectDao')}
+      isOpen={isOpen}
+      onClose={close}
       onOpenAutoFocus={e => e.preventDefault()}
     >
       <div className="flex flex-col h-full" style={{maxHeight: '75vh'}}>
@@ -75,7 +75,7 @@ const DaoSelectMenu: React.FC = () => {
               daoAddress={toDisplayEns(currentDao?.ensDomain)}
               daoName={currentDao?.metadata.name}
               daoLogo={currentDao?.metadata?.avatar}
-              onClick={() => close('selectDao')}
+              onClick={close}
             />
             {favoriteDaoCache.flatMap(dao => {
               if (
@@ -106,7 +106,7 @@ const DaoSelectMenu: React.FC = () => {
             className="w-full"
             onClick={() => {
               navigate('/');
-              close('selectDao');
+              close();
             }}
           />
         </div>

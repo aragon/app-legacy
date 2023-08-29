@@ -44,7 +44,7 @@ const ExportCsvModal: React.FC<ExportCsvModalProps> = ({
   daoDetails,
 }) => {
   const {t} = useTranslation();
-  const {isExportCsvOpen, close} = useGlobalModalContext();
+  const {isOpen, close} = useGlobalModalContext('exportCsv');
 
   const form = useForm({
     mode: 'onChange',
@@ -174,7 +174,7 @@ const ExportCsvModal: React.FC<ExportCsvModalProps> = ({
     setIsCsvGenerationError(false);
     setIsCsvGenerationSuccess(false);
     setIsFlowFinished(false);
-    close('exportCsv');
+    close();
   }, [close]);
 
   const handleFlowFinish = useCallback(() => {
@@ -183,7 +183,7 @@ const ExportCsvModal: React.FC<ExportCsvModalProps> = ({
 
   return (
     <ModalBottomSheetSwitcher
-      isOpen={isExportCsvOpen}
+      isOpen={isOpen}
       onClose={handleClose}
       title={isFlowFinished ? '' : t('finance.modalExport.headerLabel')}
       subtitle={isFlowFinished ? '' : t('finance.modalExport.headerDesc')}

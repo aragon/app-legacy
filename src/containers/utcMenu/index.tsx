@@ -12,13 +12,13 @@ type UtcMenuProps = {
 };
 
 const UtcMenu: React.FC<UtcMenuProps> = ({onTimezoneSelect}) => {
-  const {isUtcOpen, close} = useGlobalModalContext();
+  const {isOpen, close} = useGlobalModalContext('utc');
   const [searchTerm, setSearchTerm] = useState<string>('');
   const {t} = useTranslation();
 
   const handleUtcClick = (tz: string) => {
     onTimezoneSelect(tz);
-    close('utc');
+    close();
   };
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -33,8 +33,8 @@ const UtcMenu: React.FC<UtcMenuProps> = ({onTimezoneSelect}) => {
 
   return (
     <ModalBottomSheetSwitcher
-      isOpen={isUtcOpen}
-      onClose={() => close('utc')}
+      isOpen={isOpen}
+      onClose={close}
       title={t('newWithdraw.configureWithdraw.utcMenu.title')}
     >
       <ModalBody>
