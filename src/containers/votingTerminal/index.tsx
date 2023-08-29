@@ -1,4 +1,8 @@
-import {VoteValues} from '@aragon/sdk-client';
+import {
+  Erc20TokenDetails,
+  Erc20WrapperTokenDetails,
+  VoteValues,
+} from '@aragon/sdk-client';
 import {ProposalStatus} from '@aragon/sdk-client-common';
 import {
   AlertCard,
@@ -25,6 +29,8 @@ import InfoTab from './infoTab';
 import {useProviders} from 'context/providers';
 import {useNetwork} from 'context/network';
 import {CHAIN_METADATA} from 'utils/constants';
+import {usePastVotingPowerAsync} from 'services/aragon-sdk/queries/use-past-voting-power';
+import {formatUnits} from 'ethers/lib/utils';
 
 export type ProposalVoteResults = {
   yes: {value: string | number; percentage: number};
@@ -56,6 +62,8 @@ export type VotingTerminalProps = {
     symbol: string;
     name: string;
   };
+  tokenAddress?: string;
+  blockNumber?: Number;
   results?: ProposalVoteResults;
   approvals?: string[];
   votingInProcess?: boolean;
@@ -82,6 +90,8 @@ export const VotingTerminal: React.FC<VotingTerminalProps> = ({
   results,
   approvals,
   token,
+  tokenAddress,
+  blockNumber,
   startDate,
   endDate,
   preciseEndDate,
@@ -105,6 +115,7 @@ export const VotingTerminal: React.FC<VotingTerminalProps> = ({
   const {api: provider} = useProviders();
   const {t} = useTranslation();
   const {network} = useNetwork();
+  const fetchPastVotingPower = usePastVotingPowerAsync();
 
   useEffect(() => {
     // fetch avatar fpr each voter
@@ -112,8 +123,18 @@ export const VotingTerminal: React.FC<VotingTerminalProps> = ({
       const response = await Promise.all(
         voters.map(async voter => {
           const wallet = await Web3Address.create(provider, voter.wallet);
+          let balance;
+          if (tokenAddress && wallet.address) {
+            balance = await fetchPastVotingPower({
+              tokenAddress: tokenAddress as string,
+              address: wallet.address as string,
+              blockNumber: blockNumber as number,
+            });
+          }
           return {
             ...voter,
+            tokenAmount: balance ? formatUnits(balance, 18) : voter.tokenAmount,
+            tokenSymbol: token?.symbol,
             wallet: (wallet.ensName ?? wallet.address) as string,
             src: (wallet.avatar || wallet.address) as string,
           };
@@ -125,7 +146,14 @@ export const VotingTerminal: React.FC<VotingTerminalProps> = ({
     if (voters.length) {
       fetchEns();
     }
-  }, [provider, voters]);
+  }, [
+    blockNumber,
+    fetchPastVotingPower,
+    provider,
+    token,
+    tokenAddress,
+    voters,
+  ]);
 
   const filteredVoters = useMemo(() => {
     return query === ''
