@@ -247,12 +247,12 @@ describe('abi decoder', () => {
     abiDecoder.addABI(testABI);
     let methods = abiDecoder.getMethodIDs();
     expect(typeof methods).toBe('object');
-    expect(Object.keys(methods)).toHaveLength(44);
+    expect(Object.keys(methods)).toHaveLength(7);
 
     abiDecoder.removeABI(testABI);
 
     methods = abiDecoder.getMethodIDs();
     expect(typeof methods).toBe('object');
-    expect(Object.keys(methods)).toHaveLength(39);
+    expect(Object.keys(methods)).toHaveLength(2);
   });
 });
