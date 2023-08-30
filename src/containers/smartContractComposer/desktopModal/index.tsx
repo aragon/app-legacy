@@ -148,6 +148,7 @@ export default DesktopModal;
 const EmptyActionsState: React.FC<{selectedSC: SmartContract}> = ({
   selectedSC,
 }) => {
+  const {t} = useTranslation();
   const {setValue} = useFormContext<SccFormData>();
 
   return (
@@ -157,14 +158,14 @@ const EmptyActionsState: React.FC<{selectedSC: SmartContract}> = ({
           mode="inline"
           type="Object"
           object="smart_contract"
-          title="Write Contract"
-          description="No public write actions were found."
+          title={t('scc.writeContractEmptyState.title')}
+          description={t('scc.writeContractEmptyState.desc')}
         />
         {selectedSC.implementationData && (
           <ButtonText
             className="mx-auto mt-3"
             iconLeft={<IconSwitch />}
-            label="Write as proxy"
+            label={t('scc.writeContractEmptyState.ctaLabel')}
             onClick={() => {
               setValue(
                 'selectedSC',

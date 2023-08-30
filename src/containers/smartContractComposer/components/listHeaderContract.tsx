@@ -1,5 +1,4 @@
 import {
-  ButtonText,
   Dropdown,
   IconClose,
   IconCopy,
@@ -9,15 +8,17 @@ import {
   Link,
   ListItemAction,
   ListItemActionProps,
+  shortenAddress,
 } from '@aragon/ods';
 import {useAlertContext} from 'context/alert';
 import {useNetwork} from 'context/network';
-import {t} from 'i18next';
 import React from 'react';
 import {useFormContext} from 'react-hook-form';
 import {chainExplorerAddressLink} from 'utils/constants/chains';
 import {handleClipboardActions} from 'utils/library';
 import {SmartContract} from 'utils/types';
+import {SccFormData} from '..';
+import {useTranslation} from 'react-i18next';
 
 type Props = Partial<ListItemActionProps> & {
   sc: SmartContract;
@@ -31,7 +32,12 @@ export const ListHeaderContract: React.FC<Props> = ({
 }) => {
   const {alert} = useAlertContext();
   const {network} = useNetwork();
-  const {setValue} = useFormContext();
+  const {t} = useTranslation();
+  const {setValue, getValues} = useFormContext<SccFormData>();
+
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore
+  const contracts = getValues('contracts');
 
   const iconRight = (
     <Dropdown
@@ -45,13 +51,14 @@ export const ListHeaderContract: React.FC<Props> = ({
       listItems={[
         {
           component: (
-            <ButtonText
-              iconRight={<IconSwitch />}
-              label={
+            <ListItemAction
+              title={
                 sc.implementationData
-                  ? 'Write as proxy'
-                  : "Don't write as proxy"
+                  ? t('scc.writeProxy.dropdownWriteAsProxyLabel')
+                  : t('scc.writeProxy.dropdownDontWriteLabel')
               }
+              iconRight={<IconSwitch />}
+              bgWhite
             />
           ),
           callback: () => {
@@ -67,10 +74,13 @@ export const ListHeaderContract: React.FC<Props> = ({
                 )?.[0]
               );
             } else {
-              setValue('selectedSC', sc.address);
+              const contract = contracts.filter(
+                c => c.address === sc.proxyAddress
+              )[0];
+              setValue('selectedSC', contract);
               setValue(
                 'selectedAction',
-                sc.actions.filter(
+                contract.actions.filter(
                   a =>
                     a.type === 'function' &&
                     (a.stateMutability === 'payable' ||
@@ -92,7 +102,7 @@ export const ListHeaderContract: React.FC<Props> = ({
               label={t('scc.detailContract.dropdownExplorerLinkLabel', {
                 address: sc.address,
               })}
-              className="justify-between px-2 mt-2 w-full"
+              className="justify-between px-2 w-full"
             />
           ),
           callback: () => {},
@@ -135,13 +145,21 @@ export const ListHeaderContract: React.FC<Props> = ({
 
   const liaProps = {
     title: sc.name,
-    subtitle: sc.address,
+    subtitle: sc.implementationData
+      ? shortenAddress(sc.address)
+      : `${t('scc.listContracts.proxyContractAddressLabel', {
+          contractAddress: shortenAddress(sc.address),
+        })}`,
     bgWhite: true,
     logo: sc.logo,
     iconRight,
   };
 
   return (
-    <ListItemAction {...{...liaProps, ...rest}} iconLeft={liaProps.title} />
+    <ListItemAction
+      {...{...liaProps, ...rest}}
+      iconLeft={liaProps.title}
+      truncateText
+    />
   );
 };
