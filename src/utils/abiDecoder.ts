@@ -1,7 +1,6 @@
 import {keccak256, toUtf8Bytes} from 'ethers/lib/utils';
 import {utils} from 'ethers';
 import {BigNumber} from 'ethers';
-import BN from 'bn.js';
 
 export interface Abi {
   name: string;
@@ -153,88 +152,4 @@ export function decodeMethod(data: string) {
 
     return retData;
   }
-}
-
-export interface Log {
-  address: string;
-  data: string;
-  topics: string[];
-}
-
-export function decodeLogs(logs: Log[]) {
-  return logs
-    .filter(log => log.topics.length > 0)
-    .map(logItem => {
-      const methodID = logItem.topics[0].slice(2);
-      const method = state.methodIDs[methodID];
-      if (method) {
-        const logData = logItem.data;
-        const decodedParams = [] as DecodedParam[];
-        let dataIndex = 0;
-        let topicsIndex = 1;
-
-        const dataTypes = [] as string[];
-        method.inputs.map(input => {
-          if (!input.indexed) {
-            dataTypes.push(input.type);
-          }
-        });
-
-        const decodedData = abiCoder.decode(dataTypes, '0x' + logData.slice(2));
-
-        // Loop topic and data to get the params
-        method.inputs.map(param => {
-          const decodedP = {
-            name: param.name,
-            type: param.type,
-            value: '' as string | BigNumber,
-          } as DecodedParam;
-
-          if (param.indexed) {
-            decodedP.value = logItem.topics[topicsIndex];
-            topicsIndex++;
-          } else {
-            decodedP.value = decodedData[dataIndex];
-            dataIndex++;
-          }
-
-          if (param.type === 'address' && typeof decodedP.value === 'string') {
-            decodedP.value = decodedP.value.toLowerCase();
-            // 42 because len(0x) + 40
-            if (decodedP.value.length > 42) {
-              const toRemove = decodedP.value.length - 42;
-              const temp = decodedP.value.split('');
-              temp.splice(2, toRemove);
-              decodedP.value = temp.join('');
-            }
-          }
-
-          if (
-            param.type === 'uint256' ||
-            param.type === 'uint8' ||
-            param.type === 'int'
-          ) {
-            // ensure to remove leading 0x for hex numbers
-            if (
-              typeof decodedP.value === 'string' &&
-              decodedP.value.startsWith('0x')
-            ) {
-              decodedP.value = new BN(decodedP.value.slice(2), 16).toString(10);
-            } else if (decodedP.value instanceof BigNumber) {
-              decodedP.value = decodedP.value.toString();
-            } else {
-              decodedP.value = new BN(decodedP.value as string).toString(10);
-            }
-          }
-
-          decodedParams.push(decodedP);
-        });
-
-        return {
-          name: method.name,
-          events: decodedParams,
-          address: logItem.address,
-        };
-      }
-    });
 }
