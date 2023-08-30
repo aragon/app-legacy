@@ -96,8 +96,7 @@ export type ChainData = {
 const etherscanApiKey = import.meta.env.VITE_ETHERSCAN_API_KEY;
 const polygonscanApiKey = import.meta.env.VITE_POLYGONSCAN_API_KEY;
 
-export type ChainList = Record<SupportedNetworks, ChainData>;
-export const CHAIN_METADATA: ChainList = {
+export const CHAIN_METADATA: Record<SupportedNetworks, ChainData> = {
   arbitrum: {
     id: 42161,
     name: 'Arbitrum One',

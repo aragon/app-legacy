@@ -121,10 +121,6 @@ function relativeVoteCount(optionCount: number, totalCount: number) {
   return Math.round((optionCount / totalCount) * 100);
 }
 
-export type CardViewProposal = Omit<CardProposalProps, 'onClick'> & {
-  id: string;
-};
-
 /**
  * Map SDK proposals to proposals to be displayed as CardProposals
  * @param proposals proposal list from SDK
