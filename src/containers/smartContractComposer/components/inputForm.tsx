@@ -30,7 +30,7 @@ import {
   handleClipboardActions,
 } from 'utils/library';
 import {Input, SmartContract, SmartContractAction} from 'utils/types';
-import {validateAddress} from 'utils/validators';
+import {isAddress} from 'ethers/lib/utils';
 
 type InputFormProps = {
   actionIndex: number;
@@ -85,7 +85,7 @@ const InputForm: React.FC<InputFormProps> = ({
       if (input.name === getDefaultPayableAmountInputName(t)) {
         setValue(
           `actions.${actionIndex}.value`,
-          sccActions[selectedSC.address][selectedAction.name][input.name]
+          sccActions?.[selectedSC.address]?.[selectedAction.name]?.[input.name]
         );
       }
 
@@ -93,8 +93,9 @@ const InputForm: React.FC<InputFormProps> = ({
       setValue(`actions.${actionIndex}.inputs.${index}`, {
         ...actionInputs[index],
         value:
-          sccActions[selectedSC.address]?.[selectedAction.name]?.[input.name] ||
-          '',
+          sccActions?.[selectedSC.address]?.[selectedAction.name]?.[
+            input.name
+          ] || '',
       });
     });
     resetField('sccActions');
@@ -117,12 +118,12 @@ const InputForm: React.FC<InputFormProps> = ({
     selectedSC.name,
     selectedAction.name,
     selectedAction.notice,
+    sccActions,
     actionInputs,
     onComposeButtonClicked,
     another,
     daoAddressOrEns,
     t,
-    sccActions,
   ]);
 
   return (
@@ -227,11 +228,7 @@ export const ComponentForType: React.FC<ComponentForTypeProps> = ({
           name={formName}
           render={({field: {name, value, onBlur, onChange}}) => (
             <WalletInputLegacy
-              mode={
-                !isValid && (!value || validateAddress(value)) !== true
-                  ? 'critical'
-                  : 'default'
-              }
+              mode={!isValid && !isAddress(value) ? 'critical' : 'default'}
               name={name}
               value={getUserFriendlyWalletLabel(value, t)}
               onBlur={onBlur}
