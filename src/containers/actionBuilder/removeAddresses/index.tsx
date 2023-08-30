@@ -203,17 +203,6 @@ const RemoveAddresses: React.FC<RemoveAddressesProps> = ({
                     ),
                     callback: handleDeleteAll,
                   },
-                  // {
-                  //   component: (
-                  //     <ListItemAction
-                  //       title={t('labels.whitelistWallets.uploadCSV')}
-                  //       bgWhite
-                  //       mode="disabled"
-                  //     />
-                  //   ),
-                  //   // TODO: This needs to be added later
-                  //   callback: () => {},
-                  // },
                 ]}
               />
             </FormItem>

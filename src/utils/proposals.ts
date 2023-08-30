@@ -1038,47 +1038,6 @@ function calculateProposalStatus(proposal: DetailedProposal): ProposalStatus {
 
   // TODO: Update when SDK has exposed the proposal status calculations
   return proposal.status ?? ProposalStatus.PENDING;
-
-  // if (isErc20VotingProposal(proposal)) {
-  //   const results = getErc20Results(
-  //     proposal.result,
-  //     proposal.token.decimals,
-  //     proposal.totalVotingWeight
-  //   );
-
-  //   const {missingPart} = getErc20VotingParticipation(
-  //     proposal.settings.minParticipation,
-  //     proposal.usedVotingWeight,
-  //     proposal.totalVotingWeight,
-  //     proposal.token.decimals
-  //   );
-
-  //   // TODO calculate potentially executable
-  //   return computeMultisigProposalStatus({
-  //     startDate: (
-  //       (proposal.startDate || new Date()).getTime() / 1000
-  //     ).toString(),
-  //     endDate: (proposal.endDate.getTime() / 1000).toString(),
-  //     executed: false,
-  //     potentiallyExecutable: isEarlyExecutable(
-  //       missingPart,
-  //       proposal,
-  //       results,
-  //       (proposal as CachedProposal).votingMode
-  //     ),
-  //   });
-  // } else {
-  //   return computeMultisigProposalStatus({
-  //     startDate: (
-  //       (proposal.startDate || new Date()).getTime() / 1000
-  //     ).toString(),
-  //     endDate: (proposal.endDate.getTime() / 1000).toString(),
-  //     executed: false,
-  //     potentiallyExecutable:
-  //       (proposal as MultisigProposal)?.approvals?.length >=
-  //       ((proposal as CachedProposal)?.minApprovals || 1),
-  //   });
-  // }
 }
 
 /**
