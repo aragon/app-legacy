@@ -14,6 +14,7 @@ import Logo from 'public/logo.svg';
 import {useGlobalModalContext} from 'context/globalModals';
 import {Container, GridLayout} from 'components/layout';
 import {FEEDBACK_FORM} from 'utils/constants';
+import {clearWagmiCache} from 'utils/library';
 
 const ExploreNav: React.FC = () => {
   const {t} = useTranslation();
@@ -32,6 +33,8 @@ const ExploreNav: React.FC = () => {
       open('wallet');
       return;
     }
+
+    clearWagmiCache();
     methods.selectWallet().catch((err: Error) => {
       // To be implemented: maybe add an error message when
       // the error is different from closing the window

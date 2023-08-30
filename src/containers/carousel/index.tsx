@@ -9,6 +9,7 @@ import {CTACards} from 'components/ctaCard/data';
 import useScreen from 'hooks/useScreen';
 import {useWallet} from 'hooks/useWallet';
 import {trackEvent} from 'services/analytics';
+import {clearWagmiCache} from 'utils/library';
 
 const Carousel: React.FC = () => {
   const {isDesktop} = useScreen();
@@ -34,6 +35,8 @@ const Carousel: React.FC = () => {
         navigate(path);
         return;
       }
+
+      clearWagmiCache();
       methods
         .selectWallet()
         .then(() => {

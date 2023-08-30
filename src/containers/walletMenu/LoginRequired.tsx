@@ -15,6 +15,7 @@ import {
 import {useGlobalModalContext} from 'context/globalModals';
 import useScreen from 'hooks/useScreen';
 import WalletIcon from 'public/wallet.svg';
+import {clearWagmiCache} from 'utils/library';
 
 type Props = {
   isOpen?: boolean;
@@ -61,6 +62,7 @@ export const LoginRequired: React.FC<Props> = props => {
           label={t('alert.loginRequired.buttonLabel')}
           onClick={() => {
             close('wallet');
+            clearWagmiCache();
             methods.selectWallet().catch((err: Error) => {
               // To be implemented: maybe add an error message when
               // the error is different from closing the window

@@ -1054,3 +1054,9 @@ export function hasValue(value: unknown): boolean {
   }
   return value !== undefined && value !== null;
 }
+
+export function clearWagmiCache(): void {
+  localStorage.removeItem('wagmi.cache');
+  localStorage.removeItem('wagmi.store');
+  localStorage.removeItem('wagmi.wallet');
+}
