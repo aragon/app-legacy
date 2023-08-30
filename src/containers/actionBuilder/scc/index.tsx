@@ -85,7 +85,7 @@ const SCCAction: React.FC<ActionIndex & {allowRemove?: boolean}> = ({
                 ))}
               {!isValid && (
                 <AlertInline
-                  label="Please fill in all the required fields"
+                  label={t('newProposal.configureActions.alertCritical')}
                   mode="critical"
                 />
               )}{' '}
