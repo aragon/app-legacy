@@ -22,7 +22,7 @@ import {
   isMultisigVotingSettings,
   isTokenVotingSettings,
   useVotingSettings,
-} from 'hooks/usePluginSettings';
+} from 'hooks/useVotingSettings';
 import {useTokenSupply} from 'hooks/useTokenSupply';
 import {
   KNOWN_FORMATS,
@@ -47,11 +47,12 @@ const ReviewProposal: React.FC<ReviewProposalProps> = ({
   const {t, i18n} = useTranslation();
   const {setStep} = useFormStep();
 
-  const {data: daoDetails} = useDaoDetailsQuery();
+  const {data: daoDetails, isLoading: detailsLoading} = useDaoDetailsQuery();
   const pluginAddress = daoDetails?.plugins?.[0]?.instanceAddress as string;
   const pluginType = daoDetails?.plugins?.[0]?.id as PluginTypes;
 
-  const {data: votingSettings} = useVotingSettings({pluginAddress, pluginType});
+  const {data: votingSettings, isLoading: votingSettingsLoading} =
+    useVotingSettings({pluginAddress, pluginType});
 
   const {
     data: {members, daoToken},
@@ -216,11 +217,12 @@ const ReviewProposal: React.FC<ReviewProposalProps> = ({
   /*************************************************
    *                    Render                     *
    *************************************************/
+  if (detailsLoading || votingSettingsLoading || !terminalProps)
+    return <Loading />;
+
   if (!editor) {
     return null;
   }
-
-  if (!terminalProps) return <Loading />;
 
   return (
     <>

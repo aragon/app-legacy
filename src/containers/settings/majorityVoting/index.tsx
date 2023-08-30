@@ -12,13 +12,14 @@ import {useNetwork} from 'context/network';
 import {useDaoMembers} from 'hooks/useDaoMembers';
 import {useDaoToken} from 'hooks/useDaoToken';
 import {PluginTypes} from 'hooks/usePluginClient';
-import {useVotingSettings} from 'hooks/usePluginSettings';
+import {useVotingSettings} from 'hooks/useVotingSettings';
 import {useTokenSupply} from 'hooks/useTokenSupply';
 import {getDHMFromSeconds} from 'utils/date';
 import {formatUnits} from 'utils/library';
 import {Community} from 'utils/paths';
 import {IPluginSettings} from 'pages/settings';
 import {useExistingToken} from 'hooks/useExistingToken';
+import {Loading} from 'components/temporary';
 
 const MajorityVotingSettings: React.FC<IPluginSettings> = ({daoDetails}) => {
   const {t} = useTranslation();
@@ -28,28 +29,57 @@ const MajorityVotingSettings: React.FC<IPluginSettings> = ({daoDetails}) => {
   const pluginAddress = daoDetails?.plugins?.[0]?.instanceAddress as string;
   const pluginType = daoDetails?.plugins?.[0]?.id as PluginTypes;
 
-  const {data: votingSettings} = useVotingSettings({pluginAddress, pluginType});
-  const {data: daoMembers} = useDaoMembers(pluginAddress, pluginType);
-  const {data: daoToken} = useDaoToken(pluginAddress);
+  const {data: pluginVotingSettings, isLoading: votingSettingsLoading} =
+    useVotingSettings({pluginAddress, pluginType});
+
+  const {data: daoMembers, isLoading: membersLoading} = useDaoMembers(
+    pluginAddress,
+    pluginType
+  );
+
+  const {data: daoToken, isLoading: daoTokenLoading} =
+    useDaoToken(pluginAddress);
+
+  const {data: tokenSupply, isLoading: tokenSupplyLoading} = useTokenSupply(
+    daoToken?.address ?? ''
+  );
 
   const {isTokenMintable} = useExistingToken({daoToken, daoDetails});
-  const {data: tokenSupply} = useTokenSupply(daoToken?.address ?? '');
 
-  const daoVotingSettings = votingSettings as VotingSettings;
+  const isLoading =
+    votingSettingsLoading ||
+    membersLoading ||
+    daoTokenLoading ||
+    tokenSupplyLoading;
 
-  const {days, hours, minutes} = getDHMFromSeconds(
-    daoVotingSettings.minDuration
-  );
+  if (isLoading) {
+    return <Loading />;
+  }
+
+  const dataIsFetched =
+    !!daoDetails &&
+    !!pluginVotingSettings &&
+    !!daoMembers &&
+    !!daoToken &&
+    !!tokenSupply;
+
+  if (!dataIsFetched) {
+    return null;
+  }
+
+  const votingSettings = pluginVotingSettings as VotingSettings;
+
+  const {days, hours, minutes} = getDHMFromSeconds(votingSettings.minDuration);
 
   const votingMode = {
     // Note: This implies that earlyExecution and voteReplacement may never be
     // both true at the same time, as they shouldn't.
     earlyExecution:
-      daoVotingSettings?.votingMode === VotingMode.EARLY_EXECUTION
+      votingSettings.votingMode === VotingMode.EARLY_EXECUTION
         ? t('labels.yes')
         : t('labels.no'),
     voteReplacement:
-      daoVotingSettings?.votingMode === VotingMode.VOTE_REPLACEMENT
+      votingSettings.votingMode === VotingMode.VOTE_REPLACEMENT
         ? t('labels.yes')
         : t('labels.no'),
   };
@@ -67,8 +97,8 @@ const MajorityVotingSettings: React.FC<IPluginSettings> = ({daoDetails}) => {
           <Dt>{t('votingTerminal.token')}</Dt>
           <Dd>
             <div className="flex items-center space-x-1.5">
-              <p>{daoToken?.name}</p>
-              <p>{daoToken?.symbol}</p>
+              <p>{daoToken.name}</p>
+              <p>{daoToken.symbol}</p>
             </div>
           </Dd>
         </Dl>
@@ -77,7 +107,7 @@ const MajorityVotingSettings: React.FC<IPluginSettings> = ({daoDetails}) => {
           <Dd>
             <div className="flex items-center space-x-1.5">
               <p>
-                {tokenSupply?.formatted} {daoToken?.symbol}
+                {tokenSupply.formatted} {daoToken.symbol}
               </p>
               {isTokenMintable && <Tag label={t('labels.mintable')} />}
             </div>
@@ -89,11 +119,11 @@ const MajorityVotingSettings: React.FC<IPluginSettings> = ({daoDetails}) => {
           <Dd>
             <Link
               label={t('createDAO.review.distributionLink', {
-                count: daoMembers?.members.length,
+                count: daoMembers.members.length,
               })}
               onClick={() =>
                 navigate(
-                  generatePath(Community, {network, dao: daoDetails?.address})
+                  generatePath(Community, {network, dao: daoDetails.address})
                 )
               }
             />
@@ -107,7 +137,7 @@ const MajorityVotingSettings: React.FC<IPluginSettings> = ({daoDetails}) => {
           <Dt>{t('labels.minimumApprovalThreshold')}</Dt>
           <Dd>
             {'>'}
-            {Math.round(daoVotingSettings?.supportThreshold * 100)}%
+            {Math.round(votingSettings.supportThreshold * 100)}%
           </Dd>
         </Dl>
         <Dl>
@@ -115,10 +145,9 @@ const MajorityVotingSettings: React.FC<IPluginSettings> = ({daoDetails}) => {
 
           <Dd>
             {'≥'}
-            {Math.round(daoVotingSettings?.minParticipation * 100)}% ({'≥'}
-            {daoVotingSettings?.minParticipation *
-              (tokenSupply?.formatted || 0)}{' '}
-            {daoToken?.symbol})
+            {Math.round(votingSettings.minParticipation * 100)}% ({'≥'}
+            {votingSettings.minParticipation * tokenSupply.formatted}{' '}
+            {daoToken.symbol})
           </Dd>
         </Dl>
         <Dl>
@@ -145,10 +174,10 @@ const MajorityVotingSettings: React.FC<IPluginSettings> = ({daoDetails}) => {
           <Dd>
             {t('labels.review.tokenHoldersWithTkns', {
               tokenAmount: formatUnits(
-                daoVotingSettings?.minProposerVotingPower || 0,
-                daoToken?.decimals || 18
+                votingSettings.minProposerVotingPower ?? 0,
+                daoToken.decimals
               ),
-              tokenSymbol: daoToken?.symbol,
+              tokenSymbol: daoToken.symbol,
             })}
           </Dd>
         </Dl>

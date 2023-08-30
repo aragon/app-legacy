@@ -13,7 +13,7 @@ import {useProviders} from 'context/providers';
 import {useDaoDetailsQuery} from 'hooks/useDaoDetails';
 import {useDaoMembers} from 'hooks/useDaoMembers';
 import {PluginTypes} from 'hooks/usePluginClient';
-import {useVotingSettings} from 'hooks/usePluginSettings';
+import {useVotingSettings} from 'hooks/useVotingSettings';
 import {useWallet} from 'hooks/useWallet';
 import {useVotingPowerAsync} from 'services/aragon-sdk/queries/use-voting-power';
 import {CHAIN_METADATA} from 'utils/constants';

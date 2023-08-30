@@ -12,7 +12,7 @@ import {useDaoBalances} from 'hooks/useDaoBalances';
 import {useDaoDetailsQuery} from 'hooks/useDaoDetails';
 import {useDaoMembers} from 'hooks/useDaoMembers';
 import {PluginTypes} from 'hooks/usePluginClient';
-import {useVotingSettings} from 'hooks/usePluginSettings';
+import {useVotingSettings} from 'hooks/useVotingSettings';
 import {formatUnits} from 'utils/library';
 import {
   ActionIndex,
@@ -116,7 +116,7 @@ const ActionBuilder: React.FC<ActionBuilderProps> = ({allowEmpty = true}) => {
   const {data: daoDetails} = useDaoDetailsQuery();
   const {network} = useNetwork();
   const {selectedActionIndex: index, actions} = useActionsContext();
-  const {data: tokens} = useDaoBalances(daoDetails?.address || '');
+  const {data: tokens} = useDaoBalances(daoDetails?.address ?? '');
   const {setValue, resetField, clearErrors} = useFormContext();
   const fetchToken = useTokenAsync();
 

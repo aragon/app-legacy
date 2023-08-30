@@ -41,7 +41,7 @@ import {
   isMultisigVotingSettings,
   isTokenVotingSettings,
   useVotingSettings,
-} from 'hooks/usePluginSettings';
+} from 'hooks/useVotingSettings';
 import {usePollGasFee} from 'hooks/usePollGasfee';
 import {useTokenSupply} from 'hooks/useTokenSupply';
 import {useWallet} from 'hooks/useWallet';
@@ -85,7 +85,7 @@ export const ProposeSettings: React.FC = () => {
     control,
   });
 
-  const {data: daoDetails, isLoading} = useDaoDetailsQuery();
+  const {data: daoDetails, isLoading: daoDetailsLoading} = useDaoDetailsQuery();
   const {data: pluginSettings, isLoading: settingsLoading} = useVotingSettings({
     pluginAddress: daoDetails?.plugins[0].instanceAddress as string,
     pluginType: daoDetails?.plugins[0].id as PluginTypes,
@@ -120,11 +120,13 @@ export const ProposeSettings: React.FC = () => {
     setValue('actions', filteredActions);
   }, [getValues, setValue]);
 
-  if (isLoading || settingsLoading) {
+  if (daoDetailsLoading || settingsLoading) {
     return <Loading />;
   }
 
-  if (!pluginSettings) return null;
+  if (!pluginSettings || !daoDetails) {
+    return null;
+  }
 
   return (
     <ProposeSettingWrapper
@@ -136,7 +138,7 @@ export const ProposeSettings: React.FC = () => {
         navLabel={t('navLinks.settings')}
         returnPath={generatePath(EditSettings, {
           network,
-          dao: toDisplayEns(daoDetails?.ensDomain) || daoDetails?.address,
+          dao: toDisplayEns(daoDetails.ensDomain) || daoDetails.address,
         })}
       >
         <Step
@@ -206,7 +208,7 @@ const ProposeSettingWrapper: React.FC<Props> = ({
     days: minDays,
     hours: minHours,
     minutes: minMinutes,
-  } = getDHMFromSeconds((votingSettings as VotingSettings).minDuration);
+  } = getDHMFromSeconds((votingSettings as VotingSettings)?.minDuration ?? 0);
 
   const {data: daoToken} = useDaoToken(pluginAddress);
   const {data: tokenSupply, isLoading: tokenSupplyIsLoading} = useTokenSupply(

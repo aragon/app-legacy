@@ -41,7 +41,7 @@ import {
 } from 'context/apolloClient';
 import {MultisigMember} from 'hooks/useDaoMembers';
 import {PluginTypes} from 'hooks/usePluginClient';
-import {isMultisigVotingSettings} from 'hooks/usePluginSettings';
+import {isMultisigVotingSettings} from 'hooks/useVotingSettings';
 import {i18n} from '../../i18n.config';
 import {
   PENDING_EXECUTION_KEY,

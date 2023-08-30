@@ -10,7 +10,7 @@ import {
   isMultisigVotingSettings,
   isTokenVotingSettings,
   useVotingSettings,
-} from 'hooks/usePluginSettings';
+} from 'hooks/useVotingSettings';
 import {toDisplayEns} from 'utils/library';
 import {CompareMetadata} from './compareMetadata';
 import {CompareMvCommunity} from './majorityVoting/compareCommunity';
@@ -35,20 +35,23 @@ const CompareSettings: React.FC = () => {
 
   const [selectedButton, setSelectedButton] = useState<Views>('new');
 
-  const daoAddressOrEns =
-    toDisplayEns(daoDetails?.ensDomain) === ''
-      ? daoDetails?.address
-      : toDisplayEns(daoDetails?.ensDomain);
-
   const onButtonGroupChangeHandler = () => {
     setSelectedButton(prev => (prev === 'new' ? 'old' : 'new'));
   };
 
-  if (areDetailsLoading || areSettingsLoading || tokensAreLoading) {
+  const isLoading = areDetailsLoading || areSettingsLoading || tokensAreLoading;
+  if (isLoading) {
     return <Loading />;
   }
 
-  return daoDetails ? (
+  if (!daoDetails || !votingSettings) {
+    return null;
+  }
+
+  const daoAddressOrEns =
+    toDisplayEns(daoDetails.ensDomain) || daoDetails.address;
+
+  return (
     <div className="space-y-2">
       <div className="flex">
         <ButtonGroup
@@ -65,25 +68,26 @@ const CompareSettings: React.FC = () => {
       <CompareMetadata daoDetails={daoDetails} view={selectedButton} />
 
       {/* GOVERNANCE */}
-      {isTokenVotingSettings(votingSettings) ? (
+      {isTokenVotingSettings(votingSettings) && (
         <>
           <CompareMvCommunity
-            daoAddressOrEns={daoAddressOrEns as string}
+            daoAddressOrEns={daoAddressOrEns}
             view={selectedButton}
             daoSettings={votingSettings}
             daoToken={daoToken}
           />
           <CompareMvGovernance
-            daoAddressOrEns={daoAddressOrEns as string}
+            daoAddressOrEns={daoAddressOrEns}
             view={selectedButton}
             daoSettings={votingSettings}
             daoToken={daoToken}
           />
         </>
-      ) : isMultisigVotingSettings(votingSettings) ? (
+      )}
+      {isMultisigVotingSettings(votingSettings) && (
         <>
           <CompareMsCommunity
-            daoAddressOrEns={daoAddressOrEns as string}
+            daoAddressOrEns={daoAddressOrEns}
             daoSettings={votingSettings}
             view={selectedButton}
           />
@@ -92,11 +96,9 @@ const CompareSettings: React.FC = () => {
             view={selectedButton}
           />
         </>
-      ) : (
-        <></>
       )}
     </div>
-  ) : null;
+  );
 };
 
 export default CompareSettings;

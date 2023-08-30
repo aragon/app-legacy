@@ -21,7 +21,7 @@ import {PluginTypes} from 'hooks/usePluginClient';
 import {
   isMultisigVotingSettings,
   useVotingSettings,
-} from 'hooks/usePluginSettings';
+} from 'hooks/useVotingSettings';
 import {useWallet} from 'hooks/useWallet';
 import {trackEvent} from 'services/analytics';
 import {getCanonicalUtcOffset} from 'utils/date';

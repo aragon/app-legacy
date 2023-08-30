@@ -32,9 +32,9 @@ import ConfigureCommunity from 'containers/configureCommunity';
 import DefineMetadata from 'containers/defineMetadata';
 import {useNetwork} from 'context/network';
 import {useDaoToken} from 'hooks/useDaoToken';
-import {useVotingSettings} from 'hooks/usePluginSettings';
 import useScreen from 'hooks/useScreen';
 import {useTokenSupply} from 'hooks/useTokenSupply';
+import {useVotingSettings} from 'hooks/useVotingSettings';
 import {Layout} from 'pages/settings';
 import {getDHMFromSeconds} from 'utils/date';
 import {decodeVotingMode, formatUnits, toDisplayEns} from 'utils/library';
@@ -359,10 +359,6 @@ export const EditMvSettings: React.FC<EditMvSettingsProps> = ({daoDetails}) => {
       callback: setCurrentGovernance,
     },
   ];
-
-  if (isLoading) {
-    <Loading />;
-  }
 
   // Note: using isDirty here to allow time for form to fill up before
   // rendering a value or else there will be noticeable render with blank form.

@@ -5,7 +5,7 @@ import {ActionsProvider} from 'context/actions';
 import {CreateProposalProvider} from 'context/createProposal';
 import {useDaoDetailsQuery} from 'hooks/useDaoDetails';
 import {PluginTypes} from 'hooks/usePluginClient';
-import {useVotingSettings} from 'hooks/usePluginSettings';
+import {useVotingSettings} from 'hooks/useVotingSettings';
 import WithdrawStepper from 'containers/withdrawStepper';
 import {WithdrawFormData} from 'utils/types';
 
@@ -34,14 +34,18 @@ export const NewWithdraw: React.FC = () => {
    *                    Render                     *
    *************************************************/
 
-  if (!daoDetails || !pluginSettings || detailsLoading || settingsLoading) {
+  if (detailsLoading || settingsLoading) {
     return <Loading />;
+  }
+
+  if (!daoDetails || !pluginSettings) {
+    return null;
   }
 
   return (
     <>
       <FormProvider {...formMethods}>
-        <ActionsProvider daoId={daoDetails?.address as string}>
+        <ActionsProvider daoId={daoDetails.address}>
           <CreateProposalProvider
             showTxModal={showTxModal}
             setShowTxModal={setShowTxModal}

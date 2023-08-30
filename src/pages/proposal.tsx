@@ -45,7 +45,7 @@ import {
   isMultisigVotingSettings,
   isTokenVotingSettings,
   useVotingSettings,
-} from 'hooks/usePluginSettings';
+} from 'hooks/useVotingSettings';
 import useScreen from 'hooks/useScreen';
 import {useWallet} from 'hooks/useWallet';
 import {useWalletCanVote} from 'hooks/useWalletCanVote';
@@ -436,7 +436,7 @@ export const Proposal: React.FC = () => {
   // get early execution status
   let canExecuteEarly = false;
 
-  if (votingSettings && proposal && mappedProps) {
+  if (proposal && mappedProps) {
     if (isTokenVotingSettings(votingSettings)) {
       canExecuteEarly = isEarlyExecutable(
         mappedProps?.missingParticipation,
@@ -447,7 +447,7 @@ export const Proposal: React.FC = () => {
     } else if (isMultisigVotingSettings(votingSettings)) {
       canExecuteEarly =
         (proposal as MultisigProposal)?.approvals?.length >=
-        votingSettings?.minApprovals;
+        votingSettings.minApprovals;
     }
   }
 

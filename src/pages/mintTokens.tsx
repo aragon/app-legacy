@@ -1,5 +1,4 @@
 import {AlertInline} from '@aragon/ods';
-import {MajorityVotingSettings} from '@aragon/sdk-client';
 import React, {useState} from 'react';
 import {
   FieldErrors,
@@ -26,7 +25,7 @@ import {CreateProposalProvider} from 'context/createProposal';
 import {useNetwork} from 'context/network';
 import {useDaoDetailsQuery} from 'hooks/useDaoDetails';
 import {PluginTypes} from 'hooks/usePluginClient';
-import {useVotingSettings} from 'hooks/usePluginSettings';
+import {useVotingSettings} from 'hooks/useVotingSettings';
 import {toDisplayEns} from 'utils/library';
 import {Community} from 'utils/paths';
 import {MintTokensFormData} from 'utils/types';
@@ -72,7 +71,11 @@ export const MintToken: React.FC = () => {
     return <Loading />;
   }
 
-  return daoDetails && votingSettings ? (
+  if (!daoDetails || !votingSettings) {
+    return null;
+  }
+
+  return (
     <FormProvider {...formMethods}>
       <ActionsProvider daoId={daoDetails.address}>
         <CreateProposalProvider
@@ -107,9 +110,7 @@ export const MintToken: React.FC = () => {
               wizardDescription={t('newWithdraw.setupVoting.description')}
               isNextButtonDisabled={!setupVotingIsValid(errors)}
             >
-              <SetupVotingForm
-                pluginSettings={votingSettings as MajorityVotingSettings}
-              />
+              <SetupVotingForm pluginSettings={votingSettings} />
             </Step>
             <Step
               wizardTitle={t('newWithdraw.defineProposal.heading')}
@@ -131,7 +132,7 @@ export const MintToken: React.FC = () => {
         </CreateProposalProvider>
       </ActionsProvider>
     </FormProvider>
-  ) : null;
+  );
 };
 
 /**

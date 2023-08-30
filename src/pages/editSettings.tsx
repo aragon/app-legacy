@@ -12,9 +12,11 @@ export const EditSettings: React.FC = () => {
 
   if (detailsAreLoading) {
     return <Loading />;
-  } else if (daoDetails && pluginType === 'multisig.plugin.dao.eth') {
+  } else if (!daoDetails) {
+    return null;
+  } else if (pluginType === 'multisig.plugin.dao.eth') {
     return <EditMsSettings daoDetails={daoDetails} />;
-  } else if (daoDetails && pluginType === 'token-voting.plugin.dao.eth') {
+  } else if (pluginType === 'token-voting.plugin.dao.eth') {
     return <EditMvSettings daoDetails={daoDetails} />;
   } else {
     return <></>;
