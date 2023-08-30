@@ -250,7 +250,7 @@ const ReviewProposal: React.FC<ReviewProposalProps> = ({
             startDate={formattedStartDate}
             endDate={formattedEndDate}
             preciseEndDate={formattedPreciseEndDate}
-            token={daoToken}
+            daoToken={daoToken}
             {...terminalProps}
           />
 

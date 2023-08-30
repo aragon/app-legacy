@@ -58,11 +58,7 @@ export type VotingTerminalProps = {
   status?: ProposalStatus;
   statusLabel: string;
   strategy?: string;
-  token?: {
-    symbol: string;
-    name: string;
-  };
-  tokenAddress?: string;
+  daoToken?: Erc20TokenDetails | Erc20WrapperTokenDetails;
   blockNumber?: Number;
   results?: ProposalVoteResults;
   approvals?: string[];
@@ -89,8 +85,7 @@ export const VotingTerminal: React.FC<VotingTerminalProps> = ({
   voters = [],
   results,
   approvals,
-  token,
-  tokenAddress,
+  daoToken,
   blockNumber,
   startDate,
   endDate,
@@ -124,9 +119,9 @@ export const VotingTerminal: React.FC<VotingTerminalProps> = ({
         voters.map(async voter => {
           const wallet = await Web3Address.create(provider, voter.wallet);
           let balance;
-          if (tokenAddress && wallet.address) {
+          if (daoToken?.address && wallet.address) {
             balance = await fetchPastVotingPower({
-              tokenAddress: tokenAddress as string,
+              tokenAddress: daoToken.address as string,
               address: wallet.address as string,
               blockNumber: blockNumber as number,
             });
@@ -134,7 +129,7 @@ export const VotingTerminal: React.FC<VotingTerminalProps> = ({
           return {
             ...voter,
             tokenAmount: balance ? formatUnits(balance, 18) : voter.tokenAmount,
-            tokenSymbol: token?.symbol,
+            tokenSymbol: daoToken?.symbol,
             wallet: (wallet.ensName ?? wallet.address) as string,
             src: (wallet.avatar || wallet.address) as string,
           };
@@ -148,10 +143,10 @@ export const VotingTerminal: React.FC<VotingTerminalProps> = ({
     }
   }, [
     blockNumber,
+    daoToken?.address,
+    daoToken?.symbol,
     fetchPastVotingPower,
     provider,
-    token,
-    tokenAddress,
     voters,
   ]);
 
@@ -208,7 +203,7 @@ export const VotingTerminal: React.FC<VotingTerminalProps> = ({
           approvals={approvals}
           memberCount={voters.length}
           results={results}
-          token={token}
+          token={daoToken}
         />
       ) : selectedTab === 'voters' ? (
         <VotersTabContainer>
@@ -224,7 +219,7 @@ export const VotingTerminal: React.FC<VotingTerminalProps> = ({
               voters={filteredVoters}
               showOption
               page={page}
-              showAmount={token !== undefined}
+              showAmount={daoToken !== undefined}
               onLoadMore={() => setPage(prev => prev + 1)}
               LoadMoreLabel={t('community.votersTable.loadMore')}
               explorerURL={CHAIN_METADATA[network].explorer}
@@ -263,7 +258,7 @@ export const VotingTerminal: React.FC<VotingTerminalProps> = ({
           status={status}
           strategy={strategy}
           supportThreshold={supportThreshold}
-          uniqueVoters={token ? voters.length : undefined}
+          uniqueVoters={daoToken ? voters.length : undefined}
           voteOptions={voteOptions}
         />
       )}
