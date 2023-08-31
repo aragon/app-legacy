@@ -691,7 +691,7 @@ export const Proposal: React.FC = () => {
           <VotingTerminal
             status={proposal.status}
             daoToken={daoToken}
-            blockNumber={proposal?.creationBlockNumber as number}
+            blockNumber={proposal?.creationBlockNumber}
             statusLabel={voteStatus}
             selectedTab={terminalTab}
             alertMessage={alertMessage}
