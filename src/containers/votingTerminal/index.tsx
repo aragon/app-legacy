@@ -128,7 +128,7 @@ export const VotingTerminal: React.FC<VotingTerminalProps> = ({
           }
           return {
             ...voter,
-            tokenAmount: balance ? formatUnits(balance, 18) : voter.tokenAmount,
+            tokenAmount: balance ? formatUnits(balance, daoToken.decimals) : voter.tokenAmount,
             tokenSymbol: daoToken?.symbol,
             wallet: (wallet.ensName ?? wallet.address) as string,
             src: (wallet.avatar || wallet.address) as string,
