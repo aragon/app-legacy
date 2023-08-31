@@ -49,7 +49,8 @@ import useScreen from 'hooks/useScreen';
 import {useWallet} from 'hooks/useWallet';
 import {useWalletCanVote} from 'hooks/useWalletCanVote';
 import {useTokenAsync} from 'services/token/queries/use-token';
-import {CHAIN_METADATA} from 'utils/constants';
+import {CHAIN_METADATA, SupportedNetworks} from 'utils/constants';
+import {constants} from 'ethers';
 import {
   decodeAddMembersToAction,
   decodeMetadataToAction,
@@ -78,6 +79,8 @@ import {Action, ProposalId} from 'utils/types';
 import {useDaoToken} from 'hooks/useDaoToken';
 import {BigNumber} from 'ethers';
 import {usePastVotingPower} from 'services/aragon-sdk/queries/use-past-voting-power';
+import {Address} from 'viem';
+import {useBalance} from 'wagmi';
 
 // TODO: @Sepehr Please assign proper tags on action decoding
 // const PROPOSAL_TAGS = ['Finance', 'Withdraw'];
@@ -167,7 +170,15 @@ export const Proposal: React.FC = () => {
     proposal?.status as string
   );
 
-  const {data: pastVotingPower = BigNumber.from('0')} = usePastVotingPower(
+  const {data: tokenBalanceData} = useBalance({
+    address: address as Address,
+    token: daoToken?.address as Address,
+    chainId: CHAIN_METADATA[network as SupportedNetworks].id,
+    enabled: address != null && daoToken != null,
+  });
+  const tokenBalance = BigNumber.from(tokenBalanceData?.value ?? 0);
+
+  const {data: pastVotingPower = constants.Zero} = usePastVotingPower(
     {
       address: address as string,
       tokenAddress: daoToken?.address as string,
@@ -188,10 +199,12 @@ export const Proposal: React.FC = () => {
   const [votingInProcess, setVotingInProcess] = useState(false);
   const [expandedProposal, setExpandedProposal] = useState(false);
 
-  // Display the voting-power gating dialog when user can vote but had no
-  // voting power at the proposal creation
+  // Display the voting-power gating dialog when user has balance but delegated
+  // his token to someone else
   const displayVotingGate =
-    !multisigDAO && canVote && pastVotingPower.lte(BigNumber.from('0'));
+    !multisigDAO &&
+    tokenBalance.gt(constants.Zero) &&
+    pastVotingPower.lte(constants.Zero);
 
   const editor = useEditor({
     editable: false,
@@ -576,7 +589,8 @@ export const Proposal: React.FC = () => {
       address && // logged in
       !isOnWrongNetwork && // on proper network
       !voted && // haven't voted
-      !canVote // cannot vote
+      !canVote && // cannot vote
+      !displayVotingGate // user delegated tokens
     ) {
       // presence of token delineates token voting proposal
       // people add types to these things!!
@@ -586,7 +600,15 @@ export const Proposal: React.FC = () => {
           })
         : t('votingTerminal.status.ineligibleWhitelist');
     }
-  }, [address, canVote, isOnWrongNetwork, proposal, t, voted]);
+  }, [
+    address,
+    canVote,
+    isOnWrongNetwork,
+    proposal,
+    t,
+    voted,
+    displayVotingGate,
+  ]);
 
   // status steps for proposal
   const proposalSteps = useMemo(() => {
