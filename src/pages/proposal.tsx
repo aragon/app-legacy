@@ -193,7 +193,7 @@ export const Proposal: React.FC = () => {
   // Display the voting-power gating dialog when user has balance but delegated
   // his token to someone else
   const displayVotingGate =
-    !multisigDAO &&
+    !isMultisigDAO &&
     tokenBalance.gt(constants.Zero) &&
     pastVotingPower.lte(constants.Zero);
 
