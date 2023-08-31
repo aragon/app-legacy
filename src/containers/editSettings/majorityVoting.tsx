@@ -4,11 +4,7 @@ import {
   IconGovernance,
   ListItemAction,
 } from '@aragon/ods';
-import {
-  DaoDetails,
-  MajorityVotingSettings,
-  VotingMode,
-} from '@aragon/sdk-client';
+import {DaoDetails, VotingMode, VotingSettings} from '@aragon/sdk-client';
 import {BigNumber} from 'ethers/lib/ethers';
 import React, {useCallback, useEffect, useMemo} from 'react';
 import {
@@ -32,6 +28,7 @@ import ConfigureCommunity from 'containers/configureCommunity';
 import DefineMetadata from 'containers/defineMetadata';
 import {useNetwork} from 'context/network';
 import {useDaoToken} from 'hooks/useDaoToken';
+import {PluginTypes} from 'hooks/usePluginClient';
 import useScreen from 'hooks/useScreen';
 import {useTokenSupply} from 'hooks/useTokenSupply';
 import {useVotingSettings} from 'hooks/useVotingSettings';
@@ -55,27 +52,30 @@ export const EditMvSettings: React.FC<EditMvSettingsProps> = ({daoDetails}) => {
   const {errors, isValid, isDirty} = useFormState({control});
 
   const pluginAddress = daoDetails?.plugins?.[0]?.instanceAddress as string;
+  const pluginType: PluginTypes = daoDetails?.plugins?.[0]?.id as PluginTypes;
+
   const {data: daoToken, isLoading: tokensAreLoading} =
     useDaoToken(pluginAddress);
 
   const {data: tokenSupply, isLoading: tokenSupplyIsLoading} = useTokenSupply(
-    daoToken?.address || ''
+    daoToken?.address ?? ''
   );
 
-  const {data, isLoading: settingsAreLoading} = useVotingSettings({
-    pluginAddress,
-    pluginType: 'token-voting.plugin.dao.eth',
-  });
+  const {data: pluginSettings, isLoading: settingsAreLoading} =
+    useVotingSettings({
+      pluginAddress,
+      pluginType,
+    });
+  const votingSettings = pluginSettings as VotingSettings;
 
   const isLoading =
     settingsAreLoading || tokensAreLoading || tokenSupplyIsLoading;
 
-  const votingSettings = data as MajorityVotingSettings;
   const dataFetched = !!(
     !isLoading &&
     daoToken &&
     tokenSupply &&
-    votingSettings
+    votingSettings?.minDuration
   );
 
   const [
@@ -111,7 +111,9 @@ export const EditMvSettings: React.FC<EditMvSettingsProps> = ({daoDetails}) => {
     control,
   });
 
-  const {days, hours, minutes} = getDHMFromSeconds(votingSettings.minDuration);
+  const {days, hours, minutes} = getDHMFromSeconds(
+    votingSettings?.minDuration ?? 0
+  );
 
   const controlledLinks = fields.map((field, index) => {
     return {
@@ -174,7 +176,7 @@ export const EditMvSettings: React.FC<EditMvSettingsProps> = ({daoDetails}) => {
 
   // governance
   const daoVotingMode = decodeVotingMode(
-    votingSettings.votingMode ?? VotingMode.STANDARD
+    votingSettings?.votingMode ?? VotingMode.STANDARD
   );
 
   // TODO: We need to force forms to only use one type, Number or string
@@ -192,7 +194,8 @@ export const EditMvSettings: React.FC<EditMvSettingsProps> = ({daoDetails}) => {
   // calculate proposer
   let daoEligibleProposer: TokenVotingProposalEligibility =
     formEligibleProposer;
-  if (data) {
+
+  if (votingSettings) {
     if (!votingSettings.minProposerVotingPower) {
       daoEligibleProposer = 'anyone';
     } else {
@@ -359,6 +362,10 @@ export const EditMvSettings: React.FC<EditMvSettingsProps> = ({daoDetails}) => {
       callback: setCurrentGovernance,
     },
   ];
+
+  if (isLoading) {
+    return <Loading />;
+  }
 
   // Note: using isDirty here to allow time for form to fill up before
   // rendering a value or else there will be noticeable render with blank form.

@@ -8,7 +8,7 @@ import {Dd, DescriptionListContainer, Dl, Dt} from 'components/descriptionList';
 import {useNetwork} from 'context/network';
 import {useDaoMembers} from 'hooks/useDaoMembers';
 import {Community} from 'utils/paths';
-import {useVotingSettings} from 'hooks/usePluginSettings';
+import {useVotingSettings} from 'hooks/useVotingSettings';
 import {PluginTypes} from 'hooks/usePluginClient';
 import {IPluginSettings} from 'pages/settings';
 

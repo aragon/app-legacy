@@ -38,10 +38,11 @@ const ProtectedRoute: React.FC = () => {
   const pluginAddress = daoDetails?.plugins?.[0]?.instanceAddress as string;
   const pluginType = daoDetails?.plugins?.[0]?.id as PluginTypes;
 
-  const {data: daoSettings, isLoading: settingsAreLoading} = useVotingSettings({
-    pluginAddress,
-    pluginType,
-  });
+  const {data: votingSettings, isLoading: settingsAreLoading} =
+    useVotingSettings({
+      pluginAddress,
+      pluginType,
+    });
 
   const {
     data: {daoToken, filteredMembers},
@@ -83,7 +84,8 @@ const ProtectedRoute: React.FC = () => {
 
       const minProposalThreshold = Number(
         formatUnits(
-          (daoSettings as MajorityVotingSettings).minProposerVotingPower || 0,
+          (votingSettings as MajorityVotingSettings)?.minProposerVotingPower ||
+            0,
           daoToken?.decimals || 18
         )
       );
@@ -99,7 +101,7 @@ const ProtectedRoute: React.FC = () => {
     address,
     fetchVotingPower,
     close,
-    daoSettings,
+    votingSettings,
     daoToken,
     filteredMembers.length,
     network,
@@ -108,7 +110,7 @@ const ProtectedRoute: React.FC = () => {
   ]);
 
   const gateMultisigProposal = useCallback(() => {
-    if ((daoSettings as MultisigVotingSettings).onlyListed === false) {
+    if ((votingSettings as MultisigVotingSettings)?.onlyListed === false) {
       close('gating');
     } else if (
       !filteredMembers.some(
@@ -120,7 +122,14 @@ const ProtectedRoute: React.FC = () => {
     } else {
       close('gating');
     }
-  }, [membersAreLoading, close, daoSettings, open, address, filteredMembers]);
+  }, [
+    membersAreLoading,
+    close,
+    votingSettings,
+    open,
+    address,
+    filteredMembers,
+  ]);
 
   /*************************************************
    *                     Effects                   *

@@ -13,7 +13,6 @@ import {CHAIN_METADATA, FEEDBACK_FORM} from 'utils/constants';
 import {
   Community,
   CreateDAO,
-  EditSettings,
   Finance,
   Governance,
   Landing,
@@ -23,6 +22,7 @@ import {
   NewProposal,
   NewWithDraw,
   ProposeNewSettings,
+  Settings,
 } from 'utils/paths';
 import {i18n} from '../../../i18n.config';
 import DesktopNav from './desktop';
@@ -132,7 +132,7 @@ export const processes: StringIndexed = {
   },
   [ProposeNewSettings]: {
     processLabel: i18n.t('settings.proposeSettings'),
-    returnURL: EditSettings,
+    returnURL: Settings,
   },
   [MintTokensProposal]: {
     processLabel: i18n.t('labels.addMember'),

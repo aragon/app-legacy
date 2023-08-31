@@ -62,7 +62,7 @@ import {
   offsetToMills,
 } from 'utils/date';
 import {customJSONReplacer, readFile, toDisplayEns} from 'utils/library';
-import {EditSettings, Proposal} from 'utils/paths';
+import {EditSettings, Proposal, Settings} from 'utils/paths';
 import {CacheProposalParams, mapToCacheProposal} from 'utils/proposals';
 import {
   Action,
@@ -136,7 +136,7 @@ export const ProposeSettings: React.FC = () => {
       <FullScreenStepper
         wizardProcessName={t('newProposal.title')}
         navLabel={t('navLinks.settings')}
-        returnPath={generatePath(EditSettings, {
+        returnPath={generatePath(Settings, {
           network,
           dao: toDisplayEns(daoDetails.ensDomain) || daoDetails.address,
         })}

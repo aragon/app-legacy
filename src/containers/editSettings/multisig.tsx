@@ -28,7 +28,7 @@ import DefineMetadata from 'containers/defineMetadata';
 import {useNetwork} from 'context/network';
 import {MultisigMember, useDaoMembers} from 'hooks/useDaoMembers';
 import {PluginTypes} from 'hooks/usePluginClient';
-import {useVotingSettings} from 'hooks/usePluginSettings';
+import {useVotingSettings} from 'hooks/useVotingSettings';
 import useScreen from 'hooks/useScreen';
 import {Layout} from 'pages/settings';
 import {toDisplayEns} from 'utils/library';
@@ -50,10 +50,11 @@ export const EditMsSettings: React.FC<EditMsSettingsProps> = ({daoDetails}) => {
 
   const pluginAddress = daoDetails?.plugins?.[0]?.instanceAddress as string;
   const pluginType: PluginTypes = 'multisig.plugin.dao.eth';
-  const {data, isLoading: settingsAreLoading} = useVotingSettings({
-    pluginAddress,
-    pluginType,
-  });
+  const {data: pluginVotingSettings, isLoading: settingsAreLoading} =
+    useVotingSettings({
+      pluginAddress,
+      pluginType,
+    });
 
   const {data: members, isLoading: membersAreLoading} = useDaoMembers(
     pluginAddress,
@@ -62,8 +63,8 @@ export const EditMsSettings: React.FC<EditMsSettingsProps> = ({daoDetails}) => {
 
   const isLoading = membersAreLoading || settingsAreLoading;
 
-  const votingSettings = data as MultisigVotingSettings;
-  const dataFetched = !!(!isLoading && members && votingSettings.minApprovals);
+  const votingSettings = pluginVotingSettings as MultisigVotingSettings;
+  const dataFetched = !!(!isLoading && members && votingSettings?.minApprovals);
 
   const [
     daoName,
