@@ -49,7 +49,8 @@ import useScreen from 'hooks/useScreen';
 import {useWallet} from 'hooks/useWallet';
 import {useWalletCanVote} from 'hooks/useWalletCanVote';
 import {useTokenAsync} from 'services/token/queries/use-token';
-import {CHAIN_METADATA} from 'utils/constants';
+import {CHAIN_METADATA, SupportedNetworks} from 'utils/constants';
+import {constants} from 'ethers';
 import {
   decodeAddMembersToAction,
   decodeMetadataToAction,
@@ -76,7 +77,10 @@ import {
 } from 'utils/proposals';
 import {Action, ProposalId} from 'utils/types';
 import {useDaoToken} from 'hooks/useDaoToken';
-import {useDelegatee} from 'services/aragon-sdk/queries/use-delegatee';
+import {BigNumber} from 'ethers';
+import {usePastVotingPower} from 'services/aragon-sdk/queries/use-past-voting-power';
+import {Address} from 'viem';
+import {useBalance} from 'wagmi';
 
 // TODO: @Sepehr Please assign proper tags on action decoding
 // const PROPOSAL_TAGS = ['Finance', 'Withdraw'];
@@ -166,11 +170,22 @@ export const Proposal: React.FC = () => {
     proposal?.status as string
   );
 
-  const {data: delegateData} = useDelegatee(
-    {tokenAddress: daoToken?.address as string},
-    {enabled: !multisigDAO && !isOnWrongNetwork && daoToken != null}
+  const {data: tokenBalanceData} = useBalance({
+    address: address as Address,
+    token: daoToken?.address as Address,
+    chainId: CHAIN_METADATA[network as SupportedNetworks].id,
+    enabled: address != null && daoToken != null,
+  });
+  const tokenBalance = BigNumber.from(tokenBalanceData?.value ?? 0);
+
+  const {data: pastVotingPower = constants.Zero} = usePastVotingPower(
+    {
+      address: address as string,
+      tokenAddress: daoToken?.address as string,
+      blockNumber: proposal?.creationBlockNumber as number,
+    },
+    {enabled: address != null && daoToken != null && proposal != null}
   );
-  const currentDelegate = delegateData === null ? address : delegateData;
 
   const pluginClient = usePluginClient(pluginType);
 
@@ -184,8 +199,12 @@ export const Proposal: React.FC = () => {
   const [votingInProcess, setVotingInProcess] = useState(false);
   const [expandedProposal, setExpandedProposal] = useState(false);
 
-  // Display the voting-power gating dialog when user delegated his voting power
-  const displayVotingGate = !multisigDAO && currentDelegate !== address;
+  // Display the voting-power gating dialog when user has balance but delegated
+  // his token to someone else
+  const displayVotingGate =
+    !multisigDAO &&
+    tokenBalance.gt(constants.Zero) &&
+    pastVotingPower.lte(constants.Zero);
 
   const editor = useEditor({
     editable: false,
