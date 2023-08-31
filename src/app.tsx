@@ -30,7 +30,6 @@ import '../i18n.config';
 import {ProposalSettingsFormData} from 'utils/types';
 import {GatingMenu} from 'containers/gatingMenu';
 import {DelegationGatingMenu} from 'containers/delegationGatingMenu';
-import {clearWagmiCache} from 'utils/library';
 
 export const App: React.FC = () => {
   // TODO this needs to be inside a Routes component. Will be moved there with
@@ -52,7 +51,6 @@ export const App: React.FC = () => {
     // This check would prevent the wallet selection modal from opening up if the user hasn't logged in previously.
     // But if the injected wallet like Metamask is locked and the user has logged in before using that wallet, there will be a prompt for password.
     if (localStorage.getItem('WEB3_CONNECT_CACHED_PROVIDER')) {
-      clearWagmiCache();
       methods.selectWallet();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
