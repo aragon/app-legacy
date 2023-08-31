@@ -1703,5 +1703,30 @@
       "membersLabel": "Execution multisig members",
       "membersDesc": "These addresses form the governing body that approves and executes proposals passed by the community. Add the addresses who will be members of the execution multisig."
     }
+  },
+  "offChainProposalCreation": {
+    "createVocdoniAccount": {
+      "title": "Create offchain vote ID",
+      "helper": "Sign message"
+    },
+    "createVocdoniElection": {
+      "title": "Register proposal offchain",
+      "helper": "Sign message"
+    },
+    "createOnChainProposal": {
+      "title": "Register proposal onchain",
+      "helper": "Transaction"
+    },
+    "proposalReady": {
+      "title": "Your proposal is ready"
+    },
+    "stepError": {
+      "helper": "Details"
+    },
+    "processWarning": "Don't close this page while in progress.",
+    "confirmationFailed": "No confirmation received …",
+    "publishProposal": "Publish your proposal",
+    "tryAgain": "Try Again",
+    "gotoProposal": "Open your proposal"
   }
 }
