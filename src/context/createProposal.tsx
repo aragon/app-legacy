@@ -86,6 +86,10 @@ import {StepStatus, useCreateOffchainProposal} from './createOffchainProposal';
 import OffchainProposalProgress from '../components/OffchainProposalProgress';
 import styled from 'styled-components';
 import OffchainProposalModal from '../containers/transactionModals/offchainProposalModal';
+import {
+  OffchainPluginLocalStorageKeys,
+  OffchainPluginLocalStorageTypes,
+} from '../hooks/useVocdoniElection';
 
 
 
@@ -100,6 +104,9 @@ const CreateProposalWrapper: React.FC<Props> = ({
   setShowTxModal,
   children,
 }) => {
+  // todo(kon): modify this before merge
+  const offchain = true;
+
   const {t} = useTranslation();
   const {open} = useGlobalModalContext();
   const queryClient = useQueryClient();
@@ -146,6 +153,16 @@ const CreateProposalWrapper: React.FC<Props> = ({
 
   const disableActionButton =
     !proposalCreationData && creationProcessState !== TransactionState.SUCCESS;
+
+  // todo(kon): this code have to be placed somewhere else?
+  const {
+    steps: offchainProposalSteps,
+    globalState: offchainGlobalState,
+    createProposal,
+    electionId,
+  } = useCreateOffchainProposal({
+    daoToken,
+  });
 
   /*************************************************
    *             Callbacks and Handlers            *
@@ -490,6 +507,34 @@ const CreateProposalWrapper: React.FC<Props> = ({
       case TransactionState.LOADING:
         break;
       case TransactionState.SUCCESS:
+        // todo(kon): here we are storing the key value from te proposal to the vocdoni election.
+        // This is for developing purposes only, should be replaced for the selected system
+        // Also this code could be optimized
+        if (offchain) {
+          if (electionId) {
+            const proposal = {
+              proposalId: {
+                electionId: electionId,
+              },
+            } as OffchainPluginLocalStorageTypes[OffchainPluginLocalStorageKeys.PROPOSAL_TO_ELECTION];
+            const proposalsIds = localStorage.getItem(
+              OffchainPluginLocalStorageKeys.PROPOSAL_TO_ELECTION
+            );
+            if (proposalsIds !== null) {
+              const parsed = JSON.parse(
+                proposalsIds
+              ) as OffchainPluginLocalStorageTypes[OffchainPluginLocalStorageKeys.PROPOSAL_TO_ELECTION];
+              localStorage.setItem(
+                OffchainPluginLocalStorageKeys.PROPOSAL_TO_ELECTION,
+                JSON.stringify({
+                  ...parsed,
+                  ...proposal,
+                } as OffchainPluginLocalStorageTypes[OffchainPluginLocalStorageKeys.PROPOSAL_TO_ELECTION])
+              );
+            }
+          }
+        }
+
         navigate(
           generatePath(Proposal, {
             network,
@@ -510,6 +555,7 @@ const CreateProposalWrapper: React.FC<Props> = ({
     daoDetails?.ensDomain,
     navigate,
     network,
+    offchain,
     proposalId,
     setShowTxModal,
     stopPolling,
@@ -725,15 +771,6 @@ const CreateProposalWrapper: React.FC<Props> = ({
     tokenPrice,
   ]);
 
-  const {
-    steps: offchainProposalSteps,
-    globalState: offchainGlobalState,
-    createProposal,
-  } = useCreateOffchainProposal({
-    daoToken,
-    handleOnchainProposal: handlePublishProposal,
-  });
-
   const handleOffChainProposal = useCallback(async () => {
     console.log('DEBUG', 'handleOffChainProposal');
     if (!pluginClient || !daoToken) {
@@ -742,8 +779,13 @@ const CreateProposalWrapper: React.FC<Props> = ({
     console.log('DEBUG', 'ERC20 initialized', daoToken);
     const {params, metadata} = await getProposalCreationParams();
 
-    await createProposal(metadata, params);
-  }, [daoToken, getProposalCreationParams, pluginClient]);
+    await createProposal(metadata, params, handlePublishProposal);
+  }, [
+    daoToken,
+    getProposalCreationParams,
+    pluginClient,
+    handlePublishProposal,
+  ]);
 
   /*************************************************
    *                     Effects                   *
@@ -771,9 +813,6 @@ const CreateProposalWrapper: React.FC<Props> = ({
   if (daoDetailsLoading) {
     return <Loading />;
   }
-
-  // todo(kon): modify this before merge
-  const offchain = true;
 
   return (
     <>

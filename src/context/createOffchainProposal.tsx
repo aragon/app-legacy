@@ -21,6 +21,7 @@ import {
 } from '@vocdoni/sdk';
 import {VoteValues} from '@aragon/sdk-client/dist/client-common/types/plugin';
 
+// todo(kon): move this types somewhere else
 export enum OffchainProposalStepId {
   REGISTER_VOCDONI_ACCOUNT = 'REGISTER_VOCDONI_ACCOUNT',
   CREATE_VOCDONI_ELECTION = 'CREATE_VOCDONI_ELECTION',
@@ -46,15 +47,12 @@ export type OffchainProposalSteps = {
 
 type ICreateOffchainProposal = {
   daoToken: Erc20TokenDetails | Erc20WrapperTokenDetails | undefined;
-  // todo(kon): change this when min sdk is ready
-  handleOnchainProposal: () => Promise<Error | undefined>;
 };
 
-const useCreateOffchainProposal = ({
-  daoToken,
-  handleOnchainProposal,
-}: ICreateOffchainProposal) => {
+const useCreateOffchainProposal = ({daoToken}: ICreateOffchainProposal) => {
   const {t, i18n} = useTranslation();
+
+  const [electionId, setElectionId] = useState('');
 
   const [steps, setSteps] = useState<OffchainProposalSteps>({
     REGISTER_VOCDONI_ACCOUNT: {
@@ -152,10 +150,10 @@ const useCreateOffchainProposal = ({
       } catch (e) {
         // todo(kon): replace error handling
         if ((e as string).includes('not enough balance to transfer')) {
-          console.log('DEBUG', 'error, collecting faucet');
+          console.log('DEBUG', 'error, collecting faucet', election);
           // todo(kon): do an estimation and collect tokens as many as needed
           await vocdoniClient.collectFaucetTokens();
-          console.log('DEBUG', 'faucet collected');
+          console.log('DEBUG', 'faucet collected', election);
           return await vocdoniClient.createElection(election);
           console.log('DEBUG', 'election created after faucet collected');
         } else throw e;
@@ -216,7 +214,9 @@ const useCreateOffchainProposal = ({
   const createProposal = useCallback(
     async (
       metadata: ProposalMetadata,
-      data: CreateMajorityVotingProposalParams
+      data: CreateMajorityVotingProposalParams,
+      // todo(kon): change this when min sdk is ready
+      handleOnchainProposal: () => Promise<Error | undefined>
     ) => {
       console.log(
         'DEBUG',
@@ -272,6 +272,8 @@ const useCreateOffchainProposal = ({
       );
       console.log('DEBUG', 'All done!', electionId);
 
+      setElectionId(electionId);
+
       // todo(kon): handle all process is finished (go to the proposal on the ui)
     },
     [
@@ -281,11 +283,10 @@ const useCreateOffchainProposal = ({
       daoToken,
       doStep,
       globalState,
-      handleOnchainProposal,
     ]
   );
 
-  return {steps, globalState, createProposal};
+  return {steps, globalState, createProposal, electionId};
 };
 
 export {useCreateOffchainProposal};
