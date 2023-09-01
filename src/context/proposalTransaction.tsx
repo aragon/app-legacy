@@ -429,14 +429,17 @@ const ProposalTransactionProvider: React.FC<Props> = ({children}) => {
       if (offchainVoting) {
         const proposalIds = localStorage.getItem(
           OffchainPluginLocalStorageKeys.PROPOSAL_TO_ELECTION
-        ) as
-          | OffchainPluginLocalStorageTypes[OffchainPluginLocalStorageKeys.PROPOSAL_TO_ELECTION]
-          | null;
-        if (proposalIds !== null && voteParams.proposalId in proposalIds) {
-          await submitVote(
-            proposalIds[voteParams.proposalId].electionId,
-            voteParams
-          );
+        );
+        if (proposalIds !== null) {
+          const parsed = JSON.parse(
+            proposalIds
+          ) as OffchainPluginLocalStorageTypes[OffchainPluginLocalStorageKeys.PROPOSAL_TO_ELECTION];
+          if (voteParams.proposalId in parsed) {
+            await submitVote(
+              parsed[voteParams.proposalId].electionId,
+              voteParams
+            );
+          }
         }
       }
 
