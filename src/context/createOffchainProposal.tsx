@@ -19,6 +19,7 @@ import {
   ErrAPI,
   UnpublishedElection,
 } from '@vocdoni/sdk';
+import {VoteValues} from '@aragon/sdk-client/dist/client-common/types/plugin';
 
 export enum OffchainProposalStepId {
   REGISTER_VOCDONI_ACCOUNT = 'REGISTER_VOCDONI_ACCOUNT',
@@ -135,11 +136,16 @@ const useCreateOffchainProposal = ({
         startDate: electionData.startDate,
         census: electionData.census,
       });
-      election.addQuestion(electionData.question, '', [
-        {title: 'Yes', value: 0},
-        {title: 'No', value: 1},
-        {title: 'Abstain', value: 2},
-      ]);
+      election.addQuestion(
+        electionData.question,
+        '',
+        // Map choices from Aragon enum.
+        // This is important to respect the order and the values
+        Object.keys(VoteValues).map((key, i) => ({
+          title: key,
+          value: i,
+        }))
+      );
       // todo(kon): handle how collect faucet have to work
       try {
         return await vocdoniClient.createElection(election);
