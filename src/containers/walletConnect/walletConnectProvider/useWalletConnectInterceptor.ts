@@ -1,30 +1,32 @@
 import {useNetwork} from 'context/network';
 import {useCallback, useState, useEffect} from 'react';
-import {SessionTypes} from '@walletconnect/types';
+import {PairingTypes, SessionTypes} from '@walletconnect/types';
 
 import {walletConnectInterceptor} from 'services/walletConnectInterceptor';
 import {CHAIN_METADATA, SUPPORTED_CHAIN_ID} from 'utils/constants';
 import {Web3WalletTypes} from '@walletconnect/web3wallet';
-import {useDaoDetailsQuery} from './useDaoDetails';
+import {useDaoDetailsQuery} from 'hooks/useDaoDetails';
 
 export type WcSession = SessionTypes.Struct;
 export type WcActionRequest =
   Web3WalletTypes.SessionRequest['params']['request'];
 
-export interface UseWalletConnectInterceptorOptions {
-  onActionRequest?: (request: WcActionRequest) => void;
-}
-
-export interface WcConnectOptions {
+export type WcConnectOptions = {
   uri: string;
   onError?: (e: Error) => void;
-}
+};
 
-const activeSessionsListeners = new Set<(sessions: WcSession[]) => void>();
+export type WcInterceptorValues = {
+  wcConnect: (
+    options: WcConnectOptions
+  ) => Promise<PairingTypes.Struct | undefined>;
+  wcDisconnect: (topic: string) => Promise<void>;
+  sessions: WcSession[];
+  activeSessions: WcSession[];
+  actions: WcActionRequest[];
+};
 
-export function useWalletConnectInterceptor({
-  onActionRequest,
-}: UseWalletConnectInterceptorOptions) {
+export function useWalletConnectInterceptor(): WcInterceptorValues {
   const {network} = useNetwork();
 
   const {data: daoDetails} = useDaoDetailsQuery();
@@ -33,13 +35,14 @@ export function useWalletConnectInterceptor({
   );
   const activeSessions = sessions.filter(session => session.acknowledged);
 
+  const [actions, setActions] = useState<WcActionRequest[]>([]);
+
   const updateActiveSessions = useCallback(() => {
     const newSessions = walletConnectInterceptor.getActiveSessions(
       daoDetails?.address
     );
 
-    // Update active-sessions for all hook instances
-    activeSessionsListeners.forEach(listener => listener(newSessions));
+    setSessions(newSessions);
   }, [daoDetails?.address]);
 
   const wcConnect = useCallback(async ({onError, uri}: WcConnectOptions) => {
@@ -80,40 +83,22 @@ export function useWalletConnectInterceptor({
   const handleRequest = useCallback(
     (event: Web3WalletTypes.SessionRequest) => {
       if (event.params.chainId === `eip155:${CHAIN_METADATA[network].id}`) {
-        onActionRequest?.(event.params.request);
+        setActions(current => current.concat(event.params.request));
       }
     },
-    [network, onActionRequest]
+    [network]
   );
-
-  const addListeners = useCallback(() => {
-    if (activeSessionsListeners.size > 0) {
-      return;
-    }
-
-    walletConnectInterceptor.subscribeConnectProposal(handleApprove);
-    walletConnectInterceptor.subscribeDisconnect(updateActiveSessions);
-  }, [handleApprove, updateActiveSessions]);
-
-  const removeListeners = useCallback(() => {
-    if (activeSessionsListeners.size > 0) {
-      return;
-    }
-
-    walletConnectInterceptor.unsubscribeConnectProposal(handleApprove);
-    walletConnectInterceptor.unsubscribeDisconnect(updateActiveSessions);
-  }, [handleApprove, updateActiveSessions]);
 
   // Listen for active-session changes and subscribe / unsubscribe to client changes
   useEffect(() => {
-    addListeners();
-    activeSessionsListeners.add(setSessions);
+    walletConnectInterceptor.subscribeConnectProposal(handleApprove);
+    walletConnectInterceptor.subscribeDisconnect(updateActiveSessions);
 
     return () => {
-      activeSessionsListeners.delete(setSessions);
-      removeListeners();
+      walletConnectInterceptor.unsubscribeConnectProposal(handleApprove);
+      walletConnectInterceptor.unsubscribeDisconnect(updateActiveSessions);
     };
-  }, [addListeners, removeListeners]);
+  }, [handleApprove, updateActiveSessions]);
 
   // Always subscribe to the request event as the onActionRequest property might differ
   // between hook instances
@@ -125,5 +110,5 @@ export function useWalletConnectInterceptor({
     };
   }, [handleRequest]);
 
-  return {wcConnect, wcDisconnect, sessions, activeSessions};
+  return {wcConnect, wcDisconnect, sessions, activeSessions, actions};
 }
