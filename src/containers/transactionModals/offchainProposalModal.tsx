@@ -2,7 +2,7 @@ import React, {useMemo} from 'react';
 import styled from 'styled-components';
 import {useTranslation} from 'react-i18next';
 
-import {CHAIN_METADATA, TransactionState} from 'utils/constants';
+import {CHAIN_METADATA} from 'utils/constants';
 import ModalBottomSheetSwitcher from 'components/modalBottomSheetSwitcher';
 import {useNetwork} from 'context/network';
 import {formatUnits} from 'utils/library';
@@ -16,8 +16,6 @@ import {
   ButtonText,
   IconChevronRight,
   IconReload,
-  IconWarning,
-  Spinner,
 } from '@aragon/ods';
 
 type OffchainProposalModalProps = {

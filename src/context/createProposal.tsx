@@ -731,6 +731,7 @@ const CreateProposalWrapper: React.FC<Props> = ({
     createProposal,
   } = useCreateOffchainProposal({
     daoToken,
+    handleOnchainProposal: handlePublishProposal,
   });
 
   const handleOffChainProposal = useCallback(async () => {

@@ -1,79 +1,12 @@
-import {useReactiveVar} from '@apollo/client';
 import {
   CreateMajorityVotingProposalParams,
   Erc20TokenDetails,
   Erc20WrapperTokenDetails,
-  InstalledPluginListItem,
-  MultisigClient,
-  MultisigVotingSettings,
-  ProposalCreationSteps,
-  TokenVotingClient,
-  VotingSettings,
-  WithdrawParams,
 } from '@aragon/sdk-client';
-import {
-  DaoAction,
-  ProposalMetadata,
-  TokenType,
-} from '@aragon/sdk-client-common';
-import {hexToBytes} from '@aragon/sdk-common';
-import {ethers} from 'ethers';
-import React, {useCallback, useEffect, useMemo, useState} from 'react';
-import {useFormContext} from 'react-hook-form';
+import {ProposalMetadata} from '@aragon/sdk-client-common';
+import React, {useCallback, useMemo, useState} from 'react';
 import {useTranslation} from 'react-i18next';
-import {generatePath, useNavigate} from 'react-router-dom';
 
-import {Loading} from 'components/temporary';
-import PublishModal from 'containers/transactionModals/publishModal';
-import {useClient} from 'hooks/useClient';
-import {useDaoDetailsQuery} from 'hooks/useDaoDetails';
-import {useDaoToken} from 'hooks/useDaoToken';
-import {PluginTypes, usePluginClient} from 'hooks/usePluginClient';
-import {
-  isMultisigVotingSettings,
-  isTokenVotingSettings,
-  usePluginSettings,
-} from 'hooks/usePluginSettings';
-import {usePollGasFee} from 'hooks/usePollGasfee';
-import {useTokenSupply} from 'hooks/useTokenSupply';
-import {useWallet} from 'hooks/useWallet';
-import {trackEvent} from 'services/analytics';
-import {getEtherscanVerifiedContract} from 'services/etherscanAPI';
-import {
-  PENDING_MULTISIG_PROPOSALS_KEY,
-  PENDING_PROPOSALS_KEY,
-  TransactionState,
-} from 'utils/constants';
-import {
-  daysToMills,
-  getCanonicalDate,
-  getCanonicalTime,
-  getCanonicalUtcOffset,
-  getDHMFromSeconds,
-  hoursToMills,
-  minutesToMills,
-  offsetToMills,
-} from 'utils/date';
-import {
-  customJSONReplacer,
-  getDefaultPayableAmountInputName,
-  toDisplayEns,
-} from 'utils/library';
-import {Proposal} from 'utils/paths';
-import {
-  CacheProposalParams,
-  getNonEmptyActions,
-  mapToCacheProposal,
-} from 'utils/proposals';
-import {isNativeToken} from 'utils/tokens';
-import {ProposalId, ProposalResource} from 'utils/types';
-import {
-  pendingMultisigProposalsVar,
-  pendingTokenBasedProposalsVar,
-} from './apolloClient';
-import {useGlobalModalContext} from './globalModals';
-import {useNetwork} from './network';
-import {usePrivacyContext} from './privacyContext';
 import {
   proposalToElection,
   UseCreateElectionProps,
@@ -81,7 +14,6 @@ import {
 import {useClient as useVocdoniClient} from 'hooks/useVocdoniSdk';
 import {
   AccountData,
-  Census,
   Election,
   ErrAccountNotFound,
   ErrAPI,
@@ -113,9 +45,14 @@ export type OffchainProposalSteps = {
 
 type ICreateOffchainProposal = {
   daoToken: Erc20TokenDetails | Erc20WrapperTokenDetails | undefined;
+  // todo(kon): change this when min sdk is ready
+  handleOnchainProposal: () => Promise<Error | undefined>;
 };
 
-const useCreateOffchainProposal = ({daoToken}: ICreateOffchainProposal) => {
+const useCreateOffchainProposal = ({
+  daoToken,
+  handleOnchainProposal,
+}: ICreateOffchainProposal) => {
   const {t, i18n} = useTranslation();
 
   const [steps, setSteps] = useState<OffchainProposalSteps>({
@@ -210,8 +147,11 @@ const useCreateOffchainProposal = ({daoToken}: ICreateOffchainProposal) => {
         // todo(kon): replace error handling
         if ((e as string).includes('not enough balance to transfer')) {
           console.log('DEBUG', 'error, collecting faucet');
+          // todo(kon): do an estimation and collect tokens as many as needed
           await vocdoniClient.collectFaucetTokens();
+          console.log('DEBUG', 'faucet collected');
           return await vocdoniClient.createElection(election);
+          console.log('DEBUG', 'election created after faucet collected');
         } else throw e;
       }
     },
@@ -272,7 +212,16 @@ const useCreateOffchainProposal = ({daoToken}: ICreateOffchainProposal) => {
       metadata: ProposalMetadata,
       data: CreateMajorityVotingProposalParams
     ) => {
-      console.log('DEBUG', 'Start creating a proposal');
+      console.log(
+        'DEBUG',
+        'Start creating a proposal. Global state:',
+        globalState
+      );
+
+      // todo(kon): handle the click when global state is success to open the proposal again
+      if (globalState === StepStatus.SUCCESS) {
+        return await handleOnchainProposal();
+      }
 
       if (!daoToken) {
         return new Error('ERC20 SDK client is not initialized correctly');
@@ -302,18 +251,32 @@ const useCreateOffchainProposal = ({daoToken}: ICreateOffchainProposal) => {
       );
       console.log('DEBUG', 'Election created', electionId);
 
-      // 3 Register the proposal onchain
+      // 3. Register the proposal onchain
       // todo(kon): Register election to the DAO
-      updateStepStatus(
+      await doStep(
         OffchainProposalStepId.CREATE_ONCHAIN_PROPOSAL,
-        StepStatus.SUCCESS
+        handleOnchainProposal
       );
+      console.log('DEBUG', 'Proposal offchain created', electionId);
+
+      // 4. All ready
       updateStepStatus(
         OffchainProposalStepId.PROPOSAL_IS_READY,
         StepStatus.SUCCESS
       );
+      console.log('DEBUG', 'All done!', electionId);
+
+      // todo(kon): handle all process is finished (go to the proposal on the ui)
     },
-    [createAccount, createCensus, daoToken]
+    [
+      createAccount,
+      createCensus,
+      createVocdoniElection,
+      daoToken,
+      doStep,
+      globalState,
+      handleOnchainProposal,
+    ]
   );
 
   return {steps, globalState, createProposal};
