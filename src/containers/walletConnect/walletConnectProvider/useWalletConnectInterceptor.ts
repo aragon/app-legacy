@@ -7,6 +7,7 @@ import {CHAIN_METADATA, SUPPORTED_CHAIN_ID} from 'utils/constants';
 import {Web3WalletTypes} from '@walletconnect/web3wallet';
 import {useDaoDetailsQuery} from 'hooks/useDaoDetails';
 import {useSignMessage, useWalletClient} from 'wagmi';
+import {IsAddress} from '@aragon/ods';
 
 export type WcSession = SessionTypes.Struct;
 export type WcActionRequest =
@@ -15,6 +16,7 @@ export type WcActionRequest =
 export type WcConnectOptions = {
   uri: string;
   onError?: (e: Error) => void;
+  mock?: string;
 };
 
 export type WcInterceptorValues = {
@@ -32,31 +34,36 @@ export function useWalletConnectInterceptor(): WcInterceptorValues {
   const {signMessageAsync} = useSignMessage();
   const {data: walletClient} = useWalletClient();
 
+  const [mockAddress, setMockAddress] = useState<string>();
   const {data: daoDetails} = useDaoDetailsQuery();
+  const daoAddress = IsAddress(mockAddress ?? null)
+    ? mockAddress
+    : daoDetails?.address;
+
+  const [actions, setActions] = useState<WcActionRequest[]>([]);
   const [sessions, setSessions] = useState<WcSession[]>(
-    walletConnectInterceptor.getActiveSessions(daoDetails?.address)
+    walletConnectInterceptor.getActiveSessions(daoAddress)
   );
   const activeSessions = sessions.filter(session => session.acknowledged);
 
-  const [actions, setActions] = useState<WcActionRequest[]>([]);
-
   const updateActiveSessions = useCallback(() => {
-    const newSessions = walletConnectInterceptor.getActiveSessions(
-      daoDetails?.address
-    );
-
+    const newSessions = walletConnectInterceptor.getActiveSessions(daoAddress);
     setSessions(newSessions);
-  }, [daoDetails?.address]);
+  }, [daoAddress]);
 
-  const wcConnect = useCallback(async ({onError, uri}: WcConnectOptions) => {
-    try {
-      const connection = await walletConnectInterceptor.connect(uri);
+  const wcConnect = useCallback(
+    async ({onError, uri, mock}: WcConnectOptions) => {
+      try {
+        setMockAddress(mock);
+        const connection = await walletConnectInterceptor.connect(uri);
 
-      return connection;
-    } catch (e) {
-      onError?.(e as Error);
-    }
-  }, []);
+        return connection;
+      } catch (e) {
+        onError?.(e as Error);
+      }
+    },
+    []
+  );
 
   const wcDisconnect = useCallback(
     async (topic: string) => {
@@ -74,13 +81,13 @@ export function useWalletConnectInterceptor(): WcInterceptorValues {
     async (data: Web3WalletTypes.SessionProposal) => {
       await walletConnectInterceptor.approveSession(
         data,
-        daoDetails?.address as string,
+        daoAddress as string,
         SUPPORTED_CHAIN_ID
       );
 
       updateActiveSessions();
     },
-    [daoDetails?.address, updateActiveSessions]
+    [daoAddress, updateActiveSessions]
   );
 
   const handleSignRequest = useCallback(
@@ -120,7 +127,8 @@ export function useWalletConnectInterceptor(): WcInterceptorValues {
       if (isSignRequest) {
         handleSignRequest(event);
       } else if (
-        event.params.chainId === `eip155:${CHAIN_METADATA[network].id}`
+        event.params.chainId === `eip155:${CHAIN_METADATA[network].id}` ||
+        network != null // TODO: remove dummy check and restore network check
       ) {
         setActions(current => current.concat(event.params.request));
       }

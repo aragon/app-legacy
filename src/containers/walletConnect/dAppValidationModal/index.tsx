@@ -4,6 +4,7 @@ import {
   IconReload,
   Label,
   Spinner,
+  WalletInput,
   WalletInputLegacy,
 } from '@aragon/ods';
 import React, {useCallback, useEffect, useMemo, useState} from 'react';
@@ -52,6 +53,8 @@ const WCdAppValidation: React.FC<Props> = props => {
   const {control} = useFormContext();
   const {errors} = useFormState({control});
   const [uri] = useWatch({name: [WC_URI_INPUT_NAME], control});
+
+  const [mockAddress, setMockAddress] = useState({address: '', ensName: ''});
 
   const ctaLabel = useMemo(() => {
     switch (connectionStatus) {
@@ -120,14 +123,14 @@ const WCdAppValidation: React.FC<Props> = props => {
 
   const handleConnectDApp = useCallback(async () => {
     setConnectionStatus(ConnectionState.LOADING);
-    const wcConnection = await wcConnect({uri});
+    const wcConnection = await wcConnect({uri, mock: mockAddress.address});
 
     if (wcConnection) {
       setSessionTopic(wcConnection.topic);
     } else {
       setConnectionStatus(ConnectionState.ERROR);
     }
-  }, [uri, wcConnect]);
+  }, [uri, wcConnect, mockAddress]);
 
   // Update connectionStatus to SUCCESS when the session is active and acknowledged or reset
   // the connection state if the session has been terminated on the dApp
@@ -195,6 +198,13 @@ const WCdAppValidation: React.FC<Props> = props => {
             )}
           />
         </FormGroup>
+        <div className="flex flex-col gap-1.5">
+          <Label
+            label="Mock address"
+            helpText="Mock the address sent to the dApp"
+          />
+          <WalletInput value={mockAddress} onValueChange={setMockAddress} />
+        </div>
         <ButtonText
           size="large"
           label={ctaLabel}
