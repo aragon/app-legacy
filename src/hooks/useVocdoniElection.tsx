@@ -451,3 +451,19 @@ export const ElectionProvider = ({
   );
 };
 ElectionProvider.displayName = 'ElectionProvider';
+
+// todo(kon): move this following block somewhere else
+export enum OffchainPluginLocalStorageKeys {
+  PROPOSAL_TO_ELECTION = 'PROPOSAL_TO_ELECTION',
+}
+
+export interface ProposalToElection {
+  [key: string]: {
+    // The key is the proposal id
+    electionId: string;
+  };
+}
+export interface OffchainPluginLocalStorageTypes {
+  [OffchainPluginLocalStorageKeys.PROPOSAL_TO_ELECTION]: ProposalToElection;
+}
+// todo(kon): move this previous block somewehere else
