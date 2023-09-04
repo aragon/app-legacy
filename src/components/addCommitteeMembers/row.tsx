@@ -56,9 +56,12 @@ const WalletRow: React.FC<WalletRowProps> = ({index, onDelete}) => {
       if (
         committee?.some(
           (wallet, walletIndex) =>
-            ((web3Address.address && wallet.address === web3Address.address) ||
+            ((web3Address.address &&
+              wallet.address.toLowerCase() ===
+                web3Address.address.toLowerCase()) ||
               (web3Address.ensName &&
-                wallet.ensName === web3Address.ensName)) &&
+                wallet.ensName.toLowerCase() ===
+                  web3Address.ensName.toLowerCase())) &&
             walletIndex !== index
         )
       ) {

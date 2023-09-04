@@ -1026,6 +1026,7 @@ export const walletInWalletList = (
 ) =>
   walletsList?.some(
     w =>
-      w.address.toLowerCase() === wallet.address?.toLowerCase() ||
-      w.ensName.toLowerCase() === wallet.ensName?.toLowerCase()
+      (w.address &&
+        w.address.toLowerCase() === wallet.address?.toLowerCase()) ||
+      (w.ensName && w.ensName.toLowerCase() === wallet.ensName?.toLowerCase())
   );

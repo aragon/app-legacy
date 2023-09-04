@@ -113,18 +113,17 @@ const DefineCommittee: React.FC = () => {
                 </LinearProgressContainer>
               </ApprovalWrapper>
 
-              {error?.message ||
-                (committeeMinimumApproval === committeeCount.toString() && (
-                  <AlertInline
-                    label={
-                      error?.message ??
-                      t('errors.minimumApprovalCommittee', {
-                        max: committeeCount,
-                      })
-                    }
-                    mode="warning"
-                  />
-                ))}
+              {error?.message && (
+                <AlertInline
+                  label={
+                    error?.message ??
+                    t('errors.minimumApprovalCommittee', {
+                      max: committeeCount,
+                    })
+                  }
+                  mode="warning"
+                />
+              )}
             </>
           )}
         />
