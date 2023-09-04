@@ -353,7 +353,7 @@ const ProposalTransactionProvider: React.FC<Props> = ({children}) => {
 
   // todo(kon): modify this
   const offchainVoting = true;
-  const {submitVote} = useOffchainVoting();
+  const {submitVote: submitOffchainVote} = useOffchainVoting();
 
   /*************************************************
    *              Submit Transactions              *
@@ -426,21 +426,9 @@ const ProposalTransactionProvider: React.FC<Props> = ({children}) => {
 
       // todo(kon): simple way of voting, use providers better
       // It retrieves from local storage the vocdoni election id. Won't be this on the final implementation
+      // Not showing errors neither
       if (offchainVoting) {
-        const proposalIds = localStorage.getItem(
-          OffchainPluginLocalStorageKeys.PROPOSAL_TO_ELECTION
-        );
-        if (proposalIds !== null) {
-          const parsed = JSON.parse(
-            proposalIds
-          ) as OffchainPluginLocalStorageTypes[OffchainPluginLocalStorageKeys.PROPOSAL_TO_ELECTION];
-          if (voteParams.proposalId in parsed) {
-            await submitVote(
-              parsed[voteParams.proposalId].electionId,
-              voteParams
-            );
-          }
-        }
+        await submitOffchainVote(voteParams);
       }
 
       const voteSteps = pluginClient.methods.voteProposal(params);
