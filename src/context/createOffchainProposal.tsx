@@ -8,6 +8,8 @@ import React, {useCallback, useMemo, useState} from 'react';
 import {useTranslation} from 'react-i18next';
 
 import {
+  OffchainPluginLocalStorageKeys,
+  OffchainPluginLocalStorageTypes,
   proposalToElection,
   UseCreateElectionProps,
 } from 'hooks/useVocdoniElection';
@@ -19,7 +21,7 @@ import {
   ErrAPI,
   UnpublishedElection,
 } from '@vocdoni/sdk';
-import {VoteValues} from '@aragon/sdk-client/dist/client-common/types/plugin';
+import {VoteValues} from '@aragon/sdk-client';
 
 // todo(kon): move this types somewhere else
 export enum OffchainProposalStepId {
@@ -50,9 +52,46 @@ type ICreateOffchainProposal = {
 };
 
 const useCreateOffchainProposal = ({daoToken}: ICreateOffchainProposal) => {
-  const {t, i18n} = useTranslation();
-
   const [electionId, setElectionId] = useState('');
+
+  // todo(kon): only cache the proposal using local storage?
+  const cacheProposal = useCallback(
+    (proposalId: string, electionId: string) => {
+      console.log('DEBUG', 'Caching proposal', proposalId, electionId);
+      if (!electionId) return;
+
+      const proposal = {
+        [proposalId]: {
+          electionId: electionId,
+        },
+      } as OffchainPluginLocalStorageTypes[OffchainPluginLocalStorageKeys.PROPOSAL_TO_ELECTION];
+
+      const proposalsIds = localStorage.getItem(
+        OffchainPluginLocalStorageKeys.PROPOSAL_TO_ELECTION
+      );
+
+      if (proposalsIds === null) {
+        localStorage.setItem(
+          OffchainPluginLocalStorageKeys.PROPOSAL_TO_ELECTION,
+          JSON.stringify({
+            ...proposal,
+          } as OffchainPluginLocalStorageTypes[OffchainPluginLocalStorageKeys.PROPOSAL_TO_ELECTION])
+        );
+      } else {
+        const parsed = JSON.parse(
+          proposalsIds
+        ) as OffchainPluginLocalStorageTypes[OffchainPluginLocalStorageKeys.PROPOSAL_TO_ELECTION];
+        localStorage.setItem(
+          OffchainPluginLocalStorageKeys.PROPOSAL_TO_ELECTION,
+          JSON.stringify({
+            ...parsed,
+            ...proposal,
+          } as OffchainPluginLocalStorageTypes[OffchainPluginLocalStorageKeys.PROPOSAL_TO_ELECTION])
+        );
+      }
+    },
+    []
+  );
 
   const [steps, setSteps] = useState<OffchainProposalSteps>({
     REGISTER_VOCDONI_ACCOUNT: {
@@ -139,13 +178,16 @@ const useCreateOffchainProposal = ({daoToken}: ICreateOffchainProposal) => {
         '',
         // Map choices from Aragon enum.
         // This is important to respect the order and the values
-        Object.keys(VoteValues).map((key, i) => ({
-          title: key,
-          value: i,
-        }))
+        Object.keys(VoteValues)
+          .filter(key => isNaN(Number(key)))
+          .map((key, i) => ({
+            title: key,
+            value: i,
+          }))
       );
       // todo(kon): handle how collect faucet have to work
       try {
+        console.log('DEBUG', 'trying to create', election);
         return await vocdoniClient.createElection(election);
       } catch (e) {
         // todo(kon): replace error handling
@@ -216,12 +258,13 @@ const useCreateOffchainProposal = ({daoToken}: ICreateOffchainProposal) => {
       metadata: ProposalMetadata,
       data: CreateMajorityVotingProposalParams,
       // todo(kon): change this when min sdk is ready
-      handleOnchainProposal: () => Promise<Error | undefined>
+      handleOnchainProposal: (electionId?: string) => Promise<Error | undefined>
     ) => {
       console.log(
         'DEBUG',
         'Start creating a proposal. Global state:',
-        globalState
+        globalState,
+        steps
       );
 
       // todo(kon): handle the click when global state is success to open the proposal again
@@ -255,13 +298,14 @@ const useCreateOffchainProposal = ({daoToken}: ICreateOffchainProposal) => {
           );
         }
       );
+      setElectionId(electionId);
       console.log('DEBUG', 'Election created', electionId);
 
       // 3. Register the proposal onchain
       // todo(kon): Register election to the DAO
       await doStep(
         OffchainProposalStepId.CREATE_ONCHAIN_PROPOSAL,
-        handleOnchainProposal
+        async () => await handleOnchainProposal(electionId)
       );
       console.log('DEBUG', 'Proposal offchain created', electionId);
 
@@ -270,9 +314,7 @@ const useCreateOffchainProposal = ({daoToken}: ICreateOffchainProposal) => {
         OffchainProposalStepId.PROPOSAL_IS_READY,
         StepStatus.SUCCESS
       );
-      console.log('DEBUG', 'All done!', electionId);
-
-      setElectionId(electionId);
+      console.log('DEBUG', 'All done!', globalState, electionId);
 
       // todo(kon): handle all process is finished (go to the proposal on the ui)
     },
@@ -283,10 +325,12 @@ const useCreateOffchainProposal = ({daoToken}: ICreateOffchainProposal) => {
       daoToken,
       doStep,
       globalState,
+      steps,
+      setElectionId,
     ]
   );
 
-  return {steps, globalState, createProposal, electionId};
+  return {steps, globalState, createProposal, electionId, cacheProposal};
 };
 
 export {useCreateOffchainProposal};
