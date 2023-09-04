@@ -164,6 +164,16 @@ const useCreateOffchainProposal = ({daoToken}: ICreateOffchainProposal) => {
 
   const {client: vocdoniClient, census3Client} = useVocdoniClient();
 
+  const collectFaucet = useCallback(
+    async (cost: number, account: AccountData) => {
+      if (account.balance < cost) {
+        account = await vocdoniClient.collectFaucetTokens();
+        await collectFaucet(cost, account);
+      }
+    },
+    [vocdoniClient]
+  );
+
   const createVocdoniElection = useCallback(
     async (electionData: UseCreateElectionProps) => {
       const election: UnpublishedElection = Election.from({
@@ -172,6 +182,7 @@ const useCreateOffchainProposal = ({daoToken}: ICreateOffchainProposal) => {
         endDate: electionData.endDate,
         startDate: electionData.startDate,
         census: electionData.census,
+        maxCensusSize: electionData.census.size ?? undefined,
       });
       election.addQuestion(
         electionData.question,
@@ -186,20 +197,27 @@ const useCreateOffchainProposal = ({daoToken}: ICreateOffchainProposal) => {
           }))
       );
       // todo(kon): handle how collect faucet have to work
-      try {
-        console.log('DEBUG', 'trying to create', election);
-        return await vocdoniClient.createElection(election);
-      } catch (e) {
-        // todo(kon): replace error handling
-        if ((e as string).includes('not enough balance to transfer')) {
-          console.log('DEBUG', 'error, collecting faucet', election);
-          // todo(kon): do an estimation and collect tokens as many as needed
-          await vocdoniClient.collectFaucetTokens();
-          console.log('DEBUG', 'faucet collected', election);
-          return await vocdoniClient.createElection(election);
-          console.log('DEBUG', 'election created after faucet collected');
-        } else throw e;
-      }
+      const cost = await vocdoniClient.estimateElectionCost(election);
+      const accountInfo = await vocdoniClient.fetchAccountInfo();
+      console.log('DEBUG', 'Estimated cost', cost, accountInfo);
+
+      await collectFaucet(cost, accountInfo);
+
+      console.log('DEBUG', 'Faucet collected, creating election:', election);
+      return await vocdoniClient.createElection(election);
+
+      // try {
+      // } catch (e) {
+      //   // todo(kon): replace error handling
+      //   if ((e as string).includes('not enough balance to transfer')) {
+      //     console.log('DEBUG', 'error, collecting faucet', election);
+      //     // todo(kon): do an estimation and collect tokens as many as needed
+      //     await vocdoniClient.collectFaucetTokens();
+      //     console.log('DEBUG', 'faucet collected', election);
+      //     return await vocdoniClient.createElection(election);
+      //     console.log('DEBUG', 'election created after faucet collected');
+      //   } else throw e;
+      // }
     },
     [vocdoniClient]
   );
