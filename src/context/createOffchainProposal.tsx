@@ -164,11 +164,12 @@ const useCreateOffchainProposal = ({daoToken}: ICreateOffchainProposal) => {
 
   const {client: vocdoniClient, census3Client} = useVocdoniClient();
 
+  // todo(kon): move this to a provider
   const collectFaucet = useCallback(
     async (cost: number, account: AccountData) => {
-      if (account.balance < cost) {
-        account = await vocdoniClient.collectFaucetTokens();
-        await collectFaucet(cost, account);
+      let balance = account.balance;
+      while (cost > balance) {
+        balance = (await vocdoniClient.collectFaucetTokens()).balance;
       }
     },
     [vocdoniClient]
