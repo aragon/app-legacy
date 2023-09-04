@@ -39,6 +39,7 @@ const ConfigureCommunity: React.FC<ConfigureCommunityProps> = ({
     durationDays,
     durationHours,
     durationMinutes,
+    votingType,
   ] = useWatch({
     name: [
       'membership',
@@ -46,6 +47,7 @@ const ConfigureCommunity: React.FC<ConfigureCommunityProps> = ({
       'durationDays',
       'durationHours',
       'durationMinutes',
+      'votingType',
     ],
   });
 
@@ -361,43 +363,48 @@ const ConfigureCommunity: React.FC<ConfigureCommunityProps> = ({
               />
             )}
           </FormItem>
+
           {/* Early execution */}
-          <FormItem>
-            <Label
-              label={t('labels.earlyExecution')}
-              helpText={t('labels.earlyExecutionDescription')}
-            />
-            <Controller
-              name="earlyExecution"
-              control={control}
-              render={({field: {onChange, value}}) => (
-                <ToggleCheckList
-                  onChange={changeValue =>
-                    handleEarlyExecutionChanged(changeValue, onChange)
-                  }
-                  value={value as boolean}
+          {votingType !== 'offChain' && (
+            <>
+              <FormItem>
+                <Label
+                  label={t('labels.earlyExecution')}
+                  helpText={t('labels.earlyExecutionDescription')}
                 />
-              )}
-            />
-          </FormItem>
-          {/* Vote replacement */}
-          <FormItem>
-            <Label
-              label={t('labels.voteReplacement')}
-              helpText={t('labels.voteReplacementDescription')}
-            />
-            <Controller
-              name="voteReplacement"
-              control={control}
-              render={({field: {onChange, value}}) => (
-                <ToggleCheckList
-                  onChange={onChange}
-                  value={value as boolean}
-                  disabled={earlyExecution}
+                <Controller
+                  name="earlyExecution"
+                  control={control}
+                  render={({field: {onChange, value}}) => (
+                    <ToggleCheckList
+                      onChange={changeValue =>
+                        handleEarlyExecutionChanged(changeValue, onChange)
+                      }
+                      value={value as boolean}
+                    />
+                  )}
                 />
-              )}
-            />
-          </FormItem>
+              </FormItem>
+              {/* Vote replacement */}
+              <FormItem>
+                <Label
+                  label={t('labels.voteReplacement')}
+                  helpText={t('labels.voteReplacementDescription')}
+                />
+                <Controller
+                  name="voteReplacement"
+                  control={control}
+                  render={({field: {onChange, value}}) => (
+                    <ToggleCheckList
+                      onChange={onChange}
+                      value={value as boolean}
+                      disabled={earlyExecution}
+                    />
+                  )}
+                />
+              </FormItem>
+            </>
+          )}
         </>
       )}
       <FormItem>
