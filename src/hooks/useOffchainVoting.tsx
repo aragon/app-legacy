@@ -1,15 +1,16 @@
-import {useClient as useVocdoniClient} from 'hooks/useVocdoniSdk';
+import {useClient as useVocdoniClient} from '@vocdoni/react-providers';
 import {useCallback} from 'react';
 import {VoteProposalParams} from '@aragon/sdk-client';
 import {Vote} from '@vocdoni/sdk';
 import {
   OffchainPluginLocalStorageKeys,
   OffchainPluginLocalStorageTypes,
-} from './useVocdoniElection';
+} from './useVocdoniSdk';
 
 const useOffchainVoting = () => {
   const {client: vocdoniClient} = useVocdoniClient();
 
+  // todo(kon): move this into local storage provdier if needed
   const getElectionId = useCallback((proposalId: string) => {
     const proposalIds = localStorage.getItem(
       OffchainPluginLocalStorageKeys.PROPOSAL_TO_ELECTION

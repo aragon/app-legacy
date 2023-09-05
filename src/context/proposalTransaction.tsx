@@ -41,10 +41,6 @@ import {ProposalId} from 'utils/types';
 import {useNetwork} from './network';
 import {useProviders} from './providers';
 import useOffchainVoting from '../hooks/useOffchainVoting';
-import {
-  OffchainPluginLocalStorageKeys,
-  OffchainPluginLocalStorageTypes,
-} from '../hooks/useVocdoniElection';
 
 type SubmitVoteParams = {
   vote: VoteValues;
