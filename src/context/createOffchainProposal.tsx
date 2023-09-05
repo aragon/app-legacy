@@ -5,25 +5,24 @@ import {
 } from '@aragon/sdk-client';
 import {ProposalMetadata} from '@aragon/sdk-client-common';
 import React, {useCallback, useMemo, useState} from 'react';
-import {useTranslation} from 'react-i18next';
 
 import {
-  OffchainPluginLocalStorageKeys,
-  OffchainPluginLocalStorageTypes,
-  proposalToElection,
-  UseCreateElectionProps,
-} from 'hooks/useVocdoniElection';
-import {useClient as useVocdoniClient} from 'hooks/useVocdoniSdk';
-import {
   AccountData,
+  Census,
   Election,
   ErrAccountNotFound,
   ErrAPI,
+  IElectionParameters,
   UnpublishedElection,
 } from '@vocdoni/sdk';
 import {VoteValues} from '@aragon/sdk-client';
+import {
+  OffchainPluginLocalStorageKeys,
+  OffchainPluginLocalStorageTypes,
+} from '../hooks/useVocdoniSdk';
+import {useClient} from '@vocdoni/react-providers';
 
-// todo(kon): move this types somewhere else
+// todo(kon): move this block somewhere else
 export enum OffchainProposalStepId {
   REGISTER_VOCDONI_ACCOUNT = 'REGISTER_VOCDONI_ACCOUNT',
   CREATE_VOCDONI_ELECTION = 'CREATE_VOCDONI_ELECTION',
@@ -50,6 +49,43 @@ export type OffchainProposalSteps = {
 type ICreateOffchainProposal = {
   daoToken: Erc20TokenDetails | Erc20WrapperTokenDetails | undefined;
 };
+
+export type UseCreateElectionProps = Omit<
+  IElectionParameters,
+  | 'header'
+  | 'streamUri'
+  | 'voteType'
+  | 'electionType'
+  | 'questions'
+  | 'maxCensusSize'
+  | 'addSDKVersion'
+> & {
+  question: string;
+};
+
+interface IProposalToElectionProps {
+  metadata: ProposalMetadata;
+  data: CreateMajorityVotingProposalParams;
+  census: Census;
+}
+
+const proposalToElection = ({
+  metadata,
+  data,
+  census,
+}: IProposalToElectionProps): UseCreateElectionProps => {
+  return {
+    title: metadata.title,
+    description: metadata.description,
+    question: metadata.summary,
+    startDate: data?.startDate ?? new Date(),
+    endDate: data?.endDate ?? new Date(),
+    meta: 'todo',
+    census: census,
+  };
+};
+
+// todo(kon): end to move this block somewhere else
 
 const useCreateOffchainProposal = ({daoToken}: ICreateOffchainProposal) => {
   const [electionId, setElectionId] = useState('');
@@ -162,9 +198,9 @@ const useCreateOffchainProposal = ({daoToken}: ICreateOffchainProposal) => {
     return res;
   };
 
-  const {client: vocdoniClient, census3Client} = useVocdoniClient();
+  const {client: vocdoniClient, census3} = useClient();
 
-  // todo(kon): move this to a provider
+  // todo(kon): move this somewhere?
   const collectFaucet = useCallback(
     async (cost: number, account: AccountData) => {
       let balance = account.balance;
@@ -248,7 +284,7 @@ const useCreateOffchainProposal = ({daoToken}: ICreateOffchainProposal) => {
     // Check if the census is already sync
     // todo(kon): this have to be moved on DAO creation process
     try {
-      await census3Client.createToken(daoToken!.address, 'erc20');
+      await census3.createToken(daoToken!.address, 'erc20');
     } catch (e) {
       // todo(kon): replace error handling when the api return code error is fixed. Now is a generic 500
       if (
@@ -259,7 +295,7 @@ const useCreateOffchainProposal = ({daoToken}: ICreateOffchainProposal) => {
       } else throw e;
     }
 
-    const censusToken = await census3Client.getToken(daoToken!.address);
+    const censusToken = await census3.getToken(daoToken!.address);
 
     console.log('DEBUG', 'Census', censusToken);
     // todo(kon): handle token is not sync
@@ -269,8 +305,8 @@ const useCreateOffchainProposal = ({daoToken}: ICreateOffchainProposal) => {
 
     // Create the vocdoni census
     console.log('DEBUG', 'Creating vocdoni census');
-    return await census3Client.createTokenCensus(censusToken.id);
-  }, [census3Client, daoToken]);
+    return await census3.createTokenCensus(censusToken.id);
+  }, [census3, daoToken]);
 
   const createProposal = useCallback(
     async (
