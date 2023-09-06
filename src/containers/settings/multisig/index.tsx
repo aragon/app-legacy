@@ -25,7 +25,7 @@ const MultisigSettings: React.FC<IPluginSettings> = ({daoDetails}) => {
   const daoSettings = votingSettings as MultisigVotingSettings;
 
   return (
-    <div className="space-y-5">
+    <div className="space-y-3">
       {/* COMMUNITY SECTION */}
       <DescriptionListContainer title={t('navLinks.community')}>
         <Dl>

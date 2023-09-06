@@ -85,7 +85,7 @@ const MajorityVotingSettings: React.FC<IPluginSettings> = ({daoDetails}) => {
   };
 
   return (
-    <div className="space-y-5">
+    <div className="space-y-3">
       {/* COMMUNITY SECTION */}
       <DescriptionListContainer title={t('navLinks.community')}>
         <Dl>
