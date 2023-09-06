@@ -1,16 +1,21 @@
+import {IconLinkExternal, Link} from '@aragon/ods';
+import {MultisigVotingSettings} from '@aragon/sdk-client';
 import React from 'react';
 import {useTranslation} from 'react-i18next';
 import {generatePath, useNavigate} from 'react-router-dom';
-import {MultisigVotingSettings} from '@aragon/sdk-client';
-import {Link} from '@aragon/ods';
 
-import {Dd, DescriptionListContainer, Dl, Dt} from 'components/descriptionList';
+import {
+  Definition,
+  DescriptionPair,
+  SettingsCard,
+  Term,
+} from 'containers/settingsCard';
 import {useNetwork} from 'context/network';
 import {useDaoMembers} from 'hooks/useDaoMembers';
-import {Community} from 'utils/paths';
-import {useVotingSettings} from 'hooks/useVotingSettings';
 import {PluginTypes} from 'hooks/usePluginClient';
+import {useVotingSettings} from 'hooks/useVotingSettings';
 import {IPluginSettings} from 'pages/settings';
+import {Community} from 'utils/paths';
 
 const MultisigSettings: React.FC<IPluginSettings> = ({daoDetails}) => {
   const {t} = useTranslation();
@@ -25,52 +30,51 @@ const MultisigSettings: React.FC<IPluginSettings> = ({daoDetails}) => {
   const daoSettings = votingSettings as MultisigVotingSettings;
 
   return (
-    <div className="space-y-3">
+    <>
       {/* COMMUNITY SECTION */}
-      <DescriptionListContainer title={t('navLinks.community')}>
-        <Dl>
-          <Dt>{t('labels.review.eligibleVoters')}</Dt>
-          <Dd>{t('createDAO.step3.multisigMembers')}</Dd>
-        </Dl>
+      <SettingsCard title={t('navLinks.community')}>
+        <DescriptionPair>
+          <Term>{t('labels.review.eligibleVoters')}</Term>
+          <Definition>{t('createDAO.step3.multisigMembers')}</Definition>
+        </DescriptionPair>
 
-        <Dl>
-          <Dt>{t('labels.members')}</Dt>
-          <Dd>
+        <DescriptionPair className="border-none">
+          <Term>{t('labels.members')}</Term>
+          <Definition>
             <Link
               label={t('createDAO.review.distributionLink', {
                 count: daoMembers?.members?.length,
               })}
+              iconRight={<IconLinkExternal />}
               onClick={() =>
                 navigate(
                   generatePath(Community, {network, dao: daoDetails?.address})
                 )
               }
             />
-          </Dd>
-        </Dl>
-      </DescriptionListContainer>
+          </Definition>
+        </DescriptionPair>
+      </SettingsCard>
 
       {/* GOVERNANCE SECTION */}
-      <DescriptionListContainer title={t('labels.review.governance')}>
-        <Dl>
-          <Dt>{t('labels.minimumApproval')}</Dt>
-          <Dd>
-            {`${daoSettings?.minApprovals} of ${daoMembers?.members.length} ${t(
-              'labels.authorisedWallets'
-            )}`}
-          </Dd>
-        </Dl>
+      <SettingsCard title={t('labels.review.governance')}>
+        <DescriptionPair>
+          <Term>{t('labels.minimumApproval')}</Term>
+          <Definition>{`${daoSettings?.minApprovals} of ${
+            daoMembers?.members.length
+          } ${t('labels.authorisedWallets')}`}</Definition>
+        </DescriptionPair>
 
-        <Dl>
-          <Dt>{t('labels.proposalCreation')}</Dt>
-          <Dd>
+        <DescriptionPair className="border-none">
+          <Term>{t('labels.proposalCreation')}</Term>
+          <Definition>
             {daoSettings?.onlyListed
               ? t('createDAO.step3.multisigMembers')
               : t('createDAO.step3.eligibility.anyWallet.title')}
-          </Dd>
-        </Dl>
-      </DescriptionListContainer>
-    </div>
+          </Definition>
+        </DescriptionPair>
+      </SettingsCard>
+    </>
   );
 };
 
