@@ -45,7 +45,7 @@ const useOffchainVoting = () => {
     },
     [vocdoniClient]
   );
-  return {submitVote};
+  return {submitVote, getElectionId};
 };
 
 export default useOffchainVoting;

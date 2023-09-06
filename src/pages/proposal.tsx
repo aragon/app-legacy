@@ -76,7 +76,13 @@ import {
   isErc20VotingProposal,
   isMultisigProposal,
 } from 'utils/proposals';
-import {Action} from 'utils/types';
+import {Action, ProposalId} from 'utils/types';
+import {ElectionProvider, useElection} from '@vocdoni/react-providers';
+import useOffchainVoting from '../hooks/useOffchainVoting';
+import {format} from 'date-fns';
+import {getFormattedUtcOffset, KNOWN_FORMATS} from '../utils/date';
+import {formatUnits, IChoice} from '@vocdoni/sdk';
+import Big from 'big.js';
 
 const PENDING_PROPOSAL_STATUS_INTERVAL = 1000 * 10;
 const PROPOSAL_STATUS_INTERVAL = 1000 * 60;
@@ -193,23 +199,36 @@ export const Proposal: React.FC = () => {
     ],
   });
 
+  // todo(kon): delete this when needed
+  const offChain = true;
+  const {election: vocdoniElection} = useElection();
+  const title = offChain
+    ? vocdoniElection?.title.default
+    : proposal?.metadata.title;
+  const summary = offChain
+    ? vocdoniElection?.questions[0].title.default
+    : proposal?.metadata.summary;
+  const description = offChain
+    ? vocdoniElection?.description.default
+    : proposal?.metadata.description;
+
   /*************************************************
    *                     Hooks                     *
    *************************************************/
 
   // set editor data
   useEffect(() => {
-    if (proposal && editor) {
+    if (proposal && editor && description) {
       editor.commands.setContent(
         // Default list of allowed tags and attributes - https://www.npmjs.com/package/sanitize-html#default-options
-        sanitizeHtml(proposal.metadata.description, {
+        sanitizeHtml(description!, {
           // the disallowedTagsMode displays the disallowed tags to be rendered as a string
           disallowedTagsMode: 'recursiveEscape',
         }),
         true
       );
     }
-  }, [editor, proposal]);
+  }, [editor, proposal, description]);
 
   useEffect(() => {
     if (proposalStatus) {
@@ -409,6 +428,7 @@ export const Proposal: React.FC = () => {
   /*************************************************
    *              Handlers and Callbacks           *
    *************************************************/
+
   // terminal props
   const mappedProps = useMemo(() => {
     if (proposal && votingSettings)
