@@ -1,28 +1,36 @@
-import {DaoDetails} from '@aragon/sdk-client';
 import {
   AlertInline,
   AvatarDao,
   ButtonText,
-  IconChevronRight,
   IconGovernance,
-  IconReload,
+  IconLinkExternal,
   Link,
-  ListItemLink,
+  Tag,
 } from '@aragon/ods';
+import {DaoDetails} from '@aragon/sdk-client';
 import React from 'react';
 import {useTranslation} from 'react-i18next';
 import {generatePath, useNavigate, useParams} from 'react-router-dom';
 import styled from 'styled-components';
-import {Dd, DescriptionListContainer, Dl, Dt} from 'components/descriptionList';
+
 import {Loading} from 'components/temporary';
 import {PageWrapper} from 'components/wrappers';
 import MajorityVotingSettings from 'containers/settings/majorityVoting';
 import MultisigSettings from 'containers/settings/multisig';
+import {
+  Definition,
+  DescriptionPair,
+  FlexibleDefinition,
+  SettingsCard,
+  Term,
+} from 'containers/settingsCard';
+import {SettingsUpdateCard} from 'containers/settingsUpdatedCard';
 import {useNetwork} from 'context/network';
 import {useDaoDetailsQuery} from 'hooks/useDaoDetails';
 import {PluginTypes} from 'hooks/usePluginClient';
 import useScreen from 'hooks/useScreen';
 import {CHAIN_METADATA} from 'utils/constants';
+import {toDisplayEns} from 'utils/library';
 import {EditSettings} from 'utils/paths';
 
 export const Settings: React.FC = () => {
@@ -35,92 +43,125 @@ export const Settings: React.FC = () => {
 
   const networkInfo = CHAIN_METADATA[network];
   const chainLabel = networkInfo.name;
-  const networkType = networkInfo.isTestnet
-    ? t('labels.testNet')
-    : t('labels.mainNet');
-
-  const resourceLinks = daoDetails?.metadata.links?.filter(
-    l => l.name && l.url
-  );
 
   if (isLoading) {
     return <Loading />;
   }
 
+  if (!daoDetails) {
+    return null;
+  }
+
+  const explorerLink =
+    CHAIN_METADATA[network].explorer + 'address/' + daoDetails.address;
+
   return (
     <SettingsWrapper>
-      <div className="flex flex-col gap-y-3">
+      <div className="col-span-full desktop:col-start-2 desktop:col-end-12 mt-2">
         <SettingsUpdateCard />
+      </div>
 
-        {/* BLOCKCHAIN SECTION */}
-        <DescriptionListContainer
-          title={t('labels.review.blockchain')}
-          tagLabel={t('labels.notChangeable')}
-        >
-          <Dl>
-            <Dt>{t('labels.review.network')}</Dt>
-            <Dd>{networkType}</Dd>
-          </Dl>
-          <Dl>
-            <Dt>{t('labels.review.blockchain')}</Dt>
-            <Dd>{chainLabel}</Dd>
-          </Dl>
-        </DescriptionListContainer>
+      <div className="col-span-full desktop:col-span-6 desktop:col-start-2">
+        <div className="flex flex-col gap-y-3">
+          {/* DAO SECTION */}
+          <SettingsCard title="DAO">
+            <DescriptionPair>
+              <Term>{t('labels.daoName')}</Term>
+              <Definition className="items-center space-x-2">
+                <span>{daoDetails.metadata.name}</span>
+                <AvatarDao
+                  size="small"
+                  daoName={daoDetails.metadata.name}
+                  src={daoDetails.metadata?.avatar}
+                />
+              </Definition>
+            </DescriptionPair>
 
-        {/* DAO DETAILS SECTION */}
-        <DescriptionListContainer title={t('labels.review.daoMetadata')}>
-          <Dl>
-            <Dt>{t('labels.logo')}</Dt>
-            <Dd>
-              <AvatarDao
-                size={'small'}
-                daoName={daoDetails?.metadata.name || ''}
-                src={daoDetails?.metadata?.avatar}
-              />
-            </Dd>
-          </Dl>
-          <Dl>
-            <Dt>{t('labels.daoName')}</Dt>
-            <Dd>{daoDetails?.metadata.name}</Dd>
-          </Dl>
-          {!isL2Network && (
-            <Dl>
-              <Dt>{t('labels.ens')}</Dt>
-              <Dd>{daoDetails?.ensDomain}</Dd>
-            </Dl>
-          )}
-          <Dl>
-            <Dt>{t('labels.summary')}</Dt>
-            <Dd>{daoDetails?.metadata.description}</Dd>
-          </Dl>
-          {resourceLinks && resourceLinks.length > 0 && (
-            <Dl>
-              <Dt>{t('labels.links')}</Dt>
-              <Dd>
-                <div className="space-y-1.5">
-                  {resourceLinks.map(({name, url}) => (
-                    <ListItemLink label={name} href={url} key={url} />
-                  ))}
-                </div>
-              </Dd>
-            </Dl>
-          )}
-        </DescriptionListContainer>
+            <DescriptionPair>
+              <Term>{t('labels.review.blockchain')}</Term>
+              <Definition className="justify-between items-center">
+                <span>{chainLabel}</span>
+                <Tag label={t('labels.notChangeable')} colorScheme="neutral" />
+              </Definition>
+            </DescriptionPair>
 
-        {/* Plugins */}
-        <PluginSettingsWrapper daoDetails={daoDetails} />
+            {!isL2Network && (
+              <DescriptionPair>
+                <Term>{t('labels.ens')}</Term>
+                <Definition className="justify-between items-center">
+                  <Link
+                    label={toDisplayEns(daoDetails.ensDomain)}
+                    // description={shortenAddress(daoDetails.address)}
+                    type="primary"
+                    href={explorerLink}
+                    iconRight={<IconLinkExternal />}
+                  />
+                </Definition>
+              </DescriptionPair>
+            )}
 
-        {/* Edit */}
-        <div className="space-y-2">
-          <ButtonText
-            label={t('settings.edit')}
-            className="w-full tablet:w-max"
-            size="large"
-            iconLeft={!isDesktop ? <IconGovernance /> : undefined}
-            onClick={() => navigate('edit')}
-          />
-          <AlertInline label={t('settings.proposeSettingsInfo')} />
+            <DescriptionPair className="border-none">
+              <Term>{t('labels.summary')}</Term>
+              <Definition>{daoDetails.metadata.description}</Definition>
+            </DescriptionPair>
+          </SettingsCard>
+
+          {/* COMMUNITY SECTION */}
+          <PluginSettingsWrapper daoDetails={daoDetails} />
+
+          {/* Edit */}
+          <div className="space-y-2">
+            <ButtonText
+              label={t('settings.edit')}
+              className="w-full tablet:w-max"
+              size="large"
+              iconLeft={!isDesktop ? <IconGovernance /> : undefined}
+              onClick={() => navigate('edit')}
+            />
+            <AlertInline label={t('settings.proposeSettingsInfo')} />
+          </div>
         </div>
+      </div>
+      <div className="col-span-full desktop:col-start-8 desktop:col-end-12">
+        <SettingsCard title="Version info">
+          <DescriptionPair>
+            <Term>App</Term>
+            <FlexibleDefinition>
+              <Link
+                label={'Aragon App v0.1.29'}
+                // TODO: add description
+                type="primary"
+                href={explorerLink}
+                iconRight={<IconLinkExternal />}
+              />
+            </FlexibleDefinition>
+          </DescriptionPair>
+          <DescriptionPair>
+            <Term>Operating System</Term>
+            <FlexibleDefinition>
+              <Link
+                label={'Aragon OSx v1.1.23'}
+                // TODO: add description
+                type="primary"
+                href={explorerLink}
+                iconRight={<IconLinkExternal />}
+              />
+            </FlexibleDefinition>
+          </DescriptionPair>
+
+          <DescriptionPair className="border-none">
+            <Term>Governance</Term>
+            <FlexibleDefinition>
+              <Link
+                label={'Token voting v1.12'}
+                // TODO add description
+                type="primary"
+                href={explorerLink}
+                iconRight={<IconLinkExternal />}
+              />
+            </FlexibleDefinition>
+          </DescriptionPair>
+        </SettingsCard>
       </div>
     </SettingsWrapper>
   );
@@ -163,7 +204,7 @@ const SettingsWrapper: React.FC = ({children}) => {
         iconLeft: isMobile ? <IconGovernance /> : undefined,
         onClick: () => navigate(generatePath(EditSettings, {network, dao})),
       }}
-      customBody={<Layout>{children}</Layout>}
+      customBody={<>{children}</>}
     />
   );
 };
@@ -171,70 +212,4 @@ const SettingsWrapper: React.FC = ({children}) => {
 export const Layout = styled.div.attrs({
   className:
     'col-span-full desktop:col-start-4 desktop:col-end-10 text-ui-600 desktop:mt-2',
-})``;
-
-const SettingsUpdateCard: React.FC = () => {
-  const {isDesktop} = useScreen();
-
-  if (isDesktop) {
-    return (
-      <Container className="desktop:gap-x-3 desktop:p-3">
-        <div className="flex gap-x-6 items-start">
-          <div className="flex-1 space-y-1">
-            <Head>
-              <IconReload />
-              <Title>Aragon Updates available</Title>
-            </Head>
-            <ContentWrapper className="space-y-0">
-              <Description>
-                Your DAO has received new updates. Review them and create a
-                proposal for installing them.
-              </Description>
-            </ContentWrapper>
-          </div>
-          <Link
-            label="View updates"
-            type="secondary"
-            iconRight={<IconChevronRight />}
-          />
-        </div>
-      </Container>
-    );
-  }
-
-  return (
-    <Container>
-      <Head>
-        <IconReload />
-        <Title>Aragon Updates available</Title>
-      </Head>
-      <ContentWrapper>
-        <Description>
-          Your DAO has received new updates. Review them and create a proposal
-          for installing them.
-        </Description>
-        <Link
-          label="View updates"
-          type="secondary"
-          iconRight={<IconChevronRight />}
-        />
-      </ContentWrapper>
-    </Container>
-  );
-};
-
-const Container = styled.div.attrs({
-  className: 'gap-x-2 p-2 space-y-1 bg-primary-400 rounded-xl' as string,
-})``;
-
-const Head = styled.div.attrs({
-  className: 'flex items-center space-x-1.5 font-semibold text-ui-0 ft-text-lg',
-})``;
-
-const Title = styled.p.attrs({})``;
-
-const Description = styled.p.attrs({className: 'ft-text-base'})``;
-
-const ContentWrapper = styled.div.attrs({
-  className: 'pl-3.5 space-y-1.5 text-primary-50' as string,
 })``;
