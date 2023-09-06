@@ -1,25 +1,27 @@
+import {IconLinkExternal, Link} from '@aragon/ods';
+import {VotingMode, VotingSettings} from '@aragon/sdk-client';
 import React from 'react';
 import {useTranslation} from 'react-i18next';
 import {generatePath, useNavigate} from 'react-router-dom';
-import {
-  MajorityVotingSettings as VotingSettings,
-  VotingMode,
-} from '@aragon/sdk-client';
-import {Link, Tag} from '@aragon/ods';
 
-import {Dd, DescriptionListContainer, Dl, Dt} from 'components/descriptionList';
+import {Loading} from 'components/temporary';
+import {
+  Definition,
+  DescriptionPair,
+  SettingsCard,
+  Term,
+} from 'containers/settingsCard';
 import {useNetwork} from 'context/network';
 import {useDaoMembers} from 'hooks/useDaoMembers';
 import {useDaoToken} from 'hooks/useDaoToken';
 import {PluginTypes} from 'hooks/usePluginClient';
-import {useVotingSettings} from 'hooks/useVotingSettings';
 import {useTokenSupply} from 'hooks/useTokenSupply';
+import {useVotingSettings} from 'hooks/useVotingSettings';
+import {IPluginSettings} from 'pages/settings';
+import {CHAIN_METADATA} from 'utils/constants';
 import {getDHMFromSeconds} from 'utils/date';
 import {formatUnits} from 'utils/library';
 import {Community} from 'utils/paths';
-import {IPluginSettings} from 'pages/settings';
-import {useExistingToken} from 'hooks/useExistingToken';
-import {Loading} from 'components/temporary';
 
 const MajorityVotingSettings: React.FC<IPluginSettings> = ({daoDetails}) => {
   const {t} = useTranslation();
@@ -44,7 +46,7 @@ const MajorityVotingSettings: React.FC<IPluginSettings> = ({daoDetails}) => {
     daoToken?.address ?? ''
   );
 
-  const {isTokenMintable} = useExistingToken({daoToken, daoDetails});
+  // const {isTokenMintable} = useExistingToken({daoToken, daoDetails});
 
   const isLoading =
     votingSettingsLoading ||
@@ -84,94 +86,90 @@ const MajorityVotingSettings: React.FC<IPluginSettings> = ({daoDetails}) => {
         : t('labels.no'),
   };
 
+  const daoTokenBlockUrl =
+    CHAIN_METADATA[network].explorer + 'token/' + daoToken?.address;
+
   return (
-    <div className="space-y-3">
+    <>
       {/* COMMUNITY SECTION */}
-      <DescriptionListContainer title={t('navLinks.community')}>
-        <Dl>
-          <Dt>{t('labels.review.eligibleVoters')}</Dt>
-          <Dd>{t('createDAO.step3.tokenMembership')}</Dd>
-        </Dl>
-
-        <Dl>
-          <Dt>{t('votingTerminal.token')}</Dt>
-          <Dd>
-            <div className="flex items-center space-x-1.5">
-              <p>{daoToken.name}</p>
-              <p>{daoToken.symbol}</p>
-            </div>
-          </Dd>
-        </Dl>
-        <Dl>
-          <Dt>{t('labels.supply')}</Dt>
-          <Dd>
-            <div className="flex items-center space-x-1.5">
-              <p>
-                {tokenSupply.formatted} {daoToken.symbol}
-              </p>
-              {isTokenMintable && <Tag label={t('labels.mintable')} />}
-            </div>
-          </Dd>
-        </Dl>
-
-        <Dl>
-          <Dt>{t('labels.review.distribution')}</Dt>
-          <Dd>
+      <SettingsCard title={t('navLinks.community')}>
+        <DescriptionPair>
+          <Term>{t('labels.review.eligibleVoters')}</Term>
+          <Definition>{t('createDAO.step3.tokenMembership')}</Definition>
+        </DescriptionPair>
+        <DescriptionPair>
+          <Term>{t('votingTerminal.token')}</Term>
+          <Definition>
             <Link
-              label={t('createDAO.review.distributionLink', {
-                count: daoMembers.members.length,
-              })}
+              label={`${daoToken.name} ${daoToken?.symbol}`}
+              iconRight={<IconLinkExternal />}
+              href={daoTokenBlockUrl}
+            />
+          </Definition>
+        </DescriptionPair>
+        <DescriptionPair>
+          <Term>{t('labels.review.distribution')}</Term>
+          <Definition>
+            <Link
+              label={`${daoMembers.members.length} token holders`}
+              iconRight={<IconLinkExternal />}
               onClick={() =>
                 navigate(
                   generatePath(Community, {network, dao: daoDetails.address})
                 )
               }
             />
-          </Dd>
-        </Dl>
-      </DescriptionListContainer>
+          </Definition>
+        </DescriptionPair>
+        <DescriptionPair className="border-none">
+          <Term>{t('labels.supply')}</Term>
+          <Definition className="font-semibold ft-text-base">
+            {`${tokenSupply.formatted} ${daoToken.symbol}`}
+          </Definition>
+        </DescriptionPair>
+      </SettingsCard>
 
       {/* GOVERNANCE SECTION */}
-      <DescriptionListContainer title={t('labels.review.governance')}>
-        <Dl>
-          <Dt>{t('labels.minimumApprovalThreshold')}</Dt>
-          <Dd>
-            {'>'}
-            {Math.round(votingSettings.supportThreshold * 100)}%
-          </Dd>
-        </Dl>
-        <Dl>
-          <Dt>{t('labels.minimumParticipation')}</Dt>
-
-          <Dd>
-            {'≥'}
-            {Math.round(votingSettings.minParticipation * 100)}% ({'≥'}
-            {votingSettings.minParticipation * tokenSupply.formatted}{' '}
-            {daoToken.symbol})
-          </Dd>
-        </Dl>
-        <Dl>
-          <Dt>{t('labels.minimumDuration')}</Dt>
-          <Dd>
+      <SettingsCard title={t('labels.review.governance')}>
+        <DescriptionPair>
+          <Term>{t('labels.minimumApprovalThreshold')}</Term>
+          <Definition className="font-semibold ft-text-base">
+            {`>${Math.round(votingSettings.supportThreshold * 100)}%`}
+          </Definition>
+        </DescriptionPair>
+        <DescriptionPair>
+          <Term>{t('labels.minimumParticipation')}</Term>
+          <Definition className="font-semibold ft-text-base">
+            {`≥${Math.round(votingSettings.minParticipation * 100)}% (≥ ${
+              votingSettings.minParticipation * (tokenSupply.formatted ?? 0)
+            } ${daoToken?.symbol})`}
+          </Definition>
+        </DescriptionPair>
+        <DescriptionPair>
+          <Term>{t('labels.minimumDuration')}</Term>
+          <Definition className="font-semibold ft-text-base">
             {t('governance.settings.preview', {
               days,
               hours,
               minutes,
             })}
-          </Dd>
-        </Dl>
-        <Dl>
-          <Dt>{t('labels.review.earlyExecution')}</Dt>
-          <Dd>{votingMode.earlyExecution}</Dd>
-        </Dl>
-        <Dl>
-          <Dt>{t('labels.review.voteReplacement')}</Dt>
-          <Dd>{votingMode.voteReplacement}</Dd>
-        </Dl>
-
-        <Dl>
-          <Dt>{t('labels.review.proposalThreshold')}</Dt>
-          <Dd>
+          </Definition>
+        </DescriptionPair>
+        <DescriptionPair>
+          <Term>{t('labels.review.earlyExecution')}</Term>
+          <Definition className="font-semibold ft-text-base">
+            {votingMode.earlyExecution}
+          </Definition>
+        </DescriptionPair>
+        <DescriptionPair>
+          <Term>{t('labels.review.voteReplacement')}</Term>
+          <Definition className="font-semibold ft-text-base">
+            {votingMode.voteReplacement}
+          </Definition>
+        </DescriptionPair>
+        <DescriptionPair className="border-none">
+          <Term>{t('labels.review.proposalThreshold')}</Term>
+          <Definition className="font-semibold ft-text-base">
             {t('labels.review.tokenHoldersWithTkns', {
               tokenAmount: formatUnits(
                 votingSettings.minProposerVotingPower ?? 0,
@@ -179,10 +177,10 @@ const MajorityVotingSettings: React.FC<IPluginSettings> = ({daoDetails}) => {
               ),
               tokenSymbol: daoToken.symbol,
             })}
-          </Dd>
-        </Dl>
-      </DescriptionListContainer>
-    </div>
+          </Definition>
+        </DescriptionPair>
+      </SettingsCard>
+    </>
   );
 };
 
