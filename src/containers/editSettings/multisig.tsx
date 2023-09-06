@@ -63,7 +63,10 @@ export const EditMsSettings: React.FC<EditMsSettingsProps> = ({daoDetails}) => {
 
   const isLoading = membersAreLoading || settingsAreLoading;
 
-  const votingSettings = pluginVotingSettings as MultisigVotingSettings;
+  const votingSettings = pluginVotingSettings as
+    | MultisigVotingSettings
+    | undefined;
+
   const dataFetched = !!(!isLoading && members && votingSettings?.minApprovals);
 
   const [
@@ -143,11 +146,11 @@ export const EditMsSettings: React.FC<EditMsSettingsProps> = ({daoDetails}) => {
       daoLogo !== daoDetails.metadata.avatar ||
       !resourceLinksAreEqual)) as boolean;
 
-  const isGovernanceChanged = useMemo(() => {
-    if (!multisigMinimumApprovals) return false;
-
-    return multisigMinimumApprovals !== votingSettings.minApprovals;
-  }, [multisigMinimumApprovals, votingSettings.minApprovals]);
+  let isGovernanceChanged = false;
+  if (multisigMinimumApprovals && votingSettings?.minApprovals) {
+    isGovernanceChanged =
+      multisigMinimumApprovals !== votingSettings.minApprovals;
+  }
 
   let daoEligibleProposer: MultisigProposerEligibility = formEligibleProposer;
   if (votingSettings) {
@@ -189,21 +192,18 @@ export const EditMsSettings: React.FC<EditMsSettingsProps> = ({daoDetails}) => {
   }, [daoEligibleProposer, setValue]);
 
   const setCurrentGovernance = useCallback(() => {
-    const multisigWallets = members.members as MultisigMember[];
-    setValue('multisigMinimumApprovals', votingSettings.minApprovals);
-    setValue('multisigWallets', multisigWallets);
-    setValue(
-      'membership',
-      daoDetails?.plugins[0].id === 'token-voting.plugin.dao.eth'
-        ? 'token'
-        : 'multisig'
-    );
-  }, [
-    daoDetails?.plugins,
-    members.members,
-    votingSettings.minApprovals,
-    setValue,
-  ]);
+    if (votingSettings) {
+      const multisigWallets = members.members as MultisigMember[];
+      setValue('multisigMinimumApprovals', votingSettings.minApprovals);
+      setValue('multisigWallets', multisigWallets);
+      setValue(
+        'membership',
+        daoDetails?.plugins[0].id === 'token-voting.plugin.dao.eth'
+          ? 'token'
+          : 'multisig'
+      );
+    }
+  }, [votingSettings, members.members, setValue, daoDetails?.plugins]);
 
   const settingsUnchanged =
     !isGovernanceChanged && !isMetadataChanged && !isCommunityChanged;

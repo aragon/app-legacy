@@ -66,7 +66,7 @@ export const EditMvSettings: React.FC<EditMvSettingsProps> = ({daoDetails}) => {
       pluginAddress,
       pluginType,
     });
-  const votingSettings = pluginSettings as VotingSettings;
+  const votingSettings = pluginSettings as VotingSettings | undefined;
 
   const isLoading =
     settingsAreLoading || tokensAreLoading || tokenSupplyIsLoading;
@@ -180,16 +180,19 @@ export const EditMvSettings: React.FC<EditMvSettingsProps> = ({daoDetails}) => {
   );
 
   // TODO: We need to force forms to only use one type, Number or string
-  const isGovernanceChanged =
-    Number(minimumParticipation) !==
-      Math.round(votingSettings.minParticipation * 100) ||
-    Number(minimumApproval) !==
-      Math.round(votingSettings.supportThreshold * 100) ||
-    Number(durationDays) !== days ||
-    Number(durationHours) !== hours ||
-    Number(durationMinutes) !== minutes ||
-    earlyExecution !== daoVotingMode.earlyExecution ||
-    voteReplacement !== daoVotingMode.voteReplacement;
+  let isGovernanceChanged = false;
+  if (votingSettings) {
+    isGovernanceChanged =
+      Number(minimumParticipation) !==
+        Math.round(votingSettings.minParticipation * 100) ||
+      Number(minimumApproval) !==
+        Math.round(votingSettings.supportThreshold * 100) ||
+      Number(durationDays) !== days ||
+      Number(durationHours) !== hours ||
+      Number(durationMinutes) !== minutes ||
+      earlyExecution !== daoVotingMode.earlyExecution ||
+      voteReplacement !== daoVotingMode.voteReplacement;
+  }
 
   // calculate proposer
   let daoEligibleProposer: TokenVotingProposalEligibility =
@@ -208,7 +211,7 @@ export const EditMvSettings: React.FC<EditMvSettingsProps> = ({daoDetails}) => {
   }
 
   let daoProposerTokenAmount = '0';
-  if (daoToken?.decimals && votingSettings.minProposerVotingPower) {
+  if (daoToken?.decimals && votingSettings?.minProposerVotingPower) {
     daoProposerTokenAmount = Math.ceil(
       Number(
         formatUnits(votingSettings.minProposerVotingPower, daoToken.decimals)
@@ -255,6 +258,8 @@ export const EditMvSettings: React.FC<EditMvSettingsProps> = ({daoDetails}) => {
   }, [daoEligibleProposer, daoProposerTokenAmount, setValue]);
 
   const setCurrentGovernance = useCallback(() => {
+    if (!votingSettings) return;
+
     setValue('tokenTotalSupply', tokenSupply?.formatted);
     setValue(
       'minimumApproval',
@@ -267,7 +272,7 @@ export const EditMvSettings: React.FC<EditMvSettingsProps> = ({daoDetails}) => {
     setValue('tokenDecimals', daoToken?.decimals || 18);
 
     const votingMode = decodeVotingMode(
-      votingSettings?.votingMode || VotingMode.STANDARD
+      votingSettings.votingMode || VotingMode.STANDARD
     );
 
     setValue('earlyExecution', votingMode.earlyExecution);
@@ -285,16 +290,14 @@ export const EditMvSettings: React.FC<EditMvSettingsProps> = ({daoDetails}) => {
         : 'wallet'
     );
   }, [
-    setValue,
-    tokenSupply?.formatted,
-    votingSettings.supportThreshold,
-    votingSettings.minParticipation,
-    votingSettings?.votingMode,
+    daoDetails?.plugins,
     daoToken?.decimals,
     days,
     hours,
     minutes,
-    daoDetails?.plugins,
+    setValue,
+    tokenSupply?.formatted,
+    votingSettings,
   ]);
 
   const settingsUnchanged =
@@ -369,7 +372,11 @@ export const EditMvSettings: React.FC<EditMvSettingsProps> = ({daoDetails}) => {
 
   // Note: using isDirty here to allow time for form to fill up before
   // rendering a value or else there will be noticeable render with blank form.
-  return isDirty ? (
+  if (!isDirty) {
+    return <Loading />;
+  }
+
+  return (
     <PageWrapper
       title={t('settings.editDaoSettings')}
       description={t('settings.editSubtitle')}
@@ -465,8 +472,6 @@ export const EditMvSettings: React.FC<EditMvSettingsProps> = ({daoDetails}) => {
         </Layout>
       }
     />
-  ) : (
-    <Loading />
   );
 };
 
