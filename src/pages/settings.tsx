@@ -3,7 +3,10 @@ import {
   AlertInline,
   AvatarDao,
   ButtonText,
+  IconChevronRight,
   IconGovernance,
+  IconReload,
+  Link,
   ListItemLink,
 } from '@aragon/ods';
 import React from 'react';
@@ -26,6 +29,7 @@ export const Settings: React.FC = () => {
   const {t} = useTranslation();
   const {network, isL2Network} = useNetwork();
   const navigate = useNavigate();
+  const {isDesktop} = useScreen();
 
   const {data: daoDetails, isLoading} = useDaoDetailsQuery();
 
@@ -45,7 +49,9 @@ export const Settings: React.FC = () => {
 
   return (
     <SettingsWrapper>
-      <div className="mt-3 desktop:mt-8 space-y-5">
+      <div className="flex flex-col gap-y-3">
+        <SettingsUpdateCard />
+
         {/* BLOCKCHAIN SECTION */}
         <DescriptionListContainer
           title={t('labels.review.blockchain')}
@@ -103,18 +109,18 @@ export const Settings: React.FC = () => {
 
         {/* Plugins */}
         <PluginSettingsWrapper daoDetails={daoDetails} />
-      </div>
 
-      {/* Edit */}
-      <div className="space-y-2">
-        <ButtonText
-          label={t('settings.edit')}
-          className="mt-5 desktop:mt-8 w-full tablet:w-max"
-          size="large"
-          iconLeft={<IconGovernance />}
-          onClick={() => navigate('edit')}
-        />
-        <AlertInline label={t('settings.proposeSettingsInfo')} />
+        {/* Edit */}
+        <div className="space-y-2">
+          <ButtonText
+            label={t('settings.edit')}
+            className="w-full tablet:w-max"
+            size="large"
+            iconLeft={!isDesktop ? <IconGovernance /> : undefined}
+            onClick={() => navigate('edit')}
+          />
+          <AlertInline label={t('settings.proposeSettingsInfo')} />
+        </div>
       </div>
     </SettingsWrapper>
   );
@@ -152,18 +158,11 @@ const SettingsWrapper: React.FC = ({children}) => {
   return (
     <PageWrapper
       title={t('labels.daoSettings')}
-      // TODO add correct description once available in designs [VR 17-01-2023]
-      description="Review your DAO's settings"
-      primaryBtnProps={
-        isMobile
-          ? {
-              label: t('settings.edit'),
-              iconLeft: <IconGovernance />,
-              onClick: () =>
-                navigate(generatePath(EditSettings, {network, dao})),
-            }
-          : undefined
-      }
+      primaryBtnProps={{
+        label: t('settings.edit'),
+        iconLeft: isMobile ? <IconGovernance /> : undefined,
+        onClick: () => navigate(generatePath(EditSettings, {network, dao})),
+      }}
       customBody={<Layout>{children}</Layout>}
     />
   );
@@ -171,5 +170,71 @@ const SettingsWrapper: React.FC = ({children}) => {
 
 export const Layout = styled.div.attrs({
   className:
-    'col-span-full desktop:col-start-4 desktop:col-end-10 text-ui-600' as string,
+    'col-span-full desktop:col-start-4 desktop:col-end-10 text-ui-600 desktop:mt-2',
+})``;
+
+const SettingsUpdateCard: React.FC = () => {
+  const {isDesktop} = useScreen();
+
+  if (isDesktop) {
+    return (
+      <Container className="desktop:gap-x-3 desktop:p-3">
+        <div className="flex gap-x-6 items-start">
+          <div className="flex-1 space-y-1">
+            <Head>
+              <IconReload />
+              <Title>Aragon Updates available</Title>
+            </Head>
+            <ContentWrapper className="space-y-0">
+              <Description>
+                Your DAO has received new updates. Review them and create a
+                proposal for installing them.
+              </Description>
+            </ContentWrapper>
+          </div>
+          <Link
+            label="View updates"
+            type="secondary"
+            iconRight={<IconChevronRight />}
+          />
+        </div>
+      </Container>
+    );
+  }
+
+  return (
+    <Container>
+      <Head>
+        <IconReload />
+        <Title>Aragon Updates available</Title>
+      </Head>
+      <ContentWrapper>
+        <Description>
+          Your DAO has received new updates. Review them and create a proposal
+          for installing them.
+        </Description>
+        <Link
+          label="View updates"
+          type="secondary"
+          iconRight={<IconChevronRight />}
+        />
+      </ContentWrapper>
+    </Container>
+  );
+};
+
+const Container = styled.div.attrs({
+  className: 'gap-x-2 p-2 space-y-1 bg-primary-400 rounded-xl' as string,
+})``;
+
+const Head = styled.div.attrs({
+  className: 'flex items-center space-x-1.5 font-semibold text-ui-0 ft-text-lg',
+})``;
+
+const Title = styled.p.attrs({})``;
+
+const Description = styled.p.attrs({className: 'ft-text-base'})``;
+
+const ContentWrapper = styled.div.attrs({
+  className: 'pl-3.5 space-y-1.5 text-primary-50' as string,
 })``;
