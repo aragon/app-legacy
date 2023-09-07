@@ -4,6 +4,7 @@ import React from 'react';
 import {useTranslation} from 'react-i18next';
 import {generatePath, useNavigate} from 'react-router-dom';
 
+import {Loading} from 'components/temporary';
 import {
   Definition,
   DescriptionPair,
@@ -24,10 +25,29 @@ const MultisigSettings: React.FC<IPluginSettings> = ({daoDetails}) => {
 
   const pluginAddress = daoDetails?.plugins?.[0]?.instanceAddress as string;
   const pluginType = daoDetails?.plugins?.[0]?.id as PluginTypes;
-  const {data: votingSettings} = useVotingSettings({pluginAddress, pluginType});
-  const {data: daoMembers} = useDaoMembers(pluginAddress, pluginType);
 
-  const daoSettings = votingSettings as MultisigVotingSettings;
+  const {data: pluginVotingSettings, isLoading: votingSettingsLoading} =
+    useVotingSettings({
+      pluginAddress,
+      pluginType,
+    });
+
+  const {data: daoMembers, isLoading: membersLoading} = useDaoMembers(
+    pluginAddress,
+    pluginType
+  );
+
+  const isLoading = votingSettingsLoading || membersLoading;
+  if (isLoading) {
+    return <Loading />;
+  }
+
+  const dataIsFetched = !!pluginVotingSettings && !!daoMembers && !!daoDetails;
+  if (!dataIsFetched) {
+    return null;
+  }
+
+  const votingSettings = pluginVotingSettings as MultisigVotingSettings;
 
   return (
     <>
@@ -43,12 +63,12 @@ const MultisigSettings: React.FC<IPluginSettings> = ({daoDetails}) => {
           <Definition>
             <Link
               label={t('createDAO.review.distributionLink', {
-                count: daoMembers?.members?.length,
+                count: daoMembers.members.length,
               })}
               iconRight={<IconLinkExternal />}
               onClick={() =>
                 navigate(
-                  generatePath(Community, {network, dao: daoDetails?.address})
+                  generatePath(Community, {network, dao: daoDetails.address})
                 )
               }
             />
@@ -60,15 +80,15 @@ const MultisigSettings: React.FC<IPluginSettings> = ({daoDetails}) => {
       <SettingsCard title={t('labels.review.governance')}>
         <DescriptionPair>
           <Term>{t('labels.minimumApproval')}</Term>
-          <Definition>{`${daoSettings?.minApprovals} of ${
-            daoMembers?.members.length
+          <Definition>{`${votingSettings.minApprovals} of ${
+            daoMembers.members.length
           } ${t('labels.authorisedWallets')}`}</Definition>
         </DescriptionPair>
 
         <DescriptionPair className="border-none">
           <Term>{t('labels.proposalCreation')}</Term>
           <Definition>
-            {daoSettings?.onlyListed
+            {votingSettings.onlyListed
               ? t('createDAO.step3.multisigMembers')
               : t('createDAO.step3.eligibility.anyWallet.title')}
           </Definition>
