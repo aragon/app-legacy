@@ -97,7 +97,7 @@ export const WalletMenu = () => {
             mode="ghost"
             icon={<IconClose />}
             size="small"
-            onClick={close}
+            onClick={() => close()}
           />
         )}
       </ModalHeader>

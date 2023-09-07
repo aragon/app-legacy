@@ -139,7 +139,7 @@ const DepositModal: React.FC = () => {
             mode="secondary"
             size="large"
             label={t('modal.deposit.cancelLabel')}
-            onClick={close}
+            onClick={() => close()}
           />
         </HStack>
       </Container>

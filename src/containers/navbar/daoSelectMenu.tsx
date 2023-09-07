@@ -75,7 +75,7 @@ const DaoSelectMenu: React.FC = () => {
               daoAddress={toDisplayEns(currentDao?.ensDomain)}
               daoName={currentDao?.metadata.name}
               daoLogo={currentDao?.metadata?.avatar}
-              onClick={close}
+              onClick={() => close()}
             />
             {favoriteDaoCache.flatMap(dao => {
               if (

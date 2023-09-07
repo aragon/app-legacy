@@ -14,7 +14,7 @@ type GlobalModalsContextType<TState = Record<string, unknown>> = {
   modalState?: TState;
   isOpen?: boolean;
   open: (dialog: DialogType, state?: Record<string, unknown>) => void;
-  close: () => void;
+  close: (onClose?: () => void) => void;
 };
 
 export type DialogType =
@@ -42,9 +42,10 @@ export const GlobalModalsProvider: React.FC<Props> = ({children}) => {
   const [activeDialog, setActiveDialog] = useState<DialogType>();
   const [modalState, setModalState] = useState<Record<string, unknown>>();
 
-  const close = useCallback(() => {
+  const close = useCallback((onClose?: () => void) => {
     setActiveDialog(undefined);
     setModalState(undefined);
+    onClose?.();
   }, []);
 
   const open = useCallback(

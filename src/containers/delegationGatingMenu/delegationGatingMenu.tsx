@@ -95,7 +95,7 @@ export const DelegationGatingMenu: React.FC = () => {
             label={t('modal.delegationActive.BtnSecondaryLabel')}
             mode="secondary"
             size="large"
-            onClick={close}
+            onClick={() => close()}
           />
         </ContentGroup>
       </div>
