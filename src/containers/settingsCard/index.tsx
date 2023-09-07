@@ -23,7 +23,8 @@ export const Term = styled.dt.attrs({
 })``;
 
 export const Definition = styled.dd.attrs({
-  className: 'desktop:flex flex-shrink flex-grow-0' as string,
+  className:
+    'desktop:flex flex-shrink flex-grow-0 font-semibold ft-text-base' as string,
 })`
   flex-basis: 75%;
 `;
