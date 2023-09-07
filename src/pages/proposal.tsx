@@ -83,6 +83,7 @@ import {format} from 'date-fns';
 import {getFormattedUtcOffset, KNOWN_FORMATS} from '../utils/date';
 import {formatUnits, IChoice} from '@vocdoni/sdk';
 import Big from 'big.js';
+import {OffchainVotingTerminal} from '../containers/votingTerminal/offchainVotingTerminal';
 
 const PENDING_PROPOSAL_STATUS_INTERVAL = 1000 * 10;
 const PROPOSAL_STATUS_INTERVAL = 1000 * 60;
@@ -622,6 +623,36 @@ export const Proposal: React.FC = () => {
     return null;
   }
 
+  // Store the terminal to pass it to OffchainVotingTerminal if needed
+  const VTerminal = () => (
+    <VotingTerminal
+      status={proposalStatus}
+      pluginType={pluginType}
+      daoToken={daoToken}
+      blockNumber={proposal.creationBlockNumber}
+      statusLabel={voteStatus}
+      selectedTab={terminalTab}
+      alertMessage={alertMessage}
+      onTabSelected={setTerminalTab}
+      onVoteClicked={handleVoteClick}
+      onApprovalClicked={handleApprovalClick}
+      onCancelClicked={() => setVotingInProcess(false)}
+      voteButtonLabel={voteButtonLabel}
+      voteNowDisabled={votingDisabled}
+      votingInProcess={votingInProcess}
+      executableWithNextApproval={executableWithNextApproval}
+      onVoteSubmitClicked={vote =>
+        handlePrepareVote({
+          vote,
+          replacement: voted || voteOrApprovalSubmitted,
+          voteTokenAddress: (proposal as TokenVotingProposal).token
+            ?.address,
+        })
+      }
+      {...mappedProps}
+    />
+  );
+
   return (
     <Container>
       <HeaderContainer>
@@ -694,33 +725,15 @@ export const Proposal: React.FC = () => {
               />
             )}
 
-          {votingSettings && (
-            <VotingTerminal
-              status={proposalStatus}
-              pluginType={pluginType}
-              daoToken={daoToken}
-              blockNumber={proposal.creationBlockNumber}
-              statusLabel={voteStatus}
-              selectedTab={terminalTab}
-              alertMessage={alertMessage}
-              onTabSelected={setTerminalTab}
-              onVoteClicked={handleVoteClick}
-              onApprovalClicked={handleApprovalClick}
-              onCancelClicked={() => setVotingInProcess(false)}
-              voteButtonLabel={voteButtonLabel}
-              voteNowDisabled={votingDisabled}
-              votingInProcess={votingInProcess}
-              executableWithNextApproval={executableWithNextApproval}
-              onVoteSubmitClicked={vote =>
-                handlePrepareVote({
-                  vote,
-                  replacement: voted || voteOrApprovalSubmitted,
-                  voteTokenAddress: (proposal as TokenVotingProposal).token
-                    ?.address,
-                })
-              }
-              {...mappedProps}
+          {/*todo(kon): set the condition properly (if offchain, TokenVotingProposal*/}
+          {votingSettings && offChain ? (
+            <OffchainVotingTerminal
+              votingStatusLabel={voteStatus}
+              votingTerminal={<VTerminal />}
+              proposal={proposal as TokenVotingProposal}
             />
+          ) : (
+            <VTerminal />
           )}
 
           <ExecutionWidget
