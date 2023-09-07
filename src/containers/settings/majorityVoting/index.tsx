@@ -1,4 +1,4 @@
-import {IconLinkExternal, Link} from '@aragon/ods';
+import {IconLinkExternal, Link, Tag} from '@aragon/ods';
 import {VotingMode, VotingSettings} from '@aragon/sdk-client';
 import React from 'react';
 import {useTranslation} from 'react-i18next';
@@ -14,6 +14,7 @@ import {
 import {useNetwork} from 'context/network';
 import {useDaoMembers} from 'hooks/useDaoMembers';
 import {useDaoToken} from 'hooks/useDaoToken';
+import {useExistingToken} from 'hooks/useExistingToken';
 import {PluginTypes} from 'hooks/usePluginClient';
 import {useTokenSupply} from 'hooks/useTokenSupply';
 import {useVotingSettings} from 'hooks/useVotingSettings';
@@ -46,7 +47,10 @@ const MajorityVotingSettings: React.FC<IPluginSettings> = ({daoDetails}) => {
     daoToken?.address ?? ''
   );
 
-  // const {isTokenMintable} = useExistingToken({daoToken, daoDetails});
+  const {isTokenMintable: canMintToken} = useExistingToken({
+    daoToken,
+    daoDetails,
+  });
 
   const isLoading =
     votingSettingsLoading ||
@@ -99,12 +103,15 @@ const MajorityVotingSettings: React.FC<IPluginSettings> = ({daoDetails}) => {
         </DescriptionPair>
         <DescriptionPair>
           <Term>{t('votingTerminal.token')}</Term>
-          <Definition>
+          <Definition className="justify-between items-center">
             <Link
-              label={`${daoToken.name} ${daoToken?.symbol}`}
+              label={`${daoToken.name} ${daoToken.symbol}`}
               iconRight={<IconLinkExternal />}
               href={daoTokenBlockUrl}
             />
+            {canMintToken && (
+              <Tag label={'Mintable by DAO'} colorScheme="neutral" />
+            )}
           </Definition>
         </DescriptionPair>
         <DescriptionPair>
@@ -142,7 +149,7 @@ const MajorityVotingSettings: React.FC<IPluginSettings> = ({daoDetails}) => {
           <Definition className="font-semibold ft-text-base">
             {`≥${Math.round(votingSettings.minParticipation * 100)}% (≥ ${
               votingSettings.minParticipation * (tokenSupply.formatted ?? 0)
-            } ${daoToken?.symbol})`}
+            } ${daoToken.symbol})`}
           </Definition>
         </DescriptionPair>
         <DescriptionPair>
