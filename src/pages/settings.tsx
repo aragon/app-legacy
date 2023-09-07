@@ -32,6 +32,7 @@ import {useDaoDetailsQuery} from 'hooks/useDaoDetails';
 import {PluginTypes} from 'hooks/usePluginClient';
 import useScreen from 'hooks/useScreen';
 import {CHAIN_METADATA} from 'utils/constants';
+import {featureFlags} from 'utils/featureFlags';
 import {shortenAddress, toDisplayEns} from 'utils/library';
 import {EditSettings} from 'utils/paths';
 
@@ -55,7 +56,7 @@ export const Settings: React.FC = () => {
     CHAIN_METADATA[network].explorer + 'address/' + daoDetails.address;
 
   const displayUpdateInfo =
-    import.meta.env.VITE_FEATURE_FLAG_DAO_UPDATE === true;
+    featureFlags.getValue('VITE_FEATURE_FLAG_DAO_UPDATE') === 'true';
 
   return (
     <SettingsWrapper>
