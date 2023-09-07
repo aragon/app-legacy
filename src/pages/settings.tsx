@@ -54,11 +54,16 @@ export const Settings: React.FC = () => {
   const explorerLink =
     CHAIN_METADATA[network].explorer + 'address/' + daoDetails.address;
 
+  const displayUpdateInfo =
+    import.meta.env.VITE_FEATURE_FLAG_DAO_UPDATE === true;
+
   return (
     <SettingsWrapper>
-      <div className="col-span-full desktop:col-start-2 desktop:col-end-12 mt-0.5 desktop:mt-1.5">
-        <SettingsUpdateCard />
-      </div>
+      {displayUpdateInfo && (
+        <div className="col-span-full desktop:col-start-2 desktop:col-end-12 mt-0.5 desktop:mt-1.5">
+          <SettingsUpdateCard />
+        </div>
+      )}
 
       {/* DAO Settings */}
       <div className="col-span-full desktop:col-span-6 desktop:col-start-2 desktop:row-start-3 mt-1 desktop:-mt-1">
