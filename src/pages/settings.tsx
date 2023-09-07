@@ -32,7 +32,7 @@ import {useDaoDetailsQuery} from 'hooks/useDaoDetails';
 import {PluginTypes} from 'hooks/usePluginClient';
 import useScreen from 'hooks/useScreen';
 import {CHAIN_METADATA} from 'utils/constants';
-import {toDisplayEns} from 'utils/library';
+import {shortenAddress, toDisplayEns} from 'utils/library';
 import {EditSettings} from 'utils/paths';
 
 export const Settings: React.FC = () => {
@@ -56,12 +56,26 @@ export const Settings: React.FC = () => {
 
   return (
     <SettingsWrapper>
-      <div className="col-span-full desktop:col-start-2 desktop:col-end-12 mt-2">
+      <div className="col-span-full desktop:col-start-2 desktop:col-end-12 mt-0.5 desktop:mt-1.5">
         <SettingsUpdateCard />
       </div>
 
+      {/* DAO Settings */}
+      <div className="col-span-full desktop:col-span-6 desktop:col-start-2 desktop:row-start-3 mt-1 desktop:-mt-1">
+        <div className="flex flex-col gap-y-3">
+          {/* DAO SECTION */}
+          <SettingsCardDao
+            daoDetails={daoDetails}
+            explorerLink={explorerLink}
+          />
+
+          {/* COMMUNITY SECTION */}
+          <PluginSettingsWrapper daoDetails={daoDetails} />
+        </div>
+      </div>
+
       {/* Version Info */}
-      <div className="col-span-full desktop:col-span-4 desktop:col-start-8 desktop:row-start-3">
+      <div className="col-span-full desktop:col-span-4 desktop:col-start-8 desktop:row-start-3 mt-1 desktop:-mt-1 desktop:-ml-1">
         <SettingsCard title="Version info">
           <DescriptionPair>
             <Term>App</Term>
@@ -103,28 +117,17 @@ export const Settings: React.FC = () => {
         </SettingsCard>
       </div>
 
-      {/* DAO Settings */}
-      <div className="col-span-full desktop:col-span-6 desktop:col-start-2 desktop:row-start-3">
-        <div className="flex flex-col gap-y-3">
-          {/* DAO SECTION */}
-          <SettingsCardDao
-            daoDetails={daoDetails}
-            explorerLink={explorerLink}
+      {/* Edit */}
+      <div className="col-span-full desktop:col-start-2 desktop:col-end-12 desktop:row-start-4">
+        <div className="mt-1 desktop:-mt-1 space-y-2">
+          <ButtonText
+            label={t('settings.edit')}
+            className="w-full tablet:w-max"
+            size="large"
+            iconLeft={!isDesktop ? <IconGovernance /> : undefined}
+            onClick={() => navigate('edit')}
           />
-
-          {/* COMMUNITY SECTION */}
-          <PluginSettingsWrapper daoDetails={daoDetails} />
-          {/* Edit */}
-          <div className="space-y-2">
-            <ButtonText
-              label={t('settings.edit')}
-              className="w-full tablet:w-max"
-              size="large"
-              iconLeft={!isDesktop ? <IconGovernance /> : undefined}
-              onClick={() => navigate('edit')}
-            />
-            <AlertInline label={t('settings.proposeSettingsInfo')} />
-          </div>
+          <AlertInline label={t('settings.proposeSettingsInfo')} />
         </div>
       </div>
     </SettingsWrapper>
@@ -139,13 +142,13 @@ const SettingsCardDao: React.FC<{
   const {t} = useTranslation();
   const {network, isL2Network} = useNetwork();
 
-  const chainLabel = CHAIN_METADATA[network].name;
-  const resourceLinksIncluded = daoDetails.metadata.links.length !== 0;
+  const summaryRef = useRef<HTMLParagraphElement>(null);
 
   const [showAll, setShowAll] = useState(true);
   const [shouldClamp, setShouldClamp] = useState(false);
 
-  const summaryRef = useRef<HTMLParagraphElement>(null);
+  const chainLabel = CHAIN_METADATA[network].name;
+  const resourceLinksIncluded = daoDetails.metadata.links.length !== 0;
 
   // this should be extracted into a hook if clamping/showing elsewhere
   useEffect(() => {
@@ -165,7 +168,6 @@ const SettingsCardDao: React.FC<{
     }
 
     countNumberOfLines();
-
     window.addEventListener('resize', countNumberOfLines);
 
     return () => {
@@ -177,40 +179,46 @@ const SettingsCardDao: React.FC<{
     <SettingsCard title="DAO">
       <DescriptionPair>
         <Term>{t('labels.daoName')}</Term>
-        <Definition className="items-center space-x-2">
-          <span className="font-semibold ft-text-base">
-            {daoDetails.metadata.name}
-          </span>
-          <AvatarDao
-            size="small"
-            daoName={daoDetails.metadata.name}
-            src={daoDetails.metadata.avatar}
-          />
+        <Definition>
+          <div className="flex items-center space-x-1.5 desktop:space-x-2">
+            <p className="desktop:font-semibold ft-text-base">
+              {daoDetails.metadata.name}
+            </p>
+            <AvatarDao
+              size="small"
+              daoName={daoDetails.metadata.name}
+              src={daoDetails.metadata.avatar}
+            />
+          </div>
         </Definition>
       </DescriptionPair>
 
       <DescriptionPair>
         <Term>{t('labels.review.blockchain')}</Term>
-        <Definition className="justify-between items-center">
-          <span className="font-semibold ft-text-base">{chainLabel}</span>
-          <Tag label={t('labels.notChangeable')} colorScheme="neutral" />
+        <Definition>
+          <div className="flex flex-1 justify-between">
+            <p className="desktop:font-semibold ft-text-base">{chainLabel}</p>
+            <Tag label={t('labels.notChangeable')} colorScheme="neutral" />
+          </div>
         </Definition>
       </DescriptionPair>
 
-      {!isL2Network && (
-        <DescriptionPair>
-          <Term>{t('labels.ens')}</Term>
-          <Definition className="justify-between items-center">
-            <Link
-              label={toDisplayEns(daoDetails.ensDomain)}
-              // description={shortenAddress(daoDetails.address)}
-              type="primary"
-              href={explorerLink}
-              iconRight={<IconLinkExternal />}
-            />
-          </Definition>
-        </DescriptionPair>
-      )}
+      <DescriptionPair>
+        <Term>{isL2Network ? 'Contract address' : t('labels.ens')}</Term>
+        <Definition>
+          <Link
+            label={
+              isL2Network
+                ? shortenAddress(daoDetails.address)
+                : toDisplayEns(daoDetails.ensDomain)
+            }
+            // TODO: add description description={shortenAddress(daoDetails.address)}
+            type="primary"
+            href={explorerLink}
+            iconRight={<IconLinkExternal />}
+          />
+        </Definition>
+      </DescriptionPair>
 
       <DescriptionPair className={resourceLinksIncluded ? '' : 'border-none'}>
         <Term>{t('labels.summary')}</Term>
@@ -221,7 +229,7 @@ const SettingsCardDao: React.FC<{
           {shouldClamp && (
             <Link
               {...(showAll
-                ? {label: 'Read less', iconRight: <IconChevronUp />}
+                ? {label: 'View less', iconRight: <IconChevronUp />}
                 : {label: 'Read more', iconRight: <IconChevronDown />})}
               className="ft-text-base"
               onClick={() => setShowAll(prevState => !prevState)}

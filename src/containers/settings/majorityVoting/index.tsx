@@ -103,15 +103,21 @@ const MajorityVotingSettings: React.FC<IPluginSettings> = ({daoDetails}) => {
         </DescriptionPair>
         <DescriptionPair>
           <Term>{t('votingTerminal.token')}</Term>
-          <Definition className="justify-between items-center">
-            <Link
-              label={`${daoToken.name} ${daoToken.symbol}`}
-              iconRight={<IconLinkExternal />}
-              href={daoTokenBlockUrl}
-            />
-            {canMintToken && (
-              <Tag label={'Mintable by DAO'} colorScheme="neutral" />
-            )}
+          <Definition>
+            <div className="flex flex-1 desktop:justify-between space-x-1 desktop:space-x-2">
+              <Link
+                label={`${daoToken.name} ${daoToken.symbol}`}
+                iconRight={<IconLinkExternal />}
+                href={daoTokenBlockUrl}
+                className="flex-shrink min-w-0"
+              />
+
+              {canMintToken && (
+                <span className="flex-shrink-0 whitespace-nowrap">
+                  <Tag label={'Mintable by DAO'} colorScheme="neutral" />
+                </span>
+              )}
+            </div>
           </Definition>
         </DescriptionPair>
         <DescriptionPair>
@@ -130,7 +136,7 @@ const MajorityVotingSettings: React.FC<IPluginSettings> = ({daoDetails}) => {
         </DescriptionPair>
         <DescriptionPair className="border-none">
           <Term>{t('labels.supply')}</Term>
-          <Definition className="font-semibold ft-text-base">
+          <Definition>
             {`${tokenSupply.formatted} ${daoToken.symbol}`}
           </Definition>
         </DescriptionPair>
@@ -140,13 +146,13 @@ const MajorityVotingSettings: React.FC<IPluginSettings> = ({daoDetails}) => {
       <SettingsCard title={t('labels.review.governance')}>
         <DescriptionPair>
           <Term>{t('labels.minimumApprovalThreshold')}</Term>
-          <Definition className="font-semibold ft-text-base">
+          <Definition>
             {`>${Math.round(votingSettings.supportThreshold * 100)}%`}
           </Definition>
         </DescriptionPair>
         <DescriptionPair>
           <Term>{t('labels.minimumParticipation')}</Term>
-          <Definition className="font-semibold ft-text-base">
+          <Definition>
             {`≥${Math.round(votingSettings.minParticipation * 100)}% (≥ ${
               votingSettings.minParticipation * (tokenSupply.formatted ?? 0)
             } ${daoToken.symbol})`}
@@ -154,7 +160,7 @@ const MajorityVotingSettings: React.FC<IPluginSettings> = ({daoDetails}) => {
         </DescriptionPair>
         <DescriptionPair>
           <Term>{t('labels.minimumDuration')}</Term>
-          <Definition className="font-semibold ft-text-base">
+          <Definition>
             {t('governance.settings.preview', {
               days,
               hours,
@@ -164,19 +170,15 @@ const MajorityVotingSettings: React.FC<IPluginSettings> = ({daoDetails}) => {
         </DescriptionPair>
         <DescriptionPair>
           <Term>{t('labels.review.earlyExecution')}</Term>
-          <Definition className="font-semibold ft-text-base">
-            {votingMode.earlyExecution}
-          </Definition>
+          <Definition>{votingMode.earlyExecution}</Definition>
         </DescriptionPair>
         <DescriptionPair>
           <Term>{t('labels.review.voteReplacement')}</Term>
-          <Definition className="font-semibold ft-text-base">
-            {votingMode.voteReplacement}
-          </Definition>
+          <Definition>{votingMode.voteReplacement}</Definition>
         </DescriptionPair>
         <DescriptionPair className="border-none">
           <Term>{t('labels.review.proposalThreshold')}</Term>
-          <Definition className="font-semibold ft-text-base">
+          <Definition>
             {t('labels.review.tokenHoldersWithTkns', {
               tokenAmount: formatUnits(
                 votingSettings.minProposerVotingPower ?? 0,

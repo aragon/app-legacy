@@ -11,7 +11,8 @@ export const SettingsCard: React.FC<{title: string}> = ({title, children}) => {
 };
 
 const Container = styled.div.attrs({
-  className: 'py-2.5 px-2 space-y-2 bg-ui-0 rounded-xl border border-ui-100',
+  className:
+    'py-2.5 px-2 space-y-1 desktop:space-y-2 bg-ui-0 rounded-xl border border-ui-100',
 })``;
 
 export const Title = styled.p.attrs({
@@ -19,12 +20,13 @@ export const Title = styled.p.attrs({
 })``;
 
 export const Term = styled.dt.attrs({
-  className: 'w-1/4 flex-grow flex-shrink-0 whitespace-nowrap' as string,
+  className:
+    'font-semibold desktop:font-normal text-ui-800 desktop:text-ui-600 w-1/4 flex-grow flex-shrink-0 whitespace-nowrap' as string,
 })``;
 
 export const Definition = styled.dd.attrs({
   className:
-    'desktop:flex flex-shrink flex-grow-0 font-semibold ft-text-base' as string,
+    'desktop:flex flex-shrink flex-grow-0 font-normal desktop:font-semibold ft-text-base' as string,
 })`
   flex-basis: 75%;
 `;
@@ -37,5 +39,5 @@ export const FlexibleDefinition = styled.dd.attrs({
 
 export const DescriptionPair = styled.div.attrs({
   className:
-    'desktop:py-2 desktop:flex desktop:space-x-2 text-ui-600 border-b border-ui-100 ft-text-base' as string,
+    'space-y-0.5 py-1.5 desktop:py-2 desktop:flex desktop:space-x-2 text-ui-600 border-b border-ui-100 ft-text-base' as string,
 })``;
