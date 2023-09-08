@@ -220,8 +220,31 @@ export const ComponentForType: React.FC<ComponentForTypeProps> = ({
 
   // Check if we need to add "index" kind of variable to the "name"
   switch (classifyInputType(input.type)) {
-    case 'address':
     case 'encodedData':
+      return (
+        <Controller
+          defaultValue=""
+          name={formName}
+          render={({field: {name, value, onBlur, onChange}}) => (
+            <WalletInputLegacy
+              mode="default"
+              name={name}
+              value={value}
+              onBlur={onBlur}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                onChange(e.target.value);
+              }}
+              placeholder="0x"
+              adornmentText={value ? t('labels.copy') : t('labels.paste')}
+              disabledFilled={disabled}
+              onAdornmentClick={() =>
+                handleClipboardActions(value, onChange, alert)
+              }
+            />
+          )}
+        />
+      );
+    case 'address':
       return (
         <Controller
           defaultValue=""

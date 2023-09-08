@@ -203,24 +203,24 @@ export async function actionsAreValid(
   // mismatch between action form list and actions context
   if (contextActions.length !== formActions?.length) return false;
 
-  let isInValid = true;
+  let isValid = true;
 
   // @Sepehr might need to make affirmative instead at some point - F.F. 2022-08-18
-  async function actionIsInvalid(index: number) {
+  async function actionIsValid(index: number) {
     if (errors.actions) return true;
     switch (contextActions[index]?.name) {
       case 'withdraw_assets':
         return (
-          (formActions?.[index] as ActionWithdraw)?.to.address === '' ||
-          (formActions?.[index] as ActionWithdraw)?.amount?.toString() === '' ||
-          !(formActions?.[index] as ActionWithdraw)?.tokenAddress
+          (formActions?.[index] as ActionWithdraw)?.to.address !== '' &&
+          (formActions?.[index] as ActionWithdraw)?.amount?.toString() !== '' &&
+          (formActions?.[index] as ActionWithdraw)?.tokenAddress !== ''
         );
       case 'mint_tokens':
         return (
           formActions?.[index] as ActionMintToken
         )?.inputs?.mintTokensToWallets?.some(
           wallet =>
-            wallet.web3Address.address === '' || Number(wallet.amount) === 0
+            wallet.web3Address.address !== '' && Number(wallet.amount) !== 0
         );
 
       // check that no address is empty; invalid addresses will be caught by
@@ -228,32 +228,32 @@ export async function actionsAreValid(
       case 'add_address':
         return (
           formActions?.[index] as ActionRemoveAddress
-        )?.inputs.memberWallets?.some(wallet => wallet.address === '');
+        )?.inputs.memberWallets?.some(wallet => wallet.address !== '');
 
       //check whether an address is added to the action
       case 'remove_address':
         return (
           (formActions?.[index] as ActionAddAddress)?.inputs.memberWallets
-            ?.length === 0
+            ?.length !== 0
         );
       case 'external_contract_action': {
         const SCCAction = formActions?.[index] as ActionSCC;
         const result = await validateSCCAction(SCCAction, network);
-        return !result;
+        return result;
       }
       default:
-        return false;
+        return true;
     }
   }
 
   for (let i = 0; i < formActions?.length; i++) {
-    isInValid = await actionIsInvalid(i);
-    if (isInValid === true) {
+    isValid = await actionIsValid(i);
+    if (isValid === false) {
       break;
     }
   }
 
-  return !isInValid;
+  return isValid;
 }
 
 export async function validateSCCAction(

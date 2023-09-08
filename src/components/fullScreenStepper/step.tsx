@@ -18,6 +18,6 @@ export type StepProps = {
   onNextButtonDisabledClicked?: () => void;
 };
 
-export const Step: React.FC<StepProps> = props => {
-  return <>{props.children}</>;
+export const Step: React.FC<StepProps> = ({children}) => {
+  return <>{children}</>;
 };
