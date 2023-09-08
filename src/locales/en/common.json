@@ -897,6 +897,10 @@
       "inputDataDesc": "Encoded EVM call data for the smart contract"
     }
   },
+  "stepperModal": {
+    "processWarning": "Don't close this page while in progress.",
+    "stepError": "Details"
+  },
   "votingTerminal": {
     "title": "Voting",
     "breakdown": "Breakdown",
