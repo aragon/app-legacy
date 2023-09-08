@@ -39,6 +39,104 @@ export const ListHeaderContract: React.FC<Props> = ({
   // @ts-ignore
   const contracts = getValues('contracts');
 
+  const listItems = [
+    {
+      component: (
+        <Link
+          external
+          type="neutral"
+          iconRight={
+            <IconLinkExternal height={16} width={16} className="ml-4" />
+          }
+          href={chainExplorerAddressLink(network, sc.address) + '#code'}
+          label={t('scc.detailContract.dropdownExplorerLinkLabel', {
+            address: sc.address,
+          })}
+          className="justify-between px-2 my-1 w-full"
+        />
+      ),
+      callback: () => {},
+    },
+    {
+      component: (
+        <Link
+          external
+          type="neutral"
+          iconRight={<IconCopy height={16} width={16} className="ml-4" />}
+          label={t('scc.detailContract.dropdownCopyLabel')}
+          className="justify-between px-2 my-1 w-full"
+        />
+      ),
+      callback: () => {
+        handleClipboardActions(sc.address, () => {}, alert);
+      },
+    },
+    {
+      component: (
+        <Link
+          external
+          type="neutral"
+          iconRight={<IconClose height={16} width={16} className="ml-4" />}
+          label={t('scc.detailContract.dropdownRemoveLabel')}
+          className="justify-between px-2 my-1 w-full"
+        />
+      ),
+      callback: () => {
+        if (sc.implementationData) {
+          onRemoveContract(sc.proxyAddress as string);
+        } else {
+          onRemoveContract(sc.address);
+        }
+      },
+    },
+  ];
+
+  if (sc.proxyAddress || sc.implementationData) {
+    listItems.unshift({
+      component: (
+        <Link
+          external
+          type="neutral"
+          label={
+            sc.implementationData
+              ? t('scc.writeProxy.dropdownWriteAsProxyLabel')
+              : t('scc.writeProxy.dropdownDontWriteLabel')
+          }
+          iconRight={<IconSwitch />}
+          className="justify-between px-2 my-1 w-full"
+        />
+      ),
+      callback: () => {
+        if (sc.implementationData) {
+          setValue('selectedSC', sc.implementationData as SmartContract);
+          setValue(
+            'selectedAction',
+            (sc.implementationData as SmartContract).actions.filter(
+              a =>
+                a.type === 'function' &&
+                (a.stateMutability === 'payable' ||
+                  a.stateMutability === 'nonpayable')
+            )?.[0]
+          );
+        } else {
+          const contract = contracts.filter(
+            c => c.address === sc.proxyAddress
+          )[0];
+          setValue('selectedSC', contract);
+          setValue(
+            'selectedAction',
+            contract.actions.filter(
+              a =>
+                a.type === 'function' &&
+                (a.stateMutability === 'payable' ||
+                  a.stateMutability === 'nonpayable')
+            )?.[0]
+          );
+        }
+      },
+    });
+  }
+
   const iconRight = (
     <Dropdown
       align="start"
@@ -48,108 +146,17 @@ export const ListHeaderContract: React.FC<Props> = ({
         </button>
       }
       sideOffset={8}
-      listItems={[
-        {
-          component: (
-            <ListItemAction
-              title={
-                sc.implementationData
-                  ? t('scc.writeProxy.dropdownWriteAsProxyLabel')
-                  : t('scc.writeProxy.dropdownDontWriteLabel')
-              }
-              iconRight={<IconSwitch />}
-              bgWhite
-            />
-          ),
-          callback: () => {
-            if (sc.implementationData) {
-              setValue('selectedSC', sc.implementationData as SmartContract);
-              setValue(
-                'selectedAction',
-                (sc.implementationData as SmartContract).actions.filter(
-                  a =>
-                    a.type === 'function' &&
-                    (a.stateMutability === 'payable' ||
-                      a.stateMutability === 'nonpayable')
-                )?.[0]
-              );
-            } else {
-              const contract = contracts.filter(
-                c => c.address === sc.proxyAddress
-              )[0];
-              setValue('selectedSC', contract);
-              setValue(
-                'selectedAction',
-                contract.actions.filter(
-                  a =>
-                    a.type === 'function' &&
-                    (a.stateMutability === 'payable' ||
-                      a.stateMutability === 'nonpayable')
-                )?.[0]
-              );
-            }
-          },
-        },
-        {
-          component: (
-            <Link
-              external
-              type="neutral"
-              iconRight={
-                <IconLinkExternal height={16} width={16} className="ml-4" />
-              }
-              href={chainExplorerAddressLink(network, sc.address) + '#code'}
-              label={t('scc.detailContract.dropdownExplorerLinkLabel', {
-                address: sc.address,
-              })}
-              className="justify-between px-2 w-full"
-            />
-          ),
-          callback: () => {},
-        },
-        {
-          component: (
-            <Link
-              external
-              type="neutral"
-              iconRight={<IconCopy height={16} width={16} className="ml-4" />}
-              label={t('scc.detailContract.dropdownCopyLabel')}
-              className="justify-between px-2 my-2 w-full"
-            />
-          ),
-          callback: () => {
-            handleClipboardActions(sc.address, () => {}, alert);
-          },
-        },
-        {
-          component: (
-            <Link
-              external
-              type="neutral"
-              iconRight={<IconClose height={16} width={16} className="ml-4" />}
-              label={t('scc.detailContract.dropdownRemoveLabel')}
-              className="justify-between px-2 mb-2 w-full"
-            />
-          ),
-          callback: () => {
-            if (sc.implementationData) {
-              onRemoveContract(sc.proxyAddress as string);
-            } else {
-              onRemoveContract(sc.address);
-            }
-          },
-        },
-      ]}
+      listItems={listItems}
     />
   );
 
   const liaProps = {
     title: sc.name,
-    subtitle: sc.implementationData
-      ? shortenAddress(sc.address)
-      : `${t('scc.listContracts.proxyContractAddressLabel', {
+    subtitle: sc.proxyAddress
+      ? `${t('scc.listContracts.proxyContractAddressLabel', {
           contractAddress: shortenAddress(sc.address),
-        })}`,
+        })}`
+      : shortenAddress(sc.address),
     bgWhite: true,
     logo: sc.logo,
     iconRight,

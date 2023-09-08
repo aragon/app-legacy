@@ -26,7 +26,7 @@ const ActionListGroup: React.FC<ActionListGroupProps> = ({
         {actions.length === 1
           ? t('scc.labels.singleActionAvailable')
           : actions.length === 0
-          ? 'No write actions found'
+          ? t('scc.writeContractEmptyState.desc')
           : t('scc.labels.nActionsAvailable', {
               numConnected: actions.length,
             })}
