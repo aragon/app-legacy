@@ -21,6 +21,17 @@ import {
   OffchainPluginLocalStorageTypes,
 } from '../hooks/useVocdoniSdk';
 import {useClient} from '@vocdoni/react-providers';
+import {
+  StepsMap,
+  StepStatus,
+  useFunctionStepper,
+} from '../hooks/useFunctionStepper';
+import {
+  IconRadioCancel,
+  IconRadioDefault,
+  IconSuccess,
+  Spinner,
+} from '@aragon/ods';
 
 // todo(kon): move this block somewhere else
 export enum OffchainProposalStepId {
@@ -30,21 +41,7 @@ export enum OffchainProposalStepId {
   PROPOSAL_IS_READY = 'PROPOSAL_IS_READY',
 }
 
-export enum StepStatus {
-  WAITING = 'WAITING',
-  LOADING = 'LOADING',
-  SUCCESS = 'SUCCESS',
-  ERROR = 'ERROR',
-}
-
-export interface StepData {
-  status: StepStatus;
-  errorMessage?: string;
-}
-
-export type OffchainProposalSteps = {
-  [key in OffchainProposalStepId]: StepData;
-};
+export type OffchainProposalSteps = StepsMap<OffchainProposalStepId>;
 
 type ICreateOffchainProposal = {
   daoToken: Erc20TokenDetails | Erc20WrapperTokenDetails | undefined;
@@ -89,7 +86,6 @@ const proposalToElection = ({
 
 const useCreateOffchainProposal = ({daoToken}: ICreateOffchainProposal) => {
   const [electionId, setElectionId] = useState('');
-
   // todo(kon): only cache the proposal using local storage?
   const cacheProposal = useCallback(
     (proposalId: string, electionId: string) => {
@@ -129,74 +125,22 @@ const useCreateOffchainProposal = ({daoToken}: ICreateOffchainProposal) => {
     []
   );
 
-  const [steps, setSteps] = useState<OffchainProposalSteps>({
-    REGISTER_VOCDONI_ACCOUNT: {
-      status: StepStatus.WAITING,
-    },
-    CREATE_VOCDONI_ELECTION: {
-      status: StepStatus.WAITING,
-    },
-    CREATE_ONCHAIN_PROPOSAL: {
-      status: StepStatus.WAITING,
-    },
-    PROPOSAL_IS_READY: {
-      status: StepStatus.WAITING,
-    },
-  } as OffchainProposalSteps);
-
-  const globalState: StepStatus = useMemo(() => {
-    const stepsArray = Object.values(steps);
-    // If any step has an ERROR status, return ERROR
-    if (stepsArray.some(step => step.status === StepStatus.ERROR)) {
-      return StepStatus.ERROR;
-    }
-
-    // If any step has a LOADING status, return LOADING
-    if (stepsArray.some(step => step.status === StepStatus.LOADING)) {
-      return StepStatus.LOADING;
-    }
-
-    // If all steps have a SUCCESS status, return SUCCESS
-    if (stepsArray.every(step => step.status === StepStatus.SUCCESS)) {
-      return StepStatus.SUCCESS;
-    }
-
-    // If all steps have a WAITING status, return WAITING
-    if (stepsArray.every(step => step.status === StepStatus.WAITING)) {
-      return StepStatus.WAITING;
-    }
-
-    return StepStatus.ERROR;
-  }, [steps]);
-
-  const updateStepStatus = (
-    stepId: OffchainProposalStepId,
-    status: StepStatus
-  ) => {
-    setSteps(prevSteps => ({
-      ...prevSteps,
-      [stepId]: {
-        ...prevSteps[stepId],
-        status: status,
+  const {steps, updateStepStatus, doStep, globalState} = useFunctionStepper({
+    initialSteps: {
+      REGISTER_VOCDONI_ACCOUNT: {
+        status: StepStatus.WAITING,
       },
-    }));
-  };
-
-  const doStep = async <T,>(
-    stepId: OffchainProposalStepId,
-    callback: () => Promise<T>
-  ): Promise<T> => {
-    let res: T;
-    try {
-      updateStepStatus(stepId, StepStatus.LOADING);
-      res = await callback();
-    } catch (e) {
-      updateStepStatus(stepId, StepStatus.ERROR);
-      throw e;
-    }
-    updateStepStatus(stepId, StepStatus.SUCCESS);
-    return res;
-  };
+      CREATE_VOCDONI_ELECTION: {
+        status: StepStatus.WAITING,
+      },
+      CREATE_ONCHAIN_PROPOSAL: {
+        status: StepStatus.WAITING,
+      },
+      PROPOSAL_IS_READY: {
+        status: StepStatus.WAITING,
+      },
+    } as OffchainProposalSteps,
+  });
 
   const {client: vocdoniClient, census3} = useClient();
 

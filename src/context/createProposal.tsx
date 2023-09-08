@@ -82,14 +82,10 @@ import {
   UnpublishedElection,
 } from '@vocdoni/sdk';
 import {usePrivacyContext} from './privacyContext';
-import {StepStatus, useCreateOffchainProposal} from './createOffchainProposal';
-import OffchainProposalProgress from '../components/OffchainProposalProgress';
+import {useCreateOffchainProposal} from './createOffchainProposal';
 import styled from 'styled-components';
 import OffchainProposalModal from '../containers/transactionModals/offchainProposalModal';
-import {
-  OffchainPluginLocalStorageKeys,
-  OffchainPluginLocalStorageTypes,
-} from '../hooks/useVocdoniElection';
+import {StepStatus} from '../hooks/useFunctionStepper';
 
 
 
