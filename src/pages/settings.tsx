@@ -30,8 +30,8 @@ import {
   FlexibleDefinition,
   SettingsCard,
   Term,
-} from 'containers/settingsCard';
-import {SettingsUpdateCard} from 'containers/settingsUpdatedCard';
+} from 'containers/settings/settingsCard';
+import {SettingsUpdateCard} from 'containers/settings/updateCard';
 import {useNetwork} from 'context/network';
 import {useDaoDetailsQuery} from 'hooks/useDaoDetails';
 import {PluginTypes} from 'hooks/usePluginClient';

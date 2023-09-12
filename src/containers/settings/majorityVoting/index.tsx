@@ -10,7 +10,7 @@ import {
   DescriptionPair,
   SettingsCard,
   Term,
-} from 'containers/settingsCard';
+} from 'containers/settings/settingsCard';
 import {useNetwork} from 'context/network';
 import {useDaoMembers} from 'hooks/useDaoMembers';
 import {useDaoToken} from 'hooks/useDaoToken';
