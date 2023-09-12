@@ -417,7 +417,7 @@ export const Proposal: React.FC = () => {
 
       return () => clearInterval(interval);
     }
-  }, [proposal, t]);
+  }, [proposal, proposalStatus, t]);
 
   /*************************************************
    *              Handlers and Callbacks           *
