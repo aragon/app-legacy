@@ -6,10 +6,9 @@ import {AlertCard, IconSpinner, Spinner, shortenAddress} from '@aragon/ods';
 import {Dd, Dl} from 'components/descriptionList';
 import {useFormContext, useWatch} from 'react-hook-form';
 import {gTokenSymbol} from 'utils/tokens';
-import {getTotalHolders} from 'services/covalentAPI';
 import {useNetwork} from 'context/network';
-import {QueryClient} from '@tanstack/react-query';
 import numeral from 'numeral';
+import {useTokenHoldersAsync} from 'services/aragon-backend/queries/use-token-holders';
 
 type TransferListProps = {
   tokenAddress: string;
@@ -36,6 +35,8 @@ const VerificationCard: React.FC<TransferListProps> = ({tokenAddress}) => {
   });
   const {network} = useNetwork();
 
+  const fetchTokenHoldersAsync = useTokenHoldersAsync();
+
   const [isTotalHoldersLoading, setIsTotalHoldersLoading] = useState(true);
 
   useEffect(() => {
@@ -43,9 +44,11 @@ const VerificationCard: React.FC<TransferListProps> = ({tokenAddress}) => {
       try {
         setIsTotalHoldersLoading(true);
         resetField('tokenTotalHolders');
-        const queryClient = new QueryClient();
-        const total = await getTotalHolders(queryClient, tokenAddress, network);
-        setValue('tokenTotalHolders', total);
+        const tokenHolders = await fetchTokenHoldersAsync({
+          tokenAddress,
+          network,
+        });
+        setValue('tokenTotalHolders', tokenHolders.holders.totalHolders);
       } catch (e) {
         console.error(e);
       } finally {
@@ -54,7 +57,7 @@ const VerificationCard: React.FC<TransferListProps> = ({tokenAddress}) => {
     }
 
     fetchTotalHolders();
-  }, [network, resetField, setValue, tokenAddress]);
+  }, [network, resetField, setValue, tokenAddress, fetchTokenHoldersAsync]);
 
   useEffect(() => {
     if (tokenType === 'governance-ERC20') setValue('eligibilityTokenAmount', 1);

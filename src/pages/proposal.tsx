@@ -37,7 +37,7 @@ import {useProviders} from 'context/providers';
 import {useCache} from 'hooks/useCache';
 import {useClient} from 'hooks/useClient';
 import {useDaoDetailsQuery} from 'hooks/useDaoDetails';
-import {MultisigMember, useDaoMembers} from 'hooks/useDaoMembers';
+import {useDaoMembers} from 'hooks/useDaoMembers';
 import {useDaoProposal} from 'hooks/useDaoProposal';
 import {useMappedBreadcrumbs} from 'hooks/useMappedBreadcrumbs';
 import {PluginTypes, usePluginClient} from 'hooks/usePluginClient';
@@ -430,7 +430,7 @@ export const Proposal: React.FC = () => {
         proposal,
         address,
         votingSettings,
-        isMultisigProposal(proposal) ? (members as MultisigMember[]) : undefined
+        isMultisigProposal(proposal) ? members : undefined
       );
   }, [address, votingSettings, members, proposal, t]);
 

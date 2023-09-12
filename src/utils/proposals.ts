@@ -37,7 +37,7 @@ import {
   PendingTokenBasedVotes,
   pendingTokenBasedVotesVar,
 } from 'context/apolloClient';
-import {MultisigMember} from 'hooks/useDaoMembers';
+import {MultisigDaoMember} from 'hooks/useDaoMembers';
 import {PluginTypes} from 'hooks/usePluginClient';
 import {isMultisigVotingSettings} from 'hooks/useVotingSettings';
 import {i18n} from '../../i18n.config';
@@ -437,7 +437,7 @@ export function getLiveProposalTerminalProps(
   proposal: DetailedProposal,
   voter: string | null,
   votingSettings: SupportedVotingSettings,
-  members?: MultisigMember[]
+  members?: MultisigDaoMember[]
 ) {
   let token;
   let voters: Array<VoterType>;

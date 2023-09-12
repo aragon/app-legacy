@@ -26,7 +26,7 @@ import {PageWrapper} from 'components/wrappers';
 import ConfigureCommunity from 'containers/configureCommunity';
 import DefineMetadata from 'containers/defineMetadata';
 import {useNetwork} from 'context/network';
-import {MultisigMember, useDaoMembers} from 'hooks/useDaoMembers';
+import {useDaoMembers} from 'hooks/useDaoMembers';
 import {PluginTypes} from 'hooks/usePluginClient';
 import {useVotingSettings} from 'hooks/useVotingSettings';
 import useScreen from 'hooks/useScreen';
@@ -193,7 +193,7 @@ export const EditMsSettings: React.FC<EditMsSettingsProps> = ({daoDetails}) => {
 
   const setCurrentGovernance = useCallback(() => {
     if (votingSettings) {
-      const multisigWallets = members.members as MultisigMember[];
+      const multisigWallets = members.members;
       setValue('multisigMinimumApprovals', votingSettings.minApprovals);
       setValue('multisigWallets', multisigWallets);
       setValue(

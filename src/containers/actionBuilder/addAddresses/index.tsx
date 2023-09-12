@@ -17,14 +17,14 @@ import {ActionIndex} from 'utils/types';
 import AccordionSummary from './accordionSummary';
 import {AddressRow} from './addressRow';
 import {useAlertContext} from 'context/alert';
-import {BalanceMember, MultisigMember} from 'hooks/useDaoMembers';
+import {DaoMember} from 'hooks/useDaoMembers';
 
 export type CustomHeaderProps = {
   useCustomHeader?: boolean;
 };
 
 export type CurrentDaoMembers = {
-  currentDaoMembers?: MultisigMember[] | BalanceMember[];
+  currentDaoMembers?: DaoMember[];
 };
 
 type AddAddressesProps = ActionIndex &

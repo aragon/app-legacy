@@ -16,7 +16,7 @@ import ResourceList from 'components/resourceList';
 import {Loading} from 'components/temporary';
 import {VotingTerminal} from 'containers/votingTerminal';
 import {useDaoDetailsQuery} from 'hooks/useDaoDetails';
-import {MultisigMember, useDaoMembers} from 'hooks/useDaoMembers';
+import {MultisigDaoMember, useDaoMembers} from 'hooks/useDaoMembers';
 import {PluginTypes} from 'hooks/usePluginClient';
 import {
   isMultisigVotingSettings,
@@ -347,7 +347,7 @@ export const StyledEditorContent = styled(EditorContent)`
 function getReviewProposalTerminalProps(
   t: TFunction,
   daoSettings: SupportedVotingSettings,
-  daoMembers: Array<MultisigMember> | undefined,
+  daoMembers: MultisigDaoMember[] | undefined,
   daoToken: Erc20TokenDetails | undefined,
   totalSupply: bigint | undefined
 ) {
