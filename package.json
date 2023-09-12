@@ -45,6 +45,7 @@
     "file-saver": "^2.0.5",
     "framer-motion": "^5.2.1",
     "graphql": "^16.8.1",
+    "graphql-request": "^4.3.0",
     "i18next": "^21.3.3",
     "lodash": "^4.17.21",
     "numeral": "^2.0.6",
