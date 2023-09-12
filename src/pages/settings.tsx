@@ -157,7 +157,7 @@ const SettingsCardDao: React.FC<{daoDetails: DaoDetails}> = ({daoDetails}) => {
   }, []);
 
   return (
-    <SettingsCard title="DAO">
+    <SettingsCard title={t('labels.review.daoMetadata')}>
       <DescriptionPair>
         <Term>{t('labels.daoName')}</Term>
         <Definition>
@@ -187,7 +187,9 @@ const SettingsCardDao: React.FC<{daoDetails: DaoDetails}> = ({daoDetails}) => {
       </DescriptionPair>
 
       <DescriptionPair>
-        <Term>{isL2Network ? 'Contract address' : t('labels.ens')}</Term>
+        <Term>
+          {isL2Network ? t('settings.dao.contractAddress') : t('labels.ens')}
+        </Term>
         <Definition>
           <div className="flex flex-wrap flex-1 gap-y-1 justify-between items-start">
             <Link
@@ -242,10 +244,9 @@ const SettingsCardDao: React.FC<{daoDetails: DaoDetails}> = ({daoDetails}) => {
               ))}
               {daoDetails.metadata.links.length > 3 && (
                 <Dropdown
-                  className="block"
                   trigger={
                     <Link
-                      label="All links"
+                      label={t('settings.dao.links.allLinks')}
                       type="primary"
                       iconRight={<IconChevronDown />}
                     />

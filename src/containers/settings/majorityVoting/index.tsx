@@ -114,7 +114,7 @@ const MajorityVotingSettings: React.FC<IPluginSettings> = ({daoDetails}) => {
               />
 
               {canMintToken && (
-                <Tag label={'Mintable by DAO'} colorScheme="neutral" />
+                <Tag label={t('labels.mintableByDao')} colorScheme="neutral" />
               )}
             </div>
           </Definition>

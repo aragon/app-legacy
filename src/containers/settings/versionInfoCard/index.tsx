@@ -4,20 +4,22 @@ import {
   SupportedNetworksArray,
 } from '@aragon/sdk-client-common';
 import React from 'react';
+import {useTranslation} from 'react-i18next';
 
+import {useNetwork} from 'context/network';
+import {CHAIN_METADATA} from 'utils/constants';
+import {shortenAddress, translateToNetworkishName} from 'utils/library';
 import {
   DescriptionPair,
   FlexibleDefinition,
   SettingsCard,
   Term,
 } from '../settingsCard';
-import {shortenAddress, translateToNetworkishName} from 'utils/library';
-import {useNetwork} from 'context/network';
-import {CHAIN_METADATA} from 'utils/constants';
 
 export const VersionInfoCard: React.FC<{pluginAddress: string}> = ({
   pluginAddress,
 }) => {
+  const {t} = useTranslation();
   const {network} = useNetwork();
 
   const explorerEndpoint = CHAIN_METADATA[network].explorer + 'address/';
@@ -31,15 +33,16 @@ export const VersionInfoCard: React.FC<{pluginAddress: string}> = ({
     OSxAddress = LIVE_CONTRACTS[translatedNetwork].daoFactoryAddress;
   }
 
+  // TODO: generate the links
   return (
     <div
       className={
         'col-span-full desktop:col-span-4 desktop:col-start-8 desktop:row-start-3 mt-1 desktop:-mt-1 desktop:-ml-1'
       }
     >
-      <SettingsCard title="Version info">
+      <SettingsCard title={t('setting.versionInfo.title')}>
         <DescriptionPair>
-          <Term>App</Term>
+          <Term>{t('setting.versionInfo.labelApp')}</Term>
           <FlexibleDefinition>
             <Link
               label={'Aragon App v0.1.29'}
@@ -49,7 +52,7 @@ export const VersionInfoCard: React.FC<{pluginAddress: string}> = ({
           </FlexibleDefinition>
         </DescriptionPair>
         <DescriptionPair>
-          <Term>Operating System</Term>
+          <Term>{t('setting.versionInfo.labelOs')}</Term>
           <FlexibleDefinition>
             <Link
               label={'Aragon OSx v1.1.23'}
@@ -62,7 +65,7 @@ export const VersionInfoCard: React.FC<{pluginAddress: string}> = ({
         </DescriptionPair>
 
         <DescriptionPair className="border-none">
-          <Term>Governance</Term>
+          <Term>{t('setting.versionInfo.labelGovernance')}</Term>
           <FlexibleDefinition>
             <Link
               label={'Token voting v1.12'}

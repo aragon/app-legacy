@@ -92,7 +92,7 @@
     "networkCost": "Network cost",
     "security": "Security",
     "popularity": "Popularity",
-    "daoName": "DAO name",
+    "daoName": "Name",
     "summary": "Summary",
     "description": "Description",
     "addLink": "Add link",
@@ -159,7 +159,7 @@
     },
     "review": {
       "blockchain": "Blockchain",
-      "daoMetadata": "DAO details",
+      "daoMetadata": "DAO",
       "voters": "Voters",
       "votingParameters": "Voting parameters",
       "governance": "Governance",
@@ -227,7 +227,7 @@
     "addWalletsDescriptionLinkLabel": "read our guide",
     "addWalletsDescription": "Wallets can create proposals, propose to send funds in and out of the treasury, and vote in your DAO.",
     "daoEnsName": "ENS Subdomain",
-    "ens": "ENS",
+    "ens": "ENS name",
     "currentTokenSupply": "Current token supply",
     "helptext": {
       "snapshot": "Based on this proposal snapshot"
@@ -240,7 +240,8 @@
     "codeInput": {
       "address0x": "0x …"
     },
-    "totalMembers": "Total members"
+    "totalMembers": "Total members",
+    "mintableByDao": "Mintable by DAO"
   },
   "placeHolders": {
     "selectToken": "Select a token …",
@@ -344,7 +345,7 @@
     },
     "executionCard": {
       "title": "Actions",
-      "description": "These actions can be executed if the parameters you set for them are met.",
+      "description": "These actions can be executed only once the governance parameters are met.",
       "addAction": "Add action",
       "seeTransaction": "See transaction",
       "status": {
@@ -498,8 +499,8 @@
       "walletConnected": "Wallet connected",
       "walletDisconnected": "Wallet disconnected",
       "max": "Max balance applied",
-      "favorited": "DAO favorited",
-      "unfavorite": "DAO removed from favorites"
+      "favorited": "Now following this DAO",
+      "unfavorite": " No longer following this DAO"
     }
   },
   "warnings": {
@@ -562,7 +563,8 @@
     "tryAgain": "Try again",
     "createProposal": "Create proposal",
     "createProposalNow": "Create proposal now",
-    "waiting": "Waiting for confirmation"
+    "waiting": "Waiting for confirmation",
+    "alertCritical": "Transaction failed"
   },
   "AddActionModal": {
     "title": "Add action",
@@ -830,7 +832,8 @@
         "confirmingTransaction": "Confirming your transaction",
         "publishingData": "Publishing DAO data onchain",
         "DAOready": "Your DAO is ready",
-        "details": "Details"
+        "details": "Details",
+        "confirmingTransactionFail": "Transaction failed …"
       },
       "alertCritical": {
         "noConfirmationReceived": "No confirmation received …",
@@ -850,7 +853,7 @@
     "title": "New proposal",
     "configureActions": {
       "heading": "Set actions",
-      "description": "These actions are executed if the parameters you set for them are met. ",
+      "description": "These actions can be executed only once the governance parameters are met.",
       "yesOption": "If option \"Yes\" wins",
       "addFirstAction": "Add action",
       "addFirstActionSubtitle": "This action will execute if the vote passes. A common automatic action is transferring funds to a guild or person if their proposal passes a vote.",
@@ -953,7 +956,12 @@
     },
     "label": {
       "in": "In"
-    }
+    },
+    "approveOnly": "Approve only",
+    "approveAndExecute": {
+      "infoAlert": "Only one more approval is needed in order to execute the proposal actions."
+    },
+    "approveExecute": "Approve and execute"
   },
   "explore": {
     "hero": {
@@ -984,6 +992,67 @@
     "learn": {
       "linkLabel": "Learn about DAOs",
       "linkURL": "https://aragon.org/education-portal"
+    },
+    "toggleFilter": {
+      "Favourites": "My favourites",
+      "allDAOs": "All DAOs ",
+      "memberOf": "Member of",
+      "delegate": "Delegate duties"
+    },
+    "inputPlaceholder": {
+      "searchDAOs": "Search DAOs"
+    },
+    "searchDropwdown": {
+      "labelAmountDAOs": "{{amount}} DAOs"
+    },
+    "emptyStateSearch": {
+      "ctaLabel": "Reset search",
+      "title": "No results to show",
+      "description": "No DAOs found for this search term."
+    },
+    "sortOption": {
+      "mostActive": "Sort by Most active ",
+      "blockchain": "Sort by Blockchain",
+      "treasurySize": "Sort by Treasury size",
+      "communitySize": "Sort by Community size"
+    },
+    "modal": {
+      "filterDAOs": {
+        "title": "Filter DAOs",
+        "label": {
+          "blockchains": "Blockchains",
+          "DAOtype": "DAO type",
+          "treasurySize": "Treasury size",
+          "base": "Base",
+          "allChains": "All chains",
+          "polygon": "Polygon",
+          "ethereum": {
+            "label": "Ethereum"
+          },
+          "member": {
+            "label": "Member"
+          },
+          "tokenVoting": "Token voting",
+          "anyGovernance": "Any governance",
+          "1M": "> $1.000.000",
+          "1K": "> $1.000",
+          "anySize": "Any size",
+          "10M": "$10M"
+        },
+        "ctaLabel": {
+          "see0": "See 0 DAOs",
+          "see{{amount}}": "See {{amount}} DAOs",
+          "seeAll": "See all DAOs"
+        },
+        "buttonLabel": {
+          "resetFilters": "Reset filters"
+        }
+      }
+    },
+    "pagination": {
+      "label": {
+        "amountOf DAOs": "{{x}} of {{x-amount}} DAOs"
+      }
     }
   },
   "privacyPolicy": {
@@ -1042,7 +1111,13 @@
     "edit": "Edit settings",
     "newSettings": "New settings",
     "oldSettings": "Old settings",
-    "proposeSettingsInfo": "To make changes to the settings, create a proposal and put it to vote in your DAO."
+    "proposeSettingsInfo": "To make changes to the settings, create a proposal and put it to vote in your DAO.",
+    "dao": {
+      "links": {
+        "allLinks": "All links"
+      },
+      "contractAddress": "Contract address"
+    }
   },
   "dashboard": {
     "proposalsTitle": "Proposals created",
@@ -1171,6 +1246,35 @@
     "delegationInactive": {
       "title": "You have no voting power",
       "desc": "You haven't delegated your voting power of {{balance}} {{tokenSymbol}} to any address. If you want to participate in future proposals, you have to claim your voting power for yourself or delegate to another address."
+    },
+    "transaction": {
+      "multisig": {
+        "label": {
+          "gasFee": "Estimated gas fee",
+          "awaitingWallet": "Awaiting wallet confirmation",
+          "confirmingTransaction": "Confirming your transaction",
+          "details": "Details",
+          "executingActions": "Executing proposal actions"
+        },
+        "voteDescript": "You are approving this proposal",
+        "voteTitle": "Approve",
+        "ctaLabel": {
+          "continueProposal": "Continue to proposal",
+          "approve": "Approve",
+          "tryAgain": "Try again",
+          "approveExecute": "Approve and execute"
+        },
+        "alert": {
+          "transactionFailed": "Transaction failed ...",
+          "noConfirmationReceived": "No confirmation received …"
+        },
+        "ApproveExecuteTitle": "Approve and execute proposal",
+        "ApproveExecuteDescription": "The cost to approve the proposal and execute its actions will be the gas fee for a single transaction.",
+        "ApproveTitle": "Approve",
+        "approveDescription": "Review your vote before submitting and check the respective gas fees cost.",
+        "ApproveProposalDescription": "The only cost to approve the proposal will be the gas fee.",
+        "ApproveProposalTitle": "Approve proposal"
+      }
     }
   },
   "scc": {
@@ -1394,5 +1498,115 @@
     "labelYourDelegate": "Your delegate",
     "labelYou": "You"
   },
-  "Voting power claimed successfully": "Claimed your voting power successfully"
+  "og": {
+    "title": {
+      "aragonApp": "// Aragon App"
+    },
+    "explore": {
+      "desc": "Build your DAO, explore communities, and find inspiration all in one place.",
+      "title": "Aragon App"
+    },
+    "governance": {
+      "title": "Governance of {daoName}",
+      "desc": "Participate in {{daoName}} by creating and voting on proposals."
+    },
+    "finance": {
+      "title": "Finance of {daoName}",
+      "desc": "View all {{daoName}} financial transactions and funds."
+    },
+    "community": {
+      "title": "Community of {daoName}",
+      "desc": "View all {{daoName}} community members."
+    },
+    "settings": {
+      "title": "Settings of {daoName}",
+      "desc": "View all {{daoName}} settings."
+    }
+  },
+  "transactionModal": {
+    "multisig": {
+      "ctaApprove": "Approve",
+      "ctaWaitingConfirmation": "Waiting for confirmation",
+      "title": {
+        "approveProposal": "Approve proposal",
+        "approveExecute": "Approve and execute"
+      },
+      "ctaConfirmingTransactiob": "Confirming transaction ...",
+      "ctaContinueProposal": "Continue to proposal",
+      "ctaApproveExecute": "Approve and execute"
+    }
+  },
+  "dao": {
+    "follow": {
+      "true": "Following",
+      "false": "Follow"
+    }
+  },
+  "update": {
+    "banner": {
+      "title": "Aragon App Updates available",
+      "ctaLabel": "View updates"
+    },
+    "alert": {
+      "title": "Aragon App Updates available",
+      "desc": "Your DAO has received new updates. Review them and create a proposal for installing them.",
+      "ctaLabel": "View updates"
+    },
+    "reviewUpdates": {
+      "headerDesc": "TBD description of reviewing updates",
+      "headerTitle": "Review updates"
+    },
+    "item": {
+      "releaseNotesLabel": "View release notes",
+      "versionCtaLabel": "Choose another version",
+      "prepareCtaLabel": "Prepare plugin",
+      "tagLatest": "Latest",
+      "tagPrepared": "Prepared"
+    },
+    "itemList": {
+      "alertInfo": "To propose all updates, you have to prepare the above plugin, before you are able to proceed."
+    },
+    "modalVersion": {
+      "title": "Choose plugin version",
+      "desc": "Choose older version of the Aragon OSx/plugin",
+      "ctaLabel": "Select for update"
+    },
+    "modalPreparePlugin": {
+      "title": "Prepare plugin",
+      "desc": "To continue with the updates, confirm the plugin preperation.",
+      "ctaLabel": "Prepare plugin"
+    },
+    "securityCheck": {
+      "title": "Update security check",
+      "linkLabel": "Read more",
+      "daoAddress": "DAO address",
+      "pluginRegistry": "Plugin registry",
+      "pluginSetupProcessor": "Plugin setup processor",
+      "alertTitle": "Some updates might be unsafe",
+      "alertDesc": "Since one or more actions are not listed in the Aragon Update Registry, it appears that this update may be malicious."
+    },
+    "proposal": {
+      "bannerTitle": "Verified Aragon App Update"
+    },
+    "modalCritical": {
+      "title": "[TBD] Execute malicious actions",
+      "desc": "[TBD] copy",
+      "alertTitle": "Potential risk for your DAO",
+      "alertDesc": "[TBD] Instead of minting tokens to your DAO treasury, consider minting them to a member's wallet address so the tokens can be used for voting. ",
+      "ctaMainLabel": "Back to proposal",
+      "ctaSecondaryLabel": "Proceed with update",
+      "inputLabel": "Confirm with DAO address",
+      "inputDesc": "To confirm, fill in the DAO contract address below.",
+      "ctaConfirm": "Confirm",
+      "ctaCancel": "Cancel"
+    }
+  },
+  "setting": {
+    "versionInfo": {
+      "title": "Version info",
+      "labelApp": "App",
+      "labelOs": "Operating system",
+      "labelGovernance": "Governance"
+    }
+  }
 }

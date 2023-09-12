@@ -1,11 +1,13 @@
 import {IconLinkExternal, IconUpdate} from '@aragon/ods';
 import React from 'react';
+import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 
-import useScreen from 'hooks/useScreen';
 import {StyledLink} from 'components/styledLink';
+import useScreen from 'hooks/useScreen';
 
 export const SettingsUpdateCard: React.FC = () => {
+  const {t} = useTranslation();
   const {isDesktop} = useScreen();
 
   if (isDesktop) {
@@ -15,19 +17,17 @@ export const SettingsUpdateCard: React.FC = () => {
           <div className="flex-1 space-y-1">
             <Head>
               <IconUpdate />
-              <Title>Aragon Updates available</Title>
+              <Title>{t('update.alert.title')}</Title>
             </Head>
             <ContentWrapper className="space-y-0">
-              <Description>
-                Your DAO has received new updates. Review them and create a
-                proposal for installing them.
-              </Description>
+              <Description>{t('update.alert.desc')}</Description>
             </ContentWrapper>
           </div>
           <StyledLink
-            label="View updates"
+            label={t('update.alert.ctaLabel')}
             type="neutral"
             iconRight={<IconLinkExternal />}
+            //TODO add onclick/href
           />
         </div>
       </Container>
@@ -38,15 +38,12 @@ export const SettingsUpdateCard: React.FC = () => {
     <Container>
       <Head>
         <IconUpdate />
-        <Title>Aragon Updates available</Title>
+        <Title>{t('update.alert.title')}</Title>
       </Head>
       <ContentWrapper>
-        <Description>
-          Your DAO has received new updates. Review them and create a proposal
-          for installing them.
-        </Description>
+        <Description>{t('update.alert.desc')}</Description>
         <StyledLink
-          label="View updates"
+          label={t('update.alert.ctaLabel')}
           type="neutral"
           iconRight={<IconLinkExternal />}
         />
