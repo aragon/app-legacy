@@ -72,19 +72,23 @@ export const Settings: React.FC = () => {
 
   const explorerEndpoint = CHAIN_METADATA[network].explorer + 'address/';
 
-  const displayUpdateInfo =
+  const daoUpdateEnabled =
     featureFlags.getValue('VITE_FEATURE_FLAG_DAO_UPDATE') === 'true';
 
   return (
     <SettingsWrapper>
-      {displayUpdateInfo && (
-        <div className="col-span-full desktop:col-start-2 desktop:col-end-12 mt-0.5 desktop:mt-1.5">
+      {daoUpdateEnabled && (
+        <div className={`mt-0.5 desktop:mt-1.5 ${styles.fullWidth}`}>
           <SettingsUpdateCard />
         </div>
       )}
 
       {/* DAO Settings */}
-      <div className="col-span-full desktop:col-span-6 desktop:col-start-2 desktop:row-start-3 mt-1 desktop:-mt-1">
+      <div
+        className={`desktop:row-start-3 mt-1 desktop:-mt-1 ${
+          daoUpdateEnabled ? styles.rightContent : styles.center
+        }`}
+      >
         <div className="flex flex-col gap-y-3">
           {/* DAO SECTION */}
           <SettingsCardDao
@@ -98,53 +102,63 @@ export const Settings: React.FC = () => {
       </div>
 
       {/* Version Info */}
-      <div className="col-span-full desktop:col-span-4 desktop:col-start-8 desktop:row-start-3 mt-1 desktop:-mt-1 desktop:-ml-1">
-        <SettingsCard title="Version info">
-          <DescriptionPair>
-            <Term>App</Term>
-            <FlexibleDefinition>
-              <Link
-                label={'Aragon App v0.1.29'}
-                type="primary"
-                href={explorerEndpoint + ''}
-                iconRight={<IconLinkExternal />}
-              />
-            </FlexibleDefinition>
-          </DescriptionPair>
-          <DescriptionPair>
-            <Term>Operating System</Term>
-            <FlexibleDefinition>
-              <Link
-                label={'Aragon OSx v1.1.23'}
-                description={
-                  OSxAddress ? shortenAddress(OSxAddress) : undefined
-                }
-                type="primary"
-                href={explorerEndpoint + OSxAddress}
-                iconRight={<IconLinkExternal />}
-              />
-            </FlexibleDefinition>
-          </DescriptionPair>
+      {daoUpdateEnabled && (
+        <div
+          className={`desktop:row-start-3 mt-1 desktop:-mt-1 desktop:-ml-1 ${styles.leftContent}`}
+        >
+          <SettingsCard title="Version info">
+            <DescriptionPair>
+              <Term>App</Term>
+              <FlexibleDefinition>
+                <Link
+                  label={'Aragon App v0.1.29'}
+                  type="primary"
+                  href={explorerEndpoint + ''}
+                  iconRight={<IconLinkExternal />}
+                />
+              </FlexibleDefinition>
+            </DescriptionPair>
+            <DescriptionPair>
+              <Term>Operating System</Term>
+              <FlexibleDefinition>
+                <Link
+                  label={'Aragon OSx v1.1.23'}
+                  description={
+                    OSxAddress ? shortenAddress(OSxAddress) : undefined
+                  }
+                  type="primary"
+                  href={explorerEndpoint + OSxAddress}
+                  iconRight={<IconLinkExternal />}
+                />
+              </FlexibleDefinition>
+            </DescriptionPair>
 
-          <DescriptionPair className="border-none">
-            <Term>Governance</Term>
-            <FlexibleDefinition>
-              <Link
-                label={'Token voting v1.12'}
-                description={shortenAddress(
-                  daoDetails.plugins[0].instanceAddress
-                )}
-                type="primary"
-                href={explorerEndpoint + daoDetails.plugins[0].instanceAddress}
-                iconRight={<IconLinkExternal />}
-              />
-            </FlexibleDefinition>
-          </DescriptionPair>
-        </SettingsCard>
-      </div>
+            <DescriptionPair className="border-none">
+              <Term>Governance</Term>
+              <FlexibleDefinition>
+                <Link
+                  label={'Token voting v1.12'}
+                  description={shortenAddress(
+                    daoDetails.plugins[0].instanceAddress
+                  )}
+                  type="primary"
+                  href={
+                    explorerEndpoint + daoDetails.plugins[0].instanceAddress
+                  }
+                  iconRight={<IconLinkExternal />}
+                />
+              </FlexibleDefinition>
+            </DescriptionPair>
+          </SettingsCard>
+        </div>
+      )}
 
       {/* Edit */}
-      <div className="col-span-full desktop:col-start-2 desktop:col-end-12 desktop:row-start-4">
+      <div
+        className={`desktop:row-start-4 ${
+          daoUpdateEnabled ? styles.fullWidth : styles.center
+        }`}
+      >
         <div className="mt-1 desktop:-mt-1 space-y-2">
           <ButtonText
             label={t('settings.edit')}
@@ -158,6 +172,14 @@ export const Settings: React.FC = () => {
       </div>
     </SettingsWrapper>
   );
+};
+const styles = {
+  fullWidth:
+    'col-span-full desktop:col-start-2 desktop:col-end-12 desktop:col-span-6',
+  rightContent: 'col-span-full desktop:col-start-2 desktop:col-end-8',
+  leftContent: 'col-span-full desktop:col-span-4 desktop:col-start-8',
+  center:
+    'col-span-full desktop:col-start-4 desktop:col-end-10 desktop:col-span-6',
 };
 
 const DEFAULT_LINES_SHOWN = 3;
