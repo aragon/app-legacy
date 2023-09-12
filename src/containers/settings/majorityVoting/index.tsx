@@ -21,7 +21,7 @@ import {useVotingSettings} from 'hooks/useVotingSettings';
 import {IPluginSettings} from 'pages/settings';
 import {CHAIN_METADATA} from 'utils/constants';
 import {getDHMFromSeconds} from 'utils/date';
-import {formatUnits} from 'utils/library';
+import {formatUnits, shortenAddress} from 'utils/library';
 import {Community} from 'utils/paths';
 
 const MajorityVotingSettings: React.FC<IPluginSettings> = ({daoDetails}) => {
@@ -109,6 +109,7 @@ const MajorityVotingSettings: React.FC<IPluginSettings> = ({daoDetails}) => {
                 label={`${daoToken.name} ${daoToken.symbol}`}
                 iconRight={<IconLinkExternal />}
                 href={daoTokenBlockUrl}
+                description={shortenAddress(daoToken.address)}
                 className="flex-shrink min-w-0"
               />
 
@@ -125,6 +126,7 @@ const MajorityVotingSettings: React.FC<IPluginSettings> = ({daoDetails}) => {
           <Definition>
             <Link
               label={`${daoMembers.members.length} token holders`}
+              description="See all token holders"
               iconRight={<IconLinkExternal />}
               onClick={() =>
                 navigate(
