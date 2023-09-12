@@ -1,4 +1,4 @@
-import {IconReload, Link, IconChevronRight} from '@aragon/ods';
+import {IconLinkExternal, IconUpdate, Link} from '@aragon/ods';
 import React from 'react';
 import styled from 'styled-components';
 
@@ -13,7 +13,7 @@ export const SettingsUpdateCard: React.FC = () => {
         <div className="flex gap-x-6 items-start">
           <div className="flex-1 space-y-1">
             <Head>
-              <IconReload />
+              <IconUpdate />
               <Title>Aragon Updates available</Title>
             </Head>
             <ContentWrapper className="space-y-0">
@@ -24,9 +24,10 @@ export const SettingsUpdateCard: React.FC = () => {
             </ContentWrapper>
           </div>
           <Link
+            className="text-primary-50"
             label="View updates"
-            type="secondary"
-            iconRight={<IconChevronRight />}
+            type="neutral"
+            iconRight={<IconLinkExternal />}
           />
         </div>
       </Container>
@@ -36,7 +37,7 @@ export const SettingsUpdateCard: React.FC = () => {
   return (
     <Container>
       <Head>
-        <IconReload />
+        <IconUpdate />
         <Title>Aragon Updates available</Title>
       </Head>
       <ContentWrapper>
@@ -46,8 +47,8 @@ export const SettingsUpdateCard: React.FC = () => {
         </Description>
         <Link
           label="View updates"
-          type="secondary"
-          iconRight={<IconChevronRight />}
+          type="neutral"
+          iconRight={<IconLinkExternal />}
         />
       </ContentWrapper>
     </Container>

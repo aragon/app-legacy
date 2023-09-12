@@ -943,7 +943,7 @@ export function shortenAddress(address: string | null) {
   if (address === null) return '';
   if (isAddress(address))
     return (
-      address.substring(0, 5) +
+      address.substring(0, 6) +
       '…' +
       address.substring(address.length - 4, address.length)
     );

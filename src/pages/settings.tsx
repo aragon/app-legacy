@@ -2,6 +2,7 @@ import {
   AlertInline,
   AvatarDao,
   ButtonText,
+  Dropdown,
   IconChevronDown,
   IconChevronUp,
   IconGovernance,
@@ -10,6 +11,10 @@ import {
   Tag,
 } from '@aragon/ods';
 import {DaoDetails} from '@aragon/sdk-client';
+import {
+  LIVE_CONTRACTS,
+  SupportedNetworksArray,
+} from '@aragon/sdk-client-common';
 import React, {useEffect, useRef, useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {generatePath, useNavigate, useParams} from 'react-router-dom';
@@ -33,7 +38,11 @@ import {PluginTypes} from 'hooks/usePluginClient';
 import useScreen from 'hooks/useScreen';
 import {CHAIN_METADATA} from 'utils/constants';
 import {featureFlags} from 'utils/featureFlags';
-import {shortenAddress, toDisplayEns} from 'utils/library';
+import {
+  shortenAddress,
+  toDisplayEns,
+  translateToNetworkishName,
+} from 'utils/library';
 import {EditSettings} from 'utils/paths';
 
 export const Settings: React.FC = () => {
@@ -52,8 +61,16 @@ export const Settings: React.FC = () => {
     return null;
   }
 
-  const explorerLink =
-    CHAIN_METADATA[network].explorer + 'address/' + daoDetails.address;
+  let OSxAddress = '';
+  const translatedNetwork = translateToNetworkishName(network);
+  if (
+    translatedNetwork !== 'unsupported' &&
+    SupportedNetworksArray.includes(translatedNetwork)
+  ) {
+    OSxAddress = LIVE_CONTRACTS[translatedNetwork].daoFactoryAddress;
+  }
+
+  const explorerEndpoint = CHAIN_METADATA[network].explorer + 'address/';
 
   const displayUpdateInfo =
     featureFlags.getValue('VITE_FEATURE_FLAG_DAO_UPDATE') === 'true';
@@ -72,7 +89,7 @@ export const Settings: React.FC = () => {
           {/* DAO SECTION */}
           <SettingsCardDao
             daoDetails={daoDetails}
-            explorerLink={explorerLink}
+            explorerLink={explorerEndpoint + daoDetails.address}
           />
 
           {/* COMMUNITY SECTION */}
@@ -88,9 +105,8 @@ export const Settings: React.FC = () => {
             <FlexibleDefinition>
               <Link
                 label={'Aragon App v0.1.29'}
-                // TODO: add description
                 type="primary"
-                href={explorerLink}
+                href={explorerEndpoint + ''}
                 iconRight={<IconLinkExternal />}
               />
             </FlexibleDefinition>
@@ -100,9 +116,11 @@ export const Settings: React.FC = () => {
             <FlexibleDefinition>
               <Link
                 label={'Aragon OSx v1.1.23'}
-                // TODO: add description
+                description={
+                  OSxAddress ? shortenAddress(OSxAddress) : undefined
+                }
                 type="primary"
-                href={explorerLink}
+                href={explorerEndpoint + OSxAddress}
                 iconRight={<IconLinkExternal />}
               />
             </FlexibleDefinition>
@@ -113,9 +131,11 @@ export const Settings: React.FC = () => {
             <FlexibleDefinition>
               <Link
                 label={'Token voting v1.12'}
-                // TODO add description
+                description={shortenAddress(
+                  daoDetails.plugins[0].instanceAddress
+                )}
                 type="primary"
-                href={explorerLink}
+                href={explorerEndpoint + daoDetails.plugins[0].instanceAddress}
                 iconRight={<IconLinkExternal />}
               />
             </FlexibleDefinition>
@@ -140,7 +160,7 @@ export const Settings: React.FC = () => {
   );
 };
 
-const DEFAULT_SUMMARY_LINES_SHOWN = 3;
+const DEFAULT_LINES_SHOWN = 3;
 const SettingsCardDao: React.FC<{
   daoDetails: DaoDetails;
   explorerLink: string;
@@ -169,8 +189,8 @@ const SettingsCardDao: React.FC<{
         descriptionEl.offsetHeight /
         parseFloat(getComputedStyle(descriptionEl).lineHeight);
 
-      setShouldClamp(numberOfLines > DEFAULT_SUMMARY_LINES_SHOWN);
-      setShowAll(numberOfLines <= DEFAULT_SUMMARY_LINES_SHOWN);
+      setShouldClamp(numberOfLines > DEFAULT_LINES_SHOWN);
+      setShowAll(numberOfLines <= DEFAULT_LINES_SHOWN);
     }
 
     countNumberOfLines();
@@ -212,17 +232,20 @@ const SettingsCardDao: React.FC<{
       <DescriptionPair>
         <Term>{isL2Network ? 'Contract address' : t('labels.ens')}</Term>
         <Definition>
-          <Link
-            label={
-              isL2Network
-                ? shortenAddress(daoDetails.address)
-                : toDisplayEns(daoDetails.ensDomain)
-            }
-            // TODO: add description description={shortenAddress(daoDetails.address)}
-            type="primary"
-            href={explorerLink}
-            iconRight={<IconLinkExternal />}
-          />
+          <div className="flex flex-1 justify-between items-start">
+            <Link
+              {...(isL2Network
+                ? {label: shortenAddress(daoDetails.address)}
+                : {
+                    label: toDisplayEns(daoDetails.ensDomain),
+                    description: shortenAddress(daoDetails.address),
+                  })}
+              type="primary"
+              href={explorerLink}
+              iconRight={<IconLinkExternal />}
+            />
+            <Tag label={t('labels.notChangeable')} colorScheme="neutral" />
+          </div>
         </Definition>
       </DescriptionPair>
 
@@ -248,19 +271,42 @@ const SettingsCardDao: React.FC<{
         <DescriptionPair className="border-none">
           <Term>{t('labels.links')}</Term>
           <Definition>
-            <div className="space-y-1.5">
-              {daoDetails.metadata.links.map(({name, url}) => (
-                <div key={url}>
-                  <Link
-                    label={name}
-                    // description={url}
-                    // TODO add description
-                    type="primary"
-                    href={url}
-                    iconRight={<IconLinkExternal />}
-                  />
-                </div>
+            <div className="flex relative flex-col space-y-1.5">
+              {daoDetails.metadata.links.slice(0, 3).map(({name, url}) => (
+                <Link
+                  key={url}
+                  label={name}
+                  description={url}
+                  type="primary"
+                  href={url}
+                  iconRight={<IconLinkExternal />}
+                />
               ))}
+              {daoDetails.metadata.links.length > 3 && (
+                <Dropdown
+                  className="block"
+                  trigger={
+                    <Link
+                      label="All links"
+                      type="primary"
+                      iconRight={<IconChevronDown />}
+                    />
+                  }
+                  listItems={daoDetails.metadata.links.map(({name, url}) => ({
+                    component: (
+                      <div className="mb-1.5">
+                        <Link
+                          label={name}
+                          description={url}
+                          type="primary"
+                          href={url}
+                          iconRight={<IconLinkExternal />}
+                        />
+                      </div>
+                    ),
+                  }))}
+                />
+              )}
             </div>
           </Definition>
         </DescriptionPair>
@@ -327,5 +373,5 @@ const Summary = styled.p.attrs({
   display: -webkit-box;
   -webkit-box-orient: vertical;
   -webkit-line-clamp: ${props =>
-    props.fullDescription ? 'unset' : DEFAULT_SUMMARY_LINES_SHOWN};
+    props.fullDescription ? 'unset' : DEFAULT_LINES_SHOWN};
 `;
