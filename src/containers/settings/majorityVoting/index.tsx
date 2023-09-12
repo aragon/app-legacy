@@ -26,7 +26,7 @@ import {Community} from 'utils/paths';
 
 const MajorityVotingSettings: React.FC<IPluginSettings> = ({daoDetails}) => {
   const {t} = useTranslation();
-  const {network} = useNetwork(); // TODO get the network from daoDetails
+  const {network} = useNetwork();
   const navigate = useNavigate();
 
   const pluginAddress = daoDetails?.plugins?.[0]?.instanceAddress as string;
@@ -104,19 +104,17 @@ const MajorityVotingSettings: React.FC<IPluginSettings> = ({daoDetails}) => {
         <DescriptionPair>
           <Term>{t('votingTerminal.token')}</Term>
           <Definition>
-            <div className="flex flex-1 desktop:justify-between space-x-1 desktop:space-x-2">
+            <div className="flex flex-wrap flex-1 gap-y-1 justify-between items-start">
               <Link
                 label={`${daoToken.name} ${daoToken.symbol}`}
                 iconRight={<IconLinkExternal />}
                 href={daoTokenBlockUrl}
                 description={shortenAddress(daoToken.address)}
-                className="flex-shrink min-w-0"
+                className="flex-shrink-0"
               />
 
               {canMintToken && (
-                <span className="flex-shrink-0 whitespace-nowrap">
-                  <Tag label={'Mintable by DAO'} colorScheme="neutral" />
-                </span>
+                <Tag label={'Mintable by DAO'} colorScheme="neutral" />
               )}
             </div>
           </Definition>

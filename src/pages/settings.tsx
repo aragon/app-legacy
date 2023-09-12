@@ -222,8 +222,10 @@ const SettingsCardDao: React.FC<{
       <DescriptionPair>
         <Term>{t('labels.review.blockchain')}</Term>
         <Definition>
-          <div className="flex flex-1 justify-between">
-            <p className="desktop:font-semibold ft-text-base">{chainLabel}</p>
+          <div className="flex flex-wrap flex-1 gap-y-1 justify-between">
+            <p className="flex-shrink-0 desktop:font-semibold ft-text-base">
+              {chainLabel}
+            </p>
             <Tag label={t('labels.notChangeable')} colorScheme="neutral" />
           </div>
         </Definition>
@@ -232,7 +234,7 @@ const SettingsCardDao: React.FC<{
       <DescriptionPair>
         <Term>{isL2Network ? 'Contract address' : t('labels.ens')}</Term>
         <Definition>
-          <div className="flex flex-1 justify-between items-start">
+          <div className="flex flex-wrap flex-1 gap-y-1 justify-between items-start">
             <Link
               {...(isL2Network
                 ? {label: shortenAddress(daoDetails.address)}
@@ -241,6 +243,7 @@ const SettingsCardDao: React.FC<{
                     description: shortenAddress(daoDetails.address),
                   })}
               type="primary"
+              className="flex-shrink-0"
               href={explorerLink}
               iconRight={<IconLinkExternal />}
             />
