@@ -11,10 +11,7 @@ import {
   Tag,
 } from '@aragon/ods';
 import {DaoDetails} from '@aragon/sdk-client';
-import {
-  LIVE_CONTRACTS,
-  SupportedNetworksArray,
-} from '@aragon/sdk-client-common';
+
 import React, {useEffect, useRef, useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {generatePath, useNavigate, useParams} from 'react-router-dom';
@@ -27,30 +24,26 @@ import MultisigSettings from 'containers/settings/multisig';
 import {
   Definition,
   DescriptionPair,
-  FlexibleDefinition,
   SettingsCard,
   Term,
 } from 'containers/settings/settingsCard';
 import {SettingsUpdateCard} from 'containers/settings/updateCard';
+import {VersionInfoCard} from 'containers/settings/versionInfoCard';
 import {useNetwork} from 'context/network';
 import {useDaoDetailsQuery} from 'hooks/useDaoDetails';
 import {PluginTypes} from 'hooks/usePluginClient';
 import useScreen from 'hooks/useScreen';
 import {CHAIN_METADATA} from 'utils/constants';
 import {featureFlags} from 'utils/featureFlags';
-import {
-  shortenAddress,
-  toDisplayEns,
-  translateToNetworkishName,
-} from 'utils/library';
+import {shortenAddress, toDisplayEns} from 'utils/library';
 import {EditSettings} from 'utils/paths';
 
 export const Settings: React.FC = () => {
   const {t} = useTranslation();
-  const {network} = useNetwork();
   const navigate = useNavigate();
   const {isDesktop} = useScreen();
 
+  // move into components when proper loading experience is implemented
   const {data: daoDetails, isLoading} = useDaoDetailsQuery();
 
   if (isLoading) {
@@ -60,17 +53,6 @@ export const Settings: React.FC = () => {
   if (!daoDetails) {
     return null;
   }
-
-  let OSxAddress = '';
-  const translatedNetwork = translateToNetworkishName(network);
-  if (
-    translatedNetwork !== 'unsupported' &&
-    SupportedNetworksArray.includes(translatedNetwork)
-  ) {
-    OSxAddress = LIVE_CONTRACTS[translatedNetwork].daoFactoryAddress;
-  }
-
-  const explorerEndpoint = CHAIN_METADATA[network].explorer + 'address/';
 
   const daoUpdateEnabled =
     featureFlags.getValue('VITE_FEATURE_FLAG_DAO_UPDATE') === 'true';
@@ -86,15 +68,12 @@ export const Settings: React.FC = () => {
       {/* DAO Settings */}
       <div
         className={`desktop:row-start-3 mt-1 desktop:-mt-1 ${
-          daoUpdateEnabled ? styles.rightContent : styles.center
+          daoUpdateEnabled ? styles.leftCol : styles.center
         }`}
       >
         <div className="flex flex-col gap-y-3">
           {/* DAO SECTION */}
-          <SettingsCardDao
-            daoDetails={daoDetails}
-            explorerLink={explorerEndpoint + daoDetails.address}
-          />
+          <SettingsCardDao daoDetails={daoDetails} />
 
           {/* COMMUNITY SECTION */}
           <PluginSettingsWrapper daoDetails={daoDetails} />
@@ -103,54 +82,9 @@ export const Settings: React.FC = () => {
 
       {/* Version Info */}
       {daoUpdateEnabled && (
-        <div
-          className={`desktop:row-start-3 mt-1 desktop:-mt-1 desktop:-ml-1 ${styles.leftContent}`}
-        >
-          <SettingsCard title="Version info">
-            <DescriptionPair>
-              <Term>App</Term>
-              <FlexibleDefinition>
-                <Link
-                  label={'Aragon App v0.1.29'}
-                  type="primary"
-                  href={explorerEndpoint + ''}
-                  iconRight={<IconLinkExternal />}
-                />
-              </FlexibleDefinition>
-            </DescriptionPair>
-            <DescriptionPair>
-              <Term>Operating System</Term>
-              <FlexibleDefinition>
-                <Link
-                  label={'Aragon OSx v1.1.23'}
-                  description={
-                    OSxAddress ? shortenAddress(OSxAddress) : undefined
-                  }
-                  type="primary"
-                  href={explorerEndpoint + OSxAddress}
-                  iconRight={<IconLinkExternal />}
-                />
-              </FlexibleDefinition>
-            </DescriptionPair>
-
-            <DescriptionPair className="border-none">
-              <Term>Governance</Term>
-              <FlexibleDefinition>
-                <Link
-                  label={'Token voting v1.12'}
-                  description={shortenAddress(
-                    daoDetails.plugins[0].instanceAddress
-                  )}
-                  type="primary"
-                  href={
-                    explorerEndpoint + daoDetails.plugins[0].instanceAddress
-                  }
-                  iconRight={<IconLinkExternal />}
-                />
-              </FlexibleDefinition>
-            </DescriptionPair>
-          </SettingsCard>
-        </div>
+        <VersionInfoCard
+          pluginAddress={daoDetails.plugins[0].instanceAddress}
+        />
       )}
 
       {/* Edit */}
@@ -176,17 +110,13 @@ export const Settings: React.FC = () => {
 const styles = {
   fullWidth:
     'col-span-full desktop:col-start-2 desktop:col-end-12 desktop:col-span-6',
-  rightContent: 'col-span-full desktop:col-start-2 desktop:col-end-8',
-  leftContent: 'col-span-full desktop:col-span-4 desktop:col-start-8',
+  leftCol: 'col-span-full desktop:col-start-2 desktop:col-end-8',
   center:
     'col-span-full desktop:col-start-4 desktop:col-end-10 desktop:col-span-6',
 };
 
 const DEFAULT_LINES_SHOWN = 3;
-const SettingsCardDao: React.FC<{
-  daoDetails: DaoDetails;
-  explorerLink: string;
-}> = ({daoDetails, explorerLink}) => {
+const SettingsCardDao: React.FC<{daoDetails: DaoDetails}> = ({daoDetails}) => {
   const {t} = useTranslation();
   const {network, isL2Network} = useNetwork();
 
@@ -194,6 +124,9 @@ const SettingsCardDao: React.FC<{
 
   const [showAll, setShowAll] = useState(true);
   const [shouldClamp, setShouldClamp] = useState(false);
+
+  const explorerLink =
+    CHAIN_METADATA[network].explorer + 'address/' + daoDetails.address;
 
   const chainLabel = CHAIN_METADATA[network].name;
   const resourceLinksIncluded = daoDetails.metadata.links.length !== 0;
