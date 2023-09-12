@@ -1,8 +1,9 @@
-import {IconLinkExternal, IconUpdate, Link} from '@aragon/ods';
+import {IconLinkExternal, IconUpdate} from '@aragon/ods';
 import React from 'react';
 import styled from 'styled-components';
 
 import useScreen from 'hooks/useScreen';
+import {StyledLink} from 'components/styledLink';
 
 export const SettingsUpdateCard: React.FC = () => {
   const {isDesktop} = useScreen();
@@ -23,8 +24,7 @@ export const SettingsUpdateCard: React.FC = () => {
               </Description>
             </ContentWrapper>
           </div>
-          <Link
-            className="text-primary-50"
+          <StyledLink
             label="View updates"
             type="neutral"
             iconRight={<IconLinkExternal />}
@@ -45,7 +45,7 @@ export const SettingsUpdateCard: React.FC = () => {
           Your DAO has received new updates. Review them and create a proposal
           for installing them.
         </Description>
-        <Link
+        <StyledLink
           label="View updates"
           type="neutral"
           iconRight={<IconLinkExternal />}
