@@ -940,6 +940,22 @@
     "processWarning": "Don't close this page while in progress.",
     "stepError": "Details"
   },
+  "offChainVoting": {
+    "title": "Submit your vote",
+    "stepperBtn" : {
+      "confirmVote": "Confirm your vote",
+      "seeYourVote": "See your vote",
+      "tryAgain": "Try again"
+    },
+    "createVoteId": {
+      "title": "Create offchain vote ID",
+      "helper": "Sign message"
+    },
+    "publishVote": {
+      "title": "Publish your vote offchain",
+      "helper": "Sign message"
+    }
+  },
   "votingTerminal": {
     "title": "Voting",
     "breakdown": "Breakdown",

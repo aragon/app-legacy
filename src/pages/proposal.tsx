@@ -78,7 +78,7 @@ import {
 } from 'utils/proposals';
 import {Action, ProposalId} from 'utils/types';
 import {ElectionProvider, useElection} from '@vocdoni/react-providers';
-import useOffchainVoting from '../hooks/useOffchainVoting';
+import useOffchainVoting from '../context/useOffchainVoting';
 import {format} from 'date-fns';
 import {getFormattedUtcOffset, KNOWN_FORMATS} from '../utils/date';
 import {formatUnits, IChoice} from '@vocdoni/sdk';

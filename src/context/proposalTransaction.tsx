@@ -40,7 +40,7 @@ import {executionStorage, voteStorage} from 'utils/localStorage';
 import {ProposalId} from 'utils/types';
 import {useNetwork} from './network';
 import {useProviders} from './providers';
-import useOffchainVoting from '../hooks/useOffchainVoting';
+import OffchainVotingModal from '../containers/transactionModals/offchainVotingModal';
 
 type SubmitVoteParams = {
   vote: VoteValues;
@@ -148,7 +148,10 @@ const ProposalTransactionProvider: React.FC<Props> = ({children}) => {
 
       setVoteParams({proposalId, vote: params.vote});
       setShowVoteModal(true);
-      setVoteOrApprovalProcessState(TransactionState.WAITING);
+      // todo(kon): check how to avoid conflicting between offchain onchain voting states
+      setVoteOrApprovalProcessState(
+        offchainVoting ? undefined : TransactionState.WAITING
+      );
     },
     [proposalId]
   );
@@ -349,7 +352,6 @@ const ProposalTransactionProvider: React.FC<Props> = ({children}) => {
 
   // todo(kon): modify this
   const offchainVoting = true;
-  const {submitVote: submitOffchainVote} = useOffchainVoting();
 
   /*************************************************
    *              Submit Transactions              *
@@ -419,13 +421,6 @@ const ProposalTransactionProvider: React.FC<Props> = ({children}) => {
   const handleTokenVotingVote = useCallback(
     async (params: VoteProposalParams) => {
       if (!isTokenVotingPluginClient) return;
-
-      // todo(kon): simple way of voting, use providers better
-      // It retrieves from local storage the vocdoni election id. Won't be this on the final implementation
-      // Not showing errors neither
-      if (offchainVoting) {
-        await submitOffchainVote(voteParams);
-      }
 
       const voteSteps = pluginClient.methods.voteProposal(params);
       if (!voteSteps) {
@@ -588,24 +583,32 @@ const ProposalTransactionProvider: React.FC<Props> = ({children}) => {
   const callback = isExecutionContext
     ? handleProposalExecution
     : handleVoteOrApprovalTx;
-
+  // todo(kon): handle this properly
   return (
     <ProposalTransactionContext.Provider value={value}>
       {children}
-      <PublishModal
-        title={title}
-        buttonStateLabels={labels}
-        state={state}
-        isOpen={isOpen}
-        onClose={onClose}
-        callback={callback}
-        closeOnDrag={closeOnDrag}
-        maxFee={maxFee}
-        averageFee={averageFee}
-        tokenPrice={tokenPrice}
-        gasEstimationError={gasEstimationError}
-        disabledCallback={shouldDisableModalCta}
-      />
+      {offchainVoting ? (
+        <OffchainVotingModal
+          vote={voteParams}
+          setShowVoteModal={setShowVoteModal}
+          showVoteModal={showVoteModal}
+        />
+      ) : (
+        <PublishModal
+          title={title}
+          buttonStateLabels={labels}
+          state={state}
+          isOpen={isOpen}
+          onClose={onClose}
+          callback={callback}
+          closeOnDrag={closeOnDrag}
+          maxFee={maxFee}
+          averageFee={averageFee}
+          tokenPrice={tokenPrice}
+          gasEstimationError={gasEstimationError}
+          disabledCallback={shouldDisableModalCta}
+        />
+      )}
     </ProposalTransactionContext.Provider>
   );
 };
