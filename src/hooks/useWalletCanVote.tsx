@@ -7,6 +7,7 @@ import {useEffect, useState} from 'react';
 
 import {HookData} from 'utils/types';
 import {PluginTypes, usePluginClient} from './usePluginClient';
+import {useClient as useVocdoniClient} from '@vocdoni/react-providers';
 
 /**
  * Check whether wallet is eligible to vote on proposal
@@ -21,7 +22,8 @@ export const useWalletCanVote = (
   proposalId: string,
   pluginAddress: string,
   pluginType?: PluginTypes,
-  proposalStatus?: string
+  proposalStatus?: string,
+  offchainProposalId?: string
 ): HookData<boolean> => {
   const [data, setData] = useState([false, false, false] as
     | boolean[]
@@ -31,10 +33,53 @@ export const useWalletCanVote = (
 
   const isMultisigClient = pluginType === 'multisig.plugin.dao.eth';
   const isTokenVotingClient = pluginType === 'token-voting.plugin.dao.eth';
+  // todo(kon): this is hardcoded
+  const isOffchainVoting = true;
 
   const client = usePluginClient(pluginType);
+  const {client: vocdoniClient} = useVocdoniClient();
 
   useEffect(() => {
+    async function fetchOnchainVoting() {
+      let canVote;
+
+      if (isMultisigClient) {
+        canVote = [
+          await (client as MultisigClient)?.methods.canApprove({
+            proposalId,
+            approverAddressOrEns: address,
+          }),
+        ];
+      } else if (isTokenVotingClient) {
+        const canVoteValuesPromises = [
+          VoteValues.ABSTAIN,
+          VoteValues.NO,
+          VoteValues.YES,
+        ].map(vote => {
+          return (client as TokenVotingClient)?.methods.canVote({
+            voterAddressOrEns: address,
+            proposalId,
+            vote,
+          });
+        });
+        canVote = await Promise.all(canVoteValuesPromises);
+      }
+
+      if (canVote !== undefined) setData(canVote);
+      else setData([false, false, false]);
+    }
+
+    async function fetchCanVoteOffchain() {
+      let canVote = false;
+      if (offchainProposalId) {
+        canVote = await vocdoniClient.isInCensus(offchainProposalId);
+        if (canVote) {
+          canVote = !!(await vocdoniClient.hasAlreadyVoted(offchainProposalId));
+        }
+      }
+      setData(canVote);
+    }
+
     async function fetchCanVote() {
       if (!address || !proposalId || !pluginAddress || !pluginType) {
         setData(false);
@@ -43,32 +88,9 @@ export const useWalletCanVote = (
 
       try {
         setIsLoading(true);
-        let canVote;
-
-        if (isMultisigClient) {
-          canVote = [
-            await (client as MultisigClient)?.methods.canApprove({
-              proposalId,
-              approverAddressOrEns: address,
-            }),
-          ];
-        } else if (isTokenVotingClient) {
-          const canVoteValuesPromises = [
-            VoteValues.ABSTAIN,
-            VoteValues.NO,
-            VoteValues.YES,
-          ].map(vote => {
-            return (client as TokenVotingClient)?.methods.canVote({
-              voterAddressOrEns: address,
-              proposalId,
-              vote,
-            });
-          });
-          canVote = await Promise.all(canVoteValuesPromises);
-        }
-
-        if (canVote !== undefined) setData(canVote);
-        else setData([false, false, false]);
+        isOffchainVoting
+          ? await fetchCanVoteOffchain()
+          : await fetchOnchainVoting();
       } catch (error) {
         console.error(error);
         setError(error as Error);
@@ -82,11 +104,14 @@ export const useWalletCanVote = (
     address,
     client,
     isMultisigClient,
+    isOffchainVoting,
     isTokenVotingClient,
+    offchainProposalId,
     pluginAddress,
     pluginType,
     proposalId,
     proposalStatus,
+    vocdoniClient,
   ]);
 
   return {
