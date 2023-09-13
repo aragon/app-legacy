@@ -200,7 +200,7 @@ module.exports = {
     extend: {
       backgroundColor: ['active', 'disabled'],
       textColor: ['active', 'disabled'],
-      borderColor: ['active', 'disabled'],
+      borderColor: ['active', 'disabled', 'last'],
       ringColor: ['active', 'focus-visible'],
       ringWidth: ['active', 'focus-visible', 'disabled'],
       borderRadius: ['last'],

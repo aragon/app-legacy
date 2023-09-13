@@ -245,10 +245,10 @@ export const Community: React.FC = () => {
 };
 
 const BodyContainer = styled.div.attrs({
-  className: 'mt-5 desktop:space-y-8',
+  className: 'mt-1 desktop:space-y-8',
 })``;
 
-const SearchAndResultWrapper = styled.div.attrs({className: 'space-y-3'})``;
+const SearchAndResultWrapper = styled.div.attrs({className: 'space-y-2'})``;
 
 const ResultsCountLabel = styled.p.attrs({
   className: 'font-bold text-ui-800 ft-text-lg',
@@ -259,5 +259,5 @@ const PaginationWrapper = styled.div.attrs({
 })``;
 
 const InputWrapper = styled.div.attrs({
-  className: 'space-y-1',
+  className: 'space-y-5',
 })``;

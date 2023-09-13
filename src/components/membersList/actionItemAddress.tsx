@@ -10,7 +10,15 @@ import {
   IconLinkExternal,
   IconMenuVertical,
   Tag,
+  ListItemAction,
+  IconCopy,
 } from '@aragon/ods';
+import {CHAIN_METADATA} from 'utils/constants';
+import {isAddress} from 'viem';
+import {useNetwork} from 'context/network';
+import {abbreviateTokenAmount} from 'utils/tokens';
+import {useAlertContext} from 'context/alert';
+import {useTranslation} from 'react-i18next';
 
 /**
  * Type declarations for `ActionItemAddressProps`.
@@ -26,12 +34,6 @@ export type ActionItemAddressProps = {
 
   /** Number of delegations. */
   delegations?: number;
-
-  /** List of dropdown menu options. */
-  menuOptions?: ListItemProps[];
-
-  /** Optional click handler for the "view on-chain" action. */
-  onViewOnChainClick?: React.MouseEventHandler;
 
   /** Optional label for the wallet tag. */
   tagLabel?: string;
@@ -59,8 +61,6 @@ export const ActionItemAddress: React.FC<ActionItemAddressProps> = props => {
     addressOrEns,
     avatar,
     delegations,
-    menuOptions,
-    onViewOnChainClick,
     tokenSupply,
     tagLabel,
     tokenAmount,
@@ -69,74 +69,124 @@ export const ActionItemAddress: React.FC<ActionItemAddressProps> = props => {
   } = props;
 
   const {isDesktop} = useScreen();
+  const {network} = useNetwork();
+  const {alert} = useAlertContext();
+  const {t} = useTranslation();
+
+  const handleExternalLinkClick = () => {
+    const baseUrl = CHAIN_METADATA[network].explorer;
+    if (isAddress(addressOrEns)) {
+      window.open(baseUrl + '/address/' + addressOrEns, '_blank');
+    } else {
+      window.open(
+        baseUrl + '/enslookup-search?search=' + addressOrEns,
+        '_blank'
+      );
+    }
+  };
+
+  const handleCopyAddressClick = () => {
+    navigator.clipboard.writeText(addressOrEns);
+    alert(t('alert.chip.inputCopied'));
+  };
+
+  const menuOptions: ListItemProps[] = [
+    {
+      component: (
+        <ListItemAction
+          title="Copy Address"
+          iconRight={<IconCopy className="text-ui-300" />}
+          onClick={handleCopyAddressClick}
+          bgWhite={true}
+        />
+      ),
+    },
+    {
+      component: (
+        <ListItemAction
+          title="View on block explorer"
+          iconRight={<IconLinkExternal className="text-ui-300" />}
+          onClick={handleExternalLinkClick}
+          bgWhite={true}
+        />
+      ),
+    },
+  ];
 
   const supplyPercentage =
     tokenSupply && tokenAmount
       ? ((tokenAmount / tokenSupply) * 100).toFixed(2)
       : undefined;
 
-  return (
-    <Container>
-      <Avatar size="small" mode="circle" src={avatar ?? addressOrEns} />
+  const parsedTokenAmount = abbreviateTokenAmount(
+    tokenAmount?.toString() ?? '0'
+  );
 
-      <ContentWrapper>
-        <Wallet>
-          <AddressOrEns>{shortenAddress(addressOrEns)}</AddressOrEns>
-          {walletId && tagLabel && (
-            <TagWalletId
-              label={tagLabel}
-              variant={walletId}
-              className="inline-flex relative -top-0.5 -right-0.5"
-            />
-          )}
-        </Wallet>
-        <Content>
-          <InfoWrapper>
-            <span>{tokenAmount}</span>
-            <span>{tokenSymbol}</span>
-            <InfoLabel>({supplyPercentage}%)</InfoLabel>
-          </InfoWrapper>
-          <InfoWrapper>
-            {delegations != null && delegations > 0 && (
-              <>
-                <span>{delegations}</span>
-                <InfoLabel>Delegations</InfoLabel>
-              </>
+  return (
+    <tr className="bg-ui-0 border-b last:border-ui-0 border-b-ui-100">
+      <TableCell>
+        <div className="flex flex-row gap-2 items-center">
+          <Avatar size="small" mode="circle" src={avatar ?? addressOrEns} />
+          <div className="flex flex-row gap-1 items-start">
+            <div className="font-semibold text-ui-800 ft-text-base">
+              {shortenAddress(addressOrEns)}
+            </div>
+            {walletId && tagLabel && (
+              <TagWalletId
+                label={tagLabel}
+                variant={walletId}
+                className="inline-flex relative -top-0.5 -right-0.5"
+              />
             )}
-          </InfoWrapper>
-        </Content>
-      </ContentWrapper>
-      <ButtonGroup>
+          </div>
+        </div>
+      </TableCell>
+
+      {isDesktop && tokenAmount && tokenSymbol && (
+        <TableCell className="text-ui-600">
+          <div className="flex flex-row gap-0.5 items-center">
+            <div className="flex flex-row gap-0.25 font-semibold ft-text-sm">
+              <span>{parsedTokenAmount}</span>
+              <span>{tokenSymbol}</span>
+            </div>
+            <span className="ft-text-xs">({supplyPercentage}%)</span>
+          </div>
+        </TableCell>
+      )}
+
+      {isDesktop && delegations != null && (
+        <TableCell className="text-ui-600 ft-text-sm">
+          <span>{delegations > 0 ? delegations : ''}</span>
+        </TableCell>
+      )}
+
+      <TableCell className="flex gap-x-1.5 justify-end">
         {isDesktop && (
           <ButtonIcon
             mode="ghost"
             icon={<IconLinkExternal />}
             size="small"
             bgWhite
-            onClick={onViewOnChainClick}
+            onClick={handleExternalLinkClick}
           />
         )}
 
-        {menuOptions != null && (
-          <Dropdown
-            align="end"
-            alignOffset={isDesktop ? 0 : -4}
-            className="py-1 px-0"
-            listItems={menuOptions}
-            side="top"
-            sideOffset={isDesktop ? -40 : -44}
-            trigger={
-              <ButtonIcon
-                mode="secondary"
-                icon={<IconMenuVertical />}
-                size="small"
-                bgWhite
-              />
-            }
-          />
-        )}
-      </ButtonGroup>
-    </Container>
+        <Dropdown
+          align="end"
+          className="py-1 px-0"
+          listItems={menuOptions}
+          side="bottom"
+          trigger={
+            <ButtonIcon
+              mode="secondary"
+              icon={<IconMenuVertical />}
+              size="small"
+              bgWhite
+            />
+          }
+        />
+      </TableCell>
+    </tr>
   );
 };
 
@@ -169,32 +219,6 @@ const TagWalletId: React.FC<TagWalletIdProps> = ({
   return <Tag label={label} colorScheme={colorScheme} className={className} />;
 };
 
-const Container = styled.div.attrs({
-  className:
-    'bg-ui-0 flex py-2 items-center px-1.5 desktop:pr-2 desktop:pl-3 space-x-2 w-full border-b border-b-ui-100',
+const TableCell = styled.td.attrs({
+  className: 'py-2 px-3' as string,
 })``;
-
-const ContentWrapper = styled.div.attrs({
-  className: 'desktop:flex flex-1 space-y-0.5',
-})``;
-
-const Content = styled.div.attrs({
-  className:
-    'flex desktop:flex-1 space-x-1.5 font-semibold text-ui-600 ft-text-sm',
-})``;
-
-const InfoWrapper = styled.div.attrs({
-  className: 'flex desktop:flex-1 space-x-0.25',
-})``;
-
-const InfoLabel = styled.span.attrs({className: 'font-normal text-ui-500'})``;
-
-const Wallet = styled.div.attrs({
-  className: 'flex desktop:flex-1 items-center',
-})``;
-
-const AddressOrEns = styled.div.attrs({
-  className: 'font-semibold text-ui-800 ft-text-base',
-})``;
-
-const ButtonGroup = styled.div.attrs({className: 'flex gap-x-1.5'})``;

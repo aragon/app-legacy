@@ -1,8 +1,6 @@
-import {ListItemAddress} from '@aragon/ods';
 import {Erc20TokenDetails} from '@aragon/sdk-client';
-import {formatUnits, isAddress} from 'ethers/lib/utils';
+import {formatUnits} from 'ethers/lib/utils';
 import React, {useEffect, useState} from 'react';
-
 import {useNetwork} from 'context/network';
 import {useProviders} from 'context/providers';
 import {DaoMember, isTokenDaoMember} from 'hooks/useDaoMembers';
@@ -10,6 +8,8 @@ import {CHAIN_METADATA} from 'utils/constants';
 import {getTokenInfo} from 'utils/tokens';
 import {ActionItemAddress} from './actionItemAddress';
 import {useAccount} from 'wagmi';
+import styled from 'styled-components';
+import {useScreen} from '@aragon/ods';
 
 type MembersListProps = {
   members: DaoMember[];
@@ -22,6 +22,9 @@ export const MembersList: React.FC<MembersListProps> = ({token, members}) => {
   const {network} = useNetwork();
   const {api: provider} = useProviders();
   const {address} = useAccount();
+  const {isDesktop} = useScreen();
+
+  const isTokenBasedDao = token != null;
 
   useEffect(() => {
     async function fetchTotalSupply() {
@@ -36,13 +39,6 @@ export const MembersList: React.FC<MembersListProps> = ({token, members}) => {
     }
     fetchTotalSupply();
   }, [provider, token, network]);
-
-  const itemClickHandler = (address: string) => {
-    const baseUrl = CHAIN_METADATA[network].explorer;
-    if (isAddress(address))
-      window.open(baseUrl + '/address/' + address, '_blank');
-    else window.open(baseUrl + '/enslookup-search?search=' + address, '_blank');
-  };
 
   const getMemberId = (member: DaoMember) => {
     if (member.address.toLowerCase() === address?.toLowerCase()) {
@@ -60,51 +56,45 @@ export const MembersList: React.FC<MembersListProps> = ({token, members}) => {
   };
 
   return (
-    <div>
-      {members.map(member =>
-        isTokenDaoMember(member) ? (
-          <ActionItemAddress
-            key={member.address}
-            addressOrEns={member.address}
-            delegations={member.delegators.length}
-            tokenAmount={member.balance}
-            tokenSymbol={token?.symbol}
-            tokenSupply={totalSupply}
-            menuOptions={[]}
-            {...getMemberId(member)}
-          />
-        ) : (
-          <ActionItemAddress
-            key={member.address}
-            addressOrEns={member.address}
-          />
-        )
+    <table className="overflow-hidden w-full rounded-xl">
+      {isDesktop && (
+        <thead>
+          <tr className="text-ui-600 bg-ui-0 border-b border-b-ui-100">
+            <TableCellHead>Member</TableCellHead>
+            {isDesktop && isTokenBasedDao && (
+              <TableCellHead>Voting power</TableCellHead>
+            )}
+            {isDesktop && isTokenBasedDao && (
+              <TableCellHead>Delegations</TableCellHead>
+            )}
+            <TableCellHead />
+          </tr>
+        </thead>
       )}
-    </div>
-  );
-
-  return (
-    <>
-      {members.map(member => (
-        <ListItemAddress
-          // won't allow key in the objects for whatever reason
-          key={member.address}
-          label={member.address}
-          src={member.address}
-          onClick={() => itemClickHandler(member.address)}
-          {...(isTokenDaoMember(member)
-            ? {
-                tokenInfo: {
-                  amount: member.balance,
-                  symbol: token?.symbol || '',
-                  percentage: totalSupply
-                    ? Number(((member.balance / totalSupply) * 100).toFixed(2))
-                    : '-',
-                },
-              }
-            : {})}
-        />
-      ))}
-    </>
+      <tbody>
+        {members.map(member =>
+          isTokenDaoMember(member) ? (
+            <ActionItemAddress
+              key={member.address}
+              addressOrEns={member.address}
+              delegations={member.delegators.length}
+              tokenAmount={member.balance}
+              tokenSymbol={token?.symbol}
+              tokenSupply={totalSupply}
+              {...getMemberId(member)}
+            />
+          ) : (
+            <ActionItemAddress
+              key={member.address}
+              addressOrEns={member.address}
+            />
+          )
+        )}
+      </tbody>
+    </table>
   );
 };
+
+const TableCellHead = styled.td.attrs({
+  className: 'text-left px-3 py-2',
+})``;

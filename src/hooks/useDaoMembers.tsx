@@ -150,8 +150,6 @@ export const useDaoMembers = (
             network,
           });
 
-          console.log({response: data});
-
           const members = data.holders.holders.map(member => {
             const {address, balance, votes, delegates} = member;
             const tokenDecimals = daoToken?.decimals;
@@ -204,8 +202,6 @@ export const useDaoMembers = (
       : data.filter(member =>
           member.address.toLowerCase().includes(searchTerm.toLowerCase())
         );
-
-  console.log({data, filteredData, daoToken});
 
   return {
     data: {
