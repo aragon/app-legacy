@@ -12,6 +12,7 @@ import {
   Tag,
   ListItemAction,
   IconCopy,
+  IconGovernance,
 } from '@aragon/ods';
 import {CHAIN_METADATA} from 'utils/constants';
 import {isAddress} from 'viem';
@@ -19,11 +20,16 @@ import {useNetwork} from 'context/network';
 import {abbreviateTokenAmount} from 'utils/tokens';
 import {useAlertContext} from 'context/alert';
 import {useTranslation} from 'react-i18next';
+import {useGlobalModalContext} from 'context/globalModals';
+import {useAccount} from 'wagmi';
 
 /**
  * Type declarations for `ActionItemAddressProps`.
  */
 export type ActionItemAddressProps = {
+  /** Defines if the address is member of a token-based DAO or not  */
+  isTokenDaoMember?: boolean;
+
   /** Wallet address or ENS domain name. */
   addressOrEns: string;
 
@@ -58,6 +64,7 @@ export type ActionItemAddressProps = {
  */
 export const ActionItemAddress: React.FC<ActionItemAddressProps> = props => {
   const {
+    isTokenDaoMember,
     addressOrEns,
     avatar,
     delegations,
@@ -70,8 +77,10 @@ export const ActionItemAddress: React.FC<ActionItemAddressProps> = props => {
 
   const {isDesktop} = useScreen();
   const {network} = useNetwork();
+  const {address} = useAccount();
   const {alert} = useAlertContext();
   const {t} = useTranslation();
+  const {open} = useGlobalModalContext();
 
   const handleExternalLinkClick = () => {
     const baseUrl = CHAIN_METADATA[network].explorer;
@@ -90,28 +99,53 @@ export const ActionItemAddress: React.FC<ActionItemAddressProps> = props => {
     alert(t('alert.chip.inputCopied'));
   };
 
-  const menuOptions: ListItemProps[] = [
-    {
+  // TODO: check why the dialog is closed automatically without the setTimeout call
+  const handleDelegateClick = () => {
+    setTimeout(() => open('delegateVoting'), 1);
+  };
+
+  const buildMenuOptions = () => {
+    const menuOptions: ListItemProps[] = [
+      {
+        callback: handleCopyAddressClick,
+        component: (
+          <ListItemAction
+            title="Copy Address"
+            iconRight={<IconCopy className="text-ui-300" />}
+            bgWhite={true}
+          />
+        ),
+      },
+      {
+        callback: handleExternalLinkClick,
+        component: (
+          <ListItemAction
+            title="View on block explorer"
+            iconRight={<IconLinkExternal className="text-ui-300" />}
+            bgWhite={true}
+          />
+        ),
+      },
+    ];
+
+    const delegateOption: ListItemProps = {
+      callback: handleDelegateClick,
       component: (
         <ListItemAction
-          title="Copy Address"
-          iconRight={<IconCopy className="text-ui-300" />}
-          onClick={handleCopyAddressClick}
+          title="Delegate to"
+          iconRight={<IconGovernance className="text-ui-300" />}
           bgWhite={true}
         />
       ),
-    },
-    {
-      component: (
-        <ListItemAction
-          title="View on block explorer"
-          iconRight={<IconLinkExternal className="text-ui-300" />}
-          onClick={handleExternalLinkClick}
-          bgWhite={true}
-        />
-      ),
-    },
-  ];
+    };
+
+    const isConnectedAddress =
+      address?.toLowerCase() === addressOrEns.toLowerCase();
+
+    return isTokenDaoMember && !isConnectedAddress
+      ? menuOptions.concat(delegateOption)
+      : menuOptions;
+  };
 
   const supplyPercentage =
     tokenSupply && tokenAmount
@@ -174,7 +208,7 @@ export const ActionItemAddress: React.FC<ActionItemAddressProps> = props => {
         <Dropdown
           align="end"
           className="py-1 px-0"
-          listItems={menuOptions}
+          listItems={buildMenuOptions()}
           side="bottom"
           trigger={
             <ButtonIcon

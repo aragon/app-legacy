@@ -81,6 +81,7 @@ export const MembersList: React.FC<MembersListProps> = ({token, members}) => {
               tokenAmount={member.balance}
               tokenSymbol={token?.symbol}
               tokenSupply={totalSupply}
+              isTokenDaoMember={true}
               {...getMemberId(member)}
             />
           ) : (
