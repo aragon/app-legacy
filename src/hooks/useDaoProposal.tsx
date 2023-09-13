@@ -118,6 +118,7 @@ export const useDaoProposal = (
     ]
   );
 
+  // This has the effect of triggering a rerender every intervalInMills
   useEffect(() => {
     if ((intervalInMills || 0) > 0) {
       setNumberOfRuns(value => value + 1);
@@ -173,6 +174,9 @@ export const useDaoProposal = (
 
           // remove cached proposal if it exists
           if (cacheData.proposal) {
+            console.log(
+              `removing cached proposal ${proposalGuid} - it's now on subgraph`
+            );
             const newCache = {...cacheData.proposalCache};
             delete newCache[daoAddress][proposalGuid];
 
