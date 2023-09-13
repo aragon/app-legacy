@@ -10,7 +10,7 @@ import {
   TextInput,
 } from '@aragon/ods';
 import Big from 'big.js';
-import React, {useCallback} from 'react';
+import React, {useCallback, useEffect} from 'react';
 import {Controller, useFormContext, useWatch} from 'react-hook-form';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
@@ -151,6 +151,12 @@ const TokenField: React.FC<IndexProps> = ({actionIndex, fieldIndex}) => {
     if (Number(value) > 0) return true;
     return t('errors.lteZero') as string;
   };
+
+  useEffect(() => {
+    trigger(
+      `actions.${actionIndex}.inputs.mintTokensToWallets.${fieldIndex}.amount`
+    );
+  }, [actionIndex, fieldIndex, trigger]);
 
   return (
     <Controller
