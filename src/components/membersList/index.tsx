@@ -47,7 +47,9 @@ export const MembersList: React.FC<MembersListProps> = ({token, members}) => {
 
     if (
       isTokenDaoMember(member) &&
-      member.delegatee.toLowerCase() === address?.toLowerCase()
+      member.delegators.some(
+        delegator => delegator.toLowerCase() === address?.toLowerCase()
+      )
     ) {
       return {walletId: 'delegate' as const, tagLabel: 'Delegate'};
     }
@@ -78,7 +80,7 @@ export const MembersList: React.FC<MembersListProps> = ({token, members}) => {
               key={member.address}
               addressOrEns={member.address}
               delegations={member.delegators.length}
-              tokenAmount={member.balance}
+              votingPower={member.votingPower}
               tokenSymbol={token?.symbol}
               tokenSupply={totalSupply}
               isTokenDaoMember={true}

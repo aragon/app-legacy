@@ -2,6 +2,7 @@ import type {QueryKey} from '@tanstack/query-core';
 
 import type {
   IFetchDelegateeParams,
+  IFetchMembersParams,
   IFetchPastVotingPowerParams,
   IFetchVotingPowerParams,
 } from './aragon-sdk-service.api';
@@ -11,6 +12,7 @@ export enum AragonSdkQueryItem {
   DELEGATEE = 'DELEGATEE',
   VOTING_POWER = 'VOTING_POWER',
   PAST_VOTING_POWER = 'PAST_VOTING_POWER',
+  MEMBERS = 'MEMBERS',
 }
 
 // Add address and network parameters to all query keys to use the most updated DAO plugin client
@@ -30,6 +32,10 @@ export const aragonSdkQueryKeys = {
   ],
   votingPower: (params: IFetchVotingPowerParams): QueryKey => [
     AragonSdkQueryItem.VOTING_POWER,
+    params,
+  ],
+  members: (params: IFetchMembersParams): QueryKey => [
+    AragonSdkQueryItem.MEMBERS,
     params,
   ],
 };

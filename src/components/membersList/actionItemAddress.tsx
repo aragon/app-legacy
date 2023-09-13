@@ -44,8 +44,8 @@ export type ActionItemAddressProps = {
   /** Optional label for the wallet tag. */
   tagLabel?: string;
 
-  /** Number of tokens delegated. */
-  tokenAmount?: number;
+  /** Voting power of the member. */
+  votingPower?: number;
 
   /** Symbol of the token delegated. */
   tokenSymbol?: string;
@@ -70,7 +70,7 @@ export const ActionItemAddress: React.FC<ActionItemAddressProps> = props => {
     delegations,
     tokenSupply,
     tagLabel,
-    tokenAmount,
+    votingPower,
     tokenSymbol,
     walletId,
   } = props;
@@ -101,7 +101,9 @@ export const ActionItemAddress: React.FC<ActionItemAddressProps> = props => {
 
   // TODO: check why the dialog is closed automatically without the setTimeout call
   const handleDelegateClick = () => {
-    setTimeout(() => open('delegateVoting'), 1);
+    const modalState =
+      walletId === 'delegate' ? {reclaimMode: true} : {delegate: addressOrEns};
+    setTimeout(() => open('delegateVoting', modalState), 1);
   };
 
   const buildMenuOptions = () => {
@@ -132,7 +134,7 @@ export const ActionItemAddress: React.FC<ActionItemAddressProps> = props => {
       callback: handleDelegateClick,
       component: (
         <ListItemAction
-          title="Delegate to"
+          title={walletId === 'delegate' ? 'Claim voting power' : 'Delegate to'}
           iconRight={<IconGovernance className="text-ui-300" />}
           bgWhite={true}
         />
@@ -148,12 +150,12 @@ export const ActionItemAddress: React.FC<ActionItemAddressProps> = props => {
   };
 
   const supplyPercentage =
-    tokenSupply && tokenAmount
-      ? ((tokenAmount / tokenSupply) * 100).toFixed(2)
+    tokenSupply != null && votingPower != null
+      ? ((votingPower / tokenSupply) * 100).toFixed(2)
       : undefined;
 
-  const parsedTokenAmount = abbreviateTokenAmount(
-    tokenAmount?.toString() ?? '0'
+  const parsedVotingPower = abbreviateTokenAmount(
+    votingPower?.toString() ?? '0'
   );
 
   return (
@@ -176,11 +178,11 @@ export const ActionItemAddress: React.FC<ActionItemAddressProps> = props => {
         </div>
       </TableCell>
 
-      {isDesktop && tokenAmount && tokenSymbol && (
+      {isDesktop && votingPower != null && tokenSymbol && (
         <TableCell className="text-ui-600">
           <div className="flex flex-row gap-0.5 items-center">
             <div className="flex flex-row gap-0.25 font-semibold ft-text-sm">
-              <span>{parsedTokenAmount}</span>
+              <span>{parsedVotingPower}</span>
               <span>{tokenSymbol}</span>
             </div>
             <span className="ft-text-xs">({supplyPercentage}%)</span>
@@ -190,7 +192,7 @@ export const ActionItemAddress: React.FC<ActionItemAddressProps> = props => {
 
       {isDesktop && delegations != null && (
         <TableCell className="text-ui-600 ft-text-sm">
-          <span>{delegations > 0 ? delegations : ''}</span>
+          <span>{delegations}</span>
         </TableCell>
       )}
 

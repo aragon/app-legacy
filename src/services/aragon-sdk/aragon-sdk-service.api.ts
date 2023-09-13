@@ -17,3 +17,7 @@ export interface IDelegateTokensParams {
   tokenAddress: string;
   delegatee: string;
 }
+
+export interface IFetchMembersParams {
+  pluginAddress: string;
+}

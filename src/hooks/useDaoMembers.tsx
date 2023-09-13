@@ -8,9 +8,10 @@ import {fetchBalance} from 'utils/tokens';
 import {formatUnits} from 'ethers/lib/utils';
 import {HookData} from 'utils/types';
 import {useDaoToken} from './useDaoToken';
-import {PluginTypes, usePluginClient} from './usePluginClient';
+import {PluginTypes} from './usePluginClient';
 import {useWallet} from './useWallet';
 import {useTokenHoldersAsync} from 'services/aragon-backend/queries/use-token-holders';
+import {useMembersAsync} from 'services/aragon-sdk/queries/use-members';
 
 export type MultisigDaoMember = {
   address: string;
@@ -36,7 +37,7 @@ export const isTokenDaoMember = (member: DaoMember): member is TokenDaoMember =>
 
 const sortDaoMembers = (a: DaoMember, b: DaoMember) => {
   if (isTokenDaoMember(a) && isTokenDaoMember(b)) {
-    return a.balance > b.balance ? -1 : 1;
+    return a.votingPower > b.votingPower ? -1 : 1;
   } else {
     return a.address > b.address ? 1 : -1;
   }
@@ -85,8 +86,9 @@ export const useDaoMembers = (
   const {address} = useWallet();
 
   const {data: daoToken} = useDaoToken(pluginAddress);
-  const client = usePluginClient(pluginType);
+
   const fetchTokenHoldersAsync = useTokenHoldersAsync();
+  const fetchMembersAsync = useMembersAsync(pluginType);
 
   const isTokenBased = pluginType === 'token-voting.plugin.dao.eth';
 
@@ -108,7 +110,7 @@ export const useDaoMembers = (
           network === 'base' ||
           network === 'base-goerli'
         ) {
-          const response = await client?.methods.getMembers(pluginAddress);
+          const response = await fetchMembersAsync({pluginAddress});
 
           if (!response) {
             setData([]);
@@ -186,7 +188,7 @@ export const useDaoMembers = (
     fetchMembers();
   }, [
     address,
-    client?.methods,
+    fetchMembersAsync,
     daoToken,
     fetchTokenHoldersAsync,
     network,

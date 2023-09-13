@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import styled from 'styled-components';
 import {useWallet} from 'hooks/useWallet';
 import {useDaoDetailsQuery} from 'hooks/useDaoDetails';
@@ -92,6 +92,11 @@ export const DelegateVotingForm: React.FC<IDelegateVotingFormProps> = props => {
       t('errors.required.walletAddress'),
       t
     );
+
+  // Update delegateSelection on initialMode change
+  useEffect(() => {
+    setDelegateSelection(initialMode);
+  }, [initialMode]);
 
   const isDelegateValid =
     delegate.address != null &&
