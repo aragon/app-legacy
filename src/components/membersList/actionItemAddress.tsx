@@ -150,7 +150,7 @@ export const ActionItemAddress: React.FC<ActionItemAddressProps> = props => {
   };
 
   const supplyPercentage =
-    tokenSupply != null && votingPower != null
+    tokenSupply && votingPower != null
       ? ((votingPower / tokenSupply) * 100).toFixed(2)
       : undefined;
 
@@ -161,20 +161,38 @@ export const ActionItemAddress: React.FC<ActionItemAddressProps> = props => {
   return (
     <tr className="bg-ui-0 border-b last:border-ui-0 border-b-ui-100">
       <TableCell>
-        <div className="flex flex-row gap-2 items-center">
-          <Avatar size="small" mode="circle" src={avatar ?? addressOrEns} />
-          <div className="flex flex-row gap-1 items-start">
-            <div className="font-semibold text-ui-800 ft-text-base">
-              {shortenAddress(addressOrEns)}
+        <div className="flex flex-col gap-0.5">
+          <div className="flex flex-row gap-2 items-center">
+            <Avatar size="small" mode="circle" src={avatar ?? addressOrEns} />
+            <div className="flex flex-row gap-1 items-start">
+              <div className="font-semibold text-ui-800 ft-text-base">
+                {shortenAddress(addressOrEns)}
+              </div>
+              {walletId && tagLabel && (
+                <TagWalletId
+                  label={tagLabel}
+                  variant={walletId}
+                  className="inline-flex relative -top-0.5 -right-0.5"
+                />
+              )}
             </div>
-            {walletId && tagLabel && (
-              <TagWalletId
-                label={tagLabel}
-                variant={walletId}
-                className="inline-flex relative -top-0.5 -right-0.5"
-              />
-            )}
           </div>
+          {!isDesktop && (
+            <div className="flex flex-row flex-grow justify-between text-ui-600">
+              <div className="flex flex-row gap-0.5 items-center">
+                <div className="flex flex-row gap-0.25 font-semibold ft-text-sm">
+                  <span>{parsedVotingPower}</span>
+                  <span>{tokenSymbol}</span>
+                </div>
+                <span className="ft-text-xs">({supplyPercentage}%)</span>
+              </div>
+              {(delegations ?? 0) > 0 && (
+                <div className="ft-text-sm">
+                  <span>{delegations} Delegations</span>
+                </div>
+              )}
+            </div>
+          )}
         </div>
       </TableCell>
 
@@ -192,7 +210,7 @@ export const ActionItemAddress: React.FC<ActionItemAddressProps> = props => {
 
       {isDesktop && delegations != null && (
         <TableCell className="text-ui-600 ft-text-sm">
-          <span>{delegations}</span>
+          <span>{delegations > 0 ? delegations : ''}</span>
         </TableCell>
       )}
 

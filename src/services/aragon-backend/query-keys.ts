@@ -5,7 +5,7 @@ export enum AragonBackendQueryItem {
   TOKEN_HOLDERS = 'TOKEN_HOLDERS',
 }
 
-export const aragonSdkQueryKeys = {
+export const aragonBackendQueryKeys = {
   tokenHolders: (params: IFetchTokenHoldersParams): QueryKey => [
     AragonBackendQueryItem.TOKEN_HOLDERS,
     params,

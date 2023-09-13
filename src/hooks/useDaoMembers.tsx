@@ -26,6 +26,8 @@ export type TokenDaoMember = MultisigDaoMember & {
 
 export type DaoMember = MultisigDaoMember | TokenDaoMember;
 
+export type DaoMemberSort = 'delegations' | 'votingPower';
+
 export type DaoMembersData = {
   members: DaoMember[];
   filteredMembers: DaoMember[];
@@ -35,13 +37,18 @@ export type DaoMembersData = {
 export const isTokenDaoMember = (member: DaoMember): member is TokenDaoMember =>
   'balance' in member;
 
-const sortDaoMembers = (a: DaoMember, b: DaoMember) => {
-  if (isTokenDaoMember(a) && isTokenDaoMember(b)) {
-    return a.votingPower > b.votingPower ? -1 : 1;
-  } else {
-    return a.address > b.address ? 1 : -1;
-  }
-};
+const sortDaoMembers =
+  (sort?: DaoMemberSort) => (a: DaoMember, b: DaoMember) => {
+    if (isTokenDaoMember(a) && isTokenDaoMember(b)) {
+      if (sort === 'delegations') {
+        return a.delegators > b.delegators ? -1 : 1;
+      }
+
+      return a.votingPower > b.votingPower ? -1 : 1;
+    } else {
+      return a.address > b.address ? 1 : -1;
+    }
+  };
 
 const sdkToDaoMember = (
   member: string | TokenVotingMember,
@@ -75,7 +82,8 @@ const sdkToDaoMember = (
 export const useDaoMembers = (
   pluginAddress: string,
   pluginType?: PluginTypes,
-  searchTerm?: string
+  searchTerm?: string,
+  sort?: DaoMemberSort
 ): HookData<DaoMembersData> => {
   const [data, setData] = useState<DaoMember[]>([]);
   const [error, setError] = useState<Error>();
@@ -144,7 +152,6 @@ export const useDaoMembers = (
             }
           }
 
-          parsedReponse.sort(sortDaoMembers);
           setData(parsedReponse);
         } else {
           const data = await fetchTokenHoldersAsync({
@@ -172,7 +179,6 @@ export const useDaoMembers = (
             };
           });
 
-          members.sort(sortDaoMembers);
           setData(members);
         }
 
@@ -198,16 +204,17 @@ export const useDaoMembers = (
     isTokenBased,
   ]);
 
+  const sortedData = [...data].sort(sortDaoMembers(sort));
   const filteredData =
     searchTerm == null || searchTerm === ''
-      ? data
-      : data.filter(member =>
+      ? sortedData
+      : sortedData.filter(member =>
           member.address.toLowerCase().includes(searchTerm.toLowerCase())
         );
 
   return {
     data: {
-      members: data,
+      members: sortedData,
       filteredMembers: filteredData,
       daoToken,
     },

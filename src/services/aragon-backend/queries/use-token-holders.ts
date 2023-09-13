@@ -1,6 +1,6 @@
 import request, {gql} from 'graphql-request';
 import {useQueryClient} from '@tanstack/react-query';
-import {aragonSdkQueryKeys} from '../query-keys';
+import {aragonBackendQueryKeys} from '../query-keys';
 import type {IFetchTokenHoldersParams} from '../aragon-backend-service.api';
 import {useCallback} from 'react';
 import {TokenHoldersResponse} from '../domain/token-holders-response';
@@ -47,7 +47,7 @@ export const useTokenHoldersAsync = () => {
   const fetchTokenAsync = useCallback(
     (params: IFetchTokenHoldersParams) =>
       queryClient.fetchQuery({
-        queryKey: aragonSdkQueryKeys.tokenHolders(params),
+        queryKey: aragonBackendQueryKeys.tokenHolders(params),
         queryFn: () => fetchTokenHolders(params),
       }),
     [queryClient]
