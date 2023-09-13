@@ -11,7 +11,6 @@ import {
   Tag,
 } from '@aragon/ods';
 import {DaoDetails} from '@aragon/sdk-client';
-
 import React, {useEffect, useRef, useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {generatePath, useNavigate, useParams} from 'react-router-dom';
@@ -55,7 +54,7 @@ export const Settings: React.FC = () => {
   }
 
   const daoUpdateEnabled =
-    featureFlags.getValue('VITE_FEATURE_FLAG_DAO_UPDATE') === 'true';
+    featureFlags.getValue('VITE_FEATURE_FLAG_OSX_UPDATES') === 'true';
 
   return (
     <SettingsWrapper>
