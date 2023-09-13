@@ -53,7 +53,6 @@ export const DelegationGatingMenu: React.FC = () => {
     : 'delegationInactive';
 
   const handleReclaimClick = () => {
-    close();
     open('delegateVoting', {reclaimMode: true});
   };
 

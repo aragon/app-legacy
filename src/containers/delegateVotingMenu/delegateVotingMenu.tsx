@@ -169,9 +169,8 @@ export const DelegateVotingMenu: React.FC = () => {
   useEffect(() => {
     if (isConnected && isOpen && isOnWrongNetwork) {
       open('network');
-      close();
     }
-  }, [isConnected, isOpen, isOnWrongNetwork, open, close]);
+  }, [isConnected, isOpen, isOnWrongNetwork, open]);
 
   // Open gating menu when user has no tokens for this DAO
   useEffect(() => {
@@ -179,12 +178,19 @@ export const DelegateVotingMenu: React.FC = () => {
       isConnected &&
       isOpen &&
       !isLoadingBalance &&
+      !isOnWrongNetwork &&
       tokenBalance?.value === 0n
     ) {
       open('gating');
-      close();
     }
-  }, [isConnected, tokenBalance?.value, isLoadingBalance, isOpen, close, open]);
+  }, [
+    isConnected,
+    tokenBalance?.value,
+    isLoadingBalance,
+    isOnWrongNetwork,
+    isOpen,
+    open,
+  ]);
 
   if (!isConnected && isOpen) {
     return <LoginRequired isOpen={true} onClose={handleCloseLogin} />;
