@@ -203,11 +203,7 @@ export const Community: React.FC = () => {
                 <Dropdown
                   align="end"
                   className="py-1 px-0"
-                  style={
-                    isMobile
-                      ? {width: 'var(--radix-dropdown-menu-trigger-width)'}
-                      : undefined
-                  }
+                  style={{width: 'var(--radix-dropdown-menu-trigger-width)'}}
                   sideOffset={8}
                   listItems={[
                     {

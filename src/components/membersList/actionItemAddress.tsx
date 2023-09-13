@@ -17,11 +17,11 @@ import {
 import {CHAIN_METADATA} from 'utils/constants';
 import {isAddress} from 'viem';
 import {useNetwork} from 'context/network';
-import {abbreviateTokenAmount} from 'utils/tokens';
 import {useAlertContext} from 'context/alert';
 import {useTranslation} from 'react-i18next';
 import {useGlobalModalContext} from 'context/globalModals';
 import {useAccount} from 'wagmi';
+import {MemberVotingPower} from './memberVotingPower';
 
 /**
  * Type declarations for `ActionItemAddressProps`.
@@ -149,15 +149,6 @@ export const ActionItemAddress: React.FC<ActionItemAddressProps> = props => {
       : menuOptions;
   };
 
-  const supplyPercentage =
-    tokenSupply && votingPower != null
-      ? ((votingPower / tokenSupply) * 100).toFixed(2)
-      : undefined;
-
-  const parsedVotingPower = abbreviateTokenAmount(
-    votingPower?.toString() ?? '0'
-  );
-
   return (
     <tr className="bg-ui-0 border-b last:border-ui-0 border-b-ui-100">
       <TableCell>
@@ -179,13 +170,11 @@ export const ActionItemAddress: React.FC<ActionItemAddressProps> = props => {
           </div>
           {!isDesktop && (
             <div className="flex flex-row flex-grow justify-between text-ui-600">
-              <div className="flex flex-row gap-0.5 items-center">
-                <div className="flex flex-row gap-0.25 font-semibold ft-text-sm">
-                  <span>{parsedVotingPower}</span>
-                  <span>{tokenSymbol}</span>
-                </div>
-                <span className="ft-text-xs">({supplyPercentage}%)</span>
-              </div>
+              <MemberVotingPower
+                votingPower={votingPower}
+                tokenSupply={tokenSupply}
+                tokenSymbol={tokenSymbol}
+              />
               {(delegations ?? 0) > 0 && (
                 <div className="ft-text-sm">
                   <span>{delegations} Delegations</span>
@@ -198,13 +187,11 @@ export const ActionItemAddress: React.FC<ActionItemAddressProps> = props => {
 
       {isDesktop && votingPower != null && tokenSymbol && (
         <TableCell className="text-ui-600">
-          <div className="flex flex-row gap-0.5 items-center">
-            <div className="flex flex-row gap-0.25 font-semibold ft-text-sm">
-              <span>{parsedVotingPower}</span>
-              <span>{tokenSymbol}</span>
-            </div>
-            <span className="ft-text-xs">({supplyPercentage}%)</span>
-          </div>
+          <MemberVotingPower
+            votingPower={votingPower}
+            tokenSupply={tokenSupply}
+            tokenSymbol={tokenSymbol}
+          />
         </TableCell>
       )}
 
