@@ -1,17 +1,14 @@
 import {Erc20TokenDetails, TokenVotingMember} from '@aragon/sdk-client';
 import {useNetwork} from 'context/network';
-import {useProviders} from 'context/providers';
-import {useEffect, useState} from 'react';
-import {CHAIN_METADATA} from 'utils/constants';
-import {fetchBalance} from 'utils/tokens';
-
+import {CHAIN_METADATA, SupportedNetworks} from 'utils/constants';
 import {formatUnits} from 'ethers/lib/utils';
 import {HookData} from 'utils/types';
 import {useDaoToken} from './useDaoToken';
 import {PluginTypes} from './usePluginClient';
 import {useWallet} from './useWallet';
-import {useTokenHoldersAsync} from 'services/aragon-backend/queries/use-token-holders';
-import {useMembersAsync} from 'services/aragon-sdk/queries/use-members';
+import {useTokenHolders} from 'services/aragon-backend/queries/use-token-holders';
+import {useMembers} from 'services/aragon-sdk/queries/use-members';
+import {Address, useBalance} from 'wagmi';
 
 export type MultisigDaoMember = {
   address: string;
@@ -40,11 +37,14 @@ export const isTokenDaoMember = (member: DaoMember): member is TokenDaoMember =>
 const sortDaoMembers =
   (sort?: DaoMemberSort) => (a: DaoMember, b: DaoMember) => {
     if (isTokenDaoMember(a) && isTokenDaoMember(b)) {
+      const delegatorsResult = b.delegators.length - a.delegators.length;
+      const votingPowerResult = b.votingPower - a.votingPower;
+
       if (sort === 'delegations') {
-        return a.delegators > b.delegators ? -1 : 1;
+        return delegatorsResult === 0 ? votingPowerResult : delegatorsResult;
       }
 
-      return a.votingPower > b.votingPower ? -1 : 1;
+      return votingPowerResult;
     } else {
       return a.address > b.address ? 1 : -1;
     }
@@ -85,126 +85,91 @@ export const useDaoMembers = (
   searchTerm?: string,
   sort?: DaoMemberSort
 ): HookData<DaoMembersData> => {
-  const [data, setData] = useState<DaoMember[]>([]);
-  const [error, setError] = useState<Error>();
-  const [isLoading, setIsLoading] = useState(false);
-
   const {network} = useNetwork();
-  const {api: provider} = useProviders();
   const {address} = useWallet();
 
   const {data: daoToken} = useDaoToken(pluginAddress);
 
-  const fetchTokenHoldersAsync = useTokenHoldersAsync();
-  const fetchMembersAsync = useMembersAsync(pluginType);
-
   const isTokenBased = pluginType === 'token-voting.plugin.dao.eth';
 
-  useEffect(() => {
-    const fetchMembers = async () => {
-      if (pluginType == null || (isTokenBased && daoToken == null)) {
-        setData([]);
-        return;
-      }
+  const useSubgraph =
+    !isTokenBased ||
+    network === 'goerli' ||
+    network === 'base' ||
+    network === 'base-goerli';
+  const {
+    data: subgraphData = [],
+    isError: isSugraphError,
+    isInitialLoading: isSubgraphLoading,
+  } = useMembers({pluginAddress, pluginType}, {enabled: useSubgraph});
+  const parsedSubgraphData = subgraphData.map(member =>
+    sdkToDaoMember(member, daoToken?.decimals)
+  );
 
-      setIsLoading(true);
+  const {data: userBalance} = useBalance({
+    address: address as Address,
+    token: daoToken?.address as Address,
+    chainId: CHAIN_METADATA[network as SupportedNetworks].id,
+    enabled: address != null && daoToken != null,
+  });
+  const userBalanceNumber = Number(
+    formatUnits(userBalance?.value ?? '0', daoToken?.decimals)
+  );
 
-      try {
-        // Fetch members from the subgraph for the multisig plugin and for
-        // the goerli, base and base-goerli networks.
-        if (
-          !isTokenBased ||
-          network === 'goerli' ||
-          network === 'base' ||
-          network === 'base-goerli'
-        ) {
-          const response = await fetchMembersAsync({pluginAddress});
+  const useGraphql = !useSubgraph && pluginType != null;
 
-          if (!response) {
-            setData([]);
-            return;
-          }
+  const {
+    data: graphqlData,
+    isError: isGraphqlError,
+    isInitialLoading: isGraphqlLoading,
+  } = useTokenHolders(
+    {
+      network,
+      tokenAddress: pluginAddress,
+    },
+    {enabled: useGraphql}
+  );
 
-          const parsedReponse: DaoMember[] = response.map(member =>
-            sdkToDaoMember(member, daoToken?.decimals)
-          );
+  const parsedGraphqlData = (graphqlData?.holders.holders ?? []).map(member => {
+    const {address, balance, votes, delegates} = member;
+    const tokenDecimals = daoToken?.decimals;
 
-          if (parsedReponse.length === 0 && address && daoToken) {
-            const balance = await fetchBalance(
-              daoToken.address,
-              address,
-              provider,
-              CHAIN_METADATA[network].nativeCurrency,
-              false
-            );
+    const delegators = graphqlData?.holders.holders
+      .filter(
+        holder => holder.address !== address && holder.delegates === address
+      )
+      .map(delegator => delegator.address);
 
-            const balanceFormatted = formatUnits(balance, daoToken.decimals);
-            const balanceNumber = Number(balanceFormatted);
-
-            if (balanceNumber > 0) {
-              parsedReponse.push({
-                address,
-                balance: balanceNumber,
-                delegatee: address,
-                delegators: [],
-                votingPower: balanceNumber,
-              });
-            }
-          }
-
-          setData(parsedReponse);
-        } else {
-          const data = await fetchTokenHoldersAsync({
-            tokenAddress: daoToken?.address as string,
-            network,
-          });
-
-          const members = data.holders.holders.map(member => {
-            const {address, balance, votes, delegates} = member;
-            const tokenDecimals = daoToken?.decimals;
-
-            const delegators = data.holders.holders
-              .filter(
-                holder =>
-                  holder.address !== address && holder.delegates === address
-              )
-              .map(delegator => delegator.address);
-
-            return {
-              address,
-              balance: Number(formatUnits(balance, tokenDecimals)),
-              votingPower: Number(formatUnits(votes, tokenDecimals)),
-              delegatee: delegates,
-              delegators,
-            };
-          });
-
-          setData(members);
-        }
-
-        setError(undefined);
-      } catch (err) {
-        console.error(err);
-        setError(err as Error);
-      } finally {
-        setIsLoading(false);
-      }
+    return {
+      address,
+      balance: Number(formatUnits(balance, tokenDecimals)),
+      votingPower: Number(formatUnits(votes, tokenDecimals)),
+      delegatee: delegates,
+      delegators,
     };
+  });
 
-    fetchMembers();
-  }, [
-    address,
-    fetchMembersAsync,
-    daoToken,
-    fetchTokenHoldersAsync,
-    network,
-    pluginAddress,
-    pluginType,
-    provider,
-    isTokenBased,
-  ]);
+  const getCombinedData = (): DaoMember[] => {
+    if (useSubgraph) {
+      if (subgraphData.length === 0 && userBalanceNumber > 0) {
+        return [
+          {
+            address: address as string,
+            balance: userBalanceNumber,
+            delegatee: address as string,
+            delegators: [],
+            votingPower: userBalanceNumber,
+          },
+        ];
+      } else {
+        return parsedSubgraphData;
+      }
+    } else {
+      return parsedGraphqlData;
+    }
+  };
 
-  const sortedData = [...data].sort(sortDaoMembers(sort));
+  const sortedData = [...getCombinedData()].sort(sortDaoMembers(sort));
   const filteredData =
     searchTerm == null || searchTerm === ''
       ? sortedData
@@ -218,7 +183,7 @@ export const useDaoMembers = (
       filteredMembers: filteredData,
       daoToken,
     },
-    isLoading,
-    error,
+    isLoading: isSubgraphLoading || isGraphqlLoading,
+    isError: isSugraphError || isGraphqlError,
   };
 };

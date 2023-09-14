@@ -14,9 +14,14 @@ import {useScreen} from '@aragon/ods';
 type MembersListProps = {
   members: DaoMember[];
   token?: Erc20TokenDetails;
+  isCompactMode?: boolean;
 };
 
-export const MembersList: React.FC<MembersListProps> = ({token, members}) => {
+export const MembersList: React.FC<MembersListProps> = ({
+  token,
+  members,
+  isCompactMode,
+}) => {
   const [totalSupply, setTotalSupply] = useState<number>(0);
 
   const {network} = useNetwork();
@@ -25,6 +30,7 @@ export const MembersList: React.FC<MembersListProps> = ({token, members}) => {
   const {isDesktop} = useScreen();
 
   const isTokenBasedDao = token != null;
+  const useCompactMode = isCompactMode ?? !isDesktop;
 
   useEffect(() => {
     async function fetchTotalSupply() {
@@ -59,7 +65,7 @@ export const MembersList: React.FC<MembersListProps> = ({token, members}) => {
 
   return (
     <table className="overflow-hidden w-full rounded-xl">
-      {isDesktop && (
+      {!useCompactMode && (
         <thead>
           <tr className="text-ui-600 bg-ui-0 border-b border-b-ui-100">
             <TableCellHead>Member</TableCellHead>
@@ -84,12 +90,14 @@ export const MembersList: React.FC<MembersListProps> = ({token, members}) => {
               tokenSymbol={token?.symbol}
               tokenSupply={totalSupply}
               isTokenDaoMember={true}
+              isCompactMode={isCompactMode}
               {...getMemberId(member)}
             />
           ) : (
             <ActionItemAddress
               key={member.address}
               addressOrEns={member.address}
+              isCompactMode={isCompactMode}
             />
           )
         )}

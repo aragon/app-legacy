@@ -1,3 +1,5 @@
+import {PluginTypes} from 'hooks/usePluginClient';
+
 export interface IFetchDelegateeParams {
   tokenAddress: string;
 }
@@ -20,4 +22,5 @@ export interface IDelegateTokensParams {
 
 export interface IFetchMembersParams {
   pluginAddress: string;
+  pluginType?: PluginTypes;
 }

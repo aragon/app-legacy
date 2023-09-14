@@ -1,4 +1,4 @@
-import {useQueryClient} from '@tanstack/react-query';
+import {UseQueryOptions, useQuery, useQueryClient} from '@tanstack/react-query';
 import {aragonSdkQueryKeys} from '../query-keys';
 import type {IFetchMembersParams} from '../aragon-sdk-service.api';
 import {PluginTypes, usePluginClient} from 'hooks/usePluginClient';
@@ -18,6 +18,23 @@ const fetchMembers = async (
   const data = await client.methods.getMembers(params.pluginAddress);
 
   return data;
+};
+
+export const useMembers = (
+  params: IFetchMembersParams,
+  options: UseQueryOptions<Array<string | TokenVotingMember>> = {}
+) => {
+  const client = usePluginClient(params.pluginType);
+
+  if (client == null) {
+    options.enabled = false;
+  }
+
+  return useQuery(
+    aragonSdkQueryKeys.members(params),
+    () => fetchMembers(params, client),
+    options
+  );
 };
 
 export const useMembersAsync = (pluginType?: PluginTypes) => {

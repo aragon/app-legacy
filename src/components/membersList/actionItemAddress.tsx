@@ -30,6 +30,9 @@ export type ActionItemAddressProps = {
   /** Defines if the address is member of a token-based DAO or not  */
   isTokenDaoMember?: boolean;
 
+  /** Does not render some member information on compact mode */
+  isCompactMode?: boolean;
+
   /** Wallet address or ENS domain name. */
   addressOrEns: string;
 
@@ -54,7 +57,7 @@ export type ActionItemAddressProps = {
   tokenSupply?: number;
 
   /** ID variant for the wallet, which can be 'delegate' or 'you'. */
-  walletId?: TagWalletIdProps['variant'];
+  walletId?: 'delegate' | 'you';
 };
 
 /**
@@ -65,6 +68,7 @@ export type ActionItemAddressProps = {
 export const ActionItemAddress: React.FC<ActionItemAddressProps> = props => {
   const {
     isTokenDaoMember,
+    isCompactMode,
     addressOrEns,
     avatar,
     delegations,
@@ -81,6 +85,8 @@ export const ActionItemAddress: React.FC<ActionItemAddressProps> = props => {
   const {alert} = useAlertContext();
   const {t} = useTranslation();
   const {open} = useGlobalModalContext();
+
+  const useCompactMode = isCompactMode ?? !isDesktop;
 
   const handleExternalLinkClick = () => {
     const baseUrl = CHAIN_METADATA[network].explorer;
@@ -160,15 +166,15 @@ export const ActionItemAddress: React.FC<ActionItemAddressProps> = props => {
                 {shortenAddress(addressOrEns)}
               </div>
               {walletId && tagLabel && (
-                <TagWalletId
+                <Tag
                   label={tagLabel}
-                  variant={walletId}
-                  className="inline-flex relative -top-0.5 -right-0.5"
+                  colorScheme={walletId === 'you' ? 'neutral' : 'info'}
+                  className="-mt-0.5"
                 />
               )}
             </div>
           </div>
-          {!isDesktop && (
+          {useCompactMode && (
             <div className="flex flex-row flex-grow justify-between text-ui-600">
               <MemberVotingPower
                 votingPower={votingPower}
@@ -185,7 +191,7 @@ export const ActionItemAddress: React.FC<ActionItemAddressProps> = props => {
         </div>
       </TableCell>
 
-      {isDesktop && votingPower != null && tokenSymbol && (
+      {!useCompactMode && votingPower != null && tokenSymbol && (
         <TableCell className="text-ui-600">
           <MemberVotingPower
             votingPower={votingPower}
@@ -195,14 +201,14 @@ export const ActionItemAddress: React.FC<ActionItemAddressProps> = props => {
         </TableCell>
       )}
 
-      {isDesktop && delegations != null && (
+      {!useCompactMode && delegations != null && (
         <TableCell className="text-ui-600 ft-text-sm">
           <span>{delegations > 0 ? delegations : ''}</span>
         </TableCell>
       )}
 
       <TableCell className="flex gap-x-1.5 justify-end">
-        {isDesktop && (
+        {!useCompactMode && (
           <ButtonIcon
             mode="ghost"
             icon={<IconLinkExternal />}
@@ -229,35 +235,6 @@ export const ActionItemAddress: React.FC<ActionItemAddressProps> = props => {
       </TableCell>
     </tr>
   );
-};
-
-export const TAG_WALLET_ID_VARIANTS = ['delegate', 'you'] as const;
-type TagWalletIdVariant = typeof TAG_WALLET_ID_VARIANTS[number];
-
-/**
- * Type declarations for `TagWalletIdProps`.
- */
-type TagWalletIdProps = {
-  /** Optional CSS classes to apply to the tag. */
-  className?: string;
-  /** Label to display on the tag. */
-  label: string;
-  /** Variant of the tag which affects its color. Can be 'delegate' or 'you'. */
-  variant: TagWalletIdVariant;
-};
-
-/**
- * `TagWalletId` component: Displays a styled tag based on the provided variant.
- * @param props - Component properties following `TagWalletIdProps` type.
- * @returns JSX Element.
- */
-const TagWalletId: React.FC<TagWalletIdProps> = ({
-  className,
-  label,
-  variant,
-}) => {
-  const colorScheme = variant === 'you' ? 'neutral' : 'info';
-  return <Tag label={label} colorScheme={colorScheme} className={className} />;
 };
 
 const TableCell = styled.td.attrs({
