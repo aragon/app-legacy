@@ -158,9 +158,9 @@ export const ActionItemAddress: React.FC<ActionItemAddressProps> = props => {
   return (
     <tr className="bg-ui-0 border-b last:border-ui-0 border-b-ui-100">
       <TableCell>
-        <div className="flex flex-col gap-0.5">
-          <div className="flex flex-row gap-2 items-center">
-            <Avatar size="small" mode="circle" src={avatar ?? addressOrEns} />
+        <div className="flex flex-row gap-2 items-center">
+          <Avatar size="small" mode="circle" src={avatar ?? addressOrEns} />
+          <div className="flex flex-col flex-grow gap-0.5">
             <div className="flex flex-row gap-1 items-start">
               <div className="font-semibold text-ui-800 ft-text-base">
                 {shortenAddress(addressOrEns)}
@@ -173,21 +173,21 @@ export const ActionItemAddress: React.FC<ActionItemAddressProps> = props => {
                 />
               )}
             </div>
+            {useCompactMode && (
+              <div className="flex flex-row flex-grow justify-between text-ui-600">
+                <MemberVotingPower
+                  votingPower={votingPower}
+                  tokenSupply={tokenSupply}
+                  tokenSymbol={tokenSymbol}
+                />
+                {(delegations ?? 0) > 0 && (
+                  <div className="ft-text-sm">
+                    <span>{delegations} Delegations</span>
+                  </div>
+                )}
+              </div>
+            )}
           </div>
-          {useCompactMode && (
-            <div className="flex flex-row flex-grow justify-between text-ui-600">
-              <MemberVotingPower
-                votingPower={votingPower}
-                tokenSupply={tokenSupply}
-                tokenSymbol={tokenSymbol}
-              />
-              {(delegations ?? 0) > 0 && (
-                <div className="ft-text-sm">
-                  <span>{delegations} Delegations</span>
-                </div>
-              )}
-            </div>
-          )}
         </div>
       </TableCell>
 
@@ -238,5 +238,5 @@ export const ActionItemAddress: React.FC<ActionItemAddressProps> = props => {
 };
 
 const TableCell = styled.td.attrs({
-  className: 'py-2 px-3' as string,
+  className: 'items-center py-2 px-3 h-full' as string,
 })``;

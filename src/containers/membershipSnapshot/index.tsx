@@ -165,5 +165,5 @@ const VerticalContainer = styled.div.attrs({
 
 const ListItemGrid = styled.div.attrs({
   className:
-    'desktop:grid desktop:grid-cols-2 desktop:grid-flow-row desktop:gap-2',
+    'desktop:grid desktop:grid-cols-1 desktop:grid-flow-row desktop:gap-2',
 })``;

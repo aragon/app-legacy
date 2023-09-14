@@ -64,7 +64,7 @@ export const MembersList: React.FC<MembersListProps> = ({
   };
 
   return (
-    <table className="overflow-hidden w-full rounded-xl">
+    <table className="overflow-hidden w-full h-full rounded-xl">
       {!useCompactMode && (
         <thead>
           <tr className="text-ui-600 bg-ui-0 border-b border-b-ui-100">
