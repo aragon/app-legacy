@@ -217,8 +217,14 @@ const SettingsCardDao: React.FC<{daoDetails: DaoDetails}> = ({daoDetails}) => {
           {shouldClamp && (
             <Link
               {...(showAll
-                ? {label: 'View less', iconRight: <IconChevronUp />}
-                : {label: 'Read more', iconRight: <IconChevronDown />})}
+                ? {
+                    label: t('settings.dao.summaryToggleClose'),
+                    iconRight: <IconChevronUp />,
+                  }
+                : {
+                    label: t('settings.dao.summaryToggleMore'),
+                    iconRight: <IconChevronDown />,
+                  })}
               className="ft-text-base"
               onClick={() => setShowAll(prevState => !prevState)}
             />

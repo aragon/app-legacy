@@ -65,7 +65,7 @@ const MultisigSettings: React.FC<IPluginSettings> = ({daoDetails}) => {
               label={t('createDAO.review.distributionLink', {
                 count: daoMembers.members.length,
               })}
-              description="See all members"
+              description={t('settings.community.memberHelptext')}
               iconRight={<IconLinkExternal />}
               onClick={() =>
                 navigate(

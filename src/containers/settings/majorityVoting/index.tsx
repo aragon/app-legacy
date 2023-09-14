@@ -123,8 +123,10 @@ const MajorityVotingSettings: React.FC<IPluginSettings> = ({daoDetails}) => {
           <Term>{t('labels.review.distribution')}</Term>
           <Definition>
             <Link
-              label={`${daoMembers.members.length} token holders`}
-              description="See all token holders"
+              label={t('settings.community.distributionValue', {
+                value: daoMembers.members.length,
+              })}
+              description={t('settings.community.distributionHelptext')}
               iconRight={<IconLinkExternal />}
               onClick={() =>
                 navigate(

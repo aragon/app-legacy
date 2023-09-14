@@ -1116,7 +1116,14 @@
       "links": {
         "allLinks": "All links"
       },
-      "contractAddress": "Contract address"
+      "contractAddress": "Contract address",
+      "summaryToggleMore": "Read more",
+      "summaryToggleClose": "View less"
+    },
+    "community": {
+      "distributionValue": "{{value}} token holders",
+      "distributionHelptext": "View all token holders",
+      "memberHelptext": "View all members"
     }
   },
   "dashboard": {
