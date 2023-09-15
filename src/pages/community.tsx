@@ -210,7 +210,7 @@ export const Community: React.FC = () => {
                       callback: () => setSort('votingPower'),
                       component: (
                         <ListItemAction
-                          title="Sort by voting power"
+                          title={t('community.sortDropdown.optionVotingPower')}
                           bgWhite={true}
                           mode={sort === 'votingPower' ? 'selected' : 'default'}
                           iconRight={
@@ -227,7 +227,7 @@ export const Community: React.FC = () => {
                       callback: () => setSort('delegations'),
                       component: (
                         <ListItemAction
-                          title="Sort by delegations"
+                          title={t('community.sortDropdown.optionDelegations')}
                           bgWhite={true}
                           mode={sort === 'delegations' ? 'selected' : 'default'}
                           iconRight={
@@ -249,8 +249,8 @@ export const Community: React.FC = () => {
                       size="large"
                       label={
                         sort === 'delegations'
-                          ? 'Sorted by delegations'
-                          : 'Sorted by voting power'
+                          ? 'Sorted by delegations' // TODO: missing translation label
+                          : t('community.sortDropdown.label')
                       }
                     />
                   }

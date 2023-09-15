@@ -118,7 +118,7 @@ export const ActionItemAddress: React.FC<ActionItemAddressProps> = props => {
         callback: handleCopyAddressClick,
         component: (
           <ListItemAction
-            title="Copy Address"
+            title={t('community.actionItemDropdown.optionCopyAddress')}
             iconRight={<IconCopy className="text-ui-300" />}
             bgWhite={true}
           />
@@ -128,7 +128,7 @@ export const ActionItemAddress: React.FC<ActionItemAddressProps> = props => {
         callback: handleExternalLinkClick,
         component: (
           <ListItemAction
-            title="View on block explorer"
+            title={t('community.actionItemDropdown.optionBlockExplorer')}
             iconRight={<IconLinkExternal className="text-ui-300" />}
             bgWhite={true}
           />
@@ -140,7 +140,11 @@ export const ActionItemAddress: React.FC<ActionItemAddressProps> = props => {
       callback: handleDelegateClick,
       component: (
         <ListItemAction
-          title={walletId === 'delegate' ? 'Claim voting power' : 'Delegate to'}
+          title={
+            walletId === 'delegate'
+              ? t('community.actionItemDropdown.optionUndelegate')
+              : t('community.sortDropdown.optionDelegate')
+          }
           iconRight={<IconGovernance className="text-ui-300" />}
           bgWhite={true}
         />

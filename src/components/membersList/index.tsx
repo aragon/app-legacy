@@ -10,6 +10,7 @@ import {ActionItemAddress} from './actionItemAddress';
 import {useAccount} from 'wagmi';
 import styled from 'styled-components';
 import {useScreen} from '@aragon/ods';
+import {useTranslation} from 'react-i18next';
 
 type MembersListProps = {
   members: DaoMember[];
@@ -28,6 +29,7 @@ export const MembersList: React.FC<MembersListProps> = ({
   const {api: provider} = useProviders();
   const {address} = useAccount();
   const {isDesktop} = useScreen();
+  const {t} = useTranslation();
 
   const isTokenBasedDao = token != null;
   const useCompactMode = isCompactMode ?? !isDesktop;
@@ -48,7 +50,7 @@ export const MembersList: React.FC<MembersListProps> = ({
 
   const getMemberId = (member: DaoMember) => {
     if (member.address.toLowerCase() === address?.toLowerCase()) {
-      return {walletId: 'you' as const, tagLabel: 'You'};
+      return {walletId: 'you' as const, tagLabel: t('tagWallet.labelYou')};
     }
 
     if (
@@ -57,11 +59,18 @@ export const MembersList: React.FC<MembersListProps> = ({
         delegator => delegator.toLowerCase() === address?.toLowerCase()
       )
     ) {
-      return {walletId: 'delegate' as const, tagLabel: 'Delegate'};
+      return {
+        walletId: 'delegate' as const,
+        tagLabel: t('tagWallet.labelYourDelegate'),
+      };
     }
 
     return undefined;
   };
+
+  if (members.length === 0) {
+    return null;
+  }
 
   return (
     <div
