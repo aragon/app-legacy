@@ -28,6 +28,7 @@ const Committee = () => {
     executionExpirationMinutes,
     executionExpirationHours,
     executionExpirationDays,
+    tokenAddress,
   } = getValues();
 
   return (
@@ -73,7 +74,7 @@ const Committee = () => {
                   href={
                     CHAIN_METADATA[network].explorer +
                       '/token/tokenholderchart/' +
-                      committee?.address || committee
+                      tokenAddress?.address || committee
                   }
                   iconRight={<IconFeedback />}
                   external

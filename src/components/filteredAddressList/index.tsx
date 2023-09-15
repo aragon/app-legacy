@@ -37,6 +37,7 @@ export const FilteredAddressList = ({
   );
 
   const filteredAddressList = useMemo(() => {
+    if (!wallets) return [];
     if (tokenSymbol) {
       return (wallets as TokenVotingWalletField[]).filter(filterValidator).map(
         ({address, amount, ensName}) =>
