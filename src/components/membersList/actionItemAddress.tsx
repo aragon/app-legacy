@@ -91,7 +91,7 @@ export const ActionItemAddress: React.FC<ActionItemAddressProps> = props => {
   const handleExternalLinkClick = () => {
     const baseUrl = CHAIN_METADATA[network].explorer;
     if (isAddress(addressOrEns)) {
-      window.open(baseUrl + '/address/' + addressOrEns, '_blank');
+      window.open(baseUrl + 'address/' + addressOrEns, '_blank');
     } else {
       window.open(
         baseUrl + '/enslookup-search?search=' + addressOrEns,
@@ -105,10 +105,12 @@ export const ActionItemAddress: React.FC<ActionItemAddressProps> = props => {
     alert(t('alert.chip.inputCopied'));
   };
 
-  // TODO: check why the dialog is closed automatically without the setTimeout call
   const handleDelegateClick = () => {
     const modalState =
       walletId === 'delegate' ? {reclaimMode: true} : {delegate: addressOrEns};
+    // Note: By using the current implementation of the Dropdown menu, the dialog gets
+    // opened and immediately closed without a setTimeout call. This will be analysed and
+    // fixed with the new Dropdown implementation of the @aragon/ods library.
     setTimeout(() => open('delegateVoting', modalState), 1);
   };
 
