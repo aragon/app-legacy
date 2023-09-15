@@ -190,7 +190,7 @@ export const Community: React.FC = () => {
     >
       <BodyContainer>
         <SearchAndResultWrapper>
-          <div className="space-y-5">
+          <div className="space-y-2">
             {/* TODO: remove hacky way to set flex-grow 1 to search input */}
             <style>{'.search-input-wrapper > div { flex-grow: 1; }'}</style>
             <div className="flex flex-col desktop:flex-row gap-x-4 gap-y-2 search-input-wrapper">
@@ -317,7 +317,7 @@ const BodyContainer = styled.div.attrs({
   className: 'mt-1 desktop:space-y-8',
 })``;
 
-const SearchAndResultWrapper = styled.div.attrs({className: 'space-y-2'})``;
+const SearchAndResultWrapper = styled.div.attrs({className: 'space-y-5'})``;
 
 const ResultsCountLabel = styled.p.attrs({
   className: 'font-bold text-ui-800 ft-text-lg',

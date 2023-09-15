@@ -31,12 +31,36 @@ export type DaoMembersData = {
   daoToken?: Erc20TokenDetails;
 };
 
+const compareAddresses = (addressA?: string | null, addressB?: string | null) =>
+  addressA?.toLowerCase() === addressB?.toLowerCase();
+
 export const isTokenDaoMember = (member: DaoMember): member is TokenDaoMember =>
   'balance' in member;
 
 const sortDaoMembers =
-  (sort?: DaoMemberSort) => (a: DaoMember, b: DaoMember) => {
+  (sort?: DaoMemberSort, userAddress?: string | null) =>
+  (a: DaoMember, b: DaoMember) => {
+    const isConnectedUserA = compareAddresses(a.address, userAddress);
+    const isConnectedUserB = compareAddresses(b.address, userAddress);
+
+    // Always move the connected user to the top position
+    if (isConnectedUserA || isConnectedUserB) {
+      return isConnectedUserA ? -1 : 1;
+    }
+
     if (isTokenDaoMember(a) && isTokenDaoMember(b)) {
+      const isDelegatorA = a.delegators.some(delegator =>
+        compareAddresses(delegator, userAddress)
+      );
+      const isDelegatorB = b.delegators.some(delegator =>
+        compareAddresses(delegator, userAddress)
+      );
+
+      // Always move the delegator to the top position
+      if (isDelegatorA || isDelegatorB) {
+        return isDelegatorA ? -1 : 1;
+      }
+
       const delegatorsResult = b.delegators.length - a.delegators.length;
       const votingPowerResult = b.votingPower - a.votingPower;
 
@@ -169,7 +193,7 @@ export const useDaoMembers = (
     }
   };
 
-  const sortedData = [...getCombinedData()].sort(sortDaoMembers(sort));
+  const sortedData = [...getCombinedData()].sort(sortDaoMembers(sort, address));
   const filteredData =
     searchTerm == null || searchTerm === ''
       ? sortedData

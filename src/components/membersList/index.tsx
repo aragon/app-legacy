@@ -64,45 +64,51 @@ export const MembersList: React.FC<MembersListProps> = ({
   };
 
   return (
-    <table className="overflow-hidden w-full h-full rounded-xl">
-      {!useCompactMode && (
-        <thead>
-          <tr className="text-ui-600 bg-ui-0 border-b border-b-ui-100">
-            <TableCellHead>Member</TableCellHead>
-            {isDesktop && isTokenBasedDao && (
-              <TableCellHead>Voting power</TableCellHead>
-            )}
-            {isDesktop && isTokenBasedDao && (
-              <TableCellHead>Delegations</TableCellHead>
-            )}
-            <TableCellHead />
-          </tr>
-        </thead>
-      )}
-      <tbody>
-        {members.map(member =>
-          isTokenDaoMember(member) ? (
-            <ActionItemAddress
-              key={member.address}
-              addressOrEns={member.address}
-              delegations={member.delegators.length}
-              votingPower={member.votingPower}
-              tokenSymbol={token?.symbol}
-              tokenSupply={totalSupply}
-              isTokenDaoMember={true}
-              isCompactMode={isCompactMode}
-              {...getMemberId(member)}
-            />
-          ) : (
-            <ActionItemAddress
-              key={member.address}
-              addressOrEns={member.address}
-              isCompactMode={isCompactMode}
-            />
-          )
+    <div
+      className={`overflow-hidden rounded-xl ${
+        useCompactMode ? 'border border-ui-100' : ''
+      } `}
+    >
+      <table className="w-full h-full">
+        {!useCompactMode && (
+          <thead>
+            <tr className="text-ui-600 bg-ui-0 border-b border-b-ui-100">
+              <TableCellHead>Member</TableCellHead>
+              {isDesktop && isTokenBasedDao && (
+                <TableCellHead>Voting power</TableCellHead>
+              )}
+              {isDesktop && isTokenBasedDao && (
+                <TableCellHead>Delegations</TableCellHead>
+              )}
+              <TableCellHead />
+            </tr>
+          </thead>
         )}
-      </tbody>
-    </table>
+        <tbody>
+          {members.map(member =>
+            isTokenDaoMember(member) ? (
+              <ActionItemAddress
+                key={member.address}
+                addressOrEns={member.address}
+                delegations={member.delegators.length}
+                votingPower={member.votingPower}
+                tokenSymbol={token?.symbol}
+                tokenSupply={totalSupply}
+                isTokenDaoMember={true}
+                isCompactMode={isCompactMode}
+                {...getMemberId(member)}
+              />
+            ) : (
+              <ActionItemAddress
+                key={member.address}
+                addressOrEns={member.address}
+                isCompactMode={isCompactMode}
+              />
+            )
+          )}
+        </tbody>
+      </table>
+    </div>
   );
 };
 
