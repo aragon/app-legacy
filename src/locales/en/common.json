@@ -788,7 +788,8 @@
         },
         "offChain": {
           "title": "Off-chain",
-          "subtitle": "The voting process is off-chain, while the proof of all votes and the execution are done by a multisig called \"Guardians\""
+          "subtitle": "The voting process is off-chain, while the proof of all votes and the execution are done by a multisig called \"Guardians\"",
+          "soon": "Comming Soon"
         }
 
       },
