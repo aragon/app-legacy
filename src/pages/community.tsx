@@ -249,7 +249,7 @@ export const Community: React.FC = () => {
                       size="large"
                       label={
                         sort === 'delegations'
-                          ? 'Sorted by delegations' // TODO: missing translation label
+                          ? 'Sorted by delegations'
                           : t('community.sortDropdown.label')
                       }
                     />
