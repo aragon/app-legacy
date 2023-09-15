@@ -22,6 +22,7 @@ import {useTranslation} from 'react-i18next';
 import {useGlobalModalContext} from 'context/globalModals';
 import {useAccount} from 'wagmi';
 import {MemberVotingPower} from './memberVotingPower';
+import {featureFlags} from 'utils/featureFlags';
 
 /**
  * Type declarations for `ActionItemAddressProps`.
@@ -155,8 +156,10 @@ export const ActionItemAddress: React.FC<ActionItemAddressProps> = props => {
 
     const isConnectedAddress =
       address?.toLowerCase() === addressOrEns.toLowerCase();
+    const enableDelegation =
+      featureFlags.getValue('VITE_FEATURE_FLAG_DELEGATION') === 'true';
 
-    return isTokenDaoMember && !isConnectedAddress
+    return isTokenDaoMember && !isConnectedAddress && enableDelegation
       ? menuOptions.concat(delegateOption)
       : menuOptions;
   };

@@ -25,6 +25,7 @@ import {Erc20TokenDetails} from '@aragon/sdk-client';
 import numeral from 'numeral';
 import {TokensWrappingFormData} from 'utils/types';
 import {useGlobalModalContext} from 'context/globalModals';
+import {featureFlags} from 'utils/featureFlags';
 
 interface GovTokensWrappingModalProps {
   isOpen: boolean;
@@ -73,6 +74,8 @@ const GovTokensWrappingModal: FC<GovTokensWrappingModalProps> = ({
     control: form.control,
   });
   const isWrapMode = mode === 'wrap';
+  const enableDelegation =
+    featureFlags.getValue('VITE_FEATURE_FLAG_DELEGATION') === 'true';
 
   const isTokenApproveLoading = isTxLoading && currentStep === 1 && isWrapMode;
   const isTokenWrapLoading = isTxLoading && currentStep === 2 && isWrapMode;
@@ -228,7 +231,7 @@ const GovTokensWrappingModal: FC<GovTokensWrappingModalProps> = ({
               : undefined
           }
           tertiaryButton={
-            isWrapMode
+            isWrapMode && enableDelegation
               ? {
                   label: t('modal.wrapToken.successBtnGhostLabel'),
                   className: 'w-full',
