@@ -11,7 +11,8 @@ import {
   Census,
   Election,
   ErrAccountNotFound,
-  ErrAPI,
+  ErrTokenAlreadyExists,
+  ICensus3Token,
   IElectionParameters,
   UnpublishedElection,
 } from '@vocdoni/sdk';
@@ -225,27 +226,45 @@ const useCreateOffchainProposal = ({daoToken}: ICreateOffchainProposal) => {
   }, [vocdoniClient]);
 
   const createCensus = useCallback(async () => {
+    // todo(kon): this part is gonna be done during the dao creation, so not need to be done here. Neither error handling
+    const chain = 80003;
+    if (!(await census3.getSupportedChains()).includes(chain))
+      throw Error('ChainId is not supported');
     // Check if the census is already sync
-    // todo(kon): this have to be moved on DAO creation process
     try {
-      await census3.createToken(daoToken!.address, 'erc20');
+      await census3.createToken(daoToken!.address, 'erc20', chain);
     } catch (e) {
-      // todo(kon): replace error handling when the api return code error is fixed. Now is a generic 500
-      if (
-        e instanceof ErrAPI &&
-        e.message.includes('error creating token with address')
-      ) {
+      if (e instanceof ErrTokenAlreadyExists) {
         console.log('DEBUG', 'Token already created');
+      }
+      // todo(kon): handle chain is not supported
+      else if (
+        e instanceof Error &&
+        e.message.includes('chain ID provided not supported')
+      ) {
+        throw Error('ChainId is not supported');
       } else throw e;
     }
 
-    const censusToken = await census3.getToken(daoToken!.address);
+    async function getCensus3Token(): Promise<ICensus3Token> {
+      let attempts = 0;
+      const maxAttempts = 5;
 
-    console.log('DEBUG', 'Census', censusToken);
-    // todo(kon): handle token is not sync
-    if (!censusToken.status.synced) {
-      throw Error('Census token is not already calculated');
+      while (attempts < maxAttempts) {
+        const censusToken = await census3.getToken(daoToken!.address);
+        if (censusToken.status.synced) {
+          return censusToken; // early exit if the object has sync set to true
+        }
+        attempts++;
+        if (attempts < maxAttempts) {
+          await new Promise(resolve => setTimeout(resolve, 6000));
+        }
+      }
+      throw Error('Census token is not already calculated, try again later');
     }
+
+    const censusToken = await getCensus3Token();
+    console.log('DEBUG', 'Census', censusToken);
 
     // Create the vocdoni census
     console.log('DEBUG', 'Creating vocdoni census');
