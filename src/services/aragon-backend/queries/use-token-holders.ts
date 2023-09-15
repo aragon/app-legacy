@@ -1,13 +1,12 @@
 import request, {gql} from 'graphql-request';
-import {UseQueryOptions, useQuery, useQueryClient} from '@tanstack/react-query';
+import {UseQueryOptions, useQuery} from '@tanstack/react-query';
 import {aragonBackendQueryKeys} from '../query-keys';
 import type {IFetchTokenHoldersParams} from '../aragon-backend-service.api';
-import {useCallback} from 'react';
 import {TokenHoldersResponse} from '../domain/token-holders-response';
 
 const tokenHoldersQueryDocument = gql`
-  query Holders($network: Network!, $tokenAddress: String!) {
-    holders(network: $network, tokenAddress: $tokenAddress) {
+  query Holders($network: Network!, $tokenAddress: String!, $page: Int!) {
+    holders(network: $network, tokenAddress: $tokenAddress, page: $page) {
       contractAddress
       contractDecimals
       contractName
@@ -37,6 +36,7 @@ const fetchTokenHolders = async (
     tokenHoldersQueryDocument,
     {
       ...params,
+      page: params.page ?? 0,
     }
   );
 };
@@ -50,19 +50,4 @@ export const useTokenHolders = (
     () => fetchTokenHolders(params),
     options
   );
-};
-
-export const useTokenHoldersAsync = () => {
-  const queryClient = useQueryClient();
-
-  const fetchTokenAsync = useCallback(
-    (params: IFetchTokenHoldersParams) =>
-      queryClient.fetchQuery({
-        queryKey: aragonBackendQueryKeys.tokenHolders(params),
-        queryFn: () => fetchTokenHolders(params),
-      }),
-    [queryClient]
-  );
-
-  return fetchTokenAsync;
 };

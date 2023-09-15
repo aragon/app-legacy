@@ -57,8 +57,6 @@ export const DelegateVotingMenu: React.FC = () => {
     control: control,
   });
 
-  console.log('delegate form value', {delegate});
-
   const {
     isConnected,
     isModalOpen: isWeb3ModalOpen,

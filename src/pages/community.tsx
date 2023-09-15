@@ -191,11 +191,10 @@ export const Community: React.FC = () => {
       <BodyContainer>
         <SearchAndResultWrapper>
           <div className="space-y-2">
-            {/* TODO: remove hacky way to set flex-grow 1 to search input */}
-            <style>{'.search-input-wrapper > div { flex-grow: 1; }'}</style>
             <div className="flex flex-col desktop:flex-row gap-x-4 gap-y-2 search-input-wrapper">
               <SearchInput
                 placeholder={t('labels.searchPlaceholder')}
+                containerClassName="flex-grow"
                 value={searchTerm}
                 onChange={handleQueryChange}
               />

@@ -140,7 +140,7 @@ export const useDaoMembers = (
     formatUnits(userBalance?.value ?? '0', daoToken?.decimals)
   );
 
-  const useGraphql = !useSubgraph && pluginType != null;
+  const useGraphql = !useSubgraph && pluginType != null && daoToken != null;
 
   const {
     data: graphqlData,
@@ -149,7 +149,7 @@ export const useDaoMembers = (
   } = useTokenHolders(
     {
       network,
-      tokenAddress: pluginAddress,
+      tokenAddress: daoToken?.address as string,
     },
     {enabled: useGraphql}
   );
