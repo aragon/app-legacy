@@ -160,7 +160,9 @@ export const useDaoMembers = (
 
     const delegators = graphqlData?.holders.holders
       .filter(
-        holder => holder.address !== address && holder.delegates === address
+        holder =>
+          !compareAddresses(holder.address, address) &&
+          compareAddresses(holder.delegates, address)
       )
       .map(delegator => delegator.address);
 

@@ -20,6 +20,7 @@ import {
   DelegateVotingFormField,
   IDelegateVotingFormValues,
 } from './delegateVotingUtils';
+import {aragonBackendQueryKeys} from 'services/aragon-backend/query-keys';
 
 const buildFormSettings = (
   delegateAddress = ''
@@ -125,9 +126,14 @@ export const DelegateVotingMenu: React.FC = () => {
     const membersKey = aragonSdkQueryKeys.members({
       pluginAddress: daoDetails?.plugins[0].instanceAddress as string,
     });
+    const graphQlKey = aragonBackendQueryKeys.tokenHolders({
+      network: network as SupportedNetworks,
+      tokenAddress: daoToken?.address as string,
+    });
     queryClient.invalidateQueries(delegateKey);
     queryClient.invalidateQueries(votingPowerKey);
     queryClient.invalidateQueries(membersKey);
+    queryClient.invalidateQueries(graphQlKey);
   };
 
   const handleDelegateTokensSuccess = async (
