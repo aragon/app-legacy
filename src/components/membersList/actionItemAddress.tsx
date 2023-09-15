@@ -145,7 +145,7 @@ export const ActionItemAddress: React.FC<ActionItemAddressProps> = props => {
           title={
             walletId === 'delegate'
               ? t('community.actionItemDropdown.optionUndelegate')
-              : t('community.sortDropdown.optionDelegate')
+              : t('community.actionItemDropdown.optionDelegate')
           }
           iconRight={<IconGovernance className="text-ui-300" />}
           bgWhite={true}
