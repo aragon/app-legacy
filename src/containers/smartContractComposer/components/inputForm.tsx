@@ -32,6 +32,28 @@ import {
 import {Input, SmartContract, SmartContractAction} from 'utils/types';
 import {isAddress} from 'ethers/lib/utils';
 
+const extractTupleValues = (
+  input: Input,
+  formData: Record<string, unknown>
+) => {
+  const tuple: unknown[] = [];
+  console.log('formData', formData);
+
+  input.components?.map(component => {
+    if (component.type !== 'tuple') {
+      tuple.push(formData?.[component.name] || '');
+    } else {
+      tuple.push(
+        extractTupleValues(
+          component,
+          formData[component.name] as Record<string, unknown>
+        )
+      );
+    }
+  });
+  return tuple;
+};
+
 type InputFormProps = {
   actionIndex: number;
   onComposeButtonClicked: (addAnother: boolean) => void;
@@ -90,13 +112,26 @@ const InputForm: React.FC<InputFormProps> = ({
       }
 
       // set the form data
-      setValue(`actions.${actionIndex}.inputs.${index}`, {
-        ...actionInputs[index],
-        value:
+      if (input.type === 'tuple') {
+        const tuple = extractTupleValues(
+          input,
           sccActions?.[selectedSC.address]?.[selectedAction.name]?.[
             input.name
-          ] || '',
-      });
+          ] as Record<string, unknown>
+        );
+        setValue(`actions.${actionIndex}.inputs.${index}`, {
+          ...actionInputs[index],
+          value: tuple,
+        });
+      } else {
+        setValue(`actions.${actionIndex}.inputs.${index}`, {
+          ...actionInputs[index],
+          value:
+            sccActions?.[selectedSC.address]?.[selectedAction.name]?.[
+              input.name
+            ] || '',
+        });
+      }
     });
     resetField('sccActions');
 
@@ -156,7 +191,7 @@ const InputForm: React.FC<InputFormProps> = ({
                 <span className="text-ui-600 ft-text-sm">{input.notice}</span>
               </div>
               <ComponentForType
-                key={input.name}
+                key={`${selectedSC.address}.${selectedAction.name}.${input.name}`}
                 input={input}
                 functionName={`${selectedSC.address}.${selectedAction.name}`}
               />
@@ -304,16 +339,28 @@ export const ComponentForType: React.FC<ComponentForTypeProps> = ({
       if (input?.components)
         return (
           <>
-            {input.components?.map(component => (
-              <div key={component.name}>
-                <div className="mb-1.5 text-base font-bold text-ui-800 capitalize">
-                  {input.name}
+            {input.components?.map((component, index) => (
+              <div key={component.name} className="mt-2 ml-3">
+                <div className="text-base font-bold text-ui-800 capitalize">
+                  {component.name}
+                  <span className="ml-0.5 text-sm normal-case">
+                    ({component.type})
+                  </span>
+                </div>
+                <div className="mt-0.5 mb-1.5">
+                  <span className="text-ui-600 ft-text-sm">
+                    {component.notice}
+                  </span>
                 </div>
                 <ComponentForType
-                  key={component.name}
+                  key={`${functionName}.${input.name}.${component.name}`}
                   input={component}
-                  functionName={input.name}
+                  functionName={`${functionName}.${input.name}`}
+                  formHandleName={
+                    formHandleName ? `${formHandleName}[${index}]` : undefined
+                  }
                   disabled={disabled}
+                  isValid={isValid}
                 />
               </div>
             ))}
