@@ -18,6 +18,7 @@ import {
   ActionWithdraw,
   Nullable,
 } from './types';
+import {useQueries} from '@tanstack/react-query';
 
 export type TokenType =
   | 'ERC-20'
@@ -328,4 +329,60 @@ export async function validateWeb3Address(
  */
 export function isFieldValid<T>(error: FieldError | T | undefined): boolean {
   return !error;
+}
+
+export async function updateVerification(
+  address: string,
+  provider: EthersProviders.Provider
+): Promise<ValidateResult> {
+  const result = validateAddress(address);
+
+  if (result === true) {
+    return (await isERC20Token(address, provider))
+      ? true
+      : (i18n.t('errors.notERC20Token') as string);
+  } else {
+    return result;
+  }
+}
+
+/**
+ *  This method is a Mock validation function until the real SDK functions are ready
+ * @param address dao address
+ * @returns an arrea of queries the indicates the status of verifications
+ */
+export function UpdateValidation(address: string) {
+  // FIXME: remove this function and use the real SDK function
+  function getRandomInt(max: number) {
+    return Math.floor(Math.random() * max);
+  }
+
+  const verificationQueries = [
+    {
+      queryKey: [`pluginRegistry`, address],
+      queryFn: () =>
+        new Promise(resolve => {
+          setTimeout(() => resolve(Boolean(getRandomInt(2))));
+        }),
+      enabled: Boolean(address),
+      retry: false,
+    },
+    {
+      queryKey: [`pluginSetupProcessor`, address],
+      queryFn: () =>
+        new Promise(resolve => {
+          setTimeout(() => resolve(Boolean(getRandomInt(2))));
+        }),
+      enabled: Boolean(address),
+      retry: false,
+    },
+  ];
+
+  return useQueries({
+    queries: verificationQueries.map(config => {
+      return {
+        ...config,
+      };
+    }),
+  });
 }
