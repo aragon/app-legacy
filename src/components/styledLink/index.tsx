@@ -4,11 +4,11 @@ import styled from 'styled-components';
 // Temporary local component until an inverse variant is introduced into the
 // ODS link
 export const StyledLink = styled(Link as React.ComponentType<LinkProps>)`
-  & > div > span {
+  & > span {
     color: #ffffff; // ui-0
   }
 
-  & > div > div > svg {
+  & > div > svg {
     color: #ffffff;
   }
 
