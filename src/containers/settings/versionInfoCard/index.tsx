@@ -7,7 +7,7 @@ import React from 'react';
 import {useTranslation} from 'react-i18next';
 
 import {useNetwork} from 'context/network';
-import {CHAIN_METADATA} from 'utils/constants';
+import {AppVersion, CHAIN_METADATA} from 'utils/constants';
 import {shortenAddress, translateToNetworkishName} from 'utils/library';
 import {
   DescriptionPair,
@@ -15,12 +15,16 @@ import {
   SettingsCard,
   Term,
 } from '../settingsCard';
+import {useProtocolVersions} from 'hooks/useDaoVersions';
 
-export const VersionInfoCard: React.FC<{pluginAddress: string}> = ({
-  pluginAddress,
-}) => {
+export const VersionInfoCard: React.FC<{
+  pluginAddress: string;
+  pluginVersion: string;
+  daoAddress: string;
+}> = ({pluginAddress, pluginVersion, daoAddress}) => {
   const {t} = useTranslation();
   const {network} = useNetwork();
+  const {data: versions, isLoading} = useProtocolVersions(daoAddress);
 
   const explorerEndpoint = CHAIN_METADATA[network].explorer + 'address/';
 
@@ -45,7 +49,7 @@ export const VersionInfoCard: React.FC<{pluginAddress: string}> = ({
           <Term>{t('setting.versionInfo.labelApp')}</Term>
           <FlexibleDefinition>
             <Link
-              label={'Aragon App v0.1.29'}
+              label={`Aragon App v${AppVersion}`}
               type="primary"
               iconRight={<IconLinkExternal />}
             />
@@ -55,7 +59,11 @@ export const VersionInfoCard: React.FC<{pluginAddress: string}> = ({
           <Term>{t('setting.versionInfo.labelOs')}</Term>
           <FlexibleDefinition>
             <Link
-              label={'Aragon OSx v1.1.23'}
+              label={
+                !isLoading
+                  ? `Aragon OSx v${versions?.[0]}.${versions?.[1]}.${versions?.[2]}`
+                  : 'Loading...'
+              }
               description={OSxAddress ? shortenAddress(OSxAddress) : undefined}
               type="primary"
               href={explorerEndpoint + OSxAddress}
@@ -68,7 +76,7 @@ export const VersionInfoCard: React.FC<{pluginAddress: string}> = ({
           <Term>{t('setting.versionInfo.labelGovernance')}</Term>
           <FlexibleDefinition>
             <Link
-              label={'Token voting v1.12'}
+              label={`Token voting v${pluginVersion}`}
               description={shortenAddress(pluginAddress)}
               type="primary"
               href={explorerEndpoint + pluginAddress}

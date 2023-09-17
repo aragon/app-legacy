@@ -16,7 +16,7 @@ export const SettingsUpdateCard: React.FC = () => {
         <div className="flex gap-x-6 items-start">
           <div className="flex-1 space-y-1">
             <Head>
-              <IconUpdate />
+              {/* <IconUpdate /> */}
               <Title>{t('update.alert.title')}</Title>
             </Head>
             <ContentWrapper className="space-y-0">
