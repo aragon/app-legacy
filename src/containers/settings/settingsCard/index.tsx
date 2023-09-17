@@ -21,7 +21,7 @@ export const Title = styled.p.attrs({
 
 export const Term = styled.dt.attrs({
   className: `font-semibold desktop:font-normal text-ui-800 desktop:text-ui-600 
-    w-1/4 flex-grow flex-shrink-0 whitespace-nowrap` as string,
+    w-1/4 col-span-1 whitespace-nowrap` as string,
 })``;
 
 export const Definition = styled.dd.attrs({
@@ -32,12 +32,12 @@ export const Definition = styled.dd.attrs({
 `;
 
 export const FlexibleDefinition = styled.dd.attrs({
-  className: 'desktop:flex' as string,
+  className: 'desktop:flex col-span-1' as string,
 })`
   flex-grow: 1;
 `;
 
 export const DescriptionPair = styled.div.attrs({
-  className: `space-y-0.5 py-1.5 desktop:py-2 desktop:flex desktop:space-y-0 
-    desktop:space-x-2 text-ui-600 border-b border-ui-100 ft-text-base` as string,
+  className: `space-y-0.5 py-1.5 tablet:py-2 desktop:space-y-0 desktop:flex
+  desktop:space-x-2 text-ui-600 border-b border-ui-100 ft-text-base tablet:grid grid-cols-2 gap-4` as string,
 })``;

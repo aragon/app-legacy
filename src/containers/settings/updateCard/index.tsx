@@ -37,7 +37,7 @@ export const SettingsUpdateCard: React.FC = () => {
   return (
     <Container>
       <Head>
-        <IconUpdate />
+        {/* <IconUpdate /> */}
         <Title>{t('update.alert.title')}</Title>
       </Head>
       <ContentWrapper>
