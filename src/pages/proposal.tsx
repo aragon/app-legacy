@@ -82,6 +82,7 @@ import {BigNumber} from 'ethers';
 import {usePastVotingPower} from 'services/aragon-sdk/queries/use-past-voting-power';
 import {Address} from 'viem';
 import {useBalance} from 'wagmi';
+import {UpdateVerificationCard} from 'containers/updateVerificationCard';
 
 // TODO: @Sepehr Please assign proper tags on action decoding
 // const PROPOSAL_TAGS = ['Finance', 'Withdraw'];
@@ -699,6 +700,8 @@ export const Proposal: React.FC = () => {
               />
             </>
           )}
+
+          <UpdateVerificationCard proposal={proposal} />
 
           <VotingTerminal
             status={proposal.status}

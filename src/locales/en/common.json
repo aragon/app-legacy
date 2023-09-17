@@ -580,12 +580,12 @@
     "externalContractSubtitle": "Interact with an external contract on the chain your DAO is deployed on.",
     "changeMinimumApproval": "Change minimum approval",
     "changeMinimumApprovalSubtitle": "Modify minimum approval of this DAO.",
-    "connectdAppsTitle": "Connect dApps",
+    "connectdAppsTitle": "Connect verified dApp",
     "withdrawAddresses": {
       "subtitle": "Create a proposal to withdraw assets to a wallet."
     },
     "withdrawAssets": "Withdraw assets",
-    "connectdAppsSubtitle": "Interact with external dApps via WalletConnect on the chain your DAO is deployed on."
+    "connectdAppsSubtitle": "Interact with verified dApps via WalletConnect."
   },
   "newDeposit": {
     "depositAssets": "Deposit assets",
@@ -739,7 +739,7 @@
       "tokenContractSubtitlePart1": "Copy the contract address directly from the ",
       "tokenContractSubtitlePart2": "This way you can ensure that the address is correct.",
       "distributeTokensHelpertext": "Add the wallets you'd like to distribute tokens to. If you need help distributing tokens, {{link}}.",
-      "proposalCreationHelpertext": "Specify who is permitted to create proposals and what the minimum token requirement is.",
+      "proposalCreationHelpertext": "Specify who is permitted to create proposals and what the minimum requirement is.",
       "distributionWalletAlertText": "Your connected wallet was automatically added to the distribution list. You can remove it if you like.",
       "whiteListWalletAlertText": "Your connected wallet was automatically added to the list. You can remove it if you like.",
       "createTokenHelptext": "Define the token details and distribute tokens to a core team and DAO treasury. For more on token minting best practices, {{link}}",
@@ -748,18 +748,18 @@
       "membership": "Who can participate in governance?",
       "eligibility": {
         "optionTitle": "Who is eligible?",
-        "inputTitle": "Minimum tokens required",
+        "inputTitle": "Minimum requirement",
         "anyWallet": {
           "title": "Any wallet",
-          "description": "Any wallet can create proposals."
+          "description": "Any connected wallet can create proposals."
         },
         "multisigMembers": {
           "description": "Only the addresses added above can create proposals.",
           "title": "Multisig members"
         },
         "tokenHolders": {
-          "description": "Only token holders with at least a certain number of tokens can create proposals.",
-          "title": "Token holders"
+          "description": "Only token holders with at least the minimum required balance or delegates minimum required voting power can create proposals.",
+          "title": "Members"
         },
         "anyone": {
           "warning": "With anyone being able to propose, there is a risk of proposal spam. Consider having a minimum token threshold."
@@ -911,7 +911,11 @@
     "yes+no": "Yes, no, or abstain",
     "strategy": "Strategy",
     "tokenVoting": "1 token → 1 vote",
-    "multisig": "1 wallet → 1 vote",
+    "multisig": {
+      "endDescription": "Proposal is active until approved or it expires",
+      "title": "Multisig approval",
+      "description": "Minimum approval must be reached before actions can be executed."
+    },
     "supportThreshold": "Minimum support",
     "minParticipation": "Minimum participation (Quorum)",
     "currentParticipation": "Current participation",
@@ -994,7 +998,7 @@
       "linkURL": "https://aragon.org/education-portal"
     },
     "toggleFilter": {
-      "Favourites": "My favourites",
+      "Favourites": "Following",
       "allDAOs": "All DAOs ",
       "memberOf": "Member of",
       "delegate": "Delegate duties"
@@ -1442,7 +1446,6 @@
   },
   "wc": {
     "emptyState": {
-      "modalTitle": "Connect dApps",
       "title": "WalletConnect",
       "desc": "Connect any dApps to add its actions to your proposal. Learn more about {{link}}.",
       "ctaLabel": "Connect first dApp",
@@ -1492,6 +1495,9 @@
     },
     "modalHeaderSearch": {
       "placeholder": "Type to find a dApp …"
+    },
+    "dappList": {
+      "modalTitle": "Select dApp"
     }
   },
   "label": {
@@ -1551,61 +1557,65 @@
   },
   "update": {
     "banner": {
-      "title": "Aragon App Updates available",
+      "title": "Aragon OSx updates are available.",
       "ctaLabel": "View updates"
     },
     "alert": {
-      "title": "Aragon App Updates available",
-      "desc": "Your DAO has received new updates. Review them and create a proposal for installing them.",
+      "title": "Aragon OSx updates are available.",
+      "desc": "New versions of Aragon smart contracts are available. Updating your DAO requires a proposal to be a created and passed.",
       "ctaLabel": "View updates"
     },
     "reviewUpdates": {
-      "headerDesc": "TBD description of reviewing updates",
-      "headerTitle": "Review updates"
+      "headerDesc": "New features and security improvements are regularly released by the Aragon team. While updates aren't applied automatically, any community member can review the release notes below and propose an update.",
+      "headerTitle": "Aragon OSx updates"
     },
     "item": {
       "releaseNotesLabel": "View release notes",
-      "versionCtaLabel": "Choose another version",
+      "versionCtaLabel": "Select another version",
       "prepareCtaLabel": "Prepare plugin",
       "tagLatest": "Latest",
       "tagPrepared": "Prepared"
     },
     "itemList": {
-      "alertInfo": "To propose all updates, you have to prepare the above plugin, before you are able to proceed."
+      "alertInfo": "To propose the selected updates, you will first have to prepare the above plugin."
     },
     "modalVersion": {
-      "title": "Choose plugin version",
-      "desc": "Choose older version of the Aragon OSx/plugin",
-      "ctaLabel": "Select for update"
+      "title": "Select version",
+      "desc": "Multiple versions of the update are available. Review the release notes of each before making a selection",
+      "ctaLabel": "Select version"
     },
     "modalPreparePlugin": {
       "title": "Prepare plugin",
-      "desc": "To continue with the updates, confirm the plugin preperation.",
+      "desc": "Plugins must be prepared as a separate transaction before being proposed to the community.",
       "ctaLabel": "Prepare plugin"
     },
     "securityCheck": {
-      "title": "Update security check",
-      "linkLabel": "Read more",
+      "title": "Update verification",
       "daoAddress": "DAO address",
       "pluginRegistry": "Plugin registry",
       "pluginSetupProcessor": "Plugin setup processor",
-      "alertTitle": "Some updates might be unsafe",
-      "alertDesc": "Since one or more actions are not listed in the Aragon Update Registry, it appears that this update may be malicious."
+      "alertTitle": "Some updates may be unsafe",
+      "alertDesc": "One or more actions aren't in the Aragon Update Registry, indicating that this update could be potentially harmful.",
+      "desc": "All actions are listed in the Aragon Update Registry, which is managed by the Aragon team. However, always exercise caution when evaluating updates. To learn more about Aragon OSx updates, {{link}}.",
+      "descLinkLabel": "Read more",
+      "descLinkUrl": "https://"
     },
     "proposal": {
       "bannerTitle": "Verified Aragon App Update"
     },
     "modalCritical": {
-      "title": "[TBD] Execute malicious actions",
-      "desc": "[TBD] copy",
+      "title": "Are you sure you want to proceed?",
+      "desc": "This proposal may put your DAO at risk. Learn more about Aragon OSx updates {{link}}.",
       "alertTitle": "Potential risk for your DAO",
-      "alertDesc": "[TBD] Instead of minting tokens to your DAO treasury, consider minting them to a member's wallet address so the tokens can be used for voting. ",
+      "alertDesc": "One or more proposal actions aren't in the Aragon Update Registry, indicating that this update could be potentially harmful.",
       "ctaMainLabel": "Back to proposal",
-      "ctaSecondaryLabel": "Proceed with update",
+      "ctaSecondaryLabel": "Proceed with vote",
       "inputLabel": "Confirm with DAO address",
       "inputDesc": "To confirm, fill in the DAO contract address below.",
       "ctaConfirm": "Confirm",
-      "ctaCancel": "Cancel"
+      "ctaCancel": "Cancel",
+      "descLinkUrl": "https://",
+      "descLinkLabel": "in our guide"
     }
   },
   "setting": {
