@@ -52,7 +52,7 @@ export const VersionInfoCard: React.FC<{
               label={`Aragon App v${AppVersion}`}
               type="primary"
               iconRight={<IconLinkExternal />}
-              href={`https://app.aragon.org`}
+              href={'https://app.aragon.org'}
             />
           </FlexibleDefinition>
         </DescriptionPair>

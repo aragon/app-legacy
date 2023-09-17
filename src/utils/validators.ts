@@ -359,7 +359,7 @@ export function UpdateValidation(address: string) {
 
   const verificationQueries = [
     {
-      queryKey: [`pluginRegistry`, address],
+      queryKey: ['pluginRegistry', address],
       queryFn: () =>
         new Promise(resolve => {
           setTimeout(() => resolve(Boolean(getRandomInt(2))));
@@ -368,7 +368,7 @@ export function UpdateValidation(address: string) {
       retry: false,
     },
     {
-      queryKey: [`pluginSetupProcessor`, address],
+      queryKey: ['pluginSetupProcessor', address],
       queryFn: () =>
         new Promise(resolve => {
           setTimeout(() => resolve(Boolean(getRandomInt(2))));
