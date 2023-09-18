@@ -6,6 +6,7 @@ import {
   MultisigClient,
   MultisigVotingSettings,
   ProposalCreationSteps,
+  ProposalCreationStepValue,
   TokenVotingClient,
   VoteValues,
   WithdrawParams,
@@ -87,7 +88,10 @@ import styled from 'styled-components';
 import OffchainProposalModal from '../containers/transactionModals/offchainProposalModal';
 import {StepStatus} from '../hooks/useFunctionStepper';
 
-
+import {
+  CreateGasslessProposalParams,
+  OffchainVotingClient,
+} from '@vocdoni/offchain-voting';
 
 type Props = {
   showTxModal: boolean;
@@ -367,8 +371,13 @@ const CreateProposalWrapper: React.FC<Props> = ({
       description,
       resources: resources.filter((r: ProposalResource) => r.name && r.url),
     };
-
-    const ipfsUri = await pluginClient?.methods.pinMetadata(metadata);
+    let ipfsUri;
+    // Offchain voting store metadata using Vocdoni support
+    if (!offchain) {
+      ipfsUri = await (pluginClient as TokenVotingClient)?.methods.pinMetadata(
+        metadata
+      );
+    }
 
       // getting dates
       let startDateTime: Date;
@@ -488,7 +497,15 @@ const CreateProposalWrapper: React.FC<Props> = ({
     }
     if (!proposalCreationData) return;
 
-    return pluginClient?.estimation.createProposal(proposalCreationData);
+    // todo(kon): fix this when implemented on the minsdk
+    return !offchain
+      ? (pluginClient as MultisigClient)?.estimation.createProposal(
+          proposalCreationData
+        )
+      : {
+          average: BigInt(0),
+          max: BigInt(0),
+        };
   }, [pluginClient, proposalCreationData]);
 
   const {
@@ -507,8 +524,11 @@ const CreateProposalWrapper: React.FC<Props> = ({
         navigate(
           generatePath(Proposal, {
             network,
-            dao: toDisplayEns(daoDetails?.ensDomain) || daoDetails?.address,
-            id: proposalId,
+            dao:
+              toDisplayEns(daoDetails?.ensDomain) ||
+              daoDetails?.address ||
+              null,
+            id: proposalId || null,
           })
         );
         break;
@@ -662,8 +682,19 @@ const CreateProposalWrapper: React.FC<Props> = ({
         total_usd_cost: averageFee ? tokenPrice * Number(averageFee) : 0,
       });
 
-      const proposalIterator =
-        pluginClient.methods.createProposal(proposalCreationData);
+      // todo(kon): fix this if needed
+      let proposalIterator: AsyncGenerator<ProposalCreationStepValue>;
+      if (offchain && electionId) {
+        const proposalIterator = (
+          pluginClient as OffchainVotingClient
+        ).methods.createProposal(
+          getOffChainProposalParams(proposalCreationData, electionId)
+        );
+      } else {
+        const proposalIterator = (
+          pluginClient as MultisigClient | TokenVotingClient
+        ).methods.createProposal(proposalCreationData);
+      }
 
       if (creationProcessState === TransactionState.SUCCESS) {
         handleCloseModal();
@@ -683,7 +714,7 @@ const CreateProposalWrapper: React.FC<Props> = ({
       // the try-catch block inside the for loop would not catch the error
       // FF - 11/21/2020
       try {
-        for await (const step of proposalIterator) {
+        for await (const step of proposalIterator!) {
           switch (step.key) {
             case ProposalCreationSteps.CREATING:
               console.log(step.txHash);
@@ -750,6 +781,26 @@ const CreateProposalWrapper: React.FC<Props> = ({
     tokenPrice,
   ]);
 
+  const getOffChainProposalParams = useCallback(
+    (
+      params: CreateMajorityVotingProposalParams,
+      vochainProposalId: string
+    ): CreateGasslessProposalParams => {
+      return {
+        ...params,
+        // If the value is 0 will take the expiration time defined at DAO creation level.
+        // We want this because the expiration date is defined when the dao is created.
+        // We could define a different expiration date for this proposal but is not designed
+        // to do this at ux level.
+        expirationDate: 0,
+        vochainProposalId,
+        startDate: (params.startDate ?? new Date()).getTime(),
+        endDate: (params.endDate ?? new Date()).getTime(),
+      };
+    },
+    []
+  );
+
   const handleOffChainProposal = useCallback(async () => {
     console.log('DEBUG', 'handleOffChainProposal');
     if (!pluginClient || !daoToken) {
@@ -760,9 +811,10 @@ const CreateProposalWrapper: React.FC<Props> = ({
 
     await createProposal(metadata, params, handlePublishProposal);
   }, [
+    pluginClient,
     daoToken,
     getProposalCreationParams,
-    pluginClient,
+    createProposal,
     handlePublishProposal,
   ]);
 
