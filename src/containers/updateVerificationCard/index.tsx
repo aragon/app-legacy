@@ -26,13 +26,13 @@ export const UpdateVerificationCard: React.FC = () => {
   const pluginRegistryAddress = daoDetails?.address || '';
   const isPluginRegistryCheckLoading =
     pluginRegistryResult.isLoading || detailsAreLoading;
-  const isPluginRegistryVerified = pluginSetupProcessorResult.data === 1;
+  const isPluginRegistryVerified = !!pluginSetupProcessorResult.data;
 
   /** @todo Figure put how to get plugin setup processor update */
   const pluginSetupProcessorAddress = daoDetails?.address || '';
   const isPluginSetupProcessorCheckLoading =
     pluginSetupProcessorResult.isLoading || detailsAreLoading;
-  const isPluginSetupProcessorVerified = pluginSetupProcessorResult.data === 1;
+  const isPluginSetupProcessorVerified = !!pluginSetupProcessorResult.data;
 
   const isVerificationFailed =
     (!isDaoAddressCheckLoading && !isDaoAddressVerified) ||

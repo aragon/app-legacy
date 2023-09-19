@@ -16,7 +16,7 @@ export function useUpdateVerification(address: string) {
       queryKey: ['pluginRegistry', address],
       queryFn: () =>
         new Promise(resolve => {
-          setTimeout(() => resolve(Boolean(getRandomInt(2))));
+          setTimeout(() => resolve(Boolean(getRandomInt(2))), 5000); // added delay to simulate loading
         }),
       enabled: Boolean(address),
       retry: false,
@@ -25,7 +25,7 @@ export function useUpdateVerification(address: string) {
       queryKey: ['pluginSetupProcessor', address],
       queryFn: () =>
         new Promise(resolve => {
-          setTimeout(() => resolve(Boolean(getRandomInt(2))));
+          setTimeout(() => resolve(Boolean(getRandomInt(2))), 5000); // added delay to simulate loading
         }),
       enabled: Boolean(address),
       retry: false,
