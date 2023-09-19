@@ -703,7 +703,7 @@ export const Proposal: React.FC = () => {
             </>
           )}
 
-          <UpdateVerificationCard proposal={proposal} />
+          <UpdateVerificationCard />
 
           <VotingTerminal
             status={proposalStatus}
