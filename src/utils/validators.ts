@@ -351,7 +351,7 @@ export async function updateVerification(
  * @param address dao address
  * @returns an arrea of queries the indicates the status of verifications
  */
-export function UpdateValidation(address: string) {
+export function updateValidation(address: string) {
   // FIXME: remove this function and use the real SDK function
   function getRandomInt(max: number) {
     return Math.floor(Math.random() * max);
