@@ -174,9 +174,6 @@ export const useDaoProposal = (
 
           // remove cached proposal if it exists
           if (cacheData.proposal) {
-            console.log(
-              `removing cached proposal ${proposalGuid} - it's now on subgraph`
-            );
             const newCache = {...cacheData.proposalCache};
             delete newCache[daoAddress][proposalGuid];
 
