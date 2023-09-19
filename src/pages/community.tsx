@@ -194,8 +194,7 @@ export const Community: React.FC = () => {
             <div className="flex flex-col desktop:flex-row gap-x-4 gap-y-2 search-input-wrapper">
               <SearchInput
                 placeholder={t('labels.searchPlaceholder')}
-                // TODO: enable prop after library update
-                // containerClassName="flex-grow"
+                containerClassName="flex-grow"
                 value={searchTerm}
                 onChange={handleQueryChange}
               />
