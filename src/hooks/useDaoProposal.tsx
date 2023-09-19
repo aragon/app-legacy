@@ -118,6 +118,7 @@ export const useDaoProposal = (
     ]
   );
 
+  // This has the effect of triggering a rerender every intervalInMills
   useEffect(() => {
     if ((intervalInMills || 0) > 0) {
       setNumberOfRuns(value => value + 1);

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {useFormContext, useFormState, useWatch} from 'react-hook-form';
 import {useTranslation} from 'react-i18next';
 import {generatePath} from 'react-router-dom';
@@ -51,15 +51,19 @@ const ProposalStepper: React.FC<ProposalStepperType> = ({
   const {network} = useNetwork();
   const {trigger, control, getValues, setValue} = useFormContext();
   const {address, isConnected} = useWallet();
+  const [isActionsValid, setIsActionsValid] = useState(false);
 
   const [formActions] = useWatch({
     name: ['actions'],
-    control,
   });
 
   const {errors, dirtyFields} = useFormState({
     control,
   });
+
+  actionsAreValid(formActions, actions, errors, network).then(isValid =>
+    setIsActionsValid(isValid)
+  );
 
   /*************************************************
    *                    Render                     *
@@ -130,7 +134,7 @@ const ProposalStepper: React.FC<ProposalStepperType> = ({
       <Step
         wizardTitle={t('newProposal.configureActions.heading')}
         wizardDescription={t('newProposal.configureActions.description')}
-        isNextButtonDisabled={!actionsAreValid(formActions, actions, errors)}
+        isNextButtonDisabled={!isActionsValid}
         onNextButtonDisabledClicked={() => {
           trigger('actions');
         }}

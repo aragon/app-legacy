@@ -153,13 +153,14 @@ export const Proposal: React.FC = () => {
     pluginAddress,
     intervalInMills
   );
+  const proposalStatus = proposal?.status;
 
   const {data: canVote} = useWalletCanVote(
     address,
     proposalId!,
     pluginAddress,
     pluginType,
-    proposal?.status as string
+    proposalStatus as string
   );
 
   const {data: tokenBalanceData} = useBalance({
@@ -227,12 +228,12 @@ export const Proposal: React.FC = () => {
   }, [editor, proposal]);
 
   useEffect(() => {
-    if (proposal?.status) {
+    if (proposalStatus) {
       setTerminalTab(
-        proposal.status === ProposalStatus.PENDING ? 'info' : 'breakdown'
+        proposalStatus === ProposalStatus.PENDING ? 'info' : 'breakdown'
       );
     }
-  }, [proposal?.status]);
+  }, [proposalStatus]);
 
   // decode proposal actions
   useEffect(() => {
@@ -346,10 +347,10 @@ export const Proposal: React.FC = () => {
 
   // caches the status for breadcrumb
   useEffect(() => {
-    if (proposal && proposal.status !== get('proposalStatus'))
-      set('proposalStatus', proposal.status);
+    if (proposal && proposalStatus !== get('proposalStatus'))
+      set('proposalStatus', proposalStatus);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [proposal?.status]);
+  }, [proposalStatus]);
 
   // handle can vote and wallet connection status
   useEffect(() => {
@@ -410,14 +411,14 @@ export const Proposal: React.FC = () => {
           clearInterval(interval);
           setIntervalInMills(PROPOSAL_STATUS_INTERVAL);
           setVoteStatus(v);
-        } else if (proposal.status === 'Pending') {
+        } else if (proposalStatus === 'Pending') {
           setVoteStatus(v);
         }
       }, PENDING_PROPOSAL_STATUS_INTERVAL);
 
       return () => clearInterval(interval);
     }
-  }, [proposal, t]);
+  }, [proposal, proposalStatus, t]);
 
   /*************************************************
    *              Handlers and Callbacks           *
@@ -456,11 +457,11 @@ export const Proposal: React.FC = () => {
   const executionStatus = useMemo(
     () =>
       getProposalExecutionStatus(
-        proposal?.status,
+        proposalStatus,
         canExecuteEarly,
         executionFailed
       ),
-    [canExecuteEarly, executionFailed, proposal?.status]
+    [canExecuteEarly, executionFailed, proposalStatus]
   );
 
   // whether current user has voted
@@ -492,7 +493,7 @@ export const Proposal: React.FC = () => {
   // vote button state and handler
   const {voteNowDisabled, onClick} = useMemo(() => {
     // disable voting on non-active proposals
-    if (proposal?.status !== 'Active') return {voteNowDisabled: true};
+    if (proposalStatus !== 'Active') return {voteNowDisabled: true};
 
     // disable approval on multisig when wallet has voted
     if (isMultisigDAO && (voted || voteSubmitted))
@@ -554,7 +555,7 @@ export const Proposal: React.FC = () => {
     isOnWrongNetwork,
     isMultisigDAO,
     open,
-    proposal?.status,
+    proposalStatus,
     voteSubmitted,
     voted,
   ]);
@@ -576,7 +577,7 @@ export const Proposal: React.FC = () => {
   const alertMessage = useMemo(() => {
     if (
       proposal &&
-      proposal.status === 'Active' && // active proposal
+      proposalStatus === 'Active' && // active proposal
       address && // logged in
       !isOnWrongNetwork && // on proper network
       !voted && // haven't voted
@@ -596,6 +597,7 @@ export const Proposal: React.FC = () => {
     canVote,
     isOnWrongNetwork,
     proposal,
+    proposalStatus,
     t,
     voted,
     displayVotingGate,
@@ -606,7 +608,7 @@ export const Proposal: React.FC = () => {
     if (proposal) {
       return getProposalStatusSteps(
         t,
-        proposal.status,
+        proposalStatus!,
         pluginType,
         proposal.startDate,
         proposal.endDate,
@@ -621,7 +623,7 @@ export const Proposal: React.FC = () => {
         proposal.executionDate || undefined
       );
     } else return [];
-  }, [proposal, t, pluginType, executionFailed]);
+  }, [proposal, proposalStatus, t, pluginType, executionFailed]);
 
   /*************************************************
    *                     Render                    *
@@ -704,7 +706,7 @@ export const Proposal: React.FC = () => {
           <UpdateVerificationCard proposal={proposal} />
 
           <VotingTerminal
-            status={proposal.status}
+            status={proposalStatus}
             daoToken={daoToken}
             blockNumber={proposal?.creationBlockNumber}
             statusLabel={voteStatus}
