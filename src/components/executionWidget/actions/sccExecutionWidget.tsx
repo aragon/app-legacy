@@ -8,7 +8,6 @@ import {Input} from 'utils/types';
 export const SCCExecutionCard: React.FC<{
   action: any;
 }> = ({action}) => {
-  console.log('SCCExecutionCard', action);
   return (
     <AccordionMethod
       type="execution-widget"
