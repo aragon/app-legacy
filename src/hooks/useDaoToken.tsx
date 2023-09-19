@@ -1,8 +1,16 @@
-import {Erc20TokenDetails, Erc20WrapperTokenDetails} from '@aragon/sdk-client';
+import {
+  Erc20TokenDetails,
+  Erc20WrapperTokenDetails,
+  InstalledPluginListItem,
+  TokenVotingClient,
+} from '@aragon/sdk-client';
 import {useEffect, useState} from 'react';
 
 import {HookData} from 'utils/types';
-import {usePluginClient} from './usePluginClient';
+import {PluginTypes, usePluginClient} from './usePluginClient';
+import {useDaoDetailsQuery} from './useDaoDetails';
+
+import {OffchainVotingClient} from '@vocdoni/offchain-voting';
 
 export function useDaoToken(
   pluginAddress?: string
@@ -13,7 +21,12 @@ export function useDaoToken(
   const [error, setError] = useState<Error>();
   const [isLoading, setIsLoading] = useState(false);
 
-  const pluginClient = usePluginClient('token-voting.plugin.dao.eth');
+  const {data: daoDetails, isLoading: daoDetailsLoading} = useDaoDetailsQuery();
+  const {id: pluginType} =
+    daoDetails?.plugins[0] || ({} as InstalledPluginListItem);
+
+  const client = usePluginClient(pluginType as PluginTypes);
+  const pluginClient = client as OffchainVotingClient | TokenVotingClient;
 
   useEffect(() => {
     async function getTokenMetadata(address: string) {

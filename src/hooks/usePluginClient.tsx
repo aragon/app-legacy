@@ -2,29 +2,43 @@ import {MultisigClient, TokenVotingClient} from '@aragon/sdk-client';
 import {useEffect, useState} from 'react';
 
 import {useClient} from './useClient';
+import {
+  OffchainVotingContext,
+  OffchainVotingClient,
+} from '@vocdoni/offchain-voting';
 
 export type PluginTypes =
   | 'token-voting.plugin.dao.eth'
-  | 'multisig.plugin.dao.eth';
+  | 'multisig.plugin.dao.eth'
+  | 'vocdoni-offchain-voting-test-3.plugin.dao.eth';
 
 type PluginType<T> = T extends 'token-voting.plugin.dao.eth'
   ? TokenVotingClient
   : T extends 'multisig.plugin.dao.eth'
   ? MultisigClient
+  : T extends 'vocdoni-offchain-voting-test-3.plugin.dao.eth'
+  ? OffchainVotingClient
   : never;
 
 export function isTokenVotingClient(
-  client: TokenVotingClient | MultisigClient
+  client: TokenVotingClient | MultisigClient | OffchainVotingContext
 ): client is TokenVotingClient {
   if (!client || Object.keys(client).length === 0) return false;
   return client instanceof TokenVotingClient;
 }
 
 export function isMultisigClient(
-  client: TokenVotingClient | MultisigClient
+  client: TokenVotingClient | MultisigClient | OffchainVotingContext
 ): client is MultisigClient {
   if (!client || Object.keys(client).length === 0) return false;
   return client instanceof MultisigClient;
+}
+
+export function isOffchainVotingClient(
+  client: TokenVotingClient | MultisigClient | OffchainVotingContext
+): client is OffchainVotingContext {
+  if (!client || Object.keys(client).length === 0) return false;
+  return client instanceof OffchainVotingClient;
 }
 
 /**
@@ -53,6 +67,11 @@ export const usePluginClient = <T extends PluginTypes = PluginTypes>(
           break;
         case 'token-voting.plugin.dao.eth':
           setPluginClient(new TokenVotingClient(context));
+          break;
+        case 'vocdoni-offchain-voting-test-3.plugin.dao.eth':
+          setPluginClient(
+            new OffchainVotingClient(new OffchainVotingContext(context))
+          );
           break;
         default:
           throw new Error('The requested plugin type is invalid');

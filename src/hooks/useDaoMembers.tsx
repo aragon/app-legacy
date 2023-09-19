@@ -119,9 +119,7 @@ export const useDaoMembers = (
   options?: DaoMembersOptions
 ): HookData<DaoMembersData> => {
   const {network} = useNetwork();
-  const {address} = useWallet();
-
-  const {data: daoToken} = useDaoToken(pluginAddress);
+  const {api: provider} = useProviders();
 
   const isTokenBased = pluginType === 'token-voting.plugin.dao.eth';
 
@@ -141,7 +139,7 @@ export const useDaoMembers = (
     data: subgraphData = [],
     isError: isSubgraphError,
     isInitialLoading: isSubgraphLoading,
-  } = useMembers(
+  } = useMembers( // todo(kon): check 02b5ac84 to se previous rebased code
     {pluginAddress, pluginType},
     {enabled: useSubgraph && enabled}
   );
