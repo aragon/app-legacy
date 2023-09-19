@@ -78,7 +78,7 @@ const proposalToElection = ({
     question: metadata.summary,
     startDate: data?.startDate ?? new Date(),
     endDate: data?.endDate ?? new Date(),
-    meta: 'todo',
+    meta: data, // Store all DAO metadata to retrieve it easily
     census: census,
   };
 };
