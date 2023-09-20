@@ -53,6 +53,8 @@ import {
 } from '@vocdoni/offchain-voting';
 import {BigNumber} from '@ethersproject/bignumber';
 import {GaslessPluginVotingSettings} from '@vocdoni/offchain-voting/dist/js-client/src/types';
+import {ErrTokenAlreadyExists} from '@vocdoni/sdk';
+import {useCensus3CreateToken} from '../hooks/useCensus3';
 
 const DEFAULT_TOKEN_DECIMALS = 18;
 
@@ -422,13 +424,7 @@ const CreateDaoProvider: React.FC<{children: ReactNode}> = ({children}) => {
     error: gasEstimationError,
   } = usePollGasFee(estimateCreationFees, shouldPoll);
 
-  const {census3} = useVocdoniClient();
-
-  // It creates the vocdoni census3 for a specific DAO
-  // todo(kon): dao address is not the token address
-  const createDAOCensus3 = useCallback(async () => {
-    await census3.createToken(daoAddress, 'erc20');
-  }, [census3, daoAddress]);
+  const {createToken} = useCensus3CreateToken();
 
   // run dao creation transaction
   const createDao = async () => {
@@ -504,12 +500,8 @@ const CreateDaoProvider: React.FC<{children: ReactNode}> = ({children}) => {
                   },
                 }),
               ]).then(async () => {
-                if (
-                  votingType === 'offChain' &&
-                  membership === 'token' &&
-                  !(await census3.getToken(step.address.toLowerCase()))
-                ) {
-                  await createDAOCensus3();
+                if (votingType === 'offChain' && membership === 'token') {
+                  await createToken(step.address[0]);
                 }
               });
               // After everything is

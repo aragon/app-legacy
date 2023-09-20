@@ -1,12 +1,8 @@
 import {CheckboxListItem, Tag} from '@aragon/ods';
 import React from 'react';
 import {useTranslation} from 'react-i18next';
-import {
-  ControllerRenderProps,
-  FieldPathValue,
-  UnpackNestedValue,
-} from 'react-hook-form/dist/types';
-import useCensus3SupportedChains from '../../hooks/useCensus3SupportedChains';
+import {ControllerRenderProps} from 'react-hook-form/dist/types';
+import {useCensus3SupportedChains} from '../../hooks/useCensus3';
 
 /**
  * Type that infers the ControllerRenderProps value prop
