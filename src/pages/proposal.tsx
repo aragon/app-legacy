@@ -730,7 +730,9 @@ export const Proposal: React.FC = () => {
             <OffchainVotingTerminal
               votingStatusLabel={voteStatus}
               votingTerminal={<VTerminal />}
-              proposal={proposal as TokenVotingProposal}
+              // proposal={proposal as TokenVotingProposal}
+              vocdoniElection={vocdoniElection}
+              proposalId={proposalId}
             />
           ) : (
             <VTerminal />

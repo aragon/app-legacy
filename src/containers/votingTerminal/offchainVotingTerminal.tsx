@@ -1,9 +1,18 @@
-import {getVoteButtonLabel, getVoteStatus} from '../../utils/proposals';
-import {TerminalTabs, VotingTerminal} from './index';
-import React, {ReactNode, useState} from 'react';
-import {MultisigProposal, TokenVotingProposal} from '@aragon/sdk-client';
+import {
+  getVoteButtonLabel,
+  getVoteStatus,
+  isMultisigProposal,
+  isTokenBasedProposal,
+} from '../../utils/proposals';
+import {TerminalTabs, VotingTerminal, VotingTerminalProps} from './index';
+import React, {ReactNode, useMemo, useState} from 'react';
+import {
+  CreateMajorityVotingProposalParams,
+  MultisigProposal,
+  TokenVotingProposal,
+} from '@aragon/sdk-client';
 import {ProposalStatus} from '@aragon/sdk-client-common';
-import {useTranslation} from 'react-i18next';
+import {TFunction, useTranslation} from 'react-i18next';
 import {format} from 'date-fns';
 import {getFormattedUtcOffset, KNOWN_FORMATS} from '../../utils/date';
 import {MultisigMember} from '../../hooks/useDaoMembers';
@@ -11,76 +20,124 @@ import {VoterType} from '@aragon/ods';
 import styled from 'styled-components';
 import {AccordionItem} from '../../components/accordionMethod';
 import {Accordion} from '@radix-ui/react-accordion';
+import {
+  GasslessVotingProposal,
+  OffchainVotingClient,
+} from '@vocdoni/offchain-voting';
+import {usePluginClient} from '../../hooks/usePluginClient';
+import {DetailedProposal, ProposalId} from '../../utils/types';
+import {PublishedElection} from '@vocdoni/sdk';
 
 export const OffchainVotingTerminal = ({
   votingStatusLabel,
   votingTerminal,
-  proposal,
+  // proposal,
+  proposalId,
+  vocdoniElection,
 }: {
   votingStatusLabel: string;
   votingTerminal: ReactNode;
-  proposal: TokenVotingProposal; // todo(kon): this is only for mocking purposes only
+  // proposal: TokenVotingProposal; // todo(kon): this is only for mocking purposes only
+  proposalId: ProposalId | undefined;
+  vocdoniElection: PublishedElection | undefined;
 }) => {
   const {t} = useTranslation();
   const [terminalTab, setTerminalTab] = useState<TerminalTabs>('breakdown');
+  const pluginClient = usePluginClient();
+  const offChainVotingClient = pluginClient as OffchainVotingClient;
 
   // todo(kon): mocked data that will come from proposal info to let the committee vote
-  const members: MultisigMember[] = [
-    {
-      address: '0xD8fcFaa76192aa69cceDDAEc554b1d82B0166DC9',
-    },
-    {
-      address: '0x39A62b289586E8F74B7F7d8934a2Dbe7c5bd9755',
-    },
-  ];
-  const committeeProposal: MultisigProposal = {
-    actions: [],
-    approvals: [],
-    creationBlockNumber: 0,
-    creationDate: proposal.creationDate,
-    creatorAddress: '',
-    dao: {address: '', name: ''},
-    endDate: new Date(proposal.creationDate.getDate() + 1),
-    executionBlockNumber: proposal.executionBlockNumber,
-    executionDate: new Date(proposal.creationDate.getDate()),
-    executionTxHash: proposal.executionTxHash,
-    id: '',
-    metadata: proposal.metadata,
-    startDate: proposal.startDate,
-    status: ProposalStatus.PENDING,
-    settings: {
-      minApprovals: members.length,
-      onlyListed: true,
-    },
-  };
-  const canVote = true;
-  const voted = false;
-  const mappedMembers = new Map(
-    // map multisig members to voterType
-    members?.map(member => [
-      member.address,
-      {wallet: member.address, option: 'none'} as VoterType,
-    ])
-  );
+  // const members: MultisigMember[] = [
+  //   {
+  //     address: '0xD8fcFaa76192aa69cceDDAEc554b1d82B0166DC9',
+  //   },
+  //   {
+  //     address: '0x39A62b289586E8F74B7F7d8934a2Dbe7c5bd9755',
+  //   },
+  // ];
+  // const committeeProposal: MultisigProposal = {
+  //   actions: [],
+  //   approvals: [],
+  //   creationBlockNumber: 0,
+  //   creationDate: proposal.creationDate,
+  //   creatorAddress: '',
+  //   dao: {address: '', name: ''},
+  //   endDate: new Date(proposal.creationDate.getDate() + 1),
+  //   executionBlockNumber: proposal.executionBlockNumber,
+  //   executionDate: new Date(proposal.creationDate.getDate()),
+  //   executionTxHash: proposal.executionTxHash,
+  //   id: '',
+  //   metadata: proposal.metadata,
+  //   startDate: proposal.startDate,
+  //   status: ProposalStatus.PENDING,
+  //   settings: {
+  //     minApprovals: members.length,
+  //     onlyListed: true,
+  //   },
+  // };
+  // const canVote = true;
+  // const voted = false;
+  // const mappedMembers = new Map(
+  //   // map multisig members to voterType
+  //   members?.map(member => [
+  //     member.address,
+  //     {wallet: member.address, option: 'none'} as VoterType,
+  //   ])
+  // );
+  //
+  // const committeeVoteStatus = getVoteStatus(committeeProposal, t);
 
-  const committeeVoteStatus = getVoteStatus(committeeProposal, t);
+  const mappedProps = useMemo(async () => {
+    const {address, proposal} = proposalId!.stripPlgnAdrFromProposalId();
+    const proposalData = await offChainVotingClient.methods.getProposal(
+      address,
+      proposal!
+    );
 
-  const mappedProps = {
-    approvals: committeeProposal.approvals,
-    minApproval: committeeProposal.settings.minApprovals,
-    voters: [...mappedMembers.values()],
-    strategy: t('votingTerminal.multisig'),
-    voteOptions: t('votingTerminal.approve'),
-    startDate: `${format(
-      committeeProposal.startDate,
+    if (!proposalData || !vocdoniElection) return;
+
+    const meta = JSON.parse(
+      vocdoniElection.meta
+    ) as CreateMajorityVotingProposalParams;
+
+    const mappedMembers = new Map(
+      // map multisig members to voterType
+      proposalData.approvers?.map(member => [
+        member,
+        {wallet: member, option: 'none'} as VoterType,
+      ])
+    );
+    const endDate = `${format(
+      proposalData.parameters.endDate,
       KNOWN_FORMATS.proposals
-    )}  ${getFormattedUtcOffset()}`,
+    )}  ${getFormattedUtcOffset()}`;
 
-    endDate: `${format(
-      committeeProposal.endDate,
+    const startDate = `${format(
+      proposalData.parameters.startDate,
       KNOWN_FORMATS.proposals
-    )}  ${getFormattedUtcOffset()}`,
-  };
+    )}  ${getFormattedUtcOffset()}`;
+
+    return {
+      approvals: committeeProposal.approvals,
+      minApproval: committeeProposal.settings.minApprovals,
+      voters: [...mappedMembers.values()],
+      strategy: t('votingTerminal.multisig'),
+      voteOptions: t('votingTerminal.approve'),
+      startDate,
+      endDate,
+    } as VotingTerminalProps;
+  }, [offChainVotingClient.methods, proposalId, t]);
+
+  // todo(kon): fix this to enable/disable the vote button and it message
+  // const committeVoteDisabled =
+  //   isCommitteMember && electionRunning && !alreadyVoted;
+  // const showCommitteButton = isCommitteMember && !committeVoteDisabled;
+  // const committeVoteLabel =
+  //   committeVoteCount === 0
+  //     ? 'Approve Now'
+  //     : committeVoteCount + 1 === tally
+  //     ? 'Approve and execute now'
+  //     : 'Aprrove';
 
   const CommitteeVotingTerminal = () => (
     <VotingTerminal
@@ -133,6 +190,21 @@ export const OffchainVotingTerminal = ({
     </Container>
   );
 };
+
+// todo(kon): move this somewhere
+export function getCommitteVoteButtonLabel(
+  proposal: GasslessVotingProposal,
+  canVoteOrApprove: boolean,
+  votedOrApproved: boolean,
+  t: TFunction
+) {
+  const label = '';
+
+  // todo(kon): implement this
+  // if(proposal. === '')
+
+  return label;
+}
 
 const Header = styled.div.attrs({
   className: 'flex flex-col tablet:justify-between space-y-2 my-2',
