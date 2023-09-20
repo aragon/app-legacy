@@ -226,26 +226,6 @@ const useCreateOffchainProposal = ({daoToken}: ICreateOffchainProposal) => {
   }, [vocdoniClient]);
 
   const createCensus = useCallback(async () => {
-    // todo(kon): this part is gonna be done during the dao creation, so not need to be done here. Neither error handling
-    const chain = 80003;
-    if (!(await census3.getSupportedChains()).includes(chain))
-      throw Error('ChainId is not supported');
-    // Check if the census is already sync
-    try {
-      await census3.createToken(daoToken!.address, 'erc20', chain);
-    } catch (e) {
-      if (e instanceof ErrTokenAlreadyExists) {
-        console.log('DEBUG', 'Token already created');
-      }
-      // todo(kon): handle chain is not supported
-      else if (
-        e instanceof Error &&
-        e.message.includes('chain ID provided not supported')
-      ) {
-        throw Error('ChainId is not supported');
-      } else throw e;
-    }
-
     async function getCensus3Token(): Promise<ICensus3Token> {
       let attempts = 0;
       const maxAttempts = 5;
