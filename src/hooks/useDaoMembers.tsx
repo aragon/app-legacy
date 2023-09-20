@@ -4,7 +4,11 @@ import {CHAIN_METADATA, SupportedNetworks} from 'utils/constants';
 import {formatUnits} from 'ethers/lib/utils';
 import {HookData} from 'utils/types';
 import {useDaoToken} from './useDaoToken';
-import {PluginTypes} from './usePluginClient';
+import {
+  OFFCHAIN_PLUGIN_NAME,
+  PluginTypes,
+  usePluginClient,
+} from './usePluginClient';
 import {useWallet} from './useWallet';
 import {useTokenHolders} from 'services/aragon-backend/queries/use-token-holders';
 import {useMembers} from 'services/aragon-sdk/queries/use-members';
