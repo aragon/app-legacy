@@ -7,16 +7,21 @@ import {
   OffchainVotingClient,
 } from '@vocdoni/offchain-voting';
 
+// todo(kon): move this to a constants file
+export const OFFCHAIN_PLUGIN_NAME =
+  'vocdoni-offchain-voting-test-3.plugin.dao.eth';
+export type OFFCHAIN_PLUGIN_TYPE = typeof OFFCHAIN_PLUGIN_NAME;
+
 export type PluginTypes =
   | 'token-voting.plugin.dao.eth'
   | 'multisig.plugin.dao.eth'
-  | 'vocdoni-offchain-voting-test-3.plugin.dao.eth';
+  | OFFCHAIN_PLUGIN_TYPE;
 
 type PluginType<T> = T extends 'token-voting.plugin.dao.eth'
   ? TokenVotingClient
   : T extends 'multisig.plugin.dao.eth'
   ? MultisigClient
-  : T extends 'vocdoni-offchain-voting-test-3.plugin.dao.eth'
+  : T extends OFFCHAIN_PLUGIN_TYPE
   ? OffchainVotingClient
   : never;
 
@@ -68,7 +73,7 @@ export const usePluginClient = <T extends PluginTypes = PluginTypes>(
         case 'token-voting.plugin.dao.eth':
           setPluginClient(new TokenVotingClient(context));
           break;
-        case 'vocdoni-offchain-voting-test-3.plugin.dao.eth':
+        case OFFCHAIN_PLUGIN_NAME:
           setPluginClient(
             new OffchainVotingClient(new OffchainVotingContext(context))
           );
