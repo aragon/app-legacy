@@ -703,7 +703,11 @@ export const Proposal: React.FC = () => {
             </>
           )}
 
-          <UpdateVerificationCard />
+          {/* @todo: Add isUpdateProposal check once it's developed */}
+          <UpdateVerificationCard
+            proposal={proposal}
+            actions={decodedActions}
+          />
 
           <VotingTerminal
             status={proposalStatus}
