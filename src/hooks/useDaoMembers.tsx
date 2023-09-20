@@ -13,6 +13,10 @@ import {useWallet} from './useWallet';
 import {useTokenHolders} from 'services/aragon-backend/queries/use-token-holders';
 import {useMembers} from 'services/aragon-sdk/queries/use-members';
 import {Address, useBalance} from 'wagmi';
+import {
+  OffchainVotingClient,
+  GaslessVotingMember,
+} from '@vocdoni/offchain-voting';
 
 export type MultisigDaoMember = {
   address: string;
