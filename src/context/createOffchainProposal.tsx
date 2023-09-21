@@ -4,16 +4,17 @@ import {
   Erc20WrapperTokenDetails,
 } from '@aragon/sdk-client';
 import {ProposalMetadata} from '@aragon/sdk-client-common';
-import React, {useCallback, useMemo, useState} from 'react';
+import React, {useCallback, useState} from 'react';
 
 import {
   AccountData,
   Census,
+  Census3Census,
   Election,
   ErrAccountNotFound,
-  ErrTokenAlreadyExists,
   ICensus3Token,
   IElectionParameters,
+  TokenCensus,
   UnpublishedElection,
 } from '@vocdoni/sdk';
 import {VoteValues} from '@aragon/sdk-client';
@@ -27,12 +28,6 @@ import {
   StepStatus,
   useFunctionStepper,
 } from '../hooks/useFunctionStepper';
-import {
-  IconRadioCancel,
-  IconRadioDefault,
-  IconSuccess,
-  Spinner,
-} from '@aragon/ods';
 
 // todo(kon): move this block somewhere else
 export enum OffchainProposalStepId {
@@ -187,21 +182,8 @@ const useCreateOffchainProposal = ({daoToken}: ICreateOffchainProposal) => {
 
       console.log('DEBUG', 'Faucet collected, creating election:', election);
       return await vocdoniClient.createElection(election);
-
-      // try {
-      // } catch (e) {
-      //   // todo(kon): replace error handling
-      //   if ((e as string).includes('not enough balance to transfer')) {
-      //     console.log('DEBUG', 'error, collecting faucet', election);
-      //     // todo(kon): do an estimation and collect tokens as many as needed
-      //     await vocdoniClient.collectFaucetTokens();
-      //     console.log('DEBUG', 'faucet collected', election);
-      //     return await vocdoniClient.createElection(election);
-      //     console.log('DEBUG', 'election created after faucet collected');
-      //   } else throw e;
-      // }
     },
-    [vocdoniClient]
+    [collectFaucet, vocdoniClient]
   );
 
   const createAccount = useCallback(async () => {
@@ -225,7 +207,7 @@ const useCreateOffchainProposal = ({daoToken}: ICreateOffchainProposal) => {
     return account;
   }, [vocdoniClient]);
 
-  const createCensus = useCallback(async () => {
+  const createCensus = useCallback(async (): Promise<TokenCensus> => {
     async function getCensus3Token(): Promise<ICensus3Token> {
       let attempts = 0;
       const maxAttempts = 5;
@@ -248,7 +230,19 @@ const useCreateOffchainProposal = ({daoToken}: ICreateOffchainProposal) => {
 
     // Create the vocdoni census
     console.log('DEBUG', 'Creating vocdoni census');
-    return await census3.createTokenCensus(censusToken.id);
+    const census3census: Census3Census = await census3.createCensus(
+      censusToken.defaultStrategy
+    );
+
+    return new TokenCensus(
+      census3census.merkleRoot,
+      census3census.uri,
+      census3census.anonymous,
+      censusToken,
+      census3census.size,
+      BigInt(census3census.weight)
+    );
+    // return await census3.createTokenCensus(censusToken.id);
   }, [census3, daoToken]);
 
   const createProposal = useCallback(
