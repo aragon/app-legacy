@@ -67,13 +67,6 @@ const WalletRow: React.FC<WalletRowProps> = ({index, onDelete}) => {
       ) {
         validationResult = t('errors.duplicateAddress');
       }
-      // else if (
-      //   (membership === 'multisig' &&
-      //     !walletInWalletList(web3Address, multisigWallets)) ||
-      //   (membership === 'token' && !walletInWalletList(web3Address, wallets))
-      // ) {
-      //   validationResult = t('errors.addressNotElegible');
-      // }
       return validationResult;
     },
     [provider, t, committee]
