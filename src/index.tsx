@@ -29,7 +29,7 @@ import {WalletMenuProvider} from 'context/walletMenu';
 import {UseCacheProvider} from 'hooks/useCache';
 import {UseClientProvider} from 'hooks/useClient';
 import {infuraApiKey, walletConnectProjectID} from 'utils/constants';
-import {UseVocdoniClientProvider} from './hooks/useVocdoniSdk';
+import {VocdoniClientProvider} from './hooks/useVocdoniSdk';
 
 import {App} from './app';
 
@@ -116,10 +116,10 @@ root.render(
                         <TransactionDetailProvider>
                           <WalletMenuProvider>
                             <GlobalModalsProvider>
-                              <UseVocdoniClientProvider>
+                              <VocdoniClientProvider>
                                 <App />
                                 <ReactQueryDevtools initialIsOpen={false} />
-                              </UseVocdoniClientProvider>
+                              </VocdoniClientProvider>
                             </GlobalModalsProvider>
                           </WalletMenuProvider>
                         </TransactionDetailProvider>

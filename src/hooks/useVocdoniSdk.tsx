@@ -3,7 +3,7 @@ import React from 'react';
 import {useWallet} from './useWallet';
 import {ClientProvider} from '@vocdoni/react-providers';
 
-export const UseVocdoniClientProvider: React.FC = ({children}) => {
+export const VocdoniClientProvider: React.FC = ({children}) => {
   const {signer} = useWallet();
   return (
     <ClientProvider env="stg" signer={signer as Signer}>
