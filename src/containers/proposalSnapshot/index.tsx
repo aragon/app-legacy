@@ -20,7 +20,7 @@ import {htmlIn} from 'utils/htmlIn';
 import {Governance, NewProposal} from 'utils/paths';
 import {ProposalListItem} from 'utils/types';
 import {useWallet} from 'hooks/useWallet';
-// import {useUpdateProposal} from 'hooks/useUpdateProposal';
+import {useUpdateProposal} from 'hooks/useUpdateProposal';
 
 type Props = {
   daoAddressOrEns: string;
@@ -29,20 +29,22 @@ type Props = {
   proposals: ProposalListItem[];
 };
 
-const ProposalItem: React.FC<CardProposalProps> = props => {
-  /** @todo Uncomment when bannerContent from ODS implemented */
-  // const {isAragonVerifiedUpdateProposal} = useUpdateProposal();
-  // const {t} = useTranslation();
+const ProposalItem: React.FC<{proposalId: string} & CardProposalProps> =
+  props => {
+    const {isAragonVerifiedUpdateProposal} = useUpdateProposal(
+      props.proposalId
+    );
+    const {t} = useTranslation();
 
-  return (
-    <CardProposal
-      {...props}
-      // bannerContent={
-      //   isAragonVerifiedUpdateProposal ? t('update.proposal.bannerTitle') : ''
-      // }
-    />
-  );
-};
+    return (
+      <CardProposal
+        {...props}
+        bannerContent={
+          isAragonVerifiedUpdateProposal ? t('update.proposal.bannerTitle') : ''
+        }
+      />
+    );
+  };
 
 const ProposalSnapshot: React.FC<Props> = ({
   daoAddressOrEns,
@@ -122,7 +124,7 @@ const ProposalSnapshot: React.FC<Props> = ({
       />
 
       {mappedProposals.map(({id, ...p}) => (
-        <ProposalItem {...p} key={id} type="list" />
+        <ProposalItem {...p} proposalId={id} key={id} type="list" />
       ))}
 
       <ButtonText
