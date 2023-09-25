@@ -82,12 +82,16 @@ export const MembersList: React.FC<MembersListProps> = ({
         {!useCompactMode && (
           <thead>
             <tr className="text-ui-600 bg-ui-0 border-b border-b-ui-100">
-              <TableCellHead>Member</TableCellHead>
+              <TableCellHead>{t('community.listHeader.member')}</TableCellHead>
               {isDesktop && isTokenBasedDao && (
-                <TableCellHead>Voting power</TableCellHead>
+                <TableCellHead>
+                  {t('community.listHeader.votingPower')}
+                </TableCellHead>
               )}
               {isDesktop && isTokenBasedDao && (
-                <TableCellHead>Delegations</TableCellHead>
+                <TableCellHead>
+                  {t('community.listHeader.delegations')}
+                </TableCellHead>
               )}
               <TableCellHead />
             </tr>
