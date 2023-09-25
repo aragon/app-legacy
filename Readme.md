@@ -94,6 +94,14 @@ Pull requests are welcome. For major changes, please open an issue first to disc
 
 Please make sure to update tests as appropriate.
 
+## Security
+
+If you believe you've found a security issue, we encourage you to notify us. We welcome working with you to resolve the issue promptly.
+
+Security Contact Email: sirt@aragon.org
+
+Please do not use the issue tracker for security issues.
+
 ## Learn More
 
 For more information about Aragon and its ecosystem, please visit the [Aragon website](https://aragon.org/) and explore our [Developer Portal](https://devs.aragon.org/).
