@@ -44,3 +44,16 @@ export function useVotingSettings(
     options
   );
 }
+
+// type guards
+export function isTokenVotingSettings(
+  settings: SupportedVotingSettings | undefined | null
+): settings is VotingSettings {
+  return settings ? 'minDuration' in settings : false;
+}
+
+export function isMultisigVotingSettings(
+  settings: SupportedVotingSettings | undefined | null
+): settings is MultisigVotingSettings {
+  return settings ? 'minApprovals' in settings : false;
+}
