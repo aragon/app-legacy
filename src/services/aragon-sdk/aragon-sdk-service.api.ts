@@ -24,3 +24,9 @@ export interface IFetchMembersParams {
   pluginAddress: string;
   pluginType?: PluginTypes;
 }
+
+export interface IFetchVotingSettingsParams {
+  blockNumber?: number;
+  pluginAddress: string;
+  pluginType: PluginTypes;
+}
