@@ -17,7 +17,7 @@ import {useDaoToken} from 'hooks/useDaoToken';
 import {useExistingToken} from 'hooks/useExistingToken';
 import {PluginTypes} from 'hooks/usePluginClient';
 import {useTokenSupply} from 'hooks/useTokenSupply';
-import {useVotingSettings} from 'hooks/useVotingSettings';
+import {useVotingSettings} from 'services/aragon-sdk/queries/use-voting-settings';
 import {IPluginSettings} from 'pages/settings';
 import {CHAIN_METADATA} from 'utils/constants';
 import {getDHMFromSeconds} from 'utils/date';

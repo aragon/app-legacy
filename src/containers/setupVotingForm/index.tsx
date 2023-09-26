@@ -5,7 +5,7 @@ import styled from 'styled-components';
 import {
   isMultisigVotingSettings,
   isTokenVotingSettings,
-} from 'hooks/useVotingSettings';
+} from 'services/aragon-sdk/queries/use-voting-settings';
 import {
   ProposalFormData,
   StringIndexed,

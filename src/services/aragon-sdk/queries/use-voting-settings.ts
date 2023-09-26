@@ -1,4 +1,9 @@
-import {TokenVotingClient, MultisigClient} from '@aragon/sdk-client';
+import {
+  TokenVotingClient,
+  MultisigClient,
+  VotingSettings,
+  MultisigVotingSettings,
+} from '@aragon/sdk-client';
 import {UseQueryOptions, useQuery} from '@tanstack/react-query';
 
 import {SupportedVotingSettings} from 'utils/types';
