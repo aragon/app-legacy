@@ -11,7 +11,7 @@ import {IFetchVotingSettingsParams} from '../aragon-sdk-service.api';
 import {usePluginClient} from 'hooks/usePluginClient';
 import {aragonSdkQueryKeys} from '../query-keys';
 
-async function fetchVotingSettings(
+async function fetchVotingSettingsAsync(
   {pluginAddress, blockNumber}: IFetchVotingSettingsParams,
   client: TokenVotingClient | MultisigClient | undefined
 ): Promise<SupportedVotingSettings | null> {
@@ -76,7 +76,7 @@ export function useVotingSettings(
 
   return useQuery(
     aragonSdkQueryKeys.votingSettings(params),
-    () => fetchVotingSettings(params, client),
+    () => fetchVotingSettingsAsync(params, client),
     options
   );
 }
