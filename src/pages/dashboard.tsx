@@ -27,7 +27,6 @@ import {
 } from 'hooks/useFavoritedDaos';
 import {usePendingDao, useRemovePendingDaoMutation} from 'hooks/usePendingDao';
 import {PluginTypes} from 'hooks/usePluginClient';
-import {useProposals} from 'hooks/useProposals';
 import useScreen from 'hooks/useScreen';
 import {CHAIN_METADATA} from 'utils/constants';
 import {formatDate} from 'utils/date';
@@ -39,6 +38,7 @@ import {
   EmptyStateHeading,
 } from 'containers/pageEmptyState';
 import {useGlobalModalContext} from 'context/globalModals';
+import {useProposals} from 'services/aragon-sdk/queries/use-proposals';
 
 enum DaoCreationState {
   ASSEMBLING_DAO,
@@ -342,9 +342,16 @@ const DashboardContent: React.FC<DashboardContentProps> = ({
   pluginAddress,
 }) => {
   const {transfers, totalAssetValue} = useDaoVault();
-  const {data: proposals} = useProposals(daoAddressOrEns, pluginType);
 
-  const proposalCount = proposals.length;
+  const {data: proposals} = useProposals({
+    daoAddressOrEns,
+    pluginType,
+  });
+
+  // The SDK does NOT provide a count. This will be incorrect
+  // whenever the number of proposals is greater than the default
+  // page size that we fetch: 6
+  const proposalCount = proposals?.pages.flat().length;
   const transactionCount = transfers.length;
 
   if (!proposalCount) {
@@ -356,7 +363,7 @@ const DashboardContent: React.FC<DashboardContentProps> = ({
               daoAddressOrEns={daoAddressOrEns}
               pluginAddress={pluginAddress}
               pluginType={pluginType}
-              proposals={proposals}
+              proposals={proposals?.pages.flat() ?? []}
             />
             <TreasurySnapshot
               daoAddressOrEns={daoAddressOrEns}
@@ -371,7 +378,7 @@ const DashboardContent: React.FC<DashboardContentProps> = ({
                 daoAddressOrEns={daoAddressOrEns}
                 pluginAddress={pluginAddress}
                 pluginType={pluginType}
-                proposals={proposals}
+                proposals={proposals?.pages.flat() ?? []}
               />
             </LeftWideContent>
             <RightNarrowContent>
@@ -402,7 +409,7 @@ const DashboardContent: React.FC<DashboardContentProps> = ({
           daoAddressOrEns={daoAddressOrEns}
           pluginAddress={pluginAddress}
           pluginType={pluginType}
-          proposals={proposals}
+          proposals={proposals?.pages.flat() ?? []}
         />
       </LeftWideContent>
       <RightNarrowContent>
@@ -449,7 +456,7 @@ const MobileDashboardContent: React.FC<DashboardContentProps> = ({
   pluginAddress,
 }) => {
   const {transfers, totalAssetValue} = useDaoVault();
-  const {data: proposals} = useProposals(daoAddressOrEns, pluginType);
+  const {data: proposals} = useProposals({daoAddressOrEns, pluginType});
 
   return (
     <MobileLayout>
@@ -457,7 +464,7 @@ const MobileDashboardContent: React.FC<DashboardContentProps> = ({
         daoAddressOrEns={daoAddressOrEns}
         pluginAddress={pluginAddress}
         pluginType={pluginType}
-        proposals={proposals}
+        proposals={proposals?.pages.flat() ?? []}
       />
       <TreasurySnapshot
         daoAddressOrEns={daoAddressOrEns}
