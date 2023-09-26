@@ -191,17 +191,17 @@ export const Community: React.FC = () => {
       <BodyContainer>
         <SearchAndResultWrapper>
           <div className="space-y-2">
-            <div className="flex flex-col desktop:flex-row gap-x-4 gap-y-2 search-input-wrapper">
+            <div className="flex flex-col gap-x-4 gap-y-2 desktop:flex-row">
               <SearchInput
                 placeholder={t('labels.searchPlaceholder')}
-                containerClassName="flex-grow"
+                containerClassName="grow"
                 value={searchTerm}
                 onChange={handleQueryChange}
               />
               {!walletBased && (
                 <Dropdown
                   align="end"
-                  className="py-1 px-0"
+                  className="px-0 py-1"
                   style={{width: 'var(--radix-dropdown-menu-trigger-width)'}}
                   sideOffset={8}
                   listItems={[

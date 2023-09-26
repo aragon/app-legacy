@@ -28,7 +28,7 @@ export const GoLiveHeader: React.FC = () => {
   };
 
   return (
-    <div className="tablet:p-3 desktop:p-6 px-2 pt-2 desktop:pt-3 pb-3 bg-ui-0 tablet:rounded-xl">
+    <div className="bg-ui-0 px-2 pb-3 pt-2 tablet:rounded-xl tablet:p-3 desktop:p-6 desktop:pt-3">
       <div className="desktop:hidden">
         <Breadcrumb
           crumbs={{label: t('createDAO.title'), path: Landing}}
@@ -36,7 +36,7 @@ export const GoLiveHeader: React.FC = () => {
         />
       </div>
       <div className="flex justify-between">
-        <div className="pt-3 w-full">
+        <div className="w-full pt-3">
           <h1 className="text-3xl font-bold text-ui-800">
             {t('createDAO.review.title')}
           </h1>

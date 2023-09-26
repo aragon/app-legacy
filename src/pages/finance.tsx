@@ -94,7 +94,7 @@ export const Finance: React.FC = () => {
     if (tokens.length === 0) {
       return (
         <PageWrapper includeHeader={false}>
-          <div className="mt-5 mb-8">
+          <div className="mb-8 mt-5">
             <StateEmpty
               type="Human"
               mode="card"
@@ -320,7 +320,7 @@ export const Finance: React.FC = () => {
         </HeaderContainer>
       }
     >
-      <div className={'mt-1 tablet:mt-5 mb-3 tablet:mb-8'}>
+      <div className={'mb-3 mt-1 tablet:mb-8 tablet:mt-5'}>
         <TokenSectionWrapper title={t('finance.tokenSection')}>
           <ListContainer>
             <TokenList tokens={tokens.slice(0, 5)} />
@@ -372,5 +372,5 @@ const Title = styled.h1.attrs({
 })``;
 
 const Description = styled.p.attrs({
-  className: 'text-ui-600 ft-text-lg' as string,
+  className: 'ft-text-lg' as string,
 })``;

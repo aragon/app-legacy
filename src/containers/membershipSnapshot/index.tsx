@@ -101,7 +101,7 @@ export const MembershipSnapshot: React.FC<Props> = ({
             onClick={headerButtonHandler}
           />
         </div>
-        <div className="space-y-2 w-2/3">
+        <div className="w-2/3 space-y-2">
           <ListItemGrid>
             <MembersList token={daoToken} members={members} />
           </ListItemGrid>

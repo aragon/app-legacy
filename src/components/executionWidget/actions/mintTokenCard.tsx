@@ -89,7 +89,7 @@ export const MintTokenCard: React.FC<{
       additionalInfo={t('newProposal.mintTokens.additionalInfo')}
     >
       <Container>
-        <div className="p-2 tablet:p-3 space-y-2 bg-ui-50">
+        <div className="space-y-2 bg-ui-50 p-2 tablet:p-3">
           {action.inputs.mintTokensToWallets.map(
             ({web3Address, amount}, index) => {
               const label =

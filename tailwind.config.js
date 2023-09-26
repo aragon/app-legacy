@@ -1,10 +1,9 @@
 module.exports = {
-  purge: [
+  content: [
     './src/**/*.html',
     './src/**/*.tsx',
     './node_modules/@aragon/ods/**/*.cjs.js',
   ],
-  darkMode: false,
   theme: {
     extend: {
       // extends colors according to design system
@@ -169,7 +168,9 @@ module.exports = {
       '4xl': ['3.052rem', 1.2],
       '5xl': ['3.185rem', 1.2],
     },
-    fluidType: {
+  },
+  plugins: [
+    require('tailwindcss-fluid-type')({
       settings: {
         fontSizeMin: 0.875, // 0.875rem === 14px
         fontSizeMax: 1, // 1rem === 16px
@@ -194,24 +195,6 @@ module.exports = {
         '4xl': [5, 1.2],
         '5xl': [6, 1.2],
       },
-    },
-  },
-  variants: {
-    extend: {
-      backgroundColor: ['active', 'disabled'],
-      textColor: ['active', 'disabled'],
-      borderColor: ['active', 'disabled', 'last'],
-      ringColor: ['active', 'focus-visible'],
-      ringWidth: ['active', 'focus-visible', 'disabled'],
-      borderRadius: ['last'],
-      borderWidth: ['active', 'disabled'],
-      outline: ['focus-visible', 'active', 'focus', 'hover'],
-      rounded: ['focus-visible'],
-    },
-    fluidType: ['responsive'],
-  },
-  plugins: [
-    require('tailwindcss-fluid-type'),
-    require('@tailwindcss/line-clamp'),
+    }),
   ],
 };

@@ -715,7 +715,7 @@ const ContractAddressValidation: React.FC<Props> = props => {
           />
         )}
         {error?.message && (
-          <div className="flex justify-center mt-2">
+          <div className="mt-2 flex justify-center">
             <AlertInline
               label={error.message}
               mode={

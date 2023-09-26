@@ -35,8 +35,8 @@ export const OverviewDAOHeader: React.FC<OverviewDAOHeaderProps> = ({
   };
 
   return (
-    <div className="p-2 tablet:p-6 bg-ui-0 tablet:rounded-xl">
-      <div className="desktop:hidden mb-3">
+    <div className="bg-ui-0 p-2 tablet:rounded-xl tablet:p-6">
+      <div className="mb-3 desktop:hidden">
         <Breadcrumb
           crumbs={{
             label: navLabel,
@@ -46,7 +46,7 @@ export const OverviewDAOHeader: React.FC<OverviewDAOHeaderProps> = ({
         />
       </div>
 
-      <div className="tablet:flex items-end tablet:space-x-6">
+      <div className="items-end tablet:flex tablet:space-x-6">
         <div className="w-full">
           <h1 className="font-bold text-ui-800 ft-text-3xl">
             {t('createDAO.overview.title')}
@@ -55,7 +55,7 @@ export const OverviewDAOHeader: React.FC<OverviewDAOHeaderProps> = ({
             {t('createDAO.overview.description')}
           </p>
         </div>
-        <div className="flex mt-2 tablet:mt-0 space-x-2">
+        <div className="mt-2 flex space-x-2 tablet:mt-0">
           {/* <ButtonText
           size="large"
           mode="secondary"
@@ -65,7 +65,7 @@ export const OverviewDAOHeader: React.FC<OverviewDAOHeaderProps> = ({
         /> */}
           <ButtonText
             size="large"
-            className="w-full tablet:w-max whitespace-nowrap"
+            className="w-full whitespace-nowrap tablet:w-max"
             iconRight={<IconChevronRight />}
             label={t('createDAO.overview.button')}
             onClick={handleSetupClick}
@@ -108,7 +108,7 @@ export const OverviewDAOStep: React.FC = () => {
 
   if (isDesktop) {
     return (
-      <div className="tablet:flex space-y-3 tablet:space-y-0 tablet:space-x-3">
+      <div className="space-y-3 tablet:flex tablet:space-x-3 tablet:space-y-0">
         {OverviewCards}
       </div>
     );

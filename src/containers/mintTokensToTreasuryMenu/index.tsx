@@ -72,7 +72,7 @@ const MintTokensToTreasuryMenu: React.FC<Props> = ({
             title={t('modal.mintTokensToTreasury.title')}
             description={t('modal.mintTokensToTreasury.description')}
             content={
-              <div className="mt-3 mb-1.5">
+              <div className="mb-1.5 mt-3">
                 <AlertCard
                   mode="critical"
                   title={t('modal.mintTokensToTreasury.alertTitle')}
@@ -111,9 +111,9 @@ const MintTokensToTreasuryMenu: React.FC<Props> = ({
               bgWhite
             />
             <Title>{t('modal.mintTokensToTreasury.title')}</Title>
-            <div role="presentation" className="w-4 h-4" />
+            <div role="presentation" className="h-4 w-4" />
           </ModalHeader>
-          <div className="flex flex-col py-3 px-2">
+          <div className="flex flex-col px-2 py-3">
             <FormTitle>{t('modal.mintTokensToTreasury.inputLabel')}</FormTitle>
             <FormHelpText>
               {t('modal.mintTokensToTreasury.inputHelptext')}
@@ -139,7 +139,7 @@ const MintTokensToTreasuryMenu: React.FC<Props> = ({
                       ref={ref}
                     />
                   </InputContainer>
-                  <div className="mt-3 mb-1.5">
+                  <div className="mb-1.5 mt-3">
                     <AlertCard
                       mode="critical"
                       title={t('modal.mintTokensToTreasury.alertTitle')}

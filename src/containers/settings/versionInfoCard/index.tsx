@@ -41,7 +41,7 @@ export const VersionInfoCard: React.FC<{
   return (
     <div
       className={
-        'col-span-full desktop:col-span-4 desktop:col-start-8 desktop:row-start-3 mt-1 desktop:-mt-1 desktop:-ml-1'
+        'col-span-full mt-1 desktop:col-span-4 desktop:col-start-8 desktop:row-start-3 desktop:-ml-1 desktop:-mt-1'
       }
     >
       <SettingsCard title={t('setting.versionInfo.title')}>

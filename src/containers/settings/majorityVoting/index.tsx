@@ -104,13 +104,13 @@ const MajorityVotingSettings: React.FC<IPluginSettings> = ({daoDetails}) => {
         <DescriptionPair>
           <Term>{t('votingTerminal.token')}</Term>
           <Definition>
-            <div className="flex flex-wrap flex-1 gap-y-1 justify-between items-start">
+            <div className="flex flex-1 flex-wrap items-start justify-between gap-y-1">
               <Link
                 label={`${daoToken.name} ${daoToken.symbol}`}
                 iconRight={<IconLinkExternal />}
                 href={daoTokenBlockUrl}
                 description={shortenAddress(daoToken.address)}
-                className="flex-shrink-0"
+                className="shrink-0"
               />
 
               {canMintToken && (

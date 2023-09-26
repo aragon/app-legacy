@@ -246,7 +246,7 @@ export const DelegateVotingMenu: React.FC = () => {
       title={t('modal.delegation.label')}
     >
       <FormProvider {...formValues}>
-        <div className="py-3 px-2">
+        <div className="px-2 py-3">
           {txHash != null ? (
             <DelegateVotingSuccess
               txHash={txHash}

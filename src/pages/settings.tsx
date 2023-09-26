@@ -66,7 +66,7 @@ export const Settings: React.FC = () => {
 
       {/* DAO Settings */}
       <div
-        className={`desktop:row-start-3 mt-1 desktop:-mt-1 ${
+        className={`mt-1 desktop:row-start-3 desktop:-mt-1 ${
           daoUpdateEnabled ? styles.leftCol : styles.center
         }`}
       >
@@ -94,7 +94,7 @@ export const Settings: React.FC = () => {
           daoUpdateEnabled ? styles.fullWidth : styles.center
         }`}
       >
-        <div className="mt-1 desktop:-mt-1 space-y-2">
+        <div className="mt-1 space-y-2 desktop:-mt-1">
           <ButtonText
             label={t('settings.edit')}
             className="w-full tablet:w-max"
@@ -163,7 +163,7 @@ const SettingsCardDao: React.FC<{daoDetails: DaoDetails}> = ({daoDetails}) => {
         <Term>{t('labels.daoName')}</Term>
         <Definition>
           <div className="flex items-center space-x-1.5 desktop:space-x-2">
-            <p className="desktop:font-semibold ft-text-base">
+            <p className="ft-text-base desktop:font-semibold">
               {daoDetails.metadata.name}
             </p>
             <AvatarDao
@@ -178,8 +178,8 @@ const SettingsCardDao: React.FC<{daoDetails: DaoDetails}> = ({daoDetails}) => {
       <DescriptionPair>
         <Term>{t('labels.review.blockchain')}</Term>
         <Definition>
-          <div className="flex flex-wrap flex-1 gap-y-1 justify-between">
-            <p className="flex-shrink-0 desktop:font-semibold ft-text-base">
+          <div className="flex flex-1 flex-wrap justify-between gap-y-1">
+            <p className="shrink-0 ft-text-base desktop:font-semibold">
               {chainLabel}
             </p>
             <Tag label={t('labels.notChangeable')} colorScheme="neutral" />
@@ -192,7 +192,7 @@ const SettingsCardDao: React.FC<{daoDetails: DaoDetails}> = ({daoDetails}) => {
           {isL2Network ? t('settings.dao.contractAddress') : t('labels.ens')}
         </Term>
         <Definition>
-          <div className="flex flex-wrap flex-1 gap-y-1 justify-between items-start">
+          <div className="flex flex-1 flex-wrap items-start justify-between gap-y-1">
             <Link
               {...(isL2Network
                 ? {label: shortenAddress(daoDetails.address)}
@@ -201,7 +201,7 @@ const SettingsCardDao: React.FC<{daoDetails: DaoDetails}> = ({daoDetails}) => {
                     description: shortenAddress(daoDetails.address),
                   })}
               type="primary"
-              className="flex-shrink-0"
+              className="shrink-0"
               href={explorerLink}
               iconRight={<IconLinkExternal />}
             />
@@ -238,7 +238,7 @@ const SettingsCardDao: React.FC<{daoDetails: DaoDetails}> = ({daoDetails}) => {
         <DescriptionPair className="border-none">
           <Term>{t('labels.links')}</Term>
           <Definition>
-            <div className="flex relative flex-col space-y-1.5">
+            <div className="relative flex flex-col space-y-1.5">
               {daoDetails.metadata.links.slice(0, 3).map(({name, url}) => (
                 <Link
                   key={url}

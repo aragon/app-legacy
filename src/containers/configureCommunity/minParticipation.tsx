@@ -170,7 +170,7 @@ export const MinParticipation: FC = () => {
 
                     <ProgressInfo2>
                       <p
-                        className="font-bold text-right text-primary-500"
+                        className="text-right font-bold text-primary-500"
                         style={{
                           flexBasis: `${
                             (minParticipationTokensAmount /
@@ -182,7 +182,7 @@ export const MinParticipation: FC = () => {
                         {formattedProgressMinParticipation}
                       </p>
 
-                      <p className="flex-shrink-0 text-ui-600">
+                      <p className="shrink-0 text-ui-600">
                         {t('createDAO.step4.alerts.minimumApprovalAlert', {
                           amount: formattedProgressTotalSupply,
                           tokenSymbol: govTokenSymbol,
