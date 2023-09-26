@@ -162,3 +162,6 @@ export const ETH_TRANSACTION_CALL_LABEL = 'ETH transaction call';
 export const PERSONAL_SIGN_LABEL = 'Personal sign';
 export const PERSONAL_SIGN_BYTES = 32;
 export const PERSONAL_SIGN_SIGNATURE = '0x20c13b0b';
+
+// Proposals
+export const PROPOSALS_PER_PAGE = 6;
