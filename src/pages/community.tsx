@@ -7,12 +7,8 @@ import {
   IllustrationHuman,
   Dropdown,
   ButtonText,
-  IconChevronDown,
   ListItemAction,
-  IconRadioSelected,
-  IconRadioDefault,
   IconCheckmark,
-  IconMenu,
   IconSort,
 } from '@aragon/ods';
 import React, {useState} from 'react';
@@ -200,7 +196,7 @@ export const Community: React.FC = () => {
       <BodyContainer>
         <SearchAndResultWrapper>
           <div className="space-y-2">
-            <div className="flex flex-row desktop:gap-4 gap-2">
+            <div className="flex flex-row gap-2 desktop:gap-4">
               <SearchInput
                 placeholder={t('labels.searchPlaceholder')}
                 containerClassName="grow"
