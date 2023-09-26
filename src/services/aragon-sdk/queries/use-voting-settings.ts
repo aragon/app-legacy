@@ -33,13 +33,44 @@ async function fetchVotingSettings(
   return data;
 }
 
+/**
+ * Type guard to determine if the settings are of type VotingSettings.
+ *
+ * @param settings - Voting settings to check.
+ * @returns Boolean indicating whether settings are of type VotingSettings.
+ */
+export function isTokenVotingSettings(
+  settings: SupportedVotingSettings | undefined | null
+): settings is VotingSettings {
+  return settings ? 'minDuration' in settings : false;
+}
+
+/**
+ * Type guard to determine if the settings are of type MultisigVotingSettings.
+ *
+ * @param settings - Voting settings to check.
+ * @returns Boolean indicating whether settings are of type MultisigVotingSettings.
+ */
+export function isMultisigVotingSettings(
+  settings: SupportedVotingSettings | undefined | null
+): settings is MultisigVotingSettings {
+  return settings ? 'minApprovals' in settings : false;
+}
+
+/**
+ * Custom hook to get voting settings using the specified parameters and options.
+ *
+ * @param params - Parameters required to fetch voting settings.
+ * @param options - Options for the query.
+ * @returns Query object with data, error, and status.
+ */
 export function useVotingSettings(
   params: IFetchVotingSettingsParams,
   options: UseQueryOptions<SupportedVotingSettings | null> = {}
 ) {
   const client = usePluginClient(params.pluginType);
 
-  if (client == null || !params.pluginAddress || !params.pluginType) {
+  if (!client || !params.pluginAddress) {
     options.enabled = false;
   }
 
@@ -48,17 +79,4 @@ export function useVotingSettings(
     () => fetchVotingSettings(params, client),
     options
   );
-}
-
-// type guards
-export function isTokenVotingSettings(
-  settings: SupportedVotingSettings | undefined | null
-): settings is VotingSettings {
-  return settings ? 'minDuration' in settings : false;
-}
-
-export function isMultisigVotingSettings(
-  settings: SupportedVotingSettings | undefined | null
-): settings is MultisigVotingSettings {
-  return settings ? 'minApprovals' in settings : false;
 }
