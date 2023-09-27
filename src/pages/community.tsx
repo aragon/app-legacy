@@ -206,7 +206,7 @@ export const Community: React.FC = () => {
               {!walletBased && (
                 <Dropdown
                   align="end"
-                  className="py-1 px-0"
+                  className="px-0 py-1"
                   style={{minWidth: 'var(--radix-dropdown-menu-trigger-width)'}}
                   sideOffset={8}
                   listItems={[
