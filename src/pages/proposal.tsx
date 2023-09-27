@@ -74,7 +74,7 @@ import {
   getVoteStatus,
   isEarlyExecutable,
   isErc20VotingProposal,
-  isGaselessProposal,
+  isGaslessProposal,
   isMultisigProposal,
 } from 'utils/proposals';
 import {Action, ProposalId} from 'utils/types';
@@ -204,36 +204,57 @@ export const Proposal: React.FC = () => {
     ],
   });
 
-  const isGaseless = isGaselessProposal(proposal);
+  // offchain
+  // const [title, setTitle] = useState<string>('');
+  // const [summary, setSummary] = useState<string>('');
+  // const [description, setDescription] = useState<string>('');
+  // const [isGasless, setIsGasless] = useState(false);
 
-  const title = isGaseless
-    ? (proposal as GaslessVotingProposal)?.vochainMetadata.title.default
-    : proposal?.metadata.title;
-  const summary = isGaseless
-    ? (proposal as GaslessVotingProposal)?.vochainMetadata.questions[0].title
-        .default
-    : proposal?.metadata.summary;
-  const description = isGaseless
-    ? (proposal as GaslessVotingProposal)?.vochainMetadata.description.default
-    : proposal?.metadata.description;
+  // const title = isGaseless
+  //   ? (proposal as GaslessVotingProposal)?.vochainMetadata.title.default
+  //   : proposal?.metadata.title;
+  // const summary = isGaseless
+  //   ? (proposal as GaslessVotingProposal)?.vochainMetadata.questions[0].title
+  //       .default
+  //   : proposal?.metadata.summary;
+  // const description = isGaseless
+  //   ? (proposal as GaslessVotingProposal)?.vochainMetadata.description.default
+  //   : proposal?.metadata.description;
 
   /*************************************************
    *                     Hooks                     *
    *************************************************/
 
+  // useEffect(() => {
+  //   if (!proposal) return;
+  // if (isGaslessProposal(proposal)) {
+  //     setTitle(
+  //       (proposal as GaslessVotingProposal)?.vochainMetadata.title.default || ''
+  //     );
+  //     setDescription(
+  //       (proposal as GaslessVotingProposal)?.vochainMetadata.description
+  //         .default || ''
+  //     );
+  //   } else {
+  //     setTitle(proposal?.metadata.title || '');
+  //     setDescription(proposal?.metadata.description || '');
+  //   };
+  //   setSummary(proposal?.metadata.summary || '');
+  // }, [proposal]);
+
   // set editor data
   useEffect(() => {
-    if (proposal && editor && description) {
+    if (proposal && editor && proposal.metadata.description) {
       editor.commands.setContent(
         // Default list of allowed tags and attributes - https://www.npmjs.com/package/sanitize-html#default-options
-        sanitizeHtml(description!, {
+        sanitizeHtml(proposal.metadata.description!, {
           // the disallowedTagsMode displays the disallowed tags to be rendered as a string
           disallowedTagsMode: 'recursiveEscape',
         }),
         true
       );
     }
-  }, [editor, proposal, description]);
+  }, [editor, proposal]);
 
   useEffect(() => {
     if (proposalStatus) {
@@ -480,7 +501,7 @@ export const Proposal: React.FC = () => {
     voted = proposal.approvals.some(
       a => a.toLowerCase() === address.toLowerCase()
     );
-  } else if (isGaseless) {
+  } else if (isGaslessProposal(proposal)) {
     voted = offchainAlreadyVote;
   } else {
     voted = proposal.votes.some(

@@ -6,7 +6,6 @@ import {
   OffchainVotingClient,
   OffchainVotingContext,
 } from '@vocdoni/offchain-voting';
-import {EnvOptions} from '@vocdoni/sdk';
 import {VocdoniEnv} from './useVocdoniSdk';
 
 export const GaselessPluginName =

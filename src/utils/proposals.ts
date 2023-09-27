@@ -91,7 +91,7 @@ export function isMultisigProposal(
   return 'approvals' in proposal;
 }
 
-export function isGaselessProposal(
+export function isGaslessProposal(
   proposal: SupportedProposals | undefined
 ): proposal is GaslessVotingProposal {
   if (!proposal) return false;
