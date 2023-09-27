@@ -17,6 +17,7 @@ import {TokenVotingWalletField} from 'components/addWallets/row';
 import {MultisigWalletField} from 'components/multisigWallets/row';
 import {TimeFilter, TransferTypes} from './constants';
 import {Web3Address} from './library';
+import {GaslessVotingProposal} from '@vocdoni/offchain-voting';
 import {stripPlgnAdrFromProposalId} from './proposals';
 import {TokenType} from './validators';
 
@@ -176,10 +177,14 @@ export type Erc20ProposalVote = {
   weight: bigint;
 };
 
-export type DetailedProposal = MultisigProposal | TokenVotingProposal;
+export type DetailedProposal =
+  | MultisigProposal
+  | TokenVotingProposal
+  | GaslessVotingProposal;
 export type ProposalListItem =
   | TokenVotingProposalListItem
-  | MultisigProposalListItem;
+  | MultisigProposalListItem
+  | GaslessVotingProposal;
 export type SupportedProposals = DetailedProposal | ProposalListItem;
 
 export type SupportedVotingSettings = MultisigVotingSettings | VotingSettings;
@@ -523,7 +528,11 @@ export class ProposalId {
    */
   stripPlgnAdrFromProposalId() {
     const split = this.id.split('_');
-    return {address: split[0], proposal: Number(split[1]) || undefined};
+    return {
+      address: split[0],
+      // Weird JS error, if you do Number(split[1]) and the number is `0x0` ir returns undefined...
+      proposal: split[1] === '0x0' ? Number(0) : Number(split[1]),
+    };
   }
 }
 

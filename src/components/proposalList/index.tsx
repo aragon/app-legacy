@@ -22,6 +22,7 @@ import {
   getErc20Results,
   isErc20VotingProposal,
   stripPlgnAdrFromProposalId,
+  isGaselessProposal,
 } from 'utils/proposals';
 import {ProposalListItem} from 'utils/types';
 import {useWallet} from 'hooks/useWallet';
@@ -98,7 +99,8 @@ const ProposalList: React.FC<ProposalListProps> = ({
           navigate,
           t,
           daoAddressOrEns,
-          address
+          address,
+          pluginAddress
         )
       ),
     [
@@ -157,7 +159,8 @@ export function proposal2CardProps(
   navigate: NavigateFunction,
   t: TFunction,
   daoAddressOrEns: string,
-  address: string | null
+  address: string | null,
+  pluginAddress: string
 ): {id: string} & CardProposalProps {
   const publisherDisplayName =
     address && proposal.creatorAddress.toLowerCase() === address.toLowerCase()
@@ -296,6 +299,28 @@ export function proposal2CardProps(
     } else {
       return {...props, ...specificProps};
     }
+  } else if (isGaselessProposal(proposal)) {
+    const specificProps = {
+      voteTitle: t('governance.proposals.voteTitle'),
+      stateLabel: PROPOSAL_STATE_LABELS,
+
+      alertMessage: translateProposalDate(
+        proposal.status,
+        proposal.startDate,
+        proposal.endDate
+      ),
+
+      onClick: () => {
+        navigate(
+          generatePath(Proposal, {
+            network,
+            dao: daoAddressOrEns,
+            id: pluginAddress + '_' + proposal.id,
+          })
+        );
+      },
+    };
+    return {...props, ...specificProps};
   } else {
     throw Error('invalid proposal type');
   }

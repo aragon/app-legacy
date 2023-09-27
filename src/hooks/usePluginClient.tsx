@@ -41,8 +41,8 @@ export function isMultisigClient(
 }
 
 export function isOffchainVotingClient(
-  client: TokenVotingClient | MultisigClient | OffchainVotingContext
-): client is OffchainVotingContext {
+  client: TokenVotingClient | MultisigClient | OffchainVotingClient
+): client is OffchainVotingClient {
   if (!client || Object.keys(client).length === 0) return false;
   return client instanceof OffchainVotingClient;
 }

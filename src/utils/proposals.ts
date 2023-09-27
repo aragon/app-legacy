@@ -43,6 +43,7 @@ import {
   SupportedProposals,
   SupportedVotingSettings,
 } from './types';
+import {GaslessVotingProposal} from '@vocdoni/offchain-voting';
 
 export type TokenVotingOptions = StrictlyExclude<
   VoterType['option'],
@@ -88,6 +89,13 @@ export function isMultisigProposal(
 ): proposal is MultisigProposal {
   if (!proposal) return false;
   return 'approvals' in proposal;
+}
+
+export function isGaselessProposal(
+  proposal: SupportedProposals | undefined
+): proposal is GaslessVotingProposal {
+  if (!proposal) return false;
+  return 'vochainProposalId' in proposal;
 }
 
 /**
