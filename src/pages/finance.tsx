@@ -49,7 +49,13 @@ export const Finance: React.FC = () => {
   const {breadcrumbs, icon, tag} = useMappedBreadcrumbs();
 
   const {handleTransferClicked} = useTransactionDetailContext();
-  const {tokens, totalAssetChange, totalAssetValue, transfers} = useDaoVault();
+  const {
+    tokens,
+    totalAssetChange,
+    totalAssetValue,
+    transfers,
+    isDaoBalancePositive,
+  } = useDaoVault();
 
   sortTokens(tokens, 'treasurySharePercentage', true);
 
@@ -91,7 +97,7 @@ export const Finance: React.FC = () => {
     }
 
     // tokens only empty state
-    if (tokens.length === 0) {
+    if (tokens.length === 0 && !isDaoBalancePositive) {
       return (
         <PageWrapper includeHeader={false}>
           <div className="mt-5 mb-8">
@@ -213,7 +219,7 @@ export const Finance: React.FC = () => {
     }
 
     // tokens only empty state
-    if (tokens.length === 0) {
+    if (tokens.length === 0 && !isDaoBalancePositive) {
       return (
         <PageWrapper
           customHeader={
@@ -320,13 +326,15 @@ export const Finance: React.FC = () => {
         </HeaderContainer>
       }
     >
-      <div className={'mt-1 tablet:mt-5 mb-3 tablet:mb-8'}>
-        <TokenSectionWrapper title={t('finance.tokenSection')}>
-          <ListContainer>
-            <TokenList tokens={tokens.slice(0, 5)} />
-          </ListContainer>
-        </TokenSectionWrapper>
-      </div>
+      {tokens.length !== 0 && (
+        <div className={'mt-1 tablet:mt-5 mb-3 tablet:mb-8'}>
+          <TokenSectionWrapper title={t('finance.tokenSection')}>
+            <ListContainer>
+              <TokenList tokens={tokens.slice(0, 5)} />
+            </ListContainer>
+          </TokenSectionWrapper>
+        </div>
+      )}
       <TransferSectionWrapper title={t('finance.transferSection')} showButton>
         <ListContainer>
           <TransferList

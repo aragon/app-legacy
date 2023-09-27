@@ -105,6 +105,7 @@ export const useDaoVault = (
     totalAssetValue: tokenPrices.totalAssetValue,
     totalAssetChange: tokenPrices.totalAssetChange,
     transfers: transferPrices.transfers,
+    isDaoBalancePositive: transferPrices.isDaoBalancePositive,
     isTokensLoading,
     isTransfersLoading,
     isCumulativeStatsLoading,
