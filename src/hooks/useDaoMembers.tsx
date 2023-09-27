@@ -5,7 +5,7 @@ import {formatUnits} from 'ethers/lib/utils';
 import {HookData} from 'utils/types';
 import {useDaoToken} from './useDaoToken';
 import {
-  OFFCHAIN_PLUGIN_NAME,
+  GaselessPluginName,
   PluginTypes,
   usePluginClient,
 } from './usePluginClient';
@@ -131,7 +131,7 @@ export const useDaoMembers = (
 
   const isTokenBased =
     pluginType === 'token-voting.plugin.dao.eth' ||
-    pluginType === OFFCHAIN_PLUGIN_NAME;
+    pluginType === GaselessPluginName;
 
   const opts = options ? options : {};
   let memberCount = 0;
