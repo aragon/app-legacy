@@ -28,7 +28,8 @@ async function fetchProposalsAsync(
   Array<MultisigProposalListItem> | Array<TokenVotingProposalListItem>
 > {
   invariant(!!client, 'fetchProposalsAsync: client is not defined');
-  return client.methods.getProposals(params);
+  const data = await client.methods.getProposals(params);
+  return data;
 }
 
 export const useProposals = (

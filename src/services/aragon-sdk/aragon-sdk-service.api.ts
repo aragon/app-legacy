@@ -35,3 +35,8 @@ export interface IFetchVotingSettingsParams {
 export interface IFetchProposalsParams extends ProposalQueryParams {
   pluginType?: PluginTypes;
 }
+
+export interface IFetchProposalParams {
+  pluginType?: PluginTypes;
+  id: string;
+}
