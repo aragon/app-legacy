@@ -163,7 +163,7 @@ export const Governance: React.FC = () => {
         <ListWrapper>
           <ProposalList
             daoAddressOrEns={
-              toDisplayEns(daoDetails?.ensDomain) ??
+              toDisplayEns(daoDetails?.ensDomain) ||
               (daoDetails?.address as string)
             }
             proposals={data?.pages.flat() ?? []}
