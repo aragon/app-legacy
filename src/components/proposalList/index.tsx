@@ -309,7 +309,8 @@ export function proposal2CardProps(
         proposal.startDate,
         proposal.endDate
       ),
-
+      title: proposal.vochainMetadata.title.default,
+      description: proposal.vochainMetadata.questions[0].title.default,
       onClick: () => {
         navigate(
           generatePath(Proposal, {
