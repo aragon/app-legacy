@@ -1,7 +1,7 @@
 import {useWallet} from './useWallet';
 import {useClient} from '@vocdoni/react-providers';
 import {useCallback, useEffect, useState} from 'react';
-import {OFFCHAIN_PLUGIN_NAME, usePluginClient} from './usePluginClient';
+import {GaselessPluginName, usePluginClient} from './usePluginClient';
 import {ErrTokenAlreadyExists} from '@vocdoni/sdk';
 
 /**
@@ -28,7 +28,7 @@ export const useCensus3SupportedChains = () => {
 };
 
 export const useCensus3CreateToken = () => {
-  const client = usePluginClient(OFFCHAIN_PLUGIN_NAME);
+  const client = usePluginClient(GaselessPluginName);
   const {census3} = useClient();
   const {chainId} = useWallet();
   const {isSupported} = useCensus3SupportedChains();

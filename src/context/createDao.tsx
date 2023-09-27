@@ -179,9 +179,9 @@ const CreateDaoProvider: React.FC<{children: ReactNode}> = ({children}) => {
             parseInt(executionExpirationHours),
             parseInt(executionExpirationMinutes)
           )
-        ),
+        ).toBigInt(),
         minTallyApprovals: Number(committeeMinimumApproval),
-        minDuration: BigNumber.from(votingSettings.minDuration),
+        minDuration: BigNumber.from(votingSettings.minDuration).toBigInt(),
         minParticipation: votingSettings.minParticipation,
         supportThreshold: votingSettings.supportThreshold,
         minProposerVotingPower: votingSettings.minProposerVotingPower as bigint,
