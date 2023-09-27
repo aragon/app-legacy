@@ -84,9 +84,6 @@ import {
 } from 'utils/proposals';
 import {Action, ProposalId} from 'utils/types';
 
-// TODO: @Sepehr Please assign proper tags on action decoding
-// const PROPOSAL_TAGS = ['Finance', 'Withdraw'];
-
 const PENDING_PROPOSAL_STATUS_INTERVAL = 1000 * 10;
 const PROPOSAL_STATUS_INTERVAL = 1000 * 60;
 const NumberFormatter = new Intl.NumberFormat('en-US');
