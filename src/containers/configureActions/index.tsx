@@ -69,16 +69,21 @@ const ConfigureActions: React.FC<ConfigureActionsProps> = ({
   }, []);
 
   const handleAddNewActionClick = () => {
-    if (onAddNewActionClick) onAddNewActionClick();
-    else open('addAction');
+    if (onAddNewActionClick) {
+      onAddNewActionClick();
+    } else {
+      open('addAction');
+    }
   };
 
   const handleExtraActionClick = () => {
-    trackEvent('newProposal_addAction_clicked', {
-      dao_address: daoAddressOrEns,
-    });
-    if (onAddExtraActionClick) onAddExtraActionClick();
-    else open('addAction');
+    trackEvent('newProposal_addAction_clicked', {dao_address: daoAddressOrEns});
+
+    if (onAddExtraActionClick) {
+      onAddExtraActionClick();
+    } else {
+      open('addAction');
+    }
   };
 
   return (

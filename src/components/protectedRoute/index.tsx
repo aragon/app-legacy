@@ -95,7 +95,9 @@ const ProtectedRoute: React.FC = () => {
         Number(votingPower) < minProposalThreshold
       ) {
         open('gating');
-      } else close();
+      } else {
+        close();
+      }
     }
   }, [
     address,
@@ -110,21 +112,25 @@ const ProtectedRoute: React.FC = () => {
   ]);
 
   const gateMultisigProposal = useCallback(() => {
-    if ((votingSettings as MultisigVotingSettings)?.onlyListed === false) {
-      close();
-    } else if (
-      !filteredMembers.some(
-        mem => mem.address.toLowerCase() === address?.toLowerCase()
-      ) &&
-      !membersAreLoading
-    ) {
+    const everyoneAllowed =
+      (votingSettings as MultisigVotingSettings)?.onlyListed === false;
+
+    const isMember = filteredMembers.some(
+      ({address: memberAddress}) =>
+        memberAddress.toLowerCase() === address?.toLowerCase()
+    );
+
+    if (!membersAreLoading && !isMember && !everyoneAllowed && !isOpen) {
       open('gating');
-    } else {
+    }
+
+    if (isOpen && (isMember || everyoneAllowed)) {
       close();
     }
   }, [
     membersAreLoading,
     close,
+    isOpen,
     votingSettings,
     open,
     address,
@@ -149,8 +155,11 @@ const ProtectedRoute: React.FC = () => {
     if (!address && userWentThroughLoginFlowRef.current === false) {
       setShowLoginModal(true);
     } else {
-      if (isOnWrongNetwork) open('network');
-      else close();
+      if (isOnWrongNetwork) {
+        open('network');
+      } else {
+        close();
+      }
     }
   }, [address, close, isOnWrongNetwork, open]);
 

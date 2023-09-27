@@ -17,7 +17,7 @@ export type BottomSheetProps = {
 export default function BottomSheet({
   children,
   isOpen,
-  onClose = () => null,
+  onClose,
   title,
   subtitle,
   closeOnDrag = true,
@@ -36,7 +36,7 @@ export default function BottomSheet({
       info.velocity.y > 20 || (info.velocity.y >= 0 && info.point.y > 45);
     if (shouldClose) {
       controls.start('hidden');
-      onClose();
+      onClose?.();
     } else {
       controls.start('visible');
     }
