@@ -74,16 +74,17 @@ import {
   getVoteStatus,
   isEarlyExecutable,
   isErc20VotingProposal,
+  isGaselessProposal,
   isMultisigProposal,
 } from 'utils/proposals';
 import {Action, ProposalId} from 'utils/types';
-import {ElectionProvider, useElection} from '@vocdoni/react-providers';
-import useOffchainVoting from '../context/useOffchainVoting';
 import {format} from 'date-fns';
 import {getFormattedUtcOffset, KNOWN_FORMATS} from '../utils/date';
-import {formatUnits, IChoice} from '@vocdoni/sdk';
+import {formatUnits} from '@vocdoni/sdk';
 import Big from 'big.js';
 import {OffchainVotingTerminal} from '../containers/votingTerminal/offchainVotingTerminal';
+import {GaslessVotingProposal} from '@vocdoni/offchain-voting';
+import {useOffchainHasAlreadyVote} from '../context/useOffchainVoting';
 
 const PENDING_PROPOSAL_STATUS_INTERVAL = 1000 * 10;
 const PROPOSAL_STATUS_INTERVAL = 1000 * 60;
@@ -175,6 +176,9 @@ export const Proposal: React.FC = () => {
     proposalStatus as string
   );
 
+  const {hasAlreadyVote: offchainAlreadyVote} = useOffchainHasAlreadyVote({
+    proposal,
+  });
   const pluginClient = usePluginClient(pluginType);
 
   // ref used to hold "memories" of previous "state"
@@ -200,18 +204,11 @@ export const Proposal: React.FC = () => {
     ],
   });
 
-  // todo(kon): delete this when needed
-  const offChain = true;
-  const {election: vocdoniElection} = useElection();
-  const title = offChain
-    ? vocdoniElection?.title.default
-    : proposal?.metadata.title;
-  const summary = offChain
-    ? vocdoniElection?.questions[0].title.default
-    : proposal?.metadata.summary;
-  const description = offChain
-    ? vocdoniElection?.description.default
-    : proposal?.metadata.description;
+  const isGaseless = isGaselessProposal(proposal);
+
+  const title = proposal?.metadata.title;
+  const summary = proposal?.metadata.summary;
+  const description = proposal?.metadata.description;
 
   /*************************************************
    *                     Hooks                     *
@@ -476,6 +473,8 @@ export const Proposal: React.FC = () => {
     voted = proposal.approvals.some(
       a => a.toLowerCase() === address.toLowerCase()
     );
+  } else if (isGaseless) {
+    voted = offchainAlreadyVote;
   } else {
     voted = proposal.votes.some(
       voter =>
@@ -725,17 +724,16 @@ export const Proposal: React.FC = () => {
               />
             )}
 
-          {/*todo(kon): set the condition properly (if offchain, TokenVotingProposal*/}
-          {votingSettings && offChain ? (
+          {votingSettings && isGaseless ? (
             <OffchainVotingTerminal
               votingStatusLabel={voteStatus}
               votingTerminal={<VTerminal />}
-              // proposal={proposal as TokenVotingProposal}
-              vocdoniElection={vocdoniElection}
-              proposalId={proposalId}
+              proposal={proposal}
+              // vocdoniElection={vocdoniElection}
+              // proposalId={proposalId}
             />
           ) : (
-            <VTerminal />
+            votingSettings && <VTerminal /> // todo(kon): fix this conditions
           )}
 
           <ExecutionWidget

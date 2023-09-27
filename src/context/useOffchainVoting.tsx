@@ -1,5 +1,8 @@
-import {useClient as useVocdoniClient} from '@vocdoni/react-providers';
-import {useCallback} from 'react';
+import {
+  useClient,
+  useClient as useVocdoniClient,
+} from '@vocdoni/react-providers';
+import {useCallback, useEffect, useState} from 'react';
 import {VoteProposalParams} from '@aragon/sdk-client';
 import {Vote} from '@vocdoni/sdk';
 import {
@@ -11,6 +14,9 @@ import {
   StepStatus,
   useFunctionStepper,
 } from '../hooks/useFunctionStepper';
+import {GaslessVotingProposal} from '@vocdoni/offchain-voting';
+import {DetailedProposal} from '../utils/types';
+import {isGaselessProposal} from '../utils/proposals';
 
 // todo(kon): move this block somewhere else
 export enum OffchainVotingStepId {
@@ -95,6 +101,39 @@ const useOffchainVoting = () => {
   );
 
   return {vote, getElectionId, steps, globalState};
+};
+
+/**
+ * Wrapper for client.hasAlreadyVoted().
+ *
+ * Used to call asynchronously the has already vote function and store it on a react state.
+ */
+export const useOffchainHasAlreadyVote = ({
+  proposal,
+}: {
+  proposal: DetailedProposal | undefined;
+}) => {
+  const [hasAlreadyVote, setHasAlreadyVote] = useState(false);
+  const {client} = useClient();
+
+  useEffect(() => {
+    const checkAlreadyVote = async () => {
+      setHasAlreadyVote(
+        !!(await client.hasAlreadyVoted(
+          (proposal as GaslessVotingProposal)!.vochainProposalId!
+        ))
+      );
+    };
+    if (
+      client &&
+      proposal &&
+      isGaselessProposal(proposal) &&
+      proposal?.vochainProposalId
+    )
+      checkAlreadyVote();
+  }, [client, proposal]);
+
+  return {hasAlreadyVote};
 };
 
 export default useOffchainVoting;
