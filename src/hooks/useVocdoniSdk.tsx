@@ -2,11 +2,15 @@ import {Signer} from '@ethersproject/abstract-signer';
 import React from 'react';
 import {useWallet} from './useWallet';
 import {ClientProvider} from '@vocdoni/react-providers';
+import {EnvOptions} from '@vocdoni/sdk';
+
+// todo(kon): move this to be set by .env file
+export const VocdoniEnv: EnvOptions = EnvOptions.STG;
 
 export const VocdoniClientProvider: React.FC = ({children}) => {
   const {signer} = useWallet();
   return (
-    <ClientProvider env="stg" signer={signer as Signer}>
+    <ClientProvider env={VocdoniEnv} signer={signer as Signer}>
       {children}
     </ClientProvider>
   );

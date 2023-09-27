@@ -3,9 +3,11 @@ import {useEffect, useState} from 'react';
 
 import {useClient} from './useClient';
 import {
-  OffchainVotingContext,
   OffchainVotingClient,
+  OffchainVotingContext,
 } from '@vocdoni/offchain-voting';
+import {EnvOptions} from '@vocdoni/sdk';
+import {VocdoniEnv} from './useVocdoniSdk';
 
 export const GaselessPluginName =
   'vocdoni-offchain-voting-test-3.plugin.dao.eth';
@@ -74,7 +76,10 @@ export const usePluginClient = <T extends PluginTypes = PluginTypes>(
           break;
         case GaselessPluginName:
           setPluginClient(
-            new OffchainVotingClient(new OffchainVotingContext(context))
+            new OffchainVotingClient(
+              new OffchainVotingContext(context),
+              VocdoniEnv
+            )
           );
           break;
         default:
