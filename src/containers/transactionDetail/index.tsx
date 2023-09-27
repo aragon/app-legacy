@@ -16,15 +16,15 @@ import styled from 'styled-components';
 import ModalBottomSheetSwitcher from 'components/modalBottomSheetSwitcher';
 import {useNetwork} from 'context/network';
 import {useTransactionDetailContext} from 'context/transactionDetail';
-import {useDaoProposal} from 'hooks/useDaoProposal';
+import {useDaoDetailsQuery} from 'hooks/useDaoDetails';
 import {PluginTypes} from 'hooks/usePluginClient';
 import {trackEvent} from 'services/analytics';
+import {useProposal} from 'services/aragon-sdk/queries/use-proposal';
 import {CHAIN_METADATA, TransferTypes} from 'utils/constants';
+import {toDisplayEns} from 'utils/library';
 import {Proposal} from 'utils/paths';
 import {abbreviateTokenAmount} from 'utils/tokens';
 import {Withdraw} from 'utils/types';
-import {toDisplayEns} from 'utils/library';
-import {useDaoDetailsQuery} from 'hooks/useDaoDetails';
 
 const TransactionDetail: React.FC = () => {
   const {t} = useTranslation();
@@ -44,12 +44,10 @@ const TransactionDetail: React.FC = () => {
       ? (transfer as Withdraw).proposalId
       : undefined;
 
-  const {data: proposal} = useDaoProposal(
-    address,
-    proposalId,
-    plugins?.[0].id as PluginTypes,
-    plugins?.[0].instanceAddress ?? ''
-  );
+  const {data: proposal} = useProposal({
+    pluginType: plugins?.[0].id as PluginTypes,
+    id: proposalId?.toString() ?? '',
+  });
 
   const handleNavigateToProposal = useCallback(() => {
     navigate(

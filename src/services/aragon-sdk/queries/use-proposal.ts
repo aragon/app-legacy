@@ -29,7 +29,7 @@ export const useProposal = (
 ) => {
   const client = usePluginClient(params.pluginType);
 
-  if (!client) {
+  if (!client || !params.id || !params.pluginType) {
     options.enabled = false;
   }
 
