@@ -1,4 +1,5 @@
 import {InfuraProvider, JsonRpcProvider} from '@ethersproject/providers';
+import {namehash} from '@ethersproject/hash';
 import {BigNumber, providers as EthersProviders, ethers} from 'ethers';
 import {isAddress, parseUnits} from 'ethers/lib/utils';
 import {FieldError, FieldErrors, ValidateResult} from 'react-hook-form';
@@ -24,6 +25,7 @@ import {
   Nullable,
 } from './types';
 import {getEtherscanVerifiedContract} from 'services/etherscanAPI';
+import {ensRegistryABI} from 'abis/ensRegistryABI';
 
 export type TokenType =
   | 'ERC-20'
@@ -317,21 +319,30 @@ export function isDaoEnsNameValid(
     return true;
   }
 
+  const contract = new ethers.Contract(
+    // The contract address is same for all supported chains
+    '0x00000000000c2e074ec69a0dfb2997ba6c7d2e1e',
+    ensRegistryABI,
+    provider
+  );
+
   // We might need to combine the method with setTimeout (Similar to useDebouncedState)
   // for better performance
   try {
-    provider?.resolveName(`${value}.dao.eth`).then(result => {
-      const inputValue = getValues('daoEnsName');
-      // Check to see if the response belongs to current value
-      if (value === inputValue) {
-        if (result) {
-          setError('daoEnsName', {
-            type: 'validate',
-            message: i18n.t('errors.ensDuplication'),
-          });
-        } else clearError();
-      }
-    });
+    contract
+      .recordExists(namehash(`${value}.dao.eth`))
+      .then((result: boolean) => {
+        const inputValue = getValues('daoEnsName');
+        // Check to see if the response belongs to current value
+        if (value === inputValue) {
+          if (result) {
+            setError('daoEnsName', {
+              type: 'validate',
+              message: i18n.t('errors.ensDuplication'),
+            });
+          } else clearError();
+        }
+      });
 
     return i18n.t('infos.checkingEns');
 
