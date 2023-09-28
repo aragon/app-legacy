@@ -2,7 +2,7 @@ import {
   useClient,
   useClient as useVocdoniClient,
 } from '@vocdoni/react-providers';
-import {useCallback, useEffect, useState} from 'react';
+import {useCallback, useEffect, useMemo, useState} from 'react';
 import {VoteProposalParams} from '@aragon/sdk-client';
 import {Vote} from '@vocdoni/sdk';
 import {
@@ -14,9 +14,18 @@ import {
   StepStatus,
   useFunctionStepper,
 } from '../hooks/useFunctionStepper';
-import {GaslessVotingProposal} from '@vocdoni/offchain-voting';
+import {
+  GaslessVotingProposal,
+  isProposalApproved,
+} from '@vocdoni/offchain-voting';
 import {DetailedProposal} from '../utils/types';
-import {isGaslessProposal} from '../utils/proposals';
+import {
+  isGaslessProposal,
+  isMultisigProposal,
+  stripPlgnAdrFromProposalId,
+} from '../utils/proposals';
+import {GaselessPluginName, usePluginClient} from '../hooks/usePluginClient';
+import {useWallet} from '../hooks/useWallet';
 
 // todo(kon): move this block somewhere else
 export enum OffchainVotingStepId {
@@ -134,6 +143,43 @@ export const useOffchainHasAlreadyVote = ({
   }, [client, proposal]);
 
   return {hasAlreadyVote};
+};
+
+export const useOffchainCommitteVotes = (
+  pluginAddress: string,
+  proposal: GaslessVotingProposal
+) => {
+  const [canVote, setCanVote] = useState(false);
+  const client = usePluginClient(GaselessPluginName);
+  const {address} = useWallet();
+
+  const voted = useMemo(() => {
+    return proposal.approvers?.some(approver => approver === address);
+  }, [address, proposal.approvers]);
+
+  const isApproved = useMemo(() => {
+    return isProposalApproved(
+      proposal.tallyVochain,
+      proposal.approvers.length,
+      proposal.settings.supportThreshold,
+      proposal.settings.minParticipation
+    );
+  }, [proposal]);
+
+  useEffect(() => {
+    const doCheck = async () => {
+      const canVote = await client?.methods.isCommitteeMember(
+        pluginAddress,
+        address!
+      );
+      setCanVote(canVote || false);
+    };
+    if (address && client) {
+      voted ? setCanVote(true) : doCheck();
+    }
+  }, [address, client, pluginAddress, voted]);
+
+  return {canVote, voted, isApproved};
 };
 
 export default useOffchainVoting;

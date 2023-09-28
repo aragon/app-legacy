@@ -1,8 +1,5 @@
-import {getVoteButtonLabel, getVoteStatus} from '../../utils/proposals';
 import {TerminalTabs, VotingTerminal, VotingTerminalProps} from './index';
-import React, {ReactNode, useMemo, useState} from 'react';
-import {CreateMajorityVotingProposalParams} from '@aragon/sdk-client';
-import {ProposalStatus} from '@aragon/sdk-client-common';
+import React, {ReactNode, useEffect, useMemo, useState} from 'react';
 import {TFunction, useTranslation} from 'react-i18next';
 import {format} from 'date-fns';
 import {getFormattedUtcOffset, KNOWN_FORMATS} from '../../utils/date';
@@ -10,29 +7,32 @@ import {VoterType} from '@aragon/ods';
 import styled from 'styled-components';
 import {AccordionItem} from '../../components/accordionMethod';
 import {Accordion} from '@radix-ui/react-accordion';
-import {
-  GaslessVotingProposal,
-  OffchainVotingClient,
-} from '@vocdoni/offchain-voting';
-import {usePluginClient} from '../../hooks/usePluginClient';
+import {GaslessVotingProposal} from '@vocdoni/offchain-voting';
+import {GaselessPluginName, usePluginClient} from '../../hooks/usePluginClient';
+import {useOffchainCommitteVotes} from '../../context/useOffchainVoting';
 import {ProposalId} from '../../utils/types';
-import {PublishedElection} from '@vocdoni/sdk';
 
 export const OffchainVotingTerminal = ({
   votingStatusLabel,
   votingTerminal,
   proposal,
+  proposalId,
 }: {
   votingStatusLabel: string;
   votingTerminal: ReactNode;
   proposal: GaslessVotingProposal;
-  // proposalId: ProposalId | undefined;
-  // vocdoniElection: PublishedElection | undefined;
+  proposalId: ProposalId | undefined;
 }) => {
   const {t} = useTranslation();
   const [terminalTab, setTerminalTab] = useState<TerminalTabs>('breakdown');
-  const pluginClient = usePluginClient();
-  const offChainVotingClient = pluginClient as OffchainVotingClient;
+  const pluginClient = usePluginClient(GaselessPluginName);
+
+  const {address} = proposalId!.stripPlgnAdrFromProposalId();
+
+  const {voted, canVote, isApproved} = useOffchainCommitteVotes(
+    address,
+    proposal
+  );
 
   // todo(kon): mocked data that will come from proposal info to let the committee vote
   // const members: MultisigMember[] = [
@@ -75,18 +75,16 @@ export const OffchainVotingTerminal = ({
   //
   // const committeeVoteStatus = getVoteStatus(committeeProposal, t);
 
-  const mappedProps = useMemo(async () => {
+  const mappedProps = useMemo(() => {
     if (!proposal) return;
 
-    const meta = proposal.vochainMetadata as CreateMajorityVotingProposalParams;
-
-    const mappedMembers = new Map(
-      // map multisig members to voterType
-      proposal.approvers?.map(member => [
-        member,
-        {wallet: member, option: 'none'} as VoterType,
-      ])
-    );
+    // const mappedMembers = new Map(
+    //   // map multisig members to voterType
+    //   proposal.approvers?.map(member => [
+    //     member,
+    //     {wallet: member, option: 'none'} as VoterType,
+    //   ])
+    // );
     const endDate = `${format(
       proposal.parameters.endDate,
       KNOWN_FORMATS.proposals
@@ -98,9 +96,11 @@ export const OffchainVotingTerminal = ({
     )}  ${getFormattedUtcOffset()}`;
 
     return {
-      // approvals: proposal.approvals,
+      approvals: proposal.approvers,
+      // The voters list is not on the proposal object
+      voters: new Array<VoterType>(proposal.settings.minTallyApprovals),
       minApproval: proposal.settings.minTallyApprovals,
-      voters: [...mappedMembers.values()],
+      // voters: [...mappedMembers.values()],
       strategy: t('votingTerminal.multisig'),
       voteOptions: t('votingTerminal.approve'),
       startDate,
@@ -119,28 +119,45 @@ export const OffchainVotingTerminal = ({
   //     ? 'Approve and execute now'
   //     : 'Aprrove';
 
-  const CommitteeVotingTerminal = () => (
-    <VotingTerminal
-      status={proposal.status}
-      statusLabel={votingStatusLabel} // todo(kon): implement committee vote status
-      selectedTab={terminalTab}
-      // alertMessage={alertMessage}
-      onTabSelected={setTerminalTab}
-      // onVoteClicked={onClick}
-      // onCancelClicked={() => setVotingInProcess(false)}
-      // voteButtonLabel={getVoteButtonLabel(committeeProposal, canVote, voted, t)}
-      voteButtonLabel={'todo'} // todo(kon): implement getVoteButtonLabel
-      // voteNowDisabled={voteNowDisabled}
-      // votingInProcess={votingInProcess}
-      // onVoteSubmitClicked={vote =>
-      //   handleSubmitVote(
-      //     vote,
-      //     (proposal as TokenVotingProposal).token?.address
-      //   )
-      // }
-      {...mappedProps}
-    />
-  );
+  const buttonLabel = useMemo(() => {
+    if (proposal) {
+      return getCommitteVoteButtonLabel(
+        proposal,
+        canVote,
+        voted,
+        isApproved,
+        t
+      );
+    }
+  }, [proposal, voted, canVote, t]);
+
+  const CommitteeVotingTerminal = () => {
+    return (
+      <VotingTerminal
+        status={proposal.status}
+        statusLabel={votingStatusLabel} // todo(kon): implement committee vote status
+        selectedTab={terminalTab}
+        // alertMessage={alertMessage} // todo(kon): implement
+        onTabSelected={setTerminalTab}
+        onVoteClicked={() => {
+          console.log('onVoteClicked');
+        }} // todo(kon): implement
+        // onCancelClicked={() => setVotingInProcess(false)}
+        voteButtonLabel={buttonLabel} // todo(kon): implement getVoteButtonLabel
+        voteNowDisabled={!canVote} // todo(kon): implement
+        // votingInProcess={votingInProcess} // Only for token voting
+        onVoteSubmitClicked={() => {
+          console.log('onVoteSubmitClicked');
+          // todo(kon): implement
+          // handleSubmitVote(
+          //   vote,
+          //   (proposal as TokenVotingProposal).token?.address
+          // )
+        }}
+        {...mappedProps}
+      />
+    );
+  };
 
   return (
     <Container>
@@ -151,14 +168,14 @@ export const OffchainVotingTerminal = ({
         </Summary>
       </Header>
       <Accordion type={'multiple'}>
-        <AccordionItem
-          name={'community-voting'}
-          type={'action-builder'}
-          methodName={'Community Voting'}
-          alertLabel={votingStatusLabel}
-        >
-          {votingTerminal}
-        </AccordionItem>
+        {/*<AccordionItem*/}
+        {/*  name={'community-voting'}*/}
+        {/*  type={'action-builder'}*/}
+        {/*  methodName={'Community Voting'}*/}
+        {/*  alertLabel={votingStatusLabel}*/}
+        {/*>*/}
+        {/*  {votingTerminal}*/}
+        {/*</AccordionItem>*/}
         <AccordionItem
           name={'actions-approval'}
           type={'action-builder'}
@@ -173,10 +190,11 @@ export const OffchainVotingTerminal = ({
 };
 
 // todo(kon): move this somewhere
-export function getCommitteVoteButtonLabel(
+function getCommitteVoteButtonLabel(
   proposal: GaslessVotingProposal,
   canVoteOrApprove: boolean,
   votedOrApproved: boolean,
+  approved: boolean,
   t: TFunction
 ) {
   const label = 'todo';

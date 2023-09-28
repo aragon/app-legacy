@@ -762,7 +762,7 @@ export const Proposal: React.FC = () => {
               votingTerminal={<VTerminal />}
               proposal={proposal}
               // vocdoniElection={vocdoniElection}
-              // proposalId={proposalId}
+              proposalId={proposalId}
             />
           ) : (
             votingSettings && <VTerminal /> // todo(kon): fix this conditions
