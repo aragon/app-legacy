@@ -4,17 +4,18 @@ import {
   TokenVotingClient,
   TokenVotingProposal,
 } from '@aragon/sdk-client';
-
-import {invariant} from 'utils/invariant';
-import {IFetchProposalParams} from '../aragon-sdk-service.api';
 import {UseQueryOptions, useQuery} from '@tanstack/react-query';
+
 import {usePluginClient} from 'hooks/usePluginClient';
+import {invariant} from 'utils/invariant';
+import {recalculateStatus} from 'utils/proposals';
+import {IFetchProposalParams} from '../aragon-sdk-service.api';
 import {aragonSdkQueryKeys} from '../query-keys';
 
 async function fetchProposalAsync(
   params: IFetchProposalParams,
   client: TokenVotingClient | MultisigClient | undefined
-): Promise<MultisigProposal | TokenVotingProposal | null | undefined> {
+): Promise<MultisigProposal | TokenVotingProposal | null> {
   invariant(!!client, 'fetchProposalAsync: client is not defined');
 
   const data = await client?.methods.getProposal(params.id);
@@ -23,9 +24,7 @@ async function fetchProposalAsync(
 
 export const useProposal = (
   params: IFetchProposalParams,
-  options: UseQueryOptions<
-    MultisigProposal | TokenVotingProposal | null | undefined
-  > = {}
+  options: UseQueryOptions<MultisigProposal | TokenVotingProposal | null> = {}
 ) => {
   const client = usePluginClient(params.pluginType);
 
@@ -33,9 +32,16 @@ export const useProposal = (
     options.enabled = false;
   }
 
-  return useQuery(
-    aragonSdkQueryKeys.proposal(params),
-    () => fetchProposalAsync(params, client),
-    options
-  );
+  return useQuery({
+    queryKey: aragonSdkQueryKeys.proposal(params),
+    queryFn: () => fetchProposalAsync(params, client),
+    select: transformData,
+    ...options,
+  });
 };
+
+function transformData<T extends MultisigProposal | TokenVotingProposal | null>(
+  data: T
+): T {
+  return {...recalculateStatus(data)} as T;
+}
