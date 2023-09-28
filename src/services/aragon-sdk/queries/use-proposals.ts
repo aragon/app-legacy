@@ -12,6 +12,7 @@ import {usePluginClient} from 'hooks/usePluginClient';
 import {invariant} from 'utils/invariant';
 import {IFetchProposalsParams} from '../aragon-sdk-service.api';
 import {aragonSdkQueryKeys} from '../query-keys';
+import {recalculateStatus} from 'utils/proposals';
 
 const PROPOSALS_PER_PAGE = 6;
 
@@ -66,6 +67,18 @@ export const useProposals = (
       if (lastPage.length === params.limit) {
         return allPages.length;
       }
+    },
+
+    select: data => {
+      return {
+        pageParams: data.pageParams,
+        pages: data.pages.map(
+          proposals =>
+            proposals.map(proposal => ({...recalculateStatus(proposal)})) as
+              | Array<MultisigProposalListItem>
+              | Array<TokenVotingProposalListItem>
+        ),
+      };
     },
     ...options,
   });
