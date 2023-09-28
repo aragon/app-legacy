@@ -53,7 +53,7 @@ export const usePollTokenPrices = (
     const tokens: TokenWithMarketData[] = tokenList.map((token, index) => {
       const tokenMarketData = fetchedTokens[index];
 
-      if (tokenMarketData == null) {
+      if (tokenMarketData?.price == null) {
         return token;
       }
 
