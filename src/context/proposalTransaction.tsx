@@ -1,12 +1,13 @@
 import {useReactiveVar} from '@apollo/client';
 import {
   ExecuteProposalStep,
-  VoteProposalParams,
   MultisigClient,
   TokenVotingClient,
+  VoteProposalParams,
   VoteProposalStep,
   VoteValues,
 } from '@aragon/sdk-client';
+import {useQueryClient} from '@tanstack/react-query';
 import {BigNumber} from 'ethers';
 import React, {
   ReactNode,
@@ -24,6 +25,10 @@ import {useDaoDetailsQuery} from 'hooks/useDaoDetails';
 import {PluginTypes, usePluginClient} from 'hooks/usePluginClient';
 import {usePollGasFee} from 'hooks/usePollGasfee';
 import {useWallet} from 'hooks/useWallet';
+import {
+  AragonSdkQueryItem,
+  aragonSdkQueryKeys,
+} from 'services/aragon-sdk/query-keys';
 import {
   CHAIN_METADATA,
   PENDING_EXECUTION_KEY,
@@ -73,6 +78,7 @@ const ProposalTransactionProvider: React.FC<Props> = ({children}) => {
 
   const {address, isConnected} = useWallet();
   const {network} = useNetwork();
+  const queryClient = useQueryClient();
   const {api: provider} = useProviders();
 
   const [tokenAddress, setTokenAddress] = useState<string>();
@@ -135,6 +141,17 @@ const ProposalTransactionProvider: React.FC<Props> = ({children}) => {
   /*************************************************
    *                    Helpers                    *
    *************************************************/
+  const invalidateProposalQueries = useCallback(() => {
+    const allProposalsQuery = [AragonSdkQueryItem.PROPOSALS];
+    const currentProposal = aragonSdkQueryKeys.proposal({
+      id: new ProposalId(urlId!).export(),
+      pluginType,
+    });
+
+    queryClient.invalidateQueries(allProposalsQuery);
+    queryClient.invalidateQueries(currentProposal);
+  }, [pluginType, queryClient, urlId]);
+
   const handleSubmitVote = useCallback(
     (vote: VoteValues, tokenAddress?: string) => {
       // id should never be null as it is required to navigate to this page
@@ -269,12 +286,15 @@ const ProposalTransactionProvider: React.FC<Props> = ({children}) => {
           JSON.stringify(newCache, customJSONReplacer)
         );
       }
+
+      invalidateProposalQueries();
     },
     [
       address,
       cachedMultisigApprovals,
       cachedTokenBasedVotes,
       daoDetails?.address,
+      invalidateProposalQueries,
       network,
       pluginType,
       preferences?.functional,
@@ -321,12 +341,14 @@ const ProposalTransactionProvider: React.FC<Props> = ({children}) => {
           JSON.stringify(newCache, customJSONReplacer)
         );
       }
+      invalidateProposalQueries();
     },
     [
       address,
       cachedMultisigExecution,
       cachedTokenBaseExecution,
       daoDetails?.address,
+      invalidateProposalQueries,
       pluginType,
       preferences?.functional,
     ]
