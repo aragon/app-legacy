@@ -85,6 +85,7 @@ import Big from 'big.js';
 import {OffchainVotingTerminal} from '../containers/votingTerminal/offchainVotingTerminal';
 import {GaslessVotingProposal} from '@vocdoni/offchain-voting';
 import {useOffchainHasAlreadyVote} from '../context/useOffchainVoting';
+import {useDaoToken} from '../hooks/useDaoToken';
 
 const PENDING_PROPOSAL_STATUS_INTERVAL = 1000 * 10;
 const PROPOSAL_STATUS_INTERVAL = 1000 * 60;
@@ -168,12 +169,15 @@ export const Proposal: React.FC = () => {
 
   const proposalStatus = proposal?.status;
 
+  const {data: token} = useDaoToken(pluginAddress);
+
   const {data: canVote} = useWalletCanVote(
     address,
     proposalId!,
     pluginAddress,
     pluginType,
-    proposalStatus as string
+    proposal?.status as string,
+    isGaslessProposal(proposal) ? proposal.vochainProposalId : undefined
   );
 
   const {hasAlreadyVote: offchainAlreadyVote} = useOffchainHasAlreadyVote({

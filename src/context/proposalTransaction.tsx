@@ -28,6 +28,11 @@ import {
   isTokenVotingClient,
   usePluginClient,
 } from 'hooks/usePluginClient';
+import {
+  GaselessPluginName,
+  PluginTypes,
+  usePluginClient,
+} from 'hooks/usePluginClient';
 import {usePollGasFee} from 'hooks/usePollGasfee';
 import {useWallet} from 'hooks/useWallet';
 import {useVotingPowerAsync} from 'services/aragon-sdk/queries/use-voting-power';
@@ -112,6 +117,7 @@ const ProposalTransactionProvider: React.FC<Props> = ({children}) => {
     !!pluginClient && isMultisigClient(pluginClient);
   const isTokenVotingPluginClient =
     !!pluginClient && isTokenVotingClient(pluginClient);
+  const offchainVoting = pluginType === GaselessPluginName;
 
   const isWaitingForVoteOrApproval =
     (voteParams != null || approvalParams != null) &&
@@ -350,8 +356,6 @@ const ProposalTransactionProvider: React.FC<Props> = ({children}) => {
     }
   }, [executionProcessState, stopPolling]);
 
-  // todo(kon): modify this
-  const offchainVoting = true;
 
   /*************************************************
    *              Submit Transactions              *

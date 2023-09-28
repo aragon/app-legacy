@@ -7,6 +7,12 @@ import {useEffect, useState} from 'react';
 
 import {HookData} from 'utils/types';
 import {PluginTypes, usePluginClient} from './usePluginClient';
+import {HookData, ProposalId} from 'utils/types';
+import {
+  GaselessPluginName,
+  PluginTypes,
+  usePluginClient,
+} from './usePluginClient';
 import {useClient as useVocdoniClient} from '@vocdoni/react-providers';
 
 /**
@@ -33,8 +39,7 @@ export const useWalletCanVote = (
 
   const isMultisigClient = pluginType === 'multisig.plugin.dao.eth';
   const isTokenVotingClient = pluginType === 'token-voting.plugin.dao.eth';
-  // todo(kon): this is hardcoded
-  const isOffchainVoting = true;
+  const isOffchainVoting = pluginType === GaselessPluginName;
 
   const client = usePluginClient(pluginType);
   const {client: vocdoniClient} = useVocdoniClient();
@@ -74,7 +79,8 @@ export const useWalletCanVote = (
       if (offchainProposalId) {
         canVote = await vocdoniClient.isInCensus(offchainProposalId);
         if (canVote) {
-          canVote = !!(await vocdoniClient.hasAlreadyVoted(offchainProposalId));
+          canVote =
+            (await vocdoniClient.hasAlreadyVoted(offchainProposalId)) === null;
         }
       }
       setData(canVote);
