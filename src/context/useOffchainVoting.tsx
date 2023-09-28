@@ -16,7 +16,7 @@ import {
 } from '../hooks/useFunctionStepper';
 import {GaslessVotingProposal} from '@vocdoni/offchain-voting';
 import {DetailedProposal} from '../utils/types';
-import {isGaselessProposal} from '../utils/proposals';
+import {isGaslessProposal} from '../utils/proposals';
 
 // todo(kon): move this block somewhere else
 export enum OffchainVotingStepId {
@@ -127,7 +127,7 @@ export const useOffchainHasAlreadyVote = ({
     if (
       client &&
       proposal &&
-      isGaselessProposal(proposal) &&
+      isGaslessProposal(proposal) &&
       proposal?.vochainProposalId
     )
       checkAlreadyVote();
