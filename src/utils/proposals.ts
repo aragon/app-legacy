@@ -579,6 +579,7 @@ export type CacheProposalParams = {
   metadata: ProposalMetadata;
   proposalParams: CreateMajorityVotingProposalParams;
   proposalGuid: string;
+  status: ProposalStatus;
 
   // Multisig props
   minApprovals?: number;
@@ -606,6 +607,7 @@ export function mapToCacheProposal(params: CacheProposalParams) {
     startDate: params.proposalParams.startDate!,
     id: params.proposalGuid,
     metadata: params.metadata,
+    status: params.status,
   };
 
   // erc20

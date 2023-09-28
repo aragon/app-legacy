@@ -11,9 +11,11 @@ import {
 import {
   DaoAction,
   ProposalMetadata,
+  ProposalStatus,
   TokenType,
 } from '@aragon/sdk-client-common';
 import {hexToBytes} from '@aragon/sdk-common';
+import {useQueryClient} from '@tanstack/react-query';
 import {ethers} from 'ethers';
 import React, {useCallback, useEffect, useMemo, useState} from 'react';
 import {useFormContext} from 'react-hook-form';
@@ -28,13 +30,14 @@ import {useDaoToken} from 'hooks/useDaoToken';
 import {PluginTypes, usePluginClient} from 'hooks/usePluginClient';
 import {usePollGasFee} from 'hooks/usePollGasfee';
 import {useTokenSupply} from 'hooks/useTokenSupply';
+import {useWallet} from 'hooks/useWallet';
+import {trackEvent} from 'services/analytics';
 import {
   isMultisigVotingSettings,
   isTokenVotingSettings,
   useVotingSettings,
 } from 'services/aragon-sdk/queries/use-voting-settings';
-import {useWallet} from 'hooks/useWallet';
-import {trackEvent} from 'services/analytics';
+import {AragonSdkQueryItem} from 'services/aragon-sdk/query-keys';
 import {getEtherscanVerifiedContract} from 'services/etherscanAPI';
 import {
   PENDING_MULTISIG_PROPOSALS_KEY,
@@ -84,6 +87,7 @@ const CreateProposalWrapper: React.FC<Props> = ({
 }) => {
   const {t} = useTranslation();
   const {open} = useGlobalModalContext();
+  const queryClient = useQueryClient();
   const {preferences} = usePrivacyContext();
 
   const navigate = useNavigate();
@@ -512,6 +516,9 @@ const CreateProposalWrapper: React.FC<Props> = ({
         daoAddress: daoDetails?.address,
         daoName: daoDetails?.metadata.name,
         proposalGuid,
+        status: proposalCreationData.startDate
+          ? ProposalStatus.PENDING
+          : ProposalStatus.ACTIVE,
         proposalParams: {
           ...proposalCreationData,
           startDate: proposalCreationData.startDate || new Date(), // important to fallback to avoid passing undefined
@@ -578,6 +585,12 @@ const CreateProposalWrapper: React.FC<Props> = ({
       tokenSupply?.raw,
     ]
   );
+
+  const invalidateQueries = useCallback(() => {
+    // invalidating all infinite proposals query regardless of the
+    // pagination state
+    queryClient.invalidateQueries([AragonSdkQueryItem.PROPOSALS]);
+  }, [queryClient]);
 
   const handlePublishProposal = useCallback(async () => {
     if (!pluginClient) {
@@ -647,6 +660,7 @@ const CreateProposalWrapper: React.FC<Props> = ({
 
             // cache proposal
             handleCacheProposal(prefixedId);
+            invalidateQueries();
             break;
           }
         }
@@ -667,6 +681,7 @@ const CreateProposalWrapper: React.FC<Props> = ({
     daoDetails?.address,
     handleCacheProposal,
     handleCloseModal,
+    invalidateQueries,
     isOnWrongNetwork,
     network,
     open,

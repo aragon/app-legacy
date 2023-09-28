@@ -5,7 +5,12 @@ import {
   VotingMode,
   VotingSettings,
 } from '@aragon/sdk-client';
-import {DaoAction, ProposalMetadata} from '@aragon/sdk-client-common';
+import {
+  DaoAction,
+  ProposalMetadata,
+  ProposalStatus,
+} from '@aragon/sdk-client-common';
+import {useQueryClient} from '@tanstack/react-query';
 import {parseUnits} from 'ethers/lib/utils';
 import React, {useCallback, useEffect, useState} from 'react';
 import {useFormContext, useFormState} from 'react-hook-form';
@@ -37,14 +42,15 @@ import {
   isTokenVotingClient,
   usePluginClient,
 } from 'hooks/usePluginClient';
+import {usePollGasFee} from 'hooks/usePollGasfee';
+import {useTokenSupply} from 'hooks/useTokenSupply';
+import {useWallet} from 'hooks/useWallet';
 import {
   isMultisigVotingSettings,
   isTokenVotingSettings,
   useVotingSettings,
 } from 'services/aragon-sdk/queries/use-voting-settings';
-import {usePollGasFee} from 'hooks/usePollGasfee';
-import {useTokenSupply} from 'hooks/useTokenSupply';
-import {useWallet} from 'hooks/useWallet';
+import {AragonSdkQueryItem} from 'services/aragon-sdk/query-keys';
 import {
   PENDING_MULTISIG_PROPOSALS_KEY,
   PENDING_PROPOSALS_KEY,
@@ -192,6 +198,7 @@ const ProposeSettingWrapper: React.FC<Props> = ({
   const {t} = useTranslation();
   const {open} = useGlobalModalContext();
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
   const {getValues, setValue} = useFormContext();
 
   const {preferences} = usePrivacyContext();
@@ -629,6 +636,12 @@ const ProposeSettingWrapper: React.FC<Props> = ({
     }
   };
 
+  const invalidateQueries = useCallback(() => {
+    // invalidating all infinite proposals query regardless of the
+    // pagination state
+    queryClient.invalidateQueries([AragonSdkQueryItem.PROPOSALS]);
+  }, [queryClient]);
+
   const handlePublishSettings = async () => {
     if (!pluginClient) {
       return new Error('ERC20 SDK client is not initialized correctly');
@@ -675,6 +688,7 @@ const ProposeSettingWrapper: React.FC<Props> = ({
 
             // cache proposal
             handleCacheProposal(proposalGuid);
+            invalidateQueries();
             break;
           }
         }
@@ -706,6 +720,9 @@ const ProposeSettingWrapper: React.FC<Props> = ({
         daoAddress: daoDetails?.address,
         daoName: daoDetails?.metadata.name,
         proposalGuid,
+        status: proposalCreationData.startDate
+          ? ProposalStatus.PENDING
+          : ProposalStatus.ACTIVE,
         proposalParams: {
           ...proposalCreationData,
           startDate: proposalCreationData.startDate || new Date(), // important to fallback to avoid passing undefined

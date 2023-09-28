@@ -6,7 +6,11 @@ import {
   TokenVotingProposalListItem,
 } from '@aragon/sdk-client';
 import {SortDirection} from '@aragon/sdk-client-common';
-import {UseInfiniteQueryOptions, useInfiniteQuery} from '@tanstack/react-query';
+import {
+  InfiniteData,
+  UseInfiniteQueryOptions,
+  useInfiniteQuery,
+} from '@tanstack/react-query';
 
 import {usePluginClient} from 'hooks/usePluginClient';
 import {invariant} from 'utils/invariant';
@@ -69,17 +73,23 @@ export const useProposals = (
       }
     },
 
-    select: data => {
-      return {
-        pageParams: data.pageParams,
-        pages: data.pages.map(
-          proposals =>
-            proposals.map(proposal => ({...recalculateStatus(proposal)})) as
-              | Array<MultisigProposalListItem>
-              | Array<TokenVotingProposalListItem>
-        ),
-      };
-    },
+    select: transformData,
     ...options,
   });
 };
+
+function transformData(
+  data: InfiniteData<
+    Array<MultisigProposalListItem> | Array<TokenVotingProposalListItem>
+  >
+) {
+  return {
+    pageParams: data.pageParams,
+    pages: data.pages.map(
+      proposals =>
+        proposals.map(proposal => ({...recalculateStatus(proposal)})) as
+          | Array<MultisigProposalListItem>
+          | Array<TokenVotingProposalListItem>
+    ),
+  };
+}
