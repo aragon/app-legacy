@@ -10,7 +10,6 @@ import {PluginInstallItem} from '@aragon/sdk-client-common';
 
 import {
   FAVORITE_DAOS_KEY,
-  PENDING_EXECUTION_KEY,
   PENDING_MULTISIG_PROPOSALS_KEY,
   PENDING_PROPOSALS_KEY,
   SupportedChainID,
@@ -48,22 +47,6 @@ const selectedDaoVar = makeVar<NavigationDao>({
   chain: 5,
   plugins: [],
 });
-
-/*************************************************
- *                PENDING EXECUTION              *
- *************************************************/
-// Token-based
-export type PendingTokenBasedExecution = {
-  /** key is: daoAddress_proposalId */
-  [key: string]: boolean;
-};
-const pendingTokenBasedExecution = JSON.parse(
-  localStorage.getItem(PENDING_EXECUTION_KEY) || '{}',
-  customJSONReviver
-);
-const pendingTokenBasedExecutionVar = makeVar<PendingTokenBasedExecution>(
-  pendingTokenBasedExecution
-);
 
 /*************************************************
  *                 PENDING PROPOSAL              *
@@ -127,10 +110,8 @@ export type PendingDaoCreation = {
 
 export {
   favoriteDaosVar,
-  // executions
   // proposals
   pendingMultisigProposalsVar,
-  pendingTokenBasedExecutionVar,
   pendingTokenBasedProposalsVar,
   selectedDaoVar,
 };
