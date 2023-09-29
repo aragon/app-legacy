@@ -279,7 +279,7 @@ const ProposalTransactionProvider: React.FC<Props> = ({children}) => {
 
   // set proper state and cache proposal execution when transaction is successful
   const onExecutionSubmitted = useCallback(
-    async (proposalId: ProposalId) => {
+    async (proposalId: ProposalId, txHash: string) => {
       if (!address || !daoDetails?.address) return;
 
       // get current block number
@@ -289,7 +289,7 @@ const ProposalTransactionProvider: React.FC<Props> = ({children}) => {
       const executionDetails: ExecutionDetail = {
         executionBlockNumber,
         executionDate: new Date(),
-        executionTxHash: transactionHash,
+        executionTxHash: txHash,
       };
 
       // add execution detail to local storage
@@ -304,14 +304,7 @@ const ProposalTransactionProvider: React.FC<Props> = ({children}) => {
       // up cached values or remove them
       invalidateProposalQueries();
     },
-    [
-      address,
-      daoDetails?.address,
-      invalidateProposalQueries,
-      network,
-      provider,
-      transactionHash,
-    ]
+    [address, daoDetails?.address, invalidateProposalQueries, network, provider]
   );
 
   // handles vote submission/execution
@@ -442,16 +435,19 @@ const ProposalTransactionProvider: React.FC<Props> = ({children}) => {
     }
 
     try {
+      let txHash = '';
+
       for await (const step of executeSteps) {
         switch (step.key) {
           case ExecuteProposalStep.EXECUTING:
             setTransactionHash(step.txHash);
+            txHash = step.txHash;
             break;
           case ExecuteProposalStep.DONE:
             setExecuteProposalId(undefined);
             setExecutionFailed(false);
             setExecuteProcessState(TransactionState.SUCCESS);
-            onExecutionSubmitted(executeProposalId);
+            onExecutionSubmitted(executeProposalId, txHash);
             break;
         }
       }
