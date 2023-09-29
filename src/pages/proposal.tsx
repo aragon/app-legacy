@@ -129,8 +129,6 @@ export const Proposal: React.FC = () => {
   const {address, isConnected, isOnWrongNetwork} = useWallet();
 
   const [voteStatus, setVoteStatus] = useState('');
-  const [shouldRefetchOnInterval, setShouldRefetchOnInterval] = useState(false);
-
   const [decodedActions, setDecodedActions] =
     useState<(Action | undefined)[]>();
 
@@ -153,11 +151,12 @@ export const Proposal: React.FC = () => {
       pluginType: pluginType,
       id: proposalId?.toString() ?? '',
     },
-
     {
-      refetchInterval: shouldRefetchOnInterval
-        ? PROPOSAL_STATUS_INTERVAL
-        : false,
+      // refetch active proposal data every minute
+      refetchInterval: data =>
+        data?.status === ProposalStatus.ACTIVE
+          ? PROPOSAL_STATUS_INTERVAL
+          : false,
     }
   );
 
@@ -429,14 +428,6 @@ export const Proposal: React.FC = () => {
       return () => clearInterval(interval);
     }
   }, [proposal, proposalStatus, refetch, t]);
-
-  useEffect(() => {
-    if (proposalStatus === ProposalStatus.ACTIVE) {
-      setShouldRefetchOnInterval(true);
-    } else {
-      setShouldRefetchOnInterval(false);
-    }
-  }, [proposalStatus]);
 
   /*************************************************
    *              Handlers and Callbacks           *
