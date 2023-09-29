@@ -1,7 +1,7 @@
 import {makeVar} from '@apollo/client';
 import {
-  DaoListItem,
   CreateDaoParams,
+  DaoListItem,
   DaoMetadata,
   InstalledPluginListItem,
   VotingMode,
@@ -13,7 +13,6 @@ import {
   PENDING_EXECUTION_KEY,
   PENDING_MULTISIG_EXECUTION_KEY,
   PENDING_MULTISIG_PROPOSALS_KEY,
-  PENDING_MULTISIG_VOTES_KEY,
   PENDING_PROPOSALS_KEY,
   PENDING_VOTES_KEY,
   SupportedChainID,
@@ -69,19 +68,6 @@ const pendingVotes = JSON.parse(
 );
 
 const pendingTokenBasedVotesVar = makeVar<PendingTokenBasedVotes>(pendingVotes);
-
-//================ Multisig
-export type PendingMultisigApprovals = {
-  /** key is: daoAddress_proposalId; value: wallet address */
-  [key: string]: string;
-};
-const pendingMultisigApprovals = JSON.parse(
-  localStorage.getItem(PENDING_MULTISIG_VOTES_KEY) || '{}'
-);
-
-const pendingMultisigApprovalsVar = makeVar<PendingMultisigApprovals>(
-  pendingMultisigApprovals
-);
 
 /*************************************************
  *                PENDING EXECUTION              *
@@ -174,14 +160,13 @@ export type PendingDaoCreation = {
 
 export {
   favoriteDaosVar,
-  selectedDaoVar,
-  // votes
-  pendingMultisigApprovalsVar,
-  pendingTokenBasedVotesVar,
   // executions
   pendingMultisigExecutionVar,
-  pendingTokenBasedExecutionVar,
   // proposals
   pendingMultisigProposalsVar,
+  pendingTokenBasedExecutionVar,
   pendingTokenBasedProposalsVar,
+  // votes
+  pendingTokenBasedVotesVar,
+  selectedDaoVar,
 };

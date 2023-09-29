@@ -6,6 +6,7 @@
  */
 
 import {ReactiveVar} from '@apollo/client';
+import {ModeType, ProgressStatusProps, VoterType} from '@aragon/ods';
 import {
   CreateMajorityVotingProposalParams,
   Erc20TokenDetails,
@@ -19,7 +20,6 @@ import {
   VotingSettings,
 } from '@aragon/sdk-client';
 import {ProposalMetadata, ProposalStatus} from '@aragon/sdk-client-common';
-import {ModeType, ProgressStatusProps, VoterType} from '@aragon/ods';
 import Big from 'big.js';
 import {format, formatDistanceToNow, Locale} from 'date-fns';
 import differenceInSeconds from 'date-fns/fp/differenceInSeconds';
@@ -30,12 +30,8 @@ import {TFunction} from 'react-i18next';
 import {ProposalVoteResults} from 'containers/votingTerminal';
 import {
   CachedProposal,
-  PendingMultisigApprovals,
-  pendingMultisigApprovalsVar,
   PendingMultisigExecution,
   PendingTokenBasedExecution,
-  PendingTokenBasedVotes,
-  pendingTokenBasedVotesVar,
 } from 'context/apolloClient';
 import {MultisigDaoMember} from 'hooks/useDaoMembers';
 import {PluginTypes} from 'hooks/usePluginClient';
@@ -44,8 +40,6 @@ import {i18n} from '../../i18n.config';
 import {
   PENDING_EXECUTION_KEY,
   PENDING_MULTISIG_EXECUTION_KEY,
-  PENDING_MULTISIG_VOTES_KEY,
-  PENDING_VOTES_KEY,
 } from './constants';
 import {getFormattedUtcOffset, KNOWN_FORMATS} from './date';
 import {customJSONReplacer, formatUnits} from './library';
@@ -892,87 +886,6 @@ export function getNonEmptyActions(
     }
   });
 }
-
-/**
- * add cached vote to proposal
- * @param proposal Proposal
- * @param daoAddress dao address
- * @param cachedVotes votes cached
- * @param functionalCookiesEnabled whether functional cookies are enabled
- * @returns a proposal augmented with cached vote
- */
-export const augmentProposalWithCachedVote = (
-  proposal: DetailedProposal,
-  daoAddress: string,
-  cachedVotes: PendingTokenBasedVotes | PendingMultisigApprovals,
-  functionalCookiesEnabled: boolean | undefined
-) => {
-  const id = new ProposalId(proposal.id).makeGloballyUnique(daoAddress);
-
-  if (isErc20VotingProposal(proposal)) {
-    const cachedVote = (cachedVotes as PendingTokenBasedVotes)[id];
-
-    // no cache return original proposal
-    if (!cachedVote) return proposal;
-
-    // check if sdk has returned the vote in the cache
-    if (
-      proposal.votes.some(
-        v => v.address.toLowerCase() === cachedVote.address.toLowerCase()
-      )
-    ) {
-      // delete vote from cache
-      const newVoteCache = {...(cachedVotes as PendingTokenBasedVotes)};
-      delete newVoteCache[id];
-
-      // update cache
-      pendingTokenBasedVotesVar(newVoteCache);
-      if (functionalCookiesEnabled) {
-        localStorage.setItem(
-          PENDING_VOTES_KEY,
-          JSON.stringify(newVoteCache, customJSONReplacer)
-        );
-      }
-
-      return proposal;
-    } else {
-      // augment with cached vote
-      return addVoteToProposal(proposal, cachedVote);
-    }
-  }
-
-  if (isMultisigProposal(proposal)) {
-    const cachedVote = (cachedVotes as PendingMultisigApprovals)[id];
-
-    // no cache return original proposal
-    if (!cachedVote) return proposal;
-
-    // check if sdk has returned the vote in the cache
-    if (
-      proposal.approvals.some(
-        v =>
-          stripPlgnAdrFromProposalId(v).toLowerCase() ===
-          cachedVote.toLowerCase()
-      )
-    ) {
-      // delete vote from cache
-      const newVoteCache = {...(cachedVotes as PendingMultisigApprovals)};
-      delete newVoteCache[id];
-      // update cache
-      pendingMultisigApprovalsVar(newVoteCache);
-      if (functionalCookiesEnabled) {
-        localStorage.setItem(
-          PENDING_MULTISIG_VOTES_KEY,
-          JSON.stringify(newVoteCache, customJSONReplacer)
-        );
-      }
-      return proposal;
-    } else {
-      // augment with cached vote
-      return addApprovalToMultisigToProposal(proposal, cachedVote);
-    }
-  }
-};
 
 /**
  * Add cached execution to proposal
