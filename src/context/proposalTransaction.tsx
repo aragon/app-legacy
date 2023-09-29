@@ -2,7 +2,6 @@ import {
   ExecuteProposalStep,
   MultisigClient,
   TokenVotingClient,
-  TokenVotingProposalVote,
   VoteProposalParams,
   VoteProposalStep,
   VoteValues,

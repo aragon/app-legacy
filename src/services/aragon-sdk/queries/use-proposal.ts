@@ -15,16 +15,16 @@ import {ExecutionStorage, VoteStorage} from 'utils/localStorage';
 import {
   isMultisigProposal,
   isTokenBasedProposal,
-  recalculateStatus,
+  recalculateProposalStatus,
 } from 'utils/proposals';
 import {IFetchProposalParams} from '../aragon-sdk-service.api';
 import {aragonSdkQueryKeys} from '../query-keys';
 
-async function fetchProposalAsync(
+async function fetchProposal(
   params: IFetchProposalParams,
   client: TokenVotingClient | MultisigClient | undefined
 ): Promise<MultisigProposal | TokenVotingProposal | null> {
-  invariant(!!client, 'fetchProposalAsync: client is not defined');
+  invariant(!!client, 'fetchProposal: client is not defined');
 
   const data = await client?.methods.getProposal(params.id);
   return data;
@@ -36,16 +36,20 @@ export const useProposal = (
 ) => {
   const client = usePluginClient(params.pluginType);
   const {network} = useNetwork();
+  const chainId = CHAIN_METADATA[network].id;
+
+  const defaultSelect = (data: TokenVotingProposal | MultisigProposal | null) =>
+    transformData(chainId, data);
 
   if (!client || !params.id || !params.pluginType) {
     options.enabled = false;
   }
 
   return useQuery({
-    queryKey: aragonSdkQueryKeys.proposal(params),
-    queryFn: () => fetchProposalAsync(params, client),
-    select: data => transformData(CHAIN_METADATA[network].id, data),
     ...options,
+    queryKey: aragonSdkQueryKeys.proposal(params),
+    queryFn: () => fetchProposal(params, client),
+    select: options.select ?? defaultSelect,
   });
 };
 
@@ -68,14 +72,14 @@ function transformData<T extends MultisigProposal | TokenVotingProposal | null>(
   chainId: SupportedChainID,
   data: T
 ): T {
-  if (!data) return data;
+  if (data == null) return data;
 
   const proposal = {...data};
 
   syncApprovalsOrVotes(chainId, proposal);
   syncExecutionInfo(chainId, proposal);
 
-  return {...recalculateStatus(proposal)} as T;
+  return recalculateProposalStatus(proposal) as T;
 }
 
 /**
@@ -141,13 +145,10 @@ function syncMultisigVotes(
   voteStorage: VoteStorage
 ): string[] {
   const serverApprovals = new Set(proposal.approvals);
-  const allCachedApprovals = voteStorage.getVotes(
-    chainId,
-    proposal.id
-  ) as string[];
+  const allCachedApprovals = voteStorage.getVotes<string>(chainId, proposal.id);
 
   const uniqueCachedApprovals = allCachedApprovals.filter(cachedVote => {
-    // remove votes returned by the query from the cache
+    // remove, from the cache, votes that are returned by the query as well
     if (serverApprovals.has(cachedVote.toLowerCase())) {
       voteStorage.removeVoteForProposal(chainId, proposal.id, cachedVote);
       return false;
@@ -177,10 +178,10 @@ function syncTokenBasedVotes(
   const uniqueCachedVotes: Array<TokenVotingProposalVote> = [];
 
   // all cached votes
-  const allCachedVotes = voteStorage.getVotes(
+  const allCachedVotes = voteStorage.getVotes<TokenVotingProposalVote>(
     chainId,
     proposal.id
-  ) as TokenVotingProposalVote[];
+  );
 
   for (const cachedVote of allCachedVotes) {
     const serverVote = serverVotes.get(cachedVote.address.toLowerCase());
@@ -196,7 +197,7 @@ function syncTokenBasedVotes(
       !!serverVote.voteReplaced === cachedVote.voteReplaced;
 
     if (sameVoteReplacementStatus) {
-      // same vote, remove cached vote
+      // same vote replacement status, remove cached vote
       voteStorage.removeVoteForProposal(
         chainId,
         proposal.id,
@@ -206,7 +207,9 @@ function syncTokenBasedVotes(
       // cachedVote is a replacement: cache ahead, keep cached version
       serverVotes.set(cachedVote.address, cachedVote);
     } else {
-      // serverVote is a replacement, cache is behind, remove cached version
+      // serverVote is a replacement: cache is behind, remove cached version
+      // - NOTE: shouldn't be possible really unless someone is replacing their vote
+      //   using a different device
       voteStorage.removeVoteForProposal(
         chainId,
         proposal.id,

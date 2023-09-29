@@ -1049,7 +1049,7 @@ function calculateProposalStatus(proposal: DetailedProposal): ProposalStatus {
  * @returns The proposal with recalculated status,
  * or null/undefined if the input was null/undefined
  */
-export function recalculateStatus<
+export function recalculateProposalStatus<
   T extends DetailedProposal | ProposalListItem
 >(proposal: T | null | undefined): T | null | undefined {
   if (proposal?.status === ProposalStatus.SUCCEEDED) {

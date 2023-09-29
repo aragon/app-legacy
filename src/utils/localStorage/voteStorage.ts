@@ -1,4 +1,5 @@
 import {TokenVotingProposalVote} from '@aragon/sdk-client';
+
 import {SupportedChainID} from 'utils/constants';
 import {StorageUtils} from './abstractStorage';
 
@@ -51,14 +52,14 @@ export class VoteStorage extends StorageUtils {
    * @param proposalId - The proposal ID whose votes need to be fetched.
    * @returns Array of votes for the given proposal.
    */
-  getVotes(
+  getVotes<T extends string | TokenVotingProposalVote>(
     chainId: SupportedChainID,
     proposalId: string
-  ): Array<TokenVotingProposalVote | string> {
+  ): Array<T> {
     const key = chainId.toString();
     const chainData: CachedVoteData = this.getItem(key) || {};
 
-    return chainData[proposalId]?.votes || [];
+    return (chainData[proposalId]?.votes || []) as Array<T>;
   }
 
   /**
