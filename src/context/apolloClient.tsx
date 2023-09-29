@@ -14,12 +14,11 @@ import {
   PENDING_MULTISIG_EXECUTION_KEY,
   PENDING_MULTISIG_PROPOSALS_KEY,
   PENDING_PROPOSALS_KEY,
-  PENDING_VOTES_KEY,
   SupportedChainID,
   SupportedNetworks,
 } from 'utils/constants';
 import {customJSONReviver} from 'utils/library';
-import {DetailedProposal, Erc20ProposalVote} from 'utils/types';
+import {DetailedProposal} from 'utils/types';
 
 /*************************************************
  *            FAVORITE & SELECTED DAOS           *
@@ -50,24 +49,6 @@ const selectedDaoVar = makeVar<NavigationDao>({
   chain: 5,
   plugins: [],
 });
-
-// TODO: Please switch keys from `daoAddress_proposalId` to
-//  `pluginAddress_proposalId` when migrating because DAOs may have
-// multiple installed plugins
-/*************************************************
- *           PENDING VOTES & APPROVALS           *
- *************************************************/
-// Token-based
-export type PendingTokenBasedVotes = {
-  /** key is: daoAddress_proposalId */
-  [key: string]: Erc20ProposalVote;
-};
-const pendingVotes = JSON.parse(
-  localStorage.getItem(PENDING_VOTES_KEY) || '{}',
-  customJSONReviver
-);
-
-const pendingTokenBasedVotesVar = makeVar<PendingTokenBasedVotes>(pendingVotes);
 
 /*************************************************
  *                PENDING EXECUTION              *
@@ -166,7 +147,5 @@ export {
   pendingMultisigProposalsVar,
   pendingTokenBasedExecutionVar,
   pendingTokenBasedProposalsVar,
-  // votes
-  pendingTokenBasedVotesVar,
   selectedDaoVar,
 };
