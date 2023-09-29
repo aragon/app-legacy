@@ -136,7 +136,6 @@ export const PENDING_PROPOSALS_KEY = 'pendingProposals';
 export const PENDING_MULTISIG_PROPOSALS_KEY = 'pendingMultisigProposals';
 export const PENDING_DAOS_KEY = 'pendingDaos';
 export const PENDING_EXECUTION_KEY = 'pendingExecution';
-export const PENDING_MULTISIG_EXECUTION_KEY = 'pendingMultisigExecution';
 export const VERIFIED_CONTRACTS_KEY = 'verifiedContracts';
 
 // TODO: build more

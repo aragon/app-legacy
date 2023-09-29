@@ -11,7 +11,6 @@ import {PluginInstallItem} from '@aragon/sdk-client-common';
 import {
   FAVORITE_DAOS_KEY,
   PENDING_EXECUTION_KEY,
-  PENDING_MULTISIG_EXECUTION_KEY,
   PENDING_MULTISIG_PROPOSALS_KEY,
   PENDING_PROPOSALS_KEY,
   SupportedChainID,
@@ -64,19 +63,6 @@ const pendingTokenBasedExecution = JSON.parse(
 );
 const pendingTokenBasedExecutionVar = makeVar<PendingTokenBasedExecution>(
   pendingTokenBasedExecution
-);
-
-//================ Multisig
-export type PendingMultisigExecution = {
-  /** key is: daoAddress_proposalId */
-  [key: string]: boolean;
-};
-const pendingMultisigExecution = JSON.parse(
-  localStorage.getItem(PENDING_MULTISIG_EXECUTION_KEY) || '{}',
-  customJSONReviver
-);
-const pendingMultisigExecutionVar = makeVar<PendingMultisigExecution>(
-  pendingMultisigExecution
 );
 
 /*************************************************
@@ -142,7 +128,6 @@ export type PendingDaoCreation = {
 export {
   favoriteDaosVar,
   // executions
-  pendingMultisigExecutionVar,
   // proposals
   pendingMultisigProposalsVar,
   pendingTokenBasedExecutionVar,

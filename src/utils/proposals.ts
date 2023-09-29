@@ -5,7 +5,6 @@
  * so open to suggestions.
  */
 
-import {ReactiveVar} from '@apollo/client';
 import {ModeType, ProgressStatusProps, VoterType} from '@aragon/ods';
 import {
   CreateMajorityVotingProposalParams,
@@ -21,34 +20,25 @@ import {
 } from '@aragon/sdk-client';
 import {ProposalMetadata, ProposalStatus} from '@aragon/sdk-client-common';
 import Big from 'big.js';
-import {format, formatDistanceToNow, Locale} from 'date-fns';
+import {Locale, format, formatDistanceToNow} from 'date-fns';
 import differenceInSeconds from 'date-fns/fp/differenceInSeconds';
 import * as Locales from 'date-fns/locale';
 import {BigNumber} from 'ethers';
 import {TFunction} from 'react-i18next';
 
 import {ProposalVoteResults} from 'containers/votingTerminal';
-import {
-  CachedProposal,
-  PendingMultisigExecution,
-  PendingTokenBasedExecution,
-} from 'context/apolloClient';
+import {CachedProposal} from 'context/apolloClient';
 import {MultisigDaoMember} from 'hooks/useDaoMembers';
 import {PluginTypes} from 'hooks/usePluginClient';
 import {isMultisigVotingSettings} from 'services/aragon-sdk/queries/use-voting-settings';
 import {i18n} from '../../i18n.config';
-import {
-  PENDING_EXECUTION_KEY,
-  PENDING_MULTISIG_EXECUTION_KEY,
-} from './constants';
-import {getFormattedUtcOffset, KNOWN_FORMATS} from './date';
-import {customJSONReplacer, formatUnits} from './library';
+import {KNOWN_FORMATS, getFormattedUtcOffset} from './date';
+import {formatUnits} from './library';
 import {abbreviateTokenAmount} from './tokens';
 import {
   Action,
   DetailedProposal,
   Erc20ProposalVote,
-  ProposalId,
   ProposalListItem,
   StrictlyExclude,
   SupportedProposals,
@@ -885,74 +875,6 @@ export function getNonEmptyActions(
       return action;
     }
   });
-}
-
-/**
- * Add cached execution to proposal
- * @param proposal Proposal
- * @param daoAddress dao address
- * @param cachedExecutions executions cached
- * @param functionalCookiesEnabled whether functional cookies are enabled
- * @returns a proposal augmented with cached execution
- */
-export function augmentProposalWithCachedExecution(
-  proposal: DetailedProposal,
-  daoAddress: string,
-  cachedExecutions: PendingTokenBasedExecution | PendingMultisigExecution,
-  functionalCookiesEnabled: boolean | undefined,
-  cache: ReactiveVar<PendingMultisigExecution | PendingTokenBasedExecution>,
-  cacheKey: typeof PENDING_EXECUTION_KEY | typeof PENDING_MULTISIG_EXECUTION_KEY
-) {
-  const id = new ProposalId(proposal.id).makeGloballyUnique(daoAddress);
-
-  const cachedExecution = cachedExecutions[id];
-
-  // no cache return original proposal
-  if (!cachedExecution) {
-    // cached proposal coming in calculate status
-    if (!proposal.status) {
-      return {...proposal, status: calculateProposalStatus(proposal)};
-    }
-
-    // normal subgraph proposal return untouched
-    return proposal;
-  }
-
-  if (proposal.status === ProposalStatus.EXECUTED) {
-    const newExecutionCache = {...cachedExecutions};
-    delete newExecutionCache[id];
-
-    // update cache
-    cache(newExecutionCache);
-    if (functionalCookiesEnabled) {
-      localStorage.setItem(
-        cacheKey,
-        JSON.stringify(newExecutionCache, customJSONReplacer)
-      );
-    }
-
-    return proposal;
-  } else {
-    return {...proposal, status: ProposalStatus.EXECUTED};
-  }
-}
-
-/**
- * Calculate a proposal's status
- * @param proposal Proposal
- * @returns status for proposal
- */
-function calculateProposalStatus(proposal: DetailedProposal): ProposalStatus {
-  /**
-   * Be aware, since sometimes this function receives CACHED proposal which can contain
-   * empty fields (which by type definition supposed to be non-empty), you should be aware
-   * that it might require some handling.
-   *
-   * Watch out for differences between: DetailedProposal and CreateMajorityVotingProposalParams types.
-   */
-
-  // TODO: Update when SDK has exposed the proposal status calculations
-  return proposal.status ?? ProposalStatus.PENDING;
 }
 
 /**
