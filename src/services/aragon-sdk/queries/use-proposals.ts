@@ -12,11 +12,13 @@ import {
   useInfiniteQuery,
 } from '@tanstack/react-query';
 
+import {useNetwork} from 'context/network';
 import {usePluginClient} from 'hooks/usePluginClient';
+import {CHAIN_METADATA} from 'utils/constants';
 import {invariant} from 'utils/invariant';
 import {IFetchProposalsParams} from '../aragon-sdk-service.api';
 import {aragonSdkQueryKeys} from '../query-keys';
-import {recalculateProposalStatus} from 'utils/proposals';
+import {transformInfiniteProposals} from '../selectors';
 
 const PROPOSALS_PER_PAGE = 6;
 
@@ -47,51 +49,40 @@ export const useProposals = (
   const params = {...DEFAULT_PARAMS, ...userParams};
   const client = usePluginClient(params.pluginType);
 
+  const {network} = useNetwork();
+  const chainId = CHAIN_METADATA[network].id;
+
   if (client == null || params.daoAddressOrEns == null) {
     options.enabled = false;
   }
 
+  const defaultSelect = (
+    data: InfiniteData<
+      Array<MultisigProposalListItem> | Array<TokenVotingProposalListItem>
+    >
+  ) => transformInfiniteProposals(chainId, data);
+
   return useInfiniteQuery({
+    ...options,
     queryKey: aragonSdkQueryKeys.proposals(params),
 
     queryFn: context => {
       // Adjust the skip based on the current page
-      // - Note: there will always be a limit because we are merging
-      // default params with what the user passes in
       const skip = context.pageParam
         ? context.pageParam * params.limit!
         : params.skip;
       return fetchProposalsAsync({...params, skip}, client);
     },
 
+    // If the length of the last page is equal to the limit from params,
+    // it's likely there's more data to fetch. Can't be certain since
+    // the SDK doesn't return a max length
     getNextPageParam: (lastPage, allPages) => {
-      // If the length of the last page is equal to the limit from params,
-      // it's likely there's more data to fetch. Can't be certain since
-      // the SDK doesn't return a max length
       if (lastPage.length === params.limit) {
         return allPages.length;
       }
     },
 
-    select: transformData,
-    ...options,
+    select: options.select ?? defaultSelect,
   });
 };
-
-function transformData(
-  data: InfiniteData<
-    Array<MultisigProposalListItem> | Array<TokenVotingProposalListItem>
-  >
-) {
-  return {
-    pageParams: data.pageParams,
-    pages: data.pages.map(
-      proposals =>
-        proposals.map(proposal => ({
-          ...recalculateProposalStatus(proposal),
-        })) as
-          | Array<MultisigProposalListItem>
-          | Array<TokenVotingProposalListItem>
-    ),
-  };
-}
