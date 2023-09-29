@@ -9,10 +9,11 @@ import {SortDirection} from '@aragon/sdk-client-common';
 import {UseInfiniteQueryOptions, useInfiniteQuery} from '@tanstack/react-query';
 
 import {usePluginClient} from 'hooks/usePluginClient';
-import {PROPOSALS_PER_PAGE} from 'utils/constants';
 import {invariant} from 'utils/invariant';
 import {IFetchProposalsParams} from '../aragon-sdk-service.api';
 import {aragonSdkQueryKeys} from '../query-keys';
+
+const PROPOSALS_PER_PAGE = 6;
 
 const DEFAULT_PARAMS: IFetchProposalsParams = {
   limit: PROPOSALS_PER_PAGE,
@@ -41,7 +42,9 @@ export const useProposals = (
   const params = {...DEFAULT_PARAMS, ...userParams};
   const client = usePluginClient(params.pluginType);
 
-  options.enabled = !(!client || !params.daoAddressOrEns);
+  if (client == null || params.daoAddressOrEns == null) {
+    options.enabled = false;
+  }
 
   return useInfiniteQuery({
     queryKey: aragonSdkQueryKeys.proposals(params),

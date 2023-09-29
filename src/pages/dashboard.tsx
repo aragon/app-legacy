@@ -343,15 +343,16 @@ const DashboardContent: React.FC<DashboardContentProps> = ({
 }) => {
   const {transfers, totalAssetValue} = useDaoVault();
 
-  const {data: proposals} = useProposals({
+  const {data} = useProposals({
     daoAddressOrEns,
     pluginType,
   });
+  const proposals = data?.pages.flat() ?? [];
 
   // The SDK does NOT provide a count. This will be incorrect
   // whenever the number of proposals is greater than the default
   // page size that we fetch: 6
-  const proposalCount = proposals?.pages.flat().length;
+  const proposalCount = proposals.length;
   const transactionCount = transfers.length;
 
   if (!proposalCount) {
@@ -363,7 +364,7 @@ const DashboardContent: React.FC<DashboardContentProps> = ({
               daoAddressOrEns={daoAddressOrEns}
               pluginAddress={pluginAddress}
               pluginType={pluginType}
-              proposals={proposals?.pages.flat() ?? []}
+              proposals={proposals}
             />
             <TreasurySnapshot
               daoAddressOrEns={daoAddressOrEns}
@@ -378,7 +379,7 @@ const DashboardContent: React.FC<DashboardContentProps> = ({
                 daoAddressOrEns={daoAddressOrEns}
                 pluginAddress={pluginAddress}
                 pluginType={pluginType}
-                proposals={proposals?.pages.flat() ?? []}
+                proposals={proposals}
               />
             </LeftWideContent>
             <RightNarrowContent>
@@ -409,7 +410,7 @@ const DashboardContent: React.FC<DashboardContentProps> = ({
           daoAddressOrEns={daoAddressOrEns}
           pluginAddress={pluginAddress}
           pluginType={pluginType}
-          proposals={proposals?.pages.flat() ?? []}
+          proposals={proposals}
         />
       </LeftWideContent>
       <RightNarrowContent>
@@ -456,7 +457,8 @@ const MobileDashboardContent: React.FC<DashboardContentProps> = ({
   pluginAddress,
 }) => {
   const {transfers, totalAssetValue} = useDaoVault();
-  const {data: proposals} = useProposals({daoAddressOrEns, pluginType});
+  const {data} = useProposals({daoAddressOrEns, pluginType});
+  const proposals = data?.pages.flat() ?? [];
 
   return (
     <MobileLayout>
@@ -464,7 +466,7 @@ const MobileDashboardContent: React.FC<DashboardContentProps> = ({
         daoAddressOrEns={daoAddressOrEns}
         pluginAddress={pluginAddress}
         pluginType={pluginType}
-        proposals={proposals?.pages.flat() ?? []}
+        proposals={proposals}
       />
       <TreasurySnapshot
         daoAddressOrEns={daoAddressOrEns}
