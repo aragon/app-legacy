@@ -412,7 +412,7 @@ export const MintTokenForm: React.FC<MintTokenFormProps> = ({
     <>
       <Container standAlone={standAlone}>
         {isDesktop && (
-          <div className="flex items-center p-2 tablet:p-3 space-x-2 ">
+          <div className="flex items-center space-x-2 p-2 tablet:p-3 ">
             <div className="flex-1">
               <FormLabel label={t('labels.whitelistWallets.address')} />
             </div>

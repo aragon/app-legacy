@@ -22,7 +22,7 @@ import {
   isMultisigVotingSettings,
   isTokenVotingSettings,
   useVotingSettings,
-} from 'hooks/useVotingSettings';
+} from 'services/aragon-sdk/queries/use-voting-settings';
 import {useTokenSupply} from 'hooks/useTokenSupply';
 import {
   KNOWN_FORMATS,

@@ -37,7 +37,7 @@ const CookieSettingsMenu: React.FC<CookieSettingsMenuProps> = props => {
             bgWhite
           />
           <Title>{t('privacyPolicy.cookieSettings')}</Title>
-          <div role="presentation" className="w-4 h-4" />
+          <div role="presentation" className="h-4 w-4" />
         </ModalHeader>
         <BottomSheetContentContainer>
           <div className="space-y-1.5">
@@ -108,7 +108,7 @@ const Modal = styled.div.attrs(({show}: Props) => ({
   className: `${show ? 'block' : 'hidden'} fixed z-20 bg-ui-50
   bottom-0 w-full rounded-t-xl
   tablet:bottom-3 tablet:left-1/2 tablet:w-56 tablet:rounded-b-xl
-  tablet:transform tablet:-translate-x-1/2
+  tablet:-translate-x-1/2
   desktop:bottom-auto desktop:top-1/2 desktop:-translate-y-1/2`,
 }))<Props>`
   box-shadow: 0px 24px 32px rgba(31, 41, 51, 0.04),

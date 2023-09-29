@@ -162,10 +162,10 @@ const InputForm: React.FC<InputFormProps> = ({
   ]);
 
   return (
-    <div className="desktop:p-6 min-h-full bg-ui-50 desktop:bg-white">
-      <div className="desktop:flex items-baseline space-x-3">
+    <div className="min-h-full bg-ui-50 desktop:bg-white desktop:p-6">
+      <div className="items-baseline space-x-3 desktop:flex">
         <ActionName>{selectedAction.name}</ActionName>
-        <div className="hidden desktop:flex items-center space-x-1 text-primary-600">
+        <div className="hidden items-center space-x-1 text-primary-600 desktop:flex">
           <p className="text-sm font-bold text-primary-500">
             {selectedSC.name}
           </p>
@@ -173,21 +173,21 @@ const InputForm: React.FC<InputFormProps> = ({
         </div>
       </div>
       <ActionDescription>{selectedAction.notice}</ActionDescription>
-      <div className="flex desktop:hidden items-center mt-1 space-x-1 text-primary-600">
+      <div className="mt-1 flex items-center space-x-1 text-primary-600 desktop:hidden">
         <p className="text-sm font-bold text-primary-500">{selectedSC.name}</p>
         <IconSuccess />
       </div>
       {actionInputs.length > 0 ? (
-        <div className="p-3 mt-5 space-y-2 bg-white desktop:bg-ui-50 rounded-xl border border-ui-100 shadow-100">
+        <div className="mt-5 space-y-2 rounded-xl border border-ui-100 bg-white p-3 shadow-100 desktop:bg-ui-50">
           {actionInputs.map(input => (
             <div key={input.name}>
-              <div className="text-base font-bold text-ui-800 capitalize">
+              <div className="text-base font-bold capitalize text-ui-800">
                 {input.name}
                 <span className="ml-0.5 text-sm normal-case">
                   ({input.type})
                 </span>
               </div>
-              <div className="mt-0.5 mb-1.5">
+              <div className="mb-1.5 mt-0.5">
                 <span className="text-ui-600 ft-text-sm">{input.notice}</span>
               </div>
               <ComponentForType
@@ -340,14 +340,14 @@ export const ComponentForType: React.FC<ComponentForTypeProps> = ({
         return (
           <>
             {input.components?.map((component, index) => (
-              <div key={component.name} className="mt-2 ml-3">
-                <div className="text-base font-bold text-ui-800 capitalize">
+              <div key={component.name} className="ml-3 mt-2">
+                <div className="text-base font-bold capitalize text-ui-800">
                   {component.name}
                   <span className="ml-0.5 text-sm normal-case">
                     ({component.type})
                   </span>
                 </div>
-                <div className="mt-0.5 mb-1.5">
+                <div className="mb-1.5 mt-0.5">
                   <span className="text-ui-600 ft-text-sm">
                     {component.notice}
                   </span>
@@ -371,7 +371,7 @@ export const ComponentForType: React.FC<ComponentForTypeProps> = ({
           {Object.entries(input.value as {}).map((value, index) => {
             return (
               <div key={index}>
-                <div className="mb-1.5 text-base font-bold text-ui-800 capitalize">
+                <div className="mb-1.5 text-base font-bold capitalize text-ui-800">
                   {value[0]}
                 </div>
                 <ComponentForType
@@ -459,7 +459,7 @@ export function FormlessComponentForType({
           <>
             {input.components?.map(component => (
               <div key={component.name}>
-                <div className="mb-1.5 text-base font-bold text-ui-800 capitalize">
+                <div className="mb-1.5 text-base font-bold capitalize text-ui-800">
                   {input.name}
                 </div>
                 <FormlessComponentForType
@@ -476,7 +476,7 @@ export function FormlessComponentForType({
           {Object.entries(input.value as {}).map((value, index) => {
             return (
               <div key={index}>
-                <div className="mb-1.5 text-base font-bold text-ui-800 capitalize">
+                <div className="mb-1.5 text-base font-bold capitalize text-ui-800">
                   {value[0]}
                 </div>
                 <FormlessComponentForType

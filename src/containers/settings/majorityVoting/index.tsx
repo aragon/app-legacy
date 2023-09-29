@@ -17,7 +17,7 @@ import {useDaoToken} from 'hooks/useDaoToken';
 import {useExistingToken} from 'hooks/useExistingToken';
 import {PluginTypes} from 'hooks/usePluginClient';
 import {useTokenSupply} from 'hooks/useTokenSupply';
-import {useVotingSettings} from 'hooks/useVotingSettings';
+import {useVotingSettings} from 'services/aragon-sdk/queries/use-voting-settings';
 import {IPluginSettings} from 'pages/settings';
 import {CHAIN_METADATA} from 'utils/constants';
 import {getDHMFromSeconds} from 'utils/date';
@@ -104,13 +104,13 @@ const MajorityVotingSettings: React.FC<IPluginSettings> = ({daoDetails}) => {
         <DescriptionPair>
           <Term>{t('votingTerminal.token')}</Term>
           <Definition>
-            <div className="flex flex-wrap flex-1 gap-y-1 justify-between items-start">
+            <div className="flex flex-1 flex-wrap items-start justify-between gap-y-1">
               <Link
                 label={`${daoToken.name} ${daoToken.symbol}`}
                 iconRight={<IconLinkExternal />}
                 href={daoTokenBlockUrl}
                 description={shortenAddress(daoToken.address)}
-                className="flex-shrink-0"
+                className="shrink-0"
               />
 
               {canMintToken && (

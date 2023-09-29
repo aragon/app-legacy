@@ -418,7 +418,7 @@ const ConfigureWithdrawForm: React.FC<ConfigureWithdrawFormProps> = ({
                 adornmentText={t('labels.max')}
                 onAdornmentClick={() => handleMaxClicked(onChange)}
               />
-              <div className="flex justify-between items-start">
+              <div className="flex items-start justify-between">
                 <div className="space-y-1">
                   {error?.message && (
                     <AlertInline label={error.message} mode="critical" />

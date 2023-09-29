@@ -7,10 +7,9 @@ import {
   IllustrationHuman,
   Dropdown,
   ButtonText,
-  IconChevronDown,
   ListItemAction,
-  IconRadioSelected,
-  IconRadioDefault,
+  IconCheckmark,
+  IconSort,
 } from '@aragon/ods';
 import React, {useState} from 'react';
 import {useTranslation} from 'react-i18next';
@@ -76,6 +75,12 @@ export const Community: React.FC = () => {
 
   const walletBased =
     (daoDetails?.plugins[0].id as PluginTypes) === 'multisig.plugin.dao.eth';
+
+  const sortLabel = isMobile
+    ? undefined
+    : sort === 'delegations'
+    ? t('community.sortByDelegations.selected')
+    : t('community.sortByVotingPower.selected');
 
   /*************************************************
    *                    Handlers                   *
@@ -191,18 +196,18 @@ export const Community: React.FC = () => {
       <BodyContainer>
         <SearchAndResultWrapper>
           <div className="space-y-2">
-            <div className="flex flex-col desktop:flex-row gap-x-4 gap-y-2 search-input-wrapper">
+            <div className="flex flex-row gap-2 desktop:gap-4">
               <SearchInput
                 placeholder={t('labels.searchPlaceholder')}
-                containerClassName="flex-grow"
+                containerClassName="grow"
                 value={searchTerm}
                 onChange={handleQueryChange}
               />
               {!walletBased && (
                 <Dropdown
                   align="end"
-                  className="py-1 px-0"
-                  style={{width: 'var(--radix-dropdown-menu-trigger-width)'}}
+                  className="px-0 py-1"
+                  style={{minWidth: 'var(--radix-dropdown-menu-trigger-width)'}}
                   sideOffset={8}
                   listItems={[
                     {
@@ -214,10 +219,8 @@ export const Community: React.FC = () => {
                           mode={sort === 'votingPower' ? 'selected' : 'default'}
                           iconRight={
                             sort === 'votingPower' ? (
-                              <IconRadioSelected />
-                            ) : (
-                              <IconRadioDefault />
-                            )
+                              <IconCheckmark />
+                            ) : undefined
                           }
                         />
                       ),
@@ -231,10 +234,8 @@ export const Community: React.FC = () => {
                           mode={sort === 'delegations' ? 'selected' : 'default'}
                           iconRight={
                             sort === 'delegations' ? (
-                              <IconRadioSelected />
-                            ) : (
-                              <IconRadioDefault />
-                            )
+                              <IconCheckmark />
+                            ) : undefined
                           }
                         />
                       ),
@@ -244,13 +245,9 @@ export const Community: React.FC = () => {
                   trigger={
                     <ButtonText
                       mode="secondary"
-                      iconRight={<IconChevronDown />}
+                      iconLeft={<IconSort />}
                       size="large"
-                      label={
-                        sort === 'delegations'
-                          ? t('community.sortByDelegations.selected')
-                          : t('community.sortByVotingPower.selected')
-                      }
+                      label={sortLabel}
                     />
                   }
                 />

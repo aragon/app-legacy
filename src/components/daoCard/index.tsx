@@ -46,7 +46,7 @@ export const DaoCard = (props: IDaoCardProps) => {
       <DaoDataWrapper>
         <HeaderContainer>
           <AvatarDao daoName={props.name} src={avatar} />
-          <div className="space-y-0.25 desktop:space-y-0.5 text-left">
+          <div className="space-y-0.25 text-left desktop:space-y-0.5">
             <Title>{props.name}</Title>
             <p className="font-semibold text-ui-500 ft-text-sm">
               {props.ensName}

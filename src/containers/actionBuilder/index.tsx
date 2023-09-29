@@ -12,7 +12,7 @@ import {useDaoBalances} from 'hooks/useDaoBalances';
 import {useDaoDetailsQuery} from 'hooks/useDaoDetails';
 import {useDaoMembers} from 'hooks/useDaoMembers';
 import {PluginTypes} from 'hooks/usePluginClient';
-import {useVotingSettings} from 'hooks/useVotingSettings';
+import {useVotingSettings} from 'services/aragon-sdk/queries/use-voting-settings';
 import {formatUnits} from 'utils/library';
 import {
   ActionIndex,

@@ -160,7 +160,7 @@ const UpdateMinimumApproval: React.FC<UpdateMinimumApprovalProps> = ({
       >
         {useCustomHeader && (
           <FormItem
-            className={'desktop:block pt-3 pb-1.5 rounded-t-xl border-t'}
+            className={'rounded-t-xl border-t pb-1.5 pt-3 desktop:block'}
           >
             <Label label={t('labels.approvals')} />
           </FormItem>

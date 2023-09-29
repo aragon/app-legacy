@@ -25,7 +25,7 @@ import {CreateProposalProvider} from 'context/createProposal';
 import {useNetwork} from 'context/network';
 import {useDaoDetailsQuery} from 'hooks/useDaoDetails';
 import {PluginTypes} from 'hooks/usePluginClient';
-import {useVotingSettings} from 'hooks/useVotingSettings';
+import {useVotingSettings} from 'services/aragon-sdk/queries/use-voting-settings';
 import {toDisplayEns} from 'utils/library';
 import {Community} from 'utils/paths';
 import {MintTokensFormData} from 'utils/types';

@@ -284,7 +284,7 @@ const ExportCsvModal: React.FC<ExportCsvModalProps> = ({
                   onClick={createCsvBlob}
                 />
               ) : (
-                <div className="flex flex-col desktop:flex-row gap-2 items-center">
+                <div className="flex flex-col items-center gap-2 desktop:flex-row">
                   <ButtonText
                     mode="primary"
                     isActive={isCsvGenerationLoading}

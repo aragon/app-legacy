@@ -78,10 +78,10 @@ export const MembersList: React.FC<MembersListProps> = ({
         useCompactMode ? 'border border-ui-100' : ''
       } `}
     >
-      <table className="w-full h-full">
+      <table className="h-full w-full">
         {!useCompactMode && (
           <thead>
-            <tr className="text-ui-600 bg-ui-0 border-b border-b-ui-100">
+            <tr className="border-b border-b-ui-100 bg-ui-0 text-ui-600">
               <TableCellHead>{t('community.listHeader.member')}</TableCellHead>
               {isDesktop && isTokenBasedDao && (
                 <TableCellHead>

@@ -21,7 +21,7 @@ export const NotFound: React.FC = () => {
         <Menu>
           <GridLayout>
             <img
-              className="col-span-2 col-start-2 tablet:col-start-4 desktop:col-start-auto mx-auto desktop:mx-0 h-4"
+              className="col-span-2 col-start-2 mx-auto h-4 tablet:col-start-4 desktop:col-start-auto desktop:mx-0"
               src={Logo}
             />
           </GridLayout>
@@ -40,7 +40,7 @@ export const NotFound: React.FC = () => {
               <ButtonText
                 label={t('cta.404.backToExplore')}
                 size="large"
-                className="hidden desktop:block mt-5"
+                className="mt-5 hidden desktop:block"
                 onClick={() => navigate(Landing)}
               />
             </div>
@@ -58,7 +58,7 @@ export const NotFound: React.FC = () => {
             <ButtonText
               label={t('cta.404.backToExplore')}
               size="large"
-              className="block desktop:hidden mt-14 desktop:mt-0 w-full"
+              className="mt-14 block w-full desktop:mt-0 desktop:hidden"
               onClick={() => navigate(Landing)}
             />
           </div>

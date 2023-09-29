@@ -22,7 +22,7 @@ const ModalBottomSheetSwitcher: React.FC<ModalBottomSheetSwitcherProps> = ({
       {isDesktop ? (
         <Modal
           isOpen={isOpen}
-          onClose={() => onClose && onClose()}
+          onClose={() => onClose?.()}
           title={title}
           subtitle={subtitle}
           onOpenAutoFocus={onOpenAutoFocus}
@@ -31,8 +31,8 @@ const ModalBottomSheetSwitcher: React.FC<ModalBottomSheetSwitcherProps> = ({
         </Modal>
       ) : (
         <BottomSheet
-          isOpen={isOpen || false}
-          onClose={() => onClose?.()}
+          isOpen={isOpen ?? false}
+          onClose={onClose}
           title={title}
           subtitle={subtitle}
           closeOnDrag={closeOnDrag}
