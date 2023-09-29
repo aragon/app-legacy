@@ -205,7 +205,7 @@ export const Dashboard: React.FC = () => {
 
     const buttonIcon = {
       [DaoCreationState.ASSEMBLING_DAO]: (
-        <IconSpinner className="w-1.5 desktop:w-2 h-1.5 desktop:h-2 animate-spin" />
+        <IconSpinner className="h-1.5 w-1.5 animate-spin desktop:h-2 desktop:w-2" />
       ),
       [DaoCreationState.DAO_READY]: <IconCheckmark />,
       [DaoCreationState.OPEN_DAO]: undefined,
@@ -235,7 +235,7 @@ export const Dashboard: React.FC = () => {
           <EmptyStateHeading>
             {t('dashboard.emptyState.title')}
           </EmptyStateHeading>
-          <p className="mt-1.5 text-base text-center">
+          <p className="mt-1.5 text-center text-base">
             {t('dashboard.emptyState.subtitle')}
           </p>
           <ButtonText
