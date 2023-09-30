@@ -83,6 +83,7 @@ import {usePastVotingPower} from 'services/aragon-sdk/queries/use-past-voting-po
 import {Address} from 'viem';
 import {useBalance} from 'wagmi';
 import {UpdateVerificationCard} from 'containers/updateVerificationCard';
+import {featureFlags} from 'utils/featureFlags';
 
 // TODO: @Sepehr Please assign proper tags on action decoding
 // const PROPOSAL_TAGS = ['Finance', 'Withdraw'];
@@ -704,10 +705,13 @@ export const Proposal: React.FC = () => {
           )}
 
           {/* @todo: Add isUpdateProposal check once it's developed */}
-          <UpdateVerificationCard
-            proposal={proposal}
-            actions={decodedActions}
-          />
+          {featureFlags.getValue('VITE_FEATURE_FLAG_OSX_UPDATES') ===
+            'true' && (
+            <UpdateVerificationCard
+              proposal={proposal}
+              actions={decodedActions}
+            />
+          )}
 
           <VotingTerminal
             status={proposalStatus}
