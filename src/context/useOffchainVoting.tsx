@@ -16,12 +16,11 @@ import {
 } from '../hooks/useFunctionStepper';
 import {
   GaslessVotingProposal,
-  isProposalApproved,
+  OffchainVotingClient,
 } from '@vocdoni/offchain-voting';
 import {DetailedProposal} from '../utils/types';
 import {
   isGaslessProposal,
-  isMultisigProposal,
   stripPlgnAdrFromProposalId,
 } from '../utils/proposals';
 import {GaselessPluginName, usePluginClient} from '../hooks/usePluginClient';
@@ -150,21 +149,28 @@ export const useOffchainCommitteVotes = (
   proposal: GaslessVotingProposal
 ) => {
   const [canVote, setCanVote] = useState(false);
-  const client = usePluginClient(GaselessPluginName);
+  const client = usePluginClient(GaselessPluginName) as OffchainVotingClient;
   const {address} = useWallet();
 
   const voted = useMemo(() => {
     return proposal.approvers?.some(approver => approver === address);
   }, [address, proposal.approvers]);
 
-  const isApproved = useMemo(() => {
-    return isProposalApproved(
-      proposal.tallyVochain,
-      proposal.approvers.length,
-      proposal.settings.supportThreshold,
-      proposal.settings.minParticipation
+  const isApproved = useMemo(async () => {
+    if (!client) return false;
+
+    const vottingSettings = await client.methods.getVotingSettings(
+      pluginAddress
     );
-  }, [proposal]);
+    if (!vottingSettings) return false;
+    return vottingSettings.minTallyApprovals >= proposal.approvers.length;
+    // return isProposalApproved(
+    //   proposal.vochain.tally,
+    //   proposal.approvers.length,
+    //   proposal.settings.supportThreshold,
+    //   proposal.settings.minParticipation
+    // );
+  }, [client, pluginAddress, proposal]);
 
   useEffect(() => {
     const doCheck = async () => {

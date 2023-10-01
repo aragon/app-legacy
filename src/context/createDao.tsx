@@ -173,15 +173,13 @@ const CreateDaoProvider: React.FC<{children: ReactNode}> = ({children}) => {
       } = getValues();
 
       const vocdoniVotingSettings: GaslessPluginVotingSettings = {
-        expirationTime: BigNumber.from(
-          getSecondsFromDHM(
-            parseInt(executionExpirationDays),
-            parseInt(executionExpirationHours),
-            parseInt(executionExpirationMinutes)
-          )
-        ).toBigInt(),
+        expirationTime: getSecondsFromDHM(
+          parseInt(executionExpirationDays),
+          parseInt(executionExpirationHours),
+          parseInt(executionExpirationMinutes)
+        ),
         minTallyApprovals: Number(committeeMinimumApproval),
-        minDuration: BigNumber.from(votingSettings.minDuration).toBigInt(),
+        minDuration: votingSettings.minDuration,
         minParticipation: votingSettings.minParticipation,
         supportThreshold: votingSettings.supportThreshold,
         minProposerVotingPower: votingSettings.minProposerVotingPower as bigint,

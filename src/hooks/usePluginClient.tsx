@@ -26,14 +26,14 @@ type PluginType<T> = T extends 'token-voting.plugin.dao.eth'
   : never;
 
 export function isTokenVotingClient(
-  client: TokenVotingClient | MultisigClient | OffchainVotingContext
+  client: TokenVotingClient | MultisigClient | OffchainVotingClient
 ): client is TokenVotingClient {
   if (!client || Object.keys(client).length === 0) return false;
   return client instanceof TokenVotingClient;
 }
 
 export function isMultisigClient(
-  client: TokenVotingClient | MultisigClient | OffchainVotingContext
+  client: TokenVotingClient | MultisigClient | OffchainVotingClient
 ): client is MultisigClient {
   if (!client || Object.keys(client).length === 0) return false;
   return client instanceof MultisigClient;
