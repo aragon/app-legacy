@@ -21,7 +21,7 @@ import {Governance, NewProposal} from 'utils/paths';
 import {ProposalListItem} from 'utils/types';
 import {useWallet} from 'hooks/useWallet';
 import {useUpdateProposal} from 'hooks/useUpdateProposal';
-import { featureFlags } from 'utils/featureFlags';
+import {featureFlags} from 'utils/featureFlags';
 
 type Props = {
   daoAddressOrEns: string;
