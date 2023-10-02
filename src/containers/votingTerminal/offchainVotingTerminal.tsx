@@ -230,14 +230,14 @@ export const OffchainVotingTerminal = ({
         </Summary>
       </Header>
       <Accordion type={'multiple'}>
-        {/*<AccordionItem*/}
-        {/*  name={'community-voting'}*/}
-        {/*  type={'action-builder'}*/}
-        {/*  methodName={'Community Voting'}*/}
-        {/*  alertLabel={votingStatusLabel}*/}
-        {/*>*/}
-        {/*  {votingTerminal}*/}
-        {/*</AccordionItem>*/}
+        <AccordionItem
+          name={'community-voting'}
+          type={'action-builder'}
+          methodName={'Community Voting'}
+          alertLabel={votingStatusLabel}
+        >
+          {votingTerminal}
+        </AccordionItem>
         <AccordionItem
           name={'actions-approval'}
           type={'action-builder'}
