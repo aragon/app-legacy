@@ -11,6 +11,7 @@ import {useAccount} from 'wagmi';
 import styled from 'styled-components';
 import {useScreen} from '@aragon/ods';
 import {useTranslation} from 'react-i18next';
+import {featureFlags} from 'utils/featureFlags';
 
 type MembersListProps = {
   members: DaoMember[];
@@ -33,6 +34,8 @@ export const MembersList: React.FC<MembersListProps> = ({
 
   const isTokenBasedDao = token != null;
   const useCompactMode = isCompactMode ?? !isDesktop;
+  const enableDelegation =
+    featureFlags.getValue('VITE_FEATURE_FLAG_DELEGATION') === 'true';
 
   useEffect(() => {
     async function fetchTotalSupply() {
@@ -72,6 +75,9 @@ export const MembersList: React.FC<MembersListProps> = ({
     return null;
   }
 
+  const showDelegationHeaders =
+    isDesktop && isTokenBasedDao && enableDelegation;
+
   return (
     <div
       className={`overflow-hidden rounded-xl ${
@@ -88,7 +94,7 @@ export const MembersList: React.FC<MembersListProps> = ({
                   {t('community.listHeader.votingPower')}
                 </TableCellHead>
               )}
-              {isDesktop && isTokenBasedDao && (
+              {showDelegationHeaders && (
                 <TableCellHead>
                   {t('community.listHeader.delegations')}
                 </TableCellHead>

@@ -32,6 +32,7 @@ import useScreen from 'hooks/useScreen';
 import {useGovTokensWrapping} from 'context/govTokensWrapping';
 import {useExistingToken} from 'hooks/useExistingToken';
 import {Erc20WrapperTokenDetails} from '@aragon/sdk-client';
+import {featureFlags} from 'utils/featureFlags';
 
 const MEMBERS_PER_PAGE = 20;
 
@@ -75,6 +76,8 @@ export const Community: React.FC = () => {
 
   const walletBased =
     (daoDetails?.plugins[0].id as PluginTypes) === 'multisig.plugin.dao.eth';
+  const enableDelegation =
+    featureFlags.getValue('VITE_FEATURE_FLAG_DELEGATION') === 'true';
 
   const sortLabel = isMobile
     ? undefined
@@ -203,7 +206,7 @@ export const Community: React.FC = () => {
                 value={searchTerm}
                 onChange={handleQueryChange}
               />
-              {!walletBased && (
+              {!walletBased && enableDelegation && (
                 <Dropdown
                   align="end"
                   className="px-0 py-1"

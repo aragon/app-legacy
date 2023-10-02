@@ -88,6 +88,8 @@ export const ActionItemAddress: React.FC<ActionItemAddressProps> = props => {
   const {open} = useGlobalModalContext();
 
   const useCompactMode = isCompactMode ?? !isDesktop;
+  const enableDelegation =
+    featureFlags.getValue('VITE_FEATURE_FLAG_DELEGATION') === 'true';
 
   const handleExternalLinkClick = () => {
     const baseUrl = CHAIN_METADATA[network].explorer;
@@ -156,8 +158,6 @@ export const ActionItemAddress: React.FC<ActionItemAddressProps> = props => {
 
     const isConnectedAddress =
       address?.toLowerCase() === addressOrEns.toLowerCase();
-    const enableDelegation =
-      featureFlags.getValue('VITE_FEATURE_FLAG_DELEGATION') === 'true';
 
     return isTokenDaoMember && !isConnectedAddress && enableDelegation
       ? menuOptions.concat(delegateOption)
@@ -189,7 +189,7 @@ export const ActionItemAddress: React.FC<ActionItemAddressProps> = props => {
                   tokenSupply={tokenSupply}
                   tokenSymbol={tokenSymbol}
                 />
-                {(delegations ?? 0) > 0 && (
+                {(delegations ?? 0) > 0 && enableDelegation && (
                   <div className="ft-text-sm">
                     <span>{delegations} Delegations</span>
                   </div>
@@ -210,7 +210,7 @@ export const ActionItemAddress: React.FC<ActionItemAddressProps> = props => {
         </TableCell>
       )}
 
-      {!useCompactMode && delegations != null && (
+      {!useCompactMode && delegations != null && enableDelegation && (
         <TableCell className="text-ui-600 ft-text-sm">
           <span>{delegations > 0 ? delegations : ''}</span>
         </TableCell>
