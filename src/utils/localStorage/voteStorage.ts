@@ -7,7 +7,7 @@ import {StorageUtils} from './abstractStorage';
  * Type definition for cached vote data in local storage.
  * Each proposal ID is mapped to its corresponding votes.
  */
-type CachedVoteData = {
+type VoteCache = {
   [proposalId: string]: {votes: Array<TokenVotingProposalVote | string>};
 };
 
@@ -26,22 +26,22 @@ export class VoteStorage extends StorageUtils {
    *
    * @param chainId - The chain ID for which the vote is associated.
    * @param proposalId - The proposal ID for which the vote is cast.
-   * @param voteData - The vote data to be stored.
+   * @param voteOrApproval - The vote data to be stored.
    */
   addVote(
     chainId: SupportedChainID,
     proposalId: string,
-    voteData: TokenVotingProposalVote | string
+    voteOrApproval: TokenVotingProposalVote | string
   ): void {
     const key = chainId.toString();
-    const chainData: CachedVoteData = this.getItem(key) || {};
+    const chainData: VoteCache = this.getItem(key) || {};
 
     // Initialize the votes array for the proposal if not present
     if (!chainData[proposalId]) {
       chainData[proposalId] = {votes: []};
     }
 
-    chainData[proposalId].votes.push(voteData);
+    chainData[proposalId].votes.push(voteOrApproval);
     this.setItem(key, chainData);
   }
 
@@ -57,9 +57,9 @@ export class VoteStorage extends StorageUtils {
     proposalId: string
   ): Array<T> {
     const key = chainId.toString();
-    const chainData: CachedVoteData = this.getItem(key) || {};
+    const chainData: VoteCache = this.getItem(key) || {};
 
-    return (chainData[proposalId]?.votes || []) as Array<T>;
+    return (chainData[proposalId]?.votes ?? []) as Array<T>;
   }
 
   /**
@@ -75,7 +75,7 @@ export class VoteStorage extends StorageUtils {
     userWallet: string
   ): void {
     const key = chainId.toString();
-    const chainData: CachedVoteData = this.getItem(key) || {};
+    const chainData: VoteCache = this.getItem(key) || {};
 
     if (chainData[proposalId]) {
       // Filter out the vote associated with the user wallet

@@ -1,20 +1,14 @@
-import {StorageUtils} from './abstractStorage';
 import {SupportedChainID} from 'utils/constants';
+import {StorageUtils} from './abstractStorage';
 
-/**
- * Type definition for execution details.
- * Includes block number, execution date, and transaction hash.
- */
 export type ExecutionDetail = {
   executionBlockNumber: number;
   executionDate: Date;
   executionTxHash: string;
 };
 
-/**
- * Type alias for chain data, mapping proposal IDs to their execution details.
- */
-type ChainDataMap = {
+// Type alias for chain data, mapping proposal IDs to their execution details.
+type ExecutionCache = {
   [proposalId: string]: ExecutionDetail;
 };
 
@@ -40,10 +34,10 @@ export class ExecutionStorage extends StorageUtils {
     executionDetail: ExecutionDetail
   ): void {
     const key = chainId.toString();
-    const chainData: ChainDataMap = this.getItem(key) || {};
+    const executions: ExecutionCache = this.getItem(key) || {};
 
-    chainData[proposalId] = executionDetail;
-    this.setItem(key, chainData);
+    executions[proposalId] = executionDetail;
+    this.setItem(key, executions);
   }
 
   /**
@@ -58,8 +52,8 @@ export class ExecutionStorage extends StorageUtils {
     proposalId: string
   ): ExecutionDetail | null {
     const key = chainId.toString();
-    const chainData: ChainDataMap = this.getItem(key) || {};
-    return chainData[proposalId] || null;
+    const executions: ExecutionCache = this.getItem(key) || {};
+    return executions[proposalId] || null;
   }
 
   /**
@@ -70,16 +64,16 @@ export class ExecutionStorage extends StorageUtils {
    */
   removeExecutionDetail(chainId: SupportedChainID, proposalId: string): void {
     const key = chainId.toString();
-    const chainData: ChainDataMap = this.getItem(key) || {};
+    const executions: ExecutionCache = this.getItem(key) || {};
 
-    if (chainData[proposalId]) {
-      delete chainData[proposalId];
+    if (executions[proposalId]) {
+      delete executions[proposalId];
 
       // Directly remove the key from local storage if no data is left
-      if (Object.keys(chainData).length === 0) {
+      if (Object.keys(executions).length === 0) {
         this.removeItem(key);
       } else {
-        this.setItem(key, chainData);
+        this.setItem(key, executions);
       }
     }
   }
