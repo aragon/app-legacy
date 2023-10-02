@@ -763,6 +763,7 @@ export const Proposal: React.FC = () => {
               proposal={proposal}
               // vocdoniElection={vocdoniElection}
               proposalId={proposalId}
+              statusRef={statusRef}
             />
           ) : (
             votingSettings && <VTerminal /> // todo(kon): fix this conditions

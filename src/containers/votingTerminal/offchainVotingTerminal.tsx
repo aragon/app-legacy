@@ -11,21 +11,31 @@ import {GaslessVotingProposal} from '@vocdoni/offchain-voting';
 import {GaselessPluginName, usePluginClient} from '../../hooks/usePluginClient';
 import {useOffchainCommitteVotes} from '../../context/useOffchainVoting';
 import {ProposalId} from '../../utils/types';
+import {useWallet} from '../../hooks/useWallet';
+import {useProposalTransactionContext} from '../../context/proposalTransaction';
+import {VoteValues} from '@aragon/sdk-client';
 
 export const OffchainVotingTerminal = ({
   votingStatusLabel,
   votingTerminal,
   proposal,
   proposalId,
+  statusRef,
 }: {
   votingStatusLabel: string;
   votingTerminal: ReactNode;
   proposal: GaslessVotingProposal;
   proposalId: ProposalId | undefined;
+  statusRef: React.MutableRefObject<{
+    wasNotLoggedIn: boolean;
+    wasOnWrongNetwork: boolean;
+  }>;
 }) => {
   const {t} = useTranslation();
   const [terminalTab, setTerminalTab] = useState<TerminalTabs>('breakdown');
   const pluginClient = usePluginClient(GaselessPluginName);
+
+  const {isOnWrongNetwork} = useWallet();
 
   const {address} = proposalId!.stripPlgnAdrFromProposalId();
 
@@ -33,6 +43,11 @@ export const OffchainVotingTerminal = ({
     address,
     proposal
   );
+
+  const {
+    handleSubmitVote,
+    // voteSubmitted,
+  } = useProposalTransactionContext();
 
   // todo(kon): mocked data that will come from proposal info to let the committee vote
   // const members: MultisigMember[] = [
@@ -131,6 +146,55 @@ export const OffchainVotingTerminal = ({
     }
   }, [proposal, voted, canVote, t]);
 
+  // vote button state and handler
+  const {voteNowDisabled, onClick} = useMemo(() => {
+    // disable voting on non-active proposals
+    if (proposal?.status !== 'Active') return {voteNowDisabled: true};
+
+    // disable approval on multisig when wallet has voted
+    // todo(kon): this check is not working properly
+    if (!canVote || voted) return {voteNowDisabled: true};
+
+    // not logged in
+    if (!address) {
+      return {
+        voteNowDisabled: false,
+        onClick: () => {
+          open('wallet');
+          statusRef.current.wasNotLoggedIn = true;
+        },
+      };
+    }
+
+    // wrong network
+    else if (isOnWrongNetwork) {
+      return {
+        voteNowDisabled: false,
+        onClick: () => {
+          open('network');
+          statusRef.current.wasOnWrongNetwork = true;
+        },
+      };
+    }
+
+    // member, not yet voted
+    else if (canVote) {
+      return {
+        voteNowDisabled: false,
+        onClick: () => {
+          handleSubmitVote(VoteValues.YES, undefined, true);
+        },
+      };
+    } else return {voteNowDisabled: true};
+  }, [
+    address,
+    canVote,
+    handleSubmitVote,
+    isOnWrongNetwork,
+    proposal,
+    statusRef,
+  ]);
+
   const CommitteeVotingTerminal = () => {
     return (
       <VotingTerminal
@@ -139,21 +203,19 @@ export const OffchainVotingTerminal = ({
         selectedTab={terminalTab}
         // alertMessage={alertMessage} // todo(kon): implement
         onTabSelected={setTerminalTab}
-        onVoteClicked={() => {
-          console.log('onVoteClicked');
-        }} // todo(kon): implement
+        onVoteClicked={onClick} // todo(kon): implement
         // onCancelClicked={() => setVotingInProcess(false)}
         voteButtonLabel={buttonLabel} // todo(kon): implement getVoteButtonLabel
         voteNowDisabled={!canVote} // todo(kon): implement
         // votingInProcess={votingInProcess} // Only for token voting
-        onVoteSubmitClicked={() => {
-          console.log('onVoteSubmitClicked');
-          // todo(kon): implement
-          // handleSubmitVote(
-          //   vote,
-          //   (proposal as TokenVotingProposal).token?.address
-          // )
-        }}
+        // onVoteSubmitClicked={() => {
+        //   console.log('onVoteSubmitClicked');
+        //   // todo(kon): implement
+        //   // handleSubmitVote(
+        //   //   vote,
+        //   //   (proposal as TokenVotingProposal).token?.address
+        //   // )
+        // }}
         {...mappedProps}
       />
     );
@@ -192,15 +254,22 @@ export const OffchainVotingTerminal = ({
 // todo(kon): move this somewhere
 function getCommitteVoteButtonLabel(
   proposal: GaslessVotingProposal,
-  canVoteOrApprove: boolean,
-  votedOrApproved: boolean,
+  canVote: boolean,
+  voted: boolean,
   approved: boolean,
   t: TFunction
 ) {
-  const label = 'todo';
+  let label = '';
 
-  // todo(kon): implement this
-  // if(proposal. === '')
+  label = approved
+    ? t('votingTerminal.status.approved')
+    : t('votingTerminal.concluded');
+
+  // todo(kon): this is a copy paste, do it well
+  if (proposal.status === 'Pending' && canVote)
+    label = t('votingTerminal.approve');
+  else if (proposal.status === 'Active' && !voted)
+    label = t('votingTerminal.approve');
 
   return label;
 }

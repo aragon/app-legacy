@@ -46,6 +46,7 @@ import {ProposalId} from 'utils/types';
 import {useNetwork} from './network';
 import {useProviders} from './providers';
 import OffchainVotingModal from '../containers/transactionModals/offchainVotingModal';
+import {OffchainVotingClient} from '@vocdoni/offchain-voting';
 
 type SubmitVoteParams = {
   vote: VoteValues;
@@ -55,7 +56,10 @@ type SubmitVoteParams = {
 
 type ProposalTransactionContextType = {
   /** handles voting on proposal */
-  handlePrepareVote: (params: SubmitVoteParams) => void;
+  handlePrepareVote: (
+    params: SubmitVoteParams,
+    isCommitteeVote?: boolean // todo(kon): isCommitteeVote is a quick hack tot test the approve. Check how should be done
+  ) => void;
   handlePrepareApproval: (params: ApproveMultisigProposalParams) => void;
   handlePrepareExecution: () => void;
   isLoading: boolean;
@@ -92,7 +96,9 @@ const ProposalTransactionProvider: React.FC<Props> = ({children}) => {
   const [showExecutionModal, setShowExecutionModal] = useState(false);
   const [voteTokenAddress, setVoteTokenAddress] = useState<string>();
 
-  const [voteParams, setVoteParams] = useState<VoteProposalParams>();
+  const [voteParams, setVoteParams] = useState<
+    VoteProposalParams  & {isCommitteeVote: boolean | undefined}
+  >();
   const [approvalParams, setApprovalParams] =
     useState<ApproveMultisigProposalParams>();
 
@@ -148,15 +154,18 @@ const ProposalTransactionProvider: React.FC<Props> = ({children}) => {
   );
 
   const handlePrepareVote = useCallback(
-    (params: SubmitVoteParams) => {
+    // todo(kon): isCommitteeVote is a quick hack tot test the approve. Check how should be done
+    (params: SubmitVoteParams, isCommitteeVote = false) => {
       setReplacingVote(!!params.replacement);
       setVoteTokenAddress(params.voteTokenAddress);
 
-      setVoteParams({proposalId, vote: params.vote});
+      setVoteParams({proposalId, vote: params.vote, isCommitteeVote});
       setShowVoteModal(true);
       // todo(kon): check how to avoid conflicting between offchain onchain voting states
       setVoteOrApprovalProcessState(
-        offchainVoting ? undefined : TransactionState.WAITING
+        offchainVoting && !isCommitteeVote
+          ? undefined
+          : TransactionState.WAITING
       );
     },
     [proposalId]
@@ -393,7 +402,16 @@ const ProposalTransactionProvider: React.FC<Props> = ({children}) => {
     async (params: ApproveMultisigProposalParams) => {
       if (!isMultisigPluginClient) return;
 
-      const approveSteps = pluginClient.methods.approveProposal(params);
+      let approveSteps;
+      if (params.isCommitteeVote) {
+        // todo(kon): isCommitteeVote is a quick hack tot test the approve. Check how should be done
+        const {proposal} = new ProposalId(urlId!).stripPlgnAdrFromProposalId();
+        approveSteps = (pluginClient as OffchainVotingClient)?.methods.setTally(
+          proposal.toString()
+        );
+      } else {
+        approveSteps = pluginClient.methods.approveProposal(params);
+      }
       if (!approveSteps) {
         throw new Error('Approval function is not initialized correctly');
       }
@@ -591,7 +609,7 @@ const ProposalTransactionProvider: React.FC<Props> = ({children}) => {
   return (
     <ProposalTransactionContext.Provider value={value}>
       {children}
-      {offchainVoting ? (
+      {offchainVoting && !voteParams?.isCommitteeVote ? ( // todo(kon): isCommitteeVote is a quick hack tot test the approve. Check how should be done
         <OffchainVotingModal
           vote={voteParams}
           setShowVoteModal={setShowVoteModal}

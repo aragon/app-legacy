@@ -156,21 +156,10 @@ export const useOffchainCommitteVotes = (
     return proposal.approvers?.some(approver => approver === address);
   }, [address, proposal.approvers]);
 
-  const isApproved = useMemo(async () => {
-    if (!client) return false;
-
-    const vottingSettings = await client.methods.getVotingSettings(
-      pluginAddress
-    );
-    if (!vottingSettings) return false;
-    return vottingSettings.minTallyApprovals >= proposal.approvers.length;
-    // return isProposalApproved(
-    //   proposal.vochain.tally,
-    //   proposal.approvers.length,
-    //   proposal.settings.supportThreshold,
-    //   proposal.settings.minParticipation
-    // );
-  }, [client, pluginAddress, proposal]);
+  const isApproved = useMemo(() => {
+    if (!client || !proposal) return false;
+    return proposal.settings.minTallyApprovals >= proposal.approvers.length;
+  }, [client, proposal]);
 
   useEffect(() => {
     const doCheck = async () => {
@@ -184,6 +173,13 @@ export const useOffchainCommitteVotes = (
       voted ? setCanVote(true) : doCheck();
     }
   }, [address, client, pluginAddress, voted]);
+
+  // const approveProposal = useCallback(async () => {
+  //   if (!client || !canVote) return;
+  //   return proposal.approvers.length === 0
+  //     ? await client.methods.setTally(proposal.id)
+  //     : await client.methods.approveTally(proposal.id, false);
+  // }, [canVote, client]);
 
   return {canVote, voted, isApproved};
 };
