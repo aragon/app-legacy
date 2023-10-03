@@ -37,7 +37,6 @@ const extractTupleValues = (
   formData: Record<string, unknown>
 ) => {
   const tuple: unknown[] = [];
-  console.log('formData', formData);
 
   input.components?.map(component => {
     if (component.type !== 'tuple') {
