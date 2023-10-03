@@ -513,7 +513,7 @@ const CreateProposalWrapper: React.FC<Props> = ({
         actions: proposalCreationData.actions ?? [],
         status: proposalCreationData.startDate
           ? ProposalStatus.PENDING
-          : ProposalStatus.PENDING,
+          : ProposalStatus.ACTIVE,
       };
 
       if (isMultisigVotingSettings(votingSettings)) {
