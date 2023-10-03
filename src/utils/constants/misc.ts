@@ -141,16 +141,20 @@ export const PENDING_EXECUTION_KEY = 'pendingExecution';
 export const PENDING_MULTISIG_EXECUTION_KEY = 'pendingMultisigExecution';
 export const VERIFIED_CONTRACTS_KEY = 'verifiedContracts';
 
-// TODO: build more
-// Time sensitive fields (intentionally lowercasing)
-export const POTENTIALLY_TIME_SENSITIVE_FIELDS = new Set<string>([
-  'cliffperiod',
+export const POTENTIALLY_ENDDATE_SENSITIVE_FIELDS = new Set<string>([
   'deadline',
   'endtime',
   'expirydate',
+  'lockexpiration',
+]);
+
+// TODO: build more
+// Time sensitive fields (intentionally lowercasing)
+export const POTENTIALLY_TIME_SENSITIVE_FIELDS = new Set<string>([
+  ...POTENTIALLY_ENDDATE_SENSITIVE_FIELDS,
+  'cliffperiod',
   'freezeperiod',
   'lockduration',
-  'lockexpiration',
   'timelock',
   'timerestriction',
   'unlocktime',

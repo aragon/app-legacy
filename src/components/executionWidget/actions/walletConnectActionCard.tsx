@@ -2,12 +2,17 @@ import {AlertCard, Label} from '@aragon/ods';
 import React, {useMemo} from 'react';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
+import {BigNumber} from 'bignumber.js';
 
 import {AccordionMethod, AccordionMethodType} from 'components/accordionMethod';
 import {FormlessComponentForType} from 'containers/smartContractComposer/components/inputForm';
-import {POTENTIALLY_TIME_SENSITIVE_FIELDS} from 'utils/constants/misc';
+import {
+  POTENTIALLY_ENDDATE_SENSITIVE_FIELDS,
+  POTENTIALLY_TIME_SENSITIVE_FIELDS,
+} from 'utils/constants/misc';
 import {capitalizeFirstLetter, shortenAddress} from 'utils/library';
 import {ActionWC, ExecutionStatus, Input} from 'utils/types';
+import {parseUnits} from 'ethers/lib/utils';
 
 type WCActionCardActionCardProps = Pick<AccordionMethodType, 'type'> & {
   action: ActionWC;
@@ -32,6 +37,10 @@ export const WCActionCard: React.FC<WCActionCardActionCardProps> = ({
     if (action.inputs) {
       for (const input of action.inputs) {
         if (POTENTIALLY_TIME_SENSITIVE_FIELDS.has(input.name.toLowerCase())) {
+          const decimalNumber = new BigNumber(input.value[name]._hex).toString(
+            10
+          );
+          console.log('input', decimalNumber);
           return true;
         }
 
@@ -40,6 +49,14 @@ export const WCActionCard: React.FC<WCActionCardActionCardProps> = ({
           // for whatever reason the name is coming as the array index??
           for (const name in input.value as {}) {
             if (POTENTIALLY_TIME_SENSITIVE_FIELDS.has(name.toLowerCase())) {
+              if (
+                POTENTIALLY_ENDDATE_SENSITIVE_FIELDS.has(name.toLowerCase())
+              ) {
+                const decimalNumber = new BigNumber(
+                  input.value[name]._hex
+                ).toString(10);
+                console.log('input', new Date(Number(decimalNumber) * 1000));
+              }
               return true;
             }
           }
