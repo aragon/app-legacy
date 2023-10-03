@@ -1,4 +1,9 @@
-import {MultisigProposal, TokenVotingProposal} from '@aragon/sdk-client';
+import {
+  MultisigProposal,
+  MultisigProposalListItem,
+  TokenVotingProposal,
+  TokenVotingProposalListItem,
+} from '@aragon/sdk-client';
 
 import {SupportedChainID} from 'utils/constants';
 import {StorageUtils} from './abstractStorage';
@@ -56,6 +61,24 @@ export class ProposalStorage extends StorageUtils {
     const proposals: ProposalCache = this.getItem(key) || {};
 
     return (proposals[proposalId] as T) ?? null;
+  }
+
+  /**
+   * Retrieves all stored proposals associated with a given plugin address from localStorage.
+   * @param chainId - The ID of the blockchain network.
+   * @param pluginAddress - The plugin address that is part of the proposal ID.
+   * @returns - An array of retrieved proposals associated with the given plugin address
+   */
+  getProposalsByPluginAddress<
+    T extends MultisigProposalListItem | TokenVotingProposalListItem
+  >(chainId: SupportedChainID, pluginAddress: string): T[] {
+    const key = chainId.toString();
+    const proposals: ProposalCache = this.getItem(key) || {};
+    const matchingProposals = Object.values(proposals)
+      .filter(proposal => proposal.id.startsWith(pluginAddress))
+      .map(proposal => proposal);
+
+    return matchingProposals as unknown as T[];
   }
 
   /**
