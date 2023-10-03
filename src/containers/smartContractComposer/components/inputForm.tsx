@@ -353,7 +353,11 @@ export const ComponentForType: React.FC<ComponentForTypeProps> = ({
                   input={component}
                   functionName={`${functionName}.${input.name}`}
                   formHandleName={
-                    formHandleName ? `${formHandleName}[${index}]` : undefined
+                    formHandleName
+                      ? `${formHandleName}[${index}]`
+                      : disabled
+                      ? `${formName}[${index}]`
+                      : undefined
                   }
                   disabled={disabled}
                   isValid={isValid}
