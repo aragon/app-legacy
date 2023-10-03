@@ -13,6 +13,7 @@ import {
   ProposalStatus,
 } from '@aragon/sdk-client-common';
 import {useQueryClient} from '@tanstack/react-query';
+import differenceInSeconds from 'date-fns/fp/differenceInSeconds';
 import {parseUnits} from 'ethers/lib/utils';
 import React, {useCallback, useEffect, useState} from 'react';
 import {useFormContext, useFormState} from 'react-hook-form';
@@ -31,7 +32,6 @@ import PublishModal from 'containers/transactionModals/publishModal';
 import {useGlobalModalContext} from 'context/globalModals';
 import {useNetwork} from 'context/network';
 import {useProviders} from 'context/providers';
-import {millisecondsInSecond} from 'date-fns';
 import {useClient} from 'hooks/useClient';
 import {useDaoDetailsQuery} from 'hooks/useDaoDetails';
 import {useDaoToken} from 'hooks/useDaoToken';
@@ -770,9 +770,10 @@ const ProposeSettingWrapper: React.FC<Props> = ({
         const settings: MajorityVotingProposalSettings = {
           supportThreshold: votingSettings.supportThreshold,
           minParticipation: votingSettings.minParticipation,
-          duration:
-            (baseParams.endDate.getTime() - baseParams.startDate.getTime()) /
-            millisecondsInSecond,
+          duration: differenceInSeconds(
+            baseParams.endDate,
+            baseParams.startDate
+          ),
         };
 
         const proposal = {

@@ -18,7 +18,7 @@ import {
 } from '@aragon/sdk-client-common';
 import {hexToBytes} from '@aragon/sdk-common';
 import {useQueryClient} from '@tanstack/react-query';
-import {millisecondsInSecond} from 'date-fns/fp';
+import differenceInSeconds from 'date-fns/differenceInSeconds';
 import {ethers} from 'ethers';
 import React, {useCallback, useEffect, useMemo, useState} from 'react';
 import {useFormContext} from 'react-hook-form';
@@ -554,9 +554,10 @@ const CreateProposalWrapper: React.FC<Props> = ({
         const settings: MajorityVotingProposalSettings = {
           supportThreshold: votingSettings.supportThreshold,
           minParticipation: votingSettings.minParticipation,
-          duration:
-            (baseParams.endDate.getTime() - baseParams.startDate.getTime()) /
-            millisecondsInSecond,
+          duration: differenceInSeconds(
+            baseParams.endDate,
+            baseParams.startDate
+          ),
         };
 
         const proposal = {

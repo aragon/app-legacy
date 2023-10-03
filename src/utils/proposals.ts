@@ -10,7 +10,6 @@ import {
   CreateMajorityVotingProposalParams,
   Erc20TokenDetails,
   MultisigProposal,
-  MultisigProposalListItem,
   MultisigVotingSettings,
   TokenVotingProposal,
   TokenVotingProposalResult,
@@ -21,13 +20,10 @@ import {
 import {ProposalMetadata, ProposalStatus} from '@aragon/sdk-client-common';
 import Big from 'big.js';
 import {Locale, format, formatDistanceToNow} from 'date-fns';
-import differenceInSeconds from 'date-fns/fp/differenceInSeconds';
 import * as Locales from 'date-fns/locale';
-import {BigNumber} from 'ethers';
 import {TFunction} from 'react-i18next';
 
 import {ProposalVoteResults} from 'containers/votingTerminal';
-import {CachedProposal} from 'context/apolloClient';
 import {MultisigDaoMember} from 'hooks/useDaoMembers';
 import {PluginTypes} from 'hooks/usePluginClient';
 import {isMultisigVotingSettings} from 'services/aragon-sdk/queries/use-voting-settings';
@@ -38,7 +34,6 @@ import {abbreviateTokenAmount} from './tokens';
 import {
   Action,
   DetailedProposal,
-  Erc20ProposalVote,
   ProposalListItem,
   StrictlyExclude,
   SupportedProposals,
@@ -562,7 +557,7 @@ export type CacheProposalParams = {
   daoName: string;
   metadata: ProposalMetadata;
   proposalParams: CreateMajorityVotingProposalParams;
-  proposalGuid: string;
+  id: string;
   status: ProposalStatus;
 
   // Multisig props
@@ -574,116 +569,6 @@ export type CacheProposalParams = {
   pluginSettings?: VotingSettings;
   totalVotingWeight?: bigint;
 };
-
-/**
- * Map newly created proposal to Detailed proposal that can be cached and shown
- * @param params necessary parameters to map newly created proposal to augmented DetailedProposal
- * @returns Detailed proposal, ready for caching and displaying
- */
-export function mapToCacheProposal(params: CacheProposalParams) {
-  // common properties
-  const commonProps = {
-    actions: params.proposalParams.actions || [],
-    creationDate: new Date(),
-    creatorAddress: params.creatorAddress,
-    dao: {address: params.daoAddress, name: params.daoName},
-    endDate: params.proposalParams.endDate!,
-    startDate: params.proposalParams.startDate!,
-    id: params.proposalGuid,
-    metadata: params.metadata,
-    status: params.status,
-  };
-
-  // erc20
-  if (isErc20Token(params.daoToken) && params.pluginSettings) {
-    return {
-      ...commonProps,
-      token: {
-        address: params.daoToken.address,
-        decimals: params.daoToken.decimals,
-        name: params.daoToken.name,
-        symbol: params.daoToken.symbol,
-      },
-      votes: [],
-      votingMode: params.pluginSettings.votingMode,
-      settings: {
-        supportThreshold: params.pluginSettings.supportThreshold,
-        minParticipation: params.pluginSettings.minParticipation,
-        duration: differenceInSeconds(
-          params.proposalParams.startDate!,
-          params.proposalParams.endDate!
-        ),
-      },
-      totalVotingWeight: params.totalVotingWeight as bigint,
-      usedVotingWeight: BigInt(0),
-      result: {yes: BigInt(0), no: BigInt(0), abstain: BigInt(0)},
-      executionTxHash: '',
-    } as CachedProposal;
-  } else {
-    // multisig
-    return {
-      ...commonProps,
-      approvals: [],
-      minApprovals: params.minApprovals,
-      executionTxHash: '',
-      settings: {
-        minApprovals: params.minApprovals,
-        onlyListed: params.onlyListed,
-      },
-    } as CachedProposal;
-  }
-}
-
-/**
- * Augment TokenVoting proposal with vote
- * @param proposal proposal to be augmented with vote
- * @param vote
- * @returns a proposal augmented with a singular vote
- */
-export function addVoteToProposal(
-  proposal: TokenVotingProposal,
-  vote: Erc20ProposalVote
-): DetailedProposal {
-  if (!vote) return proposal;
-
-  // calculate new vote values including cached ones
-  const voteValue = MappedVotes[vote.vote];
-
-  return {
-    ...proposal,
-    votes: [...proposal.votes, {...vote}],
-    result: {
-      ...proposal.result,
-      [voteValue]: BigNumber.from(proposal.result[voteValue])
-        .add((vote as Erc20ProposalVote).weight)
-        .toBigInt(),
-    },
-    usedVotingWeight: BigNumber.from(proposal.usedVotingWeight)
-      .add((vote as Erc20ProposalVote).weight)
-      .toBigInt(),
-  } as TokenVotingProposal;
-}
-
-/**
- * Augment Multisig proposal with vote
- * @param proposal Multisig Proposal
- * @param cachedApprovalAddress Cached vote
- * @returns a proposal augmented with a singular vote
- */
-export function addApprovalToMultisigToProposal(
-  proposal: MultisigProposal | MultisigProposalListItem,
-  cachedApprovalAddress: string
-) {
-  if (!cachedApprovalAddress) return proposal;
-
-  if (typeof proposal.approvals === 'number') {
-    return {...proposal, approvals: proposal.approvals + 1};
-  } else
-    return {
-      ...proposal,
-      approvals: [...proposal.approvals, cachedApprovalAddress.toLowerCase()],
-    };
-}
 
 /**
  * Strips proposal id of plugin address
