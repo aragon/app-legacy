@@ -180,6 +180,14 @@ const ProposalTransactionProvider: React.FC<Props> = ({children}) => {
    *                  Estimations                  *
    *************************************************/
   const estimateVoteOrApprovalFees = useCallback(async () => {
+    if (voteParams && voteParams.isCommitteeVote) {
+      const {proposal} = new ProposalId(urlId!).stripPlgnAdrFromProposalId();
+      return (pluginClient as OffchainVotingClient)?.estimation.setTally(
+        pluginAddress,
+        proposal
+      )
+    }
+
     if (isTokenVotingPluginClient && voteParams && voteTokenAddress) {
       return pluginClient.estimation.voteProposal(voteParams);
     }
@@ -407,7 +415,8 @@ const ProposalTransactionProvider: React.FC<Props> = ({children}) => {
         // todo(kon): isCommitteeVote is a quick hack tot test the approve. Check how should be done
         const {proposal} = new ProposalId(urlId!).stripPlgnAdrFromProposalId();
         approveSteps = (pluginClient as OffchainVotingClient)?.methods.setTally(
-          proposal.toString()
+          pluginAddress,
+          proposal
         );
       } else {
         approveSteps = pluginClient.methods.approveProposal(params);
