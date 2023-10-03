@@ -12,7 +12,7 @@ import {CHAIN_METADATA} from 'utils/constants';
 import {invariant} from 'utils/invariant';
 import {IFetchProposalParams} from '../aragon-sdk-service.api';
 import {aragonSdkQueryKeys} from '../query-keys';
-import {transformProposal} from '../selectors';
+import {syncProposalData, transformProposal} from '../selectors';
 
 async function fetchProposal(
   params: IFetchProposalParams,
@@ -30,20 +30,23 @@ export const useProposal = (
 ) => {
   const client = usePluginClient(params.pluginType);
 
+  if (!client || !params.id || !params.pluginType) {
+    options.enabled = false;
+  }
+
   const {network} = useNetwork();
   const chainId = CHAIN_METADATA[network].id;
 
   const defaultSelect = (data: TokenVotingProposal | MultisigProposal | null) =>
     transformProposal(chainId, data);
 
-  if (!client || !params.id || !params.pluginType) {
-    options.enabled = false;
-  }
-
   return useQuery({
     ...options,
     queryKey: aragonSdkQueryKeys.proposal(params),
-    queryFn: () => fetchProposal(params, client),
+    queryFn: async () => {
+      const serverData = await fetchProposal(params, client);
+      return syncProposalData(chainId, params.id, serverData);
+    },
     select: options.select ?? defaultSelect,
   });
 };

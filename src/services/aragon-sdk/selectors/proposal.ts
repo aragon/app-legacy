@@ -10,6 +10,7 @@ import {InfiniteData} from '@tanstack/react-query';
 
 import {SupportedChainID} from 'utils/constants';
 import {ExecutionStorage, VoteStorage} from 'utils/localStorage';
+import {ProposalStorage} from 'utils/localStorage/proposalStorage';
 import {
   isMultisigProposal,
   isTokenBasedProposal,
@@ -70,6 +71,23 @@ export function transformProposal<
   syncExecutionInfo(chainId, proposal);
 
   return recalculateProposalStatus(proposal) as T;
+}
+
+export function syncProposalData<
+  T extends
+    | MultisigProposal
+    | TokenVotingProposal
+    | MultisigProposalListItem
+    | TokenVotingProposalListItem
+>(chainId: SupportedChainID, proposalId: string, serverData: T | null) {
+  const proposalStorage = new ProposalStorage();
+
+  if (serverData) {
+    proposalStorage.removeProposal(chainId, serverData.id);
+    return serverData;
+  } else {
+    return proposalStorage.getProposal(chainId, proposalId);
+  }
 }
 
 /**
@@ -172,7 +190,9 @@ function syncTokenBasedVotes(
   proposal: TokenVotingProposal | TokenVotingProposalListItem,
   voteStorage: VoteStorage
 ): TokenVotingProposalVote[] {
-  const serverVotes = new Map(proposal.votes.map(vote => [vote.address, vote]));
+  const serverVotes = new Map(
+    proposal.votes?.map(vote => [vote.address, vote])
+  );
   const uniqueCachedVotes: Array<TokenVotingProposalVote> = [];
 
   // all cached votes
