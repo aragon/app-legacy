@@ -44,10 +44,15 @@ const ProtectedRoute: React.FC = () => {
       pluginType,
     });
 
+  // only fetch first page, as for multisig this will be enough, and for token-based
+  // if it's not enough the code will fall back to fetchBalance()
   const {
     data: {daoToken, filteredMembers},
     isLoading: membersAreLoading,
-  } = useDaoMembers(pluginAddress, pluginType, address as string);
+  } = useDaoMembers(pluginAddress, pluginType, {
+    searchTerm: address as string,
+    page: 0,
+  });
   const fetchVotingPower = useVotingPowerAsync();
 
   /*************************************************

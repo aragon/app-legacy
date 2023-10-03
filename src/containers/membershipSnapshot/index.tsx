@@ -46,7 +46,7 @@ export const MembershipSnapshot: React.FC<Props> = ({
   const {
     data: {members, daoToken},
     isLoading,
-  } = useDaoMembers(pluginAddress, pluginType);
+  } = useDaoMembers(pluginAddress, pluginType, {page: 0});
   const totalMemberCount = members.length;
 
   const {data: daoDetails} = useDaoDetailsQuery();

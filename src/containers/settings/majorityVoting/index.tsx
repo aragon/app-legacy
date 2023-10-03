@@ -37,7 +37,8 @@ const MajorityVotingSettings: React.FC<IPluginSettings> = ({daoDetails}) => {
 
   const {data: daoMembers, isLoading: membersLoading} = useDaoMembers(
     pluginAddress,
-    pluginType
+    pluginType,
+    {countOnly: true}
   );
 
   const {data: daoToken, isLoading: daoTokenLoading} =
@@ -124,7 +125,7 @@ const MajorityVotingSettings: React.FC<IPluginSettings> = ({daoDetails}) => {
           <Definition>
             <Link
               label={t('settings.community.distributionValue', {
-                value: daoMembers.members.length,
+                value: daoMembers.memberCount,
               })}
               description={t('settings.community.distributionHelptext')}
               iconRight={<IconLinkExternal />}

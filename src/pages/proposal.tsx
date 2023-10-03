@@ -116,7 +116,9 @@ export const Proposal: React.FC = () => {
 
   const {
     data: {members},
-  } = useDaoMembers(pluginAddress, pluginType);
+  } = useDaoMembers(pluginAddress, pluginType, {
+    enabled: pluginType === 'multisig.plugin.dao.eth',
+  });
 
   const allowVoteReplacement =
     isTokenVotingSettings(votingSettings) &&

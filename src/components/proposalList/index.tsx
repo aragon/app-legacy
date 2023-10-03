@@ -84,7 +84,8 @@ const ProposalList: React.FC<ProposalListProps> = ({
 
   const {data: members, isLoading: areMembersLoading} = useDaoMembers(
     pluginAddress,
-    pluginType
+    pluginType,
+    {countOnly: true}
   );
 
   const mappedProposals: ({id: string} & CardProposalProps)[] = useMemo(
@@ -92,7 +93,7 @@ const ProposalList: React.FC<ProposalListProps> = ({
       proposals.map(p =>
         proposal2CardProps(
           p,
-          members.members.length,
+          members.memberCount,
           network,
           navigate,
           t,
@@ -102,7 +103,7 @@ const ProposalList: React.FC<ProposalListProps> = ({
       ),
     [
       proposals,
-      members.members.length,
+      members.memberCount,
       network,
       navigate,
       t,

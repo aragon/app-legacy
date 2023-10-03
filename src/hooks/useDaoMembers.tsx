@@ -27,6 +27,7 @@ export type DaoMemberSort = 'delegations' | 'votingPower';
 
 export type DaoMembersData = {
   members: DaoMember[];
+  memberCount: number;
   filteredMembers: DaoMember[];
   daoToken?: Erc20TokenDetails;
 };
@@ -93,21 +94,29 @@ const sdkToDaoMember = (
   };
 };
 
+export interface DaoMembersOptions {
+  searchTerm?: string;
+  sort?: DaoMemberSort;
+  page?: number;
+  countOnly?: boolean;
+  memberList?: string[];
+  enabled?: boolean;
+}
+
 /**
  * Hook to fetch DAO members. Fetches token if DAO is token based, and allows
  * for a search term to be passed in to filter the members list.
  *
  * @param pluginAddress plugin from which members will be retrieved
  * @param pluginType plugin type
- * @param searchTerm Optional member search term  (e.g. '0x...')
+ * @param options Optional options map
  * @returns A list of DAO members, the total number of members in the DAO and
  * the DAO token (if token-based)
  */
 export const useDaoMembers = (
   pluginAddress: string,
-  pluginType?: PluginTypes,
-  searchTerm?: string,
-  sort?: DaoMemberSort
+  pluginType: PluginTypes,
+  options?: DaoMembersOptions
 ): HookData<DaoMembersData> => {
   const {network} = useNetwork();
   const {address} = useWallet();
@@ -116,16 +125,25 @@ export const useDaoMembers = (
 
   const isTokenBased = pluginType === 'token-voting.plugin.dao.eth';
 
-  const useSubgraph =
-    !isTokenBased ||
+  const opts = options ? options : {};
+  let memberCount = 0;
+  const countOnly = opts?.countOnly || false;
+  const enabled = opts?.enabled || true;
+
+  const networkCovalentSupported = !(
     network === 'goerli' ||
     network === 'base' ||
-    network === 'base-goerli';
+    network === 'base-goerli'
+  );
+  const useSubgraph = !isTokenBased || !networkCovalentSupported;
   const {
     data: subgraphData = [],
-    isError: isSugraphError,
+    isError: isSubgraphError,
     isInitialLoading: isSubgraphLoading,
-  } = useMembers({pluginAddress, pluginType}, {enabled: useSubgraph});
+  } = useMembers(
+    {pluginAddress, pluginType},
+    {enabled: useSubgraph && enabled}
+  );
   const parsedSubgraphData = subgraphData.map(member =>
     sdkToDaoMember(member, daoToken?.decimals)
   );
@@ -134,13 +152,14 @@ export const useDaoMembers = (
     address: address as Address,
     token: daoToken?.address as Address,
     chainId: CHAIN_METADATA[network as SupportedNetworks].id,
-    enabled: address != null && daoToken != null,
+    enabled: address != null && daoToken != null && !countOnly && enabled,
   });
   const userBalanceNumber = Number(
     formatUnits(userBalance?.value ?? '0', daoToken?.decimals)
   );
 
-  const useGraphql = !useSubgraph && pluginType != null && daoToken != null;
+  const useGraphql =
+    !useSubgraph && pluginType != null && daoToken != null && enabled;
 
   const {
     data: graphqlData,
@@ -150,9 +169,41 @@ export const useDaoMembers = (
     {
       network,
       tokenAddress: daoToken?.address as string,
+      page: opts?.page,
     },
     {enabled: useGraphql}
   );
+
+  if (!enabled)
+    return {
+      data: {
+        members: [],
+        filteredMembers: [],
+        memberCount: 0,
+      },
+      isLoading: false,
+      isError: false,
+    };
+
+  // token holders data gives us the total holders, so only need to call once
+  // and return this number if countOnly === true
+  if (countOnly) {
+    if (useSubgraph) {
+      memberCount = parsedSubgraphData?.length || 0;
+    } else {
+      memberCount = graphqlData?.holders.totalHolders || 0;
+    }
+    return {
+      data: {
+        members: [],
+        filteredMembers: [],
+        daoToken,
+        memberCount,
+      },
+      isLoading: isSubgraphLoading || isGraphqlLoading,
+      isError: isSubgraphError || isGraphqlError,
+    };
+  }
 
   const parsedGraphqlData = (graphqlData?.holders.holders ?? []).map(member => {
     const {address, balance, votes, delegates} = member;
@@ -195,21 +246,25 @@ export const useDaoMembers = (
     }
   };
 
-  const sortedData = [...getCombinedData()].sort(sortDaoMembers(sort, address));
-  const filteredData =
-    searchTerm == null || searchTerm === ''
-      ? sortedData
-      : sortedData.filter(member =>
-          member.address.toLowerCase().includes(searchTerm.toLowerCase())
-        );
+  const sortedData = opts?.sort
+    ? [...getCombinedData()].sort(sortDaoMembers(opts.sort, address))
+    : getCombinedData();
+  memberCount = sortedData.length;
+  const searchTerm = opts?.searchTerm;
+  const filteredData = !searchTerm
+    ? sortedData
+    : sortedData.filter(member =>
+        member.address.toLowerCase().includes(searchTerm.toLowerCase())
+      );
 
   return {
     data: {
       members: sortedData,
       filteredMembers: filteredData,
       daoToken,
+      memberCount,
     },
     isLoading: isSubgraphLoading || isGraphqlLoading,
-    isError: isSugraphError || isGraphqlError,
+    isError: isSubgraphError || isGraphqlError,
   };
 };

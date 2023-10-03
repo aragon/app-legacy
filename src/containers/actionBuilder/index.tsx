@@ -54,7 +54,12 @@ const Action: React.FC<ActionsComponentProps> = ({
   // plugin data
   const {data: votingSettings} = useVotingSettings({pluginAddress, pluginType});
 
-  const {data: daoMembers} = useDaoMembers(pluginAddress, pluginType);
+  // will only be enabled for multisig
+  const {data: daoMembers} = useDaoMembers(pluginAddress, pluginType, {
+    enabled: ['add_address', 'remove_address'].includes(name),
+    page: 0,
+  });
+
   const multisigDAOSettings = votingSettings as MultisigVotingSettings;
 
   switch (name) {
