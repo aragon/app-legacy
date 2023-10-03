@@ -143,6 +143,7 @@ export const Proposal: React.FC = () => {
   const {
     data: proposal,
     error: proposalError,
+    isFetched: proposalIsFetched,
     isLoading: proposalIsLoading,
     refetch,
   } = useProposal(
@@ -636,12 +637,16 @@ export const Proposal: React.FC = () => {
   /*************************************************
    *                     Render                    *
    *************************************************/
-  if (proposalError) {
+  if (paramsAreLoading || proposalIsLoading || detailsAreLoading) {
+    return <Loading />;
+  }
+
+  if (proposalError || (proposalIsFetched && proposal === null)) {
     navigate(NotFound, {replace: true, state: {invalidProposal: proposalId}});
   }
 
-  if (paramsAreLoading || proposalIsLoading || detailsAreLoading || !proposal) {
-    return <Loading />;
+  if (!proposal) {
+    return null;
   }
 
   return (
