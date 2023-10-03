@@ -249,7 +249,9 @@ export const useDaoMembers = (
   const sortedData = opts?.sort
     ? [...getCombinedData()].sort(sortDaoMembers(opts.sort, address))
     : getCombinedData();
-  memberCount = sortedData.length;
+  memberCount = useSubgraph
+    ? sortedData.length
+    : graphqlData?.holders.totalHolders || sortedData.length;
   const searchTerm = opts?.searchTerm;
   const filteredData = !searchTerm
     ? sortedData

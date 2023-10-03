@@ -72,7 +72,14 @@ export const Community: React.FC = () => {
 
   const filteredMemberCount = filteredMembers.length;
 
-  const displayedMembers = filteredMemberCount > 0 ? filteredMembers : members;
+  const showFiltered =
+    filteredMemberCount > 0 &&
+    filteredMemberCount < members.length &&
+    apiPage === 0;
+  const displayedMembers = showFiltered ? filteredMembers : members;
+  const displayedMembersTotal = showFiltered
+    ? filteredMemberCount
+    : totalMemberCount;
   const pagedMembers = displayedMembers.slice(
     (page - 1) * MEMBERS_PER_PAGE - apiPage * 1000,
     page * MEMBERS_PER_PAGE
@@ -299,12 +306,10 @@ export const Community: React.FC = () => {
 
         {/* Pagination */}
         <PaginationWrapper>
-          {(displayedMembers.length || 0) > MEMBERS_PER_PAGE && (
+          {displayedMembersTotal > MEMBERS_PER_PAGE && (
             <Pagination
               totalPages={
-                Math.ceil(
-                  (displayedMembers.length || 0) / MEMBERS_PER_PAGE
-                ) as number
+                Math.ceil(displayedMembersTotal / MEMBERS_PER_PAGE) as number
               }
               activePage={page}
               onChange={(activePage: number) => {
