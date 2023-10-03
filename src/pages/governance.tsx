@@ -49,6 +49,7 @@ export const Governance: React.FC = () => {
   } = useProposals({
     daoAddressOrEns: daoDetails?.address,
     pluginType,
+    pluginAddress: pluginAddress ?? '',
     status: filter !== 'All' ? filter : undefined,
   });
 
