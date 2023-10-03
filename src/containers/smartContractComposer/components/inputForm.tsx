@@ -305,11 +305,6 @@ export const ComponentForType: React.FC<ComponentForTypeProps> = ({
       );
 
     case 'int':
-    case 'uint8':
-    case 'int8':
-    case 'uint32':
-    case 'int32':
-    case 'uint256':
       return (
         <Controller
           defaultValue=""
@@ -357,14 +352,15 @@ export const ComponentForType: React.FC<ComponentForTypeProps> = ({
                   input={component}
                   functionName={`${functionName}.${input.name}`}
                   formHandleName={
-                    formHandleName
-                      ? `${formHandleName}[${index}]`
-                      : disabled
-                      ? `${formName}[${index}]`
-                      : undefined
+                    formHandleName ? `${formHandleName}[${index}]` : undefined
                   }
                   disabled={disabled}
                   isValid={isValid}
+                  defaultValue={
+                    defaultValue
+                      ? (defaultValue as Array<unknown>)[index]
+                      : undefined
+                  }
                 />
               </div>
             ))}
@@ -442,11 +438,6 @@ export function FormlessComponentForType({
       );
 
     case 'int':
-    case 'uint8':
-    case 'int8':
-    case 'uint32':
-    case 'int32':
-    case 'uint256':
       return (
         <NumberInput
           name={input.name}
