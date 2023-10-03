@@ -13,21 +13,22 @@ import styled from 'styled-components';
 
 import {proposal2CardProps} from 'components/proposalList';
 import {StateEmpty} from 'components/stateEmpty';
+import {Loading} from 'components/temporary';
 import {useNetwork} from 'context/network';
 import {useDaoMembers} from 'hooks/useDaoMembers';
 import {PluginTypes} from 'hooks/usePluginClient';
+import {useUpdateProposal} from 'hooks/useUpdateProposal';
+import {useWallet} from 'hooks/useWallet';
+import {useProposals} from 'services/aragon-sdk/queries/use-proposals';
+import {PROPOSALS_PER_PAGE} from 'utils/constants';
+import {featureFlags} from 'utils/featureFlags';
 import {htmlIn} from 'utils/htmlIn';
 import {Governance, NewProposal} from 'utils/paths';
-import {ProposalListItem} from 'utils/types';
-import {useWallet} from 'hooks/useWallet';
-import {useUpdateProposal} from 'hooks/useUpdateProposal';
-import {featureFlags} from 'utils/featureFlags';
 
 type Props = {
   daoAddressOrEns: string;
   pluginAddress: string;
   pluginType: PluginTypes;
-  proposals: ProposalListItem[];
 };
 
 const ProposalItem: React.FC<{proposalId: string} & CardProposalProps> =
@@ -54,22 +55,33 @@ const ProposalSnapshot: React.FC<Props> = ({
   daoAddressOrEns,
   pluginAddress,
   pluginType,
-  proposals,
 }) => {
   const {t} = useTranslation();
   const navigate = useNavigate();
   const {address} = useWallet();
-  const {network} = useNetwork(); // TODO ensure this is the dao network
+  const {network} = useNetwork();
 
-  const {data: members, isLoading: areMembersLoading} = useDaoMembers(
+  const {
+    data,
+    isFetched: proposalsFetched,
+    isLoading: proposalsAreLoading,
+  } = useProposals({
+    daoAddressOrEns,
+    pluginType,
+    pluginAddress,
+  });
+
+  const {data: members, isLoading: membersAreLoading} = useDaoMembers(
     pluginAddress,
     pluginType,
     {countOnly: true}
   );
 
+  const proposals = data?.pages.flat();
+
   const mappedProposals = useMemo(
     () =>
-      proposals.map(p => {
+      proposals?.slice(0, PROPOSALS_PER_PAGE).map(p => {
         return proposal2CardProps(
           p,
           members.memberCount,
@@ -91,7 +103,11 @@ const ProposalSnapshot: React.FC<Props> = ({
     ]
   );
 
-  if (proposals.length === 0 || areMembersLoading) {
+  if (proposalsAreLoading || membersAreLoading) {
+    return <Loading />;
+  }
+
+  if (proposalsFetched && mappedProposals?.length === 0) {
     return (
       <StateEmpty
         type="Human"
@@ -115,11 +131,15 @@ const ProposalSnapshot: React.FC<Props> = ({
     );
   }
 
+  if (!mappedProposals) {
+    return null;
+  }
+
   return (
     <Container>
       <ListItemHeader
         icon={<IconGovernance />}
-        value={proposals.length.toString()}
+        value={mappedProposals.length.toString()}
         label={t('dashboard.proposalsTitle')}
         buttonText={t('newProposal.title')}
         orientation="horizontal"
