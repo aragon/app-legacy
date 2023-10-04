@@ -1,5 +1,5 @@
 import {AlertCard, Label} from '@aragon/ods';
-import React, {useMemo} from 'react';
+import React, {useMemo, useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 import {BigNumber} from 'bignumber.js';
@@ -12,7 +12,6 @@ import {
 } from 'utils/constants/misc';
 import {capitalizeFirstLetter, shortenAddress} from 'utils/library';
 import {ActionWC, ExecutionStatus, Input} from 'utils/types';
-import {parseUnits} from 'ethers/lib/utils';
 
 type WCActionCardActionCardProps = Pick<AccordionMethodType, 'type'> & {
   action: ActionWC;
@@ -30,6 +29,7 @@ export const WCActionCard: React.FC<WCActionCardActionCardProps> = ({
   type,
 }) => {
   const {t} = useTranslation();
+  const [endTime, setEndTime] = useState<string>();
 
   const showTimeSensitiveWarning = useMemo(() => {
     // Note: need to check whether the inputs exist because the decoding
@@ -37,25 +37,40 @@ export const WCActionCard: React.FC<WCActionCardActionCardProps> = ({
     if (action.inputs) {
       for (const input of action.inputs) {
         if (POTENTIALLY_TIME_SENSITIVE_FIELDS.has(input.name.toLowerCase())) {
-          const decimalNumber = new BigNumber(input.value[name]._hex).toString(
-            10
-          );
-          console.log('input', decimalNumber);
+          if (
+            POTENTIALLY_ENDDATE_SENSITIVE_FIELDS.has(input.name.toLowerCase())
+          ) {
+            const decimalNumber = new BigNumber(
+              action?.inputs?.[input.name]?._hex || '0x0'
+            ).toString(10);
+
+            setEndTime(
+              new Date(Number(decimalNumber) * 1000)
+                .toISOString()
+                .substring(0, 10)
+            );
+          }
+
           return true;
         }
 
         // for tuples
         if (input.type === 'tuple' && Array.isArray(input.value)) {
           // for whatever reason the name is coming as the array index??
-          for (const name in input.value as {}) {
+          for (const name in input.value) {
             if (POTENTIALLY_TIME_SENSITIVE_FIELDS.has(name.toLowerCase())) {
               if (
                 POTENTIALLY_ENDDATE_SENSITIVE_FIELDS.has(name.toLowerCase())
               ) {
                 const decimalNumber = new BigNumber(
-                  input.value[name]._hex
+                  input?.value?.[name]?._hex || '0x0'
                 ).toString(10);
-                console.log('input', new Date(Number(decimalNumber) * 1000));
+
+                setEndTime(
+                  new Date(Number(decimalNumber) * 1000)
+                    .toISOString()
+                    .substring(0, 10)
+                );
               }
               return true;
             }
@@ -106,9 +121,13 @@ export const WCActionCard: React.FC<WCActionCardActionCardProps> = ({
         {status !== 'executed' && showTimeSensitiveWarning && (
           <AlertCard
             title={t('newProposal.configureActions.actionAlertCritical.title')}
-            helpText={t(
-              'newProposal.configureActions.actionAlertCritical.desc'
-            )}
+            helpText={
+              endTime
+                ? t('addAction.configureActions.AlertCritical.desc', {
+                    date_time: endTime,
+                  })
+                : t('newProposal.configureActions.actionAlertCritical.desc')
+            }
             mode="critical"
           />
         )}

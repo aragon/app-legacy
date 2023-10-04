@@ -1638,5 +1638,13 @@
       "labelOs": "Operating system",
       "labelGovernance": "Governance"
     }
+  },
+  "addAction": {
+    "configureActions": {
+      "AlertCritical": {
+        "title": "Action may fail",
+        "desc": "Even if the proposal passes, this action may fail if it is executed after {{date_time}}"
+      }
+    }
   }
 }
