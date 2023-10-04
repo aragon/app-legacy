@@ -1,10 +1,4 @@
-import {
-  ButtonText,
-  // Dropdown,
-  // IconChevronDown,
-  // ListItemAction,
-  ListItemBlockchain,
-} from '@aragon/ods';
+import {ButtonText, ListItemBlockchain} from '@aragon/ods';
 import React, {useMemo, useState} from 'react';
 import {Controller, useFormContext} from 'react-hook-form';
 import {useTranslation} from 'react-i18next';
@@ -15,10 +9,7 @@ import useScreen from 'hooks/useScreen';
 import {CHAIN_METADATA, SupportedNetworks} from 'utils/constants';
 import {featureFlags} from 'utils/featureFlags';
 
-// import {trackEvent} from 'services/analytics';
-
 type NetworkType = 'main' | 'test';
-// type SortFilter = 'cost' | 'popularity' | 'security';
 
 const SelectChainForm: React.FC = () => {
   const {t} = useTranslation();
@@ -26,8 +17,6 @@ const SelectChainForm: React.FC = () => {
   const {setNetwork, network} = useNetwork();
   const {control, resetField} = useFormContext();
 
-  // const [isOpen, setIsOpen] = useState(false);
-  // const [sortFilter, setFilter] = useState<SortFilter>('cost');
   const [networkType, setNetworkType] = useState<NetworkType>(
     CHAIN_METADATA[network].isTestnet ? 'test' : 'main'
   );
@@ -44,36 +33,6 @@ const SelectChainForm: React.FC = () => {
       ),
     [networkType]
   );
-
-  // // moving this up so state change triggers translation changes
-  // const labels = {
-  //   cost: {tag: t('labels.cheapest'), title: t('labels.networkCost')},
-  //   popularity: {
-  //     tag: t('labels.mostPopular'),
-  //     title: t('labels.popularity'),
-  //   },
-  //   security: {
-  //     tag: t('labels.safest'),
-  //     title: t('labels.security'),
-  //   },
-  // };
-
-  // const handleFilterChanged = useCallback(
-  //   (e: Event) => {
-  //     setIsOpen(false);
-
-  //     // Note: the dropdown returns a div parent as the target for the onSelect,
-  //     // and not the original element
-  //     const {name} = (e.currentTarget as HTMLDivElement)
-  //       .children[0] as HTMLButtonElement;
-
-  //     trackEvent('daoCreation_sortBy_clicked', {sort_by: name});
-  //     if (sortFilter !== name) {
-  //       setFilter(name as SortFilter);
-  //     }
-  //   },
-  //   [sortFilter]
-  // );
 
   return (
     <>
@@ -98,58 +57,6 @@ const SelectChainForm: React.FC = () => {
             onClick={() => setNetworkType('test')}
           />
         </NetworkTypeSwitcher>
-        {/* TODO: Enable this once we added more chains */}
-        {/* <SortFilter>
-          <Dropdown
-            align="end"
-            sideOffset={8}
-            style={{width: 234}}
-            trigger={
-              <ButtonText
-                label={labels?.[sortFilter]?.title}
-                mode="secondary"
-                size={isMobile ? 'small' : 'large'}
-                isActive={isOpen}
-                iconRight={<IconChevronDown />}
-              />
-            }
-            listItems={[
-              {
-                component: (
-                  <ListItemAction
-                    name="cost"
-                    mode={sortFilter === 'cost' ? 'selected' : 'default'}
-                    title={t('labels.networkCost')}
-                    bgWhite
-                  />
-                ),
-                callback: handleFilterChanged,
-              },
-              {
-                component: (
-                  <ListItemAction
-                    name="popularity"
-                    mode={sortFilter === 'popularity' ? 'selected' : 'default'}
-                    title={t('labels.popularity')}
-                    bgWhite
-                  />
-                ),
-                callback: handleFilterChanged,
-              },
-              {
-                component: (
-                  <ListItemAction
-                    name="security"
-                    mode={sortFilter === 'security' ? 'selected' : 'default'}
-                    title={t('labels.security')}
-                    bgWhite
-                  />
-                ),
-                callback: handleFilterChanged,
-              },
-            ]}
-          />
-        </SortFilter> */}
       </Header>
       <FormItem>
         {availableNetworks.map(selectedNetwork => (
@@ -173,7 +80,6 @@ const SelectChainForm: React.FC = () => {
                   }
                 }}
                 selected={CHAIN_METADATA[selectedNetwork].id === field.value.id}
-                // tag={index === 0 ? labels[sortFilter].tag : undefined}
                 {...CHAIN_METADATA[selectedNetwork]}
               />
             )}
@@ -191,10 +97,6 @@ const Header = styled.div.attrs({className: 'flex justify-between'})``;
 const NetworkTypeSwitcher = styled.div.attrs({
   className: 'flex p-0.5 space-x-0.25 bg-ui-0 rounded-xl',
 })``;
-
-// const SortFilter = styled.div.attrs({
-//   className: 'flex items-center space-x-1.5',
-// })``;
 
 const FormItem = styled.div.attrs({
   className: 'space-y-1.5',

@@ -28,7 +28,7 @@ import {useNetwork} from 'context/network';
 import {useDaoDetailsQuery} from 'hooks/useDaoDetails';
 import {useDaoMembers} from 'hooks/useDaoMembers';
 import {PluginTypes} from 'hooks/usePluginClient';
-import {usePluginSettings} from 'hooks/usePluginSettings';
+import {useVotingSettings} from 'services/aragon-sdk/queries/use-voting-settings';
 import {
   removeUnchangedMinimumApprovalAction,
   toDisplayEns,
@@ -46,17 +46,24 @@ export const ManageMembers: React.FC = () => {
   const {network} = useNetwork();
 
   // dao data
-  const {data: daoDetails, isLoading} = useDaoDetailsQuery();
+  const {data: daoDetails, isLoading: detailsLoading} = useDaoDetailsQuery();
+  const pluginAddress = daoDetails?.plugins?.[0]?.instanceAddress as string;
+  const pluginType = daoDetails?.plugins?.[0]?.id as PluginTypes;
+
   // plugin data
-  const {data: pluginSettings} = usePluginSettings(
-    daoDetails?.plugins[0].instanceAddress as string,
-    daoDetails?.plugins[0].id as PluginTypes
+  const {data: daoMembers, isLoading: membersLoading} = useDaoMembers(
+    pluginAddress,
+    pluginType
   );
-  const {data: daoMembers} = useDaoMembers(
-    daoDetails?.plugins?.[0]?.instanceAddress || '',
-    (daoDetails?.plugins?.[0]?.id as PluginTypes) || undefined
-  );
-  const multisigDAOSettings = pluginSettings as MultisigVotingSettings;
+
+  const {data: pluginSettings, isLoading: votingSettingsLoading} =
+    useVotingSettings({pluginAddress, pluginType});
+
+  const multisigVotingSettings = pluginSettings as
+    | MultisigVotingSettings
+    | undefined;
+
+  const isLoading = detailsLoading || membersLoading || votingSettingsLoading;
 
   const formMethods = useForm<ManageMembersFormData>({
     mode: 'onChange',
@@ -81,16 +88,18 @@ export const ManageMembers: React.FC = () => {
 
   const handleGoToSetupVoting = useCallback(
     (next: () => void) => {
-      formMethods.setValue(
-        'actions',
-        removeUnchangedMinimumApprovalAction(
-          formActions,
-          multisigDAOSettings
-        ) as ManageMembersFormData['actions']
-      );
-      next();
+      if (multisigVotingSettings) {
+        formMethods.setValue(
+          'actions',
+          removeUnchangedMinimumApprovalAction(
+            formActions,
+            multisigVotingSettings
+          ) as ManageMembersFormData['actions']
+        );
+        next();
+      }
     },
-    [formActions, formMethods, multisigDAOSettings]
+    [formActions, formMethods, multisigVotingSettings]
   );
 
   /*************************************************
@@ -105,7 +114,7 @@ export const ManageMembers: React.FC = () => {
   // will navigate to NotFound page if the api returns null.
   // using this so that typescript doesn't complain about daoDetails
   // being possibly null. Unfortunately, I don't have a more elegant solution.
-  if (!daoDetails) return null;
+  if (!daoDetails || !multisigVotingSettings || !daoMembers) return null;
 
   return (
     <FormProvider {...formMethods}>
@@ -130,7 +139,7 @@ export const ManageMembers: React.FC = () => {
                 !actionsAreValid(
                   errors,
                   formActions,
-                  multisigDAOSettings?.minApprovals
+                  multisigVotingSettings.minApprovals
                 )
               }
               onNextButtonClicked={handleGoToSetupVoting}
@@ -140,18 +149,18 @@ export const ManageMembers: React.FC = () => {
                 <AddAddresses
                   actionIndex={0}
                   useCustomHeader
-                  currentDaoMembers={daoMembers?.members}
+                  currentDaoMembers={daoMembers.members}
                 />
                 <RemoveAddresses
                   actionIndex={1}
                   useCustomHeader
-                  currentDaoMembers={daoMembers?.members}
+                  currentDaoMembers={daoMembers.members}
                 />
                 <UpdateMinimumApproval
                   actionIndex={2}
                   useCustomHeader
-                  currentDaoMembers={daoMembers?.members}
-                  currentMinimumApproval={multisigDAOSettings?.minApprovals}
+                  currentDaoMembers={daoMembers.members}
+                  currentMinimumApproval={multisigVotingSettings.minApprovals}
                 />
               </>
             </Step>
@@ -160,7 +169,7 @@ export const ManageMembers: React.FC = () => {
               wizardDescription={t('newWithdraw.setupVoting.description')}
               isNextButtonDisabled={!setupVotingIsValid(errors)}
             >
-              <SetupVotingForm pluginSettings={pluginSettings} />
+              <SetupVotingForm pluginSettings={multisigVotingSettings} />
             </Step>
             <Step
               wizardTitle={t('newWithdraw.defineProposal.heading')}

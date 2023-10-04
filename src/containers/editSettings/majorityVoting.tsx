@@ -1,10 +1,11 @@
-import {DaoDetails, VotingMode, VotingSettings} from '@aragon/sdk-client';
 import {
   AlertInline,
   ButtonText,
   IconGovernance,
   ListItemAction,
 } from '@aragon/ods';
+import {DaoDetails, VotingMode, VotingSettings} from '@aragon/sdk-client';
+import {BigNumber} from 'ethers/lib/ethers';
 import React, {useCallback, useEffect, useMemo} from 'react';
 import {
   useFieldArray,
@@ -17,7 +18,10 @@ import {generatePath, useNavigate} from 'react-router-dom';
 import styled from 'styled-components';
 
 import {AccordionItem, AccordionMultiple} from 'components/accordionMethod';
-import {SelectEligibility} from 'components/selectEligibility';
+import {
+  SelectEligibility,
+  TokenVotingProposalEligibility,
+} from 'components/selectEligibility';
 import {Loading} from 'components/temporary';
 import {PageWrapper} from 'components/wrappers';
 import ConfigureCommunity from 'containers/configureCommunity';
@@ -25,9 +29,9 @@ import DefineMetadata from 'containers/defineMetadata';
 import {useNetwork} from 'context/network';
 import {useDaoToken} from 'hooks/useDaoToken';
 import {PluginTypes} from 'hooks/usePluginClient';
-import {usePluginSettings} from 'hooks/usePluginSettings';
 import useScreen from 'hooks/useScreen';
 import {useTokenSupply} from 'hooks/useTokenSupply';
+import {useVotingSettings} from 'services/aragon-sdk/queries/use-voting-settings';
 import {Layout} from 'pages/settings';
 import {getDHMFromSeconds} from 'utils/date';
 import {decodeVotingMode, formatUnits, toDisplayEns} from 'utils/library';
@@ -44,37 +48,35 @@ export const EditMvSettings: React.FC<EditMvSettingsProps> = ({daoDetails}) => {
   const {isMobile} = useScreen();
 
   const {setValue, control} = useFormContext();
-  const {fields, replace} = useFieldArray({
-    name: 'daoLinks',
-    control,
-  });
-  const {errors, isValid} = useFormState({control});
+  const {fields, replace} = useFieldArray({name: 'daoLinks', control});
+  const {errors, isValid, isDirty} = useFormState({control});
 
-  const {data: daoToken, isLoading: tokensAreLoading} = useDaoToken(
-    daoDetails?.plugins?.[0]?.instanceAddress || ''
-  );
+  const pluginAddress = daoDetails?.plugins?.[0]?.instanceAddress as string;
+  const pluginType: PluginTypes = daoDetails?.plugins?.[0]?.id as PluginTypes;
+
+  const {data: daoToken, isLoading: tokensAreLoading} =
+    useDaoToken(pluginAddress);
 
   const {data: tokenSupply, isLoading: tokenSupplyIsLoading} = useTokenSupply(
-    daoToken?.address || ''
+    daoToken?.address ?? ''
   );
 
-  const {data, isLoading: settingsAreLoading} = usePluginSettings(
-    daoDetails?.plugins[0].instanceAddress as string,
-    daoDetails?.plugins[0].id as PluginTypes
-  );
-  const daoSettings = data as VotingSettings;
+  const {data: pluginSettings, isLoading: settingsAreLoading} =
+    useVotingSettings({
+      pluginAddress,
+      pluginType,
+    });
+  const votingSettings = pluginSettings as VotingSettings | undefined;
 
-  const formattedProposerAmount = Math.ceil(
-    Number(
-      formatUnits(
-        daoSettings.minProposerVotingPower || 0,
-        daoToken?.decimals || 18
-      )
-    )
-  );
-  const formattedEligibilityType = formattedProposerAmount ? 'token' : 'anyone';
+  const isLoading =
+    settingsAreLoading || tokensAreLoading || tokenSupplyIsLoading;
 
-  const {days, hours, minutes} = getDHMFromSeconds(daoSettings.minDuration);
+  const dataFetched = !!(
+    !isLoading &&
+    daoToken &&
+    tokenSupply &&
+    votingSettings?.minDuration
+  );
 
   const [
     daoName,
@@ -82,8 +84,8 @@ export const EditMvSettings: React.FC<EditMvSettingsProps> = ({daoDetails}) => {
     daoLogo,
     minimumApproval,
     minimumParticipation,
-    eligibilityType,
-    eligibilityTokenAmount,
+    formEligibleProposer,
+    formProposerTokenAmount,
     durationDays,
     durationHours,
     durationMinutes,
@@ -108,6 +110,10 @@ export const EditMvSettings: React.FC<EditMvSettingsProps> = ({daoDetails}) => {
     ],
     control,
   });
+
+  const {days, hours, minutes} = getDHMFromSeconds(
+    votingSettings?.minDuration ?? 0
+  );
 
   const controlledLinks = fields.map((field, index) => {
     return {
@@ -170,24 +176,52 @@ export const EditMvSettings: React.FC<EditMvSettingsProps> = ({daoDetails}) => {
 
   // governance
   const daoVotingMode = decodeVotingMode(
-    daoSettings?.votingMode || VotingMode.STANDARD
+    votingSettings?.votingMode ?? VotingMode.STANDARD
   );
 
   // TODO: We need to force forms to only use one type, Number or string
-  const isGovernanceChanged =
-    Number(minimumParticipation) !==
-      Math.round(daoSettings.minParticipation * 100) ||
-    Number(minimumApproval) !==
-      Math.round(daoSettings.supportThreshold * 100) ||
-    Number(durationDays) !== days ||
-    Number(durationHours) !== hours ||
-    Number(durationMinutes) !== minutes ||
-    earlyExecution !== daoVotingMode.earlyExecution ||
-    voteReplacement !== daoVotingMode.voteReplacement;
+  let isGovernanceChanged = false;
+  if (votingSettings) {
+    isGovernanceChanged =
+      Number(minimumParticipation) !==
+        Math.round(votingSettings.minParticipation * 100) ||
+      Number(minimumApproval) !==
+        Math.round(votingSettings.supportThreshold * 100) ||
+      Number(durationDays) !== days ||
+      Number(durationHours) !== hours ||
+      Number(durationMinutes) !== minutes ||
+      earlyExecution !== daoVotingMode.earlyExecution ||
+      voteReplacement !== daoVotingMode.voteReplacement;
+  }
+
+  // calculate proposer
+  let daoEligibleProposer: TokenVotingProposalEligibility =
+    formEligibleProposer;
+
+  if (votingSettings) {
+    if (!votingSettings.minProposerVotingPower) {
+      daoEligibleProposer = 'anyone';
+    } else {
+      daoEligibleProposer = BigNumber.from(
+        votingSettings.minProposerVotingPower
+      ).isZero()
+        ? 'anyone'
+        : 'token';
+    }
+  }
+
+  let daoProposerTokenAmount = '0';
+  if (daoToken?.decimals && votingSettings?.minProposerVotingPower) {
+    daoProposerTokenAmount = Math.ceil(
+      Number(
+        formatUnits(votingSettings.minProposerVotingPower, daoToken.decimals)
+      )
+    ).toString();
+  }
 
   const isCommunityChanged =
-    eligibilityTokenAmount !== formattedProposerAmount ||
-    eligibilityType !== formattedEligibilityType;
+    daoEligibleProposer !== formEligibleProposer ||
+    !BigNumber.from(daoProposerTokenAmount).eq(formProposerTokenAmount ?? 0);
 
   const setCurrentMetadata = useCallback(() => {
     setValue('daoName', daoDetails?.metadata.name);
@@ -218,30 +252,27 @@ export const EditMvSettings: React.FC<EditMvSettingsProps> = ({daoDetails}) => {
   ]);
 
   const setCurrentCommunity = useCallback(() => {
-    if (!eligibilityTokenAmount || !eligibilityType) {
-      setValue('eligibilityTokenAmount', formattedProposerAmount);
-      setValue('eligibilityType', formattedEligibilityType);
-    }
-    setValue('minimumTokenAmount', formattedProposerAmount);
-  }, [
-    eligibilityTokenAmount,
-    eligibilityType,
-    formattedEligibilityType,
-    formattedProposerAmount,
-    setValue,
-  ]);
+    setValue('eligibilityType', daoEligibleProposer);
+    setValue('eligibilityTokenAmount', daoProposerTokenAmount);
+    setValue('minimumTokenAmount', daoProposerTokenAmount);
+  }, [daoEligibleProposer, daoProposerTokenAmount, setValue]);
 
   const setCurrentGovernance = useCallback(() => {
+    if (!votingSettings) return;
+
     setValue('tokenTotalSupply', tokenSupply?.formatted);
-    setValue('minimumApproval', Math.round(daoSettings.supportThreshold * 100));
+    setValue(
+      'minimumApproval',
+      Math.round(votingSettings.supportThreshold * 100)
+    );
     setValue(
       'minimumParticipation',
-      Math.round(daoSettings.minParticipation * 100)
+      Math.round(votingSettings.minParticipation * 100)
     );
     setValue('tokenDecimals', daoToken?.decimals || 18);
 
     const votingMode = decodeVotingMode(
-      daoSettings?.votingMode || VotingMode.STANDARD
+      votingSettings.votingMode || VotingMode.STANDARD
     );
 
     setValue('earlyExecution', votingMode.earlyExecution);
@@ -259,16 +290,14 @@ export const EditMvSettings: React.FC<EditMvSettingsProps> = ({daoDetails}) => {
         : 'wallet'
     );
   }, [
-    setValue,
-    tokenSupply?.formatted,
-    daoSettings.supportThreshold,
-    daoSettings.minParticipation,
-    daoSettings?.votingMode,
+    daoDetails?.plugins,
     daoToken?.decimals,
     days,
     hours,
     minutes,
-    daoDetails?.plugins,
+    setValue,
+    tokenSupply?.formatted,
+    votingSettings,
   ]);
 
   const settingsUnchanged =
@@ -283,17 +312,21 @@ export const EditMvSettings: React.FC<EditMvSettingsProps> = ({daoDetails}) => {
   useEffect(() => {
     setValue('isMetadataChanged', isMetadataChanged);
     setValue('areSettingsChanged', isCommunityChanged || isGovernanceChanged);
-
-    // intentionally using settingsUnchanged because it monitors all
-    // the setting changes
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [settingsUnchanged, setValue]);
+  }, [isCommunityChanged, isGovernanceChanged, isMetadataChanged, setValue]);
 
   useEffect(() => {
-    setCurrentMetadata();
-    setCurrentCommunity();
-    setCurrentGovernance();
-  }, [setCurrentGovernance, setCurrentCommunity, setCurrentMetadata]);
+    if (dataFetched && !isDirty) {
+      setCurrentMetadata();
+      setCurrentCommunity();
+      setCurrentGovernance();
+    }
+  }, [
+    dataFetched,
+    isDirty,
+    setCurrentCommunity,
+    setCurrentGovernance,
+    setCurrentMetadata,
+  ]);
 
   const metadataAction = [
     {
@@ -314,7 +347,7 @@ export const EditMvSettings: React.FC<EditMvSettingsProps> = ({daoDetails}) => {
         <ListItemAction
           title={t('settings.resetChanges')}
           bgWhite
-          mode={isGovernanceChanged ? 'default' : 'disabled'}
+          mode={isCommunityChanged ? 'default' : 'disabled'}
         />
       ),
       callback: setCurrentCommunity,
@@ -333,7 +366,13 @@ export const EditMvSettings: React.FC<EditMvSettingsProps> = ({daoDetails}) => {
     },
   ];
 
-  if (settingsAreLoading || tokensAreLoading || tokenSupplyIsLoading) {
+  if (isLoading) {
+    return <Loading />;
+  }
+
+  // Note: using isDirty here to allow time for form to fill up before
+  // rendering a value or else there will be noticeable render with blank form.
+  if (!isDirty) {
     return <Loading />;
   }
 
@@ -378,7 +417,9 @@ export const EditMvSettings: React.FC<EditMvSettingsProps> = ({daoDetails}) => {
                 dropdownItems={communityAction}
               >
                 <AccordionContent>
-                  <SelectEligibility isSettingPage />
+                  <EligibilityWrapper>
+                    <SelectEligibility />
+                  </EligibilityWrapper>
                 </AccordionContent>
               </AccordionItem>
 
@@ -434,9 +475,7 @@ export const EditMvSettings: React.FC<EditMvSettingsProps> = ({daoDetails}) => {
   );
 };
 
-const Container = styled.div.attrs({
-  className: 'mt-5 desktop:mt-8',
-})``;
+const Container = styled.div.attrs({})``;
 
 const AccordionContent = styled.div.attrs({
   className:
@@ -450,3 +489,5 @@ const HStack = styled.div.attrs({
 const Footer = styled.div.attrs({
   className: 'mt-5 desktop:mt-8 space-y-2',
 })``;
+
+const EligibilityWrapper = styled.div.attrs({})``;

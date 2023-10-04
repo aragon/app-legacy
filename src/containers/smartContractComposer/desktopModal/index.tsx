@@ -1,4 +1,10 @@
-import {ButtonText, IconLinkExternal, Link, Modal} from '@aragon/ods';
+import {
+  ButtonText,
+  IconLinkExternal,
+  IconSwitch,
+  Link,
+  Modal,
+} from '@aragon/ods';
 import React, {useEffect, useState} from 'react';
 import {useFormContext, useWatch} from 'react-hook-form';
 import {useTranslation} from 'react-i18next';
@@ -9,7 +15,7 @@ import {StateEmpty} from 'components/stateEmpty';
 import {useParams} from 'react-router-dom';
 import {trackEvent} from 'services/analytics';
 import {actionsFilter} from 'utils/contract';
-import {SmartContract} from 'utils/types';
+import {SmartContract, SmartContractAction} from 'utils/types';
 import {SccFormData} from '..';
 import ActionListGroup from '../components/actionListGroup';
 import InputForm from '../components/inputForm';
@@ -29,12 +35,12 @@ type DesktopModalProps = {
 const DesktopModal: React.FC<DesktopModalProps> = props => {
   const {t} = useTranslation();
   const {dao: daoAddressOrEns} = useParams();
-  const [selectedSC]: [SmartContract] = useWatch({
-    name: ['selectedSC'],
-  });
+  const [selectedSC, selectedAction]: [SmartContract, SmartContractAction] =
+    useWatch({
+      name: ['selectedSC', 'selectedAction'],
+    });
   const [search, setSearch] = useState('');
   const {getValues, setValue, resetField} = useFormContext<SccFormData>();
-  const [isActionSelected, setIsActionSelected] = useState(false);
 
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore
@@ -47,6 +53,17 @@ const DesktopModal: React.FC<DesktopModalProps> = props => {
 
   useEffect(() => {
     setValue('selectedSC', autoSelectedContract);
+    if (autoSelectedContract) {
+      setValue(
+        'selectedAction',
+        autoSelectedContract.actions.filter(
+          a =>
+            a.type === 'function' &&
+            (a.stateMutability === 'payable' ||
+              a.stateMutability === 'nonpayable')
+        )?.[0]
+      );
+    }
   }, [autoSelectedContract, setValue]);
 
   return (
@@ -76,7 +93,6 @@ const DesktopModal: React.FC<DesktopModalProps> = props => {
               />
               <ActionListGroup
                 actions={selectedSC.actions.filter(actionsFilter(search))}
-                onActionSelected={() => setIsActionSelected(true)}
               />
             </>
           ) : (
@@ -101,7 +117,7 @@ const DesktopModal: React.FC<DesktopModalProps> = props => {
                   iconRight={<IconLinkExternal height={13} width={13} />}
                   href={t('scc.listContracts.learnLinkURL')}
                   label={t('scc.listContracts.learnLinkLabel')}
-                  className="justify-center mt-2 w-full"
+                  className="mt-2 w-full justify-center"
                 />
               </div>
             </>
@@ -109,11 +125,15 @@ const DesktopModal: React.FC<DesktopModalProps> = props => {
         </Aside>
 
         <Main>
-          {selectedSC && isActionSelected ? (
-            <InputForm
-              actionIndex={props.actionIndex}
-              onComposeButtonClicked={props.onComposeButtonClicked}
-            />
+          {selectedSC ? (
+            selectedAction ? (
+              <InputForm
+                actionIndex={props.actionIndex}
+                onComposeButtonClicked={props.onComposeButtonClicked}
+              />
+            ) : (
+              <EmptyActionsState selectedSC={selectedSC} />
+            )
           ) : (
             <DesktopModalEmptyState />
           )}
@@ -124,6 +144,49 @@ const DesktopModal: React.FC<DesktopModalProps> = props => {
 };
 
 export default DesktopModal;
+
+const EmptyActionsState: React.FC<{selectedSC: SmartContract}> = ({
+  selectedSC,
+}) => {
+  const {t} = useTranslation();
+  const {setValue} = useFormContext<SccFormData>();
+
+  return (
+    <Container>
+      <div>
+        <StateEmpty
+          mode="inline"
+          type="Object"
+          object="smart_contract"
+          title={t('scc.writeContractEmptyState.title')}
+          description={t('scc.writeContractEmptyState.desc')}
+        />
+        {selectedSC.implementationData && (
+          <ButtonText
+            className="mx-auto mt-3"
+            iconLeft={<IconSwitch />}
+            label={t('scc.writeContractEmptyState.ctaLabel')}
+            onClick={() => {
+              setValue(
+                'selectedSC',
+                selectedSC.implementationData as SmartContract
+              );
+              setValue(
+                'selectedAction',
+                (selectedSC.implementationData as SmartContract).actions.filter(
+                  a =>
+                    a.type === 'function' &&
+                    (a.stateMutability === 'payable' ||
+                      a.stateMutability === 'nonpayable')
+                )?.[0]
+              );
+            }}
+          />
+        )}
+      </div>
+    </Container>
+  );
+};
 
 const DesktopModalEmptyState: React.FC = () => {
   const {t} = useTranslation();

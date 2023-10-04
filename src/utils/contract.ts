@@ -266,7 +266,7 @@ export function collapseNatspec(
 /** Starts scanning str at start to find the first match from searches. If multiple matches complete at the
  * same position in str, it prefers the one which is listed first in searches.
  */
-export const scanFirst = (
+const scanFirst = (
   str: string,
   start: number,
   searches: string[]
@@ -298,13 +298,13 @@ export const scanFirst = (
   return ['', -1];
 };
 
-export const skipWhitespace = (str: string, start: number) => {
+const skipWhitespace = (str: string, start: number) => {
   let pos = start;
   while (' \t\n\r\v'.indexOf(str[pos]) > -1 && pos < str.length) pos++;
   return pos;
 };
 
-export function parseSourceCode(input: string) {
+function parseSourceCode(input: string) {
   input = input.trim();
 
   if (input.startsWith('{')) {

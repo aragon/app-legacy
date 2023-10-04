@@ -1,4 +1,4 @@
-import React, {useMemo, useEffect, useState} from 'react';
+import React, {useMemo, useEffect} from 'react';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 import {AlertCard, IconSpinner, Spinner, shortenAddress} from '@aragon/ods';
@@ -6,10 +6,9 @@ import {AlertCard, IconSpinner, Spinner, shortenAddress} from '@aragon/ods';
 import {Dd, Dl} from 'components/descriptionList';
 import {useFormContext, useWatch} from 'react-hook-form';
 import {gTokenSymbol} from 'utils/tokens';
-import {getTotalHolders} from 'services/covalentAPI';
 import {useNetwork} from 'context/network';
-import {QueryClient} from '@tanstack/react-query';
 import numeral from 'numeral';
+import {useTokenHolders} from 'services/aragon-backend/queries/use-token-holders';
 
 type TransferListProps = {
   tokenAddress: string;
@@ -36,25 +35,15 @@ const VerificationCard: React.FC<TransferListProps> = ({tokenAddress}) => {
   });
   const {network} = useNetwork();
 
-  const [isTotalHoldersLoading, setIsTotalHoldersLoading] = useState(true);
+  const {data: tokenHolders, isLoading: isTotalHoldersLoading} =
+    useTokenHolders({tokenAddress, network});
 
   useEffect(() => {
-    async function fetchTotalHolders() {
-      try {
-        setIsTotalHoldersLoading(true);
-        resetField('tokenTotalHolders');
-        const queryClient = new QueryClient();
-        const total = await getTotalHolders(queryClient, tokenAddress, network);
-        setValue('tokenTotalHolders', total);
-      } catch (e) {
-        console.error(e);
-      } finally {
-        setIsTotalHoldersLoading(false);
-      }
+    if (tokenHolders) {
+      resetField('tokenTotalHolders');
+      setValue('tokenTotalHolders', tokenHolders.holders.totalHolders);
     }
-
-    fetchTotalHolders();
-  }, [network, resetField, setValue, tokenAddress]);
+  }, [resetField, setValue, tokenHolders]);
 
   useEffect(() => {
     if (tokenType === 'governance-ERC20') setValue('eligibilityTokenAmount', 1);
@@ -197,7 +186,7 @@ const VerificationCard: React.FC<TransferListProps> = ({tokenAddress}) => {
                 </Dt>
                 {isTotalHoldersLoading ? (
                   <dd className="flex items-center" style={{width: '70%'}}>
-                    <IconSpinner className="w-1.5 desktop:w-2 h-1.5 desktop:h-2 text-primary-500 animate-spin" />
+                    <IconSpinner className="h-1.5 w-1.5 animate-spin text-primary-500 desktop:h-2 desktop:w-2" />
                   </dd>
                 ) : (
                   <Dd>{formattedTokenTotalHolders}</Dd>

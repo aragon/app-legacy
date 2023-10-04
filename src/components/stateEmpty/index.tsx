@@ -17,6 +17,7 @@ type BaseProps = {
   content?: JSX.Element;
   primaryButton?: Omit<ButtonTextProps, 'mode' | 'size'>;
   secondaryButton?: Omit<ButtonTextProps, 'mode' | 'size'>;
+  tertiaryButton?: Omit<ButtonTextProps, 'mode' | 'size'>;
   renderHtml?: boolean;
   actionsColumn?: boolean;
   customCardPaddingClassName?: string;
@@ -81,6 +82,9 @@ export const StateEmpty: React.FC<StateEmptyProps> = props => {
                 size="large"
                 bgWhite={props.secondaryButton.bgWhite ?? true}
               />
+            )}
+            {props.tertiaryButton && (
+              <ButtonText {...props.tertiaryButton} mode="ghost" size="large" />
             )}
           </ActionContainer>
         )}

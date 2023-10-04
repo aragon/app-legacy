@@ -5,7 +5,7 @@ import styled from 'styled-components';
 import {
   isMultisigVotingSettings,
   isTokenVotingSettings,
-} from 'hooks/usePluginSettings';
+} from 'services/aragon-sdk/queries/use-voting-settings';
 import {
   ProposalFormData,
   StringIndexed,
@@ -25,7 +25,7 @@ const SetupVotingForm: React.FC<Props> = ({pluginSettings}) => {
    *                    Render                     *
    *************************************************/
   useEffect(() => {
-    if (Object.keys(pluginSettings).length === 0) {
+    if (!pluginSettings) {
       setError('areSettingsLoading', {});
     } else {
       clearErrors('areSettingsLoading');

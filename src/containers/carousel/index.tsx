@@ -34,6 +34,7 @@ const Carousel: React.FC = () => {
         navigate(path);
         return;
       }
+
       methods
         .selectWallet()
         .then(() => {

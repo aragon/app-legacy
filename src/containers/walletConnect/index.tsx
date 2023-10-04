@@ -5,11 +5,14 @@ import {SessionTypes} from '@walletconnect/types';
 import {useActionsContext} from 'context/actions';
 import WCdAppValidation, {WC_URI_INPUT_NAME} from './dAppValidationModal';
 import EmptyState from './emptyStateModal';
-import {useWalletConnectInterceptor} from 'hooks/useWalletConnectInterceptor';
 import WCConnectedApps from './connectedAppsModal';
 import ModalBottomSheetSwitcher from 'components/modalBottomSheetSwitcher';
 import ActionListenerModal from './actionListenerModal';
 import {Loading} from 'components/temporary';
+import {
+  WalletConnectContextProvider,
+  useWalletConnectInterceptor,
+} from './walletConnectProvider';
 
 type WalletConnectProps = {
   actionIndex: number;
@@ -19,8 +22,8 @@ const WalletConnect: React.FC<WalletConnectProps> = ({actionIndex}) => {
   const {removeAction} = useActionsContext();
   const {resetField} = useFormContext();
 
-  const {activeSessions} = useWalletConnectInterceptor({});
-  const hasActiveSessions = activeSessions.length > 0;
+  const wcValues = useWalletConnectInterceptor();
+  const hasActiveSessions = wcValues.activeSessions.length > 0;
 
   const [dAppValidationIsOpen, setdAppValidationIsOpen] = useState(false);
   const [listeningActionsIsOpen, setListeningActionsIsOpen] = useState(false);
@@ -91,13 +94,15 @@ const WalletConnect: React.FC<WalletConnectProps> = ({actionIndex}) => {
     }
 
     const isSelectedSessionActive =
-      activeSessions.find(({topic}) => topic === selectedSession.topic) != null;
+      wcValues.activeSessions.find(
+        ({topic}) => topic === selectedSession.topic
+      ) != null;
 
     if (!isSelectedSessionActive) {
       setSelectedSession(undefined);
       setListeningActionsIsOpen(false);
     }
-  }, [activeSessions, selectedSession]);
+  }, [wcValues.activeSessions, selectedSession]);
 
   /*************************************************
    *                     Render                    *
@@ -118,7 +123,7 @@ const WalletConnect: React.FC<WalletConnectProps> = ({actionIndex}) => {
   }
 
   return (
-    <>
+    <WalletConnectContextProvider value={wcValues}>
       <EmptyState
         isOpen={emptyStateIsOpen}
         onClose={handleCloseEmptyState}
@@ -126,7 +131,6 @@ const WalletConnect: React.FC<WalletConnectProps> = ({actionIndex}) => {
         onCtaClicked={handleEmptyStateCtaClick}
       />
       <WCConnectedApps
-        sessions={activeSessions}
         isOpen={dAppsListIsOpen}
         onConnectNewdApp={handledConnectNewdApp}
         onSelectExistingdApp={handleSelectExistingdApp}
@@ -147,7 +151,7 @@ const WalletConnect: React.FC<WalletConnectProps> = ({actionIndex}) => {
           actionIndex={actionIndex}
         />
       )}
-    </>
+    </WalletConnectContextProvider>
   );
 };
 

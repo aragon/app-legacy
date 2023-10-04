@@ -38,15 +38,15 @@ const AddWalletsFooter: React.FC<WalletsFooterProps> = ({totalAddresses}) => {
 
 export default AddWalletsFooter;
 
-export const Container = styled.div.attrs({
+const Container = styled.div.attrs({
   className: 'hidden tablet:flex p-2 space-x-2 bg-ui-0',
 })``;
 
-export const FooterItem1 = styled.div.attrs({
+const FooterItem1 = styled.div.attrs({
   className: 'flex-1',
 })``;
 
-export const FooterItem2 = styled.div.attrs({
+const FooterItem2 = styled.div.attrs({
   className: 'w-8',
 })``;
 

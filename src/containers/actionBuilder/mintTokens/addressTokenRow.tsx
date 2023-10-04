@@ -10,7 +10,7 @@ import {
   TextInput,
 } from '@aragon/ods';
 import Big from 'big.js';
-import React, {useCallback} from 'react';
+import React, {useCallback, useEffect} from 'react';
 import {Controller, useFormContext, useWatch} from 'react-hook-form';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
@@ -152,6 +152,12 @@ const TokenField: React.FC<IndexProps> = ({actionIndex, fieldIndex}) => {
     return t('errors.lteZero') as string;
   };
 
+  useEffect(() => {
+    trigger(
+      `actions.${actionIndex}.inputs.mintTokensToWallets.${fieldIndex}.amount`
+    );
+  }, [actionIndex, fieldIndex, trigger]);
+
   return (
     <Controller
       name={`actions.${actionIndex}.inputs.mintTokensToWallets.${fieldIndex}.amount`}
@@ -163,7 +169,7 @@ const TokenField: React.FC<IndexProps> = ({actionIndex, fieldIndex}) => {
         field: {name, value, onBlur, onChange},
         fieldState: {error},
       }) => (
-        <div className="flex-1 desktop:flex-none desktop:w-23">
+        <div className="flex-1 desktop:w-23 desktop:flex-none">
           <NumberInput
             name={name}
             value={value}

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {useFormContext, useFormState, useWatch} from 'react-hook-form';
 import {useTranslation} from 'react-i18next';
 import {generatePath} from 'react-router-dom';
@@ -20,8 +20,8 @@ import {useDaoDetailsQuery} from 'hooks/useDaoDetails';
 import {PluginTypes} from 'hooks/usePluginClient';
 import {
   isMultisigVotingSettings,
-  usePluginSettings,
-} from 'hooks/usePluginSettings';
+  useVotingSettings,
+} from 'services/aragon-sdk/queries/use-voting-settings';
 import {useWallet} from 'hooks/useWallet';
 import {trackEvent} from 'services/analytics';
 import {getCanonicalUtcOffset} from 'utils/date';
@@ -38,10 +38,11 @@ const ProposalStepper: React.FC<ProposalStepperType> = ({
   enableTxModal,
 }: ProposalStepperType) => {
   const {data: daoDetails, isLoading} = useDaoDetailsQuery();
-  const {data: pluginSettings, isLoading: settingsLoading} = usePluginSettings(
-    daoDetails?.plugins[0].instanceAddress as string,
-    daoDetails?.plugins[0].id as PluginTypes
-  );
+
+  const {data: votingSettings, isLoading: settingsLoading} = useVotingSettings({
+    pluginAddress: daoDetails?.plugins?.[0]?.instanceAddress as string,
+    pluginType: daoDetails?.plugins?.[0]?.id as PluginTypes,
+  });
 
   const {actions} = useActionsContext();
   const {open} = useGlobalModalContext();
@@ -50,15 +51,19 @@ const ProposalStepper: React.FC<ProposalStepperType> = ({
   const {network} = useNetwork();
   const {trigger, control, getValues, setValue} = useFormContext();
   const {address, isConnected} = useWallet();
+  const [isActionsValid, setIsActionsValid] = useState(false);
 
   const [formActions] = useWatch({
     name: ['actions'],
-    control,
   });
 
   const {errors, dirtyFields} = useFormState({
     control,
   });
+
+  actionsAreValid(formActions, actions, errors, network).then(isValid =>
+    setIsActionsValid(isValid)
+  );
 
   /*************************************************
    *                    Render                     *
@@ -67,7 +72,7 @@ const ProposalStepper: React.FC<ProposalStepperType> = ({
     return <Loading />;
   }
 
-  if (!daoDetails) return null;
+  if (!daoDetails || !votingSettings) return null;
 
   return (
     <FullScreenStepper
@@ -124,20 +129,20 @@ const ProposalStepper: React.FC<ProposalStepperType> = ({
           next();
         }}
       >
-        <SetupVotingForm pluginSettings={pluginSettings} />
+        <SetupVotingForm pluginSettings={votingSettings} />
       </Step>
       <Step
         wizardTitle={t('newProposal.configureActions.heading')}
         wizardDescription={t('newProposal.configureActions.description')}
-        isNextButtonDisabled={!actionsAreValid(formActions, actions, errors)}
+        isNextButtonDisabled={!isActionsValid}
         onNextButtonDisabledClicked={() => {
           trigger('actions');
         }}
         onNextButtonClicked={next => {
-          if (isMultisigVotingSettings(pluginSettings)) {
+          if (isMultisigVotingSettings(votingSettings)) {
             setValue(
               'actions',
-              removeUnchangedMinimumApprovalAction(formActions, pluginSettings)
+              removeUnchangedMinimumApprovalAction(formActions, votingSettings)
             );
           }
 

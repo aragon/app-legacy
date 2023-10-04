@@ -28,7 +28,6 @@ interface ExportCsvModalProps {
 
 interface TransferCsvEntity {
   Txhash: string;
-  Blockno: string;
   UnixTimestamp: string | number;
   DateTime: string;
   Type: string;
@@ -38,7 +37,6 @@ interface TransferCsvEntity {
   Quantity: string;
   USDvalue: string;
   ProposalId: string;
-  ProposalName: string;
 }
 
 const ExportCsvModal: React.FC<ExportCsvModalProps> = ({
@@ -46,7 +44,7 @@ const ExportCsvModal: React.FC<ExportCsvModalProps> = ({
   daoDetails,
 }) => {
   const {t} = useTranslation();
-  const {isExportCsvOpen, close} = useGlobalModalContext();
+  const {isOpen, close} = useGlobalModalContext('exportCsv');
 
   const form = useForm({
     mode: 'onChange',
@@ -112,7 +110,6 @@ const ExportCsvModal: React.FC<ExportCsvModalProps> = ({
 
       return {
         Txhash: item.transaction,
-        Blockno: '-',
         UnixTimestamp: String(Math.floor(transferDateTimeStamp / 1000)),
         DateTime: new Date(transferDateTimeStamp)
           .toUTCString()
@@ -130,7 +127,6 @@ const ExportCsvModal: React.FC<ExportCsvModalProps> = ({
         Quantity: item.tokenAmount,
         USDvalue: item.usdValue,
         ProposalId: (item as Withdraw)?.proposalId?.toString() || '-',
-        ProposalName: '-',
       };
     });
 
@@ -178,7 +174,7 @@ const ExportCsvModal: React.FC<ExportCsvModalProps> = ({
     setIsCsvGenerationError(false);
     setIsCsvGenerationSuccess(false);
     setIsFlowFinished(false);
-    close('exportCsv');
+    close();
   }, [close]);
 
   const handleFlowFinish = useCallback(() => {
@@ -187,7 +183,7 @@ const ExportCsvModal: React.FC<ExportCsvModalProps> = ({
 
   return (
     <ModalBottomSheetSwitcher
-      isOpen={isExportCsvOpen}
+      isOpen={isOpen}
       onClose={handleClose}
       title={isFlowFinished ? '' : t('finance.modalExport.headerLabel')}
       subtitle={isFlowFinished ? '' : t('finance.modalExport.headerDesc')}
@@ -288,7 +284,7 @@ const ExportCsvModal: React.FC<ExportCsvModalProps> = ({
                   onClick={createCsvBlob}
                 />
               ) : (
-                <div className="flex flex-col desktop:flex-row gap-2 items-center">
+                <div className="flex flex-col items-center gap-2 desktop:flex-row">
                   <ButtonText
                     mode="primary"
                     isActive={isCsvGenerationLoading}

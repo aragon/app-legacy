@@ -1,4 +1,9 @@
-import {AlertInline, WalletInput, WalletInputProps} from '@aragon/ods';
+import {
+  AlertInline,
+  InputValue,
+  WalletInput,
+  WalletInputProps,
+} from '@aragon/ods';
 import React, {Ref, forwardRef, useCallback, useEffect, useState} from 'react';
 import {useTranslation} from 'react-i18next';
 
@@ -11,7 +16,7 @@ import {CHAIN_METADATA, ENS_SUPPORTED_NETWORKS} from 'utils/constants/chains';
 const RESOLVED_LABEL_DELAY = 1000;
 
 type WrappedWalletInputProps = {
-  onChange: (...event: unknown[]) => void;
+  onChange: (value: InputValue) => void;
   error?: string;
   resolveLabels?: 'enabled' | 'disabled' | 'onBlur';
 } & Omit<WalletInputProps, 'onValueChange'>;

@@ -16,14 +16,14 @@ type AddActionMenuProps = {
 
 const AddActionMenu: React.FC<AddActionMenuProps> = ({actions}) => {
   const {dao: daoAddressOrEns} = useParams();
-  const {isAddActionOpen, close} = useGlobalModalContext();
+  const {isOpen, close} = useGlobalModalContext('addAction');
   const {actions: usedActions, addAction} = useActionsContext();
   const {t} = useTranslation();
 
   return (
     <ModalBottomSheetSwitcher
-      isOpen={isAddActionOpen}
-      onClose={() => close('addAction')}
+      isOpen={isOpen}
+      onClose={close}
       title={t('AddActionModal.title')}
     >
       <Container>
@@ -46,7 +46,7 @@ const AddActionMenu: React.FC<AddActionMenuProps> = ({actions}) => {
               addAction({
                 name: a.type,
               });
-              close('addAction');
+              close();
             }}
           />
         ))}

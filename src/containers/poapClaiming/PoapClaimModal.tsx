@@ -8,12 +8,12 @@ import ModalBottomSheetSwitcher from 'components/modalBottomSheetSwitcher';
 
 const PoapClaimModal: React.FC = () => {
   const {t} = useTranslation();
-  const {isPoapClaimOpen, close} = useGlobalModalContext();
+  const {isOpen, close} = useGlobalModalContext('poapClaim');
 
   return (
     <ModalBottomSheetSwitcher
-      isOpen={isPoapClaimOpen}
-      onClose={() => close('poapClaim')}
+      isOpen={isOpen}
+      onClose={close}
       title={t('modal.claimPoap.title')}
     >
       <Container>
@@ -33,7 +33,7 @@ const PoapClaimModal: React.FC = () => {
             iconRight={<IconLinkExternal />}
             onClick={() => {
               window.open(t('modal.claimPoap.ctaURL'), '_blank');
-              close('poapClaim');
+              close();
             }}
           />
         </BodyWrapper>

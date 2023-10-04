@@ -26,9 +26,7 @@ import {getSupportedNetworkByChainId, SupportedChainID} from 'utils/constants';
 import {toDisplayEns} from 'utils/library';
 import {Dashboard} from 'utils/paths';
 
-export function isExploreFilter(
-  filterValue: string
-): filterValue is ExploreFilter {
+function isExploreFilter(filterValue: string): filterValue is ExploreFilter {
   return EXPLORE_FILTER.some(ef => ef === filterValue);
 }
 

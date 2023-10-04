@@ -8,7 +8,6 @@ import {
 import React, {useCallback, useEffect} from 'react';
 import {
   Controller,
-  FormState,
   useFormContext,
   useFormState,
   useWatch,
@@ -27,7 +26,7 @@ import {useWallet} from 'hooks/useWallet';
 import {CHAIN_METADATA} from 'utils/constants';
 import {Web3Address, handleClipboardActions, toDisplayEns} from 'utils/library';
 import {fetchBalance, getTokenInfo, isNativeToken} from 'utils/tokens';
-import {ActionIndex, WithdrawFormDataAction} from 'utils/types';
+import {ActionIndex} from 'utils/types';
 import {
   validateTokenAddress,
   validateTokenAmount,
@@ -419,7 +418,7 @@ const ConfigureWithdrawForm: React.FC<ConfigureWithdrawFormProps> = ({
                 adornmentText={t('labels.max')}
                 onAdornmentClick={() => handleMaxClicked(onChange)}
               />
-              <div className="flex justify-between items-start">
+              <div className="flex items-start justify-between">
                 <div className="space-y-1">
                   {error?.message && (
                     <AlertInline label={error.message} mode="critical" />
@@ -443,27 +442,6 @@ const ConfigureWithdrawForm: React.FC<ConfigureWithdrawFormProps> = ({
 };
 
 export default ConfigureWithdrawForm;
-
-/**
- * Check if the screen is valid
- * @param dirtyFields List of fields that have been changed
- * @param errors List of fields that have errors
- * @param tokenAddress Token address
- * @returns Whether the screen is valid
- */
-export function isValid(
-  dirtyFields?: FormState<WithdrawFormDataAction>['dirtyFields'],
-  errors?: FormState<WithdrawFormDataAction>['errors'],
-  tokenAddress?: string
-) {
-  // check if fields are dirty
-  if (!dirtyFields?.to || !dirtyFields?.amount || !tokenAddress) return false;
-
-  // check if fields have errors
-  if (errors?.to || errors?.amount || errors?.tokenAddress) return false;
-
-  return true;
-}
 
 /*************************************************
  *               Styled Components               *

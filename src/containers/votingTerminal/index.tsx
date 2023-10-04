@@ -1,4 +1,8 @@
-import {VoteValues} from '@aragon/sdk-client';
+import {
+  Erc20TokenDetails,
+  Erc20WrapperTokenDetails,
+  VoteValues,
+} from '@aragon/sdk-client';
 import {ProposalStatus} from '@aragon/sdk-client-common';
 import {
   AlertCard,
@@ -14,14 +18,19 @@ import {
   VoterType,
   VotersTable,
 } from '@aragon/ods';
-import React, {useMemo, useState} from 'react';
+import React, {useEffect, useMemo, useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 
 import {StateEmpty} from 'components/stateEmpty';
-import {shortenAddress} from 'utils/library';
+import {Web3Address, shortenAddress} from 'utils/library';
 import BreakdownTab from './breakdownTab';
 import InfoTab from './infoTab';
+import {useProviders} from 'context/providers';
+import {useNetwork} from 'context/network';
+import {CHAIN_METADATA} from 'utils/constants';
+import {usePastVotingPowerAsync} from 'services/aragon-sdk/queries/use-past-voting-power';
+import {formatUnits} from 'ethers/lib/utils';
 
 export type ProposalVoteResults = {
   yes: {value: string | number; percentage: number};
@@ -49,10 +58,8 @@ export type VotingTerminalProps = {
   status?: ProposalStatus;
   statusLabel: string;
   strategy?: string;
-  token?: {
-    symbol: string;
-    name: string;
-  };
+  daoToken?: Erc20TokenDetails | Erc20WrapperTokenDetails;
+  blockNumber?: Number;
   results?: ProposalVoteResults;
   approvals?: string[];
   votingInProcess?: boolean;
@@ -78,7 +85,8 @@ export const VotingTerminal: React.FC<VotingTerminalProps> = ({
   voters = [],
   results,
   approvals,
-  token,
+  daoToken,
+  blockNumber,
   startDate,
   endDate,
   preciseEndDate,
@@ -98,13 +106,60 @@ export const VotingTerminal: React.FC<VotingTerminalProps> = ({
   const [page, setPage] = useState(1);
   const [query, setQuery] = useState('');
   const [selectedVote, setSelectedVote] = useState<VoteValues>();
+  const [displayedVoters, setDisplayedVoters] = useState<Array<VoterType>>([]);
+  const {api: provider} = useProviders();
   const {t} = useTranslation();
+  const {network} = useNetwork();
+  const fetchPastVotingPower = usePastVotingPowerAsync();
 
-  const displayedVoters = useMemo(() => {
+  useEffect(() => {
+    // fetch avatar fpr each voter
+    async function fetchEns() {
+      const response = await Promise.all(
+        voters.map(async voter => {
+          const wallet = await Web3Address.create(provider, voter.wallet);
+          let balance;
+          if (daoToken?.address && wallet.address) {
+            balance = await fetchPastVotingPower({
+              tokenAddress: daoToken.address as string,
+              address: wallet.address as string,
+              blockNumber: blockNumber as number,
+            });
+          }
+          return {
+            ...voter,
+            tokenAmount: balance
+              ? formatUnits(balance, daoToken?.decimals)
+              : voter.tokenAmount,
+            tokenSymbol: daoToken?.symbol,
+            wallet: (wallet.ensName ?? wallet.address) as string,
+            src: (wallet.avatar || wallet.address) as string,
+          };
+        })
+      );
+      setDisplayedVoters(response);
+    }
+
+    if (voters.length) {
+      fetchEns();
+    }
+  }, [
+    blockNumber,
+    daoToken?.address,
+    daoToken?.decimals,
+    daoToken?.symbol,
+    fetchPastVotingPower,
+    provider,
+    voters,
+  ]);
+
+  const filteredVoters = useMemo(() => {
     return query === ''
-      ? voters
-      : voters.filter(voter => voter.wallet.includes(query.toLowerCase()));
-  }, [query, voters]);
+      ? displayedVoters
+      : displayedVoters.filter(voter =>
+          voter.wallet.includes(query.toLowerCase())
+        );
+  }, [displayedVoters, query]);
 
   const minimumReached = useMemo(() => {
     if (approvals && minApproval) {
@@ -151,7 +206,7 @@ export const VotingTerminal: React.FC<VotingTerminalProps> = ({
           approvals={approvals}
           memberCount={voters.length}
           results={results}
-          token={token}
+          token={daoToken}
         />
       ) : selectedTab === 'voters' ? (
         <VotersTabContainer>
@@ -162,14 +217,15 @@ export const VotingTerminal: React.FC<VotingTerminalProps> = ({
               setQuery(e.target.value.trim())
             }
           />
-          {displayedVoters.length !== 0 ? (
+          {filteredVoters.length !== 0 ? (
             <VotersTable
-              voters={displayedVoters}
+              voters={filteredVoters}
               showOption
               page={page}
-              showVotingPower={token !== undefined}
-              showAmount={token !== undefined}
+              showAmount={daoToken !== undefined}
               onLoadMore={() => setPage(prev => prev + 1)}
+              LoadMoreLabel={t('community.votersTable.loadMore')}
+              explorerURL={CHAIN_METADATA[network].explorer}
             />
           ) : (
             <StateEmpty
@@ -205,7 +261,7 @@ export const VotingTerminal: React.FC<VotingTerminalProps> = ({
           status={status}
           strategy={strategy}
           supportThreshold={supportThreshold}
-          uniqueVoters={token ? voters.length : undefined}
+          uniqueVoters={daoToken ? voters.length : undefined}
           voteOptions={voteOptions}
         />
       )}
@@ -279,7 +335,7 @@ export const VotingTerminal: React.FC<VotingTerminalProps> = ({
             </VoteContainer>
 
             {alertMessage && (
-              <div className="pt-2 tablet:pt-0 tablet:mt-3">
+              <div className="pt-2 tablet:mt-3 tablet:pt-0">
                 <AlertCard title={alertMessage} mode="warning" />
               </div>
             )}
@@ -314,7 +370,7 @@ const Header = styled.div.attrs({
 })``;
 
 const Heading1 = styled.h1.attrs({
-  className: 'ft-text-xl font-bold text-ui-800 flex-grow',
+  className: 'ft-text-xl font-bold text-ui-800 grow',
 })``;
 
 const VotingContainer = styled.div.attrs({

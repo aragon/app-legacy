@@ -50,11 +50,13 @@ export const FullScreenStepper: React.FC<FullScreenStepperProps> = ({
   navLabel,
   returnPath,
 }) => {
+  const skipSteps = children.filter(child => child.props.skipStep !== true);
+
   const {t} = useTranslation();
   const navigate = useNavigate();
 
   const [showExitProcessMenu, setShowExitProcessMenu] = useState(false);
-  const {currentStep, prev, next, setStep} = useStepper(children.length);
+  const {currentStep, prev, next, setStep} = useStepper(skipSteps.length);
 
   const currentIndex = currentStep - 1;
   const {
@@ -71,23 +73,23 @@ export const FullScreenStepper: React.FC<FullScreenStepperProps> = ({
     onBackButtonClicked,
     onNextButtonClicked,
     onNextButtonDisabledClicked,
-  } = children[currentIndex].props;
+  } = skipSteps[currentIndex].props;
 
   const totalSteps = useMemo(() => {
     let total = 0;
-    children.forEach((_, index) => {
-      if (!children[index].props.hideWizard) total++;
+    skipSteps.forEach((_, index) => {
+      if (!skipSteps[index].props.hideWizard) total++;
     });
     return total;
-  }, [children]);
+  }, [skipSteps]);
 
   const previousHideWizards = useMemo(() => {
     let total = 0;
     for (let i = 0; i < currentStep; i++) {
-      children[i].props.hideWizard && total++;
+      skipSteps[i].props.hideWizard && total++;
     }
     return total;
-  }, [children, currentStep]);
+  }, [skipSteps, currentStep]);
 
   const value = {currentStep, setStep, prev, next};
 
@@ -156,7 +158,7 @@ export const FullScreenStepper: React.FC<FullScreenStepperProps> = ({
             })}
         </div>
         <FormLayout fullWidth={fullWidth || false}>
-          {children[currentIndex]}
+          {skipSteps[currentIndex]}
           {customFooter ? (
             <>{customFooter}</>
           ) : (

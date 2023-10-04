@@ -7,8 +7,6 @@
 
 import {ReactiveVar} from '@apollo/client';
 import {
-  AddresslistVotingProposal,
-  AddresslistVotingProposalResult,
   CreateMajorityVotingProposalParams,
   Erc20TokenDetails,
   MultisigProposal,
@@ -39,9 +37,9 @@ import {
   PendingTokenBasedVotes,
   pendingTokenBasedVotesVar,
 } from 'context/apolloClient';
-import {MultisigMember} from 'hooks/useDaoMembers';
+import {MultisigDaoMember} from 'hooks/useDaoMembers';
 import {PluginTypes} from 'hooks/usePluginClient';
-import {isMultisigVotingSettings} from 'hooks/usePluginSettings';
+import {isMultisigVotingSettings} from 'services/aragon-sdk/queries/use-voting-settings';
 import {i18n} from '../../i18n.config';
 import {
   PENDING_EXECUTION_KEY,
@@ -68,7 +66,7 @@ export type TokenVotingOptions = StrictlyExclude<
   'approved' | 'none'
 >;
 
-export const MappedVotes: {
+const MappedVotes: {
   [key in VoteValues]: TokenVotingOptions;
 } = {
   1: 'abstain',
@@ -84,7 +82,7 @@ export function isTokenBasedProposal(
   return 'token' in proposal;
 }
 
-export function isErc20Token(
+function isErc20Token(
   token: TokenVotingProposal['token'] | undefined
 ): token is Erc20TokenDetails {
   if (!token) return false;
@@ -185,7 +183,7 @@ export function getErc20VotingParticipation(
  * @param tokenSymbol proposal token symbol
  * @returns mapped voters
  */
-export function getErc20Voters(
+function getErc20Voters(
   votes: TokenVotingProposal['votes'],
   totalVotingWeight: bigint,
   tokenDecimals: number,
@@ -213,6 +211,7 @@ export function getErc20Voters(
     )} ${tokenSymbol}`;
 
     return {
+      src: vote.address,
       wallet: vote.address,
       option: MappedVotes[vote.vote],
       votingPower,
@@ -220,40 +219,6 @@ export function getErc20Voters(
       voteReplaced: vote.voteReplaced,
     };
   });
-}
-
-/**
- * Get mapped voters and voting participation summary for Whitelist Voting proposal
- * @param votes list of votes on proposal
- * @param totalVotingWeight  number of eligible wallets/members at proposal creation snapshot
- * @returns mapped voters and participation summary
- */
-export function getWhitelistVoterParticipation(
-  votes: AddresslistVotingProposal['votes'],
-  totalVotingWeight: number
-): {voters: Array<VoterType>; summary: string} {
-  const voters = votes.flatMap(voter => {
-    return voter.vote !== undefined
-      ? {
-          wallet: voter.address,
-          option: MappedVotes[voter.vote],
-          votingPower: '1',
-        }
-      : [];
-  });
-
-  // calculate summary
-  return {
-    voters,
-    summary: i18n.t('votingTerminal.participationErc20', {
-      participation: votes.length,
-      percentage: parseFloat(
-        ((votes.length / totalVotingWeight) * 100).toFixed(2)
-      ),
-      tokenSymbol: i18n.t('labels.members'),
-      totalWeight: totalVotingWeight,
-    }),
-  };
 }
 
 /**
@@ -294,33 +259,6 @@ export function getErc20Results(
       percentage: parseFloat(
         Big(Number(abstain)).mul(100).div(Number(totalVotingWeight)).toFixed(2)
       ),
-    },
-  };
-}
-
-/**
- * Get the mapped result of Whitelist voting proposal vote
- * @param result result of votes on proposal
- * @param totalVotingWeight number of eligible wallets/members at proposal creation snapshot
- * @returns mapped voters and participation summary
- */
-export function getWhitelistResults(
-  result: AddresslistVotingProposalResult,
-  totalVotingWeight: number
-): ProposalVoteResults {
-  const {yes, no, abstain} = result;
-  return {
-    yes: {
-      value: yes,
-      percentage: parseFloat(((yes / totalVotingWeight) * 100).toFixed(2)),
-    },
-    no: {
-      value: no,
-      percentage: parseFloat(((no / totalVotingWeight) * 100).toFixed(2)),
-    },
-    abstain: {
-      value: abstain,
-      percentage: parseFloat(((abstain / totalVotingWeight) * 100).toFixed(2)),
     },
   };
 }
@@ -499,7 +437,7 @@ export function getLiveProposalTerminalProps(
   proposal: DetailedProposal,
   voter: string | null,
   votingSettings: SupportedVotingSettings,
-  members?: MultisigMember[]
+  members?: MultisigDaoMember[]
 ) {
   let token;
   let voters: Array<VoterType>;
@@ -609,6 +547,7 @@ export function getLiveProposalTerminalProps(
 
       // considering only members can approve, no need to check if Map has the key
       mappedMembers.set(approvalAddress, {
+        src: approvalAddress,
         wallet: approvalAddress,
         option: 'approved',
       });
@@ -618,7 +557,7 @@ export function getLiveProposalTerminalProps(
       approvals: proposal.approvals,
       minApproval: proposal.settings.minApprovals,
       voters: [...mappedMembers.values()],
-      strategy: t('votingTerminal.multisig'),
+      strategy: t('votingTerminal.multisig.strategy'),
       voteOptions: t('votingTerminal.approve'),
       startDate: `${format(
         proposal.startDate,
@@ -769,41 +708,6 @@ export function addApprovalToMultisigToProposal(
 export function stripPlgnAdrFromProposalId(proposalId: string) {
   // return the "pure" contract proposal id or consider given proposal already stripped
   return proposalId?.split('_')[1] || proposalId;
-}
-
-/**
- * Adds plugin address to proposal id
- * @param proposalId id with following format: *0x000000000...00000000002*
- * @param pluginAddress address of plugin on which proposal was created
- * @returns proposal id prefixed with the plugin address
- * or the given proposal id if already prefixed with teh plugin address: *0x4206cdbc...a675cae35_0x0*
- */
-export function prefixProposalIdWithPlgnAdr(
-  proposalId: string,
-  pluginAddress: string
-) {
-  let parts = proposalId.split('_');
-
-  // address already prefixed
-  if (parts.length === 2) return proposalId;
-
-  // get proposal number "0x00" => "00"
-  parts = proposalId.split('0x');
-
-  // proposal id is singular number without hex notation "2"
-  if (parts.length === 1) {
-    return `${pluginAddress}_0x${Number(parts[0]).toString(16)}`;
-  }
-
-  // proposal id is of the following format "0x1"
-  if (parts[1] === '00') {
-    // first proposal => 0x00
-    return `${pluginAddress}_0x0`;
-  } else {
-    // other proposals => 0x3; removes leading zeros from contract proposal id
-    // NOTE: Be very careful before modifying; in fact, leave it alone ;)
-    return `${pluginAddress}_0x${parts[1].replace(/^0+/, '')}`;
-  }
 }
 
 export function getVoteStatus(proposal: DetailedProposal, t: TFunction) {
@@ -1134,47 +1038,6 @@ function calculateProposalStatus(proposal: DetailedProposal): ProposalStatus {
 
   // TODO: Update when SDK has exposed the proposal status calculations
   return proposal.status ?? ProposalStatus.PENDING;
-
-  // if (isErc20VotingProposal(proposal)) {
-  //   const results = getErc20Results(
-  //     proposal.result,
-  //     proposal.token.decimals,
-  //     proposal.totalVotingWeight
-  //   );
-
-  //   const {missingPart} = getErc20VotingParticipation(
-  //     proposal.settings.minParticipation,
-  //     proposal.usedVotingWeight,
-  //     proposal.totalVotingWeight,
-  //     proposal.token.decimals
-  //   );
-
-  //   // TODO calculate potentially executable
-  //   return computeMultisigProposalStatus({
-  //     startDate: (
-  //       (proposal.startDate || new Date()).getTime() / 1000
-  //     ).toString(),
-  //     endDate: (proposal.endDate.getTime() / 1000).toString(),
-  //     executed: false,
-  //     potentiallyExecutable: isEarlyExecutable(
-  //       missingPart,
-  //       proposal,
-  //       results,
-  //       (proposal as CachedProposal).votingMode
-  //     ),
-  //   });
-  // } else {
-  //   return computeMultisigProposalStatus({
-  //     startDate: (
-  //       (proposal.startDate || new Date()).getTime() / 1000
-  //     ).toString(),
-  //     endDate: (proposal.endDate.getTime() / 1000).toString(),
-  //     executed: false,
-  //     potentiallyExecutable:
-  //       (proposal as MultisigProposal)?.approvals?.length >=
-  //       ((proposal as CachedProposal)?.minApprovals || 1),
-  //   });
-  // }
 }
 
 /**

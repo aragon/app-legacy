@@ -56,7 +56,7 @@ const Footer: React.FC = () => {
         </FullSpan>
       </GridLayout>
       <div
-        className={`flex z-10 justify-center items-center py-0.5 desktop:mb-0 space-x-1 text-sm text-ui-0 bg-primary-400 ${
+        className={`z-10 flex items-center justify-center space-x-1 bg-primary-400 py-0.5 text-sm text-ui-0 desktop:mb-0 ${
           isOnWrongNetwork ? 'mb-11 tablet:mb-15' : 'mb-8 tablet:mb-12'
         }`}
       >

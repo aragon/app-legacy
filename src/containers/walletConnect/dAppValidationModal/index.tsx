@@ -23,7 +23,7 @@ import useScreen from 'hooks/useScreen';
 import {handleClipboardActions} from 'utils/library';
 import {useAlertContext} from 'context/alert';
 import {TransactionState as ConnectionState} from 'utils/constants/misc';
-import {useWalletConnectInterceptor} from 'hooks/useWalletConnectInterceptor';
+import {useWalletConnectContext} from '../walletConnectProvider';
 
 type Props = {
   onBackButtonClicked: () => void;
@@ -47,7 +47,7 @@ const WCdAppValidation: React.FC<Props> = props => {
     ConnectionState.WAITING
   );
 
-  const {wcConnect, sessions} = useWalletConnectInterceptor({});
+  const {wcConnect, sessions} = useWalletConnectContext();
 
   const {control} = useFormContext();
   const {errors} = useFormState({control});

@@ -18,7 +18,11 @@ import {useTokenList} from 'services/token/queries/use-token';
 
 export const usePollTransfersPrices = (
   transfers: IAssetTransfers
-): HookData<{transfers: Transfer[]; totalTransfersValue: string}> => {
+): HookData<{
+  transfers: Transfer[];
+  totalTransfersValue: string;
+  isDaoBalancePositive: boolean;
+}> => {
   const {network} = useNetwork();
 
   const assetTransfers = useMemo(
@@ -39,6 +43,7 @@ export const usePollTransfersPrices = (
 
   const processedData = useMemo(() => {
     let total = 0;
+    let transfersEstimatedTreasuryUSDValue = 0;
 
     const tokensWithMetadata = assetTransfers?.map(
       (transfer, index: number) => {
@@ -48,6 +53,12 @@ export const usePollTransfersPrices = (
           calculatedPrice =
             Number(transfer.tokenAmount) * Number(tokens[index]?.price);
           total = total + calculatedPrice;
+
+          if (transfer.transferType === TransferTypes.Deposit) {
+            transfersEstimatedTreasuryUSDValue += calculatedPrice;
+          } else {
+            transfersEstimatedTreasuryUSDValue -= calculatedPrice;
+          }
         }
 
         return {
@@ -60,7 +71,19 @@ export const usePollTransfersPrices = (
 
     const totalTransfersValue = `$${total.toFixed(2)}`;
 
-    return {transfers: tokensWithMetadata, totalTransfersValue};
+    const hasWithdrawals = !!assetTransfers?.find(
+      item => item.transferType === TransferTypes.Withdraw
+    );
+    const transfersAmount = assetTransfers?.length || 0;
+    const isDaoBalancePositive =
+      transfersEstimatedTreasuryUSDValue > 0 ||
+      (transfersAmount > 0 && !hasWithdrawals);
+
+    return {
+      transfers: tokensWithMetadata,
+      totalTransfersValue,
+      isDaoBalancePositive,
+    };
   }, [assetTransfers, tokens]);
 
   return {

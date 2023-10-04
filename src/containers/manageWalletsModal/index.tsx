@@ -26,7 +26,7 @@ const ManageWalletsModal: React.FC<ManageWalletsModalProps> = ({
   initialSelections,
 }) => {
   const {t} = useTranslation();
-  const {isManageWalletOpen, close} = useGlobalModalContext();
+  const {isOpen, close} = useGlobalModalContext('manageWallet');
   const [searchValue, setSearchValue] = useState('');
   const [selectedWallets, setSelectedWallets] = useState<SelectableWallets>(
     new Set()
@@ -115,7 +115,7 @@ const ManageWalletsModal: React.FC<ManageWalletsModalProps> = ({
   const handleClose = () => {
     setSearchValue('');
     setSelectedWallets(new Set());
-    close('manageWallet');
+    close();
   };
 
   /*************************************************
@@ -123,7 +123,7 @@ const ManageWalletsModal: React.FC<ManageWalletsModalProps> = ({
    *************************************************/
   return (
     <ModalBottomSheetSwitcher
-      isOpen={isManageWalletOpen}
+      isOpen={isOpen}
       onClose={handleClose}
       data-testid="manageWalletModal"
     >

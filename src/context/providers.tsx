@@ -27,8 +27,10 @@ import {useNetwork} from './network';
 
 /* CONTEXT PROVIDER ========================================================= */
 
+export type ApiProvider = JsonRpcProvider | AlchemyProvider | InfuraProvider;
+
 type Providers = {
-  api: JsonRpcProvider | AlchemyProvider | InfuraProvider;
+  api: ApiProvider;
   web3: Nullable<Web3Provider>;
 };
 

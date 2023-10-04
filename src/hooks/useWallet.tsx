@@ -1,4 +1,5 @@
 import {useMemo} from 'react';
+import {clearWagmiCache} from 'utils/library';
 import {LIVE_CONTRACTS, SupportedNetwork} from '@aragon/sdk-client-common';
 import {JsonRpcSigner, Web3Provider} from '@ethersproject/providers';
 import {JsonRpcProvider} from '@ethersproject/providers';
@@ -88,6 +89,7 @@ export const useWallet = (): IUseWallet => {
   const methods = {
     selectWallet: async (cacheProvider?: boolean, networkId?: string) => {
       await new Promise(resolve => {
+        clearWagmiCache();
         openWeb3Modal();
         resolve({
           networkId,

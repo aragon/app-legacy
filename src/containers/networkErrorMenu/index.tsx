@@ -14,7 +14,7 @@ import {CHAIN_METADATA} from 'utils/constants';
 import {handleClipboardActions, shortenAddress} from 'utils/library';
 
 const NetworkErrorMenu = () => {
-  const {isNetworkOpen, close} = useGlobalModalContext();
+  const {isOpen, close} = useGlobalModalContext('network');
   const {network} = useNetwork();
   const {switchWalletNetwork} = useSwitchNetwork();
   const {address, ensName, ensAvatarUrl, connectorName} = useWallet();
@@ -23,10 +23,7 @@ const NetworkErrorMenu = () => {
   const {alert} = useAlertContext();
 
   return (
-    <ModalBottomSheetSwitcher
-      onClose={() => close('network')}
-      isOpen={isNetworkOpen}
-    >
+    <ModalBottomSheetSwitcher onClose={close} isOpen={isOpen}>
       <ModalHeader>
         <AvatarAddressContainer>
           <Avatar src={ensAvatarUrl || address || ''} size="small" />
@@ -48,7 +45,7 @@ const NetworkErrorMenu = () => {
             mode="ghost"
             icon={<IconClose />}
             size="small"
-            onClick={() => close('network')}
+            onClick={() => close()}
           />
         )}
       </ModalHeader>
@@ -75,7 +72,7 @@ const NetworkErrorMenu = () => {
             })}
             onClick={() => {
               switchWalletNetwork();
-              close('network');
+              close();
             }}
             size="large"
           />

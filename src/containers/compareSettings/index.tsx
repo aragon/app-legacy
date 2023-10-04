@@ -9,8 +9,8 @@ import {PluginTypes} from 'hooks/usePluginClient';
 import {
   isMultisigVotingSettings,
   isTokenVotingSettings,
-  usePluginSettings,
-} from 'hooks/usePluginSettings';
+  useVotingSettings,
+} from 'services/aragon-sdk/queries/use-voting-settings';
 import {toDisplayEns} from 'utils/library';
 import {CompareMetadata} from './compareMetadata';
 import {CompareMvCommunity} from './majorityVoting/compareCommunity';
@@ -24,32 +24,34 @@ const CompareSettings: React.FC = () => {
   const {t} = useTranslation();
 
   const {data: daoDetails, isLoading: areDetailsLoading} = useDaoDetailsQuery();
-  const {data: pluginSettings, isLoading: areSettingsLoading} =
-    usePluginSettings(
-      daoDetails?.plugins[0].instanceAddress as string,
-      daoDetails?.plugins[0].id as PluginTypes
-    );
+  const pluginAddress = daoDetails?.plugins?.[0]?.instanceAddress as string;
+  const pluginType = daoDetails?.plugins?.[0]?.id as PluginTypes;
 
-  const {data: daoToken, isLoading: tokensAreLoading} = useDaoToken(
-    daoDetails?.plugins?.[0]?.instanceAddress || ''
-  );
+  const {data: votingSettings, isLoading: areSettingsLoading} =
+    useVotingSettings({pluginAddress, pluginType});
+
+  const {data: daoToken, isLoading: tokensAreLoading} =
+    useDaoToken(pluginAddress);
 
   const [selectedButton, setSelectedButton] = useState<Views>('new');
-
-  const daoAddressOrEns =
-    toDisplayEns(daoDetails?.ensDomain) === ''
-      ? daoDetails?.address
-      : toDisplayEns(daoDetails?.ensDomain);
 
   const onButtonGroupChangeHandler = () => {
     setSelectedButton(prev => (prev === 'new' ? 'old' : 'new'));
   };
 
-  if (areDetailsLoading || areSettingsLoading || tokensAreLoading) {
+  const isLoading = areDetailsLoading || areSettingsLoading || tokensAreLoading;
+  if (isLoading) {
     return <Loading />;
   }
 
-  return daoDetails ? (
+  if (!daoDetails || !votingSettings) {
+    return null;
+  }
+
+  const daoAddressOrEns =
+    toDisplayEns(daoDetails.ensDomain) || daoDetails.address;
+
+  return (
     <div className="space-y-2">
       <div className="flex">
         <ButtonGroup
@@ -66,38 +68,37 @@ const CompareSettings: React.FC = () => {
       <CompareMetadata daoDetails={daoDetails} view={selectedButton} />
 
       {/* GOVERNANCE */}
-      {isTokenVotingSettings(pluginSettings) ? (
+      {isTokenVotingSettings(votingSettings) && (
         <>
           <CompareMvCommunity
-            daoAddressOrEns={daoAddressOrEns as string}
+            daoAddressOrEns={daoAddressOrEns}
             view={selectedButton}
-            daoSettings={pluginSettings}
+            daoSettings={votingSettings}
             daoToken={daoToken}
           />
           <CompareMvGovernance
-            daoAddressOrEns={daoAddressOrEns as string}
+            daoAddressOrEns={daoAddressOrEns}
             view={selectedButton}
-            daoSettings={pluginSettings}
+            daoSettings={votingSettings}
             daoToken={daoToken}
           />
         </>
-      ) : isMultisigVotingSettings(pluginSettings) ? (
+      )}
+      {isMultisigVotingSettings(votingSettings) && (
         <>
           <CompareMsCommunity
-            daoAddressOrEns={daoAddressOrEns as string}
-            daoSettings={pluginSettings}
+            daoAddressOrEns={daoAddressOrEns}
+            daoSettings={votingSettings}
             view={selectedButton}
           />
           <CompareMsGovernance
-            daoSettings={pluginSettings}
+            daoSettings={votingSettings}
             view={selectedButton}
           />
         </>
-      ) : (
-        <></>
       )}
     </div>
-  ) : null;
+  );
 };
 
 export default CompareSettings;

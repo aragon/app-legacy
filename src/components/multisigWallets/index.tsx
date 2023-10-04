@@ -7,20 +7,31 @@ import {
   Label,
   ListItemAction,
 } from '@aragon/ods';
-import React, {useEffect} from 'react';
+import React, {useEffect, useRef} from 'react';
 import {useFieldArray, useFormContext, useWatch} from 'react-hook-form';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
+import {Address, useEnsName} from 'wagmi';
 
 import {useAlertContext} from 'context/alert';
+import {useNetwork} from 'context/network';
 import useScreen from 'hooks/useScreen';
 import {useWallet} from 'hooks/useWallet';
+import {CHAIN_METADATA} from 'utils/constants';
 import {Row} from './row';
 
 export const MultisigWallets = () => {
   const {t} = useTranslation();
   const {alert} = useAlertContext();
+  const appendConnectedAddress = useRef(true);
+
+  const {network} = useNetwork();
   const {address} = useWallet();
+
+  const {data: ensName} = useEnsName({
+    address: address as Address,
+    chainId: CHAIN_METADATA[network].id,
+  });
 
   const {control, trigger, setFocus} = useFormContext();
   const multisigWallets = useWatch({name: 'multisigWallets', control});
@@ -37,10 +48,15 @@ export const MultisigWallets = () => {
   });
 
   useEffect(() => {
-    if (address && !multisigWallets) {
-      append({address});
+    if (
+      address &&
+      controlledWallets?.length === 0 &&
+      appendConnectedAddress.current === true
+    ) {
+      append({address, ensName});
+      appendConnectedAddress.current = false;
     }
-  }, [address, append, multisigWallets]);
+  }, [address, append, controlledWallets?.length, ensName]);
 
   // add empty wallet
   const handleAdd = () => {
@@ -56,6 +72,7 @@ export const MultisigWallets = () => {
   // remove wallet
   const handleDeleteEntry = (index: number) => {
     remove(index);
+
     alert(t('alert.chip.removedAddress'));
     setTimeout(() => {
       trigger('multisigWallets');

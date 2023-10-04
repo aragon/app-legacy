@@ -106,7 +106,7 @@ const PublishModal: React.FC<PublishModalProps> = ({
               <div className="truncate">{formattedAverage}</div>
               <div>{`${nativeCurrency.symbol}`}</div>
             </StrongText>
-            <div className="flex justify-end space-x-0.5 text-sm text-right text-ui-500">
+            <div className="flex justify-end space-x-0.5 text-right text-sm text-ui-500">
               <div className="truncate">{formattedMax}</div>
               <div>{`${nativeCurrency.symbol}`}</div>
             </div>
@@ -122,7 +122,7 @@ const PublishModal: React.FC<PublishModalProps> = ({
               <div className="truncate">{formattedAverage}</div>
               <div>{`${nativeCurrency.symbol}`}</div>
             </StrongText>
-            <p className="text-sm text-right text-ui-500">{totalCost}</p>
+            <p className="text-right text-sm text-ui-500">{totalCost}</p>
           </VStack>
         </GasTotalCostEthContainer>
       </GasCostTableContainer>
@@ -187,7 +187,7 @@ const ButtonContainer = styled.div.attrs({
 })``;
 
 const NoShrinkVStack = styled.div.attrs({
-  className: 'space-y-0.25 flex-shrink-0',
+  className: 'space-y-0.25 shrink-0',
 })``;
 
 const VStack = styled.div.attrs({

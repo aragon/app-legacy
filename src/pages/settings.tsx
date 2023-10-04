@@ -1,122 +1,283 @@
-import {DaoDetails} from '@aragon/sdk-client';
 import {
   AlertInline,
   AvatarDao,
   ButtonText,
+  Dropdown,
+  IconChevronDown,
+  IconChevronUp,
   IconGovernance,
-  ListItemLink,
+  IconLinkExternal,
+  Link,
+  Tag,
 } from '@aragon/ods';
-import React from 'react';
+import {DaoDetails} from '@aragon/sdk-client';
+import React, {useEffect, useRef, useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {generatePath, useNavigate, useParams} from 'react-router-dom';
 import styled from 'styled-components';
-import {Dd, DescriptionListContainer, Dl, Dt} from 'components/descriptionList';
+
 import {Loading} from 'components/temporary';
 import {PageWrapper} from 'components/wrappers';
 import MajorityVotingSettings from 'containers/settings/majorityVoting';
 import MultisigSettings from 'containers/settings/multisig';
+import {
+  Definition,
+  DescriptionPair,
+  SettingsCard,
+  Term,
+} from 'containers/settings/settingsCard';
+import {SettingsUpdateCard} from 'containers/settings/updateCard';
+import {VersionInfoCard} from 'containers/settings/versionInfoCard';
 import {useNetwork} from 'context/network';
 import {useDaoDetailsQuery} from 'hooks/useDaoDetails';
 import {PluginTypes} from 'hooks/usePluginClient';
 import useScreen from 'hooks/useScreen';
 import {CHAIN_METADATA} from 'utils/constants';
+import {featureFlags} from 'utils/featureFlags';
+import {shortenAddress, toDisplayEns} from 'utils/library';
 import {EditSettings} from 'utils/paths';
 
 export const Settings: React.FC = () => {
   const {t} = useTranslation();
-  const {network, isL2Network} = useNetwork();
   const navigate = useNavigate();
+  const {isDesktop} = useScreen();
 
+  // move into components when proper loading experience is implemented
   const {data: daoDetails, isLoading} = useDaoDetailsQuery();
-
-  const networkInfo = CHAIN_METADATA[network];
-  const chainLabel = networkInfo.name;
-  const networkType = networkInfo.isTestnet
-    ? t('labels.testNet')
-    : t('labels.mainNet');
-
-  const resourceLinks = daoDetails?.metadata.links?.filter(
-    l => l.name && l.url
-  );
 
   if (isLoading) {
     return <Loading />;
   }
 
+  if (!daoDetails) {
+    return null;
+  }
+
+  const daoUpdateEnabled =
+    featureFlags.getValue('VITE_FEATURE_FLAG_OSX_UPDATES') === 'true';
+
   return (
     <SettingsWrapper>
-      <div className="mt-3 desktop:mt-8 space-y-5">
-        {/* BLOCKCHAIN SECTION */}
-        <DescriptionListContainer
-          title={t('labels.review.blockchain')}
-          tagLabel={t('labels.notChangeable')}
-        >
-          <Dl>
-            <Dt>{t('labels.review.network')}</Dt>
-            <Dd>{networkType}</Dd>
-          </Dl>
-          <Dl>
-            <Dt>{t('labels.review.blockchain')}</Dt>
-            <Dd>{chainLabel}</Dd>
-          </Dl>
-        </DescriptionListContainer>
+      {daoUpdateEnabled && (
+        <div className={`mt-0.5 desktop:mt-1.5 ${styles.fullWidth}`}>
+          <SettingsUpdateCard />
+        </div>
+      )}
 
-        {/* DAO DETAILS SECTION */}
-        <DescriptionListContainer title={t('labels.review.daoMetadata')}>
-          <Dl>
-            <Dt>{t('labels.logo')}</Dt>
-            <Dd>
-              <AvatarDao
-                size={'small'}
-                daoName={daoDetails?.metadata.name || ''}
-                src={daoDetails?.metadata?.avatar}
-              />
-            </Dd>
-          </Dl>
-          <Dl>
-            <Dt>{t('labels.daoName')}</Dt>
-            <Dd>{daoDetails?.metadata.name}</Dd>
-          </Dl>
-          {!isL2Network && (
-            <Dl>
-              <Dt>{t('labels.ens')}</Dt>
-              <Dd>{daoDetails?.ensDomain}</Dd>
-            </Dl>
-          )}
-          <Dl>
-            <Dt>{t('labels.summary')}</Dt>
-            <Dd>{daoDetails?.metadata.description}</Dd>
-          </Dl>
-          {resourceLinks && resourceLinks.length > 0 && (
-            <Dl>
-              <Dt>{t('labels.links')}</Dt>
-              <Dd>
-                <div className="space-y-1.5">
-                  {resourceLinks.map(({name, url}) => (
-                    <ListItemLink label={name} href={url} key={url} />
-                  ))}
-                </div>
-              </Dd>
-            </Dl>
-          )}
-        </DescriptionListContainer>
+      {/* DAO Settings */}
+      <div
+        className={`mt-1 desktop:row-start-3 desktop:-mt-1 ${
+          daoUpdateEnabled ? styles.leftCol : styles.center
+        }`}
+      >
+        <div className="flex flex-col gap-y-3">
+          {/* DAO SECTION */}
+          <SettingsCardDao daoDetails={daoDetails} />
 
-        {/* Plugins */}
-        <PluginSettingsWrapper daoDetails={daoDetails} />
+          {/* COMMUNITY SECTION */}
+          <PluginSettingsWrapper daoDetails={daoDetails} />
+        </div>
       </div>
+
+      {/* Version Info */}
+      {daoUpdateEnabled && (
+        <VersionInfoCard
+          pluginAddress={daoDetails.plugins[0].instanceAddress}
+          pluginVersion={`${daoDetails.plugins[0].release}.${daoDetails.plugins[0].build}`}
+          daoAddress={daoDetails.address}
+        />
+      )}
 
       {/* Edit */}
-      <div className="space-y-2">
-        <ButtonText
-          label={t('settings.edit')}
-          className="mt-5 desktop:mt-8 w-full tablet:w-max"
-          size="large"
-          iconLeft={<IconGovernance />}
-          onClick={() => navigate('edit')}
-        />
-        <AlertInline label={t('settings.proposeSettingsInfo')} />
+      <div
+        className={`desktop:row-start-4 ${
+          daoUpdateEnabled ? styles.fullWidth : styles.center
+        }`}
+      >
+        <div className="mt-1 space-y-2 desktop:-mt-1">
+          <ButtonText
+            label={t('settings.edit')}
+            className="w-full tablet:w-max"
+            size="large"
+            iconLeft={!isDesktop ? <IconGovernance /> : undefined}
+            onClick={() => navigate('edit')}
+          />
+          <AlertInline label={t('settings.proposeSettingsInfo')} />
+        </div>
       </div>
     </SettingsWrapper>
+  );
+};
+const styles = {
+  fullWidth:
+    'col-span-full desktop:col-start-2 desktop:col-end-12 desktop:col-span-6',
+  leftCol: 'col-span-full desktop:col-start-2 desktop:col-end-8',
+  center:
+    'col-span-full desktop:col-start-4 desktop:col-end-10 desktop:col-span-6',
+};
+
+const DEFAULT_LINES_SHOWN = 3;
+const SettingsCardDao: React.FC<{daoDetails: DaoDetails}> = ({daoDetails}) => {
+  const {t} = useTranslation();
+  const {network, isL2Network} = useNetwork();
+
+  const summaryRef = useRef<HTMLParagraphElement>(null);
+
+  const [showAll, setShowAll] = useState(true);
+  const [shouldClamp, setShouldClamp] = useState(false);
+
+  const explorerLink =
+    CHAIN_METADATA[network].explorer + 'address/' + daoDetails.address;
+
+  const chainLabel = CHAIN_METADATA[network].name;
+  const resourceLinksIncluded = daoDetails.metadata.links.length !== 0;
+
+  // this should be extracted into a hook if clamping/showing elsewhere
+  useEffect(() => {
+    function countNumberOfLines() {
+      const descriptionEl = summaryRef.current;
+
+      if (!descriptionEl) {
+        return;
+      }
+
+      const numberOfLines =
+        descriptionEl.offsetHeight /
+        parseFloat(getComputedStyle(descriptionEl).lineHeight);
+
+      setShouldClamp(numberOfLines > DEFAULT_LINES_SHOWN);
+      setShowAll(numberOfLines <= DEFAULT_LINES_SHOWN);
+    }
+
+    countNumberOfLines();
+    window.addEventListener('resize', countNumberOfLines);
+
+    return () => {
+      window.removeEventListener('resize', countNumberOfLines);
+    };
+  }, []);
+
+  return (
+    <SettingsCard title={t('labels.review.daoMetadata')}>
+      <DescriptionPair>
+        <Term>{t('labels.daoName')}</Term>
+        <Definition>
+          <div className="flex items-center space-x-1.5 desktop:space-x-2">
+            <p className="ft-text-base desktop:font-semibold">
+              {daoDetails.metadata.name}
+            </p>
+            <AvatarDao
+              size="small"
+              daoName={daoDetails.metadata.name}
+              src={daoDetails.metadata.avatar}
+            />
+          </div>
+        </Definition>
+      </DescriptionPair>
+
+      <DescriptionPair>
+        <Term>{t('labels.review.blockchain')}</Term>
+        <Definition>
+          <div className="flex flex-1 flex-wrap justify-between gap-y-1">
+            <p className="shrink-0 ft-text-base desktop:font-semibold">
+              {chainLabel}
+            </p>
+            <Tag label={t('labels.notChangeable')} colorScheme="neutral" />
+          </div>
+        </Definition>
+      </DescriptionPair>
+
+      <DescriptionPair>
+        <Term>
+          {isL2Network ? t('settings.dao.contractAddress') : t('labels.ens')}
+        </Term>
+        <Definition>
+          <div className="flex flex-1 flex-wrap items-start justify-between gap-y-1">
+            <Link
+              {...(isL2Network
+                ? {label: shortenAddress(daoDetails.address)}
+                : {
+                    label: toDisplayEns(daoDetails.ensDomain),
+                    description: shortenAddress(daoDetails.address),
+                  })}
+              type="primary"
+              className="shrink-0"
+              href={explorerLink}
+              iconRight={<IconLinkExternal />}
+            />
+            <Tag label={t('labels.notChangeable')} colorScheme="neutral" />
+          </div>
+        </Definition>
+      </DescriptionPair>
+
+      <DescriptionPair className={resourceLinksIncluded ? '' : 'border-none'}>
+        <Term>{t('labels.summary')}</Term>
+        <Definition className="flex flex-col gap-y-1">
+          <Summary ref={summaryRef} {...{fullDescription: showAll}}>
+            {daoDetails.metadata.description}
+          </Summary>
+          {shouldClamp && (
+            <Link
+              {...(showAll
+                ? {
+                    label: t('settings.dao.summaryToggleClose'),
+                    iconRight: <IconChevronUp />,
+                  }
+                : {
+                    label: t('settings.dao.summaryToggleMore'),
+                    iconRight: <IconChevronDown />,
+                  })}
+              className="ft-text-base"
+              onClick={() => setShowAll(prevState => !prevState)}
+            />
+          )}
+        </Definition>
+      </DescriptionPair>
+
+      {resourceLinksIncluded && (
+        <DescriptionPair className="border-none">
+          <Term>{t('labels.links')}</Term>
+          <Definition>
+            <div className="relative flex flex-col space-y-1.5">
+              {daoDetails.metadata.links.slice(0, 3).map(({name, url}) => (
+                <Link
+                  key={url}
+                  label={name}
+                  description={url}
+                  type="primary"
+                  href={url}
+                  iconRight={<IconLinkExternal />}
+                />
+              ))}
+              {daoDetails.metadata.links.length > 3 && (
+                <Dropdown
+                  trigger={
+                    <Link
+                      label={t('settings.dao.links.allLinks')}
+                      type="primary"
+                      iconRight={<IconChevronDown />}
+                    />
+                  }
+                  listItems={daoDetails.metadata.links.map(({name, url}) => ({
+                    component: (
+                      <div className="mb-1.5">
+                        <Link
+                          label={name}
+                          description={url}
+                          type="primary"
+                          href={url}
+                          iconRight={<IconLinkExternal />}
+                        />
+                      </div>
+                    ),
+                  }))}
+                />
+              )}
+            </div>
+          </Definition>
+        </DescriptionPair>
+      )}
+    </SettingsCard>
   );
 };
 
@@ -124,9 +285,7 @@ export interface IPluginSettings {
   daoDetails: DaoDetails | undefined | null;
 }
 
-export const PluginSettingsWrapper: React.FC<IPluginSettings> = ({
-  daoDetails,
-}) => {
+const PluginSettingsWrapper: React.FC<IPluginSettings> = ({daoDetails}) => {
   // TODO: Create support for multiple plugin DAO once design is ready.
   const pluginType = daoDetails?.plugins?.[0]?.id as PluginTypes;
 
@@ -143,7 +302,7 @@ export const PluginSettingsWrapper: React.FC<IPluginSettings> = ({
   }
 };
 
-export const SettingsWrapper: React.FC = ({children}) => {
+const SettingsWrapper: React.FC = ({children}) => {
   const {t} = useTranslation();
   const {isMobile} = useScreen();
 
@@ -154,24 +313,31 @@ export const SettingsWrapper: React.FC = ({children}) => {
   return (
     <PageWrapper
       title={t('labels.daoSettings')}
-      // TODO add correct description once available in designs [VR 17-01-2023]
-      description="Review your DAO's settings"
-      primaryBtnProps={
-        isMobile
-          ? {
-              label: t('settings.edit'),
-              iconLeft: <IconGovernance />,
-              onClick: () =>
-                navigate(generatePath(EditSettings, {network, dao})),
-            }
-          : undefined
-      }
-      customBody={<Layout>{children}</Layout>}
+      primaryBtnProps={{
+        label: t('settings.edit'),
+        iconLeft: isMobile ? <IconGovernance /> : undefined,
+        onClick: () => navigate(generatePath(EditSettings, {network, dao})),
+      }}
+      customBody={<>{children}</>}
     />
   );
 };
 
 export const Layout = styled.div.attrs({
   className:
-    'col-span-full desktop:col-start-4 desktop:col-end-10 text-ui-600' as string,
+    'col-span-full desktop:col-start-4 desktop:col-end-10 text-ui-600 desktop:mt-2',
 })``;
+
+type DescriptionProps = {
+  fullDescription?: boolean;
+};
+
+const Summary = styled.p.attrs({
+  className: 'font-normal text-ui-600 ft-text-base',
+})<DescriptionProps>`
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: ${props =>
+    props.fullDescription ? 'unset' : DEFAULT_LINES_SHOWN};
+`;

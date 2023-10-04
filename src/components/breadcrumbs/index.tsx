@@ -19,7 +19,7 @@ const Breadcrumbs: React.FC<Props> = ({breadcrumbs}) => {
             <Link
               to={match.pathname}
               className={
-                isLast ? 'text-ui-600 cursor-default' : 'text-primary-500'
+                isLast ? 'cursor-default text-ui-600' : 'text-primary-500'
               }
             >
               {breadcrumb}

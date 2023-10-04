@@ -20,7 +20,7 @@ export const SCCExecutionCard: React.FC<{
           <div className="space-y-2">
             {(action.inputs as Array<Input & {value: any}>).map(input => (
               <div key={input.name}>
-                <div className="mb-1.5 text-base font-bold text-ui-800 capitalize">
+                <div className="mb-1.5 text-base font-bold capitalize text-ui-800">
                   {input.name}
                   <span className="ml-0.5 text-sm normal-case">
                     ({input.type})

@@ -7,13 +7,13 @@ import {Label} from '@aragon/ods';
 import {AccordionMethod} from 'components/accordionMethod';
 import {generateAlert} from 'components/multisigMinimumApproval';
 import MinimumApproval from 'components/multisigMinimumApproval/minimumApproval';
-import {BalanceMember, MultisigMember} from 'hooks/useDaoMembers';
+import {DaoMember} from 'hooks/useDaoMembers';
 import {CORRECTION_DELAY} from 'utils/constants';
 import {ActionAddAddress, ActionIndex, ActionRemoveAddress} from 'utils/types';
 import {CustomHeaderProps, FormItem} from '../addAddresses';
 
 export type CurrentDaoMembers = {
-  currentDaoMembers?: MultisigMember[] | BalanceMember[];
+  currentDaoMembers?: DaoMember[];
 };
 
 type UpdateMinimumApprovalProps = ActionIndex &
@@ -160,7 +160,7 @@ const UpdateMinimumApproval: React.FC<UpdateMinimumApprovalProps> = ({
       >
         {useCustomHeader && (
           <FormItem
-            className={'desktop:block pt-3 pb-1.5 rounded-t-xl border-t'}
+            className={'rounded-t-xl border-t pb-1.5 pt-3 desktop:block'}
           >
             <Label label={t('labels.approvals')} />
           </FormItem>
@@ -199,7 +199,7 @@ const UpdateMinimumApproval: React.FC<UpdateMinimumApprovalProps> = ({
             <p>{removeActionCount}</p>
           </HStack>
           <HStack>
-            <SummaryLabel>{t('labels.totalNewMembers')}</SummaryLabel>
+            <SummaryLabel>{t('labels.totalMembers')}</SummaryLabel>
             <p>{totalMembers}</p>
           </HStack>
         </SummaryContainer>

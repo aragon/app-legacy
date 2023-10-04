@@ -10,7 +10,7 @@ type BreakdownProps = {
   approvals?: string[];
   memberCount?: number;
   results?: ProposalVoteResults;
-  token?: VotingTerminalProps['token'];
+  token?: VotingTerminalProps['daoToken'];
 };
 
 const BreakdownTab: React.FC<BreakdownProps> = ({

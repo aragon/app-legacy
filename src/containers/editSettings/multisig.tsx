@@ -26,9 +26,9 @@ import {PageWrapper} from 'components/wrappers';
 import ConfigureCommunity from 'containers/configureCommunity';
 import DefineMetadata from 'containers/defineMetadata';
 import {useNetwork} from 'context/network';
-import {MultisigMember, useDaoMembers} from 'hooks/useDaoMembers';
+import {useDaoMembers} from 'hooks/useDaoMembers';
 import {PluginTypes} from 'hooks/usePluginClient';
-import {usePluginSettings} from 'hooks/usePluginSettings';
+import {useVotingSettings} from 'services/aragon-sdk/queries/use-voting-settings';
 import useScreen from 'hooks/useScreen';
 import {Layout} from 'pages/settings';
 import {toDisplayEns} from 'utils/library';
@@ -45,22 +45,29 @@ export const EditMsSettings: React.FC<EditMsSettingsProps> = ({daoDetails}) => {
   const {isMobile} = useScreen();
 
   const {setValue, control} = useFormContext();
-  const {fields, replace} = useFieldArray({
-    name: 'daoLinks',
-    control,
-  });
-  const {errors, isValid} = useFormState({control});
+  const {fields, replace} = useFieldArray({name: 'daoLinks', control});
+  const {errors, isValid, isDirty} = useFormState({control});
 
-  const {data, isLoading: settingsAreLoading} = usePluginSettings(
-    daoDetails?.plugins[0].instanceAddress as string,
-    daoDetails?.plugins[0].id as PluginTypes
-  );
-  const settings = data as MultisigVotingSettings;
+  const pluginAddress = daoDetails?.plugins?.[0]?.instanceAddress as string;
+  const pluginType: PluginTypes = 'multisig.plugin.dao.eth';
+  const {data: pluginVotingSettings, isLoading: settingsAreLoading} =
+    useVotingSettings({
+      pluginAddress,
+      pluginType,
+    });
 
   const {data: members, isLoading: membersAreLoading} = useDaoMembers(
-    daoDetails?.plugins[0].instanceAddress as string,
-    daoDetails?.plugins[0].id as PluginTypes
+    pluginAddress,
+    pluginType
   );
+
+  const isLoading = membersAreLoading || settingsAreLoading;
+
+  const votingSettings = pluginVotingSettings as
+    | MultisigVotingSettings
+    | undefined;
+
+  const dataFetched = !!(!isLoading && members && votingSettings?.minApprovals);
 
   const [
     daoName,
@@ -133,33 +140,21 @@ export const EditMsSettings: React.FC<EditMsSettingsProps> = ({daoDetails}) => {
     resourceLinks,
   ]);
 
-  const isMetadataChanged = useMemo(() => {
-    if (!daoDetails?.metadata.name || !daoName?.trim()) return false;
-    return (
-      daoName !== daoDetails.metadata.name ||
+  const isMetadataChanged = (daoDetails?.metadata.name &&
+    (daoName !== daoDetails.metadata.name ||
       daoSummary !== daoDetails.metadata.description ||
       daoLogo !== daoDetails.metadata.avatar ||
-      !resourceLinksAreEqual
-    );
-  }, [
-    daoDetails.metadata.avatar,
-    daoDetails.metadata.description,
-    daoDetails.metadata.name,
-    daoLogo,
-    daoName,
-    daoSummary,
-    resourceLinksAreEqual,
-  ]);
+      !resourceLinksAreEqual)) as boolean;
 
-  const isGovernanceChanged = useMemo(() => {
-    if (!multisigMinimumApprovals) return false;
-
-    return multisigMinimumApprovals !== settings.minApprovals;
-  }, [multisigMinimumApprovals, settings.minApprovals]);
+  let isGovernanceChanged = false;
+  if (multisigMinimumApprovals && votingSettings?.minApprovals) {
+    isGovernanceChanged =
+      multisigMinimumApprovals !== votingSettings.minApprovals;
+  }
 
   let daoEligibleProposer: MultisigProposerEligibility = formEligibleProposer;
-  if (Object.keys(settings).length !== 0 && settings.constructor === Object) {
-    daoEligibleProposer = settings.onlyListed ? 'multisig' : 'anyone';
+  if (votingSettings) {
+    daoEligibleProposer = votingSettings.onlyListed ? 'multisig' : 'anyone';
   }
 
   const isCommunityChanged = daoEligibleProposer !== formEligibleProposer;
@@ -197,16 +192,18 @@ export const EditMsSettings: React.FC<EditMsSettingsProps> = ({daoDetails}) => {
   }, [daoEligibleProposer, setValue]);
 
   const setCurrentGovernance = useCallback(() => {
-    const multisigWallets = members.members as MultisigMember[];
-    setValue('multisigMinimumApprovals', settings.minApprovals);
-    setValue('multisigWallets', multisigWallets);
-    setValue(
-      'membership',
-      daoDetails?.plugins[0].id === 'token-voting.plugin.dao.eth'
-        ? 'token'
-        : 'multisig'
-    );
-  }, [daoDetails?.plugins, members.members, settings.minApprovals, setValue]);
+    if (votingSettings) {
+      const multisigWallets = members.members;
+      setValue('multisigMinimumApprovals', votingSettings.minApprovals);
+      setValue('multisigWallets', multisigWallets);
+      setValue(
+        'membership',
+        daoDetails?.plugins[0].id === 'token-voting.plugin.dao.eth'
+          ? 'token'
+          : 'multisig'
+      );
+    }
+  }, [votingSettings, members.members, setValue, daoDetails?.plugins]);
 
   const settingsUnchanged =
     !isGovernanceChanged && !isMetadataChanged && !isCommunityChanged;
@@ -223,10 +220,19 @@ export const EditMsSettings: React.FC<EditMsSettingsProps> = ({daoDetails}) => {
   }, [isCommunityChanged, isGovernanceChanged, isMetadataChanged, setValue]);
 
   useEffect(() => {
-    setCurrentMetadata();
-    setCurrentGovernance();
-    setCurrentCommunity();
-  }, [setCurrentCommunity, setCurrentGovernance, setCurrentMetadata]);
+    if (dataFetched && !isDirty) {
+      setCurrentMetadata();
+      setCurrentGovernance();
+      setCurrentCommunity();
+    }
+  }, [
+    dataFetched,
+    isDirty,
+    setCurrentCommunity,
+    setCurrentGovernance,
+    setCurrentMetadata,
+    settingsUnchanged,
+  ]);
 
   const metadataAction = [
     {
@@ -267,11 +273,13 @@ export const EditMsSettings: React.FC<EditMsSettingsProps> = ({daoDetails}) => {
     },
   ];
 
-  if (settingsAreLoading || membersAreLoading) {
+  if (isLoading) {
     return <Loading />;
   }
 
-  return (
+  // Note: using isDirty here to allow time for form to fill up before
+  // rendering a value or else there will be noticeable render with blank form.
+  return isDirty ? (
     <PageWrapper
       title={t('settings.editDaoSettings')}
       description={t('settings.editSubtitle')}
@@ -312,7 +320,9 @@ export const EditMsSettings: React.FC<EditMsSettingsProps> = ({daoDetails}) => {
                 dropdownItems={communityAction}
               >
                 <AccordionContent>
-                  <MultisigEligibility />
+                  <EligibilityWrapper>
+                    <MultisigEligibility />
+                  </EligibilityWrapper>
                 </AccordionContent>
               </AccordionItem>
 
@@ -365,12 +375,12 @@ export const EditMsSettings: React.FC<EditMsSettingsProps> = ({daoDetails}) => {
         </Layout>
       }
     />
+  ) : (
+    <Loading />
   );
 };
 
-const Container = styled.div.attrs({
-  className: 'mt-5 desktop:mt-8',
-})``;
+const Container = styled.div.attrs({})``;
 
 const AccordionContent = styled.div.attrs({
   className:
@@ -384,3 +394,5 @@ const HStack = styled.div.attrs({
 const Footer = styled.div.attrs({
   className: 'mt-5 desktop:mt-8 space-y-2',
 })``;
+
+const EligibilityWrapper = styled.div.attrs({})``;

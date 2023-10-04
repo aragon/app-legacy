@@ -1,5 +1,5 @@
 import {IconLinkExternal, Link, ListItemAddress} from '@aragon/ods';
-import React, {useCallback, useEffect, useState} from 'react';
+import React, {useCallback, useEffect, useMemo, useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 
@@ -23,23 +23,31 @@ export const MintTokenCard: React.FC<{
   const {data: daoDetails} = useDaoDetailsQuery();
 
   const {
-    data: {members},
+    data: {members, memberCount},
   } = useDaoMembers(
     daoDetails?.plugins[0].instanceAddress as string,
-    daoDetails?.plugins[0].id as PluginTypes
+    daoDetails?.plugins[0].id as PluginTypes,
+    {page: 0}
   );
 
   const [addresses, setAddresses] = useState<Web3Address[]>([]);
 
   const newTotalSupply = action.summary.newTokens + action.summary.tokenSupply;
 
-  const newHolders = action.inputs.mintTokensToWallets.filter(
-    ({web3Address}) => {
-      return members.find(
-        (addr: {address: string}) =>
-          addr.address.toLowerCase() !== web3Address.address?.toLowerCase()
-      );
-    }
+  const enableNewHolders = memberCount <= 1000;
+  // This would be slow to calculate with 1000 members
+  const newHolders = useMemo(
+    () =>
+      enableNewHolders
+        ? action.inputs.mintTokensToWallets.filter(({web3Address}) => {
+            return !members.some(
+              (addr: {address: string}) =>
+                addr.address.toLowerCase() ===
+                web3Address.address?.toLowerCase()
+            );
+          })
+        : [],
+    [members, enableNewHolders, action.inputs.mintTokensToWallets]
   );
 
   /*************************************************
@@ -89,7 +97,7 @@ export const MintTokenCard: React.FC<{
       additionalInfo={t('newProposal.mintTokens.additionalInfo')}
     >
       <Container>
-        <div className="p-2 tablet:p-3 space-y-2 bg-ui-50">
+        <div className="space-y-2 bg-ui-50 p-2 tablet:p-3">
           {action.inputs.mintTokensToWallets.map(
             ({web3Address, amount}, index) => {
               const label =
@@ -125,23 +133,27 @@ export const MintTokenCard: React.FC<{
               +{action.summary.newTokens} {action.summary.daoTokenSymbol}
             </p>
           </HStack>
-          <HStack>
-            <Label>{t('labels.newHolders')}</Label>
-            <p>+{newHolders?.length}</p>
-          </HStack>
+          {enableNewHolders && (
+            <HStack>
+              <Label>{t('labels.newHolders')}</Label>
+              <p>+{newHolders?.length}</p>
+            </HStack>
+          )}
           <HStack>
             <Label>{t('labels.totalTokens')}</Label>
             <p>
               {newTotalSupply} {action.summary.daoTokenSymbol}
             </p>
           </HStack>
-          <HStack>
-            <Label>{t('labels.totalHolders')}</Label>
-            <p>
-              {newHolders?.length +
-                (action.summary.totalMembers || members?.length)}{' '}
-            </p>
-          </HStack>
+          {enableNewHolders && (
+            <HStack>
+              <Label>{t('labels.totalHolders')}</Label>
+              <p>
+                {newHolders?.length +
+                  (action.summary.totalMembers || members?.length)}{' '}
+              </p>
+            </HStack>
+          )}
           {/* TODO add total amount of token holders here. */}
           <Link
             label={t('labels.seeCommunity')}

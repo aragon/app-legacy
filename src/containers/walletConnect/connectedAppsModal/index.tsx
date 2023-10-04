@@ -16,9 +16,9 @@ import ModalBottomSheetSwitcher from 'components/modalBottomSheetSwitcher';
 import Header from 'components/modalHeader/searchHeader';
 import {StateEmpty} from 'components/stateEmpty';
 import {parseWCIconUrl} from 'utils/library';
+import {useWalletConnectContext} from '../walletConnectProvider';
 
 type Props = {
-  sessions: SessionTypes.Struct[];
   onConnectNewdApp: () => void;
   onSelectExistingdApp: (session: SessionTypes.Struct) => void;
   onClose: () => void;
@@ -29,7 +29,8 @@ const WCConnectedApps: React.FC<Props> = props => {
   const [search, setSearch] = useState('');
   const {t} = useTranslation();
 
-  const filteredSessions = props.sessions.filter(session =>
+  const {activeSessions} = useWalletConnectContext();
+  const filteredSessions = activeSessions.filter(session =>
     session.peer.metadata.name.toLowerCase().includes(search.toLowerCase())
   );
 
@@ -46,7 +47,7 @@ const WCConnectedApps: React.FC<Props> = props => {
         buttonIcon={search ? <IconSearch /> : undefined}
       />
       <Content>
-        {props.sessions.length > 0 && filteredSessions.length === 0 ? (
+        {activeSessions.length > 0 && filteredSessions.length === 0 ? (
           <StateEmpty
             mode="inline"
             type="Object"

@@ -4,35 +4,25 @@ import React, {
   useState,
   useMemo,
   ReactNode,
+  useCallback,
 } from 'react';
 
 const GlobalModalsContext = createContext<GlobalModalsContextType | null>(null);
 
-type GlobalModalsContextType = {
-  isTransferOpen: boolean;
-  isTokenOpen: boolean;
-  isUtcOpen: boolean;
-  isSelectDaoOpen: boolean;
-  isAddActionOpen: boolean;
-  isAddressesOpen: boolean;
-  isWalletOpen: boolean;
-  isNetworkOpen: boolean;
-  isMobileMenuOpen: boolean;
-  isManageWalletOpen: boolean;
-  isGatingOpen: boolean;
-  isDepositOpen: boolean;
-  isPoapClaimOpen: boolean;
-  isExportCsvOpen: boolean;
-  open: (arg?: MenuTypes) => void;
-  close: (arg?: MenuTypes) => void;
+type GlobalModalsContextType<TState = Record<string, unknown>> = {
+  activeDialog?: DialogType;
+  modalState?: TState;
+  isOpen?: boolean;
+  open: (dialog: DialogType, state?: Record<string, unknown>) => void;
+  close: (onClose?: () => void) => void;
 };
 
-export type MenuTypes =
+export type DialogType =
+  | 'transfer'
   | 'token'
   | 'utc'
   | 'addAction'
   | 'selectDao'
-  | 'default'
   | 'addresses'
   | 'wallet'
   | 'network'
@@ -42,182 +32,38 @@ export type MenuTypes =
   | 'gating'
   | 'deposit'
   | 'poapClaim'
-  | 'exportCsv';
+  | 'exportCsv'
+  | 'delegateVoting'
+  | 'delegationGating';
 
 type Props = Record<'children', ReactNode>;
 
-/* TODO This should be reworked to have one state that holds the open menu,
-instead of one boolean state for each of the menus. This can be done based on a
-type like MenuType. Then this context can be extended simply by adding a new
-type to MenuTypes. */
-const GlobalModalsProvider: React.FC<Props> = ({children}) => {
-  const [isTransferOpen, setIsTransferOpen] =
-    useState<GlobalModalsContextType['isTransferOpen']>(false);
-  const [isTokenOpen, setIsTokenOpen] =
-    useState<GlobalModalsContextType['isTokenOpen']>(false);
-  const [isUtcOpen, setIsUtcOpen] =
-    useState<GlobalModalsContextType['isUtcOpen']>(false);
-  const [isAddActionOpen, setIsAddActionOpen] =
-    useState<GlobalModalsContextType['isAddActionOpen']>(false);
-  const [isSelectDaoOpen, setIsSelectDaoOpen] =
-    useState<GlobalModalsContextType['isSelectDaoOpen']>(false);
-  const [isAddressesOpen, setAddressesOpen] =
-    useState<GlobalModalsContextType['isAddressesOpen']>(false);
-  const [isWalletOpen, setWalletOpen] =
-    useState<GlobalModalsContextType['isWalletOpen']>(false);
-  const [isNetworkOpen, setNetworkOpen] =
-    useState<GlobalModalsContextType['isNetworkOpen']>(false);
-  const [isMobileMenuOpen, setMobileMenuOpen] =
-    useState<GlobalModalsContextType['isMobileMenuOpen']>(false);
-  const [isManageWalletOpen, setManageWalletOpen] =
-    useState<GlobalModalsContextType['isManageWalletOpen']>(false);
-  const [isGatingOpen, setIsGatingOpen] =
-    useState<GlobalModalsContextType['isGatingOpen']>(false);
-  const [isDepositOpen, setIsDepositOpen] =
-    useState<GlobalModalsContextType['isDepositOpen']>(false);
-  const [isPoapClaimOpen, setIsPoapClaimOpen] =
-    useState<GlobalModalsContextType['isPoapClaimOpen']>(false);
-  const [isExportCsvOpen, setIsExportCsvOpen] =
-    useState<GlobalModalsContextType['isExportCsvOpen']>(false);
+export const GlobalModalsProvider: React.FC<Props> = ({children}) => {
+  const [activeDialog, setActiveDialog] = useState<DialogType>();
+  const [modalState, setModalState] = useState<Record<string, unknown>>();
 
-  const open = (type?: MenuTypes) => {
-    switch (type) {
-      case 'token':
-        setIsTokenOpen(true);
-        break;
-      case 'utc':
-        setIsUtcOpen(true);
-        break;
-      case 'addAction':
-        setIsAddActionOpen(true);
-        break;
-      case 'selectDao':
-        setIsSelectDaoOpen(true);
-        break;
-      case 'addresses':
-        setAddressesOpen(true);
-        break;
-      case 'wallet':
-        setWalletOpen(true);
-        break;
-      case 'network':
-        setNetworkOpen(true);
-        break;
-      case 'mobileMenu':
-        setMobileMenuOpen(true);
-        break;
-      case 'manageWallet':
-        setManageWalletOpen(true);
-        break;
-      case 'gating':
-        setIsGatingOpen(true);
-        break;
-      case 'deposit':
-        setIsDepositOpen(true);
-        break;
-      case 'poapClaim':
-        setIsPoapClaimOpen(true);
-        break;
-      case 'exportCsv':
-        setIsExportCsvOpen(true);
-        break;
-      default:
-        setIsTransferOpen(true);
-        break;
-    }
-  };
+  const close = useCallback((onClose?: () => void) => {
+    setActiveDialog(undefined);
+    setModalState(undefined);
+    onClose?.();
+  }, []);
 
-  const close = (type?: MenuTypes) => {
-    switch (type) {
-      case 'token':
-        setIsTokenOpen(false);
-        break;
-      case 'utc':
-        setIsUtcOpen(false);
-        break;
-      case 'addAction':
-        setIsAddActionOpen(false);
-        break;
-      case 'selectDao':
-        setIsSelectDaoOpen(false);
-        break;
-      case 'addresses':
-        setAddressesOpen(false);
-        break;
-      case 'wallet':
-        setWalletOpen(false);
-        break;
-      case 'network':
-        setNetworkOpen(false);
-        break;
-      case 'mobileMenu':
-        setMobileMenuOpen(false);
-        break;
-      case 'manageWallet':
-        setManageWalletOpen(false);
-        break;
-      case 'gating':
-        setIsGatingOpen(false);
-        break;
-      case 'deposit':
-        setIsDepositOpen(false);
-        break;
-      case 'poapClaim':
-        setIsPoapClaimOpen(false);
-        break;
-      case 'exportCsv':
-        setIsExportCsvOpen(false);
-        break;
-      default:
-        setIsTransferOpen(false);
-        break;
-    }
-  };
-  /**
-   * TODO: ==============================================
-   * I used this context for managing all modals but we should
-   * categories the modal pages and organize it in a better way
-   *====================================================
-   */
-  // Since the modals can not be open at the same time, I actually think this is
-  // a good solution. Keeps the logic in one place and makes it simply to
-  // extend. [VR 10-01-2022]
+  const open = useCallback(
+    (dialog: DialogType, state?: Record<string, unknown>) => {
+      setActiveDialog(dialog);
+      setModalState(state);
+    },
+    []
+  );
 
   const value = useMemo(
     (): GlobalModalsContextType => ({
-      isTransferOpen,
-      isTokenOpen,
-      isUtcOpen,
-      isAddActionOpen,
-      isSelectDaoOpen,
-      isAddressesOpen,
-      isWalletOpen,
-      isNetworkOpen,
-      isMobileMenuOpen,
-      isManageWalletOpen,
-      isGatingOpen,
-      isDepositOpen,
-      isPoapClaimOpen,
-      isExportCsvOpen,
+      activeDialog,
+      modalState,
       open,
       close,
     }),
-    [
-      isAddActionOpen,
-      isAddressesOpen,
-      isDepositOpen,
-      isExportCsvOpen,
-      isGatingOpen,
-      isManageWalletOpen,
-      isMobileMenuOpen,
-      isNetworkOpen,
-      isPoapClaimOpen,
-      isSelectDaoOpen,
-      isTokenOpen,
-      isTransferOpen,
-      isUtcOpen,
-      isWalletOpen,
-    ]
+    [activeDialog, modalState, open, close]
   );
 
   return (
@@ -227,8 +73,20 @@ const GlobalModalsProvider: React.FC<Props> = ({children}) => {
   );
 };
 
-function useGlobalModalContext(): GlobalModalsContextType {
-  return useContext(GlobalModalsContext) as GlobalModalsContextType;
-}
+export const useGlobalModalContext = <TState extends object>(
+  dialog?: DialogType
+): GlobalModalsContextType<TState> => {
+  const values = useContext(GlobalModalsContext);
 
-export {useGlobalModalContext, GlobalModalsProvider};
+  if (values == null) {
+    throw new Error(
+      'GlobalModals: hook must be used inside the GlobalModalContext in order to work properly.'
+    );
+  }
+
+  return {
+    ...values,
+    isOpen: dialog ? values.activeDialog === dialog : undefined,
+    modalState: values.modalState as TState,
+  };
+};

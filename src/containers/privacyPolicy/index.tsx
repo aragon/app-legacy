@@ -60,7 +60,7 @@ const Container = styled.div.attrs({
 
 const MobileModal = styled.div.attrs({
   className: `space-y-3 fixed bottom-2 z-50 p-2 mx-2 rounded-xl border border-ui-100 bg-ui-0
-    tablet:w-56 tablet:bottom-3 tablet:left-1/2 tablet:mx-0 tablet:transform tablet:-translate-x-1/2`,
+    tablet:w-56 tablet:bottom-3 tablet:left-1/2 tablet:mx-0 tablet:-translate-x-1/2`,
 })`
   box-shadow: 0px 24px 32px rgba(31, 41, 51, 0.04),
     0px 16px 24px rgba(31, 41, 51, 0.04), 0px 4px 8px rgba(31, 41, 51, 0.04),

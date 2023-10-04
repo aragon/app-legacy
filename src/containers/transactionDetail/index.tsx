@@ -1,4 +1,3 @@
-import {InstalledPluginListItem} from '@aragon/sdk-client';
 import {
   ButtonIcon,
   CardText,
@@ -25,25 +24,16 @@ import {Proposal} from 'utils/paths';
 import {abbreviateTokenAmount} from 'utils/tokens';
 import {Withdraw} from 'utils/types';
 import {toDisplayEns} from 'utils/library';
+import {useDaoDetailsQuery} from 'hooks/useDaoDetails';
 
-// TODO: merge these together or remove all props when updating to use react-query
-type TransactionDetailProps = {
-  daoAddress: string;
-  daoEns?: string;
-  daoName: string;
-  daoPlugin: InstalledPluginListItem;
-};
-
-const TransactionDetail: React.FC<TransactionDetailProps> = ({
-  daoAddress,
-  daoEns,
-  daoName,
-  daoPlugin,
-}) => {
+const TransactionDetail: React.FC = () => {
   const {t} = useTranslation();
   const navigate = useNavigate();
-
   const {network} = useNetwork();
+
+  const {data: daoDetails} = useDaoDetailsQuery();
+  const {address = '', ensDomain, metadata, plugins} = daoDetails ?? {};
+  const {name: daoName = ''} = metadata ?? {};
 
   const {isOpen, transfer, onClose} = useTransactionDetailContext();
 
@@ -55,22 +45,22 @@ const TransactionDetail: React.FC<TransactionDetailProps> = ({
       : undefined;
 
   const {data: proposal} = useDaoProposal(
-    daoAddress,
+    address,
     proposalId,
-    daoPlugin.id as PluginTypes,
-    daoPlugin.instanceAddress
+    plugins?.[0].id as PluginTypes,
+    plugins?.[0].instanceAddress ?? ''
   );
 
   const handleNavigateToProposal = useCallback(() => {
     navigate(
       generatePath(Proposal, {
         network,
-        dao: toDisplayEns(daoEns) || daoAddress,
+        dao: toDisplayEns(ensDomain) ?? daoName,
         id: proposalId!.toUrlSlug(), // only called for Withdrawals
       })
     );
     onClose();
-  }, [daoAddress, daoEns, navigate, network, onClose, proposalId]);
+  }, [ensDomain, daoName, navigate, network, onClose, proposalId]);
 
   return (
     <ModalBottomSheetSwitcher isOpen={isOpen} onClose={onClose}>
@@ -129,7 +119,7 @@ const TransactionDetail: React.FC<TransactionDetailProps> = ({
             onClick={() =>
               trackEvent('finance_viewInBlockExplorer_clicked', {
                 transaction_hash: transfer.id,
-                dao_address: daoAddress,
+                dao_address: address,
               })
             }
           >

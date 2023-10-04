@@ -111,12 +111,12 @@ export const Transfers: React.FC = () => {
         primaryBtnProps={{
           label: t('TransferModal.newTransfer'),
           iconLeft: <IconAdd />,
-          onClick: () => open(),
+          onClick: () => open('transfer'),
         }}
       >
         <div className="mt-3 desktop:mt-8">
           <div className="space-y-1.5">
-            <div className="flex gap-2 justify-between items-center">
+            <div className="flex items-center justify-between gap-2">
               <ButtonGroup
                 bgWhite
                 defaultValue="all"

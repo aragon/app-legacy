@@ -1,6 +1,7 @@
 import {
   ButtonText,
   CardProposal,
+  CardProposalProps,
   IconChevronRight,
   IconGovernance,
   ListItemHeader,
@@ -19,6 +20,8 @@ import {htmlIn} from 'utils/htmlIn';
 import {Governance, NewProposal} from 'utils/paths';
 import {ProposalListItem} from 'utils/types';
 import {useWallet} from 'hooks/useWallet';
+import {useUpdateProposal} from 'hooks/useUpdateProposal';
+import {featureFlags} from 'utils/featureFlags';
 
 type Props = {
   daoAddressOrEns: string;
@@ -26,6 +29,26 @@ type Props = {
   pluginType: PluginTypes;
   proposals: ProposalListItem[];
 };
+
+const ProposalItem: React.FC<{proposalId: string} & CardProposalProps> =
+  props => {
+    const {isAragonVerifiedUpdateProposal} = useUpdateProposal(
+      props.proposalId
+    );
+    const {t} = useTranslation();
+
+    return (
+      <CardProposal
+        {...props}
+        bannerContent={
+          isAragonVerifiedUpdateProposal &&
+          featureFlags.getValue('VITE_FEATURE_FLAG_OSX_UPDATES') === 'true'
+            ? t('update.proposal.bannerTitle')
+            : ''
+        }
+      />
+    );
+  };
 
 const ProposalSnapshot: React.FC<Props> = ({
   daoAddressOrEns,
@@ -40,7 +63,8 @@ const ProposalSnapshot: React.FC<Props> = ({
 
   const {data: members, isLoading: areMembersLoading} = useDaoMembers(
     pluginAddress,
-    pluginType
+    pluginType,
+    {countOnly: true}
   );
 
   const mappedProposals = useMemo(
@@ -48,7 +72,7 @@ const ProposalSnapshot: React.FC<Props> = ({
       proposals.map(p => {
         return proposal2CardProps(
           p,
-          members.members.length,
+          members.memberCount,
           network,
           navigate,
           t,
@@ -58,7 +82,7 @@ const ProposalSnapshot: React.FC<Props> = ({
       }),
     [
       proposals,
-      members.members.length,
+      members.memberCount,
       network,
       navigate,
       t,
@@ -105,7 +129,7 @@ const ProposalSnapshot: React.FC<Props> = ({
       />
 
       {mappedProposals.map(({id, ...p}) => (
-        <CardProposal {...p} key={id} type="list" />
+        <ProposalItem {...p} proposalId={id} key={id} type="list" />
       ))}
 
       <ButtonText

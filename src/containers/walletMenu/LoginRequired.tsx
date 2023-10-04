@@ -22,18 +22,18 @@ type Props = {
 };
 
 export const LoginRequired: React.FC<Props> = props => {
-  const {close, isWalletOpen} = useGlobalModalContext();
+  const {close, isOpen} = useGlobalModalContext('wallet');
   const {t} = useTranslation();
   const {isDesktop} = useScreen();
   const {methods} = useWallet();
 
   // allow modal to be used both via global modal context &&
   // as individually controlled component.
-  const showModal = props.isOpen ?? isWalletOpen;
+  const showModal = props.isOpen ?? isOpen;
 
   const handleClose = useCallback(() => {
     if (props.onClose) props.onClose();
-    else close('wallet');
+    else close();
   }, [close, props]);
 
   return (
@@ -60,7 +60,7 @@ export const LoginRequired: React.FC<Props> = props => {
         <ButtonText
           label={t('alert.loginRequired.buttonLabel')}
           onClick={() => {
-            close('wallet');
+            close();
             methods.selectWallet().catch((err: Error) => {
               // To be implemented: maybe add an error message when
               // the error is different from closing the window

@@ -1,271 +1,273 @@
 import {Erc20TokenDetails, TokenVotingMember} from '@aragon/sdk-client';
-import {QueryClient} from '@tanstack/react-query';
 import {useNetwork} from 'context/network';
-import {useProviders} from 'context/providers';
-import {useEffect, useState} from 'react';
-import {CHAIN_METADATA} from 'utils/constants';
-import {fetchBalance} from 'utils/tokens';
-
+import {CHAIN_METADATA, SupportedNetworks} from 'utils/constants';
 import {formatUnits} from 'ethers/lib/utils';
-import {getTokenHoldersPaged} from 'services/covalentAPI';
 import {HookData} from 'utils/types';
 import {useDaoToken} from './useDaoToken';
-import {PluginTypes, usePluginClient} from './usePluginClient';
+import {PluginTypes} from './usePluginClient';
 import {useWallet} from './useWallet';
+import {useTokenHolders} from 'services/aragon-backend/queries/use-token-holders';
+import {useMembers} from 'services/aragon-sdk/queries/use-members';
+import {Address, useBalance} from 'wagmi';
 
-export type MultisigMember = {
+export type MultisigDaoMember = {
   address: string;
 };
 
-export type BalanceMember = MultisigMember & {
+export type TokenDaoMember = MultisigDaoMember & {
   balance: number;
+  votingPower: number;
+  delegatee: string;
+  delegators: string[];
 };
 
-export type DaoMembers = {
-  members: MultisigMember[] | BalanceMember[];
-  filteredMembers: MultisigMember[] | BalanceMember[];
+export type DaoMember = MultisigDaoMember | TokenDaoMember;
+
+export type DaoMemberSort = 'delegations' | 'votingPower';
+
+export type DaoMembersData = {
+  members: DaoMember[];
+  memberCount: number;
+  filteredMembers: DaoMember[];
   daoToken?: Erc20TokenDetails;
 };
 
-// this type guard will need to evolve when there are more types
-export function isMultisigMember(
-  member: BalanceMember | MultisigMember
-): member is MultisigMember {
-  return !('address' in member);
-}
+const compareAddresses = (addressA?: string | null, addressB?: string | null) =>
+  addressA?.toLowerCase() === addressB?.toLowerCase();
 
-export function isBalanceMember(
-  member: BalanceMember | MultisigMember
-): member is BalanceMember {
-  return 'balance' in member;
+export const isTokenDaoMember = (member: DaoMember): member is TokenDaoMember =>
+  'balance' in member;
+
+const sortDaoMembers =
+  (sort?: DaoMemberSort, userAddress?: string | null) =>
+  (a: DaoMember, b: DaoMember) => {
+    const isConnectedUserA = compareAddresses(a.address, userAddress);
+    const isConnectedUserB = compareAddresses(b.address, userAddress);
+
+    // Always move the connected user to the top position
+    if (isConnectedUserA || isConnectedUserB) {
+      return isConnectedUserA ? -1 : 1;
+    }
+
+    if (isTokenDaoMember(a) && isTokenDaoMember(b)) {
+      const isDelegatorA = a.delegators.some(delegator =>
+        compareAddresses(delegator, userAddress)
+      );
+      const isDelegatorB = b.delegators.some(delegator =>
+        compareAddresses(delegator, userAddress)
+      );
+
+      // Always move the delegator to the top position
+      if (isDelegatorA || isDelegatorB) {
+        return isDelegatorA ? -1 : 1;
+      }
+
+      const delegatorsResult = b.delegators.length - a.delegators.length;
+      const votingPowerResult = b.votingPower - a.votingPower;
+
+      if (sort === 'delegations') {
+        return delegatorsResult === 0 ? votingPowerResult : delegatorsResult;
+      }
+
+      return votingPowerResult;
+    } else {
+      return a.address > b.address ? 1 : -1;
+    }
+  };
+
+const sdkToDaoMember = (
+  member: string | TokenVotingMember,
+  tokenDecimals = 0
+): DaoMember => {
+  if (typeof member === 'string') {
+    return {address: member};
+  }
+
+  const {address, balance, delegatee, delegators, votingPower} = member;
+
+  return {
+    address,
+    balance: Number(formatUnits(balance, tokenDecimals)),
+    votingPower: Number(formatUnits(votingPower, tokenDecimals)),
+    delegatee: delegatee === null ? address : delegatee,
+    delegators: delegators.map(delegator => delegator.address),
+  };
+};
+
+export interface DaoMembersOptions {
+  searchTerm?: string;
+  sort?: DaoMemberSort;
+  page?: number;
+  countOnly?: boolean;
+  memberList?: string[];
+  enabled?: boolean;
 }
 
 /**
  * Hook to fetch DAO members. Fetches token if DAO is token based, and allows
- * for a search term to be passed in to filter the members list. NOTE: the
- * totalMembers included in the response is the total number of members in the
- * DAO, and not the number of members returned when filtering by search term.
+ * for a search term to be passed in to filter the members list.
  *
  * @param pluginAddress plugin from which members will be retrieved
  * @param pluginType plugin type
- * @param searchTerm Optional member search term  (e.g. '0x...')
+ * @param options Optional options map
  * @returns A list of DAO members, the total number of members in the DAO and
  * the DAO token (if token-based)
  */
 export const useDaoMembers = (
   pluginAddress: string,
-  pluginType?: PluginTypes,
-  searchTerm?: string
-): HookData<DaoMembers> => {
-  const [data, setData] = useState<BalanceMember[] | MultisigMember[]>([]);
-  const [rawMembers, setRawMembers] = useState<
-    TokenVotingMember[] | string[]
-  >();
-  const [filteredData, setFilteredData] = useState<
-    BalanceMember[] | MultisigMember[]
-  >([]);
-  const [error, setError] = useState<Error>();
-  const [isLoading, setIsLoading] = useState(false);
-
+  pluginType: PluginTypes,
+  options?: DaoMembersOptions
+): HookData<DaoMembersData> => {
   const {network} = useNetwork();
-  const {api: provider} = useProviders();
-
-  const isTokenBased = pluginType === 'token-voting.plugin.dao.eth';
-  const {data: daoToken} = useDaoToken(pluginAddress);
-
-  const client = usePluginClient(pluginType);
-
   const {address} = useWallet();
 
-  // Fetch the list of members for a this DAO.
-  useEffect(() => {
-    async function fetchMembers() {
-      try {
-        if (!pluginType) {
-          setData([]);
-          return;
-        }
+  const {data: daoToken} = useDaoToken(pluginAddress);
 
-        // Fetch members from the subgraph for the multisig plugin and for the goerli, base
-        // and base-goerli networks.
-        if (
-          pluginType === 'multisig.plugin.dao.eth' ||
-          network === 'goerli' ||
-          network === 'base' ||
-          network === 'base-goerli'
-        ) {
-          setIsLoading(true);
+  const isTokenBased = pluginType === 'token-voting.plugin.dao.eth';
 
-          const response = await client?.methods.getMembers(pluginAddress);
+  const opts = options ? options : {};
+  let memberCount = 0;
+  const countOnly = opts?.countOnly || false;
+  const enabled = opts?.enabled || true;
 
-          if (!response) {
-            setData([]);
-            return;
-          }
+  const networkCovalentSupported = !(
+    network === 'goerli' ||
+    network === 'mumbai' ||
+    network === 'base' ||
+    network === 'base-goerli'
+  );
+  const useSubgraph = !isTokenBased || !networkCovalentSupported;
+  const {
+    data: subgraphData = [],
+    isError: isSubgraphError,
+    isInitialLoading: isSubgraphLoading,
+  } = useMembers(
+    {pluginAddress, pluginType},
+    {enabled: useSubgraph && enabled}
+  );
+  const parsedSubgraphData = subgraphData.map(member =>
+    sdkToDaoMember(member, daoToken?.decimals)
+  );
 
-          if (!response.length && daoToken && address) {
-            const balance = await fetchBalance(
-              daoToken?.address,
-              address,
-              provider,
-              CHAIN_METADATA[network].nativeCurrency,
-              false
-            );
+  const {data: userBalance} = useBalance({
+    address: address as Address,
+    token: daoToken?.address as Address,
+    chainId: CHAIN_METADATA[network as SupportedNetworks].id,
+    enabled: address != null && daoToken != null && !countOnly && enabled,
+  });
+  const userBalanceNumber = Number(
+    formatUnits(userBalance?.value ?? '0', daoToken?.decimals)
+  );
 
-            const balanceNumber = Number(
-              formatUnits(balance, daoToken.decimals)
-            );
+  const useGraphql =
+    !useSubgraph && pluginType != null && daoToken != null && enabled;
 
-            if (balanceNumber > 0) {
-              (response as TokenVotingMember[]).push({
-                address,
-                balance: balance.toBigInt(),
-                delegatee: null,
-                delegators: [],
-                votingPower: balance.toBigInt(),
-              } as TokenVotingMember);
-            }
-          }
+  const {
+    data: graphqlData,
+    isError: isGraphqlError,
+    isInitialLoading: isGraphqlLoading,
+  } = useTokenHolders(
+    {
+      network,
+      tokenAddress: daoToken?.address as string,
+      page: opts?.page,
+    },
+    {enabled: useGraphql}
+  );
 
-          setRawMembers(response);
-        } else {
-          // fetch members from covalent api
-          const queryClient = new QueryClient();
+  if (!enabled)
+    return {
+      data: {
+        members: [],
+        filteredMembers: [],
+        memberCount: 0,
+      },
+      isLoading: false,
+      isError: false,
+    };
 
-          if (!daoToken) {
-            setData([] as BalanceMember[] | MultisigMember[]);
-            return;
-          }
-
-          let members = [] as BalanceMember[];
-
-          const addRawMembers = async (page: number, pageSize: 100 | 1000) => {
-            const rawMembers = await getTokenHoldersPaged(
-              queryClient,
-              daoToken?.address,
-              network,
-              page,
-              pageSize
-            );
-            members = members.concat(
-              rawMembers.data.items.map(m => {
-                return {
-                  address: m.address,
-                  balance: Number(formatUnits(m.balance, m.contract_decimals)),
-                } as BalanceMember;
-              })
-            );
-            return rawMembers.data.pagination.has_more;
-          };
-
-          // This limits total members to 3000. Very short term solution, should be superceded in a couple of days
-          let hasMore = await addRawMembers(0, 100); // try for 100 members first
-          if (hasMore) {
-            members = [];
-            hasMore = await addRawMembers(0, 1000);
-          }
-          if (hasMore) hasMore = await addRawMembers(1, 1000);
-          if (hasMore) hasMore = await addRawMembers(2, 1000);
-
-          members = members.sort(sortMembers);
-          setData(members);
-        }
-        setIsLoading(false);
-        setError(undefined);
-      } catch (err) {
-        console.error(err);
-        setError(err as Error);
-      }
-    }
-
-    fetchMembers();
-  }, [
-    address,
-    client?.methods,
-    daoToken,
-    daoToken?.address,
-    network,
-    pluginAddress,
-    pluginType,
-    provider,
-  ]);
-
-  // map the members to the desired structure
-  // Doing this separately to get rid of duplicate calls
-  // when raw members present, but no token details yet
-  useEffect(() => {
-    async function mapMembers() {
-      if (!rawMembers || (isTokenBased && !daoToken?.address)) return;
-
-      let members;
-
-      //TODO: A general type guard should be added later
-      if (isTokenBased && daoToken?.address) {
-        const balances = await Promise.all(
-          rawMembers.map(m => {
-            if ((m as TokenVotingMember)?.address)
-              return fetchBalance(
-                daoToken.address,
-                (m as TokenVotingMember).address,
-                provider,
-                CHAIN_METADATA[network].nativeCurrency
-              );
-          })
-        );
-
-        members = rawMembers.map(
-          (m, index) =>
-            ({
-              address: (m as TokenVotingMember).address,
-              balance: Number(balances[index]),
-            } as BalanceMember)
-        );
-      } else {
-        members = rawMembers.map(m => ({address: m} as MultisigMember));
-      }
-
-      members.sort(sortMembers);
-      setData(members);
-    }
-
-    mapMembers();
-  }, [daoToken?.address, isTokenBased, network, provider, rawMembers]);
-
-  useEffect(() => {
-    if (!searchTerm) {
-      setFilteredData([]);
+  // token holders data gives us the total holders, so only need to call once
+  // and return this number if countOnly === true
+  if (countOnly) {
+    if (useSubgraph) {
+      memberCount = parsedSubgraphData?.length || 0;
     } else {
-      isTokenBased
-        ? setFilteredData(
-            (data as BalanceMember[]).filter(d =>
-              d.address.toLowerCase().includes(searchTerm.toLowerCase())
-            )
-          )
-        : setFilteredData(
-            (data as MultisigMember[]).filter(d =>
-              d.address.toLowerCase().includes(searchTerm.toLowerCase())
-            )
-          );
+      memberCount = graphqlData?.holders.totalHolders || 0;
     }
-  }, [data, isTokenBased, searchTerm]);
+    return {
+      data: {
+        members: [],
+        filteredMembers: [],
+        daoToken,
+        memberCount,
+      },
+      isLoading: isSubgraphLoading || isGraphqlLoading,
+      isError: isSubgraphError || isGraphqlError,
+    };
+  }
+
+  const parsedGraphqlData = (graphqlData?.holders.holders ?? []).map(member => {
+    const {address, balance, votes, delegates} = member;
+    const tokenDecimals = daoToken?.decimals;
+
+    const delegators = graphqlData?.holders.holders
+      .filter(
+        holder =>
+          !compareAddresses(holder.address, address) &&
+          compareAddresses(holder.delegates, address)
+      )
+      .map(delegator => delegator.address);
+
+    return {
+      address,
+      balance: Number(formatUnits(balance, tokenDecimals)),
+      votingPower: Number(formatUnits(votes, tokenDecimals)),
+      delegatee: delegates,
+      delegators,
+    };
+  });
+
+  const getCombinedData = (): DaoMember[] => {
+    if (useSubgraph) {
+      if (subgraphData.length === 0 && userBalanceNumber > 0) {
+        return [
+          {
+            address: address as string,
+            balance: userBalanceNumber,
+            delegatee: address as string,
+            delegators: [],
+            votingPower: userBalanceNumber,
+          },
+        ];
+      } else {
+        return parsedSubgraphData;
+      }
+    } else {
+      return parsedGraphqlData;
+    }
+  };
+
+  const sortedData = opts?.sort
+    ? [...getCombinedData()].sort(sortDaoMembers(opts.sort, address))
+    : getCombinedData();
+  memberCount = useSubgraph
+    ? sortedData.length
+    : graphqlData?.holders.totalHolders || sortedData.length;
+  const searchTerm = opts?.searchTerm;
+  const filteredData = !searchTerm
+    ? sortedData
+    : sortedData.filter(member =>
+        member.address.toLowerCase().includes(searchTerm.toLowerCase())
+      );
 
   return {
     data: {
-      members: data,
+      members: sortedData,
       filteredMembers: filteredData,
       daoToken,
+      memberCount,
     },
-    isLoading,
-    error,
+    isLoading: isSubgraphLoading || isGraphqlLoading,
+    isError: isSubgraphError || isGraphqlError,
   };
 };
-
-function sortMembers<T extends BalanceMember | MultisigMember>(a: T, b: T) {
-  if (isBalanceMember(a)) {
-    if (a.balance === (b as BalanceMember).balance) return 0;
-    return a.balance > (b as BalanceMember).balance ? -1 : 1;
-  } else {
-    if (a.address === (b as MultisigMember).address) return 0;
-    return a.address > (b as MultisigMember).address ? 1 : -1;
-  }
-}

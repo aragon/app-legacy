@@ -32,6 +32,7 @@ const ExploreNav: React.FC = () => {
       open('wallet');
       return;
     }
+
     methods.selectWallet().catch((err: Error) => {
       // To be implemented: maybe add an error message when
       // the error is different from closing the window

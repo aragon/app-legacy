@@ -24,10 +24,12 @@ import {StateEmpty} from 'components/stateEmpty';
 import {Erc20TokenDetails} from '@aragon/sdk-client';
 import numeral from 'numeral';
 import {TokensWrappingFormData} from 'utils/types';
+import {useGlobalModalContext} from 'context/globalModals';
+import {featureFlags} from 'utils/featureFlags';
 
 interface GovTokensWrappingModalProps {
   isOpen: boolean;
-  onClose: () => void;
+  onClose: (redirectPage?: boolean) => void;
   isLoading: boolean;
   daoToken: Erc20TokenDetails | undefined;
   wrappedDaoToken: Erc20TokenDetails | undefined;
@@ -64,14 +66,16 @@ const GovTokensWrappingModal: FC<GovTokensWrappingModalProps> = ({
   handleUnwrap,
 }) => {
   const {t} = useTranslation();
-
   const {isValid, dirtyFields} = useFormState({control: form.control});
+  const {open} = useGlobalModalContext();
 
   const [mode, amount] = useWatch({
     name: ['mode', 'amount'],
     control: form.control,
   });
   const isWrapMode = mode === 'wrap';
+  const enableDelegation =
+    featureFlags.getValue('VITE_FEATURE_FLAG_DELEGATION') === 'true';
 
   const isTokenApproveLoading = isTxLoading && currentStep === 1 && isWrapMode;
   const isTokenWrapLoading = isTxLoading && currentStep === 2 && isWrapMode;
@@ -178,6 +182,11 @@ const GovTokensWrappingModal: FC<GovTokensWrappingModalProps> = ({
     [modeData.tokenBalance]
   );
 
+  const handleDelegateClick = () => {
+    onClose(false);
+    open('delegateVoting');
+  };
+
   return (
     <ModalBottomSheetSwitcher
       isOpen={isOpen}
@@ -204,12 +213,13 @@ const GovTokensWrappingModal: FC<GovTokensWrappingModalProps> = ({
           accessory="buddha"
           title={modeData.finishedTitle}
           description={modeData.finishedDescription}
+          actionsColumn={isWrapMode}
           primaryButton={{
             label: isWrapMode
               ? t('modal.wrapToken.successCtaLabel')
               : t('modal.unwrapToken.successCtaLabel'),
             className: 'w-full',
-            onClick: onClose,
+            onClick: () => onClose(),
           }}
           secondaryButton={
             isWrapMode
@@ -217,6 +227,15 @@ const GovTokensWrappingModal: FC<GovTokensWrappingModalProps> = ({
                   label: t('modal.wrapToken.successBtnSecondaryLabel'),
                   className: 'w-full',
                   onClick: handleAddWrappedTokenToWallet,
+                }
+              : undefined
+          }
+          tertiaryButton={
+            isWrapMode && enableDelegation
+              ? {
+                  label: t('modal.wrapToken.successBtnGhostLabel'),
+                  className: 'w-full',
+                  onClick: handleDelegateClick,
                 }
               : undefined
           }
@@ -292,7 +311,7 @@ const GovTokensWrappingModal: FC<GovTokensWrappingModalProps> = ({
                           handleMaxClicked(onChange);
                         }}
                       />
-                      <div className="flex justify-between items-start">
+                      <div className="flex items-start justify-between">
                         <div className="space-y-1">
                           {error?.message && (
                             <AlertInline
@@ -409,7 +428,7 @@ const GovTokensWrappingModal: FC<GovTokensWrappingModalProps> = ({
                     size="large"
                     label={t('modal.wrapToken.footerWrappedCancelLabel')}
                     className="w-full"
-                    onClick={onClose}
+                    onClick={() => onClose()}
                   />
                 </>
               )}

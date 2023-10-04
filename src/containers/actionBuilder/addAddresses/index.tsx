@@ -17,14 +17,14 @@ import {ActionIndex} from 'utils/types';
 import AccordionSummary from './accordionSummary';
 import {AddressRow} from './addressRow';
 import {useAlertContext} from 'context/alert';
-import {BalanceMember, MultisigMember} from 'hooks/useDaoMembers';
+import {DaoMember} from 'hooks/useDaoMembers';
 
 export type CustomHeaderProps = {
   useCustomHeader?: boolean;
 };
 
 export type CurrentDaoMembers = {
-  currentDaoMembers?: MultisigMember[] | BalanceMember[];
+  currentDaoMembers?: DaoMember[];
 };
 
 type AddAddressesProps = ActionIndex &
@@ -178,7 +178,7 @@ const AddAddresses: React.FC<AddAddressesProps> = ({
     >
       <FormItem
         className={`hidden desktop:block ${
-          useCustomHeader ? 'rounded-t-xl border-t pt-3 pb-1.5' : 'py-1.5'
+          useCustomHeader ? 'rounded-t-xl border-t pb-1.5 pt-3' : 'py-1.5'
         }`}
       >
         <Label label={t('labels.whitelistWallets.address')} />
@@ -192,7 +192,7 @@ const AddAddresses: React.FC<AddAddressesProps> = ({
               'rounded-t-xl border-t desktop:rounded-none desktop:border-t-0'
             }`}
           >
-            <div className="desktop:hidden mb-0.5 desktop:mb-0">
+            <div className="mb-0.5 desktop:mb-0 desktop:hidden">
               <Label label={t('labels.whitelistWallets.address')} />
             </div>
             <AddressRow
@@ -247,17 +247,6 @@ const AddAddresses: React.FC<AddAddressesProps> = ({
               ),
               callback: handleDeleteAll,
             },
-            // {
-            //   component: (
-            //     <ListItemAction
-            //       title={t('labels.whitelistWallets.uploadCSV')}
-            //       bgWhite
-            //       mode="disabled"
-            //     />
-            //   ),
-            //   // TODO: needs to be implemented later
-            //   callback: () => {},
-            // },
           ]}
         />
       </FormItem>

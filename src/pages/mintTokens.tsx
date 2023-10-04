@@ -25,17 +25,17 @@ import {CreateProposalProvider} from 'context/createProposal';
 import {useNetwork} from 'context/network';
 import {useDaoDetailsQuery} from 'hooks/useDaoDetails';
 import {PluginTypes} from 'hooks/usePluginClient';
-import {usePluginSettings} from 'hooks/usePluginSettings';
+import {useVotingSettings} from 'services/aragon-sdk/queries/use-voting-settings';
+import {toDisplayEns} from 'utils/library';
 import {Community} from 'utils/paths';
 import {MintTokensFormData} from 'utils/types';
-import {toDisplayEns} from 'utils/library';
 
 export const MintToken: React.FC = () => {
   const {data: daoDetails, isLoading} = useDaoDetailsQuery();
-  const {data: pluginSettings, isLoading: settingsLoading} = usePluginSettings(
-    daoDetails?.plugins[0].instanceAddress as string,
-    daoDetails?.plugins[0].id as PluginTypes
-  );
+  const {data: votingSettings, isLoading: settingsLoading} = useVotingSettings({
+    pluginAddress: daoDetails?.plugins[0].instanceAddress as string,
+    pluginType: daoDetails?.plugins[0].id as PluginTypes,
+  });
 
   const {t} = useTranslation();
   const {network} = useNetwork();
@@ -71,7 +71,11 @@ export const MintToken: React.FC = () => {
     return <Loading />;
   }
 
-  return daoDetails ? (
+  if (!daoDetails || !votingSettings) {
+    return null;
+  }
+
+  return (
     <FormProvider {...formMethods}>
       <ActionsProvider daoId={daoDetails.address}>
         <CreateProposalProvider
@@ -106,7 +110,7 @@ export const MintToken: React.FC = () => {
               wizardDescription={t('newWithdraw.setupVoting.description')}
               isNextButtonDisabled={!setupVotingIsValid(errors)}
             >
-              <SetupVotingForm pluginSettings={pluginSettings} />
+              <SetupVotingForm pluginSettings={votingSettings} />
             </Step>
             <Step
               wizardTitle={t('newWithdraw.defineProposal.heading')}
@@ -128,7 +132,7 @@ export const MintToken: React.FC = () => {
         </CreateProposalProvider>
       </ActionsProvider>
     </FormProvider>
-  ) : null;
+  );
 };
 
 /**

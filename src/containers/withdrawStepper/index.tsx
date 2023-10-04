@@ -67,7 +67,8 @@ const WithdrawStepper: React.FC<WithdrawStepperProps> = ({
           wizardTitle={t('newWithdraw.configureWithdraw.title')}
           wizardDescription={t('newWithdraw.configureWithdraw.subtitle')}
           isNextButtonDisabled={
-            !actions.length || !actionsAreValid(formActions, actions, errors)
+            !actions.length ||
+            !actionsAreValid(formActions, actions, errors, network)
           }
           onNextButtonClicked={next => {
             trackEvent('newWithdraw_continueBtn_clicked', {

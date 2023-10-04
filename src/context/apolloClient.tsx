@@ -1,19 +1,15 @@
-import {InMemoryCache, makeVar} from '@apollo/client';
+import {makeVar} from '@apollo/client';
 import {
   DaoListItem,
-  Deposit,
   CreateDaoParams,
   DaoMetadata,
   InstalledPluginListItem,
   VotingMode,
 } from '@aragon/sdk-client';
 import {PluginInstallItem} from '@aragon/sdk-client-common';
-import {CachePersistor, LocalStorageWrapper} from 'apollo3-cache-persist';
 
 import {
   FAVORITE_DAOS_KEY,
-  PENDING_DAOS_KEY,
-  PENDING_DEPOSITS_KEY,
   PENDING_EXECUTION_KEY,
   PENDING_MULTISIG_EXECUTION_KEY,
   PENDING_MULTISIG_PROPOSALS_KEY,
@@ -25,68 +21,6 @@ import {
 } from 'utils/constants';
 import {customJSONReviver} from 'utils/library';
 import {DetailedProposal, Erc20ProposalVote} from 'utils/types';
-import {PRIVACY_KEY} from './privacyContext';
-
-const cache = new InMemoryCache();
-
-// add the REST API's typename you want to persist here
-const entitiesToPersist = ['tokenData'];
-
-// check if cache should be persisted or restored based on user preferences
-const value = localStorage.getItem(PRIVACY_KEY);
-if (value && JSON.parse(value).functional) {
-  const persistor = new CachePersistor({
-    cache,
-    // TODO: Check and update the size needed for the cache
-    maxSize: 5242880, // 5 MiB
-    storage: new LocalStorageWrapper(window.localStorage),
-    debug: process.env.NODE_ENV === 'development',
-    persistenceMapper: async (data: string) => {
-      const parsed = JSON.parse(data);
-
-      const mapped: Record<string, unknown> = {};
-      const persistEntities: string[] = [];
-      const rootQuery = parsed['ROOT_QUERY'];
-
-      mapped['ROOT_QUERY'] = Object.keys(rootQuery).reduce(
-        (obj: Record<string, unknown>, key: string) => {
-          if (key === '__typename') return obj;
-
-          const keyWithoutArgs = key.substring(0, key.indexOf('('));
-          if (entitiesToPersist.includes(keyWithoutArgs)) {
-            obj[key] = rootQuery[key];
-
-            if (Array.isArray(rootQuery[key])) {
-              const entities = rootQuery[key].map(
-                (item: Record<string, unknown>) => item.__ref
-              );
-              persistEntities.push(...entities);
-            } else {
-              const entity = rootQuery[key].__ref;
-              persistEntities.push(entity);
-            }
-          }
-
-          return obj;
-        },
-        {__typename: 'Query'}
-      );
-
-      persistEntities.reduce((obj, key) => {
-        obj[key] = parsed[key];
-        return obj;
-      }, mapped);
-
-      return JSON.stringify(mapped);
-    },
-  });
-
-  const restoreApolloCache = async () => {
-    await persistor.restore();
-  };
-
-  restoreApolloCache();
-}
 
 /*************************************************
  *            FAVORITE & SELECTED DAOS           *
@@ -117,15 +51,6 @@ const selectedDaoVar = makeVar<NavigationDao>({
   chain: 5,
   plugins: [],
 });
-
-/*************************************************
- *               PENDING DEPOSITS                *
- *************************************************/
-const depositTxs = JSON.parse(
-  localStorage.getItem(PENDING_DEPOSITS_KEY) || '[]',
-  customJSONReviver
-);
-const pendingDeposits = makeVar<Deposit[]>(depositTxs);
 
 // TODO: Please switch keys from `daoAddress_proposalId` to
 //  `pluginAddress_proposalId` when migrating because DAOs may have
@@ -246,15 +171,9 @@ export type PendingDaoCreation = {
     [key: string]: PendingDao;
   };
 };
-const pendingDaoCreation = JSON.parse(
-  localStorage.getItem(PENDING_DAOS_KEY) || '{}'
-);
-const pendingDaoCreationVar = makeVar<PendingDaoCreation>(pendingDaoCreation);
 
 export {
   favoriteDaosVar,
-  pendingDaoCreationVar,
-  pendingDeposits,
   selectedDaoVar,
   // votes
   pendingMultisigApprovalsVar,

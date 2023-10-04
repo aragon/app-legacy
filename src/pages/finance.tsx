@@ -49,7 +49,13 @@ export const Finance: React.FC = () => {
   const {breadcrumbs, icon, tag} = useMappedBreadcrumbs();
 
   const {handleTransferClicked} = useTransactionDetailContext();
-  const {tokens, totalAssetChange, totalAssetValue, transfers} = useDaoVault();
+  const {
+    tokens,
+    totalAssetChange,
+    totalAssetValue,
+    transfers,
+    isDaoBalancePositive,
+  } = useDaoVault();
 
   sortTokens(tokens, 'treasurySharePercentage', true);
 
@@ -82,19 +88,19 @@ export const Finance: React.FC = () => {
               <IlluObject object={'wallet'} className="-ml-36" />
             </div>
           }
-          buttonLabel={t('finance.emptyState.buttonLabel')}
-          onClick={() => {
-            open('deposit');
+          primaryButton={{
+            label: t('finance.emptyState.buttonLabel'),
+            onClick: () => open('deposit'),
           }}
         />
       );
     }
 
     // tokens only empty state
-    if (tokens.length === 0) {
+    if (tokens.length === 0 && !isDaoBalancePositive) {
       return (
         <PageWrapper includeHeader={false}>
-          <div className="mt-5 mb-8">
+          <div className="mb-8 mt-5">
             <StateEmpty
               type="Human"
               mode="card"
@@ -177,7 +183,7 @@ export const Finance: React.FC = () => {
                       trackEvent('finance_newTransferBtn_clicked', {
                         dao_address: daoDetails?.address,
                       });
-                      open();
+                      open('transfer');
                     }}
                   />
                 </ContentContainer>
@@ -203,9 +209,9 @@ export const Finance: React.FC = () => {
                 <IlluObject object={'wallet'} className="-ml-32" />
               </div>
             }
-            buttonLabel={t('finance.emptyState.buttonLabel')}
-            onClick={() => {
-              open('deposit');
+            primaryButton={{
+              label: t('finance.emptyState.buttonLabel'),
+              onClick: () => open('deposit'),
             }}
           />
         </PageWrapper>
@@ -213,7 +219,7 @@ export const Finance: React.FC = () => {
     }
 
     // tokens only empty state
-    if (tokens.length === 0) {
+    if (tokens.length === 0 && !isDaoBalancePositive) {
       return (
         <PageWrapper
           customHeader={
@@ -312,7 +318,7 @@ export const Finance: React.FC = () => {
                   trackEvent('finance_newTransferBtn_clicked', {
                     dao_address: daoDetails?.address,
                   });
-                  open();
+                  open('transfer');
                 }}
               />
             </ContentContainer>
@@ -320,13 +326,15 @@ export const Finance: React.FC = () => {
         </HeaderContainer>
       }
     >
-      <div className={'mt-1 tablet:mt-5 mb-3 tablet:mb-8'}>
-        <TokenSectionWrapper title={t('finance.tokenSection')}>
-          <ListContainer>
-            <TokenList tokens={tokens.slice(0, 5)} />
-          </ListContainer>
-        </TokenSectionWrapper>
-      </div>
+      {tokens.length !== 0 && (
+        <div className={'mb-3 mt-1 tablet:mb-8 tablet:mt-5'}>
+          <TokenSectionWrapper title={t('finance.tokenSection')}>
+            <ListContainer>
+              <TokenList tokens={tokens.slice(0, 5)} />
+            </ListContainer>
+          </TokenSectionWrapper>
+        </div>
+      )}
       <TransferSectionWrapper title={t('finance.transferSection')} showButton>
         <ListContainer>
           <TransferList
@@ -372,5 +380,5 @@ const Title = styled.h1.attrs({
 })``;
 
 const Description = styled.p.attrs({
-  className: 'text-ui-600 ft-text-lg' as string,
+  className: 'ft-text-lg' as string,
 })``;

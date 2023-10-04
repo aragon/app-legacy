@@ -5,11 +5,11 @@ import {ActionsProvider} from 'context/actions';
 import {CreateProposalProvider} from 'context/createProposal';
 import {useDaoDetailsQuery} from 'hooks/useDaoDetails';
 import {PluginTypes} from 'hooks/usePluginClient';
-import {usePluginSettings} from 'hooks/usePluginSettings';
+import {useVotingSettings} from 'services/aragon-sdk/queries/use-voting-settings';
 import WithdrawStepper from 'containers/withdrawStepper';
 import {WithdrawFormData} from 'utils/types';
 
-export const defaultValues = {
+const defaultValues = {
   links: [{name: '', url: ''}],
   startSwitch: 'now',
   durationSwitch: 'duration',
@@ -20,10 +20,10 @@ export const NewWithdraw: React.FC = () => {
   const [showTxModal, setShowTxModal] = useState(false);
 
   const {data: daoDetails, isLoading: detailsLoading} = useDaoDetailsQuery();
-  const {data: pluginSettings, isLoading: settingsLoading} = usePluginSettings(
-    daoDetails?.plugins[0].instanceAddress as string,
-    daoDetails?.plugins[0].id as PluginTypes
-  );
+  const {data: pluginSettings, isLoading: settingsLoading} = useVotingSettings({
+    pluginAddress: daoDetails?.plugins[0].instanceAddress as string,
+    pluginType: daoDetails?.plugins[0].id as PluginTypes,
+  });
 
   const formMethods = useForm<WithdrawFormData>({
     defaultValues,
@@ -34,14 +34,18 @@ export const NewWithdraw: React.FC = () => {
    *                    Render                     *
    *************************************************/
 
-  if (!daoDetails || !pluginSettings || detailsLoading || settingsLoading) {
+  if (detailsLoading || settingsLoading) {
     return <Loading />;
+  }
+
+  if (!daoDetails || !pluginSettings) {
+    return null;
   }
 
   return (
     <>
       <FormProvider {...formMethods}>
-        <ActionsProvider daoId={daoDetails?.address as string}>
+        <ActionsProvider daoId={daoDetails.address}>
           <CreateProposalProvider
             showTxModal={showTxModal}
             setShowTxModal={setShowTxModal}

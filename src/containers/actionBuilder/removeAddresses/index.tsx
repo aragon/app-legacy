@@ -127,7 +127,7 @@ const RemoveAddresses: React.FC<RemoveAddressesProps> = ({
       >
         {!memberWallets || memberWallets.length === 0 ? (
           <FormItem
-            className={`pt-3 pb-3 ${
+            className={`py-3 ${
               useCustomHeader ? 'rounded-xl border-t' : 'rounded-b-xl'
             }`}
           >
@@ -146,7 +146,7 @@ const RemoveAddresses: React.FC<RemoveAddressesProps> = ({
           <>
             <FormItem
               className={`hidden desktop:block ${
-                useCustomHeader ? 'rounded-t-xl border-t pt-3 pb-1.5' : 'py-1.5'
+                useCustomHeader ? 'rounded-t-xl border-t pb-1.5 pt-3' : 'py-1.5'
               }`}
             >
               <Label label={t('labels.whitelistWallets.address')} />
@@ -159,7 +159,7 @@ const RemoveAddresses: React.FC<RemoveAddressesProps> = ({
                   'rounded-t-xl border-t desktop:rounded-none desktop:border-t-0'
                 }`}
               >
-                <div className="desktop:hidden mb-0.5 desktop:mb-0">
+                <div className="mb-0.5 desktop:mb-0 desktop:hidden">
                   <Label label={t('labels.whitelistWallets.address')} />
                 </div>
                 <AddressRow
@@ -203,17 +203,6 @@ const RemoveAddresses: React.FC<RemoveAddressesProps> = ({
                     ),
                     callback: handleDeleteAll,
                   },
-                  // {
-                  //   component: (
-                  //     <ListItemAction
-                  //       title={t('labels.whitelistWallets.uploadCSV')}
-                  //       bgWhite
-                  //       mode="disabled"
-                  //     />
-                  //   ),
-                  //   // TODO: This needs to be added later
-                  //   callback: () => {},
-                  // },
                 ]}
               />
             </FormItem>

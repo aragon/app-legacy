@@ -21,16 +21,6 @@ const createTestQueryClient = () =>
     },
   });
 
-export function createQueryClientWrapper() {
-  const testQueryClient = createTestQueryClient();
-  // eslint-disable-next-line react/display-name
-  return ({children}: {children: React.ReactNode; displayName: string}) => (
-    <QueryClientProvider client={testQueryClient}>
-      {children}
-    </QueryClientProvider>
-  );
-}
-
 export function renderWithClient(ui: React.ReactElement) {
   const testQueryClient = createTestQueryClient();
   const {rerender, ...result} = render(

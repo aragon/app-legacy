@@ -5,20 +5,32 @@ import {
   IconMenuVertical,
   ListItemAction,
 } from '@aragon/ods';
-import React, {useEffect} from 'react';
+import React, {useEffect, useRef} from 'react';
 import {useFieldArray, useFormContext, useWatch} from 'react-hook-form';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
+import {Address, useEnsName} from 'wagmi';
 
 import {useAlertContext} from 'context/alert';
+import {useNetwork} from 'context/network';
 import {useWallet} from 'hooks/useWallet';
+import {CHAIN_METADATA} from 'utils/constants';
 import Footer from './footer';
 import Header from './header';
 import Row from './row';
 
 const AddWallets: React.FC = () => {
   const {t} = useTranslation();
+  const {alert} = useAlertContext();
+  const appendConnectedAddress = useRef<boolean>(true);
+
+  const {network} = useNetwork();
   const {address} = useWallet();
+
+  const {data: ensName} = useEnsName({
+    address: address as Address,
+    chainId: CHAIN_METADATA[network].id,
+  });
 
   const {control, setValue, resetField, trigger} = useFormContext();
   const wallets = useWatch({name: 'wallets', control: control});
@@ -26,7 +38,6 @@ const AddWallets: React.FC = () => {
     name: 'wallets',
     control,
   });
-  const {alert} = useAlertContext();
 
   const controlledFields = fields.map((field, index) => {
     return {
@@ -36,10 +47,18 @@ const AddWallets: React.FC = () => {
   });
 
   useEffect(() => {
-    if (address && !wallets) {
-      append({address, amount: '1'});
+    if (
+      address &&
+      controlledFields?.length === 0 &&
+      appendConnectedAddress.current === true
+    ) {
+      append({address, amount: '1', ensName});
+      appendConnectedAddress.current = false;
+      setTimeout(() => {
+        trigger('wallets.0');
+      }, 50);
     }
-  }, [address, append, trigger, wallets]);
+  }, [address, append, controlledFields?.length, ensName, trigger]);
 
   const resetDistribution = () => {
     controlledFields.forEach((_, index) => {
@@ -62,7 +81,7 @@ const AddWallets: React.FC = () => {
     remove(index);
     setTimeout(() => {
       trigger('wallets');
-    });
+    }, 50);
   };
 
   return (

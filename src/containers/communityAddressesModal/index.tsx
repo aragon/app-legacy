@@ -9,6 +9,8 @@ import ModalBottomSheetSwitcher from 'components/modalBottomSheetSwitcher';
 import {MultisigWalletField} from 'components/multisigWallets/row';
 import {useGlobalModalContext} from 'context/globalModals';
 import {getUserFriendlyWalletLabel} from 'utils/library';
+import {CHAIN_METADATA} from 'utils/constants';
+import {useNetwork} from 'context/network';
 
 type CommunityAddressesModalProps = {
   tokenMembership: boolean;
@@ -19,7 +21,8 @@ const CommunityAddressesModal: React.FC<CommunityAddressesModalProps> = ({
 }) => {
   const [searchValue, setSearchValue] = useState('');
   const {getValues} = useFormContext();
-  const {isAddressesOpen, close} = useGlobalModalContext();
+  const {network} = useNetwork();
+  const {isOpen, close} = useGlobalModalContext('addresses');
   const [wallets, tokenSymbol, multisigWallets] = getValues([
     'wallets',
     'tokenSymbol',
@@ -68,8 +71,8 @@ const CommunityAddressesModal: React.FC<CommunityAddressesModalProps> = ({
    *************************************************/
   return (
     <ModalBottomSheetSwitcher
-      isOpen={isAddressesOpen}
-      onClose={() => close('addresses')}
+      isOpen={isOpen}
+      onClose={close}
       data-testid="communityModal"
     >
       <ModalHeader>
@@ -87,6 +90,8 @@ const CommunityAddressesModal: React.FC<CommunityAddressesModalProps> = ({
             voters={filteredAddressList}
             {...(tokenMembership && {showAmount: true})}
             pageSize={filteredAddressList.length}
+            LoadMoreLabel={t('community.votersTable.loadMore')}
+            explorerURL={CHAIN_METADATA[network].explorer}
           />
         ) : (
           // this view is temporary until designs arrive

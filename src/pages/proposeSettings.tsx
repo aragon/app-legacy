@@ -1,12 +1,12 @@
 import {useReactiveVar} from '@apollo/client';
 import {
   CreateMajorityVotingProposalParams,
-  InstalledPluginListItem,
   ProposalCreationSteps,
   VotingMode,
   VotingSettings,
 } from '@aragon/sdk-client';
 import {DaoAction, ProposalMetadata} from '@aragon/sdk-client-common';
+import {parseUnits} from 'ethers/lib/utils';
 import React, {useCallback, useEffect, useState} from 'react';
 import {useFormContext, useFormState} from 'react-hook-form';
 import {useTranslation} from 'react-i18next';
@@ -28,7 +28,6 @@ import {
 import {useGlobalModalContext} from 'context/globalModals';
 import {useNetwork} from 'context/network';
 import {usePrivacyContext} from 'context/privacyContext';
-import {parseUnits} from 'ethers/lib/utils';
 import {useClient} from 'hooks/useClient';
 import {useDaoDetailsQuery} from 'hooks/useDaoDetails';
 import {useDaoToken} from 'hooks/useDaoToken';
@@ -41,8 +40,8 @@ import {
 import {
   isMultisigVotingSettings,
   isTokenVotingSettings,
-  usePluginSettings,
-} from 'hooks/usePluginSettings';
+  useVotingSettings,
+} from 'services/aragon-sdk/queries/use-voting-settings';
 import {usePollGasFee} from 'hooks/usePollGasfee';
 import {useTokenSupply} from 'hooks/useTokenSupply';
 import {useWallet} from 'hooks/useWallet';
@@ -63,7 +62,7 @@ import {
   offsetToMills,
 } from 'utils/date';
 import {customJSONReplacer, readFile, toDisplayEns} from 'utils/library';
-import {EditSettings, Proposal} from 'utils/paths';
+import {EditSettings, Proposal, Settings} from 'utils/paths';
 import {CacheProposalParams, mapToCacheProposal} from 'utils/proposals';
 import {
   Action,
@@ -86,11 +85,11 @@ export const ProposeSettings: React.FC = () => {
     control,
   });
 
-  const {data: daoDetails, isLoading} = useDaoDetailsQuery();
-  const {data: pluginSettings, isLoading: settingsLoading} = usePluginSettings(
-    daoDetails?.plugins[0].instanceAddress as string,
-    daoDetails?.plugins[0].id as PluginTypes
-  );
+  const {data: daoDetails, isLoading: daoDetailsLoading} = useDaoDetailsQuery();
+  const {data: pluginSettings, isLoading: settingsLoading} = useVotingSettings({
+    pluginAddress: daoDetails?.plugins[0].instanceAddress as string,
+    pluginType: daoDetails?.plugins[0].id as PluginTypes,
+  });
 
   const enableTxModal = () => {
     setShowTxModal(true);
@@ -121,8 +120,12 @@ export const ProposeSettings: React.FC = () => {
     setValue('actions', filteredActions);
   }, [getValues, setValue]);
 
-  if (isLoading || settingsLoading) {
+  if (daoDetailsLoading || settingsLoading) {
     return <Loading />;
+  }
+
+  if (!pluginSettings || !daoDetails) {
+    return null;
   }
 
   return (
@@ -133,9 +136,9 @@ export const ProposeSettings: React.FC = () => {
       <FullScreenStepper
         wizardProcessName={t('newProposal.title')}
         navLabel={t('navLinks.settings')}
-        returnPath={generatePath(EditSettings, {
+        returnPath={generatePath(Settings, {
           network,
-          dao: toDisplayEns(daoDetails?.ensDomain) || daoDetails?.address,
+          dao: toDisplayEns(daoDetails.ensDomain) || daoDetails.address,
         })}
       >
         <Step
@@ -196,19 +199,16 @@ const ProposeSettingWrapper: React.FC<Props> = ({
   const {address, isOnWrongNetwork} = useWallet();
 
   const {data: daoDetails, isLoading: daoDetailsLoading} = useDaoDetailsQuery();
+  const pluginAddress = daoDetails?.plugins?.[0]?.instanceAddress as string;
+  const pluginType = daoDetails?.plugins?.[0]?.id as PluginTypes;
 
-  const {id: pluginType, instanceAddress: pluginAddress} =
-    daoDetails?.plugins[0] || ({} as InstalledPluginListItem);
+  const {data: votingSettings} = useVotingSettings({pluginAddress, pluginType});
 
-  const {data: pluginSettings} = usePluginSettings(
-    pluginAddress,
-    pluginType as PluginTypes
-  );
   const {
     days: minDays,
     hours: minHours,
     minutes: minMinutes,
-  } = getDHMFromSeconds((pluginSettings as VotingSettings).minDuration);
+  } = getDHMFromSeconds((votingSettings as VotingSettings)?.minDuration ?? 0);
 
   const {data: daoToken} = useDaoToken(pluginAddress);
   const {data: tokenSupply, isLoading: tokenSupplyIsLoading} = useTokenSupply(
@@ -216,8 +216,7 @@ const ProposeSettingWrapper: React.FC<Props> = ({
   );
 
   const {client} = useClient();
-
-  const pluginClient = usePluginClient(pluginType as PluginTypes);
+  const pluginClient = usePluginClient(pluginType);
 
   const [proposalCreationData, setProposalCreationData] =
     useState<CreateMajorityVotingProposalParams>();
@@ -302,7 +301,7 @@ const ProposeSettingWrapper: React.FC<Props> = ({
           },
         };
 
-        if (isTokenVotingSettings(pluginSettings)) {
+        if (isTokenVotingSettings(votingSettings)) {
           const voteSettingsAction: ActionUpdatePluginSettings = {
             name: 'modify_token_voting_settings',
             inputs: {
@@ -348,7 +347,7 @@ const ProposeSettingWrapper: React.FC<Props> = ({
     SetSettingActions();
   }, [
     daoToken,
-    pluginSettings,
+    votingSettings,
     getValues,
     setValue,
     tokenSupply?.raw,
@@ -477,7 +476,7 @@ const ProposeSettingWrapper: React.FC<Props> = ({
 
         // getting dates
         let startDateTime: Date;
-        const startMinutesDelay = isMultisigVotingSettings(pluginSettings)
+        const startMinutesDelay = isMultisigVotingSettings(votingSettings)
           ? 0
           : 10;
 
@@ -551,7 +550,7 @@ const ProposeSettingWrapper: React.FC<Props> = ({
          * it's going to be date from the past. And SC-call evaluation will fail.
          */
         const finalStartDate =
-          startSwitch === 'now' && isMultisigVotingSettings(pluginSettings)
+          startSwitch === 'now' && isMultisigVotingSettings(votingSettings)
             ? undefined
             : startDateTime;
 
@@ -583,7 +582,7 @@ const ProposeSettingWrapper: React.FC<Props> = ({
     minMinutes,
     pluginAddress,
     pluginClient,
-    pluginSettings,
+    votingSettings,
     showTxModal,
   ]);
 
@@ -688,7 +687,7 @@ const ProposeSettingWrapper: React.FC<Props> = ({
 
   const handleCacheProposal = useCallback(
     (proposalGuid: string) => {
-      if (!address || !daoDetails || !pluginSettings || !proposalCreationData)
+      if (!address || !daoDetails || !votingSettings || !proposalCreationData)
         return;
 
       const [title, summary, description, resources] = getValues([
@@ -719,11 +718,11 @@ const ProposeSettingWrapper: React.FC<Props> = ({
         },
       };
 
-      if (isTokenVotingSettings(pluginSettings)) {
+      if (isTokenVotingSettings(votingSettings)) {
         proposalData = {
           ...proposalData,
           daoToken,
-          pluginSettings,
+          pluginSettings: votingSettings,
           totalVotingWeight: tokenSupply?.raw,
         };
 
@@ -737,9 +736,9 @@ const ProposeSettingWrapper: React.FC<Props> = ({
           },
         };
         pendingTokenBasedProposalsVar(newCache);
-      } else if (isMultisigVotingSettings(pluginSettings)) {
-        proposalData.minApprovals = pluginSettings.minApprovals;
-        proposalData.onlyListed = pluginSettings.onlyListed;
+      } else if (isMultisigVotingSettings(votingSettings)) {
+        proposalData.minApprovals = votingSettings.minApprovals;
+        proposalData.onlyListed = votingSettings.onlyListed;
         cacheKey = PENDING_MULTISIG_PROPOSALS_KEY;
         proposalToCache = mapToCacheProposal(proposalData);
         newCache = {
@@ -767,7 +766,7 @@ const ProposeSettingWrapper: React.FC<Props> = ({
       daoDetails,
       daoToken,
       getValues,
-      pluginSettings,
+      votingSettings,
       preferences?.functional,
       proposalCreationData,
       tokenSupply?.raw,

@@ -35,7 +35,7 @@ const TokenMenu: React.FC<TokenMenuProps> = ({
 }) => {
   const {t} = useTranslation();
   const {data: tokens} = useTokenMetadata(tokenBalances);
-  const {isTokenOpen, close} = useGlobalModalContext();
+  const {isOpen, close} = useGlobalModalContext('token');
   const [searchValue, setSearchValue] = useState('');
 
   /*************************************************
@@ -51,7 +51,7 @@ const TokenMenu: React.FC<TokenMenuProps> = ({
       symbol: token.metadata.symbol,
       decimals: token.metadata.decimals,
     });
-    close('token');
+    close();
   };
 
   const filterValidator = useCallback(
@@ -140,8 +140,8 @@ const TokenMenu: React.FC<TokenMenuProps> = ({
    *************************************************/
   return (
     <ModalBottomSheetSwitcher
-      isOpen={isTokenOpen}
-      onClose={() => close('token')}
+      isOpen={isOpen}
+      onClose={close}
       data-testid="TokenMenu"
     >
       <Container>
@@ -162,7 +162,7 @@ const TokenMenu: React.FC<TokenMenuProps> = ({
           iconLeft={<IconAdd />}
           onClick={() => {
             onTokenSelect({...customToken, symbol: searchValue});
-            close('token');
+            close();
           }}
         />
       </Container>

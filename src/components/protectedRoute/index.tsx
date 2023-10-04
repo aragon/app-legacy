@@ -1,9 +1,11 @@
-import {MultisigVotingSettings, VotingSettings} from '@aragon/sdk-client';
-import React, {useCallback, useEffect, useMemo, useRef, useState} from 'react';
+import {
+  MajorityVotingSettings,
+  MultisigVotingSettings,
+} from '@aragon/sdk-client';
+import React, {useCallback, useEffect, useRef, useState} from 'react';
 import {Outlet, useNavigate} from 'react-router-dom';
 
 import {Loading} from 'components/temporary';
-import {GatingMenu} from 'containers/gatingMenu';
 import {LoginRequired} from 'containers/walletMenu/LoginRequired';
 import {useGlobalModalContext} from 'context/globalModals';
 import {useNetwork} from 'context/network';
@@ -11,45 +13,47 @@ import {useProviders} from 'context/providers';
 import {useDaoDetailsQuery} from 'hooks/useDaoDetails';
 import {useDaoMembers} from 'hooks/useDaoMembers';
 import {PluginTypes} from 'hooks/usePluginClient';
-import {usePluginSettings} from 'hooks/usePluginSettings';
 import {useWallet} from 'hooks/useWallet';
+import {useVotingPowerAsync} from 'services/aragon-sdk/queries/use-voting-power';
+import {useVotingSettings} from 'services/aragon-sdk/queries/use-voting-settings';
 import {CHAIN_METADATA} from 'utils/constants';
 import {formatUnits} from 'utils/library';
 import {fetchBalance} from 'utils/tokens';
 
 const ProtectedRoute: React.FC = () => {
   const navigate = useNavigate();
-  const {open, close, isGatingOpen} = useGlobalModalContext();
+  const {open, close, isOpen} = useGlobalModalContext('gating');
   const {
     address,
     status,
     isOnWrongNetwork,
     isModalOpen: web3ModalIsShown,
   } = useWallet();
-  const {data: daoDetails, isLoading: detailsAreLoading} = useDaoDetailsQuery();
+  const {network} = useNetwork();
+  const {api: provider} = useProviders();
 
   const [showLoginModal, setShowLoginModal] = useState(false);
 
-  const [pluginType, pluginAddress] = useMemo(
-    () => [
-      daoDetails?.plugins[0].id as PluginTypes,
-      daoDetails?.plugins[0].instanceAddress as string,
-    ],
-    [daoDetails?.plugins]
-  );
+  const {data: daoDetails, isLoading: detailsAreLoading} = useDaoDetailsQuery();
+  const pluginAddress = daoDetails?.plugins?.[0]?.instanceAddress as string;
+  const pluginType = daoDetails?.plugins?.[0]?.id as PluginTypes;
 
-  const {data: daoSettings, isLoading: settingsAreLoading} = usePluginSettings(
-    pluginAddress,
-    pluginType
-  );
+  const {data: votingSettings, isLoading: settingsAreLoading} =
+    useVotingSettings({
+      pluginAddress,
+      pluginType,
+    });
 
+  // only fetch first page, as for multisig this will be enough, and for token-based
+  // if it's not enough the code will fall back to fetchBalance()
   const {
     data: {daoToken, filteredMembers},
     isLoading: membersAreLoading,
-  } = useDaoMembers(pluginAddress, pluginType, address as string);
-
-  const {network} = useNetwork();
-  const {api: provider} = useProviders();
+  } = useDaoMembers(pluginAddress, pluginType, {
+    searchTerm: address as string,
+    page: 0,
+  });
+  const fetchVotingPower = useVotingPowerAsync();
 
   /*************************************************
    *             Callbacks and Handlers            *
@@ -63,26 +67,48 @@ const ProtectedRoute: React.FC = () => {
 
   const gateTokenBasedProposal = useCallback(async () => {
     if (daoToken && address && filteredMembers.length === 0) {
-      const balance = await fetchBalance(
-        daoToken?.address,
-        address,
-        provider,
-        CHAIN_METADATA[network].nativeCurrency
-      );
+      let balance = '0';
+      let votingPower = '0';
+
+      try {
+        balance = await fetchBalance(
+          daoToken?.address,
+          address,
+          provider,
+          CHAIN_METADATA[network].nativeCurrency
+        );
+
+        const votingPowerWei = await fetchVotingPower({
+          address,
+          tokenAddress: daoToken?.address,
+        });
+        votingPower = formatUnits(votingPowerWei, daoToken.decimals);
+      } catch (e) {
+        console.error(e);
+      }
+
       const minProposalThreshold = Number(
         formatUnits(
-          (daoSettings as VotingSettings).minProposerVotingPower || 0,
+          (votingSettings as MajorityVotingSettings)?.minProposerVotingPower ||
+            0,
           daoToken?.decimals || 18
         )
       );
-      if (minProposalThreshold && Number(balance) < minProposalThreshold) {
+      if (
+        minProposalThreshold &&
+        Number(balance) < minProposalThreshold &&
+        Number(votingPower) < minProposalThreshold
+      ) {
         open('gating');
-      } else close('gating');
+      } else {
+        close();
+      }
     }
   }, [
     address,
+    fetchVotingPower,
     close,
-    daoSettings,
+    votingSettings,
     daoToken,
     filteredMembers.length,
     network,
@@ -91,19 +117,30 @@ const ProtectedRoute: React.FC = () => {
   ]);
 
   const gateMultisigProposal = useCallback(() => {
-    if ((daoSettings as MultisigVotingSettings).onlyListed === false) {
-      close('gating');
-    } else if (
-      !filteredMembers.some(
-        mem => mem.address.toLowerCase() === address?.toLowerCase()
-      ) &&
-      !membersAreLoading
-    ) {
+    const everyoneAllowed =
+      (votingSettings as MultisigVotingSettings)?.onlyListed === false;
+
+    const isMember = filteredMembers.some(
+      ({address: memberAddress}) =>
+        memberAddress.toLowerCase() === address?.toLowerCase()
+    );
+
+    if (!membersAreLoading && !isMember && !everyoneAllowed && !isOpen) {
       open('gating');
-    } else {
-      close('gating');
     }
-  }, [membersAreLoading, close, daoSettings, open, address, filteredMembers]);
+
+    if (isOpen && (isMember || everyoneAllowed)) {
+      close();
+    }
+  }, [
+    membersAreLoading,
+    close,
+    isOpen,
+    votingSettings,
+    open,
+    address,
+    filteredMembers,
+  ]);
 
   /*************************************************
    *                     Effects                   *
@@ -123,8 +160,11 @@ const ProtectedRoute: React.FC = () => {
     if (!address && userWentThroughLoginFlowRef.current === false) {
       setShowLoginModal(true);
     } else {
-      if (isOnWrongNetwork) open('network');
-      else close('network');
+      if (isOnWrongNetwork) {
+        open('network');
+      } else {
+        close();
+      }
     }
   }, [address, close, isOnWrongNetwork, open]);
 
@@ -176,19 +216,13 @@ const ProtectedRoute: React.FC = () => {
   /*************************************************
    *                     Render                    *
    *************************************************/
-  if (detailsAreLoading || membersAreLoading || settingsAreLoading)
+  if (detailsAreLoading || membersAreLoading || settingsAreLoading) {
     return <Loading />;
+  }
 
   return (
     <>
-      {!isGatingOpen && userWentThroughLoginFlowRef.current && <Outlet />}
-      {daoDetails && (
-        <GatingMenu
-          daoDetails={daoDetails}
-          pluginType={pluginType}
-          daoToken={daoToken}
-        />
-      )}
+      {!isOpen && userWentThroughLoginFlowRef.current && <Outlet />}
       <LoginRequired isOpen={showLoginModal} onClose={handleCloseLoginModal} />
     </>
   );

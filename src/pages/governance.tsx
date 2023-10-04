@@ -26,16 +26,26 @@ import {toDisplayEns} from 'utils/library';
 import useScreen from 'hooks/useScreen';
 import {htmlIn} from 'utils/htmlIn';
 import uniqBy from 'lodash/uniqBy';
+import {useGlobalModalContext} from 'context/globalModals';
+import {featureFlags} from 'utils/featureFlags';
+
+// The number of proposals displayed on each page
+const PROPOSALS_PER_PAGE = 6;
 
 export const Governance: React.FC = () => {
   const {data: daoDetails, isLoading: isDaoLoading} = useDaoDetailsQuery();
   const {isMobile} = useScreen();
+  const {open} = useGlobalModalContext();
 
-  // The number of proposals displayed on each page
-  const PROPOSALS_PER_PAGE = 6;
   const [skip, setSkip] = useState(0);
   const [endReached, setEndReached] = useState(false);
   const [filterValue, setFilterValue] = useState<ProposalStatus | 'All'>('All');
+
+  const isTokenBasedDao =
+    daoDetails?.plugins[0].id === 'token-voting.plugin.dao.eth';
+  const enableDelegation =
+    isTokenBasedDao &&
+    featureFlags.getValue('VITE_FEATURE_FLAG_DELEGATION') === 'true';
 
   const {
     data: proposals,
@@ -70,6 +80,13 @@ export const Governance: React.FC = () => {
   const {t} = useTranslation();
   const navigate = useNavigate();
 
+  const handleNewProposalClick = () => {
+    trackEvent('governance_newProposalBtn_clicked', {
+      dao_address: daoDetails?.address as string,
+    });
+    navigate('new-proposal');
+  };
+
   const handleShowMoreClick = () => {
     if (!isDaoLoading) setSkip(prev => prev + PROPOSALS_PER_PAGE);
   };
@@ -102,16 +119,22 @@ export const Governance: React.FC = () => {
               : {height: 225, width: 400})}
           />
         }
-        buttonLabel={t('newProposal.title')}
-        onClick={() => {
-          trackEvent('governance_newProposalBtn_clicked', {
-            dao_address: daoDetails?.address as string,
-          });
-          navigate('new-proposal');
+        primaryButton={{
+          label: t('newProposal.title'),
+          onClick: handleNewProposalClick,
         }}
+        secondaryButton={
+          enableDelegation
+            ? {
+                label: t('governance.actionSecondary'),
+                onClick: () => open('delegateVoting'),
+              }
+            : undefined
+        }
       />
     );
   }
+
   return (
     <>
       <PageWrapper
@@ -126,6 +149,14 @@ export const Governance: React.FC = () => {
             navigate('new-proposal');
           },
         }}
+        secondaryBtnProps={
+          enableDelegation
+            ? {
+                label: t('governance.actionSecondary'),
+                onClick: () => open('delegateVoting'),
+              }
+            : undefined
+        }
       >
         <ButtonGroupContainer>
           <ButtonGroup

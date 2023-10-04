@@ -1,81 +1,102 @@
+import {IconLinkExternal, Link} from '@aragon/ods';
+import {MultisigVotingSettings} from '@aragon/sdk-client';
 import React from 'react';
 import {useTranslation} from 'react-i18next';
 import {generatePath, useNavigate} from 'react-router-dom';
-import {MultisigVotingSettings} from '@aragon/sdk-client';
-import {Link} from '@aragon/ods';
 
-import {Dd, DescriptionListContainer, Dl, Dt} from 'components/descriptionList';
+import {Loading} from 'components/temporary';
+import {
+  Definition,
+  DescriptionPair,
+  SettingsCard,
+  Term,
+} from 'containers/settings/settingsCard';
 import {useNetwork} from 'context/network';
 import {useDaoMembers} from 'hooks/useDaoMembers';
-import {Community} from 'utils/paths';
-import {usePluginSettings} from 'hooks/usePluginSettings';
 import {PluginTypes} from 'hooks/usePluginClient';
+import {useVotingSettings} from 'services/aragon-sdk/queries/use-voting-settings';
 import {IPluginSettings} from 'pages/settings';
+import {Community} from 'utils/paths';
 
 const MultisigSettings: React.FC<IPluginSettings> = ({daoDetails}) => {
   const {t} = useTranslation();
   const {network} = useNetwork(); // TODO get the network from daoDetails
   const navigate = useNavigate();
 
-  const {data: votingSettings} = usePluginSettings(
-    daoDetails?.plugins[0].instanceAddress as string,
-    daoDetails?.plugins[0].id as PluginTypes
+  const pluginAddress = daoDetails?.plugins?.[0]?.instanceAddress as string;
+  const pluginType = daoDetails?.plugins?.[0]?.id as PluginTypes;
+
+  const {data: pluginVotingSettings, isLoading: votingSettingsLoading} =
+    useVotingSettings({
+      pluginAddress,
+      pluginType,
+    });
+
+  const {data: daoMembers, isLoading: membersLoading} = useDaoMembers(
+    pluginAddress,
+    pluginType,
+    {countOnly: true}
   );
 
-  const {data: daoMembers} = useDaoMembers(
-    daoDetails?.plugins?.[0]?.instanceAddress || '',
-    (daoDetails?.plugins?.[0]?.id as PluginTypes) || undefined
-  );
+  const isLoading = votingSettingsLoading || membersLoading;
+  if (isLoading) {
+    return <Loading />;
+  }
 
-  const daoSettings = votingSettings as MultisigVotingSettings;
+  const dataIsFetched = !!pluginVotingSettings && !!daoMembers && !!daoDetails;
+  if (!dataIsFetched) {
+    return null;
+  }
+
+  const votingSettings = pluginVotingSettings as MultisigVotingSettings;
 
   return (
-    <div className="space-y-5">
+    <>
       {/* COMMUNITY SECTION */}
-      <DescriptionListContainer title={t('navLinks.community')}>
-        <Dl>
-          <Dt>{t('labels.review.eligibleVoters')}</Dt>
-          <Dd>{t('createDAO.step3.multisigMembers')}</Dd>
-        </Dl>
+      <SettingsCard title={t('navLinks.community')}>
+        <DescriptionPair>
+          <Term>{t('labels.review.eligibleVoters')}</Term>
+          <Definition>{t('createDAO.step3.multisigMembers')}</Definition>
+        </DescriptionPair>
 
-        <Dl>
-          <Dt>{t('labels.members')}</Dt>
-          <Dd>
+        <DescriptionPair className="border-none">
+          <Term>{t('labels.members')}</Term>
+          <Definition>
             <Link
               label={t('createDAO.review.distributionLink', {
-                count: daoMembers?.members?.length,
+                count: daoMembers.memberCount,
               })}
+              description={t('settings.community.memberHelptext')}
+              iconRight={<IconLinkExternal />}
               onClick={() =>
                 navigate(
-                  generatePath(Community, {network, dao: daoDetails?.address})
+                  generatePath(Community, {network, dao: daoDetails.address})
                 )
               }
             />
-          </Dd>
-        </Dl>
-      </DescriptionListContainer>
+          </Definition>
+        </DescriptionPair>
+      </SettingsCard>
 
       {/* GOVERNANCE SECTION */}
-      <DescriptionListContainer title={t('labels.review.governance')}>
-        <Dl>
-          <Dt>{t('labels.minimumApproval')}</Dt>
-          <Dd>
-            {`${daoSettings?.minApprovals} of ${daoMembers?.members.length} ${t(
-              'labels.authorisedWallets'
-            )}`}
-          </Dd>
-        </Dl>
+      <SettingsCard title={t('labels.review.governance')}>
+        <DescriptionPair>
+          <Term>{t('labels.minimumApproval')}</Term>
+          <Definition>{`${votingSettings.minApprovals} of ${
+            daoMembers.memberCount
+          } ${t('labels.authorisedWallets')}`}</Definition>
+        </DescriptionPair>
 
-        <Dl>
-          <Dt>{t('labels.proposalCreation')}</Dt>
-          <Dd>
-            {daoSettings?.onlyListed
+        <DescriptionPair className="border-none">
+          <Term>{t('labels.proposalCreation')}</Term>
+          <Definition>
+            {votingSettings.onlyListed
               ? t('createDAO.step3.multisigMembers')
               : t('createDAO.step3.eligibility.anyWallet.title')}
-          </Dd>
-        </Dl>
-      </DescriptionListContainer>
-    </div>
+          </Definition>
+        </DescriptionPair>
+      </SettingsCard>
+    </>
   );
 };
 

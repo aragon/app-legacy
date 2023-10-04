@@ -66,6 +66,6 @@ const SelectedValue = styled.p.attrs({
   className: 'font-bold text-ui-600 ft-text-base',
 })``;
 
-export const ActionSearchInput = styled.input.attrs({
+const ActionSearchInput = styled.input.attrs({
   className: 'flex-1 text-ui-300 bg-ui-0 ft-text-base focus:outline-none',
 })``;

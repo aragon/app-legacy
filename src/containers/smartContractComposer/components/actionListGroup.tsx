@@ -25,6 +25,8 @@ const ActionListGroup: React.FC<ActionListGroupProps> = ({
       <ContractNumberIndicator>
         {actions.length === 1
           ? t('scc.labels.singleActionAvailable')
+          : actions.length === 0
+          ? t('scc.writeContractEmptyState.desc')
           : t('scc.labels.nActionsAvailable', {
               numConnected: actions.length,
             })}

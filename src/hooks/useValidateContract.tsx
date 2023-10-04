@@ -11,7 +11,7 @@ import {useQueries, useQuery} from '@tanstack/react-query';
  * @param network network where the smart contract is deployed
  * @returns Etherscan API response containing the smart contract's source code
  */
-export const useValidateContractEtherscan = (
+const useValidateContractEtherscan = (
   contractAddress: string,
   network: SupportedNetworks,
   verificationState: TransactionState
@@ -27,7 +27,10 @@ export const useValidateContractEtherscan = (
           if (data.result[0].Proxy === '1') {
             return fetch(
               `${CHAIN_METADATA[network].etherscanApi}?module=contract&action=getsourcecode&address=${data.result[0].Implementation}&apikey=${CHAIN_METADATA[network].etherscanApiKey}`
-            ).then(r => r.json());
+            ).then(async r => {
+              data.result[0].proxyImplementation = await r.json();
+              return data;
+            });
           }
           return data;
         });
@@ -47,7 +50,7 @@ export const useValidateContractEtherscan = (
  * @param verificationState Loading state of verification modal
  * @returns An object with Sourcify FullMatch and PartialMatch API responses containing the smart contract's source code
  */
-export const useValidateContractSourcify = (
+const useValidateContractSourcify = (
   contractAddress: string,
   network: SupportedNetworks,
   verificationState: TransactionState

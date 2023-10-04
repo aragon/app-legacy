@@ -1,6 +1,6 @@
 import {AvatarDao, ButtonText, Spinner, Tag} from '@aragon/ods';
 import {SessionTypes} from '@walletconnect/types';
-import React, {useCallback, useState} from 'react';
+import React, {useCallback} from 'react';
 import {useFormContext} from 'react-hook-form';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
@@ -10,10 +10,6 @@ import ModalHeader from 'components/modalHeader';
 import {useActionsContext} from 'context/actions';
 import {useNetwork} from 'context/network';
 import useScreen from 'hooks/useScreen';
-import {
-  WcActionRequest,
-  useWalletConnectInterceptor,
-} from 'hooks/useWalletConnectInterceptor';
 import {getEtherscanVerifiedContract} from 'services/etherscanAPI';
 import {addABI, decodeMethod} from 'utils/abiDecoder';
 import {attachEtherNotice} from 'utils/contract';
@@ -23,6 +19,7 @@ import {
   getWCNativeToField,
   parseWCIconUrl,
 } from 'utils/library';
+import {useWalletConnectContext} from '../walletConnectProvider';
 
 type Props = {
   onBackButtonClicked: () => void;
@@ -46,16 +43,7 @@ const ActionListenerModal: React.FC<Props> = ({
   const {setValue} = useFormContext();
   const {addAction, removeAction} = useActionsContext();
 
-  const [actionsReceived, setActionsReceived] = useState<WcActionRequest[]>([]);
-
-  const onActionRequest = useCallback(
-    (request: WcActionRequest) => {
-      setActionsReceived([...actionsReceived, request]);
-    },
-    [actionsReceived]
-  );
-
-  const {wcDisconnect} = useWalletConnectInterceptor({onActionRequest});
+  const {actions: actionsReceived, wcDisconnect} = useWalletConnectContext();
 
   /*************************************************
    *             Callbacks and Handlers            *
@@ -207,11 +195,11 @@ const ActionListenerModal: React.FC<Props> = ({
       <Content>
         <div className="flex flex-col items-center space-y-1.5">
           <AvatarDao daoName={metadataName} src={metadataIcon} size="medium" />
-          <div className="flex justify-center items-center font-bold text-center text-ui-800">
+          <div className="flex items-center justify-center text-center font-bold text-ui-800">
             <Spinner size={'xs'} />
             <p className="ml-2">{t('wc.detaildApp.spinnerLabel')}</p>
           </div>
-          <p className="desktop:px-5 text-sm text-center text-ui-500">
+          <p className="text-center text-sm text-ui-500 desktop:px-5">
             {t('wc.detaildApp.desc', {
               dappName: metadataName,
             })}

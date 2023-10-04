@@ -5,6 +5,7 @@ export type StepProps = {
   wizardTitle?: string;
   wizardDescription?: string | React.ReactNode;
   hideWizard?: boolean;
+  skipStep?: boolean;
   fullWidth?: boolean;
   customHeader?: ReactElement;
   customFooter?: ReactElement;

@@ -1,14 +1,18 @@
 /* eslint-disable no-empty */
 import {erc20TokenABI} from 'abis/erc20TokenABI';
 import {TokenWithMetadata} from './types';
-import {constants, ethers, providers as EthersProviders} from 'ethers';
+import {
+  BigNumber,
+  constants,
+  ethers,
+  providers as EthersProviders,
+} from 'ethers';
 
 import {formatUnits} from 'utils/library';
 import {NativeTokenData, TimeFilter, TOKEN_AMOUNT_REGEX} from './constants';
 import {add} from 'date-fns';
 import {Transfer, TransferType} from '@aragon/sdk-client';
 import {TokenType} from '@aragon/sdk-client-common';
-import {ownableABI} from 'abis/ownableABI';
 import {votesUpgradeableABI} from 'abis/governanceWrappedERC20TokenABI';
 import {erc1155TokenABI} from 'abis/erc1155TokenABI';
 import {erc721TokenABI} from 'abis/erc721TokenABI';
@@ -73,20 +77,44 @@ export function filterTokens(tokens: TokenWithMetadata[], searchTerm: string) {
 }
 
 /**
- * Gets the owner of a contract or null if the contract is not ownable
+ * Returns the voting power for the specified address at the specified block number
  * @param address Address of the contract
+ * @param account Address to check the voting power
+ * @param blockNumber Block number to check for voting power
  * @param provider Ethers provider to use
- * @returns address of the owner or null if the contract is not ownable
+ * @returns voting power of the account or 0
  */
-export async function getOwner(
+export async function getPastVotingPower(
   address: string,
+  account: string,
+  blockNumber: number,
   provider: EthersProviders.Provider
 ) {
-  const contract = new ethers.Contract(address, ownableABI, provider);
+  const contract = new ethers.Contract(address, votesUpgradeableABI, provider);
   try {
-    return (await contract.owner()) as string;
+    return (await contract.getPastVotes(account, blockNumber)) as BigNumber;
   } catch (err) {
-    return null;
+    return BigNumber.from('0');
+  }
+}
+
+/**
+ * Returns the voting power for the specified address at the current time
+ * @param address Address of the contract
+ * @param account Address to check the voting power
+ * @param provider Ethers provider to use
+ * @returns voting power of the account or 0
+ */
+export async function getVotingPower(
+  address: string,
+  account: string,
+  provider: EthersProviders.Provider
+) {
+  const contract = new ethers.Contract(address, votesUpgradeableABI, provider);
+  try {
+    return (await contract.getVotes(account)) as BigNumber;
+  } catch (err) {
+    return BigNumber.from('0');
   }
 }
 
@@ -124,31 +152,6 @@ export async function isERC20Token(
   const contract = new ethers.Contract(address, erc20TokenABI, provider);
   try {
     await Promise.all([contract.balanceOf(address), contract.totalSupply()]);
-    return true;
-  } catch (err) {
-    return false;
-  }
-}
-
-/**
- * This Validation function checks if the existing token contract
- * is compatible or not
- *
- * @param address contract Address
- * @param provider Eth provider
- * @returns boolean determines whether it is compatible or not
- */
-
-export async function isERC20Governance(
-  address: string,
-  provider: EthersProviders.Provider
-) {
-  const contract = new ethers.Contract(address, votesUpgradeableABI, provider);
-  try {
-    await Promise.all([
-      contract.delegates(address),
-      contract.getVotes(address),
-    ]);
     return true;
   } catch (err) {
     return false;
@@ -426,13 +429,15 @@ export function gTokenSymbol(tokenSymbol: string): string {
   return `g${tokenSymbol}`;
 }
 
-export function shortenStr(
+function shortenStr(
   str: string,
   startSymbols = 3,
   endSymbols = 0,
   separation = '...'
 ): string {
-  if (!str) return str;
+  if (!str) {
+    return str;
+  }
 
   if (str.length < startSymbols + endSymbols) return str;
 

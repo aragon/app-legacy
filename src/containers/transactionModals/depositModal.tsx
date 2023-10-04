@@ -18,7 +18,7 @@ const DepositModal: React.FC = () => {
   const {t} = useTranslation();
   const navigate = useNavigate();
   const {network} = useNetwork();
-  const {isDepositOpen, open, close} = useGlobalModalContext();
+  const {isOpen, open, close} = useGlobalModalContext('deposit');
   const {status, isConnected, isOnWrongNetwork} = useWallet();
 
   const {data: daoDetails} = useDaoDetailsQuery();
@@ -38,7 +38,7 @@ const DepositModal: React.FC = () => {
       if (!isConnected) open('wallet');
       else {
         if (isOnWrongNetwork) open('network');
-        else close('network');
+        else close();
       }
     }
   }, [close, isConnected, isOnWrongNetwork, open]);
@@ -46,7 +46,7 @@ const DepositModal: React.FC = () => {
   // Close the login modal once the status is connecting
   useEffect(() => {
     if (loginFlowTriggeredRef.current) {
-      if (status === 'connecting' || isConnected) close('wallet');
+      if (status === 'connecting' || isConnected) close();
     }
   }, [close, isConnected, isOnWrongNetwork, open, status]);
 
@@ -64,7 +64,7 @@ const DepositModal: React.FC = () => {
    *             Callbacks and Handlers            *
    *************************************************/
   const handleCtaClicked = useCallback(() => {
-    close('deposit');
+    close();
     navigate(
       generatePath(AllTransfers, {
         network,
@@ -75,7 +75,7 @@ const DepositModal: React.FC = () => {
 
   // close modal and initiate the login/wrong network flow
   const handleConnectClick = useCallback(() => {
-    close('deposit');
+    close();
     loginFlowTriggeredRef.current = true;
   }, [close]);
 
@@ -86,8 +86,8 @@ const DepositModal: React.FC = () => {
 
   return (
     <ModalBottomSheetSwitcher
-      isOpen={isDepositOpen}
-      onClose={() => close('deposit')}
+      isOpen={isOpen}
+      onClose={close}
       title={t('modal.deposit.headerTitle')}
       subtitle={t('modal.deposit.headerDescription')}
     >
@@ -139,7 +139,7 @@ const DepositModal: React.FC = () => {
             mode="secondary"
             size="large"
             label={t('modal.deposit.cancelLabel')}
-            onClick={() => close('deposit')}
+            onClick={() => close()}
           />
         </HStack>
       </Container>

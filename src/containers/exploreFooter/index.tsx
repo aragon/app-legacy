@@ -1,8 +1,9 @@
-import {IconInfo, Link} from '@aragon/ods';
+import {IconInfo} from '@aragon/ods';
 import React from 'react';
 import styled from 'styled-components';
 
 import {GridLayout} from 'components/layout';
+import {StyledLink} from 'components/styledLink';
 import useScreen from 'hooks/useScreen';
 import Green from 'public/greenGradient.svg';
 import IconLogo from 'public/iconLogo.svg';
@@ -14,13 +15,13 @@ const Footer: React.FC = () => {
 
   const ExploreNavLinks = EXPLORE_NAV_LINKS.map(item => (
     <li key={item.label}>
-      <Link href={item.path} label={item.label} type="secondary" />
+      <StyledLink href={item.path} label={item.label} />
     </li>
   ));
 
   const PrivacyNavLinks = PRIVACY_NAV_LINKS.map(item => (
     <li key={item.label}>
-      <Link label={item.label} href={item.path} type="secondary" />
+      <StyledLink label={item.label} href={item.path} />
     </li>
   ));
 
@@ -59,7 +60,7 @@ const Footer: React.FC = () => {
           </ActionContainer>
         </FullSpan>
       </GridLayout>
-      <div className="flex z-10 justify-center items-center py-0.5 space-x-1 text-sm text-ui-0 bg-primary-400">
+      <div className="z-10 flex items-center justify-center space-x-1 bg-primary-400 py-0.5 text-sm text-ui-0">
         <IconInfo />
         <span>Aragon App Public Beta</span>
       </div>

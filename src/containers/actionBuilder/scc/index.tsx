@@ -1,5 +1,5 @@
-import {ListItemAction} from '@aragon/ods';
-import React from 'react';
+import {AlertInline, ListItemAction} from '@aragon/ods';
+import React, {useState} from 'react';
 import {useWatch} from 'react-hook-form';
 import {useTranslation} from 'react-i18next';
 
@@ -9,6 +9,8 @@ import {ActionIndex, Input} from 'utils/types';
 import {FormItem} from '../addAddresses';
 import {useAlertContext} from 'context/alert';
 import {ComponentForType} from 'containers/smartContractComposer/components/inputForm';
+import {useNetwork} from 'context/network';
+import {validateSCCAction} from 'utils/validators';
 
 const SCCAction: React.FC<ActionIndex & {allowRemove?: boolean}> = ({
   actionIndex,
@@ -20,6 +22,10 @@ const SCCAction: React.FC<ActionIndex & {allowRemove?: boolean}> = ({
     name: [`actions.${actionIndex}`],
   });
   const {alert} = useAlertContext();
+  const {network} = useNetwork();
+  const [isValid, setIsValid] = useState(true);
+
+  validateSCCAction(actionData, network).then(res => setIsValid(res));
 
   const methodActions = (() => {
     const result = [];
@@ -52,28 +58,37 @@ const SCCAction: React.FC<ActionIndex & {allowRemove?: boolean}> = ({
       >
         <FormItem className="space-y-3 rounded-b-xl">
           {actionData.inputs?.length > 0 ? (
-            <div className="pb-1.5 space-y-2">
-              {(actionData.inputs as Input[]).map((input, index) => (
-                <div key={input.name}>
-                  <div className="text-base font-bold text-ui-800 capitalize">
-                    {input.name}
-                    <span className="ml-0.5 text-sm normal-case">
-                      ({input.type})
-                    </span>
+            <div className="space-y-2 pb-1.5">
+              {(actionData.inputs as Input[])
+                .filter(input => input.type)
+                .map((input, index) => (
+                  <div key={input.name}>
+                    <div className="text-base font-bold capitalize text-ui-800">
+                      {input.name}
+                      <span className="ml-0.5 text-sm normal-case">
+                        ({input.type})
+                      </span>
+                    </div>
+                    <div className="mb-1.5 mt-0.5">
+                      <span className="text-ui-600 ft-text-sm">
+                        {input.notice}
+                      </span>
+                    </div>
+                    <ComponentForType
+                      key={input.name}
+                      input={input}
+                      functionName={actionData.name}
+                      formHandleName={`actions.${actionIndex}.inputs.${index}.value`}
+                      isValid={isValid}
+                    />
                   </div>
-                  <div className="mt-0.5 mb-1.5">
-                    <span className="text-ui-600 ft-text-sm">
-                      {input.notice}
-                    </span>
-                  </div>
-                  <ComponentForType
-                    key={input.name}
-                    input={input}
-                    functionName={actionData.name}
-                    formHandleName={`actions.${actionIndex}.inputs.${index}.value`}
-                  />
-                </div>
-              ))}
+                ))}
+              {!isValid && (
+                <AlertInline
+                  label={t('newProposal.configureActions.alertCritical')}
+                  mode="critical"
+                />
+              )}{' '}
             </div>
           ) : null}
         </FormItem>
