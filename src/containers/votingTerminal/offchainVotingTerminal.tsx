@@ -149,11 +149,11 @@ export const OffchainVotingTerminal = ({
   // vote button state and handler
   const {voteNowDisabled, onClick} = useMemo(() => {
     // disable voting on non-active proposals
-    if (proposal?.status !== 'Active') return {voteNowDisabled: true};
+    // if (proposal?.status !== 'Active') return {voteNowDisabled: true};
 
     // disable approval on multisig when wallet has voted
     // todo(kon): this check is not working properly
-    if (!canVote || voted) return {voteNowDisabled: true};
+    // if (!canVote || voted) return {voteNowDisabled: true};
 
     // not logged in
     if (!address) {
@@ -178,21 +178,30 @@ export const OffchainVotingTerminal = ({
     }
 
     // member, not yet voted
-    else if (canVote) {
-      return {
-        voteNowDisabled: false,
-        onClick: () => {
-          handleSubmitVote(VoteValues.YES, undefined, true);
-        },
-      };
-    } else return {voteNowDisabled: true};
+    // else if (canVote) {
+    //   return {
+    //     voteNowDisabled: false,
+    //     onClick: () => {
+    //
+    //       handleSubmitVote(VoteValues.YES, undefined, true);
+    //     },
+    //   };
+    // } else return {voteNowDisabled: true};
+    // todo(kon)
+    return {
+      voteNowDisabled: false,
+      onClick: () => {
+        handleSubmitVote(VoteValues.YES, undefined, true);
+      },
+    };
   }, [
     address,
     canVote,
     handleSubmitVote,
     isOnWrongNetwork,
-    proposal,
+    proposal?.status,
     statusRef,
+    voted,
   ]);
 
   const CommitteeVotingTerminal = () => {
@@ -206,7 +215,7 @@ export const OffchainVotingTerminal = ({
         onVoteClicked={onClick} // todo(kon): implement
         // onCancelClicked={() => setVotingInProcess(false)}
         voteButtonLabel={buttonLabel} // todo(kon): implement getVoteButtonLabel
-        voteNowDisabled={!canVote} // todo(kon): implement
+        // voteNowDisabled={!canVote} // todo(kon): implement
         // votingInProcess={votingInProcess} // Only for token voting
         // onVoteSubmitClicked={() => {
         //   console.log('onVoteSubmitClicked');
