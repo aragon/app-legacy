@@ -132,6 +132,7 @@ export const useDaoMembers = (
 
   const networkCovalentSupported = !(
     network === 'goerli' ||
+    network === 'mumbai' ||
     network === 'base' ||
     network === 'base-goerli'
   );
