@@ -18,13 +18,14 @@ import {
   GaslessVotingProposal,
   OffchainVotingClient,
 } from '@vocdoni/offchain-voting';
-import {DetailedProposal} from '../utils/types';
+import {DetailedProposal, ProposalId} from '../utils/types';
 import {
   isGaslessProposal,
   stripPlgnAdrFromProposalId,
 } from '../utils/proposals';
 import {GaselessPluginName, usePluginClient} from '../hooks/usePluginClient';
 import {useWallet} from '../hooks/useWallet';
+import {useDaoDetailsQuery} from '../hooks/useDaoDetails';
 
 // todo(kon): move this block somewhere else
 export enum OffchainVotingStepId {
@@ -38,22 +39,42 @@ export type OffchainVotingSteps = StepsMap<OffchainVotingStepId>;
 
 const useOffchainVoting = () => {
   const {client: vocdoniClient} = useVocdoniClient();
+  const pluginClient = usePluginClient(
+    GaselessPluginName
+  ) as OffchainVotingClient;
+  const {data: daoDetails} = useDaoDetailsQuery();
 
   // todo(kon): move this into local storage provdier if needed
-  const getElectionId = useCallback((proposalId: string) => {
-    const proposalIds = localStorage.getItem(
-      OffchainPluginLocalStorageKeys.PROPOSAL_TO_ELECTION
-    );
-    if (proposalIds !== null) {
-      const parsed = JSON.parse(
-        proposalIds
-      ) as OffchainPluginLocalStorageTypes[OffchainPluginLocalStorageKeys.PROPOSAL_TO_ELECTION];
-      if (proposalId in parsed) {
-        return parsed[proposalId].electionId;
-      }
-    }
-    return '';
-  }, []);
+  const getElectionId = useCallback(
+    async (proposalId: string) => {
+      if (daoDetails === undefined) return '';
+      const {proposal: id} = new ProposalId(
+        proposalId
+      ).stripPlgnAdrFromProposalId();
+
+      const proposal = await pluginClient.methods.getProposal(
+        daoDetails!.ensDomain,
+        daoDetails!.address,
+        daoDetails!.plugins[0].instanceAddress,
+        id
+      );
+
+      return proposal?.vochainProposalId || '';
+      // const proposalIds = localStorage.getItem(
+      //   OffchainPluginLocalStorageKeys.PROPOSAL_TO_ELECTION
+      // );
+      // if (proposalIds !== null) {
+      //   const parsed = JSON.parse(
+      //     proposalIds
+      //   ) as OffchainPluginLocalStorageTypes[OffchainPluginLocalStorageKeys.PROPOSAL_TO_ELECTION];
+      //   if (proposalId in parsed) {
+      //     return parsed[proposalId].electionId;
+      //   }
+      // }
+      // return '';
+    },
+    [daoDetails, pluginClient]
+  );
 
   const {steps, updateStepStatus, doStep, globalState} = useFunctionStepper({
     initialSteps: {
@@ -102,7 +123,7 @@ const useOffchainVoting = () => {
 
       // 2. Sumbit vote
       await doStep(OffchainVotingStepId.PUBLISH_VOTE, async () => {
-        await submitVote(vote, electionId);
+        await submitVote(vote, electionId!);
       });
     },
     [doStep, getElectionId, submitVote]
