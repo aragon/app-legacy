@@ -45,6 +45,7 @@ const SelectWCApp: React.FC<Props> = props => {
     <ModalBottomSheetSwitcher isOpen={isOpen} onClose={onClose}>
       <ModalHeader
         title={t('wc.dappList.modalTitle')}
+        subTitle="You can interact with the following dApps to add actions to your proposal. Learn more about {{link}}."
         showBackButton
         onBackButtonClicked={() => {
           onClose();

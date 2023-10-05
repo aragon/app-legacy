@@ -144,8 +144,6 @@ const WCdAppValidation: React.FC<Props> = props => {
     const isLoading = connectionStatus === ConnectionState.LOADING;
     const isSuccess = connectionStatus === ConnectionState.SUCCESS;
 
-    console.log(currentSession, selecteddApp);
-
     if (
       isLoading &&
       currentSession != null &&
