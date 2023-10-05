@@ -187,7 +187,7 @@ export type ProposalListItem =
   | GaslessVotingProposal;
 export type SupportedProposals = DetailedProposal | ProposalListItem;
 
-export type SupportedVotingSettings = MultisigVotingSettings | VotingSettings;
+export type SupportedVotingSettings = MultisigVotingSettings | GaslessPluginVotingSettings | VotingSettings;
 
 /* ACTION TYPES ============================================================= */
 
