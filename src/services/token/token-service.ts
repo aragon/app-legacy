@@ -165,31 +165,33 @@ class TokenService {
       queryKey: ['fetchCoingeckoToken', url],
       staleTime: 1000 * 60 * 60 * 24, // 24 hours
       queryFn: () => {
-        return fetch(url).then(res => {
-          return res.json().then((data: CoingeckoToken) => {
-            return {
-              id: data.id,
-              name: isNative ? nativeCurrency.name : data.name,
-              symbol: isNative
-                ? nativeCurrency.symbol
-                : data.symbol?.toUpperCase(),
-              imgUrl: data.image?.large,
-              address: address,
-              price: data.market_data?.current_price.usd,
-              priceChange: {
-                day: data.market_data?.price_change_percentage_24h_in_currency
-                  ?.usd,
-                week: data.market_data?.price_change_percentage_7d_in_currency
-                  ?.usd,
-                month:
-                  data.market_data?.price_change_percentage_30d_in_currency
+        return fetch(url)
+          .then(res => {
+            return res.json().then((data: CoingeckoToken) => {
+              return {
+                id: data.id,
+                name: isNative ? nativeCurrency.name : data.name,
+                symbol: isNative
+                  ? nativeCurrency.symbol
+                  : data.symbol?.toUpperCase(),
+                imgUrl: data.image?.large,
+                address: address,
+                price: data.market_data?.current_price.usd,
+                priceChange: {
+                  day: data.market_data?.price_change_percentage_24h_in_currency
                     ?.usd,
-                year: data.market_data?.price_change_percentage_1y_in_currency
-                  ?.usd,
-              },
-            };
-          });
-        });
+                  week: data.market_data?.price_change_percentage_7d_in_currency
+                    ?.usd,
+                  month:
+                    data.market_data?.price_change_percentage_30d_in_currency
+                      ?.usd,
+                  year: data.market_data?.price_change_percentage_1y_in_currency
+                    ?.usd,
+                },
+              };
+            });
+          })
+          .catch(() => null);
       },
     });
   };
