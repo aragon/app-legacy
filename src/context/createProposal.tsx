@@ -159,7 +159,6 @@ const CreateProposalWrapper: React.FC<Props> = ({
     steps: offchainProposalSteps,
     globalState: offchainGlobalState,
     createProposal,
-    electionId,
     cacheProposal: cacheOffchainProposal,
   } = useCreateOffchainProposal({
     daoToken,
@@ -742,13 +741,6 @@ const CreateProposalWrapper: React.FC<Props> = ({
             // cache proposal
             handleCacheProposal(prefixedId);
             invalidateQueries();
-
-            // todo(kon): here we are storing the key value from te proposal to the vocdoni election.
-            // This is for developing purposes only, should be replaced for the selected system
-            // Also this code could be optimized
-            if (offchain && electionId) {
-              cacheOffchainProposal(prefixedId, electionId);
-            }
 
             break;
           }
