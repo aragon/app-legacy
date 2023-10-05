@@ -66,6 +66,8 @@ const WCdAppValidation: React.FC<Props> = props => {
         return t('wc.validation.ctaLabelVerifying');
       case ConnectionState.ERROR:
         return t('wc.validation.ctaLabelCritical');
+      case ConnectionState.INCORRECT_URI:
+        return t('wc.validation.ctaLabelCritical');
       case ConnectionState.SUCCESS:
         return t('wc.validation.ctaLabelSuccess');
       case ConnectionState.WAITING:
@@ -142,6 +144,8 @@ const WCdAppValidation: React.FC<Props> = props => {
     const isLoading = connectionStatus === ConnectionState.LOADING;
     const isSuccess = connectionStatus === ConnectionState.SUCCESS;
 
+    console.log(currentSession, selecteddApp);
+
     if (
       isLoading &&
       currentSession != null &&
@@ -155,14 +159,14 @@ const WCdAppValidation: React.FC<Props> = props => {
           : ConnectionState.ERROR
       );
     } else if (
-      isSuccess &&
-      (currentSession == null ||
-        currentSession.peer.metadata.name
-          .toLowerCase()
-          .includes(
-            (selecteddApp as SignClientTypes.Metadata).name.toLowerCase()
-          ) === false)
+      currentSession?.peer.metadata.name
+        .toLowerCase()
+        .includes(
+          (selecteddApp as SignClientTypes.Metadata).name.toLowerCase()
+        ) === false
     ) {
+      setConnectionStatus(ConnectionState.INCORRECT_URI);
+    } else if (isSuccess && currentSession == null) {
       resetConnectionState();
     }
   }, [connectionStatus, currentSession, resetConnectionState, selecteddApp]);
@@ -229,7 +233,8 @@ const WCdAppValidation: React.FC<Props> = props => {
             iconLeft: <Spinner size={'xs'} />,
             isActive: true,
           })}
-          {...(connectionStatus === ConnectionState.ERROR && {
+          {...((connectionStatus === ConnectionState.ERROR ||
+            connectionStatus === ConnectionState.INCORRECT_URI) && {
             iconLeft: <IconReload />,
           })}
           onClick={ctaHandler}
@@ -241,6 +246,14 @@ const WCdAppValidation: React.FC<Props> = props => {
                 dappName: currentSession?.peer.metadata.name,
               })}
               mode="success"
+            />
+          </AlertWrapper>
+        )}
+        {connectionStatus === ConnectionState.INCORRECT_URI && (
+          <AlertWrapper>
+            <AlertInline
+              label={`The QR code provided is not from ${selecteddApp.name}.`}
+              mode="critical"
             />
           </AlertWrapper>
         )}
