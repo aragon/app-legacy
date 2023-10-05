@@ -25,6 +25,7 @@ import {
   CovalentTokenTransfer,
   CovalentTransferInfo,
 } from './domain/covalent-transfer';
+import {queryClient} from 'index';
 
 const REPLACEMENT_BASE_ETHER_LOGO_URL =
   'https://assets.coingecko.com/coins/images/279/large/ethereum.png?1595348880';
@@ -72,8 +73,8 @@ class TokenService {
 
     const token =
       processedNetwork === 'base' || processedNetwork === 'base-goerli'
-        ? this.fetchCovalentToken(processedNetwork, processedAddress)
-        : this.fetchCoingeckoToken(processedNetwork, processedAddress);
+        ? await this.fetchCovalentToken(processedNetwork, processedAddress)
+        : await this.fetchCoingeckoToken(processedNetwork, processedAddress);
 
     return token;
   };
@@ -98,37 +99,46 @@ class TokenService {
     const authToken = window.btoa(`${COVALENT_API_KEY}:`);
     const headers = {Authorization: `Basic ${authToken}`};
 
-    const res = await fetch(url, {headers});
-    const parsed: CovalentResponse<CovalentToken[] | null> = await res.json();
-    const data = parsed.data?.[0];
+    return queryClient.fetchQuery({
+      queryKey: ['fetchCovalentToken', url],
+      staleTime: 1000 * 60 * 60 * 24, // 24 hours
+      queryFn: () => {
+        return fetch(url, {headers}).then(res => {
+          return res
+            .json()
+            .then((parsed: CovalentResponse<CovalentToken[]>) => {
+              const data = parsed.data?.[0];
+              if (parsed.error || data == null) {
+                console.info(
+                  `fetchToken - Covalent returned error: ${parsed.error_message}`
+                );
+                return null;
+              }
 
-    if (parsed.error || data == null) {
-      console.info(
-        `fetchToken - Covalent returned error: ${parsed.error_message}`
-      );
-      return null;
-    }
-
-    return {
-      id: address,
-      name: isNative ? nativeCurrency.name : data.contract_name,
-      symbol: isNative
-        ? nativeCurrency.symbol
-        : data.contract_ticker_symbol.toUpperCase(),
-      imgUrl:
-        // Please replace once the Covalent API decides to be reasonable
-        isNative && (network === 'base' || network === 'base-goerli')
-          ? REPLACEMENT_BASE_ETHER_LOGO_URL
-          : data.logo_url,
-      address: address,
-      price: data.prices[0].price,
-      priceChange: {
-        day: 0,
-        week: 0,
-        month: 0,
-        year: 0,
+              return {
+                id: address,
+                name: isNative ? nativeCurrency.name : data.contract_name,
+                symbol: isNative
+                  ? nativeCurrency.symbol
+                  : data.contract_ticker_symbol?.toUpperCase(),
+                imgUrl:
+                  // Please replace once the Covalent API decides to be reasonable
+                  isNative && (network === 'base' || network === 'base-goerli')
+                    ? REPLACEMENT_BASE_ETHER_LOGO_URL
+                    : data.logo_url,
+                address: address,
+                price: data.prices[0].price,
+                priceChange: {
+                  day: 0,
+                  week: 0,
+                  month: 0,
+                  year: 0,
+                },
+              };
+            });
+        });
       },
-    };
+    });
   };
 
   private fetchCoingeckoToken = async (
@@ -151,28 +161,37 @@ class TokenService {
       : `/coins/${networkId}/contract/${address}`;
     const url = `${this.baseUrl.coingecko}${endpoint}`;
 
-    const res = await fetch(url);
-    const data: CoingeckoToken | CoingeckoError = await res.json();
-
-    if (this.isErrorCoingeckoResponse(data)) {
-      console.info(`fetchToken - Coingecko returned error: ${data.error}`);
-      return null;
-    }
-
-    return {
-      id: data.id,
-      name: isNative ? nativeCurrency.name : data.name,
-      symbol: isNative ? nativeCurrency.symbol : data.symbol.toUpperCase(),
-      imgUrl: data.image.large,
-      address: address,
-      price: data.market_data.current_price.usd,
-      priceChange: {
-        day: data.market_data.price_change_percentage_24h_in_currency.usd,
-        week: data.market_data.price_change_percentage_7d_in_currency.usd,
-        month: data.market_data.price_change_percentage_30d_in_currency.usd,
-        year: data.market_data.price_change_percentage_1y_in_currency.usd,
+    return queryClient.fetchQuery({
+      queryKey: ['fetchCoingeckoToken', url],
+      staleTime: 1000 * 60 * 60 * 24, // 24 hours
+      queryFn: () => {
+        return fetch(url).then(res => {
+          return res.json().then((data: CoingeckoToken) => {
+            return {
+              id: data.id,
+              name: isNative ? nativeCurrency.name : data.name,
+              symbol: isNative
+                ? nativeCurrency.symbol
+                : data.symbol?.toUpperCase(),
+              imgUrl: data.image?.large,
+              address: address,
+              price: data.market_data?.current_price.usd,
+              priceChange: {
+                day: data.market_data?.price_change_percentage_24h_in_currency
+                  ?.usd,
+                week: data.market_data?.price_change_percentage_7d_in_currency
+                  ?.usd,
+                month:
+                  data.market_data?.price_change_percentage_30d_in_currency
+                    ?.usd,
+                year: data.market_data?.price_change_percentage_1y_in_currency
+                  ?.usd,
+              },
+            };
+          });
+        });
       },
-    };
+    });
   };
 
   // Note: Purposefully not including a function to fetch token balances
