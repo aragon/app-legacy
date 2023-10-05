@@ -352,9 +352,16 @@ class TokenService {
       }),
     };
 
-    const res = await fetch(url, options);
-    const parsed = await res.json();
-    const transfers: AlchemyTransfer[] = parsed?.result?.transfers || [];
+    const transfers: AlchemyTransfer[] = await queryClient.fetchQuery({
+      queryKey: ['fetchAlchemyErc20Transfers', walletAddress],
+      queryFn: () => {
+        return fetch(url, options).then(res => {
+          return res.json().then(parsed => {
+            return parsed?.result?.transfers || [];
+          });
+        });
+      },
+    });
 
     return await Promise.all(
       transfers.map(transfer =>
