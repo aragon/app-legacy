@@ -15,7 +15,7 @@ import {
 } from 'react-hook-form';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
-import {SessionTypes} from '@walletconnect/types';
+import {SessionTypes, SignClientTypes} from '@walletconnect/types';
 
 import ModalBottomSheetSwitcher from 'components/modalBottomSheetSwitcher';
 import ModalHeader from 'components/modalHeader';
@@ -30,13 +30,20 @@ type Props = {
   onConnectionSuccess: (session: SessionTypes.Struct) => void;
   onClose: () => void;
   isOpen: boolean;
+  selecteddApp?: SignClientTypes.Metadata;
 };
 
 // Wallet connect id input name
 export const WC_URI_INPUT_NAME = 'wcID';
 
 const WCdAppValidation: React.FC<Props> = props => {
-  const {onBackButtonClicked, onConnectionSuccess, onClose, isOpen} = props;
+  const {
+    onBackButtonClicked,
+    onConnectionSuccess,
+    onClose,
+    isOpen,
+    selecteddApp,
+  } = props;
 
   const {t} = useTranslation();
   const {alert} = useAlertContext();
@@ -135,16 +142,30 @@ const WCdAppValidation: React.FC<Props> = props => {
     const isLoading = connectionStatus === ConnectionState.LOADING;
     const isSuccess = connectionStatus === ConnectionState.SUCCESS;
 
-    if (isLoading && currentSession != null) {
+    if (
+      isLoading &&
+      currentSession != null &&
+      currentSession.peer.metadata.name
+        .toLowerCase()
+        .includes((selecteddApp as SignClientTypes.Metadata).name.toLowerCase())
+    ) {
       setConnectionStatus(
         currentSession.acknowledged
           ? ConnectionState.SUCCESS
           : ConnectionState.ERROR
       );
-    } else if (isSuccess && currentSession == null) {
+    } else if (
+      isSuccess &&
+      (currentSession == null ||
+        currentSession.peer.metadata.name
+          .toLowerCase()
+          .includes(
+            (selecteddApp as SignClientTypes.Metadata).name.toLowerCase()
+          ) === false)
+    ) {
       resetConnectionState();
     }
-  }, [connectionStatus, currentSession, resetConnectionState]);
+  }, [connectionStatus, currentSession, resetConnectionState, selecteddApp]);
 
   const disableCta =
     uri == null ||
@@ -159,10 +180,14 @@ const WCdAppValidation: React.FC<Props> = props => {
   /*************************************************
    *                     Render                    *
    *************************************************/
+  if (!selecteddApp) {
+    return null;
+  }
+
   return (
     <ModalBottomSheetSwitcher isOpen={isOpen} onClose={onClose}>
       <ModalHeader
-        title={t('wc.validation.modalTitle')}
+        title={selecteddApp.name}
         showBackButton
         onBackButtonClicked={handleBackClick}
         {...(isDesktop ? {showCloseButton: true, onClose} : {})}
