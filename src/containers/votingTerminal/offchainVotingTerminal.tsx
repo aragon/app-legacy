@@ -86,11 +86,15 @@ export const OffchainVotingTerminal = ({
     } as VotingTerminalProps;
   }, [proposal, t]);
 
+  const isApprovalPeriod = useMemo(() => {
+    return (
+      proposal.endDate.valueOf() < new Date().valueOf() &&
+      proposal.expirationDate.valueOf() > new Date().valueOf()
+    );
+  }, [proposal]);
+
   const buttonLabel = useMemo(() => {
     if (proposal) {
-      const isApprovalPeriod =
-        proposal.endDate.valueOf() < new Date().valueOf() &&
-        proposal.expirationDate.valueOf() > new Date().valueOf();
       const nextVoteWillApprove =
         proposal.approvers.length + 1 === proposal.settings.minTallyApprovals;
       return getCommitteVoteButtonLabel(
@@ -102,7 +106,7 @@ export const OffchainVotingTerminal = ({
         t
       );
     }
-  }, [proposal, canVote, voted, isApproved, t]);
+  }, [proposal, canVote, voted, isApproved, isApprovalPeriod, t]);
 
   // vote button state and handler
   const {voteNowDisabled, onClick} = useMemo(() => {
@@ -162,10 +166,10 @@ export const OffchainVotingTerminal = ({
   useEffect(() => {
     if (proposal) {
       // set the very first time
-      setApprovalStatus(getApproveStatusLabel(proposal, t));
+      setApprovalStatus(getApproveStatusLabel(proposal, isApprovalPeriod, t));
 
       const interval = setInterval(async () => {
-        const v = getApproveStatusLabel(proposal, t);
+        const v = getApproveStatusLabel(proposal, isApprovalPeriod, t);
 
         // remove interval timer once the proposal has started
         if (proposal.startDate.valueOf() <= new Date().valueOf()) {
@@ -270,44 +274,36 @@ const PENDING_PROPOSAL_STATUS_INTERVAL = 1000 * 10;
 
 // todo(kon): this is a copy paste from src/pages/proposal.tsx. we could modify the function to receive
 // endate start date and status
-function getApproveStatusLabel(proposal: GaslessVotingProposal, t: TFunction) {
+function getApproveStatusLabel(
+  proposal: GaslessVotingProposal,
+  isApprovalPeriod: boolean,
+  t: TFunction
+) {
   let label = '';
 
-  switch (proposal.status) {
-    case 'Pending': {
-      // Uncomment line below is causing SyntaxError: ambiguous indirect export: default 🤷‍♀️
-      // const locale = (Locales as Record<string, Locale>)[i18n.language];
+  if (proposal.status === 'Pending' || proposal.status === 'Active') {
+    // Uncomment line below is causing SyntaxError: ambiguous indirect export: default 🤷‍♀️
+    // const locale = (Locales as Record<string, Locale>)[i18n.language];
+
+    if (!isApprovalPeriod) {
       const timeUntilNow = formatDistanceToNow(proposal.endDate, {
         includeSeconds: true,
         // locale,
       });
-
       label = t('votingTerminal.status.pending', {timeUntilNow});
-
-      break;
+    } else {
+      const timeUntilEnd = formatDistanceToNow(proposal.expirationDate, {
+        includeSeconds: true,
+        // locale,
+      });
+      label = t('votingTerminal.status.active', {timeUntilEnd});
     }
-    case 'Active':
-      {
-        // const locale = (Locales as Record<string, Locale>)[i18n.language];
-        const timeUntilEnd = formatDistanceToNow(proposal.expirationDate, {
-          includeSeconds: true,
-          // locale,
-        });
-
-        label = t('votingTerminal.status.active', {timeUntilEnd});
-      }
-
-      break;
-    case 'Succeeded':
-      label = t('votingTerminal.status.succeeded');
-
-      break;
-    case 'Executed':
-      label = t('votingTerminal.status.executed');
-
-      break;
-    case 'Defeated':
-      label = t('votingTerminal.status.defeated');
+  } else if (proposal.status === 'Succeeded') {
+    label = t('votingTerminal.status.succeeded');
+  } else if (proposal.status === 'Executed') {
+    label = t('votingTerminal.status.executed');
+  } else if (proposal.status === 'Defeated') {
+    label = t('votingTerminal.status.defeated');
   }
   return label;
 }
