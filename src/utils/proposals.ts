@@ -44,6 +44,10 @@ import {
   SupportedVotingSettings,
 } from './types';
 import {GaslessVotingProposal} from '@vocdoni/offchain-voting';
+import {
+  isGaslessVotingSettings,
+  isMultisigVotingSettings,
+} from 'hooks/usePluginSettings';
 
 export type TokenVotingOptions = StrictlyExclude<
   VoterType['option'],
@@ -450,10 +454,7 @@ export function getLiveProposalTerminalProps(
   let supportThreshold;
   let strategy;
 
-  if (
-    isGaslessProposal(proposal) &&
-    isGaslessVotingSettings(votingSettings)
-  ) {
+  if (isGaslessProposal(proposal) && isGaslessVotingSettings(votingSettings)) {
     // token
     token = {
       name: proposal.token.name,
@@ -461,7 +462,8 @@ export function getLiveProposalTerminalProps(
     };
 
     // voters
-    voters = []
+    // todo(kon): implement voters
+    voters = [];
     // getErc20Voters(
     //   proposal.votes,
     //   proposal.totalVotingWeight,
@@ -475,7 +477,11 @@ export function getLiveProposalTerminalProps(
     // });
 
     // results
-    results = proposal.vochain.tally.parsed
+    const results: ProposalVoteResults = getErc20Results(
+      proposal.vochain.tally.parsed,
+      proposal.token.decimals,
+      proposal.totalVotingWeight
+    );
     // calculate participation
     const {currentPart, currentPercentage, minPart, missingPart, totalWeight} =
       getErc20VotingParticipation(
@@ -526,7 +532,7 @@ export function getLiveProposalTerminalProps(
         KNOWN_FORMATS.proposals
       )}  ${getFormattedUtcOffset()}`,
     };
-  }  else if (isErc20VotingProposal(proposal)) {
+  } else if (isErc20VotingProposal(proposal)) {
     // token
     token = {
       name: proposal.token.name,

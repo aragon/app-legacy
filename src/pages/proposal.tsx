@@ -475,7 +475,9 @@ export const Proposal: React.FC = () => {
   let canExecuteEarly = false;
 
   if (proposal && mappedProps) {
-    if (isTokenVotingSettings(votingSettings)) {
+    if (isGaslessVotingSettings(daoSettings)) {
+      canExecuteEarly = false;
+    } else if (isTokenVotingSettings(votingSettings)) {
       canExecuteEarly = isEarlyExecutable(
         mappedProps?.missingParticipation,
         proposal,
