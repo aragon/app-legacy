@@ -623,7 +623,10 @@ export const Proposal: React.FC = () => {
         proposal.status,
         pluginType,
         proposal.startDate,
-        proposal.endDate,
+        // If is gasless the proposal ends after the expiration period
+        isGaslessProposal(proposal)
+          ? proposal.expirationDate
+          : proposal.endDate,
         proposal.creationDate,
         proposal.creationBlockNumber
           ? NumberFormatter.format(proposal.creationBlockNumber)
@@ -758,10 +761,9 @@ export const Proposal: React.FC = () => {
 
           {votingSettings && isGaseless ? (
             <OffchainVotingTerminal
-              votingStatusLabel={voteStatus}
               votingTerminal={<VTerminal />}
               proposal={proposal}
-              // vocdoniElection={vocdoniElection}
+              votingStatusLabel={voteStatus}
               proposalId={proposalId}
               statusRef={statusRef}
             />

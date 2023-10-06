@@ -185,7 +185,7 @@ const ProposalTransactionProvider: React.FC<Props> = ({children}) => {
       return (pluginClient as OffchainVotingClient)?.estimation.setTally(
         pluginAddress,
         proposal
-      )
+      );
     }
 
     if (isTokenVotingPluginClient && voteParams && voteTokenAddress) {

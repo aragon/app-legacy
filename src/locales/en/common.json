@@ -1034,6 +1034,15 @@
     },
     "approveExecute": "Approve and execute"
   },
+  "offchainVotingTerminal": {
+    "btnLabel": {
+      "approved": "Approved",
+      "concluded": "Concluded",
+      "approve": "Approve",
+      "voteAndExecute": "Approve and execute",
+      "voted": "Voted"
+    }
+  },
   "explore": {
     "hero": {
       "title": "Explore the DAO World",

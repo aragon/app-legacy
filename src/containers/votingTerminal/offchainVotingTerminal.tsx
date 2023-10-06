@@ -1,7 +1,7 @@
 import {TerminalTabs, VotingTerminal, VotingTerminalProps} from './index';
 import React, {ReactNode, useEffect, useMemo, useState} from 'react';
 import {TFunction, useTranslation} from 'react-i18next';
-import {format} from 'date-fns';
+import {format, formatDistanceToNow, Locale} from 'date-fns';
 import {getFormattedUtcOffset, KNOWN_FORMATS} from '../../utils/date';
 import {VoterType} from '@aragon/ods';
 import styled from 'styled-components';
@@ -34,6 +34,8 @@ export const OffchainVotingTerminal = ({
   const {t} = useTranslation();
   const [terminalTab, setTerminalTab] = useState<TerminalTabs>('breakdown');
   const pluginClient = usePluginClient(GaselessPluginName);
+  const [approvalStatus, setApprovalStatus] = useState('');
+  const [intervalInMills, setIntervalInMills] = useState(0);
 
   const {isOnWrongNetwork} = useWallet();
 
@@ -49,71 +51,32 @@ export const OffchainVotingTerminal = ({
     // voteSubmitted,
   } = useProposalTransactionContext();
 
-  // todo(kon): mocked data that will come from proposal info to let the committee vote
-  // const members: MultisigMember[] = [
-  //   {
-  //     address: '0xD8fcFaa76192aa69cceDDAEc554b1d82B0166DC9',
-  //   },
-  //   {
-  //     address: '0x39A62b289586E8F74B7F7d8934a2Dbe7c5bd9755',
-  //   },
-  // ];
-  // const committeeProposal: MultisigProposal = {
-  //   actions: [],
-  //   approvals: [],
-  //   creationBlockNumber: 0,
-  //   creationDate: proposal.creationDate,
-  //   creatorAddress: '',
-  //   dao: {address: '', name: ''},
-  //   endDate: new Date(proposal.creationDate.getDate() + 1),
-  //   executionBlockNumber: proposal.executionBlockNumber,
-  //   executionDate: new Date(proposal.creationDate.getDate()),
-  //   executionTxHash: proposal.executionTxHash,
-  //   id: '',
-  //   metadata: proposal.metadata,
-  //   startDate: proposal.startDate,
-  //   status: ProposalStatus.PENDING,
-  //   settings: {
-  //     minApprovals: members.length,
-  //     onlyListed: true,
-  //   },
-  // };
-  // const canVote = true;
-  // const voted = false;
-  // const mappedMembers = new Map(
-  //   // map multisig members to voterType
-  //   members?.map(member => [
-  //     member.address,
-  //     {wallet: member.address, option: 'none'} as VoterType,
-  //   ])
-  // );
-  //
-  // const committeeVoteStatus = getVoteStatus(committeeProposal, t);
-
   const mappedProps = useMemo(() => {
     if (!proposal) return;
 
-    // const mappedMembers = new Map(
-    //   // map multisig members to voterType
-    //   proposal.approvers?.map(member => [
-    //     member,
-    //     {wallet: member, option: 'none'} as VoterType,
-    //   ])
-    // );
     const endDate = `${format(
-      proposal.parameters.endDate,
+      proposal.parameters.expirationDate,
       KNOWN_FORMATS.proposals
     )}  ${getFormattedUtcOffset()}`;
 
     const startDate = `${format(
-      proposal.parameters.startDate,
+      proposal.parameters.endDate,
       KNOWN_FORMATS.proposals
     )}  ${getFormattedUtcOffset()}`;
+
+    const voters = new Array<VoterType>(
+      proposal.settings.minTallyApprovals
+    ).map((_, i) => {
+      if (proposal.approvers[i]) {
+        return {wallet: proposal.approvers[i], option: 'yes'} as VoterType;
+      }
+    });
 
     return {
       approvals: proposal.approvers,
       // The voters list is not on the proposal object
-      voters: new Array<VoterType>(proposal.settings.minTallyApprovals),
+      // voters: proposal.approvers.map(([approver, _]) => ({wallet: approver, option: 'yes'} as VoterType)),
+      voters,
       minApproval: proposal.settings.minTallyApprovals,
       // voters: [...mappedMembers.values()],
       strategy: t('votingTerminal.multisig'),
@@ -123,37 +86,31 @@ export const OffchainVotingTerminal = ({
     } as VotingTerminalProps;
   }, [proposal, t]);
 
-  // todo(kon): fix this to enable/disable the vote button and it message
-  // const committeVoteDisabled =
-  //   isCommitteMember && electionRunning && !alreadyVoted;
-  // const showCommitteButton = isCommitteMember && !committeVoteDisabled;
-  // const committeVoteLabel =
-  //   committeVoteCount === 0
-  //     ? 'Approve Now'
-  //     : committeVoteCount + 1 === tally
-  //     ? 'Approve and execute now'
-  //     : 'Aprrove';
-
   const buttonLabel = useMemo(() => {
     if (proposal) {
+      const isApprovalPeriod =
+        proposal.endDate.valueOf() < new Date().valueOf() &&
+        proposal.expirationDate.valueOf() > new Date().valueOf();
+      const nextVoteWillApprove =
+        proposal.approvers.length + 1 === proposal.settings.minTallyApprovals;
       return getCommitteVoteButtonLabel(
-        proposal,
         canVote,
         voted,
         isApproved,
+        isApprovalPeriod,
+        nextVoteWillApprove,
         t
       );
     }
-  }, [proposal, voted, canVote, t]);
+  }, [proposal, canVote, voted, isApproved, t]);
 
   // vote button state and handler
   const {voteNowDisabled, onClick} = useMemo(() => {
     // disable voting on non-active proposals
-    // if (proposal?.status !== 'Active') return {voteNowDisabled: true};
+    if (proposal?.status !== 'Active') return {voteNowDisabled: true};
 
     // disable approval on multisig when wallet has voted
-    // todo(kon): this check is not working properly
-    // if (!canVote || voted) return {voteNowDisabled: true};
+    if (!canVote || voted) return {voteNowDisabled: true};
 
     // not logged in
     if (!address) {
@@ -178,22 +135,14 @@ export const OffchainVotingTerminal = ({
     }
 
     // member, not yet voted
-    // else if (canVote) {
-    //   return {
-    //     voteNowDisabled: false,
-    //     onClick: () => {
-    //
-    //       handleSubmitVote(VoteValues.YES, undefined, true);
-    //     },
-    //   };
-    // } else return {voteNowDisabled: true};
-    // todo(kon)
-    return {
-      voteNowDisabled: false,
-      onClick: () => {
-        handleSubmitVote(VoteValues.YES, undefined, true);
-      },
-    };
+    else if (canVote) {
+      return {
+        voteNowDisabled: false,
+        onClick: () => {
+          handleSubmitVote(VoteValues.YES, undefined, true);
+        },
+      };
+    } else return {voteNowDisabled: true};
   }, [
     address,
     canVote,
@@ -204,18 +153,46 @@ export const OffchainVotingTerminal = ({
     voted,
   ]);
 
+  /**
+   * It sets the approval status label.
+   *
+   * Uses an interval to update the label every 10 seconds.
+   */
+  // todo(kon): this is a copy paste from src/pages/proposal.tsx
+  useEffect(() => {
+    if (proposal) {
+      // set the very first time
+      setApprovalStatus(getApproveStatusLabel(proposal, t));
+
+      const interval = setInterval(async () => {
+        const v = getApproveStatusLabel(proposal, t);
+
+        // remove interval timer once the proposal has started
+        if (proposal.startDate.valueOf() <= new Date().valueOf()) {
+          clearInterval(interval);
+          setIntervalInMills(PROPOSAL_STATUS_INTERVAL);
+          setApprovalStatus(v);
+        } else if (proposal.status === 'Pending') {
+          setApprovalStatus(v);
+        }
+      }, PENDING_PROPOSAL_STATUS_INTERVAL);
+
+      return () => clearInterval(interval);
+    }
+  }, [proposal, t]);
+
   const CommitteeVotingTerminal = () => {
     return (
       <VotingTerminal
         status={proposal.status}
-        statusLabel={votingStatusLabel} // todo(kon): implement committee vote status
+        statusLabel={approvalStatus} // todo(kon): implement committee vote status
         selectedTab={terminalTab}
         // alertMessage={alertMessage} // todo(kon): implement
         onTabSelected={setTerminalTab}
         onVoteClicked={onClick} // todo(kon): implement
         // onCancelClicked={() => setVotingInProcess(false)}
-        voteButtonLabel={buttonLabel} // todo(kon): implement getVoteButtonLabel
-        // voteNowDisabled={!canVote} // todo(kon): implement
+        voteButtonLabel={buttonLabel}
+        voteNowDisabled={voteNowDisabled}
         // votingInProcess={votingInProcess} // Only for token voting
         // onVoteSubmitClicked={() => {
         //   console.log('onVoteSubmitClicked');
@@ -251,7 +228,7 @@ export const OffchainVotingTerminal = ({
           name={'actions-approval'}
           type={'action-builder'}
           methodName={'Actions approval'}
-          alertLabel={votingStatusLabel} // todo(kon): implement committee vote status
+          alertLabel={approvalStatus} // todo(kon): implement committee vote status
         >
           <CommitteeVotingTerminal />
         </AccordionItem>
@@ -262,24 +239,76 @@ export const OffchainVotingTerminal = ({
 
 // todo(kon): move this somewhere
 function getCommitteVoteButtonLabel(
-  proposal: GaslessVotingProposal,
   canVote: boolean,
   voted: boolean,
   approved: boolean,
+  isApprovalPeriod: boolean,
+  nextVoteWillApprove: boolean,
   t: TFunction
 ) {
   let label = '';
 
   label = approved
-    ? t('votingTerminal.status.approved')
-    : t('votingTerminal.concluded');
+    ? t('offchainVotingTerminal.btnLabel.approved')
+    : t('offchainVotingTerminal.btnLabel.concluded');
 
-  // todo(kon): this is a copy paste, do it well
-  if (proposal.status === 'Pending' && canVote)
-    label = t('votingTerminal.approve');
-  else if (proposal.status === 'Active' && !voted)
-    label = t('votingTerminal.approve');
+  if (isApprovalPeriod && nextVoteWillApprove && canVote) {
+    label = t('offchainVotingTerminal.btnLabel.approve');
+  } else if (isApprovalPeriod && canVote) {
+    label = t('offchainVotingTerminal.btnLabel.voteAndExecute');
+  } else if (isApprovalPeriod && voted) {
+    label = t('offchainVotingTerminal.btnLabel.voted');
+  } else if (!canVote) {
+    label = t('offchainVotingTerminal.btnLabel.approve');
+  }
 
+  return label;
+}
+
+const PROPOSAL_STATUS_INTERVAL = 1000 * 60;
+const PENDING_PROPOSAL_STATUS_INTERVAL = 1000 * 10;
+
+// todo(kon): this is a copy paste from src/pages/proposal.tsx. we could modify the function to receive
+// endate start date and status
+function getApproveStatusLabel(proposal: GaslessVotingProposal, t: TFunction) {
+  let label = '';
+
+  switch (proposal.status) {
+    case 'Pending': {
+      // Uncomment line below is causing SyntaxError: ambiguous indirect export: default 🤷‍♀️
+      // const locale = (Locales as Record<string, Locale>)[i18n.language];
+      const timeUntilNow = formatDistanceToNow(proposal.endDate, {
+        includeSeconds: true,
+        // locale,
+      });
+
+      label = t('votingTerminal.status.pending', {timeUntilNow});
+
+      break;
+    }
+    case 'Active':
+      {
+        // const locale = (Locales as Record<string, Locale>)[i18n.language];
+        const timeUntilEnd = formatDistanceToNow(proposal.expirationDate, {
+          includeSeconds: true,
+          // locale,
+        });
+
+        label = t('votingTerminal.status.active', {timeUntilEnd});
+      }
+
+      break;
+    case 'Succeeded':
+      label = t('votingTerminal.status.succeeded');
+
+      break;
+    case 'Executed':
+      label = t('votingTerminal.status.executed');
+
+      break;
+    case 'Defeated':
+      label = t('votingTerminal.status.defeated');
+  }
   return label;
 }
 

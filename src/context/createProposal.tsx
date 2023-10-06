@@ -659,6 +659,26 @@ const CreateProposalWrapper: React.FC<Props> = ({
     queryClient.invalidateQueries([AragonSdkQueryItem.PROPOSALS]);
   }, [queryClient]);
 
+  const getOffChainProposalParams = useCallback(
+    (
+      params: CreateMajorityVotingProposalParams,
+      vochainProposalId: string
+    ): CreateGasslessProposalParams => {
+      return {
+        ...params,
+        // If the value is 0 will take the expiration time defined at DAO creation level.
+        // We want this because the expiration date is defined when the dao is created.
+        // We could define a different expiration date for this proposal but is not designed
+        // to do this at ux level.
+        expirationDate: 0,
+        vochainProposalId,
+        startDate: (params.startDate ?? new Date()).getTime(),
+        endDate: (params.endDate ?? new Date()).getTime(),
+      };
+    },
+    []
+  );
+
   const handlePublishProposal = useCallback(
     // todo(kon): this is a quickfix to update the internal cache with updated data. Delete this attribute when minSDK is ready
     async (electionId?: string) => {
@@ -772,26 +792,6 @@ const CreateProposalWrapper: React.FC<Props> = ({
     provider?.connection.url,
     tokenPrice,
   ]);
-
-  const getOffChainProposalParams = useCallback(
-    (
-      params: CreateMajorityVotingProposalParams,
-      vochainProposalId: string
-    ): CreateGasslessProposalParams => {
-      return {
-        ...params,
-        // If the value is 0 will take the expiration time defined at DAO creation level.
-        // We want this because the expiration date is defined when the dao is created.
-        // We could define a different expiration date for this proposal but is not designed
-        // to do this at ux level.
-        expirationDate: 0,
-        vochainProposalId,
-        startDate: (params.startDate ?? new Date()).getTime(),
-        endDate: (params.endDate ?? new Date()).getTime(),
-      };
-    },
-    []
-  );
 
   const handleOffChainProposal = useCallback(async () => {
     console.log('DEBUG', 'handleOffChainProposal');

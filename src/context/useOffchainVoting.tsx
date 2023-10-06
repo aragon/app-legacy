@@ -60,18 +60,6 @@ const useOffchainVoting = () => {
       );
 
       return proposal?.vochainProposalId || '';
-      // const proposalIds = localStorage.getItem(
-      //   OffchainPluginLocalStorageKeys.PROPOSAL_TO_ELECTION
-      // );
-      // if (proposalIds !== null) {
-      //   const parsed = JSON.parse(
-      //     proposalIds
-      //   ) as OffchainPluginLocalStorageTypes[OffchainPluginLocalStorageKeys.PROPOSAL_TO_ELECTION];
-      //   if (proposalId in parsed) {
-      //     return parsed[proposalId].electionId;
-      //   }
-      // }
-      // return '';
     },
     [daoDetails, pluginClient]
   );
