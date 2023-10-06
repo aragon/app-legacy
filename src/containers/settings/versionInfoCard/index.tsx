@@ -1,6 +1,7 @@
 import {IconLinkExternal, Link} from '@aragon/ods';
 import {
   LIVE_CONTRACTS,
+  SupportedVersion,
   SupportedNetworksArray,
 } from '@aragon/sdk-client-common';
 import React from 'react';
@@ -34,7 +35,10 @@ export const VersionInfoCard: React.FC<{
     translatedNetwork !== 'unsupported' &&
     SupportedNetworksArray.includes(translatedNetwork)
   ) {
-    OSxAddress = LIVE_CONTRACTS[translatedNetwork].daoFactoryAddress;
+    OSxAddress =
+      LIVE_CONTRACTS[
+        `${versions?.[0]}.${versions?.[1]}.${versions?.[2]}` as SupportedVersion
+      ][translatedNetwork].daoFactoryAddress;
   }
 
   // TODO: generate the links

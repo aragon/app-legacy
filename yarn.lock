@@ -67,6 +67,13 @@
     tailwindcss "^2.0.0"
     tailwindcss-fluid-type "^1.0.0"
 
+"@aragon/osx-ethers-v1.0.0@npm:@aragon/osx-ethers@1.2.1":
+  version "1.2.1"
+  resolved "https://registry.yarnpkg.com/@aragon/osx-ethers/-/osx-ethers-1.2.1.tgz#a442048137153ed5a3ca4eff3f3927b45a5134b5"
+  integrity sha512-3Fscq8C9elIktiI6OT7fR5iaAvim+ghU6IUvZF3P/phvWm9roNp/GXAROhA/Vx41NQxeqmfXokgFo6KOWt4drA==
+  dependencies:
+    ethers "^5.6.2"
+
 "@aragon/osx-ethers@1.3.0-rc0.2", "@aragon/osx-ethers@^1.3.0-rc0.2":
   version "1.3.0-rc0.2"
   resolved "https://registry.yarnpkg.com/@aragon/osx-ethers/-/osx-ethers-1.3.0-rc0.2.tgz#820f325ee8514bc6e598135bba2501f124d92d31"
@@ -74,13 +81,14 @@
   dependencies:
     ethers "^5.6.2"
 
-"@aragon/sdk-client-common@^1.5.0-rc0":
-  version "1.5.0-rc0"
-  resolved "https://registry.yarnpkg.com/@aragon/sdk-client-common/-/sdk-client-common-1.5.0-rc0.tgz#a1f5329f317b936422fdd5c2d0d93d1ee64b6d49"
-  integrity sha512-kDC7zYNNqrE5ZUiXnCwZBnv5hY40BQj6u47D+UZbvcj848gPz8ab/G+lPyTzL6heyoSgkfcgOC6e2QQQxMheDQ==
+"@aragon/sdk-client-common@^1.6.0":
+  version "1.6.0"
+  resolved "https://registry.yarnpkg.com/@aragon/sdk-client-common/-/sdk-client-common-1.6.0.tgz#02d7f65a5f83e40d3f430052824e1c16bc460e9e"
+  integrity sha512-Rb4+PM4cIXM1eBvxdnNcAtpQMKlwATpVsebJT0ODKVqmVy3gR8i8aiKZJWDxx0dxOn2S7FlocTdOOXyXAVCA0Q==
   dependencies:
     "@aragon/osx-ethers" "^1.3.0-rc0.2"
-    "@aragon/sdk-common" "^1.5.0"
+    "@aragon/osx-ethers-v1.0.0" "npm:@aragon/osx-ethers@1.2.1"
+    "@aragon/sdk-common" "^1.7.0"
     "@aragon/sdk-ipfs" "^1.1.0"
     "@ethersproject/abstract-signer" "^5.5.0"
     "@ethersproject/bignumber" "^5.6.0"
@@ -91,14 +99,14 @@
     graphql "^16.5.0"
     graphql-request "^4.3.0"
 
-"@aragon/sdk-client@^1.13.1-rc1":
-  version "1.13.1-rc1"
-  resolved "https://registry.yarnpkg.com/@aragon/sdk-client/-/sdk-client-1.13.1-rc1.tgz#4d32da9a642997873142c31d9daadf0b70ee21b0"
-  integrity sha512-4Isv/K9zcyfyEAxrG1wdzQuik4VjRDzGxtmMRQjsljpfR/BFF7eBWfLFBgXKscLnipnV7gs5CdnJLXhklNZBnQ==
+"@aragon/sdk-client@^1.14.0":
+  version "1.14.0"
+  resolved "https://registry.yarnpkg.com/@aragon/sdk-client/-/sdk-client-1.14.0.tgz#994052955d4bad5ad51d637e12634c67127ca8be"
+  integrity sha512-6nEPNoCO4SuIbj2CoM3dRaZw6yaBLH3yUUubCc3ynWYPdHMK6aeUhu5Q+GOLM5g6x+utPtGx5eUv9ydsqGS0MQ==
   dependencies:
     "@aragon/osx-ethers" "1.3.0-rc0.2"
-    "@aragon/sdk-client-common" "^1.5.0-rc0"
-    "@aragon/sdk-common" "^1.6.0"
+    "@aragon/sdk-client-common" "^1.6.0"
+    "@aragon/sdk-common" "^1.7.0"
     "@aragon/sdk-ipfs" "^1.1.0"
     "@ethersproject/abstract-signer" "^5.5.0"
     "@ethersproject/bignumber" "^5.6.0"
@@ -111,15 +119,10 @@
     graphql "^16.5.0"
     graphql-request "^4.3.0"
 
-"@aragon/sdk-common@^1.5.0":
-  version "1.5.0"
-  resolved "https://registry.yarnpkg.com/@aragon/sdk-common/-/sdk-common-1.5.0.tgz#321d5861a18d3d50b79aebb888ab77c830022be9"
-  integrity sha512-3dV1ATZamBOaDhEPlXM1thIl6BzjerqArFjd0MvajEyjbVBkFFAVM5PZRSYs243o+91iSNdVPGFml+TSonCZTg==
-
-"@aragon/sdk-common@^1.6.0":
-  version "1.6.0"
-  resolved "https://registry.yarnpkg.com/@aragon/sdk-common/-/sdk-common-1.6.0.tgz#ffa0c8815378fe489ded5b7887fb3e7c80a5d963"
-  integrity sha512-RnXrqBXb6Mf79lgCDNQTgbwqslIo9xE3Kmzz+L3t8XAMPbrFqpgL/KhZQUUYClG6n7w6ar3K5lyqWk+GaXzjJQ==
+"@aragon/sdk-common@^1.7.0":
+  version "1.7.0"
+  resolved "https://registry.yarnpkg.com/@aragon/sdk-common/-/sdk-common-1.7.0.tgz#7e71617aec584ff241ff4c7a0d0e73303f169539"
+  integrity sha512-Op5c52Qn6MdNdPu+ZJDj9ai1Leur+VpVebaGE3HaZMPYE34IPXblmM10YU05H9Znf5g6jvIDLRB8xQmUOTFscw==
 
 "@aragon/sdk-ipfs@^1.1.0":
   version "1.1.0"
