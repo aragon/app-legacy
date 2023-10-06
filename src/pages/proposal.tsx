@@ -86,6 +86,7 @@ import {OffchainVotingTerminal} from '../containers/votingTerminal/offchainVotin
 import {GaslessVotingProposal} from '@vocdoni/offchain-voting';
 import {useOffchainHasAlreadyVote} from '../context/useOffchainVoting';
 import {useDaoToken} from '../hooks/useDaoToken';
+import {CommitteeVotingTerminal} from '../containers/votingTerminal/committeeVotingTerminal';
 
 const PENDING_PROPOSAL_STATUS_INTERVAL = 1000 * 10;
 const PROPOSAL_STATUS_INTERVAL = 1000 * 60;
@@ -762,7 +763,7 @@ export const Proposal: React.FC = () => {
             )}
 
           {votingSettings && isGaseless ? (
-            <OffchainVotingTerminal
+            <CommitteeVotingTerminal
               votingTerminal={<VTerminal />}
               proposal={proposal}
               votingStatusLabel={voteStatus}

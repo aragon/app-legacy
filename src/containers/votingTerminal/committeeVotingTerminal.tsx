@@ -15,7 +15,7 @@ import {useWallet} from '../../hooks/useWallet';
 import {useProposalTransactionContext} from '../../context/proposalTransaction';
 import {VoteValues} from '@aragon/sdk-client';
 
-export const OffchainVotingTerminal = ({
+export const CommitteeVotingTerminal = ({
   votingStatusLabel,
   votingTerminal,
   proposal,
@@ -98,6 +98,7 @@ export const OffchainVotingTerminal = ({
       const nextVoteWillApprove =
         proposal.approvers.length + 1 === proposal.settings.minTallyApprovals;
       return getCommitteVoteButtonLabel(
+        proposal.executed,
         canVote,
         voted,
         isApproved,
@@ -111,7 +112,8 @@ export const OffchainVotingTerminal = ({
   // vote button state and handler
   const {voteNowDisabled, onClick} = useMemo(() => {
     // disable voting on non-active proposals
-    if (proposal?.status !== 'Active') return {voteNowDisabled: true};
+    if (proposal?.executed) return {voteNowDisabled: true};
+    if (proposal?.status !== 'Suceeded') return {voteNowDisabled: true};
 
     // disable approval on multisig when wallet has voted
     if (!canVote || voted) return {voteNowDisabled: true};
@@ -243,6 +245,7 @@ export const OffchainVotingTerminal = ({
 
 // todo(kon): move this somewhere
 function getCommitteVoteButtonLabel(
+  executed: boolean,
   canVote: boolean,
   voted: boolean,
   approved: boolean,
@@ -252,11 +255,15 @@ function getCommitteVoteButtonLabel(
 ) {
   let label = '';
 
-  label = approved
-    ? t('offchainVotingTerminal.btnLabel.approved')
-    : t('offchainVotingTerminal.btnLabel.concluded');
+  // label = approved
+  //   ? t('offchainVotingTerminal.btnLabel.approved')
+  //   : t('offchainVotingTerminal.btnLabel.concluded');
 
-  if (isApprovalPeriod && nextVoteWillApprove && canVote) {
+  if (executed) {
+    label = t('offchainVotingTerminal.btnLabel.executed');
+  } else if (approved) {
+    label = t('offchainVotingTerminal.btnLabel.execute');
+  } else if (isApprovalPeriod && nextVoteWillApprove && canVote) {
     label = t('offchainVotingTerminal.btnLabel.approve');
   } else if (isApprovalPeriod && canVote) {
     label = t('offchainVotingTerminal.btnLabel.voteAndExecute');

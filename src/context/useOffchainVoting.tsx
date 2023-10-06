@@ -167,7 +167,7 @@ export const useOffchainCommitteVotes = (
 
   const isApproved = useMemo(() => {
     if (!client || !proposal) return false;
-    return proposal.settings.minTallyApprovals >= proposal.approvers.length;
+    return proposal.settings.minTallyApprovals <= proposal.approvers.length;
   }, [client, proposal]);
 
   useEffect(() => {
@@ -175,11 +175,11 @@ export const useOffchainCommitteVotes = (
       const canVote = await client?.methods.isCommitteeMember(
         pluginAddress,
         address!
-      );
-      setCanVote(canVote || false);
+      ) || false;
+      setCanVote(canVote);
     };
     if (address && client) {
-      voted ? setCanVote(true) : doCheck();
+      voted ? setCanVote(false) : doCheck();
     }
   }, [address, client, pluginAddress, voted]);
 

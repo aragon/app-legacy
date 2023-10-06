@@ -1040,7 +1040,9 @@
       "concluded": "Concluded",
       "approve": "Approve",
       "voteAndExecute": "Approve and execute",
-      "voted": "Voted"
+      "voted": "Voted",
+      "execute":  "Execute",
+      "executed":  "Executed"
     }
   },
   "explore": {
