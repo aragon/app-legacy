@@ -191,7 +191,30 @@ export function proposal2CardProps(
     },
   };
 
-  if (isErc20VotingProposal(proposal)) {
+  if (isGaslessProposal(proposal)) {
+    const specificProps = {
+      voteTitle: t('governance.proposals.voteTitle'),
+      stateLabel: PROPOSAL_STATE_LABELS,
+
+      alertMessage: translateProposalDate(
+        proposal.status,
+        proposal.startDate,
+        proposal.endDate
+      ),
+      title: proposal.vochain.metadata.title.default,
+      description: proposal.vochain.metadata.questions[0].title.default,
+      onClick: () => {
+        navigate(
+          generatePath(Proposal, {
+            network,
+            dao: daoAddressOrEns,
+            id: pluginAddress + '_' + proposal.id,
+          })
+        );
+      },
+    };
+    return {...props, ...specificProps};
+  }   else if (isErc20VotingProposal(proposal)) {
     const specificProps = {
       voteTitle: t('governance.proposals.voteTitle'),
       stateLabel: PROPOSAL_STATE_LABELS,
@@ -299,29 +322,6 @@ export function proposal2CardProps(
     } else {
       return {...props, ...specificProps};
     }
-  } else if (isGaslessProposal(proposal)) {
-    const specificProps = {
-      voteTitle: t('governance.proposals.voteTitle'),
-      stateLabel: PROPOSAL_STATE_LABELS,
-
-      alertMessage: translateProposalDate(
-        proposal.status,
-        proposal.startDate,
-        proposal.endDate
-      ),
-      title: proposal.vochain.metadata.title.default,
-      description: proposal.vochain.metadata.questions[0].title.default,
-      onClick: () => {
-        navigate(
-          generatePath(Proposal, {
-            network,
-            dao: daoAddressOrEns,
-            id: pluginAddress + '_' + proposal.id,
-          })
-        );
-      },
-    };
-    return {...props, ...specificProps};
   } else {
     throw Error('invalid proposal type');
   }

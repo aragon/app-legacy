@@ -450,7 +450,83 @@ export function getLiveProposalTerminalProps(
   let supportThreshold;
   let strategy;
 
-  if (isErc20VotingProposal(proposal)) {
+  if (
+    isGaslessProposal(proposal) &&
+    isGaslessVotingSettings(votingSettings)
+  ) {
+    // token
+    token = {
+      name: proposal.token.name,
+      symbol: proposal.token.symbol,
+    };
+
+    // voters
+    voters = []
+    // getErc20Voters(
+    //   proposal.votes,
+    //   proposal.totalVotingWeight,
+    //   proposal.token.decimals,
+    //   proposal.token.symbol
+    // ).sort((a, b) => {
+    //   const x = Number(a.votingPower?.slice(0, a.votingPower.length - 1));
+    //   const y = Number(b.votingPower?.slice(0, b.votingPower.length - 1));
+
+    //   return x > y ? -1 : 1;
+    // });
+
+    // results
+    results = proposal.vochain.tally.parsed
+    // calculate participation
+    const {currentPart, currentPercentage, minPart, missingPart, totalWeight} =
+      getErc20VotingParticipation(
+        proposal.settings.minParticipation,
+        proposal.totalUsedWeight,
+        proposal.totalVotingWeight,
+        proposal.token.decimals
+      );
+
+    minParticipation = t('votingTerminal.participationErc20', {
+      participation: minPart,
+      totalWeight,
+      tokenSymbol: token.symbol,
+      percentage: Math.round(proposal.settings.minParticipation * 100),
+    });
+
+    currentParticipation = t('votingTerminal.participationErc20', {
+      participation: currentPart,
+      totalWeight,
+      tokenSymbol: token.symbol,
+      percentage: currentPercentage,
+    });
+
+    missingParticipation = missingPart;
+
+    // support threshold
+    supportThreshold = Math.round(proposal.settings.supportThreshold * 100);
+
+    // strategy
+    strategy = t('votingTerminal.tokenVoting');
+    return {
+      token,
+      voters,
+      results,
+      strategy,
+      supportThreshold,
+      minParticipation,
+      currentParticipation,
+      missingParticipation,
+      voteOptions: t('votingTerminal.yes+no'),
+      startDate: `${format(
+        proposal.startDate,
+        KNOWN_FORMATS.proposals
+      )}  ${getFormattedUtcOffset()}`,
+
+      endDate: `${format(
+        proposal.endDate,
+        KNOWN_FORMATS.proposals
+      )}  ${getFormattedUtcOffset()}`,
+    };
+  }  else if (isErc20VotingProposal(proposal)) {
     // token
     token = {
       name: proposal.token.name,
@@ -567,83 +643,7 @@ export function getLiveProposalTerminalProps(
         KNOWN_FORMATS.proposals
       )}  ${getFormattedUtcOffset()}`,
     };
-  } else if (
-    isGaslessProposal(proposal) &&
-    isGaslessVotingSettings(votingSettings)
-  ) {
-    // token
-    token = {
-      name: proposal.token.name,
-      symbol: proposal.token.symbol,
-    };
-
-    // voters
-    voters = []
-    // getErc20Voters(
-    //   proposal.votes,
-    //   proposal.totalVotingWeight,
-    //   proposal.token.decimals,
-    //   proposal.token.symbol
-    // ).sort((a, b) => {
-    //   const x = Number(a.votingPower?.slice(0, a.votingPower.length - 1));
-    //   const y = Number(b.votingPower?.slice(0, b.votingPower.length - 1));
-
-    //   return x > y ? -1 : 1;
-    // });
-
-    // results
-    results = proposal.vochain.tally.parsed
-    // calculate participation
-    const {currentPart, currentPercentage, minPart, missingPart, totalWeight} =
-      getErc20VotingParticipation(
-        proposal.settings.minParticipation,
-        proposal.totalUsedWeight,
-        proposal.totalVotingWeight,
-        proposal.token.decimals
-      );
-
-    minParticipation = t('votingTerminal.participationErc20', {
-      participation: minPart,
-      totalWeight,
-      tokenSymbol: token.symbol,
-      percentage: Math.round(proposal.settings.minParticipation * 100),
-    });
-
-    currentParticipation = t('votingTerminal.participationErc20', {
-      participation: currentPart,
-      totalWeight,
-      tokenSymbol: token.symbol,
-      percentage: currentPercentage,
-    });
-
-    missingParticipation = missingPart;
-
-    // support threshold
-    supportThreshold = Math.round(proposal.settings.supportThreshold * 100);
-
-    // strategy
-    strategy = t('votingTerminal.tokenVoting');
-    return {
-      token,
-      voters,
-      results,
-      strategy,
-      supportThreshold,
-      minParticipation,
-      currentParticipation,
-      missingParticipation,
-      voteOptions: t('votingTerminal.yes+no'),
-      startDate: `${format(
-        proposal.startDate,
-        KNOWN_FORMATS.proposals
-      )}  ${getFormattedUtcOffset()}`,
-
-      endDate: `${format(
-        proposal.endDate,
-        KNOWN_FORMATS.proposals
-      )}  ${getFormattedUtcOffset()}`,
-    };
-  };
+  }
 }
 
 export type CacheProposalParams = {
