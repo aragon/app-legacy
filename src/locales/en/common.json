@@ -1233,15 +1233,15 @@
       "label": "Delegation",
       "optionsLabel": "What do you want to do with your delegation?",
       "checkbox": {
-        "delegateTo": "Delegate to somebody",
+        "delegateTo": "Delegate to someone else",
         "claim": "Claim your voting power"
       },
       "codeInputLabel": "Your delegation",
-      "codeInputDesc": "Enter a wallet address to delegate your votes.",
+      "codeInputDesc": "Enter a wallet address to delegate your votes to.",
       "codeInputPlaceholder": "ENS or 0x ...",
       "alertCard": {
         "title": "How does delegation work?",
-        "desc": "Delegating increases the voting power of the address you indicate above by your current or future {{tokenSymbol}} balance. If you are delegating to somebody else, you will be unable to vote until you claim your voting power."
+        "desc": "Delegating increases the voting power of this address by your current or future {{tokenSymbol}} balance. If you are delegating to someone else, you will be unable to vote until you claim your voting power."
       },
       "ctaLabelDelegating": "Delegating …",
       "ctaLabelReclaiming": "Claiming …",
@@ -1255,7 +1255,14 @@
       "alertCriticalDelegate": "Delegating went wrong. Try again.",
       "alertCriticalReclaim": "Claiming went wrong. Try again.",
       "ctaLabelRetry": "Retry",
-      "successReclaimTitle": "Claimed your voting power successfully"
+      "successReclaimTitle": "Claimed your voting power successfully",
+      "NoVotingPower": {
+        "desc": "You were delegating your voting power of {{balance}} {{tokenSymbol}} when this proposal was created.",
+        "title": "You have no voting power",
+        "ctaLabel": "Ok, understood",
+        "Link": "Learn more",
+        "LinkURL": "https://aragon.org/how-to/delegate-your-voting-power"
+      }
     },
     "delegationInactive": {
       "title": "You have no voting power",
