@@ -46,10 +46,7 @@ export const CommitteeVotingTerminal = ({
     proposal
   );
 
-  const {
-    handleSubmitVote,
-    // voteSubmitted,
-  } = useProposalTransactionContext();
+  const {handleSubmitVote} = useProposalTransactionContext();
 
   const mappedProps = useMemo(() => {
     if (!proposal) return;
@@ -147,7 +144,7 @@ export const CommitteeVotingTerminal = ({
       return {
         voteNowDisabled: false,
         onClick: () => {
-          handleSubmitVote(VoteValues.YES, undefined, true);
+          handleSubmitVote(VoteValues.YES);
         },
       };
     } else return {voteNowDisabled: true};

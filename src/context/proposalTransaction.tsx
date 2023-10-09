@@ -30,6 +30,7 @@ import {
 } from 'hooks/usePluginClient';
 import {
   GaselessPluginName,
+  isOffchainVotingClient,
   PluginTypes,
   usePluginClient,
 } from 'hooks/usePluginClient';
@@ -56,12 +57,10 @@ type SubmitVoteParams = {
 
 type ProposalTransactionContextType = {
   /** handles voting on proposal */
-  handlePrepareVote: (
-    params: SubmitVoteParams,
-    isCommitteeVote?: boolean // todo(kon): isCommitteeVote is a quick hack tot test the approve. Check how should be done
-  ) => void;
+  handlePrepareVote: (params: SubmitVoteParams) => void;
   handlePrepareApproval: (params: ApproveMultisigProposalParams) => void;
   handlePrepareExecution: () => void;
+  handleGaslessVoting: (params: SubmitVoteParams) => void;
   isLoading: boolean;
   voteOrApprovalSubmitted: boolean;
   executionSubmitted: boolean;
@@ -93,12 +92,11 @@ const ProposalTransactionProvider: React.FC<Props> = ({children}) => {
 
   // state values
   const [showVoteModal, setShowVoteModal] = useState(false);
+  const [showGaslessModal, setShowGaslessModal] = useState(false);
   const [showExecutionModal, setShowExecutionModal] = useState(false);
   const [voteTokenAddress, setVoteTokenAddress] = useState<string>();
 
-  const [voteParams, setVoteParams] = useState<
-    VoteProposalParams  & {isCommitteeVote: boolean | undefined}
-  >();
+  const [voteParams, setVoteParams] = useState<VoteProposalParams>();
   const [approvalParams, setApprovalParams] =
     useState<ApproveMultisigProposalParams>();
 
@@ -155,20 +153,28 @@ const ProposalTransactionProvider: React.FC<Props> = ({children}) => {
 
   const handlePrepareVote = useCallback(
     // todo(kon): isCommitteeVote is a quick hack tot test the approve. Check how should be done
-    (params: SubmitVoteParams, isCommitteeVote = false) => {
+    (params: SubmitVoteParams) => {
       setReplacingVote(!!params.replacement);
       setVoteTokenAddress(params.voteTokenAddress);
 
       setVoteParams({proposalId, vote: params.vote, isCommitteeVote});
       setShowVoteModal(true);
-      // todo(kon): check how to avoid conflicting between offchain onchain voting states
-      setVoteOrApprovalProcessState(
-        offchainVoting && !isCommitteeVote
-          ? undefined
-          : TransactionState.WAITING
-      );
+      setVoteOrApprovalProcessState(TransactionState.WAITING);
     },
     [proposalId]
+  );
+
+  const handleGaslessVoting = useCallback(
+    (vote: VoteValues, tokenAddress?: string) => {
+      setVoteParams({
+        proposalId: new ProposalId(urlId!).export(),
+        vote,
+      });
+
+      setTokenAddress(tokenAddress);
+      setShowGaslessModal(true);
+    },
+    [urlId]
   );
 
   const handlePrepareExecution = useCallback(() => {
@@ -180,7 +186,7 @@ const ProposalTransactionProvider: React.FC<Props> = ({children}) => {
    *                  Estimations                  *
    *************************************************/
   const estimateVoteOrApprovalFees = useCallback(async () => {
-    if (voteParams && voteParams.isCommitteeVote) {
+    if (isOffchainVotingClient(pluginClient!)) {
       const {proposal} = new ProposalId(urlId!).stripPlgnAdrFromProposalId();
       return (pluginClient as OffchainVotingClient)?.estimation.setTally(
         pluginAddress,
@@ -373,7 +379,6 @@ const ProposalTransactionProvider: React.FC<Props> = ({children}) => {
     }
   }, [executionProcessState, stopPolling]);
 
-
   /*************************************************
    *              Submit Transactions              *
    *************************************************/
@@ -411,7 +416,7 @@ const ProposalTransactionProvider: React.FC<Props> = ({children}) => {
       if (!isMultisigPluginClient) return;
 
       let approveSteps;
-      if (params.isCommitteeVote) {
+      if (isOffchainVotingClient(pluginClient!)) {
         // todo(kon): isCommitteeVote is a quick hack tot test the approve. Check how should be done
         const {proposal: proposalId} = new ProposalId(
           urlId!
@@ -552,6 +557,7 @@ const ProposalTransactionProvider: React.FC<Props> = ({children}) => {
       handlePrepareVote,
       handlePrepareApproval,
       handlePrepareExecution,
+      handleGaslessVoting,
       isLoading,
       voteOrApprovalSubmitted,
       executionSubmitted,
@@ -562,6 +568,7 @@ const ProposalTransactionProvider: React.FC<Props> = ({children}) => {
       handlePrepareVote,
       handlePrepareApproval,
       handlePrepareExecution,
+      handleGaslessVoting,
       isLoading,
       voteOrApprovalSubmitted,
       executionSubmitted,
@@ -620,28 +627,25 @@ const ProposalTransactionProvider: React.FC<Props> = ({children}) => {
   return (
     <ProposalTransactionContext.Provider value={value}>
       {children}
-      {offchainVoting && !voteParams?.isCommitteeVote ? ( // todo(kon): isCommitteeVote is a quick hack tot test the approve. Check how should be done
-        <OffchainVotingModal
-          vote={voteParams}
-          setShowVoteModal={setShowVoteModal}
-          showVoteModal={showVoteModal}
-        />
-      ) : (
-        <PublishModal
-          title={title}
-          buttonStateLabels={labels}
-          state={state}
-          isOpen={isOpen}
-          onClose={onClose}
-          callback={callback}
-          closeOnDrag={closeOnDrag}
-          maxFee={maxFee}
-          averageFee={averageFee}
-          tokenPrice={tokenPrice}
-          gasEstimationError={gasEstimationError}
-          disabledCallback={shouldDisableModalCta}
-        />
-      )}
+      <OffchainVotingModal
+        vote={voteParams}
+        setShowVoteModal={setShowVoteModal}
+        showVoteModal={showVoteModal}
+      />
+      <PublishModal
+        title={title}
+        buttonStateLabels={labels}
+        state={state}
+        isOpen={isOpen}
+        onClose={onClose}
+        callback={callback}
+        closeOnDrag={closeOnDrag}
+        maxFee={maxFee}
+        averageFee={averageFee}
+        tokenPrice={tokenPrice}
+        gasEstimationError={gasEstimationError}
+        disabledCallback={shouldDisableModalCta}
+      />
     </ProposalTransactionContext.Provider>
   );
 };

@@ -131,6 +131,7 @@ export const Proposal: React.FC = () => {
     handlePrepareVote,
     handlePrepareApproval,
     handlePrepareExecution,
+    handleGaslessVoting,
     isLoading: paramsAreLoading,
     voteOrApprovalSubmitted,
     executionFailed,
@@ -679,7 +680,12 @@ export const Proposal: React.FC = () => {
       votingInProcess={votingInProcess}
       executableWithNextApproval={executableWithNextApproval}
       onVoteSubmitClicked={vote =>
-        handlePrepareVote({
+        isGaslessProposal(proposal)
+          ? handleGaslessVoting(
+            vote,
+              (proposal as GaslessVotingProposal).token?.address
+          )
+        : handlePrepareVote({
           vote,
           replacement: voted || voteOrApprovalSubmitted,
           voteTokenAddress: (proposal as TokenVotingProposal).token
