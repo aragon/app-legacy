@@ -54,30 +54,40 @@ const SelectWCApp: React.FC<Props> = props => {
       />
       <Content>
         <div className="space-y-1">
-          {AllowListDApps.map(dApp => (
-            <ListItemAction
-              key={dApp.name}
-              title={dApp.name}
-              iconLeft={parseWCIconUrl(dApp.url, dApp.icons[0])}
-              bgWhite
-              iconRight={<IconChevronRight />}
-              truncateText
-              // subtitle={dApp.description}
-              onClick={() => {
-                const filteredSession = activeSessions.filter(session =>
-                  session.peer.metadata.name
-                    .toLowerCase()
-                    .includes(dApp.name.toLowerCase())
-                );
-
-                if (filteredSession[0]) {
-                  onSelectExistingdApp(filteredSession[0]);
-                } else {
-                  onConnectNewdApp(dApp);
+          {AllowListDApps.map(dApp => {
+            const filteredSession = activeSessions.filter(session =>
+              session.peer.metadata.name
+                .toLowerCase()
+                .includes(dApp.name.toLowerCase())
+            );
+            return (
+              <ListItemAction
+                key={dApp.name}
+                title={dApp.name}
+                iconLeft={parseWCIconUrl(dApp.url, dApp.icons[0])}
+                bgWhite
+                iconRight={
+                  <div className="flex space-x-2">
+                    {filteredSession[0] && (
+                      <div className="flex items-center space-x-1 text-sm font-semibold text-success-700">
+                        <div className="h-1 w-1 rounded-full bg-success-700" />
+                        <p>Connected</p>
+                      </div>
+                    )}
+                    <IconChevronRight />
+                  </div>
                 }
-              }}
-            />
-          ))}
+                truncateText
+                onClick={() => {
+                  if (filteredSession[0]) {
+                    onSelectExistingdApp(filteredSession[0]);
+                  } else {
+                    onConnectNewdApp(dApp);
+                  }
+                }}
+              />
+            );
+          })}
         </div>
         <div className="mt-2 flex justify-center">
           <AlertInline label="More dApps coming soon!" />
