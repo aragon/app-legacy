@@ -216,7 +216,9 @@ const InputForm: React.FC<InputFormProps> = ({
 };
 
 const classifyInputType = (inputName: string) => {
-  if (inputName.includes('int') && inputName.includes('[]') === false) {
+  if (inputName.includes('uint') && inputName.includes('[]') === false) {
+    return 'uint';
+  } else if (inputName.includes('int') && inputName.includes('[]') === false) {
     return 'int';
   } else return inputName;
 };
@@ -305,6 +307,54 @@ export const ComponentForType: React.FC<ComponentForTypeProps> = ({
         />
       );
 
+    case 'bool':
+      return (
+        <Controller
+          defaultValue=""
+          name={formName}
+          render={({field: {name, value, onBlur, onChange}}) => (
+            <TextInput
+              name={name}
+              onBlur={onBlur}
+              onChange={onChange}
+              placeholder={`${input.name} (${input.type})`}
+              mode={
+                !isValid && value !== 'true' && value !== 'false'
+                  ? 'critical'
+                  : 'default'
+              }
+              value={value}
+              disabled={disabled}
+            />
+          )}
+        />
+      );
+
+    case 'uint':
+      return (
+        <Controller
+          defaultValue=""
+          name={formName}
+          render={({field: {name, value, onBlur, onChange}}) => (
+            <NumberInput
+              name={name}
+              onBlur={onBlur}
+              onChange={onChange}
+              placeholder="0"
+              disabled={disabled}
+              mode={
+                !isValid &&
+                (!value || value < 0) &&
+                input.name !== getDefaultPayableAmountInputName(t)
+                  ? 'critical'
+                  : 'default'
+              }
+              value={value}
+            />
+          )}
+        />
+      );
+
     case 'int':
       return (
         <Controller
@@ -316,7 +366,6 @@ export const ComponentForType: React.FC<ComponentForTypeProps> = ({
               onBlur={onBlur}
               onChange={onChange}
               placeholder="0"
-              includeDecimal
               disabled={disabled}
               mode={
                 !isValid &&
@@ -441,12 +490,12 @@ export function FormlessComponentForType({
         />
       );
 
+    case 'uint':
     case 'int':
       return (
         <NumberInput
           name={input.name}
           placeholder="0"
-          includeDecimal
           disabled={disabled}
           value={input.value as string}
         />
