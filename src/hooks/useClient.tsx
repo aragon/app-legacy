@@ -1,6 +1,7 @@
 import {Client, Context as SdkContext, ContextParams} from '@aragon/sdk-client';
 import {
   LIVE_CONTRACTS,
+  SupportedVersion,
   SupportedNetworksArray,
 } from '@aragon/sdk-client-common';
 
@@ -63,7 +64,9 @@ export const UseClientProvider: React.FC = ({children}) => {
     ];
 
     const contextParams: ContextParams = {
-      daoFactoryAddress: LIVE_CONTRACTS[translatedNetwork].daoFactoryAddress,
+      daoFactoryAddress:
+        LIVE_CONTRACTS[SupportedVersion.LATEST][translatedNetwork]
+          .daoFactoryAddress,
       network: translatedNetwork,
       signer: signer ?? undefined,
       web3Providers: CHAIN_METADATA[network].rpc[0],
