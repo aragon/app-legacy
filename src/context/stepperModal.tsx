@@ -104,39 +104,49 @@ const StepperModal = <X extends GenericKeyEnum>({
       subtitle={subtitle}
     >
       {globalState === StepStatus.WAITING && (
-        <GasCostTableContainer>
-          <GasCostEthContainer>
-            <NoShrinkVStack>
-              <Label>{t('TransactionModal.estimatedFees')}</Label>
-              <p className="text-sm text-ui-500">
-                {t('TransactionModal.maxFee')}
-              </p>
-            </NoShrinkVStack>
-            <VStack>
-              <StrongText>
-                <div className="truncate">{formattedAverage}</div>
-                <div>{`${nativeCurrency.symbol}`}</div>
-              </StrongText>
-              <div className="flex justify-end space-x-0.5 text-sm text-right text-ui-500">
-                <div className="truncate">{formattedMax}</div>
-                <div>{`${nativeCurrency.symbol}`}</div>
-              </div>
-            </VStack>
-          </GasCostEthContainer>
+        <>
+          <GasCostTableContainer>
+            <GasCostEthContainer>
+              <NoShrinkVStack>
+                <Label>{t('TransactionModal.estimatedFees')}</Label>
+                <p className="text-sm text-ui-500">
+                  {t('TransactionModal.maxFee')}
+                </p>
+              </NoShrinkVStack>
+              <VStack>
+                <StrongText>
+                  <div className="truncate">{formattedAverage}</div>
+                  <div>{`${nativeCurrency.symbol}`}</div>
+                </StrongText>
+                <div className="flex justify-end space-x-0.5 text-sm text-right text-ui-500">
+                  <div className="truncate">{formattedMax}</div>
+                  <div>{`${nativeCurrency.symbol}`}</div>
+                </div>
+              </VStack>
+            </GasCostEthContainer>
 
-          <GasTotalCostEthContainer>
-            <NoShrinkVStack>
-              <Label>{t('TransactionModal.totalCost')}</Label>
-            </NoShrinkVStack>
-            <VStack>
-              <StrongText>
-                <div className="truncate">{formattedAverage}</div>
-                <div>{`${nativeCurrency.symbol}`}</div>
-              </StrongText>
-              <p className="text-sm text-right text-ui-500">{totalCost}</p>
-            </VStack>
-          </GasTotalCostEthContainer>
-        </GasCostTableContainer>
+            <GasTotalCostEthContainer>
+              <NoShrinkVStack>
+                <Label>{t('TransactionModal.totalCost')}</Label>
+              </NoShrinkVStack>
+              <VStack>
+                <StrongText>
+                  <div className="truncate">{formattedAverage}</div>
+                  <div>{`${nativeCurrency.symbol}`}</div>
+                </StrongText>
+                <p className="text-sm text-right text-ui-500">{totalCost}</p>
+              </VStack>
+            </GasTotalCostEthContainer>
+          </GasCostTableContainer>
+          {gasEstimationError && (
+            <AlertInlineContainer>
+              <AlertInline
+                label={t('TransactionModal.gasEstimationErrorLabel') as string}
+                mode="warning"
+              />
+            </AlertInlineContainer>
+          )}
+        </>
       )}
       {globalState !== StepStatus.WAITING && (
         <StepsContainer>
@@ -149,32 +159,27 @@ const StepperModal = <X extends GenericKeyEnum>({
           )}
         </StepsContainer>
       )}
-      {gasEstimationError && (
-        <AlertInlineContainer>
-          <AlertInline
-            label={t('TransactionModal.gasEstimationErrorLabel') as string}
-            mode="warning"
-          />
-        </AlertInlineContainer>
-      )}
       {buttonLabels[globalState] !== undefined && (
-        <ButtonContainer>
-          <ButtonText
-            className="mt-3 w-full"
-            label={buttonLabels[globalState]!}
-            iconLeft={
-              globalState === StepStatus.ERROR ? <IconReload /> : undefined
-            }
-            iconRight={
-              globalState === StepStatus.WAITING ||
-              globalState === StepStatus.SUCCESS ? (
-                <IconChevronRight />
-              ) : undefined
-            }
-            disabled={gasEstimationError !== undefined}
-            onClick={callback}
-          />
-        </ButtonContainer>
+        <>
+          <ButtonContainer>
+            <ButtonText
+              className="mt-3 w-full"
+              label={buttonLabels[globalState]!}
+              iconLeft={
+                globalState === StepStatus.ERROR ? <IconReload /> : undefined
+              }
+              iconRight={
+                globalState === StepStatus.WAITING ||
+                globalState === StepStatus.SUCCESS ? (
+                  <IconChevronRight />
+                ) : undefined
+              }
+              // todo(kon): implement disabled button when is loading gas fees but not when gasEstimationError??
+              // disabled={gasEstimationError !== undefined}
+              onClick={callback}
+            />
+          </ButtonContainer>
+        </>
       )}
     </ModalBottomSheetSwitcher>
   );

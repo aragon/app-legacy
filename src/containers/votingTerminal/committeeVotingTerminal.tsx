@@ -1,7 +1,7 @@
 import {TerminalTabs, VotingTerminal, VotingTerminalProps} from './index';
 import React, {ReactNode, useEffect, useMemo, useState} from 'react';
 import {TFunction, useTranslation} from 'react-i18next';
-import {format, formatDistanceToNow, Locale} from 'date-fns';
+import {format, formatDistanceToNow} from 'date-fns';
 import {getFormattedUtcOffset, KNOWN_FORMATS} from '../../utils/date';
 import {VoterType} from '@aragon/ods';
 import styled from 'styled-components';
@@ -112,10 +112,12 @@ export const CommitteeVotingTerminal = ({
   // vote button state and handler
   const {voteNowDisabled, onClick} = useMemo(() => {
     // disable voting on non-active proposals
-    if (proposal?.executed) return {voteNowDisabled: true};
-    if (proposal?.status !== 'Suceeded') return {voteNowDisabled: true};
+    // if (proposal?.executed || proposal?.status === ProposalStatus.DEFEATED) {
+    if (!isApprovalPeriod) {
+      return {voteNowDisabled: true};
+    }
 
-    // disable approval on multisig when wallet has voted
+    // disable approval on when wallet has voted or can't vote
     if (!canVote || voted) return {voteNowDisabled: true};
 
     // not logged in
@@ -153,8 +155,8 @@ export const CommitteeVotingTerminal = ({
     address,
     canVote,
     handleSubmitVote,
+    isApprovalPeriod,
     isOnWrongNetwork,
-    proposal?.status,
     statusRef,
     voted,
   ]);
@@ -253,27 +255,21 @@ function getCommitteVoteButtonLabel(
   nextVoteWillApprove: boolean,
   t: TFunction
 ) {
-  let label = '';
-
-  // label = approved
-  //   ? t('offchainVotingTerminal.btnLabel.approved')
-  //   : t('offchainVotingTerminal.btnLabel.concluded');
-
   if (executed) {
-    label = t('offchainVotingTerminal.btnLabel.executed');
+    return t('offchainVotingTerminal.btnLabel.executed');
   } else if (approved) {
-    label = t('offchainVotingTerminal.btnLabel.execute');
+    return t('offchainVotingTerminal.btnLabel.approved');
   } else if (isApprovalPeriod && nextVoteWillApprove && canVote) {
-    label = t('offchainVotingTerminal.btnLabel.approve');
+    return t('offchainVotingTerminal.btnLabel.voteAndExecute');
   } else if (isApprovalPeriod && canVote) {
-    label = t('offchainVotingTerminal.btnLabel.voteAndExecute');
+    return t('offchainVotingTerminal.btnLabel.approve');
   } else if (isApprovalPeriod && voted) {
-    label = t('offchainVotingTerminal.btnLabel.voted');
+    return t('offchainVotingTerminal.btnLabel.voted');
   } else if (!canVote) {
-    label = t('offchainVotingTerminal.btnLabel.approve');
+    return t('offchainVotingTerminal.btnLabel.approve');
   }
 
-  return label;
+  return t('offchainVotingTerminal.btnLabel.concluded');
 }
 
 const PROPOSAL_STATUS_INTERVAL = 1000 * 60;

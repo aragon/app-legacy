@@ -157,6 +157,9 @@ export const useOffchainCommitteVotes = (
   pluginAddress: string,
   proposal: GaslessVotingProposal
 ) => {
+  // todo(kon): check from proposal the canBeApproved value. Is true if the votes are majority of yes.
+  // Also we can use SECCEDED/DEFEATED status to know that
+
   const [canVote, setCanVote] = useState(false);
   const client = usePluginClient(GaselessPluginName) as OffchainVotingClient;
   const {address} = useWallet();
@@ -172,10 +175,9 @@ export const useOffchainCommitteVotes = (
 
   useEffect(() => {
     const doCheck = async () => {
-      const canVote = await client?.methods.isCommitteeMember(
-        pluginAddress,
-        address!
-      ) || false;
+      const canVote =
+        (await client?.methods.isCommitteeMember(pluginAddress, address!)) ||
+        false;
       setCanVote(canVote);
     };
     if (address && client) {

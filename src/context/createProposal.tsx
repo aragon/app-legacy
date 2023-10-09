@@ -37,7 +37,11 @@ import PublishModal from 'containers/transactionModals/publishModal';
 import {useClient} from 'hooks/useClient';
 import {useDaoDetailsQuery} from 'hooks/useDaoDetails';
 import {useDaoToken} from 'hooks/useDaoToken';
-import {PluginTypes, usePluginClient} from 'hooks/usePluginClient';
+import {
+  GaselessPluginName,
+  PluginTypes,
+  usePluginClient,
+} from 'hooks/usePluginClient';
 import {
   isGaslessVotingSettings,
   isMultisigVotingSettings,
@@ -110,9 +114,6 @@ const CreateProposalWrapper: React.FC<Props> = ({
   setShowTxModal,
   children,
 }) => {
-  // todo(kon): modify this before merge
-  const offchain = true;
-
   const {t} = useTranslation();
   const {open} = useGlobalModalContext();
   const queryClient = useQueryClient();
@@ -137,7 +138,10 @@ const CreateProposalWrapper: React.FC<Props> = ({
   );
 
   const {client} = useClient();
-  const pluginClient = usePluginClient(pluginType);
+  const pluginClient = usePluginClient(pluginType as PluginTypes);
+
+  const offchain = pluginType === GaselessPluginName;
+
   const {
     days: minDays,
     hours: minHours,
@@ -494,6 +498,26 @@ const CreateProposalWrapper: React.FC<Props> = ({
       pluginClient?.methods,
     ]);
 
+  const getOffChainProposalParams = useCallback(
+    (
+      params: CreateMajorityVotingProposalParams,
+      vochainProposalId: string
+    ): CreateGasslessProposalParams => {
+      return {
+        ...params,
+        // If the value is 0 will take the expiration time defined at DAO creation level.
+        // We want this because the expiration date is defined when the dao is created.
+        // We could define a different expiration date for this proposal but is not designed
+        // to do this at ux level.
+        expirationDate: 0,
+        vochainProposalId,
+        startDate: (params.startDate ?? new Date()).getTime(),
+        endDate: (params.endDate ?? new Date()).getTime(),
+      };
+    },
+    []
+  );
+
   const estimateCreationFees = useCallback(async () => {
     if (!pluginClient) {
       return Promise.reject(
@@ -502,16 +526,15 @@ const CreateProposalWrapper: React.FC<Props> = ({
     }
     if (!proposalCreationData) return;
 
-    // todo(kon): fix this when implemented on the minsdk
-    return !offchain
-      ? (pluginClient as MultisigClient)?.estimation.createProposal(
-          proposalCreationData
+    // todo(kon): type miss compatibility between clients
+    return offchain
+      ? (pluginClient as OffchainVotingClient).estimation.createProposal(
+          getOffChainProposalParams(proposalCreationData, '')
         )
-      : {
-          average: BigInt(0),
-          max: BigInt(0),
-        };
-  }, [pluginClient, proposalCreationData]);
+      : (
+          pluginClient as TokenVotingClient | MultisigClient
+        ).estimation.createProposal(proposalCreationData);
+  }, [getOffChainProposalParams, offchain, pluginClient, proposalCreationData]);
 
   const {
     tokenPrice,
@@ -549,7 +572,6 @@ const CreateProposalWrapper: React.FC<Props> = ({
     daoDetails?.ensDomain,
     navigate,
     network,
-    offchain,
     proposalId,
     setShowTxModal,
     stopPolling,
@@ -664,26 +686,6 @@ const CreateProposalWrapper: React.FC<Props> = ({
     // pagination state
     queryClient.invalidateQueries([AragonSdkQueryItem.PROPOSALS]);
   }, [queryClient]);
-
-  const getOffChainProposalParams = useCallback(
-    (
-      params: CreateMajorityVotingProposalParams,
-      vochainProposalId: string
-    ): CreateGasslessProposalParams => {
-      return {
-        ...params,
-        // If the value is 0 will take the expiration time defined at DAO creation level.
-        // We want this because the expiration date is defined when the dao is created.
-        // We could define a different expiration date for this proposal but is not designed
-        // to do this at ux level.
-        expirationDate: 0,
-        vochainProposalId,
-        startDate: (params.startDate ?? new Date()).getTime(),
-        endDate: (params.endDate ?? new Date()).getTime(),
-      };
-    },
-    []
-  );
 
   const handlePublishProposal = useCallback(
     // todo(kon): this is a quickfix to update the internal cache with updated data. Delete this attribute when minSDK is ready

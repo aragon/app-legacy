@@ -413,10 +413,12 @@ const ProposalTransactionProvider: React.FC<Props> = ({children}) => {
       let approveSteps;
       if (params.isCommitteeVote) {
         // todo(kon): isCommitteeVote is a quick hack tot test the approve. Check how should be done
-        const {proposal} = new ProposalId(urlId!).stripPlgnAdrFromProposalId();
+        const {proposal: proposalId} = new ProposalId(
+          urlId!
+        ).stripPlgnAdrFromProposalId();
         approveSteps = (pluginClient as OffchainVotingClient)?.methods.setTally(
           pluginAddress,
-          proposal
+          proposalId
         );
       } else {
         approveSteps = pluginClient.methods.approveProposal(params);
