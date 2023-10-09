@@ -9,7 +9,7 @@ import {AccordionItem} from '../../components/accordionMethod';
 import {Accordion} from '@radix-ui/react-accordion';
 import {GaslessVotingProposal} from '@vocdoni/offchain-voting';
 import {GaselessPluginName, usePluginClient} from '../../hooks/usePluginClient';
-import {useOffchainCommitteVotes} from '../../context/useOffchainVoting';
+import {useGaslessCommiteVotes} from '../../context/useOffchainVoting';
 import {ProposalId} from '../../utils/types';
 import {useWallet} from '../../hooks/useWallet';
 import {useProposalTransactionContext} from '../../context/proposalTransaction';
@@ -41,10 +41,17 @@ export const CommitteeVotingTerminal = ({
 
   const {address} = proposalId!.stripPlgnAdrFromProposalId();
 
-  const {voted, canVote, isApproved} = useOffchainCommitteVotes(
-    address,
-    proposal
-  );
+  const {
+    canApprove,
+    voted,
+    isApproved,
+    canBeExecuted,
+    nextVoteWillApprove,
+    proposalCanBeApproved,
+    isApprovalPeriod,
+    executed,
+    notBegan,
+  } = useGaslessCommiteVotes(address, proposal);
 
   const {handleSubmitVote} = useProposalTransactionContext();
 
@@ -83,28 +90,26 @@ export const CommitteeVotingTerminal = ({
     } as VotingTerminalProps;
   }, [proposal, t]);
 
-  const isApprovalPeriod = useMemo(() => {
-    return (
-      proposal.endDate.valueOf() < new Date().valueOf() &&
-      proposal.expirationDate.valueOf() > new Date().valueOf()
-    );
-  }, [proposal]);
-
   const buttonLabel = useMemo(() => {
     if (proposal) {
-      const nextVoteWillApprove =
-        proposal.approvers.length + 1 === proposal.settings.minTallyApprovals;
       return getCommitteVoteButtonLabel(
-        proposal.executed,
-        canVote,
+        executed,
+        notBegan,
         voted,
-        isApproved,
-        isApprovalPeriod,
-        nextVoteWillApprove,
+        canBeExecuted,
+        canApprove,
         t
       );
     }
-  }, [proposal, canVote, voted, isApproved, isApprovalPeriod, t]);
+  }, [
+    proposal,
+    canApprove,
+    voted,
+    isApproved,
+    isApprovalPeriod,
+    nextVoteWillApprove,
+    t,
+  ]);
 
   // vote button state and handler
   const {voteNowDisabled, onClick} = useMemo(() => {
@@ -115,7 +120,7 @@ export const CommitteeVotingTerminal = ({
     }
 
     // disable approval on when wallet has voted or can't vote
-    if (!canVote || voted) return {voteNowDisabled: true};
+    if (!canApprove || voted) return {voteNowDisabled: true};
 
     // not logged in
     if (!address) {
@@ -140,7 +145,7 @@ export const CommitteeVotingTerminal = ({
     }
 
     // member, not yet voted
-    else if (canVote) {
+    else if (canApprove) {
       return {
         voteNowDisabled: false,
         onClick: () => {
@@ -150,7 +155,7 @@ export const CommitteeVotingTerminal = ({
     } else return {voteNowDisabled: true};
   }, [
     address,
-    canVote,
+    canApprove,
     handleSubmitVote,
     isApprovalPeriod,
     isOnWrongNetwork,
@@ -242,30 +247,26 @@ export const CommitteeVotingTerminal = ({
   );
 };
 
-// todo(kon): move this somewhere
+// todo(kon): move this somewhere?
 function getCommitteVoteButtonLabel(
   executed: boolean,
-  canVote: boolean,
+  notBegan: boolean,
   voted: boolean,
-  approved: boolean,
-  isApprovalPeriod: boolean,
-  nextVoteWillApprove: boolean,
+  canBeExecuted: boolean,
+  canApprove: boolean,
   t: TFunction
 ) {
   if (executed) {
     return t('offchainVotingTerminal.btnLabel.executed');
-  } else if (approved) {
-    return t('offchainVotingTerminal.btnLabel.approved');
-  } else if (isApprovalPeriod && nextVoteWillApprove && canVote) {
-    return t('offchainVotingTerminal.btnLabel.voteAndExecute');
-  } else if (isApprovalPeriod && canVote) {
+  } else if (notBegan) {
     return t('offchainVotingTerminal.btnLabel.approve');
-  } else if (isApprovalPeriod && voted) {
+  } else if (voted) {
     return t('offchainVotingTerminal.btnLabel.voted');
-  } else if (!canVote) {
+  } else if (canBeExecuted) {
+    return t('offchainVotingTerminal.btnLabel.execute');
+  } else if (canApprove) {
     return t('offchainVotingTerminal.btnLabel.approve');
   }
-
   return t('offchainVotingTerminal.btnLabel.concluded');
 }
 

@@ -6,10 +6,6 @@ import {useCallback, useEffect, useMemo, useState} from 'react';
 import {VoteProposalParams} from '@aragon/sdk-client';
 import {Vote} from '@vocdoni/sdk';
 import {
-  OffchainPluginLocalStorageKeys,
-  OffchainPluginLocalStorageTypes,
-} from '../hooks/useVocdoniSdk';
-import {
   StepsMap,
   StepStatus,
   useFunctionStepper,
@@ -19,13 +15,11 @@ import {
   OffchainVotingClient,
 } from '@vocdoni/offchain-voting';
 import {DetailedProposal, ProposalId} from '../utils/types';
-import {
-  isGaslessProposal,
-  stripPlgnAdrFromProposalId,
-} from '../utils/proposals';
+import {isGaslessProposal} from '../utils/proposals';
 import {GaselessPluginName, usePluginClient} from '../hooks/usePluginClient';
 import {useWallet} from '../hooks/useWallet';
 import {useDaoDetailsQuery} from '../hooks/useDaoDetails';
+import {ProposalStatus} from '@aragon/sdk-client-common';
 
 // todo(kon): move this block somewhere else
 export enum OffchainVotingStepId {
@@ -153,46 +147,85 @@ export const useOffchainHasAlreadyVote = ({
   return {hasAlreadyVote};
 };
 
-export const useOffchainCommitteVotes = (
+export const useGaslessCommiteVotes = (
   pluginAddress: string,
   proposal: GaslessVotingProposal
 ) => {
-  // todo(kon): check from proposal the canBeApproved value. Is true if the votes are majority of yes.
-  // Also we can use SECCEDED/DEFEATED status to know that
-
-  const [canVote, setCanVote] = useState(false);
+  const [canApprove, setCanApprove] = useState(false);
   const client = usePluginClient(GaselessPluginName) as OffchainVotingClient;
   const {address} = useWallet();
+
+  const proposalCanBeApproved = proposal.status === ProposalStatus.SUCCEEDED;
+  const isApprovalPeriod = useMemo(() => {
+    if (!proposal) return false;
+    return (
+      proposal.endDate.valueOf() < new Date().valueOf() &&
+      proposal.expirationDate.valueOf() > new Date().valueOf()
+    );
+  }, [proposal]);
 
   const voted = useMemo(() => {
     return proposal.approvers?.some(approver => approver === address);
   }, [address, proposal.approvers]);
 
   const isApproved = useMemo(() => {
-    if (!client || !proposal) return false;
+    if (!proposal) return false;
     return proposal.settings.minTallyApprovals <= proposal.approvers.length;
-  }, [client, proposal]);
+  }, [proposal]);
+
+  const canBeExecuted = useMemo(() => {
+    if (!client || !proposal) return false;
+    return (
+      canApprove && isApproved && isApprovalPeriod && proposalCanBeApproved
+    );
+  }, [
+    canApprove,
+    client,
+    isApprovalPeriod,
+    isApproved,
+    proposal,
+    proposalCanBeApproved,
+  ]);
+
+  const nextVoteWillApprove =
+    proposal.approvers.length + 1 === proposal.settings.minTallyApprovals;
+
+  const executed = proposal.executed;
+
+  const notBegan = proposal.endDate.valueOf() > new Date().valueOf();
 
   useEffect(() => {
-    const doCheck = async () => {
-      const canVote =
+    const checkCanVote = async () => {
+      const canApprove =
         (await client?.methods.isCommitteeMember(pluginAddress, address!)) ||
         false;
-      setCanVote(canVote);
+      setCanApprove(canApprove);
     };
     if (address && client) {
-      voted ? setCanVote(false) : doCheck();
+      voted || !isApprovalPeriod || !proposalCanBeApproved
+        ? setCanApprove(false)
+        : checkCanVote();
     }
-  }, [address, client, pluginAddress, voted]);
+  }, [
+    address,
+    client,
+    isApprovalPeriod,
+    pluginAddress,
+    proposalCanBeApproved,
+    voted,
+  ]);
 
-  // const approveProposal = useCallback(async () => {
-  //   if (!client || !canVote) return;
-  //   return proposal.approvers.length === 0
-  //     ? await client.methods.setTally(proposal.id)
-  //     : await client.methods.approveTally(proposal.id, false);
-  // }, [canVote, client]);
-
-  return {canVote, voted, isApproved};
+  return {
+    isApprovalPeriod,
+    canApprove,
+    voted,
+    isApproved,
+    canBeExecuted,
+    nextVoteWillApprove,
+    proposalCanBeApproved,
+    executed,
+    notBegan,
+  };
 };
 
 export default useOffchainVoting;
