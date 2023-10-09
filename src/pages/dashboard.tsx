@@ -162,12 +162,13 @@ export const Dashboard: React.FC = () => {
     removePendingDaoMutation,
   ]);
 
-  const handleClipboardActions = useCallback(async () => {
-    await navigator.clipboard.writeText(
-      `https://app.aragon.org/#/daos/${network}/${liveAddressOrEns}`
-    );
-    alert(t('alert.chip.inputCopied'));
-  }, [alert, liveAddressOrEns, network, t]);
+  const onCopy = useCallback(
+    async (copyContent: string) => {
+      await navigator.clipboard.writeText(copyContent);
+      alert(t('alert.chip.inputCopied'));
+    },
+    [alert, t]
+  );
 
   const handleFavoriteClick = useCallback(
     async (dao: NavigationDao) => {
@@ -204,7 +205,7 @@ export const Dashboard: React.FC = () => {
 
     const buttonIcon = {
       [DaoCreationState.ASSEMBLING_DAO]: (
-        <IconSpinner className="w-1.5 desktop:w-2 h-1.5 desktop:h-2 animate-spin" />
+        <IconSpinner className="h-1.5 w-1.5 animate-spin desktop:h-2 desktop:w-2" />
       ),
       [DaoCreationState.DAO_READY]: <IconCheckmark />,
       [DaoCreationState.OPEN_DAO]: undefined,
@@ -222,7 +223,7 @@ export const Dashboard: React.FC = () => {
               ? {height: 165, width: 295}
               : {height: 225, width: 400})}
           />
-          <div className="absolute transform -translate-x-2/3">
+          <div className="absolute -translate-x-2/3">
             <IlluObject
               object="build"
               {...(isMobile
@@ -234,7 +235,7 @@ export const Dashboard: React.FC = () => {
           <EmptyStateHeading>
             {t('dashboard.emptyState.title')}
           </EmptyStateHeading>
-          <p className="mt-1.5 text-base text-center">
+          <p className="mt-1.5 text-center text-base">
             {t('dashboard.emptyState.subtitle')}
           </p>
           <ButtonText
@@ -261,6 +262,7 @@ export const Dashboard: React.FC = () => {
           <HeaderDao
             daoName={liveDao.metadata.name}
             daoEnsName={toDisplayEns(liveDao.ensDomain)}
+            daoAddress={liveDao.address}
             daoAvatar={liveDao?.metadata?.avatar}
             daoUrl={`app.aragon.org/#/daos/${network}/${liveAddressOrEns}`}
             description={liveDao.metadata.description}
@@ -271,7 +273,7 @@ export const Dashboard: React.FC = () => {
             daoChain={CHAIN_METADATA[network].name}
             daoType={daoType}
             favorited={isFavoritedDao}
-            copiedOnClick={handleClipboardActions}
+            onCopy={onCopy}
             onFavoriteClick={() =>
               handleFavoriteClick({
                 address: liveDao.address.toLowerCase(),

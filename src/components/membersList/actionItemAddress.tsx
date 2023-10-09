@@ -88,6 +88,8 @@ export const ActionItemAddress: React.FC<ActionItemAddressProps> = props => {
   const {open} = useGlobalModalContext();
 
   const useCompactMode = isCompactMode ?? !isDesktop;
+  const enableDelegation =
+    featureFlags.getValue('VITE_FEATURE_FLAG_DELEGATION') === 'true';
 
   const handleExternalLinkClick = () => {
     const baseUrl = CHAIN_METADATA[network].explorer;
@@ -156,8 +158,6 @@ export const ActionItemAddress: React.FC<ActionItemAddressProps> = props => {
 
     const isConnectedAddress =
       address?.toLowerCase() === addressOrEns.toLowerCase();
-    const enableDelegation =
-      featureFlags.getValue('VITE_FEATURE_FLAG_DELEGATION') === 'true';
 
     return isTokenDaoMember && !isConnectedAddress && enableDelegation
       ? menuOptions.concat(delegateOption)
@@ -165,12 +165,12 @@ export const ActionItemAddress: React.FC<ActionItemAddressProps> = props => {
   };
 
   return (
-    <tr className="bg-ui-0 border-b last:border-ui-0 border-b-ui-100">
+    <tr className="border-b border-b-ui-100 bg-ui-0 last:border-ui-0">
       <TableCell>
-        <div className="flex flex-row gap-2 items-center">
+        <div className="flex flex-row items-center gap-2">
           <Avatar size="small" mode="circle" src={avatar ?? addressOrEns} />
-          <div className="flex flex-col flex-grow gap-0.5">
-            <div className="flex flex-row gap-1 items-start">
+          <div className="flex grow flex-col gap-0.5">
+            <div className="flex flex-row items-start gap-1">
               <div className="font-semibold text-ui-800 ft-text-base">
                 {shortenAddress(addressOrEns)}
               </div>
@@ -183,13 +183,13 @@ export const ActionItemAddress: React.FC<ActionItemAddressProps> = props => {
               )}
             </div>
             {useCompactMode && (
-              <div className="flex flex-row flex-grow justify-between text-ui-600">
+              <div className="flex grow flex-row justify-between text-ui-600">
                 <MemberVotingPower
                   votingPower={votingPower}
                   tokenSupply={tokenSupply}
                   tokenSymbol={tokenSymbol}
                 />
-                {(delegations ?? 0) > 0 && (
+                {(delegations ?? 0) > 0 && enableDelegation && (
                   <div className="ft-text-sm">
                     <span>{delegations} Delegations</span>
                   </div>
@@ -210,13 +210,13 @@ export const ActionItemAddress: React.FC<ActionItemAddressProps> = props => {
         </TableCell>
       )}
 
-      {!useCompactMode && delegations != null && (
+      {!useCompactMode && delegations != null && enableDelegation && (
         <TableCell className="text-ui-600 ft-text-sm">
           <span>{delegations > 0 ? delegations : ''}</span>
         </TableCell>
       )}
 
-      <TableCell className="flex gap-x-1.5 justify-end">
+      <TableCell className="flex justify-end gap-x-1.5">
         {!useCompactMode && (
           <ButtonIcon
             mode="ghost"
@@ -229,7 +229,7 @@ export const ActionItemAddress: React.FC<ActionItemAddressProps> = props => {
 
         <Dropdown
           align="end"
-          className="py-1 px-0"
+          className="px-0 py-1"
           listItems={buildMenuOptions()}
           side="bottom"
           trigger={

@@ -29,8 +29,8 @@ const TransferMenu: React.FC = () => {
       open('deposit');
     } else {
       navigate(generatePath(NewWithDraw, {network: network, dao: dao}));
+      close();
     }
-    close();
   };
 
   return (

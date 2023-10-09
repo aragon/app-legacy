@@ -62,6 +62,8 @@ export const DelegateVotingSuccess: React.FC<IDelegateVotingSuccessProps> =
     };
 
     const isReclaim = delegate.address === address;
+
+    const title = isReclaim ? 'successReclaimTitle' : 'successDelegateTitle';
     const description = isReclaim
       ? 'successReclaimDesc'
       : 'successDelegateDesc';
@@ -78,7 +80,7 @@ export const DelegateVotingSuccess: React.FC<IDelegateVotingSuccessProps> =
             accessory="piercings_tattoo"
           />
           <p className="text-xl text-ui-800">
-            {t('modal.delegation.successDelegateTitle')}
+            {t(`modal.delegation.${title}`)}
           </p>
           <p className="text-ui-600">
             {t(`modal.delegation.${description}`, {

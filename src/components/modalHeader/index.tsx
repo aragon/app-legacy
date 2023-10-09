@@ -26,7 +26,7 @@ const ModalHeader: React.FC<Props> = props => {
 
   return (
     <Header>
-      <ButtonWrapper className="w-4 h-4">
+      <ButtonWrapper className="h-4 w-4">
         {showBackButton && (
           <ButtonIcon
             mode="secondary"
@@ -39,7 +39,7 @@ const ModalHeader: React.FC<Props> = props => {
         )}
       </ButtonWrapper>
       <Title>{title}</Title>
-      <ButtonWrapper className="w-4 h-4">
+      <ButtonWrapper className="h-4 w-4">
         {showCloseButton && (
           <ButtonIcon
             mode="secondary"
@@ -69,4 +69,4 @@ const Title = styled.div.attrs({
   className: 'flex-1 font-bold text-ui-800 text-center desktop:text-left',
 })``;
 
-const ButtonWrapper = styled.div.attrs({className: 'w-4 h-4'})``;
+const ButtonWrapper = styled.div.attrs({className: 'w-4 h-4' as string})``;

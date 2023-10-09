@@ -39,7 +39,7 @@ import {
 } from 'context/apolloClient';
 import {MultisigDaoMember} from 'hooks/useDaoMembers';
 import {PluginTypes} from 'hooks/usePluginClient';
-import {isMultisigVotingSettings} from 'hooks/useVotingSettings';
+import {isMultisigVotingSettings} from 'services/aragon-sdk/queries/use-voting-settings';
 import {i18n} from '../../i18n.config';
 import {
   PENDING_EXECUTION_KEY,
@@ -557,7 +557,7 @@ export function getLiveProposalTerminalProps(
       approvals: proposal.approvals,
       minApproval: proposal.settings.minApprovals,
       voters: [...mappedMembers.values()],
-      strategy: t('votingTerminal.multisig'),
+      strategy: t('votingTerminal.multisig.strategy'),
       voteOptions: t('votingTerminal.approve'),
       startDate: `${format(
         proposal.startDate,

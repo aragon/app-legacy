@@ -123,11 +123,12 @@ export const MintTokenForm: React.FC<MintTokenFormProps> = ({
   );
 
   const {
-    data: {members},
+    data: {memberCount},
     isLoading: isMembersLoading,
   } = useDaoMembers(
     daoDetails?.plugins[0].instanceAddress as string,
-    daoDetails?.plugins[0].id as PluginTypes
+    daoDetails?.plugins[0].id as PluginTypes,
+    {countOnly: true}
   );
 
   const {setValue, trigger, formState, control, resetField} = useFormContext();
@@ -215,10 +216,7 @@ export const MintTokenForm: React.FC<MintTokenFormProps> = ({
             daoToken.address
           );
 
-          setValue(
-            `actions.${actionIndex}.summary.totalMembers`,
-            members.length
-          );
+          setValue(`actions.${actionIndex}.summary.totalMembers`, memberCount);
         })
         .catch(e =>
           console.error('Error happened when fetching token infos: ', e)
@@ -231,7 +229,7 @@ export const MintTokenForm: React.FC<MintTokenFormProps> = ({
     setValue,
     actionIndex,
     daoToken?.symbol,
-    members.length,
+    memberCount,
     isMembersLoading,
   ]);
 
@@ -412,7 +410,7 @@ export const MintTokenForm: React.FC<MintTokenFormProps> = ({
     <>
       <Container standAlone={standAlone}>
         {isDesktop && (
-          <div className="flex items-center p-2 tablet:p-3 space-x-2 ">
+          <div className="flex items-center space-x-2 p-2 tablet:p-3 ">
             <div className="flex-1">
               <FormLabel label={t('labels.whitelistWallets.address')} />
             </div>
@@ -491,7 +489,7 @@ export const MintTokenForm: React.FC<MintTokenFormProps> = ({
             </HStack>
             <HStack>
               <Label>{t('labels.totalHolders')}</Label>
-              <p>{newHoldersCount + (members?.length || 0)}</p>
+              <p>{newHoldersCount + memberCount}</p>
             </HStack>
             {/* TODO add total amount of token holders here. */}
           </SummaryContainer>

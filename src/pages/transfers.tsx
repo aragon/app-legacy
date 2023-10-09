@@ -116,7 +116,7 @@ export const Transfers: React.FC = () => {
       >
         <div className="mt-3 desktop:mt-8">
           <div className="space-y-1.5">
-            <div className="flex gap-2 justify-between items-center">
+            <div className="flex items-center justify-between gap-2">
               <ButtonGroup
                 bgWhite
                 defaultValue="all"

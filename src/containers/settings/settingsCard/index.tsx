@@ -20,13 +20,13 @@ export const Title = styled.p.attrs({
 })``;
 
 export const Term = styled.dt.attrs({
-  className: `font-semibold desktop:font-normal text-ui-800 desktop:text-ui-600 
+  className: `font-semibold desktop:font-normal text-ui-800 desktop:text-ui-600
     w-1/4 col-span-1 whitespace-nowrap` as string,
 })``;
 
 export const Definition = styled.dd.attrs({
   className:
-    'desktop:flex flex-shrink flex-grow-0 font-normal desktop:font-semibold ft-text-base' as string,
+    'desktop:flex shrink grow-0 font-normal desktop:font-semibold ft-text-base' as string,
 })`
   flex-basis: 75%;
 `;

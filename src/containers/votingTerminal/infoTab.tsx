@@ -102,7 +102,7 @@ const InfoTab: React.FC<Props> = ({
 
             <CurrentParticipationWrapper>
               <Strong>{currentParticipation}</Strong>
-              <div className="flex gap-x-1 justify-end">
+              <div className="flex justify-end gap-x-1">
                 {minimumReached && (
                   <Tag
                     label={t('votingTerminal.reached')}
@@ -139,7 +139,7 @@ const InfoTab: React.FC<Props> = ({
                   (currentApprovals / minApproval) * 100
                 )}%)`}
               </Strong>
-              <div className="flex gap-x-1 justify-end">
+              <div className="flex justify-end gap-x-1">
                 {minimumReached && (
                   <Tag
                     label={t('votingTerminal.reached')}
@@ -175,7 +175,7 @@ const InfoTab: React.FC<Props> = ({
           <EndDateWrapper>
             <Strong>{endDate}</Strong>
             {preciseEndDate && (
-              <div className="flex gap-x-1 justify-end">
+              <div className="flex justify-end gap-x-1">
                 <p className="text-right text-ui-400 ft-text-sm">
                   {preciseEndDate}
                 </p>

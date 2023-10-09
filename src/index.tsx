@@ -74,7 +74,7 @@ export const queryClient = new QueryClient({
   },
 });
 
-const CACHE_VERSION = 1;
+const CACHE_VERSION = 2;
 const onLoad = () => {
   // Wipe local storage cache if its structure is out of date and clashes
   // with this version of the app.

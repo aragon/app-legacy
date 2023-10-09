@@ -7,10 +7,9 @@ import {
   IllustrationHuman,
   Dropdown,
   ButtonText,
-  IconChevronDown,
   ListItemAction,
-  IconRadioSelected,
-  IconRadioDefault,
+  IconCheckmark,
+  IconSort,
 } from '@aragon/ods';
 import React, {useState} from 'react';
 import {useTranslation} from 'react-i18next';
@@ -33,6 +32,7 @@ import useScreen from 'hooks/useScreen';
 import {useGovTokensWrapping} from 'context/govTokensWrapping';
 import {useExistingToken} from 'hooks/useExistingToken';
 import {Erc20WrapperTokenDetails} from '@aragon/sdk-client';
+import {featureFlags} from 'utils/featureFlags';
 
 const MEMBERS_PER_PAGE = 20;
 
@@ -50,14 +50,19 @@ export const Community: React.FC = () => {
   const [debouncedTerm, searchTerm, setSearchTerm] = useDebouncedState('');
 
   const {data: daoDetails, isLoading: detailsAreLoading} = useDaoDetailsQuery();
+
+  const apiPage = Math.floor(((page - 1) / 1000) * MEMBERS_PER_PAGE);
   const {
-    data: {members, filteredMembers, daoToken},
+    data: {members, filteredMembers, daoToken, memberCount: totalMemberCount},
     isLoading: membersLoading,
   } = useDaoMembers(
     daoDetails?.plugins[0].instanceAddress as string,
     daoDetails?.plugins[0].id as PluginTypes,
-    debouncedTerm,
-    sort
+    {
+      searchTerm: debouncedTerm,
+      sort,
+      page: apiPage,
+    }
   );
 
   const {isDAOTokenWrapped, isTokenMintable} = useExistingToken({
@@ -65,17 +70,33 @@ export const Community: React.FC = () => {
     daoDetails,
   });
 
-  const totalMemberCount = members.length;
   const filteredMemberCount = filteredMembers.length;
 
-  const displayedMembers = filteredMemberCount > 0 ? filteredMembers : members;
+  const showFiltered =
+    filteredMemberCount > 0 &&
+    filteredMemberCount < members.length &&
+    apiPage === 0;
+  const displayedMembers = showFiltered ? filteredMembers : members;
+  const displayedMembersTotal = showFiltered
+    ? filteredMemberCount
+    : totalMemberCount;
+  const subpageStart = (page - 1) * MEMBERS_PER_PAGE - apiPage * 1000;
   const pagedMembers = displayedMembers.slice(
-    (page - 1) * MEMBERS_PER_PAGE,
-    page * MEMBERS_PER_PAGE
+    subpageStart,
+    subpageStart + MEMBERS_PER_PAGE
   );
 
   const walletBased =
     (daoDetails?.plugins[0].id as PluginTypes) === 'multisig.plugin.dao.eth';
+  const enableSearchSort = totalMemberCount <= 1000;
+  const enableDelegation =
+    featureFlags.getValue('VITE_FEATURE_FLAG_DELEGATION') === 'true';
+
+  const sortLabel = isMobile
+    ? undefined
+    : sort === 'delegations'
+    ? t('community.sortByDelegations.selected')
+    : t('community.sortByVotingPower.selected');
 
   /*************************************************
    *                    Handlers                   *
@@ -191,18 +212,20 @@ export const Community: React.FC = () => {
       <BodyContainer>
         <SearchAndResultWrapper>
           <div className="space-y-2">
-            <div className="flex flex-col desktop:flex-row gap-x-4 gap-y-2 search-input-wrapper">
-              <SearchInput
-                placeholder={t('labels.searchPlaceholder')}
-                containerClassName="flex-grow"
-                value={searchTerm}
-                onChange={handleQueryChange}
-              />
-              {!walletBased && (
+            <div className="flex flex-row gap-2 desktop:gap-4">
+              {enableSearchSort && (
+                <SearchInput
+                  placeholder={t('labels.searchPlaceholder')}
+                  containerClassName="grow"
+                  value={searchTerm}
+                  onChange={handleQueryChange}
+                />
+              )}
+              {!walletBased && enableSearchSort && enableDelegation && (
                 <Dropdown
                   align="end"
-                  className="py-1 px-0"
-                  style={{width: 'var(--radix-dropdown-menu-trigger-width)'}}
+                  className="px-0 py-1"
+                  style={{minWidth: 'var(--radix-dropdown-menu-trigger-width)'}}
                   sideOffset={8}
                   listItems={[
                     {
@@ -214,10 +237,8 @@ export const Community: React.FC = () => {
                           mode={sort === 'votingPower' ? 'selected' : 'default'}
                           iconRight={
                             sort === 'votingPower' ? (
-                              <IconRadioSelected />
-                            ) : (
-                              <IconRadioDefault />
-                            )
+                              <IconCheckmark />
+                            ) : undefined
                           }
                         />
                       ),
@@ -231,10 +252,8 @@ export const Community: React.FC = () => {
                           mode={sort === 'delegations' ? 'selected' : 'default'}
                           iconRight={
                             sort === 'delegations' ? (
-                              <IconRadioSelected />
-                            ) : (
-                              <IconRadioDefault />
-                            )
+                              <IconCheckmark />
+                            ) : undefined
                           }
                         />
                       ),
@@ -244,13 +263,9 @@ export const Community: React.FC = () => {
                   trigger={
                     <ButtonText
                       mode="secondary"
-                      iconRight={<IconChevronDown />}
+                      iconLeft={<IconSort />}
                       size="large"
-                      label={
-                        sort === 'delegations'
-                          ? t('community.sortByDelegations.selected')
-                          : t('community.sortByVotingPower.selected')
-                      }
+                      label={sortLabel}
                     />
                   }
                 />
@@ -292,12 +307,10 @@ export const Community: React.FC = () => {
 
         {/* Pagination */}
         <PaginationWrapper>
-          {(displayedMembers.length || 0) > MEMBERS_PER_PAGE && (
+          {displayedMembersTotal > MEMBERS_PER_PAGE && (
             <Pagination
               totalPages={
-                Math.ceil(
-                  (displayedMembers.length || 0) / MEMBERS_PER_PAGE
-                ) as number
+                Math.ceil(displayedMembersTotal / MEMBERS_PER_PAGE) as number
               }
               activePage={page}
               onChange={(activePage: number) => {

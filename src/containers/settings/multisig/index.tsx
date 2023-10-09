@@ -14,7 +14,7 @@ import {
 import {useNetwork} from 'context/network';
 import {useDaoMembers} from 'hooks/useDaoMembers';
 import {PluginTypes} from 'hooks/usePluginClient';
-import {useVotingSettings} from 'hooks/useVotingSettings';
+import {useVotingSettings} from 'services/aragon-sdk/queries/use-voting-settings';
 import {IPluginSettings} from 'pages/settings';
 import {Community} from 'utils/paths';
 
@@ -34,7 +34,8 @@ const MultisigSettings: React.FC<IPluginSettings> = ({daoDetails}) => {
 
   const {data: daoMembers, isLoading: membersLoading} = useDaoMembers(
     pluginAddress,
-    pluginType
+    pluginType,
+    {countOnly: true}
   );
 
   const isLoading = votingSettingsLoading || membersLoading;
@@ -63,7 +64,7 @@ const MultisigSettings: React.FC<IPluginSettings> = ({daoDetails}) => {
           <Definition>
             <Link
               label={t('createDAO.review.distributionLink', {
-                count: daoMembers.members.length,
+                count: daoMembers.memberCount,
               })}
               description={t('settings.community.memberHelptext')}
               iconRight={<IconLinkExternal />}
@@ -82,7 +83,7 @@ const MultisigSettings: React.FC<IPluginSettings> = ({daoDetails}) => {
         <DescriptionPair>
           <Term>{t('labels.minimumApproval')}</Term>
           <Definition>{`${votingSettings.minApprovals} of ${
-            daoMembers.members.length
+            daoMembers.memberCount
           } ${t('labels.authorisedWallets')}`}</Definition>
         </DescriptionPair>
 

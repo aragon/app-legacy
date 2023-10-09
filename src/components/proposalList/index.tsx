@@ -25,6 +25,7 @@ import {
 import {ProposalListItem} from 'utils/types';
 import {useWallet} from 'hooks/useWallet';
 import {useUpdateProposal} from 'hooks/useUpdateProposal';
+import {featureFlags} from 'utils/featureFlags';
 
 type ProposalListProps = {
   proposals: Array<ProposalListItem>;
@@ -60,7 +61,10 @@ const ProposalItem: React.FC<{proposalId: string} & CardProposalProps> =
       <CardProposal
         {...props}
         bannerContent={
-          isAragonVerifiedUpdateProposal ? t('update.proposal.bannerTitle') : ''
+          isAragonVerifiedUpdateProposal &&
+          featureFlags.getValue('VITE_FEATURE_FLAG_OSX_UPDATES') === 'true'
+            ? t('update.proposal.bannerTitle')
+            : ''
         }
       />
     );
@@ -80,7 +84,8 @@ const ProposalList: React.FC<ProposalListProps> = ({
 
   const {data: members, isLoading: areMembersLoading} = useDaoMembers(
     pluginAddress,
-    pluginType
+    pluginType,
+    {countOnly: true}
   );
 
   const mappedProposals: ({id: string} & CardProposalProps)[] = useMemo(
@@ -88,7 +93,7 @@ const ProposalList: React.FC<ProposalListProps> = ({
       proposals.map(p =>
         proposal2CardProps(
           p,
-          members.members.length,
+          members.memberCount,
           network,
           navigate,
           t,
@@ -98,7 +103,7 @@ const ProposalList: React.FC<ProposalListProps> = ({
       ),
     [
       proposals,
-      members.members.length,
+      members.memberCount,
       network,
       navigate,
       t,
@@ -109,7 +114,7 @@ const ProposalList: React.FC<ProposalListProps> = ({
 
   if (isLoading || areMembersLoading) {
     return (
-      <div className="flex justify-center items-center h-7">
+      <div className="flex h-7 items-center justify-center">
         <Spinner size="default" />
       </div>
     );
@@ -117,7 +122,7 @@ const ProposalList: React.FC<ProposalListProps> = ({
 
   if (mappedProposals.length === 0) {
     return (
-      <div className="flex justify-center items-center h-7 text-gray-600">
+      <div className="flex h-7 items-center justify-center text-gray-600">
         <p data-testid="proposalList">{t('governance.noProposals')}</p>
       </div>
     );

@@ -190,7 +190,7 @@ const ConfigureCommunity: React.FC<ConfigureCommunityProps> = ({
                       <Tag
                         label={t('labels.yes')}
                         colorScheme="primary"
-                        className="justify-center mr-1.5 w-6"
+                        className="mr-1.5 w-6 justify-center"
                       />
 
                       <LinearProgressContainer>
@@ -198,7 +198,7 @@ const ConfigureCommunity: React.FC<ConfigureCommunityProps> = ({
                         <ProgressBarTick />
                         <ProgressInfo1>
                           <p
-                            className="font-bold text-right text-primary-500"
+                            className="text-right font-bold text-primary-500"
                             style={{flexBasis: `${value}%`}}
                           >
                             {value !== '100' ? '>' : ''}
@@ -209,7 +209,7 @@ const ConfigureCommunity: React.FC<ConfigureCommunityProps> = ({
 
                       <Tag
                         label={t('labels.no')}
-                        className="justify-center ml-1.5 w-6"
+                        className="ml-1.5 w-6 justify-center"
                       />
                     </div>
                   </ApprovalContainer>
@@ -475,7 +475,7 @@ const LinearProgressContainer = styled.div.attrs({
 
 const ProgressBarTick = styled.div.attrs({
   className:
-    'absolute left-1/2 w-1 h-2.5 border-r-2 border-l-2 transform -translate-x-1/2 bg-ui-300 border-ui-0',
+    'absolute left-1/2 w-1 h-2.5 border-r-2 border-l-2 -translate-x-1/2 bg-ui-300 border-ui-0',
 })``;
 
 const ProgressInfo1 = styled.div.attrs({

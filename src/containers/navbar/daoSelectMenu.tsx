@@ -56,7 +56,7 @@ const DaoSelectMenu: React.FC = () => {
       onClose={close}
       onOpenAutoFocus={e => e.preventDefault()}
     >
-      <div className="flex flex-col h-full" style={{maxHeight: '75vh'}}>
+      <div className="flex h-full flex-col" style={{maxHeight: '75vh'}}>
         <ModalHeader>
           <ButtonIcon
             mode="secondary"
@@ -66,7 +66,7 @@ const DaoSelectMenu: React.FC = () => {
             onClick={handleBackButtonClick}
           />
           <Title>{t('daoSwitcher.title')}</Title>
-          <div role="presentation" className="w-4 h-4" />
+          <div role="presentation" className="h-4 w-4" />
         </ModalHeader>
         <ModalContentContainer>
           <ListGroup>

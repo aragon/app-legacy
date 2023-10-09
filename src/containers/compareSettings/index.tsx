@@ -10,7 +10,7 @@ import {
   isMultisigVotingSettings,
   isTokenVotingSettings,
   useVotingSettings,
-} from 'hooks/useVotingSettings';
+} from 'services/aragon-sdk/queries/use-voting-settings';
 import {toDisplayEns} from 'utils/library';
 import {CompareMetadata} from './compareMetadata';
 import {CompareMvCommunity} from './majorityVoting/compareCommunity';

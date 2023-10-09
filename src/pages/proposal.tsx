@@ -45,7 +45,7 @@ import {
   isMultisigVotingSettings,
   isTokenVotingSettings,
   useVotingSettings,
-} from 'hooks/useVotingSettings';
+} from 'services/aragon-sdk/queries/use-voting-settings';
 import useScreen from 'hooks/useScreen';
 import {useWallet} from 'hooks/useWallet';
 import {useWalletCanVote} from 'hooks/useWalletCanVote';
@@ -83,6 +83,7 @@ import {usePastVotingPower} from 'services/aragon-sdk/queries/use-past-voting-po
 import {Address} from 'viem';
 import {useBalance} from 'wagmi';
 import {UpdateVerificationCard} from 'containers/updateVerificationCard';
+import {featureFlags} from 'utils/featureFlags';
 
 // TODO: @Sepehr Please assign proper tags on action decoding
 // const PROPOSAL_TAGS = ['Finance', 'Withdraw'];
@@ -115,7 +116,9 @@ export const Proposal: React.FC = () => {
 
   const {
     data: {members},
-  } = useDaoMembers(pluginAddress, pluginType);
+  } = useDaoMembers(pluginAddress, pluginType, {
+    enabled: pluginType === 'multisig.plugin.dao.eth',
+  });
 
   const allowVoteReplacement =
     isTokenVotingSettings(votingSettings) &&
@@ -703,11 +706,14 @@ export const Proposal: React.FC = () => {
             </>
           )}
 
-          {/* TODO: Add isUpdateProposal check once it's developed */}
-          <UpdateVerificationCard
-            proposal={proposal}
-            actions={decodedActions}
-          />
+          {/* @todo: Add isUpdateProposal check once it's developed */}
+          {featureFlags.getValue('VITE_FEATURE_FLAG_OSX_UPDATES') ===
+            'true' && (
+            <UpdateVerificationCard
+              proposal={proposal}
+              actions={decodedActions}
+            />
+          )}
 
           <VotingTerminal
             status={proposalStatus}

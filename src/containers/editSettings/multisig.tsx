@@ -28,7 +28,7 @@ import DefineMetadata from 'containers/defineMetadata';
 import {useNetwork} from 'context/network';
 import {useDaoMembers} from 'hooks/useDaoMembers';
 import {PluginTypes} from 'hooks/usePluginClient';
-import {useVotingSettings} from 'hooks/useVotingSettings';
+import {useVotingSettings} from 'services/aragon-sdk/queries/use-voting-settings';
 import useScreen from 'hooks/useScreen';
 import {Layout} from 'pages/settings';
 import {toDisplayEns} from 'utils/library';

@@ -22,7 +22,7 @@ import {
   isMultisigVotingSettings,
   isTokenVotingSettings,
   useVotingSettings,
-} from 'hooks/useVotingSettings';
+} from 'services/aragon-sdk/queries/use-voting-settings';
 import {useTokenSupply} from 'hooks/useTokenSupply';
 import {
   KNOWN_FORMATS,
@@ -54,10 +54,12 @@ const ReviewProposal: React.FC<ReviewProposalProps> = ({
 
   const {data: votingSettings, isLoading: votingSettingsLoading} =
     useVotingSettings({pluginAddress, pluginType});
+  const isMultisig = isMultisigVotingSettings(votingSettings);
 
+  // Member list only needed for multisig so first page (1000) is sufficient
   const {
     data: {members, daoToken},
-  } = useDaoMembers(pluginAddress, pluginType);
+  } = useDaoMembers(pluginAddress, pluginType, {page: 0});
 
   const {data: totalSupply} = useTokenSupply(daoToken?.address as string);
 
@@ -79,9 +81,7 @@ const ReviewProposal: React.FC<ReviewProposalProps> = ({
     const {startSwitch, startDate, startTime, startUtc} = values;
 
     if (startSwitch === 'now') {
-      const startMinutesDelay = isMultisigVotingSettings(votingSettings)
-        ? 0
-        : 10;
+      const startMinutesDelay = isMultisig ? 0 : 10;
       return new Date(
         `${getCanonicalDate()}T${getCanonicalTime({
           minutes: startMinutesDelay,
@@ -92,11 +92,11 @@ const ReviewProposal: React.FC<ReviewProposalProps> = ({
         `${startDate}T${startTime}:00${getCanonicalUtcOffset(startUtc)}`
       );
     }
-  }, [votingSettings, values]);
+  }, [isMultisig, values]);
 
   const formattedStartDate = useMemo(() => {
     const {startSwitch} = values;
-    if (startSwitch === 'now' || isMultisigVotingSettings(votingSettings)) {
+    if (startSwitch === 'now' || isMultisig) {
       return t('labels.now');
     }
 
@@ -104,7 +104,7 @@ const ReviewProposal: React.FC<ReviewProposalProps> = ({
       startDate,
       KNOWN_FORMATS.proposals
     )} ${getFormattedUtcOffset()}`;
-  }, [votingSettings, startDate, t, values]);
+  }, [isMultisig, startDate, t, values]);
 
   /**
    * This is the primary (approximate) end date display which is rendered in Voting Terminal
@@ -180,9 +180,7 @@ const ReviewProposal: React.FC<ReviewProposalProps> = ({
 
     // adding 10 minutes to offset the 10 minutes added by starting now
     if (startSwitch === 'now') {
-      const startMinutesDelay = isMultisigVotingSettings(votingSettings)
-        ? 0
-        : 10;
+      const startMinutesDelay = isMultisig ? 0 : 10;
       endDateTime = new Date(
         endDateTime.getTime() + minutesToMills(startMinutesDelay)
       );
@@ -192,10 +190,11 @@ const ReviewProposal: React.FC<ReviewProposalProps> = ({
       endDateTime,
       KNOWN_FORMATS.proposals
     )} ${getFormattedUtcOffset()}`;
-  }, [votingSettings, values]);
+  }, [isMultisig, values]);
 
   const terminalProps = useMemo(() => {
     if (votingSettings) {
+      // note this only needs a valid members list if it's multisig
       return getReviewProposalTerminalProps(
         t,
         votingSettings,
@@ -271,9 +270,7 @@ const ReviewProposal: React.FC<ReviewProposalProps> = ({
           <ExecutionWidget
             actions={getNonEmptyActions(
               values.actions,
-              isMultisigVotingSettings(votingSettings)
-                ? votingSettings
-                : undefined
+              isMultisig ? votingSettings : undefined
             )}
             onAddAction={
               addActionsStepNumber
@@ -365,7 +362,7 @@ function getReviewProposalTerminalProps(
   if (isMultisigVotingSettings(daoSettings)) {
     return {
       minApproval: daoSettings.minApprovals,
-      strategy: t('votingTerminal.multisig'),
+      strategy: t('votingTerminal.multisig.strategy'),
       voteOptions: t('votingTerminal.approve'),
       approvals: [],
       voters:

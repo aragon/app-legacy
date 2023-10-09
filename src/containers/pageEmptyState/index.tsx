@@ -26,7 +26,7 @@ const PageEmptyState = ({
           <EmptyStateHeading>{title}</EmptyStateHeading>
 
           <span
-            className="mt-1.5 lg:w-1/2 text-center"
+            className="mt-1.5 text-center lg:w-1/2"
             dangerouslySetInnerHTML={{__html: subtitle || ''}}
           ></span>
           <ActionsContainer>

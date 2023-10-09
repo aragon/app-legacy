@@ -914,7 +914,8 @@
     "multisig": {
       "endDescription": "Proposal is active until approved or it expires",
       "title": "Multisig approval",
-      "description": "Minimum approval must be reached before actions can be executed."
+      "description": "Minimum approval must be reached before actions can be executed.",
+      "strategy": "1 Wallet -> 1 Vote"
     },
     "supportThreshold": "Minimum support",
     "minParticipation": "Minimum participation (Quorum)",

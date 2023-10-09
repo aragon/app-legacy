@@ -335,7 +335,7 @@ export const VotingTerminal: React.FC<VotingTerminalProps> = ({
             </VoteContainer>
 
             {alertMessage && (
-              <div className="pt-2 tablet:pt-0 tablet:mt-3">
+              <div className="pt-2 tablet:mt-3 tablet:pt-0">
                 <AlertCard title={alertMessage} mode="warning" />
               </div>
             )}
@@ -370,7 +370,7 @@ const Header = styled.div.attrs({
 })``;
 
 const Heading1 = styled.h1.attrs({
-  className: 'ft-text-xl font-bold text-ui-800 flex-grow',
+  className: 'ft-text-xl font-bold text-ui-800 grow',
 })``;
 
 const VotingContainer = styled.div.attrs({

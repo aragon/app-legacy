@@ -119,7 +119,7 @@ const DtContainer = styled.dt.attrs({
 })``;
 
 const DdContainer = styled.dd.attrs({
-  className: 'flex-shrink-0 text-ui-600',
+  className: 'shrink-0 text-ui-600',
 })`
   width: 70%;
 `;

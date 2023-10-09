@@ -13,9 +13,9 @@ import {useProviders} from 'context/providers';
 import {useDaoDetailsQuery} from 'hooks/useDaoDetails';
 import {useDaoMembers} from 'hooks/useDaoMembers';
 import {PluginTypes} from 'hooks/usePluginClient';
-import {useVotingSettings} from 'hooks/useVotingSettings';
 import {useWallet} from 'hooks/useWallet';
 import {useVotingPowerAsync} from 'services/aragon-sdk/queries/use-voting-power';
+import {useVotingSettings} from 'services/aragon-sdk/queries/use-voting-settings';
 import {CHAIN_METADATA} from 'utils/constants';
 import {formatUnits} from 'utils/library';
 import {fetchBalance} from 'utils/tokens';
@@ -44,10 +44,15 @@ const ProtectedRoute: React.FC = () => {
       pluginType,
     });
 
+  // only fetch first page, as for multisig this will be enough, and for token-based
+  // if it's not enough the code will fall back to fetchBalance()
   const {
     data: {daoToken, filteredMembers},
     isLoading: membersAreLoading,
-  } = useDaoMembers(pluginAddress, pluginType, address as string);
+  } = useDaoMembers(pluginAddress, pluginType, {
+    searchTerm: address as string,
+    page: 0,
+  });
   const fetchVotingPower = useVotingPowerAsync();
 
   /*************************************************
@@ -95,7 +100,9 @@ const ProtectedRoute: React.FC = () => {
         Number(votingPower) < minProposalThreshold
       ) {
         open('gating');
-      } else close();
+      } else {
+        close();
+      }
     }
   }, [
     address,
@@ -110,21 +117,25 @@ const ProtectedRoute: React.FC = () => {
   ]);
 
   const gateMultisigProposal = useCallback(() => {
-    if ((votingSettings as MultisigVotingSettings)?.onlyListed === false) {
-      close();
-    } else if (
-      !filteredMembers.some(
-        mem => mem.address.toLowerCase() === address?.toLowerCase()
-      ) &&
-      !membersAreLoading
-    ) {
+    const everyoneAllowed =
+      (votingSettings as MultisigVotingSettings)?.onlyListed === false;
+
+    const isMember = filteredMembers.some(
+      ({address: memberAddress}) =>
+        memberAddress.toLowerCase() === address?.toLowerCase()
+    );
+
+    if (!membersAreLoading && !isMember && !everyoneAllowed && !isOpen) {
       open('gating');
-    } else {
+    }
+
+    if (isOpen && (isMember || everyoneAllowed)) {
       close();
     }
   }, [
     membersAreLoading,
     close,
+    isOpen,
     votingSettings,
     open,
     address,
@@ -149,8 +160,11 @@ const ProtectedRoute: React.FC = () => {
     if (!address && userWentThroughLoginFlowRef.current === false) {
       setShowLoginModal(true);
     } else {
-      if (isOnWrongNetwork) open('network');
-      else close();
+      if (isOnWrongNetwork) {
+        open('network');
+      } else {
+        close();
+      }
     }
   }, [address, close, isOnWrongNetwork, open]);
 

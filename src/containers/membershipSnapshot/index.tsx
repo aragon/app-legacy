@@ -44,10 +44,9 @@ export const MembershipSnapshot: React.FC<Props> = ({
   const {handleOpenModal} = useGovTokensWrapping();
 
   const {
-    data: {members, daoToken},
+    data: {members, daoToken, memberCount: totalMemberCount},
     isLoading,
-  } = useDaoMembers(pluginAddress, pluginType);
-  const totalMemberCount = members.length;
+  } = useDaoMembers(pluginAddress, pluginType, {page: 0});
 
   const {data: daoDetails} = useDaoDetailsQuery();
 
@@ -101,7 +100,7 @@ export const MembershipSnapshot: React.FC<Props> = ({
             onClick={headerButtonHandler}
           />
         </div>
-        <div className="space-y-2 w-2/3">
+        <div className="w-2/3 space-y-2">
           <ListItemGrid>
             <MembersList token={daoToken} members={members} />
           </ListItemGrid>
