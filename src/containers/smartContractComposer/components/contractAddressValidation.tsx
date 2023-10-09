@@ -70,6 +70,7 @@ const icons = {
   [TransactionState.LOADING]: undefined,
   [TransactionState.SUCCESS]: <IconChevronRight />,
   [TransactionState.ERROR]: undefined,
+  [TransactionState.INCORRECT_URI]: undefined,
 };
 
 // not exactly sure where opening will be happen or if
@@ -334,6 +335,7 @@ const ContractAddressValidation: React.FC<Props> = props => {
     [TransactionState.LOADING]: '',
     [TransactionState.SUCCESS]: t('scc.validation.ctaLabelSuccess'),
     [TransactionState.ERROR]: '',
+    [TransactionState.INCORRECT_URI]: '',
   };
 
   const ABIFlowLabel = {
