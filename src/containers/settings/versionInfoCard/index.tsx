@@ -38,7 +38,7 @@ export const VersionInfoCard: React.FC<{
     OSxAddress =
       LIVE_CONTRACTS[
         `${versions?.[0]}.${versions?.[1]}.${versions?.[2]}` as SupportedVersion
-      ][translatedNetwork].daoFactoryAddress;
+      ]?.[translatedNetwork].daoFactoryAddress;
   }
 
   // TODO: generate the links
