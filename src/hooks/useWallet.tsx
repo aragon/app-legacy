@@ -1,6 +1,10 @@
 import {useMemo} from 'react';
 import {clearWagmiCache} from 'utils/library';
-import {LIVE_CONTRACTS, SupportedNetwork} from '@aragon/sdk-client-common';
+import {
+  LIVE_CONTRACTS,
+  SupportedNetwork,
+  SupportedVersion,
+} from '@aragon/sdk-client-common';
 import {JsonRpcSigner, Web3Provider} from '@ethersproject/providers';
 import {JsonRpcProvider} from '@ethersproject/providers';
 import {
@@ -64,8 +68,9 @@ export const useWallet = (): IUseWallet => {
         chainId: CHAIN_METADATA[network].id,
         name: translateToNetworkishName(network),
         ensAddress:
-          LIVE_CONTRACTS[translateToNetworkishName(network) as SupportedNetwork]
-            .ensRegistryAddress,
+          LIVE_CONTRACTS[SupportedVersion.LATEST][
+            translateToNetworkishName(network) as SupportedNetwork
+          ].ensRegistryAddress,
       });
     } else return signer?.provider;
   }, [network, signer?.provider]);
