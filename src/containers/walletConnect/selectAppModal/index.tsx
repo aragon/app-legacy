@@ -44,8 +44,8 @@ const SelectWCApp: React.FC<Props> = props => {
   return (
     <ModalBottomSheetSwitcher isOpen={isOpen} onClose={onClose}>
       <ModalHeader
-        title={t('wc.dappList.modalTitle')}
-        subTitle="You can interact with the following dApps to add actions to your proposal. Learn more about {{link}}."
+        title={t('modal.dappConnect.headerTitle')}
+        subTitle={t('modal.dappConnect.headerDesc')}
         showBackButton
         onBackButtonClicked={() => {
           onClose();
@@ -90,7 +90,7 @@ const SelectWCApp: React.FC<Props> = props => {
           })}
         </div>
         <div className="mt-2 flex justify-center">
-          <AlertInline label="More dApps coming soon!" />
+          <AlertInline label={t('modal.dappConnect.alertInfo')} />
         </div>
       </Content>
     </ModalBottomSheetSwitcher>

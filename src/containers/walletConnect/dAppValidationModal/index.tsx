@@ -63,16 +63,16 @@ const WCdAppValidation: React.FC<Props> = props => {
   const ctaLabel = useMemo(() => {
     switch (connectionStatus) {
       case ConnectionState.LOADING:
-        return t('wc.validation.ctaLabelVerifying');
+        return t('modal.dappConnect.validation.ctaLabelVerifying');
       case ConnectionState.ERROR:
-        return t('wc.validation.ctaLabelCritical');
+        return t('modal.dappConnect.validation.ctaLabelCritical');
       case ConnectionState.INCORRECT_URI:
-        return t('wc.validation.ctaLabelCritical');
+        return t('modal.dappConnect.validation.ctaLabelCritical');
       case ConnectionState.SUCCESS:
-        return t('wc.validation.ctaLabelSuccess');
+        return t('modal.dappConnect.validation.ctaLabelSuccess');
       case ConnectionState.WAITING:
       default:
-        return t('wc.validation.ctaLabel');
+        return t('modal.dappConnect.validation.ctaLabel');
     }
   }, [t, connectionStatus]);
 
@@ -197,8 +197,8 @@ const WCdAppValidation: React.FC<Props> = props => {
       <Content>
         <FormGroup>
           <Label
-            label={t('wc.validation.codeInputLabel')}
-            helpText={t('wc.validation.codeInputHelp')}
+            label={t('modal.dappConnect.validation.codeInputLabel')}
+            helpText={t('modal.dappConnect.validation.codeInputHelp')}
           />
           {/* TODO: Please add validation when format of wc Code is known */}
           <Controller
@@ -215,7 +215,9 @@ const WCdAppValidation: React.FC<Props> = props => {
                 onBlur={onBlur}
                 onChange={onChange}
                 value={value ?? ''}
-                placeholder={t('wc.validation.codeInputPlaceholder')}
+                placeholder={t(
+                  'modal.dappConnect.validation.codeInputPlaceholder'
+                )}
                 adornmentText={adornmentText}
                 onAdornmentClick={() => handleAdornmentClick(value, onChange)}
               />
@@ -240,7 +242,7 @@ const WCdAppValidation: React.FC<Props> = props => {
         {connectionStatus === ConnectionState.SUCCESS && (
           <AlertWrapper>
             <AlertInline
-              label={t('wc.validation.codeInput.statusSuccess', {
+              label={t('modal.dappConnect.validation.codeInput.statusSuccess', {
                 dappName: currentSession?.peer.metadata.name,
               })}
               mode="success"
@@ -258,7 +260,9 @@ const WCdAppValidation: React.FC<Props> = props => {
         {connectionStatus === ConnectionState.ERROR && (
           <AlertWrapper>
             <AlertInline
-              label={t('wc.validation.addressInput.alertCritical')}
+              label={t(
+                'modal.dappConnect.validation.addressInput.alertCritical'
+              )}
               mode="critical"
             />
           </AlertWrapper>

@@ -1289,6 +1289,38 @@
         "ApproveProposalDescription": "The only cost to approve the proposal will be the gas fee.",
         "ApproveProposalTitle": "Approve proposal"
       }
+    },
+    "dappConnect": {
+      "title": "Select dApp",
+      "desc": "You can interact with the following dApps to add actions to your proposal. Learn more about {{link}}.",
+      "descLinkLabel": "in our guide",
+      "descLinkURL": "https://",
+      "validation": {
+        "codeInputHelp": "To connect, open {{dappName}}, copy the WalletConnect QR code to your clipboard, and paste it here.",
+        "modalTitle": "{{dappName}}",
+        "codeInputLabel": "WalletConnect QR code",
+        "ctaLabelDefault": "Create connection",
+        "ctaLabelVerifying": "Connecting dApp …",
+        "ctaLabelCritical": "Retry",
+        "ctaLabelSuccess": "Start adding actions",
+        "alertCriticalGeneral": "Connection to {{dappName}} failed",
+        "alertCriticalDapp": "The QR code provided is not from {{dappName}}.",
+        "alertSuccess": "{{dappName}} connected",
+        "codeInputPlaceholder": "wc: …",
+        "alertCriticalQRcode": "The QR code provided is not from {{dappName}}."
+      },
+      "detaildApp": {
+        "spinnerLabel": "Listening for actions …",
+        "desc": "You can can interact with {{dappName}}. Actions you take will be added to this proposal.",
+        "noActionsTag": "No actions received yet",
+        "amountActionsTag": "{{amountActions}} actions received",
+        "ctaLabel": "Add {{amountActions}} actions"
+      },
+      "ctaOpenDapp": "Open {{dappName}}",
+      "dAppConnectedLabel": "Connected",
+      "headerTitle": "Select dApp",
+      "headerDesc": "You can interact with the following dApps to add actions to your proposal. Learn more about {{link}}.",
+      "alertInfo": "More dApps coming soon!"
     }
   },
   "scc": {
@@ -1456,62 +1488,6 @@
     "noTokensFound": {
       "title": "Tokens not found",
       "ctaLabel": "Ok, understood"
-    }
-  },
-  "wc": {
-    "emptyState": {
-      "title": "WalletConnect",
-      "desc": "Connect any dApps to add its actions to your proposal. Learn more about {{link}}.",
-      "ctaLabel": "Connect first dApp",
-      "descLinkLabel": "in our guide",
-      "descLinkURL": "https://"
-    },
-    "listdApps": {
-      "pretitle": {
-        "searchResults": "{{amount}} dApps results"
-      },
-      "emptyStateSearch": {
-        "title": "No results to show",
-        "desc": "No connected dApps found for this search term.",
-        "ctaLabel": "Reset search"
-      },
-      "listTitle": "{{amount}} connected dApps",
-      "learnLinkURL": "https://",
-      "learnLinkLabel": "Learn more",
-      "ctaLabelDefault": "Connect dApp"
-    },
-    "validation": {
-      "modalTitle": "Connect dApp",
-      "codeInputHelp": "Copy the QR Code to your Clipboard and paste it below to connect to your desired dApp.",
-      "codeInputLabel": "WalletConnect QR code",
-      "codeInputPlaceholder": "wc: …",
-      "ctaLabel": "Connect dApp",
-      "addressInput": {
-        "alertCritical": "Failure in connecting the dApp. Try again"
-      },
-      "codeInput": {
-        "statusSuccess": "{{dappName}} connected"
-      },
-      "ctaLabelSuccess": "Start adding actions",
-      "ctaLabelCritical": "Retry",
-      "ctaLabelVerifying": "Connecting dApp …"
-    },
-    "detaildApp": {
-      "spinnerLabel": "Listening for actions...",
-      "desc": "Simply open {{dappName}} and interact with it. The actions will be added to this proposal.",
-      "noActionsTag": "No actions received yet",
-      "amountActionsTag": "{{amountActions}} actions received",
-      "ctaLabel": {
-        "opendApp": "Open {{dappName}}",
-        "disconnectdApp": "Disconnect {{dappName}}",
-        "addAmountActions": "Add {{amountActions}} actions"
-      }
-    },
-    "modalHeaderSearch": {
-      "placeholder": "Type to find a dApp …"
-    },
-    "dappList": {
-      "modalTitle": "Select dApp"
     }
   },
   "label": {
