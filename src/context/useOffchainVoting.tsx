@@ -58,6 +58,8 @@ const useOffchainVoting = () => {
     [daoDetails, pluginClient]
   );
 
+  // const isCommitteeMember
+
   const {steps, updateStepStatus, doStep, globalState} = useFunctionStepper({
     initialSteps: {
       CREATE_VOTE_ID: {
@@ -178,7 +180,7 @@ export const useGaslessCommiteVotes = (
   const canBeExecuted = useMemo(() => {
     if (!client || !proposal) return false;
     return (
-      canApprove && isApproved && isApprovalPeriod && proposalCanBeApproved
+      isApproved && proposalCanBeApproved
     );
   }, [
     canApprove,
