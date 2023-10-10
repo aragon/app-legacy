@@ -21,7 +21,10 @@ export const VersionSelectionMenu: React.FC<CheckboxListItemProps> = ({
 
   const versionList = [
     {
-      version: '1.2',
+      version: {
+        release: '1',
+        build: '2',
+      },
       address: '0xadb2e0cc261fdfbf29ffd74102c91052a425e666',
       helptext: 'TBD inline release notes',
       LinkLabel: t('update.item.releaseNotesLabel'),
@@ -31,7 +34,10 @@ export const VersionSelectionMenu: React.FC<CheckboxListItemProps> = ({
       isPrepared: true,
     },
     {
-      version: '1.1',
+      version: {
+        release: '1',
+        build: '1',
+      },
       address: '0xadb2e0cc261fdfbf29ffd74102c91052a425e666',
       helptext: 'TBD inline release notes',
       LinkLabel: t('update.item.releaseNotesLabel'),
@@ -52,7 +58,10 @@ export const VersionSelectionMenu: React.FC<CheckboxListItemProps> = ({
           control={control}
           defaultValue={{
             address: '0xadb2e0cc261fdfbf29ffd74102c91052a425e666',
-            version: '1.2',
+            version: {
+              release: '1',
+              build: '2',
+            },
           }}
           render={({field: {onChange, value}}) => (
             <>
@@ -60,7 +69,7 @@ export const VersionSelectionMenu: React.FC<CheckboxListItemProps> = ({
                 {versionList.map((data, index) => (
                   <UpdateListItem
                     key={index}
-                    label={`Token voting v${data.version}`}
+                    label={`Token voting v${data.version.release}.${data.version.build}`}
                     {...data}
                     type={
                       value?.version === data.version ? 'active' : 'default'

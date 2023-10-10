@@ -9,6 +9,7 @@ import {
   VoteValues,
   VotingSettings,
 } from '@aragon/sdk-client';
+import {VersionTag} from '@aragon/sdk-client-common';
 import {BigNumber} from 'ethers';
 
 import {InputValue} from '@aragon/ods';
@@ -549,7 +550,7 @@ export interface ProposalFormData {
   };
   pluginSelectedVersion?: {
     address: string;
-    version: string;
+    version: VersionTag;
     isLatest: boolean;
     isPrepared: boolean;
   };
