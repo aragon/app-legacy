@@ -715,11 +715,12 @@ const CreateProposalWrapper: React.FC<Props> = ({
       // todo(kon): fix this if needed
       let proposalIterator: AsyncGenerator<ProposalCreationStepValue>;
       if (offchain && electionId) {
+        const proposalParams =
+          proposalCreationData as CreateGasslessProposalParams;
+        proposalParams.vochainProposalId = electionId;
         proposalIterator = (
           pluginClient as OffchainVotingClient
-        ).methods.createProposal(
-          proposalCreationData as CreateGasslessProposalParams
-        );
+        ).methods.createProposal(proposalParams);
       } else {
         proposalIterator = (
           pluginClient as MultisigClient | TokenVotingClient
