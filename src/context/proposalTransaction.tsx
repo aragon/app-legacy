@@ -186,7 +186,7 @@ const ProposalTransactionProvider: React.FC<Props> = ({children}) => {
    *                  Estimations                  *
    *************************************************/
   const estimateVoteOrApprovalFees = useCallback(async () => {
-    if (isOffchainVotingClient(pluginClient!)) {
+    if (offchainVoting && voteParams) {
       const {proposal} = new ProposalId(urlId!).stripPlgnAdrFromProposalId();
       return (pluginClient as OffchainVotingClient)?.estimation.setTally(
         pluginAddress,
@@ -416,7 +416,7 @@ const ProposalTransactionProvider: React.FC<Props> = ({children}) => {
       if (!isMultisigPluginClient) return;
 
       let approveSteps;
-      if (isOffchainVotingClient(pluginClient!)) {
+      if (offchainVoting) {
         // todo(kon): isCommitteeVote is a quick hack tot test the approve. Check how should be done
         const {proposal: proposalId} = new ProposalId(
           urlId!
@@ -516,7 +516,16 @@ const ProposalTransactionProvider: React.FC<Props> = ({children}) => {
     // start proposal execution
     setExecutionProcessState(TransactionState.LOADING);
 
-    const executeSteps = pluginClient?.methods.executeProposal(proposalId);
+    let executeSteps;
+    if (offchainVoting) {
+      executeSteps = (pluginClient as OffchainVotingClient)?.methods.execute(
+        pluginAddress,
+        proposalId
+      );
+    } else {
+      executeSteps = pluginClient?.methods.executeProposal(proposalId);
+    }
+
     if (!executeSteps) {
       throw new Error('Voting function is not initialized correctly');
     }

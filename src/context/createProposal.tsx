@@ -149,8 +149,9 @@ const CreateProposalWrapper: React.FC<Props> = ({
   } = getDHMFromSeconds((votingSettings as MajorityVotingSettings).minDuration);
 
   const [proposalId, setProposalId] = useState<string>();
-  const [proposalCreationData, setProposalCreationData] =
-    useState<CreateMajorityVotingProposalParams>();
+  const [proposalCreationData, setProposalCreationData] = useState<
+    CreateMajorityVotingProposalParams | CreateGasslessProposalParams
+  >();
   const [creationProcessState, setCreationProcessState] =
     useState<TransactionState>(TransactionState.WAITING);
 
@@ -529,12 +530,14 @@ const CreateProposalWrapper: React.FC<Props> = ({
     // todo(kon): type miss compatibility between clients
     return offchain
       ? (pluginClient as OffchainVotingClient).estimation.createProposal(
-          getOffChainProposalParams(proposalCreationData, '')
+          proposalCreationData as CreateGasslessProposalParams
         )
       : (
           pluginClient as TokenVotingClient | MultisigClient
-        ).estimation.createProposal(proposalCreationData);
-  }, [getOffChainProposalParams, offchain, pluginClient, proposalCreationData]);
+        ).estimation.createProposal(
+          proposalCreationData as CreateMajorityVotingProposalParams
+        );
+  }, [offchain, pluginClient, proposalCreationData]);
 
   const {
     tokenPrice,
@@ -715,12 +718,14 @@ const CreateProposalWrapper: React.FC<Props> = ({
         proposalIterator = (
           pluginClient as OffchainVotingClient
         ).methods.createProposal(
-          getOffChainProposalParams(proposalCreationData, electionId)
+          proposalCreationData as CreateGasslessProposalParams
         );
       } else {
         proposalIterator = (
           pluginClient as MultisigClient | TokenVotingClient
-        ).methods.createProposal(proposalCreationData);
+        ).methods.createProposal(
+          proposalCreationData as CreateMajorityVotingProposalParams
+        );
       }
 
       if (creationProcessState === TransactionState.SUCCESS) {
@@ -825,13 +830,26 @@ const CreateProposalWrapper: React.FC<Props> = ({
     // set proposal creation data
     async function setProposalData() {
       if (showTxModal && creationProcessState === TransactionState.WAITING) {
-        const {params} = await getProposalCreationParams();
-        setProposalCreationData(params);
+        if (offchain) {
+          const {params: offchainParams} = await getProposalCreationParams();
+          setProposalCreationData(
+            getOffChainProposalParams(offchainParams, '')
+          );
+        } else {
+          const {params} = await getProposalCreationParams();
+          setProposalCreationData(params);
+        }
       } else if (!showTxModal) setProposalCreationData(undefined);
     }
 
     setProposalData();
-  }, [creationProcessState, getProposalCreationParams, showTxModal]);
+  }, [
+    creationProcessState,
+    getOffChainProposalParams,
+    getProposalCreationParams,
+    offchain,
+    showTxModal,
+  ]);
 
   /*************************************************
    *                    Render                     *
