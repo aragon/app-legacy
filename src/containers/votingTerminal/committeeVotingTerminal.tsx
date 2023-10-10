@@ -43,7 +43,7 @@ export const CommitteeVotingTerminal = ({
 
   const {
     canApprove,
-    voted,
+    approved,
     isApproved,
     canBeExecuted,
     nextVoteWillApprove,
@@ -95,21 +95,13 @@ export const CommitteeVotingTerminal = ({
       return getCommitteVoteButtonLabel(
         executed,
         notBegan,
-        voted,
+        approved,
         canBeExecuted,
         canApprove,
         t
       );
     }
-  }, [
-    proposal,
-    canApprove,
-    voted,
-    isApproved,
-    isApprovalPeriod,
-    nextVoteWillApprove,
-    t,
-  ]);
+  }, [proposal, executed, notBegan, approved, canBeExecuted, canApprove, t]);
 
   // vote button state and handler
   const {voteNowDisabled, onClick} = useMemo(() => {
@@ -120,7 +112,7 @@ export const CommitteeVotingTerminal = ({
     }
 
     // disable approval on when wallet has voted or can't vote
-    if (!canApprove || voted) return {voteNowDisabled: true};
+    if (!canApprove || approved) return {voteNowDisabled: true};
 
     // not logged in
     if (!address) {
@@ -160,7 +152,7 @@ export const CommitteeVotingTerminal = ({
     isApprovalPeriod,
     isOnWrongNetwork,
     statusRef,
-    voted,
+    approved,
   ]);
 
   /**

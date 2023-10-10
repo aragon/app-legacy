@@ -155,7 +155,6 @@ export const useGaslessCommiteVotes = (
   const client = usePluginClient(GaselessPluginName) as OffchainVotingClient;
   const {address} = useWallet();
 
-  const proposalCanBeApproved = proposal.status === ProposalStatus.SUCCEEDED;
   const isApprovalPeriod = useMemo(() => {
     if (!proposal) return false;
     return (
@@ -164,7 +163,10 @@ export const useGaslessCommiteVotes = (
     );
   }, [proposal]);
 
-  const voted = useMemo(() => {
+  const proposalCanBeApproved =
+    isApprovalPeriod && proposal.status === ProposalStatus.SUCCEEDED;
+
+  const approved = useMemo(() => {
     return proposal.approvers?.some(approver => approver === address);
   }, [address, proposal.approvers]);
 
@@ -202,7 +204,7 @@ export const useGaslessCommiteVotes = (
       setCanApprove(canApprove);
     };
     if (address && client) {
-      voted || !isApprovalPeriod || !proposalCanBeApproved
+      approved || !isApprovalPeriod || !proposalCanBeApproved
         ? setCanApprove(false)
         : checkCanVote();
     }
@@ -212,13 +214,13 @@ export const useGaslessCommiteVotes = (
     isApprovalPeriod,
     pluginAddress,
     proposalCanBeApproved,
-    voted,
+    approved,
   ]);
 
   return {
     isApprovalPeriod,
     canApprove,
-    voted,
+    approved,
     isApproved,
     canBeExecuted,
     nextVoteWillApprove,
