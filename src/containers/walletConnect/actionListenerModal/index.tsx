@@ -220,12 +220,9 @@ const ActionListenerModal: React.FC<Props> = ({
         <div className="space-y-1.5">
           {actionsReceived.length > 0 ? (
             <ButtonText
-              label={t(
-                'modal.dappConnect.detaildApp.ctaLabel.addAmountActions',
-                {
-                  amountActions: actionsReceived.length,
-                }
-              )}
+              label={t('modal.dappConnect.detaildApp.ctaLabel', {
+                amountActions: actionsReceived.length,
+              })}
               onClick={handleAddActions}
               mode="primary"
               className="w-full"

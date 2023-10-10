@@ -72,7 +72,7 @@ const WCdAppValidation: React.FC<Props> = props => {
         return t('modal.dappConnect.validation.ctaLabelSuccess');
       case ConnectionState.WAITING:
       default:
-        return t('modal.dappConnect.validation.ctaLabel');
+        return t('modal.dappConnect.validation.ctaLabelDefault');
     }
   }, [t, connectionStatus]);
 
@@ -242,7 +242,7 @@ const WCdAppValidation: React.FC<Props> = props => {
         {connectionStatus === ConnectionState.SUCCESS && (
           <AlertWrapper>
             <AlertInline
-              label={t('modal.dappConnect.validation.codeInput.statusSuccess', {
+              label={t('modal.dappConnect.validation.alertSuccess', {
                 dappName: currentSession?.peer.metadata.name,
               })}
               mode="success"
@@ -252,7 +252,9 @@ const WCdAppValidation: React.FC<Props> = props => {
         {connectionStatus === ConnectionState.INCORRECT_URI && (
           <AlertWrapper>
             <AlertInline
-              label={`The QR code provided is not from ${selecteddApp.name}.`}
+              label={t('modal.dappConnect.validation.alertCriticalQRcode', {
+                dappName: selecteddApp.name,
+              })}
               mode="critical"
             />
           </AlertWrapper>
@@ -260,9 +262,9 @@ const WCdAppValidation: React.FC<Props> = props => {
         {connectionStatus === ConnectionState.ERROR && (
           <AlertWrapper>
             <AlertInline
-              label={t(
-                'modal.dappConnect.validation.addressInput.alertCritical'
-              )}
+              label={t('modal.dappConnect.validation.alertCriticalGeneral', {
+                dappName: currentSession?.peer.metadata.name,
+              })}
               mode="critical"
             />
           </AlertWrapper>

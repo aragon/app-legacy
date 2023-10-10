@@ -1317,6 +1317,7 @@
         "ctaLabel": "Add {{amountActions}} actions"
       },
       "ctaOpenDapp": "Open {{dappName}}",
+      "ctaDisconnectDapp": "Disconnect {{dappName}}",
       "dAppConnectedLabel": "Connected",
       "headerTitle": "Select dApp",
       "headerDesc": "You can interact with the following dApps to add actions to your proposal. Learn more about {{link}}.",
