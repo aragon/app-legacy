@@ -6,7 +6,7 @@ import {
   IconGovernance,
   ListItemHeader,
 } from '@aragon/ods';
-import React, {useMemo} from 'react';
+import React from 'react';
 import {useTranslation} from 'react-i18next';
 import {generatePath, useNavigate} from 'react-router-dom';
 import styled from 'styled-components';
@@ -71,39 +71,26 @@ const ProposalSnapshot: React.FC<Props> = ({
     pluginAddress,
   });
 
-  const {data: members, isLoading: membersAreLoading} = useDaoMembers(
-    pluginAddress,
-    pluginType,
-    {countOnly: true}
-  );
+  const {data: members} = useDaoMembers(pluginAddress, pluginType, {
+    countOnly: true,
+  });
 
-  const proposals = data?.pages.flat();
+  const mappedProposals = data?.pages
+    .flat()
+    .slice(0, PROPOSALS_PER_PAGE)
+    .map(p => {
+      return proposal2CardProps(
+        p,
+        members.memberCount,
+        network,
+        navigate,
+        t,
+        daoAddressOrEns,
+        address
+      );
+    });
 
-  const mappedProposals = useMemo(
-    () =>
-      proposals?.slice(0, PROPOSALS_PER_PAGE).map(p => {
-        return proposal2CardProps(
-          p,
-          members.memberCount,
-          network,
-          navigate,
-          t,
-          daoAddressOrEns,
-          address
-        );
-      }),
-    [
-      proposals,
-      members.memberCount,
-      network,
-      navigate,
-      t,
-      daoAddressOrEns,
-      address,
-    ]
-  );
-
-  if (proposalsAreLoading || membersAreLoading) {
+  if (proposalsAreLoading) {
     return <Loading />;
   }
 
