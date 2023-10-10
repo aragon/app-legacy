@@ -75,6 +75,8 @@ export const MembershipSnapshot: React.FC<Props> = ({
 
   if (members.length === 0) return null;
 
+  const displayedMembers = members.slice(0, 3);
+
   if (horizontal && isDesktop) {
     return (
       <div className="flex space-x-3">
@@ -102,7 +104,7 @@ export const MembershipSnapshot: React.FC<Props> = ({
         </div>
         <div className="w-2/3 space-y-2">
           <ListItemGrid>
-            <MembersList token={daoToken} members={members} />
+            <MembersList token={daoToken} members={displayedMembers} />
           </ListItemGrid>
           <ButtonText
             mode="secondary"
@@ -142,7 +144,7 @@ export const MembershipSnapshot: React.FC<Props> = ({
       />
       <MembersList
         token={daoToken}
-        members={members.slice(0, 3)}
+        members={displayedMembers}
         isCompactMode={true}
       />
       <ButtonText
