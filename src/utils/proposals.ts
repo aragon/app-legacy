@@ -845,11 +845,19 @@ export function isEarlyExecutable(
 export function getProposalExecutionStatus(
   proposalStatus: ProposalStatus | undefined,
   canExecuteEarly: boolean,
-  executionFailed: boolean
+  executionFailed: boolean,
+  isGaselessProposalExecutable?: boolean // Additional checks for gasless proposals. Undefined for others
 ) {
   switch (proposalStatus) {
     case 'Succeeded':
-      return executionFailed ? 'executable-failed' : 'executable';
+      if (executionFailed) {
+        return 'executable-failed';
+      }
+      // Condition will be false if undefined
+      if (isGaselessProposalExecutable === false) {
+        return 'default';
+      }
+      return 'executable';
     case 'Executed':
       return 'executed';
     case 'Defeated':

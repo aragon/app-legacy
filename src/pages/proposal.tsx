@@ -82,11 +82,10 @@ import {format} from 'date-fns';
 import {getFormattedUtcOffset, KNOWN_FORMATS} from '../utils/date';
 import {formatUnits} from '@vocdoni/sdk';
 import Big from 'big.js';
-import {OffchainVotingTerminal} from '../containers/votingTerminal/offchainVotingTerminal';
+import {CommitteeVotingTerminal} from '../containers/votingTerminal/offchainVotingTerminal';
 import {GaslessVotingProposal} from '@vocdoni/offchain-voting';
 import {useOffchainHasAlreadyVote} from '../context/useOffchainVoting';
 import {useDaoToken} from '../hooks/useDaoToken';
-import {CommitteeVotingTerminal} from '../containers/votingTerminal/committeeVotingTerminal';
 
 const PENDING_PROPOSAL_STATUS_INTERVAL = 1000 * 10;
 const PROPOSAL_STATUS_INTERVAL = 1000 * 60;
@@ -185,6 +184,7 @@ export const Proposal: React.FC = () => {
   const {hasAlreadyVote: offchainAlreadyVote} = useOffchainHasAlreadyVote({
     proposal,
   });
+
   const pluginClient = usePluginClient(pluginType);
 
   // ref used to hold "memories" of previous "state"
@@ -217,14 +217,14 @@ export const Proposal: React.FC = () => {
   // const [isGasless, setIsGasless] = useState(false);
 
   // const title = isGaseless
-  //   ? (proposal as GaslessVotingProposal)?.vochainMetadata.title.default
+  //   ? (proposal as GaslessVotingProposal)?.vochain.metadata.title.default
   //   : proposal?.metadata.title;
   // const summary = isGaseless
-  //   ? (proposal as GaslessVotingProposal)?.vochainMetadata.questions[0].title
+  //   ? (proposal as GaslessVotingProposal)?.vochain.metadata.questions[0].title
   //       .default
   //   : proposal?.metadata.summary;
   // const description = isGaseless
-  //   ? (proposal as GaslessVotingProposal)?.vochainMetadata.description.default
+  //   ? (proposal as GaslessVotingProposal)?.vochain.metadata.description.default
   //   : proposal?.metadata.description;
 
   /*************************************************
@@ -235,10 +235,10 @@ export const Proposal: React.FC = () => {
   //   if (!proposal) return;
   // if (isGaslessProposal(proposal)) {
   //     setTitle(
-  //       (proposal as GaslessVotingProposal)?.vochainMetadata.title.default || ''
+  //       (proposal as GaslessVotingProposal)?.vochain.metadata.title.default || ''
   //     );
   //     setDescription(
-  //       (proposal as GaslessVotingProposal)?.vochainMetadata.description
+  //       (proposal as GaslessVotingProposal)?.vochain.metadata.description
   //         .default || ''
   //     );
   //   } else {
@@ -497,7 +497,8 @@ export const Proposal: React.FC = () => {
   const executionStatus = getProposalExecutionStatus(
     proposalStatus,
     canExecuteEarly,
-    executionFailed
+    executionFailed,
+    undefined
   );
 
   // whether current user has voted
@@ -682,15 +683,15 @@ export const Proposal: React.FC = () => {
       onVoteSubmitClicked={vote =>
         isGaslessProposal(proposal)
           ? handleGaslessVoting(
-            vote,
+              vote,
               (proposal as GaslessVotingProposal).token?.address
-          )
-        : handlePrepareVote({
-          vote,
-          replacement: voted || voteOrApprovalSubmitted,
-          voteTokenAddress: (proposal as TokenVotingProposal).token
-            ?.address,
-        })
+            )
+          : handlePrepareVote({
+              vote,
+              replacement: voted || voteOrApprovalSubmitted,
+              voteTokenAddress: (proposal as TokenVotingProposal).token
+                ?.address,
+            })
       }
       {...mappedProps}
     />
@@ -775,18 +776,25 @@ export const Proposal: React.FC = () => {
               votingStatusLabel={voteStatus}
               proposalId={proposalId}
               statusRef={statusRef}
+              onExecuteClicked={handleExecuteNowClicked}
+              actions={decodedActions}
             />
           ) : (
-            votingSettings && <VTerminal /> // todo(kon): fix this conditions
+            votingSettings && ( // todo(kon): fix this conditions
+              <>
+                <VTerminal />
+                <ExecutionWidget
+                  pluginType={pluginType}
+                  actions={decodedActions}
+                  status={executionStatus}
+                  onExecuteClicked={handleExecuteNowClicked}
+                  txhash={
+                    executionTxHash || proposal.executionTxHash || undefined
+                  }
+                />
+              </>
+            )
           )}
-
-          <ExecutionWidget
-            pluginType={pluginType}
-            actions={decodedActions}
-            status={executionStatus}
-            onExecuteClicked={handleExecuteNowClicked}
-            txhash={executionTxHash || proposal.executionTxHash || undefined}
-          />
         </ProposalContainer>
         <AdditionalInfoContainer>
           <ResourceList links={proposal.metadata.resources} />

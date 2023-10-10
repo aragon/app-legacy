@@ -14,6 +14,16 @@ import {ProposalId} from '../../utils/types';
 import {useWallet} from '../../hooks/useWallet';
 import {useProposalTransactionContext} from '../../context/proposalTransaction';
 import {VoteValues} from '@aragon/sdk-client';
+import {
+  ExecutionWidget,
+  ExecutionWidgetProps,
+} from '../../components/executionWidget';
+import {getProposalExecutionStatus} from '../../utils/proposals';
+
+type CommitteeExecutionWidgetProps = Pick<
+  ExecutionWidgetProps,
+  'actions' | 'onExecuteClicked'
+>;
 
 export const CommitteeVotingTerminal = ({
   votingStatusLabel,
@@ -21,6 +31,8 @@ export const CommitteeVotingTerminal = ({
   proposal,
   proposalId,
   statusRef,
+  actions,
+  onExecuteClicked,
 }: {
   votingStatusLabel: string;
   votingTerminal: ReactNode;
@@ -30,7 +42,7 @@ export const CommitteeVotingTerminal = ({
     wasNotLoggedIn: boolean;
     wasOnWrongNetwork: boolean;
   }>;
-}) => {
+} & CommitteeExecutionWidgetProps) => {
   const {t} = useTranslation();
   const [terminalTab, setTerminalTab] = useState<TerminalTabs>('breakdown');
   const pluginClient = usePluginClient(GaselessPluginName);
@@ -53,7 +65,8 @@ export const CommitteeVotingTerminal = ({
     notBegan,
   } = useGaslessCommiteVotes(address, proposal);
 
-  const {handleSubmitVote} = useProposalTransactionContext();
+  const {handleSubmitVote, transactionHash, pluginType, executionFailed} =
+    useProposalTransactionContext();
 
   const mappedProps = useMemo(() => {
     if (!proposal) return;
@@ -96,7 +109,6 @@ export const CommitteeVotingTerminal = ({
         executed,
         notBegan,
         approved,
-        canBeExecuted,
         canApprove,
         t
       );
@@ -209,33 +221,53 @@ export const CommitteeVotingTerminal = ({
     );
   };
 
+  // proposal execution status
+  const executionStatus = useMemo(() => {
+    return getProposalExecutionStatus(
+      proposal?.status,
+      false,
+      executionFailed,
+      canBeExecuted
+    );
+  }, [canBeExecuted, executionFailed, proposal?.status]);
+
   return (
-    <Container>
-      <Header>
-        <Title>Voting</Title>
-        <Summary>
-          Proposal must pass with a community vote and then committee approval.
-        </Summary>
-      </Header>
-      <Accordion type={'multiple'}>
-        <AccordionItem
-          name={'community-voting'}
-          type={'action-builder'}
-          methodName={'Community Voting'}
-          alertLabel={votingStatusLabel}
-        >
-          {votingTerminal}
-        </AccordionItem>
-        <AccordionItem
-          name={'actions-approval'}
-          type={'action-builder'}
-          methodName={'Actions approval'}
-          alertLabel={approvalStatus} // todo(kon): implement committee vote status
-        >
-          <CommitteeVotingTerminal />
-        </AccordionItem>
-      </Accordion>
-    </Container>
+    <>
+      <Container>
+        <Header>
+          <Title>Voting</Title>
+          <Summary>
+            Proposal must pass with a community vote and then committee
+            approval.
+          </Summary>
+        </Header>
+        <Accordion type={'multiple'}>
+          <AccordionItem
+            name={'community-voting'}
+            type={'action-builder'}
+            methodName={'Community Voting'}
+            alertLabel={votingStatusLabel}
+          >
+            {votingTerminal}
+          </AccordionItem>
+          <AccordionItem
+            name={'actions-approval'}
+            type={'action-builder'}
+            methodName={'Actions approval'}
+            alertLabel={approvalStatus} // todo(kon): implement committee vote status
+          >
+            <CommitteeVotingTerminal />
+          </AccordionItem>
+        </Accordion>
+      </Container>
+      <ExecutionWidget
+        pluginType={pluginType}
+        actions={actions}
+        status={executionStatus}
+        onExecuteClicked={onExecuteClicked}
+        txhash={transactionHash || proposal?.executionTxHash || undefined}
+      />
+    </>
   );
 };
 
@@ -244,7 +276,6 @@ function getCommitteVoteButtonLabel(
   executed: boolean,
   notBegan: boolean,
   voted: boolean,
-  canBeExecuted: boolean,
   canApprove: boolean,
   t: TFunction
 ) {
@@ -254,8 +285,6 @@ function getCommitteVoteButtonLabel(
     return t('offchainVotingTerminal.btnLabel.approve');
   } else if (voted) {
     return t('offchainVotingTerminal.btnLabel.voted');
-  } else if (canBeExecuted) {
-    return t('offchainVotingTerminal.btnLabel.execute');
   } else if (canApprove) {
     return t('offchainVotingTerminal.btnLabel.approve');
   }
