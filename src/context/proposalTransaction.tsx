@@ -421,10 +421,9 @@ const ProposalTransactionProvider: React.FC<Props> = ({children}) => {
         const {proposal: proposalId} = new ProposalId(
           urlId!
         ).stripPlgnAdrFromProposalId();
-        approveSteps = (pluginClient as OffchainVotingClient)?.methods.setTally(
-          pluginAddress,
-          proposalId
-        );
+        approveSteps = await (
+          pluginClient as OffchainVotingClient
+        )?.methods.setTally(pluginAddress, proposalId);
       } else {
         approveSteps = pluginClient.methods.approveProposal(params);
       }
