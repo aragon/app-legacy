@@ -174,13 +174,20 @@ const useCreateOffchainProposal = ({daoToken}: ICreateOffchainProposal) => {
           }))
       );
       // todo(kon): handle how collect faucet have to work
-      const cost = await vocdoniClient.estimateElectionCost(election);
+      const cost = await vocdoniClient.calculateElectionCost(election);
       const accountInfo = await vocdoniClient.fetchAccountInfo();
-      console.log('DEBUG', 'Estimated cost', cost, accountInfo);
+
+      console.log(
+        'DEBUG',
+        'Estimated cost',
+        cost,
+        'balance',
+        accountInfo.balance
+      );
 
       await collectFaucet(cost, accountInfo);
 
-      console.log('DEBUG', 'Faucet collected, creating election:', election);
+      console.log('DEBUG', 'Creating election:', election);
       return await vocdoniClient.createElection(election);
     },
     [collectFaucet, vocdoniClient]
@@ -311,14 +318,14 @@ const useCreateOffchainProposal = ({daoToken}: ICreateOffchainProposal) => {
       // todo(kon): handle all process is finished (go to the proposal on the ui)
     },
     [
-      createAccount,
-      createCensus,
-      createVocdoniElection,
-      daoToken,
-      doStep,
       globalState,
       steps,
-      setElectionId,
+      daoToken,
+      doStep,
+      createAccount,
+      updateStepStatus,
+      createCensus,
+      createVocdoniElection,
     ]
   );
 
