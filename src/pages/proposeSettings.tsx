@@ -64,7 +64,7 @@ import {
   offsetToMills,
 } from 'utils/date';
 import {readFile, toDisplayEns} from 'utils/library';
-import {ProposalStorage} from 'utils/localStorage/proposalStorage';
+import {proposalStorage} from 'utils/localStorage/proposalStorage';
 import {EditSettings, Proposal, Settings} from 'utils/paths';
 import {
   Action,
@@ -700,7 +700,6 @@ const ProposeSettingWrapper: React.FC<Props> = ({
         return;
 
       const creationBlockNumber = await apiProvider.getBlockNumber();
-      const proposalStore = new ProposalStorage();
 
       const [title, summary, description, resources] = getValues([
         'proposalTitle',
@@ -738,7 +737,7 @@ const ProposeSettingWrapper: React.FC<Props> = ({
           approvals: creatorApproval ? [address] : [],
           settings: votingSettings,
         };
-        proposalStore.addProposal(CHAIN_METADATA[network].id, proposal);
+        proposalStorage.addProposal(CHAIN_METADATA[network].id, proposal);
       }
 
       // token voting
@@ -785,7 +784,7 @@ const ProposeSettingWrapper: React.FC<Props> = ({
           token: daoToken ?? null,
           votes,
         };
-        proposalStore.addProposal(CHAIN_METADATA[network].id, proposal);
+        proposalStorage.addProposal(CHAIN_METADATA[network].id, proposal);
       }
     },
     [

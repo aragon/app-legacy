@@ -641,12 +641,8 @@ export const Proposal: React.FC = () => {
     return <Loading />;
   }
 
-  if (proposalError || (proposalIsFetched && proposal === null)) {
+  if (proposalError || (proposalIsFetched && proposal === null) || !proposal) {
     navigate(NotFound, {replace: true, state: {invalidProposal: proposalId}});
-  }
-
-  if (!proposal) {
-    return null;
   }
 
   return (
@@ -689,7 +685,7 @@ export const Proposal: React.FC = () => {
           </ProposerLink>
         </ContentWrapper>
         <SummaryText>{proposal?.metadata.summary}</SummaryText>
-        {proposal.metadata.description && !expandedProposal && (
+        {proposal?.metadata.description && !expandedProposal && (
           <ButtonText
             className="w-full tablet:w-max"
             size="large"
@@ -703,7 +699,7 @@ export const Proposal: React.FC = () => {
 
       <ContentContainer expandedProposal={expandedProposal}>
         <ProposalContainer>
-          {proposal.metadata.description && expandedProposal && (
+          {proposal?.metadata.description && expandedProposal && (
             <>
               <StyledEditorContent editor={editor} />
               <ButtonText
@@ -717,13 +713,14 @@ export const Proposal: React.FC = () => {
           )}
 
           {/* @todo: Add isUpdateProposal check once it's developed */}
-          {featureFlags.getValue('VITE_FEATURE_FLAG_OSX_UPDATES') ===
-            'true' && (
-            <UpdateVerificationCard
-              proposal={proposal}
-              actions={decodedActions}
-            />
-          )}
+          {proposal &&
+            featureFlags.getValue('VITE_FEATURE_FLAG_OSX_UPDATES') ===
+              'true' && (
+              <UpdateVerificationCard
+                proposal={proposal}
+                actions={decodedActions}
+              />
+            )}
 
           <VotingTerminal
             status={proposalStatus}

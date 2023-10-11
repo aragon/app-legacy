@@ -78,3 +78,5 @@ export class ExecutionStorage extends StorageUtils {
     }
   }
 }
+
+export const executionStorage = new ExecutionStorage();

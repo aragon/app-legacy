@@ -19,8 +19,10 @@ import {useDaoMembers} from 'hooks/useDaoMembers';
 import {PluginTypes} from 'hooks/usePluginClient';
 import {useUpdateProposal} from 'hooks/useUpdateProposal';
 import {useWallet} from 'hooks/useWallet';
-import {useProposals} from 'services/aragon-sdk/queries/use-proposals';
-import {PROPOSALS_PER_PAGE} from 'utils/constants';
+import {
+  PROPOSALS_PER_PAGE,
+  useProposals,
+} from 'services/aragon-sdk/queries/use-proposals';
 import {featureFlags} from 'utils/featureFlags';
 import {htmlIn} from 'utils/htmlIn';
 import {Governance, NewProposal} from 'utils/paths';
@@ -94,7 +96,7 @@ const ProposalSnapshot: React.FC<Props> = ({
     return <Loading />;
   }
 
-  if (proposalsFetched && mappedProposals?.length === 0) {
+  if ((proposalsFetched && mappedProposals?.length === 0) || !mappedProposals) {
     return (
       <StateEmpty
         type="Human"
@@ -116,10 +118,6 @@ const ProposalSnapshot: React.FC<Props> = ({
         renderHtml
       />
     );
-  }
-
-  if (!mappedProposals) {
-    return null;
   }
 
   return (

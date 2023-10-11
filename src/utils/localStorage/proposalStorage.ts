@@ -74,9 +74,9 @@ export class ProposalStorage extends StorageUtils {
   >(chainId: SupportedChainID, pluginAddress: string): T[] {
     const key = chainId.toString();
     const proposals: ProposalCache = this.getItem(key) || {};
-    const matchingProposals = Object.values(proposals)
-      .filter(proposal => proposal.id.startsWith(pluginAddress))
-      .map(proposal => proposal);
+    const matchingProposals = Object.values(proposals).filter(proposal =>
+      proposal.id.startsWith(pluginAddress)
+    );
 
     return matchingProposals as unknown as T[];
   }
@@ -104,3 +104,5 @@ export class ProposalStorage extends StorageUtils {
     this.removeItem(key);
   }
 }
+
+export const proposalStorage = new ProposalStorage();

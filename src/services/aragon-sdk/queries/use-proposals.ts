@@ -15,16 +15,14 @@ import {
 
 import {useNetwork} from 'context/network';
 import {usePluginClient} from 'hooks/usePluginClient';
-import {
-  CHAIN_METADATA,
-  PROPOSALS_PER_PAGE,
-  SupportedChainID,
-} from 'utils/constants';
+import {CHAIN_METADATA, SupportedChainID} from 'utils/constants';
 import {invariant} from 'utils/invariant';
-import {ProposalStorage} from 'utils/localStorage/proposalStorage';
+import {proposalStorage} from 'utils/localStorage/proposalStorage';
 import {IFetchProposalsParams} from '../aragon-sdk-service.api';
 import {aragonSdkQueryKeys} from '../query-keys';
 import {transformInfiniteProposals} from '../selectors';
+
+export const PROPOSALS_PER_PAGE = 6;
 
 const DEFAULT_PARAMS = {
   limit: PROPOSALS_PER_PAGE,
@@ -43,8 +41,6 @@ async function fetchProposals(
   const data = await client.methods.getProposals(params);
   return data;
 }
-
-const proposalStorage = new ProposalStorage();
 
 export const useProposals = (
   userParams: Partial<IFetchProposalsParams> & {pluginAddress: string},

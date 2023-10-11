@@ -55,7 +55,7 @@ import {
   offsetToMills,
 } from 'utils/date';
 import {getDefaultPayableAmountInputName, toDisplayEns} from 'utils/library';
-import {ProposalStorage} from 'utils/localStorage/proposalStorage';
+import {proposalStorage} from 'utils/localStorage/proposalStorage';
 import {Proposal} from 'utils/paths';
 import {getNonEmptyActions} from 'utils/proposals';
 import {isNativeToken} from 'utils/tokens';
@@ -487,7 +487,6 @@ const CreateProposalWrapper: React.FC<Props> = ({
         return;
 
       const creationBlockNumber = await apiProvider.getBlockNumber();
-      const proposalStore = new ProposalStorage();
 
       const [title, summary, description, resources] = getValues([
         'proposalTitle',
@@ -525,7 +524,7 @@ const CreateProposalWrapper: React.FC<Props> = ({
           approvals: creatorApproval ? [address] : [],
           settings: votingSettings,
         };
-        proposalStore.addProposal(CHAIN_METADATA[network].id, proposal);
+        proposalStorage.addProposal(CHAIN_METADATA[network].id, proposal);
       } else if (isTokenVotingSettings(votingSettings)) {
         const {creatorVote} =
           proposalCreationData as CreateMajorityVotingProposalParams;
@@ -569,7 +568,7 @@ const CreateProposalWrapper: React.FC<Props> = ({
           token: daoToken ?? null,
           votes,
         };
-        proposalStore.addProposal(CHAIN_METADATA[network].id, proposal);
+        proposalStorage.addProposal(CHAIN_METADATA[network].id, proposal);
       }
     },
     [

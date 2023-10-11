@@ -31,8 +31,8 @@ import {
 import {CHAIN_METADATA, TransactionState} from 'utils/constants';
 import {
   ExecutionDetail,
-  ExecutionStorage,
-  VoteStorage,
+  executionStorage,
+  voteStorage,
 } from 'utils/localStorage';
 import {ProposalId} from 'utils/types';
 import {useNetwork} from './network';
@@ -240,7 +240,7 @@ const ProposalTransactionProvider: React.FC<Props> = ({children}) => {
 
       // cache multisig vote
       if (pluginType === 'multisig.plugin.dao.eth') {
-        voteToPersist = address;
+        voteToPersist = address.toLowerCase();
       }
 
       // cache token voting vote
@@ -248,7 +248,7 @@ const ProposalTransactionProvider: React.FC<Props> = ({children}) => {
         // fetch token user balance, ie vote weight
         const weight = await fetchVotingPower({tokenAddress, address});
         voteToPersist = {
-          address,
+          address: address.toLowerCase(),
           vote,
           weight: weight.toBigInt(),
           voteReplaced: !!voteReplaced,
@@ -256,7 +256,6 @@ const ProposalTransactionProvider: React.FC<Props> = ({children}) => {
       }
 
       if (voteToPersist) {
-        const voteStorage = new VoteStorage();
         voteStorage.addVote(
           CHAIN_METADATA[network].id,
           proposalId.toString(),
@@ -293,7 +292,6 @@ const ProposalTransactionProvider: React.FC<Props> = ({children}) => {
       };
 
       // add execution detail to local storage
-      const executionStorage = new ExecutionStorage();
       executionStorage.addExecutionDetail(
         CHAIN_METADATA[network].id,
         proposalId.toString(),

@@ -99,3 +99,5 @@ export class VoteStorage extends StorageUtils {
     }
   }
 }
+
+export const voteStorage = new VoteStorage();

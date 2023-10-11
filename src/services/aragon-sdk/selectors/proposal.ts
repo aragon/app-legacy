@@ -9,8 +9,8 @@ import {ProposalStatus} from '@aragon/sdk-client-common';
 import {InfiniteData} from '@tanstack/react-query';
 
 import {SupportedChainID} from 'utils/constants';
-import {ExecutionStorage, VoteStorage} from 'utils/localStorage';
-import {ProposalStorage} from 'utils/localStorage/proposalStorage';
+import {executionStorage, voteStorage} from 'utils/localStorage';
+import {proposalStorage} from 'utils/localStorage/proposalStorage';
 import {
   isMultisigProposal,
   isTokenBasedProposal,
@@ -80,8 +80,6 @@ export function syncProposalData<
     | MultisigProposalListItem
     | TokenVotingProposalListItem
 >(chainId: SupportedChainID, proposalId: string, serverData: T | null) {
-  const proposalStorage = new ProposalStorage();
-
   if (serverData) {
     proposalStorage.removeProposal(chainId, serverData.id);
     return serverData;
@@ -108,8 +106,6 @@ function syncExecutionInfo(
     | MultisigProposalListItem
     | TokenVotingProposalListItem
 ): void {
-  const executionStorage = new ExecutionStorage();
-
   if (proposal.status === ProposalStatus.EXECUTED) {
     // If the proposal is already executed, remove its detail from storage.
     executionStorage.removeExecutionDetail(chainId, proposal.id);
@@ -137,12 +133,10 @@ function syncApprovalsOrVotes(
     | MultisigProposalListItem
     | TokenVotingProposalListItem
 ): void {
-  const voteStorage = new VoteStorage();
-
   if (isMultisigProposal(proposal)) {
-    proposal.approvals = syncMultisigVotes(chainId, proposal, voteStorage);
+    proposal.approvals = syncMultisigVotes(chainId, proposal);
   } else if (isTokenBasedProposal(proposal)) {
-    proposal.votes = syncTokenBasedVotes(chainId, proposal, voteStorage);
+    proposal.votes = syncTokenBasedVotes(chainId, proposal);
   }
 }
 
@@ -157,8 +151,7 @@ function syncApprovalsOrVotes(
  */
 function syncMultisigVotes(
   chainId: SupportedChainID,
-  proposal: MultisigProposal | MultisigProposalListItem,
-  voteStorage: VoteStorage
+  proposal: MultisigProposal | MultisigProposalListItem
 ): string[] {
   const serverApprovals = new Set(proposal.approvals);
   const allCachedApprovals = voteStorage.getVotes<string>(chainId, proposal.id);
@@ -172,6 +165,8 @@ function syncMultisigVotes(
       return true;
     }
   });
+
+  console.log([...uniqueCachedApprovals, ...Array.from(serverApprovals)]);
 
   return [...uniqueCachedApprovals, ...Array.from(serverApprovals)];
 }
@@ -187,8 +182,7 @@ function syncMultisigVotes(
  */
 function syncTokenBasedVotes(
   chainId: SupportedChainID,
-  proposal: TokenVotingProposal | TokenVotingProposalListItem,
-  voteStorage: VoteStorage
+  proposal: TokenVotingProposal | TokenVotingProposalListItem
 ): TokenVotingProposalVote[] {
   const serverVotes = new Map(
     proposal.votes?.map(vote => [vote.address, vote])

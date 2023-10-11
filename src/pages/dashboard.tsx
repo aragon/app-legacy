@@ -300,13 +300,13 @@ export const Dashboard: React.FC = () => {
 
         {isDesktop ? (
           <DashboardContent
-            daoAddressOrEns={liveDao.address}
+            daoAddressOrEns={liveAddressOrEns}
             pluginType={liveDao.plugins[0].id as PluginTypes}
             pluginAddress={liveDao.plugins[0].instanceAddress ?? ''}
           />
         ) : (
           <MobileDashboardContent
-            daoAddressOrEns={liveDao.address}
+            daoAddressOrEns={liveAddressOrEns}
             pluginType={liveDao.plugins[0].id as PluginTypes}
             pluginAddress={liveDao.plugins[0].instanceAddress ?? ''}
           />

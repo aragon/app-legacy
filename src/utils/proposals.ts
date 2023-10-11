@@ -522,12 +522,12 @@ export function getLiveProposalTerminalProps(
     // loop through approvals and update vote option to approved;
     let approvalAddress;
     proposal.approvals.forEach(address => {
-      approvalAddress = stripPlgnAdrFromProposalId(address);
+      approvalAddress = stripPlgnAdrFromProposalId(address).toLowerCase();
 
       // considering only members can approve, no need to check if Map has the key
       mappedMembers.set(approvalAddress, {
-        src: approvalAddress,
         wallet: approvalAddress,
+        src: approvalAddress,
         option: 'approved',
       });
     });
