@@ -124,7 +124,6 @@ const StepperModal = <X extends GenericKeyEnum>({
                 </div>
               </VStack>
             </GasCostEthContainer>
-
             <GasTotalCostEthContainer>
               <NoShrinkVStack>
                 <Label>{t('TransactionModal.totalCost')}</Label>
@@ -224,10 +223,10 @@ const VStack = styled.div.attrs({
   className: 'space-y-0.25 overflow-hidden',
 })``;
 
-const StrongText = styled.p.attrs({
+const StrongText = styled.div.attrs({
   className: 'font-bold text-right text-ui-600 flex space-x-0.5',
 })``;
 
-const Label = styled.p.attrs({
+const Label = styled.div.attrs({
   className: 'text-ui-600',
 })``;

@@ -1,4 +1,4 @@
-import {useMemo, useState} from 'react';
+import {useCallback, useMemo, useState} from 'react';
 
 export enum StepStatus {
   WAITING = 'WAITING',
@@ -50,31 +50,44 @@ export const useFunctionStepper = <X extends GenericKeyEnum>({
     return StepStatus.ERROR;
   }, [steps]);
 
-  const updateStepStatus = (stepId: X, status: StepStatus) => {
-    setSteps(prevSteps => ({
-      ...prevSteps,
-      [stepId]: {
-        ...prevSteps[stepId],
-        status: status,
-      },
-    }));
-  };
+  const updateStepStatus = useCallback(
+    (stepId: X, status: StepStatus, errorMessage?: string) => {
+      setSteps(prevSteps => ({
+        ...prevSteps,
+        [stepId]: {
+          ...prevSteps[stepId],
+          status: status,
+          errorMessage,
+        },
+      }));
+    },
+    [setSteps]
+  );
 
-  const doStep = async <T,>(
-    stepId: X,
-    callback: () => Promise<T>
-  ): Promise<T> => {
-    let res: T;
-    try {
-      updateStepStatus(stepId, StepStatus.LOADING);
-      res = await callback();
-    } catch (e) {
-      updateStepStatus(stepId, StepStatus.ERROR);
-      throw e;
+  const doStep = useCallback(
+    async <T,>(stepId: X, callback: () => Promise<T>) => {
+      let res: T;
+      try {
+        updateStepStatus(stepId, StepStatus.LOADING);
+        res = await callback();
+      } catch (e) {
+        let message = 'Unknown Error';
+        if (e instanceof Error) message = e.message;
+        else message = String(e);
+        updateStepStatus(stepId, StepStatus.ERROR, message);
+        throw e;
+      }
+      updateStepStatus(stepId, StepStatus.SUCCESS);
+      return res;
+    },
+    [updateStepStatus]
+  );
+
+  const resetStates = useCallback(() => {
+    for (const stepKey in steps) {
+      updateStepStatus(stepKey as X, StepStatus.WAITING);
     }
-    updateStepStatus(stepId, StepStatus.SUCCESS);
-    return res;
-  };
+  }, [steps, updateStepStatus]);
 
-  return {doStep, updateStepStatus, globalState, steps};
+  return {doStep, updateStepStatus, globalState, steps, resetStates};
 };

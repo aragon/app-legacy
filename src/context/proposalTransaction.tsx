@@ -417,7 +417,6 @@ const ProposalTransactionProvider: React.FC<Props> = ({children}) => {
 
       let approveSteps;
       if (offchainVoting) {
-        // todo(kon): isCommitteeVote is a quick hack tot test the approve. Check how should be done
         const {proposal: proposalId} = new ProposalId(
           urlId!
         ).stripPlgnAdrFromProposalId();

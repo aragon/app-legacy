@@ -60,16 +60,17 @@ const useOffchainVoting = () => {
 
   // const isCommitteeMember
 
-  const {steps, updateStepStatus, doStep, globalState} = useFunctionStepper({
-    initialSteps: {
-      CREATE_VOTE_ID: {
-        status: StepStatus.WAITING,
-      },
-      PUBLISH_VOTE: {
-        status: StepStatus.WAITING,
-      },
-    } as OffchainVotingSteps,
-  });
+  const {steps, updateStepStatus, doStep, globalState, resetStates} =
+    useFunctionStepper({
+      initialSteps: {
+        CREATE_VOTE_ID: {
+          status: StepStatus.WAITING,
+        },
+        PUBLISH_VOTE: {
+          status: StepStatus.WAITING,
+        },
+      } as OffchainVotingSteps,
+    });
 
   const submitVote = useCallback(
     async (vote: VoteProposalParams, electionId: string) => {
@@ -88,6 +89,11 @@ const useOffchainVoting = () => {
   const vote = useCallback(
     async (vote: VoteProposalParams) => {
       console.log('DEBUG', 'Trying to get election id for', vote.proposalId);
+
+      if (globalState === StepStatus.ERROR) {
+        // If global status is error, reset the stepper states
+        resetStates();
+      }
 
       // todo(kon): this step should be removed when min-sdk implemented
       // 1. Retrieve the election id
@@ -179,9 +185,7 @@ export const useGaslessCommiteVotes = (
 
   const canBeExecuted = useMemo(() => {
     if (!client || !proposal) return false;
-    return (
-      isApproved && proposalCanBeApproved
-    );
+    return isApproved && proposalCanBeApproved;
   }, [
     canApprove,
     client,

@@ -422,7 +422,8 @@ export const CreateDAO: React.FC = () => {
             <ConfigureCommunity />
           </Step>
           <Step
-            hideWizard={membership !== 'token' || votingType !== 'offChain'}
+            // todo(kon): this is not working well. After rebase a fix should be added
+            hideWizard={membership !== 'token' && votingType !== 'offChain'}
             wizardTitle={t('createDAO.step5.title')}
             wizardDescription={htmlIn(t)('createDAO.step5.description')}
             isNextButtonDisabled={!defineCommitteeIsValid}

@@ -121,22 +121,23 @@ const useCreateOffchainProposal = ({daoToken}: ICreateOffchainProposal) => {
     []
   );
 
-  const {steps, updateStepStatus, doStep, globalState} = useFunctionStepper({
-    initialSteps: {
-      REGISTER_VOCDONI_ACCOUNT: {
-        status: StepStatus.WAITING,
-      },
-      CREATE_VOCDONI_ELECTION: {
-        status: StepStatus.WAITING,
-      },
-      CREATE_ONCHAIN_PROPOSAL: {
-        status: StepStatus.WAITING,
-      },
-      PROPOSAL_IS_READY: {
-        status: StepStatus.WAITING,
-      },
-    } as OffchainProposalSteps,
-  });
+  const {steps, updateStepStatus, doStep, globalState, resetStates} =
+    useFunctionStepper({
+      initialSteps: {
+        REGISTER_VOCDONI_ACCOUNT: {
+          status: StepStatus.WAITING,
+        },
+        CREATE_VOCDONI_ELECTION: {
+          status: StepStatus.WAITING,
+        },
+        CREATE_ONCHAIN_PROPOSAL: {
+          status: StepStatus.WAITING,
+        },
+        PROPOSAL_IS_READY: {
+          status: StepStatus.WAITING,
+        },
+      } as OffchainProposalSteps,
+    });
 
   const {client: vocdoniClient, census3} = useClient();
 
@@ -256,7 +257,6 @@ const useCreateOffchainProposal = ({daoToken}: ICreateOffchainProposal) => {
     async (
       metadata: ProposalMetadata,
       data: CreateMajorityVotingProposalParams,
-      // todo(kon): change this when min sdk is ready
       handleOnchainProposal: (electionId?: string) => Promise<Error | undefined>
     ) => {
       console.log(
@@ -266,8 +266,10 @@ const useCreateOffchainProposal = ({daoToken}: ICreateOffchainProposal) => {
         steps
       );
 
-      // todo(kon): handle the click when global state is success to open the proposal again
-      if (globalState === StepStatus.SUCCESS) {
+      if (globalState === StepStatus.ERROR) {
+        // If global status is error, reset the stepper states
+        resetStates();
+      } else if (globalState === StepStatus.SUCCESS) {
         return await handleOnchainProposal();
       }
 
@@ -314,8 +316,6 @@ const useCreateOffchainProposal = ({daoToken}: ICreateOffchainProposal) => {
         StepStatus.SUCCESS
       );
       console.log('DEBUG', 'All done!', globalState, electionId);
-
-      // todo(kon): handle all process is finished (go to the proposal on the ui)
     },
     [
       globalState,
@@ -324,6 +324,7 @@ const useCreateOffchainProposal = ({daoToken}: ICreateOffchainProposal) => {
       doStep,
       createAccount,
       updateStepStatus,
+      resetStates,
       createCensus,
       createVocdoniElection,
     ]

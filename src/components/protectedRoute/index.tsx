@@ -12,6 +12,9 @@ import {useNetwork} from 'context/network';
 import {useProviders} from 'context/providers';
 import {useDaoDetailsQuery} from 'hooks/useDaoDetails';
 import {TokenDaoMember, useDaoMembers} from 'hooks/useDaoMembers';
+import {useDaoMembers} from 'hooks/useDaoMembers';
+import {GaselessPluginName, PluginTypes} from 'hooks/usePluginClient';
+import {usePluginSettings} from 'hooks/usePluginSettings';
 import {PluginTypes} from 'hooks/usePluginClient';
 import {useWallet} from 'hooks/useWallet';
 import {useVotingPowerAsync} from 'services/aragon-sdk/queries/use-voting-power';
@@ -205,7 +208,10 @@ const ProtectedRoute: React.FC = () => {
   // wallet connected and on right network, authenticate
   useEffect(() => {
     if (status === 'connected' && !isOnWrongNetwork && pluginType) {
-      if (pluginType === 'token-voting.plugin.dao.eth') {
+      if (
+        pluginType === 'token-voting.plugin.dao.eth' ||
+        pluginType === GaselessPluginName
+      ) {
         gateTokenBasedProposal();
       } else {
         gateMultisigProposal();

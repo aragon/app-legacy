@@ -302,8 +302,11 @@ function getApproveStatusLabel(
   t: TFunction
 ) {
   let label = '';
-
-  if (proposal.status === 'Pending' || proposal.status === 'Active') {
+  if (
+    proposal.status === 'Pending' ||
+    proposal.status === 'Active' ||
+    proposal.status === 'Succeeded'
+  ) {
     // Uncomment line below is causing SyntaxError: ambiguous indirect export: default 🤷‍♀️
     // const locale = (Locales as Record<string, Locale>)[i18n.language];
 
@@ -320,8 +323,6 @@ function getApproveStatusLabel(
       });
       label = t('votingTerminal.status.active', {timeUntilEnd});
     }
-  } else if (proposal.status === 'Succeeded') {
-    label = t('votingTerminal.status.succeeded');
   } else if (proposal.status === 'Executed') {
     label = t('votingTerminal.status.executed');
   } else if (proposal.status === 'Defeated') {

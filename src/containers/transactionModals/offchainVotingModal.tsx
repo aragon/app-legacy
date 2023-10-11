@@ -67,6 +67,7 @@ JSX.Element => {
       case StepStatus.LOADING:
         break;
       case StepStatus.SUCCESS:
+        // todo(kon): update somehow the vote on the ui. Performing an update to the vochain for example
         setShowVoteModal(false);
         break;
       default: {

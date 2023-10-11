@@ -548,26 +548,24 @@ const CreateProposalWrapper: React.FC<Props> = ({
   } = usePollGasFee(estimateCreationFees, shouldPoll);
 
   const handleCloseModal = useCallback(() => {
-    switch (creationProcessState) {
-      case TransactionState.LOADING:
-        break;
-      case TransactionState.SUCCESS:
-        navigate(
-          generatePath(Proposal, {
-            network,
-            dao:
-              toDisplayEns(daoDetails?.ensDomain) ||
-              daoDetails?.address ||
-              null,
-            id: proposalId || null,
-          })
-        );
-        break;
-      default: {
-        setCreationProcessState(TransactionState.WAITING);
-        setShowTxModal(false);
-        stopPolling();
-      }
+    if (
+      creationProcessState === TransactionState.LOADING ||
+      offchainGlobalState === StepStatus.LOADING
+    ) {
+      return;
+    } else if (creationProcessState === TransactionState.SUCCESS) {
+      navigate(
+        generatePath(Proposal, {
+          network,
+          dao:
+            toDisplayEns(daoDetails?.ensDomain) || daoDetails?.address || null,
+          id: proposalId || null,
+        })
+      );
+    } else {
+      setCreationProcessState(TransactionState.WAITING);
+      setShowTxModal(false);
+      stopPolling();
     }
   }, [
     creationProcessState,
@@ -575,6 +573,7 @@ const CreateProposalWrapper: React.FC<Props> = ({
     daoDetails?.ensDomain,
     navigate,
     network,
+    offchainGlobalState,
     proposalId,
     setShowTxModal,
     stopPolling,
@@ -614,6 +613,7 @@ const CreateProposalWrapper: React.FC<Props> = ({
           : ProposalStatus.ACTIVE,
       };
 
+      // todo(kon): implement cache for offchain proposals
       if (isMultisigVotingSettings(votingSettings)) {
         const {approve: creatorApproval} =
           proposalCreationData as CreateMultisigProposalParams;
@@ -789,6 +789,10 @@ const CreateProposalWrapper: React.FC<Props> = ({
         wallet_provider: provider?.connection.url,
         error,
       });
+        // Fix to update the StepperModal step status when creating a gasless proposal.
+        // If the error is not thrown until the StepperModal, it thinks that the step is finished properly
+        // and not show the try again button
+        if (electionId) throw error;
     }
   }, [
     averageFee,
