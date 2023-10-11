@@ -42,7 +42,10 @@ const PrepareUpdateProvider: React.FC = ({children}) => {
 
   const {client} = useClient();
   const pluginClient = usePluginClient(pluginType);
-  const pluginSelectedVersion = getValues('pluginSelectedVersion');
+  const [osxSelectedVersion, pluginSelectedVersion] = getValues([
+    'osxSelectedVersion',
+    'pluginSelectedVersion',
+  ]);
 
   const [preparationProcessState, setPreparationProcessState] =
     useState<TransactionState>();
@@ -71,7 +74,14 @@ const PrepareUpdateProvider: React.FC = ({children}) => {
       ...(type === 'plugin' && {
         pluginRepo: '0x2345678901234567890123456789012345678901',
       }),
-      newVersion: pluginSelectedVersion?.version as VersionTag,
+      ...(type === 'plugin'
+        ? {
+            newVersion: pluginSelectedVersion?.version as VersionTag,
+          }
+        : {
+            newVersion: osxSelectedVersion?.version as VersionTag,
+          }),
+
       updateParams: [],
     });
     setShowModal({

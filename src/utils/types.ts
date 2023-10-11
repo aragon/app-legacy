@@ -548,6 +548,11 @@ export interface ProposalFormData {
     os: boolean;
     plugin: boolean;
   };
+  osxSelectedVersion?: {
+    version: VersionTag;
+    isLatest: boolean;
+    isPrepared: boolean;
+  };
   pluginSelectedVersion?: {
     address: string;
     version: VersionTag;

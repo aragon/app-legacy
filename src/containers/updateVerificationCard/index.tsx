@@ -32,8 +32,6 @@ export const UpdateVerificationCard: React.FC<UpdateVerificationCardProps> = ({
   const [pluginRegistryResult, pluginSetupProcessorResult] =
     useUpdateVerification(proposalId as ProposalId);
 
-  console.log('view', pluginRegistryResult, pluginSetupProcessorResult);
-
   /** @todo Figure put how to get plugin registry update */
   const pluginRegistryAddress = daoDetails?.address || '';
   const isPluginRegistryCheckLoading =

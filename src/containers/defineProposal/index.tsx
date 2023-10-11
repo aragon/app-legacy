@@ -18,14 +18,25 @@ import {isOnlyWhitespace} from 'utils/library';
 import {UpdateListItem} from 'containers/updateListItem/updateListItem';
 import {useParams} from 'react-router-dom';
 import {VersionSelectionMenu} from 'containers/versionSelectionMenu/versionSelectionMenu';
+import {usePrepareUpdateContext} from 'context/prepareUpdate';
+import {usePluginAvailableVersions} from 'hooks/usePluginAvailableVersions';
+import {useDaoDetailsQuery} from 'hooks/useDaoDetails';
+import {PluginTypes} from 'hooks/usePluginClient';
 const DefineProposal: React.FC = () => {
   const {t} = useTranslation();
   const {address, ensAvatarUrl} = useWallet();
   const {control, setValue} = useFormContext();
-  const pluginVersion = useWatch({
-    name: 'pluginSelectedVersion',
+  const {data: daoDetails} = useDaoDetailsQuery();
+  const pluginType = daoDetails?.plugins?.[0]?.id as PluginTypes;
+  const {handlePreparePlugin} = usePrepareUpdateContext();
+
+  const {data: pluginList, isLoading} = usePluginAvailableVersions(pluginType);
+
+  const [pluginVersion, osxVersion] = useWatch({
+    name: ['pluginSelectedVersion', 'osxSelectedVersion'],
     control: control,
   });
+
   const {type} = useParams();
   const [isOpen, setIsOpen] = useState(false);
 
@@ -36,6 +47,16 @@ const DefineProposal: React.FC = () => {
       helptext: 'TBD inline release notes',
       LinkLabel: t('update.item.releaseNotesLabel'),
       tagLabelNatural: t('update.item.tagLatest'),
+      ...(osxVersion?.isLatest && {
+        tagLabelNatural: t('update.item.tagLatest'),
+      }),
+      ...(osxVersion?.isPrepared
+        ? {
+            tagLabelInfo: t('update.item.tagPrepared'),
+          }
+        : {
+            onClickActionPrimary: (e: React.MouseEvent) => e?.stopPropagation(),
+          }),
       buttonSecondaryLabel: t('update.item.versionCtaLabel'),
       onClickActionSecondary: (e: React.MouseEvent) => e?.stopPropagation(),
     },
@@ -47,12 +68,15 @@ const DefineProposal: React.FC = () => {
       ...(pluginVersion?.isLatest && {
         tagLabelNatural: t('update.item.tagLatest'),
       }),
-      ...(pluginVersion?.isPrepared && {
-        tagLabelInfo: t('update.item.tagPrepared'),
-      }),
+      ...(pluginVersion?.isPrepared
+        ? {
+            tagLabelInfo: t('update.item.tagPrepared'),
+          }
+        : {
+            onClickActionPrimary: (e: React.MouseEvent) => e?.stopPropagation(),
+          }),
       buttonPrimaryLabel: t('update.item.prepareCtaLabel'),
       buttonSecondaryLabel: t('update.item.versionCtaLabel'),
-      onClickActionPrimary: (e: React.MouseEvent) => e?.stopPropagation(),
       onClickActionSecondary: (e: React.MouseEvent) => {
         setIsOpen(true);
         e?.stopPropagation();
@@ -100,6 +124,10 @@ const DefineProposal: React.FC = () => {
                         [data.id]: !value?.[data.id],
                       })
                     }
+                    onClickActionPrimary={(e: React.MouseEvent) => {
+                      e?.stopPropagation();
+                      handlePreparePlugin(data.id);
+                    }}
                   />
                 ))}
               </>
