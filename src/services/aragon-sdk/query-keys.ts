@@ -4,6 +4,8 @@ import type {
   IFetchDelegateeParams,
   IFetchMembersParams,
   IFetchPastVotingPowerParams,
+  IFetchProposalParams,
+  IFetchProposalsParams,
   IFetchVotingPowerParams,
   IFetchVotingSettingsParams,
 } from './aragon-sdk-service.api';
@@ -13,6 +15,8 @@ export enum AragonSdkQueryItem {
   DELEGATEE = 'DELEGATEE',
   MEMBERS = 'MEMBERS',
   PAST_VOTING_POWER = 'PAST_VOTING_POWER',
+  PROPOSAL = 'PROPOSAL',
+  PROPOSALS = 'PROPOSALS',
   VOTING_POWER = 'VOTING_POWER',
   VOTING_SETTINGS = 'VOTING_SETTINGS',
 }
@@ -34,6 +38,14 @@ export const aragonSdkQueryKeys = {
   ],
   pastVotingPower: (params: IFetchPastVotingPowerParams): QueryKey => [
     AragonSdkQueryItem.PAST_VOTING_POWER,
+    params,
+  ],
+  proposal: (params: IFetchProposalParams): QueryKey => [
+    AragonSdkQueryItem.PROPOSAL,
+    params,
+  ],
+  proposals: (params: IFetchProposalsParams): QueryKey => [
+    AragonSdkQueryItem.PROPOSALS,
     params,
   ],
   votingPower: (params: IFetchVotingPowerParams): QueryKey => [

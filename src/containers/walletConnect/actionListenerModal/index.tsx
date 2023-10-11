@@ -197,28 +197,30 @@ const ActionListenerModal: React.FC<Props> = ({
           <AvatarDao daoName={metadataName} src={metadataIcon} size="medium" />
           <div className="flex items-center justify-center text-center font-bold text-ui-800">
             <Spinner size={'xs'} />
-            <p className="ml-2">{t('wc.detaildApp.spinnerLabel')}</p>
+            <p className="ml-2">
+              {t('modal.dappConnect.detaildApp.spinnerLabel')}
+            </p>
           </div>
           <p className="text-center text-sm text-ui-500 desktop:px-5">
-            {t('wc.detaildApp.desc', {
+            {t('modal.dappConnect.detaildApp.desc', {
               dappName: metadataName,
             })}
           </p>
           {actionsReceived.length > 0 ? (
             <Tag
-              label={t('wc.detaildApp.amountActionsTag', {
+              label={t('modal.dappConnect.detaildApp.amountActionsTag', {
                 amountActions: actionsReceived.length,
               })}
             />
           ) : (
-            <Tag label={t('wc.detaildApp.noActionsTag')} />
+            <Tag label={t('modal.dappConnect.detaildApp.noActionsTag')} />
           )}
         </div>
 
         <div className="space-y-1.5">
           {actionsReceived.length > 0 ? (
             <ButtonText
-              label={t('wc.detaildApp.ctaLabel.addAmountActions', {
+              label={t('modal.dappConnect.detaildApp.ctaLabel', {
                 amountActions: actionsReceived.length,
               })}
               onClick={handleAddActions}
@@ -228,7 +230,7 @@ const ActionListenerModal: React.FC<Props> = ({
           ) : null}
           {metadataURL && (
             <ButtonText
-              label={t('wc.detaildApp.ctaLabel.opendApp', {
+              label={t('modal.dappConnect.ctaOpenDapp', {
                 dappName: metadataName,
               })}
               onClick={() => window.open(metadataURL, '_blank')}
@@ -238,7 +240,7 @@ const ActionListenerModal: React.FC<Props> = ({
             />
           )}
           <ButtonText
-            label={t('wc.detaildApp.ctaLabel.disconnectdApp', {
+            label={t('modal.dappConnect.ctaDisconnectDapp', {
               dappName: metadataName,
             })}
             onClick={async () => {

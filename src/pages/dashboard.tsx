@@ -27,7 +27,6 @@ import {
 } from 'hooks/useFavoritedDaos';
 import {usePendingDao, useRemovePendingDaoMutation} from 'hooks/usePendingDao';
 import {PluginTypes} from 'hooks/usePluginClient';
-import {useProposals} from 'hooks/useProposals';
 import useScreen from 'hooks/useScreen';
 import {CHAIN_METADATA} from 'utils/constants';
 import {formatDate} from 'utils/date';
@@ -39,6 +38,7 @@ import {
   EmptyStateHeading,
 } from 'containers/pageEmptyState';
 import {useGlobalModalContext} from 'context/globalModals';
+import {useProposals} from 'services/aragon-sdk/queries/use-proposals';
 
 enum DaoCreationState {
   ASSEMBLING_DAO,
@@ -344,8 +344,16 @@ const DashboardContent: React.FC<DashboardContentProps> = ({
   pluginAddress,
 }) => {
   const {transfers, totalAssetValue} = useDaoVault();
-  const {data: proposals} = useProposals(daoAddressOrEns, pluginType);
 
+  const {data} = useProposals({
+    daoAddressOrEns,
+    pluginType,
+  });
+  const proposals = data?.pages.flat() ?? [];
+
+  // The SDK does NOT provide a count. This will be incorrect
+  // whenever the number of proposals is greater than the default
+  // page size that we fetch: 6
   const proposalCount = proposals.length;
   const transactionCount = transfers.length;
 
@@ -451,7 +459,8 @@ const MobileDashboardContent: React.FC<DashboardContentProps> = ({
   pluginAddress,
 }) => {
   const {transfers, totalAssetValue} = useDaoVault();
-  const {data: proposals} = useProposals(daoAddressOrEns, pluginType);
+  const {data} = useProposals({daoAddressOrEns, pluginType});
+  const proposals = data?.pages.flat() ?? [];
 
   return (
     <MobileLayout>

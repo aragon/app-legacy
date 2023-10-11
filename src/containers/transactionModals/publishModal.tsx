@@ -29,6 +29,7 @@ const icons = {
   [TransactionState.WAITING]: undefined,
   [TransactionState.LOADING]: <Spinner size="xs" color="white" />,
   [TransactionState.SUCCESS]: undefined,
+  [TransactionState.INCORRECT_URI]: undefined,
   [TransactionState.ERROR]: <IconReload />,
 };
 
@@ -58,6 +59,7 @@ const PublishModal: React.FC<PublishModalProps> = ({
     [TransactionState.SUCCESS]:
       buttonLabelSuccess || t('TransactionModal.goToProposal'),
     [TransactionState.ERROR]: t('TransactionModal.tryAgain'),
+    [TransactionState.INCORRECT_URI]: '',
   };
 
   const nativeCurrency = CHAIN_METADATA[network].nativeCurrency;

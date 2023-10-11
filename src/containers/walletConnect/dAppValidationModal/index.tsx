@@ -15,7 +15,7 @@ import {
 } from 'react-hook-form';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
-import {SessionTypes} from '@walletconnect/types';
+import {SessionTypes, SignClientTypes} from '@walletconnect/types';
 
 import ModalBottomSheetSwitcher from 'components/modalBottomSheetSwitcher';
 import ModalHeader from 'components/modalHeader';
@@ -30,13 +30,20 @@ type Props = {
   onConnectionSuccess: (session: SessionTypes.Struct) => void;
   onClose: () => void;
   isOpen: boolean;
+  selecteddApp?: SignClientTypes.Metadata;
 };
 
 // Wallet connect id input name
 export const WC_URI_INPUT_NAME = 'wcID';
 
 const WCdAppValidation: React.FC<Props> = props => {
-  const {onBackButtonClicked, onConnectionSuccess, onClose, isOpen} = props;
+  const {
+    onBackButtonClicked,
+    onConnectionSuccess,
+    onClose,
+    isOpen,
+    selecteddApp,
+  } = props;
 
   const {t} = useTranslation();
   const {alert} = useAlertContext();
@@ -56,14 +63,16 @@ const WCdAppValidation: React.FC<Props> = props => {
   const ctaLabel = useMemo(() => {
     switch (connectionStatus) {
       case ConnectionState.LOADING:
-        return t('wc.validation.ctaLabelVerifying');
+        return t('modal.dappConnect.validation.ctaLabelVerifying');
       case ConnectionState.ERROR:
-        return t('wc.validation.ctaLabelCritical');
+        return t('modal.dappConnect.validation.ctaLabelCritical');
+      case ConnectionState.INCORRECT_URI:
+        return t('modal.dappConnect.validation.ctaLabelCritical');
       case ConnectionState.SUCCESS:
-        return t('wc.validation.ctaLabelSuccess');
+        return t('modal.dappConnect.validation.ctaLabelSuccess');
       case ConnectionState.WAITING:
       default:
-        return t('wc.validation.ctaLabel');
+        return t('modal.dappConnect.validation.ctaLabelDefault');
     }
   }, [t, connectionStatus]);
 
@@ -135,16 +144,30 @@ const WCdAppValidation: React.FC<Props> = props => {
     const isLoading = connectionStatus === ConnectionState.LOADING;
     const isSuccess = connectionStatus === ConnectionState.SUCCESS;
 
-    if (isLoading && currentSession != null) {
+    if (
+      isLoading &&
+      currentSession != null &&
+      currentSession.peer.metadata.name
+        .toLowerCase()
+        .includes((selecteddApp as SignClientTypes.Metadata).name.toLowerCase())
+    ) {
       setConnectionStatus(
         currentSession.acknowledged
           ? ConnectionState.SUCCESS
           : ConnectionState.ERROR
       );
+    } else if (
+      currentSession?.peer.metadata.name
+        .toLowerCase()
+        .includes(
+          (selecteddApp as SignClientTypes.Metadata).name.toLowerCase()
+        ) === false
+    ) {
+      setConnectionStatus(ConnectionState.INCORRECT_URI);
     } else if (isSuccess && currentSession == null) {
       resetConnectionState();
     }
-  }, [connectionStatus, currentSession, resetConnectionState]);
+  }, [connectionStatus, currentSession, resetConnectionState, selecteddApp]);
 
   const disableCta =
     uri == null ||
@@ -159,10 +182,14 @@ const WCdAppValidation: React.FC<Props> = props => {
   /*************************************************
    *                     Render                    *
    *************************************************/
+  if (!selecteddApp) {
+    return null;
+  }
+
   return (
     <ModalBottomSheetSwitcher isOpen={isOpen} onClose={onClose}>
       <ModalHeader
-        title={t('wc.validation.modalTitle')}
+        title={selecteddApp.name}
         showBackButton
         onBackButtonClicked={handleBackClick}
         {...(isDesktop ? {showCloseButton: true, onClose} : {})}
@@ -170,8 +197,8 @@ const WCdAppValidation: React.FC<Props> = props => {
       <Content>
         <FormGroup>
           <Label
-            label={t('wc.validation.codeInputLabel')}
-            helpText={t('wc.validation.codeInputHelp')}
+            label={t('modal.dappConnect.validation.codeInputLabel')}
+            helpText={t('modal.dappConnect.validation.codeInputHelp')}
           />
           {/* TODO: Please add validation when format of wc Code is known */}
           <Controller
@@ -188,7 +215,9 @@ const WCdAppValidation: React.FC<Props> = props => {
                 onBlur={onBlur}
                 onChange={onChange}
                 value={value ?? ''}
-                placeholder={t('wc.validation.codeInputPlaceholder')}
+                placeholder={t(
+                  'modal.dappConnect.validation.codeInputPlaceholder'
+                )}
                 adornmentText={adornmentText}
                 onAdornmentClick={() => handleAdornmentClick(value, onChange)}
               />
@@ -204,7 +233,8 @@ const WCdAppValidation: React.FC<Props> = props => {
             iconLeft: <Spinner size={'xs'} />,
             isActive: true,
           })}
-          {...(connectionStatus === ConnectionState.ERROR && {
+          {...((connectionStatus === ConnectionState.ERROR ||
+            connectionStatus === ConnectionState.INCORRECT_URI) && {
             iconLeft: <IconReload />,
           })}
           onClick={ctaHandler}
@@ -212,17 +242,29 @@ const WCdAppValidation: React.FC<Props> = props => {
         {connectionStatus === ConnectionState.SUCCESS && (
           <AlertWrapper>
             <AlertInline
-              label={t('wc.validation.codeInput.statusSuccess', {
+              label={t('modal.dappConnect.validation.alertSuccess', {
                 dappName: currentSession?.peer.metadata.name,
               })}
               mode="success"
             />
           </AlertWrapper>
         )}
+        {connectionStatus === ConnectionState.INCORRECT_URI && (
+          <AlertWrapper>
+            <AlertInline
+              label={t('modal.dappConnect.validation.alertCriticalQRcode', {
+                dappName: selecteddApp.name,
+              })}
+              mode="critical"
+            />
+          </AlertWrapper>
+        )}
         {connectionStatus === ConnectionState.ERROR && (
           <AlertWrapper>
             <AlertInline
-              label={t('wc.validation.addressInput.alertCritical')}
+              label={t('modal.dappConnect.validation.alertCriticalGeneral', {
+                dappName: currentSession?.peer.metadata.name,
+              })}
               mode="critical"
             />
           </AlertWrapper>

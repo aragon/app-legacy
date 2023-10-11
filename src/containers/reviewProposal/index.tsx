@@ -96,7 +96,7 @@ const ReviewProposal: React.FC<ReviewProposalProps> = ({
 
   const formattedStartDate = useMemo(() => {
     const {startSwitch} = values;
-    if (startSwitch === 'now' || isMultisig) {
+    if (startSwitch === 'now') {
       return t('labels.now');
     }
 
@@ -104,7 +104,7 @@ const ReviewProposal: React.FC<ReviewProposalProps> = ({
       startDate,
       KNOWN_FORMATS.proposals
     )} ${getFormattedUtcOffset()}`;
-  }, [isMultisig, startDate, t, values]);
+  }, [startDate, t, values]);
 
   /**
    * This is the primary (approximate) end date display which is rendered in Voting Terminal

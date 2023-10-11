@@ -32,6 +32,8 @@ const defaultOffsets = {
   minutes: 0,
 };
 
+let validationTimeout: NodeJS.Timeout | undefined;
+
 const DateTimeSelector: React.FC<Props> = ({
   mode,
   onUtcClicked,
@@ -64,9 +66,16 @@ const DateTimeSelector: React.FC<Props> = ({
   // corrected. This does *not* return any errors.
   // If the form is invalid, errors are set for the respective group of fields.
   const validator = useCallback(() => {
-    //build start date/time in utc mills
+    // build start date/time in utc mills
     // check end time using start and duration
     let startDateTime: Date;
+
+    // Clear previous validation timeout on date-time value update to avoid
+    // racing conditions
+    if (validationTimeout) {
+      clearTimeout(validationTimeout);
+    }
+
     if (getValues('startSwitch') === 'date') {
       const sDate = getValues('startDate');
       const sTime = getValues('startTime');
@@ -114,7 +123,7 @@ const DateTimeSelector: React.FC<Props> = ({
     if (startMills < currMills) {
       setValue('startTimeWarning', t('alert.startDateInPastAlert'));
 
-      setTimeout(() => {
+      validationTimeout = setTimeout(() => {
         // automatically correct the start date to now
         setValue('startDate', getCanonicalDate());
         setValue('startTime', getCanonicalTime({minutes}));
@@ -137,7 +146,7 @@ const DateTimeSelector: React.FC<Props> = ({
     if (endMills < minEndDateTimeMills) {
       setValue('endTimeWarning', minDurationAlert);
 
-      setTimeout(() => {
+      validationTimeout = setTimeout(() => {
         // automatically correct the end date to minimum
         setValue('endDate', format(minEndDateTimeMills, 'yyyy-MM-dd'));
         setValue('endTime', format(minEndDateTimeMills, 'HH:mm'));
@@ -147,7 +156,7 @@ const DateTimeSelector: React.FC<Props> = ({
 
     // end date past maximum duration
     if (maxDurationMills !== 0 && endMills > maxEndDateTimeMills) {
-      setTimeout(() => {
+      validationTimeout = setTimeout(() => {
         // automatically correct the end date to maximum
         setValue('endDate', format(maxEndDateTimeMills, 'yyyy-MM-dd'));
         setValue('endTime', format(maxEndDateTimeMills, 'HH:mm'));

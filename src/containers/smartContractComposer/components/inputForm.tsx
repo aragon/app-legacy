@@ -37,7 +37,6 @@ const extractTupleValues = (
   formData: Record<string, unknown>
 ) => {
   const tuple: unknown[] = [];
-  console.log('formData', formData);
 
   input.components?.map(component => {
     if (component.type !== 'tuple') {
@@ -307,11 +306,6 @@ export const ComponentForType: React.FC<ComponentForTypeProps> = ({
       );
 
     case 'int':
-    case 'uint8':
-    case 'int8':
-    case 'uint32':
-    case 'int32':
-    case 'uint256':
       return (
         <Controller
           defaultValue=""
@@ -363,6 +357,11 @@ export const ComponentForType: React.FC<ComponentForTypeProps> = ({
                   }
                   disabled={disabled}
                   isValid={isValid}
+                  defaultValue={
+                    defaultValue
+                      ? (defaultValue as Array<unknown>)[index]
+                      : undefined
+                  }
                 />
               </div>
             ))}
@@ -443,11 +442,6 @@ export function FormlessComponentForType({
       );
 
     case 'int':
-    case 'uint8':
-    case 'int8':
-    case 'uint32':
-    case 'int32':
-    case 'uint256':
       return (
         <NumberInput
           name={input.name}
@@ -463,7 +457,7 @@ export function FormlessComponentForType({
         return (
           <>
             {input.components?.map(component => (
-              <div key={component.name}>
+              <div key={component.name} className="ml-3">
                 <div className="mb-1.5 text-base font-bold capitalize text-ui-800">
                   {input.name}
                 </div>
@@ -479,18 +473,20 @@ export function FormlessComponentForType({
       return (
         <>
           {Object.entries(input.value as {}).map((value, index) => {
-            return (
-              <div key={index}>
-                <div className="mb-1.5 text-base font-bold capitalize text-ui-800">
-                  {value[0]}
+            if (Number.isNaN(parseInt(value[0]))) {
+              return (
+                <div key={index} className="ml-3">
+                  <div className="mb-1.5 text-base font-bold capitalize text-ui-800">
+                    {value[0]}
+                  </div>
+                  <FormlessComponentForType
+                    key={index}
+                    input={{value: value[1], type: typeof value[1]} as Input}
+                    disabled={disabled}
+                  />
                 </div>
-                <FormlessComponentForType
-                  key={index}
-                  input={{value: value[1], type: typeof value[1]} as Input}
-                  disabled={disabled}
-                />
-              </div>
-            );
+              );
+            }
           })}
         </>
       );
