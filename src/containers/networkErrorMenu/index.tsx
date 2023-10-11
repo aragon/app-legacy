@@ -13,8 +13,16 @@ import styled from 'styled-components';
 import {CHAIN_METADATA} from 'utils/constants';
 import {handleClipboardActions, shortenAddress} from 'utils/library';
 
-const NetworkErrorMenu = () => {
-  const {isOpen, close} = useGlobalModalContext('network');
+interface INetworkErrorMenuState {
+  onClose?: () => void;
+  onSuccess?: () => void;
+}
+
+export const NetworkErrorMenu = () => {
+  const {isOpen, close, modalState} =
+    useGlobalModalContext<INetworkErrorMenuState>('network');
+  const {onClose, onSuccess} = modalState ?? {};
+
   const {network} = useNetwork();
   const {switchWalletNetwork} = useSwitchNetwork();
   const {address, ensName, ensAvatarUrl, connectorName} = useWallet();
@@ -22,8 +30,19 @@ const NetworkErrorMenu = () => {
   const {t} = useTranslation();
   const {alert} = useAlertContext();
 
+  const handleCloseMenu = () => {
+    onClose?.();
+    close();
+  };
+
+  const handleSwitchNetwork = () => {
+    switchWalletNetwork();
+    close();
+    onSuccess?.();
+  };
+
   return (
-    <ModalBottomSheetSwitcher onClose={close} isOpen={isOpen}>
+    <ModalBottomSheetSwitcher onClose={handleCloseMenu} isOpen={isOpen}>
       <ModalHeader>
         <AvatarAddressContainer>
           <Avatar src={ensAvatarUrl || address || ''} size="small" />
@@ -45,7 +64,7 @@ const NetworkErrorMenu = () => {
             mode="ghost"
             icon={<IconClose />}
             size="small"
-            onClick={() => close()}
+            onClick={handleCloseMenu}
           />
         )}
       </ModalHeader>
@@ -70,10 +89,7 @@ const NetworkErrorMenu = () => {
             label={t('alert.wrongNetwork.buttonLabel', {
               network: CHAIN_METADATA[network].name,
             })}
-            onClick={() => {
-              switchWalletNetwork();
-              close();
-            }}
+            onClick={handleSwitchNetwork}
             size="large"
           />
         )}
@@ -81,8 +97,6 @@ const NetworkErrorMenu = () => {
     </ModalBottomSheetSwitcher>
   );
 };
-
-export default NetworkErrorMenu;
 
 const ModalHeader = styled.div.attrs({
   className: 'flex p-3 bg-ui-0 rounded-xl gap-2 sticky top-0',
