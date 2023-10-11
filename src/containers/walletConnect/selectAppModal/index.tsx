@@ -9,6 +9,7 @@ import {parseWCIconUrl} from 'utils/library';
 import {useWalletConnectContext} from '../walletConnectProvider';
 import ModalHeader from 'components/modalHeader';
 import useScreen from 'hooks/useScreen';
+import {htmlIn} from 'utils/htmlIn';
 
 type Props = {
   onConnectNewdApp: (dApp: SignClientTypes.Metadata) => void;
@@ -45,7 +46,7 @@ const SelectWCApp: React.FC<Props> = props => {
     <ModalBottomSheetSwitcher isOpen={isOpen} onClose={onClose}>
       <ModalHeader
         title={t('modal.dappConnect.headerTitle')}
-        subTitle={t('modal.dappConnect.headerDesc')}
+        subTitle={htmlIn(t)('modal.dappConnect.desc')}
         showBackButton
         onBackButtonClicked={() => {
           onClose();

@@ -42,7 +42,7 @@ const ModalHeader: React.FC<Props> = props => {
       </ButtonWrapper>
       <div className="flex-1">
         <Title>{title}</Title>
-        {subTitle && <SubTitle>{subTitle}</SubTitle>}
+        {subTitle && <SubTitle dangerouslySetInnerHTML={{__html: subTitle}} />}
       </div>
       <ButtonWrapper className="h-4 w-4">
         {showCloseButton && (
