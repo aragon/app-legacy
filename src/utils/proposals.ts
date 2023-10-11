@@ -5,12 +5,11 @@
  * so open to suggestions.
  */
 
-import {ReactiveVar} from '@apollo/client';
+import {ModeType, ProgressStatusProps, VoterType} from '@aragon/ods';
 import {
   CreateMajorityVotingProposalParams,
   Erc20TokenDetails,
   MultisigProposal,
-  MultisigProposalListItem,
   MultisigVotingSettings,
   TokenVotingProposal,
   TokenVotingProposalResult,
@@ -19,42 +18,22 @@ import {
   VotingSettings,
 } from '@aragon/sdk-client';
 import {ProposalMetadata, ProposalStatus} from '@aragon/sdk-client-common';
-import {ModeType, ProgressStatusProps, VoterType} from '@aragon/ods';
 import Big from 'big.js';
-import {format, formatDistanceToNow, Locale} from 'date-fns';
-import differenceInSeconds from 'date-fns/fp/differenceInSeconds';
+import {Locale, format, formatDistanceToNow} from 'date-fns';
 import * as Locales from 'date-fns/locale';
-import {BigNumber} from 'ethers';
 import {TFunction} from 'react-i18next';
 
 import {ProposalVoteResults} from 'containers/votingTerminal';
-import {
-  CachedProposal,
-  PendingMultisigApprovals,
-  pendingMultisigApprovalsVar,
-  PendingMultisigExecution,
-  PendingTokenBasedExecution,
-  PendingTokenBasedVotes,
-  pendingTokenBasedVotesVar,
-} from 'context/apolloClient';
 import {MultisigDaoMember} from 'hooks/useDaoMembers';
 import {PluginTypes} from 'hooks/usePluginClient';
 import {isMultisigVotingSettings} from 'services/aragon-sdk/queries/use-voting-settings';
 import {i18n} from '../../i18n.config';
-import {
-  PENDING_EXECUTION_KEY,
-  PENDING_MULTISIG_EXECUTION_KEY,
-  PENDING_MULTISIG_VOTES_KEY,
-  PENDING_VOTES_KEY,
-} from './constants';
-import {getFormattedUtcOffset, KNOWN_FORMATS} from './date';
-import {customJSONReplacer, formatUnits} from './library';
+import {KNOWN_FORMATS, getFormattedUtcOffset} from './date';
+import {formatUnits} from './library';
 import {abbreviateTokenAmount} from './tokens';
 import {
   Action,
   DetailedProposal,
-  Erc20ProposalVote,
-  ProposalId,
   ProposalListItem,
   StrictlyExclude,
   SupportedProposals,
@@ -543,12 +522,12 @@ export function getLiveProposalTerminalProps(
     // loop through approvals and update vote option to approved;
     let approvalAddress;
     proposal.approvals.forEach(address => {
-      approvalAddress = stripPlgnAdrFromProposalId(address);
+      approvalAddress = stripPlgnAdrFromProposalId(address).toLowerCase();
 
       // considering only members can approve, no need to check if Map has the key
       mappedMembers.set(approvalAddress, {
-        src: approvalAddress,
         wallet: approvalAddress,
+        src: approvalAddress,
         option: 'approved',
       });
     });
@@ -578,7 +557,8 @@ export type CacheProposalParams = {
   daoName: string;
   metadata: ProposalMetadata;
   proposalParams: CreateMajorityVotingProposalParams;
-  proposalGuid: string;
+  id: string;
+  status: ProposalStatus;
 
   // Multisig props
   minApprovals?: number;
@@ -589,115 +569,6 @@ export type CacheProposalParams = {
   pluginSettings?: VotingSettings;
   totalVotingWeight?: bigint;
 };
-
-/**
- * Map newly created proposal to Detailed proposal that can be cached and shown
- * @param params necessary parameters to map newly created proposal to augmented DetailedProposal
- * @returns Detailed proposal, ready for caching and displaying
- */
-export function mapToCacheProposal(params: CacheProposalParams) {
-  // common properties
-  const commonProps = {
-    actions: params.proposalParams.actions || [],
-    creationDate: new Date(),
-    creatorAddress: params.creatorAddress,
-    dao: {address: params.daoAddress, name: params.daoName},
-    endDate: params.proposalParams.endDate!,
-    startDate: params.proposalParams.startDate!,
-    id: params.proposalGuid,
-    metadata: params.metadata,
-  };
-
-  // erc20
-  if (isErc20Token(params.daoToken) && params.pluginSettings) {
-    return {
-      ...commonProps,
-      token: {
-        address: params.daoToken.address,
-        decimals: params.daoToken.decimals,
-        name: params.daoToken.name,
-        symbol: params.daoToken.symbol,
-      },
-      votes: [],
-      votingMode: params.pluginSettings.votingMode,
-      settings: {
-        supportThreshold: params.pluginSettings.supportThreshold,
-        minParticipation: params.pluginSettings.minParticipation,
-        duration: differenceInSeconds(
-          params.proposalParams.startDate!,
-          params.proposalParams.endDate!
-        ),
-      },
-      totalVotingWeight: params.totalVotingWeight as bigint,
-      usedVotingWeight: BigInt(0),
-      result: {yes: BigInt(0), no: BigInt(0), abstain: BigInt(0)},
-      executionTxHash: '',
-    } as CachedProposal;
-  } else {
-    // multisig
-    return {
-      ...commonProps,
-      approvals: [],
-      minApprovals: params.minApprovals,
-      executionTxHash: '',
-      settings: {
-        minApprovals: params.minApprovals,
-        onlyListed: params.onlyListed,
-      },
-    } as CachedProposal;
-  }
-}
-
-/**
- * Augment TokenVoting proposal with vote
- * @param proposal proposal to be augmented with vote
- * @param vote
- * @returns a proposal augmented with a singular vote
- */
-export function addVoteToProposal(
-  proposal: TokenVotingProposal,
-  vote: Erc20ProposalVote
-): DetailedProposal {
-  if (!vote) return proposal;
-
-  // calculate new vote values including cached ones
-  const voteValue = MappedVotes[vote.vote];
-
-  return {
-    ...proposal,
-    votes: [...proposal.votes, {...vote}],
-    result: {
-      ...proposal.result,
-      [voteValue]: BigNumber.from(proposal.result[voteValue])
-        .add((vote as Erc20ProposalVote).weight)
-        .toBigInt(),
-    },
-    usedVotingWeight: BigNumber.from(proposal.usedVotingWeight)
-      .add((vote as Erc20ProposalVote).weight)
-      .toBigInt(),
-  } as TokenVotingProposal;
-}
-
-/**
- * Augment Multisig proposal with vote
- * @param proposal Multisig Proposal
- * @param cachedApprovalAddress Cached vote
- * @returns a proposal augmented with a singular vote
- */
-export function addApprovalToMultisigToProposal(
-  proposal: MultisigProposal | MultisigProposalListItem,
-  cachedApprovalAddress: string
-) {
-  if (!cachedApprovalAddress) return proposal;
-
-  if (typeof proposal.approvals === 'number') {
-    return {...proposal, approvals: proposal.approvals + 1};
-  } else
-    return {
-      ...proposal,
-      approvals: [...proposal.approvals, cachedApprovalAddress.toLowerCase()],
-    };
-}
 
 /**
  * Strips proposal id of plugin address
@@ -892,162 +763,13 @@ export function getNonEmptyActions(
 }
 
 /**
- * add cached vote to proposal
- * @param proposal Proposal
- * @param daoAddress dao address
- * @param cachedVotes votes cached
- * @param functionalCookiesEnabled whether functional cookies are enabled
- * @returns a proposal augmented with cached vote
- */
-export const augmentProposalWithCachedVote = (
-  proposal: DetailedProposal,
-  daoAddress: string,
-  cachedVotes: PendingTokenBasedVotes | PendingMultisigApprovals,
-  functionalCookiesEnabled: boolean | undefined
-) => {
-  const id = new ProposalId(proposal.id).makeGloballyUnique(daoAddress);
-
-  if (isErc20VotingProposal(proposal)) {
-    const cachedVote = (cachedVotes as PendingTokenBasedVotes)[id];
-
-    // no cache return original proposal
-    if (!cachedVote) return proposal;
-
-    // check if sdk has returned the vote in the cache
-    if (
-      proposal.votes.some(
-        v => v.address.toLowerCase() === cachedVote.address.toLowerCase()
-      )
-    ) {
-      // delete vote from cache
-      const newVoteCache = {...(cachedVotes as PendingTokenBasedVotes)};
-      delete newVoteCache[id];
-
-      // update cache
-      pendingTokenBasedVotesVar(newVoteCache);
-      if (functionalCookiesEnabled) {
-        localStorage.setItem(
-          PENDING_VOTES_KEY,
-          JSON.stringify(newVoteCache, customJSONReplacer)
-        );
-      }
-
-      return proposal;
-    } else {
-      // augment with cached vote
-      return addVoteToProposal(proposal, cachedVote);
-    }
-  }
-
-  if (isMultisigProposal(proposal)) {
-    const cachedVote = (cachedVotes as PendingMultisigApprovals)[id];
-
-    // no cache return original proposal
-    if (!cachedVote) return proposal;
-
-    // check if sdk has returned the vote in the cache
-    if (
-      proposal.approvals.some(
-        v =>
-          stripPlgnAdrFromProposalId(v).toLowerCase() ===
-          cachedVote.toLowerCase()
-      )
-    ) {
-      // delete vote from cache
-      const newVoteCache = {...(cachedVotes as PendingMultisigApprovals)};
-      delete newVoteCache[id];
-      // update cache
-      pendingMultisigApprovalsVar(newVoteCache);
-      if (functionalCookiesEnabled) {
-        localStorage.setItem(
-          PENDING_MULTISIG_VOTES_KEY,
-          JSON.stringify(newVoteCache, customJSONReplacer)
-        );
-      }
-      return proposal;
-    } else {
-      // augment with cached vote
-      return addApprovalToMultisigToProposal(proposal, cachedVote);
-    }
-  }
-};
-
-/**
- * Add cached execution to proposal
- * @param proposal Proposal
- * @param daoAddress dao address
- * @param cachedExecutions executions cached
- * @param functionalCookiesEnabled whether functional cookies are enabled
- * @returns a proposal augmented with cached execution
- */
-export function augmentProposalWithCachedExecution(
-  proposal: DetailedProposal,
-  daoAddress: string,
-  cachedExecutions: PendingTokenBasedExecution | PendingMultisigExecution,
-  functionalCookiesEnabled: boolean | undefined,
-  cache: ReactiveVar<PendingMultisigExecution | PendingTokenBasedExecution>,
-  cacheKey: typeof PENDING_EXECUTION_KEY | typeof PENDING_MULTISIG_EXECUTION_KEY
-) {
-  const id = new ProposalId(proposal.id).makeGloballyUnique(daoAddress);
-
-  const cachedExecution = cachedExecutions[id];
-
-  // no cache return original proposal
-  if (!cachedExecution) {
-    // cached proposal coming in calculate status
-    if (!proposal.status) {
-      return {...proposal, status: calculateProposalStatus(proposal)};
-    }
-
-    // normal subgraph proposal return untouched
-    return proposal;
-  }
-
-  if (proposal.status === ProposalStatus.EXECUTED) {
-    const newExecutionCache = {...cachedExecutions};
-    delete newExecutionCache[id];
-
-    // update cache
-    cache(newExecutionCache);
-    if (functionalCookiesEnabled) {
-      localStorage.setItem(
-        cacheKey,
-        JSON.stringify(newExecutionCache, customJSONReplacer)
-      );
-    }
-
-    return proposal;
-  } else {
-    return {...proposal, status: ProposalStatus.EXECUTED};
-  }
-}
-
-/**
- * Calculate a proposal's status
- * @param proposal Proposal
- * @returns status for proposal
- */
-function calculateProposalStatus(proposal: DetailedProposal): ProposalStatus {
-  /**
-   * Be aware, since sometimes this function receives CACHED proposal which can contain
-   * empty fields (which by type definition supposed to be non-empty), you should be aware
-   * that it might require some handling.
-   *
-   * Watch out for differences between: DetailedProposal and CreateMajorityVotingProposalParams types.
-   */
-
-  // TODO: Update when SDK has exposed the proposal status calculations
-  return proposal.status ?? ProposalStatus.PENDING;
-}
-
-/**
  * Recalculates the status of a proposal.
  * @template T - A type that extends DetailedProposal or ProposalListItem
  * @param proposal - The proposal to recalculate the status of
  * @returns The proposal with recalculated status,
  * or null/undefined if the input was null/undefined
  */
-export function recalculateStatus<
+export function recalculateProposalStatus<
   T extends DetailedProposal | ProposalListItem
 >(proposal: T | null | undefined): T | null | undefined {
   if (proposal?.status === ProposalStatus.SUCCEEDED) {

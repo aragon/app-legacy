@@ -169,7 +169,7 @@
       "distributionLink": "See all {{walletCount}} addresses",
       "minimumParticipation": "{{walletCount}} wallets",
       "proposalThreshold": "Proposal threshold",
-      "tokenHoldersWithTkns": "Token holders with ≥ {{tokenAmount}} {{tokenSymbol}}",
+      "tokenHoldersWithTkns": "Members with ≥ {{tokenAmount}} {{tokenSymbol}} voting power or balance",
       "earlyExecution": "Early execution",
       "voteReplacement": "Vote change",
       "multisigMinimumApprovals": "of {{count}} authorized addresses",
@@ -820,7 +820,7 @@
       "daoUpdates": "Except for the chain you choose and the token you mint, you can change all these values later with a vote in your DAO.",
       "acceptContent": "Accept proposed content.",
       "valuesCorrect": "These values are correct",
-      "proposalCreation": "Token holders with ≥{{token}} {{symbol}}"
+      "proposalCreation": "Members with ≥ {{token}} {{symbol}} voting power or balance"
     },
     "deployDAO": {
       "title": "Deploy your DAO",

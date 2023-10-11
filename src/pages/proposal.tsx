@@ -84,9 +84,6 @@ import {
 } from 'utils/proposals';
 import {Action, ProposalId} from 'utils/types';
 
-// TODO: @Sepehr Please assign proper tags on action decoding
-// const PROPOSAL_TAGS = ['Finance', 'Withdraw'];
-
 const PENDING_PROPOSAL_STATUS_INTERVAL = 1000 * 10;
 const PROPOSAL_STATUS_INTERVAL = 1000 * 60;
 const NumberFormatter = new Intl.NumberFormat('en-US');
@@ -146,6 +143,7 @@ export const Proposal: React.FC = () => {
   const {
     data: proposal,
     error: proposalError,
+    isFetched: proposalIsFetched,
     isLoading: proposalIsLoading,
     refetch,
   } = useProposal(
@@ -550,7 +548,7 @@ export const Proposal: React.FC = () => {
         voteNowDisabled: false,
         onClick: () => {
           if (isMultisigDAO) {
-            handleSubmitVote(VoteValues.YES);
+            handleSubmitVote({vote: VoteValues.YES});
           } else {
             setVotingInProcess(true);
           }
@@ -639,12 +637,12 @@ export const Proposal: React.FC = () => {
   /*************************************************
    *                     Render                    *
    *************************************************/
-  if (proposalError) {
-    navigate(NotFound, {replace: true, state: {invalidProposal: proposalId}});
+  if (paramsAreLoading || proposalIsLoading || detailsAreLoading) {
+    return <Loading />;
   }
 
-  if (paramsAreLoading || proposalIsLoading || detailsAreLoading || !proposal) {
-    return <Loading />;
+  if (proposalError || (proposalIsFetched && proposal === null) || !proposal) {
+    navigate(NotFound, {replace: true, state: {invalidProposal: proposalId}});
   }
 
   return (
@@ -687,7 +685,7 @@ export const Proposal: React.FC = () => {
           </ProposerLink>
         </ContentWrapper>
         <SummaryText>{proposal?.metadata.summary}</SummaryText>
-        {proposal.metadata.description && !expandedProposal && (
+        {proposal?.metadata.description && !expandedProposal && (
           <ButtonText
             className="w-full tablet:w-max"
             size="large"
@@ -701,7 +699,7 @@ export const Proposal: React.FC = () => {
 
       <ContentContainer expandedProposal={expandedProposal}>
         <ProposalContainer>
-          {proposal.metadata.description && expandedProposal && (
+          {proposal?.metadata.description && expandedProposal && (
             <>
               <StyledEditorContent editor={editor} />
               <ButtonText
@@ -715,14 +713,15 @@ export const Proposal: React.FC = () => {
           )}
 
           {/* @todo: Add isUpdateProposal check once it's developed */}
-          {featureFlags.getValue('VITE_FEATURE_FLAG_OSX_UPDATES') ===
-            'true' && (
-            <UpdateVerificationCard
-              proposal={proposal}
-              actions={decodedActions}
-              proposalId={proposalId}
-            />
-          )}
+          {proposal &&
+            featureFlags.getValue('VITE_FEATURE_FLAG_OSX_UPDATES') ===
+              'true' && (
+              <UpdateVerificationCard
+                proposal={proposal}
+                actions={decodedActions}
+                proposalId={proposalId}
+              />
+            )}
 
           <VotingTerminal
             status={proposalStatus}
@@ -738,10 +737,11 @@ export const Proposal: React.FC = () => {
             voteNowDisabled={voteNowDisabled}
             votingInProcess={votingInProcess}
             onVoteSubmitClicked={vote =>
-              handleSubmitVote(
+              handleSubmitVote({
                 vote,
-                (proposal as TokenVotingProposal).token?.address
-              )
+                replacement: voted || voteSubmitted,
+                token: (proposal as TokenVotingProposal).token?.address,
+              })
             }
             {...mappedProps}
           />

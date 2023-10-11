@@ -1,13 +1,12 @@
-import {useReactiveVar} from '@apollo/client';
 import {
   ExecuteProposalStep,
-  VoteProposalParams,
   MultisigClient,
   TokenVotingClient,
+  VoteProposalParams,
   VoteProposalStep,
   VoteValues,
 } from '@aragon/sdk-client';
-import {BigNumber} from 'ethers';
+import {useQueryClient} from '@tanstack/react-query';
 import React, {
   ReactNode,
   createContext,
@@ -24,32 +23,32 @@ import {useDaoDetailsQuery} from 'hooks/useDaoDetails';
 import {PluginTypes, usePluginClient} from 'hooks/usePluginClient';
 import {usePollGasFee} from 'hooks/usePollGasfee';
 import {useWallet} from 'hooks/useWallet';
+import {useVotingPowerAsync} from 'services/aragon-sdk/queries/use-voting-power';
 import {
-  CHAIN_METADATA,
-  PENDING_EXECUTION_KEY,
-  PENDING_MULTISIG_EXECUTION_KEY,
-  PENDING_MULTISIG_VOTES_KEY,
-  PENDING_VOTES_KEY,
-  TransactionState,
-} from 'utils/constants';
-import {customJSONReplacer} from 'utils/library';
-import {fetchBalance} from 'utils/tokens';
+  AragonSdkQueryItem,
+  aragonSdkQueryKeys,
+} from 'services/aragon-sdk/query-keys';
+import {CHAIN_METADATA, TransactionState} from 'utils/constants';
+import {
+  ExecutionDetail,
+  executionStorage,
+  voteStorage,
+} from 'utils/localStorage';
 import {ProposalId} from 'utils/types';
-import {
-  pendingMultisigApprovalsVar,
-  pendingMultisigExecutionVar,
-  pendingTokenBasedExecutionVar,
-  pendingTokenBasedVotesVar,
-} from './apolloClient';
 import {useNetwork} from './network';
-import {usePrivacyContext} from './privacyContext';
 import {useProviders} from './providers';
 
 //TODO: currently a context, but considering there might only ever be one child,
 // might need to turn it into a wrapper that passes props to proposal page
+type SubmitVoteParams = {
+  vote: VoteValues;
+  token?: string;
+  replacement?: boolean;
+};
+
 type ProposalTransactionContextType = {
   /** handles voting on proposal */
-  handleSubmitVote: (vote: VoteValues, token?: string) => void;
+  handleSubmitVote: (params: SubmitVoteParams) => void;
   handleExecuteProposal: () => void;
   isLoading: boolean;
   voteSubmitted: boolean;
@@ -73,22 +72,17 @@ const ProposalTransactionProvider: React.FC<Props> = ({children}) => {
 
   const {address, isConnected} = useWallet();
   const {network} = useNetwork();
+  const queryClient = useQueryClient();
   const {api: provider} = useProviders();
+  const fetchVotingPower = useVotingPowerAsync();
 
   const [tokenAddress, setTokenAddress] = useState<string>();
   const [showVoteModal, setShowVoteModal] = useState(false);
   const [showExecuteModal, setShowExecuteModal] = useState(false);
 
-  const cachedTokenBasedVotes = useReactiveVar(pendingTokenBasedVotesVar);
-  const cachedMultisigApprovals = useReactiveVar(pendingMultisigApprovalsVar);
-
-  const cachedTokenBaseExecution = useReactiveVar(
-    pendingTokenBasedExecutionVar
-  );
-  const cachedMultisigExecution = useReactiveVar(pendingMultisigExecutionVar);
-
   const [voteParams, setVoteParams] = useState<VoteProposalParams>();
   const [voteSubmitted, setVoteSubmitted] = useState(false);
+  const [replacingVote, setReplacingVote] = useState(false);
   const [voteProcessState, setVoteProcessState] = useState<TransactionState>();
 
   const [executeProposalId, setExecuteProposalId] = useState<ProposalId>();
@@ -110,8 +104,6 @@ const ProposalTransactionProvider: React.FC<Props> = ({children}) => {
   const pluginClient = usePluginClient(
     daoDetails?.plugins[0].id as PluginTypes
   );
-
-  const {preferences} = usePrivacyContext();
 
   const shouldPollVoteFees = useMemo(
     () =>
@@ -135,17 +127,29 @@ const ProposalTransactionProvider: React.FC<Props> = ({children}) => {
   /*************************************************
    *                    Helpers                    *
    *************************************************/
+  const invalidateProposalQueries = useCallback(() => {
+    const allProposalsQuery = [AragonSdkQueryItem.PROPOSALS];
+    const currentProposal = aragonSdkQueryKeys.proposal({
+      id: new ProposalId(urlId!).export(),
+      pluginType,
+    });
+
+    queryClient.invalidateQueries(allProposalsQuery);
+    queryClient.invalidateQueries(currentProposal);
+  }, [pluginType, queryClient, urlId]);
+
   const handleSubmitVote = useCallback(
-    (vote: VoteValues, tokenAddress?: string) => {
+    (params: SubmitVoteParams) => {
       // id should never be null as it is required to navigate to this page
       // Also, the proposal details page (child) navigates back to not-found
       // if the id is invalid
       setVoteParams({
         proposalId: new ProposalId(urlId!).export(),
-        vote,
+        vote: params.vote,
       });
 
-      setTokenAddress(tokenAddress);
+      setReplacingVote(!!params.replacement);
+      setTokenAddress(params.token);
       setShowVoteModal(true);
       setVoteProcessState(TransactionState.WAITING);
     },
@@ -218,118 +222,87 @@ const ProposalTransactionProvider: React.FC<Props> = ({children}) => {
 
   // set proper state and cache vote when transaction is successful
   const onVoteSubmitted = useCallback(
-    async (proposalId: ProposalId, vote: VoteValues) => {
+    async (
+      proposalId: ProposalId,
+      vote: VoteValues,
+      voteReplaced?: boolean
+    ) => {
       if (!daoDetails?.address) return;
 
       setVoteParams(undefined);
+      setReplacingVote(false);
       setVoteSubmitted(true);
       setVoteProcessState(TransactionState.SUCCESS);
 
       if (!address) return;
 
-      let newCache;
-      let cacheKey = '';
-      const cachedProposalId = proposalId.makeGloballyUnique(
-        daoDetails?.address
-      );
+      let voteToPersist;
 
       // cache multisig vote
       if (pluginType === 'multisig.plugin.dao.eth') {
-        newCache = {
-          ...cachedMultisigApprovals,
-          [cachedProposalId]: address,
-        };
-        cacheKey = PENDING_MULTISIG_VOTES_KEY;
-        pendingMultisigApprovalsVar(newCache);
+        voteToPersist = address.toLowerCase();
       }
 
       // cache token voting vote
       if (pluginType === 'token-voting.plugin.dao.eth' && tokenAddress) {
         // fetch token user balance, ie vote weight
-        const weight: BigNumber = await fetchBalance(
-          tokenAddress,
-          address!,
-          provider,
-          CHAIN_METADATA[network].nativeCurrency,
-          false
-        );
-
-        newCache = {
-          ...cachedTokenBasedVotes,
-          [cachedProposalId]: {address, vote, weight: weight.toBigInt()},
+        const weight = await fetchVotingPower({tokenAddress, address});
+        voteToPersist = {
+          address: address.toLowerCase(),
+          vote,
+          weight: weight.toBigInt(),
+          voteReplaced: !!voteReplaced,
         };
-        cacheKey = PENDING_VOTES_KEY;
-        pendingTokenBasedVotesVar(newCache);
       }
 
-      // add to local storage
-      if (preferences?.functional) {
-        localStorage.setItem(
-          cacheKey,
-          JSON.stringify(newCache, customJSONReplacer)
+      if (voteToPersist) {
+        voteStorage.addVote(
+          CHAIN_METADATA[network].id,
+          proposalId.toString(),
+          voteToPersist
         );
       }
+
+      invalidateProposalQueries();
     },
     [
       address,
-      cachedMultisigApprovals,
-      cachedTokenBasedVotes,
       daoDetails?.address,
+      fetchVotingPower,
+      invalidateProposalQueries,
       network,
       pluginType,
-      preferences?.functional,
-      provider,
       tokenAddress,
     ]
   );
 
   // set proper state and cache proposal execution when transaction is successful
   const onExecutionSubmitted = useCallback(
-    async (proposalId: ProposalId) => {
+    async (proposalId: ProposalId, txHash: string) => {
       if (!address || !daoDetails?.address) return;
 
-      let newCache;
-      let cacheKey = '';
-      const cachedProposalId = proposalId.makeGloballyUnique(
-        daoDetails.address
+      // get current block number
+      const executionBlockNumber = await provider.getBlockNumber();
+
+      // details to be cached
+      const executionDetails: ExecutionDetail = {
+        executionBlockNumber,
+        executionDate: new Date(),
+        executionTxHash: txHash,
+      };
+
+      // add execution detail to local storage
+      executionStorage.addExecutionDetail(
+        CHAIN_METADATA[network].id,
+        proposalId.toString(),
+        executionDetails
       );
 
-      // cache token based execution
-      if (pluginType === 'token-voting.plugin.dao.eth') {
-        newCache = {
-          ...cachedTokenBaseExecution,
-          [cachedProposalId]: true,
-        };
-        cacheKey = PENDING_EXECUTION_KEY;
-        pendingTokenBasedExecutionVar(newCache);
-      }
-
-      // cache multisig execution
-      if (pluginType === 'multisig.plugin.dao.eth') {
-        newCache = {
-          ...cachedMultisigExecution,
-          [cachedProposalId]: true,
-        };
-        cacheKey = PENDING_MULTISIG_EXECUTION_KEY;
-        pendingMultisigExecutionVar(newCache);
-      }
-
-      // add to local storage
-      if (preferences?.functional) {
-        localStorage.setItem(
-          cacheKey,
-          JSON.stringify(newCache, customJSONReplacer)
-        );
-      }
+      // invalidate proposal queries to either pick
+      // up cached values or remove them
+      invalidateProposalQueries();
     },
-    [
-      address,
-      cachedMultisigExecution,
-      cachedTokenBaseExecution,
-      daoDetails?.address,
-      pluginType,
-      preferences?.functional,
-    ]
+    [address, daoDetails?.address, invalidateProposalQueries, network, provider]
   );
 
   // handles vote submission/execution
@@ -381,7 +354,8 @@ const ProposalTransactionProvider: React.FC<Props> = ({children}) => {
           case VoteProposalStep.DONE:
             onVoteSubmitted(
               new ProposalId(voteParams.proposalId),
-              voteParams.vote
+              voteParams.vote,
+              replacingVote
             );
             break;
         }
@@ -395,6 +369,7 @@ const ProposalTransactionProvider: React.FC<Props> = ({children}) => {
     onVoteSubmitted,
     pluginAddress,
     pluginClient,
+    replacingVote,
     tokenAddress,
     voteParams,
     voteProcessState,
@@ -458,16 +433,19 @@ const ProposalTransactionProvider: React.FC<Props> = ({children}) => {
     }
 
     try {
+      let txHash = '';
+
       for await (const step of executeSteps) {
         switch (step.key) {
           case ExecuteProposalStep.EXECUTING:
             setTransactionHash(step.txHash);
+            txHash = step.txHash;
             break;
           case ExecuteProposalStep.DONE:
             setExecuteProposalId(undefined);
             setExecutionFailed(false);
             setExecuteProcessState(TransactionState.SUCCESS);
-            onExecutionSubmitted(executeProposalId);
+            onExecutionSubmitted(executeProposalId, txHash);
             break;
         }
       }

@@ -1,4 +1,5 @@
 import {QueryKey} from '@tanstack/react-query';
+import {ProposalStatus} from '@aragon/sdk-client-common';
 
 import type {
   IFetchDelegateeParams,
@@ -17,6 +18,7 @@ export enum AragonSdkQueryItem {
   PAST_VOTING_POWER = 'PAST_VOTING_POWER',
   PROPOSAL = 'PROPOSAL',
   PROPOSALS = 'PROPOSALS',
+  LOCAL_PROPOSALS = 'LOCAL_PROPOSALS',
   VOTING_POWER = 'VOTING_POWER',
   VOTING_SETTINGS = 'VOTING_SETTINGS',
 }
@@ -42,6 +44,10 @@ export const aragonSdkQueryKeys = {
   ],
   proposal: (params: IFetchProposalParams): QueryKey => [
     AragonSdkQueryItem.PROPOSAL,
+    params,
+  ],
+  localProposals: (params?: ProposalStatus): QueryKey => [
+    AragonSdkQueryItem.LOCAL_PROPOSALS,
     params,
   ],
   proposals: (params: IFetchProposalsParams): QueryKey => [

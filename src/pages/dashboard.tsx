@@ -302,13 +302,13 @@ export const Dashboard: React.FC = () => {
           <DashboardContent
             daoAddressOrEns={liveAddressOrEns}
             pluginType={liveDao.plugins[0].id as PluginTypes}
-            pluginAddress={liveDao.plugins[0].instanceAddress || ''}
+            pluginAddress={liveDao.plugins[0].instanceAddress ?? ''}
           />
         ) : (
           <MobileDashboardContent
             daoAddressOrEns={liveAddressOrEns}
             pluginType={liveDao.plugins[0].id as PluginTypes}
-            pluginAddress={liveDao.plugins[0].instanceAddress || ''}
+            pluginAddress={liveDao.plugins[0].instanceAddress ?? ''}
           />
         )}
       </>
@@ -348,6 +348,7 @@ const DashboardContent: React.FC<DashboardContentProps> = ({
   const {data} = useProposals({
     daoAddressOrEns,
     pluginType,
+    pluginAddress,
   });
   const proposals = data?.pages.flat() ?? [];
 
@@ -366,7 +367,6 @@ const DashboardContent: React.FC<DashboardContentProps> = ({
               daoAddressOrEns={daoAddressOrEns}
               pluginAddress={pluginAddress}
               pluginType={pluginType}
-              proposals={proposals}
             />
             <TreasurySnapshot
               daoAddressOrEns={daoAddressOrEns}
@@ -381,7 +381,6 @@ const DashboardContent: React.FC<DashboardContentProps> = ({
                 daoAddressOrEns={daoAddressOrEns}
                 pluginAddress={pluginAddress}
                 pluginType={pluginType}
-                proposals={proposals}
               />
             </LeftWideContent>
             <RightNarrowContent>
@@ -412,7 +411,6 @@ const DashboardContent: React.FC<DashboardContentProps> = ({
           daoAddressOrEns={daoAddressOrEns}
           pluginAddress={pluginAddress}
           pluginType={pluginType}
-          proposals={proposals}
         />
       </LeftWideContent>
       <RightNarrowContent>
@@ -459,8 +457,6 @@ const MobileDashboardContent: React.FC<DashboardContentProps> = ({
   pluginAddress,
 }) => {
   const {transfers, totalAssetValue} = useDaoVault();
-  const {data} = useProposals({daoAddressOrEns, pluginType});
-  const proposals = data?.pages.flat() ?? [];
 
   return (
     <MobileLayout>
@@ -468,7 +464,6 @@ const MobileDashboardContent: React.FC<DashboardContentProps> = ({
         daoAddressOrEns={daoAddressOrEns}
         pluginAddress={pluginAddress}
         pluginType={pluginType}
-        proposals={proposals}
       />
       <TreasurySnapshot
         daoAddressOrEns={daoAddressOrEns}
