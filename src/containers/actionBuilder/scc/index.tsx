@@ -18,8 +18,8 @@ const SCCAction: React.FC<ActionIndex & {allowRemove?: boolean}> = ({
 }) => {
   const {t} = useTranslation();
   const {removeAction} = useActionsContext();
-  const [actionData] = useWatch({
-    name: [`actions.${actionIndex}`],
+  const actionData = useWatch({
+    name: `actions.${actionIndex}`,
   });
   const {alert} = useAlertContext();
   const {network} = useNetwork();
