@@ -151,11 +151,7 @@ const WCdAppValidation: React.FC<Props> = props => {
         .toLowerCase()
         .includes((selecteddApp as SignClientTypes.Metadata).name.toLowerCase())
     ) {
-      setConnectionStatus(
-        currentSession.acknowledged
-          ? ConnectionState.SUCCESS
-          : ConnectionState.ERROR
-      );
+      setConnectionStatus(ConnectionState.SUCCESS);
     } else if (
       currentSession?.peer.metadata.name
         .toLowerCase()

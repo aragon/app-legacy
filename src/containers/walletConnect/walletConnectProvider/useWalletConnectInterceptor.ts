@@ -33,7 +33,8 @@ export function useWalletConnectInterceptor(): WcInterceptorValues {
   const [sessions, setSessions] = useState<WcSession[]>(
     walletConnectInterceptor.getActiveSessions(daoDetails?.address)
   );
-  const activeSessions = sessions.filter(session => session.acknowledged);
+
+  const activeSessions = sessions;
 
   const [actions, setActions] = useState<WcActionRequest[]>([]);
 

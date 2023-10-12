@@ -72,9 +72,9 @@ const WalletConnect: React.FC<WalletConnectProps> = ({actionIndex}) => {
   const handleOnConnectionSuccess = useCallback(
     (session: SessionTypes.Struct) => {
       resetField(WC_URI_INPUT_NAME);
+      setSelectedSession(session);
       setdAppValidationIsOpen(false);
       setListeningActionsIsOpen(true);
-      setSelectedSession(session);
     },
     [resetField]
   );
