@@ -51,10 +51,10 @@
     tslib "^2.3.0"
     zen-observable-ts "^1.2.0"
 
-"@aragon/ods@^0.3.0":
-  version "0.3.0"
-  resolved "https://registry.yarnpkg.com/@aragon/ods/-/ods-0.3.0.tgz#6a9efa60a9b3437bbb875d2bb0375d9197cf8d79"
-  integrity sha512-N0bqbTsE0MzRPFEFJI6kKPtTHw5QZ05SLCXOJr2AU8F+p1kYYwHIqvfMvqumAysmbApd4UEBEhApe33kNG7XSQ==
+"@aragon/ods@^0.3.1":
+  version "0.3.1"
+  resolved "https://registry.yarnpkg.com/@aragon/ods/-/ods-0.3.1.tgz#ee6c45e9041c8af9863cb10c73a50536ad61b88c"
+  integrity sha512-9VRMsPWTGBWPxalOA62vpPzmjI3J9eIciD3J9SgJ6hjRkDZZa2sNysaF9aBc+bQtL3KP9kW9mbLSYKqd3CtCQw==
   dependencies:
     "@radix-ui/react-dialog" "^1.0.4"
     "@radix-ui/react-dropdown-menu" "^2.0.5"
@@ -71,13 +71,6 @@
     styled-components ">=6"
     tailwindcss ">=3"
     tailwindcss-fluid-type ">=2"
-
-"@aragon/osx-ethers-v1.0.0@npm:@aragon/osx-ethers@1.2.1":
-  version "1.2.1"
-  resolved "https://registry.yarnpkg.com/@aragon/osx-ethers/-/osx-ethers-1.2.1.tgz#a442048137153ed5a3ca4eff3f3927b45a5134b5"
-  integrity sha512-3Fscq8C9elIktiI6OT7fR5iaAvim+ghU6IUvZF3P/phvWm9roNp/GXAROhA/Vx41NQxeqmfXokgFo6KOWt4drA==
-  dependencies:
-    ethers "^5.6.2"
 
 "@aragon/osx-ethers-v1.0.0@npm:@aragon/osx-ethers@1.2.1":
   version "1.2.1"
