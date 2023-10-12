@@ -21,7 +21,7 @@ import {ProposalMetadata, ProposalStatus} from '@aragon/sdk-client-common';
 import Big from 'big.js';
 import {Locale, format, formatDistanceToNow} from 'date-fns';
 import * as Locales from 'date-fns/locale';
-import {TFunction} from 'react-i18next';
+import {TFunction} from 'i18next';
 
 import {ProposalVoteResults} from 'containers/votingTerminal';
 import {MultisigDaoMember} from 'hooks/useDaoMembers';

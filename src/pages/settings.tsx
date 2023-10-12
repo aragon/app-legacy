@@ -11,7 +11,7 @@ import {
   Tag,
 } from '@aragon/ods';
 import {DaoDetails} from '@aragon/sdk-client';
-import React, {useEffect, useRef, useState} from 'react';
+import React, {ReactNode, useEffect, useRef, useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {generatePath, useNavigate, useParams} from 'react-router-dom';
 import styled from 'styled-components';
@@ -302,7 +302,7 @@ const PluginSettingsWrapper: React.FC<IPluginSettings> = ({daoDetails}) => {
   }
 };
 
-const SettingsWrapper: React.FC = ({children}) => {
+const SettingsWrapper: React.FC<{children: ReactNode}> = ({children}) => {
   const {t} = useTranslation();
   const {isMobile} = useScreen();
 

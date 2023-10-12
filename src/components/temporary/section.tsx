@@ -1,6 +1,7 @@
-import React from 'react';
+import React, {ReactNode} from 'react';
 
 type TemporarySectionProps = {
+  children?: ReactNode;
   purpose?: string;
 };
 

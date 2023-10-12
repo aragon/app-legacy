@@ -198,7 +198,7 @@ const CurrentParticipationWrapper = styled.div.attrs({
   className: 'space-y-0.5 text-right',
 })``;
 
-const VStackSection = styled.div.attrs(({isLast}: {isLast?: boolean}) => ({
+const VStackSection = styled.div.attrs<{isLast?: boolean}>(({isLast}) => ({
   className: `space-y-1.5 p-2 tablet:p-3 -mx-2 tablet:-mx-3 ${
     isLast ? 'pb-0 border-b-0' : 'border-b border-ui-100'
   }`,

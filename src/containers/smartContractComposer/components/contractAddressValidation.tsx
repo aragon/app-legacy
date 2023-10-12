@@ -765,8 +765,8 @@ type VerificationStatusProps = {
   colorClassName: string;
 };
 
-const VerificationStatus = styled.span.attrs(
-  ({colorClassName}: VerificationStatusProps) => ({
-    className: 'ft-text-sm font-semibold ' + colorClassName,
-  })
-)<VerificationStatusProps>``;
+const VerificationStatus = styled.span.attrs<{
+  colorClassName: VerificationStatusProps;
+}>(({colorClassName}) => ({
+  className: 'ft-text-sm font-semibold ' + colorClassName,
+}))<VerificationStatusProps>``;

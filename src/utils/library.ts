@@ -21,7 +21,7 @@ import {
   hexlify,
   isAddress,
 } from 'ethers/lib/utils';
-import {TFunction} from 'react-i18next';
+import {TFunction} from 'i18next';
 
 import {getEtherscanVerifiedContract} from 'services/etherscanAPI';
 import {Token} from 'services/token/domain';

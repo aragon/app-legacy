@@ -49,7 +49,7 @@ const AddAddresses: React.FC<AddAddressesProps> = ({
     control,
   });
 
-  const {fields, update, append, remove} = useFieldArray({
+  const {fields, update, replace, append, remove} = useFieldArray({
     control,
     name: memberListKey,
   });
@@ -66,11 +66,11 @@ const AddAddresses: React.FC<AddAddressesProps> = ({
    *************************************************/
   useEffect(() => {
     if (controlledWallets.length === 0) {
-      append({address: '', ensName: ''});
+      replace({address: '', ensName: ''});
     }
 
     setValue(`actions.${actionIndex}.name`, 'add_address');
-  }, [actionIndex, append, controlledWallets.length, setValue]);
+  }, [actionIndex, replace, controlledWallets.length, setValue]);
 
   /*************************************************
    *             Callbacks and Handlers            *

@@ -43,7 +43,7 @@ export const Status: React.FC<StatusProps> = ({mode, label}) => {
 
 const IconContainer = styled.div.attrs({className: 'my-2'})``;
 
-const Content = styled.div.attrs(({mode}: {mode: StatusProps['mode']}) => {
+const Content = styled.div.attrs<{mode: StatusProps['mode']}>(({mode}) => {
   const className = `flex items-center gap-x-1 desktop:gap-x-2 ${textColors[mode]}`;
   return {className};
 })<{mode: StatusProps['mode']}>``;

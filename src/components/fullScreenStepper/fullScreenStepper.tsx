@@ -31,7 +31,7 @@ export type FullScreenStepperProps = {
 
 type FullScreenStepperContextType = {
   currentStep: number;
-  setStep: React.Dispatch<React.SetStateAction<number>>;
+  setStep: (newStep: number) => void;
   prev: () => void;
   next: () => void;
 };
@@ -209,11 +209,13 @@ type FormLayoutProps = {
   fullWidth: boolean;
 };
 
-const FormLayout = styled.div.attrs(({fullWidth}: FormLayoutProps) => ({
-  className: `mt-5 desktop:mt-8 mx-auto space-y-5 ${
-    !fullWidth && 'desktop:w-3/5'
-  }`,
-}))<FormLayoutProps>``;
+const FormLayout = styled.div.attrs<{fullWidth: FormLayoutProps}>(
+  ({fullWidth}) => ({
+    className: `mt-5 desktop:mt-8 mx-auto space-y-5 ${
+      !fullWidth && 'desktop:w-3/5'
+    }`,
+  })
+)<FormLayoutProps>``;
 
 const FormFooter = styled.div.attrs({
   className: 'flex justify-between desktop:pt-3',

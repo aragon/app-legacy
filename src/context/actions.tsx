@@ -1,4 +1,5 @@
 import React, {
+  ReactNode,
   createContext,
   useCallback,
   useContext,
@@ -16,13 +17,14 @@ type ActionsContextType = {
   actions: ActionItem[];
   selectedActionIndex: number;
   setSelectedActionIndex: React.Dispatch<React.SetStateAction<number>>;
-  addAction: (value: ActionItem) => void;
+  addAction: (value: ActionItem, allowDuplicate?: boolean) => void;
   duplicateAction: (index: number) => void;
   removeAction: (index: number) => void;
 };
 
 type ActionsProviderProps = {
   daoId: string;
+  children: ReactNode;
 };
 
 const updatesMultisigVoting = (action: ActionItem) =>
@@ -39,18 +41,23 @@ const ActionsProvider: React.FC<ActionsProviderProps> = ({daoId, children}) => {
   const {control} = useFormContext();
   const {remove} = useFieldArray({control, name: 'actions'});
 
-  const addAction = useCallback(newAction => {
-    setActions(current => {
-      const shouldAddEditMultisigAction =
-        updatesMultisigVoting(newAction) && !hasEditMultisigAction(current);
+  const addAction = useCallback(
+    (newAction: ActionItem, allowDuplicate = true) => {
+      setActions(current => {
+        const isDuplicate = current.some(({name}) => name === newAction.name);
+        const shouldAddEditMultisigAction =
+          updatesMultisigVoting(newAction) && !hasEditMultisigAction(current);
 
-      const newList = [...current, newAction];
+        const newList =
+          !allowDuplicate && isDuplicate ? current : [...current, newAction];
 
-      return shouldAddEditMultisigAction
-        ? newList.concat({name: 'modify_multisig_voting_settings'})
-        : newList;
-    });
-  }, []);
+        return shouldAddEditMultisigAction
+          ? newList.concat({name: 'modify_multisig_voting_settings'})
+          : newList;
+      });
+    },
+    []
+  );
 
   const removeAction = useCallback(
     (index: number) => {

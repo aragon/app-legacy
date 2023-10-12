@@ -20,7 +20,13 @@ import {hexToBytes} from '@aragon/sdk-common';
 import {useQueryClient} from '@tanstack/react-query';
 import differenceInSeconds from 'date-fns/differenceInSeconds';
 import {ethers} from 'ethers';
-import React, {useCallback, useEffect, useMemo, useState} from 'react';
+import React, {
+  ReactNode,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react';
 import {useFormContext} from 'react-hook-form';
 import {useTranslation} from 'react-i18next';
 import {generatePath, useNavigate} from 'react-router-dom';
@@ -67,6 +73,7 @@ import {useProviders} from './providers';
 type Props = {
   showTxModal: boolean;
   setShowTxModal: (value: boolean) => void;
+  children: ReactNode;
 };
 
 const CreateProposalWrapper: React.FC<Props> = ({

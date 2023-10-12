@@ -74,7 +74,7 @@ jobs:
         env:
           COMMIT_SHA: ${{ github.sha }}
         run: |
-          for f in $(find ./dist/assets/ -name *.js.map) ; do 
+          for f in $(find ./dist/assets/ -name *.js.map) ; do
             curl -X POST "https://kibana-sourcemaps.aragon.org/api/apm/sourcemaps" \
               -H 'Content-Type: multipart/form-data' \
               -H 'kbn-xsrf: true' \

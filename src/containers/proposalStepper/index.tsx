@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {useFormContext, useFormState, useWatch} from 'react-hook-form';
 import {useTranslation} from 'react-i18next';
 import {generatePath} from 'react-router-dom';
@@ -53,17 +53,25 @@ const ProposalStepper: React.FC<ProposalStepperType> = ({
   const {address, isConnected} = useWallet();
   const [isActionsValid, setIsActionsValid] = useState(false);
 
-  const [formActions] = useWatch({
-    name: ['actions'],
+  const formActions = useWatch({
+    name: 'actions',
   });
 
-  const {errors, dirtyFields} = useFormState({
-    control,
-  });
+  const {errors, dirtyFields} = useFormState({control});
 
-  actionsAreValid(formActions, actions, errors, network).then(isValid =>
-    setIsActionsValid(isValid)
-  );
+  useEffect(() => {
+    const validateActions = async () => {
+      const isValid = await actionsAreValid(
+        formActions,
+        actions,
+        errors,
+        network
+      );
+      setIsActionsValid(isValid);
+    };
+
+    validateActions();
+  }, [formActions, actions, errors, network]);
 
   /*************************************************
    *                    Render                     *

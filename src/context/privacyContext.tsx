@@ -1,4 +1,5 @@
 import React, {
+  ReactNode,
   createContext,
   useCallback,
   useContext,
@@ -36,7 +37,9 @@ const PrivacyContext = createContext<PrivacyContextType | null>(null);
 
 const PRIVACY_KEY = 'privacy-policy-preferences';
 
-const PrivacyContextProvider: React.FC = ({children}) => {
+const PrivacyContextProvider: React.FC<{children: ReactNode}> = ({
+  children,
+}) => {
   // 'cache' for the privacy preferences to reduce storage usage and increase speed
   const [preferences, setPreferences] = useState<PrivacyPreferences>();
 

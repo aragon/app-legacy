@@ -1,5 +1,5 @@
 import {AlertInline, ListItemAction} from '@aragon/ods';
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {useWatch} from 'react-hook-form';
 import {useTranslation} from 'react-i18next';
 
@@ -25,7 +25,14 @@ const SCCAction: React.FC<ActionIndex & {allowRemove?: boolean}> = ({
   const {network} = useNetwork();
   const [isValid, setIsValid] = useState(true);
 
-  validateSCCAction(actionData, network).then(res => setIsValid(res));
+  useEffect(() => {
+    const validateAction = async () => {
+      const isValid = await validateSCCAction(actionData, network);
+      setIsValid(isValid);
+    };
+
+    validateAction();
+  }, [actionData, network]);
 
   const methodActions = (() => {
     const result = [];

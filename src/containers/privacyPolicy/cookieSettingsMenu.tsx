@@ -104,7 +104,7 @@ type Props = {
 };
 
 // For the sake of consistency height of modal is halfway screen size, but modals need to be higher
-const Modal = styled.div.attrs(({show}: Props) => ({
+const Modal = styled.div.attrs<{show: Props}>(({show}) => ({
   className: `${show ? 'block' : 'hidden'} fixed z-20 bg-ui-50
   bottom-0 w-full rounded-t-xl
   tablet:bottom-3 tablet:left-1/2 tablet:w-56 tablet:rounded-b-xl

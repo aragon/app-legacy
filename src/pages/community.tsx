@@ -93,7 +93,7 @@ export const Community: React.FC = () => {
     featureFlags.getValue('VITE_FEATURE_FLAG_DELEGATION') === 'true';
 
   const sortLabel = isMobile
-    ? undefined
+    ? ''
     : sort === 'delegations'
     ? t('community.sortByDelegations.selected')
     : t('community.sortByVotingPower.selected');

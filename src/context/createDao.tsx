@@ -15,7 +15,13 @@ import {
   SupportedNetwork as sdkSupportedNetworks,
 } from '@aragon/sdk-client-common';
 import {parseUnits} from 'ethers/lib/utils';
-import React, {createContext, useCallback, useContext, useState} from 'react';
+import React, {
+  ReactNode,
+  createContext,
+  useCallback,
+  useContext,
+  useState,
+} from 'react';
 import {useFormContext} from 'react-hook-form';
 import {useTranslation} from 'react-i18next';
 import {generatePath, useNavigate} from 'react-router-dom';
@@ -48,7 +54,7 @@ type CreateDaoContextType = {
 
 const CreateDaoContext = createContext<CreateDaoContextType | null>(null);
 
-const CreateDaoProvider: React.FC = ({children}) => {
+const CreateDaoProvider: React.FC<{children: ReactNode}> = ({children}) => {
   const {open} = useGlobalModalContext();
   const navigate = useNavigate();
   const {isOnWrongNetwork, provider} = useWallet();

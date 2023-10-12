@@ -7,7 +7,8 @@ import {Locale, format, formatDistanceToNow} from 'date-fns';
 import * as Locales from 'date-fns/locale';
 import React, {useEffect, useMemo} from 'react';
 import {useFormContext} from 'react-hook-form';
-import {TFunction, useTranslation} from 'react-i18next';
+import {useTranslation} from 'react-i18next';
+import {TFunction} from 'i18next';
 import styled from 'styled-components';
 
 import {ExecutionWidget} from 'components/executionWidget';

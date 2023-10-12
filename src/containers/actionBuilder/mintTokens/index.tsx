@@ -132,7 +132,7 @@ export const MintTokenForm: React.FC<MintTokenFormProps> = ({
   );
 
   const {setValue, trigger, formState, control, resetField} = useFormContext();
-  const {fields, append, remove, update} = useFieldArray({
+  const {fields, append, replace, remove, update} = useFieldArray({
     name: `actions.${actionIndex}.inputs.mintTokensToWallets`,
   });
 
@@ -171,15 +171,15 @@ export const MintTokenForm: React.FC<MintTokenFormProps> = ({
    *************************************************/
 
   useEffect(() => {
-    // set-up form on first load/reset
+    // Setup form on first load/reset using replace to avoid calling append multiple times
     if (fields.length === 0) {
-      append({web3Address: {address: '', ensName: ''}, amount: '0'});
+      replace({web3Address: {address: '', ensName: ''}, amount: '0'});
     }
 
     if (!actionName) {
       setValue(`actions.${actionIndex}.name`, 'mint_tokens');
     }
-  }, [actionIndex, actionName, append, fields.length, setValue]);
+  }, [actionIndex, actionName, replace, fields.length, setValue]);
 
   useEffect(() => {
     // check for empty address fields on blur.
