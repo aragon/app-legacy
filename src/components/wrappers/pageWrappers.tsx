@@ -1,4 +1,4 @@
-import {HeaderPage, HeaderPageProps} from '@aragon/ods';
+import {HeaderPage, HeaderPageProps} from '@aragon/ods-old';
 import React from 'react';
 import {useNavigate} from 'react-router-dom';
 import styled from 'styled-components';

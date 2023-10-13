@@ -1,4 +1,4 @@
-import {ButtonGroup, Option} from '@aragon/ods';
+import {ButtonGroup, Option} from '@aragon/ods-old';
 import React, {useState} from 'react';
 import {useTranslation} from 'react-i18next';
 

@@ -1,4 +1,4 @@
-import {InputValue, Label} from '@aragon/ods';
+import {InputValue, Label} from '@aragon/ods-old';
 import {formatUnits} from 'ethers/lib/utils';
 import React, {useCallback, useEffect} from 'react';
 import {Controller, useFormContext, useWatch} from 'react-hook-form';

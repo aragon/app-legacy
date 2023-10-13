@@ -11,7 +11,7 @@ import {
   shortenAddress,
   WalletInputLegacy,
   IconLinkExternal,
-} from '@aragon/ods';
+} from '@aragon/ods-old';
 import {ethers} from 'ethers';
 import {isAddress} from 'ethers/lib/utils';
 import React, {useCallback, useEffect, useMemo, useState} from 'react';

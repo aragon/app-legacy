@@ -1,4 +1,4 @@
-import {AvatarDao, ButtonText, Spinner, Tag} from '@aragon/ods';
+import {AvatarDao, ButtonText, Spinner, Tag} from '@aragon/ods-old';
 import {SessionTypes} from '@walletconnect/types';
 import React, {useCallback} from 'react';
 import {useFormContext} from 'react-hook-form';

@@ -11,7 +11,7 @@ import {
   shortenAddress,
   Link,
   IconLinkExternal,
-} from '@aragon/ods';
+} from '@aragon/ods-old';
 import {useDaoDetailsQuery} from 'hooks/useDaoDetails';
 import {useDaoToken} from 'hooks/useDaoToken';
 import {Address, useBalance, useEnsName} from 'wagmi';

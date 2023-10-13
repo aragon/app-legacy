@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import {AvatarToken} from '@aragon/ods';
+import {AvatarToken} from '@aragon/ods-old';
 
 export type TokenProps = {
   tokenName: string;

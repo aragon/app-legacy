@@ -1,4 +1,4 @@
-import {IconLinkExternal, Link, Tag} from '@aragon/ods';
+import {IconLinkExternal, Link, Tag} from '@aragon/ods-old';
 import {VotingMode, VotingSettings} from '@aragon/sdk-client';
 import React from 'react';
 import {useTranslation} from 'react-i18next';

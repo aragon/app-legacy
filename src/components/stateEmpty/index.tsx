@@ -5,7 +5,7 @@ import {
   IlluObject,
   IlluObjectProps,
   IllustrationHuman,
-} from '@aragon/ods';
+} from '@aragon/ods-old';
 import useScreen from 'hooks/useScreen';
 import React from 'react';
 import styled from 'styled-components';

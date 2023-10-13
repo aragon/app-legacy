@@ -3,7 +3,7 @@ import {
   InputValue,
   WalletInput,
   WalletInputProps,
-} from '@aragon/ods';
+} from '@aragon/ods-old';
 import React, {Ref, forwardRef, useCallback, useEffect, useState} from 'react';
 import {useTranslation} from 'react-i18next';
 

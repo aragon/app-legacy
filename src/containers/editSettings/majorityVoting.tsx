@@ -3,7 +3,7 @@ import {
   ButtonText,
   IconGovernance,
   ListItemAction,
-} from '@aragon/ods';
+} from '@aragon/ods-old';
 import {DaoDetails, VotingMode, VotingSettings} from '@aragon/sdk-client';
 import {BigNumber} from 'ethers/lib/ethers';
 import React, {useCallback, useEffect, useMemo} from 'react';

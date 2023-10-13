@@ -1,4 +1,4 @@
-import {CheckboxListItem, Label} from '@aragon/ods';
+import {CheckboxListItem, Label} from '@aragon/ods-old';
 import React from 'react';
 import {Controller, useFormContext, useWatch} from 'react-hook-form';
 import {useTranslation} from 'react-i18next';

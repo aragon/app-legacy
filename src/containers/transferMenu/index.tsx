@@ -1,4 +1,4 @@
-import {IconChevronRight, ListItemAction} from '@aragon/ods';
+import {IconChevronRight, ListItemAction} from '@aragon/ods-old';
 import React from 'react';
 import {useTranslation} from 'react-i18next';
 import {generatePath, useNavigate, useParams} from 'react-router-dom';

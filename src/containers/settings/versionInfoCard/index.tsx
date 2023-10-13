@@ -1,4 +1,4 @@
-import {IconLinkExternal, Link} from '@aragon/ods';
+import {IconLinkExternal, Link} from '@aragon/ods-old';
 import {
   LIVE_CONTRACTS,
   SupportedVersion,

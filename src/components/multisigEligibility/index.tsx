@@ -1,9 +1,9 @@
 import React from 'react';
-import {CheckboxListItem, Label} from '@aragon/ods';
+import {CheckboxListItem, Label} from '@aragon/ods-old';
 import {Controller, useFormContext} from 'react-hook-form';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
-import {AlertInline} from '@aragon/ods';
+import {AlertInline} from '@aragon/ods-old';
 import useScreen from 'hooks/useScreen';
 
 export type MultisigProposerEligibility = 'multisig' | 'anyone';

@@ -1,4 +1,4 @@
-import {ButtonText, ListItemBlockchain} from '@aragon/ods';
+import {ButtonText, ListItemBlockchain} from '@aragon/ods-old';
 import React, {useMemo, useState} from 'react';
 import {Controller, useFormContext} from 'react-hook-form';
 import {useTranslation} from 'react-i18next';

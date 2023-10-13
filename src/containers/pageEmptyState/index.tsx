@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 
-import {ButtonText, ButtonTextProps} from '@aragon/ods';
+import {ButtonText, ButtonTextProps} from '@aragon/ods-old';
 
 type PageEmptyStateProps = {
   title: string;

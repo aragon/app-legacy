@@ -1,4 +1,4 @@
-import {ButtonIcon, Dropdown, IconClose, IconMenu} from '@aragon/ods';
+import {ButtonIcon, Dropdown, IconClose, IconMenu} from '@aragon/ods-old';
 import React, {useState} from 'react';
 import styled from 'styled-components';
 

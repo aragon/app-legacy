@@ -4,7 +4,7 @@ import {
   LinearProgress,
   NumberInput,
   NumberInputProps,
-} from '@aragon/ods';
+} from '@aragon/ods-old';
 import React from 'react';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';

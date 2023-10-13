@@ -5,7 +5,7 @@ import {
   IconSpinner,
   IlluObject,
   IllustrationHuman,
-} from '@aragon/ods';
+} from '@aragon/ods-old';
 import React, {useCallback, useEffect, useMemo, useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {generatePath, useNavigate, useParams} from 'react-router-dom';

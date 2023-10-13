@@ -4,7 +4,7 @@ import {
   IconSwitch,
   Link,
   Modal,
-} from '@aragon/ods';
+} from '@aragon/ods-old';
 import React, {useEffect, useState} from 'react';
 import {useFormContext, useWatch} from 'react-hook-form';
 import {useTranslation} from 'react-i18next';

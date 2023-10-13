@@ -6,7 +6,7 @@ import {
   IconMenuVertical,
   ListItemAction,
   Option,
-} from '@aragon/ods';
+} from '@aragon/ods-old';
 import {Locale, format} from 'date-fns';
 import * as Locales from 'date-fns/locale';
 import React, {useCallback, useMemo, useState} from 'react';

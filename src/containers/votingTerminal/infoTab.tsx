@@ -1,4 +1,4 @@
-import {Tag} from '@aragon/ods';
+import {Tag} from '@aragon/ods-old';
 import React from 'react';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';

@@ -1,4 +1,4 @@
-import {SearchInput, VoterType, VotersTable} from '@aragon/ods';
+import {SearchInput, VoterType, VotersTable} from '@aragon/ods-old';
 import React, {useCallback, useMemo, useState} from 'react';
 import {useFormContext} from 'react-hook-form';
 import {useTranslation} from 'react-i18next';
@@ -49,14 +49,14 @@ const CommunityAddressesModal: React.FC<CommunityAddressesModalProps> = ({
           ({
             wallet: ensName || getUserFriendlyWalletLabel(address, t),
             tokenAmount: `${amount} ${tokenSymbol}`,
-          } as VoterType)
+          }) as VoterType
       );
     }
 
     // multisig
     return (multisigWallets as MultisigWalletField[])
       .filter(filterValidator)
-      .map(({address, ensName}) => ({wallet: ensName || address} as VoterType));
+      .map(({address, ensName}) => ({wallet: ensName || address}) as VoterType);
   }, [
     filterValidator,
     multisigWallets,
@@ -107,8 +107,10 @@ export default CommunityAddressesModal;
 const ModalHeader = styled.div.attrs({
   className: 'p-3 bg-ui-0 rounded-xl sticky top-0',
 })`
-  box-shadow: 0px 4px 8px rgba(31, 41, 51, 0.04),
-    0px 0px 2px rgba(31, 41, 51, 0.06), 0px 0px 1px rgba(31, 41, 51, 0.04);
+  box-shadow:
+    0px 4px 8px rgba(31, 41, 51, 0.04),
+    0px 0px 2px rgba(31, 41, 51, 0.06),
+    0px 0px 1px rgba(31, 41, 51, 0.04);
   border-radius: 12px;
 `;
 

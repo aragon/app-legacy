@@ -10,7 +10,7 @@ import {
   ListItemAction,
   IconCheckmark,
   IconSort,
-} from '@aragon/ods';
+} from '@aragon/ods-old';
 import React, {useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {useNavigate} from 'react-router-dom';

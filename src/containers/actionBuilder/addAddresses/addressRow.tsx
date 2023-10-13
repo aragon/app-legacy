@@ -3,7 +3,7 @@ import {
   Dropdown,
   IconMenuVertical,
   InputValue as WalletInputValue,
-} from '@aragon/ods';
+} from '@aragon/ods-old';
 import React, {useCallback} from 'react';
 import {Controller, useFormContext, useWatch} from 'react-hook-form';
 import {useTranslation} from 'react-i18next';

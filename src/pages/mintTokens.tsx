@@ -1,4 +1,4 @@
-import {AlertInline} from '@aragon/ods';
+import {AlertInline} from '@aragon/ods-old';
 import React, {useState} from 'react';
 import {
   FieldErrors,

@@ -1,5 +1,10 @@
 import {useReactiveVar} from '@apollo/client';
-import {Breadcrumb, ButtonText, ButtonWallet, IconFeedback} from '@aragon/ods';
+import {
+  Breadcrumb,
+  ButtonText,
+  ButtonWallet,
+  IconFeedback,
+} from '@aragon/ods-old';
 import React, {useCallback, useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {generatePath, useNavigate, useParams} from 'react-router-dom';

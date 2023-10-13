@@ -1,4 +1,4 @@
-import {IconInfo, Link} from '@aragon/ods';
+import {IconInfo, Link} from '@aragon/ods-old';
 import React from 'react';
 import styled from 'styled-components';
 

@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import {useTranslation} from 'react-i18next';
-import {ButtonIcon, ButtonText, IconClose} from '@aragon/ods';
+import {ButtonIcon, ButtonText, IconClose} from '@aragon/ods-old';
 
 import ModalBottomSheetSwitcher from 'components/modalBottomSheetSwitcher';
 
@@ -61,8 +61,10 @@ const Title = styled.div.attrs({
 const ModalHeader = styled.div.attrs({
   className: 'flex items-center p-2 space-x-2 bg-ui-0 rounded-xl sticky top-0',
 })`
-  box-shadow: 0px 4px 8px rgba(31, 41, 51, 0.04),
-    0px 0px 2px rgba(31, 41, 51, 0.06), 0px 0px 1px rgba(31, 41, 51, 0.04);
+  box-shadow:
+    0px 4px 8px rgba(31, 41, 51, 0.04),
+    0px 0px 2px rgba(31, 41, 51, 0.06),
+    0px 0px 1px rgba(31, 41, 51, 0.04);
 `;
 
 const BottomSheetContentContainer = styled.div.attrs({

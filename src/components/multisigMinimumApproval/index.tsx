@@ -1,4 +1,4 @@
-import {AlertInlineProps, Label} from '@aragon/ods';
+import {AlertInlineProps, Label} from '@aragon/ods-old';
 import React, {useCallback, useEffect} from 'react';
 import {
   Controller,

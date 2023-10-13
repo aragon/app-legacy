@@ -1,4 +1,4 @@
-import {IconChevronRight} from '@aragon/ods';
+import {IconChevronRight} from '@aragon/ods-old';
 import React from 'react';
 import {useFormContext} from 'react-hook-form';
 import {useTranslation} from 'react-i18next';

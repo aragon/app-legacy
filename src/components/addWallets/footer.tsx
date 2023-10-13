@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import {Label} from '@aragon/ods';
+import {Label} from '@aragon/ods-old';
 import {useTranslation} from 'react-i18next';
 import {useFormContext} from 'react-hook-form';
 

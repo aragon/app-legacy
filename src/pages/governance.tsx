@@ -6,7 +6,7 @@ import {
   IllustrationHuman,
   Option,
   Spinner,
-} from '@aragon/ods';
+} from '@aragon/ods-old';
 import {ProposalStatus} from '@aragon/sdk-client-common';
 import React, {useState} from 'react';
 import {useTranslation} from 'react-i18next';

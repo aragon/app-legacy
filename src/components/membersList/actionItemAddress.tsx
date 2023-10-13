@@ -13,7 +13,7 @@ import {
   ListItemAction,
   IconCopy,
   IconGovernance,
-} from '@aragon/ods';
+} from '@aragon/ods-old';
 import {CHAIN_METADATA} from 'utils/constants';
 import {isAddress} from 'viem';
 import {useNetwork} from 'context/network';

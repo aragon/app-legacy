@@ -1,7 +1,7 @@
 import React, {useState} from 'react';
 import styled from 'styled-components';
 import {useTranslation} from 'react-i18next';
-import {IconChevronRight, ListItemAction, SearchInput} from '@aragon/ods';
+import {IconChevronRight, ListItemAction, SearchInput} from '@aragon/ods-old';
 
 import {useGlobalModalContext} from 'context/globalModals';
 import {timezones} from './utcData';

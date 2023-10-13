@@ -1,4 +1,4 @@
-import {IconAdd, SearchInput} from '@aragon/ods';
+import {IconAdd, SearchInput} from '@aragon/ods-old';
 import React, {useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import TokenList from 'components/tokenList';

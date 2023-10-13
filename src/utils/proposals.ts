@@ -5,7 +5,7 @@
  * so open to suggestions.
  */
 
-import {ModeType, ProgressStatusProps, VoterType} from '@aragon/ods';
+import {ModeType, ProgressStatusProps, VoterType} from '@aragon/ods-old';
 import {
   CreateMajorityVotingProposalParams,
   Erc20TokenDetails,
@@ -770,7 +770,7 @@ export function getNonEmptyActions(
  * or null/undefined if the input was null/undefined
  */
 export function recalculateProposalStatus<
-  T extends DetailedProposal | ProposalListItem
+  T extends DetailedProposal | ProposalListItem,
 >(proposal: T | null | undefined): T | null | undefined {
   if (proposal?.status === ProposalStatus.SUCCEEDED) {
     const endTime = proposal.endDate.getTime();

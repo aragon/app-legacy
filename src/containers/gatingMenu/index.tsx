@@ -1,4 +1,4 @@
-import {ButtonText} from '@aragon/ods';
+import {ButtonText} from '@aragon/ods-old';
 import React from 'react';
 import {useTranslation} from 'react-i18next';
 import {generatePath, useNavigate} from 'react-router-dom';

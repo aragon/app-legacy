@@ -1,4 +1,4 @@
-import {AlertInline, IconChevronRight, ListItemAction} from '@aragon/ods';
+import {AlertInline, IconChevronRight, ListItemAction} from '@aragon/ods-old';
 import {SessionTypes, SignClientTypes} from '@walletconnect/types';
 import React from 'react';
 import {useTranslation} from 'react-i18next';

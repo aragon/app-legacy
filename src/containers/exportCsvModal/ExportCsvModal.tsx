@@ -13,7 +13,7 @@ import {
   IconReload,
   Label,
   Spinner,
-} from '@aragon/ods';
+} from '@aragon/ods-old';
 import {getCanonicalDate} from 'utils/date';
 import {StateEmpty} from 'components/stateEmpty';
 import {Transfer, Deposit, Withdraw} from 'utils/types';

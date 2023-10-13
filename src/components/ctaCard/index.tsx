@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import {ButtonText} from '@aragon/ods';
+import {ButtonText} from '@aragon/ods-old';
 import useScreen from 'hooks/useScreen';
 
 type Props = {

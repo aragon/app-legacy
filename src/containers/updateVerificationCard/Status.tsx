@@ -1,6 +1,6 @@
 import React, {ReactNode} from 'react';
 import styled from 'styled-components';
-import {Spinner, IconRadioCancel, IconSuccess} from '@aragon/ods';
+import {Spinner, IconRadioCancel, IconSuccess} from '@aragon/ods-old';
 
 export interface StatusProps {
   mode: 'loading' | 'success' | 'error';

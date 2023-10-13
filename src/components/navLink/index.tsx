@@ -1,4 +1,4 @@
-import {ListItemAction} from '@aragon/ods';
+import {ListItemAction} from '@aragon/ods-old';
 import {useNetwork} from 'context/network';
 import useScreen from 'hooks/useScreen';
 import React from 'react';

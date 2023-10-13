@@ -2,7 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 import {Link} from 'react-router-dom';
 import {BreadcrumbData} from 'use-react-router-breadcrumbs';
-import {IconChevronRight} from '@aragon/ods';
+import {IconChevronRight} from '@aragon/ods-old';
 
 type Props = {
   breadcrumbs: BreadcrumbData[];

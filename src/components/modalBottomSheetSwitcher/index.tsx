@@ -1,5 +1,5 @@
 import React from 'react';
-import {Modal, ModalProps} from '@aragon/ods';
+import {Modal, ModalProps} from '@aragon/ods-old';
 import BottomSheet, {BottomSheetProps} from 'components/bottomSheet';
 import useScreen from 'hooks/useScreen';
 

@@ -1,4 +1,4 @@
-import {ButtonText, ListItemAction, Label as FormLabel} from '@aragon/ods';
+import {ButtonText, ListItemAction, Label as FormLabel} from '@aragon/ods-old';
 import Big from 'big.js';
 import {BigNumber} from 'ethers';
 import {isAddress} from 'ethers/lib/utils';

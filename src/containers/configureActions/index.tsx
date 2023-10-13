@@ -1,4 +1,4 @@
-import {AlertInline, ButtonText, IconAdd, Label} from '@aragon/ods';
+import {AlertInline, ButtonText, IconAdd, Label} from '@aragon/ods-old';
 import React, {useEffect, useMemo} from 'react';
 import {useTranslation} from 'react-i18next';
 import {useParams} from 'react-router-dom';

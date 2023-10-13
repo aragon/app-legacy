@@ -1,5 +1,5 @@
 import {MultisigProposalListItem} from '@aragon/sdk-client';
-import {CardProposal, CardProposalProps, Spinner} from '@aragon/ods';
+import {CardProposal, CardProposalProps, Spinner} from '@aragon/ods-old';
 import {BigNumber} from 'ethers';
 import React, {useMemo} from 'react';
 import {useTranslation} from 'react-i18next';
@@ -51,25 +51,24 @@ function isMultisigProposalListItem(
   return 'approvals' in proposal;
 }
 
-const ProposalItem: React.FC<{proposalId: string} & CardProposalProps> =
-  props => {
-    const {isAragonVerifiedUpdateProposal} = useUpdateProposal(
-      props.proposalId
-    );
-    const {t} = useTranslation();
+const ProposalItem: React.FC<
+  {proposalId: string} & CardProposalProps
+> = props => {
+  const {isAragonVerifiedUpdateProposal} = useUpdateProposal(props.proposalId);
+  const {t} = useTranslation();
 
-    return (
-      <CardProposal
-        {...props}
-        bannerContent={
-          isAragonVerifiedUpdateProposal &&
-          featureFlags.getValue('VITE_FEATURE_FLAG_OSX_UPDATES') === 'true'
-            ? t('update.proposal.bannerTitle')
-            : ''
-        }
-      />
-    );
-  };
+  return (
+    <CardProposal
+      {...props}
+      bannerContent={
+        isAragonVerifiedUpdateProposal &&
+        featureFlags.getValue('VITE_FEATURE_FLAG_OSX_UPDATES') === 'true'
+          ? t('update.proposal.bannerTitle')
+          : ''
+      }
+    />
+  );
+};
 
 const ProposalList: React.FC<ProposalListProps> = ({
   proposals,

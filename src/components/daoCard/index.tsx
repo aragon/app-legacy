@@ -1,4 +1,4 @@
-import {AvatarDao, IconBlock, IconCommunity} from '@aragon/ods';
+import {AvatarDao, IconBlock, IconCommunity} from '@aragon/ods-old';
 import React from 'react';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
@@ -78,8 +78,10 @@ const Container = styled.button.attrs({
     `,
 })`
   &:hover {
-    box-shadow: 0px 4px 8px rgba(31, 41, 51, 0.04),
-      0px 0px 2px rgba(31, 41, 51, 0.06), 0px 0px 1px rgba(31, 41, 51, 0.04);
+    box-shadow:
+      0px 4px 8px rgba(31, 41, 51, 0.04),
+      0px 0px 2px rgba(31, 41, 51, 0.06),
+      0px 0px 1px rgba(31, 41, 51, 0.04);
   }
   &:focus {
     box-shadow: 0px 0px 0px 2px #003bf5;

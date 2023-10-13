@@ -2,7 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 import {useNavigate} from 'react-router-dom';
 import {useTranslation} from 'react-i18next';
-import {ButtonText} from '@aragon/ods';
+import {ButtonText} from '@aragon/ods-old';
 
 import {Container, GridLayout} from 'components/layout';
 import Logo from 'public/logoBlue.svg';

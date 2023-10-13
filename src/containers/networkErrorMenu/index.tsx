@@ -1,4 +1,10 @@
-import {Avatar, ButtonIcon, ButtonText, IconClose, IconCopy} from '@aragon/ods';
+import {
+  Avatar,
+  ButtonIcon,
+  ButtonText,
+  IconClose,
+  IconCopy,
+} from '@aragon/ods-old';
 import ModalBottomSheetSwitcher from 'components/modalBottomSheetSwitcher';
 import {useAlertContext} from 'context/alert';
 import {useGlobalModalContext} from 'context/globalModals';
@@ -101,8 +107,10 @@ export const NetworkErrorMenu = () => {
 const ModalHeader = styled.div.attrs({
   className: 'flex p-3 bg-ui-0 rounded-xl gap-2 sticky top-0',
 })`
-  box-shadow: 0px 4px 8px rgba(31, 41, 51, 0.04),
-    0px 0px 2px rgba(31, 41, 51, 0.06), 0px 0px 1px rgba(31, 41, 51, 0.04);
+  box-shadow:
+    0px 4px 8px rgba(31, 41, 51, 0.04),
+    0px 0px 2px rgba(31, 41, 51, 0.06),
+    0px 0px 1px rgba(31, 41, 51, 0.04);
 `;
 
 export const Title = styled.div.attrs({

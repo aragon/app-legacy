@@ -4,7 +4,7 @@ import {
   Label,
   ValueInput,
   InputValue as WalletInputValue,
-} from '@aragon/ods';
+} from '@aragon/ods-old';
 import React, {useCallback, useEffect} from 'react';
 import {
   Controller,

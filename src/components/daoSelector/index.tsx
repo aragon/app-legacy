@@ -4,7 +4,7 @@ import {
   ButtonIcon,
   IconChevronDown,
   shortenAddress,
-} from '@aragon/ods';
+} from '@aragon/ods-old';
 import React from 'react';
 import styled from 'styled-components';
 

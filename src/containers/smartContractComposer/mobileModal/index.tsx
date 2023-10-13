@@ -6,7 +6,7 @@ import {
   IconHome,
   IconLinkExternal,
   Link,
-} from '@aragon/ods';
+} from '@aragon/ods-old';
 import React, {useEffect, useState} from 'react';
 import {useFormContext, useWatch} from 'react-hook-form';
 import {useTranslation} from 'react-i18next';
@@ -205,8 +205,10 @@ const CustomMobileHeader: React.FC<CustomHeaderProps> = props => {
 const Header = styled.div.attrs({
   className: 'flex items-center rounded-xl space-x-2 p-2 bg-ui-0',
 })`
-  box-shadow: 0px 4px 8px rgba(31, 41, 51, 0.04),
-    0px 0px 2px rgba(31, 41, 51, 0.06), 0px 0px 1px rgba(31, 41, 51, 0.04);
+  box-shadow:
+    0px 4px 8px rgba(31, 41, 51, 0.04),
+    0px 0px 2px rgba(31, 41, 51, 0.06),
+    0px 0px 1px rgba(31, 41, 51, 0.04);
 `;
 
 const Content = styled.div.attrs({

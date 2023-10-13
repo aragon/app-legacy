@@ -9,7 +9,7 @@ import NavLinks from 'components/navLinks';
 import {selectedDaoVar} from 'context/apolloClient';
 import {useGlobalModalContext} from 'context/globalModals';
 import {usePrivacyContext} from 'context/privacyContext';
-import {ButtonText, IconFeedback} from '@aragon/ods';
+import {ButtonText, IconFeedback} from '@aragon/ods-old';
 import {toDisplayEns} from 'utils/library';
 
 type MobileNavMenuProps = {
@@ -59,6 +59,8 @@ const MobileNavMenu = (props: MobileNavMenuProps) => {
 export default MobileNavMenu;
 
 const CardWrapper = styled.div`
-  box-shadow: 0px 4px 8px rgba(31, 41, 51, 0.04),
-    0px 0px 2px rgba(31, 41, 51, 0.06), 0px 0px 1px rgba(31, 41, 51, 0.04);
+  box-shadow:
+    0px 4px 8px rgba(31, 41, 51, 0.04),
+    0px 0px 2px rgba(31, 41, 51, 0.06),
+    0px 0px 1px rgba(31, 41, 51, 0.04);
 `;

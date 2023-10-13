@@ -4,7 +4,7 @@ import {
   CheckboxListItem,
   CheckboxListItemProps,
   Tag,
-} from '@aragon/ods';
+} from '@aragon/ods-old';
 import React, {ReactNode} from 'react';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';

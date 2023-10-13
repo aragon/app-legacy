@@ -5,7 +5,7 @@ import {
   TextareaSimple,
   TextareaWYSIWYG,
   TextInput,
-} from '@aragon/ods';
+} from '@aragon/ods-old';
 import React, {useEffect, useState} from 'react';
 import styled from 'styled-components';
 import {useTranslation} from 'react-i18next';

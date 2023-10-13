@@ -12,7 +12,7 @@ import {
   AlertInline,
   IconReload,
   InputValue,
-} from '@aragon/ods';
+} from '@aragon/ods-old';
 import {useDaoToken} from 'hooks/useDaoToken';
 import {WrappedWalletInput} from 'components/wrappedWalletInput';
 import {useDelegatee} from 'services/aragon-sdk/queries/use-delegatee';

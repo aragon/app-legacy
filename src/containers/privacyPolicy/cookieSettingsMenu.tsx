@@ -3,7 +3,7 @@ import {
   ButtonText,
   CheckboxListItem,
   IconChevronLeft,
-} from '@aragon/ods';
+} from '@aragon/ods-old';
 import styled from 'styled-components';
 import {useTranslation} from 'react-i18next';
 import React, {useState} from 'react';
@@ -91,8 +91,10 @@ const Title = styled.div.attrs({
 const ModalHeader = styled.div.attrs({
   className: 'flex items-center p-2 space-x-2 bg-ui-0 rounded-xl',
 })`
-  box-shadow: 0px 4px 8px rgba(31, 41, 51, 0.04),
-    0px 0px 2px rgba(31, 41, 51, 0.06), 0px 0px 1px rgba(31, 41, 51, 0.04);
+  box-shadow:
+    0px 4px 8px rgba(31, 41, 51, 0.04),
+    0px 0px 2px rgba(31, 41, 51, 0.06),
+    0px 0px 1px rgba(31, 41, 51, 0.04);
 `;
 
 const BottomSheetContentContainer = styled.div.attrs({
@@ -111,7 +113,9 @@ const Modal = styled.div.attrs<{show: Props}>(({show}) => ({
   tablet:-translate-x-1/2
   desktop:bottom-auto desktop:top-1/2 desktop:-translate-y-1/2`,
 }))<Props>`
-  box-shadow: 0px 24px 32px rgba(31, 41, 51, 0.04),
-    0px 16px 24px rgba(31, 41, 51, 0.04), 0px 4px 8px rgba(31, 41, 51, 0.04),
+  box-shadow:
+    0px 24px 32px rgba(31, 41, 51, 0.04),
+    0px 16px 24px rgba(31, 41, 51, 0.04),
+    0px 4px 8px rgba(31, 41, 51, 0.04),
     0px 0px 1px rgba(31, 41, 51, 0.04);
 `;

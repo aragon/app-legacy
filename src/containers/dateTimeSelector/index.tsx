@@ -1,4 +1,4 @@
-import {DateInput, DropdownInput} from '@aragon/ods';
+import {DateInput, DropdownInput} from '@aragon/ods-old';
 import {toDate} from 'date-fns-tz';
 import format from 'date-fns/format';
 import React, {useCallback, useMemo} from 'react';

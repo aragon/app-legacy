@@ -1,7 +1,7 @@
 import React, {useMemo, useEffect} from 'react';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
-import {AlertCard, IconSpinner, Spinner, shortenAddress} from '@aragon/ods';
+import {AlertCard, IconSpinner, Spinner, shortenAddress} from '@aragon/ods-old';
 
 import {Dd, Dl} from 'components/descriptionList';
 import {useFormContext, useWatch} from 'react-hook-form';

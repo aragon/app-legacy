@@ -5,7 +5,7 @@ import {
   IconChevronRight,
   IconGovernance,
   ListItemHeader,
-} from '@aragon/ods';
+} from '@aragon/ods-old';
 import React from 'react';
 import {useTranslation} from 'react-i18next';
 import {generatePath, useNavigate} from 'react-router-dom';
@@ -33,25 +33,24 @@ type Props = {
   pluginType: PluginTypes;
 };
 
-const ProposalItem: React.FC<{proposalId: string} & CardProposalProps> =
-  props => {
-    const {isAragonVerifiedUpdateProposal} = useUpdateProposal(
-      props.proposalId
-    );
-    const {t} = useTranslation();
+const ProposalItem: React.FC<
+  {proposalId: string} & CardProposalProps
+> = props => {
+  const {isAragonVerifiedUpdateProposal} = useUpdateProposal(props.proposalId);
+  const {t} = useTranslation();
 
-    return (
-      <CardProposal
-        {...props}
-        bannerContent={
-          isAragonVerifiedUpdateProposal &&
-          featureFlags.getValue('VITE_FEATURE_FLAG_OSX_UPDATES') === 'true'
-            ? t('update.proposal.bannerTitle')
-            : ''
-        }
-      />
-    );
-  };
+  return (
+    <CardProposal
+      {...props}
+      bannerContent={
+        isAragonVerifiedUpdateProposal &&
+        featureFlags.getValue('VITE_FEATURE_FLAG_OSX_UPDATES') === 'true'
+          ? t('update.proposal.bannerTitle')
+          : ''
+      }
+    />
+  );
+};
 
 const ProposalSnapshot: React.FC<Props> = ({
   daoAddressOrEns,

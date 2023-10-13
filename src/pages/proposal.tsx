@@ -6,7 +6,7 @@ import {
   IconGovernance,
   Link,
   WidgetStatus,
-} from '@aragon/ods';
+} from '@aragon/ods-old';
 import {
   MultisigClient,
   MultisigProposal,

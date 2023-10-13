@@ -1,6 +1,6 @@
 import React, {useEffect, ReactNode} from 'react';
 import {motion, PanInfo, useAnimation} from 'framer-motion';
-import {Backdrop} from '@aragon/ods';
+import {Backdrop} from '@aragon/ods-old';
 import styled from 'styled-components';
 
 import usePrevious from 'hooks/usePrevious';
@@ -104,8 +104,10 @@ const StyledMotionContainer = styled(motion.div).attrs({
 const ModalTitleContainer = styled.div.attrs({
   className: 'bg-white rounded-xl p-3 space-y-0.5 text-center',
 })`
-  box-shadow: 0px 10px 20px rgba(31, 41, 51, 0.04),
-    0px 2px 6px rgba(31, 41, 51, 0.04), 0px 0px 1px rgba(31, 41, 51, 0.04);
+  box-shadow:
+    0px 10px 20px rgba(31, 41, 51, 0.04),
+    0px 2px 6px rgba(31, 41, 51, 0.04),
+    0px 0px 1px rgba(31, 41, 51, 0.04);
 `;
 
 const ModalTitle = styled.h1.attrs({

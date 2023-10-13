@@ -3,7 +3,7 @@ import {Controller, useFormContext, useWatch} from 'react-hook-form';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 
-import {Label} from '@aragon/ods';
+import {Label} from '@aragon/ods-old';
 import {AccordionMethod} from 'components/accordionMethod';
 import {generateAlert} from 'components/multisigMinimumApproval';
 import MinimumApproval from 'components/multisigMinimumApproval/minimumApproval';

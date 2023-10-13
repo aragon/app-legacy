@@ -1,4 +1,4 @@
-import {Link, VoterType} from '@aragon/ods';
+import {Link, VoterType} from '@aragon/ods-old';
 import {Erc20TokenDetails} from '@aragon/sdk-client';
 import TipTapLink from '@tiptap/extension-link';
 import {EditorContent, useEditor} from '@tiptap/react';
@@ -368,7 +368,7 @@ function getReviewProposalTerminalProps(
       approvals: [],
       voters:
         daoMembers?.map(
-          m => ({wallet: m.address, option: 'none'} as VoterType)
+          m => ({wallet: m.address, option: 'none'}) as VoterType
         ) || [],
     };
   }

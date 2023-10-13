@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import {useTranslation} from 'react-i18next';
-import {ButtonText, Link} from '@aragon/ods';
+import {ButtonText, Link} from '@aragon/ods-old';
 
 type PrivacyPolicyContentProps = {
   isDesktop: boolean;

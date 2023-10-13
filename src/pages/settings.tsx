@@ -9,7 +9,7 @@ import {
   IconLinkExternal,
   Link,
   Tag,
-} from '@aragon/ods';
+} from '@aragon/ods-old';
 import {DaoDetails} from '@aragon/sdk-client';
 import React, {ReactNode, useEffect, useRef, useState} from 'react';
 import {useTranslation} from 'react-i18next';

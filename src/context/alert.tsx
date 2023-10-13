@@ -5,7 +5,7 @@ import React, {
   useMemo,
   ReactNode,
 } from 'react';
-import {AlertChip} from '@aragon/ods';
+import {AlertChip} from '@aragon/ods-old';
 
 const AlertContext = createContext<AlertContextType | null>(null);
 

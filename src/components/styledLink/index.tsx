@@ -1,4 +1,4 @@
-import {Link, LinkProps} from '@aragon/ods';
+import {Link, LinkProps} from '@aragon/ods-old';
 import styled from 'styled-components';
 
 // Temporary local component until an inverse variant is introduced into the

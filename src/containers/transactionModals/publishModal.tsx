@@ -1,5 +1,5 @@
 import React, {useMemo} from 'react';
-import {AlertInline, ButtonText, IconReload, Spinner} from '@aragon/ods';
+import {AlertInline, ButtonText, IconReload, Spinner} from '@aragon/ods-old';
 import styled from 'styled-components';
 import {useTranslation} from 'react-i18next';
 

@@ -9,7 +9,7 @@ import {
   ListItemAction,
   ListItemActionProps,
   shortenAddress,
-} from '@aragon/ods';
+} from '@aragon/ods-old';
 import {useAlertContext} from 'context/alert';
 import {useNetwork} from 'context/network';
 import React from 'react';

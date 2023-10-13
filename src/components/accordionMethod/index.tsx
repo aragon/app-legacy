@@ -9,7 +9,7 @@ import {
   IconWarning,
   Dropdown,
   ListItemProps,
-} from '@aragon/ods';
+} from '@aragon/ods-old';
 import styled from 'styled-components';
 
 export type AccordionType = 'action-builder' | 'execution-widget';

@@ -4,7 +4,7 @@ import {
   ListItemAction,
   ListItemActionProps,
   ListItemProps,
-} from '@aragon/ods';
+} from '@aragon/ods-old';
 import React from 'react';
 
 type Props = Omit<ListItemActionProps, 'iconLeft'> & {

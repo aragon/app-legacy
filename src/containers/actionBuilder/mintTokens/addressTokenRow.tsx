@@ -8,7 +8,7 @@ import {
   ListItemAction,
   NumberInput,
   TextInput,
-} from '@aragon/ods';
+} from '@aragon/ods-old';
 import Big from 'big.js';
 import React, {useCallback, useEffect} from 'react';
 import {Controller, useFormContext, useWatch} from 'react-hook-form';

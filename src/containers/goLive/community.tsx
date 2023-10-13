@@ -1,4 +1,4 @@
-import {IconLinkExternal, Link, Tag} from '@aragon/ods';
+import {IconLinkExternal, Link, Tag} from '@aragon/ods-old';
 import React, {useMemo} from 'react';
 import {Controller, useFormContext} from 'react-hook-form';
 import {useTranslation} from 'react-i18next';

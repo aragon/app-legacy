@@ -9,7 +9,7 @@ import {getTokenInfo} from 'utils/tokens';
 import {ActionItemAddress} from './actionItemAddress';
 import {useAccount} from 'wagmi';
 import styled from 'styled-components';
-import {useScreen} from '@aragon/ods';
+import {useScreen} from '@aragon/ods-old';
 import {useTranslation} from 'react-i18next';
 import {featureFlags} from 'utils/featureFlags';
 

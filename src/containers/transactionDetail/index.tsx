@@ -7,7 +7,7 @@ import {
   IconClose,
   IconLinkExternal,
   ListItemAction,
-} from '@aragon/ods';
+} from '@aragon/ods-old';
 import React, {useCallback} from 'react';
 import {useTranslation} from 'react-i18next';
 import {generatePath, useNavigate} from 'react-router-dom';
@@ -138,8 +138,10 @@ const ModalHeader = styled.div.attrs({
   className:
     'flex items-center space-between h-10 gap-x-3 p-2 bg-ui-0 rounded-xl sticky top-0',
 })`
-  box-shadow: 0px 4px 8px rgba(31, 41, 51, 0.04),
-    0px 0px 2px rgba(31, 41, 51, 0.06), 0px 0px 1px rgba(31, 41, 51, 0.04);
+  box-shadow:
+    0px 4px 8px rgba(31, 41, 51, 0.04),
+    0px 0px 2px rgba(31, 41, 51, 0.06),
+    0px 0px 1px rgba(31, 41, 51, 0.04);
 `;
 
 const Content = styled.div.attrs({className: 'p-3 space-y-1.5'})``;

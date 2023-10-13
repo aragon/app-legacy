@@ -12,7 +12,7 @@ import {
 import {VersionTag} from '@aragon/sdk-client-common';
 import {BigNumber} from 'ethers';
 
-import {InputValue} from '@aragon/ods';
+import {InputValue} from '@aragon/ods-old';
 import {TokenVotingWalletField} from 'components/addWallets/row';
 import {MultisigWalletField} from 'components/multisigWallets/row';
 import {TimeFilter, TransferTypes} from './constants';

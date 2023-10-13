@@ -1,4 +1,4 @@
-import {AlertInline, ListItemAction} from '@aragon/ods';
+import {AlertInline, ListItemAction} from '@aragon/ods-old';
 import React, {useEffect, useState} from 'react';
 import {useWatch} from 'react-hook-form';
 import {useTranslation} from 'react-i18next';

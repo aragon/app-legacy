@@ -6,7 +6,7 @@ import {
   Label,
   ListItemAction,
   TextInput,
-} from '@aragon/ods';
+} from '@aragon/ods-old';
 import React, {useCallback} from 'react';
 import styled from 'styled-components';
 import {useTranslation} from 'react-i18next';

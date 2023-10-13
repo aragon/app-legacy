@@ -2,7 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 import {generatePath, Link, useParams} from 'react-router-dom';
 import {useTranslation} from 'react-i18next';
-import {ButtonText, IconChevronRight} from '@aragon/ods';
+import {ButtonText, IconChevronRight} from '@aragon/ods-old';
 
 import {useNetwork} from 'context/network';
 import {AllTokens, AllTransfers} from 'utils/paths';

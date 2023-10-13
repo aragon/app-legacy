@@ -1,7 +1,12 @@
 import React from 'react';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
-import {AlertCard, Link, IconLinkExternal, shortenAddress} from '@aragon/ods';
+import {
+  AlertCard,
+  Link,
+  IconLinkExternal,
+  shortenAddress,
+} from '@aragon/ods-old';
 import {htmlIn} from 'utils/htmlIn';
 import {Status, StatusProps} from './Status';
 import {CHAIN_METADATA} from 'utils/constants';

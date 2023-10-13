@@ -6,7 +6,7 @@ import {
   IconSettings,
   Tag,
   TagProps,
-} from '@aragon/ods';
+} from '@aragon/ods-old';
 import React, {useMemo} from 'react';
 import {useMatch} from 'react-router-dom';
 import useBreadcrumbs, {BreadcrumbData} from 'use-react-router-breadcrumbs';

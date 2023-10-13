@@ -5,7 +5,7 @@ import {
   NumberInput,
   TextInput,
   WalletInputLegacy,
-} from '@aragon/ods';
+} from '@aragon/ods-old';
 import {t} from 'i18next';
 import React, {useCallback, useEffect, useMemo, useState} from 'react';
 import {
@@ -67,7 +67,7 @@ const InputForm: React.FC<InputFormProps> = ({
   const [selectedAction, selectedSC, sccActions]: [
     SmartContractAction,
     SmartContract,
-    Record<string, Record<string, Record<string, unknown>>>
+    Record<string, Record<string, Record<string, unknown>>>,
   ] = useWatch({
     name: ['selectedAction', 'selectedSC', 'sccActions'],
   });
