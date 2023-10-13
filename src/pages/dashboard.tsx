@@ -256,6 +256,14 @@ export const Dashboard: React.FC = () => {
         ? t('explore.explorer.walletBased')
         : t('explore.explorer.tokenBased');
 
+    const links =
+      liveDao.metadata?.links
+        ?.filter(link => link.name !== '' && link.url !== '')
+        .map(link => ({
+          label: link.name,
+          href: link.url,
+        })) ?? [];
+
     return (
       <>
         <HeaderWrapper>
@@ -287,14 +295,13 @@ export const Dashboard: React.FC = () => {
                 },
               })
             }
-            links={
-              liveDao.metadata?.links
-                ?.filter(link => link.name !== '' && link.url !== '')
-                .map(link => ({
-                  label: link.name,
-                  href: link.url,
-                })) || []
-            }
+            links={links}
+            translation={{
+              follow: t('dao.follow.true'),
+              following: t('dao.follow.falss'),
+              readLess: '',
+              readMore: '',
+            }}
           />
         </HeaderWrapper>
 
