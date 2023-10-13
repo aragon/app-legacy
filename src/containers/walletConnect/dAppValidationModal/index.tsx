@@ -25,6 +25,7 @@ import {useAlertContext} from 'context/alert';
 import {TransactionState as ConnectionState} from 'utils/constants/misc';
 import {useWalletConnectContext} from '../walletConnectProvider';
 import {AllowListDApp} from '../selectAppModal';
+import {METADATA_NAME_ERROR} from '../walletConnectProvider/useWalletConnectInterceptor';
 
 type Props = {
   onBackButtonClicked: () => void;
@@ -130,36 +131,24 @@ const WCdAppValidation: React.FC<Props> = props => {
 
   const handleConnectDApp = useCallback(async () => {
     setConnectionStatus(ConnectionState.LOADING);
-    const wcConnection = await wcConnect({uri});
 
-    if (wcConnection) {
-      setSessionTopic(wcConnection.topic);
-    } else {
-      setConnectionStatus(ConnectionState.ERROR);
+    try {
+      await wcConnect({uri, metadataName: selecteddApp?.name});
+      setConnectionStatus(ConnectionState.SUCCESS);
+    } catch (error: unknown) {
+      if (error === METADATA_NAME_ERROR) {
+        setConnectionStatus(ConnectionState.INCORRECT_URI);
+      } else {
+        setConnectionStatus(ConnectionState.ERROR);
+      }
     }
-  }, [uri, wcConnect]);
+  }, [uri, wcConnect, selecteddApp?.name]);
 
-  // Update connectionStatus to SUCCESS when the session is active and acknowledged or reset
-  // the connection state if the session has been terminated on the dApp
+  // Reset the connection state if the session has been terminated on the dApp
   useEffect(() => {
-    const isLoading = connectionStatus === ConnectionState.LOADING;
     const isSuccess = connectionStatus === ConnectionState.SUCCESS;
 
-    if (
-      isLoading &&
-      currentSession != null &&
-      currentSession.peer.metadata.name
-        .toLowerCase()
-        .includes((selecteddApp as AllowListDApp).name.toLowerCase())
-    ) {
-      setConnectionStatus(ConnectionState.SUCCESS);
-    } else if (
-      currentSession?.peer.metadata.name
-        .toLowerCase()
-        .includes((selecteddApp as AllowListDApp).name.toLowerCase()) === false
-    ) {
-      setConnectionStatus(ConnectionState.INCORRECT_URI);
-    } else if (isSuccess && currentSession == null) {
+    if (isSuccess && currentSession == null) {
       resetConnectionState();
     }
   }, [connectionStatus, currentSession, resetConnectionState, selecteddApp]);
