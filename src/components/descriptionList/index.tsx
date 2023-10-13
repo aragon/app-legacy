@@ -5,7 +5,7 @@ import {
   CheckboxListItemProps,
   Tag,
 } from '@aragon/ods';
-import React from 'react';
+import React, {ReactNode} from 'react';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 
@@ -17,6 +17,7 @@ export type DescriptionListProps = {
   checkedState?: CheckboxListItemProps['type'];
   onChecked?: () => void;
   tagLabel?: string;
+  children: ReactNode;
 };
 
 // TODO: This needs to be reworked, as it currently leads to nested DL (DLs get
@@ -79,15 +80,15 @@ export const DescriptionListContainer: React.FC<DescriptionListProps> = ({
   );
 };
 
-export const Dt: React.FC = ({children}) => (
+export const Dt: React.FC<{children: ReactNode}> = ({children}) => (
   <DtContainer>{children}</DtContainer>
 );
 
-export const Dd: React.FC = ({children}) => (
+export const Dd: React.FC<{children: ReactNode}> = ({children}) => (
   <DdContainer>{children}</DdContainer>
 );
 
-export const Dl: React.FC = ({children}) => (
+export const Dl: React.FC<{children: ReactNode}> = ({children}) => (
   <DlContainer>
     <ListItemContainer>{children}</ListItemContainer>
   </DlContainer>

@@ -17,6 +17,7 @@ import {votesUpgradeableABI} from 'abis/governanceWrappedERC20TokenABI';
 import {erc1155TokenABI} from 'abis/erc1155TokenABI';
 import {erc721TokenABI} from 'abis/erc721TokenABI';
 import {aragonTokenABI} from 'abis/aragonTokenABI';
+import {queryClient} from 'index';
 
 /**
  * This method sorts a list of array information. It is applicable to any field
@@ -236,12 +237,18 @@ export async function getTokenInfo(
   const contract = new ethers.Contract(address, erc20TokenABI, provider);
 
   try {
-    const values = await Promise.all([
-      contract.decimals(),
-      contract.name(),
-      contract.symbol(),
-      contract.totalSupply(),
-    ]);
+    const values = await queryClient.fetchQuery({
+      queryKey: ['getTokenInfo', address],
+      staleTime: 1000 * 60 * 60 * 24 * 10, // 10 days
+      queryFn: () => {
+        return Promise.all([
+          contract.decimals(),
+          contract.name(),
+          contract.symbol(),
+          contract.totalSupply(),
+        ]);
+      },
+    });
 
     decimals = values[0];
     name = values[1];

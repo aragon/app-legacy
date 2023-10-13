@@ -1,7 +1,10 @@
-import React from 'react';
+import React, {ReactNode} from 'react';
 import styled from 'styled-components';
 
-export const SettingsCard: React.FC<{title: string}> = ({title, children}) => {
+export const SettingsCard: React.FC<{title: string; children: ReactNode}> = ({
+  title,
+  children,
+}) => {
   return (
     <Container>
       <Title>{title}</Title>

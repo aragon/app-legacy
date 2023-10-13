@@ -174,7 +174,7 @@ const GovTokensWrappingModal: FC<GovTokensWrappingModalProps> = ({
   );
 
   const handleMaxClicked = useCallback(
-    onChange => {
+    (onChange: (value: string) => void) => {
       if (modeData.tokenBalance) {
         onChange(modeData.tokenBalance);
       }

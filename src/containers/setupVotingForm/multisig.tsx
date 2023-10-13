@@ -112,7 +112,7 @@ const SetupMultisigVotingForm: React.FC = () => {
 
   // handles the toggling between start time options
   const handleStartToggle = useCallback(
-    (changeValue, onChange: (value: string) => void) => {
+    (changeValue: string, onChange: (value: string) => void) => {
       onChange(changeValue);
       if (changeValue === 'now') resetStartDate();
       else setValue('startUtc', currTimezone);
@@ -122,7 +122,7 @@ const SetupMultisigVotingForm: React.FC = () => {
 
   // handles the toggling between end time options
   const handleEndToggle = useCallback(
-    (changeValue, onChange: (value: string) => void) => {
+    (changeValue: string, onChange: (value: string) => void) => {
       onChange(changeValue);
 
       if (changeValue === 'duration') resetEndDate();
@@ -205,7 +205,9 @@ const SetupMultisigVotingForm: React.FC = () => {
             <ToggleCheckList
               items={startItems}
               value={value}
-              onChange={changeValue => handleStartToggle(changeValue, onChange)}
+              onChange={changeValue =>
+                handleStartToggle(changeValue as string, onChange)
+              }
             />
           )}
         />
@@ -238,7 +240,9 @@ const SetupMultisigVotingForm: React.FC = () => {
             <ToggleCheckList
               value={value}
               items={expirationItems}
-              onChange={changeValue => handleEndToggle(changeValue, onChange)}
+              onChange={changeValue =>
+                handleEndToggle(changeValue as string, onChange)
+              }
             />
           )}
         />

@@ -114,7 +114,7 @@ class TokenService {
       name: isNative ? nativeCurrency.name : data.contract_name,
       symbol: isNative
         ? nativeCurrency.symbol
-        : data.contract_ticker_symbol.toUpperCase(),
+        : data.contract_ticker_symbol?.toUpperCase(),
       imgUrl:
         // Please replace once the Covalent API decides to be reasonable
         isNative && (network === 'base' || network === 'base-goerli')
@@ -162,15 +162,15 @@ class TokenService {
     return {
       id: data.id,
       name: isNative ? nativeCurrency.name : data.name,
-      symbol: isNative ? nativeCurrency.symbol : data.symbol.toUpperCase(),
-      imgUrl: data.image.large,
+      symbol: isNative ? nativeCurrency.symbol : data.symbol?.toUpperCase(),
+      imgUrl: data.image?.large,
       address: address,
-      price: data.market_data.current_price.usd,
+      price: data.market_data?.current_price.usd,
       priceChange: {
-        day: data.market_data.price_change_percentage_24h_in_currency.usd,
-        week: data.market_data.price_change_percentage_7d_in_currency.usd,
-        month: data.market_data.price_change_percentage_30d_in_currency.usd,
-        year: data.market_data.price_change_percentage_1y_in_currency.usd,
+        day: data.market_data?.price_change_percentage_24h_in_currency?.usd,
+        week: data.market_data?.price_change_percentage_7d_in_currency?.usd,
+        month: data.market_data?.price_change_percentage_30d_in_currency?.usd,
+        year: data.market_data?.price_change_percentage_1y_in_currency?.usd,
       },
     };
   };

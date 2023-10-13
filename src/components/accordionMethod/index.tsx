@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {ReactNode} from 'react';
 import * as Accordion from '@radix-ui/react-accordion';
 import {
   AlertInline,
@@ -12,8 +12,10 @@ import {
 } from '@aragon/ods';
 import styled from 'styled-components';
 
+export type AccordionType = 'action-builder' | 'execution-widget';
+
 export type AccordionMethodType = {
-  type: 'action-builder' | 'execution-widget';
+  type: AccordionType;
   methodName: string;
   smartContractName?: string;
   verified?: boolean;
@@ -22,6 +24,7 @@ export type AccordionMethodType = {
   additionalInfo?: string;
   dropdownItems?: ListItemProps[];
   customHeader?: React.ReactNode;
+  children: ReactNode;
 };
 
 export const AccordionMethod: React.FC<AccordionMethodType> = ({
@@ -38,6 +41,7 @@ export const AccordionMethod: React.FC<AccordionMethodType> = ({
 export const AccordionMultiple: React.FC<{
   defaultValue: string;
   className?: string;
+  children: ReactNode;
 }> = ({defaultValue, className, children}) => (
   <Accordion.Root
     type="single"
@@ -131,15 +135,13 @@ export const AccordionItem: React.FC<AccordionMethodType & {name: string}> = ({
   </Accordion.Item>
 );
 
-export type AccordionType = Pick<AccordionMethodType, 'type'>;
-
-const AccordionHeader = styled(Accordion.Header).attrs(
-  ({type}: AccordionType) => ({
+const AccordionHeader = styled(Accordion.Header).attrs<{type: AccordionType}>(
+  ({type}) => ({
     className: `p-2 tablet:px-3 rounded-xl border border-ui-100 ${
       type === 'action-builder' ? 'bg-white' : 'bg-ui-50'
     }`,
   })
-)<AccordionType>`
+)<{type: AccordionType}>`
   &[data-state='open'] {
     border-bottom-right-radius: 0;
     border-bottom-left-radius: 0;

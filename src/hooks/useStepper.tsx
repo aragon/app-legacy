@@ -21,7 +21,7 @@ export const useStepper = (totalSteps: number) => {
   }, [currentStep]);
 
   const setStep = useCallback(
-    newStep => {
+    (newStep: number) => {
       setCurrentStep(newStep);
     },
     [setCurrentStep]

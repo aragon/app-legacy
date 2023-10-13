@@ -1,6 +1,6 @@
 import {QueryClient, QueryClientProvider} from '@tanstack/react-query';
 import {render} from '@testing-library/react';
-import React from 'react';
+import React, {ReactNode} from 'react';
 import {I18nextProvider} from 'react-i18next';
 import {HashRouter as Router} from 'react-router-dom';
 
@@ -39,7 +39,7 @@ export function renderWithClient(ui: React.ReactElement) {
   };
 }
 
-const AllProviders: React.FC = ({children}) => {
+const AllProviders: React.FC<{children: ReactNode}> = ({children}) => {
   return (
     <WalletMenuProvider>
       <I18nextProvider i18n={i18n}>

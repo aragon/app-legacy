@@ -77,11 +77,11 @@ const Container = styled.button.attrs({
     bg-white rounded-xl
     `,
 })`
-  :hover {
+  &:hover {
     box-shadow: 0px 4px 8px rgba(31, 41, 51, 0.04),
       0px 0px 2px rgba(31, 41, 51, 0.06), 0px 0px 1px rgba(31, 41, 51, 0.04);
   }
-  :focus {
+  &:focus {
     box-shadow: 0px 0px 0px 2px #003bf5;
   }
 `;

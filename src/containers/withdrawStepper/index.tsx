@@ -43,8 +43,8 @@ const WithdrawStepper: React.FC<WithdrawStepperProps> = ({
 
   const {errors, dirtyFields} = useFormState({control: control});
 
-  const [formActions] = useWatch({
-    name: ['actions'],
+  const formActions = useWatch({
+    name: 'actions',
     control,
   });
 

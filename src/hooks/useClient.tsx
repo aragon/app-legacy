@@ -6,7 +6,13 @@ import {
 } from '@aragon/sdk-client-common';
 
 import {useNetwork} from 'context/network';
-import React, {createContext, useContext, useEffect, useState} from 'react';
+import React, {
+  ReactNode,
+  createContext,
+  useContext,
+  useEffect,
+  useState,
+} from 'react';
 
 import {
   CHAIN_METADATA,
@@ -37,7 +43,9 @@ export const useClient = () => {
   return client;
 };
 
-export const UseClientProvider: React.FC = ({children}) => {
+export const UseClientProvider: React.FC<{children: ReactNode}> = ({
+  children,
+}) => {
   const {signer} = useWallet();
   const [client, setClient] = useState<Client>();
   const {network} = useNetwork();

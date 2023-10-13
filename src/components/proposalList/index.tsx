@@ -2,7 +2,8 @@ import {MultisigProposalListItem} from '@aragon/sdk-client';
 import {CardProposal, CardProposalProps, Spinner} from '@aragon/ods';
 import {BigNumber} from 'ethers';
 import React, {useMemo} from 'react';
-import {TFunction, useTranslation} from 'react-i18next';
+import {useTranslation} from 'react-i18next';
+import {TFunction} from 'i18next';
 import {NavigateFunction, generatePath, useNavigate} from 'react-router-dom';
 
 import {useNetwork} from 'context/network';

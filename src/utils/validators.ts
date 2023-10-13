@@ -3,7 +3,7 @@ import {namehash} from '@ethersproject/hash';
 import {BigNumber, providers as EthersProviders, ethers} from 'ethers';
 import {isAddress, parseUnits} from 'ethers/lib/utils';
 import {FieldError, FieldErrors, ValidateResult} from 'react-hook-form';
-import {TFunction} from 'react-i18next';
+import {TFunction} from 'i18next';
 import {TokenVotingClient} from '@aragon/sdk-client';
 
 import {i18n} from '../../i18n.config';

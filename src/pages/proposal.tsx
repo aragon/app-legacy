@@ -803,8 +803,8 @@ type ContentContainerProps = {
   expandedProposal: boolean;
 };
 
-const ContentContainer = styled.div.attrs(
-  ({expandedProposal}: ContentContainerProps) => ({
+const ContentContainer = styled.div.attrs<ContentContainerProps>(
+  ({expandedProposal}) => ({
     className: `${
       expandedProposal ? 'tablet:mt-5' : 'tablet:mt-8'
     } mt-3 tablet:flex tablet:space-x-3 space-y-3 tablet:space-y-0`,

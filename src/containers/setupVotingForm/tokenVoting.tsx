@@ -125,7 +125,7 @@ const SetupTokenVotingForm: React.FC<Props> = ({pluginSettings}) => {
 
   // handles the toggling between start time options
   const handleStartToggle = useCallback(
-    (changeValue, onChange: (value: string) => void) => {
+    (changeValue: string, onChange: (value: string) => void) => {
       onChange(changeValue);
       if (changeValue === 'now') resetStartDate();
       else setValue('startUtc', currTimezone);
@@ -135,7 +135,7 @@ const SetupTokenVotingForm: React.FC<Props> = ({pluginSettings}) => {
 
   // handles the toggling between end time options
   const handleEndToggle = useCallback(
-    (changeValue, onChange: (value: string) => void) => {
+    (changeValue: string, onChange: (value: string) => void) => {
       onChange(changeValue);
 
       if (changeValue === 'duration') resetEndDate();
@@ -220,7 +220,9 @@ const SetupTokenVotingForm: React.FC<Props> = ({pluginSettings}) => {
             <ToggleCheckList
               items={startItems}
               value={value}
-              onChange={changeValue => handleStartToggle(changeValue, onChange)}
+              onChange={changeValue =>
+                handleStartToggle(changeValue as string, onChange)
+              }
             />
           )}
         />
@@ -257,7 +259,9 @@ const SetupTokenVotingForm: React.FC<Props> = ({pluginSettings}) => {
             <ToggleCheckList
               value={value}
               items={endItems}
-              onChange={changeValue => handleEndToggle(changeValue, onChange)}
+              onChange={changeValue =>
+                handleEndToggle(changeValue as string, onChange)
+              }
             />
           )}
         />
