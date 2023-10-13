@@ -40,11 +40,11 @@ const DepositModal: React.FC = () => {
 
   // close modal and initiate the login/wrong network flow
   const handleConnectClick = useCallback(() => {
+    const modalState = {onSuccess: () => open('deposit')};
+
     if (!isConnected) {
-      const modalState = {onSuccess: () => open('deposit')};
       open('wallet', modalState);
     } else if (isOnWrongNetwork) {
-      const modalState = {onSuccess: () => open('deposit')};
       open('network', modalState);
     }
   }, [open, isConnected, isOnWrongNetwork]);
