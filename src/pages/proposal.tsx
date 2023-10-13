@@ -87,8 +87,8 @@ import {GaslessVotingProposal} from '@vocdoni/offchain-voting';
 import {useOffchainHasAlreadyVote} from '../context/useOffchainVoting';
 import {useDaoToken} from '../hooks/useDaoToken';
 
-const PENDING_PROPOSAL_STATUS_INTERVAL = 1000 * 10;
-const PROPOSAL_STATUS_INTERVAL = 1000 * 60;
+export const PENDING_PROPOSAL_STATUS_INTERVAL = 1000 * 10;
+export const PROPOSAL_STATUS_INTERVAL = 1000 * 60;
 const NumberFormatter = new Intl.NumberFormat('en-US');
 
 export const Proposal: React.FC = () => {

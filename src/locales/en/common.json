@@ -1043,7 +1043,8 @@
       "voted": "Voted",
       "execute":  "Execute",
       "executed":  "Executed"
-    }
+    },
+    "alert": "You had to be a part of executive committee to approve the proposal"
   },
   "explore": {
     "hero": {

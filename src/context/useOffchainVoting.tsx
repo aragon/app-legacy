@@ -186,14 +186,7 @@ export const useGaslessCommiteVotes = (
   const canBeExecuted = useMemo(() => {
     if (!client || !proposal) return false;
     return isApproved && proposalCanBeApproved;
-  }, [
-    canApprove,
-    client,
-    isApprovalPeriod,
-    isApproved,
-    proposal,
-    proposalCanBeApproved,
-  ]);
+  }, [client, isApproved, proposal, proposalCanBeApproved]);
 
   const nextVoteWillApprove =
     proposal.approvers.length + 1 === proposal.settings.minTallyApprovals;

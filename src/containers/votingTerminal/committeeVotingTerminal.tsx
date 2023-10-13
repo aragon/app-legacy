@@ -1,14 +1,13 @@
 import {TerminalTabs, VotingTerminal, VotingTerminalProps} from './index';
 import React, {ReactNode, useEffect, useMemo, useState} from 'react';
-import {TFunction, useTranslation} from 'react-i18next';
-import {format, formatDistanceToNow} from 'date-fns';
+import {useTranslation} from 'react-i18next';
+import {format} from 'date-fns';
 import {getFormattedUtcOffset, KNOWN_FORMATS} from '../../utils/date';
 import {VoterType} from '@aragon/ods';
 import styled from 'styled-components';
 import {AccordionItem} from '../../components/accordionMethod';
 import {Accordion} from '@radix-ui/react-accordion';
 import {GaslessVotingProposal} from '@vocdoni/offchain-voting';
-import {GaselessPluginName, usePluginClient} from '../../hooks/usePluginClient';
 import {useGaslessCommiteVotes} from '../../context/useOffchainVoting';
 import {ProposalId} from '../../utils/types';
 import {useWallet} from '../../hooks/useWallet';
@@ -19,6 +18,14 @@ import {
   ExecutionWidgetProps,
 } from '../../components/executionWidget';
 import {getProposalExecutionStatus} from '../../utils/proposals';
+import {
+  PENDING_PROPOSAL_STATUS_INTERVAL,
+  PROPOSAL_STATUS_INTERVAL,
+} from '../../pages/proposal';
+import {
+  getApproveStatusLabel,
+  getCommitteVoteButtonLabel,
+} from '../../utils/committeeVoting';
 
 type CommitteeExecutionWidgetProps = Pick<
   ExecutionWidgetProps,
@@ -45,11 +52,10 @@ export const CommitteeVotingTerminal = ({
 } & CommitteeExecutionWidgetProps) => {
   const {t} = useTranslation();
   const [terminalTab, setTerminalTab] = useState<TerminalTabs>('breakdown');
-  const pluginClient = usePluginClient(GaselessPluginName);
   const [approvalStatus, setApprovalStatus] = useState('');
   const [intervalInMills, setIntervalInMills] = useState(0);
 
-  const {isOnWrongNetwork} = useWallet();
+  const {address: walletAddress, isOnWrongNetwork} = useWallet();
 
   const {address} = proposalId!.stripPlgnAdrFromProposalId();
 
@@ -58,8 +64,6 @@ export const CommitteeVotingTerminal = ({
     approved,
     isApproved,
     canBeExecuted,
-    nextVoteWillApprove,
-    proposalCanBeApproved,
     isApprovalPeriod,
     executed,
     notBegan,
@@ -91,11 +95,8 @@ export const CommitteeVotingTerminal = ({
 
     return {
       approvals: proposal.approvers,
-      // The voters list is not on the proposal object
-      // voters: proposal.approvers.map(([approver, _]) => ({wallet: approver, option: 'yes'} as VoterType)),
       voters,
       minApproval: proposal.settings.minTallyApprovals,
-      // voters: [...mappedMembers.values()],
       strategy: t('votingTerminal.multisig'),
       voteOptions: t('votingTerminal.approve'),
       startDate,
@@ -110,21 +111,18 @@ export const CommitteeVotingTerminal = ({
         notBegan,
         approved,
         canApprove,
+        isApproved,
         t
       );
     }
-  }, [proposal, executed, notBegan, approved, canBeExecuted, canApprove, t]);
+  }, [proposal, executed, notBegan, approved, canApprove, t]);
 
   // vote button state and handler
   const {voteNowDisabled, onClick} = useMemo(() => {
-    // disable voting on non-active proposals
-    // if (proposal?.executed || proposal?.status === ProposalStatus.DEFEATED) {
-    if (!isApprovalPeriod) {
+    // disable voting on non-active proposals or when wallet has voted or can't vote
+    if (!isApprovalPeriod || !canApprove || approved) {
       return {voteNowDisabled: true};
     }
-
-    // disable approval on when wallet has voted or can't vote
-    if (!canApprove || approved) return {voteNowDisabled: true};
 
     // not logged in
     if (!address) {
@@ -172,7 +170,6 @@ export const CommitteeVotingTerminal = ({
    *
    * Uses an interval to update the label every 10 seconds.
    */
-  // todo(kon): this is a copy paste from src/pages/proposal.tsx
   useEffect(() => {
     if (proposal) {
       // set the very first time
@@ -193,29 +190,33 @@ export const CommitteeVotingTerminal = ({
 
       return () => clearInterval(interval);
     }
-  }, [proposal, t]);
+  }, [isApprovalPeriod, proposal, t]);
+
+  // alert message, only shown when not eligible to vote
+  const alertMessage = useMemo(() => {
+    if (
+      proposal &&
+      proposal.status === 'Active' && // active proposal
+      walletAddress && // logged in
+      !isOnWrongNetwork && // on proper network
+      !approved && // haven't voted
+      !canApprove // cannot vote
+    ) {
+      return t('offchainVotingTerminal.alert');
+    }
+  }, [approved, canApprove, isOnWrongNetwork, proposal, t, walletAddress]);
 
   const CommitteeVotingTerminal = () => {
     return (
       <VotingTerminal
         status={proposal.status}
-        statusLabel={approvalStatus} // todo(kon): implement committee vote status
+        statusLabel={approvalStatus}
         selectedTab={terminalTab}
-        // alertMessage={alertMessage} // todo(kon): implement
+        alertMessage={alertMessage}
         onTabSelected={setTerminalTab}
-        onVoteClicked={onClick} // todo(kon): implement
-        // onCancelClicked={() => setVotingInProcess(false)}
+        onVoteClicked={onClick}
         voteButtonLabel={buttonLabel}
         voteNowDisabled={voteNowDisabled}
-        // votingInProcess={votingInProcess} // Only for token voting
-        // onVoteSubmitClicked={() => {
-        //   console.log('onVoteSubmitClicked');
-        //   // todo(kon): implement
-        //   // handleSubmitVote(
-        //   //   vote,
-        //   //   (proposal as TokenVotingProposal).token?.address
-        //   // )
-        // }}
         {...mappedProps}
       />
     );
@@ -254,7 +255,7 @@ export const CommitteeVotingTerminal = ({
             name={'actions-approval'}
             type={'action-builder'}
             methodName={'Actions approval'}
-            alertLabel={approvalStatus} // todo(kon): implement committee vote status
+            alertLabel={approvalStatus}
           >
             <CommitteeVotingTerminal />
           </AccordionItem>
@@ -270,66 +271,6 @@ export const CommitteeVotingTerminal = ({
     </>
   );
 };
-
-// todo(kon): move this somewhere?
-function getCommitteVoteButtonLabel(
-  executed: boolean,
-  notBegan: boolean,
-  voted: boolean,
-  canApprove: boolean,
-  t: TFunction
-) {
-  if (executed) {
-    return t('offchainVotingTerminal.btnLabel.executed');
-  } else if (notBegan) {
-    return t('offchainVotingTerminal.btnLabel.approve');
-  } else if (voted) {
-    return t('offchainVotingTerminal.btnLabel.voted');
-  } else if (canApprove) {
-    return t('offchainVotingTerminal.btnLabel.approve');
-  }
-  return t('offchainVotingTerminal.btnLabel.concluded');
-}
-
-const PROPOSAL_STATUS_INTERVAL = 1000 * 60;
-const PENDING_PROPOSAL_STATUS_INTERVAL = 1000 * 10;
-
-// todo(kon): this is a copy paste from src/pages/proposal.tsx. we could modify the function to receive
-// endate start date and status
-function getApproveStatusLabel(
-  proposal: GaslessVotingProposal,
-  isApprovalPeriod: boolean,
-  t: TFunction
-) {
-  let label = '';
-  if (
-    proposal.status === 'Pending' ||
-    proposal.status === 'Active' ||
-    proposal.status === 'Succeeded'
-  ) {
-    // Uncomment line below is causing SyntaxError: ambiguous indirect export: default 🤷‍♀️
-    // const locale = (Locales as Record<string, Locale>)[i18n.language];
-
-    if (!isApprovalPeriod) {
-      const timeUntilNow = formatDistanceToNow(proposal.endDate, {
-        includeSeconds: true,
-        // locale,
-      });
-      label = t('votingTerminal.status.pending', {timeUntilNow});
-    } else {
-      const timeUntilEnd = formatDistanceToNow(proposal.expirationDate, {
-        includeSeconds: true,
-        // locale,
-      });
-      label = t('votingTerminal.status.active', {timeUntilEnd});
-    }
-  } else if (proposal.status === 'Executed') {
-    label = t('votingTerminal.status.executed');
-  } else if (proposal.status === 'Defeated') {
-    label = t('votingTerminal.status.defeated');
-  }
-  return label;
-}
 
 const Header = styled.div.attrs({
   className: 'flex flex-col tablet:justify-between space-y-2 my-2',

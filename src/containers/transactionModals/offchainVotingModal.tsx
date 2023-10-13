@@ -45,6 +45,19 @@ JSX.Element => {
     },
   };
 
+  const handleCloseVoteModal = useCallback(() => {
+    switch (offchainGlobalState) {
+      case StepStatus.LOADING:
+        break;
+      case StepStatus.SUCCESS:
+        setShowVoteModal(false);
+        break;
+      default: {
+        setShowVoteModal(false);
+      }
+    }
+  }, [offchainGlobalState, setShowVoteModal]);
+
   const handleVoteExecution = useCallback(async () => {
     if (offchainGlobalState === StepStatus.SUCCESS) {
       handleCloseVoteModal();
@@ -60,21 +73,13 @@ JSX.Element => {
       // Not showing errors neither
       await submitOffchainVote(vote);
     }
-  }, [submitOffchainVote, vote]);
-
-  const handleCloseVoteModal = useCallback(() => {
-    switch (offchainGlobalState) {
-      case StepStatus.LOADING:
-        break;
-      case StepStatus.SUCCESS:
-        // todo(kon): update somehow the vote on the ui. Performing an update to the vochain for example
-        setShowVoteModal(false);
-        break;
-      default: {
-        setShowVoteModal(false);
-      }
-    }
-  }, [offchainGlobalState, setShowVoteModal]);
+  }, [
+    handleCloseVoteModal,
+    isConnected,
+    offchainGlobalState,
+    submitOffchainVote,
+    vote,
+  ]);
 
   return (
     <StepperModal
