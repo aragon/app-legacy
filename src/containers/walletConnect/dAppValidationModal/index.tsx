@@ -15,7 +15,7 @@ import {
 } from 'react-hook-form';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
-import {SessionTypes, SignClientTypes} from '@walletconnect/types';
+import {SessionTypes} from '@walletconnect/types';
 
 import ModalBottomSheetSwitcher from 'components/modalBottomSheetSwitcher';
 import ModalHeader from 'components/modalHeader';
@@ -24,13 +24,14 @@ import {handleClipboardActions} from 'utils/library';
 import {useAlertContext} from 'context/alert';
 import {TransactionState as ConnectionState} from 'utils/constants/misc';
 import {useWalletConnectContext} from '../walletConnectProvider';
+import {AllowListDApp} from '../selectAppModal';
 
 type Props = {
   onBackButtonClicked: () => void;
   onConnectionSuccess: (session: SessionTypes.Struct) => void;
   onClose: () => void;
   isOpen: boolean;
-  selecteddApp?: SignClientTypes.Metadata;
+  selecteddApp?: AllowListDApp;
 };
 
 // Wallet connect id input name
@@ -149,15 +150,13 @@ const WCdAppValidation: React.FC<Props> = props => {
       currentSession != null &&
       currentSession.peer.metadata.name
         .toLowerCase()
-        .includes((selecteddApp as SignClientTypes.Metadata).name.toLowerCase())
+        .includes((selecteddApp as AllowListDApp).name.toLowerCase())
     ) {
       setConnectionStatus(ConnectionState.SUCCESS);
     } else if (
       currentSession?.peer.metadata.name
         .toLowerCase()
-        .includes(
-          (selecteddApp as SignClientTypes.Metadata).name.toLowerCase()
-        ) === false
+        .includes((selecteddApp as AllowListDApp).name.toLowerCase()) === false
     ) {
       setConnectionStatus(ConnectionState.INCORRECT_URI);
     } else if (isSuccess && currentSession == null) {
@@ -185,7 +184,7 @@ const WCdAppValidation: React.FC<Props> = props => {
   return (
     <ModalBottomSheetSwitcher isOpen={isOpen} onClose={onClose}>
       <ModalHeader
-        title={selecteddApp.name}
+        title={selecteddApp.shortName}
         showBackButton
         onBackButtonClicked={handleBackClick}
         {...(isDesktop ? {showCloseButton: true, onClose} : {})}
@@ -239,7 +238,7 @@ const WCdAppValidation: React.FC<Props> = props => {
           <AlertWrapper>
             <AlertInline
               label={t('modal.dappConnect.validation.alertSuccess', {
-                dappName: currentSession?.peer.metadata.name,
+                dappName: selecteddApp.shortName,
               })}
               mode="success"
             />
@@ -249,7 +248,7 @@ const WCdAppValidation: React.FC<Props> = props => {
           <AlertWrapper>
             <AlertInline
               label={t('modal.dappConnect.validation.alertCriticalQRcode', {
-                dappName: selecteddApp.name,
+                dappName: selecteddApp.shortName,
               })}
               mode="critical"
             />
@@ -259,7 +258,7 @@ const WCdAppValidation: React.FC<Props> = props => {
           <AlertWrapper>
             <AlertInline
               label={t('modal.dappConnect.validation.alertCriticalGeneral', {
-                dappName: currentSession?.peer.metadata.name,
+                dappName: selecteddApp.shortName,
               })}
               mode="critical"
             />

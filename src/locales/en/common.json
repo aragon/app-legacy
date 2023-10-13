@@ -1301,7 +1301,7 @@
       "title": "Select dApp",
       "desc": "You can interact with the following dApps to add actions to your proposal. Learn more about {{link}}.",
       "descLinkLabel": "in our guide",
-      "descLinkURL": "https://",
+      "descLinkURL": "https://aragon.org/how-to/swap-tokens-with-cowswap",
       "validation": {
         "codeInputHelp": "To connect, open {{dappName}}, copy the WalletConnect QR code to your clipboard, and paste it here.",
         "modalTitle": "{{dappName}}",

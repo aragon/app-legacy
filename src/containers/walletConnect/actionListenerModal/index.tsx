@@ -20,12 +20,14 @@ import {
   parseWCIconUrl,
 } from 'utils/library';
 import {useWalletConnectContext} from '../walletConnectProvider';
+import {AllowListDApp} from '../selectAppModal';
 
 type Props = {
   onBackButtonClicked: () => void;
   onClose: () => void;
   isOpen: boolean;
   selectedSession: SessionTypes.Struct;
+  selecteddApp?: AllowListDApp;
   actionIndex: number;
 };
 
@@ -34,6 +36,7 @@ const ActionListenerModal: React.FC<Props> = ({
   onClose,
   actionIndex,
   selectedSession,
+  selecteddApp,
   isOpen,
 }) => {
   const {t} = useTranslation();
@@ -177,7 +180,8 @@ const ActionListenerModal: React.FC<Props> = ({
     return null;
   }
 
-  const metadataName = selectedSession.peer.metadata.name;
+  const metadataName =
+    selecteddApp?.shortName || selectedSession.peer.metadata.name;
   const metadataURL = selectedSession.peer.metadata.url;
   const metadataIcon = parseWCIconUrl(
     metadataURL,
