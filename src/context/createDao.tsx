@@ -28,7 +28,7 @@ import {generatePath, useNavigate} from 'react-router-dom';
 
 import PublishModal from 'containers/transactionModals/publishModal';
 import {useClient} from 'hooks/useClient';
-import {useAddFavoriteDaoMutation} from 'hooks/useFavoritedDaos';
+import {useAddFollowedDaoMutation} from 'hooks/useFollowedDaos';
 import {useAddPendingDaoMutation} from 'hooks/usePendingDao';
 import {usePollGasFee} from 'hooks/usePollGasfee';
 import {useWallet} from 'hooks/useWallet';
@@ -63,7 +63,7 @@ const CreateDaoProvider: React.FC<{children: ReactNode}> = ({children}) => {
   const {getValues} = useFormContext<CreateDaoFormData>();
   const {client} = useClient();
 
-  const addFavoriteDaoMutation = useAddFavoriteDaoMutation();
+  const addFavoriteDaoMutation = useAddFollowedDaoMutation();
   const addPendingDaoMutation = useAddPendingDaoMutation();
 
   const [creationProcessState, setCreationProcessState] =

@@ -20,11 +20,6 @@ import {NavigationDao} from 'context/apolloClient';
 import {useNetwork} from 'context/network';
 import {useDaoQuery} from 'hooks/useDaoDetails';
 import {useDaoVault} from 'hooks/useDaoVault';
-import {
-  useAddFavoriteDaoMutation,
-  useFavoritedDaosQuery,
-  useRemoveFavoriteDaoMutation,
-} from 'hooks/useFavoritedDaos';
 import {usePendingDao, useRemovePendingDaoMutation} from 'hooks/usePendingDao';
 import {PluginTypes} from 'hooks/usePluginClient';
 import useScreen from 'hooks/useScreen';
@@ -39,6 +34,11 @@ import {
 } from 'containers/pageEmptyState';
 import {useGlobalModalContext} from 'context/globalModals';
 import {useProposals} from 'services/aragon-sdk/queries/use-proposals';
+import {
+  useAddFollowedDaoMutation,
+  useFollowedDaosQuery,
+  useRemoveFollowedDaoMutation,
+} from 'hooks/useFollowedDaos';
 
 enum DaoCreationState {
   ASSEMBLING_DAO,
@@ -61,17 +61,17 @@ export const Dashboard: React.FC = () => {
     DaoCreationState.ASSEMBLING_DAO
   );
 
-  // favoring DAOS
-  const addFavoriteDaoMutation = useAddFavoriteDaoMutation(() =>
+  // following DAOS
+  const addFollowedDaoMutation = useAddFollowedDaoMutation(() =>
     alert(t('alert.chip.favorited'))
   );
 
-  const removeFavoriteDaoMutation = useRemoveFavoriteDaoMutation(() =>
+  const removeFollowedDaoMutation = useRemoveFollowedDaoMutation(() =>
     alert(t('alert.chip.unfavorite'))
   );
 
-  const {data: favoritedDaos, isLoading: favoritedDaosLoading} =
-    useFavoritedDaosQuery();
+  const {data: fallowedDaos, isLoading: followedDaosLoading} =
+    useFollowedDaosQuery();
 
   // live DAO
   const {
@@ -100,21 +100,21 @@ export const Dashboard: React.FC = () => {
     }
   });
 
-  const favoriteDaoMatchPredicate = useCallback(
-    (favoriteDao: NavigationDao) => {
+  const followedDaoMatchPredicate = useCallback(
+    (followedDao: NavigationDao) => {
       return (
-        favoriteDao.address.toLowerCase() === liveDao?.address.toLowerCase() &&
-        favoriteDao.chain === CHAIN_METADATA[network].id
+        followedDao.address.toLowerCase() === liveDao?.address.toLowerCase() &&
+        followedDao.chain === CHAIN_METADATA[network].id
       );
     },
     [liveDao?.address, network]
   );
 
-  const isFavoritedDao = useMemo(() => {
-    if (liveDao?.address && favoritedDaos)
-      return Boolean(favoritedDaos.some(favoriteDaoMatchPredicate));
+  const isFollowedDao = useMemo(() => {
+    if (liveDao?.address && fallowedDaos)
+      return Boolean(fallowedDaos.some(followedDaoMatchPredicate));
     else return false;
-  }, [favoriteDaoMatchPredicate, favoritedDaos, liveDao?.address]);
+  }, [followedDaoMatchPredicate, fallowedDaos, liveDao?.address]);
 
   /*************************************************
    *                    Hooks                      *
@@ -170,29 +170,29 @@ export const Dashboard: React.FC = () => {
     [alert, t]
   );
 
-  const handleFavoriteClick = useCallback(
+  const handleFollowedClick = useCallback(
     async (dao: NavigationDao) => {
       try {
-        if (isFavoritedDao) {
-          await removeFavoriteDaoMutation.mutateAsync({dao});
+        if (isFollowedDao) {
+          await removeFollowedDaoMutation.mutateAsync({dao});
         } else {
-          await addFavoriteDaoMutation.mutateAsync({dao});
+          await addFollowedDaoMutation.mutateAsync({dao});
         }
       } catch (error) {
-        const action = isFavoritedDao
-          ? 'removing DAO from favorites'
-          : 'adding DAO to favorites';
+        const action = isFollowedDao
+          ? 'removing DAO from list of followed DAOs'
+          : 'adding DAO to list of followed DAOs';
 
         console.error(`Error ${action}`, error);
       }
     },
-    [isFavoritedDao, removeFavoriteDaoMutation, addFavoriteDaoMutation]
+    [isFollowedDao, removeFollowedDaoMutation, addFollowedDaoMutation]
   );
 
   /*************************************************
    *                    Render                     *
    *************************************************/
-  if (pendingDaoLoading || liveDaoLoading || favoritedDaosLoading) {
+  if (pendingDaoLoading || liveDaoLoading || followedDaosLoading) {
     return <Loading />;
   }
 
@@ -272,10 +272,10 @@ export const Dashboard: React.FC = () => {
             ).toString()}
             daoChain={CHAIN_METADATA[network].name}
             daoType={daoType}
-            following={isFavoritedDao}
+            following={isFollowedDao}
             onCopy={onCopy}
             onFavoriteClick={() =>
-              handleFavoriteClick({
+              handleFollowedClick({
                 address: liveDao.address.toLowerCase(),
                 chain: CHAIN_METADATA[network].id,
                 ensDomain: liveDao.ensDomain,

@@ -8,7 +8,7 @@ import {
 import {PluginInstallItem} from '@aragon/sdk-client-common';
 
 import {
-  FAVORITE_DAOS_KEY,
+  FOLLOWED_DAOS_KEY,
   SupportedChainID,
   SupportedNetworks,
 } from 'utils/constants';
@@ -28,7 +28,7 @@ export type NavigationDao = Omit<DaoListItem, 'metadata' | 'plugins'> & {
   plugins: InstalledPluginListItem[] | PluginInstallItem[];
 };
 const favoriteDaos = JSON.parse(
-  localStorage.getItem(FAVORITE_DAOS_KEY) || '[]'
+  localStorage.getItem(FOLLOWED_DAOS_KEY) || '[]'
 );
 const favoriteDaosVar = makeVar<Array<NavigationDao>>(favoriteDaos);
 

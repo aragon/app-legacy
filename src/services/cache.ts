@@ -10,7 +10,7 @@ import {
   PendingDaoCreation,
 } from 'context/apolloClient';
 import {
-  FAVORITE_DAOS_KEY,
+  FOLLOWED_DAOS_KEY,
   PENDING_DAOS_KEY,
   SupportedChainID,
   SupportedNetworks,
@@ -20,19 +20,19 @@ import {sleepFor} from 'utils/library';
 import {SmartContract, VerifiedContracts} from 'utils/types';
 
 /**
- * Fetch a list of favorited DAOs
- * @param cache favorited DAOs cache (to be replaced when migrating to server)
+ * Fetch a list of followed DAOs
+ * @param cache followed DAOs cache (to be replaced when migrating to server)
  * @param options query options
- * @returns list of favorited DAOs based on given options
+ * @returns list of followed DAOs based on given options
  */
-export async function getFavoritedDaosFromCache(options: {
+export async function getFollowedDaosFromCache(options: {
   skip: number;
   limit?: number;
 }): Promise<NavigationDao[]> {
   const {skip, limit} = options;
 
   const favoriteDaos = JSON.parse(
-    localStorage.getItem(FAVORITE_DAOS_KEY) || '[]'
+    localStorage.getItem(FOLLOWED_DAOS_KEY) || '[]'
   ) as NavigationDao[];
 
   // sleeping for 600 ms because the immediate apparition of DAOS creates a flickering issue
@@ -41,13 +41,13 @@ export async function getFavoritedDaosFromCache(options: {
 }
 
 /**
- * Fetch a favorited DAO from the cache if available
- * @param daoAddress the address of the favorited DAO to fetch
- * @param chain the chain of the favorited DAO to fetch
- * @returns a favorited DAO with the given address and chain or null
+ * Fetch a followed DAO from the cache if available
+ * @param daoAddress the address of the followed DAO to fetch
+ * @param chain the chain of the followed DAO to fetch
+ * @returns a followed DAO with the given address and chain or null
  * if not found
  */
-export async function getFavoritedDaoFromCache(
+export async function getFollowedDaoFromCache(
   daoAddress: string | undefined,
   chain: SupportedChainID
 ) {
@@ -56,24 +56,24 @@ export async function getFavoritedDaoFromCache(
 
   if (!chain) return Promise.reject(new Error('chain must be defined'));
 
-  const daos = await getFavoritedDaosFromCache({skip: 0});
+  const daos = await getFollowedDaosFromCache({skip: 0});
   return (
     daos.find(dao => dao.address === daoAddress && dao.chain === chain) ?? null
   );
 }
 
 /**
- * Favorite a DAO by adding it to the favorite DAOs cache
- * @param dao DAO being favorited
+ * Followed a DAO by adding it to the favorite DAOs cache
+ * @param dao DAO being followed
  * @returns an error if the dao to favorite is not provided
  */
-export async function addFavoriteDaoToCache(dao: NavigationDao) {
-  if (!dao) return Promise.reject(new Error('daoToFavorite must be defined'));
+export async function addFollowedDaoToCache(dao: NavigationDao) {
+  if (!dao) return Promise.reject(new Error('daoToFollowed must be defined'));
 
-  const cache = await getFavoritedDaosFromCache({skip: 0});
+  const cache = await getFollowedDaosFromCache({skip: 0});
   const newCache = [...cache, dao];
 
-  localStorage.setItem(FAVORITE_DAOS_KEY, JSON.stringify(newCache));
+  localStorage.setItem(FOLLOWED_DAOS_KEY, JSON.stringify(newCache));
 }
 
 /**
@@ -81,17 +81,17 @@ export async function addFavoriteDaoToCache(dao: NavigationDao) {
  * @param dao DAO to unfavorite
  * @returns an error if no DAO is provided
  */
-export async function removeFavoriteDaoFromCache(dao: NavigationDao) {
+export async function removeFollowedDaoFromCache(dao: NavigationDao) {
   if (!dao) return Promise.reject(new Error('dao must be defined'));
 
-  const cache = await getFavoritedDaosFromCache({skip: 0});
+  const cache = await getFollowedDaosFromCache({skip: 0});
   const newCache = cache.filter(
     fd =>
       fd.address.toLowerCase() !== dao.address.toLowerCase() ||
       fd.chain !== dao.chain
   );
 
-  localStorage.setItem(FAVORITE_DAOS_KEY, JSON.stringify(newCache));
+  localStorage.setItem(FOLLOWED_DAOS_KEY, JSON.stringify(newCache));
 }
 
 /**
@@ -99,10 +99,10 @@ export async function removeFavoriteDaoFromCache(dao: NavigationDao) {
  * @param dao updated DAO; note dao.address & dao.chain should never be changed
  * @returns an error if no DAO is provided
  */
-export async function updateFavoritedDaoInCache(dao: NavigationDao) {
+export async function updateFollowedDaoInCache(dao: NavigationDao) {
   if (!dao) return Promise.reject(new Error('dao must be defined'));
 
-  const cache = await getFavoritedDaosFromCache({skip: 0});
+  const cache = await getFollowedDaosFromCache({skip: 0});
   const daoFound = cache.findIndex(
     d => d.address === dao.address && d.chain === dao.chain
   );
@@ -111,7 +111,7 @@ export async function updateFavoritedDaoInCache(dao: NavigationDao) {
     const newCache = [...cache];
     newCache[daoFound] = {...dao};
 
-    localStorage.setItem(FAVORITE_DAOS_KEY, JSON.stringify(newCache));
+    localStorage.setItem(FOLLOWED_DAOS_KEY, JSON.stringify(newCache));
   }
 }
 

@@ -13,7 +13,7 @@ import {generatePath, useNavigate} from 'react-router-dom';
 import styled from 'styled-components';
 
 import {DaoCard} from 'components/daoCard';
-import {useFavoritedDaosInfiniteQuery} from 'hooks/useFavoritedDaos';
+import {useFollowedDaosInfiniteQuery} from 'hooks/useFollowedDaos';
 import {
   AugmentedDaoListItem,
   ExploreFilter,
@@ -38,25 +38,25 @@ export const DaoExplorer = () => {
   const [filterValue, setFilterValue] = useState<ExploreFilter>('favorite');
 
   // conditional api queries
-  const fetchFavorited = filterValue === 'favorite';
-  const favoritedApi = useFavoritedDaosInfiniteQuery(fetchFavorited);
-  const daosApi = useDaosInfiniteQuery(fetchFavorited === false, {
+  const fetchFollowed = filterValue === 'favorite';
+  const followedApi = useFollowedDaosInfiniteQuery(fetchFollowed);
+  const daosApi = useDaosInfiniteQuery(fetchFollowed === false, {
     sortBy: toDaoSortBy(filterValue),
   });
 
   // resulting api response
   const exploreDaosApi = useMemo(
     () =>
-      (fetchFavorited ? favoritedApi : daosApi) as UseInfiniteQueryResult<
+      (fetchFollowed ? followedApi : daosApi) as UseInfiniteQueryResult<
         AugmentedDaoListItem,
         unknown
       >,
-    [daosApi, favoritedApi, fetchFavorited]
+    [daosApi, followedApi, fetchFollowed]
   );
 
-  // whether the connected wallet has favorited DAOS
-  const loggedInAndHasFavoritedDaos =
-    isConnected && (favoritedApi.data?.pages || []).length > 0;
+  // whether the connected wallet has followed DAOS
+  const loggedInAndHasFollowedDaos =
+    isConnected && (followedApi.data?.pages || []).length > 0;
 
   /*************************************************
    *             Callbacks and Handlers            *
@@ -81,12 +81,12 @@ export const DaoExplorer = () => {
    *************************************************/
   useEffect(() => {
     if (
-      favoritedApi.status === 'success' &&
-      loggedInAndHasFavoritedDaos === false
+      followedApi.status === 'success' &&
+      loggedInAndHasFollowedDaos === false
     ) {
       setFilterValue('newest');
     }
-  }, [favoritedApi.status, loggedInAndHasFavoritedDaos]);
+  }, [followedApi.status, loggedInAndHasFollowedDaos]);
 
   /*************************************************
    *                     Render                    *
@@ -96,7 +96,7 @@ export const DaoExplorer = () => {
       <MainContainer>
         <HeaderWrapper>
           <Title>{t('explore.explorer.title')}</Title>
-          {loggedInAndHasFavoritedDaos && (
+          {loggedInAndHasFollowedDaos && (
             <ButtonGroupContainer>
               <ButtonGroup
                 defaultValue={filterValue}

@@ -11,11 +11,11 @@ import {
 import {NavigationDao} from 'context/apolloClient';
 import {useCallback} from 'react';
 import {
-  addFavoriteDaoToCache,
-  getFavoritedDaoFromCache,
-  getFavoritedDaosFromCache,
-  removeFavoriteDaoFromCache,
-  updateFavoritedDaoInCache,
+  addFollowedDaoToCache,
+  getFollowedDaoFromCache,
+  getFollowedDaosFromCache,
+  removeFollowedDaoFromCache,
+  updateFollowedDaoInCache,
 } from 'services/cache';
 import {
   CHAIN_METADATA,
@@ -35,12 +35,12 @@ const DEFAULT_QUERY_PARAMS = {
  * @param limit The maximum number of DAOs to return. Fetches all available DAOs by default.
  * @returns result object containing an array of NavigationDao objects with added avatar information.
  */
-export const useFavoritedDaosQuery = (
+export const useFollowedDaosQuery = (
   skip = 0
 ): UseQueryResult<NavigationDao[]> => {
   return useQuery<NavigationDao[]>({
-    queryKey: ['favoriteDaos'],
-    queryFn: useCallback(() => getFavoritedDaosFromCache({skip}), [skip]),
+    queryKey: ['followedDaos'],
+    queryFn: useCallback(() => getFollowedDaosFromCache({skip}), [skip]),
     select: addAvatarToDaos,
     refetchOnWindowFocus: false,
   });
@@ -53,18 +53,18 @@ export const useFavoritedDaosQuery = (
  * @returns an infinite query object that can be used to fetch and
  * display the cached DAOs.
  */
-export const useFavoritedDaosInfiniteQuery = (
+export const useFollowedDaosInfiniteQuery = (
   enabled = true,
   {
     limit = DEFAULT_QUERY_PARAMS.limit,
   }: Partial<Pick<DaoQueryParams, 'limit'>> = {}
 ) => {
   return useInfiniteQuery({
-    queryKey: ['infiniteFavoriteDaos'],
+    queryKey: ['infiniteFollowedDaos'],
 
     queryFn: useCallback(
       ({pageParam = 0}) =>
-        getFavoritedDaosFromCache({
+        getFollowedDaosFromCache({
           skip: limit * pageParam,
           limit,
         }),
@@ -83,41 +83,41 @@ export const useFavoritedDaosInfiniteQuery = (
 };
 
 /**
- * Fetch a favorite DAO from the cache
- * @param daoAddress address of the favorited DAO
- * @param network network of the favorited DAO
- * @returns favorited DAO with given address and network if available
+ * Fetch a followed DAO from the cache
+ * @param daoAddress address of the followed DAO
+ * @param network network of the followed DAO
+ * @returns followed DAO with given address and network if available
  */
-export const useFavoritedDaoQuery = (
+export const useFollowedDaoQuery = (
   daoAddress: string | undefined,
   network: SupportedNetworks
 ) => {
   const chain = CHAIN_METADATA[network].id;
 
   return useQuery({
-    queryKey: ['favoritedDao', daoAddress, network],
-    queryFn: () => getFavoritedDaoFromCache(daoAddress, chain),
+    queryKey: ['followedDao', daoAddress, network],
+    queryFn: () => getFollowedDaoFromCache(daoAddress, chain),
     enabled: !!daoAddress && !!network,
   });
 };
 
 /**
- * Update a favorited DAO in in the cache
+ * Update a followed DAO in in the cache
  */
-export const useUpdateFavoritedDaoMutation = () => {
+export const useUpdateFollowedDaoMutation = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: (variables: {dao: NavigationDao}) =>
-      updateFavoritedDaoInCache(variables.dao),
+      updateFollowedDaoInCache(variables.dao),
 
     onSuccess: (_, variables) => {
       const network = getSupportedNetworkByChainId(variables.dao.chain);
 
-      queryClient.invalidateQueries(['favoriteDaos']);
-      queryClient.invalidateQueries(['infiniteFavoriteDaos']);
+      queryClient.invalidateQueries(['followedDaos']);
+      queryClient.invalidateQueries(['infiniteFollowedDaos']);
       queryClient.invalidateQueries([
-        'favoritedDao',
+        'followedDao',
         variables.dao.address,
         network,
       ]);
@@ -126,39 +126,82 @@ export const useUpdateFavoritedDaoMutation = () => {
 };
 
 /**
- * Add a favorited DAO to the cache
+ * Add a followed DAO to the cache
  * @param onSuccess callback to run once DAO has been added to the cache
  */
-export const useAddFavoriteDaoMutation = (onSuccess?: () => void) => {
+export const useAddFollowedDaoMutation = (onSuccess?: () => void) => {
   const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: (variables: {dao: NavigationDao}) =>
-      addFavoriteDaoToCache(variables.dao),
+      addFollowedDaoToCache(variables.dao),
+
+    onMutate: async (variables: {dao: NavigationDao}) => {
+      // Snapshot the current value for rollback purposes
+      const previousDaos = queryClient.getQueryData<NavigationDao[]>([
+        'followedDaos',
+      ]);
+
+      // Optimistically update the cache
+      queryClient.setQueryData<NavigationDao[]>(['followedDaos'], oldDaos => {
+        if (oldDaos) {
+          return [...oldDaos, variables.dao];
+        }
+        return [variables.dao];
+      });
+
+      // Return the previousDaos to rollback in case of an error
+      return {previousDaos};
+    },
+
+    onError: (_error, _variables, context) => {
+      // Rollback to the previous state if the mutation fails
+      queryClient.setQueryData(['followedDaos'], context?.previousDaos);
+    },
 
     onSuccess: () => {
       onSuccess?.();
-      queryClient.invalidateQueries(['favoriteDaos']);
-      queryClient.invalidateQueries(['infiniteFavoriteDaos']);
+      queryClient.invalidateQueries(['followedDaos']);
+      queryClient.invalidateQueries(['infiniteFollowedDaos']);
     },
   });
 };
 
 /**
- * Remove a favorited DAO from the cache
- * @param onSuccess callback to run once favorited DAO has been removed successfully
+ * Remove a followed DAO from the cache
+ * @param onSuccess callback to run once followed DAO has been removed successfully
  */
-export const useRemoveFavoriteDaoMutation = (onSuccess?: () => void) => {
+export const useRemoveFollowedDaoMutation = (onSuccess?: () => void) => {
   const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: (variables: {dao: NavigationDao}) =>
-      removeFavoriteDaoFromCache(variables.dao),
+      removeFollowedDaoFromCache(variables.dao),
+
+    onMutate: async (variables: {dao: NavigationDao}) => {
+      // Snapshot the current value for rollback purposes
+      const previousDaos = queryClient.getQueryData<NavigationDao[]>([
+        'followedDaos',
+      ]);
+
+      // Optimistically update the cache
+      queryClient.setQueryData<NavigationDao[]>(['followedDaos'], oldDaos => {
+        return oldDaos?.filter(dao => dao.address !== variables.dao.address);
+      });
+
+      // Return the previousDaos to rollback in case of an error
+      return {previousDaos};
+    },
+
+    onError: (_error, _variables, context) => {
+      // Rollback to the previous state if the mutation fails
+      queryClient.setQueryData(['followedDaos'], context?.previousDaos);
+    },
 
     onSuccess: () => {
       onSuccess?.();
-      queryClient.invalidateQueries(['favoriteDaos']);
-      queryClient.invalidateQueries(['infiniteFavoriteDaos']);
+      queryClient.invalidateQueries(['followedDaos']);
+      queryClient.invalidateQueries(['infiniteFollowedDaos']);
     },
   });
 };
