@@ -27,7 +27,9 @@ import {
  * @returns - Transformed data with proposals processed based on the chainId.
  */
 export function transformInfiniteProposals<
-  T extends Array<MultisigProposalListItem> | Array<TokenVotingProposalListItem>
+  T extends
+    | Array<MultisigProposalListItem>
+    | Array<TokenVotingProposalListItem>,
 >(chainId: SupportedChainID, data: InfiniteData<T>): InfiniteData<T> {
   return {
     ...data,
@@ -59,7 +61,7 @@ export function transformProposal<
     | TokenVotingProposal
     | MultisigProposalListItem
     | TokenVotingProposalListItem
-    | null
+    | null,
 >(chainId: SupportedChainID, data: T): T {
   if (data == null) {
     return data;
@@ -78,7 +80,7 @@ export function syncProposalData<
     | MultisigProposal
     | TokenVotingProposal
     | MultisigProposalListItem
-    | TokenVotingProposalListItem
+    | TokenVotingProposalListItem,
 >(chainId: SupportedChainID, proposalId: string, serverData: T | null) {
   if (serverData) {
     proposalStorage.removeProposal(chainId, serverData.id);

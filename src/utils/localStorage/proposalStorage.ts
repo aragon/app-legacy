@@ -70,7 +70,7 @@ export class ProposalStorage extends StorageUtils {
    * @returns - An array of retrieved proposals associated with the given plugin address
    */
   getProposalsByPluginAddress<
-    T extends MultisigProposalListItem | TokenVotingProposalListItem
+    T extends MultisigProposalListItem | TokenVotingProposalListItem,
   >(chainId: SupportedChainID, pluginAddress: string): T[] {
     const key = chainId.toString();
     const proposals: ProposalCache = this.getItem(key) || {};

@@ -1,7 +1,7 @@
 const extendsBase = [
   'eslint:recommended',
   'plugin:react/recommended',
-  // 'plugin:prettier/recommended',
+  'plugin:prettier/recommended',
   'plugin:tailwindcss/recommended',
 ];
 
@@ -46,7 +46,7 @@ module.exports = {
     'tailwindcss/classnames-order': 'warn',
     'tailwindcss/no-custom-classname': 'off',
     'tailwindcss/no-contradicting-classname': 'error',
-    // 'prettier/prettier': 'error',
+    'prettier/prettier': 'error',
     'block-scoped-var': 'error',
     eqeqeq: ['error', 'always', {null: 'ignore'}],
     'no-var': 'error',

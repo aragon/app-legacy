@@ -151,7 +151,7 @@ const CreateDaoProvider: React.FC<{children: ReactNode}> = ({children}) => {
 
   const getMultisigPluginInstallParams = useCallback((): [
     MultisigPluginInstallParams,
-    sdkSupportedNetworks
+    sdkSupportedNetworks,
   ] => {
     const {
       blockchain,
@@ -174,7 +174,7 @@ const CreateDaoProvider: React.FC<{children: ReactNode}> = ({children}) => {
 
   const getVoteSettings = useCallback((): [
     VotingSettings,
-    sdkSupportedNetworks
+    sdkSupportedNetworks,
   ] => {
     const {
       blockchain,

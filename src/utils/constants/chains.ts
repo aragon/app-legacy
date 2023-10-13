@@ -6,7 +6,7 @@ export const SUPPORTED_CHAIN_ID = [
   1, 5, 137, 8453, 80001, 84531, 42161, 421613,
 ] as const;
 
-export type SupportedChainID = typeof SUPPORTED_CHAIN_ID[number];
+export type SupportedChainID = (typeof SUPPORTED_CHAIN_ID)[number];
 
 export function isSupportedChainId(
   chainId: number
@@ -35,7 +35,7 @@ const SUPPORTED_NETWORKS = [
 ] as const;
 
 export type SupportedNetworks =
-  | typeof SUPPORTED_NETWORKS[number]
+  | (typeof SUPPORTED_NETWORKS)[number]
   | 'unsupported';
 
 export function toSupportedNetwork(network: string): SupportedNetworks {

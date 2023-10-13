@@ -4,7 +4,7 @@ import React from 'react';
 import {useTranslation} from 'react-i18next';
 
 const processes = ['DaoCreation', 'ProposalCreation'] as const;
-export type ProcessType = typeof processes[number];
+export type ProcessType = (typeof processes)[number];
 
 type Props = {
   isOpen: boolean;

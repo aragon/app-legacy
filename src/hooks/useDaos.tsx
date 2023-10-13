@@ -11,7 +11,7 @@ import {CHAIN_METADATA, SupportedChainID} from 'utils/constants';
 import {useClient} from './useClient';
 
 export const EXPLORE_FILTER = ['favorite', 'newest', 'popular'] as const;
-export type ExploreFilter = typeof EXPLORE_FILTER[number];
+export type ExploreFilter = (typeof EXPLORE_FILTER)[number];
 
 export type AugmentedDaoListItem = DaoListItem & {
   chain: SupportedChainID;
