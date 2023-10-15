@@ -18,57 +18,55 @@ import {isOnlyWhitespace} from 'utils/library';
 import {UpdateListItem} from 'containers/updateListItem/updateListItem';
 import {useParams} from 'react-router-dom';
 import {VersionSelectionMenu} from 'containers/versionSelectionMenu/versionSelectionMenu';
-import {usePrepareUpdateContext} from 'context/prepareUpdate';
-import {usePluginAvailableVersions} from 'hooks/usePluginAvailableVersions';
-import {useDaoDetailsQuery} from 'hooks/useDaoDetails';
-import {PluginTypes} from 'hooks/usePluginClient';
+import {useUpdateContext} from 'context/update';
+
 const DefineProposal: React.FC = () => {
   const {t} = useTranslation();
   const {address, ensAvatarUrl} = useWallet();
   const {control, setValue} = useFormContext();
-  const {data: daoDetails} = useDaoDetailsQuery();
-  const pluginType = daoDetails?.plugins?.[0]?.id as PluginTypes;
-  const {handlePreparePlugin} = usePrepareUpdateContext();
+  const {handlePreparePlugin, osxAvailableVersions} = useUpdateContext();
 
-  const {data: pluginList, isLoading} = usePluginAvailableVersions(pluginType);
-
-  const [pluginVersion, osxVersion] = useWatch({
-    name: ['pluginSelectedVersion', 'osxSelectedVersion'],
+  const [pluginSelectedVersion, osSelectedVersion, updateFramework] = useWatch({
+    name: ['pluginSelectedVersion', 'osSelectedVersion', 'updateFramework'],
     control: control,
   });
 
   const {type} = useParams();
-  const [isOpen, setIsOpen] = useState(false);
+  const [showModal, setShowModal] = useState<{
+    type: 'os' | 'plugin' | 'none';
+    isOpen: boolean;
+  }>({
+    type: 'none',
+    isOpen: false,
+  });
 
   const UpdateItems = [
     {
       id: 'os',
-      label: 'Aragon OSx v1.3.0',
+      label: `Aragon OSx v${osSelectedVersion?.version}`,
       helptext: 'TBD inline release notes',
       LinkLabel: t('update.item.releaseNotesLabel'),
-      tagLabelNatural: t('update.item.tagLatest'),
-      ...(osxVersion?.isLatest && {
+      ...(osxAvailableVersions?.get(osSelectedVersion?.version)?.isLatest && {
         tagLabelNatural: t('update.item.tagLatest'),
       }),
-      ...(osxVersion?.isPrepared
-        ? {
-            tagLabelInfo: t('update.item.tagPrepared'),
-          }
-        : {
-            onClickActionPrimary: (e: React.MouseEvent) => e?.stopPropagation(),
-          }),
       buttonSecondaryLabel: t('update.item.versionCtaLabel'),
-      onClickActionSecondary: (e: React.MouseEvent) => e?.stopPropagation(),
+      onClickActionSecondary: (e: React.MouseEvent) => {
+        setShowModal({
+          isOpen: true,
+          type: 'os',
+        });
+        e?.stopPropagation();
+      },
     },
     {
       id: 'plugin',
-      label: `Token voting v${pluginVersion?.version}`,
+      label: `Token voting v${pluginSelectedVersion?.version}`,
       helptext: 'TBD inline release notes',
       LinkLabel: t('update.item.releaseNotesLabel'),
-      ...(pluginVersion?.isLatest && {
+      ...(pluginSelectedVersion?.isLatest && {
         tagLabelNatural: t('update.item.tagLatest'),
       }),
-      ...(pluginVersion?.isPrepared
+      ...(pluginSelectedVersion?.isPrepared
         ? {
             tagLabelInfo: t('update.item.tagPrepared'),
           }
@@ -78,19 +76,33 @@ const DefineProposal: React.FC = () => {
       buttonPrimaryLabel: t('update.item.prepareCtaLabel'),
       buttonSecondaryLabel: t('update.item.versionCtaLabel'),
       onClickActionSecondary: (e: React.MouseEvent) => {
-        setIsOpen(true);
+        setShowModal({
+          isOpen: true,
+          type: 'plugin',
+        });
         e?.stopPropagation();
       },
     },
   ];
 
   useEffect(() => {
-    // TODO: This Should be removed with SDK update
-    setValue('pluginSelectedVersion', {
-      address: '0xadb2e0cc261fdfbf29ffd74102c91052a425e666',
-      version: '1.2',
-    });
-  }, [setValue]);
+    console.log('test', osSelectedVersion?.version?.split('.').map(Number));
+
+    let index = 0;
+    if (updateFramework.os && pluginSelectedVersion?.version) {
+      setValue(`actions.${index}.name`, 'os_update');
+      setValue(`actions.${index}.inputs.version`, osSelectedVersion?.version);
+      index++;
+    }
+    // if (updateFramework.plugin) {
+    //   setValue(`actions.${index}.name`, 'plugin_update');
+    // }
+  }, [
+    osSelectedVersion?.version,
+    pluginSelectedVersion?.version,
+    setValue,
+    updateFramework.os,
+  ]);
 
   useEffect(() => {
     if (type === 'os-update') {
@@ -107,7 +119,7 @@ const DefineProposal: React.FC = () => {
       <UpdateContainer>
         <UpdateGroupWrapper>
           <Controller
-            name="osUpdate"
+            name="updateFramework"
             rules={{required: 'Validate'}}
             control={control}
             render={({field: {onChange, value}}) => (
@@ -135,9 +147,12 @@ const DefineProposal: React.FC = () => {
           />
         </UpdateGroupWrapper>
         <VersionSelectionMenu
-          isOpen={isOpen}
+          showModal={showModal}
           handleCloseMenu={() => {
-            setIsOpen(false);
+            setShowModal({
+              isOpen: false,
+              type: 'none',
+            });
           }}
         />
         <AlertInline label={t('update.itemList.alertInfo')} mode="neutral" />
@@ -259,14 +274,15 @@ export function isValid(
   dirtyFields: StringIndexed,
   errors: StringIndexed,
   type?: string,
-  osUpdate?: {
+  updateFramework?: {
     os: boolean;
     plugin: boolean;
   }
 ) {
   // required fields not dirty
 
-  if (type === 'os-update' && (osUpdate?.os || osUpdate?.plugin)) return true;
+  if (type === 'os-update' && (updateFramework?.os || updateFramework?.plugin))
+    return true;
   else false;
 
   if (

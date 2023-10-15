@@ -6,7 +6,7 @@ import {ActionsProvider} from 'context/actions';
 import {CreateProposalProvider} from 'context/createProposal';
 import {useDaoDetailsQuery} from 'hooks/useDaoDetails';
 import {CreateProposalFormData} from 'utils/types';
-import {PrepareUpdateProvider} from 'context/prepareUpdate';
+import {UpdateProvider} from 'context/update';
 
 export const NewProposal: React.FC = () => {
   const {data, isLoading} = useDaoDetailsQuery();
@@ -17,9 +17,9 @@ export const NewProposal: React.FC = () => {
     mode: 'onChange',
     defaultValues: {
       links: [{name: '', url: ''}],
-      osUpdate: {
+      updateFramework: {
         os: true,
-        plugin: true,
+        plugin: false,
       },
       startSwitch: 'now',
       durationSwitch: 'duration',
@@ -45,9 +45,9 @@ export const NewProposal: React.FC = () => {
           showTxModal={showTxModal}
           setShowTxModal={setShowTxModal}
         >
-          <PrepareUpdateProvider>
+          <UpdateProvider>
             <ProposalStepper enableTxModal={enableTxModal} />
-          </PrepareUpdateProvider>
+          </UpdateProvider>
         </CreateProposalProvider>
       </ActionsProvider>
     </FormProvider>

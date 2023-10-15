@@ -54,8 +54,9 @@ const ProposalStepper: React.FC<ProposalStepperType> = ({
   const {address, isConnected} = useWallet();
   const [isActionsValid, setIsActionsValid] = useState(false);
 
-  const [formActions, osUpdate] = useWatch({
-    name: ['actions', 'osUpdate'],
+  const [formActions, updateFramework] = useWatch({
+    name: ['actions', 'updateFramework'],
+  });
 
   const {errors, dirtyFields} = useFormState({control});
 
@@ -101,7 +102,7 @@ const ProposalStepper: React.FC<ProposalStepperType> = ({
             : t('newWithdraw.defineProposal.description')
         }
         isNextButtonDisabled={
-          !defineProposalIsValid(dirtyFields, errors, type, osUpdate)
+          !defineProposalIsValid(dirtyFields, errors, type, updateFramework)
         }
         onNextButtonClicked={next => {
           trackEvent('newProposal_nextBtn_clicked', {

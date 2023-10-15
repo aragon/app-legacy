@@ -15,6 +15,9 @@ import {
   ProposalMetadata,
   ProposalStatus,
   TokenType,
+  LIVE_CONTRACTS,
+  SupportedNetworksArray,
+  SupportedVersion,
 } from '@aragon/sdk-client-common';
 import {hexToBytes} from '@aragon/sdk-common';
 import {useQueryClient} from '@tanstack/react-query';
@@ -60,7 +63,11 @@ import {
   minutesToMills,
   offsetToMills,
 } from 'utils/date';
-import {getDefaultPayableAmountInputName, toDisplayEns} from 'utils/library';
+import {
+  getDefaultPayableAmountInputName,
+  toDisplayEns,
+  translateToNetworkishName,
+} from 'utils/library';
 import {proposalStorage} from 'utils/localStorage/proposalStorage';
 import {Proposal} from 'utils/paths';
 import {getNonEmptyActions} from 'utils/proposals';
@@ -89,6 +96,7 @@ const CreateProposalWrapper: React.FC<Props> = ({
   const {getValues} = useFormContext<ProposalFormData>();
 
   const {network} = useNetwork();
+  const translatedNetwork = translateToNetworkishName(network);
   const {isOnWrongNetwork, provider, address} = useWallet();
   const {api: apiProvider} = useProviders();
 
@@ -278,18 +286,56 @@ const CreateProposalWrapper: React.FC<Props> = ({
             })
           );
           break;
+
+        case 'os_update': {
+          if (
+            translatedNetwork !== 'unsupported' &&
+            SupportedNetworksArray.includes(translatedNetwork) &&
+            daoDetails?.address
+          ) {
+            const initializeData = client.encoding.initializeFromAction(
+              daoDetails?.address as string,
+              {
+                previousVersion: action.inputs.version
+                  ?.split('.')
+                  ?.map(Number) as [number, number, number],
+              }
+            );
+            const implementationAddress =
+              await client.methods.getDaoImplementation(
+                LIVE_CONTRACTS[action.inputs.version as SupportedVersion][
+                  translatedNetwork
+                ].daoFactoryAddress
+              );
+
+            actions.push(
+              Promise.resolve(
+                client.encoding.upgradeToAndCallAction(
+                  daoDetails?.address as string,
+                  {
+                    implementationAddress: implementationAddress, // the implementation address to be upgraded to.
+                    data: initializeData.data,
+                  }
+                )
+              )
+            );
+          }
+          break;
+        }
       }
     }
 
     return Promise.all(actions);
   }, [
-    getValues,
-    pluginClient,
     client,
-    pluginAddress,
-    votingSettings,
+    daoDetails,
+    getValues,
     network,
+    pluginAddress,
+    pluginClient,
     t,
+    translatedNetwork,
+    votingSettings,
   ]);
 
   // Because getValues does NOT get updated on each render, leaving this as

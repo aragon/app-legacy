@@ -235,7 +235,9 @@ export type ActionsTypes =
   | 'modify_token_voting_settings'
   | 'modify_metadata'
   | 'modify_multisig_voting_settings'
-  | 'update_minimum_approval';
+  | 'update_minimum_approval'
+  | 'os_update'
+  | 'plugin_update';
 
 export type ActionWithdraw = {
   amount: number;
@@ -305,6 +307,20 @@ export type ActionMintToken = {
   };
 };
 
+export type ActionOSUpdate = {
+  name: 'os_update';
+  inputs: {
+    version: string;
+  };
+};
+
+export type ActionPluginUpdate = {
+  name: 'plugin_update';
+  inputs: {
+    version: string;
+  };
+};
+
 export type ActionUpdateMultisigPluginSettings = {
   name: 'modify_multisig_voting_settings';
   inputs: MultisigVotingSettings;
@@ -366,7 +382,9 @@ export type Action =
   | ActionUpdateMinimumApproval
   | ActionUpdateMultisigPluginSettings
   | ActionSCC
-  | ActionWC;
+  | ActionWC
+  | ActionOSUpdate
+  | ActionPluginUpdate;
 
 export type ParamType = {
   type: string;
@@ -544,14 +562,12 @@ export interface ProposalFormData {
   startTimeWarning: boolean;
   areSettingsLoading: boolean;
   links: Link[];
-  osUpdate?: {
+  updateFramework?: {
     os: boolean;
     plugin: boolean;
   };
-  osxSelectedVersion?: {
-    version: VersionTag;
-    isLatest: boolean;
-    isPrepared: boolean;
+  osSelectedVersion?: {
+    version: string;
   };
   pluginSelectedVersion?: {
     address: string;

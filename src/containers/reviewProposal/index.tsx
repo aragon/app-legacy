@@ -246,14 +246,14 @@ const ReviewProposal: React.FC<ReviewProposalProps> = ({
           )}
 
           {/* TODO: Add isUpdateProposal check once it's developed */}
-          <UpdateVerificationCard
+          {/* <UpdateVerificationCard
             actions={getNonEmptyActions(
               values.actions,
               isMultisigVotingSettings(votingSettings)
                 ? votingSettings
                 : undefined
             )}
-          />
+          /> */}
 
           <VotingTerminal
             breakdownTabDisabled

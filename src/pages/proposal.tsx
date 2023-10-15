@@ -718,7 +718,7 @@ export const Proposal: React.FC = () => {
               'true' && (
               <UpdateVerificationCard
                 proposal={proposal}
-                actions={decodedActions}
+                actions={proposal.actions}
                 proposalId={proposalId}
               />
             )}
