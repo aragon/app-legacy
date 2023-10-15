@@ -56,6 +56,7 @@ const ProposalStepper: React.FC<ProposalStepperType> = ({
 
   const [formActions, osUpdate] = useWatch({
     name: ['actions', 'osUpdate'],
+  });
 
   const {errors, dirtyFields} = useFormState({control});
 

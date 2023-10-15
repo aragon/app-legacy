@@ -51,7 +51,7 @@ export const VersionSelectionMenu: React.FC<CheckboxListItemProps> = ({
       title={t('update.modalVersion.title')}
       subtitle={t('update.modalVersion.desc')}
     >
-      <div className="grid gap-y-3 py-3 px-2">
+      <div className="grid gap-y-3 px-2 py-3">
         <Controller
           name="pluginSelectedVersion"
           rules={{required: 'Validate'}}

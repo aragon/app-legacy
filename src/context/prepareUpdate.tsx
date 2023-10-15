@@ -6,7 +6,13 @@ import {
   TokenVotingPluginPrepareUpdateParams,
 } from '@aragon/sdk-client';
 import {VersionTag} from '@aragon/sdk-client-common';
-import React, {createContext, useCallback, useContext, useState} from 'react';
+import React, {
+  ReactElement,
+  createContext,
+  useCallback,
+  useContext,
+  useState,
+} from 'react';
 import {useFormContext} from 'react-hook-form';
 import {useTranslation} from 'react-i18next';
 
@@ -14,7 +20,6 @@ import PublishModal from 'containers/transactionModals/publishModal';
 import {useClient} from 'hooks/useClient';
 import {usePollGasFee} from 'hooks/usePollGasfee';
 import {useWallet} from 'hooks/useWallet';
-import {trackEvent} from 'services/analytics';
 import {TransactionState} from 'utils/constants';
 import {CreateProposalFormData} from 'utils/types';
 import {PluginTypes, usePluginClient} from 'hooks/usePluginClient';
@@ -29,7 +34,9 @@ const PrepareUpdateContext = createContext<PrepareUpdateContextType | null>(
   null
 );
 
-const PrepareUpdateProvider: React.FC = ({children}) => {
+const PrepareUpdateProvider: React.FC<{children: ReactElement}> = ({
+  children,
+}) => {
   const [showModal, setShowModal] = useState({
     open: false,
     type: '',

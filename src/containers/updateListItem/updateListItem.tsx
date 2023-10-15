@@ -74,7 +74,7 @@ export const UpdateListItem: React.FC<CheckboxListItemProps> = ({
           <Link label={LinkLabel} iconRight={<IconLinkExternal />} />
         </div>
         {(buttonPrimaryLabel || buttonSecondaryLabel) && (
-          <div className="flex flex-col gap-y-1.5 mt-3">
+          <div className="mt-3 flex flex-col gap-y-1.5">
             {buttonPrimaryLabel && (
               <ButtonText
                 label={buttonPrimaryLabel}
@@ -104,7 +104,7 @@ type ContainerTypes = {
   type: 'default' | 'error' | 'active';
 };
 
-const Container = styled.div.attrs(({disabled, type}: ContainerTypes) => ({
+const Container = styled.div.attrs<ContainerTypes>(({disabled, type}) => ({
   className: `flex-1 py-1.5 px-2 rounded-xl border-2 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 ${
     disabled
       ? 'bg-ui-100 border-ui-300'
@@ -123,14 +123,15 @@ const Wrapper = styled.div.attrs({
   className: 'flex flex-col justify-between h-full',
 })``;
 
-const HStack = styled.div.attrs(({disabled, type}: ContainerTypes) => ({
-  className: `flex justify-between items-center group-hover:text-primary-500 space-x-1.5 ${
-    disabled
-      ? 'text-ui-600'
-      : type === 'default' || type === 'error'
-      ? 'text-ui-600'
-      : 'text-primary-500'
-  }`,
+const HStack = styled.div.attrs<ContainerTypes>(({disabled, type}) => ({
+  className:
+    `flex justify-between items-center group-hover:text-primary-500 space-x-1.5 ${
+      disabled
+        ? 'text-ui-600'
+        : type === 'default' || type === 'error'
+        ? 'text-ui-600'
+        : 'text-primary-500'
+    }` as string,
 }))<ContainerTypes>``;
 
 const Helptext = styled.p.attrs({

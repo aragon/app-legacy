@@ -19,18 +19,12 @@ import {UpdateListItem} from 'containers/updateListItem/updateListItem';
 import {useParams} from 'react-router-dom';
 import {VersionSelectionMenu} from 'containers/versionSelectionMenu/versionSelectionMenu';
 import {usePrepareUpdateContext} from 'context/prepareUpdate';
-import {usePluginAvailableVersions} from 'hooks/usePluginAvailableVersions';
-import {useDaoDetailsQuery} from 'hooks/useDaoDetails';
-import {PluginTypes} from 'hooks/usePluginClient';
+
 const DefineProposal: React.FC = () => {
   const {t} = useTranslation();
   const {address, ensAvatarUrl} = useWallet();
   const {control, setValue} = useFormContext();
-  const {data: daoDetails} = useDaoDetailsQuery();
-  const pluginType = daoDetails?.plugins?.[0]?.id as PluginTypes;
   const {handlePreparePlugin} = usePrepareUpdateContext();
-
-  const {data: pluginList, isLoading} = usePluginAvailableVersions(pluginType);
 
   const [pluginVersion, osxVersion] = useWatch({
     name: ['pluginSelectedVersion', 'osxSelectedVersion'],

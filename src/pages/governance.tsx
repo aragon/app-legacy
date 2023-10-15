@@ -27,6 +27,7 @@ import {featureFlags} from 'utils/featureFlags';
 import {htmlIn} from 'utils/htmlIn';
 import {toDisplayEns} from 'utils/library';
 import {useNetwork} from 'context/network';
+import {NewProposal} from 'utils/paths';
 
 export const Governance: React.FC = () => {
   const {t} = useTranslation();

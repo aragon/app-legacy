@@ -30,7 +30,7 @@ export const usePluginAvailableVersions = (pluginType: PluginTypes) => {
   const {client} = useClient();
   const {network} = useNetwork();
 
-  return useQuery<any | null>({
+  return useQuery<{} | null>({
     queryKey: ['pluginAvailableVersions', pluginType, network],
     queryFn: () => fetchPluginList(pluginClient, client, pluginType),
     enabled: Boolean(pluginType) && Boolean(client) && Boolean(pluginClient),
