@@ -15,6 +15,13 @@ export type CheckboxListItemProps = {
   handleCloseMenu: () => void;
 };
 
+type versionList = {
+  version: string;
+  helptext: string;
+  isLatest?: boolean;
+  tagLabelNatural?: string;
+};
+
 // TODO: This might be a component that
 export const VersionSelectionMenu: React.FC<CheckboxListItemProps> = ({
   showModal,
@@ -25,7 +32,7 @@ export const VersionSelectionMenu: React.FC<CheckboxListItemProps> = ({
   const {osxAvailableVersions} = useUpdateContext();
 
   const versionList = useMemo(() => {
-    const List = [];
+    const List: versionList[] = [];
     osxAvailableVersions?.forEach(value => {
       List.push({
         version: value.version,
@@ -46,7 +53,7 @@ export const VersionSelectionMenu: React.FC<CheckboxListItemProps> = ({
       title={t('update.modalVersion.title')}
       subtitle={t('update.modalVersion.desc')}
     >
-      <div className="grid gap-y-3 py-3 px-2">
+      <div className="grid gap-y-3 px-2 py-3">
         {showModal.type === 'os' ? (
           <Controller
             name="osSelectedVersion"

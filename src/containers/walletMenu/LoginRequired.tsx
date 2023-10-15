@@ -1,6 +1,6 @@
 import {ButtonIcon, ButtonText, IconClose} from '@aragon/ods';
 import {useWallet} from 'hooks/useWallet';
-import React, {useCallback} from 'react';
+import React from 'react';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 
@@ -16,28 +16,32 @@ import {useGlobalModalContext} from 'context/globalModals';
 import useScreen from 'hooks/useScreen';
 import WalletIcon from 'public/wallet.svg';
 
-type Props = {
+interface ILoginRequiredProps {
   isOpen?: boolean;
   onClose?: () => void;
-};
+}
 
-export const LoginRequired: React.FC<Props> = props => {
-  const {close, isOpen} = useGlobalModalContext('wallet');
+export const LoginRequired: React.FC<ILoginRequiredProps> = props => {
+  const {onClose: onCloseProp, isOpen: isOpenProp} = props;
+
+  const {close, isOpen: isOpenContext} = useGlobalModalContext('wallet');
+
   const {t} = useTranslation();
   const {isDesktop} = useScreen();
   const {methods} = useWallet();
 
-  // allow modal to be used both via global modal context &&
-  // as individually controlled component.
-  const showModal = props.isOpen ?? isOpen;
+  // Combine the isOpen and onClose handler as the dialog can be used both through
+  // the global modal context and standalone
+  const isOpen = isOpenProp ?? isOpenContext;
+  const onClose = onCloseProp ?? close;
 
-  const handleClose = useCallback(() => {
-    if (props.onClose) props.onClose();
-    else close();
-  }, [close, props]);
+  const handleConnectClick = async () => {
+    close();
+    await methods.selectWallet();
+  };
 
   return (
-    <ModalBottomSheetSwitcher isOpen={showModal} onClose={handleClose}>
+    <ModalBottomSheetSwitcher isOpen={isOpen} onClose={onClose}>
       <ModalHeader>
         <Title>{t('alert.loginRequired.headerTitle')}</Title>
         {isDesktop && (
@@ -45,7 +49,7 @@ export const LoginRequired: React.FC<Props> = props => {
             mode="ghost"
             icon={<IconClose />}
             size="small"
-            onClick={handleClose}
+            onClick={() => onClose()}
           />
         )}
       </ModalHeader>
@@ -59,14 +63,7 @@ export const LoginRequired: React.FC<Props> = props => {
         </WarningContainer>
         <ButtonText
           label={t('alert.loginRequired.buttonLabel')}
-          onClick={() => {
-            close();
-            methods.selectWallet().catch((err: Error) => {
-              // To be implemented: maybe add an error message when
-              // the error is different from closing the window
-              console.error(err);
-            });
-          }}
+          onClick={handleConnectClick}
           size="large"
         />
       </ModalBody>

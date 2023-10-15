@@ -1,5 +1,5 @@
 import {AlertInline, ButtonText} from '@aragon/ods';
-import React, {useCallback, useEffect, useRef} from 'react';
+import React, {useCallback} from 'react';
 import {useTranslation} from 'react-i18next';
 import {generatePath, useNavigate} from 'react-router-dom';
 import styled from 'styled-components';
@@ -25,41 +25,6 @@ const DepositModal: React.FC = () => {
 
   const networkSupportsENS = ENS_SUPPORTED_NETWORKS.includes(network);
 
-  // NOTE: This login => network flow can and should be extracted
-  // if later on we have a component that requires the same process
-  const loginFlowTriggeredRef = useRef(false);
-
-  /*************************************************
-   *                Hooks & Effects                *
-   *************************************************/
-  // Show login modal or network modal based on connection status
-  useEffect(() => {
-    if (loginFlowTriggeredRef.current) {
-      if (!isConnected) open('wallet');
-      else {
-        if (isOnWrongNetwork) open('network');
-        else close();
-      }
-    }
-  }, [close, isConnected, isOnWrongNetwork, open]);
-
-  // Close the login modal once the status is connecting
-  useEffect(() => {
-    if (loginFlowTriggeredRef.current) {
-      if (status === 'connecting' || isConnected) close();
-    }
-  }, [close, isConnected, isOnWrongNetwork, open, status]);
-
-  // show the deposit modal again when user on right network and logged in
-  useEffect(() => {
-    if (loginFlowTriggeredRef.current) {
-      if (isConnected && !isOnWrongNetwork) {
-        open('deposit');
-        loginFlowTriggeredRef.current = false;
-      }
-    }
-  }, [isConnected, isOnWrongNetwork, open]);
-
   /*************************************************
    *             Callbacks and Handlers            *
    *************************************************/
@@ -75,14 +40,21 @@ const DepositModal: React.FC = () => {
 
   // close modal and initiate the login/wrong network flow
   const handleConnectClick = useCallback(() => {
-    close();
-    loginFlowTriggeredRef.current = true;
-  }, [close]);
+    const modalState = {onSuccess: () => open('deposit')};
+
+    if (!isConnected) {
+      open('wallet', modalState);
+    } else if (isOnWrongNetwork) {
+      open('network', modalState);
+    }
+  }, [open, isConnected, isOnWrongNetwork]);
 
   /*************************************************
    *                     Render                    *
    *************************************************/
-  if (!daoDetails) return null;
+  if (!daoDetails) {
+    return null;
+  }
 
   return (
     <ModalBottomSheetSwitcher

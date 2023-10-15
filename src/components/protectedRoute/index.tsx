@@ -161,12 +161,12 @@ const ProtectedRoute: React.FC = () => {
       setShowLoginModal(true);
     } else {
       if (isOnWrongNetwork) {
-        open('network');
+        open('network', {onClose: () => navigate(-1)});
       } else {
         close();
       }
     }
-  }, [address, close, isOnWrongNetwork, open]);
+  }, [address, close, isOnWrongNetwork, open, navigate]);
 
   // close the LoginRequired modal when web3Modal is shown
   useEffect(() => {

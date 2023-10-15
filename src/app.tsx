@@ -10,7 +10,7 @@ import Footer from 'containers/footer';
 import Navbar from 'containers/navbar';
 import DaoSelectMenu from 'containers/navbar/daoSelectMenu';
 import ExploreNav from 'containers/navbar/exploreNav';
-import NetworkErrorMenu from 'containers/networkErrorMenu';
+import {NetworkErrorMenu} from 'containers/networkErrorMenu';
 import TransactionDetail from 'containers/transactionDetail';
 import TransferMenu from 'containers/transferMenu';
 import {WalletMenu} from 'containers/walletMenu';
