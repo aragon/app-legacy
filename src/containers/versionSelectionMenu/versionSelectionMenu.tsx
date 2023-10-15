@@ -2,7 +2,7 @@ import {ButtonText} from '@aragon/ods';
 import ModalBottomSheetSwitcher from 'components/modalBottomSheetSwitcher';
 import {UpdateListItem} from 'containers/updateListItem/updateListItem';
 import {useUpdateContext} from 'context/update';
-import React, {useEffect, useMemo} from 'react';
+import React, {useMemo} from 'react';
 import {Controller, useFormContext} from 'react-hook-form';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
@@ -136,6 +136,3 @@ const VersionListContainer = styled.div.attrs({
 const ActionContainer = styled.div.attrs({
   className: 'grid gap-y-1.5',
 })``;
-function getValues(arg0: string[]): [any, any] {
-  throw new Error('Function not implemented.');
-}

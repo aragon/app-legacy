@@ -56,7 +56,7 @@ const UpdateBanner: React.FC = () => {
             }
           />
         </MessageWrapper>
-        <IconClose className="justify-self-end text-ui-0 cursor-pointer" />
+        <IconClose className="cursor-pointer justify-self-end text-ui-0" />
       </UpdateContainer>
     );
   return null;
