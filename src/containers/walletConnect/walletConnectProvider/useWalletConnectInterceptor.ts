@@ -82,8 +82,13 @@ export function useWalletConnectInterceptor(): WcInterceptorValues {
     []
   );
 
+  /**
+   * The function tries to establish a connection to a dApp through the specified uri and verifies
+   * that the connection is valid. When the connection times out or the topic is not valid anymore,
+   * the function throws an error.
+   */
   const wcConnect = useCallback(
-    async ({uri, metadataName}: WcConnectOptions) => {
+    async ({uri, metadataName}: WcConnectOptions): Promise<WcSession> => {
       const connection = await walletConnectInterceptor.connect(uri);
 
       if (connection == null) {
@@ -95,17 +100,14 @@ export function useWalletConnectInterceptor(): WcInterceptorValues {
 
       return new Promise<WcSession>((resolve, reject) => {
         const verifyInterval = setInterval(async () => {
-          console.log({
-            now: Date.now(),
-            start: connectionTimeoutStart,
-            deadline: connectionTimeoutStart + CONNECTION_TIMEOUT,
-          });
-
+          // Throw error when connection times out
           if (Date.now() > connectionTimeoutStart + CONNECTION_TIMEOUT) {
             clearInterval(verifyInterval);
             reject(new Error('walletConnectInterceptor: connection timeout'));
           }
 
+          // Check status of connection and throw error when connection is expired or topic
+          // is not valid
           try {
             activeSession = await verifyConnection({connection, metadataName});
           } catch (error) {
@@ -113,6 +115,7 @@ export function useWalletConnectInterceptor(): WcInterceptorValues {
             reject(error);
           }
 
+          // Return active session and stop verification interval when session is valid
           if (activeSession != null) {
             clearInterval(verifyInterval);
             resolve(activeSession);
