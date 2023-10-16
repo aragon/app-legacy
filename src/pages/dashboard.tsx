@@ -62,13 +62,13 @@ export const Dashboard: React.FC = () => {
   );
 
   // following DAOS
-  const addFollowedDaoMutation = useAddFollowedDaoMutation(() =>
-    alert(t('alert.chip.favorited'))
-  );
+  const addFollowedDaoMutation = useAddFollowedDaoMutation({
+    onMutate: () => alert(t('alert.chip.favorited')),
+  });
 
-  const removeFollowedDaoMutation = useRemoveFollowedDaoMutation(() =>
-    alert(t('alert.chip.unfavorite'))
-  );
+  const removeFollowedDaoMutation = useRemoveFollowedDaoMutation({
+    onMutate: () => alert(t('alert.chip.unfavorite')),
+  });
 
   const {data: fallowedDaos, isLoading: followedDaosLoading} =
     useFollowedDaosQuery();

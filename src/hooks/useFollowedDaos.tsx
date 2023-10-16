@@ -36,7 +36,7 @@ const DEFAULT_QUERY_PARAMS = {
  * @returns result object containing an array of NavigationDao objects with added avatar information.
  */
 export const useFollowedDaosQuery = (
-  skip = 0
+  skip = 0,
 ): UseQueryResult<NavigationDao[]> => {
   return useQuery<NavigationDao[]>({
     queryKey: ['followedDaos'],
@@ -57,7 +57,7 @@ export const useFollowedDaosInfiniteQuery = (
   enabled = true,
   {
     limit = DEFAULT_QUERY_PARAMS.limit,
-  }: Partial<Pick<DaoQueryParams, 'limit'>> = {}
+  }: Partial<Pick<DaoQueryParams, 'limit'>> = {},
 ) => {
   return useInfiniteQuery({
     queryKey: ['infiniteFollowedDaos'],
@@ -68,12 +68,12 @@ export const useFollowedDaosInfiniteQuery = (
           skip: limit * pageParam,
           limit,
         }),
-      [limit]
+      [limit],
     ),
 
     getNextPageParam: (
       lastPage: NavigationDao[],
-      allPages: NavigationDao[][]
+      allPages: NavigationDao[][],
     ) => (lastPage.length === limit ? allPages.length : undefined),
 
     select: augmentCachedDaos,
@@ -90,7 +90,7 @@ export const useFollowedDaosInfiniteQuery = (
  */
 export const useFollowedDaoQuery = (
   daoAddress: string | undefined,
-  network: SupportedNetworks
+  network: SupportedNetworks,
 ) => {
   const chain = CHAIN_METADATA[network].id;
 
@@ -125,11 +125,16 @@ export const useUpdateFollowedDaoMutation = () => {
   });
 };
 
+interface IFollowDaoMutationParams {
+  onMutate?: () => void;
+  onError?: () => void;
+}
+
 /**
  * Add a followed DAO to the cache
  * @param onSuccess callback to run once DAO has been added to the cache
  */
-export const useAddFollowedDaoMutation = (onSuccess?: () => void) => {
+export const useAddFollowedDaoMutation = (params: IFollowDaoMutationParams) => {
   const queryClient = useQueryClient();
 
   return useMutation({
@@ -150,6 +155,9 @@ export const useAddFollowedDaoMutation = (onSuccess?: () => void) => {
         return [variables.dao];
       });
 
+      // call the user-provided callback
+      params.onMutate?.();
+
       // Return the previousDaos to rollback in case of an error
       return {previousDaos};
     },
@@ -157,10 +165,10 @@ export const useAddFollowedDaoMutation = (onSuccess?: () => void) => {
     onError: (_error, _variables, context) => {
       // Rollback to the previous state if the mutation fails
       queryClient.setQueryData(['followedDaos'], context?.previousDaos);
+      params.onError?.();
     },
 
     onSuccess: () => {
-      onSuccess?.();
       queryClient.invalidateQueries(['followedDaos']);
       queryClient.invalidateQueries(['infiniteFollowedDaos']);
     },
@@ -171,7 +179,9 @@ export const useAddFollowedDaoMutation = (onSuccess?: () => void) => {
  * Remove a followed DAO from the cache
  * @param onSuccess callback to run once followed DAO has been removed successfully
  */
-export const useRemoveFollowedDaoMutation = (onSuccess?: () => void) => {
+export const useRemoveFollowedDaoMutation = (
+  params: IFollowDaoMutationParams,
+) => {
   const queryClient = useQueryClient();
 
   return useMutation({
@@ -189,6 +199,8 @@ export const useRemoveFollowedDaoMutation = (onSuccess?: () => void) => {
         return oldDaos?.filter(dao => dao.address !== variables.dao.address);
       });
 
+      params.onMutate?.();
+
       // Return the previousDaos to rollback in case of an error
       return {previousDaos};
     },
@@ -196,10 +208,10 @@ export const useRemoveFollowedDaoMutation = (onSuccess?: () => void) => {
     onError: (_error, _variables, context) => {
       // Rollback to the previous state if the mutation fails
       queryClient.setQueryData(['followedDaos'], context?.previousDaos);
+      params.onError?.();
     },
 
     onSuccess: () => {
-      onSuccess?.();
       queryClient.invalidateQueries(['followedDaos']);
       queryClient.invalidateQueries(['infiniteFollowedDaos']);
     },
