@@ -166,8 +166,6 @@ function syncMultisigVotes(
     }
   });
 
-  console.log([...uniqueCachedApprovals, ...Array.from(serverApprovals)]);
-
   return [...uniqueCachedApprovals, ...Array.from(serverApprovals)];
 }
 
