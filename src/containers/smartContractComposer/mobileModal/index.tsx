@@ -218,5 +218,6 @@ const Content = styled.div.attrs({
 `;
 
 const ActionSearchInput = styled.input.attrs({
-  className: 'flex-1 text-neutral-300 bg-neutral-0 ft-text-base focus:outline-none',
+  className:
+    'flex-1 text-neutral-300 bg-neutral-0 ft-text-base focus:outline-none',
 })``;

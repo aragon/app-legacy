@@ -157,8 +157,7 @@ const TextWrapper = styled.div.attrs({
 const ActionContainer = styled.div.attrs<Pick<BaseProps, 'actionsColumn'>>(
   ({actionsColumn}) => ({
     className: `flex w-full flex-col gap-y-1.5 ${
-      !actionsColumn &&
-      'md:flex-row md:gap-y-0 md:justify-center md:gap-x-3'
+      !actionsColumn && 'md:flex-row md:gap-y-0 md:justify-center md:gap-x-3'
     }`,
   })
 )<Pick<BaseProps, 'actionsColumn'>>``;

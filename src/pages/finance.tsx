@@ -352,8 +352,7 @@ const ListContainer = styled.div.attrs({
 })``;
 
 const HeaderContainer = styled.div.attrs({
-  className:
-    'col-span-full xl:col-start-3 xl:col-end-11 -mx-2 md:mx-0 md:mt-3',
+  className: 'col-span-full xl:col-start-3 xl:col-end-11 -mx-2 md:mx-0 md:mt-3',
 })``;
 
 const SubtitleContainer = styled.div.attrs({

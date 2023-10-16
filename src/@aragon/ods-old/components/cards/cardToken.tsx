@@ -165,9 +165,7 @@ const ToggleMobileVisibility: React.FC<ToggleMobileVisibilityProps> = ({
 }) => {
   return (
     <div
-      className={
-        visible ? 'inline-block md:hidden' : 'hidden md:inline-block'
-      }
+      className={visible ? 'inline-block md:hidden' : 'hidden md:inline-block'}
     >
       {children}
     </div>

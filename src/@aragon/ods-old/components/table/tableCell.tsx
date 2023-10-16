@@ -39,7 +39,7 @@ export const TableCell: React.FC<TableCellProps> = ({
     return (
       <th
         data-testid="tableCell"
-        className={`bg-neutral-100 px-2 py-1.75 ${
+        className={`py-1.75 bg-neutral-100 px-2 ${
           rightAligned ? 'text-right' : 'text-left'
         } ${className}`}
       >
@@ -50,11 +50,11 @@ export const TableCell: React.FC<TableCellProps> = ({
     return (
       <td
         data-testid="tableCell"
-        className={`px-2 py-1.75 ${!bgWhite && 'bg-neutral-0'} ${
+        className={`py-1.75 px-2 ${!bgWhite && 'bg-neutral-0'} ${
           rightAligned ? 'text-right' : 'text-left'
         } ${className}`}
       >
-        <p className="cursor-pointer font-bold text-primary-500 ft-text-base">
+        <p className="font-bold cursor-pointer text-primary-500 ft-text-base">
           {children}
         </p>
       </td>

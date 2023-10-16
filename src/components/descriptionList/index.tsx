@@ -111,8 +111,7 @@ const DlContainer = styled.dl.attrs({
 })``;
 
 const ListItemContainer = styled.div.attrs({
-  className:
-    'md:flex justify-between md:space-x-2 space-y-0.5 md:space-y-0',
+  className: 'md:flex justify-between md:space-x-2 space-y-0.5 md:space-y-0',
 })``;
 
 const DtContainer = styled.dt.attrs({

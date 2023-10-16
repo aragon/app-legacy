@@ -448,8 +448,7 @@ const RightNarrowContent = styled.div.attrs({
 })``;
 
 const EqualDivide = styled.div.attrs({
-  className:
-    'xl:col-start-2 xl:col-span-10 xl:flex xl:space-x-3',
+  className: 'xl:col-start-2 xl:col-span-10 xl:flex xl:space-x-3',
 })``;
 
 const MembersWrapper = styled.div.attrs({

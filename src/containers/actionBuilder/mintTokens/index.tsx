@@ -515,8 +515,7 @@ const Container = styled.div.attrs<{standAlone: boolean}>(({standAlone}) => ({
 }))<{standAlone: boolean}>``;
 
 const ButtonContainer = styled.div.attrs({
-  className:
-    'flex justify-between md:justify-start p-2 md:p-3 space-x-2',
+  className: 'flex justify-between md:justify-start p-2 md:p-3 space-x-2',
 })``;
 
 const SummaryContainer = styled.div.attrs({

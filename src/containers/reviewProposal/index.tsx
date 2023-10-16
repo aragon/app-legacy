@@ -296,7 +296,9 @@ const ReviewProposal: React.FC<ReviewProposalProps> = ({
 
 export default ReviewProposal;
 
-const Header = styled.p.attrs({className: 'font-bold text-neutral-800 text-3xl'})``;
+const Header = styled.p.attrs({
+  className: 'font-bold text-neutral-800 text-3xl',
+})``;
 
 const BadgeContainer = styled.div.attrs({
   className: 'md:flex items-baseline mt-3 md:space-x-3',

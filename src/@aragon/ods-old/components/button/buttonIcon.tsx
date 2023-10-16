@@ -63,8 +63,12 @@ const StyledButton = styled(ButtonBase).attrs<StyledButtonProps>(
     switch (mode) {
       case 'secondary':
         className = `${
-          bgWhite ? 'bg-neutral-50 disabled:bg-neutral-50' : 'bg-neutral-0 disabled:bg-neutral-100'
-        } ${isActive ? 'text-neutral-800 bg-neutral-200' : 'text-neutral-600'} ${
+          bgWhite
+            ? 'bg-neutral-50 disabled:bg-neutral-50'
+            : 'bg-neutral-0 disabled:bg-neutral-100'
+        } ${
+          isActive ? 'text-neutral-800 bg-neutral-200' : 'text-neutral-600'
+        } ${
           paddingStyles[size]
         } hover:text-neutral-800 hover:bg-neutral-100 active:text-neutral-800 active:bg-neutral-200 disabled:text-neutral-300`;
         break;
@@ -72,8 +76,12 @@ const StyledButton = styled(ButtonBase).attrs<StyledButtonProps>(
       case 'ghost':
         className = `${
           bgWhite
-            ? `${isActive ? 'bg-primary-50' : 'bg-neutral-0'} active:bg-primary-50`
-            : `${isActive ? 'bg-neutral-0' : 'bg-transparent'} active:bg-neutral-0`
+            ? `${
+                isActive ? 'bg-primary-50' : 'bg-neutral-0'
+              } active:bg-primary-50`
+            : `${
+                isActive ? 'bg-neutral-0' : 'bg-transparent'
+              } active:bg-neutral-0`
         } ${isActive ? 'ext-primary-500' : 'text-neutral-500'} ${
           paddingStyles[size]
         } focus:text-primary-400 hover:text-primary-500 active:text-primary-500 disabled:text-neutral-300 disabled:bg-transparent`;

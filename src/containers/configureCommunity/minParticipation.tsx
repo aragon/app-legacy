@@ -170,7 +170,7 @@ export const MinParticipation: FC = () => {
 
                     <ProgressInfo2>
                       <p
-                        className="text-right font-bold text-primary-500"
+                        className="font-bold text-right text-primary-500"
                         style={{
                           flexBasis: `${
                             (minParticipationTokensAmount /
@@ -350,8 +350,7 @@ const Divider = styled.div.attrs({
 })``;
 
 const StatItem = styled.div.attrs({
-  className:
-    'space-y-1 md:space-y-0 md:space-x-1 md:flex md:justify-between',
+  className: 'space-y-1 md:space-y-0 md:space-x-1 md:flex md:justify-between',
 })``;
 
 const StatItemValue = styled.div.attrs({

@@ -37,7 +37,9 @@ const AccordionSummary: React.FC<AccordionSummaryPropsType> = ({
       <BoldedText>{t('labels.summary')}</BoldedText>
       {type === 'action-builder' ? (
         <div className="flex justify-between">
-          <p className="text-neutral-600 ft-text-base">{t('labels.totalWallets')}</p>
+          <p className="text-neutral-600 ft-text-base">
+            {t('labels.totalWallets')}
+          </p>
           <BoldedText>{total}</BoldedText>
         </div>
       ) : (

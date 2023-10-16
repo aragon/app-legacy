@@ -156,7 +156,7 @@ const RemoveAddresses: React.FC<RemoveAddressesProps> = ({
                 key={field.id}
                 className={`${
                   fieldIndex === 0 &&
-                  'rounded-t-xl border-t xl:rounded-none xl:border-t-0'
+                  'xl:rounded-none rounded-t-xl border-t xl:border-t-0'
                 }`}
               >
                 <div className="mb-0.5 xl:mb-0 xl:hidden">
@@ -227,7 +227,7 @@ const CustomHeader: React.FC = () => {
 
   return (
     <div className="mb-1.5 space-y-0.5">
-      <p className="text-base font-bold text-neutral-800">
+      <p className="font-bold text-base text-neutral-800">
         {t('labels.removeWallets')}
       </p>
       <p className="text-sm text-neutral-600">

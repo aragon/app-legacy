@@ -113,7 +113,8 @@ const DaoSelectMenu: React.FC = () => {
 export default DaoSelectMenu;
 
 const ModalHeader = styled.div.attrs({
-  className: 'flex items-center p-2 space-x-2 bg-neutral-0 rounded-xl sticky top-0',
+  className:
+    'flex items-center p-2 space-x-2 bg-neutral-0 rounded-xl sticky top-0',
 })`
   box-shadow:
     0px 4px 8px rgba(31, 41, 51, 0.04),

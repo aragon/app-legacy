@@ -63,8 +63,7 @@ const ModalHeader: React.FC<Props> = props => {
 export default ModalHeader;
 
 const Header = styled.div.attrs({
-  className:
-    'flex rounded-xl space-x-2 xl:space-x-3 p-2 xl:p-3 bg-neutral-0',
+  className: 'flex rounded-xl space-x-2 xl:space-x-3 p-2 xl:p-3 bg-neutral-0',
 })`
   box-shadow:
     0px 4px 8px rgba(31, 41, 51, 0.04),

@@ -118,7 +118,9 @@ export const DelegationGatingMenu: React.FC = () => {
           ) : (
             <IlluObject object="warning" />
           )}
-          <p className="text-xl text-neutral-800">{t(`modal.${bodyLabel}.title`)}</p>
+          <p className="text-xl text-neutral-800">
+            {t(`modal.${bodyLabel}.title`)}
+          </p>
           <p className="text-neutral-600">
             {t(`modal.${bodyLabel}.desc`, {
               balance: tokenAmount,

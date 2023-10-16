@@ -165,7 +165,7 @@ const InputForm: React.FC<InputFormProps> = ({
       <div className="items-baseline space-x-3 xl:flex">
         <ActionName>{selectedAction.name}</ActionName>
         <div className="hidden items-center space-x-1 text-primary-600 xl:flex">
-          <p className="text-sm font-bold text-primary-500">
+          <p className="font-bold text-sm text-primary-500">
             {selectedSC.name}
           </p>
           <IconSuccess />
@@ -173,21 +173,23 @@ const InputForm: React.FC<InputFormProps> = ({
       </div>
       <ActionDescription>{selectedAction.notice}</ActionDescription>
       <div className="mt-1 flex items-center space-x-1 text-primary-600 xl:hidden">
-        <p className="text-sm font-bold text-primary-500">{selectedSC.name}</p>
+        <p className="font-bold text-sm text-primary-500">{selectedSC.name}</p>
         <IconSuccess />
       </div>
       {actionInputs.length > 0 ? (
-        <div className="mt-5 space-y-2 rounded-xl border border-neutral-100 bg-neutral-0 p-3 shadow-100 xl:bg-neutral-50">
+        <div className="shadow-100 mt-5 space-y-2 rounded-xl border border-neutral-100 bg-neutral-0 p-3 xl:bg-neutral-50">
           {actionInputs.map(input => (
             <div key={input.name}>
-              <div className="text-base font-bold capitalize text-neutral-800">
+              <div className="font-bold text-base capitalize text-neutral-800">
                 {input.name}
                 <span className="ml-0.5 text-sm normal-case">
                   ({input.type})
                 </span>
               </div>
               <div className="mb-1.5 mt-0.5">
-                <span className="text-neutral-600 ft-text-sm">{input.notice}</span>
+                <span className="text-neutral-600 ft-text-sm">
+                  {input.notice}
+                </span>
               </div>
               <ComponentForType
                 key={`${selectedSC.address}.${selectedAction.name}.${input.name}`}
@@ -386,7 +388,7 @@ export const ComponentForType: React.FC<ComponentForTypeProps> = ({
           <>
             {input.components?.map((component, index) => (
               <div key={component.name} className="ml-3 mt-2">
-                <div className="text-base font-bold capitalize text-neutral-800">
+                <div className="font-bold text-base capitalize text-neutral-800">
                   {component.name}
                   <span className="ml-0.5 text-sm normal-case">
                     ({component.type})
@@ -421,7 +423,7 @@ export const ComponentForType: React.FC<ComponentForTypeProps> = ({
           {Object.entries(input.value as {}).map((value, index) => {
             return (
               <div key={index}>
-                <div className="mb-1.5 text-base font-bold capitalize text-neutral-800">
+                <div className="font-bold mb-1.5 text-base capitalize text-neutral-800">
                   {value[0]}
                 </div>
                 <ComponentForType
@@ -507,7 +509,7 @@ export function FormlessComponentForType({
           <>
             {input.components?.map(component => (
               <div key={component.name} className="ml-3">
-                <div className="mb-1.5 text-base font-bold capitalize text-neutral-800">
+                <div className="font-bold mb-1.5 text-base capitalize text-neutral-800">
                   {input.name}
                 </div>
                 <FormlessComponentForType
@@ -525,7 +527,7 @@ export function FormlessComponentForType({
             if (Number.isNaN(parseInt(value[0]))) {
               return (
                 <div key={index} className="ml-3">
-                  <div className="mb-1.5 text-base font-bold capitalize text-neutral-800">
+                  <div className="font-bold mb-1.5 text-base capitalize text-neutral-800">
                     {value[0]}
                   </div>
                   <FormlessComponentForType

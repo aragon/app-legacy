@@ -109,11 +109,9 @@ export const Settings: React.FC = () => {
   );
 };
 const styles = {
-  fullWidth:
-    'col-span-full xl:col-start-2 xl:col-end-12 xl:col-span-6',
+  fullWidth: 'col-span-full xl:col-start-2 xl:col-end-12 xl:col-span-6',
   leftCol: 'col-span-full xl:col-start-2 xl:col-end-8',
-  center:
-    'col-span-full xl:col-start-4 xl:col-end-10 xl:col-span-6',
+  center: 'col-span-full xl:col-start-4 xl:col-end-10 xl:col-span-6',
 };
 
 const DEFAULT_LINES_SHOWN = 3;

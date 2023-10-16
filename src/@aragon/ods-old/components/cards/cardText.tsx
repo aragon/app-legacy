@@ -35,7 +35,9 @@ type TitleProps = Pick<CardTextProps, 'type'>;
 
 const Title = styled.p.attrs<TitleProps>(({type}) => {
   const className = `${
-    type === 'label' ? 'ft-text-sm  text-neutral-500' : 'ft-text-base text-neutral-800'
+    type === 'label'
+      ? 'ft-text-sm  text-neutral-500'
+      : 'ft-text-base text-neutral-800'
   } font-bold`;
   return {className};
 })<TitleProps>``;

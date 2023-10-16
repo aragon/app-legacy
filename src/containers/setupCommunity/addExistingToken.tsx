@@ -161,6 +161,8 @@ const DescriptionContainer = styled.div.attrs({
   className: 'space-y-0.5',
 })``;
 
-const Title = styled.p.attrs({className: 'text-lg font-bold text-neutral-800'})``;
+const Title = styled.p.attrs({
+  className: 'text-lg font-bold text-neutral-800',
+})``;
 
 const Subtitle = styled.p.attrs({className: 'text-neutral-600 text-bold'})``;
