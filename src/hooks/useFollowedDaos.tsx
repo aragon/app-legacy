@@ -134,7 +134,9 @@ interface IFollowDaoMutationParams {
  * Add a followed DAO to the cache
  * @param onSuccess callback to run once DAO has been added to the cache
  */
-export const useAddFollowedDaoMutation = (params: IFollowDaoMutationParams) => {
+export const useAddFollowedDaoMutation = (
+  params?: IFollowDaoMutationParams
+) => {
   const queryClient = useQueryClient();
 
   return useMutation({
@@ -156,7 +158,7 @@ export const useAddFollowedDaoMutation = (params: IFollowDaoMutationParams) => {
       });
 
       // call the user-provided callback
-      params.onMutate?.();
+      params?.onMutate?.();
 
       // Return the previousDaos to rollback in case of an error
       return {previousDaos};
@@ -165,7 +167,7 @@ export const useAddFollowedDaoMutation = (params: IFollowDaoMutationParams) => {
     onError: (_error, _variables, context) => {
       // Rollback to the previous state if the mutation fails
       queryClient.setQueryData(['followedDaos'], context?.previousDaos);
-      params.onError?.();
+      params?.onError?.();
     },
 
     onSuccess: () => {
@@ -180,7 +182,7 @@ export const useAddFollowedDaoMutation = (params: IFollowDaoMutationParams) => {
  * @param onSuccess callback to run once followed DAO has been removed successfully
  */
 export const useRemoveFollowedDaoMutation = (
-  params: IFollowDaoMutationParams
+  params?: IFollowDaoMutationParams
 ) => {
   const queryClient = useQueryClient();
 
@@ -199,7 +201,7 @@ export const useRemoveFollowedDaoMutation = (
         return oldDaos?.filter(dao => dao.address !== variables.dao.address);
       });
 
-      params.onMutate?.();
+      params?.onMutate?.();
 
       // Return the previousDaos to rollback in case of an error
       return {previousDaos};
@@ -208,7 +210,7 @@ export const useRemoveFollowedDaoMutation = (
     onError: (_error, _variables, context) => {
       // Rollback to the previous state if the mutation fails
       queryClient.setQueryData(['followedDaos'], context?.previousDaos);
-      params.onError?.();
+      params?.onError?.();
     },
 
     onSuccess: () => {
