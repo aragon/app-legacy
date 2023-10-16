@@ -67,7 +67,7 @@ const AddWallets: React.FC = () => {
     remove(index);
     setTimeout(() => {
       trigger('wallets');
-    });
+    }, 50);
   };
 
   return (
