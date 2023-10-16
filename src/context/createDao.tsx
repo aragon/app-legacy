@@ -342,22 +342,23 @@ const CreateDaoProvider: React.FC = ({children}) => {
           const offChainPlugin =
             OffchainVotingClient.encoding.getPluginInstallItem(params, network);
           plugins.push(offChainPlugin);
-        } else {
-          const tokenVotingPlugin =
-            TokenVotingClient.encoding.getPluginInstallItem(
-              {
-                votingSettings: votingSettings,
-                ...((tokenType === 'governance-ERC20' || // token can be used as is
-                  tokenType === 'ERC-20') && // token can/will be wrapped
-                !isCustomToken // not a new token (existing token)
-                  ? {useToken: getErc20PluginParams()}
-                  : {newToken: getNewErc20PluginParams()}),
-              },
-              network
-            );
-
-          plugins.push(tokenVotingPlugin);
+          break;
         }
+        const tokenVotingPlugin =
+          TokenVotingClient.encoding.getPluginInstallItem(
+            {
+              votingSettings: votingSettings,
+              ...((tokenType === 'governance-ERC20' || // token can be used as is
+                tokenType === 'ERC-20') && // token can/will be wrapped
+              !isCustomToken // not a new token (existing token)
+                ? {useToken: getErc20PluginParams()}
+                : {newToken: getNewErc20PluginParams()}),
+            },
+            network
+          );
+
+        plugins.push(tokenVotingPlugin);
+
         break;
       }
       default:

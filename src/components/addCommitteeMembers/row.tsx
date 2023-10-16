@@ -14,7 +14,7 @@ import styled from 'styled-components';
 import {WrappedWalletInput} from 'components/wrappedWalletInput';
 import {useAlertContext} from 'context/alert';
 import {useProviders} from 'context/providers';
-import {walletInWalletList, Web3Address} from 'utils/library';
+import {Web3Address} from 'utils/library';
 import {validateWeb3Address} from 'utils/validators';
 import {MultisigWalletField} from 'components/multisigWallets/row';
 
@@ -50,8 +50,9 @@ const WalletRow: React.FC<WalletRowProps> = ({index, onDelete}) => {
         t
       );
 
-      if (validationResult && validationResult !== true)
+      if (validationResult && validationResult !== true) {
         return validationResult;
+      }
 
       if (
         committee?.some(
