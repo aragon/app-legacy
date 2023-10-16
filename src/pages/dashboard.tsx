@@ -272,7 +272,7 @@ export const Dashboard: React.FC = () => {
             ).toString()}
             daoChain={CHAIN_METADATA[network].name}
             daoType={daoType}
-            favorited={isFavoritedDao}
+            following={isFavoritedDao}
             onCopy={onCopy}
             onFavoriteClick={() =>
               handleFavoriteClick({

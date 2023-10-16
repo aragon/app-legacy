@@ -3,15 +3,15 @@ import {styled} from 'styled-components';
 import {useScreen} from '../../hooks';
 import {shortenAddress, shortenDaoUrl} from '../../utils';
 import {AvatarDao} from '../avatar';
-import {ButtonIcon, ButtonText} from '../button';
+import {ButtonText} from '../button';
 import {Dropdown} from '../dropdown';
 import {
   IconBlock,
+  IconCheckmark,
   IconChevronDown,
+  IconChevronUp,
   IconCommunity,
   IconCopy,
-  IconFavoriteDefault,
-  IconFavoriteSelected,
   IconFlag,
 } from '../icons';
 import {Link} from '../link';
@@ -19,6 +19,12 @@ import {ListItemLink} from '../listItem';
 
 const DEFAULT_LINES_SHOWN = 2;
 const DEFAULT_LINKS_SHOWN = 3;
+const DEFAULT_TRANSLATIONS: HeaderDaoProps['translation'] = {
+  follow: 'Follow',
+  following: 'Following',
+  readLess: 'Read less',
+  readMore: 'Read more',
+};
 
 export type HeaderDaoProps = {
   daoName: string;
@@ -30,7 +36,7 @@ export type HeaderDaoProps = {
   created_at: string;
   daoChain: string;
   daoType: string;
-  favorited?: boolean;
+  following?: boolean;
   links?: Array<{
     label: string;
     href: string;
@@ -38,6 +44,8 @@ export type HeaderDaoProps = {
   translation?: {
     readMore: string;
     readLess: string;
+    follow: string;
+    following: string;
   };
   onCopy?: (input: string) => void;
   onFavoriteClick?: (e: React.MouseEvent<HTMLButtonElement>) => void;
@@ -57,12 +65,14 @@ export const HeaderDao: React.FC<HeaderDaoProps> = ({
   created_at,
   daoChain,
   daoType,
-  favorited = false,
+  following = false,
   links = [],
-  translation,
+  translation = {},
   onCopy,
   onFavoriteClick,
 }) => {
+  const labels = {...DEFAULT_TRANSLATIONS, ...translation};
+
   const [showAll, setShowAll] = useState(true);
   const [shouldClamp, setShouldClamp] = useState(false);
 
@@ -162,11 +172,15 @@ export const HeaderDao: React.FC<HeaderDaoProps> = ({
             </Description>
             {shouldClamp && (
               <Link
-                label={
-                  showAll
-                    ? `${translation?.readLess ?? 'Read less'} ↑`
-                    : `${translation?.readMore ?? 'Read more'} ↓`
-                }
+                {...(showAll
+                  ? {
+                      label: labels.readLess,
+                      iconRight: <IconChevronUp />,
+                    }
+                  : {
+                      label: labels.readMore,
+                      iconRight: <IconChevronDown />,
+                    })}
                 className="ft-text-base"
                 onClick={() => setShowAll(prevState => !prevState)}
               />
@@ -229,14 +243,14 @@ export const HeaderDao: React.FC<HeaderDaoProps> = ({
                 }))}
               />
             )}
-            <ButtonIcon
-              icon={
-                favorited ? <IconFavoriteSelected /> : <IconFavoriteDefault />
-              }
+            <ButtonText
               onClick={onFavoriteClick}
               mode="secondary"
               size="large"
               bgWhite
+              {...(following
+                ? {iconLeft: <IconCheckmark />, label: labels.following}
+                : {label: labels.follow})}
             />
           </ActionContainer>
         </ActionWrapper>
