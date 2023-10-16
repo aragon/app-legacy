@@ -119,7 +119,7 @@ export const AccordionItem: React.FC<AccordionMethodType & {name: string}> = ({
 
         {methodDescription && (
           <AdditionalInfoContainer>
-            <p className="md:pr-10">{methodDescription}</p>
+            <p className="md:pr-20">{methodDescription}</p>
 
             {additionalInfo && (
               <AlertInline label={additionalInfo} mode="neutral" />

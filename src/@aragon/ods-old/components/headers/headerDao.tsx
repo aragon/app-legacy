@@ -191,7 +191,7 @@ export const HeaderDao: React.FC<HeaderDaoProps> = ({
           <AvatarDao
             daoName={daoName || ''}
             size="unset"
-            className="h-10 w-10 text-lg xl:h-28 xl:w-28 xl:text-xl"
+            className="h-20 w-20 text-lg xl:h-28 xl:w-28 xl:text-xl"
             {...(daoAvatar && {src: daoAvatar})}
           />
         </AvatarContainer>

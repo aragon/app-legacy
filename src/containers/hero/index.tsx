@@ -31,14 +31,14 @@ function Hero() {
   );
 }
 
-// NOTE: "h-[448px] -mt-10 pt-10" is the "simplest" way to achieve a sticky header
+// NOTE: "h-[448px] -mt-20 pt-20" is the "simplest" way to achieve a sticky header
 // with a gradient AND a primary 400 background. What it does it is extends the
 // hero by a height of 12, moves it up using the negative margin and compensates
 // by lowering the content using the padding-top. Same with factor 12 on
 // desktop.
 const Container = styled.div.attrs({
   className:
-    'bg-primary-400 h-[448px] -mt-10 pt-10  xl:h-[536px] xl:pt-12 xl:-mt-12 overflow-hidden',
+    'bg-primary-400 h-[448px] -mt-20 pt-20  xl:h-[536px] xl:pt-24 xl:-mt-24 overflow-hidden',
 })``;
 
 const Wrapper = styled.div.attrs({
@@ -47,7 +47,7 @@ const Wrapper = styled.div.attrs({
 })``;
 
 const ContentWrapper = styled.div.attrs({
-  className: 'xl:space-y-0.75 space-y-1 max-w-lg pt-4.5 xl:pt-10',
+  className: 'xl:space-y-0.75 space-y-1 max-w-lg pt-4.5 xl:pt-20',
 })``;
 
 const Title = styled.h1.attrs({

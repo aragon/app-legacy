@@ -307,7 +307,7 @@ const PercentageInputDisplay = styled(TextInput).attrs({
 })``;
 
 const PercentageInputDisplayWrapper = styled.div.attrs({
-  className: 'order-5 md:order-4 w-10',
+  className: 'order-5 md:order-4 w-20',
 })``;
 
 const LabelWrapper = styled.div.attrs({

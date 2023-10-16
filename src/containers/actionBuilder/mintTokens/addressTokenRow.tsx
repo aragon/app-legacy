@@ -253,7 +253,7 @@ const PercentageDistribution: React.FC<
   }
 
   return (
-    <div className="w-12">
+    <div className="w-24">
       <TextInput
         className="text-right"
         name={`actions.${actionIndex}.inputs.mintTokensToWallets.${fieldIndex}.amount`}

@@ -62,5 +62,5 @@ const Subtitle = styled.p.attrs({
 })``;
 
 const StyledImg = styled.img.attrs({
-  className: 'h-12 w-12',
+  className: 'h-24 w-24',
 })``;

@@ -58,7 +58,7 @@ export const EmptyStateHeading = styled.h1.attrs({
 
 export const EmptyStateContainer = styled.div.attrs({
   className:
-    'flex flex-col w-full items-center py-4 px-3 md:py-12 md:px-6 mx-auto mt-3 md:mt-5 ft-text-lg bg-neutral-0 rounded-xl text-neutral-500',
+    'flex flex-col w-full items-center py-4 px-3 md:py-24 md:px-6 mx-auto mt-3 md:mt-5 ft-text-lg bg-neutral-0 rounded-xl text-neutral-500',
 })``;
 
 const ActionsContainer = styled.div.attrs({

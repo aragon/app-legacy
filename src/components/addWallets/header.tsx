@@ -14,7 +14,7 @@ const AddWalletsHeader: React.FC = () => {
       <div className="w-[200px]">
         <Label label={t('finance.tokens')} />
       </div>
-      <div className="w-10">
+      <div className="w-20">
         <Label label={t('finance.allocation')} />
       </div>
       <div className="w-6" />
