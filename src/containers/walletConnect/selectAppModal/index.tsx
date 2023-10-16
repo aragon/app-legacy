@@ -43,7 +43,7 @@ const SelectWCApp: React.FC<Props> = props => {
   const {isDesktop} = useScreen();
   const {onConnectNewdApp, onSelectExistingdApp, onClose, isOpen} = props;
 
-  const {activeSessions} = useWalletConnectContext();
+  const {sessions} = useWalletConnectContext();
 
   /*************************************************
    *                     Render                    *
@@ -62,7 +62,7 @@ const SelectWCApp: React.FC<Props> = props => {
       <Content>
         <div className="space-y-1">
           {AllowListDApps.map(dApp => {
-            const filteredSession = activeSessions.filter(session =>
+            const filteredSession = sessions.filter(session =>
               session.peer.metadata.name
                 .toLowerCase()
                 .includes(dApp.name.toLowerCase())

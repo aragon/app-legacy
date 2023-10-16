@@ -84,15 +84,14 @@ const WalletConnect: React.FC<WalletConnectProps> = ({actionIndex}) => {
     }
 
     const isSelectedSessionActive =
-      wcValues.activeSessions.find(
-        ({topic}) => topic === selectedSession.topic
-      ) != null;
+      wcValues.sessions.find(({topic}) => topic === selectedSession.topic) !=
+      null;
 
     if (!isSelectedSessionActive) {
       setSelectedSession(undefined);
       setListeningActionsIsOpen(false);
     }
-  }, [wcValues.activeSessions, selectedSession]);
+  }, [wcValues.sessions, selectedSession]);
 
   /*************************************************
    *                     Render                    *

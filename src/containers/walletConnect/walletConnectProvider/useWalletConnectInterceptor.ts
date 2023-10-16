@@ -22,7 +22,6 @@ export type WcInterceptorValues = {
   ) => Promise<PairingTypes.Struct | undefined>;
   wcDisconnect: (topic: string) => Promise<void>;
   sessions: WcSession[];
-  activeSessions: WcSession[];
   actions: WcActionRequest[];
 };
 
@@ -33,8 +32,6 @@ export function useWalletConnectInterceptor(): WcInterceptorValues {
   const [sessions, setSessions] = useState<WcSession[]>(
     walletConnectInterceptor.getActiveSessions(daoDetails?.address)
   );
-
-  const activeSessions = sessions;
 
   const [actions, setActions] = useState<WcActionRequest[]>([]);
 
@@ -111,5 +108,5 @@ export function useWalletConnectInterceptor(): WcInterceptorValues {
     };
   }, [handleRequest]);
 
-  return {wcConnect, wcDisconnect, sessions, activeSessions, actions};
+  return {wcConnect, wcDisconnect, sessions, actions};
 }
