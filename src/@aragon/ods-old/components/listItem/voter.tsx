@@ -100,7 +100,7 @@ const Avatar: FC<AvatarProps> = ({src}) => {
 const Container = styled.button.attrs(() => {
   const baseLayoutClasses =
     'flex items-center justify-between w-full border-ui-100 border-b-2';
-  const baseStyleClasses = 'bg-ui-0 pl-2 pr-1.5 py-1.5 ';
+  const baseStyleClasses = 'bg-neutral-0 pl-2 pr-1.5 py-1.5 ';
   let className:
     | string
     | undefined = `${baseLayoutClasses} ${baseStyleClasses}`;

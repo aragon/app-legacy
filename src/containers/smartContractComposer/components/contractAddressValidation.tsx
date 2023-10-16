@@ -750,7 +750,7 @@ const Description = styled.p.attrs({
 })``;
 
 const VerificationCard = styled.div.attrs({
-  className: 'bg-ui-0 rounded-xl p-2 mt-3 space-y-2',
+  className: 'bg-neutral-0 rounded-xl p-2 mt-3 space-y-2',
 })``;
 
 const VerificationTitle = styled.h2.attrs({

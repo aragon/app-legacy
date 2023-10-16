@@ -125,7 +125,7 @@ export const ActiveIndicator = styled.li.attrs({
 })``;
 
 export const Indicator = styled.li.attrs({
-  className: 'inline-block bg-ui-200 h-0.75 w-2 ml-1 rounded-xl',
+  className: 'inline-block bg-neutral-200 h-0.75 w-2 ml-1 rounded-xl',
 })``;
 
 export const StyledCarousel = styled(ReactResponsiveCarousel).attrs({})`

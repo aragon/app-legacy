@@ -89,7 +89,7 @@ const Title = styled.div.attrs({
 })``;
 
 const ModalHeader = styled.div.attrs({
-  className: 'flex items-center p-2 space-x-2 bg-ui-0 rounded-xl',
+  className: 'flex items-center p-2 space-x-2 bg-neutral-0 rounded-xl',
 })`
   box-shadow:
     0px 4px 8px rgba(31, 41, 51, 0.04),
@@ -107,7 +107,7 @@ type Props = {
 
 // For the sake of consistency height of modal is halfway screen size, but modals need to be higher
 const Modal = styled.div.attrs<{show: Props}>(({show}) => ({
-  className: `${show ? 'block' : 'hidden'} fixed z-20 bg-ui-50
+  className: `${show ? 'block' : 'hidden'} fixed z-20 bg-neutral-50
   bottom-0 w-full rounded-t-xl
   md:bottom-3 md:left-1/2 md:w-56 md:rounded-b-xl
   md:-translate-x-1/2

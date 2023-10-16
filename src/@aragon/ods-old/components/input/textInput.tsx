@@ -48,7 +48,7 @@ type StyledContainerProps = Pick<
 export const Container = styled.div.attrs<StyledContainerProps>(
   ({mode, disabled, containerClassName}) => {
     let className = `${
-      disabled ? 'bg-ui-100 border-ui-200 border-2' : 'bg-ui-0'
+      disabled ? 'bg-neutral-100 border-ui-200 border-2' : 'bg-neutral-0'
     } flex items-center focus-within:ring-2
     focus-within:ring-primary-500
     rounded-xl hover:border-ui-300 border-2 h-6

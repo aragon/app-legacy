@@ -210,7 +210,7 @@ const Wrapper = styled.div.attrs({className: 'flex flex-1 overflow-auto'})``;
 
 const Aside = styled.div.attrs({
   className:
-    'flex flex-col justify-between overflow-auto p-3 w-40 bg-ui-50 border-r border-ui-100',
+    'flex flex-col justify-between overflow-auto p-3 w-40 bg-neutral-50 border-r border-ui-100',
 })``;
 
 const Main = styled.div.attrs({
@@ -218,7 +218,7 @@ const Main = styled.div.attrs({
 })``;
 
 const Container = styled.div.attrs({
-  className: 'flex h-full bg-ui-0 p-6 pt-0 justify-center items-center',
+  className: 'flex h-full bg-neutral-0 p-6 pt-0 justify-center items-center',
 })``;
 
 const StyledModal = styled(Modal).attrs({

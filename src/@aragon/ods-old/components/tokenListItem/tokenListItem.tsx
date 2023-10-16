@@ -56,10 +56,10 @@ type StyledContentProps = Pick<TokenListItemProps, 'bgWhite'>;
 
 const Container = styled.button.attrs<StyledContentProps>(({bgWhite}) => ({
   className: `w-full flex justify-between items-center py-1.5
-  px-2 hover:text-neutral-800 hover:bg-ui-100 active:text-neutral-800
-  text-neutral-600 active:bg-ui-200 disabled:text-neutral-300
-  disabled:text-neutral-300 disabled:bg-ui-100 rounded-xl
-  ${bgWhite ? 'bg-ui-50' : 'bg-ui-0'}`,
+  px-2 hover:text-neutral-800 hover:bg-neutral-100 active:text-neutral-800
+  text-neutral-600 active:bg-neutral-200 disabled:text-neutral-300
+  disabled:text-neutral-300 disabled:bg-neutral-100 rounded-xl
+  ${bgWhite ? 'bg-neutral-50' : 'bg-neutral-0'}`,
 }))``;
 
 const AmountWrapper = styled.h3.attrs({

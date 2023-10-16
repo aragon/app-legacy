@@ -60,7 +60,7 @@ export default MinimumApproval;
 
 const Container = styled.div.attrs({
   className:
-    'flex flex-col xl:flex-row items-center p-2 pt-4 xl:p-3 gap-x-3 gap-y-4 rounded-xl bg-ui-0',
+    'flex flex-col xl:flex-row items-center p-2 pt-4 xl:p-3 gap-x-3 gap-y-4 rounded-xl bg-neutral-0',
 })``;
 
 const LinearProgressContainer = styled.div.attrs({

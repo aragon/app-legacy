@@ -132,7 +132,7 @@ export const SelectEligibility = () => {
 
 const Container = styled.div.attrs({
   className:
-    'md:flex p-2 md:p-3 space-y-1 md:space-y-0 rounded-xl bg-ui-0 md:space-x-3 space-x-0',
+    'md:flex p-2 md:p-3 space-y-1 md:space-y-0 rounded-xl bg-neutral-0 md:space-x-3 space-x-0',
 })``;
 
 const OptionsContainers = styled.div.attrs({

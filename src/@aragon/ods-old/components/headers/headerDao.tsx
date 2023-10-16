@@ -330,7 +330,7 @@ const CredentialsDropdownItem = styled.div.attrs({
 
 const CredentialsDropdownTrigger = styled(Link).attrs({
   className:
-    'mt-1.5 text-primary-400 hover:text-primary-600 active:text-primary-800 focus-visible:ring focus-visible:ring-primary-200 focus-visible:bg-ui-50',
+    'mt-1.5 text-primary-400 hover:text-primary-600 active:text-primary-800 focus-visible:ring focus-visible:ring-primary-200 focus-visible:bg-neutral-50',
 })``;
 
 const StyledCopyIcon = styled(IconCopy).attrs({

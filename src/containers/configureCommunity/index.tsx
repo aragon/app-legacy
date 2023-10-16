@@ -453,7 +453,7 @@ const FormItem = styled.div.attrs({
 
 const DurationContainer = styled.div.attrs({
   className:
-    'flex flex-col md:flex-row space-y-1.5 md:space-y-0 md:space-x-1.5 p-3 bg-ui-0 rounded-xl',
+    'flex flex-col md:flex-row space-y-1.5 md:space-y-0 md:space-x-1.5 p-3 bg-neutral-0 rounded-xl',
 })``;
 
 const TimeLabelWrapper = styled.div.attrs({
@@ -466,7 +466,7 @@ const TimeLabel = styled.span.attrs({
 
 const ApprovalContainer = styled.div.attrs({
   className:
-    'flex flex-col flex-col-reverse md:flex-row md:items-center p-3 pt-4 md:p-3 space-y-3 space-y-reverse md:space-y-0 md:space-x-3 rounded-xl bg-ui-0',
+    'flex flex-col flex-col-reverse md:flex-row md:items-center p-3 pt-4 md:p-3 space-y-3 space-y-reverse md:space-y-0 md:space-x-3 rounded-xl bg-neutral-0',
 })``;
 
 const LinearProgressContainer = styled.div.attrs({
@@ -475,7 +475,7 @@ const LinearProgressContainer = styled.div.attrs({
 
 const ProgressBarTick = styled.div.attrs({
   className:
-    'absolute left-1/2 w-1 h-2.5 border-r-2 border-l-2 -translate-x-1/2 bg-ui-300 border-ui-0',
+    'absolute left-1/2 w-1 h-2.5 border-r-2 border-l-2 -translate-x-1/2 bg-neutral-300 border-ui-0',
 })``;
 
 const ProgressInfo1 = styled.div.attrs({

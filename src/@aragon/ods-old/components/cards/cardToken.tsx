@@ -112,7 +112,7 @@ type CardProps = Pick<CardTokenProps, 'bgWhite'>;
 
 const Card = styled.div.attrs<CardProps>(({bgWhite}) => ({
   className: `flex justify-between space-x-4 items-center py-2.5 px-3 overflow-hidden ${
-    bgWhite ? 'bg-ui-50' : 'bg-ui-0'
+    bgWhite ? 'bg-neutral-50' : 'bg-neutral-0'
   } rounded-xl`,
 }))<CardProps>``;
 

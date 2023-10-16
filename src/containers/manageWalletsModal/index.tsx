@@ -185,7 +185,7 @@ const ManageWalletsModal: React.FC<ManageWalletsModalProps> = ({
 export default ManageWalletsModal;
 
 const ModalHeader = styled.div.attrs({
-  className: 'p-3 bg-ui-0 rounded-xl sticky top-0',
+  className: 'p-3 bg-neutral-0 rounded-xl sticky top-0',
 })`
   box-shadow:
     0px 4px 8px rgba(31, 41, 51, 0.04),

@@ -362,7 +362,7 @@ const SubtitleContainer = styled.div.attrs({
 
 const Header = styled.div.attrs({
   className: `p-2 xl:p-0 pb-3 xl:mt-5 space-y-2 md:space-y-3
-   bg-ui-0 xl:bg-transparent md:rounded-xl md:border
+   bg-neutral-0 xl:bg-transparent md:rounded-xl md:border
    md:border-ui-100 xl:border-none md:shadow-100 xl:shadow-none`,
 })``;
 

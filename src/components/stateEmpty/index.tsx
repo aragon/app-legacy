@@ -136,12 +136,12 @@ const Card = styled.div.attrs<
   let className = 'flex flex-col items-center rounded-xl w-full ';
 
   if (mode === 'card') {
-    className += 'border bg-ui-0 ';
+    className += 'border bg-neutral-0 ';
     className += `${customCardPaddingClassName || 'p-3 md:p-6'} `;
 
     if (type === 'Object') className += 'gap-y-1 ';
   } else {
-    className += 'bg-ui-transparent ';
+    className += 'bg-neutral-transparent ';
   }
 
   if (type === 'Human' || type === 'both') className += 'gap-y-3 ';

@@ -29,11 +29,11 @@ const CardWithImage: React.FC<CardWithImageProps> = ({
 export default CardWithImage;
 
 const Container = styled.div.attrs({
-  className: 'flex-1 p-3 rounded-xl bg-ui-0 mx-1 mb-3 xl:m-0',
+  className: 'flex-1 p-3 rounded-xl bg-neutral-0 mx-1 mb-3 xl:m-0',
 })``;
 
 const ImageContainer = styled.div.attrs({
-  className: 'mb-2 rounded-xl flex justify-center bg-ui-50',
+  className: 'mb-2 rounded-xl flex justify-center bg-neutral-50',
 })``;
 
 const VStack = styled.div.attrs({

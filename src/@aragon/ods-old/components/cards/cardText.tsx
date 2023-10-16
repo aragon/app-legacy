@@ -26,7 +26,7 @@ type ContainerProps = Pick<CardTextProps, 'bgWhite'>;
 
 const Container = styled.div.attrs<ContainerProps>(({bgWhite}) => {
   const className = `${
-    !bgWhite && 'bg-ui-0'
+    !bgWhite && 'bg-neutral-0'
   } break-words p-2 md:p-3 rounded-xl space-y-1 text-neutral-600`;
   return {className};
 })<ContainerProps>``;

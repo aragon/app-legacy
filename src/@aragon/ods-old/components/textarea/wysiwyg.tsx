@@ -229,7 +229,7 @@ const Container = styled.div.attrs<Props>(({disabled, fullScreen = false}) => ({
     fullScreen
       ? 'h-screen flex flex-col fixed top-0'
       : 'rounded-xl border-2 border-ui-100 hover:border-ui-300 focus-within:ring-2 focus-within:ring-primary-500 active:border-primary-500 active:ring-0 '
-  } ${disabled ? 'bg-ui-100 border-ui-200' : 'bg-white'}`,
+  } ${disabled ? 'bg-neutral-100 border-ui-200' : 'bg-white'}`,
 }))<Props>`
   ::-webkit-input-placeholder {
     color: #9aa5b1;
@@ -246,9 +246,9 @@ const Container = styled.div.attrs<Props>(({disabled, fullScreen = false}) => ({
 `;
 
 const StyledMenuBar = styled.div.attrs<Props>(({disabled, fullScreen}) => ({
-  className: `bg-ui-50 px-2 py-1.5 flex flex-wrap justify-between ${
+  className: `bg-neutral-50 px-2 py-1.5 flex flex-wrap justify-between ${
     fullScreen ? 'sticky top-0 z-10' : 'rounded-t-xl'
-  } ${disabled ? 'bg-ui-100' : ''}`,
+  } ${disabled ? 'bg-neutral-100' : ''}`,
 }))<Props>``;
 
 const Toolgroup = styled.div.attrs({

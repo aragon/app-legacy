@@ -587,8 +587,8 @@ export const Container = styled.div.attrs<StyledContainerProps>(
       : 'focus-within:ring-2 focus-within:ring-primary-500';
 
     const bgAndBorderColor = disabled
-      ? 'bg-ui-100 border-ui-200 text-neutral-700'
-      : 'bg-ui-0 text-neutral-600';
+      ? 'bg-neutral-100 border-ui-200 text-neutral-700'
+      : 'bg-neutral-0 text-neutral-600';
 
     return {
       className: `${baseClassName} ${modeClassName} ${bgAndBorderColor} ${focusClass}`,

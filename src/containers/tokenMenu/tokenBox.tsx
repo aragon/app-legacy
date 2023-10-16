@@ -31,7 +31,7 @@ export default function TokenBox({
 const Box = styled.div.attrs({
   className: `flex items-center gap-x-2 py-1.5 px-2
     bg-white rounded-xl cursor-pointer
-    hover:text-neutral-800 hover:bg-ui-100`,
+    hover:text-neutral-800 hover:bg-neutral-100`,
 })``;
 
 const AvatarTokenWrapper = styled.span``;

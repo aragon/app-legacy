@@ -53,7 +53,7 @@ const ResourceList: React.FC<ResourceListProps> = ({
 
 export default ResourceList;
 
-const Container = styled.div.attrs({className: 'p-3 bg-ui-0 rounded-xl'})``;
+const Container = styled.div.attrs({className: 'p-3 bg-neutral-0 rounded-xl'})``;
 
 const Title = styled.p.attrs({className: 'ft-text-xl font-bold text-neutral-800'})``;
 

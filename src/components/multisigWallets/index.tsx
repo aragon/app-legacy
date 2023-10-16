@@ -212,7 +212,7 @@ const DescriptionContainer = styled.div.attrs(() => ({
   className: 'space-y-0.5 flex flex-col',
 }))``;
 const TableContainer = styled.div.attrs(() => ({
-  className: 'rounded-xl bg-ui-0 flex flex-col',
+  className: 'rounded-xl bg-neutral-0 flex flex-col',
 }))``;
 const TableTitleContainer = styled.div.attrs(() => ({
   className: 'mx-3 mt-3 mb-1.5',
@@ -224,7 +224,7 @@ const Text = styled.p.attrs({
   className: 'ft-text-base  text-neutral-600',
 })``;
 const Divider = styled.div.attrs(() => ({
-  className: 'flex bg-ui-50 h-0.25',
+  className: 'flex bg-neutral-50 h-0.25',
 }))``;
 const ActionsContainer = styled.div.attrs(() => ({
   className: 'flex xl:px-3 xl:py-1.5 p-2 place-content-between',

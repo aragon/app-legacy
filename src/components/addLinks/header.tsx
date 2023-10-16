@@ -25,7 +25,7 @@ export default AddLinksHeader;
 
 const Container = styled.div.attrs<{bgWhite: BgWhite}>(({bgWhite}) => ({
   className: `hidden md:flex p-2 space-x-2 ${
-    bgWhite ? 'bg-ui-50 border border-ui-100 rounded-t-xl' : 'bg-ui-0'
+    bgWhite ? 'bg-neutral-50 border border-ui-100 rounded-t-xl' : 'bg-neutral-0'
   }`,
 }))<BgWhite>``;
 

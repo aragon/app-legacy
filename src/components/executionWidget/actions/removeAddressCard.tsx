@@ -90,5 +90,5 @@ export const RemoveAddressCard: React.FC<{
 };
 
 const Container = styled.div.attrs({
-  className: 'bg-ui-50 border border-t-0 border-ui-100 space-y-1 p-2',
+  className: 'bg-neutral-50 border border-t-0 border-ui-100 space-y-1 p-2',
 })``;

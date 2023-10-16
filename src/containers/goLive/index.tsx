@@ -33,7 +33,7 @@ export const GoLiveHeader: React.FC = () => {
   };
 
   return (
-    <div className="bg-ui-0 px-2 pb-3 pt-2 md:rounded-xl md:p-3 xl:p-6 xl:pt-3">
+    <div className="bg-neutral-0 px-2 pb-3 pt-2 md:rounded-xl md:p-3 xl:p-6 xl:pt-3">
       <div className="xl:hidden">
         <Breadcrumb
           crumbs={{label: t('createDAO.title'), path: Landing}}

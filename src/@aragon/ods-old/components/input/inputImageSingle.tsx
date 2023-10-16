@@ -149,7 +149,7 @@ type DefaultContainerProps = {
 
 const DefaultContainer = styled.div.attrs<DefaultContainerProps>(
   ({isdragactive}) => ({
-    className: `flex items-center justify-center bg-ui-0
+    className: `flex items-center justify-center bg-neutral-0
     h-8 w-8 border-dashed ${
       isdragactive ? 'border-primary-500' : 'border-ui-100'
     } border-2 rounded-xl cursor-pointer`,
@@ -157,7 +157,7 @@ const DefaultContainer = styled.div.attrs<DefaultContainerProps>(
 )<DefaultContainerProps>``;
 
 const LoadingContainer = styled.div.attrs({
-  className: `flex items-center justify-center bg-ui-0
+  className: `flex items-center justify-center bg-neutral-0
     h-8 w-8 border-dashed border-primary-500 border-2 rounded-xl`,
 })``;
 
@@ -166,7 +166,7 @@ const ImageContainer = styled.div.attrs({
 })``;
 
 const Preview = styled.img.attrs({
-  className: 'rounded-xl bg-ui-0 h-8 w-8',
+  className: 'rounded-xl bg-neutral-0 h-8 w-8',
 })``;
 
 const StyledButton = styled(ButtonIcon).attrs({

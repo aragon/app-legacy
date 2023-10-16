@@ -55,7 +55,7 @@ export default SearchHeader;
 
 const Container = styled.div.attrs({
   className:
-    'flex sticky top-0 justify-between items-center py-2.5 px-3 bg-ui-0 border-b border-ui-100',
+    'flex sticky top-0 justify-between items-center py-2.5 px-3 bg-neutral-0 border-b border-ui-100',
 })``;
 
 const LeftContent = styled.div.attrs({
@@ -67,5 +67,5 @@ const SelectedValue = styled.p.attrs({
 })``;
 
 const ActionSearchInput = styled.input.attrs({
-  className: 'flex-1 text-neutral-300 bg-ui-0 ft-text-base focus:outline-none',
+  className: 'flex-1 text-neutral-300 bg-neutral-0 ft-text-base focus:outline-none',
 })``;

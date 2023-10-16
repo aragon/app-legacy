@@ -68,7 +68,7 @@ const StyledAvatar = styled.img.attrs<StyledAvatarProps>(({size}) => {
 
 const AvatarContainer = styled.div.attrs<StyledContainerProps>(
   ({size, mode}) => {
-    const className = `overflow-hidden bg-ui-100
+    const className = `overflow-hidden bg-neutral-100
     ${sizes[size].sizes}
     ${mode === 'circle' ? 'rounded-full' : 'rounded-2xl'}
     `;

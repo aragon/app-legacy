@@ -107,8 +107,8 @@ type ContainerTypes = {
 const Container = styled.div.attrs<ContainerTypes>(({disabled, type}) => ({
   className: `flex-1 py-1.5 px-2 rounded-xl border-2 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 ${
     disabled
-      ? 'bg-ui-100 border-ui-300'
-      : `bg-ui-0 group hover:border-primary-500 cursor-pointer ${
+      ? 'bg-neutral-100 border-ui-300'
+      : `bg-neutral-0 group hover:border-primary-500 cursor-pointer ${
           type === 'error'
             ? 'border-critical-500'
             : type !== 'default'

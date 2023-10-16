@@ -44,8 +44,8 @@ const Container = styled.button.attrs<Selectable>(({selected}) => {
 
   return {
     className: selected
-      ? `${baseClasses} bg-ui-0`
-      : `${baseClasses} hover:bg-ui-50 focus:bg-ui-50 active:bg-ui-0`,
+      ? `${baseClasses} bg-neutral-0`
+      : `${baseClasses} hover:bg-neutral-50 focus:bg-neutral-50 active:bg-neutral-0`,
   };
 })<Selectable>``;
 

@@ -35,7 +35,7 @@ export const OverviewDAOHeader: React.FC<OverviewDAOHeaderProps> = ({
   };
 
   return (
-    <div className="bg-ui-0 p-2 md:rounded-xl md:p-6">
+    <div className="bg-neutral-0 p-2 md:rounded-xl md:p-6">
       <div className="mb-3 xl:hidden">
         <Breadcrumb
           crumbs={{

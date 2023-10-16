@@ -103,11 +103,11 @@ const Container = styled.button.attrs<InputContainerProps>(
     switch (mode) {
       case 'disabled':
         className += ' text-neutral-300';
-        className += bgWhite ? ' bg-ui-0' : ' bg-ui-50';
+        className += bgWhite ? ' bg-neutral-0' : ' bg-neutral-50';
         break;
       case 'selected':
         className += ' text-primary-500 border-primary-500';
-        className += bgWhite ? ' bg-primary-50' : ' bg-ui-0';
+        className += bgWhite ? ' bg-primary-50' : ' bg-neutral-0';
         break;
       default:
         {
@@ -117,9 +117,9 @@ const Container = styled.button.attrs<InputContainerProps>(
           let activeClasses = 'active:outline-none active:ring-0';
           activeClasses += bgWhite
             ? ' active:bg-primary-50'
-            : ' active:bg-ui-0';
+            : ' active:bg-neutral-0';
 
-          className += bgWhite ? ' bg-ui-0' : ' bg-ui-50';
+          className += bgWhite ? ' bg-neutral-0' : ' bg-neutral-50';
           className += ` text-neutral-600 ${activeClasses} ${focusClasses} ${hoverClasses}`;
         }
         break;

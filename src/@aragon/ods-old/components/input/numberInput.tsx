@@ -149,8 +149,8 @@ export type StyledContainerProps = Pick<
 const Container = styled.div.attrs<StyledContainerProps>(
   ({mode, disabled, width}) => {
     let className = `${
-      disabled ? 'bg-ui-100' : 'bg-ui-0'
-    } inline-flex bg-ui-0 ${
+      disabled ? 'bg-neutral-100' : 'bg-neutral-0'
+    } inline-flex bg-neutral-0 ${
       width ? '' : 'w-full'
     } focus:outline-none items-center py-0.75 px-1
       focus-within:ring-2 focus-within:ring-primary-500 justify-between

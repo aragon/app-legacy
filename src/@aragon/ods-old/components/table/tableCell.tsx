@@ -27,7 +27,7 @@ export const TableCell: React.FC<TableCellProps> = ({
     return (
       <td
         data-testid="tableCell"
-        className={`bg-ui-100 px-2 py-1.5 ${
+        className={`bg-neutral-100 px-2 py-1.5 ${
           rightAligned ? 'text-right' : 'text-left'
         } ${className}`}
       >
@@ -39,7 +39,7 @@ export const TableCell: React.FC<TableCellProps> = ({
     return (
       <th
         data-testid="tableCell"
-        className={`bg-ui-100 px-2 py-1.75 ${
+        className={`bg-neutral-100 px-2 py-1.75 ${
           rightAligned ? 'text-right' : 'text-left'
         } ${className}`}
       >
@@ -50,7 +50,7 @@ export const TableCell: React.FC<TableCellProps> = ({
     return (
       <td
         data-testid="tableCell"
-        className={`px-2 py-1.75 ${!bgWhite && 'bg-ui-0'} ${
+        className={`px-2 py-1.75 ${!bgWhite && 'bg-neutral-0'} ${
           rightAligned ? 'text-right' : 'text-left'
         } ${className}`}
       >
@@ -63,7 +63,7 @@ export const TableCell: React.FC<TableCellProps> = ({
     return (
       <td
         data-testid="tableCell"
-        className={`px-2 py-1.5 ${!bgWhite && 'bg-ui-0'} ${className}`}
+        className={`px-2 py-1.5 ${!bgWhite && 'bg-neutral-0'} ${className}`}
       >
         {children}
       </td>
@@ -73,7 +73,7 @@ export const TableCell: React.FC<TableCellProps> = ({
   return (
     <td
       data-testid="tableCell"
-      className={`px-2 py-1.5 ${!bgWhite && 'bg-ui-0'} ${
+      className={`px-2 py-1.5 ${!bgWhite && 'bg-neutral-0'} ${
         rightAligned ? 'text-right' : 'text-left'
       } ${className}`}
     >

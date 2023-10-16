@@ -479,7 +479,7 @@ const Container = styled.div.attrs({})``;
 
 const AccordionContent = styled.div.attrs({
   className:
-    'p-3 pb-6 space-y-3 bg-ui-0 border border-ui-100 rounded-b-xl border-t-0',
+    'p-3 pb-6 space-y-3 bg-neutral-0 border border-ui-100 rounded-b-xl border-t-0',
 })``;
 
 const HStack = styled.div.attrs({

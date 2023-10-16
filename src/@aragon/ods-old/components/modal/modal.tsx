@@ -87,7 +87,7 @@ export const Modal: React.FC<ModalProps> = ({
 type StyledContentProps = Pick<ModalProps, 'style'>;
 
 const ModalContainer = styled(Content).attrs(({style}: StyledContentProps) => {
-  const className = 'bg-ui-50 z-30';
+  const className = 'bg-neutral-50 z-30';
   const currentStyle: CSSProperties = style ?? {
     position: 'fixed',
     top: '50%',
@@ -129,7 +129,7 @@ const ModalSubtitle = styled.div.attrs({
 })``;
 
 const ModalClose = styled(Close).attrs({
-  className: 'shrink-0 text-neutral-500 w-4 h-4 rounded-lg bg-ui-50 outline:none',
+  className: 'shrink-0 text-neutral-500 w-4 h-4 rounded-lg bg-neutral-50 outline:none',
 })``;
 
 const ModalOverlay = styled(Overlay).attrs(() => {

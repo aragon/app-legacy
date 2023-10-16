@@ -159,7 +159,7 @@ const MobileModalEmptyState: React.FC = () => {
 
 const Container = styled.div.attrs({
   'data-test-id': 'empty-container',
-  className: 'flex h-full bg-ui-0 p-6 pt-0 justify-center items-center',
+  className: 'flex h-full bg-neutral-0 p-6 pt-0 justify-center items-center',
 })``;
 
 type CustomHeaderProps = {
@@ -203,7 +203,7 @@ const CustomMobileHeader: React.FC<CustomHeaderProps> = props => {
 };
 
 const Header = styled.div.attrs({
-  className: 'flex items-center rounded-xl space-x-2 p-2 bg-ui-0',
+  className: 'flex items-center rounded-xl space-x-2 p-2 bg-neutral-0',
 })`
   box-shadow:
     0px 4px 8px rgba(31, 41, 51, 0.04),
@@ -218,5 +218,5 @@ const Content = styled.div.attrs({
 `;
 
 const ActionSearchInput = styled.input.attrs({
-  className: 'flex-1 text-neutral-300 bg-ui-0 ft-text-base focus:outline-none',
+  className: 'flex-1 text-neutral-300 bg-neutral-0 ft-text-base focus:outline-none',
 })``;

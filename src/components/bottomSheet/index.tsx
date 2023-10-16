@@ -84,7 +84,7 @@ export default function BottomSheet({
 
 const StyledMotionContainer = styled(motion.div).attrs({
   className:
-    'bg-ui-50 block left-0 fixed bottom-0 md:bottom-3 w-full md:w-max md:max-w-full rounded-t-xl md:rounded-xl md:left-0 md:right-0 md:mx-auto z-30',
+    'bg-neutral-50 block left-0 fixed bottom-0 md:bottom-3 w-full md:w-max md:max-w-full rounded-t-xl md:rounded-xl md:left-0 md:right-0 md:mx-auto z-30',
 })`
   &:before {
     content: '';

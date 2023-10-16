@@ -177,7 +177,7 @@ const GasCostEthContainer = styled.div.attrs({
 })``;
 
 const GasTotalCostEthContainer = styled.div.attrs({
-  className: 'flex justify-between py-1.5 px-2 rounded-b-xl bg-ui-100',
+  className: 'flex justify-between py-1.5 px-2 rounded-b-xl bg-neutral-100',
 })``;
 
 const AlertInlineContainer = styled.div.attrs({

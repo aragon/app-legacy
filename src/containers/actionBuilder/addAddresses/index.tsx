@@ -273,7 +273,7 @@ const CustomHeader: React.FC = () => {
 };
 
 export const FormItem = styled.div.attrs({
-  className: 'px-3 py-1.5 bg-ui-0 border border-ui-100 border-t-0' as
+  className: 'px-3 py-1.5 bg-neutral-0 border border-ui-100 border-t-0' as
     | string
     | undefined,
 })``;

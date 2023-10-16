@@ -86,10 +86,10 @@ const Description = styled.p.attrs({
 
 const variants = {
   primary: `hover:text-primary-600 active:text-primary-800
-        focus-visible:ring focus-visible:ring-primary-200 focus-visible:bg-ui-50 `,
+        focus-visible:ring focus-visible:ring-primary-200 focus-visible:bg-neutral-50 `,
 
   neutral: `hover:text-neutral-800 active:text-neutral-800
-        focus-visible:ring focus-visible:ring-primary-200 focus-visible:bg-ui-50 `,
+        focus-visible:ring focus-visible:ring-primary-200 focus-visible:bg-neutral-50 `,
 };
 
 const disabledColors = {

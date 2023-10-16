@@ -103,6 +103,6 @@ type HStackProps = {
 
 const HStack = styled.div.attrs<HStackProps>(({bgWhite}) => ({
   className: `flex rounded-xl p-0.5 space-x-1.5
-    ${bgWhite ? 'bg-ui-50' : 'bg-ui-0'}
+    ${bgWhite ? 'bg-neutral-50' : 'bg-neutral-0'}
   `,
 }))<HStackProps>``;

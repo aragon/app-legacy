@@ -267,7 +267,7 @@ const TextContent = styled.div.attrs({
 })``;
 
 const LoadingContent = styled.div.attrs({
-  className: 'space-y-2 p-2 bg-ui-50 rounded-xl',
+  className: 'space-y-2 p-2 bg-neutral-50 rounded-xl',
 })``;
 
 const ProgressInfoWrapper = styled.div.attrs({
