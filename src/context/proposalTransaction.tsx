@@ -636,8 +636,10 @@ const ProposalTransactionProvider: React.FC<Props> = ({children}) => {
       {children}
       <OffchainVotingModal
         vote={voteParams}
-        setShowVoteModal={setShowVoteModal}
-        showVoteModal={showVoteModal}
+        setShowVoteModal={setShowGaslessModal}
+        showVoteModal={showGaslessModal}
+        setVoteSubmitted={setVoteSubmitted}
+        onVoteSubmitted={onVoteSubmitted}
       />
       <PublishModal
         title={title}

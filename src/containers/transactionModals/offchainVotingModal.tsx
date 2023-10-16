@@ -6,16 +6,21 @@ import useOffchainVoting, {
   OffchainVotingStepId,
 } from '../../context/useOffchainVoting';
 import {StepperLabels} from '../../components/StepperProgress';
-import {VoteProposalParams} from '@aragon/sdk-client';
+import {VoteProposalParams, VoteValues} from '@aragon/sdk-client';
 import {useWallet} from '../../hooks/useWallet';
+import {ProposalId} from '../../utils/types';
 const OffchainVotingModal = ({
   vote,
   showVoteModal,
   setShowVoteModal,
+  setVoteSubmitted,
+  onVoteSubmitted,
 }: {
   vote: VoteProposalParams | undefined;
   showVoteModal: boolean;
   setShowVoteModal: React.Dispatch<React.SetStateAction<boolean>>;
+  setVoteSubmitted: React.Dispatch<React.SetStateAction<boolean>>;
+  onVoteSubmitted: (proposalId: ProposalId, vote: VoteValues) => Promise<void>;
 }): // props: OffChainVotingModalProps<X>
 JSX.Element => {
   const {t} = useTranslation();
@@ -67,16 +72,24 @@ JSX.Element => {
       open('wallet');
       return;
     }
+
     if (vote) {
+      // clear up previous submission state
+      setVoteSubmitted(false);
+
       // todo(kon): simple way of voting, use providers better
       // It retrieves from local storage the vocdoni election id. Won't be this on the final implementation
       // Not showing errors neither
       await submitOffchainVote(vote);
+
+      await onVoteSubmitted(new ProposalId(vote.proposalId), vote.vote);
     }
   }, [
     handleCloseVoteModal,
     isConnected,
     offchainGlobalState,
+    onVoteSubmitted,
+    setVoteSubmitted,
     submitOffchainVote,
     vote,
   ]);
