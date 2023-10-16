@@ -46,5 +46,5 @@ export const Explore: React.FC = () => {
 
 const ContentWrapper = styled.div.attrs({
   className:
-    'col-span-full desktop:col-start-2 desktop:col-end-12 space-y-5 desktop:space-y-9 mb-5 desktop:mb-10 pb-5',
+    'col-span-full xl:col-start-2 xl:col-end-12 space-y-5 xl:space-y-9 mb-5 xl:mb-10 pb-5',
 })``;

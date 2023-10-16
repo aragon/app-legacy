@@ -324,7 +324,7 @@ export const VotingTerminal: React.FC<VotingTerminalProps> = ({
                 label={voteButtonLabel || t('votingTerminal.voteNow')}
                 size="large"
                 onClick={onVoteClicked}
-                className="w-full tablet:w-max"
+                className="w-full md:w-max"
                 disabled={voteNowDisabled}
               />
               <AlertInline
@@ -335,7 +335,7 @@ export const VotingTerminal: React.FC<VotingTerminalProps> = ({
             </VoteContainer>
 
             {alertMessage && (
-              <div className="pt-2 tablet:mt-3 tablet:pt-0">
+              <div className="pt-2 md:mt-3 md:pt-0">
                 <AlertCard title={alertMessage} mode="warning" />
               </div>
             )}
@@ -361,12 +361,12 @@ const StatusIcon: React.FC<StatusProp> = ({status}) => {
 };
 
 const Container = styled.div.attrs({
-  className: 'tablet:p-3 py-2.5 px-2 rounded-xl bg-ui-0 border border-ui-100',
+  className: 'md:p-3 py-2.5 px-2 rounded-xl bg-ui-0 border border-ui-100',
 })``;
 
 const Header = styled.div.attrs({
   className:
-    'tablet:flex tablet:justify-between tablet:items-center space-y-2 tablet:space-y-0',
+    'md:flex md:justify-between md:items-center space-y-2 md:space-y-0',
 })``;
 
 const Heading1 = styled.h1.attrs({
@@ -374,7 +374,7 @@ const Heading1 = styled.h1.attrs({
 })``;
 
 const VotingContainer = styled.div.attrs({
-  className: 'mt-6 tablet:mt-5',
+  className: 'mt-6 md:mt-5',
 })``;
 
 const Heading2 = styled.h2.attrs({
@@ -387,14 +387,14 @@ const CheckboxContainer = styled.div.attrs({
 
 const VoteContainer = styled.div.attrs({
   className:
-    'flex flex-col tablet:flex-row tablet:justify-between tablet:space-x-3 items-center tablet:items-center mt-3 space-y-2 tablet:space-y-0' as string,
+    'flex flex-col md:flex-row md:justify-between md:space-x-3 items-center md:items-center mt-3 space-y-2 md:space-y-0' as string,
 })``;
 
 const ButtonWrapper = styled.div.attrs({
   className:
-    'flex flex-col tablet:flex-row space-y-2 space-x-0 tablet:space-y-0 tablet:space-x-2 w-full tablet:w-max',
+    'flex flex-col md:flex-row space-y-2 space-x-0 md:space-y-0 md:space-x-2 w-full md:w-max',
 })``;
 
 const VotersTabContainer = styled.div.attrs({
-  className: 'mt-3 desktop:mt-5 space-y-2',
+  className: 'mt-3 xl:mt-5 space-y-2',
 })``;

@@ -87,13 +87,13 @@ const ExploreNav: React.FC = () => {
 };
 
 const Menu = styled.nav.attrs({
-  className: 'py-2 desktop:py-3',
+  className: 'py-2 xl:py-3',
 })`
   background: linear-gradient(180deg, #3164fa 0%, rgba(49, 100, 250, 0) 100%);
 `;
 
 const LeftContent = styled.div.attrs({
-  className: 'col-span-3 tablet:col-span-2 flex items-center',
+  className: 'col-span-3 md:col-span-2 flex items-center',
 })``;
 
 const LogoContainer = styled.img.attrs({
@@ -106,7 +106,7 @@ const RightContent = styled.div.attrs({
 })``;
 
 const ActionsWrapper = styled.div.attrs({
-  className: 'flex space-x-1.5 tablet:space-x-3 items-center',
+  className: 'flex space-x-1.5 md:space-x-3 items-center',
 })``;
 
 export default ExploreNav;

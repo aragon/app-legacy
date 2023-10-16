@@ -216,11 +216,11 @@ const LabelContainer = styled.div.attrs({
 })``;
 
 const LabelWrapper = styled.div.attrs({
-  className: 'tablet:hidden mb-0.5',
+  className: 'md:hidden mb-0.5',
 })``;
 
 const ButtonContainer = styled.div.attrs({
-  className: 'pt-3.5 order-2 tablet:order-3 tablet:pt-0',
+  className: 'pt-3.5 order-2 md:order-3 md:pt-0',
 })``;
 
 const ErrorContainer = styled.div.attrs({
@@ -228,9 +228,9 @@ const ErrorContainer = styled.div.attrs({
 })``;
 
 const Break = styled.hr.attrs({
-  className: 'tablet:hidden w-full border-0 order-3',
+  className: 'md:hidden w-full border-0 order-3',
 })``;
 
 const LinkContainer = styled.div.attrs({
-  className: 'flex-1 order-4 tablet:order-2 h-full',
+  className: 'flex-1 order-4 md:order-2 h-full',
 })``;

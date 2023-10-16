@@ -132,11 +132,11 @@ export const SelectEligibility = () => {
 
 const Container = styled.div.attrs({
   className:
-    'tablet:flex p-2 tablet:p-3 space-y-1 tablet:space-y-0 rounded-xl bg-ui-0 tablet:space-x-3 space-x-0',
+    'md:flex p-2 md:p-3 space-y-1 md:space-y-0 rounded-xl bg-ui-0 md:space-x-3 space-x-0',
 })``;
 
 const OptionsContainers = styled.div.attrs({
-  className: 'space-y-1 tablet:w-1/2',
+  className: 'space-y-1 md:w-1/2',
 })``;
 
 const OptionsTitle = styled.h2.attrs({

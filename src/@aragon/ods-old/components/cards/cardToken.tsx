@@ -121,7 +121,7 @@ const CoinDetailsWithImage = styled.div.attrs({
 })``;
 
 const CoinImage = styled.img.attrs(({src}) => ({
-  className: 'w-3 h-3 tablet:h-5 tablet:w-5 rounded-full',
+  className: 'w-3 h-3 md:h-5 md:w-5 rounded-full',
   src,
 }))``;
 
@@ -138,7 +138,7 @@ const CoinName = styled.h1.attrs({
 })``;
 
 const SecondaryCoinDetails = styled.div.attrs({
-  className: 'ft-text-sm text-ui-500 space-x-0.5 tablet:flex',
+  className: 'ft-text-sm text-ui-500 space-x-0.5 md:flex',
 })``;
 
 const MarketProperties = styled.div.attrs({
@@ -166,7 +166,7 @@ const ToggleMobileVisibility: React.FC<ToggleMobileVisibilityProps> = ({
   return (
     <div
       className={
-        visible ? 'inline-block tablet:hidden' : 'hidden tablet:inline-block'
+        visible ? 'inline-block md:hidden' : 'hidden md:inline-block'
       }
     >
       {children}

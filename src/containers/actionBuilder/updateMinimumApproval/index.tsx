@@ -160,7 +160,7 @@ const UpdateMinimumApproval: React.FC<UpdateMinimumApprovalProps> = ({
       >
         {useCustomHeader && (
           <FormItem
-            className={'rounded-t-xl border-t pb-1.5 pt-3 desktop:block'}
+            className={'rounded-t-xl border-t pb-1.5 pt-6 xl:block'}
           >
             <Label label={t('labels.approvals')} />
           </FormItem>
@@ -227,7 +227,7 @@ const CustomHeader: React.FC = () => {
 
 const SummaryContainer = styled.div.attrs({
   className:
-    'p-2 tablet:p-3 space-y-1.5 font-bold text-ui-800 border border-ui-100 rounded-b-xl border-t-0 bg-white',
+    'p-2 md:p-3 space-y-1.5 font-bold text-ui-800 border border-ui-100 rounded-b-xl border-t-0 bg-white',
 })``;
 
 const HStack = styled.div.attrs({

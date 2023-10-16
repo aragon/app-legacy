@@ -175,7 +175,7 @@ const ConfigureCommunity: React.FC<ConfigureCommunityProps> = ({
               }) => (
                 <>
                   <ApprovalContainer>
-                    <div className="tablet:w-1/3">
+                    <div className="md:w-1/3">
                       <NumberInput
                         name={name}
                         value={value}
@@ -453,11 +453,11 @@ const FormItem = styled.div.attrs({
 
 const DurationContainer = styled.div.attrs({
   className:
-    'flex flex-col tablet:flex-row space-y-1.5 tablet:space-y-0 tablet:space-x-1.5 p-3 bg-ui-0 rounded-xl',
+    'flex flex-col md:flex-row space-y-1.5 md:space-y-0 md:space-x-1.5 p-3 bg-ui-0 rounded-xl',
 })``;
 
 const TimeLabelWrapper = styled.div.attrs({
-  className: 'w-full tablet:w-1/2 space-y-0.5',
+  className: 'w-full md:w-1/2 space-y-0.5',
 })``;
 
 const TimeLabel = styled.span.attrs({
@@ -466,7 +466,7 @@ const TimeLabel = styled.span.attrs({
 
 const ApprovalContainer = styled.div.attrs({
   className:
-    'flex flex-col flex-col-reverse tablet:flex-row tablet:items-center p-3 pt-4 tablet:p-3 space-y-3 space-y-reverse tablet:space-y-0 tablet:space-x-3 rounded-xl bg-ui-0',
+    'flex flex-col flex-col-reverse md:flex-row md:items-center p-3 pt-4 md:p-3 space-y-3 space-y-reverse md:space-y-0 md:space-x-3 rounded-xl bg-ui-0',
 })``;
 
 const LinearProgressContainer = styled.div.attrs({

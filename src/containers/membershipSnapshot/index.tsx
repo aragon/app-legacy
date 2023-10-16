@@ -161,10 +161,10 @@ export const MembershipSnapshot: React.FC<Props> = ({
 };
 
 const VerticalContainer = styled.div.attrs({
-  className: 'space-y-1.5 desktop:space-y-2',
+  className: 'space-y-1.5 xl:space-y-2',
 })``;
 
 const ListItemGrid = styled.div.attrs({
   className:
-    'desktop:grid desktop:grid-cols-1 desktop:grid-flow-row desktop:gap-2',
+    'xl:grid xl:grid-cols-1 xl:grid-flow-row xl:gap-2',
 })``;

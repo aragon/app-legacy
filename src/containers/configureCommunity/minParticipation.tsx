@@ -151,7 +151,7 @@ export const MinParticipation: FC = () => {
                 }
               >
                 <ApprovalWrapper>
-                  <div className="tablet:w-1/3">
+                  <div className="md:w-1/3">
                     <NumberInput
                       name={name}
                       value={value}
@@ -233,7 +233,7 @@ export const MinParticipation: FC = () => {
                           tokenSymbol,
                         })}
                       />
-                      <div className="tablet:w-1/3">
+                      <div className="md:w-1/3">
                         <NumberInput
                           value={simulatedWrappedTokensPercentage}
                           onChange={e =>
@@ -330,7 +330,7 @@ export const MinParticipation: FC = () => {
 };
 
 const Container = styled.div.attrs({
-  className: 'pt-4 desktop:pt-3 p-3 space-x-3 rounded-xl bg-ui-0 relative z-10',
+  className: 'pt-4 xl:pt-6 p-3 space-x-3 rounded-xl bg-ui-0 relative z-10',
 })``;
 
 const SubContainerWrapper = styled.div.attrs({
@@ -351,7 +351,7 @@ const Divider = styled.div.attrs({
 
 const StatItem = styled.div.attrs({
   className:
-    'space-y-1 tablet:space-y-0 tablet:space-x-1 tablet:flex tablet:justify-between',
+    'space-y-1 md:space-y-0 md:space-x-1 md:flex md:justify-between',
 })``;
 
 const StatItemValue = styled.div.attrs({
@@ -360,7 +360,7 @@ const StatItemValue = styled.div.attrs({
 
 const ApprovalWrapper = styled.div.attrs({
   className:
-    'flex flex-col flex-col-reverse tablet:flex-row space-y-3 space-y-reverse tablet:space-y-0 tablet:space-x-3',
+    'flex flex-col flex-col-reverse md:flex-row space-y-3 space-y-reverse md:space-y-0 md:space-x-3',
 })``;
 
 const LinearProgressContainer = styled.div.attrs({
@@ -369,5 +369,5 @@ const LinearProgressContainer = styled.div.attrs({
 
 const ProgressInfo2 = styled.div.attrs({
   className:
-    'flex absolute -top-2.5 desktop:-top-1 justify-between space-x-0.5 w-full text-sm',
+    'flex absolute -top-2.5 xl:-top-1 justify-between space-x-0.5 w-full text-sm',
 })``;

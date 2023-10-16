@@ -69,5 +69,5 @@ const Text = styled.div.attrs({
 
 const ButtonGroup = styled.div.attrs({
   className:
-    'space-y-1.5 desktop:space-y-0 desktop:flex desktop:justify-end desktop:items-center desktop:space-x-1.5',
+    'space-y-1.5 xl:space-y-0 xl:flex xl:justify-end xl:items-center xl:space-x-1.5',
 })``;

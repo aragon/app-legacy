@@ -299,11 +299,11 @@ export default ReviewProposal;
 const Header = styled.p.attrs({className: 'font-bold text-ui-800 text-3xl'})``;
 
 const BadgeContainer = styled.div.attrs({
-  className: 'tablet:flex items-baseline mt-3 tablet:space-x-3',
+  className: 'md:flex items-baseline mt-3 md:space-x-3',
 })``;
 
 const ProposerLink = styled.p.attrs({
-  className: 'mt-1.5 tablet:mt-0 text-ui-500',
+  className: 'mt-1.5 md:mt-0 text-ui-500',
 })``;
 
 const SummaryText = styled.p.attrs({
@@ -311,15 +311,15 @@ const SummaryText = styled.p.attrs({
 })``;
 
 const ProposalContainer = styled.div.attrs({
-  className: 'space-y-3 tablet:w-3/5',
+  className: 'space-y-3 md:w-3/5',
 })``;
 
 const AdditionalInfoContainer = styled.div.attrs({
-  className: 'space-y-3 tablet:w-2/5',
+  className: 'space-y-3 md:w-2/5',
 })``;
 
 const ContentContainer = styled.div.attrs({
-  className: 'mt-3 tablet:flex tablet:space-x-3 space-y-3 tablet:space-y-0',
+  className: 'mt-3 md:flex md:space-x-3 space-y-3 md:space-y-0',
 })``;
 
 export const StyledEditorContent = styled(EditorContent)`

@@ -21,7 +21,7 @@ const Crumb: React.FC<CrumbProps> = props => {
       {props.first &&
         props.icon &&
         React.cloneElement(props.icon, {
-          className: 'desktop:w-2.5 desktop:h-2.5',
+          className: 'xl:w-2.5 xl:h-2.5',
         })}
       <p className="font-bold">{props.label}</p>
       {props.last && props.tag}
@@ -32,5 +32,5 @@ const Crumb: React.FC<CrumbProps> = props => {
 export default Crumb;
 
 const CrumbContainer = styled.button.attrs({
-  className: 'flex items-center space-x-1 desktop:space-x-1.5' as string,
+  className: 'flex items-center space-x-1 xl:space-x-1.5' as string,
 })``;

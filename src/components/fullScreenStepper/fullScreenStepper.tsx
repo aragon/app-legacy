@@ -131,7 +131,7 @@ export const FullScreenStepper: React.FC<FullScreenStepperProps> = ({
   return (
     <FullScreenStepperContext.Provider value={value}>
       <Layout>
-        <div className="-mx-2 tablet:mx-0 tablet:mt-3">
+        <div className="-mx-2 md:mx-0 md:mt-3">
           {!hideWizard && (
             <Wizard
               includeStepper={includeStepper}
@@ -202,7 +202,7 @@ export const FullScreenStepper: React.FC<FullScreenStepperProps> = ({
 
 const Layout = styled.div.attrs({
   className:
-    'col-span-full desktop:col-start-2 desktop:col-end-12 font-medium text-ui-600',
+    'col-span-full xl:col-start-2 xl:col-end-12 font-medium text-ui-600',
 })``;
 
 type FormLayoutProps = {
@@ -211,14 +211,14 @@ type FormLayoutProps = {
 
 const FormLayout = styled.div.attrs<{fullWidth: FormLayoutProps}>(
   ({fullWidth}) => ({
-    className: `mt-5 desktop:mt-8 mx-auto space-y-5 ${
-      !fullWidth && 'desktop:w-3/5'
+    className: `mt-5 xl:mt-8 mx-auto space-y-5 ${
+      !fullWidth && 'xl:w-3/5'
     }`,
   })
 )<FormLayoutProps>``;
 
 const FormFooter = styled.div.attrs({
-  className: 'flex justify-between desktop:pt-3',
+  className: 'flex justify-between xl:pt-3',
 })``;
 
 const ButtonValidationTrigger = styled.div``;

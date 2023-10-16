@@ -96,5 +96,5 @@ const TreasurySnapshot: React.FC<Props> = ({
 export default TreasurySnapshot;
 
 const Container = styled.div.attrs({
-  className: 'space-y-1.5 desktop:space-y-2',
+  className: 'space-y-1.5 xl:space-y-2',
 })``;

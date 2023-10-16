@@ -345,7 +345,7 @@ export const EditMsSettings: React.FC<EditMsSettingsProps> = ({daoDetails}) => {
           <Footer>
             <HStack>
               <ButtonText
-                className="w-full tablet:w-max"
+                className="w-full md:w-max"
                 label={t('settings.reviewProposal')}
                 iconLeft={<IconGovernance />}
                 size="large"
@@ -362,7 +362,7 @@ export const EditMsSettings: React.FC<EditMsSettingsProps> = ({daoDetails}) => {
                 }
               />
               <ButtonText
-                className="w-full tablet:w-max"
+                className="w-full md:w-max"
                 label={t('settings.resetChanges')}
                 mode="secondary"
                 size="large"
@@ -388,11 +388,11 @@ const AccordionContent = styled.div.attrs({
 })``;
 
 const HStack = styled.div.attrs({
-  className: 'tablet:flex space-y-2 tablet:space-y-0 tablet:space-x-3',
+  className: 'md:flex space-y-2 md:space-y-0 md:space-x-3',
 })``;
 
 const Footer = styled.div.attrs({
-  className: 'mt-5 desktop:mt-8 space-y-2',
+  className: 'mt-5 xl:mt-8 space-y-2',
 })``;
 
 const EligibilityWrapper = styled.div.attrs({})``;

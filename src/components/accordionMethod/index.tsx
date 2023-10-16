@@ -119,7 +119,7 @@ export const AccordionItem: React.FC<AccordionMethodType & {name: string}> = ({
 
         {methodDescription && (
           <AdditionalInfoContainer>
-            <p className="tablet:pr-10">{methodDescription}</p>
+            <p className="md:pr-10">{methodDescription}</p>
 
             {additionalInfo && (
               <AlertInline label={additionalInfo} mode="neutral" />
@@ -137,7 +137,7 @@ export const AccordionItem: React.FC<AccordionMethodType & {name: string}> = ({
 
 const AccordionHeader = styled(Accordion.Header).attrs<{type: AccordionType}>(
   ({type}) => ({
-    className: `p-2 tablet:px-3 rounded-xl border border-ui-100 ${
+    className: `p-2 md:px-3 rounded-xl border border-ui-100 ${
       type === 'action-builder' ? 'bg-white' : 'bg-ui-50'
     }`,
   })
@@ -166,7 +166,7 @@ const AdditionalInfoContainer = styled.div.attrs({
 
 const FlexContainer = styled.div.attrs({
   className:
-    'tablet:flex flex-1 justify-between items-center space-y-0.5 ft-text-sm',
+    'md:flex flex-1 justify-between items-center space-y-0.5 ft-text-sm',
 })``;
 
 const MethodName = styled.p.attrs({

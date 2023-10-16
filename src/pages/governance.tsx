@@ -197,11 +197,11 @@ export const Governance: React.FC = () => {
 };
 
 export const Container = styled.div.attrs({
-  className: 'col-span-full desktop:col-start-3 desktop:col-end-11',
+  className: 'col-span-full xl:col-start-3 xl:col-end-11',
 })``;
 
 const ButtonGroupContainer = styled.div.attrs({
-  className: 'flex overflow-auto mt-3 desktop:mt-8',
+  className: 'flex overflow-auto mt-3 xl:mt-8',
 })`
   scrollbar-width: none;
 

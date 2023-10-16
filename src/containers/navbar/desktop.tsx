@@ -124,7 +124,7 @@ const DesktopNav: React.FC<DesktopNavProp> = props => {
 
         <div className="flex gap-2">
           <ButtonText
-            className="w-full tablet:w-max"
+            className="w-full md:w-max"
             size="large"
             label={t('navButtons.giveFeedback')}
             mode="secondary"
@@ -150,7 +150,7 @@ export default DesktopNav;
 
 const Menu = styled.nav.attrs({
   className: `flex mx-auto justify-between items-center max-w-screen-wide
-     px-5 wide:px-10 py-3`,
+     px-5 2xl:px-10 py-3`,
 })`
   background: linear-gradient(
     180deg,

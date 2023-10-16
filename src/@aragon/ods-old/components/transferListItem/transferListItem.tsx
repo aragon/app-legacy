@@ -30,13 +30,13 @@ export type TransferListItemProps = {
 
 const Icons: {[key: string]: JSX.Element} = {
   VaultDeposit: (
-    <IconDeposit className="h-1.5 w-1.5 text-success-600 desktop:h-2 desktop:w-2" />
+    <IconDeposit className="h-1.5 w-1.5 text-success-600 xl:h-2 xl:w-2" />
   ),
   Pending: (
-    <IconSpinner className="h-1.5 w-1.5 animate-spin text-primary-500 desktop:h-2 desktop:w-2" />
+    <IconSpinner className="h-1.5 w-1.5 animate-spin text-primary-500 xl:h-2 xl:w-2" />
   ),
   VaultWithdraw: (
-    <IconWithdraw className="h-1.5 w-1.5 text-warning-600 desktop:h-2 desktop:w-2" />
+    <IconWithdraw className="h-1.5 w-1.5 text-warning-600 xl:h-2 xl:w-2" />
   ),
 };
 
@@ -79,12 +79,12 @@ export const TransferListItem: React.FC<TransferListItemProps> = ({
 };
 
 const Container = styled.button.attrs({
-  className: `group w-full px-2 desktop:px-3 py-1.5 desktop:py-2.5 bg-ui-0 rounded-xl
+  className: `group w-full px-2 xl:px-3 py-1.5 xl:py-2.5 bg-ui-0 rounded-xl
   flex items-center space-x-2 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 active:bg-ui-100`,
 })``;
 
 const AvatarContainer = styled.div.attrs<{bgColor: string}>(({bgColor}) => ({
-  className: `flex items-center justify-center w-3 h-3 ${bgColor} rounded desktop:w-5 desktop:h-5 desktop:rounded-xl`,
+  className: `flex items-center justify-center w-3 h-3 ${bgColor} rounded xl:w-5 xl:h-5 xl:rounded-xl`,
 }))<{bgColor: string}>``;
 
 const Content = styled.div.attrs({

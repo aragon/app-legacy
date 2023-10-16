@@ -25,13 +25,13 @@ export const Wizard: React.FC<WizardProps> = ({
 }) => {
   return (
     <StepCard data-testid="wizard">
-      <div className="desktop:hidden">{nav}</div>
+      <div className="xl:hidden">{nav}</div>
 
       {/* Stepper */}
       {includeStepper && (
         <Wrapper>
           <CenteredFlex>
-            <p className="font-bold text-ui-800 desktop:text-primary-500">
+            <p className="font-bold text-ui-800 xl:text-primary-500">
               {processName}
             </p>
             <p className="text-ui-400">
@@ -59,7 +59,7 @@ export const Wizard: React.FC<WizardProps> = ({
 
 const StepCard = styled.div.attrs({
   className:
-    'flex flex-col px-2 pt-2 pb-3 tablet:p-3 desktop:p-6 tablet:rounded-xl gap-y-3 bg-ui-0 tablet:shadow-100',
+    'flex flex-col px-2 pt-2 pb-3 md:p-3 xl:p-6 md:rounded-xl gap-y-3 bg-ui-0 md:shadow-100',
 })``;
 
 const Wrapper = styled.div.attrs({
@@ -80,5 +80,5 @@ const StepSubTitle = styled.span.attrs({
 `;
 
 const CenteredFlex = styled.div.attrs({
-  className: 'flex justify-between text-sm desktop:text-base',
+  className: 'flex justify-between text-sm xl:text-base',
 })``;

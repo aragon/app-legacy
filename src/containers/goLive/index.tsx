@@ -33,8 +33,8 @@ export const GoLiveHeader: React.FC = () => {
   };
 
   return (
-    <div className="bg-ui-0 px-2 pb-3 pt-2 tablet:rounded-xl tablet:p-3 desktop:p-6 desktop:pt-3">
-      <div className="desktop:hidden">
+    <div className="bg-ui-0 px-2 pb-3 pt-2 md:rounded-xl md:p-3 xl:p-6 xl:pt-3">
+      <div className="xl:hidden">
         <Breadcrumb
           crumbs={{label: t('createDAO.title'), path: Landing}}
           onClick={clickHandler}
@@ -124,9 +124,9 @@ export const GoLiveFooter: React.FC = () => {
 export default GoLive;
 
 const Container = styled.div.attrs({
-  className: 'tablet:mx-auto tablet:w-3/4 space-y-5',
+  className: 'md:mx-auto md:w-3/4 space-y-5',
 })``;
 
 const ImageContainer = styled.img.attrs({
-  className: 'w-25 hidden tablet:block',
+  className: 'w-25 hidden md:block',
 })``;

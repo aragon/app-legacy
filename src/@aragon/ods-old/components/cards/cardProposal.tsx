@@ -293,5 +293,5 @@ const Percentage = styled.span.attrs({
 const PublisherLabel = styled.p.attrs({className: '-mr-0.5'})``;
 
 const VotedAlertWrapper = styled.div.attrs({
-  className: 'flex justify-center desktop:justify-start',
+  className: 'flex justify-center xl:justify-start',
 })``;

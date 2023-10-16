@@ -62,8 +62,8 @@ export const DescriptionListContainer: React.FC<DescriptionListProps> = ({
       </HStack>
       <DlContainer>{children}</DlContainer>
       {onChecked && (
-        <div className="ml-auto space-y-1.5 tablet:w-3/4">
-          <div className="tablet:flex">
+        <div className="ml-auto space-y-1.5 md:w-3/4">
+          <div className="md:flex">
             <CheckboxListItem
               label={t('createDAO.review.valuesCorrect')}
               multiSelect
@@ -95,7 +95,7 @@ export const Dl: React.FC<{children: ReactNode}> = ({children}) => (
 );
 
 const Container = styled.div.attrs({
-  className: 'p-2 tablet:p-3 space-y-3 rounded-xl bg-ui-0',
+  className: 'p-2 md:p-3 space-y-3 rounded-xl bg-ui-0',
 })``;
 
 const TitleText = styled.h1.attrs({
@@ -112,7 +112,7 @@ const DlContainer = styled.dl.attrs({
 
 const ListItemContainer = styled.div.attrs({
   className:
-    'tablet:flex justify-between tablet:space-x-2 space-y-0.5 tablet:space-y-0',
+    'md:flex justify-between md:space-x-2 space-y-0.5 md:space-y-0',
 })``;
 
 const DtContainer = styled.dt.attrs({

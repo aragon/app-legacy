@@ -35,8 +35,8 @@ export const OverviewDAOHeader: React.FC<OverviewDAOHeaderProps> = ({
   };
 
   return (
-    <div className="bg-ui-0 p-2 tablet:rounded-xl tablet:p-6">
-      <div className="mb-3 desktop:hidden">
+    <div className="bg-ui-0 p-2 md:rounded-xl md:p-6">
+      <div className="mb-3 xl:hidden">
         <Breadcrumb
           crumbs={{
             label: navLabel,
@@ -46,7 +46,7 @@ export const OverviewDAOHeader: React.FC<OverviewDAOHeaderProps> = ({
         />
       </div>
 
-      <div className="items-end tablet:flex tablet:space-x-6">
+      <div className="items-end md:flex md:space-x-6">
         <div className="w-full">
           <h1 className="font-bold text-ui-800 ft-text-3xl">
             {t('createDAO.overview.title')}
@@ -55,7 +55,7 @@ export const OverviewDAOHeader: React.FC<OverviewDAOHeaderProps> = ({
             {t('createDAO.overview.description')}
           </p>
         </div>
-        <div className="mt-2 flex space-x-2 tablet:mt-0">
+        <div className="mt-2 flex space-x-2 md:mt-0">
           {/* <ButtonText
           size="large"
           mode="secondary"
@@ -65,7 +65,7 @@ export const OverviewDAOHeader: React.FC<OverviewDAOHeaderProps> = ({
         /> */}
           <ButtonText
             size="large"
-            className="w-full whitespace-nowrap tablet:w-max"
+            className="w-full whitespace-nowrap md:w-max"
             iconRight={<IconChevronRight />}
             label={t('createDAO.overview.button')}
             onClick={handleSetupClick}
@@ -108,7 +108,7 @@ export const OverviewDAOStep: React.FC = () => {
 
   if (isDesktop) {
     return (
-      <div className="space-y-3 tablet:flex tablet:space-x-3 tablet:space-y-0">
+      <div className="space-y-3 md:flex md:space-x-3 md:space-y-0">
         {OverviewCards}
       </div>
     );
@@ -159,5 +159,5 @@ export const OverviewDAOStep: React.FC = () => {
 };
 
 const MobileCTA = styled.div.attrs({
-  className: 'mb-5 -mx-2 tablet:-mx-3 desktop:mx-0',
+  className: 'mb-5 -mx-2 md:-mx-3 xl:mx-0',
 })``;

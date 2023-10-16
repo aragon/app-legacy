@@ -80,7 +80,7 @@ const Section = styled.section.attrs({
 
 const ActionContainer = styled.div.attrs({
   className:
-    'relative flex flex-col desktop:flex-row desktop:justify-between items-center space-y-4 desktop:space-y-0 pt-5 desktop:pt-3 pb-8 desktop:pb-3',
+    'relative flex flex-col xl:flex-row xl:justify-between items-center space-y-4 xl:space-y-0 pt-5 xl:pt-6 pb-8 xl:pb-3',
 })``;
 
 const FlexDiv = styled.div.attrs({
@@ -104,7 +104,7 @@ const GradientGreen = styled.img.attrs({
 })``;
 
 const GradientPurple = styled.img.attrs({
-  className: 'desktop:h-40 h-30 absolute -right-5 desktop:-top-11 top-16',
+  className: 'xl:h-40 h-30 absolute -right-5 xl:-top-11 top-16',
 })``;
 
 export default Footer;

@@ -58,11 +58,11 @@ export const HeaderPage: React.FC<HeaderPageProps> = ({
 
 const Card = styled.div.attrs({
   className:
-    'flex flex-col p-2 pb-3 tablet:p-3 desktop:p-5 bg-ui-0 gap-y-2 tablet:gap-y-3 tablet:rounded-xl tablet:border tablet:border-ui-100 tablet:shadow-100',
+    'flex flex-col p-2 pb-3 md:p-3 xl:p-5 bg-ui-0 gap-y-2 md:gap-y-3 md:rounded-xl md:border md:border-ui-100 md:shadow-100',
 })``;
 
 const TextContent = styled.div.attrs({
-  className: 'tablet:flex-1 space-y-1 desktop:space-y-2',
+  className: 'md:flex-1 space-y-1 xl:space-y-2',
 })``;
 
 const Title = styled.h2.attrs({
@@ -75,13 +75,13 @@ const Description = styled.div.attrs({
 
 const ContentWrapper = styled.div.attrs({
   className:
-    'flex flex-col tablet:flex-row gap-y-2 tablet:gap-x-6 tablet:items-start desktop:items-center desktop:mt-0 desktop:pt-0',
+    'flex flex-col md:flex-row gap-y-2 md:gap-x-6 md:items-start xl:items-center xl:mt-0 xl:pt-0',
 })``;
 
 const ButtonGroup = styled.div.attrs({
-  className: 'flex flex-col-reverse tablet:flex-row gap-2',
+  className: 'flex flex-col-reverse md:flex-row gap-2',
 })``;
 
 const BreadcrumbWrapper = styled.div.attrs({
-  className: 'desktop:hidden desktop:h-0 flex',
+  className: 'xl:hidden xl:h-0 flex',
 })``;

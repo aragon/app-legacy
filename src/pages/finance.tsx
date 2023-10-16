@@ -178,7 +178,7 @@ export const Finance: React.FC = () => {
                     size="large"
                     label={t('TransferModal.newTransfer')}
                     iconLeft={<IconAdd />}
-                    className="w-full tablet:w-auto"
+                    className="w-full md:w-auto"
                     onClick={() => {
                       trackEvent('finance_newTransferBtn_clicked', {
                         dao_address: daoDetails?.address,
@@ -313,7 +313,7 @@ export const Finance: React.FC = () => {
                 size="large"
                 label={t('TransferModal.newTransfer')}
                 iconLeft={<IconAdd />}
-                className="w-full tablet:w-auto"
+                className="w-full md:w-auto"
                 onClick={() => {
                   trackEvent('finance_newTransferBtn_clicked', {
                     dao_address: daoDetails?.address,
@@ -327,7 +327,7 @@ export const Finance: React.FC = () => {
       }
     >
       {tokens.length !== 0 && (
-        <div className={'mb-3 mt-1 tablet:mb-8 tablet:mt-5'}>
+        <div className={'mb-3 mt-1 md:mb-8 md:mt-5'}>
           <TokenSectionWrapper title={t('finance.tokenSection')}>
             <ListContainer>
               <TokenList tokens={tokens.slice(0, 5)} />
@@ -353,7 +353,7 @@ const ListContainer = styled.div.attrs({
 
 const HeaderContainer = styled.div.attrs({
   className:
-    'col-span-full desktop:col-start-3 desktop:col-end-11 -mx-2 tablet:mx-0 tablet:mt-3',
+    'col-span-full xl:col-start-3 xl:col-end-11 -mx-2 md:mx-0 md:mt-3',
 })``;
 
 const SubtitleContainer = styled.div.attrs({
@@ -361,18 +361,18 @@ const SubtitleContainer = styled.div.attrs({
 })``;
 
 const Header = styled.div.attrs({
-  className: `p-2 desktop:p-0 pb-3 desktop:mt-5 space-y-2 tablet:space-y-3
-   bg-ui-0 desktop:bg-transparent tablet:rounded-xl tablet:border
-   tablet:border-ui-100 desktop:border-none tablet:shadow-100 desktop:shadow-none`,
+  className: `p-2 xl:p-0 pb-3 xl:mt-5 space-y-2 md:space-y-3
+   bg-ui-0 xl:bg-transparent md:rounded-xl md:border
+   md:border-ui-100 xl:border-none md:shadow-100 xl:shadow-none`,
 })``;
 
 const ContentContainer = styled.div.attrs({
-  className: `flex flex-col tablet:flex-row tablet:gap-x-6 gap-y-2
-     tablet: gap - y - 3 tablet: items - start desktop: items - center`,
+  className: `flex flex-col md:flex-row md:gap-x-6 gap-y-2
+     md: gap - y - 3 md: items - start xl: items - center`,
 })``;
 
 const TextContainer = styled.div.attrs({
-  className: 'tablet:flex-1 space-y-1 capitalize',
+  className: 'md:flex-1 space-y-1 capitalize',
 })``;
 
 const Title = styled.h1.attrs({

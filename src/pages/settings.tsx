@@ -59,14 +59,14 @@ export const Settings: React.FC = () => {
   return (
     <SettingsWrapper>
       {daoUpdateEnabled && (
-        <div className={`mt-0.5 desktop:mt-1.5 ${styles.fullWidth}`}>
+        <div className={`mt-0.5 xl:mt-1.5 ${styles.fullWidth}`}>
           <SettingsUpdateCard />
         </div>
       )}
 
       {/* DAO Settings */}
       <div
-        className={`mt-1 desktop:row-start-3 desktop:-mt-1 ${
+        className={`mt-1 xl:row-start-3 xl:-mt-1 ${
           daoUpdateEnabled ? styles.leftCol : styles.center
         }`}
       >
@@ -90,14 +90,14 @@ export const Settings: React.FC = () => {
 
       {/* Edit */}
       <div
-        className={`desktop:row-start-4 ${
+        className={`xl:row-start-4 ${
           daoUpdateEnabled ? styles.fullWidth : styles.center
         }`}
       >
-        <div className="mt-1 space-y-2 desktop:-mt-1">
+        <div className="mt-1 space-y-2 xl:-mt-1">
           <ButtonText
             label={t('settings.edit')}
-            className="w-full tablet:w-max"
+            className="w-full md:w-max"
             size="large"
             iconLeft={!isDesktop ? <IconGovernance /> : undefined}
             onClick={() => navigate('edit')}
@@ -110,10 +110,10 @@ export const Settings: React.FC = () => {
 };
 const styles = {
   fullWidth:
-    'col-span-full desktop:col-start-2 desktop:col-end-12 desktop:col-span-6',
-  leftCol: 'col-span-full desktop:col-start-2 desktop:col-end-8',
+    'col-span-full xl:col-start-2 xl:col-end-12 xl:col-span-6',
+  leftCol: 'col-span-full xl:col-start-2 xl:col-end-8',
   center:
-    'col-span-full desktop:col-start-4 desktop:col-end-10 desktop:col-span-6',
+    'col-span-full xl:col-start-4 xl:col-end-10 xl:col-span-6',
 };
 
 const DEFAULT_LINES_SHOWN = 3;
@@ -162,8 +162,8 @@ const SettingsCardDao: React.FC<{daoDetails: DaoDetails}> = ({daoDetails}) => {
       <DescriptionPair>
         <Term>{t('labels.daoName')}</Term>
         <Definition>
-          <div className="flex items-center space-x-1.5 desktop:space-x-2">
-            <p className="ft-text-base desktop:font-semibold">
+          <div className="flex items-center space-x-1.5 xl:space-x-2">
+            <p className="ft-text-base xl:font-semibold">
               {daoDetails.metadata.name}
             </p>
             <AvatarDao
@@ -179,7 +179,7 @@ const SettingsCardDao: React.FC<{daoDetails: DaoDetails}> = ({daoDetails}) => {
         <Term>{t('labels.review.blockchain')}</Term>
         <Definition>
           <div className="flex flex-1 flex-wrap justify-between gap-y-1">
-            <p className="shrink-0 ft-text-base desktop:font-semibold">
+            <p className="shrink-0 ft-text-base xl:font-semibold">
               {chainLabel}
             </p>
             <Tag label={t('labels.notChangeable')} colorScheme="neutral" />
@@ -325,7 +325,7 @@ const SettingsWrapper: React.FC<{children: ReactNode}> = ({children}) => {
 
 export const Layout = styled.div.attrs({
   className:
-    'col-span-full desktop:col-start-4 desktop:col-end-10 text-ui-600 desktop:mt-2',
+    'col-span-full xl:col-start-4 xl:col-end-10 text-ui-600 xl:mt-2',
 })``;
 
 type DescriptionProps = {

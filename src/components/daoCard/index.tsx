@@ -46,7 +46,7 @@ export const DaoCard = (props: IDaoCardProps) => {
       <DaoDataWrapper>
         <HeaderContainer>
           <AvatarDao daoName={props.name} src={avatar} />
-          <div className="space-y-0.25 text-left desktop:space-y-0.5">
+          <div className="space-y-0.25 text-left xl:space-y-0.5">
             <Title>{props.name}</Title>
             <p className="font-semibold text-ui-500 ft-text-sm">
               {props.ensName}
@@ -70,7 +70,7 @@ export const DaoCard = (props: IDaoCardProps) => {
 };
 
 const Container = styled.button.attrs({
-  className: `p-2 desktop:p-3 w-full flex flex-col space-y-3
+  className: `p-2 xl:p-3 w-full flex flex-col space-y-3
     box-border border border-transparent
     focus:outline-none focus:ring-2 focus:ring-primary-500
     hover:border-ui-100 active:border-200

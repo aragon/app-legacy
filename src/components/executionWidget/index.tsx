@@ -177,7 +177,7 @@ const WidgetFooter: React.FC<FooterProps> = ({
 
 const Card = styled.div.attrs({
   className:
-    'w-84 flex-col bg-white rounded-xl py-3 px-2 desktop:p-3 space-y-3',
+    'w-84 flex-col bg-white rounded-xl py-3 px-2 xl:p-3 space-y-3',
 })``;
 
 const Header = styled.div.attrs({
@@ -198,9 +198,9 @@ const Content = styled.div.attrs({
 
 const Footer = styled.div.attrs({
   className:
-    'flex flex-col tablet:flex-row items-center gap-y-2 tablet:gap-y-0 tablet:gap-x-3',
+    'flex flex-col md:flex-row items-center gap-y-2 md:gap-y-0 md:gap-x-3',
 })``;
 
 const StyledButtonText = styled(ButtonText).attrs({
-  className: 'w-full tablet:w-max',
+  className: 'w-full md:w-max',
 })``;

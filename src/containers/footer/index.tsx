@@ -56,8 +56,8 @@ const Footer: React.FC = () => {
         </FullSpan>
       </GridLayout>
       <div
-        className={`z-10 flex items-center justify-center space-x-1 bg-primary-400 py-0.5 text-sm text-ui-0 desktop:mb-0 ${
-          isOnWrongNetwork ? 'mb-11 tablet:mb-15' : 'mb-8 tablet:mb-12'
+        className={`z-10 flex items-center justify-center space-x-1 bg-primary-400 py-0.5 text-sm text-ui-0 xl:mb-0 ${
+          isOnWrongNetwork ? 'mb-11 md:mb-15' : 'mb-8 md:mb-12'
         }`}
       >
         <IconInfo />
@@ -79,7 +79,7 @@ const Section = styled.section.attrs({
 
 const ActionContainer = styled.div.attrs({
   className:
-    'relative flex flex-col desktop:flex-row desktop:justify-between items-center space-y-4 desktop:space-y-0 pt-5 desktop:pt-3 pb-8 desktop:pb-3',
+    'relative flex flex-col xl:flex-row xl:justify-between items-center space-y-4 xl:space-y-0 pt-5 xl:pt-6 pb-8 xl:pb-3',
 })``;
 
 const FlexDiv = styled.div.attrs({

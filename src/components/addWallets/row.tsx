@@ -307,11 +307,11 @@ const PercentageInputDisplay = styled(TextInput).attrs({
 })``;
 
 const PercentageInputDisplayWrapper = styled.div.attrs({
-  className: 'order-5 tablet:order-4 w-10',
+  className: 'order-5 md:order-4 w-10',
 })``;
 
 const LabelWrapper = styled.div.attrs({
-  className: 'tablet:hidden mb-0.5',
+  className: 'md:hidden mb-0.5',
 })``;
 
 const AddressWrapper = styled.div.attrs({
@@ -319,7 +319,7 @@ const AddressWrapper = styled.div.attrs({
 })``;
 
 const AmountsWrapper = styled.div.attrs({
-  className: 'flex-1 tablet:flex-none order-4 tablet:order-2 w-25',
+  className: 'flex-1 md:flex-none order-4 md:order-2 w-25',
 })``;
 
 const ErrorContainer = styled.div.attrs({
@@ -327,11 +327,11 @@ const ErrorContainer = styled.div.attrs({
 })``;
 
 const Break = styled.hr.attrs({
-  className: 'order-3 tablet:hidden w-full border-0',
+  className: 'order-3 md:hidden w-full border-0',
 })``;
 
 const DropdownMenuWrapper = styled.div.attrs({
-  className: 'flex order-2 tablet:order-5 mt-3.5 tablet:mt-0 w-6',
+  className: 'flex order-2 md:order-5 mt-3.5 md:mt-0 w-6',
 })``;
 
 const InputContainer = styled.div.attrs(() => ({

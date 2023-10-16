@@ -25,7 +25,7 @@ const AddWalletsHeader: React.FC = () => {
 export default AddWalletsHeader;
 
 const Container = styled.div.attrs({
-  className: 'hidden tablet:flex p-2 space-x-2 bg-ui-0',
+  className: 'hidden md:flex p-2 space-x-2 bg-ui-0',
 })``;
 
 const HeaderItem = styled.div.attrs({

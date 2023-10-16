@@ -49,7 +49,7 @@ const PageEmptyState = ({
 export default PageEmptyState;
 
 const Container = styled.div.attrs({
-  className: 'col-span-full desktop:col-start-3 desktop:col-end-11',
+  className: 'col-span-full xl:col-start-3 xl:col-end-11',
 })``;
 
 export const EmptyStateHeading = styled.h1.attrs({
@@ -58,10 +58,10 @@ export const EmptyStateHeading = styled.h1.attrs({
 
 export const EmptyStateContainer = styled.div.attrs({
   className:
-    'flex flex-col w-full items-center py-4 px-3 tablet:py-12 tablet:px-6 mx-auto mt-3 tablet:mt-5 ft-text-lg bg-white rounded-xl text-ui-500',
+    'flex flex-col w-full items-center py-4 px-3 md:py-12 md:px-6 mx-auto mt-3 md:mt-5 ft-text-lg bg-white rounded-xl text-ui-500',
 })``;
 
 const ActionsContainer = styled.div.attrs({
   className:
-    'flex flex-col tablet:flex-row tablet:gap-x-3 gap-y-1.5 tablet:justify-center mt-4 w-full',
+    'flex flex-col md:flex-row md:gap-x-3 gap-y-1.5 md:justify-center mt-4 w-full',
 })``;

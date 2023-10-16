@@ -212,7 +212,7 @@ export const Community: React.FC = () => {
       <BodyContainer>
         <SearchAndResultWrapper>
           <div className="space-y-2">
-            <div className="flex flex-row gap-2 desktop:gap-4">
+            <div className="flex flex-row gap-2 xl:gap-4">
               {enableSearchSort && (
                 <SearchInput
                   placeholder={t('labels.searchPlaceholder')}
@@ -326,7 +326,7 @@ export const Community: React.FC = () => {
 };
 
 const BodyContainer = styled.div.attrs({
-  className: 'mt-1 desktop:space-y-8',
+  className: 'mt-1 xl:space-y-8',
 })``;
 
 const SearchAndResultWrapper = styled.div.attrs({className: 'space-y-5'})``;

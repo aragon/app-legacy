@@ -410,7 +410,7 @@ export const MintTokenForm: React.FC<MintTokenFormProps> = ({
     <>
       <Container standAlone={standAlone}>
         {isDesktop && (
-          <div className="flex items-center space-x-2 p-2 tablet:p-3 ">
+          <div className="flex items-center space-x-2 p-2 md:p-3 ">
             <div className="flex-1">
               <FormLabel label={t('labels.whitelistWallets.address')} />
             </div>
@@ -448,12 +448,12 @@ export const MintTokenForm: React.FC<MintTokenFormProps> = ({
             mode="secondary"
             size="large"
             bgWhite
-            className="flex-1 tablet:flex-initial"
+            className="flex-1 md:flex-initial"
             onClick={handleAddWallet}
           />
 
           {/* eslint-disable-next-line tailwindcss/classnames-order */}
-          {/* <label className="flex-1 tablet:flex-initial py-1.5 px-2 space-x-1.5 h-6 font-bold rounded-xl cursor-pointer hover:text-primary-500 bg-ui-0 ft-text-base">
+          {/* <label className="flex-1 md:flex-initial py-1.5 px-2 space-x-1.5 h-6 font-bold rounded-xl cursor-pointer hover:text-primary-500 bg-ui-0 ft-text-base">
           {t('labels.whitelistWallets.uploadCSV')}
           <input
             type="file"
@@ -516,11 +516,11 @@ const Container = styled.div.attrs<{standAlone: boolean}>(({standAlone}) => ({
 
 const ButtonContainer = styled.div.attrs({
   className:
-    'flex justify-between tablet:justify-start p-2 tablet:p-3 space-x-2',
+    'flex justify-between md:justify-start p-2 md:p-3 space-x-2',
 })``;
 
 const SummaryContainer = styled.div.attrs({
-  className: 'p-2 tablet:p-3 space-y-1.5 font-bold text-ui-800',
+  className: 'p-2 md:p-3 space-y-1.5 font-bold text-ui-800',
 })``;
 
 const HStack = styled.div.attrs({

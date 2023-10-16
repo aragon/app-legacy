@@ -107,5 +107,5 @@ const SelectWCApp: React.FC<Props> = props => {
 export default SelectWCApp;
 
 const Content = styled.div.attrs({
-  className: 'py-3 px-2 desktop:px-3',
+  className: 'py-3 px-2 xl:px-3',
 })``;

@@ -51,7 +51,7 @@ export const Breadcrumb: React.FC<BreadcrumbProps> = ({
           return (
             <div
               key={index}
-              className="flex items-center space-x-1 desktop:space-x-1.5"
+              className="flex items-center space-x-1 xl:space-x-1.5"
             >
               <Crumb
                 first={index === 0}
@@ -87,13 +87,13 @@ export const Breadcrumb: React.FC<BreadcrumbProps> = ({
 
 const Container = styled.div.attrs({
   className:
-    'inline-flex items-center py-0.5 desktop:px-2 space-x-1 ' +
-    'desktop:space-x-1.5 h-5 desktop:h-6 desktop:bg-ui-0 desktop:rounded-xl',
+    'inline-flex items-center py-0.5 xl:px-2 space-x-1 ' +
+    'xl:space-x-1.5 h-5 xl:h-6 xl:bg-ui-0 xl:rounded-xl',
 })``;
 
 const ProcessContainer = styled.div.attrs({
   className:
-    'inline-flex py-0.5 desktop:pr-2 desktop:pl-0.5 desktop:rounded-xl desktop:bg-ui-0 h-6',
+    'inline-flex py-0.5 xl:pr-2 xl:pl-0.5 xl:rounded-xl xl:bg-ui-0 h-6',
 })``;
 
 const ProcessCrumbContainer = styled.div.attrs({

@@ -161,10 +161,10 @@ const InputForm: React.FC<InputFormProps> = ({
   ]);
 
   return (
-    <div className="min-h-full bg-ui-50 desktop:bg-white desktop:p-6">
-      <div className="items-baseline space-x-3 desktop:flex">
+    <div className="min-h-full bg-ui-50 xl:bg-white xl:p-6">
+      <div className="items-baseline space-x-3 xl:flex">
         <ActionName>{selectedAction.name}</ActionName>
-        <div className="hidden items-center space-x-1 text-primary-600 desktop:flex">
+        <div className="hidden items-center space-x-1 text-primary-600 xl:flex">
           <p className="text-sm font-bold text-primary-500">
             {selectedSC.name}
           </p>
@@ -172,12 +172,12 @@ const InputForm: React.FC<InputFormProps> = ({
         </div>
       </div>
       <ActionDescription>{selectedAction.notice}</ActionDescription>
-      <div className="mt-1 flex items-center space-x-1 text-primary-600 desktop:hidden">
+      <div className="mt-1 flex items-center space-x-1 text-primary-600 xl:hidden">
         <p className="text-sm font-bold text-primary-500">{selectedSC.name}</p>
         <IconSuccess />
       </div>
       {actionInputs.length > 0 ? (
-        <div className="mt-5 space-y-2 rounded-xl border border-ui-100 bg-white p-3 shadow-100 desktop:bg-ui-50">
+        <div className="mt-5 space-y-2 rounded-xl border border-ui-100 bg-white p-3 shadow-100 xl:bg-ui-50">
           {actionInputs.map(input => (
             <div key={input.name}>
               <div className="text-base font-bold capitalize text-ui-800">

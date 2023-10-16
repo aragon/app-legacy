@@ -21,17 +21,17 @@ export const NotFound: React.FC = () => {
         <Menu>
           <GridLayout>
             <img
-              className="col-span-2 col-start-2 mx-auto h-4 tablet:col-start-4 desktop:col-start-auto desktop:mx-0"
+              className="col-span-2 col-start-2 mx-auto h-4 md:col-start-4 xl:col-start-auto xl:mx-0"
               src={Logo}
             />
           </GridLayout>
         </Menu>
       </Container>
 
-      <div className="overflow-x-hidden desktop:overflow-x-visible">
+      <div className="overflow-x-hidden xl:overflow-x-visible">
         <GridLayout>
           <Wrapper>
-            <div className="mt-3 desktop:mt-0 desktop:w-1/2">
+            <div className="mt-3 xl:mt-0 xl:w-1/2">
               <Title>
                 {t('cta.404.titleLine1')}
                 <br />
@@ -40,12 +40,12 @@ export const NotFound: React.FC = () => {
               <ButtonText
                 label={t('cta.404.backToExplore')}
                 size="large"
-                className="mt-5 hidden desktop:block"
+                className="mt-5 hidden xl:block"
                 onClick={() => navigate(Landing)}
               />
             </div>
 
-            <div className="relative mt-2 desktop:mt-0 desktop:w-1/2">
+            <div className="relative mt-2 xl:mt-0 xl:w-1/2">
               <GradientGreen src={Green} />
               <GradientPurple src={Purple} />
               <img src={Logo404} className="w-full" />
@@ -58,7 +58,7 @@ export const NotFound: React.FC = () => {
             <ButtonText
               label={t('cta.404.backToExplore')}
               size="large"
-              className="mt-14 block w-full desktop:mt-0 desktop:hidden"
+              className="mt-14 block w-full xl:mt-0 xl:hidden"
               onClick={() => navigate(Landing)}
             />
           </div>
@@ -69,7 +69,7 @@ export const NotFound: React.FC = () => {
 };
 
 const Menu = styled.nav.attrs({
-  className: 'py-2 desktop:py-4',
+  className: 'py-2 xl:py-4',
 })`
   background: linear-gradient(
     180deg,
@@ -81,11 +81,11 @@ const Menu = styled.nav.attrs({
 
 const Wrapper = styled.div.attrs({
   className:
-    'desktop:flex justify-center items-end desktop:justify-between col-span-full desktop:col-start-2 desktop:col-end-12 relative',
+    'xl:flex justify-center items-end xl:justify-between col-span-full xl:col-start-2 xl:col-end-12 relative',
 })``;
 
 const Title = styled.h1.attrs({
-  className: 'font-bold text-primary-500 text-center desktop:text-left',
+  className: 'font-bold text-primary-500 text-center xl:text-left',
 })`
   font-family: Syne;
   line-height: 120%;
@@ -97,9 +97,9 @@ const Title = styled.h1.attrs({
 `;
 
 const GradientGreen = styled.img.attrs({
-  className: 'h-25 desktop:h-40 absolute -left-10 desktop:-left-14 top-8',
+  className: 'h-25 xl:h-40 absolute -left-10 xl:-left-14 top-8',
 })``;
 
 const GradientPurple = styled.img.attrs({
-  className: 'h-25 desktop:h-40 absolute -bottom-8 -right-12',
+  className: 'h-25 xl:h-40 absolute -bottom-8 -right-12',
 })``;

@@ -687,7 +687,7 @@ export const Proposal: React.FC = () => {
         <SummaryText>{proposal?.metadata.summary}</SummaryText>
         {proposal?.metadata.description && !expandedProposal && (
           <ButtonText
-            className="w-full tablet:w-max"
+            className="w-full md:w-max"
             size="large"
             label={t('governance.proposals.buttons.readFullProposal')}
             mode="secondary"
@@ -703,7 +703,7 @@ export const Proposal: React.FC = () => {
             <>
               <StyledEditorContent editor={editor} />
               <ButtonText
-                className="mt-3 w-full tablet:w-max"
+                className="mt-3 w-full md:w-max"
                 label={t('governance.proposals.buttons.closeFullProposal')}
                 mode="secondary"
                 iconRight={<IconChevronUp />}
@@ -764,11 +764,11 @@ export const Proposal: React.FC = () => {
 };
 
 const Container = styled.div.attrs({
-  className: 'col-span-full desktop:col-start-2 desktop:col-end-12',
+  className: 'col-span-full xl:col-start-2 xl:col-end-12',
 })``;
 
 const HeaderContainer = styled.div.attrs({
-  className: 'flex flex-col gap-y-2 desktop:p-0 tablet:px-3 pt-2',
+  className: 'flex flex-col gap-y-2 xl:p-0 md:px-3 pt-2',
 })``;
 
 const ProposalTitle = styled.p.attrs({
@@ -776,7 +776,7 @@ const ProposalTitle = styled.p.attrs({
 })``;
 
 const ContentWrapper = styled.div.attrs({
-  className: 'flex flex-col tablet:flex-row gap-x-3 gap-y-1.5',
+  className: 'flex flex-col md:flex-row gap-x-3 gap-y-1.5',
 })``;
 
 // const BadgeContainer = styled.div.attrs({
@@ -792,11 +792,11 @@ const SummaryText = styled.p.attrs({
 })``;
 
 const ProposalContainer = styled.div.attrs({
-  className: 'space-y-3 tablet:w-3/5',
+  className: 'space-y-3 md:w-3/5',
 })``;
 
 const AdditionalInfoContainer = styled.div.attrs({
-  className: 'space-y-3 tablet:w-2/5',
+  className: 'space-y-3 md:w-2/5',
 })``;
 
 type ContentContainerProps = {
@@ -806,7 +806,7 @@ type ContentContainerProps = {
 const ContentContainer = styled.div.attrs<ContentContainerProps>(
   ({expandedProposal}) => ({
     className: `${
-      expandedProposal ? 'tablet:mt-5' : 'tablet:mt-8'
-    } mt-3 tablet:flex tablet:space-x-3 space-y-3 tablet:space-y-0`,
+      expandedProposal ? 'md:mt-5' : 'md:mt-8'
+    } mt-3 md:flex md:space-x-3 space-y-3 md:space-y-0`,
   })
 )<ContentContainerProps>``;

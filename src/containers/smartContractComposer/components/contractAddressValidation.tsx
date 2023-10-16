@@ -735,7 +735,7 @@ const ContractAddressValidation: React.FC<Props> = props => {
 
 export default ContractAddressValidation;
 
-const Content = styled.div.attrs({className: 'px-2 tablet:px-3 py-3'})``;
+const Content = styled.div.attrs({className: 'px-2 md:px-3 py-3'})``;
 
 const DescriptionContainer = styled.div.attrs({
   className: 'space-y-0.5 mb-1.5',

@@ -52,7 +52,7 @@ export default PrivacyPolicy;
 
 const Container = styled.div.attrs({
   className:
-    'flex desktop:mx-5 wide:w-190 wide:mx-auto items-center p-3 space-x-3 bg-ui-0 rounded-xl border border-ui-100',
+    'flex xl:mx-5 2xl:w-190 2xl:mx-auto items-center p-3 space-x-3 bg-ui-0 rounded-xl border border-ui-100',
 })`
   box-shadow:
     0px 16px 24px rgba(31, 41, 51, 0.06),
@@ -62,7 +62,7 @@ const Container = styled.div.attrs({
 
 const MobileModal = styled.div.attrs({
   className: `space-y-3 fixed bottom-2 z-50 p-2 mx-2 rounded-xl border border-ui-100 bg-ui-0
-    tablet:w-56 tablet:bottom-3 tablet:left-1/2 tablet:mx-0 tablet:-translate-x-1/2`,
+    md:w-56 md:bottom-3 md:left-1/2 md:mx-0 md:-translate-x-1/2`,
 })`
   box-shadow:
     0px 24px 32px rgba(31, 41, 51, 0.04),

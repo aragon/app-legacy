@@ -114,7 +114,7 @@ export const Transfers: React.FC = () => {
           onClick: () => open('transfer'),
         }}
       >
-        <div className="mt-3 desktop:mt-8">
+        <div className="mt-3 xl:mt-8">
           <div className="space-y-1.5">
             <div className="flex items-center justify-between gap-2">
               <ButtonGroup
@@ -210,4 +210,4 @@ export const Transfers: React.FC = () => {
   );
 };
 
-const SectionContainer = styled.div.attrs({className: 'my-3 desktop:my-5'})``;
+const SectionContainer = styled.div.attrs({className: 'my-3 xl:my-5'})``;

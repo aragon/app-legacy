@@ -52,7 +52,7 @@ const ModalHeader: React.FC<Props> = props => {
             icon={<IconClose />}
             onClick={onClose}
             bgWhite
-            className="hidden desktop:block"
+            className="hidden xl:block"
           />
         )}
       </ButtonWrapper>
@@ -64,7 +64,7 @@ export default ModalHeader;
 
 const Header = styled.div.attrs({
   className:
-    'flex rounded-xl space-x-2 desktop:space-x-3 p-2 desktop:p-3 bg-ui-0',
+    'flex rounded-xl space-x-2 xl:space-x-3 p-2 xl:p-3 bg-ui-0',
 })`
   box-shadow:
     0px 4px 8px rgba(31, 41, 51, 0.04),
@@ -73,7 +73,7 @@ const Header = styled.div.attrs({
 `;
 
 const Title = styled.div.attrs({
-  className: 'font-bold text-ui-800 text-center desktop:text-left',
+  className: 'font-bold text-ui-800 text-center xl:text-left',
 })``;
 
 const SubTitle = styled.div.attrs({

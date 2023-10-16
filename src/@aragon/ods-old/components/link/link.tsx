@@ -67,7 +67,7 @@ type StyledLinkProps = Pick<LinkProps, 'disabled'> & {
 
 const StyledLink = styled.a.attrs<StyledLinkProps>(({disabled, type}) => {
   let className =
-    'inline-flex flex-col gap-y-0.25 tablet:gap-y-0.5 max-w-full rounded cursor-pointer ';
+    'inline-flex flex-col gap-y-0.25 md:gap-y-0.5 max-w-full rounded cursor-pointer ';
   className += variants[type];
   className += disabled ? disabledColors[type] : defaultColors[type];
 

@@ -123,7 +123,7 @@ const RenderIllustration: React.FC<StateEmptyProps> = props => {
       {props.type !== 'Human' && (
         <IlluObject
           object={props.object}
-          className={props.type === 'both' ? '-ml-32 desktop:-ml-36' : ''}
+          className={props.type === 'both' ? '-ml-32 xl:-ml-36' : ''}
         />
       )}
     </>
@@ -137,7 +137,7 @@ const Card = styled.div.attrs<
 
   if (mode === 'card') {
     className += 'border bg-ui-0 ';
-    className += `${customCardPaddingClassName || 'p-3 tablet:p-6'} `;
+    className += `${customCardPaddingClassName || 'p-3 md:p-6'} `;
 
     if (type === 'Object') className += 'gap-y-1 ';
   } else {
@@ -158,7 +158,7 @@ const ActionContainer = styled.div.attrs<Pick<BaseProps, 'actionsColumn'>>(
   ({actionsColumn}) => ({
     className: `flex w-full flex-col gap-y-1.5 ${
       !actionsColumn &&
-      'tablet:flex-row tablet:gap-y-0 tablet:justify-center tablet:gap-x-3'
+      'md:flex-row md:gap-y-0 md:justify-center md:gap-x-3'
     }`,
   })
 )<Pick<BaseProps, 'actionsColumn'>>``;
@@ -168,7 +168,7 @@ const Title = styled.h2.attrs({
 })``;
 
 const Description = styled.p.attrs({
-  className: 'text-ui-500 ft-text-sm tablet:ft-text-base',
+  className: 'text-ui-500 ft-text-sm md:ft-text-base',
 })`
   & > a {
     color: #003bf5;
@@ -176,5 +176,5 @@ const Description = styled.p.attrs({
 `;
 
 const ImageWrapper = styled.div.attrs({
-  className: 'flex justify-center pt-4 desktop:pt-6 pb-4 desktop:pb-8',
+  className: 'flex justify-center pt-4 xl:pt-6 pb-4 xl:pb-8',
 })``;

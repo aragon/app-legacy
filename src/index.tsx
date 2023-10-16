@@ -5,7 +5,7 @@ import {Web3Modal} from '@web3modal/react';
 import React from 'react';
 import {createRoot} from 'react-dom/client';
 import {HashRouter as Router} from 'react-router-dom';
-import 'tailwindcss/tailwind.css';
+import '@aragon/ods/index.css';
 import isPropValid from '@emotion/is-prop-valid';
 import {StyleSheetManager} from 'styled-components';
 import {WagmiConfig, configureChains, createConfig} from 'wagmi';

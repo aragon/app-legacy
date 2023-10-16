@@ -63,7 +63,7 @@ const UpdateBanner: React.FC = () => {
 };
 
 const DummyElement = styled.div.attrs({
-  className: 'tablet:block hidden',
+  className: 'md:block hidden',
 })``;
 
 const UpdateContainer = styled.div.attrs({
@@ -77,7 +77,7 @@ const TextWrapper = styled.div.attrs({
 
 const MessageWrapper = styled.div.attrs({
   className:
-    'block tablet:flex tablet:items-center tablet:space-x-3 tablet:space-y-0 space-y-1' as string,
+    'block md:flex md:items-center md:space-x-3 md:space-y-0 space-y-1' as string,
 })``;
 
 export default UpdateBanner;

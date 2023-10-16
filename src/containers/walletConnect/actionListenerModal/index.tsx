@@ -205,7 +205,7 @@ const ActionListenerModal: React.FC<Props> = ({
               {t('modal.dappConnect.detaildApp.spinnerLabel')}
             </p>
           </div>
-          <p className="text-center text-sm text-ui-500 desktop:px-5">
+          <p className="text-center text-sm text-ui-500 xl:px-5">
             {t('modal.dappConnect.detaildApp.desc', {
               dappName: metadataName,
             })}
@@ -263,5 +263,5 @@ const ActionListenerModal: React.FC<Props> = ({
 export default ActionListenerModal;
 
 const Content = styled.div.attrs({
-  className: 'py-3 px-2 desktop:px-3 space-y-3',
+  className: 'py-3 px-2 xl:px-3 space-y-3',
 })``;

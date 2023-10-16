@@ -191,7 +191,7 @@ export const HeaderDao: React.FC<HeaderDaoProps> = ({
           <AvatarDao
             daoName={daoName || ''}
             size="unset"
-            className="h-10 w-10 text-lg desktop:h-14 desktop:w-14 desktop:text-xl"
+            className="h-10 w-10 text-lg xl:h-14 xl:w-14 xl:text-xl"
             {...(daoAvatar && {src: daoAvatar})}
           />
         </AvatarContainer>
@@ -261,7 +261,7 @@ export const HeaderDao: React.FC<HeaderDaoProps> = ({
 
 const Card = styled.div.attrs({
   className:
-    'w-full bg-white tablet:rounded-xl p-2 tablet:p-3 desktop:p-6 border border-ui-100 space-y-3',
+    'w-full bg-white md:rounded-xl p-2 md:p-3 xl:p-6 border border-ui-100 space-y-3',
 })`
   box-shadow:
     0px 4px 8px rgba(31, 41, 51, 0.04),
@@ -278,7 +278,7 @@ const Content = styled.div.attrs({
 })``;
 
 const AvatarContainer = styled.div.attrs({
-  className: 'tablet:flex hidden justify-end col-span-2 desktop:items-center',
+  className: 'md:flex hidden justify-end col-span-2 xl:items-center',
 })``;
 
 const Title = styled.h1.attrs({
@@ -296,11 +296,11 @@ const Description = styled.p.attrs({
 `;
 
 const DetailsWrapper = styled.div.attrs({
-  className: 'flex items-center justify-between flex-col tablet:flex-row',
+  className: 'flex items-center justify-between flex-col md:flex-row',
 })``;
 
 const NetworkDetailsContainer = styled.div.attrs({
-  className: 'flex space-x-3 w-full tablet:w-auto',
+  className: 'flex space-x-3 w-full md:w-auto',
 })``;
 
 const NetworkDetails = styled.div.attrs({
@@ -312,7 +312,7 @@ const DetailsText = styled.span.attrs({
 })``;
 
 const LinksWrapper = styled.div.attrs({
-  className: 'space-x-3 hidden desktop:flex',
+  className: 'space-x-3 hidden xl:flex',
 })``;
 
 const ActionContainer = styled.div.attrs({
@@ -321,7 +321,7 @@ const ActionContainer = styled.div.attrs({
 
 const ActionWrapper = styled.div.attrs({
   className:
-    'flex items-center tablet:space-x-3 justify-between tablet:justify-start w-full tablet:w-max space-y-3 tablet:space-y-0',
+    'flex items-center md:space-x-3 justify-between md:justify-start w-full md:w-max space-y-3 md:space-y-0',
 })``;
 
 const CredentialsDropdownItem = styled.div.attrs({

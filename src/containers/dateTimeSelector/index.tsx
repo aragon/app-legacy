@@ -241,7 +241,7 @@ const DateTimeSelector: React.FC<Props> = ({
 
 export default DateTimeSelector;
 const InputWrapper = styled.div.attrs({
-  className: 'space-y-0.5 w-1/2 tablet:w-full',
+  className: 'space-y-0.5 w-1/2 md:w-full',
 })``;
 
 const LabelWrapper = styled.span.attrs({
@@ -250,5 +250,5 @@ const LabelWrapper = styled.span.attrs({
 
 const SpecificTimeContainer = styled.div.attrs({
   className:
-    'flex flex-col tablet:flex-row space-y-1.5 tablet:space-y-0 tablet:space-x-1.5 p-3 bg-ui-0 rounded-xl',
+    'flex flex-col md:flex-row space-y-1.5 md:space-y-0 md:space-x-1.5 p-3 bg-ui-0 rounded-xl',
 })``;

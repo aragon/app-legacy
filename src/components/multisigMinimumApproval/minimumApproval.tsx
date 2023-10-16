@@ -60,7 +60,7 @@ export default MinimumApproval;
 
 const Container = styled.div.attrs({
   className:
-    'flex flex-col desktop:flex-row items-center p-2 pt-4 desktop:p-3 gap-x-3 gap-y-4 rounded-xl bg-ui-0',
+    'flex flex-col xl:flex-row items-center p-2 pt-4 xl:p-3 gap-x-3 gap-y-4 rounded-xl bg-ui-0',
 })``;
 
 const LinearProgressContainer = styled.div.attrs({
@@ -79,9 +79,9 @@ const ApprovalAddresses = styled.p.attrs({
 const TotalAddresses = styled.p.attrs({className: 'text-ui-600 ft-text-sm'})``;
 
 const InputWrapper = styled.div.attrs({
-  className: 'order-2 desktop:order-1 w-full desktop:w-1/4',
+  className: 'order-2 xl:order-1 w-full xl:w-1/4',
 })``;
 
 const ProgressWrapper = styled.div.attrs({
-  className: 'flex flex-1 desktop:order-2 items-center w-full',
+  className: 'flex flex-1 xl:order-2 items-center w-full',
 })``;

@@ -50,8 +50,8 @@ export const DaoSelector: React.FC<DaoSelectorProps> = ({
 
 const Card = styled.div.attrs(() => ({
   className:
-    'flex desktop:inline-flex items-center space-x-2 bg-ui-0' +
-    ' desktop:bg-transparent p-3 desktop:p-0 rounded-xl cursor-pointer',
+    'flex xl:inline-flex items-center space-x-2 bg-ui-0' +
+    ' xl:bg-transparent p-3 xl:p-0 rounded-xl cursor-pointer',
 }))``;
 
 const LeftContent = styled.div.attrs({
@@ -71,5 +71,5 @@ const DaoName = styled.p.attrs({
 `;
 
 const DaoAddress = styled.p.attrs({
-  className: 'text-ui-500 ft-text-sm desktop:hidden truncate',
+  className: 'text-ui-500 ft-text-sm xl:hidden truncate',
 })``;

@@ -94,7 +94,7 @@ const ConfigureActions: React.FC<ConfigureActionsProps> = ({
             label={addExtraActionLabel}
             iconLeft={<IconAdd />}
             onClick={handleExtraActionClick}
-            className="mt-2 w-full tablet:w-max"
+            className="mt-2 w-full md:w-max"
           />
         </ActionsWrapper>
       ) : (

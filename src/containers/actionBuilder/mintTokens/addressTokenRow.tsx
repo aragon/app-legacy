@@ -169,7 +169,7 @@ const TokenField: React.FC<IndexProps> = ({actionIndex, fieldIndex}) => {
         field: {name, value, onBlur, onChange},
         fieldState: {error},
       }) => (
-        <div className="flex-1 desktop:w-23 desktop:flex-none">
+        <div className="flex-1 xl:w-23 xl:flex-none">
           <NumberInput
             name={name}
             value={value}
@@ -359,7 +359,7 @@ export const AddressAndTokenRow: React.FC<AddressAndTokenRowProps> = ({
 };
 
 const Container = styled.div.attrs({
-  className: 'p-2 tablet:p-3 space-y-3',
+  className: 'p-2 md:p-3 space-y-3',
 })``;
 
 const ErrorContainer = styled.div.attrs({
@@ -375,7 +375,7 @@ const HStack = styled.div.attrs({
 })``;
 
 const HStackWithPadding = styled.div.attrs({
-  className: 'flex tablet:pr-8 space-x-2',
+  className: 'flex md:pr-8 space-x-2',
 })``;
 
 const InputContainer = styled.div.attrs({className: 'flex-1 space-y-1'})``;
