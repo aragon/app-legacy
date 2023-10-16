@@ -25,7 +25,7 @@ const MobileNavMenu = (props: MobileNavMenuProps) => {
 
   return (
     <BottomSheet isOpen={Boolean(isOpen)} onClose={close}>
-      <div className="md:w-50">
+      <div className="md:w-[400px]">
         <CardWrapper className="rounded-xl">
           <DaoSelector
             daoAddress={toDisplayEns(currentDao?.ensDomain)}

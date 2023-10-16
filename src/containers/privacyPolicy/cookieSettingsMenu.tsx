@@ -109,7 +109,7 @@ type Props = {
 const Modal = styled.div.attrs<{show: Props}>(({show}) => ({
   className: `${show ? 'block' : 'hidden'} fixed z-20 bg-neutral-50
   bottom-0 w-full rounded-t-xl
-  md:bottom-3 md:left-1/2 md:w-56 md:rounded-b-xl
+  md:bottom-3 md:left-1/2 md:w-[448px] md:rounded-b-xl
   md:-translate-x-1/2
   xl:bottom-auto xl:top-1/2 xl:-translate-y-1/2`,
 }))<Props>`

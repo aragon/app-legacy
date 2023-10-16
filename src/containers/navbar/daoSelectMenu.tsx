@@ -126,7 +126,7 @@ const Title = styled.div.attrs({
 })``;
 
 const ModalContentContainer = styled.div.attrs({
-  className: 'p-3 pb-0 space-y-3 md:w-50 xl:w-auto overflow-auto',
+  className: 'p-3 pb-0 space-y-3 md:w-[400px] xl:w-auto overflow-auto',
 })``;
 
 const ListGroup = styled.div.attrs({

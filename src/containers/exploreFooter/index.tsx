@@ -100,7 +100,7 @@ const Copyright = styled.span.attrs({
 })``;
 
 const GradientGreen = styled.img.attrs({
-  className: 'h-50 absolute -top-16 -left-16',
+  className: 'h-[400px] absolute -top-16 -left-16',
 })``;
 
 const GradientPurple = styled.img.attrs({
