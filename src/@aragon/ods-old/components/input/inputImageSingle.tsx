@@ -180,6 +180,6 @@ const StyledButton = styled(ButtonIcon).attrs({
 
 const StyledIconAdd = styled(IconAdd).attrs(
   ({isdragactive}: DefaultContainerProps) => ({
-    className: `${isdragactive ? 'text-primary-500' : 'text-ui-600'}`,
+    className: `${isdragactive ? 'text-primary-500' : 'text-neutral-600'}`,
   })
 )<DefaultContainerProps>``;

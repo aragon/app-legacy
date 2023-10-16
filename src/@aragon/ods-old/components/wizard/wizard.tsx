@@ -31,10 +31,10 @@ export const Wizard: React.FC<WizardProps> = ({
       {includeStepper && (
         <Wrapper>
           <CenteredFlex>
-            <p className="font-bold text-ui-800 xl:text-primary-500">
+            <p className="font-bold text-neutral-800 xl:text-primary-500">
               {processName}
             </p>
-            <p className="text-ui-400">
+            <p className="text-neutral-400">
               Step {currentStep} of {totalSteps}
             </p>
           </CenteredFlex>
@@ -67,11 +67,11 @@ const Wrapper = styled.div.attrs({
 })``;
 
 const StepTitle = styled.p.attrs({
-  className: 'ft-text-3xl text-ui-800 font-bold',
+  className: 'ft-text-3xl text-neutral-800 font-bold',
 })``;
 
 const StepSubTitle = styled.span.attrs({
-  className: 'text-ui-600 ft-text-lg',
+  className: 'text-neutral-600 ft-text-lg',
 })`
   & > a {
     color: #003bf5;

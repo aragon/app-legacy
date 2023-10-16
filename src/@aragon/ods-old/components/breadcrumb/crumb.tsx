@@ -16,7 +16,7 @@ const Crumb: React.FC<CrumbProps> = props => {
   return (
     <CrumbContainer
       onClick={props.onClick}
-      className={props.last ? 'cursor-default text-ui-600' : 'text-primary-500'}
+      className={props.last ? 'cursor-default text-neutral-600' : 'text-primary-500'}
     >
       {props.first &&
         props.icon &&

@@ -124,7 +124,7 @@ export const ActionItemAddress: React.FC<ActionItemAddressProps> = props => {
         component: (
           <ListItemAction
             title={t('community.actionItemDropdown.optionCopyAddress')}
-            iconRight={<IconCopy className="text-ui-300" />}
+            iconRight={<IconCopy className="text-neutral-300" />}
             bgWhite={true}
           />
         ),
@@ -134,7 +134,7 @@ export const ActionItemAddress: React.FC<ActionItemAddressProps> = props => {
         component: (
           <ListItemAction
             title={t('community.actionItemDropdown.optionBlockExplorer')}
-            iconRight={<IconLinkExternal className="text-ui-300" />}
+            iconRight={<IconLinkExternal className="text-neutral-300" />}
             bgWhite={true}
           />
         ),
@@ -150,7 +150,7 @@ export const ActionItemAddress: React.FC<ActionItemAddressProps> = props => {
               ? t('community.actionItemDropdown.optionUndelegate')
               : t('community.actionItemDropdown.optionDelegate')
           }
-          iconRight={<IconGovernance className="text-ui-300" />}
+          iconRight={<IconGovernance className="text-neutral-300" />}
           bgWhite={true}
         />
       ),
@@ -171,7 +171,7 @@ export const ActionItemAddress: React.FC<ActionItemAddressProps> = props => {
           <Avatar size="small" mode="circle" src={avatar ?? addressOrEns} />
           <div className="flex grow flex-col gap-0.5">
             <div className="flex flex-row items-start gap-1">
-              <div className="font-semibold text-ui-800 ft-text-base">
+              <div className="font-semibold text-neutral-800 ft-text-base">
                 {shortenAddress(addressOrEns)}
               </div>
               {walletId && tagLabel && (
@@ -183,7 +183,7 @@ export const ActionItemAddress: React.FC<ActionItemAddressProps> = props => {
               )}
             </div>
             {useCompactMode && (
-              <div className="flex grow flex-row justify-between text-ui-600">
+              <div className="flex grow flex-row justify-between text-neutral-600">
                 <MemberVotingPower
                   votingPower={votingPower}
                   tokenSupply={tokenSupply}
@@ -201,7 +201,7 @@ export const ActionItemAddress: React.FC<ActionItemAddressProps> = props => {
       </TableCell>
 
       {!useCompactMode && votingPower != null && tokenSymbol && (
-        <TableCell className="text-ui-600">
+        <TableCell className="text-neutral-600">
           <MemberVotingPower
             votingPower={votingPower}
             tokenSupply={tokenSupply}
@@ -211,7 +211,7 @@ export const ActionItemAddress: React.FC<ActionItemAddressProps> = props => {
       )}
 
       {!useCompactMode && delegations != null && enableDelegation && (
-        <TableCell className="text-ui-600 ft-text-sm">
+        <TableCell className="text-neutral-600 ft-text-sm">
           <span>{delegations > 0 ? delegations : ''}</span>
         </TableCell>
       )}

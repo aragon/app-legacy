@@ -60,7 +60,7 @@ const Footer: React.FC = () => {
           </ActionContainer>
         </FullSpan>
       </GridLayout>
-      <div className="z-10 flex items-center justify-center space-x-1 bg-primary-400 py-0.5 text-sm text-ui-0">
+      <div className="z-10 flex items-center justify-center space-x-1 bg-primary-400 py-0.5 text-sm text-neutral-0">
         <IconInfo />
         <span>Aragon App Public Beta</span>
       </div>
@@ -96,7 +96,7 @@ const StyledNavList = styled.ul.attrs({
 })``;
 
 const Copyright = styled.span.attrs({
-  className: 'text-ui-0 font-normal',
+  className: 'text-neutral-0 font-normal',
 })``;
 
 const GradientGreen = styled.img.attrs({

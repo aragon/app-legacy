@@ -109,7 +109,7 @@ const InfoTab: React.FC<Props> = ({
                     colorScheme="success"
                   />
                 )}
-                <p className="text-right text-ui-400 ft-text-sm">
+                <p className="text-right text-neutral-400 ft-text-sm">
                   {minimumReached
                     ? t('votingTerminal.noVotesMissing')
                     : t('votingTerminal.missingVotes', {
@@ -146,7 +146,7 @@ const InfoTab: React.FC<Props> = ({
                     colorScheme="success"
                   />
                 )}
-                <p className="text-right text-ui-400 ft-text-sm">
+                <p className="text-right text-neutral-400 ft-text-sm">
                   {minimumReached
                     ? t('votingTerminal.noApprovalsMissing')
                     : t('votingTerminal.missingApprovals', {
@@ -176,7 +176,7 @@ const InfoTab: React.FC<Props> = ({
             <Strong>{endDate}</Strong>
             {preciseEndDate && (
               <div className="flex justify-end gap-x-1">
-                <p className="text-right text-ui-400 ft-text-sm">
+                <p className="text-right text-neutral-400 ft-text-sm">
                   {preciseEndDate}
                 </p>
               </div>
@@ -205,13 +205,13 @@ const VStackSection = styled.div.attrs<{isLast?: boolean}>(({isLast}) => ({
 }))<{isLast?: boolean}>``;
 
 const InfoLine = styled.div.attrs({
-  className: 'flex justify-between text-ui-600',
+  className: 'flex justify-between text-neutral-600',
 })``;
 
 const Strong = styled.p.attrs({
-  className: 'font-bold text-ui-800',
+  className: 'font-bold text-neutral-800',
 })``;
 
 const SectionHeader = styled.p.attrs({
-  className: 'font-bold text-ui-800 ft-text-lg',
+  className: 'font-bold text-neutral-800 ft-text-lg',
 })``;

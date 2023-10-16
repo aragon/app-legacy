@@ -136,11 +136,11 @@ const Header = styled.div.attrs({
 })``;
 
 const Heading1 = styled.h1.attrs({
-  className: 'ft-text-xl font-bold text-ui-800 grow',
+  className: 'ft-text-xl font-bold text-neutral-800 grow',
 })``;
 
 const Description = styled.div.attrs({
-  className: 'text-ui-800 text-sm md:text-base',
+  className: 'text-neutral-800 text-sm md:text-base',
 })``;
 
 export const Row = styled.div.attrs({

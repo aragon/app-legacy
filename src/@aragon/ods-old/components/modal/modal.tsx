@@ -121,15 +121,15 @@ const ModalTitleContainer = styled.div.attrs({
 })``;
 
 const ModalTitle = styled(Title).attrs({
-  className: 'font-bold text-ui-800',
+  className: 'font-bold text-neutral-800',
 })``;
 
 const ModalSubtitle = styled.div.attrs({
-  className: 'ft-text-sm text-ui-500',
+  className: 'ft-text-sm text-neutral-500',
 })``;
 
 const ModalClose = styled(Close).attrs({
-  className: 'shrink-0 text-ui-500 w-4 h-4 rounded-lg bg-ui-50 outline:none',
+  className: 'shrink-0 text-neutral-500 w-4 h-4 rounded-lg bg-ui-50 outline:none',
 })``;
 
 const ModalOverlay = styled(Overlay).attrs(() => {

@@ -52,5 +52,5 @@ const Title = styled.p.attrs({
 const Icon = styled(IconLinkExternal).attrs({className: 'ml-1 w-1.5 h-1.5'})``;
 
 const Subtitle = styled.p.attrs({
-  className: 'ft-text-sm text-ui-500 truncate',
+  className: 'ft-text-sm text-neutral-500 truncate',
 })``;

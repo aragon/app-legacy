@@ -99,7 +99,7 @@ const Container = styled.div.attrs({
 })``;
 
 const TitleText = styled.h1.attrs({
-  className: 'text-lg font-bold text-ui-800',
+  className: 'text-lg font-bold text-neutral-800',
 })``;
 
 const TitleContainer = styled.div.attrs({
@@ -116,11 +116,11 @@ const ListItemContainer = styled.div.attrs({
 })``;
 
 const DtContainer = styled.dt.attrs({
-  className: 'flex items-center font-bold text-ui-800',
+  className: 'flex items-center font-bold text-neutral-800',
 })``;
 
 const DdContainer = styled.dd.attrs({
-  className: 'shrink-0 text-ui-600',
+  className: 'shrink-0 text-neutral-600',
 })`
   width: 70%;
 `;

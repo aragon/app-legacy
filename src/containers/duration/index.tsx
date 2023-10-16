@@ -351,5 +351,5 @@ const TimeLabelWrapper = styled.div.attrs({
 })``;
 
 const TimeLabel = styled.span.attrs({
-  className: 'text-sm font-bold text-ui-800',
+  className: 'text-sm font-bold text-neutral-800',
 })``;

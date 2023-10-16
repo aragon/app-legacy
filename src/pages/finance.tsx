@@ -35,7 +35,7 @@ type Sign = -1 | 0 | 1;
 const colors: Record<Sign, string> = {
   '-1': 'text-critical-800',
   '1': 'text-success-600',
-  '0': 'text-ui-600',
+  '0': 'text-neutral-600',
 };
 
 export const Finance: React.FC = () => {
@@ -376,7 +376,7 @@ const TextContainer = styled.div.attrs({
 })``;
 
 const Title = styled.h1.attrs({
-  className: 'font-bold text-ui-800 ft-text-3xl',
+  className: 'font-bold text-neutral-800 ft-text-3xl',
 })``;
 
 const Description = styled.p.attrs({

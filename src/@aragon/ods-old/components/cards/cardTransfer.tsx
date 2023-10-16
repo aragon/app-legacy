@@ -23,7 +23,7 @@ export const CardTransfer: React.FC<CardTransferProps> = ({
   return (
     <CardContainer data-testid="cardTransfer">
       <Card label={fromLabel} copy={from} bgWhite={bgWhite} />
-      <IconChevronRight className="text-ui-600" />
+      <IconChevronRight className="text-neutral-600" />
       <Card label={toLabel} copy={to} bgWhite={bgWhite} />
     </CardContainer>
   );
@@ -59,15 +59,15 @@ const Container = styled.div.attrs<ContainerProps>(({bgWhite}) => {
 })<ContainerProps>``;
 
 const Label = styled.p.attrs({
-  className: 'ft-text-sm text-ui-500 capitalize',
+  className: 'ft-text-sm text-neutral-500 capitalize',
 })``;
 
 // TODO: Revisit address shortening
 type ValueProps = {isAddress: boolean};
 const Value = styled.p.attrs<ValueProps>(({isAddress}) => {
   const className = isAddress
-    ? 'font-bold text-ui-800'
-    : 'overflow-hidden font-bold text-ui-800 text-ellipsis whitespace-nowrap';
+    ? 'font-bold text-neutral-800'
+    : 'overflow-hidden font-bold text-neutral-800 text-ellipsis whitespace-nowrap';
 
   return {className};
 })<ValueProps>``;

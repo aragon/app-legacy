@@ -134,11 +134,11 @@ const CoinNameAndAllocation = styled.div.attrs({
 })``;
 
 const CoinName = styled.h1.attrs({
-  className: 'font-bold text-ui-800 truncate',
+  className: 'font-bold text-neutral-800 truncate',
 })``;
 
 const SecondaryCoinDetails = styled.div.attrs({
-  className: 'ft-text-sm text-ui-500 space-x-0.5 md:flex',
+  className: 'ft-text-sm text-neutral-500 space-x-0.5 md:flex',
 })``;
 
 const MarketProperties = styled.div.attrs({
@@ -146,12 +146,12 @@ const MarketProperties = styled.div.attrs({
 })``;
 
 const FiatValue = styled.h1.attrs({
-  className: 'font-bold text-ui-800',
+  className: 'font-bold text-neutral-800',
 })``;
 
 const SecondaryFiatDetails = styled.div.attrs({
   className:
-    'ft-text-sm text-ui-500 space-x-1 flex justify-end items-center truncate',
+    'ft-text-sm text-neutral-500 space-x-1 flex justify-end items-center truncate',
 })``;
 
 type ToggleMobileVisibilityProps = {

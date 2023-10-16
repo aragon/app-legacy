@@ -59,13 +59,13 @@ const Container = styled.div.attrs({
 })``;
 
 const LeftContent = styled.div.attrs({
-  className: 'flex gap-x-1 items-center text-ui-300 ft-text-base',
+  className: 'flex gap-x-1 items-center text-neutral-300 ft-text-base',
 })``;
 
 const SelectedValue = styled.p.attrs({
-  className: 'font-bold text-ui-600 ft-text-base',
+  className: 'font-bold text-neutral-600 ft-text-base',
 })``;
 
 const ActionSearchInput = styled.input.attrs({
-  className: 'flex-1 text-ui-300 bg-ui-0 ft-text-base focus:outline-none',
+  className: 'flex-1 text-neutral-300 bg-ui-0 ft-text-base focus:outline-none',
 })``;

@@ -151,5 +151,5 @@ const InputContainer = styled.div.attrs(() => ({
 }))``;
 
 const Title = styled.div.attrs(() => ({
-  className: 'text-ui-800 font-bold ft-text-base',
+  className: 'text-neutral-800 font-bold ft-text-base',
 }))``;

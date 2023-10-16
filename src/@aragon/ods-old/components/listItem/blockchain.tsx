@@ -34,7 +34,7 @@ export const ListItemBlockchain: React.FC<ListItemBlockchainProps> = ({
       {selected ? (
         <IconSuccess width={20} height={20} className="text-primary-500" />
       ) : (
-        <IconRadioDefault width={20} height={20} className="text-ui-400" />
+        <IconRadioDefault width={20} height={20} className="text-neutral-400" />
       )}
     </Container>
   );
@@ -51,10 +51,10 @@ const Container = styled.div.attrs<SelectedProps>(({selected}) => {
 })<SelectedProps>``;
 
 const Domain = styled.p.attrs<SelectedProps>(({selected}) => ({
-  className: `${selected ? 'text-primary-500' : 'text-ui-600'} font-bold`,
+  className: `${selected ? 'text-primary-500' : 'text-neutral-600'} font-bold`,
 }))<SelectedProps>``;
 
-const Name = styled.p.attrs({className: 'ft-text-sm text-ui-500'})``;
+const Name = styled.p.attrs({className: 'ft-text-sm text-neutral-500'})``;
 
 const Logo = styled.img.attrs({className: 'w-6 h-6'})``;
 

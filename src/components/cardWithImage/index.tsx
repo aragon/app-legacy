@@ -41,13 +41,13 @@ const VStack = styled.div.attrs({
 })``;
 
 const Caption = styled.div.attrs({
-  className: 'text-sm text-ui-500',
+  className: 'text-sm text-neutral-500',
 })``;
 
 const Title = styled.div.attrs({
-  className: 'font-bold text-ui-800',
+  className: 'font-bold text-neutral-800',
 })``;
 
 const Subtitle = styled.div.attrs({
-  className: 'text-sm text-ui-600',
+  className: 'text-sm text-neutral-600',
 })``;

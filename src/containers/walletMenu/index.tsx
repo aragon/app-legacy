@@ -130,10 +130,10 @@ const ModalHeader = styled.div.attrs({
     0px 0px 1px rgba(31, 41, 51, 0.04);
 `;
 const Title = styled.div.attrs({
-  className: 'flex-1 font-bold text-ui-800',
+  className: 'flex-1 font-bold text-neutral-800',
 })``;
 const SubTitle = styled.div.attrs({
-  className: 'flex-1 font-medium text-ui-500 text-sm',
+  className: 'flex-1 font-medium text-neutral-500 text-sm',
 })``;
 const AvatarAddressContainer = styled.div.attrs({
   className: 'flex flex-1 gap-1.5 items-center',

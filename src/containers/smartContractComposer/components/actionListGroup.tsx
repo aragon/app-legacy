@@ -59,5 +59,5 @@ const ListGroup = styled.div.attrs({
 })``;
 
 const ContractNumberIndicator = styled.div.attrs({
-  className: 'ft-text-sm font-bold text-ui-400 hidden xl:block',
+  className: 'ft-text-sm font-bold text-neutral-400 hidden xl:block',
 })``;

@@ -251,15 +251,15 @@ const Header = styled.div.attrs({
 })``;
 
 const Title = styled.p.attrs({
-  className: 'text-ui-800 text-left font-bold ft-text-xl',
+  className: 'text-neutral-800 text-left font-bold ft-text-xl',
 })``;
 
 const Description = styled.p.attrs({
-  className: 'text-ui-600 text-left font-normal ft-text-base line-clamp-2',
+  className: 'text-neutral-600 text-left font-normal ft-text-base line-clamp-2',
 })``;
 
 const Publisher = styled.span.attrs({
-  className: 'flex space-x-1 text-ui-500 ft-text-sm',
+  className: 'flex space-x-1 text-neutral-500 ft-text-sm',
 })``;
 
 const TextContent = styled.div.attrs({
@@ -275,11 +275,11 @@ const ProgressInfoWrapper = styled.div.attrs({
 })``;
 
 const ProgressTitle = styled.h3.attrs({
-  className: 'text-ui-800 ft-text-base font-bold',
+  className: 'text-neutral-800 ft-text-base font-bold',
 })``;
 
 const Amount = styled.span.attrs({
-  className: 'text-ui-500 ft-text-base',
+  className: 'text-neutral-500 ft-text-base',
 })``;
 
 const Vote = styled.span.attrs({

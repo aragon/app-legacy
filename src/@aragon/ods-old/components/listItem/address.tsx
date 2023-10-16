@@ -38,7 +38,7 @@ export const ListItemAddress: FC<ListItemAddressProps> = ({
 
       <RightContent>
         {tokenInfo && (
-          <p className="text-ui-500">
+          <p className="text-neutral-500">
             {tokenInfo.amount} {tokenInfo.symbol} ({tokenInfo.percentage}%)
           </p>
         )}
@@ -70,7 +70,7 @@ const Container = styled.button.attrs(() => {
   const hoverClasses = 'hover:text-primary-500 hover:shadow-100';
   const activeClasses = 'active:outline-none active:border-ui-200';
 
-  className += ` text-ui-600 ${focusVisibleClasses} ${activeClasses} ${hoverClasses}`;
+  className += ` text-neutral-600 ${focusVisibleClasses} ${activeClasses} ${hoverClasses}`;
 
   return {className};
 })``;

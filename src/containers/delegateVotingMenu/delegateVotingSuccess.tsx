@@ -78,8 +78,8 @@ export const DelegateVotingSuccess: React.FC<
           hair="curly"
           accessory="piercings_tattoo"
         />
-        <p className="text-xl text-ui-800">{t(`modal.delegation.${title}`)}</p>
-        <p className="text-ui-600">
+        <p className="text-xl text-neutral-800">{t(`modal.delegation.${title}`)}</p>
+        <p className="text-neutral-600">
           {t(`modal.delegation.${description}`, {
             balance: tokenAmount,
             tokenSymbol: daoToken?.symbol,

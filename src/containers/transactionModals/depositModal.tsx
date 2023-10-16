@@ -124,15 +124,15 @@ const Container = styled.div.attrs({
 })``;
 
 const Title = styled.h2.attrs({
-  className: 'ft-text-base font-bold text-ui-800',
+  className: 'ft-text-base font-bold text-neutral-800',
 })``;
 
 const Subtitle = styled.p.attrs({
-  className: 'mt-0.5 text-ui-600 ft-text-sm mb-1.5',
+  className: 'mt-0.5 text-neutral-600 ft-text-sm mb-1.5',
 })``;
 
 const NetworkName = styled.p.attrs({
-  className: 'flex-1 font-semibold text-ui-800',
+  className: 'flex-1 font-semibold text-neutral-800',
 })``;
 
 const ConnectButton = styled.button.attrs({

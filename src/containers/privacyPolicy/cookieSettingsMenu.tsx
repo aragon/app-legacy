@@ -85,7 +85,7 @@ const CookieSettingsMenu: React.FC<CookieSettingsMenuProps> = props => {
 export default CookieSettingsMenu;
 
 const Title = styled.div.attrs({
-  className: 'flex-1 font-bold text-center ft-text-base text-ui-800',
+  className: 'flex-1 font-bold text-center ft-text-base text-neutral-800',
 })``;
 
 const ModalHeader = styled.div.attrs({

@@ -81,7 +81,7 @@ const Container = styled.div.attrs({
 })``;
 
 const Head = styled.div.attrs({
-  className: 'flex items-center space-x-1.5 font-semibold text-ui-0 ft-text-lg',
+  className: 'flex items-center space-x-1.5 font-semibold text-neutral-0 ft-text-lg',
 })``;
 
 const Title = styled.p.attrs({})``;

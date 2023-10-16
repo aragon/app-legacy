@@ -64,7 +64,7 @@ const PrivacyPolicyContent: React.FC<PrivacyPolicyContentProps> = ({
 export default PrivacyPolicyContent;
 
 const Text = styled.div.attrs({
-  className: 'flex-1 ft-text-sm text-ui-600',
+  className: 'flex-1 ft-text-sm text-neutral-600',
 })``;
 
 const ButtonGroup = styled.div.attrs({

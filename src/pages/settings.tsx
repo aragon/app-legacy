@@ -325,7 +325,7 @@ const SettingsWrapper: React.FC<{children: ReactNode}> = ({children}) => {
 
 export const Layout = styled.div.attrs({
   className:
-    'col-span-full xl:col-start-4 xl:col-end-10 text-ui-600 xl:mt-2',
+    'col-span-full xl:col-start-4 xl:col-end-10 text-neutral-600 xl:mt-2',
 })``;
 
 type DescriptionProps = {
@@ -333,7 +333,7 @@ type DescriptionProps = {
 };
 
 const Summary = styled.p.attrs({
-  className: 'font-normal text-ui-600 ft-text-base',
+  className: 'font-normal text-neutral-600 ft-text-base',
 })<DescriptionProps>`
   overflow: hidden;
   display: -webkit-box;

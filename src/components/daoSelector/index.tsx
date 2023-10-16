@@ -65,11 +65,11 @@ const TextContainer = styled.div.attrs({
 })``;
 
 const DaoName = styled.p.attrs({
-  className: 'text-ui-800 font-bold truncate',
+  className: 'text-neutral-800 font-bold truncate',
 })`
   max-width: 88px;
 `;
 
 const DaoAddress = styled.p.attrs({
-  className: 'text-ui-500 ft-text-sm xl:hidden truncate',
+  className: 'text-neutral-500 ft-text-sm xl:hidden truncate',
 })``;

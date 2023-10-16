@@ -176,7 +176,7 @@ const Community: React.FC = () => {
                       <div>
                         {formattedTotalSupply} {govTokenSymbol}
                       </div>
-                      <div className="text-ui-400 ft-text-sm">
+                      <div className="text-neutral-400 ft-text-sm">
                         {t('labels.supplyPotentialHelptext', {tokenSymbol})}
                       </div>
                     </div>

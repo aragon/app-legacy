@@ -56,7 +56,7 @@ const Footer: React.FC = () => {
         </FullSpan>
       </GridLayout>
       <div
-        className={`z-10 flex items-center justify-center space-x-1 bg-primary-400 py-0.5 text-sm text-ui-0 xl:mb-0 ${
+        className={`z-10 flex items-center justify-center space-x-1 bg-primary-400 py-0.5 text-sm text-neutral-0 xl:mb-0 ${
           isOnWrongNetwork ? 'mb-11 md:mb-15' : 'mb-8 md:mb-12'
         }`}
       >
@@ -95,7 +95,7 @@ const StyledNavList = styled.ul.attrs({
 })``;
 
 const Copyright = styled.span.attrs({
-  className: 'text-ui-600 font-normal',
+  className: 'text-neutral-600 font-normal',
 })``;
 
 export default Footer;

@@ -482,7 +482,7 @@ const ModeActionSelection = styled.div.attrs({
 })``;
 
 const TokenBalance = styled.p.attrs({
-  className: 'flex-1 px-1 text-xs text-right text-ui-600',
+  className: 'flex-1 px-1 text-xs text-right text-neutral-600',
 })``;
 
 const TokenAmountInput = styled(ValueInput)`
@@ -507,11 +507,11 @@ const ProgressTitle = styled.div.attrs({
 })``;
 
 const ProgressSteps = styled.div.attrs({
-  className: 'text-ui-400',
+  className: 'text-neutral-400',
 })``;
 
 const ProgressHelpText = styled.div.attrs({
-  className: 'ft-text-sm text-ui-600',
+  className: 'ft-text-sm text-neutral-600',
 })``;
 
 const ActionsContainer = styled.div.attrs({

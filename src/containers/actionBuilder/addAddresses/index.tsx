@@ -264,10 +264,10 @@ const CustomHeader: React.FC = () => {
 
   return (
     <div className="mb-1.5 space-y-0.5">
-      <p className="text-base font-bold text-ui-800">
+      <p className="text-base font-bold text-neutral-800">
         {t('labels.addWallets')}
       </p>
-      <p className="text-sm text-ui-600">{t('labels.addWalletsDescription')}</p>
+      <p className="text-sm text-neutral-600">{t('labels.addWalletsDescription')}</p>
     </div>
   );
 };

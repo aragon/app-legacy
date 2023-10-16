@@ -224,5 +224,5 @@ const VerifyItemsWrapper = styled.div.attrs({
 })``;
 
 const Dt = styled.dt.attrs({
-  className: 'flex items-center text-ui-800',
+  className: 'flex items-center text-neutral-800',
 })``;

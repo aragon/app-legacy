@@ -63,10 +63,10 @@ export type StyledChevronDownProps = Pick<StyledContainerProps, 'disabled'>;
 
 const StyledIconChevronDown = styled(IconChevronDown).attrs(
   ({disabled}: StyledChevronDownProps) => ({
-    className: `${disabled ? 'text-ui-300' : 'text-ui-600'}`,
+    className: `${disabled ? 'text-neutral-300' : 'text-neutral-600'}`,
   })
 )``;
 
 const Placeholder = styled.span.attrs({
-  className: 'text-ui-300',
+  className: 'text-neutral-300',
 })``;

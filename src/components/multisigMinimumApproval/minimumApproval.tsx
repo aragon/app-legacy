@@ -76,7 +76,7 @@ const ApprovalAddresses = styled.p.attrs({
   className: 'font-bold text-right text-primary-500',
 })``;
 
-const TotalAddresses = styled.p.attrs({className: 'text-ui-600 ft-text-sm'})``;
+const TotalAddresses = styled.p.attrs({className: 'text-neutral-600 ft-text-sm'})``;
 
 const InputWrapper = styled.div.attrs({
   className: 'order-2 xl:order-1 w-full xl:w-1/4',

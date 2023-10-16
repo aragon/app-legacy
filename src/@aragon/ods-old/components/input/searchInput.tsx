@@ -31,7 +31,7 @@ export const SearchInput: React.FC<SearchInputProps> = ({
           </LeftAdornmentWrapper>
         ) : (
           <LeftAdornmentWrapper>
-            <IconSearch className="text-ui-300" />
+            <IconSearch className="text-neutral-300" />
           </LeftAdornmentWrapper>
         )
       }
@@ -52,7 +52,7 @@ export const SearchInput: React.FC<SearchInputProps> = ({
             }}
           >
             <RightAdornmentWrapper>
-              <IconClose className="text-ui-300" />
+              <IconClose className="text-neutral-300" />
             </RightAdornmentWrapper>
           </button>
         )

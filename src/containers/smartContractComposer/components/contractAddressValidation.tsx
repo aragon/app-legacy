@@ -586,11 +586,11 @@ const ContractAddressValidation: React.FC<Props> = props => {
           ABIFlowState !== ManualABIFlowState.WAITING &&
           !isTransactionWaiting && (
             <>
-              <div className="mt-2 font-bold text-ui-700 ft-text-base">
+              <div className="mt-2 font-bold text-neutral-700 ft-text-base">
                 {t('scc.abi.abiInputLabel')}
               </div>
               <p
-                className="mt-0.5 text-sm text-ui-600"
+                className="mt-0.5 text-sm text-neutral-600"
                 dangerouslySetInnerHTML={{
                   __html: htmlIn(t)('scc.abi.abiInputHelp'),
                 }}
@@ -742,11 +742,11 @@ const DescriptionContainer = styled.div.attrs({
 })``;
 
 const Title = styled.h2.attrs({
-  className: 'text-ui-800 ft-text-base font-bold',
+  className: 'text-neutral-800 ft-text-base font-bold',
 })``;
 
 const Description = styled.p.attrs({
-  className: 'ft-text-sm text-ui-600 font-normal',
+  className: 'ft-text-sm text-neutral-600 font-normal',
 })``;
 
 const VerificationCard = styled.div.attrs({
@@ -754,7 +754,7 @@ const VerificationCard = styled.div.attrs({
 })``;
 
 const VerificationTitle = styled.h2.attrs({
-  className: 'text-ui-600 ft-text-base font-semibold',
+  className: 'text-neutral-600 ft-text-base font-semibold',
 })``;
 
 const VerificationWrapper = styled.div.attrs({

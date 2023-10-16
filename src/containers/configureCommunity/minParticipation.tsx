@@ -182,7 +182,7 @@ export const MinParticipation: FC = () => {
                         {formattedProgressMinParticipation}
                       </p>
 
-                      <p className="shrink-0 text-ui-600">
+                      <p className="shrink-0 text-neutral-600">
                         {t('createDAO.step4.alerts.minimumApprovalAlert', {
                           amount: formattedProgressTotalSupply,
                           tokenSymbol: govTokenSymbol,
@@ -204,7 +204,7 @@ export const MinParticipation: FC = () => {
                           label={t('createDAO.step4.wrappedReferenceTitle')}
                         />
                         <div
-                          className="text-ui-600 ft-text-sm"
+                          className="text-neutral-600 ft-text-sm"
                           dangerouslySetInnerHTML={{
                             __html: htmlIn(t)(
                               'createDAO.step4.wrappedReferenceDesc',
@@ -355,7 +355,7 @@ const StatItem = styled.div.attrs({
 })``;
 
 const StatItemValue = styled.div.attrs({
-  className: 'text-ui-600',
+  className: 'text-neutral-600',
 })``;
 
 const ApprovalWrapper = styled.div.attrs({

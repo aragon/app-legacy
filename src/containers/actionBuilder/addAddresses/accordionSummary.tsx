@@ -37,7 +37,7 @@ const AccordionSummary: React.FC<AccordionSummaryPropsType> = ({
       <BoldedText>{t('labels.summary')}</BoldedText>
       {type === 'action-builder' ? (
         <div className="flex justify-between">
-          <p className="text-ui-600 ft-text-base">{t('labels.totalWallets')}</p>
+          <p className="text-neutral-600 ft-text-base">{t('labels.totalWallets')}</p>
           <BoldedText>{total}</BoldedText>
         </div>
       ) : (
@@ -45,14 +45,14 @@ const AccordionSummary: React.FC<AccordionSummaryPropsType> = ({
           <div className="flex justify-between">
             {IsRemove ? (
               <>
-                <p className="text-ui-600 ft-text-base">
+                <p className="text-neutral-600 ft-text-base">
                   {t('labels.removedMembers')}
                 </p>
                 <BoldedText>-{total}</BoldedText>
               </>
             ) : (
               <>
-                <p className="text-ui-600 ft-text-base">
+                <p className="text-neutral-600 ft-text-base">
                   {t('labels.addedMembers')}
                 </p>
                 <BoldedText>+{total}</BoldedText>
@@ -77,7 +77,7 @@ const Footer = styled.div.attrs<{type: AccordionType}>(({type}) => ({
 }))<{type: AccordionType}>``;
 
 const BoldedText = styled.span.attrs({
-  className: 'font-bold text-ui-800 ft-text-base',
+  className: 'font-bold text-neutral-800 ft-text-base',
 })``;
 
 export default AccordionSummary;

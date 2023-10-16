@@ -54,14 +54,14 @@ const Content = styled.div.attrs({
 })``;
 
 const Domain = styled.p.attrs({
-  className: 'ft-text-sm text-ui-500 truncate',
+  className: 'ft-text-sm text-neutral-500 truncate',
 })``;
 
 const DaoName = styled.p.attrs<Selectable>(({selected}) => {
   return {
     className: selected
       ? 'font-bold truncate text-primary-500'
-      : 'truncate font-bold text-ui-600 group-hover:text-primary-500 group-active:text-primary-500',
+      : 'truncate font-bold text-neutral-600 group-hover:text-primary-500 group-active:text-primary-500',
   };
 })<Selectable>``;
 
@@ -69,6 +69,6 @@ const IconContainer = styled.div.attrs<Selectable>(({selected}) => {
   return {
     className: selected
       ? 'ft-text-sm text-primary-500'
-      : 'ft-text-sm text-ui-400 group-hover:text-primary-500 group-active:text-primary-500',
+      : 'ft-text-sm text-neutral-400 group-hover:text-primary-500 group-active:text-primary-500',
   };
 })<Selectable>``;

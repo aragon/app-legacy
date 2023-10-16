@@ -73,11 +73,11 @@ const Header = styled.div.attrs({
 `;
 
 const Title = styled.div.attrs({
-  className: 'font-bold text-ui-800 text-center xl:text-left',
+  className: 'font-bold text-neutral-800 text-center xl:text-left',
 })``;
 
 const SubTitle = styled.div.attrs({
-  className: 'mt-0.5 text-sm text-ui-600',
+  className: 'mt-0.5 text-sm text-neutral-600',
 })``;
 
 const ButtonWrapper = styled.div.attrs({className: 'w-4 h-4' as string})``;

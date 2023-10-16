@@ -56,9 +56,9 @@ type StyledContentProps = Pick<TokenListItemProps, 'bgWhite'>;
 
 const Container = styled.button.attrs<StyledContentProps>(({bgWhite}) => ({
   className: `w-full flex justify-between items-center py-1.5
-  px-2 hover:text-ui-800 hover:bg-ui-100 active:text-ui-800
-  text-ui-600 active:bg-ui-200 disabled:text-ui-300
-  disabled:text-ui-300 disabled:bg-ui-100 rounded-xl
+  px-2 hover:text-neutral-800 hover:bg-ui-100 active:text-neutral-800
+  text-neutral-600 active:bg-ui-200 disabled:text-neutral-300
+  disabled:text-neutral-300 disabled:bg-ui-100 rounded-xl
   ${bgWhite ? 'bg-ui-50' : 'bg-ui-0'}`,
 }))``;
 

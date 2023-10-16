@@ -56,9 +56,9 @@ type StyledButtonProp = Pick<ButtonWalletProps, 'isLoading'>;
 
 const StyledButton = styled.button.attrs<StyledButtonProp>(({isLoading}) => {
   const className = `${
-    isLoading ? 'text-primary-500' : 'text-ui-600'
-  } flex items-center md:space-x-1.5 font-bold p-1.5 hover:text-ui-800
-    active:text-ui-800 disabled:text-ui-300 bg-ui-0 hover:bg-ui-100 active:bg-ui-200
+    isLoading ? 'text-primary-500' : 'text-neutral-600'
+  } flex items-center md:space-x-1.5 font-bold p-1.5 hover:text-neutral-800
+    active:text-neutral-800 disabled:text-neutral-300 bg-ui-0 hover:bg-ui-100 active:bg-ui-200
     disabled:bg-ui-100 rounded-xl focus-visible:ring-2 focus-visible:ring-primary-500`;
   return {className};
 })``;

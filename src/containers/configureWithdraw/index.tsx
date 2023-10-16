@@ -452,7 +452,7 @@ const FormItem = styled.div.attrs({
 })``;
 
 const TokenBalance = styled.p.attrs({
-  className: 'flex-1 px-1 text-xs text-right text-ui-600',
+  className: 'flex-1 px-1 text-xs text-right text-neutral-600',
 })``;
 
 const StyledInput = styled(ValueInput)`

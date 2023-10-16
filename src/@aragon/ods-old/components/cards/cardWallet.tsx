@@ -75,9 +75,9 @@ const TextContainer = styled.div.attrs({
 })``;
 
 const Title = styled.p.attrs({
-  className: 'text-ui-700 font-bold',
+  className: 'text-neutral-700 font-bold',
 })``;
 
 const Subtitle = styled.p.attrs({
-  className: 'ft-text-sm text-ui-500',
+  className: 'ft-text-sm text-neutral-500',
 })``;

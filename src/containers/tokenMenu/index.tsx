@@ -185,11 +185,11 @@ const TokenTitle = styled.h2.attrs({
 })``;
 
 const TokenSubtitle = styled.h2.attrs({
-  className: 'text-sm text-ui-600',
+  className: 'text-sm text-neutral-600',
 })``;
 
 const TokenDescription = styled.h2.attrs({
-  className: 'text-sm text-center text-ui-600',
+  className: 'text-sm text-center text-neutral-600',
 })``;
 
 const WideButton = styled(ButtonText).attrs({

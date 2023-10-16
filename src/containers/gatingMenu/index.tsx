@@ -128,5 +128,5 @@ export const GatingMenu: React.FC = () => {
 };
 
 const WarningDescription = styled.p.attrs({
-  className: 'text-base text-ui-500 text-center',
+  className: 'text-base text-neutral-500 text-center',
 })``;

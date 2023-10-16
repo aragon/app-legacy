@@ -27,7 +27,7 @@ export const AlertChip: React.FC<AlertChipProps> = ({
           React.cloneElement(icon, {
             height: 12,
             width: 12,
-            className: 'text-ui-300',
+            className: 'text-neutral-300',
           })}
         <Label>{label}</Label>
       </BadgeContainer>
@@ -108,5 +108,5 @@ const BadgeContainer = styled.div.attrs(() => ({
 }))``;
 
 const Label = styled.span.attrs({
-  className: 'text-ui-100 ft-text-sm',
+  className: 'text-neutral-100 ft-text-sm',
 })``;

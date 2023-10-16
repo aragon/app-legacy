@@ -138,7 +138,7 @@ const ManageWalletsModal: React.FC<ManageWalletsModalProps> = ({
       </ModalHeader>
       <Container>
         <SelectAllContainer>
-          <p className="text-ui-400">{labels.label as string}</p>
+          <p className="text-neutral-400">{labels.label as string}</p>
           <CheckboxSimple
             label="Select All"
             multiSelect

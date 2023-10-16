@@ -140,7 +140,7 @@ const OptionsContainers = styled.div.attrs({
 })``;
 
 const OptionsTitle = styled.h2.attrs({
-  className: 'ft-text-base font-bold text-ui-800',
+  className: 'ft-text-base font-bold text-neutral-800',
 })``;
 
 const DescriptionContainer = styled.div.attrs({

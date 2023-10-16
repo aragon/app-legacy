@@ -164,11 +164,11 @@ const ActionContainer = styled.div.attrs<Pick<BaseProps, 'actionsColumn'>>(
 )<Pick<BaseProps, 'actionsColumn'>>``;
 
 const Title = styled.h2.attrs({
-  className: 'ft-text-xl font-bold text-ui-800',
+  className: 'ft-text-xl font-bold text-neutral-800',
 })``;
 
 const Description = styled.p.attrs({
-  className: 'text-ui-500 ft-text-sm md:ft-text-base',
+  className: 'text-neutral-500 ft-text-sm md:ft-text-base',
 })`
   & > a {
     color: #003bf5;

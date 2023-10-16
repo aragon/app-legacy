@@ -772,7 +772,7 @@ const HeaderContainer = styled.div.attrs({
 })``;
 
 const ProposalTitle = styled.p.attrs({
-  className: 'font-bold text-ui-800 text-3xl',
+  className: 'font-bold text-neutral-800 text-3xl',
 })``;
 
 const ContentWrapper = styled.div.attrs({
@@ -784,11 +784,11 @@ const ContentWrapper = styled.div.attrs({
 // })``;
 
 const ProposerLink = styled.p.attrs({
-  className: 'text-ui-500',
+  className: 'text-neutral-500',
 })``;
 
 const SummaryText = styled.p.attrs({
-  className: 'text-lg text-ui-600',
+  className: 'text-lg text-neutral-600',
 })``;
 
 const ProposalContainer = styled.div.attrs({

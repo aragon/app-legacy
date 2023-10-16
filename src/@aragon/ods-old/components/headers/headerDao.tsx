@@ -282,11 +282,11 @@ const AvatarContainer = styled.div.attrs({
 })``;
 
 const Title = styled.h1.attrs({
-  className: 'ft-text-3xl font-bold text-ui-800',
+  className: 'ft-text-3xl font-bold text-neutral-800',
 })``;
 
 const Description = styled.p.attrs({
-  className: 'font-medium text-ui-600 ft-text-base',
+  className: 'font-medium text-neutral-600 ft-text-base',
 })<DescriptionProps>`
   overflow: hidden;
   display: -webkit-box;
@@ -308,7 +308,7 @@ const NetworkDetails = styled.div.attrs({
 })``;
 
 const DetailsText = styled.span.attrs({
-  className: 'text-ui-600 ft-text-sm' as string | undefined,
+  className: 'text-neutral-600 ft-text-sm' as string | undefined,
 })``;
 
 const LinksWrapper = styled.div.attrs({
@@ -325,7 +325,7 @@ const ActionWrapper = styled.div.attrs({
 })``;
 
 const CredentialsDropdownItem = styled.div.attrs({
-  className: `flex text-ui-600 items-center justify-between gap-1.5 py-1.5 font-semibold ft-text-base hover:bg-primary-50 px-2 rounded-xl hover:text-primary-400`,
+  className: `flex text-neutral-600 items-center justify-between gap-1.5 py-1.5 font-semibold ft-text-base hover:bg-primary-50 px-2 rounded-xl hover:text-primary-400`,
 })``;
 
 const CredentialsDropdownTrigger = styled(Link).attrs({
@@ -334,5 +334,5 @@ const CredentialsDropdownTrigger = styled(Link).attrs({
 })``;
 
 const StyledCopyIcon = styled(IconCopy).attrs({
-  className: 'text-ui-400',
+  className: 'text-neutral-400',
 })``;

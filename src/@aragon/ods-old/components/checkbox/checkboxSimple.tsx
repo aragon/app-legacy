@@ -45,9 +45,9 @@ const Container = styled.div.attrs<ContainerTypes>(
       !iconLeft && 'flex-row-reverse space-x-reverse'
     } ${
       disabled
-        ? 'text-ui-300'
+        ? 'text-neutral-300'
         : `cursor-pointer hover:text-primary-500 ${
-            state !== 'default' ? 'text-primary-500' : 'text-ui-600'
+            state !== 'default' ? 'text-primary-500' : 'text-neutral-600'
           }`
     }`,
   })

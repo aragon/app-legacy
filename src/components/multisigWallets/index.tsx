@@ -218,10 +218,10 @@ const TableTitleContainer = styled.div.attrs(() => ({
   className: 'mx-3 mt-3 mb-1.5',
 }))``;
 const Title = styled.p.attrs({
-  className: 'ft-text-base xl:font-bold font-semibold text-ui-800',
+  className: 'ft-text-base xl:font-bold font-semibold text-neutral-800',
 })``;
 const Text = styled.p.attrs({
-  className: 'ft-text-base  text-ui-600',
+  className: 'ft-text-base  text-neutral-600',
 })``;
 const Divider = styled.div.attrs(() => ({
   className: 'flex bg-ui-50 h-0.25',

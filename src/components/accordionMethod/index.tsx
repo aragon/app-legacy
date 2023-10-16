@@ -157,7 +157,7 @@ const AccordionButton = styled(ButtonIcon)`
 `;
 
 const AdditionalInfoContainer = styled.div.attrs({
-  className: 'mt-1.5 ft-text-sm text-ui-600 space-y-1.5',
+  className: 'mt-1.5 ft-text-sm text-neutral-600 space-y-1.5',
 })`
   [data-state='closed'] & {
     display: none;
@@ -170,7 +170,7 @@ const FlexContainer = styled.div.attrs({
 })``;
 
 const MethodName = styled.p.attrs({
-  className: 'font-bold ft-text-lg text-ui-800',
+  className: 'font-bold ft-text-lg text-neutral-800',
 })``;
 
 const HStack = styled.div.attrs({

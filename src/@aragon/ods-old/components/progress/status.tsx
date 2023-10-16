@@ -70,7 +70,7 @@ export const ProgressStatus: React.FC<ProgressStatusProps> = ({
         <BlockContainer>
           <p>{block}</p>
           <div className="pt-0.25">
-            <IconBlock className="text-ui-400" />
+            <IconBlock className="text-neutral-400" />
           </div>
         </BlockContainer>
       )}{' '}
@@ -97,13 +97,13 @@ const LabelContainer = styled.div.attrs({className: 'my-1.5'})``;
 
 const BlockContainer = styled.div.attrs({
   className:
-    'flex items-start max-h-full space-x-1 my-2 text-ui-500 ft-text-sm',
+    'flex items-start max-h-full space-x-1 my-2 text-neutral-500 ft-text-sm',
 })``;
 
 const textColors: Record<ModeType, string> = {
   active: 'text-primary-500',
   upcoming: 'text-primary-500',
-  done: 'text-ui-800',
+  done: 'text-neutral-800',
   succeeded: 'text-success-800',
   failed: 'text-critical-800',
 };
@@ -111,7 +111,7 @@ const textColors: Record<ModeType, string> = {
 const iconColors: Record<ModeType, string> = {
   active: 'text-primary-500',
   upcoming: 'text-primary-500',
-  done: 'text-ui-600',
+  done: 'text-neutral-600',
   succeeded: 'text-success-500',
   failed: 'text-critical-500',
 };
@@ -156,5 +156,5 @@ const Heading = styled.p.attrs({
 })``;
 
 const HelpText = styled.p.attrs({
-  className: 'ft-text-sm font-normal text-ui-500',
+  className: 'ft-text-sm font-normal text-neutral-500',
 })``;

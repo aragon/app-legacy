@@ -95,11 +95,11 @@ const Header = styled.div.attrs({
 })``;
 
 const Title = styled.h2.attrs({
-  className: 'text-ui-800 font-bold text-2xl',
+  className: 'text-neutral-800 font-bold text-2xl',
 })``;
 
 const Description = styled.p.attrs({
-  className: 'text-ui-600 font-normal text-normal',
+  className: 'text-neutral-600 font-normal text-normal',
 })``;
 
 const Content = styled.div.attrs({

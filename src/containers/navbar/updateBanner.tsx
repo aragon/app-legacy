@@ -35,8 +35,8 @@ const UpdateBanner: React.FC = () => {
         <DummyElement />
         <MessageWrapper>
           <TextWrapper>
-            <IconUpdate className="text-ui-0" />
-            <span className="font-semibold text-ui-0 ft-text-base">
+            <IconUpdate className="text-neutral-0" />
+            <span className="font-semibold text-neutral-0 ft-text-base">
               {t('update.banner.title')}
             </span>
           </TextWrapper>
@@ -56,7 +56,7 @@ const UpdateBanner: React.FC = () => {
             }
           />
         </MessageWrapper>
-        <IconClose className="cursor-pointer justify-self-end text-ui-0" />
+        <IconClose className="cursor-pointer justify-self-end text-neutral-0" />
       </UpdateContainer>
     );
   return null;

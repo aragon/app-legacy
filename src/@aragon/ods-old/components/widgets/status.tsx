@@ -23,7 +23,7 @@ export const WidgetStatus: React.FC<WidgetStatusProps> = ({steps}) => {
           return <ProgressStatus key={s.label + s.mode} {...s} />;
         })
       ) : (
-        <p className="text-ui-400">Progress unavailable</p>
+        <p className="text-neutral-400">Progress unavailable</p>
       )}
     </Card>
   );
@@ -36,5 +36,5 @@ const Card = styled.div.attrs(() => {
 })``;
 
 const Header = styled.p.attrs({
-  className: 'font-bold ft-text-xl text-ui-800',
+  className: 'font-bold ft-text-xl text-neutral-800',
 })``;

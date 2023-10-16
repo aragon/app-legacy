@@ -59,7 +59,7 @@ export const ListItemAction: React.FC<ListItemActionProps> = ({
           </p>
           {subtitle && (
             <p
-              className={`text-ui-500 ft-text-sm ${
+              className={`text-neutral-500 ft-text-sm ${
                 truncateText ? 'truncate' : ''
               }`}
             >
@@ -102,7 +102,7 @@ const Container = styled.button.attrs<InputContainerProps>(
 
     switch (mode) {
       case 'disabled':
-        className += ' text-ui-300';
+        className += ' text-neutral-300';
         className += bgWhite ? ' bg-ui-0' : ' bg-ui-50';
         break;
       case 'selected':
@@ -120,7 +120,7 @@ const Container = styled.button.attrs<InputContainerProps>(
             : ' active:bg-ui-0';
 
           className += bgWhite ? ' bg-ui-0' : ' bg-ui-50';
-          className += ` text-ui-600 ${activeClasses} ${focusClasses} ${hoverClasses}`;
+          className += ` text-neutral-600 ${activeClasses} ${focusClasses} ${hoverClasses}`;
         }
         break;
     }

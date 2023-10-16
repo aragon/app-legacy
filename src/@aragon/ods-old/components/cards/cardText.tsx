@@ -27,7 +27,7 @@ type ContainerProps = Pick<CardTextProps, 'bgWhite'>;
 const Container = styled.div.attrs<ContainerProps>(({bgWhite}) => {
   const className = `${
     !bgWhite && 'bg-ui-0'
-  } break-words p-2 md:p-3 rounded-xl space-y-1 text-ui-600`;
+  } break-words p-2 md:p-3 rounded-xl space-y-1 text-neutral-600`;
   return {className};
 })<ContainerProps>``;
 
@@ -35,7 +35,7 @@ type TitleProps = Pick<CardTextProps, 'type'>;
 
 const Title = styled.p.attrs<TitleProps>(({type}) => {
   const className = `${
-    type === 'label' ? 'ft-text-sm  text-ui-500' : 'ft-text-base text-ui-800'
+    type === 'label' ? 'ft-text-sm  text-neutral-500' : 'ft-text-base text-neutral-800'
   } font-bold`;
   return {className};
 })<TitleProps>``;

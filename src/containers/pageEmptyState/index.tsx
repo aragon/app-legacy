@@ -53,12 +53,12 @@ const Container = styled.div.attrs({
 })``;
 
 export const EmptyStateHeading = styled.h1.attrs({
-  className: 'mt-4 ft-text-2xl font-bold text-ui-800 text-center',
+  className: 'mt-4 ft-text-2xl font-bold text-neutral-800 text-center',
 })``;
 
 export const EmptyStateContainer = styled.div.attrs({
   className:
-    'flex flex-col w-full items-center py-4 px-3 md:py-12 md:px-6 mx-auto mt-3 md:mt-5 ft-text-lg bg-white rounded-xl text-ui-500',
+    'flex flex-col w-full items-center py-4 px-3 md:py-12 md:px-6 mx-auto mt-3 md:mt-5 ft-text-lg bg-white rounded-xl text-neutral-500',
 })``;
 
 const ActionsContainer = styled.div.attrs({

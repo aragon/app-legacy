@@ -66,11 +66,11 @@ const TextContent = styled.div.attrs({
 })``;
 
 const Title = styled.h2.attrs({
-  className: 'ft-text-3xl font-bold text-ui-800',
+  className: 'ft-text-3xl font-bold text-neutral-800',
 })``;
 
 const Description = styled.div.attrs({
-  className: 'ft-text-lg text-ui-600',
+  className: 'ft-text-lg text-neutral-600',
 })``;
 
 const ContentWrapper = styled.div.attrs({

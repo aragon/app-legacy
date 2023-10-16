@@ -96,7 +96,7 @@ const VotePercentage = styled.p.attrs({
 })``;
 
 const ResultValue = styled.p.attrs({
-  className: 'flex-1 text-right text-ui-600',
+  className: 'flex-1 text-right text-neutral-600',
 })``;
 
 const ResultValueMultisig = styled.p.attrs({
@@ -104,7 +104,7 @@ const ResultValueMultisig = styled.p.attrs({
 })``;
 
 const PercentageMultisig = styled.p.attrs({
-  className: 'font-bold text-right text-ui-600',
+  className: 'font-bold text-right text-neutral-600',
 })``;
 
 const VoteOption = styled.p.attrs({className: 'font-bold text-primary-500'})``;

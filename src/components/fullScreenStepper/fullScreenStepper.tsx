@@ -202,7 +202,7 @@ export const FullScreenStepper: React.FC<FullScreenStepperProps> = ({
 
 const Layout = styled.div.attrs({
   className:
-    'col-span-full xl:col-start-2 xl:col-end-12 font-medium text-ui-600',
+    'col-span-full xl:col-start-2 xl:col-end-12 font-medium text-neutral-600',
 })``;
 
 type FormLayoutProps = {

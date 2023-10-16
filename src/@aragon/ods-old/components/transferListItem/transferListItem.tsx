@@ -73,7 +73,7 @@ export const TransferListItem: React.FC<TransferListItemProps> = ({
         } ${tokenAmount} ${tokenSymbol}`}</USDValue>
         <TokenAmount>{usdValue}</TokenAmount>
       </Value>
-      <IconChevronRight className="text-ui-300 group-hover:text-primary-500" />
+      <IconChevronRight className="text-neutral-300 group-hover:text-primary-500" />
     </Container>
   );
 };
@@ -92,11 +92,11 @@ const Content = styled.div.attrs({
 })``;
 
 const Title = styled.p.attrs({
-  className: 'font-bold text-ui-800 group-hover:text-primary-500 truncate',
+  className: 'font-bold text-neutral-800 group-hover:text-primary-500 truncate',
 })``;
 
 const Date = styled.p.attrs({
-  className: 'ft-text-sm text-ui-500',
+  className: 'ft-text-sm text-neutral-500',
 })``;
 
 const Value = styled.div.attrs({
@@ -104,9 +104,9 @@ const Value = styled.div.attrs({
 })``;
 
 const USDValue = styled.p.attrs({
-  className: 'font-bold text-ui-800',
+  className: 'font-bold text-neutral-800',
 })``;
 
 const TokenAmount = styled.p.attrs({
-  className: 'ft-text-sm text-ui-500',
+  className: 'ft-text-sm text-neutral-500',
 })``;

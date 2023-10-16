@@ -71,5 +71,5 @@ const Title = styled.div.attrs<ContainerProps>(({mode}) => ({
 }))<ContainerProps>``;
 
 const HelpText = styled.div.attrs(() => ({
-  className: 'text-ui-600 ft-text-sm',
+  className: 'text-neutral-600 ft-text-sm',
 }))``;

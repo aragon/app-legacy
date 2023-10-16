@@ -186,7 +186,7 @@ export type PercentProps = Pick<NumberInputProps, 'disabled'>;
 
 const Percent = styled.label.attrs<PercentProps>(({disabled}) => {
   const className: string | undefined = `${
-    disabled ? 'text-ui-300' : 'text-ui-600'
+    disabled ? 'text-neutral-300' : 'text-neutral-600'
   }`;
   return {
     className,
@@ -195,7 +195,7 @@ const Percent = styled.label.attrs<PercentProps>(({disabled}) => {
 
 const LeftAdornment = styled.label.attrs<PercentProps>(({disabled}) => {
   const className: string | undefined = `${
-    disabled ? 'text-ui-300' : 'text-ui-600'
+    disabled ? 'text-neutral-300' : 'text-neutral-600'
   }`;
   return {
     className,
@@ -205,7 +205,7 @@ const LeftAdornment = styled.label.attrs<PercentProps>(({disabled}) => {
 const StyledNumberInput = styled.input.attrs<StyledNumberInputProps>(
   ({disabled, inputWidth}) => {
     const className: string | undefined = `${
-      disabled ? 'text-ui-300' : 'text-ui-600'
+      disabled ? 'text-neutral-300' : 'text-neutral-600'
     } bg-transparent margin-0 ${inputWidth}`;
     return {
       className,

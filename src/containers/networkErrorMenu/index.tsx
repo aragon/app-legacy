@@ -114,11 +114,11 @@ const ModalHeader = styled.div.attrs({
 `;
 
 export const Title = styled.div.attrs({
-  className: 'flex-1 font-bold text-ui-800',
+  className: 'flex-1 font-bold text-neutral-800',
 })``;
 
 const SubTitle = styled.div.attrs({
-  className: 'flex-1 font-medium text-ui-500 text-sm',
+  className: 'flex-1 font-medium text-neutral-500 text-sm',
 })``;
 
 const AvatarAddressContainer = styled.div.attrs({
@@ -142,9 +142,9 @@ export const WarningContainer = styled.div.attrs({
 })``;
 
 export const WarningTitle = styled.h2.attrs({
-  className: 'text-xl font-bold text-ui-800',
+  className: 'text-xl font-bold text-neutral-800',
 })``;
 
 const WarningDescription = styled.p.attrs({
-  className: 'text-sm text-ui-500 text-center',
+  className: 'text-sm text-neutral-500 text-center',
 })``;

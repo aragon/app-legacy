@@ -225,7 +225,7 @@ type Props = {
 };
 
 const Container = styled.div.attrs<Props>(({disabled, fullScreen = false}) => ({
-  className: `w-full text-ui-600 overflow-auto ${
+  className: `w-full text-neutral-600 overflow-auto ${
     fullScreen
       ? 'h-screen flex flex-col fixed top-0'
       : 'rounded-xl border-2 border-ui-100 hover:border-ui-300 focus-within:ring-2 focus-within:ring-primary-500 active:border-primary-500 active:ring-0 '

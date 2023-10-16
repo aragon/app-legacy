@@ -61,7 +61,7 @@ export const Breadcrumb: React.FC<BreadcrumbProps> = ({
                 tag={tag}
                 {...(isLast ? {} : {onClick: () => onClick?.(path)})}
               />
-              {!isLast && <IconChevronRight className="text-ui-300" />}
+              {!isLast && <IconChevronRight className="text-neutral-300" />}
             </div>
           );
         })}
@@ -97,5 +97,5 @@ const ProcessContainer = styled.div.attrs({
 })``;
 
 const ProcessCrumbContainer = styled.div.attrs({
-  className: 'flex items-center space-x-1.5 font-bold text-ui-600',
+  className: 'flex items-center space-x-1.5 font-bold text-neutral-600',
 })``;

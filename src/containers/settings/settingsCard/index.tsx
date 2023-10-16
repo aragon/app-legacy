@@ -19,11 +19,11 @@ const Container = styled.div.attrs({
 })``;
 
 export const Title = styled.p.attrs({
-  className: 'font-semibold text-ui-800 ft-text-xl',
+  className: 'font-semibold text-neutral-800 ft-text-xl',
 })``;
 
 export const Term = styled.dt.attrs({
-  className: `font-semibold xl:font-normal text-ui-800 xl:text-ui-600
+  className: `font-semibold xl:font-normal text-neutral-800 xl:text-neutral-600
     w-1/4 col-span-1 whitespace-nowrap` as string,
 })``;
 
@@ -42,5 +42,5 @@ export const FlexibleDefinition = styled.dd.attrs({
 
 export const DescriptionPair = styled.div.attrs({
   className: `space-y-0.5 py-1.5 md:py-2 xl:space-y-0 xl:flex
-  xl:space-x-2 text-ui-600 border-b border-ui-100 ft-text-base md:grid grid-cols-2 gap-4` as string,
+  xl:space-x-2 text-neutral-600 border-b border-ui-100 ft-text-base md:grid grid-cols-2 gap-4` as string,
 })``;

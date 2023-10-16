@@ -199,13 +199,13 @@ const ActionListenerModal: React.FC<Props> = ({
       <Content>
         <div className="flex flex-col items-center space-y-1.5">
           <AvatarDao daoName={metadataName} src={metadataIcon} size="medium" />
-          <div className="flex items-center justify-center text-center font-bold text-ui-800">
+          <div className="flex items-center justify-center text-center font-bold text-neutral-800">
             <Spinner size={'xs'} />
             <p className="ml-2">
               {t('modal.dappConnect.detaildApp.spinnerLabel')}
             </p>
           </div>
-          <p className="text-center text-sm text-ui-500 xl:px-5">
+          <p className="text-center text-sm text-neutral-500 xl:px-5">
             {t('modal.dappConnect.detaildApp.desc', {
               dappName: metadataName,
             })}

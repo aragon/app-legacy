@@ -269,7 +269,7 @@ export const VotingTerminal: React.FC<VotingTerminalProps> = ({
       {votingInProcess ? (
         <VotingContainer>
           <Heading2>{t('votingTerminal.chooseOption')}</Heading2>
-          <p className="mt-1 text-ui-500">
+          <p className="mt-1 text-neutral-500">
             {t('votingTerminal.chooseOptionHelptext')}
           </p>
 
@@ -370,7 +370,7 @@ const Header = styled.div.attrs({
 })``;
 
 const Heading1 = styled.h1.attrs({
-  className: 'ft-text-xl font-bold text-ui-800 grow',
+  className: 'ft-text-xl font-bold text-neutral-800 grow',
 })``;
 
 const VotingContainer = styled.div.attrs({
@@ -378,7 +378,7 @@ const VotingContainer = styled.div.attrs({
 })``;
 
 const Heading2 = styled.h2.attrs({
-  className: 'ft-text-xl font-bold text-ui-800',
+  className: 'ft-text-xl font-bold text-neutral-800',
 })``;
 
 const CheckboxContainer = styled.div.attrs({

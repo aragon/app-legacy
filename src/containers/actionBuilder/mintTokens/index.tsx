@@ -466,7 +466,7 @@ export const MintTokenForm: React.FC<MintTokenFormProps> = ({
         </ButtonContainer>
         {!daoTokenLoading && (
           <SummaryContainer>
-            <p className="font-bold text-ui-800">{t('labels.summary')}</p>
+            <p className="font-bold text-neutral-800">{t('labels.summary')}</p>
             <HStack>
               <Label>{t('labels.newTokens')}</Label>
               <p>
@@ -520,7 +520,7 @@ const ButtonContainer = styled.div.attrs({
 })``;
 
 const SummaryContainer = styled.div.attrs({
-  className: 'p-2 md:p-3 space-y-1.5 font-bold text-ui-800',
+  className: 'p-2 md:p-3 space-y-1.5 font-bold text-neutral-800',
 })``;
 
 const HStack = styled.div.attrs({
@@ -528,5 +528,5 @@ const HStack = styled.div.attrs({
 })``;
 
 const Label = styled.p.attrs({
-  className: 'font-normal text-ui-500',
+  className: 'font-normal text-neutral-500',
 })``;

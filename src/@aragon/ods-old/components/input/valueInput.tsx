@@ -58,7 +58,7 @@ export const Container = styled.div.attrs<StyledContainerProps>(
   ({mode, disabled}) => {
     let className = `${
       disabled ? 'bg-ui-100 border-ui-200' : 'bg-ui-0'
-    } flex items-center space-x-1.5 p-0.75 pl-2 text-ui-600 rounded-xl
+    } flex items-center space-x-1.5 p-0.75 pl-2 text-neutral-600 rounded-xl
     border-2 focus-within:ring-2 focus-within:ring-primary-500
     hover:border-ui-300 active:border-primary-500 active:ring-0 `;
 

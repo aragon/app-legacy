@@ -143,7 +143,7 @@ const Container = styled.div.attrs<StyledContainerProps>(
 
 const StyledTimeInput = styled.input.attrs(({disabled}) => {
   const className: string | undefined = `${
-    disabled ? 'text-ui-300' : 'text-ui-600'
+    disabled ? 'text-neutral-300' : 'text-neutral-600'
   } bg-transparent focus:outline-none margin-0 w-full`;
 
   return {

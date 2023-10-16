@@ -55,11 +55,11 @@ export const ListItemVoter: FC<ListItemVoterProps> = ({
       <LeftSection>
         {!isMobile && <Avatar src={src ?? ''} />}
         <LeftContent>
-          <p className="flex font-semibold text-ui-800 ft-text-base">
+          <p className="flex font-semibold text-neutral-800 ft-text-base">
             {shortenAddress(label)}
             {walletTag && <Tag {...walletTag} className="mx-1" />}
           </p>
-          <p className="flex font-semibold text-ui-600 ft-text-sm">
+          <p className="flex font-semibold text-neutral-600 ft-text-sm">
             {tokenInfo?.amount} {tokenInfo?.symbol}
           </p>
         </LeftContent>
@@ -75,7 +75,7 @@ export const ListItemVoter: FC<ListItemVoterProps> = ({
             />
           )}
           {voteReplaced && (
-            <p className="text-ui-600 ft-text-xs">{voteReplacedLabel}</p>
+            <p className="text-neutral-600 ft-text-xs">{voteReplacedLabel}</p>
           )}
         </RightContent>
         {!isMobile && (
@@ -110,7 +110,7 @@ const Container = styled.button.attrs(() => {
   const hoverClasses = 'hover:text-primary-500 hover:shadow-100';
   const activeClasses = 'active:outline-none active:border-ui-200';
 
-  className += ` text-ui-600 ${focusVisibleClasses} ${activeClasses} ${hoverClasses}`;
+  className += ` text-neutral-600 ${focusVisibleClasses} ${activeClasses} ${hoverClasses}`;
 
   return {className};
 })``;

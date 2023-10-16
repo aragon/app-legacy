@@ -99,7 +99,7 @@ const PublishModal: React.FC<PublishModalProps> = ({
         <GasCostEthContainer>
           <NoShrinkVStack>
             <Label>{t('TransactionModal.estimatedFees')}</Label>
-            <p className="text-sm text-ui-500">
+            <p className="text-sm text-neutral-500">
               {t('TransactionModal.maxFee')}
             </p>
           </NoShrinkVStack>
@@ -108,7 +108,7 @@ const PublishModal: React.FC<PublishModalProps> = ({
               <div className="truncate">{formattedAverage}</div>
               <div>{`${nativeCurrency.symbol}`}</div>
             </StrongText>
-            <div className="flex justify-end space-x-0.5 text-right text-sm text-ui-500">
+            <div className="flex justify-end space-x-0.5 text-right text-sm text-neutral-500">
               <div className="truncate">{formattedMax}</div>
               <div>{`${nativeCurrency.symbol}`}</div>
             </div>
@@ -124,7 +124,7 @@ const PublishModal: React.FC<PublishModalProps> = ({
               <div className="truncate">{formattedAverage}</div>
               <div>{`${nativeCurrency.symbol}`}</div>
             </StrongText>
-            <p className="text-right text-sm text-ui-500">{totalCost}</p>
+            <p className="text-right text-sm text-neutral-500">{totalCost}</p>
           </VStack>
         </GasTotalCostEthContainer>
       </GasCostTableContainer>
@@ -197,9 +197,9 @@ const VStack = styled.div.attrs({
 })``;
 
 const StrongText = styled.p.attrs({
-  className: 'font-bold text-right text-ui-600 flex space-x-0.5',
+  className: 'font-bold text-right text-neutral-600 flex space-x-0.5',
 })``;
 
 const Label = styled.p.attrs({
-  className: 'text-ui-600',
+  className: 'text-neutral-600',
 })``;

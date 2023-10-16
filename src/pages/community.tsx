@@ -332,7 +332,7 @@ const BodyContainer = styled.div.attrs({
 const SearchAndResultWrapper = styled.div.attrs({className: 'space-y-5'})``;
 
 const ResultsCountLabel = styled.p.attrs({
-  className: 'font-bold text-ui-800 ft-text-lg',
+  className: 'font-bold text-neutral-800 ft-text-lg',
 })``;
 
 const PaginationWrapper = styled.div.attrs({

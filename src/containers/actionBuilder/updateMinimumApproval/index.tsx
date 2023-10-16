@@ -189,7 +189,7 @@ const UpdateMinimumApproval: React.FC<UpdateMinimumApprovalProps> = ({
         </FormItem>
         {/* Summary */}
         <SummaryContainer>
-          <p className={'font-bold text-ui-800'}>{t('labels.summary')}</p>
+          <p className={'font-bold text-neutral-800'}>{t('labels.summary')}</p>
           <HStack>
             <SummaryLabel>{t('labels.addedMembers')}</SummaryLabel>
             <p>{addActionCount}</p>
@@ -215,10 +215,10 @@ const CustomHeader: React.FC = () => {
 
   return (
     <div className="mb-1.5 space-y-0.5">
-      <p className="text-base font-bold text-ui-800">
+      <p className="text-base font-bold text-neutral-800">
         {t('labels.minimumApproval')}
       </p>
-      <p className="text-sm text-ui-600">
+      <p className="text-sm text-neutral-600">
         {t('labels.minimumApprovalDescription')}
       </p>
     </div>
@@ -227,7 +227,7 @@ const CustomHeader: React.FC = () => {
 
 const SummaryContainer = styled.div.attrs({
   className:
-    'p-2 md:p-3 space-y-1.5 font-bold text-ui-800 border border-ui-100 rounded-b-xl border-t-0 bg-white',
+    'p-2 md:p-3 space-y-1.5 font-bold text-neutral-800 border border-ui-100 rounded-b-xl border-t-0 bg-white',
 })``;
 
 const HStack = styled.div.attrs({
@@ -235,5 +235,5 @@ const HStack = styled.div.attrs({
 })``;
 
 const SummaryLabel = styled.p.attrs({
-  className: 'font-normal text-ui-500',
+  className: 'font-normal text-neutral-500',
 })``;

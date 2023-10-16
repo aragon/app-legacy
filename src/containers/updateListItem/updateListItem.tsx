@@ -127,13 +127,13 @@ const HStack = styled.div.attrs<ContainerTypes>(({disabled, type}) => ({
   className:
     `flex justify-between items-center group-hover:text-primary-500 space-x-1.5 ${
       disabled
-        ? 'text-ui-600'
+        ? 'text-neutral-600'
         : type === 'default' || type === 'error'
-        ? 'text-ui-600'
+        ? 'text-neutral-600'
         : 'text-primary-500'
     }` as string,
 }))<ContainerTypes>``;
 
 const Helptext = styled.p.attrs({
-  className: 'ft-text-base text-ui-500 mr-3.5',
+  className: 'ft-text-base text-neutral-500 mr-3.5',
 })``;

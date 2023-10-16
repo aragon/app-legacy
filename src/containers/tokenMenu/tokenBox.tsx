@@ -31,7 +31,7 @@ export default function TokenBox({
 const Box = styled.div.attrs({
   className: `flex items-center gap-x-2 py-1.5 px-2
     bg-white rounded-xl cursor-pointer
-    hover:text-ui-800 hover:bg-ui-100`,
+    hover:text-neutral-800 hover:bg-ui-100`,
 })``;
 
 const AvatarTokenWrapper = styled.span``;
@@ -42,10 +42,10 @@ const TextWrapper = styled.div.attrs({
 
 const Name = styled.span.attrs({
   className:
-    'ft-text-base font-semibold ft-text-base flex-1 text-left truncate text-ui-600',
+    'ft-text-base font-semibold ft-text-base flex-1 text-left truncate text-neutral-600',
 })``;
 
 const Price = styled.span.attrs({
   className:
-    'ft-text-base font-normal flex-none w-1/3 text-ui-500 text-right truncate',
+    'ft-text-base font-normal flex-none w-1/3 text-neutral-500 text-right truncate',
 })``;
