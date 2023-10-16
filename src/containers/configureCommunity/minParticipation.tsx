@@ -330,7 +330,7 @@ export const MinParticipation: FC = () => {
 };
 
 const Container = styled.div.attrs({
-  className: 'pt-4 xl:pt-6 p-3 space-x-3 rounded-xl bg-neutral-0 relative z-10',
+  className: 'pt-4 xl:pt-3 p-3 space-x-3 rounded-xl bg-neutral-0 relative z-10',
 })``;
 
 const SubContainerWrapper = styled.div.attrs({
