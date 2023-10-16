@@ -93,14 +93,32 @@ export function useWalletConnectInterceptor(): WcInterceptorValues {
       const connectionTimeoutStart = Date.now();
       let activeSession: WcSession | undefined;
 
-      while (
-        activeSession != null &&
-        Date.now() < connectionTimeoutStart + CONNECTION_TIMEOUT
-      ) {
-        activeSession = await verifyConnection({connection, metadataName});
-      }
+      return new Promise<WcSession>((resolve, reject) => {
+        const verifyInterval = setInterval(async () => {
+          console.log({
+            now: Date.now(),
+            start: connectionTimeoutStart,
+            deadline: connectionTimeoutStart + CONNECTION_TIMEOUT,
+          });
 
-      return activeSession;
+          if (Date.now() > connectionTimeoutStart + CONNECTION_TIMEOUT) {
+            clearInterval(verifyInterval);
+            reject(new Error('walletConnectInterceptor: connection timeout'));
+          }
+
+          try {
+            activeSession = await verifyConnection({connection, metadataName});
+          } catch (error) {
+            clearInterval(verifyInterval);
+            reject(error);
+          }
+
+          if (activeSession != null) {
+            clearInterval(verifyInterval);
+            resolve(activeSession);
+          }
+        }, 1000);
+      });
     },
     [verifyConnection]
   );
