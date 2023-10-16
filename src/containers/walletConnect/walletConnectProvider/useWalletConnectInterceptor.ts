@@ -70,8 +70,9 @@ export function useWalletConnectInterceptor(): WcInterceptorValues {
 
       const metadataNameMatch =
         metadataName == null ||
-        matchingSession?.peer.metadata.name.toLowerCase() ===
-          connection.peerMetadata?.name.toLowerCase();
+        matchingSession?.peer.metadata.name
+          .toLowerCase()
+          .includes(metadataName);
 
       if (matchingSession && !metadataNameMatch) {
         throw METADATA_NAME_ERROR;
