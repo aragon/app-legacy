@@ -80,12 +80,12 @@ const GradientWrapper = styled.div.attrs({
 })``;
 
 const GradientGreen = styled.img.attrs({
-  className: 'h-40 absolute xl:-left-14 xl:-top-20 -top-19 left-14',
+  className: 'h-80 absolute xl:-left-14 xl:-top-20 -top-19 left-14',
 })``;
 
 const GradientPurple = styled.img.attrs({
   className:
-    'xl:h-40 h-30 absolute xl:-right-20 xl:top-5 -right-5 -top-6',
+    'xl:h-80 h-30 absolute xl:-right-20 xl:top-5 -right-5 -top-6',
 })``;
 
 export default Hero;

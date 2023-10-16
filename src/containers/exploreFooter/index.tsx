@@ -104,7 +104,7 @@ const GradientGreen = styled.img.attrs({
 })``;
 
 const GradientPurple = styled.img.attrs({
-  className: 'xl:h-40 h-30 absolute -right-5 xl:-top-11 top-16',
+  className: 'xl:h-80 h-30 absolute -right-5 xl:-top-11 top-16',
 })``;
 
 export default Footer;

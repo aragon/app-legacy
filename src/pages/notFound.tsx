@@ -97,9 +97,9 @@ const Title = styled.h1.attrs({
 `;
 
 const GradientGreen = styled.img.attrs({
-  className: 'h-25 xl:h-40 absolute -left-10 xl:-left-14 top-8',
+  className: 'h-25 xl:h-80 absolute -left-10 xl:-left-14 top-8',
 })``;
 
 const GradientPurple = styled.img.attrs({
-  className: 'h-25 xl:h-40 absolute -bottom-8 -right-12',
+  className: 'h-25 xl:h-80 absolute -bottom-8 -right-12',
 })``;
