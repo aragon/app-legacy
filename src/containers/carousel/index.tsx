@@ -113,7 +113,7 @@ const Carousel: React.FC = () => {
 
 const DesktopCTA = styled.div.attrs({
   className:
-    'relative flex xl:flex-row flex-col mb-4 space-x-3 max-w-fit -mt-16',
+    'relative flex xl:flex-row flex-col mb-4 space-x-3 max-w-fit -mt-32',
 })``;
 
 const MobileCTA = styled.div.attrs({

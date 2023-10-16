@@ -128,5 +128,5 @@ const Container = styled.div.attrs({
 })``;
 
 const ImageContainer = styled.img.attrs({
-  className: 'w-25 hidden md:block',
+  className: 'w-[200px] hidden md:block',
 })``;

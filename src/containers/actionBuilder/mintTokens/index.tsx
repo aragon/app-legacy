@@ -414,7 +414,7 @@ export const MintTokenForm: React.FC<MintTokenFormProps> = ({
             <div className="flex-1">
               <FormLabel label={t('labels.whitelistWallets.address')} />
             </div>
-            <div className="w-23">
+            <div className="w-[184px]">
               <FormLabel label={t('finance.tokens')} />
             </div>
             <div className="w-12">

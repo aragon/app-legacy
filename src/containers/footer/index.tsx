@@ -57,7 +57,7 @@ const Footer: React.FC = () => {
       </GridLayout>
       <div
         className={`z-10 flex items-center justify-center space-x-1 bg-primary-400 py-0.5 text-sm text-neutral-0 xl:mb-0 ${
-          isOnWrongNetwork ? 'mb-11 md:mb-15' : 'mb-8 md:mb-12'
+          isOnWrongNetwork ? 'mb-11 md:mb-[120px]' : 'mb-8 md:mb-12'
         }`}
       >
         <IconInfo />

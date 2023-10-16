@@ -58,7 +58,7 @@ export const NotFound: React.FC = () => {
             <ButtonText
               label={t('cta.404.backToExplore')}
               size="large"
-              className="mt-14 block w-full xl:mt-0 xl:hidden"
+              className="mt-28 block w-full xl:mt-0 xl:hidden"
               onClick={() => navigate(Landing)}
             />
           </div>
@@ -97,9 +97,9 @@ const Title = styled.h1.attrs({
 `;
 
 const GradientGreen = styled.img.attrs({
-  className: 'h-25 xl:h-80 absolute -left-10 xl:-left-14 top-8',
+  className: 'h-[200px] xl:h-80 absolute -left-10 xl:-left-28 top-8',
 })``;
 
 const GradientPurple = styled.img.attrs({
-  className: 'h-25 xl:h-80 absolute -bottom-8 -right-12',
+  className: 'h-[200px] xl:h-80 absolute -bottom-8 -right-12',
 })``;

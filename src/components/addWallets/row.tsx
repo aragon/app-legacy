@@ -319,7 +319,7 @@ const AddressWrapper = styled.div.attrs({
 })``;
 
 const AmountsWrapper = styled.div.attrs({
-  className: 'flex-1 md:flex-none order-4 md:order-2 w-25',
+  className: 'flex-1 md:flex-none order-4 md:order-2 w-[200px]',
 })``;
 
 const ErrorContainer = styled.div.attrs({

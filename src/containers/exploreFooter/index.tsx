@@ -100,11 +100,11 @@ const Copyright = styled.span.attrs({
 })``;
 
 const GradientGreen = styled.img.attrs({
-  className: 'h-[400px] absolute -top-16 -left-16',
+  className: 'h-[400px] absolute -top-32 -left-32',
 })``;
 
 const GradientPurple = styled.img.attrs({
-  className: 'xl:h-80 h-30 absolute -right-5 xl:-top-11 top-16',
+  className: 'xl:h-80 h-60 absolute -right-5 xl:-top-11 top-32',
 })``;
 
 export default Footer;

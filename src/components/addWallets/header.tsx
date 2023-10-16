@@ -11,7 +11,7 @@ const AddWalletsHeader: React.FC = () => {
       <HeaderItem>
         <Label label={t('labels.whitelistWallets.address')} />
       </HeaderItem>
-      <div className="w-25">
+      <div className="w-[200px]">
         <Label label={t('finance.tokens')} />
       </div>
       <div className="w-10">

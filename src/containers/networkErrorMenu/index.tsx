@@ -134,7 +134,7 @@ export const ModalBody = styled.div.attrs({
 })``;
 
 export const StyledImage = styled.img.attrs({
-  className: 'h-20',
+  className: 'h-40',
 })``;
 
 export const WarningContainer = styled.div.attrs({

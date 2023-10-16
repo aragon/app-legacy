@@ -33,5 +33,5 @@ export const NavlinksDropdown: React.FC = () => {
 };
 
 const StyledDropdown = styled(Dropdown).attrs({
-  className: 'p-1.5 w-30 rounded-xl',
+  className: 'p-1.5 w-60 rounded-xl',
 })``;

@@ -169,7 +169,7 @@ const TokenField: React.FC<IndexProps> = ({actionIndex, fieldIndex}) => {
         field: {name, value, onBlur, onChange},
         fieldState: {error},
       }) => (
-        <div className="flex-1 xl:w-23 xl:flex-none">
+        <div className="flex-1 xl:w-[184px] xl:flex-none">
           <NumberInput
             name={name}
             value={value}

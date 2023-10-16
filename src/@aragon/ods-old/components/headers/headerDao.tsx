@@ -154,7 +154,7 @@ export const HeaderDao: React.FC<HeaderDaoProps> = ({
           <Title>{daoName}</Title>
 
           <Dropdown
-            className="w-30"
+            className="w-60"
             align="start"
             trigger={
               <CredentialsDropdownTrigger
@@ -191,7 +191,7 @@ export const HeaderDao: React.FC<HeaderDaoProps> = ({
           <AvatarDao
             daoName={daoName || ''}
             size="unset"
-            className="h-10 w-10 text-lg xl:h-14 xl:w-14 xl:text-xl"
+            className="h-10 w-10 text-lg xl:h-28 xl:w-28 xl:text-xl"
             {...(daoAvatar && {src: daoAvatar})}
           />
         </AvatarContainer>

@@ -71,5 +71,5 @@ const Container = styled.div.attrs({
   className: 'space-y-1 overflow-y-auto',
 })``;
 const ScrollableDiv = styled.div.attrs({
-  className: 'h-25 space-y-1 p-1',
+  className: 'h-[200px] space-y-1 p-1',
 })``;

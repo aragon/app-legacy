@@ -72,7 +72,7 @@ const StyledImage = styled.img.attrs({
 })``;
 
 const GradientContainer = styled.div.attrs({
-  className: 'absolute top-64 xl:top-20 right-0 w-[568px]',
+  className: 'absolute top-64 xl:top-40 right-0 w-[568px]',
 })``;
 
 const GradientWrapper = styled.div.attrs({
@@ -80,12 +80,12 @@ const GradientWrapper = styled.div.attrs({
 })``;
 
 const GradientGreen = styled.img.attrs({
-  className: 'h-80 absolute xl:-left-14 xl:-top-20 -top-19 left-14',
+  className: 'h-80 absolute xl:-left-28 xl:-top-40 -top-[152px] left-28',
 })``;
 
 const GradientPurple = styled.img.attrs({
   className:
-    'xl:h-80 h-30 absolute xl:-right-20 xl:top-5 -right-5 -top-6',
+    'xl:h-80 h-60 absolute xl:-right-40 xl:top-5 -right-5 -top-6',
 })``;
 
 export default Hero;

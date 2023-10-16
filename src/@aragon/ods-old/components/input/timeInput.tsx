@@ -117,7 +117,7 @@ const Container = styled.div.attrs<StyledContainerProps>(
     let className = `${
       disabled ? 'bg-neutral-100' : 'bg-neutral-0'
     } inline-flex p-1 bg-neutral-0 ${
-      width ? '' : 'w-30'
+      width ? '' : 'w-60'
     } focus:outline-none items-center font-normal
       focus-within:ring-2 focus-within:ring-primary-500 justify-between
       rounded-xl hover:border-neutral-300 border-2 active:border-primary-500
