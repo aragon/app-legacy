@@ -48,6 +48,17 @@
     tslib "^2.3.0"
     zen-observable-ts "^1.2.0"
 
+"@aragon/ods@^1.0.1":
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/@aragon/ods/-/ods-1.0.1.tgz#872476b0806243fae89ca336323320bc083330f5"
+  integrity sha512-5/QHgmLhyZKR4tRccrPAm7FkqpqUooOfRlFapr6uDYAejHwQ4zP3v271cyJRy0wv3MhKiIQinL+1roqberC8nQ==
+  dependencies:
+    "@radix-ui/react-progress" "^1.0.3"
+    classnames "^2.3.2"
+    react "^18.2.0"
+    react-dom "^18.2.0"
+    tailwindcss "^3.3.3"
+
 "@aragon/osx-ethers-v1.0.0@npm:@aragon/osx-ethers@1.2.1":
   version "1.2.1"
   resolved "https://registry.yarnpkg.com/@aragon/osx-ethers/-/osx-ethers-1.2.1.tgz#a442048137153ed5a3ca4eff3f3927b45a5134b5"
@@ -2911,6 +2922,15 @@
   dependencies:
     "@babel/runtime" "^7.13.10"
     "@radix-ui/react-slot" "1.0.2"
+
+"@radix-ui/react-progress@^1.0.3":
+  version "1.0.3"
+  resolved "https://registry.yarnpkg.com/@radix-ui/react-progress/-/react-progress-1.0.3.tgz#8380272fdc64f15cbf263a294dea70a7d5d9b4fa"
+  integrity sha512-5G6Om/tYSxjSeEdrb1VfKkfZfn/1IlPWd731h2RfPuSbIfNUgfqAwbKfJCg/PP6nuUCTrYzalwHSpSinoWoCag==
+  dependencies:
+    "@babel/runtime" "^7.13.10"
+    "@radix-ui/react-context" "1.0.1"
+    "@radix-ui/react-primitive" "1.0.3"
 
 "@radix-ui/react-roving-focus@1.0.4":
   version "1.0.4"
@@ -7171,6 +7191,11 @@ classnames@^2.2.5:
   version "2.3.1"
   resolved "https://registry.yarnpkg.com/classnames/-/classnames-2.3.1.tgz#dfcfa3891e306ec1dad105d0e88f4417b8535e8e"
   integrity sha512-OlQdbZ7gLfGarSqxesMesDa5uz7KFbID8Kpq/SxIoNGDqY8lSYs0D+hhtBXhcdB3rcbXArFr7vlHheLk1voeNA==
+
+classnames@^2.3.2:
+  version "2.3.2"
+  resolved "https://registry.yarnpkg.com/classnames/-/classnames-2.3.2.tgz#351d813bf0137fcc6a76a16b88208d2560a0d924"
+  integrity sha512-CSbhY4cFEJRe6/GQzIk5qXZ4Jeg5pcsP7b5peFSDpffpe1cqjASH/n9UTjBwOp6XpMSTwQ8Za2K5V02ueA7Tmw==
 
 clean-css@^4.2.3:
   version "4.2.4"
