@@ -73,7 +73,7 @@ const ProgressInfo = styled.div.attrs({
 })``;
 
 const ApprovalAddresses = styled.p.attrs({
-  className: 'font-bold text-right text-primary-500',
+  className: 'font-semibold text-right text-primary-500',
 })``;
 
 const TotalAddresses = styled.p.attrs({

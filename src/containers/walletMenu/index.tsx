@@ -130,7 +130,7 @@ const ModalHeader = styled.div.attrs({
     0px 0px 1px rgba(31, 41, 51, 0.04);
 `;
 const Title = styled.div.attrs({
-  className: 'flex-1 font-bold text-neutral-800',
+  className: 'flex-1 font-semibold text-neutral-800',
 })``;
 const SubTitle = styled.div.attrs({
   className: 'flex-1 font-medium text-neutral-500 text-sm',

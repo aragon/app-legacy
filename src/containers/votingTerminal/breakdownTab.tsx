@@ -92,7 +92,7 @@ const ResultRow: React.FC<{
 };
 
 const VotePercentage = styled.p.attrs({
-  className: 'w-8 font-bold text-right text-primary-500 ' as string,
+  className: 'w-8 font-semibold text-right text-primary-500 ' as string,
 })``;
 
 const ResultValue = styled.p.attrs({
@@ -104,10 +104,10 @@ const ResultValueMultisig = styled.p.attrs({
 })``;
 
 const PercentageMultisig = styled.p.attrs({
-  className: 'font-bold text-right text-neutral-600',
+  className: 'font-semibold text-right text-neutral-600',
 })``;
 
-const VoteOption = styled.p.attrs({className: 'font-bold text-primary-500'})``;
+const VoteOption = styled.p.attrs({className: 'font-semibold text-primary-500'})``;
 
 const VStackRelaxed = styled.div.attrs({
   className: 'space-y-3 mt-3 mt-5',

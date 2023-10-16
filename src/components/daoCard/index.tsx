@@ -93,7 +93,7 @@ const HeaderContainer = styled.div.attrs({
 })``;
 
 const Title = styled.p.attrs({
-  className: 'font-bold text-neutral-800 ft-text-xl break-words',
+  className: 'font-semibold text-neutral-800 ft-text-xl break-words',
 })``;
 
 // The line desktop breakpoint does not work with

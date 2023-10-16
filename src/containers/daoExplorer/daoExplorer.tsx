@@ -193,5 +193,5 @@ const CardsWrapper = styled.div.attrs({
   className: 'grid grid-cols-1 gap-1.5 xl:grid-cols-2 xl:gap-3',
 })``;
 const Title = styled.p.attrs({
-  className: 'font-bold ft-text-xl text-neutral-800',
+  className: 'font-semibold ft-text-xl text-neutral-800',
 })``;

@@ -55,7 +55,7 @@ const CookiePreferenceMenu: React.FC<Props> = ({show, onClose, onAccept}) => {
 export default CookiePreferenceMenu;
 
 const Title = styled.div.attrs({
-  className: 'flex-1 font-bold text-neutral-800',
+  className: 'flex-1 font-semibold text-neutral-800',
 })``;
 
 const ModalHeader = styled.div.attrs({

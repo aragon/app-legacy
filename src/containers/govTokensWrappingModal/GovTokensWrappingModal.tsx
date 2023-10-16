@@ -503,7 +503,7 @@ const ProgressHeader = styled.div.attrs({
 })``;
 
 const ProgressTitle = styled.div.attrs({
-  className: 'font-bold text-primary-500',
+  className: 'font-semibold text-primary-500',
 })``;
 
 const ProgressSteps = styled.div.attrs({

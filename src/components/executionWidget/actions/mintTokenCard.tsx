@@ -126,7 +126,7 @@ export const MintTokenCard: React.FC<{
         </div>
 
         <SummaryContainer>
-          <p className="font-bold text-neutral-800">{t('labels.summary')}</p>
+          <p className="font-semibold text-neutral-800">{t('labels.summary')}</p>
           <HStack>
             <Label>{t('labels.newTokens')}</Label>
             <p>
@@ -172,7 +172,7 @@ const Container = styled.div.attrs({
 })``;
 
 const SummaryContainer = styled.div.attrs({
-  className: 'p-2 md:p-3 space-y-1.5 font-bold text-neutral-800',
+  className: 'p-2 md:p-3 space-y-1.5 font-semibold text-neutral-800',
 })``;
 
 const HStack = styled.div.attrs({

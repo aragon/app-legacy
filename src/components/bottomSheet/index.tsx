@@ -111,7 +111,7 @@ const ModalTitleContainer = styled.div.attrs({
 `;
 
 const ModalTitle = styled.h1.attrs({
-  className: 'font-bold text-neutral-800',
+  className: 'font-semibold text-neutral-800',
 })``;
 
 const ModalSubtitle = styled.div.attrs({

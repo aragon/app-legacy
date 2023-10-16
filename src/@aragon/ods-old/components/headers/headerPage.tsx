@@ -66,7 +66,7 @@ const TextContent = styled.div.attrs({
 })``;
 
 const Title = styled.h2.attrs({
-  className: 'ft-text-3xl font-bold text-neutral-800',
+  className: 'ft-text-3xl font-semibold text-neutral-800',
 })``;
 
 const Description = styled.div.attrs({

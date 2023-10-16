@@ -218,7 +218,7 @@ const TableTitleContainer = styled.div.attrs(() => ({
   className: 'mx-3 mt-3 mb-1.5',
 }))``;
 const Title = styled.p.attrs({
-  className: 'ft-text-base xl:font-bold font-semibold text-neutral-800',
+  className: 'ft-text-base xl:font-semibold font-semibold text-neutral-800',
 })``;
 const Text = styled.p.attrs({
   className: 'ft-text-base  text-neutral-600',

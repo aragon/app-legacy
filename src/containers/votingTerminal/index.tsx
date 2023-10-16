@@ -371,7 +371,7 @@ const Header = styled.div.attrs({
 })``;
 
 const Heading1 = styled.h1.attrs({
-  className: 'ft-text-xl font-bold text-neutral-800 grow',
+  className: 'ft-text-xl font-semibold text-neutral-800 grow',
 })``;
 
 const VotingContainer = styled.div.attrs({
@@ -379,7 +379,7 @@ const VotingContainer = styled.div.attrs({
 })``;
 
 const Heading2 = styled.h2.attrs({
-  className: 'ft-text-xl font-bold text-neutral-800',
+  className: 'ft-text-xl font-semibold text-neutral-800',
 })``;
 
 const CheckboxContainer = styled.div.attrs({

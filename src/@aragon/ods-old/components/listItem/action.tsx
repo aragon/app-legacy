@@ -51,7 +51,7 @@ export const ListItemAction: React.FC<ListItemActionProps> = ({
          to inherit the color (for example, when selected mode is on) */}
         <LabelContainer>
           <p
-            className={`font-bold ft-text-base ${
+            className={`font-semibold ft-text-base ${
               truncateText ? 'truncate' : ''
             }`}
           >

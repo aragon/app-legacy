@@ -45,7 +45,7 @@ const LabelLine = styled.div.attrs({
 })``;
 
 const Heading = styled.p.attrs({
-  className: 'font-bold text-neutral-800',
+  className: 'font-semibold text-neutral-800',
 })`
   & > a {
     color: #003bf5;

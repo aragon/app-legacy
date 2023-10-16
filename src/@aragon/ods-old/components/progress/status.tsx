@@ -152,7 +152,7 @@ const LabelLine = styled.div.attrs({
 })``;
 
 const Heading = styled.p.attrs({
-  className: 'font-bold',
+  className: 'font-semibold',
 })``;
 
 const HelpText = styled.p.attrs({

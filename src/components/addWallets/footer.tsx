@@ -51,5 +51,5 @@ const FooterItem2 = styled.div.attrs({
 })``;
 
 const StyledLabel = styled.p.attrs({
-  className: 'font-bold text-neutral-800 text-right',
+  className: 'font-semibold text-neutral-800 text-right',
 })``;

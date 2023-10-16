@@ -453,7 +453,7 @@ export const MintTokenForm: React.FC<MintTokenFormProps> = ({
           />
 
           {/* eslint-disable-next-line tailwindcss/classnames-order */}
-          {/* <label className="flex-1 md:flex-initial py-1.5 px-2 space-x-1.5 h-6 font-bold rounded-xl cursor-pointer hover:text-primary-500 bg-neutral-0 ft-text-base">
+          {/* <label className="flex-1 md:flex-initial py-1.5 px-2 space-x-1.5 h-6 font-semibold rounded-xl cursor-pointer hover:text-primary-500 bg-neutral-0 ft-text-base">
           {t('labels.whitelistWallets.uploadCSV')}
           <input
             type="file"
@@ -466,7 +466,7 @@ export const MintTokenForm: React.FC<MintTokenFormProps> = ({
         </ButtonContainer>
         {!daoTokenLoading && (
           <SummaryContainer>
-            <p className="font-bold text-neutral-800">{t('labels.summary')}</p>
+            <p className="font-semibold text-neutral-800">{t('labels.summary')}</p>
             <HStack>
               <Label>{t('labels.newTokens')}</Label>
               <p>
@@ -519,7 +519,7 @@ const ButtonContainer = styled.div.attrs({
 })``;
 
 const SummaryContainer = styled.div.attrs({
-  className: 'p-2 md:p-3 space-y-1.5 font-bold text-neutral-800',
+  className: 'p-2 md:p-3 space-y-1.5 font-semibold text-neutral-800',
 })``;
 
 const HStack = styled.div.attrs({

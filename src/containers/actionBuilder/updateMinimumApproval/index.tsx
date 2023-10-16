@@ -187,7 +187,7 @@ const UpdateMinimumApproval: React.FC<UpdateMinimumApprovalProps> = ({
         </FormItem>
         {/* Summary */}
         <SummaryContainer>
-          <p className={'font-bold text-neutral-800'}>{t('labels.summary')}</p>
+          <p className={'font-semibold text-neutral-800'}>{t('labels.summary')}</p>
           <HStack>
             <SummaryLabel>{t('labels.addedMembers')}</SummaryLabel>
             <p>{addActionCount}</p>
@@ -213,7 +213,7 @@ const CustomHeader: React.FC = () => {
 
   return (
     <div className="mb-1.5 space-y-0.5">
-      <p className="font-bold text-base text-neutral-800">
+      <p className="font-semibold text-base text-neutral-800">
         {t('labels.minimumApproval')}
       </p>
       <p className="text-sm text-neutral-600">
@@ -225,7 +225,7 @@ const CustomHeader: React.FC = () => {
 
 const SummaryContainer = styled.div.attrs({
   className:
-    'p-2 md:p-3 space-y-1.5 font-bold text-neutral-800 border border-neutral-100 rounded-b-xl border-t-0 bg-neutral-0',
+    'p-2 md:p-3 space-y-1.5 font-semibold text-neutral-800 border border-neutral-100 rounded-b-xl border-t-0 bg-neutral-0',
 })``;
 
 const HStack = styled.div.attrs({

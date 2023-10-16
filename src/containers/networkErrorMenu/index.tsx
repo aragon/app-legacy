@@ -114,7 +114,7 @@ const ModalHeader = styled.div.attrs({
 `;
 
 export const Title = styled.div.attrs({
-  className: 'flex-1 font-bold text-neutral-800',
+  className: 'flex-1 font-semibold text-neutral-800',
 })``;
 
 const SubTitle = styled.div.attrs({
@@ -142,7 +142,7 @@ export const WarningContainer = styled.div.attrs({
 })``;
 
 export const WarningTitle = styled.h2.attrs({
-  className: 'text-xl font-bold text-neutral-800',
+  className: 'text-xl font-semibold text-neutral-800',
 })``;
 
 const WarningDescription = styled.p.attrs({

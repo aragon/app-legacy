@@ -137,7 +137,7 @@ const Header = styled.div.attrs({
 })``;
 
 const Heading1 = styled.h1.attrs({
-  className: 'ft-text-xl font-bold text-neutral-800 grow',
+  className: 'ft-text-xl font-semibold text-neutral-800 grow',
 })``;
 
 const Description = styled.div.attrs({

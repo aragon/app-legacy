@@ -79,7 +79,7 @@ const Footer = styled.div.attrs<{type: AccordionType}>(({type}) => ({
 }))<{type: AccordionType}>``;
 
 const BoldedText = styled.span.attrs({
-  className: 'font-bold text-neutral-800 ft-text-base',
+  className: 'font-semibold text-neutral-800 ft-text-base',
 })``;
 
 export default AccordionSummary;

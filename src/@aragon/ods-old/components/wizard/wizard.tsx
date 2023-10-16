@@ -31,7 +31,7 @@ export const Wizard: React.FC<WizardProps> = ({
       {includeStepper && (
         <Wrapper>
           <CenteredFlex>
-            <p className="font-bold text-neutral-800 xl:text-primary-500">
+            <p className="font-semibold text-neutral-800 xl:text-primary-500">
               {processName}
             </p>
             <p className="text-neutral-400">
@@ -67,7 +67,7 @@ const Wrapper = styled.div.attrs({
 })``;
 
 const StepTitle = styled.p.attrs({
-  className: 'ft-text-3xl text-neutral-800 font-bold',
+  className: 'ft-text-3xl text-neutral-800 font-semibold',
 })``;
 
 const StepSubTitle = styled.span.attrs({

@@ -198,7 +198,7 @@ const ConfigureCommunity: React.FC<ConfigureCommunityProps> = ({
                         <ProgressBarTick />
                         <ProgressInfo1>
                           <p
-                            className="font-bold text-right text-primary-500"
+                            className="font-semibold text-right text-primary-500"
                             style={{flexBasis: `${value}%`}}
                           >
                             {value !== '100' ? '>' : ''}
@@ -461,7 +461,7 @@ const TimeLabelWrapper = styled.div.attrs({
 })``;
 
 const TimeLabel = styled.span.attrs({
-  className: 'text-sm font-bold text-neutral-800',
+  className: 'text-sm font-semibold text-neutral-800',
 })``;
 
 const ApprovalContainer = styled.div.attrs({

@@ -36,5 +36,5 @@ const Card = styled.div.attrs(() => {
 })``;
 
 const Header = styled.p.attrs({
-  className: 'font-bold ft-text-xl text-neutral-800',
+  className: 'font-semibold ft-text-xl text-neutral-800',
 })``;

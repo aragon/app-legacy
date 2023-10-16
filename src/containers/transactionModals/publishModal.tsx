@@ -197,7 +197,7 @@ const VStack = styled.div.attrs({
 })``;
 
 const StrongText = styled.p.attrs({
-  className: 'font-bold text-right text-neutral-600 flex space-x-0.5',
+  className: 'font-semibold text-right text-neutral-600 flex space-x-0.5',
 })``;
 
 const Label = styled.p.attrs({

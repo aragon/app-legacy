@@ -60,8 +60,8 @@ const Domain = styled.p.attrs({
 const DaoName = styled.p.attrs<Selectable>(({selected}) => {
   return {
     className: selected
-      ? 'font-bold truncate text-primary-500'
-      : 'truncate font-bold text-neutral-600 group-hover:text-primary-500 group-active:text-primary-500',
+      ? 'font-semibold truncate text-primary-500'
+      : 'truncate font-semibold text-neutral-600 group-hover:text-primary-500 group-active:text-primary-500',
   };
 })<Selectable>``;
 

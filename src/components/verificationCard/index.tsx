@@ -216,7 +216,7 @@ const LoadingWrapper = styled.div.attrs({
 })``;
 
 const VerifyTitle = styled.h2.attrs({
-  className: 'ft-text-lg font-bold text-800',
+  className: 'ft-text-lg font-semibold text-800',
 })``;
 
 const VerifyItemsWrapper = styled.div.attrs({

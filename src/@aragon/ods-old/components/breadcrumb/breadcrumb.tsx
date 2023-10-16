@@ -77,7 +77,7 @@ export const Breadcrumb: React.FC<BreadcrumbProps> = ({
             onClick={() => onClick?.(crumbs.path)}
             bgWhite
           />
-          <p className="font-bold">{crumbs?.label}</p>
+          <p className="font-semibold">{crumbs?.label}</p>
           {tag}
         </ProcessCrumbContainer>
       </ProcessContainer>
@@ -97,5 +97,5 @@ const ProcessContainer = styled.div.attrs({
 })``;
 
 const ProcessCrumbContainer = styled.div.attrs({
-  className: 'flex items-center space-x-1.5 font-bold text-neutral-600',
+  className: 'flex items-center space-x-1.5 font-semibold text-neutral-600',
 })``;

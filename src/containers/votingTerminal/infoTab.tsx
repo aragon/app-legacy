@@ -209,9 +209,9 @@ const InfoLine = styled.div.attrs({
 })``;
 
 const Strong = styled.p.attrs({
-  className: 'font-bold text-neutral-800',
+  className: 'font-semibold text-neutral-800',
 })``;
 
 const SectionHeader = styled.p.attrs({
-  className: 'font-bold text-neutral-800 ft-text-lg',
+  className: 'font-semibold text-neutral-800 ft-text-lg',
 })``;

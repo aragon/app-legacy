@@ -83,7 +83,7 @@ const NavLink = ({caller, data, onItemClick}: NavLinkProps) => {
 
 const NavItem = styled.button.attrs<{isSelected: boolean}>(({isSelected}) => {
   let className =
-    'py-1.5 px-2 rounded-xl font-bold hover:text-primary-500 ' +
+    'py-1.5 px-2 rounded-xl font-semibold hover:text-primary-500 ' +
     'active:text-primary-700 disabled:text-neutral-300 disabled:bg-neutral-50' +
     ' focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:outline-none ';
 

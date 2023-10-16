@@ -182,7 +182,7 @@ const MintTokensToTreasuryMenu: React.FC<Props> = ({
 };
 
 const Title = styled.div.attrs({
-  className: 'flex-1 font-bold text-center text-neutral-800',
+  className: 'flex-1 font-semibold text-center text-neutral-800',
 })``;
 
 const ModalHeader = styled.div.attrs({
@@ -196,7 +196,7 @@ const ModalHeader = styled.div.attrs({
 `;
 
 const FormTitle = styled.span.attrs({
-  className: 'ft-text-base font-bold text-neutral-800 pb-0.5',
+  className: 'ft-text-base font-semibold text-neutral-800 pb-0.5',
 })``;
 
 const FormHelpText = styled.p.attrs({

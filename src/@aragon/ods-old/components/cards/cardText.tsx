@@ -38,6 +38,6 @@ const Title = styled.p.attrs<TitleProps>(({type}) => {
     type === 'label'
       ? 'ft-text-sm  text-neutral-500'
       : 'ft-text-base text-neutral-800'
-  } font-bold`;
+  } font-semibold`;
   return {className};
 })<TitleProps>``;

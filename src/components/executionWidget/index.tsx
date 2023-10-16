@@ -184,7 +184,7 @@ const Header = styled.div.attrs({
 })``;
 
 const Title = styled.h2.attrs({
-  className: 'text-neutral-800 font-bold ft-text-xl',
+  className: 'text-neutral-800 font-semibold ft-text-xl',
 })``;
 
 const Description = styled.p.attrs({

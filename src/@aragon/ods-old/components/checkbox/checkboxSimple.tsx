@@ -28,7 +28,7 @@ export const CheckboxSimple: React.FC<CheckboxSimpleProps> = ({
       onClick={onClick}
     >
       {Icons[multiSelect ? 'multiSelect' : 'radio'][state]}
-      <p className="font-bold">{label}</p>
+      <p className="font-semibold">{label}</p>
     </Container>
   );
 };

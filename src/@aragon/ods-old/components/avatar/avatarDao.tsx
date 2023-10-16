@@ -68,7 +68,7 @@ const Avatar = styled.img.attrs<AvatarPropsType>(({size}) => ({
 
 const FallBackAvatar = styled.div.attrs<AvatarPropsType>(({size}) => ({
   className:
-    'flex items-center justify-center font-bold text-neutral-0 bg-gradient-to-r' +
+    'flex items-center justify-center font-semibold text-neutral-0 bg-gradient-to-r' +
     ` from-primary-500 to-primary-800 ${
       size !== 'unset' && sizes[size]
     } rounded-full border`,

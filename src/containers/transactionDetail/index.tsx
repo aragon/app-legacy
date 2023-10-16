@@ -147,5 +147,5 @@ const ModalHeader = styled.div.attrs({
 const Content = styled.div.attrs({className: 'p-3 space-y-1.5'})``;
 
 const Title = styled.p.attrs({
-  className: 'flex-1 text-neutral-800 font-bold',
+  className: 'flex-1 text-neutral-800 font-semibold',
 })``;

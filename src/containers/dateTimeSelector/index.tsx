@@ -245,7 +245,7 @@ const InputWrapper = styled.div.attrs({
 })``;
 
 const LabelWrapper = styled.span.attrs({
-  className: 'text-sm font-bold text-neutral-800 capitalize',
+  className: 'text-sm font-semibold text-neutral-800 capitalize',
 })``;
 
 const SpecificTimeContainer = styled.div.attrs({

@@ -123,7 +123,7 @@ const ModalHeader = styled.div.attrs({
 `;
 
 const Title = styled.div.attrs({
-  className: 'flex-1 font-bold text-center text-neutral-800',
+  className: 'flex-1 font-semibold text-center text-neutral-800',
 })``;
 
 const ModalContentContainer = styled.div.attrs({

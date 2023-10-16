@@ -75,7 +75,7 @@ const TextContainer = styled.div.attrs({
 })``;
 
 const Title = styled.p.attrs({
-  className: 'text-neutral-700 font-bold',
+  className: 'text-neutral-700 font-semibold',
 })``;
 
 const Subtitle = styled.p.attrs({

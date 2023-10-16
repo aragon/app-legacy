@@ -45,7 +45,7 @@ const Caption = styled.div.attrs({
 })``;
 
 const Title = styled.div.attrs({
-  className: 'font-bold text-neutral-800',
+  className: 'font-semibold text-neutral-800',
 })``;
 
 const Subtitle = styled.div.attrs({

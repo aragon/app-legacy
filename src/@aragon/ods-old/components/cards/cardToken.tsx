@@ -134,7 +134,7 @@ const CoinNameAndAllocation = styled.div.attrs({
 })``;
 
 const CoinName = styled.h1.attrs({
-  className: 'font-bold text-neutral-800 truncate',
+  className: 'font-semibold text-neutral-800 truncate',
 })``;
 
 const SecondaryCoinDetails = styled.div.attrs({
@@ -146,7 +146,7 @@ const MarketProperties = styled.div.attrs({
 })``;
 
 const FiatValue = styled.h1.attrs({
-  className: 'font-bold text-neutral-800',
+  className: 'font-semibold text-neutral-800',
 })``;
 
 const SecondaryFiatDetails = styled.div.attrs({

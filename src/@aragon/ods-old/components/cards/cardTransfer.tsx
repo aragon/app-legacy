@@ -66,8 +66,8 @@ const Label = styled.p.attrs({
 type ValueProps = {isAddress: boolean};
 const Value = styled.p.attrs<ValueProps>(({isAddress}) => {
   const className = isAddress
-    ? 'font-bold text-neutral-800'
-    : 'overflow-hidden font-bold text-neutral-800 text-ellipsis whitespace-nowrap';
+    ? 'font-semibold text-neutral-800'
+    : 'overflow-hidden font-semibold text-neutral-800 text-ellipsis whitespace-nowrap';
 
   return {className};
 })<ValueProps>``;

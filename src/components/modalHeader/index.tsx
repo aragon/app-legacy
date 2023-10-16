@@ -72,7 +72,7 @@ const Header = styled.div.attrs({
 `;
 
 const Title = styled.div.attrs({
-  className: 'font-bold text-neutral-800 text-center xl:text-left',
+  className: 'font-semibold text-neutral-800 text-center xl:text-left',
 })``;
 
 const SubTitle = styled.div.attrs({

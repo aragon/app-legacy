@@ -375,7 +375,7 @@ const TextContainer = styled.div.attrs({
 })``;
 
 const Title = styled.h1.attrs({
-  className: 'font-bold text-neutral-800 ft-text-3xl',
+  className: 'font-semibold text-neutral-800 ft-text-3xl',
 })``;
 
 const Description = styled.p.attrs({

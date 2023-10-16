@@ -33,7 +33,7 @@ export const ListItemAddress: FC<ListItemAddressProps> = ({
     <Container data-testid="listItem-address" {...props}>
       <LeftContent>
         <Avatar src={src ?? ''} />
-        <p className="font-bold">{shortenAddress(label)}</p>
+        <p className="font-semibold">{shortenAddress(label)}</p>
       </LeftContent>
 
       <RightContent>

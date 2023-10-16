@@ -71,5 +71,5 @@ const TextWrapper = styled.div.attrs({
 })``;
 
 const Name = styled.h2.attrs({
-  className: 'font-bold ft-text-base',
+  className: 'font-semibold ft-text-base',
 })``;

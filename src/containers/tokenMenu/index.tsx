@@ -181,7 +181,7 @@ const TokensWrapper = styled.div.attrs({
 })``;
 
 const TokenTitle = styled.h2.attrs({
-  className: 'text-base font-bold',
+  className: 'text-base font-semibold',
 })``;
 
 const TokenSubtitle = styled.h2.attrs({

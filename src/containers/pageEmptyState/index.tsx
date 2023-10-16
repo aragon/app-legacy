@@ -53,7 +53,7 @@ const Container = styled.div.attrs({
 })``;
 
 export const EmptyStateHeading = styled.h1.attrs({
-  className: 'mt-4 ft-text-2xl font-bold text-neutral-800 text-center',
+  className: 'mt-4 ft-text-2xl font-semibold text-neutral-800 text-center',
 })``;
 
 export const EmptyStateContainer = styled.div.attrs({

@@ -92,7 +92,7 @@ const Content = styled.div.attrs({
 })``;
 
 const Title = styled.p.attrs({
-  className: 'font-bold text-neutral-800 group-hover:text-primary-500 truncate',
+  className: 'font-semibold text-neutral-800 group-hover:text-primary-500 truncate',
 })``;
 
 const Date = styled.p.attrs({
@@ -104,7 +104,7 @@ const Value = styled.div.attrs({
 })``;
 
 const USDValue = styled.p.attrs({
-  className: 'font-bold text-neutral-800',
+  className: 'font-semibold text-neutral-800',
 })``;
 
 const TokenAmount = styled.p.attrs({

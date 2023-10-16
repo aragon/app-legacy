@@ -63,7 +63,7 @@ const LeftContent = styled.div.attrs({
 })``;
 
 const SelectedValue = styled.p.attrs({
-  className: 'font-bold text-neutral-600 ft-text-base',
+  className: 'font-semibold text-neutral-600 ft-text-base',
 })``;
 
 const ActionSearchInput = styled.input.attrs({

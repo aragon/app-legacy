@@ -90,7 +90,7 @@ type LabelProps = {
 };
 
 const Label = styled.span.attrs<LabelProps>(({visible}) => {
-  let className = 'font-bold';
+  let className = 'font-semibold';
   if (!visible) {
     className += ' hidden';
   }

@@ -65,7 +65,7 @@ const TextContainer = styled.div.attrs({
 })``;
 
 const DaoName = styled.p.attrs({
-  className: 'text-neutral-800 font-bold truncate',
+  className: 'text-neutral-800 font-semibold truncate',
 })`
   max-width: 88px;
 `;

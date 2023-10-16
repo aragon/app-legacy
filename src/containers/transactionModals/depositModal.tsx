@@ -124,7 +124,7 @@ const Container = styled.div.attrs({
 })``;
 
 const Title = styled.h2.attrs({
-  className: 'ft-text-base font-bold text-neutral-800',
+  className: 'ft-text-base font-semibold text-neutral-800',
 })``;
 
 const Subtitle = styled.p.attrs({

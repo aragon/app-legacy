@@ -52,7 +52,7 @@ const ContentWrapper = styled.div.attrs({
 
 const Title = styled.h1.attrs({
   className:
-    'text-neutral-0 font-bold ft-text-5xl xl:text-left text-center xl:leading-7.5 leading-4.5',
+    'text-neutral-0 font-semibold ft-text-5xl xl:text-left text-center xl:leading-7.5 leading-4.5',
 })`
   font-family: Syne;
   letter-spacing: -0.03em;

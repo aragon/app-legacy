@@ -85,7 +85,7 @@ const Wrapper = styled.div.attrs({
 })``;
 
 const Title = styled.h1.attrs({
-  className: 'font-bold text-primary-500 text-center xl:text-left',
+  className: 'font-semibold text-primary-500 text-center xl:text-left',
 })`
   font-family: Syne;
   line-height: 120%;

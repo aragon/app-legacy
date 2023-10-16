@@ -48,7 +48,7 @@ export const CheckboxListItem: React.FC<CheckboxListItemProps> = ({
       {...(disabled ? {} : {onClick})}
     >
       <HStack disabled={disabled} type={type}>
-        <p className="font-bold">{label}</p>
+        <p className="font-semibold">{label}</p>
         {Icons[multiSelect ? 'multiSelect' : 'radio'][type]}
       </HStack>
       {helptext && <Helptext>{helptext}</Helptext>}

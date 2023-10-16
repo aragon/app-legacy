@@ -99,7 +99,7 @@ const Container = styled.div.attrs({
 })``;
 
 const TitleText = styled.h1.attrs({
-  className: 'text-lg font-bold text-neutral-800',
+  className: 'text-lg font-semibold text-neutral-800',
 })``;
 
 const TitleContainer = styled.div.attrs({
@@ -115,7 +115,7 @@ const ListItemContainer = styled.div.attrs({
 })``;
 
 const DtContainer = styled.dt.attrs({
-  className: 'flex items-center font-bold text-neutral-800',
+  className: 'flex items-center font-semibold text-neutral-800',
 })``;
 
 const DdContainer = styled.dd.attrs({

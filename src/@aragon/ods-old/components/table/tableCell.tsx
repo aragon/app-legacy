@@ -43,7 +43,7 @@ export const TableCell: React.FC<TableCellProps> = ({
           rightAligned ? 'text-right' : 'text-left'
         } ${className}`}
       >
-        <p className="font-bold text-neutral-800 ft-text-sm">{text}</p>
+        <p className="font-semibold text-neutral-800 ft-text-sm">{text}</p>
       </th>
     );
   } else if (type === 'link') {
@@ -54,7 +54,7 @@ export const TableCell: React.FC<TableCellProps> = ({
           rightAligned ? 'text-right' : 'text-left'
         } ${className}`}
       >
-        <p className="font-bold cursor-pointer text-primary-500 ft-text-base">
+        <p className="font-semibold cursor-pointer text-primary-500 ft-text-base">
           {children}
         </p>
       </td>

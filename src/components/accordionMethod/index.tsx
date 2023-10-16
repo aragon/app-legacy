@@ -79,7 +79,7 @@ export const AccordionItem: React.FC<AccordionMethodType & {name: string}> = ({
                 }`}
               >
                 <p
-                  className={`font-bold ${
+                  className={`font-semibold ${
                     verified ? 'text-primary-500' : 'text-warning-500'
                   }`}
                 >
@@ -170,7 +170,7 @@ const FlexContainer = styled.div.attrs({
 })``;
 
 const MethodName = styled.p.attrs({
-  className: 'font-bold ft-text-lg text-neutral-800',
+  className: 'font-semibold ft-text-lg text-neutral-800',
 })``;
 
 const HStack = styled.div.attrs({

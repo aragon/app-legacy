@@ -58,7 +58,7 @@ const Container = styled.div.attrs({
 })``;
 
 const Title = styled.p.attrs({
-  className: 'ft-text-xl font-bold text-neutral-800',
+  className: 'ft-text-xl font-semibold text-neutral-800',
 })``;
 
 const ListItemContainer = styled.div.attrs({className: 'mt-3 space-y-2'})``;
