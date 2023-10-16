@@ -202,5 +202,5 @@ const SelectAllContainer = styled.div.attrs({
 })``;
 
 const ButtonContainer = styled.div.attrs({
-  className: 'flex py-2 px-3 space-x-2 bg-white',
+  className: 'flex py-2 px-3 space-x-2 bg-neutral-0',
 })``;

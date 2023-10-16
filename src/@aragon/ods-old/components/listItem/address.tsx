@@ -59,7 +59,7 @@ const Avatar: FC<AvatarProps> = ({src}) => {
 
 const Container = styled.button.attrs(() => {
   const baseLayoutClasses =
-    'flex items-center justify-between w-full border-2 border-transparent ';
+    'flex items-center justify-between w-full border-2 border-neutral-0 ';
   const baseStyleClasses = 'bg-neutral-0 p-2 md:p-3 rounded-xl';
   let className:
     | string

@@ -226,7 +226,7 @@ const HeaderOptions: React.VFC<HeaderOptionProps> = ({
 
 const Card = styled.button.attrs({
   className:
-    'w-full bg-white rounded-xl box-border ' +
+    'w-full bg-neutral-0 rounded-xl box-border ' +
     'hover:border hover:border-ui-100 ' +
     'active:border active:border-ui-200 ' +
     'focus:outline-none focus:ring-2 focus:ring-primary-500',

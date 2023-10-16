@@ -34,7 +34,7 @@ const StyledSpinner = styled.div.attrs<SpinnerProps>(({size}) => {
   };
   const className = `rounded-full
         ease-linear border-2
-        border-t-2 border-transparent
+        border-t-2 border-neutral-0
         ${sizes[size]}
     `;
 

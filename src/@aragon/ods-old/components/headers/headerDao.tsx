@@ -261,7 +261,7 @@ export const HeaderDao: React.FC<HeaderDaoProps> = ({
 
 const Card = styled.div.attrs({
   className:
-    'w-full bg-white md:rounded-xl p-2 md:p-3 xl:p-6 border border-ui-100 space-y-3',
+    'w-full bg-neutral-0 md:rounded-xl p-2 md:p-3 xl:p-6 border border-ui-100 space-y-3',
 })`
   box-shadow:
     0px 4px 8px rgba(31, 41, 51, 0.04),

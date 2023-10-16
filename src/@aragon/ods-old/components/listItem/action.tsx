@@ -95,7 +95,7 @@ const Container = styled.button.attrs<InputContainerProps>(
   ({mode, bgWhite = false}) => {
     const baseLayoutClasses = 'flex items-center gap-x-1.5 w-full';
     const baseStyleClasses =
-      'py-1.5 px-2 rounded-xl font-normal border-2 border-transparent';
+      'py-1.5 px-2 rounded-xl font-normal border-2 border-neutral-0';
     let className:
       | string
       | undefined = `${baseLayoutClasses} ${baseStyleClasses}`;

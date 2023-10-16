@@ -138,7 +138,7 @@ export const AccordionItem: React.FC<AccordionMethodType & {name: string}> = ({
 const AccordionHeader = styled(Accordion.Header).attrs<{type: AccordionType}>(
   ({type}) => ({
     className: `p-2 md:px-3 rounded-xl border border-ui-100 ${
-      type === 'action-builder' ? 'bg-white' : 'bg-neutral-50'
+      type === 'action-builder' ? 'bg-neutral-0' : 'bg-neutral-50'
     }`,
   })
 )<{type: AccordionType}>`
