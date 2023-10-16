@@ -24,7 +24,7 @@ export type VerifyConnectionOptions = {
 };
 
 export type WcInterceptorValues = {
-  wcConnect: (options: WcConnectOptions) => Promise<WcSession | undefined>;
+  wcConnect: (options: WcConnectOptions) => Promise<WcSession>;
   wcDisconnect: (topic: string) => Promise<void>;
   sessions: WcSession[];
   actions: WcActionRequest[];

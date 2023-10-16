@@ -133,7 +133,11 @@ const WCdAppValidation: React.FC<Props> = props => {
     setConnectionStatus(ConnectionState.LOADING);
 
     try {
-      await wcConnect({uri, metadataName: selecteddApp?.name.toLowerCase()});
+      const session = await wcConnect({
+        uri,
+        metadataName: selecteddApp?.name.toLowerCase(),
+      });
+      setSessionTopic(session.pairingTopic);
       setConnectionStatus(ConnectionState.SUCCESS);
     } catch (error: unknown) {
       if (error === METADATA_NAME_ERROR) {
