@@ -12,24 +12,21 @@ import styled from 'styled-components';
 
 import {useReactiveVar} from '@apollo/client';
 import ModalBottomSheetSwitcher from 'components/modalBottomSheetSwitcher';
-import {
-  favoriteDaosVar,
-  NavigationDao,
-  selectedDaoVar,
-} from 'context/apolloClient';
+import {NavigationDao, selectedDaoVar} from 'context/apolloClient';
 import {useGlobalModalContext} from 'context/globalModals';
+import {useFollowedDaosQuery} from 'hooks/useFollowedDaos';
 import useScreen from 'hooks/useScreen';
 import {getSupportedNetworkByChainId} from 'utils/constants';
-import {Dashboard} from 'utils/paths';
 import {toDisplayEns} from 'utils/library';
+import {Dashboard} from 'utils/paths';
 
 const DaoSelectMenu: React.FC = () => {
   const {t} = useTranslation();
   const {isDesktop} = useScreen();
   const navigate = useNavigate();
   const currentDao = useReactiveVar(selectedDaoVar);
-  const favoriteDaoCache = useReactiveVar(favoriteDaosVar);
   const {isOpen, close, open} = useGlobalModalContext('selectDao');
+  const {data: favoriteDaoCache} = useFollowedDaosQuery();
 
   const handleDaoSelect = useCallback(
     (dao: NavigationDao) => {
@@ -77,13 +74,11 @@ const DaoSelectMenu: React.FC = () => {
               daoLogo={currentDao?.metadata?.avatar}
               onClick={() => close()}
             />
-            {favoriteDaoCache.flatMap(dao => {
+            {favoriteDaoCache?.flatMap(dao => {
               if (
-                dao.address === currentDao.address &&
-                dao.chain === currentDao.chain
+                dao.address !== currentDao.address ||
+                dao.chain !== currentDao.chain
               ) {
-                return [];
-              } else {
                 return (
                   <ListItemDao
                     key={dao.address}

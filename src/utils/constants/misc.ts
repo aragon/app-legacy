@@ -132,8 +132,6 @@ export const PROPOSAL_STATE_LABELS = [
 ];
 
 // Storage and cacheing keys
-export const FOLLOWED_DAOS_KEY = 'favoriteDaos';
-export const PENDING_DAOS_KEY = 'pendingDaos';
 export const VERIFIED_CONTRACTS_KEY = 'verifiedContracts';
 
 // TODO: build more

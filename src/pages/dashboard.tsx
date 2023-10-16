@@ -297,8 +297,8 @@ export const Dashboard: React.FC = () => {
             }
             links={links}
             translation={{
-              follow: t('dao.follow.true'),
-              following: t('dao.follow.falss'),
+              follow: t('dao.follow.false'),
+              following: t('dao.follow.true'),
               readLess: '',
               readMore: '',
             }}

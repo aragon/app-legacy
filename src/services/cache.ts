@@ -9,15 +9,17 @@ import {
   PendingDao,
   PendingDaoCreation,
 } from 'context/apolloClient';
+
 import {
-  FOLLOWED_DAOS_KEY,
-  PENDING_DAOS_KEY,
   SupportedChainID,
   SupportedNetworks,
   VERIFIED_CONTRACTS_KEY,
 } from 'utils/constants';
 import {sleepFor} from 'utils/library';
 import {SmartContract, VerifiedContracts} from 'utils/types';
+
+export const FOLLOWED_DAOS_KEY = 'favoriteDaos';
+export const PENDING_DAOS_KEY = 'pendingDaos';
 
 /**
  * Fetch a list of followed DAOs

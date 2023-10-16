@@ -7,11 +7,7 @@ import {
 } from '@aragon/sdk-client';
 import {PluginInstallItem} from '@aragon/sdk-client-common';
 
-import {
-  FOLLOWED_DAOS_KEY,
-  SupportedChainID,
-  SupportedNetworks,
-} from 'utils/constants';
+import {SupportedChainID, SupportedNetworks} from 'utils/constants';
 
 /*************************************************
  *            FAVORITE & SELECTED DAOS           *
@@ -27,10 +23,6 @@ export type NavigationDao = Omit<DaoListItem, 'metadata' | 'plugins'> & {
   };
   plugins: InstalledPluginListItem[] | PluginInstallItem[];
 };
-const favoriteDaos = JSON.parse(
-  localStorage.getItem(FOLLOWED_DAOS_KEY) || '[]'
-);
-const favoriteDaosVar = makeVar<Array<NavigationDao>>(favoriteDaos);
 
 const selectedDaoVar = makeVar<NavigationDao>({
   address: '',
@@ -58,4 +50,4 @@ export type PendingDaoCreation = {
   };
 };
 
-export {favoriteDaosVar, selectedDaoVar};
+export {selectedDaoVar};
