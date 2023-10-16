@@ -193,7 +193,9 @@ const WCdAppValidation: React.FC<Props> = props => {
         <FormGroup>
           <Label
             label={t('modal.dappConnect.validation.codeInputLabel')}
-            helpText={t('modal.dappConnect.validation.codeInputHelp')}
+            helpText={t('modal.dappConnect.validation.codeInputHelp', {
+              dappName: selecteddApp.shortName,
+            })}
           />
           {/* TODO: Please add validation when format of wc Code is known */}
           <Controller
