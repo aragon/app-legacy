@@ -54,7 +54,7 @@ export const TableCell: React.FC<TableCellProps> = ({
           rightAligned ? 'text-right' : 'text-left'
         } ${className}`}
       >
-        <p className="font-semibold cursor-pointer text-primary-500 ft-text-base">
+        <p className="cursor-pointer font-semibold text-primary-500 ft-text-base">
           {children}
         </p>
       </td>

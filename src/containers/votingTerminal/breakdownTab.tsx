@@ -107,7 +107,9 @@ const PercentageMultisig = styled.p.attrs({
   className: 'font-semibold text-right text-neutral-600',
 })``;
 
-const VoteOption = styled.p.attrs({className: 'font-semibold text-primary-500'})``;
+const VoteOption = styled.p.attrs({
+  className: 'font-semibold text-primary-500',
+})``;
 
 const VStackRelaxed = styled.div.attrs({
   className: 'space-y-3 mt-3 mt-5',

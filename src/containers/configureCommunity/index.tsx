@@ -198,7 +198,7 @@ const ConfigureCommunity: React.FC<ConfigureCommunityProps> = ({
                         <ProgressBarTick />
                         <ProgressInfo1>
                           <p
-                            className="font-semibold text-right text-primary-500"
+                            className="text-right font-semibold text-primary-500"
                             style={{flexBasis: `${value}%`}}
                           >
                             {value !== '100' ? '>' : ''}

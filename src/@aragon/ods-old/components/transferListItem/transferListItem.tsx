@@ -92,7 +92,8 @@ const Content = styled.div.attrs({
 })``;
 
 const Title = styled.p.attrs({
-  className: 'font-semibold text-neutral-800 group-hover:text-primary-500 truncate',
+  className:
+    'font-semibold text-neutral-800 group-hover:text-primary-500 truncate',
 })``;
 
 const Date = styled.p.attrs({

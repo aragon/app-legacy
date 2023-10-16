@@ -70,7 +70,7 @@ const SCCAction: React.FC<ActionIndex & {allowRemove?: boolean}> = ({
                 .filter(input => input.type)
                 .map((input, index) => (
                   <div key={input.name}>
-                    <div className="font-semibold text-base capitalize text-neutral-800">
+                    <div className="text-base font-semibold capitalize text-neutral-800">
                       {input.name}
                       <span className="ml-0.5 text-sm normal-case">
                         ({input.type})

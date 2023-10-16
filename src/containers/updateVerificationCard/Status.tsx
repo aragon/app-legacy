@@ -36,7 +36,7 @@ export const Status: React.FC<StatusProps> = ({mode, label}) => {
       <IconContainer>
         <Icon mode={mode} />
       </IconContainer>
-      <div className="font-semibold text-sm md:text-base">{label}</div>
+      <div className="text-sm font-semibold md:text-base">{label}</div>
     </Content>
   );
 };

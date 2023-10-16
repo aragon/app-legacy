@@ -170,7 +170,7 @@ export const MinParticipation: FC = () => {
 
                     <ProgressInfo2>
                       <p
-                        className="font-semibold text-right text-primary-500"
+                        className="text-right font-semibold text-primary-500"
                         style={{
                           flexBasis: `${
                             (minParticipationTokensAmount /
