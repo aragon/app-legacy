@@ -64,9 +64,8 @@ export function useWalletConnectInterceptor(): WcInterceptorValues {
       connection,
       metadataName,
     }: VerifyConnectionOptions): Promise<WcSession | undefined> => {
-      const matchingSession = await walletConnectInterceptor.verifyConnection(
-        connection
-      );
+      const matchingSession =
+        await walletConnectInterceptor.verifyConnection(connection);
 
       const metadataNameMatch =
         metadataName == null ||
