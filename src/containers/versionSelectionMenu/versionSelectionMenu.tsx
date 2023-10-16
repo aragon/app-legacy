@@ -1,4 +1,4 @@
-import {ButtonText} from '@aragon/ods';
+import {ButtonText} from '@aragon/ods-old';
 import ModalBottomSheetSwitcher from 'components/modalBottomSheetSwitcher';
 import {UpdateListItem} from 'containers/updateListItem/updateListItem';
 import React from 'react';

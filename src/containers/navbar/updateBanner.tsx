@@ -1,7 +1,7 @@
 import React from 'react';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
-import {ButtonText, IconClose, IconUpdate} from '@aragon/ods';
+import {ButtonText, IconClose, IconUpdate} from '@aragon/ods-old';
 import {
   generatePath,
   useLocation,
