@@ -48,7 +48,7 @@ export type HeaderDaoProps = {
     following: string;
   };
   onCopy?: (input: string) => void;
-  onFavoriteClick?: (e: React.MouseEvent<HTMLButtonElement>) => void;
+  onFollowClick?: (e: React.MouseEvent<HTMLButtonElement>) => void;
 };
 
 type DescriptionProps = {
@@ -69,7 +69,7 @@ export const HeaderDao: React.FC<HeaderDaoProps> = ({
   links = [],
   translation = {},
   onCopy,
-  onFavoriteClick,
+  onFollowClick,
 }) => {
   const labels = {...DEFAULT_TRANSLATIONS, ...translation};
 
@@ -244,7 +244,7 @@ export const HeaderDao: React.FC<HeaderDaoProps> = ({
               />
             )}
             <ButtonText
-              onClick={onFavoriteClick}
+              onClick={onFollowClick}
               mode="secondary"
               size="large"
               bgWhite

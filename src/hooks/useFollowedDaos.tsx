@@ -36,7 +36,7 @@ const DEFAULT_QUERY_PARAMS = {
  * @returns result object containing an array of NavigationDao objects with added avatar information.
  */
 export const useFollowedDaosQuery = (
-  skip = 0,
+  skip = 0
 ): UseQueryResult<NavigationDao[]> => {
   return useQuery<NavigationDao[]>({
     queryKey: ['followedDaos'],
@@ -57,7 +57,7 @@ export const useFollowedDaosInfiniteQuery = (
   enabled = true,
   {
     limit = DEFAULT_QUERY_PARAMS.limit,
-  }: Partial<Pick<DaoQueryParams, 'limit'>> = {},
+  }: Partial<Pick<DaoQueryParams, 'limit'>> = {}
 ) => {
   return useInfiniteQuery({
     queryKey: ['infiniteFollowedDaos'],
@@ -68,12 +68,12 @@ export const useFollowedDaosInfiniteQuery = (
           skip: limit * pageParam,
           limit,
         }),
-      [limit],
+      [limit]
     ),
 
     getNextPageParam: (
       lastPage: NavigationDao[],
-      allPages: NavigationDao[][],
+      allPages: NavigationDao[][]
     ) => (lastPage.length === limit ? allPages.length : undefined),
 
     select: augmentCachedDaos,
@@ -90,7 +90,7 @@ export const useFollowedDaosInfiniteQuery = (
  */
 export const useFollowedDaoQuery = (
   daoAddress: string | undefined,
-  network: SupportedNetworks,
+  network: SupportedNetworks
 ) => {
   const chain = CHAIN_METADATA[network].id;
 
@@ -180,7 +180,7 @@ export const useAddFollowedDaoMutation = (params: IFollowDaoMutationParams) => {
  * @param onSuccess callback to run once followed DAO has been removed successfully
  */
 export const useRemoveFollowedDaoMutation = (
-  params: IFollowDaoMutationParams,
+  params: IFollowDaoMutationParams
 ) => {
   const queryClient = useQueryClient();
 

@@ -282,7 +282,7 @@ export const Dashboard: React.FC = () => {
             daoType={daoType}
             following={isFollowedDao}
             onCopy={onCopy}
-            onFavoriteClick={() =>
+            onFollowClick={() =>
               handleFollowedClick({
                 address: liveDao.address.toLowerCase(),
                 chain: CHAIN_METADATA[network].id,
