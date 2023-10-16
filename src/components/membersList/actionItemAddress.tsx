@@ -165,7 +165,7 @@ export const ActionItemAddress: React.FC<ActionItemAddressProps> = props => {
   };
 
   return (
-    <tr className="border-b border-b-ui-100 bg-neutral-0 last:border-ui-0">
+    <tr className="border-b border-b-neutral-100 bg-neutral-0 last:border-neutral-0">
       <TableCell>
         <div className="flex flex-row items-center gap-2">
           <Avatar size="small" mode="circle" src={avatar ?? addressOrEns} />

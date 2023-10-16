@@ -154,12 +154,12 @@ const Container = styled.div.attrs<StyledContainerProps>(
       width ? '' : 'w-full'
     } focus:outline-none items-center py-0.75 px-1
       focus-within:ring-2 focus-within:ring-primary-500 justify-between
-      rounded-xl hover:border-ui-300 border-2 active:border-primary-500
+      rounded-xl hover:border-neutral-300 border-2 active:border-primary-500
       active:ring-0
     `;
 
     if (mode === 'default') {
-      className += 'border-ui-100';
+      className += 'border-neutral-100';
     } else if (mode === 'success') {
       className += 'border-success-600';
     } else if (mode === 'warning') {

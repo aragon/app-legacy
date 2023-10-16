@@ -200,7 +200,7 @@ const CurrentParticipationWrapper = styled.div.attrs({
 
 const VStackSection = styled.div.attrs<{isLast?: boolean}>(({isLast}) => ({
   className: `space-y-1.5 p-2 md:p-3 -mx-2 md:-mx-3 ${
-    isLast ? 'pb-0 border-b-0' : 'border-b border-ui-100'
+    isLast ? 'pb-0 border-b-0' : 'border-b border-neutral-100'
   }`,
 }))<{isLast?: boolean}>``;
 

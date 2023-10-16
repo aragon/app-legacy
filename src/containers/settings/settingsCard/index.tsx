@@ -15,7 +15,7 @@ export const SettingsCard: React.FC<{title: string; children: ReactNode}> = ({
 
 const Container = styled.div.attrs({
   className:
-    'py-2.5 px-2 space-y-1 xl:space-y-2 bg-neutral-0 rounded-xl border border-ui-100',
+    'py-2.5 px-2 space-y-1 xl:space-y-2 bg-neutral-0 rounded-xl border border-neutral-100',
 })``;
 
 export const Title = styled.p.attrs({
@@ -42,5 +42,5 @@ export const FlexibleDefinition = styled.dd.attrs({
 
 export const DescriptionPair = styled.div.attrs({
   className: `space-y-0.5 py-1.5 md:py-2 xl:space-y-0 xl:flex
-  xl:space-x-2 text-neutral-600 border-b border-ui-100 ft-text-base md:grid grid-cols-2 gap-4` as string,
+  xl:space-x-2 text-neutral-600 border-b border-neutral-100 ft-text-base md:grid grid-cols-2 gap-4` as string,
 })``;

@@ -68,7 +68,7 @@ const Container = styled.button.attrs(() => {
   const focusVisibleClasses =
     'focus-visible:ring-0 focus-visible:ring-transparent';
   const hoverClasses = 'hover:text-primary-500 hover:shadow-100';
-  const activeClasses = 'active:outline-none active:border-ui-200';
+  const activeClasses = 'active:outline-none active:border-neutral-200';
 
   className += ` text-neutral-600 ${focusVisibleClasses} ${activeClasses} ${hoverClasses}`;
 

@@ -509,7 +509,7 @@ export const MintTokenForm: React.FC<MintTokenFormProps> = ({
 };
 
 const Container = styled.div.attrs<{standAlone: boolean}>(({standAlone}) => ({
-  className: `bg-neutral-0 border divide-y border-ui-100 divide-ui-100 ${
+  className: `bg-neutral-0 border divide-y border-neutral-100 divide-neutral-100 ${
     standAlone ? 'rounded-xl' : 'rounded-b-xl border-t-0'
   }`,
 }))<{standAlone: boolean}>``;

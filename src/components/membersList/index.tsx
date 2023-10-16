@@ -81,13 +81,13 @@ export const MembersList: React.FC<MembersListProps> = ({
   return (
     <div
       className={`overflow-hidden rounded-xl ${
-        useCompactMode ? 'border border-ui-100' : ''
+        useCompactMode ? 'border border-neutral-100' : ''
       } `}
     >
       <table className="h-full w-full">
         {!useCompactMode && (
           <thead>
-            <tr className="border-b border-b-ui-100 bg-neutral-0 text-neutral-600">
+            <tr className="border-b border-b-neutral-100 bg-neutral-0 text-neutral-600">
               <TableCellHead>{t('community.listHeader.member')}</TableCellHead>
               {isDesktop && isTokenBasedDao && (
                 <TableCellHead>

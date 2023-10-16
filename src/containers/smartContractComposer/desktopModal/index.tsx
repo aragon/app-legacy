@@ -210,7 +210,7 @@ const Wrapper = styled.div.attrs({className: 'flex flex-1 overflow-auto'})``;
 
 const Aside = styled.div.attrs({
   className:
-    'flex flex-col justify-between overflow-auto p-3 w-40 bg-neutral-50 border-r border-ui-100',
+    'flex flex-col justify-between overflow-auto p-3 w-40 bg-neutral-50 border-r border-neutral-100',
 })``;
 
 const Main = styled.div.attrs({

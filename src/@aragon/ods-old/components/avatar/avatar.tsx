@@ -77,5 +77,5 @@ const AvatarContainer = styled.div.attrs<StyledContainerProps>(
 )<StyledContainerProps>``;
 
 const FallbackAvatar = styled.div.attrs({
-  className: 'w-3 h-3 rounded-full bg-gradient-to-tl from-ui-900',
+  className: 'w-3 h-3 rounded-full bg-gradient-to-tl from-neutral-900',
 })``;

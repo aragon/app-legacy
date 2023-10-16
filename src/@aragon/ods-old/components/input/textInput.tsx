@@ -48,10 +48,10 @@ type StyledContainerProps = Pick<
 export const Container = styled.div.attrs<StyledContainerProps>(
   ({mode, disabled, containerClassName}) => {
     let className = `${
-      disabled ? 'bg-neutral-100 border-ui-200 border-2' : 'bg-neutral-0'
+      disabled ? 'bg-neutral-100 border-neutral-200 border-2' : 'bg-neutral-0'
     } flex items-center focus-within:ring-2
     focus-within:ring-primary-500
-    rounded-xl hover:border-ui-300 border-2 h-6
+    rounded-xl hover:border-neutral-300 border-2 h-6
     active:border-primary-500 active:ring-0 `;
 
     if (containerClassName) {
@@ -59,7 +59,7 @@ export const Container = styled.div.attrs<StyledContainerProps>(
     }
 
     if (mode === 'default') {
-      className += 'border-ui-100';
+      className += 'border-neutral-100';
     } else if (mode === 'success') {
       className += 'border-success-600';
     } else if (mode === 'warning') {

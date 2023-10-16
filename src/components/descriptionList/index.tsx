@@ -131,5 +131,5 @@ const HStack = styled.div.attrs({
 
 export const ActionCardDlContainer = styled.div.attrs({
   className:
-    'bg-neutral-50 rounded-b-xl border border-t-0 border-ui-100 space-y-2 p-3',
+    'bg-neutral-50 rounded-b-xl border border-t-0 border-neutral-100 space-y-2 p-3',
 })``;

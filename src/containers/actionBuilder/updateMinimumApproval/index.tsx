@@ -227,7 +227,7 @@ const CustomHeader: React.FC = () => {
 
 const SummaryContainer = styled.div.attrs({
   className:
-    'p-2 md:p-3 space-y-1.5 font-bold text-neutral-800 border border-ui-100 rounded-b-xl border-t-0 bg-neutral-0',
+    'p-2 md:p-3 space-y-1.5 font-bold text-neutral-800 border border-neutral-100 rounded-b-xl border-t-0 bg-neutral-0',
 })``;
 
 const HStack = styled.div.attrs({

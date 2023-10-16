@@ -151,7 +151,7 @@ const DefaultContainer = styled.div.attrs<DefaultContainerProps>(
   ({isdragactive}) => ({
     className: `flex items-center justify-center bg-neutral-0
     h-8 w-8 border-dashed ${
-      isdragactive ? 'border-primary-500' : 'border-ui-100'
+      isdragactive ? 'border-primary-500' : 'border-neutral-100'
     } border-2 rounded-xl cursor-pointer`,
   })
 )<DefaultContainerProps>``;

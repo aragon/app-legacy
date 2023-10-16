@@ -25,11 +25,11 @@ const InputContainer = styled.div.attrs<InputContainerProps>(({disabled}) => {
   let className = `${baseClasses}`;
 
   if (disabled) {
-    className += ' bg-neutral-100 text-neutral-300 border-ui-200';
+    className += ' bg-neutral-100 text-neutral-300 border-neutral-200';
   } else {
     const focusVisibleClasses =
       'focus-within:ring-2 focus-within:ring-primary-500';
-    const hoverClasses = 'hover:border-ui-300';
+    const hoverClasses = 'hover:border-neutral-300';
     const activeClasses = 'active:border-primary-500 active:ring-0';
     className += ` bg-neutral-0 text-neutral-600 ${focusVisibleClasses} ${hoverClasses} ${activeClasses}`;
   }

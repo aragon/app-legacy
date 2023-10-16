@@ -99,7 +99,7 @@ const Avatar: FC<AvatarProps> = ({src}) => {
 
 const Container = styled.button.attrs(() => {
   const baseLayoutClasses =
-    'flex items-center justify-between w-full border-ui-100 border-b-2';
+    'flex items-center justify-between w-full border-neutral-100 border-b-2';
   const baseStyleClasses = 'bg-neutral-0 pl-2 pr-1.5 py-1.5 ';
   let className:
     | string
@@ -108,7 +108,7 @@ const Container = styled.button.attrs(() => {
   const focusVisibleClasses =
     'focus-visible:ring-0 focus-visible:ring-transparent';
   const hoverClasses = 'hover:text-primary-500 hover:shadow-100';
-  const activeClasses = 'active:outline-none active:border-ui-200';
+  const activeClasses = 'active:outline-none active:border-neutral-200';
 
   className += ` text-neutral-600 ${focusVisibleClasses} ${activeClasses} ${hoverClasses}`;
 

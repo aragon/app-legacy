@@ -40,11 +40,11 @@ const Container = styled.button.attrs(
       disabled ? 'bg-neutral-100' : 'bg-neutral-0'
     } flex bg-neutral-0 focus:outline-none focus-within:ring-2
     focus-within:ring-primary-500 py-1.5 px-2 rounded-xl w-full
-    hover:border-ui-300 border-2 active:border-primary-500 active:ring-0
+    hover:border-neutral-300 border-2 active:border-primary-500 active:ring-0
     items-center justify-between `;
 
     if (mode === 'default') {
-      className += 'border-ui-100';
+      className += 'border-neutral-100';
     } else if (mode === 'success') {
       className += 'border-success-600';
     } else if (mode === 'warning') {

@@ -168,7 +168,7 @@ export const MintTokenCard: React.FC<{
 
 const Container = styled.div.attrs({
   className:
-    'bg-neutral-50 border divide-y border-ui-100 divide-ui-100 rounded-b-xl border-t-0',
+    'bg-neutral-50 border divide-y border-neutral-100 divide-neutral-100 rounded-b-xl border-t-0',
 })``;
 
 const SummaryContainer = styled.div.attrs({

@@ -206,7 +206,7 @@ export default LinkRow;
 const Container = styled.div.attrs<{bgWhite: BgWhite}>(({bgWhite}) => ({
   className: `flex flex-wrap gap-x-2 gap-y-1.5 p-2 ${
     bgWhite
-      ? 'bg-neutral-50 border border-t-0 border-ui-100 last:rounded-b-xl'
+      ? 'bg-neutral-50 border border-t-0 border-neutral-100 last:rounded-b-xl'
       : 'bg-neutral-0'
   }`,
 }))<BgWhite>``;

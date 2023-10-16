@@ -572,7 +572,7 @@ const modeStyles = (state: WalletInputProps['state']) => {
     case 'critical':
       return 'border-critical-600';
     default:
-      return 'border-ui-100';
+      return 'border-neutral-100';
   }
 };
 
@@ -587,7 +587,7 @@ export const Container = styled.div.attrs<StyledContainerProps>(
       : 'focus-within:ring-2 focus-within:ring-primary-500';
 
     const bgAndBorderColor = disabled
-      ? 'bg-neutral-100 border-ui-200 text-neutral-700'
+      ? 'bg-neutral-100 border-neutral-200 text-neutral-700'
       : 'bg-neutral-0 text-neutral-600';
 
     return {
