@@ -577,7 +577,8 @@ export function ComponentForTypeWithFormProvider({
 }
 
 const ActionName = styled.p.attrs({
-  className: 'text-lg font-semibold text-neutral-800 capitalize truncate',
+  className:
+    'text-xl leading-normal font-semibold text-neutral-800 capitalize truncate',
 })``;
 
 const ActionDescription = styled.p.attrs({

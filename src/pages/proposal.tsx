@@ -788,7 +788,7 @@ const ProposerLink = styled.p.attrs({
 })``;
 
 const SummaryText = styled.p.attrs({
-  className: 'text-lg text-neutral-600',
+  className: 'text-xl leading-normal text-neutral-600',
 })``;
 
 const ProposalContainer = styled.div.attrs({

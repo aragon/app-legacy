@@ -119,7 +119,7 @@ const DescriptionContainer = styled.div.attrs({
 })``;
 
 const Title = styled.p.attrs({
-  className: 'text-lg font-semibold text-neutral-800',
+  className: 'text-xl leading-normal font-semibold text-neutral-800',
 })``;
 
 const Subtitle = styled.p.attrs({className: 'text-neutral-600 text-bold'})``;

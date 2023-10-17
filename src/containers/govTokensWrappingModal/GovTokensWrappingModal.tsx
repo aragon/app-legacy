@@ -470,7 +470,7 @@ const LoadingContainer = styled.div.attrs({
 })``;
 
 const LoadingLabel = styled.span.attrs({
-  className: 'text-lg text-center',
+  className: 'text-xl leading-normal text-center',
 })``;
 
 const FormItem = styled.div.attrs({

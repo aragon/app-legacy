@@ -45,7 +45,7 @@ export const GoLiveHeader: React.FC = () => {
           <h1 className="text-4xl font-semibold leading-tight text-neutral-800">
             {t('createDAO.review.title')}
           </h1>
-          <p className="mt-4 text-lg text-neutral-600">
+          <p className="mt-4 text-xl leading-normal text-neutral-600">
             {t('createDAO.review.description')}
           </p>
         </div>

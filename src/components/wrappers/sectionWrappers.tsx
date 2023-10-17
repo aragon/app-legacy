@@ -87,7 +87,8 @@ export const TransferSectionWrapper = ({
 };
 
 const Title = styled.p.attrs({
-  className: 'flex text-lg font-semibold items-center text-neutral-800',
+  className:
+    'flex text-xl leading-normal font-semibold items-center text-neutral-800',
 })``;
 
 const HeaderContainer = styled.div.attrs({

@@ -99,7 +99,7 @@ const Container = styled.div.attrs({
 })``;
 
 const TitleText = styled.h1.attrs({
-  className: 'text-lg font-semibold text-neutral-800',
+  className: 'text-xl leading-normal font-semibold text-neutral-800',
 })``;
 
 const TitleContainer = styled.div.attrs({
