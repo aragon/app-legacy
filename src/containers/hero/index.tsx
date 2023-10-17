@@ -52,7 +52,7 @@ const ContentWrapper = styled.div.attrs({
 
 const Title = styled.h1.attrs({
   className:
-    'text-neutral-0 font-semibold ft-text-5xl xl:text-left text-center xl:leading-7.5 leading-4.5',
+    'text-neutral-0 font-semibold ft-text-5xl xl:text-left text-center xl:leading-[60px] leading-[38px]',
 })`
   font-family: Syne;
   letter-spacing: -0.03em;
@@ -60,7 +60,7 @@ const Title = styled.h1.attrs({
 
 const Subtitle = styled.h3.attrs({
   className:
-    'text-neutral-0 ft-text-lg font-normal text-center xl:text-left leading-3 xl:leading-3.75',
+    'text-neutral-0 ft-text-lg font-normal text-center xl:text-left leading-[24px] xl:leading-[30px]',
 })``;
 
 const ImageWrapper = styled.div.attrs({

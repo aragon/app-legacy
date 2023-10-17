@@ -42,7 +42,7 @@ export const GoLiveHeader: React.FC = () => {
       </div>
       <div className="flex justify-between">
         <div className="w-full pt-6">
-          <h1 className="text-3xl font-semibold text-neutral-800">
+          <h1 className="text-4xl font-semibold leading-tight text-neutral-800">
             {t('createDAO.review.title')}
           </h1>
           <p className="mt-4 text-lg text-neutral-600">

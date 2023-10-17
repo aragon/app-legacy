@@ -772,7 +772,7 @@ const HeaderContainer = styled.div.attrs({
 })``;
 
 const ProposalTitle = styled.p.attrs({
-  className: 'font-semibold text-neutral-800 text-3xl',
+  className: 'font-semibold text-neutral-800 text-4xl leading-tight',
 })``;
 
 const ContentWrapper = styled.div.attrs({
