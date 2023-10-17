@@ -159,7 +159,7 @@ const MobileModalEmptyState: React.FC = () => {
 
 const Container = styled.div.attrs({
   'data-test-id': 'empty-container',
-  className: 'flex h-full bg-neutral-0 p-6 pt-0 justify-center items-center',
+  className: 'flex h-full bg-neutral-0 p-12 pt-0 justify-center items-center',
 })``;
 
 type CustomHeaderProps = {

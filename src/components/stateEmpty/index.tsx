@@ -137,7 +137,7 @@ const Card = styled.div.attrs<
 
   if (mode === 'card') {
     className += 'border bg-neutral-0 ';
-    className += `${customCardPaddingClassName || 'p-3 md:p-6'} `;
+    className += `${customCardPaddingClassName || 'p-3 md:p-12'} `;
 
     if (type === 'Object') className += 'gap-y-1 ';
   } else {
@@ -175,5 +175,5 @@ const Description = styled.p.attrs({
 `;
 
 const ImageWrapper = styled.div.attrs({
-  className: 'flex justify-center pt-4 xl:pt-6 pb-4 xl:pb-8',
+  className: 'flex justify-center pt-4 xl:pt-12 pb-4 xl:pb-16',
 })``;

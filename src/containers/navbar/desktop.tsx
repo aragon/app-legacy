@@ -161,7 +161,7 @@ const Menu = styled.nav.attrs({
 `;
 
 const Content = styled.div.attrs({
-  className: 'flex items-center space-x-6',
+  className: 'flex items-center space-x-12',
 })``;
 
 const LinksWrapper = styled.div.attrs({

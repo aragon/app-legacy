@@ -420,7 +420,7 @@ export const MintTokenForm: React.FC<MintTokenFormProps> = ({
             <div className="w-24">
               <FormLabel label={t('finance.allocation')} />
             </div>
-            <div className="w-6" />
+            <div className="w-12" />
           </div>
         )}
 
@@ -453,7 +453,7 @@ export const MintTokenForm: React.FC<MintTokenFormProps> = ({
           />
 
           {/* eslint-disable-next-line tailwindcss/classnames-order */}
-          {/* <label className="flex-1 md:flex-initial py-1.5 px-2 space-x-1.5 h-6 font-semibold rounded-xl cursor-pointer hover:text-primary-500 bg-neutral-0 ft-text-base">
+          {/* <label className="flex-1 md:flex-initial py-1.5 px-2 space-x-1.5 h-12 font-semibold rounded-xl cursor-pointer hover:text-primary-500 bg-neutral-0 ft-text-base">
           {t('labels.whitelistWallets.uploadCSV')}
           <input
             type="file"

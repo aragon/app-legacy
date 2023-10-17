@@ -326,7 +326,7 @@ export const Community: React.FC = () => {
 };
 
 const BodyContainer = styled.div.attrs({
-  className: 'mt-1 xl:space-y-8',
+  className: 'mt-1 xl:space-y-16',
 })``;
 
 const SearchAndResultWrapper = styled.div.attrs({className: 'space-y-5'})``;
@@ -336,5 +336,5 @@ const ResultsCountLabel = styled.p.attrs({
 })``;
 
 const PaginationWrapper = styled.div.attrs({
-  className: 'flex mt-8',
+  className: 'flex mt-16',
 })``;

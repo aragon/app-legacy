@@ -161,7 +161,7 @@ const InputForm: React.FC<InputFormProps> = ({
   ]);
 
   return (
-    <div className="min-h-full bg-neutral-50 xl:bg-neutral-0 xl:p-6">
+    <div className="min-h-full bg-neutral-50 xl:bg-neutral-0 xl:p-12">
       <div className="items-baseline space-x-3 xl:flex">
         <ActionName>{selectedAction.name}</ActionName>
         <div className="hidden items-center space-x-1 text-primary-600 xl:flex">

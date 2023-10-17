@@ -30,7 +30,7 @@ const StyledSpinner = styled.div.attrs<SpinnerProps>(({size}) => {
     xs: 'w-2 h-2',
     small: 'w-3 h-3',
     default: 'w-5 h-5',
-    big: 'w-6 h-6',
+    big: 'w-12 h-12',
   };
   const className = `rounded-full
         ease-linear border-2

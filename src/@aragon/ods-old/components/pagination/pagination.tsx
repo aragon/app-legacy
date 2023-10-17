@@ -233,5 +233,5 @@ const HStack = styled.div.attrs({
 })``;
 
 const Separator = styled.div.attrs({
-  className: 'flex items-center justify-center w-6 h-6',
+  className: 'flex items-center justify-center w-12 h-12',
 })``;

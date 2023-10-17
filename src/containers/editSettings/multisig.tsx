@@ -384,7 +384,7 @@ const Container = styled.div.attrs({})``;
 
 const AccordionContent = styled.div.attrs({
   className:
-    'p-3 pb-6 space-y-3 bg-neutral-0 border border-neutral-100 rounded-b-xl border-t-0',
+    'p-3 pb-12 space-y-3 bg-neutral-0 border border-neutral-100 rounded-b-xl border-t-0',
 })``;
 
 const HStack = styled.div.attrs({
@@ -392,7 +392,7 @@ const HStack = styled.div.attrs({
 })``;
 
 const Footer = styled.div.attrs({
-  className: 'mt-5 xl:mt-8 space-y-2',
+  className: 'mt-5 xl:mt-16 space-y-2',
 })``;
 
 const EligibilityWrapper = styled.div.attrs({})``;

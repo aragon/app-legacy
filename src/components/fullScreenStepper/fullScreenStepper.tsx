@@ -211,7 +211,7 @@ type FormLayoutProps = {
 
 const FormLayout = styled.div.attrs<{fullWidth: FormLayoutProps}>(
   ({fullWidth}) => ({
-    className: `mt-5 xl:mt-8 mx-auto space-y-5 ${!fullWidth && 'xl:w-3/5'}`,
+    className: `mt-5 xl:mt-16 mx-auto space-y-5 ${!fullWidth && 'xl:w-3/5'}`,
   })
 )<FormLayoutProps>``;
 

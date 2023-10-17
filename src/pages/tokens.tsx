@@ -36,7 +36,7 @@ export const Tokens: React.FC = () => {
         onClick: () => open('transfer'),
       }}
     >
-      <div className="mt-3 space-y-3 xl:mt-8 xl:space-y-5">
+      <div className="mt-3 space-y-3 xl:mt-16 xl:space-y-5">
         <SearchInput
           placeholder="Type to filter"
           value={searchTerm}

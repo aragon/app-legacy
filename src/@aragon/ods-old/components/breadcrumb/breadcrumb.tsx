@@ -88,12 +88,12 @@ export const Breadcrumb: React.FC<BreadcrumbProps> = ({
 const Container = styled.div.attrs({
   className:
     'inline-flex items-center py-0.5 xl:px-2 space-x-1 ' +
-    'xl:space-x-1.5 h-5 xl:h-6 xl:bg-neutral-0 xl:rounded-xl',
+    'xl:space-x-1.5 h-5 xl:h-12 xl:bg-neutral-0 xl:rounded-xl',
 })``;
 
 const ProcessContainer = styled.div.attrs({
   className:
-    'inline-flex py-0.5 xl:pr-2 xl:pl-0.5 xl:rounded-xl xl:bg-neutral-0 h-6',
+    'inline-flex py-0.5 xl:pr-2 xl:pl-0.5 xl:rounded-xl xl:bg-neutral-0 h-12',
 })``;
 
 const ProcessCrumbContainer = styled.div.attrs({

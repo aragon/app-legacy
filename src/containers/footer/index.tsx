@@ -57,7 +57,7 @@ const Footer: React.FC = () => {
       </GridLayout>
       <div
         className={`z-10 flex items-center justify-center space-x-1 bg-primary-400 py-0.5 text-sm text-neutral-0 xl:mb-0 ${
-          isOnWrongNetwork ? 'mb-[88px] md:mb-[120px]' : 'mb-8 md:mb-24'
+          isOnWrongNetwork ? 'mb-[88px] md:mb-[120px]' : 'mb-16 md:mb-24'
         }`}
       >
         <IconInfo />
@@ -74,12 +74,12 @@ const FullSpan = styled.div.attrs({
 `;
 
 const Section = styled.section.attrs({
-  className: 'w-full overflow-hidden bg-neutral-0 mt-8',
+  className: 'w-full overflow-hidden bg-neutral-0 mt-16',
 })``;
 
 const ActionContainer = styled.div.attrs({
   className:
-    'relative flex flex-col xl:flex-row xl:justify-between items-center space-y-4 xl:space-y-0 pt-5 xl:pt-3 pb-8 xl:pb-3',
+    'relative flex flex-col xl:flex-row xl:justify-between items-center space-y-4 xl:space-y-0 pt-5 xl:pt-3 pb-16 xl:pb-3',
 })``;
 
 const FlexDiv = styled.div.attrs({

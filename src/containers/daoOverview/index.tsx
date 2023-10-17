@@ -35,7 +35,7 @@ export const OverviewDAOHeader: React.FC<OverviewDAOHeaderProps> = ({
   };
 
   return (
-    <div className="bg-neutral-0 p-2 md:rounded-xl md:p-6">
+    <div className="bg-neutral-0 p-2 md:rounded-xl md:p-12">
       <div className="mb-3 xl:hidden">
         <Breadcrumb
           crumbs={{
@@ -46,7 +46,7 @@ export const OverviewDAOHeader: React.FC<OverviewDAOHeaderProps> = ({
         />
       </div>
 
-      <div className="items-end md:flex md:space-x-6">
+      <div className="items-end md:flex md:space-x-12">
         <div className="w-full">
           <h1 className="font-semibold text-neutral-800 ft-text-3xl">
             {t('createDAO.overview.title')}

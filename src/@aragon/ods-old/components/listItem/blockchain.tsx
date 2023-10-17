@@ -58,6 +58,6 @@ const Domain = styled.p.attrs<SelectedProps>(({selected}) => ({
 
 const Name = styled.p.attrs({className: 'ft-text-sm text-neutral-500'})``;
 
-const Logo = styled.img.attrs({className: 'w-6 h-6'})``;
+const Logo = styled.img.attrs({className: 'w-12 h-12'})``;
 
 const Content = styled.div.attrs({className: 'flex-1'})``;

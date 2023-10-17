@@ -375,7 +375,7 @@ const Heading1 = styled.h1.attrs({
 })``;
 
 const VotingContainer = styled.div.attrs({
-  className: 'mt-6 md:mt-5',
+  className: 'mt-12 md:mt-5',
 })``;
 
 const Heading2 = styled.h2.attrs({

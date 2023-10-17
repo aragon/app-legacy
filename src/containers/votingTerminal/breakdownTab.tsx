@@ -92,7 +92,7 @@ const ResultRow: React.FC<{
 };
 
 const VotePercentage = styled.p.attrs({
-  className: 'w-8 font-semibold text-right text-primary-500 ' as string,
+  className: 'w-16 font-semibold text-right text-primary-500 ' as string,
 })``;
 
 const ResultValue = styled.p.attrs({

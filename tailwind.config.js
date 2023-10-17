@@ -27,10 +27,6 @@ module.exports = {
         4: '32px',
         4.5: '36px',
         5: '40px',
-        6: '48px',
-        7: '56px',
-        8: '64px',
-        9: '72px',
       },
       borderRadius: {
         larger: '10px',
@@ -41,11 +37,6 @@ module.exports = {
         300: '0px 16px 24px rgba(31, 41, 51, 0.06), 0px 2px 6px rgba(31, 41, 51, 0.04), 0px 0px 1px rgba(31, 41, 51, 0.04)',
         400: '0px 24px 32px rgba(31, 41, 51, 0.04), 0px 16px 24px rgba(31, 41, 51, 0.04), 0px 4px 8px rgba(31, 41, 51, 0.04), 0px 0px 1px rgba(31, 41, 51, 0.04)',
       },
-    },
-    fontWeight: {
-      normal: 500,
-      semibold: 600,
-      bold: 700,
     },
     lineHeight: {
       3: '24px',

@@ -19,7 +19,7 @@ const BLOCKIES_SQUARES = 8;
 const sizes: SizesType = {
   small: {sizes: 'w-3 h-3', scale: 3},
   default: {sizes: 'w-5 h-5', scale: 5},
-  large: {sizes: 'w-6 h-6', scale: 6},
+  large: {sizes: 'w-12 h-12', scale: 6},
 };
 
 /** Simple Avatar*/

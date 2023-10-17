@@ -114,7 +114,7 @@ const ProposalList: React.FC<ProposalListProps> = ({
 
   if (isLoading || areMembersLoading) {
     return (
-      <div className="flex h-7 items-center justify-center">
+      <div className="flex h-14 items-center justify-center">
         <Spinner size="default" />
       </div>
     );
@@ -122,7 +122,7 @@ const ProposalList: React.FC<ProposalListProps> = ({
 
   if (mappedProposals.length === 0) {
     return (
-      <div className="text-gray-600 flex h-7 items-center justify-center">
+      <div className="text-gray-600 flex h-14 items-center justify-center">
         <p data-testid="proposalList">{t('governance.noProposals')}</p>
       </div>
     );

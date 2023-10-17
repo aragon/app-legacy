@@ -51,7 +51,7 @@ export const Container = styled.div.attrs<StyledContainerProps>(
       disabled ? 'bg-neutral-100 border-neutral-200 border-2' : 'bg-neutral-0'
     } flex items-center focus-within:ring-2
     focus-within:ring-primary-500
-    rounded-xl hover:border-neutral-300 border-2 h-6
+    rounded-xl hover:border-neutral-300 border-2 h-12
     active:border-primary-500 active:ring-0 `;
 
     if (containerClassName) {

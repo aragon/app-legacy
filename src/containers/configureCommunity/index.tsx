@@ -190,7 +190,7 @@ const ConfigureCommunity: React.FC<ConfigureCommunityProps> = ({
                       <Tag
                         label={t('labels.yes')}
                         colorScheme="primary"
-                        className="mr-1.5 w-6 justify-center"
+                        className="mr-1.5 w-12 justify-center"
                       />
 
                       <LinearProgressContainer>
@@ -209,7 +209,7 @@ const ConfigureCommunity: React.FC<ConfigureCommunityProps> = ({
 
                       <Tag
                         label={t('labels.no')}
-                        className="ml-1.5 w-6 justify-center"
+                        className="ml-1.5 w-12 justify-center"
                       />
                     </div>
                   </ApprovalContainer>

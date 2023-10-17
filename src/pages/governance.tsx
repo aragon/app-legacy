@@ -201,7 +201,7 @@ export const Container = styled.div.attrs({
 })``;
 
 const ButtonGroupContainer = styled.div.attrs({
-  className: 'flex overflow-auto mt-3 xl:mt-8',
+  className: 'flex overflow-auto mt-3 xl:mt-16',
 })`
   scrollbar-width: none;
 

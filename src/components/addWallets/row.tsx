@@ -331,7 +331,7 @@ const Break = styled.hr.attrs({
 })``;
 
 const DropdownMenuWrapper = styled.div.attrs({
-  className: 'flex order-2 md:order-5 mt-3.5 md:mt-0 w-6',
+  className: 'flex order-2 md:order-5 mt-3.5 md:mt-0 w-12',
 })``;
 
 const InputContainer = styled.div.attrs(() => ({

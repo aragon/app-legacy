@@ -75,7 +75,7 @@ const Description = styled.div.attrs({
 
 const ContentWrapper = styled.div.attrs({
   className:
-    'flex flex-col md:flex-row gap-y-2 md:gap-x-6 md:items-start xl:items-center xl:mt-0 xl:pt-0',
+    'flex flex-col md:flex-row gap-y-2 md:gap-x-12 md:items-start xl:items-center xl:mt-0 xl:pt-0',
 })``;
 
 const ButtonGroup = styled.div.attrs({

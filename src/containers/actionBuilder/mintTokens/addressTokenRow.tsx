@@ -375,7 +375,7 @@ const HStack = styled.div.attrs({
 })``;
 
 const HStackWithPadding = styled.div.attrs({
-  className: 'flex md:pr-8 space-x-2',
+  className: 'flex md:pr-16 space-x-2',
 })``;
 
 const InputContainer = styled.div.attrs({className: 'flex-1 space-y-1'})``;

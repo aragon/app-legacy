@@ -16,7 +16,7 @@ const AddLinksHeader: React.FC<BgWhite> = ({bgWhite}) => {
       <HeaderItem>
         <Label label={t('labels.link')} />
       </HeaderItem>
-      <div className="w-6" />
+      <div className="w-12" />
     </Container>
   );
 };

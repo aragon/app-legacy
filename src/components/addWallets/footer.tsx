@@ -31,7 +31,7 @@ const AddWalletsFooter: React.FC<WalletsFooterProps> = ({totalAddresses}) => {
       <FooterItem2>
         <StyledLabel>100%</StyledLabel>
       </FooterItem2>
-      <div className="w-8" />
+      <div className="w-16" />
     </Container>
   );
 };
@@ -47,7 +47,7 @@ const FooterItem1 = styled.div.attrs({
 })``;
 
 const FooterItem2 = styled.div.attrs({
-  className: 'w-8',
+  className: 'w-16',
 })``;
 
 const StyledLabel = styled.p.attrs({

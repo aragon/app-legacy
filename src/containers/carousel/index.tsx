@@ -121,7 +121,7 @@ const MobileCTA = styled.div.attrs({
 })``;
 
 export const ActiveIndicator = styled.li.attrs({
-  className: 'inline-block bg-primary-500 h-0.75 w-6 ml-1 rounded-xl',
+  className: 'inline-block bg-primary-500 h-0.75 w-12 ml-1 rounded-xl',
 })``;
 
 export const Indicator = styled.li.attrs({

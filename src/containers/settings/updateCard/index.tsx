@@ -19,7 +19,7 @@ export const SettingsUpdateCard: React.FC = () => {
   if (isDesktop) {
     return (
       <Container className="xl:gap-x-3 xl:p-3">
-        <div className="flex items-start gap-x-6">
+        <div className="flex items-start gap-x-12">
           <div className="flex-1 space-y-1">
             <Head>
               <IconUpdate />

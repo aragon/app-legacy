@@ -466,7 +466,7 @@ const BodyWrapper = styled.div.attrs({
 })``;
 
 const LoadingContainer = styled.div.attrs({
-  className: 'flex flex-col col-span-full gap-3 items-center py-6 w-full',
+  className: 'flex flex-col col-span-full gap-3 items-center py-12 w-full',
 })``;
 
 const LoadingLabel = styled.span.attrs({
