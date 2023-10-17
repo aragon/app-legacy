@@ -102,7 +102,7 @@ export const MembershipSnapshot: React.FC<Props> = ({
             onClick={headerButtonHandler}
           />
         </div>
-        <div className="w-2/3 space-y-2">
+        <div className="w-2/3 space-y-4">
           <ListItemGrid>
             <MembersList token={daoToken} members={displayedMembers} />
           </ListItemGrid>
@@ -161,9 +161,9 @@ export const MembershipSnapshot: React.FC<Props> = ({
 };
 
 const VerticalContainer = styled.div.attrs({
-  className: 'space-y-1.5 xl:space-y-2',
+  className: 'space-y-1.5 xl:space-y-4',
 })``;
 
 const ListItemGrid = styled.div.attrs({
-  className: 'xl:grid xl:grid-cols-1 xl:grid-flow-row xl:gap-2',
+  className: 'xl:grid xl:grid-cols-1 xl:grid-flow-row xl:gap-4',
 })``;

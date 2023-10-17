@@ -202,7 +202,7 @@ const NoTokenWrapper = styled.div.attrs({
 
 const NoTokenContainer = styled.div.attrs({
   className: `flex flex-col items-center mb-6
-    justify-center bg-neutral-100 py-6 px-2 rounded-xl`,
+    justify-center bg-neutral-100 py-6 px-4 rounded-xl`,
 })``;
 
 const IconWrapper = styled.div.attrs({

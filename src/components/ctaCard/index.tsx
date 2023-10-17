@@ -54,11 +54,11 @@ const Content = styled.div.attrs({
 })``;
 
 const Title = styled.p.attrs({
-  className: 'ft-text-2xl font-semibold text-neutral-800 xl:mt-2 mt-0',
+  className: 'ft-text-2xl font-semibold text-neutral-800 xl:mt-4 mt-0',
 })``;
 
 const Subtitle = styled.p.attrs({
-  className: 'text-neutral-600 h-[72px] ft-text-base xl:mt-2 mt-1.5',
+  className: 'text-neutral-600 h-[72px] ft-text-base xl:mt-4 mt-1.5',
 })``;
 
 const StyledImg = styled.img.attrs({

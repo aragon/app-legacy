@@ -94,7 +94,7 @@ export const Settings: React.FC = () => {
           daoUpdateEnabled ? styles.fullWidth : styles.center
         }`}
       >
-        <div className="mt-1 space-y-2 xl:-mt-1">
+        <div className="mt-1 space-y-4 xl:-mt-1">
           <ButtonText
             label={t('settings.edit')}
             className="w-full md:w-max"
@@ -160,7 +160,7 @@ const SettingsCardDao: React.FC<{daoDetails: DaoDetails}> = ({daoDetails}) => {
       <DescriptionPair>
         <Term>{t('labels.daoName')}</Term>
         <Definition>
-          <div className="flex items-center space-x-1.5 xl:space-x-2">
+          <div className="flex items-center space-x-1.5 xl:space-x-4">
             <p className="ft-text-base xl:font-semibold">
               {daoDetails.metadata.name}
             </p>
@@ -323,7 +323,7 @@ const SettingsWrapper: React.FC<{children: ReactNode}> = ({children}) => {
 
 export const Layout = styled.div.attrs({
   className:
-    'col-span-full xl:col-start-4 xl:col-end-10 text-neutral-600 xl:mt-2',
+    'col-span-full xl:col-start-4 xl:col-end-10 text-neutral-600 xl:mt-4',
 })``;
 
 type DescriptionProps = {

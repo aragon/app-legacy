@@ -126,7 +126,7 @@ const CoinImage = styled.img.attrs(({src}) => ({
 }))``;
 
 const CoinDetails = styled.div.attrs({
-  className: 'ml-2 space-y-1 overflow-hidden',
+  className: 'ml-4 space-y-1 overflow-hidden',
 })``;
 
 const CoinNameAndAllocation = styled.div.attrs({

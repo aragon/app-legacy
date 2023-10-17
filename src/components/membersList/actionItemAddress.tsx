@@ -167,7 +167,7 @@ export const ActionItemAddress: React.FC<ActionItemAddressProps> = props => {
   return (
     <tr className="border-b border-b-neutral-100 bg-neutral-0 last:border-neutral-0">
       <TableCell>
-        <div className="flex flex-row items-center gap-2">
+        <div className="flex flex-row items-center gap-4">
           <Avatar size="small" mode="circle" src={avatar ?? addressOrEns} />
           <div className="flex grow flex-col gap-0.5">
             <div className="flex flex-row items-start gap-1">
@@ -247,5 +247,5 @@ export const ActionItemAddress: React.FC<ActionItemAddressProps> = props => {
 };
 
 const TableCell = styled.td.attrs({
-  className: 'items-center py-2 px-6 h-full' as string,
+  className: 'items-center py-4 px-6 h-full' as string,
 })``;

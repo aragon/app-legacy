@@ -7,7 +7,7 @@ export type TextareaSimpleProps = Omit<
 >;
 
 export const TextareaSimple = styled.textarea.attrs({
-  className: `py-1.5 px-2 rounded-xl resize-none w-full border-2 border-neutral-100 hover:border-neutral-300
+  className: `py-1.5 px-4 rounded-xl resize-none w-full border-2 border-neutral-100 hover:border-neutral-300
     disabled:bg-neutral-100 disabled:border-neutral-200 focus:ring-2 focus:ring-primary-500 focus:outline-none bg-neutral-0 text-neutral-600 active:border-primary-500 active:ring-0`,
 })`
   min-height: 144px;

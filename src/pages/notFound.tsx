@@ -45,7 +45,7 @@ export const NotFound: React.FC = () => {
               />
             </div>
 
-            <div className="relative mt-2 xl:mt-0 xl:w-1/2">
+            <div className="relative mt-4 xl:mt-0 xl:w-1/2">
               <GradientGreen src={Green} />
               <GradientPurple src={Purple} />
               <img src={Logo404} className="w-full" />
@@ -69,7 +69,7 @@ export const NotFound: React.FC = () => {
 };
 
 const Menu = styled.nav.attrs({
-  className: 'py-2 xl:py-8',
+  className: 'py-4 xl:py-8',
 })`
   background: linear-gradient(
     180deg,

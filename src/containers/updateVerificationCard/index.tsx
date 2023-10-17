@@ -129,11 +129,11 @@ export const UpdateVerificationCard: React.FC<UpdateVerificationCardProps> = ({
 
 const Container = styled.div.attrs({
   className:
-    'md:p-6 py-5 px-2 rounded-xl bg-neutral-0 border border-neutral-100',
+    'md:p-6 py-5 px-4 rounded-xl bg-neutral-0 border border-neutral-100',
 })``;
 
 const Header = styled.div.attrs({
-  className: 'space-y-1.5 mb-2',
+  className: 'space-y-1.5 mb-4',
 })``;
 
 const Heading1 = styled.h1.attrs({
@@ -146,5 +146,5 @@ const Description = styled.div.attrs({
 
 export const Row = styled.div.attrs({
   className:
-    'py-1 md:py-2 xl:space-x-2 border-t border-neutral-100 ft-text-base flex items-center justify-between',
+    'py-1 md:py-4 xl:space-x-4 border-t border-neutral-100 ft-text-base flex items-center justify-between',
 })``;

@@ -52,7 +52,7 @@ const CompareSettings: React.FC = () => {
     toDisplayEns(daoDetails.ensDomain) || daoDetails.address;
 
   return (
-    <div className="space-y-2">
+    <div className="space-y-4">
       <div className="flex">
         <ButtonGroup
           bgWhite={false}

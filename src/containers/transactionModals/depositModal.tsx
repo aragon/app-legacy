@@ -140,7 +140,7 @@ const ConnectButton = styled.button.attrs({
 })``;
 
 const NetworkDetailsWrapper = styled.div.attrs({
-  className: 'py-1.5 px-2 bg-neutral-0 rounded-xl',
+  className: 'py-1.5 px-4 bg-neutral-0 rounded-xl',
 })``;
 
 const HStack = styled.div.attrs({

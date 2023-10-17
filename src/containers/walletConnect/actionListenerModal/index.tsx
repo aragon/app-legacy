@@ -201,7 +201,7 @@ const ActionListenerModal: React.FC<Props> = ({
           <AvatarDao daoName={metadataName} src={metadataIcon} size="medium" />
           <div className="flex items-center justify-center text-center font-semibold text-neutral-800">
             <Spinner size={'xs'} />
-            <p className="ml-2">
+            <p className="ml-4">
               {t('modal.dappConnect.detaildApp.spinnerLabel')}
             </p>
           </div>
@@ -263,5 +263,5 @@ const ActionListenerModal: React.FC<Props> = ({
 export default ActionListenerModal;
 
 const Content = styled.div.attrs({
-  className: 'py-6 px-2 xl:px-6 space-y-6',
+  className: 'py-6 px-4 xl:px-6 space-y-6',
 })``;

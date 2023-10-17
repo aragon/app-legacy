@@ -204,7 +204,7 @@ const LinkRow: React.FC<LinkRowProps & BgWhite> = ({
 export default LinkRow;
 
 const Container = styled.div.attrs<{bgWhite: BgWhite}>(({bgWhite}) => ({
-  className: `flex flex-wrap gap-x-2 gap-y-1.5 p-2 ${
+  className: `flex flex-wrap gap-x-4 gap-y-1.5 p-4 ${
     bgWhite
       ? 'bg-neutral-50 border border-t-0 border-neutral-100 last:rounded-b-xl'
       : 'bg-neutral-0'

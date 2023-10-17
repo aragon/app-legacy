@@ -97,7 +97,7 @@ const Container = styled.div.attrs({
 `;
 
 const LoadMoreContainer = styled.button.attrs({
-  className: 'px-2 py-1.5',
+  className: 'px-4 py-1.5',
 })``;
 
 const Link = styled.a.attrs({

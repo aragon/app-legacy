@@ -131,7 +131,7 @@ export const FullScreenStepper: React.FC<FullScreenStepperProps> = ({
   return (
     <FullScreenStepperContext.Provider value={value}>
       <Layout>
-        <div className="-mx-2 md:mx-0 md:mt-6">
+        <div className="-mx-4 md:mx-0 md:mt-6">
           {!hideWizard && (
             <Wizard
               includeStepper={includeStepper}

@@ -33,7 +33,7 @@ export const GoLiveHeader: React.FC = () => {
   };
 
   return (
-    <div className="bg-neutral-0 px-2 pb-6 pt-2 md:rounded-xl md:p-6 xl:p-12 xl:pt-6">
+    <div className="bg-neutral-0 px-4 pb-6 pt-4 md:rounded-xl md:p-6 xl:p-12 xl:pt-6">
       <div className="xl:hidden">
         <Breadcrumb
           crumbs={{label: t('createDAO.title'), path: Landing}}
@@ -45,7 +45,7 @@ export const GoLiveHeader: React.FC = () => {
           <h1 className="text-3xl font-semibold text-neutral-800">
             {t('createDAO.review.title')}
           </h1>
-          <p className="mt-2 text-lg text-neutral-600">
+          <p className="mt-4 text-lg text-neutral-600">
             {t('createDAO.review.description')}
           </p>
         </div>

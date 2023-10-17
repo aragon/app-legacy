@@ -43,9 +43,9 @@ export const ButtonText = React.forwardRef<HTMLButtonElement, ButtonTextProps>(
 ButtonText.displayName = 'ButtonText';
 
 const paddingStyles = {
-  small: 'py-0.5 px-2',
-  medium: 'py-1.5 px-2',
-  large: 'py-1.5 px-2',
+  small: 'py-0.5 px-4',
+  medium: 'py-1.5 px-4',
+  large: 'py-1.5 px-4',
 };
 
 type StyledButtonProps = {

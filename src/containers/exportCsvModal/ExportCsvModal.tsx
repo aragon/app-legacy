@@ -254,7 +254,7 @@ const ExportCsvModal: React.FC<ExportCsvModalProps> = ({
               </FormItem>
             </form>
 
-            <div className="space-y-2">
+            <div className="space-y-4">
               {isCsvGenerationSuccess ? (
                 <ButtonText
                   mode="primary"
@@ -284,7 +284,7 @@ const ExportCsvModal: React.FC<ExportCsvModalProps> = ({
                   onClick={createCsvBlob}
                 />
               ) : (
-                <div className="flex flex-col items-center gap-2 xl:flex-row">
+                <div className="flex flex-col items-center gap-4 xl:flex-row">
                   <ButtonText
                     mode="primary"
                     isActive={isCsvGenerationLoading}

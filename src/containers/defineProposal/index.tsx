@@ -282,5 +282,5 @@ const UpdateGroupWrapper = styled.div.attrs({
 })``;
 
 const UpdateContainer = styled.div.attrs({
-  className: 'space-y-2',
+  className: 'space-y-4',
 })``;

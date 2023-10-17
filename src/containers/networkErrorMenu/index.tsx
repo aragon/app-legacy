@@ -105,7 +105,7 @@ export const NetworkErrorMenu = () => {
 };
 
 const ModalHeader = styled.div.attrs({
-  className: 'flex p-6 bg-neutral-0 rounded-xl gap-2 sticky top-0',
+  className: 'flex p-6 bg-neutral-0 rounded-xl gap-4 sticky top-0',
 })`
   box-shadow:
     0px 4px 8px rgba(31, 41, 51, 0.04),

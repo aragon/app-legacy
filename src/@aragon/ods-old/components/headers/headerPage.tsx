@@ -58,11 +58,11 @@ export const HeaderPage: React.FC<HeaderPageProps> = ({
 
 const Card = styled.div.attrs({
   className:
-    'flex flex-col p-2 pb-6 md:p-6 xl:p-10 bg-neutral-0 gap-y-2 md:gap-y-6 md:rounded-xl md:border md:border-neutral-100 md:shadow-100',
+    'flex flex-col p-4 pb-6 md:p-6 xl:p-10 bg-neutral-0 gap-y-4 md:gap-y-6 md:rounded-xl md:border md:border-neutral-100 md:shadow-100',
 })``;
 
 const TextContent = styled.div.attrs({
-  className: 'md:flex-1 space-y-1 xl:space-y-2',
+  className: 'md:flex-1 space-y-1 xl:space-y-4',
 })``;
 
 const Title = styled.h2.attrs({
@@ -75,11 +75,11 @@ const Description = styled.div.attrs({
 
 const ContentWrapper = styled.div.attrs({
   className:
-    'flex flex-col md:flex-row gap-y-2 md:gap-x-12 md:items-start xl:items-center xl:mt-0 xl:pt-0',
+    'flex flex-col md:flex-row gap-y-4 md:gap-x-12 md:items-start xl:items-center xl:mt-0 xl:pt-0',
 })``;
 
 const ButtonGroup = styled.div.attrs({
-  className: 'flex flex-col-reverse md:flex-row gap-2',
+  className: 'flex flex-col-reverse md:flex-row gap-4',
 })``;
 
 const BreadcrumbWrapper = styled.div.attrs({

@@ -132,5 +132,5 @@ export const MembersList: React.FC<MembersListProps> = ({
 };
 
 const TableCellHead = styled.td.attrs({
-  className: 'text-left px-6 py-2',
+  className: 'text-left px-6 py-4',
 })``;

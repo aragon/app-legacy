@@ -23,7 +23,7 @@ const TransferList: React.FC<TransferListProps> = ({
     return <p data-testid="transferList">{t('allTransfer.noTransfers')}</p>;
 
   return (
-    <div className="space-y-2" data-testid="transferList">
+    <div className="space-y-4" data-testid="transferList">
       {transfers.map(({tokenAmount, tokenSymbol, ...rest}, index) => (
         <TransferListItem
           // TODO: This is not a stable key and will be slow when sort/filtering.

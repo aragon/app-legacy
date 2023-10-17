@@ -768,7 +768,7 @@ const Container = styled.div.attrs({
 })``;
 
 const HeaderContainer = styled.div.attrs({
-  className: 'flex flex-col gap-y-2 xl:p-0 md:px-6 pt-2',
+  className: 'flex flex-col gap-y-4 xl:p-0 md:px-6 pt-4',
 })``;
 
 const ProposalTitle = styled.p.attrs({

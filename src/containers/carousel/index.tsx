@@ -117,7 +117,7 @@ const DesktopCTA = styled.div.attrs({
 })``;
 
 const MobileCTA = styled.div.attrs({
-  className: 'relative -mt-[104px] mb-10 -mx-2 md:-mx-6 xl:mx-0',
+  className: 'relative -mt-[104px] mb-10 -mx-4 md:-mx-6 xl:mx-0',
 })``;
 
 export const ActiveIndicator = styled.li.attrs({
@@ -125,7 +125,7 @@ export const ActiveIndicator = styled.li.attrs({
 })``;
 
 export const Indicator = styled.li.attrs({
-  className: 'inline-block bg-neutral-200 h-0.75 w-2 ml-1 rounded-xl',
+  className: 'inline-block bg-neutral-200 h-0.75 w-4 ml-1 rounded-xl',
 })``;
 
 export const StyledCarousel = styled(ReactResponsiveCarousel).attrs({})`

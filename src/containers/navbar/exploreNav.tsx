@@ -87,7 +87,7 @@ const ExploreNav: React.FC = () => {
 };
 
 const Menu = styled.nav.attrs({
-  className: 'py-2 xl:py-6',
+  className: 'py-4 xl:py-6',
 })`
   background: linear-gradient(180deg, #3164fa 0%, rgba(49, 100, 250, 0) 100%);
 `;

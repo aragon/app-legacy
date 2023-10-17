@@ -64,8 +64,8 @@ const fontStyles = {
 
 const iconStyles = {
   small: 'w-1.5 h-1.5',
-  medium: 'w-2 h-2',
-  large: 'w-2 h-2',
+  medium: 'w-4 h-4',
+  large: 'w-4 h-4',
 };
 
 /**********************************

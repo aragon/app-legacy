@@ -122,7 +122,7 @@ const DesktopNav: React.FC<DesktopNavProp> = props => {
           </LinksWrapper>
         </Content>
 
-        <div className="flex gap-2">
+        <div className="flex gap-4">
           <ButtonText
             className="w-full md:w-max"
             size="large"

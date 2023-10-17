@@ -30,8 +30,8 @@ export const WidgetStatus: React.FC<WidgetStatusProps> = ({steps}) => {
 };
 
 const Card = styled.div.attrs(() => {
-  const baseClasses = 'bg-neutral-0 rounded-xl pt-6 pb-8 space-y-2';
-  const bpClasses = ' px-2  md:px-6';
+  const baseClasses = 'bg-neutral-0 rounded-xl pt-6 pb-8 space-y-4';
+  const bpClasses = ' px-4  md:px-6';
   return {className: baseClasses + bpClasses};
 })``;
 

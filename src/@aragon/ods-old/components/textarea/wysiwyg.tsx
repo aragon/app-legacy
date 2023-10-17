@@ -246,7 +246,7 @@ const Container = styled.div.attrs<Props>(({disabled, fullScreen = false}) => ({
 `;
 
 const StyledMenuBar = styled.div.attrs<Props>(({disabled, fullScreen}) => ({
-  className: `bg-neutral-50 px-2 py-1.5 flex flex-wrap justify-between ${
+  className: `bg-neutral-50 px-4 py-1.5 flex flex-wrap justify-between ${
     fullScreen ? 'sticky top-0 z-10' : 'rounded-t-xl'
   } ${disabled ? 'bg-neutral-100' : ''}`,
 }))<Props>``;

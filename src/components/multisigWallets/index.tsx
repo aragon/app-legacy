@@ -227,14 +227,14 @@ const Divider = styled.div.attrs(() => ({
   className: 'flex bg-neutral-50 h-0.25',
 }))``;
 const ActionsContainer = styled.div.attrs(() => ({
-  className: 'flex xl:px-6 xl:py-1.5 p-2 place-content-between',
+  className: 'flex xl:px-6 xl:py-1.5 p-4 place-content-between',
 }))``;
 const TextButtonsContainer = styled.div.attrs(() => ({
-  className: 'flex gap-2',
+  className: 'flex gap-4',
 }))``;
 
 const SummaryContainer = styled.div.attrs(() => ({
-  className: 'flex xl:p-6 p-2 flex-col space-y-1.5',
+  className: 'flex xl:p-6 p-4 flex-col space-y-1.5',
 }))``;
 const TotalWalletsContainer = styled.div.attrs(() => ({
   className: 'flex place-content-between',

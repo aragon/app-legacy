@@ -24,7 +24,7 @@ const PrivacyPolicy: React.FC<PrivacyPolicyProps> = ({
   return (
     <>
       {isDesktop ? (
-        <div className="fixed bottom-2 w-full">
+        <div className="fixed bottom-4 w-full">
           <Container>
             <PrivacyPolicyContent
               isDesktop={true}
@@ -61,7 +61,7 @@ const Container = styled.div.attrs({
 `;
 
 const MobileModal = styled.div.attrs({
-  className: `space-y-6 fixed bottom-2 z-50 p-2 mx-2 rounded-xl border border-neutral-100 bg-neutral-0
+  className: `space-y-6 fixed bottom-4 z-50 p-4 mx-4 rounded-xl border border-neutral-100 bg-neutral-0
     md:w-[448px] md:bottom-6 md:left-1/2 md:mx-0 md:-translate-x-1/2`,
 })`
   box-shadow:

@@ -82,7 +82,7 @@ const OptionsContainers = styled.div.attrs({
 
 const CheckboxItemsContainer = styled.div.attrs({
   className:
-    'flex xl:flex-row flex-col xl:gap-2 xl:bg-transparent bg-neutral-0 gap-1 p-2 xl:p-0 rounded-xl',
+    'flex xl:flex-row flex-col xl:gap-4 xl:bg-transparent bg-neutral-0 gap-1 p-4 xl:p-0 rounded-xl',
 })``;
 
 const CheckboxContainer = styled.div.attrs({

@@ -32,7 +32,7 @@ const CookiePreferenceMenu: React.FC<Props> = ({show, onClose, onAccept}) => {
       </ModalHeader>
       <BottomSheetContentContainer>
         <Text>{t('cookiePreferences.content')}</Text>
-        <div className="flex space-x-2">
+        <div className="flex space-x-4">
           <ButtonText
             className="flex-1"
             label={t('cookiePreferences.accept')}
@@ -60,7 +60,7 @@ const Title = styled.div.attrs({
 
 const ModalHeader = styled.div.attrs({
   className:
-    'flex items-center p-2 space-x-2 bg-neutral-0 rounded-xl sticky top-0',
+    'flex items-center p-4 space-x-4 bg-neutral-0 rounded-xl sticky top-0',
 })`
   box-shadow:
     0px 4px 8px rgba(31, 41, 51, 0.04),
@@ -69,7 +69,7 @@ const ModalHeader = styled.div.attrs({
 `;
 
 const BottomSheetContentContainer = styled.div.attrs({
-  className: 'py-6 px-2 space-y-6 md:w-[448px]',
+  className: 'py-6 px-4 space-y-6 md:w-[448px]',
 })``;
 
 const Text = styled.div.attrs({

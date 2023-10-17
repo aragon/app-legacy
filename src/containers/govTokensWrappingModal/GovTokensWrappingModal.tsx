@@ -243,7 +243,7 @@ const GovTokensWrappingModal: FC<GovTokensWrappingModalProps> = ({
       ) : (
         <Container>
           <BodyWrapper>
-            <form className="space-y-2">
+            <form className="space-y-4">
               {/* Action selection */}
               <FormItem>
                 <Label label={t('modal.wrapToken.inputModeLabel')} />
@@ -462,7 +462,7 @@ const Container = styled.div.attrs({
 })``;
 
 const BodyWrapper = styled.div.attrs({
-  className: 'space-y-2',
+  className: 'space-y-4',
 })``;
 
 const LoadingContainer = styled.div.attrs({
@@ -515,7 +515,7 @@ const ProgressHelpText = styled.div.attrs({
 })``;
 
 const ActionsContainer = styled.div.attrs({
-  className: 'flex gap-2 items-center',
+  className: 'flex gap-4 items-center',
 })``;
 
 export default GovTokensWrappingModal;

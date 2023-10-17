@@ -99,7 +99,7 @@ const Container = styled.div.attrs({
 })``;
 
 const Menu = styled.nav.attrs({
-  className: `flex justify-between items-center px-2 md:px-6 py-1
+  className: `flex justify-between items-center px-4 md:px-6 py-1
      md:py-1.5`,
 })`
   background: linear-gradient(

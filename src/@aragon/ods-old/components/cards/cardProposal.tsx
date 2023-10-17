@@ -239,11 +239,11 @@ const Card = styled.button.attrs({
   }
 `;
 
-const CardBody = styled.div.attrs({className: 'p-2 space-y-6'})``;
+const CardBody = styled.div.attrs({className: 'p-4 space-y-6'})``;
 
 const CardBanner = styled.div.attrs({
   className:
-    'bg-primary-400 text-primary-50 text-sm font-semibold px-2 py-1 flex items-center gap-x-1.5 rounded-t-xl',
+    'bg-primary-400 text-primary-50 text-sm font-semibold px-4 py-1 flex items-center gap-x-1.5 rounded-t-xl',
 })``;
 
 const Header = styled.div.attrs({
@@ -255,7 +255,7 @@ const Title = styled.p.attrs({
 })``;
 
 const Description = styled.p.attrs({
-  className: 'text-neutral-600 text-left font-normal ft-text-base line-clamp-2',
+  className: 'text-neutral-600 text-left font-normal ft-text-base line-clamp-4',
 })``;
 
 const Publisher = styled.span.attrs({
@@ -267,7 +267,7 @@ const TextContent = styled.div.attrs({
 })``;
 
 const LoadingContent = styled.div.attrs({
-  className: 'space-y-2 p-2 bg-neutral-50 rounded-xl',
+  className: 'space-y-4 p-4 bg-neutral-50 rounded-xl',
 })``;
 
 const ProgressInfoWrapper = styled.div.attrs({

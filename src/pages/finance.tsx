@@ -348,11 +348,11 @@ export const Finance: React.FC = () => {
 };
 
 const ListContainer = styled.div.attrs({
-  className: 'py-2 space-y-2',
+  className: 'py-4 space-y-4',
 })``;
 
 const HeaderContainer = styled.div.attrs({
-  className: 'col-span-full xl:col-start-3 xl:col-end-11 -mx-2 md:mx-0 md:mt-6',
+  className: 'col-span-full xl:col-start-3 xl:col-end-11 -mx-4 md:mx-0 md:mt-6',
 })``;
 
 const SubtitleContainer = styled.div.attrs({
@@ -360,13 +360,13 @@ const SubtitleContainer = styled.div.attrs({
 })``;
 
 const Header = styled.div.attrs({
-  className: `p-2 xl:p-0 pb-6 xl:mt-10 space-y-2 md:space-y-6
+  className: `p-4 xl:p-0 pb-6 xl:mt-10 space-y-4 md:space-y-6
    bg-neutral-0 xl:bg-transparent md:rounded-xl md:border
    md:border-neutral-100 xl:border-none md:shadow-100 xl:shadow-none`,
 })``;
 
 const ContentContainer = styled.div.attrs({
-  className: `flex flex-col md:flex-row md:gap-x-12 gap-y-2
+  className: `flex flex-col md:flex-row md:gap-x-12 gap-y-4
      md: gap - y - 3 md: items - start xl: items - center`,
 })``;
 

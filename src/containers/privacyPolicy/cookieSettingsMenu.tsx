@@ -56,7 +56,7 @@ const CookieSettingsMenu: React.FC<CookieSettingsMenuProps> = props => {
               multiSelect
             />
           </div>
-          <div className="flex space-x-2">
+          <div className="flex space-x-4">
             <ButtonText
               className="flex-1"
               label={t('privacyPolicy.acceptSelectedCookies')}
@@ -89,7 +89,7 @@ const Title = styled.div.attrs({
 })``;
 
 const ModalHeader = styled.div.attrs({
-  className: 'flex items-center p-2 space-x-2 bg-neutral-0 rounded-xl',
+  className: 'flex items-center p-4 space-x-4 bg-neutral-0 rounded-xl',
 })`
   box-shadow:
     0px 4px 8px rgba(31, 41, 51, 0.04),
@@ -98,7 +98,7 @@ const ModalHeader = styled.div.attrs({
 `;
 
 const BottomSheetContentContainer = styled.div.attrs({
-  className: 'py-6 px-2 space-y-6',
+  className: 'py-6 px-4 space-y-6',
 })``;
 
 type Props = {

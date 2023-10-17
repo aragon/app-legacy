@@ -104,7 +104,7 @@ export const DelegationGatingMenu: React.FC = () => {
       isOpen={isOpen}
       title={t('modal.delegationActive.label')}
     >
-      <div className="flex flex-col gap-6 px-2 py-6 text-center">
+      <div className="flex flex-col gap-6 px-4 py-6 text-center">
         <ContentGroup className="items-center">
           {needsSelfDelegation ? (
             <IllustrationHuman

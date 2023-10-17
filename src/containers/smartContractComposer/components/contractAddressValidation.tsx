@@ -586,7 +586,7 @@ const ContractAddressValidation: React.FC<Props> = props => {
           ABIFlowState !== ManualABIFlowState.WAITING &&
           !isTransactionWaiting && (
             <>
-              <div className="mt-2 font-semibold text-neutral-700 ft-text-base">
+              <div className="mt-4 font-semibold text-neutral-700 ft-text-base">
                 {t('scc.abi.abiInputLabel')}
               </div>
               <p
@@ -712,12 +712,12 @@ const ContractAddressValidation: React.FC<Props> = props => {
               props.onClose();
             }}
             size="large"
-            className="mt-2 w-full"
+            className="mt-4 w-full"
             mode="secondary"
           />
         )}
         {error?.message && (
-          <div className="mt-2 flex justify-center">
+          <div className="mt-4 flex justify-center">
             <AlertInline
               label={error.message}
               mode={
@@ -735,7 +735,7 @@ const ContractAddressValidation: React.FC<Props> = props => {
 
 export default ContractAddressValidation;
 
-const Content = styled.div.attrs({className: 'px-2 md:px-6 py-6'})``;
+const Content = styled.div.attrs({className: 'px-4 md:px-6 py-6'})``;
 
 const DescriptionContainer = styled.div.attrs({
   className: 'space-y-0.5 mb-1.5',
@@ -750,7 +750,7 @@ const Description = styled.p.attrs({
 })``;
 
 const VerificationCard = styled.div.attrs({
-  className: 'bg-neutral-0 rounded-xl p-2 mt-6 space-y-2',
+  className: 'bg-neutral-0 rounded-xl p-4 mt-6 space-y-4',
 })``;
 
 const VerificationTitle = styled.h2.attrs({

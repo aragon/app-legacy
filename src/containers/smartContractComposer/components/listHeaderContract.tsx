@@ -52,7 +52,7 @@ export const ListHeaderContract: React.FC<Props> = ({
           label={t('scc.detailContract.dropdownExplorerLinkLabel', {
             address: sc.address,
           })}
-          className="my-1 w-full justify-between px-2"
+          className="my-1 w-full justify-between px-4"
         />
       ),
       callback: () => {},
@@ -64,7 +64,7 @@ export const ListHeaderContract: React.FC<Props> = ({
           type="neutral"
           iconRight={<IconCopy height={16} width={16} className="ml-8" />}
           label={t('scc.detailContract.dropdownCopyLabel')}
-          className="my-1 w-full justify-between px-2"
+          className="my-1 w-full justify-between px-4"
         />
       ),
       callback: () => {
@@ -78,7 +78,7 @@ export const ListHeaderContract: React.FC<Props> = ({
           type="neutral"
           iconRight={<IconClose height={16} width={16} className="ml-8" />}
           label={t('scc.detailContract.dropdownRemoveLabel')}
-          className="my-1 w-full justify-between px-2"
+          className="my-1 w-full justify-between px-4"
         />
       ),
       callback: () => {
@@ -103,7 +103,7 @@ export const ListHeaderContract: React.FC<Props> = ({
               : t('scc.writeProxy.dropdownDontWriteLabel')
           }
           iconRight={<IconSwitch />}
-          className="my-1 w-full justify-between px-2"
+          className="my-1 w-full justify-between px-4"
         />
       ),
       callback: () => {

@@ -25,7 +25,7 @@ const AddWalletsHeader: React.FC = () => {
 export default AddWalletsHeader;
 
 const Container = styled.div.attrs({
-  className: 'hidden md:flex p-2 space-x-2 bg-neutral-0',
+  className: 'hidden md:flex p-4 space-x-4 bg-neutral-0',
 })``;
 
 const HeaderItem = styled.div.attrs({

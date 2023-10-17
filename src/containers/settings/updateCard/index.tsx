@@ -77,7 +77,7 @@ export const SettingsUpdateCard: React.FC = () => {
 };
 
 const Container = styled.div.attrs({
-  className: 'gap-x-2 p-2 space-y-1 bg-primary-400 rounded-xl' as string,
+  className: 'gap-x-4 p-4 space-y-1 bg-primary-400 rounded-xl' as string,
 })``;
 
 const Head = styled.div.attrs({

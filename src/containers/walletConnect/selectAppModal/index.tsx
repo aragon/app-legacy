@@ -74,7 +74,7 @@ const SelectWCApp: React.FC<Props> = props => {
                 iconLeft={parseWCIconUrl(dApp.url, dApp.icons[0])}
                 bgWhite
                 iconRight={
-                  <div className="flex space-x-2">
+                  <div className="flex space-x-4">
                     {filteredSession[0] && (
                       <div className="flex items-center space-x-1 text-sm font-semibold text-success-700">
                         <div className="h-1 w-1 rounded-full bg-success-700" />
@@ -96,7 +96,7 @@ const SelectWCApp: React.FC<Props> = props => {
             );
           })}
         </div>
-        <div className="mt-2 flex justify-center">
+        <div className="mt-4 flex justify-center">
           <AlertInline label={t('modal.dappConnect.alertInfo')} />
         </div>
       </Content>
@@ -107,5 +107,5 @@ const SelectWCApp: React.FC<Props> = props => {
 export default SelectWCApp;
 
 const Content = styled.div.attrs({
-  className: 'py-6 px-2 xl:px-6',
+  className: 'py-6 px-4 xl:px-6',
 })``;

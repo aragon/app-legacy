@@ -91,13 +91,13 @@ const LeftContainer = styled.div.attrs<ModeProps>(({mode}) => {
   return {className};
 })<ModeProps>``;
 
-const IconContainer = styled.div.attrs({className: 'my-2'})``;
+const IconContainer = styled.div.attrs({className: 'my-4'})``;
 
 const LabelContainer = styled.div.attrs({className: 'my-1.5'})``;
 
 const BlockContainer = styled.div.attrs({
   className:
-    'flex items-start max-h-full space-x-1 my-2 text-neutral-500 ft-text-sm',
+    'flex items-start max-h-full space-x-1 my-4 text-neutral-500 ft-text-sm',
 })``;
 
 const textColors: Record<ModeType, string> = {

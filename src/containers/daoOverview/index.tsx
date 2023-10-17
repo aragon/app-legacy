@@ -35,7 +35,7 @@ export const OverviewDAOHeader: React.FC<OverviewDAOHeaderProps> = ({
   };
 
   return (
-    <div className="bg-neutral-0 p-2 md:rounded-xl md:p-12">
+    <div className="bg-neutral-0 p-4 md:rounded-xl md:p-12">
       <div className="mb-6 xl:hidden">
         <Breadcrumb
           crumbs={{
@@ -51,11 +51,11 @@ export const OverviewDAOHeader: React.FC<OverviewDAOHeaderProps> = ({
           <h1 className="font-semibold text-neutral-800 ft-text-3xl">
             {t('createDAO.overview.title')}
           </h1>
-          <p className="mt-2 text-neutral-600 ft-text-lg">
+          <p className="mt-4 text-neutral-600 ft-text-lg">
             {t('createDAO.overview.description')}
           </p>
         </div>
-        <div className="mt-2 flex space-x-2 md:mt-0">
+        <div className="mt-4 flex space-x-4 md:mt-0">
           {/* <ButtonText
           size="large"
           mode="secondary"
@@ -159,5 +159,5 @@ export const OverviewDAOStep: React.FC = () => {
 };
 
 const MobileCTA = styled.div.attrs({
-  className: 'mb-10 -mx-2 md:-mx-6 xl:mx-0',
+  className: 'mb-10 -mx-4 md:-mx-6 xl:mx-0',
 })``;

@@ -26,7 +26,7 @@ const ExitProcessMenu: React.FC<Props> = ({
 
   return (
     <ModalBottomSheetSwitcher isOpen={isOpen} onClose={onClose}>
-      <div className="px-2 py-6">
+      <div className="px-4 py-6">
         <StateEmpty
           type="Object"
           object="warning"

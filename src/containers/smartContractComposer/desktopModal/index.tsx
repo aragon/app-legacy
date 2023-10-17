@@ -119,7 +119,7 @@ const DesktopModal: React.FC<DesktopModalProps> = props => {
                   iconRight={<IconLinkExternal height={13} width={13} />}
                   href={t('scc.listContracts.learnLinkURL')}
                   label={t('scc.listContracts.learnLinkLabel')}
-                  className="mt-2 w-full justify-center"
+                  className="mt-4 w-full justify-center"
                 />
               </div>
             </>

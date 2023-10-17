@@ -61,7 +61,7 @@ const SmartContractListGroup: React.FC = () => {
 
 export default SmartContractListGroup;
 
-const ListGroup = styled.div.attrs({className: 'pb-2 space-y-1'})``;
+const ListGroup = styled.div.attrs({className: 'pb-4 space-y-1'})``;
 
 const ContractNumberIndicator = styled.div.attrs({
   className: 'ft-text-sm font-semibold text-neutral-400',

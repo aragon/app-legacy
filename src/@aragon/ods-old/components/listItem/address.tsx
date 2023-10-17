@@ -60,7 +60,7 @@ const Avatar: FC<AvatarProps> = ({src}) => {
 const Container = styled.button.attrs(() => {
   const baseLayoutClasses =
     'flex items-center justify-between w-full border-2 border-neutral-0 ';
-  const baseStyleClasses = 'bg-neutral-0 p-2 md:p-6 rounded-xl';
+  const baseStyleClasses = 'bg-neutral-0 p-4 md:p-6 rounded-xl';
   let className:
     | string
     | undefined = `${baseLayoutClasses} ${baseStyleClasses}`;
@@ -75,7 +75,7 @@ const Container = styled.button.attrs(() => {
   return {className};
 })``;
 
-const LeftContent = styled.div.attrs({className: 'flex space-x-2'})``;
+const LeftContent = styled.div.attrs({className: 'flex space-x-4'})``;
 const RightContent = styled.div.attrs({
-  className: 'flex space-x-2 items-center ft-text-sm',
+  className: 'flex space-x-4 items-center ft-text-sm',
 })``;

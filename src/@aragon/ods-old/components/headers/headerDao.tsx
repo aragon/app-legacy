@@ -261,7 +261,7 @@ export const HeaderDao: React.FC<HeaderDaoProps> = ({
 
 const Card = styled.div.attrs({
   className:
-    'w-full bg-neutral-0 md:rounded-xl p-2 md:p-6 xl:p-12 border border-neutral-100 space-y-6',
+    'w-full bg-neutral-0 md:rounded-xl p-4 md:p-6 xl:p-12 border border-neutral-100 space-y-6',
 })`
   box-shadow:
     0px 4px 8px rgba(31, 41, 51, 0.04),
@@ -325,7 +325,7 @@ const ActionWrapper = styled.div.attrs({
 })``;
 
 const CredentialsDropdownItem = styled.div.attrs({
-  className: `flex text-neutral-600 items-center justify-between gap-1.5 py-1.5 font-semibold ft-text-base hover:bg-primary-50 px-2 rounded-xl hover:text-primary-400`,
+  className: `flex text-neutral-600 items-center justify-between gap-1.5 py-1.5 font-semibold ft-text-base hover:bg-primary-50 px-4 rounded-xl hover:text-primary-400`,
 })``;
 
 const CredentialsDropdownTrigger = styled(Link).attrs({

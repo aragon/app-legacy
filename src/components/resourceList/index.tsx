@@ -61,4 +61,4 @@ const Title = styled.p.attrs({
   className: 'ft-text-xl font-semibold text-neutral-800',
 })``;
 
-const ListItemContainer = styled.div.attrs({className: 'mt-6 space-y-2'})``;
+const ListItemContainer = styled.div.attrs({className: 'mt-6 space-y-4'})``;

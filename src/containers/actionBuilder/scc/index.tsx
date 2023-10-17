@@ -65,7 +65,7 @@ const SCCAction: React.FC<ActionIndex & {allowRemove?: boolean}> = ({
       >
         <FormItem className="space-y-6 rounded-b-xl">
           {actionData.inputs?.length > 0 ? (
-            <div className="space-y-2 pb-1.5">
+            <div className="space-y-4 pb-1.5">
               {(actionData.inputs as Input[])
                 .filter(input => input.type)
                 .map((input, index) => (

@@ -198,9 +198,9 @@ const Container = styled.div.attrs({
 })``;
 
 const SelectAllContainer = styled.div.attrs({
-  className: 'flex justify-between items-center mb-5 mr-2.25',
+  className: 'flex justify-between items-center mb-5 mr-[18px]',
 })``;
 
 const ButtonContainer = styled.div.attrs({
-  className: 'flex py-2 px-6 space-x-2 bg-neutral-0',
+  className: 'flex py-4 px-6 space-x-4 bg-neutral-0',
 })``;

@@ -50,7 +50,7 @@ export const DaoSelector: React.FC<DaoSelectorProps> = ({
 
 const Card = styled.div.attrs(() => ({
   className:
-    'flex xl:inline-flex items-center space-x-2 bg-neutral-0' +
+    'flex xl:inline-flex items-center space-x-4 bg-neutral-0' +
     ' xl:bg-transparent p-6 xl:p-0 rounded-xl cursor-pointer',
 }))``;
 

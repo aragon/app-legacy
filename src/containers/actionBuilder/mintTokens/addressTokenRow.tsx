@@ -359,7 +359,7 @@ export const AddressAndTokenRow: React.FC<AddressAndTokenRowProps> = ({
 };
 
 const Container = styled.div.attrs({
-  className: 'p-2 md:p-6 space-y-6',
+  className: 'p-4 md:p-6 space-y-6',
 })``;
 
 const ErrorContainer = styled.div.attrs({
@@ -371,11 +371,11 @@ const VStack = styled.div.attrs({
 })``;
 
 const HStack = styled.div.attrs({
-  className: 'flex space-x-2',
+  className: 'flex space-x-4',
 })``;
 
 const HStackWithPadding = styled.div.attrs({
-  className: 'flex md:pr-16 space-x-2',
+  className: 'flex md:pr-16 space-x-4',
 })``;
 
 const InputContainer = styled.div.attrs({className: 'flex-1 space-y-1'})``;

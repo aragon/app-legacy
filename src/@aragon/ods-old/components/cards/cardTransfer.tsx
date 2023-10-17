@@ -52,7 +52,7 @@ const CardContainer = styled.div.attrs({
 type ContainerProps = {bgWhite: boolean};
 const Container = styled.div.attrs<ContainerProps>(({bgWhite}) => {
   return {
-    className: `flex-1 py-1.5 px-2 min-w-0 text-left ${
+    className: `flex-1 py-1.5 px-4 min-w-0 text-left ${
       bgWhite ? 'bg-neutral-50' : 'bg-neutral-0'
     } rounded-xl`,
   };

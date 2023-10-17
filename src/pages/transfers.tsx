@@ -116,7 +116,7 @@ export const Transfers: React.FC = () => {
       >
         <div className="mt-6 xl:mt-16">
           <div className="space-y-1.5">
-            <div className="flex items-center justify-between gap-2">
+            <div className="flex items-center justify-between gap-4">
               <ButtonGroup
                 bgWhite
                 defaultValue="all"
@@ -163,7 +163,7 @@ export const Transfers: React.FC = () => {
               {displayedTransfers.week.length > 0 && (
                 <SectionContainer>
                   <TransferSectionWrapper title={t('allTransfer.thisWeek')}>
-                    <div className="my-2 space-y-1.5 border-solid">
+                    <div className="my-4 space-y-1.5 border-solid">
                       <TransferList
                         transfers={displayedTransfers.week}
                         onTransferClick={handleTransferClicked}
@@ -181,7 +181,7 @@ export const Transfers: React.FC = () => {
                       ],
                     })}
                   >
-                    <div className="my-2 space-y-1.5 border-solid">
+                    <div className="my-4 space-y-1.5 border-solid">
                       <TransferList
                         transfers={displayedTransfers.month}
                         onTransferClick={handleTransferClicked}
@@ -193,7 +193,7 @@ export const Transfers: React.FC = () => {
               {displayedTransfers.year.length !== 0 && (
                 <SectionContainer>
                   <TransferSectionWrapper title={format(new Date(), 'yyyy')}>
-                    <div className="my-2 space-y-1.5 border-solid">
+                    <div className="my-4 space-y-1.5 border-solid">
                       <TransferList
                         transfers={displayedTransfers.year}
                         onTransferClick={handleTransferClicked}

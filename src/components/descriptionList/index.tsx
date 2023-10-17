@@ -95,7 +95,7 @@ export const Dl: React.FC<{children: ReactNode}> = ({children}) => (
 );
 
 const Container = styled.div.attrs({
-  className: 'p-2 md:p-6 space-y-6 rounded-xl bg-neutral-0',
+  className: 'p-4 md:p-6 space-y-6 rounded-xl bg-neutral-0',
 })``;
 
 const TitleText = styled.h1.attrs({
@@ -103,15 +103,15 @@ const TitleText = styled.h1.attrs({
 })``;
 
 const TitleContainer = styled.div.attrs({
-  className: 'flex space-x-2',
+  className: 'flex space-x-4',
 })``;
 
 const DlContainer = styled.dl.attrs({
-  className: 'space-y-2',
+  className: 'space-y-4',
 })``;
 
 const ListItemContainer = styled.div.attrs({
-  className: 'md:flex justify-between md:space-x-2 space-y-0.5 md:space-y-0',
+  className: 'md:flex justify-between md:space-x-4 space-y-0.5 md:space-y-0',
 })``;
 
 const DtContainer = styled.dt.attrs({
@@ -130,5 +130,5 @@ const HStack = styled.div.attrs({
 
 export const ActionCardDlContainer = styled.div.attrs({
   className:
-    'bg-neutral-50 rounded-b-xl border border-t-0 border-neutral-100 space-y-2 p-6',
+    'bg-neutral-50 rounded-b-xl border border-t-0 border-neutral-100 space-y-4 p-6',
 })``;

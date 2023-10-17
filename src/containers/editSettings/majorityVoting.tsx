@@ -483,11 +483,11 @@ const AccordionContent = styled.div.attrs({
 })``;
 
 const HStack = styled.div.attrs({
-  className: 'md:flex space-y-2 md:space-y-0 md:space-x-6',
+  className: 'md:flex space-y-4 md:space-y-0 md:space-x-6',
 })``;
 
 const Footer = styled.div.attrs({
-  className: 'mt-10 xl:mt-16 space-y-2',
+  className: 'mt-10 xl:mt-16 space-y-4',
 })``;
 
 const EligibilityWrapper = styled.div.attrs({})``;

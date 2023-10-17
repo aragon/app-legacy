@@ -23,7 +23,7 @@ export const AvatarToken: React.FC<AvatarTokenProps> = ({
 };
 
 const styles = {
-  small: 'w-2 h-2',
+  small: 'w-4 h-4',
   medium: 'w-6 h-6',
   large: 'w-10 h-10',
 };

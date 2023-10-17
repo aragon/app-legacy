@@ -33,7 +33,7 @@ const Container = styled.div.attrs({
 })``;
 
 const ImageContainer = styled.div.attrs({
-  className: 'mb-2 rounded-xl flex justify-center bg-neutral-50',
+  className: 'mb-4 rounded-xl flex justify-center bg-neutral-50',
 })``;
 
 const VStack = styled.div.attrs({

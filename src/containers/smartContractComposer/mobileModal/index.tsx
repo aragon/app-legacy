@@ -121,7 +121,7 @@ const MobileModal: React.FC<Props> = props => {
                   iconRight={<IconLinkExternal height={13} width={13} />}
                   href={t('scc.listContracts.learnLinkURL')}
                   label={t('scc.listContracts.learnLinkLabel')}
-                  className="mt-2 w-full justify-center"
+                  className="mt-4 w-full justify-center"
                 />
               </div>
             </>
@@ -203,7 +203,7 @@ const CustomMobileHeader: React.FC<CustomHeaderProps> = props => {
 };
 
 const Header = styled.div.attrs({
-  className: 'flex items-center rounded-xl space-x-2 p-2 bg-neutral-0',
+  className: 'flex items-center rounded-xl space-x-4 p-4 bg-neutral-0',
 })`
   box-shadow:
     0px 4px 8px rgba(31, 41, 51, 0.04),
@@ -212,7 +212,7 @@ const Header = styled.div.attrs({
 `;
 
 const Content = styled.div.attrs({
-  className: 'py-6 px-2 space-y-6 overflow-auto',
+  className: 'py-6 px-4 space-y-6 overflow-auto',
 })`
   max-height: 70vh;
 `;

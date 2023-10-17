@@ -64,7 +64,7 @@ const MintTokensToTreasuryMenu: React.FC<Props> = ({
   return (
     <ModalBottomSheetSwitcher isOpen={isOpen} {...{onCloseReset}}>
       {step === 0 ? (
-        <div className="px-2 pb-6">
+        <div className="px-4 pb-6">
           <StateEmpty
             type="Object"
             object="warning"
@@ -113,7 +113,7 @@ const MintTokensToTreasuryMenu: React.FC<Props> = ({
             <Title>{t('modal.mintTokensToTreasury.title')}</Title>
             <div role="presentation" className="h-8 w-8" />
           </ModalHeader>
-          <div className="flex flex-col px-2 py-6">
+          <div className="flex flex-col px-4 py-6">
             <FormTitle>{t('modal.mintTokensToTreasury.inputLabel')}</FormTitle>
             <FormHelpText>
               {t('modal.mintTokensToTreasury.inputHelptext')}
@@ -187,7 +187,7 @@ const Title = styled.div.attrs({
 
 const ModalHeader = styled.div.attrs({
   className:
-    'flex items-center p-2 space-x-2 bg-neutral-0 rounded-xl sticky top-0',
+    'flex items-center p-4 space-x-4 bg-neutral-0 rounded-xl sticky top-0',
 })`
   box-shadow:
     0px 4px 8px rgba(31, 41, 51, 0.04),

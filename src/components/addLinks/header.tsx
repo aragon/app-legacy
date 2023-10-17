@@ -24,7 +24,7 @@ const AddLinksHeader: React.FC<BgWhite> = ({bgWhite}) => {
 export default AddLinksHeader;
 
 const Container = styled.div.attrs<{bgWhite: BgWhite}>(({bgWhite}) => ({
-  className: `hidden md:flex p-2 space-x-2 ${
+  className: `hidden md:flex p-4 space-x-4 ${
     bgWhite
       ? 'bg-neutral-50 border border-neutral-100 rounded-t-xl'
       : 'bg-neutral-0'
