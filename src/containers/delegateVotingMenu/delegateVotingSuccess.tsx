@@ -78,7 +78,7 @@ export const DelegateVotingSuccess: React.FC<
           hair="curly"
           accessory="piercings_tattoo"
         />
-        <p className="text-xl text-neutral-800">
+        <p className="text-2xl leading-tight text-neutral-800">
           {t(`modal.delegation.${title}`)}
         </p>
         <p className="text-neutral-600">

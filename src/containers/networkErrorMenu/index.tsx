@@ -142,7 +142,7 @@ export const WarningContainer = styled.div.attrs({
 })``;
 
 export const WarningTitle = styled.h2.attrs({
-  className: 'text-xl font-semibold text-neutral-800',
+  className: 'text-2xl leading-tight font-semibold text-neutral-800',
 })``;
 
 const WarningDescription = styled.p.attrs({
