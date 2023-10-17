@@ -543,7 +543,7 @@ function getTextAreaHeight(element: HTMLTextAreaElement | null) {
 
 export const StyledInput = styled.textarea.attrs(() => {
   const baseClassName =
-    'w-full items-center appearance-none bg-transparent border-none outline-none resize-none font-inherit p-0 m-0';
+    'w-full items-center appearance-none bg-[transparent] border-none outline-none resize-none font-inherit p-0 m-0';
   const disabledClassName = 'disabled:cursor-not-allowed';
 
   const className: string | undefined = `${baseClassName} ${disabledClassName}`;

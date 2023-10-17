@@ -73,7 +73,7 @@ export const Container = styled.div.attrs<StyledContainerProps>(
 )<StyledContainerProps>``;
 
 export const StyledInput = styled.input.attrs(() => {
-  const className: string | undefined = 'w-full bg-transparent h-8 truncate';
+  const className: string | undefined = 'w-full bg-[transparent] h-8 truncate';
   return {className};
 })`
   outline: 0;

@@ -75,11 +75,11 @@ const StyledButton = styled(ButtonBase).attrs<StyledButtonProps>(
                 isActive ? 'bg-primary-50' : 'bg-neutral-0'
               } active:bg-primary-50`
             : `${
-                isActive ? 'bg-neutral-0' : 'bg-transparent'
+                isActive ? 'bg-neutral-0' : 'bg-[transparent]'
               }  active:bg-neutral-0`
         } ${isActive ? 'text-primary-500' : 'text-neutral-600'} ${
           paddingStyles[size]
-        } hover:text-primary-500 active:text-primary-500 disabled:text-neutral-300 disabled:bg-transparent`;
+        } hover:text-primary-500 active:text-primary-500 disabled:text-neutral-300 disabled:bg-[transparent]`;
         break;
 
       default:

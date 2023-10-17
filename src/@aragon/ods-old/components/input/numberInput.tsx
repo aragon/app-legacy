@@ -206,7 +206,7 @@ const StyledNumberInput = styled.input.attrs<StyledNumberInputProps>(
   ({disabled, inputWidth}) => {
     const className: string | undefined = `${
       disabled ? 'text-neutral-300' : 'text-neutral-600'
-    } bg-transparent margin-0 ${inputWidth}`;
+    } bg-[transparent] margin-0 ${inputWidth}`;
     return {
       className,
     };

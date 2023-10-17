@@ -37,7 +37,7 @@ const InputContainer = styled.div.attrs<InputContainerProps>(({disabled}) => {
 })<DateInputProps>``;
 
 const StyledInput = styled.input.attrs(() => {
-  const baseClasses = 'w-full bg-transparent';
+  const baseClasses = 'w-full bg-[transparent]';
   const className = `${baseClasses}`;
 
   return {className};

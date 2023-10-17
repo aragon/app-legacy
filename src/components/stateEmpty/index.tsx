@@ -140,8 +140,6 @@ const Card = styled.div.attrs<
     className += `${customCardPaddingClassName || 'p-6 md:p-12'} `;
 
     if (type === 'Object') className += 'gap-y-2 ';
-  } else {
-    className += 'bg-neutral-transparent ';
   }
 
   if (type === 'Human' || type === 'both') className += 'gap-y-6 ';
