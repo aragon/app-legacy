@@ -136,7 +136,7 @@ const Card = styled.div.attrs<
   let className = 'flex flex-col items-center rounded-xl w-full ';
 
   if (mode === 'card') {
-    className += 'border bg-neutral-0 ';
+    className += 'border border-neutral-100 bg-neutral-0 ';
     className += `${customCardPaddingClassName || 'p-6 md:p-12'} `;
 
     if (type === 'Object') className += 'gap-y-2 ';
