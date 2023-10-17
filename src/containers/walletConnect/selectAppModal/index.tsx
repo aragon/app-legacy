@@ -1,6 +1,6 @@
 import {AlertInline, IconChevronRight, ListItemAction} from '@aragon/ods-old';
 import {SessionTypes, SignClientTypes} from '@walletconnect/types';
-import React from 'react';
+import React, {useEffect} from 'react';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 
@@ -21,7 +21,7 @@ type Props = {
   isOpen: boolean;
 };
 
-export type AllowListDApp = SignClientTypes.Metadata & {shortName: string};
+export type AllowListDApp = SignClientTypes.Metadata & {shortName?: string};
 
 export const AllowListDApps: AllowListDApp[] = [
   {
@@ -38,12 +38,33 @@ export const AllowListDApps: AllowListDApp[] = [
   },
 ];
 
+if (import.meta.env.DEV) {
+  AllowListDApps.push({
+    name: 'Connect any app',
+    shortName: 'Connect any app',
+    description: 'Connect any app',
+    url: '',
+    icons: [],
+  });
+}
+
+let DAppList: AllowListDApp[] = AllowListDApps;
+
 const SelectWCApp: React.FC<Props> = props => {
   const {t} = useTranslation();
   const {isDesktop} = useScreen();
   const {onConnectNewdApp, onSelectExistingdApp, onClose, isOpen} = props;
 
   const {sessions} = useWalletConnectContext();
+
+  useEffect(() => {
+    if (import.meta.env.DEV) {
+      DAppList = [
+        ...AllowListDApps,
+        ...sessions.map(session => session.peer.metadata),
+      ];
+    }
+  }, [sessions]);
 
   /*************************************************
    *                     Render                    *
@@ -61,7 +82,7 @@ const SelectWCApp: React.FC<Props> = props => {
       />
       <Content>
         <div className="space-y-2">
-          {AllowListDApps.map(dApp => {
+          {DAppList.map(dApp => {
             const filteredSession = sessions.filter(session =>
               session.peer.metadata.name
                 .toLowerCase()
@@ -69,15 +90,15 @@ const SelectWCApp: React.FC<Props> = props => {
             );
             return (
               <ListItemAction
-                key={dApp.shortName}
-                title={dApp.shortName}
+                key={dApp.shortName || dApp.name}
+                title={dApp.shortName || dApp.name}
                 iconLeft={parseWCIconUrl(dApp.url, dApp.icons[0])}
                 bgWhite
                 iconRight={
                   <div className="flex space-x-4">
                     {filteredSession[0] && (
-                      <div className="flex items-center space-x-2 text-sm font-semibold leading-normal text-success-700">
-                        <div className="h-2 w-2 rounded-full bg-success-700" />
+                      <div className="text-success-700 flex items-center space-x-2 text-sm font-semibold leading-normal">
+                        <div className="bg-success-700 h-2 w-2 rounded-full" />
                         <p>Connected</p>
                       </div>
                     )}
