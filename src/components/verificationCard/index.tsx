@@ -186,7 +186,7 @@ const VerificationCard: React.FC<TransferListProps> = ({tokenAddress}) => {
                 </Dt>
                 {isTotalHoldersLoading ? (
                   <dd className="flex items-center" style={{width: '70%'}}>
-                    <IconSpinner className="h-1.5 w-1.5 animate-spin text-primary-500 xl:h-4 xl:w-4" />
+                    <IconSpinner className="h-3 w-3 animate-spin text-primary-500 xl:h-4 xl:w-4" />
                   </dd>
                 ) : (
                   <Dd>{formattedTokenTotalHolders}</Dd>
@@ -220,7 +220,7 @@ const VerifyTitle = styled.h2.attrs({
 })``;
 
 const VerifyItemsWrapper = styled.div.attrs({
-  className: 'flex flex-col md:gap-x-4 gap-y-1.5',
+  className: 'flex flex-col md:gap-x-4 gap-y-3',
 })``;
 
 const Dt = styled.dt.attrs({

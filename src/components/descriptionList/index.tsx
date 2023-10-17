@@ -62,7 +62,7 @@ export const DescriptionListContainer: React.FC<DescriptionListProps> = ({
       </HStack>
       <DlContainer>{children}</DlContainer>
       {onChecked && (
-        <div className="ml-auto space-y-1.5 md:w-3/4">
+        <div className="ml-auto space-y-3 md:w-3/4">
           <div className="md:flex">
             <CheckboxListItem
               label={t('createDAO.review.valuesCorrect')}

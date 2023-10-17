@@ -62,5 +62,5 @@ export function isValid(errors: StringIndexed) {
 }
 
 export const FormSection = styled.div.attrs({
-  className: 'space-y-1.5',
+  className: 'space-y-3',
 })``;

@@ -73,7 +73,7 @@ const AccordionSummary: React.FC<AccordionSummaryPropsType> = ({
 };
 
 const Footer = styled.div.attrs<{type: AccordionType}>(({type}) => ({
-  className: `space-y-1.5 bg-neutral-0 rounded-b-xl border border-t-0 border-neutral-100 ${
+  className: `space-y-3 bg-neutral-0 rounded-b-xl border border-t-0 border-neutral-100 ${
     type === 'action-builder' ? 'bg-neutral-0 p-6' : 'bg-neutral-50 p-4'
   }`,
 }))<{type: AccordionType}>``;

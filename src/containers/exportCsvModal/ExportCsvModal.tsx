@@ -206,7 +206,7 @@ const ExportCsvModal: React.FC<ExportCsvModalProps> = ({
         <Container>
           <div />
           <BodyWrapper>
-            <form className="space-y-1.5">
+            <form className="space-y-3">
               <FormItem>
                 <Label label={t('labels.startDate')} />
                 <Controller
@@ -343,7 +343,7 @@ const BodyWrapper = styled.div.attrs({
 })``;
 
 const FormItem = styled.div.attrs({
-  className: 'space-y-1.5',
+  className: 'space-y-3',
 })``;
 
 export default ExportCsvModal;

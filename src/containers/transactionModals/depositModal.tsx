@@ -128,7 +128,7 @@ const Title = styled.h2.attrs({
 })``;
 
 const Subtitle = styled.p.attrs({
-  className: 'mt-0.5 text-neutral-600 ft-text-sm mb-1.5',
+  className: 'mt-0.5 text-neutral-600 ft-text-sm mb-3',
 })``;
 
 const NetworkName = styled.p.attrs({
@@ -140,11 +140,11 @@ const ConnectButton = styled.button.attrs({
 })``;
 
 const NetworkDetailsWrapper = styled.div.attrs({
-  className: 'py-1.5 px-4 bg-neutral-0 rounded-xl',
+  className: 'py-3 px-4 bg-neutral-0 rounded-xl',
 })``;
 
 const HStack = styled.div.attrs({
-  className: 'flex space-x-1.5',
+  className: 'flex space-x-3',
 })``;
 
 const Logo = styled.img.attrs({className: 'w-6 h-6 rounded-full'})``;

@@ -106,7 +106,7 @@ const RightContent = styled.div.attrs({
 })``;
 
 const ActionsWrapper = styled.div.attrs({
-  className: 'flex space-x-1.5 md:space-x-6 items-center',
+  className: 'flex space-x-3 md:space-x-6 items-center',
 })``;
 
 export default ExploreNav;

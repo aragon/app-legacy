@@ -46,8 +46,8 @@ ButtonBase.displayName = 'ButtonBase';
  **********************************/
 const sizeClassNames = {
   small: 'h-8 space-x-1 rounded-lg',
-  medium: 'h-10 space-x-1.5 rounded-larger',
-  large: 'h-12 space-x-1.5 rounded-xl',
+  medium: 'h-10 space-x-3 rounded-larger',
+  large: 'h-12 space-x-3 rounded-xl',
 };
 
 const sizeStyles = {
@@ -63,7 +63,7 @@ const fontStyles = {
 };
 
 const iconStyles = {
-  small: 'w-1.5 h-1.5',
+  small: 'w-3 h-3',
   medium: 'w-4 h-4',
   large: 'w-4 h-4',
 };

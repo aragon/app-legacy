@@ -29,7 +29,7 @@ export default function TokenBox({
 }
 
 const Box = styled.div.attrs({
-  className: `flex items-center gap-x-4 py-1.5 px-4
+  className: `flex items-center gap-x-4 py-3 px-4
     bg-neutral-0 rounded-xl cursor-pointer
     hover:text-neutral-800 hover:bg-neutral-100`,
 })``;

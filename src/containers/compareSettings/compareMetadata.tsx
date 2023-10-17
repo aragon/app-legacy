@@ -94,7 +94,7 @@ export const CompareMetadata: React.FC<CompareMetadataProps> = ({
         <Dl>
           <Dt>{t('labels.links')}</Dt>
           <Dd>
-            <div className="space-y-1.5">
+            <div className="space-y-3">
               {displayedInfo.links.map((link: {name: string; url: string}) => (
                 <ListItemLink
                   key={link.name + link.url}

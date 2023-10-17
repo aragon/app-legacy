@@ -283,7 +283,7 @@ const InputCount = styled.div.attrs({
 })``;
 
 const FormItem = styled.div.attrs({
-  className: 'space-y-1.5',
+  className: 'space-y-3',
 })``;
 
 const LogoContainer = styled.div.attrs({

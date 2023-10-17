@@ -44,8 +44,8 @@ ButtonText.displayName = 'ButtonText';
 
 const paddingStyles = {
   small: 'py-0.5 px-4',
-  medium: 'py-1.5 px-4',
-  large: 'py-1.5 px-4',
+  medium: 'py-3 px-4',
+  large: 'py-3 px-4',
 };
 
 type StyledButtonProps = {

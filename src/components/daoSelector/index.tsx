@@ -55,7 +55,7 @@ const Card = styled.div.attrs(() => ({
 }))``;
 
 const LeftContent = styled.div.attrs({
-  className: 'inline-flex flex-1 space-x-1.5 min-w-0',
+  className: 'inline-flex flex-1 space-x-3 min-w-0',
 })``;
 
 const AvatarWrapper = styled.div``;

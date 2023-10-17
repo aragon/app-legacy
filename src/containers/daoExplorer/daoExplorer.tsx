@@ -183,14 +183,14 @@ const MainContainer = styled.div.attrs({
   className: 'flex flex-col space-y-4 xl:space-y-6',
 })``;
 const Container = styled.div.attrs({
-  className: 'flex flex-col space-y-1.5',
+  className: 'flex flex-col space-y-3',
 })``;
 const HeaderWrapper = styled.div.attrs({
   className:
     'flex flex-col space-y-4 xl:flex-row xl:space-y-0 xl:justify-between',
 })``;
 const CardsWrapper = styled.div.attrs({
-  className: 'grid grid-cols-1 gap-1.5 xl:grid-cols-2 xl:gap-6',
+  className: 'grid grid-cols-1 gap-3 xl:grid-cols-2 xl:gap-6',
 })``;
 const Title = styled.p.attrs({
   className: 'font-semibold ft-text-xl text-neutral-800',

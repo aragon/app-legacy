@@ -113,5 +113,5 @@ const FormGroup = styled.div.attrs({
 })``;
 
 const FormItem = styled.div.attrs({
-  className: 'space-y-1.5',
+  className: 'space-y-3',
 })``;

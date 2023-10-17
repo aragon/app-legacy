@@ -41,7 +41,7 @@ const VStack = styled.div.attrs({
 })``;
 
 const LabelLine = styled.div.attrs({
-  className: 'flex space-x-1.5',
+  className: 'flex space-x-3',
 })``;
 
 const Heading = styled.p.attrs({

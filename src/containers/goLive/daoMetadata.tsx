@@ -62,7 +62,7 @@ const DaoMetadata: React.FC = () => {
             <Dl>
               <Dt>{t('labels.links')}</Dt>
               <Dd>
-                <div className="space-y-1.5">
+                <div className="space-y-3">
                   {links.map(
                     (
                       {name, url}: {name: string; url: string},

@@ -146,7 +146,7 @@ const RemoveAddresses: React.FC<RemoveAddressesProps> = ({
           <>
             <FormItem
               className={`hidden xl:block ${
-                useCustomHeader ? 'rounded-t-xl border-t pb-1.5 pt-6' : 'py-1.5'
+                useCustomHeader ? 'rounded-t-xl border-t pb-3 pt-6' : 'py-3'
               }`}
             >
               <Label label={t('labels.whitelistWallets.address')} />
@@ -226,7 +226,7 @@ const CustomHeader: React.FC = () => {
   const {t} = useTranslation();
 
   return (
-    <div className="mb-1.5 space-y-0.5">
+    <div className="mb-3 space-y-0.5">
       <p className="text-base font-semibold text-neutral-800">
         {t('labels.removeWallets')}
       </p>

@@ -108,4 +108,4 @@ export const DelegateVotingSuccess: React.FC<
   );
 };
 
-const FormGroup = styled.div.attrs({className: 'flex flex-col gap-1.5'})``;
+const FormGroup = styled.div.attrs({className: 'flex flex-col gap-3'})``;

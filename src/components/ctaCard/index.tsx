@@ -58,7 +58,7 @@ const Title = styled.p.attrs({
 })``;
 
 const Subtitle = styled.p.attrs({
-  className: 'text-neutral-600 h-[72px] ft-text-base xl:mt-4 mt-1.5',
+  className: 'text-neutral-600 h-[72px] ft-text-base xl:mt-4 mt-3',
 })``;
 
 const StyledImg = styled.img.attrs({

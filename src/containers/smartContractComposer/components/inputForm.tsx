@@ -188,7 +188,7 @@ const InputForm: React.FC<InputFormProps> = ({
                   ({input.type})
                 </span>
               </div>
-              <div className="mb-1.5 mt-0.5">
+              <div className="mb-3 mt-0.5">
                 <span className="text-neutral-600 ft-text-sm">
                   {input.notice}
                 </span>
@@ -396,7 +396,7 @@ export const ComponentForType: React.FC<ComponentForTypeProps> = ({
                     ({component.type})
                   </span>
                 </div>
-                <div className="mb-1.5 mt-0.5">
+                <div className="mb-3 mt-0.5">
                   <span className="text-neutral-600 ft-text-sm">
                     {component.notice}
                   </span>
@@ -425,7 +425,7 @@ export const ComponentForType: React.FC<ComponentForTypeProps> = ({
           {Object.entries(input.value as {}).map((value, index) => {
             return (
               <div key={index}>
-                <div className="mb-1.5 text-base font-semibold capitalize text-neutral-800">
+                <div className="mb-3 text-base font-semibold capitalize text-neutral-800">
                   {value[0]}
                 </div>
                 <ComponentForType
@@ -511,7 +511,7 @@ export function FormlessComponentForType({
           <>
             {input.components?.map(component => (
               <div key={component.name} className="ml-6">
-                <div className="mb-1.5 text-base font-semibold capitalize text-neutral-800">
+                <div className="mb-3 text-base font-semibold capitalize text-neutral-800">
                   {input.name}
                 </div>
                 <FormlessComponentForType
@@ -529,7 +529,7 @@ export function FormlessComponentForType({
             if (Number.isNaN(parseInt(value[0]))) {
               return (
                 <div key={index} className="ml-6">
-                  <div className="mb-1.5 text-base font-semibold capitalize text-neutral-800">
+                  <div className="mb-3 text-base font-semibold capitalize text-neutral-800">
                     {value[0]}
                   </div>
                   <FormlessComponentForType

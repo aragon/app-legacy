@@ -216,7 +216,7 @@ export const ActionItemAddress: React.FC<ActionItemAddressProps> = props => {
         </TableCell>
       )}
 
-      <TableCell className="flex justify-end gap-x-1.5">
+      <TableCell className="flex justify-end gap-x-3">
         {!useCompactMode && (
           <ButtonIcon
             mode="ghost"

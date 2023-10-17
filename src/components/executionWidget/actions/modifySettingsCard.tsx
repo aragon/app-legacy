@@ -21,7 +21,7 @@ export const ModifyMvSettingsCard: React.FC<{
               inputs.minParticipation,
               inputs.totalVotingWeight,
               inputs.token?.decimals || 18
-            )} 
+            )}
             ${inputs.token?.symbol})`,
     [
       inputs.minParticipation,
@@ -65,7 +65,7 @@ export const ModifyMvSettingsCard: React.FC<{
         <Dl>
           <Dt>{t('labels.minimumDuration')}</Dt>
           <Dd>
-            <div className="space-x-1.5">
+            <div className="space-x-3">
               <span>{t('createDAO.review.days', {days})}</span>
               <span>{t('createDAO.review.hours', {hours})}</span>
               <span>{t('createDAO.review.minutes', {minutes})}</span>

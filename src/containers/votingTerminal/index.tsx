@@ -383,7 +383,7 @@ const Heading2 = styled.h2.attrs({
 })``;
 
 const CheckboxContainer = styled.div.attrs({
-  className: 'mt-6 space-y-1.5',
+  className: 'mt-6 space-y-3',
 })``;
 
 const VoteContainer = styled.div.attrs({

@@ -59,7 +59,7 @@ type ContainerProps = {
   mode: NonNullable<AlertCardProps['mode']>;
 };
 const Container = styled.div.attrs<ContainerProps>(({mode}) => ({
-  className: `flex gap-1.5 box-border px-4 py-1.5 border-2 rounded-xl ${styles[mode].bgColor} ${styles[mode].borderColor}`,
+  className: `flex gap-3 box-border px-4 py-3 border-2 rounded-xl ${styles[mode].bgColor} ${styles[mode].borderColor}`,
 }))<ContainerProps>``;
 
 const TextContainer = styled.div.attrs(() => ({

@@ -83,6 +83,6 @@ type StyledInputWrapper = Pick<TextInputProps, 'leftAdornment'>;
 
 const InputWrapper = styled.div.attrs<StyledInputWrapper>(
   ({leftAdornment}) => ({
-    className: `py-1.5 ${leftAdornment ? 'pr-4' : 'px-4'} w-full`,
+    className: `py-3 ${leftAdornment ? 'pr-4' : 'px-4'} w-full`,
   })
 )``;

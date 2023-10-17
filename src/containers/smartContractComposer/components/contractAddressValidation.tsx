@@ -595,7 +595,7 @@ const ContractAddressValidation: React.FC<Props> = props => {
                   __html: htmlIn(t)('scc.abi.abiInputHelp'),
                 }}
               />
-              <div className="mt-1.5">
+              <div className="mt-3">
                 <Controller
                   name="ABIInput"
                   rules={{
@@ -738,7 +738,7 @@ export default ContractAddressValidation;
 const Content = styled.div.attrs({className: 'px-4 md:px-6 py-6'})``;
 
 const DescriptionContainer = styled.div.attrs({
-  className: 'space-y-0.5 mb-1.5',
+  className: 'space-y-0.5 mb-3',
 })``;
 
 const Title = styled.h2.attrs({

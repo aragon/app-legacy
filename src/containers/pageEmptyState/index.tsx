@@ -26,7 +26,7 @@ const PageEmptyState = ({
           <EmptyStateHeading>{title}</EmptyStateHeading>
 
           <span
-            className="mt-1.5 text-center lg:w-1/2"
+            className="mt-3 text-center lg:w-1/2"
             dangerouslySetInnerHTML={{__html: subtitle || ''}}
           ></span>
           <ActionsContainer>
@@ -63,5 +63,5 @@ export const EmptyStateContainer = styled.div.attrs({
 
 const ActionsContainer = styled.div.attrs({
   className:
-    'flex flex-col md:flex-row md:gap-x-6 gap-y-1.5 md:justify-center mt-8 w-full',
+    'flex flex-col md:flex-row md:gap-x-6 gap-y-3 md:justify-center mt-8 w-full',
 })``;

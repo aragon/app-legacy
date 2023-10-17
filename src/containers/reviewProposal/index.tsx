@@ -305,7 +305,7 @@ const BadgeContainer = styled.div.attrs({
 })``;
 
 const ProposerLink = styled.p.attrs({
-  className: 'mt-1.5 md:mt-0 text-neutral-500',
+  className: 'mt-3 md:mt-0 text-neutral-500',
 })``;
 
 const SummaryText = styled.p.attrs({

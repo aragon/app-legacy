@@ -40,7 +40,7 @@ const CookieSettingsMenu: React.FC<CookieSettingsMenuProps> = props => {
           <div role="presentation" className="h-8 w-8" />
         </ModalHeader>
         <BottomSheetContentContainer>
-          <div className="space-y-1.5">
+          <div className="space-y-3">
             <CheckboxListItem
               label={t('privacyPolicy.functional')}
               type={functionalSelected ? 'active' : 'default'}

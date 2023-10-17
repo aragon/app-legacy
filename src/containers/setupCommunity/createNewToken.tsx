@@ -111,7 +111,7 @@ const CreateNewToken: React.FC = () => {
 export default CreateNewToken;
 
 const FormItem = styled.div.attrs({
-  className: 'space-y-1.5',
+  className: 'space-y-3',
 })``;
 
 const DescriptionContainer = styled.div.attrs({

@@ -270,8 +270,8 @@ const Content = styled.div.attrs({
   className: 'py-6 px-4 xl:px-6 space-y-6',
 })``;
 
-const FormGroup = styled.div.attrs({className: 'space-y-1.5'})``;
+const FormGroup = styled.div.attrs({className: 'space-y-3'})``;
 
 const AlertWrapper = styled.div.attrs({
-  className: 'mt-1.5 flex justify-center',
+  className: 'mt-3 flex justify-center',
 })``;

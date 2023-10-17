@@ -161,7 +161,7 @@ export const MembershipSnapshot: React.FC<Props> = ({
 };
 
 const VerticalContainer = styled.div.attrs({
-  className: 'space-y-1.5 xl:space-y-4',
+  className: 'space-y-3 xl:space-y-4',
 })``;
 
 const ListItemGrid = styled.div.attrs({

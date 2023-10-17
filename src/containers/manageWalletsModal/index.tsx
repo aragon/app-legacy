@@ -148,7 +148,7 @@ const ManageWalletsModal: React.FC<ManageWalletsModalProps> = ({
           />
         </SelectAllContainer>
 
-        <div className="space-y-1.5">
+        <div className="space-y-3">
           {filteredWallets.map(wallet => (
             <CheckboxListItem
               key={wallet}

@@ -133,7 +133,7 @@ const Container = styled.div.attrs({
 })``;
 
 const Header = styled.div.attrs({
-  className: 'space-y-1.5 mb-4',
+  className: 'space-y-3 mb-4',
 })``;
 
 const Heading1 = styled.h1.attrs({

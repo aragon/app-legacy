@@ -49,7 +49,7 @@ const Title = styled.p.attrs({
     'md:max-w-xs max-w-full overflow-hidden font-semibold truncate whitespace-nowrap',
 })``;
 
-const Icon = styled(IconLinkExternal).attrs({className: 'ml-1 w-1.5 h-1.5'})``;
+const Icon = styled(IconLinkExternal).attrs({className: 'ml-1 w-3 h-3'})``;
 
 const Subtitle = styled.p.attrs({
   className: 'ft-text-sm text-neutral-500 truncate',

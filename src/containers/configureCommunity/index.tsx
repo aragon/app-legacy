@@ -190,7 +190,7 @@ const ConfigureCommunity: React.FC<ConfigureCommunityProps> = ({
                       <Tag
                         label={t('labels.yes')}
                         colorScheme="primary"
-                        className="mr-1.5 w-12 justify-center"
+                        className="mr-3 w-12 justify-center"
                       />
 
                       <LinearProgressContainer>
@@ -209,7 +209,7 @@ const ConfigureCommunity: React.FC<ConfigureCommunityProps> = ({
 
                       <Tag
                         label={t('labels.no')}
-                        className="ml-1.5 w-12 justify-center"
+                        className="ml-3 w-12 justify-center"
                       />
                     </div>
                   </ApprovalContainer>
@@ -448,12 +448,12 @@ const ToggleCheckListContainer = styled.div.attrs({
 const ToggleCheckListItemWrapper = styled.div.attrs({className: 'flex-1'})``;
 
 const FormItem = styled.div.attrs({
-  className: 'space-y-1.5',
+  className: 'space-y-3',
 })``;
 
 const DurationContainer = styled.div.attrs({
   className:
-    'flex flex-col md:flex-row space-y-1.5 md:space-y-0 md:space-x-1.5 p-6 bg-neutral-0 rounded-xl',
+    'flex flex-col md:flex-row space-y-3 md:space-y-0 md:space-x-3 p-6 bg-neutral-0 rounded-xl',
 })``;
 
 const TimeLabelWrapper = styled.div.attrs({

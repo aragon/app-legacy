@@ -136,13 +136,13 @@ const SubTitle = styled.div.attrs({
   className: 'flex-1 font-medium text-neutral-500 text-sm',
 })``;
 const AvatarAddressContainer = styled.div.attrs({
-  className: 'flex flex-1 gap-1.5 items-center',
+  className: 'flex flex-1 gap-3 items-center',
 })``;
 const AddressContainer = styled.div.attrs({
   className: 'flex flex-col',
 })``;
 const ModalBody = styled.div.attrs({
-  className: 'flex flex-col p-6 gap-1.5',
+  className: 'flex flex-col p-6 gap-3',
 })``;
 
 const StyledButtonText = styled(ButtonText)`

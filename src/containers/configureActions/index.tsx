@@ -128,7 +128,7 @@ const ConfigureActions: React.FC<ConfigureActionsProps> = ({
 export default ConfigureActions;
 
 const FormWrapper = styled.div.attrs({
-  className: 'space-y-1.5',
+  className: 'space-y-3',
 })``;
 
 const ActionsWrapper = styled.div.attrs({

@@ -274,11 +274,11 @@ export function isValid(
 }
 
 const FormItem = styled.div.attrs({
-  className: 'space-y-1.5',
+  className: 'space-y-3',
 })``;
 
 const UpdateGroupWrapper = styled.div.attrs({
-  className: 'flex md:flex-row flex-col gap-y-1.5 gap-x-6',
+  className: 'flex md:flex-row flex-col gap-y-3 gap-x-6',
 })``;
 
 const UpdateContainer = styled.div.attrs({

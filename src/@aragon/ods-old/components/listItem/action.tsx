@@ -93,9 +93,9 @@ type InputContainerProps = Pick<ListItemActionProps, 'mode' | 'bgWhite'>;
 
 const Container = styled.button.attrs<InputContainerProps>(
   ({mode, bgWhite = false}) => {
-    const baseLayoutClasses = 'flex items-center gap-x-1.5 w-full';
+    const baseLayoutClasses = 'flex items-center gap-x-3 w-full';
     const baseStyleClasses =
-      'py-1.5 px-4 rounded-xl font-normal border-2 border-neutral-0';
+      'py-3 px-4 rounded-xl font-normal border-2 border-neutral-0';
     let className:
       | string
       | undefined = `${baseLayoutClasses} ${baseStyleClasses}`;
@@ -133,5 +133,5 @@ const LabelContainer = styled.div.attrs({
   className: 'text-left overflow-hidden',
 })``;
 const LeftContent = styled.div.attrs({
-  className: 'flex items-center space-x-1.5 flex-1 overflow-hidden',
+  className: 'flex items-center space-x-3 flex-1 overflow-hidden',
 })``;

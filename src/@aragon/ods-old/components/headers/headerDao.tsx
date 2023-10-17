@@ -166,7 +166,7 @@ export const HeaderDao: React.FC<HeaderDaoProps> = ({
             listItems={daoCredentialsDropdownItems}
           />
 
-          <div className="mt-1.5">
+          <div className="mt-3">
             <Description ref={descriptionRef} {...{fullDescription: showAll}}>
               {description}
             </Description>
@@ -236,7 +236,7 @@ export const HeaderDao: React.FC<HeaderDaoProps> = ({
                 className="max-w-xs"
                 listItems={links?.map(({label, href}, index: number) => ({
                   component: (
-                    <div className="mb-1.5 p-1">
+                    <div className="mb-3 p-1">
                       <ListItemLink {...{label, href}} key={index} external />
                     </div>
                   ),
@@ -316,7 +316,7 @@ const LinksWrapper = styled.div.attrs({
 })``;
 
 const ActionContainer = styled.div.attrs({
-  className: 'flex space-x-1.5 w-full justify-between',
+  className: 'flex space-x-3 w-full justify-between',
 })``;
 
 const ActionWrapper = styled.div.attrs({
@@ -325,12 +325,12 @@ const ActionWrapper = styled.div.attrs({
 })``;
 
 const CredentialsDropdownItem = styled.div.attrs({
-  className: `flex text-neutral-600 items-center justify-between gap-1.5 py-1.5 font-semibold ft-text-base hover:bg-primary-50 px-4 rounded-xl hover:text-primary-400`,
+  className: `flex text-neutral-600 items-center justify-between gap-3 py-3 font-semibold ft-text-base hover:bg-primary-50 px-4 rounded-xl hover:text-primary-400`,
 })``;
 
 const CredentialsDropdownTrigger = styled(Link).attrs({
   className:
-    'mt-1.5 text-primary-400 hover:text-primary-600 active:text-primary-800 focus-visible:ring focus-visible:ring-primary-200 focus-visible:bg-neutral-50',
+    'mt-3 text-primary-400 hover:text-primary-600 active:text-primary-800 focus-visible:ring focus-visible:ring-primary-200 focus-visible:bg-neutral-50',
 })``;
 
 const StyledCopyIcon = styled(IconCopy).attrs({

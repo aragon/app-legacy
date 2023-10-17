@@ -474,7 +474,7 @@ const LoadingLabel = styled.span.attrs({
 })``;
 
 const FormItem = styled.div.attrs({
-  className: 'space-y-1.5',
+  className: 'space-y-3',
 })``;
 
 const ModeActionSelection = styled.div.attrs({

@@ -174,7 +174,7 @@ const Container = styled.div.attrs({
 })``;
 
 const SummaryContainer = styled.div.attrs({
-  className: 'p-4 md:p-6 space-y-1.5 font-semibold text-neutral-800',
+  className: 'p-4 md:p-6 space-y-3 font-semibold text-neutral-800',
 })``;
 
 const HStack = styled.div.attrs({

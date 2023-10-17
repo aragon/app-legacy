@@ -58,5 +58,5 @@ const AddActionMenu: React.FC<AddActionMenuProps> = ({actions}) => {
 export default AddActionMenu;
 
 const Container = styled.div.attrs({
-  className: 'space-y-1.5 p-6',
+  className: 'space-y-3 p-6',
 })``;

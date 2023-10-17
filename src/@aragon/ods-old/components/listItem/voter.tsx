@@ -79,7 +79,7 @@ export const ListItemVoter: FC<ListItemVoterProps> = ({
           )}
         </RightContent>
         {!isMobile && (
-          <span className="px-1.5">
+          <span className="px-3">
             <IconLinkExternal />
           </span>
         )}
@@ -100,7 +100,7 @@ const Avatar: FC<AvatarProps> = ({src}) => {
 const Container = styled.button.attrs(() => {
   const baseLayoutClasses =
     'flex items-center justify-between w-full border-neutral-100 border-b-2';
-  const baseStyleClasses = 'bg-neutral-0 pl-4 pr-1.5 py-1.5 ';
+  const baseStyleClasses = 'bg-neutral-0 pl-4 pr-3 py-3 ';
   let className:
     | string
     | undefined = `${baseLayoutClasses} ${baseStyleClasses}`;
@@ -116,12 +116,12 @@ const Container = styled.button.attrs(() => {
 })``;
 
 const LeftSection = styled.div.attrs({
-  className: 'flex items-center space-x-1.5',
+  className: 'flex items-center space-x-3',
 })``;
 const LeftContent = styled.div.attrs({className: 'space-y-0.5'})``;
 const RightContent = styled.div.attrs({
   className: 'flex flex-col items-end space-y-0.5',
 })``;
 const RightSection = styled.div.attrs({
-  className: 'flex space-x-1.5 items-center ft-text-sm',
+  className: 'flex space-x-3 items-center ft-text-sm',
 })``;

@@ -159,5 +159,5 @@ export const DelegationGatingMenu: React.FC = () => {
 };
 
 const ContentGroup = styled.div.attrs({
-  className: 'flex flex-col gap-1.5' as string,
+  className: 'flex flex-col gap-3' as string,
 })``;

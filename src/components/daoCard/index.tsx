@@ -121,7 +121,7 @@ const IconWrapper = styled.div.attrs({
 })``;
 
 const DaoDataWrapper = styled.div.attrs({
-  className: 'flex flex-col grow space-y-1.5 flex-1',
+  className: 'flex flex-col grow space-y-3 flex-1',
 })``;
 
 const StyledIconBlock = styled(IconBlock).attrs({

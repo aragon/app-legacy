@@ -206,5 +206,5 @@ const NoTokenContainer = styled.div.attrs({
 })``;
 
 const IconWrapper = styled.div.attrs({
-  className: 'mb-1.5',
+  className: 'mb-3',
 })``;

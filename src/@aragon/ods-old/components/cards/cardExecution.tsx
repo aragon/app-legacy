@@ -103,7 +103,7 @@ const Description = styled.p.attrs({
 })``;
 
 const Content = styled.div.attrs({
-  className: 'flex flex-col space-y-1.5',
+  className: 'flex flex-col space-y-3',
 })``;
 
 const Action = styled.div.attrs({

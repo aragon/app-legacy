@@ -77,7 +77,7 @@ const TitleContainer = styled.div.attrs({
 })``;
 
 const OptionsContainers = styled.div.attrs({
-  className: 'space-y-1.5',
+  className: 'space-y-3',
 })``;
 
 const CheckboxItemsContainer = styled.div.attrs({
@@ -86,7 +86,7 @@ const CheckboxItemsContainer = styled.div.attrs({
 })``;
 
 const CheckboxContainer = styled.div.attrs({
-  className: 'flex space-y-1.5 flex-col',
+  className: 'flex space-y-3 flex-col',
 })``;
 
 const CheckboxListItemWrapper = styled.div.attrs({

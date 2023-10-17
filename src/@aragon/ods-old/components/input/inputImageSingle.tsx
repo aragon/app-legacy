@@ -170,7 +170,7 @@ const Preview = styled.img.attrs({
 })``;
 
 const StyledButton = styled(ButtonIcon).attrs({
-  className: 'absolute -top-4 -right-1.75',
+  className: 'absolute -top-4 -right-3.5',
 })`
   box-shadow:
     0px 4px 8px rgba(31, 41, 51, 0.04),

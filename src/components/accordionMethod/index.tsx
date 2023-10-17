@@ -157,7 +157,7 @@ const AccordionButton = styled(ButtonIcon)`
 `;
 
 const AdditionalInfoContainer = styled.div.attrs({
-  className: 'mt-1.5 ft-text-sm text-neutral-600 space-y-1.5',
+  className: 'mt-3 ft-text-sm text-neutral-600 space-y-3',
 })`
   [data-state='closed'] & {
     display: none;

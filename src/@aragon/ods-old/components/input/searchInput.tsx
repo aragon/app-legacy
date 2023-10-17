@@ -63,7 +63,7 @@ export const SearchInput: React.FC<SearchInputProps> = ({
 };
 
 const LeftAdornmentWrapper = styled.div.attrs({
-  className: 'pl-4 pr-1.5',
+  className: 'pl-4 pr-3',
 })``;
 
 const RightAdornmentWrapper = styled.div.attrs({

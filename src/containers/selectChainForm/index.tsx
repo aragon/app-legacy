@@ -99,7 +99,7 @@ const NetworkTypeSwitcher = styled.div.attrs({
 })``;
 
 const FormItem = styled.div.attrs({
-  className: 'space-y-1.5',
+  className: 'space-y-3',
 })``;
 
 // Note: Default Network name in polygon network is different than Below list

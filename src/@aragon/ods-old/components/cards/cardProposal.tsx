@@ -243,7 +243,7 @@ const CardBody = styled.div.attrs({className: 'p-4 space-y-6'})``;
 
 const CardBanner = styled.div.attrs({
   className:
-    'bg-primary-400 text-primary-50 text-sm font-semibold px-4 py-1 flex items-center gap-x-1.5 rounded-t-xl',
+    'bg-primary-400 text-primary-50 text-sm font-semibold px-4 py-1 flex items-center gap-x-3 rounded-t-xl',
 })``;
 
 const Header = styled.div.attrs({
@@ -263,7 +263,7 @@ const Publisher = styled.span.attrs({
 })``;
 
 const TextContent = styled.div.attrs({
-  className: 'space-y-1.5',
+  className: 'space-y-3',
 })``;
 
 const LoadingContent = styled.div.attrs({

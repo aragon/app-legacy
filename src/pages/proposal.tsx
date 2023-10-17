@@ -776,11 +776,11 @@ const ProposalTitle = styled.p.attrs({
 })``;
 
 const ContentWrapper = styled.div.attrs({
-  className: 'flex flex-col md:flex-row gap-x-6 gap-y-1.5',
+  className: 'flex flex-col md:flex-row gap-x-6 gap-y-3',
 })``;
 
 // const BadgeContainer = styled.div.attrs({
-//   className: 'flex flex-wrap gap-x-1.5',
+//   className: 'flex flex-wrap gap-x-3',
 // })``;
 
 const ProposerLink = styled.p.attrs({

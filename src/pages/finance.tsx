@@ -356,7 +356,7 @@ const HeaderContainer = styled.div.attrs({
 })``;
 
 const SubtitleContainer = styled.div.attrs({
-  className: 'flex gap-x-1.5 items-center mt-1',
+  className: 'flex gap-x-3 items-center mt-1',
 })``;
 
 const Header = styled.div.attrs({

@@ -116,9 +116,9 @@ const VStackRelaxed = styled.div.attrs({
 })``;
 
 const VStackNormal = styled.div.attrs({
-  className: 'space-y-1.5',
+  className: 'space-y-3',
 })``;
 
 const HStack = styled.div.attrs({
-  className: 'flex space-x-1.5',
+  className: 'flex space-x-3',
 })``;

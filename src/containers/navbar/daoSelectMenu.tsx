@@ -131,5 +131,5 @@ const ModalContentContainer = styled.div.attrs({
 })``;
 
 const ListGroup = styled.div.attrs({
-  className: 'space-y-1.5',
+  className: 'space-y-3',
 })``;

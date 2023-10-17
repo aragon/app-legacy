@@ -59,7 +59,7 @@ export const Settings: React.FC = () => {
   return (
     <SettingsWrapper>
       {daoUpdateEnabled && (
-        <div className={`mt-0.5 xl:mt-1.5 ${styles.fullWidth}`}>
+        <div className={`mt-0.5 xl:mt-3 ${styles.fullWidth}`}>
           <SettingsUpdateCard />
         </div>
       )}
@@ -160,7 +160,7 @@ const SettingsCardDao: React.FC<{daoDetails: DaoDetails}> = ({daoDetails}) => {
       <DescriptionPair>
         <Term>{t('labels.daoName')}</Term>
         <Definition>
-          <div className="flex items-center space-x-1.5 xl:space-x-4">
+          <div className="flex items-center space-x-3 xl:space-x-4">
             <p className="ft-text-base xl:font-semibold">
               {daoDetails.metadata.name}
             </p>
@@ -236,7 +236,7 @@ const SettingsCardDao: React.FC<{daoDetails: DaoDetails}> = ({daoDetails}) => {
         <DescriptionPair className="border-none">
           <Term>{t('labels.links')}</Term>
           <Definition>
-            <div className="relative flex flex-col space-y-1.5">
+            <div className="relative flex flex-col space-y-3">
               {daoDetails.metadata.links.slice(0, 3).map(({name, url}) => (
                 <Link
                   key={url}
@@ -258,7 +258,7 @@ const SettingsCardDao: React.FC<{daoDetails: DaoDetails}> = ({daoDetails}) => {
                   }
                   listItems={daoDetails.metadata.links.map(({name, url}) => ({
                     component: (
-                      <div className="mb-1.5">
+                      <div className="mb-3">
                         <Link
                           label={name}
                           description={url}

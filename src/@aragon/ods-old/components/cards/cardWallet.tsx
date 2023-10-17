@@ -63,11 +63,11 @@ type ContainerProps = Pick<CardWalletProps, 'wide'>;
 const Card = styled.div.attrs<ContainerProps>(({wide}) => ({
   className: `flex items-center ${
     wide && 'w-full justify-between'
-  } space-x-1.5`,
+  } space-x-3`,
 }))``;
 
 const Content = styled.div.attrs({
-  className: 'flex items-center space-x-1.5',
+  className: 'flex items-center space-x-3',
 })``;
 
 const TextContainer = styled.div.attrs({

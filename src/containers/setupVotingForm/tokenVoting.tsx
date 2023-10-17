@@ -309,5 +309,5 @@ const SetupTokenVotingForm: React.FC<Props> = ({pluginSettings}) => {
 export default SetupTokenVotingForm;
 
 const FormSection = styled.div.attrs({
-  className: 'space-y-1.5',
+  className: 'space-y-3',
 })``;

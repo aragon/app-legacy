@@ -246,13 +246,13 @@ const Container = styled.div.attrs<Props>(({disabled, fullScreen = false}) => ({
 `;
 
 const StyledMenuBar = styled.div.attrs<Props>(({disabled, fullScreen}) => ({
-  className: `bg-neutral-50 px-4 py-1.5 flex flex-wrap justify-between ${
+  className: `bg-neutral-50 px-4 py-3 flex flex-wrap justify-between ${
     fullScreen ? 'sticky top-0 z-10' : 'rounded-t-xl'
   } ${disabled ? 'bg-neutral-100' : ''}`,
 }))<Props>``;
 
 const Toolgroup = styled.div.attrs({
-  className: 'flex flex-wrap space-x-1.5',
+  className: 'flex flex-wrap space-x-3',
 })``;
 
 const StyledEditorContent = styled(EditorContent)`

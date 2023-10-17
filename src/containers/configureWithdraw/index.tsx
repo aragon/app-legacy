@@ -448,7 +448,7 @@ export default ConfigureWithdrawForm;
  *************************************************/
 
 const FormItem = styled.div.attrs({
-  className: 'space-y-1.5',
+  className: 'space-y-3',
 })``;
 
 const TokenBalance = styled.p.attrs({

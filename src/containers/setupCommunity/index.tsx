@@ -150,5 +150,5 @@ const SetupCommunityForm: React.FC = () => {
 export default SetupCommunityForm;
 
 const FormItem = styled.div.attrs({
-  className: 'space-y-1.5',
+  className: 'space-y-3',
 })``;

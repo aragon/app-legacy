@@ -8,7 +8,7 @@ import styled from 'styled-components';
  */
 export const SimplifiedTimeInput = styled.input.attrs({
   type: 'time',
-  className: 'w-full rounded-xl border-2 border-neutral-100 px-4 py-1.5',
+  className: 'w-full rounded-xl border-2 border-neutral-100 px-4 py-3',
 })`
   // hides the icon that allows to open the time selection dropdown
   ::-webkit-calendar-picker-indicator {

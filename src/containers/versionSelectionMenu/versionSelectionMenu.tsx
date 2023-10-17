@@ -102,9 +102,9 @@ export const VersionSelectionMenu: React.FC<CheckboxListItemProps> = ({
 };
 
 const VersionListContainer = styled.div.attrs({
-  className: 'grid gap-y-1.5',
+  className: 'grid gap-y-3',
 })``;
 
 const ActionContainer = styled.div.attrs({
-  className: 'grid gap-y-1.5',
+  className: 'grid gap-y-3',
 })``;

@@ -62,7 +62,7 @@ type ContainerTypes = {
 };
 
 const Container = styled.div.attrs<ContainerTypes>(({disabled, type}) => ({
-  className: `py-1.5 px-4 rounded-xl border-2 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 ${
+  className: `py-3 px-4 rounded-xl border-2 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 ${
     disabled
       ? 'bg-neutral-100 border-neutral-300'
       : `bg-neutral-0 group hover:border-primary-500 cursor-pointer ${
@@ -77,7 +77,7 @@ const Container = styled.div.attrs<ContainerTypes>(({disabled, type}) => ({
 }))<ContainerTypes>``;
 
 const HStack = styled.div.attrs<ContainerTypes>(({disabled, type}) => ({
-  className: `flex justify-between items-center group-hover:text-primary-500 space-x-1.5 ${
+  className: `flex justify-between items-center group-hover:text-primary-500 space-x-3 ${
     disabled
       ? 'text-neutral-600'
       : type === 'default' || type === 'error'

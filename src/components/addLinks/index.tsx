@@ -74,7 +74,7 @@ const AddLinks: React.FC<AddLinks> = ({
 
 export default AddLinks;
 
-const Container = styled.div.attrs({className: 'space-y-1.5'})``;
+const Container = styled.div.attrs({className: 'space-y-3'})``;
 const ListGroup = styled.div.attrs({
   className: 'flex flex-col overflow-auto rounded-xl',
 })``;

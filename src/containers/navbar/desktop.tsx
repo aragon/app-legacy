@@ -165,5 +165,5 @@ const Content = styled.div.attrs({
 })``;
 
 const LinksWrapper = styled.div.attrs({
-  className: 'flex items-center space-x-1.5',
+  className: 'flex items-center space-x-3',
 })``;

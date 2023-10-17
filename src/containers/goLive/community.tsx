@@ -119,7 +119,7 @@ const Community: React.FC = () => {
               <Dl>
                 <Dt>{t('votingTerminal.token')}</Dt>
                 <Dd>
-                  <div className="flex items-center space-x-1.5">
+                  <div className="flex items-center space-x-3">
                     <span>
                       {t('labels.review.tokenSymbolGovernance')} {tokenName} (
                       {govTokenSymbol})
@@ -144,7 +144,7 @@ const Community: React.FC = () => {
                 <Dl>
                   <Dt>{t('labels.supply')}</Dt>
                   <Dd>
-                    <div className="flex items-center space-x-1.5">
+                    <div className="flex items-center space-x-3">
                       <p>
                         {formattedTotalSupply} {tokenSymbol}
                       </p>
@@ -162,7 +162,7 @@ const Community: React.FC = () => {
                 <Dl>
                   <Dt>{t('labels.review.existingTokens.currentHolders')}</Dt>
                   <Dd>
-                    <div className="flex items-center space-x-1.5">
+                    <div className="flex items-center space-x-3">
                       <p>{formattedTotalHolders}</p>
                     </div>
                   </Dd>

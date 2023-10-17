@@ -82,7 +82,7 @@ const Container = styled.div.attrs({
 
 const Head = styled.div.attrs({
   className:
-    'flex items-center space-x-1.5 font-semibold text-neutral-0 ft-text-lg',
+    'flex items-center space-x-3 font-semibold text-neutral-0 ft-text-lg',
 })``;
 
 const Title = styled.p.attrs({})``;
@@ -90,5 +90,5 @@ const Title = styled.p.attrs({})``;
 const Description = styled.p.attrs({className: 'ft-text-base'})``;
 
 const ContentWrapper = styled.div.attrs({
-  className: 'pl-7 space-y-1.5 text-primary-50' as string,
+  className: 'pl-7 space-y-3 text-primary-50' as string,
 })``;

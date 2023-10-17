@@ -342,7 +342,7 @@ const SubContainer = styled.div.attrs({
 })``;
 
 const SimulationSection = styled.div.attrs({
-  className: 'space-y-1.5',
+  className: 'space-y-3',
 })``;
 
 const Divider = styled.div.attrs({

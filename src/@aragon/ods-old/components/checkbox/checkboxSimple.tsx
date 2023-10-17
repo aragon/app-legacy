@@ -41,7 +41,7 @@ type ContainerTypes = {
 
 const Container = styled.div.attrs<ContainerTypes>(
   ({disabled, state, iconLeft}) => ({
-    className: `flex w-max space-x-1.5 items-center ${
+    className: `flex w-max space-x-3 items-center ${
       !iconLeft && 'flex-row-reverse space-x-reverse'
     } ${
       disabled

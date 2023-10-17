@@ -151,12 +151,12 @@ const Card = styled.div.attrs<
 const ContentWrapper = styled.div.attrs({className: 'space-y-6 w-full'})``;
 
 const TextWrapper = styled.div.attrs({
-  className: 'space-y-1.5 text-center',
+  className: 'space-y-3 text-center',
 })``;
 
 const ActionContainer = styled.div.attrs<Pick<BaseProps, 'actionsColumn'>>(
   ({actionsColumn}) => ({
-    className: `flex w-full flex-col gap-y-1.5 ${
+    className: `flex w-full flex-col gap-y-3 ${
       !actionsColumn && 'md:flex-row md:gap-y-0 md:justify-center md:gap-x-6'
     }`,
   })

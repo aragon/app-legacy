@@ -154,7 +154,7 @@ const AddExistingToken: React.FC = () => {
 export default AddExistingToken;
 
 const FormItem = styled.div.attrs({
-  className: 'space-y-1.5',
+  className: 'space-y-3',
 })``;
 
 const DescriptionContainer = styled.div.attrs({

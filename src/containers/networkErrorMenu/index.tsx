@@ -122,7 +122,7 @@ const SubTitle = styled.div.attrs({
 })``;
 
 const AvatarAddressContainer = styled.div.attrs({
-  className: 'flex flex-1 gap-1.5 items-center',
+  className: 'flex flex-1 gap-3 items-center',
 })``;
 
 const AddressContainer = styled.div.attrs({
@@ -138,7 +138,7 @@ export const StyledImage = styled.img.attrs({
 })``;
 
 export const WarningContainer = styled.div.attrs({
-  className: 'flex flex-col justify-center items-center space-y-1.5 mb-6',
+  className: 'flex flex-col justify-center items-center space-y-3 mb-6',
 })``;
 
 export const WarningTitle = styled.h2.attrs({

@@ -23,7 +23,7 @@ const TokenList: React.FC<TokenListProps> = ({tokens}) => {
     return <p data-testid="tokenList">{t('allTokens.noTokens')}</p>;
 
   return (
-    <div className="space-y-1.5" data-testid="tokenList">
+    <div className="space-y-3" data-testid="tokenList">
       {tokens.map(token => (
         <CardToken
           key={token.metadata.id}
