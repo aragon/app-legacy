@@ -37,7 +37,7 @@ const ImageContainer = styled.div.attrs({
 })``;
 
 const VStack = styled.div.attrs({
-  className: 'space-y-0.25',
+  className: 'space-y-0.5',
 })``;
 
 const Caption = styled.div.attrs({

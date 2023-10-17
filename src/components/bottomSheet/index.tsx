@@ -102,7 +102,7 @@ const StyledMotionContainer = styled(motion.div).attrs({
 `;
 
 const ModalTitleContainer = styled.div.attrs({
-  className: 'bg-neutral-0 rounded-xl p-6 space-y-0.5 text-center',
+  className: 'bg-neutral-0 rounded-xl p-6 space-y-1 text-center',
 })`
   box-shadow:
     0px 10px 20px rgba(31, 41, 51, 0.04),

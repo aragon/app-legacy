@@ -111,7 +111,7 @@ const Menu = styled.nav.attrs({
 `;
 
 const DaoContainer = styled.div.attrs({
-  className: 'flex flex-col gap-y-0.5 items-center rounded-xl',
+  className: 'flex flex-col gap-y-1 items-center rounded-xl',
 })``;
 
 const DaoName = styled.p.attrs({

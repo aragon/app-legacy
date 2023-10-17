@@ -558,7 +558,7 @@ export const InputWrapper = styled.div.attrs({
 type StyledContainerProps = Pick<WalletInputProps, 'state' | 'disabled'>;
 
 const AdornmentWrapper = styled.div.attrs(() => {
-  const className = 'flex items-center space-x-0.75 border-blue-600';
+  const className = 'flex items-center space-x-1.5 border-blue-600';
 
   return {className};
 })``;
@@ -579,7 +579,7 @@ const modeStyles = (state: WalletInputProps['state']) => {
 export const Container = styled.div.attrs<StyledContainerProps>(
   ({state, disabled}) => {
     const baseClassName =
-      'border-2 flex space-x-3 py-0.75 pr-2 pl-4 rounded-xl';
+      'border-2 flex space-x-3 py-1.5 pr-2 pl-4 rounded-xl';
     const modeClassName = modeStyles(state);
 
     const focusClass = disabled

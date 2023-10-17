@@ -37,7 +37,7 @@ export const Label: React.FC<LabelProps> = ({
 };
 
 const VStack = styled.div.attrs({
-  className: 'space-y-0.5',
+  className: 'space-y-1',
 })``;
 
 const LabelLine = styled.div.attrs({

@@ -172,7 +172,7 @@ const Community: React.FC = () => {
                 <Dl>
                   <Dt>{t('labels.supplyPotential')}</Dt>
                   <Dd>
-                    <div className="space-y-0.5">
+                    <div className="space-y-1">
                       <div>
                         {formattedTotalSupply} {govTokenSymbol}
                       </div>

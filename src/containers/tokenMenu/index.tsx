@@ -197,7 +197,7 @@ const WideButton = styled(ButtonText).attrs({
 })``;
 
 const NoTokenWrapper = styled.div.attrs({
-  className: 'space-y-0.5 mb-6',
+  className: 'space-y-1 mb-6',
 })``;
 
 const NoTokenContainer = styled.div.attrs({

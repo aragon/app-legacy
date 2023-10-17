@@ -63,7 +63,7 @@ const Container = styled.div.attrs<ContainerProps>(({mode}) => ({
 }))<ContainerProps>``;
 
 const TextContainer = styled.div.attrs(() => ({
-  className: 'flex flex-col gap-0.25 ',
+  className: 'flex flex-col gap-0.5 ',
 }))``;
 
 const Title = styled.div.attrs<ContainerProps>(({mode}) => ({

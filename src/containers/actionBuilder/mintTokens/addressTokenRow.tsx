@@ -363,11 +363,11 @@ const Container = styled.div.attrs({
 })``;
 
 const ErrorContainer = styled.div.attrs({
-  className: 'mt-0.5',
+  className: 'mt-1',
 })``;
 
 const VStack = styled.div.attrs({
-  className: 'space-y-0.5',
+  className: 'space-y-1',
 })``;
 
 const HStack = styled.div.attrs({

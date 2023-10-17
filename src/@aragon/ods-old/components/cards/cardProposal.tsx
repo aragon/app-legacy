@@ -290,7 +290,7 @@ const Percentage = styled.span.attrs({
   className: 'text-primary-500 font-semibold ft-text-base',
 })``;
 
-const PublisherLabel = styled.p.attrs({className: '-mr-0.5'})``;
+const PublisherLabel = styled.p.attrs({className: '-mr-1'})``;
 
 const VotedAlertWrapper = styled.div.attrs({
   className: 'flex justify-center xl:justify-start',

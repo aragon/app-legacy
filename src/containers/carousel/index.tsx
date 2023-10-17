@@ -121,11 +121,11 @@ const MobileCTA = styled.div.attrs({
 })``;
 
 export const ActiveIndicator = styled.li.attrs({
-  className: 'inline-block bg-primary-500 h-0.75 w-12 ml-2 rounded-xl',
+  className: 'inline-block bg-primary-500 h-1.5 w-12 ml-2 rounded-xl',
 })``;
 
 export const Indicator = styled.li.attrs({
-  className: 'inline-block bg-neutral-200 h-0.75 w-4 ml-2 rounded-xl',
+  className: 'inline-block bg-neutral-200 h-1.5 w-4 ml-2 rounded-xl',
 })``;
 
 export const StyledCarousel = styled(ReactResponsiveCarousel).attrs({})`

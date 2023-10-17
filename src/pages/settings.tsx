@@ -59,7 +59,7 @@ export const Settings: React.FC = () => {
   return (
     <SettingsWrapper>
       {daoUpdateEnabled && (
-        <div className={`mt-0.5 xl:mt-3 ${styles.fullWidth}`}>
+        <div className={`mt-1 xl:mt-3 ${styles.fullWidth}`}>
           <SettingsUpdateCard />
         </div>
       )}

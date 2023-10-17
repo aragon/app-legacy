@@ -15,7 +15,7 @@ export const Tag: React.FC<TagProps> = props => {
   const {label, colorScheme = 'neutral', className} = props;
 
   const classes = classNames(
-    'flex rounded px-0.5 py-0.1 text-center font-semibold ft-text-sm',
+    'flex rounded px-1 py-0.25 text-center font-semibold ft-text-sm',
     colorSchemeClass[colorScheme],
     className
   );

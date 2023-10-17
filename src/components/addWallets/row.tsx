@@ -311,7 +311,7 @@ const PercentageInputDisplayWrapper = styled.div.attrs({
 })``;
 
 const LabelWrapper = styled.div.attrs({
-  className: 'md:hidden mb-0.5',
+  className: 'md:hidden mb-1',
 })``;
 
 const AddressWrapper = styled.div.attrs({
@@ -323,7 +323,7 @@ const AmountsWrapper = styled.div.attrs({
 })``;
 
 const ErrorContainer = styled.div.attrs({
-  className: 'mt-0.5',
+  className: 'mt-1',
 })``;
 
 const Break = styled.hr.attrs({

@@ -108,7 +108,7 @@ const PublishModal: React.FC<PublishModalProps> = ({
               <div className="truncate">{formattedAverage}</div>
               <div>{`${nativeCurrency.symbol}`}</div>
             </StrongText>
-            <div className="flex justify-end space-x-0.5 text-right text-sm text-neutral-500">
+            <div className="flex justify-end space-x-1 text-right text-sm text-neutral-500">
               <div className="truncate">{formattedMax}</div>
               <div>{`${nativeCurrency.symbol}`}</div>
             </div>
@@ -189,15 +189,15 @@ const ButtonContainer = styled.div.attrs({
 })``;
 
 const NoShrinkVStack = styled.div.attrs({
-  className: 'space-y-0.25 shrink-0',
+  className: 'space-y-0.5 shrink-0',
 })``;
 
 const VStack = styled.div.attrs({
-  className: 'space-y-0.25 overflow-hidden',
+  className: 'space-y-0.5 overflow-hidden',
 })``;
 
 const StrongText = styled.p.attrs({
-  className: 'font-semibold text-right text-neutral-600 flex space-x-0.5',
+  className: 'font-semibold text-right text-neutral-600 flex space-x-1',
 })``;
 
 const Label = styled.p.attrs({

@@ -68,7 +68,7 @@ export const Dropdown: React.FC<DropdownProps> = ({
       </DropdownMenu.Trigger>
 
       <StyledContent {...rest}>
-        <DropdownMenu.Group className="gap-y-0.75 flex flex-col">
+        <DropdownMenu.Group className="gap-y-1.5 flex flex-col">
           {listItems?.map((li, index) => (
             <StyledItem key={index} onSelect={li.callback}>
               {li.component}

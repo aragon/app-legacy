@@ -184,11 +184,11 @@ const InputForm: React.FC<InputFormProps> = ({
             <div key={input.name}>
               <div className="text-base font-semibold capitalize text-neutral-800">
                 {input.name}
-                <span className="ml-0.5 text-sm normal-case">
+                <span className="ml-1 text-sm normal-case">
                   ({input.type})
                 </span>
               </div>
-              <div className="mb-3 mt-0.5">
+              <div className="mb-3 mt-1">
                 <span className="text-neutral-600 ft-text-sm">
                   {input.notice}
                 </span>
@@ -392,11 +392,11 @@ export const ComponentForType: React.FC<ComponentForTypeProps> = ({
               <div key={component.name} className="ml-6 mt-4">
                 <div className="text-base font-semibold capitalize text-neutral-800">
                   {component.name}
-                  <span className="ml-0.5 text-sm normal-case">
+                  <span className="ml-1 text-sm normal-case">
                     ({component.type})
                   </span>
                 </div>
-                <div className="mb-3 mt-0.5">
+                <div className="mb-3 mt-1">
                   <span className="text-neutral-600 ft-text-sm">
                     {component.notice}
                   </span>

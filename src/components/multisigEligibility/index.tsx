@@ -73,7 +73,7 @@ export const MultisigEligibility = () => {
 };
 
 const TitleContainer = styled.div.attrs({
-  className: 'flex-col space-y-0.5',
+  className: 'flex-col space-y-1',
 })``;
 
 const OptionsContainers = styled.div.attrs({

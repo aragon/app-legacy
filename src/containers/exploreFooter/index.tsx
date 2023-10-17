@@ -60,7 +60,7 @@ const Footer: React.FC = () => {
           </ActionContainer>
         </FullSpan>
       </GridLayout>
-      <div className="z-10 flex items-center justify-center space-x-2 bg-primary-400 py-0.5 text-sm text-neutral-0">
+      <div className="z-10 flex items-center justify-center space-x-2 bg-primary-400 py-1 text-sm text-neutral-0">
         <IconInfo />
         <span>Aragon App Public Beta</span>
       </div>

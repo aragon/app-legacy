@@ -144,5 +144,5 @@ const OptionsTitle = styled.h2.attrs({
 })``;
 
 const DescriptionContainer = styled.div.attrs({
-  className: 'space-y-0.5 mb-3',
+  className: 'space-y-1 mb-3',
 })``;

@@ -115,7 +115,7 @@ const FormItem = styled.div.attrs({
 })``;
 
 const DescriptionContainer = styled.div.attrs({
-  className: 'space-y-0.5',
+  className: 'space-y-1',
 })``;
 
 const Title = styled.p.attrs({

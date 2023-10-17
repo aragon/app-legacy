@@ -191,11 +191,11 @@ const InfoTab: React.FC<Props> = ({
 export default InfoTab;
 
 const EndDateWrapper = styled.div.attrs({
-  className: 'space-y-0.5 text-right',
+  className: 'space-y-1 text-right',
 })``;
 
 const CurrentParticipationWrapper = styled.div.attrs({
-  className: 'space-y-0.5 text-right',
+  className: 'space-y-1 text-right',
 })``;
 
 const VStackSection = styled.div.attrs<{isLast?: boolean}>(({isLast}) => ({

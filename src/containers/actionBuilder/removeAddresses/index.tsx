@@ -159,7 +159,7 @@ const RemoveAddresses: React.FC<RemoveAddressesProps> = ({
                   'xl:rounded-none rounded-t-xl border-t xl:border-t-0'
                 }`}
               >
-                <div className="mb-0.5 xl:mb-0 xl:hidden">
+                <div className="mb-1 xl:mb-0 xl:hidden">
                   <Label label={t('labels.whitelistWallets.address')} />
                 </div>
                 <AddressRow
@@ -226,7 +226,7 @@ const CustomHeader: React.FC = () => {
   const {t} = useTranslation();
 
   return (
-    <div className="mb-3 space-y-0.5">
+    <div className="mb-3 space-y-1">
       <p className="text-base font-semibold text-neutral-800">
         {t('labels.removeWallets')}
       </p>

@@ -199,7 +199,7 @@ export const MinParticipation: FC = () => {
                   <SubContainer>
                     {/* Header */}
                     <SimulationSection>
-                      <div className="space-y-0.5">
+                      <div className="space-y-1">
                         <Label
                           label={t('createDAO.step4.wrappedReferenceTitle')}
                         />
@@ -368,5 +368,5 @@ const LinearProgressContainer = styled.div.attrs({
 
 const ProgressInfo2 = styled.div.attrs({
   className:
-    'flex absolute -top-5 xl:-top-2 justify-between space-x-0.5 w-full text-sm',
+    'flex absolute -top-5 xl:-top-2 justify-between space-x-1 w-full text-sm',
 })``;

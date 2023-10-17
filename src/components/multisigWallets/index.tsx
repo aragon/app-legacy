@@ -209,7 +209,7 @@ const Container = styled.div.attrs(() => ({
   className: 'space-y-3 flex flex-col',
 }))``;
 const DescriptionContainer = styled.div.attrs(() => ({
-  className: 'space-y-0.5 flex flex-col',
+  className: 'space-y-1 flex flex-col',
 }))``;
 const TableContainer = styled.div.attrs(() => ({
   className: 'rounded-xl bg-neutral-0 flex flex-col',
@@ -224,7 +224,7 @@ const Text = styled.p.attrs({
   className: 'ft-text-base  text-neutral-600',
 })``;
 const Divider = styled.div.attrs(() => ({
-  className: 'flex bg-neutral-50 h-0.25',
+  className: 'flex bg-neutral-50 h-0.5',
 }))``;
 const ActionsContainer = styled.div.attrs(() => ({
   className: 'flex xl:px-6 xl:py-3 p-4 place-content-between',

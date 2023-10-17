@@ -48,7 +48,7 @@ export const CardToken: React.FC<CardTokenProps> = ({
           </CoinNameAndAllocation>
           {isVault && (
             <SecondaryCoinDetails>
-              <div className="flex space-x-0.5">
+              <div className="flex space-x-1">
                 <div className="truncate">{props.tokenCount}</div>{' '}
                 <div>{props.tokenSymbol}</div>
               </div>
@@ -67,7 +67,7 @@ export const CardToken: React.FC<CardTokenProps> = ({
           {isVault ? (
             <div className="truncate">{props.treasuryShare}</div>
           ) : (
-            <div className="flex justify-end space-x-0.5">
+            <div className="flex justify-end space-x-1">
               <div className="truncate">{props.tokenCount}</div>{' '}
               <div>{props.tokenSymbol}</div>
             </div>
@@ -138,7 +138,7 @@ const CoinName = styled.h1.attrs({
 })``;
 
 const SecondaryCoinDetails = styled.div.attrs({
-  className: 'ft-text-sm text-neutral-500 space-x-0.5 md:flex',
+  className: 'ft-text-sm text-neutral-500 space-x-1 md:flex',
 })``;
 
 const MarketProperties = styled.div.attrs({

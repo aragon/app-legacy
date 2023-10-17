@@ -22,7 +22,7 @@ export const SCCExecutionCard: React.FC<{
               <div key={input.name}>
                 <div className="mb-3 text-base font-semibold capitalize text-neutral-800">
                   {input.name}
-                  <span className="ml-0.5 text-sm normal-case">
+                  <span className="ml-1 text-sm normal-case">
                     ({input.type})
                   </span>
                 </div>

@@ -140,7 +140,7 @@ export const Row = ({index, ...props}: MultisigWalletsRowProps) => {
 };
 
 const RowContainer = styled.div.attrs(() => ({
-  className: 'gap-0.5 flex flex-col xl:px-6 xl:py-3 p-4',
+  className: 'gap-1 flex flex-col xl:px-6 xl:py-3 p-4',
 }))``;
 
 const Container = styled.div.attrs(() => ({

@@ -196,7 +196,7 @@ const ModalHeader = styled.div.attrs({
 `;
 
 const FormTitle = styled.span.attrs({
-  className: 'ft-text-base font-semibold text-neutral-800 pb-0.5',
+  className: 'ft-text-base font-semibold text-neutral-800 pb-1',
 })``;
 
 const FormHelpText = styled.p.attrs({

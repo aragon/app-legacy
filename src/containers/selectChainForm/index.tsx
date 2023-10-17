@@ -95,7 +95,7 @@ export default SelectChainForm;
 const Header = styled.div.attrs({className: 'flex justify-between'})``;
 
 const NetworkTypeSwitcher = styled.div.attrs({
-  className: 'flex p-0.5 space-x-0.25 bg-neutral-0 rounded-xl',
+  className: 'flex p-1 space-x-0.5 bg-neutral-0 rounded-xl',
 })``;
 
 const FormItem = styled.div.attrs({

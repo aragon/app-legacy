@@ -169,7 +169,7 @@ export const ActionItemAddress: React.FC<ActionItemAddressProps> = props => {
       <TableCell>
         <div className="flex flex-row items-center gap-4">
           <Avatar size="small" mode="circle" src={avatar ?? addressOrEns} />
-          <div className="flex grow flex-col gap-0.5">
+          <div className="flex grow flex-col gap-1">
             <div className="flex flex-row items-start gap-2">
               <div className="font-semibold text-neutral-800 ft-text-base">
                 {shortenAddress(addressOrEns)}
@@ -178,7 +178,7 @@ export const ActionItemAddress: React.FC<ActionItemAddressProps> = props => {
                 <Tag
                   label={tagLabel}
                   colorScheme={walletId === 'you' ? 'neutral' : 'info'}
-                  className="-mt-0.5"
+                  className="-mt-1"
                 />
               )}
             </div>

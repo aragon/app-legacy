@@ -49,7 +49,7 @@ export const Link = React.forwardRef<HTMLAnchorElement, LinkProps>(
         {...props}
         data-testid="link"
       >
-        <div className="mr-0.5 flex items-center gap-x-2">
+        <div className="mr-1 flex items-center gap-x-2">
           <Label>{label}</Label>
           {iconRight && <div>{iconRight}</div>}
         </div>
@@ -67,7 +67,7 @@ type StyledLinkProps = Pick<LinkProps, 'disabled'> & {
 
 const StyledLink = styled.a.attrs<StyledLinkProps>(({disabled, type}) => {
   let className =
-    'inline-flex flex-col gap-y-0.25 md:gap-y-0.5 max-w-full rounded cursor-pointer ';
+    'inline-flex flex-col gap-y-0.5 md:gap-y-1 max-w-full rounded cursor-pointer ';
   className += variants[type];
   className += disabled ? disabledColors[type] : defaultColors[type];
 

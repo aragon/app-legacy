@@ -214,7 +214,7 @@ const CustomHeader: React.FC = () => {
   const {t} = useTranslation();
 
   return (
-    <div className="mb-3 space-y-0.5">
+    <div className="mb-3 space-y-1">
       <p className="text-base font-semibold text-neutral-800">
         {t('labels.minimumApproval')}
       </p>

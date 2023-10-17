@@ -457,7 +457,7 @@ const DurationContainer = styled.div.attrs({
 })``;
 
 const TimeLabelWrapper = styled.div.attrs({
-  className: 'w-full md:w-1/2 space-y-0.5',
+  className: 'w-full md:w-1/2 space-y-1',
 })``;
 
 const TimeLabel = styled.span.attrs({
@@ -480,5 +480,5 @@ const ProgressBarTick = styled.div.attrs({
 
 const ProgressInfo1 = styled.div.attrs({
   className:
-    'flex absolute -top-5 justify-between space-x-0.5 w-full text-sm',
+    'flex absolute -top-5 justify-between space-x-1 w-full text-sm',
 })``;

@@ -117,7 +117,7 @@ const ModalHeader = styled.div.attrs({
 `;
 
 const ModalTitleContainer = styled.div.attrs({
-  className: 'space-y-0.5',
+  className: 'space-y-1',
 })``;
 
 const ModalTitle = styled(Title).attrs({

@@ -24,8 +24,8 @@ export const MemberVotingPower: React.FC<MemberVotingPowerProps> = props => {
   }
 
   return (
-    <div className="flex flex-row items-center gap-0.5">
-      <div className="flex flex-row gap-0.25 font-semibold ft-text-sm">
+    <div className="flex flex-row items-center gap-1">
+      <div className="flex flex-row gap-0.5 font-semibold ft-text-sm">
         <span>{parsedVotingPower}</span>
         <span>{tokenSymbol}</span>
       </div>

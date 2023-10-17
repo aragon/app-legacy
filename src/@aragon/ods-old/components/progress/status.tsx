@@ -69,7 +69,7 @@ export const ProgressStatus: React.FC<ProgressStatusProps> = ({
       {block && mayHaveBlock && (
         <BlockContainer>
           <p>{block}</p>
-          <div className="pt-0.25">
+          <div className="pt-0.5">
             <IconBlock className="text-neutral-400" />
           </div>
         </BlockContainer>
@@ -144,7 +144,7 @@ const CustomLabel: React.FC<CustomLabelProps> = ({label, helpText}) => {
 };
 
 const VStack = styled.div.attrs({
-  className: 'space-y-0.5',
+  className: 'space-y-1',
 })``;
 
 const LabelLine = styled.div.attrs({

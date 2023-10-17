@@ -128,7 +128,7 @@ const Title = styled.h2.attrs({
 })``;
 
 const Subtitle = styled.p.attrs({
-  className: 'mt-0.5 text-neutral-600 ft-text-sm mb-3',
+  className: 'mt-1 text-neutral-600 ft-text-sm mb-3',
 })``;
 
 const NetworkName = styled.p.attrs({

@@ -287,5 +287,5 @@ const FormItem = styled.div.attrs({
 })``;
 
 const LogoContainer = styled.div.attrs({
-  className: 'pt-0.5',
+  className: 'pt-1',
 })``;
