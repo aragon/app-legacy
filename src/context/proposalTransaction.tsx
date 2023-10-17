@@ -554,8 +554,9 @@ const ProposalTransactionProvider: React.FC<Props> = ({children}) => {
     proposalId,
     pluginAddress,
     isConnected,
-    pluginClient?.methods,
+    offchainVoting,
     handleCloseExecuteModal,
+    pluginClient,
     onExecutionSuccess,
   ]);
 

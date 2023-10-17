@@ -38,7 +38,6 @@ const useOffchainVoting = () => {
   ) as OffchainVotingClient;
   const {data: daoDetails} = useDaoDetailsQuery();
 
-  // todo(kon): move this into local storage provdier if needed
   const getElectionId = useCallback(
     async (proposalId: string) => {
       if (daoDetails === undefined) return '';
@@ -58,8 +57,6 @@ const useOffchainVoting = () => {
     [daoDetails, pluginClient]
   );
 
-  // const isCommitteeMember
-
   const {steps, updateStepStatus, doStep, globalState, resetStates} =
     useFunctionStepper({
       initialSteps: {
@@ -76,12 +73,11 @@ const useOffchainVoting = () => {
     async (vote: VoteProposalParams, electionId: string) => {
       const vocVote = new Vote([vote.vote - 1]); // See values on the enum, using vocdoni starts on 0
       console.log('DEBUG', 'ElectionId and vote', electionId, vocVote);
-
-      // todo(kon): use election provider instead of set manually the election id
       await vocdoniClient.setElectionId(electionId);
       console.log('DEBUG', 'Submitting the vote');
-      await vocdoniClient.submitVote(vocVote);
+      const voteId = await vocdoniClient.submitVote(vocVote);
       console.log('DEBUG', 'Vote submitted');
+      return voteId;
     },
     [vocdoniClient]
   );
@@ -95,7 +91,6 @@ const useOffchainVoting = () => {
         resetStates();
       }
 
-      // todo(kon): this step should be removed when min-sdk implemented
       // 1. Retrieve the election id
       const electionId = await doStep(
         OffchainVotingStepId.CREATE_VOTE_ID,
