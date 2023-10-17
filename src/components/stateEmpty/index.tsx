@@ -175,5 +175,5 @@ const Description = styled.p.attrs({
 `;
 
 const ImageWrapper = styled.div.attrs({
-  className: 'flex justify-center pt-4 xl:pt-12 pb-4 xl:pb-16',
+  className: 'flex justify-center pt-8 xl:pt-12 pb-8 xl:pb-16',
 })``;

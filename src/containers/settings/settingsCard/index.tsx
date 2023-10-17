@@ -42,5 +42,5 @@ export const FlexibleDefinition = styled.dd.attrs({
 
 export const DescriptionPair = styled.div.attrs({
   className: `space-y-0.5 py-1.5 md:py-2 xl:space-y-0 xl:flex
-  xl:space-x-2 text-neutral-600 border-b border-neutral-100 ft-text-base md:grid grid-cols-2 gap-4` as string,
+  xl:space-x-2 text-neutral-600 border-b border-neutral-100 ft-text-base md:grid grid-cols-2 gap-8` as string,
 })``;

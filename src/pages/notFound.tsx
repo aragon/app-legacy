@@ -21,7 +21,7 @@ export const NotFound: React.FC = () => {
         <Menu>
           <GridLayout>
             <img
-              className="col-span-2 col-start-2 mx-auto h-4 md:col-start-4 xl:col-start-auto xl:mx-0"
+              className="col-span-2 col-start-2 mx-auto h-8 md:col-start-4 xl:col-start-auto xl:mx-0"
               src={Logo}
             />
           </GridLayout>
@@ -69,7 +69,7 @@ export const NotFound: React.FC = () => {
 };
 
 const Menu = styled.nav.attrs({
-  className: 'py-2 xl:py-4',
+  className: 'py-2 xl:py-8',
 })`
   background: linear-gradient(
     180deg,

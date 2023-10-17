@@ -135,5 +135,5 @@ const HStack = styled.div.attrs<ContainerTypes>(({disabled, type}) => ({
 }))<ContainerTypes>``;
 
 const Helptext = styled.p.attrs({
-  className: 'ft-text-base text-neutral-500 mr-3.5',
+  className: 'ft-text-base text-neutral-500 mr-7',
 })``;

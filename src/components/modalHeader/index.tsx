@@ -28,7 +28,7 @@ const ModalHeader: React.FC<Props> = props => {
 
   return (
     <Header>
-      <ButtonWrapper className="h-4 w-4">
+      <ButtonWrapper className="h-8 w-8">
         {showBackButton && (
           <ButtonIcon
             mode="secondary"
@@ -44,7 +44,7 @@ const ModalHeader: React.FC<Props> = props => {
         <Title>{title}</Title>
         {subTitle && <SubTitle dangerouslySetInnerHTML={{__html: subTitle}} />}
       </div>
-      <ButtonWrapper className="h-4 w-4">
+      <ButtonWrapper className="h-8 w-8">
         {showCloseButton && (
           <ButtonIcon
             mode="secondary"
@@ -79,4 +79,4 @@ const SubTitle = styled.div.attrs({
   className: 'mt-0.5 text-sm text-neutral-600',
 })``;
 
-const ButtonWrapper = styled.div.attrs({className: 'w-4 h-4' as string})``;
+const ButtonWrapper = styled.div.attrs({className: 'w-8 h-8' as string})``;

@@ -466,7 +466,7 @@ const TimeLabel = styled.span.attrs({
 
 const ApprovalContainer = styled.div.attrs({
   className:
-    'flex flex-col flex-col-reverse md:flex-row md:items-center p-3 pt-4 md:p-3 space-y-3 space-y-reverse md:space-y-0 md:space-x-3 rounded-xl bg-neutral-0',
+    'flex flex-col flex-col-reverse md:flex-row md:items-center p-3 pt-8 md:p-3 space-y-3 space-y-reverse md:space-y-0 md:space-x-3 rounded-xl bg-neutral-0',
 })``;
 
 const LinearProgressContainer = styled.div.attrs({

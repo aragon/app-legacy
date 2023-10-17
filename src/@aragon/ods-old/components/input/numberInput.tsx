@@ -63,7 +63,7 @@ export const NumberInput: React.FC<NumberInputProps> = ({
     [value: string]: string;
   } = {
     bigger: 'w-16',
-    percentage: 'w-3.5',
+    percentage: 'w-7',
     default: 'w-full',
   };
 

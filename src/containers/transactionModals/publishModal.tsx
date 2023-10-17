@@ -173,7 +173,7 @@ const GasCostTableContainer = styled.div.attrs({
 })``;
 
 const GasCostEthContainer = styled.div.attrs({
-  className: 'flex justify-between py-1.5 px-2 space-x-4',
+  className: 'flex justify-between py-1.5 px-2 space-x-8',
 })``;
 
 const GasTotalCostEthContainer = styled.div.attrs({

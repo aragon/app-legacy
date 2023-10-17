@@ -130,7 +130,7 @@ const ModalSubtitle = styled.div.attrs({
 
 const ModalClose = styled(Close).attrs({
   className:
-    'shrink-0 text-neutral-500 w-4 h-4 rounded-lg bg-neutral-50 outline:none',
+    'shrink-0 text-neutral-500 w-8 h-8 rounded-lg bg-neutral-50 outline:none',
 })``;
 
 const ModalOverlay = styled(Overlay).attrs(() => {

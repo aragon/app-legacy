@@ -90,5 +90,5 @@ const Title = styled.p.attrs({})``;
 const Description = styled.p.attrs({className: 'ft-text-base'})``;
 
 const ContentWrapper = styled.div.attrs({
-  className: 'pl-3.5 space-y-1.5 text-primary-50' as string,
+  className: 'pl-7 space-y-1.5 text-primary-50' as string,
 })``;

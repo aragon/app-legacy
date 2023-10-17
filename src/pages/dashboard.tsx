@@ -242,7 +242,7 @@ export const Dashboard: React.FC = () => {
             size="large"
             label={buttonLabel[daoCreationState]}
             iconLeft={buttonIcon[daoCreationState]}
-            className={`mt-4 ${daoCreationState === 0 && 'bg-primary-800'}`}
+            className={`mt-8 ${daoCreationState === 0 && 'bg-primary-800'}`}
             onClick={handleOpenYourDaoClick}
           />
         </EmptyStateContainer>

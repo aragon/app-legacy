@@ -97,7 +97,7 @@ const LeftContent = styled.div.attrs({
 })``;
 
 const LogoContainer = styled.img.attrs({
-  className: 'h-4 cursor-pointer',
+  className: 'h-8 cursor-pointer',
 })``;
 
 const RightContent = styled.div.attrs({

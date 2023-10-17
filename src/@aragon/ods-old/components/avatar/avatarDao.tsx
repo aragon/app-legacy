@@ -75,5 +75,5 @@ const FallBackAvatar = styled.div.attrs<AvatarPropsType>(({size}) => ({
 }))<AvatarPropsType>``;
 
 const DaoInitials = styled.p.attrs({
-  className: 'w-4 h-4 flex items-center justify-center',
+  className: 'w-8 h-8 flex items-center justify-center',
 })``;

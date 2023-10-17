@@ -111,7 +111,7 @@ const MintTokensToTreasuryMenu: React.FC<Props> = ({
               bgWhite
             />
             <Title>{t('modal.mintTokensToTreasury.title')}</Title>
-            <div role="presentation" className="h-4 w-4" />
+            <div role="presentation" className="h-8 w-8" />
           </ModalHeader>
           <div className="flex flex-col px-2 py-3">
             <FormTitle>{t('modal.mintTokensToTreasury.inputLabel')}</FormTitle>

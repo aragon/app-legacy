@@ -111,7 +111,7 @@ export const CardToken: React.FC<CardTokenProps> = ({
 type CardProps = Pick<CardTokenProps, 'bgWhite'>;
 
 const Card = styled.div.attrs<CardProps>(({bgWhite}) => ({
-  className: `flex justify-between space-x-4 items-center py-2.5 px-3 overflow-hidden ${
+  className: `flex justify-between space-x-8 items-center py-2.5 px-3 overflow-hidden ${
     bgWhite ? 'bg-neutral-50' : 'bg-neutral-0'
   } rounded-xl`,
 }))<CardProps>``;

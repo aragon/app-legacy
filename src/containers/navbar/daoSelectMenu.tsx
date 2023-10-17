@@ -63,7 +63,7 @@ const DaoSelectMenu: React.FC = () => {
             onClick={handleBackButtonClick}
           />
           <Title>{t('daoSwitcher.title')}</Title>
-          <div role="presentation" className="h-4 w-4" />
+          <div role="presentation" className="h-8 w-8" />
         </ModalHeader>
         <ModalContentContainer>
           <ListGroup>

@@ -47,7 +47,7 @@ const Wrapper = styled.div.attrs({
 })``;
 
 const ContentWrapper = styled.div.attrs({
-  className: 'xl:space-y-0.75 space-y-1 max-w-lg pt-4.5 xl:pt-20',
+  className: 'xl:space-y-0.75 space-y-1 max-w-lg pt-9 xl:pt-20',
 })``;
 
 const Title = styled.h1.attrs({

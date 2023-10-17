@@ -220,7 +220,7 @@ const LabelWrapper = styled.div.attrs({
 })``;
 
 const ButtonContainer = styled.div.attrs({
-  className: 'pt-3.5 order-2 md:order-3 md:pt-0',
+  className: 'pt-7 order-2 md:order-3 md:pt-0',
 })``;
 
 const ErrorContainer = styled.div.attrs({

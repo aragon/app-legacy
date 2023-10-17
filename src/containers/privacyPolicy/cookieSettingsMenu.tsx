@@ -37,7 +37,7 @@ const CookieSettingsMenu: React.FC<CookieSettingsMenuProps> = props => {
             bgWhite
           />
           <Title>{t('privacyPolicy.cookieSettings')}</Title>
-          <div role="presentation" className="h-4 w-4" />
+          <div role="presentation" className="h-8 w-8" />
         </ModalHeader>
         <BottomSheetContentContainer>
           <div className="space-y-1.5">
