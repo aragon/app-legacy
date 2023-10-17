@@ -61,7 +61,7 @@ const Container = styled.div.attrs<VariableAlignment>(({horizontal}) => ({
 
 const IconWrapper = styled.div.attrs({
   className:
-    'order-1 grid place-content-center w-5 h-5 text-primary-500 bg-primary-50 rounded-xl',
+    'order-1 grid place-content-center w-10 h-10 text-primary-500 bg-primary-50 rounded-xl',
 })``;
 
 const ButtonWrapper = styled.div.attrs<VariableAlignment>(({horizontal}) => ({

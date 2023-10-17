@@ -80,7 +80,7 @@ const Section = styled.section.attrs({
 
 const ActionContainer = styled.div.attrs({
   className:
-    'relative flex flex-col xl:flex-row xl:justify-between items-center space-y-4 xl:space-y-0 pt-5 xl:pt-3 pb-16 xl:pb-3',
+    'relative flex flex-col xl:flex-row xl:justify-between items-center space-y-4 xl:space-y-0 pt-10 xl:pt-3 pb-16 xl:pb-3',
 })``;
 
 const FlexDiv = styled.div.attrs({
@@ -88,7 +88,7 @@ const FlexDiv = styled.div.attrs({
 })``;
 
 const LogoContainer = styled.img.attrs({
-  className: 'h-5',
+  className: 'h-10',
 })``;
 
 const StyledNavList = styled.ul.attrs({
@@ -104,7 +104,7 @@ const GradientGreen = styled.img.attrs({
 })``;
 
 const GradientPurple = styled.img.attrs({
-  className: 'xl:h-80 h-60 absolute -right-5 xl:-top-[88px] top-32',
+  className: 'xl:h-80 h-60 absolute -right-10 xl:-top-[88px] top-32',
 })``;
 
 export default Footer;

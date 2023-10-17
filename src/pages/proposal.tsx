@@ -806,7 +806,7 @@ type ContentContainerProps = {
 const ContentContainer = styled.div.attrs<ContentContainerProps>(
   ({expandedProposal}) => ({
     className: `${
-      expandedProposal ? 'md:mt-5' : 'md:mt-16'
+      expandedProposal ? 'md:mt-10' : 'md:mt-16'
     } mt-3 md:flex md:space-x-3 space-y-3 md:space-y-0`,
   })
 )<ContentContainerProps>``;

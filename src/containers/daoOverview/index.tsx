@@ -159,5 +159,5 @@ export const OverviewDAOStep: React.FC = () => {
 };
 
 const MobileCTA = styled.div.attrs({
-  className: 'mb-5 -mx-2 md:-mx-3 xl:mx-0',
+  className: 'mb-10 -mx-2 md:-mx-3 xl:mx-0',
 })``;

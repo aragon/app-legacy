@@ -84,7 +84,7 @@ const Container = styled.button.attrs({
 })``;
 
 const AvatarContainer = styled.div.attrs<{bgColor: string}>(({bgColor}) => ({
-  className: `flex items-center justify-center w-3 h-3 ${bgColor} rounded xl:w-5 xl:h-5 xl:rounded-xl`,
+  className: `flex items-center justify-center w-3 h-3 ${bgColor} rounded xl:w-10 xl:h-10 xl:rounded-xl`,
 }))<{bgColor: string}>``;
 
 const Content = styled.div.attrs({

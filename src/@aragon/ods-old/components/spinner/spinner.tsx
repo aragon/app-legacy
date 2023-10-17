@@ -29,7 +29,7 @@ const StyledSpinner = styled.div.attrs<SpinnerProps>(({size}) => {
   const sizes: SizesType = {
     xs: 'w-2 h-2',
     small: 'w-3 h-3',
-    default: 'w-5 h-5',
+    default: 'w-10 h-10',
     big: 'w-12 h-12',
   };
   const className = `rounded-full

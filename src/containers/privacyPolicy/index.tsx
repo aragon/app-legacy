@@ -52,7 +52,7 @@ export default PrivacyPolicy;
 
 const Container = styled.div.attrs({
   className:
-    'flex xl:mx-5 2xl:w-[1520px] 2xl:mx-auto items-center p-3 space-x-3 bg-neutral-0 rounded-xl border border-neutral-100',
+    'flex xl:mx-10 2xl:w-[1520px] 2xl:mx-auto items-center p-3 space-x-3 bg-neutral-0 rounded-xl border border-neutral-100',
 })`
   box-shadow:
     0px 16px 24px rgba(31, 41, 51, 0.06),

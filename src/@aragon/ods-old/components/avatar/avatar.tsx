@@ -18,7 +18,7 @@ type SizesType = Record<AvatarProps['size'], {sizes: string; scale: number}>;
 const BLOCKIES_SQUARES = 8;
 const sizes: SizesType = {
   small: {sizes: 'w-3 h-3', scale: 3},
-  default: {sizes: 'w-5 h-5', scale: 5},
+  default: {sizes: 'w-10 h-10', scale: 5},
   large: {sizes: 'w-12 h-12', scale: 6},
 };
 

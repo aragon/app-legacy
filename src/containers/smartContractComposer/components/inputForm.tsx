@@ -179,7 +179,7 @@ const InputForm: React.FC<InputFormProps> = ({
         <IconSuccess />
       </div>
       {actionInputs.length > 0 ? (
-        <div className="shadow-100 mt-5 space-y-2 rounded-xl border border-neutral-100 bg-neutral-0 p-3 xl:bg-neutral-50">
+        <div className="shadow-100 mt-10 space-y-2 rounded-xl border border-neutral-100 bg-neutral-0 p-3 xl:bg-neutral-50">
           {actionInputs.map(input => (
             <div key={input.name}>
               <div className="text-base font-semibold capitalize text-neutral-800">
@@ -588,7 +588,7 @@ const ActionDescription = styled.p.attrs({
 
 const HStack = styled.div.attrs({
   className:
-    'flex justify-between items-center space-x-3 mt-5 ft-text-base mb-1',
+    'flex justify-between items-center space-x-3 mt-10 ft-text-base mb-1',
 })``;
 
 export default InputForm;

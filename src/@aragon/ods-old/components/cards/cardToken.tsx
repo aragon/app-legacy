@@ -121,7 +121,7 @@ const CoinDetailsWithImage = styled.div.attrs({
 })``;
 
 const CoinImage = styled.img.attrs(({src}) => ({
-  className: 'w-3 h-3 md:h-5 md:w-5 rounded-full',
+  className: 'w-3 h-3 md:h-10 md:w-10 rounded-full',
   src,
 }))``;
 

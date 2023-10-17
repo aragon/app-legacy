@@ -84,7 +84,7 @@ const GradientGreen = styled.img.attrs({
 })``;
 
 const GradientPurple = styled.img.attrs({
-  className: 'xl:h-80 h-60 absolute xl:-right-40 xl:top-5 -right-5 -top-12',
+  className: 'xl:h-80 h-60 absolute xl:-right-40 xl:top-10 -right-10 -top-12',
 })``;
 
 export default Hero;

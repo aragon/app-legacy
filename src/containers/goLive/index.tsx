@@ -124,7 +124,7 @@ export const GoLiveFooter: React.FC = () => {
 export default GoLive;
 
 const Container = styled.div.attrs({
-  className: 'md:mx-auto md:w-3/4 space-y-5',
+  className: 'md:mx-auto md:w-3/4 space-y-10',
 })``;
 
 const ImageContainer = styled.img.attrs({

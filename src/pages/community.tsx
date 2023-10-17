@@ -329,7 +329,7 @@ const BodyContainer = styled.div.attrs({
   className: 'mt-1 xl:space-y-16',
 })``;
 
-const SearchAndResultWrapper = styled.div.attrs({className: 'space-y-5'})``;
+const SearchAndResultWrapper = styled.div.attrs({className: 'space-y-10'})``;
 
 const ResultsCountLabel = styled.p.attrs({
   className: 'font-semibold text-neutral-800 ft-text-lg',

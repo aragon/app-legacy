@@ -210,4 +210,4 @@ export const Transfers: React.FC = () => {
   );
 };
 
-const SectionContainer = styled.div.attrs({className: 'my-3 xl:my-5'})``;
+const SectionContainer = styled.div.attrs({className: 'my-3 xl:my-10'})``;

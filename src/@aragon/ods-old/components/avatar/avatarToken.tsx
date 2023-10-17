@@ -25,7 +25,7 @@ export const AvatarToken: React.FC<AvatarTokenProps> = ({
 const styles = {
   small: 'w-2 h-2',
   medium: 'w-3 h-3',
-  large: 'w-5 h-5',
+  large: 'w-10 h-10',
 };
 
 type StyledImageProps = {size: AvatarTokenProps['size']};

@@ -40,7 +40,7 @@ export const NotFound: React.FC = () => {
               <ButtonText
                 label={t('cta.404.backToExplore')}
                 size="large"
-                className="mt-5 hidden xl:block"
+                className="mt-10 hidden xl:block"
                 onClick={() => navigate(Landing)}
               />
             </div>

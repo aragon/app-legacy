@@ -440,7 +440,7 @@ const DashboardContent: React.FC<DashboardContentProps> = ({
 // the mobile layout is much simpler, it has it's own component.
 
 const LeftWideContent = styled.div.attrs({
-  className: 'xl:space-y-5 xl:col-start-2 xl:col-span-6',
+  className: 'xl:space-y-10 xl:col-start-2 xl:col-span-6',
 })``;
 
 const RightNarrowContent = styled.div.attrs({
@@ -486,5 +486,5 @@ const MobileDashboardContent: React.FC<DashboardContentProps> = ({
 };
 
 const MobileLayout = styled.div.attrs({
-  className: 'col-span-full space-y-5',
+  className: 'col-span-full space-y-10',
 })``;

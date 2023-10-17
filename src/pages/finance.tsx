@@ -100,7 +100,7 @@ export const Finance: React.FC = () => {
     if (tokens.length === 0 && !isDaoBalancePositive) {
       return (
         <PageWrapper includeHeader={false}>
-          <div className="mb-16 mt-5">
+          <div className="mb-16 mt-10">
             <StateEmpty
               type="Human"
               mode="card"
@@ -327,7 +327,7 @@ export const Finance: React.FC = () => {
       }
     >
       {tokens.length !== 0 && (
-        <div className={'mb-3 mt-1 md:mb-16 md:mt-5'}>
+        <div className={'mb-3 mt-1 md:mb-16 md:mt-10'}>
           <TokenSectionWrapper title={t('finance.tokenSection')}>
             <ListContainer>
               <TokenList tokens={tokens.slice(0, 5)} />
@@ -360,7 +360,7 @@ const SubtitleContainer = styled.div.attrs({
 })``;
 
 const Header = styled.div.attrs({
-  className: `p-2 xl:p-0 pb-3 xl:mt-5 space-y-2 md:space-y-3
+  className: `p-2 xl:p-0 pb-3 xl:mt-10 space-y-2 md:space-y-3
    bg-neutral-0 xl:bg-transparent md:rounded-xl md:border
    md:border-neutral-100 xl:border-none md:shadow-100 xl:shadow-none`,
 })``;

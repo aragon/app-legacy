@@ -392,7 +392,7 @@ const HStack = styled.div.attrs({
 })``;
 
 const Footer = styled.div.attrs({
-  className: 'mt-5 xl:mt-16 space-y-2',
+  className: 'mt-10 xl:mt-16 space-y-2',
 })``;
 
 const EligibilityWrapper = styled.div.attrs({})``;

@@ -375,7 +375,7 @@ const Heading1 = styled.h1.attrs({
 })``;
 
 const VotingContainer = styled.div.attrs({
-  className: 'mt-12 md:mt-5',
+  className: 'mt-12 md:mt-10',
 })``;
 
 const Heading2 = styled.h2.attrs({
@@ -397,5 +397,5 @@ const ButtonWrapper = styled.div.attrs({
 })``;
 
 const VotersTabContainer = styled.div.attrs({
-  className: 'mt-3 xl:mt-5 space-y-2',
+  className: 'mt-3 xl:mt-10 space-y-2',
 })``;

@@ -45,7 +45,7 @@ ButtonIcon.displayName = 'ButtonIcon';
 
 const paddingStyles = {
   small: 'w-4 p-1',
-  medium: 'w-5 p-1.5',
+  medium: 'w-10 p-1.5',
   large: 'w-12 p-2',
 };
 
