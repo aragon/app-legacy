@@ -479,6 +479,5 @@ const ProgressBarTick = styled.div.attrs({
 })``;
 
 const ProgressInfo1 = styled.div.attrs({
-  className:
-    'flex absolute -top-5 justify-between space-x-1 w-full text-sm',
+  className: 'flex absolute -top-5 justify-between space-x-1 w-full text-sm',
 })``;

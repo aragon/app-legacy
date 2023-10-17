@@ -59,7 +59,7 @@ export const Wizard: React.FC<WizardProps> = ({
 
 const StepCard = styled.div.attrs({
   className:
-    'flex flex-col px-4 pt-4 pb-6 md:p-6 xl:p-12 md:rounded-xl gap-y-6 bg-neutral-0 md:shadow-100',
+    'flex flex-col px-4 pt-4 pb-6 md:p-6 xl:p-12 md:rounded-xl gap-y-6 bg-neutral-0 md:shadow-neutral',
 })``;
 
 const Wrapper = styled.div.attrs({

@@ -189,7 +189,7 @@ const AddAddresses: React.FC<AddAddressesProps> = ({
             key={field.id}
             className={`${
               fieldIndex === 0 &&
-              'xl:rounded-none rounded-t-xl border-t xl:border-t-0'
+              'rounded-t-xl border-t xl:rounded-[0px] xl:border-t-0'
             }`}
           >
             <div className="mb-1 xl:mb-0 xl:hidden">

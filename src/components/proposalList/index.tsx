@@ -122,7 +122,7 @@ const ProposalList: React.FC<ProposalListProps> = ({
 
   if (mappedProposals.length === 0) {
     return (
-      <div className="text-gray-600 flex h-14 items-center justify-center">
+      <div className="flex h-14 items-center justify-center text-neutral-600">
         <p data-testid="proposalList">{t('governance.noProposals')}</p>
       </div>
     );

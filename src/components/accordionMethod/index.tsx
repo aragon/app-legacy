@@ -165,8 +165,7 @@ const AdditionalInfoContainer = styled.div.attrs({
 `;
 
 const FlexContainer = styled.div.attrs({
-  className:
-    'md:flex flex-1 justify-between items-center space-y-1 ft-text-sm',
+  className: 'md:flex flex-1 justify-between items-center space-y-1 ft-text-sm',
 })``;
 
 const MethodName = styled.p.attrs({

@@ -179,14 +179,12 @@ const InputForm: React.FC<InputFormProps> = ({
         <IconSuccess />
       </div>
       {actionInputs.length > 0 ? (
-        <div className="shadow-100 mt-10 space-y-4 rounded-xl border border-neutral-100 bg-neutral-0 p-6 xl:bg-neutral-50">
+        <div className="mt-10 space-y-4 rounded-xl border border-neutral-100 bg-neutral-0 p-6 shadow-neutral xl:bg-neutral-50">
           {actionInputs.map(input => (
             <div key={input.name}>
               <div className="text-base font-semibold capitalize text-neutral-800">
                 {input.name}
-                <span className="ml-1 text-sm normal-case">
-                  ({input.type})
-                </span>
+                <span className="ml-1 text-sm normal-case">({input.type})</span>
               </div>
               <div className="mb-3 mt-1">
                 <span className="text-neutral-600 ft-text-sm">
