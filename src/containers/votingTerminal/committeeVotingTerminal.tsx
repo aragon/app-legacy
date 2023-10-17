@@ -194,17 +194,25 @@ export const CommitteeVotingTerminal = ({
 
   // alert message, only shown when not eligible to vote
   const alertMessage = useMemo(() => {
-    if (
+    if (!isApprovalPeriod) {
+      return t('offchainVotingTerminal.alerts.cannotApproveYet');
+    } else if (
       proposal &&
-      proposal.status === 'Active' && // active proposal
+      isApprovalPeriod && // active proposal
       walletAddress && // logged in
       !isOnWrongNetwork && // on proper network
-      !approved && // haven't voted
       !canApprove // cannot vote
     ) {
-      return t('offchainVotingTerminal.alert');
+      return t('offchainVotingTerminal.alerts.notInCommittee');
     }
-  }, [approved, canApprove, isOnWrongNetwork, proposal, t, walletAddress]);
+  }, [
+    canApprove,
+    isApprovalPeriod,
+    isOnWrongNetwork,
+    proposal,
+    t,
+    walletAddress,
+  ]);
 
   const CommitteeVotingTerminal = () => {
     return (
