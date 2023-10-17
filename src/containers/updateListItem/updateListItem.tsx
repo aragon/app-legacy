@@ -59,9 +59,9 @@ export const UpdateListItem: React.FC<CheckboxListItemProps> = ({
   return (
     <Container data-testid="checkboxListItem" {...{type, disabled, onClick}}>
       <Wrapper>
-        <div className="flex flex-col space-y-1">
+        <div className="flex flex-col space-y-2">
           <HStack {...{disabled, type}}>
-            <div className="flex space-x-1">
+            <div className="flex space-x-2">
               <p className="font-semibold ft-text-base">{label}</p>
               {tagLabelNatural && (
                 <Tag label={tagLabelNatural} colorScheme="neutral" />

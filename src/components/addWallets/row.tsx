@@ -335,5 +335,5 @@ const DropdownMenuWrapper = styled.div.attrs({
 })``;
 
 const InputContainer = styled.div.attrs(() => ({
-  className: 'space-y-1',
+  className: 'space-y-2',
 }))``;

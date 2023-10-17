@@ -177,7 +177,7 @@ const Container = styled.div.attrs({
 })``;
 
 const TokensWrapper = styled.div.attrs({
-  className: 'space-y-1 mt-1',
+  className: 'space-y-2 mt-2',
 })``;
 
 const TokenTitle = styled.h2.attrs({

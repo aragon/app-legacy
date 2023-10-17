@@ -279,7 +279,7 @@ const DefineMetadata: React.FC<DefineMetadataProps> = ({
 export default DefineMetadata;
 
 const InputCount = styled.div.attrs({
-  className: 'ft-text-sm mt-1',
+  className: 'ft-text-sm mt-2',
 })``;
 
 const FormItem = styled.div.attrs({

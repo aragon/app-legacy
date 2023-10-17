@@ -55,7 +55,7 @@ const ActionListGroup: React.FC<ActionListGroupProps> = ({
 export default ActionListGroup;
 
 const ListGroup = styled.div.attrs({
-  className: 'flex-1 pt-6 xl:pt-8 pb-4 space-y-1',
+  className: 'flex-1 pt-6 xl:pt-8 pb-4 space-y-2',
 })``;
 
 const ContractNumberIndicator = styled.div.attrs({

@@ -170,7 +170,7 @@ export const ActionItemAddress: React.FC<ActionItemAddressProps> = props => {
         <div className="flex flex-row items-center gap-4">
           <Avatar size="small" mode="circle" src={avatar ?? addressOrEns} />
           <div className="flex grow flex-col gap-0.5">
-            <div className="flex flex-row items-start gap-1">
+            <div className="flex flex-row items-start gap-2">
               <div className="font-semibold text-neutral-800 ft-text-base">
                 {shortenAddress(addressOrEns)}
               </div>
@@ -229,7 +229,7 @@ export const ActionItemAddress: React.FC<ActionItemAddressProps> = props => {
 
         <Dropdown
           align="end"
-          className="px-0 py-1"
+          className="px-0 py-2"
           listItems={buildMenuOptions()}
           side="bottom"
           trigger={

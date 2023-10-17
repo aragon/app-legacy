@@ -46,7 +46,7 @@ const Card: React.FC<CardProps> = ({label, copy, bgWhite}) => {
 };
 
 const CardContainer = styled.div.attrs({
-  className: 'flex items-center space-x-1',
+  className: 'flex items-center space-x-2',
 })``;
 
 type ContainerProps = {bgWhite: boolean};

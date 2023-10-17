@@ -212,7 +212,7 @@ const VerifyWrapper = styled.div.attrs({
 })``;
 
 const LoadingWrapper = styled.div.attrs({
-  className: 'flex py-6 text-primary-400 gap-x-1 items-center',
+  className: 'flex py-6 text-primary-400 gap-x-2 items-center',
 })``;
 
 const VerifyTitle = styled.h2.attrs({

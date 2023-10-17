@@ -126,11 +126,11 @@ const CoinImage = styled.img.attrs(({src}) => ({
 }))``;
 
 const CoinDetails = styled.div.attrs({
-  className: 'ml-4 space-y-1 overflow-hidden',
+  className: 'ml-4 space-y-2 overflow-hidden',
 })``;
 
 const CoinNameAndAllocation = styled.div.attrs({
-  className: 'flex items-start space-x-1',
+  className: 'flex items-start space-x-2',
 })``;
 
 const CoinName = styled.h1.attrs({
@@ -142,7 +142,7 @@ const SecondaryCoinDetails = styled.div.attrs({
 })``;
 
 const MarketProperties = styled.div.attrs({
-  className: 'text-right space-y-1 flex-auto overflow-hidden',
+  className: 'text-right space-y-2 flex-auto overflow-hidden',
 })``;
 
 const FiatValue = styled.h1.attrs({
@@ -151,7 +151,7 @@ const FiatValue = styled.h1.attrs({
 
 const SecondaryFiatDetails = styled.div.attrs({
   className:
-    'ft-text-sm text-neutral-500 space-x-1 flex justify-end items-center truncate',
+    'ft-text-sm text-neutral-500 space-x-2 flex justify-end items-center truncate',
 })``;
 
 type ToggleMobileVisibilityProps = {

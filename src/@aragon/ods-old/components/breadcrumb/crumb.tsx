@@ -34,5 +34,5 @@ const Crumb: React.FC<CrumbProps> = props => {
 export default Crumb;
 
 const CrumbContainer = styled.button.attrs({
-  className: 'flex items-center space-x-1 xl:space-x-3' as string,
+  className: 'flex items-center space-x-2 xl:space-x-3' as string,
 })``;

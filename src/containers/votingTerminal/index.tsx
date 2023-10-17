@@ -269,7 +269,7 @@ export const VotingTerminal: React.FC<VotingTerminalProps> = ({
       {votingInProcess ? (
         <VotingContainer>
           <Heading2>{t('votingTerminal.chooseOption')}</Heading2>
-          <p className="mt-1 text-neutral-500">
+          <p className="mt-2 text-neutral-500">
             {t('votingTerminal.chooseOptionHelptext')}
           </p>
 

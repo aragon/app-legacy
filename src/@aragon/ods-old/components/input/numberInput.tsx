@@ -152,7 +152,7 @@ const Container = styled.div.attrs<StyledContainerProps>(
       disabled ? 'bg-neutral-100' : 'bg-neutral-0'
     } inline-flex bg-neutral-0 ${
       width ? '' : 'w-full'
-    } focus:outline-none items-center py-0.75 px-1
+    } focus:outline-none items-center py-0.75 px-2
       focus-within:ring-2 focus-within:ring-primary-500 justify-between
       rounded-xl hover:border-neutral-300 border-2 active:border-primary-500
       active:ring-0

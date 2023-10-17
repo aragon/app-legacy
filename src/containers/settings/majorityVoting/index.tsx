@@ -105,7 +105,7 @@ const MajorityVotingSettings: React.FC<IPluginSettings> = ({daoDetails}) => {
         <DescriptionPair>
           <Term>{t('votingTerminal.token')}</Term>
           <Definition>
-            <div className="flex flex-1 flex-wrap items-start justify-between gap-y-1">
+            <div className="flex flex-1 flex-wrap items-start justify-between gap-y-2">
               <Link
                 label={`${daoToken.name} ${daoToken.symbol}`}
                 iconRight={<IconLinkExternal />}

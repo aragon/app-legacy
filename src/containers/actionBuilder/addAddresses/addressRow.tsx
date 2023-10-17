@@ -151,5 +151,5 @@ const Container = styled.div.attrs(() => ({
 }))``;
 
 const InputContainer = styled.div.attrs(() => ({
-  className: 'flex flex-col gap-1 flex-1',
+  className: 'flex flex-col gap-2 flex-1',
 }))``;

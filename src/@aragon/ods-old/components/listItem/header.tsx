@@ -54,7 +54,7 @@ type VariableAlignment = {
 
 const Container = styled.div.attrs<VariableAlignment>(({horizontal}) => ({
   className:
-    'flex flex-wrap gap-1 md:gap-6 justify-between items-center ' +
+    'flex flex-wrap gap-2 md:gap-6 justify-between items-center ' +
     'p-4 md:p-6 bg-neutral-0 rounded-xl border border-neutral-100 ' +
     `${horizontal ? 'md:flex-nowrap :' : ''}`,
 }))<VariableAlignment>``;
@@ -76,7 +76,7 @@ const Break = styled.hr.attrs<VariableAlignment>(({horizontal}) => ({
 
 const ContentWrapper = styled.div.attrs<VariableAlignment>(({horizontal}) => ({
   className: `order-4 min-w-0 ${
-    horizontal ? 'md:flex flex-1 md:order-2 items-baseline gap-x-1' : ''
+    horizontal ? 'md:flex flex-1 md:order-2 items-baseline gap-x-2' : ''
   }`,
 }))<VariableAlignment>``;
 

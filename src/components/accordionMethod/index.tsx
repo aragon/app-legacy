@@ -31,8 +31,8 @@ export const AccordionMethod: React.FC<AccordionMethodType> = ({
   children,
   ...props
 }) => (
-  <Accordion.Root type="single" collapsible defaultValue="item-1">
-    <AccordionItem name="item-1" {...props}>
+  <Accordion.Root type="single" collapsible defaultValue="item-2">
+    <AccordionItem name="item-2" {...props}>
       {children}
     </AccordionItem>
   </Accordion.Root>
@@ -74,7 +74,7 @@ export const AccordionItem: React.FC<AccordionMethodType & {name: string}> = ({
             <MethodName>{methodName}</MethodName>
             {smartContractName && (
               <div
-                className={`flex items-center space-x-1 ${
+                className={`flex items-center space-x-2 ${
                   verified ? 'text-primary-600' : 'text-warning-600'
                 }`}
               >
@@ -178,5 +178,5 @@ const HStack = styled.div.attrs({
 })``;
 
 const VStack = styled.div.attrs({
-  className: 'flex items-start space-x-1',
+  className: 'flex items-start space-x-2',
 })``;

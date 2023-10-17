@@ -117,7 +117,7 @@ const IconLabel = styled.p.attrs({
   className: 'text-neutral-600 ft-text-sm capitalize',
 })``;
 const IconWrapper = styled.div.attrs({
-  className: 'flex flex-row space-x-1',
+  className: 'flex flex-row space-x-2',
 })``;
 
 const DaoDataWrapper = styled.div.attrs({

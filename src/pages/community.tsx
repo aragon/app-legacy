@@ -224,7 +224,7 @@ export const Community: React.FC = () => {
               {!walletBased && enableSearchSort && enableDelegation && (
                 <Dropdown
                   align="end"
-                  className="px-0 py-1"
+                  className="px-0 py-2"
                   style={{minWidth: 'var(--radix-dropdown-menu-trigger-width)'}}
                   sideOffset={8}
                   listItems={[
@@ -326,7 +326,7 @@ export const Community: React.FC = () => {
 };
 
 const BodyContainer = styled.div.attrs({
-  className: 'mt-1 xl:space-y-16',
+  className: 'mt-2 xl:space-y-16',
 })``;
 
 const SearchAndResultWrapper = styled.div.attrs({className: 'space-y-10'})``;

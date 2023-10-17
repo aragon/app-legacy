@@ -164,7 +164,7 @@ const InputForm: React.FC<InputFormProps> = ({
     <div className="min-h-full bg-neutral-50 xl:bg-neutral-0 xl:p-12">
       <div className="items-baseline space-x-6 xl:flex">
         <ActionName>{selectedAction.name}</ActionName>
-        <div className="hidden items-center space-x-1 text-primary-600 xl:flex">
+        <div className="hidden items-center space-x-2 text-primary-600 xl:flex">
           <p className="text-sm font-semibold text-primary-500">
             {selectedSC.name}
           </p>
@@ -172,7 +172,7 @@ const InputForm: React.FC<InputFormProps> = ({
         </div>
       </div>
       <ActionDescription>{selectedAction.notice}</ActionDescription>
-      <div className="mt-1 flex items-center space-x-1 text-primary-600 xl:hidden">
+      <div className="mt-2 flex items-center space-x-2 text-primary-600 xl:hidden">
         <p className="text-sm font-semibold text-primary-500">
           {selectedSC.name}
         </p>
@@ -583,12 +583,12 @@ const ActionName = styled.p.attrs({
 })``;
 
 const ActionDescription = styled.p.attrs({
-  className: 'mt-1 text-sm text-neutral-600',
+  className: 'mt-2 text-sm text-neutral-600',
 })``;
 
 const HStack = styled.div.attrs({
   className:
-    'flex justify-between items-center space-x-6 mt-10 ft-text-base mb-1',
+    'flex justify-between items-center space-x-6 mt-10 ft-text-base mb-2',
 })``;
 
 export default InputForm;

@@ -385,7 +385,7 @@ const ContractAddressValidation: React.FC<Props> = props => {
   const sourcifyValidationStatus = useMemo(() => {
     if (sourcifyLoading && !isTransactionError) {
       return (
-        <div className="flex space-x-1">
+        <div className="flex space-x-2">
           <Spinner size={'xs'} className="text-primary-500" />
           <VerificationStatus colorClassName="text-primary-800">
             {t('scc.validation.sourcifyStatusPending')}
@@ -395,7 +395,7 @@ const ContractAddressValidation: React.FC<Props> = props => {
     } else {
       if (sourcifyFullData) {
         return (
-          <div className="flex space-x-1">
+          <div className="flex space-x-2">
             <IconSuccess className="text-success-500" />
             <VerificationStatus colorClassName="text-success-800">
               {t('scc.validation.sourcifyStatusSuccess')}
@@ -404,7 +404,7 @@ const ContractAddressValidation: React.FC<Props> = props => {
         );
       } else if (sourcifyPartialData) {
         return (
-          <div className="flex space-x-1">
+          <div className="flex space-x-2">
             <IconRadioMulti className="text-warning-500" />
             <VerificationStatus colorClassName="text-warning-800">
               {t('scc.validation.sourcifyStatusWarning')}
@@ -413,7 +413,7 @@ const ContractAddressValidation: React.FC<Props> = props => {
         );
       } else {
         return (
-          <div className="flex space-x-1">
+          <div className="flex space-x-2">
             <IconRadioCancel className="text-critical-500" />
             <VerificationStatus colorClassName="text-critical-800">
               {t('scc.validation.sourcifyStatusCritical')}
@@ -433,7 +433,7 @@ const ContractAddressValidation: React.FC<Props> = props => {
   const etherscanValidationStatus = useMemo(() => {
     if (etherscanLoading && !isTransactionError) {
       return (
-        <div className="flex space-x-1">
+        <div className="flex space-x-2">
           <Spinner size={'xs'} className="text-primary-500" />
           <VerificationStatus colorClassName="text-primary-800">
             {t('scc.validation.etherscanStatusPending')}
@@ -446,7 +446,7 @@ const ContractAddressValidation: React.FC<Props> = props => {
         etherscanData?.result[0].ABI !== 'Contract source code not verified'
       ) {
         return (
-          <div className="flex space-x-1">
+          <div className="flex space-x-2">
             <IconSuccess className="text-success-500" />
             <VerificationStatus colorClassName="text-success-800">
               {t('scc.validation.etherscanStatusSuccess')}
@@ -455,7 +455,7 @@ const ContractAddressValidation: React.FC<Props> = props => {
         );
       } else {
         return (
-          <div className="flex space-x-1">
+          <div className="flex space-x-2">
             <IconRadioCancel className="text-critical-500" />
             <VerificationStatus colorClassName="text-critical-800">
               {t('scc.validation.etherscanStatusCritical')}
@@ -536,7 +536,7 @@ const ContractAddressValidation: React.FC<Props> = props => {
                 adornmentText={adornmentText}
                 onAdornmentClick={() => handleAdornmentClick(value, onChange)}
               />
-              <div className="mt-1">
+              <div className="mt-2">
                 {error?.message && (
                   <AlertInline label={error.message} mode="critical" />
                 )}

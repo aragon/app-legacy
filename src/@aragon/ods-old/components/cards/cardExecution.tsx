@@ -91,7 +91,7 @@ const Card = styled.div.attrs<CardProps>(({wide}) => ({
 }))<CardProps>``;
 
 const Header = styled.div.attrs({
-  className: 'flex flex-col space-y-1',
+  className: 'flex flex-col space-y-2',
 })``;
 
 const Title = styled.h2.attrs({

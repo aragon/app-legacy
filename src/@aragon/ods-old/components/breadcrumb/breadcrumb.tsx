@@ -51,7 +51,7 @@ export const Breadcrumb: React.FC<BreadcrumbProps> = ({
           return (
             <div
               key={index}
-              className="flex items-center space-x-1 xl:space-x-3"
+              className="flex items-center space-x-2 xl:space-x-3"
             >
               <Crumb
                 first={index === 0}
@@ -87,7 +87,7 @@ export const Breadcrumb: React.FC<BreadcrumbProps> = ({
 
 const Container = styled.div.attrs({
   className:
-    'inline-flex items-center py-0.5 xl:px-4 space-x-1 ' +
+    'inline-flex items-center py-0.5 xl:px-4 space-x-2 ' +
     'xl:space-x-3 h-10 xl:h-12 xl:bg-neutral-0 xl:rounded-xl',
 })``;
 

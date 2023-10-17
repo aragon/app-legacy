@@ -51,7 +51,7 @@ type ContainerProps = {
   mode: NonNullable<AlertInlineProps['mode']>;
 };
 const Container = styled.div.attrs<ContainerProps>(({mode}) => ({
-  className: `flex items-center space-x-1 ${styles[mode].color}`,
+  className: `flex items-center space-x-2 ${styles[mode].color}`,
 }))<ContainerProps>``;
 
 const Label = styled.p.attrs({className: 'font-semibold ft-text-sm'})``;

@@ -59,7 +59,7 @@ const Container = styled.div.attrs({
 })``;
 
 const LeftContent = styled.div.attrs({
-  className: 'flex gap-x-1 items-center text-neutral-300 ft-text-base',
+  className: 'flex gap-x-2 items-center text-neutral-300 ft-text-base',
 })``;
 
 const SelectedValue = styled.p.attrs({

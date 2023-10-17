@@ -66,7 +66,7 @@ export const Settings: React.FC = () => {
 
       {/* DAO Settings */}
       <div
-        className={`mt-1 xl:row-start-3 xl:-mt-1 ${
+        className={`mt-2 xl:row-start-3 xl:-mt-2 ${
           daoUpdateEnabled ? styles.leftCol : styles.center
         }`}
       >
@@ -94,7 +94,7 @@ export const Settings: React.FC = () => {
           daoUpdateEnabled ? styles.fullWidth : styles.center
         }`}
       >
-        <div className="mt-1 space-y-4 xl:-mt-1">
+        <div className="mt-2 space-y-4 xl:-mt-2">
           <ButtonText
             label={t('settings.edit')}
             className="w-full md:w-max"
@@ -176,7 +176,7 @@ const SettingsCardDao: React.FC<{daoDetails: DaoDetails}> = ({daoDetails}) => {
       <DescriptionPair>
         <Term>{t('labels.review.blockchain')}</Term>
         <Definition>
-          <div className="flex flex-1 flex-wrap justify-between gap-y-1">
+          <div className="flex flex-1 flex-wrap justify-between gap-y-2">
             <p className="shrink-0 ft-text-base xl:font-semibold">
               {chainLabel}
             </p>
@@ -190,7 +190,7 @@ const SettingsCardDao: React.FC<{daoDetails: DaoDetails}> = ({daoDetails}) => {
           {isL2Network ? t('settings.dao.contractAddress') : t('labels.ens')}
         </Term>
         <Definition>
-          <div className="flex flex-1 flex-wrap items-start justify-between gap-y-1">
+          <div className="flex flex-1 flex-wrap items-start justify-between gap-y-2">
             <Link
               {...(isL2Network
                 ? {label: shortenAddress(daoDetails.address)}
@@ -210,7 +210,7 @@ const SettingsCardDao: React.FC<{daoDetails: DaoDetails}> = ({daoDetails}) => {
 
       <DescriptionPair className={resourceLinksIncluded ? '' : 'border-none'}>
         <Term>{t('labels.summary')}</Term>
-        <Definition className="flex flex-col gap-y-1">
+        <Definition className="flex flex-col gap-y-2">
           <Summary ref={summaryRef} {...{fullDescription: showAll}}>
             {daoDetails.metadata.description}
           </Summary>

@@ -104,7 +104,7 @@ const Wrapper = styled.div.attrs<ContainerProps>(({isShown}) => ({
 
 const BadgeContainer = styled.div.attrs(() => ({
   className:
-    'flex items-center bg-neutral-900 rounded-full px-6 py-4 space-x-1 cursor-default',
+    'flex items-center bg-neutral-900 rounded-full px-6 py-4 space-x-2 cursor-default',
 }))``;
 
 const Label = styled.span.attrs({

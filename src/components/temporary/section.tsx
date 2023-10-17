@@ -10,7 +10,7 @@ export const TemporarySection: React.FC<TemporarySectionProps> = ({
   purpose = '',
 }) => {
   return (
-    <div className="m-10 space-y-1 bg-primary-100 p-4">
+    <div className="m-10 space-y-2 bg-primary-100 p-4">
       <p>
         This is a temporarily added section for demonstration purposes.{' '}
         {purpose}

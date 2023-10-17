@@ -253,7 +253,7 @@ export const Finance: React.FC = () => {
             </HeaderContainer>
           }
         >
-          <div className="mt-1">
+          <div className="mt-2">
             <TransferSectionWrapper
               title={t('finance.transferSection')}
               showButton
@@ -327,7 +327,7 @@ export const Finance: React.FC = () => {
       }
     >
       {tokens.length !== 0 && (
-        <div className={'mb-6 mt-1 md:mb-16 md:mt-10'}>
+        <div className={'mb-6 mt-2 md:mb-16 md:mt-10'}>
           <TokenSectionWrapper title={t('finance.tokenSection')}>
             <ListContainer>
               <TokenList tokens={tokens.slice(0, 5)} />
@@ -356,7 +356,7 @@ const HeaderContainer = styled.div.attrs({
 })``;
 
 const SubtitleContainer = styled.div.attrs({
-  className: 'flex gap-x-3 items-center mt-1',
+  className: 'flex gap-x-3 items-center mt-2',
 })``;
 
 const Header = styled.div.attrs({
@@ -371,7 +371,7 @@ const ContentContainer = styled.div.attrs({
 })``;
 
 const TextContainer = styled.div.attrs({
-  className: 'md:flex-1 space-y-1 capitalize',
+  className: 'md:flex-1 space-y-2 capitalize',
 })``;
 
 const Title = styled.h1.attrs({

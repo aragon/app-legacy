@@ -44,7 +44,7 @@ export const ButtonIcon = React.forwardRef<HTMLButtonElement, ButtonIconProps>(
 ButtonIcon.displayName = 'ButtonIcon';
 
 const paddingStyles = {
-  small: 'w-8 p-1',
+  small: 'w-8 p-2',
   medium: 'w-10 p-3',
   large: 'w-12 p-4',
 };

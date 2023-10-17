@@ -88,5 +88,5 @@ export const AddAddressCard: React.FC<{
 };
 
 const Container = styled.div.attrs({
-  className: 'bg-neutral-50 border border-t-0 border-neutral-100 space-y-1 p-4',
+  className: 'bg-neutral-50 border border-t-0 border-neutral-100 space-y-2 p-4',
 })``;

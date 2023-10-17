@@ -63,7 +63,7 @@ const StepCard = styled.div.attrs({
 })``;
 
 const Wrapper = styled.div.attrs({
-  className: 'space-y-1',
+  className: 'space-y-2',
 })``;
 
 const StepTitle = styled.p.attrs({

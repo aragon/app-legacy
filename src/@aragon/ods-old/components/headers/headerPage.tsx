@@ -62,7 +62,7 @@ const Card = styled.div.attrs({
 })``;
 
 const TextContent = styled.div.attrs({
-  className: 'md:flex-1 space-y-1 xl:space-y-4',
+  className: 'md:flex-1 space-y-2 xl:space-y-4',
 })``;
 
 const Title = styled.h2.attrs({

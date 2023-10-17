@@ -36,7 +36,7 @@ export default Breadcrumbs;
 
 const Container = styled.div.attrs({
   className:
-    'flex flex-row items-center h-12 py-1 px-4 space-x-3 text-neutral-600 bg-neutral-0 rounded-xl font-semibold',
+    'flex flex-row items-center h-12 py-2 px-4 space-x-3 text-neutral-600 bg-neutral-0 rounded-xl font-semibold',
 })``;
 
 const Breadcrumb = styled.div.attrs({

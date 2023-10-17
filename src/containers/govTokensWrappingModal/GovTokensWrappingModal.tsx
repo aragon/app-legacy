@@ -312,7 +312,7 @@ const GovTokensWrappingModal: FC<GovTokensWrappingModalProps> = ({
                         }}
                       />
                       <div className="flex items-start justify-between">
-                        <div className="space-y-1">
+                        <div className="space-y-2">
                           {error?.message && (
                             <AlertInline
                               label={error.message}
@@ -482,7 +482,7 @@ const ModeActionSelection = styled.div.attrs({
 })``;
 
 const TokenBalance = styled.p.attrs({
-  className: 'flex-1 px-1 text-xs text-right text-neutral-600',
+  className: 'flex-1 px-2 text-xs text-right text-neutral-600',
 })``;
 
 const TokenAmountInput = styled(ValueInput)`
@@ -495,7 +495,7 @@ const TokenAmountInput = styled(ValueInput)`
 `;
 
 const ProgressContainer = styled.div.attrs({
-  className: 'flex flex-col gap-1',
+  className: 'flex flex-col gap-2',
 })``;
 
 const ProgressHeader = styled.div.attrs({

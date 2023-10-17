@@ -236,7 +236,7 @@ export const HeaderDao: React.FC<HeaderDaoProps> = ({
                 className="max-w-xs"
                 listItems={links?.map(({label, href}, index: number) => ({
                   component: (
-                    <div className="mb-3 p-1">
+                    <div className="mb-3 p-2">
                       <ListItemLink {...{label, href}} key={index} external />
                     </div>
                   ),
@@ -304,7 +304,7 @@ const NetworkDetailsContainer = styled.div.attrs({
 })``;
 
 const NetworkDetails = styled.div.attrs({
-  className: 'flex space-x-1 items-center justify-center',
+  className: 'flex space-x-2 items-center justify-center',
 })``;
 
 const DetailsText = styled.span.attrs({

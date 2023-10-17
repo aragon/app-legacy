@@ -43,7 +43,7 @@ const AccordionSummary: React.FC<AccordionSummaryPropsType> = ({
           <BoldedText>{total}</BoldedText>
         </div>
       ) : (
-        <div className="space-y-1">
+        <div className="space-y-2">
           <div className="flex justify-between">
             {IsRemove ? (
               <>

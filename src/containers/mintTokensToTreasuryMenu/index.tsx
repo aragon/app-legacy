@@ -207,6 +207,6 @@ const ActionContainer = styled.div.attrs({
   className: 'flex flex-col w-full space-y-3',
 })``;
 
-const InputContainer = styled.div.attrs({className: 'flex-1 space-y-1'})``;
+const InputContainer = styled.div.attrs({className: 'flex-1 space-y-2'})``;
 
 export default MintTokensToTreasuryMenu;

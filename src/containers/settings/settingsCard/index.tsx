@@ -15,7 +15,7 @@ export const SettingsCard: React.FC<{title: string; children: ReactNode}> = ({
 
 const Container = styled.div.attrs({
   className:
-    'py-5 px-4 space-y-1 xl:space-y-4 bg-neutral-0 rounded-xl border border-neutral-100',
+    'py-5 px-4 space-y-2 xl:space-y-4 bg-neutral-0 rounded-xl border border-neutral-100',
 })``;
 
 export const Title = styled.p.attrs({

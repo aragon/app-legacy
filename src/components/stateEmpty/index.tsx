@@ -139,7 +139,7 @@ const Card = styled.div.attrs<
     className += 'border bg-neutral-0 ';
     className += `${customCardPaddingClassName || 'p-6 md:p-12'} `;
 
-    if (type === 'Object') className += 'gap-y-1 ';
+    if (type === 'Object') className += 'gap-y-2 ';
   } else {
     className += 'bg-neutral-transparent ';
   }

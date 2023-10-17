@@ -20,7 +20,7 @@ export const SettingsUpdateCard: React.FC = () => {
     return (
       <Container className="xl:gap-x-6 xl:p-6">
         <div className="flex items-start gap-x-12">
-          <div className="flex-1 space-y-1">
+          <div className="flex-1 space-y-2">
             <Head>
               <IconUpdate />
               <Title>{t('update.alert.title')}</Title>
@@ -77,7 +77,7 @@ export const SettingsUpdateCard: React.FC = () => {
 };
 
 const Container = styled.div.attrs({
-  className: 'gap-x-4 p-4 space-y-1 bg-primary-400 rounded-xl' as string,
+  className: 'gap-x-4 p-4 space-y-2 bg-primary-400 rounded-xl' as string,
 })``;
 
 const Head = styled.div.attrs({

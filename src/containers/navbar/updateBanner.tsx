@@ -68,16 +68,16 @@ const DummyElement = styled.div.attrs({
 
 const UpdateContainer = styled.div.attrs({
   className:
-    'flex justify-between items-center py-1 px-6 bg-primary-400' as string,
+    'flex justify-between items-center py-2 px-6 bg-primary-400' as string,
 })``;
 
 const TextWrapper = styled.div.attrs({
-  className: 'flex items-center gap-x-1' as string,
+  className: 'flex items-center gap-x-2' as string,
 })``;
 
 const MessageWrapper = styled.div.attrs({
   className:
-    'block md:flex md:items-center md:space-x-6 md:space-y-0 space-y-1' as string,
+    'block md:flex md:items-center md:space-x-6 md:space-y-0 space-y-2' as string,
 })``;
 
 export default UpdateBanner;

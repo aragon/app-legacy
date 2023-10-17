@@ -146,5 +146,5 @@ const Description = styled.div.attrs({
 
 export const Row = styled.div.attrs({
   className:
-    'py-1 md:py-4 xl:space-x-4 border-t border-neutral-100 ft-text-base flex items-center justify-between',
+    'py-2 md:py-4 xl:space-x-4 border-t border-neutral-100 ft-text-base flex items-center justify-between',
 })``;

@@ -334,7 +334,7 @@ const Container = styled.div.attrs({
 })``;
 
 const SubContainerWrapper = styled.div.attrs({
-  className: 'px-1',
+  className: 'px-2',
 })``;
 
 const SubContainer = styled.div.attrs({
@@ -350,7 +350,7 @@ const Divider = styled.div.attrs({
 })``;
 
 const StatItem = styled.div.attrs({
-  className: 'space-y-1 md:space-y-0 md:space-x-1 md:flex md:justify-between',
+  className: 'space-y-2 md:space-y-0 md:space-x-2 md:flex md:justify-between',
 })``;
 
 const StatItemValue = styled.div.attrs({
@@ -368,5 +368,5 @@ const LinearProgressContainer = styled.div.attrs({
 
 const ProgressInfo2 = styled.div.attrs({
   className:
-    'flex absolute -top-5 xl:-top-1 justify-between space-x-0.5 w-full text-sm',
+    'flex absolute -top-5 xl:-top-2 justify-between space-x-0.5 w-full text-sm',
 })``;

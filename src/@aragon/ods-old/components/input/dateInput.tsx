@@ -21,7 +21,7 @@ type InputContainerProps = Pick<DateInputProps, 'disabled'>;
 
 const InputContainer = styled.div.attrs<InputContainerProps>(({disabled}) => {
   const baseClasses =
-    'flex relative items-center p-1 rounded-xl border-2 font-normal cursor-pointer';
+    'flex relative items-center p-2 rounded-xl border-2 font-normal cursor-pointer';
   let className = `${baseClasses}`;
 
   if (disabled) {

@@ -57,7 +57,7 @@ export const ListItemVoter: FC<ListItemVoterProps> = ({
         <LeftContent>
           <p className="flex font-semibold text-neutral-800 ft-text-base">
             {shortenAddress(label)}
-            {walletTag && <Tag {...walletTag} className="mx-1" />}
+            {walletTag && <Tag {...walletTag} className="mx-2" />}
           </p>
           <p className="flex font-semibold text-neutral-600 ft-text-sm">
             {tokenInfo?.amount} {tokenInfo?.symbol}

@@ -10,7 +10,7 @@ export const LinearProgress: React.FC<
 };
 
 const Progress = styled.progress.attrs({
-  className: 'h-1 w-full',
+  className: 'h-2 w-full',
 })<React.ProgressHTMLAttributes<HTMLProgressElement>>`
   &::-webkit-progress-bar {
     background-color: #e4e7eb;

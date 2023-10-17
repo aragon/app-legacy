@@ -475,7 +475,7 @@ const LinearProgressContainer = styled.div.attrs({
 
 const ProgressBarTick = styled.div.attrs({
   className:
-    'absolute left-1/2 w-1 h-5 border-r-2 border-l-2 -translate-x-1/2 bg-neutral-300 border-neutral-0',
+    'absolute left-1/2 w-2 h-5 border-r-2 border-l-2 -translate-x-1/2 bg-neutral-300 border-neutral-0',
 })``;
 
 const ProgressInfo1 = styled.div.attrs({
