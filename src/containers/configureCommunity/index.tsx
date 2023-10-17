@@ -475,10 +475,10 @@ const LinearProgressContainer = styled.div.attrs({
 
 const ProgressBarTick = styled.div.attrs({
   className:
-    'absolute left-1/2 w-1 h-2.5 border-r-2 border-l-2 -translate-x-1/2 bg-neutral-300 border-neutral-0',
+    'absolute left-1/2 w-1 h-5 border-r-2 border-l-2 -translate-x-1/2 bg-neutral-300 border-neutral-0',
 })``;
 
 const ProgressInfo1 = styled.div.attrs({
   className:
-    'flex absolute -top-2.5 justify-between space-x-0.5 w-full text-sm',
+    'flex absolute -top-5 justify-between space-x-0.5 w-full text-sm',
 })``;

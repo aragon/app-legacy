@@ -55,7 +55,7 @@ export default SearchHeader;
 
 const Container = styled.div.attrs({
   className:
-    'flex sticky top-0 justify-between items-center py-2.5 px-6 bg-neutral-0 border-b border-neutral-100',
+    'flex sticky top-0 justify-between items-center py-5 px-6 bg-neutral-0 border-b border-neutral-100',
 })``;
 
 const LeftContent = styled.div.attrs({

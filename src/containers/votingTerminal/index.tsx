@@ -362,7 +362,7 @@ const StatusIcon: React.FC<StatusProp> = ({status}) => {
 
 const Container = styled.div.attrs({
   className:
-    'md:p-6 py-2.5 px-2 rounded-xl bg-neutral-0 border border-neutral-100',
+    'md:p-6 py-5 px-2 rounded-xl bg-neutral-0 border border-neutral-100',
 })``;
 
 const Header = styled.div.attrs({

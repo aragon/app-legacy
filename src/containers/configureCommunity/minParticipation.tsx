@@ -368,5 +368,5 @@ const LinearProgressContainer = styled.div.attrs({
 
 const ProgressInfo2 = styled.div.attrs({
   className:
-    'flex absolute -top-2.5 xl:-top-1 justify-between space-x-0.5 w-full text-sm',
+    'flex absolute -top-5 xl:-top-1 justify-between space-x-0.5 w-full text-sm',
 })``;
