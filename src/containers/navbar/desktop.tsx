@@ -149,7 +149,7 @@ const DesktopNav: React.FC<DesktopNavProp> = props => {
 export default DesktopNav;
 
 const Menu = styled.nav.attrs({
-  className: `flex mx-auto justify-between items-center max-w-screen-wide
+  className: `flex mx-auto justify-between items-center max-w-[1680px]
      px-10 2xl:px-20 py-6`,
 })`
   background: linear-gradient(
