@@ -72,7 +72,7 @@ const SCCAction: React.FC<ActionIndex & {allowRemove?: boolean}> = ({
                   <div key={input.name}>
                     <div className="text-base font-semibold capitalize leading-normal text-neutral-800">
                       {input.name}
-                      <span className="ml-1 text-sm leading-normal normal-case">
+                      <span className="ml-1 text-sm normal-case leading-normal">
                         ({input.type})
                       </span>
                     </div>

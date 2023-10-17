@@ -165,7 +165,7 @@ const InputForm: React.FC<InputFormProps> = ({
       <div className="items-baseline space-x-6 xl:flex">
         <ActionName>{selectedAction.name}</ActionName>
         <div className="hidden items-center space-x-2 text-primary-600 xl:flex">
-          <p className="text-sm leading-normal font-semibold text-primary-500">
+          <p className="text-sm font-semibold leading-normal text-primary-500">
             {selectedSC.name}
           </p>
           <IconSuccess />
@@ -173,7 +173,7 @@ const InputForm: React.FC<InputFormProps> = ({
       </div>
       <ActionDescription>{selectedAction.notice}</ActionDescription>
       <div className="mt-2 flex items-center space-x-2 text-primary-600 xl:hidden">
-        <p className="text-sm leading-normal font-semibold text-primary-500">
+        <p className="text-sm font-semibold leading-normal text-primary-500">
           {selectedSC.name}
         </p>
         <IconSuccess />
@@ -184,7 +184,9 @@ const InputForm: React.FC<InputFormProps> = ({
             <div key={input.name}>
               <div className="text-base font-semibold capitalize leading-normal text-neutral-800">
                 {input.name}
-                <span className="ml-1 text-sm leading-normal normal-case">({input.type})</span>
+                <span className="ml-1 text-sm normal-case leading-normal">
+                  ({input.type})
+                </span>
               </div>
               <div className="mb-3 mt-1">
                 <span className="text-neutral-600 ft-text-sm">
@@ -390,7 +392,7 @@ export const ComponentForType: React.FC<ComponentForTypeProps> = ({
               <div key={component.name} className="ml-6 mt-4">
                 <div className="text-base font-semibold capitalize leading-normal text-neutral-800">
                   {component.name}
-                  <span className="ml-1 text-sm leading-normal normal-case">
+                  <span className="ml-1 text-sm normal-case leading-normal">
                     ({component.type})
                   </span>
                 </div>
