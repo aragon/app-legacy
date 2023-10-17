@@ -105,7 +105,7 @@ const CommunityAddressesModal: React.FC<CommunityAddressesModalProps> = ({
 export default CommunityAddressesModal;
 
 const ModalHeader = styled.div.attrs({
-  className: 'p-3 bg-neutral-0 rounded-xl sticky top-0',
+  className: 'p-6 bg-neutral-0 rounded-xl sticky top-0',
 })`
   box-shadow:
     0px 4px 8px rgba(31, 41, 51, 0.04),
@@ -115,5 +115,5 @@ const ModalHeader = styled.div.attrs({
 `;
 
 const Container = styled.div.attrs({
-  className: 'p-3 max-h-96 overflow-auto',
+  className: 'p-6 max-h-96 overflow-auto',
 })``;

@@ -43,14 +43,14 @@ export default CTACard;
 
 const CTACardWrapper = styled.div.attrs({
   className:
-    'flex flex-col xl:items-start items-center p-3 space-y-3 rounded-xl relative xl:m-0 mb-3 mx-1' as string,
+    'flex flex-col xl:items-start items-center p-6 space-y-6 rounded-xl relative xl:m-0 mb-6 mx-1' as string,
 })`
   background: rgba(255, 255, 255, 0.68);
   backdrop-filter: blur(50px);
 `;
 
 const Content = styled.div.attrs({
-  className: 'flex xl:items-start items-center flex-col xl:m-0 mb-3',
+  className: 'flex xl:items-start items-center flex-col xl:m-0 mb-6',
 })``;
 
 const Title = styled.p.attrs({

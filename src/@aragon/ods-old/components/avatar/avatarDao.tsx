@@ -56,7 +56,7 @@ type AvatarPropsType = {
 };
 
 const sizes = {
-  small: 'w-3 h-3 ft-text-xs',
+  small: 'w-6 h-6 ft-text-xs',
   medium: 'w-12 h-12 ft-text-base',
   big: 'w-20 h-20 ft-text-lg',
   hero: 'w-28 h-28 ft-text-xl',

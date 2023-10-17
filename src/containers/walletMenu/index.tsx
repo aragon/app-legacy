@@ -122,7 +122,7 @@ export const WalletMenu = () => {
 };
 
 const ModalHeader = styled.div.attrs({
-  className: 'flex p-3 bg-neutral-0 rounded-xl gap-2 sticky top-0',
+  className: 'flex p-6 bg-neutral-0 rounded-xl gap-2 sticky top-0',
 })`
   box-shadow:
     0px 4px 8px rgba(31, 41, 51, 0.04),
@@ -142,7 +142,7 @@ const AddressContainer = styled.div.attrs({
   className: 'flex flex-col',
 })``;
 const ModalBody = styled.div.attrs({
-  className: 'flex flex-col p-3 gap-1.5',
+  className: 'flex flex-col p-6 gap-1.5',
 })``;
 
 const StyledButtonText = styled(ButtonText)`

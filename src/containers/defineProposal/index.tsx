@@ -278,7 +278,7 @@ const FormItem = styled.div.attrs({
 })``;
 
 const UpdateGroupWrapper = styled.div.attrs({
-  className: 'flex md:flex-row flex-col gap-y-1.5 gap-x-3',
+  className: 'flex md:flex-row flex-col gap-y-1.5 gap-x-6',
 })``;
 
 const UpdateContainer = styled.div.attrs({

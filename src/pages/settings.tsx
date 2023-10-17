@@ -70,7 +70,7 @@ export const Settings: React.FC = () => {
           daoUpdateEnabled ? styles.leftCol : styles.center
         }`}
       >
-        <div className="flex flex-col gap-y-3">
+        <div className="flex flex-col gap-y-6">
           {/* DAO SECTION */}
           <SettingsCardDao daoDetails={daoDetails} />
 

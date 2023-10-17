@@ -28,7 +28,7 @@ const StyledSpinner = styled.div.attrs<SpinnerProps>(({size}) => {
   // TODO clean up sizes.
   const sizes: SizesType = {
     xs: 'w-2 h-2',
-    small: 'w-3 h-3',
+    small: 'w-6 h-6',
     default: 'w-10 h-10',
     big: 'w-12 h-12',
   };

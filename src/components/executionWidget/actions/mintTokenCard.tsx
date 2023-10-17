@@ -97,7 +97,7 @@ export const MintTokenCard: React.FC<{
       additionalInfo={t('newProposal.mintTokens.additionalInfo')}
     >
       <Container>
-        <div className="space-y-2 bg-neutral-50 p-2 md:p-3">
+        <div className="space-y-2 bg-neutral-50 p-2 md:p-6">
           {action.inputs.mintTokensToWallets.map(
             ({web3Address, amount}, index) => {
               const label =
@@ -174,7 +174,7 @@ const Container = styled.div.attrs({
 })``;
 
 const SummaryContainer = styled.div.attrs({
-  className: 'p-2 md:p-3 space-y-1.5 font-semibold text-neutral-800',
+  className: 'p-2 md:p-6 space-y-1.5 font-semibold text-neutral-800',
 })``;
 
 const HStack = styled.div.attrs({

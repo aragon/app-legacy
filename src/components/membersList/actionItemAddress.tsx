@@ -247,5 +247,5 @@ export const ActionItemAddress: React.FC<ActionItemAddressProps> = props => {
 };
 
 const TableCell = styled.td.attrs({
-  className: 'items-center py-2 px-3 h-full' as string,
+  className: 'items-center py-2 px-6 h-full' as string,
 })``;

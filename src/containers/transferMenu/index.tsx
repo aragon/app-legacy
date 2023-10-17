@@ -60,5 +60,5 @@ const TransferMenu: React.FC = () => {
 export default TransferMenu;
 
 const Container = styled.div.attrs({
-  className: 'space-y-1.5 p-3',
+  className: 'space-y-1.5 p-6',
 })``;

@@ -203,7 +203,7 @@ const GovTokensWrappingModal: FC<GovTokensWrappingModalProps> = ({
         </Container>
       ) : isFinished ? (
         <StateEmpty
-          customCardPaddingClassName="p-3"
+          customCardPaddingClassName="p-6"
           type="Human"
           mode="card"
           body="elevating"
@@ -458,7 +458,7 @@ const GovTokensWrappingModal: FC<GovTokensWrappingModalProps> = ({
 };
 
 const Container = styled.div.attrs({
-  className: 'p-3',
+  className: 'p-6',
 })``;
 
 const BodyWrapper = styled.div.attrs({
@@ -466,7 +466,7 @@ const BodyWrapper = styled.div.attrs({
 })``;
 
 const LoadingContainer = styled.div.attrs({
-  className: 'flex flex-col col-span-full gap-3 items-center py-12 w-full',
+  className: 'flex flex-col col-span-full gap-6 items-center py-12 w-full',
 })``;
 
 const LoadingLabel = styled.span.attrs({
@@ -478,7 +478,7 @@ const FormItem = styled.div.attrs({
 })``;
 
 const ModeActionSelection = styled.div.attrs({
-  className: 'flex gap-3 items-center',
+  className: 'flex gap-6 items-center',
 })``;
 
 const TokenBalance = styled.p.attrs({

@@ -178,7 +178,7 @@ const AddAddresses: React.FC<AddAddressesProps> = ({
     >
       <FormItem
         className={`hidden xl:block ${
-          useCustomHeader ? 'rounded-t-xl border-t pb-1.5 pt-3' : 'py-1.5'
+          useCustomHeader ? 'rounded-t-xl border-t pb-1.5 pt-6' : 'py-1.5'
         }`}
       >
         <Label label={t('labels.whitelistWallets.address')} />
@@ -275,7 +275,7 @@ const CustomHeader: React.FC = () => {
 };
 
 export const FormItem = styled.div.attrs({
-  className: 'px-3 py-1.5 bg-neutral-0 border border-neutral-100 border-t-0' as
+  className: 'px-6 py-1.5 bg-neutral-0 border border-neutral-100 border-t-0' as
     | string
     | undefined,
 })``;

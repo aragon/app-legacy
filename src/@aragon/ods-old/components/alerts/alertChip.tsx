@@ -94,7 +94,7 @@ const WrapperAnimationCSS = css<ContainerProps>`
 `;
 
 const Wrapper = styled.div.attrs<ContainerProps>(({isShown}) => ({
-  className: `fixed w-full flex items-center justify-center top-3 ${
+  className: `fixed w-full flex items-center justify-center top-6 ${
     isShown ? 'opacity-100 fixed' : 'opacity-0 none'
   }`,
 }))`
@@ -104,7 +104,7 @@ const Wrapper = styled.div.attrs<ContainerProps>(({isShown}) => ({
 
 const BadgeContainer = styled.div.attrs(() => ({
   className:
-    'flex items-center bg-neutral-900 rounded-full px-3 py-2 space-x-1 cursor-default',
+    'flex items-center bg-neutral-900 rounded-full px-6 py-2 space-x-1 cursor-default',
 }))``;
 
 const Label = styled.span.attrs({

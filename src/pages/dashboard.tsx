@@ -334,7 +334,7 @@ export const Dashboard: React.FC = () => {
 
 const HeaderWrapper = styled.div.attrs({
   className:
-    'w-screen -mx-2 md:col-span-full md:w-full md:mx-0 xl:col-start-2 xl:col-span-10 md:mt-3',
+    'w-screen -mx-2 md:col-span-full md:w-full md:mx-0 xl:col-start-2 xl:col-span-10 md:mt-6',
 })``;
 
 /* DESKTOP DASHBOARD ======================================================== */
@@ -444,11 +444,11 @@ const LeftWideContent = styled.div.attrs({
 })``;
 
 const RightNarrowContent = styled.div.attrs({
-  className: 'xl:col-start-8 xl:col-span-4 xl:space-y-3',
+  className: 'xl:col-start-8 xl:col-span-4 xl:space-y-6',
 })``;
 
 const EqualDivide = styled.div.attrs({
-  className: 'xl:col-start-2 xl:col-span-10 xl:flex xl:space-x-3',
+  className: 'xl:col-start-2 xl:col-span-10 xl:flex xl:space-x-6',
 })``;
 
 const MembersWrapper = styled.div.attrs({

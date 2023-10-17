@@ -84,7 +84,7 @@ export default function BottomSheet({
 
 const StyledMotionContainer = styled(motion.div).attrs({
   className:
-    'bg-neutral-50 block left-0 fixed bottom-0 md:bottom-3 w-full md:w-max md:max-w-full rounded-t-xl md:rounded-xl md:left-0 md:right-0 md:mx-auto z-30',
+    'bg-neutral-50 block left-0 fixed bottom-0 md:bottom-6 w-full md:w-max md:max-w-full rounded-t-xl md:rounded-xl md:left-0 md:right-0 md:mx-auto z-30',
 })`
   &:before {
     content: '';
@@ -102,7 +102,7 @@ const StyledMotionContainer = styled(motion.div).attrs({
 `;
 
 const ModalTitleContainer = styled.div.attrs({
-  className: 'bg-neutral-0 rounded-xl p-3 space-y-0.5 text-center',
+  className: 'bg-neutral-0 rounded-xl p-6 space-y-0.5 text-center',
 })`
   box-shadow:
     0px 10px 20px rgba(31, 41, 51, 0.04),

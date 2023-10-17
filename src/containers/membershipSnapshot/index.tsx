@@ -79,7 +79,7 @@ export const MembershipSnapshot: React.FC<Props> = ({
 
   if (horizontal && isDesktop) {
     return (
-      <div className="flex space-x-3">
+      <div className="flex space-x-6">
         <div className="w-1/3">
           <ListItemHeader
             icon={<IconCommunity />}

@@ -703,7 +703,7 @@ export const Proposal: React.FC = () => {
             <>
               <StyledEditorContent editor={editor} />
               <ButtonText
-                className="mt-3 w-full md:w-max"
+                className="mt-6 w-full md:w-max"
                 label={t('governance.proposals.buttons.closeFullProposal')}
                 mode="secondary"
                 iconRight={<IconChevronUp />}
@@ -768,7 +768,7 @@ const Container = styled.div.attrs({
 })``;
 
 const HeaderContainer = styled.div.attrs({
-  className: 'flex flex-col gap-y-2 xl:p-0 md:px-3 pt-2',
+  className: 'flex flex-col gap-y-2 xl:p-0 md:px-6 pt-2',
 })``;
 
 const ProposalTitle = styled.p.attrs({
@@ -776,7 +776,7 @@ const ProposalTitle = styled.p.attrs({
 })``;
 
 const ContentWrapper = styled.div.attrs({
-  className: 'flex flex-col md:flex-row gap-x-3 gap-y-1.5',
+  className: 'flex flex-col md:flex-row gap-x-6 gap-y-1.5',
 })``;
 
 // const BadgeContainer = styled.div.attrs({
@@ -792,11 +792,11 @@ const SummaryText = styled.p.attrs({
 })``;
 
 const ProposalContainer = styled.div.attrs({
-  className: 'space-y-3 md:w-3/5',
+  className: 'space-y-6 md:w-3/5',
 })``;
 
 const AdditionalInfoContainer = styled.div.attrs({
-  className: 'space-y-3 md:w-2/5',
+  className: 'space-y-6 md:w-2/5',
 })``;
 
 type ContentContainerProps = {
@@ -807,6 +807,6 @@ const ContentContainer = styled.div.attrs<ContentContainerProps>(
   ({expandedProposal}) => ({
     className: `${
       expandedProposal ? 'md:mt-10' : 'md:mt-16'
-    } mt-3 md:flex md:space-x-3 space-y-3 md:space-y-0`,
+    } mt-6 md:flex md:space-x-6 space-y-6 md:space-y-0`,
   })
 )<ContentContainerProps>``;

@@ -327,7 +327,7 @@ export const Finance: React.FC = () => {
       }
     >
       {tokens.length !== 0 && (
-        <div className={'mb-3 mt-1 md:mb-16 md:mt-10'}>
+        <div className={'mb-6 mt-1 md:mb-16 md:mt-10'}>
           <TokenSectionWrapper title={t('finance.tokenSection')}>
             <ListContainer>
               <TokenList tokens={tokens.slice(0, 5)} />
@@ -352,7 +352,7 @@ const ListContainer = styled.div.attrs({
 })``;
 
 const HeaderContainer = styled.div.attrs({
-  className: 'col-span-full xl:col-start-3 xl:col-end-11 -mx-2 md:mx-0 md:mt-3',
+  className: 'col-span-full xl:col-start-3 xl:col-end-11 -mx-2 md:mx-0 md:mt-6',
 })``;
 
 const SubtitleContainer = styled.div.attrs({
@@ -360,7 +360,7 @@ const SubtitleContainer = styled.div.attrs({
 })``;
 
 const Header = styled.div.attrs({
-  className: `p-2 xl:p-0 pb-3 xl:mt-10 space-y-2 md:space-y-3
+  className: `p-2 xl:p-0 pb-6 xl:mt-10 space-y-2 md:space-y-6
    bg-neutral-0 xl:bg-transparent md:rounded-xl md:border
    md:border-neutral-100 xl:border-none md:shadow-100 xl:shadow-none`,
 })``;

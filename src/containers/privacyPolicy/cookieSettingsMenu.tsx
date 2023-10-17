@@ -98,7 +98,7 @@ const ModalHeader = styled.div.attrs({
 `;
 
 const BottomSheetContentContainer = styled.div.attrs({
-  className: 'py-3 px-2 space-y-3',
+  className: 'py-6 px-2 space-y-6',
 })``;
 
 type Props = {
@@ -109,7 +109,7 @@ type Props = {
 const Modal = styled.div.attrs<{show: Props}>(({show}) => ({
   className: `${show ? 'block' : 'hidden'} fixed z-20 bg-neutral-50
   bottom-0 w-full rounded-t-xl
-  md:bottom-3 md:left-1/2 md:w-[448px] md:rounded-b-xl
+  md:bottom-6 md:left-1/2 md:w-[448px] md:rounded-b-xl
   md:-translate-x-1/2
   xl:bottom-auto xl:top-1/2 xl:-translate-y-1/2`,
 }))<Props>`

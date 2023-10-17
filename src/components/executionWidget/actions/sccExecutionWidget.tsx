@@ -44,5 +44,5 @@ export const SCCExecutionCard: React.FC<{
 
 const Container = styled.div.attrs({
   className:
-    'bg-neutral-50 rounded-b-xl border border-t-0 border-neutral-100 space-y-3 p-3',
+    'bg-neutral-50 rounded-b-xl border border-t-0 border-neutral-100 space-y-6 p-6',
 })``;

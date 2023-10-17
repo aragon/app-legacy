@@ -65,7 +65,7 @@ const UtcMenu: React.FC<UtcMenuProps> = ({onTimezoneSelect}) => {
 
 export default UtcMenu;
 
-const ModalBody = styled.div.attrs({className: 'space-y-1 p-3'})``;
+const ModalBody = styled.div.attrs({className: 'space-y-1 p-6'})``;
 
 const Container = styled.div.attrs({
   className: 'space-y-1 overflow-y-auto',

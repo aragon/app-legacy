@@ -162,7 +162,7 @@ const InputForm: React.FC<InputFormProps> = ({
 
   return (
     <div className="min-h-full bg-neutral-50 xl:bg-neutral-0 xl:p-12">
-      <div className="items-baseline space-x-3 xl:flex">
+      <div className="items-baseline space-x-6 xl:flex">
         <ActionName>{selectedAction.name}</ActionName>
         <div className="hidden items-center space-x-1 text-primary-600 xl:flex">
           <p className="text-sm font-semibold text-primary-500">
@@ -179,7 +179,7 @@ const InputForm: React.FC<InputFormProps> = ({
         <IconSuccess />
       </div>
       {actionInputs.length > 0 ? (
-        <div className="shadow-100 mt-10 space-y-2 rounded-xl border border-neutral-100 bg-neutral-0 p-3 xl:bg-neutral-50">
+        <div className="shadow-100 mt-10 space-y-2 rounded-xl border border-neutral-100 bg-neutral-0 p-6 xl:bg-neutral-50">
           {actionInputs.map(input => (
             <div key={input.name}>
               <div className="text-base font-semibold capitalize text-neutral-800">
@@ -389,7 +389,7 @@ export const ComponentForType: React.FC<ComponentForTypeProps> = ({
         return (
           <>
             {input.components?.map((component, index) => (
-              <div key={component.name} className="ml-3 mt-2">
+              <div key={component.name} className="ml-6 mt-2">
                 <div className="text-base font-semibold capitalize text-neutral-800">
                   {component.name}
                   <span className="ml-0.5 text-sm normal-case">
@@ -510,7 +510,7 @@ export function FormlessComponentForType({
         return (
           <>
             {input.components?.map(component => (
-              <div key={component.name} className="ml-3">
+              <div key={component.name} className="ml-6">
                 <div className="mb-1.5 text-base font-semibold capitalize text-neutral-800">
                   {input.name}
                 </div>
@@ -528,7 +528,7 @@ export function FormlessComponentForType({
           {Object.entries(input.value as {}).map((value, index) => {
             if (Number.isNaN(parseInt(value[0]))) {
               return (
-                <div key={index} className="ml-3">
+                <div key={index} className="ml-6">
                   <div className="mb-1.5 text-base font-semibold capitalize text-neutral-800">
                     {value[0]}
                   </div>
@@ -588,7 +588,7 @@ const ActionDescription = styled.p.attrs({
 
 const HStack = styled.div.attrs({
   className:
-    'flex justify-between items-center space-x-3 mt-10 ft-text-base mb-1',
+    'flex justify-between items-center space-x-6 mt-10 ft-text-base mb-1',
 })``;
 
 export default InputForm;

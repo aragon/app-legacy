@@ -79,7 +79,7 @@ const Section = styled.section.attrs({
 
 const ActionContainer = styled.div.attrs({
   className:
-    'relative flex flex-col xl:flex-row xl:justify-between items-center space-y-8 xl:space-y-0 pt-10 xl:pt-3 pb-16 xl:pb-3',
+    'relative flex flex-col xl:flex-row xl:justify-between items-center space-y-8 xl:space-y-0 pt-10 xl:pt-6 pb-16 xl:pb-6',
 })``;
 
 const FlexDiv = styled.div.attrs({

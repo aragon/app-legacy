@@ -105,7 +105,7 @@ export const NetworkErrorMenu = () => {
 };
 
 const ModalHeader = styled.div.attrs({
-  className: 'flex p-3 bg-neutral-0 rounded-xl gap-2 sticky top-0',
+  className: 'flex p-6 bg-neutral-0 rounded-xl gap-2 sticky top-0',
 })`
   box-shadow:
     0px 4px 8px rgba(31, 41, 51, 0.04),
@@ -130,7 +130,7 @@ const AddressContainer = styled.div.attrs({
 })``;
 
 export const ModalBody = styled.div.attrs({
-  className: 'flex flex-col px-3 pb-3',
+  className: 'flex flex-col px-6 pb-6',
 })``;
 
 export const StyledImage = styled.img.attrs({
@@ -138,7 +138,7 @@ export const StyledImage = styled.img.attrs({
 })``;
 
 export const WarningContainer = styled.div.attrs({
-  className: 'flex flex-col justify-center items-center space-y-1.5 mb-3',
+  className: 'flex flex-col justify-center items-center space-y-1.5 mb-6',
 })``;
 
 export const WarningTitle = styled.h2.attrs({

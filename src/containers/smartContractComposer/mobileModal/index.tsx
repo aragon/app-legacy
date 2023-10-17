@@ -212,7 +212,7 @@ const Header = styled.div.attrs({
 `;
 
 const Content = styled.div.attrs({
-  className: 'py-3 px-2 space-y-3 overflow-auto',
+  className: 'py-6 px-2 space-y-6 overflow-auto',
 })`
   max-height: 70vh;
 `;

@@ -137,18 +137,18 @@ const Card = styled.div.attrs<
 
   if (mode === 'card') {
     className += 'border bg-neutral-0 ';
-    className += `${customCardPaddingClassName || 'p-3 md:p-12'} `;
+    className += `${customCardPaddingClassName || 'p-6 md:p-12'} `;
 
     if (type === 'Object') className += 'gap-y-1 ';
   } else {
     className += 'bg-neutral-transparent ';
   }
 
-  if (type === 'Human' || type === 'both') className += 'gap-y-3 ';
+  if (type === 'Human' || type === 'both') className += 'gap-y-6 ';
   return {className};
 })<Pick<StateEmptyProps, 'mode' | 'type' | 'customCardPaddingClassName'>>``;
 
-const ContentWrapper = styled.div.attrs({className: 'space-y-3 w-full'})``;
+const ContentWrapper = styled.div.attrs({className: 'space-y-6 w-full'})``;
 
 const TextWrapper = styled.div.attrs({
   className: 'space-y-1.5 text-center',
@@ -157,7 +157,7 @@ const TextWrapper = styled.div.attrs({
 const ActionContainer = styled.div.attrs<Pick<BaseProps, 'actionsColumn'>>(
   ({actionsColumn}) => ({
     className: `flex w-full flex-col gap-y-1.5 ${
-      !actionsColumn && 'md:flex-row md:gap-y-0 md:justify-center md:gap-x-3'
+      !actionsColumn && 'md:flex-row md:gap-y-0 md:justify-center md:gap-x-6'
     }`,
   })
 )<Pick<BaseProps, 'actionsColumn'>>``;

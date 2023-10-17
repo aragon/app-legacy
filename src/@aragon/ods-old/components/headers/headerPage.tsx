@@ -58,7 +58,7 @@ export const HeaderPage: React.FC<HeaderPageProps> = ({
 
 const Card = styled.div.attrs({
   className:
-    'flex flex-col p-2 pb-3 md:p-3 xl:p-10 bg-neutral-0 gap-y-2 md:gap-y-3 md:rounded-xl md:border md:border-neutral-100 md:shadow-100',
+    'flex flex-col p-2 pb-6 md:p-6 xl:p-10 bg-neutral-0 gap-y-2 md:gap-y-6 md:rounded-xl md:border md:border-neutral-100 md:shadow-100',
 })``;
 
 const TextContent = styled.div.attrs({

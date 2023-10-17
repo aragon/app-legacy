@@ -31,7 +31,7 @@ export const NotFound: React.FC = () => {
       <div className="overflow-x-hidden xl:overflow-x-visible">
         <GridLayout>
           <Wrapper>
-            <div className="mt-3 xl:mt-0 xl:w-1/2">
+            <div className="mt-6 xl:mt-0 xl:w-1/2">
               <Title>
                 {t('cta.404.titleLine1')}
                 <br />

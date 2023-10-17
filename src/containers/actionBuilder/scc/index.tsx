@@ -63,7 +63,7 @@ const SCCAction: React.FC<ActionIndex & {allowRemove?: boolean}> = ({
         verified
         methodDescription={actionData.notice}
       >
-        <FormItem className="space-y-3 rounded-b-xl">
+        <FormItem className="space-y-6 rounded-b-xl">
           {actionData.inputs?.length > 0 ? (
             <div className="space-y-2 pb-1.5">
               {(actionData.inputs as Input[])

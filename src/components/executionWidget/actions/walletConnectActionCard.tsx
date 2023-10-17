@@ -102,14 +102,14 @@ export const WCActionCard: React.FC<WCActionCardActionCardProps> = ({
 
 const Content = styled.div.attrs<{type: WCActionCardActionCardProps['type']}>(
   ({type}) => ({
-    className: `px-2 xl:px-3 p-3 border border-neutral-100 border-t-0 space-y-2 xl:space-y-3 rounded-b-xl ${
+    className: `px-2 xl:px-6 p-6 border border-neutral-100 border-t-0 space-y-2 xl:space-y-6 rounded-b-xl ${
       type === 'action-builder' ? 'bg-neutral-0' : 'bg-neutral-50'
     }`,
   })
 )<{type: WCActionCardActionCardProps['type']}>``;
 
 const FormGroup = styled.div.attrs({
-  className: 'space-y-2 xl:space-y-3',
+  className: 'space-y-2 xl:space-y-6',
 })``;
 
 const FormItem = styled.div.attrs({

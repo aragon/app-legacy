@@ -74,7 +74,7 @@ export const UpdateListItem: React.FC<CheckboxListItemProps> = ({
           <Link label={LinkLabel} iconRight={<IconLinkExternal />} />
         </div>
         {(buttonPrimaryLabel || buttonSecondaryLabel) && (
-          <div className="mt-3 flex flex-col gap-y-1.5">
+          <div className="mt-6 flex flex-col gap-y-1.5">
             {buttonPrimaryLabel && (
               <ButtonText
                 label={buttonPrimaryLabel}

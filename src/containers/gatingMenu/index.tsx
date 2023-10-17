@@ -102,7 +102,7 @@ export const GatingMenu: React.FC = () => {
         )}
 
         {displayWrapToken ? (
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-2 gap-6">
             <ButtonText
               label={t('modalAlert.wrapToken.ctaLabel')}
               onClick={handleWrapTokens}

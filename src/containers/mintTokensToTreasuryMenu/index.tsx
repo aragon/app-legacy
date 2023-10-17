@@ -64,7 +64,7 @@ const MintTokensToTreasuryMenu: React.FC<Props> = ({
   return (
     <ModalBottomSheetSwitcher isOpen={isOpen} {...{onCloseReset}}>
       {step === 0 ? (
-        <div className="px-2 pb-3">
+        <div className="px-2 pb-6">
           <StateEmpty
             type="Object"
             object="warning"
@@ -72,7 +72,7 @@ const MintTokensToTreasuryMenu: React.FC<Props> = ({
             title={t('modal.mintTokensToTreasury.title')}
             description={t('modal.mintTokensToTreasury.description')}
             content={
-              <div className="mb-1.5 mt-3">
+              <div className="mb-1.5 mt-6">
                 <AlertCard
                   mode="critical"
                   title={t('modal.mintTokensToTreasury.alertTitle')}
@@ -113,7 +113,7 @@ const MintTokensToTreasuryMenu: React.FC<Props> = ({
             <Title>{t('modal.mintTokensToTreasury.title')}</Title>
             <div role="presentation" className="h-8 w-8" />
           </ModalHeader>
-          <div className="flex flex-col px-2 py-3">
+          <div className="flex flex-col px-2 py-6">
             <FormTitle>{t('modal.mintTokensToTreasury.inputLabel')}</FormTitle>
             <FormHelpText>
               {t('modal.mintTokensToTreasury.inputHelptext')}
@@ -139,7 +139,7 @@ const MintTokensToTreasuryMenu: React.FC<Props> = ({
                       ref={ref}
                     />
                   </InputContainer>
-                  <div className="mb-1.5 mt-3">
+                  <div className="mb-1.5 mt-6">
                     <AlertCard
                       mode="critical"
                       title={t('modal.mintTokensToTreasury.alertTitle')}

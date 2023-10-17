@@ -120,7 +120,7 @@ const DepositModal: React.FC = () => {
 };
 
 const Container = styled.div.attrs({
-  className: 'p-3 space-y-3',
+  className: 'p-6 space-y-6',
 })``;
 
 const Title = styled.h2.attrs({
@@ -147,6 +147,6 @@ const HStack = styled.div.attrs({
   className: 'flex space-x-1.5',
 })``;
 
-const Logo = styled.img.attrs({className: 'w-3 h-3 rounded-full'})``;
+const Logo = styled.img.attrs({className: 'w-6 h-6 rounded-full'})``;
 
 export default DepositModal;

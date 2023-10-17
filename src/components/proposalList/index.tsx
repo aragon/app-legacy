@@ -129,7 +129,7 @@ const ProposalList: React.FC<ProposalListProps> = ({
   }
 
   return (
-    <div className="space-y-3" data-testid="proposalList">
+    <div className="space-y-6" data-testid="proposalList">
       {mappedProposals.map(({id, ...p}) => (
         <ProposalItem {...p} proposalId={id} key={id} />
       ))}

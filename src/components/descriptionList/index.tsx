@@ -95,7 +95,7 @@ export const Dl: React.FC<{children: ReactNode}> = ({children}) => (
 );
 
 const Container = styled.div.attrs({
-  className: 'p-2 md:p-3 space-y-3 rounded-xl bg-neutral-0',
+  className: 'p-2 md:p-6 space-y-6 rounded-xl bg-neutral-0',
 })``;
 
 const TitleText = styled.h1.attrs({
@@ -130,5 +130,5 @@ const HStack = styled.div.attrs({
 
 export const ActionCardDlContainer = styled.div.attrs({
   className:
-    'bg-neutral-50 rounded-b-xl border border-t-0 border-neutral-100 space-y-2 p-3',
+    'bg-neutral-50 rounded-b-xl border border-t-0 border-neutral-100 space-y-2 p-6',
 })``;

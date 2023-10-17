@@ -36,7 +36,7 @@ export const OverviewDAOHeader: React.FC<OverviewDAOHeaderProps> = ({
 
   return (
     <div className="bg-neutral-0 p-2 md:rounded-xl md:p-12">
-      <div className="mb-3 xl:hidden">
+      <div className="mb-6 xl:hidden">
         <Breadcrumb
           crumbs={{
             label: navLabel,
@@ -108,7 +108,7 @@ export const OverviewDAOStep: React.FC = () => {
 
   if (isDesktop) {
     return (
-      <div className="space-y-3 md:flex md:space-x-3 md:space-y-0">
+      <div className="space-y-6 md:flex md:space-x-6 md:space-y-0">
         {OverviewCards}
       </div>
     );
@@ -159,5 +159,5 @@ export const OverviewDAOStep: React.FC = () => {
 };
 
 const MobileCTA = styled.div.attrs({
-  className: 'mb-10 -mx-2 md:-mx-3 xl:mx-0',
+  className: 'mb-10 -mx-2 md:-mx-6 xl:mx-0',
 })``;

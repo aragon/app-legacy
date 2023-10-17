@@ -87,7 +87,7 @@ const ExploreNav: React.FC = () => {
 };
 
 const Menu = styled.nav.attrs({
-  className: 'py-2 xl:py-3',
+  className: 'py-2 xl:py-6',
 })`
   background: linear-gradient(180deg, #3164fa 0%, rgba(49, 100, 250, 0) 100%);
 `;
@@ -106,7 +106,7 @@ const RightContent = styled.div.attrs({
 })``;
 
 const ActionsWrapper = styled.div.attrs({
-  className: 'flex space-x-1.5 md:space-x-3 items-center',
+  className: 'flex space-x-1.5 md:space-x-6 items-center',
 })``;
 
 export default ExploreNav;

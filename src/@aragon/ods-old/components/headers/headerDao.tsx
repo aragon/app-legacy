@@ -261,7 +261,7 @@ export const HeaderDao: React.FC<HeaderDaoProps> = ({
 
 const Card = styled.div.attrs({
   className:
-    'w-full bg-neutral-0 md:rounded-xl p-2 md:p-3 xl:p-12 border border-neutral-100 space-y-3',
+    'w-full bg-neutral-0 md:rounded-xl p-2 md:p-6 xl:p-12 border border-neutral-100 space-y-6',
 })`
   box-shadow:
     0px 4px 8px rgba(31, 41, 51, 0.04),
@@ -300,7 +300,7 @@ const DetailsWrapper = styled.div.attrs({
 })``;
 
 const NetworkDetailsContainer = styled.div.attrs({
-  className: 'flex space-x-3 w-full md:w-auto',
+  className: 'flex space-x-6 w-full md:w-auto',
 })``;
 
 const NetworkDetails = styled.div.attrs({
@@ -312,7 +312,7 @@ const DetailsText = styled.span.attrs({
 })``;
 
 const LinksWrapper = styled.div.attrs({
-  className: 'space-x-3 hidden xl:flex',
+  className: 'space-x-6 hidden xl:flex',
 })``;
 
 const ActionContainer = styled.div.attrs({
@@ -321,7 +321,7 @@ const ActionContainer = styled.div.attrs({
 
 const ActionWrapper = styled.div.attrs({
   className:
-    'flex items-center md:space-x-3 justify-between md:justify-start w-full md:w-max space-y-3 md:space-y-0',
+    'flex items-center md:space-x-6 justify-between md:justify-start w-full md:w-max space-y-6 md:space-y-0',
 })``;
 
 const CredentialsDropdownItem = styled.div.attrs({

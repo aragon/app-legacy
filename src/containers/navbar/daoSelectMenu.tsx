@@ -92,7 +92,7 @@ const DaoSelectMenu: React.FC = () => {
             })}
           </ListGroup>
         </ModalContentContainer>
-        <div className="p-3">
+        <div className="p-6">
           <ButtonText
             mode="secondary"
             size="large"
@@ -127,7 +127,7 @@ const Title = styled.div.attrs({
 })``;
 
 const ModalContentContainer = styled.div.attrs({
-  className: 'p-3 pb-0 space-y-3 md:w-[400px] xl:w-auto overflow-auto',
+  className: 'p-6 pb-0 space-y-6 md:w-[400px] xl:w-auto overflow-auto',
 })``;
 
 const ListGroup = styled.div.attrs({

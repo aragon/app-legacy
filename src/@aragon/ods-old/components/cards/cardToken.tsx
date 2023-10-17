@@ -111,7 +111,7 @@ export const CardToken: React.FC<CardTokenProps> = ({
 type CardProps = Pick<CardTokenProps, 'bgWhite'>;
 
 const Card = styled.div.attrs<CardProps>(({bgWhite}) => ({
-  className: `flex justify-between space-x-8 items-center py-2.5 px-3 overflow-hidden ${
+  className: `flex justify-between space-x-8 items-center py-2.5 px-6 overflow-hidden ${
     bgWhite ? 'bg-neutral-50' : 'bg-neutral-0'
   } rounded-xl`,
 }))<CardProps>``;
@@ -121,7 +121,7 @@ const CoinDetailsWithImage = styled.div.attrs({
 })``;
 
 const CoinImage = styled.img.attrs(({src}) => ({
-  className: 'w-3 h-3 md:h-10 md:w-10 rounded-full',
+  className: 'w-6 h-6 md:h-10 md:w-10 rounded-full',
   src,
 }))``;
 

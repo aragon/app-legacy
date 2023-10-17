@@ -631,7 +631,7 @@ const ContractAddressValidation: React.FC<Props> = props => {
               setVerificationState(TransactionState.WAITING);
             }}
             size="large"
-            className="mt-3 w-full"
+            className="mt-6 w-full"
             mode="secondary"
           />
         ) : (
@@ -700,7 +700,7 @@ const ContractAddressValidation: React.FC<Props> = props => {
             isActive={isTransactionLoading}
             disabled={isButtonDisabled}
             size="large"
-            className="mt-3 w-full"
+            className="mt-6 w-full"
           />
         )}
         {isTransactionError && ABIFlowState === ManualABIFlowState.WAITING && (
@@ -735,7 +735,7 @@ const ContractAddressValidation: React.FC<Props> = props => {
 
 export default ContractAddressValidation;
 
-const Content = styled.div.attrs({className: 'px-2 md:px-3 py-3'})``;
+const Content = styled.div.attrs({className: 'px-2 md:px-6 py-6'})``;
 
 const DescriptionContainer = styled.div.attrs({
   className: 'space-y-0.5 mb-1.5',
@@ -750,7 +750,7 @@ const Description = styled.p.attrs({
 })``;
 
 const VerificationCard = styled.div.attrs({
-  className: 'bg-neutral-0 rounded-xl p-2 mt-3 space-y-2',
+  className: 'bg-neutral-0 rounded-xl p-2 mt-6 space-y-2',
 })``;
 
 const VerificationTitle = styled.h2.attrs({

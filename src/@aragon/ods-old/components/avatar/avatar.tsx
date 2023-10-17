@@ -17,7 +17,7 @@ type SizesType = Record<AvatarProps['size'], {sizes: string; scale: number}>;
 
 const BLOCKIES_SQUARES = 8;
 const sizes: SizesType = {
-  small: {sizes: 'w-3 h-3', scale: 3},
+  small: {sizes: 'w-6 h-6', scale: 3},
   default: {sizes: 'w-10 h-10', scale: 5},
   large: {sizes: 'w-12 h-12', scale: 6},
 };
@@ -77,5 +77,5 @@ const AvatarContainer = styled.div.attrs<StyledContainerProps>(
 )<StyledContainerProps>``;
 
 const FallbackAvatar = styled.div.attrs({
-  className: 'w-3 h-3 rounded-full bg-gradient-to-tl from-neutral-900',
+  className: 'w-6 h-6 rounded-full bg-gradient-to-tl from-neutral-900',
 })``;

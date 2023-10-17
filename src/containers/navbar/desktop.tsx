@@ -150,7 +150,7 @@ export default DesktopNav;
 
 const Menu = styled.nav.attrs({
   className: `flex mx-auto justify-between items-center max-w-screen-wide
-     px-10 2xl:px-20 py-3`,
+     px-10 2xl:px-20 py-6`,
 })`
   background: linear-gradient(
     180deg,

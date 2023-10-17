@@ -204,7 +204,7 @@ const VerificationCard: React.FC<TransferListProps> = ({tokenAddress}) => {
 export default VerificationCard;
 
 const VerifyContainer = styled.div.attrs({
-  className: 'flex flex-col space-y-3 p-3 bg-neutral-0 rounded-xl',
+  className: 'flex flex-col space-y-6 p-6 bg-neutral-0 rounded-xl',
 })``;
 
 const VerifyWrapper = styled.div.attrs({
@@ -212,7 +212,7 @@ const VerifyWrapper = styled.div.attrs({
 })``;
 
 const LoadingWrapper = styled.div.attrs({
-  className: 'flex py-3 text-primary-400 gap-x-1 items-center',
+  className: 'flex py-6 text-primary-400 gap-x-1 items-center',
 })``;
 
 const VerifyTitle = styled.h2.attrs({

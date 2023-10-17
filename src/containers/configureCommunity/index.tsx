@@ -442,7 +442,7 @@ const ToggleCheckList = ({
 };
 
 const ToggleCheckListContainer = styled.div.attrs({
-  className: 'flex gap-x-3',
+  className: 'flex gap-x-6',
 })``;
 
 const ToggleCheckListItemWrapper = styled.div.attrs({className: 'flex-1'})``;
@@ -453,7 +453,7 @@ const FormItem = styled.div.attrs({
 
 const DurationContainer = styled.div.attrs({
   className:
-    'flex flex-col md:flex-row space-y-1.5 md:space-y-0 md:space-x-1.5 p-3 bg-neutral-0 rounded-xl',
+    'flex flex-col md:flex-row space-y-1.5 md:space-y-0 md:space-x-1.5 p-6 bg-neutral-0 rounded-xl',
 })``;
 
 const TimeLabelWrapper = styled.div.attrs({
@@ -466,7 +466,7 @@ const TimeLabel = styled.span.attrs({
 
 const ApprovalContainer = styled.div.attrs({
   className:
-    'flex flex-col flex-col-reverse md:flex-row md:items-center p-3 pt-8 md:p-3 space-y-3 space-y-reverse md:space-y-0 md:space-x-3 rounded-xl bg-neutral-0',
+    'flex flex-col flex-col-reverse md:flex-row md:items-center p-6 pt-8 md:p-6 space-y-6 space-y-reverse md:space-y-0 md:space-x-6 rounded-xl bg-neutral-0',
 })``;
 
 const LinearProgressContainer = styled.div.attrs({

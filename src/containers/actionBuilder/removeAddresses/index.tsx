@@ -127,7 +127,7 @@ const RemoveAddresses: React.FC<RemoveAddressesProps> = ({
       >
         {!memberWallets || memberWallets.length === 0 ? (
           <FormItem
-            className={`py-3 ${
+            className={`py-6 ${
               useCustomHeader ? 'rounded-xl border-t' : 'rounded-b-xl'
             }`}
           >
@@ -146,7 +146,7 @@ const RemoveAddresses: React.FC<RemoveAddressesProps> = ({
           <>
             <FormItem
               className={`hidden xl:block ${
-                useCustomHeader ? 'rounded-t-xl border-t pb-1.5 pt-3' : 'py-1.5'
+                useCustomHeader ? 'rounded-t-xl border-t pb-1.5 pt-6' : 'py-1.5'
               }`}
             >
               <Label label={t('labels.whitelistWallets.address')} />

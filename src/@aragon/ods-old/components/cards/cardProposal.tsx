@@ -239,7 +239,7 @@ const Card = styled.button.attrs({
   }
 `;
 
-const CardBody = styled.div.attrs({className: 'p-2 space-y-3'})``;
+const CardBody = styled.div.attrs({className: 'p-2 space-y-6'})``;
 
 const CardBanner = styled.div.attrs({
   className:

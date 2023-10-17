@@ -78,7 +78,7 @@ const WithdrawAction: React.FC<WithdrawActionProps> = ({
       smartContractName={t('labels.aragonOSx')}
       methodDescription={t('AddActionModal.withdrawAssetsActionSubtitle')}
     >
-      <FormItem className="space-y-3 rounded-b-xl py-3">
+      <FormItem className="space-y-6 rounded-b-xl py-6">
         <ConfigureWithdrawForm actionIndex={actionIndex} />
       </FormItem>
     </AccordionMethod>

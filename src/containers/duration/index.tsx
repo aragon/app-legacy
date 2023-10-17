@@ -343,7 +343,7 @@ export const DurationLabel: React.FC<DurationLabelProps> = ({
 
 const DurationContainer = styled.div.attrs({
   className:
-    'flex flex-col md:flex-row space-y-1.5 md:space-y-0 md:space-x-1.5 p-3 bg-neutral-0 rounded-xl',
+    'flex flex-col md:flex-row space-y-1.5 md:space-y-0 md:space-x-1.5 p-6 bg-neutral-0 rounded-xl',
 })``;
 
 const TimeLabelWrapper = styled.div.attrs({

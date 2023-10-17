@@ -335,7 +335,7 @@ export const VotingTerminal: React.FC<VotingTerminalProps> = ({
             </VoteContainer>
 
             {alertMessage && (
-              <div className="pt-2 md:mt-3 md:pt-0">
+              <div className="pt-2 md:mt-6 md:pt-0">
                 <AlertCard title={alertMessage} mode="warning" />
               </div>
             )}
@@ -362,7 +362,7 @@ const StatusIcon: React.FC<StatusProp> = ({status}) => {
 
 const Container = styled.div.attrs({
   className:
-    'md:p-3 py-2.5 px-2 rounded-xl bg-neutral-0 border border-neutral-100',
+    'md:p-6 py-2.5 px-2 rounded-xl bg-neutral-0 border border-neutral-100',
 })``;
 
 const Header = styled.div.attrs({
@@ -383,12 +383,12 @@ const Heading2 = styled.h2.attrs({
 })``;
 
 const CheckboxContainer = styled.div.attrs({
-  className: 'mt-3 space-y-1.5',
+  className: 'mt-6 space-y-1.5',
 })``;
 
 const VoteContainer = styled.div.attrs({
   className:
-    'flex flex-col md:flex-row md:justify-between md:space-x-3 items-center md:items-center mt-3 space-y-2 md:space-y-0' as string,
+    'flex flex-col md:flex-row md:justify-between md:space-x-6 items-center md:items-center mt-6 space-y-2 md:space-y-0' as string,
 })``;
 
 const ButtonWrapper = styled.div.attrs({
@@ -397,5 +397,5 @@ const ButtonWrapper = styled.div.attrs({
 })``;
 
 const VotersTabContainer = styled.div.attrs({
-  className: 'mt-3 xl:mt-10 space-y-2',
+  className: 'mt-6 xl:mt-10 space-y-2',
 })``;

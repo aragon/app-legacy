@@ -39,7 +39,7 @@ const MobileNavMenu = (props: MobileNavMenuProps) => {
             }}
           />
         </CardWrapper>
-        <div className="space-y-3 px-2 py-3">
+        <div className="space-y-6 px-2 py-6">
           <NavLinks onItemClick={close} />
 
           <ButtonText

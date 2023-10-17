@@ -410,7 +410,7 @@ export const MintTokenForm: React.FC<MintTokenFormProps> = ({
     <>
       <Container standAlone={standAlone}>
         {isDesktop && (
-          <div className="flex items-center space-x-2 p-2 md:p-3 ">
+          <div className="flex items-center space-x-2 p-2 md:p-6 ">
             <div className="flex-1">
               <FormLabel label={t('labels.whitelistWallets.address')} />
             </div>
@@ -517,11 +517,11 @@ const Container = styled.div.attrs<{standAlone: boolean}>(({standAlone}) => ({
 }))<{standAlone: boolean}>``;
 
 const ButtonContainer = styled.div.attrs({
-  className: 'flex justify-between md:justify-start p-2 md:p-3 space-x-2',
+  className: 'flex justify-between md:justify-start p-2 md:p-6 space-x-2',
 })``;
 
 const SummaryContainer = styled.div.attrs({
-  className: 'p-2 md:p-3 space-y-1.5 font-semibold text-neutral-800',
+  className: 'p-2 md:p-6 space-y-1.5 font-semibold text-neutral-800',
 })``;
 
 const HStack = styled.div.attrs({

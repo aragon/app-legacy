@@ -69,7 +69,7 @@ const ModalHeader = styled.div.attrs({
 `;
 
 const BottomSheetContentContainer = styled.div.attrs({
-  className: 'py-3 px-2 space-y-3 md:w-[448px]',
+  className: 'py-6 px-2 space-y-6 md:w-[448px]',
 })``;
 
 const Text = styled.div.attrs({

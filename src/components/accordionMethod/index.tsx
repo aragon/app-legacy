@@ -137,7 +137,7 @@ export const AccordionItem: React.FC<AccordionMethodType & {name: string}> = ({
 
 const AccordionHeader = styled(Accordion.Header).attrs<{type: AccordionType}>(
   ({type}) => ({
-    className: `p-2 md:px-3 rounded-xl border border-neutral-100 ${
+    className: `p-2 md:px-6 rounded-xl border border-neutral-100 ${
       type === 'action-builder' ? 'bg-neutral-0' : 'bg-neutral-50'
     }`,
   })
@@ -174,7 +174,7 @@ const MethodName = styled.p.attrs({
 })``;
 
 const HStack = styled.div.attrs({
-  className: 'flex justify-between space-x-3',
+  className: 'flex justify-between space-x-6',
 })``;
 
 const VStack = styled.div.attrs({

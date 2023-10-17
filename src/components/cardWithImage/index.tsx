@@ -29,7 +29,7 @@ const CardWithImage: React.FC<CardWithImageProps> = ({
 export default CardWithImage;
 
 const Container = styled.div.attrs({
-  className: 'flex-1 p-3 rounded-xl bg-neutral-0 mx-1 mb-3 xl:m-0',
+  className: 'flex-1 p-6 rounded-xl bg-neutral-0 mx-1 mb-6 xl:m-0',
 })``;
 
 const ImageContainer = styled.div.attrs({

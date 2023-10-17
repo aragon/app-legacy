@@ -53,4 +53,4 @@ const EmptyState: React.FC<Props> = props => {
 
 export default EmptyState;
 
-const Content = styled.div.attrs({className: 'px-2 md:px-3 pb-3'})``;
+const Content = styled.div.attrs({className: 'px-2 md:px-6 pb-6'})``;

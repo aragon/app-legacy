@@ -173,7 +173,7 @@ const TokenMenu: React.FC<TokenMenuProps> = ({
 export default TokenMenu;
 
 const Container = styled.div.attrs({
-  className: 'space-y-3 p-3',
+  className: 'space-y-6 p-6',
 })``;
 
 const TokensWrapper = styled.div.attrs({
@@ -197,12 +197,12 @@ const WideButton = styled(ButtonText).attrs({
 })``;
 
 const NoTokenWrapper = styled.div.attrs({
-  className: 'space-y-0.5 mb-3',
+  className: 'space-y-0.5 mb-6',
 })``;
 
 const NoTokenContainer = styled.div.attrs({
-  className: `flex flex-col items-center mb-3
-    justify-center bg-neutral-100 py-3 px-2 rounded-xl`,
+  className: `flex flex-col items-center mb-6
+    justify-center bg-neutral-100 py-6 px-2 rounded-xl`,
 })``;
 
 const IconWrapper = styled.div.attrs({

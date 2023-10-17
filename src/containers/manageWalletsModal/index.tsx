@@ -185,7 +185,7 @@ const ManageWalletsModal: React.FC<ManageWalletsModalProps> = ({
 export default ManageWalletsModal;
 
 const ModalHeader = styled.div.attrs({
-  className: 'p-3 bg-neutral-0 rounded-xl sticky top-0',
+  className: 'p-6 bg-neutral-0 rounded-xl sticky top-0',
 })`
   box-shadow:
     0px 4px 8px rgba(31, 41, 51, 0.04),
@@ -194,7 +194,7 @@ const ModalHeader = styled.div.attrs({
 `;
 
 const Container = styled.div.attrs({
-  className: 'p-3 max-h-96 overflow-auto',
+  className: 'p-6 max-h-96 overflow-auto',
 })``;
 
 const SelectAllContainer = styled.div.attrs({
@@ -202,5 +202,5 @@ const SelectAllContainer = styled.div.attrs({
 })``;
 
 const ButtonContainer = styled.div.attrs({
-  className: 'flex py-2 px-3 space-x-2 bg-neutral-0',
+  className: 'flex py-2 px-6 space-x-2 bg-neutral-0',
 })``;

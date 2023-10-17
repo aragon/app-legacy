@@ -136,7 +136,7 @@ export default TransactionDetail;
 
 const ModalHeader = styled.div.attrs({
   className:
-    'flex items-center space-between h-20 gap-x-3 p-2 bg-neutral-0 rounded-xl sticky top-0',
+    'flex items-center space-between h-20 gap-x-6 p-2 bg-neutral-0 rounded-xl sticky top-0',
 })`
   box-shadow:
     0px 4px 8px rgba(31, 41, 51, 0.04),
@@ -144,7 +144,7 @@ const ModalHeader = styled.div.attrs({
     0px 0px 1px rgba(31, 41, 51, 0.04);
 `;
 
-const Content = styled.div.attrs({className: 'p-3 space-y-1.5'})``;
+const Content = styled.div.attrs({className: 'p-6 space-y-1.5'})``;
 
 const Title = styled.p.attrs({
   className: 'flex-1 text-neutral-800 font-semibold',

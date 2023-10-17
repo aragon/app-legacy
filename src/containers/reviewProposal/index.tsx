@@ -301,7 +301,7 @@ const Header = styled.p.attrs({
 })``;
 
 const BadgeContainer = styled.div.attrs({
-  className: 'md:flex items-baseline mt-3 md:space-x-3',
+  className: 'md:flex items-baseline mt-6 md:space-x-6',
 })``;
 
 const ProposerLink = styled.p.attrs({
@@ -309,19 +309,19 @@ const ProposerLink = styled.p.attrs({
 })``;
 
 const SummaryText = styled.p.attrs({
-  className: 'text-lg text-neutral-600 mt-3',
+  className: 'text-lg text-neutral-600 mt-6',
 })``;
 
 const ProposalContainer = styled.div.attrs({
-  className: 'space-y-3 md:w-3/5',
+  className: 'space-y-6 md:w-3/5',
 })``;
 
 const AdditionalInfoContainer = styled.div.attrs({
-  className: 'space-y-3 md:w-2/5',
+  className: 'space-y-6 md:w-2/5',
 })``;
 
 const ContentContainer = styled.div.attrs({
-  className: 'mt-3 md:flex md:space-x-3 space-y-3 md:space-y-0',
+  className: 'mt-6 md:flex md:space-x-6 space-y-6 md:space-y-0',
 })``;
 
 export const StyledEditorContent = styled(EditorContent)`

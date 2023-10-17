@@ -165,7 +165,7 @@ const EmptyActionsState: React.FC<{selectedSC: SmartContract}> = ({
         />
         {selectedSC.implementationData && (
           <ButtonText
-            className="mx-auto mt-3"
+            className="mx-auto mt-6"
             iconLeft={<IconSwitch />}
             label={t('scc.writeContractEmptyState.ctaLabel')}
             onClick={() => {
@@ -210,7 +210,7 @@ const Wrapper = styled.div.attrs({className: 'flex flex-1 overflow-auto'})``;
 
 const Aside = styled.div.attrs({
   className:
-    'flex flex-col justify-between overflow-auto p-3 w-80 bg-neutral-50 border-r border-neutral-100',
+    'flex flex-col justify-between overflow-auto p-6 w-80 bg-neutral-50 border-r border-neutral-100',
 })``;
 
 const Main = styled.div.attrs({

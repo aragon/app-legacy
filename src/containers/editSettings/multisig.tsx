@@ -295,7 +295,7 @@ export const EditMsSettings: React.FC<EditMsSettingsProps> = ({daoDetails}) => {
       customBody={
         <Layout>
           <Container>
-            <AccordionMultiple defaultValue="metadata" className="space-y-3">
+            <AccordionMultiple defaultValue="metadata" className="space-y-6">
               <AccordionItem
                 type="action-builder"
                 name="metadata"
@@ -384,11 +384,11 @@ const Container = styled.div.attrs({})``;
 
 const AccordionContent = styled.div.attrs({
   className:
-    'p-3 pb-12 space-y-3 bg-neutral-0 border border-neutral-100 rounded-b-xl border-t-0',
+    'p-6 pb-12 space-y-6 bg-neutral-0 border border-neutral-100 rounded-b-xl border-t-0',
 })``;
 
 const HStack = styled.div.attrs({
-  className: 'md:flex space-y-2 md:space-y-0 md:space-x-3',
+  className: 'md:flex space-y-2 md:space-y-0 md:space-x-6',
 })``;
 
 const Footer = styled.div.attrs({

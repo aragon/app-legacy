@@ -33,7 +33,7 @@ export const GoLiveHeader: React.FC = () => {
   };
 
   return (
-    <div className="bg-neutral-0 px-2 pb-3 pt-2 md:rounded-xl md:p-3 xl:p-12 xl:pt-3">
+    <div className="bg-neutral-0 px-2 pb-6 pt-2 md:rounded-xl md:p-6 xl:p-12 xl:pt-6">
       <div className="xl:hidden">
         <Breadcrumb
           crumbs={{label: t('createDAO.title'), path: Landing}}
@@ -41,7 +41,7 @@ export const GoLiveHeader: React.FC = () => {
         />
       </div>
       <div className="flex justify-between">
-        <div className="w-full pt-3">
+        <div className="w-full pt-6">
           <h1 className="text-3xl font-semibold text-neutral-800">
             {t('createDAO.review.title')}
           </h1>
@@ -107,7 +107,7 @@ export const GoLiveFooter: React.FC = () => {
   };
 
   return (
-    <div className="flex justify-center pt-3">
+    <div className="flex justify-center pt-6">
       <div onClick={showInvalidFields}>
         <ButtonText
           size="large"

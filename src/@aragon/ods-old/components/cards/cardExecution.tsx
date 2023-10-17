@@ -87,7 +87,7 @@ type CardProps = Pick<CardExecutionProps, 'wide'>;
 const Card = styled.div.attrs<CardProps>(({wide}) => ({
   className: `${
     wide ? 'flex justify-between' : 'w-84'
-  } flex-col bg-neutral-0 rounded-xl p-3 space-y-3`,
+  } flex-col bg-neutral-0 rounded-xl p-6 space-y-6`,
 }))<CardProps>``;
 
 const Header = styled.div.attrs({

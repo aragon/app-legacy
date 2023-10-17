@@ -68,7 +68,7 @@ const DummyElement = styled.div.attrs({
 
 const UpdateContainer = styled.div.attrs({
   className:
-    'flex justify-between items-center py-1 px-3 bg-primary-400' as string,
+    'flex justify-between items-center py-1 px-6 bg-primary-400' as string,
 })``;
 
 const TextWrapper = styled.div.attrs({
@@ -77,7 +77,7 @@ const TextWrapper = styled.div.attrs({
 
 const MessageWrapper = styled.div.attrs({
   className:
-    'block md:flex md:items-center md:space-x-3 md:space-y-0 space-y-1' as string,
+    'block md:flex md:items-center md:space-x-6 md:space-y-0 space-y-1' as string,
 })``;
 
 export default UpdateBanner;

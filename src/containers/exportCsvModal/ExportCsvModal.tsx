@@ -190,7 +190,7 @@ const ExportCsvModal: React.FC<ExportCsvModalProps> = ({
     >
       {isFlowFinished ? (
         <StateEmpty
-          customCardPaddingClassName="p-3"
+          customCardPaddingClassName="p-6"
           type="Object"
           object="success"
           mode="card"
@@ -335,11 +335,11 @@ const ExportCsvModal: React.FC<ExportCsvModalProps> = ({
 };
 
 const Container = styled.div.attrs({
-  className: 'p-3',
+  className: 'p-6',
 })``;
 
 const BodyWrapper = styled.div.attrs({
-  className: 'space-y-3',
+  className: 'space-y-6',
 })``;
 
 const FormItem = styled.div.attrs({

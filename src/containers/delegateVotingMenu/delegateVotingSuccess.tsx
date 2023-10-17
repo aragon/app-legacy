@@ -68,7 +68,7 @@ export const DelegateVotingSuccess: React.FC<
   const description = isReclaim ? 'successReclaimDesc' : 'successDelegateDesc';
 
   return (
-    <div className="flex flex-col gap-3 text-center">
+    <div className="flex flex-col gap-6 text-center">
       <FormGroup>
         <IllustrationHuman
           width={343}

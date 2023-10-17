@@ -112,7 +112,7 @@ const VoteOption = styled.p.attrs({
 })``;
 
 const VStackRelaxed = styled.div.attrs({
-  className: 'space-y-3 mt-3 mt-10',
+  className: 'space-y-6 mt-6 mt-10',
 })``;
 
 const VStackNormal = styled.div.attrs({

@@ -263,5 +263,5 @@ const ActionListenerModal: React.FC<Props> = ({
 export default ActionListenerModal;
 
 const Content = styled.div.attrs({
-  className: 'py-3 px-2 xl:px-3 space-y-3',
+  className: 'py-6 px-2 xl:px-6 space-y-6',
 })``;

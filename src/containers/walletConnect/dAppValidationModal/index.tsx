@@ -267,7 +267,7 @@ const WCdAppValidation: React.FC<Props> = props => {
 export default WCdAppValidation;
 
 const Content = styled.div.attrs({
-  className: 'py-3 px-2 xl:px-3 space-y-3',
+  className: 'py-6 px-2 xl:px-6 space-y-6',
 })``;
 
 const FormGroup = styled.div.attrs({className: 'space-y-1.5'})``;

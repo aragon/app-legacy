@@ -330,7 +330,7 @@ export const MinParticipation: FC = () => {
 };
 
 const Container = styled.div.attrs({
-  className: 'pt-8 xl:pt-3 p-3 space-x-3 rounded-xl bg-neutral-0 relative z-10',
+  className: 'pt-8 xl:pt-6 p-6 space-x-6 rounded-xl bg-neutral-0 relative z-10',
 })``;
 
 const SubContainerWrapper = styled.div.attrs({
@@ -338,7 +338,7 @@ const SubContainerWrapper = styled.div.attrs({
 })``;
 
 const SubContainer = styled.div.attrs({
-  className: 'p-3 space-y-3 rounded-b-xl bg-neutral-0',
+  className: 'p-6 space-y-6 rounded-b-xl bg-neutral-0',
 })``;
 
 const SimulationSection = styled.div.attrs({
@@ -359,7 +359,7 @@ const StatItemValue = styled.div.attrs({
 
 const ApprovalWrapper = styled.div.attrs({
   className:
-    'flex flex-col flex-col-reverse md:flex-row space-y-3 space-y-reverse md:space-y-0 md:space-x-3',
+    'flex flex-col flex-col-reverse md:flex-row space-y-6 space-y-reverse md:space-y-0 md:space-x-6',
 })``;
 
 const LinearProgressContainer = styled.div.attrs({

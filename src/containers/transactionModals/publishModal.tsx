@@ -130,7 +130,7 @@ const PublishModal: React.FC<PublishModalProps> = ({
       </GasCostTableContainer>
       <ButtonContainer>
         <ButtonText
-          className="mt-3 w-full"
+          className="mt-6 w-full"
           label={label[state]}
           iconLeft={icons[state]}
           isActive={state === TransactionState.LOADING}
@@ -169,7 +169,7 @@ const PublishModal: React.FC<PublishModalProps> = ({
 export default PublishModal;
 
 const GasCostTableContainer = styled.div.attrs({
-  className: 'm-3 bg-neutral-0 rounded-xl border border-neutral-100 divide-y',
+  className: 'm-6 bg-neutral-0 rounded-xl border border-neutral-100 divide-y',
 })``;
 
 const GasCostEthContainer = styled.div.attrs({
@@ -185,7 +185,7 @@ const AlertInlineContainer = styled.div.attrs({
 })``;
 
 const ButtonContainer = styled.div.attrs({
-  className: 'px-3 pb-3 rounded-b-xl',
+  className: 'px-6 pb-6 rounded-b-xl',
 })``;
 
 const NoShrinkVStack = styled.div.attrs({

@@ -58,10 +58,10 @@ export const EmptyStateHeading = styled.h1.attrs({
 
 export const EmptyStateContainer = styled.div.attrs({
   className:
-    'flex flex-col w-full items-center py-8 px-3 md:py-24 md:px-12 mx-auto mt-3 md:mt-10 ft-text-lg bg-neutral-0 rounded-xl text-neutral-500',
+    'flex flex-col w-full items-center py-8 px-6 md:py-24 md:px-12 mx-auto mt-6 md:mt-10 ft-text-lg bg-neutral-0 rounded-xl text-neutral-500',
 })``;
 
 const ActionsContainer = styled.div.attrs({
   className:
-    'flex flex-col md:flex-row md:gap-x-3 gap-y-1.5 md:justify-center mt-8 w-full',
+    'flex flex-col md:flex-row md:gap-x-6 gap-y-1.5 md:justify-center mt-8 w-full',
 })``;
