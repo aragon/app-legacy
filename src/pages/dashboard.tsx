@@ -235,7 +235,7 @@ export const Dashboard: React.FC = () => {
           <EmptyStateHeading>
             {t('dashboard.emptyState.title')}
           </EmptyStateHeading>
-          <p className="mt-3 text-center text-base">
+          <p className="mt-3 text-center text-base leading-normal">
             {t('dashboard.emptyState.subtitle')}
           </p>
           <ButtonText

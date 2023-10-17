@@ -181,15 +181,15 @@ const TokensWrapper = styled.div.attrs({
 })``;
 
 const TokenTitle = styled.h2.attrs({
-  className: 'text-base font-semibold',
+  className: 'text-base leading-normal font-semibold',
 })``;
 
 const TokenSubtitle = styled.h2.attrs({
-  className: 'text-sm text-neutral-600',
+  className: 'text-sm leading-normal text-neutral-600',
 })``;
 
 const TokenDescription = styled.h2.attrs({
-  className: 'text-sm text-center text-neutral-600',
+  className: 'text-sm leading-normal text-center text-neutral-600',
 })``;
 
 const WideButton = styled(ButtonText).attrs({

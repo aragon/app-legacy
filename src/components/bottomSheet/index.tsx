@@ -115,5 +115,5 @@ const ModalTitle = styled.h1.attrs({
 })``;
 
 const ModalSubtitle = styled.div.attrs({
-  className: 'text-sm text-neutral-500',
+  className: 'text-sm leading-normal text-neutral-500',
 })``;

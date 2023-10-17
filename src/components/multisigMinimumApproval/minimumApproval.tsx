@@ -69,7 +69,7 @@ const LinearProgressContainer = styled.div.attrs({
 
 const ProgressInfo = styled.div.attrs({
   className:
-    'flex absolute whitespace-nowrap -top-5 justify-between space-x-1 w-full text-sm',
+    'flex absolute whitespace-nowrap -top-5 justify-between space-x-1 w-full text-sm leading-normal ',
 })``;
 
 const ApprovalAddresses = styled.p.attrs({

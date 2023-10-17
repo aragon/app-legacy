@@ -115,5 +115,5 @@ const DaoContainer = styled.div.attrs({
 })``;
 
 const DaoName = styled.p.attrs({
-  className: 'hidden md:block text-sm font-semibold text-neutral-800',
+  className: 'hidden md:block text-sm leading-normal font-semibold text-neutral-800',
 })``;

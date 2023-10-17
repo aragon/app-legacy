@@ -141,7 +141,7 @@ const Heading1 = styled.h1.attrs({
 })``;
 
 const Description = styled.div.attrs({
-  className: 'text-neutral-800 text-sm md:text-base',
+  className: 'text-neutral-800 text-sm md:text-base leading-normal',
 })``;
 
 export const Row = styled.div.attrs({

@@ -136,7 +136,7 @@ export const CardProposal: React.FC<CardProposalProps> = ({
               label={shortenAddress(
                 (isExploreProposal(type) ? daoName : publisherAddress) ?? ''
               )}
-              className="text-sm"
+              className="text-sm leading-normal"
             />
           </Publisher>
         </TextContent>
@@ -243,7 +243,7 @@ const CardBody = styled.div.attrs({className: 'p-4 space-y-6'})``;
 
 const CardBanner = styled.div.attrs({
   className:
-    'bg-primary-400 text-primary-50 text-sm font-semibold px-4 py-2 flex items-center gap-x-3 rounded-t-xl',
+    'bg-primary-400 text-primary-50 text-sm leading-normal font-semibold px-4 py-2 flex items-center gap-x-3 rounded-t-xl',
 })``;
 
 const Header = styled.div.attrs({

@@ -461,7 +461,7 @@ const TimeLabelWrapper = styled.div.attrs({
 })``;
 
 const TimeLabel = styled.span.attrs({
-  className: 'text-sm font-semibold text-neutral-800',
+  className: 'text-sm leading-normal font-semibold text-neutral-800',
 })``;
 
 const ApprovalContainer = styled.div.attrs({
@@ -479,5 +479,5 @@ const ProgressBarTick = styled.div.attrs({
 })``;
 
 const ProgressInfo1 = styled.div.attrs({
-  className: 'flex absolute -top-5 justify-between space-x-1 w-full text-sm',
+  className: 'flex absolute -top-5 justify-between space-x-1 w-full text-sm leading-normal',
 })``;

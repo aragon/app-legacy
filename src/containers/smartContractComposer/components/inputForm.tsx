@@ -165,7 +165,7 @@ const InputForm: React.FC<InputFormProps> = ({
       <div className="items-baseline space-x-6 xl:flex">
         <ActionName>{selectedAction.name}</ActionName>
         <div className="hidden items-center space-x-2 text-primary-600 xl:flex">
-          <p className="text-sm font-semibold text-primary-500">
+          <p className="text-sm leading-normal font-semibold text-primary-500">
             {selectedSC.name}
           </p>
           <IconSuccess />
@@ -173,7 +173,7 @@ const InputForm: React.FC<InputFormProps> = ({
       </div>
       <ActionDescription>{selectedAction.notice}</ActionDescription>
       <div className="mt-2 flex items-center space-x-2 text-primary-600 xl:hidden">
-        <p className="text-sm font-semibold text-primary-500">
+        <p className="text-sm leading-normal font-semibold text-primary-500">
           {selectedSC.name}
         </p>
         <IconSuccess />
@@ -182,9 +182,9 @@ const InputForm: React.FC<InputFormProps> = ({
         <div className="mt-10 space-y-4 rounded-xl border border-neutral-100 bg-neutral-0 p-6 shadow-neutral xl:bg-neutral-50">
           {actionInputs.map(input => (
             <div key={input.name}>
-              <div className="text-base font-semibold capitalize text-neutral-800">
+              <div className="text-base font-semibold capitalize leading-normal text-neutral-800">
                 {input.name}
-                <span className="ml-1 text-sm normal-case">({input.type})</span>
+                <span className="ml-1 text-sm leading-normal normal-case">({input.type})</span>
               </div>
               <div className="mb-3 mt-1">
                 <span className="text-neutral-600 ft-text-sm">
@@ -388,9 +388,9 @@ export const ComponentForType: React.FC<ComponentForTypeProps> = ({
           <>
             {input.components?.map((component, index) => (
               <div key={component.name} className="ml-6 mt-4">
-                <div className="text-base font-semibold capitalize text-neutral-800">
+                <div className="text-base font-semibold capitalize leading-normal text-neutral-800">
                   {component.name}
-                  <span className="ml-1 text-sm normal-case">
+                  <span className="ml-1 text-sm leading-normal normal-case">
                     ({component.type})
                   </span>
                 </div>
@@ -423,7 +423,7 @@ export const ComponentForType: React.FC<ComponentForTypeProps> = ({
           {Object.entries(input.value as {}).map((value, index) => {
             return (
               <div key={index}>
-                <div className="mb-3 text-base font-semibold capitalize text-neutral-800">
+                <div className="mb-3 text-base font-semibold capitalize leading-normal text-neutral-800">
                   {value[0]}
                 </div>
                 <ComponentForType
@@ -509,7 +509,7 @@ export function FormlessComponentForType({
           <>
             {input.components?.map(component => (
               <div key={component.name} className="ml-6">
-                <div className="mb-3 text-base font-semibold capitalize text-neutral-800">
+                <div className="mb-3 text-base font-semibold capitalize leading-normal text-neutral-800">
                   {input.name}
                 </div>
                 <FormlessComponentForType
@@ -527,7 +527,7 @@ export function FormlessComponentForType({
             if (Number.isNaN(parseInt(value[0]))) {
               return (
                 <div key={index} className="ml-6">
-                  <div className="mb-3 text-base font-semibold capitalize text-neutral-800">
+                  <div className="mb-3 text-base font-semibold capitalize leading-normal text-neutral-800">
                     {value[0]}
                   </div>
                   <FormlessComponentForType
@@ -582,7 +582,7 @@ const ActionName = styled.p.attrs({
 })``;
 
 const ActionDescription = styled.p.attrs({
-  className: 'mt-2 text-sm text-neutral-600',
+  className: 'mt-2 text-sm leading-normal text-neutral-600',
 })``;
 
 const HStack = styled.div.attrs({

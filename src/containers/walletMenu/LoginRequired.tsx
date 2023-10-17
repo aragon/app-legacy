@@ -82,5 +82,5 @@ const ModalHeader = styled.div.attrs({
 `;
 
 const WarningDescription = styled.p.attrs({
-  className: 'text-base text-neutral-500 text-center',
+  className: 'text-base leading-normal text-neutral-500 text-center',
 })``;

@@ -133,7 +133,7 @@ const Title = styled.div.attrs({
   className: 'flex-1 font-semibold text-neutral-800',
 })``;
 const SubTitle = styled.div.attrs({
-  className: 'flex-1 font-medium text-neutral-500 text-sm',
+  className: 'flex-1 font-medium text-neutral-500 text-sm leading-normal',
 })``;
 const AvatarAddressContainer = styled.div.attrs({
   className: 'flex flex-1 gap-3 items-center',

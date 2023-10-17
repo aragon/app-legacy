@@ -7,15 +7,6 @@ module.exports = {
     './src/**/*.{tsx,html}',
     './node_modules/@aragon/ods/**/*.js',
   ],
-  /*
-  theme: {
-    fontSize: {
-      xs: ['0.64rem', 1.5],
-      sm: ['0.8rem', 1.5],
-      base: ['1rem', 1.5],
-    },
-  },
-  */
   plugins: [
     require('tailwindcss-fluid-type')({
       settings: {

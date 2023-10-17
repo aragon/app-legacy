@@ -118,7 +118,7 @@ export const Title = styled.div.attrs({
 })``;
 
 const SubTitle = styled.div.attrs({
-  className: 'flex-1 font-medium text-neutral-500 text-sm',
+  className: 'flex-1 font-medium text-neutral-500 text-sm leading-normal ',
 })``;
 
 const AvatarAddressContainer = styled.div.attrs({
@@ -146,5 +146,5 @@ export const WarningTitle = styled.h2.attrs({
 })``;
 
 const WarningDescription = styled.p.attrs({
-  className: 'text-sm text-neutral-500 text-center',
+  className: 'text-sm leading-normal text-neutral-500 text-center',
 })``;

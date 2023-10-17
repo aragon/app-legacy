@@ -76,7 +76,7 @@ const Title = styled.div.attrs({
 })``;
 
 const SubTitle = styled.div.attrs({
-  className: 'mt-1 text-sm text-neutral-600',
+  className: 'mt-1 text-sm leading-normal text-neutral-600',
 })``;
 
 const ButtonWrapper = styled.div.attrs({className: 'w-8 h-8' as string})``;

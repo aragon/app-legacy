@@ -227,10 +227,10 @@ const CustomHeader: React.FC = () => {
 
   return (
     <div className="mb-3 space-y-1">
-      <p className="text-base font-semibold text-neutral-800">
+      <p className="text-base font-semibold leading-normal text-neutral-800">
         {t('labels.removeWallets')}
       </p>
-      <p className="text-sm text-neutral-600">
+      <p className="text-sm leading-normal text-neutral-600">
         {t('labels.removeWalletsDescription')}
       </p>
     </div>

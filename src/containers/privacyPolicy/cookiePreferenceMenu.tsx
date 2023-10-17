@@ -73,5 +73,5 @@ const BottomSheetContentContainer = styled.div.attrs({
 })``;
 
 const Text = styled.div.attrs({
-  className: 'flex-1 xl:text-sm text-neutral-600',
+  className: 'flex-1 xl:text-sm leading-normal text-neutral-600',
 })``;

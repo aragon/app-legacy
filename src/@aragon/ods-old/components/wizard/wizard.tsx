@@ -80,5 +80,5 @@ const StepSubTitle = styled.span.attrs({
 `;
 
 const CenteredFlex = styled.div.attrs({
-  className: 'flex justify-between text-sm xl:text-base',
+  className: 'flex justify-between text-sm xl:text-base leading-normal',
 })``;

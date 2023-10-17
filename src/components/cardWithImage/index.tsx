@@ -41,7 +41,7 @@ const VStack = styled.div.attrs({
 })``;
 
 const Caption = styled.div.attrs({
-  className: 'text-sm text-neutral-500',
+  className: 'text-sm leading-normal text-neutral-500',
 })``;
 
 const Title = styled.div.attrs({
@@ -49,5 +49,5 @@ const Title = styled.div.attrs({
 })``;
 
 const Subtitle = styled.div.attrs({
-  className: 'text-sm text-neutral-600',
+  className: 'text-sm leading-normal text-neutral-600',
 })``;

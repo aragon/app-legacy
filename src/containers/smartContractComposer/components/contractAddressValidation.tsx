@@ -590,7 +590,7 @@ const ContractAddressValidation: React.FC<Props> = props => {
                 {t('scc.abi.abiInputLabel')}
               </div>
               <p
-                className="mt-1 text-sm text-neutral-600"
+                className="mt-1 text-sm leading-normal text-neutral-600"
                 dangerouslySetInnerHTML={{
                   __html: htmlIn(t)('scc.abi.abiInputHelp'),
                 }}
