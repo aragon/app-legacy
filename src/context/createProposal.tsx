@@ -76,6 +76,7 @@ import {ProposalFormData, ProposalId, ProposalResource} from 'utils/types';
 import {useGlobalModalContext} from './globalModals';
 import {useNetwork} from './network';
 import {useProviders} from './providers';
+import {useProtocolVersions} from 'hooks/useDaoVersions';
 
 type Props = {
   showTxModal: boolean;
@@ -111,6 +112,8 @@ const CreateProposalWrapper: React.FC<Props> = ({
     {tokenAddress: daoToken?.address as string, address: address as string},
     {enabled: !!daoToken?.address && !!address}
   );
+
+  const {data: versions} = useProtocolVersions(daoDetails?.address);
 
   const {client} = useClient();
   const pluginClient = usePluginClient(pluginType);
@@ -291,34 +294,36 @@ const CreateProposalWrapper: React.FC<Props> = ({
           if (
             translatedNetwork !== 'unsupported' &&
             SupportedNetworksArray.includes(translatedNetwork) &&
-            daoDetails?.address
+            daoDetails?.address &&
+            versions
           ) {
             const initializeData = client.encoding.initializeFromAction(
               daoDetails?.address as string,
               {
-                previousVersion: action.inputs.version
-                  ?.split('.')
-                  ?.map(Number) as [number, number, number],
+                previousVersion: versions as [number, number, number],
               }
             );
-            const implementationAddress =
-              await client.methods.getDaoImplementation(
-                LIVE_CONTRACTS[action.inputs.version as SupportedVersion][
-                  translatedNetwork
-                ].daoFactoryAddress
-              );
 
-            actions.push(
-              Promise.resolve(
-                client.encoding.upgradeToAndCallAction(
-                  daoDetails?.address as string,
-                  {
-                    implementationAddress: implementationAddress, // the implementation address to be upgraded to.
-                    data: initializeData.data,
-                  }
+            const daoFactoryAddress =
+              LIVE_CONTRACTS[action.inputs.version as SupportedVersion][
+                translatedNetwork
+              ].daoFactoryAddress;
+
+            const implementationAddress =
+              await client.methods.getDaoImplementation(daoFactoryAddress);
+
+            if (initializeData && implementationAddress)
+              actions.push(
+                Promise.resolve(
+                  client.encoding.upgradeToAndCallAction(
+                    daoDetails?.address as string,
+                    {
+                      implementationAddress: implementationAddress, // the implementation address to be upgraded to.
+                      data: initializeData.data,
+                    }
+                  )
                 )
-              )
-            );
+              );
           }
           break;
         }
@@ -328,13 +333,14 @@ const CreateProposalWrapper: React.FC<Props> = ({
     return Promise.all(actions);
   }, [
     client,
-    daoDetails,
+    daoDetails?.address,
     getValues,
     network,
     pluginAddress,
     pluginClient,
     t,
     translatedNetwork,
+    versions,
     votingSettings,
   ]);
 
@@ -492,6 +498,8 @@ const CreateProposalWrapper: React.FC<Props> = ({
       );
     }
     if (!proposalCreationData) return;
+
+    console.log('proposalCreationData', proposalCreationData);
 
     return pluginClient?.estimation.createProposal(proposalCreationData);
   }, [pluginClient, proposalCreationData]);
