@@ -255,7 +255,7 @@ const Title = styled.p.attrs({
 })``;
 
 const Description = styled.p.attrs({
-  className: 'text-neutral-600 text-left font-normal ft-text-base line-clamp-4',
+  className: 'text-neutral-600 text-left font-normal ft-text-base line-clamp-2',
 })``;
 
 const Publisher = styled.span.attrs({
