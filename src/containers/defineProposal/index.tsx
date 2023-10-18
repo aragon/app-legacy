@@ -18,13 +18,11 @@ import {isOnlyWhitespace} from 'utils/library';
 import {UpdateListItem} from 'containers/updateListItem/updateListItem';
 import {useParams} from 'react-router-dom';
 import {VersionSelectionMenu} from 'containers/versionSelectionMenu/versionSelectionMenu';
-import {usePrepareUpdateContext} from 'context/prepareUpdate';
 
 const DefineProposal: React.FC = () => {
   const {t} = useTranslation();
   const {address, ensAvatarUrl} = useWallet();
   const {control, setValue} = useFormContext();
-  const {handlePreparePlugin} = usePrepareUpdateContext();
 
   const [pluginVersion, osxVersion] = useWatch({
     name: ['pluginSelectedVersion', 'osxSelectedVersion'],
@@ -120,7 +118,6 @@ const DefineProposal: React.FC = () => {
                     }
                     onClickActionPrimary={(e: React.MouseEvent) => {
                       e?.stopPropagation();
-                      handlePreparePlugin(data.id);
                     }}
                   />
                 ))}

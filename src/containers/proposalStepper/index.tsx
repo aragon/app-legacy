@@ -54,9 +54,8 @@ const ProposalStepper: React.FC<ProposalStepperType> = ({
   const {address, isConnected} = useWallet();
   const [isActionsValid, setIsActionsValid] = useState(false);
 
-  const [formActions, osUpdate] = useWatch({
-    name: ['actions', 'osUpdate'],
-  });
+  const formActions = useWatch({name: 'actions'});
+  const osUpdate = useWatch({name: 'osUpdate'});
 
   const {errors, dirtyFields} = useFormState({control});
 
