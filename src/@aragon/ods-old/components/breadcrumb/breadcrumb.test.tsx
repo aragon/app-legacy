@@ -5,7 +5,7 @@ import {Breadcrumb} from './breadcrumb';
 
 const crumbs = [
   {label: 'label-1', path: 'path-1'},
-  {label: 'label-2', path: 'path-4'},
+  {label: 'label-2', path: 'path-2'},
 ];
 
 describe('Breadcrumb', () => {
