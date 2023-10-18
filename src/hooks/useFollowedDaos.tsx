@@ -128,6 +128,7 @@ export const useUpdateFollowedDaoMutation = () => {
 interface IFollowDaoMutationParams {
   onMutate?: () => void;
   onError?: () => void;
+  onSuccess?: () => void;
 }
 
 /**
@@ -173,6 +174,7 @@ export const useAddFollowedDaoMutation = (
     onSuccess: () => {
       queryClient.invalidateQueries(['followedDaos']);
       queryClient.invalidateQueries(['infiniteFollowedDaos']);
+      params?.onSuccess?.();
     },
   });
 };
@@ -216,6 +218,7 @@ export const useRemoveFollowedDaoMutation = (
     onSuccess: () => {
       queryClient.invalidateQueries(['followedDaos']);
       queryClient.invalidateQueries(['infiniteFollowedDaos']);
+      params?.onSuccess?.();
     },
   });
 };
