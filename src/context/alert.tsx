@@ -1,17 +1,17 @@
+import {AlertChip, IconType} from '@aragon/ods-old';
 import React, {
+  ReactNode,
   createContext,
   useContext,
-  useState,
   useMemo,
-  ReactNode,
+  useState,
 } from 'react';
-import {AlertChip} from '@aragon/ods-old';
 
 const AlertContext = createContext<AlertContextType | null>(null);
 
 type AlertContextType = {
   isShown: boolean;
-  alert: (label: string) => void;
+  alert: (label: string, icon?: React.ReactComponentElement<IconType>) => void;
 };
 
 type Props = Record<'children', ReactNode>;
@@ -19,6 +19,7 @@ type Props = Record<'children', ReactNode>;
 const AlertProvider: React.FC<Props> = ({children}) => {
   const [isShown, setIsShown] = useState<AlertContextType['isShown']>(false);
   const [label, setLabel] = useState<string>('');
+  const [icon, setIcon] = useState<React.ReactComponentElement<IconType>>();
 
   /**
    * @param label Alert text
@@ -27,11 +28,21 @@ const AlertProvider: React.FC<Props> = ({children}) => {
    * We can add others method in future to have better control if needed
    */
 
-  const alert = (label: string) => {
+  const alert = (
+    label: string,
+    icon?: React.ReactComponentElement<IconType>
+  ) => {
+    if (icon) {
+      setIcon(icon);
+    }
+
     setLabel(label);
     setIsShown(true);
     setTimeout(() => {
       setIsShown(false);
+
+      // clear the icon once it has ben shown
+      setIcon(undefined);
     }, 1200);
   };
 
@@ -46,7 +57,7 @@ const AlertProvider: React.FC<Props> = ({children}) => {
   return (
     <AlertContext.Provider value={value}>
       {children}
-      <AlertChip {...{isShown, label}} showIcon />
+      <AlertChip {...{isShown, label}} icon={icon} showIcon />
     </AlertContext.Provider>
   );
 };
@@ -55,4 +66,4 @@ function useAlertContext(): AlertContextType {
   return useContext(AlertContext) as AlertContextType;
 }
 
-export {useAlertContext, AlertProvider};
+export {AlertProvider, useAlertContext};
