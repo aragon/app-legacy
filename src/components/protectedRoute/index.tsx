@@ -92,8 +92,6 @@ const ProtectedRoute: React.FC = () => {
       votingPower = Number(formatUnits(userVotingPower, daoToken.decimals));
     }
 
-    console.log({connectedDaoMember, balance, votingPower});
-
     const minProposalThreshold = Number(
       formatUnits(
         (votingSettings as MajorityVotingSettings)?.minProposerVotingPower ?? 0,
