@@ -123,7 +123,9 @@ export const DelegateVotingForm: React.FC<IDelegateVotingFormProps> = props => {
   return (
     <div className="flex flex-col gap-3">
       <FormGroup>
-        <p className="text-base">{t('modal.delegation.optionsLabel')}</p>
+        <p className="text-base text-ui-800">
+          {t('modal.delegation.optionsLabel')}
+        </p>
         <CheckboxListItem
           label={t('modal.delegation.checkbox.delegateTo')}
           type={!isReclaimMode ? 'active' : 'default'}
