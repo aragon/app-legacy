@@ -313,8 +313,6 @@ export const Dashboard: React.FC = () => {
             translation={{
               follow: t('dao.follow.false'),
               following: t('dao.follow.true'),
-              readLess: '',
-              readMore: '',
             }}
           />
         </HeaderWrapper>

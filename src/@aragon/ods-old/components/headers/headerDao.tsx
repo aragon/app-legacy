@@ -19,7 +19,7 @@ import {ListItemLink} from '../listItem';
 
 const DEFAULT_LINES_SHOWN = 2;
 const DEFAULT_LINKS_SHOWN = 3;
-const DEFAULT_TRANSLATIONS: HeaderDaoProps['translation'] = {
+const DEFAULT_TRANSLATIONS = {
   follow: 'Follow',
   following: 'Following',
   readLess: 'Read less',
@@ -43,10 +43,10 @@ export type HeaderDaoProps = {
     href: string;
   }>;
   translation?: {
-    readMore: string;
-    readLess: string;
-    follow: string;
-    following: string;
+    readMore?: string;
+    readLess?: string;
+    follow?: string;
+    following?: string;
   };
   onCopy?: (input: string) => void;
   onFollowClick?: (e: React.MouseEvent<HTMLButtonElement>) => void;
