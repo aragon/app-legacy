@@ -11,7 +11,7 @@ import {useGlobalModalContext} from 'context/globalModals';
 import {useNetwork} from 'context/network';
 import {useProviders} from 'context/providers';
 import {useDaoDetailsQuery} from 'hooks/useDaoDetails';
-import {useDaoMembers} from 'hooks/useDaoMembers';
+import {TokenDaoMember, useDaoMembers} from 'hooks/useDaoMembers';
 import {PluginTypes} from 'hooks/usePluginClient';
 import {useWallet} from 'hooks/useWallet';
 import {useVotingPowerAsync} from 'services/aragon-sdk/queries/use-voting-power';
@@ -66,43 +66,50 @@ const ProtectedRoute: React.FC = () => {
   }, [navigate]);
 
   const gateTokenBasedProposal = useCallback(async () => {
-    if (daoToken && address && filteredMembers.length === 0) {
-      let balance = '0';
-      let votingPower = '0';
+    if (daoToken == null || address == null || membersAreLoading) {
+      return;
+    }
 
-      try {
-        balance = await fetchBalance(
-          daoToken?.address,
-          address,
-          provider,
-          CHAIN_METADATA[network].nativeCurrency
-        );
+    const connectedDaoMember = filteredMembers[0] as TokenDaoMember | undefined;
+    let balance = connectedDaoMember?.balance ?? 0;
+    let votingPower = connectedDaoMember?.votingPower ?? 0;
 
-        const votingPowerWei = await fetchVotingPower({
-          address,
-          tokenAddress: daoToken?.address,
-        });
-        votingPower = formatUnits(votingPowerWei, daoToken.decimals);
-      } catch (e) {
-        console.error(e);
-      }
-
-      const minProposalThreshold = Number(
-        formatUnits(
-          (votingSettings as MajorityVotingSettings)?.minProposerVotingPower ||
-            0,
-          daoToken?.decimals || 18
-        )
+    // Fallback to fetching connected user balance and voting power from smart
+    // contract when user is not found on DAO members list
+    if (connectedDaoMember == null) {
+      const userBalance = await fetchBalance(
+        daoToken?.address,
+        address,
+        provider,
+        CHAIN_METADATA[network].nativeCurrency
       );
-      if (
-        minProposalThreshold &&
-        Number(balance) < minProposalThreshold &&
-        Number(votingPower) < minProposalThreshold
-      ) {
-        open('gating');
-      } else {
-        close();
-      }
+      balance = Number(userBalance);
+
+      const userVotingPower = await fetchVotingPower({
+        address,
+        tokenAddress: daoToken?.address,
+      });
+      votingPower = Number(formatUnits(userVotingPower, daoToken.decimals));
+    }
+
+    console.log({connectedDaoMember, balance, votingPower});
+
+    const minProposalThreshold = Number(
+      formatUnits(
+        (votingSettings as MajorityVotingSettings)?.minProposerVotingPower ?? 0,
+        daoToken.decimals
+      )
+    );
+
+    const canCreateProposal =
+      minProposalThreshold === 0 ||
+      balance >= minProposalThreshold ||
+      votingPower >= minProposalThreshold;
+
+    if (!canCreateProposal) {
+      open('gating');
+    } else {
+      close();
     }
   }, [
     address,
@@ -110,7 +117,8 @@ const ProtectedRoute: React.FC = () => {
     close,
     votingSettings,
     daoToken,
-    filteredMembers.length,
+    filteredMembers,
+    membersAreLoading,
     network,
     open,
     provider,
