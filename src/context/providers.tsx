@@ -107,7 +107,7 @@ export function getAlchemyProvider(
 ): AlchemyProvider | null {
   const network = toNetwork(chainIdOrNetwork);
 
-  if (!network || network === 'unsupported') {
+  if (!network || network === 'unsupported' || network === 'local') {
     return null;
   }
 
@@ -143,7 +143,12 @@ export function getAlchemyProvider(
 export function getInfuraProvider(
   chainIdOrNetwork: SupportedChainID | SupportedNetworks
 ): InfuraProvider | null {
-  const InfuraUnsupportedNetworks = ['base', 'base-goerli', 'unsupported'];
+  const InfuraUnsupportedNetworks = [
+    'base',
+    'base-goerli',
+    'unsupported',
+    'local',
+  ];
   const network = toNetwork(chainIdOrNetwork);
 
   if (!network || InfuraUnsupportedNetworks.includes(network)) {

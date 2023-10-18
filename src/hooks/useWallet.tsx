@@ -63,14 +63,16 @@ export const useWallet = (): IUseWallet => {
   const signer = useEthersSigner(chainId);
 
   const provider = useMemo(() => {
-    if (['mumbai', 'polygon'].includes(network)) {
+    if (['mumbai', 'polygon', 'local'].includes(network)) {
       return new JsonRpcProvider(CHAIN_METADATA[network].rpc[0], {
         chainId: CHAIN_METADATA[network].id,
         name: translateToNetworkishName(network),
         ensAddress:
-          LIVE_CONTRACTS[SupportedVersion.LATEST][
-            translateToNetworkishName(network) as SupportedNetwork
-          ].ensRegistryAddress,
+          network === 'local'
+            ? '0xDc64a140Aa3E981100a9becA4E685f962f0cF6C9'
+            : LIVE_CONTRACTS[SupportedVersion.LATEST][
+                translateToNetworkishName(network) as SupportedNetwork
+              ].ensRegistryAddress,
       });
     } else return signer?.provider;
   }, [network, signer?.provider]);

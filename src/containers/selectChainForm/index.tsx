@@ -120,8 +120,8 @@ const networks: SelectableNetworks = {
     security: ['ethereum', 'base', 'polygon'],
   },
   test: {
-    cost: ['mumbai', 'base-goerli', 'goerli'],
-    popularity: ['goerli', 'mumbai', 'base-goerli'],
-    security: ['goerli', 'base-goerli', 'mumbai'],
+    cost: ['mumbai', 'base-goerli', 'goerli', 'local'],
+    popularity: ['goerli', 'mumbai', 'base-goerli', 'local'],
+    security: ['goerli', 'base-goerli', 'mumbai', 'local'],
   },
 };

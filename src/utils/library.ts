@@ -661,6 +661,8 @@ export function translateToNetworkishName(
       return SdkSupportedNetworks.MUMBAI;
     case 'polygon':
       return SdkSupportedNetworks.POLYGON;
+    case 'local':
+      return SdkSupportedNetworks.LOCAL;
   }
 
   return 'unsupported';

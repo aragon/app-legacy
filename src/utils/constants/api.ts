@@ -22,6 +22,7 @@ export const SUBGRAPH_API_URL: SubgraphNetworkUrl = {
     'https://subgraph.satsuma-prod.com/qHR2wGfc5RLi6/aragon/osx-mumbai/version/v1.3.1/api',
   polygon:
     'https://subgraph.satsuma-prod.com/qHR2wGfc5RLi6/aragon/osx-polygon/version/v1.3.1/api',
+  local: 'http://localhost:8000/subgraphs/name/aragon/aragon-core-goerli',
   unsupported: undefined,
 };
 
@@ -35,6 +36,7 @@ export const alchemyApiKeys: AlchemyApiKeys = {
   goerli: import.meta.env.VITE_ALCHEMY_KEY_GOERLI as string,
   mumbai: import.meta.env.VITE_ALCHEMY_KEY_POLYGON_MUMBAI as string,
   polygon: import.meta.env.VITE_ALCHEMY_KEY_POLYGON_MAINNET as string,
+  local: undefined,
   unsupported: undefined,
 };
 
