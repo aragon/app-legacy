@@ -583,7 +583,7 @@ export const Container = styled.div.attrs<StyledContainerProps>(
 
     const focusClass = disabled
       ? ''
-      : 'focus-within:ring-2 focus-within:ring-primary-500';
+      : 'focus-within:ring focus-within:ring-primary';
 
     const bgAndBorderColor = disabled
       ? 'bg-neutral-100 border-neutral-200 text-neutral-700'

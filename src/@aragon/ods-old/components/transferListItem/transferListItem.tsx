@@ -80,7 +80,7 @@ export const TransferListItem: React.FC<TransferListItemProps> = ({
 
 const Container = styled.button.attrs({
   className: `group w-full px-4 xl:px-6 py-3 xl:py-5 bg-neutral-0 rounded-xl
-  flex items-center space-x-4 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 active:bg-neutral-100`,
+  flex items-center space-x-4 focus:outline-none focus-visible:ring focus-visible:ring-primary active:bg-neutral-100`,
 })``;
 
 const AvatarContainer = styled.div.attrs<{bgColor: string}>(({bgColor}) => ({

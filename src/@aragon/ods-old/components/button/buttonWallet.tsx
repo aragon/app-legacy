@@ -59,7 +59,7 @@ const StyledButton = styled.button.attrs<StyledButtonProp>(({isLoading}) => {
     isLoading ? 'text-primary-500' : 'text-neutral-600'
   } flex items-center md:space-x-3 font-semibold p-3 hover:text-neutral-800
     active:text-neutral-800 disabled:text-neutral-300 bg-neutral-0 hover:bg-neutral-100 active:bg-neutral-200
-    disabled:bg-neutral-100 rounded-xl focus-visible:ring-2 focus-visible:ring-primary-500`;
+    disabled:bg-neutral-100 rounded-xl focus-visible:ring focus-visible:ring-primary`;
   return {className};
 })``;
 

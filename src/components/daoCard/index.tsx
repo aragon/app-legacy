@@ -72,7 +72,7 @@ export const DaoCard = (props: IDaoCardProps) => {
 const Container = styled.button.attrs({
   className: `p-4 xl:p-6 w-full flex flex-col space-y-6
     box-border border border-neutral-0
-    focus:outline-none focus:ring-2 focus:ring-primary-500
+    focus:outline-none focus:ring focus:ring-primary
     hover:border-neutral-100 active:border-200
     bg-neutral-0 rounded-xl
     `,

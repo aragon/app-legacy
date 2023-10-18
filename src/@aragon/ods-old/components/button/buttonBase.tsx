@@ -77,8 +77,8 @@ type SizeProps = {
 
 const BaseStyledButton = styled.button.attrs<SizeProps>(({size = 'medium'}) => {
   const className = `${sizeClassNames[size]} ${fontStyles[size]}
-  flex justify-center items-center focus:outline-none focus-visible:ring-2
-  focus-visible:ring-primary-500`;
+  flex justify-center items-center focus:outline-none focus-visible:ring
+  focus-visible:ring-primary`;
 
   const style = sizeStyles[size] as CSSProperties;
 

@@ -95,7 +95,7 @@ const Container = styled.button.attrs<InputContainerProps>(
   ({mode, bgWhite = false}) => {
     const baseLayoutClasses = 'flex items-center gap-x-3 w-full';
     const baseStyleClasses =
-      'py-3 px-4 rounded-xl font-normal border-2 border-neutral-0';
+      'py-3 px-4 rounded-xl font-normal border-2 border-[transparent]';
     let className:
       | string
       | undefined = `${baseLayoutClasses} ${baseStyleClasses}`;
@@ -112,7 +112,7 @@ const Container = styled.button.attrs<InputContainerProps>(
       default:
         {
           const focusClasses =
-            'focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500';
+            'focus:outline-none focus-visible:ring focus-visible:ring-primary';
           const hoverClasses = 'hover:text-primary-500';
           let activeClasses = 'active:outline-none active:ring-0';
           activeClasses += bgWhite

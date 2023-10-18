@@ -119,7 +119,7 @@ const Container = styled.div.attrs<StyledContainerProps>(
     } inline-flex p-2 bg-neutral-0 ${
       width ? '' : 'w-60'
     } focus:outline-none items-center font-normal
-      focus-within:ring-2 focus-within:ring-primary-500 justify-between
+      focus-within:ring focus-within:ring-primary justify-between
       rounded-xl hover:border-neutral-300 border-2 active:border-primary-500
       active:ring-0
     `;

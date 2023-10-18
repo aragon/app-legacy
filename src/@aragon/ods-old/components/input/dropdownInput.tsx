@@ -38,8 +38,8 @@ const Container = styled.button.attrs(
   ({mode, disabled}: StyledContainerProps) => {
     let className = `${
       disabled ? 'bg-neutral-100' : 'bg-neutral-0'
-    } flex bg-neutral-0 focus:outline-none focus-within:ring-2
-    focus-within:ring-primary-500 py-3 px-4 rounded-xl w-full
+    } flex bg-neutral-0 focus:outline-none focus-within:ring
+    focus-within:ring-primary py-3 px-4 rounded-xl w-full
     hover:border-neutral-300 border-2 active:border-primary-500 active:ring-0
     items-center justify-between `;
 

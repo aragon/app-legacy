@@ -229,7 +229,7 @@ const Card = styled.button.attrs({
     'w-full bg-neutral-0 rounded-xl box-border ' +
     'hover:border hover:border-neutral-100 ' +
     'active:border active:border-neutral-200 ' +
-    'focus:outline-none focus:ring-2 focus:ring-primary-500',
+    'focus:outline-none focus:ring focus:ring-primary',
 })`
   &:hover {
     box-shadow:

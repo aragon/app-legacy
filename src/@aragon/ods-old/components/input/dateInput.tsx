@@ -21,14 +21,13 @@ type InputContainerProps = Pick<DateInputProps, 'disabled'>;
 
 const InputContainer = styled.div.attrs<InputContainerProps>(({disabled}) => {
   const baseClasses =
-    'flex relative items-center p-2 rounded-xl border-2 font-normal cursor-pointer';
+    'flex relative items-center p-2 rounded-xl border-2 border-neutral-100 font-normal cursor-pointer';
   let className = `${baseClasses}`;
 
   if (disabled) {
     className += ' bg-neutral-100 text-neutral-300 border-neutral-200';
   } else {
-    const focusVisibleClasses =
-      'focus-within:ring-2 focus-within:ring-primary-500';
+    const focusVisibleClasses = 'focus-within:ring focus-within:ring-primary';
     const hoverClasses = 'hover:border-neutral-300';
     const activeClasses = 'active:border-primary-500 active:ring-0';
     className += ` bg-neutral-0 text-neutral-600 ${focusVisibleClasses} ${hoverClasses} ${activeClasses}`;

@@ -153,7 +153,7 @@ const Container = styled.div.attrs<StyledContainerProps>(
     } inline-flex bg-neutral-0 ${
       width ? '' : 'w-full'
     } focus:outline-none items-center py-1.5 px-2
-      focus-within:ring-2 focus-within:ring-primary-500 justify-between
+      focus-within:ring focus-within:ring-primary justify-between
       rounded-xl hover:border-neutral-300 border-2 active:border-primary-500
       active:ring-0
     `;
