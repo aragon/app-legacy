@@ -171,7 +171,7 @@ const PublishModal: React.FC<PublishModalProps> = ({
 export default PublishModal;
 
 const GasCostTableContainer = styled.div.attrs({
-  className: 'm-6 bg-neutral-0 rounded-xl border border-neutral-100 divide-y',
+  className: 'm-6 bg-neutral-0 rounded-xl border border-neutral-100',
 })``;
 
 const GasCostEthContainer = styled.div.attrs({
