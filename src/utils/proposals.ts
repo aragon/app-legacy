@@ -75,7 +75,7 @@ export function isErc20VotingProposal(
 }
 
 export function isMultisigProposal(
-  proposal: SupportedProposals | undefined
+  proposal: SupportedProposals | undefined | null
 ): proposal is MultisigProposal {
   if (!proposal) return false;
   return 'approvals' in proposal;
