@@ -49,10 +49,8 @@ export const Container = styled.div.attrs<StyledContainerProps>(
   ({mode, disabled, containerClassName}) => {
     let className = `${
       disabled ? 'bg-neutral-100 border-neutral-200 border-2' : 'bg-neutral-0'
-    } flex items-center focus-within:ring
-    focus-within:ring-primary
-    rounded-xl hover:border-neutral-300 border-2 h-12
-    active:border-primary-500 active:ring-0 `;
+    } flex items-center focus-within:border-primary-500 focus-within:hover:border-primary-500
+    rounded-xl hover:border-neutral-300 border-2 h-12 `;
 
     if (containerClassName) {
       className += containerClassName;

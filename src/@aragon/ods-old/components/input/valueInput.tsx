@@ -59,8 +59,8 @@ export const Container = styled.div.attrs<StyledContainerProps>(
     let className = `${
       disabled ? 'bg-neutral-100 border-neutral-200' : 'bg-neutral-0'
     } flex items-center space-x-3 p-1.5 pl-4 text-neutral-600 rounded-xl
-    border-2 focus-within:ring focus-within:ring-primary
-    hover:border-neutral-300 active:border-primary-500 active:ring-0 `;
+    border-2 focus-within:border-primary-500 focus-within:hover:border-primary-500
+    hover:border-neutral-300 active:border-primary-500 `;
 
     if (mode === 'default') {
       className += 'border-neutral-100';
