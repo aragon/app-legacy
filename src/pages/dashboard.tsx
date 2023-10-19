@@ -81,10 +81,10 @@ export const Dashboard: React.FC = () => {
     isFetching: followedDaosFetching,
   } = useFollowedDaosQuery();
 
-  const disableFollowing =
-    followedDaosFetching ||
-    addFollowedDaoMutation.isLoading ||
-    removeFollowedDaoMutation.isLoading;
+  const enableFollowing =
+    !followedDaosFetching &&
+    !addFollowedDaoMutation.isLoading &&
+    !removeFollowedDaoMutation.isLoading;
 
   // live DAO
   const {
@@ -185,21 +185,28 @@ export const Dashboard: React.FC = () => {
 
   const handleFollowedClick = useCallback(
     async (dao: NavigationDao) => {
-      try {
-        if (isFollowedDao) {
-          await removeFollowedDaoMutation.mutateAsync({dao});
-        } else {
-          await addFollowedDaoMutation.mutateAsync({dao});
-        }
-      } catch (error) {
-        const action = isFollowedDao
-          ? 'removing DAO from list of followed DAOs'
-          : 'adding DAO to list of followed DAOs';
+      if (enableFollowing) {
+        try {
+          if (isFollowedDao) {
+            await removeFollowedDaoMutation.mutateAsync({dao});
+          } else {
+            await addFollowedDaoMutation.mutateAsync({dao});
+          }
+        } catch (error) {
+          const action = isFollowedDao
+            ? 'removing DAO from list of followed DAOs'
+            : 'adding DAO to list of followed DAOs';
 
-        console.error(`Error ${action}`, error);
+          console.error(`Error ${action}`, error);
+        }
       }
     },
-    [isFollowedDao, removeFollowedDaoMutation, addFollowedDaoMutation]
+    [
+      enableFollowing,
+      isFollowedDao,
+      removeFollowedDaoMutation,
+      addFollowedDaoMutation,
+    ]
   );
 
   /*************************************************
@@ -295,8 +302,7 @@ export const Dashboard: React.FC = () => {
             daoType={daoType}
             following={isFollowedDao}
             onCopy={onCopy}
-            disableFollowing={disableFollowing}
-            onFollowClick={() =>
+            onFollowClick={() => {
               handleFollowedClick({
                 address: liveDao.address.toLowerCase(),
                 chain: CHAIN_METADATA[network].id,
@@ -307,8 +313,8 @@ export const Dashboard: React.FC = () => {
                   avatar: liveDao?.metadata?.avatar,
                   description: liveDao.metadata.description,
                 },
-              })
-            }
+              });
+            }}
             links={links}
             translation={{
               follow: t('dao.follow.false'),

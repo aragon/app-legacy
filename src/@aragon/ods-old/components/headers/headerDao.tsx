@@ -37,7 +37,6 @@ export type HeaderDaoProps = {
   daoChain: string;
   daoType: string;
   following?: boolean;
-  disableFollowing?: boolean;
   links?: Array<{
     label: string;
     href: string;
@@ -67,7 +66,6 @@ export const HeaderDao: React.FC<HeaderDaoProps> = ({
   daoChain,
   daoType,
   following = false,
-  disableFollowing = false,
   links = [],
   translation = {},
   onCopy,
@@ -249,7 +247,6 @@ export const HeaderDao: React.FC<HeaderDaoProps> = ({
               onClick={onFollowClick}
               mode="secondary"
               size="large"
-              disabled={disableFollowing}
               bgWhite
               {...(following
                 ? {iconLeft: <IconCheckmark />, label: labels.following}
