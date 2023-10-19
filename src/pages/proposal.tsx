@@ -12,15 +12,13 @@ import {
   MultisigProposal,
   TokenVotingClient,
   TokenVotingProposal,
-  VoteValues,
-  VotingMode,
 } from '@aragon/sdk-client';
 import {DaoAction, ProposalStatus} from '@aragon/sdk-client-common';
 import TipTapLink from '@tiptap/extension-link';
 import {useEditor} from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import {BigNumber, constants} from 'ethers';
-import React, {useEffect, useMemo, useRef, useState} from 'react';
+import React, {useCallback, useEffect, useMemo, useRef, useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {generatePath, useNavigate, useParams} from 'react-router-dom';
 import sanitizeHtml from 'sanitize-html';
@@ -113,12 +111,8 @@ export const Proposal: React.FC = () => {
   const {
     data: {members},
   } = useDaoMembers(pluginAddress, pluginType, {
-    enabled: pluginType === 'multisig.plugin.dao.eth',
+    enabled: isMultisigDAO,
   });
-
-  const allowVoteReplacement =
-    isTokenVotingSettings(votingSettings) &&
-    votingSettings.votingMode === VotingMode.VOTE_REPLACEMENT;
 
   const {client} = useClient();
   const {set, get} = useCache();
@@ -132,12 +126,13 @@ export const Proposal: React.FC = () => {
     useState<(Action | undefined)[]>();
 
   const {
-    handleSubmitVote,
-    handleExecuteProposal,
+    handlePrepareVote,
+    handlePrepareApproval,
+    handlePrepareExecution,
     isLoading: paramsAreLoading,
-    voteSubmitted,
+    voteOrApprovalSubmitted,
     executionFailed,
-    transactionHash,
+    executionTxHash,
   } = useProposalTransactionContext();
 
   const {
@@ -215,6 +210,15 @@ export const Proposal: React.FC = () => {
       }),
     ],
   });
+
+  // multisig proposal must have at least one action to trigger
+  // approve and execute flow
+  const executableWithNextApproval =
+    isMultisigProposal(proposal) &&
+    proposal.status !== ProposalStatus.EXECUTED &&
+    isMultisigVotingSettings(votingSettings) &&
+    proposal.actions.length > 0 &&
+    proposal.approvals.length + 1 >= votingSettings.minApprovals;
 
   /*************************************************
    *                     Hooks                     *
@@ -399,11 +403,11 @@ export const Proposal: React.FC = () => {
 
   // show voter tab once user has voted
   useEffect(() => {
-    if (voteSubmitted) {
+    if (voteOrApprovalSubmitted) {
       setTerminalTab('voters');
       setVotingInProcess(false);
     }
-  }, [voteSubmitted]);
+  }, [voteOrApprovalSubmitted]);
 
   useEffect(() => {
     if (proposal) {
@@ -499,75 +503,34 @@ export const Proposal: React.FC = () => {
     }
   }, [proposal, voted, canVote, t]);
 
-  // vote button state and handler
-  const {voteNowDisabled, onClick} = useMemo(() => {
-    // disable voting on non-active proposals
-    if (proposalStatus !== 'Active') return {voteNowDisabled: true};
+  let voteNowDisabled = true;
+  if (address == null || isOnWrongNetwork || canVote || displayVotingGate) {
+    voteNowDisabled = false;
+  }
 
-    // disable approval on multisig when wallet has voted
-    if (isMultisigDAO && (voted || voteSubmitted))
-      return {voteNowDisabled: true};
+  console.log(canVote, 'CANVOTE');
+  const handleApprovalClick = useCallback(
+    (tryExecution: boolean) => {
+      if (proposal?.id) {
+        handlePrepareApproval({tryExecution, proposalId: proposal.id});
+      }
+    },
+    [handlePrepareApproval, proposal?.id]
+  );
 
-    // disable voting on mv with no vote replacement when wallet has voted
-    if (!allowVoteReplacement && (voted || voteSubmitted))
-      return {voteNowDisabled: true};
-
-    // not logged in
-    if (!address) {
-      return {
-        voteNowDisabled: false,
-        onClick: () => {
-          open('wallet');
-          statusRef.current.wasNotLoggedIn = true;
-        },
-      };
+  const handleVoteClick = useCallback(() => {
+    if (address == null) {
+      open('wallet');
+      statusRef.current.wasNotLoggedIn = true;
+    } else if (isOnWrongNetwork) {
+      open('network');
+      statusRef.current.wasOnWrongNetwork = true;
+    } else if (displayVotingGate) {
+      return open('delegationGating');
+    } else if (canVote) {
+      setVotingInProcess(true);
     }
-
-    // wrong network
-    else if (isOnWrongNetwork) {
-      return {
-        voteNowDisabled: false,
-        onClick: () => {
-          open('network');
-          statusRef.current.wasOnWrongNetwork = true;
-        },
-      };
-    }
-
-    // needs voting power
-    else if (displayVotingGate) {
-      return {
-        voteNowDisabled: false,
-        onClick: () => open('delegationGating'),
-      };
-    }
-
-    // member, not yet voted
-    else if (canVote) {
-      return {
-        voteNowDisabled: false,
-        onClick: () => {
-          if (isMultisigDAO) {
-            handleSubmitVote({vote: VoteValues.YES});
-          } else {
-            setVotingInProcess(true);
-          }
-        },
-      };
-    } else return {voteNowDisabled: true};
-  }, [
-    address,
-    allowVoteReplacement,
-    displayVotingGate,
-    canVote,
-    handleSubmitVote,
-    isOnWrongNetwork,
-    isMultisigDAO,
-    open,
-    proposalStatus,
-    voteSubmitted,
-    voted,
-  ]);
+  }, [address, canVote, displayVotingGate, isOnWrongNetwork, open]);
 
   // handler for execution
   const handleExecuteNowClicked = () => {
@@ -578,7 +541,7 @@ export const Proposal: React.FC = () => {
       // don't allow execution on wrong network
       open('network');
     } else {
-      handleExecuteProposal();
+      handlePrepareExecution();
     }
   };
 
@@ -665,11 +628,6 @@ export const Proposal: React.FC = () => {
         )}
         <ProposalTitle>{proposal?.metadata.title}</ProposalTitle>
         <ContentWrapper>
-          {/* <BadgeContainer>
-            {PROPOSAL_TAGS.map((tag: string) => (
-              <Tag label={tag} key={tag} />
-            ))}
-          </BadgeContainer> */}
           <ProposerLink>
             {t('governance.proposals.publishedBy')}{' '}
             <Link
@@ -731,16 +689,19 @@ export const Proposal: React.FC = () => {
             selectedTab={terminalTab}
             alertMessage={alertMessage}
             onTabSelected={setTerminalTab}
-            onVoteClicked={onClick}
+            onVoteClicked={handleVoteClick}
+            onApprovalClicked={handleApprovalClick}
             onCancelClicked={() => setVotingInProcess(false)}
             voteButtonLabel={buttonLabel}
             voteNowDisabled={voteNowDisabled}
             votingInProcess={votingInProcess}
+            executableWithNextApproval={executableWithNextApproval}
             onVoteSubmitClicked={vote =>
-              handleSubmitVote({
+              handlePrepareVote({
                 vote,
-                replacement: voted || voteSubmitted,
-                token: (proposal as TokenVotingProposal).token?.address,
+                replacement: voted || voteOrApprovalSubmitted,
+                voteTokenAddress: (proposal as TokenVotingProposal).token
+                  ?.address,
               })
             }
             {...mappedProps}
@@ -751,7 +712,7 @@ export const Proposal: React.FC = () => {
             actions={decodedActions}
             status={executionStatus}
             onExecuteClicked={handleExecuteNowClicked}
-            txhash={transactionHash || proposal?.executionTxHash || undefined}
+            txhash={executionTxHash || proposal?.executionTxHash || undefined}
           />
         </ProposalContainer>
         <AdditionalInfoContainer>
