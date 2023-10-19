@@ -1,4 +1,4 @@
-import {AlertInline, Label, LinearProgress, NumberInput} from '@aragon/ods';
+import {AlertInline, Label, LinearProgress, NumberInput} from '@aragon/ods-old';
 import React, {useCallback, useEffect} from 'react';
 import {Controller, useFormContext, useWatch} from 'react-hook-form';
 import {useTranslation} from 'react-i18next';
@@ -94,7 +94,7 @@ const DefineCommittee: React.FC = () => {
 
                   <ProgressInfo2>
                     <p
-                      className="font-bold text-right text-primary-500"
+                      className="text-right font-bold text-primary-500"
                       style={{
                         flexBasis: `${
                           (Number(value) / Number(committeeCount)) * 100
@@ -104,7 +104,7 @@ const DefineCommittee: React.FC = () => {
                       {value}
                     </p>
 
-                    <p className="flex-shrink-0 text-ui-600">
+                    <p className="shrink-0 text-ui-600">
                       {t('createDAO.step5.alerts.ofAddresses', {
                         count: committeeCount,
                       })}

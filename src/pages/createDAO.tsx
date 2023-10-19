@@ -28,6 +28,7 @@ import {hasValue} from 'utils/library';
 import {Landing} from 'utils/paths';
 import {CreateDaoFormData} from 'utils/types';
 import {isFieldValid} from 'utils/validators';
+import DefineCommittee from '../containers/defineCommittee';
 
 const defaultValues = {
   tokenName: '',
@@ -52,14 +53,6 @@ const defaultValues = {
   durationHours: '0',
   durationMinutes: '0',
   minimumParticipation: '15',
-  votingType: 'onChain' | 'offChain';
-  committee: MultisigWalletField[];
-  committeeMinimumApproval: string;
-  executionExpirationMinutes: string;
-  executionExpirationHours: string;
-  executionExpirationDays: string;
-  committee: MultisigWalletField[];
-  committeeMinimumApproval: string;
 };
 
 export const CreateDAO: React.FC = () => {
@@ -83,6 +76,11 @@ export const CreateDAO: React.FC = () => {
     control: formMethods.control,
   });
 
+  const {update: updateCommittee} = useFieldArray({
+    name: 'committee',
+    control: formMethods.control,
+  });
+
   const {errors, dirtyFields} = useFormState({control: formMethods.control});
 
   const [
@@ -90,8 +88,6 @@ export const CreateDAO: React.FC = () => {
     daoName,
     daoEnsName,
     eligibilityType,
-    votingType,
-    committee,
     isCustomToken,
     tokenAddress,
     tokenName,
@@ -101,6 +97,8 @@ export const CreateDAO: React.FC = () => {
     tokenWallets,
     tokenTotalSupply,
     tokenType,
+    committee,
+    votingType,
   ] = useWatch({
     control: formMethods.control,
     name: [
@@ -117,12 +115,8 @@ export const CreateDAO: React.FC = () => {
       'wallets',
       'tokenTotalSupply',
       'tokenType',
-      'membership',
-      'daoName',
-      'daoEnsName',
-      'eligibilityType',
-      'votingType',
       'committee',
+      'votingType',
     ],
   });
   const prevFormChain = useRef<number>(formChain);
@@ -163,6 +157,10 @@ export const CreateDAO: React.FC = () => {
 
       if (tokenWallets) {
         updateWalletsENS(tokenWallets, provider, updateTokenFields);
+      }
+
+      if (committee) {
+        updateWalletsENS(tokenWallets, provider, updateCommittee);
       }
     };
 
@@ -302,20 +300,20 @@ export const CreateDAO: React.FC = () => {
     errors.executionExpirationDays,
   ]);
 
-  const proposalCreationIsValid = useMemo(() => {
-    // required fields not dirty
-    // if multisig
-    if (membership === 'multisig') {
-      if (!['multisig', 'anyone'].includes(eligibilityType)) {
-        return false;
-      }
-      return true;
-    } else {
-      return !errors.eligibilityTokenAmount;
-    }
-  }, [eligibilityType, errors.eligibilityTokenAmount, membership]);
-
   // todo(kon): check for rebase validation b794a88a
+  // const proposalCreationIsValid = useMemo(() => {
+  //   // required fields not dirty
+  //   // if multisig
+  //   if (membership === 'multisig') {
+  //     if (!['multisig', 'anyone'].includes(eligibilityType)) {
+  //       return false;
+  //     }
+  //     return true;
+  //   } else {
+  //     return !errors.eligibilityTokenAmount;
+  //   }
+  // }, [eligibilityType, errors.eligibilityTokenAmount, membership]);
+
   const daoCommunityConfigurationIsValid = useMemo(() => {
     if (
       errors.minimumApproval ||

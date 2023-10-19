@@ -40,12 +40,20 @@ import {useDaoDetailsQuery} from 'hooks/useDaoDetails';
 import {useDaoMembers} from 'hooks/useDaoMembers';
 import {useDaoToken} from 'hooks/useDaoToken';
 import {useMappedBreadcrumbs} from 'hooks/useMappedBreadcrumbs';
-import {PluginTypes, usePluginClient} from 'hooks/usePluginClient';
+import {
+  GaselessPluginName,
+  PluginTypes,
+  usePluginClient,
+} from 'hooks/usePluginClient';
 import useScreen from 'hooks/useScreen';
 import {useWallet} from 'hooks/useWallet';
 import {useWalletCanVote} from 'hooks/useWalletCanVote';
-import {useProposal} from 'services/aragon-sdk/queries/use-proposal';
 import {
+  IFetchGaslessProposalParams,
+  useProposal,
+} from 'services/aragon-sdk/queries/use-proposal';
+import {
+  isGaslessVotingSettings,
   isMultisigVotingSettings,
   isTokenVotingSettings,
   useVotingSettings,
@@ -78,14 +86,9 @@ import {
   isMultisigProposal,
 } from 'utils/proposals';
 import {Action, ProposalId} from 'utils/types';
-import {format} from 'date-fns';
-import {getFormattedUtcOffset, KNOWN_FORMATS} from '../utils/date';
-import {formatUnits} from '@vocdoni/sdk';
-import Big from 'big.js';
-import {CommitteeVotingTerminal} from '../containers/votingTerminal/offchainVotingTerminal';
 import {GaslessVotingProposal} from '@vocdoni/offchain-voting';
 import {useOffchainHasAlreadyVote} from '../context/useOffchainVoting';
-import {useDaoToken} from '../hooks/useDaoToken';
+import {CommitteeVotingTerminal} from '../containers/votingTerminal/committeeVotingTerminal';
 
 export const PENDING_PROPOSAL_STATUS_INTERVAL = 1000 * 10;
 export const PROPOSAL_STATUS_INTERVAL = 1000 * 60;
@@ -137,6 +140,17 @@ export const Proposal: React.FC = () => {
     executionTxHash,
   } = useProposalTransactionContext();
 
+  let gaslessProposalParams: IFetchGaslessProposalParams | undefined;
+  if (pluginType === GaselessPluginName && dao && daoDetails && proposalId) {
+    const {proposal} = proposalId!.stripPlgnAdrFromProposalId();
+    gaslessProposalParams = {
+      daoName: daoDetails!.ensDomain,
+      daoAddress: dao!,
+      pluginAddress: pluginAddress,
+      proposalId: proposal,
+    };
+  }
+
   const {
     data: proposal,
     error: proposalError,
@@ -156,7 +170,8 @@ export const Proposal: React.FC = () => {
         data?.status === ProposalStatus.ACTIVE
           ? PROPOSAL_STATUS_INTERVAL
           : false,
-    }
+    },
+    gaslessProposalParams
   );
 
   const {data: votingSettings} = useVotingSettings(
@@ -169,8 +184,6 @@ export const Proposal: React.FC = () => {
   );
 
   const proposalStatus = proposal?.status;
-
-  const {data: token} = useDaoToken(pluginAddress);
 
   const {data: canVote} = useWalletCanVote(
     address,
@@ -477,7 +490,7 @@ export const Proposal: React.FC = () => {
   let canExecuteEarly = false;
 
   if (proposal && mappedProps) {
-    if (isGaslessVotingSettings(daoSettings)) {
+    if (isGaslessVotingSettings(votingSettings)) {
       canExecuteEarly = false;
     } else if (isTokenVotingSettings(votingSettings)) {
       canExecuteEarly = isEarlyExecutable(
@@ -582,7 +595,7 @@ export const Proposal: React.FC = () => {
     } else if (isOnWrongNetwork) {
       open('network');
       statusRef.current.wasOnWrongNetwork = true;
-    } else if (displayDelegationVoteGating) {
+    } else if (displayDelegationVoteGating && !isGaslessProposal(proposal)) {
       return open('delegationGating', {proposal});
     } else if (canVote) {
       setVotingInProcess(true);
@@ -682,15 +695,14 @@ export const Proposal: React.FC = () => {
       executableWithNextApproval={executableWithNextApproval}
       onVoteSubmitClicked={vote =>
         isGaslessProposal(proposal)
-          ? handleGaslessVoting(
+          ? handleGaslessVoting({
               vote,
-              (proposal as GaslessVotingProposal).token?.address
-            )
-          : handlePrepareVote({
+              token: (proposal as GaslessVotingProposal).token?.address,
+            })
+          : handleSubmitVote({
               vote,
-              replacement: voted || voteOrApprovalSubmitted,
-              voteTokenAddress: (proposal as TokenVotingProposal).token
-                ?.address,
+              replacement: voted || voteSubmitted,
+              token: (proposal as TokenVotingProposal).token?.address,
             })
       }
       {...mappedProps}
@@ -769,7 +781,7 @@ export const Proposal: React.FC = () => {
               />
             )}
 
-          {votingSettings && isGaseless ? (
+          {votingSettings && isGaslessProposal(proposal) ? (
             <CommitteeVotingTerminal
               votingTerminal={<VTerminal />}
               proposal={proposal}
@@ -778,6 +790,7 @@ export const Proposal: React.FC = () => {
               statusRef={statusRef}
               onExecuteClicked={handleExecuteNowClicked}
               actions={decodedActions}
+              pluginType={pluginType}
             />
           ) : (
             votingSettings && ( // todo(kon): fix this conditions

@@ -9,7 +9,7 @@ import {
   Dl,
   Dt,
 } from '../../components/descriptionList';
-import {IconFeedback, Link} from '@aragon/ods';
+import {IconFeedback, Link} from '@aragon/ods-old';
 import {CHAIN_METADATA} from '../../utils/constants';
 import React from 'react';
 import CommitteeAddressesModal from '../committeeAddressesModal';

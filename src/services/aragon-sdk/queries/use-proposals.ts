@@ -21,6 +21,10 @@ import {proposalStorage} from 'utils/localStorage/proposalStorage';
 import {IFetchProposalsParams} from '../aragon-sdk-service.api';
 import {aragonSdkQueryKeys} from '../query-keys';
 import {transformInfiniteProposals} from '../selectors';
+import {
+  GaslessVotingProposal,
+  OffchainVotingClient,
+} from '@vocdoni/offchain-voting';
 
 export const PROPOSALS_PER_PAGE = 6;
 
@@ -33,9 +37,11 @@ const DEFAULT_PARAMS = {
 
 async function fetchProposals(
   params: IFetchProposalsParams,
-  client: TokenVotingClient | MultisigClient | undefined
+  client: TokenVotingClient | MultisigClient | OffchainVotingClient | undefined
 ): Promise<
-  Array<MultisigProposalListItem> | Array<TokenVotingProposalListItem>
+  | Array<MultisigProposalListItem>
+  | Array<TokenVotingProposalListItem>
+  | Array<GaslessVotingProposal>
 > {
   invariant(!!client, 'fetchProposalsAsync: client is not defined');
   const data = await client.methods.getProposals(params);

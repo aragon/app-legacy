@@ -30,7 +30,6 @@ import {
 } from 'hooks/usePluginClient';
 import {
   GaselessPluginName,
-  isOffchainVotingClient,
   PluginTypes,
   usePluginClient,
 } from 'hooks/usePluginClient';
@@ -152,12 +151,11 @@ const ProposalTransactionProvider: React.FC<Props> = ({children}) => {
   );
 
   const handlePrepareVote = useCallback(
-    // todo(kon): isCommitteeVote is a quick hack tot test the approve. Check how should be done
     (params: SubmitVoteParams) => {
       setReplacingVote(!!params.replacement);
       setVoteTokenAddress(params.voteTokenAddress);
 
-      setVoteParams({proposalId, vote: params.vote, isCommitteeVote});
+      setVoteParams({proposalId, vote: params.vote});
       setShowVoteModal(true);
       setVoteOrApprovalProcessState(TransactionState.WAITING);
     },
@@ -165,13 +163,13 @@ const ProposalTransactionProvider: React.FC<Props> = ({children}) => {
   );
 
   const handleGaslessVoting = useCallback(
-    (vote: VoteValues, tokenAddress?: string) => {
+    (params: SubmitVoteParams) => {
       setVoteParams({
         proposalId: new ProposalId(urlId!).export(),
-        vote,
+        vote: params.vote,
       });
 
-      setTokenAddress(tokenAddress);
+      setTokenAddress(params.token);
       setShowGaslessModal(true);
     },
     [urlId]

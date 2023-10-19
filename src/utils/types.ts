@@ -17,8 +17,10 @@ import {TokenVotingWalletField} from 'components/addWallets/row';
 import {MultisigWalletField} from 'components/multisigWallets/row';
 import {TimeFilter, TransferTypes} from './constants';
 import {Web3Address} from './library';
-import {GaslessVotingProposal} from '@vocdoni/offchain-voting';
-import {stripPlgnAdrFromProposalId} from './proposals';
+import {
+  GaslessVotingProposal,
+  GaslessPluginVotingSettings,
+} from '@vocdoni/offchain-voting';
 import {TokenType} from './validators';
 
 /*************************************************
@@ -59,6 +61,13 @@ export type CreateDaoFormData = {
   voteReplacement: boolean;
   multisigWallets: MultisigWalletField[];
   multisigMinimumApprovals: number;
+
+  votingType: 'onChain' | 'offChain';
+  executionExpirationMinutes: string;
+  executionExpirationHours: string;
+  executionExpirationDays: string;
+  committee: MultisigWalletField[];
+  committeeMinimumApproval: string;
 };
 
 /*************************************************
@@ -187,7 +196,10 @@ export type ProposalListItem =
   | GaslessVotingProposal;
 export type SupportedProposals = DetailedProposal | ProposalListItem;
 
-export type SupportedVotingSettings = MultisigVotingSettings | GaslessPluginVotingSettings | VotingSettings;
+export type SupportedVotingSettings =
+  | MultisigVotingSettings
+  | GaslessPluginVotingSettings
+  | VotingSettings;
 
 /* ACTION TYPES ============================================================= */
 

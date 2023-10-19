@@ -3,7 +3,7 @@ import {useTranslation} from 'react-i18next';
 import useScreen from '../../hooks/useScreen';
 import {MultisigEligibility} from '../../components/multisigEligibility';
 import React from 'react';
-import {Label} from '@aragon/ods';
+import {Label} from '@aragon/ods-old';
 import {SelectEligibility} from '../../components/selectEligibility';
 import styled from 'styled-components';
 

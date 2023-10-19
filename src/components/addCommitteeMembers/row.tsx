@@ -5,7 +5,7 @@ import {
   Label,
   ListItemAction,
   InputValue as WalletInputValue,
-} from '@aragon/ods';
+} from '@aragon/ods-old';
 import React, {useCallback} from 'react';
 import {Controller, useFormContext, useWatch} from 'react-hook-form';
 import {useTranslation} from 'react-i18next';
@@ -33,7 +33,7 @@ const WalletRow: React.FC<WalletRowProps> = ({index, onDelete}) => {
     MultisigWalletField[],
     MultisigWalletField[],
     MultisigWalletField[],
-    'multisig' | 'token'
+    'multisig' | 'token',
   ] = useWatch({
     name: ['committee', 'multisigWallets', 'wallets', 'membership'],
     control,

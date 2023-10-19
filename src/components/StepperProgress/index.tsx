@@ -4,7 +4,7 @@ import {
   IconRadioDefault,
   IconSuccess,
   Spinner,
-} from '@aragon/ods';
+} from '@aragon/ods-old';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 import {

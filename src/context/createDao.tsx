@@ -45,15 +45,11 @@ import {CreateDaoFormData} from 'utils/types';
 import {useGlobalModalContext} from './globalModals';
 import {useNetwork} from './network';
 
-import {useClient as useVocdoniClient} from '@vocdoni/react-providers';
-
 import {
   OffchainVotingClient,
   OffchainVotingPluginInstall,
 } from '@vocdoni/offchain-voting';
-import {BigNumber} from '@ethersproject/bignumber';
 import {GaslessPluginVotingSettings} from '@vocdoni/offchain-voting/dist/js-client/src/types';
-import {ErrTokenAlreadyExists} from '@vocdoni/sdk';
 import {useCensus3CreateToken} from '../hooks/useCensus3';
 
 const DEFAULT_TOKEN_DECIMALS = 18;

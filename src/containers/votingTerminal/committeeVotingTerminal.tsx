@@ -3,7 +3,7 @@ import React, {ReactNode, useEffect, useMemo, useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {format} from 'date-fns';
 import {getFormattedUtcOffset, KNOWN_FORMATS} from '../../utils/date';
-import {VoterType} from '@aragon/ods';
+import {VoterType} from '@aragon/ods-old';
 import styled from 'styled-components';
 import {AccordionItem} from '../../components/accordionMethod';
 import {Accordion} from '@radix-ui/react-accordion';
@@ -26,6 +26,7 @@ import {
   getApproveStatusLabel,
   getCommitteVoteButtonLabel,
 } from '../../utils/committeeVoting';
+import {PluginTypes} from '../../hooks/usePluginClient';
 
 type CommitteeExecutionWidgetProps = Pick<
   ExecutionWidgetProps,
@@ -40,6 +41,7 @@ export const CommitteeVotingTerminal = ({
   statusRef,
   actions,
   onExecuteClicked,
+  pluginType,
 }: {
   votingStatusLabel: string;
   votingTerminal: ReactNode;
@@ -49,6 +51,7 @@ export const CommitteeVotingTerminal = ({
     wasNotLoggedIn: boolean;
     wasOnWrongNetwork: boolean;
   }>;
+  pluginType: PluginTypes;
 } & CommitteeExecutionWidgetProps) => {
   const {t} = useTranslation();
   const [terminalTab, setTerminalTab] = useState<TerminalTabs>('breakdown');
@@ -69,7 +72,7 @@ export const CommitteeVotingTerminal = ({
     notBegan,
   } = useGaslessCommiteVotes(address, proposal);
 
-  const {handleSubmitVote, transactionHash, pluginType, executionFailed} =
+  const {handleSubmitVote, transactionHash, executionFailed} =
     useProposalTransactionContext();
 
   const mappedProps = useMemo(() => {
@@ -151,7 +154,7 @@ export const CommitteeVotingTerminal = ({
       return {
         voteNowDisabled: false,
         onClick: () => {
-          handleSubmitVote(VoteValues.YES);
+          handleSubmitVote({vote: VoteValues.YES});
         },
       };
     } else return {voteNowDisabled: true};
@@ -201,7 +204,8 @@ export const CommitteeVotingTerminal = ({
       isApprovalPeriod && // active proposal
       walletAddress && // logged in
       !isOnWrongNetwork && // on proper network
-      !canApprove // cannot vote
+      !canApprove && // cannot vote
+      !approved // Already voted
     ) {
       return t('offchainVotingTerminal.alerts.notInCommittee');
     }

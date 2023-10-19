@@ -1,4 +1,4 @@
-import React, {useCallback, useState} from 'react';
+import React, {useCallback} from 'react';
 import {useTranslation} from 'react-i18next';
 import StepperModal, {BtnLabels} from '../../context/stepperModal';
 import {StepStatus} from '../../hooks/useFunctionStepper';
@@ -24,7 +24,7 @@ const OffchainVotingModal = ({
 }): // props: OffChainVotingModalProps<X>
 JSX.Element => {
   const {t} = useTranslation();
-  const {address, isConnected} = useWallet();
+  const {isConnected} = useWallet();
 
   const {
     vote: submitOffchainVote,

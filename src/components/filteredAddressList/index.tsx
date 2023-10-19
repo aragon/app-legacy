@@ -1,14 +1,18 @@
+import {SearchInput, VoterType, VotersTable} from '@aragon/ods-old';
 import React, {useCallback, useMemo, useState} from 'react';
 import {useTranslation} from 'react-i18next';
-import {TokenVotingWalletField} from '../../components/addWallets/row';
-import {MultisigWalletField} from '../../components/multisigWallets/row';
-import {getUserFriendlyWalletLabel} from '../../utils/library';
-import {SearchInput, VotersTable, VoterType} from '@aragon/ods';
 import styled from 'styled-components';
+
+import {TokenVotingWalletField} from 'components/addWallets/row';
+import {MultisigWalletField} from 'components/multisigWallets/row';
+import {getUserFriendlyWalletLabel} from 'utils/library';
+import {CHAIN_METADATA} from 'utils/constants';
+import {useNetwork} from 'context/network';
 
 type FilteredAddressListProps = {
   wallets: TokenVotingWalletField[] | MultisigWalletField[];
   tokenSymbol?: string;
+  // tokenMembership: boolean;
 };
 
 /**
@@ -22,6 +26,7 @@ export const FilteredAddressList = ({
   tokenSymbol,
 }: FilteredAddressListProps) => {
   const [searchValue, setSearchValue] = useState('');
+  const {network} = useNetwork();
   const {t} = useTranslation();
 
   const filterValidator = useCallback(
@@ -44,15 +49,15 @@ export const FilteredAddressList = ({
           ({
             wallet: ensName || getUserFriendlyWalletLabel(address, t),
             tokenAmount: `${amount} ${tokenSymbol}`,
-          } as VoterType)
+          }) as VoterType
       );
     }
 
     // multisig
     return (wallets as MultisigWalletField[])
       .filter(filterValidator)
-      .map(({address, ensName}) => ({wallet: ensName || address} as VoterType));
-  }, [filterValidator, wallets, t, tokenSymbol, wallets]);
+      .map(({address, ensName}) => ({wallet: ensName || address}) as VoterType);
+  }, [filterValidator, wallets, t, tokenSymbol]);
 
   /*************************************************
    *                    Render                     *
@@ -74,12 +79,40 @@ export const FilteredAddressList = ({
             voters={filteredAddressList}
             {...(tokenSymbol && {showAmount: true})}
             pageSize={filteredAddressList.length}
+            LoadMoreLabel={t('community.votersTable.loadMore')}
+            explorerURL={CHAIN_METADATA[network].explorer}
           />
         ) : (
           // this view is temporary until designs arrive
           <span>{t('AddressModal.noAddresses')}</span>
         )}
       </Container>
+      {/*<ModalHeader>*/}
+      {/*  <SearchInput*/}
+      {/*    value={searchValue}*/}
+      {/*    placeholder={t('placeHolders.searchTokens')}*/}
+      {/*    onChange={(e: React.ChangeEvent<HTMLInputElement>) =>*/}
+      {/*      setSearchValue(e.target.value)*/}
+      {/*    }*/}
+      {/*  />*/}
+      {/*</ModalHeader>*/}
+      {/*<Container>*/}
+      {/*  {filteredAddressList?.length > 0 ? (*/}
+      {/*    <VotersTable*/}
+      {/*      voters={filteredAddressList}*/}
+      {/*      {...(tokenMembership && {showAmount: true})}*/}
+      {/*      pageSize={filteredAddressList.length}*/}
+      {/*      LoadMoreLabel={t('community.votersTable.loadMore')}*/}
+      {/*      explorerURL={CHAIN_METADATA[network].explorer}*/}
+      {/*      // voters={filteredAddressList}*/}
+      {/*      // {...(tokenSymbol && {showAmount: true})}*/}
+      {/*      // pageSize={filteredAddressList.length}*/}
+      {/*    />*/}
+      {/*  ) : (*/}
+      {/*    // this view is temporary until designs arrive*/}
+      {/*    <span>{t('AddressModal.noAddresses')}</span>*/}
+      {/*  )}*/}
+      {/*</Container>*/}
     </>
   );
 };
@@ -87,8 +120,10 @@ export const FilteredAddressList = ({
 const ModalHeader = styled.div.attrs({
   className: 'p-3 bg-ui-0 rounded-xl sticky top-0',
 })`
-  box-shadow: 0px 4px 8px rgba(31, 41, 51, 0.04),
-    0px 0px 2px rgba(31, 41, 51, 0.06), 0px 0px 1px rgba(31, 41, 51, 0.04);
+  box-shadow:
+    0px 4px 8px rgba(31, 41, 51, 0.04),
+    0px 0px 2px rgba(31, 41, 51, 0.06),
+    0px 0px 1px rgba(31, 41, 51, 0.04);
   border-radius: 12px;
 `;
 

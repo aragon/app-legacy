@@ -125,7 +125,7 @@ const useOffchainVoting = () => {
 export const useOffchainHasAlreadyVote = ({
   proposal,
 }: {
-  proposal: DetailedProposal | undefined;
+  proposal: DetailedProposal | undefined | null;
 }) => {
   const [hasAlreadyVote, setHasAlreadyVote] = useState(false);
   const {client} = useClient();
@@ -143,8 +143,9 @@ export const useOffchainHasAlreadyVote = ({
       proposal &&
       isGaslessProposal(proposal) &&
       proposal?.vochainProposalId
-    )
+    ) {
       checkAlreadyVote();
+    }
   }, [client, proposal]);
 
   return {hasAlreadyVote};

@@ -11,7 +11,7 @@ import {
   ButtonText,
   IconChevronRight,
   IconReload,
-} from '@aragon/ods';
+} from '@aragon/ods-old';
 import {
   GenericKeyEnum,
   StepsMap,
@@ -118,7 +118,7 @@ const StepperModal = <X extends GenericKeyEnum>({
                   <div className="truncate">{formattedAverage}</div>
                   <div>{`${nativeCurrency.symbol}`}</div>
                 </StrongText>
-                <div className="flex justify-end space-x-0.5 text-sm text-right text-ui-500">
+                <div className="flex justify-end space-x-0.5 text-right text-sm text-ui-500">
                   <div className="truncate">{formattedMax}</div>
                   <div>{`${nativeCurrency.symbol}`}</div>
                 </div>
@@ -133,7 +133,7 @@ const StepperModal = <X extends GenericKeyEnum>({
                   <div className="truncate">{formattedAverage}</div>
                   <div>{`${nativeCurrency.symbol}`}</div>
                 </StrongText>
-                <p className="text-sm text-right text-ui-500">{totalCost}</p>
+                <p className="text-right text-sm text-ui-500">{totalCost}</p>
               </VStack>
             </GasTotalCostEthContainer>
           </GasCostTableContainer>

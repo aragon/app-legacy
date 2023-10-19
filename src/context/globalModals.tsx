@@ -74,9 +74,16 @@ export const GlobalModalsProvider: React.FC<Props> = ({children}) => {
   );
 };
 
-function useGlobalModalContext(): GlobalModalsContextType {
-  return useContext(GlobalModalsContext) as GlobalModalsContextType;
-}
+export const useGlobalModalContext = <TState extends object>(
+  dialog?: DialogType
+): GlobalModalsContextType<TState> => {
+  const values = useContext(GlobalModalsContext);
+
+  if (values == null) {
+    throw new Error(
+      'GlobalModals: hook must be used inside the GlobalModalContext in order to work properly.'
+    );
+  }
 
   return {
     ...values,

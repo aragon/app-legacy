@@ -21,6 +21,8 @@ import {useClient as useVocdoniClient} from '@vocdoni/react-providers';
  * @param proposalId proposal id
  * @param pluginAddress plugin for which voting eligibility will be calculated
  * @param pluginType plugin type
+ * @param proposalStatus
+ * @param gaslessProposalId if is a gasless proposal, the id of the proposal on the vochain
  * @returns whether given wallet address is allowed to vote on proposal with given id
  */
 export const useWalletCanVote = (
@@ -29,7 +31,7 @@ export const useWalletCanVote = (
   pluginAddress: string,
   pluginType?: PluginTypes,
   proposalStatus?: string,
-  offchainProposalId?: string
+  gaslessProposalId?: string
 ): HookData<boolean> => {
   const [data, setData] = useState([false, false, false] as
     | boolean[]
@@ -76,11 +78,11 @@ export const useWalletCanVote = (
 
     async function fetchCanVoteOffchain() {
       let canVote = false;
-      if (offchainProposalId) {
-        canVote = await vocdoniClient.isInCensus(offchainProposalId);
+      if (gaslessProposalId) {
+        canVote = await vocdoniClient.isInCensus(gaslessProposalId);
         if (canVote) {
           canVote =
-            (await vocdoniClient.hasAlreadyVoted(offchainProposalId)) === null;
+            (await vocdoniClient.hasAlreadyVoted(gaslessProposalId)) === null;
         }
       }
       setData(canVote);
@@ -112,7 +114,7 @@ export const useWalletCanVote = (
     isMultisigClient,
     isOffchainVoting,
     isTokenVotingClient,
-    offchainProposalId,
+    gaslessProposalId,
     pluginAddress,
     pluginType,
     proposalId,

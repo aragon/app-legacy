@@ -1,6 +1,6 @@
 import React, {useCallback} from 'react';
 import {Controller, useFormContext, useWatch} from 'react-hook-form';
-import {AlertInline, NumberInput} from '@aragon/ods';
+import {AlertInline, NumberInput} from '@aragon/ods-old';
 import {
   COMMITTEE_EXECUTION_MAX_DURATION_DAYS,
   COMMITTEE_EXECUTION_MIN_DURATION_HOURS,

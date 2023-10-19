@@ -14,8 +14,6 @@ import {useDaoDetailsQuery} from 'hooks/useDaoDetails';
 import {TokenDaoMember, useDaoMembers} from 'hooks/useDaoMembers';
 import {useDaoMembers} from 'hooks/useDaoMembers';
 import {GaselessPluginName, PluginTypes} from 'hooks/usePluginClient';
-import {usePluginSettings} from 'hooks/usePluginSettings';
-import {PluginTypes} from 'hooks/usePluginClient';
 import {useWallet} from 'hooks/useWallet';
 import {useVotingPowerAsync} from 'services/aragon-sdk/queries/use-voting-power';
 import {useVotingSettings} from 'services/aragon-sdk/queries/use-voting-settings';

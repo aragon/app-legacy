@@ -42,18 +42,13 @@ import {
   PluginTypes,
   usePluginClient,
 } from 'hooks/usePluginClient';
-import {
-  isGaslessVotingSettings,
-  isMultisigVotingSettings,
-  isTokenVotingSettings,
-  usePluginSettings,
-} from 'hooks/usePluginSettings';
 import {usePollGasFee} from 'hooks/usePollGasfee';
 import {useTokenSupply} from 'hooks/useTokenSupply';
 import {useWallet} from 'hooks/useWallet';
 import {trackEvent} from 'services/analytics';
 import {useVotingPower} from 'services/aragon-sdk/queries/use-voting-power';
 import {
+  isGaslessVotingSettings,
   isMultisigVotingSettings,
   isTokenVotingSettings,
   useVotingSettings,
@@ -80,19 +75,6 @@ import {ProposalFormData, ProposalId, ProposalResource} from 'utils/types';
 import {useGlobalModalContext} from './globalModals';
 import {useNetwork} from './network';
 import {useProviders} from './providers';
-import {
-  proposalToElection,
-  UseCreateElectionProps,
-} from 'hooks/useVocdoniElection';
-import {useClient as useVocdoniClient} from 'hooks/useVocdoniSdk';
-import {
-  AccountData,
-  Election,
-  ErrAccountNotFound,
-  ErrAPI,
-  UnpublishedElection,
-} from '@vocdoni/sdk';
-import {usePrivacyContext} from './privacyContext';
 import {useCreateOffchainProposal} from './createOffchainProposal';
 import styled from 'styled-components';
 import OffchainProposalModal from '../containers/transactionModals/offchainProposalModal';
@@ -170,7 +152,7 @@ const CreateProposalWrapper: React.FC<Props> = ({
     steps: offchainProposalSteps,
     globalState: offchainGlobalState,
     createProposal,
-    cacheProposal: cacheOffchainProposal,
+    // cacheProposal: cacheOffchainProposal,
   } = useCreateOffchainProposal({
     daoToken,
   });
@@ -425,14 +407,14 @@ const CreateProposalWrapper: React.FC<Props> = ({
           'durationMinutes',
         ]);
 
-        // Calculate the end date using duration
-        const endDateTimeMill =
-          startDateTime.valueOf() +
-          offsetToMills({
-            days: Number(days),
-            hours: Number(hours),
-            minutes: Number(minutes),
-          });
+      // Calculate the end date using duration
+      const endDateTimeMill =
+        startDateTime.valueOf() +
+        offsetToMills({
+          days: Number(days),
+          hours: Number(hours),
+          minutes: Number(minutes),
+        });
 
         endDateTime = new Date(endDateTimeMill);
 
@@ -513,7 +495,7 @@ const CreateProposalWrapper: React.FC<Props> = ({
         expirationDate: 0,
         vochainProposalId,
         startDate: (params.startDate ?? new Date()).getTime(),
-        endDate: (params.endDate ?? new Date()).getTime(),
+        endDate: (params.endDate ?? new Date()).getTime(), // todo(kon): endate regresion
       };
     },
     []
@@ -584,6 +566,11 @@ const CreateProposalWrapper: React.FC<Props> = ({
       if (!address || !daoDetails || !votingSettings || !proposalCreationData)
         return;
 
+      // todo(kon): implement cache for offchain proposals
+      if (isGaslessVotingSettings(votingSettings)) {
+        return;
+      }
+
       const creationBlockNumber = await apiProvider.getBlockNumber();
 
       const [title, summary, description, resources] = getValues([
@@ -599,8 +586,8 @@ const CreateProposalWrapper: React.FC<Props> = ({
         creationDate: new Date(),
         creatorAddress: address,
         creationBlockNumber,
-        startDate: proposalCreationData.startDate ?? new Date(),
-        endDate: proposalCreationData.endDate!,
+        startDate: (proposalCreationData.startDate as Date) ?? new Date(), // todo(kon): type incompatibility with gaseless proposal
+        endDate: proposalCreationData.endDate! as Date, // todo(kon): type incompatibility with gaseless proposal
         metadata: {
           title,
           summary,
@@ -613,7 +600,6 @@ const CreateProposalWrapper: React.FC<Props> = ({
           : ProposalStatus.ACTIVE,
       };
 
-      // todo(kon): implement cache for offchain proposals
       if (isMultisigVotingSettings(votingSettings)) {
         const {approve: creatorApproval} =
           proposalCreationData as CreateMultisigProposalParams;
@@ -772,44 +758,47 @@ const CreateProposalWrapper: React.FC<Props> = ({
                 proposalId: prefixedId,
               });
 
-            // cache proposal
-            handleCacheProposal(prefixedId);
-            invalidateQueries();
+              // cache proposal
+              handleCacheProposal(prefixedId);
+              invalidateQueries();
 
-            break;
+              break;
+            }
           }
         }
-      }
-    } catch (error) {
-      console.error(error);
-      setCreationProcessState(TransactionState.ERROR);
-      trackEvent('newProposal_transaction_failed', {
-        dao_address: daoDetails?.address,
-        network: network,
-        wallet_provider: provider?.connection.url,
-        error,
-      });
+      } catch (error) {
+        console.error(error);
+        setCreationProcessState(TransactionState.ERROR);
+        trackEvent('newProposal_transaction_failed', {
+          dao_address: daoDetails?.address,
+          network: network,
+          wallet_provider: provider?.connection.url,
+          error,
+        });
         // Fix to update the StepperModal step status when creating a gasless proposal.
         // If the error is not thrown until the StepperModal, it thinks that the step is finished properly
         // and not show the try again button
         if (electionId) throw error;
-    }
-  }, [
-    averageFee,
-    creationProcessState,
-    daoDetails?.address,
-    handleCacheProposal,
-    handleCloseModal,
-    invalidateQueries,
-    isOnWrongNetwork,
-    network,
-    open,
-    pluginAddress,
-    pluginClient,
-    proposalCreationData,
-    provider?.connection.url,
-    tokenPrice,
-  ]);
+      }
+    },
+    [
+      averageFee,
+      creationProcessState,
+      daoDetails?.address,
+      handleCacheProposal,
+      handleCloseModal,
+      invalidateQueries,
+      isOnWrongNetwork,
+      network,
+      offchain,
+      open,
+      pluginAddress,
+      pluginClient,
+      proposalCreationData,
+      provider?.connection.url,
+      tokenPrice,
+    ]
+  );
 
   const handleOffChainProposal = useCallback(async () => {
     console.log('DEBUG', 'handleOffChainProposal');
@@ -817,6 +806,7 @@ const CreateProposalWrapper: React.FC<Props> = ({
       return new Error('ERC20 SDK client is not initialized correctly');
     }
     console.log('DEBUG', 'ERC20 initialized', daoToken);
+
     const {params, metadata} = await getProposalCreationParams();
 
     await createProposal(metadata, params, handlePublishProposal);

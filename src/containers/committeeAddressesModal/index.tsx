@@ -7,7 +7,7 @@ import {FilteredAddressList} from '../../components/filteredAddressList';
 
 const CommitteeAddressesModal: React.FC = () => {
   const {getValues} = useFormContext();
-  const {isCommitteeMembersOpen, close} = useGlobalModalContext();
+  const {isOpen, close} = useGlobalModalContext('committeeMembers');
   const [committee] = getValues(['committee']);
 
   /*************************************************
@@ -15,8 +15,8 @@ const CommitteeAddressesModal: React.FC = () => {
    *************************************************/
   return (
     <ModalBottomSheetSwitcher
-      isOpen={isCommitteeMembersOpen}
-      onClose={() => close('committeeMembers')}
+      isOpen={isOpen}
+      onClose={close}
       data-testid="communityModal"
     >
       <FilteredAddressList wallets={committee} />

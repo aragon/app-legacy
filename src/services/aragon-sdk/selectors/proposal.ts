@@ -16,6 +16,7 @@ import {
   isTokenBasedProposal,
   recalculateProposalStatus,
 } from 'utils/proposals';
+import {GaslessVotingProposal} from '@vocdoni/offchain-voting';
 
 /**
  * Transforms proposals within an `InfiniteData` structure.
@@ -80,7 +81,8 @@ export function syncProposalData<
     | MultisigProposal
     | TokenVotingProposal
     | MultisigProposalListItem
-    | TokenVotingProposalListItem,
+    | TokenVotingProposalListItem
+    | GaslessVotingProposal,
 >(chainId: SupportedChainID, proposalId: string, serverData: T | null) {
   if (serverData) {
     proposalStorage.removeProposal(chainId, serverData.id);

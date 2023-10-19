@@ -10,10 +10,14 @@ import {SupportedVotingSettings} from 'utils/types';
 import {IFetchVotingSettingsParams} from '../aragon-sdk-service.api';
 import {usePluginClient} from 'hooks/usePluginClient';
 import {aragonSdkQueryKeys} from '../query-keys';
+import {
+  GaslessPluginVotingSettings,
+  OffchainVotingClient,
+} from '@vocdoni/offchain-voting';
 
 async function fetchVotingSettingsAsync(
   {pluginAddress, blockNumber}: IFetchVotingSettingsParams,
-  client: TokenVotingClient | MultisigClient | undefined
+  client: TokenVotingClient | MultisigClient | OffchainVotingClient | undefined
 ): Promise<SupportedVotingSettings | null> {
   if (!pluginAddress)
     return Promise.reject(
@@ -55,6 +59,13 @@ export function isMultisigVotingSettings(
   settings: SupportedVotingSettings | undefined | null
 ): settings is MultisigVotingSettings {
   return settings ? 'minApprovals' in settings : false;
+}
+
+export function isGaslessVotingSettings(
+  settings: SupportedVotingSettings | undefined | null
+): settings is GaslessPluginVotingSettings {
+  if (!settings || Object.keys(settings).length === 0) return false;
+  return 'onlyCommitteeProposalCreation' in settings;
 }
 
 /**

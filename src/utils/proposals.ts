@@ -29,7 +29,7 @@ import {MultisigDaoMember} from 'hooks/useDaoMembers';
 import {PluginTypes} from 'hooks/usePluginClient';
 import {
   isMultisigVotingSettings,
-  isTokenVotingSettings,
+  isGaslessVotingSettings,
 } from 'services/aragon-sdk/queries/use-voting-settings';
 import {i18n} from '../../i18n.config';
 import {KNOWN_FORMATS, getFormattedUtcOffset} from './date';
@@ -44,10 +44,6 @@ import {
   SupportedVotingSettings,
 } from './types';
 import {GaslessVotingProposal} from '@vocdoni/offchain-voting';
-import {
-  isGaslessVotingSettings,
-  isMultisigVotingSettings,
-} from 'hooks/usePluginSettings';
 
 export type TokenVotingOptions = StrictlyExclude<
   VoterType['option'],
@@ -96,7 +92,7 @@ export function isMultisigProposal(
 }
 
 export function isGaslessProposal(
-  proposal: SupportedProposals | undefined
+  proposal: SupportedProposals | undefined | null
 ): proposal is GaslessVotingProposal {
   if (!proposal) return false;
   return 'vochainProposalId' in proposal;
