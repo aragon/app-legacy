@@ -99,8 +99,8 @@ const SelectWCApp: React.FC<Props> = props => {
                 iconRight={
                   <div className="flex space-x-4">
                     {filteredSession[0] && (
-                      <div className="text-success-700 flex items-center space-x-2 text-sm font-semibold leading-normal">
-                        <div className="bg-success-700 h-2 w-2 rounded-full" />
+                      <div className="flex items-center space-x-2 text-sm font-semibold leading-normal text-success-700">
+                        <div className="h-2 w-2 rounded-full bg-success-700" />
                         <p>Connected</p>
                       </div>
                     )}
