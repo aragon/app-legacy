@@ -4,29 +4,32 @@ import {
   Link,
   shortenAddress,
 } from '@aragon/ods-old';
-import {useNetwork} from 'context/network';
-import {useDaoDetailsQuery} from 'hooks/useDaoDetails';
-import {useUpdateVerification} from 'hooks/useUpdateVerification';
+import {DaoAction} from '@aragon/sdk-client-common';
 import React from 'react';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
+
+import {useNetwork} from 'context/network';
+import {useDaoDetailsQuery} from 'hooks/useDaoDetails';
+import {useUpdateVerification} from 'hooks/useUpdateVerification';
 import {CHAIN_METADATA} from 'utils/constants';
 import {htmlIn} from 'utils/htmlIn';
-import {Action, DetailedProposal} from 'utils/types';
+import {DetailedProposal, ProposalId} from 'utils/types';
 import {validateAddress} from 'utils/validators';
 import {Status, StatusProps} from './Status';
+// import {useClient} from 'hooks/useClient';
 
 export interface UpdateVerificationCardProps {
   proposal?: DetailedProposal;
-  proposalId?: string;
-  /** @todo Perform check of actions, once requirements are clear */
-  actions: Array<Action | undefined> | undefined;
+  proposalId?: ProposalId;
+  actions?: DaoAction[];
 }
 
 export const UpdateVerificationCard: React.FC<UpdateVerificationCardProps> = ({
-  proposalId,
+  actions,
 }) => {
   const {t} = useTranslation();
+  // const {client} = useClient();
   const {network} = useNetwork();
   const {data: daoDetails, isLoading: detailsAreLoading} = useDaoDetailsQuery();
 
@@ -34,20 +37,39 @@ export const UpdateVerificationCard: React.FC<UpdateVerificationCardProps> = ({
   const isDaoAddressCheckLoading = detailsAreLoading;
   const isDaoAddressVerified = validateAddress(daoAddress) === true;
 
-  const [pluginRegistryResult, pluginSetupProcessorResult] =
-    useUpdateVerification(proposalId as string);
+  // const isPluginUpdateProposal = client?.methods.isPluginUpdate(
+  //   actions as DaoAction[]
+  // );
+  // const isOsUpdateProposal = client?.methods.isDaoUpdate(
+  //   actions as DaoAction[]
+  // );
+
+  const [pluginUpdateVerification, osUpdateVerification] =
+    useUpdateVerification(
+      actions as DaoAction[],
+      daoAddress
+      // isPluginUpdateProposal,
+      // isOsUpdateProposal
+    );
+
+  console.log(
+    'pluginUpdateVerification',
+    pluginUpdateVerification,
+    osUpdateVerification,
+    actions
+  );
 
   /** @todo Figure put how to get plugin registry update */
   const pluginRegistryAddress = daoDetails?.address || '';
   const isPluginRegistryCheckLoading =
-    pluginRegistryResult.isLoading || detailsAreLoading;
-  const isPluginRegistryVerified = !!pluginSetupProcessorResult.data;
+    pluginUpdateVerification.isLoading || detailsAreLoading;
+  const isPluginRegistryVerified = !!osUpdateVerification.data;
 
   /** @todo Figure put how to get plugin setup processor update */
   const pluginSetupProcessorAddress = daoDetails?.address || '';
   const isPluginSetupProcessorCheckLoading =
-    pluginSetupProcessorResult.isLoading || detailsAreLoading;
-  const isPluginSetupProcessorVerified = !!pluginSetupProcessorResult.data;
+    pluginUpdateVerification.isLoading || detailsAreLoading;
+  const isPluginSetupProcessorVerified = !!osUpdateVerification.data;
 
   const isVerificationFailed =
     (!isDaoAddressCheckLoading && !isDaoAddressVerified) ||
@@ -61,6 +83,8 @@ export const UpdateVerificationCard: React.FC<UpdateVerificationCardProps> = ({
     if (isLoading) return 'loading';
     return isVerified ? 'success' : 'error';
   }
+
+  // if (!isPluginUpdateProposal && !isOsUpdateProposal) return null;
 
   return (
     <Container>

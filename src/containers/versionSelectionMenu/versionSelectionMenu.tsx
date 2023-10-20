@@ -1,93 +1,129 @@
 import {ButtonText} from '@aragon/ods-old';
 import ModalBottomSheetSwitcher from 'components/modalBottomSheetSwitcher';
 import {UpdateListItem} from 'containers/updateListItem/updateListItem';
-import React from 'react';
+import {useUpdateContext} from 'context/update';
+import React, {useMemo} from 'react';
 import {Controller, useFormContext} from 'react-hook-form';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 
 export type CheckboxListItemProps = {
-  isOpen: boolean;
+  showModal: {
+    isOpen: boolean;
+    type: 'os' | 'plugin' | 'none';
+  };
   handleCloseMenu: () => void;
+};
+
+type versionList = {
+  version: string;
+  helptext: string;
+  isLatest?: boolean;
+  tagLabelNatural?: string;
 };
 
 // TODO: This might be a component that
 export const VersionSelectionMenu: React.FC<CheckboxListItemProps> = ({
-  isOpen,
+  showModal,
   handleCloseMenu,
 }) => {
   const {t} = useTranslation();
   const {control} = useFormContext();
+  const {osxAvailableVersions} = useUpdateContext();
 
-  const versionList = [
-    {
-      version: {
-        release: '1',
-        build: '2',
-      },
-      address: '0xadb2e0cc261fdfbf29ffd74102c91052a425e666',
-      helptext: 'TBD inline release notes',
-      LinkLabel: t('update.item.releaseNotesLabel'),
-      tagLabelNatural: t('update.item.tagLatest'),
-      tagLabelInfo: t('update.item.tagPrepared'),
-      isLatest: true,
-      isPrepared: true,
-    },
-    {
-      version: {
-        release: '1',
-        build: '1',
-      },
-      address: '0xadb2e0cc261fdfbf29ffd74102c91052a425e666',
-      helptext: 'TBD inline release notes',
-      LinkLabel: t('update.item.releaseNotesLabel'),
-    },
-  ];
+
+  const versionList = useMemo(() => {
+    const List: versionList[] = [];
+    osxAvailableVersions?.forEach(value => {
+      List.push({
+        version: value.version,
+        helptext: 'TBD inline release notes',
+        ...(Boolean(value.isLatest) && {
+          isLatest: true,
+          tagLabelNatural: t('update.item.tagLatest'),
+        }),
+      });
+    });
+    return List;
+  }, [osxAvailableVersions, t]);
 
   return (
     <ModalBottomSheetSwitcher
       onClose={handleCloseMenu}
-      isOpen={isOpen}
+      isOpen={showModal.isOpen}
       title={t('update.modalVersion.title')}
       subtitle={t('update.modalVersion.desc')}
     >
-      <div className="grid gap-y-6 px-4 py-6">
-        <Controller
-          name="pluginSelectedVersion"
-          rules={{required: 'Validate'}}
-          control={control}
-          defaultValue={{
-            address: '0xadb2e0cc261fdfbf29ffd74102c91052a425e666',
-            version: {
-              release: '1',
-              build: '2',
-            },
-          }}
-          render={({field: {onChange, value}}) => (
-            <>
-              <VersionListContainer>
-                {versionList.map((data, index) => (
-                  <UpdateListItem
-                    key={index}
-                    label={`Token voting v${data.version.release}.${data.version.build}`}
-                    {...data}
-                    type={
-                      value?.version === data.version ? 'active' : 'default'
-                    }
-                    onClick={() =>
-                      onChange({
-                        address: data.address,
-                        version: data.version,
-                        isLatest: data.isLatest,
-                        isPrepared: data.isPrepared,
-                      })
-                    }
-                  />
-                ))}
-              </VersionListContainer>
-            </>
-          )}
-        />
+      <div className="grid gap-y-3 px-2 py-3">
+        {showModal.type === 'os' ? (
+          <Controller
+            name="osSelectedVersion"
+            rules={{required: 'Validate'}}
+            control={control}
+            render={({field: {onChange, value}}) => (
+              <>
+                <VersionListContainer>
+                  {versionList.map((data, index) => {
+                    return (
+                      <UpdateListItem
+                        key={index}
+                        label={`Token voting v${data.version}`}
+                        {...data}
+                        type={
+                          value?.version === data.version ? 'active' : 'default'
+                        }
+                        LinkLabel={t('update.item.releaseNotesLabel')}
+                        onClick={() =>
+                          onChange({
+                            version: data.version,
+                            isLatest: data.isLatest,
+                          })
+                        }
+                      />
+                    );
+                  })}
+                </VersionListContainer>
+              </>
+            )}
+          />
+        ) : (
+          <Controller
+            name="pluginSelectedVersion"
+            rules={{required: 'Validate'}}
+            control={control}
+            defaultValue={{
+              address: '0xadb2e0cc261fdfbf29ffd74102c91052a425e666',
+              version: {
+                release: '1',
+                build: '2',
+              },
+            }}
+            render={({field: {onChange, value}}) => (
+              <>
+                <VersionListContainer>
+                  {versionList.map((data, index) => (
+                    <UpdateListItem
+                      key={index}
+                      label={`Token voting v${data.version.release}.${data.version.build}`}
+                      {...data}
+                      type={
+                        value?.version === data.version ? 'active' : 'default'
+                      }
+                      onClick={() =>
+                        onChange({
+                          address: data.address,
+                          version: data.version,
+                          isLatest: data.isLatest,
+                          isPrepared: data.isPrepared,
+                        })
+                      }
+                    />
+                  ))}
+                </VersionListContainer>
+              </>
+            )}
+          />
+        )}
         <ActionContainer>
           <ButtonText
             label={t('update.modalVersion.ctaLabel')}
@@ -102,9 +138,9 @@ export const VersionSelectionMenu: React.FC<CheckboxListItemProps> = ({
 };
 
 const VersionListContainer = styled.div.attrs({
-  className: 'grid gap-y-3',
+  className: 'grid gap-y-1.5',
 })``;
 
 const ActionContainer = styled.div.attrs({
-  className: 'grid gap-y-3',
+  className: 'grid gap-y-1.5',
 })``;
