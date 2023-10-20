@@ -1,38 +1,25 @@
 import {useQuery} from '@tanstack/react-query';
-import {PluginTypes, usePluginClient} from './usePluginClient';
-import {useNetwork} from 'context/network';
-import {Client, MultisigClient, TokenVotingClient} from '@aragon/sdk-client';
-import {useClient} from './useClient';
-
-async function fetchPluginList(
-  pluginClient?: TokenVotingClient | MultisigClient,
-  client?: Client,
-  pluginType?: PluginTypes
-) {
-  if (!pluginType || !client || !pluginClient) return null;
-
-  const pluginRepoAddress = pluginClient?.web3.getAddress(
-    pluginType === 'token-voting.plugin.dao.eth'
-      ? 'tokenVotingRepoAddress'
-      : 'multisigRepoAddress'
-  );
-
-  return await client?.methods.getPlugin(pluginRepoAddress);
-}
+import {Client, PluginRepo, PluginSortBy} from '@aragon/sdk-client';
+import {SortDirection} from '@aragon/sdk-client-common';
 
 /**
- * Get List of plugins available for a DAO
- * @param pluginType The plugin type to get available versions for
- * @returns List of available versions
+ * Custom hook to get the list of available versions for a plugin
+ * @param pluginType The type of plugin to fetch the list for
+ * @returns The query result for the list of available versions
  */
-export const usePluginAvailableVersions = (pluginType: PluginTypes) => {
-  const pluginClient = usePluginClient(pluginType);
-  const {client} = useClient();
-  const {network} = useNetwork();
-
-  return useQuery<{} | null>({
-    queryKey: ['pluginAvailableVersions', pluginType, network],
-    queryFn: () => fetchPluginList(pluginClient, client, pluginType),
-    enabled: Boolean(pluginType) && Boolean(client) && Boolean(pluginClient),
-  });
+export const usePluginAvailableVersions = (client: Client) => {
+  // Use the useQuery hook to fetch the list of available versions for the plugin
+  return useQuery(
+    ['pluginAvailableVersions'],
+    () =>
+      client.methods.getPlugins({
+        limit: 10,
+        skip: 0,
+        direction: SortDirection.ASC,
+        sortBy: PluginSortBy.SUBDOMAIN,
+      }),
+    {
+      enabled: Boolean(client),
+    }
+  );
 };

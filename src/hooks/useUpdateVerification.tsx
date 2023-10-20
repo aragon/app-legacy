@@ -7,24 +7,27 @@ import {ProposalId} from 'utils/types';
  * @param address dao address
  * @returns an arrea of queries the indicates the status of verifications
  */
-export function useUpdateVerification(proposalId: ProposalId | string) {
+export function useUpdateVerification(
+  proposalId: ProposalId | string,
+  isPluginUpdateProposal?: boolean,
+  isOsUpdateProposal?: boolean
+) {
   const {client} = useClient();
 
   const verificationQueries = [
     {
       queryKey: ['isPluginUpdateProposalValid', proposalId],
-      queryFn: () =>
-        client?.methods.isPluginUpdateProposalValid(proposalId as string),
-      enabled: Boolean(proposalId),
+      queryFn: () => client?.methods.isPluginUpdateValid(proposalId as string),
+      enabled: Boolean(proposalId) && isPluginUpdateProposal,
       retry: false,
     },
     {
       queryKey: ['isDaoUpdateProposalValid', proposalId],
       queryFn: () =>
-        client?.methods.isDaoUpdateProposalValid({
+        client?.methods.isDaoUpdateValid({
           proposalId: proposalId as string,
         }),
-      enabled: Boolean(proposalId),
+      enabled: Boolean(proposalId) && isOsUpdateProposal,
       retry: false,
     },
   ];
