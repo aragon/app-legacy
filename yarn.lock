@@ -66,21 +66,20 @@
   dependencies:
     ethers "^5.6.2"
 
-"@aragon/osx-ethers@1.3.0-rc0.2", "@aragon/osx-ethers@^1.3.0-rc0.2":
-  version "1.3.0-rc0.2"
-  resolved "https://registry.yarnpkg.com/@aragon/osx-ethers/-/osx-ethers-1.3.0-rc0.2.tgz#820f325ee8514bc6e598135bba2501f124d92d31"
-  integrity sha512-PpsmyZOBRQPElEsiLNkoGg/4j+oJn8SJC6S0oN837k5JofkleLbOdZgUmB0SHmL98hvcE157MoRZ4YM+IXbhhA==
+"@aragon/osx-ethers@1.3.0-rc0.3", "@aragon/osx-ethers@^1.3.0-rc0.3":
+  version "1.3.0-rc0.3"
+  resolved "https://registry.yarnpkg.com/@aragon/osx-ethers/-/osx-ethers-1.3.0-rc0.3.tgz#53c7ee2888e25704932e4450c1518014cb383093"
+  integrity sha512-8hjNtAni7rGygtZDScJuCUh0QnA5q6gF8zhQycyhCvvjwakxWouLFEySpBPIYoFsMziqFa4E2uu/XyNHQb+YiQ==
   dependencies:
     ethers "^5.6.2"
 
-"@aragon/sdk-client-common@^1.6.0":
-  version "1.6.0"
-  resolved "https://registry.yarnpkg.com/@aragon/sdk-client-common/-/sdk-client-common-1.6.0.tgz#02d7f65a5f83e40d3f430052824e1c16bc460e9e"
-  integrity sha512-Rb4+PM4cIXM1eBvxdnNcAtpQMKlwATpVsebJT0ODKVqmVy3gR8i8aiKZJWDxx0dxOn2S7FlocTdOOXyXAVCA0Q==
+"@aragon/sdk-client-common@^1.7.0":
+  version "1.7.0"
+  resolved "https://registry.yarnpkg.com/@aragon/sdk-client-common/-/sdk-client-common-1.7.0.tgz#161ce1de2878cea2a4f9f0a3766c1826c54bc37e"
+  integrity sha512-IsklsLjmsBLE6JV1slOFNXcU7QMwrBpSHAKnabVXiiCBH/QimazIs6SP10wPJSUHtgB90D+lkoDPm0qKRxm8qw==
   dependencies:
-    "@aragon/osx-ethers" "^1.3.0-rc0.2"
+    "@aragon/osx-ethers" "^1.3.0-rc0.3"
     "@aragon/osx-ethers-v1.0.0" "npm:@aragon/osx-ethers@1.2.1"
-    "@aragon/sdk-common" "^1.7.0"
     "@aragon/sdk-ipfs" "^1.1.0"
     "@ethersproject/abstract-signer" "^5.5.0"
     "@ethersproject/bignumber" "^5.6.0"
@@ -90,15 +89,15 @@
     "@ethersproject/wallet" "^5.6.0"
     graphql "^16.5.0"
     graphql-request "^4.3.0"
+    yup "^1.2.0"
 
-"@aragon/sdk-client@^1.14.0":
-  version "1.14.0"
-  resolved "https://registry.yarnpkg.com/@aragon/sdk-client/-/sdk-client-1.14.0.tgz#994052955d4bad5ad51d637e12634c67127ca8be"
-  integrity sha512-6nEPNoCO4SuIbj2CoM3dRaZw6yaBLH3yUUubCc3ynWYPdHMK6aeUhu5Q+GOLM5g6x+utPtGx5eUv9ydsqGS0MQ==
+"@aragon/sdk-client@^1.16.0":
+  version "1.16.0"
+  resolved "https://registry.yarnpkg.com/@aragon/sdk-client/-/sdk-client-1.16.0.tgz#fb4e6acf11998fe2231d6621c7d7f641a462e2ab"
+  integrity sha512-Vazy+KF5GzrUnURAwaSosHYb4eqDaYoWkPCbMgzfFTCgSz+x8qqgfLAqhpgtPhw2i7LF4B4eXT6EhB7xZFey7Q==
   dependencies:
-    "@aragon/osx-ethers" "1.3.0-rc0.2"
-    "@aragon/sdk-client-common" "^1.6.0"
-    "@aragon/sdk-common" "^1.7.0"
+    "@aragon/osx-ethers" "1.3.0-rc0.3"
+    "@aragon/sdk-client-common" "^1.7.0"
     "@aragon/sdk-ipfs" "^1.1.0"
     "@ethersproject/abstract-signer" "^5.5.0"
     "@ethersproject/bignumber" "^5.6.0"
@@ -110,11 +109,7 @@
     "@openzeppelin/contracts-upgradeable" "^4.8.1"
     graphql "^16.5.0"
     graphql-request "^4.3.0"
-
-"@aragon/sdk-common@^1.7.0":
-  version "1.7.0"
-  resolved "https://registry.yarnpkg.com/@aragon/sdk-common/-/sdk-common-1.7.0.tgz#7e71617aec584ff241ff4c7a0d0e73303f169539"
-  integrity sha512-Op5c52Qn6MdNdPu+ZJDj9ai1Leur+VpVebaGE3HaZMPYE34IPXblmM10YU05H9Znf5g6jvIDLRB8xQmUOTFscw==
+    yup "^1.2.0"
 
 "@aragon/sdk-ipfs@^1.1.0":
   version "1.1.0"
@@ -14491,6 +14486,11 @@ prop-types@^15.5.10, prop-types@^15.5.8, prop-types@^15.7.2, prop-types@^15.8.1:
     object-assign "^4.1.1"
     react-is "^16.13.1"
 
+property-expr@^2.0.5:
+  version "2.0.6"
+  resolved "https://registry.yarnpkg.com/property-expr/-/property-expr-2.0.6.tgz#f77bc00d5928a6c748414ad12882e83f24aec1e8"
+  integrity sha512-SVtmxhRE/CGkn3eZY1T6pC8Nln6Fr/lu1mKSgRud0eC73whjGfoAogbn78LkD8aFL0zz3bAFerKSnOl7NlErBA==
+
 prosemirror-changeset@^2.2.0:
   version "2.2.1"
   resolved "https://registry.yarnpkg.com/prosemirror-changeset/-/prosemirror-changeset-2.2.1.tgz#dae94b63aec618fac7bb9061648e6e2a79988383"
@@ -16836,6 +16836,11 @@ timed-out@^4.0.0, timed-out@^4.0.1:
   resolved "https://registry.yarnpkg.com/timed-out/-/timed-out-4.0.1.tgz#f32eacac5a175bea25d7fab565ab3ed8741ef56f"
   integrity sha1-8y6srFoXW+ol1/q1Zas+2HQe9W8=
 
+tiny-case@^1.0.3:
+  version "1.0.3"
+  resolved "https://registry.yarnpkg.com/tiny-case/-/tiny-case-1.0.3.tgz#d980d66bc72b5d5a9ca86fb7c9ffdb9c898ddd03"
+  integrity sha512-Eet/eeMhkO6TX8mnUteS9zgPbUMQa4I6Kkp5ORiBD5476/m+PIRiumP5tmh5ioJpH7k51Kehawy2UDfsnxxY8Q==
+
 tippy.js@^6.3.7:
   version "6.3.7"
   resolved "https://registry.yarnpkg.com/tippy.js/-/tippy.js-6.3.7.tgz#8ccfb651d642010ed9a32ff29b0e9e19c5b8c61c"
@@ -16906,6 +16911,11 @@ toidentifier@1.0.1:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/toidentifier/-/toidentifier-1.0.1.tgz#3be34321a88a820ed1bd80dfaa33e479fbb8dd35"
   integrity sha512-o5sSPKEkg/DIQNmH43V0/uerLrpzVedkUh8tGNvaeXpfpuwjKenlSox/2O/BTlZUtEe+JG7s5YhEz608PlAHRA==
+
+toposort@^2.0.2:
+  version "2.0.2"
+  resolved "https://registry.yarnpkg.com/toposort/-/toposort-2.0.2.tgz#ae21768175d1559d48bef35420b2f4962f09c330"
+  integrity sha512-0a5EOkAUp8D4moMi2W8ZF8jcga7BgZd91O/yabJCFY8az+XSzeGyTKs0Aoo897iV1Nj6guFq8orWDS96z91oGg==
 
 tough-cookie@^4.1.2, tough-cookie@^4.1.3:
   version "4.1.3"
@@ -18349,6 +18359,16 @@ yocto-queue@^1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/yocto-queue/-/yocto-queue-1.0.0.tgz#7f816433fb2cbc511ec8bf7d263c3b58a1a3c251"
   integrity sha512-9bnSc/HEW2uRy67wc+T8UwauLuPJVn28jb+GtJY16iiKWyvmYJRXVT4UamsAEGQfPohgr2q4Tq0sQbQlxTfi1g==
+
+yup@^1.2.0:
+  version "1.3.2"
+  resolved "https://registry.yarnpkg.com/yup/-/yup-1.3.2.tgz#afffc458f1513ed386e6aaf4bcaa4e67a9e270dc"
+  integrity sha512-6KCM971iQtJ+/KUaHdrhVr2LDkfhBtFPRnsG1P8F4q3uUVQ2RfEM9xekpha9aA4GXWJevjM10eDcPQ1FfWlmaQ==
+  dependencies:
+    property-expr "^2.0.5"
+    tiny-case "^1.0.3"
+    toposort "^2.0.2"
+    type-fest "^2.19.0"
 
 zen-observable-ts@^1.2.0:
   version "1.2.3"

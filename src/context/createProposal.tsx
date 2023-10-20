@@ -15,8 +15,8 @@ import {
   ProposalMetadata,
   ProposalStatus,
   TokenType,
+  hexToBytes
 } from '@aragon/sdk-client-common';
-import {hexToBytes} from '@aragon/sdk-common';
 import {useQueryClient} from '@tanstack/react-query';
 import differenceInSeconds from 'date-fns/differenceInSeconds';
 import {ethers} from 'ethers';
