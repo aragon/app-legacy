@@ -42,7 +42,7 @@ export const AllowListDApps: AllowListDApp[] = [
 export const enableConnectAnyDApp =
   featureFlags.getValue('VITE_FEATURE_FLAG_CONNECT_ANY_DAPP') === 'true';
 
-if (import.meta.env.DEV || enableConnectAnyDApp) {
+if (enableConnectAnyDApp) {
   AllowListDApps.push({
     name: 'Connect any app',
     shortName: 'Connect any app',
@@ -61,7 +61,7 @@ const SelectWCApp: React.FC<Props> = props => {
 
   const dAppList: AllowListDApp[] = useMemo(
     () =>
-      import.meta.env.DEV || enableConnectAnyDApp
+      enableConnectAnyDApp
         ? [...AllowListDApps, ...sessions.map(session => session.peer.metadata)]
         : AllowListDApps,
     [sessions]

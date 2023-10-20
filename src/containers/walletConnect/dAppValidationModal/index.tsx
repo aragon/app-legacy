@@ -146,8 +146,7 @@ const WCdAppValidation: React.FC<Props> = props => {
       const session = await wcConnect({
         uri,
         metadataName:
-          (import.meta.env.DEV || enableConnectAnyDApp) &&
-          appInAllowlist.length === 0
+          enableConnectAnyDApp && appInAllowlist.length === 0
             ? undefined
             : selecteddApp?.name.toLowerCase(),
       });
