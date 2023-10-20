@@ -462,12 +462,16 @@ const CreateDaoProvider: React.FC<{children: ReactNode}> = ({children}) => {
   /*************************************************
    *                    Render                     *
    *************************************************/
+  const buttonLabels = {
+    [TransactionState.SUCCESS]: t('TransactionModal.launchDaoDashboard'),
+    [TransactionState.WAITING]: t('TransactionModal.publishDaoButtonLabel'),
+  };
   return (
     <CreateDaoContext.Provider value={{handlePublishDao}}>
       {children}
       <PublishModal
         subtitle={t('TransactionModal.publishDaoSubtitle')}
-        buttonLabelSuccess={t('TransactionModal.launchDaoDashboard')}
+        buttonStateLabels={buttonLabels}
         state={creationProcessState || TransactionState.WAITING}
         isOpen={showModal}
         onClose={handleCloseModal}

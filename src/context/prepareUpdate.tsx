@@ -209,12 +209,16 @@ const PrepareUpdateProvider: React.FC<{children: ReactElement}> = ({
   /*************************************************
    *                    Render                     *
    *************************************************/
+  const buttonLabels = {
+    [TransactionState.SUCCESS]: t('TransactionModal.launchDaoDashboard'),
+  };
+
   return (
     <PrepareUpdateContext.Provider value={{handlePreparePlugin}}>
       {children}
       <PublishModal
         subtitle={t('TransactionModal.publishDaoSubtitle')}
-        buttonLabelSuccess={t('TransactionModal.launchDaoDashboard')}
+        buttonStateLabels={buttonLabels}
         state={preparationProcessState || TransactionState.WAITING}
         isOpen={showModal.open}
         onClose={handleCloseModal}

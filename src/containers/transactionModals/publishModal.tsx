@@ -8,6 +8,10 @@ import ModalBottomSheetSwitcher from 'components/modalBottomSheetSwitcher';
 import {useNetwork} from 'context/network';
 import {formatUnits} from 'utils/library';
 
+export type TransactionStateLabels = {
+  [K in TransactionState]?: string;
+};
+
 type PublishModalProps = {
   state: TransactionState;
   callback: () => void;
@@ -20,8 +24,7 @@ type PublishModalProps = {
   tokenPrice: number;
   title?: string;
   subtitle?: string;
-  buttonLabel?: string;
-  buttonLabelSuccess?: string;
+  buttonStateLabels?: TransactionStateLabels;
   disabledCallback?: boolean;
 };
 
@@ -45,27 +48,26 @@ const PublishModal: React.FC<PublishModalProps> = ({
   tokenPrice,
   title,
   subtitle,
-  buttonLabel,
-  buttonLabelSuccess,
+  buttonStateLabels,
   disabledCallback,
 }) => {
   const {t} = useTranslation();
   const {network} = useNetwork();
 
-  const label = {
+  const labels = {
     [TransactionState.WAITING]:
-      buttonLabel || t('TransactionModal.publishDaoButtonLabel'),
-    [TransactionState.LOADING]: t('TransactionModal.waiting'),
+      buttonStateLabels?.WAITING ?? t('TransactionModal.publishDaoButtonLabel'),
+    [TransactionState.LOADING]:
+      buttonStateLabels?.LOADING ?? t('TransactionModal.waiting'),
     [TransactionState.SUCCESS]:
-      buttonLabelSuccess || t('TransactionModal.goToProposal'),
-    [TransactionState.ERROR]: t('TransactionModal.tryAgain'),
-    [TransactionState.INCORRECT_URI]: '',
+      buttonStateLabels?.SUCCESS ?? t('TransactionModal.goToProposal'),
+    [TransactionState.ERROR]:
+      buttonStateLabels?.ERROR ?? t('TransactionModal.tryAgain'),
+    [TransactionState.INCORRECT_URI]: buttonStateLabels?.INCORRECT_URI ?? '',
   };
 
   const nativeCurrency = CHAIN_METADATA[network].nativeCurrency;
 
-  // TODO: temporarily returning error when unable to estimate fees
-  // for chain on which contract not deployed
   const [totalCost, formattedAverage] = useMemo(
     () =>
       averageFee === undefined
@@ -133,7 +135,7 @@ const PublishModal: React.FC<PublishModalProps> = ({
       <ButtonContainer>
         <ButtonText
           className="mt-6 w-full"
-          label={label[state]}
+          label={labels[state]}
           iconLeft={icons[state]}
           isActive={state === TransactionState.LOADING}
           onClick={callback}
@@ -158,7 +160,7 @@ const PublishModal: React.FC<PublishModalProps> = ({
         {gasEstimationError && (
           <AlertInlineContainer>
             <AlertInline
-              label={t('TransactionModal.gasEstimationErrorLabel') as string}
+              label={t('TransactionModal.gasEstimationErrorLabel')}
               mode="warning"
             />
           </AlertInlineContainer>

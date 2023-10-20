@@ -18,7 +18,9 @@ import React, {
 import {useTranslation} from 'react-i18next';
 import {useParams} from 'react-router-dom';
 
-import PublishModal from 'containers/transactionModals/publishModal';
+import PublishModal, {
+  TransactionStateLabels,
+} from 'containers/transactionModals/publishModal';
 import {useDaoDetailsQuery} from 'hooks/useDaoDetails';
 import {
   PluginTypes,
@@ -536,13 +538,27 @@ const ProposalTransactionProvider: React.FC<Props> = ({children}) => {
     (showExecutionModal ? executionProcessState : voteOrApprovalProcessState) ||
     TransactionState.WAITING;
 
-  const title = showExecutionModal
-    ? t('labels.signExecuteProposal')
-    : t('labels.signVote');
+  let title = t('labels.signExecuteProposal');
 
-  const buttonLabel = showExecutionModal
-    ? t('governance.proposals.buttons.execute')
-    : t('governance.proposals.buttons.vote');
+  const buttonLabels: TransactionStateLabels = {
+    [TransactionState.WAITING]: t('governance.proposals.buttons.execute'),
+  };
+
+  if (showVoteModal) {
+    if (pluginType === 'multisig.plugin.dao.eth') {
+      buttonLabels.SUCCESS = t('transactionModal.multisig.ctaContinueProposal');
+      buttonLabels.LOADING = t(
+        'transactionModal.multisig.ctaWaitingConfirmation'
+      );
+      if (approvalParams?.tryExecution) {
+        title = t('transactionModal.multisig.title.approveExecute');
+        buttonLabels.WAITING = t('transactionModal.multisig.ctaApproveExecute');
+      } else {
+        buttonLabels.WAITING = t('transactionModal.multisig.ctaApprove');
+        title = t('transactionModal.multisig.title.approveProposal');
+      }
+    }
+  }
 
   const isOpen = showVoteModal || showExecutionModal;
 
@@ -563,7 +579,7 @@ const ProposalTransactionProvider: React.FC<Props> = ({children}) => {
       {children}
       <PublishModal
         title={title}
-        buttonLabel={buttonLabel}
+        buttonStateLabels={buttonLabels}
         state={state}
         isOpen={isOpen}
         onClose={onClose}
