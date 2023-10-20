@@ -24,7 +24,11 @@ import {handleClipboardActions} from 'utils/library';
 import {useAlertContext} from 'context/alert';
 import {TransactionState as ConnectionState} from 'utils/constants/misc';
 import {useWalletConnectContext} from '../walletConnectProvider';
-import {AllowListDApp, AllowListDApps} from '../selectAppModal';
+import {
+  AllowListDApp,
+  AllowListDApps,
+  enableConnectAnyDApp,
+} from '../selectAppModal';
 import {METADATA_NAME_ERROR} from '../walletConnectProvider/useWalletConnectInterceptor';
 
 type Props = {
@@ -142,7 +146,8 @@ const WCdAppValidation: React.FC<Props> = props => {
       const session = await wcConnect({
         uri,
         metadataName:
-          import.meta.env.DEV && appInAllowlist.length === 0
+          (import.meta.env.DEV || enableConnectAnyDApp) &&
+          appInAllowlist.length === 0
             ? undefined
             : selecteddApp?.name.toLowerCase(),
       });
@@ -183,10 +188,12 @@ const WCdAppValidation: React.FC<Props> = props => {
     return null;
   }
 
+  const dappName = selecteddApp.shortName || selecteddApp.name;
+
   return (
     <ModalBottomSheetSwitcher isOpen={isOpen} onClose={onClose}>
       <ModalHeader
-        title={selecteddApp.shortName || selecteddApp.name}
+        title={dappName}
         showBackButton
         onBackButtonClicked={handleBackClick}
         {...(isDesktop ? {showCloseButton: true, onClose} : {})}
@@ -196,7 +203,7 @@ const WCdAppValidation: React.FC<Props> = props => {
           <Label
             label={t('modal.dappConnect.validation.codeInputLabel')}
             helpText={t('modal.dappConnect.validation.codeInputHelp', {
-              dappName: selecteddApp.shortName || selecteddApp.name,
+              dappName,
             })}
           />
           {/* TODO: Please add validation when format of wc Code is known */}
@@ -242,7 +249,7 @@ const WCdAppValidation: React.FC<Props> = props => {
           <AlertWrapper>
             <AlertInline
               label={t('modal.dappConnect.validation.alertSuccess', {
-                dappName: selecteddApp.shortName || selecteddApp.name,
+                dappName,
               })}
               mode="success"
             />
@@ -252,7 +259,7 @@ const WCdAppValidation: React.FC<Props> = props => {
           <AlertWrapper>
             <AlertInline
               label={t('modal.dappConnect.validation.alertCriticalQRcode', {
-                dappName: selecteddApp.shortName || selecteddApp.name,
+                dappName,
               })}
               mode="critical"
             />
@@ -262,7 +269,7 @@ const WCdAppValidation: React.FC<Props> = props => {
           <AlertWrapper>
             <AlertInline
               label={t('modal.dappConnect.validation.alertCriticalGeneral', {
-                dappName: selecteddApp.shortName || selecteddApp.name,
+                dappName,
               })}
               mode="critical"
             />
