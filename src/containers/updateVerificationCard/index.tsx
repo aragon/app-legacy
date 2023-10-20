@@ -1,24 +1,24 @@
+import {
+  AlertCard,
+  IconLinkExternal,
+  Link,
+  shortenAddress,
+} from '@aragon/ods-old';
+import {useNetwork} from 'context/network';
+import {useDaoDetailsQuery} from 'hooks/useDaoDetails';
+import {useUpdateVerification} from 'hooks/useUpdateVerification';
 import React from 'react';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
-import {
-  AlertCard,
-  Link,
-  IconLinkExternal,
-  shortenAddress,
-} from '@aragon/ods-old';
-import {htmlIn} from 'utils/htmlIn';
-import {Status, StatusProps} from './Status';
 import {CHAIN_METADATA} from 'utils/constants';
-import {useNetwork} from 'context/network';
-import {useDaoDetailsQuery} from 'hooks/useDaoDetails';
+import {htmlIn} from 'utils/htmlIn';
+import {Action, DetailedProposal} from 'utils/types';
 import {validateAddress} from 'utils/validators';
-import {useUpdateVerification} from 'hooks/useUpdateVerification';
-import {Action, DetailedProposal, ProposalId} from 'utils/types';
+import {Status, StatusProps} from './Status';
 
 export interface UpdateVerificationCardProps {
   proposal?: DetailedProposal;
-  proposalId?: ProposalId;
+  proposalId?: string;
   /** @todo Perform check of actions, once requirements are clear */
   actions: Array<Action | undefined> | undefined;
 }
@@ -35,7 +35,7 @@ export const UpdateVerificationCard: React.FC<UpdateVerificationCardProps> = ({
   const isDaoAddressVerified = validateAddress(daoAddress) === true;
 
   const [pluginRegistryResult, pluginSetupProcessorResult] =
-    useUpdateVerification(proposalId as ProposalId);
+    useUpdateVerification(proposalId as string);
 
   /** @todo Figure put how to get plugin registry update */
   const pluginRegistryAddress = daoDetails?.address || '';

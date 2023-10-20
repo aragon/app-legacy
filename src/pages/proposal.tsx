@@ -80,7 +80,7 @@ import {
   isMultisigProposal,
   stripPlgnAdrFromProposalId,
 } from 'utils/proposals';
-import {Action, ProposalId} from 'utils/types';
+import {Action} from 'utils/types';
 
 const PENDING_PROPOSAL_STATUS_INTERVAL = 1000 * 10;
 const PROPOSAL_STATUS_INTERVAL = 1000 * 60;
@@ -94,11 +94,7 @@ export const Proposal: React.FC = () => {
   const navigate = useNavigate();
   const fetchToken = useTokenAsync();
 
-  const {dao, id: urlId} = useParams();
-  const proposalId = useMemo(
-    () => (urlId ? new ProposalId(urlId) : undefined),
-    [urlId]
-  );
+  const {dao, id: proposalId} = useParams();
 
   const {data: daoDetails, isLoading: detailsAreLoading} = useDaoDetailsQuery();
   const pluginAddress = daoDetails?.plugins?.[0]?.instanceAddress as string;
@@ -144,9 +140,11 @@ export const Proposal: React.FC = () => {
   } = useProposal(
     {
       pluginType: pluginType,
-      id: proposalId?.toString() ?? '',
+      id: proposalId ?? '',
     },
     {
+      enabled: !!proposalId,
+
       // refetch active proposal data every minute
       refetchInterval: data =>
         data?.status === ProposalStatus.ACTIVE
