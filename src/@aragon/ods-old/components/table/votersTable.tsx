@@ -82,7 +82,7 @@ export const VotersTable: React.FC<VotersTableProps> = ({
 };
 
 const Container = styled.div.attrs({
-  className: 'w-full border-2 rounded-xl whitespace-nowrap',
+  className: 'w-full border-2 border-neutral-100 rounded-xl whitespace-nowrap',
 })`
   button:first-child {
     border-top-right-radius: 12px;
