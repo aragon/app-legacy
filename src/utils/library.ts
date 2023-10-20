@@ -24,6 +24,7 @@ import {
 } from 'ethers/lib/utils';
 import {TFunction} from 'i18next';
 
+import {MultisigWalletField} from 'components/multisigWallets/row';
 import {getEtherscanVerifiedContract} from 'services/etherscanAPI';
 import {Token} from 'services/token/domain';
 import {IFetchTokenParams} from 'services/token/token-service.api';
@@ -54,7 +55,6 @@ import {i18n} from '../../i18n.config';
 import {addABI, decodeMethod} from './abiDecoder';
 import {attachEtherNotice} from './contract';
 import {getTokenInfo} from './tokens';
-import {MultisigWalletField} from 'components/multisigWallets/row';
 
 export function formatUnits(amount: BigNumberish, decimals: number) {
   if (amount.toString().includes('.') || !decimals) {
