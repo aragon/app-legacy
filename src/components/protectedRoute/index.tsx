@@ -106,7 +106,9 @@ const ProtectedRoute: React.FC = () => {
 
     if (!canCreateProposal) {
       open('gating');
-    } else {
+    }
+
+    if (canCreateProposal && isOpen) {
       close();
     }
   }, [
@@ -119,6 +121,7 @@ const ProtectedRoute: React.FC = () => {
     membersAreLoading,
     network,
     open,
+    isOpen,
     provider,
   ]);
 
