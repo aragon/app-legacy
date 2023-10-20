@@ -101,7 +101,7 @@ const SelectWCApp: React.FC<Props> = props => {
                     {filteredSession[0] && (
                       <div className="flex items-center space-x-2 text-sm font-semibold leading-normal text-success-700">
                         <div className="h-2 w-2 rounded-full bg-success-700" />
-                        <p>Connected</p>
+                        <p>{t('modal.dappConnect.dAppConnectedLabel')}</p>
                       </div>
                     )}
                     <IconChevronRight />
