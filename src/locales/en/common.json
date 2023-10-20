@@ -1299,7 +1299,7 @@
     },
     "dappConnect": {
       "title": "Select dApp",
-      "desc": "You can interact with the following dApps to add actions to your proposal. Learn more about {{link}}.",
+      "desc": "You can interact with the following dApps to add actions to your proposal. Learn more about this {{link}}.",
       "descLinkLabel": "in our guide",
       "descLinkURL": "https://aragon.org/how-to/swap-tokens-with-cowswap",
       "validation": {
