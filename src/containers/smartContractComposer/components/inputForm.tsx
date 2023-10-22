@@ -258,8 +258,6 @@ export const ComponentForType: React.FC<ComponentForTypeProps> = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  console.log('defaultValue', defaultValue);
-
   // Check if we need to add "index" kind of variable to the "name"
   switch (classifyInputType(input.type)) {
     case 'encodedData':
@@ -446,7 +444,6 @@ export const ComponentForType: React.FC<ComponentForTypeProps> = ({
           defaultValue=""
           name={formName}
           render={({field: {name, value, onBlur, onChange}}) => {
-            console.log('defaultValue->', value, name);
             return (
               <TextInput
                 name={name}

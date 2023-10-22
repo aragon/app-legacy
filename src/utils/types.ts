@@ -1,4 +1,5 @@
 import {
+  ApplyInstallationParams,
   DaoMetadata,
   Erc20TokenDetails,
   MultisigProposal,
@@ -316,9 +317,7 @@ export type ActionOSUpdate = {
 
 export type ActionPluginUpdate = {
   name: 'plugin_update';
-  inputs: {
-    version: string;
-  };
+  inputs: ApplyInstallationParams;
 };
 
 export type ActionUpdateMultisigPluginSettings = {
@@ -570,10 +569,7 @@ export interface ProposalFormData {
     version: string;
   };
   pluginSelectedVersion?: {
-    address: string;
     version: VersionTag;
-    isLatest: boolean;
-    isPrepared: boolean;
   };
 }
 

@@ -297,33 +297,43 @@ const CreateProposalWrapper: React.FC<Props> = ({
             daoDetails?.address &&
             versions
           ) {
-            const initializeData = client.encoding.initializeFromAction(
-              daoDetails?.address as string,
-              {
-                previousVersion: versions as [number, number, number],
-              }
+            actions.push(
+              Promise.resolve(
+                client.encoding.daoUpdateAction(daoDetails?.address, {
+                  previousVersion: action.inputs.version
+                    .split('.')
+                    .map(Number) as [number, number, number],
+                  daoFactoryAddress:
+                    LIVE_CONTRACTS[action.inputs.version as SupportedVersion][
+                      translatedNetwork
+                    ].daoFactoryAddress,
+                })
+              )
             );
+          }
+          break;
+        }
 
-            const daoFactoryAddress =
-              LIVE_CONTRACTS[action.inputs.version as SupportedVersion][
-                translatedNetwork
-              ].daoFactoryAddress;
-
-            const implementationAddress =
-              await client.methods.getDaoImplementation(daoFactoryAddress);
-
-            if (initializeData && implementationAddress)
-              actions.push(
-                Promise.resolve(
-                  client.encoding.upgradeToAndCallAction(
-                    daoDetails?.address as string,
-                    {
-                      implementationAddress: implementationAddress, // the implementation address to be upgraded to.
-                      data: initializeData.data,
-                    }
-                  )
-                )
-              );
+        case 'plugin_update': {
+          if (
+            translatedNetwork !== 'unsupported' &&
+            SupportedNetworksArray.includes(translatedNetwork) &&
+            daoDetails?.address &&
+            versions
+          ) {
+            actions.push(
+              Promise.resolve(
+                client.encoding.daoUpdateAction(daoDetails?.address, {
+                  previousVersion: action.inputs.version
+                    .split('.')
+                    .map(Number) as [number, number, number],
+                  daoFactoryAddress:
+                    LIVE_CONTRACTS[action.inputs.version as SupportedVersion][
+                      translatedNetwork
+                    ].daoFactoryAddress,
+                })
+              )
+            );
           }
           break;
         }
@@ -498,6 +508,8 @@ const CreateProposalWrapper: React.FC<Props> = ({
       );
     }
     if (!proposalCreationData) return;
+
+    console.log('proposalCreationData', proposalCreationData);
 
     return pluginClient?.estimation.createProposal(proposalCreationData);
   }, [pluginClient, proposalCreationData]);
