@@ -24,12 +24,12 @@ const DefineProposal: React.FC = () => {
   const {t} = useTranslation();
   const {address, ensAvatarUrl} = useWallet();
   const {control, setValue} = useFormContext();
-  const {handlePreparePlugin, osxAvailableVersions} = useUpdateContext();
+  const {handlePreparePlugin, osxAvailableVersions, pluginAvailableVersions} =
+    useUpdateContext();
 
-  const [pluginSelectedVersion, osSelectedVersion, updateFramework] = useWatch({
-    name: ['pluginSelectedVersion', 'osSelectedVersion', 'updateFramework'],
-    control: control,
-  });
+  const pluginSelectedVersion = useWatch({name: 'pluginSelectedVersion'});
+  const osSelectedVersion = useWatch({name: 'osSelectedVersion'});
+  const updateFramework = useWatch({name: 'updateFramework'});
 
   const {type} = useParams();
   const [showModal, setShowModal] = useState<{
@@ -60,13 +60,17 @@ const DefineProposal: React.FC = () => {
     },
     {
       id: 'plugin',
-      label: `Token voting v${pluginSelectedVersion?.version}`,
+      label: `Token voting v${pluginSelectedVersion?.version.release}.${pluginSelectedVersion?.version.build}`,
       helptext: 'TBD inline release notes',
       LinkLabel: t('update.item.releaseNotesLabel'),
-      ...(pluginSelectedVersion?.isLatest && {
+      ...(pluginAvailableVersions?.get(
+        `${pluginSelectedVersion?.version.release}.${pluginSelectedVersion?.version.build}`
+      )?.isLatest && {
         tagLabelNatural: t('update.item.tagLatest'),
       }),
-      ...(pluginSelectedVersion?.isPrepared
+      ...(pluginAvailableVersions?.get(
+        `${pluginSelectedVersion?.version.release}.${pluginSelectedVersion?.version.build}`
+      )?.isPrepared
         ? {
             tagLabelInfo: t('update.item.tagPrepared'),
           }
@@ -86,13 +90,17 @@ const DefineProposal: React.FC = () => {
   ];
 
   useEffect(() => {
-    console.log('test', osSelectedVersion?.version?.split('.').map(Number));
-
     let index = 0;
     if (updateFramework.os && pluginSelectedVersion?.version) {
       setValue(`actions.${index}.name`, 'os_update');
       setValue(`actions.${index}.inputs.version`, osSelectedVersion?.version);
       index++;
+    }
+    if (updateFramework.plugin && pluginSelectedVersion?.version) {
+      setValue(`actions.${index}.name`, 'plugin_update');
+      setValue(`actions.${index}.inputs`, {
+        versionTag: pluginSelectedVersion.version,
+      });
     }
     // if (updateFramework.plugin) {
     //   setValue(`actions.${index}.name`, 'plugin_update');
@@ -102,6 +110,7 @@ const DefineProposal: React.FC = () => {
     pluginSelectedVersion?.version,
     setValue,
     updateFramework.os,
+    updateFramework.plugin,
   ]);
 
   useEffect(() => {

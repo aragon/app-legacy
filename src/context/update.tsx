@@ -1,9 +1,6 @@
 /* eslint-disable no-case-declarations */
 import {
-  Client,
   MultisigPluginPrepareUpdateParams,
-  PluginRepo,
-  PluginSortBy,
   PrepareUpdateParams,
   PrepareUpdateStep,
   TokenVotingPluginPrepareUpdateParams,
@@ -12,7 +9,6 @@ import {
   VersionTag,
   MultiTargetPermission,
   SupportedVersion,
-  SortDirection,
 } from '@aragon/sdk-client-common';
 import React, {
   ReactElement,
@@ -53,7 +49,9 @@ type preparedData = {
 };
 
 type Plugin = {
+  version: VersionTag;
   isPrepared?: boolean;
+  isLatest?: boolean;
   preparedData?: preparedData;
 };
 
@@ -143,15 +141,11 @@ const UpdateProvider: React.FC<{children: ReactElement}> = ({children}) => {
   const {client} = useClient();
   const pluginClient = usePluginClient(pluginType);
   const {data: pluginAvailableVersions, isLoading: availableVersionLoading} =
-    usePluginAvailableVersions(client as Client);
+    usePluginAvailableVersions(pluginType, daoDetails?.address as string);
+
+  console.log('pluginAvailableVersions', pluginAvailableVersions);
 
   const pluginSelectedVersion = getValues('pluginSelectedVersion');
-
-  console.log(
-    'pluginAvailableVersions2',
-    pluginAvailableVersions,
-    availableVersionLoading
-  );
 
   const shouldPoll =
     state.daoUpdateData !== undefined &&
@@ -167,8 +161,6 @@ const UpdateProvider: React.FC<{children: ReactElement}> = ({children}) => {
   // set plugin list
   useEffect(() => {
     if (availableVersionLoading) return;
-
-    console.log('pluginAvailableVersions', pluginAvailableVersions);
 
     const OSXVersions = new Map();
 
@@ -188,25 +180,38 @@ const UpdateProvider: React.FC<{children: ReactElement}> = ({children}) => {
         });
     });
 
-    console.log('SupportedVersion', OSXVersions);
+    const pluginVersions = new Map();
 
-    // const pluginVersions: Map<string, Plugin> = new Map(
-    //   // pluginAvailableVersions.data?.map(plugin => [plugin.version, plugin])
-    //   [
-    //     [
-    //       `${
-    //         (pluginAvailableVersions.data as PluginRepo)?.current.release.number
-    //       }.${
-    //         (pluginAvailableVersions.data as PluginRepo)?.current.build.number
-    //       }`,
-    //       pluginAvailableVersions.data as Plugin,
-    //     ],
-    //   ]
-    // );
+    pluginAvailableVersions?.releases?.map((release, releaseIndex) => {
+      release.builds.sort((a, b) => {
+        return a.build > b.build ? 1 : -1;
+      });
+
+      release.builds.map((build, buildIndex) => {
+        pluginVersions.set(`${release.release}.${build.build}`, {
+          version: {
+            build: build.build,
+            release: release.release,
+          },
+          isPrepared: false,
+          ...(releaseIndex === pluginAvailableVersions?.releases.length - 1 &&
+            buildIndex === release.builds.length - 1 && {
+              isLatest: true,
+            }),
+        });
+      });
+
+      setValue('pluginSelectedVersion', {
+        version: {
+          build: release.builds[release.builds.length - 1].build,
+          release: release.release,
+        },
+      });
+    });
 
     dispatch({
       type: 'setPluginAvailableVersions',
-      payload: OSXVersions,
+      payload: pluginVersions,
     });
     dispatch({
       type: 'setOSXAvailableVersions',
@@ -228,18 +233,8 @@ const UpdateProvider: React.FC<{children: ReactElement}> = ({children}) => {
       payload: {
         daoAddressOrEns: daoDetails!.address, // my-dao.dao.eth
         pluginAddress: daoDetails?.plugins?.[0]!.instanceAddress as string,
-        ...(type === 'plugin' && {
-          pluginRepo: '0x2345678901234567890123456789012345678901',
-        }),
-        ...(type === 'plugin'
-          ? {
-              newVersion: pluginSelectedVersion?.version as VersionTag,
-            }
-          : {
-              newVersion: pluginSelectedVersion?.version as VersionTag,
-            }),
-
-        updateParams: [],
+        pluginRepo: pluginAvailableVersions?.address,
+        newVersion: pluginSelectedVersion?.version as VersionTag,
       },
     });
     dispatch({
@@ -332,12 +327,9 @@ const UpdateProvider: React.FC<{children: ReactElement}> = ({children}) => {
     if (!client || !state.daoUpdateData) {
       throw new Error('SDK client is not initialized correctly');
     }
-    const preparePluginIterator =
-      state.showModal.type === 'plugin'
-        ? pluginClient?.methods.prepareUpdate(state.daoUpdateData)
-        : client?.methods.prepareUpdate(
-            state.daoUpdateData as PrepareUpdateParams
-          );
+    const preparePluginIterator = client?.methods.prepareUpdate(
+      state.daoUpdateData as PrepareUpdateParams
+    );
 
     // Check if preparePluginIterator function is initialized
     if (!preparePluginIterator) {
@@ -351,13 +343,27 @@ const UpdateProvider: React.FC<{children: ReactElement}> = ({children}) => {
             console.log(step.txHash);
             break;
           case PrepareUpdateStep.DONE:
-            console.log({
-              permissions: step.permissions,
-              pluginAddress: step.pluginAddress,
-              pluginRepo: step.pluginRepo,
-              versionTag: step.versionTag,
-              initData: step.initData,
-              helpers: step.helpers,
+            const pluginListTemp = state.pluginList;
+            pluginListTemp?.set(
+              `${step.versionTag.release}.${step.versionTag.build}`,
+              {
+                ...state.pluginList!.get(
+                  `${step.versionTag.release}.${step.versionTag.build}`
+                ),
+                version: step.versionTag,
+                isPrepared: true,
+                preparedData: {
+                  permissions: step.permissions,
+                  pluginAddress: step.pluginAddress,
+                  pluginRepo: step.pluginRepo,
+                  initData: step.initData,
+                  helpers: step.helpers,
+                } as preparedData,
+              }
+            );
+            dispatch({
+              type: 'setPluginAvailableVersions',
+              payload: pluginListTemp as Map<string, Plugin>,
             });
             dispatch({type: 'setDaoUpdateData'});
             dispatch({
