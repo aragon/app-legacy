@@ -195,7 +195,7 @@ export const VotingTerminal: React.FC<VotingTerminalProps> = ({
   return (
     <Container>
       <Header className="items-start gap-x-6">
-        <div className="space-y-3">
+        <div className="flex-1 space-y-3">
           <Heading1>
             {isMultisigProposal
               ? t('votingTerminal.multisig.title')
@@ -207,25 +207,32 @@ export const VotingTerminal: React.FC<VotingTerminalProps> = ({
             icon={<StatusIcon status={status} />}
           />
         </div>
-
-        <ButtonGroup
-          bgWhite
-          defaultValue={selectedTab}
-          value={selectedTab}
-          onChange={(value: string) => onTabSelected?.(value as TerminalTabs)}
-        >
-          <Option
-            value="breakdown"
-            label={t('votingTerminal.breakdown')}
-            disabled={breakdownTabDisabled}
-          />
-          <Option
-            value="voters"
-            label={t('votingTerminal.voters')}
-            disabled={votersTabDisabled}
-          />
-          <Option value="info" label={t('votingTerminal.info')} />
-        </ButtonGroup>
+        <div className="flex-1">
+          <ButtonGroup
+            bgWhite
+            defaultValue={selectedTab}
+            value={selectedTab}
+            onChange={(value: string) => onTabSelected?.(value as TerminalTabs)}
+          >
+            <Option
+              value="breakdown"
+              label={t('votingTerminal.breakdown')}
+              disabled={breakdownTabDisabled}
+              className="flex-1"
+            />
+            <Option
+              value="voters"
+              label={t('votingTerminal.voters')}
+              disabled={votersTabDisabled}
+              className="flex-1"
+            />
+            <Option
+              value="info"
+              label={t('votingTerminal.info')}
+              className="flex-1"
+            />
+          </ButtonGroup>
+        </div>
       </Header>
 
       {selectedTab === 'breakdown' ? (
@@ -423,7 +430,7 @@ const Container = styled.div.attrs({
 })``;
 
 const Header = styled.div.attrs({
-  className: 'md:flex md:flex-row md:justify-between space-y-4 md:space-y-0',
+  className: 'md:flex md:flex-row md:space-x-6 space-y-4 md:space-y-0',
 })``;
 
 const Heading1 = styled.h1.attrs({
