@@ -12,8 +12,9 @@ import {
 import {
   DaoAction,
   SupportedNetwork as SdkSupportedNetworks,
+  bytesToHex,
+  resolveIpfsCid,
 } from '@aragon/sdk-client-common';
-import {bytesToHex, resolveIpfsCid} from '@aragon/sdk-common';
 import {fetchEnsAvatar} from '@wagmi/core';
 import {BigNumber, BigNumberish, constants, providers} from 'ethers';
 import {
