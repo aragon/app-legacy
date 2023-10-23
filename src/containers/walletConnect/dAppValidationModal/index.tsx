@@ -210,7 +210,6 @@ const WCdAppValidation: React.FC<Props> = props => {
             name={WC_URI_INPUT_NAME}
             control={control}
             rules={{
-              required: 'Invalid code',
               validate: validateURI,
             }}
             defaultValue=""

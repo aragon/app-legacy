@@ -24,7 +24,8 @@ class WalletConnectInterceptor {
   }
 
   validateURI(uri: string) {
-    return URI_REGEX.test(uri);
+    // TODO: Get crowdin key for this
+    return URI_REGEX.test(uri) || 'Invalid code';
   }
 
   subscribeConnectProposal(
