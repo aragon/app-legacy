@@ -12,6 +12,7 @@ import {SupportedChainID} from 'utils/constants';
 import {executionStorage, voteStorage} from 'utils/localStorage';
 import {proposalStorage} from 'utils/localStorage/proposalStorage';
 import {
+  isGaslessProposal,
   isMultisigProposal,
   isTokenBasedProposal,
   recalculateProposalStatus,
@@ -62,6 +63,7 @@ export function transformProposal<
     | TokenVotingProposal
     | MultisigProposalListItem
     | TokenVotingProposalListItem
+    | GaslessVotingProposal
     | null,
 >(chainId: SupportedChainID, data: T): T {
   if (data == null) {
@@ -109,6 +111,7 @@ function syncExecutionInfo(
     | TokenVotingProposal
     | MultisigProposalListItem
     | TokenVotingProposalListItem
+    | GaslessVotingProposal
 ): void {
   if (proposal.status === ProposalStatus.EXECUTED) {
     // If the proposal is already executed, remove its detail from storage.
@@ -140,11 +143,14 @@ function syncApprovalsOrVotes(
     | TokenVotingProposal
     | MultisigProposalListItem
     | TokenVotingProposalListItem
+    | GaslessVotingProposal
 ): void {
   if (isMultisigProposal(proposal)) {
     proposal.approvals = syncMultisigVotes(chainId, proposal);
   } else if (isTokenBasedProposal(proposal)) {
     proposal.votes = syncTokenBasedVotes(chainId, proposal);
+  } else if (isGaslessProposal(proposal)) {
+    /* No votes listing for the moment */
   }
 }
 

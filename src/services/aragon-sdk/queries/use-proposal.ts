@@ -19,32 +19,27 @@ import {
 } from '@vocdoni/offchain-voting';
 
 // todo(kon): move this somewehre?
-export type IFetchGaslessProposalParams = {
-  daoName: string;
-  daoAddress: string;
-  pluginAddress: string;
-  proposalId: number;
-};
-
 async function fetchProposal(
   params: IFetchProposalParams,
   client: TokenVotingClient | MultisigClient | OffchainVotingClient | undefined,
-  gaslessParams?: IFetchGaslessProposalParams
 ): Promise<
   MultisigProposal | TokenVotingProposal | GaslessVotingProposal | null
 > {
   invariant(!!client, 'fetchProposal: client is not defined');
   let data;
   if (isOffchainVotingClient(client)) {
-    data = (client as OffchainVotingClient).methods.getProposal(
-      gaslessParams!.daoName,
-      gaslessParams!.daoAddress,
-      gaslessParams!.pluginAddress,
-      gaslessParams!.proposalId
+    if (!params.pluginAddress || !params.id) {
+        return null
+    }
+    data = await (client as OffchainVotingClient).methods.getProposal(
+      '',
+      '',
+      params!.pluginAddress as string,
+      Number(params!.id)
     );
     return data;
   }
-
+  params = params as IFetchProposalParams;
   data = await client?.methods.getProposal(params.id);
   return data;
 }
@@ -54,7 +49,6 @@ export const useProposal = (
   options: UseQueryOptions<
     MultisigProposal | TokenVotingProposal | GaslessVotingProposal | null
   > = {},
-  gaslessParams?: IFetchGaslessProposalParams
 ) => {
   const client = usePluginClient(params.pluginType);
 
@@ -65,16 +59,16 @@ export const useProposal = (
   const {network} = useNetwork();
   const chainId = CHAIN_METADATA[network].id;
 
-  const defaultSelect = (data: TokenVotingProposal | MultisigProposal | null) =>
+  const defaultSelect = (data: TokenVotingProposal | MultisigProposal | GaslessVotingProposal | null) =>
     transformProposal(chainId, data);
 
   return useQuery({
-    ...options,
-    queryKey: aragonSdkQueryKeys.proposal(params),
-    queryFn: async () => {
-      const serverData = await fetchProposal(params, client, gaslessParams);
+   ...options,
+   queryKey: aragonSdkQueryKeys.proposal(params),
+   queryFn: async () => {
+      const serverData = await fetchProposal(params, client);
       return syncProposalData(chainId, params.id, serverData);
     },
-    select: options.select ?? defaultSelect,
-  });
+   select: options.select ?? defaultSelect,
+});
 };
