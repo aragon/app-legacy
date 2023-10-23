@@ -102,7 +102,7 @@ export const Dashboard: React.FC = () => {
     navigate(
       generatePath(DashboardPath, {
         network,
-        dao: liveAddressOrEns ?? null,
+        dao: liveAddressOrEns,
       })
     );
     // Temporary restriction to Eth mainnet only as spamming was happening on Polygon

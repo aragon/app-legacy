@@ -41,7 +41,6 @@ import {useDaoMembers} from 'hooks/useDaoMembers';
 import {useDaoToken} from 'hooks/useDaoToken';
 import {useMappedBreadcrumbs} from 'hooks/useMappedBreadcrumbs';
 import {
-  GaselessPluginName,
   PluginTypes,
   usePluginClient,
 } from 'hooks/usePluginClient';
@@ -49,7 +48,6 @@ import useScreen from 'hooks/useScreen';
 import {useWallet} from 'hooks/useWallet';
 import {useWalletCanVote} from 'hooks/useWalletCanVote';
 import {
-  IFetchGaslessProposalParams,
   useProposal,
 } from 'services/aragon-sdk/queries/use-proposal';
 import {
@@ -140,16 +138,17 @@ export const Proposal: React.FC = () => {
     executionTxHash,
   } = useProposalTransactionContext();
 
-  let gaslessProposalParams: IFetchGaslessProposalParams | undefined;
-  if (pluginType === GaselessPluginName && dao && daoDetails && proposalId) {
-    const {proposal} = proposalId!.stripPlgnAdrFromProposalId();
-    gaslessProposalParams = {
-      daoName: daoDetails!.ensDomain,
-      daoAddress: dao!,
-      pluginAddress: pluginAddress,
-      proposalId: proposal,
-    };
-  }
+  // let gaslessProposalParams: IFetchGaslessProposalParams | undefined;
+  // if (pluginType === GaselessPluginName && dao && daoDetails && proposalId) {
+  //   const {proposal} = proposalId!.stripPlgnAdrFromProposalId();
+  //   gaslessProposalParams = {
+  //     id: proposalId?.toString() ?? '',
+  //     pluginType,
+  //     daoName: daoDetails!.ensDomain,
+  //     daoAddress: dao!,
+  //     pluginAddress: pluginAddress,
+  //   };
+  // }
 
   const {
     data: proposal,
@@ -161,6 +160,7 @@ export const Proposal: React.FC = () => {
     {
       pluginType: pluginType,
       id: proposalId ?? '',
+      pluginAddress,
     },
     {
       enabled: !!proposalId,
@@ -171,7 +171,7 @@ export const Proposal: React.FC = () => {
           ? PROPOSAL_STATUS_INTERVAL
           : false,
     },
-    gaslessProposalParams
+    // gaslessProposalParams
   );
 
   const {data: votingSettings} = useVotingSettings(

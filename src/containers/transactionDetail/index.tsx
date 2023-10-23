@@ -47,6 +47,7 @@ const TransactionDetail: React.FC = () => {
   const {data: proposal} = useProposal({
     pluginType: plugins?.[0].id as PluginTypes,
     id: proposalId?.toString() ?? '',
+    pluginAddress: plugins?.[0].instanceAddress ?? '',
   });
 
   const handleNavigateToProposal = useCallback(() => {

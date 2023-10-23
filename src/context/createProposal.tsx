@@ -540,8 +540,8 @@ const CreateProposalWrapper: React.FC<Props> = ({
         generatePath(Proposal, {
           network,
           dao:
-            toDisplayEns(daoDetails?.ensDomain) || daoDetails?.address || null,
-          id: proposalId || null,
+            toDisplayEns(daoDetails?.ensDomain) || daoDetails?.address,
+          id: proposalId,
         })
       );
     } else {

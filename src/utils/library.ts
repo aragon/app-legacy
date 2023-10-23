@@ -54,7 +54,7 @@ import {i18n} from '../../i18n.config';
 import {addABI, decodeMethod} from './abiDecoder';
 import {attachEtherNotice} from './contract';
 import {getTokenInfo} from './tokens';
-import {IFetchTokenParams} from 'services/token/token-service.api';
+import { MultisigWalletField } from 'components/multisigWallets/row';
 
 export function formatUnits(amount: BigNumberish, decimals: number) {
   if (amount.toString().includes('.') || !decimals) {

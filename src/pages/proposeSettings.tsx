@@ -679,7 +679,7 @@ const ProposeSettingWrapper: React.FC<Props> = ({
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     const proposalIterator =
-      pluginClient.methods.createProposal(proposalCreationData);
+      pluginClient.methods.createProposal(proposalCreationData as any);
 
     if (creationProcessState === TransactionState.SUCCESS) {
       handleCloseModal();
