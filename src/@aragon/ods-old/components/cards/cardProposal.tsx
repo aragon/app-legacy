@@ -5,7 +5,6 @@ import {shortenAddress} from '../../utils/addresses';
 import {AlertInline} from '../alerts';
 import {AvatarDao} from '../avatar';
 import {IconClock, IconUpdate} from '../icons';
-import {Link} from '../link';
 import {LinearProgress} from '../progress';
 import {Tag} from '../tag';
 
@@ -61,6 +60,9 @@ export type CardProposalProps = {
   /** Publisher's ethereum address, ENS name **or** DAO address when type is
    * explore */
   publisherAddress?: string;
+  /** Human readable name */
+  publisherDisplayName: string;
+
   /** DAO name to display when type is explore */
   daoName?: string;
   /** Blockchain explorer URL */
@@ -91,6 +93,7 @@ export const CardProposal: React.FC<CardProposalProps> = ({
   winningOptionValue,
   publishLabel,
   publisherAddress,
+  publisherDisplayName,
   explorer = 'https://etherscan.io/',
   alertMessage,
   stateLabel,
@@ -130,14 +133,15 @@ export const CardProposal: React.FC<CardProposalProps> = ({
               <PublisherLabel>{publishLabel}</PublisherLabel>
             )}
 
-            <Link
-              external
+            <PublisherAddress
               href={addressExploreUrl}
-              label={shortenAddress(
-                (isExploreProposal(type) ? daoName : publisherAddress) ?? ''
+              rel="noopener noreferrer"
+              target="_blank"
+            >
+              {shortenAddress(
+                (isExploreProposal(type) ? daoName : publisherDisplayName) ?? ''
               )}
-              className="text-sm leading-normal"
-            />
+            </PublisherAddress>
           </Publisher>
         </TextContent>
         {process === 'active' && voteProgress !== undefined && (
@@ -294,4 +298,9 @@ const PublisherLabel = styled.p.attrs({className: '-mr-1'})``;
 
 const VotedAlertWrapper = styled.div.attrs({
   className: 'flex justify-center xl:justify-start',
+})``;
+
+const PublisherAddress = styled.a.attrs({
+  className: `font-semibold ft-text-sm text-primary-400 hover:text-primary-600 active:text-primary-800
+        focus-visible:ring focus-visible:ring-primary-200 focus-visible:bg-neutral-50 `,
 })``;

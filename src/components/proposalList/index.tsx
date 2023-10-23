@@ -159,12 +159,18 @@ export function proposal2CardProps(
   daoAddressOrEns: string,
   address: string | null
 ): {id: string} & CardProposalProps {
+  const publisherDisplayName =
+    address && proposal.creatorAddress.toLowerCase() === address.toLowerCase()
+      ? t('labels.you')
+      : proposal.creatorAddress;
+
   const props = {
     id: proposal.id,
     title: proposal.metadata.title,
     description: proposal.metadata.summary,
     explorer: CHAIN_METADATA[network].explorer,
     publisherAddress: proposal.creatorAddress,
+    publisherDisplayName,
     publishLabel: t('governance.proposals.publishedBy'),
     process: proposal.status.toLowerCase() as CardProposalProps['process'],
     onClick: () => {
