@@ -62,11 +62,11 @@ export type VotingTerminalProps = {
   approvals?: string[];
   votingInProcess?: boolean;
   voteOptions?: string;
-  onApprovalClicked: (tryExecution: boolean) => void;
+  onApprovalClicked?: (tryExecution: boolean) => void;
   onVoteClicked?: React.MouseEventHandler<HTMLButtonElement>;
   onVoteSubmitClicked?: (vote: VoteValues) => void;
   onCancelClicked?: React.MouseEventHandler<HTMLButtonElement>;
-  voteButtonLabel: string;
+  voteButtonLabel?: string;
   alertMessage?: string;
   selectedTab?: TerminalTabs;
   onTabSelected?: React.Dispatch<React.SetStateAction<TerminalTabs>>;
@@ -363,15 +363,15 @@ export const VotingTerminal: React.FC<VotingTerminalProps> = ({
                             'transactionModal.multisig.ctaApproveExecute'
                           )}
                           size="large"
-                          onClick={() => onApprovalClicked(true)}
+                          onClick={() => onApprovalClicked?.(true)}
                           className="w-full md:w-max"
                           disabled={voteNowDisabled}
                         />
                       )}
                       <ButtonText
-                        label={voteButtonLabel}
+                        label={voteButtonLabel ?? ''}
                         size="large"
-                        onClick={() => onApprovalClicked(false)}
+                        onClick={() => onApprovalClicked?.(false)}
                         className="w-full md:w-max"
                         disabled={voteNowDisabled}
                         {...(executableWithNextApproval
