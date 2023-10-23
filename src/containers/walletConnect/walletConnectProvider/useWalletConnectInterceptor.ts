@@ -26,7 +26,7 @@ export type VerifyConnectionOptions = {
 export type WcInterceptorValues = {
   wcConnect: (options: WcConnectOptions) => Promise<WcSession>;
   wcDisconnect: (topic: string) => Promise<void>;
-  validateURI: (uri: string) => boolean;
+  validateURI: (uri: string) => boolean | string;
   sessions: WcSession[];
   actions: WcActionRequest[];
 };
