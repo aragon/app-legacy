@@ -222,7 +222,8 @@ export const Proposal: React.FC = () => {
   // approve and execute flow
   const executableWithNextApproval =
     isMultisigProposal(proposal) &&
-    proposal.status !== ProposalStatus.EXECUTED &&
+    (proposal.status === ProposalStatus.PENDING ||
+      proposal.status === ProposalStatus.ACTIVE) &&
     isMultisigVotingSettings(votingSettings) &&
     proposal.actions.length > 0 &&
     proposal.approvals.length + 1 >= votingSettings.minApprovals;
