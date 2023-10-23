@@ -247,7 +247,7 @@ const UpdateProvider: React.FC<{children: ReactElement}> = ({children}) => {
   };
 
   // Handler for modal button click
-  const handleExecuteCreation = async () => {
+  const handleExecutePrepare = async () => {
     if (state.preparationProcessState === TransactionState.SUCCESS) {
       handleCloseModal();
       return;
@@ -361,6 +361,14 @@ const UpdateProvider: React.FC<{children: ReactElement}> = ({children}) => {
                 } as preparedData,
               }
             );
+            console.log('success', {
+              permissions: step.permissions,
+              pluginAddress: step.pluginAddress,
+              pluginRepo: step.pluginRepo,
+              versionTag: step.versionTag,
+              initData: step.initData,
+              helpers: step.helpers,
+            });
             dispatch({
               type: 'setPluginAvailableVersions',
               payload: pluginListTemp as Map<string, Plugin>,
@@ -396,17 +404,19 @@ const UpdateProvider: React.FC<{children: ReactElement}> = ({children}) => {
     >
       {children}
       <PublishModal
-        subtitle={t('TransactionModal.publishDaoSubtitle')}
-        buttonLabelSuccess={t('TransactionModal.launchDaoDashboard')}
         state={state.preparationProcessState || TransactionState.WAITING}
         isOpen={state.showModal.open}
         onClose={handleCloseModal}
-        callback={handleExecuteCreation}
+        callback={handleExecutePrepare}
         closeOnDrag={state.preparationProcessState !== TransactionState.LOADING}
         maxFee={maxFee}
         averageFee={averageFee}
         gasEstimationError={gasEstimationError}
         tokenPrice={tokenPrice}
+        title={t('update.modalPreparePlugin.title')}
+        subtitle={t('update.modalPreparePlugin.desc')}
+        buttonLabel={t('update.modalPreparePlugin.ctaLabel')}
+        buttonLabelSuccess={t('TransactionModal.goToProposal')}
         disabledCallback={disableActionButton}
       />
     </PrepareUpdateContext.Provider>

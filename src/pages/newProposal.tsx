@@ -19,7 +19,7 @@ export const NewProposal: React.FC = () => {
       links: [{name: '', url: ''}],
       updateFramework: {
         os: true,
-        plugin: true,
+        plugin: false,
       },
       startSwitch: 'now',
       durationSwitch: 'duration',
