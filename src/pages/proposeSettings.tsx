@@ -608,6 +608,9 @@ const ProposeSettingWrapper: React.FC<Props> = ({
     }
     if (!proposalCreationData) return;
 
+    // todo(kon): implement this
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
     return pluginClient?.estimation.createProposal(proposalCreationData);
   }, [pluginClient, proposalCreationData]);
 
@@ -660,6 +663,21 @@ const ProposeSettingWrapper: React.FC<Props> = ({
       return;
     }
 
+    // let proposalIterator: AsyncGenerator<ProposalCreationStepValue>;
+    // if (isOffchainVotingClient(pluginClient)) {
+    //   proposalIterator = (
+    //     pluginClient as OffchainVotingClient
+    //   ).methods.createProposal(
+    //     proposalCreationData as CreateGasslessProposalParams
+    //   );
+    // } else {
+    //   proposalIterator =
+    //     pluginClient.methods.createProposal(proposalCreationData);
+    // }
+
+    // todo(kon): implement this
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
     const proposalIterator =
       pluginClient.methods.createProposal(proposalCreationData);
 

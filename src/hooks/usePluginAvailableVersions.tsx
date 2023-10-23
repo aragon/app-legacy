@@ -3,9 +3,10 @@ import {PluginTypes, usePluginClient} from './usePluginClient';
 import {useNetwork} from 'context/network';
 import {Client, MultisigClient, TokenVotingClient} from '@aragon/sdk-client';
 import {useClient} from './useClient';
+import {OffchainVotingClient} from '@vocdoni/offchain-voting';
 
 async function fetchPluginList(
-  pluginClient?: TokenVotingClient | MultisigClient,
+  pluginClient?: TokenVotingClient | MultisigClient | OffchainVotingClient,
   client?: Client,
   pluginType?: PluginTypes
 ) {

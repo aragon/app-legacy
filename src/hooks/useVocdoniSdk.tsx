@@ -7,9 +7,7 @@ import {EnvOptions} from '@vocdoni/sdk';
 // todo(kon): move this to be set by .env file
 export const VocdoniEnv: EnvOptions = EnvOptions.STG;
 
-export const VocdoniClientProvider: React.FC = ({
-  children,
-}: PropsWithChildren) => {
+export const VocdoniClientProvider = ({children}: PropsWithChildren) => {
   const {signer} = useWallet();
   return (
     <ClientProvider env={VocdoniEnv} signer={signer as Signer}>

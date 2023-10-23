@@ -143,9 +143,13 @@ const PrepareUpdateProvider: React.FC<{children: ReactElement}> = ({
   // estimate creation fees
   const estimateCreationFees = useCallback(async () => {
     if (!daoUpdateData) return;
-    if (showModal.type === 'plugin')
+    if (showModal.type === 'plugin') {
+      // todo(kon): implement this on the min sdk
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
       return pluginClient?.estimation.prepareUpdate(daoUpdateData);
-    else client?.estimation.prepareUpdate(daoUpdateData as PrepareUpdateParams);
+    } else
+      client?.estimation.prepareUpdate(daoUpdateData as PrepareUpdateParams);
   }, [
     client?.estimation,
     daoUpdateData,
@@ -171,7 +175,10 @@ const PrepareUpdateProvider: React.FC<{children: ReactElement}> = ({
     }
     const preparePluginIterator =
       showModal.type === 'plugin'
-        ? pluginClient?.methods.prepareUpdate(daoUpdateData)
+        ? // todo(kon): implement this on the min sdk
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore
+          pluginClient?.methods.prepareUpdate(daoUpdateData)
         : client?.methods.prepareUpdate(daoUpdateData as PrepareUpdateParams);
 
     // Check if preparePluginIterator function is initialized
