@@ -633,38 +633,69 @@ export function getVoteButtonLabel(
   votedOrApproved: boolean,
   executableWithNextApproval: boolean,
   t: TFunction
-) {
-  let label = '';
+): string {
   if (isMultisigProposal(proposal)) {
-    const approvalText = executableWithNextApproval
-      ? t('votingTerminal.approveOnly')
-      : t('votingTerminal.approve');
-
-    label = votedOrApproved
-      ? t('votingTerminal.status.approved')
-      : t('votingTerminal.concluded');
-
-    if (proposal.status === 'Pending') label = approvalText;
-    else if (proposal.status === 'Active' && !votedOrApproved)
-      label = approvalText;
+    return getMultisigLabel(
+      proposal,
+      votedOrApproved,
+      executableWithNextApproval,
+      t
+    );
   }
 
   if (isTokenBasedProposal(proposal) && isTokenVotingSettings(voteSettings)) {
-    label = t('votingTerminal.voteOver');
-
-    if (votedOrApproved) {
-      label =
-        voteSettings.votingMode === VotingMode.VOTE_REPLACEMENT
-          ? t('votingTerminal.status.revote')
-          : t('votingTerminal.status.voteSubmitted');
-    }
-
-    if (proposal.status === 'Pending') label = t('votingTerminal.voteNow');
-    else if (proposal.status === 'Active' && !votedOrApproved)
-      label = t('votingTerminal.voteNow');
+    return getTokenBasedLabel(proposal, voteSettings, votedOrApproved, t);
   }
 
-  return label;
+  return '';
+}
+
+function getMultisigLabel(
+  proposal: MultisigProposal,
+  votedOrApproved: boolean,
+  executableWithNextApproval: boolean,
+  t: TFunction
+): string {
+  if (
+    proposal.status === ProposalStatus.PENDING ||
+    (proposal.status === ProposalStatus.ACTIVE && !votedOrApproved)
+  ) {
+    return executableWithNextApproval
+      ? t('votingTerminal.approveOnly')
+      : t('votingTerminal.approve');
+  }
+
+  return votedOrApproved
+    ? t('votingTerminal.status.approved')
+    : t('votingTerminal.concluded');
+}
+
+function getTokenBasedLabel(
+  proposal: TokenVotingProposal,
+  voteSettings: MajorityVotingSettings,
+  voted: boolean,
+  t: TFunction
+): string {
+  if (proposal.status === ProposalStatus.PENDING) {
+    return t('votingTerminal.voteNow');
+  }
+
+  if (voted) {
+    // voted on plugin with voteReplacement
+    if (
+      proposal.status === ProposalStatus.ACTIVE &&
+      voteSettings.votingMode === VotingMode.VOTE_REPLACEMENT
+    ) {
+      return t('votingTerminal.status.revote');
+    }
+
+    return t('votingTerminal.status.voteSubmitted');
+  }
+
+  // have not voted
+  return proposal.status === ProposalStatus.ACTIVE
+    ? t('votingTerminal.voteNow')
+    : t('votingTerminal.voteOver');
 }
 
 export function isEarlyExecutable(
