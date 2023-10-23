@@ -92,7 +92,8 @@ const CreateNewToken: React.FC = () => {
         <DescriptionContainer>
           <Label
             label={t('labels.distributeTokens')}
-            helpText={t('createDAO.step3.distributeTokensHelpertext')}
+            helpText={htmlIn(t)('createDAO.step3.distributeTokensHelpertext')}
+            renderHtml={true}
           />
         </DescriptionContainer>
         <AlertInline
