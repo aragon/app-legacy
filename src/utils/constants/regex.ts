@@ -16,3 +16,5 @@ export const ISO_DATE_PATTERN =
   /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2}(?:\.\d*))(?:Z|(\+|-)([\d|:]*))?$/;
 
 export const BIGINT_PATTERN = /^\d+n$/;
+
+export const WC_URI_PATTERN = /^$/;
