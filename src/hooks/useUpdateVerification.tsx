@@ -1,6 +1,6 @@
 import {useQueries} from '@tanstack/react-query';
 import {useClient} from './useClient';
-import {ProposalId} from 'utils/types';
+import {DaoAction} from '@aragon/sdk-client-common';
 
 /**
  *  This method is a Mock validation function until the real SDK functions are ready
@@ -8,7 +8,8 @@ import {ProposalId} from 'utils/types';
  * @returns an arrea of queries the indicates the status of verifications
  */
 export function useUpdateVerification(
-  proposalId: ProposalId | string,
+  actions: DaoAction[],
+  daoAddress: string,
   isPluginUpdateProposal?: boolean,
   isOsUpdateProposal?: boolean
 ) {
@@ -16,19 +17,22 @@ export function useUpdateVerification(
 
   const verificationQueries = [
     {
-      queryKey: ['isPluginUpdateProposalValid', proposalId],
-      queryFn: () => client?.methods.isPluginUpdateValid(proposalId as string),
-      enabled: Boolean(proposalId) && isPluginUpdateProposal,
-      retry: false,
+      queryKey: ['isPluginUpdateProposalValid', daoAddress],
+      queryFn: () =>
+        client?.methods.isPluginUpdateValid({
+          daoAddress: daoAddress,
+          actions,
+        }),
+      enabled: Boolean(daoAddress) && Boolean(actions),
     },
     {
-      queryKey: ['isDaoUpdateProposalValid', proposalId],
+      queryKey: ['isDaoUpdateProposalValid', daoAddress],
       queryFn: () =>
         client?.methods.isDaoUpdateValid({
-          proposalId: proposalId as string,
+          daoAddress: daoAddress,
+          actions,
         }),
-      enabled: Boolean(proposalId) && isOsUpdateProposal,
-      retry: false,
+      enabled: Boolean(daoAddress) && Boolean(actions),
     },
   ];
 

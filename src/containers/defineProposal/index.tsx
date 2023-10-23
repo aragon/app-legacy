@@ -75,9 +75,9 @@ const DefineProposal: React.FC = () => {
             tagLabelInfo: t('update.item.tagPrepared'),
           }
         : {
+            buttonPrimaryLabel: t('update.item.prepareCtaLabel'),
             onClickActionPrimary: (e: React.MouseEvent) => e?.stopPropagation(),
           }),
-      buttonPrimaryLabel: t('update.item.prepareCtaLabel'),
       buttonSecondaryLabel: t('update.item.versionCtaLabel'),
       onClickActionSecondary: (e: React.MouseEvent) => {
         setShowModal({
@@ -102,9 +102,6 @@ const DefineProposal: React.FC = () => {
         versionTag: pluginSelectedVersion.version,
       });
     }
-    // if (updateFramework.plugin) {
-    //   setValue(`actions.${index}.name`, 'plugin_update');
-    // }
   }, [
     osSelectedVersion?.version,
     pluginSelectedVersion?.version,
@@ -305,13 +302,13 @@ export function isValid(
 }
 
 const FormItem = styled.div.attrs({
-  className: 'space-y-1.5',
+  className: 'space-y-3',
 })``;
 
 const UpdateGroupWrapper = styled.div.attrs({
-  className: 'flex tablet:flex-row flex-col gap-y-1.5 gap-x-3',
+  className: 'flex md:flex-row flex-col gap-y-3 gap-x-6',
 })``;
 
 const UpdateContainer = styled.div.attrs({
-  className: 'space-y-2',
+  className: 'space-y-4',
 })``;

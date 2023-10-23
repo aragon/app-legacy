@@ -314,29 +314,29 @@ const CreateProposalWrapper: React.FC<Props> = ({
           break;
         }
 
-        case 'plugin_update': {
-          if (
-            translatedNetwork !== 'unsupported' &&
-            SupportedNetworksArray.includes(translatedNetwork) &&
-            daoDetails?.address &&
-            versions
-          ) {
-            actions.push(
-              Promise.resolve(
-                client.encoding.daoUpdateAction(daoDetails?.address, {
-                  previousVersion: action.inputs.version
-                    .split('.')
-                    .map(Number) as [number, number, number],
-                  daoFactoryAddress:
-                    LIVE_CONTRACTS[action.inputs.version as SupportedVersion][
-                      translatedNetwork
-                    ].daoFactoryAddress,
-                })
-              )
-            );
-          }
-          break;
-        }
+        // case 'plugin_update': {
+        //   if (
+        //     translatedNetwork !== 'unsupported' &&
+        //     SupportedNetworksArray.includes(translatedNetwork) &&
+        //     daoDetails?.address &&
+        //     versions
+        //   ) {
+        //     actions.push(
+        //       Promise.resolve(
+        //         client.encoding.daoUpdateAction(daoDetails?.address, {
+        //           previousVersion: action.inputs.version
+        //             .split('.')
+        //             .map(Number) as [number, number, number],
+        //           daoFactoryAddress:
+        //             LIVE_CONTRACTS[action.inputs.version as SupportedVersion][
+        //               translatedNetwork
+        //             ].daoFactoryAddress,
+        //         })
+        //       )
+        //     );
+        //   }
+        //   break;
+        // }
       }
     }
 
