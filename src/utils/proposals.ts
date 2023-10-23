@@ -9,6 +9,7 @@ import {ModeType, ProgressStatusProps, VoterType} from '@aragon/ods-old';
 import {
   CreateMajorityVotingProposalParams,
   Erc20TokenDetails,
+  MajorityVotingSettings,
   MultisigProposal,
   MultisigVotingSettings,
   TokenVotingProposal,
@@ -26,7 +27,10 @@ import {TFunction} from 'i18next';
 import {ProposalVoteResults} from 'containers/votingTerminal';
 import {MultisigDaoMember} from 'hooks/useDaoMembers';
 import {PluginTypes} from 'hooks/usePluginClient';
-import {isMultisigVotingSettings} from 'services/aragon-sdk/queries/use-voting-settings';
+import {
+  isMultisigVotingSettings,
+  isTokenVotingSettings,
+} from 'services/aragon-sdk/queries/use-voting-settings';
 import {i18n} from '../../i18n.config';
 import {KNOWN_FORMATS, getFormattedUtcOffset} from './date';
 import {formatUnits} from './library';
@@ -625,28 +629,35 @@ export function getVoteStatus(proposal: DetailedProposal, t: TFunction) {
 
 export function getVoteButtonLabel(
   proposal: DetailedProposal,
-  canVoteOrApprove: boolean,
+  voteSettings: MajorityVotingSettings | MultisigVotingSettings,
   votedOrApproved: boolean,
+  executableWithNextApproval: boolean,
   t: TFunction
 ) {
   let label = '';
-
   if (isMultisigProposal(proposal)) {
+    const approvalText = executableWithNextApproval
+      ? t('votingTerminal.approveOnly')
+      : t('votingTerminal.approve');
+
     label = votedOrApproved
       ? t('votingTerminal.status.approved')
       : t('votingTerminal.concluded');
 
-    if (proposal.status === 'Pending') label = t('votingTerminal.approve');
+    if (proposal.status === 'Pending') label = approvalText;
     else if (proposal.status === 'Active' && !votedOrApproved)
-      label = t('votingTerminal.approve');
+      label = approvalText;
   }
 
-  if (isTokenBasedProposal(proposal)) {
-    label = votedOrApproved
-      ? canVoteOrApprove
-        ? t('votingTerminal.status.revote')
-        : t('votingTerminal.status.voteSubmitted')
-      : t('votingTerminal.voteOver');
+  if (isTokenBasedProposal(proposal) && isTokenVotingSettings(voteSettings)) {
+    label = t('votingTerminal.voteOver');
+
+    if (votedOrApproved) {
+      label =
+        voteSettings.votingMode === VotingMode.VOTE_REPLACEMENT
+          ? t('votingTerminal.status.revote')
+          : t('votingTerminal.status.voteSubmitted');
+    }
 
     if (proposal.status === 'Pending') label = t('votingTerminal.voteNow');
     else if (proposal.status === 'Active' && !votedOrApproved)
