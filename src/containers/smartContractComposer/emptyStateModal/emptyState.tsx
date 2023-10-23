@@ -7,6 +7,7 @@ import styled from 'styled-components';
 import ModalBottomSheetSwitcher from 'components/modalBottomSheetSwitcher';
 import ModalHeader from 'components/modalHeader';
 import {StateEmpty} from 'components/stateEmpty';
+import {htmlIn} from 'utils/htmlIn';
 
 type Props = {
   isOpen: boolean;
@@ -35,7 +36,7 @@ const EmptyState: React.FC<Props> = props => {
           type="Object"
           object="smart_contract"
           title={t('scc.emptyState.title')}
-          description={t('scc.emptyState.description')}
+          description={htmlIn(t)('scc.emptyState.description')}
           primaryButton={{
             label: t('scc.emptyState.ctaLabel'),
             onClick: () => {

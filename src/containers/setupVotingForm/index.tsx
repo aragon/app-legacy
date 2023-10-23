@@ -13,12 +13,14 @@ import {
 } from 'utils/types';
 import SetupMultisigVotingForm from './multisig';
 import SetupTokenVotingForm from './tokenVoting';
+import {DaoMembersData} from 'hooks/useDaoMembers';
 
-type Props = {
+export type Props = {
   pluginSettings: SupportedVotingSettings;
+  daoMembers?: DaoMembersData;
 };
 
-const SetupVotingForm: React.FC<Props> = ({pluginSettings}) => {
+const SetupVotingForm: React.FC<Props> = ({pluginSettings, daoMembers}) => {
   const {setError, clearErrors} = useFormContext<ProposalFormData>();
 
   /*************************************************
@@ -36,7 +38,12 @@ const SetupVotingForm: React.FC<Props> = ({pluginSettings}) => {
   if (isTokenVotingSettings(pluginSettings)) {
     return <SetupTokenVotingForm pluginSettings={pluginSettings} />;
   } else if (isMultisigVotingSettings(pluginSettings)) {
-    return <SetupMultisigVotingForm />;
+    return (
+      <SetupMultisigVotingForm
+        pluginSettings={pluginSettings}
+        daoMembers={daoMembers}
+      />
+    );
   }
 
   // TODO: We need an error output/boundary for when a network error occurs

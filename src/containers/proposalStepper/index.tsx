@@ -29,6 +29,7 @@ import {removeUnchangedMinimumApprovalAction} from 'utils/library';
 import {Governance} from 'utils/paths';
 import {Action} from 'utils/types';
 import {actionsAreValid} from 'utils/validators';
+import {useDaoMembers} from 'hooks/useDaoMembers';
 
 type ProposalStepperType = {
   enableTxModal: () => void;
@@ -44,6 +45,12 @@ const ProposalStepper: React.FC<ProposalStepperType> = ({
     pluginAddress: daoDetails?.plugins?.[0]?.instanceAddress as string,
     pluginType: daoDetails?.plugins?.[0]?.id as PluginTypes,
   });
+
+  // plugin data
+  const {data: daoMembers, isLoading: membersLoading} = useDaoMembers(
+    daoDetails?.plugins?.[0]?.instanceAddress as string,
+    daoDetails?.plugins?.[0]?.id as PluginTypes
+  );
 
   const {actions} = useActionsContext();
   const {open} = useGlobalModalContext();
@@ -76,7 +83,7 @@ const ProposalStepper: React.FC<ProposalStepperType> = ({
   /*************************************************
    *                    Render                     *
    *************************************************/
-  if (isLoading || settingsLoading) {
+  if (isLoading || settingsLoading || membersLoading) {
     return <Loading />;
   }
 
@@ -147,7 +154,10 @@ const ProposalStepper: React.FC<ProposalStepperType> = ({
           next();
         }}
       >
-        <SetupVotingForm pluginSettings={votingSettings} />
+        <SetupVotingForm
+          pluginSettings={votingSettings}
+          daoMembers={daoMembers}
+        />
       </Step>
       <Step
         wizardTitle={t('newProposal.configureActions.heading')}

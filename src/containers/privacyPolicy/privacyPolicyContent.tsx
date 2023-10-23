@@ -21,7 +21,11 @@ const PrivacyPolicyContent: React.FC<PrivacyPolicyContentProps> = ({
       <Text>
         {t('privacyPolicy.content')}{' '}
         <span className="capitalize">
-          <Link label={t('privacyPolicy.title')} href="#" />.
+          <Link
+            label={t('privacyPolicy.linkLabel')}
+            href={t('privacyPolicy.linkURL')}
+          />
+          .
         </span>
       </Text>
 

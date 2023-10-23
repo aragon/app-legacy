@@ -1072,7 +1072,7 @@
     "acceptAllCookies": "Accept all",
     "rejectAllCookies": "Reject all",
     "acceptSelectedCookies": "Accept",
-    "content": "We use cookies and similar technologies to improve your experience, enable certain features, and analyze our application usage. You may opt-out of cookies here. Learn more in our {{link}}.",
+    "content": "We use cookies and similar technologies to improve your experience, enable certain features, and analyze our application usage. You may opt-out of cookies here. Learn more in our",
     "linkLabel": "privacy policy",
     "linkURL": "https://aragon.org/privacy-policy"
   },

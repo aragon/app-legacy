@@ -24,13 +24,18 @@ import {
 import {FormSection} from '.';
 import {DateTimeErrors} from './dateTimeErrors';
 import {ProposalFormData} from 'utils/types';
+import {Props as SetupVotingProps} from 'containers/setupVotingForm';
+import {MultisigVotingSettings} from '@aragon/sdk-client';
 
 const MAX_DURATION_MILLS =
   MULTISIG_MAX_REC_DURATION_DAYS * MINS_IN_DAY * 60 * 1000;
 
 export type UtcInstance = 'first' | 'second';
 
-const SetupMultisigVotingForm: React.FC = () => {
+const SetupMultisigVotingForm: React.FC<SetupVotingProps> = ({
+  pluginSettings,
+  daoMembers,
+}) => {
   const {t} = useTranslation();
   const {open} = useGlobalModalContext();
 
@@ -180,7 +185,12 @@ const SetupMultisigVotingForm: React.FC = () => {
           label={t('newWithdraw.setupVoting.multisig.votingOption.label')}
           type="active"
           helptext={t(
-            'newWithdraw.setupVoting.multisig.votingOption.description'
+            'newWithdraw.setupVoting.multisig.votingOption.description',
+            {
+              amountMembers: (pluginSettings as MultisigVotingSettings)
+                .minApprovals,
+              totalAmountMembers: daoMembers?.memberCount,
+            }
           )}
           multiSelect={false}
         />
