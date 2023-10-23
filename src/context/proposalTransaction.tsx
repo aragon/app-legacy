@@ -373,7 +373,7 @@ const ProposalTransactionProvider: React.FC<Props> = ({children}) => {
 
     if (pluginType === 'multisig.plugin.dao.eth' && approvalParams) {
       handleMultisigApproval(approvalParams);
-    } else if (pluginType === 'multisig.plugin.dao.eth' && voteParams) {
+    } else if (pluginType === 'token-voting.plugin.dao.eth' && voteParams) {
       handleTokenVotingVote(voteParams);
     }
   };
@@ -541,10 +541,14 @@ const ProposalTransactionProvider: React.FC<Props> = ({children}) => {
     (isExecutionContext ? executionProcessState : voteOrApprovalProcessState) ??
     TransactionState.WAITING;
 
-  let title = t('labels.signExecuteProposal');
+  let title = isVotingContext
+    ? t('labels.signVote')
+    : t('labels.signExecuteProposal');
 
   const labels: TransactionStateLabels = {
-    [TransactionState.WAITING]: t('governance.proposals.buttons.execute'),
+    [TransactionState.WAITING]: isVotingContext
+      ? t('governance.proposals.buttons.vote')
+      : t('governance.proposals.buttons.execute'),
   };
 
   if (isVotingContext && pluginType === 'multisig.plugin.dao.eth') {
