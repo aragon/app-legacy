@@ -2,6 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 import {useTranslation} from 'react-i18next';
 import {ButtonText, Link} from '@aragon/ods-old';
+import {htmlIn} from 'utils/htmlIn';
 
 type PrivacyPolicyContentProps = {
   isDesktop: boolean;
@@ -18,16 +19,11 @@ const PrivacyPolicyContent: React.FC<PrivacyPolicyContentProps> = ({
 
   return (
     <>
-      <Text>
-        {t('privacyPolicy.content')}{' '}
-        <span className="capitalize">
-          <Link
-            label={t('privacyPolicy.linkLabel')}
-            href={t('privacyPolicy.linkURL')}
-          />
-          .
-        </span>
-      </Text>
+      <Text
+        dangerouslySetInnerHTML={{
+          __html: htmlIn(t)('privacyPolicy.content'),
+        }}
+      />
 
       <ButtonGroup>
         <ButtonText
