@@ -36,6 +36,8 @@
   },
   "labels": {
     "approvals": "Approvals",
+    "approve": "Approve",
+    "approveProposal":"Approve proposal",
     "loading": "Loading …",
     "members": "Members",
     "tokenHolders": "Token holders",

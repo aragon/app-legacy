@@ -60,6 +60,7 @@ type ProposalTransactionContextType = {
   handlePrepareApproval: (params: ApproveMultisigProposalParams) => void;
   handlePrepareExecution: () => void;
   handleGaslessVoting: (params: SubmitVoteParams) => void;
+  handleCommitteApprove: (params: SubmitVoteParams) => void;
   isLoading: boolean;
   voteOrApprovalSubmitted: boolean;
   executionSubmitted: boolean;
@@ -94,6 +95,8 @@ const ProposalTransactionProvider: React.FC<Props> = ({children}) => {
   const [showGaslessModal, setShowGaslessModal] = useState(false);
   const [showExecutionModal, setShowExecutionModal] = useState(false);
   const [voteTokenAddress, setVoteTokenAddress] = useState<string>();
+  const [showCommitteeApprovalModal, setShowCommitteeApprovalModal] =
+    useState(false);
 
   const [voteParams, setVoteParams] = useState<VoteProposalParams>();
   const [approvalParams, setApprovalParams] =
@@ -171,6 +174,20 @@ const ProposalTransactionProvider: React.FC<Props> = ({children}) => {
 
       setTokenAddress(params.token);
       setShowGaslessModal(true);
+    },
+    [urlId]
+  );
+
+  const handleCommitteApprove = useCallback(
+    (params: SubmitVoteParams) => {
+      setVoteParams({
+        proposalId: new ProposalId(urlId!).export(),
+        vote: params.vote,
+      });
+      setReplacingVote(!!params.replacement);
+      setTokenAddress(params.token);
+      setVoteProcessState(TransactionState.WAITING);
+      setShowCommitteeApprovalModal(true);
     },
     [urlId]
   );
@@ -351,9 +368,11 @@ const ProposalTransactionProvider: React.FC<Props> = ({children}) => {
         break;
       case TransactionState.SUCCESS:
         setShowVoteModal(false);
+        setShowCommitteeApprovalModal(false);
         break;
       default: {
         setShowVoteModal(false);
+        setShowCommitteeApprovalModal(false);
         stopPolling();
       }
     }
@@ -564,6 +583,7 @@ const ProposalTransactionProvider: React.FC<Props> = ({children}) => {
       handlePrepareApproval,
       handlePrepareExecution,
       handleGaslessVoting,
+      handleCommitteApprove,
       isLoading,
       voteOrApprovalSubmitted,
       executionSubmitted,
@@ -575,6 +595,7 @@ const ProposalTransactionProvider: React.FC<Props> = ({children}) => {
       handlePrepareApproval,
       handlePrepareExecution,
       handleGaslessVoting,
+      handleCommitteApprove,
       isLoading,
       voteOrApprovalSubmitted,
       executionSubmitted,
@@ -593,6 +614,21 @@ const ProposalTransactionProvider: React.FC<Props> = ({children}) => {
   const state =
     (isExecutionContext ? executionProcessState : voteOrApprovalProcessState) ??
     TransactionState.WAITING;
+
+  // todo(kon): lines lost during rebase
+  //   title={
+  //     showExecuteModal
+  //     ? t('labels.signExecuteProposal')
+  //     : showCommitteeApprovalModal
+  //       ? t('labels.approveProposal')
+  //       : t('labels.signVote')
+  // }
+
+  // showExecuteModal
+  //   ? t('governance.proposals.buttons.execute')
+  //   : showCommitteeApprovalModal
+  //     ? t('labels.approve')
+  //     : t('governance.proposals.buttons.vote')
 
   let title = isVotingContext
     ? t('labels.signVote')
@@ -616,7 +652,8 @@ const ProposalTransactionProvider: React.FC<Props> = ({children}) => {
     }
   }
 
-  const isOpen = showVoteModal || showExecutionModal;
+  const isOpen =
+    showVoteModal || showExecutionModal || showCommitteeApprovalModal;
 
   const onClose = isExecutionContext
     ? handleCloseExecuteModal

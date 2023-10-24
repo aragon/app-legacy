@@ -72,7 +72,7 @@ export const CommitteeVotingTerminal = ({
     notBegan,
   } = useGaslessCommiteVotes(address, proposal);
 
-  const {handleSubmitVote, transactionHash, executionFailed} =
+  const {handleCommitteApprove, transactionHash, executionFailed} =
     useProposalTransactionContext();
 
   const mappedProps = useMemo(() => {
@@ -154,14 +154,14 @@ export const CommitteeVotingTerminal = ({
       return {
         voteNowDisabled: false,
         onClick: () => {
-          handleSubmitVote({vote: VoteValues.YES});
+          handleCommitteApprove({vote: VoteValues.YES});
         },
       };
     } else return {voteNowDisabled: true};
   }, [
     address,
     canApprove,
-    handleSubmitVote,
+    handleCommitteApprove,
     isApprovalPeriod,
     isOnWrongNetwork,
     statusRef,
