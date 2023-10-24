@@ -223,7 +223,7 @@ export const Community: React.FC = () => {
               {!walletBased && enableSearchSort && enableDelegation && (
                 <Dropdown
                   align="end"
-                  className="px-0 py-2"
+                  className="p-2"
                   style={{minWidth: 'var(--radix-dropdown-menu-trigger-width)'}}
                   sideOffset={8}
                   listItems={[
