@@ -46,12 +46,6 @@ const ProposalStepper: React.FC<ProposalStepperType> = ({
     pluginType: daoDetails?.plugins?.[0]?.id as PluginTypes,
   });
 
-  // plugin data
-  const {data: daoMembers, isLoading: membersLoading} = useDaoMembers(
-    daoDetails?.plugins?.[0]?.instanceAddress as string,
-    daoDetails?.plugins?.[0]?.id as PluginTypes
-  );
-
   const {actions} = useActionsContext();
   const {open} = useGlobalModalContext();
 
@@ -154,10 +148,7 @@ const ProposalStepper: React.FC<ProposalStepperType> = ({
           next();
         }}
       >
-        <SetupVotingForm
-          pluginSettings={votingSettings}
-          daoMembers={daoMembers}
-        />
+        <SetupVotingForm pluginSettings={votingSettings} />
       </Step>
       <Step
         wizardTitle={t('newProposal.configureActions.heading')}

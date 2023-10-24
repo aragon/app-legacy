@@ -37,6 +37,7 @@ const EmptyState: React.FC<Props> = props => {
           object="smart_contract"
           title={t('scc.emptyState.title')}
           description={htmlIn(t)('scc.emptyState.description')}
+          renderHtml
           primaryButton={{
             label: t('scc.emptyState.ctaLabel'),
             onClick: () => {

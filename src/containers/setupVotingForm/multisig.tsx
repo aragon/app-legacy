@@ -26,6 +26,9 @@ import {DateTimeErrors} from './dateTimeErrors';
 import {ProposalFormData} from 'utils/types';
 import {Props as SetupVotingProps} from 'containers/setupVotingForm';
 import {MultisigVotingSettings} from '@aragon/sdk-client';
+import {PluginTypes} from 'hooks/usePluginClient';
+import {useDaoMembers} from 'hooks/useDaoMembers';
+import {useDaoDetailsQuery} from 'hooks/useDaoDetails';
 
 const MAX_DURATION_MILLS =
   MULTISIG_MAX_REC_DURATION_DAYS * MINS_IN_DAY * 60 * 1000;
@@ -34,10 +37,15 @@ export type UtcInstance = 'first' | 'second';
 
 const SetupMultisigVotingForm: React.FC<SetupVotingProps> = ({
   pluginSettings,
-  daoMembers,
 }) => {
   const {t} = useTranslation();
   const {open} = useGlobalModalContext();
+  const {data: daoDetails} = useDaoDetailsQuery();
+  // plugin data
+  const {data: daoMembers} = useDaoMembers(
+    daoDetails?.plugins?.[0]?.instanceAddress as string,
+    daoDetails?.plugins?.[0]?.id as PluginTypes
+  );
 
   const [utcInstance, setUtcInstance] = useState<UtcInstance>('first');
   const {control, formState, getValues, resetField, setValue, trigger} =

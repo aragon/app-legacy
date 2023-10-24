@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import {useTranslation} from 'react-i18next';
-import {ButtonText, Link} from '@aragon/ods-old';
+import {ButtonText} from '@aragon/ods-old';
 import {htmlIn} from 'utils/htmlIn';
 
 type PrivacyPolicyContentProps = {
