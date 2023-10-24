@@ -223,43 +223,9 @@ export const Proposal: React.FC = () => {
     ],
   });
 
-  // offchain
-  // const [title, setTitle] = useState<string>('');
-  // const [summary, setSummary] = useState<string>('');
-  // const [description, setDescription] = useState<string>('');
-  // const [isGasless, setIsGasless] = useState(false);
-
-  // const title = isGaseless
-  //   ? (proposal as GaslessVotingProposal)?.vochain.metadata.title.default
-  //   : proposal?.metadata.title;
-  // const summary = isGaseless
-  //   ? (proposal as GaslessVotingProposal)?.vochain.metadata.questions[0].title
-  //       .default
-  //   : proposal?.metadata.summary;
-  // const description = isGaseless
-  //   ? (proposal as GaslessVotingProposal)?.vochain.metadata.description.default
-  //   : proposal?.metadata.description;
-
   /*************************************************
    *                     Hooks                     *
    *************************************************/
-
-  // useEffect(() => {
-  //   if (!proposal) return;
-  // if (isGaslessProposal(proposal)) {
-  //     setTitle(
-  //       (proposal as GaslessVotingProposal)?.vochain.metadata.title.default || ''
-  //     );
-  //     setDescription(
-  //       (proposal as GaslessVotingProposal)?.vochain.metadata.description
-  //         .default || ''
-  //     );
-  //   } else {
-  //     setTitle(proposal?.metadata.title || '');
-  //     setDescription(proposal?.metadata.description || '');
-  //   };
-  //   setSummary(proposal?.metadata.summary || '');
-  // }, [proposal]);
 
   // set editor data
   useEffect(() => {

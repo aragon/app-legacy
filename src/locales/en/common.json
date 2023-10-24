@@ -850,7 +850,7 @@
       "executiveCommitteeMembersSubtitleLinkURL" : "https://aragon.org/how-to/governance-ii-setting-dao-governance-thresholds",
       "minimumAprovalDescritpion": "Participation is the amount of addresses in the authorised list that approve on a proposal. The minimum is how many have to approve for the result to be valid.",
       "alerts": {
-        "ofAddresses": "of {{count}} Addresses"
+        "ofAddresses": "of {{number}} Addresses"
       },
       "executionTimeSubtitle": "Define how long the voting should last in days or exact date and time."
     },

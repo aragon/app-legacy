@@ -159,13 +159,13 @@ export const useGaslessCommiteVotes = (
   const client = usePluginClient(GaselessPluginName) as OffchainVotingClient;
   const {address} = useWallet();
 
-  const isApprovalPeriod = useMemo(() => {
+  const isApprovalPeriod = (proposal => {
     if (!proposal) return false;
     return (
       proposal.endDate.valueOf() < new Date().valueOf() &&
       proposal.expirationDate.valueOf() > new Date().valueOf()
     );
-  }, [proposal]);
+  })(proposal);
 
   const proposalCanBeApproved =
     isApprovalPeriod && proposal.status === ProposalStatus.SUCCEEDED;
@@ -174,15 +174,15 @@ export const useGaslessCommiteVotes = (
     return proposal.approvers?.some(approver => approver === address);
   }, [address, proposal.approvers]);
 
-  const isApproved = useMemo(() => {
+  const isApproved = (proposal => {
     if (!proposal) return false;
     return proposal.settings.minTallyApprovals <= proposal.approvers.length;
-  }, [proposal]);
+  })(proposal);
 
-  const canBeExecuted = useMemo(() => {
+  const canBeExecuted = (proposal => {
     if (!client || !proposal) return false;
     return isApproved && proposalCanBeApproved;
-  }, [client, isApproved, proposal, proposalCanBeApproved]);
+  })(proposal);
 
   const nextVoteWillApprove =
     proposal.approvers.length + 1 === proposal.settings.minTallyApprovals;
@@ -198,11 +198,16 @@ export const useGaslessCommiteVotes = (
         false;
       setCanApprove(canApprove);
     };
-    if (address && client) {
-      approved || !isApprovalPeriod || !proposalCanBeApproved
-        ? setCanApprove(false)
-        : checkCanVote();
+
+    if (!(address && client)) {
+      return;
     }
+
+    if (approved || !isApprovalPeriod || !proposalCanBeApproved) {
+      setCanApprove(false);
+      return;
+    }
+    checkCanVote();
   }, [
     address,
     client,

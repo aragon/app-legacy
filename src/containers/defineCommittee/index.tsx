@@ -106,7 +106,7 @@ const DefineCommittee: React.FC = () => {
 
                     <p className="shrink-0 text-ui-600">
                       {t('createDAO.step5.alerts.ofAddresses', {
-                        count: committeeCount,
+                        number: committeeCount,
                       })}
                     </p>
                   </ProgressInfo2>

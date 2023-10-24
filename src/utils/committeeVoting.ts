@@ -12,13 +12,17 @@ export function getCommitteVoteButtonLabel(
 ) {
   if (executed) {
     return t('offchainVotingTerminal.btnLabel.executed');
-  } else if (approved) {
+  }
+  if (approved) {
     return t('offchainVotingTerminal.btnLabel.approved');
-  } else if (notBegan) {
+  }
+  if (notBegan) {
     return t('offchainVotingTerminal.btnLabel.approve');
-  } else if (voted) {
+  }
+  if (voted) {
     return t('offchainVotingTerminal.btnLabel.voted');
-  } else if (canApprove) {
+  }
+  if (canApprove) {
     return t('offchainVotingTerminal.btnLabel.approve');
   }
   return t('offchainVotingTerminal.btnLabel.concluded');
