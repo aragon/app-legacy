@@ -1,5 +1,4 @@
 import {
-  AlertInline,
   IconAdd,
   IconLinkExternal,
   Pagination,
@@ -271,9 +270,6 @@ export const Community: React.FC = () => {
                 />
               )}
             </div>
-            {!walletBased && (
-              <AlertInline label={t('alert.tokenBasedMembers') as string} />
-            )}
           </div>
 
           {/* Members List */}
