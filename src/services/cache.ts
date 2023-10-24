@@ -143,7 +143,7 @@ export async function getPendingDaoFromCache(
 
   return {
     address: daoAddressOrEns,
-    ensDomain: foundDao.ensSubdomain,
+    ensDomain: foundDao.ensSubdomain ?? '',
     metadata: foundDao.metadata,
     plugins: [],
     creationDate: foundDao.creationDate,
