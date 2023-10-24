@@ -36,7 +36,7 @@ const buildFormSettings = (
 
 type DelegateVotingMenuState = {
   /**
-   * Initialises the form in reclaim mode when set to true.
+   * Initializes the form in reclaim mode when set to true.
    */
   reclaimMode?: boolean;
   /**
@@ -52,7 +52,7 @@ export const DelegateVotingMenu: React.FC = () => {
     useGlobalModalContext<DelegateVotingMenuState>('delegateVoting');
   const formSettings = buildFormSettings(modalState?.delegate);
   const formValues = useForm<IDelegateVotingFormValues>(formSettings);
-  const {setValue, control} = formValues;
+  const {setValue, clearErrors, control} = formValues;
   const delegate = useWatch({
     name: DelegateVotingFormField.TOKEN_DELEGATE,
     control: control,
@@ -101,6 +101,7 @@ export const DelegateVotingMenu: React.FC = () => {
       address: currentDelegate ?? '',
       ensName: currentDelegateEns,
     });
+    clearErrors(DelegateVotingFormField.TOKEN_DELEGATE);
     setTxHash(undefined);
     close();
     resetDelegateProcess();
