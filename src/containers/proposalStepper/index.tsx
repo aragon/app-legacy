@@ -76,7 +76,7 @@ const ProposalStepper: React.FC<ProposalStepperType> = ({
   /*************************************************
    *                    Render                     *
    *************************************************/
-  if (isLoading || settingsLoading || membersLoading) {
+  if (isLoading || settingsLoading) {
     return <Loading />;
   }
 
