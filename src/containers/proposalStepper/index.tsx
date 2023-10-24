@@ -29,7 +29,6 @@ import {removeUnchangedMinimumApprovalAction} from 'utils/library';
 import {Governance} from 'utils/paths';
 import {Action} from 'utils/types';
 import {actionsAreValid} from 'utils/validators';
-import {useDaoMembers} from 'hooks/useDaoMembers';
 
 type ProposalStepperType = {
   enableTxModal: () => void;
