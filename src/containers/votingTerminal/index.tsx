@@ -354,39 +354,35 @@ export const VotingTerminal: React.FC<VotingTerminalProps> = ({
           <>
             <VoteContainer>
               {isMultisigProposal ? (
-                <>
-                  <div className="flex w-full flex-col gap-y-4">
-                    <div className="flex w-full flex-col gap-x-4 gap-y-3 xl:flex-row">
-                      {executableWithNextApproval && (
-                        <ButtonText
-                          label={t(
-                            'transactionModal.multisig.ctaApproveExecute'
-                          )}
-                          size="large"
-                          onClick={() => onApprovalClicked?.(true)}
-                          className="w-full md:w-max"
-                          disabled={voteNowDisabled}
-                        />
-                      )}
+                <div className="flex w-full flex-col gap-y-4">
+                  <div className="flex w-full flex-col gap-x-4 gap-y-3 xl:flex-row">
+                    {executableWithNextApproval && (
                       <ButtonText
-                        label={voteButtonLabel ?? ''}
+                        label={t('transactionModal.multisig.ctaApproveExecute')}
                         size="large"
-                        onClick={() => onApprovalClicked?.(false)}
+                        onClick={() => onApprovalClicked?.(true)}
                         className="w-full md:w-max"
                         disabled={voteNowDisabled}
-                        {...(executableWithNextApproval
-                          ? {mode: 'secondary', bgWhite: true}
-                          : {mode: 'primary'})}
-                      />
-                    </div>
-                    {executableWithNextApproval && (
-                      <AlertInline
-                        label={t('votingTerminal.approveAndExecute.infoAlert')}
-                        mode={'neutral'}
                       />
                     )}
+                    <ButtonText
+                      label={voteButtonLabel ?? ''}
+                      size="large"
+                      onClick={() => onApprovalClicked?.(false)}
+                      className="w-full md:w-max"
+                      disabled={voteNowDisabled}
+                      {...(executableWithNextApproval
+                        ? {mode: 'secondary', bgWhite: true}
+                        : {mode: 'primary'})}
+                    />
                   </div>
-                </>
+                  {executableWithNextApproval && (
+                    <AlertInline
+                      label={t('votingTerminal.approveAndExecute.infoAlert')}
+                      mode={'neutral'}
+                    />
+                  )}
+                </div>
               ) : (
                 <ButtonText
                   label={voteButtonLabel || t('votingTerminal.voteNow')}

@@ -717,7 +717,7 @@ const CreateProposalWrapper: React.FC<Props> = ({
    *************************************************/
   const buttonLabels = {
     [TransactionState.SUCCESS]: t('TransactionModal.goToProposal'),
-    [TransactionState.WAITING]: t('TransactionModal.createProposal'),
+    [TransactionState.WAITING]: t('TransactionModal.createProposalNow'),
   };
 
   if (daoDetailsLoading) {
