@@ -1595,8 +1595,8 @@
       "alertTitle": "Some updates may be unsafe",
       "alertDesc": "One or more actions aren't in the Aragon Update Registry, indicating that this update could be potentially harmful.",
       "desc": "All actions are listed in the Aragon Update Registry, which is managed by the Aragon team. However, always exercise caution when evaluating updates. To learn more about Aragon OSx updates, {{link}}.",
-      "descLinkLabel": "Read more",
-      "descLinkUrl": "https://"
+      "descLinkLabel": "read more in our guides",
+      "descLinkURL": "https://aragon.org/how-to/update-your-aragon-dao"
     },
     "proposal": {
       "bannerTitle": "Verified Aragon App Update"
