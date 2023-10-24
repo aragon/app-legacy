@@ -47,9 +47,7 @@ import {
 import useScreen from 'hooks/useScreen';
 import {useWallet} from 'hooks/useWallet';
 import {useWalletCanVote} from 'hooks/useWalletCanVote';
-import {
-  useProposal,
-} from 'services/aragon-sdk/queries/use-proposal';
+import {useProposal} from 'services/aragon-sdk/queries/use-proposal';
 import {
   isGaslessVotingSettings,
   isMultisigVotingSettings,
@@ -138,18 +136,6 @@ export const Proposal: React.FC = () => {
     executionTxHash,
   } = useProposalTransactionContext();
 
-  // let gaslessProposalParams: IFetchGaslessProposalParams | undefined;
-  // if (pluginType === GaselessPluginName && dao && daoDetails && proposalId) {
-  //   const {proposal} = proposalId!.stripPlgnAdrFromProposalId();
-  //   gaslessProposalParams = {
-  //     id: proposalId?.toString() ?? '',
-  //     pluginType,
-  //     daoName: daoDetails!.ensDomain,
-  //     daoAddress: dao!,
-  //     pluginAddress: pluginAddress,
-  //   };
-  // }
-
   const {
     data: proposal,
     error: proposalError,
@@ -170,8 +156,7 @@ export const Proposal: React.FC = () => {
         data?.status === ProposalStatus.ACTIVE
           ? PROPOSAL_STATUS_INTERVAL
           : false,
-    },
-    // gaslessProposalParams
+    }
   );
 
   const {data: votingSettings} = useVotingSettings(
