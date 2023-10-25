@@ -47,7 +47,33 @@ export const Pagination: React.FC<PaginationProps> = ({
     const {isMobile} = useScreen();
 
     if (isMobile) {
-      if (totalPages - page <= 1) {
+      if (totalPages === 2) {
+        return (
+          <>
+            <ButtonText
+              mode="secondary"
+              size="large"
+              isActive={page === 1}
+              onClick={() => setPage(1)}
+              {...(bgWhite && {bgWhite})}
+              label={`${1}`}
+              key={1}
+            />
+
+            <ButtonText
+              mode="secondary"
+              size="large"
+              isActive={page === 2}
+              onClick={() => setPage(2)}
+              {...(bgWhite && {bgWhite})}
+              label={`${2}`}
+              key={2}
+            />
+          </>
+        );
+      }
+
+      if (totalPages - page <= 1 && totalPages > 2) {
         const penultimatePage = totalPages - 1;
         return (
           <>
