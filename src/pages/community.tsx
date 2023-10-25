@@ -10,7 +10,7 @@ import {
   IconCheckmark,
   IconSort,
 } from '@aragon/ods-old';
-import React, {useState} from 'react';
+import React, {useCallback, useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {useNavigate} from 'react-router-dom';
 import styled from 'styled-components';
@@ -123,6 +123,11 @@ export const Community: React.FC = () => {
     }
   };
 
+  const handlePageChange = useCallback((activePage: number) => {
+    setPage(activePage);
+    window.scrollTo({top: 0, behavior: 'smooth'});
+  }, []);
+
   /*************************************************
    *                     Render                    *
    *************************************************/
@@ -210,66 +215,60 @@ export const Community: React.FC = () => {
     >
       <BodyContainer>
         <SearchAndResultWrapper>
-          <div className="space-y-4">
-            <div className="flex flex-row gap-4 xl:gap-8">
-              {enableSearchSort && (
-                <SearchInput
-                  placeholder={t('labels.searchPlaceholder')}
-                  containerClassName="grow"
-                  value={searchTerm}
-                  onChange={handleQueryChange}
-                />
-              )}
-              {!walletBased && enableSearchSort && enableDelegation && (
-                <Dropdown
-                  align="end"
-                  className="p-2"
-                  style={{minWidth: 'var(--radix-dropdown-menu-trigger-width)'}}
-                  sideOffset={8}
-                  listItems={[
-                    {
-                      callback: () => setSort('votingPower'),
-                      component: (
-                        <ListItemAction
-                          title={t('community.sortByVotingPower.default')}
-                          bgWhite={true}
-                          mode={sort === 'votingPower' ? 'selected' : 'default'}
-                          iconRight={
-                            sort === 'votingPower' ? (
-                              <IconCheckmark />
-                            ) : undefined
-                          }
-                        />
-                      ),
-                    },
-                    {
-                      callback: () => setSort('delegations'),
-                      component: (
-                        <ListItemAction
-                          title={t('community.sortByDelegations.default')}
-                          bgWhite={true}
-                          mode={sort === 'delegations' ? 'selected' : 'default'}
-                          iconRight={
-                            sort === 'delegations' ? (
-                              <IconCheckmark />
-                            ) : undefined
-                          }
-                        />
-                      ),
-                    },
-                  ]}
-                  side="bottom"
-                  trigger={
-                    <ButtonText
-                      mode="secondary"
-                      iconLeft={<IconSort />}
-                      size="large"
-                      label={sortLabel}
-                    />
-                  }
-                />
-              )}
-            </div>
+          <div className="flex flex-row gap-4 xl:gap-8">
+            {enableSearchSort && (
+              <SearchInput
+                placeholder={t('labels.searchPlaceholder')}
+                containerClassName="grow"
+                value={searchTerm}
+                onChange={handleQueryChange}
+              />
+            )}
+            {!walletBased && enableSearchSort && enableDelegation && (
+              <Dropdown
+                align="end"
+                className="p-2"
+                style={{minWidth: 'var(--radix-dropdown-menu-trigger-width)'}}
+                sideOffset={8}
+                listItems={[
+                  {
+                    callback: () => setSort('votingPower'),
+                    component: (
+                      <ListItemAction
+                        title={t('community.sortByVotingPower.default')}
+                        bgWhite={true}
+                        mode={sort === 'votingPower' ? 'selected' : 'default'}
+                        iconRight={
+                          sort === 'votingPower' ? <IconCheckmark /> : undefined
+                        }
+                      />
+                    ),
+                  },
+                  {
+                    callback: () => setSort('delegations'),
+                    component: (
+                      <ListItemAction
+                        title={t('community.sortByDelegations.default')}
+                        bgWhite={true}
+                        mode={sort === 'delegations' ? 'selected' : 'default'}
+                        iconRight={
+                          sort === 'delegations' ? <IconCheckmark /> : undefined
+                        }
+                      />
+                    ),
+                  },
+                ]}
+                side="bottom"
+                trigger={
+                  <ButtonText
+                    mode="secondary"
+                    iconLeft={<IconSort />}
+                    size="large"
+                    label={sortLabel}
+                  />
+                }
+              />
+            )}
           </div>
 
           {/* Members List */}
@@ -309,10 +308,7 @@ export const Community: React.FC = () => {
                 Math.ceil(displayedMembersTotal / MEMBERS_PER_PAGE) as number
               }
               activePage={page}
-              onChange={(activePage: number) => {
-                setPage(activePage);
-                window.scrollTo({top: 0, behavior: 'smooth'});
-              }}
+              onChange={handlePageChange}
             />
           )}
         </PaginationWrapper>
