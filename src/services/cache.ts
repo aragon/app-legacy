@@ -143,7 +143,7 @@ export async function getPendingDaoFromCache(
 
   return {
     address: daoAddressOrEns,
-    ensDomain: foundDao.ensSubdomain,
+    ensDomain: foundDao.ensSubdomain ?? '',
     metadata: foundDao.metadata,
     plugins: [],
     creationDate: foundDao.creationDate,
@@ -210,7 +210,7 @@ export async function removePendingDaoFromCache(
 
   const cache = await getPendingDaosFromCache();
   const newCache = {...cache};
-  delete newCache?.[network]?.[daoAddress];
+  delete newCache?.[network]?.[daoAddress.toLowerCase()];
 
   localStorage.setItem(PENDING_DAOS_KEY, JSON.stringify(newCache));
 }

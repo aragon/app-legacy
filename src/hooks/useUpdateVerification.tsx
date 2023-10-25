@@ -1,5 +1,4 @@
 import {useQueries} from '@tanstack/react-query';
-import {useClient} from './useClient';
 import {ProposalId} from 'utils/types';
 
 /**
@@ -8,22 +7,16 @@ import {ProposalId} from 'utils/types';
  * @returns an arrea of queries the indicates the status of verifications
  */
 export function useUpdateVerification(proposalId: ProposalId | string) {
-  const {client} = useClient();
-
   const verificationQueries = [
     {
       queryKey: ['isPluginUpdateProposalValid', proposalId],
-      queryFn: () =>
-        client?.methods.isPluginUpdateProposalValid(proposalId as string),
+      queryFn: () => Promise.resolve(() => null),
       enabled: Boolean(proposalId),
       retry: false,
     },
     {
       queryKey: ['isDaoUpdateProposalValid', proposalId],
-      queryFn: () =>
-        client?.methods.isDaoUpdateProposalValid({
-          proposalId: proposalId as string,
-        }),
+      queryFn: () => Promise.resolve(() => null),
       enabled: Boolean(proposalId),
       retry: false,
     },

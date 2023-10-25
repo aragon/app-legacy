@@ -1,11 +1,11 @@
-import {useEffect, useState} from 'react';
 import {
   MultisigClient,
   TokenVotingClient,
   VoteValues,
 } from '@aragon/sdk-client';
+import {useEffect, useState} from 'react';
 
-import {HookData, ProposalId} from 'utils/types';
+import {HookData} from 'utils/types';
 import {PluginTypes, usePluginClient} from './usePluginClient';
 
 /**
@@ -18,7 +18,7 @@ import {PluginTypes, usePluginClient} from './usePluginClient';
  */
 export const useWalletCanVote = (
   address: string | null,
-  proposalId: ProposalId,
+  proposalId: string,
   pluginAddress: string,
   pluginType?: PluginTypes,
   proposalStatus?: string
@@ -48,7 +48,7 @@ export const useWalletCanVote = (
         if (isMultisigClient) {
           canVote = [
             await (client as MultisigClient)?.methods.canApprove({
-              proposalId: proposalId.export(),
+              proposalId,
               approverAddressOrEns: address,
             }),
           ];
@@ -60,7 +60,7 @@ export const useWalletCanVote = (
           ].map(vote => {
             return (client as TokenVotingClient)?.methods.canVote({
               voterAddressOrEns: address,
-              proposalId: proposalId.export(),
+              proposalId,
               vote,
             });
           });

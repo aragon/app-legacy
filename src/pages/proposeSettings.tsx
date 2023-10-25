@@ -805,6 +805,10 @@ const ProposeSettingWrapper: React.FC<Props> = ({
   /*************************************************
    *                    Render                     *
    *************************************************/
+  const buttonLabels = {
+    [TransactionState.SUCCESS]: t('TransactionModal.goToProposal'),
+    [TransactionState.WAITING]: t('TransactionModal.createProposalNow'),
+  };
 
   if (daoDetailsLoading || tokenSupplyIsLoading) {
     return <Loading />;
@@ -824,8 +828,7 @@ const ProposeSettingWrapper: React.FC<Props> = ({
         gasEstimationError={gasEstimationError}
         tokenPrice={tokenPrice}
         title={t('TransactionModal.createProposal')}
-        buttonLabel={t('TransactionModal.createProposalNow')}
-        buttonLabelSuccess={t('TransactionModal.launchGovernancePage')}
+        buttonStateLabels={buttonLabels}
         disabledCallback={disableActionButton}
       />
     </>

@@ -24,28 +24,32 @@ import {
 import {FormSection} from '.';
 import {DateTimeErrors} from './dateTimeErrors';
 import {ProposalFormData} from 'utils/types';
-import {Props as SetupVotingProps} from 'containers/setupVotingForm';
-import {MultisigVotingSettings} from '@aragon/sdk-client';
-import {PluginTypes} from 'hooks/usePluginClient';
-import {useDaoMembers} from 'hooks/useDaoMembers';
+import {useVotingSettings} from 'services/aragon-sdk/queries/use-voting-settings';
 import {useDaoDetailsQuery} from 'hooks/useDaoDetails';
+import {useDaoMembers} from 'hooks/useDaoMembers';
+import {MultisigVotingSettings} from '@aragon/sdk-client';
 
 const MAX_DURATION_MILLS =
   MULTISIG_MAX_REC_DURATION_DAYS * MINS_IN_DAY * 60 * 1000;
 
 export type UtcInstance = 'first' | 'second';
 
-const SetupMultisigVotingForm: React.FC<SetupVotingProps> = ({
-  pluginSettings,
-}) => {
+const SetupMultisigVotingForm: React.FC = () => {
   const {t} = useTranslation();
   const {open} = useGlobalModalContext();
+
   const {data: daoDetails} = useDaoDetailsQuery();
-  // plugin data
-  const {data: daoMembers} = useDaoMembers(
-    daoDetails?.plugins?.[0]?.instanceAddress as string,
-    daoDetails?.plugins?.[0]?.id as PluginTypes
-  );
+
+  const pluginAddress = daoDetails?.plugins?.[0]?.instanceAddress as string;
+
+  const {
+    data: {members},
+  } = useDaoMembers(pluginAddress, 'multisig.plugin.dao.eth');
+
+  const {data: votingSettings} = useVotingSettings({
+    pluginAddress,
+    pluginType: 'multisig.plugin.dao.eth',
+  });
 
   const [utcInstance, setUtcInstance] = useState<UtcInstance>('first');
   const {control, formState, getValues, resetField, setValue, trigger} =
@@ -195,9 +199,9 @@ const SetupMultisigVotingForm: React.FC<SetupVotingProps> = ({
           helptext={t(
             'newWithdraw.setupVoting.multisig.votingOption.description',
             {
-              amountMembers: (pluginSettings as MultisigVotingSettings)
+              amountMembers: (votingSettings as MultisigVotingSettings)
                 .minApprovals,
-              totalAmountMembers: daoMembers?.memberCount,
+              totalAmountMembers: members.length,
             }
           )}
           multiSelect={false}

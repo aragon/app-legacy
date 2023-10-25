@@ -217,6 +217,10 @@ const WCdAppValidation: React.FC<Props> = props => {
               <WalletInputLegacy
                 mode={error ? 'critical' : 'default'}
                 name={name}
+                disabled={
+                  connectionStatus === ConnectionState.LOADING ||
+                  connectionStatus === ConnectionState.SUCCESS
+                }
                 onBlur={onBlur}
                 onChange={onChange}
                 value={value ?? ''}

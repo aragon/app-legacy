@@ -49,6 +49,7 @@ const InfoTab: React.FC<Props> = ({
   preciseEndDate,
 }) => {
   const {t} = useTranslation();
+  const isMultisigProposal = minApproval != null && minApproval !== 0;
 
   return (
     <>
@@ -74,7 +75,7 @@ const InfoTab: React.FC<Props> = ({
         {minParticipation && (
           <InfoLine>
             <p>{t('votingTerminal.minParticipation')}</p>
-            <Strong>{`≥ ${minParticipation}`}</Strong>
+            <Strong className="text-right">{`≥ ${minParticipation}`}</Strong>
           </InfoLine>
         )}
 
@@ -170,16 +171,24 @@ const InfoTab: React.FC<Props> = ({
           <p>{t('votingTerminal.startDate')}</p>
           <Strong>{startDate}</Strong>
         </InfoLine>
-        <InfoLine>
-          <p>{t('votingTerminal.endDate')}</p>
-          <EndDateWrapper>
-            <Strong>{endDate}</Strong>
-            {preciseEndDate && (
-              <div className="flex justify-end gap-x-2">
-                <p className="text-right text-neutral-400 ft-text-sm">
-                  {preciseEndDate}
-                </p>
-              </div>
+        <InfoLine className="items-start gap-x-4">
+          <p className="ft-text-base">{t('votingTerminal.endDate')}</p>
+          <EndDateWrapper className="w-[213px]">
+            {isMultisigProposal ? (
+              <p className="text-right font-semibold text-neutral-800 ft-text-base">
+                {t('votingTerminal.multisig.endDescription')}
+              </p>
+            ) : (
+              <>
+                <Strong>{endDate}</Strong>
+                {preciseEndDate && (
+                  <div className="flex justify-end gap-x-2">
+                    <p className="text-right text-neutral-800 ft-text-sm">
+                      {preciseEndDate}
+                    </p>
+                  </div>
+                )}
+              </>
             )}
           </EndDateWrapper>
         </InfoLine>
@@ -205,7 +214,7 @@ const VStackSection = styled.div.attrs<{isLast?: boolean}>(({isLast}) => ({
 }))<{isLast?: boolean}>``;
 
 const InfoLine = styled.div.attrs({
-  className: 'flex justify-between text-neutral-600',
+  className: 'flex justify-between text-neutral-600 ft-text-base',
 })``;
 
 const Strong = styled.p.attrs({

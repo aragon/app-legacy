@@ -50,7 +50,9 @@ const NavLink = ({caller, data, onItemClick}: NavLinkProps) => {
   const handleOnClick = () => {
     const dao = daoMatch?.params?.dao;
     onItemClick?.();
-    navigate(generatePath(data.path, {network, dao}));
+    // timeout is to allow any state changes triggered by onItemClick to take effect
+    // before navigation occurs, potentially unmounting components
+    setTimeout(() => navigate(generatePath(data.path, {network, dao})), 100);
   };
 
   if (caller === 'dropdown') {
