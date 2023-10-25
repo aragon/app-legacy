@@ -31,6 +31,7 @@ import {CHAIN_METADATA} from 'utils/constants';
 import {Web3Address, shortenAddress} from 'utils/library';
 import BreakdownTab from './breakdownTab';
 import InfoTab from './infoTab';
+import {PluginTypes} from 'hooks/usePluginClient';
 
 export type ProposalVoteResults = {
   yes: {value: string | number; percentage: number};
@@ -70,6 +71,7 @@ export type VotingTerminalProps = {
   alertMessage?: string;
   selectedTab?: TerminalTabs;
   onTabSelected?: React.Dispatch<React.SetStateAction<TerminalTabs>>;
+  pluginType: PluginTypes;
   executableWithNextApproval?: boolean;
 };
 
@@ -103,6 +105,7 @@ export const VotingTerminal: React.FC<VotingTerminalProps> = ({
   alertMessage,
   selectedTab = 'info',
   onTabSelected,
+  pluginType,
   executableWithNextApproval = false,
 }) => {
   const [page, setPage] = useState(1);
@@ -114,7 +117,8 @@ export const VotingTerminal: React.FC<VotingTerminalProps> = ({
   const {network} = useNetwork();
   const fetchPastVotingPower = usePastVotingPowerAsync();
 
-  const isMultisigProposal = !!approvals && !!minApproval;
+  const isMultisigProposal =
+    pluginType === 'multisig.plugin.dao.eth' && !!approvals && !!minApproval;
 
   useEffect(() => {
     // fetch avatar fpr each voter

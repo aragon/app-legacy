@@ -693,31 +693,34 @@ export const Proposal: React.FC = () => {
               />
             )}
 
-          <VotingTerminal
-            status={proposalStatus}
-            daoToken={daoToken}
-            blockNumber={proposal.creationBlockNumber}
-            statusLabel={voteStatus}
-            selectedTab={terminalTab}
-            alertMessage={alertMessage}
-            onTabSelected={setTerminalTab}
-            onVoteClicked={handleVoteClick}
-            onApprovalClicked={handleApprovalClick}
-            onCancelClicked={() => setVotingInProcess(false)}
-            voteButtonLabel={voteButtonLabel}
-            voteNowDisabled={votingDisabled}
-            votingInProcess={votingInProcess}
-            executableWithNextApproval={executableWithNextApproval}
-            onVoteSubmitClicked={vote =>
-              handlePrepareVote({
-                vote,
-                replacement: voted || voteOrApprovalSubmitted,
-                voteTokenAddress: (proposal as TokenVotingProposal).token
-                  ?.address,
-              })
-            }
-            {...mappedProps}
-          />
+          {votingSettings && (
+            <VotingTerminal
+              status={proposalStatus}
+              pluginType={pluginType}
+              daoToken={daoToken}
+              blockNumber={proposal.creationBlockNumber}
+              statusLabel={voteStatus}
+              selectedTab={terminalTab}
+              alertMessage={alertMessage}
+              onTabSelected={setTerminalTab}
+              onVoteClicked={handleVoteClick}
+              onApprovalClicked={handleApprovalClick}
+              onCancelClicked={() => setVotingInProcess(false)}
+              voteButtonLabel={voteButtonLabel}
+              voteNowDisabled={votingDisabled}
+              votingInProcess={votingInProcess}
+              executableWithNextApproval={executableWithNextApproval}
+              onVoteSubmitClicked={vote =>
+                handlePrepareVote({
+                  vote,
+                  replacement: voted || voteOrApprovalSubmitted,
+                  voteTokenAddress: (proposal as TokenVotingProposal).token
+                    ?.address,
+                })
+              }
+              {...mappedProps}
+            />
+          )}
 
           <ExecutionWidget
             pluginType={pluginType}

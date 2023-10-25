@@ -255,18 +255,21 @@ const ReviewProposal: React.FC<ReviewProposalProps> = ({
             )}
           />
 
-          <VotingTerminal
-            breakdownTabDisabled
-            votersTabDisabled
-            voteNowDisabled
-            selectedTab="info"
-            statusLabel={t('votingTerminal.status.draft')}
-            startDate={formattedStartDate}
-            endDate={formattedEndDate}
-            preciseEndDate={formattedPreciseEndDate}
-            daoToken={daoToken}
-            {...terminalProps}
-          />
+          {votingSettings && (
+            <VotingTerminal
+              pluginType={pluginType}
+              breakdownTabDisabled
+              votersTabDisabled
+              voteNowDisabled
+              selectedTab="info"
+              statusLabel={t('votingTerminal.status.draft')}
+              startDate={formattedStartDate}
+              endDate={formattedEndDate}
+              preciseEndDate={formattedPreciseEndDate}
+              daoToken={daoToken}
+              {...terminalProps}
+            />
+          )}
 
           <ExecutionWidget
             actions={getNonEmptyActions(
