@@ -6,16 +6,13 @@ import {
   isMultisigVotingSettings,
   isTokenVotingSettings,
 } from 'services/aragon-sdk/queries/use-voting-settings';
-import {
-  ProposalFormData,
-  StringIndexed,
-  SupportedVotingSettings,
-} from 'utils/types';
+import {ProposalFormData, StringIndexed} from 'utils/types';
 import SetupMultisigVotingForm from './multisig';
 import SetupTokenVotingForm from './tokenVoting';
+import {VotingSettings} from '@aragon/sdk-client';
 
 export type Props = {
-  pluginSettings: SupportedVotingSettings;
+  pluginSettings: VotingSettings;
 };
 
 const SetupVotingForm: React.FC<Props> = ({pluginSettings}) => {
@@ -36,7 +33,7 @@ const SetupVotingForm: React.FC<Props> = ({pluginSettings}) => {
   if (isTokenVotingSettings(pluginSettings)) {
     return <SetupTokenVotingForm pluginSettings={pluginSettings} />;
   } else if (isMultisigVotingSettings(pluginSettings)) {
-    return <SetupMultisigVotingForm pluginSettings={pluginSettings} />;
+    return <SetupMultisigVotingForm />;
   }
 
   // TODO: We need an error output/boundary for when a network error occurs
