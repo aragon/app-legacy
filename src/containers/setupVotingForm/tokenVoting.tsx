@@ -20,10 +20,10 @@ import {
 } from 'utils/date';
 import {DateTimeErrors} from './dateTimeErrors';
 import {ToggleCheckList, UtcInstance} from './multisig';
-import {ProposalFormData} from 'utils/types';
+import {ProposalFormData, SupportedVotingSettings} from 'utils/types';
 
 type Props = {
-  pluginSettings: VotingSettings;
+  pluginSettings: SupportedVotingSettings;
 };
 
 const MAX_DURATION_MILLS = MAX_DURATION_DAYS * MINS_IN_DAY * 60 * 1000;
