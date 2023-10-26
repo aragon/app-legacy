@@ -20,7 +20,12 @@ const OffchainVotingModal = ({
   showVoteModal: boolean;
   setShowVoteModal: React.Dispatch<React.SetStateAction<boolean>>;
   setVoteSubmitted: React.Dispatch<React.SetStateAction<boolean>>;
-  onVoteSubmitted: (proposalId: ProposalId, vote: VoteValues) => Promise<void>;
+  onVoteSubmitted: (
+    proposalId: ProposalId,
+    vote: VoteValues,
+    voteReplaced?: boolean,
+    isGaslessVote?: boolean
+  ) => Promise<void>;
 }): // props: OffChainVotingModalProps<X>
 JSX.Element => {
   const {t} = useTranslation();
@@ -82,7 +87,12 @@ JSX.Element => {
       // Not showing errors neither
       await submitOffchainVote(vote);
 
-      await onVoteSubmitted(new ProposalId(vote.proposalId), vote.vote);
+      await onVoteSubmitted(
+        new ProposalId(vote.proposalId),
+        vote.vote,
+        false,
+        true
+      );
     }
   }, [
     handleCloseVoteModal,

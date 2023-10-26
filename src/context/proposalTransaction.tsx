@@ -47,6 +47,7 @@ import {useNetwork} from './network';
 import {useProviders} from './providers';
 import OffchainVotingModal from '../containers/transactionModals/offchainVotingModal';
 import {OffchainVotingClient} from '@vocdoni/offchain-voting';
+import {GaslessVoteOrApproval} from '../services/aragon-sdk/selectors';
 
 type SubmitVoteParams = {
   vote: VoteValues;
@@ -288,12 +289,30 @@ const ProposalTransactionProvider: React.FC<Props> = ({children}) => {
     async (
       proposalId: string,
       executedWithApproval: boolean,
-      txHash: string
+      txHash: string,
+      isGaslessVote?: boolean // todo(kon): this logic is broken after rebase
     ) => {
       // clean up state
       setApprovalParams(undefined);
       setVoteOrApprovalSubmitted(true);
       setVoteOrApprovalProcessState(TransactionState.SUCCESS);
+
+      // todo(kon): this logic is broken after rebase
+      // af7534dd
+      // let voteToPersist;
+      // if (pluginType === GaselessPluginName) {
+      //   if (isGaslessVote) {
+      //     voteToPersist = {
+      //       type: 'gaslessVote',
+      //       vote: address.toLowerCase(),
+      //     } as GaslessVoteOrApproval;
+      //   } else {
+      //     voteToPersist = {
+      //       type: 'approval',
+      //       vote: address.toLowerCase(),
+      //     } as GaslessVoteOrApproval;
+      //   }
+      // }
 
       // cache multisig vote
       if (address) {

@@ -150,7 +150,12 @@ function syncApprovalsOrVotes(
   } else if (isTokenBasedProposal(proposal)) {
     proposal.votes = syncTokenBasedVotes(chainId, proposal);
   } else if (isGaslessProposal(proposal)) {
-    /* No votes listing for the moment */
+    // todo(kon): gasless vote array is not yet implemented
+    const {gaslessVotes, approvers} = syncGaslessVotesOrApproves(
+      chainId,
+      proposal
+    );
+    proposal.approvers = approvers;
   }
 }
 
@@ -243,4 +248,61 @@ function syncTokenBasedVotes(
   }
 
   return [...uniqueCachedVotes, ...Array.from(serverVotes.values())];
+}
+
+type ApprovalVote = string;
+type GaslessVote = string;
+
+export type GaslessVoteOrApproval =
+  | {
+      type: 'gaslessVote';
+      vote: GaslessVote;
+    }
+  | {
+      type: 'approval';
+      vote: ApprovalVote;
+    };
+
+function syncGaslessVotesOrApproves(
+  chainId: SupportedChainID,
+  proposal: GaslessVotingProposal
+) {
+  const approversCache: ApprovalVote[] = [];
+  const gaslessVoteCache: GaslessVote[] = [];
+
+  // all cached votes
+  const allCachedVotes = voteStorage.getVotes<GaslessVoteOrApproval>(
+    chainId,
+    proposal.id
+  );
+
+  const serverApprovals = new Set(proposal.approvers);
+  // todo(kon): implement gasless votes cache
+  // const serverGaslessVotes = new Set(proposal.votes);
+
+  allCachedVotes.forEach(cachedVote => {
+    // remove, from the cache, votes that are returned by the query as well
+    if (
+      cachedVote.type === 'approval' &&
+      serverApprovals.has(cachedVote.vote.toLowerCase())
+    ) {
+      voteStorage.removeVoteForProposal(chainId, proposal.id, cachedVote.vote);
+      // } else if (
+      //   cachedVote.type === 'gaslessVote' &&
+      //   serverGaslessVotes.has(cachedVote.vote.toLowerCase())
+      // ) {
+      //   voteStorage.removeVoteForProposal(chainId, proposal.id, cachedVote.vote);
+    } else {
+      // If the vote is not in the server, add it to the list
+      cachedVote.type === 'approval'
+        ? approversCache.push(cachedVote.vote)
+        : gaslessVoteCache.push(cachedVote.vote);
+    }
+  });
+
+  return {
+    approvers: [...approversCache, ...serverApprovals],
+    gaslessVotes: [...gaslessVoteCache],
+    // ...serverGaslessVotes
+  };
 }

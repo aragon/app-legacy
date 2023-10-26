@@ -2,13 +2,16 @@ import {TokenVotingProposalVote} from '@aragon/sdk-client';
 
 import {SupportedChainID} from 'utils/constants';
 import {StorageUtils} from './abstractStorage';
+import {GaslessVoteOrApproval} from '../../services/aragon-sdk/selectors';
 
 /**
  * Type definition for cached vote data in local storage.
  * Each proposal ID is mapped to its corresponding votes.
  */
 type VoteCache = {
-  [proposalId: string]: {votes: Array<TokenVotingProposalVote | string>};
+  [proposalId: string]: {
+    votes: Array<GaslessVoteOrApproval | TokenVotingProposalVote | string>;
+  };
 };
 
 /**
@@ -31,7 +34,7 @@ export class VoteStorage extends StorageUtils {
   addVote(
     chainId: SupportedChainID,
     proposalId: string,
-    voteOrApproval: TokenVotingProposalVote | string
+    voteOrApproval: GaslessVoteOrApproval | TokenVotingProposalVote | string
   ): void {
     const key = chainId.toString();
     const chainData: VoteCache = this.getItem(key) || {};
@@ -52,7 +55,7 @@ export class VoteStorage extends StorageUtils {
    * @param proposalId - The proposal ID whose votes need to be fetched.
    * @returns Array of votes for the given proposal.
    */
-  getVotes<T extends string | TokenVotingProposalVote>(
+  getVotes<T extends string | TokenVotingProposalVote | GaslessVoteOrApproval>(
     chainId: SupportedChainID,
     proposalId: string
   ): Array<T> {
@@ -79,11 +82,23 @@ export class VoteStorage extends StorageUtils {
 
     if (chainData[proposalId]) {
       // Filter out the vote associated with the user wallet
-      chainData[proposalId].votes = chainData[proposalId].votes.filter(vote =>
-        typeof vote === 'string'
-          ? vote !== userWallet
-          : vote.address !== userWallet
-      );
+      chainData[proposalId].votes = chainData[proposalId].votes.filter(vote => {
+        // For string Multisig
+        if (typeof vote === 'string') {
+          return vote !== userWallet;
+        }
+
+        // For GaslessVoteOrApproval
+        if (
+          'type' in vote &&
+          (vote.type === 'gaslessVote' || vote.type === 'approval')
+        ) {
+          return vote.vote !== userWallet;
+        }
+
+        // For TokenVotingProposalVote
+        return vote.address !== userWallet;
+      });
 
       // If there are no votes left for the proposal, remove the proposal key entirely
       if (!chainData[proposalId].votes.length) {

@@ -4,10 +4,12 @@ import {
   MajorityVotingProposalSettings,
   MajorityVotingSettings,
   MultisigClient,
+  MultisigProposal,
   MultisigVotingSettings,
   ProposalCreationSteps,
   ProposalCreationStepValue,
   TokenVotingClient,
+  TokenVotingProposal,
   VoteValues,
   WithdrawParams,
 } from '@aragon/sdk-client';
@@ -76,12 +78,12 @@ import {useGlobalModalContext} from './globalModals';
 import {useNetwork} from './network';
 import {useProviders} from './providers';
 import {useCreateOffchainProposal} from './createOffchainProposal';
-import styled from 'styled-components';
 import OffchainProposalModal from '../containers/transactionModals/offchainProposalModal';
 import {StepStatus} from '../hooks/useFunctionStepper';
 
 import {
   CreateGasslessProposalParams,
+  GaslessVotingProposal,
   OffchainVotingClient,
 } from '@vocdoni/offchain-voting';
 
@@ -539,8 +541,7 @@ const CreateProposalWrapper: React.FC<Props> = ({
       navigate(
         generatePath(Proposal, {
           network,
-          dao:
-            toDisplayEns(daoDetails?.ensDomain) || daoDetails?.address,
+          dao: toDisplayEns(daoDetails?.ensDomain) || daoDetails?.address,
           id: proposalId,
         })
       );
@@ -562,14 +563,9 @@ const CreateProposalWrapper: React.FC<Props> = ({
   ]);
 
   const handleCacheProposal = useCallback(
-    async (proposalId: string) => {
+    async (proposalId: string, vochainProposalId?: string) => {
       if (!address || !daoDetails || !votingSettings || !proposalCreationData)
         return;
-
-      // todo(kon): implement cache for offchain proposals
-      if (isGaslessVotingSettings(votingSettings)) {
-        return;
-      }
 
       const creationBlockNumber = await apiProvider.getBlockNumber();
 
@@ -608,7 +604,7 @@ const CreateProposalWrapper: React.FC<Props> = ({
           ...baseParams,
           approvals: creatorApproval ? [address] : [],
           settings: votingSettings,
-        };
+        } as MultisigProposal;
         proposalStorage.addProposal(CHAIN_METADATA[network].id, proposal);
       } else if (isTokenVotingSettings(votingSettings)) {
         const {creatorVote} =
@@ -652,7 +648,36 @@ const CreateProposalWrapper: React.FC<Props> = ({
           totalVotingWeight: tokenSupply?.raw ?? BigInt(0),
           token: daoToken ?? null,
           votes,
-        };
+        } as TokenVotingProposal;
+        proposalStorage.addProposal(CHAIN_METADATA[network].id, proposal);
+      } else if (isGaslessVotingSettings(votingSettings)) {
+        const proposal = {
+          ...baseParams,
+          // todo(kon): is this needed to be implemented?
+          // expirationDate: Date;
+          executed: false,
+          approvers: new Array<string>(),
+          vochainProposalId,
+          // parameters: GaslessProposalParametersStruct;
+          // allowFailureMap: number;
+          settings: votingSettings,
+          // vochain: {
+          //   metadata: PublishedElection;
+          //   tally: {
+          //     final: boolean;
+          //     value: bigint[];
+          //     parsed: TokenVotingProposalResult;
+          //   };
+          // };
+          // totalVotingWeight: bigint;
+          // totalUsedWeight: bigint;
+          participation: {
+            currentParticipation: 0,
+            currentPercentage: 0,
+            missingParticipation: 100,
+          },
+          token: daoToken,
+        } as GaslessVotingProposal;
         proposalStorage.addProposal(CHAIN_METADATA[network].id, proposal);
       }
     },
@@ -678,7 +703,7 @@ const CreateProposalWrapper: React.FC<Props> = ({
 
   const handlePublishProposal = useCallback(
     // todo(kon): this is a quickfix to update the internal cache with updated data. Delete this attribute when minSDK is ready
-    async (electionId?: string) => {
+    async (vochainProposalId?: string) => {
       if (!pluginClient) {
         return new Error('ERC20 SDK client is not initialized correctly');
       }
@@ -700,10 +725,10 @@ const CreateProposalWrapper: React.FC<Props> = ({
 
       // todo(kon): fix this if needed
       let proposalIterator: AsyncGenerator<ProposalCreationStepValue>;
-      if (offchain && electionId) {
+      if (offchain && vochainProposalId) {
         const proposalParams =
           proposalCreationData as CreateGasslessProposalParams;
-        proposalParams.vochainProposalId = electionId;
+        proposalParams.vochainProposalId = vochainProposalId;
         proposalIterator = (
           pluginClient as OffchainVotingClient
         ).methods.createProposal(proposalParams);
@@ -759,7 +784,7 @@ const CreateProposalWrapper: React.FC<Props> = ({
               });
 
               // cache proposal
-              handleCacheProposal(prefixedId);
+              handleCacheProposal(prefixedId, vochainProposalId);
               invalidateQueries();
 
               break;
@@ -778,7 +803,7 @@ const CreateProposalWrapper: React.FC<Props> = ({
         // Fix to update the StepperModal step status when creating a gasless proposal.
         // If the error is not thrown until the StepperModal, it thinks that the step is finished properly
         // and not show the try again button
-        if (electionId) throw error;
+        if (vochainProposalId) throw error;
       }
     },
     [

@@ -18,10 +18,9 @@ import {
   OffchainVotingClient,
 } from '@vocdoni/offchain-voting';
 
-// todo(kon): move this somewehre?
 async function fetchProposal(
   params: IFetchProposalParams,
-  client: TokenVotingClient | MultisigClient | OffchainVotingClient | undefined,
+  client: TokenVotingClient | MultisigClient | OffchainVotingClient | undefined
 ): Promise<
   MultisigProposal | TokenVotingProposal | GaslessVotingProposal | null
 > {
@@ -29,7 +28,7 @@ async function fetchProposal(
   let data;
   if (isOffchainVotingClient(client)) {
     if (!params.pluginAddress || !params.id) {
-        return null
+      return null;
     }
     data = await (client as OffchainVotingClient).methods.getProposal(
       '',
@@ -48,7 +47,7 @@ export const useProposal = (
   params: IFetchProposalParams,
   options: UseQueryOptions<
     MultisigProposal | TokenVotingProposal | GaslessVotingProposal | null
-  > = {},
+  > = {}
 ) => {
   const client = usePluginClient(params.pluginType);
 
@@ -59,16 +58,17 @@ export const useProposal = (
   const {network} = useNetwork();
   const chainId = CHAIN_METADATA[network].id;
 
-  const defaultSelect = (data: TokenVotingProposal | MultisigProposal | GaslessVotingProposal | null) =>
-    transformProposal(chainId, data);
+  const defaultSelect = (
+    data: TokenVotingProposal | MultisigProposal | GaslessVotingProposal | null
+  ) => transformProposal(chainId, data);
 
   return useQuery({
-   ...options,
-   queryKey: aragonSdkQueryKeys.proposal(params),
-   queryFn: async () => {
+    ...options,
+    queryKey: aragonSdkQueryKeys.proposal(params),
+    queryFn: async () => {
       const serverData = await fetchProposal(params, client);
       return syncProposalData(chainId, params.id, serverData);
     },
-   select: options.select ?? defaultSelect,
-});
+    select: options.select ?? defaultSelect,
+  });
 };

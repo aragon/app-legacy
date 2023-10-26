@@ -7,9 +7,10 @@ import {
 
 import {SupportedChainID} from 'utils/constants';
 import {StorageUtils} from './abstractStorage';
+import {GaslessVotingProposal} from '@vocdoni/offchain-voting';
 
 type StoredProposal = Omit<
-  MultisigProposal | TokenVotingProposal,
+  MultisigProposal | TokenVotingProposal | GaslessVotingProposal,
   'executionBlockNumber' | 'executionDate' | 'executionTxHash'
 >;
 
