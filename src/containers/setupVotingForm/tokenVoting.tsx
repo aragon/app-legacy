@@ -19,10 +19,11 @@ import {
 } from 'utils/date';
 import {DateTimeErrors} from './dateTimeErrors';
 import {ToggleCheckList, UtcInstance} from './multisig';
-import {ProposalFormData, SupportedVotingSettings} from 'utils/types';
+import {ProposalFormData} from 'utils/types';
+import {MajorityVotingSettings} from '@aragon/sdk-client';
 
 type Props = {
-  pluginSettings: SupportedVotingSettings;
+  pluginSettings: MajorityVotingSettings;
 };
 
 const MAX_DURATION_MILLS = MAX_DURATION_DAYS * MINS_IN_DAY * 60 * 1000;
