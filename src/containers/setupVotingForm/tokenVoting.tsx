@@ -4,7 +4,6 @@ import {Controller, useFormContext, useWatch} from 'react-hook-form';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 
-import {VotingSettings} from '@aragon/sdk-client';
 import DateTimeSelector from 'containers/dateTimeSelector';
 import Duration, {DurationLabel} from 'containers/duration';
 import UtcMenu from 'containers/utcMenu';
