@@ -8,8 +8,8 @@ import {
 } from '@aragon/sdk-client';
 import {useQueryClient} from '@tanstack/react-query';
 import React, {
-  ReactNode,
   createContext,
+  ReactNode,
   useCallback,
   useContext,
   useMemo,

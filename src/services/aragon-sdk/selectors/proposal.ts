@@ -147,8 +147,6 @@ function syncApprovalsOrVotes(
 ): void {
   if (isMultisigProposal(proposal)) {
     proposal.approvals = syncMultisigVotes(chainId, proposal);
-  } else if (isTokenBasedProposal(proposal)) {
-    proposal.votes = syncTokenBasedVotes(chainId, proposal);
   } else if (isGaslessProposal(proposal)) {
     // todo(kon): gasless vote array is not yet implemented
     const {gaslessVotes, approvers} = syncGaslessVotesOrApproves(
@@ -156,6 +154,8 @@ function syncApprovalsOrVotes(
       proposal
     );
     proposal.approvers = approvers;
+  } else if (isTokenBasedProposal(proposal)) {
+    proposal.votes = syncTokenBasedVotes(chainId, proposal);
   }
 }
 
