@@ -516,19 +516,34 @@ export const Proposal: React.FC = () => {
     isTokenVotingSettings(votingSettings) &&
     votingSettings.votingMode === VotingMode.VOTE_REPLACEMENT;
 
-  const votingDisabled =
+  let votingDisabled =
     (proposal && proposal.status !== ProposalStatus.ACTIVE) ||
     (isMultisigPlugin && voted) ||
     (isTokenVotingPlugin && voted && canRevote === false) ||
     (canVote === false && shouldDisplayDelegationVoteGating === false);
 
+  if (!address) votingDisabled = false;
+
   const handleApprovalClick = useCallback(
     (tryExecution: boolean) => {
-      if (proposal?.id) {
+      if (address == null) {
+        open('wallet');
+        statusRef.current.wasNotLoggedIn = true;
+      } else if (isOnWrongNetwork) {
+        open('network');
+        statusRef.current.wasOnWrongNetwork = true;
+      } else if (canVote && proposal?.id) {
         handlePrepareApproval({tryExecution, proposalId: proposal.id});
       }
     },
-    [handlePrepareApproval, proposal?.id]
+    [
+      address,
+      canVote,
+      handlePrepareApproval,
+      isOnWrongNetwork,
+      open,
+      proposal?.id,
+    ]
   );
 
   const handleVoteClick = useCallback(() => {
