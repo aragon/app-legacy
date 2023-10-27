@@ -131,6 +131,7 @@ export const useDaoMembers = (
   const enabled = opts?.enabled || true;
 
   const networkCovalentSupported = !(
+    network === 'arbitrum-sepolia' ||
     network === 'goerli' ||
     network === 'mumbai' ||
     network === 'base' ||
