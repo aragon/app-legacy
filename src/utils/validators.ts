@@ -205,11 +205,13 @@ export async function actionsAreValid(
   // mismatch between action form list and actions context
   if (contextActions.length !== formActions?.length) return false;
 
+  // top level action errors
+  if (errors.actions.length > 0) return false;
+
   let isValid = true;
 
   // @Sepehr might need to make affirmative instead at some point - F.F. 2022-08-18
   async function actionIsValid(index: number) {
-    if (errors.actions) return true;
     switch (contextActions[index]?.name) {
       case 'withdraw_assets':
         return (
