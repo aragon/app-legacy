@@ -497,7 +497,7 @@ const CreateProposalWrapper: React.FC<Props> = ({
         expirationDate: 0,
         vochainProposalId,
         startDate: (params.startDate ?? new Date()).getTime(),
-        endDate: (params.endDate ?? new Date()).getTime(), // todo(kon): endate regresion
+        endDate: params.endDate!.getTime(),
       };
     },
     []
@@ -511,7 +511,6 @@ const CreateProposalWrapper: React.FC<Props> = ({
     }
     if (!proposalCreationData) return;
 
-    // todo(kon): type miss compatibility between clients
     return offchain
       ? (pluginClient as OffchainVotingClient).estimation.createProposal(
           proposalCreationData as CreateGasslessProposalParams

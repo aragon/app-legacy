@@ -18,12 +18,6 @@ const TokenProposalCreation = () => {
     <>
       {isAllowedToConfigureVotingEligibility && (
         <>
-          <DescriptionContainer>
-            <Label
-              label={t('labels.proposalCreation')}
-              helpText={t('createDAO.step3.proposalCreationHelpertext')}
-            />
-          </DescriptionContainer>
           <SelectEligibility />
         </>
       )}
