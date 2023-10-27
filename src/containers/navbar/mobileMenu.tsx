@@ -1,5 +1,5 @@
 import {useReactiveVar} from '@apollo/client';
-import React, { useEffect } from 'react';
+import React from 'react';
 import styled from 'styled-components';
 import {useTranslation} from 'react-i18next';
 
@@ -22,10 +22,6 @@ const MobileNavMenu = (props: MobileNavMenuProps) => {
   const {t} = useTranslation();
 
   const {handleWithFunctionalPreferenceMenu} = usePrivacyContext();
-
-  useEffect(() => {
-    console.log('mobMenu mounted');
-  }, []);
 
   return (
     <BottomSheet isOpen={Boolean(isOpen)} onClose={close}>

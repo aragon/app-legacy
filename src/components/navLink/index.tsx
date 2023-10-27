@@ -52,7 +52,7 @@ const NavLink = ({caller, data, onItemClick}: NavLinkProps) => {
     onItemClick?.();
     // timeout is to allow any state changes triggered by onItemClick to take effect
     // before navigation occurs, potentially unmounting components
-    setTimeout(() => navigate(generatePath(data.path, {network, dao})), 1000);
+    navigate(generatePath(data.path, {network, dao}));
   };
 
   if (caller === 'dropdown') {

@@ -45,16 +45,13 @@ export const GlobalModalsProvider: React.FC<Props> = ({children}) => {
   const close = useCallback((onClose?: () => void) => {
     setActiveDialog(undefined);
     setModalState(undefined);
-    console.log('onclose = ' + JSON.stringify(onClose));
     onClose?.();
-    console.log('dialog closed');
   }, []);
 
   const open = useCallback(
     (dialog: DialogType, state?: Record<string, unknown>) => {
       setActiveDialog(dialog);
       setModalState(state);
-      console.log(`dialog -> ${dialog}`);
     },
     []
   );
