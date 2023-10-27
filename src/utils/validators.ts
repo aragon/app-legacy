@@ -210,7 +210,8 @@ export async function actionsAreValid(
 
   let isValid = true;
 
-  // @Sepehr might need to make affirmative instead at some point - F.F. 2022-08-18
+  // If the form errors are being set properly, this should very rarely be called
+  // since we are checking for any form action errors prior to calling this function
   async function actionIsValid(index: number) {
     switch (contextActions[index]?.name) {
       case 'withdraw_assets':
