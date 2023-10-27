@@ -1,9 +1,7 @@
-import React, {useEffect, ReactNode} from 'react';
-import {motion, PanInfo, useAnimation} from 'framer-motion';
+import React, {ReactNode} from 'react';
+import {motion, PanInfo} from 'framer-motion';
 import {Backdrop} from '@aragon/ods-old';
 import styled from 'styled-components';
-
-import usePrevious from 'hooks/usePrevious';
 
 export type BottomSheetProps = {
   children?: ReactNode;
@@ -22,33 +20,16 @@ export default function BottomSheet({
   subtitle,
   closeOnDrag = true,
 }: BottomSheetProps) {
-  const prevIsOpen = usePrevious(isOpen);
-  const controls = useAnimation();
-
   // For adding drag on bottom sheet
   function onDragEnd(_: MouseEvent | TouchEvent | PointerEvent, info: PanInfo) {
     if (!closeOnDrag) {
-      controls.start('visible');
       return;
     }
 
-    const shouldClose =
-      info.velocity.y > 20 || (info.velocity.y >= 0 && info.point.y > 45);
-    if (shouldClose) {
-      controls.start('hidden');
+    if (info.velocity.y > 20 || (info.velocity.y >= 0 && info.point.y > 45)) {
       onClose?.();
-    } else {
-      controls.start('visible');
     }
   }
-  // For Run animation on each state change
-  useEffect(() => {
-    if (prevIsOpen && !isOpen) {
-      controls.start('hidden');
-    } else if (!prevIsOpen && isOpen) {
-      controls.start('visible');
-    }
-  }, [controls, isOpen, prevIsOpen]);
 
   return (
     <>
@@ -56,8 +37,8 @@ export default function BottomSheet({
       <StyledMotionContainer
         drag="y"
         onDragEnd={onDragEnd}
-        initial="hidden"
-        animate={controls}
+        initial={isOpen ? 'visible' : 'hidden'}
+        animate={isOpen ? 'visible' : 'hidden'}
         transition={{
           type: 'spring',
           damping: 40,
