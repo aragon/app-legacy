@@ -4,13 +4,13 @@ import {Controller, useFormContext, useWatch} from 'react-hook-form';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 
-import {MultisigEligibility} from 'components/multisigEligibility';
 import {MultisigWallets} from 'components/multisigWallets';
 import {FormSection} from 'containers/setupVotingForm';
 import {ToggleCheckList} from 'containers/setupVotingForm/multisig';
 import {CreateDaoFormData} from 'utils/types';
 import AddExistingToken from './addExistingToken';
 import CreateNewToken from './createNewToken';
+import {featureFlags} from '../../utils/featureFlags';
 
 const SetupCommunityForm: React.FC = () => {
   const {t} = useTranslation();
@@ -103,40 +103,42 @@ const SetupCommunityForm: React.FC = () => {
         />
       </FormItem>
 
-      {membership === 'token' && (
-        <FormSection>
-          <Label label={t('createDAO.step3.votingType.title')} />
-          <Controller
-            name="votingType"
-            rules={{required: 'Validate'}}
-            control={control}
-            defaultValue="onChain"
-            render={({field: {onChange, value}}) => (
-              <>
-                <CheckboxListItem
-                  label={t('createDAO.step3.votingType.onChain.title')}
-                  helptext={t('createDAO.step3.votingType.onChain.subtitle')}
-                  multiSelect={false}
-                  onClick={() => {
-                    onChange('onChain');
-                  }}
-                  {...(value === 'onChain' ? {type: 'active'} : {})}
-                />
+      {membership === 'token' &&
+        featureFlags.getValue('VITE_FEATURE_FLAG_GASLESS_PLUGIN') ===
+          'true' && (
+          <FormSection>
+            <Label label={t('createDAO.step3.votingType.title')} />
+            <Controller
+              name="votingType"
+              rules={{required: 'Validate'}}
+              control={control}
+              defaultValue="onChain"
+              render={({field: {onChange, value}}) => (
+                <>
+                  <CheckboxListItem
+                    label={t('createDAO.step3.votingType.onChain.title')}
+                    helptext={t('createDAO.step3.votingType.onChain.subtitle')}
+                    multiSelect={false}
+                    onClick={() => {
+                      onChange('onChain');
+                    }}
+                    {...(value === 'onChain' ? {type: 'active'} : {})}
+                  />
 
-                <CheckboxListItem
-                  label={t('createDAO.step3.votingType.offChain.title')}
-                  helptext={t('createDAO.step3.votingType.offChain.subtitle')}
-                  onClick={() => {
-                    onChange('offChain');
-                  }}
-                  multiSelect={false}
-                  {...(value === 'offChain' ? {type: 'active'} : {})}
-                />
-              </>
-            )}
-          />
-        </FormSection>
-      )}
+                  <CheckboxListItem
+                    label={t('createDAO.step3.votingType.offChain.title')}
+                    helptext={t('createDAO.step3.votingType.offChain.subtitle')}
+                    onClick={() => {
+                      onChange('offChain');
+                    }}
+                    multiSelect={false}
+                    {...(value === 'offChain' ? {type: 'active'} : {})}
+                  />
+                </>
+              )}
+            />
+          </FormSection>
+        )}
 
       {membership === 'multisig' && (
         <>
