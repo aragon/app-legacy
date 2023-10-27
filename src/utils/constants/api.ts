@@ -9,8 +9,10 @@ export const FEEDBACK_FORM =
   'https://aragonassociation.atlassian.net/servicedesk/customer/portal/3';
 
 export const SUBGRAPH_API_URL: SubgraphNetworkUrl = {
-  arbitrum: undefined,
-  'arbitrum-test': undefined,
+  arbitrum:
+    'https://subgraph.satsuma-prod.com/qHR2wGfc5RLi6/aragon/osx-arbitrum/version/v1.3.1/api',
+  'arbitrum-sepolia':
+    'https://subgraph.satsuma-prod.com/qHR2wGfc5RLi6/aragon/osx-arbitrumSepolia/version/v1.3.1/api',
   base: 'https://subgraph.satsuma-prod.com/qHR2wGfc5RLi6/aragon/osx-baseMainnet/version/v1.3.1/api',
   'base-goerli':
     'https://subgraph.satsuma-prod.com/qHR2wGfc5RLi6/aragon/osx-baseGoerli/version/v1.3.1/api',
@@ -28,7 +30,7 @@ export const SUBGRAPH_API_URL: SubgraphNetworkUrl = {
 type AlchemyApiKeys = Record<SupportedNetworks, string | undefined>;
 export const alchemyApiKeys: AlchemyApiKeys = {
   arbitrum: undefined,
-  'arbitrum-test': undefined,
+  'arbitrum-sepolia': undefined,
   base: undefined,
   'base-goerli': undefined,
   ethereum: import.meta.env.VITE_ALCHEMY_KEY_MAINNET as string,
