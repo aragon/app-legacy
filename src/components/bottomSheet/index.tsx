@@ -35,6 +35,7 @@ export default function BottomSheet({
     const shouldClose =
       info.velocity.y > 20 || (info.velocity.y >= 0 && info.point.y > 45);
     if (shouldClose) {
+      console.log('mobMenu drag close');
       controls.start('hidden');
       onClose?.();
     } else {
@@ -43,16 +44,23 @@ export default function BottomSheet({
   }
   // For Run animation on each state change
   useEffect(() => {
+    console.log(`prevIsOpen ${prevIsOpen} isOpen ${isOpen}`);
     if (prevIsOpen && !isOpen) {
+      console.log('mobMenu close');
       controls.start('hidden');
     } else if (!prevIsOpen && isOpen) {
+      console.log('mobMenu open');
       controls.start('visible');
     }
   }, [controls, isOpen, prevIsOpen]);
 
+  const backdropClose = () => {
+    onClose?.();
+  };
+
   return (
     <>
-      <Backdrop visible={isOpen} onClose={onClose} />
+      <Backdrop visible={isOpen} onClose={backdropClose} />
       <StyledMotionContainer
         drag="y"
         onDragEnd={onDragEnd}

@@ -24,7 +24,7 @@ type NavLinkProps = {
    * Function to be performed when the NavLink is clicked IN ADDITION TO
    * NAVIGATION. Navigation itseld is already taken care of within Navlink.
    */
-  onItemClick?: () => void;
+  onItemClick?: () => void | Promise<void>;
 };
 
 /**
@@ -47,12 +47,12 @@ const NavLink = ({caller, data, onItemClick}: NavLinkProps) => {
   const basePath = pathname.split('/').slice(0, 5).join('/');
   const matches = matchRoutes([{path: data.path}], basePath) !== null;
 
-  const handleOnClick = () => {
+  const handleOnClick = async () => {
     const dao = daoMatch?.params?.dao;
     onItemClick?.();
     // timeout is to allow any state changes triggered by onItemClick to take effect
     // before navigation occurs, potentially unmounting components
-    setTimeout(() => navigate(generatePath(data.path, {network, dao})), 100);
+    setTimeout(() => navigate(generatePath(data.path, {network, dao})), 1000);
   };
 
   if (caller === 'dropdown') {
