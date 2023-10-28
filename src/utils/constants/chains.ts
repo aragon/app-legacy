@@ -130,7 +130,7 @@ export const CHAIN_METADATA: Record<SupportedNetworks, ChainData> = {
     logo: 'https://mirror-media.imgix.net/publication-images/cgqxxPdUFBDjgKna_dDir.png?h=250&w=250',
     explorer: 'https://basescan.org/',
     isTestnet: false,
-    rpc: ['https://developer-access-mainnet.base.org'],
+    rpc: ['https://mainnet.base.org'],
     nativeCurrency: {
       name: 'Ether',
       symbol: 'ETH',

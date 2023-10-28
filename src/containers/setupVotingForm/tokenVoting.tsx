@@ -4,7 +4,6 @@ import {Controller, useFormContext, useWatch} from 'react-hook-form';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 
-import {VotingSettings} from '@aragon/sdk-client';
 import DateTimeSelector from 'containers/dateTimeSelector';
 import Duration, {DurationLabel} from 'containers/duration';
 import UtcMenu from 'containers/utcMenu';
@@ -21,9 +20,10 @@ import {
 import {DateTimeErrors} from './dateTimeErrors';
 import {ToggleCheckList, UtcInstance} from './multisig';
 import {ProposalFormData} from 'utils/types';
+import {MajorityVotingSettings} from '@aragon/sdk-client';
 
 type Props = {
-  pluginSettings: VotingSettings;
+  pluginSettings: MajorityVotingSettings;
 };
 
 const MAX_DURATION_MILLS = MAX_DURATION_DAYS * MINS_IN_DAY * 60 * 1000;

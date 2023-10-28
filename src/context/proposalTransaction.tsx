@@ -1,7 +1,7 @@
 import {
+  ApproveMultisigProposalParams,
+  ApproveProposalStep,
   ExecuteProposalStep,
-  MultisigClient,
-  TokenVotingClient,
   VoteProposalParams,
   VoteProposalStep,
   VoteValues,
@@ -18,9 +18,16 @@ import React, {
 import {useTranslation} from 'react-i18next';
 import {useParams} from 'react-router-dom';
 
-import PublishModal from 'containers/transactionModals/publishModal';
+import PublishModal, {
+  TransactionStateLabels,
+} from 'containers/transactionModals/publishModal';
 import {useDaoDetailsQuery} from 'hooks/useDaoDetails';
-import {PluginTypes, usePluginClient} from 'hooks/usePluginClient';
+import {
+  PluginTypes,
+  isMultisigClient,
+  isTokenVotingClient,
+  usePluginClient,
+} from 'hooks/usePluginClient';
 import {usePollGasFee} from 'hooks/usePollGasfee';
 import {useWallet} from 'hooks/useWallet';
 import {useVotingPowerAsync} from 'services/aragon-sdk/queries/use-voting-power';
@@ -29,39 +36,35 @@ import {
   aragonSdkQueryKeys,
 } from 'services/aragon-sdk/query-keys';
 import {CHAIN_METADATA, TransactionState} from 'utils/constants';
-import {
-  ExecutionDetail,
-  executionStorage,
-  voteStorage,
-} from 'utils/localStorage';
+import {executionStorage, voteStorage} from 'utils/localStorage';
 import {ProposalId} from 'utils/types';
 import {useNetwork} from './network';
 import {useProviders} from './providers';
 
-//TODO: currently a context, but considering there might only ever be one child,
-// might need to turn it into a wrapper that passes props to proposal page
 type SubmitVoteParams = {
   vote: VoteValues;
-  token?: string;
+  voteTokenAddress?: string;
   replacement?: boolean;
 };
 
 type ProposalTransactionContextType = {
   /** handles voting on proposal */
-  handleSubmitVote: (params: SubmitVoteParams) => void;
-  handleExecuteProposal: () => void;
+  handlePrepareVote: (params: SubmitVoteParams) => void;
+  handlePrepareApproval: (params: ApproveMultisigProposalParams) => void;
+  handlePrepareExecution: () => void;
   isLoading: boolean;
-  voteSubmitted: boolean;
-  executeSubmitted: boolean;
+  voteOrApprovalSubmitted: boolean;
+  executionSubmitted: boolean;
   executionFailed: boolean;
-  transactionHash: string;
+  executionTxHash: string;
 };
 
 type Props = Record<'children', ReactNode>;
 
 /**
  * This context serves as a transaction manager for proposal
- * voting and action execution
+ * voting and action execution.
+ * Note: Break this up when new plugin is added
  */
 const ProposalTransactionContext =
   createContext<ProposalTransactionContextType | null>(null);
@@ -69,129 +72,114 @@ const ProposalTransactionContext =
 const ProposalTransactionProvider: React.FC<Props> = ({children}) => {
   const {t} = useTranslation();
   const {id: urlId} = useParams();
+  const proposalId = new ProposalId(urlId!).export();
 
   const {address, isConnected} = useWallet();
   const {network} = useNetwork();
   const queryClient = useQueryClient();
   const {api: provider} = useProviders();
   const fetchVotingPower = useVotingPowerAsync();
-
-  const [tokenAddress, setTokenAddress] = useState<string>();
-  const [showVoteModal, setShowVoteModal] = useState(false);
-  const [showExecuteModal, setShowExecuteModal] = useState(false);
-
-  const [voteParams, setVoteParams] = useState<VoteProposalParams>();
-  const [voteSubmitted, setVoteSubmitted] = useState(false);
-  const [replacingVote, setReplacingVote] = useState(false);
-  const [voteProcessState, setVoteProcessState] = useState<TransactionState>();
-
-  const [executeProposalId, setExecuteProposalId] = useState<ProposalId>();
-  const [executeSubmitted, setExecuteSubmitted] = useState(false);
-  const [executionFailed, setExecutionFailed] = useState(false);
-  const [executeProcessState, setExecuteProcessState] =
-    useState<TransactionState>();
-  const [transactionHash, setTransactionHash] = useState<string>('');
-
   const {data: daoDetails, isLoading} = useDaoDetailsQuery();
 
-  const {pluginAddress, pluginType} = useMemo(() => {
-    return {
-      pluginAddress: daoDetails?.plugins[0].instanceAddress || '',
-      pluginType: daoDetails?.plugins[0].id as PluginTypes,
-    };
-  }, [daoDetails?.plugins]);
+  // state values
+  const [showVoteModal, setShowVoteModal] = useState(false);
+  const [showExecutionModal, setShowExecutionModal] = useState(false);
+  const [voteTokenAddress, setVoteTokenAddress] = useState<string>();
 
-  const pluginClient = usePluginClient(
-    daoDetails?.plugins[0].id as PluginTypes
-  );
+  const [voteParams, setVoteParams] = useState<VoteProposalParams>();
+  const [approvalParams, setApprovalParams] =
+    useState<ApproveMultisigProposalParams>();
 
-  const shouldPollVoteFees = useMemo(
-    () =>
-      (voteParams !== undefined &&
-        voteProcessState === TransactionState.WAITING) ||
-      (executeProposalId !== undefined &&
-        executeProcessState === TransactionState.WAITING),
-    [executeProposalId, executeProcessState, voteParams, voteProcessState]
-  );
+  const [replacingVote, setReplacingVote] = useState(false);
+  const [voteOrApprovalSubmitted, setVoteOrApprovalSubmitted] = useState(false);
+  const [voteOrApprovalProcessState, setVoteOrApprovalProcessState] =
+    useState<TransactionState>();
 
-  const shouldDisableCallback = useMemo(() => {
-    if (
-      voteProcessState === TransactionState.SUCCESS ||
-      executeProcessState === TransactionState.SUCCESS
-    )
-      return false;
+  const [executionFailed, setExecutionFailed] = useState(false);
+  const [executionSubmitted, setExecuteSubmitted] = useState(false);
+  const [executionProcessState, setExecutionProcessState] =
+    useState<TransactionState>();
 
-    return !(voteParams || executeProposalId);
-  }, [executeProcessState, executeProposalId, voteParams, voteProcessState]);
+  const [executionTxHash, setExecutionTxHash] = useState<string>('');
+
+  // intermediate values
+  const pluginType = daoDetails?.plugins[0].id as PluginTypes;
+  const pluginAddress = daoDetails?.plugins[0].instanceAddress;
+  const pluginClient = usePluginClient(pluginType);
+
+  const isMultisigPluginClient =
+    !!pluginClient && isMultisigClient(pluginClient);
+  const isTokenVotingPluginClient =
+    !!pluginClient && isTokenVotingClient(pluginClient);
+
+  const isWaitingForVoteOrApproval =
+    (voteParams != null || approvalParams != null) &&
+    voteOrApprovalProcessState === TransactionState.WAITING;
+
+  const isWaitingForExecution =
+    !!proposalId && executionProcessState === TransactionState.WAITING;
+
+  const notInSuccessState =
+    executionProcessState !== TransactionState.SUCCESS &&
+    voteOrApprovalProcessState !== TransactionState.SUCCESS;
+
+  const noActionsPending = !voteParams && !approvalParams && !proposalId;
+
+  const shouldPollFees = isWaitingForVoteOrApproval || isWaitingForExecution;
+  const shouldDisableModalCta = noActionsPending && notInSuccessState;
 
   /*************************************************
-   *                    Helpers                    *
+   *              Prepare Transactions             *
    *************************************************/
-  const invalidateProposalQueries = useCallback(() => {
-    const allProposalsQuery = [AragonSdkQueryItem.PROPOSALS];
-    const currentProposal = aragonSdkQueryKeys.proposal({
-      id: new ProposalId(urlId!).export(),
-      pluginType,
-    });
-
-    queryClient.invalidateQueries(allProposalsQuery);
-    queryClient.invalidateQueries(currentProposal);
-  }, [pluginType, queryClient, urlId]);
-
-  const handleSubmitVote = useCallback(
-    (params: SubmitVoteParams) => {
-      // id should never be null as it is required to navigate to this page
-      // Also, the proposal details page (child) navigates back to not-found
-      // if the id is invalid
-      setVoteParams({
-        proposalId: new ProposalId(urlId!).export(),
-        vote: params.vote,
-      });
-
-      setReplacingVote(!!params.replacement);
-      setTokenAddress(params.token);
+  const handlePrepareApproval = useCallback(
+    (params: ApproveMultisigProposalParams) => {
+      setApprovalParams(params);
       setShowVoteModal(true);
-      setVoteProcessState(TransactionState.WAITING);
+      setVoteOrApprovalProcessState(TransactionState.WAITING);
     },
-    [urlId]
+    []
   );
 
-  // estimate voting fees
-  const estimateVotingFees = useCallback(async () => {
-    if (voteParams) {
-      if (tokenAddress) {
-        return (pluginClient as TokenVotingClient)?.estimation.voteProposal({
-          ...voteParams,
-          proposalId: voteParams.proposalId,
-        });
-      }
+  const handlePrepareVote = useCallback(
+    (params: SubmitVoteParams) => {
+      setReplacingVote(!!params.replacement);
+      setVoteTokenAddress(params.voteTokenAddress);
 
-      return (pluginClient as MultisigClient)?.estimation.approveProposal({
-        proposalId: voteParams.proposalId,
-        tryExecution: false,
-      });
+      setVoteParams({proposalId, vote: params.vote});
+      setShowVoteModal(true);
+      setVoteOrApprovalProcessState(TransactionState.WAITING);
+    },
+    [proposalId]
+  );
+
+  const handlePrepareExecution = useCallback(() => {
+    setShowExecutionModal(true);
+    setExecutionProcessState(TransactionState.WAITING);
+  }, []);
+
+  /*************************************************
+   *                  Estimations                  *
+   *************************************************/
+  const estimateVoteOrApprovalFees = useCallback(async () => {
+    if (isTokenVotingPluginClient && voteParams && voteTokenAddress) {
+      return pluginClient.estimation.voteProposal(voteParams);
     }
-  }, [pluginClient, tokenAddress, voteParams]);
 
-  const handleExecuteProposal = useCallback(() => {
-    setExecuteProposalId(new ProposalId(urlId!));
-    setShowExecuteModal(true);
-    setExecuteProcessState(TransactionState.WAITING);
-  }, [urlId]);
-
-  // estimate proposal execution fees
-  const estimateExecuteFees = useCallback(async () => {
-    if (executeProposalId) {
-      if (tokenAddress) {
-        return (pluginClient as TokenVotingClient)?.estimation.executeProposal(
-          executeProposalId.export()
-        );
-      }
-      return (pluginClient as MultisigClient)?.estimation.executeProposal(
-        executeProposalId.export()
-      );
+    if (isMultisigPluginClient && approvalParams) {
+      return pluginClient.estimation.approveProposal(approvalParams);
     }
-  }, [executeProposalId, pluginClient, tokenAddress]);
+  }, [
+    approvalParams,
+    isMultisigPluginClient,
+    isTokenVotingPluginClient,
+    pluginClient,
+    voteTokenAddress,
+    voteParams,
+  ]);
+
+  const estimateExecutionFees = useCallback(async () => {
+    return pluginClient?.estimation.executeProposal(proposalId);
+  }, [pluginClient?.estimation, proposalId]);
 
   // estimation fees for voting on proposal/executing proposal
   const {
@@ -201,91 +189,33 @@ const ProposalTransactionProvider: React.FC<Props> = ({children}) => {
     stopPolling,
     error: gasEstimationError,
   } = usePollGasFee(
-    showExecuteModal ? estimateExecuteFees : estimateVotingFees,
-    shouldPollVoteFees
+    showExecutionModal ? estimateExecutionFees : estimateVoteOrApprovalFees,
+    shouldPollFees
   );
 
-  // handles closing vote modal
-  const handleCloseVoteModal = useCallback(() => {
-    switch (voteProcessState) {
-      case TransactionState.LOADING:
-        break;
-      case TransactionState.SUCCESS:
-        setShowVoteModal(false);
-        break;
-      default: {
-        setShowVoteModal(false);
-        stopPolling();
-      }
-    }
-  }, [stopPolling, voteProcessState]);
-
-  // set proper state and cache vote when transaction is successful
-  const onVoteSubmitted = useCallback(
-    async (
-      proposalId: ProposalId,
-      vote: VoteValues,
-      voteReplaced?: boolean
-    ) => {
-      if (!daoDetails?.address) return;
-
-      setVoteParams(undefined);
-      setReplacingVote(false);
-      setVoteSubmitted(true);
-      setVoteProcessState(TransactionState.SUCCESS);
-
-      if (!address) return;
-
-      let voteToPersist;
-
-      // cache multisig vote
-      if (pluginType === 'multisig.plugin.dao.eth') {
-        voteToPersist = address.toLowerCase();
-      }
-
-      // cache token voting vote
-      if (pluginType === 'token-voting.plugin.dao.eth' && tokenAddress) {
-        // fetch token user balance, ie vote weight
-        const weight = await fetchVotingPower({tokenAddress, address});
-        voteToPersist = {
-          address: address.toLowerCase(),
-          vote,
-          weight: weight.toBigInt(),
-          voteReplaced: !!voteReplaced,
-        };
-      }
-
-      if (voteToPersist) {
-        voteStorage.addVote(
-          CHAIN_METADATA[network].id,
-          proposalId.toString(),
-          voteToPersist
-        );
-      }
-
-      invalidateProposalQueries();
-    },
-    [
-      address,
-      daoDetails?.address,
-      fetchVotingPower,
-      invalidateProposalQueries,
-      network,
+  /*************************************************
+   *               Cleanup & Cache                 *
+   *************************************************/
+  const invalidateProposalQueries = useCallback(() => {
+    const allProposalsQuery = [AragonSdkQueryItem.PROPOSALS];
+    const currentProposal = aragonSdkQueryKeys.proposal({
+      id: proposalId,
       pluginType,
-      tokenAddress,
-    ]
-  );
+    });
 
-  // set proper state and cache proposal execution when transaction is successful
-  const onExecutionSubmitted = useCallback(
-    async (proposalId: ProposalId, txHash: string) => {
+    queryClient.invalidateQueries(allProposalsQuery);
+    queryClient.invalidateQueries(currentProposal);
+  }, [pluginType, proposalId, queryClient]);
+
+  const onExecutionSuccess = useCallback(
+    async (proposalId: string, txHash: string) => {
       if (!address || !daoDetails?.address) return;
 
       // get current block number
       const executionBlockNumber = await provider.getBlockNumber();
 
       // details to be cached
-      const executionDetails: ExecutionDetail = {
+      const executionDetails = {
         executionBlockNumber,
         executionDate: new Date(),
         executionTxHash: txHash,
@@ -305,129 +235,243 @@ const ProposalTransactionProvider: React.FC<Props> = ({children}) => {
     [address, daoDetails?.address, invalidateProposalQueries, network, provider]
   );
 
-  // handles vote submission/execution
-  const handleVoteExecution = useCallback(async () => {
-    if (voteProcessState === TransactionState.SUCCESS) {
-      handleCloseVoteModal();
-      return;
-    }
+  // cleans up and caches successful approval tx
+  const onApprovalSuccess = useCallback(
+    async (
+      proposalId: string,
+      executedWithApproval: boolean,
+      txHash: string
+    ) => {
+      // clean up state
+      setApprovalParams(undefined);
+      setVoteOrApprovalSubmitted(true);
+      setVoteOrApprovalProcessState(TransactionState.SUCCESS);
 
-    if (!voteParams || voteProcessState === TransactionState.LOADING) {
-      console.log('Transaction is running');
-      return;
-    }
+      // cache multisig vote
+      if (address) {
+        voteStorage.addVote(
+          CHAIN_METADATA[network].id,
+          proposalId,
+          address.toLowerCase()
+        );
+      }
 
-    if (!pluginAddress) {
-      console.error('Plugin address is required');
-      return;
-    }
+      // executed while approving, cache execution as well
+      if (executedWithApproval) {
+        setExecutionTxHash(txHash);
+        onExecutionSuccess(proposalId, txHash);
+      }
 
-    setVoteProcessState(TransactionState.LOADING);
+      invalidateProposalQueries();
+    },
+    [address, invalidateProposalQueries, network, onExecutionSuccess]
+  );
 
-    let voteSteps;
+  // cleans up and caches successful vote
+  const onVoteSuccess = useCallback(
+    async (proposalId: string, vote: VoteValues, voteReplaced?: boolean) => {
+      // cleanup state
+      setVoteParams(undefined);
+      setReplacingVote(false);
+      setVoteOrApprovalSubmitted(true);
+      setVoteOrApprovalProcessState(TransactionState.SUCCESS);
 
-    if (!tokenAddress) {
-      voteSteps = (pluginClient as MultisigClient)?.methods.approveProposal({
-        proposalId: voteParams.proposalId,
-        tryExecution: false,
-      });
-    } else {
-      voteSteps = (pluginClient as TokenVotingClient)?.methods.voteProposal({
-        ...voteParams,
-        proposalId: voteParams.proposalId,
-      });
-    }
+      // cache token-voting vote
+      if (address != null && voteTokenAddress != null) {
+        // fetch token user balance, ie vote weight
+        try {
+          const weight = await fetchVotingPower({
+            tokenAddress: voteTokenAddress,
+            address,
+          });
+          const voteToPersist = {
+            address: address.toLowerCase(),
+            vote,
+            weight: weight.toBigInt(),
+            voteReplaced: !!voteReplaced,
+          };
 
-    if (!voteSteps) {
-      throw new Error('Voting function is not initialized correctly');
-    }
-
-    // clear up previous submission state
-    setVoteSubmitted(false);
-
-    try {
-      for await (const step of voteSteps) {
-        switch (step.key) {
-          case VoteProposalStep.VOTING:
-            console.log(step.txHash);
-            break;
-          case VoteProposalStep.DONE:
-            onVoteSubmitted(
-              new ProposalId(voteParams.proposalId),
-              voteParams.vote,
-              replacingVote
-            );
-            break;
+          // store in local storage
+          voteStorage.addVote(
+            CHAIN_METADATA[network].id,
+            proposalId.toString(),
+            voteToPersist
+          );
+        } catch (error) {
+          console.error(error);
         }
       }
-    } catch (err) {
-      console.error(err);
-      setVoteProcessState(TransactionState.ERROR);
+
+      invalidateProposalQueries();
+    },
+    [
+      address,
+      fetchVotingPower,
+      invalidateProposalQueries,
+      network,
+      voteTokenAddress,
+    ]
+  );
+
+  // handles closing vote/approval modal
+  const handleCloseVoteModal = useCallback(() => {
+    switch (voteOrApprovalProcessState) {
+      case TransactionState.LOADING:
+        break;
+      case TransactionState.SUCCESS:
+        setShowVoteModal(false);
+        break;
+      default: {
+        setShowVoteModal(false);
+        stopPolling();
+      }
     }
-  }, [
-    handleCloseVoteModal,
-    onVoteSubmitted,
-    pluginAddress,
-    pluginClient,
-    replacingVote,
-    tokenAddress,
-    voteParams,
-    voteProcessState,
-  ]);
+  }, [stopPolling, voteOrApprovalProcessState]);
 
   // handles closing execute modal
   const handleCloseExecuteModal = useCallback(() => {
-    switch (executeProcessState) {
+    switch (executionProcessState) {
       case TransactionState.LOADING:
         break;
       case TransactionState.SUCCESS:
         {
-          setShowExecuteModal(false);
+          setShowExecutionModal(false);
           setExecuteSubmitted(true);
         }
-        break; // TODO: reload and cache
+        break;
       default: {
-        setShowExecuteModal(false);
+        setShowExecutionModal(false);
         stopPolling();
       }
     }
-  }, [executeProcessState, stopPolling]);
+  }, [executionProcessState, stopPolling]);
 
-  // handles proposal execution
-  const handleProposalExecution = useCallback(async () => {
-    if (executeProcessState === TransactionState.SUCCESS) {
-      handleCloseExecuteModal();
+  /*************************************************
+   *              Submit Transactions              *
+   *************************************************/
+  const handleVoteOrApprovalTx = () => {
+    // tx already successful close modal
+    if (voteOrApprovalProcessState === TransactionState.SUCCESS) {
+      handleCloseVoteModal();
       return;
     }
+
     if (
-      !executeProposalId ||
-      executeProcessState === TransactionState.LOADING
+      (voteParams == null && approvalParams == null) ||
+      voteOrApprovalProcessState === TransactionState.LOADING
     ) {
       console.log('Transaction is running');
       return;
     }
+
     if (!pluginAddress) {
       console.error('Plugin address is required');
       return;
     }
+
+    setVoteOrApprovalProcessState(TransactionState.LOADING);
+
+    if (pluginType === 'multisig.plugin.dao.eth' && approvalParams) {
+      handleMultisigApproval(approvalParams);
+    } else if (pluginType === 'token-voting.plugin.dao.eth' && voteParams) {
+      handleTokenVotingVote(voteParams);
+    }
+  };
+
+  const handleMultisigApproval = useCallback(
+    async (params: ApproveMultisigProposalParams) => {
+      if (!isMultisigPluginClient) return;
+
+      const approveSteps = pluginClient.methods.approveProposal(params);
+      if (!approveSteps) {
+        throw new Error('Approval function is not initialized correctly');
+      }
+
+      setVoteOrApprovalSubmitted(false);
+
+      // tx hash is necessary for caching when approving and executing
+      // at the same time
+      let txHash = '';
+      try {
+        for await (const step of approveSteps) {
+          switch (step.key) {
+            case ApproveProposalStep.APPROVING:
+              txHash = step.txHash;
+              break;
+            case ApproveProposalStep.DONE:
+              onApprovalSuccess(params.proposalId, params.tryExecution, txHash);
+              break;
+          }
+        }
+      } catch (error) {
+        console.error(error);
+        setVoteOrApprovalProcessState(TransactionState.ERROR);
+      }
+    },
+    [isMultisigPluginClient, onApprovalSuccess, pluginClient?.methods]
+  );
+
+  const handleTokenVotingVote = useCallback(
+    async (params: VoteProposalParams) => {
+      if (!isTokenVotingPluginClient) return;
+
+      const voteSteps = pluginClient.methods.voteProposal(params);
+      if (!voteSteps) {
+        throw new Error('Voting function is not initialized correctly');
+      }
+
+      // clear up previous submission state
+      setVoteOrApprovalSubmitted(false);
+
+      try {
+        for await (const step of voteSteps) {
+          switch (step.key) {
+            case VoteProposalStep.VOTING:
+              console.log(step.txHash);
+              break;
+            case VoteProposalStep.DONE:
+              onVoteSuccess(params.proposalId, params.vote, replacingVote);
+              break;
+          }
+        }
+      } catch (err) {
+        console.error(err);
+        setVoteOrApprovalProcessState(TransactionState.ERROR);
+      }
+    },
+    [
+      isTokenVotingPluginClient,
+      onVoteSuccess,
+      pluginClient?.methods,
+      replacingVote,
+    ]
+  );
+
+  // handles proposal execution
+  const handleProposalExecution = useCallback(async () => {
+    if (executionProcessState === TransactionState.SUCCESS) {
+      handleCloseExecuteModal();
+      return;
+    }
+    if (!proposalId || executionProcessState === TransactionState.LOADING) {
+      console.log('Transaction is running');
+      return;
+    }
+
+    if (!pluginAddress) {
+      console.error('Plugin address is required');
+      return;
+    }
+
     if (!isConnected) {
       open('wallet');
       return;
     }
 
-    setExecuteProcessState(TransactionState.LOADING);
+    // start proposal execution
+    setExecutionProcessState(TransactionState.LOADING);
 
-    let executeSteps;
-    if (tokenAddress) {
-      executeSteps = (
-        pluginClient as TokenVotingClient
-      )?.methods.executeProposal(executeProposalId.export());
-    } else {
-      executeSteps = (pluginClient as MultisigClient)?.methods.executeProposal(
-        executeProposalId.export()
-      );
-    }
-
+    const executeSteps = pluginClient?.methods.executeProposal(proposalId);
     if (!executeSteps) {
       throw new Error('Voting function is not initialized correctly');
     }
@@ -438,92 +482,117 @@ const ProposalTransactionProvider: React.FC<Props> = ({children}) => {
       for await (const step of executeSteps) {
         switch (step.key) {
           case ExecuteProposalStep.EXECUTING:
-            setTransactionHash(step.txHash);
+            setExecutionTxHash(step.txHash);
             txHash = step.txHash;
             break;
           case ExecuteProposalStep.DONE:
-            setExecuteProposalId(undefined);
+            onExecutionSuccess(proposalId, txHash);
             setExecutionFailed(false);
-            setExecuteProcessState(TransactionState.SUCCESS);
-            onExecutionSubmitted(executeProposalId, txHash);
+            setExecutionProcessState(TransactionState.SUCCESS);
             break;
         }
       }
     } catch (err) {
       console.error(err);
       setExecutionFailed(true);
-      setExecuteProcessState(TransactionState.ERROR);
+      setExecutionProcessState(TransactionState.ERROR);
     }
   }, [
-    executeProposalId,
-    executeProcessState,
-    handleCloseExecuteModal,
-    isConnected,
-    onExecutionSubmitted,
+    executionProcessState,
+    proposalId,
     pluginAddress,
-    pluginClient,
-    tokenAddress,
+    isConnected,
+    pluginClient?.methods,
+    handleCloseExecuteModal,
+    onExecutionSuccess,
   ]);
 
   const value = useMemo(
     () => ({
-      handleSubmitVote,
-      handleExecuteProposal,
+      handlePrepareVote,
+      handlePrepareApproval,
+      handlePrepareExecution,
       isLoading,
-      voteSubmitted,
-      executeSubmitted,
+      voteOrApprovalSubmitted,
+      executionSubmitted,
       executionFailed,
-      transactionHash,
+      executionTxHash,
     }),
     [
+      handlePrepareVote,
+      handlePrepareApproval,
+      handlePrepareExecution,
       isLoading,
-      executeSubmitted,
+      voteOrApprovalSubmitted,
+      executionSubmitted,
       executionFailed,
-      handleExecuteProposal,
-      handleSubmitVote,
-      transactionHash,
-      voteSubmitted,
+      executionTxHash,
     ]
   );
 
   /*************************************************
    *                    Render                     *
    *************************************************/
+  // modal values
+  const isExecutionContext = showExecutionModal;
+  const isVotingContext = showVoteModal;
+
+  const state =
+    (isExecutionContext ? executionProcessState : voteOrApprovalProcessState) ??
+    TransactionState.WAITING;
+
+  let title = isVotingContext
+    ? t('labels.signVote')
+    : t('labels.signExecuteProposal');
+
+  const labels: TransactionStateLabels = {
+    [TransactionState.WAITING]: isVotingContext
+      ? t('governance.proposals.buttons.vote')
+      : t('governance.proposals.buttons.execute'),
+  };
+
+  if (isVotingContext && pluginType === 'multisig.plugin.dao.eth') {
+    title = t('transactionModal.multisig.title.approveProposal');
+    labels.WAITING = t('transactionModal.multisig.ctaApprove');
+    labels.LOADING = t('transactionModal.multisig.ctaWaitingConfirmation');
+    labels.SUCCESS = t('transactionModal.multisig.ctaContinueProposal');
+
+    if (approvalParams?.tryExecution) {
+      title = t('transactionModal.multisig.title.approveExecute');
+      labels.WAITING = t('transactionModal.multisig.ctaApproveExecute');
+    }
+  }
+
+  const isOpen = showVoteModal || showExecutionModal;
+
+  const onClose = isExecutionContext
+    ? handleCloseExecuteModal
+    : handleCloseVoteModal;
+
+  const closeOnDrag = isExecutionContext
+    ? executionProcessState !== TransactionState.LOADING
+    : voteOrApprovalProcessState !== TransactionState.LOADING;
+
+  const callback = isExecutionContext
+    ? handleProposalExecution
+    : handleVoteOrApprovalTx;
+
   return (
     <ProposalTransactionContext.Provider value={value}>
       {children}
       <PublishModal
-        title={
-          showExecuteModal
-            ? t('labels.signExecuteProposal')
-            : t('labels.signVote')
-        }
-        buttonLabel={
-          showExecuteModal
-            ? t('governance.proposals.buttons.execute')
-            : t('governance.proposals.buttons.vote')
-        }
-        state={
-          (showExecuteModal ? executeProcessState : voteProcessState) ||
-          TransactionState.WAITING
-        }
-        isOpen={showVoteModal || showExecuteModal}
-        onClose={
-          showExecuteModal ? handleCloseExecuteModal : handleCloseVoteModal
-        }
-        callback={
-          showExecuteModal ? handleProposalExecution : handleVoteExecution
-        }
-        closeOnDrag={
-          showExecuteModal
-            ? executeProcessState !== TransactionState.LOADING
-            : voteProcessState !== TransactionState.LOADING
-        }
+        title={title}
+        buttonStateLabels={labels}
+        state={state}
+        isOpen={isOpen}
+        onClose={onClose}
+        callback={callback}
+        closeOnDrag={closeOnDrag}
         maxFee={maxFee}
         averageFee={averageFee}
         tokenPrice={tokenPrice}
         gasEstimationError={gasEstimationError}
-        disabledCallback={shouldDisableCallback}
+        disabledCallback={shouldDisableModalCta}
       />
     </ProposalTransactionContext.Provider>
   );

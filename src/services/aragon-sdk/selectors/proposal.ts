@@ -117,7 +117,11 @@ function syncExecutionInfo(
       chainId,
       proposal.id
     );
-    Object.assign(proposal, executionDetail);
+
+    if (executionDetail) {
+      Object.assign(proposal, executionDetail);
+      proposal.status = ProposalStatus.EXECUTED;
+    }
   }
 }
 

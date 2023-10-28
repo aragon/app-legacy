@@ -14,7 +14,7 @@ import {
 import SetupMultisigVotingForm from './multisig';
 import SetupTokenVotingForm from './tokenVoting';
 
-type Props = {
+export type Props = {
   pluginSettings: SupportedVotingSettings;
 };
 

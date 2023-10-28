@@ -9,6 +9,7 @@ import {ModeType, ProgressStatusProps, VoterType} from '@aragon/ods-old';
 import {
   CreateMajorityVotingProposalParams,
   Erc20TokenDetails,
+  MajorityVotingSettings,
   MultisigProposal,
   MultisigVotingSettings,
   TokenVotingProposal,
@@ -26,7 +27,10 @@ import {TFunction} from 'i18next';
 import {ProposalVoteResults} from 'containers/votingTerminal';
 import {MultisigDaoMember} from 'hooks/useDaoMembers';
 import {PluginTypes} from 'hooks/usePluginClient';
-import {isMultisigVotingSettings} from 'services/aragon-sdk/queries/use-voting-settings';
+import {
+  isMultisigVotingSettings,
+  isTokenVotingSettings,
+} from 'services/aragon-sdk/queries/use-voting-settings';
 import {i18n} from '../../i18n.config';
 import {KNOWN_FORMATS, getFormattedUtcOffset} from './date';
 import {formatUnits} from './library';
@@ -75,7 +79,7 @@ export function isErc20VotingProposal(
 }
 
 export function isMultisigProposal(
-  proposal: SupportedProposals | undefined
+  proposal: SupportedProposals | undefined | null
 ): proposal is MultisigProposal {
   if (!proposal) return false;
   return 'approvals' in proposal;
@@ -625,35 +629,73 @@ export function getVoteStatus(proposal: DetailedProposal, t: TFunction) {
 
 export function getVoteButtonLabel(
   proposal: DetailedProposal,
-  canVoteOrApprove: boolean,
+  voteSettings: MajorityVotingSettings | MultisigVotingSettings,
   votedOrApproved: boolean,
+  executableWithNextApproval: boolean,
   t: TFunction
-) {
-  let label = '';
-
+): string {
   if (isMultisigProposal(proposal)) {
-    label = votedOrApproved
-      ? t('votingTerminal.status.approved')
-      : t('votingTerminal.concluded');
-
-    if (proposal.status === 'Pending') label = t('votingTerminal.approve');
-    else if (proposal.status === 'Active' && !votedOrApproved)
-      label = t('votingTerminal.approve');
+    return getMultisigLabel(
+      proposal,
+      votedOrApproved,
+      executableWithNextApproval,
+      t
+    );
   }
 
-  if (isTokenBasedProposal(proposal)) {
-    label = votedOrApproved
-      ? canVoteOrApprove
-        ? t('votingTerminal.status.revote')
-        : t('votingTerminal.status.voteSubmitted')
-      : t('votingTerminal.voteOver');
-
-    if (proposal.status === 'Pending') label = t('votingTerminal.voteNow');
-    else if (proposal.status === 'Active' && !votedOrApproved)
-      label = t('votingTerminal.voteNow');
+  if (isTokenBasedProposal(proposal) && isTokenVotingSettings(voteSettings)) {
+    return getTokenBasedLabel(proposal, voteSettings, votedOrApproved, t);
   }
 
-  return label;
+  return '';
+}
+
+function getMultisigLabel(
+  proposal: MultisigProposal,
+  votedOrApproved: boolean,
+  executableWithNextApproval: boolean,
+  t: TFunction
+): string {
+  if (
+    proposal.status === ProposalStatus.PENDING ||
+    (proposal.status === ProposalStatus.ACTIVE && !votedOrApproved)
+  ) {
+    return executableWithNextApproval
+      ? t('votingTerminal.approveOnly')
+      : t('votingTerminal.approve');
+  }
+
+  return votedOrApproved
+    ? t('votingTerminal.status.approved')
+    : t('votingTerminal.concluded');
+}
+
+function getTokenBasedLabel(
+  proposal: TokenVotingProposal,
+  voteSettings: MajorityVotingSettings,
+  voted: boolean,
+  t: TFunction
+): string {
+  if (proposal.status === ProposalStatus.PENDING) {
+    return t('votingTerminal.voteNow');
+  }
+
+  if (voted) {
+    // voted on plugin with voteReplacement
+    if (
+      proposal.status === ProposalStatus.ACTIVE &&
+      voteSettings.votingMode === VotingMode.VOTE_REPLACEMENT
+    ) {
+      return t('votingTerminal.status.revote');
+    }
+
+    return t('votingTerminal.status.voteSubmitted');
+  }
+
+  // have not voted
+  return proposal.status === ProposalStatus.ACTIVE
+    ? t('votingTerminal.voteNow')
+    : t('votingTerminal.voteOver');
 }
 
 export function isEarlyExecutable(

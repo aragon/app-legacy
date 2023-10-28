@@ -475,8 +475,8 @@
       "buttonLabel": "Connect wallet now"
     },
     "gatingUsers": {
-      "tokenTitle": "Token not found",
-      "tokenDescription": "The wallet does not contain '{{tokenName}}' token. Please ensure that you have the necessary tokens in order to continue.",
+      "tokenTitle": "You can’t create a proposal",
+      "tokenDescription": "You don’t have the required voting power or token balance. Creating proposals in {{daoName}} requires at least {{amount}} ‘{{tokenSymbol}}’ in either voting power or token balance.",
       "walletTitle": "Wallet not allowlisted",
       "walletDescription": "The connected wallet is not allowlisted. Please connect a valid wallet in order to proceed with the process.",
       "buttonLabel": "Ok, understood"
@@ -769,7 +769,14 @@
       "descriptionLinkLabel": "read this guide",
       "descriptionLinkURL": "https://aragon.org/how-to/set-up-your-dao-governance-in-8-steps",
       "distributeTokensHelpertextLinkLabel": "read our guide",
-      "distributeTokensHelpertextLinkURL": "https://aragon.org/how-to/distribute-a-dao-governance-token"
+      "distributeTokensHelpertextLinkURL": "https://aragon.org/how-to/distribute-a-dao-governance-token",
+      "blockChainVoting": {
+        "label": "On what blockchain will community voting take place?",
+        "optionOnchainLabel": "{{blockchainName}}",
+        "optionOnchainDesc": "Voting on proposals will require your community members to sign transactions and pay {{blockchainName}} gas fees. Proposals that pass a community vote can be executed by anyone.",
+        "optionGaslessLabel": "Vocdoni",
+        "optionGaslessDesc": "Voting on proposals will allow your community members to vote on a voting-specific proof-of-authority blockchain without paying any gas fees. Proposals that pass a community vote must be approved by an Execution Multisig before being executed on {{blockchainName}}."
+      }
     },
     "step4": {
       "label": "Step 4",
@@ -1001,47 +1008,34 @@
     "toggleFilter": {
       "Favourites": "Following",
       "allDAOs": "All DAOs ",
-      "memberOf": "Member of",
-      "delegate": "Delegate duties"
+      "member": "Member"
     },
     "inputPlaceholder": {
-      "searchDAOs": "Search DAOs"
+      "searchDAOs": "Search by name or address"
     },
     "searchDropwdown": {
       "labelAmountDAOs": "{{amount}} DAOs"
     },
     "emptyStateSearch": {
-      "ctaLabel": "Reset search",
-      "title": "No results to show",
-      "description": "No DAOs found for this search term."
-    },
-    "sortOption": {
-      "mostActive": "Sort by Most active ",
-      "blockchain": "Sort by Blockchain",
-      "treasurySize": "Sort by Treasury size"
+      "ctaLabel": "Clear filters & search",
+      "title": "No results",
+      "description": "No DAOs match your filters."
     },
     "modal": {
       "filterDAOs": {
         "title": "Filter DAOs",
         "label": {
           "blockchains": "Blockchains",
-          "DAOtype": "DAO type",
-          "treasurySize": "Treasury size",
           "base": "Base",
           "allChains": "All chains",
           "polygon": "Polygon",
-          "ethereum": {
-            "label": "Ethereum"
-          },
-          "member": {
-            "label": "Member"
-          },
-          "tokenVoting": "Token voting",
-          "anyGovernance": "Any governance",
-          "1M": "> $1.000.000",
-          "1K": "> $1.000",
-          "anySize": "Any size",
-          "10M": "$10M"
+          "tokenVoting": "Token-based",
+          "ethereum": "Ethereum",
+          "ethereumGoerli": "Ethereum Goerli",
+          "baseGoerli": "Base Goerli",
+          "polygonMumbai": "Polygon Mumbai",
+          "member": "Wallet-based",
+          "governanceType": "Governance type"
         },
         "ctaLabel": {
           "see0": "See 0 DAOs",
@@ -1049,17 +1043,29 @@
           "seeAll": "See all DAOs"
         },
         "buttonLabel": {
-          "resetFilters": "Reset filters"
+          "clearFilters": "Clear filters"
+        },
+        "ctaLoading": "Filtering DAOs..."
+      },
+      "filterDAOS": {
+        "label": {
+          "showTesnets": "Show testnets"
         }
       }
     },
     "pagination": {
       "label": {
-        "amountOf DAOs": "{{x}} of {{x-amount}} DAOs"
+        "amountOf DAOs": "{{amount}} of {{total}}"
       }
     },
     "search": {
-      "labelAmount": "Found {{x}} DAOs"
+      "labelAmount": "{{amount}} DAOs"
+    },
+    "sortBy": {
+      "largestTreasury": "Sort by largest treasury",
+      "mostProposals": "Sort by most proposals",
+      "largestCommunity": "Sort by largest community",
+      "recentlyCreated": "Sort by recently created"
     }
   },
   "privacyPolicy": {
@@ -1073,8 +1079,8 @@
     "rejectAllCookies": "Reject all",
     "acceptSelectedCookies": "Accept",
     "content": "We use cookies and similar technologies to improve your experience, enable certain features, and analyze our application usage. You may opt-out of cookies here. Learn more in our {{link}}.",
-    "linkLabel": "privacy policy",
-    "linkURL": "https://aragon.org/privacy-policy"
+    "contentLinkURL": "https://aragon.org/privacy-policy",
+    "contentLinkLabel": "privacy policy"
   },
   "transactionDetail": {
     "title": "Transaction detail",
@@ -1301,7 +1307,7 @@
       "title": "Select dApp",
       "desc": "You can interact with the following dApps to add actions to your proposal. Learn more about {{link}}.",
       "descLinkLabel": "in our guide",
-      "descLinkURL": "https://aragon.org/how-to/swap-tokens-with-cowswap",
+      "descLinkURL": "https://",
       "validation": {
         "codeInputHelp": "To connect, open {{dappName}}, copy the WalletConnect QR code to your clipboard, and paste it here.",
         "modalTitle": "{{dappName}}",
@@ -1317,18 +1323,18 @@
         "alertCriticalQRcode": "The QR code provided is not from {{dappName}}."
       },
       "detaildApp": {
-        "spinnerLabel": "Listening for actions …",
+        "spinnerLabel": "Listening for actions…",
         "desc": "You can can interact with {{dappName}}. Actions you take will be added to this proposal.",
         "noActionsTag": "No actions received yet",
         "amountActionsTag": "{{amountActions}} actions received",
         "ctaLabel": "Add {{amountActions}} actions"
       },
       "ctaOpenDapp": "Open {{dappName}}",
-      "ctaDisconnectDapp": "Disconnect {{dappName}}",
       "dAppConnectedLabel": "Connected",
       "headerTitle": "Select dApp",
       "headerDesc": "You can interact with the following dApps to add actions to your proposal. Learn more about {{link}}.",
-      "alertInfo": "More dApps coming soon!"
+      "alertInfo": "More dApps coming soon!",
+      "ctaDisconnectDapp": "Disconnect {{dappName}}"
     }
   },
   "scc": {
@@ -1458,7 +1464,7 @@
       "optionCopyAddress": "Copy address",
       "optionBlockExplorer": "View on block explorer",
       "optionDelegate": "Delegate to",
-      "optionUndelegate": "Undelegate"
+      "optionChangeDelegation": "Change delegation"
     },
     "actionItemVoter": {
       "labelVoteWasChanged": "Vote was changed"
@@ -1499,7 +1505,8 @@
     }
   },
   "label": {
-    "exportCSV": "Export to CSV"
+    "exportCSV": "Export to CSV",
+    "executionMultisig": "Execution multisig"
   },
   "tokenAmount": {
     "InputLabel": "Tokens",
@@ -1595,8 +1602,8 @@
       "alertTitle": "Some updates may be unsafe",
       "alertDesc": "One or more actions aren't in the Aragon Update Registry, indicating that this update could be potentially harmful.",
       "desc": "All actions are listed in the Aragon Update Registry, which is managed by the Aragon team. However, always exercise caution when evaluating updates. To learn more about Aragon OSx updates, {{link}}.",
-      "descLinkLabel": "Read more",
-      "descLinkUrl": "https://"
+      "descLinkLabel": "read more in our guides",
+      "descLinkURL": "https://aragon.org/how-to/update-your-aragon-dao"
     },
     "proposal": {
       "bannerTitle": "Verified Aragon App Update"
@@ -1622,6 +1629,26 @@
       "labelApp": "App",
       "labelOs": "Operating system",
       "labelGovernance": "Governance"
+    }
+  },
+  "addAction": {
+    "configureActions": {
+      "AlertCritical": {
+        "title": "Action may fail",
+        "desc": "Even if the proposal passes, this action may fail if it is executed after {{date time}}"
+      }
+    }
+  },
+  "createDao": {
+    "stepCommunityVoting": {
+      "title": "Community voting parameters",
+      "desc": "Establish the conditions that determine the passage of a proposal during the initial community voting phase. How much support does the proposal need? How much of the community needs to participate? How long is the proposal open for voting? Learn more about in {{this guide}}."
+    },
+    "executionMultisig": {
+      "title": "Define your execution multisig",
+      "desc": "To bring the offchain results onchain, a execution multisig is needed to validate the results and perform the optional actions of a proposal. Learn more about the execution multisig and its tasks in {{link}}.",
+      "membersLabel": "Execution multisig members",
+      "membersDesc": "These addresses form the governing body that approves and executes proposals passed by the community. Add the addresses who will be members of the execution multisig."
     }
   }
 }

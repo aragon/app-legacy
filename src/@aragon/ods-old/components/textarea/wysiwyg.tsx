@@ -228,7 +228,7 @@ const Container = styled.div.attrs<Props>(({disabled, fullScreen = false}) => ({
   className: `w-full text-neutral-600 overflow-auto ${
     fullScreen
       ? 'h-screen flex flex-col fixed top-0'
-      : 'rounded-xl border-2 border-neutral-100 hover:border-neutral-300 focus-within:ring focus-within:ring-primary active:border-primary-500 active:ring-0 '
+      : 'rounded-xl border-2 border-neutral-100 hover:border-neutral-300 focus-within:border-primary-500 focus-within:hover:border-primary-500 active:border-primary-500 '
   } ${disabled ? 'bg-neutral-100 border-neutral-200' : 'bg-neutral-0'}`,
 }))<Props>`
   ::-webkit-input-placeholder {
@@ -258,14 +258,15 @@ const Toolgroup = styled.div.attrs({
 const StyledEditorContent = styled(EditorContent)`
   flex: 1;
 
+  .ProseMirror:focus,
+  .ProseMirror:focus-visible {
+    outline: none;
+  }
+
   .ProseMirror {
     padding: 12px 16px;
     height: 100%;
     min-height: 112px;
-
-    :focus {
-      outline: none;
-    }
 
     ul {
       list-style-type: decimal;

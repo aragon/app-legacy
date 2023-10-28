@@ -123,7 +123,7 @@ export const DelegateVotingForm: React.FC<IDelegateVotingFormProps> = props => {
   return (
     <div className="flex flex-col gap-6">
       <FormGroup>
-        <p className="text-base leading-normal text-neutral-800">
+        <p className="font-semibold text-neutral-800 ft-text-base">
           {t('modal.delegation.optionsLabel')}
         </p>
         <CheckboxListItem
@@ -194,5 +194,5 @@ export const DelegateVotingForm: React.FC<IDelegateVotingFormProps> = props => {
 };
 
 const FormGroup = styled.div.attrs({
-  className: 'flex flex-col gap-3' as string,
+  className: 'flex flex-col gap-3',
 })``;

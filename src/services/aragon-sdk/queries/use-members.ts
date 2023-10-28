@@ -14,7 +14,9 @@ const fetchMembers = async (
   client?: TokenVotingClient | MultisigClient
 ): Promise<Array<string | TokenVotingMember>> => {
   invariant(client != null, 'fetchMembers: client is not defined');
-  const data = await client.methods.getMembers(params.pluginAddress);
+  const data = await client.methods.getMembers({
+    pluginAddress: params.pluginAddress,
+  });
 
   return data;
 };

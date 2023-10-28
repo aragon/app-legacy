@@ -229,7 +229,7 @@ export const ActionItemAddress: React.FC<ActionItemAddressProps> = props => {
 
         <Dropdown
           align="end"
-          className="px-0 py-2"
+          className="p-2"
           listItems={buildMenuOptions()}
           side="bottom"
           trigger={

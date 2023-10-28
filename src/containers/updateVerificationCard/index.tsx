@@ -1,19 +1,18 @@
+import {
+  AlertCard,
+  IconLinkExternal,
+  Link,
+  shortenAddress,
+} from '@aragon/ods-old';
+import {useNetwork} from 'context/network';
+import {useDaoDetailsQuery} from 'hooks/useDaoDetails';
+import {useUpdateVerification} from 'hooks/useUpdateVerification';
 import React from 'react';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
-import {
-  AlertCard,
-  Link,
-  IconLinkExternal,
-  shortenAddress,
-} from '@aragon/ods-old';
-import {htmlIn} from 'utils/htmlIn';
-import {Status, StatusProps} from './Status';
 import {CHAIN_METADATA} from 'utils/constants';
-import {useNetwork} from 'context/network';
-import {useDaoDetailsQuery} from 'hooks/useDaoDetails';
+import {htmlIn} from 'utils/htmlIn';
 import {validateAddress} from 'utils/validators';
-import {useUpdateVerification} from 'hooks/useUpdateVerification';
 import {DetailedProposal, ProposalId} from 'utils/types';
 import {DaoAction} from '@aragon/sdk-client-common';
 import {useClient} from 'hooks/useClient';

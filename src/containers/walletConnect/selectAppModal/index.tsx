@@ -1,6 +1,6 @@
 import {AlertInline, IconChevronRight, ListItemAction} from '@aragon/ods-old';
 import {SessionTypes, SignClientTypes} from '@walletconnect/types';
-import React from 'react';
+import React, {useMemo} from 'react';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 
@@ -10,6 +10,7 @@ import {useWalletConnectContext} from '../walletConnectProvider';
 import ModalHeader from 'components/modalHeader';
 import useScreen from 'hooks/useScreen';
 import {htmlIn} from 'utils/htmlIn';
+import {featureFlags} from 'utils/featureFlags';
 
 type Props = {
   onConnectNewdApp: (dApp: AllowListDApp) => void;
@@ -21,7 +22,7 @@ type Props = {
   isOpen: boolean;
 };
 
-export type AllowListDApp = SignClientTypes.Metadata & {shortName: string};
+export type AllowListDApp = SignClientTypes.Metadata & {shortName?: string};
 
 export const AllowListDApps: AllowListDApp[] = [
   {
@@ -38,12 +39,33 @@ export const AllowListDApps: AllowListDApp[] = [
   },
 ];
 
+export const enableConnectAnyDApp =
+  featureFlags.getValue('VITE_FEATURE_FLAG_CONNECT_ANY_DAPP') === 'true';
+
+if (enableConnectAnyDApp) {
+  AllowListDApps.push({
+    name: 'Connect any app',
+    shortName: 'Connect any app',
+    description: 'Connect any app',
+    url: '',
+    icons: [],
+  });
+}
+
 const SelectWCApp: React.FC<Props> = props => {
   const {t} = useTranslation();
   const {isDesktop} = useScreen();
   const {onConnectNewdApp, onSelectExistingdApp, onClose, isOpen} = props;
 
   const {sessions} = useWalletConnectContext();
+
+  const dAppList: AllowListDApp[] = useMemo(
+    () =>
+      enableConnectAnyDApp
+        ? [...AllowListDApps, ...sessions.map(session => session.peer.metadata)]
+        : AllowListDApps,
+    [sessions]
+  );
 
   /*************************************************
    *                     Render                    *
@@ -61,7 +83,8 @@ const SelectWCApp: React.FC<Props> = props => {
       />
       <Content>
         <div className="space-y-2">
-          {AllowListDApps.map(dApp => {
+          {dAppList.map(dApp => {
+            const dAppName = dApp.shortName || dApp.name;
             const filteredSession = sessions.filter(session =>
               session.peer.metadata.name
                 .toLowerCase()
@@ -69,8 +92,8 @@ const SelectWCApp: React.FC<Props> = props => {
             );
             return (
               <ListItemAction
-                key={dApp.shortName}
-                title={dApp.shortName}
+                key={dAppName}
+                title={dAppName}
                 iconLeft={parseWCIconUrl(dApp.url, dApp.icons[0])}
                 bgWhite
                 iconRight={
@@ -78,7 +101,7 @@ const SelectWCApp: React.FC<Props> = props => {
                     {filteredSession[0] && (
                       <div className="flex items-center space-x-2 text-sm font-semibold leading-normal text-success-700">
                         <div className="h-2 w-2 rounded-full bg-success-700" />
-                        <p>Connected</p>
+                        <p>{t('modal.dappConnect.dAppConnectedLabel')}</p>
                       </div>
                     )}
                     <IconChevronRight />

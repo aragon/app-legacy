@@ -24,7 +24,11 @@ import {handleClipboardActions} from 'utils/library';
 import {useAlertContext} from 'context/alert';
 import {TransactionState as ConnectionState} from 'utils/constants/misc';
 import {useWalletConnectContext} from '../walletConnectProvider';
-import {AllowListDApp} from '../selectAppModal';
+import {
+  AllowListDApp,
+  AllowListDApps,
+  enableConnectAnyDApp,
+} from '../selectAppModal';
 import {METADATA_NAME_ERROR} from '../walletConnectProvider/useWalletConnectInterceptor';
 
 type Props = {
@@ -132,10 +136,19 @@ const WCdAppValidation: React.FC<Props> = props => {
   const handleConnectDApp = useCallback(async () => {
     setConnectionStatus(ConnectionState.LOADING);
 
+    const appInAllowlist = AllowListDApps.filter(
+      dApp =>
+        dApp.name === selecteddApp?.name &&
+        selecteddApp.name !== 'Connect any app'
+    );
+
     try {
       const session = await wcConnect({
         uri,
-        metadataName: selecteddApp?.name.toLowerCase(),
+        metadataName:
+          enableConnectAnyDApp && appInAllowlist.length === 0
+            ? undefined
+            : selecteddApp?.name.toLowerCase(),
       });
       setSessionTopic(session.pairingTopic);
       setConnectionStatus(ConnectionState.SUCCESS);
@@ -174,10 +187,12 @@ const WCdAppValidation: React.FC<Props> = props => {
     return null;
   }
 
+  const dappName = selecteddApp.shortName || selecteddApp.name;
+
   return (
     <ModalBottomSheetSwitcher isOpen={isOpen} onClose={onClose}>
       <ModalHeader
-        title={selecteddApp.shortName}
+        title={dappName}
         showBackButton
         onBackButtonClicked={handleBackClick}
         {...(isDesktop ? {showCloseButton: true, onClose} : {})}
@@ -187,7 +202,7 @@ const WCdAppValidation: React.FC<Props> = props => {
           <Label
             label={t('modal.dappConnect.validation.codeInputLabel')}
             helpText={t('modal.dappConnect.validation.codeInputHelp', {
-              dappName: selecteddApp.shortName,
+              dappName,
             })}
           />
           {/* TODO: Please add validation when format of wc Code is known */}
@@ -202,6 +217,10 @@ const WCdAppValidation: React.FC<Props> = props => {
               <WalletInputLegacy
                 mode={error ? 'critical' : 'default'}
                 name={name}
+                disabled={
+                  connectionStatus === ConnectionState.LOADING ||
+                  connectionStatus === ConnectionState.SUCCESS
+                }
                 onBlur={onBlur}
                 onChange={onChange}
                 value={value ?? ''}
@@ -233,7 +252,7 @@ const WCdAppValidation: React.FC<Props> = props => {
           <AlertWrapper>
             <AlertInline
               label={t('modal.dappConnect.validation.alertSuccess', {
-                dappName: selecteddApp.shortName,
+                dappName,
               })}
               mode="success"
             />
@@ -243,7 +262,7 @@ const WCdAppValidation: React.FC<Props> = props => {
           <AlertWrapper>
             <AlertInline
               label={t('modal.dappConnect.validation.alertCriticalQRcode', {
-                dappName: selecteddApp.shortName,
+                dappName,
               })}
               mode="critical"
             />
@@ -253,7 +272,7 @@ const WCdAppValidation: React.FC<Props> = props => {
           <AlertWrapper>
             <AlertInline
               label={t('modal.dappConnect.validation.alertCriticalGeneral', {
-                dappName: selecteddApp.shortName,
+                dappName,
               })}
               mode="critical"
             />
