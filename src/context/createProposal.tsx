@@ -19,7 +19,7 @@ import {
   SupportedNetworksArray,
   SupportedVersion,
 } from '@aragon/sdk-client-common';
-import {hexToBytes} from '@aragon/sdk-common';
+import {hexToBytes} from '@aragon/sdk-client-common';
 import {useQueryClient} from '@tanstack/react-query';
 import differenceInSeconds from 'date-fns/differenceInSeconds';
 import {ethers} from 'ethers';
