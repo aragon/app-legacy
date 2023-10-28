@@ -300,9 +300,7 @@ const CreateProposalWrapper: React.FC<Props> = ({
             actions.push(
               Promise.resolve(
                 client.encoding.daoUpdateAction(daoDetails?.address, {
-                  previousVersion: action.inputs.version
-                    .split('.')
-                    .map(Number) as [number, number, number],
+                  previousVersion: versions as [number, number, number],
                   daoFactoryAddress:
                     LIVE_CONTRACTS[action.inputs.version as SupportedVersion][
                       translatedNetwork

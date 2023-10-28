@@ -31,6 +31,7 @@ import {CreateProposalFormData} from 'utils/types';
 import {PluginTypes, usePluginClient} from 'hooks/usePluginClient';
 import {useDaoDetailsQuery} from 'hooks/useDaoDetails';
 import {usePluginAvailableVersions} from 'hooks/usePluginAvailableVersions';
+import {usePreparedPlugin} from 'hooks/usePreparedPlugins';
 
 type UpdateContextType = {
   /** Prepares the creation data and awaits user confirmation to start process */
@@ -142,8 +143,6 @@ const UpdateProvider: React.FC<{children: ReactElement}> = ({children}) => {
   const pluginClient = usePluginClient(pluginType);
   const {data: pluginAvailableVersions, isLoading: availableVersionLoading} =
     usePluginAvailableVersions(pluginType, daoDetails?.address as string);
-
-  console.log('pluginAvailableVersions', pluginAvailableVersions);
 
   const pluginSelectedVersion = getValues('pluginSelectedVersion');
 
