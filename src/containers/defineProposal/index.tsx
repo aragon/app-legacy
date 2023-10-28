@@ -19,6 +19,7 @@ import {UpdateListItem} from 'containers/updateListItem/updateListItem';
 import {useParams} from 'react-router-dom';
 import {VersionSelectionMenu} from 'containers/versionSelectionMenu/versionSelectionMenu';
 import {useUpdateContext} from 'context/update';
+import {Loading} from 'components/temporary';
 
 const DefineProposal: React.FC = () => {
   const {t} = useTranslation();
@@ -57,6 +58,7 @@ const DefineProposal: React.FC = () => {
         });
         e?.stopPropagation();
       },
+      disabled: !osxAvailableVersions?.size,
     },
     {
       id: 'plugin',
@@ -86,6 +88,7 @@ const DefineProposal: React.FC = () => {
         });
         e?.stopPropagation();
       },
+      disabled: !pluginAvailableVersions?.size,
     },
   ];
 
@@ -120,6 +123,10 @@ const DefineProposal: React.FC = () => {
     }
   }, [setValue, type]);
 
+  if (!pluginSelectedVersion) {
+    return <Loading />;
+  }
+
   if (type === 'os-update') {
     return (
       <UpdateContainer>
@@ -130,24 +137,27 @@ const DefineProposal: React.FC = () => {
             control={control}
             render={({field: {onChange, value}}) => (
               <>
-                {UpdateItems.map((data, index) => (
-                  <UpdateListItem
-                    key={index}
-                    {...data}
-                    type={value?.[data.id] ? 'active' : 'default'}
-                    multiSelect
-                    onClick={() =>
-                      onChange({
-                        ...value,
-                        [data.id]: !value?.[data.id],
-                      })
-                    }
-                    onClickActionPrimary={(e: React.MouseEvent) => {
-                      e?.stopPropagation();
-                      handlePreparePlugin(data.id);
-                    }}
-                  />
-                ))}
+                {UpdateItems.map((data, index) => {
+                  if (!data.disabled)
+                    return (
+                      <UpdateListItem
+                        key={index}
+                        {...data}
+                        type={value?.[data.id] ? 'active' : 'default'}
+                        multiSelect
+                        onClick={() => {
+                          onChange({
+                            ...value,
+                            [data.id]: !value?.[data.id],
+                          });
+                        }}
+                        onClickActionPrimary={(e: React.MouseEvent) => {
+                          e?.stopPropagation();
+                          handlePreparePlugin(data.id);
+                        }}
+                      />
+                    );
+                })}
               </>
             )}
           />

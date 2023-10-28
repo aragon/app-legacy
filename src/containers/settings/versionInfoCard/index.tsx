@@ -36,9 +36,9 @@ export const VersionInfoCard: React.FC<{
     SupportedNetworksArray.includes(translatedNetwork)
   ) {
     OSxAddress =
-      LIVE_CONTRACTS[
-        `${versions?.[0]}.${versions?.[1]}.${versions?.[2]}` as SupportedVersion
-      ]?.[translatedNetwork]?.daoFactoryAddress;
+      LIVE_CONTRACTS[versions?.join('.') as SupportedVersion]?.[
+        translatedNetwork
+      ]?.daoFactoryAddress;
   }
 
   // TODO: generate the links
@@ -65,9 +65,7 @@ export const VersionInfoCard: React.FC<{
           <FlexibleDefinition>
             <Link
               label={
-                !isLoading
-                  ? `Aragon OSx v${versions?.[0]}.${versions?.[1]}.${versions?.[2]}`
-                  : 'Loading...'
+                !isLoading ? `Aragon OSx v${versions?.join('.')}` : 'Loading...'
               }
               description={OSxAddress ? shortenAddress(OSxAddress) : undefined}
               type="primary"
