@@ -56,12 +56,12 @@ export const usePluginAvailableVersions = (
   ) {
     PluginRepoAddress =
       pluginType === 'multisig.plugin.dao.eth'
-        ? LIVE_CONTRACTS[
-            `${versions?.[0]}.${versions?.[1]}.${versions?.[2]}` as SupportedVersion
-          ]?.[translatedNetwork].multisigRepoAddress
-        : LIVE_CONTRACTS[
-            `${versions?.[0]}.${versions?.[1]}.${versions?.[2]}` as SupportedVersion
-          ]?.[translatedNetwork].tokenVotingRepoAddress;
+        ? LIVE_CONTRACTS[versions?.join('.') as SupportedVersion]?.[
+            translatedNetwork
+          ].multisigRepoAddress
+        : LIVE_CONTRACTS[versions?.join('.') as SupportedVersion]?.[
+            translatedNetwork
+          ].tokenVotingRepoAddress;
   }
 
   return useQuery<pluginAvailableVersionsType | null>({

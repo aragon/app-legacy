@@ -32,6 +32,7 @@ import {PluginTypes, usePluginClient} from 'hooks/usePluginClient';
 import {useDaoDetailsQuery} from 'hooks/useDaoDetails';
 import {usePluginAvailableVersions} from 'hooks/usePluginAvailableVersions';
 import {usePreparedPlugin} from 'hooks/usePreparedPlugins';
+import {useProtocolVersions} from 'hooks/useDaoVersions';
 
 type UpdateContextType = {
   /** Prepares the creation data and awaits user confirmation to start process */
@@ -143,6 +144,7 @@ const UpdateProvider: React.FC<{children: ReactElement}> = ({children}) => {
   const pluginClient = usePluginClient(pluginType);
   const {data: pluginAvailableVersions, isLoading: availableVersionLoading} =
     usePluginAvailableVersions(pluginType, daoDetails?.address as string);
+  const {data: versions, isLoading} = useProtocolVersions(daoDetails?.address);
 
   const pluginSelectedVersion = getValues('pluginSelectedVersion');
 
@@ -164,19 +166,27 @@ const UpdateProvider: React.FC<{children: ReactElement}> = ({children}) => {
     const OSXVersions = new Map();
 
     Object.keys(SupportedVersion).forEach(key => {
-      OSXVersions.set(SupportedVersion[key as keyof typeof SupportedVersion], {
-        version: SupportedVersion[
-          key as keyof typeof SupportedVersion
-        ] as string,
-        ...(key === 'LATEST' && {isLatest: true}),
-      } as OSX);
+      if (
+        Number(SupportedVersion[key as keyof typeof SupportedVersion]) >=
+        Number(versions?.join('.'))
+      )
+        OSXVersions.set(
+          SupportedVersion[key as keyof typeof SupportedVersion],
+          {
+            version: SupportedVersion[
+              key as keyof typeof SupportedVersion
+            ] as string,
+            ...(key === 'LATEST' && {isLatest: true}),
+          } as OSX
+        );
 
-      if (key === 'LATEST')
+      if (key === 'LATEST') {
         setValue('osSelectedVersion', {
           version: SupportedVersion[
             key as keyof typeof SupportedVersion
           ] as string,
         });
+      }
     });
 
     const pluginVersions = new Map();
@@ -187,24 +197,28 @@ const UpdateProvider: React.FC<{children: ReactElement}> = ({children}) => {
       });
 
       release.builds.map((build, buildIndex) => {
-        pluginVersions.set(`${release.release}.${build.build}`, {
+        if (
+          release.release >= daoDetails!.plugins[0].release &&
+          build.build > daoDetails!.plugins[0].build
+        )
+          pluginVersions.set(`${release.release}.${build.build}`, {
+            version: {
+              build: build.build,
+              release: release.release,
+            },
+            isPrepared: false,
+            ...(releaseIndex === pluginAvailableVersions?.releases.length - 1 &&
+              buildIndex === release.builds.length - 1 && {
+                isLatest: true,
+              }),
+          });
+
+        setValue('pluginSelectedVersion', {
           version: {
-            build: build.build,
+            build: release.builds[release.builds.length - 1].build,
             release: release.release,
           },
-          isPrepared: false,
-          ...(releaseIndex === pluginAvailableVersions?.releases.length - 1 &&
-            buildIndex === release.builds.length - 1 && {
-              isLatest: true,
-            }),
         });
-      });
-
-      setValue('pluginSelectedVersion', {
-        version: {
-          build: release.builds[release.builds.length - 1].build,
-          release: release.release,
-        },
       });
     });
 
@@ -216,7 +230,13 @@ const UpdateProvider: React.FC<{children: ReactElement}> = ({children}) => {
       type: 'setOSXAvailableVersions',
       payload: OSXVersions,
     });
-  }, [availableVersionLoading, pluginAvailableVersions, setValue]);
+  }, [
+    availableVersionLoading,
+    daoDetails,
+    pluginAvailableVersions,
+    setValue,
+    versions,
+  ]);
 
   /*************************************************
    *                   Handlers                    *
@@ -343,6 +363,13 @@ const UpdateProvider: React.FC<{children: ReactElement}> = ({children}) => {
             break;
           case PrepareUpdateStep.DONE:
             const pluginListTemp = state.pluginList;
+            localStorage.setItem(
+              'preparePlugin',
+              JSON.stringify({
+                daoAddress: daoDetails?.address,
+                ...step,
+              })
+            );
             pluginListTemp?.set(
               `${step.versionTag.release}.${step.versionTag.build}`,
               {

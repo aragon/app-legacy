@@ -78,22 +78,22 @@ export const VersionSelectionMenu: React.FC<CheckboxListItemProps> = ({
       subtitle={t('update.modalVersion.desc')}
     >
       <div className="grid gap-y-3 px-2 py-3">
-        {showModal.type === 'os' ? (
+        {showModal.type === 'os' && (
           <Controller
             name="osSelectedVersion"
-            rules={{required: 'Validate'}}
             control={control}
-            render={({field: {onChange, value}}) => (
+            render={({field: {onChange, value: value23}}) => (
               <>
                 <VersionListContainer>
                   {osVersionList.map((data, index) => {
-                    console.log('value23', value);
                     return (
                       <UpdateListItem
                         {...data}
                         key={index}
                         type={
-                          value?.version === data.version ? 'active' : 'default'
+                          value23?.version === data.version
+                            ? 'active'
+                            : 'default'
                         }
                         LinkLabel={t('update.item.releaseNotesLabel')}
                         onClick={() =>
@@ -109,7 +109,9 @@ export const VersionSelectionMenu: React.FC<CheckboxListItemProps> = ({
               </>
             )}
           />
-        ) : (
+        )}
+
+        {showModal.type === 'plugin' && (
           <Controller
             name="pluginSelectedVersion"
             rules={{required: 'Validate'}}

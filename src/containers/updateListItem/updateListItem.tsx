@@ -79,6 +79,7 @@ export const UpdateListItem: React.FC<CheckboxListItemProps> = ({
               <ButtonText
                 label={buttonPrimaryLabel}
                 mode="primary"
+                disabled={disabled}
                 size="medium"
                 onClick={onClickActionPrimary}
               />
@@ -88,6 +89,7 @@ export const UpdateListItem: React.FC<CheckboxListItemProps> = ({
                 label={buttonSecondaryLabel}
                 mode="secondary"
                 bgWhite
+                disabled={disabled}
                 size="medium"
                 onClick={onClickActionSecondary}
               />
