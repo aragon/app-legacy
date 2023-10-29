@@ -351,29 +351,24 @@ const CreateProposalWrapper: React.FC<Props> = ({
           break;
         }
 
-        // case 'plugin_update': {
-        //   if (
-        //     translatedNetwork !== 'unsupported' &&
-        //     SupportedNetworksArray.includes(translatedNetwork) &&
-        //     daoDetails?.address &&
-        //     versions
-        //   ) {
-        //     actions.push(
-        //       Promise.resolve(
-        //         client.encoding.daoUpdateAction(daoDetails?.address, {
-        //           previousVersion: action.inputs.version
-        //             .split('.')
-        //             .map(Number) as [number, number, number],
-        //           daoFactoryAddress:
-        //             LIVE_CONTRACTS[action.inputs.version as SupportedVersion][
-        //               translatedNetwork
-        //             ].daoFactoryAddress,
-        //         })
-        //       )
-        //     );
-        //   }
-        //   break;
-        // }
+        case 'plugin_update': {
+          const daoActionsArray = client.encoding.applyUpdateAction(
+            daoDetails?.address as string,
+            {
+              permissions: [],
+              initData: new Uint8Array([]),
+              helpers: [],
+              versionTag: action.inputs.versionTag,
+              pluginRepo: '0x2c4690b8be39adad4f15a69340d5035ac6e53eef',
+              pluginAddress: '0xf2205ed1dd3b28c44c9dfc3dc4855fa879fb2ea4',
+            }
+          );
+          console.log('view', daoActionsArray);
+          daoActionsArray.map(daoAction => {
+            actions.push(Promise.resolve(daoAction));
+          });
+          break;
+        }
       }
     }
 

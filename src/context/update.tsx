@@ -33,6 +33,7 @@ import {useDaoDetailsQuery} from 'hooks/useDaoDetails';
 import {usePluginAvailableVersions} from 'hooks/usePluginAvailableVersions';
 import {usePreparedPlugin} from 'hooks/usePreparedPlugins';
 import {useProtocolVersions} from 'hooks/useDaoVersions';
+import {compareVersions} from 'utils/library';
 
 type UpdateContextType = {
   /** Prepares the creation data and awaits user confirmation to start process */
@@ -167,8 +168,10 @@ const UpdateProvider: React.FC<{children: ReactElement}> = ({children}) => {
 
     Object.keys(SupportedVersion).forEach(key => {
       if (
-        Number(SupportedVersion[key as keyof typeof SupportedVersion]) >=
-        Number(versions?.join('.'))
+        compareVersions(
+          SupportedVersion[key as keyof typeof SupportedVersion],
+          versions?.join('.') as string
+        )
       )
         OSXVersions.set(
           SupportedVersion[key as keyof typeof SupportedVersion],
@@ -420,6 +423,12 @@ const UpdateProvider: React.FC<{children: ReactElement}> = ({children}) => {
   /*************************************************
    *                    Render                     *
    *************************************************/
+
+  const buttonLabels = {
+    [TransactionState.SUCCESS]: t('TransactionModal.goToProposal'),
+    [TransactionState.WAITING]: t('update.modalPreparePlugin.ctaLabel'),
+  };
+
   return (
     <PrepareUpdateContext.Provider
       value={{
@@ -441,8 +450,7 @@ const UpdateProvider: React.FC<{children: ReactElement}> = ({children}) => {
         tokenPrice={tokenPrice}
         title={t('update.modalPreparePlugin.title')}
         subtitle={t('update.modalPreparePlugin.desc')}
-        buttonLabel={t('update.modalPreparePlugin.ctaLabel')}
-        buttonLabelSuccess={t('TransactionModal.goToProposal')}
+        buttonStateLabels={buttonLabels}
         disabledCallback={disableActionButton}
       />
     </PrepareUpdateContext.Provider>

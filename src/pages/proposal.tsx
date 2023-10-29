@@ -758,7 +758,7 @@ export const Proposal: React.FC = () => {
           )}
 
           {/* @todo: Add isUpdateProposal check once it's developed */}
-          {proposal &&
+          {/* {proposal &&
             featureFlags.getValue('VITE_FEATURE_FLAG_OSX_UPDATES') ===
               'true' && (
               <UpdateVerificationCard
@@ -766,7 +766,7 @@ export const Proposal: React.FC = () => {
                 actions={proposal.actions}
                 proposalId={proposalId}
               />
-            )}
+            )} */}
 
           {votingSettings && isGaslessProposal(proposal) ? (
             <GaslessVotingTerminal
