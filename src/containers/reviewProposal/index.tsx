@@ -245,7 +245,7 @@ const ReviewProposal: React.FC<ReviewProposalProps> = ({
             </>
           )}
 
-          <UpdateVerificationCard actions={values.actions} />
+          {/* <UpdateVerificationCard actions={values.actions} /> */}
 
           {votingSettings && (
             <VotingTerminal

@@ -1011,3 +1011,27 @@ export function clearWagmiCache(): void {
   localStorage.removeItem('wagmi.store');
   localStorage.removeItem('wagmi.wallet');
 }
+
+/**
+ * Compares two version strings and returns a number indicating their order.
+ * @param version1 - The first version string to compare.
+ * @param version2 - The second version string to compare.
+ * @returns A number indicating the order of the version strings:
+ *          - 1 if version1 is greater than version2
+ *          - -1 if version1 is less than version2
+ *          - 0 if version1 is equal to version2
+ */
+export function compareVersions(version1: string, version2: string): number {
+  const v1 = version1.split('.').map(Number);
+  const v2 = version2.split('.').map(Number);
+
+  for (let i = 0; i < v1.length; i++) {
+    if (v1[i] > v2[i]) {
+      return 1;
+    } else if (v1[i] < v2[i]) {
+      return -1;
+    }
+  }
+
+  return 0;
+}
