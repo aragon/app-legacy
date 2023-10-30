@@ -522,7 +522,7 @@ export const Proposal: React.FC = () => {
     (address == null || // wallet disconnected
       (voted === false && canVote === true) || // haven't voted and can vote
       (isTokenVotingPlugin && voted && canRevote === true) || // voted but vote replacement enabled
-      // can vote but no voting power (voted should never)
+      // can vote but no voting power (voted should status should never be true if shouldDisplayDelegationVotingGating)
       (voted === false && shouldDisplayDelegationVoteGating === true));
 
   const handleApprovalClick = useCallback(
