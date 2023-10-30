@@ -71,7 +71,7 @@ const ProposalStepper: React.FC<ProposalStepperType> = ({
     };
 
     validateActions();
-  }, [formActions, actions, errors, network]);
+  }, [formActions, actions, errors, errors?.actions?.length, network]);
 
   /*************************************************
    *                    Render                     *
