@@ -52,34 +52,17 @@ const Committee = () => {
         >
           <Dl>
             <Dt>{t('labels.review.eligableMembers')}</Dt>
-            <Dd>
-              {isCustomToken
-                ? t('createDAO.step3.tokenMembership')
-                : t('createDAO.step3.multisigMembership')}
-            </Dd>
+            <Dd>{t('createDAO.step3.multisigMembership')}</Dd>
           </Dl>
           <Dl>
             <Dt>{t('labels.review.members')}</Dt>
             <Dd>
-              {isCustomToken ? (
-                <Link
-                  label={t('createDAO.review.distributionLink', {
-                    count: committee?.length,
-                  })}
-                  onClick={() => open('committeeMembers')}
-                />
-              ) : (
-                <Link
-                  label={t('labels.review.distributionLinkLabel')}
-                  href={
-                    CHAIN_METADATA[network].explorer +
-                      '/token/tokenholderchart/' +
-                      tokenAddress?.address || committee
-                  }
-                  iconRight={<IconFeedback />}
-                  external
-                />
-              )}
+              <Link
+                label={t('createDAO.review.distributionLink', {
+                  count: committee?.length,
+                })}
+                onClick={() => open('committeeMembers')}
+              />
             </Dd>
           </Dl>
           <Dl>
