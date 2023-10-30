@@ -206,7 +206,7 @@ export async function actionsAreValid(
   if (contextActions.length !== formActions?.length) return false;
 
   // top level action errors
-  if (errors.actions.length > 0) return false;
+  if (errors?.actions?.length > 0) return false;
 
   let isValid = true;
 
