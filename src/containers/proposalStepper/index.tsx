@@ -52,7 +52,7 @@ const ProposalStepper: React.FC<ProposalStepperType> = ({
   const {network} = useNetwork();
   const {trigger, control, getValues, setValue} = useFormContext();
   const {address, isConnected} = useWallet();
-  const [isActionsValid, setIsActionsValid] = useState(false);
+  const [areActionsValid, setAreActionsValid] = useState(false);
 
   const formActions = useWatch({name: 'actions'});
   const osUpdate = useWatch({name: 'osUpdate'});
@@ -67,7 +67,7 @@ const ProposalStepper: React.FC<ProposalStepperType> = ({
         errors,
         network
       );
-      setIsActionsValid(isValid);
+      setAreActionsValid(isValid);
     };
 
     validateActions();
@@ -152,7 +152,7 @@ const ProposalStepper: React.FC<ProposalStepperType> = ({
       <Step
         wizardTitle={t('newProposal.configureActions.heading')}
         wizardDescription={t('newProposal.configureActions.description')}
-        isNextButtonDisabled={!isActionsValid}
+        isNextButtonDisabled={!areActionsValid}
         {...(type === 'os-update' && {skipStep: true, hideWizard: true})}
         onNextButtonDisabledClicked={() => {
           trigger('actions');
