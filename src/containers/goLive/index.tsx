@@ -5,7 +5,12 @@ import {useFormContext} from 'react-hook-form';
 // import {DAOFactory} from 'typechain';
 // TODO reintroduce this by adding back the postInstall script in packages.json
 // that executes the generate-abis-and-types command.
-import {AlertCard, Breadcrumb, ButtonText, IconChevronRight} from '@aragon/ods';
+import {
+  AlertCard,
+  Breadcrumb,
+  ButtonText,
+  IconChevronRight,
+} from '@aragon/ods-old';
 import {useNavigate} from 'react-router-dom';
 
 import Blockchain from './blockchain';
@@ -28,19 +33,19 @@ export const GoLiveHeader: React.FC = () => {
   };
 
   return (
-    <div className="bg-ui-0 px-2 pb-3 pt-2 tablet:rounded-xl tablet:p-3 desktop:p-6 desktop:pt-3">
-      <div className="desktop:hidden">
+    <div className="bg-neutral-0 px-4 pb-6 pt-4 md:rounded-xl md:p-6 xl:p-12 xl:pt-6">
+      <div className="xl:hidden">
         <Breadcrumb
           crumbs={{label: t('createDAO.title'), path: Landing}}
           onClick={clickHandler}
         />
       </div>
       <div className="flex justify-between">
-        <div className="w-full pt-3">
-          <h1 className="text-3xl font-bold text-ui-800">
+        <div className="w-full pt-6">
+          <h1 className="text-4xl font-semibold leading-tight text-neutral-800">
             {t('createDAO.review.title')}
           </h1>
-          <p className="mt-2 text-lg text-ui-600">
+          <p className="mt-4 text-xl leading-normal text-neutral-600">
             {t('createDAO.review.description')}
           </p>
         </div>
@@ -102,7 +107,7 @@ export const GoLiveFooter: React.FC = () => {
   };
 
   return (
-    <div className="flex justify-center pt-3">
+    <div className="flex justify-center pt-6">
       <div onClick={showInvalidFields}>
         <ButtonText
           size="large"
@@ -119,9 +124,9 @@ export const GoLiveFooter: React.FC = () => {
 export default GoLive;
 
 const Container = styled.div.attrs({
-  className: 'tablet:mx-auto tablet:w-3/4 space-y-5',
+  className: 'md:mx-auto md:w-3/4 space-y-10',
 })``;
 
 const ImageContainer = styled.img.attrs({
-  className: 'w-25 hidden tablet:block',
+  className: 'w-[200px] hidden md:block',
 })``;

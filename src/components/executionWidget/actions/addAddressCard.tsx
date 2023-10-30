@@ -1,4 +1,4 @@
-import {ListItemAddress} from '@aragon/ods';
+import {ListItemAddress} from '@aragon/ods-old';
 import React, {useCallback, useEffect, useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
@@ -88,5 +88,5 @@ export const AddAddressCard: React.FC<{
 };
 
 const Container = styled.div.attrs({
-  className: 'bg-ui-50 border border-t-0 border-ui-100 space-y-1 p-2',
+  className: 'bg-neutral-50 border border-t-0 border-neutral-100 space-y-2 p-4',
 })``;

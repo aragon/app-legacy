@@ -5,7 +5,7 @@ import {
   NumberInput,
   TextInput,
   WalletInputLegacy,
-} from '@aragon/ods';
+} from '@aragon/ods-old';
 import {t} from 'i18next';
 import React, {useCallback, useEffect, useMemo, useState} from 'react';
 import {
@@ -37,7 +37,6 @@ const extractTupleValues = (
   formData: Record<string, unknown>
 ) => {
   const tuple: unknown[] = [];
-  console.log('formData', formData);
 
   input.components?.map(component => {
     if (component.type !== 'tuple') {
@@ -68,7 +67,7 @@ const InputForm: React.FC<InputFormProps> = ({
   const [selectedAction, selectedSC, sccActions]: [
     SmartContractAction,
     SmartContract,
-    Record<string, Record<string, Record<string, unknown>>>
+    Record<string, Record<string, Record<string, unknown>>>,
   ] = useWatch({
     name: ['selectedAction', 'selectedSC', 'sccActions'],
   });
@@ -162,33 +161,37 @@ const InputForm: React.FC<InputFormProps> = ({
   ]);
 
   return (
-    <div className="min-h-full bg-ui-50 desktop:bg-white desktop:p-6">
-      <div className="items-baseline space-x-3 desktop:flex">
+    <div className="min-h-full bg-neutral-50 xl:bg-neutral-0 xl:p-12">
+      <div className="items-baseline space-x-6 xl:flex">
         <ActionName>{selectedAction.name}</ActionName>
-        <div className="hidden items-center space-x-1 text-primary-600 desktop:flex">
-          <p className="text-sm font-bold text-primary-500">
+        <div className="hidden items-center space-x-2 text-primary-600 xl:flex">
+          <p className="text-sm font-semibold leading-normal text-primary-500">
             {selectedSC.name}
           </p>
           <IconSuccess />
         </div>
       </div>
       <ActionDescription>{selectedAction.notice}</ActionDescription>
-      <div className="mt-1 flex items-center space-x-1 text-primary-600 desktop:hidden">
-        <p className="text-sm font-bold text-primary-500">{selectedSC.name}</p>
+      <div className="mt-2 flex items-center space-x-2 text-primary-600 xl:hidden">
+        <p className="text-sm font-semibold leading-normal text-primary-500">
+          {selectedSC.name}
+        </p>
         <IconSuccess />
       </div>
       {actionInputs.length > 0 ? (
-        <div className="mt-5 space-y-2 rounded-xl border border-ui-100 bg-white p-3 shadow-100 desktop:bg-ui-50">
+        <div className="mt-10 space-y-4 rounded-xl border border-neutral-100 bg-neutral-0 p-6 shadow-neutral xl:bg-neutral-50">
           {actionInputs.map(input => (
             <div key={input.name}>
-              <div className="text-base font-bold capitalize text-ui-800">
+              <div className="text-base font-semibold capitalize leading-normal text-neutral-800">
                 {input.name}
-                <span className="ml-0.5 text-sm normal-case">
+                <span className="ml-1 text-sm normal-case leading-normal">
                   ({input.type})
                 </span>
               </div>
-              <div className="mb-1.5 mt-0.5">
-                <span className="text-ui-600 ft-text-sm">{input.notice}</span>
+              <div className="mb-3 mt-1">
+                <span className="text-neutral-600 ft-text-sm">
+                  {input.notice}
+                </span>
               </div>
               <ComponentForType
                 key={`${selectedSC.address}.${selectedAction.name}.${input.name}`}
@@ -217,7 +220,9 @@ const InputForm: React.FC<InputFormProps> = ({
 };
 
 const classifyInputType = (inputName: string) => {
-  if (inputName.includes('int') && inputName.includes('[]') === false) {
+  if (inputName.includes('uint') && inputName.includes('[]') === false) {
+    return 'uint';
+  } else if (inputName.includes('int') && inputName.includes('[]') === false) {
     return 'int';
   } else return inputName;
 };
@@ -252,6 +257,8 @@ export const ComponentForType: React.FC<ComponentForTypeProps> = ({
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  console.log('defaultValue', defaultValue);
 
   // Check if we need to add "index" kind of variable to the "name"
   switch (classifyInputType(input.type)) {
@@ -304,12 +311,30 @@ export const ComponentForType: React.FC<ComponentForTypeProps> = ({
         />
       );
 
-    case 'int':
-    case 'uint8':
-    case 'int8':
-    case 'uint32':
-    case 'int32':
-    case 'uint256':
+    case 'bool':
+      return (
+        <Controller
+          defaultValue=""
+          name={formName}
+          render={({field: {name, value, onBlur, onChange}}) => (
+            <TextInput
+              name={name}
+              onBlur={onBlur}
+              onChange={onChange}
+              placeholder={`${input.name} (${input.type})`}
+              mode={
+                !isValid && value !== 'true' && value !== 'false'
+                  ? 'critical'
+                  : 'default'
+              }
+              value={value}
+              disabled={disabled}
+            />
+          )}
+        />
+      );
+
+    case 'uint':
       return (
         <Controller
           defaultValue=""
@@ -320,7 +345,31 @@ export const ComponentForType: React.FC<ComponentForTypeProps> = ({
               onBlur={onBlur}
               onChange={onChange}
               placeholder="0"
-              includeDecimal
+              disabled={disabled}
+              mode={
+                !isValid &&
+                (!value || value < 0) &&
+                input.name !== getDefaultPayableAmountInputName(t)
+                  ? 'critical'
+                  : 'default'
+              }
+              value={value}
+            />
+          )}
+        />
+      );
+
+    case 'int':
+      return (
+        <Controller
+          defaultValue=""
+          name={formName}
+          render={({field: {name, value, onBlur, onChange}}) => (
+            <NumberInput
+              name={name}
+              onBlur={onBlur}
+              onChange={onChange}
+              placeholder="0"
               disabled={disabled}
               mode={
                 !isValid &&
@@ -340,15 +389,15 @@ export const ComponentForType: React.FC<ComponentForTypeProps> = ({
         return (
           <>
             {input.components?.map((component, index) => (
-              <div key={component.name} className="ml-3 mt-2">
-                <div className="text-base font-bold capitalize text-ui-800">
+              <div key={component.name} className="ml-6 mt-4">
+                <div className="text-base font-semibold capitalize leading-normal text-neutral-800">
                   {component.name}
-                  <span className="ml-0.5 text-sm normal-case">
+                  <span className="ml-1 text-sm normal-case leading-normal">
                     ({component.type})
                   </span>
                 </div>
-                <div className="mb-1.5 mt-0.5">
-                  <span className="text-ui-600 ft-text-sm">
+                <div className="mb-3 mt-1">
+                  <span className="text-neutral-600 ft-text-sm">
                     {component.notice}
                   </span>
                 </div>
@@ -361,6 +410,11 @@ export const ComponentForType: React.FC<ComponentForTypeProps> = ({
                   }
                   disabled={disabled}
                   isValid={isValid}
+                  defaultValue={
+                    defaultValue
+                      ? (defaultValue as Array<unknown>)[index]
+                      : undefined
+                  }
                 />
               </div>
             ))}
@@ -371,7 +425,7 @@ export const ComponentForType: React.FC<ComponentForTypeProps> = ({
           {Object.entries(input.value as {}).map((value, index) => {
             return (
               <div key={index}>
-                <div className="mb-1.5 text-base font-bold capitalize text-ui-800">
+                <div className="mb-3 text-base font-semibold capitalize leading-normal text-neutral-800">
                   {value[0]}
                 </div>
                 <ComponentForType
@@ -391,17 +445,20 @@ export const ComponentForType: React.FC<ComponentForTypeProps> = ({
         <Controller
           defaultValue=""
           name={formName}
-          render={({field: {name, value, onBlur, onChange}}) => (
-            <TextInput
-              name={name}
-              onBlur={onBlur}
-              onChange={onChange}
-              placeholder={`${input.name} (${input.type})`}
-              mode={!isValid && !value ? 'critical' : 'default'}
-              value={value}
-              disabled={disabled}
-            />
-          )}
+          render={({field: {name, value, onBlur, onChange}}) => {
+            console.log('defaultValue->', value, name);
+            return (
+              <TextInput
+                name={name}
+                onBlur={onBlur}
+                onChange={onChange}
+                placeholder={`${input.name} (${input.type})`}
+                mode={!isValid && !value ? 'critical' : 'default'}
+                value={value}
+                disabled={disabled}
+              />
+            );
+          }}
         />
       );
   }
@@ -437,17 +494,12 @@ export function FormlessComponentForType({
         />
       );
 
+    case 'uint':
     case 'int':
-    case 'uint8':
-    case 'int8':
-    case 'uint32':
-    case 'int32':
-    case 'uint256':
       return (
         <NumberInput
           name={input.name}
           placeholder="0"
-          includeDecimal
           disabled={disabled}
           value={input.value as string}
         />
@@ -458,8 +510,8 @@ export function FormlessComponentForType({
         return (
           <>
             {input.components?.map(component => (
-              <div key={component.name}>
-                <div className="mb-1.5 text-base font-bold capitalize text-ui-800">
+              <div key={component.name} className="ml-6">
+                <div className="mb-3 text-base font-semibold capitalize leading-normal text-neutral-800">
                   {input.name}
                 </div>
                 <FormlessComponentForType
@@ -474,18 +526,20 @@ export function FormlessComponentForType({
       return (
         <>
           {Object.entries(input.value as {}).map((value, index) => {
-            return (
-              <div key={index}>
-                <div className="mb-1.5 text-base font-bold capitalize text-ui-800">
-                  {value[0]}
+            if (Number.isNaN(parseInt(value[0]))) {
+              return (
+                <div key={index} className="ml-6">
+                  <div className="mb-3 text-base font-semibold capitalize leading-normal text-neutral-800">
+                    {value[0]}
+                  </div>
+                  <FormlessComponentForType
+                    key={index}
+                    input={{value: value[1], type: typeof value[1]} as Input}
+                    disabled={disabled}
+                  />
                 </div>
-                <FormlessComponentForType
-                  key={index}
-                  input={{value: value[1], type: typeof value[1]} as Input}
-                  disabled={disabled}
-                />
-              </div>
-            );
+              );
+            }
           })}
         </>
       );
@@ -525,16 +579,17 @@ export function ComponentForTypeWithFormProvider({
 }
 
 const ActionName = styled.p.attrs({
-  className: 'text-lg font-bold text-ui-800 capitalize truncate',
+  className:
+    'text-xl leading-normal font-semibold text-neutral-800 capitalize truncate',
 })``;
 
 const ActionDescription = styled.p.attrs({
-  className: 'mt-1 text-sm text-ui-600',
+  className: 'mt-2 text-sm leading-normal text-neutral-600',
 })``;
 
 const HStack = styled.div.attrs({
   className:
-    'flex justify-between items-center space-x-3 mt-5 ft-text-base mb-1',
+    'flex justify-between items-center space-x-6 mt-10 ft-text-base mb-2',
 })``;
 
 export default InputForm;

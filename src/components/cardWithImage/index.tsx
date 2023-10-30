@@ -29,25 +29,25 @@ const CardWithImage: React.FC<CardWithImageProps> = ({
 export default CardWithImage;
 
 const Container = styled.div.attrs({
-  className: 'flex-1 p-3 rounded-xl bg-ui-0 mx-1 mb-3 desktop:m-0',
+  className: 'flex-1 p-6 rounded-xl bg-neutral-0 mx-2 mb-6 xl:m-0',
 })``;
 
 const ImageContainer = styled.div.attrs({
-  className: 'mb-2 rounded-xl flex justify-center bg-ui-50',
+  className: 'mb-4 rounded-xl flex justify-center bg-neutral-50',
 })``;
 
 const VStack = styled.div.attrs({
-  className: 'space-y-0.25',
+  className: 'space-y-0.5',
 })``;
 
 const Caption = styled.div.attrs({
-  className: 'text-sm text-ui-500',
+  className: 'text-sm leading-normal text-neutral-500',
 })``;
 
 const Title = styled.div.attrs({
-  className: 'font-bold text-ui-800',
+  className: 'font-semibold text-neutral-800',
 })``;
 
 const Subtitle = styled.div.attrs({
-  className: 'text-sm text-ui-600',
+  className: 'text-sm leading-normal text-neutral-600',
 })``;

@@ -1,13 +1,21 @@
-import {useReactiveVar} from '@apollo/client';
 import {
   CreateMajorityVotingProposalParams,
+  CreateMultisigProposalParams,
+  MajorityVotingProposalSettings,
   ProposalCreationSteps,
+  VoteValues,
   VotingMode,
   VotingSettings,
 } from '@aragon/sdk-client';
-import {DaoAction, ProposalMetadata} from '@aragon/sdk-client-common';
+import {
+  DaoAction,
+  ProposalMetadata,
+  ProposalStatus,
+} from '@aragon/sdk-client-common';
+import {useQueryClient} from '@tanstack/react-query';
+import differenceInSeconds from 'date-fns/fp/differenceInSeconds';
 import {parseUnits} from 'ethers/lib/utils';
-import React, {useCallback, useEffect, useState} from 'react';
+import React, {ReactNode, useCallback, useEffect, useState} from 'react';
 import {useFormContext, useFormState} from 'react-hook-form';
 import {useTranslation} from 'react-i18next';
 import {generatePath, useNavigate} from 'react-router-dom';
@@ -21,13 +29,9 @@ import DefineProposal, {
 import ReviewProposal from 'containers/reviewProposal';
 import SetupVotingForm from 'containers/setupVotingForm';
 import PublishModal from 'containers/transactionModals/publishModal';
-import {
-  pendingMultisigProposalsVar,
-  pendingTokenBasedProposalsVar,
-} from 'context/apolloClient';
 import {useGlobalModalContext} from 'context/globalModals';
 import {useNetwork} from 'context/network';
-import {usePrivacyContext} from 'context/privacyContext';
+import {useProviders} from 'context/providers';
 import {useClient} from 'hooks/useClient';
 import {useDaoDetailsQuery} from 'hooks/useDaoDetails';
 import {useDaoToken} from 'hooks/useDaoToken';
@@ -37,19 +41,17 @@ import {
   isTokenVotingClient,
   usePluginClient,
 } from 'hooks/usePluginClient';
+import {usePollGasFee} from 'hooks/usePollGasfee';
+import {useTokenSupply} from 'hooks/useTokenSupply';
+import {useWallet} from 'hooks/useWallet';
+import {useVotingPower} from 'services/aragon-sdk/queries/use-voting-power';
 import {
   isMultisigVotingSettings,
   isTokenVotingSettings,
   useVotingSettings,
 } from 'services/aragon-sdk/queries/use-voting-settings';
-import {usePollGasFee} from 'hooks/usePollGasfee';
-import {useTokenSupply} from 'hooks/useTokenSupply';
-import {useWallet} from 'hooks/useWallet';
-import {
-  PENDING_MULTISIG_PROPOSALS_KEY,
-  PENDING_PROPOSALS_KEY,
-  TransactionState,
-} from 'utils/constants';
+import {AragonSdkQueryItem} from 'services/aragon-sdk/query-keys';
+import {CHAIN_METADATA, TransactionState} from 'utils/constants';
 import {
   daysToMills,
   getCanonicalDate,
@@ -61,9 +63,9 @@ import {
   minutesToMills,
   offsetToMills,
 } from 'utils/date';
-import {customJSONReplacer, readFile, toDisplayEns} from 'utils/library';
+import {readFile, toDisplayEns} from 'utils/library';
+import {proposalStorage} from 'utils/localStorage/proposalStorage';
 import {EditSettings, Proposal, Settings} from 'utils/paths';
-import {CacheProposalParams, mapToCacheProposal} from 'utils/proposals';
 import {
   Action,
   ActionUpdateMetadata,
@@ -181,6 +183,7 @@ export const ProposeSettings: React.FC = () => {
 type Props = {
   showTxModal: boolean;
   setShowTxModal: (value: boolean) => void;
+  children: ReactNode;
 };
 
 // TODO: this is almost identical to CreateProposal wrapper, please merge if possible
@@ -192,9 +195,10 @@ const ProposeSettingWrapper: React.FC<Props> = ({
   const {t} = useTranslation();
   const {open} = useGlobalModalContext();
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
   const {getValues, setValue} = useFormContext();
+  const {api: apiProvider} = useProviders();
 
-  const {preferences} = usePrivacyContext();
   const {network} = useNetwork();
   const {address, isOnWrongNetwork} = useWallet();
 
@@ -203,6 +207,11 @@ const ProposeSettingWrapper: React.FC<Props> = ({
   const pluginType = daoDetails?.plugins?.[0]?.id as PluginTypes;
 
   const {data: votingSettings} = useVotingSettings({pluginAddress, pluginType});
+  const {data: daoToken} = useDaoToken(pluginAddress);
+  const {data: votingPower} = useVotingPower(
+    {tokenAddress: daoToken?.address as string, address: address as string},
+    {enabled: !!daoToken?.address && !!address}
+  );
 
   const {
     days: minDays,
@@ -210,7 +219,6 @@ const ProposeSettingWrapper: React.FC<Props> = ({
     minutes: minMinutes,
   } = getDHMFromSeconds((votingSettings as VotingSettings)?.minDuration ?? 0);
 
-  const {data: daoToken} = useDaoToken(pluginAddress);
   const {data: tokenSupply, isLoading: tokenSupplyIsLoading} = useTokenSupply(
     daoToken?.address || ''
   );
@@ -225,11 +233,6 @@ const ProposeSettingWrapper: React.FC<Props> = ({
     useState<TransactionState>(TransactionState.WAITING);
 
   const [proposalId, setProposalId] = useState<string>();
-
-  const cachedMultisigProposals = useReactiveVar(pendingMultisigProposalsVar);
-  const cachedTokenBasedProposals = useReactiveVar(
-    pendingTokenBasedProposalsVar
-  );
 
   const shouldPoll =
     creationProcessState === TransactionState.WAITING &&
@@ -629,6 +632,12 @@ const ProposeSettingWrapper: React.FC<Props> = ({
     }
   };
 
+  const invalidateQueries = useCallback(() => {
+    // invalidating all infinite proposals query regardless of the
+    // pagination state
+    queryClient.invalidateQueries([AragonSdkQueryItem.PROPOSALS]);
+  }, [queryClient]);
+
   const handlePublishSettings = async () => {
     if (!pluginClient) {
       return new Error('ERC20 SDK client is not initialized correctly');
@@ -675,6 +684,7 @@ const ProposeSettingWrapper: React.FC<Props> = ({
 
             // cache proposal
             handleCacheProposal(proposalGuid);
+            invalidateQueries();
             break;
           }
         }
@@ -686,9 +696,11 @@ const ProposeSettingWrapper: React.FC<Props> = ({
   };
 
   const handleCacheProposal = useCallback(
-    (proposalGuid: string) => {
+    async (proposalId: string) => {
       if (!address || !daoDetails || !votingSettings || !proposalCreationData)
         return;
+
+      const creationBlockNumber = await apiProvider.getBlockNumber();
 
       const [title, summary, description, resources] = getValues([
         'proposalTitle',
@@ -697,85 +709,106 @@ const ProposeSettingWrapper: React.FC<Props> = ({
         'links',
       ]);
 
-      let cacheKey = '';
-      let newCache;
-      let proposalToCache;
-
-      let proposalData: CacheProposalParams = {
+      const baseParams = {
+        id: proposalId,
+        dao: {address: daoDetails.address, name: daoDetails.metadata.name},
+        creationDate: new Date(),
         creatorAddress: address,
-        daoAddress: daoDetails?.address,
-        daoName: daoDetails?.metadata.name,
-        proposalGuid,
-        proposalParams: {
-          ...proposalCreationData,
-          startDate: proposalCreationData.startDate || new Date(), // important to fallback to avoid passing undefined
-        },
+        creationBlockNumber,
+        startDate: proposalCreationData.startDate ?? new Date(),
+        endDate: proposalCreationData.endDate!,
         metadata: {
           title,
           summary,
           description,
           resources: resources.filter((r: ProposalResource) => r.name && r.url),
         },
+        actions: proposalCreationData.actions ?? [],
+        status: proposalCreationData.startDate
+          ? ProposalStatus.PENDING
+          : ProposalStatus.ACTIVE,
       };
 
-      if (isTokenVotingSettings(votingSettings)) {
-        proposalData = {
-          ...proposalData,
-          daoToken,
-          pluginSettings: votingSettings,
-          totalVotingWeight: tokenSupply?.raw,
-        };
+      if (isMultisigVotingSettings(votingSettings)) {
+        const {approve: creatorApproval} =
+          proposalCreationData as CreateMultisigProposalParams;
 
-        cacheKey = PENDING_PROPOSALS_KEY;
-        proposalToCache = mapToCacheProposal(proposalData);
-        newCache = {
-          ...cachedTokenBasedProposals,
-          [daoDetails.address]: {
-            ...cachedTokenBasedProposals[daoDetails.address],
-            [proposalGuid]: {...proposalToCache},
-          },
+        const proposal = {
+          ...baseParams,
+          approvals: creatorApproval ? [address] : [],
+          settings: votingSettings,
         };
-        pendingTokenBasedProposalsVar(newCache);
-      } else if (isMultisigVotingSettings(votingSettings)) {
-        proposalData.minApprovals = votingSettings.minApprovals;
-        proposalData.onlyListed = votingSettings.onlyListed;
-        cacheKey = PENDING_MULTISIG_PROPOSALS_KEY;
-        proposalToCache = mapToCacheProposal(proposalData);
-        newCache = {
-          ...cachedMultisigProposals,
-          [daoDetails.address]: {
-            ...cachedMultisigProposals[daoDetails.address],
-            [proposalGuid]: {...proposalToCache},
-          },
-        };
-        pendingMultisigProposalsVar(newCache);
+        proposalStorage.addProposal(CHAIN_METADATA[network].id, proposal);
       }
 
-      // persist new cache if functional cookies enabled
-      if (preferences?.functional) {
-        localStorage.setItem(
-          cacheKey,
-          JSON.stringify(newCache, customJSONReplacer)
-        );
+      // token voting
+      else if (isTokenVotingSettings(votingSettings)) {
+        const {creatorVote} =
+          proposalCreationData as CreateMajorityVotingProposalParams;
+
+        const creatorVotingPower = votingPower?.toBigInt() ?? BigInt(0);
+
+        const result = {
+          yes: creatorVote === VoteValues.YES ? creatorVotingPower : BigInt(0),
+          no: creatorVote === VoteValues.NO ? creatorVotingPower : BigInt(0),
+          abstain:
+            creatorVote === VoteValues.ABSTAIN ? creatorVotingPower : BigInt(0),
+        };
+
+        let usedVotingWeight = BigInt(0);
+        const votes = [];
+        if (creatorVote) {
+          usedVotingWeight = creatorVotingPower;
+          votes.push({
+            address,
+            vote: creatorVote,
+            voteReplaced: false,
+            weight: creatorVotingPower,
+          });
+        }
+
+        const settings: MajorityVotingProposalSettings = {
+          supportThreshold: votingSettings.supportThreshold,
+          minParticipation: votingSettings.minParticipation,
+          duration: differenceInSeconds(
+            baseParams.endDate,
+            baseParams.startDate
+          ),
+        };
+
+        const proposal = {
+          ...baseParams,
+          result,
+          settings,
+          usedVotingWeight,
+          totalVotingWeight: tokenSupply?.raw ?? BigInt(0),
+          token: daoToken ?? null,
+          votes,
+        };
+        proposalStorage.addProposal(CHAIN_METADATA[network].id, proposal);
       }
     },
     [
       address,
-      cachedMultisigProposals,
-      cachedTokenBasedProposals,
       daoDetails,
-      daoToken,
-      getValues,
       votingSettings,
-      preferences?.functional,
       proposalCreationData,
+      apiProvider,
+      getValues,
+      network,
+      votingPower,
       tokenSupply?.raw,
+      daoToken,
     ]
   );
 
   /*************************************************
    *                    Render                     *
    *************************************************/
+  const buttonLabels = {
+    [TransactionState.SUCCESS]: t('TransactionModal.goToProposal'),
+    [TransactionState.WAITING]: t('TransactionModal.createProposalNow'),
+  };
 
   if (daoDetailsLoading || tokenSupplyIsLoading) {
     return <Loading />;
@@ -795,8 +828,7 @@ const ProposeSettingWrapper: React.FC<Props> = ({
         gasEstimationError={gasEstimationError}
         tokenPrice={tokenPrice}
         title={t('TransactionModal.createProposal')}
-        buttonLabel={t('TransactionModal.createProposalNow')}
-        buttonLabelSuccess={t('TransactionModal.launchGovernancePage')}
+        buttonStateLabels={buttonLabels}
         disabledCallback={disableActionButton}
       />
     </>

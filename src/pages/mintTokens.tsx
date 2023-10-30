@@ -1,4 +1,4 @@
-import {AlertInline} from '@aragon/ods';
+import {AlertInline} from '@aragon/ods-old';
 import React, {useState} from 'react';
 import {
   FieldErrors,
@@ -29,6 +29,7 @@ import {useVotingSettings} from 'services/aragon-sdk/queries/use-voting-settings
 import {toDisplayEns} from 'utils/library';
 import {Community} from 'utils/paths';
 import {MintTokensFormData} from 'utils/types';
+import {MajorityVotingSettings} from '@aragon/sdk-client';
 
 export const MintToken: React.FC = () => {
   const {data: daoDetails, isLoading} = useDaoDetailsQuery();
@@ -97,7 +98,7 @@ export const MintToken: React.FC = () => {
               isNextButtonDisabled={!actionIsValid(errors, formActions)}
               onNextButtonDisabledClicked={() => formMethods.trigger('actions')}
             >
-              <div className="space-y-2">
+              <div className="space-y-4">
                 <AlertInline
                   label={t('newProposal.mintTokens.additionalInfo')}
                   mode="neutral"
@@ -110,7 +111,9 @@ export const MintToken: React.FC = () => {
               wizardDescription={t('newWithdraw.setupVoting.description')}
               isNextButtonDisabled={!setupVotingIsValid(errors)}
             >
-              <SetupVotingForm pluginSettings={votingSettings} />
+              <SetupVotingForm
+                pluginSettings={votingSettings as MajorityVotingSettings}
+              />
             </Step>
             <Step
               wizardTitle={t('newWithdraw.defineProposal.heading')}

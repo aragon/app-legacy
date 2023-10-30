@@ -1,8 +1,9 @@
 import {MultisigProposalListItem} from '@aragon/sdk-client';
-import {CardProposal, CardProposalProps, Spinner} from '@aragon/ods';
+import {CardProposal, CardProposalProps, Spinner} from '@aragon/ods-old';
 import {BigNumber} from 'ethers';
 import React, {useMemo} from 'react';
-import {TFunction, useTranslation} from 'react-i18next';
+import {useTranslation} from 'react-i18next';
+import {TFunction} from 'i18next';
 import {NavigateFunction, generatePath, useNavigate} from 'react-router-dom';
 
 import {useNetwork} from 'context/network';
@@ -50,25 +51,24 @@ function isMultisigProposalListItem(
   return 'approvals' in proposal;
 }
 
-const ProposalItem: React.FC<{proposalId: string} & CardProposalProps> =
-  props => {
-    const {isAragonVerifiedUpdateProposal} = useUpdateProposal(
-      props.proposalId
-    );
-    const {t} = useTranslation();
+const ProposalItem: React.FC<
+  {proposalId: string} & CardProposalProps
+> = props => {
+  const {isAragonVerifiedUpdateProposal} = useUpdateProposal(props.proposalId);
+  const {t} = useTranslation();
 
-    return (
-      <CardProposal
-        {...props}
-        bannerContent={
-          isAragonVerifiedUpdateProposal &&
-          featureFlags.getValue('VITE_FEATURE_FLAG_OSX_UPDATES') === 'true'
-            ? t('update.proposal.bannerTitle')
-            : ''
-        }
-      />
-    );
-  };
+  return (
+    <CardProposal
+      {...props}
+      bannerContent={
+        isAragonVerifiedUpdateProposal &&
+        featureFlags.getValue('VITE_FEATURE_FLAG_OSX_UPDATES') === 'true'
+          ? t('update.proposal.bannerTitle')
+          : ''
+      }
+    />
+  );
+};
 
 const ProposalList: React.FC<ProposalListProps> = ({
   proposals,
@@ -114,7 +114,7 @@ const ProposalList: React.FC<ProposalListProps> = ({
 
   if (isLoading || areMembersLoading) {
     return (
-      <div className="flex h-7 items-center justify-center">
+      <div className="flex h-14 items-center justify-center">
         <Spinner size="default" />
       </div>
     );
@@ -122,14 +122,14 @@ const ProposalList: React.FC<ProposalListProps> = ({
 
   if (mappedProposals.length === 0) {
     return (
-      <div className="flex h-7 items-center justify-center text-gray-600">
+      <div className="flex h-14 items-center justify-center text-neutral-600">
         <p data-testid="proposalList">{t('governance.noProposals')}</p>
       </div>
     );
   }
 
   return (
-    <div className="space-y-3" data-testid="proposalList">
+    <div className="space-y-6" data-testid="proposalList">
       {mappedProposals.map(({id, ...p}) => (
         <ProposalItem {...p} proposalId={id} key={id} />
       ))}
@@ -159,12 +159,18 @@ export function proposal2CardProps(
   daoAddressOrEns: string,
   address: string | null
 ): {id: string} & CardProposalProps {
+  const publisherDisplayName =
+    address && proposal.creatorAddress.toLowerCase() === address.toLowerCase()
+      ? t('labels.you')
+      : proposal.creatorAddress;
+
   const props = {
     id: proposal.id,
     title: proposal.metadata.title,
     description: proposal.metadata.summary,
     explorer: CHAIN_METADATA[network].explorer,
     publisherAddress: proposal.creatorAddress,
+    publisherDisplayName,
     publishLabel: t('governance.proposals.publishedBy'),
     process: proposal.status.toLowerCase() as CardProposalProps['process'],
     onClick: () => {

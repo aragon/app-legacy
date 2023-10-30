@@ -1,4 +1,4 @@
-import {AlertInline} from '@aragon/ods';
+import {AlertInline} from '@aragon/ods-old';
 import React, {useEffect, useState} from 'react';
 import {useFormContext, FieldError, useWatch} from 'react-hook-form';
 
@@ -19,8 +19,8 @@ export function DateTimeErrors({mode}: DateTimeErrorsProps) {
 
     // filter for errors that target the current mode
     const fieldErrors: FieldError[] = Object.values(formState.errors);
-    const modeSpecificErrors = fieldErrors.filter(e =>
-      e.ref?.name.includes(mode)
+    const modeSpecificErrors = fieldErrors.filter(
+      e => e.ref?.name.includes(mode)
     );
     // categorize them by error type
     modeSpecificErrors.forEach(e => {

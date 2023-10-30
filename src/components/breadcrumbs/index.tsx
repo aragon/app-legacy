@@ -2,7 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 import {Link} from 'react-router-dom';
 import {BreadcrumbData} from 'use-react-router-breadcrumbs';
-import {IconChevronRight} from '@aragon/ods';
+import {IconChevronRight} from '@aragon/ods-old';
 
 type Props = {
   breadcrumbs: BreadcrumbData[];
@@ -19,7 +19,7 @@ const Breadcrumbs: React.FC<Props> = ({breadcrumbs}) => {
             <Link
               to={match.pathname}
               className={
-                isLast ? 'cursor-default text-ui-600' : 'text-primary-500'
+                isLast ? 'cursor-default text-neutral-600' : 'text-primary-500'
               }
             >
               {breadcrumb}
@@ -36,9 +36,9 @@ export default Breadcrumbs;
 
 const Container = styled.div.attrs({
   className:
-    'flex flex-row items-center h-6 py-1 px-2 space-x-1.5 text-ui-600 bg-ui-0 rounded-xl font-bold',
+    'flex flex-row items-center h-12 py-2 px-4 space-x-3 text-neutral-600 bg-neutral-0 rounded-xl font-semibold',
 })``;
 
 const Breadcrumb = styled.div.attrs({
-  className: 'flex flex-row items-center space-x-1.5',
+  className: 'flex flex-row items-center space-x-3',
 })``;

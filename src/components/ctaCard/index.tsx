@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import {ButtonText} from '@aragon/ods';
+import {ButtonText} from '@aragon/ods-old';
 import useScreen from 'hooks/useScreen';
 
 type Props = {
@@ -43,24 +43,24 @@ export default CTACard;
 
 const CTACardWrapper = styled.div.attrs({
   className:
-    'flex flex-col desktop:items-start items-center p-3 space-y-3 rounded-xl relative desktop:m-0 mb-3 mx-1' as string,
+    'flex flex-col xl:items-start items-center p-6 space-y-6 rounded-xl relative xl:m-0 mb-6 mx-2' as string,
 })`
   background: rgba(255, 255, 255, 0.68);
   backdrop-filter: blur(50px);
 `;
 
 const Content = styled.div.attrs({
-  className: 'flex desktop:items-start items-center flex-col desktop:m-0 mb-3',
+  className: 'flex xl:items-start items-center flex-col xl:m-0 mb-6',
 })``;
 
 const Title = styled.p.attrs({
-  className: 'ft-text-2xl font-bold text-ui-800 desktop:mt-2 mt-0',
+  className: 'ft-text-2xl font-semibold text-neutral-800 xl:mt-4 mt-0',
 })``;
 
 const Subtitle = styled.p.attrs({
-  className: 'text-ui-600 h-9 ft-text-base desktop:mt-2 mt-1.5',
+  className: 'text-neutral-600 h-[72px] ft-text-base xl:mt-4 mt-3',
 })``;
 
 const StyledImg = styled.img.attrs({
-  className: 'h-12 w-12',
+  className: 'h-24 w-24',
 })``;

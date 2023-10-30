@@ -1,4 +1,4 @@
-import {IconInfo, Link} from '@aragon/ods';
+import {IconInfo, Link} from '@aragon/ods-old';
 import React from 'react';
 import styled from 'styled-components';
 
@@ -56,8 +56,8 @@ const Footer: React.FC = () => {
         </FullSpan>
       </GridLayout>
       <div
-        className={`z-10 flex items-center justify-center space-x-1 bg-primary-400 py-0.5 text-sm text-ui-0 desktop:mb-0 ${
-          isOnWrongNetwork ? 'mb-11 tablet:mb-15' : 'mb-8 tablet:mb-12'
+        className={`z-10 flex items-center justify-center space-x-2 bg-primary-400 py-1 text-sm leading-normal text-neutral-0 xl:mb-0 ${
+          isOnWrongNetwork ? 'mb-[88px] md:mb-[120px]' : 'mb-16 md:mb-24'
         }`}
       >
         <IconInfo />
@@ -74,28 +74,28 @@ const FullSpan = styled.div.attrs({
 `;
 
 const Section = styled.section.attrs({
-  className: 'w-full overflow-hidden bg-ui-0 mt-8',
+  className: 'w-full overflow-hidden bg-neutral-0 mt-16',
 })``;
 
 const ActionContainer = styled.div.attrs({
   className:
-    'relative flex flex-col desktop:flex-row desktop:justify-between items-center space-y-4 desktop:space-y-0 pt-5 desktop:pt-3 pb-8 desktop:pb-3',
+    'relative flex flex-col xl:flex-row xl:justify-between items-center space-y-8 xl:space-y-0 pt-10 xl:pt-6 pb-16 xl:pb-6',
 })``;
 
 const FlexDiv = styled.div.attrs({
-  className: 'flex space-x-4 items-center',
+  className: 'flex space-x-8 items-center',
 })``;
 
 const LogoContainer = styled.img.attrs({
-  className: 'h-5',
+  className: 'h-10',
 })``;
 
 const StyledNavList = styled.ul.attrs({
-  className: 'flex space-x-4',
+  className: 'flex space-x-8',
 })``;
 
 const Copyright = styled.span.attrs({
-  className: 'text-ui-600 font-normal',
+  className: 'text-neutral-600 font-normal',
 })``;
 
 export default Footer;

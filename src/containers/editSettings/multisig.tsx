@@ -3,7 +3,7 @@ import {
   ButtonText,
   IconGovernance,
   ListItemAction,
-} from '@aragon/ods';
+} from '@aragon/ods-old';
 import {DaoDetails, MultisigVotingSettings} from '@aragon/sdk-client';
 import React, {useCallback, useEffect, useMemo} from 'react';
 import {
@@ -295,7 +295,7 @@ export const EditMsSettings: React.FC<EditMsSettingsProps> = ({daoDetails}) => {
       customBody={
         <Layout>
           <Container>
-            <AccordionMultiple defaultValue="metadata" className="space-y-3">
+            <AccordionMultiple defaultValue="metadata" className="space-y-6">
               <AccordionItem
                 type="action-builder"
                 name="metadata"
@@ -345,7 +345,7 @@ export const EditMsSettings: React.FC<EditMsSettingsProps> = ({daoDetails}) => {
           <Footer>
             <HStack>
               <ButtonText
-                className="w-full tablet:w-max"
+                className="w-full md:w-max"
                 label={t('settings.reviewProposal')}
                 iconLeft={<IconGovernance />}
                 size="large"
@@ -362,7 +362,7 @@ export const EditMsSettings: React.FC<EditMsSettingsProps> = ({daoDetails}) => {
                 }
               />
               <ButtonText
-                className="w-full tablet:w-max"
+                className="w-full md:w-max"
                 label={t('settings.resetChanges')}
                 mode="secondary"
                 size="large"
@@ -384,15 +384,15 @@ const Container = styled.div.attrs({})``;
 
 const AccordionContent = styled.div.attrs({
   className:
-    'p-3 pb-6 space-y-3 bg-ui-0 border border-ui-100 rounded-b-xl border-t-0',
+    'p-6 pb-12 space-y-6 bg-neutral-0 border border-neutral-100 rounded-b-xl border-t-0',
 })``;
 
 const HStack = styled.div.attrs({
-  className: 'tablet:flex space-y-2 tablet:space-y-0 tablet:space-x-3',
+  className: 'md:flex space-y-4 md:space-y-0 md:space-x-6',
 })``;
 
 const Footer = styled.div.attrs({
-  className: 'mt-5 desktop:mt-8 space-y-2',
+  className: 'mt-10 xl:mt-16 space-y-4',
 })``;
 
 const EligibilityWrapper = styled.div.attrs({})``;

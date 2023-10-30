@@ -3,14 +3,16 @@ import {buildApprovedNamespaces, getSdkError} from '@walletconnect/utils';
 import Web3WalletClient, {Web3Wallet} from '@walletconnect/web3wallet';
 import {AuthClientTypes} from '@walletconnect/auth-client';
 import {Web3WalletTypes} from '@walletconnect/web3wallet';
-import {SessionTypes} from '@walletconnect/types';
+import {PairingTypes, SessionTypes} from '@walletconnect/types';
 
 class WalletConnectInterceptor {
   clientMetadata: AuthClientTypes.Metadata = {
     name: 'Aragon DAO',
     description: 'Aragon DAO',
     url: 'https://aragon.org',
-    icons: ['https://walletconnect.org/walletconnect-logo.png'],
+    icons: [
+      'https://assets.website-files.com/5e997428d0f2eb13a90aec8c/635283b535e03c60d5aafe64_logo_aragon_isotype.png',
+    ],
   };
 
   client: Web3WalletClient | undefined;
@@ -55,6 +57,35 @@ class WalletConnectInterceptor {
 
   connect(uri: string) {
     return this.client?.core.pairing.pair({uri});
+  }
+
+  pingTopic(topic: string) {
+    return this.client?.core.pairing.ping({topic});
+  }
+
+  async verifyConnection(
+    connection: PairingTypes.Struct
+  ): Promise<SessionTypes.Struct | undefined> {
+    const matchingSession = this.getActiveSessions().find(
+      ({pairingTopic}) => pairingTopic === connection.topic
+    );
+
+    if (matchingSession) {
+      return matchingSession;
+    }
+
+    // Connection is expired as there's still no matching session
+    if (Date.now() / 1000 > connection.expiry) {
+      throw new Error('walletConnectInterceptor: connection is expired');
+    }
+
+    // The pingTopic function throws error when the topic is not
+    // valid anymore
+    try {
+      await this.pingTopic(connection.topic);
+    } catch (error) {
+      throw new Error('walletConnectInterceptor: topic not valid');
+    }
   }
 
   approveSession(

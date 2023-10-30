@@ -4,7 +4,6 @@ import {render, screen} from '@testing-library/react';
 import Footer from '..';
 
 describe('Footer', () => {
-  // eslint-disable-next-line
   function setup() {
     render(<Footer />);
     return screen.getByTestId(/footer/i);
@@ -12,6 +11,6 @@ describe('Footer', () => {
 
   test('should render without crashing', () => {
     const element = setup();
-    expect(element).toBeInTheDocument;
+    expect(element).toBeInTheDocument();
   });
 });

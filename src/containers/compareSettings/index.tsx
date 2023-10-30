@@ -1,4 +1,4 @@
-import {ButtonGroup, Option} from '@aragon/ods';
+import {ButtonGroup, Option} from '@aragon/ods-old';
 import React, {useState} from 'react';
 import {useTranslation} from 'react-i18next';
 
@@ -52,7 +52,7 @@ const CompareSettings: React.FC = () => {
     toDisplayEns(daoDetails.ensDomain) || daoDetails.address;
 
   return (
-    <div className="space-y-2">
+    <div className="space-y-4">
       <div className="flex">
         <ButtonGroup
           bgWhite={false}

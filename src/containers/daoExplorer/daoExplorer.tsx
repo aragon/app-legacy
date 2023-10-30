@@ -5,7 +5,7 @@ import {
   IconChevronDown,
   Option,
   Spinner,
-} from '@aragon/ods';
+} from '@aragon/ods-old';
 import {UseInfiniteQueryResult} from '@tanstack/react-query';
 import React, {useEffect, useMemo, useState} from 'react';
 import {useTranslation} from 'react-i18next';
@@ -13,7 +13,7 @@ import {generatePath, useNavigate} from 'react-router-dom';
 import styled from 'styled-components';
 
 import {DaoCard} from 'components/daoCard';
-import {useFavoritedDaosInfiniteQuery} from 'hooks/useFavoritedDaos';
+import {useFollowedDaosInfiniteQuery} from 'hooks/useFollowedDaos';
 import {
   AugmentedDaoListItem,
   ExploreFilter,
@@ -38,25 +38,25 @@ export const DaoExplorer = () => {
   const [filterValue, setFilterValue] = useState<ExploreFilter>('favorite');
 
   // conditional api queries
-  const fetchFavorited = filterValue === 'favorite';
-  const favoritedApi = useFavoritedDaosInfiniteQuery(fetchFavorited);
-  const daosApi = useDaosInfiniteQuery(fetchFavorited === false, {
+  const fetchFollowed = filterValue === 'favorite';
+  const followedApi = useFollowedDaosInfiniteQuery(fetchFollowed);
+  const daosApi = useDaosInfiniteQuery(fetchFollowed === false, {
     sortBy: toDaoSortBy(filterValue),
   });
 
   // resulting api response
   const exploreDaosApi = useMemo(
     () =>
-      (fetchFavorited ? favoritedApi : daosApi) as UseInfiniteQueryResult<
+      (fetchFollowed ? followedApi : daosApi) as UseInfiniteQueryResult<
         AugmentedDaoListItem,
         unknown
       >,
-    [daosApi, favoritedApi, fetchFavorited]
+    [daosApi, followedApi, fetchFollowed]
   );
 
-  // whether the connected wallet has favorited DAOS
-  const loggedInAndHasFavoritedDaos =
-    isConnected && (favoritedApi.data?.pages || []).length > 0;
+  // whether the connected wallet has followed DAOS
+  const loggedInAndHasFollowedDaos =
+    isConnected && (followedApi.data?.pages || []).length > 0;
 
   /*************************************************
    *             Callbacks and Handlers            *
@@ -81,12 +81,12 @@ export const DaoExplorer = () => {
    *************************************************/
   useEffect(() => {
     if (
-      favoritedApi.status === 'success' &&
-      loggedInAndHasFavoritedDaos === false
+      followedApi.status === 'success' &&
+      loggedInAndHasFollowedDaos === false
     ) {
       setFilterValue('newest');
     }
-  }, [favoritedApi.status, loggedInAndHasFavoritedDaos]);
+  }, [followedApi.status, loggedInAndHasFollowedDaos]);
 
   /*************************************************
    *                     Render                    *
@@ -96,7 +96,7 @@ export const DaoExplorer = () => {
       <MainContainer>
         <HeaderWrapper>
           <Title>{t('explore.explorer.title')}</Title>
-          {loggedInAndHasFavoritedDaos && (
+          {loggedInAndHasFollowedDaos && (
             <ButtonGroupContainer>
               <ButtonGroup
                 defaultValue={filterValue}
@@ -180,18 +180,18 @@ const ButtonGroupContainer = styled.div.attrs({
 })``;
 
 const MainContainer = styled.div.attrs({
-  className: 'flex flex-col space-y-2 desktop:space-y-3',
+  className: 'flex flex-col space-y-4 xl:space-y-6',
 })``;
 const Container = styled.div.attrs({
-  className: 'flex flex-col space-y-1.5',
+  className: 'flex flex-col space-y-3',
 })``;
 const HeaderWrapper = styled.div.attrs({
   className:
-    'flex flex-col space-y-2 desktop:flex-row desktop:space-y-0 desktop:justify-between',
+    'flex flex-col space-y-4 xl:flex-row xl:space-y-0 xl:justify-between',
 })``;
 const CardsWrapper = styled.div.attrs({
-  className: 'grid grid-cols-1 gap-1.5 desktop:grid-cols-2 desktop:gap-3',
+  className: 'grid grid-cols-1 gap-3 xl:grid-cols-2 xl:gap-6',
 })``;
 const Title = styled.p.attrs({
-  className: 'font-bold ft-text-xl text-ui-800',
+  className: 'font-semibold ft-text-xl text-neutral-800',
 })``;

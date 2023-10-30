@@ -4,7 +4,7 @@ import {
   IconFinance,
   ListItemHeader,
   TransferListItem,
-} from '@aragon/ods';
+} from '@aragon/ods-old';
 import React from 'react';
 import {useTranslation} from 'react-i18next';
 import {generatePath, useNavigate} from 'react-router-dom';
@@ -96,5 +96,5 @@ const TreasurySnapshot: React.FC<Props> = ({
 export default TreasurySnapshot;
 
 const Container = styled.div.attrs({
-  className: 'space-y-1.5 desktop:space-y-2',
+  className: 'space-y-3 xl:space-y-4',
 })``;

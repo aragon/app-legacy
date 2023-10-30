@@ -4,7 +4,7 @@ import {
   Dropdown,
   IconMenuVertical,
   ListItemAction,
-} from '@aragon/ods';
+} from '@aragon/ods-old';
 import React, {useEffect, useRef} from 'react';
 import {useFieldArray, useFormContext, useWatch} from 'react-hook-form';
 import {useTranslation} from 'react-i18next';
@@ -150,10 +150,10 @@ const AddWallets: React.FC = () => {
 
 export default AddWallets;
 
-const Container = styled.div.attrs({className: 'space-y-1.5'})``;
+const Container = styled.div.attrs({className: 'space-y-3'})``;
 
 const ListGroup = styled.div.attrs({
-  className: 'flex flex-col overflow-hidden space-y-0.25 rounded-xl',
+  className: 'flex flex-col overflow-hidden space-y-0.5 rounded-xl',
 })``;
 
 const ActionsWrapper = styled.div.attrs({

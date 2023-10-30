@@ -1,5 +1,5 @@
-import {AlertInline, ButtonText} from '@aragon/ods';
-import React, {useCallback, useEffect, useRef} from 'react';
+import {AlertInline, ButtonText} from '@aragon/ods-old';
+import React, {useCallback} from 'react';
 import {useTranslation} from 'react-i18next';
 import {generatePath, useNavigate} from 'react-router-dom';
 import styled from 'styled-components';
@@ -25,41 +25,6 @@ const DepositModal: React.FC = () => {
 
   const networkSupportsENS = ENS_SUPPORTED_NETWORKS.includes(network);
 
-  // NOTE: This login => network flow can and should be extracted
-  // if later on we have a component that requires the same process
-  const loginFlowTriggeredRef = useRef(false);
-
-  /*************************************************
-   *                Hooks & Effects                *
-   *************************************************/
-  // Show login modal or network modal based on connection status
-  useEffect(() => {
-    if (loginFlowTriggeredRef.current) {
-      if (!isConnected) open('wallet');
-      else {
-        if (isOnWrongNetwork) open('network');
-        else close();
-      }
-    }
-  }, [close, isConnected, isOnWrongNetwork, open]);
-
-  // Close the login modal once the status is connecting
-  useEffect(() => {
-    if (loginFlowTriggeredRef.current) {
-      if (status === 'connecting' || isConnected) close();
-    }
-  }, [close, isConnected, isOnWrongNetwork, open, status]);
-
-  // show the deposit modal again when user on right network and logged in
-  useEffect(() => {
-    if (loginFlowTriggeredRef.current) {
-      if (isConnected && !isOnWrongNetwork) {
-        open('deposit');
-        loginFlowTriggeredRef.current = false;
-      }
-    }
-  }, [isConnected, isOnWrongNetwork, open]);
-
   /*************************************************
    *             Callbacks and Handlers            *
    *************************************************/
@@ -75,14 +40,21 @@ const DepositModal: React.FC = () => {
 
   // close modal and initiate the login/wrong network flow
   const handleConnectClick = useCallback(() => {
-    close();
-    loginFlowTriggeredRef.current = true;
-  }, [close]);
+    const modalState = {onSuccess: () => open('deposit')};
+
+    if (!isConnected) {
+      open('wallet', modalState);
+    } else if (isOnWrongNetwork) {
+      open('network', modalState);
+    }
+  }, [open, isConnected, isOnWrongNetwork]);
 
   /*************************************************
    *                     Render                    *
    *************************************************/
-  if (!daoDetails) return null;
+  if (!daoDetails) {
+    return null;
+  }
 
   return (
     <ModalBottomSheetSwitcher
@@ -148,19 +120,19 @@ const DepositModal: React.FC = () => {
 };
 
 const Container = styled.div.attrs({
-  className: 'p-3 space-y-3',
+  className: 'p-6 space-y-6',
 })``;
 
 const Title = styled.h2.attrs({
-  className: 'ft-text-base font-bold text-ui-800',
+  className: 'ft-text-base font-semibold text-neutral-800',
 })``;
 
 const Subtitle = styled.p.attrs({
-  className: 'mt-0.5 text-ui-600 ft-text-sm mb-1.5',
+  className: 'mt-1 text-neutral-600 ft-text-sm mb-3',
 })``;
 
 const NetworkName = styled.p.attrs({
-  className: 'flex-1 font-semibold text-ui-800',
+  className: 'flex-1 font-semibold text-neutral-800',
 })``;
 
 const ConnectButton = styled.button.attrs({
@@ -168,13 +140,13 @@ const ConnectButton = styled.button.attrs({
 })``;
 
 const NetworkDetailsWrapper = styled.div.attrs({
-  className: 'py-1.5 px-2 bg-white rounded-xl',
+  className: 'py-3 px-4 bg-neutral-0 rounded-xl',
 })``;
 
 const HStack = styled.div.attrs({
-  className: 'flex space-x-1.5',
+  className: 'flex space-x-3',
 })``;
 
-const Logo = styled.img.attrs({className: 'w-3 h-3 rounded-full'})``;
+const Logo = styled.img.attrs({className: 'w-6 h-6 rounded-full'})``;
 
 export default DepositModal;

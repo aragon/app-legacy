@@ -75,9 +75,9 @@ export const CompareMvGovernance: React.FC<CompareMvGovernanceProps> = ({
       )}%`,
       minParticipation: `≥${Math.round(
         (daoSettings?.minParticipation || 0) * 100
-      )}% (≥${(daoSettings?.minParticipation || 0) * (tokenTotalSupply || 0)} ${
-        daoToken?.symbol
-      })`,
+      )}% (≥${
+        (daoSettings?.minParticipation || 0) * (tokenTotalSupply || 0)
+      } ${daoToken?.symbol})`,
       days: duration.days,
       hours: duration.hours,
       minutes: duration.minutes,

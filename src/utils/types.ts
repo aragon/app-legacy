@@ -9,9 +9,10 @@ import {
   VoteValues,
   VotingSettings,
 } from '@aragon/sdk-client';
+import {VersionTag} from '@aragon/sdk-client-common';
 import {BigNumber} from 'ethers';
 
-import {InputValue} from '@aragon/ods';
+import {InputValue} from '@aragon/ods-old';
 import {TokenVotingWalletField} from 'components/addWallets/row';
 import {MultisigWalletField} from 'components/multisigWallets/row';
 import {TimeFilter, TransferTypes} from './constants';
@@ -543,6 +544,21 @@ export interface ProposalFormData {
   startTimeWarning: boolean;
   areSettingsLoading: boolean;
   links: Link[];
+  osUpdate?: {
+    os: boolean;
+    plugin: boolean;
+  };
+  osxSelectedVersion?: {
+    version: VersionTag;
+    isLatest: boolean;
+    isPrepared: boolean;
+  };
+  pluginSelectedVersion?: {
+    address: string;
+    version: VersionTag;
+    isLatest: boolean;
+    isPrepared: boolean;
+  };
 }
 
 export type ProposalSettingsFormData = ProposalFormData & {

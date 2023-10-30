@@ -2,7 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 import {generatePath, Link, useParams} from 'react-router-dom';
 import {useTranslation} from 'react-i18next';
-import {ButtonText, IconChevronRight} from '@aragon/ods';
+import {ButtonText, IconChevronRight} from '@aragon/ods-old';
 
 import {useNetwork} from 'context/network';
 import {AllTokens, AllTransfers} from 'utils/paths';
@@ -87,7 +87,8 @@ export const TransferSectionWrapper = ({
 };
 
 const Title = styled.p.attrs({
-  className: 'flex text-lg font-bold items-center text-ui-800',
+  className:
+    'flex text-xl leading-normal font-semibold items-center text-neutral-800',
 })``;
 
 const HeaderContainer = styled.div.attrs({

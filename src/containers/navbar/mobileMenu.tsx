@@ -9,7 +9,7 @@ import NavLinks from 'components/navLinks';
 import {selectedDaoVar} from 'context/apolloClient';
 import {useGlobalModalContext} from 'context/globalModals';
 import {usePrivacyContext} from 'context/privacyContext';
-import {ButtonText, IconFeedback} from '@aragon/ods';
+import {ButtonText, IconFeedback} from '@aragon/ods-old';
 import {toDisplayEns} from 'utils/library';
 
 type MobileNavMenuProps = {
@@ -25,7 +25,7 @@ const MobileNavMenu = (props: MobileNavMenuProps) => {
 
   return (
     <BottomSheet isOpen={Boolean(isOpen)} onClose={close}>
-      <div className="tablet:w-50">
+      <div className="md:w-[400px]">
         <CardWrapper className="rounded-xl">
           <DaoSelector
             daoAddress={toDisplayEns(currentDao?.ensDomain)}
@@ -39,7 +39,7 @@ const MobileNavMenu = (props: MobileNavMenuProps) => {
             }}
           />
         </CardWrapper>
-        <div className="space-y-3 px-2 py-3">
+        <div className="space-y-6 px-4 py-6">
           <NavLinks onItemClick={close} />
 
           <ButtonText
@@ -59,6 +59,8 @@ const MobileNavMenu = (props: MobileNavMenuProps) => {
 export default MobileNavMenu;
 
 const CardWrapper = styled.div`
-  box-shadow: 0px 4px 8px rgba(31, 41, 51, 0.04),
-    0px 0px 2px rgba(31, 41, 51, 0.06), 0px 0px 1px rgba(31, 41, 51, 0.04);
+  box-shadow:
+    0px 4px 8px rgba(31, 41, 51, 0.04),
+    0px 0px 2px rgba(31, 41, 51, 0.06),
+    0px 0px 1px rgba(31, 41, 51, 0.04);
 `;

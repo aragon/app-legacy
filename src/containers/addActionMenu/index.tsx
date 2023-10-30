@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import {useTranslation} from 'react-i18next';
-import {ListItemAction, IconChevronRight} from '@aragon/ods';
+import {ListItemAction, IconChevronRight} from '@aragon/ods-old';
 
 import {useGlobalModalContext} from 'context/globalModals';
 import {useActionsContext} from 'context/actions';
@@ -58,5 +58,5 @@ const AddActionMenu: React.FC<AddActionMenuProps> = ({actions}) => {
 export default AddActionMenu;
 
 const Container = styled.div.attrs({
-  className: 'space-y-1.5 p-3',
+  className: 'space-y-3 p-6',
 })``;

@@ -1,4 +1,4 @@
-import {IconChevronRight, ListItemAction} from '@aragon/ods';
+import {IconChevronRight, ListItemAction} from '@aragon/ods-old';
 import React from 'react';
 import {useFormContext, useWatch} from 'react-hook-form';
 import {useTranslation} from 'react-i18next';
@@ -55,9 +55,9 @@ const ActionListGroup: React.FC<ActionListGroupProps> = ({
 export default ActionListGroup;
 
 const ListGroup = styled.div.attrs({
-  className: 'flex-1 pt-3 desktop:pt-4 pb-2 space-y-1',
+  className: 'flex-1 pt-6 xl:pt-8 pb-4 space-y-2',
 })``;
 
 const ContractNumberIndicator = styled.div.attrs({
-  className: 'ft-text-sm font-bold text-ui-400 hidden desktop:block',
+  className: 'ft-text-sm font-semibold text-neutral-400 hidden xl:block',
 })``;

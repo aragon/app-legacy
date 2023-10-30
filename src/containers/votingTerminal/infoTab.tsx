@@ -1,4 +1,4 @@
-import {Tag} from '@aragon/ods';
+import {Tag} from '@aragon/ods-old';
 import React from 'react';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
@@ -49,6 +49,7 @@ const InfoTab: React.FC<Props> = ({
   preciseEndDate,
 }) => {
   const {t} = useTranslation();
+  const isMultisigProposal = minApproval != null && minApproval !== 0;
 
   return (
     <>
@@ -74,7 +75,7 @@ const InfoTab: React.FC<Props> = ({
         {minParticipation && (
           <InfoLine>
             <p>{t('votingTerminal.minParticipation')}</p>
-            <Strong>{`≥ ${minParticipation}`}</Strong>
+            <Strong className="text-right">{`≥ ${minParticipation}`}</Strong>
           </InfoLine>
         )}
 
@@ -102,14 +103,14 @@ const InfoTab: React.FC<Props> = ({
 
             <CurrentParticipationWrapper>
               <Strong>{currentParticipation}</Strong>
-              <div className="flex justify-end gap-x-1">
+              <div className="flex justify-end gap-x-2">
                 {minimumReached && (
                   <Tag
                     label={t('votingTerminal.reached')}
                     colorScheme="success"
                   />
                 )}
-                <p className="text-right text-ui-400 ft-text-sm">
+                <p className="text-right text-neutral-400 ft-text-sm">
                   {minimumReached
                     ? t('votingTerminal.noVotesMissing')
                     : t('votingTerminal.missingVotes', {
@@ -139,14 +140,14 @@ const InfoTab: React.FC<Props> = ({
                   (currentApprovals / minApproval) * 100
                 )}%)`}
               </Strong>
-              <div className="flex justify-end gap-x-1">
+              <div className="flex justify-end gap-x-2">
                 {minimumReached && (
                   <Tag
                     label={t('votingTerminal.reached')}
                     colorScheme="success"
                   />
                 )}
-                <p className="text-right text-ui-400 ft-text-sm">
+                <p className="text-right text-neutral-400 ft-text-sm">
                   {minimumReached
                     ? t('votingTerminal.noApprovalsMissing')
                     : t('votingTerminal.missingApprovals', {
@@ -170,16 +171,24 @@ const InfoTab: React.FC<Props> = ({
           <p>{t('votingTerminal.startDate')}</p>
           <Strong>{startDate}</Strong>
         </InfoLine>
-        <InfoLine>
-          <p>{t('votingTerminal.endDate')}</p>
-          <EndDateWrapper>
-            <Strong>{endDate}</Strong>
-            {preciseEndDate && (
-              <div className="flex justify-end gap-x-1">
-                <p className="text-right text-ui-400 ft-text-sm">
-                  {preciseEndDate}
-                </p>
-              </div>
+        <InfoLine className="items-start gap-x-4">
+          <p className="ft-text-base">{t('votingTerminal.endDate')}</p>
+          <EndDateWrapper className="w-[213px]">
+            {isMultisigProposal ? (
+              <p className="text-right font-semibold text-neutral-800 ft-text-base">
+                {t('votingTerminal.multisig.endDescription')}
+              </p>
+            ) : (
+              <>
+                <Strong>{endDate}</Strong>
+                {preciseEndDate && (
+                  <div className="flex justify-end gap-x-2">
+                    <p className="text-right text-neutral-800 ft-text-sm">
+                      {preciseEndDate}
+                    </p>
+                  </div>
+                )}
+              </>
             )}
           </EndDateWrapper>
         </InfoLine>
@@ -191,27 +200,27 @@ const InfoTab: React.FC<Props> = ({
 export default InfoTab;
 
 const EndDateWrapper = styled.div.attrs({
-  className: 'space-y-0.5 text-right',
+  className: 'space-y-1 text-right',
 })``;
 
 const CurrentParticipationWrapper = styled.div.attrs({
-  className: 'space-y-0.5 text-right',
+  className: 'space-y-1 text-right',
 })``;
 
-const VStackSection = styled.div.attrs(({isLast}: {isLast?: boolean}) => ({
-  className: `space-y-1.5 p-2 tablet:p-3 -mx-2 tablet:-mx-3 ${
-    isLast ? 'pb-0 border-b-0' : 'border-b border-ui-100'
+const VStackSection = styled.div.attrs<{isLast?: boolean}>(({isLast}) => ({
+  className: `space-y-3 p-4 md:p-6 -mx-4 md:-mx-6 ${
+    isLast ? 'pb-0 border-b-0' : 'border-b border-neutral-100'
   }`,
 }))<{isLast?: boolean}>``;
 
 const InfoLine = styled.div.attrs({
-  className: 'flex justify-between text-ui-600',
+  className: 'flex justify-between text-neutral-600 ft-text-base',
 })``;
 
 const Strong = styled.p.attrs({
-  className: 'font-bold text-ui-800',
+  className: 'font-semibold text-neutral-800',
 })``;
 
 const SectionHeader = styled.p.attrs({
-  className: 'font-bold text-ui-800 ft-text-lg',
+  className: 'font-semibold text-neutral-800 ft-text-lg',
 })``;

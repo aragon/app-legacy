@@ -1,4 +1,4 @@
-import {InputValue, Label} from '@aragon/ods';
+import {InputValue, Label} from '@aragon/ods-old';
 import {formatUnits} from 'ethers/lib/utils';
 import React, {useCallback, useEffect} from 'react';
 import {Controller, useFormContext, useWatch} from 'react-hook-form';
@@ -154,13 +154,15 @@ const AddExistingToken: React.FC = () => {
 export default AddExistingToken;
 
 const FormItem = styled.div.attrs({
-  className: 'space-y-1.5',
+  className: 'space-y-3',
 })``;
 
 const DescriptionContainer = styled.div.attrs({
-  className: 'space-y-0.5',
+  className: 'space-y-1',
 })``;
 
-const Title = styled.p.attrs({className: 'text-lg font-bold text-ui-800'})``;
+const Title = styled.p.attrs({
+  className: 'text-xl leading-normal font-semibold text-neutral-800',
+})``;
 
-const Subtitle = styled.p.attrs({className: 'text-ui-600 text-bold'})``;
+const Subtitle = styled.p.attrs({className: 'text-neutral-600 text-bold'})``;

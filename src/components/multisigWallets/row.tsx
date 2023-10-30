@@ -4,7 +4,7 @@ import {
   IconMenuVertical,
   InputValue,
   ListItemAction,
-} from '@aragon/ods';
+} from '@aragon/ods-old';
 import React from 'react';
 import {Controller, useFormContext, useWatch} from 'react-hook-form';
 import {useTranslation} from 'react-i18next';
@@ -140,16 +140,16 @@ export const Row = ({index, ...props}: MultisigWalletsRowProps) => {
 };
 
 const RowContainer = styled.div.attrs(() => ({
-  className: 'gap-0.5 flex flex-col desktop:px-3 desktop:py-1.5 p-2',
+  className: 'gap-1 flex flex-col xl:px-6 xl:py-3 p-4',
 }))``;
 
 const Container = styled.div.attrs(() => ({
-  className: 'flex gap-2 items-start',
+  className: 'flex gap-4 items-start',
 }))``;
 const InputContainer = styled.div.attrs(() => ({
-  className: 'flex flex-col gap-1 flex-1',
+  className: 'flex flex-col gap-2 flex-1',
 }))``;
 
 const Title = styled.div.attrs(() => ({
-  className: 'text-ui-800 font-bold ft-text-base',
+  className: 'text-neutral-800 font-semibold ft-text-base',
 }))``;

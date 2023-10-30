@@ -1,4 +1,4 @@
-import {ButtonText, ListItemBlockchain} from '@aragon/ods';
+import {ButtonText, ListItemBlockchain} from '@aragon/ods-old';
 import React, {useMemo, useState} from 'react';
 import {Controller, useFormContext} from 'react-hook-form';
 import {useTranslation} from 'react-i18next';
@@ -95,11 +95,11 @@ export default SelectChainForm;
 const Header = styled.div.attrs({className: 'flex justify-between'})``;
 
 const NetworkTypeSwitcher = styled.div.attrs({
-  className: 'flex p-0.5 space-x-0.25 bg-ui-0 rounded-xl',
+  className: 'flex p-1 space-x-0.5 bg-neutral-0 rounded-xl',
 })``;
 
 const FormItem = styled.div.attrs({
-  className: 'space-y-1.5',
+  className: 'space-y-3',
 })``;
 
 // Note: Default Network name in polygon network is different than Below list

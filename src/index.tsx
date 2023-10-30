@@ -3,9 +3,11 @@ import {ReactQueryDevtools} from '@tanstack/react-query-devtools';
 import {EthereumClient, w3mConnectors, w3mProvider} from '@web3modal/ethereum';
 import {Web3Modal} from '@web3modal/react';
 import React from 'react';
-import ReactDOM from 'react-dom';
+import {createRoot} from 'react-dom/client';
 import {HashRouter as Router} from 'react-router-dom';
-import 'tailwindcss/tailwind.css';
+import '@aragon/ods/index.css';
+import isPropValid from '@emotion/is-prop-valid';
+import {StyleSheetManager} from 'styled-components';
 import {WagmiConfig, configureChains, createConfig} from 'wagmi';
 import {
   base,
@@ -91,39 +93,46 @@ const onLoad = () => {
 };
 onLoad();
 
-ReactDOM.render(
+const root = createRoot(document.getElementById('root')!);
+
+root.render(
   <React.StrictMode>
-    <QueryClientProvider client={queryClient}>
-      <PrivacyContextProvider>
-        <Router>
-          <AlertProvider>
-            <WagmiConfig config={wagmiConfig}>
-              <NetworkProvider>
-                <UseClientProvider>
-                  <UseCacheProvider>
-                    <ProvidersContextProvider>
-                      <TransactionDetailProvider>
-                        <WalletMenuProvider>
-                          <GlobalModalsProvider>
-                            <App />
-                            <ReactQueryDevtools initialIsOpen={false} />
-                          </GlobalModalsProvider>
-                        </WalletMenuProvider>
-                      </TransactionDetailProvider>
-                    </ProvidersContextProvider>
-                  </UseCacheProvider>
-                </UseClientProvider>
-              </NetworkProvider>
-            </WagmiConfig>
-          </AlertProvider>
-        </Router>
-      </PrivacyContextProvider>
-    </QueryClientProvider>
-    <Web3Modal
-      projectId={walletConnectProjectID}
-      ethereumClient={ethereumClient}
-      themeMode="light"
-    />
-  </React.StrictMode>,
-  document.getElementById('root')
+    <StyleSheetManager
+      shouldForwardProp={(propName, elementToBeRendered) =>
+        typeof elementToBeRendered === 'string' ? isPropValid(propName) : true
+      }
+    >
+      <QueryClientProvider client={queryClient}>
+        <PrivacyContextProvider>
+          <Router>
+            <AlertProvider>
+              <WagmiConfig config={wagmiConfig}>
+                <NetworkProvider>
+                  <UseClientProvider>
+                    <UseCacheProvider>
+                      <ProvidersContextProvider>
+                        <TransactionDetailProvider>
+                          <WalletMenuProvider>
+                            <GlobalModalsProvider>
+                              <App />
+                              <ReactQueryDevtools initialIsOpen={false} />
+                            </GlobalModalsProvider>
+                          </WalletMenuProvider>
+                        </TransactionDetailProvider>
+                      </ProvidersContextProvider>
+                    </UseCacheProvider>
+                  </UseClientProvider>
+                </NetworkProvider>
+              </WagmiConfig>
+            </AlertProvider>
+          </Router>
+        </PrivacyContextProvider>
+      </QueryClientProvider>
+      <Web3Modal
+        projectId={walletConnectProjectID}
+        ethereumClient={ethereumClient}
+        themeMode="light"
+      />
+    </StyleSheetManager>
+  </React.StrictMode>
 );

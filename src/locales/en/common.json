@@ -169,7 +169,7 @@
       "distributionLink": "See all {{walletCount}} addresses",
       "minimumParticipation": "{{walletCount}} wallets",
       "proposalThreshold": "Proposal threshold",
-      "tokenHoldersWithTkns": "Token holders with ≥ {{tokenAmount}} {{tokenSymbol}}",
+      "tokenHoldersWithTkns": "Members with ≥ {{tokenAmount}} {{tokenSymbol}} voting power or balance",
       "earlyExecution": "Early execution",
       "voteReplacement": "Vote change",
       "multisigMinimumApprovals": "of {{count}} authorized addresses",
@@ -475,8 +475,8 @@
       "buttonLabel": "Connect wallet now"
     },
     "gatingUsers": {
-      "tokenTitle": "Token not found",
-      "tokenDescription": "The wallet does not contain '{{tokenName}}' token. Please ensure that you have the necessary tokens in order to continue.",
+      "tokenTitle": "You can’t create a proposal",
+      "tokenDescription": "You don’t have the required voting power or token balance. Creating proposals in {{daoName}} requires at least {{amount}} ‘{{tokenSymbol}}’ in either voting power or token balance.",
       "walletTitle": "Wallet not allowlisted",
       "walletDescription": "The connected wallet is not allowlisted. Please connect a valid wallet in order to proceed with the process.",
       "buttonLabel": "Ok, understood"
@@ -641,7 +641,7 @@
       "description": "Provide the information voters will need to make their decision here.",
       "title": "Title",
       "titlePlaceholder": "Give your proposal a title",
-      "summaryPlaceholder": "Describe your proposal in 2-3 sentences. This will appear in in the proposal overview.",
+      "summaryPlaceholder": "Describe your proposal in 2-3 sentences. This will appear in the proposal overview.",
       "proposal": "Proposal",
       "body": "Body",
       "proposalPlaceholder": "Write the body of the proposal here."
@@ -693,7 +693,7 @@
       "newTokenSubtitle": "No, I would like to create a token.",
       "existingToken": {
         "title": "Import your existing token",
-        "description": "Import the existing ERC-20 token  that your community uses for governance. We recommend to read about why this is important in {{link}}.",
+        "description": "Import the existing ERC-20 token that your community uses for governance. We recommend to read about why this is important in {{link}}.",
         "descriptionLinkLabel": "our guide",
         "questionLabel": "Does your community already have an ERC-20 token to govern your DAO?",
         "answerNegative": "No",
@@ -710,7 +710,7 @@
         "verificationGovernanceSupported": "Supported",
         "verificationAlertWarningTitle": "Requires wrapping",
         "verificationAlertCriticalTitle": "Not supported token",
-        "verificationAlertWarningDescription": "This token must be wrapped by its holders to be participate in your DAO's governance.\n\nToken holders can wrap their tokens within the Aragon App at any time to receive equivalent governance tokens (1 {{tokenSymbol}} = 1 {{gTokenSymbol}}). These can then be used to vote on proposals in your DAO. They can unwrap at any time to receive their original tokens.",
+        "verificationAlertWarningDescription": "This token must be wrapped by its holders to participate in your DAO's governance.\n\nToken holders can wrap their tokens within the Aragon App at any time to receive equivalent governance tokens (1 {{tokenSymbol}} = 1 {{gTokenSymbol}}). These can then be used to vote on proposals in your DAO. They can unwrap at any time to receive their original tokens.",
         "verificationAlertCriticalDescription": "This token is not supported in the Aragon App. Try a different token or specify that you don't have a governance token yet.",
         "descriptionLinkURL": "https://aragon.org/how-to/import-existing-tokens",
         "verificationLabelBlockchain": "Blockchain",
@@ -726,7 +726,7 @@
       "multisigMembersWalletAlert": "Your connected wallet was automatically added to the list. You can remove it if you like.",
       "multisigEligibilityTitle": "Proposal creation",
       "multisigEligibilitySubtitle": "Specify who is permitted to create proposals.",
-      "multisigEligibilityMobileTitle": "Who is elegible?",
+      "multisigEligibilityMobileTitle": "Who is eligible?",
       "multisigEligibilityAlert": "With anyone being able to propose, there is a risk of proposal spam. Consider only authorized addresses.",
       "tokenName": "Token name",
       "tokenMembershipSubtitle": "Tokens act as voting chips. The more tokens you hold, the more weight your vote has. 1 token equals 1 vote.",
@@ -769,7 +769,14 @@
       "descriptionLinkLabel": "read this guide",
       "descriptionLinkURL": "https://aragon.org/how-to/set-up-your-dao-governance-in-8-steps",
       "distributeTokensHelpertextLinkLabel": "read our guide",
-      "distributeTokensHelpertextLinkURL": "https://aragon.org/how-to/distribute-a-dao-governance-token"
+      "distributeTokensHelpertextLinkURL": "https://aragon.org/how-to/distribute-a-dao-governance-token",
+      "blockChainVoting": {
+        "label": "On what blockchain will community voting take place?",
+        "optionOnchainLabel": "{{blockchainName}}",
+        "optionOnchainDesc": "Voting on proposals will require your community members to sign transactions and pay {{blockchainName}} gas fees. Proposals that pass a community vote can be executed by anyone.",
+        "optionGaslessLabel": "Vocdoni",
+        "optionGaslessDesc": "Voting on proposals will allow your community members to vote on a voting-specific proof-of-authority blockchain without paying any gas fees. Proposals that pass a community vote must be approved by an Execution Multisig before being executed on {{blockchainName}}."
+      }
     },
     "step4": {
       "label": "Step 4",
@@ -820,7 +827,7 @@
       "daoUpdates": "Except for the chain you choose and the token you mint, you can change all these values later with a vote in your DAO.",
       "acceptContent": "Accept proposed content.",
       "valuesCorrect": "These values are correct",
-      "proposalCreation": "Token holders with ≥{{token}} {{symbol}}"
+      "proposalCreation": "Members with ≥ {{token}} {{symbol}} voting power or balance"
     },
     "deployDAO": {
       "title": "Deploy your DAO",
@@ -864,7 +871,7 @@
         "desc": "This action must be executed within a specified duration. Even if the proposal passes, it may be too late to successfully execute."
       },
       "addFirstActionTitle": "Add first Action",
-      "addFirstActionDesc": "Add your very first optional action if you wish to peform on-chain executions",
+      "addFirstActionDesc": "Add your very first optional action if you wish to perform on-chain executions",
       "alertInfo": "Based on the voting options setup, it is only possible to add actions to the option \"Yes\".",
       "stepCounter": "Step {{x}} of {{x}}",
       "actionAlertWarning": {
@@ -1001,47 +1008,34 @@
     "toggleFilter": {
       "Favourites": "Following",
       "allDAOs": "All DAOs ",
-      "memberOf": "Member of",
-      "delegate": "Delegate duties"
+      "member": "Member"
     },
     "inputPlaceholder": {
-      "searchDAOs": "Search DAOs"
+      "searchDAOs": "Search by name or address"
     },
     "searchDropwdown": {
       "labelAmountDAOs": "{{amount}} DAOs"
     },
     "emptyStateSearch": {
-      "ctaLabel": "Reset search",
-      "title": "No results to show",
-      "description": "No DAOs found for this search term."
-    },
-    "sortOption": {
-      "mostActive": "Sort by Most active ",
-      "blockchain": "Sort by Blockchain",
-      "treasurySize": "Sort by Treasury size"
+      "ctaLabel": "Clear filters & search",
+      "title": "No results",
+      "description": "No DAOs match your filters."
     },
     "modal": {
       "filterDAOs": {
         "title": "Filter DAOs",
         "label": {
           "blockchains": "Blockchains",
-          "DAOtype": "DAO type",
-          "treasurySize": "Treasury size",
           "base": "Base",
           "allChains": "All chains",
           "polygon": "Polygon",
-          "ethereum": {
-            "label": "Ethereum"
-          },
-          "member": {
-            "label": "Member"
-          },
-          "tokenVoting": "Token voting",
-          "anyGovernance": "Any governance",
-          "1M": "> $1.000.000",
-          "1K": "> $1.000",
-          "anySize": "Any size",
-          "10M": "$10M"
+          "tokenVoting": "Token-based",
+          "ethereum": "Ethereum",
+          "ethereumGoerli": "Ethereum Goerli",
+          "baseGoerli": "Base Goerli",
+          "polygonMumbai": "Polygon Mumbai",
+          "member": "Wallet-based",
+          "governanceType": "Governance type"
         },
         "ctaLabel": {
           "see0": "See 0 DAOs",
@@ -1049,17 +1043,29 @@
           "seeAll": "See all DAOs"
         },
         "buttonLabel": {
-          "resetFilters": "Reset filters"
+          "clearFilters": "Clear filters"
+        },
+        "ctaLoading": "Filtering DAOs..."
+      },
+      "filterDAOS": {
+        "label": {
+          "showTesnets": "Show testnets"
         }
       }
     },
     "pagination": {
       "label": {
-        "amountOf DAOs": "{{x}} of {{x-amount}} DAOs"
+        "amountOf DAOs": "{{amount}} of {{total}}"
       }
     },
     "search": {
-      "labelAmount": "Found {{x}} DAOs"
+      "labelAmount": "{{amount}} DAOs"
+    },
+    "sortBy": {
+      "largestTreasury": "Sort by largest treasury",
+      "mostProposals": "Sort by most proposals",
+      "largestCommunity": "Sort by largest community",
+      "recentlyCreated": "Sort by recently created"
     }
   },
   "privacyPolicy": {
@@ -1073,8 +1079,8 @@
     "rejectAllCookies": "Reject all",
     "acceptSelectedCookies": "Accept",
     "content": "We use cookies and similar technologies to improve your experience, enable certain features, and analyze our application usage. You may opt-out of cookies here. Learn more in our {{link}}.",
-    "linkLabel": "privacy policy",
-    "linkURL": "https://aragon.org/privacy-policy"
+    "contentLinkURL": "https://aragon.org/privacy-policy",
+    "contentLinkLabel": "privacy policy"
   },
   "transactionDetail": {
     "title": "Transaction detail",
@@ -1208,7 +1214,7 @@
       "footerAlertCriticalApprove": "Error while approving your tokens. Try again.",
       "footerAlertCriticalWrap": "Error while wrapping your tokens. Try again.",
       "successTitle": "Tokens successfully wrapped",
-      "successDesc": "You have received {{amount}}  {{gTokenSymbol}} in your wallet. You are now a member of the DAO can use these tokens to participate in governance.",
+      "successDesc": "You have received {{amount}}  {{gTokenSymbol}} in your wallet. You are now a member of the DAO and can use these tokens to participate in governance.",
       "successCtaLabel": "See community",
       "successBtnSecondaryLabel": "Add token symbol",
       "inputAmountBalanceWrapped": "Your balance: {{amount}} g{{tokenSymbol}}",
@@ -1233,15 +1239,15 @@
       "label": "Delegation",
       "optionsLabel": "What do you want to do with your delegation?",
       "checkbox": {
-        "delegateTo": "Delegate to somebody",
+        "delegateTo": "Delegate to someone else",
         "claim": "Claim your voting power"
       },
       "codeInputLabel": "Your delegation",
-      "codeInputDesc": "Enter a wallet address to delegate your votes.",
+      "codeInputDesc": "Enter a wallet address to delegate your votes to.",
       "codeInputPlaceholder": "ENS or 0x ...",
       "alertCard": {
         "title": "How does delegation work?",
-        "desc": "Delegating increases the voting power of the address you indicate above by your current or future {{tokenSymbol}} balance. If you are delegating to somebody else, you will be unable to vote until you claim your voting power."
+        "desc": "Delegating increases the voting power of this address by your current or future {{tokenSymbol}} balance. If you are delegating to someone else, you will be unable to vote until you claim your voting power."
       },
       "ctaLabelDelegating": "Delegating …",
       "ctaLabelReclaiming": "Claiming …",
@@ -1255,7 +1261,14 @@
       "alertCriticalDelegate": "Delegating went wrong. Try again.",
       "alertCriticalReclaim": "Claiming went wrong. Try again.",
       "ctaLabelRetry": "Retry",
-      "successReclaimTitle": "Claimed your voting power successfully"
+      "successReclaimTitle": "Claimed your voting power successfully",
+      "NoVotingPower": {
+        "desc": "You were delegating your voting power of {{balance}} {{tokenSymbol}} when this proposal was created.",
+        "title": "You have no voting power",
+        "ctaLabel": "Ok, understood",
+        "Link": "Learn more",
+        "LinkURL": "https://aragon.org/how-to/delegate-your-voting-power"
+      }
     },
     "delegationInactive": {
       "title": "You have no voting power",
@@ -1289,6 +1302,39 @@
         "ApproveProposalDescription": "The only cost to approve the proposal will be the gas fee.",
         "ApproveProposalTitle": "Approve proposal"
       }
+    },
+    "dappConnect": {
+      "title": "Select dApp",
+      "desc": "You can interact with the following dApps to add actions to your proposal. Learn more about {{link}}.",
+      "descLinkLabel": "in our guide",
+      "descLinkURL": "https://",
+      "validation": {
+        "codeInputHelp": "To connect, open {{dappName}}, copy the WalletConnect QR code to your clipboard, and paste it here.",
+        "modalTitle": "{{dappName}}",
+        "codeInputLabel": "WalletConnect QR code",
+        "ctaLabelDefault": "Create connection",
+        "ctaLabelVerifying": "Connecting dApp …",
+        "ctaLabelCritical": "Retry",
+        "ctaLabelSuccess": "Start adding actions",
+        "alertCriticalGeneral": "Connection to {{dappName}} failed",
+        "alertCriticalDapp": "The QR code provided is not from {{dappName}}.",
+        "alertSuccess": "{{dappName}} connected",
+        "codeInputPlaceholder": "wc: …",
+        "alertCriticalQRcode": "The QR code provided is not from {{dappName}}."
+      },
+      "detaildApp": {
+        "spinnerLabel": "Listening for actions…",
+        "desc": "You can can interact with {{dappName}}. Actions you take will be added to this proposal.",
+        "noActionsTag": "No actions received yet",
+        "amountActionsTag": "{{amountActions}} actions received",
+        "ctaLabel": "Add {{amountActions}} actions"
+      },
+      "ctaOpenDapp": "Open {{dappName}}",
+      "dAppConnectedLabel": "Connected",
+      "headerTitle": "Select dApp",
+      "headerDesc": "You can interact with the following dApps to add actions to your proposal. Learn more about {{link}}.",
+      "alertInfo": "More dApps coming soon!",
+      "ctaDisconnectDapp": "Disconnect {{dappName}}"
     }
   },
   "scc": {
@@ -1418,7 +1464,7 @@
       "optionCopyAddress": "Copy address",
       "optionBlockExplorer": "View on block explorer",
       "optionDelegate": "Delegate to",
-      "optionUndelegate": "Undelegate"
+      "optionChangeDelegation": "Change delegation"
     },
     "actionItemVoter": {
       "labelVoteWasChanged": "Vote was changed"
@@ -1458,64 +1504,9 @@
       "ctaLabel": "Ok, understood"
     }
   },
-  "wc": {
-    "emptyState": {
-      "title": "WalletConnect",
-      "desc": "Connect any dApps to add its actions to your proposal. Learn more about {{link}}.",
-      "ctaLabel": "Connect first dApp",
-      "descLinkLabel": "in our guide",
-      "descLinkURL": "https://"
-    },
-    "listdApps": {
-      "pretitle": {
-        "searchResults": "{{amount}} dApps results"
-      },
-      "emptyStateSearch": {
-        "title": "No results to show",
-        "desc": "No connected dApps found for this search term.",
-        "ctaLabel": "Reset search"
-      },
-      "listTitle": "{{amount}} connected dApps",
-      "learnLinkURL": "https://",
-      "learnLinkLabel": "Learn more",
-      "ctaLabelDefault": "Connect dApp"
-    },
-    "validation": {
-      "modalTitle": "Connect dApp",
-      "codeInputHelp": "Copy the QR Code to your Clipboard and paste it below to connect to your desired dApp.",
-      "codeInputLabel": "WalletConnect QR code",
-      "codeInputPlaceholder": "wc: …",
-      "ctaLabel": "Connect dApp",
-      "addressInput": {
-        "alertCritical": "Failure in connecting the dApp. Try again"
-      },
-      "codeInput": {
-        "statusSuccess": "{{dappName}} connected"
-      },
-      "ctaLabelSuccess": "Start adding actions",
-      "ctaLabelCritical": "Retry",
-      "ctaLabelVerifying": "Connecting dApp …"
-    },
-    "detaildApp": {
-      "spinnerLabel": "Listening for actions...",
-      "desc": "Simply open {{dappName}} and interact with it. The actions will be added to this proposal.",
-      "noActionsTag": "No actions received yet",
-      "amountActionsTag": "{{amountActions}} actions received",
-      "ctaLabel": {
-        "opendApp": "Open {{dappName}}",
-        "disconnectdApp": "Disconnect {{dappName}}",
-        "addAmountActions": "Add {{amountActions}} actions"
-      }
-    },
-    "modalHeaderSearch": {
-      "placeholder": "Type to find a dApp …"
-    },
-    "dappList": {
-      "modalTitle": "Select dApp"
-    }
-  },
   "label": {
-    "exportCSV": "Export to CSV"
+    "exportCSV": "Export to CSV",
+    "executionMultisig": "Execution multisig"
   },
   "tokenAmount": {
     "InputLabel": "Tokens",
@@ -1576,7 +1567,7 @@
     },
     "alert": {
       "title": "Aragon OSx updates are available.",
-      "desc": "New versions of Aragon smart contracts are available. Updating your DAO requires a proposal to be a created and passed.",
+      "desc": "New versions of Aragon smart contracts are available. Updating your DAO requires a proposal to be created and passed.",
       "ctaLabel": "View updates"
     },
     "reviewUpdates": {
@@ -1611,8 +1602,8 @@
       "alertTitle": "Some updates may be unsafe",
       "alertDesc": "One or more actions aren't in the Aragon Update Registry, indicating that this update could be potentially harmful.",
       "desc": "All actions are listed in the Aragon Update Registry, which is managed by the Aragon team. However, always exercise caution when evaluating updates. To learn more about Aragon OSx updates, {{link}}.",
-      "descLinkLabel": "Read more",
-      "descLinkUrl": "https://"
+      "descLinkLabel": "read more in our guides",
+      "descLinkURL": "https://aragon.org/how-to/update-your-aragon-dao"
     },
     "proposal": {
       "bannerTitle": "Verified Aragon App Update"
@@ -1638,6 +1629,26 @@
       "labelApp": "App",
       "labelOs": "Operating system",
       "labelGovernance": "Governance"
+    }
+  },
+  "addAction": {
+    "configureActions": {
+      "AlertCritical": {
+        "title": "Action may fail",
+        "desc": "Even if the proposal passes, this action may fail if it is executed after {{date time}}"
+      }
+    }
+  },
+  "createDao": {
+    "stepCommunityVoting": {
+      "title": "Community voting parameters",
+      "desc": "Establish the conditions that determine the passage of a proposal during the initial community voting phase. How much support does the proposal need? How much of the community needs to participate? How long is the proposal open for voting? Learn more about in {{this guide}}."
+    },
+    "executionMultisig": {
+      "title": "Define your execution multisig",
+      "desc": "To bring the offchain results onchain, a execution multisig is needed to validate the results and perform the optional actions of a proposal. Learn more about the execution multisig and its tasks in {{link}}.",
+      "membersLabel": "Execution multisig members",
+      "membersDesc": "These addresses form the governing body that approves and executes proposals passed by the community. Add the addresses who will be members of the execution multisig."
     }
   }
 }

@@ -5,7 +5,7 @@ import {
   IconGovernance,
   IconType,
   IconSettings,
-} from '@aragon/ods';
+} from '@aragon/ods-old';
 
 import {i18n} from '../../../i18n.config';
 import {Dashboard, Community, Finance, Governance, Settings} from '../paths';
@@ -24,6 +24,7 @@ export const enum TransactionState {
   LOADING = 'LOADING',
   SUCCESS = 'SUCCESS',
   ERROR = 'ERROR',
+  INCORRECT_URI = 'INCORRECT_URI',
 }
 
 export const enum ManualABIFlowState {
@@ -131,14 +132,6 @@ export const PROPOSAL_STATE_LABELS = [
 ];
 
 // Storage and cacheing keys
-export const FAVORITE_DAOS_KEY = 'favoriteDaos';
-export const PENDING_PROPOSALS_KEY = 'pendingProposals';
-export const PENDING_MULTISIG_PROPOSALS_KEY = 'pendingMultisigProposals';
-export const PENDING_VOTES_KEY = 'pendingVotes';
-export const PENDING_MULTISIG_VOTES_KEY = 'pendingMultisigVotes';
-export const PENDING_DAOS_KEY = 'pendingDaos';
-export const PENDING_EXECUTION_KEY = 'pendingExecution';
-export const PENDING_MULTISIG_EXECUTION_KEY = 'pendingMultisigExecution';
 export const VERIFIED_CONTRACTS_KEY = 'verifiedContracts';
 
 // TODO: build more

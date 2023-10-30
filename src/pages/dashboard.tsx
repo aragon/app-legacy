@@ -2,10 +2,11 @@ import {
   ButtonText,
   HeaderDao,
   IconCheckmark,
+  IconClose,
   IconSpinner,
   IlluObject,
   IllustrationHuman,
-} from '@aragon/ods';
+} from '@aragon/ods-old';
 import React, {useCallback, useEffect, useMemo, useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {generatePath, useNavigate, useParams} from 'react-router-dom';
@@ -13,32 +14,32 @@ import styled from 'styled-components';
 
 import {Loading} from 'components/temporary';
 import {MembershipSnapshot} from 'containers/membershipSnapshot';
+import {
+  EmptyStateContainer,
+  EmptyStateHeading,
+} from 'containers/pageEmptyState';
 import ProposalSnapshot from 'containers/proposalSnapshot';
 import TreasurySnapshot from 'containers/treasurySnapshot';
 import {useAlertContext} from 'context/alert';
 import {NavigationDao} from 'context/apolloClient';
+import {useGlobalModalContext} from 'context/globalModals';
 import {useNetwork} from 'context/network';
 import {useDaoQuery} from 'hooks/useDaoDetails';
 import {useDaoVault} from 'hooks/useDaoVault';
 import {
-  useAddFavoriteDaoMutation,
-  useFavoritedDaosQuery,
-  useRemoveFavoriteDaoMutation,
-} from 'hooks/useFavoritedDaos';
+  useAddFollowedDaoMutation,
+  useFollowedDaosQuery,
+  useRemoveFollowedDaoMutation,
+} from 'hooks/useFollowedDaos';
 import {usePendingDao, useRemovePendingDaoMutation} from 'hooks/usePendingDao';
 import {PluginTypes} from 'hooks/usePluginClient';
-import {useProposals} from 'hooks/useProposals';
 import useScreen from 'hooks/useScreen';
+import {useProposals} from 'services/aragon-sdk/queries/use-proposals';
 import {CHAIN_METADATA} from 'utils/constants';
 import {formatDate} from 'utils/date';
 import {toDisplayEns} from 'utils/library';
 import {Dashboard as DashboardPath, NotFound} from 'utils/paths';
 import {Container} from './governance';
-import {
-  EmptyStateContainer,
-  EmptyStateHeading,
-} from 'containers/pageEmptyState';
-import {useGlobalModalContext} from 'context/globalModals';
 
 enum DaoCreationState {
   ASSEMBLING_DAO,
@@ -61,17 +62,29 @@ export const Dashboard: React.FC = () => {
     DaoCreationState.ASSEMBLING_DAO
   );
 
-  // favoring DAOS
-  const addFavoriteDaoMutation = useAddFavoriteDaoMutation(() =>
-    alert(t('alert.chip.favorited'))
-  );
+  // following DAOS
+  const addFollowedDaoMutation = useAddFollowedDaoMutation({
+    onMutate: () => {
+      alert(t('alert.chip.favorited'));
+    },
+  });
 
-  const removeFavoriteDaoMutation = useRemoveFavoriteDaoMutation(() =>
-    alert(t('alert.chip.unfavorite'))
-  );
+  const removeFollowedDaoMutation = useRemoveFollowedDaoMutation({
+    onMutate: () => {
+      alert(t('alert.chip.unfavorite'), <IconClose />);
+    },
+  });
 
-  const {data: favoritedDaos, isLoading: favoritedDaosLoading} =
-    useFavoritedDaosQuery();
+  const {
+    data: fallowedDaos,
+    isLoading: followedDaosLoading,
+    isFetching: followedDaosFetching,
+  } = useFollowedDaosQuery();
+
+  const enableFollowing =
+    !followedDaosFetching &&
+    !addFollowedDaoMutation.isLoading &&
+    !removeFollowedDaoMutation.isLoading;
 
   // live DAO
   const {
@@ -100,21 +113,21 @@ export const Dashboard: React.FC = () => {
     }
   });
 
-  const favoriteDaoMatchPredicate = useCallback(
-    (favoriteDao: NavigationDao) => {
+  const followedDaoMatchPredicate = useCallback(
+    (followedDao: NavigationDao) => {
       return (
-        favoriteDao.address.toLowerCase() === liveDao?.address.toLowerCase() &&
-        favoriteDao.chain === CHAIN_METADATA[network].id
+        followedDao.address.toLowerCase() === liveDao?.address.toLowerCase() &&
+        followedDao.chain === CHAIN_METADATA[network].id
       );
     },
     [liveDao?.address, network]
   );
 
-  const isFavoritedDao = useMemo(() => {
-    if (liveDao?.address && favoritedDaos)
-      return Boolean(favoritedDaos.some(favoriteDaoMatchPredicate));
+  const isFollowedDao = useMemo(() => {
+    if (liveDao?.address && fallowedDaos)
+      return Boolean(fallowedDaos.some(followedDaoMatchPredicate));
     else return false;
-  }, [favoriteDaoMatchPredicate, favoritedDaos, liveDao?.address]);
+  }, [followedDaoMatchPredicate, fallowedDaos, liveDao?.address]);
 
   /*************************************************
    *                    Hooks                      *
@@ -162,36 +175,44 @@ export const Dashboard: React.FC = () => {
     removePendingDaoMutation,
   ]);
 
-  const handleClipboardActions = useCallback(async () => {
-    await navigator.clipboard.writeText(
-      `https://app.aragon.org/#/daos/${network}/${liveAddressOrEns}`
-    );
-    alert(t('alert.chip.inputCopied'));
-  }, [alert, liveAddressOrEns, network, t]);
+  const onCopy = useCallback(
+    async (copyContent: string) => {
+      await navigator.clipboard.writeText(copyContent);
+      alert(t('alert.chip.inputCopied'));
+    },
+    [alert, t]
+  );
 
-  const handleFavoriteClick = useCallback(
+  const handleFollowedClick = useCallback(
     async (dao: NavigationDao) => {
-      try {
-        if (isFavoritedDao) {
-          await removeFavoriteDaoMutation.mutateAsync({dao});
-        } else {
-          await addFavoriteDaoMutation.mutateAsync({dao});
-        }
-      } catch (error) {
-        const action = isFavoritedDao
-          ? 'removing DAO from favorites'
-          : 'adding DAO to favorites';
+      if (enableFollowing) {
+        try {
+          if (isFollowedDao) {
+            await removeFollowedDaoMutation.mutateAsync({dao});
+          } else {
+            await addFollowedDaoMutation.mutateAsync({dao});
+          }
+        } catch (error) {
+          const action = isFollowedDao
+            ? 'removing DAO from list of followed DAOs'
+            : 'adding DAO to list of followed DAOs';
 
-        console.error(`Error ${action}`, error);
+          console.error(`Error ${action}`, error);
+        }
       }
     },
-    [isFavoritedDao, removeFavoriteDaoMutation, addFavoriteDaoMutation]
+    [
+      enableFollowing,
+      isFollowedDao,
+      removeFollowedDaoMutation,
+      addFollowedDaoMutation,
+    ]
   );
 
   /*************************************************
    *                    Render                     *
    *************************************************/
-  if (pendingDaoLoading || liveDaoLoading || favoritedDaosLoading) {
+  if (pendingDaoLoading || liveDaoLoading || followedDaosLoading) {
     return <Loading />;
   }
 
@@ -204,7 +225,7 @@ export const Dashboard: React.FC = () => {
 
     const buttonIcon = {
       [DaoCreationState.ASSEMBLING_DAO]: (
-        <IconSpinner className="h-1.5 w-1.5 animate-spin desktop:h-2 desktop:w-2" />
+        <IconSpinner className="h-3 w-3 animate-spin xl:h-4 xl:w-4" />
       ),
       [DaoCreationState.DAO_READY]: <IconCheckmark />,
       [DaoCreationState.OPEN_DAO]: undefined,
@@ -234,14 +255,14 @@ export const Dashboard: React.FC = () => {
           <EmptyStateHeading>
             {t('dashboard.emptyState.title')}
           </EmptyStateHeading>
-          <p className="mt-1.5 text-center text-base">
+          <p className="mt-3 text-center text-base leading-normal">
             {t('dashboard.emptyState.subtitle')}
           </p>
           <ButtonText
             size="large"
             label={buttonLabel[daoCreationState]}
             iconLeft={buttonIcon[daoCreationState]}
-            className={`mt-4 ${daoCreationState === 0 && 'bg-primary-800'}`}
+            className={`mt-8 ${daoCreationState === 0 && 'bg-primary-800'}`}
             onClick={handleOpenYourDaoClick}
           />
         </EmptyStateContainer>
@@ -255,12 +276,21 @@ export const Dashboard: React.FC = () => {
         ? t('explore.explorer.walletBased')
         : t('explore.explorer.tokenBased');
 
+    const links =
+      liveDao.metadata?.links
+        ?.filter(link => link.name !== '' && link.url !== '')
+        .map(link => ({
+          label: link.name,
+          href: link.url,
+        })) ?? [];
+
     return (
       <>
         <HeaderWrapper>
           <HeaderDao
             daoName={liveDao.metadata.name}
             daoEnsName={toDisplayEns(liveDao.ensDomain)}
+            daoAddress={liveDao.address}
             daoAvatar={liveDao?.metadata?.avatar}
             daoUrl={`app.aragon.org/#/daos/${network}/${liveAddressOrEns}`}
             description={liveDao.metadata.description}
@@ -270,10 +300,10 @@ export const Dashboard: React.FC = () => {
             ).toString()}
             daoChain={CHAIN_METADATA[network].name}
             daoType={daoType}
-            favorited={isFavoritedDao}
-            copiedOnClick={handleClipboardActions}
-            onFavoriteClick={() =>
-              handleFavoriteClick({
+            following={isFollowedDao}
+            onCopy={onCopy}
+            onFollowClick={() => {
+              handleFollowedClick({
                 address: liveDao.address.toLowerCase(),
                 chain: CHAIN_METADATA[network].id,
                 ensDomain: liveDao.ensDomain,
@@ -283,16 +313,13 @@ export const Dashboard: React.FC = () => {
                   avatar: liveDao?.metadata?.avatar,
                   description: liveDao.metadata.description,
                 },
-              })
-            }
-            links={
-              liveDao.metadata?.links
-                ?.filter(link => link.name !== '' && link.url !== '')
-                .map(link => ({
-                  label: link.name,
-                  href: link.url,
-                })) || []
-            }
+              });
+            }}
+            links={links}
+            translation={{
+              follow: t('dao.follow.false'),
+              following: t('dao.follow.true'),
+            }}
           />
         </HeaderWrapper>
 
@@ -300,13 +327,13 @@ export const Dashboard: React.FC = () => {
           <DashboardContent
             daoAddressOrEns={liveAddressOrEns}
             pluginType={liveDao.plugins[0].id as PluginTypes}
-            pluginAddress={liveDao.plugins[0].instanceAddress || ''}
+            pluginAddress={liveDao.plugins[0].instanceAddress ?? ''}
           />
         ) : (
           <MobileDashboardContent
             daoAddressOrEns={liveAddressOrEns}
             pluginType={liveDao.plugins[0].id as PluginTypes}
-            pluginAddress={liveDao.plugins[0].instanceAddress || ''}
+            pluginAddress={liveDao.plugins[0].instanceAddress ?? ''}
           />
         )}
       </>
@@ -325,7 +352,7 @@ export const Dashboard: React.FC = () => {
 
 const HeaderWrapper = styled.div.attrs({
   className:
-    'w-screen -mx-2 tablet:col-span-full tablet:w-full tablet:mx-0 desktop:col-start-2 desktop:col-span-10 tablet:mt-3',
+    'w-screen -mx-4 md:col-span-full md:w-full md:mx-0 xl:col-start-2 xl:col-span-10 md:mt-6',
 })``;
 
 /* DESKTOP DASHBOARD ======================================================== */
@@ -342,8 +369,17 @@ const DashboardContent: React.FC<DashboardContentProps> = ({
   pluginAddress,
 }) => {
   const {transfers, totalAssetValue} = useDaoVault();
-  const {data: proposals} = useProposals(daoAddressOrEns, pluginType);
 
+  const {data} = useProposals({
+    daoAddressOrEns,
+    pluginType,
+    pluginAddress,
+  });
+  const proposals = data?.pages.flat() ?? [];
+
+  // The SDK does NOT provide a count. This will be incorrect
+  // whenever the number of proposals is greater than the default
+  // page size that we fetch: 6
   const proposalCount = proposals.length;
   const transactionCount = transfers.length;
 
@@ -356,7 +392,6 @@ const DashboardContent: React.FC<DashboardContentProps> = ({
               daoAddressOrEns={daoAddressOrEns}
               pluginAddress={pluginAddress}
               pluginType={pluginType}
-              proposals={proposals}
             />
             <TreasurySnapshot
               daoAddressOrEns={daoAddressOrEns}
@@ -371,7 +406,6 @@ const DashboardContent: React.FC<DashboardContentProps> = ({
                 daoAddressOrEns={daoAddressOrEns}
                 pluginAddress={pluginAddress}
                 pluginType={pluginType}
-                proposals={proposals}
               />
             </LeftWideContent>
             <RightNarrowContent>
@@ -402,7 +436,6 @@ const DashboardContent: React.FC<DashboardContentProps> = ({
           daoAddressOrEns={daoAddressOrEns}
           pluginAddress={pluginAddress}
           pluginType={pluginType}
-          proposals={proposals}
         />
       </LeftWideContent>
       <RightNarrowContent>
@@ -425,20 +458,19 @@ const DashboardContent: React.FC<DashboardContentProps> = ({
 // the mobile layout is much simpler, it has it's own component.
 
 const LeftWideContent = styled.div.attrs({
-  className: 'desktop:space-y-5 desktop:col-start-2 desktop:col-span-6',
+  className: 'xl:space-y-10 xl:col-start-2 xl:col-span-6',
 })``;
 
 const RightNarrowContent = styled.div.attrs({
-  className: 'desktop:col-start-8 desktop:col-span-4 desktop:space-y-3',
+  className: 'xl:col-start-8 xl:col-span-4 xl:space-y-6',
 })``;
 
 const EqualDivide = styled.div.attrs({
-  className:
-    'desktop:col-start-2 desktop:col-span-10 desktop:flex desktop:space-x-3',
+  className: 'xl:col-start-2 xl:col-span-10 xl:flex xl:space-x-6',
 })``;
 
 const MembersWrapper = styled.div.attrs({
-  className: 'desktop:col-start-2 desktop:col-span-10',
+  className: 'xl:col-start-2 xl:col-span-10',
 })``;
 
 /* MOBILE DASHBOARD CONTENT ================================================= */
@@ -449,7 +481,6 @@ const MobileDashboardContent: React.FC<DashboardContentProps> = ({
   pluginAddress,
 }) => {
   const {transfers, totalAssetValue} = useDaoVault();
-  const {data: proposals} = useProposals(daoAddressOrEns, pluginType);
 
   return (
     <MobileLayout>
@@ -457,7 +488,6 @@ const MobileDashboardContent: React.FC<DashboardContentProps> = ({
         daoAddressOrEns={daoAddressOrEns}
         pluginAddress={pluginAddress}
         pluginType={pluginType}
-        proposals={proposals}
       />
       <TreasurySnapshot
         daoAddressOrEns={daoAddressOrEns}
@@ -474,5 +504,5 @@ const MobileDashboardContent: React.FC<DashboardContentProps> = ({
 };
 
 const MobileLayout = styled.div.attrs({
-  className: 'col-span-full space-y-5',
+  className: 'col-span-full space-y-10',
 })``;

@@ -1,4 +1,4 @@
-import {ButtonText} from '@aragon/ods';
+import {ButtonText} from '@aragon/ods-old';
 import React from 'react';
 import {useTranslation} from 'react-i18next';
 import {generatePath, useNavigate} from 'react-router-dom';
@@ -16,13 +16,17 @@ import {useNetwork} from 'context/network';
 import {PluginTypes} from 'hooks/usePluginClient';
 import WalletIcon from 'public/wallet.svg';
 import {Governance, Community} from 'utils/paths';
-import {Erc20WrapperTokenDetails} from '@aragon/sdk-client';
-import {toDisplayEns} from 'utils/library';
+import {
+  Erc20WrapperTokenDetails,
+  MajorityVotingSettings,
+} from '@aragon/sdk-client';
+import {formatUnits, toDisplayEns} from 'utils/library';
 import {useExistingToken} from 'hooks/useExistingToken';
 import {htmlIn} from 'utils/htmlIn';
 import {useGovTokensWrapping} from 'context/govTokensWrapping';
 import {useDaoDetailsQuery} from 'hooks/useDaoDetails';
 import {useDaoToken} from 'hooks/useDaoToken';
+import {useVotingSettings} from 'services/aragon-sdk/queries/use-voting-settings';
 
 export const GatingMenu: React.FC = () => {
   const {close, isOpen} = useGlobalModalContext('gating');
@@ -39,6 +43,11 @@ export const GatingMenu: React.FC = () => {
 
   const {data: daoToken} = useDaoToken(plugins?.[0].instanceAddress);
   const {isDAOTokenWrapped} = useExistingToken({daoDetails, daoToken});
+
+  const {data: votingSettings} = useVotingSettings({
+    pluginAddress: plugins?.[0].instanceAddress,
+    pluginType: plugins?.[0].id as PluginTypes,
+  });
 
   const handleCloseMenu = () => {
     const governancePath = generatePath(Governance, {network, dao: daoName});
@@ -60,6 +69,13 @@ export const GatingMenu: React.FC = () => {
   const wrapTokenSymbol =
     (daoToken as Erc20WrapperTokenDetails | undefined)?.underlyingToken
       ?.symbol || '';
+
+  const minProposalThreshold = Number(
+    formatUnits(
+      (votingSettings as MajorityVotingSettings)?.minProposerVotingPower ?? 0,
+      daoToken?.decimals as number
+    )
+  );
 
   return (
     <ModalBottomSheetSwitcher isOpen={isOpen} onClose={handleCloseMenu}>
@@ -86,7 +102,10 @@ export const GatingMenu: React.FC = () => {
             <WarningTitle>{t('alert.gatingUsers.tokenTitle')}</WarningTitle>
             <WarningDescription>
               {t('alert.gatingUsers.tokenDescription', {
+                daoName: daoName,
                 tokenName: daoToken?.name,
+                amount: minProposalThreshold,
+                tokenSymbol: daoToken?.symbol,
               })}
             </WarningDescription>
           </WarningContainer>
@@ -102,7 +121,7 @@ export const GatingMenu: React.FC = () => {
         )}
 
         {displayWrapToken ? (
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-2 gap-6">
             <ButtonText
               label={t('modalAlert.wrapToken.ctaLabel')}
               onClick={handleWrapTokens}
@@ -128,5 +147,5 @@ export const GatingMenu: React.FC = () => {
 };
 
 const WarningDescription = styled.p.attrs({
-  className: 'text-base text-ui-500 text-center',
+  className: 'text-base text-neutral-500 text-center',
 })``;

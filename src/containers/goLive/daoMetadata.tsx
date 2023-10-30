@@ -1,5 +1,5 @@
 import React from 'react';
-import {AvatarDao, ListItemLink} from '@aragon/ods';
+import {AvatarDao, ListItemLink} from '@aragon/ods-old';
 import {Controller, useFormContext} from 'react-hook-form';
 import {useTranslation} from 'react-i18next';
 
@@ -62,7 +62,7 @@ const DaoMetadata: React.FC = () => {
             <Dl>
               <Dt>{t('labels.links')}</Dt>
               <Dd>
-                <div className="space-y-1.5">
+                <div className="space-y-3">
                   {links.map(
                     (
                       {name, url}: {name: string; url: string},

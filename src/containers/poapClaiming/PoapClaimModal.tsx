@@ -1,4 +1,4 @@
-import {ButtonText, IconLinkExternal} from '@aragon/ods';
+import {ButtonText, IconLinkExternal} from '@aragon/ods-old';
 import React from 'react';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
@@ -43,11 +43,11 @@ const PoapClaimModal: React.FC = () => {
 };
 
 const Container = styled.div.attrs({
-  className: 'p-3',
+  className: 'p-6',
 })``;
 
 const PoapImgContainer = styled.div.attrs({
-  className: 'py-3 flex justify-center',
+  className: 'py-6 flex justify-center',
 })``;
 
 const PoapImg = styled.img.attrs({
@@ -58,7 +58,7 @@ const PoapImg = styled.img.attrs({
 `;
 
 const BodyWrapper = styled.div.attrs({
-  className: 'space-y-3',
+  className: 'space-y-6',
 })``;
 
 export default PoapClaimModal;

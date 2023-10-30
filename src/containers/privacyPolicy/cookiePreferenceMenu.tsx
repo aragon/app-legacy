@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import {useTranslation} from 'react-i18next';
-import {ButtonIcon, ButtonText, IconClose} from '@aragon/ods';
+import {ButtonIcon, ButtonText, IconClose} from '@aragon/ods-old';
 
 import ModalBottomSheetSwitcher from 'components/modalBottomSheetSwitcher';
 
@@ -32,7 +32,7 @@ const CookiePreferenceMenu: React.FC<Props> = ({show, onClose, onAccept}) => {
       </ModalHeader>
       <BottomSheetContentContainer>
         <Text>{t('cookiePreferences.content')}</Text>
-        <div className="flex space-x-2">
+        <div className="flex space-x-4">
           <ButtonText
             className="flex-1"
             label={t('cookiePreferences.accept')}
@@ -55,20 +55,23 @@ const CookiePreferenceMenu: React.FC<Props> = ({show, onClose, onAccept}) => {
 export default CookiePreferenceMenu;
 
 const Title = styled.div.attrs({
-  className: 'flex-1 font-bold text-ui-800',
+  className: 'flex-1 font-semibold text-neutral-800',
 })``;
 
 const ModalHeader = styled.div.attrs({
-  className: 'flex items-center p-2 space-x-2 bg-ui-0 rounded-xl sticky top-0',
+  className:
+    'flex items-center p-4 space-x-4 bg-neutral-0 rounded-xl sticky top-0',
 })`
-  box-shadow: 0px 4px 8px rgba(31, 41, 51, 0.04),
-    0px 0px 2px rgba(31, 41, 51, 0.06), 0px 0px 1px rgba(31, 41, 51, 0.04);
+  box-shadow:
+    0px 4px 8px rgba(31, 41, 51, 0.04),
+    0px 0px 2px rgba(31, 41, 51, 0.06),
+    0px 0px 1px rgba(31, 41, 51, 0.04);
 `;
 
 const BottomSheetContentContainer = styled.div.attrs({
-  className: 'py-3 px-2 space-y-3 tablet:w-56',
+  className: 'py-6 px-4 space-y-6 md:w-[448px]',
 })``;
 
 const Text = styled.div.attrs({
-  className: 'flex-1 desktop:text-sm text-ui-600',
+  className: 'flex-1 xl:text-sm leading-normal text-neutral-600',
 })``;

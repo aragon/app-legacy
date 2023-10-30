@@ -1,7 +1,7 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {useFormContext, useFormState, useWatch} from 'react-hook-form';
 import {useTranslation} from 'react-i18next';
-import {generatePath} from 'react-router-dom';
+import {generatePath, useParams} from 'react-router-dom';
 
 import {FullScreenStepper, Step} from 'components/fullScreenStepper';
 import {Loading} from 'components/temporary';
@@ -38,6 +38,7 @@ const ProposalStepper: React.FC<ProposalStepperType> = ({
   enableTxModal,
 }: ProposalStepperType) => {
   const {data: daoDetails, isLoading} = useDaoDetailsQuery();
+  const {type} = useParams();
 
   const {data: votingSettings, isLoading: settingsLoading} = useVotingSettings({
     pluginAddress: daoDetails?.plugins?.[0]?.instanceAddress as string,
@@ -51,19 +52,26 @@ const ProposalStepper: React.FC<ProposalStepperType> = ({
   const {network} = useNetwork();
   const {trigger, control, getValues, setValue} = useFormContext();
   const {address, isConnected} = useWallet();
-  const [isActionsValid, setIsActionsValid] = useState(false);
+  const [areActionsValid, setAreActionsValid] = useState(false);
 
-  const [formActions] = useWatch({
-    name: ['actions'],
-  });
+  const formActions = useWatch({name: 'actions'});
+  const osUpdate = useWatch({name: 'osUpdate'});
 
-  const {errors, dirtyFields} = useFormState({
-    control,
-  });
+  const {errors, dirtyFields} = useFormState({control});
 
-  actionsAreValid(formActions, actions, errors, network).then(isValid =>
-    setIsActionsValid(isValid)
-  );
+  useEffect(() => {
+    const validateActions = async () => {
+      const isValid = await actionsAreValid(
+        formActions,
+        actions,
+        errors,
+        network
+      );
+      setAreActionsValid(isValid);
+    };
+
+    validateActions();
+  }, [formActions, actions, errors, errors?.actions?.length, network]);
 
   /*************************************************
    *                    Render                     *
@@ -82,9 +90,19 @@ const ProposalStepper: React.FC<ProposalStepperType> = ({
       returnPath={generatePath(Governance, {network, dao: daoDetails.address})}
     >
       <Step
-        wizardTitle={t('newWithdraw.defineProposal.heading')}
-        wizardDescription={t('newWithdraw.defineProposal.description')}
-        isNextButtonDisabled={!defineProposalIsValid(dirtyFields, errors)}
+        wizardTitle={
+          type === 'os-update'
+            ? t('update.reviewUpdates.headerTitle')
+            : t('newWithdraw.defineProposal.heading')
+        }
+        wizardDescription={
+          type === 'os-update'
+            ? t('update.reviewUpdates.headerDesc')
+            : t('newWithdraw.defineProposal.description')
+        }
+        isNextButtonDisabled={
+          !defineProposalIsValid(dirtyFields, errors, type, osUpdate)
+        }
         onNextButtonClicked={next => {
           trackEvent('newProposal_nextBtn_clicked', {
             dao_address: daoDetails.address,
@@ -134,7 +152,8 @@ const ProposalStepper: React.FC<ProposalStepperType> = ({
       <Step
         wizardTitle={t('newProposal.configureActions.heading')}
         wizardDescription={t('newProposal.configureActions.description')}
-        isNextButtonDisabled={!isActionsValid}
+        isNextButtonDisabled={!areActionsValid}
+        {...(type === 'os-update' && {skipStep: true, hideWizard: true})}
         onNextButtonDisabledClicked={() => {
           trigger('actions');
         }}

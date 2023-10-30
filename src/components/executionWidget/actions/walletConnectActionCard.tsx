@@ -1,4 +1,4 @@
-import {AlertCard, Label} from '@aragon/ods';
+import {AlertCard, Label} from '@aragon/ods-old';
 import React, {useMemo} from 'react';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
@@ -100,18 +100,18 @@ export const WCActionCard: React.FC<WCActionCardActionCardProps> = ({
   );
 };
 
-type ContentProps = Pick<WCActionCardActionCardProps, 'type'>;
-
-const Content = styled.div.attrs(({type}: ContentProps) => ({
-  className: `px-2 desktop:px-3 p-3 border border-ui-100 border-t-0 space-y-2 desktop:space-y-3 rounded-b-xl ${
-    type === 'action-builder' ? 'bg-ui-0' : 'bg-ui-50'
-  }`,
-}))<ContentProps>``;
+const Content = styled.div.attrs<{type: WCActionCardActionCardProps['type']}>(
+  ({type}) => ({
+    className: `px-4 xl:px-6 p-6 border border-neutral-100 border-t-0 space-y-4 xl:space-y-6 rounded-b-xl ${
+      type === 'action-builder' ? 'bg-neutral-0' : 'bg-neutral-50'
+    }`,
+  })
+)<{type: WCActionCardActionCardProps['type']}>``;
 
 const FormGroup = styled.div.attrs({
-  className: 'space-y-2 desktop:space-y-3',
+  className: 'space-y-4 xl:space-y-6',
 })``;
 
 const FormItem = styled.div.attrs({
-  className: 'space-y-1.5',
+  className: 'space-y-3',
 })``;

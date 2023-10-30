@@ -5,7 +5,7 @@ import {
   ButtonText,
   ButtonWallet,
   IconMenu,
-} from '@aragon/ods';
+} from '@aragon/ods-old';
 import React from 'react';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
@@ -99,8 +99,8 @@ const Container = styled.div.attrs({
 })``;
 
 const Menu = styled.nav.attrs({
-  className: `flex justify-between items-center px-2 tablet:px-3 py-1
-     tablet:py-1.5`,
+  className: `flex justify-between items-center px-4 md:px-6 py-2
+     md:py-3`,
 })`
   background: linear-gradient(
     180deg,
@@ -111,9 +111,10 @@ const Menu = styled.nav.attrs({
 `;
 
 const DaoContainer = styled.div.attrs({
-  className: 'flex flex-col gap-y-0.5 items-center rounded-xl',
+  className: 'flex flex-col gap-y-1 items-center rounded-xl',
 })``;
 
 const DaoName = styled.p.attrs({
-  className: 'hidden tablet:block text-sm font-bold text-ui-800',
+  className:
+    'hidden md:block text-sm leading-normal font-semibold text-neutral-800',
 })``;

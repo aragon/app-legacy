@@ -1,4 +1,4 @@
-import {IconLinkExternal, Link, Tag} from '@aragon/ods';
+import {IconLinkExternal, Link, Tag} from '@aragon/ods-old';
 import React, {useMemo} from 'react';
 import {Controller, useFormContext} from 'react-hook-form';
 import {useTranslation} from 'react-i18next';
@@ -119,7 +119,7 @@ const Community: React.FC = () => {
               <Dl>
                 <Dt>{t('votingTerminal.token')}</Dt>
                 <Dd>
-                  <div className="flex items-center space-x-1.5">
+                  <div className="flex items-center space-x-3">
                     <span>
                       {t('labels.review.tokenSymbolGovernance')} {tokenName} (
                       {govTokenSymbol})
@@ -144,7 +144,7 @@ const Community: React.FC = () => {
                 <Dl>
                   <Dt>{t('labels.supply')}</Dt>
                   <Dd>
-                    <div className="flex items-center space-x-1.5">
+                    <div className="flex items-center space-x-3">
                       <p>
                         {formattedTotalSupply} {tokenSymbol}
                       </p>
@@ -162,7 +162,7 @@ const Community: React.FC = () => {
                 <Dl>
                   <Dt>{t('labels.review.existingTokens.currentHolders')}</Dt>
                   <Dd>
-                    <div className="flex items-center space-x-1.5">
+                    <div className="flex items-center space-x-3">
                       <p>{formattedTotalHolders}</p>
                     </div>
                   </Dd>
@@ -172,11 +172,11 @@ const Community: React.FC = () => {
                 <Dl>
                   <Dt>{t('labels.supplyPotential')}</Dt>
                   <Dd>
-                    <div className="space-y-0.5">
+                    <div className="space-y-1">
                       <div>
                         {formattedTotalSupply} {govTokenSymbol}
                       </div>
-                      <div className="text-ui-400 ft-text-sm">
+                      <div className="text-neutral-400 ft-text-sm">
                         {t('labels.supplyPotentialHelptext', {tokenSymbol})}
                       </div>
                     </div>

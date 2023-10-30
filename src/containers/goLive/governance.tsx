@@ -88,7 +88,7 @@ const Governance: React.FC = () => {
               <Dl>
                 <Dt>{t('labels.minimumDuration')}</Dt>
                 <Dd>
-                  <div className="flex space-x-1.5">
+                  <div className="flex space-x-3">
                     <div>
                       {t('createDAO.review.days', {days: durationDays})}
                     </div>

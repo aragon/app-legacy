@@ -1,4 +1,4 @@
-import {LinearProgress} from '@aragon/ods';
+import {LinearProgress} from '@aragon/ods-old';
 import React from 'react';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
@@ -92,11 +92,11 @@ const ResultRow: React.FC<{
 };
 
 const VotePercentage = styled.p.attrs({
-  className: 'w-8 font-bold text-right text-primary-500 ' as string,
+  className: 'w-16 font-semibold text-right text-primary-500 ' as string,
 })``;
 
 const ResultValue = styled.p.attrs({
-  className: 'flex-1 text-right text-ui-600',
+  className: 'flex-1 text-right text-neutral-600',
 })``;
 
 const ResultValueMultisig = styled.p.attrs({
@@ -104,19 +104,21 @@ const ResultValueMultisig = styled.p.attrs({
 })``;
 
 const PercentageMultisig = styled.p.attrs({
-  className: 'font-bold text-right text-ui-600',
+  className: 'font-semibold text-right text-neutral-600',
 })``;
 
-const VoteOption = styled.p.attrs({className: 'font-bold text-primary-500'})``;
+const VoteOption = styled.p.attrs({
+  className: 'font-semibold text-primary-500',
+})``;
 
 const VStackRelaxed = styled.div.attrs({
-  className: 'space-y-3 mt-3 mt-5',
+  className: 'space-y-6 mt-10',
 })``;
 
 const VStackNormal = styled.div.attrs({
-  className: 'space-y-1.5',
+  className: 'space-y-3',
 })``;
 
 const HStack = styled.div.attrs({
-  className: 'flex space-x-1.5',
+  className: 'flex space-x-3',
 })``;

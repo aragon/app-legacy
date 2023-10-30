@@ -1,4 +1,4 @@
-import {TransferListItem} from '@aragon/ods';
+import {TransferListItem} from '@aragon/ods-old';
 import React from 'react';
 import {useTranslation} from 'react-i18next';
 import {useParams} from 'react-router-dom';
@@ -23,7 +23,7 @@ const TransferList: React.FC<TransferListProps> = ({
     return <p data-testid="transferList">{t('allTransfer.noTransfers')}</p>;
 
   return (
-    <div className="space-y-2" data-testid="transferList">
+    <div className="space-y-4" data-testid="transferList">
       {transfers.map(({tokenAmount, tokenSymbol, ...rest}, index) => (
         <TransferListItem
           // TODO: This is not a stable key and will be slow when sort/filtering.

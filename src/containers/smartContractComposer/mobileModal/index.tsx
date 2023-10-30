@@ -6,7 +6,7 @@ import {
   IconHome,
   IconLinkExternal,
   Link,
-} from '@aragon/ods';
+} from '@aragon/ods-old';
 import React, {useEffect, useState} from 'react';
 import {useFormContext, useWatch} from 'react-hook-form';
 import {useTranslation} from 'react-i18next';
@@ -121,7 +121,7 @@ const MobileModal: React.FC<Props> = props => {
                   iconRight={<IconLinkExternal height={13} width={13} />}
                   href={t('scc.listContracts.learnLinkURL')}
                   label={t('scc.listContracts.learnLinkLabel')}
-                  className="mt-2 w-full justify-center"
+                  className="mt-4 w-full justify-center"
                 />
               </div>
             </>
@@ -159,7 +159,7 @@ const MobileModalEmptyState: React.FC = () => {
 
 const Container = styled.div.attrs({
   'data-test-id': 'empty-container',
-  className: 'flex h-full bg-ui-0 p-6 pt-0 justify-center items-center',
+  className: 'flex h-full bg-neutral-0 p-12 pt-0 justify-center items-center',
 })``;
 
 type CustomHeaderProps = {
@@ -203,18 +203,21 @@ const CustomMobileHeader: React.FC<CustomHeaderProps> = props => {
 };
 
 const Header = styled.div.attrs({
-  className: 'flex items-center rounded-xl space-x-2 p-2 bg-ui-0',
+  className: 'flex items-center rounded-xl space-x-4 p-4 bg-neutral-0',
 })`
-  box-shadow: 0px 4px 8px rgba(31, 41, 51, 0.04),
-    0px 0px 2px rgba(31, 41, 51, 0.06), 0px 0px 1px rgba(31, 41, 51, 0.04);
+  box-shadow:
+    0px 4px 8px rgba(31, 41, 51, 0.04),
+    0px 0px 2px rgba(31, 41, 51, 0.06),
+    0px 0px 1px rgba(31, 41, 51, 0.04);
 `;
 
 const Content = styled.div.attrs({
-  className: 'py-3 px-2 space-y-3 overflow-auto',
+  className: 'py-6 px-4 space-y-6 overflow-auto',
 })`
   max-height: 70vh;
 `;
 
 const ActionSearchInput = styled.input.attrs({
-  className: 'flex-1 text-ui-300 bg-ui-0 ft-text-base focus:outline-none',
+  className:
+    'flex-1 text-neutral-300 bg-neutral-0 ft-text-base focus:outline-none',
 })``;

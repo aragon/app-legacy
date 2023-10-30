@@ -12,7 +12,7 @@ import {
   AlertInline,
   IconReload,
   InputValue,
-} from '@aragon/ods';
+} from '@aragon/ods-old';
 import {useDaoToken} from 'hooks/useDaoToken';
 import {WrappedWalletInput} from 'components/wrappedWalletInput';
 import {useDelegatee} from 'services/aragon-sdk/queries/use-delegatee';
@@ -121,9 +121,11 @@ export const DelegateVotingForm: React.FC<IDelegateVotingFormProps> = props => {
     : 'alertCriticalDelegate';
 
   return (
-    <div className="flex flex-col gap-3">
+    <div className="flex flex-col gap-6">
       <FormGroup>
-        <p className="text-base">{t('modal.delegation.optionsLabel')}</p>
+        <p className="font-semibold text-neutral-800 ft-text-base">
+          {t('modal.delegation.optionsLabel')}
+        </p>
         <CheckboxListItem
           label={t('modal.delegation.checkbox.delegateTo')}
           type={!isReclaimMode ? 'active' : 'default'}
@@ -192,5 +194,5 @@ export const DelegateVotingForm: React.FC<IDelegateVotingFormProps> = props => {
 };
 
 const FormGroup = styled.div.attrs({
-  className: 'flex flex-col gap-1.5' as string,
+  className: 'flex flex-col gap-3',
 })``;

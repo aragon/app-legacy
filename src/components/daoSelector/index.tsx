@@ -4,7 +4,7 @@ import {
   ButtonIcon,
   IconChevronDown,
   shortenAddress,
-} from '@aragon/ods';
+} from '@aragon/ods-old';
 import React from 'react';
 import styled from 'styled-components';
 
@@ -50,12 +50,12 @@ export const DaoSelector: React.FC<DaoSelectorProps> = ({
 
 const Card = styled.div.attrs(() => ({
   className:
-    'flex desktop:inline-flex items-center space-x-2 bg-ui-0' +
-    ' desktop:bg-transparent p-3 desktop:p-0 rounded-xl cursor-pointer',
+    'flex xl:inline-flex items-center space-x-4 bg-neutral-0' +
+    ' xl:bg-[transparent] p-6 xl:p-0 rounded-xl cursor-pointer',
 }))``;
 
 const LeftContent = styled.div.attrs({
-  className: 'inline-flex flex-1 space-x-1.5 min-w-0',
+  className: 'inline-flex flex-1 space-x-3 min-w-0',
 })``;
 
 const AvatarWrapper = styled.div``;
@@ -65,11 +65,11 @@ const TextContainer = styled.div.attrs({
 })``;
 
 const DaoName = styled.p.attrs({
-  className: 'text-ui-800 font-bold truncate',
+  className: 'text-neutral-800 font-semibold truncate',
 })`
   max-width: 88px;
 `;
 
 const DaoAddress = styled.p.attrs({
-  className: 'text-ui-500 ft-text-sm desktop:hidden truncate',
+  className: 'text-neutral-500 ft-text-sm xl:hidden truncate',
 })``;

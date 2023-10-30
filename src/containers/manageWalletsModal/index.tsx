@@ -3,7 +3,7 @@ import {
   CheckboxListItem,
   CheckboxSimple,
   SearchInput,
-} from '@aragon/ods';
+} from '@aragon/ods-old';
 import React, {useEffect, useMemo, useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
@@ -138,7 +138,7 @@ const ManageWalletsModal: React.FC<ManageWalletsModalProps> = ({
       </ModalHeader>
       <Container>
         <SelectAllContainer>
-          <p className="text-ui-400">{labels.label as string}</p>
+          <p className="text-neutral-400">{labels.label as string}</p>
           <CheckboxSimple
             label="Select All"
             multiSelect
@@ -148,7 +148,7 @@ const ManageWalletsModal: React.FC<ManageWalletsModalProps> = ({
           />
         </SelectAllContainer>
 
-        <div className="space-y-1.5">
+        <div className="space-y-3">
           {filteredWallets.map(wallet => (
             <CheckboxListItem
               key={wallet}
@@ -185,20 +185,22 @@ const ManageWalletsModal: React.FC<ManageWalletsModalProps> = ({
 export default ManageWalletsModal;
 
 const ModalHeader = styled.div.attrs({
-  className: 'p-3 bg-ui-0 rounded-xl sticky top-0',
+  className: 'p-6 bg-neutral-0 rounded-xl sticky top-0',
 })`
-  box-shadow: 0px 4px 8px rgba(31, 41, 51, 0.04),
-    0px 0px 2px rgba(31, 41, 51, 0.06), 0px 0px 1px rgba(31, 41, 51, 0.04);
+  box-shadow:
+    0px 4px 8px rgba(31, 41, 51, 0.04),
+    0px 0px 2px rgba(31, 41, 51, 0.06),
+    0px 0px 1px rgba(31, 41, 51, 0.04);
 `;
 
 const Container = styled.div.attrs({
-  className: 'p-3 max-h-96 overflow-auto',
+  className: 'p-6 max-h-96 overflow-auto',
 })``;
 
 const SelectAllContainer = styled.div.attrs({
-  className: 'flex justify-between items-center mb-2.5 mr-2.25',
+  className: 'flex justify-between items-center mb-5 mr-[18px]',
 })``;
 
 const ButtonContainer = styled.div.attrs({
-  className: 'flex py-2 px-3 space-x-2 bg-white',
+  className: 'flex py-4 px-6 space-x-4 bg-neutral-0',
 })``;

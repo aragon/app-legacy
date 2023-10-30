@@ -4,7 +4,7 @@ import {
   IconChevronLeft,
   IconChevronRight,
   Wizard,
-} from '@aragon/ods';
+} from '@aragon/ods-old';
 import React, {
   createContext,
   useCallback,
@@ -31,7 +31,7 @@ export type FullScreenStepperProps = {
 
 type FullScreenStepperContextType = {
   currentStep: number;
-  setStep: React.Dispatch<React.SetStateAction<number>>;
+  setStep: (newStep: number) => void;
   prev: () => void;
   next: () => void;
 };
@@ -131,7 +131,7 @@ export const FullScreenStepper: React.FC<FullScreenStepperProps> = ({
   return (
     <FullScreenStepperContext.Provider value={value}>
       <Layout>
-        <div className="-mx-2 tablet:mx-0 tablet:mt-3">
+        <div className="-mx-4 md:mx-0 md:mt-6">
           {!hideWizard && (
             <Wizard
               includeStepper={includeStepper}
@@ -202,21 +202,21 @@ export const FullScreenStepper: React.FC<FullScreenStepperProps> = ({
 
 const Layout = styled.div.attrs({
   className:
-    'col-span-full desktop:col-start-2 desktop:col-end-12 font-medium text-ui-600',
+    'col-span-full xl:col-start-2 xl:col-end-12 font-medium text-neutral-600',
 })``;
 
 type FormLayoutProps = {
   fullWidth: boolean;
 };
 
-const FormLayout = styled.div.attrs(({fullWidth}: FormLayoutProps) => ({
-  className: `mt-5 desktop:mt-8 mx-auto space-y-5 ${
-    !fullWidth && 'desktop:w-3/5'
-  }`,
-}))<FormLayoutProps>``;
+const FormLayout = styled.div.attrs<{fullWidth: FormLayoutProps}>(
+  ({fullWidth}) => ({
+    className: `mt-10 xl:mt-16 mx-auto space-y-10 ${!fullWidth && 'xl:w-3/5'}`,
+  })
+)<FormLayoutProps>``;
 
 const FormFooter = styled.div.attrs({
-  className: 'flex justify-between desktop:pt-3',
+  className: 'flex justify-between xl:pt-6',
 })``;
 
 const ButtonValidationTrigger = styled.div``;

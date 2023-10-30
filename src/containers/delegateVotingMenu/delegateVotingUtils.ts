@@ -1,4 +1,4 @@
-import {InputValue} from '@aragon/ods';
+import {InputValue} from '@aragon/ods-old';
 
 export enum DelegateVotingFormField {
   TOKEN_DELEGATE = 'tokenDelegate',

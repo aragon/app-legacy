@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import {Label} from '@aragon/ods';
+import {Label} from '@aragon/ods-old';
 import {useTranslation} from 'react-i18next';
 import {useFormContext} from 'react-hook-form';
 
@@ -31,7 +31,7 @@ const AddWalletsFooter: React.FC<WalletsFooterProps> = ({totalAddresses}) => {
       <FooterItem2>
         <StyledLabel>100%</StyledLabel>
       </FooterItem2>
-      <div className="w-8" />
+      <div className="w-16" />
     </Container>
   );
 };
@@ -39,7 +39,7 @@ const AddWalletsFooter: React.FC<WalletsFooterProps> = ({totalAddresses}) => {
 export default AddWalletsFooter;
 
 const Container = styled.div.attrs({
-  className: 'hidden tablet:flex p-2 space-x-2 bg-ui-0',
+  className: 'hidden md:flex p-4 space-x-4 bg-neutral-0',
 })``;
 
 const FooterItem1 = styled.div.attrs({
@@ -47,9 +47,9 @@ const FooterItem1 = styled.div.attrs({
 })``;
 
 const FooterItem2 = styled.div.attrs({
-  className: 'w-8',
+  className: 'w-16',
 })``;
 
 const StyledLabel = styled.p.attrs({
-  className: 'font-bold text-ui-800 text-right',
+  className: 'font-semibold text-neutral-800 text-right',
 })``;

@@ -1,4 +1,4 @@
-import {ButtonText, IconAdd} from '@aragon/ods';
+import {ButtonText, IconAdd} from '@aragon/ods-old';
 import {useAlertContext} from 'context/alert';
 import React from 'react';
 import {useFieldArray, useFormContext, useWatch} from 'react-hook-form';
@@ -74,7 +74,7 @@ const AddLinks: React.FC<AddLinks> = ({
 
 export default AddLinks;
 
-const Container = styled.div.attrs({className: 'space-y-1.5'})``;
+const Container = styled.div.attrs({className: 'space-y-3'})``;
 const ListGroup = styled.div.attrs({
   className: 'flex flex-col overflow-auto rounded-xl',
 })``;

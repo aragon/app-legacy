@@ -4,7 +4,7 @@ import {
   IconClose,
   IconHome,
   IconType,
-} from '@aragon/ods';
+} from '@aragon/ods-old';
 import React from 'react';
 import styled from 'styled-components';
 
@@ -55,17 +55,18 @@ export default SearchHeader;
 
 const Container = styled.div.attrs({
   className:
-    'flex sticky top-0 justify-between items-center py-2.5 px-3 bg-ui-0 border-b border-ui-100',
+    'flex sticky top-0 justify-between items-center py-5 px-6 bg-neutral-0 border-b border-neutral-100',
 })``;
 
 const LeftContent = styled.div.attrs({
-  className: 'flex gap-x-1 items-center text-ui-300 ft-text-base',
+  className: 'flex gap-x-2 items-center text-neutral-300 ft-text-base',
 })``;
 
 const SelectedValue = styled.p.attrs({
-  className: 'font-bold text-ui-600 ft-text-base',
+  className: 'font-semibold text-neutral-600 ft-text-base',
 })``;
 
 const ActionSearchInput = styled.input.attrs({
-  className: 'flex-1 text-ui-300 bg-ui-0 ft-text-base focus:outline-none',
+  className:
+    'flex-1 text-neutral-300 bg-neutral-0 ft-text-base focus:outline-none',
 })``;

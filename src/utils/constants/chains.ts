@@ -6,7 +6,7 @@ export const SUPPORTED_CHAIN_ID = [
   1, 5, 137, 8453, 80001, 84531, 42161, 421613,
 ] as const;
 
-export type SupportedChainID = typeof SUPPORTED_CHAIN_ID[number];
+export type SupportedChainID = (typeof SUPPORTED_CHAIN_ID)[number];
 
 export function isSupportedChainId(
   chainId: number
@@ -35,7 +35,7 @@ const SUPPORTED_NETWORKS = [
 ] as const;
 
 export type SupportedNetworks =
-  | typeof SUPPORTED_NETWORKS[number]
+  | (typeof SUPPORTED_NETWORKS)[number]
   | 'unsupported';
 
 export function toSupportedNetwork(network: string): SupportedNetworks {
@@ -130,7 +130,7 @@ export const CHAIN_METADATA: Record<SupportedNetworks, ChainData> = {
     logo: 'https://mirror-media.imgix.net/publication-images/cgqxxPdUFBDjgKna_dDir.png?h=250&w=250',
     explorer: 'https://basescan.org/',
     isTestnet: false,
-    rpc: ['https://developer-access-mainnet.base.org'],
+    rpc: ['https://mainnet.base.org'],
     nativeCurrency: {
       name: 'Ether',
       symbol: 'ETH',

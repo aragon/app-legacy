@@ -5,7 +5,7 @@ import {
   Label,
   Spinner,
   WalletInputLegacy,
-} from '@aragon/ods';
+} from '@aragon/ods-old';
 import React, {useCallback, useEffect, useMemo, useState} from 'react';
 import {
   Controller,
@@ -24,19 +24,32 @@ import {handleClipboardActions} from 'utils/library';
 import {useAlertContext} from 'context/alert';
 import {TransactionState as ConnectionState} from 'utils/constants/misc';
 import {useWalletConnectContext} from '../walletConnectProvider';
+import {
+  AllowListDApp,
+  AllowListDApps,
+  enableConnectAnyDApp,
+} from '../selectAppModal';
+import {METADATA_NAME_ERROR} from '../walletConnectProvider/useWalletConnectInterceptor';
 
 type Props = {
   onBackButtonClicked: () => void;
   onConnectionSuccess: (session: SessionTypes.Struct) => void;
   onClose: () => void;
   isOpen: boolean;
+  selecteddApp?: AllowListDApp;
 };
 
 // Wallet connect id input name
 export const WC_URI_INPUT_NAME = 'wcID';
 
 const WCdAppValidation: React.FC<Props> = props => {
-  const {onBackButtonClicked, onConnectionSuccess, onClose, isOpen} = props;
+  const {
+    onBackButtonClicked,
+    onConnectionSuccess,
+    onClose,
+    isOpen,
+    selecteddApp,
+  } = props;
 
   const {t} = useTranslation();
   const {alert} = useAlertContext();
@@ -56,14 +69,16 @@ const WCdAppValidation: React.FC<Props> = props => {
   const ctaLabel = useMemo(() => {
     switch (connectionStatus) {
       case ConnectionState.LOADING:
-        return t('wc.validation.ctaLabelVerifying');
+        return t('modal.dappConnect.validation.ctaLabelVerifying');
       case ConnectionState.ERROR:
-        return t('wc.validation.ctaLabelCritical');
+        return t('modal.dappConnect.validation.ctaLabelCritical');
+      case ConnectionState.INCORRECT_URI:
+        return t('modal.dappConnect.validation.ctaLabelCritical');
       case ConnectionState.SUCCESS:
-        return t('wc.validation.ctaLabelSuccess');
+        return t('modal.dappConnect.validation.ctaLabelSuccess');
       case ConnectionState.WAITING:
       default:
-        return t('wc.validation.ctaLabel');
+        return t('modal.dappConnect.validation.ctaLabelDefault');
     }
   }, [t, connectionStatus]);
 
@@ -120,31 +135,40 @@ const WCdAppValidation: React.FC<Props> = props => {
 
   const handleConnectDApp = useCallback(async () => {
     setConnectionStatus(ConnectionState.LOADING);
-    const wcConnection = await wcConnect({uri});
 
-    if (wcConnection) {
-      setSessionTopic(wcConnection.topic);
-    } else {
-      setConnectionStatus(ConnectionState.ERROR);
+    const appInAllowlist = AllowListDApps.filter(
+      dApp =>
+        dApp.name === selecteddApp?.name &&
+        selecteddApp.name !== 'Connect any app'
+    );
+
+    try {
+      const session = await wcConnect({
+        uri,
+        metadataName:
+          enableConnectAnyDApp && appInAllowlist.length === 0
+            ? undefined
+            : selecteddApp?.name.toLowerCase(),
+      });
+      setSessionTopic(session.pairingTopic);
+      setConnectionStatus(ConnectionState.SUCCESS);
+    } catch (error: unknown) {
+      if (error === METADATA_NAME_ERROR) {
+        setConnectionStatus(ConnectionState.INCORRECT_URI);
+      } else {
+        setConnectionStatus(ConnectionState.ERROR);
+      }
     }
-  }, [uri, wcConnect]);
+  }, [uri, wcConnect, selecteddApp?.name]);
 
-  // Update connectionStatus to SUCCESS when the session is active and acknowledged or reset
-  // the connection state if the session has been terminated on the dApp
+  // Reset the connection state if the session has been terminated on the dApp
   useEffect(() => {
-    const isLoading = connectionStatus === ConnectionState.LOADING;
     const isSuccess = connectionStatus === ConnectionState.SUCCESS;
 
-    if (isLoading && currentSession != null) {
-      setConnectionStatus(
-        currentSession.acknowledged
-          ? ConnectionState.SUCCESS
-          : ConnectionState.ERROR
-      );
-    } else if (isSuccess && currentSession == null) {
+    if (isSuccess && currentSession == null) {
       resetConnectionState();
     }
-  }, [connectionStatus, currentSession, resetConnectionState]);
+  }, [connectionStatus, currentSession, resetConnectionState, selecteddApp]);
 
   const disableCta =
     uri == null ||
@@ -159,10 +183,16 @@ const WCdAppValidation: React.FC<Props> = props => {
   /*************************************************
    *                     Render                    *
    *************************************************/
+  if (!selecteddApp) {
+    return null;
+  }
+
+  const dappName = selecteddApp.shortName || selecteddApp.name;
+
   return (
     <ModalBottomSheetSwitcher isOpen={isOpen} onClose={onClose}>
       <ModalHeader
-        title={t('wc.validation.modalTitle')}
+        title={dappName}
         showBackButton
         onBackButtonClicked={handleBackClick}
         {...(isDesktop ? {showCloseButton: true, onClose} : {})}
@@ -170,8 +200,10 @@ const WCdAppValidation: React.FC<Props> = props => {
       <Content>
         <FormGroup>
           <Label
-            label={t('wc.validation.codeInputLabel')}
-            helpText={t('wc.validation.codeInputHelp')}
+            label={t('modal.dappConnect.validation.codeInputLabel')}
+            helpText={t('modal.dappConnect.validation.codeInputHelp', {
+              dappName,
+            })}
           />
           {/* TODO: Please add validation when format of wc Code is known */}
           <Controller
@@ -185,10 +217,16 @@ const WCdAppValidation: React.FC<Props> = props => {
               <WalletInputLegacy
                 mode={error ? 'critical' : 'default'}
                 name={name}
+                disabled={
+                  connectionStatus === ConnectionState.LOADING ||
+                  connectionStatus === ConnectionState.SUCCESS
+                }
                 onBlur={onBlur}
                 onChange={onChange}
                 value={value ?? ''}
-                placeholder={t('wc.validation.codeInputPlaceholder')}
+                placeholder={t(
+                  'modal.dappConnect.validation.codeInputPlaceholder'
+                )}
                 adornmentText={adornmentText}
                 onAdornmentClick={() => handleAdornmentClick(value, onChange)}
               />
@@ -204,7 +242,8 @@ const WCdAppValidation: React.FC<Props> = props => {
             iconLeft: <Spinner size={'xs'} />,
             isActive: true,
           })}
-          {...(connectionStatus === ConnectionState.ERROR && {
+          {...((connectionStatus === ConnectionState.ERROR ||
+            connectionStatus === ConnectionState.INCORRECT_URI) && {
             iconLeft: <IconReload />,
           })}
           onClick={ctaHandler}
@@ -212,17 +251,29 @@ const WCdAppValidation: React.FC<Props> = props => {
         {connectionStatus === ConnectionState.SUCCESS && (
           <AlertWrapper>
             <AlertInline
-              label={t('wc.validation.codeInput.statusSuccess', {
-                dappName: currentSession?.peer.metadata.name,
+              label={t('modal.dappConnect.validation.alertSuccess', {
+                dappName,
               })}
               mode="success"
+            />
+          </AlertWrapper>
+        )}
+        {connectionStatus === ConnectionState.INCORRECT_URI && (
+          <AlertWrapper>
+            <AlertInline
+              label={t('modal.dappConnect.validation.alertCriticalQRcode', {
+                dappName,
+              })}
+              mode="critical"
             />
           </AlertWrapper>
         )}
         {connectionStatus === ConnectionState.ERROR && (
           <AlertWrapper>
             <AlertInline
-              label={t('wc.validation.addressInput.alertCritical')}
+              label={t('modal.dappConnect.validation.alertCriticalGeneral', {
+                dappName,
+              })}
               mode="critical"
             />
           </AlertWrapper>
@@ -235,11 +286,11 @@ const WCdAppValidation: React.FC<Props> = props => {
 export default WCdAppValidation;
 
 const Content = styled.div.attrs({
-  className: 'py-3 px-2 desktop:px-3 space-y-3',
+  className: 'py-6 px-4 xl:px-6 space-y-6',
 })``;
 
-const FormGroup = styled.div.attrs({className: 'space-y-1.5'})``;
+const FormGroup = styled.div.attrs({className: 'space-y-3'})``;
 
 const AlertWrapper = styled.div.attrs({
-  className: 'mt-1.5 flex justify-center',
+  className: 'mt-3 flex justify-center',
 })``;

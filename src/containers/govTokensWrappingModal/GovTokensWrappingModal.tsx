@@ -7,7 +7,7 @@ import {
   LinearProgress,
   Spinner,
   ValueInput,
-} from '@aragon/ods';
+} from '@aragon/ods-old';
 import React, {useCallback, useMemo, FC} from 'react';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
@@ -174,7 +174,7 @@ const GovTokensWrappingModal: FC<GovTokensWrappingModalProps> = ({
   );
 
   const handleMaxClicked = useCallback(
-    onChange => {
+    (onChange: (value: string) => void) => {
       if (modeData.tokenBalance) {
         onChange(modeData.tokenBalance);
       }
@@ -203,7 +203,7 @@ const GovTokensWrappingModal: FC<GovTokensWrappingModalProps> = ({
         </Container>
       ) : isFinished ? (
         <StateEmpty
-          customCardPaddingClassName="p-3"
+          customCardPaddingClassName="p-6"
           type="Human"
           mode="card"
           body="elevating"
@@ -243,7 +243,7 @@ const GovTokensWrappingModal: FC<GovTokensWrappingModalProps> = ({
       ) : (
         <Container>
           <BodyWrapper>
-            <form className="space-y-2">
+            <form className="space-y-4">
               {/* Action selection */}
               <FormItem>
                 <Label label={t('modal.wrapToken.inputModeLabel')} />
@@ -312,7 +312,7 @@ const GovTokensWrappingModal: FC<GovTokensWrappingModalProps> = ({
                         }}
                       />
                       <div className="flex items-start justify-between">
-                        <div className="space-y-1">
+                        <div className="space-y-2">
                           {error?.message && (
                             <AlertInline
                               label={error.message}
@@ -458,31 +458,31 @@ const GovTokensWrappingModal: FC<GovTokensWrappingModalProps> = ({
 };
 
 const Container = styled.div.attrs({
-  className: 'p-3',
+  className: 'p-6',
 })``;
 
 const BodyWrapper = styled.div.attrs({
-  className: 'space-y-2',
+  className: 'space-y-4',
 })``;
 
 const LoadingContainer = styled.div.attrs({
-  className: 'flex flex-col col-span-full gap-3 items-center py-6 w-full',
+  className: 'flex flex-col col-span-full gap-6 items-center py-12 w-full',
 })``;
 
 const LoadingLabel = styled.span.attrs({
-  className: 'text-lg text-center',
+  className: 'text-xl leading-normal text-center',
 })``;
 
 const FormItem = styled.div.attrs({
-  className: 'space-y-1.5',
+  className: 'space-y-3',
 })``;
 
 const ModeActionSelection = styled.div.attrs({
-  className: 'flex gap-3 items-center',
+  className: 'flex gap-6 items-center',
 })``;
 
 const TokenBalance = styled.p.attrs({
-  className: 'flex-1 px-1 text-xs text-right text-ui-600',
+  className: 'flex-1 px-2 text-xs leading-normal text-right text-neutral-600',
 })``;
 
 const TokenAmountInput = styled(ValueInput)`
@@ -495,7 +495,7 @@ const TokenAmountInput = styled(ValueInput)`
 `;
 
 const ProgressContainer = styled.div.attrs({
-  className: 'flex flex-col gap-1',
+  className: 'flex flex-col gap-2',
 })``;
 
 const ProgressHeader = styled.div.attrs({
@@ -503,19 +503,19 @@ const ProgressHeader = styled.div.attrs({
 })``;
 
 const ProgressTitle = styled.div.attrs({
-  className: 'font-bold text-primary-500',
+  className: 'font-semibold text-primary-500',
 })``;
 
 const ProgressSteps = styled.div.attrs({
-  className: 'text-ui-400',
+  className: 'text-neutral-400',
 })``;
 
 const ProgressHelpText = styled.div.attrs({
-  className: 'ft-text-sm text-ui-600',
+  className: 'ft-text-sm text-neutral-600',
 })``;
 
 const ActionsContainer = styled.div.attrs({
-  className: 'flex gap-2 items-center',
+  className: 'flex gap-4 items-center',
 })``;
 
 export default GovTokensWrappingModal;

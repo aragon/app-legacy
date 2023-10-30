@@ -14,7 +14,7 @@ import {
 import SetupMultisigVotingForm from './multisig';
 import SetupTokenVotingForm from './tokenVoting';
 
-type Props = {
+export type Props = {
   pluginSettings: SupportedVotingSettings;
 };
 
@@ -62,5 +62,5 @@ export function isValid(errors: StringIndexed) {
 }
 
 export const FormSection = styled.div.attrs({
-  className: 'space-y-1.5',
+  className: 'space-y-3',
 })``;

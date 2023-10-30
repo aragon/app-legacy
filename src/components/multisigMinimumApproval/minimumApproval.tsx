@@ -4,7 +4,7 @@ import {
   LinearProgress,
   NumberInput,
   NumberInputProps,
-} from '@aragon/ods';
+} from '@aragon/ods-old';
 import React from 'react';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
@@ -60,7 +60,7 @@ export default MinimumApproval;
 
 const Container = styled.div.attrs({
   className:
-    'flex flex-col desktop:flex-row items-center p-2 pt-4 desktop:p-3 gap-x-3 gap-y-4 rounded-xl bg-ui-0',
+    'flex flex-col xl:flex-row items-center p-4 pt-8 xl:p-6 gap-x-6 gap-y-8 rounded-xl bg-neutral-0',
 })``;
 
 const LinearProgressContainer = styled.div.attrs({
@@ -69,19 +69,21 @@ const LinearProgressContainer = styled.div.attrs({
 
 const ProgressInfo = styled.div.attrs({
   className:
-    'flex absolute whitespace-nowrap -top-2.5 justify-between space-x-0.5 w-full text-sm',
+    'flex absolute whitespace-nowrap -top-5 justify-between space-x-1 w-full text-sm leading-normal ',
 })``;
 
 const ApprovalAddresses = styled.p.attrs({
-  className: 'font-bold text-right text-primary-500',
+  className: 'font-semibold text-right text-primary-500',
 })``;
 
-const TotalAddresses = styled.p.attrs({className: 'text-ui-600 ft-text-sm'})``;
+const TotalAddresses = styled.p.attrs({
+  className: 'text-neutral-600 ft-text-sm',
+})``;
 
 const InputWrapper = styled.div.attrs({
-  className: 'order-2 desktop:order-1 w-full desktop:w-1/4',
+  className: 'order-2 xl:order-1 w-full xl:w-1/4',
 })``;
 
 const ProgressWrapper = styled.div.attrs({
-  className: 'flex flex-1 desktop:order-2 items-center w-full',
+  className: 'flex flex-1 xl:order-2 items-center w-full',
 })``;

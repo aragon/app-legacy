@@ -4,8 +4,8 @@ import {
   CheckboxListItem,
   CheckboxListItemProps,
   Tag,
-} from '@aragon/ods';
-import React from 'react';
+} from '@aragon/ods-old';
+import React, {ReactNode} from 'react';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 
@@ -17,6 +17,7 @@ export type DescriptionListProps = {
   checkedState?: CheckboxListItemProps['type'];
   onChecked?: () => void;
   tagLabel?: string;
+  children: ReactNode;
 };
 
 // TODO: This needs to be reworked, as it currently leads to nested DL (DLs get
@@ -61,8 +62,8 @@ export const DescriptionListContainer: React.FC<DescriptionListProps> = ({
       </HStack>
       <DlContainer>{children}</DlContainer>
       {onChecked && (
-        <div className="ml-auto space-y-1.5 tablet:w-3/4">
-          <div className="tablet:flex">
+        <div className="ml-auto space-y-3 md:w-3/4">
+          <div className="md:flex">
             <CheckboxListItem
               label={t('createDAO.review.valuesCorrect')}
               multiSelect
@@ -79,47 +80,46 @@ export const DescriptionListContainer: React.FC<DescriptionListProps> = ({
   );
 };
 
-export const Dt: React.FC = ({children}) => (
+export const Dt: React.FC<{children: ReactNode}> = ({children}) => (
   <DtContainer>{children}</DtContainer>
 );
 
-export const Dd: React.FC = ({children}) => (
+export const Dd: React.FC<{children: ReactNode}> = ({children}) => (
   <DdContainer>{children}</DdContainer>
 );
 
-export const Dl: React.FC = ({children}) => (
+export const Dl: React.FC<{children: ReactNode}> = ({children}) => (
   <DlContainer>
     <ListItemContainer>{children}</ListItemContainer>
   </DlContainer>
 );
 
 const Container = styled.div.attrs({
-  className: 'p-2 tablet:p-3 space-y-3 rounded-xl bg-ui-0',
+  className: 'p-4 md:p-6 space-y-6 rounded-xl bg-neutral-0',
 })``;
 
 const TitleText = styled.h1.attrs({
-  className: 'text-lg font-bold text-ui-800',
+  className: 'text-xl leading-normal font-semibold text-neutral-800',
 })``;
 
 const TitleContainer = styled.div.attrs({
-  className: 'flex space-x-2',
+  className: 'flex space-x-4',
 })``;
 
 const DlContainer = styled.dl.attrs({
-  className: 'space-y-2',
+  className: 'space-y-4',
 })``;
 
 const ListItemContainer = styled.div.attrs({
-  className:
-    'tablet:flex justify-between tablet:space-x-2 space-y-0.5 tablet:space-y-0',
+  className: 'md:flex justify-between md:space-x-4 space-y-1 md:space-y-0',
 })``;
 
 const DtContainer = styled.dt.attrs({
-  className: 'flex items-center font-bold text-ui-800',
+  className: 'flex items-center font-semibold text-neutral-800',
 })``;
 
 const DdContainer = styled.dd.attrs({
-  className: 'shrink-0 text-ui-600',
+  className: 'shrink-0 text-neutral-600',
 })`
   width: 70%;
 `;
@@ -130,5 +130,5 @@ const HStack = styled.div.attrs({
 
 export const ActionCardDlContainer = styled.div.attrs({
   className:
-    'bg-ui-50 rounded-b-xl border border-t-0 border-ui-100 space-y-2 p-3',
+    'bg-neutral-50 rounded-b-xl border border-t-0 border-neutral-100 space-y-4 p-6',
 })``;

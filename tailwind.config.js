@@ -1,189 +1,24 @@
+/** @type {import('tailwindcss').Config} */
 module.exports = {
-  content: [
-    './src/**/*.html',
-    './src/**/*.tsx',
-    './node_modules/@aragon/ods/**/*.cjs.js',
+  presets: [
+    require('@aragon/ods/tailwind.config'),
   ],
-  theme: {
-    extend: {
-      // extends colors according to design system
-      colors: {
-        primary: {
-          50: '#F5F8FF',
-          100: '#C4D7FF',
-          200: '#93B2FF',
-          300: '#628CFE',
-          400: '#3164FA',
-          500: '#003BF5',
-          600: '#0037D2',
-          700: '#0031AD',
-          800: '#002985',
-          900: '#001F5C',
-        },
-        ui: {
-          0: '#FFFFFF',
-          50: '#F5F7FA',
-          100: '#E4E7EB',
-          200: '#CBD2D9',
-          300: '#9AA5B1',
-          400: '#7B8794',
-          500: '#616E7C',
-          600: '#52606D',
-          700: '#3E4C59',
-          800: '#323F4B',
-          900: '#1F2933',
-        },
-        info: {
-          100: '#D1FDFA',
-          200: '#A4F9FB',
-          300: '#75E8F3',
-          400: '#52CFE7',
-          500: '#1EADD8',
-          600: '#1588B9',
-          700: '#0F669B',
-          800: '#09497D',
-          900: '#053467',
-        },
-        success: {
-          100: '#F3FCCC',
-          200: '#E4F99A',
-          300: '#CCEF66',
-          400: '#B2E040',
-          500: '#8ECC0A',
-          600: '#74AF07',
-          700: '#5C9205',
-          800: '#467603',
-          900: '#366101',
-        },
-        warning: {
-          100: '#FFF3D6',
-          200: '#FFE4AD',
-          300: '#FFD083',
-          400: '#FFBE65',
-          500: '#FF9F32',
-          600: '#DB7D24',
-          700: '#B75E19',
-          800: '#93430F',
-          900: '#7A3009',
-        },
-        critical: {
-          100: '#FEE4D6',
-          200: '#FEC3AE',
-          300: '#FD9A86',
-          400: '#FB7467',
-          500: '#F93636',
-          600: '#D62736',
-          700: '#B31B35',
-          800: '#901132',
-          900: '#770A30',
-        },
-      },
-      // extends spacing according to design system
-      spacing: {
-        0.1: '1px',
-        0.25: '2px',
-        0.5: '4px',
-        0.75: '6px',
-        1: '8px',
-        1.5: '12px',
-        1.75: '14px',
-        2: '16px',
-        2.25: '18px',
-        2.5: '20px',
-        2.75: '22px',
-        3: '24px',
-        3.5: '28px',
-        4: '32px',
-        4.5: '36px',
-        5: '40px',
-        6: '48px',
-        7: '56px',
-        8: '64px',
-        9: '72px',
-        10: '80px',
-        11: '88px',
-        12: '96px',
-        13: '104px',
-        14: '112px',
-        15: '120px',
-        16: '128px',
-        19: '152px',
-        20: '160px',
-        23: '184px',
-        25: '200px',
-        30: '240px',
-        35: '280px',
-        40: '320px',
-        46: '368px',
-        50: '400px',
-        55: '440px',
-        56: '448px',
-        63: '504px',
-        67: '536px',
-        70: '560px',
-        71: '568px',
-        190: '1520px',
-      },
-      borderRadius: {
-        larger: '10px',
-      },
-      boxShadow: {
-        100: '0px 4px 8px rgba(31, 41, 51, 0.04), 0px 0px 2px rgba(31, 41, 51, 0.06), 0px 0px 1px rgba(31, 41, 51, 0.04)',
-        200: '0px 10px 20px rgba(31, 41, 51, 0.04), 0px 2px 6px rgba(31, 41, 51, 0.04), 0px 0px 1px rgba(31, 41, 51, 0.04)',
-        300: '0px 16px 24px rgba(31, 41, 51, 0.06), 0px 2px 6px rgba(31, 41, 51, 0.04), 0px 0px 1px rgba(31, 41, 51, 0.04)',
-        400: '0px 24px 32px rgba(31, 41, 51, 0.04), 0px 16px 24px rgba(31, 41, 51, 0.04), 0px 4px 8px rgba(31, 41, 51, 0.04), 0px 0px 1px rgba(31, 41, 51, 0.04)',
-      },
-    },
-    fontWeight: {
-      normal: 500,
-      semibold: 600,
-      bold: 700,
-    },
-    lineHeight: {
-      3: '24px',
-      3.75: '30px',
-      4.75: '38px',
-      7.5: '60px',
-    },
-    // overrides screen breakpoints according to design system
-    screens: {
-      tablet: '768px',
-      lg: '1280px',
-      desktop: '1280px',
-      wide: '1680px',
-    },
-    fontFamily: {
-      sans: ['Manrope'],
-    },
-    // overrides font sizes according to design system
-    // These are to be used on components (labels, etc.).
-    fontSize: {
-      xs: ['0.64rem', 1.5],
-      sm: ['0.8rem', 1.5],
-      base: ['1rem', 1.5],
-      lg: ['1.25rem', 1.5],
-      xl: ['1.563rem', 1.2],
-      '2xl': ['1.953rem', 1.2],
-      '3xl': ['2.441rem', 1.2],
-      '4xl': ['3.052rem', 1.2],
-      '5xl': ['3.185rem', 1.2],
-    },
-  },
+  content: [
+    './src/**/*.{tsx,html}',
+    './node_modules/@aragon/ods/**/*.js',
+  ],
   plugins: [
     require('tailwindcss-fluid-type')({
       settings: {
-        fontSizeMin: 0.875, // 0.875rem === 14px
-        fontSizeMax: 1, // 1rem === 16px
-        ratioMin: 1.2, // Multiplicator Min: Minor Third
-        ratioMax: 1.25, // Multiplicator Max Major Third
-        screenMin: 20, // 20rem === 320px
-        screenMax: 96, // 96rem === 1536px
+        ratioMin: 1.2, // Min multiplicator: Minor Third
+        ratioMax: 1.25, // Max multiplicator: Major Third
+        fontSizeMin: 0.875, // 14px
+        fontSizeMax: 1, // 16px
+        screenMin: 20, // 320px
+        screenMax: 96, // 1536px
         unit: 'rem',
         prefix: 'ft-',
       },
-      // Creates the ft-text-xx classes. These are to be used for inline text
-      // and headings.
-      // 'lineHeight' is unitless.
       values: {
         xs: [-2, 1.5],
         sm: [-1, 1.5],

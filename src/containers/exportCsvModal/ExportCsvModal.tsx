@@ -13,7 +13,7 @@ import {
   IconReload,
   Label,
   Spinner,
-} from '@aragon/ods';
+} from '@aragon/ods-old';
 import {getCanonicalDate} from 'utils/date';
 import {StateEmpty} from 'components/stateEmpty';
 import {Transfer, Deposit, Withdraw} from 'utils/types';
@@ -190,7 +190,7 @@ const ExportCsvModal: React.FC<ExportCsvModalProps> = ({
     >
       {isFlowFinished ? (
         <StateEmpty
-          customCardPaddingClassName="p-3"
+          customCardPaddingClassName="p-6"
           type="Object"
           object="success"
           mode="card"
@@ -206,7 +206,7 @@ const ExportCsvModal: React.FC<ExportCsvModalProps> = ({
         <Container>
           <div />
           <BodyWrapper>
-            <form className="space-y-1.5">
+            <form className="space-y-3">
               <FormItem>
                 <Label label={t('labels.startDate')} />
                 <Controller
@@ -254,7 +254,7 @@ const ExportCsvModal: React.FC<ExportCsvModalProps> = ({
               </FormItem>
             </form>
 
-            <div className="space-y-2">
+            <div className="space-y-4">
               {isCsvGenerationSuccess ? (
                 <ButtonText
                   mode="primary"
@@ -284,7 +284,7 @@ const ExportCsvModal: React.FC<ExportCsvModalProps> = ({
                   onClick={createCsvBlob}
                 />
               ) : (
-                <div className="flex flex-col items-center gap-2 desktop:flex-row">
+                <div className="flex flex-col items-center gap-4 xl:flex-row">
                   <ButtonText
                     mode="primary"
                     isActive={isCsvGenerationLoading}
@@ -335,15 +335,15 @@ const ExportCsvModal: React.FC<ExportCsvModalProps> = ({
 };
 
 const Container = styled.div.attrs({
-  className: 'p-3',
+  className: 'p-6',
 })``;
 
 const BodyWrapper = styled.div.attrs({
-  className: 'space-y-3',
+  className: 'space-y-6',
 })``;
 
 const FormItem = styled.div.attrs({
-  className: 'space-y-1.5',
+  className: 'space-y-3',
 })``;
 
 export default ExportCsvModal;

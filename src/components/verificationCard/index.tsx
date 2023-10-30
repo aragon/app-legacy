@@ -1,7 +1,7 @@
 import React, {useMemo, useEffect} from 'react';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
-import {AlertCard, IconSpinner, Spinner, shortenAddress} from '@aragon/ods';
+import {AlertCard, IconSpinner, Spinner, shortenAddress} from '@aragon/ods-old';
 
 import {Dd, Dl} from 'components/descriptionList';
 import {useFormContext, useWatch} from 'react-hook-form';
@@ -186,7 +186,7 @@ const VerificationCard: React.FC<TransferListProps> = ({tokenAddress}) => {
                 </Dt>
                 {isTotalHoldersLoading ? (
                   <dd className="flex items-center" style={{width: '70%'}}>
-                    <IconSpinner className="h-1.5 w-1.5 animate-spin text-primary-500 desktop:h-2 desktop:w-2" />
+                    <IconSpinner className="h-3 w-3 animate-spin text-primary-500 xl:h-4 xl:w-4" />
                   </dd>
                 ) : (
                   <Dd>{formattedTokenTotalHolders}</Dd>
@@ -204,25 +204,25 @@ const VerificationCard: React.FC<TransferListProps> = ({tokenAddress}) => {
 export default VerificationCard;
 
 const VerifyContainer = styled.div.attrs({
-  className: 'flex flex-col space-y-3 p-3 bg-ui-0 rounded-xl',
+  className: 'flex flex-col space-y-6 p-6 bg-neutral-0 rounded-xl',
 })``;
 
 const VerifyWrapper = styled.div.attrs({
-  className: 'space-y-6',
+  className: 'space-y-12',
 })``;
 
 const LoadingWrapper = styled.div.attrs({
-  className: 'flex py-3 text-primary-400 gap-x-1 items-center',
+  className: 'flex py-6 text-primary-400 gap-x-2 items-center',
 })``;
 
 const VerifyTitle = styled.h2.attrs({
-  className: 'ft-text-lg font-bold text-800',
+  className: 'ft-text-lg font-semibold text-800',
 })``;
 
 const VerifyItemsWrapper = styled.div.attrs({
-  className: 'flex flex-col tablet:gap-x-2 gap-y-1.5',
+  className: 'flex flex-col md:gap-x-4 gap-y-3',
 })``;
 
 const Dt = styled.dt.attrs({
-  className: 'flex items-center text-ui-800',
+  className: 'flex items-center text-neutral-800',
 })``;

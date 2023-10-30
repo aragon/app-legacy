@@ -1,4 +1,4 @@
-import {AvatarDao, ButtonText, Spinner, Tag} from '@aragon/ods';
+import {AvatarDao, ButtonText, Spinner, Tag} from '@aragon/ods-old';
 import {SessionTypes} from '@walletconnect/types';
 import React, {useCallback} from 'react';
 import {useFormContext} from 'react-hook-form';
@@ -20,12 +20,14 @@ import {
   parseWCIconUrl,
 } from 'utils/library';
 import {useWalletConnectContext} from '../walletConnectProvider';
+import {AllowListDApp} from '../selectAppModal';
 
 type Props = {
   onBackButtonClicked: () => void;
   onClose: () => void;
   isOpen: boolean;
   selectedSession: SessionTypes.Struct;
+  selecteddApp?: AllowListDApp;
   actionIndex: number;
 };
 
@@ -34,6 +36,7 @@ const ActionListenerModal: React.FC<Props> = ({
   onClose,
   actionIndex,
   selectedSession,
+  selecteddApp,
   isOpen,
 }) => {
   const {t} = useTranslation();
@@ -177,7 +180,8 @@ const ActionListenerModal: React.FC<Props> = ({
     return null;
   }
 
-  const metadataName = selectedSession.peer.metadata.name;
+  const metadataName =
+    selecteddApp?.shortName || selectedSession.peer.metadata.name;
   const metadataURL = selectedSession.peer.metadata.url;
   const metadataIcon = parseWCIconUrl(
     metadataURL,
@@ -193,32 +197,34 @@ const ActionListenerModal: React.FC<Props> = ({
         {...(isDesktop ? {showCloseButton: true, onClose} : {})}
       />
       <Content>
-        <div className="flex flex-col items-center space-y-1.5">
+        <div className="flex flex-col items-center space-y-3">
           <AvatarDao daoName={metadataName} src={metadataIcon} size="medium" />
-          <div className="flex items-center justify-center text-center font-bold text-ui-800">
+          <div className="flex items-center justify-center text-center font-semibold text-neutral-800">
             <Spinner size={'xs'} />
-            <p className="ml-2">{t('wc.detaildApp.spinnerLabel')}</p>
+            <p className="ml-4">
+              {t('modal.dappConnect.detaildApp.spinnerLabel')}
+            </p>
           </div>
-          <p className="text-center text-sm text-ui-500 desktop:px-5">
-            {t('wc.detaildApp.desc', {
+          <p className="text-center text-sm leading-normal text-neutral-500 xl:px-10">
+            {t('modal.dappConnect.detaildApp.desc', {
               dappName: metadataName,
             })}
           </p>
           {actionsReceived.length > 0 ? (
             <Tag
-              label={t('wc.detaildApp.amountActionsTag', {
+              label={t('modal.dappConnect.detaildApp.amountActionsTag', {
                 amountActions: actionsReceived.length,
               })}
             />
           ) : (
-            <Tag label={t('wc.detaildApp.noActionsTag')} />
+            <Tag label={t('modal.dappConnect.detaildApp.noActionsTag')} />
           )}
         </div>
 
-        <div className="space-y-1.5">
+        <div className="space-y-3">
           {actionsReceived.length > 0 ? (
             <ButtonText
-              label={t('wc.detaildApp.ctaLabel.addAmountActions', {
+              label={t('modal.dappConnect.detaildApp.ctaLabel', {
                 amountActions: actionsReceived.length,
               })}
               onClick={handleAddActions}
@@ -228,7 +234,7 @@ const ActionListenerModal: React.FC<Props> = ({
           ) : null}
           {metadataURL && (
             <ButtonText
-              label={t('wc.detaildApp.ctaLabel.opendApp', {
+              label={t('modal.dappConnect.ctaOpenDapp', {
                 dappName: metadataName,
               })}
               onClick={() => window.open(metadataURL, '_blank')}
@@ -238,7 +244,7 @@ const ActionListenerModal: React.FC<Props> = ({
             />
           )}
           <ButtonText
-            label={t('wc.detaildApp.ctaLabel.disconnectdApp', {
+            label={t('modal.dappConnect.ctaDisconnectDapp', {
               dappName: metadataName,
             })}
             onClick={async () => {
@@ -257,5 +263,5 @@ const ActionListenerModal: React.FC<Props> = ({
 export default ActionListenerModal;
 
 const Content = styled.div.attrs({
-  className: 'py-3 px-2 desktop:px-3 space-y-3',
+  className: 'py-6 px-4 xl:px-6 space-y-6',
 })``;

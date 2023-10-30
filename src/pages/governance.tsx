@@ -1,106 +1,102 @@
-import {ProposalStatus} from '@aragon/sdk-client-common';
 import {
   ButtonGroup,
   ButtonText,
   IconAdd,
   IconChevronDown,
+  IllustrationHuman,
   Option,
   Spinner,
-  IllustrationHuman,
-} from '@aragon/ods';
-import React, {useEffect, useState} from 'react';
+} from '@aragon/ods-old';
+import {ProposalStatus} from '@aragon/sdk-client-common';
+import React, {useState} from 'react';
 import {useTranslation} from 'react-i18next';
-import {useNavigate} from 'react-router-dom';
+import {generatePath, useNavigate} from 'react-router-dom';
 import styled from 'styled-components';
 
 import ProposalList from 'components/proposalList';
 import {Loading} from 'components/temporary';
 import {PageWrapper} from 'components/wrappers';
+import PageEmptyState from 'containers/pageEmptyState';
+import {useGlobalModalContext} from 'context/globalModals';
 import {useDaoDetailsQuery} from 'hooks/useDaoDetails';
 import {PluginTypes} from 'hooks/usePluginClient';
-import {useProposals} from 'hooks/useProposals';
-import {trackEvent} from 'services/analytics';
-import {ProposalListItem} from 'utils/types';
-import PageEmptyState from 'containers/pageEmptyState';
-import {toDisplayEns} from 'utils/library';
 import useScreen from 'hooks/useScreen';
-import {htmlIn} from 'utils/htmlIn';
-import uniqBy from 'lodash/uniqBy';
-import {useGlobalModalContext} from 'context/globalModals';
+import {trackEvent} from 'services/analytics';
+import {useProposals} from 'services/aragon-sdk/queries/use-proposals';
 import {featureFlags} from 'utils/featureFlags';
-
-// The number of proposals displayed on each page
-const PROPOSALS_PER_PAGE = 6;
+import {htmlIn} from 'utils/htmlIn';
+import {toDisplayEns} from 'utils/library';
+import {useNetwork} from 'context/network';
+import {NewProposal} from 'utils/paths';
 
 export const Governance: React.FC = () => {
-  const {data: daoDetails, isLoading: isDaoLoading} = useDaoDetailsQuery();
+  const {t} = useTranslation();
+  const navigate = useNavigate();
   const {isMobile} = useScreen();
   const {open} = useGlobalModalContext();
+  const {network} = useNetwork();
 
-  const [skip, setSkip] = useState(0);
-  const [endReached, setEndReached] = useState(false);
-  const [filterValue, setFilterValue] = useState<ProposalStatus | 'All'>('All');
+  const [filter, setFilter] = useState<ProposalStatus | 'All'>('All');
 
-  const isTokenBasedDao =
-    daoDetails?.plugins[0].id === 'token-voting.plugin.dao.eth';
+  const {data: daoDetails, isLoading: daoDetailsLoading} = useDaoDetailsQuery();
+  const pluginType = daoDetails?.plugins[0].id as PluginTypes | undefined;
+  const pluginAddress = daoDetails?.plugins[0].instanceAddress;
+
+  const {
+    data,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+    isFetched,
+    isLoading: proposalsLoading,
+  } = useProposals({
+    daoAddressOrEns: daoDetails?.address,
+    pluginType,
+    pluginAddress: pluginAddress ?? '',
+    status: filter !== 'All' ? filter : undefined,
+  });
+
+  const noProposals =
+    isFetched && data?.pages[0].length === 0 && filter === 'All';
+
+  const isTokenBasedDao = pluginType === 'token-voting.plugin.dao.eth';
   const enableDelegation =
     isTokenBasedDao &&
     featureFlags.getValue('VITE_FEATURE_FLAG_DELEGATION') === 'true';
 
-  const {
-    data: proposals,
-    isInitialLoading,
-    isLoading,
-    isLoadingMore,
-  } = useProposals(
-    daoDetails?.address as string,
-    daoDetails?.plugins[0].id as PluginTypes,
-    PROPOSALS_PER_PAGE,
-    skip,
-    filterValue !== 'All' ? filterValue : undefined
-  );
-
-  const [displayedProposals, setDisplayedProposals] = useState<
-    ProposalListItem[]
-  >([]);
-
-  useEffect(() => {
-    if (!isInitialLoading) {
-      if (!proposals.length) {
-        setEndReached(true);
-      }
-
-      setDisplayedProposals(prev => {
-        const resultProposals = [...(prev || []), ...proposals];
-        return uniqBy(resultProposals, 'id');
-      });
-    }
-  }, [isInitialLoading, proposals]);
-
-  const {t} = useTranslation();
-  const navigate = useNavigate();
-
+  /*************************************************
+   *             Callbacks & Handlers              *
+   *************************************************/
   const handleNewProposalClick = () => {
     trackEvent('governance_newProposalBtn_clicked', {
       dao_address: daoDetails?.address as string,
     });
-    navigate('new-proposal');
+    navigate(
+      generatePath(NewProposal, {
+        type: 'default',
+        network,
+        dao: toDisplayEns(daoDetails?.ensDomain) || daoDetails?.address,
+      })
+    );
   };
 
   const handleShowMoreClick = () => {
-    if (!isDaoLoading) setSkip(prev => prev + PROPOSALS_PER_PAGE);
+    if (!isFetchingNextPage) {
+      fetchNextPage();
+    }
   };
 
-  if (isInitialLoading) {
+  /*************************************************
+   *                    Render                     *
+   *************************************************/
+  // NOTE: only thing that relies on this loading state
+  // is whether the delegate button is shown
+  if (daoDetailsLoading) {
     return <Loading />;
   }
 
-  if (
-    !isInitialLoading &&
-    !isLoading &&
-    !displayedProposals?.length &&
-    filterValue === 'All'
-  ) {
+  // Empty State
+  if (noProposals) {
     return (
       <PageEmptyState
         title={t('governance.emptyState.title')}
@@ -142,12 +138,7 @@ export const Governance: React.FC = () => {
         primaryBtnProps={{
           label: t('governance.action'),
           iconLeft: <IconAdd />,
-          onClick: () => {
-            trackEvent('governance_newProposalBtn_clicked', {
-              dao_address: daoDetails?.address,
-            });
-            navigate('new-proposal');
-          },
+          onClick: handleNewProposalClick,
         }}
         secondaryBtnProps={
           enableDelegation
@@ -161,12 +152,9 @@ export const Governance: React.FC = () => {
         <ButtonGroupContainer>
           <ButtonGroup
             bgWhite
-            defaultValue={filterValue}
+            defaultValue={filter}
             onChange={(selected: string) => {
-              setFilterValue(selected as ProposalStatus | 'All');
-              setDisplayedProposals([]);
-              setSkip(0);
-              setEndReached(false);
+              setFilter(selected as ProposalStatus | 'All');
             }}
           >
             <Option value="All" label="All" />
@@ -183,19 +171,19 @@ export const Governance: React.FC = () => {
               toDisplayEns(daoDetails?.ensDomain) ||
               (daoDetails?.address as string)
             }
-            proposals={displayedProposals}
-            pluginAddress={daoDetails?.plugins[0].instanceAddress as string}
-            pluginType={daoDetails?.plugins[0].id as PluginTypes}
-            isLoading={isLoading}
+            proposals={data?.pages.flat() ?? []}
+            pluginAddress={pluginAddress as string}
+            pluginType={pluginType as PluginTypes}
+            isLoading={proposalsLoading}
           />
         </ListWrapper>
 
-        {!endReached && displayedProposals?.length > 0 && (
-          <div className="mt-3">
+        {hasNextPage && (
+          <div className="mt-6">
             <ButtonText
               label={t('explore.explorer.showMore')}
               iconRight={
-                isLoadingMore ? <Spinner size="xs" /> : <IconChevronDown />
+                isFetchingNextPage ? <Spinner size="xs" /> : <IconChevronDown />
               }
               bgWhite
               mode="ghost"
@@ -209,11 +197,11 @@ export const Governance: React.FC = () => {
 };
 
 export const Container = styled.div.attrs({
-  className: 'col-span-full desktop:col-start-3 desktop:col-end-11',
+  className: 'col-span-full xl:col-start-3 xl:col-end-11',
 })``;
 
 const ButtonGroupContainer = styled.div.attrs({
-  className: 'flex overflow-auto mt-3 desktop:mt-8',
+  className: 'flex overflow-auto mt-6 xl:mt-16',
 })`
   scrollbar-width: none;
 
@@ -224,5 +212,5 @@ const ButtonGroupContainer = styled.div.attrs({
 `;
 
 const ListWrapper = styled.div.attrs({
-  className: 'mt-3',
+  className: 'mt-6',
 })``;

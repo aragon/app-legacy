@@ -1,4 +1,4 @@
-import {CardToken, CardTransfer} from '@aragon/ods';
+import {CardToken, CardTransfer} from '@aragon/ods-old';
 import React from 'react';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
@@ -49,5 +49,5 @@ export const WithdrawCard: React.FC<{
 
 const Container = styled.div.attrs({
   className:
-    'bg-ui-50 rounded-b-xl border border-t-0 border-ui-100 space-y-3 p-3',
+    'bg-neutral-50 rounded-b-xl border border-t-0 border-neutral-100 space-y-6 p-6',
 })``;

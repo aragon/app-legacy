@@ -1,4 +1,4 @@
-import {AlertInline, NumberInput} from '@aragon/ods';
+import {AlertInline, NumberInput} from '@aragon/ods-old';
 import React, {useCallback, useEffect} from 'react';
 import {Controller, useFormContext} from 'react-hook-form';
 import {useTranslation} from 'react-i18next';
@@ -343,13 +343,13 @@ export const DurationLabel: React.FC<DurationLabelProps> = ({
 
 const DurationContainer = styled.div.attrs({
   className:
-    'flex flex-col tablet:flex-row space-y-1.5 tablet:space-y-0 tablet:space-x-1.5 p-3 bg-ui-0 rounded-xl',
+    'flex flex-col md:flex-row space-y-3 md:space-y-0 md:space-x-3 p-6 bg-neutral-0 rounded-xl',
 })``;
 
 const TimeLabelWrapper = styled.div.attrs({
-  className: 'tablet:w-full space-y-0.5',
+  className: 'md:w-full space-y-1',
 })``;
 
 const TimeLabel = styled.span.attrs({
-  className: 'text-sm font-bold text-ui-800',
+  className: 'text-sm leading-normal font-semibold text-neutral-800',
 })``;

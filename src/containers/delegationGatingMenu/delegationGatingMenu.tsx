@@ -4,7 +4,14 @@ import styled from 'styled-components';
 import React from 'react';
 import {constants} from 'ethers';
 import {useTranslation} from 'react-i18next';
-import {ButtonText, IllustrationHuman, shortenAddress} from '@aragon/ods';
+import {
+  ButtonText,
+  IllustrationHuman,
+  IlluObject,
+  shortenAddress,
+  Link,
+  IconLinkExternal,
+} from '@aragon/ods-old';
 import {useDaoDetailsQuery} from 'hooks/useDaoDetails';
 import {useDaoToken} from 'hooks/useDaoToken';
 import {Address, useBalance, useEnsName} from 'wagmi';
@@ -12,6 +19,26 @@ import {CHAIN_METADATA, SupportedNetworks} from 'utils/constants';
 import {useDelegatee} from 'services/aragon-sdk/queries/use-delegatee';
 import {abbreviateTokenAmount} from 'utils/tokens';
 import {useWallet} from 'hooks/useWallet';
+
+const getDelegationLabels = (params: {
+  needsSelfDelegation: boolean;
+  noVotingPower: boolean;
+}) => {
+  const {needsSelfDelegation, noVotingPower} = params;
+
+  let bodyLabel = 'delegationActive';
+  let ctaLabel = 'delegationActive.CtaLabel';
+
+  if (needsSelfDelegation) {
+    bodyLabel = 'delegationInactive';
+    ctaLabel = 'delegation.ctaLabelDelegateNow';
+  } else if (noVotingPower) {
+    bodyLabel = 'delegation.NoVotingPower';
+    ctaLabel = 'delegation.NoVotingPower.ctaLabel';
+  }
+
+  return {bodyLabel, ctaLabel};
+};
 
 export const DelegationGatingMenu: React.FC = () => {
   const {t} = useTranslation();
@@ -37,10 +64,19 @@ export const DelegationGatingMenu: React.FC = () => {
     {tokenAddress: daoToken?.address as string},
     {enabled: daoToken != null}
   );
-  const isDelegationActive = delegateData !== constants.AddressZero;
+
   // The useDelegatee hook returns null when current delegate is connected address
   const currentDelegate =
     delegateData === null ? (address as string) : delegateData;
+
+  // For imported ERC-20 tokens, there's no self-delegation and the delegation data is set to address-zero.
+  const needsSelfDelegation = delegateData === constants.AddressZero;
+
+  // Defines the case when the user is not delegating the tokens to someone else but had no
+  // voting power when the proposal has been created.
+  const noVotingPower =
+    !needsSelfDelegation &&
+    currentDelegate?.toLowerCase() === address?.toLowerCase();
 
   const {data: delegateEns} = useEnsName({
     address: currentDelegate as Address,
@@ -48,35 +84,45 @@ export const DelegationGatingMenu: React.FC = () => {
   });
 
   const delegateName = delegateEns ?? shortenAddress(currentDelegate ?? '');
-  const delegationLabel = isDelegationActive
-    ? 'delegationActive'
-    : 'delegationInactive';
 
-  const handleReclaimClick = () => {
-    open('delegateVoting', {reclaimMode: true});
+  const handleCtaClick = () => {
+    if (noVotingPower) {
+      close();
+    } else {
+      open('delegateVoting', {reclaimMode: true});
+    }
   };
+
+  const {bodyLabel, ctaLabel} = getDelegationLabels({
+    noVotingPower,
+    needsSelfDelegation,
+  });
 
   return (
     <ModalBottomSheetSwitcher
       onClose={close}
       isOpen={isOpen}
-      title={t('modal.delegationActive.title')}
+      title={t('modal.delegationActive.label')}
     >
-      <div className="flex flex-col gap-3 px-2 py-3 text-center">
-        <ContentGroup>
-          <IllustrationHuman
-            width={343}
-            height={193}
-            body="elevating"
-            expression="excited"
-            hair="curly"
-            accessory="piercings_tattoo"
-          />
-          <p className="text-xl text-ui-800">
-            {t(`modal.${delegationLabel}.title`)}
+      <div className="flex flex-col gap-6 px-4 py-6 text-center">
+        <ContentGroup className="items-center">
+          {needsSelfDelegation ? (
+            <IllustrationHuman
+              width={343}
+              height={193}
+              body="elevating"
+              expression="excited"
+              hair="curly"
+              accessory="piercings_tattoo"
+            />
+          ) : (
+            <IlluObject object="warning" />
+          )}
+          <p className="text-2xl leading-tight text-neutral-800">
+            {t(`modal.${bodyLabel}.title`)}
           </p>
-          <p className="text-ui-600">
-            {t(`modal.${delegationLabel}.desc`, {
+          <p className="text-neutral-600">
+            {t(`modal.${bodyLabel}.desc`, {
               balance: tokenAmount,
               tokenSymbol: daoToken?.symbol,
               walletAddressDelegation: delegateName,
@@ -85,21 +131,33 @@ export const DelegationGatingMenu: React.FC = () => {
         </ContentGroup>
         <ContentGroup>
           <ButtonText
-            label={t('modal.delegationActive.CtaLabel')}
+            label={t(`modal.${ctaLabel}`)}
             mode="primary"
             size="large"
-            onClick={handleReclaimClick}
+            onClick={handleCtaClick}
           />
-          <ButtonText
-            label={t('modal.delegationActive.BtnSecondaryLabel')}
-            mode="secondary"
-            size="large"
-            onClick={() => close()}
-          />
+          {noVotingPower ? (
+            <Link
+              label={t('modal.delegation.NoVotingPower.Link')}
+              href={t('modal.delegation.NoVotingPower.LinkURL')}
+              target="_blank"
+              className="self-center"
+              iconRight={<IconLinkExternal />}
+            />
+          ) : (
+            <ButtonText
+              label={t('modal.delegationActive.BtnSecondaryLabel')}
+              mode="secondary"
+              size="large"
+              onClick={() => close()}
+            />
+          )}
         </ContentGroup>
       </div>
     </ModalBottomSheetSwitcher>
   );
 };
 
-const ContentGroup = styled.div.attrs({className: 'flex flex-col gap-1.5'})``;
+const ContentGroup = styled.div.attrs({
+  className: 'flex flex-col gap-3' as string,
+})``;

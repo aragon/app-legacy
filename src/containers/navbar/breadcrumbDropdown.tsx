@@ -1,4 +1,4 @@
-import {ButtonIcon, Dropdown, IconClose, IconMenu} from '@aragon/ods';
+import {ButtonIcon, Dropdown, IconClose, IconMenu} from '@aragon/ods-old';
 import React, {useState} from 'react';
 import styled from 'styled-components';
 
@@ -33,5 +33,5 @@ export const NavlinksDropdown: React.FC = () => {
 };
 
 const StyledDropdown = styled(Dropdown).attrs({
-  className: 'p-1.5 w-30 rounded-xl',
+  className: 'p-3 w-60 rounded-xl',
 })``;

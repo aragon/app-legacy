@@ -1,3 +1,4 @@
+import {ProposalQueryParams} from '@aragon/sdk-client';
 import {PluginTypes} from 'hooks/usePluginClient';
 
 export interface IFetchDelegateeParams {
@@ -29,4 +30,14 @@ export interface IFetchVotingSettingsParams {
   blockNumber?: number;
   pluginAddress?: string;
   pluginType?: PluginTypes;
+}
+
+export interface IFetchProposalsParams extends ProposalQueryParams {
+  pluginType?: PluginTypes;
+  pluginAddress: string;
+}
+
+export interface IFetchProposalParams {
+  pluginType?: PluginTypes;
+  id: string;
 }

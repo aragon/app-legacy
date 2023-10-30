@@ -6,29 +6,32 @@ import {
   IconGovernance,
   Link,
   WidgetStatus,
-} from '@aragon/ods';
+} from '@aragon/ods-old';
 import {
   MultisigClient,
   MultisigProposal,
   TokenVotingClient,
   TokenVotingProposal,
-  VoteValues,
   VotingMode,
 } from '@aragon/sdk-client';
 import {DaoAction, ProposalStatus} from '@aragon/sdk-client-common';
 import TipTapLink from '@tiptap/extension-link';
 import {useEditor} from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
-import React, {useEffect, useMemo, useRef, useState} from 'react';
+import {BigNumber, constants} from 'ethers';
+import React, {useCallback, useEffect, useMemo, useRef, useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {generatePath, useNavigate, useParams} from 'react-router-dom';
 import sanitizeHtml from 'sanitize-html';
 import styled from 'styled-components';
+import {Address} from 'viem';
+import {useBalance} from 'wagmi';
 
 import {ExecutionWidget} from 'components/executionWidget';
 import ResourceList from 'components/resourceList';
 import {Loading} from 'components/temporary';
 import {StyledEditorContent} from 'containers/reviewProposal';
+import {UpdateVerificationCard} from 'containers/updateVerificationCard';
 import {TerminalTabs, VotingTerminal} from 'containers/votingTerminal';
 import {useGlobalModalContext} from 'context/globalModals';
 import {useNetwork} from 'context/network';
@@ -38,20 +41,22 @@ import {useCache} from 'hooks/useCache';
 import {useClient} from 'hooks/useClient';
 import {useDaoDetailsQuery} from 'hooks/useDaoDetails';
 import {useDaoMembers} from 'hooks/useDaoMembers';
-import {useDaoProposal} from 'hooks/useDaoProposal';
+import {useDaoToken} from 'hooks/useDaoToken';
 import {useMappedBreadcrumbs} from 'hooks/useMappedBreadcrumbs';
 import {PluginTypes, usePluginClient} from 'hooks/usePluginClient';
+import useScreen from 'hooks/useScreen';
+import {useWallet} from 'hooks/useWallet';
+import {useWalletCanVote} from 'hooks/useWalletCanVote';
+import {usePastVotingPower} from 'services/aragon-sdk/queries/use-past-voting-power';
+import {useProposal} from 'services/aragon-sdk/queries/use-proposal';
 import {
   isMultisigVotingSettings,
   isTokenVotingSettings,
   useVotingSettings,
 } from 'services/aragon-sdk/queries/use-voting-settings';
-import useScreen from 'hooks/useScreen';
-import {useWallet} from 'hooks/useWallet';
-import {useWalletCanVote} from 'hooks/useWalletCanVote';
 import {useTokenAsync} from 'services/token/queries/use-token';
 import {CHAIN_METADATA, SupportedNetworks} from 'utils/constants';
-import {constants} from 'ethers';
+import {featureFlags} from 'utils/featureFlags';
 import {
   decodeAddMembersToAction,
   decodeMetadataToAction,
@@ -74,19 +79,8 @@ import {
   isEarlyExecutable,
   isErc20VotingProposal,
   isMultisigProposal,
-  stripPlgnAdrFromProposalId,
 } from 'utils/proposals';
-import {Action, ProposalId} from 'utils/types';
-import {useDaoToken} from 'hooks/useDaoToken';
-import {BigNumber} from 'ethers';
-import {usePastVotingPower} from 'services/aragon-sdk/queries/use-past-voting-power';
-import {Address} from 'viem';
-import {useBalance} from 'wagmi';
-import {UpdateVerificationCard} from 'containers/updateVerificationCard';
-import {featureFlags} from 'utils/featureFlags';
-
-// TODO: @Sepehr Please assign proper tags on action decoding
-// const PROPOSAL_TAGS = ['Finance', 'Withdraw'];
+import {Action} from 'utils/types';
 
 const PENDING_PROPOSAL_STATUS_INTERVAL = 1000 * 10;
 const PROPOSAL_STATUS_INTERVAL = 1000 * 60;
@@ -100,29 +94,21 @@ export const Proposal: React.FC = () => {
   const navigate = useNavigate();
   const fetchToken = useTokenAsync();
 
-  const {dao, id: urlId} = useParams();
-  const proposalId = useMemo(
-    () => (urlId ? new ProposalId(urlId) : undefined),
-    [urlId]
-  );
+  const {dao, id: proposalId} = useParams();
 
   const {data: daoDetails, isLoading: detailsAreLoading} = useDaoDetailsQuery();
   const pluginAddress = daoDetails?.plugins?.[0]?.instanceAddress as string;
   const pluginType = daoDetails?.plugins?.[0]?.id as PluginTypes;
-  const isMultisigDAO = pluginType === 'multisig.plugin.dao.eth';
+  const isMultisigPlugin = pluginType === 'multisig.plugin.dao.eth';
+  const isTokenVotingPlugin = pluginType === 'token-voting.plugin.dao.eth';
 
   const {data: daoToken} = useDaoToken(pluginAddress);
-  const {data: votingSettings} = useVotingSettings({pluginAddress, pluginType});
 
   const {
     data: {members},
   } = useDaoMembers(pluginAddress, pluginType, {
-    enabled: pluginType === 'multisig.plugin.dao.eth',
+    enabled: isMultisigPlugin,
   });
-
-  const allowVoteReplacement =
-    isTokenVotingSettings(votingSettings) &&
-    votingSettings.votingMode === VotingMode.VOTE_REPLACEMENT;
 
   const {client} = useClient();
   const {set, get} = useCache();
@@ -132,30 +118,50 @@ export const Proposal: React.FC = () => {
   const {address, isConnected, isOnWrongNetwork} = useWallet();
 
   const [voteStatus, setVoteStatus] = useState('');
-  const [intervalInMills, setIntervalInMills] = useState(0);
   const [decodedActions, setDecodedActions] =
     useState<(Action | undefined)[]>();
 
   const {
-    handleSubmitVote,
-    handleExecuteProposal,
+    handlePrepareVote,
+    handlePrepareApproval,
+    handlePrepareExecution,
     isLoading: paramsAreLoading,
-    voteSubmitted,
+    voteOrApprovalSubmitted,
     executionFailed,
-    transactionHash,
+    executionTxHash,
   } = useProposalTransactionContext();
 
   const {
     data: proposal,
     error: proposalError,
+    isFetched: proposalIsFetched,
     isLoading: proposalIsLoading,
-  } = useDaoProposal(
-    daoDetails?.address as string,
-    proposalId!,
-    pluginType,
-    pluginAddress,
-    intervalInMills
+    refetch,
+  } = useProposal(
+    {
+      pluginType: pluginType,
+      id: proposalId ?? '',
+    },
+    {
+      enabled: !!proposalId,
+
+      // refetch active proposal data every minute
+      refetchInterval: data =>
+        data?.status === ProposalStatus.ACTIVE
+          ? PROPOSAL_STATUS_INTERVAL
+          : false,
+    }
   );
+
+  const {data: votingSettings} = useVotingSettings(
+    {
+      pluginAddress,
+      pluginType,
+      blockNumber: proposal?.creationBlockNumber,
+    },
+    {enabled: !!proposal?.creationBlockNumber}
+  );
+
   const proposalStatus = proposal?.status;
 
   const {data: canVote} = useWalletCanVote(
@@ -197,8 +203,8 @@ export const Proposal: React.FC = () => {
 
   // Display the voting-power gating dialog when user has balance but delegated
   // his token to someone else
-  const displayVotingGate =
-    !isMultisigDAO &&
+  const shouldDisplayDelegationVoteGating =
+    !isMultisigPlugin &&
     tokenBalance.gt(constants.Zero) &&
     pastVotingPower.lte(constants.Zero);
 
@@ -395,11 +401,11 @@ export const Proposal: React.FC = () => {
 
   // show voter tab once user has voted
   useEffect(() => {
-    if (voteSubmitted) {
+    if (voteOrApprovalSubmitted) {
       setTerminalTab('voters');
       setVotingInProcess(false);
     }
-  }, [voteSubmitted]);
+  }, [voteOrApprovalSubmitted]);
 
   useEffect(() => {
     if (proposal) {
@@ -412,16 +418,18 @@ export const Proposal: React.FC = () => {
         // remove interval timer once the proposal has started
         if (proposal.startDate.valueOf() <= new Date().valueOf()) {
           clearInterval(interval);
-          setIntervalInMills(PROPOSAL_STATUS_INTERVAL);
           setVoteStatus(v);
-        } else if (proposalStatus === 'Pending') {
+          if (proposalStatus === ProposalStatus.PENDING) {
+            refetch();
+          }
+        } else if (proposalStatus === ProposalStatus.PENDING) {
           setVoteStatus(v);
         }
       }, PENDING_PROPOSAL_STATUS_INTERVAL);
 
       return () => clearInterval(interval);
     }
-  }, [proposal, proposalStatus, t]);
+  }, [proposal, proposalStatus, refetch, t]);
 
   /*************************************************
    *              Handlers and Callbacks           *
@@ -457,110 +465,106 @@ export const Proposal: React.FC = () => {
   }
 
   // proposal execution status
-  const executionStatus = useMemo(
-    () =>
-      getProposalExecutionStatus(
-        proposalStatus,
-        canExecuteEarly,
-        executionFailed
-      ),
-    [canExecuteEarly, executionFailed, proposalStatus]
+  const executionStatus = getProposalExecutionStatus(
+    proposalStatus,
+    canExecuteEarly,
+    executionFailed
   );
 
   // whether current user has voted
-  const voted = useMemo(() => {
-    if (!address || !proposal) return false;
+  let voted = false;
 
-    if (isMultisigProposal(proposal)) {
-      return proposal.approvals.some(
-        a =>
-          // remove the call to strip plugin address when sdk returns proper plugin address
-          stripPlgnAdrFromProposalId(a).toLowerCase() === address.toLowerCase()
-      );
-    } else {
-      return proposal.votes.some(
-        voter =>
-          voter.address.toLowerCase() === address.toLowerCase() &&
-          voter.vote !== undefined
-      );
+  if (address == null || proposal == null) {
+    voted = false;
+  } else if (isMultisigProposal(proposal)) {
+    voted = proposal.approvals.some(
+      a => a.toLowerCase() === address.toLowerCase()
+    );
+  } else {
+    voted = proposal.votes.some(
+      voter =>
+        voter.address.toLowerCase() === address.toLowerCase() &&
+        voter.vote != null
+    );
+  }
+
+  // multisig proposal must have at least one action to trigger
+  // approve and execute flow
+  const executableWithNextApproval =
+    isMultisigProposal(proposal) &&
+    (proposal.status === ProposalStatus.PENDING ||
+      proposal.status === ProposalStatus.ACTIVE) &&
+    voted === false &&
+    isMultisigVotingSettings(votingSettings) &&
+    proposal.actions.length > 0 &&
+    proposal.approvals.length + 1 >= votingSettings.minApprovals;
+
+  // vote button label
+  let voteButtonLabel = '';
+  if (proposal && votingSettings) {
+    voteButtonLabel = getVoteButtonLabel(
+      proposal,
+      votingSettings,
+      voted,
+      executableWithNextApproval,
+      t
+    );
+  }
+
+  // vote button status
+  const canRevote =
+    isTokenVotingSettings(votingSettings) &&
+    votingSettings.votingMode === VotingMode.VOTE_REPLACEMENT;
+
+  // this tracks whether the voting button should be enabled
+  const enableVotingButton =
+    proposal?.status === ProposalStatus.ACTIVE && // active proposal
+    (address == null || // wallet disconnected
+      (voted === false && canVote === true) || // haven't voted and can vote
+      (isTokenVotingPlugin && voted && canRevote === true) || // voted but vote replacement enabled
+      // can vote but no voting power (voted should status should never be true if shouldDisplayDelegationVotingGating)
+      (voted === false && shouldDisplayDelegationVoteGating === true));
+
+  const handleApprovalClick = useCallback(
+    (tryExecution: boolean) => {
+      if (address == null) {
+        open('wallet');
+        statusRef.current.wasNotLoggedIn = true;
+      } else if (isOnWrongNetwork) {
+        open('network');
+        statusRef.current.wasOnWrongNetwork = true;
+      } else if (canVote && proposal?.id) {
+        handlePrepareApproval({tryExecution, proposalId: proposal.id});
+      }
+    },
+    [
+      address,
+      canVote,
+      handlePrepareApproval,
+      isOnWrongNetwork,
+      open,
+      proposal?.id,
+    ]
+  );
+
+  const handleVoteClick = useCallback(() => {
+    if (address == null) {
+      open('wallet');
+      statusRef.current.wasNotLoggedIn = true;
+    } else if (isOnWrongNetwork) {
+      open('network');
+      statusRef.current.wasOnWrongNetwork = true;
+    } else if (shouldDisplayDelegationVoteGating) {
+      return open('delegationGating');
+    } else if (canVote) {
+      setVotingInProcess(true);
     }
-  }, [address, proposal]);
-
-  // vote button and status
-  const buttonLabel = useMemo(() => {
-    if (proposal) {
-      return getVoteButtonLabel(proposal, canVote, voted, t);
-    }
-  }, [proposal, voted, canVote, t]);
-
-  // vote button state and handler
-  const {voteNowDisabled, onClick} = useMemo(() => {
-    // disable voting on non-active proposals
-    if (proposalStatus !== 'Active') return {voteNowDisabled: true};
-
-    // disable approval on multisig when wallet has voted
-    if (isMultisigDAO && (voted || voteSubmitted))
-      return {voteNowDisabled: true};
-
-    // disable voting on mv with no vote replacement when wallet has voted
-    if (!allowVoteReplacement && (voted || voteSubmitted))
-      return {voteNowDisabled: true};
-
-    // not logged in
-    if (!address) {
-      return {
-        voteNowDisabled: false,
-        onClick: () => {
-          open('wallet');
-          statusRef.current.wasNotLoggedIn = true;
-        },
-      };
-    }
-
-    // wrong network
-    else if (isOnWrongNetwork) {
-      return {
-        voteNowDisabled: false,
-        onClick: () => {
-          open('network');
-          statusRef.current.wasOnWrongNetwork = true;
-        },
-      };
-    }
-
-    // needs voting power
-    else if (displayVotingGate) {
-      return {
-        voteNowDisabled: false,
-        onClick: () => open('delegationGating'),
-      };
-    }
-
-    // member, not yet voted
-    else if (canVote) {
-      return {
-        voteNowDisabled: false,
-        onClick: () => {
-          if (isMultisigDAO) {
-            handleSubmitVote(VoteValues.YES);
-          } else {
-            setVotingInProcess(true);
-          }
-        },
-      };
-    } else return {voteNowDisabled: true};
   }, [
     address,
-    allowVoteReplacement,
-    displayVotingGate,
     canVote,
-    handleSubmitVote,
+    shouldDisplayDelegationVoteGating,
     isOnWrongNetwork,
-    isMultisigDAO,
     open,
-    proposalStatus,
-    voteSubmitted,
-    voted,
   ]);
 
   // handler for execution
@@ -572,46 +576,34 @@ export const Proposal: React.FC = () => {
       // don't allow execution on wrong network
       open('network');
     } else {
-      handleExecuteProposal();
+      handlePrepareExecution();
     }
   };
 
   // alert message, only shown when not eligible to vote
-  const alertMessage = useMemo(() => {
-    if (
-      proposal &&
-      proposalStatus === 'Active' && // active proposal
-      address && // logged in
-      !isOnWrongNetwork && // on proper network
-      !voted && // haven't voted
-      !canVote && // cannot vote
-      !displayVotingGate // user delegated tokens
-    ) {
-      // presence of token delineates token voting proposal
-      // people add types to these things!!
-      return isErc20VotingProposal(proposal)
-        ? t('votingTerminal.status.ineligibleTokenBased', {
-            token: proposal.token.name,
-          })
-        : t('votingTerminal.status.ineligibleWhitelist');
-    }
-  }, [
-    address,
-    canVote,
-    isOnWrongNetwork,
-    proposal,
-    proposalStatus,
-    t,
-    voted,
-    displayVotingGate,
-  ]);
+  let alertMessage = '';
+  if (
+    proposal &&
+    proposal.status === 'Active' && // active proposal
+    address && // logged in
+    isOnWrongNetwork === false && // on proper network
+    voted === false && // haven't voted
+    canVote === false && // cannot vote
+    shouldDisplayDelegationVoteGating === false // user delegated tokens
+  ) {
+    // presence of token delineates token voting proposal
+    alertMessage = isErc20VotingProposal(proposal)
+      ? t('votingTerminal.status.ineligibleTokenBased', {
+          token: proposal.token.name,
+        })
+      : t('votingTerminal.status.ineligibleWhitelist');
+  }
 
   // status steps for proposal
-  const proposalSteps = useMemo(() => {
-    if (proposal) {
-      return getProposalStatusSteps(
+  const proposalSteps = proposal
+    ? getProposalStatusSteps(
         t,
-        proposalStatus!,
+        proposal.status,
         pluginType,
         proposal.startDate,
         proposal.endDate,
@@ -623,20 +615,26 @@ export const Proposal: React.FC = () => {
         proposal.executionBlockNumber
           ? NumberFormatter.format(proposal.executionBlockNumber!)
           : '',
-        proposal.executionDate || undefined
-      );
-    } else return [];
-  }, [proposal, proposalStatus, t, pluginType, executionFailed]);
+        proposal.executionDate ?? undefined
+      )
+    : [];
 
   /*************************************************
    *                     Render                    *
    *************************************************/
-  if (proposalError) {
-    navigate(NotFound, {replace: true, state: {invalidProposal: proposalId}});
+  const isLoading = paramsAreLoading || proposalIsLoading || detailsAreLoading;
+
+  // the last check is to make sure Typescript narrows the type properly
+  const hasInvalidProposal =
+    proposalError || (proposalIsFetched && !proposal) || proposal == null;
+
+  if (isLoading) {
+    return <Loading />;
   }
 
-  if (paramsAreLoading || proposalIsLoading || detailsAreLoading || !proposal) {
-    return <Loading />;
+  if (hasInvalidProposal) {
+    navigate(NotFound, {replace: true, state: {invalidProposal: proposalId}});
+    return null;
   }
 
   return (
@@ -657,31 +655,25 @@ export const Proposal: React.FC = () => {
             tag={tag}
           />
         )}
-        <ProposalTitle>{proposal?.metadata.title}</ProposalTitle>
+        <ProposalTitle>{proposal.metadata.title}</ProposalTitle>
         <ContentWrapper>
-          {/* <BadgeContainer>
-            {PROPOSAL_TAGS.map((tag: string) => (
-              <Tag label={tag} key={tag} />
-            ))}
-          </BadgeContainer> */}
           <ProposerLink>
             {t('governance.proposals.publishedBy')}{' '}
             <Link
               external
               label={
-                proposal?.creatorAddress.toLowerCase() ===
-                address?.toLowerCase()
+                proposal.creatorAddress.toLowerCase() === address?.toLowerCase()
                   ? t('labels.you')
-                  : shortenAddress(proposal?.creatorAddress || '')
+                  : shortenAddress(proposal.creatorAddress)
               }
               href={`${CHAIN_METADATA[network].explorer}/address/${proposal?.creatorAddress}`}
             />
           </ProposerLink>
         </ContentWrapper>
-        <SummaryText>{proposal?.metadata.summary}</SummaryText>
+        <SummaryText>{proposal.metadata.summary}</SummaryText>
         {proposal.metadata.description && !expandedProposal && (
           <ButtonText
-            className="w-full tablet:w-max"
+            className="w-full md:w-max"
             size="large"
             label={t('governance.proposals.buttons.readFullProposal')}
             mode="secondary"
@@ -697,7 +689,7 @@ export const Proposal: React.FC = () => {
             <>
               <StyledEditorContent editor={editor} />
               <ButtonText
-                className="mt-3 w-full tablet:w-max"
+                className="mt-6 w-full md:w-max"
                 label={t('governance.proposals.buttons.closeFullProposal')}
                 mode="secondary"
                 iconRight={<IconChevronUp />}
@@ -707,46 +699,55 @@ export const Proposal: React.FC = () => {
           )}
 
           {/* @todo: Add isUpdateProposal check once it's developed */}
-          {featureFlags.getValue('VITE_FEATURE_FLAG_OSX_UPDATES') ===
-            'true' && (
-            <UpdateVerificationCard
-              proposal={proposal}
-              actions={decodedActions}
+          {proposal &&
+            featureFlags.getValue('VITE_FEATURE_FLAG_OSX_UPDATES') ===
+              'true' && (
+              <UpdateVerificationCard
+                proposal={proposal}
+                actions={decodedActions}
+                proposalId={proposalId}
+              />
+            )}
+
+          {votingSettings && (
+            <VotingTerminal
+              status={proposalStatus}
+              pluginType={pluginType}
+              daoToken={daoToken}
+              blockNumber={proposal.creationBlockNumber}
+              statusLabel={voteStatus}
+              selectedTab={terminalTab}
+              alertMessage={alertMessage}
+              onTabSelected={setTerminalTab}
+              onVoteClicked={handleVoteClick}
+              onApprovalClicked={handleApprovalClick}
+              onCancelClicked={() => setVotingInProcess(false)}
+              voteButtonLabel={voteButtonLabel}
+              voteNowDisabled={!enableVotingButton}
+              votingInProcess={votingInProcess}
+              executableWithNextApproval={executableWithNextApproval}
+              onVoteSubmitClicked={vote =>
+                handlePrepareVote({
+                  vote,
+                  replacement: voted || voteOrApprovalSubmitted,
+                  voteTokenAddress: (proposal as TokenVotingProposal).token
+                    ?.address,
+                })
+              }
+              {...mappedProps}
             />
           )}
-
-          <VotingTerminal
-            status={proposalStatus}
-            daoToken={daoToken}
-            blockNumber={proposal?.creationBlockNumber}
-            statusLabel={voteStatus}
-            selectedTab={terminalTab}
-            alertMessage={alertMessage}
-            onTabSelected={setTerminalTab}
-            onVoteClicked={onClick}
-            onCancelClicked={() => setVotingInProcess(false)}
-            voteButtonLabel={buttonLabel}
-            voteNowDisabled={voteNowDisabled}
-            votingInProcess={votingInProcess}
-            onVoteSubmitClicked={vote =>
-              handleSubmitVote(
-                vote,
-                (proposal as TokenVotingProposal).token?.address
-              )
-            }
-            {...mappedProps}
-          />
 
           <ExecutionWidget
             pluginType={pluginType}
             actions={decodedActions}
             status={executionStatus}
             onExecuteClicked={handleExecuteNowClicked}
-            txhash={transactionHash || proposal?.executionTxHash || undefined}
+            txhash={executionTxHash || proposal.executionTxHash || undefined}
           />
         </ProposalContainer>
         <AdditionalInfoContainer>
-          <ResourceList links={proposal?.metadata.resources} />
+          <ResourceList links={proposal.metadata.resources} />
           <WidgetStatus steps={proposalSteps} />
         </AdditionalInfoContainer>
       </ContentContainer>
@@ -755,49 +756,49 @@ export const Proposal: React.FC = () => {
 };
 
 const Container = styled.div.attrs({
-  className: 'col-span-full desktop:col-start-2 desktop:col-end-12',
+  className: 'col-span-full xl:col-start-2 xl:col-end-12',
 })``;
 
 const HeaderContainer = styled.div.attrs({
-  className: 'flex flex-col gap-y-2 desktop:p-0 tablet:px-3 pt-2',
+  className: 'flex flex-col gap-y-4 xl:p-0 md:px-6 pt-4',
 })``;
 
 const ProposalTitle = styled.p.attrs({
-  className: 'font-bold text-ui-800 text-3xl',
+  className: 'font-semibold text-neutral-800 text-4xl leading-tight',
 })``;
 
 const ContentWrapper = styled.div.attrs({
-  className: 'flex flex-col tablet:flex-row gap-x-3 gap-y-1.5',
+  className: 'flex flex-col md:flex-row gap-x-6 gap-y-3',
 })``;
 
 // const BadgeContainer = styled.div.attrs({
-//   className: 'flex flex-wrap gap-x-1.5',
+//   className: 'flex flex-wrap gap-x-3',
 // })``;
 
 const ProposerLink = styled.p.attrs({
-  className: 'text-ui-500',
+  className: 'text-neutral-500',
 })``;
 
 const SummaryText = styled.p.attrs({
-  className: 'text-lg text-ui-600',
+  className: 'text-xl leading-normal text-neutral-600',
 })``;
 
 const ProposalContainer = styled.div.attrs({
-  className: 'space-y-3 tablet:w-3/5',
+  className: 'space-y-6 md:w-3/5',
 })``;
 
 const AdditionalInfoContainer = styled.div.attrs({
-  className: 'space-y-3 tablet:w-2/5',
+  className: 'space-y-6 md:w-2/5',
 })``;
 
 type ContentContainerProps = {
   expandedProposal: boolean;
 };
 
-const ContentContainer = styled.div.attrs(
-  ({expandedProposal}: ContentContainerProps) => ({
+const ContentContainer = styled.div.attrs<ContentContainerProps>(
+  ({expandedProposal}) => ({
     className: `${
-      expandedProposal ? 'tablet:mt-5' : 'tablet:mt-8'
-    } mt-3 tablet:flex tablet:space-x-3 space-y-3 tablet:space-y-0`,
+      expandedProposal ? 'md:mt-10' : 'md:mt-16'
+    } mt-6 md:flex md:space-x-6 space-y-6 md:space-y-0`,
   })
 )<ContentContainerProps>``;

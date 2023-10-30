@@ -1,4 +1,4 @@
-import {AlertInline, ButtonText, IconAdd, Label} from '@aragon/ods';
+import {AlertInline, ButtonText, IconAdd, Label} from '@aragon/ods-old';
 import React, {useEffect, useMemo} from 'react';
 import {useTranslation} from 'react-i18next';
 import {useParams} from 'react-router-dom';
@@ -57,16 +57,11 @@ const ConfigureActions: React.FC<ConfigureActionsProps> = ({
     const existentActions = actions.map(actionItem => actionItem.name);
 
     initialActions.forEach(actionType => {
-      const alreadyAddedActionIndex = existentActions.indexOf(actionType);
-
-      if (alreadyAddedActionIndex === -1) {
-        addAction({name: actionType});
-      } else {
-        existentActions.splice(alreadyAddedActionIndex, 1);
+      if (!existentActions.includes(actionType)) {
+        addAction({name: actionType}, false);
       }
     });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [actions, addAction, initialActions]);
 
   const handleAddNewActionClick = () => {
     if (onAddNewActionClick) {
@@ -99,7 +94,7 @@ const ConfigureActions: React.FC<ConfigureActionsProps> = ({
             label={addExtraActionLabel}
             iconLeft={<IconAdd />}
             onClick={handleExtraActionClick}
-            className="mt-2 w-full tablet:w-max"
+            className="mt-4 w-full md:w-max"
           />
         </ActionsWrapper>
       ) : (
@@ -133,9 +128,9 @@ const ConfigureActions: React.FC<ConfigureActionsProps> = ({
 export default ConfigureActions;
 
 const FormWrapper = styled.div.attrs({
-  className: 'space-y-1.5',
+  className: 'space-y-3',
 })``;
 
 const ActionsWrapper = styled.div.attrs({
-  className: 'space-y-2',
+  className: 'space-y-4',
 })``;

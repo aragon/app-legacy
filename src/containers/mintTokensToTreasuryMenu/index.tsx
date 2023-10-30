@@ -4,7 +4,7 @@ import {
   ButtonText,
   IconChevronLeft,
   InputValue,
-} from '@aragon/ods';
+} from '@aragon/ods-old';
 import React, {useCallback, useMemo, useState} from 'react';
 import {Controller, useFormContext, useWatch} from 'react-hook-form';
 import {useTranslation} from 'react-i18next';
@@ -64,7 +64,7 @@ const MintTokensToTreasuryMenu: React.FC<Props> = ({
   return (
     <ModalBottomSheetSwitcher isOpen={isOpen} {...{onCloseReset}}>
       {step === 0 ? (
-        <div className="px-2 pb-3">
+        <div className="px-4 pb-6">
           <StateEmpty
             type="Object"
             object="warning"
@@ -72,7 +72,7 @@ const MintTokensToTreasuryMenu: React.FC<Props> = ({
             title={t('modal.mintTokensToTreasury.title')}
             description={t('modal.mintTokensToTreasury.description')}
             content={
-              <div className="mb-1.5 mt-3">
+              <div className="mb-3 mt-6">
                 <AlertCard
                   mode="critical"
                   title={t('modal.mintTokensToTreasury.alertTitle')}
@@ -111,9 +111,9 @@ const MintTokensToTreasuryMenu: React.FC<Props> = ({
               bgWhite
             />
             <Title>{t('modal.mintTokensToTreasury.title')}</Title>
-            <div role="presentation" className="h-4 w-4" />
+            <div role="presentation" className="h-8 w-8" />
           </ModalHeader>
-          <div className="flex flex-col px-2 py-3">
+          <div className="flex flex-col px-4 py-6">
             <FormTitle>{t('modal.mintTokensToTreasury.inputLabel')}</FormTitle>
             <FormHelpText>
               {t('modal.mintTokensToTreasury.inputHelptext')}
@@ -139,7 +139,7 @@ const MintTokensToTreasuryMenu: React.FC<Props> = ({
                       ref={ref}
                     />
                   </InputContainer>
-                  <div className="mb-1.5 mt-3">
+                  <div className="mb-3 mt-6">
                     <AlertCard
                       mode="critical"
                       title={t('modal.mintTokensToTreasury.alertTitle')}
@@ -182,28 +182,31 @@ const MintTokensToTreasuryMenu: React.FC<Props> = ({
 };
 
 const Title = styled.div.attrs({
-  className: 'flex-1 font-bold text-center text-ui-800',
+  className: 'flex-1 font-semibold text-center text-neutral-800',
 })``;
 
 const ModalHeader = styled.div.attrs({
-  className: 'flex items-center p-2 space-x-2 bg-ui-0 rounded-xl sticky top-0',
+  className:
+    'flex items-center p-4 space-x-4 bg-neutral-0 rounded-xl sticky top-0',
 })`
-  box-shadow: 0px 4px 8px rgba(31, 41, 51, 0.04),
-    0px 0px 2px rgba(31, 41, 51, 0.06), 0px 0px 1px rgba(31, 41, 51, 0.04);
+  box-shadow:
+    0px 4px 8px rgba(31, 41, 51, 0.04),
+    0px 0px 2px rgba(31, 41, 51, 0.06),
+    0px 0px 1px rgba(31, 41, 51, 0.04);
 `;
 
 const FormTitle = styled.span.attrs({
-  className: 'ft-text-base font-bold text-ui-800 pb-0.5',
+  className: 'ft-text-base font-semibold text-neutral-800 pb-1',
 })``;
 
 const FormHelpText = styled.p.attrs({
-  className: 'ft-text-sm text-ui-600 pb-1.5',
+  className: 'ft-text-sm text-neutral-600 pb-3',
 })``;
 
 const ActionContainer = styled.div.attrs({
-  className: 'flex flex-col w-full space-y-1.5',
+  className: 'flex flex-col w-full space-y-3',
 })``;
 
-const InputContainer = styled.div.attrs({className: 'flex-1 space-y-1'})``;
+const InputContainer = styled.div.attrs({className: 'flex-1 space-y-2'})``;
 
 export default MintTokensToTreasuryMenu;

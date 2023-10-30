@@ -1,4 +1,4 @@
-import {HeaderPage, HeaderPageProps} from '@aragon/ods';
+import {HeaderPage, HeaderPageProps} from '@aragon/ods-old';
 import React from 'react';
 import {useNavigate} from 'react-router-dom';
 import styled from 'styled-components';
@@ -45,9 +45,9 @@ export const PageWrapper: React.FC<PageWrapperProps> = ({
 
 const HeaderContainer = styled.div.attrs({
   className:
-    'col-span-full desktop:col-start-2 desktop:col-end-12 -mx-2 tablet:mx-0 tablet:mt-3 desktop:mt-5',
+    'col-span-full xl:col-start-2 xl:col-end-12 -mx-4 md:mx-0 md:mt-6 xl:mt-10',
 })``;
 
 const BodyContainer = styled.div.attrs({
-  className: 'col-span-full desktop:col-start-3 desktop:col-end-11',
+  className: 'col-span-full xl:col-start-3 xl:col-end-11',
 })``;

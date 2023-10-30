@@ -1,10 +1,9 @@
-import {AlertCard, CheckboxListItem, Label} from '@aragon/ods';
+import {AlertCard, CheckboxListItem, Label} from '@aragon/ods-old';
 import React, {useCallback, useMemo, useState} from 'react';
 import {Controller, useFormContext, useWatch} from 'react-hook-form';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 
-import {VotingSettings} from '@aragon/sdk-client';
 import DateTimeSelector from 'containers/dateTimeSelector';
 import Duration, {DurationLabel} from 'containers/duration';
 import UtcMenu from 'containers/utcMenu';
@@ -21,9 +20,10 @@ import {
 import {DateTimeErrors} from './dateTimeErrors';
 import {ToggleCheckList, UtcInstance} from './multisig';
 import {ProposalFormData} from 'utils/types';
+import {MajorityVotingSettings} from '@aragon/sdk-client';
 
 type Props = {
-  pluginSettings: VotingSettings;
+  pluginSettings: MajorityVotingSettings;
 };
 
 const MAX_DURATION_MILLS = MAX_DURATION_DAYS * MINS_IN_DAY * 60 * 1000;
@@ -125,7 +125,7 @@ const SetupTokenVotingForm: React.FC<Props> = ({pluginSettings}) => {
 
   // handles the toggling between start time options
   const handleStartToggle = useCallback(
-    (changeValue, onChange: (value: string) => void) => {
+    (changeValue: string, onChange: (value: string) => void) => {
       onChange(changeValue);
       if (changeValue === 'now') resetStartDate();
       else setValue('startUtc', currTimezone);
@@ -135,7 +135,7 @@ const SetupTokenVotingForm: React.FC<Props> = ({pluginSettings}) => {
 
   // handles the toggling between end time options
   const handleEndToggle = useCallback(
-    (changeValue, onChange: (value: string) => void) => {
+    (changeValue: string, onChange: (value: string) => void) => {
       onChange(changeValue);
 
       if (changeValue === 'duration') resetEndDate();
@@ -220,7 +220,9 @@ const SetupTokenVotingForm: React.FC<Props> = ({pluginSettings}) => {
             <ToggleCheckList
               items={startItems}
               value={value}
-              onChange={changeValue => handleStartToggle(changeValue, onChange)}
+              onChange={changeValue =>
+                handleStartToggle(changeValue as string, onChange)
+              }
             />
           )}
         />
@@ -257,7 +259,9 @@ const SetupTokenVotingForm: React.FC<Props> = ({pluginSettings}) => {
             <ToggleCheckList
               value={value}
               items={endItems}
-              onChange={changeValue => handleEndToggle(changeValue, onChange)}
+              onChange={changeValue =>
+                handleEndToggle(changeValue as string, onChange)
+              }
             />
           )}
         />
@@ -305,5 +309,5 @@ const SetupTokenVotingForm: React.FC<Props> = ({pluginSettings}) => {
 export default SetupTokenVotingForm;
 
 const FormSection = styled.div.attrs({
-  className: 'space-y-1.5',
+  className: 'space-y-3',
 })``;

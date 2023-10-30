@@ -5,7 +5,7 @@ import {
   IlluObject,
   IlluObjectProps,
   IllustrationHuman,
-} from '@aragon/ods';
+} from '@aragon/ods-old';
 import useScreen from 'hooks/useScreen';
 import React from 'react';
 import styled from 'styled-components';
@@ -123,7 +123,7 @@ const RenderIllustration: React.FC<StateEmptyProps> = props => {
       {props.type !== 'Human' && (
         <IlluObject
           object={props.object}
-          className={props.type === 'both' ? '-ml-32 desktop:-ml-36' : ''}
+          className={props.type === 'both' ? '-ml-32 xl:-ml-36' : ''}
         />
       )}
     </>
@@ -136,39 +136,36 @@ const Card = styled.div.attrs<
   let className = 'flex flex-col items-center rounded-xl w-full ';
 
   if (mode === 'card') {
-    className += 'border bg-ui-0 ';
-    className += `${customCardPaddingClassName || 'p-3 tablet:p-6'} `;
+    className += 'border border-neutral-100 bg-neutral-0 ';
+    className += `${customCardPaddingClassName || 'p-6 md:p-12'} `;
 
-    if (type === 'Object') className += 'gap-y-1 ';
-  } else {
-    className += 'bg-ui-transparent ';
+    if (type === 'Object') className += 'gap-y-2 ';
   }
 
-  if (type === 'Human' || type === 'both') className += 'gap-y-3 ';
+  if (type === 'Human' || type === 'both') className += 'gap-y-6 ';
   return {className};
 })<Pick<StateEmptyProps, 'mode' | 'type' | 'customCardPaddingClassName'>>``;
 
-const ContentWrapper = styled.div.attrs({className: 'space-y-3 w-full'})``;
+const ContentWrapper = styled.div.attrs({className: 'space-y-6 w-full'})``;
 
 const TextWrapper = styled.div.attrs({
-  className: 'space-y-1.5 text-center',
+  className: 'space-y-3 text-center',
 })``;
 
 const ActionContainer = styled.div.attrs<Pick<BaseProps, 'actionsColumn'>>(
   ({actionsColumn}) => ({
-    className: `flex w-full flex-col gap-y-1.5 ${
-      !actionsColumn &&
-      'tablet:flex-row tablet:gap-y-0 tablet:justify-center tablet:gap-x-3'
+    className: `flex w-full flex-col gap-y-3 ${
+      !actionsColumn && 'md:flex-row md:gap-y-0 md:justify-center md:gap-x-6'
     }`,
   })
 )<Pick<BaseProps, 'actionsColumn'>>``;
 
 const Title = styled.h2.attrs({
-  className: 'ft-text-xl font-bold text-ui-800',
+  className: 'ft-text-xl font-semibold text-neutral-800',
 })``;
 
 const Description = styled.p.attrs({
-  className: 'text-ui-500 ft-text-sm tablet:ft-text-base',
+  className: 'text-neutral-500 ft-text-sm md:ft-text-base',
 })`
   & > a {
     color: #003bf5;
@@ -176,5 +173,5 @@ const Description = styled.p.attrs({
 `;
 
 const ImageWrapper = styled.div.attrs({
-  className: 'flex justify-center pt-4 desktop:pt-6 pb-4 desktop:pb-8',
+  className: 'flex justify-center pt-8 xl:pt-12 pb-8 xl:pb-16',
 })``;

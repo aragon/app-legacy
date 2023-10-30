@@ -12,8 +12,9 @@ import {
 import {
   DaoAction,
   SupportedNetwork as SdkSupportedNetworks,
+  bytesToHex,
+  resolveIpfsCid,
 } from '@aragon/sdk-client-common';
-import {bytesToHex, resolveIpfsCid} from '@aragon/sdk-common';
 import {fetchEnsAvatar} from '@wagmi/core';
 import {BigNumber, BigNumberish, constants, providers} from 'ethers';
 import {
@@ -21,7 +22,7 @@ import {
   hexlify,
   isAddress,
 } from 'ethers/lib/utils';
-import {TFunction} from 'react-i18next';
+import {TFunction} from 'i18next';
 
 import {getEtherscanVerifiedContract} from 'services/etherscanAPI';
 import {Token} from 'services/token/domain';

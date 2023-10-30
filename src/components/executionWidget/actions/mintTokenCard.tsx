@@ -1,4 +1,4 @@
-import {IconLinkExternal, Link, ListItemAddress} from '@aragon/ods';
+import {IconLinkExternal, Link, ListItemAddress} from '@aragon/ods-old';
 import React, {useCallback, useEffect, useMemo, useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
@@ -97,7 +97,7 @@ export const MintTokenCard: React.FC<{
       additionalInfo={t('newProposal.mintTokens.additionalInfo')}
     >
       <Container>
-        <div className="space-y-2 bg-ui-50 p-2 tablet:p-3">
+        <div className="space-y-4 bg-neutral-50 p-4 md:p-6">
           {action.inputs.mintTokensToWallets.map(
             ({web3Address, amount}, index) => {
               const label =
@@ -126,7 +126,9 @@ export const MintTokenCard: React.FC<{
         </div>
 
         <SummaryContainer>
-          <p className="font-bold text-ui-800">{t('labels.summary')}</p>
+          <p className="font-semibold text-neutral-800">
+            {t('labels.summary')}
+          </p>
           <HStack>
             <Label>{t('labels.newTokens')}</Label>
             <p>
@@ -168,11 +170,11 @@ export const MintTokenCard: React.FC<{
 
 const Container = styled.div.attrs({
   className:
-    'bg-ui-50 border divide-y border-ui-100 divide-ui-100 rounded-b-xl border-t-0',
+    'bg-neutral-50 border divide-y border-neutral-100 divide-neutral-100 rounded-b-xl border-t-0',
 })``;
 
 const SummaryContainer = styled.div.attrs({
-  className: 'p-2 tablet:p-3 space-y-1.5 font-bold text-ui-800',
+  className: 'p-4 md:p-6 space-y-3 font-semibold text-neutral-800',
 })``;
 
 const HStack = styled.div.attrs({
@@ -180,5 +182,5 @@ const HStack = styled.div.attrs({
 })``;
 
 const Label = styled.p.attrs({
-  className: 'font-normal text-ui-500',
+  className: 'font-normal text-neutral-500',
 })``;

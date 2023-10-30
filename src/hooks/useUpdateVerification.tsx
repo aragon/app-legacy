@@ -1,33 +1,23 @@
 import {useQueries} from '@tanstack/react-query';
+import {ProposalId} from 'utils/types';
 
 /**
  *  This method is a Mock validation function until the real SDK functions are ready
  * @param address dao address
  * @returns an arrea of queries the indicates the status of verifications
  */
-export function useUpdateVerification(address: string) {
-  // FIXME: remove this function and use the real SDK function
-  function getRandomInt(max: number) {
-    return Math.floor(Math.random() * max);
-  }
-
+export function useUpdateVerification(proposalId: ProposalId | string) {
   const verificationQueries = [
     {
-      queryKey: ['pluginRegistry', address],
-      queryFn: () =>
-        new Promise(resolve => {
-          setTimeout(() => resolve(Boolean(getRandomInt(2))), 5000); // added delay to simulate loading
-        }),
-      enabled: Boolean(address),
+      queryKey: ['isPluginUpdateProposalValid', proposalId],
+      queryFn: () => Promise.resolve(() => null),
+      enabled: Boolean(proposalId),
       retry: false,
     },
     {
-      queryKey: ['pluginSetupProcessor', address],
-      queryFn: () =>
-        new Promise(resolve => {
-          setTimeout(() => resolve(Boolean(getRandomInt(2))), 5000); // added delay to simulate loading
-        }),
-      enabled: Boolean(address),
+      queryKey: ['isDaoUpdateProposalValid', proposalId],
+      queryFn: () => Promise.resolve(() => null),
+      enabled: Boolean(proposalId),
       retry: false,
     },
   ];

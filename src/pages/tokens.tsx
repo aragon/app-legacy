@@ -1,4 +1,4 @@
-import {IconAdd, SearchInput} from '@aragon/ods';
+import {IconAdd, SearchInput} from '@aragon/ods-old';
 import React, {useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import TokenList from 'components/tokenList';
@@ -36,7 +36,7 @@ export const Tokens: React.FC = () => {
         onClick: () => open('transfer'),
       }}
     >
-      <div className="mt-3 space-y-3 desktop:mt-8 desktop:space-y-5">
+      <div className="mt-6 space-y-6 xl:mt-16 xl:space-y-10">
         <SearchInput
           placeholder="Type to filter"
           value={searchTerm}

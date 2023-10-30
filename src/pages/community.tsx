@@ -1,5 +1,4 @@
 import {
-  AlertInline,
   IconAdd,
   IconLinkExternal,
   Pagination,
@@ -10,8 +9,8 @@ import {
   ListItemAction,
   IconCheckmark,
   IconSort,
-} from '@aragon/ods';
-import React, {useState} from 'react';
+} from '@aragon/ods-old';
+import React, {useCallback, useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {useNavigate} from 'react-router-dom';
 import styled from 'styled-components';
@@ -93,7 +92,7 @@ export const Community: React.FC = () => {
     featureFlags.getValue('VITE_FEATURE_FLAG_DELEGATION') === 'true';
 
   const sortLabel = isMobile
-    ? undefined
+    ? ''
     : sort === 'delegations'
     ? t('community.sortByDelegations.selected')
     : t('community.sortByVotingPower.selected');
@@ -123,6 +122,11 @@ export const Community: React.FC = () => {
       navigate('mint-tokens');
     }
   };
+
+  const handlePageChange = useCallback((activePage: number) => {
+    setPage(activePage);
+    window.scrollTo({top: 0, behavior: 'smooth'});
+  }, []);
 
   /*************************************************
    *                     Render                    *
@@ -211,68 +215,59 @@ export const Community: React.FC = () => {
     >
       <BodyContainer>
         <SearchAndResultWrapper>
-          <div className="space-y-2">
-            <div className="flex flex-row gap-2 desktop:gap-4">
-              {enableSearchSort && (
-                <SearchInput
-                  placeholder={t('labels.searchPlaceholder')}
-                  containerClassName="grow"
-                  value={searchTerm}
-                  onChange={handleQueryChange}
-                />
-              )}
-              {!walletBased && enableSearchSort && enableDelegation && (
-                <Dropdown
-                  align="end"
-                  className="px-0 py-1"
-                  style={{minWidth: 'var(--radix-dropdown-menu-trigger-width)'}}
-                  sideOffset={8}
-                  listItems={[
-                    {
-                      callback: () => setSort('votingPower'),
-                      component: (
-                        <ListItemAction
-                          title={t('community.sortByVotingPower.default')}
-                          bgWhite={true}
-                          mode={sort === 'votingPower' ? 'selected' : 'default'}
-                          iconRight={
-                            sort === 'votingPower' ? (
-                              <IconCheckmark />
-                            ) : undefined
-                          }
-                        />
-                      ),
-                    },
-                    {
-                      callback: () => setSort('delegations'),
-                      component: (
-                        <ListItemAction
-                          title={t('community.sortByDelegations.default')}
-                          bgWhite={true}
-                          mode={sort === 'delegations' ? 'selected' : 'default'}
-                          iconRight={
-                            sort === 'delegations' ? (
-                              <IconCheckmark />
-                            ) : undefined
-                          }
-                        />
-                      ),
-                    },
-                  ]}
-                  side="bottom"
-                  trigger={
-                    <ButtonText
-                      mode="secondary"
-                      iconLeft={<IconSort />}
-                      size="large"
-                      label={sortLabel}
-                    />
-                  }
-                />
-              )}
-            </div>
-            {!walletBased && (
-              <AlertInline label={t('alert.tokenBasedMembers') as string} />
+          <div className="flex flex-row gap-4 xl:gap-8">
+            {enableSearchSort && (
+              <SearchInput
+                placeholder={t('labels.searchPlaceholder')}
+                containerClassName="grow"
+                value={searchTerm}
+                onChange={handleQueryChange}
+              />
+            )}
+            {!walletBased && enableSearchSort && enableDelegation && (
+              <Dropdown
+                align="end"
+                className="p-2"
+                style={{minWidth: 'var(--radix-dropdown-menu-trigger-width)'}}
+                sideOffset={8}
+                listItems={[
+                  {
+                    callback: () => setSort('votingPower'),
+                    component: (
+                      <ListItemAction
+                        title={t('community.sortByVotingPower.default')}
+                        bgWhite={true}
+                        mode={sort === 'votingPower' ? 'selected' : 'default'}
+                        iconRight={
+                          sort === 'votingPower' ? <IconCheckmark /> : undefined
+                        }
+                      />
+                    ),
+                  },
+                  {
+                    callback: () => setSort('delegations'),
+                    component: (
+                      <ListItemAction
+                        title={t('community.sortByDelegations.default')}
+                        bgWhite={true}
+                        mode={sort === 'delegations' ? 'selected' : 'default'}
+                        iconRight={
+                          sort === 'delegations' ? <IconCheckmark /> : undefined
+                        }
+                      />
+                    ),
+                  },
+                ]}
+                side="bottom"
+                trigger={
+                  <ButtonText
+                    mode="secondary"
+                    iconLeft={<IconSort />}
+                    size="large"
+                    label={sortLabel}
+                  />
+                }
+              />
             )}
           </div>
 
@@ -313,10 +308,7 @@ export const Community: React.FC = () => {
                 Math.ceil(displayedMembersTotal / MEMBERS_PER_PAGE) as number
               }
               activePage={page}
-              onChange={(activePage: number) => {
-                setPage(activePage);
-                window.scrollTo({top: 0, behavior: 'smooth'});
-              }}
+              onChange={handlePageChange}
             />
           )}
         </PaginationWrapper>
@@ -326,15 +318,15 @@ export const Community: React.FC = () => {
 };
 
 const BodyContainer = styled.div.attrs({
-  className: 'mt-1 desktop:space-y-8',
+  className: 'mt-2 xl:space-y-16',
 })``;
 
-const SearchAndResultWrapper = styled.div.attrs({className: 'space-y-5'})``;
+const SearchAndResultWrapper = styled.div.attrs({className: 'space-y-10'})``;
 
 const ResultsCountLabel = styled.p.attrs({
-  className: 'font-bold text-ui-800 ft-text-lg',
+  className: 'font-semibold text-neutral-800 ft-text-lg',
 })``;
 
 const PaginationWrapper = styled.div.attrs({
-  className: 'flex mt-8',
+  className: 'flex mt-16',
 })``;

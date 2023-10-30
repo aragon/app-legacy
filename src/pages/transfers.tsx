@@ -6,7 +6,7 @@ import {
   IconMenuVertical,
   ListItemAction,
   Option,
-} from '@aragon/ods';
+} from '@aragon/ods-old';
 import {Locale, format} from 'date-fns';
 import * as Locales from 'date-fns/locale';
 import React, {useCallback, useMemo, useState} from 'react';
@@ -114,9 +114,9 @@ export const Transfers: React.FC = () => {
           onClick: () => open('transfer'),
         }}
       >
-        <div className="mt-3 desktop:mt-8">
-          <div className="space-y-1.5">
-            <div className="flex items-center justify-between gap-2">
+        <div className="mt-6 xl:mt-16">
+          <div className="space-y-3">
+            <div className="flex items-center justify-between gap-4">
               <ButtonGroup
                 bgWhite
                 defaultValue="all"
@@ -137,19 +137,21 @@ export const Transfers: React.FC = () => {
                 /> */}
               </ButtonGroup>
 
-              <Dropdown
-                side="bottom"
-                align="end"
-                listItems={dropdownActions}
-                disabled={dropdownActions.length === 0}
-                trigger={
-                  <ButtonIcon
-                    mode="secondary"
-                    size="medium"
-                    icon={<IconMenuVertical />}
-                  />
-                }
-              />
+              {!noTransfers && (
+                <Dropdown
+                  side="bottom"
+                  align="end"
+                  listItems={dropdownActions}
+                  disabled={dropdownActions.length === 0}
+                  trigger={
+                    <ButtonIcon
+                      mode="secondary"
+                      size="medium"
+                      icon={<IconMenuVertical />}
+                    />
+                  }
+                />
+              )}
             </div>
           </div>
           {noTransfers ? (
@@ -161,7 +163,7 @@ export const Transfers: React.FC = () => {
               {displayedTransfers.week.length > 0 && (
                 <SectionContainer>
                   <TransferSectionWrapper title={t('allTransfer.thisWeek')}>
-                    <div className="my-2 space-y-1.5 border-solid">
+                    <div className="my-4 space-y-3 border-solid">
                       <TransferList
                         transfers={displayedTransfers.week}
                         onTransferClick={handleTransferClicked}
@@ -179,7 +181,7 @@ export const Transfers: React.FC = () => {
                       ],
                     })}
                   >
-                    <div className="my-2 space-y-1.5 border-solid">
+                    <div className="my-4 space-y-3 border-solid">
                       <TransferList
                         transfers={displayedTransfers.month}
                         onTransferClick={handleTransferClicked}
@@ -191,7 +193,7 @@ export const Transfers: React.FC = () => {
               {displayedTransfers.year.length !== 0 && (
                 <SectionContainer>
                   <TransferSectionWrapper title={format(new Date(), 'yyyy')}>
-                    <div className="my-2 space-y-1.5 border-solid">
+                    <div className="my-4 space-y-3 border-solid">
                       <TransferList
                         transfers={displayedTransfers.year}
                         onTransferClick={handleTransferClicked}
@@ -208,4 +210,4 @@ export const Transfers: React.FC = () => {
   );
 };
 
-const SectionContainer = styled.div.attrs({className: 'my-3 desktop:my-5'})``;
+const SectionContainer = styled.div.attrs({className: 'my-6 xl:my-10'})``;

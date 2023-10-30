@@ -6,7 +6,7 @@ import {
   IconCopy,
   IconSwitch,
   IconTurnOff,
-} from '@aragon/ods';
+} from '@aragon/ods-old';
 import {useGlobalModalContext} from 'context/globalModals';
 import React, {useEffect} from 'react';
 import {useTranslation} from 'react-i18next';
@@ -122,25 +122,27 @@ export const WalletMenu = () => {
 };
 
 const ModalHeader = styled.div.attrs({
-  className: 'flex p-3 bg-ui-0 rounded-xl gap-2 sticky top-0',
+  className: 'flex p-6 bg-neutral-0 rounded-xl gap-4 sticky top-0',
 })`
-  box-shadow: 0px 4px 8px rgba(31, 41, 51, 0.04),
-    0px 0px 2px rgba(31, 41, 51, 0.06), 0px 0px 1px rgba(31, 41, 51, 0.04);
+  box-shadow:
+    0px 4px 8px rgba(31, 41, 51, 0.04),
+    0px 0px 2px rgba(31, 41, 51, 0.06),
+    0px 0px 1px rgba(31, 41, 51, 0.04);
 `;
 const Title = styled.div.attrs({
-  className: 'flex-1 font-bold text-ui-800',
+  className: 'flex-1 font-semibold text-neutral-800',
 })``;
 const SubTitle = styled.div.attrs({
-  className: 'flex-1 font-medium text-ui-500 text-sm',
+  className: 'flex-1 font-medium text-neutral-500 text-sm leading-normal',
 })``;
 const AvatarAddressContainer = styled.div.attrs({
-  className: 'flex flex-1 gap-1.5 items-center',
+  className: 'flex flex-1 gap-3 items-center',
 })``;
 const AddressContainer = styled.div.attrs({
   className: 'flex flex-col',
 })``;
 const ModalBody = styled.div.attrs({
-  className: 'flex flex-col p-3 gap-1.5',
+  className: 'flex flex-col p-6 gap-3',
 })``;
 
 const StyledButtonText = styled(ButtonText)`

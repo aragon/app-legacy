@@ -1,4 +1,4 @@
-import {ListItemAction} from '@aragon/ods';
+import {ListItemAction} from '@aragon/ods-old';
 import React from 'react';
 import {useFormContext} from 'react-hook-form';
 import {useTranslation} from 'react-i18next';
@@ -78,7 +78,7 @@ const WithdrawAction: React.FC<WithdrawActionProps> = ({
       smartContractName={t('labels.aragonOSx')}
       methodDescription={t('AddActionModal.withdrawAssetsActionSubtitle')}
     >
-      <FormItem className="space-y-3 rounded-b-xl py-3">
+      <FormItem className="space-y-6 rounded-b-xl py-6">
         <ConfigureWithdrawForm actionIndex={actionIndex} />
       </FormItem>
     </AccordionMethod>

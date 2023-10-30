@@ -1,4 +1,4 @@
-import {IconAdd, ListItemLink} from '@aragon/ods';
+import {IconAdd, ListItemLink} from '@aragon/ods-old';
 import React from 'react';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
@@ -53,8 +53,12 @@ const ResourceList: React.FC<ResourceListProps> = ({
 
 export default ResourceList;
 
-const Container = styled.div.attrs({className: 'p-3 bg-ui-0 rounded-xl'})``;
+const Container = styled.div.attrs({
+  className: 'p-6 bg-neutral-0 rounded-xl',
+})``;
 
-const Title = styled.p.attrs({className: 'ft-text-xl font-bold text-ui-800'})``;
+const Title = styled.p.attrs({
+  className: 'ft-text-xl font-semibold text-neutral-800',
+})``;
 
-const ListItemContainer = styled.div.attrs({className: 'mt-3 space-y-2'})``;
+const ListItemContainer = styled.div.attrs({className: 'mt-6 space-y-4'})``;

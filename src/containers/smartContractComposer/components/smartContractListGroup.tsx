@@ -1,4 +1,4 @@
-import {IconChevronRight} from '@aragon/ods';
+import {IconChevronRight} from '@aragon/ods-old';
 import React from 'react';
 import {useFormContext} from 'react-hook-form';
 import {useTranslation} from 'react-i18next';
@@ -61,8 +61,8 @@ const SmartContractListGroup: React.FC = () => {
 
 export default SmartContractListGroup;
 
-const ListGroup = styled.div.attrs({className: 'pb-2 space-y-1'})``;
+const ListGroup = styled.div.attrs({className: 'pb-4 space-y-2'})``;
 
 const ContractNumberIndicator = styled.div.attrs({
-  className: 'ft-text-sm font-bold text-ui-400',
+  className: 'ft-text-sm font-semibold text-neutral-400',
 })``;

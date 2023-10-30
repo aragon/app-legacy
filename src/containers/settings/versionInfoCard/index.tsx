@@ -1,6 +1,7 @@
-import {IconLinkExternal, Link} from '@aragon/ods';
+import {IconLinkExternal, Link} from '@aragon/ods-old';
 import {
   LIVE_CONTRACTS,
+  SupportedVersion,
   SupportedNetworksArray,
 } from '@aragon/sdk-client-common';
 import React from 'react';
@@ -34,14 +35,17 @@ export const VersionInfoCard: React.FC<{
     translatedNetwork !== 'unsupported' &&
     SupportedNetworksArray.includes(translatedNetwork)
   ) {
-    OSxAddress = LIVE_CONTRACTS[translatedNetwork].daoFactoryAddress;
+    OSxAddress =
+      LIVE_CONTRACTS[
+        `${versions?.[0]}.${versions?.[1]}.${versions?.[2]}` as SupportedVersion
+      ]?.[translatedNetwork]?.daoFactoryAddress;
   }
 
   // TODO: generate the links
   return (
     <div
       className={
-        'col-span-full mt-1 desktop:col-span-4 desktop:col-start-8 desktop:row-start-3 desktop:-ml-1 desktop:-mt-1'
+        'col-span-full mt-2 xl:col-span-4 xl:col-start-8 xl:row-start-3 xl:-ml-2 xl:-mt-2'
       }
     >
       <SettingsCard title={t('setting.versionInfo.title')}>

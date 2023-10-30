@@ -1,6 +1,6 @@
 import React, {FC, useState, useMemo} from 'react';
 import {Controller, useFormContext, useWatch} from 'react-hook-form';
-import {AlertInline, Label, LinearProgress, NumberInput} from '@aragon/ods';
+import {AlertInline, Label, LinearProgress, NumberInput} from '@aragon/ods-old';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 import {htmlIn} from 'utils/htmlIn';
@@ -151,7 +151,7 @@ export const MinParticipation: FC = () => {
                 }
               >
                 <ApprovalWrapper>
-                  <div className="tablet:w-1/3">
+                  <div className="md:w-1/3">
                     <NumberInput
                       name={name}
                       value={value}
@@ -170,7 +170,7 @@ export const MinParticipation: FC = () => {
 
                     <ProgressInfo2>
                       <p
-                        className="text-right font-bold text-primary-500"
+                        className="text-right font-semibold text-primary-500"
                         style={{
                           flexBasis: `${
                             (minParticipationTokensAmount /
@@ -182,7 +182,7 @@ export const MinParticipation: FC = () => {
                         {formattedProgressMinParticipation}
                       </p>
 
-                      <p className="shrink-0 text-ui-600">
+                      <p className="shrink-0 text-neutral-600">
                         {t('createDAO.step4.alerts.minimumApprovalAlert', {
                           amount: formattedProgressTotalSupply,
                           tokenSymbol: govTokenSymbol,
@@ -199,12 +199,12 @@ export const MinParticipation: FC = () => {
                   <SubContainer>
                     {/* Header */}
                     <SimulationSection>
-                      <div className="space-y-0.5">
+                      <div className="space-y-1">
                         <Label
                           label={t('createDAO.step4.wrappedReferenceTitle')}
                         />
                         <div
-                          className="text-ui-600 ft-text-sm"
+                          className="text-neutral-600 ft-text-sm"
                           dangerouslySetInnerHTML={{
                             __html: htmlIn(t)(
                               'createDAO.step4.wrappedReferenceDesc',
@@ -233,7 +233,7 @@ export const MinParticipation: FC = () => {
                           tokenSymbol,
                         })}
                       />
-                      <div className="tablet:w-1/3">
+                      <div className="md:w-1/3">
                         <NumberInput
                           value={simulatedWrappedTokensPercentage}
                           onChange={e =>
@@ -330,37 +330,36 @@ export const MinParticipation: FC = () => {
 };
 
 const Container = styled.div.attrs({
-  className: 'pt-4 desktop:pt-3 p-3 space-x-3 rounded-xl bg-ui-0 relative z-10',
+  className: 'pt-8 xl:pt-6 p-6 space-x-6 rounded-xl bg-neutral-0 relative z-10',
 })``;
 
 const SubContainerWrapper = styled.div.attrs({
-  className: 'px-1',
+  className: 'px-2',
 })``;
 
 const SubContainer = styled.div.attrs({
-  className: 'p-3 space-y-3 rounded-b-xl bg-ui-0',
+  className: 'p-6 space-y-6 rounded-b-xl bg-neutral-0',
 })``;
 
 const SimulationSection = styled.div.attrs({
-  className: 'space-y-1.5',
+  className: 'space-y-3',
 })``;
 
 const Divider = styled.div.attrs({
-  className: 'w-full h-px bg-ui-100',
+  className: 'w-full h-px bg-neutral-100',
 })``;
 
 const StatItem = styled.div.attrs({
-  className:
-    'space-y-1 tablet:space-y-0 tablet:space-x-1 tablet:flex tablet:justify-between',
+  className: 'space-y-2 md:space-y-0 md:space-x-2 md:flex md:justify-between',
 })``;
 
 const StatItemValue = styled.div.attrs({
-  className: 'text-ui-600',
+  className: 'text-neutral-600',
 })``;
 
 const ApprovalWrapper = styled.div.attrs({
   className:
-    'flex flex-col flex-col-reverse tablet:flex-row space-y-3 space-y-reverse tablet:space-y-0 tablet:space-x-3',
+    'flex flex-col flex-col-reverse md:flex-row space-y-6 space-y-reverse md:space-y-0 md:space-x-6',
 })``;
 
 const LinearProgressContainer = styled.div.attrs({
@@ -369,5 +368,5 @@ const LinearProgressContainer = styled.div.attrs({
 
 const ProgressInfo2 = styled.div.attrs({
   className:
-    'flex absolute -top-2.5 desktop:-top-1 justify-between space-x-0.5 w-full text-sm',
+    'flex absolute -top-5 xl:-top-2 justify-between space-x-1 w-full text-sm leading-normal',
 })``;

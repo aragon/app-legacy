@@ -9,9 +9,9 @@ import {
   IconLinkExternal,
   Link,
   Tag,
-} from '@aragon/ods';
+} from '@aragon/ods-old';
 import {DaoDetails} from '@aragon/sdk-client';
-import React, {useEffect, useRef, useState} from 'react';
+import React, {ReactNode, useEffect, useRef, useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {generatePath, useNavigate, useParams} from 'react-router-dom';
 import styled from 'styled-components';
@@ -59,18 +59,18 @@ export const Settings: React.FC = () => {
   return (
     <SettingsWrapper>
       {daoUpdateEnabled && (
-        <div className={`mt-0.5 desktop:mt-1.5 ${styles.fullWidth}`}>
+        <div className={`mt-1 xl:mt-3 ${styles.fullWidth}`}>
           <SettingsUpdateCard />
         </div>
       )}
 
       {/* DAO Settings */}
       <div
-        className={`mt-1 desktop:row-start-3 desktop:-mt-1 ${
+        className={`mt-2 xl:row-start-3 xl:-mt-2 ${
           daoUpdateEnabled ? styles.leftCol : styles.center
         }`}
       >
-        <div className="flex flex-col gap-y-3">
+        <div className="flex flex-col gap-y-6">
           {/* DAO SECTION */}
           <SettingsCardDao daoDetails={daoDetails} />
 
@@ -90,14 +90,14 @@ export const Settings: React.FC = () => {
 
       {/* Edit */}
       <div
-        className={`desktop:row-start-4 ${
+        className={`xl:row-start-4 ${
           daoUpdateEnabled ? styles.fullWidth : styles.center
         }`}
       >
-        <div className="mt-1 space-y-2 desktop:-mt-1">
+        <div className="mt-2 space-y-4 xl:-mt-2">
           <ButtonText
             label={t('settings.edit')}
-            className="w-full tablet:w-max"
+            className="w-full md:w-max"
             size="large"
             iconLeft={!isDesktop ? <IconGovernance /> : undefined}
             onClick={() => navigate('edit')}
@@ -109,11 +109,9 @@ export const Settings: React.FC = () => {
   );
 };
 const styles = {
-  fullWidth:
-    'col-span-full desktop:col-start-2 desktop:col-end-12 desktop:col-span-6',
-  leftCol: 'col-span-full desktop:col-start-2 desktop:col-end-8',
-  center:
-    'col-span-full desktop:col-start-4 desktop:col-end-10 desktop:col-span-6',
+  fullWidth: 'col-span-full xl:col-start-2 xl:col-end-12 xl:col-span-6',
+  leftCol: 'col-span-full xl:col-start-2 xl:col-end-8',
+  center: 'col-span-full xl:col-start-4 xl:col-end-10 xl:col-span-6',
 };
 
 const DEFAULT_LINES_SHOWN = 3;
@@ -162,8 +160,8 @@ const SettingsCardDao: React.FC<{daoDetails: DaoDetails}> = ({daoDetails}) => {
       <DescriptionPair>
         <Term>{t('labels.daoName')}</Term>
         <Definition>
-          <div className="flex items-center space-x-1.5 desktop:space-x-2">
-            <p className="ft-text-base desktop:font-semibold">
+          <div className="flex items-center space-x-3 xl:space-x-4">
+            <p className="ft-text-base xl:font-semibold">
               {daoDetails.metadata.name}
             </p>
             <AvatarDao
@@ -178,8 +176,8 @@ const SettingsCardDao: React.FC<{daoDetails: DaoDetails}> = ({daoDetails}) => {
       <DescriptionPair>
         <Term>{t('labels.review.blockchain')}</Term>
         <Definition>
-          <div className="flex flex-1 flex-wrap justify-between gap-y-1">
-            <p className="shrink-0 ft-text-base desktop:font-semibold">
+          <div className="flex flex-1 flex-wrap justify-between gap-y-2">
+            <p className="shrink-0 ft-text-base xl:font-semibold">
               {chainLabel}
             </p>
             <Tag label={t('labels.notChangeable')} colorScheme="neutral" />
@@ -192,7 +190,7 @@ const SettingsCardDao: React.FC<{daoDetails: DaoDetails}> = ({daoDetails}) => {
           {isL2Network ? t('settings.dao.contractAddress') : t('labels.ens')}
         </Term>
         <Definition>
-          <div className="flex flex-1 flex-wrap items-start justify-between gap-y-1">
+          <div className="flex flex-1 flex-wrap items-start justify-between gap-y-2">
             <Link
               {...(isL2Network
                 ? {label: shortenAddress(daoDetails.address)}
@@ -212,7 +210,7 @@ const SettingsCardDao: React.FC<{daoDetails: DaoDetails}> = ({daoDetails}) => {
 
       <DescriptionPair className={resourceLinksIncluded ? '' : 'border-none'}>
         <Term>{t('labels.summary')}</Term>
-        <Definition className="flex flex-col gap-y-1">
+        <Definition className="flex flex-col gap-y-2">
           <Summary ref={summaryRef} {...{fullDescription: showAll}}>
             {daoDetails.metadata.description}
           </Summary>
@@ -238,7 +236,7 @@ const SettingsCardDao: React.FC<{daoDetails: DaoDetails}> = ({daoDetails}) => {
         <DescriptionPair className="border-none">
           <Term>{t('labels.links')}</Term>
           <Definition>
-            <div className="relative flex flex-col space-y-1.5">
+            <div className="relative flex flex-col space-y-3">
               {daoDetails.metadata.links.slice(0, 3).map(({name, url}) => (
                 <Link
                   key={url}
@@ -260,7 +258,7 @@ const SettingsCardDao: React.FC<{daoDetails: DaoDetails}> = ({daoDetails}) => {
                   }
                   listItems={daoDetails.metadata.links.map(({name, url}) => ({
                     component: (
-                      <div className="mb-1.5">
+                      <div className="mb-3">
                         <Link
                           label={name}
                           description={url}
@@ -302,7 +300,7 @@ const PluginSettingsWrapper: React.FC<IPluginSettings> = ({daoDetails}) => {
   }
 };
 
-const SettingsWrapper: React.FC = ({children}) => {
+const SettingsWrapper: React.FC<{children: ReactNode}> = ({children}) => {
   const {t} = useTranslation();
   const {isMobile} = useScreen();
 
@@ -325,7 +323,7 @@ const SettingsWrapper: React.FC = ({children}) => {
 
 export const Layout = styled.div.attrs({
   className:
-    'col-span-full desktop:col-start-4 desktop:col-end-10 text-ui-600 desktop:mt-2',
+    'col-span-full xl:col-start-4 xl:col-end-10 text-neutral-600 xl:mt-4',
 })``;
 
 type DescriptionProps = {
@@ -333,7 +331,7 @@ type DescriptionProps = {
 };
 
 const Summary = styled.p.attrs({
-  className: 'font-normal text-ui-600 ft-text-base',
+  className: 'font-normal text-neutral-600 ft-text-base',
 })<DescriptionProps>`
   overflow: hidden;
   display: -webkit-box;

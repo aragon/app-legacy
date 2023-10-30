@@ -9,7 +9,7 @@ import {
   ListItemAction,
   ListItemActionProps,
   shortenAddress,
-} from '@aragon/ods';
+} from '@aragon/ods-old';
 import {useAlertContext} from 'context/alert';
 import {useNetwork} from 'context/network';
 import React from 'react';
@@ -46,13 +46,13 @@ export const ListHeaderContract: React.FC<Props> = ({
           external
           type="neutral"
           iconRight={
-            <IconLinkExternal height={16} width={16} className="ml-4" />
+            <IconLinkExternal height={16} width={16} className="ml-8" />
           }
           href={chainExplorerAddressLink(network, sc.address) + '#code'}
           label={t('scc.detailContract.dropdownExplorerLinkLabel', {
             address: sc.address,
           })}
-          className="my-1 w-full justify-between px-2"
+          className="my-2 w-full justify-between px-4"
         />
       ),
       callback: () => {},
@@ -62,9 +62,9 @@ export const ListHeaderContract: React.FC<Props> = ({
         <Link
           external
           type="neutral"
-          iconRight={<IconCopy height={16} width={16} className="ml-4" />}
+          iconRight={<IconCopy height={16} width={16} className="ml-8" />}
           label={t('scc.detailContract.dropdownCopyLabel')}
-          className="my-1 w-full justify-between px-2"
+          className="my-2 w-full justify-between px-4"
         />
       ),
       callback: () => {
@@ -76,9 +76,9 @@ export const ListHeaderContract: React.FC<Props> = ({
         <Link
           external
           type="neutral"
-          iconRight={<IconClose height={16} width={16} className="ml-4" />}
+          iconRight={<IconClose height={16} width={16} className="ml-8" />}
           label={t('scc.detailContract.dropdownRemoveLabel')}
-          className="my-1 w-full justify-between px-2"
+          className="my-2 w-full justify-between px-4"
         />
       ),
       callback: () => {
@@ -103,7 +103,7 @@ export const ListHeaderContract: React.FC<Props> = ({
               : t('scc.writeProxy.dropdownDontWriteLabel')
           }
           iconRight={<IconSwitch />}
-          className="my-1 w-full justify-between px-2"
+          className="my-2 w-full justify-between px-4"
         />
       ),
       callback: () => {

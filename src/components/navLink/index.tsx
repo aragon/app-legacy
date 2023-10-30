@@ -1,4 +1,4 @@
-import {ListItemAction} from '@aragon/ods';
+import {ListItemAction} from '@aragon/ods-old';
 import {useNetwork} from 'context/network';
 import useScreen from 'hooks/useScreen';
 import React from 'react';
@@ -24,7 +24,7 @@ type NavLinkProps = {
    * Function to be performed when the NavLink is clicked IN ADDITION TO
    * NAVIGATION. Navigation itseld is already taken care of within Navlink.
    */
-  onItemClick?: () => void;
+  onItemClick?: () => void | Promise<void>;
 };
 
 /**
@@ -81,14 +81,14 @@ const NavLink = ({caller, data, onItemClick}: NavLinkProps) => {
   }
 };
 
-const NavItem = styled.button.attrs(({isSelected}: {isSelected: boolean}) => {
+const NavItem = styled.button.attrs<{isSelected: boolean}>(({isSelected}) => {
   let className =
-    'py-1.5 px-2 rounded-xl font-bold hover:text-primary-500 ' +
-    'active:text-primary-700 disabled:text-ui-300 disabled:bg-ui-50' +
-    ' focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:outline-none ';
+    'py-3 px-4 rounded-xl font-semibold hover:text-primary-500 ' +
+    'active:text-primary-700 disabled:text-neutral-300 disabled:bg-neutral-50' +
+    ' focus-visible:ring focus-visible:ring-primary focus-visible:outline-none ';
 
-  if (isSelected) className += 'text-primary-500 bg-ui-0';
-  else className += 'text-ui-600';
+  if (isSelected) className += 'text-primary-500 bg-neutral-0';
+  else className += 'text-neutral-600';
 
   return {className};
 })<{isSelected: boolean}>``;

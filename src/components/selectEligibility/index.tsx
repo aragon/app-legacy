@@ -1,4 +1,9 @@
-import {AlertInline, CheckboxListItem, Label, NumberInput} from '@aragon/ods';
+import {
+  AlertInline,
+  CheckboxListItem,
+  Label,
+  NumberInput,
+} from '@aragon/ods-old';
 import React, {useEffect} from 'react';
 import {Controller, useFormContext, useWatch} from 'react-hook-form';
 import {useTranslation} from 'react-i18next';
@@ -127,17 +132,17 @@ export const SelectEligibility = () => {
 
 const Container = styled.div.attrs({
   className:
-    'tablet:flex p-2 tablet:p-3 space-y-1 tablet:space-y-0 rounded-xl bg-ui-0 tablet:space-x-3 space-x-0',
+    'md:flex p-4 md:p-6 space-y-2 md:space-y-0 rounded-xl bg-neutral-0 md:space-x-6 space-x-0',
 })``;
 
 const OptionsContainers = styled.div.attrs({
-  className: 'space-y-1 tablet:w-1/2',
+  className: 'space-y-2 md:w-1/2',
 })``;
 
 const OptionsTitle = styled.h2.attrs({
-  className: 'ft-text-base font-bold text-ui-800',
+  className: 'ft-text-base font-semibold text-neutral-800',
 })``;
 
 const DescriptionContainer = styled.div.attrs({
-  className: 'space-y-0.5 mb-1.5',
+  className: 'space-y-1 mb-3',
 })``;

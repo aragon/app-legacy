@@ -1,4 +1,4 @@
-import React, {ReactElement} from 'react';
+import React, {ReactElement, ReactNode} from 'react';
 
 export type StepProps = {
   includeStepper?: boolean;
@@ -16,6 +16,7 @@ export type StepProps = {
   onNextButtonClicked?: (next: () => void) => void;
   // This method can use to trigger validations once user clicked on disabled next button
   onNextButtonDisabledClicked?: () => void;
+  children: ReactNode;
 };
 
 export const Step: React.FC<StepProps> = ({children}) => {

@@ -4,7 +4,7 @@ import {
   ButtonText,
   IconAdd,
   IconLinkExternal,
-} from '@aragon/ods';
+} from '@aragon/ods-old';
 import React from 'react';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
@@ -176,31 +176,30 @@ const WidgetFooter: React.FC<FooterProps> = ({
 };
 
 const Card = styled.div.attrs({
-  className:
-    'w-84 flex-col bg-white rounded-xl py-3 px-2 desktop:p-3 space-y-3',
+  className: 'w-84 flex-col bg-neutral-0 rounded-xl py-6 px-4 xl:p-6 space-y-6',
 })``;
 
 const Header = styled.div.attrs({
-  className: 'flex flex-col space-y-1',
+  className: 'flex flex-col space-y-2',
 })``;
 
 const Title = styled.h2.attrs({
-  className: 'text-ui-800 font-bold ft-text-xl',
+  className: 'text-neutral-800 font-semibold ft-text-xl',
 })``;
 
 const Description = styled.p.attrs({
-  className: 'text-ui-600 font-normal ft-text-sm',
+  className: 'text-neutral-600 font-normal ft-text-sm',
 })``;
 
 const Content = styled.div.attrs({
-  className: 'flex flex-col space-y-3',
+  className: 'flex flex-col space-y-6',
 })``;
 
 const Footer = styled.div.attrs({
   className:
-    'flex flex-col tablet:flex-row items-center gap-y-2 tablet:gap-y-0 tablet:gap-x-3',
+    'flex flex-col md:flex-row items-center gap-y-4 md:gap-y-0 md:gap-x-6',
 })``;
 
 const StyledButtonText = styled(ButtonText).attrs({
-  className: 'w-full tablet:w-max',
+  className: 'w-full md:w-max',
 })``;

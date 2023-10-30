@@ -13,7 +13,7 @@ import {
   ListItemAction,
   IconCopy,
   IconGovernance,
-} from '@aragon/ods';
+} from '@aragon/ods-old';
 import {CHAIN_METADATA} from 'utils/constants';
 import {isAddress} from 'viem';
 import {useNetwork} from 'context/network';
@@ -124,7 +124,7 @@ export const ActionItemAddress: React.FC<ActionItemAddressProps> = props => {
         component: (
           <ListItemAction
             title={t('community.actionItemDropdown.optionCopyAddress')}
-            iconRight={<IconCopy className="text-ui-300" />}
+            iconRight={<IconCopy className="text-neutral-300" />}
             bgWhite={true}
           />
         ),
@@ -134,7 +134,7 @@ export const ActionItemAddress: React.FC<ActionItemAddressProps> = props => {
         component: (
           <ListItemAction
             title={t('community.actionItemDropdown.optionBlockExplorer')}
-            iconRight={<IconLinkExternal className="text-ui-300" />}
+            iconRight={<IconLinkExternal className="text-neutral-300" />}
             bgWhite={true}
           />
         ),
@@ -150,7 +150,7 @@ export const ActionItemAddress: React.FC<ActionItemAddressProps> = props => {
               ? t('community.actionItemDropdown.optionUndelegate')
               : t('community.actionItemDropdown.optionDelegate')
           }
-          iconRight={<IconGovernance className="text-ui-300" />}
+          iconRight={<IconGovernance className="text-neutral-300" />}
           bgWhite={true}
         />
       ),
@@ -165,25 +165,25 @@ export const ActionItemAddress: React.FC<ActionItemAddressProps> = props => {
   };
 
   return (
-    <tr className="border-b border-b-ui-100 bg-ui-0 last:border-ui-0">
+    <tr className="border-b border-b-neutral-100 bg-neutral-0 last:border-neutral-0">
       <TableCell>
-        <div className="flex flex-row items-center gap-2">
+        <div className="flex flex-row items-center gap-4">
           <Avatar size="small" mode="circle" src={avatar ?? addressOrEns} />
-          <div className="flex grow flex-col gap-0.5">
-            <div className="flex flex-row items-start gap-1">
-              <div className="font-semibold text-ui-800 ft-text-base">
+          <div className="flex grow flex-col gap-1">
+            <div className="flex flex-row items-start gap-2">
+              <div className="font-semibold text-neutral-800 ft-text-base">
                 {shortenAddress(addressOrEns)}
               </div>
               {walletId && tagLabel && (
                 <Tag
                   label={tagLabel}
                   colorScheme={walletId === 'you' ? 'neutral' : 'info'}
-                  className="-mt-0.5"
+                  className="-mt-1"
                 />
               )}
             </div>
             {useCompactMode && (
-              <div className="flex grow flex-row justify-between text-ui-600">
+              <div className="flex grow flex-row justify-between text-neutral-600">
                 <MemberVotingPower
                   votingPower={votingPower}
                   tokenSupply={tokenSupply}
@@ -201,7 +201,7 @@ export const ActionItemAddress: React.FC<ActionItemAddressProps> = props => {
       </TableCell>
 
       {!useCompactMode && votingPower != null && tokenSymbol && (
-        <TableCell className="text-ui-600">
+        <TableCell className="text-neutral-600">
           <MemberVotingPower
             votingPower={votingPower}
             tokenSupply={tokenSupply}
@@ -211,12 +211,12 @@ export const ActionItemAddress: React.FC<ActionItemAddressProps> = props => {
       )}
 
       {!useCompactMode && delegations != null && enableDelegation && (
-        <TableCell className="text-ui-600 ft-text-sm">
+        <TableCell className="text-neutral-600 ft-text-sm">
           <span>{delegations > 0 ? delegations : ''}</span>
         </TableCell>
       )}
 
-      <TableCell className="flex justify-end gap-x-1.5">
+      <TableCell className="flex justify-end gap-x-3">
         {!useCompactMode && (
           <ButtonIcon
             mode="ghost"
@@ -229,7 +229,7 @@ export const ActionItemAddress: React.FC<ActionItemAddressProps> = props => {
 
         <Dropdown
           align="end"
-          className="px-0 py-1"
+          className="p-2"
           listItems={buildMenuOptions()}
           side="bottom"
           trigger={
@@ -247,5 +247,5 @@ export const ActionItemAddress: React.FC<ActionItemAddressProps> = props => {
 };
 
 const TableCell = styled.td.attrs({
-  className: 'items-center py-2 px-3 h-full' as string,
+  className: 'items-center py-4 px-6 h-full' as string,
 })``;

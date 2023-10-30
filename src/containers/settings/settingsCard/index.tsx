@@ -1,7 +1,10 @@
-import React from 'react';
+import React, {ReactNode} from 'react';
 import styled from 'styled-components';
 
-export const SettingsCard: React.FC<{title: string}> = ({title, children}) => {
+export const SettingsCard: React.FC<{title: string; children: ReactNode}> = ({
+  title,
+  children,
+}) => {
   return (
     <Container>
       <Title>{title}</Title>
@@ -12,32 +15,32 @@ export const SettingsCard: React.FC<{title: string}> = ({title, children}) => {
 
 const Container = styled.div.attrs({
   className:
-    'py-2.5 px-2 space-y-1 desktop:space-y-2 bg-ui-0 rounded-xl border border-ui-100',
+    'py-5 px-4 space-y-2 xl:space-y-4 bg-neutral-0 rounded-xl border border-neutral-100',
 })``;
 
 export const Title = styled.p.attrs({
-  className: 'font-semibold text-ui-800 ft-text-xl',
+  className: 'font-semibold text-neutral-800 ft-text-xl',
 })``;
 
 export const Term = styled.dt.attrs({
-  className: `font-semibold desktop:font-normal text-ui-800 desktop:text-ui-600
+  className: `font-semibold xl:font-normal text-neutral-800 xl:text-neutral-600
     w-1/4 col-span-1 whitespace-nowrap` as string,
 })``;
 
 export const Definition = styled.dd.attrs({
   className:
-    'desktop:flex shrink grow-0 font-normal desktop:font-semibold ft-text-base' as string,
+    'xl:flex shrink grow-0 font-normal xl:font-semibold ft-text-base' as string,
 })`
   flex-basis: 75%;
 `;
 
 export const FlexibleDefinition = styled.dd.attrs({
-  className: 'desktop:flex col-span-1' as string,
+  className: 'xl:flex col-span-1' as string,
 })`
   flex-grow: 1;
 `;
 
 export const DescriptionPair = styled.div.attrs({
-  className: `space-y-0.5 py-1.5 tablet:py-2 desktop:space-y-0 desktop:flex
-  desktop:space-x-2 text-ui-600 border-b border-ui-100 ft-text-base tablet:grid grid-cols-2 gap-4` as string,
+  className: `space-y-1 py-3 md:py-4 xl:space-y-0 xl:flex
+  xl:space-x-4 text-neutral-600 border-b border-neutral-100 ft-text-base md:grid grid-cols-2 gap-8` as string,
 })``;

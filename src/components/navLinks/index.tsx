@@ -23,8 +23,7 @@ const NavLinks: React.FC<NavLinksProps> = ({onItemClick}) => {
 };
 
 const StyledNavList = styled.ul.attrs({
-  className:
-    'space-y-1 desktop:space-y-0 desktop:flex desktop:space-x-1.5 desktop:items-center',
+  className: 'space-y-2 xl:space-y-0 xl:flex xl:space-x-3 xl:items-center',
 })``;
 
 export default NavLinks;

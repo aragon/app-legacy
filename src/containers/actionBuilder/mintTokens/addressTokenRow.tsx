@@ -8,7 +8,7 @@ import {
   ListItemAction,
   NumberInput,
   TextInput,
-} from '@aragon/ods';
+} from '@aragon/ods-old';
 import Big from 'big.js';
 import React, {useCallback, useEffect} from 'react';
 import {Controller, useFormContext, useWatch} from 'react-hook-form';
@@ -169,7 +169,7 @@ const TokenField: React.FC<IndexProps> = ({actionIndex, fieldIndex}) => {
         field: {name, value, onBlur, onChange},
         fieldState: {error},
       }) => (
-        <div className="flex-1 desktop:w-23 desktop:flex-none">
+        <div className="flex-1 xl:w-[184px] xl:flex-none">
           <NumberInput
             name={name}
             value={value}
@@ -253,7 +253,7 @@ const PercentageDistribution: React.FC<
   }
 
   return (
-    <div className="w-12">
+    <div className="w-24">
       <TextInput
         className="text-right"
         name={`actions.${actionIndex}.inputs.mintTokensToWallets.${fieldIndex}.amount`}
@@ -359,23 +359,23 @@ export const AddressAndTokenRow: React.FC<AddressAndTokenRowProps> = ({
 };
 
 const Container = styled.div.attrs({
-  className: 'p-2 tablet:p-3 space-y-3',
+  className: 'p-4 md:p-6 space-y-6',
 })``;
 
 const ErrorContainer = styled.div.attrs({
-  className: 'mt-0.5',
+  className: 'mt-1',
 })``;
 
 const VStack = styled.div.attrs({
-  className: 'space-y-0.5',
+  className: 'space-y-1',
 })``;
 
 const HStack = styled.div.attrs({
-  className: 'flex space-x-2',
+  className: 'flex space-x-4',
 })``;
 
 const HStackWithPadding = styled.div.attrs({
-  className: 'flex tablet:pr-8 space-x-2',
+  className: 'flex md:pr-16 space-x-4',
 })``;
 
-const InputContainer = styled.div.attrs({className: 'flex-1 space-y-1'})``;
+const InputContainer = styled.div.attrs({className: 'flex-1 space-y-2'})``;

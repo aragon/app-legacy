@@ -1,4 +1,4 @@
-import {AvatarDao, ListItemLink} from '@aragon/ods';
+import {AvatarDao, ListItemLink} from '@aragon/ods-old';
 import React from 'react';
 import {useTranslation} from 'react-i18next';
 

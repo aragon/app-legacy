@@ -1,4 +1,4 @@
-import {IconChevronRight, ListItemAction} from '@aragon/ods';
+import {IconChevronRight, ListItemAction} from '@aragon/ods-old';
 import React from 'react';
 import {useTranslation} from 'react-i18next';
 import {generatePath, useNavigate, useParams} from 'react-router-dom';
@@ -60,5 +60,5 @@ const TransferMenu: React.FC = () => {
 export default TransferMenu;
 
 const Container = styled.div.attrs({
-  className: 'space-y-1.5 p-3',
+  className: 'space-y-3 p-6',
 })``;

@@ -1,4 +1,4 @@
-import {IconInfo} from '@aragon/ods';
+import {IconInfo} from '@aragon/ods-old';
 import React from 'react';
 import styled from 'styled-components';
 
@@ -60,7 +60,7 @@ const Footer: React.FC = () => {
           </ActionContainer>
         </FullSpan>
       </GridLayout>
-      <div className="z-10 flex items-center justify-center space-x-1 bg-primary-400 py-0.5 text-sm text-ui-0">
+      <div className="z-10 flex items-center justify-center space-x-2 bg-primary-400 py-1 text-sm leading-normal text-neutral-0">
         <IconInfo />
         <span>Aragon App Public Beta</span>
       </div>
@@ -80,31 +80,31 @@ const Section = styled.section.attrs({
 
 const ActionContainer = styled.div.attrs({
   className:
-    'relative flex flex-col desktop:flex-row desktop:justify-between items-center space-y-4 desktop:space-y-0 pt-5 desktop:pt-3 pb-8 desktop:pb-3',
+    'relative flex flex-col xl:flex-row xl:justify-between items-center space-y-8 xl:space-y-0 pt-10 xl:pt-6 pb-16 xl:pb-6',
 })``;
 
 const FlexDiv = styled.div.attrs({
-  className: 'flex space-x-4 items-center',
+  className: 'flex space-x-8 items-center',
 })``;
 
 const LogoContainer = styled.img.attrs({
-  className: 'h-5',
+  className: 'h-10',
 })``;
 
 const StyledNavList = styled.ul.attrs({
-  className: 'flex space-x-4',
+  className: 'flex space-x-8',
 })``;
 
 const Copyright = styled.span.attrs({
-  className: 'text-ui-0 font-normal',
+  className: 'text-neutral-0 font-normal',
 })``;
 
 const GradientGreen = styled.img.attrs({
-  className: 'h-50 absolute -top-16 -left-16',
+  className: 'h-[400px] absolute -top-32 -left-32',
 })``;
 
 const GradientPurple = styled.img.attrs({
-  className: 'desktop:h-40 h-30 absolute -right-5 desktop:-top-11 top-16',
+  className: 'xl:h-80 h-60 absolute -right-10 xl:-top-[88px] top-32',
 })``;
 
 export default Footer;

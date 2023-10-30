@@ -1,4 +1,4 @@
-import {AlertInlineProps, Label} from '@aragon/ods';
+import {AlertInlineProps, Label} from '@aragon/ods-old';
 import React, {useCallback, useEffect} from 'react';
 import {
   Controller,
@@ -7,7 +7,8 @@ import {
   useWatch,
   ValidateResult,
 } from 'react-hook-form';
-import {TFunction, useTranslation} from 'react-i18next';
+import {useTranslation} from 'react-i18next';
+import {TFunction} from 'i18next';
 import {CORRECTION_DELAY} from 'utils/constants';
 
 import MinimumApproval from './minimumApproval';

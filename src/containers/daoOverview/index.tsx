@@ -3,7 +3,7 @@ import {
   ButtonText,
   IconChevronRight,
   IlluObject,
-} from '@aragon/ods';
+} from '@aragon/ods-old';
 import React from 'react';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
@@ -35,8 +35,8 @@ export const OverviewDAOHeader: React.FC<OverviewDAOHeaderProps> = ({
   };
 
   return (
-    <div className="bg-ui-0 p-2 tablet:rounded-xl tablet:p-6">
-      <div className="mb-3 desktop:hidden">
+    <div className="bg-neutral-0 p-4 md:rounded-xl md:p-12">
+      <div className="mb-6 xl:hidden">
         <Breadcrumb
           crumbs={{
             label: navLabel,
@@ -46,16 +46,16 @@ export const OverviewDAOHeader: React.FC<OverviewDAOHeaderProps> = ({
         />
       </div>
 
-      <div className="items-end tablet:flex tablet:space-x-6">
+      <div className="items-end md:flex md:space-x-12">
         <div className="w-full">
-          <h1 className="font-bold text-ui-800 ft-text-3xl">
+          <h1 className="font-semibold text-neutral-800 ft-text-3xl">
             {t('createDAO.overview.title')}
           </h1>
-          <p className="mt-2 text-ui-600 ft-text-lg">
+          <p className="mt-4 text-neutral-600 ft-text-lg">
             {t('createDAO.overview.description')}
           </p>
         </div>
-        <div className="mt-2 flex space-x-2 tablet:mt-0">
+        <div className="mt-4 flex space-x-4 md:mt-0">
           {/* <ButtonText
           size="large"
           mode="secondary"
@@ -65,7 +65,7 @@ export const OverviewDAOHeader: React.FC<OverviewDAOHeaderProps> = ({
         /> */}
           <ButtonText
             size="large"
-            className="w-full whitespace-nowrap tablet:w-max"
+            className="w-full whitespace-nowrap md:w-max"
             iconRight={<IconChevronRight />}
             label={t('createDAO.overview.button')}
             onClick={handleSetupClick}
@@ -108,7 +108,7 @@ export const OverviewDAOStep: React.FC = () => {
 
   if (isDesktop) {
     return (
-      <div className="space-y-3 tablet:flex tablet:space-x-3 tablet:space-y-0">
+      <div className="space-y-6 md:flex md:space-x-6 md:space-y-0">
         {OverviewCards}
       </div>
     );
@@ -159,5 +159,5 @@ export const OverviewDAOStep: React.FC = () => {
 };
 
 const MobileCTA = styled.div.attrs({
-  className: 'mb-5 -mx-2 tablet:-mx-3 desktop:mx-0',
+  className: 'mb-10 -mx-4 md:-mx-6 xl:mx-0',
 })``;

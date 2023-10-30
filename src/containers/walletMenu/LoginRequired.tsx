@@ -1,6 +1,6 @@
-import {ButtonIcon, ButtonText, IconClose} from '@aragon/ods';
+import {ButtonIcon, ButtonText, IconClose} from '@aragon/ods-old';
 import {useWallet} from 'hooks/useWallet';
-import React, {useCallback} from 'react';
+import React from 'react';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 
@@ -16,28 +16,32 @@ import {useGlobalModalContext} from 'context/globalModals';
 import useScreen from 'hooks/useScreen';
 import WalletIcon from 'public/wallet.svg';
 
-type Props = {
+interface ILoginRequiredProps {
   isOpen?: boolean;
   onClose?: () => void;
-};
+}
 
-export const LoginRequired: React.FC<Props> = props => {
-  const {close, isOpen} = useGlobalModalContext('wallet');
+export const LoginRequired: React.FC<ILoginRequiredProps> = props => {
+  const {onClose: onCloseProp, isOpen: isOpenProp} = props;
+
+  const {close, isOpen: isOpenContext} = useGlobalModalContext('wallet');
+
   const {t} = useTranslation();
   const {isDesktop} = useScreen();
   const {methods} = useWallet();
 
-  // allow modal to be used both via global modal context &&
-  // as individually controlled component.
-  const showModal = props.isOpen ?? isOpen;
+  // Combine the isOpen and onClose handler as the dialog can be used both through
+  // the global modal context and standalone
+  const isOpen = isOpenProp ?? isOpenContext;
+  const onClose = onCloseProp ?? close;
 
-  const handleClose = useCallback(() => {
-    if (props.onClose) props.onClose();
-    else close();
-  }, [close, props]);
+  const handleConnectClick = async () => {
+    close();
+    await methods.selectWallet();
+  };
 
   return (
-    <ModalBottomSheetSwitcher isOpen={showModal} onClose={handleClose}>
+    <ModalBottomSheetSwitcher isOpen={isOpen} onClose={onClose}>
       <ModalHeader>
         <Title>{t('alert.loginRequired.headerTitle')}</Title>
         {isDesktop && (
@@ -45,7 +49,7 @@ export const LoginRequired: React.FC<Props> = props => {
             mode="ghost"
             icon={<IconClose />}
             size="small"
-            onClick={handleClose}
+            onClick={() => onClose()}
           />
         )}
       </ModalHeader>
@@ -59,14 +63,7 @@ export const LoginRequired: React.FC<Props> = props => {
         </WarningContainer>
         <ButtonText
           label={t('alert.loginRequired.buttonLabel')}
-          onClick={() => {
-            close();
-            methods.selectWallet().catch((err: Error) => {
-              // To be implemented: maybe add an error message when
-              // the error is different from closing the window
-              console.error(err);
-            });
-          }}
+          onClick={handleConnectClick}
           size="large"
         />
       </ModalBody>
@@ -76,12 +73,14 @@ export const LoginRequired: React.FC<Props> = props => {
 
 const ModalHeader = styled.div.attrs({
   className:
-    'flex justify-between items-center p-3 bg-ui-0 rounded-xl gap-2 sticky top-0',
+    'flex justify-between items-center p-6 bg-neutral-0 rounded-xl gap-4 sticky top-0',
 })`
-  box-shadow: 0px 4px 8px rgba(31, 41, 51, 0.04),
-    0px 0px 2px rgba(31, 41, 51, 0.06), 0px 0px 1px rgba(31, 41, 51, 0.04);
+  box-shadow:
+    0px 4px 8px rgba(31, 41, 51, 0.04),
+    0px 0px 2px rgba(31, 41, 51, 0.06),
+    0px 0px 1px rgba(31, 41, 51, 0.04);
 `;
 
 const WarningDescription = styled.p.attrs({
-  className: 'text-base text-ui-500 text-center',
+  className: 'text-base leading-normal text-neutral-500 text-center',
 })``;

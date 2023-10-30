@@ -5,7 +5,7 @@ import {
   LinearProgress,
   NumberInput,
   Tag,
-} from '@aragon/ods';
+} from '@aragon/ods-old';
 import {MultisigMinimumApproval} from 'components/multisigMinimumApproval';
 import React, {useCallback} from 'react';
 import {Controller, useFormContext, useWatch} from 'react-hook-form';
@@ -175,7 +175,7 @@ const ConfigureCommunity: React.FC<ConfigureCommunityProps> = ({
               }) => (
                 <>
                   <ApprovalContainer>
-                    <div className="tablet:w-1/3">
+                    <div className="md:w-1/3">
                       <NumberInput
                         name={name}
                         value={value}
@@ -190,7 +190,7 @@ const ConfigureCommunity: React.FC<ConfigureCommunityProps> = ({
                       <Tag
                         label={t('labels.yes')}
                         colorScheme="primary"
-                        className="mr-1.5 w-6 justify-center"
+                        className="mr-3 w-12 justify-center"
                       />
 
                       <LinearProgressContainer>
@@ -198,7 +198,7 @@ const ConfigureCommunity: React.FC<ConfigureCommunityProps> = ({
                         <ProgressBarTick />
                         <ProgressInfo1>
                           <p
-                            className="text-right font-bold text-primary-500"
+                            className="text-right font-semibold text-primary-500"
                             style={{flexBasis: `${value}%`}}
                           >
                             {value !== '100' ? '>' : ''}
@@ -209,7 +209,7 @@ const ConfigureCommunity: React.FC<ConfigureCommunityProps> = ({
 
                       <Tag
                         label={t('labels.no')}
-                        className="ml-1.5 w-6 justify-center"
+                        className="ml-3 w-12 justify-center"
                       />
                     </div>
                   </ApprovalContainer>
@@ -442,31 +442,31 @@ const ToggleCheckList = ({
 };
 
 const ToggleCheckListContainer = styled.div.attrs({
-  className: 'flex gap-x-3',
+  className: 'flex gap-x-6',
 })``;
 
 const ToggleCheckListItemWrapper = styled.div.attrs({className: 'flex-1'})``;
 
 const FormItem = styled.div.attrs({
-  className: 'space-y-1.5',
+  className: 'space-y-3',
 })``;
 
 const DurationContainer = styled.div.attrs({
   className:
-    'flex flex-col tablet:flex-row space-y-1.5 tablet:space-y-0 tablet:space-x-1.5 p-3 bg-ui-0 rounded-xl',
+    'flex flex-col md:flex-row space-y-3 md:space-y-0 md:space-x-3 p-6 bg-neutral-0 rounded-xl',
 })``;
 
 const TimeLabelWrapper = styled.div.attrs({
-  className: 'w-full tablet:w-1/2 space-y-0.5',
+  className: 'w-full md:w-1/2 space-y-1',
 })``;
 
 const TimeLabel = styled.span.attrs({
-  className: 'text-sm font-bold text-ui-800',
+  className: 'text-sm leading-normal font-semibold text-neutral-800',
 })``;
 
 const ApprovalContainer = styled.div.attrs({
   className:
-    'flex flex-col flex-col-reverse tablet:flex-row tablet:items-center p-3 pt-4 tablet:p-3 space-y-3 space-y-reverse tablet:space-y-0 tablet:space-x-3 rounded-xl bg-ui-0',
+    'flex flex-col flex-col-reverse md:flex-row md:items-center p-6 pt-8 md:p-6 space-y-6 space-y-reverse md:space-y-0 md:space-x-6 rounded-xl bg-neutral-0',
 })``;
 
 const LinearProgressContainer = styled.div.attrs({
@@ -475,10 +475,10 @@ const LinearProgressContainer = styled.div.attrs({
 
 const ProgressBarTick = styled.div.attrs({
   className:
-    'absolute left-1/2 w-1 h-2.5 border-r-2 border-l-2 -translate-x-1/2 bg-ui-300 border-ui-0',
+    'absolute left-1/2 w-2 h-5 border-r-2 border-l-2 -translate-x-1/2 bg-neutral-300 border-neutral-0',
 })``;
 
 const ProgressInfo1 = styled.div.attrs({
   className:
-    'flex absolute -top-2.5 justify-between space-x-0.5 w-full text-sm',
+    'flex absolute -top-5 justify-between space-x-1 w-full text-sm leading-normal',
 })``;

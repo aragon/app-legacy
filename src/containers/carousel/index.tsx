@@ -113,19 +113,19 @@ const Carousel: React.FC = () => {
 
 const DesktopCTA = styled.div.attrs({
   className:
-    'relative flex desktop:flex-row flex-col mb-4 space-x-3 max-w-fit -mt-16',
+    'relative flex xl:flex-row flex-col mb-8 space-x-6 max-w-fit -mt-32',
 })``;
 
 const MobileCTA = styled.div.attrs({
-  className: 'relative -mt-13 mb-5 -mx-2 tablet:-mx-3 desktop:mx-0',
+  className: 'relative -mt-[104px] mb-10 -mx-4 md:-mx-6 xl:mx-0',
 })``;
 
 export const ActiveIndicator = styled.li.attrs({
-  className: 'inline-block bg-primary-500 h-0.75 w-6 ml-1 rounded-xl',
+  className: 'inline-block bg-primary-500 h-1.5 w-12 ml-2 rounded-xl',
 })``;
 
 export const Indicator = styled.li.attrs({
-  className: 'inline-block bg-ui-200 h-0.75 w-2 ml-1 rounded-xl',
+  className: 'inline-block bg-neutral-200 h-1.5 w-4 ml-2 rounded-xl',
 })``;
 
 export const StyledCarousel = styled(ReactResponsiveCarousel).attrs({})`

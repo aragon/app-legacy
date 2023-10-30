@@ -4,7 +4,7 @@ import React from 'react';
 import {useTranslation} from 'react-i18next';
 
 const processes = ['DaoCreation', 'ProposalCreation'] as const;
-export type ProcessType = typeof processes[number];
+export type ProcessType = (typeof processes)[number];
 
 type Props = {
   isOpen: boolean;
@@ -26,7 +26,7 @@ const ExitProcessMenu: React.FC<Props> = ({
 
   return (
     <ModalBottomSheetSwitcher isOpen={isOpen} onClose={onClose}>
-      <div className="px-2 py-3">
+      <div className="px-4 py-6">
         <StateEmpty
           type="Object"
           object="warning"

@@ -7,6 +7,7 @@ import styled from 'styled-components';
 import ModalBottomSheetSwitcher from 'components/modalBottomSheetSwitcher';
 import ModalHeader from 'components/modalHeader';
 import {StateEmpty} from 'components/stateEmpty';
+import {htmlIn} from 'utils/htmlIn';
 
 type Props = {
   isOpen: boolean;
@@ -35,7 +36,8 @@ const EmptyState: React.FC<Props> = props => {
           type="Object"
           object="smart_contract"
           title={t('scc.emptyState.title')}
-          description={t('scc.emptyState.description')}
+          description={htmlIn(t)('scc.emptyState.description')}
+          renderHtml
           primaryButton={{
             label: t('scc.emptyState.ctaLabel'),
             onClick: () => {
@@ -53,4 +55,4 @@ const EmptyState: React.FC<Props> = props => {
 
 export default EmptyState;
 
-const Content = styled.div.attrs({className: 'px-2 tablet:px-3 pb-3'})``;
+const Content = styled.div.attrs({className: 'px-4 md:px-6 pb-6'})``;

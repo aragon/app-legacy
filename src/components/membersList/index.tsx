@@ -9,7 +9,7 @@ import {getTokenInfo} from 'utils/tokens';
 import {ActionItemAddress} from './actionItemAddress';
 import {useAccount} from 'wagmi';
 import styled from 'styled-components';
-import {useScreen} from '@aragon/ods';
+import {useScreen} from '@aragon/ods-old';
 import {useTranslation} from 'react-i18next';
 import {featureFlags} from 'utils/featureFlags';
 
@@ -81,13 +81,13 @@ export const MembersList: React.FC<MembersListProps> = ({
   return (
     <div
       className={`overflow-hidden rounded-xl ${
-        useCompactMode ? 'border border-ui-100' : ''
+        useCompactMode ? 'border border-neutral-100' : ''
       } `}
     >
       <table className="h-full w-full">
         {!useCompactMode && (
           <thead>
-            <tr className="border-b border-b-ui-100 bg-ui-0 text-ui-600">
+            <tr className="border-b border-b-neutral-100 bg-neutral-0 text-neutral-600">
               <TableCellHead>{t('community.listHeader.member')}</TableCellHead>
               {isDesktop && isTokenBasedDao && (
                 <TableCellHead>
@@ -132,5 +132,5 @@ export const MembersList: React.FC<MembersListProps> = ({
 };
 
 const TableCellHead = styled.td.attrs({
-  className: 'text-left px-3 py-2',
+  className: 'text-left px-6 py-4',
 })``;

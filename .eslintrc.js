@@ -88,6 +88,7 @@ module.exports = {
         'node/shebang': 'off',
         'no-dupe-class-members': 'off',
         'require-atomic-updates': 'off',
+        'react/prop-types': 'off',
       },
     },
   ],

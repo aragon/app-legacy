@@ -1,5 +1,6 @@
 import {
   LIVE_CONTRACTS,
+  SupportedVersion,
   SupportedNetwork as sdkSupportedNetworks,
 } from '@aragon/sdk-client-common';
 import {
@@ -122,7 +123,7 @@ export function getAlchemyProvider(
 
   if (NETWORKS_WITH_CUSTOM_REGISTRY.includes(network)) {
     networkishOptions.ensAddress =
-      LIVE_CONTRACTS[
+      LIVE_CONTRACTS[SupportedVersion.LATEST][
         networkishOptions.name as sdkSupportedNetworks
       ].ensRegistryAddress;
   }
@@ -156,7 +157,7 @@ export function getInfuraProvider(
 
   if (NETWORKS_WITH_CUSTOM_REGISTRY.includes(network)) {
     networkishOptions.ensAddress =
-      LIVE_CONTRACTS[
+      LIVE_CONTRACTS[SupportedVersion.LATEST][
         networkishOptions.name as sdkSupportedNetworks
       ].ensRegistryAddress;
   }
@@ -187,7 +188,7 @@ export function getJsonRpcProvider(
 
   if (NETWORKS_WITH_CUSTOM_REGISTRY.includes(network)) {
     networkishOptions.ensAddress =
-      LIVE_CONTRACTS[
+      LIVE_CONTRACTS[SupportedVersion.LATEST][
         networkishOptions.name as sdkSupportedNetworks
       ].ensRegistryAddress;
   }

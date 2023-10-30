@@ -8,23 +8,32 @@ import {Web3WalletTypes} from '@walletconnect/web3wallet';
 import {useDaoDetailsQuery} from 'hooks/useDaoDetails';
 
 export type WcSession = SessionTypes.Struct;
+export type WcConnection = PairingTypes.Struct;
+
 export type WcActionRequest =
   Web3WalletTypes.SessionRequest['params']['request'];
 
 export type WcConnectOptions = {
   uri: string;
-  onError?: (e: Error) => void;
+  metadataName?: string;
+};
+
+export type VerifyConnectionOptions = {
+  connection: WcConnection;
+  metadataName?: string;
 };
 
 export type WcInterceptorValues = {
-  wcConnect: (
-    options: WcConnectOptions
-  ) => Promise<PairingTypes.Struct | undefined>;
+  wcConnect: (options: WcConnectOptions) => Promise<WcSession>;
   wcDisconnect: (topic: string) => Promise<void>;
   sessions: WcSession[];
-  activeSessions: WcSession[];
   actions: WcActionRequest[];
 };
+
+export const CONNECTION_TIMEOUT = 60_000; // 60 seconds before connection timeout
+export const METADATA_NAME_ERROR = new Error(
+  'walletConnectInterceptor: peer name does not match'
+);
 
 export function useWalletConnectInterceptor(): WcInterceptorValues {
   const {network} = useNetwork();
@@ -33,7 +42,6 @@ export function useWalletConnectInterceptor(): WcInterceptorValues {
   const [sessions, setSessions] = useState<WcSession[]>(
     walletConnectInterceptor.getActiveSessions(daoDetails?.address)
   );
-  const activeSessions = sessions.filter(session => session.acknowledged);
 
   const [actions, setActions] = useState<WcActionRequest[]>([]);
 
@@ -45,15 +53,78 @@ export function useWalletConnectInterceptor(): WcInterceptorValues {
     setSessions(newSessions);
   }, [daoDetails?.address]);
 
-  const wcConnect = useCallback(async ({onError, uri}: WcConnectOptions) => {
-    try {
+  /**
+   * The function checks if the connection is still valid and returns the relative
+   * active session when found or undefined when the connection is still active but
+   * there are no matching session.
+   * The function throws error when the connection is not valid anymore.
+   */
+  const verifyConnection = useCallback(
+    async ({
+      connection,
+      metadataName,
+    }: VerifyConnectionOptions): Promise<WcSession | undefined> => {
+      const matchingSession =
+        await walletConnectInterceptor.verifyConnection(connection);
+
+      const metadataNameMatch =
+        metadataName == null ||
+        matchingSession?.peer.metadata.name
+          .toLowerCase()
+          .includes(metadataName);
+
+      if (matchingSession && !metadataNameMatch) {
+        throw METADATA_NAME_ERROR;
+      }
+
+      return matchingSession;
+    },
+    []
+  );
+
+  /**
+   * The function tries to establish a connection to a dApp through the specified uri and verifies
+   * that the connection is valid. When the connection times out or the topic is not valid anymore,
+   * the function throws an error.
+   */
+  const wcConnect = useCallback(
+    async ({uri, metadataName}: WcConnectOptions): Promise<WcSession> => {
       const connection = await walletConnectInterceptor.connect(uri);
 
-      return connection;
-    } catch (e) {
-      onError?.(e as Error);
-    }
-  }, []);
+      if (connection == null) {
+        throw new Error('walletConnectInterceptor: connection not defined');
+      }
+
+      const connectionTimeoutStart = Date.now();
+      let activeSession: WcSession | undefined;
+
+      return new Promise<WcSession>((resolve, reject) => {
+        const verifyInterval = setInterval(async () => {
+          // Throw error when connection times out
+          if (Date.now() > connectionTimeoutStart + CONNECTION_TIMEOUT) {
+            clearInterval(verifyInterval);
+            reject(new Error('walletConnectInterceptor: connection timeout'));
+          }
+
+          // Check status of connection and throw error when connection is expired or topic
+          // is not valid
+          try {
+            activeSession = await verifyConnection({connection, metadataName});
+          } catch (error) {
+            clearInterval(verifyInterval);
+            reject(error);
+          }
+
+          // Return active session and stop verification interval when session is valid
+          if (activeSession != null) {
+            clearInterval(verifyInterval);
+            resolve(activeSession);
+          }
+        }, 1000);
+      });
+    },
+    [verifyConnection]
+  );
 
   const wcDisconnect = useCallback(
     async (topic: string) => {
@@ -110,5 +181,5 @@ export function useWalletConnectInterceptor(): WcInterceptorValues {
     };
   }, [handleRequest]);
 
-  return {wcConnect, wcDisconnect, sessions, activeSessions, actions};
+  return {wcConnect, wcDisconnect, sessions, actions};
 }

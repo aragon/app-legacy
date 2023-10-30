@@ -6,7 +6,7 @@ import {
   Label,
   ListItemAction,
   TextInput,
-} from '@aragon/ods';
+} from '@aragon/ods-old';
 import React, {useCallback} from 'react';
 import styled from 'styled-components';
 import {useTranslation} from 'react-i18next';
@@ -203,11 +203,11 @@ const LinkRow: React.FC<LinkRowProps & BgWhite> = ({
 
 export default LinkRow;
 
-const Container = styled.div.attrs(({bgWhite}: BgWhite) => ({
-  className: `flex flex-wrap gap-x-2 gap-y-1.5 p-2 ${
+const Container = styled.div.attrs<{bgWhite: BgWhite}>(({bgWhite}) => ({
+  className: `flex flex-wrap gap-x-4 gap-y-3 p-4 ${
     bgWhite
-      ? 'bg-ui-50 border border-t-0 border-ui-100 last:rounded-b-xl'
-      : 'bg-ui-0'
+      ? 'bg-neutral-50 border border-t-0 border-neutral-100 last:rounded-b-xl'
+      : 'bg-neutral-0'
   }`,
 }))<BgWhite>``;
 
@@ -216,21 +216,21 @@ const LabelContainer = styled.div.attrs({
 })``;
 
 const LabelWrapper = styled.div.attrs({
-  className: 'tablet:hidden mb-0.5',
+  className: 'md:hidden mb-1',
 })``;
 
 const ButtonContainer = styled.div.attrs({
-  className: 'pt-3.5 order-2 tablet:order-3 tablet:pt-0',
+  className: 'pt-7 order-2 md:order-3 md:pt-0',
 })``;
 
 const ErrorContainer = styled.div.attrs({
-  className: 'mt-0.5',
+  className: 'mt-1',
 })``;
 
 const Break = styled.hr.attrs({
-  className: 'tablet:hidden w-full border-0 order-3',
+  className: 'md:hidden w-full border-0 order-3',
 })``;
 
 const LinkContainer = styled.div.attrs({
-  className: 'flex-1 order-4 tablet:order-2 h-full',
+  className: 'flex-1 order-4 md:order-2 h-full',
 })``;

@@ -10,7 +10,7 @@ import Footer from 'containers/footer';
 import Navbar from 'containers/navbar';
 import DaoSelectMenu from 'containers/navbar/daoSelectMenu';
 import ExploreNav from 'containers/navbar/exploreNav';
-import NetworkErrorMenu from 'containers/networkErrorMenu';
+import {NetworkErrorMenu} from 'containers/networkErrorMenu';
 import TransactionDetail from 'containers/transactionDetail';
 import TransferMenu from 'containers/transferMenu';
 import {WalletMenu} from 'containers/walletMenu';
@@ -30,6 +30,7 @@ import '../i18n.config';
 import {ProposalSettingsFormData} from 'utils/types';
 import {GatingMenu} from 'containers/gatingMenu';
 import {DelegationGatingMenu} from 'containers/delegationGatingMenu';
+import UpdateBanner from 'containers/navbar/updateBanner';
 
 export const App: React.FC = () => {
   // TODO this needs to be inside a Routes component. Will be moved there with
@@ -84,7 +85,7 @@ export const App: React.FC = () => {
                   element={<NewWithdrawPage />}
                 />
                 <Route
-                  path="governance/new-proposal"
+                  path="governance/new-proposal/:type"
                   element={<NewProposalPage />}
                 />
                 <Route element={<NewSettingsWrapper />}>
@@ -179,6 +180,7 @@ const DaoWrapper: React.FC = () => {
 
   return (
     <GovTokensWrappingProvider>
+      <UpdateBanner />
       <Navbar />
       <div className="min-h-screen">
         <GridLayout>

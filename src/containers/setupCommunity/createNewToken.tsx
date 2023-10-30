@@ -1,4 +1,4 @@
-import {AlertInline, Label, TextInput} from '@aragon/ods';
+import {AlertInline, Label, TextInput} from '@aragon/ods-old';
 import React from 'react';
 import styled from 'styled-components';
 import {useTranslation} from 'react-i18next';
@@ -92,7 +92,8 @@ const CreateNewToken: React.FC = () => {
         <DescriptionContainer>
           <Label
             label={t('labels.distributeTokens')}
-            helpText={t('createDAO.step3.distributeTokensHelpertext')}
+            helpText={htmlIn(t)('createDAO.step3.distributeTokensHelpertext')}
+            renderHtml={true}
           />
         </DescriptionContainer>
         <AlertInline
@@ -111,13 +112,15 @@ const CreateNewToken: React.FC = () => {
 export default CreateNewToken;
 
 const FormItem = styled.div.attrs({
-  className: 'space-y-1.5',
+  className: 'space-y-3',
 })``;
 
 const DescriptionContainer = styled.div.attrs({
-  className: 'space-y-0.5',
+  className: 'space-y-1',
 })``;
 
-const Title = styled.p.attrs({className: 'text-lg font-bold text-ui-800'})``;
+const Title = styled.p.attrs({
+  className: 'text-xl leading-normal font-semibold text-neutral-800',
+})``;
 
-const Subtitle = styled.p.attrs({className: 'text-ui-600 text-bold'})``;
+const Subtitle = styled.p.attrs({className: 'text-neutral-600 text-bold'})``;

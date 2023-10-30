@@ -4,7 +4,7 @@ import {
   IconChevronLeft,
   IconLinkExternal,
   ListItemDao,
-} from '@aragon/ods';
+} from '@aragon/ods-old';
 import React, {useCallback} from 'react';
 import {useTranslation} from 'react-i18next';
 import {generatePath, useNavigate} from 'react-router-dom';
@@ -12,24 +12,21 @@ import styled from 'styled-components';
 
 import {useReactiveVar} from '@apollo/client';
 import ModalBottomSheetSwitcher from 'components/modalBottomSheetSwitcher';
-import {
-  favoriteDaosVar,
-  NavigationDao,
-  selectedDaoVar,
-} from 'context/apolloClient';
+import {NavigationDao, selectedDaoVar} from 'context/apolloClient';
 import {useGlobalModalContext} from 'context/globalModals';
+import {useFollowedDaosQuery} from 'hooks/useFollowedDaos';
 import useScreen from 'hooks/useScreen';
 import {getSupportedNetworkByChainId} from 'utils/constants';
-import {Dashboard} from 'utils/paths';
 import {toDisplayEns} from 'utils/library';
+import {Dashboard} from 'utils/paths';
 
 const DaoSelectMenu: React.FC = () => {
   const {t} = useTranslation();
   const {isDesktop} = useScreen();
   const navigate = useNavigate();
   const currentDao = useReactiveVar(selectedDaoVar);
-  const favoriteDaoCache = useReactiveVar(favoriteDaosVar);
   const {isOpen, close, open} = useGlobalModalContext('selectDao');
+  const {data: favoriteDaoCache} = useFollowedDaosQuery();
 
   const handleDaoSelect = useCallback(
     (dao: NavigationDao) => {
@@ -66,7 +63,7 @@ const DaoSelectMenu: React.FC = () => {
             onClick={handleBackButtonClick}
           />
           <Title>{t('daoSwitcher.title')}</Title>
-          <div role="presentation" className="h-4 w-4" />
+          <div role="presentation" className="h-8 w-8" />
         </ModalHeader>
         <ModalContentContainer>
           <ListGroup>
@@ -77,13 +74,11 @@ const DaoSelectMenu: React.FC = () => {
               daoLogo={currentDao?.metadata?.avatar}
               onClick={() => close()}
             />
-            {favoriteDaoCache.flatMap(dao => {
+            {favoriteDaoCache?.flatMap(dao => {
               if (
-                dao.address === currentDao.address &&
-                dao.chain === currentDao.chain
+                dao.address !== currentDao.address ||
+                dao.chain !== currentDao.chain
               ) {
-                return [];
-              } else {
                 return (
                   <ListItemDao
                     key={dao.address}
@@ -97,7 +92,7 @@ const DaoSelectMenu: React.FC = () => {
             })}
           </ListGroup>
         </ModalContentContainer>
-        <div className="p-3">
+        <div className="p-6">
           <ButtonText
             mode="secondary"
             size="large"
@@ -118,20 +113,23 @@ const DaoSelectMenu: React.FC = () => {
 export default DaoSelectMenu;
 
 const ModalHeader = styled.div.attrs({
-  className: 'flex items-center p-2 space-x-2 bg-ui-0 rounded-xl sticky top-0',
+  className:
+    'flex items-center p-4 space-x-4 bg-neutral-0 rounded-xl sticky top-0',
 })`
-  box-shadow: 0px 4px 8px rgba(31, 41, 51, 0.04),
-    0px 0px 2px rgba(31, 41, 51, 0.06), 0px 0px 1px rgba(31, 41, 51, 0.04);
+  box-shadow:
+    0px 4px 8px rgba(31, 41, 51, 0.04),
+    0px 0px 2px rgba(31, 41, 51, 0.06),
+    0px 0px 1px rgba(31, 41, 51, 0.04);
 `;
 
 const Title = styled.div.attrs({
-  className: 'flex-1 font-bold text-center text-ui-800',
+  className: 'flex-1 font-semibold text-center text-neutral-800',
 })``;
 
 const ModalContentContainer = styled.div.attrs({
-  className: 'p-3 pb-0 space-y-3 tablet:w-50 desktop:w-auto overflow-auto',
+  className: 'p-6 pb-0 space-y-6 md:w-[400px] xl:w-auto overflow-auto',
 })``;
 
 const ListGroup = styled.div.attrs({
-  className: 'space-y-1.5',
+  className: 'space-y-3',
 })``;

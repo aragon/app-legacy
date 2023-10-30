@@ -31,28 +31,28 @@ function Hero() {
   );
 }
 
-// NOTE: "h-56 -mt-10 pt-10" is the "simplest" way to achieve a sticky header
+// NOTE: "h-[448px] -mt-20 pt-20" is the "simplest" way to achieve a sticky header
 // with a gradient AND a primary 400 background. What it does it is extends the
 // hero by a height of 12, moves it up using the negative margin and compensates
 // by lowering the content using the padding-top. Same with factor 12 on
 // desktop.
 const Container = styled.div.attrs({
   className:
-    'bg-primary-400 h-56 -mt-10 pt-10  desktop:h-67 desktop:pt-12 desktop:-mt-12 overflow-hidden',
+    'bg-primary-400 h-[448px] -mt-20 pt-20  xl:h-[536px] xl:pt-24 xl:-mt-24 overflow-hidden',
 })``;
 
 const Wrapper = styled.div.attrs({
   className:
-    'flex justify-center desktop:justify-between col-span-full desktop:col-start-2 desktop:col-end-12 relative',
+    'flex justify-center xl:justify-between col-span-full xl:col-start-2 xl:col-end-12 relative',
 })``;
 
 const ContentWrapper = styled.div.attrs({
-  className: 'desktop:space-y-0.75 space-y-1 max-w-lg pt-4.5 desktop:pt-10',
+  className: 'xl:space-y-1.5 space-y-2 max-w-lg pt-9 xl:pt-20',
 })``;
 
 const Title = styled.h1.attrs({
   className:
-    'text-ui-0 font-bold ft-text-5xl desktop:text-left text-center desktop:leading-7.5 leading-4.5',
+    'text-neutral-0 font-semibold ft-text-5xl xl:text-left text-center xl:leading-[60px] leading-[38px]',
 })`
   font-family: Syne;
   letter-spacing: -0.03em;
@@ -60,7 +60,7 @@ const Title = styled.h1.attrs({
 
 const Subtitle = styled.h3.attrs({
   className:
-    'text-ui-0 ft-text-lg font-normal text-center desktop:text-left leading-3 desktop:leading-3.75',
+    'text-neutral-0 ft-text-lg font-normal text-center xl:text-left leading-[24px] xl:leading-[30px]',
 })``;
 
 const ImageWrapper = styled.div.attrs({
@@ -68,11 +68,11 @@ const ImageWrapper = styled.div.attrs({
 })``;
 
 const StyledImage = styled.img.attrs({
-  className: 'w-71 hidden desktop:block',
+  className: 'w-[568px] hidden xl:block',
 })``;
 
 const GradientContainer = styled.div.attrs({
-  className: 'absolute top-64 desktop:top-20 right-0 w-71',
+  className: 'absolute top-64 xl:top-40 right-0 w-[568px]',
 })``;
 
 const GradientWrapper = styled.div.attrs({
@@ -80,12 +80,11 @@ const GradientWrapper = styled.div.attrs({
 })``;
 
 const GradientGreen = styled.img.attrs({
-  className: 'h-40 absolute desktop:-left-14 desktop:-top-20 -top-19 left-14',
+  className: 'h-80 absolute xl:-left-28 xl:-top-40 -top-[152px] left-28',
 })``;
 
 const GradientPurple = styled.img.attrs({
-  className:
-    'desktop:h-40 h-30 absolute desktop:-right-20 desktop:top-5 -right-5 -top-6',
+  className: 'xl:h-80 h-60 absolute xl:-right-40 xl:top-10 -right-10 -top-12',
 })``;
 
 export default Hero;

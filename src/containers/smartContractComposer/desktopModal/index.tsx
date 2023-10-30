@@ -4,7 +4,7 @@ import {
   IconSwitch,
   Link,
   Modal,
-} from '@aragon/ods';
+} from '@aragon/ods-old';
 import React, {useEffect, useState} from 'react';
 import {useFormContext, useWatch} from 'react-hook-form';
 import {useTranslation} from 'react-i18next';
@@ -41,6 +41,8 @@ const DesktopModal: React.FC<DesktopModalProps> = props => {
     });
   const [search, setSearch] = useState('');
   const {getValues, setValue, resetField} = useFormContext<SccFormData>();
+
+  console.log('selectedSC', selectedSC);
 
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore
@@ -117,7 +119,7 @@ const DesktopModal: React.FC<DesktopModalProps> = props => {
                   iconRight={<IconLinkExternal height={13} width={13} />}
                   href={t('scc.listContracts.learnLinkURL')}
                   label={t('scc.listContracts.learnLinkLabel')}
-                  className="mt-2 w-full justify-center"
+                  className="mt-4 w-full justify-center"
                 />
               </div>
             </>
@@ -163,7 +165,7 @@ const EmptyActionsState: React.FC<{selectedSC: SmartContract}> = ({
         />
         {selectedSC.implementationData && (
           <ButtonText
-            className="mx-auto mt-3"
+            className="mx-auto mt-6"
             iconLeft={<IconSwitch />}
             label={t('scc.writeContractEmptyState.ctaLabel')}
             onClick={() => {
@@ -208,7 +210,7 @@ const Wrapper = styled.div.attrs({className: 'flex flex-1 overflow-auto'})``;
 
 const Aside = styled.div.attrs({
   className:
-    'flex flex-col justify-between overflow-auto p-3 w-40 bg-ui-50 border-r border-ui-100',
+    'flex flex-col justify-between overflow-auto p-6 w-80 bg-neutral-50 border-r border-neutral-100',
 })``;
 
 const Main = styled.div.attrs({
@@ -216,7 +218,7 @@ const Main = styled.div.attrs({
 })``;
 
 const Container = styled.div.attrs({
-  className: 'flex h-full bg-ui-0 p-6 pt-0 justify-center items-center',
+  className: 'flex h-full bg-neutral-0 p-12 pt-0 justify-center items-center',
 })``;
 
 const StyledModal = styled(Modal).attrs({

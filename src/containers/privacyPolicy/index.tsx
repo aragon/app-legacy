@@ -24,7 +24,7 @@ const PrivacyPolicy: React.FC<PrivacyPolicyProps> = ({
   return (
     <>
       {isDesktop ? (
-        <div className="fixed bottom-2 w-full">
+        <div className="fixed bottom-4 w-full">
           <Container>
             <PrivacyPolicyContent
               isDesktop={true}
@@ -52,17 +52,21 @@ export default PrivacyPolicy;
 
 const Container = styled.div.attrs({
   className:
-    'flex desktop:mx-5 wide:w-190 wide:mx-auto items-center p-3 space-x-3 bg-ui-0 rounded-xl border border-ui-100',
+    'flex xl:mx-10 2xl:w-[1520px] 2xl:mx-auto items-center p-6 space-x-6 bg-neutral-0 rounded-xl border border-neutral-100',
 })`
-  box-shadow: 0px 16px 24px rgba(31, 41, 51, 0.06),
-    0px 2px 6px rgba(31, 41, 51, 0.04), 0px 0px 1px rgba(31, 41, 51, 0.04);
+  box-shadow:
+    0px 16px 24px rgba(31, 41, 51, 0.06),
+    0px 2px 6px rgba(31, 41, 51, 0.04),
+    0px 0px 1px rgba(31, 41, 51, 0.04);
 `;
 
 const MobileModal = styled.div.attrs({
-  className: `space-y-3 fixed bottom-2 z-50 p-2 mx-2 rounded-xl border border-ui-100 bg-ui-0
-    tablet:w-56 tablet:bottom-3 tablet:left-1/2 tablet:mx-0 tablet:-translate-x-1/2`,
+  className: `space-y-6 fixed bottom-4 z-50 p-4 mx-4 rounded-xl border border-neutral-100 bg-neutral-0
+    md:w-[448px] md:bottom-6 md:left-1/2 md:mx-0 md:-translate-x-1/2`,
 })`
-  box-shadow: 0px 24px 32px rgba(31, 41, 51, 0.04),
-    0px 16px 24px rgba(31, 41, 51, 0.04), 0px 4px 8px rgba(31, 41, 51, 0.04),
+  box-shadow:
+    0px 24px 32px rgba(31, 41, 51, 0.04),
+    0px 16px 24px rgba(31, 41, 51, 0.04),
+    0px 4px 8px rgba(31, 41, 51, 0.04),
     0px 0px 1px rgba(31, 41, 51, 0.04);
 `;

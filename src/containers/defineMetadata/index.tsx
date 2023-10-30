@@ -4,7 +4,7 @@ import {
   Label,
   TextareaSimple,
   TextInput,
-} from '@aragon/ods';
+} from '@aragon/ods-old';
 import React, {useCallback} from 'react';
 import {Controller, FieldError, useFormContext} from 'react-hook-form';
 import {useTranslation} from 'react-i18next';
@@ -175,7 +175,7 @@ const DefineMetadata: React.FC<DefineMetadataProps> = ({
                   }}
                   placeholder={t('placeHolders.ensName')}
                   rightAdornment={
-                    <div className="flex h-full items-center rounded-r-xl bg-ui-50 px-2">
+                    <div className="flex h-full items-center rounded-r-xl bg-neutral-50 px-4">
                       .dao.eth
                     </div>
                   }
@@ -279,13 +279,13 @@ const DefineMetadata: React.FC<DefineMetadataProps> = ({
 export default DefineMetadata;
 
 const InputCount = styled.div.attrs({
-  className: 'ft-text-sm mt-1',
+  className: 'ft-text-sm mt-2',
 })``;
 
 const FormItem = styled.div.attrs({
-  className: 'space-y-1.5',
+  className: 'space-y-3',
 })``;
 
 const LogoContainer = styled.div.attrs({
-  className: 'pt-0.5',
+  className: 'pt-1',
 })``;

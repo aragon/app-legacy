@@ -1,4 +1,4 @@
-import {AlertInline, CheckboxListItem, Label} from '@aragon/ods';
+import {AlertInline, CheckboxListItem, Label} from '@aragon/ods-old';
 import React, {useCallback, useMemo, useState} from 'react';
 import {Controller, useFormContext, useWatch} from 'react-hook-form';
 import {useTranslation} from 'react-i18next';
@@ -24,6 +24,10 @@ import {
 import {FormSection} from '.';
 import {DateTimeErrors} from './dateTimeErrors';
 import {ProposalFormData} from 'utils/types';
+import {useVotingSettings} from 'services/aragon-sdk/queries/use-voting-settings';
+import {useDaoDetailsQuery} from 'hooks/useDaoDetails';
+import {useDaoMembers} from 'hooks/useDaoMembers';
+import {MultisigVotingSettings} from '@aragon/sdk-client';
 
 const MAX_DURATION_MILLS =
   MULTISIG_MAX_REC_DURATION_DAYS * MINS_IN_DAY * 60 * 1000;
@@ -33,6 +37,19 @@ export type UtcInstance = 'first' | 'second';
 const SetupMultisigVotingForm: React.FC = () => {
   const {t} = useTranslation();
   const {open} = useGlobalModalContext();
+
+  const {data: daoDetails} = useDaoDetailsQuery();
+
+  const pluginAddress = daoDetails?.plugins?.[0]?.instanceAddress as string;
+
+  const {
+    data: {members},
+  } = useDaoMembers(pluginAddress, 'multisig.plugin.dao.eth');
+
+  const {data: votingSettings} = useVotingSettings({
+    pluginAddress,
+    pluginType: 'multisig.plugin.dao.eth',
+  });
 
   const [utcInstance, setUtcInstance] = useState<UtcInstance>('first');
   const {control, formState, getValues, resetField, setValue, trigger} =
@@ -112,7 +129,7 @@ const SetupMultisigVotingForm: React.FC = () => {
 
   // handles the toggling between start time options
   const handleStartToggle = useCallback(
-    (changeValue, onChange: (value: string) => void) => {
+    (changeValue: string, onChange: (value: string) => void) => {
       onChange(changeValue);
       if (changeValue === 'now') resetStartDate();
       else setValue('startUtc', currTimezone);
@@ -122,7 +139,7 @@ const SetupMultisigVotingForm: React.FC = () => {
 
   // handles the toggling between end time options
   const handleEndToggle = useCallback(
-    (changeValue, onChange: (value: string) => void) => {
+    (changeValue: string, onChange: (value: string) => void) => {
       onChange(changeValue);
 
       if (changeValue === 'duration') resetEndDate();
@@ -180,7 +197,12 @@ const SetupMultisigVotingForm: React.FC = () => {
           label={t('newWithdraw.setupVoting.multisig.votingOption.label')}
           type="active"
           helptext={t(
-            'newWithdraw.setupVoting.multisig.votingOption.description'
+            'newWithdraw.setupVoting.multisig.votingOption.description',
+            {
+              amountMembers: (votingSettings as MultisigVotingSettings)
+                .minApprovals,
+              totalAmountMembers: members.length,
+            }
           )}
           multiSelect={false}
         />
@@ -205,7 +227,9 @@ const SetupMultisigVotingForm: React.FC = () => {
             <ToggleCheckList
               items={startItems}
               value={value}
-              onChange={changeValue => handleStartToggle(changeValue, onChange)}
+              onChange={changeValue =>
+                handleStartToggle(changeValue as string, onChange)
+              }
             />
           )}
         />
@@ -238,7 +262,9 @@ const SetupMultisigVotingForm: React.FC = () => {
             <ToggleCheckList
               value={value}
               items={expirationItems}
-              onChange={changeValue => handleEndToggle(changeValue, onChange)}
+              onChange={changeValue =>
+                handleEndToggle(changeValue as string, onChange)
+              }
             />
           )}
         />
@@ -305,7 +331,7 @@ export const ToggleCheckList: React.FC<Props> = ({onChange, items, value}) => {
 };
 
 const ToggleCheckListContainer = styled.div.attrs({
-  className: 'flex gap-y-1.5 gap-x-3',
+  className: 'flex gap-y-3 gap-x-6',
 })``;
 
 const ToggleCheckListItemWrapper = styled.div.attrs({className: 'flex-1'})``;

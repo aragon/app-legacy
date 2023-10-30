@@ -17,12 +17,12 @@ export const SCCExecutionCard: React.FC<{
     >
       <Container>
         {action.inputs?.length > 0 ? (
-          <div className="space-y-2">
+          <div className="space-y-4">
             {(action.inputs as Array<Input & {value: any}>).map(input => (
               <div key={input.name}>
-                <div className="mb-1.5 text-base font-bold capitalize text-ui-800">
+                <div className="mb-3 text-base font-semibold capitalize leading-normal text-neutral-800">
                   {input.name}
-                  <span className="ml-0.5 text-sm normal-case">
+                  <span className="ml-1 text-sm normal-case leading-normal">
                     ({input.type})
                   </span>
                 </div>
@@ -44,5 +44,5 @@ export const SCCExecutionCard: React.FC<{
 
 const Container = styled.div.attrs({
   className:
-    'bg-ui-50 rounded-b-xl border border-t-0 border-ui-100 space-y-3 p-3',
+    'bg-neutral-50 rounded-b-xl border border-t-0 border-neutral-100 space-y-6 p-6',
 })``;

@@ -15,14 +15,20 @@ import {
   SupportedNetwork as sdkSupportedNetworks,
 } from '@aragon/sdk-client-common';
 import {parseUnits} from 'ethers/lib/utils';
-import React, {createContext, useCallback, useContext, useState} from 'react';
+import React, {
+  ReactNode,
+  createContext,
+  useCallback,
+  useContext,
+  useState,
+} from 'react';
 import {useFormContext} from 'react-hook-form';
 import {useTranslation} from 'react-i18next';
 import {generatePath, useNavigate} from 'react-router-dom';
 
 import PublishModal from 'containers/transactionModals/publishModal';
 import {useClient} from 'hooks/useClient';
-import {useAddFavoriteDaoMutation} from 'hooks/useFavoritedDaos';
+import {useAddFollowedDaoMutation} from 'hooks/useFollowedDaos';
 import {useAddPendingDaoMutation} from 'hooks/usePendingDao';
 import {usePollGasFee} from 'hooks/usePollGasfee';
 import {useWallet} from 'hooks/useWallet';
@@ -48,7 +54,7 @@ type CreateDaoContextType = {
 
 const CreateDaoContext = createContext<CreateDaoContextType | null>(null);
 
-const CreateDaoProvider: React.FC = ({children}) => {
+const CreateDaoProvider: React.FC<{children: ReactNode}> = ({children}) => {
   const {open} = useGlobalModalContext();
   const navigate = useNavigate();
   const {isOnWrongNetwork, provider} = useWallet();
@@ -57,7 +63,7 @@ const CreateDaoProvider: React.FC = ({children}) => {
   const {getValues} = useFormContext<CreateDaoFormData>();
   const {client} = useClient();
 
-  const addFavoriteDaoMutation = useAddFavoriteDaoMutation();
+  const addFavoriteDaoMutation = useAddFollowedDaoMutation();
   const addPendingDaoMutation = useAddPendingDaoMutation();
 
   const [creationProcessState, setCreationProcessState] =
@@ -145,7 +151,7 @@ const CreateDaoProvider: React.FC = ({children}) => {
 
   const getMultisigPluginInstallParams = useCallback((): [
     MultisigPluginInstallParams,
-    sdkSupportedNetworks
+    sdkSupportedNetworks,
   ] => {
     const {
       blockchain,
@@ -168,7 +174,7 @@ const CreateDaoProvider: React.FC = ({children}) => {
 
   const getVoteSettings = useCallback((): [
     VotingSettings,
-    sdkSupportedNetworks
+    sdkSupportedNetworks,
   ] => {
     const {
       blockchain,
@@ -456,12 +462,16 @@ const CreateDaoProvider: React.FC = ({children}) => {
   /*************************************************
    *                    Render                     *
    *************************************************/
+  const buttonLabels = {
+    [TransactionState.SUCCESS]: t('TransactionModal.launchDaoDashboard'),
+    [TransactionState.WAITING]: t('TransactionModal.publishDaoButtonLabel'),
+  };
   return (
     <CreateDaoContext.Provider value={{handlePublishDao}}>
       {children}
       <PublishModal
         subtitle={t('TransactionModal.publishDaoSubtitle')}
-        buttonLabelSuccess={t('TransactionModal.launchDaoDashboard')}
+        buttonStateLabels={buttonLabels}
         state={creationProcessState || TransactionState.WAITING}
         isOpen={showModal}
         onClose={handleCloseModal}

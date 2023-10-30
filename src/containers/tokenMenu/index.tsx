@@ -1,5 +1,5 @@
 import {AssetBalance} from '@aragon/sdk-client';
-import {ButtonText, IconAdd, IconStorage, SearchInput} from '@aragon/ods';
+import {ButtonText, IconAdd, IconStorage, SearchInput} from '@aragon/ods-old';
 import React, {useCallback, useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
@@ -173,23 +173,23 @@ const TokenMenu: React.FC<TokenMenuProps> = ({
 export default TokenMenu;
 
 const Container = styled.div.attrs({
-  className: 'space-y-3 p-3',
+  className: 'space-y-6 p-6',
 })``;
 
 const TokensWrapper = styled.div.attrs({
-  className: 'space-y-1 mt-1',
+  className: 'space-y-2 mt-2',
 })``;
 
 const TokenTitle = styled.h2.attrs({
-  className: 'text-base font-bold',
+  className: 'text-base leading-normal font-semibold',
 })``;
 
 const TokenSubtitle = styled.h2.attrs({
-  className: 'text-sm text-ui-600',
+  className: 'text-sm leading-normal text-neutral-600',
 })``;
 
 const TokenDescription = styled.h2.attrs({
-  className: 'text-sm text-center text-ui-600',
+  className: 'text-sm leading-normal text-center text-neutral-600',
 })``;
 
 const WideButton = styled(ButtonText).attrs({
@@ -197,14 +197,14 @@ const WideButton = styled(ButtonText).attrs({
 })``;
 
 const NoTokenWrapper = styled.div.attrs({
-  className: 'space-y-0.5 mb-3',
+  className: 'space-y-1 mb-6',
 })``;
 
 const NoTokenContainer = styled.div.attrs({
-  className: `flex flex-col items-center mb-3
-    justify-center bg-ui-100 py-3 px-2 rounded-xl`,
+  className: `flex flex-col items-center mb-6
+    justify-center bg-neutral-100 py-6 px-4 rounded-xl`,
 })``;
 
 const IconWrapper = styled.div.attrs({
-  className: 'mb-1.5',
+  className: 'mb-3',
 })``;

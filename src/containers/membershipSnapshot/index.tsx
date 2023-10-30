@@ -3,7 +3,7 @@ import {
   IconChevronRight,
   IconCommunity,
   ListItemHeader,
-} from '@aragon/ods';
+} from '@aragon/ods-old';
 import React from 'react';
 import {useTranslation} from 'react-i18next';
 import {generatePath, useNavigate} from 'react-router-dom';
@@ -75,9 +75,11 @@ export const MembershipSnapshot: React.FC<Props> = ({
 
   if (members.length === 0) return null;
 
+  const displayedMembers = members.slice(0, 3);
+
   if (horizontal && isDesktop) {
     return (
-      <div className="flex space-x-3">
+      <div className="flex space-x-6">
         <div className="w-1/3">
           <ListItemHeader
             icon={<IconCommunity />}
@@ -100,9 +102,9 @@ export const MembershipSnapshot: React.FC<Props> = ({
             onClick={headerButtonHandler}
           />
         </div>
-        <div className="w-2/3 space-y-2">
+        <div className="w-2/3 space-y-4">
           <ListItemGrid>
-            <MembersList token={daoToken} members={members} />
+            <MembersList token={daoToken} members={displayedMembers} />
           </ListItemGrid>
           <ButtonText
             mode="secondary"
@@ -142,7 +144,7 @@ export const MembershipSnapshot: React.FC<Props> = ({
       />
       <MembersList
         token={daoToken}
-        members={members.slice(0, 3)}
+        members={displayedMembers}
         isCompactMode={true}
       />
       <ButtonText
@@ -159,10 +161,9 @@ export const MembershipSnapshot: React.FC<Props> = ({
 };
 
 const VerticalContainer = styled.div.attrs({
-  className: 'space-y-1.5 desktop:space-y-2',
+  className: 'space-y-3 xl:space-y-4',
 })``;
 
 const ListItemGrid = styled.div.attrs({
-  className:
-    'desktop:grid desktop:grid-cols-1 desktop:grid-flow-row desktop:gap-2',
+  className: 'xl:grid xl:grid-cols-1 xl:grid-flow-row xl:gap-4',
 })``;

@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 
-import {ButtonText, ButtonTextProps} from '@aragon/ods';
+import {ButtonText, ButtonTextProps} from '@aragon/ods-old';
 
 type PageEmptyStateProps = {
   title: string;
@@ -26,7 +26,7 @@ const PageEmptyState = ({
           <EmptyStateHeading>{title}</EmptyStateHeading>
 
           <span
-            className="mt-1.5 text-center lg:w-1/2"
+            className="mt-3 text-center lg:w-1/2"
             dangerouslySetInnerHTML={{__html: subtitle || ''}}
           ></span>
           <ActionsContainer>
@@ -49,19 +49,19 @@ const PageEmptyState = ({
 export default PageEmptyState;
 
 const Container = styled.div.attrs({
-  className: 'col-span-full desktop:col-start-3 desktop:col-end-11',
+  className: 'col-span-full xl:col-start-3 xl:col-end-11',
 })``;
 
 export const EmptyStateHeading = styled.h1.attrs({
-  className: 'mt-4 ft-text-2xl font-bold text-ui-800 text-center',
+  className: 'mt-8 ft-text-2xl font-semibold text-neutral-800 text-center',
 })``;
 
 export const EmptyStateContainer = styled.div.attrs({
   className:
-    'flex flex-col w-full items-center py-4 px-3 tablet:py-12 tablet:px-6 mx-auto mt-3 tablet:mt-5 ft-text-lg bg-white rounded-xl text-ui-500',
+    'flex flex-col w-full items-center py-8 px-6 md:py-24 md:px-12 mx-auto mt-6 md:mt-10 ft-text-lg bg-neutral-0 rounded-xl text-neutral-500',
 })``;
 
 const ActionsContainer = styled.div.attrs({
   className:
-    'flex flex-col tablet:flex-row tablet:gap-x-3 gap-y-1.5 tablet:justify-center mt-4 w-full',
+    'flex flex-col md:flex-row md:gap-x-6 gap-y-3 md:justify-center mt-8 w-full',
 })``;

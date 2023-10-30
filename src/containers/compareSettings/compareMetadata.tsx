@@ -1,5 +1,5 @@
 import {DaoDetails} from '@aragon/sdk-client';
-import {AvatarDao, ListItemLink} from '@aragon/ods';
+import {AvatarDao, ListItemLink} from '@aragon/ods-old';
 import React from 'react';
 import {useFormContext} from 'react-hook-form';
 import {useTranslation} from 'react-i18next';
@@ -94,7 +94,7 @@ export const CompareMetadata: React.FC<CompareMetadataProps> = ({
         <Dl>
           <Dt>{t('labels.links')}</Dt>
           <Dd>
-            <div className="space-y-1.5">
+            <div className="space-y-3">
               {displayedInfo.links.map((link: {name: string; url: string}) => (
                 <ListItemLink
                   key={link.name + link.url}

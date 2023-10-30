@@ -1,7 +1,7 @@
 import React, {useState} from 'react';
 import styled from 'styled-components';
 import {useTranslation} from 'react-i18next';
-import {IconChevronRight, ListItemAction, SearchInput} from '@aragon/ods';
+import {IconChevronRight, ListItemAction, SearchInput} from '@aragon/ods-old';
 
 import {useGlobalModalContext} from 'context/globalModals';
 import {timezones} from './utcData';
@@ -65,11 +65,11 @@ const UtcMenu: React.FC<UtcMenuProps> = ({onTimezoneSelect}) => {
 
 export default UtcMenu;
 
-const ModalBody = styled.div.attrs({className: 'space-y-1 p-3'})``;
+const ModalBody = styled.div.attrs({className: 'space-y-2 p-6'})``;
 
 const Container = styled.div.attrs({
-  className: 'space-y-1 overflow-y-auto',
+  className: 'space-y-2 overflow-y-auto',
 })``;
 const ScrollableDiv = styled.div.attrs({
-  className: 'h-25 space-y-1 p-1',
+  className: 'h-[200px] space-y-2 p-2',
 })``;

@@ -7,7 +7,7 @@ import {
   IconClose,
   IconLinkExternal,
   ListItemAction,
-} from '@aragon/ods';
+} from '@aragon/ods-old';
 import React, {useCallback} from 'react';
 import {useTranslation} from 'react-i18next';
 import {generatePath, useNavigate} from 'react-router-dom';
@@ -16,15 +16,15 @@ import styled from 'styled-components';
 import ModalBottomSheetSwitcher from 'components/modalBottomSheetSwitcher';
 import {useNetwork} from 'context/network';
 import {useTransactionDetailContext} from 'context/transactionDetail';
-import {useDaoProposal} from 'hooks/useDaoProposal';
+import {useDaoDetailsQuery} from 'hooks/useDaoDetails';
 import {PluginTypes} from 'hooks/usePluginClient';
 import {trackEvent} from 'services/analytics';
+import {useProposal} from 'services/aragon-sdk/queries/use-proposal';
 import {CHAIN_METADATA, TransferTypes} from 'utils/constants';
+import {toDisplayEns} from 'utils/library';
 import {Proposal} from 'utils/paths';
 import {abbreviateTokenAmount} from 'utils/tokens';
 import {Withdraw} from 'utils/types';
-import {toDisplayEns} from 'utils/library';
-import {useDaoDetailsQuery} from 'hooks/useDaoDetails';
 
 const TransactionDetail: React.FC = () => {
   const {t} = useTranslation();
@@ -44,12 +44,10 @@ const TransactionDetail: React.FC = () => {
       ? (transfer as Withdraw).proposalId
       : undefined;
 
-  const {data: proposal} = useDaoProposal(
-    address,
-    proposalId,
-    plugins?.[0].id as PluginTypes,
-    plugins?.[0].instanceAddress ?? ''
-  );
+  const {data: proposal} = useProposal({
+    pluginType: plugins?.[0].id as PluginTypes,
+    id: proposalId?.toString() ?? '',
+  });
 
   const handleNavigateToProposal = useCallback(() => {
     navigate(
@@ -138,14 +136,16 @@ export default TransactionDetail;
 
 const ModalHeader = styled.div.attrs({
   className:
-    'flex items-center space-between h-10 gap-x-3 p-2 bg-ui-0 rounded-xl sticky top-0',
+    'flex items-center space-between h-20 gap-x-6 p-4 bg-neutral-0 rounded-xl sticky top-0',
 })`
-  box-shadow: 0px 4px 8px rgba(31, 41, 51, 0.04),
-    0px 0px 2px rgba(31, 41, 51, 0.06), 0px 0px 1px rgba(31, 41, 51, 0.04);
+  box-shadow:
+    0px 4px 8px rgba(31, 41, 51, 0.04),
+    0px 0px 2px rgba(31, 41, 51, 0.06),
+    0px 0px 1px rgba(31, 41, 51, 0.04);
 `;
 
-const Content = styled.div.attrs({className: 'p-3 space-y-1.5'})``;
+const Content = styled.div.attrs({className: 'p-6 space-y-3'})``;
 
 const Title = styled.p.attrs({
-  className: 'flex-1 text-ui-800 font-bold',
+  className: 'flex-1 text-neutral-800 font-semibold',
 })``;

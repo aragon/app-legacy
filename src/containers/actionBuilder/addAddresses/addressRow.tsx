@@ -3,7 +3,7 @@ import {
   Dropdown,
   IconMenuVertical,
   InputValue as WalletInputValue,
-} from '@aragon/ods';
+} from '@aragon/ods-old';
 import React, {useCallback} from 'react';
 import {Controller, useFormContext, useWatch} from 'react-hook-form';
 import {useTranslation} from 'react-i18next';
@@ -147,9 +147,9 @@ export const AddressRow = ({
 };
 
 const Container = styled.div.attrs(() => ({
-  className: 'flex gap-2 items-start',
+  className: 'flex gap-4 items-start',
 }))``;
 
 const InputContainer = styled.div.attrs(() => ({
-  className: 'flex flex-col gap-1 flex-1',
+  className: 'flex flex-col gap-2 flex-1',
 }))``;
