@@ -36,6 +36,7 @@ import {
 import {getErc20VotingParticipation, getNonEmptyActions} from 'utils/proposals';
 import {ProposalResource, SupportedVotingSettings} from 'utils/types';
 import {UpdateVerificationCard} from 'containers/updateVerificationCard';
+import {featureFlags} from 'utils/featureFlags';
 
 type ReviewProposalProps = {
   defineProposalStepNumber: number;
@@ -246,14 +247,17 @@ const ReviewProposal: React.FC<ReviewProposalProps> = ({
           )}
 
           {/* TODO: Add isUpdateProposal check once it's developed */}
-          <UpdateVerificationCard
-            actions={getNonEmptyActions(
-              values.actions,
-              isMultisigVotingSettings(votingSettings)
-                ? votingSettings
-                : undefined
-            )}
-          />
+          {featureFlags.getValue('VITE_FEATURE_FLAG_OSX_UPDATES') ===
+            'true' && (
+            <UpdateVerificationCard
+              actions={getNonEmptyActions(
+                values.actions,
+                isMultisigVotingSettings(votingSettings)
+                  ? votingSettings
+                  : undefined
+              )}
+            />
+          )}
 
           {votingSettings && (
             <VotingTerminal
