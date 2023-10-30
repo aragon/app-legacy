@@ -16,6 +16,8 @@ export function isSupportedChainId(
 
 export const ENS_SUPPORTED_NETWORKS = ['ethereum', 'goerli'];
 export const NETWORKS_WITH_CUSTOM_REGISTRY = [
+  'arbitrum',
+  'arbitrum-goerli',
   'base',
   'base-goerli',
   'mumbai',
@@ -25,7 +27,7 @@ export const L2_NETWORKS = NETWORKS_WITH_CUSTOM_REGISTRY;
 
 const SUPPORTED_NETWORKS = [
   'arbitrum',
-  'arbitrum-test',
+  'arbitrum-goerli',
   'base',
   'base-goerli',
   'ethereum',
@@ -122,6 +124,32 @@ export const CHAIN_METADATA: Record<SupportedNetworks, ChainData> = {
     },
     supportsEns: false,
     ipfs: 'https://prod.ipfs.aragon.network',
+  },
+  'arbitrum-goerli': {
+    id: 421613,
+    name: 'Arbitrum Goerli',
+    domain: 'L2 Blockchain',
+    logo: 'https://bridge.arbitrum.io/logo.png',
+    explorer: 'https://testnet.arbiscan.io/',
+    isTestnet: true,
+    mainnet: 'arbitrum',
+    rpc: [
+      `https://arbitrum-goerli.infura.io/v3/${infuraApiKey}`,
+      `wss://arbitrum-goerli.infura.io/ws/v3/${infuraApiKey}`,
+    ],
+    nativeCurrency: {
+      name: 'Ether',
+      symbol: 'ETH',
+      decimals: 18,
+    },
+    etherscanApi: 'https://api-goerli.arbiscan.io/api',
+    alchemyApi: 'https://arb-goerli.g.alchemy.com/v2',
+    covalent: {
+      networkId: 'arbitrum-goerli',
+      nativeTokenId: '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee',
+    },
+    supportsEns: false,
+    ipfs: 'https://test.ipfs.aragon.network',
   },
   base: {
     id: 8453,
@@ -229,29 +257,6 @@ export const CHAIN_METADATA: Record<SupportedNetworks, ChainData> = {
     alchemyApi: 'https://polygon-mainnet.g.alchemy.com/v2',
     supportsEns: false,
     ipfs: 'https://prod.ipfs.aragon.network',
-  },
-  'arbitrum-test': {
-    id: 421613,
-    name: 'Arbitrum Goerli',
-    domain: 'L2 Blockchain',
-    logo: 'https://bridge.arbitrum.io/logo.png',
-    explorer: 'https://testnet.arbiscan.io/',
-    isTestnet: true,
-    mainnet: 'arbitrum',
-    rpc: ['https://goerli-rollup.arbitrum.io/rpc'],
-    nativeCurrency: {
-      name: 'Goerli Ether',
-      symbol: 'ETH',
-      decimals: 18,
-    },
-    etherscanApi: 'https://api-goerli.arbiscan.io/api',
-    alchemyApi: 'https://arb-goerli.g.alchemy.com/v2',
-    covalent: {
-      networkId: 'arbitrum-goerli',
-      nativeTokenId: '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee',
-    },
-    supportsEns: false,
-    ipfs: 'https://test.ipfs.aragon.network',
   },
   goerli: {
     id: 5,
