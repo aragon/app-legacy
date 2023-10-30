@@ -664,9 +664,9 @@ const ProposeSettingWrapper: React.FC<Props> = ({
     }
 
     // let proposalIterator: AsyncGenerator<ProposalCreationStepValue>;
-    // if (isOffchainVotingClient(pluginClient)) {
+    // if (isGaslessVotingClient(pluginClient)) {
     //   proposalIterator = (
-    //     pluginClient as OffchainVotingClient
+    //     pluginClient as GaslessVotingClient
     //   ).methods.createProposal(
     //     proposalCreationData as CreateGasslessProposalParams
     //   );
@@ -678,8 +678,9 @@ const ProposeSettingWrapper: React.FC<Props> = ({
     // todo(kon): implement this
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
-    const proposalIterator =
-      pluginClient.methods.createProposal(proposalCreationData as any);
+    const proposalIterator = pluginClient.methods.createProposal(
+      proposalCreationData as any
+    );
 
     if (creationProcessState === TransactionState.SUCCESS) {
       handleCloseModal();

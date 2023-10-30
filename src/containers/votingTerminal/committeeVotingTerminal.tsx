@@ -7,7 +7,7 @@ import {VoterType} from '@aragon/ods-old';
 import styled from 'styled-components';
 import {AccordionItem} from '../../components/accordionMethod';
 import {Accordion} from '@radix-ui/react-accordion';
-import {GaslessVotingProposal} from '@vocdoni/offchain-voting';
+import {GaslessVotingProposal} from '@vocdoni/gasless-voting';
 import {useGaslessCommiteVotes} from '../../context/useOffchainVoting';
 import {ProposalId} from '../../utils/types';
 import {useWallet} from '../../hooks/useWallet';
@@ -37,7 +37,7 @@ export const CommitteeVotingTerminal = ({
   votingStatusLabel,
   votingTerminal,
   proposal,
-  proposalId,
+  pluginAddress,
   statusRef,
   actions,
   onExecuteClicked,
@@ -46,7 +46,7 @@ export const CommitteeVotingTerminal = ({
   votingStatusLabel: string;
   votingTerminal: ReactNode;
   proposal: GaslessVotingProposal;
-  proposalId: ProposalId | undefined;
+  pluginAddress: string;
   statusRef: React.MutableRefObject<{
     wasNotLoggedIn: boolean;
     wasOnWrongNetwork: boolean;
@@ -58,9 +58,7 @@ export const CommitteeVotingTerminal = ({
   const [approvalStatus, setApprovalStatus] = useState('');
   const [intervalInMills, setIntervalInMills] = useState(0);
 
-  const {address: walletAddress, isOnWrongNetwork} = useWallet();
-
-  const {address} = proposalId!.stripPlgnAdrFromProposalId();
+  const {address, isOnWrongNetwork} = useWallet();
 
   const {
     canApprove,
@@ -70,7 +68,7 @@ export const CommitteeVotingTerminal = ({
     isApprovalPeriod,
     executed,
     notBegan,
-  } = useGaslessCommiteVotes(address, proposal);
+  } = useGaslessCommiteVotes(pluginAddress, proposal);
 
   const {handleCommitteApprove, transactionHash, executionFailed} =
     useProposalTransactionContext();
@@ -118,7 +116,7 @@ export const CommitteeVotingTerminal = ({
         t
       );
     }
-  }, [proposal, executed, notBegan, approved, canApprove, t]);
+  }, [proposal, executed, notBegan, approved, canApprove, isApproved, t]);
 
   // vote button state and handler
   const {voteNowDisabled, onClick} = useMemo(() => {
@@ -202,21 +200,14 @@ export const CommitteeVotingTerminal = ({
     } else if (
       proposal &&
       isApprovalPeriod && // active proposal
-      walletAddress && // logged in
+      address && // logged in
       !isOnWrongNetwork && // on proper network
       !canApprove && // cannot vote
       !approved // Already voted
     ) {
       return t('offchainVotingTerminal.alerts.notInCommittee');
     }
-  }, [
-    canApprove,
-    isApprovalPeriod,
-    isOnWrongNetwork,
-    proposal,
-    t,
-    walletAddress,
-  ]);
+  }, [canApprove, isApprovalPeriod, isOnWrongNetwork, proposal, t, address]);
 
   const CommitteeVotingTerminal = () => {
     return (

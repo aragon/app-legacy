@@ -46,10 +46,10 @@ import {useGlobalModalContext} from './globalModals';
 import {useNetwork} from './network';
 
 import {
-  OffchainVotingClient,
-  OffchainVotingPluginInstall,
-} from '@vocdoni/offchain-voting';
-import {GaslessPluginVotingSettings} from '@vocdoni/offchain-voting/dist/js-client/src/types';
+  GaslessVotingClient,
+  GaslessVotingPluginInstall,
+  GaslessPluginVotingSettings,
+} from '@vocdoni/gasless-voting';
 import {useCensus3CreateToken} from '../hooks/useCensus3';
 
 const DEFAULT_TOKEN_DECIMALS = 18;
@@ -157,7 +157,7 @@ const CreateDaoProvider: React.FC<{children: ReactNode}> = ({children}) => {
   };
 
   const getOffchainPluginInstallParams = useCallback(
-    (votingSettings: VotingSettings): OffchainVotingPluginInstall => {
+    (votingSettings: VotingSettings): GaslessVotingPluginInstall => {
       const {
         isCustomToken,
         committee,
@@ -183,7 +183,7 @@ const CreateDaoProvider: React.FC<{children: ReactNode}> = ({children}) => {
       };
 
       return {
-        committee: committee.map(wallet => wallet.address),
+        multisig: committee.map(wallet => wallet.address),
         votingSettings: vocdoniVotingSettings,
         ...((tokenType === 'governance-ERC20' || // token can be used as is
           tokenType === 'ERC-20') && // token can/will be wrapped
@@ -342,7 +342,7 @@ const CreateDaoProvider: React.FC<{children: ReactNode}> = ({children}) => {
         if (votingType === 'offChain') {
           const params = getOffchainPluginInstallParams(votingSettings);
           const offChainPlugin =
-            OffchainVotingClient.encoding.getPluginInstallItem(params, network);
+            GaslessVotingClient.encoding.getPluginInstallItem(params, network);
           plugins.push(offChainPlugin);
           break;
         }

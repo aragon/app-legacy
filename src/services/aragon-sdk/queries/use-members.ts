@@ -8,11 +8,11 @@ import {
   TokenVotingMember,
 } from '@aragon/sdk-client';
 import {invariant} from 'utils/invariant';
-import {OffchainVotingClient} from '@vocdoni/offchain-voting';
+import {GaslessVotingClient} from '@vocdoni/gasless-voting';
 
 const fetchMembers = async (
   params: IFetchMembersParams,
-  client?: TokenVotingClient | MultisigClient | OffchainVotingClient
+  client?: TokenVotingClient | MultisigClient | GaslessVotingClient
 ): Promise<Array<string | TokenVotingMember>> => {
   invariant(client != null, 'fetchMembers: client is not defined');
   const data = await client.methods.getMembers({

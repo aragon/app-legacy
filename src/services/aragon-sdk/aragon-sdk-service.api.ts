@@ -40,7 +40,6 @@ export interface IFetchProposalsParams extends ProposalQueryParams {
 export interface IFetchProposalParams {
   pluginType?: PluginTypes;
   id: string;
-  pluginAddress?: string;
 }
 
 export interface IFetchMemberParams {

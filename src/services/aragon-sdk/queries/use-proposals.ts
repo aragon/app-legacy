@@ -23,8 +23,8 @@ import {aragonSdkQueryKeys} from '../query-keys';
 import {transformInfiniteProposals} from '../selectors';
 import {
   GaslessVotingProposal,
-  OffchainVotingClient,
-} from '@vocdoni/offchain-voting';
+  GaslessVotingClient,
+} from '@vocdoni/gasless-voting';
 
 export const PROPOSALS_PER_PAGE = 6;
 
@@ -37,7 +37,7 @@ const DEFAULT_PARAMS = {
 
 async function fetchProposals(
   params: IFetchProposalsParams,
-  client: TokenVotingClient | MultisigClient | OffchainVotingClient | undefined
+  client: TokenVotingClient | MultisigClient | GaslessVotingClient | undefined
 ): Promise<
   | Array<MultisigProposalListItem>
   | Array<TokenVotingProposalListItem>

@@ -12,12 +12,12 @@ import {usePluginClient} from 'hooks/usePluginClient';
 import {aragonSdkQueryKeys} from '../query-keys';
 import {
   GaslessPluginVotingSettings,
-  OffchainVotingClient,
-} from '@vocdoni/offchain-voting';
+  GaslessVotingClient,
+} from '@vocdoni/gasless-voting';
 
 async function fetchVotingSettingsAsync(
   {pluginAddress, blockNumber}: IFetchVotingSettingsParams,
-  client: TokenVotingClient | MultisigClient | OffchainVotingClient | undefined
+  client: TokenVotingClient | MultisigClient | GaslessVotingClient | undefined
 ): Promise<SupportedVotingSettings | null> {
   if (!pluginAddress)
     return Promise.reject(

@@ -36,7 +36,7 @@ import {Layout} from 'pages/settings';
 import {getDHMFromSeconds} from 'utils/date';
 import {decodeVotingMode, formatUnits, toDisplayEns} from 'utils/library';
 import {ProposeNewSettings} from 'utils/paths';
-import {GaslessPluginVotingSettings} from '@vocdoni/offchain-voting';
+import {GaslessPluginVotingSettings} from '@vocdoni/gasless-voting';
 
 type EditMvSettingsProps = {
   daoDetails: DaoDetails;

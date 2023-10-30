@@ -3,9 +3,9 @@ import {useEffect, useState} from 'react';
 
 import {useClient} from './useClient';
 import {
-  OffchainVotingClient,
-  OffchainVotingContext,
-} from '@vocdoni/offchain-voting';
+  GaslessVotingClient,
+  GaslessVotingContext,
+} from '@vocdoni/gasless-voting';
 import {VocdoniEnv} from './useVocdoniSdk';
 
 export const GaselessPluginName =
@@ -22,28 +22,28 @@ type PluginType<T> = T extends 'token-voting.plugin.dao.eth'
   : T extends 'multisig.plugin.dao.eth'
   ? MultisigClient
   : T extends GaselessPluginType
-  ? OffchainVotingClient
+  ? GaslessVotingClient
   : never;
 
 export function isTokenVotingClient(
-  client: TokenVotingClient | MultisigClient | OffchainVotingClient
+  client: TokenVotingClient | MultisigClient | GaslessVotingClient
 ): client is TokenVotingClient {
   if (!client || Object.keys(client).length === 0) return false;
   return client instanceof TokenVotingClient;
 }
 
 export function isMultisigClient(
-  client: TokenVotingClient | MultisigClient | OffchainVotingClient
+  client: TokenVotingClient | MultisigClient | GaslessVotingClient
 ): client is MultisigClient {
   if (!client || Object.keys(client).length === 0) return false;
   return client instanceof MultisigClient;
 }
 
-export function isOffchainVotingClient(
-  client: TokenVotingClient | MultisigClient | OffchainVotingClient
-): client is OffchainVotingClient {
+export function isGaslessVotingClient(
+  client: TokenVotingClient | MultisigClient | GaslessVotingClient
+): client is GaslessVotingClient {
   if (!client || Object.keys(client).length === 0) return false;
-  return client instanceof OffchainVotingClient;
+  return client instanceof GaslessVotingClient;
 }
 
 /**
@@ -75,8 +75,8 @@ export const usePluginClient = <T extends PluginTypes = PluginTypes>(
           break;
         case GaselessPluginName:
           setPluginClient(
-            new OffchainVotingClient(
-              new OffchainVotingContext(context),
+            new GaslessVotingClient(
+              new GaslessVotingContext(context),
               VocdoniEnv
             )
           );

@@ -20,7 +20,7 @@ import {Web3Address} from './library';
 import {
   GaslessVotingProposal,
   GaslessPluginVotingSettings,
-} from '@vocdoni/offchain-voting';
+} from '@vocdoni/gasless-voting';
 import {TokenType} from './validators';
 
 /*************************************************
@@ -532,19 +532,6 @@ export class ProposalId {
   /** The proposal id as a string */
   toString() {
     return this.id;
-  }
-
-  /**
-   * Strips proposal id of plugin address, when the id is with following format:  *0x4206cdbc...a675cae35_0x0*
-   * @returns object with plugin address and proposal id or undefined
-   */
-  stripPlgnAdrFromProposalId() {
-    const split = this.id.split('_');
-    return {
-      address: split[0],
-      // Weird JS error, if you do Number(split[1]) and the number is `0x0` ir returns undefined...
-      proposal: split[1] === '0x0' ? Number(0) : Number(split[1]),
-    };
   }
 }
 

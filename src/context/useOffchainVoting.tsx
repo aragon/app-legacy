@@ -12,9 +12,9 @@ import {
 } from '../hooks/useFunctionStepper';
 import {
   GaslessVotingProposal,
-  OffchainVotingClient,
-} from '@vocdoni/offchain-voting';
-import {DetailedProposal, ProposalId} from '../utils/types';
+  GaslessVotingClient,
+} from '@vocdoni/gasless-voting';
+import {DetailedProposal} from '../utils/types';
 import {isGaslessProposal} from '../utils/proposals';
 import {GaselessPluginName, usePluginClient} from '../hooks/usePluginClient';
 import {useWallet} from '../hooks/useWallet';
@@ -35,21 +35,17 @@ const useOffchainVoting = () => {
   const {client: vocdoniClient} = useVocdoniClient();
   const pluginClient = usePluginClient(
     GaselessPluginName
-  ) as OffchainVotingClient;
+  ) as GaslessVotingClient;
   const {data: daoDetails} = useDaoDetailsQuery();
 
   const getElectionId = useCallback(
     async (proposalId: string) => {
       if (daoDetails === undefined) return '';
-      const {proposal: id} = new ProposalId(
-        proposalId
-      ).stripPlgnAdrFromProposalId();
 
       const proposal = await pluginClient.methods.getProposal(
+        proposalId,
         daoDetails!.ensDomain,
-        daoDetails!.address,
-        daoDetails!.plugins[0].instanceAddress,
-        id
+        daoDetails!.address
       );
 
       return proposal?.vochainProposalId || '';
@@ -161,7 +157,7 @@ export const useGaslessCommiteVotes = (
   proposal: GaslessVotingProposal
 ) => {
   const [canApprove, setCanApprove] = useState(false);
-  const client = usePluginClient(GaselessPluginName) as OffchainVotingClient;
+  const client = usePluginClient(GaselessPluginName) as GaslessVotingClient;
   const {address} = useWallet();
 
   const isApprovalPeriod = (proposal => {
@@ -199,7 +195,7 @@ export const useGaslessCommiteVotes = (
   useEffect(() => {
     const checkCanVote = async () => {
       const canApprove =
-        (await client?.methods.isCommitteeMember(pluginAddress, address!)) ||
+        (await client?.methods.isMultisigMember(pluginAddress, address!)) ||
         false;
       setCanApprove(canApprove);
     };

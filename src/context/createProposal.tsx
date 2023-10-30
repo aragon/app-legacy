@@ -84,8 +84,8 @@ import {StepStatus} from '../hooks/useFunctionStepper';
 import {
   CreateGasslessProposalParams,
   GaslessVotingProposal,
-  OffchainVotingClient,
-} from '@vocdoni/offchain-voting';
+  GaslessVotingClient,
+} from '@vocdoni/gasless-voting';
 
 type Props = {
   showTxModal: boolean;
@@ -490,14 +490,14 @@ const CreateProposalWrapper: React.FC<Props> = ({
     ): CreateGasslessProposalParams => {
       return {
         ...params,
-        // If the value is 0 will take the expiration time defined at DAO creation level.
+        // If the value is undefined will take the expiration time defined at DAO creation level.
         // We want this because the expiration date is defined when the dao is created.
         // We could define a different expiration date for this proposal but is not designed
-        // to do this at ux level.
-        expirationDate: 0,
+        // to do this at ux level. (kon)
+        expirationDate: undefined,
         vochainProposalId,
-        startDate: (params.startDate ?? new Date()).getTime(),
-        endDate: params.endDate!.getTime(),
+        startDate: params.startDate,
+        endDate: params.endDate!,
       };
     },
     []
@@ -512,7 +512,7 @@ const CreateProposalWrapper: React.FC<Props> = ({
     if (!proposalCreationData) return;
 
     return offchain
-      ? (pluginClient as OffchainVotingClient).estimation.createProposal(
+      ? (pluginClient as GaslessVotingClient).estimation.createProposal(
           proposalCreationData as CreateGasslessProposalParams
         )
       : (
@@ -581,8 +581,8 @@ const CreateProposalWrapper: React.FC<Props> = ({
         creationDate: new Date(),
         creatorAddress: address,
         creationBlockNumber,
-        startDate: (proposalCreationData.startDate as Date) ?? new Date(), // todo(kon): type incompatibility with gaseless proposal
-        endDate: proposalCreationData.endDate! as Date, // todo(kon): type incompatibility with gaseless proposal
+        startDate: proposalCreationData.startDate,
+        endDate: proposalCreationData.endDate!,
         metadata: {
           title,
           summary,
@@ -635,7 +635,7 @@ const CreateProposalWrapper: React.FC<Props> = ({
           minParticipation: votingSettings.minParticipation,
           duration: differenceInSeconds(
             baseParams.endDate,
-            baseParams.startDate
+            baseParams.startDate ?? new Date()
           ),
         };
 
@@ -729,7 +729,7 @@ const CreateProposalWrapper: React.FC<Props> = ({
           proposalCreationData as CreateGasslessProposalParams;
         proposalParams.vochainProposalId = vochainProposalId;
         proposalIterator = (
-          pluginClient as OffchainVotingClient
+          pluginClient as GaslessVotingClient
         ).methods.createProposal(proposalParams);
       } else {
         proposalIterator = (

@@ -1,5 +1,5 @@
 import {TFunction} from 'i18next';
-import {GaslessVotingProposal} from '@vocdoni/offchain-voting';
+import {GaslessVotingProposal} from '@vocdoni/gasless-voting';
 import {formatDistanceToNow} from 'date-fns';
 
 export function getCommitteVoteButtonLabel(

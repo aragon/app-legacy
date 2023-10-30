@@ -7,7 +7,7 @@ import {
 import {UseQueryOptions, useQuery} from '@tanstack/react-query';
 
 import {useNetwork} from 'context/network';
-import {isOffchainVotingClient, usePluginClient} from 'hooks/usePluginClient';
+import {isGaslessVotingClient, usePluginClient} from 'hooks/usePluginClient';
 import {CHAIN_METADATA} from 'utils/constants';
 import {invariant} from 'utils/invariant';
 import {IFetchProposalParams} from '../aragon-sdk-service.api';
@@ -15,26 +15,25 @@ import {aragonSdkQueryKeys} from '../query-keys';
 import {syncProposalData, transformProposal} from '../selectors';
 import {
   GaslessVotingProposal,
-  OffchainVotingClient,
-} from '@vocdoni/offchain-voting';
+  GaslessVotingClient,
+} from '@vocdoni/gasless-voting';
 
 async function fetchProposal(
   params: IFetchProposalParams,
-  client: TokenVotingClient | MultisigClient | OffchainVotingClient | undefined
+  client: TokenVotingClient | MultisigClient | GaslessVotingClient | undefined
 ): Promise<
   MultisigProposal | TokenVotingProposal | GaslessVotingProposal | null
 > {
   invariant(!!client, 'fetchProposal: client is not defined');
   let data;
-  if (isOffchainVotingClient(client)) {
-    if (!params.pluginAddress || !params.id) {
+  if (isGaslessVotingClient(client)) {
+    if (!params.id) {
       return null;
     }
-    data = await (client as OffchainVotingClient).methods.getProposal(
+    data = await (client as GaslessVotingClient).methods.getProposal(
+      params!.id,
       '',
-      '',
-      params!.pluginAddress as string,
-      Number(params!.id)
+      ''
     );
     return data;
   }

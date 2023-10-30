@@ -1,4 +1,4 @@
-import {IconLinkExternal, Link, Tag} from '@aragon/ods-old';
+import {Link} from '@aragon/ods-old';
 import React from 'react';
 import {useTranslation} from 'react-i18next';
 
@@ -13,7 +13,7 @@ import {PluginTypes} from 'hooks/usePluginClient';
 import {useVotingSettings} from 'services/aragon-sdk/queries/use-voting-settings';
 import {IPluginSettings} from 'pages/settings';
 import {getDHMFromSeconds} from 'utils/date';
-import {GaslessPluginVotingSettings} from '@vocdoni/offchain-voting';
+import {GaslessPluginVotingSettings} from '@vocdoni/gasless-voting';
 
 const GaslessVotingSettings: React.FC<IPluginSettings> = ({daoDetails}) => {
   const {t} = useTranslation();

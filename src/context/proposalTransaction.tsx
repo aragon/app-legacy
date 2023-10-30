@@ -46,7 +46,7 @@ import {ProposalId} from 'utils/types';
 import {useNetwork} from './network';
 import {useProviders} from './providers';
 import OffchainVotingModal from '../containers/transactionModals/offchainVotingModal';
-import {OffchainVotingClient} from '@vocdoni/offchain-voting';
+import {GaslessVotingClient} from '@vocdoni/gasless-voting';
 import {GaslessVoteOrApproval} from '../services/aragon-sdk/selectors';
 
 type SubmitVoteParams = {
@@ -203,10 +203,8 @@ const ProposalTransactionProvider: React.FC<Props> = ({children}) => {
    *************************************************/
   const estimateVoteOrApprovalFees = useCallback(async () => {
     if (offchainVoting && voteParams) {
-      const {proposal} = new ProposalId(urlId!).stripPlgnAdrFromProposalId();
-      return (pluginClient as OffchainVotingClient)?.estimation.setTally(
-        pluginAddress,
-        proposal
+      return (pluginClient as GaslessVotingClient)?.estimation.approve(
+        voteParams.proposalId
       );
     }
 
@@ -453,12 +451,9 @@ const ProposalTransactionProvider: React.FC<Props> = ({children}) => {
 
       let approveSteps;
       if (offchainVoting) {
-        const {proposal: proposalId} = new ProposalId(
-          urlId!
-        ).stripPlgnAdrFromProposalId();
-        approveSteps = await (
-          pluginClient as OffchainVotingClient
-        )?.methods.setTally(pluginAddress, proposalId);
+        approveSteps = await (pluginClient as GaslessVotingClient)?.methods.approve(
+          voteParams.proposalId
+        );
       } else {
         approveSteps = pluginClient.methods.approveProposal(params);
       }
@@ -552,8 +547,7 @@ const ProposalTransactionProvider: React.FC<Props> = ({children}) => {
 
     let executeSteps;
     if (offchainVoting) {
-      executeSteps = (pluginClient as OffchainVotingClient)?.methods.execute(
-        pluginAddress,
+      executeSteps = (pluginClient as GaslessVotingClient)?.methods.execute(
         proposalId
       );
     } else {

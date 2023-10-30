@@ -82,7 +82,7 @@ import {
   isMultisigProposal,
 } from 'utils/proposals';
 import {Action, ProposalId} from 'utils/types';
-import {GaslessVotingProposal} from '@vocdoni/offchain-voting';
+import {GaslessVotingProposal} from '@vocdoni/gasless-voting';
 import {useOffchainHasAlreadyVote} from '../context/useOffchainVoting';
 import {CommitteeVotingTerminal} from '../containers/votingTerminal/committeeVotingTerminal';
 
@@ -146,7 +146,6 @@ export const Proposal: React.FC = () => {
     {
       pluginType: pluginType,
       id: proposalId ?? '',
-      pluginAddress,
     },
     {
       enabled: !!proposalId,
@@ -737,7 +736,7 @@ export const Proposal: React.FC = () => {
               votingTerminal={<VTerminal />}
               proposal={proposal}
               votingStatusLabel={voteStatus}
-              proposalId={proposalId}
+              pluginAddress={pluginAddress}
               statusRef={statusRef}
               onExecuteClicked={handleExecuteNowClicked}
               actions={decodedActions}

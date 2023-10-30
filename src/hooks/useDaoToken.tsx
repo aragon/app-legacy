@@ -10,7 +10,7 @@ import {HookData} from 'utils/types';
 import {PluginTypes, usePluginClient} from './usePluginClient';
 import {useDaoDetailsQuery} from './useDaoDetails';
 
-import {OffchainVotingClient} from '@vocdoni/offchain-voting';
+import {GaslessVotingClient} from '@vocdoni/gasless-voting';
 
 export function useDaoToken(
   pluginAddress?: string
@@ -26,7 +26,7 @@ export function useDaoToken(
     daoDetails?.plugins[0] || ({} as InstalledPluginListItem);
 
   const client = usePluginClient(pluginType as PluginTypes);
-  const pluginClient = client as OffchainVotingClient | TokenVotingClient;
+  const pluginClient = client as GaslessVotingClient | TokenVotingClient;
 
   useEffect(() => {
     async function getTokenMetadata(address: string) {

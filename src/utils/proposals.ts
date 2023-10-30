@@ -43,7 +43,7 @@ import {
   SupportedProposals,
   SupportedVotingSettings,
 } from './types';
-import {GaslessVotingProposal} from '@vocdoni/offchain-voting';
+import {GaslessVotingProposal} from '@vocdoni/gasless-voting';
 
 export type TokenVotingOptions = StrictlyExclude<
   VoterType['option'],

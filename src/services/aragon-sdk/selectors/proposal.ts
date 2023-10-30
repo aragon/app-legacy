@@ -17,7 +17,7 @@ import {
   isTokenBasedProposal,
   recalculateProposalStatus,
 } from 'utils/proposals';
-import {GaslessVotingProposal} from '@vocdoni/offchain-voting';
+import {GaslessVotingProposal} from '@vocdoni/gasless-voting';
 
 /**
  * Transforms proposals within an `InfiniteData` structure.
