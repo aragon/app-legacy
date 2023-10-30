@@ -11,7 +11,7 @@ import {
 import {formatUnits} from 'utils/library';
 import {NativeTokenData, TimeFilter, TOKEN_AMOUNT_REGEX} from './constants';
 import {add} from 'date-fns';
-import {Transfer, TransferType} from '@aragon/sdk-client';
+import {TokenVotingClient, Transfer, TransferType} from '@aragon/sdk-client';
 import {TokenType} from '@aragon/sdk-client-common';
 import {votesUpgradeableABI} from 'abis/governanceWrappedERC20TokenABI';
 import {erc1155TokenABI} from 'abis/erc1155TokenABI';
@@ -303,6 +303,34 @@ export const fetchBalance = async (
  */
 export const isNativeToken = (tokenAddress: string) => {
   return tokenAddress === constants.AddressZero;
+};
+
+type Compatibility = 'compatible' | 'needsWrapping' | 'unknown';
+/**
+ * Check if token is compatible with Aragon token voting
+ * @param tokenAddress address of token contract
+ * @returns whether token is compatible
+ */
+export const isCompatibleToken = async (
+  pluginClient: TokenVotingClient,
+  address: string
+): Promise<Compatibility> => {
+  try {
+    const network = pluginClient.web3.getNetworkName();
+    const value = await queryClient.fetchQuery({
+      queryKey: ['isCompatibleToken', network, address],
+      staleTime: 1000 * 60 * 60 * 24 * 10, // 10 days
+      queryFn: () => {
+        return pluginClient.methods.isTokenVotingCompatibleToken(address);
+      },
+    });
+
+    return value as Compatibility;
+  } catch (error) {
+    console.error('Error, getting token info from contract');
+  }
+
+  return 'unknown';
 };
 
 /**

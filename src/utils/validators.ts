@@ -13,7 +13,7 @@ import {
   getDefaultPayableAmountInputName,
   isOnlyWhitespace,
 } from './library';
-import {isERC1155, isERC20Token, isERC721} from './tokens';
+import {isCompatibleToken, isERC1155, isERC20Token, isERC721} from './tokens';
 import {
   Action,
   ActionAddAddress,
@@ -80,8 +80,10 @@ export async function validateGovernanceTokenAddress(
       type: 'Unknown',
     };
   } else {
-    const isGovernanceCompatible =
-      await pluginClient.methods.isTokenVotingCompatibleToken(address);
+    const isGovernanceCompatible = await isCompatibleToken(
+      pluginClient,
+      address
+    );
 
     // I should've used TokenVotingTokenCompatibility enum but It isn't exported
     if (isGovernanceCompatible === 'compatible')
