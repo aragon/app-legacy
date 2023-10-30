@@ -36,6 +36,7 @@ import {CHAIN_METADATA} from 'utils/constants';
 import {featureFlags} from 'utils/featureFlags';
 import {shortenAddress, toDisplayEns} from 'utils/library';
 import {EditSettings} from 'utils/paths';
+import GaslessVotingSettings from '../containers/settings/gaslessVoting';
 
 export const Settings: React.FC = () => {
   const {t} = useTranslation();
@@ -295,8 +296,12 @@ const PluginSettingsWrapper: React.FC<IPluginSettings> = ({daoDetails}) => {
       return <MultisigSettings daoDetails={daoDetails} />;
 
     case GaselessPluginName:
-      // todo(kon): This part needs to be designed
-      return <MajorityVotingSettings daoDetails={daoDetails} />;
+      return (
+        <>
+          <MajorityVotingSettings daoDetails={daoDetails} />
+          <GaslessVotingSettings daoDetails={daoDetails} />
+        </>
+      );
 
     default:
       // TODO: need to be designed

@@ -3,7 +3,8 @@ import {Loading} from 'components/temporary';
 import {EditMvSettings} from 'containers/editSettings/majorityVoting';
 import {EditMsSettings} from 'containers/editSettings/multisig';
 import {useDaoDetailsQuery} from 'hooks/useDaoDetails';
-import {PluginTypes} from 'hooks/usePluginClient';
+import {GaselessPluginName, PluginTypes} from 'hooks/usePluginClient';
+import {EditGaslessSetings} from '../containers/editSettings/GaslessVoting';
 
 export const EditSettings: React.FC = () => {
   const {data: daoDetails, isLoading: detailsAreLoading} = useDaoDetailsQuery();
@@ -16,7 +17,10 @@ export const EditSettings: React.FC = () => {
     return null;
   } else if (pluginType === 'multisig.plugin.dao.eth') {
     return <EditMsSettings daoDetails={daoDetails} />;
-  } else if (pluginType === 'token-voting.plugin.dao.eth') {
+  } else if (
+    pluginType === 'token-voting.plugin.dao.eth' ||
+    pluginType === GaselessPluginName
+  ) {
     return <EditMvSettings daoDetails={daoDetails} />;
   } else {
     return <></>;

@@ -24,7 +24,8 @@
     "termsLinkLabel": "Terms of service",
     "termsLinkURL": "https://aragon.org/terms-and-conditions",
     "privacyLinkLabel": "Privacy",
-    "privacyLinkURL": "https://aragon.org/privacy-policy"
+    "privacyLinkURL": "https://aragon.org/privacy-policy",
+    "executiveCommittee": "Executive committee"
   },
   "daoSwitcher": {
     "title": "Select your DAO",
