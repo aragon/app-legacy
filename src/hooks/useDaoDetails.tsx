@@ -1,17 +1,17 @@
-import {Client, DaoDetails} from '@aragon/sdk-client';
-import {JsonRpcProvider} from '@ethersproject/providers';
-import {useQuery} from '@tanstack/react-query';
-import {isAddress} from 'ethers/lib/utils';
-import {useCallback, useEffect, useMemo} from 'react';
-import {useLocation, useNavigate, useParams} from 'react-router-dom';
+import { Client, DaoDetails } from "@aragon/sdk-client";
+import { JsonRpcProvider } from "@ethersproject/providers";
+import { useQuery } from "@tanstack/react-query";
+import { isAddress } from "ethers/lib/utils";
+import { useCallback, useEffect, useMemo } from "react";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 
-import {useNetwork} from 'context/network';
-import {useProviders} from 'context/providers';
-import {CHAIN_METADATA} from 'utils/constants';
-import {toDisplayEns} from 'utils/library';
-import {NotFound} from 'utils/paths';
-import {useClient} from './useClient';
-import {resolveIpfsCid} from '@aragon/sdk-client-common';
+import { useNetwork } from "context/network";
+import { useProviders } from "context/providers";
+import { CHAIN_METADATA } from "utils/constants";
+import { toDisplayEns } from "utils/library";
+import { NotFound } from "utils/paths";
+import { useClient } from "./useClient";
+import { resolveIpfsCid } from "@aragon/sdk-common";
 
 /**
  * Fetches DAO data for a given DAO address or ENS name using a given client.
@@ -28,9 +28,9 @@ async function fetchDaoDetails(
   redirectDaoToAddress: (address: string | null) => void
 ): Promise<DaoDetails | null> {
   if (!daoAddressOrEns)
-    return Promise.reject(new Error('daoAddressOrEns must be defined'));
+    return Promise.reject(new Error("daoAddressOrEns must be defined"));
 
-  if (!client) return Promise.reject(new Error('client must be defined'));
+  if (!client) return Promise.reject(new Error("client must be defined"));
 
   // if network is l2 and has ens name, resolve to address
   if (isL2NetworkEns) {
@@ -42,7 +42,7 @@ async function fetchDaoDetails(
   const daoDetails = await client.methods.getDao(daoAddressOrEns.toLowerCase());
   const avatar = daoDetails?.metadata.avatar;
   if (avatar)
-    if (typeof avatar !== 'string') {
+    if (typeof avatar !== "string") {
       daoDetails.metadata.avatar = URL.createObjectURL(avatar);
     } else if (/^ipfs/.test(avatar) && client) {
       try {
@@ -53,11 +53,20 @@ async function fetchDaoDetails(
 
         daoDetails.metadata.avatar = URL.createObjectURL(imageBlob);
       } catch (err) {
-        console.warn('Error resolving DAO avatar IPFS Cid', err);
+        console.warn("Error resolving DAO avatar IPFS Cid", err);
       }
     } else {
       daoDetails.metadata.avatar = avatar;
     }
+
+  daoDetails?.plugins.sort((a) => {
+    if (
+      a.id === "token-voting.plugin.dao.eth" ||
+      a.id === "multisig.plugin.dao.eth"
+    )
+      return -1;
+    return 0;
+  });
 
   return daoDetails;
 }
@@ -71,9 +80,9 @@ export const useDaoQuery = (
   daoAddressOrEns: string | undefined,
   refetchInterval = 0
 ) => {
-  const {api: provider} = useProviders();
-  const {network, networkUrlSegment} = useNetwork();
-  const {client, network: clientNetwork} = useClient();
+  const { api: provider } = useProviders();
+  const { network, networkUrlSegment } = useNetwork();
+  const { client, network: clientNetwork } = useClient();
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -96,18 +105,18 @@ export const useDaoQuery = (
         // if the the resolver doesn't have an address, redirect to 404
         navigate(NotFound, {
           replace: true,
-          state: {incorrectDao: daoAddressOrEns},
+          state: { incorrectDao: daoAddressOrEns },
         });
 
       // replace the ens name with the address in the url
-      const segments = location.pathname.split('/');
+      const segments = location.pathname.split("/");
       const daoIndex = segments.findIndex(
-        segment => segment === daoAddressOrEns
+        (segment) => segment === daoAddressOrEns
       );
 
       if (daoIndex !== -1 && address) {
         segments[daoIndex] = address;
-        navigate(segments.join('/'));
+        navigate(segments.join("/"));
       }
     },
     [daoAddressOrEns, location.pathname, navigate]
@@ -128,7 +137,7 @@ export const useDaoQuery = (
   }, [client, daoAddressOrEns, isL2NetworkEns, provider, redirectDaoToAddress]);
 
   return useQuery<DaoDetails | null>({
-    queryKey: ['daoDetails', daoAddressOrEns, queryNetwork],
+    queryKey: ["daoDetails", daoAddressOrEns, queryNetwork],
     queryFn,
     select: addAvatarToDao(),
     enabled,
@@ -137,8 +146,8 @@ export const useDaoQuery = (
     // none l2 networks and l2 networks that are not ens names
     ...{
       ...(isL2NetworkEns
-        ? {cacheTime: 0, refetchOnWindowFocus: true}
-        : {refetchOnWindowFocus: false}),
+        ? { cacheTime: 0, refetchOnWindowFocus: true }
+        : { refetchOnWindowFocus: false }),
     },
     refetchInterval,
   });
@@ -150,7 +159,7 @@ export const useDaoQuery = (
  * @returns An object with the status of the query and the DAO details, if available.
  */
 export const useDaoDetailsQuery = () => {
-  const {dao} = useParams();
+  const { dao } = useParams();
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -163,7 +172,7 @@ export const useDaoDetailsQuery = () => {
       if (apiResponse.error || apiResponse.data === null) {
         navigate(NotFound, {
           replace: true,
-          state: {incorrectDao: daoAddressOrEns},
+          state: { incorrectDao: daoAddressOrEns },
         });
       }
 
@@ -172,13 +181,13 @@ export const useDaoDetailsQuery = () => {
         isAddress(daoAddressOrEns as string) &&
         toDisplayEns(apiResponse.data?.ensDomain)
       ) {
-        const segments = location.pathname.split('/');
+        const segments = location.pathname.split("/");
         const daoIndex = segments.findIndex(
-          segment => segment === daoAddressOrEns
+          (segment) => segment === daoAddressOrEns
         );
         if (daoIndex !== -1 && apiResponse.data?.ensDomain) {
           segments[daoIndex] = apiResponse.data.ensDomain;
-          navigate(segments.join('/'));
+          navigate(segments.join("/"));
         }
       }
     }
