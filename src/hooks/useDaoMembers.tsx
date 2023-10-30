@@ -130,13 +130,15 @@ export const useDaoMembers = (
   const countOnly = opts?.countOnly || false;
   const enabled = opts?.enabled || true;
 
-  const networkCovalentSupported = !(
+  const covalentSupportedNetwork = !(
     network === 'goerli' ||
     network === 'mumbai' ||
+    network === 'arbitrum' ||
+    network === 'arbitrum-goerli' ||
     network === 'base' ||
     network === 'base-goerli'
   );
-  const useSubgraph = !isTokenBased || !networkCovalentSupported;
+  const useSubgraph = !isTokenBased || !covalentSupportedNetwork;
   const {
     data: subgraphData = [],
     isError: isSubgraphError,
