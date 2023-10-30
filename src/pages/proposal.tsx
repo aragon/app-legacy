@@ -519,7 +519,7 @@ export const Proposal: React.FC = () => {
   const enableVoting =
     proposal?.status === ProposalStatus.ACTIVE && // active proposal
     (address == null || // wallet disconnected
-      voted === false || // haven't voted
+      (voted === false && canVote === true) || // haven't voted and can vote
       (isTokenVotingPlugin && voted && canRevote === true) || // voted but vote replacement enabled
       (canVote === true && shouldDisplayDelegationVoteGating === true)); // can vote but no power
 
