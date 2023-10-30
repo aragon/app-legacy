@@ -143,12 +143,7 @@ export function getAlchemyProvider(
 export function getInfuraProvider(
   chainIdOrNetwork: SupportedChainID | SupportedNetworks
 ): InfuraProvider | null {
-  const InfuraUnsupportedNetworks = [
-    'base',
-    'base-goerli',
-    'arbitrum-sepolia',
-    'unsupported',
-  ];
+  const InfuraUnsupportedNetworks = ['base', 'base-goerli', 'unsupported'];
   const network = toNetwork(chainIdOrNetwork);
 
   if (!network || InfuraUnsupportedNetworks.includes(network)) {
