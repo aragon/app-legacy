@@ -517,12 +517,13 @@ export const Proposal: React.FC = () => {
     votingSettings.votingMode === VotingMode.VOTE_REPLACEMENT;
 
   // this tracks whether the voting button should be enabled
-  const enableVoting =
+  const enableVotingButton =
     proposal?.status === ProposalStatus.ACTIVE && // active proposal
     (address == null || // wallet disconnected
       (voted === false && canVote === true) || // haven't voted and can vote
       (isTokenVotingPlugin && voted && canRevote === true) || // voted but vote replacement enabled
-      (canVote === true && shouldDisplayDelegationVoteGating === true)); // can vote but no power
+      // can vote but no voting power (voted should never)
+      (voted === false && shouldDisplayDelegationVoteGating === true));
 
   const handleApprovalClick = useCallback(
     (tryExecution: boolean) => {
@@ -722,7 +723,7 @@ export const Proposal: React.FC = () => {
               onApprovalClicked={handleApprovalClick}
               onCancelClicked={() => setVotingInProcess(false)}
               voteButtonLabel={voteButtonLabel}
-              voteNowDisabled={!enableVoting}
+              voteNowDisabled={!enableVotingButton}
               votingInProcess={votingInProcess}
               executableWithNextApproval={executableWithNextApproval}
               onVoteSubmitClicked={vote =>
