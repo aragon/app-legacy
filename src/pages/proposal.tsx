@@ -516,6 +516,7 @@ export const Proposal: React.FC = () => {
     isTokenVotingSettings(votingSettings) &&
     votingSettings.votingMode === VotingMode.VOTE_REPLACEMENT;
 
+  // this tracks whether the voting button should be enabled
   const enableVoting =
     proposal?.status === ProposalStatus.ACTIVE && // active proposal
     (address == null || // wallet disconnected
