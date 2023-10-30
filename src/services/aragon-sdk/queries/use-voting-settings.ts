@@ -65,7 +65,7 @@ export function isGaslessVotingSettings(
   settings: SupportedVotingSettings | undefined | null
 ): settings is GaslessPluginVotingSettings {
   if (!settings || Object.keys(settings).length === 0) return false;
-  return 'onlyCommitteeProposalCreation' in settings;
+  return 'onlyMultisigProposalCreation' in settings;
 }
 
 /**
