@@ -25,13 +25,13 @@ import PublishModal from 'containers/transactionModals/publishModal';
 import {useClient} from 'hooks/useClient';
 import {usePollGasFee} from 'hooks/usePollGasfee';
 import {useWallet} from 'hooks/useWallet';
-import {trackEvent} from 'services/analytics';
+// import {trackEvent} from 'services/analytics';
 import {TransactionState} from 'utils/constants';
 import {CreateProposalFormData} from 'utils/types';
 import {PluginTypes, usePluginClient} from 'hooks/usePluginClient';
 import {useDaoDetailsQuery} from 'hooks/useDaoDetails';
 import {usePluginAvailableVersions} from 'hooks/usePluginAvailableVersions';
-import {usePreparedPlugin} from 'hooks/usePreparedPlugins';
+// import {usePreparedPlugin} from 'hooks/usePreparedPlugins';
 import {useProtocolVersions} from 'hooks/useDaoVersions';
 import {compareVersions} from 'utils/library';
 
@@ -145,7 +145,15 @@ const UpdateProvider: React.FC<{children: ReactElement}> = ({children}) => {
   const pluginClient = usePluginClient(pluginType);
   const {data: pluginAvailableVersions, isLoading: availableVersionLoading} =
     usePluginAvailableVersions(pluginType, daoDetails?.address as string);
-  const {data: versions, isLoading} = useProtocolVersions(daoDetails?.address);
+  const {data: versions, isLoading: protocolVersionLoading} =
+    useProtocolVersions(daoDetails?.address);
+
+  // const {data} = usePreparedPlugin(
+  //   client,
+  //   daoDetails?.plugins?.[0]?.instanceAddress,
+  //   pluginType,
+  //   daoDetails?.address
+  // );
 
   const pluginSelectedVersion = getValues('pluginSelectedVersion');
 
@@ -162,7 +170,7 @@ const UpdateProvider: React.FC<{children: ReactElement}> = ({children}) => {
    *************************************************/
   // set plugin list
   useEffect(() => {
-    if (availableVersionLoading) return;
+    if (availableVersionLoading && protocolVersionLoading) return;
 
     const OSXVersions = new Map();
 
@@ -237,6 +245,7 @@ const UpdateProvider: React.FC<{children: ReactElement}> = ({children}) => {
     availableVersionLoading,
     daoDetails,
     pluginAvailableVersions,
+    protocolVersionLoading,
     setValue,
     versions,
   ]);
@@ -366,13 +375,7 @@ const UpdateProvider: React.FC<{children: ReactElement}> = ({children}) => {
             break;
           case PrepareUpdateStep.DONE:
             const pluginListTemp = state.pluginList;
-            localStorage.setItem(
-              'preparePlugin',
-              JSON.stringify({
-                daoAddress: daoDetails?.address,
-                ...step,
-              })
-            );
+
             pluginListTemp?.set(
               `${step.versionTag.release}.${step.versionTag.build}`,
               {
