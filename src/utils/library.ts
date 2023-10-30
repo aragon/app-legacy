@@ -619,6 +619,10 @@ export const translateToAppNetwork = (
   sdkNetwork: SdkContext['network']
 ): SupportedNetworks => {
   switch (sdkNetwork.name as SdkSupportedNetworks) {
+    case SdkSupportedNetworks.ARBITRUM:
+      return 'arbitrum';
+    case SdkSupportedNetworks.ARBITRUM_GOERLI:
+      return 'arbitrum-goerli';
     case SdkSupportedNetworks.BASE:
       return 'base';
     case SdkSupportedNetworks.BASE_GOERLI:
@@ -649,6 +653,10 @@ export function translateToNetworkishName(
   }
 
   switch (appNetwork) {
+    case 'arbitrum':
+      return SdkSupportedNetworks.ARBITRUM;
+    case 'arbitrum-goerli':
+      return SdkSupportedNetworks.ARBITRUM_GOERLI;
     case 'base':
       return SdkSupportedNetworks.BASE;
     case 'base-goerli':
