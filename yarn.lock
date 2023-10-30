@@ -111,6 +111,11 @@
     graphql-request "^4.3.0"
     yup "^1.2.0"
 
+"@aragon/sdk-common@^1.7.0":
+  version "1.7.0"
+  resolved "https://registry.yarnpkg.com/@aragon/sdk-common/-/sdk-common-1.7.0.tgz#7e71617aec584ff241ff4c7a0d0e73303f169539"
+  integrity sha512-Op5c52Qn6MdNdPu+ZJDj9ai1Leur+VpVebaGE3HaZMPYE34IPXblmM10YU05H9Znf5g6jvIDLRB8xQmUOTFscw==
+
 "@aragon/sdk-ipfs@^1.1.0":
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/@aragon/sdk-ipfs/-/sdk-ipfs-1.1.0.tgz#178ee5ce840ce40b44ba0345dd5068e1b5608f9d"
