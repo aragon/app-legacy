@@ -16,6 +16,8 @@ export type HeaderPageProps = {
   primaryBtnProps?: Omit<ButtonTextProps, 'mode' | 'size'>;
   /** Secondary action button properties */
   secondaryBtnProps?: Omit<ButtonTextProps, 'mode' | 'size' | 'bgWhite'>;
+  /** Secondary action button properties */
+  tertiaryBtnProps?: Omit<ButtonTextProps, 'mode' | 'size' | 'bgWhite'>;
   /** Breadcrumb properties */
   breadCrumbs: DefaultCrumbProps & NonNullable<Omit<BreadcrumbProps, 'tag'>>;
 };
@@ -26,6 +28,7 @@ export const HeaderPage: React.FC<HeaderPageProps> = ({
   breadCrumbs,
   primaryBtnProps,
   secondaryBtnProps,
+  tertiaryBtnProps,
 }) => {
   return (
     <Card data-testid="header-page">
@@ -39,6 +42,9 @@ export const HeaderPage: React.FC<HeaderPageProps> = ({
         </TextContent>
         {/* Mode,size, bgWhite should not be changed, adding after spread to override */}
         <ButtonGroup>
+          {tertiaryBtnProps && (
+            <ButtonText {...tertiaryBtnProps} size="large" mode="ghost" />
+          )}
           {secondaryBtnProps && (
             <ButtonText
               {...secondaryBtnProps}
