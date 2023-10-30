@@ -26,6 +26,7 @@ import {MultisigWalletField} from 'components/multisigWallets/row';
 import {TimeFilter, TransferTypes} from './constants';
 import {Web3Address} from './library';
 import {TokenType} from './validators';
+import {CustomActionSpec} from './customActions';
 
 /*************************************************
  *                 DAO Creation types            *
@@ -235,6 +236,10 @@ export type ActionParameter = {
    * Hides the action from the action menu when set to true.
    */
   isDisabled?: boolean;
+  /**
+   * Custom action details
+   */
+  custom?: CustomActionSpec;
 };
 
 /**
@@ -255,6 +260,7 @@ export type ActionsTypes =
   | 'modify_metadata'
   | 'modify_multisig_voting_settings'
   | 'update_minimum_approval'
+  | 'custom_action'
   | 'os_update'
   | 'plugin_update';
 
@@ -415,6 +421,7 @@ export type ParamType = {
 export type ActionItem = {
   name: ActionsTypes;
   inputs?: ParamType[];
+  custom?: CustomActionSpec;
 };
 
 /* UTILITY TYPES ============================================================ */

@@ -7,11 +7,15 @@ import {useDaoToken} from './useDaoToken';
 import {useProviders} from 'context/providers';
 import {useEffect, useState} from 'react';
 import {featureFlags} from 'utils/featureFlags';
+import {CustomActionSpec, getAllCustomActions} from 'utils/customActions';
 
 export function useDaoActions(dao: string): HookData<ActionParameter[]> {
   const {data: daoDetails, error, isLoading} = useDaoQuery(dao);
   const multisig = daoDetails?.plugins[0].id === 'multisig.plugin.dao.eth';
   const [showMintOption, setShowMintOption] = useState(false);
+  const [customActions, setCustomActions] = useState(
+    {} as Record<string, CustomActionSpec>
+  );
 
   const {api: provider} = useProviders();
 
@@ -25,6 +29,9 @@ export function useDaoActions(dao: string): HookData<ActionParameter[]> {
         daoToken?.address || '',
         provider
       );
+
+      const allCustomActions = await getAllCustomActions();
+      setCustomActions(allCustomActions);
 
       setShowMintOption(
         daoTokenView?.toLocaleLowerCase() === daoDetails?.address
@@ -93,9 +100,19 @@ export function useDaoActions(dao: string): HookData<ActionParameter[]> {
   const actions = (multisig ? multisigActions : tokenVotingActions).filter(
     ({isDisabled}) => isDisabled !== true
   );
+  const customActionsList = Object.values(customActions).map(v => {
+    return {
+      type: 'custom_action',
+      title: v.title,
+      subtitle: v.description,
+      custom: v,
+    } as ActionParameter;
+  });
+
+  const data = [...actions, ...customActionsList];
 
   return {
-    data: actions,
+    data,
     isLoading,
     error: error as Error,
   };

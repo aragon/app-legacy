@@ -27,7 +27,9 @@ import SCCAction from './scc';
 import UpdateMinimumApproval from './updateMinimumApproval';
 import WalletConnectAction from './walletConnect';
 import WithdrawAction from './withdraw/withdrawAction';
+import CustomAction from './custom';
 import {useTokenAsync} from 'services/token/queries/use-token';
+import {CustomActionSpec} from 'utils/customActions';
 
 /**
  * This Component is responsible for generating all actions that append to pipeline context (actions)
@@ -39,12 +41,14 @@ import {useTokenAsync} from 'services/token/queries/use-token';
 type ActionsComponentProps = {
   name: ActionsTypes;
   allowRemove?: boolean;
+  customAction?: CustomActionSpec;
 } & ActionIndex;
 
 const Action: React.FC<ActionsComponentProps> = ({
   name,
   actionIndex,
   allowRemove = true,
+  customAction,
 }) => {
   // dao data
   const {data: daoDetails} = useDaoDetailsQuery();
@@ -106,6 +110,14 @@ const Action: React.FC<ActionsComponentProps> = ({
         <WalletConnectAction
           actionIndex={actionIndex}
           allowRemove={allowRemove}
+        />
+      );
+    case 'custom_action':
+      return (
+        <CustomAction
+          actionIndex={actionIndex}
+          allowRemove={allowRemove}
+          customAction={customAction!}
         />
       );
     default:
@@ -172,6 +184,7 @@ const ActionBuilder: React.FC<ActionBuilderProps> = ({allowEmpty = true}) => {
           name={action?.name}
           actionIndex={index}
           allowRemove={actions.length <= 1 ? allowEmpty : true}
+          customAction={action.custom}
         />
       ))}
 

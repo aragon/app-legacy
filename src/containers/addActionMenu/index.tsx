@@ -45,6 +45,7 @@ const AddActionMenu: React.FC<AddActionMenuProps> = ({actions}) => {
               });
               addAction({
                 name: a.type,
+                custom: a.custom,
               });
               close();
             }}

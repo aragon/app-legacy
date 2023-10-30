@@ -1,0 +1,96 @@
+import {ButtonText, IconChevronRight, ListItemAction} from '@aragon/ods-old';
+import React from 'react';
+import {useTranslation} from 'react-i18next';
+import styled from 'styled-components';
+
+import {AccordionMethod} from 'components/accordionMethod';
+import {useActionsContext} from 'context/actions';
+import {useAlertContext} from 'context/alert';
+import {ActionIndex} from 'utils/types';
+import {CustomActionSpec} from 'utils/customActions';
+import {SchemaSubmitForm} from '@restspace/schema-form';
+import {TextInput} from 'utils/schemaForm/textInput';
+import {IComponentMap} from '@restspace/schema-form/build/components/schema-form-interfaces';
+
+type CustomActionProps = ActionIndex & {
+  allowRemove?: boolean;
+  customAction: CustomActionSpec;
+};
+
+const CustomAction: React.FC<CustomActionProps> = ({
+  actionIndex,
+  allowRemove = true,
+  customAction,
+}) => {
+  const {t} = useTranslation();
+  const {alert} = useAlertContext();
+
+  const {removeAction} = useActionsContext();
+  const value = {};
+
+  const methodActions = (() => {
+    const result = [
+      {
+        component: <ListItemAction title={t('labels.resetAction')} bgWhite />,
+        callback: () => {},
+      },
+    ];
+
+    if (allowRemove) {
+      result.push({
+        component: (
+          <ListItemAction title={t('labels.removeEntireAction')} bgWhite />
+        ),
+        callback: () => {
+          removeAction(actionIndex);
+          alert(t('alert.chip.removedAction'));
+        },
+      });
+    }
+
+    return result;
+  })();
+
+  const makeSubmitLink = (
+    onClick: React.MouseEventHandler<HTMLButtonElement>
+  ) => (
+    <FormFooter>
+      <ButtonText
+        label="Next"
+        size="large"
+        onClick={onClick}
+        iconRight={<IconChevronRight />}
+      />
+    </FormFooter>
+  );
+
+  const components: IComponentMap = {
+    string: TextInput,
+    textarea: TextInput,
+  };
+
+  return (
+    <AccordionMethod
+      type="action-builder"
+      methodName={customAction.title}
+      smartContractName={t('labels.aragonOSx')}
+      verified
+      methodDescription={customAction.description}
+      dropdownItems={methodActions}
+    >
+      <div>Form here</div>
+      <SchemaSubmitForm
+        schema={customAction.schema}
+        value={value}
+        makeSubmitLink={makeSubmitLink}
+        components={components}
+      />
+    </AccordionMethod>
+  );
+};
+
+export default CustomAction;
+
+const FormFooter = styled.div.attrs({
+  className: 'flex justify-between desktop:pt-3',
+})``;
