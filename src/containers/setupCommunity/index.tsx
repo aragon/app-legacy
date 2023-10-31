@@ -126,13 +126,13 @@ const SetupCommunityForm: React.FC = () => {
                   />
 
                   <CheckboxListItem
-                    label={t('createDAO.step3.votingType.offChain.title')}
-                    helptext={t('createDAO.step3.votingType.offChain.subtitle')}
+                    label={t('createDAO.step3.votingType.gasless.title')}
+                    helptext={t('createDAO.step3.votingType.gasless.subtitle')}
                     onClick={() => {
-                      onChange('offChain');
+                      onChange('gasless');
                     }}
                     multiSelect={false}
-                    {...(value === 'offChain' ? {type: 'active'} : {})}
+                    {...(value === 'gasless' ? {type: 'active'} : {})}
                   />
                 </>
               )}

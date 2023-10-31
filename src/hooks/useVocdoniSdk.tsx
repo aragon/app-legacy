@@ -17,7 +17,7 @@ export const VocdoniClientProvider = ({children}: PropsWithChildren) => {
 };
 
 // todo(kon): move this following block somewhere else
-export enum OffchainPluginLocalStorageKeys {
+export enum GaslessPluginLocalStorageKeys {
   PROPOSAL_TO_ELECTION = 'PROPOSAL_TO_ELECTION',
 }
 
@@ -27,7 +27,7 @@ export interface ProposalToElection {
     electionId: string;
   };
 }
-export interface OffchainPluginLocalStorageTypes {
-  [OffchainPluginLocalStorageKeys.PROPOSAL_TO_ELECTION]: ProposalToElection;
+export interface GaslessPluginLocalStorageTypes {
+  [GaslessPluginLocalStorageKeys.PROPOSAL_TO_ELECTION]: ProposalToElection;
 }
 // todo(kon): move this previous block somewehere else

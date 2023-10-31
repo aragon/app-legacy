@@ -83,7 +83,7 @@ import {
 } from 'utils/proposals';
 import {Action, ProposalId} from 'utils/types';
 import {GaslessVotingProposal} from '@vocdoni/gasless-voting';
-import {useOffchainHasAlreadyVote} from '../context/useOffchainVoting';
+import {useGaslessHasAlreadyVote} from '../context/useGaslessVoting';
 import {CommitteeVotingTerminal} from '../containers/votingTerminal/committeeVotingTerminal';
 
 export const PENDING_PROPOSAL_STATUS_INTERVAL = 1000 * 10;
@@ -178,7 +178,7 @@ export const Proposal: React.FC = () => {
     isGaslessProposal(proposal) ? proposal.vochainProposalId : undefined
   );
 
-  const {hasAlreadyVote: offchainAlreadyVote} = useOffchainHasAlreadyVote({
+  const {hasAlreadyVote: gaslessAlreadyVote} = useGaslessHasAlreadyVote({
     proposal,
   });
 
@@ -474,7 +474,7 @@ export const Proposal: React.FC = () => {
       a => a.toLowerCase() === address.toLowerCase()
     );
   } else if (isGaslessProposal(proposal)) {
-    voted = offchainAlreadyVote;
+    voted = gaslessAlreadyVote;
   } else {
     voted = proposal.votes.some(
       voter =>
@@ -625,7 +625,7 @@ export const Proposal: React.FC = () => {
     return null;
   }
 
-  // Store the terminal to pass it to OffchainVotingTerminal if needed
+  // Store the terminal to pass it to GaslessVotingTerminal if needed
   const VTerminal = () => (
     <VotingTerminal
       status={proposalStatus}

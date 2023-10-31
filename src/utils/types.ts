@@ -62,7 +62,7 @@ export type CreateDaoFormData = {
   multisigWallets: MultisigWalletField[];
   multisigMinimumApprovals: number;
 
-  votingType: 'onChain' | 'offChain';
+  votingType: 'onChain' | 'gasless';
   executionExpirationMinutes: string;
   executionExpirationHours: string;
   executionExpirationDays: string;

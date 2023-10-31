@@ -420,12 +420,12 @@ export const CreateDAO: React.FC = () => {
             <ConfigureCommunity />
           </Step>
           <Step
-            skipStep={votingType !== 'offChain'}
+            skipStep={votingType !== 'gasless'}
             wizardTitle={t('createDAO.step5.title')}
             wizardDescription={htmlIn(t)('createDAO.step5.description')}
             isNextButtonDisabled={!defineCommitteeIsValid}
             onNextButtonClicked={next => {
-              handleNextButtonTracking(next, '5_define_executive_committee', {
+              handleNextButtonTracking(next, '5_define_execution_multisig', {
                 committee: formMethods.getValues('committee'),
                 committeeMinimumApproval: formMethods.getValues(
                   'committeeMinimumApproval'

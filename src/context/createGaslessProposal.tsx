@@ -4,7 +4,7 @@ import {
   Erc20WrapperTokenDetails,
 } from '@aragon/sdk-client';
 import {ProposalMetadata} from '@aragon/sdk-client-common';
-import React, {useCallback, useState} from 'react';
+import {useCallback, useState} from 'react';
 
 import {
   AccountData,
@@ -19,8 +19,8 @@ import {
 } from '@vocdoni/sdk';
 import {VoteValues} from '@aragon/sdk-client';
 import {
-  OffchainPluginLocalStorageKeys,
-  OffchainPluginLocalStorageTypes,
+  GaslessPluginLocalStorageKeys,
+  GaslessPluginLocalStorageTypes,
 } from '../hooks/useVocdoniSdk';
 import {useClient} from '@vocdoni/react-providers';
 import {
@@ -30,16 +30,16 @@ import {
 } from '../hooks/useFunctionStepper';
 
 // todo(kon): move this block somewhere else
-export enum OffchainProposalStepId {
+export enum GaslessProposalStepId {
   REGISTER_VOCDONI_ACCOUNT = 'REGISTER_VOCDONI_ACCOUNT',
   CREATE_VOCDONI_ELECTION = 'CREATE_VOCDONI_ELECTION',
   CREATE_ONCHAIN_PROPOSAL = 'CREATE_ONCHAIN_PROPOSAL',
   PROPOSAL_IS_READY = 'PROPOSAL_IS_READY',
 }
 
-export type OffchainProposalSteps = StepsMap<OffchainProposalStepId>;
+export type GaslessProposalSteps = StepsMap<GaslessProposalStepId>;
 
-type ICreateOffchainProposal = {
+type ICreateGaslessProposal = {
   daoToken: Erc20TokenDetails | Erc20WrapperTokenDetails | undefined;
 };
 
@@ -80,7 +80,7 @@ const proposalToElection = ({
 
 // todo(kon): end to move this block somewhere else
 
-const useCreateOffchainProposal = ({daoToken}: ICreateOffchainProposal) => {
+const useCreateGaslessProposal = ({daoToken}: ICreateGaslessProposal) => {
   const [electionId, setElectionId] = useState('');
   // todo(kon): only cache the proposal using local storage?
   const cacheProposal = useCallback(
@@ -92,29 +92,29 @@ const useCreateOffchainProposal = ({daoToken}: ICreateOffchainProposal) => {
         [proposalId]: {
           electionId: electionId,
         },
-      } as OffchainPluginLocalStorageTypes[OffchainPluginLocalStorageKeys.PROPOSAL_TO_ELECTION];
+      } as GaslessPluginLocalStorageTypes[GaslessPluginLocalStorageKeys.PROPOSAL_TO_ELECTION];
 
       const proposalsIds = localStorage.getItem(
-        OffchainPluginLocalStorageKeys.PROPOSAL_TO_ELECTION
+        GaslessPluginLocalStorageKeys.PROPOSAL_TO_ELECTION
       );
 
       if (proposalsIds === null) {
         localStorage.setItem(
-          OffchainPluginLocalStorageKeys.PROPOSAL_TO_ELECTION,
+          GaslessPluginLocalStorageKeys.PROPOSAL_TO_ELECTION,
           JSON.stringify({
             ...proposal,
-          } as OffchainPluginLocalStorageTypes[OffchainPluginLocalStorageKeys.PROPOSAL_TO_ELECTION])
+          } as GaslessPluginLocalStorageTypes[GaslessPluginLocalStorageKeys.PROPOSAL_TO_ELECTION])
         );
       } else {
         const parsed = JSON.parse(
           proposalsIds
-        ) as OffchainPluginLocalStorageTypes[OffchainPluginLocalStorageKeys.PROPOSAL_TO_ELECTION];
+        ) as GaslessPluginLocalStorageTypes[GaslessPluginLocalStorageKeys.PROPOSAL_TO_ELECTION];
         localStorage.setItem(
-          OffchainPluginLocalStorageKeys.PROPOSAL_TO_ELECTION,
+          GaslessPluginLocalStorageKeys.PROPOSAL_TO_ELECTION,
           JSON.stringify({
             ...parsed,
             ...proposal,
-          } as OffchainPluginLocalStorageTypes[OffchainPluginLocalStorageKeys.PROPOSAL_TO_ELECTION])
+          } as GaslessPluginLocalStorageTypes[GaslessPluginLocalStorageKeys.PROPOSAL_TO_ELECTION])
         );
       }
     },
@@ -136,7 +136,7 @@ const useCreateOffchainProposal = ({daoToken}: ICreateOffchainProposal) => {
         PROPOSAL_IS_READY: {
           status: StepStatus.WAITING,
         },
-      } as OffchainProposalSteps,
+      } as GaslessProposalSteps,
     });
 
   const {client: vocdoniClient, census3} = useClient();
@@ -278,17 +278,17 @@ const useCreateOffchainProposal = ({daoToken}: ICreateOffchainProposal) => {
       }
 
       // 1. Create an account if not exists
-      const account = await doStep(
-        OffchainProposalStepId.REGISTER_VOCDONI_ACCOUNT,
+      await doStep(
+        GaslessProposalStepId.REGISTER_VOCDONI_ACCOUNT,
         createAccount
       );
-      console.log('DEBUG', 'Account created start creating offchain proposal');
+      console.log('DEBUG', 'Account created start creating gasless proposal');
 
       // 2. Create vocdoni election
       const electionId = await doStep(
-        OffchainProposalStepId.CREATE_VOCDONI_ELECTION,
+        GaslessProposalStepId.CREATE_VOCDONI_ELECTION,
         async () => {
-          // 2.1 Register offchain proposal
+          // 2.1 Register gasless proposal
           // This involves various steps such the census creation and election creation
           console.log('DEBUG', 'Creating vocdoni census');
           const census = await createCensus();
@@ -305,14 +305,14 @@ const useCreateOffchainProposal = ({daoToken}: ICreateOffchainProposal) => {
       // 3. Register the proposal onchain
       // todo(kon): Register election to the DAO
       await doStep(
-        OffchainProposalStepId.CREATE_ONCHAIN_PROPOSAL,
+        GaslessProposalStepId.CREATE_ONCHAIN_PROPOSAL,
         async () => await handleOnchainProposal(electionId)
       );
-      console.log('DEBUG', 'Proposal offchain created', electionId);
+      console.log('DEBUG', 'Proposal gasless created', electionId);
 
       // 4. All ready
       updateStepStatus(
-        OffchainProposalStepId.PROPOSAL_IS_READY,
+        GaslessProposalStepId.PROPOSAL_IS_READY,
         StepStatus.SUCCESS
       );
       console.log('DEBUG', 'All done!', globalState, electionId);
@@ -333,4 +333,4 @@ const useCreateOffchainProposal = ({daoToken}: ICreateOffchainProposal) => {
   return {steps, globalState, createProposal, electionId, cacheProposal};
 };
 
-export {useCreateOffchainProposal};
+export {useCreateGaslessProposal};

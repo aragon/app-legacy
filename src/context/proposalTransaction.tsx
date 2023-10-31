@@ -45,7 +45,7 @@ import {executionStorage, voteStorage} from 'utils/localStorage';
 import {ProposalId} from 'utils/types';
 import {useNetwork} from './network';
 import {useProviders} from './providers';
-import OffchainVotingModal from '../containers/transactionModals/offchainVotingModal';
+import GaslessVotingModal from '../containers/transactionModals/gaslessVotingModal';
 import {GaslessVotingClient} from '@vocdoni/gasless-voting';
 import {GaslessVoteOrApproval} from '../services/aragon-sdk/selectors';
 
@@ -124,7 +124,7 @@ const ProposalTransactionProvider: React.FC<Props> = ({children}) => {
     !!pluginClient && isMultisigClient(pluginClient);
   const isTokenVotingPluginClient =
     !!pluginClient && isTokenVotingClient(pluginClient);
-  const offchainVoting = pluginType === GaselessPluginName;
+  const gaslessVoting = pluginType === GaselessPluginName;
 
   const isWaitingForVoteOrApproval =
     (voteParams != null || approvalParams != null) &&
@@ -202,7 +202,7 @@ const ProposalTransactionProvider: React.FC<Props> = ({children}) => {
    *                  Estimations                  *
    *************************************************/
   const estimateVoteOrApprovalFees = useCallback(async () => {
-    if (offchainVoting && voteParams) {
+    if (gaslessVoting && voteParams) {
       return (pluginClient as GaslessVotingClient)?.estimation.approve(
         voteParams.proposalId
       );
@@ -222,11 +222,39 @@ const ProposalTransactionProvider: React.FC<Props> = ({children}) => {
     pluginClient,
     voteTokenAddress,
     voteParams,
+    gaslessVoting,
   ]);
 
-  const estimateExecutionFees = useCallback(async () => {
-    return pluginClient?.estimation.executeProposal(proposalId);
-  }, [pluginClient?.estimation, proposalId]);
+  const handleExecuteProposal = useCallback(() => {
+    setExecuteProposalId(new ProposalId(urlId!));
+    setShowExecuteModal(true);
+    setExecuteProcessState(TransactionState.WAITING);
+  }, [urlId]);
+
+  // estimate proposal execution fees
+  const estimateExecuteFees = useCallback(async () => {
+    if (executeProposalId) {
+      if (offchainVoting) {
+        return (pluginClient as GaslessVotingClient)?.estimation.execute(
+          executeProposalId.export()
+        );
+      } else if (tokenAddress) {
+        return (pluginClient as TokenVotingClient)?.estimation.executeProposal(
+          executeProposalId.export()
+        );
+      }
+      return (pluginClient as MultisigClient)?.estimation.executeProposal(
+        executeProposalId.export()
+      );
+    }
+  }, [
+    executeProposalId,
+    offchainVoting,
+    pluginAddress,
+    pluginClient,
+    tokenAddress,
+    urlId,
+  ]);
 
   // estimation fees for voting on proposal/executing proposal
   const {
@@ -450,7 +478,7 @@ const ProposalTransactionProvider: React.FC<Props> = ({children}) => {
       if (!isMultisigPluginClient) return;
 
       let approveSteps;
-      if (offchainVoting) {
+      if (gaslessVoting) {
         approveSteps = await (pluginClient as GaslessVotingClient)?.methods.approve(
           voteParams.proposalId
         );
@@ -546,7 +574,7 @@ const ProposalTransactionProvider: React.FC<Props> = ({children}) => {
     setExecutionProcessState(TransactionState.LOADING);
 
     let executeSteps;
-    if (offchainVoting) {
+    if (gaslessVoting) {
       executeSteps = (pluginClient as GaslessVotingClient)?.methods.execute(
         proposalId
       );
@@ -584,7 +612,7 @@ const ProposalTransactionProvider: React.FC<Props> = ({children}) => {
     proposalId,
     pluginAddress,
     isConnected,
-    offchainVoting,
+    gaslessVoting,
     handleCloseExecuteModal,
     pluginClient,
     onExecutionSuccess,
@@ -683,7 +711,7 @@ const ProposalTransactionProvider: React.FC<Props> = ({children}) => {
   return (
     <ProposalTransactionContext.Provider value={value}>
       {children}
-      <OffchainVotingModal
+      <GaslessVotingModal
         vote={voteParams}
         setShowVoteModal={setShowGaslessModal}
         showVoteModal={showGaslessModal}

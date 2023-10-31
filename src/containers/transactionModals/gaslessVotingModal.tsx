@@ -2,14 +2,14 @@ import React, {useCallback} from 'react';
 import {useTranslation} from 'react-i18next';
 import StepperModal, {BtnLabels} from '../../context/stepperModal';
 import {StepStatus} from '../../hooks/useFunctionStepper';
-import useOffchainVoting, {
-  OffchainVotingStepId,
-} from '../../context/useOffchainVoting';
+import useGaslessVoting, {
+  GaslessVotingStepId,
+} from '../../context/useGaslessVoting';
 import {StepperLabels} from '../../components/StepperProgress';
 import {VoteProposalParams, VoteValues} from '@aragon/sdk-client';
 import {useWallet} from '../../hooks/useWallet';
 import {ProposalId} from '../../utils/types';
-const OffchainVotingModal = ({
+const GaslessVotingModal = ({
   vote,
   showVoteModal,
   setShowVoteModal,
@@ -32,31 +32,31 @@ JSX.Element => {
   const {isConnected} = useWallet();
 
   const {
-    vote: submitOffchainVote,
-    steps: offchainSteps,
-    globalState: offchainGlobalState,
-  } = useOffchainVoting();
+    vote: submitGaslessVote,
+    steps: gaslessSteps,
+    globalState: gaslessGlobalState,
+  } = useGaslessVoting();
 
   const btnLabel: BtnLabels = {
-    [StepStatus.WAITING]: t('offChainVoting.stepperBtn.confirmVote'),
+    [StepStatus.WAITING]: t('gaslessVoting.stepperBtn.confirmVote'),
     [StepStatus.LOADING]: undefined,
-    [StepStatus.SUCCESS]: t('offChainVoting.stepperBtn.seeYourVote'),
-    [StepStatus.ERROR]: t('offChainVoting.stepperBtn.tryAgain'),
+    [StepStatus.SUCCESS]: t('gaslessVoting.stepperBtn.seeYourVote'),
+    [StepStatus.ERROR]: t('gaslessVoting.stepperBtn.tryAgain'),
   };
 
-  const labels: StepperLabels<OffchainVotingStepId> = {
-    [OffchainVotingStepId.CREATE_VOTE_ID]: {
-      title: t('offChainVoting.createVoteId.title'),
-      helper: t('offChainVoting.createVoteId.helper'),
+  const labels: StepperLabels<GaslessVotingStepId> = {
+    [GaslessVotingStepId.CREATE_VOTE_ID]: {
+      title: t('gaslessVoting.createVoteId.title'),
+      helper: t('gaslessVoting.createVoteId.helper'),
     },
-    [OffchainVotingStepId.PUBLISH_VOTE]: {
-      title: t('offChainVoting.publishVote.title'),
-      helper: t('offChainVoting.publishVote.helper'),
+    [GaslessVotingStepId.PUBLISH_VOTE]: {
+      title: t('gaslessVoting.publishVote.title'),
+      helper: t('gaslessVoting.publishVote.helper'),
     },
   };
 
   const handleCloseVoteModal = useCallback(() => {
-    switch (offchainGlobalState) {
+    switch (gaslessGlobalState) {
       case StepStatus.LOADING:
         break;
       case StepStatus.SUCCESS:
@@ -66,10 +66,10 @@ JSX.Element => {
         setShowVoteModal(false);
       }
     }
-  }, [offchainGlobalState, setShowVoteModal]);
+  }, [gaslessGlobalState, setShowVoteModal]);
 
   const handleVoteExecution = useCallback(async () => {
-    if (offchainGlobalState === StepStatus.SUCCESS) {
+    if (gaslessGlobalState === StepStatus.SUCCESS) {
       handleCloseVoteModal();
       return;
     }
@@ -85,7 +85,7 @@ JSX.Element => {
       // todo(kon): simple way of voting, use providers better
       // It retrieves from local storage the vocdoni election id. Won't be this on the final implementation
       // Not showing errors neither
-      await submitOffchainVote(vote);
+      await submitGaslessVote(vote);
 
       await onVoteSubmitted(
         new ProposalId(vote.proposalId),
@@ -97,10 +97,10 @@ JSX.Element => {
   }, [
     handleCloseVoteModal,
     isConnected,
-    offchainGlobalState,
+    gaslessGlobalState,
     onVoteSubmitted,
     setVoteSubmitted,
-    submitOffchainVote,
+    submitGaslessVote,
     vote,
   ]);
 
@@ -108,20 +108,20 @@ JSX.Element => {
     <StepperModal
       buttonLabels={btnLabel}
       stepLabels={labels}
-      steps={offchainSteps}
-      globalState={offchainGlobalState}
+      steps={gaslessSteps}
+      globalState={gaslessGlobalState}
       isOpen={showVoteModal}
       onClose={handleCloseVoteModal}
       callback={handleVoteExecution}
-      closeOnDrag={offchainGlobalState !== StepStatus.LOADING}
+      closeOnDrag={gaslessGlobalState !== StepStatus.LOADING}
       // todo(kon): implementent free cost gas component
       maxFee={BigInt(0)}
       averageFee={BigInt(0)}
       gasEstimationError={undefined}
       tokenPrice={0}
-      title={t('offChainVoting.title')}
+      title={t('gaslessVoting.title')}
     />
   );
 };
 
-export default OffchainVotingModal;
+export default GaslessVotingModal;

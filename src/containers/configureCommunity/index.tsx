@@ -365,7 +365,7 @@ const ConfigureCommunity: React.FC<ConfigureCommunityProps> = ({
           </FormItem>
 
           {/* Early execution */}
-          {votingType !== 'offChain' && (
+          {votingType !== 'gasless' && (
             <>
               <FormItem>
                 <Label

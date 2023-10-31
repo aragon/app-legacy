@@ -77,8 +77,8 @@ import {ProposalFormData, ProposalId, ProposalResource} from 'utils/types';
 import {useGlobalModalContext} from './globalModals';
 import {useNetwork} from './network';
 import {useProviders} from './providers';
-import {useCreateOffchainProposal} from './createOffchainProposal';
-import OffchainProposalModal from '../containers/transactionModals/offchainProposalModal';
+import {useCreateGaslessProposal} from './createGaslessProposal';
+import GaslessProposalModal from '../containers/transactionModals/gaslessProposalModal';
 import {StepStatus} from '../hooks/useFunctionStepper';
 
 import {
@@ -124,7 +124,7 @@ const CreateProposalWrapper: React.FC<Props> = ({
   const {client} = useClient();
   const pluginClient = usePluginClient(pluginType as PluginTypes);
 
-  const offchain = pluginType === GaselessPluginName;
+  const gasless = pluginType === GaselessPluginName;
 
   const {
     days: minDays,
@@ -151,11 +151,11 @@ const CreateProposalWrapper: React.FC<Props> = ({
 
   // todo(kon): this code have to be placed somewhere else?
   const {
-    steps: offchainProposalSteps,
-    globalState: offchainGlobalState,
+    steps: gaslessProposalSteps,
+    globalState: gaslessGlobalState,
     createProposal,
-    // cacheProposal: cacheOffchainProposal,
-  } = useCreateOffchainProposal({
+    // cacheProposal: cacheGaslessProposal,
+  } = useCreateGaslessProposal({
     daoToken,
   });
 
@@ -366,8 +366,8 @@ const CreateProposalWrapper: React.FC<Props> = ({
       resources: resources.filter((r: ProposalResource) => r.name && r.url),
     };
     let ipfsUri;
-    // Offchain voting store metadata using Vocdoni support
-    if (!offchain) {
+    // Gasless voting store metadata using Vocdoni support
+    if (!gasless) {
       ipfsUri = await (pluginClient as TokenVotingClient)?.methods.pinMetadata(
         metadata
       );
@@ -465,23 +465,27 @@ const CreateProposalWrapper: React.FC<Props> = ({
        */
       const finalStartDate = startSwitch === 'now' ? undefined : startDateTime;
 
-      // Ignore encoding if the proposal had no actions
-      return {
-        pluginAddress,
-        metadataUri: ipfsUri || '',
-        startDate: finalStartDate,
-        endDate: endDateTime,
-        actions,
-      };
-    }, [
-      encodeActions,
-      getValues,
-      minDays,
-      minHours,
-      minMinutes,
+    // Ignore encoding if the proposal had no actions
+    const params: CreateMajorityVotingProposalParams = {
       pluginAddress,
-      pluginClient?.methods,
-    ]);
+      metadataUri: ipfsUri || '',
+      startDate: finalStartDate,
+      endDate: endDateTime,
+      actions,
+    };
+
+    return {params, metadata};
+  }, [
+    encodeActions,
+    getValues,
+    minDays,
+    minHours,
+    minMinutes,
+    gasless,
+    pluginAddress,
+    pluginClient?.methods,
+    votingSettings,
+  ]);
 
   const getOffChainProposalParams = useCallback(
     (
@@ -511,7 +515,7 @@ const CreateProposalWrapper: React.FC<Props> = ({
     }
     if (!proposalCreationData) return;
 
-    return offchain
+    return gasless
       ? (pluginClient as GaslessVotingClient).estimation.createProposal(
           proposalCreationData as CreateGasslessProposalParams
         )
@@ -520,7 +524,7 @@ const CreateProposalWrapper: React.FC<Props> = ({
         ).estimation.createProposal(
           proposalCreationData as CreateMajorityVotingProposalParams
         );
-  }, [offchain, pluginClient, proposalCreationData]);
+  }, [gasless, pluginClient, proposalCreationData]);
 
   const {
     tokenPrice,
@@ -533,7 +537,7 @@ const CreateProposalWrapper: React.FC<Props> = ({
   const handleCloseModal = useCallback(() => {
     if (
       creationProcessState === TransactionState.LOADING ||
-      offchainGlobalState === StepStatus.LOADING
+      gaslessGlobalState === StepStatus.LOADING
     ) {
       return;
     } else if (creationProcessState === TransactionState.SUCCESS) {
@@ -555,7 +559,7 @@ const CreateProposalWrapper: React.FC<Props> = ({
     daoDetails?.ensDomain,
     navigate,
     network,
-    offchainGlobalState,
+    gaslessGlobalState,
     proposalId,
     setShowTxModal,
     stopPolling,
@@ -724,7 +728,7 @@ const CreateProposalWrapper: React.FC<Props> = ({
 
       // todo(kon): fix this if needed
       let proposalIterator: AsyncGenerator<ProposalCreationStepValue>;
-      if (offchain && vochainProposalId) {
+      if (gasless && vochainProposalId) {
         const proposalParams =
           proposalCreationData as CreateGasslessProposalParams;
         proposalParams.vochainProposalId = vochainProposalId;
@@ -814,7 +818,7 @@ const CreateProposalWrapper: React.FC<Props> = ({
       invalidateQueries,
       isOnWrongNetwork,
       network,
-      offchain,
+      gasless,
       open,
       pluginAddress,
       pluginClient,
@@ -849,11 +853,9 @@ const CreateProposalWrapper: React.FC<Props> = ({
     // set proposal creation data
     async function setProposalData() {
       if (showTxModal && creationProcessState === TransactionState.WAITING) {
-        if (offchain) {
-          const {params: offchainParams} = await getProposalCreationParams();
-          setProposalCreationData(
-            getOffChainProposalParams(offchainParams, '')
-          );
+        if (gasless) {
+          const {params: gaslessParams} = await getProposalCreationParams();
+          setProposalCreationData(getOffChainProposalParams(gaslessParams, ''));
         } else {
           const {params} = await getProposalCreationParams();
           setProposalCreationData(params);
@@ -866,7 +868,7 @@ const CreateProposalWrapper: React.FC<Props> = ({
     creationProcessState,
     getOffChainProposalParams,
     getProposalCreationParams,
-    offchain,
+    gasless,
     showTxModal,
   ]);
 
@@ -885,16 +887,16 @@ const CreateProposalWrapper: React.FC<Props> = ({
   return (
     <>
       {children}
-      {offchain ? (
-        <OffchainProposalModal
-          steps={offchainProposalSteps}
-          globalState={offchainGlobalState}
+      {gasless ? (
+        <GaslessProposalModal
+          steps={gaslessProposalSteps}
+          globalState={gaslessGlobalState}
           isOpen={showTxModal}
           onClose={handleCloseModal}
           callback={handleOffChainProposal}
           closeOnDrag={
             creationProcessState !== TransactionState.LOADING ||
-            offchainGlobalState !== StepStatus.LOADING
+            gaslessGlobalState !== StepStatus.LOADING
           }
           maxFee={maxFee}
           averageFee={averageFee}

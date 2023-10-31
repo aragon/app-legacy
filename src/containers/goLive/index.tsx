@@ -68,7 +68,7 @@ const GoLive: React.FC = () => {
       <DaoMetadata />
       <Community />
       <Governance />
-      {votingType === 'offChain' && <Committee />}
+      {votingType === 'gasless' && <Committee />}
       <AlertCard title={t('createDAO.review.daoUpdates')} />
     </Container>
   );

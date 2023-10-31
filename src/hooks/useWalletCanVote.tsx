@@ -41,7 +41,7 @@ export const useWalletCanVote = (
 
   const isMultisigClient = pluginType === 'multisig.plugin.dao.eth';
   const isTokenVotingClient = pluginType === 'token-voting.plugin.dao.eth';
-  const isOffchainVoting = pluginType === GaselessPluginName;
+  const isGaslessVoting = pluginType === GaselessPluginName;
 
   const client = usePluginClient(pluginType);
   const {client: vocdoniClient} = useVocdoniClient();
@@ -76,7 +76,7 @@ export const useWalletCanVote = (
       else setData([false, false, false]);
     }
 
-    async function fetchCanVoteOffchain() {
+    async function fetchCanVoteGasless() {
       let canVote = false;
       if (gaslessProposalId) {
         canVote = await vocdoniClient.isInCensus(gaslessProposalId);
@@ -96,8 +96,8 @@ export const useWalletCanVote = (
 
       try {
         setIsLoading(true);
-        isOffchainVoting
-          ? await fetchCanVoteOffchain()
+        isGaslessVoting
+          ? await fetchCanVoteGasless()
           : await fetchOnchainVoting();
       } catch (error) {
         console.error(error);
@@ -112,7 +112,7 @@ export const useWalletCanVote = (
     address,
     client,
     isMultisigClient,
-    isOffchainVoting,
+    isGaslessVoting,
     isTokenVotingClient,
     gaslessProposalId,
     pluginAddress,

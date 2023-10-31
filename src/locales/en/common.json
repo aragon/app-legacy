@@ -25,7 +25,7 @@
     "termsLinkURL": "https://aragon.org/terms-and-conditions",
     "privacyLinkLabel": "Privacy",
     "privacyLinkURL": "https://aragon.org/privacy-policy",
-    "executiveCommittee": "Executive committee"
+    "executionMultisig": "Execution multisig"
   },
   "daoSwitcher": {
     "title": "Select your DAO",
@@ -147,7 +147,7 @@
     "changeableVote": "Changeable with a vote",
     "changeable": "Changeable",
     "etherscan": "Etherscan",
-    "executiveCommitteeMembers": "Executive committee members",
+    "executionMultisigMembers": "Execution multisig members",
     "whitelistWallets": {
       "address": "Address",
       "addresses": "{{count}} addresses",
@@ -473,7 +473,7 @@
     "durationAlert": "Set this to a duration that is long enough for your members to have sufficient time to vote. It’s recommended to set this to at least 1 day.",
     "maxDurationAlert": "The maximum duration is 365 days.",
     "minDurationAlert": "The minimum duration is one hour.",
-    "executionDurationAlert": "Set this to a duration that your executive committee can approve the results. It’s recommended to set this to at least 1 day.",
+    "executionDurationAlert": "Set this to a duration that your execution multisig can approve the results. It’s recommended to set this to at least 1 day.",
     "startDateInPastAlert": "Start time can’t be in the past. ",
     "wrongWalletNetwork": "Wrong wallet network",
     "wrongNetwork": {
@@ -784,14 +784,14 @@
       "distributeTokensHelpertextLinkLabel": "read our guide",
       "distributeTokensHelpertextLinkURL": "https://aragon.org/how-to/distribute-a-dao-governance-token",
       "votingType": {
-        "title": "Should voting take place on-chain or off-chain",
+        "title": "Should voting take place on-chain or gasless",
         "onChain": {
           "title": "On-chain",
           "subtitle": "The voting process and the execution of actions binded to a proposal are both on-chain"
         },
-        "offChain": {
-          "title": "Off-chain",
-          "subtitle": "The voting process is off-chain, while the proof of all votes and the execution are done by a multisig called \"Guardians\"",
+        "gasless": {
+          "title": "Gasless",
+          "subtitle": "The voting process is gasless, while the proof of all votes and the execution are done by a multisig called \"Guardians\"",
           "soon": "Comming Soon"
         }
 
@@ -844,13 +844,13 @@
     },
     "step5": {
       "label": "Step 5",
-      "title": "Define your executive committee",
-      "description": "To bring the offchain results onchain, a executive committee is needed to validate the results and perform the optional actions of a proposal. Learn more about the council and its tasks {{ link }}.",
+      "title": "Define your execution multisig",
+      "description": "To bring the gasless results onchain, a execution multisig is needed to validate the results and perform the optional actions of a proposal. Learn more about the council and its tasks {{ link }}.",
       "descriptionLinkLabel": "in our guide",
       "descriptionLinkURL": "https://aragon.org/how-to/governance-ii-setting-dao-governance-thresholds",
-      "executiveCommitteeMembersSubtitle" : "Add as many addresses as you like to the DAO. These are authorised to create proposals, transactions or suggest changes to the DAO settings after its creation. Upload a CSV with {{link}} if you want.",
-      "executiveCommitteeMembersSubtitleLinkLabel" : "this template",
-      "executiveCommitteeMembersSubtitleLinkURL" : "https://aragon.org/how-to/governance-ii-setting-dao-governance-thresholds",
+      "executionMultisigMembersSubtitle" : "Add as many addresses as you like to the DAO. These are authorised to create proposals, transactions or suggest changes to the DAO settings after its creation. Upload a CSV with {{link}} if you want.",
+      "executionMultisigMembersSubtitleLinkLabel" : "this template",
+      "executionMultisigMembersSubtitleLinkURL" : "https://aragon.org/how-to/governance-ii-setting-dao-governance-thresholds",
       "minimumAprovalDescritpion": "Participation is the amount of addresses in the authorised list that approve on a proposal. The minimum is how many have to approve for the result to be valid.",
       "alerts": {
         "ofAddresses": "of {{number}} Addresses"
@@ -860,7 +860,7 @@
     "review": {
       "title": "Review details",
       "description": "Double-check that everything is correct before deploying your DAO.",
-      "executiveCommittee": "Executive Committee",
+      "executionMultisig": "Execution Multisig",
       "network": "{{network}} net",
       "distributionLink": "See {{count}} addresses",
       "days": "{{days}} days",
@@ -943,7 +943,7 @@
     "processWarning": "Don't close this page while in progress.",
     "stepError": "Details"
   },
-  "offChainVoting": {
+  "gaslessVoting": {
     "title": "Submit your vote",
     "stepperBtn" : {
       "confirmVote": "Confirm your vote",
@@ -951,11 +951,11 @@
       "tryAgain": "Try again"
     },
     "createVoteId": {
-      "title": "Create offchain vote ID",
+      "title": "Create gasless vote ID",
       "helper": "Sign message"
     },
     "publishVote": {
-      "title": "Publish your vote offchain",
+      "title": "Publish your vote gasless",
       "helper": "Sign message"
     }
   },
@@ -1037,7 +1037,7 @@
     },
     "approveExecute": "Approve and execute"
   },
-  "offchainVotingTerminal": {
+  "gaslessVotingTerminal": {
     "btnLabel": {
       "approved": "Approved",
       "concluded": "Concluded",
@@ -1048,7 +1048,7 @@
       "executed":  "Executed"
     },
     "alerts": {
-      "notInCommittee": "You had to be a part of executive committee to approve the proposal",
+      "notInCommittee": "You had to be a part of execution multisig to approve the proposal",
       "cannotApproveYet": "Approval period is not open yet"
     }
   },
@@ -1738,13 +1738,13 @@
       "membersDesc": "These addresses form the governing body that approves and executes proposals passed by the community. Add the addresses who will be members of the execution multisig."
     }
   },
-  "offChainProposalCreation": {
+  "gaslessProposalCreation": {
     "createVocdoniAccount": {
-      "title": "Create offchain vote ID",
+      "title": "Create gasless vote ID",
       "helper": "Sign message"
     },
     "createVocdoniElection": {
-      "title": "Register proposal offchain",
+      "title": "Register proposal gasless",
       "helper": "Sign message"
     },
     "createOnChainProposal": {

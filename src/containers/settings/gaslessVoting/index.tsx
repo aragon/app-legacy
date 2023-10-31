@@ -73,7 +73,7 @@ const GaslessVotingSettings: React.FC<IPluginSettings> = ({daoDetails}) => {
   return (
     <>
       {/* COMMUNITY SECTION */}
-      <SettingsCard title={t('navLinks.executiveCommittee')}>
+      <SettingsCard title={t('navLinks.executionMultisig')}>
         <DescriptionPair>
           <Term>{t('labels.review.members')}</Term>
           <Definition>

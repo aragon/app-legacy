@@ -345,7 +345,7 @@ export const EditMvSettings: React.FC<EditMvSettingsProps> = ({daoDetails}) => {
   const setCurrentGasless = useCallback(() => {
     if (!isGasless) return;
 
-    setValue('votingType', 'offchain');
+    setValue('votingType', 'gasless');
     setValue('executionExpirationMinutes', approvalMinutes);
     setValue('executionExpirationHours', approvalHours);
     setValue('executionExpirationDays', approvalDays);
@@ -518,7 +518,7 @@ export const EditMvSettings: React.FC<EditMvSettingsProps> = ({daoDetails}) => {
               {/*<AccordionItem*/}
               {/*  type="action-builder"*/}
               {/*  name="committee"*/}
-              {/*  methodName={t('createDAO.review.executiveCommittee')}*/}
+              {/*  methodName={t('createDAO.review.executionMultisig')}*/}
               {/*  alertLabel={*/}
               {/*    isGaslessChanged ? t('settings.newSettings') : undefined*/}
               {/*  }*/}

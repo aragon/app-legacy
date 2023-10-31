@@ -51,8 +51,8 @@ const DefineCommittee: React.FC = () => {
       {/*Executive committee members*/}
       <FormItem>
         <Label
-          label={t('labels.executiveCommitteeMembers')}
-          helpText={t('createDAO.step5.executiveCommitteeMembersSubtitle')}
+          label={t('labels.executionMultisigMembers')}
+          helpText={t('createDAO.step5.executionMultisigMembersSubtitle')}
         />
         <AddCommitteeMembers />
       </FormItem>

@@ -17,7 +17,7 @@ type ValueOfControllerRenderProps<T> = T extends ControllerRenderProps<any, any>
  * It has a logic to show a `Comming Soon` label when the chainId is not compatible with vocdoni census3 service.
  * @constructor
  */
-const OffChainSelector = ({
+const GaslessSelector = ({
   onChange,
   value,
 }: {
@@ -34,22 +34,22 @@ const OffChainSelector = ({
         <div className="flex flex-row-reverse gap-1">
           <Tag
             colorScheme="warning"
-            label={t('createDAO.step3.votingType.offChain.soon')}
+            label={t('createDAO.step3.votingType.gasless.soon')}
           />
         </div>
       )}
       <CheckboxListItem
-        label={t('createDAO.step3.votingType.offChain.title')}
-        helptext={t('createDAO.step3.votingType.offChain.subtitle')}
+        label={t('createDAO.step3.votingType.gasless.title')}
+        helptext={t('createDAO.step3.votingType.gasless.subtitle')}
         onClick={() => {
-          onChange('offChain');
+          onChange('gasless');
         }}
         multiSelect={false}
         disabled={!isSupported}
-        {...(value === 'offChain' ? {type: 'active'} : {})}
+        {...(value === 'gasless' ? {type: 'active'} : {})}
       />
     </>
   );
 };
 
-export default OffChainSelector;
+export default GaslessSelector;

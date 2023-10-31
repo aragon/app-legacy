@@ -156,7 +156,7 @@ const CreateDaoProvider: React.FC<{children: ReactNode}> = ({children}) => {
     }
   };
 
-  const getOffchainPluginInstallParams = useCallback(
+  const getGaslessPluginInstallParams = useCallback(
     (votingSettings: VotingSettings): GaslessVotingPluginInstall => {
       const {
         isCustomToken,
@@ -339,11 +339,11 @@ const CreateDaoProvider: React.FC<{children: ReactNode}> = ({children}) => {
       case 'token': {
         const [votingSettings, network] = getVoteSettings();
 
-        if (votingType === 'offChain') {
-          const params = getOffchainPluginInstallParams(votingSettings);
-          const offChainPlugin =
+        if (votingType === 'gasless') {
+          const params = getGaslessPluginInstallParams(votingSettings);
+          const gaslessPlugin =
             GaslessVotingClient.encoding.getPluginInstallItem(params, network);
-          plugins.push(offChainPlugin);
+          plugins.push(gaslessPlugin);
           break;
         }
         const tokenVotingPlugin =
@@ -495,7 +495,7 @@ const CreateDaoProvider: React.FC<{children: ReactNode}> = ({children}) => {
                   },
                 }),
               ]).then(async () => {
-                if (votingType === 'offChain' && membership === 'token') {
+                if (votingType === 'gasless' && membership === 'token') {
                   await createToken(step.pluginAddresses[0]);
                 }
               });

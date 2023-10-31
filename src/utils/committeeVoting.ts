@@ -11,21 +11,21 @@ export function getCommitteVoteButtonLabel(
   t: TFunction
 ) {
   if (executed) {
-    return t('offchainVotingTerminal.btnLabel.executed');
+    return t('gaslessVotingTerminal.btnLabel.executed');
   }
   if (approved) {
-    return t('offchainVotingTerminal.btnLabel.approved');
+    return t('gaslessVotingTerminal.btnLabel.approved');
   }
   if (notBegan) {
-    return t('offchainVotingTerminal.btnLabel.approve');
+    return t('gaslessVotingTerminal.btnLabel.approve');
   }
   if (voted) {
-    return t('offchainVotingTerminal.btnLabel.voted');
+    return t('gaslessVotingTerminal.btnLabel.voted');
   }
   if (canApprove) {
-    return t('offchainVotingTerminal.btnLabel.approve');
+    return t('gaslessVotingTerminal.btnLabel.approve');
   }
-  return t('offchainVotingTerminal.btnLabel.concluded');
+  return t('gaslessVotingTerminal.btnLabel.concluded');
 }
 
 export function getApproveStatusLabel(

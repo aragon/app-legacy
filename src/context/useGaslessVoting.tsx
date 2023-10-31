@@ -22,16 +22,16 @@ import {useDaoDetailsQuery} from '../hooks/useDaoDetails';
 import {ProposalStatus} from '@aragon/sdk-client-common';
 
 // todo(kon): move this block somewhere else
-export enum OffchainVotingStepId {
+export enum GaslessVotingStepId {
   CREATE_VOTE_ID = 'CREATE_VOTE_ID',
   PUBLISH_VOTE = 'PUBLISH_VOTE',
 }
 
-export type OffchainVotingSteps = StepsMap<OffchainVotingStepId>;
+export type GaslessVotingSteps = StepsMap<GaslessVotingStepId>;
 
 // todo(kon): end to move this block somewhere else
 
-const useOffchainVoting = () => {
+const useGaslessVoting = () => {
   const {client: vocdoniClient} = useVocdoniClient();
   const pluginClient = usePluginClient(
     GaselessPluginName
@@ -62,7 +62,7 @@ const useOffchainVoting = () => {
         PUBLISH_VOTE: {
           status: StepStatus.WAITING,
         },
-      } as OffchainVotingSteps,
+      } as GaslessVotingSteps,
     });
 
   const submitVote = useCallback(
@@ -89,7 +89,7 @@ const useOffchainVoting = () => {
 
       // 1. Retrieve the election id
       const electionId = await doStep(
-        OffchainVotingStepId.CREATE_VOTE_ID,
+        GaslessVotingStepId.CREATE_VOTE_ID,
         async () => {
           const electionId = getElectionId(vote.proposalId);
           if (!electionId) {
@@ -103,7 +103,7 @@ const useOffchainVoting = () => {
       console.log('DEBUG', 'ElectionId found', electionId);
 
       // 2. Sumbit vote
-      await doStep(OffchainVotingStepId.PUBLISH_VOTE, async () => {
+      await doStep(GaslessVotingStepId.PUBLISH_VOTE, async () => {
         await submitVote(vote, electionId!);
       });
     },
@@ -118,7 +118,7 @@ const useOffchainVoting = () => {
  *
  * Used to call asynchronously the has already vote function and store it on a react state.
  */
-export const useOffchainHasAlreadyVote = ({
+export const useGaslessHasAlreadyVote = ({
   proposal,
 }: {
   proposal: DetailedProposal | undefined | null;
@@ -231,4 +231,4 @@ export const useGaslessCommiteVotes = (
   };
 };
 
-export default useOffchainVoting;
+export default useGaslessVoting;

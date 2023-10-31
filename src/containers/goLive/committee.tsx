@@ -41,7 +41,7 @@ const Committee = () => {
       }}
       render={({field: {onChange, value}}) => (
         <DescriptionListContainer
-          title={t('createDAO.review.executiveCommittee')}
+          title={t('createDAO.review.executionMultisig')}
           onEditClick={() => setStep(6)}
           checkBoxErrorMessage={t('createDAO.review.acceptContent')}
           checkedState={

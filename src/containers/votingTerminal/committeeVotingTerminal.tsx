@@ -8,8 +8,7 @@ import styled from 'styled-components';
 import {AccordionItem} from '../../components/accordionMethod';
 import {Accordion} from '@radix-ui/react-accordion';
 import {GaslessVotingProposal} from '@vocdoni/gasless-voting';
-import {useGaslessCommiteVotes} from '../../context/useOffchainVoting';
-import {ProposalId} from '../../utils/types';
+import {useGaslessCommiteVotes} from '../../context/useGaslessVoting';
 import {useWallet} from '../../hooks/useWallet';
 import {useProposalTransactionContext} from '../../context/proposalTransaction';
 import {VoteValues} from '@aragon/sdk-client';
@@ -77,7 +76,7 @@ export const CommitteeVotingTerminal = ({
     if (!proposal) return;
 
     const endDate = `${format(
-      proposal.parameters.expirationDate,
+      proposal.parameters.expirationDate!,
       KNOWN_FORMATS.proposals
     )}  ${getFormattedUtcOffset()}`;
 
@@ -196,7 +195,7 @@ export const CommitteeVotingTerminal = ({
   // alert message, only shown when not eligible to vote
   const alertMessage = useMemo(() => {
     if (!isApprovalPeriod) {
-      return t('offchainVotingTerminal.alerts.cannotApproveYet');
+      return t('gaslessVotingTerminal.alerts.cannotApproveYet');
     } else if (
       proposal &&
       isApprovalPeriod && // active proposal
@@ -205,7 +204,7 @@ export const CommitteeVotingTerminal = ({
       !canApprove && // cannot vote
       !approved // Already voted
     ) {
-      return t('offchainVotingTerminal.alerts.notInCommittee');
+      return t('gaslessVotingTerminal.alerts.notInCommittee');
     }
   }, [canApprove, isApprovalPeriod, isOnWrongNetwork, proposal, t, address]);
 
