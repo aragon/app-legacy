@@ -204,11 +204,7 @@ export function proposal2CardProps(
 
     // calculate winning option for active proposal
     if (proposal.status.toLowerCase() === 'active') {
-      const results = getErc20Results(
-        proposal.result,
-        proposal.token.decimals,
-        proposal.totalVotingWeight
-      );
+      const results = getErc20Results(proposal.result, proposal.token.decimals);
 
       // The winning option is the outcome of the proposal if duration was to be reached
       // as is. Note that the "yes" option can only be "winning" if it has met the support

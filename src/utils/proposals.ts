@@ -208,40 +208,28 @@ function getErc20Voters(
  * Get the mapped result of ERC20 voting proposal vote
  * @param result result of votes on proposal
  * @param tokenDecimals number of decimals in token
- * @param totalVotingWeight number of eligible voting tokens at proposal creation snapshot
  * @returns mapped voting result
  */
 export function getErc20Results(
   result: TokenVotingProposalResult,
-  tokenDecimals: number,
-  totalVotingWeight: BigInt
+  tokenDecimals: number
 ): ProposalVoteResults {
   const {yes, no, abstain} = result;
 
+  const totalYesNo = Big(yes.toString()).plus(no.toString());
+
   return {
     yes: {
-      value: parseFloat(
-        Number(formatUnits(yes, tokenDecimals)).toFixed(2)
-      ).toString(),
-      percentage: parseFloat(
-        Big(Number(yes)).mul(100).div(Number(totalVotingWeight)).toFixed(2)
-      ),
+      value: formatUnits(yes, tokenDecimals),
+      percentage: Big(yes.toString()).mul(100).div(totalYesNo).toNumber(),
     },
     no: {
-      value: parseFloat(
-        Number(formatUnits(no, tokenDecimals)).toFixed(2)
-      ).toString(),
-      percentage: parseFloat(
-        Big(Number(no)).mul(100).div(Number(totalVotingWeight)).toFixed(2)
-      ),
+      value: formatUnits(no, tokenDecimals),
+      percentage: Big(no.toString()).mul(100).div(totalYesNo).toNumber(),
     },
     abstain: {
-      value: parseFloat(
-        Number(formatUnits(abstain, tokenDecimals)).toFixed(2)
-      ).toString(),
-      percentage: parseFloat(
-        Big(Number(abstain)).mul(100).div(Number(totalVotingWeight)).toFixed(2)
-      ),
+      value: formatUnits(abstain, tokenDecimals),
+      percentage: Big(abstain.toString()).mul(100).div(totalYesNo).toNumber(),
     },
   };
 }
@@ -452,11 +440,7 @@ export function getLiveProposalTerminalProps(
     });
 
     // results
-    results = getErc20Results(
-      proposal.result,
-      proposal.token.decimals,
-      proposal.totalVotingWeight
-    );
+    results = getErc20Results(proposal.result, proposal.token.decimals);
 
     // calculate participation
     const {currentPart, currentPercentage, minPart, missingPart, totalWeight} =
