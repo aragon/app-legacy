@@ -2,7 +2,6 @@ import ModalBottomSheetSwitcher from 'components/modalBottomSheetSwitcher';
 import {useGlobalModalContext} from 'context/globalModals';
 import styled from 'styled-components';
 import React from 'react';
-import {constants} from 'ethers';
 import {useTranslation} from 'react-i18next';
 import {
   ButtonText,
@@ -18,21 +17,18 @@ import {CHAIN_METADATA, SupportedNetworks} from 'utils/constants';
 import {useDelegatee} from 'services/aragon-sdk/queries/use-delegatee';
 import {abbreviateTokenAmount} from 'utils/tokens';
 import {useWallet} from 'hooks/useWallet';
-import {usePastVotingPower} from 'services/aragon-sdk/queries/use-past-voting-power';
 import {TokenVotingProposal} from '@aragon/sdk-client';
+import {useIsMember} from 'services/aragon-sdk/queries/use-is-member';
 
 export interface IDelegationGatingMenuState {
   proposal?: TokenVotingProposal;
 }
 
 const getDelegationLabels = (params: {
-  needsSelfDelegation: boolean;
-  hasPastVotingPower: boolean;
   hasBalance: boolean;
   hasPastBalance: boolean;
 }) => {
-  const {needsSelfDelegation, hasPastVotingPower, hasBalance, hasPastBalance} =
-    params;
+  const {hasBalance, hasPastBalance} = params;
 
   const firstKey = hasPastBalance ? 'sentence1b' : 'sentence1a';
   const secondKey = hasPastBalance
@@ -67,22 +63,15 @@ export const DelegationGatingMenu: React.FC = () => {
 
   const tokenAmount = abbreviateTokenAmount(tokenBalance?.formatted ?? '0');
 
-  const {data: pastVotingPower} = usePastVotingPower(
-    {
-      tokenAddress: daoToken?.address as string,
-      address: address as string,
-      blockNumber: proposal?.creationBlockNumber as number,
-    },
-    {enabled: daoToken != null && address != null && proposal != null}
-  );
-
   const hasBalance = tokenBalance != null && tokenBalance.value > 0;
 
-  // TODO: to be fetched from the SDK
-  const hasPastBalance = true;
-
-  const hasPastVotingPower =
-    pastVotingPower != null && pastVotingPower.gt(constants.Zero);
+  const {data: hasPastBalance} = useIsMember(
+    {
+      tokenAddress: daoToken?.address as string,
+      blockNumber: proposal?.creationBlockNumber as number,
+    },
+    {enabled: daoToken != null && proposal != null}
+  );
 
   const {data: delegateData} = useDelegatee(
     {tokenAddress: daoToken?.address as string},
@@ -98,7 +87,7 @@ export const DelegationGatingMenu: React.FC = () => {
     hasBalance && currentDelegate?.toLowerCase() !== address?.toLowerCase();
 
   const handleCtaClick = () => {
-    if (!hasPastVotingPower) {
+    if (!needsSelfDelegation) {
       close();
     } else {
       open('delegateVoting', {reclaimMode: true});
@@ -106,10 +95,8 @@ export const DelegationGatingMenu: React.FC = () => {
   };
 
   const {firstKey, secondKey} = getDelegationLabels({
-    hasPastVotingPower,
-    needsSelfDelegation,
     hasBalance,
-    hasPastBalance,
+    hasPastBalance: Boolean(hasPastBalance),
   });
   const firstSentence = t(`modal.delegation.CanVote.${firstKey}`, {
     tokenSymbol: daoToken?.symbol,
@@ -119,7 +106,9 @@ export const DelegationGatingMenu: React.FC = () => {
     tokenSymbol: daoToken?.symbol,
   });
 
-  const ctaLabel =
+  const ctaLabel = needsSelfDelegation
+    ? 'modal.delegationActive.CtaLabel'
+    : 'modal.delegation.NoVotingPower.ctaLabel';
 
   return (
     <ModalBottomSheetSwitcher
@@ -153,20 +142,12 @@ export const DelegationGatingMenu: React.FC = () => {
         </ContentGroup>
         <ContentGroup>
           <ButtonText
-            label={t(`modal.${ctaLabel}`)}
+            label={t(ctaLabel)}
             mode="primary"
             size="large"
             onClick={handleCtaClick}
           />
-          {noVotingPower ? (
-            <Link
-              label={t('modal.delegation.NoVotingPower.Link')}
-              href={t('modal.delegation.NoVotingPower.LinkURL')}
-              target="_blank"
-              className="self-center"
-              iconRight={<IconLinkExternal />}
-            />
-          ) : (
+          {needsSelfDelegation && (
             <ButtonText
               label={t('modal.delegationActive.BtnSecondaryLabel')}
               mode="secondary"
@@ -174,6 +155,13 @@ export const DelegationGatingMenu: React.FC = () => {
               onClick={() => close()}
             />
           )}
+          <Link
+            label={t('modal.delegation.NoVotingPower.Link')}
+            href={t('modal.delegation.NoVotingPower.LinkURL')}
+            target="_blank"
+            className="self-center"
+            iconRight={<IconLinkExternal />}
+          />
         </ContentGroup>
       </div>
     </ModalBottomSheetSwitcher>

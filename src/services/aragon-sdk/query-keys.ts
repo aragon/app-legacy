@@ -21,6 +21,7 @@ export enum AragonSdkQueryItem {
   LOCAL_PROPOSALS = 'LOCAL_PROPOSALS',
   VOTING_POWER = 'VOTING_POWER',
   VOTING_SETTINGS = 'VOTING_SETTINGS',
+  IS_MEMBER = 'IS_MEMBER',
 }
 
 // Add address and network parameters to all query keys to use the most updated DAO plugin client
@@ -62,4 +63,8 @@ export const aragonSdkQueryKeys = {
     AragonSdkQueryItem.VOTING_SETTINGS,
     params,
   ],
+  isMember: (
+    baseParams: IAragonSdkBaseParams,
+    params: IFetchDelegateeParams
+  ): QueryKey => [AragonSdkQueryItem.IS_MEMBER, baseParams, params],
 };

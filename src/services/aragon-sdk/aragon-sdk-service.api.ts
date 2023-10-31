@@ -41,3 +41,8 @@ export interface IFetchProposalParams {
   pluginType?: PluginTypes;
   id: string;
 }
+
+export interface IFetchIsMemberParams {
+  tokenAddress: string;
+  blockNumber?: number;
+}
