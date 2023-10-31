@@ -901,13 +901,13 @@ export class Web3Address {
           });
         }
       }
-
       // Return the Address instance
       return addressObj;
     } catch (error) {
-      throw new Error(
-        `Failed to create Web3Address: ${(error as Error).message}`
-      );
+      // this means we've an issue fetching ens related data; return
+      // the provided instance regardless
+      console.warn('Error resolving ENS subdomain or avatar');
+      return addressObj;
     }
   }
 
