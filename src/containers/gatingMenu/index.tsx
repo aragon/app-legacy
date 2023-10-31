@@ -49,12 +49,7 @@ export const GatingMenu: React.FC = () => {
     pluginType: plugins?.[0].id as PluginTypes,
   });
 
-  const handleCloseMenu = () => {
-    const governancePath = generatePath(Governance, {network, dao: daoName});
-    navigate(governancePath);
-    close();
-  };
-
+  const handleCloseMenu = () => close();
   const handleWrapTokens = () => {
     const communityPath = generatePath(Community, {network, dao: daoName});
     navigate(communityPath);
@@ -81,7 +76,6 @@ export const GatingMenu: React.FC = () => {
     <ModalBottomSheetSwitcher isOpen={isOpen} onClose={handleCloseMenu}>
       <ModalBody>
         <StyledImage src={WalletIcon} />
-
         {displayWrapToken && (
           <WarningContainer>
             <WarningTitle>{t('modalAlert.wrapToken.title')}</WarningTitle>
@@ -96,7 +90,6 @@ export const GatingMenu: React.FC = () => {
             </WarningDescription>
           </WarningContainer>
         )}
-
         {isTokenBasedDao && !isDAOTokenWrapped && (
           <WarningContainer>
             <WarningTitle>{t('alert.gatingUsers.tokenTitle')}</WarningTitle>
@@ -110,7 +103,6 @@ export const GatingMenu: React.FC = () => {
             </WarningDescription>
           </WarningContainer>
         )}
-
         {!isTokenBasedDao && (
           <WarningContainer>
             <WarningTitle>{t('alert.gatingUsers.walletTitle')}</WarningTitle>
@@ -119,7 +111,6 @@ export const GatingMenu: React.FC = () => {
             </WarningDescription>
           </WarningContainer>
         )}
-
         {displayWrapToken ? (
           <div className="grid grid-cols-2 gap-6">
             <ButtonText
