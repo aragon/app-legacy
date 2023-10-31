@@ -82,9 +82,6 @@ JSX.Element => {
       // clear up previous submission state
       setVoteSubmitted(false);
 
-      // todo(kon): simple way of voting, use providers better
-      // It retrieves from local storage the vocdoni election id. Won't be this on the final implementation
-      // Not showing errors neither
       await submitGaslessVote(vote);
 
       await onVoteSubmitted(
@@ -114,7 +111,6 @@ JSX.Element => {
       onClose={handleCloseVoteModal}
       callback={handleVoteExecution}
       closeOnDrag={gaslessGlobalState !== StepStatus.LOADING}
-      // todo(kon): implementent free cost gas component
       maxFee={BigInt(0)}
       averageFee={BigInt(0)}
       gasEstimationError={undefined}

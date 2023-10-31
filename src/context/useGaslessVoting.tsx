@@ -21,15 +21,12 @@ import {useWallet} from '../hooks/useWallet';
 import {useDaoDetailsQuery} from '../hooks/useDaoDetails';
 import {ProposalStatus} from '@aragon/sdk-client-common';
 
-// todo(kon): move this block somewhere else
 export enum GaslessVotingStepId {
   CREATE_VOTE_ID = 'CREATE_VOTE_ID',
   PUBLISH_VOTE = 'PUBLISH_VOTE',
 }
 
 export type GaslessVotingSteps = StepsMap<GaslessVotingStepId>;
-
-// todo(kon): end to move this block somewhere else
 
 const useGaslessVoting = () => {
   const {client: vocdoniClient} = useVocdoniClient();
@@ -53,17 +50,16 @@ const useGaslessVoting = () => {
     [daoDetails, pluginClient]
   );
 
-  const {steps, updateStepStatus, doStep, globalState, resetStates} =
-    useFunctionStepper({
-      initialSteps: {
-        CREATE_VOTE_ID: {
-          status: StepStatus.WAITING,
-        },
-        PUBLISH_VOTE: {
-          status: StepStatus.WAITING,
-        },
-      } as GaslessVotingSteps,
-    });
+  const {steps, doStep, globalState, resetStates} = useFunctionStepper({
+    initialSteps: {
+      CREATE_VOTE_ID: {
+        status: StepStatus.WAITING,
+      },
+      PUBLISH_VOTE: {
+        status: StepStatus.WAITING,
+      },
+    } as GaslessVotingSteps,
+  });
 
   const submitVote = useCallback(
     async (vote: VoteProposalParams, electionId: string) => {

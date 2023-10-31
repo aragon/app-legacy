@@ -11,7 +11,6 @@ import {
   Census,
   Census3Census,
   Election,
-  ErrAccountNotFound,
   ICensus3Token,
   IElectionParameters,
   TokenCensus,
@@ -25,7 +24,6 @@ import {
   useFunctionStepper,
 } from '../hooks/useFunctionStepper';
 
-// todo(kon): move this block somewhere else
 export enum GaslessProposalStepId {
   REGISTER_VOCDONI_ACCOUNT = 'REGISTER_VOCDONI_ACCOUNT',
   CREATE_VOCDONI_ELECTION = 'CREATE_VOCDONI_ELECTION',
@@ -74,8 +72,6 @@ const proposalToElection = ({
   };
 };
 
-// todo(kon): end to move this block somewhere else
-
 const useCreateGaslessProposal = ({daoToken}: ICreateGaslessProposal) => {
   const [electionId, setElectionId] = useState('');
 
@@ -97,9 +93,9 @@ const useCreateGaslessProposal = ({daoToken}: ICreateGaslessProposal) => {
       } as GaslessProposalSteps,
     });
 
-  const {client: vocdoniClient, census3} = useClient();
+  const {client: vocdoniClient, census3, account, createAccount} = useClient();
 
-  // todo(kon): move this somewhere?
+  // todo(kon): check if this is needed somewhere else
   const collectFaucet = useCallback(
     async (cost: number, account: AccountData) => {
       let balance = account.balance;
@@ -132,46 +128,25 @@ const useCreateGaslessProposal = ({daoToken}: ICreateGaslessProposal) => {
             value: i,
           }))
       );
-      // todo(kon): handle how collect faucet have to work
+
       const cost = await vocdoniClient.calculateElectionCost(election);
-      const accountInfo = await vocdoniClient.fetchAccountInfo();
 
-      console.log(
-        'DEBUG',
-        'Estimated cost',
-        cost,
-        'balance',
-        accountInfo.balance
-      );
+      console.log('DEBUG', 'Estimated cost', cost, 'balance', account!.balance);
 
-      await collectFaucet(cost, accountInfo);
+      await collectFaucet(cost, account!);
 
       console.log('DEBUG', 'Creating election:', election);
       return await vocdoniClient.createElection(election);
     },
-    [collectFaucet, vocdoniClient]
+    [account, collectFaucet, vocdoniClient]
   );
 
-  const createAccount = useCallback(async () => {
+  const checkAccountCreation = useCallback(async () => {
     // Check if the account is already created, if not, create it
-    let account: AccountData | null = null;
-    try {
-      console.log('DEBUG', 'get  account info');
-      account = await vocdoniClient.fetchAccountInfo();
-    } catch (e) {
-      // todo(kon): replace error handling when the api return code error is fixed. Now is a generic 500
-      if (e instanceof ErrAccountNotFound) {
-        console.log('DEBUG', 'Account not found, creating it');
-        account = await vocdoniClient.createAccount();
-      } else throw e;
-    }
-
-    if (!account) {
-      throw Error('Error creating a Vocdoni account');
-    }
+    await createAccount();
 
     return account;
-  }, [vocdoniClient]);
+  }, [account, createAccount]);
 
   const createCensus = useCallback(async (): Promise<TokenCensus> => {
     async function getCensus3Token(): Promise<ICensus3Token> {
@@ -238,7 +213,7 @@ const useCreateGaslessProposal = ({daoToken}: ICreateGaslessProposal) => {
       // 1. Create an account if not exists
       await doStep(
         GaslessProposalStepId.REGISTER_VOCDONI_ACCOUNT,
-        createAccount
+        checkAccountCreation
       );
       console.log('DEBUG', 'Account created start creating gasless proposal');
 
@@ -261,7 +236,6 @@ const useCreateGaslessProposal = ({daoToken}: ICreateGaslessProposal) => {
       console.log('DEBUG', 'Election created', electionId);
 
       // 3. Register the proposal onchain
-      // todo(kon): Register election to the DAO
       await doStep(
         GaslessProposalStepId.CREATE_ONCHAIN_PROPOSAL,
         async () => await handleOnchainProposal(electionId)

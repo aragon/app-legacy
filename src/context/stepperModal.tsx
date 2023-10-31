@@ -173,8 +173,7 @@ const StepperModal = <X extends GenericKeyEnum>({
                   <IconChevronRight />
                 ) : undefined
               }
-              // todo(kon): implement disabled button when is loading gas fees but not when gasEstimationError??
-              // disabled={gasEstimationError !== undefined}
+              disabled={gasEstimationError !== undefined}
               onClick={callback}
             />
           </ButtonContainer>

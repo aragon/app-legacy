@@ -149,7 +149,6 @@ const CreateProposalWrapper: React.FC<Props> = ({
   const disableActionButton =
     !proposalCreationData && creationProcessState !== TransactionState.SUCCESS;
 
-  // todo(kon): this code have to be placed somewhere else?
   const {
     steps: gaslessProposalSteps,
     globalState: gaslessGlobalState,
@@ -705,7 +704,6 @@ const CreateProposalWrapper: React.FC<Props> = ({
   }, [queryClient]);
 
   const handlePublishProposal = useCallback(
-    // todo(kon): this is a quickfix to update the internal cache with updated data. Delete this attribute when minSDK is ready
     async (vochainProposalId?: string) => {
       if (!pluginClient) {
         return new Error('ERC20 SDK client is not initialized correctly');
@@ -726,15 +724,14 @@ const CreateProposalWrapper: React.FC<Props> = ({
         total_usd_cost: averageFee ? tokenPrice * Number(averageFee) : 0,
       });
 
-      // todo(kon): fix this if needed
       let proposalIterator: AsyncGenerator<ProposalCreationStepValue>;
       if (gasless && vochainProposalId) {
-        const proposalParams =
-          proposalCreationData as CreateGasslessProposalParams;
-        proposalParams.vochainProposalId = vochainProposalId;
         proposalIterator = (
           pluginClient as GaslessVotingClient
-        ).methods.createProposal(proposalParams);
+        ).methods.createProposal({
+          ...(proposalCreationData as CreateGasslessProposalParams),
+          vochainProposalId,
+        });
       } else {
         proposalIterator = (
           pluginClient as MultisigClient | TokenVotingClient
