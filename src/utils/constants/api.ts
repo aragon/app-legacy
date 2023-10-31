@@ -29,8 +29,8 @@ export const SUBGRAPH_API_URL: SubgraphNetworkUrl = {
 
 type AlchemyApiKeys = Record<SupportedNetworks, string | undefined>;
 export const alchemyApiKeys: AlchemyApiKeys = {
-  arbitrum: import.meta.env.VITE_ALCHEMY_KEY_ARBITRUM as string,
-  'arbitrum-goerli': import.meta.env.VITE_ALCHEMY_KEY_ARBITRUM_GOERLI as string,
+  arbitrum: import.meta.env.VITE_ALCHEMY_KEY_MAINNET as string,
+  'arbitrum-goerli': import.meta.env.VITE_ALCHEMY_KEY_MAINNET as string,
   base: undefined,
   'base-goerli': undefined,
   ethereum: import.meta.env.VITE_ALCHEMY_KEY_MAINNET as string,

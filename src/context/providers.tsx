@@ -159,7 +159,7 @@ export function getInfuraProvider(
     networkishOptions.ensAddress =
       LIVE_CONTRACTS[SupportedVersion.LATEST][
         networkishOptions.name as sdkSupportedNetworks
-      ].ensRegistryAddress;
+      ]?.ensRegistryAddress;
   }
 
   return new InfuraProvider(networkishOptions, infuraApiKey);
@@ -190,7 +190,7 @@ export function getJsonRpcProvider(
     networkishOptions.ensAddress =
       LIVE_CONTRACTS[SupportedVersion.LATEST][
         networkishOptions.name as sdkSupportedNetworks
-      ].ensRegistryAddress;
+      ]?.ensRegistryAddress;
   }
 
   return new JsonRpcProvider(
