@@ -18,10 +18,6 @@ import {
   UnpublishedElection,
 } from '@vocdoni/sdk';
 import {VoteValues} from '@aragon/sdk-client';
-import {
-  GaslessPluginLocalStorageKeys,
-  GaslessPluginLocalStorageTypes,
-} from '../hooks/useVocdoniSdk';
 import {useClient} from '@vocdoni/react-providers';
 import {
   StepsMap,
@@ -82,44 +78,6 @@ const proposalToElection = ({
 
 const useCreateGaslessProposal = ({daoToken}: ICreateGaslessProposal) => {
   const [electionId, setElectionId] = useState('');
-  // todo(kon): only cache the proposal using local storage?
-  const cacheProposal = useCallback(
-    (proposalId: string, electionId: string) => {
-      console.log('DEBUG', 'Caching proposal', proposalId, electionId);
-      if (!electionId) return;
-
-      const proposal = {
-        [proposalId]: {
-          electionId: electionId,
-        },
-      } as GaslessPluginLocalStorageTypes[GaslessPluginLocalStorageKeys.PROPOSAL_TO_ELECTION];
-
-      const proposalsIds = localStorage.getItem(
-        GaslessPluginLocalStorageKeys.PROPOSAL_TO_ELECTION
-      );
-
-      if (proposalsIds === null) {
-        localStorage.setItem(
-          GaslessPluginLocalStorageKeys.PROPOSAL_TO_ELECTION,
-          JSON.stringify({
-            ...proposal,
-          } as GaslessPluginLocalStorageTypes[GaslessPluginLocalStorageKeys.PROPOSAL_TO_ELECTION])
-        );
-      } else {
-        const parsed = JSON.parse(
-          proposalsIds
-        ) as GaslessPluginLocalStorageTypes[GaslessPluginLocalStorageKeys.PROPOSAL_TO_ELECTION];
-        localStorage.setItem(
-          GaslessPluginLocalStorageKeys.PROPOSAL_TO_ELECTION,
-          JSON.stringify({
-            ...parsed,
-            ...proposal,
-          } as GaslessPluginLocalStorageTypes[GaslessPluginLocalStorageKeys.PROPOSAL_TO_ELECTION])
-        );
-      }
-    },
-    []
-  );
 
   const {steps, updateStepStatus, doStep, globalState, resetStates} =
     useFunctionStepper({
@@ -330,7 +288,7 @@ const useCreateGaslessProposal = ({daoToken}: ICreateGaslessProposal) => {
     ]
   );
 
-  return {steps, globalState, createProposal, electionId, cacheProposal};
+  return {steps, globalState, createProposal, electionId};
 };
 
 export {useCreateGaslessProposal};

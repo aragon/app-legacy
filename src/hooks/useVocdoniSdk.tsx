@@ -15,19 +15,3 @@ export const VocdoniClientProvider = ({children}: PropsWithChildren) => {
     </ClientProvider>
   );
 };
-
-// todo(kon): move this following block somewhere else
-export enum GaslessPluginLocalStorageKeys {
-  PROPOSAL_TO_ELECTION = 'PROPOSAL_TO_ELECTION',
-}
-
-export interface ProposalToElection {
-  [key: string]: {
-    // The key is the proposal id
-    electionId: string;
-  };
-}
-export interface GaslessPluginLocalStorageTypes {
-  [GaslessPluginLocalStorageKeys.PROPOSAL_TO_ELECTION]: ProposalToElection;
-}
-// todo(kon): move this previous block somewehere else
