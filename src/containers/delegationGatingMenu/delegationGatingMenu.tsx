@@ -18,7 +18,7 @@ import {useDelegatee} from 'services/aragon-sdk/queries/use-delegatee';
 import {abbreviateTokenAmount} from 'utils/tokens';
 import {useWallet} from 'hooks/useWallet';
 import {TokenVotingProposal} from '@aragon/sdk-client';
-import {useIsMember} from 'services/aragon-sdk/queries/use-is-member';
+import {useGetMember} from 'services/aragon-sdk/queries/use-get-member';
 
 export interface IDelegationGatingMenuState {
   proposal?: TokenVotingProposal;
@@ -27,15 +27,16 @@ export interface IDelegationGatingMenuState {
 const getDelegationLabels = (params: {
   hasBalance: boolean;
   hasPastBalance: boolean;
+  needsSelfDelegation: boolean;
 }) => {
-  const {hasBalance, hasPastBalance} = params;
+  const {hasBalance, hasPastBalance, needsSelfDelegation} = params;
 
   const firstKey = hasPastBalance ? 'sentence1b' : 'sentence1a';
-  const secondKey = hasPastBalance
-    ? 'sentence2a'
-    : hasBalance
+  const secondKey = needsSelfDelegation
     ? 'sentence2b'
-    : 'sentence2c';
+    : !hasBalance
+    ? 'sentence2c'
+    : 'sentence2a';
 
   return {firstKey, secondKey};
 };
@@ -61,17 +62,17 @@ export const DelegationGatingMenu: React.FC = () => {
     enabled: address != null && daoToken != null,
   });
 
-  const tokenAmount = abbreviateTokenAmount(tokenBalance?.formatted ?? '0');
-
   const hasBalance = tokenBalance != null && tokenBalance.value > 0;
 
-  const {data: hasPastBalance} = useIsMember(
+  const {data: daoMember} = useGetMember(
     {
       tokenAddress: daoToken?.address as string,
       blockNumber: proposal?.creationBlockNumber as number,
     },
     {enabled: daoToken != null && proposal != null}
   );
+  const pastBalance = daoMember?.balance ?? 0;
+  const parsedPastBalance = abbreviateTokenAmount(pastBalance.toString());
 
   const {data: delegateData} = useDelegatee(
     {tokenAddress: daoToken?.address as string},
@@ -96,13 +97,14 @@ export const DelegationGatingMenu: React.FC = () => {
 
   const {firstKey, secondKey} = getDelegationLabels({
     hasBalance,
-    hasPastBalance: Boolean(hasPastBalance),
+    hasPastBalance: pastBalance > 0,
+    needsSelfDelegation,
   });
-  const firstSentence = t(`modal.delegation.CanVote.${firstKey}`, {
+  const firstSentence = t(`modal.delegation.CantVote.${firstKey}`, {
     tokenSymbol: daoToken?.symbol,
-    balance: tokenAmount,
+    balance: parsedPastBalance,
   });
-  const secondSentence = t(`modal.delegation.CanVote.${secondKey}`, {
+  const secondSentence = t(`modal.delegation.CantVote.${secondKey}`, {
     tokenSymbol: daoToken?.symbol,
   });
 
@@ -134,7 +136,7 @@ export const DelegationGatingMenu: React.FC = () => {
             {t(`modal.delegation.CantVote.title`)}
           </p>
           <p className="text-neutral-600">
-            {t('modal.delegation.CanVote.description', {
+            {t('modal.delegation.CantVote.description', {
               sentence1: firstSentence,
               sentence2: secondSentence,
             })}
@@ -159,7 +161,7 @@ export const DelegationGatingMenu: React.FC = () => {
             label={t('modal.delegation.NoVotingPower.Link')}
             href={t('modal.delegation.NoVotingPower.LinkURL')}
             target="_blank"
-            className="self-center"
+            className="my-3 self-center"
             iconRight={<IconLinkExternal />}
           />
         </ContentGroup>

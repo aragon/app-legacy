@@ -42,7 +42,7 @@ export interface IFetchProposalParams {
   id: string;
 }
 
-export interface IFetchIsMemberParams {
+export interface IFetchMemberParams {
   tokenAddress: string;
   blockNumber?: number;
 }

@@ -526,11 +526,18 @@ export const Proposal: React.FC = () => {
       open('network');
       statusRef.current.wasOnWrongNetwork = true;
     } else if (displayDelegationVoteGating) {
-      return open('delegationGating');
+      return open('delegationGating', {proposal});
     } else if (canVote) {
       setVotingInProcess(true);
     }
-  }, [address, canVote, displayDelegationVoteGating, isOnWrongNetwork, open]);
+  }, [
+    address,
+    canVote,
+    displayDelegationVoteGating,
+    proposal,
+    isOnWrongNetwork,
+    open,
+  ]);
 
   // handler for execution
   const handleExecuteNowClicked = () => {
