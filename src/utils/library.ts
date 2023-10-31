@@ -631,6 +631,8 @@ export const translateToAppNetwork = (
       return 'mumbai';
     case SdkSupportedNetworks.POLYGON:
       return 'polygon';
+    case SdkSupportedNetworks.LOCAL:
+      return 'local';
     default:
       return 'unsupported';
   }
