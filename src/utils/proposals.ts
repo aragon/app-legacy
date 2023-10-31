@@ -458,7 +458,7 @@ export function getLiveProposalTerminalProps(
     };
 
     // voters
-    // todo(kon): implement voters
+    // todo(kon)(cache): implement voters
     voters = [];
     // getErc20Voters(
     //   proposal.votes,

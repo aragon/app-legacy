@@ -124,7 +124,7 @@ export const useGaslessHasAlreadyVote = ({
 
   useEffect(() => {
     const checkAlreadyVote = async () => {
-      // todo(kon): implement voters.some and if not, do the set has already vote
+      // todo(kon)(cache): implement voters.some and if not, do the set has already vote
       // if (proposal.votes.some(vote => vote.voter === address)) {
       //   setHasAlreadyVote(true);
       //   return;

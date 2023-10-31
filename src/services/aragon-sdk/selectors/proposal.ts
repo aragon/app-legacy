@@ -148,7 +148,7 @@ function syncApprovalsOrVotes(
   if (isMultisigProposal(proposal)) {
     proposal.approvals = syncMultisigVotes(chainId, proposal);
   } else if (isGaslessProposal(proposal)) {
-    // todo(kon): gasless vote array is not yet implemented
+    // todo(kon)(cache): gasless vote array is not yet implemented
     const {gaslessVotes, approvers} = syncGaslessVotesOrApproves(
       chainId,
       proposal
@@ -277,7 +277,7 @@ function syncGaslessVotesOrApproves(
   );
 
   const serverApprovals = new Set(proposal.approvers);
-  // todo(kon): implement gasless votes cache
+  // todo(kon)(cache): implement gasless votes cache
   // const serverGaslessVotes = new Set(proposal.votes);
 
   allCachedVotes.forEach(cachedVote => {

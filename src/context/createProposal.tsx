@@ -655,7 +655,7 @@ const CreateProposalWrapper: React.FC<Props> = ({
       } else if (isGaslessVotingSettings(votingSettings)) {
         const proposal = {
           ...baseParams,
-          // todo(kon): is this needed to be implemented?
+          // todo(kon)(cache): is this needed to be implemented?
           // expirationDate: Date;
           executed: false,
           approvers: new Array<string>(),
