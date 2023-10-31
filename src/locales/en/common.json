@@ -1320,7 +1320,8 @@
         "alertCriticalDapp": "The QR code provided is not from {{dappName}}.",
         "alertSuccess": "{{dappName}} connected",
         "codeInputPlaceholder": "wc: …",
-        "alertCriticalQRcode": "The QR code provided is not from {{dappName}}."
+        "alertCriticalQRcode": "The QR code provided is not from {{dappName}}.",
+        "alertInvalid": "Invalid code"
       },
       "detaildApp": {
         "spinnerLabel": "Listening for actions…",

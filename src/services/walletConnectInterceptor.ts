@@ -5,6 +5,7 @@ import {AuthClientTypes} from '@walletconnect/auth-client';
 import {Web3WalletTypes} from '@walletconnect/web3wallet';
 import {PairingTypes, SessionTypes} from '@walletconnect/types';
 import {WC_URI_PATTERN} from 'utils/constants';
+import {i18n} from '../../i18n.config';
 
 const URI_REGEX = new RegExp(WC_URI_PATTERN);
 class WalletConnectInterceptor {
@@ -25,7 +26,9 @@ class WalletConnectInterceptor {
 
   validateURI(uri: string) {
     // TODO: Get crowdin key for this
-    return URI_REGEX.test(uri) ? undefined : 'Invalid code';
+    return URI_REGEX.test(uri)
+      ? undefined
+      : i18n.t('modal.dappConnect.validation.alertInvalid');
   }
 
   subscribeConnectProposal(
