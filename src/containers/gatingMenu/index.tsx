@@ -15,7 +15,7 @@ import {useGlobalModalContext} from 'context/globalModals';
 import {useNetwork} from 'context/network';
 import {PluginTypes} from 'hooks/usePluginClient';
 import WalletIcon from 'public/wallet.svg';
-import {Governance, Community} from 'utils/paths';
+import {Community} from 'utils/paths';
 import {
   Erc20WrapperTokenDetails,
   MajorityVotingSettings,
