@@ -492,7 +492,7 @@ export const Proposal: React.FC = () => {
     votingSettings.votingMode === VotingMode.VOTE_REPLACEMENT;
 
   const votingDisabled =
-    (address != null && proposal?.status !== ProposalStatus.ACTIVE) ||
+    proposal?.status !== ProposalStatus.ACTIVE ||
     (isMultisigPlugin && voted) ||
     (isTokenVotingPlugin && voted && !canRevote);
 
