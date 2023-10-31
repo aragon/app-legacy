@@ -18,14 +18,11 @@ import {DaoAction, ProposalStatus} from '@aragon/sdk-client-common';
 import TipTapLink from '@tiptap/extension-link';
 import {useEditor} from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
-import {BigNumber, constants} from 'ethers';
 import React, {useCallback, useEffect, useMemo, useRef, useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {generatePath, useNavigate, useParams} from 'react-router-dom';
 import sanitizeHtml from 'sanitize-html';
 import styled from 'styled-components';
-import {Address} from 'viem';
-import {useBalance} from 'wagmi';
 
 import {ExecutionWidget} from 'components/executionWidget';
 import ResourceList from 'components/resourceList';
@@ -47,7 +44,6 @@ import {PluginTypes, usePluginClient} from 'hooks/usePluginClient';
 import useScreen from 'hooks/useScreen';
 import {useWallet} from 'hooks/useWallet';
 import {useWalletCanVote} from 'hooks/useWalletCanVote';
-import {usePastVotingPower} from 'services/aragon-sdk/queries/use-past-voting-power';
 import {useProposal} from 'services/aragon-sdk/queries/use-proposal';
 import {
   isMultisigVotingSettings,
@@ -55,7 +51,7 @@ import {
   useVotingSettings,
 } from 'services/aragon-sdk/queries/use-voting-settings';
 import {useTokenAsync} from 'services/token/queries/use-token';
-import {CHAIN_METADATA, SupportedNetworks} from 'utils/constants';
+import {CHAIN_METADATA} from 'utils/constants';
 import {featureFlags} from 'utils/featureFlags';
 import {
   decodeAddMembersToAction,
@@ -172,23 +168,6 @@ export const Proposal: React.FC = () => {
     proposalStatus as string
   );
 
-  const {data: tokenBalanceData} = useBalance({
-    address: address as Address,
-    token: daoToken?.address as Address,
-    chainId: CHAIN_METADATA[network as SupportedNetworks].id,
-    enabled: address != null && daoToken != null,
-  });
-  const tokenBalance = BigNumber.from(tokenBalanceData?.value ?? 0);
-
-  const {data: pastVotingPower = constants.Zero} = usePastVotingPower(
-    {
-      address: address as string,
-      tokenAddress: daoToken?.address as string,
-      blockNumber: proposal?.creationBlockNumber as number,
-    },
-    {enabled: address != null && daoToken != null && proposal != null}
-  );
-
   const pluginClient = usePluginClient(pluginType);
 
   // ref used to hold "memories" of previous "state"
@@ -201,12 +180,8 @@ export const Proposal: React.FC = () => {
   const [votingInProcess, setVotingInProcess] = useState(false);
   const [expandedProposal, setExpandedProposal] = useState(false);
 
-  // Display the voting-power gating dialog when user has balance but delegated
-  // his token to someone else
-  const shouldDisplayDelegationVoteGating =
-    !isMultisigPlugin &&
-    tokenBalance.gt(constants.Zero) &&
-    pastVotingPower.lte(constants.Zero);
+  // Display the delegation gating dialog when user cannot vote on token-based proposal
+  const displayDelegationVoteGating = !isMultisigPlugin && !canVote;
 
   const editor = useEditor({
     editable: false,
@@ -516,15 +491,10 @@ export const Proposal: React.FC = () => {
     isTokenVotingSettings(votingSettings) &&
     votingSettings.votingMode === VotingMode.VOTE_REPLACEMENT;
 
-  // this tracks whether the voting button should be enabled
-  const enableVotingButton =
-    proposal?.status === ProposalStatus.ACTIVE && // active proposal
-    (address == null || // wallet disconnected
-      isOnWrongNetwork || // wrong network, allow user to switch networks
-      (voted === false && canVote === true) || // haven't voted and can vote
-      (isTokenVotingPlugin && voted && canRevote === true) || // voted but vote replacement enabled
-      // can vote but no voting power (voted should status should never be true if shouldDisplayDelegationVotingGating)
-      (voted === false && shouldDisplayDelegationVoteGating === true));
+  const votingDisabled =
+    (address != null && proposal?.status !== ProposalStatus.ACTIVE) ||
+    (isMultisigPlugin && voted) ||
+    (isTokenVotingPlugin && voted && !canRevote);
 
   const handleApprovalClick = useCallback(
     (tryExecution: boolean) => {
@@ -555,18 +525,12 @@ export const Proposal: React.FC = () => {
     } else if (isOnWrongNetwork) {
       open('network');
       statusRef.current.wasOnWrongNetwork = true;
-    } else if (shouldDisplayDelegationVoteGating) {
+    } else if (displayDelegationVoteGating) {
       return open('delegationGating');
     } else if (canVote) {
       setVotingInProcess(true);
     }
-  }, [
-    address,
-    canVote,
-    shouldDisplayDelegationVoteGating,
-    isOnWrongNetwork,
-    open,
-  ]);
+  }, [address, canVote, displayDelegationVoteGating, isOnWrongNetwork, open]);
 
   // handler for execution
   const handleExecuteNowClicked = () => {
@@ -581,24 +545,17 @@ export const Proposal: React.FC = () => {
     }
   };
 
-  // alert message, only shown when not eligible to vote
-  let alertMessage = '';
-  if (
-    proposal &&
-    proposal.status === 'Active' && // active proposal
+  const displayAlertMessage =
+    proposal?.status === 'Active' && // active proposal
     address && // logged in
-    isOnWrongNetwork === false && // on proper network
-    voted === false && // haven't voted
-    canVote === false && // cannot vote
-    shouldDisplayDelegationVoteGating === false // user delegated tokens
-  ) {
-    // presence of token delineates token voting proposal
-    alertMessage = isErc20VotingProposal(proposal)
-      ? t('votingTerminal.status.ineligibleTokenBased', {
-          token: proposal.token.name,
-        })
-      : t('votingTerminal.status.ineligibleWhitelist');
-  }
+    !isOnWrongNetwork && // on proper network
+    !voted && // haven't voted
+    !canVote && // cannot vote
+    isMultisigPlugin; // is multisig plugin
+
+  const alertMessage = displayAlertMessage
+    ? t('votingTerminal.status.ineligibleWhitelist')
+    : undefined;
 
   // status steps for proposal
   const proposalSteps = proposal
@@ -724,7 +681,7 @@ export const Proposal: React.FC = () => {
               onApprovalClicked={handleApprovalClick}
               onCancelClicked={() => setVotingInProcess(false)}
               voteButtonLabel={voteButtonLabel}
-              voteNowDisabled={!enableVotingButton}
+              voteNowDisabled={votingDisabled}
               votingInProcess={votingInProcess}
               executableWithNextApproval={executableWithNextApproval}
               onVoteSubmitClicked={vote =>
@@ -771,10 +728,6 @@ const ProposalTitle = styled.p.attrs({
 const ContentWrapper = styled.div.attrs({
   className: 'flex flex-col md:flex-row gap-x-6 gap-y-3',
 })``;
-
-// const BadgeContainer = styled.div.attrs({
-//   className: 'flex flex-wrap gap-x-3',
-// })``;
 
 const ProposerLink = styled.p.attrs({
   className: 'text-neutral-500',

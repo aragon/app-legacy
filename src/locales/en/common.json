@@ -1268,6 +1268,15 @@
         "ctaLabel": "Ok, understood",
         "Link": "Learn more",
         "LinkURL": "https://aragon.org/how-to/delegate-your-voting-power"
+      },
+      "CantVote": {
+        "title": "You can't vote",
+        "description": "{{sentence1}} {{sentence2}}",
+        "sentence1a": "You weren't holding {{tokenSymbol}} and had no voting power when this proposal was created.",
+        "sentence1b": "You held {{balance}} {{tokenSymbol}} when this proposal was created but had no voting power.",
+        "sentence2a": "",
+        "sentence2b": "If you want to participate in future proposals you have to claim your voting power. ",
+        "sentence2c": "If you want to participate in future proposals you have to obtain {{tokenSymbol}}."
       }
     },
     "delegationInactive": {
