@@ -10,6 +10,8 @@ import isPropValid from '@emotion/is-prop-valid';
 import {StyleSheetManager} from 'styled-components';
 import {WagmiConfig, configureChains, createConfig} from 'wagmi';
 import {
+  arbitrum,
+  arbitrumGoerli,
   base,
   baseGoerli,
   goerli,
@@ -31,8 +33,24 @@ import {UseClientProvider} from 'hooks/useClient';
 import {infuraApiKey, walletConnectProjectID} from 'utils/constants';
 import {App} from './app';
 
-const chains = [base, baseGoerli, goerli, mainnet, polygon, polygonMumbai];
-const ledgerChains = [goerli, mainnet, polygon, polygonMumbai];
+const chains = [
+  base,
+  baseGoerli,
+  goerli,
+  mainnet,
+  polygon,
+  polygonMumbai,
+  arbitrum,
+  arbitrumGoerli,
+];
+const ledgerChains = [
+  goerli,
+  mainnet,
+  polygon,
+  polygonMumbai,
+  arbitrum,
+  arbitrumGoerli,
+];
 
 const {publicClient} = configureChains(chains, [
   w3mProvider({projectId: walletConnectProjectID}),

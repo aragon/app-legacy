@@ -118,14 +118,17 @@ export function getAlchemyProvider(
 
   const networkishOptions: Networkish = {
     chainId: CHAIN_METADATA[network]?.id,
-    name: translateToNetworkishName(network),
+    name:
+      network !== 'arbitrum-goerli'
+        ? translateToNetworkishName(network)
+        : 'arbitrum-goerli',
   };
 
   if (NETWORKS_WITH_CUSTOM_REGISTRY.includes(network)) {
     networkishOptions.ensAddress =
       LIVE_CONTRACTS[SupportedVersion.LATEST][
         networkishOptions.name as sdkSupportedNetworks
-      ].ensRegistryAddress;
+      ]?.ensRegistryAddress;
   }
 
   return new AlchemyProvider(networkishOptions, apiKey);
@@ -152,7 +155,10 @@ export function getInfuraProvider(
 
   const networkishOptions: Networkish = {
     chainId: CHAIN_METADATA[network]?.id,
-    name: translateToNetworkishName(network),
+    name:
+      network !== 'arbitrum-goerli'
+        ? translateToNetworkishName(network)
+        : 'arbitrum-goerli',
   };
 
   if (NETWORKS_WITH_CUSTOM_REGISTRY.includes(network)) {
