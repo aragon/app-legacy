@@ -211,14 +211,14 @@ const StyledNumberInput = styled.input.attrs<StyledNumberInputProps>(
     };
   }
 )<StyledNumberInputProps>`
-  text-align: center;
-  ::-webkit-inner-spin-button,
-  ::-webkit-outer-spin-button {
+  &::-webkit-inner-spin-button,
+  &::-webkit-outer-spin-button {
     -webkit-appearance: none;
     margin: 0;
   }
-  -moz-appearance: textfield;
 
+  -moz-appearance: textfield;
+  text-align: center;
   outline: 0;
 `;
 
