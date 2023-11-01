@@ -180,13 +180,22 @@ export const Proposal: React.FC = () => {
   });
   const tokenBalance = BigNumber.from(tokenBalanceData?.value ?? 0);
 
+  const shouldFetchPastVotingPower =
+    address != null &&
+    daoToken != null &&
+    proposal != null &&
+    proposal.status === ProposalStatus.ACTIVE;
+
   const {data: pastVotingPower = constants.Zero} = usePastVotingPower(
     {
       address: address as string,
       tokenAddress: daoToken?.address as string,
       blockNumber: proposal?.creationBlockNumber as number,
+      network,
     },
-    {enabled: address != null && daoToken != null && proposal != null}
+    {
+      enabled: shouldFetchPastVotingPower,
+    }
   );
 
   const pluginClient = usePluginClient(pluginType);
