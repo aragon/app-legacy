@@ -1,5 +1,7 @@
 import {ProposalQueryParams} from '@aragon/sdk-client';
+
 import {PluginTypes} from 'hooks/usePluginClient';
+import {SupportedNetworks} from 'utils/constants';
 
 export interface IFetchDelegateeParams {
   tokenAddress: string;
@@ -9,6 +11,7 @@ export interface IFetchPastVotingPowerParams {
   tokenAddress: string;
   address: string;
   blockNumber: number;
+  network: SupportedNetworks;
 }
 
 export interface IFetchVotingPowerParams {

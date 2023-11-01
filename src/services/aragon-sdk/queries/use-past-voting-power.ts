@@ -1,16 +1,19 @@
 import {UseQueryOptions, useQuery, useQueryClient} from '@tanstack/react-query';
-import {aragonSdkQueryKeys} from '../query-keys';
-import type {IFetchPastVotingPowerParams} from '../aragon-sdk-service.api';
-import {getPastVotingPower} from 'utils/tokens';
-import {useProviders} from 'context/providers';
 import {BigNumber} from 'ethers';
 import {useCallback} from 'react';
+
+import {useNetwork} from 'context/network';
+import {useProviders} from 'context/providers';
+import {getPastVotingPower} from 'utils/tokens';
+import type {IFetchPastVotingPowerParams} from '../aragon-sdk-service.api';
+import {aragonSdkQueryKeys} from '../query-keys';
 
 export const usePastVotingPower = (
   params: IFetchPastVotingPowerParams,
   options?: UseQueryOptions<BigNumber>
 ) => {
   const {api: provider} = useProviders();
+  const {network} = useNetwork();
 
   return useQuery(
     aragonSdkQueryKeys.pastVotingPower(params),
@@ -19,7 +22,8 @@ export const usePastVotingPower = (
         params.tokenAddress,
         params.address,
         params.blockNumber,
-        provider
+        provider,
+        network
       ),
     options
   );
@@ -28,6 +32,7 @@ export const usePastVotingPower = (
 export const usePastVotingPowerAsync = () => {
   const queryClient = useQueryClient();
   const {api: provider} = useProviders();
+  const {network} = useNetwork();
 
   const fetchPastVotingPowerAsync = useCallback(
     (params: IFetchPastVotingPowerParams) =>
@@ -38,10 +43,11 @@ export const usePastVotingPowerAsync = () => {
             params.tokenAddress,
             params.address,
             params.blockNumber,
-            provider
+            provider,
+            network
           ),
       }),
-    [queryClient, provider]
+    [queryClient, provider, network]
   );
 
   return fetchPastVotingPowerAsync;
