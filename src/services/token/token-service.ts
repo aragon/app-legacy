@@ -25,6 +25,7 @@ import {
   CovalentTokenTransfer,
   CovalentTransferInfo,
 } from './domain/covalent-transfer';
+import {useBalance} from 'wagmi';
 
 const REPLACEMENT_BASE_ETHER_LOGO_URL =
   'https://assets.coingecko.com/coins/images/279/large/ethereum.png?1595348880';
@@ -182,6 +183,7 @@ class TokenService {
     address,
     network,
     ignoreZeroBalances = true,
+    nativeTokenBalance,
   }: IFetchTokenBalancesParams): Promise<AssetBalance[] | null> => {
     const {networkId} = CHAIN_METADATA[network].covalent ?? {};
 
@@ -212,8 +214,14 @@ class TokenService {
     }
 
     return data.items.flatMap(({native_token, ...item}) => {
-      // ignore zero balances if indicated
-      if (ignoreZeroBalances && BigNumber.from(item.balance).isZero())
+      if (native_token && nativeTokenBalance === 0n) return [];
+
+      if (
+        ignoreZeroBalances &&
+        BigNumber.from(item.balance).isZero() &&
+        !native_token
+      )
+        // ignore zero balances if indicated
         return [];
 
       return {
@@ -231,7 +239,9 @@ class TokenService {
           : item.nft_data
           ? TokenType.ERC721
           : TokenType.ERC20) as tokenType,
-        balance: BigInt(item.balance),
+        balance: native_token
+          ? (nativeTokenBalance as bigint)
+          : BigInt(item.balance),
         updateDate: new Date(data.updated_at),
       };
     });

@@ -15,6 +15,8 @@ import type {
   IFetchTokenBalancesParams,
   IFetchTokenParams,
 } from '../token-service.api';
+import {useBalance} from 'wagmi';
+import {CHAIN_METADATA} from 'utils/constants';
 
 export const useToken = (
   params: IFetchTokenParams,
@@ -59,9 +61,18 @@ export const useTokenBalances = (
   params: IFetchTokenBalancesParams,
   options?: UseQueryOptions<AssetBalance[] | null>
 ) => {
+  const {data: nativeToken} = useBalance({
+    address: params.address as `0x${string}`,
+    chainId: CHAIN_METADATA[params.network].id,
+  });
+
   return useQuery(
     tokenQueryKeys.balances(params),
-    () => tokenService.fetchTokenBalances(params),
+    () =>
+      tokenService.fetchTokenBalances({
+        ...params,
+        nativeTokenBalance: nativeToken?.value,
+      }),
     options
   );
 };
