@@ -25,7 +25,6 @@ import {
   CovalentTokenTransfer,
   CovalentTransferInfo,
 } from './domain/covalent-transfer';
-import {useBalance} from 'wagmi';
 
 const REPLACEMENT_BASE_ETHER_LOGO_URL =
   'https://assets.coingecko.com/coins/images/279/large/ethereum.png?1595348880';
