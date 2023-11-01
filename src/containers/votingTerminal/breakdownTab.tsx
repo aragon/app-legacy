@@ -3,9 +3,9 @@ import React from 'react';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 
-import {formatterUtils, NumberFormat} from '@aragon/ods';
 import {TokenVotingOptions} from 'utils/proposals';
 import {ProposalVoteResults, VotingTerminalProps} from '.';
+import {abbreviateTokenAmount} from 'utils/tokens';
 
 type BreakdownProps = {
   approvals?: string[];
@@ -52,9 +52,9 @@ const BreakdownTab: React.FC<BreakdownProps> = ({
             key={key}
             option={key as TokenVotingOptions}
             percentage={result.percentage}
-            value={`${formatterUtils.formatNumber(result.value, {
-              format: NumberFormat.TOKEN_AMOUNT_SHORT,
-            })} ${token.symbol}`}
+            value={`${abbreviateTokenAmount(result.value.toString())} ${
+              token.symbol
+            }`}
           />
         ))}
       </VStackRelaxed>

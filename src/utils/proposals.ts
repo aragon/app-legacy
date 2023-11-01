@@ -57,6 +57,11 @@ const MappedVotes: {
   3: 'no',
 };
 
+const formatter = new Intl.NumberFormat('en-US', {
+  minimumFractionDigits: 0, // Minimum number of decimal places
+  maximumFractionDigits: 2, // Maximum number of decimal places
+});
+
 // this type guard will need to evolve when there are more types
 export function isTokenBasedProposal(
   proposal: SupportedProposals | undefined | null
@@ -218,18 +223,29 @@ export function getErc20Results(
 
   const totalYesNo = Big(yes.toString()).plus(no.toString());
 
+  // TODO: Format with new ODS formatter
   return {
     yes: {
-      value: formatUnits(yes, tokenDecimals),
-      percentage: Big(yes.toString()).mul(100).div(totalYesNo).toNumber(),
+      value: formatter.format(Number(formatUnits(yes, tokenDecimals))),
+      percentage: Number(
+        formatter.format(
+          Big(yes.toString()).mul(100).div(totalYesNo).toNumber()
+        )
+      ),
     },
     no: {
-      value: formatUnits(no, tokenDecimals),
-      percentage: Big(no.toString()).mul(100).div(totalYesNo).toNumber(),
+      value: formatter.format(Number(formatUnits(no, tokenDecimals))),
+      percentage: Number(
+        formatter.format(Big(no.toString()).mul(100).div(totalYesNo).toNumber())
+      ),
     },
     abstain: {
-      value: formatUnits(abstain, tokenDecimals),
-      percentage: Big(abstain.toString()).mul(100).div(totalYesNo).toNumber(),
+      value: formatter.format(Number(formatUnits(abstain, tokenDecimals))),
+      percentage: Number(
+        formatter.format(
+          Big(abstain.toString()).mul(100).div(totalYesNo).toNumber()
+        )
+      ),
     },
   };
 }
