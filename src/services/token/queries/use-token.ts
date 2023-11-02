@@ -6,7 +6,7 @@ import {
   useQueryClient,
 } from '@tanstack/react-query';
 import {useCallback} from 'react';
-import {useBalance} from 'wagmi';
+import {useBalance, Address} from 'wagmi';
 
 import {CHAIN_METADATA} from 'utils/constants';
 import {Token} from '../domain';
@@ -62,7 +62,7 @@ export const useTokenBalances = (
   options: UseQueryOptions<AssetBalance[] | null> = {}
 ) => {
   const {data: nativeToken, isFetched} = useBalance({
-    address: params.address as `0x${string}`,
+    address: params.address as Address,
     chainId: CHAIN_METADATA[params.network].id,
   });
 
