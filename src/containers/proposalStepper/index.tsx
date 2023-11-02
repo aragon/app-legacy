@@ -153,7 +153,7 @@ const ProposalStepper: React.FC<ProposalStepperType> = ({
         wizardTitle={t('newProposal.configureActions.heading')}
         wizardDescription={t('newProposal.configureActions.description')}
         isNextButtonDisabled={!areActionsValid}
-        {...(type === 'os-update' && {skipStep: true, hideWizard: true})}
+        // {...(type === 'os-update' && {skipStep: true, hideWizard: true})}
         onNextButtonDisabledClicked={() => {
           trigger('actions');
         }}
