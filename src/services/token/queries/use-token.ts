@@ -6,7 +6,9 @@ import {
   useQueryClient,
 } from '@tanstack/react-query';
 import {useCallback} from 'react';
+import {useBalance} from 'wagmi';
 
+import {CHAIN_METADATA} from 'utils/constants';
 import {Token} from '../domain';
 import {tokenQueryKeys} from '../query-keys';
 import {tokenService} from '../token-service';
@@ -15,8 +17,6 @@ import type {
   IFetchTokenBalancesParams,
   IFetchTokenParams,
 } from '../token-service.api';
-import {useBalance} from 'wagmi';
-import {CHAIN_METADATA} from 'utils/constants';
 
 export const useToken = (
   params: IFetchTokenParams,
@@ -59,19 +59,23 @@ export const useTokenList = (
 
 export const useTokenBalances = (
   params: IFetchTokenBalancesParams,
-  options?: UseQueryOptions<AssetBalance[] | null>
+  options: UseQueryOptions<AssetBalance[] | null> = {}
 ) => {
-  const {data: nativeToken} = useBalance({
+  const {data: nativeToken, isFetched} = useBalance({
     address: params.address as `0x${string}`,
     chainId: CHAIN_METADATA[params.network].id,
   });
+
+  if (!isFetched) {
+    options.enabled = false;
+  }
 
   return useQuery(
     tokenQueryKeys.balances(params),
     () =>
       tokenService.fetchTokenBalances({
         ...params,
-        nativeTokenBalance: nativeToken?.value,
+        nativeTokenBalance: nativeToken?.value ?? BigInt(0),
       }),
     options
   );

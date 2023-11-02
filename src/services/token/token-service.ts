@@ -213,12 +213,10 @@ class TokenService {
     }
 
     return data.items.flatMap(({native_token, ...item}) => {
-      if (native_token && nativeTokenBalance === 0n) return [];
-
       if (
         ignoreZeroBalances &&
-        BigNumber.from(item.balance).isZero() &&
-        !native_token
+        ((native_token && nativeTokenBalance === BigInt(0)) ||
+          BigNumber.from(item.balance).isZero())
       )
         // ignore zero balances if indicated
         return [];
