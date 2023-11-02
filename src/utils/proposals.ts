@@ -30,6 +30,7 @@ import {PluginTypes} from 'hooks/usePluginClient';
 import {
   isMultisigVotingSettings,
   isGaslessVotingSettings,
+  isTokenVotingSettings,
 } from 'services/aragon-sdk/queries/use-voting-settings';
 import {i18n} from '../../i18n.config';
 import {KNOWN_FORMATS, getFormattedUtcOffset} from './date';

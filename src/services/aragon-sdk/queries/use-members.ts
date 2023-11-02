@@ -1,7 +1,7 @@
 import {UseQueryOptions, useQuery} from '@tanstack/react-query';
 import {aragonSdkQueryKeys} from '../query-keys';
 import type {IFetchMembersParams} from '../aragon-sdk-service.api';
-import {usePluginClient} from 'hooks/usePluginClient';
+import {isGaslessVotingClient, usePluginClient} from 'hooks/usePluginClient';
 import {
   MultisigClient,
   TokenVotingClient,
@@ -15,6 +15,11 @@ const fetchMembers = async (
   client?: TokenVotingClient | MultisigClient | GaslessVotingClient
 ): Promise<Array<string | TokenVotingMember>> => {
   invariant(client != null, 'fetchMembers: client is not defined');
+  // todo(kon): change gasless method signature
+  if (isGaslessVotingClient(client)) {
+    const data = await client.methods.getMembers(params.pluginAddress);
+    return data;
+  }
   const data = await client.methods.getMembers({
     pluginAddress: params.pluginAddress,
   });

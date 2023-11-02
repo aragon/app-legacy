@@ -69,7 +69,7 @@ export const CommitteeVotingTerminal = ({
     notBegan,
   } = useGaslessCommiteVotes(pluginAddress, proposal);
 
-  const {handleCommitteApprove, transactionHash, executionFailed} =
+  const {handleExecutionMultisigApprove, executionFailed, executionTxHash} =
     useProposalTransactionContext();
 
   const mappedProps = useMemo(() => {
@@ -151,14 +151,14 @@ export const CommitteeVotingTerminal = ({
       return {
         voteNowDisabled: false,
         onClick: () => {
-          handleCommitteApprove({vote: VoteValues.YES});
+          handleExecutionMultisigApprove({vote: VoteValues.YES});
         },
       };
     } else return {voteNowDisabled: true};
   }, [
     address,
     canApprove,
-    handleCommitteApprove,
+    handleExecutionMultisigApprove,
     isApprovalPeriod,
     isOnWrongNetwork,
     statusRef,
@@ -206,12 +206,21 @@ export const CommitteeVotingTerminal = ({
     ) {
       return t('gaslessVotingTerminal.alerts.notInCommittee');
     }
-  }, [canApprove, isApprovalPeriod, isOnWrongNetwork, proposal, t, address]);
+  }, [
+    isApprovalPeriod,
+    proposal,
+    address,
+    isOnWrongNetwork,
+    canApprove,
+    approved,
+    t,
+  ]);
 
   const CommitteeVotingTerminal = () => {
     return (
       <VotingTerminal
         status={proposal.status}
+        pluginType={pluginType}
         statusLabel={approvalStatus}
         selectedTab={terminalTab}
         alertMessage={alertMessage}
@@ -268,7 +277,7 @@ export const CommitteeVotingTerminal = ({
         actions={actions}
         status={executionStatus}
         onExecuteClicked={onExecuteClicked}
-        txhash={transactionHash || proposal?.executionTxHash || undefined}
+        txhash={executionTxHash || proposal?.executionTxHash || undefined}
       />
     </>
   );

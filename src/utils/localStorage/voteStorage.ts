@@ -2,7 +2,7 @@ import {TokenVotingProposalVote} from '@aragon/sdk-client';
 
 import {SupportedChainID} from 'utils/constants';
 import {StorageUtils} from './abstractStorage';
-import {GaslessVoteOrApproval} from '../../services/aragon-sdk/selectors';
+import {GaslessVoteOrApprovalVote} from '../../services/aragon-sdk/selectors';
 
 /**
  * Type definition for cached vote data in local storage.
@@ -10,7 +10,7 @@ import {GaslessVoteOrApproval} from '../../services/aragon-sdk/selectors';
  */
 type VoteCache = {
   [proposalId: string]: {
-    votes: Array<GaslessVoteOrApproval | TokenVotingProposalVote | string>;
+    votes: Array<GaslessVoteOrApprovalVote | TokenVotingProposalVote | string>;
   };
 };
 
@@ -34,7 +34,7 @@ export class VoteStorage extends StorageUtils {
   addVote(
     chainId: SupportedChainID,
     proposalId: string,
-    voteOrApproval: GaslessVoteOrApproval | TokenVotingProposalVote | string
+    voteOrApproval: GaslessVoteOrApprovalVote | TokenVotingProposalVote | string
   ): void {
     const key = chainId.toString();
     const chainData: VoteCache = this.getItem(key) || {};
@@ -55,10 +55,9 @@ export class VoteStorage extends StorageUtils {
    * @param proposalId - The proposal ID whose votes need to be fetched.
    * @returns Array of votes for the given proposal.
    */
-  getVotes<T extends string | TokenVotingProposalVote | GaslessVoteOrApproval>(
-    chainId: SupportedChainID,
-    proposalId: string
-  ): Array<T> {
+  getVotes<
+    T extends string | TokenVotingProposalVote | GaslessVoteOrApprovalVote,
+  >(chainId: SupportedChainID, proposalId: string): Array<T> {
     const key = chainId.toString();
     const chainData: VoteCache = this.getItem(key) || {};
 

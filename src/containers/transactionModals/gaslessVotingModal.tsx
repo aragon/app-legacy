@@ -8,7 +8,6 @@ import useGaslessVoting, {
 import {StepperLabels} from '../../components/StepperProgress';
 import {VoteProposalParams, VoteValues} from '@aragon/sdk-client';
 import {useWallet} from '../../hooks/useWallet';
-import {ProposalId} from '../../utils/types';
 const GaslessVotingModal = ({
   vote,
   showVoteModal,
@@ -21,10 +20,9 @@ const GaslessVotingModal = ({
   setShowVoteModal: React.Dispatch<React.SetStateAction<boolean>>;
   setVoteSubmitted: React.Dispatch<React.SetStateAction<boolean>>;
   onVoteSubmitted: (
-    proposalId: ProposalId,
+    proposalId: string,
     vote: VoteValues,
-    voteReplaced?: boolean,
-    isGaslessVote?: boolean
+    isApproval?: boolean
   ) => Promise<void>;
 }): // props: OffChainVotingModalProps<X>
 JSX.Element => {
@@ -84,12 +82,7 @@ JSX.Element => {
 
       await submitGaslessVote(vote);
 
-      await onVoteSubmitted(
-        new ProposalId(vote.proposalId),
-        vote.vote,
-        false,
-        true
-      );
+      await onVoteSubmitted(vote.proposalId, vote.vote, false);
     }
   }, [
     handleCloseVoteModal,

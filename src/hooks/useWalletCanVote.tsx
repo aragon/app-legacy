@@ -6,8 +6,6 @@ import {
 import {useEffect, useState} from 'react';
 
 import {HookData} from 'utils/types';
-import {PluginTypes, usePluginClient} from './usePluginClient';
-import {HookData, ProposalId} from 'utils/types';
 import {
   GaselessPluginName,
   PluginTypes,
@@ -54,7 +52,7 @@ export const useWalletCanVote = (
         canVote = [
           await (client as MultisigClient)?.methods.canApprove({
             proposalId,
-            approverAddressOrEns: address,
+            approverAddressOrEns: address!,
           }),
         ];
       } else if (isTokenVotingClient) {
@@ -64,7 +62,7 @@ export const useWalletCanVote = (
           VoteValues.YES,
         ].map(vote => {
           return (client as TokenVotingClient)?.methods.canVote({
-            voterAddressOrEns: address,
+            voterAddressOrEns: address!,
             proposalId,
             vote,
           });

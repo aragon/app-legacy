@@ -253,7 +253,7 @@ function syncTokenBasedVotes(
 type ApprovalVote = string;
 type GaslessVote = string;
 
-export type GaslessVoteOrApproval =
+export type GaslessVoteOrApprovalVote =
   | {
       type: 'gaslessVote';
       vote: GaslessVote;
@@ -271,7 +271,7 @@ function syncGaslessVotesOrApproves(
   const gaslessVoteCache: GaslessVote[] = [];
 
   // all cached votes
-  const allCachedVotes = voteStorage.getVotes<GaslessVoteOrApproval>(
+  const allCachedVotes = voteStorage.getVotes<GaslessVoteOrApprovalVote>(
     chainId,
     proposal.id
   );

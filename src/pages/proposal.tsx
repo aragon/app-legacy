@@ -81,7 +81,7 @@ import {
   isGaslessProposal,
   isMultisigProposal,
 } from 'utils/proposals';
-import {Action, ProposalId} from 'utils/types';
+import {Action} from 'utils/types';
 import {GaslessVotingProposal} from '@vocdoni/gasless-voting';
 import {useGaslessHasAlreadyVote} from '../context/useGaslessVoting';
 import {CommitteeVotingTerminal} from '../containers/votingTerminal/committeeVotingTerminal';
@@ -647,12 +647,14 @@ export const Proposal: React.FC = () => {
         isGaslessProposal(proposal)
           ? handleGaslessVoting({
               vote,
-              token: (proposal as GaslessVotingProposal).token?.address,
+              voteTokenAddress: (proposal as GaslessVotingProposal).token
+                ?.address,
             })
-          : handleSubmitVote({
+          : handlePrepareVote({
               vote,
-              replacement: voted || voteSubmitted,
-              token: (proposal as TokenVotingProposal).token?.address,
+              replacement: voted || voteOrApprovalSubmitted,
+              voteTokenAddress: (proposal as TokenVotingProposal).token
+                ?.address,
             })
       }
       {...mappedProps}
