@@ -31,7 +31,6 @@ import {
   getCanonicalTime,
   getCanonicalUtcOffset,
   getFormattedUtcOffset,
-  minutesToMills,
 } from 'utils/date';
 import {getErc20VotingParticipation, getNonEmptyActions} from 'utils/proposals';
 import {ProposalResource, SupportedVotingSettings} from 'utils/types';
