@@ -337,15 +337,10 @@ const CreateProposalWrapper: React.FC<Props> = ({
 
       // getting dates
       let startDateTime: Date;
-      const startMinutesDelay = isMultisigVotingSettings(votingSettings)
-        ? 0
-        : 10;
 
       if (startSwitch === 'now') {
         startDateTime = new Date(
-          `${getCanonicalDate()}T${getCanonicalTime({
-            minutes: startMinutesDelay,
-          })}:00${getCanonicalUtcOffset()}`
+          `${getCanonicalDate()}T${getCanonicalTime()}:00${getCanonicalUtcOffset()}`
         );
       } else {
         startDateTime = new Date(
@@ -379,15 +374,11 @@ const CreateProposalWrapper: React.FC<Props> = ({
       }
 
       if (startSwitch === 'now') {
-        endDateTime = new Date(
-          endDateTime.getTime() + minutesToMills(startMinutesDelay)
-        );
+        endDateTime = new Date(endDateTime.getTime());
       } else {
         if (startDateTime.valueOf() < new Date().valueOf()) {
           startDateTime = new Date(
-            `${getCanonicalDate()}T${getCanonicalTime({
-              minutes: startMinutesDelay,
-            })}:00${getCanonicalUtcOffset()}`
+            `${getCanonicalDate()}T${getCanonicalTime()}:00${getCanonicalUtcOffset()}`
           );
         }
 
@@ -410,22 +401,20 @@ const CreateProposalWrapper: React.FC<Props> = ({
       }
 
       /**
-       * For multisig proposals, in case "now" as start time is selected, we want
-       * to keep startDate undefined, so it's automatically evaluated.
+       * In case "now" as start time is selected, we want
+       * to keep startDate and endDate undefined, so it's automatically evaluated.
        * If we just provide "Date.now()", than after user still goes through the flow
        * it's going to be date from the past. And SC-call evaluation will fail.
        */
-      const finalStartDate =
-        startSwitch === 'now' && isMultisigVotingSettings(votingSettings)
-          ? undefined
-          : startDateTime;
+      const finalStartDate = startSwitch === 'now' ? undefined : startDateTime;
+      const finalEndDate = startSwitch === 'now' ? undefined : endDateTime;
 
       // Ignore encoding if the proposal had no actions
       return {
         pluginAddress,
         metadataUri: ipfsUri || '',
         startDate: finalStartDate,
-        endDate: endDateTime,
+        endDate: finalEndDate,
         actions,
       };
     }, [
@@ -436,7 +425,6 @@ const CreateProposalWrapper: React.FC<Props> = ({
       minMinutes,
       pluginAddress,
       pluginClient?.methods,
-      votingSettings,
     ]);
 
   const estimateCreationFees = useCallback(async () => {
