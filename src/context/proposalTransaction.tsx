@@ -214,12 +214,8 @@ const ProposalTransactionProvider: React.FC<Props> = ({children}) => {
 
   // estimate proposal execution fees
   const estimateExecutionFees = useCallback(async () => {
-    // todo(kon): change gasless method signature
-    if (isGaslessVotingPluginClient) {
-      return pluginClient?.estimation.execute(proposalId);
-    }
     return pluginClient?.estimation.executeProposal(proposalId);
-  }, [isGaslessVotingPluginClient, pluginClient?.estimation, proposalId]);
+  }, [pluginClient?.estimation, proposalId]);
 
   // estimation fees for voting on proposal/executing proposal
   const {
@@ -595,14 +591,7 @@ const ProposalTransactionProvider: React.FC<Props> = ({children}) => {
     // start proposal execution
     setExecutionProcessState(TransactionState.LOADING);
 
-    let executeSteps;
-    // todo(kon): change gasless method signature
-    if (isGaslessVotingPluginClient) {
-      executeSteps = pluginClient?.methods.execute(proposalId);
-    } else {
-      executeSteps = pluginClient?.methods.executeProposal(proposalId);
-    }
-
+    const executeSteps = pluginClient?.methods.executeProposal(proposalId);
     if (!executeSteps) {
       throw new Error('Voting function is not initialized correctly');
     }
@@ -671,26 +660,11 @@ const ProposalTransactionProvider: React.FC<Props> = ({children}) => {
    *************************************************/
   // modal values
   const isExecutionContext = showExecutionModal;
-  const isVotingContext = showVoteModal;
+  const isVotingContext = showVoteModal || showCommitteeApprovalModal;
 
   const state =
     (isExecutionContext ? executionProcessState : voteOrApprovalProcessState) ??
     TransactionState.WAITING;
-
-  // todo(kon): lines lost during rebase
-  //   title={
-  //     showExecuteModal
-  //     ? t('labels.signExecuteProposal')
-  //     : showCommitteeApprovalModal
-  //       ? t('labels.approveProposal')
-  //       : t('labels.signVote')
-  // }
-
-  // showExecuteModal
-  //   ? t('governance.proposals.buttons.execute')
-  //   : showCommitteeApprovalModal
-  //     ? t('labels.approve')
-  //     : t('governance.proposals.buttons.vote')
 
   let title = isVotingContext
     ? t('labels.signVote')
@@ -702,7 +676,10 @@ const ProposalTransactionProvider: React.FC<Props> = ({children}) => {
       : t('governance.proposals.buttons.execute'),
   };
 
-  if (isVotingContext && pluginType === 'multisig.plugin.dao.eth') {
+  if (
+    (isVotingContext && pluginType === 'multisig.plugin.dao.eth') ||
+    (isVotingContext && pluginType === GaselessPluginName)
+  ) {
     title = t('transactionModal.multisig.title.approveProposal');
     labels.WAITING = t('transactionModal.multisig.ctaApprove');
     labels.LOADING = t('transactionModal.multisig.ctaWaitingConfirmation');
