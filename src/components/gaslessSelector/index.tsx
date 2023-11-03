@@ -3,6 +3,7 @@ import React from 'react';
 import {useTranslation} from 'react-i18next';
 import {ControllerRenderProps} from 'react-hook-form/dist/types';
 import {useCensus3SupportedChains} from '../../hooks/useCensus3';
+import {useFormContext} from 'react-hook-form';
 
 /**
  * Type that infers the ControllerRenderProps value prop
@@ -25,8 +26,11 @@ const GaslessSelector = ({
   value: ValueOfControllerRenderProps<ControllerRenderProps>;
 }) => {
   const {t} = useTranslation();
+  const {getValues} = useFormContext();
 
-  const {isSupported} = useCensus3SupportedChains();
+  const {blockchain} = getValues();
+
+  const {isSupported} = useCensus3SupportedChains(blockchain.id);
 
   return (
     <>

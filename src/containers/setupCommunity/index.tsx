@@ -11,6 +11,7 @@ import {CreateDaoFormData} from 'utils/types';
 import AddExistingToken from './addExistingToken';
 import CreateNewToken from './createNewToken';
 import {featureFlags} from '../../utils/featureFlags';
+import GaslessSelector from '../../components/gaslessSelector';
 
 const SetupCommunityForm: React.FC = () => {
   const {t} = useTranslation();
@@ -124,15 +125,11 @@ const SetupCommunityForm: React.FC = () => {
                     }}
                     {...(value === 'onChain' ? {type: 'active'} : {})}
                   />
-
-                  <CheckboxListItem
-                    label={t('createDAO.step3.votingType.gasless.title')}
-                    helptext={t('createDAO.step3.votingType.gasless.subtitle')}
-                    onClick={() => {
+                  <GaslessSelector
+                    onChange={() => {
                       onChange('gasless');
                     }}
-                    multiSelect={false}
-                    {...(value === 'gasless' ? {type: 'active'} : {})}
+                    value={value}
                   />
                 </>
               )}

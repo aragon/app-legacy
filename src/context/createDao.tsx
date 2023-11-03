@@ -419,7 +419,8 @@ const CreateDaoProvider: React.FC<{children: ReactNode}> = ({children}) => {
     error: gasEstimationError,
   } = usePollGasFee(estimateCreationFees, shouldPoll);
 
-  const {createToken} = useCensus3CreateToken();
+  const chainId = getValues('blockchain')?.id;
+  const {createToken} = useCensus3CreateToken({chainId});
 
   // run dao creation transaction
   const createDao = async () => {
