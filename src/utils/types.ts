@@ -126,7 +126,6 @@ export type TokenWithMetadata = {
 export interface MarketData {
   price: number;
   balanceValue: number;
-  priceChangeDuringInterval: number;
   valueChangeDuringInterval?: number;
   percentageChangedDuringInterval: number;
 }

@@ -25,6 +25,12 @@ import {
   IFetchTokenParams,
   IFetchTokenTransfersParams,
 } from './token-service.api';
+import {AlchemyTransfer} from './domain/alchemy-transfer';
+import {
+  CovalentTokenTransfer,
+  CovalentTransferInfo,
+} from './domain/covalent-transfer';
+import request, {gql} from 'graphql-request';
 
 const REPLACEMENT_BASE_ETHER_LOGO_URL =
   'https://assets.coingecko.com/coins/images/279/large/ethereum.png?1595348880';
@@ -70,12 +76,40 @@ class TokenService {
       ? TOP_ETH_SYMBOL_ADDRESSES[symbol.toLowerCase()]
       : address;
 
-    const token =
-      processedNetwork === 'base' || processedNetwork === 'base-goerli'
-        ? this.fetchCovalentToken(processedNetwork, processedAddress)
-        : this.fetchCoingeckoToken(processedNetwork, processedAddress);
+    const token = await this.fetchTokenFromBackend(
+      processedNetwork,
+      processedAddress
+    );
 
     return token;
+  };
+
+  tokenQueryDocument = gql`
+    query Token($network: Network!, $tokenAddress: String!) {
+      token(network: $network, tokenAddress: $tokenAddress) {
+        checkDate
+        contractAddress
+        decimals
+        imageUrl
+        name
+        network
+        priceUsd
+        symbol
+        totalHolders
+        totalSupply
+      }
+    }
+  `;
+
+  private fetchTokenFromBackend = async (
+    network: SupportedNetworks,
+    tokenAddress: string
+  ): Promise<Token> => {
+    return request(
+      'https://app-backend.aragon.org/graphql',
+      this.tokenQueryDocument,
+      {network, tokenAddress}
+    );
   };
 
   private fetchCovalentToken = async (
