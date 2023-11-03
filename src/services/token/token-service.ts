@@ -90,7 +90,6 @@ class TokenService {
         name
         network
         priceUsd
-        priceChangeOnDayUsd
         symbol
         totalHolders
         totalSupply
