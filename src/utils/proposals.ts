@@ -222,6 +222,9 @@ export function getErc20Results(
   const {yes, no, abstain} = result;
 
   const totalYesNo = Big(yes.toString()).plus(no.toString());
+  const abstainDivisor = totalYesNo.gt(0)
+    ? totalYesNo
+    : Big(abstain.toString());
 
   // TODO: Format with new ODS formatter
   return {
@@ -243,7 +246,7 @@ export function getErc20Results(
       value: formatter.format(Number(formatUnits(abstain, tokenDecimals))),
       percentage: Number(
         formatter.format(
-          Big(abstain.toString()).mul(100).div(totalYesNo).toNumber()
+          Big(abstain.toString()).mul(100).div(abstainDivisor).toNumber()
         )
       ),
     },
