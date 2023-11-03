@@ -73,7 +73,7 @@ const proposalToElection = ({
 };
 
 const useCreateGaslessProposal = ({daoToken}: ICreateGaslessProposal) => {
-  const [electionId, setElectionId] = useState('');
+  const [vochainProposalId, setVochainProposalId] = useState('');
 
   const {steps, updateStepStatus, doStep, globalState, resetStates} =
     useFunctionStepper({
@@ -141,12 +141,11 @@ const useCreateGaslessProposal = ({daoToken}: ICreateGaslessProposal) => {
     [account, collectFaucet, vocdoniClient]
   );
 
+  // todo(kon): this is not a callback
   const checkAccountCreation = useCallback(async () => {
     // Check if the account is already created, if not, create it
     await createAccount();
-
-    return account;
-  }, [account, createAccount]);
+  }, [createAccount]);
 
   const createCensus = useCallback(async (): Promise<TokenCensus> => {
     async function getCensus3Token(): Promise<ICensus3Token> {
@@ -232,7 +231,7 @@ const useCreateGaslessProposal = ({daoToken}: ICreateGaslessProposal) => {
           );
         }
       );
-      setElectionId(electionId);
+      setVochainProposalId(electionId);
       console.log('DEBUG', 'Election created', electionId);
 
       // 3. Register the proposal onchain
@@ -254,7 +253,7 @@ const useCreateGaslessProposal = ({daoToken}: ICreateGaslessProposal) => {
       steps,
       daoToken,
       doStep,
-      createAccount,
+      checkAccountCreation,
       updateStepStatus,
       resetStates,
       createCensus,
@@ -262,7 +261,7 @@ const useCreateGaslessProposal = ({daoToken}: ICreateGaslessProposal) => {
     ]
   );
 
-  return {steps, globalState, createProposal, electionId};
+  return {steps, globalState, createProposal, vochainProposalId};
 };
 
 export {useCreateGaslessProposal};

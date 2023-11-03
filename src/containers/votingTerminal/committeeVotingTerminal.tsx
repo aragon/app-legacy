@@ -249,6 +249,7 @@ export const CommitteeVotingTerminal = ({
         <Header>
           <Title>Voting</Title>
           <Summary>
+            {/*todo(kon): intl this*/}
             Proposal must pass with a community vote and then committee
             approval.
           </Summary>
@@ -287,12 +288,13 @@ const Header = styled.div.attrs({
   className: 'flex flex-col tablet:justify-between space-y-2 my-2',
 })``;
 const Title = styled.h1.attrs({
-  className: 'ft-text-xl font-bold text-ui-800 flex-grow',
+  className: 'ft-text-xl font-semibold text-neutral-800 grow',
 })``;
 const Summary = styled.h1.attrs({
-  className: 'ft-text-md text-ui-500 flex-grow',
+  className: 'text-neutral-800 text-sm md:text-base leading-normal',
 })``;
 
 const Container = styled.div.attrs({
-  className: 'tablet:p-3 py-2.5 px-2 rounded-xl bg-ui-0 border border-ui-100',
+  className:
+    'md:p-6 py-5 px-4 rounded-xl bg-neutral-0 border border-neutral-100',
 })``;

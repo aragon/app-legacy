@@ -153,7 +153,6 @@ const CreateProposalWrapper: React.FC<Props> = ({
     steps: gaslessProposalSteps,
     globalState: gaslessGlobalState,
     createProposal,
-    // cacheProposal: cacheGaslessProposal,
   } = useCreateGaslessProposal({
     daoToken,
   });

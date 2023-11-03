@@ -109,7 +109,7 @@ const StepperModal = <X extends GenericKeyEnum>({
             <GasCostEthContainer>
               <NoShrinkVStack>
                 <Label>{t('TransactionModal.estimatedFees')}</Label>
-                <p className="text-sm text-ui-500">
+                <p className="text-ui-500 text-sm">
                   {t('TransactionModal.maxFee')}
                 </p>
               </NoShrinkVStack>
@@ -118,7 +118,7 @@ const StepperModal = <X extends GenericKeyEnum>({
                   <div className="truncate">{formattedAverage}</div>
                   <div>{`${nativeCurrency.symbol}`}</div>
                 </StrongText>
-                <div className="flex justify-end space-x-0.5 text-right text-sm text-ui-500">
+                <div className="text-ui-500 flex justify-end space-x-0.5 text-right text-sm">
                   <div className="truncate">{formattedMax}</div>
                   <div>{`${nativeCurrency.symbol}`}</div>
                 </div>
@@ -133,7 +133,7 @@ const StepperModal = <X extends GenericKeyEnum>({
                   <div className="truncate">{formattedAverage}</div>
                   <div>{`${nativeCurrency.symbol}`}</div>
                 </StrongText>
-                <p className="text-right text-sm text-ui-500">{totalCost}</p>
+                <p className="text-ui-500 text-right text-sm">{totalCost}</p>
               </VStack>
             </GasTotalCostEthContainer>
           </GasCostTableContainer>
@@ -185,47 +185,43 @@ const StepperModal = <X extends GenericKeyEnum>({
 
 export default StepperModal;
 
-const StepGlobalMessage = styled.div.attrs(({color}: {color?: string}) => ({
-  className: `flex space-x-2 items-center  ${color}`,
-}))``;
-
-const ButtonContainer = styled.div.attrs({
-  className: 'px-3 pb-3 rounded-b-xl',
-})``;
-
-const GasCostTableContainer = styled.div.attrs({
-  className: 'm-3 bg-white rounded-xl border border-ui-100 divide-y',
-})``;
-
-const GasCostEthContainer = styled.div.attrs({
-  className: 'flex justify-between py-1.5 px-2 space-x-4',
-})``;
-
-const GasTotalCostEthContainer = styled.div.attrs({
-  className: 'flex justify-between py-1.5 px-2 rounded-b-xl bg-ui-100',
-})``;
-
-const AlertInlineContainer = styled.div.attrs({
-  className: 'mx-auto mt-2 w-max',
-})``;
-
 const StepsContainer = styled.div.attrs({
   className:
     'px-3 py-3 rounded-b-xl bg-white mx-3 my-3 border-ui-100 rounded-xl flex flex-col gap-3',
 })``;
 
+const GasCostTableContainer = styled.div.attrs({
+  className: 'm-6 bg-neutral-0 rounded-xl border border-neutral-100',
+})``;
+
+const GasCostEthContainer = styled.div.attrs({
+  className: 'flex justify-between py-3 px-4 space-x-8',
+})``;
+
+const GasTotalCostEthContainer = styled.div.attrs({
+  className: 'flex justify-between py-3 px-4 rounded-b-xl bg-neutral-100',
+})``;
+
+const AlertInlineContainer = styled.div.attrs({
+  className: 'mx-auto mt-4 w-max',
+})``;
+
+const ButtonContainer = styled.div.attrs({
+  className: 'px-6 pb-6 rounded-b-xl',
+})``;
+
 const NoShrinkVStack = styled.div.attrs({
-  className: 'space-y-0.25 flex-shrink-0',
+  className: 'space-y-0.5 shrink-0',
 })``;
 
 const VStack = styled.div.attrs({
-  className: 'space-y-0.25 overflow-hidden',
+  className: 'space-y-0.5 overflow-hidden',
 })``;
 
-const StrongText = styled.div.attrs({
-  className: 'font-bold text-right text-ui-600 flex space-x-0.5',
+const StrongText = styled.p.attrs({
+  className: 'font-semibold text-right text-neutral-600 flex space-x-1',
 })``;
 
-const Label = styled.div.attrs({
-  className: 'text-ui-600',
+const Label = styled.p.attrs({
+  className: 'text-neutral-600',
 })``;

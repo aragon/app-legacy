@@ -1,7 +1,6 @@
 import React from 'react';
 import {useTranslation} from 'react-i18next';
 
-import {useNetwork} from 'context/network';
 import {GaslessProposalStepId} from '../../context/createGaslessProposal';
 import {StepperLabels} from '../../components/StepperProgress';
 import {StepStatus} from '../../hooks/useFunctionStepper';

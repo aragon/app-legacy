@@ -26,14 +26,14 @@ const icons = {
   [StepStatus.WAITING]: <IconRadioDefault className="text-ui-200" />,
   [StepStatus.LOADING]: <Spinner size="xs" />,
   [StepStatus.SUCCESS]: <IconSuccess className="text-success-500" />,
-  [StepStatus.ERROR]: <IconRadioCancel className="text-red-700" />,
+  [StepStatus.ERROR]: <IconRadioCancel className="text-critical-700" />,
 };
 
 const textColor = {
   [StepStatus.WAITING]: 'text-ui-400',
   [StepStatus.LOADING]: 'text-primary-400',
   [StepStatus.SUCCESS]: 'text-success-600',
-  [StepStatus.ERROR]: 'text-red-700',
+  [StepStatus.ERROR]: 'text-critical-700',
 };
 
 const StepLine = ({
@@ -50,12 +50,12 @@ const StepLine = ({
         <div className={textColor[status]}>{title}</div>
       </IconAndMessage>
       {status === StepStatus.ERROR && (
-        <div className={'text-ui-400 ft-text-sm'}>
+        <div className={'text-critical-800 ft-text-sm'}>
           {t('stepperModal.stepError')}
         </div>
       )}
       {helper && status === StepStatus.LOADING && (
-        <div className={'text-ui-400 ft-text-sm'}>{helper}</div>
+        <div className={'text-neutral-400 ft-text-sm'}>{helper}</div>
       )}
     </StepListItem>
   );
@@ -90,7 +90,7 @@ const StepList = styled.div.attrs({
 })``;
 
 const StepListItem = styled.div.attrs({
-  className: 'flex justify-between text-ui-600',
+  className: 'flex justify-between text-neutral-600',
 })``;
 
 const IconAndMessage = styled.div.attrs({
