@@ -190,10 +190,15 @@ export const Community: React.FC = () => {
         ? {
             description: t('explore.explorer.tokenBased'),
             primaryBtnProps: {
+              label: t('governance.actionSecondary'),
+              iconLeft: <IconFailure />,
+              onClick: () => open('delegateVoting'),
+            },
+            secondaryBtnProps: {
               label: t('community.ctaMain.wrappedLabel'),
               onClick: handlePrimaryClick,
             },
-            secondaryBtnProps: {
+            tertiaryBtnProps: {
               label: t('labels.seeAllHolders'),
               iconLeft: <IconLinkExternal />,
               onClick: handleSecondaryButtonClick,
@@ -220,6 +225,11 @@ export const Community: React.FC = () => {
           }
         : {
             description: t('explore.explorer.tokenBased'),
+            primaryBtnProps: {
+              label: t('governance.actionSecondary'),
+              iconLeft: <IconFailure />,
+              onClick: () => open('delegateVoting'),
+            },
             secondaryBtnProps: {
               label: t('labels.seeAllHolders'),
               iconLeft: <IconLinkExternal />,
