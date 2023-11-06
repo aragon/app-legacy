@@ -242,14 +242,12 @@ export function getErc20Results(
 
 function getVotePercentage(value: bigint, totalYesNo: Big): number {
   const vote = Big(value.toString());
-  let divisor = totalYesNo;
 
   // no yes + no votes
-  if (divisor.eq(0)) {
+  if (totalYesNo.eq(0)) {
     if (vote.gt(0)) {
       // vote before yes + no votes have been casted
-      // technically this could immediately return 100%;
-      divisor = vote;
+      return 100;
     } else {
       // no votes casted yet/divide by zero
       return 0;
