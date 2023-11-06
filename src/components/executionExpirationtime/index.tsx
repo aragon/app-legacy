@@ -231,23 +231,14 @@ const ExecutionExpirationtime: React.FC = () => {
       </DurationContainer>
       {executionExpirationDays ===
       COMMITTEE_EXECUTION_MAX_DURATION_DAYS.toString() ? (
-        <AlertInline
-          label={t('alert.maxDurationAlert') as string}
-          mode="warning"
-        />
+        <AlertInline label={t('alert.maxDurationAlert')} mode="warning" />
       ) : executionExpirationDays === '0' &&
         executionExpirationHours ===
           COMMITTEE_EXECUTION_MIN_DURATION_HOURS.toString() &&
         executionExpirationMinutes === '0' ? (
-        <AlertInline
-          label={t('alert.minDurationAlert') as string}
-          mode="warning"
-        />
+        <AlertInline label={t('alert.minDurationAlert')} mode="warning" />
       ) : (
-        <AlertInline
-          label={t('alert.executionDurationAlert') as string}
-          mode="neutral"
-        />
+        <AlertInline label={t('alert.executionDurationAlert')} mode="neutral" />
       )}
     </>
   );

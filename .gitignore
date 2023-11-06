@@ -1,5 +1,3 @@
-.idea
-
 # dependencies
 node_modules
 
@@ -18,6 +16,7 @@ typechain
 
 # misc
 .vscode
+.idea
 .yarn
 .yarnrc.yml
 .DS_Store
@@ -48,4 +47,3 @@ subgraph.yaml
 
 tests/e2e/videos/*
 test.http
-.idea

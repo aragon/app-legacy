@@ -2,15 +2,13 @@ import {Controller, useFormContext} from 'react-hook-form';
 import {useFormStep} from '../../components/fullScreenStepper';
 import {useGlobalModalContext} from '../../context/globalModals';
 import {useTranslation} from 'react-i18next';
-import {useNetwork} from '../../context/network';
 import {
   Dd,
   DescriptionListContainer,
   Dl,
   Dt,
 } from '../../components/descriptionList';
-import {IconFeedback, Link} from '@aragon/ods-old';
-import {CHAIN_METADATA} from '../../utils/constants';
+import {Link} from '@aragon/ods-old';
 import React from 'react';
 import CommitteeAddressesModal from '../committeeAddressesModal';
 
@@ -19,16 +17,14 @@ const Committee = () => {
   const {setStep} = useFormStep();
   const {open} = useGlobalModalContext();
   const {t} = useTranslation();
-  const {network} = useNetwork();
+
   const {
     reviewCheckError,
-    isCustomToken,
     committee,
     committeeMinimumApproval,
     executionExpirationMinutes,
     executionExpirationHours,
     executionExpirationDays,
-    tokenAddress,
   } = getValues();
 
   return (

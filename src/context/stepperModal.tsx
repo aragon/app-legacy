@@ -17,7 +17,8 @@ import {
   StepsMap,
   StepStatus,
 } from '../hooks/useFunctionStepper';
-import StepperModalProgress, {
+import {
+  StepperModalProgress,
   StepperLabels,
 } from '../components/StepperProgress';
 
@@ -59,8 +60,6 @@ const StepperModal = <X extends GenericKeyEnum>({
   title,
   subtitle,
   buttonLabels,
-  buttonLabelSuccess,
-  disabledCallback,
   stepLabels,
 }: StepperModalProps<X>): JSX.Element => {
   const {t} = useTranslation();

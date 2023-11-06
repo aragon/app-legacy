@@ -12,7 +12,6 @@ import {useNetwork} from 'context/network';
 type FilteredAddressListProps = {
   wallets: TokenVotingWalletField[] | MultisigWalletField[];
   tokenSymbol?: string;
-  // tokenMembership: boolean;
 };
 
 /**
@@ -87,32 +86,6 @@ export const FilteredAddressList = ({
           <span>{t('AddressModal.noAddresses')}</span>
         )}
       </Container>
-      {/*<ModalHeader>*/}
-      {/*  <SearchInput*/}
-      {/*    value={searchValue}*/}
-      {/*    placeholder={t('placeHolders.searchTokens')}*/}
-      {/*    onChange={(e: React.ChangeEvent<HTMLInputElement>) =>*/}
-      {/*      setSearchValue(e.target.value)*/}
-      {/*    }*/}
-      {/*  />*/}
-      {/*</ModalHeader>*/}
-      {/*<Container>*/}
-      {/*  {filteredAddressList?.length > 0 ? (*/}
-      {/*    <VotersTable*/}
-      {/*      voters={filteredAddressList}*/}
-      {/*      {...(tokenMembership && {showAmount: true})}*/}
-      {/*      pageSize={filteredAddressList.length}*/}
-      {/*      LoadMoreLabel={t('community.votersTable.loadMore')}*/}
-      {/*      explorerURL={CHAIN_METADATA[network].explorer}*/}
-      {/*      // voters={filteredAddressList}*/}
-      {/*      // {...(tokenSymbol && {showAmount: true})}*/}
-      {/*      // pageSize={filteredAddressList.length}*/}
-      {/*    />*/}
-      {/*  ) : (*/}
-      {/*    // this view is temporary until designs arrive*/}
-      {/*    <span>{t('AddressModal.noAddresses')}</span>*/}
-      {/*  )}*/}
-      {/*</Container>*/}
     </>
   );
 };
