@@ -308,8 +308,15 @@ function syncGaslessVotesOrApproves(
     }
   });
 
+  // This is needed until the voters list is fixed from the backend
+  const mappedVoters = Array.from(serverGaslessVoters).map(address => ({
+    address,
+    vote: null,
+    weight: null,
+  }));
+
   return {
     approvers: [...approversCache, ...serverApprovals],
-    gaslessVoters: [...gaslessVotersCache],
+    gaslessVoters: [...gaslessVotersCache, ...mappedVoters],
   };
 }
