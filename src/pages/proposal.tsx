@@ -520,6 +520,7 @@ export const Proposal: React.FC = () => {
   const enableVotingButton =
     proposal?.status === ProposalStatus.ACTIVE && // active proposal
     (address == null || // wallet disconnected
+      isOnWrongNetwork || // wrong network, allow user to switch networks
       (voted === false && canVote === true) || // haven't voted and can vote
       (isTokenVotingPlugin && voted && canRevote === true) || // voted but vote replacement enabled
       // can vote but no voting power (voted should status should never be true if shouldDisplayDelegationVotingGating)
