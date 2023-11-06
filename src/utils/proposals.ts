@@ -222,35 +222,41 @@ export function getErc20Results(
   const {yes, no, abstain} = result;
 
   const totalYesNo = Big(yes.toString()).plus(no.toString());
-  const abstainDivisor = totalYesNo.gt(0)
-    ? totalYesNo
-    : Big(abstain.toString());
 
   // TODO: Format with new ODS formatter
   return {
     yes: {
       value: formatter.format(Number(formatUnits(yes, tokenDecimals))),
-      percentage: Number(
-        formatter.format(
-          Big(yes.toString()).mul(100).div(totalYesNo).toNumber()
-        )
-      ),
+      percentage: getVotePercentage(yes, totalYesNo),
     },
     no: {
       value: formatter.format(Number(formatUnits(no, tokenDecimals))),
-      percentage: Number(
-        formatter.format(Big(no.toString()).mul(100).div(totalYesNo).toNumber())
-      ),
+      percentage: getVotePercentage(no, totalYesNo),
     },
     abstain: {
       value: formatter.format(Number(formatUnits(abstain, tokenDecimals))),
-      percentage: Number(
-        formatter.format(
-          Big(abstain.toString()).mul(100).div(abstainDivisor).toNumber()
-        )
-      ),
+      percentage: getVotePercentage(abstain, totalYesNo),
     },
   };
+}
+
+function getVotePercentage(value: bigint, totalYesNo: Big): number {
+  const vote = Big(value.toString());
+  let divisor = totalYesNo;
+
+  // no yes + no votes
+  if (divisor.eq(0)) {
+    if (vote.gt(0)) {
+      // vote before yes + no votes have been casted
+      // technically this could immediately return 100%;
+      divisor = vote;
+    } else {
+      // no votes casted yet/divide by zero
+      return 0;
+    }
+  }
+
+  return Number(formatter.format(vote.mul(100).div(totalYesNo).toNumber()));
 }
 
 /**
