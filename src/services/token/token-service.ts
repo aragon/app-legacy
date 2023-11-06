@@ -104,7 +104,7 @@ class TokenService {
   private fetchTokenFromBackend = async (
     network: SupportedNetworks,
     tokenAddress: string
-  ): Promise<Token> => {
+  ) => {
     return request(
       'https://app-backend.aragon.org/graphql',
       this.tokenQueryDocument,
@@ -144,7 +144,6 @@ class TokenService {
     }
 
     return {
-      id: address,
       name: isNative ? nativeCurrency.name : data.contract_name,
       symbol: isNative
         ? nativeCurrency.symbol
@@ -194,7 +193,6 @@ class TokenService {
     }
 
     return {
-      id: data.id,
       name: isNative ? nativeCurrency.name : data.name,
       symbol: isNative ? nativeCurrency.symbol : data.symbol?.toUpperCase(),
       imgUrl: data.image?.large,
