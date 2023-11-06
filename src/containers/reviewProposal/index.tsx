@@ -155,7 +155,6 @@ const ReviewProposal: React.FC<ReviewProposalProps> = ({
       durationHours,
       durationMinutes,
       durationSwitch,
-      startSwitch,
       endDate,
       endTime,
       endUtc,
