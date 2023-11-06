@@ -44,7 +44,7 @@ const DefineCommittee: React.FC = () => {
     if (committeeMinimumApproval > committeeCount) {
       setValue('committeeMinimumApproval', committeeCount.toString());
     }
-  }, [committeeCount, committeeMinimumApproval]);
+  }, [committeeCount, committeeMinimumApproval, setValue]);
 
   return (
     <>

@@ -111,6 +111,7 @@ const ProposalList: React.FC<ProposalListProps> = ({
       t,
       daoAddressOrEns,
       address,
+      pluginAddress,
     ]
   );
 

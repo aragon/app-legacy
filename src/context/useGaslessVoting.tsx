@@ -103,7 +103,7 @@ const useGaslessVoting = () => {
         await submitVote(vote, electionId!);
       });
     },
-    [doStep, getElectionId, submitVote]
+    [doStep, getElectionId, globalState, resetStates, submitVote]
   );
 
   return {vote, getElectionId, steps, globalState};
@@ -142,7 +142,7 @@ export const useGaslessHasAlreadyVote = ({
     ) {
       checkAlreadyVote();
     }
-  }, [client, proposal]);
+  }, [address, client, proposal]);
 
   return {hasAlreadyVote};
 };

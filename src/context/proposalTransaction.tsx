@@ -170,7 +170,7 @@ const ProposalTransactionProvider: React.FC<Props> = ({children}) => {
       setVoteTokenAddress(params.voteTokenAddress);
       setShowGaslessModal(true);
     },
-    [urlId]
+    [proposalId]
   );
 
   const handleExecutionMultisigApprove = useCallback(
@@ -179,7 +179,7 @@ const ProposalTransactionProvider: React.FC<Props> = ({children}) => {
       setShowCommitteeApprovalModal(true);
       setVoteOrApprovalProcessState(TransactionState.WAITING);
     },
-    [urlId]
+    [proposalId]
   );
 
   const handlePrepareExecution = useCallback(() => {

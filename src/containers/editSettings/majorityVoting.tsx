@@ -336,6 +336,7 @@ export const EditMvSettings: React.FC<EditMvSettingsProps> = ({daoDetails}) => {
     daoToken?.decimals,
     days,
     hours,
+    isGasless,
     minutes,
     setValue,
     tokenSupply?.formatted,
@@ -355,7 +356,14 @@ export const EditMvSettings: React.FC<EditMvSettingsProps> = ({daoDetails}) => {
       'committeeMinimumApproval',
       (votingSettings as GaslessPluginVotingSettings).minTallyApprovals
     );
-  }, [approvalDays, approvalHours, approvalMinutes, isGasless, setValue]);
+  }, [
+    approvalDays,
+    approvalHours,
+    approvalMinutes,
+    isGasless,
+    setValue,
+    votingSettings,
+  ]);
 
   const settingsUnchanged =
     !isGovernanceChanged &&
@@ -376,7 +384,13 @@ export const EditMvSettings: React.FC<EditMvSettingsProps> = ({daoDetails}) => {
       'areSettingsChanged',
       isCommunityChanged || isGovernanceChanged || isGaslessChanged
     );
-  }, [isCommunityChanged, isGovernanceChanged, isMetadataChanged, setValue]);
+  }, [
+    isCommunityChanged,
+    isGaslessChanged,
+    isGovernanceChanged,
+    isMetadataChanged,
+    setValue,
+  ]);
 
   useEffect(() => {
     if (dataFetched && !isDirty) {

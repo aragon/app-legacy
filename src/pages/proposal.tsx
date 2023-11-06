@@ -556,6 +556,9 @@ export const Proposal: React.FC = () => {
     displayDelegationVoteGating,
     proposal,
     isOnWrongNetwork,
+    shouldDisplayDelegationVoteGating,
+    proposal,
+    canVote,
     open,
   ]);
 
