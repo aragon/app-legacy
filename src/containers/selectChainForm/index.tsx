@@ -34,6 +34,8 @@ const SelectChainForm: React.FC = () => {
     [networkType]
   );
 
+  console.log(availableNetworks);
+
   return (
     <>
       <Header>
