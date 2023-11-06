@@ -176,11 +176,6 @@ const ReviewProposal: React.FC<ReviewProposalProps> = ({
       );
     }
 
-    // adding 10 minutes to offset the 10 minutes added by starting now
-    if (startSwitch === 'now') {
-      endDateTime = new Date(endDateTime.getTime());
-    }
-
     return `~${format(
       endDateTime,
       KNOWN_FORMATS.proposals
