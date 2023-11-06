@@ -17,7 +17,7 @@ import {ActionOSUpdate} from 'utils/types';
 
 export const UpdateOSCard: React.FC<{
   action: ActionOSUpdate;
-  dao: DaoDetails;
+  dao?: DaoDetails | null;
 }> = ({action, dao}) => {
   const {t} = useTranslation();
   const {client} = useClient();
@@ -62,8 +62,6 @@ export const UpdateOSCard: React.FC<{
     translatedNetwork,
     versions,
   ]);
-
-  console.log('view', decodedAction);
 
   return (
     <AccordionMethod

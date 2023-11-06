@@ -11,7 +11,7 @@ import {RemoveAddressCard} from './actions/removeAddressCard';
 import {SCCExecutionCard} from './actions/sccExecutionWidget';
 import {WCActionCard} from './actions/walletConnectActionCard';
 import {WithdrawCard} from './actions/withdrawCard';
-import {UpdateOSCard} from './actions/updateOScard';
+import {UpdateOSCard} from './actions/updateOSCard';
 
 type ActionsFilterProps = {
   action: Action;

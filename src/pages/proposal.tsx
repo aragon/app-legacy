@@ -28,7 +28,7 @@ import {ExecutionWidget} from 'components/executionWidget';
 import ResourceList from 'components/resourceList';
 import {Loading} from 'components/temporary';
 import {StyledEditorContent} from 'containers/reviewProposal';
-import {UpdateVerificationCard} from 'containers/updateVerificationCard';
+// import {UpdateVerificationCard} from 'containers/updateVerificationCard';
 import {TerminalTabs, VotingTerminal} from 'containers/votingTerminal';
 import {useGlobalModalContext} from 'context/globalModals';
 import {useNetwork} from 'context/network';
@@ -57,7 +57,10 @@ import {
 } from 'services/aragon-sdk/queries/use-voting-settings';
 import {useTokenAsync} from 'services/token/queries/use-token';
 import {CHAIN_METADATA} from 'utils/constants';
-import {featureFlags} from 'utils/featureFlags';
+// import {featureFlags} from 'utils/featureFlags';
+import {GaslessVotingProposal} from '@vocdoni/gasless-voting';
+import {constants} from 'ethers';
+import {usePastVotingPower} from 'services/aragon-sdk/queries/use-past-voting-power';
 import {
   decodeAddMembersToAction,
   decodeMetadataToAction,
@@ -83,11 +86,8 @@ import {
   isMultisigProposal,
 } from 'utils/proposals';
 import {Action} from 'utils/types';
-import {GaslessVotingProposal} from '@vocdoni/gasless-voting';
-import {useGaslessHasAlreadyVote} from '../context/useGaslessVoting';
 import {GaslessVotingTerminal} from '../containers/votingTerminal/gaslessVotingTerminal';
-import {usePastVotingPower} from 'services/aragon-sdk/queries/use-past-voting-power';
-import {constants} from 'ethers';
+import {useGaslessHasAlreadyVote} from '../context/useGaslessVoting';
 
 export const PENDING_PROPOSAL_STATUS_INTERVAL = 1000 * 10;
 export const PROPOSAL_STATUS_INTERVAL = 1000 * 60;
