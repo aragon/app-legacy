@@ -97,6 +97,16 @@ const StepperModal = <X extends GenericKeyEnum>({
     return <></>;
   }
 
+  // If global state is error, find the first step with error message
+  let errorMessage = '';
+  if (globalState === StepStatus.ERROR) {
+    for (const key in steps) {
+      if (steps[key].errorMessage) {
+        errorMessage = steps[key].errorMessage!;
+      }
+    }
+  }
+
   return (
     <ModalBottomSheetSwitcher
       {...{isOpen, onClose, closeOnDrag}}
@@ -155,6 +165,9 @@ const StepperModal = <X extends GenericKeyEnum>({
               label={t('stepperModal.processWarning')}
               mode="critical"
             />
+          )}
+          {globalState === StepStatus.ERROR && (
+            <AlertInline label={errorMessage} mode="critical" />
           )}
         </StepsContainer>
       )}

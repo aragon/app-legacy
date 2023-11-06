@@ -49,11 +49,6 @@ const StepLine = ({
         {icons[status]}
         <div className={textColor[status]}>{title}</div>
       </IconAndMessage>
-      {status === StepStatus.ERROR && (
-        <div className={'text-critical-800 ft-text-sm'}>
-          {t('stepperModal.stepError')}
-        </div>
-      )}
       {helper && status === StepStatus.LOADING && (
         <div className={'text-neutral-400 ft-text-sm'}>{helper}</div>
       )}
