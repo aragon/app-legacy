@@ -9,9 +9,9 @@ import {DaoAction} from '@aragon/sdk-client-common';
  */
 export function useUpdateVerification(
   actions: DaoAction[],
-  daoAddress: string,
-  isPluginUpdateProposal?: boolean,
-  isOsUpdateProposal?: boolean
+  daoAddress: string
+  // isPluginUpdateProposal?: boolean,
+  // isOsUpdateProposal?: boolean
 ) {
   const {client} = useClient();
 

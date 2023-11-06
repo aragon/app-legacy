@@ -35,7 +35,6 @@ import {
 } from 'utils/date';
 import {getErc20VotingParticipation, getNonEmptyActions} from 'utils/proposals';
 import {ProposalResource, SupportedVotingSettings} from 'utils/types';
-import {UpdateVerificationCard} from 'containers/updateVerificationCard';
 
 type ReviewProposalProps = {
   defineProposalStepNumber: number;

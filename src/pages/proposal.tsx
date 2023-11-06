@@ -31,7 +31,7 @@ import {ExecutionWidget} from 'components/executionWidget';
 import ResourceList from 'components/resourceList';
 import {Loading} from 'components/temporary';
 import {StyledEditorContent} from 'containers/reviewProposal';
-import {UpdateVerificationCard} from 'containers/updateVerificationCard';
+// import {UpdateVerificationCard} from 'containers/updateVerificationCard';
 import {TerminalTabs, VotingTerminal} from 'containers/votingTerminal';
 import {useGlobalModalContext} from 'context/globalModals';
 import {useNetwork} from 'context/network';
@@ -56,7 +56,7 @@ import {
 } from 'services/aragon-sdk/queries/use-voting-settings';
 import {useTokenAsync} from 'services/token/queries/use-token';
 import {CHAIN_METADATA, SupportedNetworks} from 'utils/constants';
-import {featureFlags} from 'utils/featureFlags';
+// import {featureFlags} from 'utils/featureFlags';
 import {
   decodeAddMembersToAction,
   decodeMetadataToAction,

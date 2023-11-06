@@ -15,7 +15,8 @@ import {htmlIn} from 'utils/htmlIn';
 import {validateAddress} from 'utils/validators';
 import {DetailedProposal, ProposalId} from 'utils/types';
 import {DaoAction} from '@aragon/sdk-client-common';
-import {useClient} from 'hooks/useClient';
+import {Status, StatusProps} from './Status';
+// import {useClient} from 'hooks/useClient';
 
 export interface UpdateVerificationCardProps {
   proposal?: DetailedProposal;
@@ -27,7 +28,7 @@ export const UpdateVerificationCard: React.FC<UpdateVerificationCardProps> = ({
   actions,
 }) => {
   const {t} = useTranslation();
-  const {client} = useClient();
+  // const {client} = useClient();
   const {network} = useNetwork();
   const {data: daoDetails, isLoading: detailsAreLoading} = useDaoDetailsQuery();
 
@@ -35,12 +36,12 @@ export const UpdateVerificationCard: React.FC<UpdateVerificationCardProps> = ({
   const isDaoAddressCheckLoading = detailsAreLoading;
   const isDaoAddressVerified = validateAddress(daoAddress) === true;
 
-  const isPluginUpdateProposal = client?.methods.isPluginUpdate(
-    actions as DaoAction[]
-  );
-  const isOsUpdateProposal = client?.methods.isDaoUpdate(
-    actions as DaoAction[]
-  );
+  // const isPluginUpdateProposal = client?.methods.isPluginUpdate(
+  //   actions as DaoAction[]
+  // );
+  // const isOsUpdateProposal = client?.methods.isDaoUpdate(
+  //   actions as DaoAction[]
+  // );
 
   const [pluginUpdateVerification, osUpdateVerification] =
     useUpdateVerification(
