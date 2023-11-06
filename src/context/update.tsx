@@ -31,7 +31,7 @@ import {CreateProposalFormData} from 'utils/types';
 import {PluginTypes, usePluginClient} from 'hooks/usePluginClient';
 import {useDaoDetailsQuery} from 'hooks/useDaoDetails';
 import {usePluginAvailableVersions} from 'hooks/usePluginAvailableVersions';
-// import {usePreparedPlugin} from 'hooks/usePreparedPlugins';
+import {usePreparedPlugin} from 'hooks/usePreparedPlugins';
 import {useProtocolVersions} from 'hooks/useDaoVersions';
 import {compareVersions} from 'utils/library';
 
@@ -148,12 +148,13 @@ const UpdateProvider: React.FC<{children: ReactElement}> = ({children}) => {
   const {data: versions, isLoading: protocolVersionLoading} =
     useProtocolVersions(daoDetails?.address);
 
-  // const {data} = usePreparedPlugin(
-  //   client,
-  //   daoDetails?.plugins?.[0]?.instanceAddress,
-  //   pluginType,
-  //   daoDetails?.address
-  // );
+  const {data: preparedPluginList, isLoading: preparedPluginLoading} =
+    usePreparedPlugin(
+      client,
+      daoDetails?.plugins?.[0]?.instanceAddress,
+      pluginType,
+      daoDetails?.address
+    );
 
   const pluginSelectedVersion = getValues('pluginSelectedVersion');
 
@@ -170,7 +171,12 @@ const UpdateProvider: React.FC<{children: ReactElement}> = ({children}) => {
    *************************************************/
   // set plugin list
   useEffect(() => {
-    if (availableVersionLoading && protocolVersionLoading) return;
+    if (
+      availableVersionLoading &&
+      protocolVersionLoading &&
+      preparedPluginLoading
+    )
+      return;
 
     const OSXVersions = new Map();
 
@@ -217,7 +223,14 @@ const UpdateProvider: React.FC<{children: ReactElement}> = ({children}) => {
               build: build.build,
               release: release.release,
             },
-            isPrepared: false,
+            ...(preparedPluginList?.has(
+              `${release.release}.${build.build}`
+            ) && {
+              isPrepared: true,
+              preparedData: {
+                ...preparedPluginList.get(`${release.release}.${build.build}`),
+              },
+            }),
             ...(releaseIndex === pluginAvailableVersions?.releases.length - 1 &&
               buildIndex === release.builds.length - 1 && {
                 isLatest: true,
@@ -229,6 +242,13 @@ const UpdateProvider: React.FC<{children: ReactElement}> = ({children}) => {
             build: release.builds[release.builds.length - 1].build,
             release: release.release,
           },
+          isPrepared: Boolean(
+            preparedPluginList?.has(
+              `${release.release}.${
+                release.builds[release.builds.length - 1].build
+              }`
+            )
+          ),
         });
       });
     });
@@ -244,7 +264,9 @@ const UpdateProvider: React.FC<{children: ReactElement}> = ({children}) => {
   }, [
     availableVersionLoading,
     daoDetails,
-    pluginAvailableVersions,
+    pluginAvailableVersions?.releases,
+    preparedPluginList,
+    preparedPluginLoading,
     protocolVersionLoading,
     setValue,
     versions,

@@ -293,14 +293,18 @@ export function isValid(
   updateFramework?: {
     os: boolean;
     plugin: boolean;
-  }
+  },
+  isSelectedPluginPrepared?: boolean
 ) {
-  // required fields not dirty
-
-  if (type === 'os-update' && (updateFramework?.os || updateFramework?.plugin))
+  if (
+    type === 'os-update' &&
+    (updateFramework?.os || updateFramework?.plugin)
+  ) {
+    if (updateFramework?.plugin && !isSelectedPluginPrepared) return false;
     return true;
-  else false;
+  }
 
+  // required fields not dirty
   if (
     !dirtyFields.proposalTitle ||
     !dirtyFields.proposalSummary ||

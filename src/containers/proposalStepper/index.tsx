@@ -56,6 +56,7 @@ const ProposalStepper: React.FC<ProposalStepperType> = ({
 
   const formActions = useWatch({name: 'actions'});
   const updateFramework = useWatch({name: 'updateFramework'});
+  const pluginSelectedVersion = useWatch({name: 'pluginSelectedVersion'});
 
   const {errors, dirtyFields} = useFormState({control});
 
@@ -101,7 +102,13 @@ const ProposalStepper: React.FC<ProposalStepperType> = ({
             : t('newWithdraw.defineProposal.description')
         }
         isNextButtonDisabled={
-          !defineProposalIsValid(dirtyFields, errors, type, updateFramework)
+          !defineProposalIsValid(
+            dirtyFields,
+            errors,
+            type,
+            updateFramework,
+            pluginSelectedVersion?.isPrepared
+          )
         }
         onNextButtonClicked={next => {
           trackEvent('newProposal_nextBtn_clicked', {
