@@ -35,7 +35,7 @@
     "@tiptap/pm": "^2.0.3",
     "@tiptap/react": "^2.0.3",
     "@tiptap/starter-kit": "^2.0.3",
-    "@vocdoni/gasless-voting": "./vocdoni-gasless-voting-v0.0.1-rc4.tgz",
+    "@vocdoni/gasless-voting": "./vocdoni-gasless-voting-v0.0.1-rc11.tgz",
     "@vocdoni/gasless-voting-ethers": "./vocdoni-gasless-voting-ethers-v0.0.1-rc1.tgz",
     "@vocdoni/react-providers": "^0.1.13",
     "@vocdoni/sdk": "^0.3.1",
@@ -116,5 +116,8 @@
   },
   "engines": {
     "node": ">=18.0.0"
+  },
+  "resolutions": {
+    "@types/react": "^18.2.23"
   }
 }

@@ -4,7 +4,6 @@ import {EditMvSettings} from 'containers/editSettings/majorityVoting';
 import {EditMsSettings} from 'containers/editSettings/multisig';
 import {useDaoDetailsQuery} from 'hooks/useDaoDetails';
 import {GaselessPluginName, PluginTypes} from 'hooks/usePluginClient';
-import {EditGaslessSetings} from '../containers/editSettings/GaslessVoting';
 
 export const EditSettings: React.FC = () => {
   const {data: daoDetails, isLoading: detailsAreLoading} = useDaoDetailsQuery();
