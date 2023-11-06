@@ -64,7 +64,7 @@ export const useTokenBalances = (
   // Because the external api (covalent) sometimes does
   // not index a native balance, fetch the native token balance for
   // the DAO directly and augment the covalent response with it.
-  // Please remove this and handle it on the backend; see APP-2592
+  // Please remove this and handle it on the backend: see APP-2592
   // [FF - 11/6/2023]
   const {data: nativeToken, isFetched} = useBalance({
     address: params.address as Address,
