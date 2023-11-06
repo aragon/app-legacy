@@ -2,6 +2,7 @@ import ModalBottomSheetSwitcher from 'components/modalBottomSheetSwitcher';
 import {useGlobalModalContext} from 'context/globalModals';
 import styled from 'styled-components';
 import React from 'react';
+import {formatUnits} from 'ethers/lib/utils';
 import {useTranslation} from 'react-i18next';
 import {
   ButtonText,
@@ -18,7 +19,7 @@ import {useDelegatee} from 'services/aragon-sdk/queries/use-delegatee';
 import {abbreviateTokenAmount} from 'utils/tokens';
 import {useWallet} from 'hooks/useWallet';
 import {TokenVotingProposal} from '@aragon/sdk-client';
-import {useGetMember} from 'services/aragon-sdk/queries/use-get-member';
+import {useMember} from 'services/aragon-sdk/queries/use-member';
 
 export interface IDelegationGatingMenuState {
   proposal?: TokenVotingProposal;
@@ -64,14 +65,14 @@ export const DelegationGatingMenu: React.FC = () => {
 
   const hasBalance = tokenBalance != null && tokenBalance.value > 0;
 
-  const {data: daoMember} = useGetMember(
+  const {data: daoMember} = useMember(
     {
-      tokenAddress: daoToken?.address as string,
+      pluginAddress: daoDetails?.plugins[0].instanceAddress as string,
       blockNumber: proposal?.creationBlockNumber as number,
     },
-    {enabled: daoToken != null && proposal != null}
+    {enabled: daoDetails != null && proposal != null}
   );
-  const pastBalance = daoMember?.balance ?? 0;
+  const pastBalance = formatUnits(daoMember?.balance ?? 0n, daoToken?.decimals);
   const parsedPastBalance = abbreviateTokenAmount(pastBalance.toString());
 
   const {data: delegateData} = useDelegatee(
@@ -97,7 +98,7 @@ export const DelegationGatingMenu: React.FC = () => {
 
   const {firstKey, secondKey} = getDelegationLabels({
     hasBalance,
-    hasPastBalance: pastBalance > 0,
+    hasPastBalance: (daoMember?.balance ?? 0) > 0,
     needsSelfDelegation,
   });
   const firstSentence = t(`modal.delegation.CantVote.${firstKey}`, {

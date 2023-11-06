@@ -3,6 +3,7 @@ import {ProposalStatus} from '@aragon/sdk-client-common';
 
 import type {
   IFetchDelegateeParams,
+  IFetchMemberParams,
   IFetchMembersParams,
   IFetchPastVotingPowerParams,
   IFetchProposalParams,
@@ -65,6 +66,6 @@ export const aragonSdkQueryKeys = {
   ],
   getMember: (
     baseParams: IAragonSdkBaseParams,
-    params: IFetchDelegateeParams
+    params: IFetchMemberParams
   ): QueryKey => [AragonSdkQueryItem.GET_MEMBER, baseParams, params],
 };
