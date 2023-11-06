@@ -88,11 +88,11 @@ export class VoteStorage extends StorageUtils {
         }
 
         // For GaslessVoteOrApproval
-        if (
-          'type' in vote &&
-          (vote.type === 'gaslessVote' || vote.type === 'approval')
-        ) {
-          return vote.vote !== userWallet;
+        if ('type' in vote) {
+          if (vote.type === 'approval') return vote.vote !== userWallet;
+          else if (vote.type === 'gaslessVote') {
+            return vote.vote.address !== userWallet;
+          }
         }
 
         // For TokenVotingProposalVote

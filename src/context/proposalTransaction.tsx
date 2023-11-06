@@ -364,10 +364,18 @@ const ProposalTransactionProvider: React.FC<Props> = ({children}) => {
             type: 'approval',
             vote: address.toLowerCase(),
           } as GaslessVoteOrApprovalVote;
-        } else {
+        } else if (voteTokenAddress != null) {
+          const weight = await fetchVotingPower({
+            tokenAddress: voteTokenAddress,
+            address,
+          });
           voteToPersist = {
             type: 'gaslessVote',
-            vote: address.toLowerCase(),
+            vote: {
+              address: address.toLowerCase(),
+              vote,
+              weight: weight.toBigInt(),
+            },
           } as GaslessVoteOrApprovalVote;
         }
       }
@@ -380,7 +388,7 @@ const ProposalTransactionProvider: React.FC<Props> = ({children}) => {
         );
       }
     },
-    [address, network, pluginType]
+    [address, fetchVotingPower, network, pluginType, voteTokenAddress]
   );
 
   // handles closing vote/approval modal

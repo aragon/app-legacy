@@ -458,21 +458,6 @@ export function getLiveProposalTerminalProps(
       symbol: proposal.token.symbol,
     };
 
-    // voters
-    // todo(kon)(cache): implement voters
-    voters = [];
-    // getErc20Voters(
-    //   proposal.votes,
-    //   proposal.totalVotingWeight,
-    //   proposal.token.decimals,
-    //   proposal.token.symbol
-    // ).sort((a, b) => {
-    //   const x = Number(a.votingPower?.slice(0, a.votingPower.length - 1));
-    //   const y = Number(b.votingPower?.slice(0, b.votingPower.length - 1));
-
-    //   return x > y ? -1 : 1;
-    // });
-
     // results
     const results: ProposalVoteResults = getErc20Results(
       proposal.vochain.tally.parsed,
@@ -511,7 +496,7 @@ export function getLiveProposalTerminalProps(
     strategy = t('votingTerminal.tokenVoting');
     return {
       token,
-      voters,
+      voters: proposal.voters,
       results,
       strategy,
       supportThreshold,

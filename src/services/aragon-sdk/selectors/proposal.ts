@@ -4,6 +4,7 @@ import {
   TokenVotingProposal,
   TokenVotingProposalListItem,
   TokenVotingProposalVote,
+  VoteValues,
 } from '@aragon/sdk-client';
 import {ProposalStatus} from '@aragon/sdk-client-common';
 import {InfiniteData} from '@tanstack/react-query';
@@ -148,12 +149,12 @@ function syncApprovalsOrVotes(
   if (isMultisigProposal(proposal)) {
     proposal.approvals = syncMultisigVotes(chainId, proposal);
   } else if (isGaslessProposal(proposal)) {
-    // todo(kon)(cache): gasless vote array is not yet implemented
-    const {gaslessVotes, approvers} = syncGaslessVotesOrApproves(
+    const {gaslessVoters, approvers} = syncGaslessVotesOrApproves(
       chainId,
       proposal
     );
     proposal.approvers = approvers;
+    proposal.voters = gaslessVoters.map(({address}) => address);
   } else if (isTokenBasedProposal(proposal)) {
     proposal.votes = syncTokenBasedVotes(chainId, proposal);
   }
@@ -251,7 +252,11 @@ function syncTokenBasedVotes(
 }
 
 type ApprovalVote = string;
-type GaslessVote = string;
+type GaslessVote = {
+  address: string;
+  vote: VoteValues;
+  weight: BigInt;
+};
 
 export type GaslessVoteOrApprovalVote =
   | {
@@ -268,7 +273,7 @@ function syncGaslessVotesOrApproves(
   proposal: GaslessVotingProposal
 ) {
   const approversCache: ApprovalVote[] = [];
-  const gaslessVoteCache: GaslessVote[] = [];
+  const gaslessVotersCache: GaslessVote[] = [];
 
   // all cached votes
   const allCachedVotes = voteStorage.getVotes<GaslessVoteOrApprovalVote>(
@@ -277,8 +282,7 @@ function syncGaslessVotesOrApproves(
   );
 
   const serverApprovals = new Set(proposal.approvers);
-  // todo(kon)(cache): implement gasless votes cache
-  // const serverGaslessVotes = new Set(proposal.votes);
+  const serverGaslessVoters = new Set(proposal.voters);
 
   allCachedVotes.forEach(cachedVote => {
     // remove, from the cache, votes that are returned by the query as well
@@ -287,22 +291,25 @@ function syncGaslessVotesOrApproves(
       serverApprovals.has(cachedVote.vote.toLowerCase())
     ) {
       voteStorage.removeVoteForProposal(chainId, proposal.id, cachedVote.vote);
-      // } else if (
-      //   cachedVote.type === 'gaslessVote' &&
-      //   serverGaslessVotes.has(cachedVote.vote.toLowerCase())
-      // ) {
-      //   voteStorage.removeVoteForProposal(chainId, proposal.id, cachedVote.vote);
+    } else if (
+      cachedVote.type === 'gaslessVote' &&
+      serverGaslessVoters.has(cachedVote.vote.address.toLowerCase())
+    ) {
+      voteStorage.removeVoteForProposal(
+        chainId,
+        proposal.id,
+        cachedVote.vote.address
+      );
     } else {
       // If the vote is not in the server, add it to the list
       cachedVote.type === 'approval'
         ? approversCache.push(cachedVote.vote)
-        : gaslessVoteCache.push(cachedVote.vote);
+        : gaslessVotersCache.push(cachedVote.vote);
     }
   });
 
   return {
     approvers: [...approversCache, ...serverApprovals],
-    gaslessVotes: [...gaslessVoteCache],
-    // ...serverGaslessVotes
+    gaslessVoters: [...gaslessVotersCache],
   };
 }

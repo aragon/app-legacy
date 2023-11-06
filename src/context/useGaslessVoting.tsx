@@ -121,18 +121,17 @@ export const useGaslessHasAlreadyVote = ({
 }) => {
   const [hasAlreadyVote, setHasAlreadyVote] = useState(false);
   const {client} = useClient();
+  const {address} = useWallet();
 
   useEffect(() => {
     const checkAlreadyVote = async () => {
-      // todo(kon)(cache): implement voters.some and if not, do the set has already vote
-      // if (proposal.votes.some(vote => vote.voter === address)) {
-      //   setHasAlreadyVote(true);
-      //   return;
-      // }
+      const p = proposal as GaslessVotingProposal;
+      if (p.voters && p.voters.some(vote => vote === address)) {
+        setHasAlreadyVote(true);
+        return;
+      }
       setHasAlreadyVote(
-        !!(await client.hasAlreadyVoted(
-          (proposal as GaslessVotingProposal)!.vochainProposalId!
-        ))
+        !!(await client.hasAlreadyVoted(p!.vochainProposalId!))
       );
     };
     if (
