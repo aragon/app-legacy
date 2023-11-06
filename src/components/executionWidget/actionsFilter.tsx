@@ -11,6 +11,7 @@ import {RemoveAddressCard} from './actions/removeAddressCard';
 import {SCCExecutionCard} from './actions/sccExecutionWidget';
 import {WCActionCard} from './actions/walletConnectActionCard';
 import {WithdrawCard} from './actions/withdrawCard';
+import {UpdateOSCard} from './actions/updateOScard';
 
 type ActionsFilterProps = {
   action: Action;
@@ -48,6 +49,7 @@ export const ActionsFilter: React.FC<ActionsFilterProps> = ({
         <WCActionCard action={action} type="execution-widget" status={status} />
       );
     case 'os_update':
+      return <UpdateOSCard action={action} dao={dao} />;
     default:
       return <></>;
   }

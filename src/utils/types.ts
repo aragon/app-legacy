@@ -10,7 +10,7 @@ import {
   VoteValues,
   VotingSettings,
 } from '@aragon/sdk-client';
-import {VersionTag} from '@aragon/sdk-client-common';
+import {VersionTag, SupportedVersion} from '@aragon/sdk-client-common';
 import {BigNumber} from 'ethers';
 
 import {InputValue} from '@aragon/ods-old';
@@ -329,7 +329,7 @@ export type ActionMintToken = {
 export type ActionOSUpdate = {
   name: 'os_update';
   inputs: {
-    version: string;
+    version: SupportedVersion;
   };
 };
 
@@ -588,6 +588,7 @@ export interface ProposalFormData {
   };
   pluginSelectedVersion?: {
     version: VersionTag;
+    isPrepared: boolean;
   };
 }
 

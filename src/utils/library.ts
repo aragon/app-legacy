@@ -1049,6 +1049,8 @@ export const walletInWalletList = (
  *          - 0 if version1 is equal to version2
  */
 export function compareVersions(version1: string, version2: string): number {
+  if (!version1 || !version2) return 0;
+
   const v1 = version1.split('.').map(Number);
   const v2 = version2.split('.').map(Number);
 

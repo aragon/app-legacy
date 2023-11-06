@@ -21,6 +21,7 @@ type versionList = {
   version: string | VersionTag;
   helptext: string;
   isLatest?: boolean;
+  isPrepared?: boolean;
   tagLabelNatural?: string;
 };
 
@@ -135,6 +136,7 @@ export const VersionSelectionMenu: React.FC<CheckboxListItemProps> = ({
                           onChange({
                             version: data.version,
                             isLatest: data.isLatest,
+                            isPrepared: data.isPrepared,
                           })
                         }
                       />

@@ -26,8 +26,8 @@ async function fetchPreparedList(
   PluginRepoAddress?: string,
   pluginAddress?: string
 ) {
-  return client
-    ? client?.methods?.getPluginPreparations({
+  const fetchedList = client
+    ? await client?.methods?.getPluginPreparations({
         limit: 10,
         skip: 0,
         direction: SortDirection.ASC,
@@ -36,7 +36,20 @@ async function fetchPreparedList(
         daoAddressOrEns: daoAddressOrEns,
         pluginRepoAddress: PluginRepoAddress,
       })
-    : Promise.reject(new Error('Client not defined'));
+    : [];
+
+  const filteredFetchedList = new Map();
+
+  //  Filters the fetched list of plugins to only include those of type 'Update'.
+  fetchedList?.map(plugin => {
+    if (plugin.type === 'Update')
+      filteredFetchedList.set(
+        `${plugin.versionTag.release}.${plugin.versionTag.build}`,
+        plugin
+      );
+  });
+
+  return filteredFetchedList;
 }
 
 /**
@@ -73,7 +86,7 @@ export const usePreparedPlugin = (
   }
 
   return useQuery({
-    queryKey: ['protocolVersions', daoAddressOrEns],
+    queryKey: ['preparedPlugin', daoAddressOrEns],
     queryFn: () =>
       fetchPreparedList(
         client,
