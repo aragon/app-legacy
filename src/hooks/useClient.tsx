@@ -66,7 +66,9 @@ export const UseClientProvider: React.FC<{children: ReactNode}> = ({
       {
         url: `${CHAIN_METADATA[network].ipfs}/api/v0`,
         headers: {
-          'X-API-KEY': (import.meta.env.VITE_IPFS_API_KEY as string) || '',
+          ...(translatedNetwork !== 'local' && {
+            'X-API-KEY': (import.meta.env.VITE_IPFS_API_KEY as string) || '',
+          }),
         },
       },
     ];
