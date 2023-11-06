@@ -19,7 +19,7 @@ import {
 import {getProposalExecutionStatus} from '../../utils/proposals';
 import {
   PENDING_PROPOSAL_STATUS_INTERVAL,
-  PROPOSAL_STATUS_INTERVAL,
+  // PROPOSAL_STATUS_INTERVAL,
 } from '../../pages/proposal';
 import {
   getApproveStatusLabel,
@@ -55,7 +55,7 @@ export const CommitteeVotingTerminal = ({
   const {t} = useTranslation();
   const [terminalTab, setTerminalTab] = useState<TerminalTabs>('breakdown');
   const [approvalStatus, setApprovalStatus] = useState('');
-  const [intervalInMills, setIntervalInMills] = useState(0);
+  // const [intervalInMills, setIntervalInMills] = useState(0);
 
   const {address, isOnWrongNetwork} = useWallet();
 
@@ -181,7 +181,7 @@ export const CommitteeVotingTerminal = ({
         // remove interval timer once the proposal has started
         if (proposal.startDate.valueOf() <= new Date().valueOf()) {
           clearInterval(interval);
-          setIntervalInMills(PROPOSAL_STATUS_INTERVAL);
+          // setIntervalInMills(PROPOSAL_STATUS_INTERVAL);
           setApprovalStatus(v);
         } else if (proposal.status === 'Pending') {
           setApprovalStatus(v);

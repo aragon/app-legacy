@@ -1,4 +1,3 @@
-import {useWallet} from './useWallet';
 import {useClient} from '@vocdoni/react-providers';
 import {useCallback, useEffect, useState} from 'react';
 import {GaselessPluginName, usePluginClient} from './usePluginClient';

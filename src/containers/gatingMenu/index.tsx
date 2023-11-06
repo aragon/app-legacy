@@ -58,8 +58,9 @@ export const GatingMenu: React.FC = () => {
   };
 
   const pluginType = plugins?.[0].id as PluginTypes;
-  const isTokenBasedDao = pluginType === 'token-voting.plugin.dao.eth'
-    || pluginType  === GaselessPluginName;
+  const isTokenBasedDao =
+    pluginType === 'token-voting.plugin.dao.eth' ||
+    pluginType === GaselessPluginName;
 
   const displayWrapToken = isTokenBasedDao && isDAOTokenWrapped;
   const wrapTokenSymbol =

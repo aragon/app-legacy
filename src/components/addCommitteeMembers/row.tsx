@@ -29,13 +29,8 @@ const WalletRow: React.FC<WalletRowProps> = ({index, onDelete}) => {
   const {api: provider} = useProviders();
 
   const {control} = useFormContext();
-  const [committee, multisigWallets, wallets, membership]: [
-    MultisigWalletField[],
-    MultisigWalletField[],
-    MultisigWalletField[],
-    'multisig' | 'token',
-  ] = useWatch({
-    name: ['committee', 'multisigWallets', 'wallets', 'membership'],
+  const committee: MultisigWalletField[] = useWatch({
+    name: ['committee'],
     control,
   });
 

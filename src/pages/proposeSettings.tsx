@@ -676,9 +676,8 @@ const ProposeSettingWrapper: React.FC<Props> = ({
     // }
 
     // todo(kon): implement this
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
     const proposalIterator = pluginClient.methods.createProposal(
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       proposalCreationData as any
     );
 

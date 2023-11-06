@@ -214,7 +214,7 @@ export function proposal2CardProps(
       },
     };
     return {...props, ...specificProps};
-  }   else if (isErc20VotingProposal(proposal)) {
+  } else if (isErc20VotingProposal(proposal)) {
     const specificProps = {
       voteTitle: t('governance.proposals.voteTitle'),
       stateLabel: PROPOSAL_STATE_LABELS,

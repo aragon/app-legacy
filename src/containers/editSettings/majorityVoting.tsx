@@ -430,18 +430,19 @@ export const EditMvSettings: React.FC<EditMvSettingsProps> = ({daoDetails}) => {
     },
   ];
 
-  const gaslessAction = [
-    {
-      component: (
-        <ListItemAction
-          title={t('settings.resetChanges')}
-          bgWhite
-          mode={isGaslessChanged ? 'default' : 'disabled'}
-        />
-      ),
-      callback: setCurrentGasless,
-    },
-  ];
+  /*todo(kon): fix or remove before pr turn to non-draft*/
+  // const gaslessAction = [
+  //   {
+  //     component: (
+  //       <ListItemAction
+  //         title={t('settings.resetChanges')}
+  //         bgWhite
+  //         mode={isGaslessChanged ? 'default' : 'disabled'}
+  //       />
+  //     ),
+  //     callback: setCurrentGasless,
+  //   },
+  // ];
 
   if (isLoading) {
     return <Loading />;

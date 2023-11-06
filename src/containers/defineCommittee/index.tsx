@@ -9,7 +9,7 @@ import ExecutionExpirationtime from 'components/executionExpirationtime';
 
 const DefineCommittee: React.FC = () => {
   const {t} = useTranslation();
-  const {control, setValue, getValues, trigger} = useFormContext();
+  const {control, setValue, trigger} = useFormContext();
 
   const [committee, committeeMinimumApproval] = useWatch({
     name: ['committee', 'committeeMinimumApproval'],

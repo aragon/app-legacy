@@ -4,7 +4,6 @@ import React, {useCallback, useEffect} from 'react';
 import {Controller, useFormContext, useWatch} from 'react-hook-form';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
-import {SelectEligibility} from 'components/selectEligibility';
 
 import VerificationCard from 'components/verificationCard';
 import {WrappedWalletInput} from 'components/wrappedWalletInput';
@@ -24,8 +23,8 @@ const AddExistingToken: React.FC = () => {
   const {control, trigger, clearErrors, setValue, resetField} =
     useFormContext();
 
-  const [tokenAddress, blockchain, tokenType] = useWatch({
-    name: ['tokenAddress', 'blockchain', 'tokenType'],
+  const [tokenAddress, blockchain] = useWatch({
+    name: ['tokenAddress', 'blockchain'],
   });
 
   // non-null assertion because blockchain comes from the list of

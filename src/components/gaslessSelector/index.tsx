@@ -1,16 +1,18 @@
 import {CheckboxListItem, Tag} from '@aragon/ods-old';
 import React from 'react';
 import {useTranslation} from 'react-i18next';
-import {ControllerRenderProps} from 'react-hook-form/dist/types';
 import {useCensus3SupportedChains} from '../../hooks/useCensus3';
 import {useFormContext} from 'react-hook-form';
 
 /**
  * Type that infers the ControllerRenderProps value prop
  */
-type ValueOfControllerRenderProps<T> = T extends ControllerRenderProps<any, any>
-  ? T['value']
-  : never;
+// type ValueOfControllerRenderProps<T> = T extends ControllerRenderProps<
+//   FieldValues,
+//   TName
+// >
+//   ? T['value']
+//   : never;
 
 /**
  * Checkbox used on the DAO creation process.
@@ -22,8 +24,8 @@ const GaslessSelector = ({
   onChange,
   value,
 }: {
-  onChange: (...event: any[]) => void;
-  value: ValueOfControllerRenderProps<ControllerRenderProps>;
+  onChange: (value: string) => void;
+  value: string;
 }) => {
   const {t} = useTranslation();
   const {getValues} = useFormContext();

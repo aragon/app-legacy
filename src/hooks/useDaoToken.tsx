@@ -21,7 +21,7 @@ export function useDaoToken(
   const [error, setError] = useState<Error>();
   const [isLoading, setIsLoading] = useState(false);
 
-  const {data: daoDetails, isLoading: daoDetailsLoading} = useDaoDetailsQuery();
+  const {data: daoDetails} = useDaoDetailsQuery();
   const {id: pluginType} =
     daoDetails?.plugins[0] || ({} as InstalledPluginListItem);
 

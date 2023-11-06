@@ -1,5 +1,4 @@
 import React from 'react';
-import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 import {
   GenericKeyEnum,
@@ -23,8 +22,6 @@ export const StepperModalProgress = <X extends GenericKeyEnum>({
   steps: StepsMap<X>;
   labels: StepperLabels<X>;
 }) => {
-  const {t, i18n} = useTranslation();
-
   if (!steps) {
     return null;
   }
