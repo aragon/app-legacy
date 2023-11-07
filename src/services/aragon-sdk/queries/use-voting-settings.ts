@@ -64,8 +64,7 @@ export function isMultisigVotingSettings(
 export function isGaslessVotingSettings(
   settings: SupportedVotingSettings | undefined | null
 ): settings is GaslessPluginVotingSettings {
-  if (!settings || Object.keys(settings).length === 0) return false;
-  return 'onlyMultisigProposalCreation' in settings;
+  return settings ? 'onlyMultisigProposalCreation' in settings : false;
 }
 
 /**

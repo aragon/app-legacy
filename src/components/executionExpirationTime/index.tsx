@@ -12,7 +12,7 @@ import styled from 'styled-components';
 import {useTranslation} from 'react-i18next';
 import {getDaysHoursMins} from '../../utils/date';
 
-const ExecutionExpirationtime: React.FC = () => {
+const ExecutionExpirationTime: React.FC = () => {
   const {control, setValue, trigger, getValues} = useFormContext();
   const {t} = useTranslation();
 
@@ -244,7 +244,7 @@ const ExecutionExpirationtime: React.FC = () => {
   );
 };
 
-export default ExecutionExpirationtime;
+export default ExecutionExpirationTime;
 
 const DurationContainer = styled.div.attrs({
   className:

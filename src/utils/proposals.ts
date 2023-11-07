@@ -464,8 +464,6 @@ export function getLiveProposalTerminalProps(
         return {wallet: voter, src: voter, option: 'none'} as VoterType;
       }) ?? [];
 
-    console.log(voters);
-
     // results
     const results: ProposalVoteResults = getErc20Results(
       proposal.vochain.tally.parsed,

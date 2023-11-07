@@ -12,11 +12,7 @@ import {
   IconChevronRight,
   IconReload,
 } from '@aragon/ods-old';
-import {
-  GenericKeyEnum,
-  StepsMap,
-  StepStatus,
-} from '../hooks/useFunctionStepper';
+import {StepsMap, StepStatus} from '../hooks/useFunctionStepper';
 import {
   StepperModalProgress,
   StepperLabels,
@@ -26,9 +22,9 @@ export type BtnLabels = {
   [key in StepStatus]: string | undefined;
 };
 
-export interface StepperModalProps<X extends GenericKeyEnum> {
+export interface StepperModalProps<TStepKey extends string> {
   // state: TransactionState;
-  steps: StepsMap<X>;
+  steps: StepsMap<TStepKey>;
   globalState: StepStatus;
   callback: () => void;
   isOpen: boolean;
@@ -43,10 +39,10 @@ export interface StepperModalProps<X extends GenericKeyEnum> {
   buttonLabels: BtnLabels;
   buttonLabelSuccess?: string;
   disabledCallback?: boolean;
-  stepLabels: StepperLabels<X>;
+  stepLabels: StepperLabels<TStepKey>;
 }
 
-const StepperModal = <X extends GenericKeyEnum>({
+const StepperModal = <TStepKey extends string>({
   steps,
   globalState,
   callback,
@@ -61,7 +57,7 @@ const StepperModal = <X extends GenericKeyEnum>({
   subtitle,
   buttonLabels,
   stepLabels,
-}: StepperModalProps<X>): JSX.Element => {
+}: StepperModalProps<TStepKey>): JSX.Element => {
   const {t} = useTranslation();
   const {network} = useNetwork();
 
@@ -127,7 +123,7 @@ const StepperModal = <X extends GenericKeyEnum>({
                   <div className="truncate">{formattedAverage}</div>
                   <div>{`${nativeCurrency.symbol}`}</div>
                 </StrongText>
-                <div className="text-ui-500 flex justify-end space-x-0.5 text-right text-sm">
+                <div className="text-ui-500 space-TStepKey-0.5 flex justify-end text-right text-sm">
                   <div className="truncate">{formattedMax}</div>
                   <div>{`${nativeCurrency.symbol}`}</div>
                 </div>
@@ -207,7 +203,7 @@ const GasCostTableContainer = styled.div.attrs({
 })``;
 
 const GasCostEthContainer = styled.div.attrs({
-  className: 'flex justify-between py-3 px-4 space-x-8',
+  className: 'flex justify-between py-3 px-4 space-TStepKey-8',
 })``;
 
 const GasTotalCostEthContainer = styled.div.attrs({
@@ -231,7 +227,7 @@ const VStack = styled.div.attrs({
 })``;
 
 const StrongText = styled.p.attrs({
-  className: 'font-semibold text-right text-neutral-600 flex space-x-1',
+  className: 'font-semibold text-right text-neutral-600 flex space-TStepKey-1',
 })``;
 
 const Label = styled.p.attrs({

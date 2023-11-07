@@ -68,9 +68,10 @@ export const EditMvSettings: React.FC<EditMvSettingsProps> = ({daoDetails}) => {
       pluginAddress,
       pluginType,
     });
-  const votingSettings = isGasless
-    ? (pluginSettings as GaslessPluginVotingSettings)
-    : (pluginSettings as VotingSettings | undefined);
+  const votingSettings = pluginSettings as
+    | GaslessPluginVotingSettings
+    | VotingSettings
+    | undefined;
 
   const isLoading =
     settingsAreLoading || tokensAreLoading || tokenSupplyIsLoading;

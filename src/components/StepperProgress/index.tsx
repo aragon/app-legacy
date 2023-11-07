@@ -1,26 +1,22 @@
 import React from 'react';
 import styled from 'styled-components';
-import {
-  GenericKeyEnum,
-  StepData,
-  StepsMap,
-} from '../../hooks/useFunctionStepper';
+import {StepData, StepsMap} from '../../hooks/useFunctionStepper';
 import {StepLine} from './StepLine';
 
-export type StepperLabels<X extends GenericKeyEnum> = Record<
-  X,
+export type StepperLabels<TStepKey extends string> = Record<
+  TStepKey,
   {
     title: string;
     helper?: string;
   }
 >;
 
-export const StepperModalProgress = <X extends GenericKeyEnum>({
+export const StepperModalProgress = <TStepKey extends string>({
   steps,
   labels,
 }: {
-  steps: StepsMap<X>;
-  labels: StepperLabels<X>;
+  steps: StepsMap<TStepKey>;
+  labels: StepperLabels<TStepKey>;
 }) => {
   if (!steps) {
     return null;
@@ -30,7 +26,11 @@ export const StepperModalProgress = <X extends GenericKeyEnum>({
     <StepList>
       {Object.entries(steps).map(([id, step], i) => {
         return (
-          <StepLine key={i} {...labels[id as X]} {...(step as StepData)} />
+          <StepLine
+            key={i}
+            {...labels[id as TStepKey]}
+            {...(step as StepData)}
+          />
         );
       })}
     </StepList>

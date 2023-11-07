@@ -12,18 +12,20 @@ export interface StepData {
   errorMessage?: string;
 }
 
-export type GenericKeyEnum = string | number | symbol;
+export type GenericKeyEnum = string;
+export type StepsMap<TStepKey extends GenericKeyEnum> = Record<
+  TStepKey,
+  StepData
+>;
 
-export type StepsMap<X extends GenericKeyEnum> = Record<X, StepData>;
-
-interface IUseFunctionStepper<X extends GenericKeyEnum> {
-  initialSteps: StepsMap<X>;
+interface IUseFunctionStepper<TStepKey extends string> {
+  initialSteps: StepsMap<TStepKey>;
 }
 
-export const useFunctionStepper = <X extends GenericKeyEnum>({
+export const useFunctionStepper = <TStepKey extends string>({
   initialSteps,
-}: IUseFunctionStepper<X>) => {
-  const [steps, setSteps] = useState<StepsMap<X>>(initialSteps);
+}: IUseFunctionStepper<TStepKey>) => {
+  const [steps, setSteps] = useState<StepsMap<TStepKey>>(initialSteps);
 
   const globalState: StepStatus = useMemo(() => {
     const stepsArray: StepData[] = Object.values(steps);
@@ -51,7 +53,7 @@ export const useFunctionStepper = <X extends GenericKeyEnum>({
   }, [steps]);
 
   const updateStepStatus = useCallback(
-    (stepId: X, status: StepStatus, errorMessage?: string) => {
+    (stepId: TStepKey, status: StepStatus, errorMessage?: string) => {
       setSteps(prevSteps => ({
         ...prevSteps,
         [stepId]: {
@@ -65,7 +67,7 @@ export const useFunctionStepper = <X extends GenericKeyEnum>({
   );
 
   const doStep = useCallback(
-    async <T,>(stepId: X, callback: () => Promise<T>) => {
+    async <T,>(stepId: TStepKey, callback: () => Promise<T>) => {
       let res: T;
       try {
         updateStepStatus(stepId, StepStatus.LOADING);
@@ -85,7 +87,7 @@ export const useFunctionStepper = <X extends GenericKeyEnum>({
 
   const resetStates = useCallback(() => {
     for (const stepKey in steps) {
-      updateStepStatus(stepKey as X, StepStatus.WAITING);
+      updateStepStatus(stepKey as TStepKey, StepStatus.WAITING);
     }
   }, [steps, updateStepStatus]);
 

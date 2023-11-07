@@ -52,7 +52,7 @@ export const CommitteeVotingTerminal = ({
   }>;
   pluginType: PluginTypes;
 } & CommitteeExecutionWidgetProps) => {
-  const {t} = useTranslation();
+  const {t, i18n} = useTranslation();
   const [terminalTab, setTerminalTab] = useState<TerminalTabs>('breakdown');
   const [approvalStatus, setApprovalStatus] = useState('');
   // const [intervalInMills, setIntervalInMills] = useState(0);
@@ -173,10 +173,17 @@ export const CommitteeVotingTerminal = ({
   useEffect(() => {
     if (proposal) {
       // set the very first time
-      setApprovalStatus(getApproveStatusLabel(proposal, isApprovalPeriod, t));
+      setApprovalStatus(
+        getApproveStatusLabel(proposal, isApprovalPeriod, t, i18n.language)
+      );
 
       const interval = setInterval(async () => {
-        const v = getApproveStatusLabel(proposal, isApprovalPeriod, t);
+        const v = getApproveStatusLabel(
+          proposal,
+          isApprovalPeriod,
+          t,
+          i18n.language
+        );
 
         // remove interval timer once the proposal has started
         if (proposal.startDate.valueOf() <= new Date().valueOf()) {

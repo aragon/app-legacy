@@ -20,7 +20,6 @@ import {abbreviateTokenAmount} from 'utils/tokens';
 import {useWallet} from 'hooks/useWallet';
 import {TokenVotingProposal} from '@aragon/sdk-client';
 import {useMember} from 'services/aragon-sdk/queries/use-member';
-import {GaselessPluginName, PluginTypes} from '../../hooks/usePluginClient';
 
 export interface IDelegationGatingMenuState {
   proposal?: TokenVotingProposal;
@@ -114,10 +113,6 @@ export const DelegationGatingMenu: React.FC = () => {
   const ctaLabel = needsSelfDelegation
     ? 'modal.delegationActive.CtaLabel'
     : 'modal.delegation.NoVotingPower.ctaLabel';
-
-  if ((daoDetails?.plugins[0].id as PluginTypes) === GaselessPluginName) {
-    return;
-  }
 
   return (
     <ModalBottomSheetSwitcher

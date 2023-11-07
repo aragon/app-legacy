@@ -1,6 +1,7 @@
 import {TFunction} from 'i18next';
 import {GaslessVotingProposal} from '@vocdoni/gasless-voting';
-import {formatDistanceToNow} from 'date-fns';
+import {Locale, formatDistanceToNow} from 'date-fns';
+import * as Locales from 'date-fns/locale';
 
 export function getCommitteVoteButtonLabel(
   executed: boolean,
@@ -31,27 +32,28 @@ export function getCommitteVoteButtonLabel(
 export function getApproveStatusLabel(
   proposal: GaslessVotingProposal,
   isApprovalPeriod: boolean,
-  t: TFunction
+  t: TFunction,
+  i18nLanguage: string
 ) {
   let label = '';
+
   if (
     proposal.status === 'Pending' ||
     proposal.status === 'Active' ||
     proposal.status === 'Succeeded'
   ) {
-    // Uncomment line below is causing SyntaxError: ambiguous indirect export: default 🤷‍♀️
-    // const locale = (Locales as Record<string, Locale>)[i18n.language];
+    const locale = (Locales as Record<string, Locale>)[i18nLanguage];
 
     if (!isApprovalPeriod) {
       const timeUntilNow = formatDistanceToNow(proposal.endDate, {
         includeSeconds: true,
-        // locale,
+        locale,
       });
       label = t('votingTerminal.status.pending', {timeUntilNow});
     } else {
       const timeUntilEnd = formatDistanceToNow(proposal.expirationDate, {
         includeSeconds: true,
-        // locale,
+        locale,
       });
       label = t('votingTerminal.status.active', {timeUntilEnd});
     }

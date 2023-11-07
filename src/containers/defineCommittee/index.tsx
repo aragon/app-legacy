@@ -5,7 +5,7 @@ import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 
 import AddCommitteeMembers from 'components/addCommitteeMembers';
-import ExecutionExpirationtime from 'components/executionExpirationtime';
+import ExecutionExpirationTime from 'components/executionExpirationTime';
 
 const DefineCommittee: React.FC = () => {
   const {t} = useTranslation();
@@ -94,7 +94,7 @@ const DefineCommittee: React.FC = () => {
 
                   <ProgressInfo2>
                     <p
-                      className="text-right font-bold text-primary-500"
+                      className="font-bold text-right text-primary-500"
                       style={{
                         flexBasis: `${
                           (Number(value) / Number(committeeCount)) * 100
@@ -104,7 +104,7 @@ const DefineCommittee: React.FC = () => {
                       {value}
                     </p>
 
-                    <p className="shrink-0 text-ui-600">
+                    <p className="text-ui-600 shrink-0">
                       {t('createDAO.step5.alerts.ofAddresses', {
                         number: committeeCount,
                       })}
@@ -135,7 +135,7 @@ const DefineCommittee: React.FC = () => {
           label={t('labels.executionExpirationTime')}
           helpText={t('createDAO.step5.executionTimeSubtitle')}
         />
-        <ExecutionExpirationtime />
+        <ExecutionExpirationTime />
       </FormItem>
     </>
   );
