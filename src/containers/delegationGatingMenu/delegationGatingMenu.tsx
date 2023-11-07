@@ -67,10 +67,11 @@ export const DelegationGatingMenu: React.FC = () => {
 
   const {data: daoMember} = useMember(
     {
+      address: address as string,
       pluginAddress: daoDetails?.plugins[0].instanceAddress as string,
       blockNumber: proposal?.creationBlockNumber as number,
     },
-    {enabled: daoDetails != null && proposal != null}
+    {enabled: address != null && daoDetails != null && proposal != null}
   );
   const pastBalance = formatUnits(daoMember?.balance ?? 0n, daoToken?.decimals);
   const parsedPastBalance = abbreviateTokenAmount(pastBalance.toString());

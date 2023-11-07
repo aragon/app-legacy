@@ -553,12 +553,12 @@ export const Proposal: React.FC = () => {
   };
 
   const displayAlertMessage =
+    isMultisigPlugin && // is multisig plugin
     proposal?.status === 'Active' && // active proposal
     address && // logged in
     !isOnWrongNetwork && // on proper network
     !voted && // haven't voted
-    !canVote && // cannot vote
-    isMultisigPlugin; // is multisig plugin
+    !canVote; // cannot vote
 
   const alertMessage = displayAlertMessage
     ? t('votingTerminal.status.ineligibleWhitelist')

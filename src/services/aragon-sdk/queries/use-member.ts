@@ -54,15 +54,14 @@ export const tokenMemberQuery = gql`
 `;
 
 const fetchMember = async (
-  {pluginAddress, blockNumber}: IFetchMemberParams,
+  {pluginAddress, blockNumber, address}: IFetchMemberParams,
   client?: TokenVotingClient
 ): Promise<TokenVotingMember> => {
   invariant(client != null, 'fetchMember: client is not defined');
-  const userAddress = await client.web3.getSigner().getAddress();
   const params = {
     where: {
       plugin: pluginAddress.toLowerCase(),
-      address: userAddress.toLowerCase(),
+      address: address.toLowerCase(),
     },
     block: blockNumber ? {number: blockNumber} : null,
   };
