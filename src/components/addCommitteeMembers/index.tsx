@@ -6,7 +6,7 @@ import {
   IconMenuVertical,
   ListItemAction,
 } from '@aragon/ods-old';
-import React, {useEffect} from 'react';
+import React, {useEffect, useRef} from 'react';
 import {useFieldArray, useFormContext, useWatch} from 'react-hook-form';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
@@ -16,18 +16,29 @@ import {useWallet} from 'hooks/useWallet';
 import Footer from './footer';
 import Header from './header';
 import Row from './row';
+import {useNetwork} from '../../context/network';
+import {Address, useEnsName} from 'wagmi';
+import {CHAIN_METADATA} from '../../utils/constants';
 
 const AddCommitteeMembers: React.FC = () => {
   const {t} = useTranslation();
-  const {address, ensName} = useWallet();
+  const {alert} = useAlertContext();
+  const appendConnectedAddress = useRef<boolean>(true);
 
-  const {control, trigger} = useFormContext();
+  const {network} = useNetwork();
+  const {address} = useWallet();
+
+  const {data: ensName} = useEnsName({
+    address: address as Address,
+    chainId: CHAIN_METADATA[network].id,
+  });
+
+  const {control, setFocus, trigger} = useFormContext();
   const wallets = useWatch({name: 'committee', control: control});
   const {fields, append, remove} = useFieldArray({
     name: 'committee',
     control,
   });
-  const {alert} = useAlertContext();
 
   const controlledFields = fields.map((field, index) => {
     return {
@@ -37,26 +48,41 @@ const AddCommitteeMembers: React.FC = () => {
   });
 
   useEffect(() => {
-    if (address && !wallets) {
-      // uncomment when minting to treasury is ready
-      // insert(1, {address: address, amount: '0'});
-      append({address, ensName, amount: 1});
+    if (
+      address &&
+      controlledFields?.length === 0 &&
+      appendConnectedAddress.current === true
+    ) {
+      append({address, amount: '1', ensName});
+      appendConnectedAddress.current = false;
     }
-  }, [address, append, ensName, wallets]);
+  }, [address, append, controlledFields?.length, ensName, trigger]);
 
   // setTimeout added because instant trigger not working
   const handleAddWallet = () => {
     append({address: '', ensName: '', amount: 1});
+    alert(t('alert.chip.addressAdded'));
+    const id = `committee.${controlledFields.length}`;
     setTimeout(() => {
-      trigger(`committee.${controlledFields.length}`);
+      setFocus(id);
+      trigger(id);
     }, 50);
   };
 
   const handleDeleteRow = (index: number) => {
     remove(index);
+    alert(t('alert.chip.removedAddress'));
     setTimeout(() => {
       trigger('committee');
     });
+  };
+
+  const handleDeleteAll = () => {
+    remove();
+    alert(t('alert.chip.removedAllAddresses'));
+    setTimeout(() => {
+      trigger('multisigWallets');
+    }, 50);
   };
 
   return (
@@ -97,10 +123,7 @@ const AddCommitteeMembers: React.FC = () => {
                   bgWhite
                 />
               ),
-              callback: () => {
-                remove();
-                alert(t('alert.chip.removedAllAddresses'));
-              },
+              callback: handleDeleteAll,
             },
           ]}
         />

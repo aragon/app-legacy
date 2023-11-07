@@ -29,8 +29,8 @@ const WalletRow: React.FC<WalletRowProps> = ({index, onDelete}) => {
   const {api: provider} = useProviders();
 
   const {control} = useFormContext();
-  const committee: MultisigWalletField[] = useWatch({
-    name: ['committee'],
+  const committee = useWatch({
+    name: 'committee',
     control,
   });
 
@@ -49,18 +49,21 @@ const WalletRow: React.FC<WalletRowProps> = ({index, onDelete}) => {
         return validationResult;
       }
 
-      const isDuplicateAddress = committee?.some(
-        (wallet, walletIndex) =>
-          ((web3Address.address &&
-            wallet.address.toLowerCase() ===
-              web3Address.address.toLowerCase()) ||
-            (web3Address.ensName &&
-              wallet.ensName.toLowerCase() ===
-                web3Address.ensName.toLowerCase())) &&
-          walletIndex !== index
-      );
-      if (isDuplicateAddress) {
-        validationResult = t('errors.duplicateAddress');
+      if (committee) {
+        committee.forEach(
+          ({address, ensName}: MultisigWalletField, itemIndex: number) => {
+            if (
+              ((web3Address.address &&
+                address.toLowerCase() === web3Address.address.toLowerCase()) ||
+                (web3Address.ensName &&
+                  ensName.toLowerCase() ===
+                    web3Address.ensName.toLowerCase())) &&
+              itemIndex !== index
+            ) {
+              validationResult = t('errors.duplicateAddress');
+            }
+          }
+        );
       }
       return validationResult;
     },
@@ -75,7 +78,9 @@ const WalletRow: React.FC<WalletRowProps> = ({index, onDelete}) => {
         ...(e as WalletInputValue),
       });
     },
-    []
+    // We want this effect to be executed on change of the committee
+    // eslint-disable-next-line
+    [index, committee]
   );
 
   return (

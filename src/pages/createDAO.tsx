@@ -300,20 +300,6 @@ export const CreateDAO: React.FC = () => {
     errors.executionExpirationDays,
   ]);
 
-  // todo(kon): check for rebase validation b794a88a
-  // const proposalCreationIsValid = useMemo(() => {
-  //   // required fields not dirty
-  //   // if multisig
-  //   if (membership === 'multisig') {
-  //     if (!['multisig', 'anyone'].includes(eligibilityType)) {
-  //       return false;
-  //     }
-  //     return true;
-  //   } else {
-  //     return !errors.eligibilityTokenAmount;
-  //   }
-  // }, [eligibilityType, errors.eligibilityTokenAmount, membership]);
-
   const daoCommunityConfigurationIsValid = useMemo(() => {
     if (
       errors.minimumApproval ||

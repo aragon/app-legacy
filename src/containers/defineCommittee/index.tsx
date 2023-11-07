@@ -76,7 +76,7 @@ const DefineCommittee: React.FC = () => {
           }) => (
             <>
               <ApprovalWrapper>
-                <div className="tablet:w-1/3">
+                <InputWrapper>
                   <NumberInput
                     name={name}
                     value={value}
@@ -87,30 +87,31 @@ const DefineCommittee: React.FC = () => {
                     disabled={committeeCount === 0}
                     min="1"
                   />
-                </div>
+                </InputWrapper>
 
-                <LinearProgressContainer>
-                  <LinearProgress max={committeeCount} value={value} />
+                <ProgressWrapper>
+                  <LinearProgressContainer>
+                    <LinearProgress max={committeeCount} value={value} />
 
-                  <ProgressInfo2>
-                    <p
-                      className="text-right text-primary-500"
-                      style={{
-                        flexBasis: `${
-                          (Number(value) / Number(committeeCount)) * 100
-                        }%`,
-                      }}
-                    >
-                      {value}
-                    </p>
+                    <ProgressInfo>
+                      <ApprovalAddresses
+                        style={{
+                          flexBasis: `${
+                            (Number(value) / Number(committeeCount)) * 100
+                          }%`,
+                        }}
+                      >
+                        {value}
+                      </ApprovalAddresses>
 
-                    <p className="shrink-0 text-primary-600">
-                      {t('createDAO.step5.alerts.ofAddresses', {
-                        number: committeeCount,
-                      })}
-                    </p>
-                  </ProgressInfo2>
-                </LinearProgressContainer>
+                      <TotalAddresses>
+                        {t('createDAO.step5.alerts.ofAddresses', {
+                          number: committeeCount,
+                        })}
+                      </TotalAddresses>
+                    </ProgressInfo>
+                  </LinearProgressContainer>
+                </ProgressWrapper>
               </ApprovalWrapper>
 
               {error?.message && (
@@ -149,14 +150,30 @@ const FormItem = styled.div.attrs({
 
 const ApprovalWrapper = styled.div.attrs({
   className:
-    'flex flex-col tablet:flex-row space-y-1.5 tablet:space-y-0 tablet:space-x-3 gap-3',
+    'flex flex-col xl:flex-row items-center p-4 pt-8 xl:p-6 gap-x-6 gap-y-8 rounded-xl bg-neutral-0',
 })``;
 
 const LinearProgressContainer = styled.div.attrs({
   className: 'flex relative flex-1 items-center',
 })``;
 
-const ProgressInfo2 = styled.div.attrs({
+const ProgressInfo = styled.div.attrs({
   className:
-    'flex absolute -top-2.5 justify-between space-x-0.5 w-full text-sm',
+    'flex absolute whitespace-nowrap -top-5 justify-between space-x-1 w-full text-sm leading-normal ',
+})``;
+
+const ApprovalAddresses = styled.p.attrs({
+  className: 'font-semibold text-right text-primary-500',
+})``;
+
+const TotalAddresses = styled.p.attrs({
+  className: 'text-neutral-600 ft-text-sm',
+})``;
+
+const InputWrapper = styled.div.attrs({
+  className: 'order-2 xl:order-1 w-full xl:w-1/4',
+})``;
+
+const ProgressWrapper = styled.div.attrs({
+  className: 'flex flex-1 xl:order-2 items-center w-full',
 })``;
