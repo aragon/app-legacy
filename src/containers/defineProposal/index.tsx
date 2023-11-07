@@ -44,9 +44,9 @@ const DefineProposal: React.FC = () => {
   const UpdateItems = [
     {
       id: 'os',
+      version: osSelectedVersion?.version,
       label: `Aragon OSx v${osSelectedVersion?.version}`,
-      helptext: 'TBD inline release notes',
-      LinkLabel: t('update.item.releaseNotesLabel'),
+      linkLabel: t('update.item.releaseNotesLabel'),
       ...(osxAvailableVersions?.get(osSelectedVersion?.version)?.isLatest && {
         tagLabelNatural: t('update.item.tagLatest'),
       }),
@@ -62,9 +62,10 @@ const DefineProposal: React.FC = () => {
     },
     {
       id: 'plugin',
+      isPlugin: true,
+      version: `${pluginSelectedVersion?.version.release}.${pluginSelectedVersion?.version.build}`,
       label: `Token voting v${pluginSelectedVersion?.version.release}.${pluginSelectedVersion?.version.build}`,
-      helptext: 'TBD inline release notes',
-      LinkLabel: t('update.item.releaseNotesLabel'),
+      linkLabel: t('update.item.releaseNotesLabel'),
       ...(pluginAvailableVersions?.get(
         `${pluginSelectedVersion?.version.release}.${pluginSelectedVersion?.version.build}`
       )?.isLatest && {
