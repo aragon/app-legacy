@@ -91,24 +91,6 @@
     graphql-request "^4.3.0"
     yup "^1.2.0"
 
-"@aragon/sdk-client-common@^1.11.0":
-  version "1.11.0"
-  resolved "https://registry.yarnpkg.com/@aragon/sdk-client-common/-/sdk-client-common-1.11.0.tgz#37d4f4ab4012fd65e06e40c3f41b9c3163328dcf"
-  integrity sha512-zn3BP5vnW7NHgc0fDEbAkVzuiOk+hzSh9oCwOcHY9tLGdGR+g+D0Jzpwqu9McBBur6TpzcW3xdNgMMGTqr21ZA==
-  dependencies:
-    "@aragon/osx-ethers" "^1.3.0-rc0.4"
-    "@aragon/osx-ethers-v1.0.0" "npm:@aragon/osx-ethers@1.2.1"
-    "@aragon/sdk-ipfs" "^1.1.0"
-    "@ethersproject/abstract-signer" "^5.5.0"
-    "@ethersproject/bignumber" "^5.6.0"
-    "@ethersproject/constants" "^5.6.0"
-    "@ethersproject/contracts" "^5.5.0"
-    "@ethersproject/providers" "^5.5.0"
-    "@ethersproject/wallet" "^5.6.0"
-    graphql "^16.5.0"
-    graphql-request "^4.3.0"
-    yup "^1.2.0"
-
 "@aragon/sdk-client@^1.18.1":
   version "1.18.1"
   resolved "https://registry.yarnpkg.com/@aragon/sdk-client/-/sdk-client-1.18.1.tgz#443636d2e8fc7a43d0d95ef32d92f32d4249e337"
