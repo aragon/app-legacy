@@ -3,6 +3,7 @@ import {Erc20TokenDetails} from '@aragon/sdk-client';
 import TipTapLink from '@tiptap/extension-link';
 import {EditorContent, useEditor} from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
+import {Markdown} from 'tiptap-markdown';
 import {Locale, format, formatDistanceToNow} from 'date-fns';
 import * as Locales from 'date-fns/locale';
 import React, {useEffect, useMemo} from 'react';
@@ -76,6 +77,7 @@ const ReviewProposal: React.FC<ReviewProposalProps> = ({
     content: values.proposal,
     extensions: [
       StarterKit,
+      Markdown,
       TipTapLink.configure({
         openOnClick: false,
       }),
