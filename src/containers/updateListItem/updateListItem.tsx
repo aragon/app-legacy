@@ -8,7 +8,11 @@ import {
   Link,
   Tag,
 } from '@aragon/ods-old';
-import React from 'react';
+import {EditorContent, useEditor} from '@tiptap/react';
+import StarterKit from '@tiptap/starter-kit';
+import {Markdown} from 'tiptap-markdown';
+import React, {useEffect} from 'react';
+import {useReleaseNotes} from 'services/aragon-sdk/queries/use-release-notes';
 import styled from 'styled-components';
 
 export const Icons = {
@@ -26,8 +30,9 @@ export const Icons = {
 
 export type CheckboxListItemProps = {
   label: string;
-  helptext?: string;
-  LinkLabel: string;
+  linkLabel: string;
+  version: string;
+  isPlugin?: boolean;
   tagLabelNatural?: string;
   tagLabelInfo?: string;
   disabled?: boolean;
@@ -40,11 +45,14 @@ export type CheckboxListItemProps = {
   onClickActionSecondary?: (e: React.MouseEvent) => void;
 };
 
+const LATEST_RELEASE = '1.3.0';
+
 // TODO: This might be a component that
 export const UpdateListItem: React.FC<CheckboxListItemProps> = ({
   label,
-  helptext,
-  LinkLabel,
+  linkLabel,
+  version,
+  isPlugin,
   tagLabelNatural,
   tagLabelInfo,
   disabled = false,
@@ -56,6 +64,17 @@ export const UpdateListItem: React.FC<CheckboxListItemProps> = ({
   onClickActionPrimary,
   onClickActionSecondary,
 }) => {
+  const {data: releases} = useReleaseNotes();
+  const releaseNotes = releases?.find(release =>
+    release.tag_name.includes(isPlugin ? LATEST_RELEASE : version)
+  );
+  const editor = useEditor({extensions: [StarterKit, Markdown]});
+
+  // Update editor content on release notes change
+  useEffect(() => {
+    editor?.commands.setContent(releaseNotes?.summary ?? '');
+  }, [editor, releaseNotes]);
+
   return (
     <Container data-testid="checkboxListItem" {...{type, disabled, onClick}}>
       <Wrapper>
@@ -70,8 +89,14 @@ export const UpdateListItem: React.FC<CheckboxListItemProps> = ({
             </div>
             {Icons[multiSelect ? 'multiSelect' : 'radio'][type]}
           </HStack>
-          <Helptext>{helptext}</Helptext>
-          <Link label={LinkLabel} iconRight={<IconLinkExternal />} />
+          <Helptext>
+            <EditorContent editor={editor} />
+          </Helptext>
+          <Link
+            label={linkLabel}
+            iconRight={<IconLinkExternal />}
+            href={releaseNotes?.html_url}
+          />
         </div>
         {(buttonPrimaryLabel || buttonSecondaryLabel) && (
           <div className="mt-6 flex flex-col gap-y-3">
