@@ -119,7 +119,7 @@ export const CHAIN_METADATA: Record<SupportedNetworks, ChainData> = {
     alchemyApi: 'https://arb-mainnet.g.alchemy.com/v2',
     coingecko: {
       networkId: 'arbitrum-one',
-      nativeTokenId: 'arbitrum',
+      nativeTokenId: 'ethereum',
     },
     covalent: {
       networkId: 'arbitrum-mainnet',
