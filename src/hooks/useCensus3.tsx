@@ -6,7 +6,7 @@ import {ErrTokenAlreadyExists} from '@vocdoni/sdk';
 /**
  * Hook to know if the actual wallet chain id is supported by the census3 vocdoni service
  */
-export const useCensus3SupportedChains = ({chainId}: {chainId: number}) => {
+export const useCensus3SupportedChains = (chainId: number) => {
   const {census3} = useClient();
   const [isSupported, setIsSupported] = useState(false);
 
@@ -18,13 +18,13 @@ export const useCensus3SupportedChains = ({chainId}: {chainId: number}) => {
     })();
   }, [census3, chainId]);
 
-  return {isSupported};
+  return isSupported;
 };
 
 export const useCensus3CreateToken = ({chainId}: {chainId: number}) => {
   const client = usePluginClient(GaselessPluginName);
   const {census3} = useClient();
-  const {isSupported} = useCensus3SupportedChains({chainId});
+  const isSupported = useCensus3SupportedChains(chainId);
 
   const createToken = useCallback(
     async (pluginAddress: string) => {

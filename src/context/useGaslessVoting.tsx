@@ -65,8 +65,7 @@ const useGaslessVoting = () => {
     async (vote: VoteProposalParams, electionId: string) => {
       const vocVote = new Vote([vote.vote - 1]); // See values on the enum, using vocdoni starts on 0
       await vocdoniClient.setElectionId(electionId);
-      const voteId = await vocdoniClient.submitVote(vocVote);
-      return voteId;
+      return await vocdoniClient.submitVote(vocVote);
     },
     [vocdoniClient]
   );
