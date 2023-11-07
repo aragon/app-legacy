@@ -32,7 +32,7 @@ const GaslessSelector = ({
 
   const {blockchain} = getValues();
 
-  const {isSupported} = useCensus3SupportedChains(blockchain.id);
+  const isSupported = useCensus3SupportedChains(blockchain.id);
 
   return (
     <>

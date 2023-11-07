@@ -114,7 +114,7 @@ const StepperModal = <TStepKey extends string>({
             <GasCostEthContainer>
               <NoShrinkVStack>
                 <Label>{t('TransactionModal.estimatedFees')}</Label>
-                <p className="text-ui-500 text-sm">
+                <p className="text-sm text-primary-500">
                   {t('TransactionModal.maxFee')}
                 </p>
               </NoShrinkVStack>
@@ -123,7 +123,7 @@ const StepperModal = <TStepKey extends string>({
                   <div className="truncate">{formattedAverage}</div>
                   <div>{`${nativeCurrency.symbol}`}</div>
                 </StrongText>
-                <div className="text-ui-500 space-TStepKey-0.5 flex justify-end text-right text-sm">
+                <div className="flex justify-end text-right text-sm text-primary-500">
                   <div className="truncate">{formattedMax}</div>
                   <div>{`${nativeCurrency.symbol}`}</div>
                 </div>
@@ -138,7 +138,9 @@ const StepperModal = <TStepKey extends string>({
                   <div className="truncate">{formattedAverage}</div>
                   <div>{`${nativeCurrency.symbol}`}</div>
                 </StrongText>
-                <p className="text-ui-500 text-right text-sm">{totalCost}</p>
+                <p className="text-right text-sm text-primary-500">
+                  {totalCost}
+                </p>
               </VStack>
             </GasTotalCostEthContainer>
           </GasCostTableContainer>

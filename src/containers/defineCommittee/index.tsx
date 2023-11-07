@@ -94,7 +94,7 @@ const DefineCommittee: React.FC = () => {
 
                   <ProgressInfo2>
                     <p
-                      className="font-bold text-right text-primary-500"
+                      className="text-right text-primary-500"
                       style={{
                         flexBasis: `${
                           (Number(value) / Number(committeeCount)) * 100
@@ -104,7 +104,7 @@ const DefineCommittee: React.FC = () => {
                       {value}
                     </p>
 
-                    <p className="text-ui-600 shrink-0">
+                    <p className="shrink-0 text-primary-600">
                       {t('createDAO.step5.alerts.ofAddresses', {
                         number: committeeCount,
                       })}

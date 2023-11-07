@@ -197,7 +197,7 @@ export const CommitteeVotingTerminal = ({
 
       return () => clearInterval(interval);
     }
-  }, [isApprovalPeriod, proposal, t]);
+  }, [i18n.language, isApprovalPeriod, proposal, t]);
 
   // alert message, only shown when not eligible to vote
   const alertMessage = useMemo(() => {

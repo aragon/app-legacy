@@ -9,14 +9,14 @@ import {
 import styled from 'styled-components';
 
 const icons = {
-  [StepStatus.WAITING]: <IconRadioDefault className="text-ui-200" />,
+  [StepStatus.WAITING]: <IconRadioDefault className="text-info-200" />,
   [StepStatus.LOADING]: <Spinner size="xs" />,
   [StepStatus.SUCCESS]: <IconSuccess className="text-success-500" />,
   [StepStatus.ERROR]: <IconRadioCancel className="text-critical-700" />,
 };
 
 const textColor = {
-  [StepStatus.WAITING]: 'text-ui-400',
+  [StepStatus.WAITING]: 'text-info-400',
   [StepStatus.LOADING]: 'text-primary-400',
   [StepStatus.SUCCESS]: 'text-success-600',
   [StepStatus.ERROR]: 'text-critical-700',

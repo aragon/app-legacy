@@ -630,7 +630,6 @@ const ProposalTransactionProvider: React.FC<Props> = ({children}) => {
     proposalId,
     pluginAddress,
     isConnected,
-    isGaslessVotingPluginClient,
     handleCloseExecuteModal,
     pluginClient?.methods,
     onExecutionSuccess,

@@ -75,7 +75,7 @@ const WalletRow: React.FC<WalletRowProps> = ({index, onDelete}) => {
         ...(e as WalletInputValue),
       });
     },
-    [index, committee]
+    []
   );
 
   return (

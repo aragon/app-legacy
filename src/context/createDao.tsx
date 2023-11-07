@@ -156,45 +156,6 @@ const CreateDaoProvider: React.FC<{children: ReactNode}> = ({children}) => {
     }
   };
 
-  const getGaslessPluginInstallParams = useCallback(
-    (votingSettings: VotingSettings): GaslessVotingPluginInstall => {
-      const {
-        isCustomToken,
-        committee,
-        tokenType,
-        committeeMinimumApproval,
-        executionExpirationHours,
-        executionExpirationDays,
-        executionExpirationMinutes,
-      } = getValues();
-
-      const vocdoniVotingSettings: GaslessPluginVotingSettings = {
-        expirationTime: getSecondsFromDHM(
-          parseInt(executionExpirationDays),
-          parseInt(executionExpirationHours),
-          parseInt(executionExpirationMinutes)
-        ),
-        minTallyApprovals: Number(committeeMinimumApproval),
-        minDuration: votingSettings.minDuration,
-        minParticipation: votingSettings.minParticipation,
-        supportThreshold: votingSettings.supportThreshold,
-        minProposerVotingPower: votingSettings.minProposerVotingPower as bigint,
-        censusStrategy: '',
-      };
-
-      return {
-        multisig: committee.map(wallet => wallet.address),
-        votingSettings: vocdoniVotingSettings,
-        ...((tokenType === 'governance-ERC20' || // token can be used as is
-          tokenType === 'ERC-20') && // token can/will be wrapped
-        !isCustomToken // not a new token (existing token)
-          ? {useToken: getErc20PluginParams()}
-          : {newToken: getNewErc20PluginParams()}),
-      };
-    },
-    [getValues]
-  );
-
   const getMultisigPluginInstallParams = useCallback((): [
     MultisigPluginInstallParams,
     sdkSupportedNetworks,
@@ -311,6 +272,45 @@ const CreateDaoProvider: React.FC<{children: ReactNode}> = ({children}) => {
       };
     }, [getValues]);
 
+  const getGaslessPluginInstallParams = useCallback(
+    (votingSettings: VotingSettings): GaslessVotingPluginInstall => {
+      const {
+        isCustomToken,
+        committee,
+        tokenType,
+        committeeMinimumApproval,
+        executionExpirationHours,
+        executionExpirationDays,
+        executionExpirationMinutes,
+      } = getValues();
+
+      const vocdoniVotingSettings: GaslessPluginVotingSettings = {
+        expirationTime: getSecondsFromDHM(
+          parseInt(executionExpirationDays),
+          parseInt(executionExpirationHours),
+          parseInt(executionExpirationMinutes)
+        ),
+        minTallyApprovals: Number(committeeMinimumApproval),
+        minDuration: votingSettings.minDuration,
+        minParticipation: votingSettings.minParticipation,
+        supportThreshold: votingSettings.supportThreshold,
+        minProposerVotingPower: votingSettings.minProposerVotingPower as bigint,
+        censusStrategy: '',
+      };
+
+      return {
+        multisig: committee.map(wallet => wallet.address),
+        votingSettings: vocdoniVotingSettings,
+        ...((tokenType === 'governance-ERC20' || // token can be used as is
+          tokenType === 'ERC-20') && // token can/will be wrapped
+        !isCustomToken // not a new token (existing token)
+          ? {useToken: getErc20PluginParams()}
+          : {newToken: getNewErc20PluginParams()}),
+      };
+    },
+    [getErc20PluginParams, getNewErc20PluginParams, getValues]
+  );
+
   // Get dao setting configuration for creation process
   const getDaoSettings = useCallback(async (): Promise<CreateDaoParams> => {
     const {
@@ -400,6 +400,7 @@ const CreateDaoProvider: React.FC<{children: ReactNode}> = ({children}) => {
     client?.ipfs,
     client?.methods,
     getErc20PluginParams,
+    getGaslessPluginInstallParams,
     getMultisigPluginInstallParams,
     getNewErc20PluginParams,
     getValues,
