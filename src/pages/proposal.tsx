@@ -216,7 +216,7 @@ export const Proposal: React.FC = () => {
     if (proposal && editor && proposal.metadata.description) {
       editor.commands.setContent(
         // Default list of allowed tags and attributes - https://www.npmjs.com/package/sanitize-html#default-options
-        sanitizeHtml(proposal.metadata.description!, {
+        sanitizeHtml(proposal.metadata.description, {
           // the disallowedTagsMode displays the disallowed tags to be rendered as a string
           disallowedTagsMode: 'recursiveEscape',
         }),
@@ -489,7 +489,7 @@ export const Proposal: React.FC = () => {
     isMultisigProposal(proposal) &&
     (proposal.status === ProposalStatus.PENDING ||
       proposal.status === ProposalStatus.ACTIVE) &&
-    voted === false &&
+    !voted &&
     isMultisigVotingSettings(votingSettings) &&
     proposal.actions.length > 0 &&
     proposal.approvals.length + 1 >= votingSettings.minApprovals;
@@ -738,7 +738,6 @@ export const Proposal: React.FC = () => {
 
           {votingSettings && isGaslessProposal(proposal) ? (
             <CommitteeVotingTerminal
-              votingTerminal={<VTerminal />}
               proposal={proposal}
               votingStatusLabel={voteStatus}
               pluginAddress={pluginAddress}
@@ -746,7 +745,9 @@ export const Proposal: React.FC = () => {
               onExecuteClicked={handleExecuteNowClicked}
               actions={decodedActions}
               pluginType={pluginType}
-            />
+            >
+              <VTerminal />
+            </CommitteeVotingTerminal>
           ) : (
             votingSettings && ( // todo(kon): fix this conditions
               <>

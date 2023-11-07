@@ -1,5 +1,5 @@
 import {TerminalTabs, VotingTerminal, VotingTerminalProps} from './index';
-import React, {ReactNode, useEffect, useMemo, useState} from 'react';
+import React, {PropsWithChildren, useEffect, useMemo, useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {format} from 'date-fns';
 import {getFormattedUtcOffset, KNOWN_FORMATS} from '../../utils/date';
@@ -34,16 +34,15 @@ type CommitteeExecutionWidgetProps = Pick<
 
 export const CommitteeVotingTerminal = ({
   votingStatusLabel,
-  votingTerminal,
   proposal,
   pluginAddress,
   statusRef,
   actions,
   onExecuteClicked,
   pluginType,
+  children,
 }: {
   votingStatusLabel: string;
-  votingTerminal: ReactNode;
   proposal: GaslessVotingProposal;
   pluginAddress: string;
   statusRef: React.MutableRefObject<{
@@ -51,7 +50,8 @@ export const CommitteeVotingTerminal = ({
     wasOnWrongNetwork: boolean;
   }>;
   pluginType: PluginTypes;
-} & CommitteeExecutionWidgetProps) => {
+} & CommitteeExecutionWidgetProps &
+  PropsWithChildren) => {
   const {t, i18n} = useTranslation();
   const [terminalTab, setTerminalTab] = useState<TerminalTabs>('breakdown');
   const [approvalStatus, setApprovalStatus] = useState('');
@@ -268,7 +268,7 @@ export const CommitteeVotingTerminal = ({
             methodName={'Community Voting'}
             alertLabel={votingStatusLabel}
           >
-            {votingTerminal}
+            {children}
           </AccordionItem>
           <AccordionItem
             name={'actions-approval'}

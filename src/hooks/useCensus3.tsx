@@ -35,9 +35,9 @@ export const useCensus3CreateToken = ({chainId}: {chainId: number}) => {
         if (!token) throw 'Cannot retrieve the token';
         await census3.createToken(token.address, 'erc20', chainId);
       } catch (e) {
-        if (e instanceof ErrTokenAlreadyExists) {
-          console.log('DEBUG', 'Token already created');
-        } else throw e;
+        if (!(e instanceof ErrTokenAlreadyExists)) {
+          throw e;
+        }
       }
     },
     [census3, chainId, client?.methods, isSupported]

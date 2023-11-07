@@ -1,7 +1,6 @@
 import {
   Erc20TokenDetails,
   Erc20WrapperTokenDetails,
-  InstalledPluginListItem,
   TokenVotingClient,
 } from '@aragon/sdk-client';
 import {useEffect, useState} from 'react';
@@ -22,8 +21,7 @@ export function useDaoToken(
   const [isLoading, setIsLoading] = useState(false);
 
   const {data: daoDetails} = useDaoDetailsQuery();
-  const {id: pluginType} =
-    daoDetails?.plugins[0] || ({} as InstalledPluginListItem);
+  const {id: pluginType} = daoDetails?.plugins[0] || {};
 
   const client = usePluginClient(pluginType as PluginTypes);
   const pluginClient = client as GaslessVotingClient | TokenVotingClient;

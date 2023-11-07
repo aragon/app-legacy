@@ -64,11 +64,8 @@ const useGaslessVoting = () => {
   const submitVote = useCallback(
     async (vote: VoteProposalParams, electionId: string) => {
       const vocVote = new Vote([vote.vote - 1]); // See values on the enum, using vocdoni starts on 0
-      console.log('DEBUG', 'ElectionId and vote', electionId, vocVote);
       await vocdoniClient.setElectionId(electionId);
-      console.log('DEBUG', 'Submitting the vote');
       const voteId = await vocdoniClient.submitVote(vocVote);
-      console.log('DEBUG', 'Vote submitted');
       return voteId;
     },
     [vocdoniClient]
@@ -76,8 +73,6 @@ const useGaslessVoting = () => {
 
   const vote = useCallback(
     async (vote: VoteProposalParams) => {
-      console.log('DEBUG', 'Trying to get election id for', vote.proposalId);
-
       if (globalState === StepStatus.ERROR) {
         // If global status is error, reset the stepper states
         resetStates();
@@ -96,7 +91,6 @@ const useGaslessVoting = () => {
           return electionId;
         }
       );
-      console.log('DEBUG', 'ElectionId found', electionId);
 
       // 2. Sumbit vote
       await doStep(GaslessVotingStepId.PUBLISH_VOTE, async () => {

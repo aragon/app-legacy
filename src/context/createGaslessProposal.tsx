@@ -131,11 +131,8 @@ const useCreateGaslessProposal = ({daoToken}: ICreateGaslessProposal) => {
 
       const cost = await vocdoniClient.calculateElectionCost(election);
 
-      console.log('DEBUG', 'Estimated cost', cost, 'balance', account!.balance);
-
       await collectFaucet(cost, account!);
 
-      console.log('DEBUG', 'Creating election:', election);
       return await vocdoniClient.createElection(election);
     },
     [account, collectFaucet, vocdoniClient]
@@ -166,10 +163,8 @@ const useCreateGaslessProposal = ({daoToken}: ICreateGaslessProposal) => {
     }
 
     const censusToken = await getCensus3Token();
-    console.log('DEBUG', 'Census', censusToken);
 
     // Create the vocdoni census
-    console.log('DEBUG', 'Creating vocdoni census');
     const census3census: Census3Census = await census3.createCensus(
       censusToken.defaultStrategy
     );
@@ -191,13 +186,6 @@ const useCreateGaslessProposal = ({daoToken}: ICreateGaslessProposal) => {
       data: CreateMajorityVotingProposalParams,
       handleOnchainProposal: (electionId?: string) => Promise<Error | undefined>
     ) => {
-      console.log(
-        'DEBUG',
-        'Start creating a proposal. Global state:',
-        globalState,
-        steps
-      );
-
       if (globalState === StepStatus.ERROR) {
         // If global status is error, reset the stepper states
         resetStates();
@@ -214,7 +202,6 @@ const useCreateGaslessProposal = ({daoToken}: ICreateGaslessProposal) => {
         GaslessProposalStepId.REGISTER_VOCDONI_ACCOUNT,
         checkAccountCreation
       );
-      console.log('DEBUG', 'Account created start creating gasless proposal');
 
       // 2. Create vocdoni election
       const electionId = await doStep(
@@ -222,35 +209,29 @@ const useCreateGaslessProposal = ({daoToken}: ICreateGaslessProposal) => {
         async () => {
           // 2.1 Register gasless proposal
           // This involves various steps such the census creation and election creation
-          console.log('DEBUG', 'Creating vocdoni census');
           const census = await createCensus();
           // 2.2. Create vocdoni election
-          console.log('DEBUG', 'Creating vocdoni election');
           return await createVocdoniElection(
             proposalToElection({metadata, data, census})
           );
         }
       );
       setVochainProposalId(electionId);
-      console.log('DEBUG', 'Election created', electionId);
 
       // 3. Register the proposal onchain
       await doStep(
         GaslessProposalStepId.CREATE_ONCHAIN_PROPOSAL,
         async () => await handleOnchainProposal(electionId)
       );
-      console.log('DEBUG', 'Proposal gasless created', electionId);
 
       // 4. All ready
       updateStepStatus(
         GaslessProposalStepId.PROPOSAL_IS_READY,
         StepStatus.SUCCESS
       );
-      console.log('DEBUG', 'All done!', globalState, electionId);
     },
     [
       globalState,
-      steps,
       daoToken,
       doStep,
       checkAccountCreation,

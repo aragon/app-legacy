@@ -825,11 +825,9 @@ const CreateProposalWrapper: React.FC<Props> = ({
   );
 
   const handleOffChainProposal = useCallback(async () => {
-    console.log('DEBUG', 'handleOffChainProposal');
     if (!pluginClient || !daoToken) {
       return new Error('ERC20 SDK client is not initialized correctly');
     }
-    console.log('DEBUG', 'ERC20 initialized', daoToken);
 
     const {params, metadata} = await getProposalCreationParams();
 
@@ -899,9 +897,6 @@ const CreateProposalWrapper: React.FC<Props> = ({
           gasEstimationError={gasEstimationError}
           tokenPrice={tokenPrice}
           title={t('TransactionModal.createProposal')}
-          // buttonLabel={t('TransactionModal.createProposal')}
-          // buttonLabelSuccess={t('TransactionModal.goToProposal')}
-          // disabledCallback={disableActionButton}
         />
       ) : (
         <PublishModal
