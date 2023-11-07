@@ -6,6 +6,7 @@ import {
   IconGovernance,
   ListItemHeader,
 } from '@aragon/ods-old';
+import {DaoAction} from '@aragon/sdk-client-common';
 import React from 'react';
 import {useTranslation} from 'react-i18next';
 import {generatePath, useNavigate} from 'react-router-dom';
@@ -34,9 +35,12 @@ type Props = {
 };
 
 const ProposalItem: React.FC<
-  {proposalId: string} & CardProposalProps
+  {proposalId: string; actions: DaoAction[]} & CardProposalProps
 > = props => {
-  const {isAragonVerifiedUpdateProposal} = useUpdateProposal(props.proposalId);
+  const {isAragonVerifiedUpdateProposal} = useUpdateProposal(
+    props.proposalId,
+    props.actions
+  );
   const {t} = useTranslation();
 
   return (
