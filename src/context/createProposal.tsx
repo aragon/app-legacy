@@ -654,24 +654,10 @@ const CreateProposalWrapper: React.FC<Props> = ({
       } else if (isGaslessVotingSettings(votingSettings)) {
         const proposal = {
           ...baseParams,
-          // todo(kon)(cache): is this needed to be implemented?
-          // expirationDate: Date;
           executed: false,
           approvers: new Array<string>(),
           vochainProposalId,
-          // parameters: GaslessProposalParametersStruct;
-          // allowFailureMap: number;
           settings: votingSettings,
-          // vochain: {
-          //   metadata: PublishedElection;
-          //   tally: {
-          //     final: boolean;
-          //     value: bigint[];
-          //     parsed: TokenVotingProposalResult;
-          //   };
-          // };
-          // totalVotingWeight: bigint;
-          // totalUsedWeight: bigint;
           participation: {
             currentParticipation: 0,
             currentPercentage: 0,
