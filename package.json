@@ -24,6 +24,7 @@
     "@apollo/client": "^3.5.8",
     "@aragon/ods": "^1.0.1",
     "@aragon/sdk-client": "^1.18.1",
+    "@aragon/sdk-client-common": "^1.11.0",
     "@elastic/apm-rum-react": "^2.0.0",
     "@radix-ui/react-accordion": "^1.1.2",
     "@radix-ui/react-dialog": "^1.0.4",
