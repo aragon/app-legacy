@@ -20,11 +20,13 @@ import {useParams} from 'react-router-dom';
 import {VersionSelectionMenu} from 'containers/versionSelectionMenu/versionSelectionMenu';
 import {useUpdateContext} from 'context/update';
 import {Loading} from 'components/temporary';
+import {useDaoDetailsQuery} from 'hooks/useDaoDetails';
 
 const DefineProposal: React.FC = () => {
   const {t} = useTranslation();
   const {address, ensAvatarUrl} = useWallet();
   const {control, setValue} = useFormContext();
+  const {data: dao} = useDaoDetailsQuery();
   const {handlePreparePlugin, osxAvailableVersions, pluginAvailableVersions} =
     useUpdateContext();
 
@@ -116,13 +118,39 @@ const DefineProposal: React.FC = () => {
 
   useEffect(() => {
     if (type === 'os-update') {
-      setValue('proposalTitle', 'Aragon Update');
-      setValue(
-        'proposalSummary',
-        'This is an update for your Aragon OSx based DAO. Review all the details and vote for it.'
-      );
+      const proposalSummary = t('update.proposal.summary', {
+        daoName: dao?.metadata.name,
+      });
+
+      setValue('proposalTitle', t('update.proposal.title'));
+      setValue('proposalSummary', proposalSummary);
     }
-  }, [setValue, type]);
+  }, [setValue, type, dao, t]);
+
+  useEffect(() => {
+    if (type === 'os-update') {
+      let proposalBody = t('update.proposal.descriptionHeader');
+
+      if (updateFramework.os) {
+        proposalBody += t('update.proposal.descriptionProtocolUpgrade');
+      }
+      if (updateFramework.plugin) {
+        proposalBody += t('update.proposal.descriptionPluginUpgrade');
+      }
+
+      proposalBody += t('update.proposal.descriptionFooter');
+
+      setValue('proposal', proposalBody);
+    }
+  }, [
+    setValue,
+    type,
+    dao,
+    t,
+    osSelectedVersion,
+    pluginSelectedVersion,
+    updateFramework,
+  ]);
 
   if (!pluginSelectedVersion) {
     return <Loading />;
