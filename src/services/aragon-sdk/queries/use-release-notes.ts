@@ -12,6 +12,8 @@ const parseReleaseNote = (release: IGithubReleaseNote): IReleaseNote => {
   return {...release, summary};
 };
 
+// TODO: use SDK when the functionality is implemented there
+// (see https://aragonassociation.atlassian.net/browse/OS-808)
 const fetchReleaseNotes = async (): Promise<IReleaseNote[]> => {
   const data = await fetch('https://api.github.com/repos/aragon/osx/releases');
   const releaseNotes = (await data.json()) as IGithubReleaseNote[];

@@ -1,10 +1,10 @@
 import {IReleaseNote} from 'services/aragon-sdk/domain/release-note';
 import {VersionTag} from '@aragon/sdk-client-common';
-import {OsSelectedVersion, PluginSelectedVersion} from './types';
 
 export interface IGetReleaseNotesParams {
   releases?: IReleaseNote[];
-  update?: OsSelectedVersion | PluginSelectedVersion;
+  version?: string | VersionTag;
+  isPlugin?: boolean;
 }
 
 class OsxUpdates {
@@ -34,20 +34,19 @@ class OsxUpdates {
 
   getReleaseNotes = ({
     releases,
-    update,
+    version,
+    isPlugin,
   }: IGetReleaseNotesParams): IReleaseNote | undefined => {
-    if (update == null) {
+    if (version == null) {
       return undefined;
     }
 
-    const isPluginUpdate = 'isPrepared' in update;
-    const updateVersion = isPluginUpdate
-      ? this.getPluginUpdateLabel(update.version)!
-      : update.version;
+    const processedVersion =
+      typeof version === 'string' ? version : this.getPluginVersion(version)!;
 
     const releaseNotes = releases?.find(release =>
       release.tag_name.includes(
-        isPluginUpdate ? this.latestRelease : updateVersion
+        isPlugin ? this.latestRelease : processedVersion
       )
     );
 
