@@ -17,7 +17,7 @@ class OsxUpdates {
       ? version.join('.')
       : version;
 
-    return processedVersion ? `Aragon OSx v${version}` : undefined;
+    return processedVersion ? `Aragon OSx v${processedVersion}` : undefined;
   };
 
   getPluginVersion = (version?: VersionTag): string | undefined => {
