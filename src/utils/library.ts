@@ -1048,19 +1048,19 @@ export const walletInWalletList = (
  *          - -1 if version1 is less than version2
  *          - 0 if version1 is equal to version2
  */
-export function compareVersions(version1: string, version2: string): number {
-  if (!version1 || !version2) return 0;
+export function compareVersions(version1: string, version2: string): boolean {
+  if (!version1 || !version2) return false;
 
   const v1 = version1.split('.').map(Number);
   const v2 = version2.split('.').map(Number);
 
   for (let i = 0; i < v1.length; i++) {
     if (v1[i] > v2[i]) {
-      return 1;
+      return true;
     } else if (v1[i] < v2[i]) {
-      return -1;
+      return false;
     }
   }
 
-  return 0;
+  return false;
 }

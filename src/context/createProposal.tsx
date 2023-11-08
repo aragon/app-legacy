@@ -95,6 +95,7 @@ import {
 } from '@vocdoni/gasless-voting';
 import {TokenCensus} from '@vocdoni/sdk';
 import {useProtocolVersions} from 'hooks/useDaoVersions';
+import {usePluginAvailableVersions} from 'hooks/usePluginAvailableVersions';
 
 type Props = {
   showTxModal: boolean;
@@ -129,6 +130,11 @@ const CreateProposalWrapper: React.FC<Props> = ({
   const {data: daoDetails, isLoading: daoDetailsLoading} = useDaoDetailsQuery();
   const pluginAddress = daoDetails?.plugins?.[0]?.instanceAddress as string;
   const pluginType = daoDetails?.plugins?.[0]?.id as PluginTypes;
+
+  const {data: pluginAvailableVersions} = usePluginAvailableVersions(
+    pluginType,
+    daoDetails?.address as string
+  );
 
   const {data: daoToken} = useDaoToken(pluginAddress);
   const {data: tokenSupply} = useTokenSupply(daoToken?.address || '');
@@ -355,12 +361,12 @@ const CreateProposalWrapper: React.FC<Props> = ({
           const daoActionsArray = client.encoding.applyUpdateAction(
             daoDetails?.address as string,
             {
-              permissions: [],
+              permissions: action.inputs.permissions,
               initData: new Uint8Array([]),
-              helpers: [],
+              helpers: action.inputs.helpers,
               versionTag: action.inputs.versionTag,
-              pluginRepo: '0x2c4690b8be39adad4f15a69340d5035ac6e53eef',
-              pluginAddress: '0xf2205ed1dd3b28c44c9dfc3dc4855fa879fb2ea4',
+              pluginRepo: pluginAvailableVersions?.address as string,
+              pluginAddress: pluginAddress,
             }
           );
           console.log('view', daoActionsArray);
@@ -379,6 +385,7 @@ const CreateProposalWrapper: React.FC<Props> = ({
     getValues,
     network,
     pluginAddress,
+    pluginAvailableVersions?.address,
     pluginClient,
     t,
     translatedNetwork,

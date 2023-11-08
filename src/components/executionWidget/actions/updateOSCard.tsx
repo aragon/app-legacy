@@ -74,8 +74,6 @@ export const UpdateOSCard: React.FC<{
         {decodedAction && (
           <div className="space-y-4">
             {Object.entries(decodedAction).map(([key, value]) => {
-              console.log('key', value);
-
               return (
                 <div key={key}>
                   <div className="mb-3 text-base font-semibold capitalize leading-normal text-neutral-800">
