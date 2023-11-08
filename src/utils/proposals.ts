@@ -226,15 +226,21 @@ export function getErc20Results(
   // TODO: Format with new ODS formatter
   return {
     yes: {
-      value: formatter.format(Number(formatUnits(yes, tokenDecimals))),
+      value: parseFloat(
+        Number(formatUnits(yes, tokenDecimals)).toFixed(2)
+      ).toString(),
       percentage: getVotePercentage(yes, totalYesNo),
     },
     no: {
-      value: formatter.format(Number(formatUnits(no, tokenDecimals))),
+      value: parseFloat(
+        Number(formatUnits(no, tokenDecimals)).toFixed(2)
+      ).toString(),
       percentage: getVotePercentage(no, totalYesNo),
     },
     abstain: {
-      value: formatter.format(Number(formatUnits(abstain, tokenDecimals))),
+      value: parseFloat(
+        Number(formatUnits(abstain, tokenDecimals)).toFixed(2)
+      ).toString(),
       percentage: getVotePercentage(abstain, totalYesNo),
     },
   };
