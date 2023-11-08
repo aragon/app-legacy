@@ -122,7 +122,9 @@ const Community: React.FC = () => {
                   <div className="flex items-center space-x-3">
                     <span>
                       {isGovTokenRequiresWrapping && (
-                        <span>{t('labels.review.tokenSymbolGovernance')}</span>
+                        <span>
+                          {t('labels.review.tokenSymbolGovernance')}&nbsp;
+                        </span>
                       )}
                       <span>
                         {tokenName} ({govTokenSymbol})
