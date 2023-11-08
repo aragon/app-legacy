@@ -3,7 +3,7 @@
 import {infuraApiKey} from './api';
 
 export const SUPPORTED_CHAIN_ID = [
-  1, 5, 137, 8453, 80001, 84531, 42161, 421613,
+  1, 5, 137, 8453, 80001, 84531, 42161, 421613, 11155111,
 ] as const;
 
 export type SupportedChainID = (typeof SUPPORTED_CHAIN_ID)[number];
@@ -25,6 +25,7 @@ export const NETWORKS_WITH_CUSTOM_REGISTRY: SupportedNetworks[] = [
   'base-goerli',
   'mumbai',
   'polygon',
+  'sepolia',
 ];
 export const L2_NETWORKS = NETWORKS_WITH_CUSTOM_REGISTRY;
 
@@ -37,6 +38,7 @@ const SUPPORTED_NETWORKS = [
   'goerli',
   'mumbai',
   'polygon',
+  'sepolia',
 ] as const;
 
 export type SupportedNetworks =
@@ -321,6 +323,33 @@ export const CHAIN_METADATA: Record<SupportedNetworks, ChainData> = {
       nativeTokenId: '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee',
     },
     alchemyApi: 'https://polygon-mumbai.g.alchemy.com/v2',
+    supportsEns: false,
+    ipfs: 'https://test.ipfs.aragon.network',
+  },
+  sepolia: {
+    id: 11155111,
+    name: 'Sepolia',
+    domain: 'L1 Blockchain',
+    logo: 'https://assets.coingecko.com/coins/images/279/large/ethereum.png?1595348880',
+    explorer: 'https://sepolia.etherscan.io/',
+    isTestnet: true,
+    mainnet: 'ethereum',
+    rpc: [
+      `https://sepolia.infura.io/v3/${infuraApiKey}`,
+      `wss://sepolia.infura.io/ws/v3/${infuraApiKey}`,
+    ],
+    nativeCurrency: {
+      name: 'SepoliaETH',
+      symbol: 'ETH',
+      decimals: 18,
+    },
+    etherscanApi: 'https://api-sepolia.etherscan.io/api',
+    etherscanApiKey: etherscanApiKey,
+    covalent: {
+      networkId: 'eth-sepolia',
+      nativeTokenId: '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee',
+    },
+    alchemyApi: 'https://eth-sepolia.g.alchemy.com/v2',
     supportsEns: false,
     ipfs: 'https://test.ipfs.aragon.network',
   },
