@@ -817,7 +817,7 @@
       "wrappedReferenceParticipationValueLabel": "{{gTokenSymbol}} *"
     },
     "review": {
-      "title": "Review details",
+      "title": "Deploy your DAO",
       "description": "Double-check that everything is correct before deploying your DAO.",
       "network": "{{network}} net",
       "distributionLink": "See {{count}} addresses",

@@ -121,8 +121,7 @@ const Community: React.FC = () => {
                 <Dd>
                   <div className="flex items-center space-x-3">
                     <span>
-                      {t('labels.review.tokenSymbolGovernance')} {tokenName} (
-                      {govTokenSymbol})
+                      {tokenName} ({govTokenSymbol})
                     </span>
 
                     {/* TODO: check the owner for token contract, if it belongs to
