@@ -20,32 +20,37 @@ const GaslessProposalModal = <X extends GaslessProposalStepId>(
   const {t} = useTranslation();
 
   const btnLabel: BtnLabels = {
-    [StepStatus.WAITING]: t('gaslessProposalCreation.publishProposal'),
+    [StepStatus.WAITING]: t('labels.submitProposal'),
     [StepStatus.LOADING]: undefined,
-    [StepStatus.SUCCESS]: t('gaslessProposalCreation.gotoProposal'),
-    [StepStatus.ERROR]: t('gaslessProposalCreation.tryAgain'),
+    [StepStatus.SUCCESS]: t('TransactionModal.goToProposal'),
+    [StepStatus.ERROR]: t('modal.transaction.multisig.ctaLabel.tryAgain'),
   };
 
   const labels: StepperLabels<GaslessProposalStepId> = {
     REGISTER_VOCDONI_ACCOUNT: {
-      title: t('gaslessProposalCreation.createVocdoniAccount.title'),
-      helper: t('gaslessProposalCreation.createVocdoniAccount.helper'),
+      title: t('modalTransaction.vocdoni.deploy.createOffchain'),
+      helper: t('modalTransaction.vocdoni.deploy.signMessage'),
     },
     CREATE_VOCDONI_ELECTION: {
-      title: t('gaslessProposalCreation.createVocdoniElection.title'),
-      helper: t('gaslessProposalCreation.createVocdoniElection.helper'),
+      title: t('modalTransaction.vocdoni.deploy.registerProposalOff'),
+      helper: t('modalTransaction.vocdoni.deploy.signMessage'),
     },
     CREATE_ONCHAIN_PROPOSAL: {
-      title: t('gaslessProposalCreation.createOnChainProposal.title'),
-      helper: t('gaslessProposalCreation.createOnChainProposal.helper'),
+      title: t('modalTransaction.vocdoni.deploy.registerProposalOn'),
+      helper: t('modalTransaction.vocdoni.deploy.signTransaction'),
     },
     PROPOSAL_IS_READY: {
-      title: t('gaslessProposalCreation.proposalReady.title'),
+      title: t('modalTransaction.vocdoni.deploy.proposalRready'),
     },
   };
 
   return (
-    <StepperModal buttonLabels={btnLabel} stepLabels={labels} {...props} />
+    <StepperModal
+      title={t('TransactionModal.createProposal')}
+      buttonLabels={btnLabel}
+      stepLabels={labels}
+      {...props}
+    />
   );
 };
 

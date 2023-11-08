@@ -28,7 +28,7 @@ import {hasValue} from 'utils/library';
 import {Landing} from 'utils/paths';
 import {CreateDaoFormData} from 'utils/types';
 import {isFieldValid} from 'utils/validators';
-import DefineCommittee from '../containers/defineCommittee';
+import DefineExecutionMultisig from '../containers/defineExecutionMultisig';
 
 const defaultValues = {
   tokenName: '',
@@ -428,7 +428,7 @@ export const CreateDAO: React.FC = () => {
               });
             }}
           >
-            <DefineCommittee />
+            <DefineExecutionMultisig />
           </Step>
           <Step
             hideWizard

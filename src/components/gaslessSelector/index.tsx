@@ -45,8 +45,8 @@ const GaslessSelector = ({
         </div>
       )}
       <CheckboxListItem
-        label={t('createDAO.step3.votingType.gasless.title')}
-        helptext={t('createDAO.step3.votingType.gasless.subtitle')}
+        label={t('createDAO.step3.blockChainVoting.optionGaslessLabel')}
+        helptext={t('createDAO.step3.blockChainVoting.optionGaslessDesc')}
         onClick={() => {
           onChange('gasless');
         }}

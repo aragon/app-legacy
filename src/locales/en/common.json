@@ -24,8 +24,7 @@
     "termsLinkLabel": "Terms of service",
     "termsLinkURL": "https://aragon.org/terms-and-conditions",
     "privacyLinkLabel": "Privacy",
-    "privacyLinkURL": "https://aragon.org/privacy-policy",
-    "executionMultisig": "Execution multisig"
+    "privacyLinkURL": "https://aragon.org/privacy-policy"
   },
   "daoSwitcher": {
     "title": "Select your DAO",
@@ -37,8 +36,6 @@
   },
   "labels": {
     "approvals": "Approvals",
-    "approve": "Approve",
-    "approveProposal":"Approve proposal",
     "loading": "Loading …",
     "members": "Members",
     "tokenHolders": "Token holders",
@@ -116,7 +113,6 @@
     "minimumApproval": "Minimum approval",
     "minimumParticipation": "Minimum participation",
     "minimumDuration": "Minimum duration",
-    "executionExpirationTime": "Execution expiration time",
     "voteReplacement": "Vote change",
     "support": "Support",
     "duration": "Duration",
@@ -147,7 +143,6 @@
     "changeableVote": "Changeable with a vote",
     "changeable": "Changeable",
     "etherscan": "Etherscan",
-    "executionMultisigMembers": "Execution multisig members",
     "whitelistWallets": {
       "address": "Address",
       "addresses": "{{count}} addresses",
@@ -170,15 +165,14 @@
       "governance": "Governance",
       "network": "Network",
       "eligibleVoters": "Eligible voters",
-      "members": "Members",
-      "eligableMembers": "Eligable members",
+      "distribution": "Distribution",
       "distributionLink": "See all {{walletCount}} addresses",
       "minimumParticipation": "{{walletCount}} wallets",
       "proposalThreshold": "Proposal threshold",
       "tokenHoldersWithTkns": "Members with ≥ {{tokenAmount}} {{tokenSymbol}} voting power or balance",
       "earlyExecution": "Early execution",
       "voteReplacement": "Vote change",
-      "multisigMinimumApprovals": "{{count}} of {{total}} authorized addresses",
+      "multisigMinimumApprovals": "of {{count}} authorized addresses",
       "existingTokens": {
         "currentHolders": "Current Holders"
       },
@@ -407,7 +401,6 @@
     "distributionDays": "Days can't be negative",
     "emptyDistributionDays": "Days can't be empty",
     "percentage": "Percentage amount should be between 0 and 100",
-    "minimumApprovalCommittee": "Minimum approval should be between 1 and {{max}}",
     "totalSupplyZero": "Total token supply can not be 0",
     "requiredTokenAddressZero": "Required token amount can not be 0",
     "onlyAlphaNumeric": "{{field}} can only contain alphanumeric characters",
@@ -418,7 +411,6 @@
     "notValidContractAddress": "Smart contract address not valid",
     "duplicateContractAddress": "Smart contract has already been added",
     "biggerThanTotalSupply": "Minimum tokens must be less than total supply",
-    "addressNotElegible": "The address is not on the DAO community",
     "required": {
       "tokenAddress": "Token address is required",
       "tokenName": "Token name is required",
@@ -466,14 +458,9 @@
       "accepTableProposalDuration": "It’s recommended to have an expiration time of five days, so you have a clean proposal list.",
       "dateTimeMinDuration": "Duration cannot be less than one hour."
     },
-    "committee": {
-      "automaticallyAdded": "Your connected Wallet got automatically added to the list.",
-      "minimumDuration": "The minimum duration of {{days}} is defined by DAO Governance Settings."
-    },
     "durationAlert": "Set this to a duration that is long enough for your members to have sufficient time to vote. It’s recommended to set this to at least 1 day.",
     "maxDurationAlert": "The maximum duration is 365 days.",
     "minDurationAlert": "The minimum duration is one hour.",
-    "executionDurationAlert": "Set this to a duration that your execution multisig can approve the results. It’s recommended to set this to at least 1 day.",
     "startDateInPastAlert": "Start time can’t be in the past. ",
     "wrongWalletNetwork": "Wrong wallet network",
     "wrongNetwork": {
@@ -783,19 +770,6 @@
       "descriptionLinkURL": "https://aragon.org/how-to/set-up-your-dao-governance-in-8-steps",
       "distributeTokensHelpertextLinkLabel": "read our guide",
       "distributeTokensHelpertextLinkURL": "https://aragon.org/how-to/distribute-a-dao-governance-token",
-      "votingType": {
-        "title": "Should voting take place on-chain or gasless",
-        "onChain": {
-          "title": "On-chain",
-          "subtitle": "The voting process and the execution of actions binded to a proposal are both on-chain"
-        },
-        "gasless": {
-          "title": "Gasless",
-          "subtitle": "The voting process is gasless, while the proof of all votes and the execution are done by a multisig called \"Guardians\"",
-          "soon": "Comming Soon"
-        }
-
-      },
       "blockChainVoting": {
         "label": "On what blockchain will community voting take place?",
         "optionOnchainLabel": "{{blockchainName}}",
@@ -842,25 +816,9 @@
       "wrappedReferenceValueLabel": "{{tokenSymbol}}",
       "wrappedReferenceParticipationValueLabel": "{{gTokenSymbol}} *"
     },
-    "step5": {
-      "label": "Step 5",
-      "title": "Define your execution multisig",
-      "description": "To bring the gasless results onchain, a execution multisig is needed to validate the results and perform the optional actions of a proposal. Learn more about the council and its tasks {{ link }}.",
-      "descriptionLinkLabel": "in our guide",
-      "descriptionLinkURL": "https://aragon.org/how-to/governance-ii-setting-dao-governance-thresholds",
-      "executionMultisigMembersSubtitle" : "Add as many addresses as you like to the DAO. These are authorised to create proposals, transactions or suggest changes to the DAO settings after its creation. Upload a CSV with {{link}} if you want.",
-      "executionMultisigMembersSubtitleLinkLabel" : "this template",
-      "executionMultisigMembersSubtitleLinkURL" : "https://aragon.org/how-to/governance-ii-setting-dao-governance-thresholds",
-      "minimumAprovalDescritpion": "Participation is the amount of addresses in the authorised list that approve on a proposal. The minimum is how many have to approve for the result to be valid.",
-      "alerts": {
-        "ofAddresses": "of {{number}} Addresses"
-      },
-      "executionTimeSubtitle": "Define how long the voting should last in days or exact date and time."
-    },
     "review": {
       "title": "Review details",
       "description": "Double-check that everything is correct before deploying your DAO.",
-      "executionMultisig": "Execution Multisig",
       "network": "{{network}} net",
       "distributionLink": "See {{count}} addresses",
       "days": "{{days}} days",
@@ -937,26 +895,6 @@
       "inputValueDesc": "Amount of tokens to transfer",
       "inputDataLabel": "Data",
       "inputDataDesc": "Encoded EVM call data for the smart contract"
-    }
-  },
-  "stepperModal": {
-    "processWarning": "Don't close this page while in progress.",
-    "stepError": "Details"
-  },
-  "gaslessVoting": {
-    "title": "Submit your vote",
-    "stepperBtn" : {
-      "confirmVote": "Confirm your vote",
-      "seeYourVote": "See your vote",
-      "tryAgain": "Try again"
-    },
-    "createVoteId": {
-      "title": "Create gasless vote ID",
-      "helper": "Sign message"
-    },
-    "publishVote": {
-      "title": "Publish your vote gasless",
-      "helper": "Sign message"
     }
   },
   "votingTerminal": {
@@ -1036,21 +974,6 @@
       "infoAlert": "Only one more approval is needed in order to execute the proposal actions."
     },
     "approveExecute": "Approve and execute"
-  },
-  "gaslessVotingTerminal": {
-    "btnLabel": {
-      "approved": "Approved",
-      "concluded": "Concluded",
-      "approve": "Approve",
-      "voteAndExecute": "Approve and execute",
-      "voted": "Voted",
-      "execute":  "Execute",
-      "executed":  "Executed"
-    },
-    "alerts": {
-      "notInCommittee": "You had to be a part of execution multisig to approve the proposal",
-      "cannotApproveYet": "Approval period is not open yet"
-    }
   },
   "explore": {
     "hero": {
@@ -1689,8 +1612,8 @@
       "alertTitle": "Some updates may be unsafe",
       "alertDesc": "One or more actions aren't in the Aragon Update Registry, indicating that this update could be potentially harmful.",
       "desc": "All actions are listed in the Aragon Update Registry, which is managed by the Aragon team. However, always exercise caution when evaluating updates. To learn more about Aragon OSx updates, {{link}}.",
-      "descLinkLabel": "Read more",
-      "descLinkUrl": "https://"
+      "descLinkLabel": "read more in our guides",
+      "descLinkURL": "https://aragon.org/how-to/update-your-aragon-dao"
     },
     "proposal": {
       "bannerTitle": "Verified Aragon App Update"
@@ -1737,30 +1660,5 @@
       "membersLabel": "Execution multisig members",
       "membersDesc": "These addresses form the governing body that approves and executes proposals passed by the community. Add the addresses who will be members of the execution multisig."
     }
-  },
-  "gaslessProposalCreation": {
-    "createVocdoniAccount": {
-      "title": "Create gasless vote ID",
-      "helper": "Sign message"
-    },
-    "createVocdoniElection": {
-      "title": "Register proposal gasless",
-      "helper": "Sign message"
-    },
-    "createOnChainProposal": {
-      "title": "Register proposal onchain",
-      "helper": "Transaction"
-    },
-    "proposalReady": {
-      "title": "Your proposal is ready"
-    },
-    "stepError": {
-      "helper": "Details"
-    },
-    "processWarning": "Don't close this page while in progress.",
-    "confirmationFailed": "No confirmation received …",
-    "publishProposal": "Publish your proposal",
-    "tryAgain": "Try Again",
-    "gotoProposal": "Open your proposal"
   }
 }

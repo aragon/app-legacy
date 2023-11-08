@@ -7,7 +7,7 @@ import styled from 'styled-components';
 import AddCommitteeMembers from 'components/addCommitteeMembers';
 import ExecutionExpirationTime from 'components/executionExpirationTime';
 
-const DefineCommittee: React.FC = () => {
+const DefineExecutionMultisig: React.FC = () => {
   const {t} = useTranslation();
   const {control, setValue, trigger} = useFormContext();
 
@@ -51,8 +51,8 @@ const DefineCommittee: React.FC = () => {
       {/*Executive committee members*/}
       <FormItem>
         <Label
-          label={t('labels.executionMultisigMembers')}
-          helpText={t('createDAO.step5.executionMultisigMembersSubtitle')}
+          label={t('createDao.executionMultisig.membersLabel')}
+          helpText={t('createDao.executionMultisig.membersDesc')}
         />
         <AddCommitteeMembers />
       </FormItem>
@@ -142,7 +142,7 @@ const DefineCommittee: React.FC = () => {
   );
 };
 
-export default DefineCommittee;
+export default DefineExecutionMultisig;
 
 const FormItem = styled.div.attrs({
   className: 'space-y-1.5',

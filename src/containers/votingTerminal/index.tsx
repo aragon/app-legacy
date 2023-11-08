@@ -42,6 +42,7 @@ export type ProposalVoteResults = {
 export type TerminalTabs = 'voters' | 'breakdown' | 'info';
 
 export type VotingTerminalProps = {
+  title: string;
   breakdownTabDisabled?: boolean;
   votersTabDisabled?: boolean;
   voteNowDisabled?: boolean;
@@ -76,6 +77,7 @@ export type VotingTerminalProps = {
 };
 
 export const VotingTerminal: React.FC<VotingTerminalProps> = ({
+  title,
   breakdownTabDisabled = false,
   votersTabDisabled = false,
   voteNowDisabled = false,
@@ -200,11 +202,7 @@ export const VotingTerminal: React.FC<VotingTerminalProps> = ({
     <Container>
       <Header className="items-start gap-x-6">
         <div className="flex-1 space-y-3">
-          <Heading1>
-            {isMultisigProposal
-              ? t('votingTerminal.multisig.title')
-              : t('votingTerminal.title')}
-          </Heading1>
+          <Heading1>{title}</Heading1>
           <AlertInline
             label={statusLabel}
             mode={status === 'Defeated' ? 'critical' : 'neutral'}

@@ -631,6 +631,13 @@ export const Proposal: React.FC = () => {
   // Store the terminal to pass it to GaslessVotingTerminal if needed
   const VTerminal = () => (
     <VotingTerminal
+      title={
+        isMultisigProposal(proposal)
+          ? t('votingTerminal.multisig.title')
+          : isGaslessProposal(proposal)
+          ? t('votingTerminal.vocdoni.titleCommunityVoting')
+          : t('votingTerminal.title')
+      }
       status={proposalStatus}
       pluginType={pluginType}
       daoToken={daoToken}

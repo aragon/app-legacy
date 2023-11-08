@@ -39,20 +39,18 @@ JSX.Element => {
   } = useGaslessVoting();
 
   const btnLabel: BtnLabels = {
-    [StepStatus.WAITING]: t('gaslessVoting.stepperBtn.confirmVote'),
+    [StepStatus.WAITING]: t('modalTransaction.submitVote.ctaLabel'),
     [StepStatus.LOADING]: undefined,
-    [StepStatus.SUCCESS]: t('gaslessVoting.stepperBtn.seeYourVote'),
-    [StepStatus.ERROR]: t('gaslessVoting.stepperBtn.tryAgain'),
+    [StepStatus.SUCCESS]: t('modalTransaction.vocdoni.submitVote.ctaSeeVote'),
+    [StepStatus.ERROR]: t('modal.transaction.multisig.ctaLabel.tryAgain'),
   };
 
   const labels: StepperLabels<GaslessVotingStepId> = {
     [GaslessVotingStepId.CREATE_VOTE_ID]: {
-      title: t('gaslessVoting.createVoteId.title'),
-      helper: t('gaslessVoting.createVoteId.helper'),
+      title: t('modalTransaction.vocdoni.submitVote.createOffchain'),
     },
     [GaslessVotingStepId.PUBLISH_VOTE]: {
-      title: t('gaslessVoting.publishVote.title'),
-      helper: t('gaslessVoting.publishVote.helper'),
+      title: t('modalTransaction.vocdoni.submitVote.publishVote'),
     },
   };
 
@@ -111,7 +109,8 @@ JSX.Element => {
       averageFee={BigInt(0)}
       gasEstimationError={undefined}
       tokenPrice={0}
-      title={t('gaslessVoting.title')}
+      title={t('modalTransaction.vocdoni.submitVote.title')}
+      subtitle={t('modalTransaction.vocdoni.submitVote.desc')}
     />
   );
 };

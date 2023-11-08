@@ -202,7 +202,7 @@ export const CommitteeVotingTerminal = ({
   // alert message, only shown when not eligible to vote
   const alertMessage = useMemo(() => {
     if (!isApprovalPeriod) {
-      return t('gaslessVotingTerminal.alerts.cannotApproveYet');
+      return t('votingTerminal.vocdoni.cannotApproveYet');
     } else if (
       proposal &&
       isApprovalPeriod && // active proposal
@@ -211,7 +211,7 @@ export const CommitteeVotingTerminal = ({
       !canApprove && // cannot vote
       !approved // Already voted
     ) {
-      return t('gaslessVotingTerminal.alerts.notInCommittee');
+      return t('votingTerminal.vocdoni.notInCommittee');
     }
   }, [
     isApprovalPeriod,
@@ -223,9 +223,10 @@ export const CommitteeVotingTerminal = ({
     t,
   ]);
 
-  const CommitteeVotingTerminal = () => {
+  const ApprovalVotingTerminal = () => {
     return (
       <VotingTerminal
+        title={t('votingTerminal.vocdoni.titleActionsApproval')}
         status={proposal.status}
         pluginType={pluginType}
         statusLabel={approvalStatus}
@@ -254,12 +255,8 @@ export const CommitteeVotingTerminal = ({
     <>
       <Container>
         <Header>
-          <Title>Voting</Title>
-          <Summary>
-            {/*todo(kon): intl this*/}
-            Proposal must pass with a community vote and then committee
-            approval.
-          </Summary>
+          <Title>{t('votingTerminal.vocdoni.title')}</Title>
+          <Summary>{t('votingTerminal.vocdoni.description')}</Summary>
         </Header>
         <Accordion type={'multiple'}>
           <AccordionItem
@@ -276,7 +273,7 @@ export const CommitteeVotingTerminal = ({
             methodName={'Actions approval'}
             alertLabel={approvalStatus}
           >
-            <CommitteeVotingTerminal />
+            <ApprovalVotingTerminal />
           </AccordionItem>
         </Accordion>
       </Container>

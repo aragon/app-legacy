@@ -117,8 +117,12 @@ const SetupCommunityForm: React.FC = () => {
               render={({field: {onChange, value}}) => (
                 <>
                   <CheckboxListItem
-                    label={t('createDAO.step3.votingType.onChain.title')}
-                    helptext={t('createDAO.step3.votingType.onChain.subtitle')}
+                    label={t(
+                      'createDAO.step3.blockChainVoting.optionOnchainLabel'
+                    )}
+                    helptext={t(
+                      'createDAO.step3.blockChainVoting.optionOnchainDesc'
+                    )}
                     multiSelect={false}
                     onClick={() => {
                       onChange('onChain');

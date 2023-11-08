@@ -63,8 +63,6 @@ const StepperModal = <TStepKey extends string>({
 
   const nativeCurrency = CHAIN_METADATA[network].nativeCurrency;
 
-  // TODO: temporarily returning error when unable to estimate fees
-  // for chain on which contract not deployed
   const [totalCost, formattedAverage] = useMemo(
     () =>
       averageFee === undefined
@@ -105,7 +103,7 @@ const StepperModal = <TStepKey extends string>({
   return (
     <ModalBottomSheetSwitcher
       {...{isOpen, onClose, closeOnDrag}}
-      title={title || t('createDAO.review.title')}
+      title={title}
       subtitle={subtitle}
     >
       {globalState === StepStatus.WAITING && (
@@ -114,7 +112,7 @@ const StepperModal = <TStepKey extends string>({
             <GasCostEthContainer>
               <NoShrinkVStack>
                 <Label>{t('TransactionModal.estimatedFees')}</Label>
-                <p className="text-sm text-primary-500">
+                <p className="text-sm leading-normal text-neutral-500">
                   {t('TransactionModal.maxFee')}
                 </p>
               </NoShrinkVStack>
@@ -123,12 +121,13 @@ const StepperModal = <TStepKey extends string>({
                   <div className="truncate">{formattedAverage}</div>
                   <div>{`${nativeCurrency.symbol}`}</div>
                 </StrongText>
-                <div className="flex justify-end text-right text-sm text-primary-500">
+                <div className="flex justify-end space-x-1 text-right text-sm leading-normal text-neutral-500">
                   <div className="truncate">{formattedMax}</div>
                   <div>{`${nativeCurrency.symbol}`}</div>
                 </div>
               </VStack>
             </GasCostEthContainer>
+
             <GasTotalCostEthContainer>
               <NoShrinkVStack>
                 <Label>{t('TransactionModal.totalCost')}</Label>
@@ -138,8 +137,8 @@ const StepperModal = <TStepKey extends string>({
                   <div className="truncate">{formattedAverage}</div>
                   <div>{`${nativeCurrency.symbol}`}</div>
                 </StrongText>
-                <p className="text-right text-sm text-primary-500">
-                  {totalCost}
+                <p className="text-right text-sm leading-normal text-neutral-500">
+                  h{totalCost}
                 </p>
               </VStack>
             </GasTotalCostEthContainer>
@@ -159,7 +158,7 @@ const StepperModal = <TStepKey extends string>({
           <StepperModalProgress steps={steps} labels={stepLabels} />
           {globalState === StepStatus.LOADING && (
             <AlertInline
-              label={t('stepperModal.processWarning')}
+              label={t('createDAO.deployDAO.alertCritical.dontClosePage')}
               mode="critical"
             />
           )}
