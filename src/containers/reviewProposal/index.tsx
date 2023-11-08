@@ -258,11 +258,7 @@ const ReviewProposal: React.FC<ReviewProposalProps> = ({
 
       <ContentContainer>
         <ProposalContainer>
-          {values.proposal && (
-            <>
-              <StyledEditorContent editor={editor} />
-            </>
-          )}
+          {values.proposal && <StyledEditorContent editor={editor} />}
 
           {/* TODO: Add isUpdateProposal check once it's developed
           {featureFlags.getValue('VITE_FEATURE_FLAG_OSX_UPDATES') ===

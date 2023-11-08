@@ -12,8 +12,8 @@ import {EditorContent, useEditor} from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import {Markdown} from 'tiptap-markdown';
 import React, {useEffect} from 'react';
-import {useReleaseNotes} from 'services/aragon-sdk/queries/use-release-notes';
 import styled from 'styled-components';
+import {IReleaseNote} from 'services/aragon-sdk/domain/release-note';
 
 export const Icons = {
   multiSelect: {
@@ -29,10 +29,9 @@ export const Icons = {
 };
 
 export type CheckboxListItemProps = {
-  label: string;
+  label?: string;
   linkLabel: string;
-  version: string;
-  isPlugin?: boolean;
+  releaseNote?: IReleaseNote;
   tagLabelNatural?: string;
   tagLabelInfo?: string;
   disabled?: boolean;
@@ -45,14 +44,11 @@ export type CheckboxListItemProps = {
   onClickActionSecondary?: (e: React.MouseEvent) => void;
 };
 
-const LATEST_RELEASE = '1.3.0';
-
 // TODO: This might be a component that
 export const UpdateListItem: React.FC<CheckboxListItemProps> = ({
   label,
   linkLabel,
-  version,
-  isPlugin,
+  releaseNote,
   tagLabelNatural,
   tagLabelInfo,
   disabled = false,
@@ -64,16 +60,15 @@ export const UpdateListItem: React.FC<CheckboxListItemProps> = ({
   onClickActionPrimary,
   onClickActionSecondary,
 }) => {
-  const {data: releases} = useReleaseNotes();
-  const releaseNotes = releases?.find(release =>
-    release.tag_name.includes(isPlugin ? LATEST_RELEASE : version)
-  );
-  const editor = useEditor({extensions: [StarterKit, Markdown]});
+  const editor = useEditor({
+    editable: false,
+    extensions: [StarterKit, Markdown],
+  });
 
   // Update editor content on release notes change
   useEffect(() => {
-    editor?.commands.setContent(releaseNotes?.summary ?? '');
-  }, [editor, releaseNotes]);
+    editor?.commands.setContent(releaseNote?.summary ?? '');
+  }, [editor, releaseNote]);
 
   return (
     <Container data-testid="checkboxListItem" {...{type, disabled, onClick}}>
@@ -95,7 +90,7 @@ export const UpdateListItem: React.FC<CheckboxListItemProps> = ({
           <Link
             label={linkLabel}
             iconRight={<IconLinkExternal />}
-            href={releaseNotes?.html_url}
+            href={releaseNote?.html_url}
           />
         </div>
         {(buttonPrimaryLabel || buttonSecondaryLabel) && (
