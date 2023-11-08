@@ -40,10 +40,7 @@ import {useDaoDetailsQuery} from 'hooks/useDaoDetails';
 import {useDaoMembers} from 'hooks/useDaoMembers';
 import {useDaoToken} from 'hooks/useDaoToken';
 import {useMappedBreadcrumbs} from 'hooks/useMappedBreadcrumbs';
-import {
-  PluginTypes,
-  usePluginClient,
-} from 'hooks/usePluginClient';
+import {PluginTypes, usePluginClient} from 'hooks/usePluginClient';
 import useScreen from 'hooks/useScreen';
 import {useWallet} from 'hooks/useWallet';
 import {useWalletCanVote} from 'hooks/useWalletCanVote';
@@ -556,9 +553,6 @@ export const Proposal: React.FC = () => {
     displayDelegationVoteGating,
     proposal,
     isOnWrongNetwork,
-    shouldDisplayDelegationVoteGating,
-    proposal,
-    canVote,
     open,
   ]);
 

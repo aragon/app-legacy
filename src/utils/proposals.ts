@@ -470,8 +470,7 @@ export function getLiveProposalTerminalProps(
     // results
     const results: ProposalVoteResults = getErc20Results(
       proposal.vochain.tally.parsed,
-      proposal.token.decimals,
-      proposal.totalVotingWeight
+      proposal.token.decimals
     );
     // calculate participation
     const {currentPart, currentPercentage, minPart, missingPart, totalWeight} =
