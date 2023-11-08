@@ -285,7 +285,7 @@ const CreateDaoProvider: React.FC<{children: ReactNode}> = ({children}) => {
       } = getValues();
 
       const vocdoniVotingSettings: GaslessPluginVotingSettings = {
-        expirationTime: getSecondsFromDHM(
+        minTallyDuration: getSecondsFromDHM(
           parseInt(executionExpirationDays),
           parseInt(executionExpirationHours),
           parseInt(executionExpirationMinutes)

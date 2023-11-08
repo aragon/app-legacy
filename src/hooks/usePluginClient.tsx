@@ -8,8 +8,7 @@ import {
 } from '@vocdoni/gasless-voting';
 import {VocdoniEnv} from './useVocdoniSdk';
 
-export const GaselessPluginName =
-  'vocdoni-offchain-voting-test-3.plugin.dao.eth';
+export const GaselessPluginName = 'vocdoni-offchain-voting-poc-13';
 export type GaselessPluginType = typeof GaselessPluginName;
 
 export type PluginTypes =

@@ -595,9 +595,7 @@ export const Proposal: React.FC = () => {
         pluginType,
         proposal.startDate,
         // If is gasless the proposal ends after the expiration period
-        isGaslessProposal(proposal)
-          ? proposal.expirationDate
-          : proposal.endDate,
+        isGaslessProposal(proposal) ? proposal.tallyEndDate : proposal.endDate,
         proposal.creationDate,
         proposal.creationBlockNumber
           ? NumberFormatter.format(proposal.creationBlockNumber)

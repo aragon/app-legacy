@@ -67,7 +67,7 @@ const GaslessVotingSettings: React.FC<IPluginSettings> = ({daoDetails}) => {
   const votingSettings = pluginVotingSettings as GaslessPluginVotingSettings;
 
   const {days, hours, minutes} = getDHMFromSeconds(
-    votingSettings.expirationTime
+    votingSettings.minTallyDuration
   );
 
   return (

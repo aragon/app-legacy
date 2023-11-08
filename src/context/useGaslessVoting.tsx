@@ -152,7 +152,7 @@ export const useGaslessCommiteVotes = (
     if (!proposal) return false;
     return (
       proposal.endDate.valueOf() < new Date().valueOf() &&
-      proposal.expirationDate.valueOf() > new Date().valueOf()
+      proposal.tallyEndDate.valueOf() > new Date().valueOf()
     );
   })(proposal);
 

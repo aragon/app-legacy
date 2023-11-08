@@ -76,12 +76,9 @@ export const EditMvSettings: React.FC<EditMvSettingsProps> = ({daoDetails}) => {
   const isLoading =
     settingsAreLoading || tokensAreLoading || tokenSupplyIsLoading;
 
-  const dataFetched = !!(
-    !isLoading &&
-    daoToken &&
-    tokenSupply &&
-    votingSettings?.minDuration
-  );
+  const minDuration = votingSettings?.minDuration;
+
+  const dataFetched = !!(!isLoading && daoToken && tokenSupply && minDuration);
 
   const [
     daoName,
@@ -128,16 +125,14 @@ export const EditMvSettings: React.FC<EditMvSettingsProps> = ({daoDetails}) => {
     control,
   });
 
-  const {days, hours, minutes} = getDHMFromSeconds(
-    votingSettings?.minDuration ?? 0
-  );
+  const {days, hours, minutes} = getDHMFromSeconds(minDuration ?? 0);
 
   let approvalDays: number | undefined;
   let approvalHours: number | undefined;
   let approvalMinutes: number | undefined;
   if (isGasless) {
     const {days, hours, minutes} = getDHMFromSeconds(
-      (votingSettings as GaslessPluginVotingSettings)?.expirationTime ?? 0
+      (votingSettings as GaslessPluginVotingSettings)?.minTallyDuration ?? 0
     );
     approvalDays = days;
     approvalHours = hours;

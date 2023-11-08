@@ -4,7 +4,7 @@ import {
   Erc20WrapperTokenDetails,
 } from '@aragon/sdk-client';
 import {ProposalMetadata} from '@aragon/sdk-client-common';
-import {useCallback, useState} from 'react';
+import {useCallback} from 'react';
 
 import {
   AccountData,
@@ -73,8 +73,6 @@ const proposalToElection = ({
 };
 
 const useCreateGaslessProposal = ({daoToken}: ICreateGaslessProposal) => {
-  const [vochainProposalId, setVochainProposalId] = useState('');
-
   const {steps, updateStepStatus, doStep, globalState, resetStates} =
     useFunctionStepper({
       initialSteps: {
@@ -184,7 +182,10 @@ const useCreateGaslessProposal = ({daoToken}: ICreateGaslessProposal) => {
     async (
       metadata: ProposalMetadata,
       data: CreateMajorityVotingProposalParams,
-      handleOnchainProposal: (electionId?: string) => Promise<Error | undefined>
+      handleOnchainProposal: (
+        electionId?: string,
+        vochainCensus?: TokenCensus
+      ) => Promise<Error | undefined>
     ) => {
       if (globalState === StepStatus.ERROR) {
         // If global status is error, reset the stepper states
@@ -204,24 +205,24 @@ const useCreateGaslessProposal = ({daoToken}: ICreateGaslessProposal) => {
       );
 
       // 2. Create vocdoni election
+      let census: TokenCensus;
       const electionId = await doStep(
         GaslessProposalStepId.CREATE_VOCDONI_ELECTION,
         async () => {
           // 2.1 Register gasless proposal
           // This involves various steps such the census creation and election creation
-          const census = await createCensus();
+          census = await createCensus();
           // 2.2. Create vocdoni election
           return await createVocdoniElection(
             proposalToElection({metadata, data, census})
           );
         }
       );
-      setVochainProposalId(electionId);
 
       // 3. Register the proposal onchain
       await doStep(
         GaslessProposalStepId.CREATE_ONCHAIN_PROPOSAL,
-        async () => await handleOnchainProposal(electionId)
+        async () => await handleOnchainProposal(electionId, census)
       );
 
       // 4. All ready
@@ -242,7 +243,7 @@ const useCreateGaslessProposal = ({daoToken}: ICreateGaslessProposal) => {
     ]
   );
 
-  return {steps, globalState, createProposal, vochainProposalId};
+  return {steps, globalState, createProposal};
 };
 
 export {useCreateGaslessProposal};

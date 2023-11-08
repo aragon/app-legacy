@@ -33,12 +33,7 @@ import {
   getCanonicalUtcOffset,
   getFormattedUtcOffset,
 } from 'utils/date';
-import {
-  getErc20VotingParticipation,
-  getNonEmptyActions,
-  isGaslessProposal,
-  isMultisigProposal,
-} from 'utils/proposals';
+import {getErc20VotingParticipation, getNonEmptyActions} from 'utils/proposals';
 import {ProposalResource, SupportedVotingSettings} from 'utils/types';
 
 type ReviewProposalProps = {

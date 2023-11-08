@@ -86,12 +86,20 @@ import {
   GaslessVotingProposal,
   GaslessVotingClient,
 } from '@vocdoni/gasless-voting';
+import {TokenCensus} from '@vocdoni/sdk';
 
 type Props = {
   showTxModal: boolean;
   setShowTxModal: (value: boolean) => void;
   children: ReactNode;
 };
+
+// This omitted Gasless params are added after Vocdoni election created
+// This type is used to store information needed before creating the proposal in the vochain
+type PartialGaslessParams = Omit<
+  CreateGasslessProposalParams,
+  'vochainProposalId' | 'censusURI' | 'censusRoot' | 'totalVotingPower'
+>;
 
 const CreateProposalWrapper: React.FC<Props> = ({
   showTxModal,
@@ -122,6 +130,7 @@ const CreateProposalWrapper: React.FC<Props> = ({
   );
 
   const {client} = useClient();
+
   const pluginClient = usePluginClient(pluginType as PluginTypes);
 
   const gasless = pluginType === GaselessPluginName;
@@ -134,7 +143,7 @@ const CreateProposalWrapper: React.FC<Props> = ({
 
   const [proposalId, setProposalId] = useState<string>();
   const [proposalCreationData, setProposalCreationData] = useState<
-    CreateMajorityVotingProposalParams | CreateGasslessProposalParams
+    CreateMajorityVotingProposalParams | PartialGaslessParams
   >();
   const [creationProcessState, setCreationProcessState] =
     useState<TransactionState>(TransactionState.WAITING);
@@ -486,18 +495,14 @@ const CreateProposalWrapper: React.FC<Props> = ({
   ]);
 
   const getOffChainProposalParams = useCallback(
-    (
-      params: CreateMajorityVotingProposalParams,
-      vochainProposalId: string
-    ): CreateGasslessProposalParams => {
+    (params: CreateMajorityVotingProposalParams): PartialGaslessParams => {
       return {
         ...params,
         // If the value is undefined will take the expiration time defined at DAO creation level.
         // We want this because the expiration date is defined when the dao is created.
         // We could define a different expiration date for this proposal but is not designed
         // to do this at ux level. (kon)
-        expirationDate: undefined,
-        vochainProposalId,
+        tallyEndDate: undefined,
         startDate: params.startDate,
         endDate: params.endDate!,
       };
@@ -689,7 +694,7 @@ const CreateProposalWrapper: React.FC<Props> = ({
   }, [queryClient]);
 
   const handlePublishProposal = useCallback(
-    async (vochainProposalId?: string) => {
+    async (vochainProposalId?: string, vochainCensus?: TokenCensus) => {
       if (!pluginClient) {
         return new Error('ERC20 SDK client is not initialized correctly');
       }
@@ -710,11 +715,19 @@ const CreateProposalWrapper: React.FC<Props> = ({
       });
 
       let proposalIterator: AsyncGenerator<ProposalCreationStepValue>;
-      if (gasless && vochainProposalId) {
+      if (gasless && vochainProposalId && vochainCensus) {
+        const params: CreateGasslessProposalParams = {
+          ...(proposalCreationData as PartialGaslessParams),
+          censusRoot: vochainCensus.censusId!,
+          censusURI: vochainCensus.censusURI!,
+          totalVotingPower: vochainCensus.weight!,
+          vochainProposalId,
+        };
+
         proposalIterator = (
           pluginClient as GaslessVotingClient
         ).methods.createProposal({
-          ...(proposalCreationData as CreateGasslessProposalParams),
+          ...params,
           vochainProposalId,
         });
       } else {
@@ -835,7 +848,7 @@ const CreateProposalWrapper: React.FC<Props> = ({
       if (showTxModal && creationProcessState === TransactionState.WAITING) {
         if (gasless) {
           const {params: gaslessParams} = await getProposalCreationParams();
-          setProposalCreationData(getOffChainProposalParams(gaslessParams, ''));
+          setProposalCreationData(getOffChainProposalParams(gaslessParams));
         } else {
           const {params} = await getProposalCreationParams();
           setProposalCreationData(params);

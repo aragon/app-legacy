@@ -76,7 +76,7 @@ export const CommitteeVotingTerminal = ({
     if (!proposal) return;
 
     const endDate = `${format(
-      proposal.parameters.expirationDate!,
+      proposal.parameters.tallyEndDate!,
       KNOWN_FORMATS.proposals
     )}  ${getFormattedUtcOffset()}`;
 

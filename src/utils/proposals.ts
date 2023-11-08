@@ -44,7 +44,10 @@ import {
   SupportedProposals,
   SupportedVotingSettings,
 } from './types';
-import {GaslessVotingProposal} from '@vocdoni/gasless-voting';
+import {
+  GaslessPluginVotingSettings,
+  GaslessVotingProposal,
+} from '@vocdoni/gasless-voting';
 
 export type TokenVotingOptions = StrictlyExclude<
   VoterType['option'],
@@ -714,7 +717,10 @@ export function getVoteStatus(proposal: DetailedProposal, t: TFunction) {
 
 export function getVoteButtonLabel(
   proposal: DetailedProposal,
-  voteSettings: MajorityVotingSettings | MultisigVotingSettings,
+  voteSettings:
+    | MajorityVotingSettings
+    | MultisigVotingSettings
+    | GaslessPluginVotingSettings,
   votedOrApproved: boolean,
   executableWithNextApproval: boolean,
   t: TFunction
@@ -726,6 +732,10 @@ export function getVoteButtonLabel(
       executableWithNextApproval,
       t
     );
+  }
+
+  if (isGaslessProposal(proposal) && isGaslessVotingSettings(voteSettings)) {
+    return getTokenBasedLabel(proposal, voteSettings, votedOrApproved, t);
   }
 
   if (isTokenBasedProposal(proposal) && isTokenVotingSettings(voteSettings)) {
@@ -756,18 +766,19 @@ function getMultisigLabel(
 }
 
 function getTokenBasedLabel(
-  proposal: TokenVotingProposal,
-  voteSettings: MajorityVotingSettings,
+  proposal: TokenVotingProposal | GaslessVotingProposal,
+  voteSettings: MajorityVotingSettings | GaslessPluginVotingSettings,
   voted: boolean,
   t: TFunction
 ): string {
   if (proposal.status === ProposalStatus.PENDING) {
     return t('votingTerminal.voteNow');
   }
-
   if (voted) {
     // voted on plugin with voteReplacement
     if (
+      isTokenBasedProposal(proposal) &&
+      isTokenVotingSettings(voteSettings) &&
       proposal.status === ProposalStatus.ACTIVE &&
       voteSettings.votingMode === VotingMode.VOTE_REPLACEMENT
     ) {

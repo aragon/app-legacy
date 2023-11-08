@@ -51,7 +51,7 @@ export function getApproveStatusLabel(
       });
       label = t('votingTerminal.status.pending', {timeUntilNow});
     } else {
-      const timeUntilEnd = formatDistanceToNow(proposal.expirationDate, {
+      const timeUntilEnd = formatDistanceToNow(proposal.tallyEndDate, {
         includeSeconds: true,
         locale,
       });
