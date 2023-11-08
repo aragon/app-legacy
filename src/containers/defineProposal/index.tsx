@@ -68,7 +68,7 @@ const DefineProposal: React.FC = () => {
       label: osxUpdates.getProtocolUpdateLabel(osSelectedVersion?.version),
       releaseNote: osxUpdates.getReleaseNotes({
         releases,
-        update: osSelectedVersion,
+        version: osSelectedVersion?.version,
       }),
       linkLabel: t('update.item.releaseNotesLabel'),
       ...(osxAvailableVersions?.get(osSelectedVersion?.version ?? '')
@@ -89,7 +89,8 @@ const DefineProposal: React.FC = () => {
       id: 'plugin',
       releaseNote: osxUpdates.getReleaseNotes({
         releases,
-        update: pluginSelectedVersion,
+        version: pluginSelectedVersion?.version,
+        isPlugin: true,
       }),
       label: osxUpdates.getPluginUpdateLabel(pluginSelectedVersion?.version),
       linkLabel: t('update.item.releaseNotesLabel'),
@@ -163,7 +164,7 @@ const DefineProposal: React.FC = () => {
         );
         const releaseNotes = osxUpdates.getReleaseNotes({
           releases,
-          update: osSelectedVersion,
+          version: osSelectedVersion?.version,
         });
         editor?.commands.setContent(releaseNotes?.summary ?? '');
         proposalBody += t('update.proposal.descriptionProtocolUpgrade', {
@@ -179,7 +180,8 @@ const DefineProposal: React.FC = () => {
         );
         const releaseNotes = osxUpdates.getReleaseNotes({
           releases,
-          update: pluginSelectedVersion,
+          version: pluginSelectedVersion?.version,
+          isPlugin: true,
         });
         editor?.commands.setContent(releaseNotes?.summary ?? '');
         proposalBody += t('update.proposal.descriptionPluginUpgrade', {

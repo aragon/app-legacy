@@ -7,6 +7,9 @@ import {VersionTag} from '@aragon/sdk-client-common';
 import {Controller, useFormContext} from 'react-hook-form';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
+import {osxUpdates} from 'utils/osxUpdates';
+import {IReleaseNote} from 'services/aragon-sdk/domain/release-note';
+import {useReleaseNotes} from 'services/aragon-sdk/queries/use-release-notes';
 
 export type CheckboxListItemProps = {
   showModal: {
@@ -17,9 +20,9 @@ export type CheckboxListItemProps = {
 };
 
 type versionList = {
-  label: string;
+  label?: string;
   version: string | VersionTag;
-  helptext: string;
+  releaseNote?: IReleaseNote;
   isLatest?: boolean;
   isPrepared?: boolean;
   tagLabelNatural?: string;
@@ -33,15 +36,18 @@ export const VersionSelectionMenu: React.FC<CheckboxListItemProps> = ({
   const {t} = useTranslation();
   const {control} = useFormContext();
   const {osxAvailableVersions, pluginAvailableVersions} = useUpdateContext();
+  const {data: releases} = useReleaseNotes();
 
   const osVersionList = useMemo(() => {
     const List: versionList[] = [];
     osxAvailableVersions?.forEach(value => {
-      console.log('value', value.version, osxAvailableVersions);
       List.push({
-        label: `OSX v${value.version}`,
+        label: osxUpdates.getProtocolUpdateLabel(value.version),
+        releaseNote: osxUpdates.getReleaseNotes({
+          releases,
+          version: value.version,
+        }),
         version: value.version,
-        helptext: 'TBD inline release notes',
         ...(Boolean(value.isLatest) && {
           isLatest: true,
           tagLabelNatural: t('update.item.tagLatest'),
@@ -49,15 +55,19 @@ export const VersionSelectionMenu: React.FC<CheckboxListItemProps> = ({
       });
     });
     return List;
-  }, [osxAvailableVersions, t]);
+  }, [osxAvailableVersions, releases, t]);
 
   const pluginVersionList = useMemo(() => {
     const List: versionList[] = [];
     pluginAvailableVersions?.forEach(value => {
       List.push({
-        label: `Token voting v${value.version.release}.${value.version.build}`,
+        label: osxUpdates.getPluginUpdateLabel(value.version),
         version: value.version,
-        helptext: 'TBD inline release notes',
+        releaseNote: osxUpdates.getReleaseNotes({
+          releases,
+          version: value.version,
+          isPlugin: true,
+        }),
         ...(value.isLatest && {
           isLatest: true,
           tagLabelNatural: t('update.item.tagLatest'),
@@ -69,7 +79,7 @@ export const VersionSelectionMenu: React.FC<CheckboxListItemProps> = ({
       });
     });
     return List;
-  }, [pluginAvailableVersions, t]);
+  }, [pluginAvailableVersions, releases, t]);
 
   return (
     <ModalBottomSheetSwitcher
@@ -83,7 +93,7 @@ export const VersionSelectionMenu: React.FC<CheckboxListItemProps> = ({
           <Controller
             name="osSelectedVersion"
             control={control}
-            render={({field: {onChange, value: value23}}) => (
+            render={({field: {onChange, value: fieldValue}}) => (
               <>
                 <VersionListContainer>
                   {osVersionList.map((data, index) => {
@@ -92,11 +102,11 @@ export const VersionSelectionMenu: React.FC<CheckboxListItemProps> = ({
                         {...data}
                         key={index}
                         type={
-                          value23?.version === data.version
+                          fieldValue?.version === data.version
                             ? 'active'
                             : 'default'
                         }
-                        LinkLabel={t('update.item.releaseNotesLabel')}
+                        linkLabel={t('update.item.releaseNotesLabel')}
                         onClick={() =>
                           onChange({
                             version: data.version,
@@ -131,7 +141,7 @@ export const VersionSelectionMenu: React.FC<CheckboxListItemProps> = ({
                             ? 'active'
                             : 'default'
                         }
-                        LinkLabel={t('update.item.releaseNotesLabel')}
+                        linkLabel={t('update.item.releaseNotesLabel')}
                         onClick={() =>
                           onChange({
                             version: data.version,
