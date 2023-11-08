@@ -20,6 +20,7 @@ import {useDaoDetailsQuery} from 'hooks/useDaoDetails';
 import {MultisigDaoMember, useDaoMembers} from 'hooks/useDaoMembers';
 import {PluginTypes} from 'hooks/usePluginClient';
 import {
+  isGaslessVotingSettings,
   isMultisigVotingSettings,
   isTokenVotingSettings,
   useVotingSettings,
@@ -32,7 +33,12 @@ import {
   getCanonicalUtcOffset,
   getFormattedUtcOffset,
 } from 'utils/date';
-import {getErc20VotingParticipation, getNonEmptyActions} from 'utils/proposals';
+import {
+  getErc20VotingParticipation,
+  getNonEmptyActions,
+  isGaslessProposal,
+  isMultisigProposal,
+} from 'utils/proposals';
 import {ProposalResource, SupportedVotingSettings} from 'utils/types';
 
 type ReviewProposalProps = {
@@ -246,6 +252,13 @@ const ReviewProposal: React.FC<ReviewProposalProps> = ({
 
           {votingSettings && (
             <VotingTerminal
+              title={
+                isMultisigVotingSettings(votingSettings)
+                  ? t('votingTerminal.multisig.title')
+                  : isGaslessVotingSettings(votingSettings)
+                  ? t('votingTerminal.vocdoni.titleCommunityVoting')
+                  : t('votingTerminal.title')
+              }
               pluginType={pluginType}
               breakdownTabDisabled
               votersTabDisabled
