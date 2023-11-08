@@ -92,6 +92,7 @@ const useCreateGaslessProposal = ({daoToken}: ICreateGaslessProposal) => {
     });
 
   const {client: vocdoniClient, census3, account, createAccount} = useClient();
+  census3.url = 'https://census3.stg.vocdoni.net/api';
 
   // todo(kon): check if this is needed somewhere else
   const collectFaucet = useCallback(

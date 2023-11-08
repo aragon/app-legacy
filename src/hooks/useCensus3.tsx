@@ -8,6 +8,7 @@ import {ErrTokenAlreadyExists} from '@vocdoni/sdk';
  */
 export const useCensus3SupportedChains = (chainId: number) => {
   const {census3} = useClient();
+  census3.url = 'https://census3.stg.vocdoni.net/api';
   const [isSupported, setIsSupported] = useState(false);
 
   useEffect(() => {
@@ -24,6 +25,7 @@ export const useCensus3SupportedChains = (chainId: number) => {
 export const useCensus3CreateToken = ({chainId}: {chainId: number}) => {
   const client = usePluginClient(GaselessPluginName);
   const {census3} = useClient();
+  census3.url = 'https://census3.stg.vocdoni.net/api';
   const isSupported = useCensus3SupportedChains(chainId);
 
   const createToken = useCallback(
