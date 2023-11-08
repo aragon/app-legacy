@@ -6,13 +6,15 @@ import {
   TextareaWYSIWYG,
   TextInput,
 } from '@aragon/ods-old';
+import StarterKit from '@tiptap/starter-kit';
+import {Markdown} from 'tiptap-markdown';
 import React, {useEffect, useState} from 'react';
 import styled from 'styled-components';
 import {useTranslation} from 'react-i18next';
 
 import AddLinks from 'components/addLinks';
 import {useWallet} from 'hooks/useWallet';
-import {StringIndexed} from 'utils/types';
+import {ProposalFormData, StringIndexed} from 'utils/types';
 import {Controller, useFormContext, useWatch} from 'react-hook-form';
 import {isOnlyWhitespace} from 'utils/library';
 import {UpdateListItem} from 'containers/updateListItem/updateListItem';
@@ -21,6 +23,10 @@ import {VersionSelectionMenu} from 'containers/versionSelectionMenu/versionSelec
 import {useUpdateContext} from 'context/update';
 import {Loading} from 'components/temporary';
 import {useDaoDetailsQuery} from 'hooks/useDaoDetails';
+import {useReleaseNotes} from 'services/aragon-sdk/queries/use-release-notes';
+import {osxUpdates} from 'utils/osxUpdates';
+import {useEditor} from '@tiptap/react';
+import {useProtocolVersions} from 'hooks/useDaoVersions';
 
 const DefineProposal: React.FC = () => {
   const {t} = useTranslation();
@@ -30,9 +36,22 @@ const DefineProposal: React.FC = () => {
   const {handlePreparePlugin, osxAvailableVersions, pluginAvailableVersions} =
     useUpdateContext();
 
-  const pluginSelectedVersion = useWatch({name: 'pluginSelectedVersion'});
-  const osSelectedVersion = useWatch({name: 'osSelectedVersion'});
-  const updateFramework = useWatch({name: 'updateFramework'});
+  const {data: releases} = useReleaseNotes();
+  const editor = useEditor({extensions: [StarterKit, Markdown]});
+  const {data: versions} = useProtocolVersions(dao?.address);
+
+  const pluginSelectedVersion = useWatch<
+    ProposalFormData,
+    'pluginSelectedVersion'
+  >({
+    name: 'pluginSelectedVersion',
+  });
+  const osSelectedVersion = useWatch<ProposalFormData, 'osSelectedVersion'>({
+    name: 'osSelectedVersion',
+  });
+  const updateFramework = useWatch<ProposalFormData, 'updateFramework'>({
+    name: 'updateFramework',
+  });
 
   const {type} = useParams();
   const [showModal, setShowModal] = useState<{
@@ -46,10 +65,14 @@ const DefineProposal: React.FC = () => {
   const UpdateItems = [
     {
       id: 'os',
-      version: osSelectedVersion?.version,
-      label: `Aragon OSx v${osSelectedVersion?.version}`,
+      label: osxUpdates.getProtocolUpdateLabel(osSelectedVersion?.version),
+      releaseNote: osxUpdates.getReleaseNotes({
+        releases,
+        update: osSelectedVersion,
+      }),
       linkLabel: t('update.item.releaseNotesLabel'),
-      ...(osxAvailableVersions?.get(osSelectedVersion?.version)?.isLatest && {
+      ...(osxAvailableVersions?.get(osSelectedVersion?.version ?? '')
+        ?.isLatest && {
         tagLabelNatural: t('update.item.tagLatest'),
       }),
       buttonSecondaryLabel: t('update.item.versionCtaLabel'),
@@ -64,17 +87,19 @@ const DefineProposal: React.FC = () => {
     },
     {
       id: 'plugin',
-      isPlugin: true,
-      version: `${pluginSelectedVersion?.version.release}.${pluginSelectedVersion?.version.build}`,
-      label: `Token voting v${pluginSelectedVersion?.version.release}.${pluginSelectedVersion?.version.build}`,
+      releaseNote: osxUpdates.getReleaseNotes({
+        releases,
+        update: pluginSelectedVersion,
+      }),
+      label: osxUpdates.getPluginUpdateLabel(pluginSelectedVersion?.version),
       linkLabel: t('update.item.releaseNotesLabel'),
       ...(pluginAvailableVersions?.get(
-        `${pluginSelectedVersion?.version.release}.${pluginSelectedVersion?.version.build}`
+        osxUpdates.getPluginVersion(pluginSelectedVersion?.version) ?? ''
       )?.isLatest && {
         tagLabelNatural: t('update.item.tagLatest'),
       }),
       ...(pluginAvailableVersions?.get(
-        `${pluginSelectedVersion?.version.release}.${pluginSelectedVersion?.version.build}`
+        osxUpdates.getPluginVersion(pluginSelectedVersion?.version) ?? ''
       )?.isPrepared
         ? {
             tagLabelInfo: t('update.item.tagPrepared'),
@@ -97,12 +122,12 @@ const DefineProposal: React.FC = () => {
 
   useEffect(() => {
     let index = 0;
-    if (updateFramework.os && pluginSelectedVersion?.version) {
+    if (updateFramework?.os && pluginSelectedVersion?.version) {
       setValue(`actions.${index}.name`, 'os_update');
       setValue(`actions.${index}.inputs.version`, osSelectedVersion?.version);
       index++;
     }
-    if (updateFramework.plugin && pluginSelectedVersion?.version) {
+    if (updateFramework?.plugin && pluginSelectedVersion?.version) {
       setValue(`actions.${index}.name`, 'plugin_update');
       setValue(`actions.${index}.inputs`, {
         versionTag: pluginSelectedVersion.version,
@@ -112,17 +137,18 @@ const DefineProposal: React.FC = () => {
     osSelectedVersion?.version,
     pluginSelectedVersion?.version,
     setValue,
-    updateFramework.os,
-    updateFramework.plugin,
+    updateFramework?.os,
+    updateFramework?.plugin,
   ]);
 
   useEffect(() => {
     if (type === 'os-update') {
+      const proposalTitle = t('update.proposal.title');
       const proposalSummary = t('update.proposal.summary', {
         daoName: dao?.metadata.name,
       });
 
-      setValue('proposalTitle', t('update.proposal.title'));
+      setValue('proposalTitle', proposalTitle);
       setValue('proposalSummary', proposalSummary);
     }
   }, [setValue, type, dao, t]);
@@ -131,11 +157,37 @@ const DefineProposal: React.FC = () => {
     if (type === 'os-update') {
       let proposalBody = t('update.proposal.descriptionHeader');
 
-      if (updateFramework.os) {
-        proposalBody += t('update.proposal.descriptionProtocolUpgrade');
+      if (updateFramework?.os) {
+        const updatedVersion = osxUpdates.getProtocolUpdateLabel(
+          osSelectedVersion?.version
+        );
+        const releaseNotes = osxUpdates.getReleaseNotes({
+          releases,
+          update: osSelectedVersion,
+        });
+        editor?.commands.setContent(releaseNotes?.summary ?? '');
+        proposalBody += t('update.proposal.descriptionProtocolUpgrade', {
+          updatedVersion,
+          description: editor?.getHTML().replace(/<(\/){0,1}p>/g, ''),
+          releaseNotesLink: releaseNotes?.html_url,
+          currentVersion: osxUpdates.getProtocolUpdateLabel(versions),
+        });
       }
-      if (updateFramework.plugin) {
-        proposalBody += t('update.proposal.descriptionPluginUpgrade');
+      if (updateFramework?.plugin) {
+        const updatedVersion = osxUpdates.getPluginUpdateLabel(
+          pluginSelectedVersion?.version
+        );
+        const releaseNotes = osxUpdates.getReleaseNotes({
+          releases,
+          update: pluginSelectedVersion,
+        });
+        editor?.commands.setContent(releaseNotes?.summary ?? '');
+        proposalBody += t('update.proposal.descriptionPluginUpgrade', {
+          updatedVersion,
+          description: editor?.getHTML().replace(/<(\/){0,1}p>/g, ''),
+          releaseNotesLink: releaseNotes?.html_url,
+          currentVersion: osxUpdates.getPluginUpdateLabel(dao?.plugins[0]),
+        });
       }
 
       proposalBody += t('update.proposal.descriptionFooter');
@@ -147,6 +199,9 @@ const DefineProposal: React.FC = () => {
     type,
     dao,
     t,
+    editor,
+    versions,
+    releases,
     osSelectedVersion,
     pluginSelectedVersion,
     updateFramework,

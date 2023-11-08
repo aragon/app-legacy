@@ -240,11 +240,7 @@ const ReviewProposal: React.FC<ReviewProposalProps> = ({
 
       <ContentContainer>
         <ProposalContainer>
-          {values.proposal && (
-            <>
-              <StyledEditorContent editor={editor} />
-            </>
-          )}
+          {values.proposal && <StyledEditorContent editor={editor} />}
 
           {/* <UpdateVerificationCard actions={values.actions} /> */}
 

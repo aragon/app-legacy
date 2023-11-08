@@ -539,6 +539,15 @@ export interface Link {
   url: string;
 }
 
+export interface OsSelectedVersion {
+  version: string;
+}
+
+export interface PluginSelectedVersion {
+  version: VersionTag;
+  isPrepared: boolean;
+}
+
 export interface ProposalFormData {
   actions: Action[];
   startDate: string;
@@ -565,13 +574,8 @@ export interface ProposalFormData {
     os: boolean;
     plugin: boolean;
   };
-  osSelectedVersion?: {
-    version: string;
-  };
-  pluginSelectedVersion?: {
-    version: VersionTag;
-    isPrepared: boolean;
-  };
+  osSelectedVersion?: OsSelectedVersion;
+  pluginSelectedVersion?: PluginSelectedVersion;
 }
 
 export type ProposalSettingsFormData = ProposalFormData & {
