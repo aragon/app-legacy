@@ -186,7 +186,7 @@ const UpdateProvider: React.FC<{children: ReactElement}> = ({children}) => {
           SupportedVersion[key as keyof typeof SupportedVersion],
           versions?.join('.') as string
         )
-      )
+      ) {
         OSXVersions.set(
           SupportedVersion[key as keyof typeof SupportedVersion],
           {
@@ -196,6 +196,7 @@ const UpdateProvider: React.FC<{children: ReactElement}> = ({children}) => {
             ...(key === 'LATEST' && {isLatest: true}),
           } as OSX
         );
+      }
 
       if (key === 'LATEST') {
         setValue('osSelectedVersion', {

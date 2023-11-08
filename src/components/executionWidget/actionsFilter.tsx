@@ -50,6 +50,7 @@ export const ActionsFilter: React.FC<ActionsFilterProps> = ({
       );
     case 'os_update':
       return <UpdateOSCard action={action} dao={dao} />;
+    case 'plugin_update':
     default:
       return <></>;
   }
