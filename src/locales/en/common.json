@@ -360,7 +360,13 @@
         "expiredDesc": "This proposal action can no longer be executed because the expiration time has passed. If you want to reattempt executing this action, you must create a new proposal, pass it, and execute it within the expiration time."
       }
     },
-    "actionSecondary": "Delegate"
+    "actionSecondary": "Delegate",
+    "vocdoni": {
+      "executionCard": {
+        "title": "Actions",
+        "desc": "These actions can be executed by the execution multisig after the proposal passes a community vote."
+      }
+    }
   },
   "infos": {
     "voteDuration": "The minimum duration of {{days}} days is defined by DAO governance settings. To change the minimum duration a vote is required.",
@@ -973,7 +979,23 @@
     "approveAndExecute": {
       "infoAlert": "Only one more approval is needed in order to execute the proposal actions."
     },
-    "approveExecute": "Approve and execute"
+    "approveExecute": "Approve and execute",
+    "vocdoni": {
+      "title": "Voting",
+      "desc": "The proposal must first pass a community vote and then be approved by the execution multisig.",
+      "titleCommunityVoting": "Community voting",
+      "titleExecutionMultisig": "Execution multisig approval",
+      "titleActionsApproval": "Actions approval",
+      "alertInfoActionsApproval": "These actions can be executed by the execution multisig after the proposal passes a community vote.",
+      "status": {
+        "proposalDefeated": "Proposal has been <b>defeated</b>",
+        "noApproval": "No approval allowed",
+        "passed": "Proposal <b>passed</b>",
+        "notApproved": "Proposal was <b>not approved</b>",
+        "remainingTime": "remaining",
+        "approved": "Proposal <b>approved</b>"
+      }
+    }
   },
   "explore": {
     "hero": {
@@ -1273,7 +1295,7 @@
         "title": "You can't vote",
         "description": "{{sentence1}} {{sentence2}}",
         "sentence1a": "You weren't holding {{tokenSymbol}} and had no voting power when this proposal was created.",
-        "sentence1b": "You held {{balance}} {{tokenSymbol}} when this proposal was created but had no voting power.",
+        "sentence1b": "You held {{balance}} {{tokenSymbol}} but had no voting power when this proposal was created .",
         "sentence2a": "",
         "sentence2b": "If you want to participate in future proposals you have to claim your voting power. ",
         "sentence2c": "If you want to participate in future proposals you have to obtain {{tokenSymbol}}."
@@ -1329,8 +1351,7 @@
         "alertCriticalDapp": "The QR code provided is not from {{dappName}}.",
         "alertSuccess": "{{dappName}} connected",
         "codeInputPlaceholder": "wc: …",
-        "alertCriticalQRcode": "The QR code provided is not from {{dappName}}.",
-        "alertInvalid": "Invalid code"
+        "alertCriticalQRcode": "The QR code provided is not from {{dappName}}."
       },
       "detaildApp": {
         "spinnerLabel": "Listening for actions…",
@@ -1659,6 +1680,32 @@
       "desc": "To bring the offchain results onchain, a execution multisig is needed to validate the results and perform the optional actions of a proposal. Learn more about the execution multisig and its tasks in {{link}}.",
       "membersLabel": "Execution multisig members",
       "membersDesc": "These addresses form the governing body that approves and executes proposals passed by the community. Add the addresses who will be members of the execution multisig."
+    }
+  },
+  "modalTransaction": {
+    "vocdoni": {
+      "deploy": {
+        "createOffchain": "Create offchain vote ID",
+        "registerProposalOff": "Register proposal offchain ",
+        "registerProposalOn": "Register proposal onchain",
+        "proposalRready": "Your proposal is ready",
+        "signMessage": "Sign message",
+        "signTransaction": "Sign transaction",
+        "details": "Details"
+      },
+      "submitVote": {
+        "title": "Submit your vote",
+        "desc": "The only cost to publish your proposal are the {{votingBlockchain}} network's gas fee.",
+        "ctaLabel": "Confirm your vote",
+        "createOffchain": "Create offchain vote ID",
+        "signMessage": "Sign message",
+        "publishVote": "Publish your vote",
+        "details": "Details",
+        "alertDontClose": "Don't close this page while in progress.",
+        "ctaWaitingWalllet": "Awaiting wallet confirmation",
+        "ctaSeeVote": "See your vote",
+        "PublishFailed": "Publishing your vote has failed"
+      }
     }
   }
 }
