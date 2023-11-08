@@ -389,8 +389,8 @@ export const CreateDAO: React.FC = () => {
             <SetupCommunity />
           </Step>
           <Step
-            wizardTitle={t('createDAO.step4.title')}
-            wizardDescription={htmlIn(t)('createDAO.step4.description')}
+            wizardTitle={t('createDao.executionMultisig.title')}
+            wizardDescription={htmlIn(t)('createDao.executionMultisig.desc')}
             isNextButtonDisabled={!daoCommunityConfigurationIsValid}
             onNextButtonClicked={next =>
               handleNextButtonTracking(next, '4_configure_governance', {

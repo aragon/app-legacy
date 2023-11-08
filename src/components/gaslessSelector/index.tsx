@@ -46,7 +46,9 @@ const GaslessSelector = ({
       )}
       <CheckboxListItem
         label={t('createDAO.step3.blockChainVoting.optionGaslessLabel')}
-        helptext={t('createDAO.step3.blockChainVoting.optionGaslessDesc')}
+        helptext={t('createDAO.step3.blockChainVoting.optionGaslessDesc', {
+          blockchainName: blockchain.label,
+        })}
         onClick={() => {
           onChange('gasless');
         }}

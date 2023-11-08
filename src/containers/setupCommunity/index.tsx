@@ -16,11 +16,14 @@ import GaslessSelector from '../../components/gaslessSelector';
 const SetupCommunityForm: React.FC = () => {
   const {t} = useTranslation();
 
-  const {control, resetField, setValue} = useFormContext<CreateDaoFormData>();
+  const {control, resetField, setValue, getValues} =
+    useFormContext<CreateDaoFormData>();
   const [membership, isCustomToken] = useWatch({
     control,
     name: ['membership', 'isCustomToken'],
   });
+
+  const {blockchain} = getValues();
 
   const existingTokenItems = [
     // No mean It's a custom Token so It should be true
@@ -118,7 +121,8 @@ const SetupCommunityForm: React.FC = () => {
                 <>
                   <CheckboxListItem
                     label={t(
-                      'createDAO.step3.blockChainVoting.optionOnchainLabel'
+                      'createDAO.step3.blockChainVoting.optionOnchainLabel',
+                      {blockchainName: blockchain.label}
                     )}
                     helptext={t(
                       'createDAO.step3.blockChainVoting.optionOnchainDesc'
