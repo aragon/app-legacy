@@ -22,7 +22,11 @@ import {usePollGasFee} from 'hooks/usePollGasfee';
 import {useWallet} from 'hooks/useWallet';
 import {TransactionState} from 'utils/constants';
 import {CreateProposalFormData} from 'utils/types';
-import {PluginTypes, usePluginClient} from 'hooks/usePluginClient';
+import {
+  isGaslessVotingClient,
+  PluginTypes,
+  usePluginClient,
+} from 'hooks/usePluginClient';
 import {useDaoDetailsQuery} from 'hooks/useDaoDetails';
 
 type PrepareUpdateContextType = {
@@ -145,17 +149,15 @@ const PrepareUpdateProvider: React.FC<{children: ReactElement}> = ({
     if (!daoUpdateData) return;
     if (showModal.type === 'plugin') {
       // todo(kon): implement this on the min sdk
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
+      // The propose settings flow is not currently handled by the gasless voting client
+      if (pluginClient && isGaslessVotingClient(pluginClient)) {
+        return;
+      }
+
       return pluginClient?.estimation.prepareUpdate(daoUpdateData);
     } else
       client?.estimation.prepareUpdate(daoUpdateData as PrepareUpdateParams);
-  }, [
-    client?.estimation,
-    daoUpdateData,
-    pluginClient?.estimation,
-    showModal.type,
-  ]);
+  }, [client?.estimation, daoUpdateData, pluginClient, showModal.type]);
 
   const {
     tokenPrice,

@@ -40,6 +40,7 @@ import {
   isMultisigClient,
   isTokenVotingClient,
   usePluginClient,
+  isGaslessVotingClient,
 } from 'hooks/usePluginClient';
 import {usePollGasFee} from 'hooks/usePollGasfee';
 import {useTokenSupply} from 'hooks/useTokenSupply';
@@ -609,8 +610,9 @@ const ProposeSettingWrapper: React.FC<Props> = ({
     if (!proposalCreationData) return;
 
     // todo(kon): implement this
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
+    // The propose settings flow is not currently handled by the gasless voting client
+    if (!proposalCreationData || isGaslessVotingClient(pluginClient)) return;
+
     return pluginClient?.estimation.createProposal(proposalCreationData);
   }, [pluginClient, proposalCreationData]);
 
@@ -676,10 +678,13 @@ const ProposeSettingWrapper: React.FC<Props> = ({
     // }
 
     // todo(kon): implement this
-    const proposalIterator = pluginClient.methods.createProposal(
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      proposalCreationData as any
-    );
+    // The propose settings flow is not currently handled by the gasless voting client
+    if (isGaslessVotingClient(pluginClient)) {
+      return;
+    }
+
+    const proposalIterator =
+      pluginClient.methods.createProposal(proposalCreationData);
 
     if (creationProcessState === TransactionState.SUCCESS) {
       handleCloseModal();

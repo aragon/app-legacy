@@ -32,16 +32,7 @@ type CommitteeExecutionWidgetProps = Pick<
   'actions' | 'onExecuteClicked'
 >;
 
-export const CommitteeVotingTerminal = ({
-  votingStatusLabel,
-  proposal,
-  pluginAddress,
-  statusRef,
-  actions,
-  onExecuteClicked,
-  pluginType,
-  children,
-}: {
+type CommitteeVotingTerminalProps = {
   votingStatusLabel: string;
   proposal: GaslessVotingProposal;
   pluginAddress: string;
@@ -51,7 +42,20 @@ export const CommitteeVotingTerminal = ({
   }>;
   pluginType: PluginTypes;
 } & CommitteeExecutionWidgetProps &
-  PropsWithChildren) => {
+  PropsWithChildren;
+
+export const CommitteeVotingTerminal: React.FC<
+  CommitteeVotingTerminalProps
+> = ({
+  votingStatusLabel,
+  proposal,
+  pluginAddress,
+  statusRef,
+  actions,
+  onExecuteClicked,
+  pluginType,
+  children,
+}) => {
   const {t, i18n} = useTranslation();
   const [terminalTab, setTerminalTab] = useState<TerminalTabs>('breakdown');
   const [approvalStatus, setApprovalStatus] = useState('');

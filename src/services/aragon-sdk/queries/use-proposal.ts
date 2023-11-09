@@ -1,21 +1,14 @@
 import {MultisigProposal, TokenVotingProposal} from '@aragon/sdk-client';
-import {UseQueryOptions, useQuery} from '@tanstack/react-query';
+import {useQuery, UseQueryOptions} from '@tanstack/react-query';
 
 import {useNetwork} from 'context/network';
-import {
-  isGaslessVotingClient,
-  PluginClient,
-  usePluginClient,
-} from 'hooks/usePluginClient';
+import {PluginClient, usePluginClient} from 'hooks/usePluginClient';
 import {CHAIN_METADATA} from 'utils/constants';
 import {invariant} from 'utils/invariant';
 import {IFetchProposalParams} from '../aragon-sdk-service.api';
 import {aragonSdkQueryKeys} from '../query-keys';
 import {syncProposalData, transformProposal} from '../selectors';
-import {
-  GaslessVotingClient,
-  GaslessVotingProposal,
-} from '@vocdoni/gasless-voting';
+import {GaslessVotingProposal} from '@vocdoni/gasless-voting';
 
 async function fetchProposal(
   params: IFetchProposalParams,
@@ -24,20 +17,7 @@ async function fetchProposal(
   MultisigProposal | TokenVotingProposal | GaslessVotingProposal | null
 > {
   invariant(!!client, 'fetchProposal: client is not defined');
-  let data;
-  if (isGaslessVotingClient(client)) {
-    if (!params.id) {
-      return null;
-    }
-    data = await (client as GaslessVotingClient).methods.getProposal(
-      params!.id,
-      '',
-      ''
-    );
-    return data;
-  }
-  params = params as IFetchProposalParams;
-  data = await client?.methods.getProposal(params.id);
+  const data = await client?.methods.getProposal(params.id);
   return data;
 }
 

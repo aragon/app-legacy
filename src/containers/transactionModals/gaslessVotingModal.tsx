@@ -12,8 +12,8 @@ import {useWallet} from '../../hooks/useWallet';
 type GaslessVotingModalProps = {
   vote: VoteProposalParams | undefined;
   showVoteModal: boolean;
-  setShowVoteModal: React.Dispatch<React.SetStateAction<boolean>>;
-  setVoteSubmitted: React.Dispatch<React.SetStateAction<boolean>>;
+  setShowVoteModal: (showModal: boolean) => void;
+  setVoteSubmitted: (voteSubmitted: boolean) => void;
   onVoteSubmitted: (
     proposalId: string,
     vote: VoteValues,
