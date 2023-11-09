@@ -3,12 +3,19 @@ import {useCallback, useEffect, useState} from 'react';
 import {GaselessPluginName, usePluginClient} from './usePluginClient';
 import {ErrTokenAlreadyExists} from '@vocdoni/sdk';
 
+const CENSUS3_URL = 'https://census3.stg.vocdoni.net/api';
+
+export const useCensus3Client = () => {
+  const {census3} = useClient();
+  census3.url = CENSUS3_URL;
+  return census3;
+};
+
 /**
  * Hook to know if the actual wallet chain id is supported by the census3 vocdoni service
  */
 export const useCensus3SupportedChains = (chainId: number) => {
-  const {census3} = useClient();
-  census3.url = 'https://census3.stg.vocdoni.net/api';
+  const census3 = useCensus3Client();
   const [isSupported, setIsSupported] = useState(false);
 
   useEffect(() => {
@@ -24,8 +31,7 @@ export const useCensus3SupportedChains = (chainId: number) => {
 
 export const useCensus3CreateToken = ({chainId}: {chainId: number}) => {
   const client = usePluginClient(GaselessPluginName);
-  const {census3} = useClient();
-  census3.url = 'https://census3.stg.vocdoni.net/api';
+  const census3 = useCensus3Client();
   const isSupported = useCensus3SupportedChains(chainId);
 
   const createToken = useCallback(

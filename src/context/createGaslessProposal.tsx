@@ -22,6 +22,7 @@ import {
   StepStatus,
   useFunctionStepper,
 } from '../hooks/useFunctionStepper';
+import {useCensus3Client} from '../hooks/useCensus3';
 
 export enum GaslessProposalStepId {
   REGISTER_VOCDONI_ACCOUNT = 'REGISTER_VOCDONI_ACCOUNT',
@@ -90,14 +91,8 @@ const useCreateGaslessProposal = ({daoToken}: ICreateGaslessProposal) => {
       } as GaslessProposalSteps,
     });
 
-  const {
-    client: vocdoniClient,
-    census3,
-    account,
-    createAccount,
-    errors,
-  } = useClient();
-  census3.url = 'https://census3.stg.vocdoni.net/api';
+  const {client: vocdoniClient, account, createAccount, errors} = useClient();
+  const census3 = useCensus3Client();
 
   // todo(kon): check if this is needed somewhere else
   const collectFaucet = useCallback(
@@ -139,7 +134,7 @@ const useCreateGaslessProposal = ({daoToken}: ICreateGaslessProposal) => {
 
       return await vocdoniClient.createElection(election);
     },
-    [account, collectFaucet, vocdoniClient]
+    [collectFaucet, vocdoniClient]
   );
 
   // todo(kon): this is not a callback
