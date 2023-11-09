@@ -6,7 +6,7 @@ import StarterKit from '@tiptap/starter-kit';
 import {Locale, format, formatDistanceToNow} from 'date-fns';
 import * as Locales from 'date-fns/locale';
 import React, {useEffect, useMemo} from 'react';
-import {useFormContext} from 'react-hook-form';
+import {useFormContext, useWatch} from 'react-hook-form';
 import {useTranslation} from 'react-i18next';
 import {TFunction} from 'i18next';
 import styled from 'styled-components';
@@ -35,6 +35,7 @@ import {
 } from 'utils/date';
 import {getErc20VotingParticipation, getNonEmptyActions} from 'utils/proposals';
 import {ProposalResource, SupportedVotingSettings} from 'utils/types';
+import {useParams} from 'react-router-dom';
 
 type ReviewProposalProps = {
   defineProposalStepNumber: number;
@@ -47,6 +48,10 @@ const ReviewProposal: React.FC<ReviewProposalProps> = ({
 }) => {
   const {t, i18n} = useTranslation();
   const {setStep} = useFormStep();
+  const {type} = useParams();
+  const pluginSelectedVersion = useWatch({name: 'pluginSelectedVersion'});
+  const osSelectedVersion = useWatch({name: 'osSelectedVersion'});
+  const updateFramework = useWatch({name: 'updateFramework'});
 
   const {data: daoDetails, isLoading: detailsLoading} = useDaoDetailsQuery();
   const pluginAddress = daoDetails?.plugins?.[0]?.instanceAddress as string;
@@ -213,6 +218,31 @@ const ReviewProposal: React.FC<ReviewProposalProps> = ({
       setValue('proposal', '');
     }
   }, [setValue, values.proposal]);
+
+  useEffect(() => {
+    if (type === 'os-update') {
+      let index = 0;
+      setValue('actions', []);
+      if (updateFramework.os && pluginSelectedVersion?.version) {
+        setValue(`actions.${index}.name`, 'os_update');
+        setValue(`actions.${index}.inputs.version`, osSelectedVersion?.version);
+        index++;
+      }
+      if (updateFramework.plugin && pluginSelectedVersion?.version) {
+        setValue(`actions.${index}.name`, 'plugin_update');
+        setValue(`actions.${index}.inputs`, {
+          versionTag: pluginSelectedVersion.version,
+        });
+      }
+    }
+  }, [
+    osSelectedVersion?.version,
+    pluginSelectedVersion.version,
+    setValue,
+    type,
+    updateFramework.os,
+    updateFramework.plugin,
+  ]);
 
   /*************************************************
    *                    Render                     *
