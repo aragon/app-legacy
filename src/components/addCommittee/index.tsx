@@ -34,35 +34,23 @@ const AddCommittee: React.FC = () => {
   });
 
   const {control, setFocus, trigger} = useFormContext();
-  const wallets = useWatch({name: 'committee', control: control});
   const {fields, append, remove} = useFieldArray({
     name: 'committee',
     control,
   });
 
-  const controlledFields = fields.map((field, index) => {
-    return {
-      ...field,
-      ...(wallets && {...wallets[index]}),
-    };
-  });
-
   useEffect(() => {
-    if (
-      address &&
-      controlledFields?.length === 0 &&
-      appendConnectedAddress.current === true
-    ) {
+    if (address && fields?.length === 0 && appendConnectedAddress.current) {
       append({address, amount: '1', ensName});
       appendConnectedAddress.current = false;
     }
-  }, [address, append, controlledFields?.length, ensName, trigger]);
+  }, [address, append, fields?.length, ensName, trigger]);
 
   // setTimeout added because instant trigger not working
   const handleAddWallet = () => {
     append({address: '', ensName: '', amount: 1});
     alert(t('alert.chip.addressAdded'));
-    const id = `committee.${controlledFields.length}`;
+    const id = `committee.${fields.length}`;
     setTimeout(() => {
       setFocus(id);
       trigger(id);
@@ -88,8 +76,8 @@ const AddCommittee: React.FC = () => {
   return (
     <Container>
       <ListGroup>
-        {controlledFields.length > 0 && <Header />}
-        {controlledFields.map((field, index) => {
+        {fields.length > 0 && <Header />}
+        {fields.map((field, index) => {
           return (
             <Row key={field.id} index={index} onDelete={handleDeleteRow} />
           );

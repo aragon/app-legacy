@@ -17,10 +17,10 @@ const AddCommitteeWalletsHeader: React.FC = () => {
 
 export default AddCommitteeWalletsHeader;
 
-export const Container = styled.div.attrs({
+const Container = styled.div.attrs({
   className: 'hidden tablet:flex p-2 space-x-2 bg-ui-0',
 })``;
 
-export const HeaderItem = styled.div.attrs({
+const HeaderItem = styled.div.attrs({
   className: 'flex-1',
 })``;
