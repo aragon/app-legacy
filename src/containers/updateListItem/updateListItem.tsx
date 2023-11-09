@@ -8,8 +8,12 @@ import {
   Link,
   Tag,
 } from '@aragon/ods-old';
-import React from 'react';
+import {EditorContent, useEditor} from '@tiptap/react';
+import StarterKit from '@tiptap/starter-kit';
+import {Markdown} from 'tiptap-markdown';
+import React, {useEffect} from 'react';
 import styled from 'styled-components';
+import {IReleaseNote} from 'services/aragon-sdk/domain/release-note';
 
 export const Icons = {
   multiSelect: {
@@ -25,9 +29,9 @@ export const Icons = {
 };
 
 export type CheckboxListItemProps = {
-  label: string;
-  helptext?: string;
-  LinkLabel: string;
+  label?: string;
+  linkLabel: string;
+  releaseNote?: IReleaseNote;
   tagLabelNatural?: string;
   tagLabelInfo?: string;
   disabled?: boolean;
@@ -43,8 +47,8 @@ export type CheckboxListItemProps = {
 // TODO: This might be a component that
 export const UpdateListItem: React.FC<CheckboxListItemProps> = ({
   label,
-  helptext,
-  LinkLabel,
+  linkLabel,
+  releaseNote,
   tagLabelNatural,
   tagLabelInfo,
   disabled = false,
@@ -56,6 +60,16 @@ export const UpdateListItem: React.FC<CheckboxListItemProps> = ({
   onClickActionPrimary,
   onClickActionSecondary,
 }) => {
+  const editor = useEditor({
+    editable: false,
+    extensions: [StarterKit, Markdown],
+  });
+
+  // Update editor content on release notes change
+  useEffect(() => {
+    editor?.commands.setContent(releaseNote?.summary ?? '');
+  }, [editor, releaseNote]);
+
   return (
     <Container data-testid="checkboxListItem" {...{type, disabled, onClick}}>
       <Wrapper>
@@ -70,8 +84,14 @@ export const UpdateListItem: React.FC<CheckboxListItemProps> = ({
             </div>
             {Icons[multiSelect ? 'multiSelect' : 'radio'][type]}
           </HStack>
-          <Helptext>{helptext}</Helptext>
-          <Link label={LinkLabel} iconRight={<IconLinkExternal />} />
+          <Helptext>
+            <EditorContent editor={editor} />
+          </Helptext>
+          <Link
+            label={linkLabel}
+            iconRight={<IconLinkExternal />}
+            href={releaseNote?.html_url}
+          />
         </div>
         {(buttonPrimaryLabel || buttonSecondaryLabel) && (
           <div className="mt-6 flex flex-col gap-y-3">
