@@ -77,11 +77,9 @@ export const useWalletCanVote = (
     async function fetchCanVoteGasless() {
       let canVote = false;
       if (gaslessProposalId) {
-        canVote = await vocdoniClient.isInCensus(gaslessProposalId);
-        if (canVote) {
-          canVote =
-            (await vocdoniClient.hasAlreadyVoted(gaslessProposalId)) === null;
-        }
+        canVote =
+          (await vocdoniClient.isInCensus(gaslessProposalId)) &&
+          !(await vocdoniClient.hasAlreadyVoted(gaslessProposalId));
       }
       setData(canVote);
     }
@@ -94,9 +92,11 @@ export const useWalletCanVote = (
 
       try {
         setIsLoading(true);
-        isGaslessVoting
-          ? await fetchCanVoteGasless()
-          : await fetchOnchainVoting();
+        if (isGaslessVoting) {
+          await fetchCanVoteGasless();
+          return;
+        }
+        await fetchOnchainVoting();
       } catch (error) {
         console.error(error);
         setError(error as Error);
