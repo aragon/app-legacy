@@ -7,7 +7,6 @@ import {ProposalMetadata} from '@aragon/sdk-client-common';
 import {useCallback} from 'react';
 
 import {
-  AccountData,
   Census,
   Census3Census,
   Election,
@@ -91,18 +90,24 @@ const useCreateGaslessProposal = ({daoToken}: ICreateGaslessProposal) => {
       } as GaslessProposalSteps,
     });
 
-  const {client: vocdoniClient, census3, account, createAccount} = useClient();
+  const {
+    client: vocdoniClient,
+    census3,
+    account,
+    createAccount,
+    errors,
+  } = useClient();
   census3.url = 'https://census3.stg.vocdoni.net/api';
 
   // todo(kon): check if this is needed somewhere else
   const collectFaucet = useCallback(
-    async (cost: number, account: AccountData) => {
-      let balance = account.balance;
-      while (cost > balance) {
+    async (cost: number) => {
+      let balance = account?.balance;
+      while (balance && cost > balance) {
         balance = (await vocdoniClient.collectFaucetTokens()).balance;
       }
     },
-    [vocdoniClient]
+    [account, vocdoniClient]
   );
 
   const createVocdoniElection = useCallback(
@@ -130,7 +135,7 @@ const useCreateGaslessProposal = ({daoToken}: ICreateGaslessProposal) => {
 
       const cost = await vocdoniClient.calculateElectionCost(election);
 
-      await collectFaucet(cost, account!);
+      await collectFaucet(cost);
 
       return await vocdoniClient.createElection(election);
     },
@@ -140,8 +145,10 @@ const useCreateGaslessProposal = ({daoToken}: ICreateGaslessProposal) => {
   // todo(kon): this is not a callback
   const checkAccountCreation = useCallback(async () => {
     // Check if the account is already created, if not, create it
-    await createAccount();
-  }, [createAccount]);
+    await createAccount()?.finally(() => {
+      if (errors.account) throw errors.account;
+    });
+  }, [createAccount, errors.account]);
 
   const createCensus = useCallback(async (): Promise<TokenCensus> => {
     async function getCensus3Token(): Promise<ICensus3Token> {
