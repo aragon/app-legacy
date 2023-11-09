@@ -65,8 +65,8 @@ const proposalToElection = ({
     title: metadata.title,
     description: metadata.description,
     question: metadata.summary,
-    startDate: data?.startDate ?? undefined,
-    endDate: data?.endDate ?? new Date(),
+    startDate: data.startDate,
+    endDate: data.endDate!,
     meta: data, // Store all DAO metadata to retrieve it easily
     census: census,
   };
