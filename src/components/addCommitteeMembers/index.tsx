@@ -129,7 +129,7 @@ const AddCommitteeMembers: React.FC = () => {
         />
       </ActionsWrapper>
       <AlertInline
-        label={t('alert.committee.automaticallyAdded') as string}
+        label={t('createDAO.step3.distributionWalletAlertText') as string}
         mode="neutral"
       />
     </Container>
