@@ -1,26 +1,25 @@
-import {
-  MultisigClient,
-  MultisigProposal,
-  TokenVotingClient,
-  TokenVotingProposal,
-} from '@aragon/sdk-client';
+import {MultisigProposal, TokenVotingProposal} from '@aragon/sdk-client';
 import {UseQueryOptions, useQuery} from '@tanstack/react-query';
 
 import {useNetwork} from 'context/network';
-import {isGaslessVotingClient, usePluginClient} from 'hooks/usePluginClient';
+import {
+  isGaslessVotingClient,
+  PluginClient,
+  usePluginClient,
+} from 'hooks/usePluginClient';
 import {CHAIN_METADATA} from 'utils/constants';
 import {invariant} from 'utils/invariant';
 import {IFetchProposalParams} from '../aragon-sdk-service.api';
 import {aragonSdkQueryKeys} from '../query-keys';
 import {syncProposalData, transformProposal} from '../selectors';
 import {
-  GaslessVotingProposal,
   GaslessVotingClient,
+  GaslessVotingProposal,
 } from '@vocdoni/gasless-voting';
 
 async function fetchProposal(
   params: IFetchProposalParams,
-  client: TokenVotingClient | MultisigClient | GaslessVotingClient | undefined
+  client: PluginClient | undefined
 ): Promise<
   MultisigProposal | TokenVotingProposal | GaslessVotingProposal | null
 > {

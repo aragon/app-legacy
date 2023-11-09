@@ -1,8 +1,6 @@
 import {
-  MultisigClient,
   MultisigProposalListItem,
   ProposalSortBy,
-  TokenVotingClient,
   TokenVotingProposalListItem,
 } from '@aragon/sdk-client';
 import {SortDirection} from '@aragon/sdk-client-common';
@@ -14,17 +12,14 @@ import {
 } from '@tanstack/react-query';
 
 import {useNetwork} from 'context/network';
-import {usePluginClient} from 'hooks/usePluginClient';
+import {PluginClient, usePluginClient} from 'hooks/usePluginClient';
 import {CHAIN_METADATA, SupportedChainID} from 'utils/constants';
 import {invariant} from 'utils/invariant';
 import {proposalStorage} from 'utils/localStorage/proposalStorage';
 import {IFetchProposalsParams} from '../aragon-sdk-service.api';
 import {aragonSdkQueryKeys} from '../query-keys';
 import {transformInfiniteProposals} from '../selectors';
-import {
-  GaslessVotingProposal,
-  GaslessVotingClient,
-} from '@vocdoni/gasless-voting';
+import {GaslessVotingProposal} from '@vocdoni/gasless-voting';
 
 export const PROPOSALS_PER_PAGE = 6;
 
@@ -37,7 +32,7 @@ const DEFAULT_PARAMS = {
 
 async function fetchProposals(
   params: IFetchProposalsParams,
-  client: TokenVotingClient | MultisigClient | GaslessVotingClient | undefined
+  client: PluginClient | undefined
 ): Promise<
   | Array<MultisigProposalListItem>
   | Array<TokenVotingProposalListItem>

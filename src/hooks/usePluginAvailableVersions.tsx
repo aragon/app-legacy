@@ -1,12 +1,11 @@
 import {useQuery} from '@tanstack/react-query';
-import {PluginTypes, usePluginClient} from './usePluginClient';
+import {PluginClient, PluginTypes, usePluginClient} from './usePluginClient';
 import {useNetwork} from 'context/network';
-import {Client, MultisigClient, TokenVotingClient} from '@aragon/sdk-client';
+import {Client} from '@aragon/sdk-client';
 import {useClient} from './useClient';
-import {GaslessVotingClient} from '@vocdoni/gasless-voting';
 
 async function fetchPluginList(
-  pluginClient?: TokenVotingClient | MultisigClient | GaslessVotingClient,
+  pluginClient?: PluginClient,
   client?: Client,
   pluginType?: PluginTypes
 ) {

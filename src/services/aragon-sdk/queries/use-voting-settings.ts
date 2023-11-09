@@ -1,23 +1,15 @@
-import {
-  TokenVotingClient,
-  MultisigClient,
-  VotingSettings,
-  MultisigVotingSettings,
-} from '@aragon/sdk-client';
+import {VotingSettings, MultisigVotingSettings} from '@aragon/sdk-client';
 import {UseQueryOptions, useQuery} from '@tanstack/react-query';
 
 import {SupportedVotingSettings} from 'utils/types';
 import {IFetchVotingSettingsParams} from '../aragon-sdk-service.api';
-import {usePluginClient} from 'hooks/usePluginClient';
+import {PluginClient, usePluginClient} from 'hooks/usePluginClient';
 import {aragonSdkQueryKeys} from '../query-keys';
-import {
-  GaslessPluginVotingSettings,
-  GaslessVotingClient,
-} from '@vocdoni/gasless-voting';
+import {GaslessPluginVotingSettings} from '@vocdoni/gasless-voting';
 
 async function fetchVotingSettingsAsync(
   {pluginAddress, blockNumber}: IFetchVotingSettingsParams,
-  client: TokenVotingClient | MultisigClient | GaslessVotingClient | undefined
+  client: PluginClient | undefined
 ): Promise<SupportedVotingSettings | null> {
   if (!pluginAddress)
     return Promise.reject(

@@ -24,22 +24,27 @@ type PluginType<T> = T extends 'token-voting.plugin.dao.eth'
   ? GaslessVotingClient
   : never;
 
+export type PluginClient =
+  | TokenVotingClient
+  | MultisigClient
+  | GaslessVotingClient;
+
 export function isTokenVotingClient(
-  client: TokenVotingClient | MultisigClient | GaslessVotingClient
+  client: PluginClient
 ): client is TokenVotingClient {
   if (!client || Object.keys(client).length === 0) return false;
   return client instanceof TokenVotingClient;
 }
 
 export function isMultisigClient(
-  client: TokenVotingClient | MultisigClient | GaslessVotingClient
+  client: PluginClient
 ): client is MultisigClient {
   if (!client || Object.keys(client).length === 0) return false;
   return client instanceof MultisigClient;
 }
 
 export function isGaslessVotingClient(
-  client: TokenVotingClient | MultisigClient | GaslessVotingClient
+  client: PluginClient
 ): client is GaslessVotingClient {
   if (!client || Object.keys(client).length === 0) return false;
   return client instanceof GaslessVotingClient;
