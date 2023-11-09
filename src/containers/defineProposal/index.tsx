@@ -30,7 +30,6 @@ const DefineProposal: React.FC = () => {
 
   const pluginSelectedVersion = useWatch({name: 'pluginSelectedVersion'});
   const osSelectedVersion = useWatch({name: 'osSelectedVersion'});
-  const updateFramework = useWatch({name: 'updateFramework'});
 
   const {type} = useParams();
   const [showModal, setShowModal] = useState<{
@@ -91,27 +90,6 @@ const DefineProposal: React.FC = () => {
       disabled: !pluginAvailableVersions?.size,
     },
   ];
-
-  useEffect(() => {
-    let index = 0;
-    if (updateFramework.os && pluginSelectedVersion?.version) {
-      setValue(`actions.${index}.name`, 'os_update');
-      setValue(`actions.${index}.inputs.version`, osSelectedVersion?.version);
-      index++;
-    }
-    if (updateFramework.plugin && pluginSelectedVersion?.version) {
-      setValue(`actions.${index}.name`, 'plugin_update');
-      setValue(`actions.${index}.inputs`, {
-        versionTag: pluginSelectedVersion.version,
-      });
-    }
-  }, [
-    osSelectedVersion?.version,
-    pluginSelectedVersion?.version,
-    setValue,
-    updateFramework.os,
-    updateFramework.plugin,
-  ]);
 
   useEffect(() => {
     if (type === 'os-update') {

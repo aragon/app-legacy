@@ -18,7 +18,7 @@ export const NewProposal: React.FC = () => {
     defaultValues: {
       links: [{name: '', url: ''}],
       updateFramework: {
-        os: true,
+        os: false,
         plugin: false,
       },
       startSwitch: 'now',
