@@ -111,7 +111,7 @@ const SetupCommunityForm: React.FC = () => {
         featureFlags.getValue('VITE_FEATURE_FLAG_GASLESS_PLUGIN') ===
           'true' && (
           <FormSection>
-            <Label label={t('createDAO.step3.votingType.title')} />
+            <Label label={t('createDAO.step3.blockChainVoting.label')} />
             <Controller
               name="votingType"
               rules={{required: 'Validate'}}
