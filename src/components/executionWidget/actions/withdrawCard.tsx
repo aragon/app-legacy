@@ -5,6 +5,7 @@ import styled from 'styled-components';
 
 import {AccordionMethod} from 'components/accordionMethod';
 import {ActionWithdraw} from 'utils/types';
+import {NumberFormat, formatterUtils} from '@aragon/ods';
 
 export const WithdrawCard: React.FC<{
   action: ActionWithdraw;
@@ -34,10 +35,12 @@ export const WithdrawCard: React.FC<{
           tokenCount={action.amount}
           treasuryShare={
             action.tokenPrice
-              ? new Intl.NumberFormat('en-US', {
-                  style: 'currency',
-                  currency: 'USD',
-                }).format(action.tokenPrice * action.amount)
+              ? (formatterUtils.formatNumber(
+                  action.tokenPrice * action.amount,
+                  {
+                    format: NumberFormat.FIAT_TOTAL_SHORT,
+                  }
+                ) as string)
               : t('finance.unknownUSDValue')
           }
           type={'transfer'}

@@ -48,10 +48,10 @@
     tslib "^2.3.0"
     zen-observable-ts "^1.2.0"
 
-"@aragon/ods@^1.0.1":
-  version "1.0.1"
-  resolved "https://registry.yarnpkg.com/@aragon/ods/-/ods-1.0.1.tgz#872476b0806243fae89ca336323320bc083330f5"
-  integrity sha512-5/QHgmLhyZKR4tRccrPAm7FkqpqUooOfRlFapr6uDYAejHwQ4zP3v271cyJRy0wv3MhKiIQinL+1roqberC8nQ==
+"@aragon/ods@^1.0.4":
+  version "1.0.4"
+  resolved "https://registry.yarnpkg.com/@aragon/ods/-/ods-1.0.4.tgz#181f61af112de96abe3f7219d38f92383ecbf83b"
+  integrity sha512-/QHMEG4U7uOX3oxu3EBmtFVq43S6iq1gs0tO203rb7pj8VaCJnjIN/E0rUjn0hfDB5HIz4A/3ZqMxIyn7Kbitg==
   dependencies:
     "@radix-ui/react-progress" "^1.0.3"
     classnames "^2.3.2"
