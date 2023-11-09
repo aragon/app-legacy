@@ -4,8 +4,7 @@ import {useWallet} from './useWallet';
 import {ClientProvider} from '@vocdoni/react-providers';
 import {EnvOptions} from '@vocdoni/sdk';
 
-// todo(kon): move this to be set by .env file
-export const VocdoniEnv: EnvOptions = EnvOptions.STG;
+export const VocdoniEnv: EnvOptions = import.meta.env.VITE_VOCDONI_ENV ?? 'stg';
 
 export const VocdoniClientProvider = ({children}: PropsWithChildren) => {
   const {signer} = useWallet();
