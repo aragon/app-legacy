@@ -23,7 +23,7 @@ type WalletRowProps = {
   onDelete?: (index: number) => void;
 };
 
-const WalletRow: React.FC<WalletRowProps> = ({index, onDelete}) => {
+const AddCommitteeWalletRow: React.FC<WalletRowProps> = ({index, onDelete}) => {
   const {t} = useTranslation();
   const {alert} = useAlertContext();
   const {api: provider} = useProviders();
@@ -149,7 +149,7 @@ const WalletRow: React.FC<WalletRowProps> = ({index, onDelete}) => {
   );
 };
 
-export default WalletRow;
+export default AddCommitteeWalletRow;
 
 const Container = styled.div.attrs({
   className: 'flex flex-wrap gap-x-2 gap-y-1.5 p-2 bg-ui-0',

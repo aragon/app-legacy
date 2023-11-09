@@ -13,14 +13,14 @@ import styled from 'styled-components';
 
 import {useAlertContext} from 'context/alert';
 import {useWallet} from 'hooks/useWallet';
-import Footer from './footer';
-import Header from './header';
-import Row from './row';
+import Footer from './addCommitteeWalletsFooter';
+import Header from './addCommitteeWalletsHeader';
+import Row from './addCommitteeWallet';
 import {useNetwork} from '../../context/network';
 import {Address, useEnsName} from 'wagmi';
 import {CHAIN_METADATA} from '../../utils/constants';
 
-const AddCommitteeMembers: React.FC = () => {
+const AddCommittee: React.FC = () => {
   const {t} = useTranslation();
   const {alert} = useAlertContext();
   const appendConnectedAddress = useRef<boolean>(true);
@@ -136,7 +136,7 @@ const AddCommitteeMembers: React.FC = () => {
   );
 };
 
-export default AddCommitteeMembers;
+export default AddCommittee;
 
 const Container = styled.div.attrs({className: 'space-y-1.5'})``;
 

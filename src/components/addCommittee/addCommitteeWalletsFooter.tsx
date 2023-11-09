@@ -7,7 +7,9 @@ type WalletsFooterProps = {
   totalAddresses: number;
 };
 
-const AddWalletsFooter: React.FC<WalletsFooterProps> = ({totalAddresses}) => {
+const AddCommitteeWalletsFooter: React.FC<WalletsFooterProps> = ({
+  totalAddresses,
+}) => {
   const {t} = useTranslation();
 
   return (
@@ -27,7 +29,7 @@ const AddWalletsFooter: React.FC<WalletsFooterProps> = ({totalAddresses}) => {
   );
 };
 
-export default AddWalletsFooter;
+export default AddCommitteeWalletsFooter;
 
 export const Container = styled.div.attrs({
   className: 'hidden tablet:flex tablet:flex-col p-2 bg-ui-0',

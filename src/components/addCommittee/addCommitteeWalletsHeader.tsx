@@ -1,9 +1,9 @@
 import React from 'react';
 import styled from 'styled-components';
-import {Label} from '@aragon/ods-old';
+import {Label} from '../../@aragon/ods-old';
 import {useTranslation} from 'react-i18next';
 
-const AddWalletsHeader: React.FC = () => {
+const AddCommitteeWalletsHeader: React.FC = () => {
   const {t} = useTranslation();
 
   return (
@@ -15,7 +15,7 @@ const AddWalletsHeader: React.FC = () => {
   );
 };
 
-export default AddWalletsHeader;
+export default AddCommitteeWalletsHeader;
 
 export const Container = styled.div.attrs({
   className: 'hidden tablet:flex p-2 space-x-2 bg-ui-0',

@@ -9,7 +9,7 @@ import {
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 
-import AddCommitteeMembers from 'components/addCommitteeMembers';
+import AddCommittee from 'components/addCommittee';
 import ExecutionExpirationTime from 'components/executionExpirationTime';
 import MinimumApproval from '../../components/multisigMinimumApproval/minimumApproval';
 import {generateAlert} from '../../components/multisigMinimumApproval';
@@ -66,7 +66,7 @@ const DefineExecutionMultisig: React.FC = () => {
           label={t('createDao.executionMultisig.membersLabel')}
           helpText={t('createDao.executionMultisig.membersDesc')}
         />
-        <AddCommitteeMembers />
+        <AddCommittee />
       </FormItem>
 
       {/*Minimum Approval*/}
