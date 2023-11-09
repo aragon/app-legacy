@@ -107,7 +107,9 @@ export const GatingMenu: React.FC = () => {
           <WarningContainer>
             <WarningTitle>{t('alert.gatingUsers.walletTitle')}</WarningTitle>
             <WarningDescription>
-              {t('alert.gatingUsers.walletDescription')}
+              {t('alert.gatingUsers.walletDescription', {
+                daoName: daoName,
+              })}
             </WarningDescription>
           </WarningContainer>
         )}
