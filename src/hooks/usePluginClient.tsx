@@ -7,6 +7,7 @@ import {
   GaslessVotingContext,
 } from '@vocdoni/gasless-voting';
 import {VocdoniEnv} from './useVocdoniSdk';
+import {EnvOptions} from '@vocdoni/sdk';
 
 export const GaselessPluginName = 'vocdoni-gasless-voting-poc.plugin.dao.eth';
 export type GaselessPluginType = typeof GaselessPluginName;
@@ -81,7 +82,7 @@ export const usePluginClient = <T extends PluginTypes = PluginTypes>(
           setPluginClient(
             new GaslessVotingClient(
               new GaslessVotingContext(context),
-              VocdoniEnv
+              VocdoniEnv as EnvOptions
             )
           );
           break;
