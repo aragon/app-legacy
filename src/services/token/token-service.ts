@@ -94,6 +94,7 @@ class TokenService {
         name
         network
         priceUsd
+        priceChangeOnDayUsd
         symbol
         totalHolders
         totalSupply
@@ -105,11 +106,30 @@ class TokenService {
     network: SupportedNetworks,
     tokenAddress: string
   ) => {
-    return request(
-      'https://app-backend.aragon.org/graphql',
-      this.tokenQueryDocument,
-      {network, tokenAddress}
-    );
+    let token: Token | null = null;
+    try {
+      const {token: resp} = await request(
+        `${import.meta.env.VITE_BACKEND_URL}/graphql`,
+        this.tokenQueryDocument,
+        {network, tokenAddress}
+      );
+      token = {
+        name: resp.name,
+        symbol: resp.symbol,
+        imgUrl: resp.imageUrl,
+        address: resp.contractAddress,
+        price: resp.priceUsd,
+        priceChange: {
+          day: resp.priceChangeOnDayUsd,
+          week: 0,
+          month: 0,
+          year: 0,
+        },
+      };
+    } catch {
+      console.error('failed to fetch token');
+    }
+    return token;
   };
 
   private fetchCovalentToken = async (
