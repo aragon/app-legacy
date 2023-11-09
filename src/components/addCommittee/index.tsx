@@ -7,7 +7,7 @@ import {
   ListItemAction,
 } from '@aragon/ods-old';
 import React, {useEffect, useRef} from 'react';
-import {useFieldArray, useFormContext, useWatch} from 'react-hook-form';
+import {useFieldArray, useFormContext} from 'react-hook-form';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 

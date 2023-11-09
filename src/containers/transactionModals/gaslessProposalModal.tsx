@@ -2,7 +2,7 @@ import React from 'react';
 import {useTranslation} from 'react-i18next';
 
 import {GaslessProposalStepId} from '../../context/createGaslessProposal';
-import {StepperLabels} from '../../components/StepperProgress';
+import {StepperLabels} from '../../components/stepperProgress';
 import {StepStatus} from '../../hooks/useFunctionStepper';
 import StepperModal, {
   BtnLabels,

@@ -16,7 +16,7 @@ import {StepsMap, StepStatus} from '../hooks/useFunctionStepper';
 import {
   StepperModalProgress,
   StepperLabels,
-} from '../components/StepperProgress';
+} from '../components/stepperProgress';
 
 export type BtnLabels = {
   [key in StepStatus]: string | undefined;

@@ -5,7 +5,7 @@ import {StepStatus} from '../../hooks/useFunctionStepper';
 import useGaslessVoting, {
   GaslessVotingStepId,
 } from '../../context/useGaslessVoting';
-import {StepperLabels} from '../../components/StepperProgress';
+import {StepperLabels} from '../../components/stepperProgress';
 import {VoteProposalParams, VoteValues} from '@aragon/sdk-client';
 import {useWallet} from '../../hooks/useWallet';
 
