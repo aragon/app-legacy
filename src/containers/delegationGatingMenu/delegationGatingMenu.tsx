@@ -4,13 +4,7 @@ import styled from 'styled-components';
 import React from 'react';
 import {formatUnits} from 'ethers/lib/utils';
 import {useTranslation} from 'react-i18next';
-import {
-  ButtonText,
-  IllustrationHuman,
-  IlluObject,
-  Link,
-  IconLinkExternal,
-} from '@aragon/ods-old';
+import {ButtonText, IlluObject, Link, IconLinkExternal} from '@aragon/ods-old';
 import {useDaoDetailsQuery} from 'hooks/useDaoDetails';
 import {useDaoToken} from 'hooks/useDaoToken';
 import {Address, useBalance} from 'wagmi';
@@ -122,18 +116,7 @@ export const DelegationGatingMenu: React.FC = () => {
     >
       <div className="flex flex-col gap-6 px-4 py-6 text-center">
         <ContentGroup className="items-center">
-          {needsSelfDelegation ? (
-            <IllustrationHuman
-              width={343}
-              height={193}
-              body="elevating"
-              expression="excited"
-              hair="curly"
-              accessory="piercings_tattoo"
-            />
-          ) : (
-            <IlluObject object="warning" />
-          )}
+          <IlluObject object="warning" />
           <p className="text-2xl leading-tight text-neutral-800">
             {t(`modal.delegation.CantVote.title`)}
           </p>
