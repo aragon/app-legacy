@@ -221,7 +221,7 @@ export const EditMvSettings: React.FC<EditMvSettingsProps> = ({daoDetails}) => {
 
   const isCommunityChanged =
     daoEligibleProposer !== formEligibleProposer ||
-    !BigNumber.from(daoProposerTokenAmount).eq(formProposerTokenAmount ?? 0);
+    !BigNumber.from(daoProposerTokenAmount).eq(formProposerTokenAmount || 0);
 
   const setCurrentMetadata = useCallback(() => {
     setValue('daoName', daoDetails?.metadata.name);
