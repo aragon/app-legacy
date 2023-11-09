@@ -428,6 +428,10 @@ const UpdateProvider: React.FC<{children: ReactElement}> = ({children}) => {
               type: 'setPluginAvailableVersions',
               payload: pluginListTemp as Map<string, Plugin>,
             });
+            setValue('pluginSelectedVersion', {
+              version: step.versionTag,
+              isPrepared: true,
+            });
             dispatch({type: 'setDaoUpdateData'});
             dispatch({
               type: 'setPreparationProcessState',
