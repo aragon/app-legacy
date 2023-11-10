@@ -15,7 +15,7 @@ import {useGlobalModalContext} from 'context/globalModals';
 import {useNetwork} from 'context/network';
 import {PluginTypes} from 'hooks/usePluginClient';
 import WalletIcon from 'public/wallet.svg';
-import {Community} from 'utils/paths';
+import {Community, Governance} from 'utils/paths';
 import {
   Erc20WrapperTokenDetails,
   MajorityVotingSettings,
@@ -50,7 +50,15 @@ export const GatingMenu: React.FC = () => {
     pluginType: plugins?.[0].id as PluginTypes,
   });
 
-  const handleCloseMenu = () => close();
+  const handleCloseMenu = () => {
+    const governancePath = generatePath(Governance, {
+      network,
+      dao: daoDisplayName,
+    });
+    navigate(governancePath);
+    close();
+  };
+
   const handleWrapTokens = () => {
     const communityPath = generatePath(Community, {
       network,
