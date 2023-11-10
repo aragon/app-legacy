@@ -38,7 +38,7 @@ export const GatingMenu: React.FC = () => {
 
   const {data: daoDetails} = useDaoDetailsQuery();
   const {plugins, ensDomain, address} = daoDetails ?? {};
-  const daoName =
+  const daoDisplayName =
     toDisplayEns(ensDomain) !== '' ? toDisplayEns(ensDomain) : address;
 
   const {data: daoToken} = useDaoToken(plugins?.[0].instanceAddress);
@@ -51,11 +51,13 @@ export const GatingMenu: React.FC = () => {
 
   const handleCloseMenu = () => close();
   const handleWrapTokens = () => {
-    const communityPath = generatePath(Community, {network, dao: daoName});
+    const communityPath = generatePath(Community, {network, dao: daoDisplayName});
     navigate(communityPath);
     close();
     handleOpenModal();
   };
+
+  const daoName = daoDetails?.metadata.name;
 
   const pluginType = plugins?.[0].id as PluginTypes;
   const isTokenBasedDao = pluginType === 'token-voting.plugin.dao.eth';
