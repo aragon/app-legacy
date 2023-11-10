@@ -205,9 +205,7 @@ export const CommitteeVotingTerminal: React.FC<
 
   // alert message, only shown when not eligible to vote
   const alertMessage = useMemo(() => {
-    if (!isApprovalPeriod) {
-      return t('votingTerminal.vocdoni.cannotApproveYet');
-    } else if (
+    if (
       proposal &&
       isApprovalPeriod && // active proposal
       address && // logged in
@@ -215,7 +213,7 @@ export const CommitteeVotingTerminal: React.FC<
       !canApprove && // cannot vote
       !approved // Already voted
     ) {
-      return t('votingTerminal.vocdoni.notInCommittee');
+      return t('votingTerminal.status.ineligibleWhitelist');
     }
   }, [
     isApprovalPeriod,
