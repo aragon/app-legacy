@@ -11,22 +11,13 @@ export function getCommitteVoteButtonLabel(
   approved: boolean,
   t: TFunction
 ) {
-  if (executed) {
-    return t('gaslessVotingTerminal.btnLabel.executed');
+  if (approved || voted) {
+    return t('votingTerminal.status.approved');
   }
-  if (approved) {
-    return t('gaslessVotingTerminal.btnLabel.approved');
+  if (notBegan || canApprove) {
+    return t('votingTerminal.approve');
   }
-  if (notBegan) {
-    return t('gaslessVotingTerminal.btnLabel.approve');
-  }
-  if (voted) {
-    return t('gaslessVotingTerminal.btnLabel.voted');
-  }
-  if (canApprove) {
-    return t('gaslessVotingTerminal.btnLabel.approve');
-  }
-  return t('gaslessVotingTerminal.btnLabel.concluded');
+  return t('votingTerminal.concluded');
 }
 
 export function getApproveStatusLabel(

@@ -260,7 +260,7 @@ export const CommitteeVotingTerminal: React.FC<
       <Container>
         <Header>
           <Title>{t('votingTerminal.vocdoni.title')}</Title>
-          <Summary>{t('votingTerminal.vocdoni.description')}</Summary>
+          <Summary>{t('votingTerminal.vocdoni.desc')}</Summary>
         </Header>
         <Accordion type={'multiple'}>
           <AccordionItem
