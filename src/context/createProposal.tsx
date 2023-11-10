@@ -715,8 +715,16 @@ const CreateProposalWrapper: React.FC<Props> = ({
 
       let proposalIterator: AsyncGenerator<ProposalCreationStepValue>;
       if (gasless && vochainProposalId && vochainCensus) {
+        // This is the last step of a gasless proposal creation
+        // If some of the previous steps failed, and the user press the try again button, the end date is the same as when
+        // the user opened the modal. So I get fresh calculated params, to check if the start date is on 6 minutes (for
+        // example), the end date will be updated from now to 6 minutes more.
+        const updatedParams = getOffChainProposalParams(
+          (await getProposalCreationParams()).params
+        );
+
         const params: CreateGasslessProposalParams = {
-          ...(proposalCreationData as PartialGaslessParams),
+          ...(updatedParams as PartialGaslessParams),
           censusRoot: vochainCensus.censusId!,
           censusURI: vochainCensus.censusURI!,
           totalVotingPower: vochainCensus.weight!,

@@ -97,8 +97,9 @@ const useCreateGaslessProposal = ({daoToken}: ICreateGaslessProposal) => {
   // todo(kon): check if this is needed somewhere else
   const collectFaucet = useCallback(
     async (cost: number) => {
-      let balance = account?.balance;
-      while (balance && cost > balance) {
+      let balance = account!.balance;
+
+      while (cost > balance) {
         balance = (await vocdoniClient.collectFaucetTokens()).balance;
       }
     },
