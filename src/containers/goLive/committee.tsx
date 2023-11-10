@@ -37,7 +37,7 @@ const Committee = () => {
       }}
       render={({field: {onChange, value}}) => (
         <DescriptionListContainer
-          title={t('createDAO.review.executionMultisig')}
+          title={t('label.executionMultisig')}
           onEditClick={() => setStep(6)}
           checkBoxErrorMessage={t('createDAO.review.acceptContent')}
           checkedState={
@@ -47,11 +47,11 @@ const Committee = () => {
           onChecked={() => onChange(!value)}
         >
           <Dl>
-            <Dt>{t('labels.review.eligableMembers')}</Dt>
-            <Dd>{t('createDAO.step3.multisigMembership')}</Dd>
+            <Dt>{t('labels.review.eligibleMembers')}</Dt>
+            <Dd>{t('labels.multisigMembers')}</Dd>
           </Dl>
           <Dl>
-            <Dt>{t('labels.review.members')}</Dt>
+            <Dt>{t('labels.members')}</Dt>
             <Dd>
               <Link
                 label={t('createDAO.review.distributionLink', {
@@ -64,14 +64,14 @@ const Committee = () => {
           <Dl>
             <Dt>{t('labels.minimumApproval')}</Dt>
             <Dd>
+              {committeeMinimumApproval}&nbsp;
               {t('labels.review.multisigMinimumApprovals', {
-                count: committeeMinimumApproval,
-                total: committee.length,
+                count: committee.length,
               })}
             </Dd>
           </Dl>
           <Dl>
-            <Dt>{t('labels.minimumDuration')}</Dt>
+            <Dt>{t('createDao.executionMultisig.executionTitle')}</Dt>
             <Dd>
               <div className="flex space-x-1.5">
                 <div>

@@ -238,7 +238,7 @@ const ExecutionExpirationTime: React.FC = () => {
         executionExpirationMinutes === '0' ? (
         <AlertInline label={t('alert.minDurationAlert')} mode="warning" />
       ) : (
-        <AlertInline label={t('alert.executionDurationAlert')} mode="neutral" />
+        <AlertInline label={t('alert.durationAlert')} mode="neutral" />
       )}
     </>
   );

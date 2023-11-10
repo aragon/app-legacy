@@ -125,7 +125,8 @@ const SetupCommunityForm: React.FC = () => {
                       {blockchainName: blockchain.label}
                     )}
                     helptext={t(
-                      'createDAO.step3.blockChainVoting.optionOnchainDesc'
+                      'createDAO.step3.blockChainVoting.optionOnchainDesc',
+                      {blockchainName: blockchain.label}
                     )}
                     multiSelect={false}
                     onClick={() => {
