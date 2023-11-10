@@ -44,9 +44,7 @@ type CommitteeVotingTerminalProps = {
 } & CommitteeExecutionWidgetProps &
   PropsWithChildren;
 
-export const CommitteeVotingTerminal: React.FC<
-  CommitteeVotingTerminalProps
-> = ({
+export const GaslessVotingTerminal: React.FC<CommitteeVotingTerminalProps> = ({
   votingStatusLabel,
   proposal,
   pluginAddress,
@@ -90,6 +88,8 @@ export const CommitteeVotingTerminal: React.FC<
     )}  ${getFormattedUtcOffset()}`;
 
     const voters = new Array<VoterType>(
+      // todo(kon): Array with empty components needed to render the correct number of voters on breakdown tab
+      // Can be fixed when can get the list of executive committee
       proposal.settings.minTallyApprovals
     ).map((_, i) => {
       if (proposal.approvers[i]) {

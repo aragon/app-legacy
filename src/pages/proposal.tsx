@@ -81,7 +81,7 @@ import {
 import {Action} from 'utils/types';
 import {GaslessVotingProposal} from '@vocdoni/gasless-voting';
 import {useGaslessHasAlreadyVote} from '../context/useGaslessVoting';
-import {CommitteeVotingTerminal} from '../containers/votingTerminal/committeeVotingTerminal';
+import {GaslessVotingTerminal} from '../containers/votingTerminal/gaslessVotingTerminal';
 
 export const PENDING_PROPOSAL_STATUS_INTERVAL = 1000 * 10;
 export const PROPOSAL_STATUS_INTERVAL = 1000 * 60;
@@ -736,7 +736,7 @@ export const Proposal: React.FC = () => {
             )}
 
           {votingSettings && isGaslessProposal(proposal) ? (
-            <CommitteeVotingTerminal
+            <GaslessVotingTerminal
               proposal={proposal}
               votingStatusLabel={voteStatus}
               pluginAddress={pluginAddress}
@@ -746,7 +746,7 @@ export const Proposal: React.FC = () => {
               pluginType={pluginType}
             >
               <VTerminal />
-            </CommitteeVotingTerminal>
+            </GaslessVotingTerminal>
           ) : (
             votingSettings && ( // todo(kon): fix this conditions
               <>
