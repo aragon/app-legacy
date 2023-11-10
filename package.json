@@ -8,7 +8,7 @@
   "scripts": {
     "dev": "vite --host",
     "dev:watch": "cross-env WATCH=true vite --host",
-    "build": "tsc && cross-env NODE_ENV=development node --max_old_space_size=16384 ./node_modules/vite/bin/vite.js build --sourcemap true > build.txt",
+    "build": "tsc && cross-env NODE_ENV=production node --max_old_space_size=16384 ./node_modules/vite/bin/vite.js build --sourcemap true > build.txt",
     "serve": "vite preview",
     "prepbrotli": "brotli-cli compress --glob \"dist/assets/*.*\"",
     "servebrotli": "caddy run",
@@ -35,9 +35,9 @@
     "@tiptap/pm": "^2.0.3",
     "@tiptap/react": "^2.0.3",
     "@tiptap/starter-kit": "^2.0.3",
-    "@vocdoni/gasless-voting": "./vocdoni-gasless-voting-v0.0.1-rc23.tgz",
-    "@vocdoni/gasless-voting-ethers": "./vocdoni-gasless-voting-ethers-v0.0.1-rc6.tgz",
-    "@vocdoni/react-providers": "^0.1.13",
+    "@vocdoni/gasless-voting": "0.0.1-r1",
+    "@vocdoni/gasless-voting-ethers": "0.0.1-rc1",
+    "@vocdoni/react-providers": "0.1.14",
     "@vocdoni/sdk": "0.4.2",
     "@walletconnect/core": "^2.8.3",
     "@walletconnect/utils": "^2.8.3",
@@ -116,9 +116,5 @@
   },
   "engines": {
     "node": ">=18.0.0"
-  },
-  "resolutions": {
-    "@types/react": "^18.2.23",
-    "@vocdoni/sdk": "0.4.2"
   }
 }
