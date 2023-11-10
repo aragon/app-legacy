@@ -52,7 +52,10 @@ export const GatingMenu: React.FC = () => {
 
   const handleCloseMenu = () => close();
   const handleWrapTokens = () => {
-    const communityPath = generatePath(Community, {network, dao: daoDisplayName});
+    const communityPath = generatePath(Community, {
+      network,
+      dao: daoDisplayName,
+    });
     navigate(communityPath);
     close();
     handleOpenModal();
