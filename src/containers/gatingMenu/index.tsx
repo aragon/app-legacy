@@ -40,6 +40,7 @@ export const GatingMenu: React.FC = () => {
   const {plugins, ensDomain, address} = daoDetails ?? {};
   const daoDisplayName =
     toDisplayEns(ensDomain) !== '' ? toDisplayEns(ensDomain) : address;
+  const daoName = daoDetails?.metadata.name;
 
   const {data: daoToken} = useDaoToken(plugins?.[0].instanceAddress);
   const {isDAOTokenWrapped} = useExistingToken({daoDetails, daoToken});
@@ -56,8 +57,6 @@ export const GatingMenu: React.FC = () => {
     close();
     handleOpenModal();
   };
-
-  const daoName = daoDetails?.metadata.name;
 
   const pluginType = plugins?.[0].id as PluginTypes;
   const isTokenBasedDao = pluginType === 'token-voting.plugin.dao.eth';
