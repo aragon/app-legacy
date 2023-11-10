@@ -477,8 +477,8 @@
     "gatingUsers": {
       "tokenTitle": "You can’t create a proposal",
       "tokenDescription": "You don’t have the required voting power or token balance. Creating proposals in {{daoName}} requires at least {{amount}} ‘{{tokenSymbol}}’ in either voting power or token balance.",
-      "walletTitle": "Wallet not allowlisted",
-      "walletDescription": "The connected wallet is not allowlisted. Please connect a valid wallet in order to proceed with the process.",
+      "walletTitle": "You can’t create a proposal",
+      "walletDescription": "You are not a member. Creating proposals in {{daoName}} can only be done by addresses that have been added to its member list.",
       "buttonLabel": "Ok, understood"
     },
     "tokenBasedMembers": "The DAO members listed here have interacted with the DAO at least once",
