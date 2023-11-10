@@ -380,7 +380,13 @@ export const VotingTerminal: React.FC<VotingTerminalProps> = ({
                   </div>
                   {executableWithNextApproval && (
                     <AlertInline
-                      label={t('votingTerminal.approveAndExecute.infoAlert')}
+                      label={
+                        approvals.length < minApproval
+                          ? t('votingTerminal.approveAndExecute.infoAlert')
+                          : t(
+                              'votingTerminal.approveAndExecute.infoAlertApproved'
+                            )
+                      }
                       mode={'neutral'}
                     />
                   )}
