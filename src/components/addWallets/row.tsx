@@ -100,7 +100,6 @@ const WalletRow: React.FC<WalletRowProps> = ({index, onDelete}) => {
       let totalSupply = 0;
       let minAmount = walletFieldArray[0]?.amount;
       const address = getValues(`wallets.${index}.address`);
-      const eligibilityType = getValues('eligibilityType');
       if (address === '') trigger(`wallets.${index}.address`);
 
       // calculate total token supply disregarding error invalid fields
@@ -112,9 +111,6 @@ const WalletRow: React.FC<WalletRowProps> = ({index, onDelete}) => {
           totalSupply = Number(wallet.amount) + totalSupply;
       });
       setValue('tokenTotalSupply', totalSupply);
-
-      if (eligibilityType === 'token')
-        setValue('minimumTokenAmount', minAmount);
 
       // Number of characters after decimal point greater than
       // the number of decimals in the token itself
