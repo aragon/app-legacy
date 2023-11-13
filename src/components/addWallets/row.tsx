@@ -249,12 +249,7 @@ const WalletRow: React.FC<WalletRowProps> = ({index, onDelete}) => {
               ),
               callback: () => {
                 if (typeof onDelete === 'function') {
-                  const [
-                    totalSupply,
-                    amount,
-                    eligibilityType,
-                    eligibilityTokenAmount,
-                  ] = getValues([
+                  const [totalSupply, amount] = getValues([
                     'tokenTotalSupply',
                     `wallets.${index}.amount`,
                     'eligibilityType',
@@ -267,20 +262,6 @@ const WalletRow: React.FC<WalletRowProps> = ({index, onDelete}) => {
                     newTotalSupply < 0 ? 0 : newTotalSupply
                   );
                   onDelete(index);
-                  if (eligibilityType === 'token') {
-                    if (eligibilityTokenAmount === amount) {
-                      let minAmount = walletFieldArray[0]?.amount;
-                      (walletFieldArray as TokenVotingWalletField[]).forEach(
-                        (wallet, mapIndex) => {
-                          if (mapIndex !== index)
-                            if (Number(wallet.amount) < Number(minAmount)) {
-                              minAmount = wallet.amount;
-                            }
-                        }
-                      );
-                      setValue('minimumTokenAmount', minAmount);
-                    }
-                  }
                   alert(t('alert.chip.removedAddress') as string);
                 }
               },
