@@ -9,7 +9,6 @@ import {
   AccordionItem,
   AccordionMultiple,
 } from '../../components/accordionMethod';
-import {Accordion} from '@radix-ui/react-accordion';
 import {GaslessVotingProposal} from '@vocdoni/gasless-voting';
 import {useGaslessCommiteVotes} from '../../context/useGaslessVoting';
 import {useWallet} from '../../hooks/useWallet';
