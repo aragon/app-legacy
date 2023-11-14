@@ -53,7 +53,9 @@ const DefineExecutionMultisig: React.FC = () => {
 
   // This is used to update the committeeMinimumApproval when a wallet is deleted
   useEffect(() => {
-    if (committeeMinimumApproval > committeeCount) {
+    if (Number(committeeMinimumApproval) === 0 && committeeCount === 1) {
+      setValue('committeeMinimumApproval', committeeCount.toString());
+    } else if (Number(committeeMinimumApproval) > committeeCount) {
       setValue('committeeMinimumApproval', committeeCount.toString());
     }
   }, [committeeCount, committeeMinimumApproval, setValue]);
@@ -80,6 +82,7 @@ const DefineExecutionMultisig: React.FC = () => {
           control={control}
           defaultValue="1"
           rules={{
+            required: t('errors.required.amount'),
             validate: value => validateMinimumApproval(value),
           }}
           render={({
