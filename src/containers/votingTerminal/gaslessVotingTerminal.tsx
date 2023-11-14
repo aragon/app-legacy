@@ -5,7 +5,10 @@ import {format} from 'date-fns';
 import {getFormattedUtcOffset, KNOWN_FORMATS} from '../../utils/date';
 import {VoterType} from '@aragon/ods-old';
 import styled from 'styled-components';
-import {AccordionItem} from '../../components/accordionMethod';
+import {
+  AccordionItem,
+  AccordionMultiple,
+} from '../../components/accordionMethod';
 import {Accordion} from '@radix-ui/react-accordion';
 import {GaslessVotingProposal} from '@vocdoni/gasless-voting';
 import {useGaslessCommiteVotes} from '../../context/useGaslessVoting';
@@ -253,6 +256,13 @@ export const GaslessVotingTerminal: React.FC<CommitteeVotingTerminalProps> = ({
     );
   }, [canBeExecuted, executionFailed, proposal?.status]);
 
+  let defaultAccordion = '';
+  if (new Date() < proposal?.parameters.endDate) {
+    defaultAccordion = 'community-voting';
+  } else if (new Date() < proposal.parameters.tallyEndDate!) {
+    defaultAccordion = 'actions-approval';
+  }
+
   return (
     <>
       <Container>
@@ -260,7 +270,7 @@ export const GaslessVotingTerminal: React.FC<CommitteeVotingTerminalProps> = ({
           <Title>{t('votingTerminal.vocdoni.title')}</Title>
           <Summary>{t('votingTerminal.vocdoni.desc')}</Summary>
         </Header>
-        <Accordion type={'multiple'}>
+        <AccordionMultiple defaultValue={defaultAccordion}>
           <AccordionItem
             name={'community-voting'}
             type={'action-builder'}
@@ -277,7 +287,7 @@ export const GaslessVotingTerminal: React.FC<CommitteeVotingTerminalProps> = ({
           >
             <ApprovalVotingTerminal />
           </AccordionItem>
-        </Accordion>
+        </AccordionMultiple>
       </Container>
       <ExecutionWidget
         pluginType={pluginType}
