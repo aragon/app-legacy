@@ -389,8 +389,8 @@ export const CreateDAO: React.FC = () => {
             <SetupCommunity />
           </Step>
           <Step
-            wizardTitle={t('createDao.executionMultisig.title')}
-            wizardDescription={htmlIn(t)('createDao.executionMultisig.desc')}
+            wizardTitle={t('createDao.stepCommunityVoting.title')}
+            wizardDescription={htmlIn(t)('createDao.stepCommunityVoting.desc')}
             isNextButtonDisabled={!daoCommunityConfigurationIsValid}
             onNextButtonClicked={next =>
               handleNextButtonTracking(next, '4_configure_governance', {
@@ -407,8 +407,8 @@ export const CreateDAO: React.FC = () => {
           </Step>
           <Step
             skipStep={votingType !== 'gasless'}
-            wizardTitle={t('createDAO.step5.title')}
-            wizardDescription={htmlIn(t)('createDAO.step5.description')}
+            wizardTitle={t('createDao.executionMultisig.title')}
+            wizardDescription={htmlIn(t)('createDao.executionMultisig.desc')}
             isNextButtonDisabled={!defineCommitteeIsValid}
             onNextButtonClicked={next => {
               handleNextButtonTracking(next, '5_define_execution_multisig', {
