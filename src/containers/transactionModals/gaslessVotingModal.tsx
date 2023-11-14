@@ -39,7 +39,7 @@ JSX.Element => {
   } = useGaslessVoting();
 
   const btnLabel: BtnLabels = {
-    [StepStatus.WAITING]: t('modalTransaction.submitVote.ctaLabel'),
+    [StepStatus.WAITING]: t('modalTransaction.vocdoni.submitVote.ctaLabel'),
     [StepStatus.LOADING]: undefined,
     [StepStatus.SUCCESS]: t('modalTransaction.vocdoni.submitVote.ctaSeeVote'),
     [StepStatus.ERROR]: t('modal.transaction.multisig.ctaLabel.tryAgain'),
@@ -110,7 +110,9 @@ JSX.Element => {
       gasEstimationError={undefined}
       tokenPrice={0}
       title={t('modalTransaction.vocdoni.submitVote.title')}
-      subtitle={t('modalTransaction.vocdoni.submitVote.desc')}
+      subtitle={t('modalTransaction.vocdoni.submitVote.desc', {
+        votingBlockchain: 'Vocdoni',
+      })}
     />
   );
 };

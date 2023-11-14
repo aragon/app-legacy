@@ -138,7 +138,7 @@ const StepperModal = <TStepKey extends string>({
                   <div>{`${nativeCurrency.symbol}`}</div>
                 </StrongText>
                 <p className="text-right text-sm leading-normal text-neutral-500">
-                  h{totalCost}
+                  {totalCost}
                 </p>
               </VStack>
             </GasTotalCostEthContainer>
