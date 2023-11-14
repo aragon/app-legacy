@@ -1,5 +1,6 @@
 import {MultisigProposalListItem} from '@aragon/sdk-client';
 import {CardProposal, CardProposalProps, Spinner} from '@aragon/ods-old';
+import {DaoAction} from '@aragon/sdk-client-common';
 import {BigNumber} from 'ethers';
 import React, {useMemo} from 'react';
 import {useTranslation} from 'react-i18next';
@@ -52,9 +53,12 @@ function isMultisigProposalListItem(
 }
 
 const ProposalItem: React.FC<
-  {proposalId: string} & CardProposalProps
+  {proposalId: string; actions: DaoAction[]} & CardProposalProps
 > = props => {
-  const {isAragonVerifiedUpdateProposal} = useUpdateProposal(props.proposalId);
+  const {isAragonVerifiedUpdateProposal} = useUpdateProposal(
+    props.proposalId,
+    props.actions
+  );
   const {t} = useTranslation();
 
   return (
@@ -88,7 +92,10 @@ const ProposalList: React.FC<ProposalListProps> = ({
     {countOnly: true}
   );
 
-  const mappedProposals: ({id: string} & CardProposalProps)[] = useMemo(
+  const mappedProposals: ({
+    id: string;
+    actions: DaoAction[];
+  } & CardProposalProps)[] = useMemo(
     () =>
       proposals.map(p =>
         proposal2CardProps(
@@ -158,7 +165,7 @@ export function proposal2CardProps(
   t: TFunction,
   daoAddressOrEns: string,
   address: string | null
-): {id: string} & CardProposalProps {
+): {id: string; actions: DaoAction[]} & CardProposalProps {
   const publisherDisplayName =
     address && proposal.creatorAddress.toLowerCase() === address.toLowerCase()
       ? t('labels.you')
@@ -173,6 +180,7 @@ export function proposal2CardProps(
     publisherDisplayName,
     publishLabel: t('governance.proposals.publishedBy'),
     process: proposal.status.toLowerCase() as CardProposalProps['process'],
+    actions: proposal.actions,
     onClick: () => {
       trackEvent('governance_viewProposal_clicked', {
         proposal_id: proposal.id,

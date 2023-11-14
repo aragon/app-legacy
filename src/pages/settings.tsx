@@ -30,20 +30,35 @@ import {SettingsUpdateCard} from 'containers/settings/updateCard';
 import {VersionInfoCard} from 'containers/settings/versionInfoCard';
 import {useNetwork} from 'context/network';
 import {useDaoDetailsQuery} from 'hooks/useDaoDetails';
-import {PluginTypes} from 'hooks/usePluginClient';
+import {PluginTypes, usePluginClient} from 'hooks/usePluginClient';
 import useScreen from 'hooks/useScreen';
 import {CHAIN_METADATA} from 'utils/constants';
 import {featureFlags} from 'utils/featureFlags';
 import {shortenAddress, toDisplayEns} from 'utils/library';
 import {EditSettings} from 'utils/paths';
+import {useWallet} from 'hooks/useWallet';
 
 export const Settings: React.FC = () => {
   const {t} = useTranslation();
   const navigate = useNavigate();
   const {isDesktop} = useScreen();
+  const {address} = useWallet();
 
   // move into components when proper loading experience is implemented
   const {data: daoDetails, isLoading} = useDaoDetailsQuery();
+  const pluginType = daoDetails?.plugins?.[0]?.id as PluginTypes;
+  const pluginAddress = daoDetails?.plugins?.[0]?.instanceAddress as string;
+  const pluginClient = usePluginClient(pluginType);
+  const [isMember, setIsMember] = useState(false);
+
+  useEffect(() => {
+    pluginClient?.methods
+      .isMember({
+        address: address as string,
+        pluginAddress,
+      })
+      .then(value => setIsMember(value));
+  }, [address, pluginAddress, pluginClient?.methods]);
 
   if (isLoading) {
     return <Loading />;
@@ -54,7 +69,8 @@ export const Settings: React.FC = () => {
   }
 
   const daoUpdateEnabled =
-    featureFlags.getValue('VITE_FEATURE_FLAG_OSX_UPDATES') === 'true';
+    featureFlags.getValue('VITE_FEATURE_FLAG_OSX_UPDATES') === 'true' &&
+    isMember;
 
   return (
     <SettingsWrapper>

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 import {ButtonText, IconClose, IconUpdate} from '@aragon/ods-old';
@@ -11,6 +11,9 @@ import {
 import {useNetwork} from 'context/network';
 import {NewProposal} from 'utils/paths';
 import {featureFlags} from 'utils/featureFlags';
+import {useDaoDetailsQuery} from 'hooks/useDaoDetails';
+import {PluginTypes, usePluginClient} from 'hooks/usePluginClient';
+import {useWallet} from 'hooks/useWallet';
 
 const UpdateBanner: React.FC = () => {
   const {t} = useTranslation();
@@ -18,16 +21,33 @@ const UpdateBanner: React.FC = () => {
   const {network} = useNetwork();
   const {dao} = useParams();
   const location = useLocation();
+  const {address} = useWallet();
+  const {data: daoDetails, isLoading} = useDaoDetailsQuery();
+  const pluginType = daoDetails?.plugins?.[0]?.id as PluginTypes;
+  const pluginAddress = daoDetails?.plugins?.[0]?.instanceAddress as string;
+  const pluginClient = usePluginClient(pluginType);
+  const [isMember, setIsMember] = useState(false);
+
+  useEffect(() => {
+    pluginClient?.methods
+      .isMember({
+        address: address as string,
+        pluginAddress,
+      })
+      .then(value => setIsMember(value));
+  }, [address, pluginAddress, pluginClient?.methods]);
 
   if (
     location.pathname.includes('new-proposal') ||
     location.pathname.includes('settings') ||
-    location.pathname.includes('create')
+    location.pathname.includes('create') ||
+    isLoading
   )
     return null;
 
   const daoUpdateEnabled =
-    featureFlags.getValue('VITE_FEATURE_FLAG_OSX_UPDATES') === 'true';
+    featureFlags.getValue('VITE_FEATURE_FLAG_OSX_UPDATES') === 'true' &&
+    isMember;
 
   if (daoUpdateEnabled)
     return (
