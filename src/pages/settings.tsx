@@ -37,6 +37,7 @@ import {featureFlags} from 'utils/featureFlags';
 import {shortenAddress, toDisplayEns} from 'utils/library';
 import {EditSettings} from 'utils/paths';
 import {useWallet} from 'hooks/useWallet';
+import {useAvailableUpdateVersions} from 'hooks/useAvailableUpdateVersions';
 
 export const Settings: React.FC = () => {
   const {t} = useTranslation();
@@ -50,6 +51,8 @@ export const Settings: React.FC = () => {
   const pluginAddress = daoDetails?.plugins?.[0]?.instanceAddress as string;
   const pluginClient = usePluginClient(pluginType);
   const [isMember, setIsMember] = useState(false);
+  const {osxAvailableVersions, pluginAvailableVersions} =
+    useAvailableUpdateVersions(pluginType, daoDetails as DaoDetails);
 
   useEffect(() => {
     pluginClient?.methods
@@ -70,7 +73,8 @@ export const Settings: React.FC = () => {
 
   const daoUpdateEnabled =
     featureFlags.getValue('VITE_FEATURE_FLAG_OSX_UPDATES') === 'true' &&
-    isMember;
+    isMember &&
+    (osxAvailableVersions.size !== 0 || pluginAvailableVersions.size !== 0);
 
   return (
     <SettingsWrapper>

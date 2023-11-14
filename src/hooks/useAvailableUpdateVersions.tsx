@@ -22,7 +22,7 @@ export const useAvailableUpdateVersions = (
   const {client} = useClient();
   const {data: pluginVersions, isLoading} = usePluginAvailableVersions(
     pluginType,
-    daoDetails.address
+    daoDetails?.address
   );
   const {data: versions, isLoading: protocolVersionLoading} =
     useProtocolVersions(daoDetails?.address);
