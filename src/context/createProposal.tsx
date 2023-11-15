@@ -154,9 +154,7 @@ const CreateProposalWrapper: React.FC<Props> = ({
     {enabled: !!daoToken?.address && !!address}
   );
 
-  const {data: versions} = useProtocolVersion(daoDetails?.address || '', {
-    enabled: !!daoDetails?.address,
-  });
+  const {data: versions} = useProtocolVersion(daoDetails?.address as string);
 
   const {client} = useClient();
 

@@ -7,6 +7,7 @@ import type {
   IFetchMembersParams,
   IFetchPastVotingPowerParams,
   IFetchPluginVersionsParams,
+  IFetchPreparedPluginsParams,
   IFetchProposalParams,
   IFetchProposalsParams,
   IFetchVotingPowerParams,
@@ -21,8 +22,9 @@ export enum AragonSdkQueryItem {
   PROPOSAL = 'PROPOSAL',
   PROPOSALS = 'PROPOSALS',
   LOCAL_PROPOSALS = 'LOCAL_PROPOSALS',
-  PROTOCOL_VERSION = 'PROTOCOL_VERSION',
   PLUGIN_VERSIONS = 'PLUGIN_VERSIONS',
+  PREPARED_PLUGINS = 'PREPARED_PLUGINS',
+  PROTOCOL_VERSION = 'PROTOCOL_VERSION',
   VOTING_POWER = 'VOTING_POWER',
   VOTING_SETTINGS = 'VOTING_SETTINGS',
   GET_MEMBER = 'GET_MEMBER',
@@ -60,7 +62,10 @@ export const aragonSdkQueryKeys = {
     baseParams: Omit<IAragonSdkBaseParams, 'address'>,
     params: IFetchPluginVersionsParams
   ): QueryKey => [AragonSdkQueryItem.PLUGIN_VERSIONS, baseParams, params],
-
+  preparedPlugins: (params: IFetchPreparedPluginsParams): QueryKey => [
+    AragonSdkQueryItem.PREPARED_PLUGINS,
+    params,
+  ],
   proposals: (params: IFetchProposalsParams): QueryKey => [
     AragonSdkQueryItem.PROPOSALS,
     params,

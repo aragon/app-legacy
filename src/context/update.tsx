@@ -30,10 +30,10 @@ import {TransactionState} from 'utils/constants';
 import {CreateProposalFormData} from 'utils/types';
 import {PluginTypes, usePluginClient} from 'hooks/usePluginClient';
 import {useDaoDetailsQuery} from 'hooks/useDaoDetails';
-import {usePreparedPlugin} from 'hooks/usePreparedPlugins';
 import {compareVersions} from 'utils/library';
 import {useProtocolVersion} from 'services/aragon-sdk/queries/use-protocol-version';
 import {usePluginVersions} from 'services/aragon-sdk/queries/use-plugin-versions';
+import {usePreparedPlugin} from 'services/aragon-sdk/queries/use-prepared-plugins';
 
 type UpdateContextType = {
   /** Prepares the creation data and awaits user confirmation to start process */
@@ -152,17 +152,14 @@ const UpdateProvider: React.FC<{children: ReactElement}> = ({children}) => {
     );
 
   const {data: versions, isLoading: protocolVersionLoading} =
-    useProtocolVersion(daoDetails?.address || '', {
-      enabled: !!daoDetails?.address,
-    });
+    useProtocolVersion(daoDetails?.address as string);
 
   const {data: preparedPluginList, isLoading: preparedPluginLoading} =
-    usePreparedPlugin(
-      client,
-      daoDetails?.plugins?.[0]?.instanceAddress,
+    usePreparedPlugin({
       pluginType,
-      daoDetails?.address
-    );
+      pluginAddress: daoDetails?.plugins?.[0]?.instanceAddress as string,
+      daoAddressOrEns: daoDetails?.address as string,
+    });
 
   const {getValues, setValue} = useFormContext<CreateProposalFormData>();
   const pluginSelectedVersion = getValues('pluginSelectedVersion');

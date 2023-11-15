@@ -55,3 +55,9 @@ export interface IFetchPluginVersionsParams {
   pluginType?: PluginTypes;
   daoAddress: string;
 }
+
+export interface IFetchPreparedPluginsParams {
+  pluginAddress: string;
+  pluginType: PluginTypes;
+  daoAddressOrEns: string;
+}

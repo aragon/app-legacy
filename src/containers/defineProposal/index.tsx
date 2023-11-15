@@ -41,9 +41,7 @@ const DefineProposal: React.FC = () => {
 
   const {data: dao} = useDaoDetailsQuery();
   const {data: releases} = useReleaseNotes({enabled: isUpdateProposal});
-  const {data: versions} = useProtocolVersion(dao?.address ?? '', {
-    enabled: !!dao?.address,
-  });
+  const {data: versions} = useProtocolVersion(dao?.address as string);
 
   const {control, setValue, formState} = useFormContext();
   const pluginSelectedVersion = useWatch<

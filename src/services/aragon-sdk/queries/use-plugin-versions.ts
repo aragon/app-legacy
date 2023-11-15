@@ -48,15 +48,15 @@ export const usePluginVersions = (
   const {client} = useClient();
   const {network} = useNetwork();
 
-  const {data: versions} = useProtocolVersion(params.daoAddress);
+  const {data: protocolVersion} = useProtocolVersion(params.daoAddress);
 
   let pluginRepoAddress: string | undefined;
 
-  if (params.pluginType && versions) {
+  if (params.pluginType && protocolVersion) {
     pluginRepoAddress = getPluginRepoAddress(
       network,
       params.pluginType,
-      versions
+      protocolVersion
     );
   }
 

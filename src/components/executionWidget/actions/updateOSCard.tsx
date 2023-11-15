@@ -24,9 +24,7 @@ export const UpdateOSCard: React.FC<{
   const {client} = useClient();
   const {network} = useNetwork();
 
-  const {data: versions} = useProtocolVersion(dao?.address ?? '', {
-    enabled: !!dao?.address,
-  });
+  const {data: versions} = useProtocolVersion(dao?.address as string);
 
   const [decodedAction, setDecodedAction] = useState<
     DaoUpdateDecodedParams | undefined
