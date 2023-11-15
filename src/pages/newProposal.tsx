@@ -1,5 +1,7 @@
 import React, {useState} from 'react';
 import {FormProvider, useForm} from 'react-hook-form';
+import {useParams} from 'react-router-dom';
+
 import {Loading} from 'components/temporary';
 import ProposalStepper from 'containers/proposalStepper';
 import {ActionsProvider} from 'context/actions';
@@ -8,8 +10,18 @@ import {useDaoDetailsQuery} from 'hooks/useDaoDetails';
 import {CreateProposalFormData} from 'utils/types';
 import {UpdateProvider} from 'context/update';
 
+const updateProposalValues = {
+  updateFramework: {
+    os: false,
+    plugin: false,
+  },
+};
+
 export const NewProposal: React.FC = () => {
+  const {type} = useParams();
   const {data, isLoading} = useDaoDetailsQuery();
+
+  const isUpdateProposal = type !== 'default';
 
   const [showTxModal, setShowTxModal] = useState(false);
 
@@ -17,13 +29,10 @@ export const NewProposal: React.FC = () => {
     mode: 'onChange',
     defaultValues: {
       links: [{name: '', url: ''}],
-      updateFramework: {
-        os: false,
-        plugin: false,
-      },
       startSwitch: 'now',
       durationSwitch: 'duration',
       actions: [],
+      ...(isUpdateProposal ? updateProposalValues : {}),
     },
   });
 
