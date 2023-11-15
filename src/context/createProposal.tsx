@@ -136,14 +136,9 @@ const CreateProposalWrapper: React.FC<Props> = ({
   const {data: pluginAvailableVersions} = usePluginVersions(
     {
       pluginType,
-      daoAddress: daoDetails?.address || '',
+      daoAddress: daoDetails?.address as string,
     },
-    {
-      enabled:
-        type === ProposalTypes.OSUpdates &&
-        !!daoDetails?.address &&
-        !!pluginType,
-    }
+    {enabled: type === ProposalTypes.OSUpdates}
   );
 
   const {data: daoToken} = useDaoToken(pluginAddress);

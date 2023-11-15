@@ -146,10 +146,7 @@ const UpdateProvider: React.FC<{children: ReactElement}> = ({children}) => {
   const pluginClient = usePluginClient(pluginType);
 
   const {data: pluginAvailableVersions, isLoading: availableVersionLoading} =
-    usePluginVersions(
-      {pluginType, daoAddress: daoDetails?.address as string},
-      {enabled: !!daoDetails?.address && !!pluginType}
-    );
+    usePluginVersions({pluginType, daoAddress: daoDetails?.address as string});
 
   const {data: versions, isLoading: protocolVersionLoading} =
     useProtocolVersion(daoDetails?.address as string);
