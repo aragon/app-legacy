@@ -103,7 +103,7 @@ export const GaslessVotingTerminal: React.FC<CommitteeVotingTerminalProps> = ({
       approvals: proposal.approvers,
       voters,
       minApproval: proposal.settings.minTallyApprovals,
-      strategy: t('votingTerminal.multisig'),
+      strategy: t('votingTerminal.multisig.strategy'),
       voteOptions: t('votingTerminal.approve'),
       startDate,
       endDate,
