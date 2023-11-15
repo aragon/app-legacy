@@ -1,4 +1,4 @@
-import {CheckboxListItem, Tag} from '@aragon/ods-old';
+import {AlertInline, CheckboxListItem, Tag} from '@aragon/ods-old';
 import React from 'react';
 import {useTranslation} from 'react-i18next';
 import {useCensus3SupportedChains} from '../../hooks/useCensus3';
@@ -36,14 +36,6 @@ const GaslessSelector = ({
 
   return (
     <>
-      {!isSupported && (
-        <div className="flex flex-row-reverse gap-1">
-          <Tag
-            colorScheme="warning"
-            label={t('createDAO.step3.votingType.gasless.soon')}
-          />
-        </div>
-      )}
       <CheckboxListItem
         label={t('createDAO.step3.blockChainVoting.optionGaslessLabel')}
         helptext={t('createDAO.step3.blockChainVoting.optionGaslessDesc', {
@@ -56,6 +48,14 @@ const GaslessSelector = ({
         disabled={!isSupported}
         {...(value === 'gasless' ? {type: 'active'} : {})}
       />
+      {!isSupported && (
+        <AlertInline
+          label={t('createDAO.step3.votingType.gasless.soon', {
+            blockchainName: blockchain.label,
+          })}
+          mode="neutral"
+        />
+      )}
     </>
   );
 };

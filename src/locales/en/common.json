@@ -242,7 +242,10 @@
       "address0x": "0x …"
     },
     "totalMembers": "Total members",
-    "mintableByDao": "Mintable by DAO"
+    "mintableByDao": "Mintable by DAO",
+    "basescan": "BaseScan",
+    "Arbiscan": "Arbiscan",
+    "polygonscan": "Polygonscan"
   },
   "placeHolders": {
     "selectToken": "Select a token …",
@@ -783,6 +786,11 @@
         "optionOnchainDesc": "Voting on proposals will require your community members to sign transactions and pay {{blockchainName}} gas fees. Proposals that pass a community vote can be executed by anyone.",
         "optionGaslessLabel": "Vocdoni",
         "optionGaslessDesc": "Voting on proposals will allow your community members to vote on a voting-specific proof-of-authority blockchain without paying any gas fees. Proposals that pass a community vote must be approved by an Execution Multisig before being executed on {{blockchainName}}."
+      },
+      "votingType": {
+        "gasless": {
+          "soon": "Coming soon on {{blockchainName}}"
+        }
       }
     },
     "step4": {
@@ -886,7 +894,7 @@
         "title": "Action not decoded",
         "desc": "This action can't be decoded because the smart contract is not verified."
       },
-      "alertCritical": "All fields are required"
+      "alertCritical": "All fields require valid input"
     },
     "mintTokens": {
       "methodDescription": "Create a proposal to mint more governance tokens. Select the wallets that should receive tokens and determine how many.",
@@ -1396,12 +1404,12 @@
     },
     "validation": {
       "sourcifyStatusPending": "Validating on Sourcify …",
-      "etherscanStatusPending": "Validating on Etherscan …",
+      "etherscanStatusPending": "Validating on {{blockExplorerName}} …",
       "sourcifyStatusSuccess": "Verified on Sourcify",
-      "etherscanStatusSuccess": "Verified on Etherscan",
+      "etherscanStatusSuccess": "Verified on {{blockExplorerName}}",
       "sourcifyStatusWarning": "Partially verified on Sourcify",
       "sourcifyStatusCritical": "Not verified on Sourcify",
-      "etherscanStatusCritical": "Not verified on Etherscan",
+      "etherscanStatusCritical": "Not verified on {{blockExplorerName}}",
       "addressInputHelp": "Enter the contract address. We recommend pasting it directly from a block explorer.",
       "cancelLabel": "Cancel validation",
       "explorerLinkLabel": "View details",
