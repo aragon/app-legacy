@@ -50,3 +50,8 @@ export interface IFetchMemberParams {
   address: string;
   blockNumber?: number;
 }
+
+export interface IFetchPluginVersionsParams {
+  pluginType?: PluginTypes;
+  daoAddress: string;
+}

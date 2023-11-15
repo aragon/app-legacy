@@ -11,7 +11,10 @@ import {
 } from '@aragon/sdk-client';
 import {
   DaoAction,
+  LIVE_CONTRACTS,
   SupportedNetwork as SdkSupportedNetworks,
+  SupportedNetworksArray,
+  SupportedVersion,
   bytesToHex,
   resolveIpfsCid,
 } from '@aragon/sdk-client-common';
@@ -25,6 +28,7 @@ import {
 import {TFunction} from 'i18next';
 
 import {MultisigWalletField} from 'components/multisigWallets/row';
+import {PluginTypes} from 'hooks/usePluginClient';
 import {getEtherscanVerifiedContract} from 'services/etherscanAPI';
 import {Token} from 'services/token/domain';
 import {IFetchTokenParams} from 'services/token/token-service.api';
@@ -1063,4 +1067,31 @@ export function compareVersions(version1: string, version2: string): boolean {
   }
 
   return false;
+}
+
+/**
+ * Retrieves the repository address for a specific plugin type on a supported network and protocol version.
+ * @param network - The supported network
+ * @param pluginType - The type of plugin
+ * @param protocolVersion - The protocol version as an array of three numbers.
+ * @returns The repository address based on the provided parameters.
+ */
+export function getPluginRepoAddress(
+  network: SupportedNetworks,
+  pluginType: PluginTypes,
+  protocolVersion: [number, number, number]
+) {
+  const translatedNetwork = translateToNetworkishName(network);
+  if (
+    translatedNetwork !== 'unsupported' &&
+    SupportedNetworksArray.includes(translatedNetwork)
+  ) {
+    return pluginType === 'multisig.plugin.dao.eth'
+      ? LIVE_CONTRACTS[protocolVersion?.join('.') as SupportedVersion]?.[
+          translatedNetwork
+        ].multisigRepoAddress
+      : LIVE_CONTRACTS[protocolVersion?.join('.') as SupportedVersion]?.[
+          translatedNetwork
+        ].tokenVotingRepoAddress;
+  }
 }

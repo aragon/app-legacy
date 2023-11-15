@@ -35,7 +35,7 @@ import React, {
 } from 'react';
 import {useFormContext} from 'react-hook-form';
 import {useTranslation} from 'react-i18next';
-import {generatePath, useNavigate} from 'react-router-dom';
+import {generatePath, useNavigate, useParams} from 'react-router-dom';
 
 import {Loading} from 'components/temporary';
 import PublishModal from 'containers/transactionModals/publishModal';
@@ -94,8 +94,9 @@ import {
   GaslessVotingProposal,
 } from '@vocdoni/gasless-voting';
 import {TokenCensus} from '@vocdoni/sdk';
-import {usePluginAvailableVersions} from 'hooks/usePluginAvailableVersions';
+import {usePluginVersions} from 'services/aragon-sdk/queries/use-plugin-versions';
 import {useProtocolVersion} from 'services/aragon-sdk/queries/use-protocol-version';
+import {ProposalTypes} from 'utils/types';
 
 type Props = {
   showTxModal: boolean;
@@ -116,6 +117,7 @@ const CreateProposalWrapper: React.FC<Props> = ({
   children,
 }) => {
   const {t} = useTranslation();
+  const {type} = useParams();
   const {open} = useGlobalModalContext();
   const queryClient = useQueryClient();
 
@@ -131,9 +133,17 @@ const CreateProposalWrapper: React.FC<Props> = ({
   const pluginAddress = daoDetails?.plugins?.[0]?.instanceAddress as string;
   const pluginType = daoDetails?.plugins?.[0]?.id as PluginTypes;
 
-  const {data: pluginAvailableVersions} = usePluginAvailableVersions(
-    pluginType,
-    daoDetails?.address as string
+  const {data: pluginAvailableVersions} = usePluginVersions(
+    {
+      pluginType,
+      daoAddress: daoDetails?.address || '',
+    },
+    {
+      enabled:
+        type === ProposalTypes.OSUpdates &&
+        !!daoDetails?.address &&
+        !!pluginType,
+    }
   );
 
   const {data: daoToken} = useDaoToken(pluginAddress);

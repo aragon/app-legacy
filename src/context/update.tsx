@@ -30,16 +30,16 @@ import {TransactionState} from 'utils/constants';
 import {CreateProposalFormData} from 'utils/types';
 import {PluginTypes, usePluginClient} from 'hooks/usePluginClient';
 import {useDaoDetailsQuery} from 'hooks/useDaoDetails';
-import {usePluginAvailableVersions} from 'hooks/usePluginAvailableVersions';
 import {usePreparedPlugin} from 'hooks/usePreparedPlugins';
-import {useProtocolVersions} from 'hooks/useDaoVersions';
 import {compareVersions} from 'utils/library';
+import {useProtocolVersion} from 'services/aragon-sdk/queries/use-protocol-version';
+import {usePluginVersions} from 'services/aragon-sdk/queries/use-plugin-versions';
 
 type UpdateContextType = {
   /** Prepares the creation data and awaits user confirmation to start process */
   handlePreparePlugin: (type: string) => void;
-  pluginAvailableVersions: Map<string, Plugin> | null;
-  osxAvailableVersions: Map<string, OSX> | null;
+  availablePluginVersions: Map<string, Plugin> | null;
+  availableOSxVersions: Map<string, OSX> | null;
 };
 
 type preparedData = {
@@ -134,19 +134,27 @@ const reducer = (state: State, action: Action): State => {
 const PrepareUpdateContext = createContext<UpdateContextType | null>(null);
 
 const UpdateProvider: React.FC<{children: ReactElement}> = ({children}) => {
-  const [state, dispatch] = useReducer(reducer, initialState);
-  const {isOnWrongNetwork} = useWallet();
   const {t} = useTranslation();
-  const {getValues, setValue} = useFormContext<CreateProposalFormData>();
+  const {isOnWrongNetwork} = useWallet();
+
+  const [state, dispatch] = useReducer(reducer, initialState);
+
   const {data: daoDetails, isLoading: detailsAreLoading} = useDaoDetailsQuery();
   const pluginType = daoDetails?.plugins?.[0]?.id as PluginTypes;
 
   const {client} = useClient();
   const pluginClient = usePluginClient(pluginType);
+
   const {data: pluginAvailableVersions, isLoading: availableVersionLoading} =
-    usePluginAvailableVersions(pluginType, daoDetails?.address as string);
+    usePluginVersions(
+      {pluginType, daoAddress: daoDetails?.address as string},
+      {enabled: !!daoDetails?.address && !!pluginType}
+    );
+
   const {data: versions, isLoading: protocolVersionLoading} =
-    useProtocolVersions(daoDetails?.address);
+    useProtocolVersion(daoDetails?.address || '', {
+      enabled: !!daoDetails?.address,
+    });
 
   const {data: preparedPluginList, isLoading: preparedPluginLoading} =
     usePreparedPlugin(
@@ -156,6 +164,7 @@ const UpdateProvider: React.FC<{children: ReactElement}> = ({children}) => {
       daoDetails?.address
     );
 
+  const {getValues, setValue} = useFormContext<CreateProposalFormData>();
   const pluginSelectedVersion = getValues('pluginSelectedVersion');
 
   const shouldPoll =
@@ -463,8 +472,8 @@ const UpdateProvider: React.FC<{children: ReactElement}> = ({children}) => {
     <PrepareUpdateContext.Provider
       value={{
         handlePreparePlugin,
-        pluginAvailableVersions: state.pluginList,
-        osxAvailableVersions: state.osxList,
+        availablePluginVersions: state.pluginList,
+        availableOSxVersions: state.osxList,
       }}
     >
       {children}
