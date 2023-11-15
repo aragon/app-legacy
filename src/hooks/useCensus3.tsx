@@ -3,7 +3,7 @@ import {useCallback, useEffect, useState} from 'react';
 import {GaselessPluginName, usePluginClient} from './usePluginClient';
 import {ErrTokenAlreadyExists} from '@vocdoni/sdk';
 
-const CENSUS3_URL = 'https://census3-stg.vocdoni.net/api';
+const CENSUS3_URL = 'https://census3-dev.vocdoni.net/api';
 
 export const useCensus3Client = () => {
   const {census3} = useClient();
@@ -21,7 +21,10 @@ export const useCensus3SupportedChains = (chainId: number) => {
   useEffect(() => {
     (async () => {
       if (chainId && census3) {
-        setIsSupported((await census3.getSupportedChains()).includes(chainId));
+        const supported = (await census3.getSupportedChains())
+          .map(chain => chain.chainID)
+          .includes(chainId);
+        setIsSupported(supported);
       }
     })();
   }, [census3, chainId]);
@@ -41,7 +44,9 @@ export const useCensus3CreateToken = ({chainId}: {chainId: number}) => {
       try {
         const token = await client?.methods.getToken(pluginAddress);
         if (!token) throw 'Cannot retrieve the token';
-        await census3.createToken(token.address, 'erc20', chainId);
+        await census3.createToken(token.address, 'erc20', chainId, undefined, [
+          'aragon/app',
+        ]);
       } catch (e) {
         if (!(e instanceof ErrTokenAlreadyExists)) {
           throw e;

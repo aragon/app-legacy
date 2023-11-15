@@ -10,7 +10,7 @@ import {
   Census,
   Census3Census,
   Election,
-  ICensus3Token,
+  Token as Census3Token,
   IElectionParameters,
   TokenCensus,
   UnpublishedElection,
@@ -35,6 +35,7 @@ export type GaslessProposalSteps = StepsMap<GaslessProposalStepId>;
 
 type ICreateGaslessProposal = {
   daoToken: Erc20TokenDetails | Erc20WrapperTokenDetails | undefined;
+  chainId: number;
 };
 
 export type UseCreateElectionProps = Omit<
@@ -72,7 +73,10 @@ const proposalToElection = ({
   };
 };
 
-const useCreateGaslessProposal = ({daoToken}: ICreateGaslessProposal) => {
+const useCreateGaslessProposal = ({
+  daoToken,
+  chainId,
+}: ICreateGaslessProposal) => {
   const {steps, updateStepStatus, doStep, globalState, resetStates} =
     useFunctionStepper({
       initialSteps: {
@@ -147,12 +151,12 @@ const useCreateGaslessProposal = ({daoToken}: ICreateGaslessProposal) => {
   }, [createAccount, errors.account]);
 
   const createCensus = useCallback(async (): Promise<TokenCensus> => {
-    async function getCensus3Token(): Promise<ICensus3Token> {
+    async function getCensus3Token(): Promise<Census3Token> {
       let attempts = 0;
       const maxAttempts = 5;
 
       while (attempts < maxAttempts) {
-        const censusToken = await census3.getToken(daoToken!.address);
+        const censusToken = await census3.getToken(daoToken!.address, chainId);
         if (censusToken.status.synced) {
           return censusToken; // early exit if the object has sync set to true
         }
@@ -180,7 +184,7 @@ const useCreateGaslessProposal = ({daoToken}: ICreateGaslessProposal) => {
       BigInt(census3census.weight)
     );
     // return await census3.createTokenCensus(censusToken.id);
-  }, [census3, daoToken]);
+  }, [census3, chainId, daoToken]);
 
   const createProposal = useCallback(
     async (
