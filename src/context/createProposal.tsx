@@ -15,13 +15,13 @@ import {
 } from '@aragon/sdk-client';
 import {
   DaoAction,
+  hexToBytes,
+  LIVE_CONTRACTS,
   ProposalMetadata,
   ProposalStatus,
-  TokenType,
-  LIVE_CONTRACTS,
   SupportedNetworksArray,
   SupportedVersion,
-  hexToBytes,
+  TokenType,
 } from '@aragon/sdk-client-common';
 import {useQueryClient} from '@tanstack/react-query';
 import differenceInSeconds from 'date-fns/differenceInSeconds';
@@ -81,21 +81,21 @@ import {Proposal} from 'utils/paths';
 import {getNonEmptyActions} from 'utils/proposals';
 import {isNativeToken} from 'utils/tokens';
 import {ProposalFormData, ProposalId, ProposalResource} from 'utils/types';
+import GaslessProposalModal from '../containers/transactionModals/gaslessProposalModal';
+import {StepStatus} from '../hooks/useFunctionStepper';
+import {useCreateGaslessProposal} from './createGaslessProposal';
 import {useGlobalModalContext} from './globalModals';
 import {useNetwork} from './network';
 import {useProviders} from './providers';
-import {useCreateGaslessProposal} from './createGaslessProposal';
-import GaslessProposalModal from '../containers/transactionModals/gaslessProposalModal';
-import {StepStatus} from '../hooks/useFunctionStepper';
 
 import {
   CreateGasslessProposalParams,
-  GaslessVotingProposal,
   GaslessVotingClient,
+  GaslessVotingProposal,
 } from '@vocdoni/gasless-voting';
 import {TokenCensus} from '@vocdoni/sdk';
-import {useProtocolVersions} from 'hooks/useDaoVersions';
 import {usePluginAvailableVersions} from 'hooks/usePluginAvailableVersions';
+import {useProtocolVersion} from 'services/aragon-sdk/queries/use-protocol-version';
 
 type Props = {
   showTxModal: boolean;
@@ -144,7 +144,9 @@ const CreateProposalWrapper: React.FC<Props> = ({
     {enabled: !!daoToken?.address && !!address}
   );
 
-  const {data: versions} = useProtocolVersions(daoDetails?.address);
+  const {data: versions} = useProtocolVersion(daoDetails?.address || '', {
+    enabled: !!daoDetails?.address,
+  });
 
   const {client} = useClient();
 

@@ -20,6 +20,7 @@ export enum AragonSdkQueryItem {
   PROPOSAL = 'PROPOSAL',
   PROPOSALS = 'PROPOSALS',
   LOCAL_PROPOSALS = 'LOCAL_PROPOSALS',
+  PROTOCOL_VERSION = 'PROTOCOL_VERSION',
   VOTING_POWER = 'VOTING_POWER',
   VOTING_SETTINGS = 'VOTING_SETTINGS',
   GET_MEMBER = 'GET_MEMBER',
@@ -56,6 +57,10 @@ export const aragonSdkQueryKeys = {
   proposals: (params: IFetchProposalsParams): QueryKey => [
     AragonSdkQueryItem.PROPOSALS,
     params,
+  ],
+  protocolVersion: (daoAddressOrEns: string): QueryKey => [
+    AragonSdkQueryItem.PROTOCOL_VERSION,
+    daoAddressOrEns,
   ],
   votingPower: (params: IFetchVotingPowerParams): QueryKey => [
     AragonSdkQueryItem.VOTING_POWER,

@@ -4,12 +4,13 @@ import {
   SupportedVersion,
   SupportedNetworksArray,
 } from '@aragon/sdk-client-common';
+import {Client} from '@aragon/sdk-client';
+
 import {PluginTypes} from './usePluginClient';
 import {useNetwork} from 'context/network';
-import {Client} from '@aragon/sdk-client';
 import {useClient} from './useClient';
-import {useProtocolVersions} from './useDaoVersions';
 import {translateToNetworkishName} from 'utils/library';
+import {useProtocolVersion} from 'services/aragon-sdk/queries/use-protocol-version';
 
 export type pluginAvailableVersionsType = {
   address: string;
@@ -45,9 +46,12 @@ export const usePluginAvailableVersions = (
   daoAddress: string
 ) => {
   const {client} = useClient();
-  const {data: versions} = useProtocolVersions(daoAddress);
   const {network} = useNetwork();
+
+  const {data: versions} = useProtocolVersion(daoAddress);
+
   const translatedNetwork = translateToNetworkishName(network);
+
   let PluginRepoAddress: undefined | string;
 
   if (

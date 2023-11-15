@@ -7,8 +7,8 @@ import {
 } from '@aragon/sdk-client-common';
 import {useQuery} from '@tanstack/react-query';
 
-import {useProtocolVersions} from './useDaoVersions';
 import {useNetwork} from 'context/network';
+import {useProtocolVersion} from 'services/aragon-sdk/queries/use-protocol-version';
 import {translateToNetworkishName} from 'utils/library';
 
 /**
@@ -66,8 +66,10 @@ export const usePreparedPlugin = (
   pluginType?: string,
   daoAddressOrEns?: string
 ) => {
-  const {data: versions} = useProtocolVersions(daoAddressOrEns);
   const {network} = useNetwork();
+
+  const {data: versions} = useProtocolVersion(daoAddressOrEns || '');
+
   const translatedNetwork = translateToNetworkishName(network);
   let PluginRepoAddress: undefined | string;
 

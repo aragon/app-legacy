@@ -16,7 +16,7 @@ import {
   SettingsCard,
   Term,
 } from '../settingsCard';
-import {useProtocolVersions} from 'hooks/useDaoVersions';
+import {useProtocolVersion} from 'services/aragon-sdk/queries/use-protocol-version';
 
 export const VersionInfoCard: React.FC<{
   pluginAddress: string;
@@ -25,7 +25,7 @@ export const VersionInfoCard: React.FC<{
 }> = ({pluginAddress, pluginVersion, daoAddress}) => {
   const {t} = useTranslation();
   const {network} = useNetwork();
-  const {data: versions, isLoading} = useProtocolVersions(daoAddress);
+  const {data: versions, isLoading} = useProtocolVersion(daoAddress);
 
   const explorerEndpoint = CHAIN_METADATA[network].explorer + 'address/';
 

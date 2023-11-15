@@ -4,13 +4,14 @@ import {
   LIVE_CONTRACTS,
   SupportedNetworksArray,
 } from '@aragon/sdk-client-common';
-import {AccordionMethod} from 'components/accordionMethod';
-import {useNetwork} from 'context/network';
-import {useClient} from 'hooks/useClient';
-import {useProtocolVersions} from 'hooks/useDaoVersions';
 import React, {useEffect, useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
+
+import {AccordionMethod} from 'components/accordionMethod';
+import {useNetwork} from 'context/network';
+import {useClient} from 'hooks/useClient';
+import {useProtocolVersion} from 'services/aragon-sdk/queries/use-protocol-version';
 import {ETH_TRANSACTION_CALL_LABEL} from 'utils/constants';
 import {translateToNetworkishName} from 'utils/library';
 import {ActionOSUpdate} from 'utils/types';
@@ -22,12 +23,16 @@ export const UpdateOSCard: React.FC<{
   const {t} = useTranslation();
   const {client} = useClient();
   const {network} = useNetwork();
-  const translatedNetwork = translateToNetworkishName(network);
-  const {data: versions} = useProtocolVersions(dao?.address);
+
+  const {data: versions} = useProtocolVersion(dao?.address ?? '', {
+    enabled: !!dao?.address,
+  });
+
   const [decodedAction, setDecodedAction] = useState<
     DaoUpdateDecodedParams | undefined
   >();
 
+  const translatedNetwork = translateToNetworkishName(network);
   useEffect(() => {
     async function extractOSUpdateAction() {
       if (
