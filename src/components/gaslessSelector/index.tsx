@@ -5,16 +5,6 @@ import {useCensus3SupportedChains} from '../../hooks/useCensus3';
 import {useFormContext} from 'react-hook-form';
 
 /**
- * Type that infers the ControllerRenderProps value prop
- */
-// type ValueOfControllerRenderProps<T> = T extends ControllerRenderProps<
-//   FieldValues,
-//   TName
-// >
-//   ? T['value']
-//   : never;
-
-/**
  * Checkbox used on the DAO creation process.
  *
  * It has a logic to show a `Comming Soon` label when the chainId is not compatible with vocdoni census3 service.
