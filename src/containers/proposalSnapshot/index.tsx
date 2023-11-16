@@ -87,8 +87,7 @@ const ProposalSnapshot: React.FC<Props> = ({
         navigate,
         t,
         daoAddressOrEns,
-        address,
-        pluginAddress
+        address
       );
     });
 
