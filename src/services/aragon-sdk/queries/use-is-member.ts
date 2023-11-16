@@ -1,5 +1,6 @@
 import {MultisigClient, TokenVotingClient} from '@aragon/sdk-client';
 import {UseQueryOptions, useQuery} from '@tanstack/react-query';
+import {GaslessVotingClient} from '@vocdoni/gasless-voting';
 
 import {useNetwork} from 'context/network';
 import {PluginTypes, usePluginClient} from 'hooks/usePluginClient';
@@ -9,9 +10,16 @@ import {aragonSdkQueryKeys} from '../query-keys';
 
 const fetchIsMember = async (
   params: IFetchIsMemberParams,
-  client?: TokenVotingClient | MultisigClient
+  client?: TokenVotingClient | MultisigClient | GaslessVotingClient
 ) => {
   invariant(client != null, 'fetchIsMember: client is not defined');
+
+  if (client instanceof GaslessVotingClient) {
+    console.warn(
+      'fetchIsMember: unable to determine membership using GaslessVotingClient'
+    );
+    return;
+  }
 
   const data = await client.methods.isMember({
     address: params.address,
@@ -27,12 +35,17 @@ interface IUseIsMemberParams extends IFetchIsMemberParams {
 
 export const useIsMember = (
   params: IUseIsMemberParams,
-  options: UseQueryOptions<boolean> = {}
+  options: UseQueryOptions<boolean | undefined> = {}
 ) => {
   const {network} = useNetwork();
   const client = usePluginClient(params.pluginType);
 
-  if (client == null || !params.address || !params.pluginAddress) {
+  if (
+    client == null ||
+    !params.address ||
+    !params.pluginAddress ||
+    client instanceof GaslessVotingClient
+  ) {
     options.enabled = false;
   }
 

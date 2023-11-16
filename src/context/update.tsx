@@ -1,8 +1,10 @@
 /* eslint-disable no-case-declarations */
 import {
+  MultisigClient,
   MultisigPluginPrepareUpdateParams,
   PrepareUpdateParams,
   PrepareUpdateStep,
+  TokenVotingClient,
   TokenVotingPluginPrepareUpdateParams,
 } from '@aragon/sdk-client';
 import {
@@ -352,15 +354,21 @@ const UpdateProvider: React.FC<{children: ReactElement}> = ({children}) => {
   // estimate creation fees
   const estimateCreationFees = useCallback(async () => {
     if (!state.daoUpdateData) return;
-    if (state.showModal.type === 'plugin')
-      return pluginClient?.estimation.prepareUpdate(state.daoUpdateData);
+    if (
+      state.showModal.type === 'plugin' &&
+      pluginType !== 'vocdoni-gasless-voting-poc.plugin.dao.eth'
+    )
+      return (
+        pluginClient as MultisigClient | TokenVotingClient
+      )?.estimation.prepareUpdate(state.daoUpdateData);
     else
       client?.estimation.prepareUpdate(
         state.daoUpdateData as PrepareUpdateParams
       );
   }, [
     client?.estimation,
-    pluginClient?.estimation,
+    pluginClient,
+    pluginType,
     state.daoUpdateData,
     state.showModal.type,
   ]);

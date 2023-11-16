@@ -15,7 +15,8 @@ import {Loading} from 'components/temporary';
 import AddAddresses from 'containers/actionBuilder/addAddresses';
 import RemoveAddresses from 'containers/actionBuilder/removeAddresses';
 import UpdateMinimumApproval from 'containers/actionBuilder/updateMinimumApproval';
-import DefineProposal, {
+import {
+  DefineProposal,
   isValid as defineProposalIsValid,
 } from 'containers/defineProposal';
 import ReviewProposal from 'containers/reviewProposal';
