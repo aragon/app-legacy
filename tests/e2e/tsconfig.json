@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
     "allowJs": true,
-    "baseUrl": "../../node_modules",
+    "baseUrl": "./",
     "types": [
       "cypress",
       "@synthetixio/synpress/support",
