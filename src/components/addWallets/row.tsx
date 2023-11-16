@@ -252,8 +252,6 @@ const WalletRow: React.FC<WalletRowProps> = ({index, onDelete}) => {
                   const [totalSupply, amount] = getValues([
                     'tokenTotalSupply',
                     `wallets.${index}.amount`,
-                    'eligibilityType',
-                    'eligibilityTokenAmount',
                   ]);
 
                   const newTotalSupply = Number(totalSupply) - Number(amount);
