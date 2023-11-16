@@ -28,19 +28,18 @@ type versionList = {
   tagLabelNatural?: string;
 };
 
-// TODO: This might be a component that
 export const VersionSelectionMenu: React.FC<CheckboxListItemProps> = ({
   showModal,
   handleCloseMenu,
 }) => {
   const {t} = useTranslation();
   const {control} = useFormContext();
-  const {osxAvailableVersions, pluginAvailableVersions} = useUpdateContext();
+  const {availableOSxVersions, availablePluginVersions} = useUpdateContext();
   const {data: releases} = useReleaseNotes();
 
   const osVersionList = useMemo(() => {
     const List: versionList[] = [];
-    osxAvailableVersions?.forEach(value => {
+    availableOSxVersions?.forEach(value => {
       List.push({
         label: osxUpdates.getProtocolUpdateLabel(value.version),
         releaseNote: osxUpdates.getReleaseNotes({
@@ -55,11 +54,11 @@ export const VersionSelectionMenu: React.FC<CheckboxListItemProps> = ({
       });
     });
     return List;
-  }, [osxAvailableVersions, releases, t]);
+  }, [availableOSxVersions, releases, t]);
 
   const pluginVersionList = useMemo(() => {
     const List: versionList[] = [];
-    pluginAvailableVersions?.forEach(value => {
+    availablePluginVersions?.forEach(value => {
       List.push({
         label: osxUpdates.getPluginUpdateLabel(value.version),
         version: value.version,
@@ -79,7 +78,7 @@ export const VersionSelectionMenu: React.FC<CheckboxListItemProps> = ({
       });
     });
     return List;
-  }, [pluginAvailableVersions, releases, t]);
+  }, [availablePluginVersions, releases, t]);
 
   return (
     <ModalBottomSheetSwitcher

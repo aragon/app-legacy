@@ -26,6 +26,7 @@ import {
 import {featureFlags} from 'utils/featureFlags';
 import {htmlIn} from 'utils/htmlIn';
 import {Governance, NewProposal} from 'utils/paths';
+import {ProposalTypes} from 'utils/types';
 
 type Props = {
   daoAddressOrEns: string;
@@ -112,7 +113,7 @@ const ProposalSnapshot: React.FC<Props> = ({
           onClick: () =>
             navigate(
               generatePath(NewProposal, {
-                type: 'default',
+                type: ProposalTypes.Default,
                 network,
                 dao: daoAddressOrEns,
               })
@@ -134,7 +135,7 @@ const ProposalSnapshot: React.FC<Props> = ({
         onClick={() =>
           navigate(
             generatePath(NewProposal, {
-              type: 'default',
+              type: ProposalTypes.Default,
               network,
               dao: daoAddressOrEns,
             })
