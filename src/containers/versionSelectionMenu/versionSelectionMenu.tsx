@@ -19,7 +19,7 @@ export type CheckboxListItemProps = {
   handleCloseMenu: () => void;
 };
 
-type versionList = {
+type VersionList = {
   label?: string;
   version: string | VersionTag;
   releaseNote?: IReleaseNote;
@@ -38,9 +38,9 @@ export const VersionSelectionMenu: React.FC<CheckboxListItemProps> = ({
   const {data: releases} = useReleaseNotes();
 
   const osVersionList = useMemo(() => {
-    const List: versionList[] = [];
+    const versionList: VersionList[] = [];
     availableOSxVersions?.forEach(value => {
-      List.push({
+      versionList.push({
         label: osxUpdates.getProtocolUpdateLabel(value.version),
         releaseNote: osxUpdates.getReleaseNotes({
           releases,
@@ -53,11 +53,11 @@ export const VersionSelectionMenu: React.FC<CheckboxListItemProps> = ({
         }),
       });
     });
-    return List;
+    return versionList;
   }, [availableOSxVersions, releases, t]);
 
   const pluginVersionList = useMemo(() => {
-    const List: versionList[] = [];
+    const List: VersionList[] = [];
     availablePluginVersions?.forEach(value => {
       List.push({
         label: osxUpdates.getPluginUpdateLabel(value.version),

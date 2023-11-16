@@ -35,7 +35,7 @@ import {useDaoDetailsQuery} from 'hooks/useDaoDetails';
 import {compareVersions} from 'utils/library';
 import {useProtocolVersion} from 'services/aragon-sdk/queries/use-protocol-version';
 import {usePluginVersions} from 'services/aragon-sdk/queries/use-plugin-versions';
-import {usePreparedPlugin} from 'services/aragon-sdk/queries/use-prepared-plugins';
+import {usePreparedPlugins} from 'services/aragon-sdk/queries/use-prepared-plugins';
 
 type UpdateContextType = {
   /** Prepares the creation data and awaits user confirmation to start process */
@@ -44,7 +44,7 @@ type UpdateContextType = {
   availableOSxVersions: Map<string, OSX> | null;
 };
 
-type preparedData = {
+type PreparedPluginData = {
   permissions: MultiTargetPermission[];
   pluginAddress: string;
   pluginRepo: string;
@@ -57,7 +57,7 @@ type Plugin = {
   version: VersionTag;
   isPrepared?: boolean;
   isLatest?: boolean;
-  preparedData?: preparedData;
+  preparedData?: PreparedPluginData;
 };
 
 export type OSX = {
@@ -154,7 +154,7 @@ const UpdateProvider: React.FC<{children: ReactElement}> = ({children}) => {
     useProtocolVersion(daoDetails?.address as string);
 
   const {data: preparedPluginList, isLoading: preparedPluginLoading} =
-    usePreparedPlugin({
+    usePreparedPlugins({
       pluginType,
       pluginAddress: daoDetails?.plugins?.[0]?.instanceAddress as string,
       daoAddressOrEns: daoDetails?.address as string,
@@ -424,7 +424,7 @@ const UpdateProvider: React.FC<{children: ReactElement}> = ({children}) => {
                   pluginRepo: step.pluginRepo,
                   initData: step.initData,
                   helpers: step.helpers,
-                } as preparedData,
+                } as PreparedPluginData,
               }
             );
             console.log('success', {

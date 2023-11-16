@@ -58,7 +58,7 @@ async function fetchPreparedPlugins(
   return filteredFetchedList;
 }
 
-export const usePreparedPlugin = (
+export const usePreparedPlugins = (
   params: IFetchPreparedPluginsParams,
   options: UseQueryOptions<Map<string, PluginPreparationListItem>> = {}
 ) => {
