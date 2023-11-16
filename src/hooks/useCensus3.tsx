@@ -3,7 +3,7 @@ import {useCallback, useEffect, useState} from 'react';
 import {GaselessPluginName, usePluginClient} from './usePluginClient';
 import {ErrTokenAlreadyExists} from '@vocdoni/sdk';
 
-const CENSUS3_URL = 'https://census3-dev.vocdoni.net/api';
+const CENSUS3_URL = 'https://census3-stg.vocdoni.net/api';
 
 export const useCensus3Client = () => {
   const {census3} = useClient();
