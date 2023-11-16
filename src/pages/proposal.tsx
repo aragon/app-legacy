@@ -506,7 +506,6 @@ export const Proposal: React.FC = () => {
     isMultisigProposal(proposal) &&
     (proposal.status === ProposalStatus.PENDING ||
       proposal.status === ProposalStatus.ACTIVE) &&
-    !voted &&
     isMultisigVotingSettings(votingSettings) &&
     proposal.actions.length > 0 &&
     proposal.approvals.length + 1 >= votingSettings.minApprovals;
@@ -518,7 +517,7 @@ export const Proposal: React.FC = () => {
       proposal,
       votingSettings,
       voted,
-      executableWithNextApproval,
+      executableWithNextApproval && !voted,
       t
     );
   }
@@ -664,6 +663,7 @@ export const Proposal: React.FC = () => {
       voteButtonLabel={voteButtonLabel}
       voteNowDisabled={votingDisabled}
       votingInProcess={votingInProcess}
+      voted={voted}
       executableWithNextApproval={executableWithNextApproval}
       onVoteSubmitClicked={vote =>
         isGaslessProposal(proposal)
