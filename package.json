@@ -116,7 +116,8 @@
     "vite-tsconfig-paths": "^4.2.0"
   },
   "resolutions": {
-    "@vocdoni/sdk": "0.5.0"
+    "@vocdoni/sdk": "0.5.0",
+    "@types/react": "^18.2.23"
   },
   "engines": {
     "node": ">=18.0.0"
