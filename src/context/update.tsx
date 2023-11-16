@@ -58,7 +58,7 @@ type Plugin = {
   preparedData?: preparedData;
 };
 
-type OSX = {
+export type OSX = {
   version: string;
   isLatest?: boolean;
 };

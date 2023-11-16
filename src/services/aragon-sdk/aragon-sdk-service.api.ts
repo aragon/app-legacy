@@ -61,3 +61,8 @@ export interface IFetchPreparedPluginsParams {
   pluginType: PluginTypes;
   daoAddressOrEns: string;
 }
+
+export interface IFetchIsMemberParams {
+  pluginAddress: string;
+  address: string;
+}

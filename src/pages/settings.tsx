@@ -37,14 +37,26 @@ import {featureFlags} from 'utils/featureFlags';
 import {shortenAddress, toDisplayEns} from 'utils/library';
 import {EditSettings} from 'utils/paths';
 import GaslessVotingSettings from '../containers/settings/gaslessVoting';
+import {useIsMember} from 'services/aragon-sdk/queries/use-is-member';
+import {useWallet} from 'hooks/useWallet';
 
 export const Settings: React.FC = () => {
   const {t} = useTranslation();
   const navigate = useNavigate();
+  const {address} = useWallet();
   const {isDesktop} = useScreen();
 
   // move into components when proper loading experience is implemented
   const {data: daoDetails, isLoading} = useDaoDetailsQuery();
+
+  const pluginAddress = daoDetails?.plugins?.[0]?.instanceAddress as string;
+  const pluginType = daoDetails?.plugins?.[0]?.id as PluginTypes;
+
+  const {data: isMember} = useIsMember({
+    address: address as string,
+    pluginAddress,
+    pluginType,
+  });
 
   if (isLoading) {
     return <Loading />;
@@ -59,7 +71,7 @@ export const Settings: React.FC = () => {
 
   return (
     <SettingsWrapper>
-      {daoUpdateEnabled && (
+      {daoUpdateEnabled && isMember && (
         <div className={`mt-1 xl:mt-3 ${styles.fullWidth}`}>
           <SettingsUpdateCard />
         </div>

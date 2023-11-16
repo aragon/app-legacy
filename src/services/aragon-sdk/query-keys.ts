@@ -4,6 +4,7 @@ import {ProposalStatus} from '@aragon/sdk-client-common';
 import type {
   IFetchDelegateeParams,
   IFetchMemberParams,
+  IFetchIsMemberParams,
   IFetchMembersParams,
   IFetchPastVotingPowerParams,
   IFetchPluginVersionsParams,
@@ -17,6 +18,7 @@ import {SupportedNetworks} from 'utils/constants';
 
 export enum AragonSdkQueryItem {
   DELEGATEE = 'DELEGATEE',
+  IS_MEMBER = 'IS_MEMBER',
   MEMBERS = 'MEMBERS',
   PAST_VOTING_POWER = 'PAST_VOTING_POWER',
   PROPOSAL = 'PROPOSAL',
@@ -42,6 +44,10 @@ export const aragonSdkQueryKeys = {
     baseParams: IAragonSdkBaseParams,
     params: IFetchDelegateeParams
   ): QueryKey => [AragonSdkQueryItem.DELEGATEE, baseParams, params],
+  isMember: (
+    baseParams: IAragonSdkBaseParams,
+    params: IFetchIsMemberParams
+  ): QueryKey => [AragonSdkQueryItem.IS_MEMBER, {baseParams, ...params}],
   members: (params: IFetchMembersParams): QueryKey => [
     AragonSdkQueryItem.MEMBERS,
     params,

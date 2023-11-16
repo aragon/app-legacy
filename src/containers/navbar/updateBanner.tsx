@@ -1,24 +1,44 @@
-import React from 'react';
-import {useTranslation} from 'react-i18next';
-import styled from 'styled-components';
 import {ButtonText, IconClose, IconUpdate} from '@aragon/ods-old';
+import React, {useState} from 'react';
+import {useTranslation} from 'react-i18next';
 import {
   generatePath,
   useLocation,
   useNavigate,
   useParams,
 } from 'react-router-dom';
+import styled from 'styled-components';
+
 import {useNetwork} from 'context/network';
-import {NewProposal} from 'utils/paths';
+import {useDaoDetailsQuery} from 'hooks/useDaoDetails';
+import {PluginTypes} from 'hooks/usePluginClient';
+import {useWallet} from 'hooks/useWallet';
+import {useIsMember} from 'services/aragon-sdk/queries/use-is-member';
 import {featureFlags} from 'utils/featureFlags';
+import {NewProposal} from 'utils/paths';
 import {ProposalTypes} from 'utils/types';
 
 const UpdateBanner: React.FC = () => {
   const {t} = useTranslation();
-  const navigate = useNavigate();
-  const {network} = useNetwork();
   const {dao} = useParams();
+  const navigate = useNavigate();
   const location = useLocation();
+
+  const {network} = useNetwork();
+  const {address} = useWallet();
+
+  const [showUpdateBanner, setShowUpdateBanner] = useState(true);
+
+  const {data: daoDetails} = useDaoDetailsQuery();
+
+  const pluginAddress = daoDetails?.plugins?.[0]?.instanceAddress as string;
+  const pluginType = daoDetails?.plugins?.[0]?.id as PluginTypes;
+
+  const {data: isMember} = useIsMember({
+    address: address as string,
+    pluginAddress,
+    pluginType,
+  });
 
   if (
     location.pathname.includes('new-proposal') ||
@@ -30,7 +50,12 @@ const UpdateBanner: React.FC = () => {
   const daoUpdateEnabled =
     featureFlags.getValue('VITE_FEATURE_FLAG_OSX_UPDATES') === 'true';
 
-  if (daoUpdateEnabled)
+  // TODO: when do we show banner?
+  function handleBannerClosed() {
+    setShowUpdateBanner(false);
+  }
+
+  if (daoUpdateEnabled && isMember && showUpdateBanner)
     return (
       <UpdateContainer>
         <DummyElement />
@@ -57,7 +82,10 @@ const UpdateBanner: React.FC = () => {
             }
           />
         </MessageWrapper>
-        <IconClose className="cursor-pointer justify-self-end text-neutral-0" />
+        <IconClose
+          className="cursor-pointer justify-self-end text-neutral-0"
+          onClick={handleBannerClosed}
+        />
       </UpdateContainer>
     );
   return null;
