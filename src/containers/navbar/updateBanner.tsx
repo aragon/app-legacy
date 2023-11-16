@@ -11,6 +11,7 @@ import {
 import {useNetwork} from 'context/network';
 import {NewProposal} from 'utils/paths';
 import {featureFlags} from 'utils/featureFlags';
+import {ProposalTypes} from 'utils/types';
 
 const UpdateBanner: React.FC = () => {
   const {t} = useTranslation();
@@ -48,7 +49,7 @@ const UpdateBanner: React.FC = () => {
             onClick={() =>
               navigate(
                 generatePath(NewProposal, {
-                  type: 'os-update',
+                  type: ProposalTypes.OSUpdates,
                   network,
                   dao: dao,
                 })
