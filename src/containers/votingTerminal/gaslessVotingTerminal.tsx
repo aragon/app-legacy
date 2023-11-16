@@ -89,15 +89,18 @@ export const GaslessVotingTerminal: React.FC<CommitteeVotingTerminalProps> = ({
       KNOWN_FORMATS.proposals
     )}  ${getFormattedUtcOffset()}`;
 
-    const voters = new Array<VoterType>(
-      // todo(kon): Array with empty components needed to render the correct number of voters on breakdown tab
-      // Can be fixed when can get the list of executive committee
-      proposal.settings.minTallyApprovals
-    ).map((_, i) => {
-      if (proposal.approvers[i]) {
-        return {wallet: proposal.approvers[i], option: 'yes'} as VoterType;
+    const voters: VoterType[] = proposal.settings.executionMultisigMembers!.map(
+      member => {
+        if (
+          proposal.approvers
+            .map(string => string.toLowerCase())
+            .includes(member.toLowerCase())
+        ) {
+          return {wallet: member, option: 'approved'} as VoterType;
+        }
+        return {wallet: member, option: 'none'} as VoterType;
       }
-    });
+    );
 
     return {
       approvals: proposal.approvers,
