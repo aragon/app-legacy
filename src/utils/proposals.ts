@@ -7,6 +7,7 @@
 
 import {ModeType, ProgressStatusProps, VoterType} from '@aragon/ods-old';
 import {
+  Client,
   CreateMajorityVotingProposalParams,
   Erc20TokenDetails,
   MajorityVotingSettings,
@@ -18,7 +19,11 @@ import {
   VotingMode,
   VotingSettings,
 } from '@aragon/sdk-client';
-import {ProposalMetadata, ProposalStatus} from '@aragon/sdk-client-common';
+import {
+  DaoAction,
+  ProposalMetadata,
+  ProposalStatus,
+} from '@aragon/sdk-client-common';
 import Big from 'big.js';
 import {Locale, format, formatDistanceToNow} from 'date-fns';
 import * as Locales from 'date-fns/locale';
@@ -938,4 +943,14 @@ export function recalculateProposalStatus<
     }
   }
   return proposal;
+}
+
+export function isVerifiedAragonUpdateProposal(
+  proposalActions: DaoAction[],
+  client: Client
+) {
+  return (
+    client.methods.isDaoUpdate(proposalActions) ||
+    client.methods.isPluginUpdate(proposalActions)
+  );
 }

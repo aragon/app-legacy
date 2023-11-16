@@ -6,6 +6,7 @@ import {
   IconGovernance,
   ListItemHeader,
 } from '@aragon/ods-old';
+import {DaoAction} from '@aragon/sdk-client-common';
 import React from 'react';
 import {useTranslation} from 'react-i18next';
 import {generatePath, useNavigate} from 'react-router-dom';
@@ -15,9 +16,9 @@ import {proposal2CardProps} from 'components/proposalList';
 import {StateEmpty} from 'components/stateEmpty';
 import {Loading} from 'components/temporary';
 import {useNetwork} from 'context/network';
+import {useClient} from 'hooks/useClient';
 import {useDaoMembers} from 'hooks/useDaoMembers';
 import {PluginTypes} from 'hooks/usePluginClient';
-import {useUpdateProposal} from 'hooks/useUpdateProposal';
 import {useWallet} from 'hooks/useWallet';
 import {
   PROPOSALS_PER_PAGE,
@@ -26,6 +27,7 @@ import {
 import {featureFlags} from 'utils/featureFlags';
 import {htmlIn} from 'utils/htmlIn';
 import {Governance, NewProposal} from 'utils/paths';
+import {isVerifiedAragonUpdateProposal} from 'utils/proposals';
 import {ProposalTypes} from 'utils/types';
 
 type Props = {
@@ -34,17 +36,26 @@ type Props = {
   pluginType: PluginTypes;
 };
 
-const ProposalItem: React.FC<
-  {proposalId: string} & CardProposalProps
-> = props => {
-  const {isAragonVerifiedUpdateProposal} = useUpdateProposal(props.proposalId);
+type ProposalItemProps = CardProposalProps & {
+  proposalId: string;
+  actions: DaoAction[];
+};
+
+const ProposalItem: React.FC<ProposalItemProps> = ({actions, ...props}) => {
   const {t} = useTranslation();
+  const {client} = useClient();
+
+  let verifiedUpdateProposal = false;
+
+  if (client != null) {
+    verifiedUpdateProposal = isVerifiedAragonUpdateProposal(actions, client);
+  }
 
   return (
     <CardProposal
       {...props}
       bannerContent={
-        isAragonVerifiedUpdateProposal &&
+        verifiedUpdateProposal &&
         featureFlags.getValue('VITE_FEATURE_FLAG_OSX_UPDATES') === 'true'
           ? t('update.proposal.bannerTitle')
           : ''
