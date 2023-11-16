@@ -21,7 +21,7 @@ export const NewProposal: React.FC = () => {
   const {type} = useParams();
   const {data, isLoading} = useDaoDetailsQuery();
 
-  const isUpdateProposal = type !== 'default';
+  const isUpdateProposal = type === 'os-update';
 
   const [showTxModal, setShowTxModal] = useState(false);
 

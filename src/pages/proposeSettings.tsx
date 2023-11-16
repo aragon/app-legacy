@@ -23,9 +23,7 @@ import {generatePath, useNavigate} from 'react-router-dom';
 import {FullScreenStepper, Step} from 'components/fullScreenStepper';
 import {Loading} from 'components/temporary';
 import CompareSettings from 'containers/compareSettings';
-import DefineProposal, {
-  isValid as defineProposalIsValid,
-} from 'containers/defineProposal';
+import {isValid as defineProposalIsValid} from 'containers/defineProposal';
 import ReviewProposal from 'containers/reviewProposal';
 import SetupVotingForm from 'containers/setupVotingForm';
 import PublishModal from 'containers/transactionModals/publishModal';
@@ -76,6 +74,7 @@ import {
   ProposalResource,
   ProposalSettingsFormData,
 } from 'utils/types';
+import {DefineProposal} from 'containers/defineProposal/';
 
 export const ProposeSettings: React.FC = () => {
   const {t} = useTranslation();

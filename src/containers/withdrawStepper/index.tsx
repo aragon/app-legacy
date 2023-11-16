@@ -3,7 +3,8 @@ import {useFormContext, useFormState, useWatch} from 'react-hook-form';
 import {useTranslation} from 'react-i18next';
 
 import {FullScreenStepper, Step} from 'components/fullScreenStepper';
-import DefineProposal, {
+import {
+  DefineProposal,
   isValid as defineProposalIsValid,
 } from 'containers/defineProposal';
 import ReviewProposal from 'containers/reviewProposal';

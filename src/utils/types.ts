@@ -596,6 +596,11 @@ export interface ProposalFormData {
   pluginSelectedVersion?: PluginSelectedVersion;
 }
 
+export enum ProposalTypes {
+  OSUpdates = 'os-update',
+  Default = 'default',
+}
+
 export type ProposalSettingsFormData = ProposalFormData & {
   areSettingsChanged: boolean;
   isMetadataChanged: boolean;
