@@ -789,7 +789,7 @@ const ContentWrapper = styled.div.attrs({
   className: 'flex flex-col md:flex-row gap-x-6 gap-y-3',
 })``;
 
-const ProposerLink = styled.p.attrs({
+const ProposerLink = styled.div.attrs({
   className: 'text-neutral-500',
 })``;
 

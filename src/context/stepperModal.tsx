@@ -138,7 +138,7 @@ const StepperModal = <TStepKey extends string>({
                   <div>{`${nativeCurrency.symbol}`}</div>
                 </StrongText>
                 <p className="text-right text-sm leading-normal text-neutral-500">
-                  h{totalCost}
+                  {totalCost}
                 </p>
               </VStack>
             </GasTotalCostEthContainer>
@@ -227,7 +227,7 @@ const VStack = styled.div.attrs({
   className: 'space-y-0.5 overflow-hidden',
 })``;
 
-const StrongText = styled.p.attrs({
+const StrongText = styled.div.attrs({
   className: 'font-semibold text-right text-neutral-600 flex space-TStepKey-1',
 })``;
 
