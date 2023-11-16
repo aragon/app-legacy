@@ -1,18 +1,8 @@
-import {CheckboxListItem, Tag} from '@aragon/ods-old';
+import {AlertInline, CheckboxListItem} from '@aragon/ods-old';
 import React from 'react';
 import {useTranslation} from 'react-i18next';
 import {useCensus3SupportedChains} from '../../hooks/useCensus3';
 import {useFormContext} from 'react-hook-form';
-
-/**
- * Type that infers the ControllerRenderProps value prop
- */
-// type ValueOfControllerRenderProps<T> = T extends ControllerRenderProps<
-//   FieldValues,
-//   TName
-// >
-//   ? T['value']
-//   : never;
 
 /**
  * Checkbox used on the DAO creation process.
@@ -36,14 +26,6 @@ const GaslessSelector = ({
 
   return (
     <>
-      {!isSupported && (
-        <div className="flex flex-row-reverse gap-1">
-          <Tag
-            colorScheme="warning"
-            label={t('createDAO.step3.votingType.gasless.soon')}
-          />
-        </div>
-      )}
       <CheckboxListItem
         label={t('createDAO.step3.blockChainVoting.optionGaslessLabel')}
         helptext={t('createDAO.step3.blockChainVoting.optionGaslessDesc', {
@@ -56,6 +38,14 @@ const GaslessSelector = ({
         disabled={!isSupported}
         {...(value === 'gasless' ? {type: 'active'} : {})}
       />
+      {!isSupported && (
+        <AlertInline
+          label={t('createDAO.step3.votingType.gasless.soon', {
+            blockchainName: blockchain.label,
+          })}
+          mode="neutral"
+        />
+      )}
     </>
   );
 };

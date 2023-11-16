@@ -375,8 +375,16 @@ const ProposalTransactionProvider: React.FC<Props> = ({children}) => {
           voteToPersist
         );
       }
+      invalidateProposalQueries();
     },
-    [address, fetchVotingPower, network, pluginType, voteTokenAddress]
+    [
+      address,
+      fetchVotingPower,
+      invalidateProposalQueries,
+      network,
+      pluginType,
+      voteTokenAddress,
+    ]
   );
 
   // handles closing vote/approval modal
