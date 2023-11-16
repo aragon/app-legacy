@@ -4572,10 +4572,10 @@
   dependencies:
     ethers "^5.6.2"
 
-"@vocdoni/gasless-voting@0.0.1-r1":
-  version "0.0.1-r1"
-  resolved "https://registry.yarnpkg.com/@vocdoni/gasless-voting/-/gasless-voting-0.0.1-r1.tgz#02c96c89ca77d6dd236aabddfe1bc936279b2b57"
-  integrity sha512-2oz3sdQrUxT9BZb9GHQIIT05GPZJuIyIv7gCyF7JfG6crC8ueJbEfEVHG3Q0tngQJ+/x7Tpa7cTL9DbFgBmu/A==
+"@vocdoni/gasless-voting@0.0.1-rc2":
+  version "0.0.1-rc2"
+  resolved "https://registry.yarnpkg.com/@vocdoni/gasless-voting/-/gasless-voting-0.0.1-rc2.tgz#77301d029d74f78ad1b12a21a4d69176e35db646"
+  integrity sha512-4RN+yIvo9ki2Qx7v3XXlQ3cxZt13ilnZOpPj9BCGjwtcQUAS2UvNvX2+kOYk7grjLzG2pEwdszq+j9QLzvpcEQ==
   dependencies:
     "@aragon/osx-ethers" "1.3.0-rc0.3"
     "@aragon/sdk-client-common" "1.10.0"
@@ -4587,7 +4587,7 @@
     "@ethersproject/wallet" "^5.7.0"
     "@types/big.js" "^6.1.5"
     "@vocdoni/gasless-voting-ethers" "0.0.1-rc1"
-    "@vocdoni/sdk" "0.4.2"
+    "@vocdoni/sdk" "0.5.0"
     axios "0.27.2"
     graphql "^16.6.0"
     graphql-request "4.3.0"
@@ -4607,10 +4607,10 @@
   dependencies:
     "@vocdoni/sdk" "^0.4.2"
 
-"@vocdoni/sdk@0.4.2", "@vocdoni/sdk@^0.4.2":
-  version "0.4.2"
-  resolved "https://registry.yarnpkg.com/@vocdoni/sdk/-/sdk-0.4.2.tgz#c9b34914ed9f800a5e5e8c0a6f77adea67cb4096"
-  integrity sha512-7VLO7Oirylvh1qSwf37maSnb4aiVdf7tV1jhzApYPCDG8f4UZWG+nWby0nfkuaZGZEaldpx/yxwJgWCWkcwz/A==
+"@vocdoni/sdk@0.5.0", "@vocdoni/sdk@^0.4.2":
+  version "0.5.0"
+  resolved "https://registry.yarnpkg.com/@vocdoni/sdk/-/sdk-0.5.0.tgz#34084e796bb744c68c17e107f80cdf30b9b316e4"
+  integrity sha512-7MobpmGeCyMyywj8UdpwHdJTE/z28m6jENgwe7UHIYYsaTqzSyWV8Zq/RisRA5vD2jgQbXTVmhzzzV0LXBDwuQ==
   dependencies:
     "@ethersproject/abstract-signer" "^5.7.0"
     "@ethersproject/address" "^5.7.0"
