@@ -1,13 +1,13 @@
 import {MultisigClient, TokenVotingClient} from '@aragon/sdk-client';
-import {useEffect, useState} from 'react';
-
-import {useClient} from './useClient';
 import {
   GaslessVotingClient,
   GaslessVotingContext,
 } from '@vocdoni/gasless-voting';
-import {VocdoniEnv} from './useVocdoniSdk';
 import {EnvOptions} from '@vocdoni/sdk';
+import {useEffect, useState} from 'react';
+
+import {useClient} from './useClient';
+import {VocdoniEnv} from './useVocdoniSdk';
 
 export const GaselessPluginName = 'vocdoni-gasless-voting-poc.plugin.dao.eth';
 export type GaselessPluginType = typeof GaselessPluginName;
