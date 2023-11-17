@@ -156,13 +156,16 @@ const Container = styled.div.attrs({
 })``;
 
 const LabelWrapper = styled.div.attrs({
-  className: 'tablet:hidden mb-0.5',
+  className: 'md:hidden mb-1',
 })``;
 
 const AddressWrapper = styled.div.attrs({
   className: 'flex-1 order-1',
 })``;
 
+// const DropdownMenuWrapper = styled.div.attrs({
+//   className: 'flex order-2 tablet:order-5 mt-3.5 tablet:mt-0 w-6',
+// })``;
 const DropdownMenuWrapper = styled.div.attrs({
-  className: 'flex order-2 tablet:order-5 mt-3.5 tablet:mt-0 w-6',
+  className: 'flex order-2 md:order-5 mt-7 md:mt-0 w-12',
 })``;

@@ -133,5 +133,5 @@ const ListGroup = styled.div.attrs({
 })``;
 
 const ActionsWrapper = styled.div.attrs({
-  className: 'flex justify-between',
+  className: 'flex justify-between p-2',
 })``;
