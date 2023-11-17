@@ -40,7 +40,11 @@ import {useDaoDetailsQuery} from 'hooks/useDaoDetails';
 import {useDaoMembers} from 'hooks/useDaoMembers';
 import {useDaoToken} from 'hooks/useDaoToken';
 import {useMappedBreadcrumbs} from 'hooks/useMappedBreadcrumbs';
-import {PluginTypes, usePluginClient} from 'hooks/usePluginClient';
+import {
+  GaselessPluginName,
+  PluginTypes,
+  usePluginClient,
+} from 'hooks/usePluginClient';
 import useScreen from 'hooks/useScreen';
 import {useWallet} from 'hooks/useWallet';
 import {useWalletCanVote} from 'hooks/useWalletCanVote';
@@ -104,6 +108,7 @@ export const Proposal: React.FC = () => {
   const pluginType = daoDetails?.plugins?.[0]?.id as PluginTypes;
   const isMultisigPlugin = pluginType === 'multisig.plugin.dao.eth';
   const isTokenVotingPlugin = pluginType === 'token-voting.plugin.dao.eth';
+  const isGaslessVotingPlugin = pluginType === GaselessPluginName;
 
   const {data: daoToken} = useDaoToken(pluginAddress);
 
@@ -531,6 +536,7 @@ export const Proposal: React.FC = () => {
   const votingDisabled =
     proposal?.status !== ProposalStatus.ACTIVE ||
     (isMultisigPlugin && voted) ||
+    (isGaslessVotingPlugin && voted) ||
     (isTokenVotingPlugin && voted && !canRevote);
 
   const handleApprovalClick = useCallback(
@@ -689,6 +695,8 @@ export const Proposal: React.FC = () => {
       {...mappedProps}
     />
   );
+
+  console.log('proposal', proposal);
 
   return (
     <Container>
