@@ -19,6 +19,7 @@ type GaslessVotingModalProps = {
     vote: VoteValues,
     isApproval?: boolean
   ) => Promise<void>;
+  invalidateProposalQueries: () => void;
 };
 
 const GaslessVotingModal: React.FC<GaslessVotingModalProps> = ({
@@ -27,6 +28,7 @@ const GaslessVotingModal: React.FC<GaslessVotingModalProps> = ({
   setShowVoteModal,
   setVoteSubmitted,
   onVoteSubmitted,
+  invalidateProposalQueries,
 }): // props: OffChainVotingModalProps<X>
 JSX.Element => {
   const {t} = useTranslation();
@@ -60,12 +62,13 @@ JSX.Element => {
         break;
       case StepStatus.SUCCESS:
         setShowVoteModal(false);
+        invalidateProposalQueries();
         break;
       default: {
         setShowVoteModal(false);
       }
     }
-  }, [gaslessGlobalState, setShowVoteModal]);
+  }, [gaslessGlobalState, invalidateProposalQueries, setShowVoteModal]);
 
   const handleVoteExecution = useCallback(async () => {
     if (gaslessGlobalState === StepStatus.SUCCESS) {

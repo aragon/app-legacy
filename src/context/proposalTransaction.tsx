@@ -375,16 +375,8 @@ const ProposalTransactionProvider: React.FC<Props> = ({children}) => {
           voteToPersist
         );
       }
-      invalidateProposalQueries();
     },
-    [
-      address,
-      fetchVotingPower,
-      invalidateProposalQueries,
-      network,
-      pluginType,
-      voteTokenAddress,
-    ]
+    [address, fetchVotingPower, network, pluginType, voteTokenAddress]
   );
 
   // handles closing vote/approval modal
@@ -721,6 +713,7 @@ const ProposalTransactionProvider: React.FC<Props> = ({children}) => {
         showVoteModal={showGaslessModal}
         setVoteSubmitted={setVoteOrApprovalSubmitted}
         onVoteSubmitted={onGaslessVoteOrApprovalSubmitted}
+        invalidateProposalQueries={invalidateProposalQueries}
       />
       <PublishModal
         title={title}
