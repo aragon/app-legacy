@@ -3,30 +3,33 @@ import {Erc20TokenDetails} from '@aragon/sdk-client';
 import TipTapLink from '@tiptap/extension-link';
 import {EditorContent, useEditor} from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
-import {Markdown} from 'tiptap-markdown';
 import {Locale, format, formatDistanceToNow} from 'date-fns';
 import * as Locales from 'date-fns/locale';
-import React, {useEffect, useMemo} from 'react';
+import {TFunction} from 'i18next';
+import React, {useCallback, useEffect, useMemo, useState} from 'react';
 import {useFormContext, useWatch} from 'react-hook-form';
 import {useTranslation} from 'react-i18next';
-import {TFunction} from 'i18next';
 import styled from 'styled-components';
+import {Markdown} from 'tiptap-markdown';
 
 import {ExecutionWidget} from 'components/executionWidget';
 import {useFormStep} from 'components/fullScreenStepper';
 import ResourceList from 'components/resourceList';
 import {Loading} from 'components/temporary';
 import {VotingTerminal} from 'containers/votingTerminal';
+import {useClient} from 'hooks/useClient';
 import {useDaoDetailsQuery} from 'hooks/useDaoDetails';
 import {MultisigDaoMember, useDaoMembers} from 'hooks/useDaoMembers';
 import {PluginTypes} from 'hooks/usePluginClient';
+import {useTokenSupply} from 'hooks/useTokenSupply';
+import {useParams} from 'react-router-dom';
+import {useProtocolVersion} from 'services/aragon-sdk/queries/use-protocol-version';
 import {
   isGaslessVotingSettings,
   isMultisigVotingSettings,
   isTokenVotingSettings,
   useVotingSettings,
 } from 'services/aragon-sdk/queries/use-voting-settings';
-import {useTokenSupply} from 'hooks/useTokenSupply';
 import {
   KNOWN_FORMATS,
   getCanonicalDate,
@@ -34,9 +37,18 @@ import {
   getCanonicalUtcOffset,
   getFormattedUtcOffset,
 } from 'utils/date';
-import {getErc20VotingParticipation, getNonEmptyActions} from 'utils/proposals';
-import {ProposalResource, SupportedVotingSettings} from 'utils/types';
-import {useParams} from 'react-router-dom';
+import {decodeOsUpdateAction} from 'utils/library';
+import {
+  encodeOsUpdateAction,
+  getErc20VotingParticipation,
+  getNonEmptyActions,
+} from 'utils/proposals';
+import {
+  Action,
+  ProposalResource,
+  ProposalTypes,
+  SupportedVotingSettings,
+} from 'utils/types';
 
 type ReviewProposalProps = {
   defineProposalStepNumber: number;
@@ -47,16 +59,22 @@ const ReviewProposal: React.FC<ReviewProposalProps> = ({
   defineProposalStepNumber,
   addActionsStepNumber,
 }) => {
+  const {type} = useParams();
+  const {client, network} = useClient();
   const {t, i18n} = useTranslation();
   const {setStep} = useFormStep();
-  const {type} = useParams();
-  const pluginSelectedVersion = useWatch({name: 'pluginSelectedVersion'});
+
+  const [displayedActions, setDisplayedActions] = useState<Action[]>([]);
+
   const osSelectedVersion = useWatch({name: 'osSelectedVersion'});
   const updateFramework = useWatch({name: 'updateFramework'});
 
   const {data: daoDetails, isLoading: detailsLoading} = useDaoDetailsQuery();
+  const daoAddress = daoDetails?.address as string;
   const pluginAddress = daoDetails?.plugins?.[0]?.instanceAddress as string;
   const pluginType = daoDetails?.plugins?.[0]?.id as PluginTypes;
+
+  const {data: protocolVersion} = useProtocolVersion(daoAddress);
 
   const {data: votingSettings, isLoading: votingSettingsLoading} =
     useVotingSettings({pluginAddress, pluginType});
@@ -200,39 +218,72 @@ const ReviewProposal: React.FC<ReviewProposalProps> = ({
     }
   }, [votingSettings, daoToken, members, t, totalSupply?.raw]);
 
+  const getUpdateEncodedActions = useCallback(async () => {
+    if (!client) return;
+
+    let index = 0;
+    const updateActions = [];
+
+    if (updateFramework.os && osSelectedVersion?.version) {
+      setValue(`actions.${index}.name`, 'os_update');
+      setValue(`actions.${index}.inputs.version`, osSelectedVersion.version);
+      index++;
+
+      // encode and decode the osUpdateAction
+      const encodedOsAction = await encodeOsUpdateAction(
+        protocolVersion,
+        osSelectedVersion.version,
+        network,
+        daoAddress,
+        client
+      );
+
+      const decoded = decodeOsUpdateAction(encodedOsAction, client, t);
+
+      if (decoded) {
+        updateActions.push(decoded);
+      }
+    }
+
+    setDisplayedActions(updateActions);
+  }, [
+    client,
+    daoAddress,
+    network,
+    osSelectedVersion?.version,
+    protocolVersion,
+    setValue,
+    t,
+    updateFramework?.os,
+  ]);
+
   /*************************************************
    *                    Effects                    *
    *************************************************/
+  useEffect(() => {
+    if (type === ProposalTypes.Default) {
+      setDisplayedActions(
+        getNonEmptyActions(
+          values.actions,
+          isMultisig ? votingSettings : undefined
+        )
+      );
+    } else {
+      getUpdateEncodedActions();
+    }
+  }, [
+    getUpdateEncodedActions,
+    isMultisig,
+    type,
+    values.actions,
+    votingSettings,
+  ]);
+
   useEffect(() => {
     if (values.proposal === '<p></p>') {
       setValue('proposal', '');
     }
   }, [setValue, values.proposal]);
-
-  useEffect(() => {
-    if (type === 'os-update') {
-      let index = 0;
-      setValue('actions', []);
-      if (updateFramework.os && pluginSelectedVersion?.version) {
-        setValue(`actions.${index}.name`, 'os_update');
-        setValue(`actions.${index}.inputs.version`, osSelectedVersion?.version);
-        index++;
-      }
-      if (updateFramework.plugin && pluginSelectedVersion?.version) {
-        setValue(`actions.${index}.name`, 'plugin_update');
-        setValue(`actions.${index}.inputs`, {
-          versionTag: pluginSelectedVersion.version,
-        });
-      }
-    }
-  }, [
-    osSelectedVersion?.version,
-    pluginSelectedVersion.version,
-    setValue,
-    type,
-    updateFramework.os,
-    updateFramework.plugin,
-  ]);
 
   /*************************************************
    *                    Render                     *
@@ -297,10 +348,7 @@ const ReviewProposal: React.FC<ReviewProposalProps> = ({
           )}
 
           <ExecutionWidget
-            actions={getNonEmptyActions(
-              values.actions,
-              isMultisig ? votingSettings : undefined
-            )}
+            actions={displayedActions}
             onAddAction={
               addActionsStepNumber
                 ? () => setStep(addActionsStepNumber)

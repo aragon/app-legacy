@@ -1,3 +1,4 @@
+import {InputValue} from '@aragon/ods-old';
 import {
   ApplyInstallationParams,
   DaoMetadata,
@@ -10,18 +11,17 @@ import {
   VoteValues,
   VotingSettings,
 } from '@aragon/sdk-client';
-import {VersionTag, SupportedVersion} from '@aragon/sdk-client-common';
+import {SupportedVersion, VersionTag} from '@aragon/sdk-client-common';
+import {
+  GaslessPluginVotingSettings,
+  GaslessVotingProposal,
+} from '@vocdoni/gasless-voting';
 import {BigNumber} from 'ethers';
 
-import {InputValue} from '@aragon/ods-old';
 import {TokenVotingWalletField} from 'components/addWallets/row';
 import {MultisigWalletField} from 'components/multisigWallets/row';
 import {TimeFilter, TransferTypes} from './constants';
 import {Web3Address} from './library';
-import {
-  GaslessVotingProposal,
-  GaslessPluginVotingSettings,
-} from '@vocdoni/gasless-voting';
 import {TokenType} from './validators';
 
 /*************************************************

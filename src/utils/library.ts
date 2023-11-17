@@ -1,5 +1,6 @@
 import {
   Client,
+  DaoUpdateDecodedParams,
   Erc20TokenDetails,
   MintTokenParams,
   MultisigClient,
@@ -48,6 +49,7 @@ import {
   ActionExternalContract,
   ActionMintToken,
   ActionRemoveAddress,
+  ActionSCC,
   ActionUpdateMetadata,
   ActionUpdateMultisigPluginSettings,
   ActionUpdatePluginSettings,
@@ -481,6 +483,55 @@ export async function decodeToExternalAction(
     }
   } catch (error) {
     console.error('Failed to decode external contract action:', error);
+  }
+}
+
+/**
+ * Decodes the OS update action and prepares data for an external contract action.
+ * @param encodedAction The encoded action to decode.
+ * @param client The client instance used for decoding.
+ * @param t The translation function.
+ * @returns ActionSCC object representing the decoded action, or undefined if decoding fails.
+ */
+export function decodeOsUpdateAction(
+  encodedAction: DaoAction | undefined,
+  client: Client | undefined,
+  t: TFunction
+) {
+  if (!client) {
+    console.error('SDK client is not initialized correctly');
+    return;
+  }
+
+  if (!encodedAction) return;
+
+  try {
+    const decoded: DaoUpdateDecodedParams = client.decoding.daoUpdateAction(
+      encodedAction.data
+    );
+
+    const inputs = Object.entries(decoded).map(([key, value]) => {
+      let displayedValue = value;
+      if (typeof value === 'object' && Object.keys(value).length === 0)
+        displayedValue = ' ';
+
+      return {name: key, type: typeof value, value: displayedValue};
+    });
+
+    return {
+      name: 'external_contract_action',
+      functionName:
+        client.decoding.findInterface(encodedAction.data)?.functionName ??
+        'upgradeToAndCall',
+      contractName: t('labels.aragonOSx'),
+      contractAddress: encodedAction.to,
+      inputs,
+    } as ActionSCC;
+  } catch (error) {
+    console.error(
+      'decodeOsUpdateAction: failed to decode os_update action',
+      error
+    );
   }
 }
 

@@ -1,44 +1,61 @@
 import {AlertInline} from '@aragon/ods-old';
-import React, {useEffect, useState} from 'react';
-import {Controller, useFormContext, useWatch} from 'react-hook-form';
-import styled from 'styled-components';
-import {useTranslation} from 'react-i18next';
 import {useEditor} from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
+import React, {useEffect, useState} from 'react';
+import {
+  Controller,
+  useFormContext,
+  useFormState,
+  useWatch,
+} from 'react-hook-form';
+import {useTranslation} from 'react-i18next';
+import styled from 'styled-components';
 import {Markdown} from 'tiptap-markdown';
 
+import {Loading} from 'components/temporary';
 import {UpdateListItem} from 'containers/updateListItem/updateListItem';
 import {VersionSelectionMenu} from 'containers/versionSelectionMenu/versionSelectionMenu';
 import {useUpdateContext} from 'context/update';
 import {useDaoDetailsQuery} from 'hooks/useDaoDetails';
 import {useProtocolVersion} from 'services/aragon-sdk/queries/use-protocol-version';
 import {useReleaseNotes} from 'services/aragon-sdk/queries/use-release-notes';
-import {ProposalFormData} from 'utils/types';
 import {osxUpdates} from 'utils/osxUpdates';
+import {ProposalFormData} from 'utils/types';
+
+type ModalState = {
+  type: 'os' | 'plugin' | 'none';
+  isOpen: boolean;
+};
 
 export const DefineUpdateProposal: React.FC = () => {
-  const [showModal, setShowModal] = useState<{
-    type: 'os' | 'plugin' | 'none';
-    isOpen: boolean;
-  }>({
+  const [showModal, setShowModal] = useState<ModalState>({
     type: 'none',
     isOpen: false,
   });
 
-  // data fetching
-  const {data: dao} = useDaoDetailsQuery();
-  const {data: releases} = useReleaseNotes();
-  const {data: versions} = useProtocolVersion(dao?.address as string);
-
   // hooks
   const {t} = useTranslation();
 
-  const {handlePreparePlugin, availableOSxVersions, availablePluginVersions} =
-    useUpdateContext();
+  const {
+    handlePreparePlugin,
+    availableOSxVersions: availableProtocolUpdates,
+    availablePluginVersions: availablePluginUpdates,
+  } = useUpdateContext();
+
+  // data fetching
+  const {data: dao, isLoading: detailsLoading} = useDaoDetailsQuery();
+  const daoAddress = dao?.address as string;
+
+  const {data: releases, isLoading: releaseNotesLoading} = useReleaseNotes();
+  const {data: protocolVersion, isLoading: protocolVersionLoading} =
+    useProtocolVersion(daoAddress);
 
   // form values
   const editor = useEditor({extensions: [StarterKit, Markdown]});
-  const {control, setValue, formState} = useFormContext();
+
+  const {control, setValue} = useFormContext();
+  const {dirtyFields} = useFormState({control});
+
   const pluginSelectedVersion = useWatch<
     ProposalFormData,
     'pluginSelectedVersion'
@@ -53,23 +70,44 @@ export const DefineUpdateProposal: React.FC = () => {
   });
 
   // intermediate values
-  const multipleOSxUpdates = (availableOSxVersions?.size || 0) > 1;
-  const multiplePluginUpdates = (availablePluginVersions?.size || 0) > 1;
+  const multipleOSxUpdates = (availableProtocolUpdates?.size || 0) > 1;
+  const multiplePluginUpdates = (availablePluginUpdates?.size || 0) > 1;
 
-  const updateItems = [
+  const isLoading =
+    detailsLoading || protocolVersionLoading || releaseNotesLoading;
+
+  const OSxReleaseNotes = osxUpdates.getReleaseNotes({
+    releases,
+    version: osSelectedVersion?.version,
+  });
+
+  const pluginReleaseNotes = osxUpdates.getReleaseNotes({
+    releases,
+    version: pluginSelectedVersion?.version,
+    isPlugin: true,
+  });
+
+  const isLatestOSxVersion = !!availableProtocolUpdates?.get(
+    osSelectedVersion?.version ?? ''
+  )?.isLatest;
+
+  const isLatestPlugin = !!availablePluginUpdates?.get(
+    osxUpdates.getPluginVersion(pluginSelectedVersion?.version) ?? ''
+  )?.isLatest;
+
+  const isPluginPrepared = availablePluginUpdates?.get(
+    osxUpdates.getPluginVersion(pluginSelectedVersion?.version) ?? ''
+  )?.isPrepared;
+
+  const updateListItems = [
     {
       id: 'os',
       label: osxUpdates.getProtocolUpdateLabel(osSelectedVersion?.version),
-      releaseNote: osxUpdates.getReleaseNotes({
-        releases,
-        version: osSelectedVersion?.version,
-      }),
+      releaseNote: OSxReleaseNotes,
       linkLabel: t('update.item.releaseNotesLabel'),
-      ...(availableOSxVersions?.get(osSelectedVersion?.version ?? '')
-        ?.isLatest && {
+      ...(isLatestOSxVersion && {
         tagLabelNatural: t('update.item.tagLatest'),
       }),
-
       ...(multipleOSxUpdates && {
         buttonSecondaryLabel: t('update.item.versionCtaLabel'),
         onClickActionSecondary: (e: React.MouseEvent) => {
@@ -79,29 +117,17 @@ export const DefineUpdateProposal: React.FC = () => {
           });
           e?.stopPropagation();
         },
-        disabled: !availableOSxVersions?.size,
+        disabled: !availableProtocolUpdates?.size,
       }),
     },
     {
       id: 'plugin',
-      releaseNote: osxUpdates.getReleaseNotes({
-        releases,
-        version: pluginSelectedVersion?.version,
-        isPlugin: true,
-      }),
+      releaseNote: pluginReleaseNotes,
       label: osxUpdates.getPluginUpdateLabel(pluginSelectedVersion?.version),
       linkLabel: t('update.item.releaseNotesLabel'),
-      ...(availablePluginVersions?.get(
-        osxUpdates.getPluginVersion(pluginSelectedVersion?.version) ?? ''
-      )?.isLatest && {
-        tagLabelNatural: t('update.item.tagLatest'),
-      }),
-      ...(availablePluginVersions?.get(
-        osxUpdates.getPluginVersion(pluginSelectedVersion?.version) ?? ''
-      )?.isPrepared
-        ? {
-            tagLabelInfo: t('update.item.tagPrepared'),
-          }
+      ...(isLatestPlugin && {tagLabelNatural: t('update.item.tagLatest')}),
+      ...(isPluginPrepared
+        ? {tagLabelInfo: t('update.item.tagPrepared')}
         : {
             buttonPrimaryLabel: t('update.item.prepareCtaLabel'),
             onClickActionPrimary: (e: React.MouseEvent) => e?.stopPropagation(),
@@ -116,7 +142,7 @@ export const DefineUpdateProposal: React.FC = () => {
           });
           e?.stopPropagation();
         },
-        disabled: !availablePluginVersions?.size,
+        disabled: !availablePluginUpdates?.size,
       }),
     },
   ];
@@ -152,7 +178,7 @@ export const DefineUpdateProposal: React.FC = () => {
         updatedVersion,
         description: editor?.getHTML().replace(/<(\/){0,1}p>/g, ''),
         releaseNotesLink: releaseNotes?.html_url,
-        currentVersion: osxUpdates.getProtocolUpdateLabel(versions),
+        currentVersion: osxUpdates.getProtocolUpdateLabel(protocolVersion),
       });
     }
     if (updateFramework?.plugin) {
@@ -191,67 +217,35 @@ export const DefineUpdateProposal: React.FC = () => {
     t,
     updateFramework?.os,
     updateFramework?.plugin,
-    versions,
-  ]);
-
-  // set and remove plugin actions from form
-  useEffect(() => {
-    let index = 0;
-    setValue('actions', []);
-    if (updateFramework?.os && pluginSelectedVersion?.version) {
-      setValue(`actions.${index}.name`, 'os_update');
-      setValue(`actions.${index}.inputs.version`, osSelectedVersion?.version);
-      index++;
-    }
-    if (updateFramework?.plugin && pluginSelectedVersion?.version) {
-      setValue(`actions.${index}.name`, 'plugin_update');
-      setValue(`actions.${index}.inputs`, {
-        versionTag: pluginSelectedVersion?.version,
-      });
-    }
-  }, [
-    osSelectedVersion?.version,
-    pluginSelectedVersion?.version,
-    setValue,
-    updateFramework?.os,
-    updateFramework?.plugin,
+    protocolVersion,
   ]);
 
   // auto select the available updates by default if only one
   // update is present in a "framework"
   useEffect(() => {
-    if (
-      availableOSxVersions &&
-      availablePluginVersions &&
-      !formState.dirtyFields.actions
-    ) {
-      if (availableOSxVersions.size === 1) {
-        setValue(`actions.0.name`, 'os_update');
-        setValue(
-          `actions.0.inputs.version`,
-          availableOSxVersions.values().next().value.version
-        );
+    if (!dirtyFields.updateFramework) {
+      if (availableProtocolUpdates?.size === 1) {
         setValue('updateFramework.os', true);
       }
 
-      if (availablePluginVersions.size === 1) {
-        setValue(`actions.1.name`, 'plugin_update');
-        setValue(`actions.1.inputs`, {
-          versionTag: availablePluginVersions.values().next().value.version,
-        });
+      if (availablePluginUpdates?.size === 1) {
         setValue('updateFramework.plugin', true);
       }
     }
   }, [
-    availableOSxVersions,
-    availablePluginVersions,
-    formState.dirtyFields.actions,
+    availablePluginUpdates?.size,
+    availableProtocolUpdates?.size,
+    dirtyFields.updateFramework,
     setValue,
   ]);
 
   /*************************************************
    *                     Render                    *
    *************************************************/
+  if (isLoading || !OSxReleaseNotes || !pluginReleaseNotes) {
+    return <Loading />;
+  }
+
   return (
     <UpdateContainer>
       <UpdateGroupWrapper>
@@ -261,7 +255,7 @@ export const DefineUpdateProposal: React.FC = () => {
           control={control}
           render={({field: {onChange, value}}) => (
             <>
-              {updateItems.map((data, index) => {
+              {updateListItems.map((data, index) => {
                 if (!data.disabled)
                   return (
                     <UpdateListItem

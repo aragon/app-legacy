@@ -8,6 +8,7 @@ import {
 } from '@aragon/sdk-client';
 import {ensure0x, ProposalStatus} from '@aragon/sdk-client-common';
 import {InfiniteData} from '@tanstack/react-query';
+import {GaslessVotingProposal} from '@vocdoni/gasless-voting';
 
 import {SupportedChainID} from 'utils/constants';
 import {executionStorage, voteStorage} from 'utils/localStorage';
@@ -18,7 +19,6 @@ import {
   isTokenBasedProposal,
   recalculateProposalStatus,
 } from 'utils/proposals';
-import {GaslessVotingProposal} from '@vocdoni/gasless-voting';
 
 /**
  * Transforms proposals within an `InfiniteData` structure.

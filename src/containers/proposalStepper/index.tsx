@@ -29,7 +29,7 @@ import {
 import {getCanonicalUtcOffset} from 'utils/date';
 import {removeUnchangedMinimumApprovalAction} from 'utils/library';
 import {Governance} from 'utils/paths';
-import {Action, CreateProposalFormData, ProposalTypes} from 'utils/types';
+import {Action, ProposalTypes} from 'utils/types';
 import {actionsAreValid} from 'utils/validators';
 
 type ProposalStepperType = {
@@ -58,18 +58,9 @@ const ProposalStepper: React.FC<ProposalStepperType> = ({
 
   const {errors, dirtyFields} = useFormState({control});
 
-  const formActions = useWatch<CreateProposalFormData, 'actions'>({
-    name: 'actions',
-  });
-
-  const updateFramework = useWatch<CreateProposalFormData, 'updateFramework'>({
-    name: 'updateFramework',
-  });
-
-  const pluginSelectedVersion = useWatch<
-    CreateProposalFormData,
-    'pluginSelectedVersion'
-  >({name: 'pluginSelectedVersion'});
+  const formActions = useWatch({name: 'actions'});
+  const updateFramework = useWatch({name: 'updateFramework'});
+  const pluginSelectedVersion = useWatch({name: 'pluginSelectedVersion'});
 
   const isUpdateProposal = type === ProposalTypes.OSUpdates;
 

@@ -66,6 +66,7 @@ import {
   decodeMetadataToAction,
   decodeMintTokensToAction,
   decodeMultisigSettingsToAction,
+  decodeOsUpdateAction,
   decodePluginSettingsToAction,
   decodeRemoveMembersToAction,
   decodeToExternalAction,
@@ -303,6 +304,8 @@ export const Proposal: React.FC = () => {
           return decodeMultisigSettingsToAction(action.data, multisigClient);
         case 'setMetadata':
           return decodeMetadataToAction(action.data, client);
+        case 'upgradeToAndCall':
+          return decodeOsUpdateAction(action, client, t);
         default: {
           try {
             const decodedAction = await decodeWithdrawToAction(
