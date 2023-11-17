@@ -646,15 +646,15 @@ export const Proposal: React.FC = () => {
       title={
         isMultisigProposal(proposal)
           ? t('votingTerminal.multisig.title')
-          : isGaslessProposal(proposal)
-          ? t('votingTerminal.vocdoni.titleCommunityVoting')
-          : t('votingTerminal.title')
+          : isTokenVotingPlugin
+          ? t('votingTerminal.title')
+          : undefined // Title will be shown on the GaslessVotingTerminal
       }
       status={proposalStatus}
       pluginType={pluginType}
       daoToken={daoToken}
       blockNumber={proposal.creationBlockNumber}
-      statusLabel={voteStatus}
+      statusLabel={isGaslessProposal(proposal) ? undefined : voteStatus} // Status will be shown on the GaslessVotingTerminal
       selectedTab={terminalTab}
       alertMessage={alertMessage}
       onTabSelected={setTerminalTab}

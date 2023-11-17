@@ -5,10 +5,7 @@ import {format} from 'date-fns';
 import {getFormattedUtcOffset, KNOWN_FORMATS} from '../../utils/date';
 import {VoterType} from '@aragon/ods-old';
 import styled from 'styled-components';
-import {
-  AccordionItem,
-  AccordionMultiple,
-} from '../../components/accordionMethod';
+import {AccordionMultiple} from '../../components/accordionMethod';
 import {GaslessVotingProposal} from '@vocdoni/gasless-voting';
 import {useGaslessCommiteVotes} from '../../context/useGaslessVoting';
 import {useWallet} from '../../hooks/useWallet';
@@ -29,6 +26,7 @@ import {
 } from '../../utils/committeeVoting';
 import {PluginTypes} from '../../hooks/usePluginClient';
 import {BigNumber} from 'ethers';
+import {VotingTerminalAccordionItem} from './accordionItem';
 
 type CommitteeExecutionWidgetProps = Pick<
   ExecutionWidgetProps,
@@ -240,10 +238,8 @@ export const GaslessVotingTerminal: React.FC<CommitteeVotingTerminalProps> = ({
   const ApprovalVotingTerminal = () => {
     return (
       <VotingTerminal
-        title={t('votingTerminal.vocdoni.titleActionsApproval')}
         status={proposal.status}
         pluginType={pluginType}
-        statusLabel={approvalStatus}
         selectedTab={terminalTab}
         alertMessage={alertMessage}
         onTabSelected={setTerminalTab}
@@ -280,22 +276,20 @@ export const GaslessVotingTerminal: React.FC<CommitteeVotingTerminalProps> = ({
           <Summary>{t('votingTerminal.vocdoni.desc')}</Summary>
         </Header>
         <AccordionMultiple defaultValue={defaultAccordion}>
-          <AccordionItem
+          <VotingTerminalAccordionItem
             name={'community-voting'}
-            type={'action-builder'}
-            methodName={'Community Voting'}
+            methodName={t('votingTerminal.vocdoni.titleCommunityVoting')}
             alertLabel={votingStatusLabel}
           >
             {children}
-          </AccordionItem>
-          <AccordionItem
+          </VotingTerminalAccordionItem>
+          <VotingTerminalAccordionItem
             name={'actions-approval'}
-            type={'action-builder'}
-            methodName={'Actions approval'}
+            methodName={t('votingTerminal.vocdoni.titleActionsApproval')}
             alertLabel={approvalStatus}
           >
             <ApprovalVotingTerminal />
-          </AccordionItem>
+          </VotingTerminalAccordionItem>
         </AccordionMultiple>
       </Container>
       <ExecutionWidget

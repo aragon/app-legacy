@@ -42,7 +42,7 @@ export type ProposalVoteResults = {
 export type TerminalTabs = 'voters' | 'breakdown' | 'info';
 
 export type VotingTerminalProps = {
-  title: string;
+  title?: string;
   breakdownTabDisabled?: boolean;
   votersTabDisabled?: boolean;
   voteNowDisabled?: boolean;
@@ -56,7 +56,7 @@ export type VotingTerminalProps = {
   supportThreshold?: number;
   voters?: Array<VoterType>;
   status?: ProposalStatus;
-  statusLabel: string;
+  statusLabel?: string;
   strategy?: string;
   daoToken?: Erc20TokenDetails | Erc20WrapperTokenDetails;
   blockNumber?: Number;
@@ -204,12 +204,14 @@ export const VotingTerminal: React.FC<VotingTerminalProps> = ({
     <Container>
       <Header className="items-start gap-x-6">
         <div className="flex-1 space-y-3">
-          <Heading1>{title}</Heading1>
-          <AlertInline
-            label={statusLabel}
-            mode={status === 'Defeated' ? 'critical' : 'neutral'}
-            icon={<StatusIcon status={status} />}
-          />
+          {title && <Heading1> {title}</Heading1>}
+          {statusLabel && (
+            <AlertInline
+              label={statusLabel}
+              mode={status === 'Defeated' ? 'critical' : 'neutral'}
+              icon={<StatusIcon status={status} />}
+            />
+          )}
         </div>
         <div className="flex-1">
           <ButtonGroup
