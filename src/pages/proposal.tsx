@@ -689,14 +689,12 @@ export const Proposal: React.FC = () => {
       }
       className={
         isGaslessProposal(proposal)
-          ? 'border border-neutral-100 bg-neutral-0 px-4 py-5 md:p-6'
+          ? 'border border-t-0 border-neutral-100 bg-neutral-0 px-4 py-5 md:p-6'
           : undefined
       }
       {...mappedProps}
     />
   );
-
-  console.log('proposal', proposal);
 
   return (
     <Container>
