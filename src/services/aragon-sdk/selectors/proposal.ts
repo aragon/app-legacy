@@ -6,7 +6,7 @@ import {
   TokenVotingProposalVote,
   VoteValues,
 } from '@aragon/sdk-client';
-import {ProposalStatus} from '@aragon/sdk-client-common';
+import {ensure0x, ProposalStatus} from '@aragon/sdk-client-common';
 import {InfiniteData} from '@tanstack/react-query';
 
 import {SupportedChainID} from 'utils/constants';
@@ -75,6 +75,9 @@ export function transformProposal<
 
   syncApprovalsOrVotes(chainId, proposal);
   syncExecutionInfo(chainId, proposal);
+
+  // todo(kon): Quickfix for gasless proposals bug where the creator address is not prefixed with 0x
+  proposal.creatorAddress = ensure0x(proposal.creatorAddress);
 
   return recalculateProposalStatus(proposal) as T;
 }
