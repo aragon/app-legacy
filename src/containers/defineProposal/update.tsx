@@ -54,7 +54,7 @@ export const DefineUpdateProposal: React.FC = () => {
   const editor = useEditor({extensions: [StarterKit, Markdown]});
 
   const {control, setValue} = useFormContext();
-  const {dirtyFields} = useFormState({control});
+  const {touchedFields} = useFormState({control});
 
   const pluginSelectedVersion = useWatch<
     ProposalFormData,
@@ -220,23 +220,53 @@ export const DefineUpdateProposal: React.FC = () => {
     protocolVersion,
   ]);
 
+  // add values to form
+  useEffect(() => {
+    let index = 0;
+    setValue('actions', []);
+    if (updateFramework?.os && osSelectedVersion?.version) {
+      setValue(`actions.${index}.name`, 'os_update');
+      setValue(`actions.${index}.inputs.version`, osSelectedVersion?.version);
+      index++;
+    }
+    if (updateFramework?.plugin && pluginSelectedVersion?.version) {
+      setValue(`actions.${index}.name`, 'plugin_update');
+      setValue(`actions.${index}.inputs`, {
+        versionTag: pluginSelectedVersion.version,
+      });
+    }
+  }, [
+    osSelectedVersion?.version,
+    pluginSelectedVersion?.version,
+    setValue,
+    updateFramework?.os,
+    updateFramework?.plugin,
+  ]);
+
   // auto select the available updates by default if only one
   // update is present in a "framework"
   useEffect(() => {
-    if (!dirtyFields.updateFramework) {
-      if (availableProtocolUpdates?.size === 1) {
-        setValue('updateFramework.os', true);
-      }
-
+    if (!touchedFields.updateFramework?.plugin) {
       if (availablePluginUpdates?.size === 1) {
-        setValue('updateFramework.plugin', true);
+        setValue('updateFramework.plugin', true, {shouldTouch: true});
       }
     }
   }, [
     availablePluginUpdates?.size,
-    availableProtocolUpdates?.size,
-    dirtyFields.updateFramework,
     setValue,
+    touchedFields.updateFramework?.plugin,
+  ]);
+
+  useEffect(() => {
+    if (!touchedFields.updateFramework?.os) {
+      if (availableProtocolUpdates?.size === 1) {
+        setValue('updateFramework.os', true, {shouldTouch: true});
+      }
+    }
+  }, [
+    availableProtocolUpdates?.size,
+    setValue,
+    touchedFields.updateFramework?.os,
   ]);
 
   /*************************************************
@@ -295,7 +325,8 @@ export const DefineUpdateProposal: React.FC = () => {
 };
 
 const UpdateGroupWrapper = styled.div.attrs({
-  className: 'flex md:flex-row flex-col gap-y-3 gap-x-6',
+  className:
+    'flex flex-col items-center md:flex-row md:justify-center md:items-stretch gap-y-3 gap-x-6',
 })``;
 
 const UpdateContainer = styled.div.attrs({

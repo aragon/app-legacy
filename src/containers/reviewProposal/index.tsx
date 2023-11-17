@@ -218,30 +218,38 @@ const ReviewProposal: React.FC<ReviewProposalProps> = ({
     }
   }, [votingSettings, daoToken, members, t, totalSupply?.raw]);
 
-  const getUpdateEncodedActions = useCallback(async () => {
+  /*************************************************
+   *             Callbacks & Handlers              *
+   *************************************************/
+  const getDecodedUpdateActions = useCallback(async () => {
     if (!client) return;
 
-    let index = 0;
     const updateActions = [];
 
-    if (updateFramework.os && osSelectedVersion?.version) {
-      setValue(`actions.${index}.name`, 'os_update');
-      setValue(`actions.${index}.inputs.version`, osSelectedVersion.version);
-      index++;
+    for (const action of values.actions as Action[]) {
+      if (
+        action.name === 'os_update' &&
+        updateFramework?.os &&
+        osSelectedVersion?.version
+      ) {
+        // encode and decode the osUpdateAction so that it can be
+        // decoded and passed to the generic SCC external action card
+        const encodedOsAction = await encodeOsUpdateAction(
+          protocolVersion,
+          osSelectedVersion.version,
+          network,
+          daoAddress,
+          client
+        );
 
-      // encode and decode the osUpdateAction
-      const encodedOsAction = await encodeOsUpdateAction(
-        protocolVersion,
-        osSelectedVersion.version,
-        network,
-        daoAddress,
-        client
-      );
+        // decode using the SDK to get around the proxy issue
+        // TODO: remove this when the implementation contract and ABI can be
+        // fetched properly by the generic action decoder
+        const decoded = decodeOsUpdateAction(encodedOsAction, client, t);
 
-      const decoded = decodeOsUpdateAction(encodedOsAction, client, t);
-
-      if (decoded) {
-        updateActions.push(decoded);
+        if (decoded) {
+          updateActions.push(decoded);
+        }
       }
     }
 
@@ -252,9 +260,9 @@ const ReviewProposal: React.FC<ReviewProposalProps> = ({
     network,
     osSelectedVersion?.version,
     protocolVersion,
-    setValue,
     t,
     updateFramework?.os,
+    values.actions,
   ]);
 
   /*************************************************
@@ -269,10 +277,10 @@ const ReviewProposal: React.FC<ReviewProposalProps> = ({
         )
       );
     } else {
-      getUpdateEncodedActions();
+      getDecodedUpdateActions();
     }
   }, [
-    getUpdateEncodedActions,
+    getDecodedUpdateActions,
     isMultisig,
     type,
     values.actions,
