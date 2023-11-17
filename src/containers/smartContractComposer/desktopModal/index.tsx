@@ -42,8 +42,6 @@ const DesktopModal: React.FC<DesktopModalProps> = props => {
   const [search, setSearch] = useState('');
   const {getValues, setValue, resetField} = useFormContext<SccFormData>();
 
-  console.log('selectedSC', selectedSC);
-
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore
   const contracts = getValues('contracts') || [];

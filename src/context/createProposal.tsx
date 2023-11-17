@@ -374,7 +374,6 @@ const CreateProposalWrapper: React.FC<Props> = ({
               pluginAddress: pluginAddress,
             }
           );
-          console.log('view', daoActionsArray);
           daoActionsArray.map(daoAction => {
             actions.push(Promise.resolve(daoAction));
           });
