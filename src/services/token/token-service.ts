@@ -25,11 +25,6 @@ import {
   IFetchTokenParams,
   IFetchTokenTransfersParams,
 } from './token-service.api';
-import {AlchemyTransfer} from './domain/alchemy-transfer';
-import {
-  CovalentTokenTransfer,
-  CovalentTransferInfo,
-} from './domain/covalent-transfer';
 import request, {gql} from 'graphql-request';
 
 const REPLACEMENT_BASE_ETHER_LOGO_URL =
@@ -113,14 +108,20 @@ class TokenService {
         this.tokenQueryDocument,
         {network, tokenAddress}
       );
+      const currPriceUsd = resp.priceUsd || 0;
+      const prevPriceUsd = currPriceUsd - (resp.priceChangeOnDayUsd || 0);
+      const priceChangePc =
+        currPriceUsd === 0 && prevPriceUsd === 0
+          ? 0
+          : (currPriceUsd / prevPriceUsd - 1) * 100;
       token = {
         name: resp.name,
         symbol: resp.symbol,
         imgUrl: resp.imageUrl,
         address: resp.contractAddress,
-        price: resp.priceUsd,
+        price: resp.priceUsd || null,
         priceChange: {
-          day: resp.priceChangeOnDayUsd,
+          day: priceChangePc,
           week: 0,
           month: 0,
           year: 0,
