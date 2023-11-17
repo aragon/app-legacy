@@ -512,10 +512,15 @@ export function decodeOsUpdateAction(
 
     const inputs = Object.entries(decoded).map(([key, value]) => {
       let displayedValue = value;
+      let displayedType = typeof value as string;
+
       if (typeof value === 'object' && Object.keys(value).length === 0)
         displayedValue = ' ';
 
-      return {name: key, type: typeof value, value: displayedValue};
+      if (typeof value === 'string') displayedType = 'address';
+      else if (value instanceof Array) displayedType = 'bytes';
+
+      return {name: key, type: displayedType, value: displayedValue};
     });
 
     return {
