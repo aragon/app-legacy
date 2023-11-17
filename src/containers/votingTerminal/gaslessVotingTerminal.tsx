@@ -246,6 +246,7 @@ export const GaslessVotingTerminal: React.FC<CommitteeVotingTerminalProps> = ({
         onVoteClicked={onClick}
         voteButtonLabel={buttonLabel}
         voteNowDisabled={voteNowDisabled}
+        className={'border border-neutral-100 bg-neutral-0 px-4 py-5 md:p-6'}
         {...mappedProps}
       />
     );

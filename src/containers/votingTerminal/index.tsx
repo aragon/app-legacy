@@ -74,6 +74,7 @@ export type VotingTerminalProps = {
   onTabSelected?: React.Dispatch<React.SetStateAction<TerminalTabs>>;
   pluginType: PluginTypes;
   executableWithNextApproval?: boolean;
+  className?: string;
 };
 
 export const VotingTerminal: React.FC<VotingTerminalProps> = ({
@@ -109,6 +110,7 @@ export const VotingTerminal: React.FC<VotingTerminalProps> = ({
   onTabSelected,
   pluginType,
   executableWithNextApproval = false,
+  className,
 }) => {
   const [page, setPage] = useState(1);
   const [query, setQuery] = useState('');
@@ -201,7 +203,7 @@ export const VotingTerminal: React.FC<VotingTerminalProps> = ({
   ]);
 
   return (
-    <Container>
+    <Container customClasses={className}>
       <Header className="items-start gap-x-6">
         <div className="flex-1 space-y-3">
           {title && <Heading1> {title}</Heading1>}
@@ -432,10 +434,13 @@ const StatusIcon: React.FC<StatusProp> = ({status}) => {
   }
 };
 
-const Container = styled.div.attrs({
-  className:
-    'md:p-6 py-5 px-4 rounded-xl bg-neutral-0 border border-neutral-100',
-})``;
+const Container = styled.div.attrs<{customClasses?: string}>(
+  ({
+    customClasses = 'md:p-6 py-5 px-4 rounded-xl bg-neutral-0 border border-neutral-100',
+  }) => ({
+    className: customClasses,
+  })
+)<{customClasses?: string}>``;
 
 const Header = styled.div.attrs({
   className: 'md:flex md:flex-row md:space-x-6 space-y-4 md:space-y-0',
