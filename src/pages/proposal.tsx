@@ -89,6 +89,7 @@ import {
 import {Action} from 'utils/types';
 import {GaslessVotingTerminal} from '../containers/votingTerminal/gaslessVotingTerminal';
 import {useGaslessHasAlreadyVote} from '../context/useGaslessVoting';
+import {daoABI} from 'abis/daoABI';
 
 export const PENDING_PROPOSAL_STATUS_INTERVAL = 1000 * 10;
 export const PROPOSAL_STATUS_INTERVAL = 1000 * 60;
@@ -274,6 +275,7 @@ export const Proposal: React.FC = () => {
         client?.decoding.findInterface(action.data) ||
         pluginClient?.decoding.findInterface(action.data);
 
+      console.log(functionParams);
       switch (functionParams?.functionName) {
         case 'transfer':
           return decodeWithdrawToAction(
@@ -305,7 +307,16 @@ export const Proposal: React.FC = () => {
         case 'setMetadata':
           return decodeMetadataToAction(action.data, client);
         case 'upgradeToAndCall':
-          return decodeOsUpdateAction(action, client, t);
+          return decodeOsUpdateAction(action, client);
+        case 'grant':
+        case 'revoke':
+          return decodeToExternalAction(
+            action,
+            proposal.dao.address,
+            network,
+            t,
+            daoABI
+          );
         default: {
           try {
             const decodedAction = await decodeWithdrawToAction(

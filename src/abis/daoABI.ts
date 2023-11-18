@@ -1,3 +1,5 @@
+import {Abi} from 'utils/abiDecoder';
+
 export const daoABI = [
   {inputs: [], stateMutability: 'nonpayable', type: 'constructor'},
   {
@@ -33,4 +35,4 @@ export const daoABI = [
     type: 'function',
   },
   {stateMutability: 'payable', type: 'receive'},
-];
+] as unknown as Abi[];
