@@ -58,7 +58,7 @@ import {
   Input,
 } from 'utils/types';
 import {i18n} from '../../i18n.config';
-import {addABI, decodeMethod} from './abiDecoder';
+import {Abi, addABI, decodeMethod} from './abiDecoder';
 import {attachEtherNotice} from './contract';
 import {getTokenInfo} from './tokens';
 
@@ -403,7 +403,8 @@ export async function decodeToExternalAction(
   action: DaoAction,
   daoAddress: string,
   network: SupportedNetworks,
-  t: TFunction
+  t: TFunction,
+  ABI?: Abi[]
 ): Promise<ActionExternalContract | undefined> {
   try {
     const etherscanData = await getEtherscanVerifiedContract(
@@ -413,10 +414,13 @@ export async function decodeToExternalAction(
 
     // Check if the contract data was fetched successfully and if the contract has a verified source code
     if (
-      etherscanData.status === '1' &&
-      etherscanData.result[0].ABI !== 'Contract source code not verified'
+      (etherscanData.status === '1' &&
+        etherscanData.result[0].ABI !== 'Contract source code not verified') ||
+      ABI
     ) {
-      addABI(JSON.parse(etherscanData.result[0].ABI));
+      const contractAbi = ABI ?? JSON.parse(etherscanData.result[0].ABI);
+
+      addABI(contractAbi);
       const decodedData = decodeMethod(bytesToHex(action.data));
 
       // Check if the action data was decoded successfully
@@ -424,7 +428,7 @@ export async function decodeToExternalAction(
         const notices = attachEtherNotice(
           etherscanData.result[0].SourceCode,
           etherscanData.result[0].ContractName,
-          JSON.parse(etherscanData.result[0].ABI)
+          contractAbi
         ).find(notice => notice.name === decodedData.name);
 
         const inputs: ExternalActionInput[] = decodedData.params.map(param => {
@@ -495,8 +499,7 @@ export async function decodeToExternalAction(
  */
 export function decodeOsUpdateAction(
   encodedAction: DaoAction | undefined,
-  client: Client | undefined,
-  t: TFunction
+  client: Client | undefined
 ) {
   if (!client) {
     console.error('SDK client is not initialized correctly');
@@ -528,7 +531,7 @@ export function decodeOsUpdateAction(
       functionName:
         client.decoding.findInterface(encodedAction.data)?.functionName ??
         'upgradeToAndCall',
-      contractName: t('labels.aragonOSx'),
+      contractName: 'DAO',
       contractAddress: encodedAction.to,
       inputs,
     } as ActionSCC;
