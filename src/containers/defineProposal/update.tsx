@@ -1,4 +1,5 @@
 import {AlertInline} from '@aragon/ods-old';
+import {VersionTag} from '@aragon/sdk-client-common';
 import {useEditor} from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import React, {useEffect, useState} from 'react';
@@ -15,7 +16,7 @@ import {Markdown} from 'tiptap-markdown';
 import {Loading} from 'components/temporary';
 import {UpdateListItem} from 'containers/updateListItem/updateListItem';
 import {VersionSelectionMenu} from 'containers/versionSelectionMenu/versionSelectionMenu';
-import {useUpdateContext} from 'context/update';
+import {PreparedPluginData, useUpdateContext} from 'context/update';
 import {useDaoDetailsQuery} from 'hooks/useDaoDetails';
 import {useProtocolVersion} from 'services/aragon-sdk/queries/use-protocol-version';
 import {useReleaseNotes} from 'services/aragon-sdk/queries/use-release-notes';
@@ -222,20 +223,40 @@ export const DefineUpdateProposal: React.FC = () => {
 
   // add values to form
   useEffect(() => {
-    let index = 0;
     setValue('actions', []);
+
     if (updateFramework?.os && osSelectedVersion?.version) {
-      setValue(`actions.${index}.name`, 'os_update');
-      setValue(`actions.${index}.inputs.version`, osSelectedVersion?.version);
-      index++;
+      setValue(`actions.0.name`, 'os_update');
+      setValue(`actions.0.inputs.version`, osSelectedVersion?.version);
     }
+
     if (updateFramework?.plugin && pluginSelectedVersion?.version) {
-      setValue(`actions.${index}.name`, 'plugin_update');
-      setValue(`actions.${index}.inputs`, {
-        versionTag: pluginSelectedVersion.version,
-      });
+      const versionKey = getVersionKey(
+        pluginSelectedVersion.version.release,
+        pluginSelectedVersion.version.build
+      );
+
+      const preparedData: PreparedPluginData | undefined =
+        availablePluginUpdates?.get(versionKey)?.preparedData;
+
+      const inputs: VersionTag | PreparedPluginData = preparedData
+        ? {
+            ...preparedData,
+            // TODO: This return type is incorrect!
+            pluginRepo: (
+              preparedData.pluginRepo as unknown as {
+                id: string;
+                subdomain: string;
+              }
+            ).id,
+          }
+        : pluginSelectedVersion.version;
+
+      setValue(`actions.1.name`, 'plugin_update');
+      setValue(`actions.1.inputs`, inputs);
     }
   }, [
+    availablePluginUpdates,
     osSelectedVersion?.version,
     pluginSelectedVersion?.version,
     setValue,
@@ -332,3 +353,7 @@ const UpdateGroupWrapper = styled.div.attrs({
 const UpdateContainer = styled.div.attrs({
   className: 'space-y-4',
 })``;
+
+function getVersionKey(release: number, build: number) {
+  return `${release}.${build}`;
+}
