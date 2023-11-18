@@ -27,29 +27,38 @@ import {
   SupportedNetworksArray,
   SupportedVersion,
 } from '@aragon/sdk-client-common';
-import Big from 'big.js';
-import {Locale, format, formatDistanceToNow} from 'date-fns';
-import * as Locales from 'date-fns/locale';
-import {TFunction} from 'i18next';
 import {
   GaslessPluginVotingSettings,
   GaslessVotingProposal,
 } from '@vocdoni/gasless-voting';
+import Big from 'big.js';
+import {Locale, format, formatDistanceToNow} from 'date-fns';
+import * as Locales from 'date-fns/locale';
+import {TFunction} from 'i18next';
 
 import {ProposalVoteResults} from 'containers/votingTerminal';
 import {MultisigDaoMember} from 'hooks/useDaoMembers';
 import {PluginTypes} from 'hooks/usePluginClient';
 import {
-  isMultisigVotingSettings,
   isGaslessVotingSettings,
+  isMultisigVotingSettings,
   isTokenVotingSettings,
 } from 'services/aragon-sdk/queries/use-voting-settings';
 import {i18n} from '../../i18n.config';
 import {KNOWN_FORMATS, getFormattedUtcOffset} from './date';
-import {formatUnits, translateToNetworkishName} from './library';
+import {
+  decodeOsUpdateAction,
+  decodeToExternalAction,
+  formatUnits,
+  translateToNetworkishName,
+} from './library';
 import {abbreviateTokenAmount} from './tokens';
 import {
   Action,
+  ActionOSUpdate,
+  ActionPluginUpdate,
+  ActionSCC,
+  CreateProposalFormData,
   DetailedProposal,
   ProposalListItem,
   StrictlyExclude,
@@ -57,6 +66,7 @@ import {
   SupportedVotingSettings,
 } from './types';
 
+import {daoABI} from 'abis/daoABI';
 import {SupportedNetworks} from './constants';
 
 export type TokenVotingOptions = StrictlyExclude<
@@ -894,6 +904,8 @@ export function getNonEmptyActions(
   msVoteSettings?: MultisigVotingSettings
 ): Action[] {
   return actions.flatMap(action => {
+    if (action == null) return [];
+
     if (action.name === 'modify_multisig_voting_settings') {
       // minimum approval or onlyListed changed: return action or don't include
       return action.inputs.minApprovals !== msVoteSettings?.minApprovals ||
@@ -950,6 +962,12 @@ export function recalculateProposalStatus<
   return proposal;
 }
 
+/**
+ * Checks if a proposal contains verified updates for Aragon DAO or plugins.
+ * @param proposalActions - An array of `DaoAction` objects representing proposal actions.
+ * @param client - An instance of the `Client` class providing methods for DAO and plugin updates.
+ * @returns A boolean indicating whether the proposal contains verified updates for Aragon DAO or plugins.
+ */
 export function isVerifiedAragonUpdateProposal(
   proposalActions: DaoAction[],
   client: Client
@@ -960,6 +978,15 @@ export function isVerifiedAragonUpdateProposal(
   );
 }
 
+/**
+ * Encodes an OS update action for a DAO on a specified network.
+ * @param currentVersion - The current version of the OS in the format [major, minor, patch].
+ * @param selectedVersion - The selected version of the OS to update to.
+ * @param network - The network on which the DAO operates.
+ * @param daoAddress - The address of the DAO.
+ * @param client - An instance of the `Client` class for encoding the update action.
+ * @returns A encoded action for updating the OS of the DAO.
+ */
 export async function encodeOsUpdateAction(
   currentVersion: [number, number, number] | undefined,
   selectedVersion: SupportedVersion,
@@ -986,4 +1013,108 @@ export async function encodeOsUpdateAction(
       console.error('Error encoding OSxUpdate Action', error);
     }
   }
+}
+
+/**
+ * Retrieves and decodes update actions for a DAO based on specified criteria.
+ * @param daoAddress - The address of the DAO.
+ * @param actions - An array of actions to process for updates.
+ * @param updateFramework - Information about the update framework.
+ * @param currentProtocolVersion - The current version of the protocol.
+ * @param client - An instance of the `Client` class.
+ * @param network - The network on which the DAO operates.
+ * @param t - Translation function.
+ * @returns An array of decoded update actions for the DAO.
+ */
+export async function getDecodedUpdateActions(
+  daoAddress: string,
+  actions: Array<Action>,
+  updateFramework: CreateProposalFormData['updateFramework'],
+  currentProtocolVersion: [number, number, number] | undefined,
+  client: Client | undefined,
+  network: SupportedNetworks | undefined,
+  t: TFunction
+) {
+  const updateActions: Array<Action> = [];
+
+  if (!client || !network) return updateActions;
+
+  // encode the osUpdateAction so that it can be
+  // decoded and passed to the generic SCC external action card
+  const processOsUpdateAction = async () => {
+    const osAction: ActionOSUpdate | undefined = actions.find(
+      action => action.name === 'os_update'
+    ) as ActionOSUpdate | undefined;
+
+    if (osAction && updateFramework?.os) {
+      const encodedOsAction = await encodeOsUpdateAction(
+        currentProtocolVersion,
+        osAction.inputs.version,
+        network,
+        daoAddress,
+        client
+      );
+
+      if (encodedOsAction) {
+        const decoded = decodeOsUpdateAction(encodedOsAction, client);
+
+        // decode using the SDK to get around the proxy issue
+        // TODO: remove this when the implementation contract and ABI can be
+        // fetched properly by the generic action decoder
+        // const decoded = await decodeToExternalAction(
+        //   encodedOsAction,
+        //   daoAddress,
+        //   network!,
+        //   t
+        // );
+        if (decoded) {
+          updateActions.push(decoded);
+          // TODO: uncomment when using general decoder
+          // updateActions.push({...decoded, name: 'external_contract_action'});
+        }
+      }
+    }
+  };
+
+  // encode the plugin update actions so it can be decoded
+  // and passed to the generic SCC external action card
+  const processPluginUpdateActions = async () => {
+    const pluginAction: ActionPluginUpdate | undefined = actions.find(
+      action => action.name === 'plugin_update'
+    ) as ActionPluginUpdate | undefined;
+
+    if (pluginAction && updateFramework?.plugin) {
+      const encodedPluginActions = client.encoding.applyUpdateAction(
+        daoAddress,
+        {
+          initData: new Uint8Array([]),
+          ...pluginAction.inputs,
+        }
+      );
+
+      const decodedPluginActions = [];
+      for (const pluginAction of encodedPluginActions) {
+        const decoded = await decodeToExternalAction(
+          pluginAction,
+          daoAddress,
+          network!,
+          t,
+          daoABI // Assuming daoABI is defined somewhere accessible
+        );
+
+        if (decoded) {
+          decodedPluginActions.push({
+            ...decoded,
+            name: 'external_contract_action',
+          } as ActionSCC);
+        }
+      }
+
+      updateActions.push(...decodedPluginActions);
+    }
+  };
+
+  await Promise.all([processOsUpdateAction(), processPluginUpdateActions()]);
+
+  return updateActions;
 }
