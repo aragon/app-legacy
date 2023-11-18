@@ -44,7 +44,7 @@ type UpdateContextType = {
   availableOSxVersions: Map<string, OSX> | null;
 };
 
-type PreparedPluginData = {
+export type PreparedPluginData = {
   permissions: MultiTargetPermission[];
   pluginAddress: string;
   pluginRepo: string;
@@ -223,15 +223,14 @@ const UpdateProvider: React.FC<{children: ReactElement}> = ({children}) => {
         if (
           release.release >= daoDetails!.plugins[0].release &&
           build.build > daoDetails!.plugins[0].build
-        )
-          pluginVersions.set(`${release.release}.${build.build}`, {
+        ) {
+          const versionKey = `${release.release}.${build.build}`;
+          pluginVersions.set(versionKey, {
             version: {
               build: build.build,
               release: release.release,
             },
-            ...(preparedPluginList?.has(
-              `${release.release}.${build.build}`
-            ) && {
+            ...(preparedPluginList?.has(versionKey) && {
               isPrepared: true,
               preparedData: {
                 ...preparedPluginList.get(`${release.release}.${build.build}`),
@@ -242,6 +241,7 @@ const UpdateProvider: React.FC<{children: ReactElement}> = ({children}) => {
                 isLatest: true,
               }),
           });
+        }
 
         setValue('pluginSelectedVersion', {
           version: {

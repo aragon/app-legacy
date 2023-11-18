@@ -231,10 +231,7 @@ export const DefineUpdateProposal: React.FC = () => {
     }
 
     if (updateFramework?.plugin && pluginSelectedVersion?.version) {
-      const versionKey = getVersionKey(
-        pluginSelectedVersion.version.release,
-        pluginSelectedVersion.version.build
-      );
+      const versionKey = `${pluginSelectedVersion.version.release}.${pluginSelectedVersion.version.build}`;
 
       const preparedData: PreparedPluginData | undefined =
         availablePluginUpdates?.get(versionKey)?.preparedData;
@@ -353,7 +350,3 @@ const UpdateGroupWrapper = styled.div.attrs({
 const UpdateContainer = styled.div.attrs({
   className: 'space-y-4',
 })``;
-
-function getVersionKey(release: number, build: number) {
-  return `${release}.${build}`;
-}
