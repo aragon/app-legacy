@@ -275,6 +275,7 @@ const CreateProposalWrapper: React.FC<Props> = ({
           );
           break;
         }
+        case 'custom_action':
         case 'external_contract_action': {
           const etherscanData = await getEtherscanVerifiedContract(
             action.contractAddress,

@@ -363,7 +363,7 @@ export type ActionUpdateMetadata = {
 };
 
 export type ActionSCC = {
-  name: 'external_contract_action';
+  name: 'external_contract_action' | 'custom_action';
   contractName: string;
   contractAddress: string;
   functionName: string;

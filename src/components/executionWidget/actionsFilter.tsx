@@ -42,6 +42,7 @@ export const ActionsFilter: React.FC<ActionsFilterProps> = ({
     case 'modify_multisig_voting_settings':
       return <ModifyMultisigSettingsCard action={action} />;
     case 'external_contract_action':
+    case 'custom_action':
       return <SCCExecutionCard action={action} />;
     case 'wallet_connect_action':
       return (

@@ -243,6 +243,7 @@ export async function actionsAreValid(
           (formActions?.[index] as ActionAddAddress)?.inputs.memberWallets
             ?.length !== 0
         );
+      case 'custom_action':
       case 'external_contract_action': {
         const SCCAction = formActions?.[index] as ActionSCC;
         const result = await validateSCCAction(SCCAction, network);

@@ -7,10 +7,12 @@ import {AccordionMethod} from 'components/accordionMethod';
 import {useActionsContext} from 'context/actions';
 import {useAlertContext} from 'context/alert';
 import {ActionIndex} from 'utils/types';
-import {CustomActionSpec} from 'utils/customActions';
+import {ActionCalldata, CustomActionSpec} from 'utils/customActions';
 import {SchemaSubmitForm} from '@restspace/schema-form';
 import {TextInput} from 'utils/schemaForm/textInput';
 import {IComponentMap} from '@restspace/schema-form/build/components/schema-form-interfaces';
+import {useFormContext} from 'react-hook-form';
+import {transformation} from 'utils/transformation/transformation';
 
 type CustomActionProps = ActionIndex & {
   allowRemove?: boolean;
@@ -26,6 +28,7 @@ const CustomAction: React.FC<CustomActionProps> = ({
   const {alert} = useAlertContext();
 
   const {removeAction} = useActionsContext();
+  const {setValue} = useFormContext();
   const value = {};
 
   const methodActions = (() => {
@@ -50,6 +53,29 @@ const CustomAction: React.FC<CustomActionProps> = ({
 
     return result;
   })();
+
+  const onSubmit = async (value: object) => {
+    // transform user inputs to get call data info
+    const actionCalldata = transformation(
+      customAction.transform,
+      value
+    ) as ActionCalldata[];
+    setValue(`actions.${actionIndex}.name`, 'custom_action');
+
+    const action = actionCalldata[0];
+
+    setValue(`actions.${actionIndex}.contractName`, action.contractName);
+    setValue(`actions.${actionIndex}.contractAddress`, action.contractAddress);
+    setValue(`actions.${actionIndex}.functionName`, action.functionName);
+
+    action.inputs.forEach((inp, idx) => {
+      setValue(`actions.${actionIndex}.inputs.${idx}.name`, inp.name);
+      setValue(`actions.${actionIndex}.inputs.${idx}.type`, inp.type);
+      setValue(`actions.${actionIndex}.inputs.${idx}.value`, inp.value);
+    });
+
+    return true;
+  };
 
   const makeSubmitLink = (
     onClick: React.MouseEventHandler<HTMLButtonElement>
@@ -84,6 +110,7 @@ const CustomAction: React.FC<CustomActionProps> = ({
         value={value}
         makeSubmitLink={makeSubmitLink}
         components={components}
+        onSubmit={onSubmit}
       />
     </AccordionMethod>
   );
