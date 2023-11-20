@@ -55,6 +55,10 @@ export default defineConfig(({mode}) => {
         target: 'es2020',
       },
     },
+    define: {
+      // creates an alias for __dirname in any npm package that needs it
+      __dirname: `"${__dirname}"`,
+    },
     resolve: {
       preserveSymlinks: !watchMode,
       alias: watchMode

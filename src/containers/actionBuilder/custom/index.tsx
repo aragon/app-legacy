@@ -1,4 +1,4 @@
-import {ButtonText, IconChevronRight, ListItemAction} from '@aragon/ods-old';
+import {ButtonText, ListItemAction} from '@aragon/ods-old';
 import React from 'react';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
@@ -80,14 +80,9 @@ const CustomAction: React.FC<CustomActionProps> = ({
   const makeSubmitLink = (
     onClick: React.MouseEventHandler<HTMLButtonElement>
   ) => (
-    <FormFooter>
-      <ButtonText
-        label="Next"
-        size="large"
-        onClick={onClick}
-        iconRight={<IconChevronRight />}
-      />
-    </FormFooter>
+    <ButtonContainer>
+      <ButtonText label="Submit" size="large" onClick={onClick} type="button" />
+    </ButtonContainer>
   );
 
   const components: IComponentMap = {
@@ -96,28 +91,41 @@ const CustomAction: React.FC<CustomActionProps> = ({
   };
 
   return (
-    <AccordionMethod
-      type="action-builder"
-      methodName={customAction.title}
-      smartContractName={t('labels.aragonOSx')}
-      verified
-      methodDescription={customAction.description}
-      dropdownItems={methodActions}
-    >
-      <div>Form here</div>
-      <SchemaSubmitForm
-        schema={customAction.schema}
-        value={value}
-        makeSubmitLink={makeSubmitLink}
-        components={components}
-        onSubmit={onSubmit}
-      />
-    </AccordionMethod>
+    <Container standAlone={false}>
+      <AccordionMethod
+        type="action-builder"
+        methodName={customAction.title}
+        smartContractName={t('labels.aragonOSx')}
+        verified
+        methodDescription={customAction.description}
+        dropdownItems={methodActions}
+      >
+        <SummaryContainer>
+          <SchemaSubmitForm
+            schema={customAction.schema}
+            value={value}
+            makeSubmitLink={makeSubmitLink}
+            components={components}
+            onSubmit={onSubmit}
+          />
+        </SummaryContainer>
+      </AccordionMethod>
+    </Container>
   );
 };
 
 export default CustomAction;
 
-const FormFooter = styled.div.attrs({
-  className: 'flex justify-between desktop:pt-3',
+const Container = styled.div.attrs<{standAlone: boolean}>(({standAlone}) => ({
+  className: `bg-neutral-0 border divide-y border-neutral-100 divide-neutral-100 ${
+    standAlone ? 'rounded-xl' : 'rounded-b-xl border-t-0'
+  }`,
+}))<{standAlone: boolean}>``;
+
+const ButtonContainer = styled.div.attrs({
+  className: 'flex justify-between md:justify-start p-4 md:p-6 space-x-4',
+})``;
+
+const SummaryContainer = styled.div.attrs({
+  className: 'p-4 md:p-6 space-y-3 font-semibold text-neutral-800',
 })``;
