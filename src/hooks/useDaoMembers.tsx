@@ -143,7 +143,7 @@ export const useDaoMembers = (
   const {
     data: subgraphData = [],
     isError: isSubgraphError,
-    isInitialLoading: isSubgraphLoading,
+    isLoading: isSubgraphLoading,
   } = useMembers(
     {pluginAddress, pluginType},
     {enabled: useSubgraph && enabled}
