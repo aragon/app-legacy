@@ -41,8 +41,12 @@ const UpdateBanner: React.FC = () => {
   const daoUpdateEnabled =
     featureFlags.getValue('VITE_FEATURE_FLAG_OSX_UPDATES') === 'true';
 
-  const showBanner =
-    !bannerHidden && isMember && updateExists && daoUpdateEnabled;
+  const showBanner = !!(
+    !bannerHidden &&
+    isMember &&
+    updateExists &&
+    daoUpdateEnabled
+  );
 
   if (
     location.pathname.includes('new-proposal') ||
