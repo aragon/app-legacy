@@ -47,8 +47,9 @@ import {
 import {i18n} from '../../i18n.config';
 import {KNOWN_FORMATS, getFormattedUtcOffset} from './date';
 import {
-  decodeOsUpdateAction,
-  decodeToExternalAction,
+  decodeApplyUpdateAction,
+  decodeOSUpdateActions,
+  decodeUpgradeToAndCallAction,
   formatUnits,
   translateToNetworkishName,
 } from './library';
@@ -66,7 +67,7 @@ import {
   SupportedVotingSettings,
 } from './types';
 
-import {daoABI} from 'abis/daoABI';
+import {ethers} from 'ethers';
 import {SupportedNetworks} from './constants';
 
 export type TokenVotingOptions = StrictlyExclude<
@@ -1021,8 +1022,9 @@ export async function encodeOsUpdateAction(
  * @param actions - An array of actions to process for updates.
  * @param updateFramework - Information about the update framework.
  * @param currentProtocolVersion - The current version of the protocol.
- * @param client - An instance of the `Client` class.
+ * @param client - An instance of the Aragon SDK client.
  * @param network - The network on which the DAO operates.
+ * @param provider - Ethers provider
  * @param t - Translation function.
  * @returns An array of decoded update actions for the DAO.
  */
@@ -1033,11 +1035,12 @@ export async function getDecodedUpdateActions(
   currentProtocolVersion: [number, number, number] | undefined,
   client: Client | undefined,
   network: SupportedNetworks | undefined,
+  provider: ethers.providers.Provider,
   t: TFunction
 ) {
-  const updateActions: Array<Action> = [];
+  const decodedActions: ActionSCC[] = [];
 
-  if (!client || !network) return updateActions;
+  if (!client || !network) return decodedActions;
 
   // encode the osUpdateAction so that it can be
   // decoded and passed to the generic SCC external action card
@@ -1056,22 +1059,7 @@ export async function getDecodedUpdateActions(
       );
 
       if (encodedOsAction) {
-        const decoded = decodeOsUpdateAction(encodedOsAction, client);
-
-        // decode using the SDK to get around the proxy issue
-        // TODO: remove this when the implementation contract and ABI can be
-        // fetched properly by the generic action decoder
-        // const decoded = await decodeToExternalAction(
-        //   encodedOsAction,
-        //   daoAddress,
-        //   network!,
-        //   t
-        // );
-        if (decoded) {
-          updateActions.push(decoded);
-          // TODO: uncomment when using general decoder
-          // updateActions.push({...decoded, name: 'external_contract_action'});
-        }
+        return decodeUpgradeToAndCallAction(encodedOsAction, client);
       }
     }
   };
@@ -1093,14 +1081,27 @@ export async function getDecodedUpdateActions(
       );
 
       const decodedPluginActions = [];
-      for (const pluginAction of encodedPluginActions) {
-        const decoded = await decodeToExternalAction(
-          pluginAction,
-          daoAddress,
-          network!,
-          t,
-          daoABI // Assuming daoABI is defined somewhere accessible
-        );
+      for (const [
+        index,
+        pluginUpdateAction,
+      ] of encodedPluginActions.entries()) {
+        let decoded: Action | undefined;
+
+        // decode the applyUpdate action with the custom decoder as
+        // the decoding fails when using the generic decoder;
+        // Note: the applyUpdateAction will always be the second action
+        // in the list (grant, applyUpdate, revoke)
+        if (index === 1) {
+          decoded = decodeApplyUpdateAction(pluginUpdateAction, client);
+        } else {
+          decoded = await decodeOSUpdateActions(
+            daoAddress,
+            t,
+            pluginUpdateAction,
+            network!,
+            provider
+          );
+        }
 
         if (decoded) {
           decodedPluginActions.push({
@@ -1110,11 +1111,19 @@ export async function getDecodedUpdateActions(
         }
       }
 
-      updateActions.push(...decodedPluginActions);
+      return decodedPluginActions;
     }
+    return [];
   };
 
-  await Promise.all([processOsUpdateAction(), processPluginUpdateActions()]);
+  const osUpdateAction = await processOsUpdateAction();
+  const pluginUpdateActions = (await processPluginUpdateActions()) ?? [];
 
-  return updateActions;
+  // the osUpdateAction must come before the plugin updates
+  if (osUpdateAction) {
+    decodedActions.push(osUpdateAction);
+  }
+
+  decodedActions.push(...pluginUpdateActions);
+  return decodedActions;
 }

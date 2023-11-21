@@ -48,6 +48,7 @@ import {
   ProposalTypes,
   SupportedVotingSettings,
 } from 'utils/types';
+import {useProviders} from 'context/providers';
 
 type ReviewProposalProps = {
   defineProposalStepNumber: number;
@@ -62,6 +63,7 @@ const ReviewProposal: React.FC<ReviewProposalProps> = ({
   const {client, network} = useClient();
   const {t, i18n} = useTranslation();
   const {setStep} = useFormStep();
+  const {api: provider} = useProviders();
 
   const [displayedActions, setDisplayedActions] = useState<Action[]>([]);
 
@@ -234,6 +236,7 @@ const ReviewProposal: React.FC<ReviewProposalProps> = ({
         currentProtocolVersion,
         client,
         network,
+        provider,
         t
       ).then(actions => {
         if (actions) {
@@ -252,6 +255,7 @@ const ReviewProposal: React.FC<ReviewProposalProps> = ({
     type,
     updateFramework,
     values.actions,
+    provider,
   ]);
 
   useEffect(() => {
