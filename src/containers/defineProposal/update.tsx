@@ -22,6 +22,8 @@ import {useProtocolVersion} from 'services/aragon-sdk/queries/use-protocol-versi
 import {useReleaseNotes} from 'services/aragon-sdk/queries/use-release-notes';
 import {osxUpdates} from 'utils/osxUpdates';
 import {ProposalFormData} from 'utils/types';
+import {useNavigate} from 'react-router-dom';
+import {NotFound} from 'utils/paths';
 
 type ModalState = {
   type: 'os' | 'plugin' | 'none';
@@ -36,6 +38,7 @@ export const DefineUpdateProposal: React.FC = () => {
 
   // hooks
   const {t} = useTranslation();
+  const navigate = useNavigate();
 
   const {
     handlePreparePlugin,
@@ -305,11 +308,9 @@ export const DefineUpdateProposal: React.FC = () => {
     availablePluginUpdates?.size === 0 &&
     availableProtocolUpdates?.size === 0
   ) {
-    return (
-      <div className="flex h-40 items-center justify-center">
-        No updates currently available for your DAO.
-      </div>
-    );
+    navigate(NotFound, {
+      replace: true,
+    });
   }
 
   return (
