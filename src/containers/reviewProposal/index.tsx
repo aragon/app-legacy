@@ -88,8 +88,6 @@ const ReviewProposal: React.FC<ReviewProposalProps> = ({
 
   const {getValues, setValue} = useFormContext();
   const updateFramework = useWatch({name: 'updateFramework'});
-  const osSelectedVersion = useWatch({name: 'osSelectedVersion'});
-  const pluginSelectedVersion = useWatch({name: 'pluginSelectedVersion'});
   const values = getValues();
 
   const editor = useEditor({
@@ -217,21 +215,21 @@ const ReviewProposal: React.FC<ReviewProposalProps> = ({
    *                    Effects                    *
    *************************************************/
   useEffect(() => {
-    if (type === ProposalTypes.Default) {
+    if (type !== ProposalTypes.OSUpdates) {
       setDisplayedActions(
         getNonEmptyActions(
-          values.actions,
+          getValues('actions'),
           isMultisig ? votingSettings : undefined
         )
       );
     }
-  }, [isMultisig, type, values.actions, votingSettings]);
+  }, [getValues, isMultisig, type, votingSettings]);
 
   useEffect(() => {
     if (type === ProposalTypes.OSUpdates) {
       getDecodedUpdateActions(
         daoAddress,
-        getNonEmptyActions(values.actions),
+        getNonEmptyActions(getValues('actions')),
         updateFramework,
         currentProtocolVersion,
         client,
@@ -246,16 +244,14 @@ const ReviewProposal: React.FC<ReviewProposalProps> = ({
     }
   }, [
     client,
-    daoAddress,
-    network,
-    osSelectedVersion,
-    pluginSelectedVersion,
     currentProtocolVersion,
+    daoAddress,
+    getValues,
+    network,
+    provider,
     t,
     type,
     updateFramework,
-    values.actions,
-    provider,
   ]);
 
   useEffect(() => {

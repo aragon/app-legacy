@@ -74,9 +74,6 @@ export const DefineUpdateProposal: React.FC = () => {
   const multipleOSxUpdates = (availableProtocolUpdates?.size || 0) > 1;
   const multiplePluginUpdates = (availablePluginUpdates?.size || 0) > 1;
 
-  const isLoading =
-    detailsLoading || protocolVersionLoading || releaseNotesLoading;
-
   const OSxReleaseNotes = osxUpdates.getReleaseNotes({
     releases,
     version: osSelectedVersion?.version,
@@ -118,8 +115,8 @@ export const DefineUpdateProposal: React.FC = () => {
           });
           e?.stopPropagation();
         },
-        disabled: !availableProtocolUpdates?.size,
       }),
+      disabled: availableProtocolUpdates?.size === 0,
     },
     {
       id: 'plugin',
@@ -143,10 +140,19 @@ export const DefineUpdateProposal: React.FC = () => {
           });
           e?.stopPropagation();
         },
-        disabled: !availablePluginUpdates?.size,
       }),
+      disabled: availablePluginUpdates?.size === 0,
     },
-  ];
+  ].filter(update => !update.disabled);
+
+  // queries loading && data parsing
+  const isLoading =
+    detailsLoading ||
+    protocolVersionLoading ||
+    releaseNotesLoading ||
+    (((availablePluginUpdates?.size || 0) > 0 ||
+      (availableProtocolUpdates?.size || 0) > 0) &&
+      (!OSxReleaseNotes || !pluginReleaseNotes));
 
   /*************************************************
    *                    Effects                    *
@@ -290,8 +296,20 @@ export const DefineUpdateProposal: React.FC = () => {
   /*************************************************
    *                     Render                    *
    *************************************************/
-  if (isLoading || !OSxReleaseNotes || !pluginReleaseNotes) {
+  if (isLoading) {
     return <Loading />;
+  }
+
+  // no protocol or plugin update
+  if (
+    availablePluginUpdates?.size === 0 &&
+    availableProtocolUpdates?.size === 0
+  ) {
+    return (
+      <div className="flex h-40 items-center justify-center">
+        No updates currently available for your DAO.
+      </div>
+    );
   }
 
   return (
@@ -303,27 +321,24 @@ export const DefineUpdateProposal: React.FC = () => {
           control={control}
           render={({field: {onChange, value}}) => (
             <>
-              {updateListItems.map((data, index) => {
-                if (!data.disabled)
-                  return (
-                    <UpdateListItem
-                      key={index}
-                      {...data}
-                      type={value?.[data.id] ? 'active' : 'default'}
-                      multiSelect
-                      onClick={() => {
-                        onChange({
-                          ...value,
-                          [data.id]: !value?.[data.id],
-                        });
-                      }}
-                      onClickActionPrimary={(e: React.MouseEvent) => {
-                        e?.stopPropagation();
-                        handlePreparePlugin(data.id);
-                      }}
-                    />
-                  );
-              })}
+              {updateListItems.map(data => (
+                <UpdateListItem
+                  key={data.label}
+                  {...data}
+                  type={value?.[data.id] ? 'active' : 'default'}
+                  multiSelect
+                  onClick={() => {
+                    onChange({
+                      ...value,
+                      [data.id]: !value?.[data.id],
+                    });
+                  }}
+                  onClickActionPrimary={(e: React.MouseEvent) => {
+                    e?.stopPropagation();
+                    handlePreparePlugin(data.id);
+                  }}
+                />
+              ))}
             </>
           )}
         />
