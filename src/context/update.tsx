@@ -27,7 +27,6 @@ import PublishModal from 'containers/transactionModals/publishModal';
 import {useClient} from 'hooks/useClient';
 import {usePollGasFee} from 'hooks/usePollGasfee';
 import {useWallet} from 'hooks/useWallet';
-// import {trackEvent} from 'services/analytics';
 import {TransactionState} from 'utils/constants';
 import {CreateProposalFormData} from 'utils/types';
 import {PluginTypes, usePluginClient} from 'hooks/usePluginClient';
@@ -190,7 +189,7 @@ const UpdateProvider: React.FC<{children: ReactElement}> = ({children}) => {
         compareVersions(
           SupportedVersion[key as keyof typeof SupportedVersion],
           versions?.join('.') as string
-        )
+        ) === 1
       ) {
         OSXVersions.set(
           SupportedVersion[key as keyof typeof SupportedVersion],
@@ -201,14 +200,14 @@ const UpdateProvider: React.FC<{children: ReactElement}> = ({children}) => {
             ...(key === 'LATEST' && {isLatest: true}),
           } as OSX
         );
-      }
 
-      if (key === 'LATEST') {
-        setValue('osSelectedVersion', {
-          version: SupportedVersion[
-            key as keyof typeof SupportedVersion
-          ] as string,
-        });
+        if (key === 'LATEST') {
+          setValue('osSelectedVersion', {
+            version: SupportedVersion[
+              key as keyof typeof SupportedVersion
+            ] as string,
+          });
+        }
       }
     });
 
@@ -241,21 +240,21 @@ const UpdateProvider: React.FC<{children: ReactElement}> = ({children}) => {
                 isLatest: true,
               }),
           });
-        }
 
-        setValue('pluginSelectedVersion', {
-          version: {
-            build: release.builds[release.builds.length - 1].build,
-            release: release.release,
-          },
-          isPrepared: Boolean(
-            preparedPluginList?.has(
-              `${release.release}.${
-                release.builds[release.builds.length - 1].build
-              }`
-            )
-          ),
-        });
+          setValue('pluginSelectedVersion', {
+            version: {
+              build: release.builds[release.builds.length - 1].build,
+              release: release.release,
+            },
+            isPrepared: Boolean(
+              preparedPluginList?.has(
+                `${release.release}.${
+                  release.builds[release.builds.length - 1].build
+                }`
+              )
+            ),
+          });
+        }
       });
     });
 
@@ -427,14 +426,6 @@ const UpdateProvider: React.FC<{children: ReactElement}> = ({children}) => {
                 } as PreparedPluginData,
               }
             );
-            console.log('success', {
-              permissions: step.permissions,
-              pluginAddress: step.pluginAddress,
-              pluginRepo: step.pluginRepo,
-              versionTag: step.versionTag,
-              initData: step.initData,
-              helpers: step.helpers,
-            });
             dispatch({
               type: 'setPluginAvailableVersions',
               payload: pluginListTemp as Map<string, Plugin>,
