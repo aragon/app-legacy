@@ -39,6 +39,7 @@ import {EditSettings} from 'utils/paths';
 import GaslessVotingSettings from '../containers/settings/gaslessVoting';
 import {useIsMember} from 'services/aragon-sdk/queries/use-is-member';
 import {useWallet} from 'hooks/useWallet';
+import {useUpdateExists} from 'hooks/useUpdateExists';
 
 export const Settings: React.FC = () => {
   const {t} = useTranslation();
@@ -48,6 +49,7 @@ export const Settings: React.FC = () => {
 
   // move into components when proper loading experience is implemented
   const {data: daoDetails, isLoading} = useDaoDetailsQuery();
+  const updateExists = useUpdateExists();
 
   const pluginAddress = daoDetails?.plugins?.[0]?.instanceAddress as string;
   const pluginType = daoDetails?.plugins?.[0]?.id as PluginTypes;
@@ -69,9 +71,11 @@ export const Settings: React.FC = () => {
   const daoUpdateEnabled =
     featureFlags.getValue('VITE_FEATURE_FLAG_OSX_UPDATES') === 'true';
 
+  const showUpdatesCard = updateExists && isMember && daoUpdateEnabled;
+
   return (
     <SettingsWrapper>
-      {daoUpdateEnabled && isMember && (
+      {showUpdatesCard && (
         <div className={`mt-1 xl:mt-3 ${styles.fullWidth}`}>
           <SettingsUpdateCard />
         </div>
