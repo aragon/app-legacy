@@ -12,6 +12,7 @@ import styled from 'styled-components';
 import {useNetwork} from 'context/network';
 import {useDaoDetailsQuery} from 'hooks/useDaoDetails';
 import {PluginTypes} from 'hooks/usePluginClient';
+import {useUpdateExists} from 'hooks/useUpdateExists';
 import {useWallet} from 'hooks/useWallet';
 import {useIsMember} from 'services/aragon-sdk/queries/use-is-member';
 import {featureFlags} from 'utils/featureFlags';
@@ -19,6 +20,8 @@ import {NewProposal} from 'utils/paths';
 import {ProposalTypes} from 'utils/types';
 
 const UpdateBanner: React.FC = () => {
+  const [bannerHidden, setBannerHidden] = useState(false);
+
   const {t} = useTranslation();
   const {dao} = useParams();
   const navigate = useNavigate();
@@ -27,68 +30,62 @@ const UpdateBanner: React.FC = () => {
   const {network} = useNetwork();
   const {address} = useWallet();
 
-  const [showUpdateBanner, setShowUpdateBanner] = useState(true);
-
+  const updateExists = useUpdateExists();
   const {data: daoDetails} = useDaoDetailsQuery();
-
-  const pluginAddress = daoDetails?.plugins?.[0]?.instanceAddress as string;
-  const pluginType = daoDetails?.plugins?.[0]?.id as PluginTypes;
-
   const {data: isMember} = useIsMember({
     address: address as string,
-    pluginAddress,
-    pluginType,
+    pluginAddress: daoDetails?.plugins?.[0]?.instanceAddress as string,
+    pluginType: daoDetails?.plugins?.[0]?.id as PluginTypes,
   });
-
-  if (
-    location.pathname.includes('new-proposal') ||
-    location.pathname.includes('settings') ||
-    location.pathname.includes('create')
-  )
-    return null;
 
   const daoUpdateEnabled =
     featureFlags.getValue('VITE_FEATURE_FLAG_OSX_UPDATES') === 'true';
 
-  // TODO: when do we show banner?
-  function handleBannerClosed() {
-    setShowUpdateBanner(false);
-  }
+  const showBanner =
+    !bannerHidden && isMember && updateExists && daoUpdateEnabled;
 
-  if (daoUpdateEnabled && isMember && showUpdateBanner)
-    return (
-      <UpdateContainer>
-        <DummyElement />
-        <MessageWrapper>
-          <TextWrapper>
-            <IconUpdate className="text-neutral-0" />
-            <span className="font-semibold text-neutral-0 ft-text-base">
-              {t('update.banner.title')}
-            </span>
-          </TextWrapper>
-          <ButtonText
-            label="View updates"
-            size="small"
-            bgWhite
-            mode={'secondary'}
-            onClick={() =>
-              navigate(
-                generatePath(NewProposal, {
-                  type: ProposalTypes.OSUpdates,
-                  network,
-                  dao: dao,
-                })
-              )
-            }
-          />
-        </MessageWrapper>
-        <IconClose
-          className="cursor-pointer justify-self-end text-neutral-0"
-          onClick={handleBannerClosed}
+  if (
+    location.pathname.includes('new-proposal') ||
+    location.pathname.includes('settings') ||
+    location.pathname.includes('create') ||
+    showBanner === false
+  )
+    return null;
+
+  return (
+    <UpdateContainer>
+      <DummyElement />
+      <MessageWrapper>
+        <TextWrapper>
+          <IconUpdate className="text-neutral-0" />
+          <span className="font-semibold text-neutral-0 ft-text-base">
+            {t('update.banner.title')}
+          </span>
+        </TextWrapper>
+        <ButtonText
+          label="View updates"
+          size="small"
+          bgWhite
+          mode={'secondary'}
+          onClick={() =>
+            navigate(
+              generatePath(NewProposal, {
+                type: ProposalTypes.OSUpdates,
+                network,
+                dao: dao,
+              })
+            )
+          }
         />
-      </UpdateContainer>
-    );
-  return null;
+      </MessageWrapper>
+      <IconClose
+        className="cursor-pointer justify-self-end text-neutral-0"
+        onClick={() => {
+          setBannerHidden(true);
+        }}
+      />
+    </UpdateContainer>
+  );
 };
 
 const DummyElement = styled.div.attrs({
