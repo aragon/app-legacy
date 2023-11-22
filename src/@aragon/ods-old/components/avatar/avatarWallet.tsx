@@ -6,7 +6,7 @@ import {IsAddress} from '../../utils/addresses';
 const SQUARES = 8;
 
 export type AvatarWalletProps = {
-  size?: 'small' | 'medium';
+  size?: 'small' | 'medium' | 'large';
   /**
    * Url of the avatar icon OR wallet address
    */
@@ -21,6 +21,7 @@ type SizesType = Record<
 const styles: SizesType = {
   small: {style: 'w-4 h-4', scale: 2},
   medium: {style: 'w-6 h-6', scale: 3},
+  large: {style: 'w-12 h-12', scale: 6},
 };
 
 export const AvatarWallet: React.FC<AvatarWalletProps> = ({

@@ -4,7 +4,6 @@ import {
   IconChevronDown,
   IconChevronUp,
   IconGovernance,
-  Link,
   WidgetStatus,
 } from '@aragon/ods-old';
 import {
@@ -20,7 +19,7 @@ import {useEditor} from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import React, {useCallback, useEffect, useMemo, useRef, useState} from 'react';
 import {useTranslation} from 'react-i18next';
-import {generatePath, useNavigate, useParams} from 'react-router-dom';
+import {generatePath, useNavigate, useParams, Link} from 'react-router-dom';
 import sanitizeHtml from 'sanitize-html';
 import styled from 'styled-components';
 
@@ -74,7 +73,7 @@ import {
   shortenAddress,
   toDisplayEns,
 } from 'utils/library';
-import {NotFound} from 'utils/paths';
+import {DaoMember, NotFound} from 'utils/paths';
 import {
   getLiveProposalTerminalProps,
   getProposalExecutionStatus,
@@ -722,14 +721,17 @@ export const Proposal: React.FC = () => {
           <ProposerLink>
             {t('governance.proposals.publishedBy')}{' '}
             <Link
-              external
-              label={
-                proposal.creatorAddress.toLowerCase() === address?.toLowerCase()
-                  ? t('labels.you')
-                  : shortenAddress(proposal.creatorAddress)
-              }
-              href={`${CHAIN_METADATA[network].explorer}/address/${proposal?.creatorAddress}`}
-            />
+              to={generatePath(DaoMember, {
+                network,
+                dao,
+                user: proposal.creatorAddress,
+              })}
+              className="inline-flex max-w-full cursor-pointer items-center space-x-3 truncate rounded font-semibold text-primary-500 hover:text-primary-700 focus:outline-none focus-visible:ring focus-visible:ring-primary active:text-primary-800"
+            >
+              {proposal.creatorAddress.toLowerCase() === address?.toLowerCase()
+                ? t('labels.you')
+                : shortenAddress(proposal.creatorAddress)}
+            </Link>
           </ProposerLink>
         </ContentWrapper>
         <SummaryText>{proposal.metadata.summary}</SummaryText>

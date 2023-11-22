@@ -27,7 +27,6 @@ import {useNetwork} from 'context/network';
 import {useProviders} from 'context/providers';
 import {formatUnits} from 'ethers/lib/utils';
 import {usePastVotingPowerAsync} from 'services/aragon-sdk/queries/use-past-voting-power';
-import {CHAIN_METADATA} from 'utils/constants';
 import {Web3Address, shortenAddress} from 'utils/library';
 import BreakdownTab from './breakdownTab';
 import InfoTab from './infoTab';
@@ -269,7 +268,6 @@ export const VotingTerminal: React.FC<VotingTerminalProps> = ({
               showAmount={daoToken !== undefined}
               onLoadMore={() => setPage(prev => prev + 1)}
               LoadMoreLabel={t('community.votersTable.loadMore')}
-              explorerURL={CHAIN_METADATA[network].explorer}
             />
           ) : (
             <StateEmpty

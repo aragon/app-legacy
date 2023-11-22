@@ -4,6 +4,9 @@ import {styled} from 'styled-components';
 import {shortenAddress} from '../../utils';
 import {IconChevronDown} from '../icons';
 import {ListItemVoter} from '../listItem/voter';
+import {generatePath, useNavigate, useParams} from 'react-router-dom';
+import {DaoMember} from 'utils/paths';
+import {useNetwork} from 'context/network';
 
 export type VoterType = {
   wallet: string;
@@ -24,7 +27,6 @@ export type VotersTableProps = {
   showOption?: boolean;
   showAmount?: boolean;
   pageSize?: number; // number of rows to show
-  explorerURL: string;
 };
 
 const colorScheme = (option: VoterType['walletTag']) =>
@@ -37,8 +39,11 @@ export const VotersTable: React.FC<VotersTableProps> = ({
   page = 1,
   showAmount = false,
   pageSize = 3,
-  explorerURL,
 }) => {
+  const {network} = useNetwork();
+  const navigate = useNavigate();
+  const {dao} = useParams();
+
   const displayedVoters = page * pageSize;
 
   return (
@@ -50,7 +55,13 @@ export const VotersTable: React.FC<VotersTableProps> = ({
           src={voter.src}
           option={voter.option}
           onClick={() => {
-            window.open(`${explorerURL}address/${voter.wallet}`, '_blank');
+            navigate(
+              generatePath(DaoMember, {
+                network,
+                dao,
+                user: voter.wallet,
+              })
+            );
           }}
           voteReplaced={voter.voteReplaced}
           {...(voter.walletTag && {

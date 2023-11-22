@@ -1,3 +1,4 @@
+/* eslint-disable tailwindcss/no-custom-classname */
 import React from 'react';
 import styled from 'styled-components';
 import {
@@ -5,22 +6,12 @@ import {
   shortenAddress,
   Avatar,
   ButtonIcon,
-  Dropdown,
-  ListItemProps,
-  IconLinkExternal,
-  IconMenuVertical,
   Tag,
-  ListItemAction,
-  IconCopy,
-  IconGovernance,
+  IconChevronRight,
 } from '@aragon/ods-old';
-import {CHAIN_METADATA} from 'utils/constants';
-import {isAddress} from 'viem';
+import {DaoMember} from 'utils/paths';
+import {generatePath, useNavigate, useParams} from 'react-router-dom';
 import {useNetwork} from 'context/network';
-import {useAlertContext} from 'context/alert';
-import {useTranslation} from 'react-i18next';
-import {useGlobalModalContext} from 'context/globalModals';
-import {useAccount} from 'wagmi';
 import {MemberVotingPower} from './memberVotingPower';
 import {featureFlags} from 'utils/featureFlags';
 
@@ -68,7 +59,6 @@ export type ActionItemAddressProps = {
  */
 export const ActionItemAddress: React.FC<ActionItemAddressProps> = props => {
   const {
-    isTokenDaoMember,
     isCompactMode,
     addressOrEns,
     avatar,
@@ -82,96 +72,31 @@ export const ActionItemAddress: React.FC<ActionItemAddressProps> = props => {
 
   const {isDesktop} = useScreen();
   const {network} = useNetwork();
-  const {address} = useAccount();
-  const {alert} = useAlertContext();
-  const {t} = useTranslation();
-  const {open} = useGlobalModalContext();
+  const navigate = useNavigate();
+  const {dao} = useParams();
 
   const useCompactMode = isCompactMode ?? !isDesktop;
   const enableDelegation =
     featureFlags.getValue('VITE_FEATURE_FLAG_DELEGATION') === 'true';
 
-  const handleExternalLinkClick = () => {
-    const baseUrl = CHAIN_METADATA[network].explorer;
-    if (isAddress(addressOrEns)) {
-      window.open(baseUrl + 'address/' + addressOrEns, '_blank');
-    } else {
-      window.open(
-        baseUrl + '/enslookup-search?search=' + addressOrEns,
-        '_blank'
-      );
-    }
-  };
-
-  const handleCopyAddressClick = () => {
-    navigator.clipboard.writeText(addressOrEns);
-    alert(t('alert.chip.inputCopied'));
-  };
-
-  const handleDelegateClick = () => {
-    const modalState =
-      walletId === 'delegate' ? {reclaimMode: true} : {delegate: addressOrEns};
-    // Note: By using the current implementation of the Dropdown menu, the dialog gets
-    // opened and immediately closed without a setTimeout call. This will be analysed and
-    // fixed with the new Dropdown implementation of the @aragon/ods library.
-    setTimeout(() => open('delegateVoting', modalState), 1);
-  };
-
-  const buildMenuOptions = () => {
-    const menuOptions: ListItemProps[] = [
-      {
-        callback: handleCopyAddressClick,
-        component: (
-          <ListItemAction
-            title={t('community.actionItemDropdown.optionCopyAddress')}
-            iconRight={<IconCopy className="text-neutral-300" />}
-            bgWhite={true}
-          />
-        ),
-      },
-      {
-        callback: handleExternalLinkClick,
-        component: (
-          <ListItemAction
-            title={t('community.actionItemDropdown.optionBlockExplorer')}
-            iconRight={<IconLinkExternal className="text-neutral-300" />}
-            bgWhite={true}
-          />
-        ),
-      },
-    ];
-
-    const delegateOption: ListItemProps = {
-      callback: handleDelegateClick,
-      component: (
-        <ListItemAction
-          title={
-            walletId === 'delegate'
-              ? t('community.actionItemDropdown.optionChangeDelegation')
-              : t('community.actionItemDropdown.optionDelegate')
-          }
-          iconRight={<IconGovernance className="text-neutral-300" />}
-          bgWhite={true}
-        />
-      ),
-    };
-
-    const isConnectedAddress =
-      address?.toLowerCase() === addressOrEns.toLowerCase();
-
-    return isTokenDaoMember && !isConnectedAddress && enableDelegation
-      ? menuOptions.concat(delegateOption)
-      : menuOptions;
+  const navigateToDaoMember = () => {
+    navigate(
+      generatePath(DaoMember, {
+        network,
+        dao,
+        user: addressOrEns,
+      })
+    );
   };
 
   return (
-    <tr className="border-b border-b-neutral-100 bg-neutral-0 last:border-neutral-0">
+    <TableRow onClick={navigateToDaoMember}>
       <TableCell>
         <div className="flex flex-row items-center gap-4">
           <Avatar size="small" mode="circle" src={avatar ?? addressOrEns} />
           <div className="flex grow flex-col gap-1">
             <div className="flex flex-row items-start gap-2">
-              <div className="font-semibold text-neutral-800 ft-text-base">
+              <div className="user-display font-semibold text-neutral-800 ft-text-base">
                 {shortenAddress(addressOrEns)}
               </div>
               {walletId && tagLabel && (
@@ -220,31 +145,26 @@ export const ActionItemAddress: React.FC<ActionItemAddressProps> = props => {
         {!useCompactMode && (
           <ButtonIcon
             mode="ghost"
-            icon={<IconLinkExternal />}
-            size="small"
+            icon={<IconChevronRight />}
+            size="medium"
             bgWhite
-            onClick={handleExternalLinkClick}
+            className="go-to-member"
           />
         )}
-
-        <Dropdown
-          align="end"
-          className="p-2"
-          listItems={buildMenuOptions()}
-          side="bottom"
-          trigger={
-            <ButtonIcon
-              mode="secondary"
-              icon={<IconMenuVertical />}
-              size="small"
-              bgWhite
-            />
-          }
-        />
       </TableCell>
-    </tr>
+    </TableRow>
   );
 };
+
+const TableRow = styled.tr.attrs({
+  className:
+    'border-b border-b-neutral-100 bg-neutral-0 last:border-neutral-0 hover:cursor-pointer',
+})`
+  &:hover .user-display,
+  &:hover .go-to-member {
+    color: #003bf5;
+  }
+`;
 
 const TableCell = styled.td.attrs({
   className: 'items-center py-4 px-6 h-full' as string,
