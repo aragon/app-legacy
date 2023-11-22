@@ -110,6 +110,7 @@ export const SelectEligibility = () => {
                 value={value}
                 view={anyoneIsEligible ? 'default' : 'bigger'}
                 onChange={onChange}
+                includeDecimal
                 max={tokenTotalSupply}
                 disabled={anyoneIsEligible}
               />
