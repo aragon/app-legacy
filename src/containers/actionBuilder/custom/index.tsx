@@ -27,7 +27,7 @@ const CustomAction: React.FC<CustomActionProps> = ({
   const {t} = useTranslation();
   const {alert} = useAlertContext();
 
-  const {removeAction} = useActionsContext();
+  const {removeAction, addAction} = useActionsContext();
   const {setValue} = useFormContext();
   const value = {};
 
@@ -60,19 +60,30 @@ const CustomAction: React.FC<CustomActionProps> = ({
       customAction.transform,
       value
     ) as ActionCalldata[];
-    setValue(`actions.${actionIndex}.name`, 'custom_action');
 
-    const action = actionCalldata[0];
+    let idx = 0;
+    for (const action of actionCalldata) {
+      if (idx > 0) {
+        addAction({
+          name: 'custom_action',
+          custom: customAction,
+        });
+      }
 
-    setValue(`actions.${actionIndex}.contractName`, action.contractName);
-    setValue(`actions.${actionIndex}.contractAddress`, action.contractAddress);
-    setValue(`actions.${actionIndex}.functionName`, action.functionName);
+      const currIdx = actionIndex + idx;
+      setValue(`actions.${currIdx}.name`, 'custom_action');
+      setValue(`actions.${currIdx}.contractName`, action.contractName);
+      setValue(`actions.${currIdx}.contractAddress`, action.contractAddress);
+      setValue(`actions.${currIdx}.functionName`, action.functionName);
 
-    action.inputs.forEach((inp, idx) => {
-      setValue(`actions.${actionIndex}.inputs.${idx}.name`, inp.name);
-      setValue(`actions.${actionIndex}.inputs.${idx}.type`, inp.type);
-      setValue(`actions.${actionIndex}.inputs.${idx}.value`, inp.value);
-    });
+      action.inputs.forEach((inp, inputIdx) => {
+        setValue(`actions.${currIdx}.inputs.${inputIdx}.name`, inp.name);
+        setValue(`actions.${currIdx}.inputs.${inputIdx}.type`, inp.type);
+        setValue(`actions.${currIdx}.inputs.${inputIdx}.value`, inp.value);
+      });
+
+      idx++;
+    }
 
     return true;
   };
