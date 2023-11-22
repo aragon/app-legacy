@@ -12,6 +12,7 @@ import {
 } from '@aragon/sdk-client';
 import {
   DaoAction,
+  DecodedApplyUpdateParams,
   LIVE_CONTRACTS,
   SupportedNetwork as SdkSupportedNetworks,
   SupportedNetworksArray,
@@ -20,7 +21,7 @@ import {
   resolveIpfsCid,
 } from '@aragon/sdk-client-common';
 import {fetchEnsAvatar} from '@wagmi/core';
-import {BigNumber, BigNumberish, constants, providers} from 'ethers';
+import {BigNumber, BigNumberish, constants, ethers, providers} from 'ethers';
 import {
   formatUnits as ethersFormatUnits,
   hexlify,
@@ -28,6 +29,7 @@ import {
 } from 'ethers/lib/utils';
 import {TFunction} from 'i18next';
 
+import {daoFactoryABI} from 'abis/daoFactoryABI';
 import {MultisigWalletField} from 'components/multisigWallets/row';
 import {PluginTypes} from 'hooks/usePluginClient';
 import {getEtherscanVerifiedContract} from 'services/etherscanAPI';
@@ -58,9 +60,10 @@ import {
   Input,
 } from 'utils/types';
 import {i18n} from '../../i18n.config';
-import {addABI, decodeMethod} from './abiDecoder';
+import {Abi, addABI, decodeMethod} from './abiDecoder';
 import {attachEtherNotice} from './contract';
 import {getTokenInfo} from './tokens';
+import {daoABI} from 'abis/daoABI';
 
 export function formatUnits(amount: BigNumberish, decimals: number) {
   if (amount.toString().includes('.') || !decimals) {
@@ -399,24 +402,39 @@ export async function decodeMetadataToAction(
  * @returns A promise that resolves to the decoded action
  * or undefined if the action could not be decoded.
  */
+/**
+ * Decodes a DAO action to an external contract action (SCC or Wallet Connect).
+ * @param action - DAO action to decode.
+ * @param daoAddress - The address of the DAO.
+ * @param network - Supported network.
+ * @param t - Translation function.
+ * @param ABI - Array of ABI definitions used instead of the one fetched via the block scan API.
+ * @param bypassAddress - Optional address used in the place of the `to` value of the action.
+ * @returns Promise resolving to the decoded external contract action or undefined.
+ */
 export async function decodeToExternalAction(
   action: DaoAction,
   daoAddress: string,
   network: SupportedNetworks,
-  t: TFunction
+  t: TFunction,
+  ABI?: Abi[],
+  bypassAddress?: string
 ): Promise<ActionExternalContract | undefined> {
   try {
     const etherscanData = await getEtherscanVerifiedContract(
-      action.to,
+      bypassAddress ?? action.to,
       network
     );
 
     // Check if the contract data was fetched successfully and if the contract has a verified source code
     if (
-      etherscanData.status === '1' &&
-      etherscanData.result[0].ABI !== 'Contract source code not verified'
+      (etherscanData.status === '1' &&
+        etherscanData.result[0].ABI !== 'Contract source code not verified') ||
+      ABI
     ) {
-      addABI(JSON.parse(etherscanData.result[0].ABI));
+      const contractAbi = ABI ?? JSON.parse(etherscanData.result[0].ABI);
+
+      addABI(contractAbi);
       const decodedData = decodeMethod(bytesToHex(action.data));
 
       // Check if the action data was decoded successfully
@@ -424,7 +442,7 @@ export async function decodeToExternalAction(
         const notices = attachEtherNotice(
           etherscanData.result[0].SourceCode,
           etherscanData.result[0].ContractName,
-          JSON.parse(etherscanData.result[0].ABI)
+          contractAbi
         ).find(notice => notice.name === decodedData.name);
 
         const inputs: ExternalActionInput[] = decodedData.params.map(param => {
@@ -487,16 +505,67 @@ export async function decodeToExternalAction(
 }
 
 /**
+ * Decodes OS update actions for a DAO to external contract action in
+ * order to display the properties in the generic action card.
+ *
+ * @param daoAddress - The address of the DAO.
+ * @param t - Translation function.
+ * @param encodedAction - Encoded DAO action.
+ * @param network - Supported network.
+ * @param provider - Ethers provider.
+ * @returns Promise resolving to the decoded external action.
+ */
+export async function decodeOSUpdateActions(
+  daoAddress: string,
+  t: TFunction,
+  encodedAction: DaoAction,
+  network: SupportedNetworks,
+  provider: ethers.providers.Provider
+) {
+  const translatedNetwork = translateToNetworkishName(network ?? 'unsupported');
+
+  if (translatedNetwork !== 'unsupported') {
+    const {daoFactoryAddress} =
+      LIVE_CONTRACTS[SupportedVersion.LATEST][translatedNetwork];
+
+    let daoImplementationAddress: string | undefined;
+
+    try {
+      // interact with the DAO Factory to get the proxy's implementation address
+      const contract = new ethers.Contract(
+        daoFactoryAddress,
+        daoFactoryABI,
+        provider
+      );
+
+      daoImplementationAddress = await contract.daoBase();
+    } catch (error) {
+      console.error(
+        'Error fetching the DAO base implementation address',
+        error
+      );
+    }
+
+    return decodeToExternalAction(
+      encodedAction,
+      daoAddress,
+      network,
+      t,
+      daoImplementationAddress ? undefined : daoABI,
+      daoImplementationAddress
+    );
+  }
+}
+
+/**
  * Decodes the OS update action and prepares data for an external contract action.
  * @param encodedAction The encoded action to decode.
  * @param client The client instance used for decoding.
- * @param t The translation function.
  * @returns ActionSCC object representing the decoded action, or undefined if decoding fails.
  */
-export function decodeOsUpdateAction(
+export function decodeUpgradeToAndCallAction(
   encodedAction: DaoAction | undefined,
-  client: Client | undefined,
-  t: TFunction
+  client: Client | undefined
 ) {
   if (!client) {
     console.error('SDK client is not initialized correctly');
@@ -510,25 +579,15 @@ export function decodeOsUpdateAction(
       encodedAction.data
     );
 
-    const inputs = Object.entries(decoded).map(([key, value]) => {
-      let displayedValue = value;
-      let displayedType = typeof value as string;
-
-      if (typeof value === 'object' && Object.keys(value).length === 0)
-        displayedValue = ' ';
-
-      if (typeof value === 'string') displayedType = 'address';
-      else if (value instanceof Array) displayedType = 'bytes';
-
-      return {name: key, type: displayedType, value: displayedValue};
-    });
+    const inputs = entriesToExternalContractActionProps(decoded);
+    const functionName =
+      client.decoding.findInterface(encodedAction.data)?.functionName ??
+      'upgradeToAndCall';
 
     return {
       name: 'external_contract_action',
-      functionName:
-        client.decoding.findInterface(encodedAction.data)?.functionName ??
-        'upgradeToAndCall',
-      contractName: t('labels.aragonOSx'),
+      functionName,
+      contractName: 'DAO',
       contractAddress: encodedAction.to,
       inputs,
     } as ActionSCC;
@@ -537,6 +596,71 @@ export function decodeOsUpdateAction(
       'decodeOsUpdateAction: failed to decode os_update action',
       error
     );
+  }
+}
+
+/**
+ * Decodes an encoded DaoAction and generates an ActionSCC for applying updates
+ * for a plugin
+ * @param encodedAction - Encoded DaoAction containing data to decode.
+ * @param client - Initialized Client instance required for decoding.
+ * @returns ActionSCC or logs errors if decoding fails or client is not initialized.
+ */
+export function decodeApplyUpdateAction(
+  encodedAction: DaoAction,
+  client: Client | undefined
+) {
+  if (!client) {
+    console.error('SDK client is not initialized correctly');
+    return;
+  }
+
+  if (!encodedAction) return;
+
+  try {
+    const decoded: DecodedApplyUpdateParams = client.decoding.applyUpdateAction(
+      encodedAction.data
+    );
+
+    const inputs = entriesToExternalContractActionProps(decoded);
+    const functionName =
+      client.decoding.findInterface(encodedAction.data)?.functionName ??
+      'applyUpdate';
+
+    return {
+      name: 'external_contract_action',
+      functionName,
+      contractName: 'PluginSetupProcessor',
+      contractAddress: encodedAction.to,
+      inputs,
+    } as ActionSCC;
+  } catch (error) {
+    console.error(
+      'decodeApplyUpdateAction: failed to decode apply_update action',
+      error
+    );
+  }
+}
+
+/**
+ * Transforms entries of an object into an array of external action properties
+ * @param decoded - The object whose entries are to be transformed.
+ * @returns An array of objects with name, type, and value properties.
+ */
+function entriesToExternalContractActionProps(decoded: object) {
+  if (decoded != null && typeof decoded === 'object') {
+    return Object.entries(decoded).map(([key, value]) => {
+      let displayedValue = value;
+      let displayedType = typeof value as string;
+
+      if (typeof value === 'object' && Object.keys(value).length === 0) {
+        displayedValue = ' ';
+      } else if (typeof value === 'string') {
+        displayedType = 'address';
+      }
+
+      return {name: key, type: displayedType, value: displayedValue};
+    });
   }
 }
 
@@ -1108,21 +1232,21 @@ export const walletInWalletList = (
  *          - -1 if version1 is less than version2
  *          - 0 if version1 is equal to version2
  */
-export function compareVersions(version1: string, version2: string): boolean {
-  if (!version1 || !version2) return false;
+export function compareVersions(version1: string, version2: string): number {
+  if (!version1 || !version2) return 0;
 
   const v1 = version1.split('.').map(Number);
   const v2 = version2.split('.').map(Number);
 
   for (let i = 0; i < v1.length; i++) {
     if (v1[i] > v2[i]) {
-      return true;
+      return 1;
     } else if (v1[i] < v2[i]) {
-      return false;
+      return -1;
     }
   }
 
-  return false;
+  return 0;
 }
 
 /**

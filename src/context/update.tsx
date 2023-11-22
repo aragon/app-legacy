@@ -8,9 +8,9 @@ import {
   TokenVotingPluginPrepareUpdateParams,
 } from '@aragon/sdk-client';
 import {
-  VersionTag,
-  MultiTargetPermission,
+  ApplyUpdateParams,
   SupportedVersion,
+  VersionTag,
 } from '@aragon/sdk-client-common';
 import React, {
   ReactElement,
@@ -25,17 +25,15 @@ import {useTranslation} from 'react-i18next';
 
 import PublishModal from 'containers/transactionModals/publishModal';
 import {useClient} from 'hooks/useClient';
+import {useDaoDetailsQuery} from 'hooks/useDaoDetails';
+import {PluginTypes, usePluginClient} from 'hooks/usePluginClient';
 import {usePollGasFee} from 'hooks/usePollGasfee';
 import {useWallet} from 'hooks/useWallet';
-// import {trackEvent} from 'services/analytics';
-import {TransactionState} from 'utils/constants';
-import {CreateProposalFormData} from 'utils/types';
-import {PluginTypes, usePluginClient} from 'hooks/usePluginClient';
-import {useDaoDetailsQuery} from 'hooks/useDaoDetails';
-import {compareVersions} from 'utils/library';
-import {useProtocolVersion} from 'services/aragon-sdk/queries/use-protocol-version';
 import {usePluginVersions} from 'services/aragon-sdk/queries/use-plugin-versions';
 import {usePreparedPlugins} from 'services/aragon-sdk/queries/use-prepared-plugins';
+import {useProtocolVersion} from 'services/aragon-sdk/queries/use-protocol-version';
+import {TransactionState} from 'utils/constants';
+import {compareVersions} from 'utils/library';
 
 type UpdateContextType = {
   /** Prepares the creation data and awaits user confirmation to start process */
@@ -44,20 +42,11 @@ type UpdateContextType = {
   availableOSxVersions: Map<string, OSX> | null;
 };
 
-type PreparedPluginData = {
-  permissions: MultiTargetPermission[];
-  pluginAddress: string;
-  pluginRepo: string;
-  versionTag: VersionTag;
-  initData: Uint8Array;
-  helpers: string[];
-};
-
 type Plugin = {
   version: VersionTag;
   isPrepared?: boolean;
   isLatest?: boolean;
-  preparedData?: PreparedPluginData;
+  preparedData?: ApplyUpdateParams;
 };
 
 export type OSX = {
@@ -160,7 +149,7 @@ const UpdateProvider: React.FC<{children: ReactElement}> = ({children}) => {
       daoAddressOrEns: daoDetails?.address as string,
     });
 
-  const {getValues, setValue} = useFormContext<CreateProposalFormData>();
+  const {getValues, setValue} = useFormContext();
   const pluginSelectedVersion = getValues('pluginSelectedVersion');
 
   const shouldPoll =
@@ -190,7 +179,7 @@ const UpdateProvider: React.FC<{children: ReactElement}> = ({children}) => {
         compareVersions(
           SupportedVersion[key as keyof typeof SupportedVersion],
           versions?.join('.') as string
-        )
+        ) === 1
       ) {
         OSXVersions.set(
           SupportedVersion[key as keyof typeof SupportedVersion],
@@ -201,14 +190,14 @@ const UpdateProvider: React.FC<{children: ReactElement}> = ({children}) => {
             ...(key === 'LATEST' && {isLatest: true}),
           } as OSX
         );
-      }
 
-      if (key === 'LATEST') {
-        setValue('osSelectedVersion', {
-          version: SupportedVersion[
-            key as keyof typeof SupportedVersion
-          ] as string,
-        });
+        if (key === 'LATEST') {
+          setValue('osSelectedVersion', {
+            version: SupportedVersion[
+              key as keyof typeof SupportedVersion
+            ] as string,
+          });
+        }
       }
     });
 
@@ -223,15 +212,14 @@ const UpdateProvider: React.FC<{children: ReactElement}> = ({children}) => {
         if (
           release.release >= daoDetails!.plugins[0].release &&
           build.build > daoDetails!.plugins[0].build
-        )
-          pluginVersions.set(`${release.release}.${build.build}`, {
+        ) {
+          const versionKey = `${release.release}.${build.build}`;
+          pluginVersions.set(versionKey, {
             version: {
               build: build.build,
               release: release.release,
             },
-            ...(preparedPluginList?.has(
-              `${release.release}.${build.build}`
-            ) && {
+            ...(preparedPluginList?.has(versionKey) && {
               isPrepared: true,
               preparedData: {
                 ...preparedPluginList.get(`${release.release}.${build.build}`),
@@ -243,19 +231,20 @@ const UpdateProvider: React.FC<{children: ReactElement}> = ({children}) => {
               }),
           });
 
-        setValue('pluginSelectedVersion', {
-          version: {
-            build: release.builds[release.builds.length - 1].build,
-            release: release.release,
-          },
-          isPrepared: Boolean(
-            preparedPluginList?.has(
-              `${release.release}.${
-                release.builds[release.builds.length - 1].build
-              }`
-            )
-          ),
-        });
+          setValue('pluginSelectedVersion', {
+            version: {
+              build: release.builds[release.builds.length - 1].build,
+              release: release.release,
+            },
+            isPrepared: Boolean(
+              preparedPluginList?.has(
+                `${release.release}.${
+                  release.builds[release.builds.length - 1].build
+                }`
+              )
+            ),
+          });
+        }
       });
     });
 
@@ -410,6 +399,15 @@ const UpdateProvider: React.FC<{children: ReactElement}> = ({children}) => {
           case PrepareUpdateStep.DONE:
             const pluginListTemp = state.pluginList;
 
+            const preparedData: ApplyUpdateParams = {
+              permissions: step.permissions,
+              pluginAddress: step.pluginAddress,
+              pluginRepo: step.pluginRepo,
+              initData: step.initData,
+              helpers: step.helpers,
+              versionTag: step.versionTag,
+            };
+
             pluginListTemp?.set(
               `${step.versionTag.release}.${step.versionTag.build}`,
               {
@@ -418,23 +416,9 @@ const UpdateProvider: React.FC<{children: ReactElement}> = ({children}) => {
                 ),
                 version: step.versionTag,
                 isPrepared: true,
-                preparedData: {
-                  permissions: step.permissions,
-                  pluginAddress: step.pluginAddress,
-                  pluginRepo: step.pluginRepo,
-                  initData: step.initData,
-                  helpers: step.helpers,
-                } as PreparedPluginData,
+                preparedData,
               }
             );
-            console.log('success', {
-              permissions: step.permissions,
-              pluginAddress: step.pluginAddress,
-              pluginRepo: step.pluginRepo,
-              versionTag: step.versionTag,
-              initData: step.initData,
-              helpers: step.helpers,
-            });
             dispatch({
               type: 'setPluginAvailableVersions',
               payload: pluginListTemp as Map<string, Plugin>,

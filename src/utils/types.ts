@@ -1,6 +1,5 @@
 import {InputValue} from '@aragon/ods-old';
 import {
-  ApplyInstallationParams,
   DaoMetadata,
   Erc20TokenDetails,
   MultisigProposal,
@@ -11,7 +10,11 @@ import {
   VoteValues,
   VotingSettings,
 } from '@aragon/sdk-client';
-import {SupportedVersion, VersionTag} from '@aragon/sdk-client-common';
+import {
+  ApplyUpdateParams,
+  SupportedVersion,
+  VersionTag,
+} from '@aragon/sdk-client-common';
 import {
   GaslessPluginVotingSettings,
   GaslessVotingProposal,
@@ -335,7 +338,7 @@ export type ActionOSUpdate = {
 
 export type ActionPluginUpdate = {
   name: 'plugin_update';
-  inputs: ApplyInstallationParams;
+  inputs: ApplyUpdateParams;
 };
 
 export type ActionUpdateMultisigPluginSettings = {

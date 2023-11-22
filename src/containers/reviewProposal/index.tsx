@@ -6,7 +6,7 @@ import StarterKit from '@tiptap/starter-kit';
 import {Locale, format, formatDistanceToNow} from 'date-fns';
 import * as Locales from 'date-fns/locale';
 import {TFunction} from 'i18next';
-import React, {useCallback, useEffect, useMemo, useState} from 'react';
+import React, {useEffect, useMemo, useState} from 'react';
 import {useFormContext, useWatch} from 'react-hook-form';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
@@ -37,9 +37,8 @@ import {
   getCanonicalUtcOffset,
   getFormattedUtcOffset,
 } from 'utils/date';
-import {decodeOsUpdateAction} from 'utils/library';
 import {
-  encodeOsUpdateAction,
+  getDecodedUpdateActions,
   getErc20VotingParticipation,
   getNonEmptyActions,
 } from 'utils/proposals';
@@ -51,6 +50,7 @@ import {
 } from 'utils/types';
 import {DaoMember} from 'utils/paths';
 import {useWallet} from 'hooks/useWallet';
+import {useProviders} from 'context/providers';
 
 type ReviewProposalProps = {
   defineProposalStepNumber: number;
@@ -66,31 +66,31 @@ const ReviewProposal: React.FC<ReviewProposalProps> = ({
   const {address: userAddress} = useWallet();
   const {t, i18n} = useTranslation();
   const {setStep} = useFormStep();
+  const {api: provider} = useProviders();
 
   const [displayedActions, setDisplayedActions] = useState<Action[]>([]);
 
-  const osSelectedVersion = useWatch({name: 'osSelectedVersion'});
-  const updateFramework = useWatch({name: 'updateFramework'});
-
   const {data: daoDetails, isLoading: detailsLoading} = useDaoDetailsQuery();
   const daoAddress = daoDetails?.address as string;
-  const pluginAddress = daoDetails?.plugins?.[0]?.instanceAddress as string;
   const pluginType = daoDetails?.plugins?.[0]?.id as PluginTypes;
+  const pluginAddress = daoDetails?.plugins?.[0]?.instanceAddress as string;
 
-  const {data: protocolVersion} = useProtocolVersion(daoAddress);
+  const {data: currentProtocolVersion, isLoading: protocolVersionLoading} =
+    useProtocolVersion(daoAddress);
 
   const {data: votingSettings, isLoading: votingSettingsLoading} =
     useVotingSettings({pluginAddress, pluginType});
+
   const isMultisig = isMultisigVotingSettings(votingSettings);
 
   // Member list only needed for multisig so first page (1000) is sufficient
   const {
     data: {members, daoToken},
   } = useDaoMembers(pluginAddress, pluginType, {page: 0});
-
   const {data: totalSupply} = useTokenSupply(daoToken?.address as string);
 
   const {getValues, setValue} = useFormContext();
+  const updateFramework = useWatch({name: 'updateFramework'});
   const values = getValues();
 
   const editor = useEditor({
@@ -105,31 +105,24 @@ const ReviewProposal: React.FC<ReviewProposalProps> = ({
     ],
   });
 
-  const startDate = useMemo(() => {
-    const {startSwitch, startDate, startTime, startUtc} = values;
+  const {startSwitch, startDate, startTime, startUtc} = values;
 
-    if (startSwitch === 'now') {
-      return new Date(
-        `${getCanonicalDate()}T${getCanonicalTime()}:00${getCanonicalUtcOffset()}`
-      );
-    } else {
-      return Date.parse(
-        `${startDate}T${startTime}:00${getCanonicalUtcOffset(startUtc)}`
-      );
-    }
-  }, [values]);
+  let calculatedStartDate: number | Date;
+  let formattedStartDate = t('labels.now');
 
-  const formattedStartDate = useMemo(() => {
-    const {startSwitch} = values;
-    if (startSwitch === 'now') {
-      return t('labels.now');
-    }
-
-    return `${format(
-      startDate,
+  if (startSwitch === 'now') {
+    calculatedStartDate = new Date(
+      `${getCanonicalDate()}T${getCanonicalTime()}:00${getCanonicalUtcOffset()}`
+    );
+  } else {
+    calculatedStartDate = Date.parse(
+      `${startDate}T${startTime}:00${getCanonicalUtcOffset(startUtc)}`
+    );
+    formattedStartDate = `${format(
+      calculatedStartDate,
       KNOWN_FORMATS.proposals
     )} ${getFormattedUtcOffset()}`;
-  }, [startDate, t, values]);
+  }
 
   /**
    * This is the primary (approximate) end date display which is rendered in Voting Terminal
@@ -222,72 +215,46 @@ const ReviewProposal: React.FC<ReviewProposalProps> = ({
   }, [votingSettings, daoToken, members, t, totalSupply?.raw]);
 
   /*************************************************
-   *             Callbacks & Handlers              *
-   *************************************************/
-  const getDecodedUpdateActions = useCallback(async () => {
-    if (!client) return;
-
-    const updateActions = [];
-
-    for (const action of values.actions as Action[]) {
-      if (
-        action.name === 'os_update' &&
-        updateFramework?.os &&
-        osSelectedVersion?.version
-      ) {
-        // encode and decode the osUpdateAction so that it can be
-        // decoded and passed to the generic SCC external action card
-        const encodedOsAction = await encodeOsUpdateAction(
-          protocolVersion,
-          osSelectedVersion.version,
-          network,
-          daoAddress,
-          client
-        );
-
-        // decode using the SDK to get around the proxy issue
-        // TODO: remove this when the implementation contract and ABI can be
-        // fetched properly by the generic action decoder
-        const decoded = decodeOsUpdateAction(encodedOsAction, client, t);
-
-        if (decoded) {
-          updateActions.push(decoded);
-        }
-      }
-    }
-
-    setDisplayedActions(updateActions);
-  }, [
-    client,
-    daoAddress,
-    network,
-    osSelectedVersion?.version,
-    protocolVersion,
-    t,
-    updateFramework?.os,
-    values.actions,
-  ]);
-
-  /*************************************************
    *                    Effects                    *
    *************************************************/
   useEffect(() => {
-    if (type === ProposalTypes.Default) {
+    if (type !== ProposalTypes.OSUpdates) {
       setDisplayedActions(
         getNonEmptyActions(
-          values.actions,
+          getValues('actions'),
           isMultisig ? votingSettings : undefined
         )
       );
-    } else {
-      getDecodedUpdateActions();
+    }
+  }, [getValues, isMultisig, type, votingSettings]);
+
+  useEffect(() => {
+    if (type === ProposalTypes.OSUpdates) {
+      getDecodedUpdateActions(
+        daoAddress,
+        getNonEmptyActions(getValues('actions')),
+        updateFramework,
+        currentProtocolVersion,
+        client,
+        network,
+        provider,
+        t
+      ).then(actions => {
+        if (actions) {
+          setDisplayedActions(actions);
+        }
+      });
     }
   }, [
-    getDecodedUpdateActions,
-    isMultisig,
+    client,
+    currentProtocolVersion,
+    daoAddress,
+    getValues,
+    network,
+    provider,
+    t,
     type,
-    values.actions,
-    votingSettings,
+    updateFramework,
   ]);
 
   useEffect(() => {
@@ -299,7 +266,12 @@ const ReviewProposal: React.FC<ReviewProposalProps> = ({
   /*************************************************
    *                    Render                     *
    *************************************************/
-  if (detailsLoading || votingSettingsLoading || !terminalProps)
+  if (
+    detailsLoading ||
+    votingSettingsLoading ||
+    protocolVersionLoading ||
+    !terminalProps
+  )
     return <Loading />;
 
   if (!editor) {
@@ -450,7 +422,6 @@ export const StyledEditorContent = styled(EditorContent)`
   }
 `;
 
-// this is slightly different from
 function getReviewProposalTerminalProps(
   t: TFunction,
   daoSettings: SupportedVotingSettings,
