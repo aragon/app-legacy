@@ -89,6 +89,7 @@ import {
 import {Action} from 'utils/types';
 import {GaslessVotingTerminal} from '../containers/votingTerminal/gaslessVotingTerminal';
 import {useGaslessHasAlreadyVote} from '../context/useGaslessVoting';
+import {UpdateVerificationCard} from 'containers/updateVerificationCard';
 
 export const PENDING_PROPOSAL_STATUS_INTERVAL = 1000 * 10;
 export const PROPOSAL_STATUS_INTERVAL = 1000 * 60;
@@ -771,6 +772,11 @@ export const Proposal: React.FC = () => {
               />
             )} */}
 
+          <UpdateVerificationCard
+            proposal={proposal}
+            actions={proposal.actions}
+            // proposalId={proposalId}
+          />
           {votingSettings && isGaslessProposal(proposal) ? (
             <GaslessVotingTerminal
               proposal={proposal}

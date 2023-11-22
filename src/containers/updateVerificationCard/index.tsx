@@ -82,10 +82,10 @@ export const UpdateVerificationCard: React.FC<UpdateVerificationCardProps> = ({
   return (
     <Container>
       <Header>
-        <Heading1>{t('update.securityCheck.title')}</Heading1>
+        <Heading1>{t('update.verification.title')}</Heading1>
         <Description
           dangerouslySetInnerHTML={{
-            __html: htmlIn(t)('update.securityCheck.desc'),
+            __html: htmlIn(t)('update.verification.desc'),
           }}
         />
       </Header>
@@ -93,13 +93,7 @@ export const UpdateVerificationCard: React.FC<UpdateVerificationCardProps> = ({
         <Row>
           <Status
             mode={getStatusMode(isDaoAddressCheckLoading, isDaoAddressVerified)}
-            label={t('update.securityCheck.daoAddress')}
-          />
-          <Link
-            label={shortenAddress(daoAddress)}
-            type="neutral"
-            href={`${CHAIN_METADATA[network].explorer}/address/${daoAddress}`}
-            iconRight={<IconLinkExternal />}
+            label={t('update.securityCheck.pluginSetupProcessor')}
           />
         </Row>
         <Row>
@@ -108,28 +102,7 @@ export const UpdateVerificationCard: React.FC<UpdateVerificationCardProps> = ({
               isPluginRegistryCheckLoading,
               isPluginRegistryVerified
             )}
-            label={t('update.securityCheck.pluginRegistry')}
-          />
-          <Link
-            label={shortenAddress(pluginRegistryAddress)}
-            type="neutral"
-            href={`${CHAIN_METADATA[network].explorer}/address/${pluginRegistryAddress}`}
-            iconRight={<IconLinkExternal />}
-          />
-        </Row>
-        <Row>
-          <Status
-            mode={getStatusMode(
-              isPluginSetupProcessorCheckLoading,
-              isPluginSetupProcessorVerified
-            )}
-            label={t('update.securityCheck.pluginSetupProcessor')}
-          />
-          <Link
-            label={shortenAddress(pluginSetupProcessorAddress)}
-            type="neutral"
-            href={`${CHAIN_METADATA[network].explorer}/address/${pluginSetupProcessorAddress}`}
-            iconRight={<IconLinkExternal />}
+            label={t('update.securityCheck.daoAddress')}
           />
         </Row>
       </div>
