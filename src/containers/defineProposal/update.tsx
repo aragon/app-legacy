@@ -1,5 +1,5 @@
 import {AlertInline} from '@aragon/ods-old';
-import {VersionTag} from '@aragon/sdk-client-common';
+import {ApplyUpdateParams, VersionTag} from '@aragon/sdk-client-common';
 import {useEditor} from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import React, {useEffect, useState} from 'react';
@@ -16,13 +16,12 @@ import {Markdown} from 'tiptap-markdown';
 import {Loading} from 'components/temporary';
 import {UpdateListItem} from 'containers/updateListItem/updateListItem';
 import {VersionSelectionMenu} from 'containers/versionSelectionMenu/versionSelectionMenu';
-import {PreparedPluginData, useUpdateContext} from 'context/update';
+import {useUpdateContext} from 'context/update';
 import {useDaoDetailsQuery} from 'hooks/useDaoDetails';
+import {useNavigate} from 'react-router-dom';
 import {useProtocolVersion} from 'services/aragon-sdk/queries/use-protocol-version';
 import {useReleaseNotes} from 'services/aragon-sdk/queries/use-release-notes';
 import {osxUpdates} from 'utils/osxUpdates';
-import {ProposalFormData} from 'utils/types';
-import {useNavigate} from 'react-router-dom';
 import {NotFound} from 'utils/paths';
 
 type ModalState = {
@@ -60,16 +59,13 @@ export const DefineUpdateProposal: React.FC = () => {
   const {control, setValue} = useFormContext();
   const {touchedFields} = useFormState({control});
 
-  const pluginSelectedVersion = useWatch<
-    ProposalFormData,
-    'pluginSelectedVersion'
-  >({
+  const pluginSelectedVersion = useWatch({
     name: 'pluginSelectedVersion',
   });
-  const osSelectedVersion = useWatch<ProposalFormData, 'osSelectedVersion'>({
+  const osSelectedVersion = useWatch({
     name: 'osSelectedVersion',
   });
-  const updateFramework = useWatch<ProposalFormData, 'updateFramework'>({
+  const updateFramework = useWatch({
     name: 'updateFramework',
   });
 
@@ -242,22 +238,29 @@ export const DefineUpdateProposal: React.FC = () => {
     if (updateFramework?.plugin && pluginSelectedVersion?.version) {
       const versionKey = `${pluginSelectedVersion.version.release}.${pluginSelectedVersion.version.build}`;
 
-      const preparedData: PreparedPluginData | undefined =
+      const preparedData: ApplyUpdateParams | undefined =
         availablePluginUpdates?.get(versionKey)?.preparedData;
 
-      const inputs: VersionTag | PreparedPluginData = preparedData
+      const inputs: VersionTag | ApplyUpdateParams = preparedData
         ? {
-            ...preparedData,
+            versionTag: preparedData.versionTag,
+            initData: new Uint8Array([]),
+            pluginAddress: preparedData.pluginAddress,
+            permissions: preparedData.permissions,
+            helpers: preparedData.helpers,
+
             // TODO: This return type is incorrect!
-            pluginRepo: (
-              preparedData.pluginRepo as unknown as {
-                id: string;
-                subdomain: string;
-              }
-            ).id,
+            pluginRepo:
+              typeof preparedData.pluginRepo === 'string'
+                ? preparedData.pluginRepo
+                : (
+                    preparedData.pluginRepo as unknown as {
+                      id: string;
+                      subdomain: string;
+                    }
+                  ).id,
           }
         : pluginSelectedVersion.version;
-
       setValue(`actions.1.name`, 'plugin_update');
       setValue(`actions.1.inputs`, inputs);
     }
@@ -265,6 +268,7 @@ export const DefineUpdateProposal: React.FC = () => {
     availablePluginUpdates,
     osSelectedVersion?.version,
     pluginSelectedVersion?.version,
+    pluginSelectedVersion?.isPrepared,
     setValue,
     updateFramework?.os,
     updateFramework?.plugin,

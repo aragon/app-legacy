@@ -8,9 +8,9 @@ import {
   TokenVotingPluginPrepareUpdateParams,
 } from '@aragon/sdk-client';
 import {
-  VersionTag,
-  MultiTargetPermission,
+  ApplyUpdateParams,
   SupportedVersion,
+  VersionTag,
 } from '@aragon/sdk-client-common';
 import React, {
   ReactElement,
@@ -25,16 +25,16 @@ import {useTranslation} from 'react-i18next';
 
 import PublishModal from 'containers/transactionModals/publishModal';
 import {useClient} from 'hooks/useClient';
+import {useDaoDetailsQuery} from 'hooks/useDaoDetails';
+import {PluginTypes, usePluginClient} from 'hooks/usePluginClient';
 import {usePollGasFee} from 'hooks/usePollGasfee';
 import {useWallet} from 'hooks/useWallet';
-import {TransactionState} from 'utils/constants';
-import {CreateProposalFormData} from 'utils/types';
-import {PluginTypes, usePluginClient} from 'hooks/usePluginClient';
-import {useDaoDetailsQuery} from 'hooks/useDaoDetails';
-import {compareVersions} from 'utils/library';
-import {useProtocolVersion} from 'services/aragon-sdk/queries/use-protocol-version';
 import {usePluginVersions} from 'services/aragon-sdk/queries/use-plugin-versions';
 import {usePreparedPlugins} from 'services/aragon-sdk/queries/use-prepared-plugins';
+import {useProtocolVersion} from 'services/aragon-sdk/queries/use-protocol-version';
+import {TransactionState} from 'utils/constants';
+import {compareVersions} from 'utils/library';
+import {CreateProposalFormData} from 'utils/types';
 
 type UpdateContextType = {
   /** Prepares the creation data and awaits user confirmation to start process */
@@ -43,20 +43,11 @@ type UpdateContextType = {
   availableOSxVersions: Map<string, OSX> | null;
 };
 
-export type PreparedPluginData = {
-  permissions: MultiTargetPermission[];
-  pluginAddress: string;
-  pluginRepo: string;
-  versionTag: VersionTag;
-  initData: Uint8Array;
-  helpers: string[];
-};
-
 type Plugin = {
   version: VersionTag;
   isPrepared?: boolean;
   isLatest?: boolean;
-  preparedData?: PreparedPluginData;
+  preparedData?: ApplyUpdateParams;
 };
 
 export type OSX = {
@@ -409,6 +400,15 @@ const UpdateProvider: React.FC<{children: ReactElement}> = ({children}) => {
           case PrepareUpdateStep.DONE:
             const pluginListTemp = state.pluginList;
 
+            const preparedData: ApplyUpdateParams = {
+              permissions: step.permissions,
+              pluginAddress: step.pluginAddress,
+              pluginRepo: step.pluginRepo,
+              initData: step.initData,
+              helpers: step.helpers,
+              versionTag: step.versionTag,
+            };
+
             pluginListTemp?.set(
               `${step.versionTag.release}.${step.versionTag.build}`,
               {
@@ -417,13 +417,7 @@ const UpdateProvider: React.FC<{children: ReactElement}> = ({children}) => {
                 ),
                 version: step.versionTag,
                 isPrepared: true,
-                preparedData: {
-                  permissions: step.permissions,
-                  pluginAddress: step.pluginAddress,
-                  pluginRepo: step.pluginRepo,
-                  initData: step.initData,
-                  helpers: step.helpers,
-                } as PreparedPluginData,
+                preparedData,
               }
             );
             dispatch({

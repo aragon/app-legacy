@@ -1074,10 +1074,7 @@ export async function getDecodedUpdateActions(
     if (pluginAction && updateFramework?.plugin) {
       const encodedPluginActions = client.encoding.applyUpdateAction(
         daoAddress,
-        {
-          initData: new Uint8Array([]),
-          ...pluginAction.inputs,
-        }
+        pluginAction.inputs
       );
 
       const decodedPluginActions = [];
