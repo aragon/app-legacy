@@ -1,8 +1,10 @@
+import {DaoDetails} from '@aragon/sdk-client';
 import React from 'react';
 import {useFormContext, useFormState, useWatch} from 'react-hook-form';
 import {useTranslation} from 'react-i18next';
 
 import {FullScreenStepper, Step} from 'components/fullScreenStepper';
+import ConfigureActions from 'containers/configureActions';
 import {
   DefineProposal,
   isValid as defineProposalIsValid,
@@ -11,6 +13,7 @@ import ReviewProposal from 'containers/reviewProposal';
 import SetupVotingForm, {
   isValid as setupVotingIsValid,
 } from 'containers/setupVotingForm';
+import {useActionsContext} from 'context/actions';
 import {useNetwork} from 'context/network';
 import {useWallet} from 'hooks/useWallet';
 import {generatePath} from 'react-router-dom';
@@ -18,11 +21,8 @@ import {trackEvent} from 'services/analytics';
 import {getCanonicalUtcOffset} from 'utils/date';
 import {toDisplayEns} from 'utils/library';
 import {Finance} from 'utils/paths';
-import {ProposalFormData, SupportedVotingSettings} from 'utils/types';
-import ConfigureActions from 'containers/configureActions';
+import {SupportedVotingSettings} from 'utils/types';
 import {actionsAreValid} from 'utils/validators';
-import {useActionsContext} from 'context/actions';
-import {DaoDetails} from '@aragon/sdk-client';
 
 interface WithdrawStepperProps {
   enableTxModal: () => void;
@@ -40,7 +40,7 @@ const WithdrawStepper: React.FC<WithdrawStepperProps> = ({
   const {address} = useWallet();
   const {actions, addAction} = useActionsContext();
 
-  const {control, getValues} = useFormContext<ProposalFormData>();
+  const {control, getValues} = useFormContext();
 
   const {errors, dirtyFields} = useFormState({control: control});
 

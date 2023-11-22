@@ -34,7 +34,6 @@ import {usePreparedPlugins} from 'services/aragon-sdk/queries/use-prepared-plugi
 import {useProtocolVersion} from 'services/aragon-sdk/queries/use-protocol-version';
 import {TransactionState} from 'utils/constants';
 import {compareVersions} from 'utils/library';
-import {CreateProposalFormData} from 'utils/types';
 
 type UpdateContextType = {
   /** Prepares the creation data and awaits user confirmation to start process */
@@ -150,7 +149,7 @@ const UpdateProvider: React.FC<{children: ReactElement}> = ({children}) => {
       daoAddressOrEns: daoDetails?.address as string,
     });
 
-  const {getValues, setValue} = useFormContext<CreateProposalFormData>();
+  const {getValues, setValue} = useFormContext();
   const pluginSelectedVersion = getValues('pluginSelectedVersion');
 
   const shouldPoll =
