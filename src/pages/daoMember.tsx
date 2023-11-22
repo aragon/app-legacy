@@ -29,7 +29,7 @@ export const DaoMember: React.FC = () => {
   const navigate = useNavigate();
   const {open} = useGlobalModalContext();
   const {network} = useNetwork();
-  const {isOnWrongNetwork, address, ensAvatarUrl} = useWallet();
+  const {isOnWrongNetwork, address, ensAvatarUrl, isConnected} = useWallet();
   const {alert} = useAlertContext();
   const {dao, user} = useParams();
 
@@ -48,6 +48,7 @@ export const DaoMember: React.FC = () => {
   const isDelegating = !!delegateData;
 
   const isDelegationEnabled =
+    isConnected &&
     isTokenBasedDao &&
     featureFlags.getValue('VITE_FEATURE_FLAG_DELEGATION') === 'true';
 
