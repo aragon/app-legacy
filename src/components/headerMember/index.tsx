@@ -202,7 +202,7 @@ export const HeaderMember: React.FC<HeaderMemberProps> = ({
       </Card>
 
       {!!stats.length && (
-        <StatsContainer total={4}>
+        <StatsContainer total={stats.length}>
           {stats.map((stat, statIdx) => (
             <StatItem key={`member-stat-${statIdx}`}>
               <StatHeader>
@@ -272,7 +272,9 @@ const StyledCopyIcon = styled(IconCopy).attrs({
 })``;
 
 const StatsContainer = styled.div.attrs<{total: number}>(props => ({
-  className: `relative grid grid-cols-2 shadow-neutral border-[0.5px] border-neutral-100 rounded-xl overflow-hidden mt-6 md:mt-0 m-auto w-full md:w-[fit-content] md:absolute md:-bottom-11 md:left-10 md:grid-cols-${props.total}`,
+  className: `relative grid grid-cols-2 shadow-neutral border-[0.5px] border-neutral-100 rounded-xl overflow-hidden mt-6 md:mt-0 m-auto w-full md:w-[fit-content] md:absolute md:-bottom-11 md:left-10 ${
+    'md:grid-cols-' + props.total
+  } `,
 }))``;
 
 const StatItem = styled.div.attrs({
