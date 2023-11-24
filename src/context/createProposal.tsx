@@ -122,7 +122,7 @@ const CreateProposalWrapper: React.FC<Props> = ({
   const queryClient = useQueryClient();
 
   const navigate = useNavigate();
-  const {getValues} = useFormContext<ProposalFormData>();
+  const {getValues} = useFormContext();
 
   const {network} = useNetwork();
   const translatedNetwork = translateToNetworkishName(network);
@@ -660,7 +660,9 @@ const CreateProposalWrapper: React.FC<Props> = ({
           title,
           summary,
           description,
-          resources: resources.filter(r => r.name && r.url),
+          resources: (resources as ProposalFormData['links']).filter(
+            r => r.name && r.url
+          ),
         },
         actions: proposalCreationData.actions ?? [],
         status: proposalCreationData.startDate

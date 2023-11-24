@@ -1,4 +1,5 @@
 import {AlertInline, CheckboxListItem, Label} from '@aragon/ods-old';
+import {MultisigVotingSettings} from '@aragon/sdk-client';
 import React, {useCallback, useMemo, useState} from 'react';
 import {Controller, useFormContext, useWatch} from 'react-hook-form';
 import {useTranslation} from 'react-i18next';
@@ -9,6 +10,9 @@ import Duration, {DurationLabel} from 'containers/duration';
 import UtcMenu from 'containers/utcMenu';
 import {timezones} from 'containers/utcMenu/utcData';
 import {useGlobalModalContext} from 'context/globalModals';
+import {useDaoDetailsQuery} from 'hooks/useDaoDetails';
+import {useDaoMembers} from 'hooks/useDaoMembers';
+import {useVotingSettings} from 'services/aragon-sdk/queries/use-voting-settings';
 import {
   MINS_IN_DAY,
   MULTISIG_MAX_REC_DURATION_DAYS,
@@ -23,11 +27,6 @@ import {
 } from 'utils/date';
 import {FormSection} from '.';
 import {DateTimeErrors} from './dateTimeErrors';
-import {ProposalFormData} from 'utils/types';
-import {useVotingSettings} from 'services/aragon-sdk/queries/use-voting-settings';
-import {useDaoDetailsQuery} from 'hooks/useDaoDetails';
-import {useDaoMembers} from 'hooks/useDaoMembers';
-import {MultisigVotingSettings} from '@aragon/sdk-client';
 
 const MAX_DURATION_MILLS =
   MULTISIG_MAX_REC_DURATION_DAYS * MINS_IN_DAY * 60 * 1000;
@@ -53,7 +52,7 @@ const SetupMultisigVotingForm: React.FC = () => {
 
   const [utcInstance, setUtcInstance] = useState<UtcInstance>('first');
   const {control, formState, getValues, resetField, setValue, trigger} =
-    useFormContext<ProposalFormData>();
+    useFormContext();
 
   const [endTimeWarning, startSwitch, durationSwitch] = useWatch({
     control,

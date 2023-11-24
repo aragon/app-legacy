@@ -63,13 +63,15 @@ import {constants} from 'ethers';
 import {usePastVotingPower} from 'services/aragon-sdk/queries/use-past-voting-power';
 import {
   decodeAddMembersToAction,
+  decodeApplyUpdateAction,
   decodeMetadataToAction,
   decodeMintTokensToAction,
   decodeMultisigSettingsToAction,
-  decodeOsUpdateAction,
+  decodeOSUpdateActions,
   decodePluginSettingsToAction,
   decodeRemoveMembersToAction,
   decodeToExternalAction,
+  decodeUpgradeToAndCallAction,
   decodeWithdrawToAction,
   shortenAddress,
   toDisplayEns,
@@ -306,9 +308,28 @@ export const Proposal: React.FC = () => {
         case 'setMetadata':
           return decodeMetadataToAction(action.data, client);
         case 'upgradeToAndCall':
-          return decodeOsUpdateAction(action, client, t);
+          return decodeUpgradeToAndCallAction(action, client);
+        case 'grant':
+        case 'revoke': {
+          return decodeOSUpdateActions(
+            proposal.dao.address,
+            t,
+            action,
+            network,
+            provider
+          );
+        }
         default: {
           try {
+            // check if the action is a plugin apply update action
+            // calling no function name is provided for this custom action
+            const decodedApplyUpdate = decodeApplyUpdateAction(action, client);
+
+            if (decodedApplyUpdate) {
+              return decodedApplyUpdate;
+            }
+
+            // check if withdraw action
             const decodedAction = await decodeWithdrawToAction(
               action.data,
               client,

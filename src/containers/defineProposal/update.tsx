@@ -1,4 +1,5 @@
 import {AlertInline} from '@aragon/ods-old';
+import {ApplyUpdateParams, VersionTag} from '@aragon/sdk-client-common';
 import {useEditor} from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import React, {useEffect, useState} from 'react';
@@ -17,10 +18,11 @@ import {UpdateListItem} from 'containers/updateListItem/updateListItem';
 import {VersionSelectionMenu} from 'containers/versionSelectionMenu/versionSelectionMenu';
 import {useUpdateContext} from 'context/update';
 import {useDaoDetailsQuery} from 'hooks/useDaoDetails';
+import {useNavigate} from 'react-router-dom';
 import {useProtocolVersion} from 'services/aragon-sdk/queries/use-protocol-version';
 import {useReleaseNotes} from 'services/aragon-sdk/queries/use-release-notes';
 import {osxUpdates} from 'utils/osxUpdates';
-import {ProposalFormData} from 'utils/types';
+import {NotFound} from 'utils/paths';
 
 type ModalState = {
   type: 'os' | 'plugin' | 'none';
@@ -35,6 +37,7 @@ export const DefineUpdateProposal: React.FC = () => {
 
   // hooks
   const {t} = useTranslation();
+  const navigate = useNavigate();
 
   const {
     handlePreparePlugin,
@@ -56,25 +59,19 @@ export const DefineUpdateProposal: React.FC = () => {
   const {control, setValue} = useFormContext();
   const {touchedFields} = useFormState({control});
 
-  const pluginSelectedVersion = useWatch<
-    ProposalFormData,
-    'pluginSelectedVersion'
-  >({
+  const pluginSelectedVersion = useWatch({
     name: 'pluginSelectedVersion',
   });
-  const osSelectedVersion = useWatch<ProposalFormData, 'osSelectedVersion'>({
+  const osSelectedVersion = useWatch({
     name: 'osSelectedVersion',
   });
-  const updateFramework = useWatch<ProposalFormData, 'updateFramework'>({
+  const updateFramework = useWatch({
     name: 'updateFramework',
   });
 
   // intermediate values
   const multipleOSxUpdates = (availableProtocolUpdates?.size || 0) > 1;
   const multiplePluginUpdates = (availablePluginUpdates?.size || 0) > 1;
-
-  const isLoading =
-    detailsLoading || protocolVersionLoading || releaseNotesLoading;
 
   const OSxReleaseNotes = osxUpdates.getReleaseNotes({
     releases,
@@ -117,8 +114,8 @@ export const DefineUpdateProposal: React.FC = () => {
           });
           e?.stopPropagation();
         },
-        disabled: !availableProtocolUpdates?.size,
       }),
+      disabled: availableProtocolUpdates?.size === 0,
     },
     {
       id: 'plugin',
@@ -142,10 +139,19 @@ export const DefineUpdateProposal: React.FC = () => {
           });
           e?.stopPropagation();
         },
-        disabled: !availablePluginUpdates?.size,
       }),
+      disabled: availablePluginUpdates?.size === 0,
     },
-  ];
+  ].filter(update => !update.disabled);
+
+  // queries loading && data parsing
+  const isLoading =
+    detailsLoading ||
+    protocolVersionLoading ||
+    releaseNotesLoading ||
+    (((availablePluginUpdates?.size || 0) > 0 ||
+      (availableProtocolUpdates?.size || 0) > 0) &&
+      (!OSxReleaseNotes || !pluginReleaseNotes));
 
   /*************************************************
    *                    Effects                    *
@@ -222,22 +228,47 @@ export const DefineUpdateProposal: React.FC = () => {
 
   // add values to form
   useEffect(() => {
-    let index = 0;
     setValue('actions', []);
+
     if (updateFramework?.os && osSelectedVersion?.version) {
-      setValue(`actions.${index}.name`, 'os_update');
-      setValue(`actions.${index}.inputs.version`, osSelectedVersion?.version);
-      index++;
+      setValue(`actions.0.name`, 'os_update');
+      setValue(`actions.0.inputs.version`, osSelectedVersion?.version);
     }
+
     if (updateFramework?.plugin && pluginSelectedVersion?.version) {
-      setValue(`actions.${index}.name`, 'plugin_update');
-      setValue(`actions.${index}.inputs`, {
-        versionTag: pluginSelectedVersion.version,
-      });
+      const versionKey = `${pluginSelectedVersion.version.release}.${pluginSelectedVersion.version.build}`;
+
+      const preparedData: ApplyUpdateParams | undefined =
+        availablePluginUpdates?.get(versionKey)?.preparedData;
+
+      const inputs: VersionTag | ApplyUpdateParams = preparedData
+        ? {
+            versionTag: preparedData.versionTag,
+            initData: new Uint8Array([]),
+            pluginAddress: preparedData.pluginAddress,
+            permissions: preparedData.permissions,
+            helpers: preparedData.helpers,
+
+            // TODO: This return type is incorrect!
+            pluginRepo:
+              typeof preparedData.pluginRepo === 'string'
+                ? preparedData.pluginRepo
+                : (
+                    preparedData.pluginRepo as unknown as {
+                      id: string;
+                      subdomain: string;
+                    }
+                  ).id,
+          }
+        : pluginSelectedVersion.version;
+      setValue(`actions.1.name`, 'plugin_update');
+      setValue(`actions.1.inputs`, inputs);
     }
   }, [
+    availablePluginUpdates,
     osSelectedVersion?.version,
     pluginSelectedVersion?.version,
+    pluginSelectedVersion?.isPrepared,
     setValue,
     updateFramework?.os,
     updateFramework?.plugin,
@@ -272,8 +303,18 @@ export const DefineUpdateProposal: React.FC = () => {
   /*************************************************
    *                     Render                    *
    *************************************************/
-  if (isLoading || !OSxReleaseNotes || !pluginReleaseNotes) {
+  if (isLoading) {
     return <Loading />;
+  }
+
+  // no protocol or plugin update
+  if (
+    availablePluginUpdates?.size === 0 &&
+    availableProtocolUpdates?.size === 0
+  ) {
+    navigate(NotFound, {
+      replace: true,
+    });
   }
 
   return (
@@ -285,27 +326,24 @@ export const DefineUpdateProposal: React.FC = () => {
           control={control}
           render={({field: {onChange, value}}) => (
             <>
-              {updateListItems.map((data, index) => {
-                if (!data.disabled)
-                  return (
-                    <UpdateListItem
-                      key={index}
-                      {...data}
-                      type={value?.[data.id] ? 'active' : 'default'}
-                      multiSelect
-                      onClick={() => {
-                        onChange({
-                          ...value,
-                          [data.id]: !value?.[data.id],
-                        });
-                      }}
-                      onClickActionPrimary={(e: React.MouseEvent) => {
-                        e?.stopPropagation();
-                        handlePreparePlugin(data.id);
-                      }}
-                    />
-                  );
-              })}
+              {updateListItems.map(data => (
+                <UpdateListItem
+                  key={data.label}
+                  {...data}
+                  type={value?.[data.id] ? 'active' : 'default'}
+                  multiSelect
+                  onClick={() => {
+                    onChange({
+                      ...value,
+                      [data.id]: !value?.[data.id],
+                    });
+                  }}
+                  onClickActionPrimary={(e: React.MouseEvent) => {
+                    e?.stopPropagation();
+                    handlePreparePlugin(data.id);
+                  }}
+                />
+              ))}
             </>
           )}
         />
