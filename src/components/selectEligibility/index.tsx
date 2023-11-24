@@ -39,7 +39,10 @@ export const SelectEligibility = () => {
 
   useEffect(() => {
     if (eligibilityType === 'token') {
-      setValue('eligibilityTokenAmount', minimumTokenAmount);
+      setValue(
+        'eligibilityTokenAmount',
+        minimumTokenAmount < 1 ? minimumTokenAmount : 1
+      );
     } else {
       setValue('eligibilityTokenAmount', 0);
     }
