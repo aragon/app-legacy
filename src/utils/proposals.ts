@@ -20,7 +20,6 @@ import {
   VotingSettings,
 } from '@aragon/sdk-client';
 import {
-  DaoAction,
   LIVE_CONTRACTS,
   ProposalMetadata,
   ProposalStatus,
@@ -973,8 +972,10 @@ export async function isVerifiedAragonUpdateProposal(
   proposalId: string,
   client: Client
 ) {
-  return await (client.methods.isDaoUpdateProposal(proposalId) ||
-    client.methods.isPluginUpdateProposal(proposalId));
+  return (
+    client.methods.isDaoUpdateProposal(proposalId) ||
+    client.methods.isPluginUpdateProposal(proposalId)
+  );
 }
 
 /**
