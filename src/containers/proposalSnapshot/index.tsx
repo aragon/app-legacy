@@ -7,7 +7,7 @@ import {
   ListItemHeader,
 } from '@aragon/ods-old';
 import {DaoAction} from '@aragon/sdk-client-common';
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {generatePath, useNavigate} from 'react-router-dom';
 import styled from 'styled-components';
@@ -41,16 +41,23 @@ type ProposalItemProps = CardProposalProps & {
   actions: DaoAction[];
 };
 
-const ProposalItem: React.FC<ProposalItemProps> = ({actions, ...props}) => {
+const ProposalItem: React.FC<ProposalItemProps> = ({proposalId, ...props}) => {
   const {t} = useTranslation();
   const {client} = useClient();
+  const [verifiedUpdateProposal, setVerifiedUpdateProposal] =
+    useState<boolean>(false);
 
-  let verifiedUpdateProposal = false;
+  useEffect(() => {
+    async function fetchIsVerifiedAragonUpdateProposal() {
+      if (client != null) {
+        setVerifiedUpdateProposal(
+          await isVerifiedAragonUpdateProposal(proposalId, client)
+        );
+      }
+    }
 
-  if (client != null) {
-    verifiedUpdateProposal = isVerifiedAragonUpdateProposal(actions, client);
-  }
-
+    fetchIsVerifiedAragonUpdateProposal();
+  }, [client, proposalId]);
   return (
     <CardProposal
       {...props}

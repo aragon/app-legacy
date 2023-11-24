@@ -3,7 +3,7 @@ import {MultisigProposalListItem} from '@aragon/sdk-client';
 import {DaoAction} from '@aragon/sdk-client-common';
 import {BigNumber} from 'ethers';
 import {TFunction} from 'i18next';
-import React, {useMemo} from 'react';
+import React, {useEffect, useMemo, useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {NavigateFunction, generatePath, useNavigate} from 'react-router-dom';
 
@@ -59,15 +59,26 @@ type ProposalListItemProps = CardProposalProps & {
   actions: DaoAction[];
 };
 
-const ProposalItem: React.FC<ProposalListItemProps> = ({actions, ...props}) => {
+const ProposalItem: React.FC<ProposalListItemProps> = ({
+  proposalId,
+  ...props
+}) => {
   const {t} = useTranslation();
   const {client} = useClient();
+  const [verifiedUpdateProposal, setVerifiedUpdateProposal] =
+    useState<boolean>(false);
 
-  let verifiedUpdateProposal = false;
+  useEffect(() => {
+    async function fetchIsVerifiedAragonUpdateProposal() {
+      if (client != null) {
+        setVerifiedUpdateProposal(
+          await isVerifiedAragonUpdateProposal(proposalId, client)
+        );
+      }
+    }
 
-  if (client != null) {
-    verifiedUpdateProposal = isVerifiedAragonUpdateProposal(actions, client);
-  }
+    fetchIsVerifiedAragonUpdateProposal();
+  }, [client, proposalId]);
 
   return (
     <CardProposal

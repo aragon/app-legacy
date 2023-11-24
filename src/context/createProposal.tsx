@@ -363,17 +363,18 @@ const CreateProposalWrapper: React.FC<Props> = ({
         }
 
         case 'plugin_update': {
-          const daoActionsArray = client.encoding.applyUpdateAction(
-            daoDetails?.address as string,
-            {
-              permissions: action.inputs.permissions,
-              initData: new Uint8Array([]),
-              helpers: action.inputs.helpers,
-              versionTag: action.inputs.versionTag,
-              pluginRepo: pluginAvailableVersions?.address as string,
-              pluginAddress: pluginAddress,
-            }
-          );
+          const daoActionsArray =
+            client.encoding.applyUpdateAndPermissionsActionBlock(
+              daoDetails?.address as string,
+              {
+                permissions: action.inputs.permissions,
+                initData: new Uint8Array([]),
+                helpers: action.inputs.helpers,
+                versionTag: action.inputs.versionTag,
+                pluginRepo: pluginAvailableVersions?.address as string,
+                pluginAddress: pluginAddress,
+              }
+            );
           daoActionsArray.map(daoAction => {
             actions.push(Promise.resolve(daoAction));
           });
