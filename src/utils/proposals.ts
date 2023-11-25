@@ -963,10 +963,10 @@ export function recalculateProposalStatus<
 }
 
 /**
- * Checks if a proposal contains verified updates for Aragon DAO or plugins.
- * @param proposalActions - An array of `DaoAction` objects representing proposal actions.
- * @param client - An instance of the `Client` class providing methods for DAO and plugin updates.
- * @returns A boolean indicating whether the proposal contains verified updates for Aragon DAO or plugins.
+ * Checks if a proposal is a verified Aragon update proposal.
+ * @param proposalId - The ID of the proposal.
+ * @param client - The SDK client.
+ * @returns A boolean indicating whether the proposal is a verified Aragon update proposal.
  */
 export async function isVerifiedAragonUpdateProposal(
   proposalId: string,

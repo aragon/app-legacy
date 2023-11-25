@@ -90,7 +90,8 @@ import {
 import {Action} from 'utils/types';
 import {GaslessVotingTerminal} from '../containers/votingTerminal/gaslessVotingTerminal';
 import {useGaslessHasAlreadyVote} from '../context/useGaslessVoting';
-// import {UpdateVerificationCard} from 'containers/updateVerificationCard';
+import {UpdateVerificationCard} from 'containers/updateVerificationCard';
+import {featureFlags} from 'utils/featureFlags';
 
 export const PENDING_PROPOSAL_STATUS_INTERVAL = 1000 * 10;
 export const PROPOSAL_STATUS_INTERVAL = 1000 * 60;
@@ -782,15 +783,9 @@ export const Proposal: React.FC = () => {
           )}
 
           {/* @todo: Add isUpdateProposal check once it's developed */}
-          {/* {proposal &&
+          {proposal &&
             featureFlags.getValue('VITE_FEATURE_FLAG_OSX_UPDATES') ===
-              'true' && (
-              <UpdateVerificationCard
-                proposal={proposal}
-                actions={proposal.actions}
-                proposalId={proposalId}
-              />
-            )} */}
+              'true' && <UpdateVerificationCard proposalId={proposalId} />}
           {votingSettings && isGaslessProposal(proposal) ? (
             <GaslessVotingTerminal
               proposal={proposal}

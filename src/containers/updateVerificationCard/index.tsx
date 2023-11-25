@@ -5,18 +5,22 @@
 // shortenAddress,
 // } from '@aragon/ods-old';
 // import {DaoAction} from '@aragon/sdk-client-common';
-import React from 'react';
+import React, {useEffect, useMemo, useState} from 'react';
 // import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 
 // import {useNetwork} from 'context/network';
 import {useDaoDetailsQuery} from 'hooks/useDaoDetails';
 import {useUpdateVerification} from 'hooks/useUpdateVerification';
+import {useClient} from 'hooks/useClient';
+import {isVerifiedAragonUpdateProposal} from 'utils/proposals';
+import {htmlIn} from 'utils/htmlIn';
+import {useTranslation} from 'react-i18next';
 // import {CHAIN_METADATA} from 'utils/constants';
 // import {htmlIn} from 'utils/htmlIn';
 // import {ProposalId} from 'utils/types';
 // import {validateAddress} from 'utils/validators';
-// import {Status, StatusProps} from './Status';
+import {Status, StatusProps} from './Status';
 // import {useClient} from 'hooks/useClient';
 
 export interface UpdateVerificationCardProps {
@@ -26,40 +30,52 @@ export interface UpdateVerificationCardProps {
 export const UpdateVerificationCard: React.FC<UpdateVerificationCardProps> = ({
   proposalId,
 }) => {
+  const {t} = useTranslation();
+  const {client} = useClient();
+  const [verifiedUpdateProposal, setVerifiedUpdateProposal] =
+    useState<boolean>(false);
+
+  console.log('verifiedUpdateProposal', verifiedUpdateProposal);
+
+  useEffect(() => {
+    async function fetchIsVerifiedAragonUpdateProposal() {
+      if (client != null && proposalId) {
+        setVerifiedUpdateProposal(
+          await isVerifiedAragonUpdateProposal(proposalId, client)
+        );
+      }
+    }
+
+    fetchIsVerifiedAragonUpdateProposal();
+  }, [client, proposalId]);
+
   // const {t} = useTranslation();
   // const {client} = useClient();
   // const {network} = useNetwork();
   const {data: daoDetails} = useDaoDetailsQuery();
 
   const daoAddress: string = daoDetails?.address || '';
+  const pluginType =
+    daoDetails?.plugins[0].type === 'token-voting.plugin.dao.eth'
+      ? 'token voting'
+      : 'multisig';
   // const isDaoAddressCheckLoading = detailsAreLoading;
   // const isDaoAddressVerified = validateAddress(daoAddress) === true;
 
-  // const isPluginUpdateProposal = client?.methods.isPluginUpdate(
-  //   actions as DaoAction[]
-  // );
-  // const isOsUpdateProposal = client?.methods.isDaoUpdate(
-  //   actions as DaoAction[]
-  // );
-
-  const [pluginUpdateVerification, osUpdateVerification] =
-    useUpdateVerification(
-      daoAddress,
-      proposalId
-      // isPluginUpdateProposal,
-      // isOsUpdateProposal
-    );
+  const [
+    {data: pluginUpdateVerification, isLoading: isPluginUpdateLoading},
+    {data: osUpdateVerification, isLoading: isOSUpdateLoading},
+  ] = useUpdateVerification(daoAddress, proposalId as string);
 
   console.log(
     'showUpdateVerification',
-    pluginUpdateVerification.data,
-    osUpdateVerification.data
+    proposalId,
+    pluginUpdateVerification,
+    osUpdateVerification
   );
 
-  // /** @todo Figure put how to get plugin registry update */
-  // // const pluginRegistryAddress = daoDetails?.address || '';
-  // const isPluginRegistryCheckLoading =
-  //   pluginUpdateVerification.isLoading || detailsAreLoading;
+  /** @todo Figure put how to get plugin registry update */
+  // // const pluginRegistryAddress = daoDetails?.address || ''
   // const isPluginRegistryVerified = !!osUpdateVerification.data;
 
   // /** @todo Figure put how to get plugin setup processor update */
@@ -68,24 +84,62 @@ export const UpdateVerificationCard: React.FC<UpdateVerificationCardProps> = ({
   //   pluginUpdateVerification.isLoading || detailsAreLoading;
   // const isPluginSetupProcessorVerified = !!osUpdateVerification.data;
 
-  // const isVerificationFailed =
-  //   (!isDaoAddressCheckLoading && !isDaoAddressVerified) ||
-  //   (!isPluginRegistryCheckLoading && !isPluginRegistryVerified) ||
-  //   (!isPluginSetupProcessorCheckLoading && !isPluginSetupProcessorVerified);
+  const OSUpdate: StatusProps = useMemo(() => {
+    if (isOSUpdateLoading)
+      return {
+        mode: 'loading',
+        label: t('update.verification.itemPending', {
+          updateName: 'OSX',
+        }),
+      };
+    else {
+      if (osUpdateVerification?.isValid)
+        return {
+          mode: 'success',
+          label: t('update.verification.itemSuccess', {
+            updateName: 'OSX',
+          }),
+        };
+      else
+        return {
+          mode: 'error',
+          label: t('update.verification.itemCriticalDecoding.desc'),
+        };
+    }
+  }, [isOSUpdateLoading, osUpdateVerification, t]);
 
-  // function getStatusMode(
-  //   isLoading: boolean,
-  //   isVerified: boolean
-  // ): StatusProps['mode'] {
-  //   if (isLoading) return 'loading';
-  //   return isVerified ? 'success' : 'error';
-  // }
+  const pluginUpdate: StatusProps = useMemo(() => {
+    if (isPluginUpdateLoading)
+      return {
+        mode: 'loading',
+        label: t('update.verification.itemPending', {
+          updateName: pluginType,
+        }),
+      };
+    else {
+      if (pluginUpdateVerification?.isValid)
+        return {
+          mode: 'success',
+          label: t('update.verification.itemSuccess', {
+            updateName: pluginType,
+          }),
+        };
+      else
+        return {
+          mode: 'error',
+          label: t('update.verification.itemCriticalDecoding.desc'),
+          description: t('update.verification.itemCriticalFailed.desc'),
+          DetailsButtonLabel: t('update.verification.itemCritical.linkLabel'),
+          DetailsButtonSrc: t('update.verification.itemCritical.linkUrl'),
+        };
+    }
+  }, [isPluginUpdateLoading, pluginType, pluginUpdateVerification, t]);
 
-  // if (!isPluginUpdateProposal && !isOsUpdateProposal) return null;
+  if (!verifiedUpdateProposal) return null;
 
   return (
     <Container>
-      {/* <Header>
+      <Header>
         <Heading1>{t('update.verification.title')}</Heading1>
         <Description
           dangerouslySetInnerHTML={{
@@ -95,28 +149,12 @@ export const UpdateVerificationCard: React.FC<UpdateVerificationCardProps> = ({
       </Header>
       <div>
         <Row>
-          <Status
-            mode={getStatusMode(isDaoAddressCheckLoading, isDaoAddressVerified)}
-            label={t('update.securityCheck.pluginSetupProcessor')}
-          />
+          <Status {...OSUpdate} />
         </Row>
         <Row>
-          <Status
-            mode={getStatusMode(
-              isPluginRegistryCheckLoading,
-              isPluginRegistryVerified
-            )}
-            label={t('update.securityCheck.daoAddress')}
-          />
+          <Status {...pluginUpdate} />
         </Row>
       </div>
-      {isVerificationFailed && (
-        <AlertCard
-          mode="critical"
-          title={t('update.securityCheck.alertTitle')}
-          helpText={t('update.securityCheck.alertDesc')}
-        />
-      )} */}
     </Container>
   );
 };
@@ -126,17 +164,17 @@ const Container = styled.div.attrs({
     'md:p-6 py-5 px-4 rounded-xl bg-neutral-0 border border-neutral-100',
 })``;
 
-// const Header = styled.div.attrs({
-//   className: 'space-y-3 mb-4',
-// })``;
+const Header = styled.div.attrs({
+  className: 'space-y-3 mb-4',
+})``;
 
-// const Heading1 = styled.h1.attrs({
-//   className: 'ft-text-xl font-semibold text-neutral-800 grow',
-// })``;
+const Heading1 = styled.h1.attrs({
+  className: 'ft-text-xl font-semibold text-neutral-800 grow',
+})``;
 
-// const Description = styled.div.attrs({
-//   className: 'text-neutral-800 text-sm md:text-base leading-normal',
-// })``;
+const Description = styled.div.attrs({
+  className: 'text-neutral-800 text-sm md:text-base leading-normal',
+})``;
 
 export const Row = styled.div.attrs({
   className:

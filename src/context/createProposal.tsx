@@ -35,7 +35,7 @@ import React, {
 } from 'react';
 import {useFormContext} from 'react-hook-form';
 import {useTranslation} from 'react-i18next';
-import {generatePath, useNavigate, useParams} from 'react-router-dom';
+import {generatePath, useNavigate} from 'react-router-dom';
 
 import {Loading} from 'components/temporary';
 import PublishModal from 'containers/transactionModals/publishModal';
@@ -94,9 +94,7 @@ import {
   GaslessVotingProposal,
 } from '@vocdoni/gasless-voting';
 import {TokenCensus} from '@vocdoni/sdk';
-import {usePluginVersions} from 'services/aragon-sdk/queries/use-plugin-versions';
 import {useProtocolVersion} from 'services/aragon-sdk/queries/use-protocol-version';
-import {ProposalTypes} from 'utils/types';
 
 type Props = {
   showTxModal: boolean;
@@ -117,7 +115,6 @@ const CreateProposalWrapper: React.FC<Props> = ({
   children,
 }) => {
   const {t} = useTranslation();
-  const {type} = useParams();
   const {open} = useGlobalModalContext();
   const queryClient = useQueryClient();
 
@@ -132,14 +129,6 @@ const CreateProposalWrapper: React.FC<Props> = ({
   const {data: daoDetails, isLoading: daoDetailsLoading} = useDaoDetailsQuery();
   const pluginAddress = daoDetails?.plugins?.[0]?.instanceAddress as string;
   const pluginType = daoDetails?.plugins?.[0]?.id as PluginTypes;
-
-  const {data: pluginAvailableVersions} = usePluginVersions(
-    {
-      pluginType,
-      daoAddress: daoDetails?.address as string,
-    },
-    {enabled: type === ProposalTypes.OSUpdates}
-  );
 
   const {data: daoToken} = useDaoToken(pluginAddress);
   const {data: tokenSupply} = useTokenSupply(daoToken?.address || '');
@@ -363,19 +352,14 @@ const CreateProposalWrapper: React.FC<Props> = ({
         }
 
         case 'plugin_update': {
-          const daoActionsArray =
+          const pluginUpdateActions =
             client.encoding.applyUpdateAndPermissionsActionBlock(
               daoDetails?.address as string,
               {
-                permissions: action.inputs.permissions,
-                initData: new Uint8Array([]),
-                helpers: action.inputs.helpers,
-                versionTag: action.inputs.versionTag,
-                pluginRepo: pluginAvailableVersions?.address as string,
-                pluginAddress: pluginAddress,
+                ...action.inputs,
               }
             );
-          daoActionsArray.map(daoAction => {
+          pluginUpdateActions.map(daoAction => {
             actions.push(Promise.resolve(daoAction));
           });
           break;
@@ -390,7 +374,6 @@ const CreateProposalWrapper: React.FC<Props> = ({
     getValues,
     network,
     pluginAddress,
-    pluginAvailableVersions?.address,
     pluginClient,
     t,
     translatedNetwork,

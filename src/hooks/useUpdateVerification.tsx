@@ -3,24 +3,23 @@ import {useQueries} from '@tanstack/react-query';
 import {useClient} from './useClient';
 
 /**
- *  This method is a Mock validation function until the real SDK functions are ready
- * @param address dao address
- * @returns an area of queries the indicates the status of verifications
+ * Custom hook for update proposal verification.
+ * @param daoAddress - The address of the DAO.
+ * @param proposalId - The ID of the proposal.
+ * @returns The result of the verification queries.
  */
-export function useUpdateVerification(daoAddress: string, proposalId?: string) {
+export function useUpdateVerification(daoAddress: string, proposalId: string) {
   const {client} = useClient();
 
   const verificationQueries = [
     {
       queryKey: ['isPluginUpdateProposalValid', daoAddress],
-      queryFn: () =>
-        client?.methods.isPluginUpdateProposal(proposalId as string),
+      queryFn: () => client?.methods.isPluginUpdateProposalValid(proposalId),
       enabled: Boolean(daoAddress) && Boolean(proposalId),
     },
     {
       queryKey: ['isDaoUpdateProposalValid', daoAddress],
-      queryFn: () =>
-        client?.methods.isDaoUpdateProposalValid(proposalId as string),
+      queryFn: () => client?.methods.isDaoUpdateProposalValid(proposalId),
       enabled: Boolean(daoAddress) && Boolean(proposalId),
     },
   ];
