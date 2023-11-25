@@ -62,7 +62,7 @@ export const Status: React.FC<StatusProps> = ({
           </div>
         )}
         {mode === 'error' && (
-          <div className="mb-3 flex space-x-2 ">
+          <div className="mb-3 flex flex-wrap gap-2">
             {ErrorList?.map((item, index) => (
               <Tag key={index} label={item} colorScheme={'critical'} />
             ))}
