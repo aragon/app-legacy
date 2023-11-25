@@ -5,6 +5,8 @@ import {
   IconRadioCancel,
   IconSuccess,
   ButtonText,
+  IconLinkExternal,
+  Tag,
 } from '@aragon/ods-old';
 
 export interface StatusProps {
@@ -13,6 +15,7 @@ export interface StatusProps {
   description?: ReactNode;
   DetailsButtonLabel?: string;
   DetailsButtonSrc?: string;
+  ErrorList?: string[];
 }
 
 const textColors: Record<StatusProps['mode'], string> = {
@@ -44,6 +47,7 @@ export const Status: React.FC<StatusProps> = ({
   description,
   DetailsButtonLabel,
   DetailsButtonSrc,
+  ErrorList,
 }) => {
   return (
     <Content>
@@ -53,18 +57,28 @@ export const Status: React.FC<StatusProps> = ({
       <Wrapper>
         <Label mode={mode}>{label}</Label>
         {description && (
-          <div className="text-sm leading-normal text-neutral-600 md:text-base">
+          <div className="mb-3 mt-1 text-sm leading-normal text-neutral-600 md:text-base">
             {description}
           </div>
         )}
         {mode === 'error' && (
-          <ButtonText
-            label={DetailsButtonLabel as string}
-            mode="secondary"
-            size="small"
-            bgWhite
-            onClick={() => window.open(DetailsButtonSrc, '_blank')}
-          />
+          <div className="mb-3 flex space-x-2 ">
+            {ErrorList?.map((item, index) => (
+              <Tag key={index} label={item} colorScheme={'critical'} />
+            ))}
+          </div>
+        )}
+        {mode === 'error' && (
+          <div>
+            <ButtonText
+              label={DetailsButtonLabel as string}
+              iconRight={<IconLinkExternal />}
+              mode="secondary"
+              size="small"
+              bgWhite
+              onClick={() => window.open(DetailsButtonSrc, '_blank')}
+            />
+          </div>
         )}
       </Wrapper>
     </Content>
@@ -78,7 +92,7 @@ const Content = styled.div.attrs(() => ({
 }))``;
 
 const Wrapper = styled.div.attrs({
-  className: 'flex flex-col justify-between h-full space-y-0.5',
+  className: 'flex flex-col justify-between h-full',
 })``;
 
 const Label = styled.div.attrs<{mode: StatusProps['mode']}>(({mode}) => ({

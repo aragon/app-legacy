@@ -1,27 +1,13 @@
-// import {
-// AlertCard,
-// IconLinkExternal,
-// Link,
-// shortenAddress,
-// } from '@aragon/ods-old';
-// import {DaoAction} from '@aragon/sdk-client-common';
 import React, {useEffect, useMemo, useState} from 'react';
-// import {useTranslation} from 'react-i18next';
+import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 
-// import {useNetwork} from 'context/network';
 import {useDaoDetailsQuery} from 'hooks/useDaoDetails';
 import {useUpdateVerification} from 'hooks/useUpdateVerification';
 import {useClient} from 'hooks/useClient';
 import {isVerifiedAragonUpdateProposal} from 'utils/proposals';
 import {htmlIn} from 'utils/htmlIn';
-import {useTranslation} from 'react-i18next';
-// import {CHAIN_METADATA} from 'utils/constants';
-// import {htmlIn} from 'utils/htmlIn';
-// import {ProposalId} from 'utils/types';
-// import {validateAddress} from 'utils/validators';
 import {Status, StatusProps} from './Status';
-// import {useClient} from 'hooks/useClient';
 
 export interface UpdateVerificationCardProps {
   proposalId?: string;
@@ -35,8 +21,6 @@ export const UpdateVerificationCard: React.FC<UpdateVerificationCardProps> = ({
   const [verifiedUpdateProposal, setVerifiedUpdateProposal] =
     useState<boolean>(false);
 
-  console.log('verifiedUpdateProposal', verifiedUpdateProposal);
-
   useEffect(() => {
     async function fetchIsVerifiedAragonUpdateProposal() {
       if (client != null && proposalId) {
@@ -49,40 +33,18 @@ export const UpdateVerificationCard: React.FC<UpdateVerificationCardProps> = ({
     fetchIsVerifiedAragonUpdateProposal();
   }, [client, proposalId]);
 
-  // const {t} = useTranslation();
-  // const {client} = useClient();
-  // const {network} = useNetwork();
   const {data: daoDetails} = useDaoDetailsQuery();
 
   const daoAddress: string = daoDetails?.address || '';
   const pluginType =
-    daoDetails?.plugins[0].type === 'token-voting.plugin.dao.eth'
+    daoDetails?.plugins[0].id === 'token-voting.plugin.dao.eth'
       ? 'token voting'
       : 'multisig';
-  // const isDaoAddressCheckLoading = detailsAreLoading;
-  // const isDaoAddressVerified = validateAddress(daoAddress) === true;
 
   const [
     {data: pluginUpdateVerification, isLoading: isPluginUpdateLoading},
     {data: osUpdateVerification, isLoading: isOSUpdateLoading},
   ] = useUpdateVerification(daoAddress, proposalId as string);
-
-  console.log(
-    'showUpdateVerification',
-    proposalId,
-    pluginUpdateVerification,
-    osUpdateVerification
-  );
-
-  /** @todo Figure put how to get plugin registry update */
-  // // const pluginRegistryAddress = daoDetails?.address || ''
-  // const isPluginRegistryVerified = !!osUpdateVerification.data;
-
-  // /** @todo Figure put how to get plugin setup processor update */
-  // // const pluginSetupProcessorAddress = daoDetails?.address || '';
-  // const isPluginSetupProcessorCheckLoading =
-  //   pluginUpdateVerification.isLoading || detailsAreLoading;
-  // const isPluginSetupProcessorVerified = !!osUpdateVerification.data;
 
   const OSUpdate: StatusProps = useMemo(() => {
     if (isOSUpdateLoading)
@@ -104,9 +66,22 @@ export const UpdateVerificationCard: React.FC<UpdateVerificationCardProps> = ({
         return {
           mode: 'error',
           label: t('update.verification.itemCriticalDecoding.desc'),
+          description: t('update.verification.itemCriticalFailed.desc'),
+          DetailsButtonLabel: t('update.verification.itemCritical.linkLabel'),
+          DetailsButtonSrc: t('update.verification.itemCritical.linkURL'),
+          ErrorList: [
+            ...(osUpdateVerification?.actionErrorCauses || []),
+            ...(osUpdateVerification?.proposalSettingsErrorCauses || []),
+          ] as string[],
         };
     }
-  }, [isOSUpdateLoading, osUpdateVerification, t]);
+  }, [
+    isOSUpdateLoading,
+    osUpdateVerification?.actionErrorCauses,
+    osUpdateVerification?.isValid,
+    osUpdateVerification?.proposalSettingsErrorCauses,
+    t,
+  ]);
 
   const pluginUpdate: StatusProps = useMemo(() => {
     if (isPluginUpdateLoading)
@@ -130,7 +105,11 @@ export const UpdateVerificationCard: React.FC<UpdateVerificationCardProps> = ({
           label: t('update.verification.itemCriticalDecoding.desc'),
           description: t('update.verification.itemCriticalFailed.desc'),
           DetailsButtonLabel: t('update.verification.itemCritical.linkLabel'),
-          DetailsButtonSrc: t('update.verification.itemCritical.linkUrl'),
+          DetailsButtonSrc: t('update.verification.itemCritical.linkURL'),
+          ErrorList: [
+            ...(pluginUpdateVerification?.actionErrorCauses || []),
+            ...(pluginUpdateVerification?.proposalSettingsErrorCauses || []),
+          ] as string[],
         };
     }
   }, [isPluginUpdateLoading, pluginType, pluginUpdateVerification, t]);
