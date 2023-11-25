@@ -5,7 +5,6 @@ import {useTranslation} from 'react-i18next';
 import {Controller, useFormContext} from 'react-hook-form';
 import AddWallets from 'components/addWallets';
 import {alphaNumericValidator} from 'utils/validators';
-import {SelectEligibility} from 'components/selectEligibility';
 import {htmlIn} from 'utils/htmlIn';
 
 const CreateNewToken: React.FC = () => {
@@ -101,9 +100,6 @@ const CreateNewToken: React.FC = () => {
           mode="neutral"
         />
         <AddWallets />
-      </FormItem>
-      <FormItem>
-        <SelectEligibility />
       </FormItem>
     </>
   );

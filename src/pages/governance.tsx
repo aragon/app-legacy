@@ -28,6 +28,7 @@ import {htmlIn} from 'utils/htmlIn';
 import {toDisplayEns} from 'utils/library';
 import {useNetwork} from 'context/network';
 import {NewProposal} from 'utils/paths';
+import {ProposalTypes} from 'utils/types';
 
 export const Governance: React.FC = () => {
   const {t} = useTranslation();
@@ -73,7 +74,7 @@ export const Governance: React.FC = () => {
     });
     navigate(
       generatePath(NewProposal, {
-        type: 'default',
+        type: ProposalTypes.Default,
         network,
         dao: toDisplayEns(daoDetails?.ensDomain) || daoDetails?.address,
       })

@@ -100,7 +100,6 @@ const WalletRow: React.FC<WalletRowProps> = ({index, onDelete}) => {
       let totalSupply = 0;
       let minAmount = walletFieldArray[0]?.amount;
       const address = getValues(`wallets.${index}.address`);
-      const eligibilityType = getValues('eligibilityType');
       if (address === '') trigger(`wallets.${index}.address`);
 
       // calculate total token supply disregarding error invalid fields
@@ -112,9 +111,6 @@ const WalletRow: React.FC<WalletRowProps> = ({index, onDelete}) => {
           totalSupply = Number(wallet.amount) + totalSupply;
       });
       setValue('tokenTotalSupply', totalSupply);
-
-      if (eligibilityType === 'token')
-        setValue('minimumTokenAmount', minAmount);
 
       // Number of characters after decimal point greater than
       // the number of decimals in the token itself
@@ -253,16 +249,9 @@ const WalletRow: React.FC<WalletRowProps> = ({index, onDelete}) => {
               ),
               callback: () => {
                 if (typeof onDelete === 'function') {
-                  const [
-                    totalSupply,
-                    amount,
-                    eligibilityType,
-                    eligibilityTokenAmount,
-                  ] = getValues([
+                  const [totalSupply, amount] = getValues([
                     'tokenTotalSupply',
                     `wallets.${index}.amount`,
-                    'eligibilityType',
-                    'eligibilityTokenAmount',
                   ]);
 
                   const newTotalSupply = Number(totalSupply) - Number(amount);
@@ -271,20 +260,6 @@ const WalletRow: React.FC<WalletRowProps> = ({index, onDelete}) => {
                     newTotalSupply < 0 ? 0 : newTotalSupply
                   );
                   onDelete(index);
-                  if (eligibilityType === 'token') {
-                    if (eligibilityTokenAmount === amount) {
-                      let minAmount = walletFieldArray[0]?.amount;
-                      (walletFieldArray as TokenVotingWalletField[]).forEach(
-                        (wallet, mapIndex) => {
-                          if (mapIndex !== index)
-                            if (Number(wallet.amount) < Number(minAmount)) {
-                              minAmount = wallet.amount;
-                            }
-                        }
-                      );
-                      setValue('minimumTokenAmount', minAmount);
-                    }
-                  }
                   alert(t('alert.chip.removedAddress') as string);
                 }
               },

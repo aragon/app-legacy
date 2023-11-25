@@ -2,9 +2,10 @@ import {LinearProgress} from '@aragon/ods-old';
 import React from 'react';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
+
 import {TokenVotingOptions} from 'utils/proposals';
-import {abbreviateTokenAmount} from 'utils/tokens';
 import {ProposalVoteResults, VotingTerminalProps} from '.';
+import {abbreviateTokenAmount} from 'utils/tokens';
 
 type BreakdownProps = {
   approvals?: string[];
@@ -17,7 +18,7 @@ const BreakdownTab: React.FC<BreakdownProps> = ({
   approvals,
   memberCount,
   token,
-  results,
+  results = [],
 }) => {
   const {t} = useTranslation();
 
@@ -46,7 +47,7 @@ const BreakdownTab: React.FC<BreakdownProps> = ({
   if (token) {
     return (
       <VStackRelaxed>
-        {Object.entries(results || []).map(([key, result]) => (
+        {Object.entries(results).map(([key, result]) => (
           <ResultRow
             key={key}
             option={key as TokenVotingOptions}

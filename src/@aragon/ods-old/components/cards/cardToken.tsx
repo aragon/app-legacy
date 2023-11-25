@@ -111,13 +111,13 @@ export const CardToken: React.FC<CardTokenProps> = ({
 type CardProps = Pick<CardTokenProps, 'bgWhite'>;
 
 const Card = styled.div.attrs<CardProps>(({bgWhite}) => ({
-  className: `flex justify-between space-x-8 items-center py-5 px-6 overflow-hidden ${
+  className: `flex justify-between items-center py-5 px-6 overflow-hidden ${
     bgWhite ? 'bg-neutral-50' : 'bg-neutral-0'
   } rounded-xl`,
 }))<CardProps>``;
 
 const CoinDetailsWithImage = styled.div.attrs({
-  className: 'flex items-center flex-auto',
+  className: 'flex items-center flex-auto overflow-hidden',
 })``;
 
 const CoinImage = styled.img.attrs(({src}) => ({
@@ -142,7 +142,7 @@ const SecondaryCoinDetails = styled.div.attrs({
 })``;
 
 const MarketProperties = styled.div.attrs({
-  className: 'text-right space-y-2 flex-auto overflow-hidden',
+  className: 'text-right space-y-2 flex-auto',
 })``;
 
 const FiatValue = styled.h1.attrs({

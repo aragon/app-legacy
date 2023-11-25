@@ -6,7 +6,9 @@ import {
   useQueryClient,
 } from '@tanstack/react-query';
 import {useCallback} from 'react';
+import {useBalance, Address} from 'wagmi';
 
+import {CHAIN_METADATA} from 'utils/constants';
 import {Token} from '../domain';
 import {tokenQueryKeys} from '../query-keys';
 import {tokenService} from '../token-service';
@@ -57,11 +59,29 @@ export const useTokenList = (
 
 export const useTokenBalances = (
   params: IFetchTokenBalancesParams,
-  options?: UseQueryOptions<AssetBalance[] | null>
+  options: UseQueryOptions<AssetBalance[] | null> = {}
 ) => {
+  // Because the external api (covalent) sometimes does
+  // not index a native balance, fetch the native token balance for
+  // the DAO directly and augment the covalent response with it.
+  // Please remove this and handle it on the backend; see APP-2592
+  // [FF - 11/6/2023]
+  const {data: nativeToken, isFetched} = useBalance({
+    address: params.address as Address,
+    chainId: CHAIN_METADATA[params.network].id,
+  });
+
+  if (!isFetched) {
+    options.enabled = false;
+  }
+
   return useQuery(
     tokenQueryKeys.balances(params),
-    () => tokenService.fetchTokenBalances(params),
+    () =>
+      tokenService.fetchTokenBalances({
+        ...params,
+        nativeTokenBalance: nativeToken?.value ?? BigInt(0),
+      }),
     options
   );
 };

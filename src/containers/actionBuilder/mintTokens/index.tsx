@@ -1,6 +1,6 @@
 import {ButtonText, ListItemAction, Label as FormLabel} from '@aragon/ods-old';
 import Big from 'big.js';
-import {BigNumber} from 'ethers';
+import {BigNumber} from '@ethersproject/bignumber';
 import {isAddress} from 'ethers/lib/utils';
 import React, {useCallback, useEffect, useState} from 'react';
 import {

@@ -1,32 +1,31 @@
-import {
-  MultisigClient,
-  MultisigProposal,
-  TokenVotingClient,
-  TokenVotingProposal,
-} from '@aragon/sdk-client';
-import {UseQueryOptions, useQuery} from '@tanstack/react-query';
+import {MultisigProposal, TokenVotingProposal} from '@aragon/sdk-client';
+import {useQuery, UseQueryOptions} from '@tanstack/react-query';
 
 import {useNetwork} from 'context/network';
-import {usePluginClient} from 'hooks/usePluginClient';
+import {PluginClient, usePluginClient} from 'hooks/usePluginClient';
 import {CHAIN_METADATA} from 'utils/constants';
 import {invariant} from 'utils/invariant';
 import {IFetchProposalParams} from '../aragon-sdk-service.api';
 import {aragonSdkQueryKeys} from '../query-keys';
 import {syncProposalData, transformProposal} from '../selectors';
+import {GaslessVotingProposal} from '@vocdoni/gasless-voting';
 
 async function fetchProposal(
   params: IFetchProposalParams,
-  client: TokenVotingClient | MultisigClient | undefined
-): Promise<MultisigProposal | TokenVotingProposal | null> {
+  client: PluginClient | undefined
+): Promise<
+  MultisigProposal | TokenVotingProposal | GaslessVotingProposal | null
+> {
   invariant(!!client, 'fetchProposal: client is not defined');
-
   const data = await client?.methods.getProposal(params.id);
   return data;
 }
 
 export const useProposal = (
   params: IFetchProposalParams,
-  options: UseQueryOptions<MultisigProposal | TokenVotingProposal | null> = {}
+  options: UseQueryOptions<
+    MultisigProposal | TokenVotingProposal | GaslessVotingProposal | null
+  > = {}
 ) => {
   const client = usePluginClient(params.pluginType);
 
@@ -37,8 +36,9 @@ export const useProposal = (
   const {network} = useNetwork();
   const chainId = CHAIN_METADATA[network].id;
 
-  const defaultSelect = (data: TokenVotingProposal | MultisigProposal | null) =>
-    transformProposal(chainId, data);
+  const defaultSelect = (
+    data: TokenVotingProposal | MultisigProposal | GaslessVotingProposal | null
+  ) => transformProposal(chainId, data);
 
   return useQuery({
     ...options,

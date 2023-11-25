@@ -635,73 +635,75 @@ const ContractAddressValidation: React.FC<Props> = props => {
             mode="secondary"
           />
         ) : (
-          <ButtonText
-            label={
-              ABIFlowState !== ManualABIFlowState.NOT_STARTED
-                ? ABIFlowLabel[ABIFlowState]
-                : label[verificationState]
-            }
-            onClick={async () => {
-              if (verificationState === TransactionState.SUCCESS) {
-                props.onVerificationSuccess();
-                // clear contract address field
-                resetField('contractAddress');
-                setVerificationState(TransactionState.WAITING);
-
-                trackEvent('newProposal_createAction_clicked', {
-                  dao_address: daoAddressOrEns,
-                  smart_contract_address: addressField,
-                  smart_contract_name: contractName,
-                });
-              } else if (ABIFlowState === ManualABIFlowState.NOT_STARTED) {
-                // contract address entered for validation
-                trackEvent('newProposal_validateSmartContract_clicked', {
-                  dao_address: daoAddressOrEns,
-                  smart_contract_address: addressField,
-                });
-                setVerificationState(TransactionState.LOADING);
-              } else if (ABIFlowState === ManualABIFlowState.SUCCESS) {
-                // Add ABI contract to verified contracts
-                setVerifiedContract(
-                  'manualABI',
-                  {
-                    ABI: value,
-                    ContractName: addressField,
-                  } as AugmentedEtherscanContractResponse,
-                  ''
-                );
-                props.onVerificationSuccess();
-                resetField('contractAddress');
-                resetField('ABIInput');
-                setVerificationState(TransactionState.WAITING);
-                setABIFlowState(ManualABIFlowState.NOT_STARTED);
-
-                trackEvent('newProposal_createAction_clicked', {
-                  dao_address: daoAddressOrEns,
-                  smart_contract_address: addressField,
-                  smart_contract_name: contractName,
-                });
-              } else if (verificationState === TransactionState.ERROR) {
-                // Manual ABI flow starting
-                // setABIFlowState(ManualABIFlowState.ABI_INPUT);
-
-                //Retry
-                resetField('contractAddress', {defaultValue: ''});
-                setVerificationState(TransactionState.WAITING);
-                setABIFlowState(ManualABIFlowState.NOT_STARTED);
+          ABIFlowState !== ManualABIFlowState.WAITING && (
+            <ButtonText
+              label={
+                ABIFlowState !== ManualABIFlowState.NOT_STARTED
+                  ? ABIFlowLabel[ABIFlowState]
+                  : label[verificationState]
               }
-            }}
-            iconLeft={
-              isTransactionLoading ? (
-                <Spinner size="xs" color="white" />
-              ) : undefined
-            }
-            iconRight={icons[verificationState]}
-            isActive={isTransactionLoading}
-            disabled={isButtonDisabled}
-            size="large"
-            className="mt-6 w-full"
-          />
+              onClick={async () => {
+                if (verificationState === TransactionState.SUCCESS) {
+                  props.onVerificationSuccess();
+                  // clear contract address field
+                  resetField('contractAddress');
+                  setVerificationState(TransactionState.WAITING);
+
+                  trackEvent('newProposal_createAction_clicked', {
+                    dao_address: daoAddressOrEns,
+                    smart_contract_address: addressField,
+                    smart_contract_name: contractName,
+                  });
+                } else if (ABIFlowState === ManualABIFlowState.NOT_STARTED) {
+                  // contract address entered for validation
+                  trackEvent('newProposal_validateSmartContract_clicked', {
+                    dao_address: daoAddressOrEns,
+                    smart_contract_address: addressField,
+                  });
+                  setVerificationState(TransactionState.LOADING);
+                } else if (ABIFlowState === ManualABIFlowState.SUCCESS) {
+                  // Add ABI contract to verified contracts
+                  setVerifiedContract(
+                    'manualABI',
+                    {
+                      ABI: value,
+                      ContractName: addressField,
+                    } as AugmentedEtherscanContractResponse,
+                    ''
+                  );
+                  props.onVerificationSuccess();
+                  resetField('contractAddress');
+                  resetField('ABIInput');
+                  setVerificationState(TransactionState.WAITING);
+                  setABIFlowState(ManualABIFlowState.NOT_STARTED);
+
+                  trackEvent('newProposal_createAction_clicked', {
+                    dao_address: daoAddressOrEns,
+                    smart_contract_address: addressField,
+                    smart_contract_name: contractName,
+                  });
+                } else if (verificationState === TransactionState.ERROR) {
+                  // Manual ABI flow starting
+                  // setABIFlowState(ManualABIFlowState.ABI_INPUT);
+
+                  //Retry
+                  resetField('contractAddress', {defaultValue: ''});
+                  setVerificationState(TransactionState.WAITING);
+                  setABIFlowState(ManualABIFlowState.NOT_STARTED);
+                }
+              }}
+              iconLeft={
+                isTransactionLoading ? (
+                  <Spinner size="xs" color="white" />
+                ) : undefined
+              }
+              iconRight={icons[verificationState]}
+              isActive={isTransactionLoading}
+              disabled={isButtonDisabled}
+              size="large"
+              className="mt-6 w-full"
+            />
+          )
         )}
         {isTransactionError && ABIFlowState === ManualABIFlowState.WAITING && (
           <ButtonText

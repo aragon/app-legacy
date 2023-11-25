@@ -4,14 +4,17 @@ import {
   TokenVotingProposal,
   TokenVotingProposalListItem,
   TokenVotingProposalVote,
+  VoteValues,
 } from '@aragon/sdk-client';
-import {ProposalStatus} from '@aragon/sdk-client-common';
+import {ensure0x, ProposalStatus} from '@aragon/sdk-client-common';
 import {InfiniteData} from '@tanstack/react-query';
+import {GaslessVotingProposal} from '@vocdoni/gasless-voting';
 
 import {SupportedChainID} from 'utils/constants';
 import {executionStorage, voteStorage} from 'utils/localStorage';
 import {proposalStorage} from 'utils/localStorage/proposalStorage';
 import {
+  isGaslessProposal,
   isMultisigProposal,
   isTokenBasedProposal,
   recalculateProposalStatus,
@@ -61,6 +64,7 @@ export function transformProposal<
     | TokenVotingProposal
     | MultisigProposalListItem
     | TokenVotingProposalListItem
+    | GaslessVotingProposal
     | null,
 >(chainId: SupportedChainID, data: T): T {
   if (data == null) {
@@ -72,6 +76,9 @@ export function transformProposal<
   syncApprovalsOrVotes(chainId, proposal);
   syncExecutionInfo(chainId, proposal);
 
+  // todo(kon): Quickfix for gasless proposals bug where the creator address is not prefixed with 0x
+  proposal.creatorAddress = ensure0x(proposal.creatorAddress);
+
   return recalculateProposalStatus(proposal) as T;
 }
 
@@ -80,7 +87,8 @@ export function syncProposalData<
     | MultisigProposal
     | TokenVotingProposal
     | MultisigProposalListItem
-    | TokenVotingProposalListItem,
+    | TokenVotingProposalListItem
+    | GaslessVotingProposal,
 >(chainId: SupportedChainID, proposalId: string, serverData: T | null) {
   if (serverData) {
     proposalStorage.removeProposal(chainId, serverData.id);
@@ -107,6 +115,7 @@ function syncExecutionInfo(
     | TokenVotingProposal
     | MultisigProposalListItem
     | TokenVotingProposalListItem
+    | GaslessVotingProposal
 ): void {
   if (proposal.status === ProposalStatus.EXECUTED) {
     // If the proposal is already executed, remove its detail from storage.
@@ -138,9 +147,17 @@ function syncApprovalsOrVotes(
     | TokenVotingProposal
     | MultisigProposalListItem
     | TokenVotingProposalListItem
+    | GaslessVotingProposal
 ): void {
   if (isMultisigProposal(proposal)) {
     proposal.approvals = syncMultisigVotes(chainId, proposal);
+  } else if (isGaslessProposal(proposal)) {
+    const {gaslessVoters, approvers} = syncGaslessVotesOrApproves(
+      chainId,
+      proposal
+    );
+    proposal.approvers = approvers;
+    proposal.voters = gaslessVoters.map(({address}) => address);
   } else if (isTokenBasedProposal(proposal)) {
     proposal.votes = syncTokenBasedVotes(chainId, proposal);
   }
@@ -235,4 +252,74 @@ function syncTokenBasedVotes(
   }
 
   return [...uniqueCachedVotes, ...Array.from(serverVotes.values())];
+}
+
+type ApprovalVote = string;
+type GaslessVote = {
+  address: string;
+  vote: VoteValues;
+  weight: BigInt;
+};
+
+export type GaslessVoteOrApprovalVote =
+  | {
+      type: 'gaslessVote';
+      vote: GaslessVote;
+    }
+  | {
+      type: 'approval';
+      vote: ApprovalVote;
+    };
+
+function syncGaslessVotesOrApproves(
+  chainId: SupportedChainID,
+  proposal: GaslessVotingProposal
+) {
+  const approversCache: ApprovalVote[] = [];
+  const gaslessVotersCache: GaslessVote[] = [];
+
+  // all cached votes
+  const allCachedVotes = voteStorage.getVotes<GaslessVoteOrApprovalVote>(
+    chainId,
+    proposal.id
+  );
+
+  const serverApprovals = new Set(proposal.approvers);
+  const serverGaslessVoters = new Set(proposal.voters);
+
+  allCachedVotes.forEach(cachedVote => {
+    // remove, from the cache, votes that are returned by the query as well
+    if (
+      cachedVote.type === 'approval' &&
+      serverApprovals.has(cachedVote.vote.toLowerCase())
+    ) {
+      voteStorage.removeVoteForProposal(chainId, proposal.id, cachedVote.vote);
+    } else if (
+      cachedVote.type === 'gaslessVote' &&
+      serverGaslessVoters.has(cachedVote.vote.address.toLowerCase())
+    ) {
+      voteStorage.removeVoteForProposal(
+        chainId,
+        proposal.id,
+        cachedVote.vote.address
+      );
+    } else {
+      // If the vote is not in the server, add it to the list
+      cachedVote.type === 'approval'
+        ? approversCache.push(cachedVote.vote)
+        : gaslessVotersCache.push(cachedVote.vote);
+    }
+  });
+
+  // This is needed until the voters list is fixed from the backend
+  const mappedVoters = Array.from(serverGaslessVoters).map(address => ({
+    address,
+    vote: null,
+    weight: null,
+  }));
+
+  return {
+    approvers: [...approversCache, ...serverApprovals],
+    gaslessVoters: [...gaslessVotersCache, ...mappedVoters],
+  };
 }

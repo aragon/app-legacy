@@ -45,6 +45,7 @@ export const useTokenHolders = (
   params: IFetchTokenHoldersParams,
   options: UseQueryOptions<TokenHoldersResponse> = {}
 ) => {
+  params.page = params.page || 0; // otherwise undefined & 0 are different query keys
   return useQuery(
     aragonBackendQueryKeys.tokenHolders(params),
     () => fetchTokenHolders(params),

@@ -23,9 +23,8 @@ import {generatePath, useNavigate} from 'react-router-dom';
 import {FullScreenStepper, Step} from 'components/fullScreenStepper';
 import {Loading} from 'components/temporary';
 import CompareSettings from 'containers/compareSettings';
-import DefineProposal, {
-  isValid as defineProposalIsValid,
-} from 'containers/defineProposal';
+import {isValid as defineProposalIsValid} from 'containers/defineProposal';
+import {DefineProposal} from 'containers/defineProposal/';
 import ReviewProposal from 'containers/reviewProposal';
 import SetupVotingForm from 'containers/setupVotingForm';
 import PublishModal from 'containers/transactionModals/publishModal';
@@ -37,6 +36,7 @@ import {useDaoDetailsQuery} from 'hooks/useDaoDetails';
 import {useDaoToken} from 'hooks/useDaoToken';
 import {
   PluginTypes,
+  isGaslessVotingClient,
   isMultisigClient,
   isTokenVotingClient,
   usePluginClient,
@@ -73,15 +73,13 @@ import {
   ActionUpdatePluginSettings,
   ProposalId,
   ProposalResource,
-  ProposalSettingsFormData,
 } from 'utils/types';
 
 export const ProposeSettings: React.FC = () => {
   const {t} = useTranslation();
   const {network} = useNetwork();
 
-  const {getValues, setValue, control} =
-    useFormContext<ProposalSettingsFormData>();
+  const {getValues, setValue, control} = useFormContext();
   const [showTxModal, setShowTxModal] = useState(false);
   const {errors, dirtyFields} = useFormState({
     control,
@@ -479,24 +477,33 @@ const ProposeSettingWrapper: React.FC<Props> = ({
 
         // getting dates
         let startDateTime: Date;
-        const startMinutesDelay = isMultisigVotingSettings(votingSettings)
-          ? 0
-          : 10;
 
+        /**
+         * Here we defined base startDate.
+         */
         if (startSwitch === 'now') {
+          // Taking current time, but we won't pass it to SC cuz it's gonna be outdated. Needed for calculations below.
           startDateTime = new Date(
-            `${getCanonicalDate()}T${getCanonicalTime({
-              minutes: startMinutesDelay,
-            })}:00${getCanonicalUtcOffset()}`
+            `${getCanonicalDate()}T${getCanonicalTime()}:00${getCanonicalUtcOffset()}`
           );
         } else {
+          // Taking time user has set.
           startDateTime = new Date(
             `${startDate}T${startTime}:00${getCanonicalUtcOffset(startUtc)}`
           );
         }
 
+        // Minimum allowed end date (if endDate is lower than that SC call fails)
+        const minEndDateTimeMills =
+          startDateTime.valueOf() +
+          daysToMills(minDays || 0) +
+          hoursToMills(minHours || 0) +
+          minutesToMills(minMinutes || 0);
+
         // End date
         let endDateTime;
+
+        // user specifies duration in time/second exact way
         if (durationSwitch === 'duration') {
           const [days, hours, minutes] = getValues([
             'durationDays',
@@ -509,31 +516,32 @@ const ProposeSettingWrapper: React.FC<Props> = ({
             startDateTime.valueOf() + offsetToMills({days, hours, minutes});
 
           endDateTime = new Date(endDateTimeMill);
+
+          // In case the endDate is close to being minimum durable, (and we starting immediately)
+          // to avoid passing late-date possibly, we just rely on SDK to set proper Date
+          if (
+            endDateTime.valueOf() <= minEndDateTimeMills &&
+            startSwitch === 'now'
+          ) {
+            /* Pass enddate as undefined to SDK to auto-calculate min endDate */
+            endDateTime = undefined;
+          }
         } else {
+          // In case exact time specified by user
           endDateTime = new Date(
             `${endDate}T${endTime}:00${getCanonicalUtcOffset(endUtc)}`
           );
         }
 
-        if (startSwitch === 'now') {
-          endDateTime = new Date(
-            endDateTime.getTime() + minutesToMills(startMinutesDelay)
-          );
-        } else {
+        if (startSwitch === 'duration' && endDateTime) {
+          // Making sure we are not in past for further calculation
           if (startDateTime.valueOf() < new Date().valueOf()) {
             startDateTime = new Date(
-              `${getCanonicalDate()}T${getCanonicalTime({
-                minutes: startMinutesDelay,
-              })}:00${getCanonicalUtcOffset()}`
+              `${getCanonicalDate()}T${getCanonicalTime()}:00${getCanonicalUtcOffset()}`
             );
           }
 
-          const minEndDateTimeMills =
-            startDateTime.valueOf() +
-            daysToMills(minDays || 0) +
-            hoursToMills(minHours || 0) +
-            minutesToMills(minMinutes || 0);
-
+          // If provided date is expired
           if (endDateTime.valueOf() < minEndDateTimeMills) {
             const legacyStartDate = new Date(
               `${startDate}T${startTime}:00${getCanonicalUtcOffset(startUtc)}`
@@ -547,15 +555,13 @@ const ProposeSettingWrapper: React.FC<Props> = ({
         }
 
         /**
-         * For multisig proposals, in case "now" as start time is selected, we want
+         * In case "now" as start time is selected, we want
          * to keep startDate undefined, so it's automatically evaluated.
          * If we just provide "Date.now()", than after user still goes through the flow
          * it's going to be date from the past. And SC-call evaluation will fail.
          */
         const finalStartDate =
-          startSwitch === 'now' && isMultisigVotingSettings(votingSettings)
-            ? undefined
-            : startDateTime;
+          startSwitch === 'now' ? undefined : startDateTime;
 
         // Ignore encoding if the proposal had no actions
         return {
@@ -599,6 +605,10 @@ const ProposeSettingWrapper: React.FC<Props> = ({
       );
     }
     if (!proposalCreationData) return;
+
+    // todo(kon): implement this
+    // The propose settings flow is not currently handled by the gasless voting client
+    if (!proposalCreationData || isGaslessVotingClient(pluginClient)) return;
 
     return pluginClient?.estimation.createProposal(proposalCreationData);
   }, [pluginClient, proposalCreationData]);
@@ -649,6 +659,24 @@ const ProposeSettingWrapper: React.FC<Props> = ({
       creationProcessState === TransactionState.LOADING
     ) {
       console.log('Transaction is running');
+      return;
+    }
+
+    // let proposalIterator: AsyncGenerator<ProposalCreationStepValue>;
+    // if (isGaslessVotingClient(pluginClient)) {
+    //   proposalIterator = (
+    //     pluginClient as GaslessVotingClient
+    //   ).methods.createProposal(
+    //     proposalCreationData as CreateGasslessProposalParams
+    //   );
+    // } else {
+    //   proposalIterator =
+    //     pluginClient.methods.createProposal(proposalCreationData);
+    // }
+
+    // todo(kon): implement this
+    // The propose settings flow is not currently handled by the gasless voting client
+    if (isGaslessVotingClient(pluginClient)) {
       return;
     }
 

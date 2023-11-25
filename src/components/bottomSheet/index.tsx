@@ -1,9 +1,6 @@
-import React, {useEffect, ReactNode} from 'react';
-import {motion, PanInfo, useAnimation} from 'framer-motion';
+import React, {ReactNode} from 'react';
 import {Backdrop} from '@aragon/ods-old';
 import styled from 'styled-components';
-
-import usePrevious from 'hooks/usePrevious';
 
 export type BottomSheetProps = {
   children?: ReactNode;
@@ -22,54 +19,34 @@ export default function BottomSheet({
   subtitle,
   closeOnDrag = true,
 }: BottomSheetProps) {
-  const prevIsOpen = usePrevious(isOpen);
-  const controls = useAnimation();
+  // Allow swiping menu away
+  const onTouchMove = () => {
+    if (!closeOnDrag) return;
+    onClose?.();
+  };
 
-  // For adding drag on bottom sheet
-  function onDragEnd(_: MouseEvent | TouchEvent | PointerEvent, info: PanInfo) {
-    if (!closeOnDrag) {
-      controls.start('visible');
-      return;
-    }
+  const backdropClose = () => {
+    onClose?.();
+  };
 
-    const shouldClose =
-      info.velocity.y > 20 || (info.velocity.y >= 0 && info.point.y > 45);
-    if (shouldClose) {
-      controls.start('hidden');
-      onClose?.();
-    } else {
-      controls.start('visible');
-    }
-  }
-  // For Run animation on each state change
-  useEffect(() => {
-    if (prevIsOpen && !isOpen) {
-      controls.start('hidden');
-    } else if (!prevIsOpen && isOpen) {
-      controls.start('visible');
-    }
-  }, [controls, isOpen, prevIsOpen]);
+  const openStyle = {
+    transition: 'max-height 0.5s ease-out, y 0.5s ease-out',
+    y: 0,
+    height: 'auto',
+    maxHeight: '100vh',
+  };
+  const closedStyle = {
+    transition: 'max-height 1s ease-out, y 1s ease-out',
+    y: 100,
+    height: 0,
+    maxHeight: '0vh',
+  };
+  const currentStyle = isOpen ? openStyle : closedStyle;
 
   return (
     <>
-      <Backdrop visible={isOpen} onClose={onClose} />
-      <StyledMotionContainer
-        drag="y"
-        onDragEnd={onDragEnd}
-        initial="hidden"
-        animate={controls}
-        transition={{
-          type: 'spring',
-          damping: 40,
-          stiffness: 400,
-        }}
-        variants={{
-          visible: {y: 0, height: 'auto'},
-          hidden: {y: 100, height: 0},
-        }}
-        dragConstraints={{top: 0}}
-        dragElastic={0.2}
-      >
+      <Backdrop visible={isOpen} onClose={backdropClose} />
+      <BottomSheetContainer style={currentStyle} onTouchMove={onTouchMove}>
         {title && (
           <ModalTitleContainer>
             <ModalTitle>{title}</ModalTitle>
@@ -77,12 +54,12 @@ export default function BottomSheet({
           </ModalTitleContainer>
         )}
         {children}
-      </StyledMotionContainer>
+      </BottomSheetContainer>
     </>
   );
 }
 
-const StyledMotionContainer = styled(motion.div).attrs({
+const BottomSheetContainer = styled.div.attrs({
   className:
     'bg-neutral-50 block left-0 fixed bottom-0 md:bottom-6 w-full md:w-max md:max-w-full rounded-t-xl md:rounded-xl md:left-0 md:right-0 md:mx-auto z-30',
 })`

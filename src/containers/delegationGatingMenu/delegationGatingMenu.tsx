@@ -2,47 +2,46 @@ import ModalBottomSheetSwitcher from 'components/modalBottomSheetSwitcher';
 import {useGlobalModalContext} from 'context/globalModals';
 import styled from 'styled-components';
 import React from 'react';
-import {constants} from 'ethers';
+import {formatUnits} from 'ethers/lib/utils';
 import {useTranslation} from 'react-i18next';
-import {
-  ButtonText,
-  IllustrationHuman,
-  IlluObject,
-  shortenAddress,
-  Link,
-  IconLinkExternal,
-} from '@aragon/ods-old';
+import {ButtonText, IlluObject, Link, IconLinkExternal} from '@aragon/ods-old';
 import {useDaoDetailsQuery} from 'hooks/useDaoDetails';
 import {useDaoToken} from 'hooks/useDaoToken';
-import {Address, useBalance, useEnsName} from 'wagmi';
+import {Address, useBalance} from 'wagmi';
 import {CHAIN_METADATA, SupportedNetworks} from 'utils/constants';
 import {useDelegatee} from 'services/aragon-sdk/queries/use-delegatee';
 import {abbreviateTokenAmount} from 'utils/tokens';
 import {useWallet} from 'hooks/useWallet';
+import {TokenVotingProposal} from '@aragon/sdk-client';
+import {useMember} from 'services/aragon-sdk/queries/use-member';
+
+export interface IDelegationGatingMenuState {
+  proposal?: TokenVotingProposal;
+}
 
 const getDelegationLabels = (params: {
+  hasBalance: boolean;
+  hasPastBalance: boolean;
   needsSelfDelegation: boolean;
-  noVotingPower: boolean;
 }) => {
-  const {needsSelfDelegation, noVotingPower} = params;
+  const {hasBalance, hasPastBalance, needsSelfDelegation} = params;
 
-  let bodyLabel = 'delegationActive';
-  let ctaLabel = 'delegationActive.CtaLabel';
+  const firstKey = hasPastBalance ? 'sentence1b' : 'sentence1a';
+  const secondKey = needsSelfDelegation
+    ? 'sentence2b'
+    : !hasBalance
+    ? 'sentence2c'
+    : 'sentence2a';
 
-  if (needsSelfDelegation) {
-    bodyLabel = 'delegationInactive';
-    ctaLabel = 'delegation.ctaLabelDelegateNow';
-  } else if (noVotingPower) {
-    bodyLabel = 'delegation.NoVotingPower';
-    ctaLabel = 'delegation.NoVotingPower.ctaLabel';
-  }
-
-  return {bodyLabel, ctaLabel};
+  return {firstKey, secondKey};
 };
 
 export const DelegationGatingMenu: React.FC = () => {
   const {t} = useTranslation();
-  const {isOpen, close, open} = useGlobalModalContext('delegationGating');
+  const {isOpen, modalState, close, open} =
+    useGlobalModalContext<IDelegationGatingMenuState>('delegationGating');
+
+  const {proposal} = modalState ?? {};
 
   const {network, address} = useWallet();
 
@@ -58,7 +57,18 @@ export const DelegationGatingMenu: React.FC = () => {
     enabled: address != null && daoToken != null,
   });
 
-  const tokenAmount = abbreviateTokenAmount(tokenBalance?.formatted ?? '0');
+  const hasBalance = tokenBalance != null && tokenBalance.value > 0;
+
+  const {data: daoMember} = useMember(
+    {
+      address: address as string,
+      pluginAddress: daoDetails?.plugins[0].instanceAddress as string,
+      blockNumber: proposal?.creationBlockNumber as number,
+    },
+    {enabled: address != null && daoDetails != null && proposal != null}
+  );
+  const pastBalance = formatUnits(daoMember?.balance ?? 0n, daoToken?.decimals);
+  const parsedPastBalance = abbreviateTokenAmount(pastBalance.toString());
 
   const {data: delegateData} = useDelegatee(
     {tokenAddress: daoToken?.address as string},
@@ -70,33 +80,33 @@ export const DelegationGatingMenu: React.FC = () => {
     delegateData === null ? (address as string) : delegateData;
 
   // For imported ERC-20 tokens, there's no self-delegation and the delegation data is set to address-zero.
-  const needsSelfDelegation = delegateData === constants.AddressZero;
-
-  // Defines the case when the user is not delegating the tokens to someone else but had no
-  // voting power when the proposal has been created.
-  const noVotingPower =
-    !needsSelfDelegation &&
-    currentDelegate?.toLowerCase() === address?.toLowerCase();
-
-  const {data: delegateEns} = useEnsName({
-    address: currentDelegate as Address,
-    enabled: currentDelegate != null,
-  });
-
-  const delegateName = delegateEns ?? shortenAddress(currentDelegate ?? '');
+  const needsSelfDelegation =
+    hasBalance && currentDelegate?.toLowerCase() !== address?.toLowerCase();
 
   const handleCtaClick = () => {
-    if (noVotingPower) {
+    if (!needsSelfDelegation) {
       close();
     } else {
       open('delegateVoting', {reclaimMode: true});
     }
   };
 
-  const {bodyLabel, ctaLabel} = getDelegationLabels({
-    noVotingPower,
+  const {firstKey, secondKey} = getDelegationLabels({
+    hasBalance,
+    hasPastBalance: (daoMember?.balance ?? 0) > 0,
     needsSelfDelegation,
   });
+  const firstSentence = t(`modal.delegation.CantVote.${firstKey}`, {
+    tokenSymbol: daoToken?.symbol,
+    balance: parsedPastBalance,
+  });
+  const secondSentence = t(`modal.delegation.CantVote.${secondKey}`, {
+    tokenSymbol: daoToken?.symbol,
+  });
+
+  const ctaLabel = needsSelfDelegation
+    ? 'modal.delegationActive.CtaLabel'
+    : 'modal.delegation.NoVotingPower.ctaLabel';
 
   return (
     <ModalBottomSheetSwitcher
@@ -106,45 +116,25 @@ export const DelegationGatingMenu: React.FC = () => {
     >
       <div className="flex flex-col gap-6 px-4 py-6 text-center">
         <ContentGroup className="items-center">
-          {needsSelfDelegation ? (
-            <IllustrationHuman
-              width={343}
-              height={193}
-              body="elevating"
-              expression="excited"
-              hair="curly"
-              accessory="piercings_tattoo"
-            />
-          ) : (
-            <IlluObject object="warning" />
-          )}
+          <IlluObject object="warning" />
           <p className="text-2xl leading-tight text-neutral-800">
-            {t(`modal.${bodyLabel}.title`)}
+            {t(`modal.delegation.CantVote.title`)}
           </p>
           <p className="text-neutral-600">
-            {t(`modal.${bodyLabel}.desc`, {
-              balance: tokenAmount,
-              tokenSymbol: daoToken?.symbol,
-              walletAddressDelegation: delegateName,
+            {t('modal.delegation.CantVote.description', {
+              sentence1: firstSentence,
+              sentence2: secondSentence,
             })}
           </p>
         </ContentGroup>
         <ContentGroup>
           <ButtonText
-            label={t(`modal.${ctaLabel}`)}
+            label={t(ctaLabel)}
             mode="primary"
             size="large"
             onClick={handleCtaClick}
           />
-          {noVotingPower ? (
-            <Link
-              label={t('modal.delegation.NoVotingPower.Link')}
-              href={t('modal.delegation.NoVotingPower.LinkURL')}
-              target="_blank"
-              className="self-center"
-              iconRight={<IconLinkExternal />}
-            />
-          ) : (
+          {needsSelfDelegation && (
             <ButtonText
               label={t('modal.delegationActive.BtnSecondaryLabel')}
               mode="secondary"
@@ -152,6 +142,13 @@ export const DelegationGatingMenu: React.FC = () => {
               onClick={() => close()}
             />
           )}
+          <Link
+            label={t('modal.delegation.NoVotingPower.Link')}
+            href={t('modal.delegation.NoVotingPower.LinkURL')}
+            target="_blank"
+            className="my-3 self-center"
+            iconRight={<IconLinkExternal />}
+          />
         </ContentGroup>
       </div>
     </ModalBottomSheetSwitcher>

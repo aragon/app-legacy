@@ -9,9 +9,14 @@ import {
 } from 'ethers';
 
 import {formatUnits} from 'utils/library';
-import {NativeTokenData, TimeFilter, TOKEN_AMOUNT_REGEX} from './constants';
+import {
+  NativeTokenData,
+  SupportedNetworks,
+  TimeFilter,
+  TOKEN_AMOUNT_REGEX,
+} from './constants';
 import {add} from 'date-fns';
-import {Transfer, TransferType} from '@aragon/sdk-client';
+import {TokenVotingClient, Transfer, TransferType} from '@aragon/sdk-client';
 import {TokenType} from '@aragon/sdk-client-common';
 import {votesUpgradeableABI} from 'abis/governanceWrappedERC20TokenABI';
 import {erc1155TokenABI} from 'abis/erc1155TokenABI';
@@ -89,12 +94,32 @@ export async function getPastVotingPower(
   address: string,
   account: string,
   blockNumber: number,
-  provider: EthersProviders.Provider
+  provider: EthersProviders.Provider,
+  network: SupportedNetworks
 ) {
-  const contract = new ethers.Contract(address, votesUpgradeableABI, provider);
   try {
-    return (await contract.getPastVotes(account, blockNumber)) as BigNumber;
-  } catch (err) {
+    // for Arbitrum, there is a mismatch between the l1 and l2 block numbers.
+    // "Historical" data is being fetched by directing the provider to a
+    // specific block
+    if (network === 'arbitrum' || network === 'arbitrum-goerli') {
+      const functionName = 'getVotes';
+      const iface = new ethers.utils.Interface(votesUpgradeableABI);
+      const data = iface.encodeFunctionData(functionName, [account]);
+      const tx = {to: address, data};
+
+      const encodedResponse = await provider.call(tx, blockNumber);
+
+      const decoded = iface.decodeFunctionResult(functionName, encodedResponse);
+      return BigNumber.from(decoded.toString());
+    } else {
+      const contract = new ethers.Contract(
+        address,
+        votesUpgradeableABI,
+        provider
+      );
+      return (await contract.getPastVotes(account, blockNumber)) as BigNumber;
+    }
+  } catch (error) {
     return BigNumber.from('0');
   }
 }
@@ -303,6 +328,34 @@ export const fetchBalance = async (
  */
 export const isNativeToken = (tokenAddress: string) => {
   return tokenAddress === constants.AddressZero;
+};
+
+type Compatibility = 'compatible' | 'needsWrapping' | 'unknown';
+/**
+ * Check if token is compatible with Aragon token voting
+ * @param tokenAddress address of token contract
+ * @returns whether token is compatible
+ */
+export const isCompatibleToken = async (
+  pluginClient: TokenVotingClient,
+  address: string
+): Promise<Compatibility> => {
+  try {
+    const network = pluginClient.web3.getNetworkName();
+    const value = await queryClient.fetchQuery({
+      queryKey: ['isCompatibleToken', network, address],
+      staleTime: 1000 * 60 * 60 * 24 * 10, // 10 days
+      queryFn: () => {
+        return pluginClient.methods.isTokenVotingCompatibleToken(address);
+      },
+    });
+
+    return value as Compatibility;
+  } catch (error) {
+    console.error('Error, getting token info from contract');
+  }
+
+  return 'unknown';
 };
 
 /**

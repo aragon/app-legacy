@@ -1,5 +1,5 @@
 import {ButtonText, ListItemBlockchain} from '@aragon/ods-old';
-import React, {useMemo, useState} from 'react';
+import React, {useState} from 'react';
 import {Controller, useFormContext} from 'react-hook-form';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
@@ -21,17 +21,13 @@ const SelectChainForm: React.FC = () => {
     CHAIN_METADATA[network].isTestnet ? 'test' : 'main'
   );
 
-  const availableNetworks = useMemo(
-    () =>
-      networks[networkType]['popularity'].filter(
-        n =>
-          // uppercase SupportedNetwork name is used for the flag
-          // also replace hyphens with underscores
-          featureFlags.getValue(
-            `VITE_FEATURE_FLAG_${n.replace(/-/g, '_').toUpperCase()}`
-          ) !== 'false'
-      ),
-    [networkType]
+  const availableNetworks = networks[networkType]['popularity'].filter(
+    n =>
+      // uppercase SupportedNetwork name is used for the flag
+      // also replace hyphens with underscores
+      featureFlags.getValue(
+        `VITE_FEATURE_FLAG_${n.replace(/-/g, '_').toUpperCase()}`
+      ) !== 'false'
   );
 
   return (
@@ -115,13 +111,13 @@ type SelectableNetworks = Record<
 // TODO: enable base in the network selection
 const networks: SelectableNetworks = {
   main: {
-    cost: ['polygon', 'base', 'ethereum'],
-    popularity: ['ethereum', 'polygon', 'base'],
-    security: ['ethereum', 'base', 'polygon'],
+    cost: ['polygon', 'base', 'arbitrum', 'ethereum'],
+    popularity: ['ethereum', 'polygon', 'arbitrum', 'base'],
+    security: ['ethereum', 'base', 'arbitrum', 'polygon'],
   },
   test: {
-    cost: ['mumbai', 'base-goerli', 'goerli'],
-    popularity: ['goerli', 'mumbai', 'base-goerli'],
-    security: ['goerli', 'base-goerli', 'mumbai'],
+    cost: ['mumbai', 'base-goerli', 'arbitrum-goerli', 'goerli'],
+    popularity: ['goerli', 'mumbai', 'arbitrum-goerli', 'base-goerli'],
+    security: ['goerli', 'base-goerli', 'arbitrum-goerli', 'mumbai'],
   },
 };

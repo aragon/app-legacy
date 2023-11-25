@@ -7,6 +7,7 @@
 
 import {ModeType, ProgressStatusProps, VoterType} from '@aragon/ods-old';
 import {
+  Client,
   CreateMajorityVotingProposalParams,
   Erc20TokenDetails,
   MajorityVotingSettings,
@@ -18,7 +19,18 @@ import {
   VotingMode,
   VotingSettings,
 } from '@aragon/sdk-client';
-import {ProposalMetadata, ProposalStatus} from '@aragon/sdk-client-common';
+import {
+  DaoAction,
+  LIVE_CONTRACTS,
+  ProposalMetadata,
+  ProposalStatus,
+  SupportedNetworksArray,
+  SupportedVersion,
+} from '@aragon/sdk-client-common';
+import {
+  GaslessPluginVotingSettings,
+  GaslessVotingProposal,
+} from '@vocdoni/gasless-voting';
 import Big from 'big.js';
 import {Locale, format, formatDistanceToNow} from 'date-fns';
 import * as Locales from 'date-fns/locale';
@@ -28,21 +40,35 @@ import {ProposalVoteResults} from 'containers/votingTerminal';
 import {MultisigDaoMember} from 'hooks/useDaoMembers';
 import {PluginTypes} from 'hooks/usePluginClient';
 import {
+  isGaslessVotingSettings,
   isMultisigVotingSettings,
   isTokenVotingSettings,
 } from 'services/aragon-sdk/queries/use-voting-settings';
 import {i18n} from '../../i18n.config';
 import {KNOWN_FORMATS, getFormattedUtcOffset} from './date';
-import {formatUnits} from './library';
+import {
+  decodeApplyUpdateAction,
+  decodeOSUpdateActions,
+  decodeUpgradeToAndCallAction,
+  formatUnits,
+  translateToNetworkishName,
+} from './library';
 import {abbreviateTokenAmount} from './tokens';
 import {
   Action,
+  ActionOSUpdate,
+  ActionPluginUpdate,
+  ActionSCC,
+  CreateProposalFormData,
   DetailedProposal,
   ProposalListItem,
   StrictlyExclude,
   SupportedProposals,
   SupportedVotingSettings,
 } from './types';
+
+import {ethers} from 'ethers';
+import {SupportedNetworks} from './constants';
 
 export type TokenVotingOptions = StrictlyExclude<
   VoterType['option'],
@@ -56,6 +82,11 @@ const MappedVotes: {
   2: 'yes',
   3: 'no',
 };
+
+const formatter = new Intl.NumberFormat('en-US', {
+  minimumFractionDigits: 0, // Minimum number of decimal places
+  maximumFractionDigits: 2, // Maximum number of decimal places
+});
 
 // this type guard will need to evolve when there are more types
 export function isTokenBasedProposal(
@@ -83,6 +114,13 @@ export function isMultisigProposal(
 ): proposal is MultisigProposal {
   if (!proposal) return false;
   return 'approvals' in proposal;
+}
+
+export function isGaslessProposal(
+  proposal: SupportedProposals | undefined | null
+): proposal is GaslessVotingProposal {
+  if (!proposal) return false;
+  return 'vochainProposalId' in proposal;
 }
 
 /**
@@ -208,42 +246,54 @@ function getErc20Voters(
  * Get the mapped result of ERC20 voting proposal vote
  * @param result result of votes on proposal
  * @param tokenDecimals number of decimals in token
- * @param totalVotingWeight number of eligible voting tokens at proposal creation snapshot
  * @returns mapped voting result
  */
 export function getErc20Results(
   result: TokenVotingProposalResult,
-  tokenDecimals: number,
-  totalVotingWeight: BigInt
+  tokenDecimals: number
 ): ProposalVoteResults {
   const {yes, no, abstain} = result;
 
+  const totalYesNo = Big(yes.toString()).plus(no.toString());
+
+  // TODO: Format with new ODS formatter
   return {
     yes: {
       value: parseFloat(
         Number(formatUnits(yes, tokenDecimals)).toFixed(2)
       ).toString(),
-      percentage: parseFloat(
-        Big(Number(yes)).mul(100).div(Number(totalVotingWeight)).toFixed(2)
-      ),
+      percentage: getVotePercentage(yes, totalYesNo),
     },
     no: {
       value: parseFloat(
         Number(formatUnits(no, tokenDecimals)).toFixed(2)
       ).toString(),
-      percentage: parseFloat(
-        Big(Number(no)).mul(100).div(Number(totalVotingWeight)).toFixed(2)
-      ),
+      percentage: getVotePercentage(no, totalYesNo),
     },
     abstain: {
       value: parseFloat(
         Number(formatUnits(abstain, tokenDecimals)).toFixed(2)
       ).toString(),
-      percentage: parseFloat(
-        Big(Number(abstain)).mul(100).div(Number(totalVotingWeight)).toFixed(2)
-      ),
+      percentage: getVotePercentage(abstain, totalYesNo),
     },
   };
+}
+
+function getVotePercentage(value: bigint, totalYesNo: Big): number {
+  const vote = Big(value.toString());
+
+  // no yes + no votes
+  if (totalYesNo.eq(0)) {
+    if (vote.gt(0)) {
+      // vote before yes + no votes have been casted
+      return 100;
+    } else {
+      // no votes casted yet/divide by zero
+      return 0;
+    }
+  }
+
+  return Number(formatter.format(vote.mul(100).div(totalYesNo).toNumber()));
 }
 
 /**
@@ -431,7 +481,75 @@ export function getLiveProposalTerminalProps(
   let supportThreshold;
   let strategy;
 
-  if (isErc20VotingProposal(proposal)) {
+  if (isGaslessProposal(proposal) && isGaslessVotingSettings(votingSettings)) {
+    // token
+    token = {
+      name: proposal.token.name,
+      symbol: proposal.token.symbol,
+    };
+
+    // voters
+    voters =
+      proposal.voters?.map(voter => {
+        return {wallet: voter, src: voter, option: 'none'} as VoterType;
+      }) ?? [];
+
+    // results
+    const results: ProposalVoteResults = getErc20Results(
+      proposal.vochain.tally.parsed,
+      proposal.token.decimals
+    );
+    // calculate participation
+    const {currentPart, currentPercentage, minPart, missingPart, totalWeight} =
+      getErc20VotingParticipation(
+        proposal.settings.minParticipation,
+        proposal.totalUsedWeight,
+        proposal.totalVotingWeight,
+        proposal.token.decimals
+      );
+
+    minParticipation = t('votingTerminal.participationErc20', {
+      participation: minPart,
+      totalWeight,
+      tokenSymbol: token.symbol,
+      percentage: Math.round(proposal.settings.minParticipation * 100),
+    });
+
+    currentParticipation = t('votingTerminal.participationErc20', {
+      participation: currentPart,
+      totalWeight,
+      tokenSymbol: token.symbol,
+      percentage: currentPercentage,
+    });
+
+    missingParticipation = missingPart;
+
+    // support threshold
+    supportThreshold = Math.round(proposal.settings.supportThreshold * 100);
+
+    // strategy
+    strategy = t('votingTerminal.tokenVoting');
+    return {
+      token,
+      voters,
+      results,
+      strategy,
+      supportThreshold,
+      minParticipation,
+      currentParticipation,
+      missingParticipation,
+      voteOptions: t('votingTerminal.yes+no'),
+      startDate: `${format(
+        proposal.startDate,
+        KNOWN_FORMATS.proposals
+      )}  ${getFormattedUtcOffset()}`,
+
+      endDate: `${format(
+        proposal.endDate,
+        KNOWN_FORMATS.proposals
+      )}  ${getFormattedUtcOffset()}`,
+    };
+  } else if (isErc20VotingProposal(proposal)) {
     // token
     token = {
       name: proposal.token.name,
@@ -452,11 +570,7 @@ export function getLiveProposalTerminalProps(
     });
 
     // results
-    results = getErc20Results(
-      proposal.result,
-      proposal.token.decimals,
-      proposal.totalVotingWeight
-    );
+    results = getErc20Results(proposal.result, proposal.token.decimals);
 
     // calculate participation
     const {currentPart, currentPercentage, minPart, missingPart, totalWeight} =
@@ -629,7 +743,10 @@ export function getVoteStatus(proposal: DetailedProposal, t: TFunction) {
 
 export function getVoteButtonLabel(
   proposal: DetailedProposal,
-  voteSettings: MajorityVotingSettings | MultisigVotingSettings,
+  voteSettings:
+    | MajorityVotingSettings
+    | MultisigVotingSettings
+    | GaslessPluginVotingSettings,
   votedOrApproved: boolean,
   executableWithNextApproval: boolean,
   t: TFunction
@@ -641,6 +758,10 @@ export function getVoteButtonLabel(
       executableWithNextApproval,
       t
     );
+  }
+
+  if (isGaslessProposal(proposal) && isGaslessVotingSettings(voteSettings)) {
+    return getTokenBasedLabel(proposal, voteSettings, votedOrApproved, t);
   }
 
   if (isTokenBasedProposal(proposal) && isTokenVotingSettings(voteSettings)) {
@@ -671,18 +792,19 @@ function getMultisigLabel(
 }
 
 function getTokenBasedLabel(
-  proposal: TokenVotingProposal,
-  voteSettings: MajorityVotingSettings,
+  proposal: TokenVotingProposal | GaslessVotingProposal,
+  voteSettings: MajorityVotingSettings | GaslessPluginVotingSettings,
   voted: boolean,
   t: TFunction
 ): string {
   if (proposal.status === ProposalStatus.PENDING) {
     return t('votingTerminal.voteNow');
   }
-
   if (voted) {
     // voted on plugin with voteReplacement
     if (
+      isTokenBasedProposal(proposal) &&
+      isTokenVotingSettings(voteSettings) &&
       proposal.status === ProposalStatus.ACTIVE &&
       voteSettings.votingMode === VotingMode.VOTE_REPLACEMENT
     ) {
@@ -748,11 +870,19 @@ export function isEarlyExecutable(
 export function getProposalExecutionStatus(
   proposalStatus: ProposalStatus | undefined,
   canExecuteEarly: boolean,
-  executionFailed: boolean
+  executionFailed: boolean,
+  isGaselessProposalExecutable?: boolean // Additional checks for gasless proposals. Undefined for others
 ) {
   switch (proposalStatus) {
     case 'Succeeded':
-      return executionFailed ? 'executable-failed' : 'executable';
+      if (executionFailed) {
+        return 'executable-failed';
+      }
+      // Condition will be false if undefined
+      if (isGaselessProposalExecutable === false) {
+        return 'default';
+      }
+      return 'executable';
     case 'Executed':
       return 'executed';
     case 'Defeated':
@@ -773,8 +903,10 @@ export function getProposalExecutionStatus(
 export function getNonEmptyActions(
   actions: Array<Action>,
   msVoteSettings?: MultisigVotingSettings
-) {
+): Action[] {
   return actions.flatMap(action => {
+    if (action == null) return [];
+
     if (action.name === 'modify_multisig_voting_settings') {
       // minimum approval or onlyListed changed: return action or don't include
       return action.inputs.minApprovals !== msVoteSettings?.minApprovals ||
@@ -829,4 +961,166 @@ export function recalculateProposalStatus<
     }
   }
   return proposal;
+}
+
+/**
+ * Checks if a proposal contains verified updates for Aragon DAO or plugins.
+ * @param proposalActions - An array of `DaoAction` objects representing proposal actions.
+ * @param client - An instance of the `Client` class providing methods for DAO and plugin updates.
+ * @returns A boolean indicating whether the proposal contains verified updates for Aragon DAO or plugins.
+ */
+export function isVerifiedAragonUpdateProposal(
+  proposalActions: DaoAction[],
+  client: Client
+) {
+  return (
+    client.methods.isDaoUpdate(proposalActions) ||
+    client.methods.isPluginUpdate(proposalActions)
+  );
+}
+
+/**
+ * Encodes an OS update action for a DAO on a specified network.
+ * @param currentVersion - The current version of the OS in the format [major, minor, patch].
+ * @param selectedVersion - The selected version of the OS to update to.
+ * @param network - The network on which the DAO operates.
+ * @param daoAddress - The address of the DAO.
+ * @param client - An instance of the `Client` class for encoding the update action.
+ * @returns A encoded action for updating the OS of the DAO.
+ */
+export async function encodeOsUpdateAction(
+  currentVersion: [number, number, number] | undefined,
+  selectedVersion: SupportedVersion,
+  network: SupportedNetworks | undefined,
+  daoAddress: string | undefined,
+  client: Client | undefined
+) {
+  const translatedNetwork = translateToNetworkishName(network ?? 'unsupported');
+  if (
+    translatedNetwork !== 'unsupported' &&
+    SupportedNetworksArray.includes(translatedNetwork) &&
+    currentVersion &&
+    daoAddress &&
+    client
+  ) {
+    try {
+      const encodedAction = await client.encoding.daoUpdateAction(daoAddress, {
+        previousVersion: currentVersion,
+        daoFactoryAddress:
+          LIVE_CONTRACTS[selectedVersion][translatedNetwork].daoFactoryAddress,
+      });
+      return encodedAction;
+    } catch (error) {
+      console.error('Error encoding OSxUpdate Action', error);
+    }
+  }
+}
+
+/**
+ * Retrieves and decodes update actions for a DAO based on specified criteria.
+ * @param daoAddress - The address of the DAO.
+ * @param actions - An array of actions to process for updates.
+ * @param updateFramework - Information about the update framework.
+ * @param currentProtocolVersion - The current version of the protocol.
+ * @param client - An instance of the Aragon SDK client.
+ * @param network - The network on which the DAO operates.
+ * @param provider - Ethers provider
+ * @param t - Translation function.
+ * @returns An array of decoded update actions for the DAO.
+ */
+export async function getDecodedUpdateActions(
+  daoAddress: string,
+  actions: Array<Action>,
+  updateFramework: CreateProposalFormData['updateFramework'],
+  currentProtocolVersion: [number, number, number] | undefined,
+  client: Client | undefined,
+  network: SupportedNetworks | undefined,
+  provider: ethers.providers.Provider,
+  t: TFunction
+) {
+  const decodedActions: ActionSCC[] = [];
+
+  if (!client || !network) return decodedActions;
+
+  // encode the osUpdateAction so that it can be
+  // decoded and passed to the generic SCC external action card
+  const processOsUpdateAction = async () => {
+    const osAction: ActionOSUpdate | undefined = actions.find(
+      action => action.name === 'os_update'
+    ) as ActionOSUpdate | undefined;
+
+    if (osAction && updateFramework?.os) {
+      const encodedOsAction = await encodeOsUpdateAction(
+        currentProtocolVersion,
+        osAction.inputs.version,
+        network,
+        daoAddress,
+        client
+      );
+
+      if (encodedOsAction) {
+        return decodeUpgradeToAndCallAction(encodedOsAction, client);
+      }
+    }
+  };
+
+  // encode the plugin update actions so it can be decoded
+  // and passed to the generic SCC external action card
+  const processPluginUpdateActions = async () => {
+    const pluginAction: ActionPluginUpdate | undefined = actions.find(
+      action => action.name === 'plugin_update'
+    ) as ActionPluginUpdate | undefined;
+
+    if (pluginAction && updateFramework?.plugin) {
+      const encodedPluginActions = client.encoding.applyUpdateAction(
+        daoAddress,
+        pluginAction.inputs
+      );
+
+      const decodedPluginActions = [];
+      for (const [
+        index,
+        pluginUpdateAction,
+      ] of encodedPluginActions.entries()) {
+        let decoded: Action | undefined;
+
+        // decode the applyUpdate action with the custom decoder as
+        // the decoding fails when using the generic decoder;
+        // Note: the applyUpdateAction will always be the second action
+        // in the list (grant, applyUpdate, revoke)
+        if (index === 1) {
+          decoded = decodeApplyUpdateAction(pluginUpdateAction, client);
+        } else {
+          decoded = await decodeOSUpdateActions(
+            daoAddress,
+            t,
+            pluginUpdateAction,
+            network!,
+            provider
+          );
+        }
+
+        if (decoded) {
+          decodedPluginActions.push({
+            ...decoded,
+            name: 'external_contract_action',
+          } as ActionSCC);
+        }
+      }
+
+      return decodedPluginActions;
+    }
+    return [];
+  };
+
+  const osUpdateAction = await processOsUpdateAction();
+  const pluginUpdateActions = (await processPluginUpdateActions()) ?? [];
+
+  // the osUpdateAction must come before the plugin updates
+  if (osUpdateAction) {
+    decodedActions.push(osUpdateAction);
+  }
+
+  decodedActions.push(...pluginUpdateActions);
+  return decodedActions;
 }

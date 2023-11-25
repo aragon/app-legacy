@@ -5,37 +5,50 @@ import {EditorContent, useEditor} from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import {Locale, format, formatDistanceToNow} from 'date-fns';
 import * as Locales from 'date-fns/locale';
-import React, {useEffect, useMemo} from 'react';
-import {useFormContext} from 'react-hook-form';
-import {useTranslation} from 'react-i18next';
 import {TFunction} from 'i18next';
+import React, {useEffect, useMemo, useState} from 'react';
+import {useFormContext, useWatch} from 'react-hook-form';
+import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
+import {Markdown} from 'tiptap-markdown';
 
 import {ExecutionWidget} from 'components/executionWidget';
 import {useFormStep} from 'components/fullScreenStepper';
 import ResourceList from 'components/resourceList';
 import {Loading} from 'components/temporary';
 import {VotingTerminal} from 'containers/votingTerminal';
+import {useClient} from 'hooks/useClient';
 import {useDaoDetailsQuery} from 'hooks/useDaoDetails';
 import {MultisigDaoMember, useDaoMembers} from 'hooks/useDaoMembers';
 import {PluginTypes} from 'hooks/usePluginClient';
+import {useTokenSupply} from 'hooks/useTokenSupply';
+import {useParams} from 'react-router-dom';
+import {useProtocolVersion} from 'services/aragon-sdk/queries/use-protocol-version';
 import {
+  isGaslessVotingSettings,
   isMultisigVotingSettings,
   isTokenVotingSettings,
   useVotingSettings,
 } from 'services/aragon-sdk/queries/use-voting-settings';
-import {useTokenSupply} from 'hooks/useTokenSupply';
 import {
   KNOWN_FORMATS,
   getCanonicalDate,
   getCanonicalTime,
   getCanonicalUtcOffset,
   getFormattedUtcOffset,
-  minutesToMills,
 } from 'utils/date';
-import {getErc20VotingParticipation, getNonEmptyActions} from 'utils/proposals';
-import {ProposalResource, SupportedVotingSettings} from 'utils/types';
-import {UpdateVerificationCard} from 'containers/updateVerificationCard';
+import {
+  getDecodedUpdateActions,
+  getErc20VotingParticipation,
+  getNonEmptyActions,
+} from 'utils/proposals';
+import {
+  Action,
+  ProposalResource,
+  ProposalTypes,
+  SupportedVotingSettings,
+} from 'utils/types';
+import {useProviders} from 'context/providers';
 
 type ReviewProposalProps = {
   defineProposalStepNumber: number;
@@ -46,25 +59,35 @@ const ReviewProposal: React.FC<ReviewProposalProps> = ({
   defineProposalStepNumber,
   addActionsStepNumber,
 }) => {
+  const {type} = useParams();
+  const {client, network} = useClient();
   const {t, i18n} = useTranslation();
   const {setStep} = useFormStep();
+  const {api: provider} = useProviders();
+
+  const [displayedActions, setDisplayedActions] = useState<Action[]>([]);
 
   const {data: daoDetails, isLoading: detailsLoading} = useDaoDetailsQuery();
-  const pluginAddress = daoDetails?.plugins?.[0]?.instanceAddress as string;
+  const daoAddress = daoDetails?.address as string;
   const pluginType = daoDetails?.plugins?.[0]?.id as PluginTypes;
+  const pluginAddress = daoDetails?.plugins?.[0]?.instanceAddress as string;
+
+  const {data: currentProtocolVersion, isLoading: protocolVersionLoading} =
+    useProtocolVersion(daoAddress);
 
   const {data: votingSettings, isLoading: votingSettingsLoading} =
     useVotingSettings({pluginAddress, pluginType});
+
   const isMultisig = isMultisigVotingSettings(votingSettings);
 
   // Member list only needed for multisig so first page (1000) is sufficient
   const {
     data: {members, daoToken},
   } = useDaoMembers(pluginAddress, pluginType, {page: 0});
-
   const {data: totalSupply} = useTokenSupply(daoToken?.address as string);
 
   const {getValues, setValue} = useFormContext();
+  const updateFramework = useWatch({name: 'updateFramework'});
   const values = getValues();
 
   const editor = useEditor({
@@ -72,40 +95,31 @@ const ReviewProposal: React.FC<ReviewProposalProps> = ({
     content: values.proposal,
     extensions: [
       StarterKit,
+      Markdown,
       TipTapLink.configure({
         openOnClick: false,
       }),
     ],
   });
 
-  const startDate = useMemo(() => {
-    const {startSwitch, startDate, startTime, startUtc} = values;
+  const {startSwitch, startDate, startTime, startUtc} = values;
 
-    if (startSwitch === 'now') {
-      const startMinutesDelay = isMultisig ? 0 : 10;
-      return new Date(
-        `${getCanonicalDate()}T${getCanonicalTime({
-          minutes: startMinutesDelay,
-        })}:00${getCanonicalUtcOffset()}`
-      );
-    } else {
-      return Date.parse(
-        `${startDate}T${startTime}:00${getCanonicalUtcOffset(startUtc)}`
-      );
-    }
-  }, [isMultisig, values]);
+  let calculatedStartDate: number | Date;
+  let formattedStartDate = t('labels.now');
 
-  const formattedStartDate = useMemo(() => {
-    const {startSwitch} = values;
-    if (startSwitch === 'now') {
-      return t('labels.now');
-    }
-
-    return `${format(
-      startDate,
+  if (startSwitch === 'now') {
+    calculatedStartDate = new Date(
+      `${getCanonicalDate()}T${getCanonicalTime()}:00${getCanonicalUtcOffset()}`
+    );
+  } else {
+    calculatedStartDate = Date.parse(
+      `${startDate}T${startTime}:00${getCanonicalUtcOffset(startUtc)}`
+    );
+    formattedStartDate = `${format(
+      calculatedStartDate,
       KNOWN_FORMATS.proposals
     )} ${getFormattedUtcOffset()}`;
-  }, [startDate, t, values]);
+  }
 
   /**
    * This is the primary (approximate) end date display which is rendered in Voting Terminal
@@ -158,7 +172,6 @@ const ReviewProposal: React.FC<ReviewProposalProps> = ({
       durationHours,
       durationMinutes,
       durationSwitch,
-      startSwitch,
       endDate,
       endTime,
       endUtc,
@@ -179,19 +192,11 @@ const ReviewProposal: React.FC<ReviewProposalProps> = ({
       );
     }
 
-    // adding 10 minutes to offset the 10 minutes added by starting now
-    if (startSwitch === 'now') {
-      const startMinutesDelay = isMultisig ? 0 : 10;
-      endDateTime = new Date(
-        endDateTime.getTime() + minutesToMills(startMinutesDelay)
-      );
-    }
-
     return `~${format(
       endDateTime,
       KNOWN_FORMATS.proposals
     )} ${getFormattedUtcOffset()}`;
-  }, [isMultisig, values]);
+  }, [values]);
 
   const terminalProps = useMemo(() => {
     if (votingSettings) {
@@ -210,6 +215,46 @@ const ReviewProposal: React.FC<ReviewProposalProps> = ({
    *                    Effects                    *
    *************************************************/
   useEffect(() => {
+    if (type !== ProposalTypes.OSUpdates) {
+      setDisplayedActions(
+        getNonEmptyActions(
+          getValues('actions'),
+          isMultisig ? votingSettings : undefined
+        )
+      );
+    }
+  }, [getValues, isMultisig, type, votingSettings]);
+
+  useEffect(() => {
+    if (type === ProposalTypes.OSUpdates) {
+      getDecodedUpdateActions(
+        daoAddress,
+        getNonEmptyActions(getValues('actions')),
+        updateFramework,
+        currentProtocolVersion,
+        client,
+        network,
+        provider,
+        t
+      ).then(actions => {
+        if (actions) {
+          setDisplayedActions(actions);
+        }
+      });
+    }
+  }, [
+    client,
+    currentProtocolVersion,
+    daoAddress,
+    getValues,
+    network,
+    provider,
+    t,
+    type,
+    updateFramework,
+  ]);
+
+  useEffect(() => {
     if (values.proposal === '<p></p>') {
       setValue('proposal', '');
     }
@@ -218,7 +263,12 @@ const ReviewProposal: React.FC<ReviewProposalProps> = ({
   /*************************************************
    *                    Render                     *
    *************************************************/
-  if (detailsLoading || votingSettingsLoading || !terminalProps)
+  if (
+    detailsLoading ||
+    votingSettingsLoading ||
+    protocolVersionLoading ||
+    !terminalProps
+  )
     return <Loading />;
 
   if (!editor) {
@@ -239,24 +289,30 @@ const ReviewProposal: React.FC<ReviewProposalProps> = ({
 
       <ContentContainer>
         <ProposalContainer>
-          {values.proposal && (
-            <>
-              <StyledEditorContent editor={editor} />
-            </>
-          )}
+          {values.proposal && <StyledEditorContent editor={editor} />}
 
-          {/* TODO: Add isUpdateProposal check once it's developed */}
-          <UpdateVerificationCard
-            actions={getNonEmptyActions(
-              values.actions,
-              isMultisigVotingSettings(votingSettings)
-                ? votingSettings
-                : undefined
-            )}
-          />
+          {/* TODO: Add isUpdateProposal check once it's developed
+          {featureFlags.getValue('VITE_FEATURE_FLAG_OSX_UPDATES') ===
+            'true' && (
+            <UpdateVerificationCard
+              actions={getNonEmptyActions(
+                values.actions,
+                isMultisigVotingSettings(votingSettings)
+                  ? votingSettings
+                  : undefined
+              )}
+            />
+          )} */}
 
           {votingSettings && (
             <VotingTerminal
+              title={
+                isMultisigVotingSettings(votingSettings)
+                  ? t('votingTerminal.multisig.title')
+                  : isGaslessVotingSettings(votingSettings)
+                  ? t('votingTerminal.vocdoni.titleCommunityVoting')
+                  : t('votingTerminal.title')
+              }
               pluginType={pluginType}
               breakdownTabDisabled
               votersTabDisabled
@@ -272,10 +328,7 @@ const ReviewProposal: React.FC<ReviewProposalProps> = ({
           )}
 
           <ExecutionWidget
-            actions={getNonEmptyActions(
-              values.actions,
-              isMultisig ? votingSettings : undefined
-            )}
+            actions={displayedActions}
             onAddAction={
               addActionsStepNumber
                 ? () => setStep(addActionsStepNumber)
@@ -357,7 +410,6 @@ export const StyledEditorContent = styled(EditorContent)`
   }
 `;
 
-// this is slightly different from
 function getReviewProposalTerminalProps(
   t: TFunction,
   daoSettings: SupportedVotingSettings,

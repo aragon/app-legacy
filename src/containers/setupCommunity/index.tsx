@@ -4,22 +4,26 @@ import {Controller, useFormContext, useWatch} from 'react-hook-form';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 
-import {MultisigEligibility} from 'components/multisigEligibility';
 import {MultisigWallets} from 'components/multisigWallets';
 import {FormSection} from 'containers/setupVotingForm';
 import {ToggleCheckList} from 'containers/setupVotingForm/multisig';
 import {CreateDaoFormData} from 'utils/types';
 import AddExistingToken from './addExistingToken';
 import CreateNewToken from './createNewToken';
+import {featureFlags} from '../../utils/featureFlags';
+import GaslessSelector from '../../components/gaslessSelector';
 
 const SetupCommunityForm: React.FC = () => {
   const {t} = useTranslation();
 
-  const {control, resetField, setValue} = useFormContext<CreateDaoFormData>();
+  const {control, resetField, setValue, getValues} =
+    useFormContext<CreateDaoFormData>();
   const [membership, isCustomToken] = useWatch({
     control,
     name: ['membership', 'isCustomToken'],
   });
+
+  const {blockchain} = getValues();
 
   const existingTokenItems = [
     // No mean It's a custom Token so It should be true
@@ -103,13 +107,49 @@ const SetupCommunityForm: React.FC = () => {
         />
       </FormItem>
 
+      {membership === 'token' &&
+        featureFlags.getValue('VITE_FEATURE_FLAG_GASLESS_PLUGIN') ===
+          'true' && (
+          <FormSection>
+            <Label label={t('createDAO.step3.blockChainVoting.label')} />
+            <Controller
+              name="votingType"
+              rules={{required: 'Validate'}}
+              control={control}
+              defaultValue="onChain"
+              render={({field: {onChange, value}}) => (
+                <>
+                  <CheckboxListItem
+                    label={t(
+                      'createDAO.step3.blockChainVoting.optionOnchainLabel',
+                      {blockchainName: blockchain.label}
+                    )}
+                    helptext={t(
+                      'createDAO.step3.blockChainVoting.optionOnchainDesc',
+                      {blockchainName: blockchain.label}
+                    )}
+                    multiSelect={false}
+                    onClick={() => {
+                      onChange('onChain');
+                    }}
+                    {...(value === 'onChain' ? {type: 'active'} : {})}
+                  />
+                  <GaslessSelector
+                    onChange={() => {
+                      onChange('gasless');
+                    }}
+                    value={value}
+                  />
+                </>
+              )}
+            />
+          </FormSection>
+        )}
+
       {membership === 'multisig' && (
         <>
           <FormItem>
             <MultisigWallets />
-          </FormItem>
-          <FormItem>
-            <MultisigEligibility />
           </FormItem>
         </>
       )}

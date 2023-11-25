@@ -13,7 +13,7 @@ import {
   getDefaultPayableAmountInputName,
   isOnlyWhitespace,
 } from './library';
-import {isERC1155, isERC20Token, isERC721} from './tokens';
+import {isCompatibleToken, isERC1155, isERC20Token, isERC721} from './tokens';
 import {
   Action,
   ActionAddAddress,
@@ -80,8 +80,10 @@ export async function validateGovernanceTokenAddress(
       type: 'Unknown',
     };
   } else {
-    const isGovernanceCompatible =
-      await pluginClient.methods.isTokenVotingCompatibleToken(address);
+    const isGovernanceCompatible = await isCompatibleToken(
+      pluginClient,
+      address
+    );
 
     // I should've used TokenVotingTokenCompatibility enum but It isn't exported
     if (isGovernanceCompatible === 'compatible')
@@ -205,11 +207,14 @@ export async function actionsAreValid(
   // mismatch between action form list and actions context
   if (contextActions.length !== formActions?.length) return false;
 
+  // top level action errors
+  if (errors?.actions?.length > 0) return false;
+
   let isValid = true;
 
-  // @Sepehr might need to make affirmative instead at some point - F.F. 2022-08-18
+  // If the form errors are being set properly, this should very rarely be called
+  // since we are checking for any form action errors prior to calling this function
   async function actionIsValid(index: number) {
-    if (errors.actions) return true;
     switch (contextActions[index]?.name) {
       case 'withdraw_assets':
         return (

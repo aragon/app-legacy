@@ -47,6 +47,7 @@ export const ActionsFilter: React.FC<ActionsFilterProps> = ({
       return (
         <WCActionCard action={action} type="execution-widget" status={status} />
       );
+    case 'plugin_update':
     default:
       return <></>;
   }

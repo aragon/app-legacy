@@ -106,6 +106,11 @@ export const MAX_TOKEN_DECIMALS = 18;
 export const MAX_DURATION_DAYS = 365;
 export const MIN_DURATION_HOURS = 1;
 
+// Executive committee
+// Execution expiration time duration boundaries
+export const COMMITTEE_EXECUTION_MAX_DURATION_DAYS = 365;
+export const COMMITTEE_EXECUTION_MIN_DURATION_HOURS = 1;
+
 // Multisig duration boundaries
 // Note: multisig does not contain a hard end boundary
 export const MULTISIG_MIN_DURATION_HOURS = 1;

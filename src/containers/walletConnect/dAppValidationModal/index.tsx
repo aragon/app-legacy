@@ -60,7 +60,7 @@ const WCdAppValidation: React.FC<Props> = props => {
     ConnectionState.WAITING
   );
 
-  const {wcConnect, sessions} = useWalletConnectContext();
+  const {wcConnect, validateURI, sessions} = useWalletConnectContext();
 
   const {control} = useFormContext();
   const {errors} = useFormState({control});
@@ -209,27 +209,37 @@ const WCdAppValidation: React.FC<Props> = props => {
           <Controller
             name={WC_URI_INPUT_NAME}
             control={control}
+            rules={{
+              validate: validateURI,
+            }}
             defaultValue=""
             render={({
               field: {name, onBlur, onChange, value},
               fieldState: {error},
             }) => (
-              <WalletInputLegacy
-                mode={error ? 'critical' : 'default'}
-                name={name}
-                disabled={
-                  connectionStatus === ConnectionState.LOADING ||
-                  connectionStatus === ConnectionState.SUCCESS
-                }
-                onBlur={onBlur}
-                onChange={onChange}
-                value={value ?? ''}
-                placeholder={t(
-                  'modal.dappConnect.validation.codeInputPlaceholder'
-                )}
-                adornmentText={adornmentText}
-                onAdornmentClick={() => handleAdornmentClick(value, onChange)}
-              />
+              <>
+                <WalletInputLegacy
+                  mode={error ? 'critical' : 'default'}
+                  name={name}
+                  disabled={
+                    connectionStatus === ConnectionState.LOADING ||
+                    connectionStatus === ConnectionState.SUCCESS
+                  }
+                  onBlur={onBlur}
+                  onChange={onChange}
+                  value={value ?? ''}
+                  placeholder={t(
+                    'modal.dappConnect.validation.codeInputPlaceholder'
+                  )}
+                  adornmentText={adornmentText}
+                  onAdornmentClick={() => handleAdornmentClick(value, onChange)}
+                />
+                <div className="mt-2">
+                  {error?.message && (
+                    <AlertInline label={error.message} mode="critical" />
+                  )}
+                </div>
+              </>
             )}
           />
         </FormGroup>

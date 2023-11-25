@@ -5,12 +5,34 @@ import styled from 'styled-components';
 
 import {AccordionMethod} from 'components/accordionMethod';
 import {ActionWithdraw} from 'utils/types';
+import {NumberFormat, formatterUtils} from '@aragon/ods';
 
 export const WithdrawCard: React.FC<{
   action: ActionWithdraw;
   daoName: string;
 }> = ({action, daoName}) => {
   const {t} = useTranslation();
+
+  const amount = Number(action.amount) || 0;
+  const tokenPrice = Number(action.tokenPrice) || 0;
+
+  const tokenCountDisplay =
+    amount > 99999
+      ? (formatterUtils.formatNumber(amount, {
+          format: NumberFormat.TOKEN_AMOUNT_SHORT,
+        }) as string)
+      : (formatterUtils.formatNumber(
+          amount.toFixed(amount > 100 ? 2 : amount < 10 ? 6 : 3),
+          {
+            format: NumberFormat.TOKEN_AMOUNT_LONG,
+          }
+        ) as string);
+
+  const treasuryShareDisplay = tokenPrice
+    ? (formatterUtils.formatNumber(tokenPrice * amount, {
+        format: NumberFormat.FIAT_TOTAL_SHORT,
+      }) as string)
+    : t('finance.unknownUSDValue');
 
   return (
     <AccordionMethod
@@ -31,15 +53,8 @@ export const WithdrawCard: React.FC<{
           tokenName={action.tokenName}
           tokenImageUrl={action.tokenImgUrl}
           tokenSymbol={action.tokenSymbol}
-          tokenCount={action.amount}
-          treasuryShare={
-            action.tokenPrice
-              ? new Intl.NumberFormat('en-US', {
-                  style: 'currency',
-                  currency: 'USD',
-                }).format(action.tokenPrice * action.amount)
-              : t('finance.unknownUSDValue')
-          }
+          tokenCount={tokenCountDisplay}
+          treasuryShare={treasuryShareDisplay}
           type={'transfer'}
         />
       </Container>

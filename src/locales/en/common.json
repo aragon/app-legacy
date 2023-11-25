@@ -180,7 +180,8 @@
       "no": "No",
       "yes": "Yes",
       "tokenWrapped": "Wrapped",
-      "tokenSymbolGovernance": "Governance"
+      "tokenSymbolGovernance": "Governance",
+      "eligibleMembers": "Eligible Members"
     },
     "author": "Author",
     "sec": "sec",
@@ -241,7 +242,10 @@
       "address0x": "0x …"
     },
     "totalMembers": "Total members",
-    "mintableByDao": "Mintable by DAO"
+    "mintableByDao": "Mintable by DAO",
+    "basescan": "BaseScan",
+    "Arbiscan": "Arbiscan",
+    "polygonscan": "Polygonscan"
   },
   "placeHolders": {
     "selectToken": "Select a token …",
@@ -360,7 +364,13 @@
         "expiredDesc": "This proposal action can no longer be executed because the expiration time has passed. If you want to reattempt executing this action, you must create a new proposal, pass it, and execute it within the expiration time."
       }
     },
-    "actionSecondary": "Delegate"
+    "actionSecondary": "Delegate",
+    "vocdoni": {
+      "executionCard": {
+        "title": "Actions",
+        "desc": "These actions can be executed by the execution multisig after the proposal passes a community vote."
+      }
+    }
   },
   "infos": {
     "voteDuration": "The minimum duration of {{days}} days is defined by DAO governance settings. To change the minimum duration a vote is required.",
@@ -477,8 +487,8 @@
     "gatingUsers": {
       "tokenTitle": "You can’t create a proposal",
       "tokenDescription": "You don’t have the required voting power or token balance. Creating proposals in {{daoName}} requires at least {{amount}} ‘{{tokenSymbol}}’ in either voting power or token balance.",
-      "walletTitle": "Wallet not allowlisted",
-      "walletDescription": "The connected wallet is not allowlisted. Please connect a valid wallet in order to proceed with the process.",
+      "walletTitle": "You can’t create a proposal",
+      "walletDescription": "You are not a member. Creating proposals in {{daoName}} can only be done by addresses that have been added to its member list.",
       "buttonLabel": "Ok, understood"
     },
     "tokenBasedMembers": "The DAO members listed here have interacted with the DAO at least once",
@@ -776,12 +786,17 @@
         "optionOnchainDesc": "Voting on proposals will require your community members to sign transactions and pay {{blockchainName}} gas fees. Proposals that pass a community vote can be executed by anyone.",
         "optionGaslessLabel": "Vocdoni",
         "optionGaslessDesc": "Voting on proposals will allow your community members to vote on a voting-specific proof-of-authority blockchain without paying any gas fees. Proposals that pass a community vote must be approved by an Execution Multisig before being executed on {{blockchainName}}."
+      },
+      "votingType": {
+        "gasless": {
+          "soon": "Coming soon on {{blockchainName}}"
+        }
       }
     },
     "step4": {
       "label": "Step 4",
       "title": "Select governance settings",
-      "description": "These are the rules that define how decisions are made in your DAO. How many people have to participate? How much support is needed? How long are proposals open for voting? Learn more about in {{link}}.",
+      "description": "These are the rules that define how decisions are made in your DAO. How many people have to participate? How much support is needed? How long are proposals open for voting? Learn more in {{link}}.",
       "bestPractices": "best practices on governance",
       "supportThresholdSubtitle": "The percentage of tokens that vote \"Yes\" in support of a proposal, out of all tokens that have voted, must be greater than this value for the proposal to pass.",
       "minimumParticipationSubtitle": "The percentage of tokens that participate in a proposal, out of the total {{gTokenSymbol}} supply, must be greater than or equal to this value for the proposal to pass.",
@@ -797,7 +812,8 @@
         "minimumParticipationAlert": "Rounded up to {{percentage}}% equals {{walletCount}} wallets have to vote",
         "minority": "Proposals could be approved by a minority rather than a majority.",
         "majority": "Proposal will be approved by majority",
-        "absoluteMajority": "This approval threshold might be too high to reach regularly. Consider setting something lower. "
+        "absoluteMajority": "This approval threshold might be too high to reach regularly. Consider setting something lower. ",
+        "1AddressOnly": "The approval threshold can’t be changed because there is only 1 address."
       },
       "descriptionLinkLabel": "this guide",
       "descriptionLinkURL": "https://aragon.org/how-to/governance-ii-setting-dao-governance-thresholds",
@@ -817,7 +833,7 @@
       "wrappedReferenceParticipationValueLabel": "{{gTokenSymbol}} *"
     },
     "review": {
-      "title": "Review details",
+      "title": "Deploy your DAO",
       "description": "Double-check that everything is correct before deploying your DAO.",
       "network": "{{network}} net",
       "distributionLink": "See {{count}} addresses",
@@ -878,7 +894,7 @@
         "title": "Action not decoded",
         "desc": "This action can't be decoded because the smart contract is not verified."
       },
-      "alertCritical": "All fields are required"
+      "alertCritical": "All fields require valid input"
     },
     "mintTokens": {
       "methodDescription": "Create a proposal to mint more governance tokens. Select the wallets that should receive tokens and determine how many.",
@@ -971,9 +987,26 @@
     },
     "approveOnly": "Approve only",
     "approveAndExecute": {
-      "infoAlert": "Only one more approval is needed in order to execute the proposal actions."
+      "infoAlert": "Only one more approval is needed in order to execute the proposal actions.",
+      "infoAlertApproved": "No more approvals are needed in order to execute the proposal actions."
     },
-    "approveExecute": "Approve and execute"
+    "approveExecute": "Approve and execute",
+    "vocdoni": {
+      "title": "Voting",
+      "desc": "The proposal must first pass a community vote and then be approved by the execution multisig.",
+      "titleCommunityVoting": "Community voting",
+      "titleExecutionMultisig": "Execution multisig approval",
+      "titleActionsApproval": "Actions approval",
+      "alertInfoActionsApproval": "These actions must be approved before execution.",
+      "status": {
+        "proposalDefeated": "Proposal has been <b>defeated</b>",
+        "noApproval": "No approval allowed",
+        "passed": "Proposal <b>passed</b>",
+        "notApproved": "Proposal was <b>not approved</b>",
+        "remainingTime": "remaining",
+        "approved": "Proposal <b>approved</b>"
+      }
+    }
   },
   "explore": {
     "hero": {
@@ -1268,6 +1301,15 @@
         "ctaLabel": "Ok, understood",
         "Link": "Learn more",
         "LinkURL": "https://aragon.org/how-to/delegate-your-voting-power"
+      },
+      "CantVote": {
+        "title": "You can't vote",
+        "description": "{{sentence1}} {{sentence2}}",
+        "sentence1a": "You weren't holding {{tokenSymbol}} and had no voting power when this proposal was created.",
+        "sentence1b": "You held {{balance}} {{tokenSymbol}} but had no voting power when this proposal was created .",
+        "sentence2a": "",
+        "sentence2b": "If you want to participate in future proposals you have to claim your voting power. ",
+        "sentence2c": "If you want to participate in future proposals you have to obtain {{tokenSymbol}}."
       }
     },
     "delegationInactive": {
@@ -1320,7 +1362,8 @@
         "alertCriticalDapp": "The QR code provided is not from {{dappName}}.",
         "alertSuccess": "{{dappName}} connected",
         "codeInputPlaceholder": "wc: …",
-        "alertCriticalQRcode": "The QR code provided is not from {{dappName}}."
+        "alertCriticalQRcode": "The QR code provided is not from {{dappName}}.",
+        "alertInvalid": "Invalid code"
       },
       "detaildApp": {
         "spinnerLabel": "Listening for actions…",
@@ -1595,18 +1638,22 @@
       "ctaLabel": "Prepare plugin"
     },
     "securityCheck": {
-      "title": "Update verification",
       "daoAddress": "DAO address",
       "pluginRegistry": "Plugin registry",
       "pluginSetupProcessor": "Plugin setup processor",
       "alertTitle": "Some updates may be unsafe",
       "alertDesc": "One or more actions aren't in the Aragon Update Registry, indicating that this update could be potentially harmful.",
-      "desc": "All actions are listed in the Aragon Update Registry, which is managed by the Aragon team. However, always exercise caution when evaluating updates. To learn more about Aragon OSx updates, {{link}}.",
       "descLinkLabel": "read more in our guides",
       "descLinkURL": "https://aragon.org/how-to/update-your-aragon-dao"
     },
     "proposal": {
-      "bannerTitle": "Verified Aragon App Update"
+      "bannerTitle": "Verified Update",
+      "title": "Aragon OSx Update",
+      "summary": "This proposal is an Aragon OSx Update for {{daoName}}. The title, summary, and description text are automatically generated by Aragon App.",
+      "descriptionFooter": "</ol><p><br />It is essential to consider the implications of upgrades before voting. Read the above release notes and confirm that this OSx Update passes Aragon’s Security Verification.</p>",
+      "descriptionHeader": "<p>This proposal contains on-chain transactions that would upgrade specific smart contract components as follows:<br /></p><ol>",
+      "descriptionProtocolUpgrade": "<li>\n<strong>{{updatedVersion}}</strong>\n<ol>\n<li><strong>Current version</strong>: {{currentVersion}}</li>\n<li><strong>Upgrade description</strong>: {{description}}</li>\n<ol><li><a href={{releaseNotesLink}} target=”_blank” rel=”noopener noreferrer”>View Release Notes</a></li></ol>\n<li><strong>Note</strong>: The DAO’s address will never change</li>\n</li></ol>",
+      "descriptionPluginUpgrade": "<li>\n<strong>{{updatedVersion}}</strong>\n<ol>\n<li><strong>Current version</strong>: {{currentVersion}}</li>\n<li><strong>Upgrade description</strong>: {{description}}</li>\n<ol><li><a href={{releaseNotesLink}} target=”_blank” rel=”noopener noreferrer”>View Release Notes</a></li></ol>\n</li></ol>"
     },
     "modalCritical": {
       "title": "Are you sure you want to proceed?",
@@ -1621,6 +1668,22 @@
       "ctaCancel": "Cancel",
       "descLinkUrl": "https://",
       "descLinkLabel": "in our guide"
+    },
+    "verification": {
+      "title": "Update verification",
+      "desc": "Aragon OSx updates should always be verified prior to being voted on or executed. The following checks are the most essential and are automatically performed for you by Aragon App. To learn more about Aragon OSx updates, {{link}}.",
+      "itemPending": "Checking {updateName} update…",
+      "itemSuccess": "{updateName} update verified",
+      "itemCriticalDecoding": {
+        "desc": "At least one action can’t be decoded, indicating that this update could be  harmful."
+      },
+      "itemCritical": {
+        "linkLabel": "View details",
+        "linkUrl": "https://aragon.org/how-to/update-your-aragon-dao"
+      },
+      "itemCriticalFailed": {
+        "desc": "One or more of our checks found that these actions are not constructed properly, indicating that this update is harmful."
+      }
     }
   },
   "setting": {
@@ -1642,13 +1705,42 @@
   "createDao": {
     "stepCommunityVoting": {
       "title": "Community voting parameters",
-      "desc": "Establish the conditions that determine the passage of a proposal during the initial community voting phase. How much support does the proposal need? How much of the community needs to participate? How long is the proposal open for voting? Learn more about in {{this guide}}."
+      "desc": "Establish the conditions that determine the passage of a proposal during the community voting phase. How much support does the proposal need? How much of the community needs to participate? How long is the proposal open for voting? Learn more in {{this guide}}."
     },
     "executionMultisig": {
       "title": "Define your execution multisig",
       "desc": "To bring the offchain results onchain, a execution multisig is needed to validate the results and perform the optional actions of a proposal. Learn more about the execution multisig and its tasks in {{link}}.",
       "membersLabel": "Execution multisig members",
-      "membersDesc": "These addresses form the governing body that approves and executes proposals passed by the community. Add the addresses who will be members of the execution multisig."
+      "membersDesc": "These addresses form the governing body that approves and executes proposals passed by the community. Add the addresses who will be members of the execution multisig.",
+      "executionTitle": "Execution expiration time",
+      "executionDesc": "Execution expiration time is the window available for the execution multisig to enact a passed community-backed proposal before it becomes ineligible for execution.\n"
     }
-  }
+  },
+  "modalTransaction": {
+    "vocdoni": {
+      "deploy": {
+        "createOffchain": "Create offchain vote ID",
+        "registerProposalOff": "Register proposal offchain ",
+        "registerProposalOn": "Register proposal onchain",
+        "proposalRready": "Your proposal is ready",
+        "signMessage": "Sign message",
+        "signTransaction": "Sign transaction",
+        "details": "Details"
+      },
+      "submitVote": {
+        "title": "Submit your vote",
+        "desc": "The only cost to publish your proposal are the {{votingBlockchain}} network's gas fee.",
+        "ctaLabel": "Confirm your vote",
+        "createOffchain": "Create offchain vote ID",
+        "signMessage": "Sign message",
+        "publishVote": "Publish your vote",
+        "details": "Details",
+        "alertDontClose": "Don't close this page while in progress.",
+        "ctaWaitingWalllet": "Awaiting wallet confirmation",
+        "ctaSeeVote": "See your vote",
+        "PublishFailed": "Publishing your vote has failed"
+      }
+    }
+  },
+  "AA_TESTKEY": "TEST KEY - Update #1"
 }

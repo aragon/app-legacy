@@ -3,12 +3,12 @@ import {useNetwork} from 'context/network';
 import {CHAIN_METADATA, SupportedNetworks} from 'utils/constants';
 import {formatUnits} from 'ethers/lib/utils';
 import {HookData} from 'utils/types';
-import {useDaoToken} from './useDaoToken';
-import {PluginTypes} from './usePluginClient';
-import {useWallet} from './useWallet';
+import {GaselessPluginName, PluginTypes} from './usePluginClient';
 import {useTokenHolders} from 'services/aragon-backend/queries/use-token-holders';
 import {useMembers} from 'services/aragon-sdk/queries/use-members';
 import {Address, useBalance} from 'wagmi';
+import {useDaoToken} from './useDaoToken';
+import {useWallet} from './useWallet';
 
 export type MultisigDaoMember = {
   address: string;
@@ -120,23 +120,26 @@ export const useDaoMembers = (
 ): HookData<DaoMembersData> => {
   const {network} = useNetwork();
   const {address} = useWallet();
-
   const {data: daoToken} = useDaoToken(pluginAddress);
 
-  const isTokenBased = pluginType === 'token-voting.plugin.dao.eth';
+  const isTokenBased =
+    pluginType === 'token-voting.plugin.dao.eth' ||
+    pluginType === GaselessPluginName;
 
   const opts = options ? options : {};
   let memberCount = 0;
   const countOnly = opts?.countOnly || false;
   const enabled = opts?.enabled || true;
 
-  const networkCovalentSupported = !(
+  const covalentSupportedNetwork = !(
     network === 'goerli' ||
     network === 'mumbai' ||
+    network === 'arbitrum' ||
+    network === 'arbitrum-goerli' ||
     network === 'base' ||
     network === 'base-goerli'
   );
-  const useSubgraph = !isTokenBased || !networkCovalentSupported;
+  const useSubgraph = !isTokenBased || !covalentSupportedNetwork;
   const {
     data: subgraphData = [],
     isError: isSubgraphError,

@@ -1,5 +1,7 @@
 import {ProposalQueryParams} from '@aragon/sdk-client';
+
 import {PluginTypes} from 'hooks/usePluginClient';
+import {SupportedNetworks} from 'utils/constants';
 
 export interface IFetchDelegateeParams {
   tokenAddress: string;
@@ -9,6 +11,7 @@ export interface IFetchPastVotingPowerParams {
   tokenAddress: string;
   address: string;
   blockNumber: number;
+  network: SupportedNetworks;
 }
 
 export interface IFetchVotingPowerParams {
@@ -40,4 +43,26 @@ export interface IFetchProposalsParams extends ProposalQueryParams {
 export interface IFetchProposalParams {
   pluginType?: PluginTypes;
   id: string;
+}
+
+export interface IFetchMemberParams {
+  pluginAddress: string;
+  address: string;
+  blockNumber?: number;
+}
+
+export interface IFetchPluginVersionsParams {
+  pluginType?: PluginTypes;
+  daoAddress: string;
+}
+
+export interface IFetchPreparedPluginsParams {
+  pluginAddress: string;
+  pluginType: PluginTypes;
+  daoAddressOrEns: string;
+}
+
+export interface IFetchIsMemberParams {
+  pluginAddress: string;
+  address: string;
 }
