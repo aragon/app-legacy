@@ -11,7 +11,7 @@ import {CHAIN_METADATA} from 'utils/constants';
 import {toDisplayEns} from 'utils/library';
 import {NotFound} from 'utils/paths';
 import {useClient} from './useClient';
-import {resolveIpfsCid} from '@aragon/sdk-common';
+import {resolveIpfsCid} from '@aragon/sdk-client-common';
 
 /**
  * Fetches DAO data for a given DAO address or ENS name using a given client.
