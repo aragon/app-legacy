@@ -3,8 +3,8 @@ import {useQueries} from '@tanstack/react-query';
 import {useClient} from './useClient';
 
 /**
- * Custom hook for update proposal verification.
- * @param daoAddress - The address of the DAO.
+ * Custom hook for updating verification.
+ *
  * @param proposalId - The ID of the proposal.
  * @returns The result of the verification queries.
  */
