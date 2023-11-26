@@ -6,7 +6,7 @@ import {useDaoDetailsQuery} from 'hooks/useDaoDetails';
 import {useUpdateVerification} from 'hooks/useUpdateVerification';
 import {htmlIn} from 'utils/htmlIn';
 import {Status, StatusProps} from './Status';
-import {useIsUpdateProposal} from 'hooks/useIsUpdateproposal';
+import {useIsUpdateProposal} from 'hooks/useIsUpdateProposal';
 
 export interface UpdateVerificationCardProps {
   proposalId?: string;

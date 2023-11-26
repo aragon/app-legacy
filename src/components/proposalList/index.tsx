@@ -28,7 +28,7 @@ import {
   isGaslessProposal,
 } from 'utils/proposals';
 import {ProposalListItem} from 'utils/types';
-import {useIsUpdateProposal} from 'hooks/useIsUpdateproposal';
+import {useIsUpdateProposal} from 'hooks/useIsUpdateProposal';
 
 type ProposalListProps = {
   proposals: Array<ProposalListItem>;

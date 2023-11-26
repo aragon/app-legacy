@@ -27,7 +27,7 @@ import {featureFlags} from 'utils/featureFlags';
 import {htmlIn} from 'utils/htmlIn';
 import {Governance, NewProposal} from 'utils/paths';
 import {ProposalTypes} from 'utils/types';
-import {useIsUpdateProposal} from 'hooks/useIsUpdateproposal';
+import {useIsUpdateProposal} from 'hooks/useIsUpdateProposal';
 
 type Props = {
   daoAddressOrEns: string;
