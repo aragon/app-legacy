@@ -3,12 +3,11 @@ import {MultisigProposalListItem} from '@aragon/sdk-client';
 import {DaoAction} from '@aragon/sdk-client-common';
 import {BigNumber} from 'ethers';
 import {TFunction} from 'i18next';
-import React, {useEffect, useMemo, useState} from 'react';
+import React, {useMemo} from 'react';
 import {useTranslation} from 'react-i18next';
 import {NavigateFunction, generatePath, useNavigate} from 'react-router-dom';
 
 import {useNetwork} from 'context/network';
-import {useClient} from 'hooks/useClient';
 import {useDaoMembers} from 'hooks/useDaoMembers';
 import {PluginTypes} from 'hooks/usePluginClient';
 import {useWallet} from 'hooks/useWallet';
@@ -25,11 +24,11 @@ import {
   TokenVotingOptions,
   getErc20Results,
   isErc20VotingProposal,
-  isVerifiedAragonUpdateProposal,
   stripPlgnAdrFromProposalId,
   isGaslessProposal,
 } from 'utils/proposals';
 import {ProposalListItem} from 'utils/types';
+import {useIsUpdateProposal} from 'hooks/useIsUpdateproposal';
 
 type ProposalListProps = {
   proposals: Array<ProposalListItem>;
@@ -64,27 +63,14 @@ const ProposalItem: React.FC<ProposalListItemProps> = ({
   ...props
 }) => {
   const {t} = useTranslation();
-  const {client} = useClient();
-  const [verifiedUpdateProposal, setVerifiedUpdateProposal] =
-    useState<boolean>(false);
-
-  useEffect(() => {
-    async function fetchIsVerifiedAragonUpdateProposal() {
-      if (client != null) {
-        setVerifiedUpdateProposal(
-          await isVerifiedAragonUpdateProposal(proposalId, client)
-        );
-      }
-    }
-
-    fetchIsVerifiedAragonUpdateProposal();
-  }, [client, proposalId]);
+  const [{data: isPluginUpdate}, {data: isOSUpdate}] =
+    useIsUpdateProposal(proposalId);
 
   return (
     <CardProposal
       {...props}
       bannerContent={
-        verifiedUpdateProposal &&
+        (isPluginUpdate || isOSUpdate) &&
         featureFlags.getValue('VITE_FEATURE_FLAG_OSX_UPDATES') === 'true'
           ? t('update.proposal.bannerTitle')
           : ''

@@ -7,7 +7,7 @@ import {
   ListItemHeader,
 } from '@aragon/ods-old';
 import {DaoAction} from '@aragon/sdk-client-common';
-import React, {useEffect, useState} from 'react';
+import React from 'react';
 import {useTranslation} from 'react-i18next';
 import {generatePath, useNavigate} from 'react-router-dom';
 import styled from 'styled-components';
@@ -16,7 +16,6 @@ import {proposal2CardProps} from 'components/proposalList';
 import {StateEmpty} from 'components/stateEmpty';
 import {Loading} from 'components/temporary';
 import {useNetwork} from 'context/network';
-import {useClient} from 'hooks/useClient';
 import {useDaoMembers} from 'hooks/useDaoMembers';
 import {PluginTypes} from 'hooks/usePluginClient';
 import {useWallet} from 'hooks/useWallet';
@@ -27,8 +26,8 @@ import {
 import {featureFlags} from 'utils/featureFlags';
 import {htmlIn} from 'utils/htmlIn';
 import {Governance, NewProposal} from 'utils/paths';
-import {isVerifiedAragonUpdateProposal} from 'utils/proposals';
 import {ProposalTypes} from 'utils/types';
+import {useIsUpdateProposal} from 'hooks/useIsUpdateproposal';
 
 type Props = {
   daoAddressOrEns: string;
@@ -43,26 +42,14 @@ type ProposalItemProps = CardProposalProps & {
 
 const ProposalItem: React.FC<ProposalItemProps> = ({proposalId, ...props}) => {
   const {t} = useTranslation();
-  const {client} = useClient();
-  const [verifiedUpdateProposal, setVerifiedUpdateProposal] =
-    useState<boolean>(false);
+  const [{data: isPluginUpdate}, {data: isOSUpdate}] =
+    useIsUpdateProposal(proposalId);
 
-  useEffect(() => {
-    async function fetchIsVerifiedAragonUpdateProposal() {
-      if (client != null) {
-        setVerifiedUpdateProposal(
-          await isVerifiedAragonUpdateProposal(proposalId, client)
-        );
-      }
-    }
-
-    fetchIsVerifiedAragonUpdateProposal();
-  }, [client, proposalId]);
   return (
     <CardProposal
       {...props}
       bannerContent={
-        verifiedUpdateProposal &&
+        (isPluginUpdate || isOSUpdate) &&
         featureFlags.getValue('VITE_FEATURE_FLAG_OSX_UPDATES') === 'true'
           ? t('update.proposal.bannerTitle')
           : ''

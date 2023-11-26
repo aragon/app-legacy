@@ -1,13 +1,12 @@
-import React, {useEffect, useMemo, useState} from 'react';
+import React, {useMemo} from 'react';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 
 import {useDaoDetailsQuery} from 'hooks/useDaoDetails';
 import {useUpdateVerification} from 'hooks/useUpdateVerification';
-import {useClient} from 'hooks/useClient';
-import {isVerifiedAragonUpdateProposal} from 'utils/proposals';
 import {htmlIn} from 'utils/htmlIn';
 import {Status, StatusProps} from './Status';
+import {useIsUpdateProposal} from 'hooks/useIsUpdateproposal';
 
 export interface UpdateVerificationCardProps {
   proposalId?: string;
@@ -17,25 +16,12 @@ export const UpdateVerificationCard: React.FC<UpdateVerificationCardProps> = ({
   proposalId,
 }) => {
   const {t} = useTranslation();
-  const {client} = useClient();
-  const [verifiedUpdateProposal, setVerifiedUpdateProposal] =
-    useState<boolean>(false);
-
-  useEffect(() => {
-    async function fetchIsVerifiedAragonUpdateProposal() {
-      if (client != null && proposalId) {
-        setVerifiedUpdateProposal(
-          await isVerifiedAragonUpdateProposal(proposalId, client)
-        );
-      }
-    }
-
-    fetchIsVerifiedAragonUpdateProposal();
-  }, [client, proposalId]);
+  const [{data: isPluginUpdate}, {data: isOSUpdate}] = useIsUpdateProposal(
+    proposalId as string
+  );
 
   const {data: daoDetails} = useDaoDetailsQuery();
 
-  const daoAddress: string = daoDetails?.address || '';
   const pluginType =
     daoDetails?.plugins[0].id === 'token-voting.plugin.dao.eth'
       ? 'token voting'
@@ -44,7 +30,7 @@ export const UpdateVerificationCard: React.FC<UpdateVerificationCardProps> = ({
   const [
     {data: pluginUpdateVerification, isLoading: isPluginUpdateLoading},
     {data: osUpdateVerification, isLoading: isOSUpdateLoading},
-  ] = useUpdateVerification(daoAddress, proposalId as string);
+  ] = useUpdateVerification(proposalId as string);
 
   const OSUpdate: StatusProps = useMemo(() => {
     if (isOSUpdateLoading)
@@ -114,7 +100,7 @@ export const UpdateVerificationCard: React.FC<UpdateVerificationCardProps> = ({
     }
   }, [isPluginUpdateLoading, pluginType, pluginUpdateVerification, t]);
 
-  if (!verifiedUpdateProposal) return null;
+  if (!isPluginUpdate && !isOSUpdate) return null;
 
   return (
     <Container>
@@ -127,12 +113,16 @@ export const UpdateVerificationCard: React.FC<UpdateVerificationCardProps> = ({
         />
       </Header>
       <div>
-        <Row>
-          <Status {...OSUpdate} />
-        </Row>
-        <Row>
-          <Status {...pluginUpdate} />
-        </Row>
+        {isOSUpdate && (
+          <Row>
+            <Status {...OSUpdate} />
+          </Row>
+        )}
+        {isPluginUpdate && (
+          <Row>
+            <Status {...pluginUpdate} />
+          </Row>
+        )}
       </div>
     </Container>
   );

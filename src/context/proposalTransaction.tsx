@@ -84,7 +84,7 @@ const ProposalTransactionProvider: React.FC<Props> = ({children}) => {
   const proposalId = new ProposalId(urlId!).export();
 
   const {address, isConnected} = useWallet();
-  const {network} = useNetwork();
+  const {network, networkUrlSegment} = useNetwork();
   const queryClient = useQueryClient();
   const {api: provider} = useProviders();
   const fetchVotingPower = useVotingPowerAsync();
@@ -247,6 +247,12 @@ const ProposalTransactionProvider: React.FC<Props> = ({children}) => {
     queryClient.invalidateQueries(currentProposal);
   }, [pluginType, proposalId, queryClient]);
 
+  // if network is unsupported this will be caught when compared to client
+  const queryNetwork = useMemo(
+    () => networkUrlSegment ?? network,
+    [network, networkUrlSegment]
+  );
+
   const onExecutionSuccess = useCallback(
     async (proposalId: string, txHash: string) => {
       if (!address || !daoDetails?.address) return;
@@ -267,8 +273,13 @@ const ProposalTransactionProvider: React.FC<Props> = ({children}) => {
         proposalId.toString(),
         executionDetails
       );
+
+      queryClient.invalidateQueries([
+        aragonSdkQueryKeys.protocolVersion(daoDetails?.address),
+        ['daoDetails', daoDetails?.address, queryNetwork],
+      ]);
     },
-    [address, daoDetails?.address, network, provider]
+    [address, daoDetails?.address, network, provider, queryClient, queryNetwork]
   );
 
   // cleans up and caches successful approval tx

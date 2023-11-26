@@ -963,22 +963,6 @@ export function recalculateProposalStatus<
 }
 
 /**
- * Checks if a proposal is a verified Aragon update proposal.
- * @param proposalId - The ID of the proposal.
- * @param client - The SDK client.
- * @returns A boolean indicating whether the proposal is a verified Aragon update proposal.
- */
-export async function isVerifiedAragonUpdateProposal(
-  proposalId: string,
-  client: Client
-) {
-  return (
-    client.methods.isDaoUpdateProposal(proposalId) ||
-    client.methods.isPluginUpdateProposal(proposalId)
-  );
-}
-
-/**
  * Encodes an OS update action for a DAO on a specified network.
  * @param currentVersion - The current version of the OS in the format [major, minor, patch].
  * @param selectedVersion - The selected version of the OS to update to.
