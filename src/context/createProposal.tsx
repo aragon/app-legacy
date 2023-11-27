@@ -6,8 +6,8 @@ import {
   MultisigClient,
   MultisigProposal,
   MultisigVotingSettings,
-  ProposalCreationSteps,
   ProposalCreationStepValue,
+  ProposalCreationSteps,
   TokenVotingClient,
   TokenVotingProposal,
   VoteValues,
@@ -15,15 +15,21 @@ import {
 } from '@aragon/sdk-client';
 import {
   DaoAction,
-  hexToBytes,
   LIVE_CONTRACTS,
   ProposalMetadata,
   ProposalStatus,
   SupportedNetworksArray,
   SupportedVersion,
   TokenType,
+  hexToBytes,
 } from '@aragon/sdk-client-common';
 import {useQueryClient} from '@tanstack/react-query';
+import {
+  CreateGasslessProposalParams,
+  GaslessVotingClient,
+  GaslessVotingProposal,
+} from '@vocdoni/gasless-voting';
+import {TokenCensus} from '@vocdoni/sdk';
 import differenceInSeconds from 'date-fns/differenceInSeconds';
 import {ethers} from 'ethers';
 import React, {
@@ -51,6 +57,7 @@ import {usePollGasFee} from 'hooks/usePollGasfee';
 import {useTokenSupply} from 'hooks/useTokenSupply';
 import {useWallet} from 'hooks/useWallet';
 import {trackEvent} from 'services/analytics';
+import {useProtocolVersion} from 'services/aragon-sdk/queries/use-protocol-version';
 import {useVotingPower} from 'services/aragon-sdk/queries/use-voting-power';
 import {
   isGaslessVotingSettings,
@@ -59,6 +66,7 @@ import {
   useVotingSettings,
 } from 'services/aragon-sdk/queries/use-voting-settings';
 import {AragonSdkQueryItem} from 'services/aragon-sdk/query-keys';
+import {aragonSubgraphQueryKeys} from 'services/aragon-subgraph/query-keys';
 import {getEtherscanVerifiedContract} from 'services/etherscanAPI';
 import {CHAIN_METADATA, TransactionState} from 'utils/constants';
 import {
@@ -87,14 +95,6 @@ import {useCreateGaslessProposal} from './createGaslessProposal';
 import {useGlobalModalContext} from './globalModals';
 import {useNetwork} from './network';
 import {useProviders} from './providers';
-
-import {
-  CreateGasslessProposalParams,
-  GaslessVotingClient,
-  GaslessVotingProposal,
-} from '@vocdoni/gasless-voting';
-import {TokenCensus} from '@vocdoni/sdk';
-import {useProtocolVersion} from 'services/aragon-sdk/queries/use-protocol-version';
 
 type Props = {
   showTxModal: boolean;
@@ -743,7 +743,10 @@ const CreateProposalWrapper: React.FC<Props> = ({
     // invalidating all infinite proposals query regardless of the
     // pagination state
     queryClient.invalidateQueries([AragonSdkQueryItem.PROPOSALS]);
-  }, [queryClient]);
+    queryClient.invalidateQueries(
+      aragonSubgraphQueryKeys.totalProposalCount({pluginAddress, pluginType})
+    );
+  }, [pluginAddress, pluginType, queryClient]);
 
   const handlePublishProposal = useCallback(
     async (vochainProposalId?: string, vochainCensus?: TokenCensus) => {

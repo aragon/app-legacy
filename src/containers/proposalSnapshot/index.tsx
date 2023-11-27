@@ -77,6 +77,7 @@ const ProposalSnapshot: React.FC<Props> = ({
 
   const {
     data: proposalCount,
+    error: proposalCountError,
     isLoading: proposalCountIsLoading,
     isFetched: proposalCountIsFetched,
   } = useTotalProposalCount({
@@ -107,7 +108,7 @@ const ProposalSnapshot: React.FC<Props> = ({
     return <Loading />;
   }
 
-  if (proposalCountIsFetched && proposalCount === 0) {
+  if (proposalCountIsFetched && (proposalCount === 0 || proposalCountError)) {
     return (
       <StateEmpty
         type="Human"
@@ -135,11 +136,15 @@ const ProposalSnapshot: React.FC<Props> = ({
     );
   }
 
+  // gasless plugin does not have a proposal count yet; use the length
+  // of the page
+  const displayedCount = proposalCount ?? data?.pages.flat().length;
+
   return (
     <Container>
       <ListItemHeader
         icon={<IconGovernance />}
-        value={proposalCount?.toString() ?? '0'}
+        value={displayedCount?.toString() ?? '0'}
         label={t('dashboard.proposalsTitle')}
         buttonText={t('newProposal.title')}
         orientation="horizontal"
