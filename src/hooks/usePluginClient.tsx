@@ -81,7 +81,7 @@ export const usePluginClient = <T extends PluginTypes = PluginTypes>(
         case GaselessPluginName:
           setPluginClient(
             new GaslessVotingClient(
-              new GaslessVotingContext(undefined, undefined),
+              new GaslessVotingContext(context, context),
               VocdoniEnv as EnvOptions
             )
           );
