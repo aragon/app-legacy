@@ -31,7 +31,7 @@ export type HeaderMemberProps = {
   profileUrl: string;
   explorerUrl: string;
   explorerName: string;
-  avatarUrl?: string;
+  avatarUrl?: string | null;
   description?: string;
   ens?: string;
   actions?: ReactNode;
@@ -68,8 +68,6 @@ export const HeaderMember: React.FC<HeaderMemberProps> = ({
   const [shouldClamp, setShouldClamp] = useState(false);
 
   const descriptionRef = useRef<HTMLParagraphElement>(null);
-
-  const hasStats = !!stats.length;
 
   // this should be extracted into a hook if clamping/showing elsewhere
   useEffect(() => {
@@ -150,7 +148,7 @@ export const HeaderMember: React.FC<HeaderMemberProps> = ({
 
   return (
     <div className="relative">
-      <Card hasStats={hasStats}>
+      <Card totalStats={stats.length}>
         <ContentWrapper>
           <Content>
             <Title>{name}</Title>
@@ -218,9 +216,11 @@ export const HeaderMember: React.FC<HeaderMemberProps> = ({
   );
 };
 
-const Card = styled.div.attrs<{hasStats: boolean}>(props => ({
-  className: `w-full bg-neutral-0 md:rounded-xl p-4 md:px-12 ${
-    props.hasStats ? 'md:pb-20' : 'md:pb-16'
+const Card = styled.div.attrs<{totalStats: number}>(props => ({
+  className: `w-full bg-neutral-0 md:rounded-xl px-4 pt-4 ${
+    props.totalStats > 2 ? 'pb-28' : props.totalStats > 0 ? 'pb-16' : 'pb-4'
+  } md:px-12 ${
+    props.totalStats > 0 ? 'md:pb-20' : 'md:pb-16'
   } md:pt-12 border border-neutral-100 space-y-6 relative`,
 }))`
   box-shadow:
@@ -271,11 +271,16 @@ const StyledCopyIcon = styled(IconCopy).attrs({
   className: 'text-neutral-400',
 })``;
 
-const StatsContainer = styled.div.attrs<{total: number}>(props => ({
-  className: `relative grid grid-cols-2 shadow-neutral border-[0.5px] border-neutral-100 rounded-xl overflow-hidden mt-6 md:mt-0 m-auto w-full md:w-[fit-content] md:absolute md:-bottom-11 md:left-10 ${
-    'md:grid-cols-' + props.total
-  } `,
-}))``;
+const StatsContainer = styled.div.attrs<{total: number}>({
+  className: `relative grid shadow-neutral border-[0.5px] border-neutral-100 rounded-xl overflow-hidden m-auto w-full w-[fit-content] md:left-10 md:m-0`,
+})`
+  grid-template-columns: repeat(${props => props.total}, 1fr);
+  transform: translateY(-50%);
+
+  @media screen and (max-width: 786px) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+`;
 
 const StatItem = styled.div.attrs({
   className:
