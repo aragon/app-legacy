@@ -308,7 +308,8 @@ export const CreateDAO: React.FC = () => {
       errors.durationDays ||
       errors.durationHours ||
       errors.durationMinutes ||
-      errors.multisigMinimumApprovals
+      errors.multisigMinimumApprovals ||
+      errors.eligibilityTokenAmount
     )
       return false;
     return true;
@@ -320,6 +321,7 @@ export const CreateDAO: React.FC = () => {
     errors.minimumParticipation,
     errors.support,
     errors.multisigMinimumApprovals,
+    errors.eligibilityTokenAmount,
   ]);
 
   /*************************************************

@@ -39,7 +39,10 @@ export const SelectEligibility = () => {
 
   useEffect(() => {
     if (eligibilityType === 'token') {
-      setValue('eligibilityTokenAmount', minimumTokenAmount);
+      setValue(
+        'eligibilityTokenAmount',
+        minimumTokenAmount < 1 ? minimumTokenAmount : 1
+      );
     } else {
       setValue('eligibilityTokenAmount', 0);
     }
@@ -110,6 +113,7 @@ export const SelectEligibility = () => {
                 value={value}
                 view={anyoneIsEligible ? 'default' : 'bigger'}
                 onChange={onChange}
+                includeDecimal
                 max={tokenTotalSupply}
                 disabled={anyoneIsEligible}
               />
