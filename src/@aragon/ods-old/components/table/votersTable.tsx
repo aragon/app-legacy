@@ -4,9 +4,6 @@ import {styled} from 'styled-components';
 import {shortenAddress} from '../../utils';
 import {IconChevronDown} from '../icons';
 import {ListItemVoter} from '../listItem/voter';
-import {generatePath, useNavigate, useParams} from 'react-router-dom';
-import {DaoMember} from 'utils/paths';
-import {useNetwork} from 'context/network';
 
 export type VoterType = {
   wallet: string;
@@ -21,6 +18,7 @@ export type VoterType = {
 
 export type VotersTableProps = {
   voters: VoterType[];
+  onVoterClick?: (address: string) => void;
   page?: number;
   LoadMoreLabel: string;
   onLoadMore?: () => void;
@@ -34,16 +32,13 @@ const colorScheme = (option: VoterType['walletTag']) =>
 
 export const VotersTable: React.FC<VotersTableProps> = ({
   voters,
+  onVoterClick = () => {},
   LoadMoreLabel,
   onLoadMore,
   page = 1,
   showAmount = false,
   pageSize = 3,
 }) => {
-  const {network} = useNetwork();
-  const navigate = useNavigate();
-  const {dao} = useParams();
-
   const displayedVoters = page * pageSize;
 
   return (
@@ -54,15 +49,7 @@ export const VotersTable: React.FC<VotersTableProps> = ({
           label={shortenAddress(voter.wallet)}
           src={voter.src}
           option={voter.option}
-          onClick={() => {
-            navigate(
-              generatePath(DaoMember, {
-                network,
-                dao,
-                user: voter.wallet,
-              })
-            );
-          }}
+          onClick={() => onVoterClick(voter.wallet)}
           voteReplaced={voter.voteReplaced}
           {...(voter.walletTag && {
             walletTag: {

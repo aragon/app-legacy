@@ -10,6 +10,7 @@ import {getUserFriendlyWalletLabel} from 'utils/library';
 type FilteredAddressListProps = {
   wallets: TokenVotingWalletField[] | MultisigWalletField[];
   tokenSymbol?: string;
+  onVoterClick?: (address: string) => void;
 };
 
 /**
@@ -21,6 +22,7 @@ type FilteredAddressListProps = {
 export const FilteredAddressList = ({
   wallets,
   tokenSymbol,
+  onVoterClick = () => {},
 }: FilteredAddressListProps) => {
   const [searchValue, setSearchValue] = useState('');
   const {t} = useTranslation();
@@ -76,6 +78,7 @@ export const FilteredAddressList = ({
             {...(tokenSymbol && {showAmount: true})}
             pageSize={filteredAddressList.length}
             LoadMoreLabel={t('community.votersTable.loadMore')}
+            onVoterClick={onVoterClick}
           />
         ) : (
           // this view is temporary until designs arrive
