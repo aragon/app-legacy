@@ -4,7 +4,12 @@ import {
   ValueDispatch,
 } from '@restspace/schema-form';
 import React, {useContext} from 'react';
-import {Label, TextareaSimple, TextInput as UITextInput} from '@aragon/ods-old';
+import {
+  Label,
+  NumberInput,
+  TextareaSimple,
+  TextInput as UITextInput,
+} from '@aragon/ods-old';
 import {fieldType} from './schema';
 //import dayjs from 'dayjs';
 import 'dayjs/plugin/utc';
@@ -203,12 +208,12 @@ export const TextInput = ({
           />
         );
       case 'number':
+        // eslint-disable-next-line prettier/prettier
         return (
-          <input
-            {...commonProps}
-            type="number"
-            className={classes('sf-number')}
-            onInput={handleChangeNumber}
+          <NumberInput
+            {...baseProps}
+            value={(value || '').toString()}
+            onChange={handleChangeNumber}
           />
         );
       //   case "currency":

@@ -1,4 +1,4 @@
-import {ButtonText, ListItemAction} from '@aragon/ods-old';
+import {ButtonText, ListItemAction, Spinner} from '@aragon/ods-old';
 import React from 'react';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
@@ -10,9 +10,14 @@ import {ActionIndex} from 'utils/types';
 import {ActionCalldata, CustomActionSpec} from 'utils/customActions';
 import {SchemaSubmitForm} from '@restspace/schema-form';
 import {TextInput} from 'utils/schemaForm/textInput';
-import {IComponentMap} from '@restspace/schema-form/build/components/schema-form-interfaces';
+import {
+  IComponentMap,
+  IContainerMap,
+} from '@restspace/schema-form/build/components/schema-form-interfaces';
 import {useFormContext} from 'react-hook-form';
 import {transformation} from 'utils/transformation/transformation';
+import {TokenInput} from 'utils/schemaForm/tokenInput';
+import {useDaoDetailsQuery} from 'hooks/useDaoDetails';
 
 type CustomActionProps = ActionIndex & {
   allowRemove?: boolean;
@@ -29,6 +34,9 @@ const CustomAction: React.FC<CustomActionProps> = ({
 
   const {removeAction, addAction} = useActionsContext();
   const {setValue} = useFormContext();
+
+  const {isLoading, data: daoDetails} = useDaoDetailsQuery();
+
   const value = {};
 
   const methodActions = (() => {
@@ -55,11 +63,20 @@ const CustomAction: React.FC<CustomActionProps> = ({
   })();
 
   const onSubmit = async (value: object) => {
+    console.log(`form val: ${JSON.stringify(value)}`);
+    // data to import into the transform as preset variables
+    const appContextData = {
+      $daoAddress: daoDetails?.address,
+    };
     // transform user inputs to get call data info
     const actionCalldata = transformation(
       customAction.transform,
-      value
+      value,
+      undefined,
+      appContextData
     ) as ActionCalldata[];
+
+    console.log(`transformed: ${JSON.stringify(actionCalldata)}`);
 
     let idx = 0;
     for (const action of actionCalldata) {
@@ -99,7 +116,20 @@ const CustomAction: React.FC<CustomActionProps> = ({
   const components: IComponentMap = {
     string: TextInput,
     textarea: TextInput,
+    number: TextInput,
+    boolean: TextInput,
   };
+
+  const containers: IContainerMap = {
+    token: TokenInput,
+  };
+
+  if (isLoading)
+    return (
+      <Container standAlone={false}>
+        <Spinner size="big" />
+      </Container>
+    );
 
   return (
     <Container standAlone={false}>
@@ -117,6 +147,7 @@ const CustomAction: React.FC<CustomActionProps> = ({
             value={value}
             makeSubmitLink={makeSubmitLink}
             components={components}
+            containers={containers}
             onSubmit={onSubmit}
           />
         </SummaryContainer>
