@@ -888,7 +888,7 @@ const CreateProposalWrapper: React.FC<Props> = ({
     ]
   );
 
-  const handleOffChainProposal = useCallback(async () => {
+  const handleGaslessProposal = useCallback(async () => {
     if (!pluginClient || !daoToken) {
       return new Error('ERC20 SDK client is not initialized correctly');
     }
@@ -951,7 +951,7 @@ const CreateProposalWrapper: React.FC<Props> = ({
           globalState={gaslessGlobalState}
           isOpen={showTxModal}
           onClose={handleCloseModal}
-          callback={handleOffChainProposal}
+          callback={handleGaslessProposal}
           closeOnDrag={
             creationProcessState !== TransactionState.LOADING ||
             gaslessGlobalState !== StepStatus.LOADING
