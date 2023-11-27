@@ -272,10 +272,11 @@ const StyledCopyIcon = styled(IconCopy).attrs({
 })``;
 
 const StatsContainer = styled.div.attrs<{total: number}>({
-  className: `relative grid shadow-neutral border-[0.5px] border-neutral-100 rounded-xl overflow-hidden m-auto w-full w-[fit-content] md:left-10 md:m-0`,
+  className: `relative grid shadow-neutral border-[0.5px] border-neutral-100 rounded-xl overflow-hidden m-auto w-full md:left-10 md:m-0`,
 })`
   grid-template-columns: repeat(${props => props.total}, 1fr);
   transform: translateY(-50%);
+  width: fit-content;
 
   @media screen and (max-width: 786px) {
     grid-template-columns: repeat(2, 1fr);
