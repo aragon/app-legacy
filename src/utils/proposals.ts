@@ -955,7 +955,7 @@ export function recalculateProposalStatus<
     // for an inactive multisig proposal, make sure a vote has actually been cast
     // or that the end time isn't in the past
     if (isMultisigProposal(proposal)) {
-      if (endTime < Date.now() || proposal.approvals.length === 0)
+      if (proposal.approvals.length === 0)
         return {...proposal, status: ProposalStatus.DEFEATED};
     }
   }
