@@ -98,10 +98,10 @@
     graphql-request "^4.3.0"
     yup "^1.2.0"
 
-"@aragon/sdk-client-common@1.11.0":
-  version "1.11.0"
-  resolved "https://registry.yarnpkg.com/@aragon/sdk-client-common/-/sdk-client-common-1.11.0.tgz#37d4f4ab4012fd65e06e40c3f41b9c3163328dcf"
-  integrity sha512-zn3BP5vnW7NHgc0fDEbAkVzuiOk+hzSh9oCwOcHY9tLGdGR+g+D0Jzpwqu9McBBur6TpzcW3xdNgMMGTqr21ZA==
+"@aragon/sdk-client-common@^1.12.0":
+  version "1.12.0"
+  resolved "https://registry.yarnpkg.com/@aragon/sdk-client-common/-/sdk-client-common-1.12.0.tgz#01e7c105d9afc8860a251e7b9fc84b009464d4b7"
+  integrity sha512-y+g17b2f639nmFJyMsRQVIyljRHDJC9ES0IS0KK9nkIeDgVyJK+je5NqzRSwjadpxeb2fEry9HSPw57FWFR4Mg==
   dependencies:
     "@aragon/osx-ethers" "^1.3.0-rc0.4"
     "@aragon/osx-ethers-v1.0.0" "npm:@aragon/osx-ethers@1.2.1"
@@ -116,31 +116,13 @@
     graphql-request "^4.3.0"
     yup "^1.2.0"
 
-"@aragon/sdk-client-common@^1.11.1":
-  version "1.11.1"
-  resolved "https://registry.yarnpkg.com/@aragon/sdk-client-common/-/sdk-client-common-1.11.1.tgz#7f6bea01ff9033056aa7b882ca11a840d24aab87"
-  integrity sha512-kX2MJ1qq+uIKfLnmdtQ2+hadBbZs3mEerwwq3vLwsMlPe53UAGDu3pq4treOMGMRidvISasc24cJnAHWNb96BA==
-  dependencies:
-    "@aragon/osx-ethers" "^1.3.0-rc0.4"
-    "@aragon/osx-ethers-v1.0.0" "npm:@aragon/osx-ethers@1.2.1"
-    "@aragon/sdk-ipfs" "^1.1.0"
-    "@ethersproject/abstract-signer" "^5.5.0"
-    "@ethersproject/bignumber" "^5.6.0"
-    "@ethersproject/constants" "^5.6.0"
-    "@ethersproject/contracts" "^5.5.0"
-    "@ethersproject/providers" "^5.5.0"
-    "@ethersproject/wallet" "^5.6.0"
-    graphql "^16.5.0"
-    graphql-request "^4.3.0"
-    yup "^1.2.0"
-
-"@aragon/sdk-client@^1.19.2":
-  version "1.19.2"
-  resolved "https://registry.yarnpkg.com/@aragon/sdk-client/-/sdk-client-1.19.2.tgz#62ba132393439e7385fec05a92b28f86dcc7a336"
-  integrity sha512-3A3CKxj5Anj1CTlgFBgw4bZSgArRtdkj1R7AVXyAQO96IL/H1FeC86jldf/dwMCLqn5HnhwrYa+S0D2pj1ZhUw==
+"@aragon/sdk-client@^1.20.0":
+  version "1.20.0"
+  resolved "https://registry.yarnpkg.com/@aragon/sdk-client/-/sdk-client-1.20.0.tgz#62c8f3ad67703ffa471b6ee1c0e1a11102d5f770"
+  integrity sha512-f6r0eP3JKKL9arUTuMcHkmbDhoWGuHqUEAFR0eMnNVgOZXSWfm0WEmP5jCeQ8dafxHTZIIj0pAw+UDki2hR+0w==
   dependencies:
     "@aragon/osx-ethers" "1.3.0-rc0.4"
-    "@aragon/sdk-client-common" "^1.11.1"
+    "@aragon/sdk-client-common" "^1.12.0"
     "@aragon/sdk-ipfs" "^1.1.0"
     "@ethersproject/abstract-signer" "^5.5.0"
     "@ethersproject/bignumber" "^5.6.0"
