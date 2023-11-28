@@ -3,10 +3,10 @@ import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 
 import {useDaoDetailsQuery} from 'hooks/useDaoDetails';
+import {useIsUpdateProposal} from 'hooks/useIsUpdateProposal';
 import {useUpdateVerification} from 'hooks/useUpdateVerification';
 import {htmlIn} from 'utils/htmlIn';
 import {Status, StatusProps} from './status';
-import {useIsUpdateProposal} from 'hooks/useIsUpdateProposal';
 
 export interface UpdateVerificationCardProps {
   proposalId?: string;
