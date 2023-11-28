@@ -23,11 +23,10 @@ export const tokenVotingProposalCountQuery = gql`
 
 const fetchTokenVotingProposalCount = async (
   params: IFetchTotalProposalCountParams,
-  client: TokenVotingClient
+  gqlClient: TokenVotingClient['graphql']
 ): Promise<number> => {
   type TResult = {tokenVotingPlugin: ProposalCount};
-
-  const data = await client.graphql.request<TResult>({
+  const data = await gqlClient.request<TResult>({
     query: tokenVotingProposalCountQuery,
     params: {pluginAddress: params.pluginAddress},
   });
@@ -46,11 +45,11 @@ export const multisigProposalCountQuery = gql`
 
 const fetchMultisigProposalCount = async (
   params: IFetchTotalProposalCountParams,
-  client: MultisigClient
+  gqlClient: MultisigClient['graphql']
 ): Promise<number> => {
   type TResult = {multisigPlugin: ProposalCount};
 
-  const data = await client.graphql.request<TResult>({
+  const data = await gqlClient.request<TResult>({
     query: multisigProposalCountQuery,
     params: {pluginAddress: params.pluginAddress},
   });
@@ -69,11 +68,11 @@ export const gaslessVotingProposalCountQuery = gql`
 
 const fetchGaslessVotingProposalCount = async (
   params: IFetchTotalProposalCountParams,
-  client: GaslessVotingClient
+  gqlClient: GaslessVotingClient['graphql']
 ): Promise<number> => {
   type TResult = {multisigPlugin: ProposalCount};
 
-  const data = await client.graphql.request<TResult>({
+  const data = await gqlClient.request<TResult>({
     query: gaslessVotingProposalCountQuery,
     params: {pluginAddress: params.pluginAddress},
   });
@@ -89,17 +88,11 @@ const fetchTotalProposalCount = async (
 
   switch (params.pluginType) {
     case 'multisig.plugin.dao.eth':
-      return await fetchMultisigProposalCount(params, client as MultisigClient);
+      return await fetchMultisigProposalCount(params, client.graphql);
     case 'token-voting.plugin.dao.eth':
-      return await fetchTokenVotingProposalCount(
-        params,
-        client as TokenVotingClient
-      );
+      return await fetchTokenVotingProposalCount(params, client.graphql);
     case 'vocdoni-gasless-voting-poc.plugin.dao.eth':
-      return await fetchGaslessVotingProposalCount(
-        params,
-        client as GaslessVotingClient
-      );
+      return await fetchGaslessVotingProposalCount(params, client.graphql);
   }
 };
 
