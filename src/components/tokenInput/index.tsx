@@ -1,3 +1,4 @@
+import {useNetwork} from 'context/network';
 import {useDaoBalances} from 'hooks/useDaoBalances';
 import {useDaoDetailsQuery} from 'hooks/useDaoDetails';
 import {useTokenMetadata} from 'hooks/useTokenMetadata';
@@ -37,6 +38,7 @@ export const TokenInput: React.FC<TokenInputProps> = ({
   );
   const {data: tokensWithMetadata, isLoading: isTokensMetadataLoading} =
     useTokenMetadata(balances);
+  const network = useNetwork();
 
   const [amount, setAmount] = useState(tokenAmount);
   const [address, setAddress] = useState(tokenAddress);
@@ -47,6 +49,7 @@ export const TokenInput: React.FC<TokenInputProps> = ({
     isLoading || !tokensWithMetadata.some(t => t.metadata.id === tokenAddress);
 
   useEffect(() => {
+    network.network;
     if (!isLoading) {
       const tok = tokensWithMetadata.find(t => t.metadata.id === address);
       const tokenValue =

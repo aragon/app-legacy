@@ -2,6 +2,7 @@
 import {evaluate} from 'bcx-expression-evaluator';
 import dayjs from 'dayjs';
 import {pathCombine, scanFirst, shallowCopy, upTo} from './transformUtils';
+import {ethers} from 'ethers';
 
 const arrayToFunction = (
   arr: any[],
@@ -71,7 +72,12 @@ export const transformation = (
       !list
         ? []
         : Array.from(list, item =>
-            transformation(transformObject, Object.assign({}, data, item), name)
+            transformation(
+              transformObject,
+              Object.assign({}, data, item),
+              name,
+              variables
+            )
           ),
     expressionReduce: (list: ArrayLike<any>, init: any, expression: string) =>
       !list
@@ -173,6 +179,8 @@ export const transformation = (
     parseInt: (s: string, radix?: number) => parseInt(s, radix),
     parseFloat: (s: string) => parseFloat(s),
     uuid: () => crypto.randomUUID(),
+    tokenValue: (amount: number, decimals: number) =>
+      ethers.utils.parseUnits(amount.toString(), decimals).toString(),
   };
 
   if (typeof transformObject === 'string') {
@@ -183,7 +191,9 @@ export const transformation = (
       typeof transformObject[0] !== 'string' ||
       !transformObject[0].endsWith('()')
     ) {
-      return transformObject.map(item => transformation(item, data, name));
+      return transformObject.map(item =>
+        transformation(item, data, name, variables)
+      );
     }
     const expr = arrayToFunction(transformObject, transformHelper);
     console.log('expr ' + expr);
@@ -305,7 +315,9 @@ const doTransformKey = (
           variables
         );
       } else {
-        output[index] = shallowCopy(transformation(subTransform, input, name));
+        output[index] = shallowCopy(
+          transformation(subTransform, input, name, variables)
+        );
       }
     };
 
