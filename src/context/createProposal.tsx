@@ -894,7 +894,16 @@ const CreateProposalWrapper: React.FC<Props> = ({
     }
 
     const {params, metadata} = await getProposalCreationParams();
-
+    if (!params.endDate) {
+      const startDate = params.startDate || new Date();
+      params.endDate = new Date(
+        startDate.valueOf() +
+          daysToMills(minDays || 0) +
+          hoursToMills(minHours || 0) +
+          minutesToMills(minMinutes || 0)
+      );
+    }
+    params.endDate = params.endDate || params.startDate;
     await createProposal(metadata, params, handlePublishProposal);
   }, [
     pluginClient,
@@ -902,6 +911,9 @@ const CreateProposalWrapper: React.FC<Props> = ({
     getProposalCreationParams,
     createProposal,
     handlePublishProposal,
+    minDays,
+    minHours,
+    minMinutes,
   ]);
 
   /*************************************************
