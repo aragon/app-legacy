@@ -313,6 +313,7 @@ export function getProposalStatusSteps(
   creationDate: Date,
   publishedBlock: string,
   executionFailed: boolean,
+  isSuccessfulMultisigSignalingProposal: boolean,
   executionBlock?: string,
   executionDate?: Date
 ): Array<ProgressStatusProps> {
@@ -338,15 +339,16 @@ export function getProposalStatusSteps(
           )}  ${getFormattedUtcOffset()}`,
         },
       ];
-    case ProposalStatus.SUCCEEDED:
-      if (executionFailed)
+    case ProposalStatus.SUCCEEDED: {
+      if (executionFailed) {
         return [
           ...getEndedProposalSteps(
             t,
             creationDate,
             startDate,
             endDate,
-            publishedBlock
+            publishedBlock,
+            false
           ),
           {
             label: t('governance.statusWidget.failed'),
@@ -357,20 +359,27 @@ export function getProposalStatusSteps(
             )}  ${getFormattedUtcOffset()}`,
           },
         ];
-      else
-        return [
+      } else {
+        const steps = [
           ...getEndedProposalSteps(
             t,
             creationDate,
             startDate,
             endDate,
-            publishedBlock
+            publishedBlock,
+            isSuccessfulMultisigSignalingProposal
           ),
-          {
+        ];
+
+        if (!isSuccessfulMultisigSignalingProposal) {
+          steps.push({
             label: t('governance.statusWidget.executed'),
             mode: 'upcoming',
-          },
-        ];
+          });
+        }
+        return steps;
+      }
+    }
     case ProposalStatus.EXECUTED:
       if (executionDate)
         return [
@@ -380,6 +389,7 @@ export function getProposalStatusSteps(
             startDate,
             endDate,
             publishedBlock,
+            isSuccessfulMultisigSignalingProposal,
             executionDate || new Date()
           ),
           {
@@ -399,7 +409,8 @@ export function getProposalStatusSteps(
             creationDate,
             startDate,
             endDate,
-            publishedBlock
+            publishedBlock,
+            isSuccessfulMultisigSignalingProposal
           ),
           {label: t('governance.statusWidget.failed'), mode: 'failed'},
         ];
@@ -416,14 +427,23 @@ function getEndedProposalSteps(
   startDate: Date,
   endDate: Date,
   block: string,
+  isSuccessfulMultisigSignalingProposal: boolean,
   executionDate?: Date
 ): Array<ProgressStatusProps> {
+  let label = t('governance.statusWidget.succeeded');
+  let mode: ModeType = 'done';
+
+  if (isSuccessfulMultisigSignalingProposal) {
+    label = t('votingTerminal.status.approved');
+    mode = 'succeeded';
+  }
+
   return [
     {...getPublishedProposalStep(t, creationDate, block)},
     {...getActiveProposalStep(t, startDate, 'done')},
     {
-      label: t('governance.statusWidget.succeeded'),
-      mode: 'done',
+      label,
+      mode,
       date: `${format(
         executionDate! < endDate ? executionDate! : endDate,
         KNOWN_FORMATS.proposals
@@ -702,7 +722,7 @@ export function getVoteStatus(proposal: DetailedProposal, t: TFunction) {
   let label = '';
 
   switch (proposal.status) {
-    case 'Pending':
+    case ProposalStatus.PENDING:
       {
         const locale = (Locales as Record<string, Locale>)[i18n.language];
         const timeUntilNow = formatDistanceToNow(proposal.startDate, {
@@ -713,7 +733,7 @@ export function getVoteStatus(proposal: DetailedProposal, t: TFunction) {
         label = t('votingTerminal.status.pending', {timeUntilNow});
       }
       break;
-    case 'Active':
+    case ProposalStatus.ACTIVE:
       {
         const locale = (Locales as Record<string, Locale>)[i18n.language];
         const timeUntilEnd = formatDistanceToNow(proposal.endDate, {
@@ -724,15 +744,15 @@ export function getVoteStatus(proposal: DetailedProposal, t: TFunction) {
         label = t('votingTerminal.status.active', {timeUntilEnd});
       }
       break;
-    case 'Succeeded':
+    case ProposalStatus.SUCCEEDED:
       label = t('votingTerminal.status.succeeded');
 
       break;
-    case 'Executed':
+    case ProposalStatus.EXECUTED:
       label = t('votingTerminal.status.executed');
 
       break;
-    case 'Defeated':
+    case ProposalStatus.DEFEATED:
       label = isMultisigProposal(proposal)
         ? t('votingTerminal.status.expired')
         : t('votingTerminal.status.defeated');

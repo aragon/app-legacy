@@ -176,6 +176,23 @@ export const Proposal: React.FC = () => {
 
   const proposalStatus = proposal?.status;
 
+  const isSuccessfulMultisigSignalingProposal =
+    isMultisigProposal(proposal) &&
+    proposal.status === ProposalStatus.SUCCEEDED &&
+    proposal.actions.length === 0 &&
+    isMultisigVotingSettings(votingSettings) &&
+    votingSettings.minApprovals <= proposal.approvals.length;
+
+  // checking only after voting settings and proposal are available
+  // so that the status isn't transitioning from "Succeeded" to "Approved"
+  // for a successful signalling Multisig proposal
+  let displayedProposalStatus = '';
+  if (votingSettings && proposal) {
+    displayedProposalStatus = isSuccessfulMultisigSignalingProposal
+      ? t('votingTerminal.status.approved')
+      : proposal.status;
+  }
+
   const {data: canVote} = useWalletCanVote(
     address,
     proposalId!,
@@ -391,10 +408,10 @@ export const Proposal: React.FC = () => {
 
   // caches the status for breadcrumb
   useEffect(() => {
-    if (proposal && proposalStatus !== get('proposalStatus'))
-      set('proposalStatus', proposalStatus);
+    if (displayedProposalStatus !== get('proposalStatus'))
+      set('proposalStatus', displayedProposalStatus);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [proposalStatus]);
+  }, [displayedProposalStatus]);
 
   // handle can vote and wallet connection status
   useEffect(() => {
@@ -644,6 +661,7 @@ export const Proposal: React.FC = () => {
           ? NumberFormatter.format(proposal.creationBlockNumber)
           : '',
         executionFailed,
+        isSuccessfulMultisigSignalingProposal,
         proposal.executionBlockNumber
           ? NumberFormatter.format(proposal.executionBlockNumber!)
           : '',
