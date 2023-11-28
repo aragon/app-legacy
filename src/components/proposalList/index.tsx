@@ -299,7 +299,9 @@ export function proposal2CardProps(
     const specificProps = {
       process:
         proposal.status === ProposalStatus.SUCCEEDED
-          ? 'approved'
+          ? (t(
+              'votingTerminal.status.approved'
+            ).toLowerCase() as CardProposalProps['process'])
           : props.process,
       voteTitle: t('votingTerminal.approvedBy'),
       stateLabel: PROPOSAL_STATE_LABELS,
