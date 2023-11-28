@@ -108,7 +108,6 @@ type SelectableNetworks = Record<
   }
 >;
 
-// TODO: enable base in the network selection
 const networks: SelectableNetworks = {
   main: {
     cost: ['polygon', 'base', 'arbitrum', 'ethereum'],
