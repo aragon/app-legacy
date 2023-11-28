@@ -54,7 +54,7 @@ export const NAV_LINKS_DATA: NavLinkData[] = [
   },
   {label: i18n.t('navLinks.finance'), path: Finance, icon: IconFinance},
   {
-    label: i18n.t('navLinks.community'),
+    label: i18n.t('navLinks.members'),
     path: Community,
     icon: IconCommunity,
   },
