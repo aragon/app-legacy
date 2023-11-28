@@ -1,6 +1,6 @@
 import {CardProposal, CardProposalProps, Spinner} from '@aragon/ods-old';
 import {MultisigProposalListItem} from '@aragon/sdk-client';
-import {DaoAction} from '@aragon/sdk-client-common';
+import {DaoAction, ProposalStatus} from '@aragon/sdk-client-common';
 import {BigNumber} from 'ethers';
 import {TFunction} from 'i18next';
 import React, {useMemo} from 'react';
@@ -297,6 +297,10 @@ export function proposal2CardProps(
     }
   } else if (isMultisigProposalListItem(proposal)) {
     const specificProps = {
+      process:
+        proposal.status === ProposalStatus.SUCCEEDED
+          ? 'approved'
+          : props.process,
       voteTitle: t('votingTerminal.approvedBy'),
       stateLabel: PROPOSAL_STATE_LABELS,
       alertMessage: translateProposalDate(

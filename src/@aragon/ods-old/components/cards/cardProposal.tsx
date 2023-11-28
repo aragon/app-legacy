@@ -35,6 +35,7 @@ export type CardProposalProps = {
     | 'pending'
     | 'active'
     | 'succeeded'
+    | 'approved'
     | 'executed'
     | 'defeated';
   /** Indicates whether the proposal is in being used in list or in its special form (see explore page) */
@@ -70,7 +71,7 @@ export type CardProposalProps = {
 
   alertMessage?: string;
   /**
-   * ['Draft', 'Pending', 'Active', 'Executed', 'Succeeded', 'Defeated']
+   * ['Draft', 'Pending', 'Active', 'Executed', 'Succeeded', 'Approved', 'Defeated']
    */
   stateLabel: string[];
 
@@ -221,8 +222,10 @@ const HeaderOptions: React.VFC<HeaderOptionProps> = ({
       return <Tag label={stateLabel[3]} colorScheme="success" />;
     case 'succeeded':
       return <Tag label={stateLabel[4]} colorScheme="success" />;
+    case 'approved':
+      return <Tag label={stateLabel[5]} colorScheme="success" />;
     case 'defeated':
-      return <Tag label={stateLabel[5]} colorScheme="critical" />;
+      return <Tag label={stateLabel[6]} colorScheme="critical" />;
     default:
       return null;
   }
