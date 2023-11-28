@@ -8,19 +8,23 @@ import {useClient} from './useClient';
  * @param proposalId - The ID of the proposal.
  * @returns The result of the verification queries.
  */
-export function useUpdateVerification(proposalId: string) {
+export function useUpdateVerification(
+  proposalId: string,
+  isPluginUpdate?: boolean,
+  isOSUpdate?: boolean
+) {
   const {client} = useClient();
 
   const verificationQueries = [
     {
       queryKey: ['isPluginUpdateProposalValid', proposalId],
       queryFn: () => client?.methods.isPluginUpdateProposalValid(proposalId),
-      enabled: Boolean(proposalId),
+      enabled: Boolean(proposalId) && isPluginUpdate,
     },
     {
       queryKey: ['isDaoUpdateProposalValid', proposalId],
       queryFn: () => client?.methods.isDaoUpdateProposalValid(proposalId),
-      enabled: Boolean(proposalId),
+      enabled: Boolean(proposalId) && isOSUpdate,
     },
   ];
 

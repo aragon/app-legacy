@@ -5,7 +5,7 @@ import styled from 'styled-components';
 import {useDaoDetailsQuery} from 'hooks/useDaoDetails';
 import {useUpdateVerification} from 'hooks/useUpdateVerification';
 import {htmlIn} from 'utils/htmlIn';
-import {Status, StatusProps} from './Status';
+import {Status, StatusProps} from './status';
 import {useIsUpdateProposal} from 'hooks/useIsUpdateProposal';
 
 export interface UpdateVerificationCardProps {
@@ -30,7 +30,7 @@ export const UpdateVerificationCard: React.FC<UpdateVerificationCardProps> = ({
   const [
     {data: pluginUpdateVerification, isLoading: isPluginUpdateLoading},
     {data: osUpdateVerification, isLoading: isOSUpdateLoading},
-  ] = useUpdateVerification(proposalId as string);
+  ] = useUpdateVerification(proposalId as string, isPluginUpdate, isOSUpdate);
 
   const OSUpdate: StatusProps = useMemo(() => {
     if (isOSUpdateLoading)

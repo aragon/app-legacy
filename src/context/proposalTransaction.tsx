@@ -247,15 +247,12 @@ const ProposalTransactionProvider: React.FC<Props> = ({children}) => {
     queryClient.invalidateQueries(currentProposal);
   }, [pluginType, proposalId, queryClient]);
 
-  // if network is unsupported this will be caught when compared to client
-  const queryNetwork = useMemo(
-    () => networkUrlSegment ?? network,
-    [network, networkUrlSegment]
-  );
-
   const onExecutionSuccess = useCallback(
     async (proposalId: string, txHash: string) => {
       if (!address || !daoDetails?.address) return;
+
+      // if network is unsupported this will be caught when compared to client
+      const queryNetwork = networkUrlSegment ?? network;
 
       // get current block number
       const executionBlockNumber = await provider.getBlockNumber();
@@ -279,7 +276,14 @@ const ProposalTransactionProvider: React.FC<Props> = ({children}) => {
         ['daoDetails', daoDetails?.address, queryNetwork],
       ]);
     },
-    [address, daoDetails?.address, network, provider, queryClient, queryNetwork]
+    [
+      address,
+      daoDetails?.address,
+      network,
+      networkUrlSegment,
+      provider,
+      queryClient,
+    ]
   );
 
   // cleans up and caches successful approval tx

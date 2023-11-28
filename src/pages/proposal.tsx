@@ -56,7 +56,7 @@ import {
 } from 'services/aragon-sdk/queries/use-voting-settings';
 import {useTokenAsync} from 'services/token/queries/use-token';
 import {CHAIN_METADATA} from 'utils/constants';
-// import {featureFlags} from 'utils/featureFlags';
+import {featureFlags} from 'utils/featureFlags';
 import {GaslessVotingProposal} from '@vocdoni/gasless-voting';
 import {constants} from 'ethers';
 import {usePastVotingPower} from 'services/aragon-sdk/queries/use-past-voting-power';
@@ -91,7 +91,6 @@ import {Action} from 'utils/types';
 import {GaslessVotingTerminal} from '../containers/votingTerminal/gaslessVotingTerminal';
 import {useGaslessHasAlreadyVote} from '../context/useGaslessVoting';
 import {UpdateVerificationCard} from 'containers/updateVerificationCard';
-import {featureFlags} from 'utils/featureFlags';
 
 export const PENDING_PROPOSAL_STATUS_INTERVAL = 1000 * 10;
 export const PROPOSAL_STATUS_INTERVAL = 1000 * 60;
@@ -782,8 +781,9 @@ export const Proposal: React.FC = () => {
             </>
           )}
 
-          {/* @todo: Add isUpdateProposal check once it's developed */}
           {proposal &&
+            (proposalStatus === ProposalStatus.ACTIVE ||
+              proposalStatus === ProposalStatus.SUCCEEDED) &&
             featureFlags.getValue('VITE_FEATURE_FLAG_OSX_UPDATES') ===
               'true' && <UpdateVerificationCard proposalId={proposalId} />}
           {votingSettings && isGaslessProposal(proposal) ? (
