@@ -93,6 +93,8 @@ const fetchTotalProposalCount = async (
       return await fetchTokenVotingProposalCount(params, client.graphql);
     case 'vocdoni-gasless-voting-poc.plugin.dao.eth':
       return await fetchGaslessVotingProposalCount(params, client.graphql);
+    default:
+      throw new Error('Invalid pluginType');
   }
 };
 
