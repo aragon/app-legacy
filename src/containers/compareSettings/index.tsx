@@ -7,6 +7,7 @@ import {useDaoDetailsQuery} from 'hooks/useDaoDetails';
 import {useDaoToken} from 'hooks/useDaoToken';
 import {PluginTypes} from 'hooks/usePluginClient';
 import {
+  isGaslessVotingSettings,
   isMultisigVotingSettings,
   isTokenVotingSettings,
   useVotingSettings,
@@ -17,6 +18,7 @@ import {CompareMvCommunity} from './majorityVoting/compareCommunity';
 import {CompareMvGovernance} from './majorityVoting/compareGovernance';
 import {CompareMsCommunity} from './multisig/compareCommunity';
 import {CompareMsGovernance} from './multisig/compareGovernance';
+import {CompareGasless} from './gaslessVoting/compareGasless';
 
 export type Views = 'old' | 'new';
 
@@ -96,6 +98,13 @@ const CompareSettings: React.FC = () => {
             view={selectedButton}
           />
         </>
+      )}
+      {isGaslessVotingSettings(votingSettings) && (
+        <CompareGasless
+          daoAddressOrEns={daoAddressOrEns}
+          daoSettings={votingSettings}
+          view={selectedButton}
+        />
       )}
     </div>
   );
