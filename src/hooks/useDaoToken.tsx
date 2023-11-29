@@ -2,7 +2,12 @@ import {Erc20TokenDetails, Erc20WrapperTokenDetails} from '@aragon/sdk-client';
 import {useEffect, useState} from 'react';
 
 import {HookData} from 'utils/types';
-import {usePluginClient} from './usePluginClient';
+import {
+  isMultisigClient,
+  PluginTypes,
+  usePluginClient,
+} from './usePluginClient';
+import {useDaoDetailsQuery} from './useDaoDetails';
 
 export function useDaoToken(
   pluginAddress?: string
@@ -13,14 +18,19 @@ export function useDaoToken(
   const [error, setError] = useState<Error>();
   const [isLoading, setIsLoading] = useState(false);
 
-  const pluginClient = usePluginClient('token-voting.plugin.dao.eth');
+  const {data: daoDetails} = useDaoDetailsQuery();
+  const {id: pluginType} = daoDetails?.plugins[0] || {};
+
+  const client = usePluginClient(pluginType as PluginTypes);
 
   useEffect(() => {
     async function getTokenMetadata(address: string) {
+      if (client && isMultisigClient(client)) return;
+
       try {
         setIsLoading(true);
 
-        const response = await pluginClient?.methods.getToken(address);
+        const response = await client?.methods.getToken(address);
 
         if (response) {
           setData(response as Erc20TokenDetails | Erc20WrapperTokenDetails);
@@ -36,7 +46,7 @@ export function useDaoToken(
     if (pluginAddress) {
       getTokenMetadata(pluginAddress);
     }
-  }, [pluginAddress, pluginClient]);
+  }, [pluginAddress, client]);
 
   return {data, error, isLoading};
 }

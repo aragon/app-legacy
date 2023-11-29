@@ -1,14 +1,17 @@
-import {MultisigProposalListItem} from '@aragon/sdk-client';
 import {CardProposal, CardProposalProps, Spinner} from '@aragon/ods-old';
+import {MultisigProposalListItem} from '@aragon/sdk-client';
+import {DaoAction} from '@aragon/sdk-client-common';
 import {BigNumber} from 'ethers';
+import {TFunction} from 'i18next';
 import React, {useMemo} from 'react';
 import {useTranslation} from 'react-i18next';
-import {TFunction} from 'i18next';
 import {NavigateFunction, generatePath, useNavigate} from 'react-router-dom';
 
 import {useNetwork} from 'context/network';
+import {useClient} from 'hooks/useClient';
 import {useDaoMembers} from 'hooks/useDaoMembers';
 import {PluginTypes} from 'hooks/usePluginClient';
+import {useWallet} from 'hooks/useWallet';
 import {trackEvent} from 'services/analytics';
 import {
   CHAIN_METADATA,
@@ -16,17 +19,17 @@ import {
   SupportedNetworks,
 } from 'utils/constants';
 import {translateProposalDate} from 'utils/date';
+import {featureFlags} from 'utils/featureFlags';
 import {Proposal} from 'utils/paths';
 import {
   TokenVotingOptions,
   getErc20Results,
   isErc20VotingProposal,
+  isVerifiedAragonUpdateProposal,
   stripPlgnAdrFromProposalId,
+  isGaslessProposal,
 } from 'utils/proposals';
 import {ProposalListItem} from 'utils/types';
-import {useWallet} from 'hooks/useWallet';
-import {useUpdateProposal} from 'hooks/useUpdateProposal';
-import {featureFlags} from 'utils/featureFlags';
 
 type ProposalListProps = {
   proposals: Array<ProposalListItem>;
@@ -51,23 +54,37 @@ function isMultisigProposalListItem(
   return 'approvals' in proposal;
 }
 
-const ProposalItem: React.FC<
-  {proposalId: string} & CardProposalProps
-> = props => {
-  const {isAragonVerifiedUpdateProposal} = useUpdateProposal(props.proposalId);
+type ProposalListItemProps = CardProposalProps & {
+  proposalId: string;
+  actions: DaoAction[];
+};
+
+const ProposalItem: React.FC<ProposalListItemProps> = ({actions, ...props}) => {
   const {t} = useTranslation();
+  const {client} = useClient();
+
+  let verifiedUpdateProposal = false;
+
+  if (client != null) {
+    verifiedUpdateProposal = isVerifiedAragonUpdateProposal(actions, client);
+  }
 
   return (
     <CardProposal
       {...props}
       bannerContent={
-        isAragonVerifiedUpdateProposal &&
+        verifiedUpdateProposal &&
         featureFlags.getValue('VITE_FEATURE_FLAG_OSX_UPDATES') === 'true'
           ? t('update.proposal.bannerTitle')
           : ''
       }
     />
   );
+};
+
+type MappedProposal = CardProposalProps & {
+  id: string;
+  actions: DaoAction[];
 };
 
 const ProposalList: React.FC<ProposalListProps> = ({
@@ -88,7 +105,7 @@ const ProposalList: React.FC<ProposalListProps> = ({
     {countOnly: true}
   );
 
-  const mappedProposals: ({id: string} & CardProposalProps)[] = useMemo(
+  const mappedProposals: MappedProposal[] = useMemo(
     () =>
       proposals.map(p =>
         proposal2CardProps(
@@ -158,7 +175,7 @@ export function proposal2CardProps(
   t: TFunction,
   daoAddressOrEns: string,
   address: string | null
-): {id: string} & CardProposalProps {
+): MappedProposal {
   const publisherDisplayName =
     address && proposal.creatorAddress.toLowerCase() === address.toLowerCase()
       ? t('labels.you')
@@ -173,6 +190,7 @@ export function proposal2CardProps(
     publisherDisplayName,
     publishLabel: t('governance.proposals.publishedBy'),
     process: proposal.status.toLowerCase() as CardProposalProps['process'],
+    actions: proposal.actions,
     onClick: () => {
       trackEvent('governance_viewProposal_clicked', {
         proposal_id: proposal.id,
@@ -188,7 +206,21 @@ export function proposal2CardProps(
     },
   };
 
-  if (isErc20VotingProposal(proposal)) {
+  if (isGaslessProposal(proposal)) {
+    const specificProps = {
+      voteTitle: t('governance.proposals.voteTitle'),
+      stateLabel: PROPOSAL_STATE_LABELS,
+
+      alertMessage: translateProposalDate(
+        proposal.status,
+        proposal.startDate,
+        proposal.endDate
+      ),
+      title: proposal.vochain.metadata.title.default,
+      description: proposal.vochain.metadata.questions[0].title.default,
+    };
+    return {...props, ...specificProps};
+  } else if (isErc20VotingProposal(proposal)) {
     const specificProps = {
       voteTitle: t('governance.proposals.voteTitle'),
       stateLabel: PROPOSAL_STATE_LABELS,
@@ -204,11 +236,7 @@ export function proposal2CardProps(
 
     // calculate winning option for active proposal
     if (proposal.status.toLowerCase() === 'active') {
-      const results = getErc20Results(
-        proposal.result,
-        proposal.token.decimals,
-        proposal.totalVotingWeight
-      );
+      const results = getErc20Results(proposal.result, proposal.token.decimals);
 
       // The winning option is the outcome of the proposal if duration was to be reached
       // as is. Note that the "yes" option can only be "winning" if it has met the support

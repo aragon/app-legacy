@@ -30,20 +30,35 @@ import {SettingsUpdateCard} from 'containers/settings/updateCard';
 import {VersionInfoCard} from 'containers/settings/versionInfoCard';
 import {useNetwork} from 'context/network';
 import {useDaoDetailsQuery} from 'hooks/useDaoDetails';
-import {PluginTypes} from 'hooks/usePluginClient';
+import {GaselessPluginName, PluginTypes} from 'hooks/usePluginClient';
 import useScreen from 'hooks/useScreen';
 import {CHAIN_METADATA} from 'utils/constants';
 import {featureFlags} from 'utils/featureFlags';
 import {shortenAddress, toDisplayEns} from 'utils/library';
 import {EditSettings} from 'utils/paths';
+import GaslessVotingSettings from '../containers/settings/gaslessVoting';
+import {useIsMember} from 'services/aragon-sdk/queries/use-is-member';
+import {useWallet} from 'hooks/useWallet';
+import {useUpdateExists} from 'hooks/useUpdateExists';
 
 export const Settings: React.FC = () => {
   const {t} = useTranslation();
   const navigate = useNavigate();
+  const {address} = useWallet();
   const {isDesktop} = useScreen();
 
   // move into components when proper loading experience is implemented
   const {data: daoDetails, isLoading} = useDaoDetailsQuery();
+  const updateExists = useUpdateExists();
+
+  const pluginAddress = daoDetails?.plugins?.[0]?.instanceAddress as string;
+  const pluginType = daoDetails?.plugins?.[0]?.id as PluginTypes;
+
+  const {data: isMember} = useIsMember({
+    address: address as string,
+    pluginAddress,
+    pluginType,
+  });
 
   if (isLoading) {
     return <Loading />;
@@ -56,9 +71,11 @@ export const Settings: React.FC = () => {
   const daoUpdateEnabled =
     featureFlags.getValue('VITE_FEATURE_FLAG_OSX_UPDATES') === 'true';
 
+  const showUpdatesCard = updateExists && isMember && daoUpdateEnabled;
+
   return (
     <SettingsWrapper>
-      {daoUpdateEnabled && (
+      {showUpdatesCard && (
         <div className={`mt-1 xl:mt-3 ${styles.fullWidth}`}>
           <SettingsUpdateCard />
         </div>
@@ -293,6 +310,14 @@ const PluginSettingsWrapper: React.FC<IPluginSettings> = ({daoDetails}) => {
 
     case 'multisig.plugin.dao.eth':
       return <MultisigSettings daoDetails={daoDetails} />;
+
+    case GaselessPluginName:
+      return (
+        <>
+          <MajorityVotingSettings daoDetails={daoDetails} />
+          <GaslessVotingSettings daoDetails={daoDetails} />
+        </>
+      );
 
     default:
       // TODO: need to be designed

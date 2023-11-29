@@ -26,6 +26,7 @@ export type VerifyConnectionOptions = {
 export type WcInterceptorValues = {
   wcConnect: (options: WcConnectOptions) => Promise<WcSession>;
   wcDisconnect: (topic: string) => Promise<void>;
+  validateURI: (uri: string) => string | undefined;
   sessions: WcSession[];
   actions: WcActionRequest[];
 };
@@ -44,6 +45,8 @@ export function useWalletConnectInterceptor(): WcInterceptorValues {
   );
 
   const [actions, setActions] = useState<WcActionRequest[]>([]);
+
+  const validateURI = walletConnectInterceptor.validateURI;
 
   const updateActiveSessions = useCallback(() => {
     const newSessions = walletConnectInterceptor.getActiveSessions(
@@ -181,5 +184,5 @@ export function useWalletConnectInterceptor(): WcInterceptorValues {
     };
   }, [handleRequest]);
 
-  return {wcConnect, wcDisconnect, sessions, actions};
+  return {wcConnect, wcDisconnect, sessions, actions, validateURI};
 }

@@ -28,6 +28,7 @@ import {hasValue} from 'utils/library';
 import {Landing} from 'utils/paths';
 import {CreateDaoFormData} from 'utils/types';
 import {isFieldValid} from 'utils/validators';
+import DefineExecutionMultisig from '../containers/defineExecutionMultisig';
 
 const defaultValues = {
   tokenName: '',
@@ -75,6 +76,11 @@ export const CreateDAO: React.FC = () => {
     control: formMethods.control,
   });
 
+  const {update: updateCommittee} = useFieldArray({
+    name: 'committee',
+    control: formMethods.control,
+  });
+
   const {errors, dirtyFields} = useFormState({control: formMethods.control});
 
   const [
@@ -91,6 +97,8 @@ export const CreateDAO: React.FC = () => {
     tokenWallets,
     tokenTotalSupply,
     tokenType,
+    committee,
+    votingType,
   ] = useWatch({
     control: formMethods.control,
     name: [
@@ -107,6 +115,8 @@ export const CreateDAO: React.FC = () => {
       'wallets',
       'tokenTotalSupply',
       'tokenType',
+      'committee',
+      'votingType',
     ],
   });
   const prevFormChain = useRef<number>(formChain);
@@ -147,6 +157,10 @@ export const CreateDAO: React.FC = () => {
 
       if (tokenWallets) {
         updateWalletsENS(tokenWallets, provider, updateTokenFields);
+      }
+
+      if (committee) {
+        updateWalletsENS(tokenWallets, provider, updateCommittee);
       }
     };
 
@@ -265,6 +279,26 @@ export const CreateDAO: React.FC = () => {
         : validateExistingTokenCommunity();
       break;
   }
+  const defineCommitteeIsValid = useMemo(() => {
+    if (
+      !committee ||
+      !committee.length ||
+      errors.committee ||
+      errors.committeeMinimumApproval ||
+      errors.executionExpirationMinutes ||
+      errors.executionExpirationHours ||
+      errors.executionExpirationDays
+    )
+      return false;
+    return true;
+  }, [
+    committee,
+    errors.committee,
+    errors.committeeMinimumApproval,
+    errors.executionExpirationMinutes,
+    errors.executionExpirationHours,
+    errors.executionExpirationDays,
+  ]);
 
   const daoCommunityConfigurationIsValid = useMemo(() => {
     if (
@@ -274,7 +308,8 @@ export const CreateDAO: React.FC = () => {
       errors.durationDays ||
       errors.durationHours ||
       errors.durationMinutes ||
-      errors.multisigMinimumApprovals
+      errors.multisigMinimumApprovals ||
+      errors.eligibilityTokenAmount
     )
       return false;
     return true;
@@ -286,6 +321,7 @@ export const CreateDAO: React.FC = () => {
     errors.minimumParticipation,
     errors.support,
     errors.multisigMinimumApprovals,
+    errors.eligibilityTokenAmount,
   ]);
 
   /*************************************************
@@ -344,6 +380,7 @@ export const CreateDAO: React.FC = () => {
             onNextButtonClicked={next =>
               handleNextButtonTracking(next, '3_setup_community', {
                 governance_type: formMethods.getValues('membership'),
+                voting_type: formMethods.getValues('votingType'),
                 token_name: formMethods.getValues('tokenName'),
                 symbol: formMethods.getValues('tokenSymbol'),
                 token_address: formMethods.getValues('tokenAddress.address'),
@@ -354,8 +391,8 @@ export const CreateDAO: React.FC = () => {
             <SetupCommunity />
           </Step>
           <Step
-            wizardTitle={t('createDAO.step4.title')}
-            wizardDescription={htmlIn(t)('createDAO.step4.description')}
+            wizardTitle={t('createDao.stepCommunityVoting.title')}
+            wizardDescription={htmlIn(t)('createDao.stepCommunityVoting.desc')}
             isNextButtonDisabled={!daoCommunityConfigurationIsValid}
             onNextButtonClicked={next =>
               handleNextButtonTracking(next, '4_configure_governance', {
@@ -369,6 +406,31 @@ export const CreateDAO: React.FC = () => {
             }
           >
             <ConfigureCommunity />
+          </Step>
+          <Step
+            skipStep={votingType !== 'gasless'}
+            wizardTitle={t('createDao.executionMultisig.title')}
+            wizardDescription={htmlIn(t)('createDao.executionMultisig.desc')}
+            isNextButtonDisabled={!defineCommitteeIsValid}
+            onNextButtonClicked={next => {
+              handleNextButtonTracking(next, '5_define_execution_multisig', {
+                committee: formMethods.getValues('committee'),
+                committeeMinimumApproval: formMethods.getValues(
+                  'committeeMinimumApproval'
+                ),
+                executionExpirationMinutes: formMethods.getValues(
+                  'executionExpirationMinutes'
+                ),
+                executionExpirationHours: formMethods.getValues(
+                  'executionExpirationHours'
+                ),
+                executionExpirationDays: formMethods.getValues(
+                  'executionExpirationDays'
+                ),
+              });
+            }}
+          >
+            <DefineExecutionMultisig />
           </Step>
           <Step
             hideWizard

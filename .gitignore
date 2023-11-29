@@ -16,6 +16,7 @@ typechain
 
 # misc
 .vscode
+.idea
 .yarn
 .yarnrc.yml
 .DS_Store

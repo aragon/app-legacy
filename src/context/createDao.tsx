@@ -45,6 +45,13 @@ import {CreateDaoFormData} from 'utils/types';
 import {useGlobalModalContext} from './globalModals';
 import {useNetwork} from './network';
 
+import {
+  GaslessVotingClient,
+  GaslessVotingPluginInstall,
+  GaslessPluginVotingSettings,
+} from '@vocdoni/gasless-voting';
+import {useCensus3CreateToken} from '../hooks/useCensus3';
+
 const DEFAULT_TOKEN_DECIMALS = 18;
 
 type CreateDaoContextType = {
@@ -265,6 +272,45 @@ const CreateDaoProvider: React.FC<{children: ReactNode}> = ({children}) => {
       };
     }, [getValues]);
 
+  const getGaslessPluginInstallParams = useCallback(
+    (votingSettings: VotingSettings): GaslessVotingPluginInstall => {
+      const {
+        isCustomToken,
+        committee,
+        tokenType,
+        committeeMinimumApproval,
+        executionExpirationHours,
+        executionExpirationDays,
+        executionExpirationMinutes,
+      } = getValues();
+
+      const vocdoniVotingSettings: GaslessPluginVotingSettings = {
+        minTallyDuration: getSecondsFromDHM(
+          parseInt(executionExpirationDays),
+          parseInt(executionExpirationHours),
+          parseInt(executionExpirationMinutes)
+        ),
+        minTallyApprovals: Number(committeeMinimumApproval),
+        minDuration: votingSettings.minDuration,
+        minParticipation: votingSettings.minParticipation,
+        supportThreshold: votingSettings.supportThreshold,
+        minProposerVotingPower: votingSettings.minProposerVotingPower as bigint,
+        censusStrategy: '',
+      };
+
+      return {
+        multisig: committee.map(wallet => wallet.address),
+        votingSettings: vocdoniVotingSettings,
+        ...((tokenType === 'governance-ERC20' || // token can be used as is
+          tokenType === 'ERC-20') && // token can/will be wrapped
+        !isCustomToken // not a new token (existing token)
+          ? {useToken: getErc20PluginParams()}
+          : {newToken: getNewErc20PluginParams()}),
+      };
+    },
+    [getErc20PluginParams, getNewErc20PluginParams, getValues]
+  );
+
   // Get dao setting configuration for creation process
   const getDaoSettings = useCallback(async (): Promise<CreateDaoParams> => {
     const {
@@ -276,6 +322,7 @@ const CreateDaoProvider: React.FC<{children: ReactNode}> = ({children}) => {
       tokenType,
       isCustomToken,
       links,
+      votingType,
     } = getValues();
     const plugins: PluginInstallItem[] = [];
     switch (membership) {
@@ -292,6 +339,13 @@ const CreateDaoProvider: React.FC<{children: ReactNode}> = ({children}) => {
       case 'token': {
         const [votingSettings, network] = getVoteSettings();
 
+        if (votingType === 'gasless') {
+          const params = getGaslessPluginInstallParams(votingSettings);
+          const gaslessPlugin =
+            GaslessVotingClient.encoding.getPluginInstallItem(params, network);
+          plugins.push(gaslessPlugin);
+          break;
+        }
         const tokenVotingPlugin =
           TokenVotingClient.encoding.getPluginInstallItem(
             {
@@ -306,6 +360,7 @@ const CreateDaoProvider: React.FC<{children: ReactNode}> = ({children}) => {
           );
 
         plugins.push(tokenVotingPlugin);
+
         break;
       }
       default:
@@ -345,6 +400,7 @@ const CreateDaoProvider: React.FC<{children: ReactNode}> = ({children}) => {
     client?.ipfs,
     client?.methods,
     getErc20PluginParams,
+    getGaslessPluginInstallParams,
     getMultisigPluginInstallParams,
     getNewErc20PluginParams,
     getValues,
@@ -364,6 +420,9 @@ const CreateDaoProvider: React.FC<{children: ReactNode}> = ({children}) => {
     error: gasEstimationError,
   } = usePollGasFee(estimateCreationFees, shouldPoll);
 
+  const chainId = getValues('blockchain')?.id;
+  const {createToken} = useCensus3CreateToken({chainId});
+
   // run dao creation transaction
   const createDao = async () => {
     setCreationProcessState(TransactionState.LOADING);
@@ -379,7 +438,8 @@ const CreateDaoProvider: React.FC<{children: ReactNode}> = ({children}) => {
       throw new Error('deposit function is not initialized correctly');
     }
 
-    const {daoName, daoSummary, daoLogo, links} = getValues();
+    const {daoName, daoSummary, daoLogo, links, votingType, membership} =
+      getValues();
     const metadata: DaoMetadata = {
       name: daoName,
       description: daoSummary,
@@ -436,7 +496,12 @@ const CreateDaoProvider: React.FC<{children: ReactNode}> = ({children}) => {
                     },
                   },
                 }),
-              ]);
+              ]).then(async () => {
+                if (votingType === 'gasless' && membership === 'token') {
+                  await createToken(step.pluginAddresses[0]);
+                }
+              });
+              // After everything is
             } catch (error) {
               console.warn(
                 'Error favoriting and adding newly created DAO to cache',

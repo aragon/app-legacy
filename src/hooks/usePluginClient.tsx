@@ -1,30 +1,54 @@
 import {MultisigClient, TokenVotingClient} from '@aragon/sdk-client';
+import {
+  GaslessVotingClient,
+  GaslessVotingContext,
+} from '@vocdoni/gasless-voting';
+import {EnvOptions} from '@vocdoni/sdk';
 import {useEffect, useState} from 'react';
 
 import {useClient} from './useClient';
+import {VocdoniEnv} from './useVocdoniSdk';
+
+export const GaselessPluginName = 'vocdoni-gasless-voting-poc.plugin.dao.eth';
+export type GaselessPluginType = typeof GaselessPluginName;
 
 export type PluginTypes =
   | 'token-voting.plugin.dao.eth'
-  | 'multisig.plugin.dao.eth';
+  | 'multisig.plugin.dao.eth'
+  | GaselessPluginType;
 
 type PluginType<T> = T extends 'token-voting.plugin.dao.eth'
   ? TokenVotingClient
   : T extends 'multisig.plugin.dao.eth'
   ? MultisigClient
+  : T extends GaselessPluginType
+  ? GaslessVotingClient
   : never;
 
+export type PluginClient =
+  | TokenVotingClient
+  | MultisigClient
+  | GaslessVotingClient;
+
 export function isTokenVotingClient(
-  client: TokenVotingClient | MultisigClient
+  client: PluginClient
 ): client is TokenVotingClient {
   if (!client || Object.keys(client).length === 0) return false;
   return client instanceof TokenVotingClient;
 }
 
 export function isMultisigClient(
-  client: TokenVotingClient | MultisigClient
+  client: PluginClient
 ): client is MultisigClient {
   if (!client || Object.keys(client).length === 0) return false;
   return client instanceof MultisigClient;
+}
+
+export function isGaslessVotingClient(
+  client: PluginClient
+): client is GaslessVotingClient {
+  if (!client || Object.keys(client).length === 0) return false;
+  return client instanceof GaslessVotingClient;
 }
 
 /**
@@ -53,6 +77,14 @@ export const usePluginClient = <T extends PluginTypes = PluginTypes>(
           break;
         case 'token-voting.plugin.dao.eth':
           setPluginClient(new TokenVotingClient(context));
+          break;
+        case GaselessPluginName:
+          setPluginClient(
+            new GaslessVotingClient(
+              new GaslessVotingContext(undefined, undefined),
+              VocdoniEnv as EnvOptions
+            )
+          );
           break;
         default:
           throw new Error('The requested plugin type is invalid');

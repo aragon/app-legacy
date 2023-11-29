@@ -121,8 +121,14 @@ const Community: React.FC = () => {
                 <Dd>
                   <div className="flex items-center space-x-3">
                     <span>
-                      {t('labels.review.tokenSymbolGovernance')} {tokenName} (
-                      {govTokenSymbol})
+                      {isGovTokenRequiresWrapping && (
+                        <span>
+                          {t('labels.review.tokenSymbolGovernance')}&nbsp;
+                        </span>
+                      )}
+                      <span>
+                        {tokenName} ({govTokenSymbol})
+                      </span>
                     </span>
 
                     {/* TODO: check the owner for token contract, if it belongs to
@@ -221,7 +227,7 @@ const Community: React.FC = () => {
             </>
           )}
 
-          <CommunityAddressesModal tokenMembership={membership === 'token'} />
+          <CommunityAddressesModal />
         </DescriptionListContainer>
       )}
     />

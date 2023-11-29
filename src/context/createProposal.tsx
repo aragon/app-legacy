@@ -4,18 +4,24 @@ import {
   MajorityVotingProposalSettings,
   MajorityVotingSettings,
   MultisigClient,
+  MultisigProposal,
   MultisigVotingSettings,
   ProposalCreationSteps,
+  ProposalCreationStepValue,
   TokenVotingClient,
+  TokenVotingProposal,
   VoteValues,
   WithdrawParams,
 } from '@aragon/sdk-client';
 import {
   DaoAction,
+  hexToBytes,
+  LIVE_CONTRACTS,
   ProposalMetadata,
   ProposalStatus,
+  SupportedNetworksArray,
+  SupportedVersion,
   TokenType,
-  hexToBytes,
 } from '@aragon/sdk-client-common';
 import {useQueryClient} from '@tanstack/react-query';
 import differenceInSeconds from 'date-fns/differenceInSeconds';
@@ -29,20 +35,25 @@ import React, {
 } from 'react';
 import {useFormContext} from 'react-hook-form';
 import {useTranslation} from 'react-i18next';
-import {generatePath, useNavigate} from 'react-router-dom';
+import {generatePath, useNavigate, useParams} from 'react-router-dom';
 
 import {Loading} from 'components/temporary';
 import PublishModal from 'containers/transactionModals/publishModal';
 import {useClient} from 'hooks/useClient';
 import {useDaoDetailsQuery} from 'hooks/useDaoDetails';
 import {useDaoToken} from 'hooks/useDaoToken';
-import {PluginTypes, usePluginClient} from 'hooks/usePluginClient';
+import {
+  GaselessPluginName,
+  PluginTypes,
+  usePluginClient,
+} from 'hooks/usePluginClient';
 import {usePollGasFee} from 'hooks/usePollGasfee';
 import {useTokenSupply} from 'hooks/useTokenSupply';
 import {useWallet} from 'hooks/useWallet';
 import {trackEvent} from 'services/analytics';
 import {useVotingPower} from 'services/aragon-sdk/queries/use-voting-power';
 import {
+  isGaslessVotingSettings,
   isMultisigVotingSettings,
   isTokenVotingSettings,
   useVotingSettings,
@@ -60,15 +71,32 @@ import {
   minutesToMills,
   offsetToMills,
 } from 'utils/date';
-import {getDefaultPayableAmountInputName, toDisplayEns} from 'utils/library';
+import {
+  getDefaultPayableAmountInputName,
+  toDisplayEns,
+  translateToNetworkishName,
+} from 'utils/library';
 import {proposalStorage} from 'utils/localStorage/proposalStorage';
 import {Proposal} from 'utils/paths';
 import {getNonEmptyActions} from 'utils/proposals';
 import {isNativeToken} from 'utils/tokens';
 import {ProposalFormData, ProposalId, ProposalResource} from 'utils/types';
+import GaslessProposalModal from '../containers/transactionModals/gaslessProposalModal';
+import {StepStatus} from '../hooks/useFunctionStepper';
+import {useCreateGaslessProposal} from './createGaslessProposal';
 import {useGlobalModalContext} from './globalModals';
 import {useNetwork} from './network';
 import {useProviders} from './providers';
+
+import {
+  CreateGasslessProposalParams,
+  GaslessVotingClient,
+  GaslessVotingProposal,
+} from '@vocdoni/gasless-voting';
+import {TokenCensus} from '@vocdoni/sdk';
+import {usePluginVersions} from 'services/aragon-sdk/queries/use-plugin-versions';
+import {useProtocolVersion} from 'services/aragon-sdk/queries/use-protocol-version';
+import {ProposalTypes} from 'utils/types';
 
 type Props = {
   showTxModal: boolean;
@@ -76,25 +104,42 @@ type Props = {
   children: ReactNode;
 };
 
+// This omitted Gasless params are added after Vocdoni election created
+// This type is used to store information needed before creating the proposal in the vochain
+type PartialGaslessParams = Omit<
+  CreateGasslessProposalParams,
+  'vochainProposalId' | 'censusURI' | 'censusRoot' | 'totalVotingPower'
+>;
+
 const CreateProposalWrapper: React.FC<Props> = ({
   showTxModal,
   setShowTxModal,
   children,
 }) => {
   const {t} = useTranslation();
+  const {type} = useParams();
   const {open} = useGlobalModalContext();
   const queryClient = useQueryClient();
 
   const navigate = useNavigate();
-  const {getValues} = useFormContext<ProposalFormData>();
+  const {getValues} = useFormContext();
 
   const {network} = useNetwork();
+  const translatedNetwork = translateToNetworkishName(network);
   const {isOnWrongNetwork, provider, address} = useWallet();
   const {api: apiProvider} = useProviders();
 
   const {data: daoDetails, isLoading: daoDetailsLoading} = useDaoDetailsQuery();
   const pluginAddress = daoDetails?.plugins?.[0]?.instanceAddress as string;
   const pluginType = daoDetails?.plugins?.[0]?.id as PluginTypes;
+
+  const {data: pluginAvailableVersions} = usePluginVersions(
+    {
+      pluginType,
+      daoAddress: daoDetails?.address as string,
+    },
+    {enabled: type === ProposalTypes.OSUpdates}
+  );
 
   const {data: daoToken} = useDaoToken(pluginAddress);
   const {data: tokenSupply} = useTokenSupply(daoToken?.address || '');
@@ -104,8 +149,14 @@ const CreateProposalWrapper: React.FC<Props> = ({
     {enabled: !!daoToken?.address && !!address}
   );
 
+  const {data: versions} = useProtocolVersion(daoDetails?.address as string);
+
   const {client} = useClient();
-  const pluginClient = usePluginClient(pluginType);
+
+  const pluginClient = usePluginClient(pluginType as PluginTypes);
+
+  const gasless = pluginType === GaselessPluginName;
+
   const {
     days: minDays,
     hours: minHours,
@@ -113,8 +164,9 @@ const CreateProposalWrapper: React.FC<Props> = ({
   } = getDHMFromSeconds((votingSettings as MajorityVotingSettings).minDuration);
 
   const [proposalId, setProposalId] = useState<string>();
-  const [proposalCreationData, setProposalCreationData] =
-    useState<CreateMajorityVotingProposalParams>();
+  const [proposalCreationData, setProposalCreationData] = useState<
+    CreateMajorityVotingProposalParams | PartialGaslessParams
+  >();
   const [creationProcessState, setCreationProcessState] =
     useState<TransactionState>(TransactionState.WAITING);
 
@@ -127,6 +179,15 @@ const CreateProposalWrapper: React.FC<Props> = ({
 
   const disableActionButton =
     !proposalCreationData && creationProcessState !== TransactionState.SUCCESS;
+
+  const {
+    steps: gaslessProposalSteps,
+    globalState: gaslessGlobalState,
+    createProposal,
+  } = useCreateGaslessProposal({
+    daoToken,
+    chainId: CHAIN_METADATA[network].id,
+  });
 
   /*************************************************
    *             Callbacks and Handlers            *
@@ -278,166 +339,242 @@ const CreateProposalWrapper: React.FC<Props> = ({
             })
           );
           break;
+
+        case 'os_update': {
+          if (
+            translatedNetwork !== 'unsupported' &&
+            SupportedNetworksArray.includes(translatedNetwork) &&
+            daoDetails?.address &&
+            versions
+          ) {
+            actions.push(
+              Promise.resolve(
+                client.encoding.daoUpdateAction(daoDetails?.address, {
+                  previousVersion: versions as [number, number, number],
+                  daoFactoryAddress:
+                    LIVE_CONTRACTS[action.inputs.version as SupportedVersion][
+                      translatedNetwork
+                    ].daoFactoryAddress,
+                })
+              )
+            );
+          }
+          break;
+        }
+
+        case 'plugin_update': {
+          const daoActionsArray = client.encoding.applyUpdateAction(
+            daoDetails?.address as string,
+            {
+              permissions: action.inputs.permissions,
+              initData: new Uint8Array([]),
+              helpers: action.inputs.helpers,
+              versionTag: action.inputs.versionTag,
+              pluginRepo: pluginAvailableVersions?.address as string,
+              pluginAddress: pluginAddress,
+            }
+          );
+          daoActionsArray.map(daoAction => {
+            actions.push(Promise.resolve(daoAction));
+          });
+          break;
+        }
       }
     }
 
     return Promise.all(actions);
   }, [
-    getValues,
-    pluginClient,
     client,
-    pluginAddress,
-    votingSettings,
+    daoDetails?.address,
+    getValues,
     network,
+    pluginAddress,
+    pluginAvailableVersions?.address,
+    pluginClient,
     t,
+    translatedNetwork,
+    versions,
+    votingSettings,
   ]);
 
   // Because getValues does NOT get updated on each render, leaving this as
-  // a function to be called when data is needed instead of a memoized value
-  const getProposalCreationParams =
-    useCallback(async (): Promise<CreateMajorityVotingProposalParams> => {
-      const [
-        title,
-        summary,
-        description,
-        resources,
-        startDate,
-        startTime,
-        startUtc,
-        endDate,
-        endTime,
-        endUtc,
-        durationSwitch,
-        startSwitch,
-      ] = getValues([
-        'proposalTitle',
-        'proposalSummary',
-        'proposal',
-        'links',
-        'startDate',
-        'startTime',
-        'startUtc',
-        'endDate',
-        'endTime',
-        'endUtc',
-        'durationSwitch',
-        'startSwitch',
+  // a function to be called when data is needed instead of a memorized value
+  const getProposalCreationParams = useCallback(async (): Promise<{
+    params: CreateMajorityVotingProposalParams;
+    metadata: ProposalMetadata;
+  }> => {
+    const [
+      title,
+      summary,
+      description,
+      resources,
+      startDate,
+      startTime,
+      startUtc,
+      endDate,
+      endTime,
+      endUtc,
+      durationSwitch,
+      startSwitch,
+    ] = getValues([
+      'proposalTitle',
+      'proposalSummary',
+      'proposal',
+      'links',
+      'startDate',
+      'startTime',
+      'startUtc',
+      'endDate',
+      'endTime',
+      'endUtc',
+      'durationSwitch',
+      'startSwitch',
+    ]);
+
+    const actions = await encodeActions();
+
+    const metadata: ProposalMetadata = {
+      title,
+      summary,
+      description,
+      resources: resources.filter((r: ProposalResource) => r.name && r.url),
+    };
+    let ipfsUri;
+    // Gasless voting store metadata using Vocdoni support
+    if (!gasless) {
+      ipfsUri = await (pluginClient as TokenVotingClient)?.methods.pinMetadata(
+        metadata
+      );
+    }
+
+    // getting dates
+    let startDateTime: Date;
+
+    /**
+     * Here we defined base startDate.
+     */
+    if (startSwitch === 'now') {
+      // Taking current time, but we won't pass it to SC cuz it's gonna be outdated. Needed for calculations below.
+      startDateTime = new Date(
+        `${getCanonicalDate()}T${getCanonicalTime()}:00${getCanonicalUtcOffset()}`
+      );
+    } else {
+      // Taking time user has set.
+      startDateTime = new Date(
+        `${startDate}T${startTime}:00${getCanonicalUtcOffset(startUtc)}`
+      );
+    }
+
+    // Minimum allowed end date (if endDate is lower than that SC call fails)
+    const minEndDateTimeMills =
+      startDateTime.valueOf() +
+      daysToMills(minDays || 0) +
+      hoursToMills(minHours || 0) +
+      minutesToMills(minMinutes || 0);
+
+    // End date
+    let endDateTime;
+
+    // user specifies duration in time/second exact way
+    if (durationSwitch === 'duration') {
+      const [days, hours, minutes] = getValues([
+        'durationDays',
+        'durationHours',
+        'durationMinutes',
       ]);
 
-      const actions = await encodeActions();
+      // Calculate the end date using duration
+      const endDateTimeMill =
+        startDateTime.valueOf() +
+        offsetToMills({
+          days: Number(days),
+          hours: Number(hours),
+          minutes: Number(minutes),
+        });
 
-      const metadata: ProposalMetadata = {
-        title,
-        summary,
-        description,
-        resources: resources.filter((r: ProposalResource) => r.name && r.url),
-      };
+      endDateTime = new Date(endDateTimeMill);
 
-      const ipfsUri = await pluginClient?.methods.pinMetadata(metadata);
+      // In case the endDate is close to being minimum durable, (and we starting immediately)
+      // to avoid passing late-date possibly, we just rely on SDK to set proper Date
+      if (
+        endDateTime.valueOf() <= minEndDateTimeMills &&
+        startSwitch === 'now'
+      ) {
+        /* Pass enddate as undefined to SDK to auto-calculate min endDate */
+        endDateTime = undefined;
+      }
+    } else {
+      // In case exact time specified by user
+      endDateTime = new Date(
+        `${endDate}T${endTime}:00${getCanonicalUtcOffset(endUtc)}`
+      );
+    }
 
-      // getting dates
-      let startDateTime: Date;
-      const startMinutesDelay = isMultisigVotingSettings(votingSettings)
-        ? 0
-        : 10;
-
-      if (startSwitch === 'now') {
+    if (startSwitch === 'duration' && endDateTime) {
+      // Making sure we are not in past for further calculation
+      if (startDateTime.valueOf() < new Date().valueOf()) {
         startDateTime = new Date(
-          `${getCanonicalDate()}T${getCanonicalTime({
-            minutes: startMinutesDelay,
-          })}:00${getCanonicalUtcOffset()}`
+          `${getCanonicalDate()}T${getCanonicalTime()}:00${getCanonicalUtcOffset()}`
         );
-      } else {
-        startDateTime = new Date(
+      }
+
+      // If provided date is expired
+      if (endDateTime.valueOf() < minEndDateTimeMills) {
+        const legacyStartDate = new Date(
           `${startDate}T${startTime}:00${getCanonicalUtcOffset(startUtc)}`
         );
+        const endMills =
+          endDateTime.valueOf() +
+          (startDateTime.valueOf() - legacyStartDate.valueOf());
+
+        endDateTime = new Date(endMills);
       }
+    }
 
-      // End date
-      let endDateTime;
-      if (durationSwitch === 'duration') {
-        const [days, hours, minutes] = getValues([
-          'durationDays',
-          'durationHours',
-          'durationMinutes',
-        ]);
+    /**
+     * In case "now" as start time is selected, we want
+     * to keep startDate undefined, so it's automatically evaluated.
+     * If we just provide "Date.now()", than after user still goes through the flow
+     * it's going to be date from the past. And SC-call evaluation will fail.
+     */
+    const finalStartDate = startSwitch === 'now' ? undefined : startDateTime;
 
-        // Calculate the end date using duration
-        const endDateTimeMill =
-          startDateTime.valueOf() +
-          offsetToMills({
-            days: Number(days),
-            hours: Number(hours),
-            minutes: Number(minutes),
-          });
-
-        endDateTime = new Date(endDateTimeMill);
-      } else {
-        endDateTime = new Date(
-          `${endDate}T${endTime}:00${getCanonicalUtcOffset(endUtc)}`
-        );
-      }
-
-      if (startSwitch === 'now') {
-        endDateTime = new Date(
-          endDateTime.getTime() + minutesToMills(startMinutesDelay)
-        );
-      } else {
-        if (startDateTime.valueOf() < new Date().valueOf()) {
-          startDateTime = new Date(
-            `${getCanonicalDate()}T${getCanonicalTime({
-              minutes: startMinutesDelay,
-            })}:00${getCanonicalUtcOffset()}`
-          );
-        }
-
-        const minEndDateTimeMills =
-          startDateTime.valueOf() +
-          daysToMills(minDays || 0) +
-          hoursToMills(minHours || 0) +
-          minutesToMills(minMinutes || 0);
-
-        if (endDateTime.valueOf() < minEndDateTimeMills) {
-          const legacyStartDate = new Date(
-            `${startDate}T${startTime}:00${getCanonicalUtcOffset(startUtc)}`
-          );
-          const endMills =
-            endDateTime.valueOf() +
-            (startDateTime.valueOf() - legacyStartDate.valueOf());
-
-          endDateTime = new Date(endMills);
-        }
-      }
-
-      /**
-       * For multisig proposals, in case "now" as start time is selected, we want
-       * to keep startDate undefined, so it's automatically evaluated.
-       * If we just provide "Date.now()", than after user still goes through the flow
-       * it's going to be date from the past. And SC-call evaluation will fail.
-       */
-      const finalStartDate =
-        startSwitch === 'now' && isMultisigVotingSettings(votingSettings)
-          ? undefined
-          : startDateTime;
-
-      // Ignore encoding if the proposal had no actions
-      return {
-        pluginAddress,
-        metadataUri: ipfsUri || '',
-        startDate: finalStartDate,
-        endDate: endDateTime,
-        actions,
-      };
-    }, [
-      encodeActions,
-      getValues,
-      minDays,
-      minHours,
-      minMinutes,
+    // Ignore encoding if the proposal had no actions
+    const params: CreateMajorityVotingProposalParams = {
       pluginAddress,
-      pluginClient?.methods,
-      votingSettings,
-    ]);
+      metadataUri: ipfsUri || '',
+      startDate: finalStartDate,
+      endDate: endDateTime,
+      actions,
+    };
+
+    return {params, metadata};
+  }, [
+    getValues,
+    encodeActions,
+    gasless,
+    minDays,
+    minHours,
+    minMinutes,
+    pluginAddress,
+    pluginClient,
+  ]);
+
+  const getOffChainProposalParams = useCallback(
+    (params: CreateMajorityVotingProposalParams): PartialGaslessParams => {
+      return {
+        ...params,
+        // If the value is undefined will take the expiration time defined at DAO creation level.
+        // We want this because the expiration date is defined when the dao is created.
+        // We could define a different expiration date for this proposal but is not designed
+        // to do this at ux level. (kon)
+        tallyEndDate: undefined,
+        startDate: params.startDate,
+        endDate: params.endDate!,
+      };
+    },
+    []
+  );
 
   const estimateCreationFees = useCallback(async () => {
     if (!pluginClient) {
@@ -447,8 +584,16 @@ const CreateProposalWrapper: React.FC<Props> = ({
     }
     if (!proposalCreationData) return;
 
-    return pluginClient?.estimation.createProposal(proposalCreationData);
-  }, [pluginClient, proposalCreationData]);
+    return gasless
+      ? (pluginClient as GaslessVotingClient).estimation.createProposal(
+          proposalCreationData as CreateGasslessProposalParams
+        )
+      : (
+          pluginClient as TokenVotingClient | MultisigClient
+        ).estimation.createProposal(
+          proposalCreationData as CreateMajorityVotingProposalParams
+        );
+  }, [gasless, pluginClient, proposalCreationData]);
 
   const {
     tokenPrice,
@@ -459,23 +604,23 @@ const CreateProposalWrapper: React.FC<Props> = ({
   } = usePollGasFee(estimateCreationFees, shouldPoll);
 
   const handleCloseModal = useCallback(() => {
-    switch (creationProcessState) {
-      case TransactionState.LOADING:
-        break;
-      case TransactionState.SUCCESS:
-        navigate(
-          generatePath(Proposal, {
-            network,
-            dao: toDisplayEns(daoDetails?.ensDomain) || daoDetails?.address,
-            id: proposalId,
-          })
-        );
-        break;
-      default: {
-        setCreationProcessState(TransactionState.WAITING);
-        setShowTxModal(false);
-        stopPolling();
-      }
+    if (
+      creationProcessState === TransactionState.LOADING ||
+      gaslessGlobalState === StepStatus.LOADING
+    ) {
+      return;
+    } else if (creationProcessState === TransactionState.SUCCESS) {
+      navigate(
+        generatePath(Proposal, {
+          network,
+          dao: toDisplayEns(daoDetails?.ensDomain) || daoDetails?.address,
+          id: proposalId,
+        })
+      );
+    } else {
+      setCreationProcessState(TransactionState.WAITING);
+      setShowTxModal(false);
+      stopPolling();
     }
   }, [
     creationProcessState,
@@ -483,13 +628,14 @@ const CreateProposalWrapper: React.FC<Props> = ({
     daoDetails?.ensDomain,
     navigate,
     network,
+    gaslessGlobalState,
     proposalId,
     setShowTxModal,
     stopPolling,
   ]);
 
   const handleCacheProposal = useCallback(
-    async (proposalId: string) => {
+    async (proposalId: string, vochainProposalId?: string) => {
       if (!address || !daoDetails || !votingSettings || !proposalCreationData)
         return;
 
@@ -508,13 +654,15 @@ const CreateProposalWrapper: React.FC<Props> = ({
         creationDate: new Date(),
         creatorAddress: address,
         creationBlockNumber,
-        startDate: proposalCreationData.startDate ?? new Date(),
+        startDate: proposalCreationData.startDate,
         endDate: proposalCreationData.endDate!,
         metadata: {
           title,
           summary,
           description,
-          resources: resources.filter(r => r.name && r.url),
+          resources: (resources as ProposalFormData['links']).filter(
+            r => r.name && r.url
+          ),
         },
         actions: proposalCreationData.actions ?? [],
         status: proposalCreationData.startDate
@@ -530,7 +678,7 @@ const CreateProposalWrapper: React.FC<Props> = ({
           ...baseParams,
           approvals: creatorApproval ? [address] : [],
           settings: votingSettings,
-        };
+        } as MultisigProposal;
         proposalStorage.addProposal(CHAIN_METADATA[network].id, proposal);
       } else if (isTokenVotingSettings(votingSettings)) {
         const {creatorVote} =
@@ -562,7 +710,7 @@ const CreateProposalWrapper: React.FC<Props> = ({
           minParticipation: votingSettings.minParticipation,
           duration: differenceInSeconds(
             baseParams.endDate,
-            baseParams.startDate
+            baseParams.startDate ?? new Date()
           ),
         };
 
@@ -574,7 +722,22 @@ const CreateProposalWrapper: React.FC<Props> = ({
           totalVotingWeight: tokenSupply?.raw ?? BigInt(0),
           token: daoToken ?? null,
           votes,
-        };
+        } as TokenVotingProposal;
+        proposalStorage.addProposal(CHAIN_METADATA[network].id, proposal);
+      } else if (isGaslessVotingSettings(votingSettings)) {
+        const proposal = {
+          ...baseParams,
+          executed: false,
+          approvers: new Array<string>(),
+          vochainProposalId,
+          settings: votingSettings,
+          participation: {
+            currentParticipation: 0,
+            currentPercentage: 0,
+            missingParticipation: 100,
+          },
+          token: daoToken,
+        } as GaslessVotingProposal;
         proposalStorage.addProposal(CHAIN_METADATA[network].id, proposal);
       }
     },
@@ -598,104 +761,160 @@ const CreateProposalWrapper: React.FC<Props> = ({
     queryClient.invalidateQueries([AragonSdkQueryItem.PROPOSALS]);
   }, [queryClient]);
 
-  const handlePublishProposal = useCallback(async () => {
-    if (!pluginClient) {
+  const handlePublishProposal = useCallback(
+    async (vochainProposalId?: string, vochainCensus?: TokenCensus) => {
+      if (!pluginClient) {
+        return new Error('ERC20 SDK client is not initialized correctly');
+      }
+
+      // if no creation data is set, or transaction already running, do nothing.
+      if (
+        !proposalCreationData ||
+        creationProcessState === TransactionState.LOADING
+      ) {
+        console.log('Transaction is running');
+        return;
+      }
+
+      trackEvent('newProposal_createNowBtn_clicked', {
+        dao_address: daoDetails?.address,
+        estimated_gwei_fee: averageFee,
+        total_usd_cost: averageFee ? tokenPrice * Number(averageFee) : 0,
+      });
+
+      let proposalIterator: AsyncGenerator<ProposalCreationStepValue>;
+      if (gasless && vochainProposalId && vochainCensus) {
+        // This is the last step of a gasless proposal creation
+        // If some of the previous steps failed, and the user press the try again button, the end date is the same as when
+        // the user opened the modal. So I get fresh calculated params, to check if the start date is on 6 minutes (for
+        // example), the end date will be updated from now to 6 minutes more.
+        const updatedParams = getOffChainProposalParams(
+          (await getProposalCreationParams()).params
+        );
+
+        const params: CreateGasslessProposalParams = {
+          ...(updatedParams as PartialGaslessParams),
+          censusRoot: vochainCensus.censusId!,
+          censusURI: vochainCensus.censusURI!,
+          totalVotingPower: vochainCensus.weight!,
+          vochainProposalId,
+        };
+
+        proposalIterator = (
+          pluginClient as GaslessVotingClient
+        ).methods.createProposal({
+          ...params,
+          vochainProposalId,
+        });
+      } else {
+        proposalIterator = (
+          pluginClient as MultisigClient | TokenVotingClient
+        ).methods.createProposal(
+          proposalCreationData as CreateMajorityVotingProposalParams
+        );
+      }
+
+      if (creationProcessState === TransactionState.SUCCESS) {
+        handleCloseModal();
+        return;
+      }
+
+      if (isOnWrongNetwork) {
+        open('network');
+        handleCloseModal();
+        return;
+      }
+
+      setCreationProcessState(TransactionState.LOADING);
+
+      // NOTE: quite weird, I've had to wrap the entirety of the generator
+      // in a try-catch because when the user rejects the transaction,
+      // the try-catch block inside the for loop would not catch the error
+      // FF - 11/21/2020
+      try {
+        for await (const step of proposalIterator!) {
+          switch (step.key) {
+            case ProposalCreationSteps.CREATING:
+              console.log(step.txHash);
+              trackEvent('newProposal_transaction_signed', {
+                dao_address: daoDetails?.address,
+                network: network,
+                wallet_provider: provider?.connection.url,
+              });
+              break;
+            case ProposalCreationSteps.DONE: {
+              //TODO: replace with step.proposal id when SDK returns proper format
+              const prefixedId = new ProposalId(
+                step.proposalId
+              ).makeGloballyUnique(pluginAddress);
+
+              setProposalId(prefixedId);
+              setCreationProcessState(TransactionState.SUCCESS);
+              trackEvent('newProposal_transaction_success', {
+                dao_address: daoDetails?.address,
+                network: network,
+                wallet_provider: provider?.connection.url,
+                proposalId: prefixedId,
+              });
+
+              // cache proposal
+              handleCacheProposal(prefixedId, vochainProposalId);
+              invalidateQueries();
+
+              break;
+            }
+          }
+        }
+      } catch (error) {
+        console.error(error);
+        setCreationProcessState(TransactionState.ERROR);
+        trackEvent('newProposal_transaction_failed', {
+          dao_address: daoDetails?.address,
+          network: network,
+          wallet_provider: provider?.connection.url,
+          error,
+        });
+        // Fix to update the StepperModal step status when creating a gasless proposal.
+        // If the error is not thrown until the StepperModal, it thinks that the step is finished properly
+        // and not show the try again button
+        if (vochainProposalId) throw error;
+      }
+    },
+    [
+      pluginClient,
+      proposalCreationData,
+      creationProcessState,
+      daoDetails?.address,
+      averageFee,
+      tokenPrice,
+      gasless,
+      isOnWrongNetwork,
+      getOffChainProposalParams,
+      getProposalCreationParams,
+      handleCloseModal,
+      open,
+      network,
+      provider?.connection.url,
+      pluginAddress,
+      handleCacheProposal,
+      invalidateQueries,
+    ]
+  );
+
+  const handleOffChainProposal = useCallback(async () => {
+    if (!pluginClient || !daoToken) {
       return new Error('ERC20 SDK client is not initialized correctly');
     }
 
-    // if no creation data is set, or transaction already running, do nothing.
-    if (
-      !proposalCreationData ||
-      creationProcessState === TransactionState.LOADING
-    ) {
-      console.log('Transaction is running');
-      return;
-    }
+    const {params, metadata} = await getProposalCreationParams();
 
-    trackEvent('newProposal_createNowBtn_clicked', {
-      dao_address: daoDetails?.address,
-      estimated_gwei_fee: averageFee,
-      total_usd_cost: averageFee ? tokenPrice * Number(averageFee) : 0,
-    });
-
-    const proposalIterator =
-      pluginClient.methods.createProposal(proposalCreationData);
-
-    if (creationProcessState === TransactionState.SUCCESS) {
-      handleCloseModal();
-      return;
-    }
-
-    if (isOnWrongNetwork) {
-      open('network');
-      handleCloseModal();
-      return;
-    }
-
-    setCreationProcessState(TransactionState.LOADING);
-
-    // NOTE: quite weird, I've had to wrap the entirety of the generator
-    // in a try-catch because when the user rejects the transaction,
-    // the try-catch block inside the for loop would not catch the error
-    // FF - 11/21/2020
-    try {
-      for await (const step of proposalIterator) {
-        switch (step.key) {
-          case ProposalCreationSteps.CREATING:
-            console.log(step.txHash);
-            trackEvent('newProposal_transaction_signed', {
-              dao_address: daoDetails?.address,
-              network: network,
-              wallet_provider: provider?.connection.url,
-            });
-            break;
-          case ProposalCreationSteps.DONE: {
-            //TODO: replace with step.proposal id when SDK returns proper format
-            const prefixedId = new ProposalId(
-              step.proposalId
-            ).makeGloballyUnique(pluginAddress);
-
-            setProposalId(prefixedId);
-            setCreationProcessState(TransactionState.SUCCESS);
-            trackEvent('newProposal_transaction_success', {
-              dao_address: daoDetails?.address,
-              network: network,
-              wallet_provider: provider?.connection.url,
-              proposalId: prefixedId,
-            });
-
-            // cache proposal
-            handleCacheProposal(prefixedId);
-            invalidateQueries();
-            break;
-          }
-        }
-      }
-    } catch (error) {
-      console.error(error);
-      setCreationProcessState(TransactionState.ERROR);
-      trackEvent('newProposal_transaction_failed', {
-        dao_address: daoDetails?.address,
-        network: network,
-        wallet_provider: provider?.connection.url,
-        error,
-      });
-    }
+    await createProposal(metadata, params, handlePublishProposal);
   }, [
-    averageFee,
-    creationProcessState,
-    daoDetails?.address,
-    handleCacheProposal,
-    handleCloseModal,
-    invalidateQueries,
-    isOnWrongNetwork,
-    network,
-    open,
-    pluginAddress,
     pluginClient,
-    proposalCreationData,
-    provider?.connection.url,
-    tokenPrice,
+    daoToken,
+    getProposalCreationParams,
+    createProposal,
+    handlePublishProposal,
   ]);
 
   /*************************************************
@@ -704,13 +923,25 @@ const CreateProposalWrapper: React.FC<Props> = ({
   useEffect(() => {
     // set proposal creation data
     async function setProposalData() {
-      if (showTxModal && creationProcessState === TransactionState.WAITING)
-        setProposalCreationData(await getProposalCreationParams());
-      else if (!showTxModal) setProposalCreationData(undefined);
+      if (showTxModal && creationProcessState === TransactionState.WAITING) {
+        if (gasless) {
+          const {params: gaslessParams} = await getProposalCreationParams();
+          setProposalCreationData(getOffChainProposalParams(gaslessParams));
+        } else {
+          const {params} = await getProposalCreationParams();
+          setProposalCreationData(params);
+        }
+      } else if (!showTxModal) setProposalCreationData(undefined);
     }
 
     setProposalData();
-  }, [creationProcessState, getProposalCreationParams, showTxModal]);
+  }, [
+    creationProcessState,
+    getOffChainProposalParams,
+    getProposalCreationParams,
+    gasless,
+    showTxModal,
+  ]);
 
   /*************************************************
    *                    Render                     *
@@ -727,20 +958,39 @@ const CreateProposalWrapper: React.FC<Props> = ({
   return (
     <>
       {children}
-      <PublishModal
-        state={creationProcessState || TransactionState.WAITING}
-        isOpen={showTxModal}
-        onClose={handleCloseModal}
-        callback={handlePublishProposal}
-        closeOnDrag={creationProcessState !== TransactionState.LOADING}
-        maxFee={maxFee}
-        averageFee={averageFee}
-        gasEstimationError={gasEstimationError}
-        tokenPrice={tokenPrice}
-        title={t('TransactionModal.createProposal')}
-        buttonStateLabels={buttonLabels}
-        disabledCallback={disableActionButton}
-      />
+      {gasless ? (
+        <GaslessProposalModal
+          steps={gaslessProposalSteps}
+          globalState={gaslessGlobalState}
+          isOpen={showTxModal}
+          onClose={handleCloseModal}
+          callback={handleOffChainProposal}
+          closeOnDrag={
+            creationProcessState !== TransactionState.LOADING ||
+            gaslessGlobalState !== StepStatus.LOADING
+          }
+          maxFee={maxFee}
+          averageFee={averageFee}
+          gasEstimationError={gasEstimationError}
+          tokenPrice={tokenPrice}
+          title={t('TransactionModal.createProposal')}
+        />
+      ) : (
+        <PublishModal
+          state={creationProcessState || TransactionState.WAITING}
+          isOpen={showTxModal}
+          onClose={handleCloseModal}
+          callback={handlePublishProposal}
+          closeOnDrag={creationProcessState !== TransactionState.LOADING}
+          maxFee={maxFee}
+          averageFee={averageFee}
+          gasEstimationError={gasEstimationError}
+          tokenPrice={tokenPrice}
+          title={t('TransactionModal.createProposal')}
+          buttonStateLabels={buttonLabels}
+          disabledCallback={disableActionButton}
+        />
+      )}
     </>
   );
 };

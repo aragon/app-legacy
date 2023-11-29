@@ -13,7 +13,8 @@ import {generatePath} from 'react-router-dom';
 import {FullScreenStepper, Step} from 'components/fullScreenStepper';
 import {Loading} from 'components/temporary';
 import {MintTokenForm} from 'containers/actionBuilder/mintTokens';
-import DefineProposal, {
+import {
+  DefineProposal,
   isValid as defineProposalIsValid,
 } from 'containers/defineProposal';
 import ReviewProposal from 'containers/reviewProposal';

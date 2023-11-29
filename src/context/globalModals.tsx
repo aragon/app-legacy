@@ -34,7 +34,8 @@ export type DialogType =
   | 'poapClaim'
   | 'exportCsv'
   | 'delegateVoting'
-  | 'delegationGating';
+  | 'delegationGating'
+  | 'committeeMembers';
 
 type Props = Record<'children', ReactNode>;
 

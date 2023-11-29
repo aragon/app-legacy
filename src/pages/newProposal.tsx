@@ -1,15 +1,27 @@
 import React, {useState} from 'react';
 import {FormProvider, useForm} from 'react-hook-form';
+import {useParams} from 'react-router-dom';
+
 import {Loading} from 'components/temporary';
 import ProposalStepper from 'containers/proposalStepper';
 import {ActionsProvider} from 'context/actions';
 import {CreateProposalProvider} from 'context/createProposal';
 import {useDaoDetailsQuery} from 'hooks/useDaoDetails';
 import {CreateProposalFormData} from 'utils/types';
-import {PrepareUpdateProvider} from 'context/prepareUpdate';
+import {UpdateProvider} from 'context/update';
+
+const updateProposalValues = {
+  updateFramework: {
+    os: false,
+    plugin: false,
+  },
+};
 
 export const NewProposal: React.FC = () => {
+  const {type} = useParams();
   const {data, isLoading} = useDaoDetailsQuery();
+
+  const isUpdateProposal = type === 'os-update';
 
   const [showTxModal, setShowTxModal] = useState(false);
 
@@ -17,13 +29,10 @@ export const NewProposal: React.FC = () => {
     mode: 'onChange',
     defaultValues: {
       links: [{name: '', url: ''}],
-      osUpdate: {
-        os: true,
-        plugin: true,
-      },
       startSwitch: 'now',
       durationSwitch: 'duration',
       actions: [],
+      ...(isUpdateProposal ? updateProposalValues : {}),
     },
   });
 
@@ -45,9 +54,9 @@ export const NewProposal: React.FC = () => {
           showTxModal={showTxModal}
           setShowTxModal={setShowTxModal}
         >
-          <PrepareUpdateProvider>
+          <UpdateProvider>
             <ProposalStepper enableTxModal={enableTxModal} />
-          </PrepareUpdateProvider>
+          </UpdateProvider>
         </CreateProposalProvider>
       </ActionsProvider>
     </FormProvider>

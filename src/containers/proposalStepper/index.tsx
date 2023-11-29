@@ -6,7 +6,9 @@ import {generatePath, useParams} from 'react-router-dom';
 import {FullScreenStepper, Step} from 'components/fullScreenStepper';
 import {Loading} from 'components/temporary';
 import ConfigureActions from 'containers/configureActions';
-import DefineProposal, {
+import {
+  DefineProposal,
+  DefineUpdateProposal,
   isValid as defineProposalIsValid,
 } from 'containers/defineProposal';
 import ReviewProposal from 'containers/reviewProposal';
@@ -18,16 +20,16 @@ import {useGlobalModalContext} from 'context/globalModals';
 import {useNetwork} from 'context/network';
 import {useDaoDetailsQuery} from 'hooks/useDaoDetails';
 import {PluginTypes} from 'hooks/usePluginClient';
+import {useWallet} from 'hooks/useWallet';
+import {trackEvent} from 'services/analytics';
 import {
   isMultisigVotingSettings,
   useVotingSettings,
 } from 'services/aragon-sdk/queries/use-voting-settings';
-import {useWallet} from 'hooks/useWallet';
-import {trackEvent} from 'services/analytics';
 import {getCanonicalUtcOffset} from 'utils/date';
 import {removeUnchangedMinimumApprovalAction} from 'utils/library';
 import {Governance} from 'utils/paths';
-import {Action} from 'utils/types';
+import {Action, ProposalTypes} from 'utils/types';
 import {actionsAreValid} from 'utils/validators';
 
 type ProposalStepperType = {
@@ -37,28 +39,34 @@ type ProposalStepperType = {
 const ProposalStepper: React.FC<ProposalStepperType> = ({
   enableTxModal,
 }: ProposalStepperType) => {
-  const {data: daoDetails, isLoading} = useDaoDetailsQuery();
-  const {type} = useParams();
+  const [areActionsValid, setAreActionsValid] = useState(false);
 
+  const {t} = useTranslation();
+  const {open} = useGlobalModalContext();
+  const {type} = useParams();
+  const {network} = useNetwork();
+  const {address, isConnected} = useWallet();
+
+  const {data: daoDetails, isLoading} = useDaoDetailsQuery();
   const {data: votingSettings, isLoading: settingsLoading} = useVotingSettings({
     pluginAddress: daoDetails?.plugins?.[0]?.instanceAddress as string,
     pluginType: daoDetails?.plugins?.[0]?.id as PluginTypes,
   });
 
   const {actions} = useActionsContext();
-  const {open} = useGlobalModalContext();
-
-  const {t} = useTranslation();
-  const {network} = useNetwork();
   const {trigger, control, getValues, setValue} = useFormContext();
-  const {address, isConnected} = useWallet();
-  const [areActionsValid, setAreActionsValid] = useState(false);
-
-  const formActions = useWatch({name: 'actions'});
-  const osUpdate = useWatch({name: 'osUpdate'});
 
   const {errors, dirtyFields} = useFormState({control});
 
+  const formActions = useWatch({name: 'actions'});
+  const updateFramework = useWatch({name: 'updateFramework'});
+  const pluginSelectedVersion = useWatch({name: 'pluginSelectedVersion'});
+
+  const isUpdateProposal = type === ProposalTypes.OSUpdates;
+
+  /*************************************************
+   *                    Effects                    *
+   *************************************************/
   useEffect(() => {
     const validateActions = async () => {
       const isValid = await actionsAreValid(
@@ -91,17 +99,23 @@ const ProposalStepper: React.FC<ProposalStepperType> = ({
     >
       <Step
         wizardTitle={
-          type === 'os-update'
+          isUpdateProposal
             ? t('update.reviewUpdates.headerTitle')
             : t('newWithdraw.defineProposal.heading')
         }
         wizardDescription={
-          type === 'os-update'
+          isUpdateProposal
             ? t('update.reviewUpdates.headerDesc')
             : t('newWithdraw.defineProposal.description')
         }
         isNextButtonDisabled={
-          !defineProposalIsValid(dirtyFields, errors, type, osUpdate)
+          !defineProposalIsValid(
+            dirtyFields,
+            errors,
+            type,
+            updateFramework,
+            pluginSelectedVersion?.isPrepared
+          )
         }
         onNextButtonClicked={next => {
           trackEvent('newProposal_nextBtn_clicked', {
@@ -118,7 +132,7 @@ const ProposalStepper: React.FC<ProposalStepperType> = ({
           next();
         }}
       >
-        <DefineProposal />
+        {isUpdateProposal ? <DefineUpdateProposal /> : <DefineProposal />}
       </Step>
       <Step
         wizardTitle={t('newWithdraw.setupVoting.title')}
@@ -153,7 +167,7 @@ const ProposalStepper: React.FC<ProposalStepperType> = ({
         wizardTitle={t('newProposal.configureActions.heading')}
         wizardDescription={t('newProposal.configureActions.description')}
         isNextButtonDisabled={!areActionsValid}
-        {...(type === 'os-update' && {skipStep: true, hideWizard: true})}
+        {...(isUpdateProposal && {skipStep: true, hideWizard: true})}
         onNextButtonDisabledClicked={() => {
           trigger('actions');
         }}

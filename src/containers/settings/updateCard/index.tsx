@@ -8,6 +8,7 @@ import {StyledLink} from 'components/styledLink';
 import useScreen from 'hooks/useScreen';
 import {useNetwork} from 'context/network';
 import {NewProposal} from 'utils/paths';
+import {ProposalTypes} from 'utils/types';
 
 export const SettingsUpdateCard: React.FC = () => {
   const {t} = useTranslation();
@@ -36,7 +37,7 @@ export const SettingsUpdateCard: React.FC = () => {
             onClick={() =>
               navigate(
                 generatePath(NewProposal, {
-                  type: 'os-update',
+                  type: ProposalTypes.OSUpdates,
                   network,
                   dao: dao,
                 })

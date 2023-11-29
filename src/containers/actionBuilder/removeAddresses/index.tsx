@@ -78,6 +78,11 @@ const RemoveAddresses: React.FC<RemoveAddressesProps> = ({
     alert(t('alert.chip.removedAllAddresses'));
   }
 
+  function handleResetAll() {
+    replace([]);
+    alert(t('alert.chip.resetAction'));
+  }
+
   const rowActions = [
     {
       component: (
@@ -94,7 +99,12 @@ const RemoveAddresses: React.FC<RemoveAddressesProps> = ({
   ];
 
   const methodActions = (() => {
-    const result = [];
+    const result = [
+      {
+        component: <ListItemAction title={t('labels.resetAction')} bgWhite />,
+        callback: handleResetAll,
+      },
+    ];
 
     if (allowRemove) {
       result.push({

@@ -9,6 +9,7 @@ import {
   ListItemAction,
   IconCheckmark,
   IconSort,
+  IconFailure,
 } from '@aragon/ods-old';
 import React, {useCallback, useState} from 'react';
 import {useTranslation} from 'react-i18next';
@@ -32,6 +33,7 @@ import {useGovTokensWrapping} from 'context/govTokensWrapping';
 import {useExistingToken} from 'hooks/useExistingToken';
 import {Erc20WrapperTokenDetails} from '@aragon/sdk-client';
 import {featureFlags} from 'utils/featureFlags';
+import {useGlobalModalContext} from 'context/globalModals';
 
 const MEMBERS_PER_PAGE = 20;
 
@@ -40,6 +42,7 @@ export const Community: React.FC = () => {
   const {network} = useNetwork();
   const navigate = useNavigate();
   const {isMobile} = useScreen();
+  const {open} = useGlobalModalContext();
   const {handleOpenModal} = useGovTokensWrapping();
 
   const [page, setPage] = useState(1);
@@ -104,7 +107,7 @@ export const Community: React.FC = () => {
     setSearchTerm(event.target.value.trim());
   };
 
-  const handleSecondaryButtonClick = () => {
+  const navigateToTokenHoldersChart = () => {
     window.open(
       CHAIN_METADATA[network].explorer +
         '/token/tokenholderchart/' +
@@ -113,13 +116,19 @@ export const Community: React.FC = () => {
     );
   };
 
+  const handleSecondaryButtonClick = () => {
+    if (isTokenMintable) {
+      navigate('mint-tokens');
+    } else navigateToTokenHoldersChart();
+  };
+
   const handlePrimaryClick = () => {
     if (walletBased) {
       navigate('manage-members');
     } else if (isDAOTokenWrapped) {
       handleOpenModal();
     } else if (isTokenMintable) {
-      navigate('mint-tokens');
+      open('delegateVoting');
     }
   };
 
@@ -181,10 +190,15 @@ export const Community: React.FC = () => {
         ? {
             description: t('explore.explorer.tokenBased'),
             primaryBtnProps: {
+              label: t('governance.actionSecondary'),
+              iconLeft: <IconFailure />,
+              onClick: () => open('delegateVoting'),
+            },
+            secondaryBtnProps: {
               label: t('community.ctaMain.wrappedLabel'),
               onClick: handlePrimaryClick,
             },
-            secondaryBtnProps: {
+            tertiaryBtnProps: {
               label: t('labels.seeAllHolders'),
               iconLeft: <IconLinkExternal />,
               onClick: handleSecondaryButtonClick,
@@ -194,18 +208,28 @@ export const Community: React.FC = () => {
         ? {
             description: t('explore.explorer.tokenBased'),
             primaryBtnProps: {
-              label: t('labels.mintTokens'),
-              iconLeft: <IconAdd />,
+              label: t('governance.actionSecondary'),
+              iconLeft: <IconFailure />,
               onClick: handlePrimaryClick,
             },
             secondaryBtnProps: {
+              label: t('labels.mintTokens'),
+              iconLeft: <IconAdd />,
+              onClick: handleSecondaryButtonClick,
+            },
+            tertiaryBtnProps: {
               label: t('labels.seeAllHolders'),
               iconLeft: <IconLinkExternal />,
-              onClick: handleSecondaryButtonClick,
+              onClick: navigateToTokenHoldersChart,
             },
           }
         : {
             description: t('explore.explorer.tokenBased'),
+            primaryBtnProps: {
+              label: t('governance.actionSecondary'),
+              iconLeft: <IconFailure />,
+              onClick: () => open('delegateVoting'),
+            },
             secondaryBtnProps: {
               label: t('labels.seeAllHolders'),
               iconLeft: <IconLinkExternal />,

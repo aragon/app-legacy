@@ -42,6 +42,7 @@ export type ProposalVoteResults = {
 export type TerminalTabs = 'voters' | 'breakdown' | 'info';
 
 export type VotingTerminalProps = {
+  title?: string;
   breakdownTabDisabled?: boolean;
   votersTabDisabled?: boolean;
   voteNowDisabled?: boolean;
@@ -55,12 +56,13 @@ export type VotingTerminalProps = {
   supportThreshold?: number;
   voters?: Array<VoterType>;
   status?: ProposalStatus;
-  statusLabel: string;
+  statusLabel?: string;
   strategy?: string;
   daoToken?: Erc20TokenDetails | Erc20WrapperTokenDetails;
   blockNumber?: Number;
   results?: ProposalVoteResults;
   approvals?: string[];
+  voted?: boolean;
   votingInProcess?: boolean;
   voteOptions?: string;
   onApprovalClicked?: (tryExecution: boolean) => void;
@@ -73,9 +75,11 @@ export type VotingTerminalProps = {
   onTabSelected?: React.Dispatch<React.SetStateAction<TerminalTabs>>;
   pluginType: PluginTypes;
   executableWithNextApproval?: boolean;
+  className?: string;
 };
 
 export const VotingTerminal: React.FC<VotingTerminalProps> = ({
+  title,
   breakdownTabDisabled = false,
   votersTabDisabled = false,
   voteNowDisabled = false,
@@ -95,6 +99,7 @@ export const VotingTerminal: React.FC<VotingTerminalProps> = ({
   status,
   statusLabel,
   strategy,
+  voted = false,
   voteOptions = '',
   onApprovalClicked,
   onVoteClicked,
@@ -107,6 +112,7 @@ export const VotingTerminal: React.FC<VotingTerminalProps> = ({
   onTabSelected,
   pluginType,
   executableWithNextApproval = false,
+  className,
 }) => {
   const [page, setPage] = useState(1);
   const [query, setQuery] = useState('');
@@ -132,6 +138,7 @@ export const VotingTerminal: React.FC<VotingTerminalProps> = ({
               tokenAddress: daoToken.address as string,
               address: wallet.address as string,
               blockNumber: blockNumber as number,
+              network,
             });
           }
           return {
@@ -157,6 +164,7 @@ export const VotingTerminal: React.FC<VotingTerminalProps> = ({
     daoToken?.decimals,
     daoToken?.symbol,
     fetchPastVotingPower,
+    network,
     provider,
     voters,
   ]);
@@ -197,19 +205,17 @@ export const VotingTerminal: React.FC<VotingTerminalProps> = ({
   ]);
 
   return (
-    <Container>
+    <Container customClasses={className}>
       <Header className="items-start gap-x-6">
         <div className="flex-1 space-y-3">
-          <Heading1>
-            {isMultisigProposal
-              ? t('votingTerminal.multisig.title')
-              : t('votingTerminal.title')}
-          </Heading1>
-          <AlertInline
-            label={statusLabel}
-            mode={status === 'Defeated' ? 'critical' : 'neutral'}
-            icon={<StatusIcon status={status} />}
-          />
+          {title && <Heading1> {title}</Heading1>}
+          {statusLabel && (
+            <AlertInline
+              label={statusLabel}
+              mode={status === 'Defeated' ? 'critical' : 'neutral'}
+              icon={<StatusIcon status={status} />}
+            />
+          )}
         </div>
         <div className="flex-1">
           <ButtonGroup
@@ -360,7 +366,7 @@ export const VotingTerminal: React.FC<VotingTerminalProps> = ({
               {isMultisigProposal ? (
                 <div className="flex w-full flex-col gap-y-4">
                   <div className="flex w-full flex-col gap-x-4 gap-y-3 xl:flex-row">
-                    {executableWithNextApproval && (
+                    {executableWithNextApproval && !voted && (
                       <ButtonText
                         label={t('transactionModal.multisig.ctaApproveExecute')}
                         size="large"
@@ -375,14 +381,20 @@ export const VotingTerminal: React.FC<VotingTerminalProps> = ({
                       onClick={() => onApprovalClicked?.(false)}
                       className="w-full md:w-max"
                       disabled={voteNowDisabled}
-                      {...(executableWithNextApproval
+                      {...(executableWithNextApproval && !voted
                         ? {mode: 'secondary', bgWhite: true}
                         : {mode: 'primary'})}
                     />
                   </div>
                   {executableWithNextApproval && (
                     <AlertInline
-                      label={t('votingTerminal.approveAndExecute.infoAlert')}
+                      label={
+                        approvals.length < minApproval
+                          ? t('votingTerminal.approveAndExecute.infoAlert')
+                          : t(
+                              'votingTerminal.approveAndExecute.infoAlertApproved'
+                            )
+                      }
                       mode={'neutral'}
                     />
                   )}
@@ -424,10 +436,13 @@ const StatusIcon: React.FC<StatusProp> = ({status}) => {
   }
 };
 
-const Container = styled.div.attrs({
-  className:
-    'md:p-6 py-5 px-4 rounded-xl bg-neutral-0 border border-neutral-100',
-})``;
+const Container = styled.div.attrs<{customClasses?: string}>(
+  ({
+    customClasses = 'md:p-6 py-5 px-4 rounded-xl bg-neutral-0 border border-neutral-100',
+  }) => ({
+    className: customClasses,
+  })
+)<{customClasses?: string}>``;
 
 const Header = styled.div.attrs({
   className: 'md:flex md:flex-row md:space-x-6 space-y-4 md:space-y-0',

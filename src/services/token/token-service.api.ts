@@ -11,6 +11,7 @@ export interface IFetchTokenBalancesParams {
   address: string;
   network: SupportedNetworks;
   ignoreZeroBalances?: boolean;
+  nativeTokenBalance?: bigint;
 }
 
 export interface IFetchTokenTransfersParams {

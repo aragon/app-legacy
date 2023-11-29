@@ -6,7 +6,12 @@ import {
 import {useEffect, useState} from 'react';
 
 import {HookData} from 'utils/types';
-import {PluginTypes, usePluginClient} from './usePluginClient';
+import {
+  GaselessPluginName,
+  PluginTypes,
+  usePluginClient,
+} from './usePluginClient';
+import {useClient as useVocdoniClient} from '@vocdoni/react-providers';
 
 /**
  * Check whether wallet is eligible to vote on proposal
@@ -14,6 +19,8 @@ import {PluginTypes, usePluginClient} from './usePluginClient';
  * @param proposalId proposal id
  * @param pluginAddress plugin for which voting eligibility will be calculated
  * @param pluginType plugin type
+ * @param proposalStatus
+ * @param gaslessProposalId if is a gasless proposal, the id of the proposal on the vochain
  * @returns whether given wallet address is allowed to vote on proposal with given id
  */
 export const useWalletCanVote = (
@@ -21,7 +28,8 @@ export const useWalletCanVote = (
   proposalId: string,
   pluginAddress: string,
   pluginType?: PluginTypes,
-  proposalStatus?: string
+  proposalStatus?: string,
+  gaslessProposalId?: string
 ): HookData<boolean> => {
   const [data, setData] = useState([false, false, false] as
     | boolean[]
@@ -31,10 +39,51 @@ export const useWalletCanVote = (
 
   const isMultisigClient = pluginType === 'multisig.plugin.dao.eth';
   const isTokenVotingClient = pluginType === 'token-voting.plugin.dao.eth';
+  const isGaslessVoting = pluginType === GaselessPluginName;
 
   const client = usePluginClient(pluginType);
+  const {client: vocdoniClient} = useVocdoniClient();
 
   useEffect(() => {
+    async function fetchOnchainVoting() {
+      let canVote;
+
+      if (isMultisigClient) {
+        canVote = [
+          await (client as MultisigClient)?.methods.canApprove({
+            proposalId,
+            approverAddressOrEns: address!,
+          }),
+        ];
+      } else if (isTokenVotingClient) {
+        const canVoteValuesPromises = [
+          VoteValues.ABSTAIN,
+          VoteValues.NO,
+          VoteValues.YES,
+        ].map(vote => {
+          return (client as TokenVotingClient)?.methods.canVote({
+            voterAddressOrEns: address!,
+            proposalId,
+            vote,
+          });
+        });
+        canVote = await Promise.all(canVoteValuesPromises);
+      }
+
+      if (canVote !== undefined) setData(canVote);
+      else setData([false, false, false]);
+    }
+
+    async function fetchCanVoteGasless() {
+      let canVote = false;
+      if (gaslessProposalId) {
+        canVote =
+          (await vocdoniClient.isInCensus(gaslessProposalId)) &&
+          !(await vocdoniClient.hasAlreadyVoted(gaslessProposalId));
+      }
+      setData(canVote);
+    }
+
     async function fetchCanVote() {
       if (!address || !proposalId || !pluginAddress || !pluginType) {
         setData(false);
@@ -43,32 +92,11 @@ export const useWalletCanVote = (
 
       try {
         setIsLoading(true);
-        let canVote;
-
-        if (isMultisigClient) {
-          canVote = [
-            await (client as MultisigClient)?.methods.canApprove({
-              proposalId,
-              approverAddressOrEns: address,
-            }),
-          ];
-        } else if (isTokenVotingClient) {
-          const canVoteValuesPromises = [
-            VoteValues.ABSTAIN,
-            VoteValues.NO,
-            VoteValues.YES,
-          ].map(vote => {
-            return (client as TokenVotingClient)?.methods.canVote({
-              voterAddressOrEns: address,
-              proposalId,
-              vote,
-            });
-          });
-          canVote = await Promise.all(canVoteValuesPromises);
+        if (isGaslessVoting) {
+          await fetchCanVoteGasless();
+          return;
         }
-
-        if (canVote !== undefined) setData(canVote);
-        else setData([false, false, false]);
+        await fetchOnchainVoting();
       } catch (error) {
         console.error(error);
         setError(error as Error);
@@ -82,11 +110,14 @@ export const useWalletCanVote = (
     address,
     client,
     isMultisigClient,
+    isGaslessVoting,
     isTokenVotingClient,
+    gaslessProposalId,
     pluginAddress,
     pluginType,
     proposalId,
     proposalStatus,
+    vocdoniClient,
   ]);
 
   return {

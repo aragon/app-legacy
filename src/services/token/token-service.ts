@@ -1,7 +1,7 @@
 import {AssetBalance, Deposit, TransferType} from '@aragon/sdk-client';
 import {TokenType} from '@aragon/sdk-client-common';
+import {BigNumber} from '@ethersproject/bignumber';
 import {AddressZero} from '@ethersproject/constants';
-import {BigNumber} from 'ethers';
 
 import {getAlchemyProvider} from 'context/providers';
 import {
@@ -13,18 +13,18 @@ import {
 import {TOP_ETH_SYMBOL_ADDRESSES} from 'utils/constants/topSymbolAddresses';
 import {getTokenInfo, isNativeToken} from 'utils/tokens';
 import {CoingeckoError, CoingeckoToken, Token} from './domain';
+import {AlchemyTransfer} from './domain/alchemy-transfer';
 import {CovalentResponse} from './domain/covalent-response';
 import {CovalentToken, CovalentTokenBalance} from './domain/covalent-token';
+import {
+  CovalentTokenTransfer,
+  CovalentTransferInfo,
+} from './domain/covalent-transfer';
 import {
   IFetchTokenBalancesParams,
   IFetchTokenParams,
   IFetchTokenTransfersParams,
 } from './token-service.api';
-import {AlchemyTransfer} from './domain/alchemy-transfer';
-import {
-  CovalentTokenTransfer,
-  CovalentTransferInfo,
-} from './domain/covalent-transfer';
 
 const REPLACEMENT_BASE_ETHER_LOGO_URL =
   'https://assets.coingecko.com/coins/images/279/large/ethereum.png?1595348880';
@@ -182,6 +182,7 @@ class TokenService {
     address,
     network,
     ignoreZeroBalances = true,
+    nativeTokenBalance,
   }: IFetchTokenBalancesParams): Promise<AssetBalance[] | null> => {
     const {networkId} = CHAIN_METADATA[network].covalent ?? {};
 
@@ -212,8 +213,12 @@ class TokenService {
     }
 
     return data.items.flatMap(({native_token, ...item}) => {
-      // ignore zero balances if indicated
-      if (ignoreZeroBalances && BigNumber.from(item.balance).isZero())
+      if (
+        ignoreZeroBalances &&
+        ((native_token && nativeTokenBalance === BigInt(0)) ||
+          BigNumber.from(item.balance).isZero())
+      )
+        // ignore zero balances if indicated
         return [];
 
       return {
@@ -231,7 +236,9 @@ class TokenService {
           : item.nft_data
           ? TokenType.ERC721
           : TokenType.ERC20) as tokenType,
-        balance: BigInt(item.balance),
+        balance: native_token
+          ? (nativeTokenBalance as bigint)
+          : BigInt(item.balance),
         updateDate: new Date(data.updated_at),
       };
     });
@@ -384,11 +391,7 @@ class TokenService {
     transfer: AlchemyTransfer,
     network: SupportedNetworks,
     address: string
-  ): Promise<
-    Deposit & {
-      tokenType: TokenType.ERC20;
-    }
-  > => {
+  ): Promise<Deposit> => {
     const {rawContract, metadata, from, hash} = transfer;
     const provider = getAlchemyProvider(network)!;
 

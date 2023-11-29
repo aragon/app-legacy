@@ -28,7 +28,7 @@ import ConfigureCommunity from 'containers/configureCommunity';
 import DefineMetadata from 'containers/defineMetadata';
 import {useNetwork} from 'context/network';
 import {useDaoToken} from 'hooks/useDaoToken';
-import {PluginTypes} from 'hooks/usePluginClient';
+import {GaselessPluginName, PluginTypes} from 'hooks/usePluginClient';
 import useScreen from 'hooks/useScreen';
 import {useTokenSupply} from 'hooks/useTokenSupply';
 import {useVotingSettings} from 'services/aragon-sdk/queries/use-voting-settings';
@@ -36,6 +36,7 @@ import {Layout} from 'pages/settings';
 import {getDHMFromSeconds} from 'utils/date';
 import {decodeVotingMode, formatUnits, toDisplayEns} from 'utils/library';
 import {ProposeNewSettings} from 'utils/paths';
+import {GaslessPluginVotingSettings} from '@vocdoni/gasless-voting';
 
 type EditMvSettingsProps = {
   daoDetails: DaoDetails;
@@ -53,6 +54,7 @@ export const EditMvSettings: React.FC<EditMvSettingsProps> = ({daoDetails}) => {
 
   const pluginAddress = daoDetails?.plugins?.[0]?.instanceAddress as string;
   const pluginType: PluginTypes = daoDetails?.plugins?.[0]?.id as PluginTypes;
+  const isGasless = pluginType === GaselessPluginName;
 
   const {data: daoToken, isLoading: tokensAreLoading} =
     useDaoToken(pluginAddress);
@@ -66,17 +68,17 @@ export const EditMvSettings: React.FC<EditMvSettingsProps> = ({daoDetails}) => {
       pluginAddress,
       pluginType,
     });
-  const votingSettings = pluginSettings as VotingSettings | undefined;
+  const votingSettings = pluginSettings as
+    | GaslessPluginVotingSettings
+    | VotingSettings
+    | undefined;
 
   const isLoading =
     settingsAreLoading || tokensAreLoading || tokenSupplyIsLoading;
 
-  const dataFetched = !!(
-    !isLoading &&
-    daoToken &&
-    tokenSupply &&
-    votingSettings?.minDuration
-  );
+  const minDuration = votingSettings?.minDuration;
+
+  const dataFetched = !!(!isLoading && daoToken && tokenSupply && minDuration);
 
   const [
     daoName,
@@ -92,6 +94,11 @@ export const EditMvSettings: React.FC<EditMvSettingsProps> = ({daoDetails}) => {
     resourceLinks,
     earlyExecution,
     voteReplacement,
+    executionExpirationMinutes,
+    executionExpirationHours,
+    executionExpirationDays,
+    committee,
+    committeeMinimumApproval,
   ] = useWatch({
     name: [
       'daoName',
@@ -107,13 +114,30 @@ export const EditMvSettings: React.FC<EditMvSettingsProps> = ({daoDetails}) => {
       'daoLinks',
       'earlyExecution',
       'voteReplacement',
+
+      'votingType',
+      'executionExpirationMinutes',
+      'executionExpirationHours',
+      'executionExpirationDays',
+      'committee',
+      'committeeMinimumApproval',
     ],
     control,
   });
 
-  const {days, hours, minutes} = getDHMFromSeconds(
-    votingSettings?.minDuration ?? 0
-  );
+  const {days, hours, minutes} = getDHMFromSeconds(minDuration ?? 0);
+
+  let approvalDays: number | undefined;
+  let approvalHours: number | undefined;
+  let approvalMinutes: number | undefined;
+  if (isGasless) {
+    const {days, hours, minutes} = getDHMFromSeconds(
+      (votingSettings as GaslessPluginVotingSettings)?.minTallyDuration ?? 0
+    );
+    approvalDays = days;
+    approvalHours = hours;
+    approvalMinutes = minutes;
+  }
 
   const controlledLinks = fields.map((field, index) => {
     return {
@@ -176,7 +200,9 @@ export const EditMvSettings: React.FC<EditMvSettingsProps> = ({daoDetails}) => {
 
   // governance
   const daoVotingMode = decodeVotingMode(
-    votingSettings?.votingMode ?? VotingMode.STANDARD
+    isGasless
+      ? VotingMode.STANDARD
+      : (votingSettings as VotingSettings)?.votingMode ?? VotingMode.STANDARD
   );
 
   // TODO: We need to force forms to only use one type, Number or string
@@ -192,6 +218,16 @@ export const EditMvSettings: React.FC<EditMvSettingsProps> = ({daoDetails}) => {
       Number(durationMinutes) !== minutes ||
       earlyExecution !== daoVotingMode.earlyExecution ||
       voteReplacement !== daoVotingMode.voteReplacement;
+  }
+
+  let isGaslessChanged = false;
+  if (isGasless && votingSettings) {
+    isGaslessChanged =
+      Number(executionExpirationMinutes) !== approvalMinutes ||
+      Number(executionExpirationHours) !== approvalHours ||
+      Number(executionExpirationDays) !== approvalDays ||
+      committeeMinimumApproval !== committee;
+    // committee !== committeList; // todo(kon): implement it
   }
 
   // calculate proposer
@@ -219,9 +255,12 @@ export const EditMvSettings: React.FC<EditMvSettingsProps> = ({daoDetails}) => {
     ).toString();
   }
 
+  // Note: formProposerTokenAmount may be an empty string
   const isCommunityChanged =
     daoEligibleProposer !== formEligibleProposer ||
-    !BigNumber.from(daoProposerTokenAmount).eq(formProposerTokenAmount ?? 0);
+    !BigNumber.from(daoProposerTokenAmount).eq(
+      formProposerTokenAmount !== '' ? formProposerTokenAmount : 0
+    );
 
   const setCurrentMetadata = useCallback(() => {
     setValue('daoName', daoDetails?.metadata.name);
@@ -272,7 +311,9 @@ export const EditMvSettings: React.FC<EditMvSettingsProps> = ({daoDetails}) => {
     setValue('tokenDecimals', daoToken?.decimals || 18);
 
     const votingMode = decodeVotingMode(
-      votingSettings.votingMode || VotingMode.STANDARD
+      isGasless
+        ? VotingMode.STANDARD
+        : (votingSettings as VotingSettings)?.votingMode ?? VotingMode.STANDARD
     );
 
     setValue('earlyExecution', votingMode.earlyExecution);
@@ -294,25 +335,61 @@ export const EditMvSettings: React.FC<EditMvSettingsProps> = ({daoDetails}) => {
     daoToken?.decimals,
     days,
     hours,
+    isGasless,
     minutes,
     setValue,
     tokenSupply?.formatted,
     votingSettings,
   ]);
 
+  const setCurrentGasless = useCallback(() => {
+    if (!isGasless) return;
+
+    setValue('votingType', 'gasless');
+    setValue('executionExpirationMinutes', approvalMinutes);
+    setValue('executionExpirationHours', approvalHours);
+    setValue('executionExpirationDays', approvalDays);
+    // todo(kon): implement this
+    // setValue('committee', []);
+    setValue(
+      'committeeMinimumApproval',
+      (votingSettings as GaslessPluginVotingSettings).minTallyApprovals
+    );
+  }, [
+    approvalDays,
+    approvalHours,
+    approvalMinutes,
+    isGasless,
+    setValue,
+    votingSettings,
+  ]);
+
   const settingsUnchanged =
-    !isGovernanceChanged && !isMetadataChanged && !isCommunityChanged;
+    !isGovernanceChanged &&
+    !isMetadataChanged &&
+    !isCommunityChanged &&
+    !isGaslessChanged;
 
   const handleResetChanges = () => {
     setCurrentMetadata();
     setCurrentCommunity();
     setCurrentGovernance();
+    setCurrentGasless();
   };
 
   useEffect(() => {
     setValue('isMetadataChanged', isMetadataChanged);
-    setValue('areSettingsChanged', isCommunityChanged || isGovernanceChanged);
-  }, [isCommunityChanged, isGovernanceChanged, isMetadataChanged, setValue]);
+    setValue(
+      'areSettingsChanged',
+      isCommunityChanged || isGovernanceChanged || isGaslessChanged
+    );
+  }, [
+    isCommunityChanged,
+    isGaslessChanged,
+    isGovernanceChanged,
+    isMetadataChanged,
+    setValue,
+  ]);
 
   useEffect(() => {
     if (dataFetched && !isDirty) {
@@ -365,6 +442,20 @@ export const EditMvSettings: React.FC<EditMvSettingsProps> = ({daoDetails}) => {
       callback: setCurrentGovernance,
     },
   ];
+
+  /*todo(kon): fix or remove before pr turn to non-draft*/
+  // const gaslessAction = [
+  //   {
+  //     component: (
+  //       <ListItemAction
+  //         title={t('settings.resetChanges')}
+  //         bgWhite
+  //         mode={isGaslessChanged ? 'default' : 'disabled'}
+  //       />
+  //     ),
+  //     callback: setCurrentGasless,
+  //   },
+  // ];
 
   if (isLoading) {
     return <Loading />;
@@ -436,6 +527,21 @@ export const EditMvSettings: React.FC<EditMvSettingsProps> = ({daoDetails}) => {
                   <ConfigureCommunity isSettingPage />
                 </AccordionContent>
               </AccordionItem>
+
+              {/*todo(kon): this is not going to work until the executive committe list can be retrieved */}
+              {/*<AccordionItem*/}
+              {/*  type="action-builder"*/}
+              {/*  name="committee"*/}
+              {/*  methodName={t('createDAO.review.executionMultisig')}*/}
+              {/*  alertLabel={*/}
+              {/*    isGaslessChanged ? t('settings.newSettings') : undefined*/}
+              {/*  }*/}
+              {/*  dropdownItems={gaslessAction}*/}
+              {/*>*/}
+              {/*  <AccordionContent>*/}
+              {/*    <DefineCommittee />*/}
+              {/*  </AccordionContent>*/}
+              {/*</AccordionItem>*/}
             </AccordionMultiple>
           </Container>
           {/* Footer */}

@@ -16,7 +16,7 @@ import {CHAIN_METADATA} from 'utils/constants';
 import {Action, ExecutionStatus} from 'utils/types';
 import {ActionsFilter} from './actionsFilter';
 
-type ExecutionWidgetProps = {
+export type ExecutionWidgetProps = {
   pluginType?: PluginTypes;
   txhash?: string;
   actions?: Array<Action | undefined>;

@@ -13,9 +13,9 @@ import {
 } from 'containers/networkErrorMenu';
 import {useGlobalModalContext} from 'context/globalModals';
 import {useNetwork} from 'context/network';
-import {PluginTypes} from 'hooks/usePluginClient';
+import {GaselessPluginName, PluginTypes} from 'hooks/usePluginClient';
 import WalletIcon from 'public/wallet.svg';
-import {Governance, Community} from 'utils/paths';
+import {Community, Governance} from 'utils/paths';
 import {
   Erc20WrapperTokenDetails,
   MajorityVotingSettings,
@@ -38,8 +38,9 @@ export const GatingMenu: React.FC = () => {
 
   const {data: daoDetails} = useDaoDetailsQuery();
   const {plugins, ensDomain, address} = daoDetails ?? {};
-  const daoName =
+  const daoDisplayName =
     toDisplayEns(ensDomain) !== '' ? toDisplayEns(ensDomain) : address;
+  const daoName = daoDetails?.metadata.name;
 
   const {data: daoToken} = useDaoToken(plugins?.[0].instanceAddress);
   const {isDAOTokenWrapped} = useExistingToken({daoDetails, daoToken});
@@ -50,20 +51,28 @@ export const GatingMenu: React.FC = () => {
   });
 
   const handleCloseMenu = () => {
-    const governancePath = generatePath(Governance, {network, dao: daoName});
+    const governancePath = generatePath(Governance, {
+      network,
+      dao: daoDisplayName,
+    });
     navigate(governancePath);
     close();
   };
 
   const handleWrapTokens = () => {
-    const communityPath = generatePath(Community, {network, dao: daoName});
+    const communityPath = generatePath(Community, {
+      network,
+      dao: daoDisplayName,
+    });
     navigate(communityPath);
     close();
     handleOpenModal();
   };
 
   const pluginType = plugins?.[0].id as PluginTypes;
-  const isTokenBasedDao = pluginType === 'token-voting.plugin.dao.eth';
+  const isTokenBasedDao =
+    pluginType === 'token-voting.plugin.dao.eth' ||
+    pluginType === GaselessPluginName;
 
   const displayWrapToken = isTokenBasedDao && isDAOTokenWrapped;
   const wrapTokenSymbol =
@@ -81,7 +90,6 @@ export const GatingMenu: React.FC = () => {
     <ModalBottomSheetSwitcher isOpen={isOpen} onClose={handleCloseMenu}>
       <ModalBody>
         <StyledImage src={WalletIcon} />
-
         {displayWrapToken && (
           <WarningContainer>
             <WarningTitle>{t('modalAlert.wrapToken.title')}</WarningTitle>
@@ -96,7 +104,6 @@ export const GatingMenu: React.FC = () => {
             </WarningDescription>
           </WarningContainer>
         )}
-
         {isTokenBasedDao && !isDAOTokenWrapped && (
           <WarningContainer>
             <WarningTitle>{t('alert.gatingUsers.tokenTitle')}</WarningTitle>
@@ -110,16 +117,16 @@ export const GatingMenu: React.FC = () => {
             </WarningDescription>
           </WarningContainer>
         )}
-
         {!isTokenBasedDao && (
           <WarningContainer>
             <WarningTitle>{t('alert.gatingUsers.walletTitle')}</WarningTitle>
             <WarningDescription>
-              {t('alert.gatingUsers.walletDescription')}
+              {t('alert.gatingUsers.walletDescription', {
+                daoName: daoName,
+              })}
             </WarningDescription>
           </WarningContainer>
         )}
-
         {displayWrapToken ? (
           <div className="grid grid-cols-2 gap-6">
             <ButtonText
