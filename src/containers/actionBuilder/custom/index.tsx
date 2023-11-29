@@ -16,7 +16,7 @@ import {
 } from '@restspace/schema-form/build/components/schema-form-interfaces';
 import {useFormContext} from 'react-hook-form';
 import {transformation} from 'utils/transformation/transformation';
-import {TokenInput} from 'utils/schemaForm/tokenInput';
+import {WalletTokenInput} from 'utils/schemaForm/tokenInput';
 import {useDaoDetailsQuery} from 'hooks/useDaoDetails';
 
 type CustomActionProps = ActionIndex & {
@@ -121,7 +121,7 @@ const CustomAction: React.FC<CustomActionProps> = ({
   };
 
   const containers: IContainerMap = {
-    token: TokenInput,
+    token: WalletTokenInput,
   };
 
   if (isLoading)

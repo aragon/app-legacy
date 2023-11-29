@@ -5,7 +5,7 @@ import {
   ValueDispatch,
 } from '@restspace/schema-form';
 import {
-  TokenInput as TokenInputInner,
+  WalletTokenInput as WalletTokenInputInner,
   TokenInputValue,
 } from '../../components/tokenInput';
 import {Label} from '@aragon/ods-old';
@@ -18,7 +18,7 @@ import {Label} from '@aragon/ods-old';
  * @param value The current value shown in the component
  * @returns React component
  */
-export const TokenInput = ({
+export const WalletTokenInput = ({
   schema: schemaObj,
   path,
   value,
@@ -38,7 +38,7 @@ export const TokenInput = ({
         label={schema.title as string}
         helpText={schema.description as string}
       />
-      <TokenInputInner
+      <WalletTokenInputInner
         tokenAmount={tokenInputValue.amount}
         tokenAddress={tokenInputValue.address}
         showAmount={!!schema.showAmount}

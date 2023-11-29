@@ -3,8 +3,10 @@ import {useDaoBalances} from 'hooks/useDaoBalances';
 import {useDaoDetailsQuery} from 'hooks/useDaoDetails';
 import {useTokenMetadata} from 'hooks/useTokenMetadata';
 import React, {ChangeEvent, useEffect, useState} from 'react';
+import {useNetworkTokens} from 'services/aragon-backend/queries/use-network-tokens';
 import {styled} from 'styled-components';
 import {formatUnits} from 'utils/library';
+import {TokenWithMetadata} from 'utils/types';
 
 export interface TokenInputValue {
   amount?: number;
@@ -12,7 +14,7 @@ export interface TokenInputValue {
   decimals: number;
   symbol: string;
   name: string;
-  balance: string;
+  balance?: string;
 }
 
 export interface TokenInputProps {
@@ -23,33 +25,30 @@ export interface TokenInputProps {
   disabled?: boolean;
 }
 
-export const TokenInput: React.FC<TokenInputProps> = ({
+interface TokenInputPropsWithData extends TokenInputProps {
+  isLoading?: boolean;
+  tokensWithMetadata: TokenWithMetadata[];
+}
+
+/**
+ * Display only Token Input component
+ */
+const TokenInput: React.FC<TokenInputPropsWithData> = ({
   tokenAmount,
   tokenAddress,
   showAmount,
   onChange,
   disabled,
+  isLoading,
+  tokensWithMetadata,
 }) => {
-  const {data: daoDetails, isLoading: isDaoDetailsLoading} =
-    useDaoDetailsQuery();
-
-  const {data: balances, isLoading: isBalancesLoading} = useDaoBalances(
-    daoDetails?.address ?? ''
-  );
-  const {data: tokensWithMetadata, isLoading: isTokensMetadataLoading} =
-    useTokenMetadata(balances);
-  const network = useNetwork();
-
   const [amount, setAmount] = useState(tokenAmount);
   const [address, setAddress] = useState(tokenAddress);
 
-  const isLoading =
-    isDaoDetailsLoading || isBalancesLoading || isTokensMetadataLoading;
   const isEmpty =
     isLoading || !tokensWithMetadata.some(t => t.metadata.id === tokenAddress);
 
   useEffect(() => {
-    network.network;
     if (!isLoading) {
       const tok = tokensWithMetadata.find(t => t.metadata.id === address);
       const tokenValue =
@@ -116,6 +115,62 @@ export const TokenInput: React.FC<TokenInputProps> = ({
         )}
       </StyledSelect>
     </Container>
+  );
+};
+
+export const WalletTokenInput: React.FC<TokenInputProps> = ({
+  tokenAmount,
+  tokenAddress,
+  showAmount,
+  onChange,
+  disabled,
+}) => {
+  const {data: daoDetails, isLoading: isDaoDetailsLoading} =
+    useDaoDetailsQuery();
+
+  const {data: balances, isLoading: isBalancesLoading} = useDaoBalances(
+    daoDetails?.address ?? ''
+  );
+  const {data: tokensWithMetadata, isLoading: isTokensMetadataLoading} =
+    useTokenMetadata(balances);
+
+  const isLoading =
+    isDaoDetailsLoading || isBalancesLoading || isTokensMetadataLoading;
+
+  return (
+    <TokenInput
+      tokenAmount={tokenAmount}
+      tokenAddress={tokenAddress}
+      showAmount={showAmount}
+      onChange={onChange}
+      disabled={disabled}
+      isLoading={isLoading}
+      tokensWithMetadata={tokensWithMetadata ?? []}
+    />
+  );
+};
+
+export const NetworkTokenInput: React.FC<TokenInputProps> = ({
+  tokenAmount,
+  tokenAddress,
+  showAmount,
+  onChange,
+  disabled,
+}) => {
+  const {network} = useNetwork();
+
+  const {data: tokens, isLoading} = useNetworkTokens(network);
+
+  return (
+    <TokenInput
+      tokenAmount={tokenAmount}
+      tokenAddress={tokenAddress}
+      showAmount={showAmount}
+      onChange={onChange}
+      disabled={disabled}
+      isLoading={isLoading}
+      tokensWithMetadata={tokensWithMetadata ?? []}
+    />
   );
 };
 
