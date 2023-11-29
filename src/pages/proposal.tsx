@@ -574,10 +574,14 @@ export const Proposal: React.FC = () => {
     votingSettings.votingMode === VotingMode.VOTE_REPLACEMENT;
 
   const votingDisabled =
-    proposal?.status !== ProposalStatus.ACTIVE ||
-    (isMultisigPlugin && voted) ||
-    (isGaslessVotingPlugin && voted) ||
-    (isTokenVotingPlugin && voted && !canRevote);
+    // wallet should be connected and on the
+    // right network before we disable the button
+    isConnected &&
+    !isOnWrongNetwork &&
+    (proposal?.status !== ProposalStatus.ACTIVE ||
+      (isMultisigPlugin && (voted || canVote === false)) ||
+      (isGaslessVotingPlugin && voted) ||
+      (isTokenVotingPlugin && voted && !canRevote));
 
   const handleApprovalClick = useCallback(
     (tryExecution: boolean) => {
