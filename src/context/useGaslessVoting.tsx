@@ -113,7 +113,7 @@ export const useGaslessHasAlreadyVote = ({
   proposal: DetailedProposal | undefined | null;
 }) => {
   const [hasAlreadyVote, setHasAlreadyVote] = useState(false);
-  const {client} = useClient();
+  const {client, signer} = useClient();
   const {address} = useWallet();
 
   useEffect(() => {
@@ -124,7 +124,11 @@ export const useGaslessHasAlreadyVote = ({
         return;
       }
       setHasAlreadyVote(
-        !!(await client.hasAlreadyVoted(p!.vochainProposalId!))
+        // !!(await client.hasAlreadyVoted(p!.vochainProposalId!))
+        !!(await client.hasAlreadyVoted({
+          wallet: signer,
+          electionId: p!.vochainProposalId!,
+        }))
       );
     };
     if (
@@ -135,7 +139,7 @@ export const useGaslessHasAlreadyVote = ({
     ) {
       checkAlreadyVote();
     }
-  }, [address, client, proposal]);
+  }, [address, client, proposal, signer]);
 
   return {hasAlreadyVote};
 };
