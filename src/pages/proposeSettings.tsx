@@ -74,6 +74,9 @@ import {
   ProposalId,
   ProposalResource,
 } from 'utils/types';
+import {DefineProposal} from 'containers/defineProposal/';
+import {ProposalCreationStepValue} from '@aragon/sdk-client';
+import {CreateGasslessProposalParams} from '@vocdoni/gasless-voting';
 import {aragonSubgraphQueryKeys} from 'services/aragon-subgraph/query-keys';
 
 export const ProposeSettings: React.FC = () => {
@@ -607,11 +610,13 @@ const ProposeSettingWrapper: React.FC<Props> = ({
     }
     if (!proposalCreationData) return;
 
-    // todo(kon): implement this
-    // The propose settings flow is not currently handled by the gasless voting client
-    if (!proposalCreationData || isGaslessVotingClient(pluginClient)) return;
-
-    return pluginClient?.estimation.createProposal(proposalCreationData);
+    return isGaslessVotingClient(pluginClient)
+      ? pluginClient.estimation.createProposal(
+          proposalCreationData as CreateGasslessProposalParams
+        )
+      : pluginClient.estimation.createProposal(
+          proposalCreationData as CreateMajorityVotingProposalParams
+        );
   }, [pluginClient, proposalCreationData]);
 
   const {
@@ -666,26 +671,15 @@ const ProposeSettingWrapper: React.FC<Props> = ({
       return;
     }
 
-    // let proposalIterator: AsyncGenerator<ProposalCreationStepValue>;
-    // if (isGaslessVotingClient(pluginClient)) {
-    //   proposalIterator = (
-    //     pluginClient as GaslessVotingClient
-    //   ).methods.createProposal(
-    //     proposalCreationData as CreateGasslessProposalParams
-    //   );
-    // } else {
-    //   proposalIterator =
-    //     pluginClient.methods.createProposal(proposalCreationData);
-    // }
-
-    // todo(kon): implement this
-    // The propose settings flow is not currently handled by the gasless voting client
+    let proposalIterator: AsyncGenerator<ProposalCreationStepValue>;
     if (isGaslessVotingClient(pluginClient)) {
-      return;
+      proposalIterator = pluginClient.methods.createProposal(
+        proposalCreationData as CreateGasslessProposalParams
+      );
+    } else {
+      proposalIterator =
+        pluginClient.methods.createProposal(proposalCreationData);
     }
-
-    const proposalIterator =
-      pluginClient.methods.createProposal(proposalCreationData);
 
     if (creationProcessState === TransactionState.SUCCESS) {
       handleCloseModal();

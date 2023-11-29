@@ -37,6 +37,8 @@ import {getDHMFromSeconds} from 'utils/date';
 import {decodeVotingMode, formatUnits, toDisplayEns} from 'utils/library';
 import {ProposeNewSettings} from 'utils/paths';
 import {GaslessPluginVotingSettings} from '@vocdoni/gasless-voting';
+import DefineExecutionMultisig from '../defineExecutionMultisig';
+import {MultisigWalletField} from '../../components/multisigWallets/row';
 
 type EditMvSettingsProps = {
   daoDetails: DaoDetails;
@@ -114,8 +116,6 @@ export const EditMvSettings: React.FC<EditMvSettingsProps> = ({daoDetails}) => {
       'daoLinks',
       'earlyExecution',
       'voteReplacement',
-
-      'votingType',
       'executionExpirationMinutes',
       'executionExpirationHours',
       'executionExpirationDays',
@@ -130,13 +130,16 @@ export const EditMvSettings: React.FC<EditMvSettingsProps> = ({daoDetails}) => {
   let approvalDays: number | undefined;
   let approvalHours: number | undefined;
   let approvalMinutes: number | undefined;
-  if (isGasless) {
+  let executionMultisigMembers: string[] | undefined;
+  if (isGasless && votingSettings) {
     const {days, hours, minutes} = getDHMFromSeconds(
-      (votingSettings as GaslessPluginVotingSettings)?.minTallyDuration ?? 0
+      (votingSettings as GaslessPluginVotingSettings).minTallyDuration ?? 0
     );
     approvalDays = days;
     approvalHours = hours;
     approvalMinutes = minutes;
+    executionMultisigMembers = (votingSettings as GaslessPluginVotingSettings)
+      .executionMultisigMembers;
   }
 
   const controlledLinks = fields.map((field, index) => {
@@ -220,15 +223,35 @@ export const EditMvSettings: React.FC<EditMvSettingsProps> = ({daoDetails}) => {
       voteReplacement !== daoVotingMode.voteReplacement;
   }
 
-  let isGaslessChanged = false;
-  if (isGasless && votingSettings) {
-    isGaslessChanged =
-      Number(executionExpirationMinutes) !== approvalMinutes ||
-      Number(executionExpirationHours) !== approvalHours ||
-      Number(executionExpirationDays) !== approvalDays ||
-      committeeMinimumApproval !== committee;
-    // committee !== committeList; // todo(kon): implement it
-  }
+  const isGaslessChanged = useMemo(() => {
+    if (isGasless && votingSettings) {
+      return (
+        Number(executionExpirationMinutes) !== approvalMinutes ||
+        Number(executionExpirationHours) !== approvalHours ||
+        Number(executionExpirationDays) !== approvalDays ||
+        committeeMinimumApproval !==
+          (votingSettings as GaslessPluginVotingSettings).minTallyApprovals ||
+        JSON.stringify(
+          (committee as MultisigWalletField[])
+            .map(wallet => wallet.address)
+            .sort()
+        ) !== JSON.stringify(executionMultisigMembers?.sort())
+      );
+    }
+    return false;
+  }, [
+    approvalDays,
+    approvalHours,
+    approvalMinutes,
+    committee,
+    committeeMinimumApproval,
+    executionExpirationDays,
+    executionExpirationHours,
+    executionExpirationMinutes,
+    executionMultisigMembers,
+    isGasless,
+    votingSettings,
+  ]);
 
   // calculate proposer
   let daoEligibleProposer: TokenVotingProposalEligibility =
@@ -346,11 +369,17 @@ export const EditMvSettings: React.FC<EditMvSettingsProps> = ({daoDetails}) => {
     if (!isGasless) return;
 
     setValue('votingType', 'gasless');
-    setValue('executionExpirationMinutes', approvalMinutes);
-    setValue('executionExpirationHours', approvalHours);
-    setValue('executionExpirationDays', approvalDays);
-    // todo(kon): implement this
-    // setValue('committee', []);
+    setValue('executionExpirationMinutes', approvalMinutes?.toString());
+    setValue('executionExpirationHours', approvalHours?.toString());
+    setValue('executionExpirationDays', approvalDays?.toString());
+    setValue(
+      'committee',
+      executionMultisigMembers?.map(wallet => ({
+        address: wallet,
+        ensName: '',
+      })) as MultisigWalletField[]
+    );
+
     setValue(
       'committeeMinimumApproval',
       (votingSettings as GaslessPluginVotingSettings).minTallyApprovals
@@ -396,11 +425,13 @@ export const EditMvSettings: React.FC<EditMvSettingsProps> = ({daoDetails}) => {
       setCurrentMetadata();
       setCurrentCommunity();
       setCurrentGovernance();
+      setCurrentGasless();
     }
   }, [
     dataFetched,
     isDirty,
     setCurrentCommunity,
+    setCurrentGasless,
     setCurrentGovernance,
     setCurrentMetadata,
   ]);
@@ -443,19 +474,18 @@ export const EditMvSettings: React.FC<EditMvSettingsProps> = ({daoDetails}) => {
     },
   ];
 
-  /*todo(kon): fix or remove before pr turn to non-draft*/
-  // const gaslessAction = [
-  //   {
-  //     component: (
-  //       <ListItemAction
-  //         title={t('settings.resetChanges')}
-  //         bgWhite
-  //         mode={isGaslessChanged ? 'default' : 'disabled'}
-  //       />
-  //     ),
-  //     callback: setCurrentGasless,
-  //   },
-  // ];
+  const gaslessAction = [
+    {
+      component: (
+        <ListItemAction
+          title={t('settings.resetChanges')}
+          bgWhite
+          mode={isGaslessChanged ? 'default' : 'disabled'}
+        />
+      ),
+      callback: setCurrentGasless,
+    },
+  ];
 
   if (isLoading) {
     return <Loading />;
@@ -528,20 +558,21 @@ export const EditMvSettings: React.FC<EditMvSettingsProps> = ({daoDetails}) => {
                 </AccordionContent>
               </AccordionItem>
 
-              {/*todo(kon): this is not going to work until the executive committe list can be retrieved */}
-              {/*<AccordionItem*/}
-              {/*  type="action-builder"*/}
-              {/*  name="committee"*/}
-              {/*  methodName={t('createDAO.review.executionMultisig')}*/}
-              {/*  alertLabel={*/}
-              {/*    isGaslessChanged ? t('settings.newSettings') : undefined*/}
-              {/*  }*/}
-              {/*  dropdownItems={gaslessAction}*/}
-              {/*>*/}
-              {/*  <AccordionContent>*/}
-              {/*    <DefineCommittee />*/}
-              {/*  </AccordionContent>*/}
-              {/*</AccordionItem>*/}
+              {isGasless && (
+                <AccordionItem
+                  type="action-builder"
+                  name="executionMultisig"
+                  methodName={t('label.executionMultisig')}
+                  alertLabel={
+                    isGaslessChanged ? t('settings.newSettings') : undefined
+                  }
+                  dropdownItems={gaslessAction}
+                >
+                  <AccordionContent>
+                    <DefineExecutionMultisig />
+                  </AccordionContent>
+                </AccordionItem>
+              )}
             </AccordionMultiple>
           </Container>
           {/* Footer */}

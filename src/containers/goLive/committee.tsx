@@ -15,7 +15,6 @@ import CommitteeAddressesModal from '../committeeAddressesModal';
 const Committee = () => {
   const {control, getValues} = useFormContext();
   const {setStep} = useFormStep();
-  const {open} = useGlobalModalContext();
   const {t} = useTranslation();
 
   const {
@@ -46,59 +45,90 @@ const Committee = () => {
           tagLabel={t('labels.changeableVote')}
           onChecked={() => onChange(!value)}
         >
-          <Dl>
-            <Dt>{t('labels.review.eligibleMembers')}</Dt>
-            <Dd>{t('labels.multisigMembers')}</Dd>
-          </Dl>
-          <Dl>
-            <Dt>{t('labels.members')}</Dt>
-            <Dd>
-              <Link
-                label={t('createDAO.review.distributionLink', {
-                  count: committee?.length,
-                })}
-                onClick={() => open('committeeMembers')}
-              />
-            </Dd>
-          </Dl>
-          <Dl>
-            <Dt>{t('labels.minimumApproval')}</Dt>
-            <Dd>
-              {t('labels.review.multisigMinimumApprovals', {
-                count: committeeMinimumApproval,
-                total: committee.length,
-              })}
-            </Dd>
-          </Dl>
-          <Dl>
-            <Dt>{t('createDao.executionMultisig.executionTitle')}</Dt>
-            <Dd>
-              <div className="flex space-x-1.5">
-                <div>
-                  {t('createDAO.review.days', {days: executionExpirationDays})}
-                </div>
-                {executionExpirationHours > 0 && (
-                  <div>
-                    {t('createDAO.review.hours', {
-                      hours: executionExpirationHours,
-                    })}
-                  </div>
-                )}
-                {executionExpirationMinutes > 0 && (
-                  <div>
-                    {t('createDAO.review.minutes', {
-                      minutes: executionExpirationMinutes,
-                    })}
-                  </div>
-                )}
-              </div>
-            </Dd>
-          </Dl>
-
-          <CommitteeAddressesModal />
+          <ReviewExecutionMultisig
+            committee={committee}
+            committeeMinimumApproval={committeeMinimumApproval}
+            executionExpirationMinutes={executionExpirationMinutes}
+            executionExpirationHours={executionExpirationHours}
+            executionExpirationDays={executionExpirationDays}
+          />
         </DescriptionListContainer>
       )}
     />
+  );
+};
+
+export type ReviewExecutionMultisigProps = {
+  committee: string[];
+  committeeMinimumApproval: number;
+  executionExpirationMinutes: number;
+  executionExpirationHours: number;
+  executionExpirationDays: number;
+};
+export const ReviewExecutionMultisig: React.FC<
+  ReviewExecutionMultisigProps
+> = ({
+  committee,
+  committeeMinimumApproval,
+  executionExpirationMinutes,
+  executionExpirationHours,
+  executionExpirationDays,
+}) => {
+  const {t} = useTranslation();
+  const {open} = useGlobalModalContext();
+
+  return (
+    <>
+      <Dl>
+        <Dt>{t('labels.review.eligibleMembers')}</Dt>
+        <Dd>{t('labels.multisigMembers')}</Dd>
+      </Dl>
+      <Dl>
+        <Dt>{t('labels.members')}</Dt>
+        <Dd>
+          <Link
+            label={t('createDAO.review.distributionLink', {
+              count: committee?.length || 0,
+            })}
+            onClick={() => open('committeeMembers')}
+          />
+        </Dd>
+      </Dl>
+      <Dl>
+        <Dt>{t('labels.minimumApproval')}</Dt>
+        <Dd>
+          {committeeMinimumApproval}&nbsp;
+          {t('labels.review.multisigMinimumApprovals', {
+            count: committee?.length || 0,
+          })}
+        </Dd>
+      </Dl>
+      <Dl>
+        <Dt>{t('createDao.executionMultisig.executionTitle')}</Dt>
+        <Dd>
+          <div className="flex space-x-1.5">
+            <div>
+              {t('createDAO.review.days', {days: executionExpirationDays})}
+            </div>
+            {executionExpirationHours > 0 && (
+              <div>
+                {t('createDAO.review.hours', {
+                  hours: executionExpirationHours,
+                })}
+              </div>
+            )}
+            {executionExpirationMinutes > 0 && (
+              <div>
+                {t('createDAO.review.minutes', {
+                  minutes: executionExpirationMinutes,
+                })}
+              </div>
+            )}
+          </div>
+        </Dd>
+      </Dl>
+      <CommitteeAddressesModal />
+    </>
   );
 };
 
