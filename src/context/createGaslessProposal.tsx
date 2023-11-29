@@ -153,7 +153,7 @@ const useCreateGaslessProposal = ({
   const createCensus = useCallback(async (): Promise<TokenCensus> => {
     async function getCensus3Token(): Promise<Census3Token> {
       let attempts = 0;
-      const maxAttempts = 5;
+      const maxAttempts = 6;
 
       while (attempts < maxAttempts) {
         const censusToken = await census3.getToken(daoToken!.address, chainId);
@@ -162,7 +162,7 @@ const useCreateGaslessProposal = ({
         }
         attempts++;
         if (attempts < maxAttempts) {
-          await new Promise(resolve => setTimeout(resolve, 6000));
+          await new Promise(resolve => setTimeout(resolve, 10000));
         }
       }
       throw Error('Census token is not already calculated, try again later');
