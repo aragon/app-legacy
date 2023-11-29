@@ -1,12 +1,15 @@
+import {TokenType} from '@aragon/sdk-client-common';
 import {useNetwork} from 'context/network';
+import {constants} from 'ethers';
 import {useDaoBalances} from 'hooks/useDaoBalances';
 import {useDaoDetailsQuery} from 'hooks/useDaoDetails';
-import {useTokenMetadata} from 'hooks/useTokenMetadata';
 import React, {ChangeEvent, useEffect, useState} from 'react';
 import {useNetworkTokens} from 'services/aragon-backend/queries/use-network-tokens';
+import {useToken} from 'services/token/queries/use-token';
+import {IFetchTokenParams} from 'services/token/token-service.api';
 import {styled} from 'styled-components';
+import {CHAIN_METADATA, SupportedNetworks} from 'utils/constants';
 import {formatUnits} from 'utils/library';
-import {TokenWithMetadata} from 'utils/types';
 
 export interface TokenInputValue {
   amount?: number;
@@ -17,9 +20,17 @@ export interface TokenInputValue {
   balance?: string;
 }
 
+export interface TokenDropdownValue {
+  address: string;
+  symbol: string;
+  balance?: BigInt;
+  decimals?: number;
+}
+
 export interface TokenInputProps {
   tokenAmount?: number;
   tokenAddress?: string;
+  network?: SupportedNetworks;
   showAmount?: boolean;
   onChange?: (tokenVal?: TokenInputValue) => void;
   disabled?: boolean;
@@ -27,7 +38,7 @@ export interface TokenInputProps {
 
 interface TokenInputPropsWithData extends TokenInputProps {
   isLoading?: boolean;
-  tokensWithMetadata: TokenWithMetadata[];
+  tokensDropdown: TokenDropdownValue[];
 }
 
 /**
@@ -36,35 +47,41 @@ interface TokenInputPropsWithData extends TokenInputProps {
 const TokenInput: React.FC<TokenInputPropsWithData> = ({
   tokenAmount,
   tokenAddress,
+  network,
   showAmount,
   onChange,
   disabled,
   isLoading,
-  tokensWithMetadata,
+  tokensDropdown,
 }) => {
   const [amount, setAmount] = useState(tokenAmount);
-  const [address, setAddress] = useState(tokenAddress);
+  const [tokenDropdownValue, setTokenDropdownValue] = useState<
+    TokenDropdownValue | undefined
+  >(undefined);
+
+  const {data: token} = useToken(
+    {
+      address: tokenDropdownValue?.address || '',
+      network: network || 'ethereum',
+    },
+    {enabled: !!tokenDropdownValue?.address}
+  );
 
   const isEmpty =
-    isLoading || !tokensWithMetadata.some(t => t.metadata.id === tokenAddress);
+    isLoading || !tokensDropdown.some(t => t.address === tokenAddress);
 
   useEffect(() => {
-    if (!isLoading) {
-      const tok = tokensWithMetadata.find(t => t.metadata.id === address);
-      const tokenValue =
-        tok === undefined
-          ? undefined
-          : ({
-              amount,
-              address: tok.metadata.id,
-              decimals: tok?.metadata.decimals,
-              symbol: tok?.metadata.symbol,
-              name: tok?.metadata.name,
-              balance: tok?.balance.toString(),
-            } as TokenInputValue);
-      onChange?.(tokenValue);
+    if (token && tokenDropdownValue) {
+      onChange?.({
+        amount,
+        address: tokenDropdownValue.address,
+        decimals: tokenDropdownValue.decimals || 18,
+        symbol: token.symbol,
+        name: token.name,
+        balance: tokenDropdownValue.balance?.toString(),
+      });
     }
-  }, [amount, address, tokensWithMetadata, isLoading, onChange]);
+  }, [token]);
 
   const handleInputChange = (ev: ChangeEvent<HTMLInputElement>) => {
     const amt = parseFloat(ev.currentTarget.value);
@@ -74,7 +91,8 @@ const TokenInput: React.FC<TokenInputPropsWithData> = ({
 
   const handleSelectChange = (ev: ChangeEvent<HTMLSelectElement>) => {
     const addr = ev.currentTarget.value;
-    setAddress(addr);
+    const tok = tokensDropdown.find(t => t.address === addr);
+    setTokenDropdownValue(tok);
   };
 
   return (
@@ -97,18 +115,22 @@ const TokenInput: React.FC<TokenInputPropsWithData> = ({
         ) : (
           <>
             <option key="" value="" selected={isEmpty}>
-              {tokensWithMetadata.length === 0
+              {tokensDropdown.length === 0
                 ? 'No tokens available'
                 : 'Choose a token'}
             </option>
-            {tokensWithMetadata.map(token => (
+            {tokensDropdown.map(token => (
               <option
-                key={token.metadata.id}
-                value={token.metadata.id}
-                selected={address === token.metadata.id}
+                key={token.address}
+                value={token.address}
+                selected={tokenDropdownValue?.address === token.address}
               >
-                {token.metadata.symbol} (
-                {formatUnits(token.balance, token.metadata.decimals)})
+                {token.symbol}
+                {token?.balance !== undefined &&
+                  token?.decimals !== undefined &&
+                  '(' +
+                    formatUnits(token.balance.toString(), token.decimals) +
+                    ')'}
               </option>
             ))}
           </>
@@ -125,17 +147,37 @@ export const WalletTokenInput: React.FC<TokenInputProps> = ({
   onChange,
   disabled,
 }) => {
+  const {network} = useNetwork();
+
   const {data: daoDetails, isLoading: isDaoDetailsLoading} =
     useDaoDetailsQuery();
 
   const {data: balances, isLoading: isBalancesLoading} = useDaoBalances(
     daoDetails?.address ?? ''
   );
-  const {data: tokensWithMetadata, isLoading: isTokensMetadataLoading} =
-    useTokenMetadata(balances);
 
-  const isLoading =
-    isDaoDetailsLoading || isBalancesLoading || isTokensMetadataLoading;
+  const tokensDropdown = balances
+    ?.map(b => {
+      switch (b.type) {
+        case TokenType.ERC20:
+          return {
+            address: b.id,
+            symbol: b.symbol,
+            balance: b.balance,
+            decimals: b.decimals,
+          };
+        case TokenType.NATIVE:
+          return {
+            address: constants.AddressZero,
+            symbol: CHAIN_METADATA[network].nativeCurrency.symbol,
+            balance: b.balance,
+            decimals: CHAIN_METADATA[network].nativeCurrency.decimals,
+          };
+      }
+    })
+    .filter(b => b !== undefined) as TokenDropdownValue[];
+
+  const isLoading = isDaoDetailsLoading || isBalancesLoading;
 
   return (
     <TokenInput
@@ -145,7 +187,7 @@ export const WalletTokenInput: React.FC<TokenInputProps> = ({
       onChange={onChange}
       disabled={disabled}
       isLoading={isLoading}
-      tokensWithMetadata={tokensWithMetadata ?? []}
+      tokensDropdown={tokensDropdown ?? []}
     />
   );
 };
@@ -169,7 +211,7 @@ export const NetworkTokenInput: React.FC<TokenInputProps> = ({
       onChange={onChange}
       disabled={disabled}
       isLoading={isLoading}
-      tokensWithMetadata={tokensWithMetadata ?? []}
+      tokensDropdown={[]}
     />
   );
 };
