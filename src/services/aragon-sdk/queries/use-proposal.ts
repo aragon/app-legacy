@@ -1,5 +1,6 @@
 import {MultisigProposal, TokenVotingProposal} from '@aragon/sdk-client';
-import {useQuery, UseQueryOptions} from '@tanstack/react-query';
+import {UseQueryOptions, useQuery} from '@tanstack/react-query';
+import {GaslessVotingProposal} from '@vocdoni/gasless-voting';
 
 import {useNetwork} from 'context/network';
 import {PluginClient, usePluginClient} from 'hooks/usePluginClient';
@@ -8,7 +9,6 @@ import {invariant} from 'utils/invariant';
 import {IFetchProposalParams} from '../aragon-sdk-service.api';
 import {aragonSdkQueryKeys} from '../query-keys';
 import {syncProposalData, transformProposal} from '../selectors';
-import {GaslessVotingProposal} from '@vocdoni/gasless-voting';
 
 async function fetchProposal(
   params: IFetchProposalParams,

@@ -74,6 +74,7 @@ import {
   ProposalId,
   ProposalResource,
 } from 'utils/types';
+import {aragonSubgraphQueryKeys} from 'services/aragon-subgraph/query-keys';
 
 export const ProposeSettings: React.FC = () => {
   const {t} = useTranslation();
@@ -646,7 +647,10 @@ const ProposeSettingWrapper: React.FC<Props> = ({
     // invalidating all infinite proposals query regardless of the
     // pagination state
     queryClient.invalidateQueries([AragonSdkQueryItem.PROPOSALS]);
-  }, [queryClient]);
+    queryClient.invalidateQueries(
+      aragonSubgraphQueryKeys.totalProposalCount({pluginAddress, pluginType})
+    );
+  }, [pluginAddress, pluginType, queryClient]);
 
   const handlePublishSettings = async () => {
     if (!pluginClient) {

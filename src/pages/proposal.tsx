@@ -28,7 +28,6 @@ import {ExecutionWidget} from 'components/executionWidget';
 import ResourceList from 'components/resourceList';
 import {Loading} from 'components/temporary';
 import {StyledEditorContent} from 'containers/reviewProposal';
-// import {UpdateVerificationCard} from 'containers/updateVerificationCard';
 import {TerminalTabs, VotingTerminal} from 'containers/votingTerminal';
 import {useGlobalModalContext} from 'context/globalModals';
 import {useNetwork} from 'context/network';
@@ -57,7 +56,7 @@ import {
 } from 'services/aragon-sdk/queries/use-voting-settings';
 import {useTokenAsync} from 'services/token/queries/use-token';
 import {CHAIN_METADATA} from 'utils/constants';
-// import {featureFlags} from 'utils/featureFlags';
+import {featureFlags} from 'utils/featureFlags';
 import {GaslessVotingProposal} from '@vocdoni/gasless-voting';
 import {constants} from 'ethers';
 import {usePastVotingPower} from 'services/aragon-sdk/queries/use-past-voting-power';
@@ -91,6 +90,7 @@ import {
 import {Action} from 'utils/types';
 import {GaslessVotingTerminal} from '../containers/votingTerminal/gaslessVotingTerminal';
 import {useGaslessHasAlreadyVote} from '../context/useGaslessVoting';
+import {UpdateVerificationCard} from 'containers/updateVerificationCard';
 
 export const PENDING_PROPOSAL_STATUS_INTERVAL = 1000 * 10;
 export const PROPOSAL_STATUS_INTERVAL = 1000 * 60;
@@ -175,6 +175,23 @@ export const Proposal: React.FC = () => {
   );
 
   const proposalStatus = proposal?.status;
+
+  const isSuccessfulMultisigSignalingProposal =
+    isMultisigProposal(proposal) &&
+    proposal.status === ProposalStatus.SUCCEEDED &&
+    proposal.actions.length === 0 &&
+    isMultisigVotingSettings(votingSettings) &&
+    votingSettings.minApprovals <= proposal.approvals.length;
+
+  // checking only after voting settings and proposal are available
+  // so that the status isn't transitioning from "Succeeded" to "Approved"
+  // for a successful signalling Multisig proposal
+  let displayedProposalStatus = '';
+  if (votingSettings && proposal) {
+    displayedProposalStatus = isSuccessfulMultisigSignalingProposal
+      ? t('votingTerminal.status.approved')
+      : proposal.status;
+  }
 
   const {data: canVote} = useWalletCanVote(
     address,
@@ -391,10 +408,10 @@ export const Proposal: React.FC = () => {
 
   // caches the status for breadcrumb
   useEffect(() => {
-    if (proposal && proposalStatus !== get('proposalStatus'))
-      set('proposalStatus', proposalStatus);
+    if (displayedProposalStatus !== get('proposalStatus'))
+      set('proposalStatus', displayedProposalStatus);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [proposalStatus]);
+  }, [displayedProposalStatus]);
 
   // handle can vote and wallet connection status
   useEffect(() => {
@@ -557,10 +574,14 @@ export const Proposal: React.FC = () => {
     votingSettings.votingMode === VotingMode.VOTE_REPLACEMENT;
 
   const votingDisabled =
-    proposal?.status !== ProposalStatus.ACTIVE ||
-    (isMultisigPlugin && voted) ||
-    (isGaslessVotingPlugin && voted) ||
-    (isTokenVotingPlugin && voted && !canRevote);
+    // wallet should be connected and on the
+    // right network before we disable the button
+    isConnected &&
+    !isOnWrongNetwork &&
+    (proposal?.status !== ProposalStatus.ACTIVE ||
+      (isMultisigPlugin && (voted || canVote === false)) ||
+      (isGaslessVotingPlugin && voted) ||
+      (isTokenVotingPlugin && voted && !canRevote));
 
   const handleApprovalClick = useCallback(
     (tryExecution: boolean) => {
@@ -644,6 +665,7 @@ export const Proposal: React.FC = () => {
           ? NumberFormatter.format(proposal.creationBlockNumber)
           : '',
         executionFailed,
+        isSuccessfulMultisigSignalingProposal,
         proposal.executionBlockNumber
           ? NumberFormatter.format(proposal.executionBlockNumber!)
           : '',
@@ -781,17 +803,11 @@ export const Proposal: React.FC = () => {
             </>
           )}
 
-          {/* @todo: Add isUpdateProposal check once it's developed */}
-          {/* {proposal &&
+          {proposal &&
+            (proposalStatus === ProposalStatus.ACTIVE ||
+              proposalStatus === ProposalStatus.SUCCEEDED) &&
             featureFlags.getValue('VITE_FEATURE_FLAG_OSX_UPDATES') ===
-              'true' && (
-              <UpdateVerificationCard
-                proposal={proposal}
-                actions={proposal.actions}
-                proposalId={proposalId}
-              />
-            )} */}
-
+              'true' && <UpdateVerificationCard proposalId={proposalId} />}
           {votingSettings && isGaslessProposal(proposal) ? (
             <GaslessVotingTerminal
               proposal={proposal}

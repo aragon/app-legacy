@@ -12,10 +12,10 @@ import {
 } from 'utils/constants';
 import {TOP_ETH_SYMBOL_ADDRESSES} from 'utils/constants/topSymbolAddresses';
 import {getTokenInfo, isNativeToken} from 'utils/tokens';
-import {CoingeckoError, CoingeckoToken, Token} from './domain';
+import {CoingeckoError, Token} from './domain';
 import {AlchemyTransfer} from './domain/alchemy-transfer';
 import {CovalentResponse} from './domain/covalent-response';
-import {CovalentToken, CovalentTokenBalance} from './domain/covalent-token';
+import {CovalentTokenBalance} from './domain/covalent-token';
 import {
   CovalentTokenTransfer,
   CovalentTransferInfo,
@@ -25,6 +25,8 @@ import {
   IFetchTokenParams,
   IFetchTokenTransfersParams,
 } from './token-service.api';
+import request, {gql} from 'graphql-request';
+import {constants} from 'ethers';
 
 const REPLACEMENT_BASE_ETHER_LOGO_URL =
   'https://assets.coingecko.com/coins/images/279/large/ethereum.png?1595348880';
@@ -70,109 +72,73 @@ class TokenService {
       ? TOP_ETH_SYMBOL_ADDRESSES[symbol.toLowerCase()]
       : address;
 
-    const token =
-      processedNetwork === 'base' || processedNetwork === 'base-goerli'
-        ? this.fetchCovalentToken(processedNetwork, processedAddress)
-        : this.fetchCoingeckoToken(processedNetwork, processedAddress);
+    const token = await this.fetchTokenFromBackend(
+      processedNetwork,
+      processedAddress
+    );
 
     return token;
   };
 
-  private fetchCovalentToken = async (
+  tokenQueryDocument = gql`
+    query Token($network: Network!, $tokenAddress: String!) {
+      token(network: $network, tokenAddress: $tokenAddress) {
+        checkDate
+        contractAddress
+        decimals
+        imageUrl
+        name
+        network
+        priceUsd
+        priceChangeOnDayUsd
+        symbol
+        totalHolders
+        totalSupply
+      }
+    }
+  `;
+
+  private fetchTokenFromBackend = async (
     network: SupportedNetworks,
-    address: string
-  ): Promise<Token | null> => {
-    const {networkId, nativeTokenId} = CHAIN_METADATA[network].covalent ?? {};
-    const {nativeCurrency} = CHAIN_METADATA[network];
-    const isNative = isNativeToken(address);
-
-    if (!networkId || !nativeTokenId) {
-      console.info(`fetchToken - network ${network} not supported by Covalent`);
-      return null;
-    }
-
-    const processedAddress = isNative ? nativeTokenId : address;
-    const endpoint = `/pricing/historical_by_addresses_v2/${networkId}/${this.defaultCurrency}/${processedAddress}/`;
-
-    const url = `${this.baseUrl.covalent}${endpoint}`;
-    const authToken = window.btoa(`${COVALENT_API_KEY}:`);
-    const headers = {Authorization: `Basic ${authToken}`};
-
-    const res = await fetch(url, {headers});
-    const parsed: CovalentResponse<CovalentToken[] | null> = await res.json();
-    const data = parsed.data?.[0];
-
-    if (parsed.error || data == null) {
-      console.info(
-        `fetchToken - Covalent returned error: ${parsed.error_message}`
+    tokenAddress: string
+  ) => {
+    let token: Token | null = null;
+    try {
+      const {token: resp} = await request(
+        `${import.meta.env.VITE_BACKEND_URL}/graphql`,
+        this.tokenQueryDocument,
+        {network, tokenAddress}
       );
-      return null;
+      const currPriceUsd = resp.priceUsd || 0;
+      const prevPriceUsd = currPriceUsd - (resp.priceChangeOnDayUsd || 0);
+      const priceChangePc =
+        currPriceUsd === 0 && prevPriceUsd === 0
+          ? 0
+          : (currPriceUsd / prevPriceUsd - 1) * 100;
+      token = {
+        name: resp.name,
+        symbol: resp.symbol,
+        imgUrl: resp.imageUrl,
+        address: resp.contractAddress,
+        price: resp.priceUsd || null,
+        priceChange: {
+          day: priceChangePc,
+          week: 0,
+          month: 0,
+          year: 0,
+        },
+      };
+
+      if (
+        (network === 'base' || network === 'base-goerli') &&
+        token.address === constants.AddressZero
+      ) {
+        token.imgUrl = REPLACEMENT_BASE_ETHER_LOGO_URL;
+      }
+    } catch {
+      console.error('failed to fetch token');
     }
-
-    return {
-      id: address,
-      name: isNative ? nativeCurrency.name : data.contract_name,
-      symbol: isNative
-        ? nativeCurrency.symbol
-        : data.contract_ticker_symbol?.toUpperCase(),
-      imgUrl:
-        // Please replace once the Covalent API decides to be reasonable
-        isNative && (network === 'base' || network === 'base-goerli')
-          ? REPLACEMENT_BASE_ETHER_LOGO_URL
-          : data.logo_url,
-      address: address,
-      price: data.prices[0].price,
-      priceChange: {
-        day: 0,
-        week: 0,
-        month: 0,
-        year: 0,
-      },
-    };
-  };
-
-  private fetchCoingeckoToken = async (
-    network: SupportedNetworks,
-    address: string
-  ): Promise<Token | null> => {
-    const {networkId, nativeTokenId} = CHAIN_METADATA[network].coingecko ?? {};
-    const {nativeCurrency} = CHAIN_METADATA[network];
-    const isNative = isNativeToken(address);
-
-    if (!networkId || !nativeTokenId) {
-      console.info(
-        `fetchToken - network ${network} not supported by Coingecko`
-      );
-      return null;
-    }
-
-    const endpoint = isNative
-      ? `/coins/${nativeTokenId}`
-      : `/coins/${networkId}/contract/${address}`;
-    const url = `${this.baseUrl.coingecko}${endpoint}`;
-
-    const res = await fetch(url);
-    const data: CoingeckoToken | CoingeckoError = await res.json();
-
-    if (this.isErrorCoingeckoResponse(data)) {
-      console.info(`fetchToken - Coingecko returned error: ${data.error}`);
-      return null;
-    }
-
-    return {
-      id: data.id,
-      name: isNative ? nativeCurrency.name : data.name,
-      symbol: isNative ? nativeCurrency.symbol : data.symbol?.toUpperCase(),
-      imgUrl: data.image?.large,
-      address: address,
-      price: data.market_data?.current_price.usd,
-      priceChange: {
-        day: data.market_data?.price_change_percentage_24h_in_currency?.usd,
-        week: data.market_data?.price_change_percentage_7d_in_currency?.usd,
-        month: data.market_data?.price_change_percentage_30d_in_currency?.usd,
-        year: data.market_data?.price_change_percentage_1y_in_currency?.usd,
-      },
-    };
+    return token;
   };
 
   // Note: Purposefully not including a function to fetch token balances

@@ -7,9 +7,10 @@ import {
   VoteValues,
 } from '@aragon/sdk-client';
 import {useQueryClient} from '@tanstack/react-query';
+import {ApproveTallyStep} from '@vocdoni/gasless-voting';
 import React, {
-  createContext,
   ReactNode,
+  createContext,
   useCallback,
   useContext,
   useMemo,
@@ -23,29 +24,30 @@ import PublishModal, {
 } from 'containers/transactionModals/publishModal';
 import {BigNumber} from 'ethers';
 import {useDaoDetailsQuery} from 'hooks/useDaoDetails';
+import {useIsUpdateProposal} from 'hooks/useIsUpdateProposal';
 import {
+  GaselessPluginName,
   PluginTypes,
+  isGaslessVotingClient,
   isMultisigClient,
   isTokenVotingClient,
   usePluginClient,
-  isGaslessVotingClient,
-  GaselessPluginName,
 } from 'hooks/usePluginClient';
 import {usePollGasFee} from 'hooks/usePollGasfee';
 import {useWallet} from 'hooks/useWallet';
+import {useVotingPowerAsync} from 'services/aragon-sdk/queries/use-voting-power';
 import {
   AragonSdkQueryItem,
   aragonSdkQueryKeys,
 } from 'services/aragon-sdk/query-keys';
 import {CHAIN_METADATA, TransactionState} from 'utils/constants';
+import {toDisplayEns} from 'utils/library';
 import {executionStorage, voteStorage} from 'utils/localStorage';
 import {ProposalId} from 'utils/types';
+import GaslessVotingModal from '../containers/transactionModals/gaslessVotingModal';
+import {GaslessVoteOrApprovalVote} from '../services/aragon-sdk/selectors';
 import {useNetwork} from './network';
 import {useProviders} from './providers';
-import GaslessVotingModal from '../containers/transactionModals/gaslessVotingModal';
-import {ApproveTallyStep} from '@vocdoni/gasless-voting';
-import {GaslessVoteOrApprovalVote} from '../services/aragon-sdk/selectors';
-import {useVotingPowerAsync} from 'services/aragon-sdk/queries/use-voting-power';
 
 type SubmitVoteParams = {
   vote: VoteValues;
@@ -84,11 +86,13 @@ const ProposalTransactionProvider: React.FC<Props> = ({children}) => {
   const proposalId = new ProposalId(urlId!).export();
 
   const {address, isConnected} = useWallet();
-  const {network} = useNetwork();
+  const {network, networkUrlSegment} = useNetwork();
   const queryClient = useQueryClient();
   const {api: provider} = useProviders();
   const fetchVotingPower = useVotingPowerAsync();
   const {data: daoDetails, isLoading} = useDaoDetailsQuery();
+  const [{data: isPluginUpdate}, {data: isProtocolUpdate}] =
+    useIsUpdateProposal(proposalId);
 
   // state values
   const [showVoteModal, setShowVoteModal] = useState(false);
@@ -116,6 +120,9 @@ const ProposalTransactionProvider: React.FC<Props> = ({children}) => {
   const [executionTxHash, setExecutionTxHash] = useState<string>('');
 
   // intermediate values
+  const daoAddressOrEns =
+    toDisplayEns(daoDetails?.ensDomain) ?? daoDetails?.address;
+
   const pluginType = daoDetails?.plugins[0].id as PluginTypes;
   const pluginAddress = daoDetails?.plugins[0].instanceAddress;
   const pluginClient = usePluginClient(pluginType);
@@ -247,9 +254,23 @@ const ProposalTransactionProvider: React.FC<Props> = ({children}) => {
     queryClient.invalidateQueries(currentProposal);
   }, [pluginType, proposalId, queryClient]);
 
+  const invalidatePluginQueries = useCallback(() => {
+    queryClient.invalidateQueries([
+      'daoDetails',
+      daoAddressOrEns,
+      networkUrlSegment ?? network,
+    ]);
+  }, [daoAddressOrEns, network, networkUrlSegment, queryClient]);
+
+  const invalidateProtocolQueries = useCallback(() => {
+    queryClient.invalidateQueries(
+      aragonSdkQueryKeys.protocolVersion(daoAddressOrEns)
+    );
+  }, [daoAddressOrEns, queryClient]);
+
   const onExecutionSuccess = useCallback(
     async (proposalId: string, txHash: string) => {
-      if (!address || !daoDetails?.address) return;
+      if (!address) return;
 
       // get current block number
       const executionBlockNumber = await provider.getBlockNumber();
@@ -267,8 +288,24 @@ const ProposalTransactionProvider: React.FC<Props> = ({children}) => {
         proposalId.toString(),
         executionDetails
       );
+
+      if (isPluginUpdate) {
+        invalidatePluginQueries();
+      }
+
+      if (isProtocolUpdate) {
+        invalidateProtocolQueries();
+      }
     },
-    [address, daoDetails?.address, network, provider]
+    [
+      address,
+      invalidatePluginQueries,
+      invalidateProtocolQueries,
+      isPluginUpdate,
+      isProtocolUpdate,
+      network,
+      provider,
+    ]
   );
 
   // cleans up and caches successful approval tx

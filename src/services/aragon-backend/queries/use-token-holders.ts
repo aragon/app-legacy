@@ -32,7 +32,7 @@ const fetchTokenHolders = async (
   params: IFetchTokenHoldersParams
 ): Promise<TokenHoldersResponse> => {
   return request(
-    'https://app-backend.aragon.org/graphql',
+    `${import.meta.env.VITE_BACKEND_URL}/graphql`,
     tokenHoldersQueryDocument,
     {
       ...params,

@@ -48,6 +48,10 @@ export const DefineUpdateProposal: React.FC = () => {
   // data fetching
   const {data: dao, isLoading: detailsLoading} = useDaoDetailsQuery();
   const daoAddress = dao?.address as string;
+  const pluginUpdateTypeLabel =
+    dao?.plugins[0].id === 'token-voting.plugin.dao.eth'
+      ? 'Token voting'
+      : 'Multisig';
 
   const {data: releases, isLoading: releaseNotesLoading} = useReleaseNotes();
   const {data: protocolVersion, isLoading: protocolVersionLoading} =
@@ -120,7 +124,10 @@ export const DefineUpdateProposal: React.FC = () => {
     {
       id: 'plugin',
       releaseNote: pluginReleaseNotes,
-      label: osxUpdates.getPluginUpdateLabel(pluginSelectedVersion?.version),
+      label: osxUpdates.getPluginUpdateLabel(
+        pluginSelectedVersion?.version,
+        pluginUpdateTypeLabel
+      ),
       linkLabel: t('update.item.releaseNotesLabel'),
       ...(isLatestPlugin && {tagLabelNatural: t('update.item.tagLatest')}),
       ...(isPluginPrepared
@@ -363,8 +370,7 @@ export const DefineUpdateProposal: React.FC = () => {
 };
 
 const UpdateGroupWrapper = styled.div.attrs({
-  className:
-    'flex flex-col items-center md:flex-row md:justify-center md:items-stretch gap-y-3 gap-x-6',
+  className: 'flex flex-col items-center md:justify-center gap-y-3',
 })``;
 
 const UpdateContainer = styled.div.attrs({
