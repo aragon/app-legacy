@@ -10,6 +10,7 @@ import {
   useWatch,
 } from 'react-hook-form';
 import {useTranslation} from 'react-i18next';
+import {useNavigate} from 'react-router-dom';
 import styled from 'styled-components';
 import {Markdown} from 'tiptap-markdown';
 
@@ -21,6 +22,7 @@ import {useDaoDetailsQuery} from 'hooks/useDaoDetails';
 import {useProtocolVersion} from 'services/aragon-sdk/queries/use-protocol-version';
 import {useReleaseNotes} from 'services/aragon-sdk/queries/use-release-notes';
 import {osxUpdates} from 'utils/osxUpdates';
+import {NotFound} from 'utils/paths';
 
 type ModalState = {
   type: 'os' | 'plugin' | 'none';
@@ -35,6 +37,7 @@ export const DefineUpdateProposal: React.FC = () => {
 
   // hooks
   const {t} = useTranslation();
+  const navigate = useNavigate();
 
   const {
     handlePreparePlugin,
@@ -150,7 +153,11 @@ export const DefineUpdateProposal: React.FC = () => {
 
   // queries loading
   const isLoading =
-    detailsLoading || protocolVersionLoading || releaseNotesLoading;
+    detailsLoading ||
+    protocolVersionLoading ||
+    releaseNotesLoading ||
+    ((availablePluginUpdates?.size ?? 1) > 0 && !pluginReleaseNotes) ||
+    ((availableProtocolUpdates?.size ?? 1) > 0 && !OSxReleaseNotes);
 
   /*************************************************
    *                    Effects                    *
@@ -193,7 +200,8 @@ export const DefineUpdateProposal: React.FC = () => {
       }
 
       const updatedVersion = osxUpdates.getPluginUpdateLabel(
-        pluginSelectedVersion?.version
+        pluginSelectedVersion?.version,
+        pluginUpdateTypeLabel
       );
       const releaseNotes = osxUpdates.getReleaseNotes({
         releases,
@@ -205,7 +213,10 @@ export const DefineUpdateProposal: React.FC = () => {
         updatedVersion,
         description: editor?.getHTML().replace(/<(\/){0,1}p>/g, ''),
         releaseNotesLink: releaseNotes?.html_url,
-        currentVersion: osxUpdates.getPluginUpdateLabel(dao?.plugins[0]),
+        currentVersion: osxUpdates.getPluginUpdateLabel(
+          dao?.plugins[0],
+          pluginUpdateTypeLabel
+        ),
       });
     }
 
@@ -220,9 +231,10 @@ export const DefineUpdateProposal: React.FC = () => {
     releases,
     setValue,
     t,
-    updateFramework?.os,
+    updateFramework.os,
     updateFramework?.plugin,
     protocolVersion,
+    pluginUpdateTypeLabel,
   ]);
 
   // add values to form
@@ -311,7 +323,9 @@ export const DefineUpdateProposal: React.FC = () => {
     availablePluginUpdates?.size === 0 &&
     availableProtocolUpdates?.size === 0
   ) {
-    return <p>No OSx updates available at this time.</p>;
+    navigate(NotFound, {
+      replace: true,
+    });
   }
 
   return (
