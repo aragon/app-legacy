@@ -11,6 +11,7 @@ import {RemoveAddressCard} from './actions/removeAddressCard';
 import {SCCExecutionCard} from './actions/sccExecutionWidget';
 import {WCActionCard} from './actions/walletConnectActionCard';
 import {WithdrawCard} from './actions/withdrawCard';
+import {toDisplayEns} from 'utils/library';
 
 type ActionsFilterProps = {
   action: Action;
@@ -27,7 +28,11 @@ export const ActionsFilter: React.FC<ActionsFilterProps> = ({
   switch (action.name) {
     case 'withdraw_assets':
       return (
-        <WithdrawCard action={action} daoName={dao?.metadata?.name || ''} />
+        <WithdrawCard
+          action={action}
+          daoAddress={dao?.address || ''}
+          daoLabel={toDisplayEns(dao?.ensDomain) || dao?.metadata?.name || ''}
+        />
       );
     case 'add_address':
       return <AddAddressCard action={action} />;

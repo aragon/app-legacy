@@ -44,11 +44,8 @@ const TransactionDetail: React.FC = () => {
       ? (transfer as Withdraw).proposalId
       : undefined;
 
-  const daoExplorerURL = `${explorerURL}address/${
-    ensDomain ? ensDomain : address
-  }`;
-
-  const transferDaoName = ensDomain ? ensDomain : daoName;
+  const daoExplorerURL = `${explorerURL}address/${address}`;
+  const transferDaoName = toDisplayEns(ensDomain) || daoName;
 
   const {data: proposal} = useProposal({
     pluginType: plugins?.[0].id as PluginTypes,
