@@ -573,15 +573,19 @@ export const Proposal: React.FC = () => {
     isTokenVotingSettings(votingSettings) &&
     votingSettings.votingMode === VotingMode.VOTE_REPLACEMENT;
 
+  const connectedToRightNetwork = isConnected && !isOnWrongNetwork;
+
   const votingDisabled =
-    // wallet should be connected and on the
-    // right network before we disable the button
-    isConnected &&
-    !isOnWrongNetwork &&
-    (proposal?.status !== ProposalStatus.ACTIVE ||
-      (isMultisigPlugin && (voted || canVote === false)) ||
-      (isGaslessVotingPlugin && voted) ||
-      (isTokenVotingPlugin && voted && !canRevote));
+    // can only vote on active proposals
+    proposal?.status !== ProposalStatus.ACTIVE ||
+    // when disconnected or on wrong network,
+    // login and network modals should be shown respectively
+    (connectedToRightNetwork &&
+      // need to check canVote status on Multisig because
+      // the delegation modals are not shown for Multisig
+      ((isMultisigPlugin && (voted || canVote === false)) ||
+        (isGaslessVotingPlugin && voted) ||
+        (isTokenVotingPlugin && voted && !canRevote)));
 
   const handleApprovalClick = useCallback(
     (tryExecution: boolean) => {
