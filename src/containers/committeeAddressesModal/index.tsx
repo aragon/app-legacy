@@ -7,6 +7,7 @@ import {FilteredAddressList} from '../../components/filteredAddressList';
 import {generatePath, useNavigate, useParams} from 'react-router-dom';
 import {DaoMember} from 'utils/paths';
 import {useNetwork} from 'context/network';
+import {CHAIN_METADATA} from 'utils/constants';
 
 const CommitteeAddressesModal: React.FC = () => {
   const {getValues} = useFormContext();
@@ -29,13 +30,18 @@ const CommitteeAddressesModal: React.FC = () => {
       <FilteredAddressList
         wallets={committee}
         onVoterClick={user => {
-          navigate(
-            generatePath(DaoMember, {
-              network,
-              dao,
-              user,
-            })
-          );
+          dao
+            ? navigate(
+                generatePath(DaoMember, {
+                  network,
+                  dao,
+                  user,
+                })
+              )
+            : window.open(
+                `${CHAIN_METADATA[network].explorer}address/${user}`,
+                '_blank'
+              );
         }}
       />
     </ModalBottomSheetSwitcher>

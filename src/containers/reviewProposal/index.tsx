@@ -1,4 +1,4 @@
-import {VoterType} from '@aragon/ods-old';
+import {Link, VoterType} from '@aragon/ods-old';
 import {Erc20TokenDetails} from '@aragon/sdk-client';
 import TipTapLink from '@tiptap/extension-link';
 import {EditorContent, useEditor} from '@tiptap/react';
@@ -22,7 +22,7 @@ import {useDaoDetailsQuery} from 'hooks/useDaoDetails';
 import {MultisigDaoMember, useDaoMembers} from 'hooks/useDaoMembers';
 import {PluginTypes} from 'hooks/usePluginClient';
 import {useTokenSupply} from 'hooks/useTokenSupply';
-import {useParams, Link, generatePath} from 'react-router-dom';
+import {useParams} from 'react-router-dom';
 import {useProtocolVersion} from 'services/aragon-sdk/queries/use-protocol-version';
 import {
   isGaslessVotingSettings,
@@ -48,8 +48,6 @@ import {
   ProposalTypes,
   SupportedVotingSettings,
 } from 'utils/types';
-import {DaoMember} from 'utils/paths';
-import {useWallet} from 'hooks/useWallet';
 import {useProviders} from 'context/providers';
 
 type ReviewProposalProps = {
@@ -61,9 +59,8 @@ const ReviewProposal: React.FC<ReviewProposalProps> = ({
   defineProposalStepNumber,
   addActionsStepNumber,
 }) => {
-  const {type, dao} = useParams();
+  const {type} = useParams();
   const {client, network} = useClient();
-  const {address: userAddress} = useWallet();
   const {t, i18n} = useTranslation();
   const {setStep} = useFormStep();
   const {api: provider} = useProviders();
@@ -284,16 +281,7 @@ const ReviewProposal: React.FC<ReviewProposalProps> = ({
       <BadgeContainer>
         <ProposerLink>
           {t('governance.proposals.publishedBy')}{' '}
-          <Link
-            to={generatePath(DaoMember, {
-              network,
-              dao,
-              user: userAddress as string,
-            })}
-            className="inline-flex max-w-full cursor-pointer items-center space-x-3 truncate rounded font-semibold text-primary-500 hover:text-primary-700 focus:outline-none focus-visible:ring focus-visible:ring-primary active:text-primary-800"
-          >
-            {t('labels.you')}
-          </Link>
+          <Link external label={t('labels.you')} />
         </ProposerLink>
       </BadgeContainer>
 

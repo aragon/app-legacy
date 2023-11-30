@@ -96,7 +96,7 @@ export const ActionItemAddress: React.FC<ActionItemAddressProps> = props => {
           <Avatar size="small" mode="circle" src={avatar ?? addressOrEns} />
           <div className="flex grow flex-col gap-1">
             <div className="flex flex-row items-start gap-2">
-              <div className="user-display font-semibold text-neutral-800 ft-text-base">
+              <div className="font-semibold text-neutral-800 ft-text-base group-hover:text-primary-600">
                 {shortenAddress(addressOrEns)}
               </div>
               {walletId && tagLabel && (
@@ -148,7 +148,7 @@ export const ActionItemAddress: React.FC<ActionItemAddressProps> = props => {
             icon={<IconChevronRight />}
             size="medium"
             bgWhite
-            className="go-to-member"
+            className="group-hover:text-primary-600"
           />
         )}
       </TableCell>
@@ -158,13 +158,8 @@ export const ActionItemAddress: React.FC<ActionItemAddressProps> = props => {
 
 const TableRow = styled.tr.attrs({
   className:
-    'border-b border-b-neutral-100 bg-neutral-0 last:border-neutral-0 hover:cursor-pointer',
-})`
-  &:hover .user-display,
-  &:hover .go-to-member {
-    color: #003bf5;
-  }
-`;
+    'border-b border-b-neutral-100 bg-neutral-0 last:border-neutral-0 hover:cursor-pointer group',
+})``;
 
 const TableCell = styled.td.attrs({
   className: 'items-center py-4 px-6 h-full' as string,

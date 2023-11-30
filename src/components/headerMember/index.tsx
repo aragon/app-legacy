@@ -1,9 +1,7 @@
-import React, {useEffect, useMemo, useRef, useState, ReactNode} from 'react';
+import React, {useMemo, ReactNode} from 'react';
 import {styled} from 'styled-components';
 import {
-  Link,
   IconChevronDown,
-  IconChevronUp,
   IconCopy,
   Dropdown,
   ButtonText,
@@ -12,13 +10,6 @@ import {
   shortenDaoUrl,
   IconLinkExternal,
 } from '@aragon/ods-old';
-
-const DEFAULT_LINES_SHOWN = 2;
-
-const DEFAULT_TRANSLATIONS = {
-  readLess: 'Read less',
-  readMore: 'Read more',
-};
 
 export interface HeaderMemberStat {
   value: ReactNode;
@@ -32,19 +23,10 @@ export type HeaderMemberProps = {
   explorerUrl: string;
   explorerName: string;
   avatarUrl?: string | null;
-  description?: string;
   ens?: string;
   actions?: ReactNode;
   stats?: HeaderMemberStat[];
-  translation?: {
-    readMore?: string;
-    readLess?: string;
-  };
   onCopy?: (input: string) => void;
-};
-
-type DescriptionProps = {
-  fullDescription?: boolean;
 };
 
 export const HeaderMember: React.FC<HeaderMemberProps> = ({
@@ -54,46 +36,11 @@ export const HeaderMember: React.FC<HeaderMemberProps> = ({
   explorerUrl,
   avatarUrl,
   explorerName,
-  description,
   actions,
   stats = [],
-  translation = {},
   onCopy,
 }) => {
   const name = ens || shortenAddress(address);
-
-  const labels = {...DEFAULT_TRANSLATIONS, ...translation};
-
-  const [showAll, setShowAll] = useState(true);
-  const [shouldClamp, setShouldClamp] = useState(false);
-
-  const descriptionRef = useRef<HTMLParagraphElement>(null);
-
-  // this should be extracted into a hook if clamping/showing elsewhere
-  useEffect(() => {
-    function countNumberOfLines() {
-      const descriptionEl = descriptionRef.current;
-
-      if (!descriptionEl) {
-        return;
-      }
-
-      const numberOfLines =
-        descriptionEl.offsetHeight /
-        parseFloat(getComputedStyle(descriptionEl).lineHeight);
-
-      setShouldClamp(numberOfLines > DEFAULT_LINES_SHOWN);
-      setShowAll(numberOfLines <= DEFAULT_LINES_SHOWN);
-    }
-
-    countNumberOfLines();
-
-    window.addEventListener('resize', countNumberOfLines);
-
-    return () => {
-      window.removeEventListener('resize', countNumberOfLines);
-    };
-  }, []);
 
   const credentialsDropdownItems = useMemo(() => {
     const result = [
@@ -152,27 +99,6 @@ export const HeaderMember: React.FC<HeaderMemberProps> = ({
         <ContentWrapper>
           <Content>
             <Title>{name}</Title>
-
-            <div className={description ? 'mt-3' : ''}>
-              <Description ref={descriptionRef} {...{fullDescription: showAll}}>
-                {description}
-              </Description>
-              {shouldClamp && (
-                <Link
-                  {...(showAll
-                    ? {
-                        label: labels.readLess,
-                        iconRight: <IconChevronUp />,
-                      }
-                    : {
-                        label: labels.readMore,
-                        iconRight: <IconChevronDown />,
-                      })}
-                  className="ft-text-base"
-                  onClick={() => setShowAll(prevState => !prevState)}
-                />
-              )}
-            </div>
 
             <ActionsContainer>
               <Dropdown
@@ -244,16 +170,6 @@ const AvatarContainer = styled.div.attrs({
 const Title = styled.h1.attrs({
   className: 'ft-text-2xl font-semibold text-neutral-800',
 })``;
-
-const Description = styled.p.attrs({
-  className: 'font-medium text-neutral-600 ft-text-lg',
-})<DescriptionProps>`
-  overflow: hidden;
-  display: -webkit-box;
-  -webkit-box-orient: vertical;
-  -webkit-line-clamp: ${props =>
-    props.fullDescription ? 'unset' : DEFAULT_LINES_SHOWN};
-`;
 
 const ActionsContainer = styled.div.attrs({
   className: 'flex justify-between items-center gap-4 mt-6',

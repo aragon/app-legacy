@@ -33,6 +33,7 @@ import {PluginTypes} from 'hooks/usePluginClient';
 import {generatePath, useNavigate, useParams} from 'react-router-dom';
 import {DaoMember} from 'utils/paths';
 import {useNetwork} from 'context/network';
+import {CHAIN_METADATA} from 'utils/constants';
 
 export type ProposalVoteResults = {
   yes: {value: string | number; percentage: number};
@@ -273,13 +274,18 @@ export const VotingTerminal: React.FC<VotingTerminalProps> = ({
               onLoadMore={() => setPage(prev => prev + 1)}
               LoadMoreLabel={t('community.votersTable.loadMore')}
               onVoterClick={user => {
-                navigate(
-                  generatePath(DaoMember, {
-                    network,
-                    dao,
-                    user,
-                  })
-                );
+                dao
+                  ? navigate(
+                      generatePath(DaoMember, {
+                        network,
+                        dao,
+                        user,
+                      })
+                    )
+                  : window.open(
+                      `${CHAIN_METADATA[network].explorer}address/${user}`,
+                      '_blank'
+                    );
               }}
             />
           ) : (

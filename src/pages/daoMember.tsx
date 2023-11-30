@@ -64,9 +64,6 @@ export const DaoMember: React.FC = () => {
   const memberEns =
     (isEnsDomain(user || '') ? user : fetchedMemberEnsName) || '';
 
-  /** @todo implement once clarity is in */
-  const memberDescription = '';
-
   const isUserOwnProfile =
     memberAddress?.toLowerCase() === address?.toLowerCase();
 
@@ -204,7 +201,6 @@ export const DaoMember: React.FC = () => {
         explorerUrl={explorerUrl}
         explorerName={explorerName}
         avatarUrl={ensAvatar}
-        description={memberDescription}
         onCopy={onCopy}
         stats={stats}
         actions={
