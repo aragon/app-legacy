@@ -1,18 +1,9 @@
-export type CovalentToken = CovalentBaseToken & {
-  prices: CovalentTokenPrice[];
-};
-
 export type CovalentBaseToken = {
   contract_decimals: number;
   contract_name: string;
   contract_ticker_symbol: string;
   contract_address: string;
   logo_url: string;
-};
-
-export type CovalentTokenPrice = {
-  date: string;
-  price: number;
 };
 
 export type CovalentTokenBalance = {

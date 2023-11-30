@@ -133,6 +133,7 @@ export const PROPOSAL_STATE_LABELS = [
   i18n.t('governance.proposals.states.active'),
   i18n.t('governance.proposals.states.executed'),
   i18n.t('governance.proposals.states.succeeded'),
+  i18n.t('votingTerminal.status.approved'),
   i18n.t('governance.proposals.states.defeated'),
 ];
 

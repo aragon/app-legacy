@@ -425,6 +425,7 @@ export function abbreviateTokenAmount(amount: string): string {
   return `${Number.parseInt(integers)}${symbol && ' ' + symbol}`;
 }
 
+/** Balances at a certain amount of time in the past on all tokens in the account */
 export function historicalTokenBalances(
   transfers: Transfer[],
   tokenBalances: TokenWithMetadata[],

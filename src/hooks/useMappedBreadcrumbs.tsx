@@ -5,12 +5,15 @@ import {
   IconGovernance,
   IconSettings,
   Tag,
+  TagColorScheme,
   TagProps,
 } from '@aragon/ods-old';
+import {ProposalStatus} from '@aragon/sdk-client-common';
 import React, {useMemo} from 'react';
 import {useMatch} from 'react-router-dom';
 import useBreadcrumbs, {BreadcrumbData} from 'use-react-router-breadcrumbs';
 
+import {useTranslation} from 'react-i18next';
 import * as Paths from 'utils/paths';
 import {useCache} from './useCache';
 
@@ -21,6 +24,18 @@ type MappedBreadcrumbs = {
   }[];
   tag?: React.FunctionComponentElement<TagProps>;
   icon: JSX.Element;
+};
+
+type ProposalStatusColorMap = {
+  [key in ProposalStatus]: TagColorScheme;
+};
+
+const proposalStatusColorMap: ProposalStatusColorMap = {
+  [ProposalStatus.ACTIVE]: 'info',
+  [ProposalStatus.PENDING]: 'neutral',
+  [ProposalStatus.SUCCEEDED]: 'success',
+  [ProposalStatus.EXECUTED]: 'success',
+  [ProposalStatus.DEFEATED]: 'critical',
 };
 
 const routes = Object.values(Paths).map(path => {
@@ -39,12 +54,16 @@ function basePathIcons(path: string) {
 }
 
 export function useMappedBreadcrumbs(): MappedBreadcrumbs {
+  const {t} = useTranslation();
   const {get, cache} = useCache();
 
   // TODO this is temporary solution to update status in navigation bar
   // This useCache should be removed in future
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  const proposalStatus = useMemo(() => get('proposalStatus'), [get, cache]);
+  const proposalStatus: ProposalStatus = useMemo(
+    () => get('proposalStatus'),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [get, cache]
+  );
 
   const breadcrumbs = useBreadcrumbs(routes, {
     excludePaths: [
@@ -70,8 +89,19 @@ export function useMappedBreadcrumbs(): MappedBreadcrumbs {
   const isProposalDetail = useMatch(Paths.Proposal) !== null;
 
   let tag;
-  if (isProposalDetail && proposalStatus)
-    tag = <Tag label={proposalStatus} className="capitalize" />;
+  if (isProposalDetail && proposalStatus) {
+    const colorScheme =
+      proposalStatus === t('votingTerminal.status.approved')
+        ? proposalStatusColorMap.Succeeded
+        : proposalStatusColorMap[proposalStatus];
+    tag = (
+      <Tag
+        label={proposalStatus}
+        className="capitalize"
+        colorScheme={colorScheme}
+      />
+    );
+  }
 
   return {breadcrumbs, icon, tag};
 }

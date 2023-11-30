@@ -109,11 +109,7 @@ export const DelegationGatingMenu: React.FC = () => {
     : 'modal.delegation.NoVotingPower.ctaLabel';
 
   return (
-    <ModalBottomSheetSwitcher
-      onClose={close}
-      isOpen={isOpen}
-      title={t('modal.delegationActive.label')}
-    >
+    <ModalBottomSheetSwitcher onClose={close} isOpen={isOpen}>
       <div className="flex flex-col gap-6 px-4 py-6 text-center">
         <ContentGroup className="items-center">
           <IlluObject object="warning" />

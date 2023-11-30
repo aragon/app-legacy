@@ -1,6 +1,6 @@
 import {CardProposal, CardProposalProps, Spinner} from '@aragon/ods-old';
 import {MultisigProposalListItem} from '@aragon/sdk-client';
-import {DaoAction} from '@aragon/sdk-client-common';
+import {DaoAction, ProposalStatus} from '@aragon/sdk-client-common';
 import {BigNumber} from 'ethers';
 import {TFunction} from 'i18next';
 import React, {useMemo} from 'react';
@@ -8,7 +8,6 @@ import {useTranslation} from 'react-i18next';
 import {NavigateFunction, generatePath, useNavigate} from 'react-router-dom';
 
 import {useNetwork} from 'context/network';
-import {useClient} from 'hooks/useClient';
 import {useDaoMembers} from 'hooks/useDaoMembers';
 import {PluginTypes} from 'hooks/usePluginClient';
 import {useWallet} from 'hooks/useWallet';
@@ -25,11 +24,11 @@ import {
   TokenVotingOptions,
   getErc20Results,
   isErc20VotingProposal,
-  isVerifiedAragonUpdateProposal,
   stripPlgnAdrFromProposalId,
   isGaslessProposal,
 } from 'utils/proposals';
 import {ProposalListItem} from 'utils/types';
+import {useIsUpdateProposal} from 'hooks/useIsUpdateProposal';
 
 type ProposalListProps = {
   proposals: Array<ProposalListItem>;
@@ -59,21 +58,19 @@ type ProposalListItemProps = CardProposalProps & {
   actions: DaoAction[];
 };
 
-const ProposalItem: React.FC<ProposalListItemProps> = ({actions, ...props}) => {
+const ProposalItem: React.FC<ProposalListItemProps> = ({
+  proposalId,
+  ...props
+}) => {
   const {t} = useTranslation();
-  const {client} = useClient();
-
-  let verifiedUpdateProposal = false;
-
-  if (client != null) {
-    verifiedUpdateProposal = isVerifiedAragonUpdateProposal(actions, client);
-  }
+  const [{data: isPluginUpdate}, {data: isOSUpdate}] =
+    useIsUpdateProposal(proposalId);
 
   return (
     <CardProposal
       {...props}
       bannerContent={
-        verifiedUpdateProposal &&
+        (isPluginUpdate || isOSUpdate) &&
         featureFlags.getValue('VITE_FEATURE_FLAG_OSX_UPDATES') === 'true'
           ? t('update.proposal.bannerTitle')
           : ''
@@ -300,6 +297,12 @@ export function proposal2CardProps(
     }
   } else if (isMultisigProposalListItem(proposal)) {
     const specificProps = {
+      process:
+        proposal.status === ProposalStatus.SUCCEEDED
+          ? (t(
+              'votingTerminal.status.approved'
+            ).toLowerCase() as CardProposalProps['process'])
+          : props.process,
       voteTitle: t('votingTerminal.approvedBy'),
       stateLabel: PROPOSAL_STATE_LABELS,
       alertMessage: translateProposalDate(
