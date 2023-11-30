@@ -3,7 +3,7 @@ import {useNetwork} from 'context/network';
 import {constants} from 'ethers';
 import {useDaoBalances} from 'hooks/useDaoBalances';
 import {useDaoDetailsQuery} from 'hooks/useDaoDetails';
-import React, {ChangeEvent, useEffect, useState} from 'react';
+import React, {ChangeEvent, useEffect, useMemo, useState} from 'react';
 import {useNetworkTokens} from 'services/aragon-backend/queries/use-network-tokens';
 import {useToken} from 'services/token/queries/use-token';
 import {styled} from 'styled-components';
@@ -161,20 +161,23 @@ export const WalletTokenInput: React.FC<TokenInputProps> = ({
         case TokenType.ERC20:
           return {
             address: b.id,
-            symbol: b.symbol,
+            symbol: b.symbol.toUpperCase(),
             balance: b.balance,
             decimals: b.decimals,
           };
         case TokenType.NATIVE:
           return {
             address: constants.AddressZero,
-            symbol: CHAIN_METADATA[network].nativeCurrency.symbol,
+            symbol: CHAIN_METADATA[network].nativeCurrency.symbol.toUpperCase(),
             balance: b.balance,
             decimals: CHAIN_METADATA[network].nativeCurrency.decimals,
           };
       }
     })
-    .filter(b => b !== undefined) as TokenDropdownValue[];
+    .filter(b => b !== undefined)
+    .sort((a, b) =>
+      a!.symbol < b!.symbol ? -1 : a!.symbol === b!.symbol ? 0 : 1
+    ) as TokenDropdownValue[];
 
   const isLoading = isDaoDetailsLoading || isBalancesLoading;
 
@@ -202,10 +205,18 @@ export const NetworkTokenInput: React.FC<TokenInputProps> = ({
 
   const {data: tokens, isLoading} = useNetworkTokens(network);
 
-  const tokensDropdown = tokens?.map(t => ({
-    address: t.address,
-    symbol: t.symbol,
-  }));
+  const tokensDropdown = useMemo(
+    () =>
+      tokens
+        ?.map(t => ({
+          address: t.address,
+          symbol: t.symbol.toUpperCase(),
+        }))
+        .sort((a, b) =>
+          a.symbol < b.symbol ? -1 : a.symbol === b.symbol ? 0 : 1
+        ),
+    [tokens]
+  );
 
   return (
     <TokenInput
