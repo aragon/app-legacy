@@ -267,6 +267,12 @@ const ProposeSettingWrapper: React.FC<Props> = ({
           durationMinutes,
           resourceLinks,
           tokenDecimals,
+
+          executionExpirationMinutes,
+          executionExpirationHours,
+          executionExpirationDays,
+          committee,
+          committeeMinimumApproval,
         ] = getValues([
           'daoName',
           'daoSummary',
@@ -283,6 +289,12 @@ const ProposeSettingWrapper: React.FC<Props> = ({
           'durationMinutes',
           'daoLinks',
           'tokenDecimals',
+
+          'executionExpirationMinutes',
+          'executionExpirationHours',
+          'executionExpirationDays',
+          'committee',
+          'committeeMinimumApproval',
         ]);
 
         let daoLogoFile = '';
@@ -306,7 +318,46 @@ const ProposeSettingWrapper: React.FC<Props> = ({
           },
         };
 
-        if (isTokenVotingSettings(votingSettings)) {
+        if (isGaslessVotingSettings(votingSettings)) {
+          const gaslessSettingsAction: ActionUpdateGaslessSettings = {
+            name: 'modify_gasless_voting_settings',
+            inputs: {
+              executionMultisigMembers: (
+                committee as MultisigWalletField[]
+              ).map(wallet => wallet.address),
+              minTallyApprovals: committeeMinimumApproval,
+              minDuration: getSecondsFromDHM(
+                executionExpirationDays,
+                executionExpirationHours,
+                executionExpirationMinutes
+              ),
+              minTallyDuration: getSecondsFromDHM(
+                durationDays,
+                durationHours,
+                durationMinutes
+              ),
+              minParticipation: Number(minimumParticipation) / 100,
+              supportThreshold: Number(minimumApproval) / 100,
+
+              minProposerVotingPower:
+                eligibilityType === 'token'
+                  ? parseUnits(
+                      eligibilityTokenAmount.toString(),
+                      tokenDecimals
+                    ).toBigInt()
+                  : BigInt(0),
+              censusStrategy: '',
+              daoTokenAddress: daoToken?.address,
+              // onlyExecutionMultisigProposalCreation?: boolean;
+              id: pluginAddress,
+              // dao: {
+              //   id: dao,
+              //   proposalsCount: number;
+              // };
+            },
+          };
+          setValue('actions', [metadataAction, gaslessSettingsAction]);
+        } else if (isTokenVotingSettings(votingSettings)) {
           const voteSettingsAction: ActionUpdatePluginSettings = {
             name: 'modify_token_voting_settings',
             inputs: {
@@ -359,6 +410,7 @@ const ProposeSettingWrapper: React.FC<Props> = ({
     daoDetails,
     navigate,
     network,
+    pluginAddress,
   ]);
 
   useEffect(() => {
@@ -406,6 +458,18 @@ const ProposeSettingWrapper: React.FC<Props> = ({
           } catch (error) {
             throw Error('Could not pin metadata on IPFS');
           }
+        } else if (
+          action.name === 'modify_gasless_voting_settings' &&
+          isGaslessVotingClient(pluginClient)
+        ) {
+          actions.push(
+            Promise.resolve(
+              pluginClient.encoding.updatePluginSettingsAction(
+                pluginAddress,
+                action.inputs
+              )
+            )
+          );
         } else if (
           action.name === 'modify_token_voting_settings' &&
           isTokenVotingClient(pluginClient)

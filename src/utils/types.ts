@@ -256,7 +256,8 @@ export type ActionsTypes =
   | 'modify_multisig_voting_settings'
   | 'update_minimum_approval'
   | 'os_update'
-  | 'plugin_update';
+  | 'plugin_update'
+  | 'modify_gasless_voting_settings';
 
 export type ActionWithdraw = {
   amount: number;
@@ -351,6 +352,11 @@ export type ActionUpdatePluginSettings = {
   };
 };
 
+export type ActionUpdateGaslessSettings = {
+  name: 'modify_gasless_voting_settings';
+  inputs: GaslessPluginVotingSettings;
+};
+
 export type ActionUpdateMetadata = {
   name: 'modify_metadata';
   inputs: DaoMetadata;
@@ -401,7 +407,8 @@ export type Action =
   | ActionSCC
   | ActionWC
   | ActionOSUpdate
-  | ActionPluginUpdate;
+  | ActionPluginUpdate
+  | ActionUpdateGaslessSettings;
 
 export type ParamType = {
   type: string;
