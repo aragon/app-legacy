@@ -28,8 +28,8 @@ import {
 import request, {gql} from 'graphql-request';
 import {constants} from 'ethers';
 
-const REPLACEMENT_BASE_ETHER_LOGO_URL =
-  'https://assets.coingecko.com/coins/images/279/large/ethereum.png?1595348880';
+// const REPLACEMENT_BASE_ETHER_LOGO_URL =
+//   'https://assets.coingecko.com/coins/images/279/large/ethereum.png?1595348880';
 
 type tokenType = TokenType.NATIVE | TokenType.ERC20;
 
@@ -127,6 +127,7 @@ class TokenService {
           month: 0,
           year: 0,
         },
+        decimals: resp.decimals,
       };
 
       if (

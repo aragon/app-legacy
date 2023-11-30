@@ -7,4 +7,5 @@ export type Token = {
   address: string;
   price: number;
   priceChange: TokenPriceChange;
+  decimals: number;
 };

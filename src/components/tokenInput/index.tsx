@@ -6,7 +6,6 @@ import {useDaoDetailsQuery} from 'hooks/useDaoDetails';
 import React, {ChangeEvent, useEffect, useState} from 'react';
 import {useNetworkTokens} from 'services/aragon-backend/queries/use-network-tokens';
 import {useToken} from 'services/token/queries/use-token';
-import {IFetchTokenParams} from 'services/token/token-service.api';
 import {styled} from 'styled-components';
 import {CHAIN_METADATA, SupportedNetworks} from 'utils/constants';
 import {formatUnits} from 'utils/library';
@@ -71,17 +70,17 @@ const TokenInput: React.FC<TokenInputPropsWithData> = ({
     isLoading || !tokensDropdown.some(t => t.address === tokenAddress);
 
   useEffect(() => {
-    if (token && tokenDropdownValue) {
-      onChange?.({
+    if (token && tokenDropdownValue && onChange) {
+      onChange({
         amount,
         address: tokenDropdownValue.address,
-        decimals: tokenDropdownValue.decimals || 18,
+        decimals: token.decimals,
         symbol: token.symbol,
         name: token.name,
         balance: tokenDropdownValue.balance?.toString(),
       });
     }
-  }, [token]);
+  }, [token, tokenDropdownValue, amount, onChange]);
 
   const handleInputChange = (ev: ChangeEvent<HTMLInputElement>) => {
     const amt = parseFloat(ev.currentTarget.value);
@@ -203,6 +202,11 @@ export const NetworkTokenInput: React.FC<TokenInputProps> = ({
 
   const {data: tokens, isLoading} = useNetworkTokens(network);
 
+  const tokensDropdown = tokens?.map(t => ({
+    address: t.address,
+    symbol: t.symbol,
+  }));
+
   return (
     <TokenInput
       tokenAmount={tokenAmount}
@@ -211,7 +215,7 @@ export const NetworkTokenInput: React.FC<TokenInputProps> = ({
       onChange={onChange}
       disabled={disabled}
       isLoading={isLoading}
-      tokensDropdown={[]}
+      tokensDropdown={tokensDropdown ?? []}
     />
   );
 };
