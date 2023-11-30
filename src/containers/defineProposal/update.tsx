@@ -18,11 +18,9 @@ import {UpdateListItem} from 'containers/updateListItem/updateListItem';
 import {VersionSelectionMenu} from 'containers/versionSelectionMenu/versionSelectionMenu';
 import {useUpdateContext} from 'context/update';
 import {useDaoDetailsQuery} from 'hooks/useDaoDetails';
-import {useNavigate} from 'react-router-dom';
 import {useProtocolVersion} from 'services/aragon-sdk/queries/use-protocol-version';
 import {useReleaseNotes} from 'services/aragon-sdk/queries/use-release-notes';
 import {osxUpdates} from 'utils/osxUpdates';
-import {NotFound} from 'utils/paths';
 
 type ModalState = {
   type: 'os' | 'plugin' | 'none';
@@ -37,7 +35,6 @@ export const DefineUpdateProposal: React.FC = () => {
 
   // hooks
   const {t} = useTranslation();
-  const navigate = useNavigate();
 
   const {
     handlePreparePlugin,
@@ -151,14 +148,9 @@ export const DefineUpdateProposal: React.FC = () => {
     },
   ].filter(update => !update.disabled);
 
-  // queries loading && data parsing
+  // queries loading
   const isLoading =
-    detailsLoading ||
-    protocolVersionLoading ||
-    releaseNotesLoading ||
-    (((availablePluginUpdates?.size || 0) > 0 ||
-      (availableProtocolUpdates?.size || 0) > 0) &&
-      (!OSxReleaseNotes || !pluginReleaseNotes));
+    detailsLoading || protocolVersionLoading || releaseNotesLoading;
 
   /*************************************************
    *                    Effects                    *
@@ -319,9 +311,7 @@ export const DefineUpdateProposal: React.FC = () => {
     availablePluginUpdates?.size === 0 &&
     availableProtocolUpdates?.size === 0
   ) {
-    navigate(NotFound, {
-      replace: true,
-    });
+    return <p>No OSx updates available at this time.</p>;
   }
 
   return (
