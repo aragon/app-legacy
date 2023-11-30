@@ -903,7 +903,6 @@ const CreateProposalWrapper: React.FC<Props> = ({
           minutesToMills(minMinutes || 0)
       );
     }
-    params.endDate = params.endDate || params.startDate;
     await createProposal(metadata, params, handlePublishProposal);
   }, [
     pluginClient,
