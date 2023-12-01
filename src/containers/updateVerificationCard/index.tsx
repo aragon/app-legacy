@@ -58,7 +58,7 @@ export const UpdateVerificationCard: React.FC<UpdateVerificationCardProps> = ({
           ErrorList: [
             ...(osUpdateVerification?.actionErrorCauses || []),
             ...(osUpdateVerification?.proposalSettingsErrorCauses || []),
-          ] as string[],
+          ].flat(),
         };
     }
   }, [
@@ -95,7 +95,7 @@ export const UpdateVerificationCard: React.FC<UpdateVerificationCardProps> = ({
           ErrorList: [
             ...(pluginUpdateVerification?.actionErrorCauses || []),
             ...(pluginUpdateVerification?.proposalSettingsErrorCauses || []),
-          ] as string[],
+          ].flat(),
         };
     }
   }, [isPluginUpdateLoading, pluginType, pluginUpdateVerification, t]);
