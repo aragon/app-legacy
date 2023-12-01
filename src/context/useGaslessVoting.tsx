@@ -164,7 +164,9 @@ export const useGaslessCommiteVotes = (
     isApprovalPeriod && proposal.status === ProposalStatus.SUCCEEDED;
 
   const approved = useMemo(() => {
-    return proposal.approvers?.some(approver => approver === address);
+    return proposal.approvers?.some(
+      approver => approver.toLowerCase() === address?.toLowerCase()
+    );
   }, [address, proposal.approvers]);
 
   const isApproved = (proposal => {
@@ -192,7 +194,7 @@ export const useGaslessCommiteVotes = (
       setCanApprove(canApprove);
     };
 
-    if (!(address && client)) {
+    if (!address || !client) {
       return;
     }
 
