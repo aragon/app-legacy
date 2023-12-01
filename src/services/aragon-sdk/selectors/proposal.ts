@@ -284,8 +284,12 @@ function syncGaslessVotesOrApproves(
     proposal.id
   );
 
-  const serverApprovals = new Set(proposal.approvers);
-  const serverGaslessVoters = new Set(proposal.voters);
+  const serverApprovals = new Set(
+    proposal.approvers?.map(approver => approver.toLowerCase())
+  );
+  const serverGaslessVoters = new Set(
+    proposal.voters?.map(voter => voter.toLowerCase())
+  );
 
   allCachedVotes.forEach(cachedVote => {
     // remove, from the cache, votes that are returned by the query as well
