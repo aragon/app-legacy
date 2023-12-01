@@ -289,7 +289,7 @@ export const TextInput = ({
           />
         );
       case 'hidden':
-        return <input {...commonProps} type="hidden" className="sf-hidden" />;
+        return <input {...commonProps} type="hidden" />;
       case 'textarea':
         return (
           <TextareaSimple
