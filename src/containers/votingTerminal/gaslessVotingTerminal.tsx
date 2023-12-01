@@ -70,7 +70,6 @@ export const GaslessVotingTerminal: React.FC<CommitteeVotingTerminalProps> = ({
     isApproved,
     canBeExecuted,
     isApprovalPeriod,
-    executed,
     notBegan,
   } = useGaslessCommiteVotes(pluginAddress, proposal);
 
@@ -124,7 +123,7 @@ export const GaslessVotingTerminal: React.FC<CommitteeVotingTerminalProps> = ({
         t
       );
     }
-  }, [proposal, executed, notBegan, approved, canApprove, isApproved, t]);
+  }, [proposal, notBegan, approved, isApproved, isApprovalPeriod, t]);
 
   // vote button state and handler
   const {voteNowDisabled, onClick} = useMemo(() => {
