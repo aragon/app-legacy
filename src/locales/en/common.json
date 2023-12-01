@@ -1663,8 +1663,8 @@
     "verification": {
       "title": "Update verification",
       "desc": "Aragon OSx updates should always be verified prior to being voted on or executed. The following checks are the most essential and are automatically performed for you by Aragon App. To learn more about Aragon OSx updates, {{link}}.",
-      "itemPending": "Checking {updateName} update…",
-      "itemSuccess": "{updateName} update verified",
+      "itemPending": "Checking {{updateName}} update…",
+      "itemSuccess": "{{updateName}} update verified",
       "itemCriticalDecoding": {
         "desc": "At least one action can’t be decoded, indicating that this update could be  harmful."
       },
