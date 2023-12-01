@@ -250,7 +250,7 @@ export const VotingTerminal: React.FC<VotingTerminalProps> = ({
       {selectedTab === 'breakdown' ? (
         <BreakdownTab
           approvals={approvals}
-          memberCount={voters.length}
+          memberCount={minApproval ?? voters.length} // For gasless proposals, the member count is the minimum approval and not all voters
           results={results}
           token={daoToken}
         />
