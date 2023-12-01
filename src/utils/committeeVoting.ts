@@ -4,17 +4,16 @@ import {Locale, formatDistanceToNow} from 'date-fns';
 import * as Locales from 'date-fns/locale';
 
 export function getCommitteVoteButtonLabel(
-  executed: boolean,
   notBegan: boolean,
   voted: boolean,
-  canApprove: boolean,
   approved: boolean,
+  isApprovalPeriod: boolean,
   t: TFunction
 ) {
   if (approved || voted) {
     return t('votingTerminal.status.approved');
   }
-  if (notBegan || canApprove) {
+  if (notBegan || isApprovalPeriod) {
     return t('votingTerminal.approve');
   }
   return t('votingTerminal.concluded');
