@@ -195,6 +195,7 @@ const StatsContainer = styled.div.attrs<{total: number}>({
   width: fit-content;
 
   @media screen and (max-width: 786px) {
+    width: calc(100% - 32px);
     grid-template-columns: repeat(2, 1fr);
   }
 `;

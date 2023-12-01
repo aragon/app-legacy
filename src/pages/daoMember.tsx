@@ -81,7 +81,7 @@ export const DaoMember: React.FC = () => {
   );
 
   const isDelegating = !!daoMember?.delegators?.find(
-    item => item.address === address
+    item => item.address.toLowerCase() === address?.toLowerCase()
   );
 
   const isDelegationEnabled =
