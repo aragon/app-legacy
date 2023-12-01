@@ -19,6 +19,7 @@ import {isGaslessProposal} from '../utils/proposals';
 import {GaselessPluginName, usePluginClient} from '../hooks/usePluginClient';
 import {useWallet} from '../hooks/useWallet';
 import {useDaoDetailsQuery} from '../hooks/useDaoDetails';
+import {ProposalStatus} from '@aragon/sdk-client-common';
 
 export enum GaslessVotingStepId {
   CREATE_VOTE_ID = 'CREATE_VOTE_ID',
