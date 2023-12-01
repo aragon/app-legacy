@@ -1,6 +1,6 @@
 import {VotingMode} from '@aragon/sdk-client';
 import {parseUnits} from 'ethers/lib/utils';
-import React, {useCallback, useState} from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 import {useFormContext, useFormState} from 'react-hook-form';
 import {useTranslation} from 'react-i18next';
 import {generatePath} from 'react-router-dom';
@@ -88,154 +88,165 @@ export const ProposeSettings: React.FC = () => {
 
   // Not a fan, but this sets the actions on the form context so that the Action
   // Widget can read them
-  const setSettingActions = useCallback(async () => {
-    const [
-      daoName,
-      daoSummary,
-      daoLogo,
-      minimumApproval,
-      multisigMinimumApprovals,
-      minimumParticipation,
-      eligibilityType,
-      eligibilityTokenAmount,
-      earlyExecution,
-      voteReplacement,
-      durationDays,
-      durationHours,
-      durationMinutes,
-      resourceLinks,
-      tokenDecimals,
+  useEffect(() => {
+    const setSettingActions = async () => {
+      const [
+        daoName,
+        daoSummary,
+        daoLogo,
+        minimumApproval,
+        multisigMinimumApprovals,
+        minimumParticipation,
+        eligibilityType,
+        eligibilityTokenAmount,
+        earlyExecution,
+        voteReplacement,
+        durationDays,
+        durationHours,
+        durationMinutes,
+        resourceLinks,
+        tokenDecimals,
 
-      executionExpirationMinutes,
-      executionExpirationHours,
-      executionExpirationDays,
-      committee,
-      committeeMinimumApproval,
-    ] = getValues([
-      'daoName',
-      'daoSummary',
-      'daoLogo',
-      'minimumApproval',
-      'multisigMinimumApprovals',
-      'minimumParticipation',
-      'eligibilityType',
-      'eligibilityTokenAmount',
-      'earlyExecution',
-      'voteReplacement',
-      'durationDays',
-      'durationHours',
-      'durationMinutes',
-      'daoLinks',
-      'tokenDecimals',
+        executionExpirationMinutes,
+        executionExpirationHours,
+        executionExpirationDays,
+        committee,
+        committeeMinimumApproval,
+      ] = getValues([
+        'daoName',
+        'daoSummary',
+        'daoLogo',
+        'minimumApproval',
+        'multisigMinimumApprovals',
+        'minimumParticipation',
+        'eligibilityType',
+        'eligibilityTokenAmount',
+        'earlyExecution',
+        'voteReplacement',
+        'durationDays',
+        'durationHours',
+        'durationMinutes',
+        'daoLinks',
+        'tokenDecimals',
 
-      'executionExpirationMinutes',
-      'executionExpirationHours',
-      'executionExpirationDays',
-      'committee',
-      'committeeMinimumApproval',
-    ]);
+        'executionExpirationMinutes',
+        'executionExpirationHours',
+        'executionExpirationDays',
+        'committee',
+        'committeeMinimumApproval',
+      ]);
 
-    let daoLogoFile = '';
+      let daoLogoFile = '';
 
-    if (daoDetails && !daoName) return; // todo: handle this on the form
-    // navigate(
-    //   generatePath(EditSettings, {network, dao: daoDetails?.address})
-    // );
+      if (daoDetails && !daoName) return; // todo: handle this on the form
+      // navigate(
+      //   generatePath(EditSettings, {network, dao: daoDetails?.address})
+      // );
 
-    if (daoLogo?.startsWith?.('blob'))
-      daoLogoFile = (await fetch(daoLogo).then(r => r.blob())) as string;
-    else daoLogoFile = daoLogo;
+      if (daoLogo?.startsWith?.('blob'))
+        daoLogoFile = (await fetch(daoLogo).then(r => r.blob())) as string;
+      else daoLogoFile = daoLogo;
 
-    const metadataAction: ActionUpdateMetadata = {
-      name: 'modify_metadata',
-      inputs: {
-        name: daoName,
-        description: daoSummary,
-        avatar: daoLogoFile,
-        links: resourceLinks,
-      },
+      const metadataAction: ActionUpdateMetadata = {
+        name: 'modify_metadata',
+        inputs: {
+          name: daoName,
+          description: daoSummary,
+          avatar: daoLogoFile,
+          links: resourceLinks,
+        },
+      };
+
+      if (isGaslessVotingSettings(pluginSettings)) {
+        const gaslessSettingsAction: ActionUpdateGaslessSettings = {
+          name: 'modify_gasless_voting_settings',
+          inputs: {
+            executionMultisigMembers: (committee as MultisigWalletField[]).map(
+              wallet => wallet.address
+            ),
+            minTallyApprovals: committeeMinimumApproval,
+            minDuration: getSecondsFromDHM(
+              executionExpirationDays,
+              executionExpirationHours,
+              executionExpirationMinutes
+            ),
+            minTallyDuration: getSecondsFromDHM(
+              durationDays,
+              durationHours,
+              durationMinutes
+            ),
+            minParticipation: Number(minimumParticipation) / 100,
+            supportThreshold: Number(minimumApproval) / 100,
+
+            minProposerVotingPower:
+              eligibilityType === 'token'
+                ? parseUnits(
+                    eligibilityTokenAmount.toString(),
+                    tokenDecimals
+                  ).toBigInt()
+                : BigInt(0),
+            censusStrategy: '',
+            daoTokenAddress: daoToken?.address,
+            // onlyExecutionMultisigProposalCreation?: boolean;
+            id: pluginAddress,
+            // dao: {
+            //   id: dao,
+            //   proposalsCount: number;
+            // };
+          },
+        };
+        setValue('actions', [metadataAction, gaslessSettingsAction]);
+      } else if (isTokenVotingSettings(pluginSettings)) {
+        const voteSettingsAction: ActionUpdatePluginSettings = {
+          name: 'modify_token_voting_settings',
+          inputs: {
+            token: daoToken,
+            totalVotingWeight: tokenSupply?.raw || BigInt(0),
+
+            minDuration: getSecondsFromDHM(
+              durationDays,
+              durationHours,
+              durationMinutes
+            ),
+            supportThreshold: Number(minimumApproval) / 100,
+            minParticipation: Number(minimumParticipation) / 100,
+            minProposerVotingPower:
+              eligibilityType === 'token'
+                ? parseUnits(
+                    eligibilityTokenAmount.toString(),
+                    tokenDecimals
+                  ).toBigInt()
+                : undefined,
+            votingMode: earlyExecution
+              ? VotingMode.EARLY_EXECUTION
+              : voteReplacement
+              ? VotingMode.VOTE_REPLACEMENT
+              : VotingMode.STANDARD,
+          },
+        };
+        setValue('actions', [metadataAction, voteSettingsAction]);
+      } else {
+        const multisigSettingsAction: ActionUpdateMultisigPluginSettings = {
+          name: 'modify_multisig_voting_settings',
+          inputs: {
+            minApprovals: multisigMinimumApprovals,
+            onlyListed: eligibilityType === 'multisig',
+          },
+        };
+
+        setValue('actions', [metadataAction, multisigSettingsAction]);
+      }
     };
-
-    if (isGaslessVotingSettings(pluginSettings)) {
-      const gaslessSettingsAction: ActionUpdateGaslessSettings = {
-        name: 'modify_gasless_voting_settings',
-        inputs: {
-          executionMultisigMembers: (committee as MultisigWalletField[]).map(
-            wallet => wallet.address
-          ),
-          minTallyApprovals: committeeMinimumApproval,
-          minDuration: getSecondsFromDHM(
-            executionExpirationDays,
-            executionExpirationHours,
-            executionExpirationMinutes
-          ),
-          minTallyDuration: getSecondsFromDHM(
-            durationDays,
-            durationHours,
-            durationMinutes
-          ),
-          minParticipation: Number(minimumParticipation) / 100,
-          supportThreshold: Number(minimumApproval) / 100,
-
-          minProposerVotingPower:
-            eligibilityType === 'token'
-              ? parseUnits(
-                  eligibilityTokenAmount.toString(),
-                  tokenDecimals
-                ).toBigInt()
-              : BigInt(0),
-          censusStrategy: '',
-          daoTokenAddress: daoToken?.address,
-          // onlyExecutionMultisigProposalCreation?: boolean;
-          id: pluginAddress,
-          // dao: {
-          //   id: dao,
-          //   proposalsCount: number;
-          // };
-        },
-      };
-      setValue('actions', [metadataAction, gaslessSettingsAction]);
-    } else if (isTokenVotingSettings(pluginSettings)) {
-      const voteSettingsAction: ActionUpdatePluginSettings = {
-        name: 'modify_token_voting_settings',
-        inputs: {
-          token: daoToken,
-          totalVotingWeight: tokenSupply?.raw || BigInt(0),
-
-          minDuration: getSecondsFromDHM(
-            durationDays,
-            durationHours,
-            durationMinutes
-          ),
-          supportThreshold: Number(minimumApproval) / 100,
-          minParticipation: Number(minimumParticipation) / 100,
-          minProposerVotingPower:
-            eligibilityType === 'token'
-              ? parseUnits(
-                  eligibilityTokenAmount.toString(),
-                  tokenDecimals
-                ).toBigInt()
-              : undefined,
-          votingMode: earlyExecution
-            ? VotingMode.EARLY_EXECUTION
-            : voteReplacement
-            ? VotingMode.VOTE_REPLACEMENT
-            : VotingMode.STANDARD,
-        },
-      };
-      setValue('actions', [metadataAction, voteSettingsAction]);
-    } else {
-      const multisigSettingsAction: ActionUpdateMultisigPluginSettings = {
-        name: 'modify_multisig_voting_settings',
-        inputs: {
-          minApprovals: multisigMinimumApprovals,
-          onlyListed: eligibilityType === 'multisig',
-        },
-      };
-
-      setValue('actions', [metadataAction, multisigSettingsAction]);
-    }
-  }, [getValues, daoDetails, pluginSettings, setValue]);
+    setSettingActions();
+  }, [
+    getValues,
+    daoDetails,
+    pluginSettings,
+    daoToken,
+    pluginAddress,
+    setValue,
+    tokenSupply?.raw,
+  ]);
 
   if (daoDetailsLoading || settingsLoading || tokenSupplyIsLoading) {
     return <Loading />;
@@ -278,7 +289,6 @@ export const ProposeSettings: React.FC = () => {
         <Step
           wizardTitle={t('newWithdraw.setupVoting.title')}
           wizardDescription={t('newWithdraw.setupVoting.description')}
-          onNextButtonClicked={setSettingActions}
         >
           <SetupVotingForm pluginSettings={pluginSettings} />
         </Step>
