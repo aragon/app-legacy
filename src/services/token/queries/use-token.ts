@@ -22,11 +22,19 @@ export const useToken = (
   params: IFetchTokenParams,
   options?: UseQueryOptions<Token | null>
 ) => {
-  return useQuery(
+  const tok = useQuery(
     tokenQueryKeys.token(params),
     () => tokenService.fetchToken(params),
     options
   );
+  if (options?.enabled) {
+    console.log(
+      `useToken ${params.address}(${params.symbol}): ${JSON.stringify(tok)}`
+    );
+  } else {
+    console.log(`useToken disabled: ${params.address} ${params.network}`);
+  }
+  return tok;
 };
 
 export const useTokenAsync = () => {

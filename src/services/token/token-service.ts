@@ -130,14 +130,16 @@ class TokenService {
         decimals: resp.decimals,
       };
 
+      console.log(`fetched token ${JSON.stringify(token)} from backend`);
+
       if (
         (network === 'base' || network === 'base-goerli') &&
         token.address === constants.AddressZero
       ) {
         token.imgUrl = REPLACEMENT_BASE_ETHER_LOGO_URL;
       }
-    } catch {
-      console.error('failed to fetch token');
+    } catch (err) {
+      console.error(`failed to fetch token: ${err}`);
     }
     return token;
   };

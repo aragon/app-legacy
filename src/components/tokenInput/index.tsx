@@ -1,6 +1,6 @@
 import {TokenType} from '@aragon/sdk-client-common';
 import {useNetwork} from 'context/network';
-import {constants} from 'ethers';
+import {constants, ethers} from 'ethers';
 import {useDaoBalances} from 'hooks/useDaoBalances';
 import {useDaoDetailsQuery} from 'hooks/useDaoDetails';
 import React, {ChangeEvent, useEffect, useMemo, useState} from 'react';
@@ -12,10 +12,10 @@ import {formatUnits} from 'utils/library';
 
 export interface TokenInputValue {
   amount?: number;
-  address: string;
-  decimals: number;
-  symbol: string;
-  name: string;
+  address?: string;
+  decimals?: number;
+  symbol?: string;
+  name?: string;
   balance?: string;
 }
 
@@ -58,29 +58,41 @@ const TokenInput: React.FC<TokenInputPropsWithData> = ({
     TokenDropdownValue | undefined
   >(undefined);
 
-  const {data: token} = useToken(
+  const {
+    data: token,
+    isLoading: isTokenLoading,
+    isError: isTokenError,
+  } = useToken(
     {
-      address: tokenDropdownValue?.address || '',
-      network: network || 'ethereum',
+      address: tokenDropdownValue?.address
+        ? ethers.utils.getAddress(tokenDropdownValue?.address)
+        : '',
+      network: network!,
     },
-    {enabled: !!tokenDropdownValue?.address}
+    {enabled: !!tokenDropdownValue?.address && !!network}
   );
 
   const isEmpty =
     isLoading || !tokensDropdown.some(t => t.address === tokenAddress);
 
   useEffect(() => {
-    if (token && tokenDropdownValue && onChange) {
-      onChange({
-        amount,
-        address: tokenDropdownValue.address,
-        decimals: token.decimals,
-        symbol: token.symbol,
-        name: token.name,
-        balance: tokenDropdownValue.balance?.toString(),
-      });
-    }
-  }, [token, tokenDropdownValue, amount, onChange]);
+    if (!onChange) return;
+    onChange({
+      amount,
+      address: tokenDropdownValue?.address,
+      decimals: token?.decimals,
+      symbol: token?.symbol,
+      name: token?.name,
+      balance: tokenDropdownValue?.balance?.toString(),
+    });
+  }, [
+    token,
+    tokenDropdownValue,
+    amount,
+    onChange,
+    isTokenLoading,
+    isTokenError,
+  ]);
 
   const handleInputChange = (ev: ChangeEvent<HTMLInputElement>) => {
     const amt = parseFloat(ev.currentTarget.value);
@@ -190,6 +202,7 @@ export const WalletTokenInput: React.FC<TokenInputProps> = ({
       disabled={disabled}
       isLoading={isLoading}
       tokensDropdown={tokensDropdown ?? []}
+      network={network}
     />
   );
 };
@@ -227,6 +240,7 @@ export const NetworkTokenInput: React.FC<TokenInputProps> = ({
       disabled={disabled}
       isLoading={isLoading}
       tokensDropdown={tokensDropdown ?? []}
+      network={network}
     />
   );
 };
