@@ -12,6 +12,7 @@ import {SCCExecutionCard} from './actions/sccExecutionWidget';
 import {WCActionCard} from './actions/walletConnectActionCard';
 import {WithdrawCard} from './actions/withdrawCard';
 import {toDisplayEns} from 'utils/library';
+import {ModifyGaslessSettingsCard} from './actions/modifyGaslessSettingsCard';
 
 type ActionsFilterProps = {
   action: Action;
@@ -52,6 +53,8 @@ export const ActionsFilter: React.FC<ActionsFilterProps> = ({
       return (
         <WCActionCard action={action} type="execution-widget" status={status} />
       );
+    case 'modify_gasless_voting_settings':
+      return <ModifyGaslessSettingsCard action={action} />;
     case 'plugin_update':
     default:
       return <></>;
