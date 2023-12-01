@@ -117,11 +117,10 @@ export const GaslessVotingTerminal: React.FC<CommitteeVotingTerminalProps> = ({
   const buttonLabel = useMemo(() => {
     if (proposal) {
       return getCommitteVoteButtonLabel(
-        executed,
         notBegan,
         approved,
-        canApprove,
         isApproved,
+        isApprovalPeriod,
         t
       );
     }
