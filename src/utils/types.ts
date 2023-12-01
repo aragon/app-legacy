@@ -85,7 +85,6 @@ export type BaseTokenInfo = {
   address: string;
   count: bigint;
   decimals: number;
-  id?: string; // for api call, optional because custom tokens have no id
   imgUrl: string;
   name: string;
   symbol: string;
@@ -110,7 +109,6 @@ export type TokenBalance = {
 export type TokenWithMetadata = {
   balance: bigint;
   metadata: TokenBalance['token'] & {
-    apiId?: string;
     imgUrl: string;
   };
 };
@@ -126,7 +124,6 @@ export type TokenWithMetadata = {
 export interface MarketData {
   price: number;
   balanceValue: number;
-  priceChangeDuringInterval: number;
   valueChangeDuringInterval?: number;
   percentageChangedDuringInterval: number;
 }

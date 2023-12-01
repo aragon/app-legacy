@@ -43,7 +43,6 @@ const TokenMenu: React.FC<TokenMenuProps> = ({
    *************************************************/
   const handleTokenClick = (token: TokenWithMetadata) => {
     onTokenSelect({
-      id: token.metadata.apiId,
       address: token.metadata.id,
       name: token.metadata.name,
       count: token.balance,

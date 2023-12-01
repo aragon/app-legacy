@@ -20,7 +20,6 @@ import {
   VotingSettings,
 } from '@aragon/sdk-client';
 import {
-  DaoAction,
   LIVE_CONTRACTS,
   ProposalMetadata,
   ProposalStatus,
@@ -314,6 +313,7 @@ export function getProposalStatusSteps(
   creationDate: Date,
   publishedBlock: string,
   executionFailed: boolean,
+  isSuccessfulMultisigSignalingProposal: boolean,
   executionBlock?: string,
   executionDate?: Date
 ): Array<ProgressStatusProps> {
@@ -339,15 +339,16 @@ export function getProposalStatusSteps(
           )}  ${getFormattedUtcOffset()}`,
         },
       ];
-    case ProposalStatus.SUCCEEDED:
-      if (executionFailed)
+    case ProposalStatus.SUCCEEDED: {
+      if (executionFailed) {
         return [
           ...getEndedProposalSteps(
             t,
             creationDate,
             startDate,
             endDate,
-            publishedBlock
+            publishedBlock,
+            false
           ),
           {
             label: t('governance.statusWidget.failed'),
@@ -358,20 +359,27 @@ export function getProposalStatusSteps(
             )}  ${getFormattedUtcOffset()}`,
           },
         ];
-      else
-        return [
+      } else {
+        const steps = [
           ...getEndedProposalSteps(
             t,
             creationDate,
             startDate,
             endDate,
-            publishedBlock
+            publishedBlock,
+            isSuccessfulMultisigSignalingProposal
           ),
-          {
+        ];
+
+        if (!isSuccessfulMultisigSignalingProposal) {
+          steps.push({
             label: t('governance.statusWidget.executed'),
             mode: 'upcoming',
-          },
-        ];
+          });
+        }
+        return steps;
+      }
+    }
     case ProposalStatus.EXECUTED:
       if (executionDate)
         return [
@@ -381,6 +389,7 @@ export function getProposalStatusSteps(
             startDate,
             endDate,
             publishedBlock,
+            isSuccessfulMultisigSignalingProposal,
             executionDate || new Date()
           ),
           {
@@ -400,7 +409,8 @@ export function getProposalStatusSteps(
             creationDate,
             startDate,
             endDate,
-            publishedBlock
+            publishedBlock,
+            isSuccessfulMultisigSignalingProposal
           ),
           {label: t('governance.statusWidget.failed'), mode: 'failed'},
         ];
@@ -417,14 +427,23 @@ function getEndedProposalSteps(
   startDate: Date,
   endDate: Date,
   block: string,
+  isSuccessfulMultisigSignalingProposal: boolean,
   executionDate?: Date
 ): Array<ProgressStatusProps> {
+  let label = t('governance.statusWidget.succeeded');
+  let mode: ModeType = 'done';
+
+  if (isSuccessfulMultisigSignalingProposal) {
+    label = t('votingTerminal.status.approved');
+    mode = 'succeeded';
+  }
+
   return [
     {...getPublishedProposalStep(t, creationDate, block)},
     {...getActiveProposalStep(t, startDate, 'done')},
     {
-      label: t('governance.statusWidget.succeeded'),
-      mode: 'done',
+      label,
+      mode,
       date: `${format(
         executionDate! < endDate ? executionDate! : endDate,
         KNOWN_FORMATS.proposals
@@ -703,7 +722,7 @@ export function getVoteStatus(proposal: DetailedProposal, t: TFunction) {
   let label = '';
 
   switch (proposal.status) {
-    case 'Pending':
+    case ProposalStatus.PENDING:
       {
         const locale = (Locales as Record<string, Locale>)[i18n.language];
         const timeUntilNow = formatDistanceToNow(proposal.startDate, {
@@ -714,7 +733,7 @@ export function getVoteStatus(proposal: DetailedProposal, t: TFunction) {
         label = t('votingTerminal.status.pending', {timeUntilNow});
       }
       break;
-    case 'Active':
+    case ProposalStatus.ACTIVE:
       {
         const locale = (Locales as Record<string, Locale>)[i18n.language];
         const timeUntilEnd = formatDistanceToNow(proposal.endDate, {
@@ -725,15 +744,15 @@ export function getVoteStatus(proposal: DetailedProposal, t: TFunction) {
         label = t('votingTerminal.status.active', {timeUntilEnd});
       }
       break;
-    case 'Succeeded':
+    case ProposalStatus.SUCCEEDED:
       label = t('votingTerminal.status.succeeded');
 
       break;
-    case 'Executed':
+    case ProposalStatus.EXECUTED:
       label = t('votingTerminal.status.executed');
 
       break;
-    case 'Defeated':
+    case ProposalStatus.DEFEATED:
       label = isMultisigProposal(proposal)
         ? t('votingTerminal.status.expired')
         : t('votingTerminal.status.defeated');
@@ -956,27 +975,11 @@ export function recalculateProposalStatus<
     // for an inactive multisig proposal, make sure a vote has actually been cast
     // or that the end time isn't in the past
     if (isMultisigProposal(proposal)) {
-      if (endTime < Date.now() || proposal.approvals.length === 0)
+      if (proposal.approvals.length === 0)
         return {...proposal, status: ProposalStatus.DEFEATED};
     }
   }
   return proposal;
-}
-
-/**
- * Checks if a proposal contains verified updates for Aragon DAO or plugins.
- * @param proposalActions - An array of `DaoAction` objects representing proposal actions.
- * @param client - An instance of the `Client` class providing methods for DAO and plugin updates.
- * @returns A boolean indicating whether the proposal contains verified updates for Aragon DAO or plugins.
- */
-export function isVerifiedAragonUpdateProposal(
-  proposalActions: DaoAction[],
-  client: Client
-) {
-  return (
-    client.methods.isDaoUpdate(proposalActions) ||
-    client.methods.isPluginUpdate(proposalActions)
-  );
 }
 
 /**
@@ -1072,10 +1075,11 @@ export async function getDecodedUpdateActions(
     ) as ActionPluginUpdate | undefined;
 
     if (pluginAction && updateFramework?.plugin) {
-      const encodedPluginActions = client.encoding.applyUpdateAction(
-        daoAddress,
-        pluginAction.inputs
-      );
+      const encodedPluginActions =
+        client.encoding.applyUpdateAndPermissionsActionBlock(
+          daoAddress,
+          pluginAction.inputs
+        );
 
       const decodedPluginActions = [];
       for (const [

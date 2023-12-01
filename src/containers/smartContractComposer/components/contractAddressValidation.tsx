@@ -436,7 +436,9 @@ const ContractAddressValidation: React.FC<Props> = props => {
         <div className="flex space-x-2">
           <Spinner size={'xs'} className="text-primary-500" />
           <VerificationStatus colorClassName="text-primary-800">
-            {t('scc.validation.etherscanStatusPending')}
+            {t('scc.validation.etherscanStatusPending', {
+              blockExplorerName: CHAIN_METADATA[network].explorerName,
+            })}
           </VerificationStatus>
         </div>
       );
@@ -449,7 +451,9 @@ const ContractAddressValidation: React.FC<Props> = props => {
           <div className="flex space-x-2">
             <IconSuccess className="text-success-500" />
             <VerificationStatus colorClassName="text-success-800">
-              {t('scc.validation.etherscanStatusSuccess')}
+              {t('scc.validation.etherscanStatusSuccess', {
+                blockExplorerName: CHAIN_METADATA[network].explorerName,
+              })}
             </VerificationStatus>
           </div>
         );
@@ -458,13 +462,15 @@ const ContractAddressValidation: React.FC<Props> = props => {
           <div className="flex space-x-2">
             <IconRadioCancel className="text-critical-500" />
             <VerificationStatus colorClassName="text-critical-800">
-              {t('scc.validation.etherscanStatusCritical')}
+              {t('scc.validation.etherscanStatusCritical', {
+                blockExplorerName: CHAIN_METADATA[network].explorerName,
+              })}
             </VerificationStatus>
           </div>
         );
       }
     }
-  }, [etherscanData, etherscanLoading, isTransactionError, t]);
+  }, [etherscanData, etherscanLoading, isTransactionError, network, t]);
 
   return (
     <ModalBottomSheetSwitcher

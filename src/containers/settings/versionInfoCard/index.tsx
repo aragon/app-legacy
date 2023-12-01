@@ -17,14 +17,17 @@ import {
   Term,
 } from '../settingsCard';
 import {useProtocolVersion} from 'services/aragon-sdk/queries/use-protocol-version';
+import {PluginTypes} from 'hooks/usePluginClient';
 
 export const VersionInfoCard: React.FC<{
   pluginAddress: string;
   pluginVersion: string;
   daoAddress: string;
-}> = ({pluginAddress, pluginVersion, daoAddress}) => {
+  pluginType: PluginTypes;
+}> = ({pluginAddress, pluginVersion, pluginType, daoAddress}) => {
   const {t} = useTranslation();
   const {network} = useNetwork();
+
   const {data: versions, isLoading} = useProtocolVersion(daoAddress);
 
   const explorerEndpoint = CHAIN_METADATA[network].explorer + 'address/';
@@ -41,7 +44,22 @@ export const VersionInfoCard: React.FC<{
       ]?.daoFactoryAddress;
   }
 
-  // TODO: generate the links
+  let pluginName = '';
+
+  switch (pluginType) {
+    case 'multisig.plugin.dao.eth':
+      pluginName = 'Multisig';
+      break;
+    case 'token-voting.plugin.dao.eth':
+      pluginName = 'Token Voting';
+      break;
+    case 'vocdoni-gasless-voting-poc.plugin.dao.eth':
+      pluginName = 'Vocdoni Gasless Voting';
+      break;
+    default:
+      pluginName = 'Unknown plugin';
+  }
+
   return (
     <div
       className={
@@ -51,7 +69,7 @@ export const VersionInfoCard: React.FC<{
       <SettingsCard title={t('setting.versionInfo.title')}>
         <DescriptionPair>
           <Term>{t('setting.versionInfo.labelApp')}</Term>
-          <FlexibleDefinition>
+          <FlexibleDefinition className="truncate">
             <Link
               label={`Aragon App v${AppVersion}`}
               type="primary"
@@ -62,7 +80,7 @@ export const VersionInfoCard: React.FC<{
         </DescriptionPair>
         <DescriptionPair>
           <Term>{t('setting.versionInfo.labelOs')}</Term>
-          <FlexibleDefinition>
+          <FlexibleDefinition className="truncate">
             <Link
               label={
                 !isLoading ? `Aragon OSx v${versions?.join('.')}` : 'Loading...'
@@ -77,9 +95,9 @@ export const VersionInfoCard: React.FC<{
 
         <DescriptionPair className="border-none">
           <Term>{t('setting.versionInfo.labelGovernance')}</Term>
-          <FlexibleDefinition>
+          <FlexibleDefinition className="truncate">
             <Link
-              label={`Token voting v${pluginVersion}`}
+              label={`${pluginName} v${pluginVersion}`}
               description={shortenAddress(pluginAddress)}
               type="primary"
               href={explorerEndpoint + pluginAddress}

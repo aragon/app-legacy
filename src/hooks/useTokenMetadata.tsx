@@ -58,7 +58,6 @@ export const useTokenMetadata = (
             }),
 
         price: tokens[index]?.price,
-        apiId: tokens[index]?.id,
         imgUrl: tokens[index]?.imgUrl ?? '',
       },
     }));

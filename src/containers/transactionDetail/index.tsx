@@ -37,12 +37,15 @@ const TransactionDetail: React.FC = () => {
 
   const {isOpen, transfer, onClose} = useTransactionDetailContext();
 
-  const transactionUrl = `
-    ${CHAIN_METADATA[network].explorer}tx/${transfer.transaction}`;
+  const explorerURL = CHAIN_METADATA[network].explorer;
+  const transactionUrl = ` ${explorerURL}tx/${transfer.transaction}`;
   const proposalId =
     transfer.transferType === TransferTypes.Withdraw
       ? (transfer as Withdraw).proposalId
       : undefined;
+
+  const daoExplorerURL = `${explorerURL}address/${address}`;
+  const transferDaoName = toDisplayEns(ensDomain) || daoName;
 
   const {data: proposal} = useProposal({
     pluginType: plugins?.[0].id as PluginTypes,
@@ -76,8 +79,18 @@ const TransactionDetail: React.FC = () => {
       <Content>
         <CardTransfer
           {...(transfer.transferType === TransferTypes.Deposit
-            ? {to: daoName, from: transfer.sender}
-            : {to: transfer.to, from: daoName})}
+            ? {
+                to: transferDaoName,
+                toLinkURL: daoExplorerURL,
+                from: transfer.sender,
+                fromLinkURL: `${explorerURL}address/${transfer.sender}`,
+              }
+            : {
+                to: transfer.to,
+                toLinkURL: `${explorerURL}address/${transfer.to}`,
+                from: transferDaoName,
+                fromLinkURL: daoExplorerURL,
+              })}
           toLabel={t('labels.to')}
           fromLabel={t('labels.from')}
         />

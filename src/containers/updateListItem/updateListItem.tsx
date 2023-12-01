@@ -96,16 +96,7 @@ export const UpdateListItem: React.FC<CheckboxListItemProps> = ({
           </span>
         </div>
         {(buttonPrimaryLabel || buttonSecondaryLabel) && (
-          <div className="mt-6 flex flex-col gap-y-3">
-            {buttonPrimaryLabel && (
-              <ButtonText
-                label={buttonPrimaryLabel}
-                mode="primary"
-                disabled={disabled}
-                size="medium"
-                onClick={onClickActionPrimary}
-              />
-            )}
+          <div className="mt-6 flex flex-col gap-y-3 md:flex-row">
             {buttonSecondaryLabel && (
               <ButtonText
                 label={buttonSecondaryLabel}
@@ -114,6 +105,15 @@ export const UpdateListItem: React.FC<CheckboxListItemProps> = ({
                 disabled={disabled}
                 size="medium"
                 onClick={onClickActionSecondary}
+              />
+            )}
+            {buttonPrimaryLabel && (
+              <ButtonText
+                label={buttonPrimaryLabel}
+                mode="primary"
+                disabled={disabled}
+                size="medium"
+                onClick={onClickActionPrimary}
               />
             )}
           </div>
@@ -129,7 +129,7 @@ type ContainerTypes = {
 };
 
 const Container = styled.div.attrs<ContainerTypes>(({disabled, type}) => ({
-  className: `flex-1 py-3 px-4 rounded-xl border-2 focus:outline-none focus-visible:ring focus-visible:ring-primary max-w-[364px] ${
+  className: `flex-1 py-3 px-4 rounded-xl border-2 focus:outline-none focus-visible:ring focus-visible:ring-primary w-full ${
     disabled
       ? 'bg-neutral-100 border-neutral-300'
       : `bg-neutral-0 group hover:border-primary-500 cursor-pointer ${
