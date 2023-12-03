@@ -20,6 +20,13 @@ interface IUseIsMemberParams extends IFetchIsMemberParams {
   pluginType: PluginTypes;
 }
 
+/**
+ * Custom hook that checks if a given address is a member of a DAO plugin.
+ *
+ * @param params - The parameters for the query.
+ * @param options - The options for the query.
+ * @returns The result of the query, indicating whether the address is a member or not.
+ */
 export const useIsMember = (
   params: IUseIsMemberParams,
   options: UseQueryOptions<boolean | undefined> = {}
@@ -28,15 +35,19 @@ export const useIsMember = (
   const client = usePluginClient(params.pluginType);
   const {api: provider} = useProviders();
   const fetchVotingPower = useVotingPowerAsync();
+
+  // fetch voting settings
   const {data: votingSettings, isLoading: settingsAreLoading} =
     useVotingSettings({
       pluginAddress: params.pluginAddress,
-      pluginType: params.pluginType,
+      pluginType: 'token-voting.plugin.dao.eth',
     });
+
+  // fetch dao members
   const {
     data: {daoToken, filteredMembers},
     isLoading: membersAreLoading,
-  } = useDaoMembers(params.pluginAddress, params.pluginType, {
+  } = useDaoMembers(params.pluginAddress, 'token-voting.plugin.dao.eth', {
     searchTerm: params.address as string,
     page: 0,
   });
