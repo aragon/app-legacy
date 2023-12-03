@@ -35,6 +35,7 @@ module.exports = defineConfig({
   e2e: {
     setupNodeEvents,
     baseUrl: 'http://localhost:3000',
+    projectId: 'p9x1v4',
     specPattern: 'tests/e2e/specs/**/*.{js,jsx,ts,tsx}',
     supportFile,
   },
