@@ -7,7 +7,7 @@ on:
       - synchronize
 jobs:
   e2e-run:
-    if: contains(github.event.pull_request.labels.*.name, 'e2e-test')
+    if: contains(github.event.pull_request.labels.*.name, 'e2e-tests')
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false # https://github.com/cypress-io/github-action/issues/48
