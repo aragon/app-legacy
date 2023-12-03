@@ -1,0 +1,32 @@
+name: E2E Tests
+
+on:
+  pull_request:
+    types:
+      - labeled
+      - synchronize
+jobs:
+  e2e-run:
+    if: contains(github.event.pull_request.labels.*.name, 'e2e-test')
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false # https://github.com/cypress-io/github-action/issues/48
+      matrix:
+        containers: [1, 2] # Uses 2 parallel instances
+    steps:
+     - name: Checkout Repository
+        uses: actions/checkout@v3
+        # with:
+        #   ref: ${{ github.event.inputs.branch }}
+    # - name: Checkout code
+    #   uses: actions/checkout@v3
+    - name: Install NodeJS
+      uses: actions/setup-node@v3
+      with:
+        node-version: 18
+        cache: 'yarn'
+    - name: Install depdendencies
+      run: yarn install --pure-lockfile
+    - name: Run E2E Tests
+        run: yarn e2e
+
