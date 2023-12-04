@@ -18,6 +18,7 @@ import {
   mainnet,
   polygon,
   polygonMumbai,
+  sepolia,
 } from 'wagmi/chains';
 import {infuraProvider} from 'wagmi/providers/infura';
 import {LedgerConnector} from 'wagmi/connectors/ledger';
@@ -44,6 +45,7 @@ const chains = [
   polygonMumbai,
   arbitrum,
   arbitrumGoerli,
+  sepolia,
 ];
 const ledgerChains = [
   goerli,
@@ -52,6 +54,7 @@ const ledgerChains = [
   polygonMumbai,
   arbitrum,
   arbitrumGoerli,
+  sepolia,
 ];
 
 const {publicClient} = configureChains(chains, [

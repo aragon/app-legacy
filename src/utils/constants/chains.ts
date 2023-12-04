@@ -333,6 +333,7 @@ export const CHAIN_METADATA: Record<SupportedNetworks, ChainData> = {
     logo: 'https://assets.coingecko.com/coins/images/279/large/ethereum.png?1595348880',
     explorer: 'https://sepolia.etherscan.io/',
     isTestnet: true,
+    explorerName: 'Etherscan',
     mainnet: 'ethereum',
     rpc: [
       `https://sepolia.infura.io/v3/${infuraApiKey}`,
