@@ -1,20 +1,20 @@
-import {MajorityVotingSettings, TokenVotingClient} from '@aragon/sdk-client';
+import {MajorityVotingSettings} from '@aragon/sdk-client';
 import {UseQueryOptions, useQuery} from '@tanstack/react-query';
 import {GaslessVotingClient} from '@vocdoni/gasless-voting';
+import {useCallback} from 'react';
 
 import {useNetwork} from 'context/network';
+import {useProviders} from 'context/providers';
+import {TokenDaoMember, useDaoMembers} from 'hooks/useDaoMembers';
 import {PluginTypes, usePluginClient} from 'hooks/usePluginClient';
+import {CHAIN_METADATA} from 'utils/constants';
 import {invariant} from 'utils/invariant';
+import {formatUnits} from 'utils/library';
+import {fetchBalance} from 'utils/tokens';
 import {IFetchIsMemberParams} from '../aragon-sdk-service.api';
 import {aragonSdkQueryKeys} from '../query-keys';
-import {useVotingSettings} from './use-voting-settings';
-import {TokenDaoMember, useDaoMembers} from 'hooks/useDaoMembers';
-import {fetchBalance} from 'utils/tokens';
 import {useVotingPowerAsync} from './use-voting-power';
-import {formatUnits} from 'utils/library';
-import {useCallback} from 'react';
-import {CHAIN_METADATA} from 'utils/constants';
-import {useProviders} from 'context/providers';
+import {useVotingSettings} from './use-voting-settings';
 
 interface IUseIsMemberParams extends IFetchIsMemberParams {
   pluginType: PluginTypes;
@@ -37,6 +37,8 @@ export const useIsMember = (
   const fetchVotingPower = useVotingPowerAsync();
 
   const isTokenVoting = params.pluginType === 'token-voting.plugin.dao.eth';
+  const isGaslessVoting =
+    params.pluginType === 'vocdoni-gasless-voting-poc.plugin.dao.eth';
 
   // fetch voting settings
   const {data: votingSettings, isLoading: settingsAreLoading} =
@@ -62,7 +64,7 @@ export const useIsMember = (
     client == null ||
     !params.address ||
     !params.pluginAddress ||
-    client instanceof GaslessVotingClient ||
+    isGaslessVoting || // Temporarily turn off for Vocdoni gasless plugin
     (isTokenVoting &&
       (daoToken == null || membersAreLoading || settingsAreLoading))
   ) {
@@ -118,20 +120,19 @@ export const useIsMember = (
   const fetchIsMember = async () => {
     invariant(client != null, 'fetchIsMember: client is not defined');
 
-    if (client instanceof GaslessVotingClient) {
+    if (isGaslessVoting || client instanceof GaslessVotingClient) {
       console.warn(
         'fetchIsMember: unable to determine membership using GaslessVotingClient'
       );
       return;
     }
 
-    const data =
-      client instanceof TokenVotingClient
-        ? await fetchIsMemberTokenBased()
-        : await client.methods.isMember({
-            address: params.address,
-            pluginAddress: params.pluginAddress,
-          });
+    const data = isTokenVoting
+      ? await fetchIsMemberTokenBased()
+      : await client.methods.isMember({
+          address: params.address,
+          pluginAddress: params.pluginAddress,
+        });
 
     return data;
   };
