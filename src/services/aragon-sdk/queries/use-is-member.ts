@@ -37,11 +37,14 @@ export const useIsMember = (
   const fetchVotingPower = useVotingPowerAsync();
 
   // fetch voting settings
-  const {data: votingSettings, isLoading: settingsAreLoading} =
-    useVotingSettings({
-      pluginAddress: params.pluginAddress,
-      pluginType: 'token-voting.plugin.dao.eth',
-    });
+ const {data: votingSettings, isLoading: settingsAreLoading} =
+    useVotingSettings(
+      {
+        pluginAddress: params.pluginAddress,
+        pluginType: params.pluginType,
+      },
+      {enabled: params.pluginType === 'token-voting.plugin.dao.eth'}
+    );
 
   // fetch dao members
   const {
