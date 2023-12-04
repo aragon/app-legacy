@@ -4,7 +4,6 @@ import {Loading} from 'components/temporary';
 import {useDaoDetailsQuery} from 'hooks/useDaoDetails';
 import {CreateProposalProvider} from '../context/createProposal';
 import {ProposeSettingsStepper} from '../containers/proposeSettingsStepper/proposeSettingsStepper';
-import {ActionsProvider} from '../context/actions';
 
 export const ProposeSettings: React.FC = () => {
   const [showTxModal, setShowTxModal] = useState(false);
