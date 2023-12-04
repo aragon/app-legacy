@@ -36,6 +36,8 @@ export const useIsMember = (
   const {api: provider} = useProviders();
   const fetchVotingPower = useVotingPowerAsync();
 
+  const isTokenVoting = params.pluginType === 'token-voting.plugin.dao.eth';
+
   // fetch voting settings
   const {data: votingSettings, isLoading: settingsAreLoading} =
     useVotingSettings(
@@ -43,7 +45,7 @@ export const useIsMember = (
         pluginAddress: params.pluginAddress,
         pluginType: params.pluginType,
       },
-      {enabled: params.pluginType === 'token-voting.plugin.dao.eth'}
+      {enabled: isTokenVoting}
     );
 
   // fetch dao members
@@ -53,7 +55,7 @@ export const useIsMember = (
   } = useDaoMembers(params.pluginAddress, params.pluginType, {
     searchTerm: params.address,
     page: 0,
-    enabled: params.pluginType === 'token-voting.plugin.dao.eth',
+    enabled: isTokenVoting,
   });
 
   if (
@@ -61,9 +63,8 @@ export const useIsMember = (
     !params.address ||
     !params.pluginAddress ||
     client instanceof GaslessVotingClient ||
-    daoToken == null ||
-    membersAreLoading ||
-    settingsAreLoading
+    (isTokenVoting &&
+      (daoToken == null || membersAreLoading || settingsAreLoading))
   ) {
     options.enabled = false;
   }
