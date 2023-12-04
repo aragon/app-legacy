@@ -14,7 +14,6 @@ export const WithdrawCard: React.FC<{
   daoAddress: string;
   daoLabel: string;
 }> = ({action, daoAddress, daoLabel}) => {
-  console.log(action, daoAddress, daoLabel);
   const {t} = useTranslation();
   const {network} = useNetwork();
 
