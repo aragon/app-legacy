@@ -37,7 +37,7 @@ export const useIsMember = (
   const fetchVotingPower = useVotingPowerAsync();
 
   // fetch voting settings
- const {data: votingSettings, isLoading: settingsAreLoading} =
+  const {data: votingSettings, isLoading: settingsAreLoading} =
     useVotingSettings(
       {
         pluginAddress: params.pluginAddress,
