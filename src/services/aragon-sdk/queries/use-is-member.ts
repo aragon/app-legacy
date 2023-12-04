@@ -50,9 +50,10 @@ export const useIsMember = (
   const {
     data: {daoToken, filteredMembers},
     isLoading: membersAreLoading,
-  } = useDaoMembers(params.pluginAddress, 'token-voting.plugin.dao.eth', {
-    searchTerm: params.address as string,
+  } = useDaoMembers(params.pluginAddress, params.pluginType, {
+    searchTerm: params.address,
     page: 0,
+    enabled: params.pluginType === 'token-voting.plugin.dao.eth',
   });
 
   if (
