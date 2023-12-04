@@ -18,13 +18,13 @@ export type VoterType = {
 
 export type VotersTableProps = {
   voters: VoterType[];
+  onVoterClick?: (address: string) => void;
   page?: number;
   LoadMoreLabel: string;
   onLoadMore?: () => void;
   showOption?: boolean;
   showAmount?: boolean;
   pageSize?: number; // number of rows to show
-  explorerURL: string;
 };
 
 const colorScheme = (option: VoterType['walletTag']) =>
@@ -32,12 +32,12 @@ const colorScheme = (option: VoterType['walletTag']) =>
 
 export const VotersTable: React.FC<VotersTableProps> = ({
   voters,
+  onVoterClick = () => {},
   LoadMoreLabel,
   onLoadMore,
   page = 1,
   showAmount = false,
   pageSize = 3,
-  explorerURL,
 }) => {
   const displayedVoters = page * pageSize;
 
@@ -49,9 +49,7 @@ export const VotersTable: React.FC<VotersTableProps> = ({
           label={shortenAddress(voter.wallet)}
           src={voter.src}
           option={voter.option}
-          onClick={() => {
-            window.open(`${explorerURL}address/${voter.wallet}`, '_blank');
-          }}
+          onClick={() => onVoterClick(voter.wallet)}
           voteReplaced={voter.voteReplaced}
           {...(voter.walletTag && {
             walletTag: {

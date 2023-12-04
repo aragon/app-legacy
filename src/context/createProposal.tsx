@@ -6,8 +6,8 @@ import {
   MultisigClient,
   MultisigProposal,
   MultisigVotingSettings,
-  ProposalCreationSteps,
   ProposalCreationStepValue,
+  ProposalCreationSteps,
   TokenVotingClient,
   TokenVotingProposal,
   VoteValues,
@@ -15,15 +15,21 @@ import {
 } from '@aragon/sdk-client';
 import {
   DaoAction,
-  hexToBytes,
   LIVE_CONTRACTS,
   ProposalMetadata,
   ProposalStatus,
   SupportedNetworksArray,
   SupportedVersion,
   TokenType,
+  hexToBytes,
 } from '@aragon/sdk-client-common';
 import {useQueryClient} from '@tanstack/react-query';
+import {
+  CreateGasslessProposalParams,
+  GaslessVotingClient,
+  GaslessVotingProposal,
+} from '@vocdoni/gasless-voting';
+import {TokenCensus} from '@vocdoni/sdk';
 import differenceInSeconds from 'date-fns/differenceInSeconds';
 import {ethers} from 'ethers';
 import React, {
@@ -35,7 +41,7 @@ import React, {
 } from 'react';
 import {useFormContext} from 'react-hook-form';
 import {useTranslation} from 'react-i18next';
-import {generatePath, useNavigate, useParams} from 'react-router-dom';
+import {generatePath, useNavigate} from 'react-router-dom';
 
 import {Loading} from 'components/temporary';
 import PublishModal from 'containers/transactionModals/publishModal';
@@ -51,6 +57,7 @@ import {usePollGasFee} from 'hooks/usePollGasfee';
 import {useTokenSupply} from 'hooks/useTokenSupply';
 import {useWallet} from 'hooks/useWallet';
 import {trackEvent} from 'services/analytics';
+import {useProtocolVersion} from 'services/aragon-sdk/queries/use-protocol-version';
 import {useVotingPower} from 'services/aragon-sdk/queries/use-voting-power';
 import {
   isGaslessVotingSettings,
@@ -59,6 +66,7 @@ import {
   useVotingSettings,
 } from 'services/aragon-sdk/queries/use-voting-settings';
 import {AragonSdkQueryItem} from 'services/aragon-sdk/query-keys';
+import {aragonSubgraphQueryKeys} from 'services/aragon-subgraph/query-keys';
 import {getEtherscanVerifiedContract} from 'services/etherscanAPI';
 import {CHAIN_METADATA, TransactionState} from 'utils/constants';
 import {
@@ -88,16 +96,6 @@ import {useGlobalModalContext} from './globalModals';
 import {useNetwork} from './network';
 import {useProviders} from './providers';
 
-import {
-  CreateGasslessProposalParams,
-  GaslessVotingClient,
-  GaslessVotingProposal,
-} from '@vocdoni/gasless-voting';
-import {TokenCensus} from '@vocdoni/sdk';
-import {usePluginVersions} from 'services/aragon-sdk/queries/use-plugin-versions';
-import {useProtocolVersion} from 'services/aragon-sdk/queries/use-protocol-version';
-import {ProposalTypes} from 'utils/types';
-
 type Props = {
   showTxModal: boolean;
   setShowTxModal: (value: boolean) => void;
@@ -117,12 +115,11 @@ const CreateProposalWrapper: React.FC<Props> = ({
   children,
 }) => {
   const {t} = useTranslation();
-  const {type} = useParams();
   const {open} = useGlobalModalContext();
   const queryClient = useQueryClient();
 
   const navigate = useNavigate();
-  const {getValues} = useFormContext<ProposalFormData>();
+  const {getValues} = useFormContext();
 
   const {network} = useNetwork();
   const translatedNetwork = translateToNetworkishName(network);
@@ -132,14 +129,6 @@ const CreateProposalWrapper: React.FC<Props> = ({
   const {data: daoDetails, isLoading: daoDetailsLoading} = useDaoDetailsQuery();
   const pluginAddress = daoDetails?.plugins?.[0]?.instanceAddress as string;
   const pluginType = daoDetails?.plugins?.[0]?.id as PluginTypes;
-
-  const {data: pluginAvailableVersions} = usePluginVersions(
-    {
-      pluginType,
-      daoAddress: daoDetails?.address as string,
-    },
-    {enabled: type === ProposalTypes.OSUpdates}
-  );
 
   const {data: daoToken} = useDaoToken(pluginAddress);
   const {data: tokenSupply} = useTokenSupply(daoToken?.address || '');
@@ -363,18 +352,14 @@ const CreateProposalWrapper: React.FC<Props> = ({
         }
 
         case 'plugin_update': {
-          const daoActionsArray = client.encoding.applyUpdateAction(
-            daoDetails?.address as string,
-            {
-              permissions: action.inputs.permissions,
-              initData: new Uint8Array([]),
-              helpers: action.inputs.helpers,
-              versionTag: action.inputs.versionTag,
-              pluginRepo: pluginAvailableVersions?.address as string,
-              pluginAddress: pluginAddress,
-            }
-          );
-          daoActionsArray.map(daoAction => {
+          const pluginUpdateActions =
+            client.encoding.applyUpdateAndPermissionsActionBlock(
+              daoDetails?.address as string,
+              {
+                ...action.inputs,
+              }
+            );
+          pluginUpdateActions.map(daoAction => {
             actions.push(Promise.resolve(daoAction));
           });
           break;
@@ -389,7 +374,6 @@ const CreateProposalWrapper: React.FC<Props> = ({
     getValues,
     network,
     pluginAddress,
-    pluginAvailableVersions?.address,
     pluginClient,
     t,
     translatedNetwork,
@@ -660,7 +644,9 @@ const CreateProposalWrapper: React.FC<Props> = ({
           title,
           summary,
           description,
-          resources: resources.filter(r => r.name && r.url),
+          resources: (resources as ProposalFormData['links']).filter(
+            r => r.name && r.url
+          ),
         },
         actions: proposalCreationData.actions ?? [],
         status: proposalCreationData.startDate
@@ -757,7 +743,10 @@ const CreateProposalWrapper: React.FC<Props> = ({
     // invalidating all infinite proposals query regardless of the
     // pagination state
     queryClient.invalidateQueries([AragonSdkQueryItem.PROPOSALS]);
-  }, [queryClient]);
+    queryClient.invalidateQueries(
+      aragonSubgraphQueryKeys.totalProposalCount({pluginAddress, pluginType})
+    );
+  }, [pluginAddress, pluginType, queryClient]);
 
   const handlePublishProposal = useCallback(
     async (vochainProposalId?: string, vochainCensus?: TokenCensus) => {

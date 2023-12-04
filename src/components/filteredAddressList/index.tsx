@@ -6,12 +6,11 @@ import styled from 'styled-components';
 import {TokenVotingWalletField} from 'components/addWallets/row';
 import {MultisigWalletField} from 'components/multisigWallets/row';
 import {getUserFriendlyWalletLabel} from 'utils/library';
-import {CHAIN_METADATA} from 'utils/constants';
-import {useNetwork} from 'context/network';
 
 type FilteredAddressListProps = {
   wallets: TokenVotingWalletField[] | MultisigWalletField[];
   tokenSymbol?: string;
+  onVoterClick?: (address: string) => void;
 };
 
 /**
@@ -23,9 +22,9 @@ type FilteredAddressListProps = {
 export const FilteredAddressList = ({
   wallets,
   tokenSymbol,
+  onVoterClick = () => {},
 }: FilteredAddressListProps) => {
   const [searchValue, setSearchValue] = useState('');
-  const {network} = useNetwork();
   const {t} = useTranslation();
 
   const filterValidator = useCallback(
@@ -79,7 +78,7 @@ export const FilteredAddressList = ({
             {...(tokenSymbol && {showAmount: true})}
             pageSize={filteredAddressList.length}
             LoadMoreLabel={t('community.votersTable.loadMore')}
-            explorerURL={CHAIN_METADATA[network].explorer}
+            onVoterClick={onVoterClick}
           />
         ) : (
           // this view is temporary until designs arrive

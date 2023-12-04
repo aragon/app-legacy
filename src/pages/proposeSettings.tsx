@@ -24,6 +24,7 @@ import {FullScreenStepper, Step} from 'components/fullScreenStepper';
 import {Loading} from 'components/temporary';
 import CompareSettings from 'containers/compareSettings';
 import {isValid as defineProposalIsValid} from 'containers/defineProposal';
+import {DefineProposal} from 'containers/defineProposal/';
 import ReviewProposal from 'containers/reviewProposal';
 import SetupVotingForm from 'containers/setupVotingForm';
 import PublishModal from 'containers/transactionModals/publishModal';
@@ -35,10 +36,10 @@ import {useDaoDetailsQuery} from 'hooks/useDaoDetails';
 import {useDaoToken} from 'hooks/useDaoToken';
 import {
   PluginTypes,
+  isGaslessVotingClient,
   isMultisigClient,
   isTokenVotingClient,
   usePluginClient,
-  isGaslessVotingClient,
 } from 'hooks/usePluginClient';
 import {usePollGasFee} from 'hooks/usePollGasfee';
 import {useTokenSupply} from 'hooks/useTokenSupply';
@@ -72,16 +73,14 @@ import {
   ActionUpdatePluginSettings,
   ProposalId,
   ProposalResource,
-  ProposalSettingsFormData,
 } from 'utils/types';
-import {DefineProposal} from 'containers/defineProposal/';
+import {aragonSubgraphQueryKeys} from 'services/aragon-subgraph/query-keys';
 
 export const ProposeSettings: React.FC = () => {
   const {t} = useTranslation();
   const {network} = useNetwork();
 
-  const {getValues, setValue, control} =
-    useFormContext<ProposalSettingsFormData>();
+  const {getValues, setValue, control} = useFormContext();
   const [showTxModal, setShowTxModal] = useState(false);
   const {errors, dirtyFields} = useFormState({
     control,
@@ -648,7 +647,10 @@ const ProposeSettingWrapper: React.FC<Props> = ({
     // invalidating all infinite proposals query regardless of the
     // pagination state
     queryClient.invalidateQueries([AragonSdkQueryItem.PROPOSALS]);
-  }, [queryClient]);
+    queryClient.invalidateQueries(
+      aragonSubgraphQueryKeys.totalProposalCount({pluginAddress, pluginType})
+    );
+  }, [pluginAddress, pluginType, queryClient]);
 
   const handlePublishSettings = async () => {
     if (!pluginClient) {

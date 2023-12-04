@@ -58,5 +58,3 @@ jobs:
           CYPRESS_RECORD_KEY: '0c4de406-82ab-48c2-94b1-6267578d2f33' # key of testing project
           # Creating a token https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/creating-a-personal-access-token
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-

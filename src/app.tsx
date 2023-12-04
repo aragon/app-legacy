@@ -110,6 +110,11 @@ export const App: React.FC = () => {
                 element={<ProposalDetailsWrapper />}
               />
               <Route path="community" element={<CommunityPage />} />
+              <Route
+                path="members"
+                element={<Navigate to={'../community'} replace />}
+              />
+              <Route path="members/:user" element={<DaoMemberPage />} />
               <Route path="settings" element={<SettingsPage />} />
               {/* Redirects the user to the dashboard page by default if no dao-specific page is specified. */}
               <Route index element={<Navigate to={'dashboard'} replace />} />
@@ -210,6 +215,9 @@ const CreateDaoPage = lazy(() =>
 );
 const DashboardPage = lazy(() =>
   import('pages/dashboard').then(module => ({default: module.Dashboard}))
+);
+const DaoMemberPage = lazy(() =>
+  import('pages/daoMember').then(module => ({default: module.DaoMember}))
 );
 const EditSettingsPage = lazy(() =>
   import('pages/editSettings').then(module => ({default: module.EditSettings}))

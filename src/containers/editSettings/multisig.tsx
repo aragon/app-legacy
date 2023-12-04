@@ -313,7 +313,7 @@ export const EditMsSettings: React.FC<EditMsSettingsProps> = ({daoDetails}) => {
               <AccordionItem
                 type="action-builder"
                 name="community"
-                methodName={t('navLinks.community')}
+                methodName={t('navLinks.members')}
                 alertLabel={
                   isCommunityChanged ? t('settings.newSettings') : undefined
                 }

@@ -6,11 +6,7 @@ import {
   isMultisigVotingSettings,
   isTokenVotingSettings,
 } from 'services/aragon-sdk/queries/use-voting-settings';
-import {
-  ProposalFormData,
-  StringIndexed,
-  SupportedVotingSettings,
-} from 'utils/types';
+import {StringIndexed, SupportedVotingSettings} from 'utils/types';
 import SetupMultisigVotingForm from './multisig';
 import SetupTokenVotingForm from './tokenVoting';
 
@@ -19,7 +15,7 @@ export type Props = {
 };
 
 const SetupVotingForm: React.FC<Props> = ({pluginSettings}) => {
-  const {setError, clearErrors} = useFormContext<ProposalFormData>();
+  const {setError, clearErrors} = useFormContext();
 
   /*************************************************
    *                    Render                     *

@@ -1,6 +1,5 @@
 import {InputValue} from '@aragon/ods-old';
 import {
-  ApplyInstallationParams,
   DaoMetadata,
   Erc20TokenDetails,
   MultisigProposal,
@@ -11,7 +10,11 @@ import {
   VoteValues,
   VotingSettings,
 } from '@aragon/sdk-client';
-import {SupportedVersion, VersionTag} from '@aragon/sdk-client-common';
+import {
+  ApplyUpdateParams,
+  SupportedVersion,
+  VersionTag,
+} from '@aragon/sdk-client-common';
 import {
   GaslessPluginVotingSettings,
   GaslessVotingProposal,
@@ -82,7 +85,6 @@ export type BaseTokenInfo = {
   address: string;
   count: bigint;
   decimals: number;
-  id?: string; // for api call, optional because custom tokens have no id
   imgUrl: string;
   name: string;
   symbol: string;
@@ -107,7 +109,6 @@ export type TokenBalance = {
 export type TokenWithMetadata = {
   balance: bigint;
   metadata: TokenBalance['token'] & {
-    apiId?: string;
     imgUrl: string;
   };
 };
@@ -123,7 +124,6 @@ export type TokenWithMetadata = {
 export interface MarketData {
   price: number;
   balanceValue: number;
-  priceChangeDuringInterval: number;
   valueChangeDuringInterval?: number;
   percentageChangedDuringInterval: number;
 }
@@ -335,7 +335,7 @@ export type ActionOSUpdate = {
 
 export type ActionPluginUpdate = {
   name: 'plugin_update';
-  inputs: ApplyInstallationParams;
+  inputs: ApplyUpdateParams;
 };
 
 export type ActionUpdateMultisigPluginSettings = {

@@ -4,7 +4,6 @@ import {
   IconChevronDown,
   IconChevronUp,
   IconGovernance,
-  Link,
   WidgetStatus,
 } from '@aragon/ods-old';
 import {
@@ -20,7 +19,7 @@ import {useEditor} from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import React, {useCallback, useEffect, useMemo, useRef, useState} from 'react';
 import {useTranslation} from 'react-i18next';
-import {generatePath, useNavigate, useParams} from 'react-router-dom';
+import {generatePath, useNavigate, useParams, Link} from 'react-router-dom';
 import sanitizeHtml from 'sanitize-html';
 import styled from 'styled-components';
 
@@ -28,7 +27,6 @@ import {ExecutionWidget} from 'components/executionWidget';
 import ResourceList from 'components/resourceList';
 import {Loading} from 'components/temporary';
 import {StyledEditorContent} from 'containers/reviewProposal';
-// import {UpdateVerificationCard} from 'containers/updateVerificationCard';
 import {TerminalTabs, VotingTerminal} from 'containers/votingTerminal';
 import {useGlobalModalContext} from 'context/globalModals';
 import {useNetwork} from 'context/network';
@@ -57,24 +55,26 @@ import {
 } from 'services/aragon-sdk/queries/use-voting-settings';
 import {useTokenAsync} from 'services/token/queries/use-token';
 import {CHAIN_METADATA} from 'utils/constants';
-// import {featureFlags} from 'utils/featureFlags';
+import {featureFlags} from 'utils/featureFlags';
 import {GaslessVotingProposal} from '@vocdoni/gasless-voting';
 import {constants} from 'ethers';
 import {usePastVotingPower} from 'services/aragon-sdk/queries/use-past-voting-power';
 import {
   decodeAddMembersToAction,
+  decodeApplyUpdateAction,
   decodeMetadataToAction,
   decodeMintTokensToAction,
   decodeMultisigSettingsToAction,
-  decodeOsUpdateAction,
+  decodeOSUpdateActions,
   decodePluginSettingsToAction,
   decodeRemoveMembersToAction,
   decodeToExternalAction,
+  decodeUpgradeToAndCallAction,
   decodeWithdrawToAction,
   shortenAddress,
   toDisplayEns,
 } from 'utils/library';
-import {NotFound} from 'utils/paths';
+import {DaoMember, NotFound} from 'utils/paths';
 import {
   getLiveProposalTerminalProps,
   getProposalExecutionStatus,
@@ -89,6 +89,7 @@ import {
 import {Action} from 'utils/types';
 import {GaslessVotingTerminal} from '../containers/votingTerminal/gaslessVotingTerminal';
 import {useGaslessHasAlreadyVote} from '../context/useGaslessVoting';
+import {UpdateVerificationCard} from 'containers/updateVerificationCard';
 
 export const PENDING_PROPOSAL_STATUS_INTERVAL = 1000 * 10;
 export const PROPOSAL_STATUS_INTERVAL = 1000 * 60;
@@ -173,6 +174,23 @@ export const Proposal: React.FC = () => {
   );
 
   const proposalStatus = proposal?.status;
+
+  const isSuccessfulMultisigSignalingProposal =
+    isMultisigProposal(proposal) &&
+    proposal.status === ProposalStatus.SUCCEEDED &&
+    proposal.actions.length === 0 &&
+    isMultisigVotingSettings(votingSettings) &&
+    votingSettings.minApprovals <= proposal.approvals.length;
+
+  // checking only after voting settings and proposal are available
+  // so that the status isn't transitioning from "Succeeded" to "Approved"
+  // for a successful signalling Multisig proposal
+  let displayedProposalStatus = '';
+  if (votingSettings && proposal) {
+    displayedProposalStatus = isSuccessfulMultisigSignalingProposal
+      ? t('votingTerminal.status.approved')
+      : proposal.status;
+  }
 
   const {data: canVote} = useWalletCanVote(
     address,
@@ -305,9 +323,28 @@ export const Proposal: React.FC = () => {
         case 'setMetadata':
           return decodeMetadataToAction(action.data, client);
         case 'upgradeToAndCall':
-          return decodeOsUpdateAction(action, client, t);
+          return decodeUpgradeToAndCallAction(action, client);
+        case 'grant':
+        case 'revoke': {
+          return decodeOSUpdateActions(
+            proposal.dao.address,
+            t,
+            action,
+            network,
+            provider
+          );
+        }
         default: {
           try {
+            // check if the action is a plugin apply update action
+            // calling no function name is provided for this custom action
+            const decodedApplyUpdate = decodeApplyUpdateAction(action, client);
+
+            if (decodedApplyUpdate) {
+              return decodedApplyUpdate;
+            }
+
+            // check if withdraw action
             const decodedAction = await decodeWithdrawToAction(
               action.data,
               client,
@@ -370,10 +407,10 @@ export const Proposal: React.FC = () => {
 
   // caches the status for breadcrumb
   useEffect(() => {
-    if (proposal && proposalStatus !== get('proposalStatus'))
-      set('proposalStatus', proposalStatus);
+    if (displayedProposalStatus !== get('proposalStatus'))
+      set('proposalStatus', displayedProposalStatus);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [proposalStatus]);
+  }, [displayedProposalStatus]);
 
   // handle can vote and wallet connection status
   useEffect(() => {
@@ -535,11 +572,19 @@ export const Proposal: React.FC = () => {
     isTokenVotingSettings(votingSettings) &&
     votingSettings.votingMode === VotingMode.VOTE_REPLACEMENT;
 
+  const connectedToRightNetwork = isConnected && !isOnWrongNetwork;
+
   const votingDisabled =
+    // can only vote on active proposals
     proposal?.status !== ProposalStatus.ACTIVE ||
-    (isMultisigPlugin && voted) ||
-    (isGaslessVotingPlugin && voted) ||
-    (isTokenVotingPlugin && voted && !canRevote);
+    // when disconnected or on wrong network,
+    // login and network modals should be shown respectively
+    (connectedToRightNetwork &&
+      // need to check canVote status on Multisig because
+      // the delegation modals are not shown for Multisig
+      ((isMultisigPlugin && (voted || canVote === false)) ||
+        (isGaslessVotingPlugin && voted) ||
+        (isTokenVotingPlugin && voted && !canRevote)));
 
   const handleApprovalClick = useCallback(
     (tryExecution: boolean) => {
@@ -623,6 +668,7 @@ export const Proposal: React.FC = () => {
           ? NumberFormatter.format(proposal.creationBlockNumber)
           : '',
         executionFailed,
+        isSuccessfulMultisigSignalingProposal,
         proposal.executionBlockNumber
           ? NumberFormatter.format(proposal.executionBlockNumber!)
           : '',
@@ -722,14 +768,17 @@ export const Proposal: React.FC = () => {
           <ProposerLink>
             {t('governance.proposals.publishedBy')}{' '}
             <Link
-              external
-              label={
-                proposal.creatorAddress.toLowerCase() === address?.toLowerCase()
-                  ? t('labels.you')
-                  : shortenAddress(proposal.creatorAddress)
-              }
-              href={`${CHAIN_METADATA[network].explorer}/address/${proposal?.creatorAddress}`}
-            />
+              to={generatePath(DaoMember, {
+                network,
+                dao,
+                user: proposal.creatorAddress,
+              })}
+              className="inline-flex max-w-full cursor-pointer items-center space-x-3 truncate rounded font-semibold text-primary-500 hover:text-primary-700 focus:outline-none focus-visible:ring focus-visible:ring-primary active:text-primary-800"
+            >
+              {proposal.creatorAddress.toLowerCase() === address?.toLowerCase()
+                ? t('labels.you')
+                : shortenAddress(proposal.creatorAddress)}
+            </Link>
           </ProposerLink>
         </ContentWrapper>
         <SummaryText>{proposal.metadata.summary}</SummaryText>
@@ -760,17 +809,11 @@ export const Proposal: React.FC = () => {
             </>
           )}
 
-          {/* @todo: Add isUpdateProposal check once it's developed */}
-          {/* {proposal &&
+          {proposal &&
+            (proposalStatus === ProposalStatus.ACTIVE ||
+              proposalStatus === ProposalStatus.SUCCEEDED) &&
             featureFlags.getValue('VITE_FEATURE_FLAG_OSX_UPDATES') ===
-              'true' && (
-              <UpdateVerificationCard
-                proposal={proposal}
-                actions={proposal.actions}
-                proposalId={proposalId}
-              />
-            )} */}
-
+              'true' && <UpdateVerificationCard proposalId={proposalId} />}
           {votingSettings && isGaslessProposal(proposal) ? (
             <GaslessVotingTerminal
               proposal={proposal}

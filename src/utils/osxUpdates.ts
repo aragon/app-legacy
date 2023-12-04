@@ -26,10 +26,15 @@ class OsxUpdates {
     return release ? `${release}.${build}` : undefined;
   };
 
-  getPluginUpdateLabel = (version?: VersionTag): string | undefined => {
+  getPluginUpdateLabel = (
+    version?: VersionTag,
+    pluginUpdateTypeLabel?: string
+  ): string | undefined => {
     const pluginVersion = this.getPluginVersion(version);
 
-    return pluginVersion ? `Token voting v${pluginVersion}` : undefined;
+    return pluginVersion
+      ? `${pluginUpdateTypeLabel} v${pluginVersion}`
+      : undefined;
   };
 
   getReleaseNotes = ({

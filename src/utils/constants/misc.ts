@@ -54,7 +54,7 @@ export const NAV_LINKS_DATA: NavLinkData[] = [
   },
   {label: i18n.t('navLinks.finance'), path: Finance, icon: IconFinance},
   {
-    label: i18n.t('navLinks.community'),
+    label: i18n.t('navLinks.members'),
     path: Community,
     icon: IconCommunity,
   },
@@ -133,6 +133,7 @@ export const PROPOSAL_STATE_LABELS = [
   i18n.t('governance.proposals.states.active'),
   i18n.t('governance.proposals.states.executed'),
   i18n.t('governance.proposals.states.succeeded'),
+  i18n.t('votingTerminal.status.approved'),
   i18n.t('governance.proposals.states.defeated'),
 ];
 

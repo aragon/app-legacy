@@ -20,36 +20,45 @@ import {
   VotingSettings,
 } from '@aragon/sdk-client';
 import {
-  DaoAction,
   LIVE_CONTRACTS,
   ProposalMetadata,
   ProposalStatus,
   SupportedNetworksArray,
   SupportedVersion,
 } from '@aragon/sdk-client-common';
-import Big from 'big.js';
-import {Locale, format, formatDistanceToNow} from 'date-fns';
-import * as Locales from 'date-fns/locale';
-import {TFunction} from 'i18next';
 import {
   GaslessPluginVotingSettings,
   GaslessVotingProposal,
 } from '@vocdoni/gasless-voting';
+import Big from 'big.js';
+import {Locale, format, formatDistanceToNow} from 'date-fns';
+import * as Locales from 'date-fns/locale';
+import {TFunction} from 'i18next';
 
 import {ProposalVoteResults} from 'containers/votingTerminal';
 import {MultisigDaoMember} from 'hooks/useDaoMembers';
 import {PluginTypes} from 'hooks/usePluginClient';
 import {
-  isMultisigVotingSettings,
   isGaslessVotingSettings,
+  isMultisigVotingSettings,
   isTokenVotingSettings,
 } from 'services/aragon-sdk/queries/use-voting-settings';
 import {i18n} from '../../i18n.config';
 import {KNOWN_FORMATS, getFormattedUtcOffset} from './date';
-import {formatUnits, translateToNetworkishName} from './library';
+import {
+  decodeApplyUpdateAction,
+  decodeOSUpdateActions,
+  decodeUpgradeToAndCallAction,
+  formatUnits,
+  translateToNetworkishName,
+} from './library';
 import {abbreviateTokenAmount} from './tokens';
 import {
   Action,
+  ActionOSUpdate,
+  ActionPluginUpdate,
+  ActionSCC,
+  CreateProposalFormData,
   DetailedProposal,
   ProposalListItem,
   StrictlyExclude,
@@ -57,6 +66,7 @@ import {
   SupportedVotingSettings,
 } from './types';
 
+import {ethers} from 'ethers';
 import {SupportedNetworks} from './constants';
 
 export type TokenVotingOptions = StrictlyExclude<
@@ -303,6 +313,7 @@ export function getProposalStatusSteps(
   creationDate: Date,
   publishedBlock: string,
   executionFailed: boolean,
+  isSuccessfulMultisigSignalingProposal: boolean,
   executionBlock?: string,
   executionDate?: Date
 ): Array<ProgressStatusProps> {
@@ -328,15 +339,16 @@ export function getProposalStatusSteps(
           )}  ${getFormattedUtcOffset()}`,
         },
       ];
-    case ProposalStatus.SUCCEEDED:
-      if (executionFailed)
+    case ProposalStatus.SUCCEEDED: {
+      if (executionFailed) {
         return [
           ...getEndedProposalSteps(
             t,
             creationDate,
             startDate,
             endDate,
-            publishedBlock
+            publishedBlock,
+            false
           ),
           {
             label: t('governance.statusWidget.failed'),
@@ -347,20 +359,27 @@ export function getProposalStatusSteps(
             )}  ${getFormattedUtcOffset()}`,
           },
         ];
-      else
-        return [
+      } else {
+        const steps = [
           ...getEndedProposalSteps(
             t,
             creationDate,
             startDate,
             endDate,
-            publishedBlock
+            publishedBlock,
+            isSuccessfulMultisigSignalingProposal
           ),
-          {
+        ];
+
+        if (!isSuccessfulMultisigSignalingProposal) {
+          steps.push({
             label: t('governance.statusWidget.executed'),
             mode: 'upcoming',
-          },
-        ];
+          });
+        }
+        return steps;
+      }
+    }
     case ProposalStatus.EXECUTED:
       if (executionDate)
         return [
@@ -370,6 +389,7 @@ export function getProposalStatusSteps(
             startDate,
             endDate,
             publishedBlock,
+            isSuccessfulMultisigSignalingProposal,
             executionDate || new Date()
           ),
           {
@@ -389,7 +409,8 @@ export function getProposalStatusSteps(
             creationDate,
             startDate,
             endDate,
-            publishedBlock
+            publishedBlock,
+            isSuccessfulMultisigSignalingProposal
           ),
           {label: t('governance.statusWidget.failed'), mode: 'failed'},
         ];
@@ -406,14 +427,23 @@ function getEndedProposalSteps(
   startDate: Date,
   endDate: Date,
   block: string,
+  isSuccessfulMultisigSignalingProposal: boolean,
   executionDate?: Date
 ): Array<ProgressStatusProps> {
+  let label = t('governance.statusWidget.succeeded');
+  let mode: ModeType = 'done';
+
+  if (isSuccessfulMultisigSignalingProposal) {
+    label = t('votingTerminal.status.approved');
+    mode = 'succeeded';
+  }
+
   return [
     {...getPublishedProposalStep(t, creationDate, block)},
     {...getActiveProposalStep(t, startDate, 'done')},
     {
-      label: t('governance.statusWidget.succeeded'),
-      mode: 'done',
+      label,
+      mode,
       date: `${format(
         executionDate! < endDate ? executionDate! : endDate,
         KNOWN_FORMATS.proposals
@@ -692,7 +722,7 @@ export function getVoteStatus(proposal: DetailedProposal, t: TFunction) {
   let label = '';
 
   switch (proposal.status) {
-    case 'Pending':
+    case ProposalStatus.PENDING:
       {
         const locale = (Locales as Record<string, Locale>)[i18n.language];
         const timeUntilNow = formatDistanceToNow(proposal.startDate, {
@@ -703,7 +733,7 @@ export function getVoteStatus(proposal: DetailedProposal, t: TFunction) {
         label = t('votingTerminal.status.pending', {timeUntilNow});
       }
       break;
-    case 'Active':
+    case ProposalStatus.ACTIVE:
       {
         const locale = (Locales as Record<string, Locale>)[i18n.language];
         const timeUntilEnd = formatDistanceToNow(proposal.endDate, {
@@ -714,15 +744,15 @@ export function getVoteStatus(proposal: DetailedProposal, t: TFunction) {
         label = t('votingTerminal.status.active', {timeUntilEnd});
       }
       break;
-    case 'Succeeded':
+    case ProposalStatus.SUCCEEDED:
       label = t('votingTerminal.status.succeeded');
 
       break;
-    case 'Executed':
+    case ProposalStatus.EXECUTED:
       label = t('votingTerminal.status.executed');
 
       break;
-    case 'Defeated':
+    case ProposalStatus.DEFEATED:
       label = isMultisigProposal(proposal)
         ? t('votingTerminal.status.expired')
         : t('votingTerminal.status.defeated');
@@ -894,6 +924,8 @@ export function getNonEmptyActions(
   msVoteSettings?: MultisigVotingSettings
 ): Action[] {
   return actions.flatMap(action => {
+    if (action == null) return [];
+
     if (action.name === 'modify_multisig_voting_settings') {
       // minimum approval or onlyListed changed: return action or don't include
       return action.inputs.minApprovals !== msVoteSettings?.minApprovals ||
@@ -943,23 +975,22 @@ export function recalculateProposalStatus<
     // for an inactive multisig proposal, make sure a vote has actually been cast
     // or that the end time isn't in the past
     if (isMultisigProposal(proposal)) {
-      if (endTime < Date.now() || proposal.approvals.length === 0)
+      if (proposal.approvals.length === 0)
         return {...proposal, status: ProposalStatus.DEFEATED};
     }
   }
   return proposal;
 }
 
-export function isVerifiedAragonUpdateProposal(
-  proposalActions: DaoAction[],
-  client: Client
-) {
-  return (
-    client.methods.isDaoUpdate(proposalActions) ||
-    client.methods.isPluginUpdate(proposalActions)
-  );
-}
-
+/**
+ * Encodes an OS update action for a DAO on a specified network.
+ * @param currentVersion - The current version of the OS in the format [major, minor, patch].
+ * @param selectedVersion - The selected version of the OS to update to.
+ * @param network - The network on which the DAO operates.
+ * @param daoAddress - The address of the DAO.
+ * @param client - An instance of the `Client` class for encoding the update action.
+ * @returns A encoded action for updating the OS of the DAO.
+ */
 export async function encodeOsUpdateAction(
   currentVersion: [number, number, number] | undefined,
   selectedVersion: SupportedVersion,
@@ -986,4 +1017,114 @@ export async function encodeOsUpdateAction(
       console.error('Error encoding OSxUpdate Action', error);
     }
   }
+}
+
+/**
+ * Retrieves and decodes update actions for a DAO based on specified criteria.
+ * @param daoAddress - The address of the DAO.
+ * @param actions - An array of actions to process for updates.
+ * @param updateFramework - Information about the update framework.
+ * @param currentProtocolVersion - The current version of the protocol.
+ * @param client - An instance of the Aragon SDK client.
+ * @param network - The network on which the DAO operates.
+ * @param provider - Ethers provider
+ * @param t - Translation function.
+ * @returns An array of decoded update actions for the DAO.
+ */
+export async function getDecodedUpdateActions(
+  daoAddress: string,
+  actions: Array<Action>,
+  updateFramework: CreateProposalFormData['updateFramework'],
+  currentProtocolVersion: [number, number, number] | undefined,
+  client: Client | undefined,
+  network: SupportedNetworks | undefined,
+  provider: ethers.providers.Provider,
+  t: TFunction
+) {
+  const decodedActions: ActionSCC[] = [];
+
+  if (!client || !network) return decodedActions;
+
+  // encode the osUpdateAction so that it can be
+  // decoded and passed to the generic SCC external action card
+  const processOsUpdateAction = async () => {
+    const osAction: ActionOSUpdate | undefined = actions.find(
+      action => action.name === 'os_update'
+    ) as ActionOSUpdate | undefined;
+
+    if (osAction && updateFramework?.os) {
+      const encodedOsAction = await encodeOsUpdateAction(
+        currentProtocolVersion,
+        osAction.inputs.version,
+        network,
+        daoAddress,
+        client
+      );
+
+      if (encodedOsAction) {
+        return decodeUpgradeToAndCallAction(encodedOsAction, client);
+      }
+    }
+  };
+
+  // encode the plugin update actions so it can be decoded
+  // and passed to the generic SCC external action card
+  const processPluginUpdateActions = async () => {
+    const pluginAction: ActionPluginUpdate | undefined = actions.find(
+      action => action.name === 'plugin_update'
+    ) as ActionPluginUpdate | undefined;
+
+    if (pluginAction && updateFramework?.plugin) {
+      const encodedPluginActions =
+        client.encoding.applyUpdateAndPermissionsActionBlock(
+          daoAddress,
+          pluginAction.inputs
+        );
+
+      const decodedPluginActions = [];
+      for (const [
+        index,
+        pluginUpdateAction,
+      ] of encodedPluginActions.entries()) {
+        let decoded: Action | undefined;
+
+        // decode the applyUpdate action with the custom decoder as
+        // the decoding fails when using the generic decoder;
+        // Note: the applyUpdateAction will always be the second action
+        // in the list (grant, applyUpdate, revoke)
+        if (index === 1) {
+          decoded = decodeApplyUpdateAction(pluginUpdateAction, client);
+        } else {
+          decoded = await decodeOSUpdateActions(
+            daoAddress,
+            t,
+            pluginUpdateAction,
+            network!,
+            provider
+          );
+        }
+
+        if (decoded) {
+          decodedPluginActions.push({
+            ...decoded,
+            name: 'external_contract_action',
+          } as ActionSCC);
+        }
+      }
+
+      return decodedPluginActions;
+    }
+    return [];
+  };
+
+  const osUpdateAction = await processOsUpdateAction();
+  const pluginUpdateActions = (await processPluginUpdateActions()) ?? [];
+
+  // the osUpdateAction must come before the plugin updates
+  if (osUpdateAction) {
+    decodedActions.push(osUpdateAction);
+  }
+
+  decodedActions.push(...pluginUpdateActions);
+  return decodedActions;
 }

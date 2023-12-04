@@ -8,9 +8,9 @@ import {
   TokenVotingPluginPrepareUpdateParams,
 } from '@aragon/sdk-client';
 import {
-  VersionTag,
-  MultiTargetPermission,
+  ApplyUpdateParams,
   SupportedVersion,
+  VersionTag,
 } from '@aragon/sdk-client-common';
 import React, {
   ReactElement,
@@ -25,17 +25,15 @@ import {useTranslation} from 'react-i18next';
 
 import PublishModal from 'containers/transactionModals/publishModal';
 import {useClient} from 'hooks/useClient';
+import {useDaoDetailsQuery} from 'hooks/useDaoDetails';
+import {PluginTypes, usePluginClient} from 'hooks/usePluginClient';
 import {usePollGasFee} from 'hooks/usePollGasfee';
 import {useWallet} from 'hooks/useWallet';
-// import {trackEvent} from 'services/analytics';
-import {TransactionState} from 'utils/constants';
-import {CreateProposalFormData} from 'utils/types';
-import {PluginTypes, usePluginClient} from 'hooks/usePluginClient';
-import {useDaoDetailsQuery} from 'hooks/useDaoDetails';
-import {compareVersions} from 'utils/library';
-import {useProtocolVersion} from 'services/aragon-sdk/queries/use-protocol-version';
 import {usePluginVersions} from 'services/aragon-sdk/queries/use-plugin-versions';
 import {usePreparedPlugins} from 'services/aragon-sdk/queries/use-prepared-plugins';
+import {useProtocolVersion} from 'services/aragon-sdk/queries/use-protocol-version';
+import {TransactionState} from 'utils/constants';
+import {compareVersions} from 'utils/library';
 
 type UpdateContextType = {
   /** Prepares the creation data and awaits user confirmation to start process */
@@ -44,20 +42,11 @@ type UpdateContextType = {
   availableOSxVersions: Map<string, OSX> | null;
 };
 
-type PreparedPluginData = {
-  permissions: MultiTargetPermission[];
-  pluginAddress: string;
-  pluginRepo: string;
-  versionTag: VersionTag;
-  initData: Uint8Array;
-  helpers: string[];
-};
-
 type Plugin = {
   version: VersionTag;
   isPrepared?: boolean;
   isLatest?: boolean;
-  preparedData?: PreparedPluginData;
+  preparedData?: ApplyUpdateParams;
 };
 
 export type OSX = {
@@ -143,24 +132,25 @@ const UpdateProvider: React.FC<{children: ReactElement}> = ({children}) => {
 
   const {data: daoDetails, isLoading: detailsAreLoading} = useDaoDetailsQuery();
   const pluginType = daoDetails?.plugins?.[0]?.id as PluginTypes;
+  const daoAddress = daoDetails?.address as string;
 
   const {client} = useClient();
   const pluginClient = usePluginClient(pluginType);
 
-  const {data: pluginAvailableVersions, isLoading: availableVersionLoading} =
-    usePluginVersions({pluginType, daoAddress: daoDetails?.address as string});
+  const {data: pluginAvailableVersions} = usePluginVersions({
+    pluginType,
+    daoAddress,
+  });
 
-  const {data: versions, isLoading: protocolVersionLoading} =
-    useProtocolVersion(daoDetails?.address as string);
+  const {data: versions} = useProtocolVersion(daoAddress);
 
-  const {data: preparedPluginList, isLoading: preparedPluginLoading} =
-    usePreparedPlugins({
-      pluginType,
-      pluginAddress: daoDetails?.plugins?.[0]?.instanceAddress as string,
-      daoAddressOrEns: daoDetails?.address as string,
-    });
+  const {data: preparedPluginList} = usePreparedPlugins({
+    pluginType,
+    pluginAddress: daoDetails?.plugins?.[0]?.instanceAddress as string,
+    daoAddressOrEns: daoAddress,
+  });
 
-  const {getValues, setValue} = useFormContext<CreateProposalFormData>();
+  const {getValues, setValue} = useFormContext();
   const pluginSelectedVersion = getValues('pluginSelectedVersion');
 
   const shouldPoll =
@@ -174,108 +164,110 @@ const UpdateProvider: React.FC<{children: ReactElement}> = ({children}) => {
   /*************************************************
    *                    Effects                    *
    *************************************************/
+  // set protocol list
+  useEffect(() => {
+    if (versions) {
+      const OSXVersions = new Map();
+
+      Object.keys(SupportedVersion).forEach(key => {
+        if (
+          compareVersions(
+            SupportedVersion[key as keyof typeof SupportedVersion],
+            versions.join('.') as string
+          ) === 1
+        ) {
+          OSXVersions.set(
+            SupportedVersion[key as keyof typeof SupportedVersion],
+            {
+              version: SupportedVersion[
+                key as keyof typeof SupportedVersion
+              ] as string,
+              ...(key === 'LATEST' && {isLatest: true}),
+            } as OSX
+          );
+
+          if (key === 'LATEST') {
+            setValue('osSelectedVersion', {
+              version: SupportedVersion[
+                key as keyof typeof SupportedVersion
+              ] as string,
+            });
+          }
+        }
+      });
+
+      dispatch({
+        type: 'setOSXAvailableVersions',
+        payload: OSXVersions,
+      });
+
+      console.log('dispatching');
+    }
+  }, [setValue, versions]);
+
   // set plugin list
   useEffect(() => {
-    if (
-      availableVersionLoading &&
-      protocolVersionLoading &&
-      preparedPluginLoading
-    )
-      return;
+    if (daoDetails && pluginAvailableVersions?.releases && preparedPluginList) {
+      const pluginVersions = new Map();
 
-    const OSXVersions = new Map();
-
-    Object.keys(SupportedVersion).forEach(key => {
-      if (
-        compareVersions(
-          SupportedVersion[key as keyof typeof SupportedVersion],
-          versions?.join('.') as string
-        )
-      ) {
-        OSXVersions.set(
-          SupportedVersion[key as keyof typeof SupportedVersion],
-          {
-            version: SupportedVersion[
-              key as keyof typeof SupportedVersion
-            ] as string,
-            ...(key === 'LATEST' && {isLatest: true}),
-          } as OSX
-        );
-      }
-
-      if (key === 'LATEST') {
-        setValue('osSelectedVersion', {
-          version: SupportedVersion[
-            key as keyof typeof SupportedVersion
-          ] as string,
+      pluginAvailableVersions.releases.map((release, releaseIndex) => {
+        release.builds.sort((a, b) => {
+          return a.build > b.build ? 1 : -1;
         });
-      }
-    });
 
-    const pluginVersions = new Map();
-
-    pluginAvailableVersions?.releases?.map((release, releaseIndex) => {
-      release.builds.sort((a, b) => {
-        return a.build > b.build ? 1 : -1;
-      });
-
-      release.builds.map((build, buildIndex) => {
-        if (
-          release.release >= daoDetails!.plugins[0].release &&
-          build.build > daoDetails!.plugins[0].build
-        )
-          pluginVersions.set(`${release.release}.${build.build}`, {
-            version: {
-              build: build.build,
-              release: release.release,
-            },
-            ...(preparedPluginList?.has(
-              `${release.release}.${build.build}`
-            ) && {
-              isPrepared: true,
-              preparedData: {
-                ...preparedPluginList.get(`${release.release}.${build.build}`),
+        release.builds.map((build, buildIndex) => {
+          if (
+            release.release >= daoDetails.plugins[0].release &&
+            build.build > daoDetails.plugins[0].build
+          ) {
+            const versionKey = `${release.release}.${build.build}`;
+            pluginVersions.set(versionKey, {
+              version: {
+                build: build.build,
+                release: release.release,
               },
-            }),
-            ...(releaseIndex === pluginAvailableVersions?.releases.length - 1 &&
-              buildIndex === release.builds.length - 1 && {
-                isLatest: true,
+              ...(preparedPluginList.has(versionKey) && {
+                isPrepared: true,
+                preparedData: {
+                  ...preparedPluginList.get(
+                    `${release.release}.${build.build}`
+                  ),
+                },
               }),
-          });
+              ...(releaseIndex ===
+                pluginAvailableVersions.releases.length - 1 &&
+                buildIndex === release.builds.length - 1 && {
+                  isLatest: true,
+                }),
+            });
 
-        setValue('pluginSelectedVersion', {
-          version: {
-            build: release.builds[release.builds.length - 1].build,
-            release: release.release,
-          },
-          isPrepared: Boolean(
-            preparedPluginList?.has(
-              `${release.release}.${
-                release.builds[release.builds.length - 1].build
-              }`
-            )
-          ),
+            setValue('pluginSelectedVersion', {
+              version: {
+                build: release.builds[release.builds.length - 1].build,
+                release: release.release,
+              },
+              isPrepared: Boolean(
+                preparedPluginList.has(
+                  `${release.release}.${
+                    release.builds[release.builds.length - 1].build
+                  }`
+                )
+              ),
+            });
+          }
         });
       });
-    });
 
-    dispatch({
-      type: 'setPluginAvailableVersions',
-      payload: pluginVersions,
-    });
-    dispatch({
-      type: 'setOSXAvailableVersions',
-      payload: OSXVersions,
-    });
+      dispatch({
+        type: 'setPluginAvailableVersions',
+        payload: pluginVersions,
+      });
+    }
   }, [
-    availableVersionLoading,
     daoDetails,
     pluginAvailableVersions?.releases,
     preparedPluginList,
-    preparedPluginLoading,
-    protocolVersionLoading,
     setValue,
-    versions,
   ]);
 
   /*************************************************
@@ -410,6 +402,15 @@ const UpdateProvider: React.FC<{children: ReactElement}> = ({children}) => {
           case PrepareUpdateStep.DONE:
             const pluginListTemp = state.pluginList;
 
+            const preparedData: ApplyUpdateParams = {
+              permissions: step.permissions,
+              pluginAddress: step.pluginAddress,
+              pluginRepo: step.pluginRepo,
+              initData: step.initData,
+              helpers: step.helpers,
+              versionTag: step.versionTag,
+            };
+
             pluginListTemp?.set(
               `${step.versionTag.release}.${step.versionTag.build}`,
               {
@@ -418,23 +419,9 @@ const UpdateProvider: React.FC<{children: ReactElement}> = ({children}) => {
                 ),
                 version: step.versionTag,
                 isPrepared: true,
-                preparedData: {
-                  permissions: step.permissions,
-                  pluginAddress: step.pluginAddress,
-                  pluginRepo: step.pluginRepo,
-                  initData: step.initData,
-                  helpers: step.helpers,
-                } as PreparedPluginData,
+                preparedData,
               }
             );
-            console.log('success', {
-              permissions: step.permissions,
-              pluginAddress: step.pluginAddress,
-              pluginRepo: step.pluginRepo,
-              versionTag: step.versionTag,
-              initData: step.initData,
-              helpers: step.helpers,
-            });
             dispatch({
               type: 'setPluginAvailableVersions',
               payload: pluginListTemp as Map<string, Plugin>,
