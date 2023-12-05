@@ -31,7 +31,7 @@ const fetchTokenVotingProposalCount = async (
     params: {pluginAddress: params.pluginAddress},
   });
 
-  return Number(data.tokenVotingPlugin.proposalCount) ?? 0;
+  return Number(data.tokenVotingPlugin.proposalCount ?? 0);
 };
 
 // Multisig query and fetch
@@ -54,7 +54,7 @@ const fetchMultisigProposalCount = async (
     params: {pluginAddress: params.pluginAddress},
   });
 
-  return Number(data.multisigPlugin.proposalCount) ?? 0;
+  return Number(data.multisigPlugin.proposalCount ?? 0);
 };
 
 // Gasless voting query and fetch
