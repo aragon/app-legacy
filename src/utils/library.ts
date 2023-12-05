@@ -52,6 +52,7 @@ import {
   ActionMintToken,
   ActionRemoveAddress,
   ActionSCC,
+  ActionUpdateGaslessSettings,
   ActionUpdateMetadata,
   ActionUpdateMultisigPluginSettings,
   ActionUpdatePluginSettings,
@@ -64,6 +65,7 @@ import {Abi, addABI, decodeMethod} from './abiDecoder';
 import {attachEtherNotice} from './contract';
 import {getTokenInfo} from './tokens';
 import {daoABI} from 'abis/daoABI';
+import {GaslessVotingClient} from '@vocdoni/gasless-voting';
 
 export function formatUnits(amount: BigNumberish, decimals: number) {
   if (amount.toString().includes('.') || !decimals) {
@@ -362,6 +364,21 @@ export function decodeMultisigSettingsToAction(
   return {
     name: 'modify_multisig_voting_settings',
     inputs: client.decoding.updateMultisigVotingSettings(data),
+  };
+}
+
+export function decodeGaslessSettingsToAction(
+  data: Uint8Array | undefined,
+  client: GaslessVotingClient
+): ActionUpdateGaslessSettings | undefined {
+  if (!client || !data) {
+    console.error('SDK client is not initialized correctly');
+    return;
+  }
+
+  return {
+    name: 'modify_gasless_voting_settings',
+    inputs: client.decoding.updatePluginSettingsAction(data),
   };
 }
 
