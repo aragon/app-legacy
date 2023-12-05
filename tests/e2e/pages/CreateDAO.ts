@@ -13,10 +13,10 @@ export default class CreateDAO {
     cy.get('button').contains('Next').click();
 
     // Fills out mandatory fields on the Define DAO metadata page and proceeds to the next page
-    cy.get('input[name="daoName"]').type('Cypress test');
+    cy.get('input[name="daoName"]').type('Tunesia Offsite DAO');
     cy.get('input[name="daoEnsName"]').type(Date.now().toString());
     cy.get('textarea[name="daoSummary"]').type(
-      'Cypress test to test Multisig DAO Creation'
+      'DAO to come to democratic group decisions during our offsite'
     );
     cy.get('button[mode="primary"]')
       .contains('Next')
@@ -62,9 +62,8 @@ export default class CreateDAO {
     cy.confirmMetamaskTransaction();
     cy.switchToCypressWindow();
 
-    // Waits till the tx completes by checking the state of the primary button the tx modal
-    cy.get('button[mode="primary"]').contains('Launch DAO Dashboard');
-
+    // Waits till the tx completes by checking the state of the primary button the tx modal and continues to DAO Dashboard
+    cy.get('button[mode="primary"]').contains('Launch DAO Dashboard').click();
     cy.wait(5000);
   }
 }

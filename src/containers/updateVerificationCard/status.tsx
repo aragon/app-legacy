@@ -85,7 +85,7 @@ export const Status: React.FC<StatusProps> = ({
   );
 };
 
-const IconContainer = styled.div.attrs({className: 'mr-1 mt-2'})``;
+const IconContainer = styled.div.attrs({className: 'mr-1 mt-1'})``;
 
 const Content = styled.div.attrs(() => ({
   className: `flex items-start gap-x-2 xl:gap-x-4`,

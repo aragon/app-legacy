@@ -42,6 +42,8 @@ export const CardExecution: React.FC<CardExecutionProps> = ({
   from,
   toLabel,
   fromLabel,
+  toLinkURL,
+  fromLinkURL,
   tokenName,
   tokenImageUrl,
   tokenSymbol,
@@ -58,7 +60,10 @@ export const CardExecution: React.FC<CardExecutionProps> = ({
         <Description>{description}</Description>
       </Header>
       <Content>
-        <CardTransfer {...{to, from, toLabel, fromLabel}} bgWhite />
+        <CardTransfer
+          {...{to, from, toLabel, fromLabel, toLinkURL, fromLinkURL}}
+          bgWhite
+        />
         <CardToken
           {...{
             tokenName,

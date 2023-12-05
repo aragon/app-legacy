@@ -1,12 +1,13 @@
-import React, {type ReactComponentElement} from 'react';
+import React, {type ReactComponentElement, type ReactElement} from 'react';
 import {styled} from 'styled-components';
 import {ButtonIcon} from '../button';
 import {IconChevronLeft, IconChevronRight, type IconType} from '../icons';
 import {type TagProps} from '../tag';
 import Crumb from './crumb';
+import {shortenAddress} from '../../utils/addresses';
 
 export type CrumbType = {
-  label: string;
+  label: ReactElement | string;
   path: string;
 };
 
@@ -41,6 +42,11 @@ export const Breadcrumb: React.FC<BreadcrumbProps> = ({
   tag,
   onClick,
 }) => {
+  function getLabel(content: ReactElement | string | undefined): string {
+    if (typeof content === 'string') return shortenAddress(content);
+    return shortenAddress(content?.props?.children);
+  }
+
   if (Array.isArray(crumbs)) {
     let isLast: boolean;
 
@@ -56,7 +62,7 @@ export const Breadcrumb: React.FC<BreadcrumbProps> = ({
               <Crumb
                 first={index === 0}
                 icon={icon}
-                label={label}
+                label={getLabel(label)}
                 last={isLast}
                 tag={tag}
                 {...(isLast ? {} : {onClick: () => onClick?.(path)})}
@@ -77,7 +83,7 @@ export const Breadcrumb: React.FC<BreadcrumbProps> = ({
             onClick={() => onClick?.(crumbs.path)}
             bgWhite
           />
-          <p className="font-semibold">{crumbs?.label}</p>
+          <p className="font-semibold">{getLabel(crumbs?.label)}</p>
           {tag}
         </ProcessCrumbContainer>
       </ProcessContainer>

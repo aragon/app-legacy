@@ -86,7 +86,7 @@ export type ChainData = {
   isTestnet: boolean;
   mainnet?: SupportedNetworks;
   explorer: string;
-  explorerName?: string;
+  explorerName: string;
   logo: string;
   rpc: string[];
   nativeCurrency: NativeTokenData;
@@ -330,6 +330,7 @@ export const CHAIN_METADATA: Record<SupportedNetworks, ChainData> = {
     domain: 'L1 Blockchain',
     logo: '',
     explorer: '',
+    explorerName: '',
     isTestnet: false,
     rpc: [],
     nativeCurrency: {

@@ -501,7 +501,7 @@ export const EditMvSettings: React.FC<EditMvSettingsProps> = ({daoDetails}) => {
               <AccordionItem
                 type="action-builder"
                 name="community"
-                methodName={t('navLinks.community')}
+                methodName={t('navLinks.members')}
                 alertLabel={
                   isCommunityChanged ? t('settings.newSettings') : undefined
                 }

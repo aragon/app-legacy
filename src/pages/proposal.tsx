@@ -4,7 +4,6 @@ import {
   IconChevronDown,
   IconChevronUp,
   IconGovernance,
-  Link,
   WidgetStatus,
 } from '@aragon/ods-old';
 import {
@@ -20,7 +19,7 @@ import {useEditor} from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import React, {useCallback, useEffect, useMemo, useRef, useState} from 'react';
 import {useTranslation} from 'react-i18next';
-import {generatePath, useNavigate, useParams} from 'react-router-dom';
+import {generatePath, useNavigate, useParams, Link} from 'react-router-dom';
 import sanitizeHtml from 'sanitize-html';
 import styled from 'styled-components';
 
@@ -75,7 +74,7 @@ import {
   shortenAddress,
   toDisplayEns,
 } from 'utils/library';
-import {NotFound} from 'utils/paths';
+import {DaoMember, NotFound} from 'utils/paths';
 import {
   getLiveProposalTerminalProps,
   getProposalExecutionStatus,
@@ -573,15 +572,19 @@ export const Proposal: React.FC = () => {
     isTokenVotingSettings(votingSettings) &&
     votingSettings.votingMode === VotingMode.VOTE_REPLACEMENT;
 
+  const connectedToRightNetwork = isConnected && !isOnWrongNetwork;
+
   const votingDisabled =
-    // wallet should be connected and on the
-    // right network before we disable the button
-    isConnected &&
-    !isOnWrongNetwork &&
-    (proposal?.status !== ProposalStatus.ACTIVE ||
-      (isMultisigPlugin && (voted || canVote === false)) ||
-      (isGaslessVotingPlugin && voted) ||
-      (isTokenVotingPlugin && voted && !canRevote));
+    // can only vote on active proposals
+    proposal?.status !== ProposalStatus.ACTIVE ||
+    // when disconnected or on wrong network,
+    // login and network modals should be shown respectively
+    (connectedToRightNetwork &&
+      // need to check canVote status on Multisig because
+      // the delegation modals are not shown for Multisig
+      ((isMultisigPlugin && (voted || canVote === false)) ||
+        (isGaslessVotingPlugin && voted) ||
+        (isTokenVotingPlugin && voted && !canRevote)));
 
   const handleApprovalClick = useCallback(
     (tryExecution: boolean) => {
@@ -765,14 +768,17 @@ export const Proposal: React.FC = () => {
           <ProposerLink>
             {t('governance.proposals.publishedBy')}{' '}
             <Link
-              external
-              label={
-                proposal.creatorAddress.toLowerCase() === address?.toLowerCase()
-                  ? t('labels.you')
-                  : shortenAddress(proposal.creatorAddress)
-              }
-              href={`${CHAIN_METADATA[network].explorer}/address/${proposal?.creatorAddress}`}
-            />
+              to={generatePath(DaoMember, {
+                network,
+                dao,
+                user: proposal.creatorAddress,
+              })}
+              className="inline-flex max-w-full cursor-pointer items-center space-x-3 truncate rounded font-semibold text-primary-500 hover:text-primary-700 focus:outline-none focus-visible:ring focus-visible:ring-primary active:text-primary-800"
+            >
+              {proposal.creatorAddress.toLowerCase() === address?.toLowerCase()
+                ? t('labels.you')
+                : shortenAddress(proposal.creatorAddress)}
+            </Link>
           </ProposerLink>
         </ContentWrapper>
         <SummaryText>{proposal.metadata.summary}</SummaryText>
@@ -872,7 +878,7 @@ const SummaryText = styled.p.attrs({
 })``;
 
 const ProposalContainer = styled.div.attrs({
-  className: 'space-y-6 md:w-3/5',
+  className: 'space-y-6 md:w-3/5 text-neutral-600',
 })``;
 
 const AdditionalInfoContainer = styled.div.attrs({

@@ -58,7 +58,7 @@ export const UpdateVerificationCard: React.FC<UpdateVerificationCardProps> = ({
           ErrorList: [
             ...(osUpdateVerification?.actionErrorCauses || []),
             ...(osUpdateVerification?.proposalSettingsErrorCauses || []),
-          ] as string[],
+          ].flat(),
         };
     }
   }, [
@@ -95,7 +95,7 @@ export const UpdateVerificationCard: React.FC<UpdateVerificationCardProps> = ({
           ErrorList: [
             ...(pluginUpdateVerification?.actionErrorCauses || []),
             ...(pluginUpdateVerification?.proposalSettingsErrorCauses || []),
-          ] as string[],
+          ].flat(),
         };
     }
   }, [isPluginUpdateLoading, pluginType, pluginUpdateVerification, t]);
@@ -147,5 +147,5 @@ const Description = styled.div.attrs({
 
 export const Row = styled.div.attrs({
   className:
-    'py-2 md:py-4 xl:space-x-4 border-t border-neutral-100 ft-text-base flex items-center justify-between',
+    'py-2 md:py-4 xl:space-x-4 border-t border-neutral-100 ft-text-base flex items-center justify-between overflow-auto',
 })``;

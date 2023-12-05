@@ -10,6 +10,7 @@ import {
   useWatch,
 } from 'react-hook-form';
 import {useTranslation} from 'react-i18next';
+import {useNavigate} from 'react-router-dom';
 import styled from 'styled-components';
 import {Markdown} from 'tiptap-markdown';
 
@@ -18,7 +19,6 @@ import {UpdateListItem} from 'containers/updateListItem/updateListItem';
 import {VersionSelectionMenu} from 'containers/versionSelectionMenu/versionSelectionMenu';
 import {useUpdateContext} from 'context/update';
 import {useDaoDetailsQuery} from 'hooks/useDaoDetails';
-import {useNavigate} from 'react-router-dom';
 import {useProtocolVersion} from 'services/aragon-sdk/queries/use-protocol-version';
 import {useReleaseNotes} from 'services/aragon-sdk/queries/use-release-notes';
 import {osxUpdates} from 'utils/osxUpdates';
@@ -151,14 +151,13 @@ export const DefineUpdateProposal: React.FC = () => {
     },
   ].filter(update => !update.disabled);
 
-  // queries loading && data parsing
+  // queries loading
   const isLoading =
     detailsLoading ||
     protocolVersionLoading ||
     releaseNotesLoading ||
-    (((availablePluginUpdates?.size || 0) > 0 ||
-      (availableProtocolUpdates?.size || 0) > 0) &&
-      (!OSxReleaseNotes || !pluginReleaseNotes));
+    ((availablePluginUpdates?.size ?? 1) > 0 && !pluginReleaseNotes) ||
+    ((availableProtocolUpdates?.size ?? 1) > 0 && !OSxReleaseNotes);
 
   /*************************************************
    *                    Effects                    *
@@ -195,13 +194,9 @@ export const DefineUpdateProposal: React.FC = () => {
       });
     }
     if (updateFramework?.plugin) {
-      // Add space between the two updates
-      if (updateFramework.os) {
-        proposalBody += '<p />';
-      }
-
       const updatedVersion = osxUpdates.getPluginUpdateLabel(
-        pluginSelectedVersion?.version
+        pluginSelectedVersion?.version,
+        pluginUpdateTypeLabel
       );
       const releaseNotes = osxUpdates.getReleaseNotes({
         releases,
@@ -213,7 +208,10 @@ export const DefineUpdateProposal: React.FC = () => {
         updatedVersion,
         description: editor?.getHTML().replace(/<(\/){0,1}p>/g, ''),
         releaseNotesLink: releaseNotes?.html_url,
-        currentVersion: osxUpdates.getPluginUpdateLabel(dao?.plugins[0]),
+        currentVersion: osxUpdates.getPluginUpdateLabel(
+          dao?.plugins[0],
+          pluginUpdateTypeLabel
+        ),
       });
     }
 
@@ -228,9 +226,10 @@ export const DefineUpdateProposal: React.FC = () => {
     releases,
     setValue,
     t,
-    updateFramework?.os,
+    updateFramework.os,
     updateFramework?.plugin,
     protocolVersion,
+    pluginUpdateTypeLabel,
   ]);
 
   // add values to form

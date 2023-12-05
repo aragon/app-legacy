@@ -100,6 +100,7 @@ export const Settings: React.FC = () => {
       {daoUpdateEnabled && (
         <VersionInfoCard
           pluginAddress={daoDetails.plugins[0].instanceAddress}
+          pluginType={daoDetails.plugins[0].id as PluginTypes}
           pluginVersion={`${daoDetails.plugins[0].release}.${daoDetails.plugins[0].build}`}
           daoAddress={daoDetails.address}
         />

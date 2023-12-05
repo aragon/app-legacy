@@ -6,6 +6,7 @@ export const NotFound = '/not-found';
 /* DAO-SPECIFIC PAGES ======================================================= */
 
 export const Dashboard = '/daos/:network/:dao/dashboard';
+export const DaoMember = '/daos/:network/:dao/members/:user';
 export const Finance = '/daos/:network/:dao/finance';
 export const Governance = '/daos/:network/:dao/governance';
 export const Community = '/daos/:network/:dao/community';

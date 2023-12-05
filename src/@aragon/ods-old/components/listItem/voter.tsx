@@ -4,7 +4,7 @@ import {styled} from 'styled-components';
 import {useScreen} from '../../hooks';
 import {shortenAddress} from '../../utils/addresses';
 import {AvatarWallet} from '../avatar';
-import {IconLinkExternal, IconPerson} from '../icons';
+import {IconChevronRight, IconPerson} from '../icons';
 import type {TagProps} from '../tag';
 import {Tag} from '../tag';
 
@@ -55,7 +55,7 @@ export const ListItemVoter: FC<ListItemVoterProps> = ({
       <LeftSection>
         {!isMobile && <Avatar src={src ?? ''} />}
         <LeftContent>
-          <p className="flex font-semibold text-neutral-800 ft-text-base">
+          <p className="flex font-semibold ft-text-base">
             {shortenAddress(label)}
             {walletTag && <Tag {...walletTag} className="mx-2" />}
           </p>
@@ -80,7 +80,7 @@ export const ListItemVoter: FC<ListItemVoterProps> = ({
         </RightContent>
         {!isMobile && (
           <span className="px-3">
-            <IconLinkExternal />
+            <IconChevronRight />
           </span>
         )}
       </RightSection>

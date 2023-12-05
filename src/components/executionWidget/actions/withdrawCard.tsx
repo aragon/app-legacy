@@ -6,12 +6,16 @@ import styled from 'styled-components';
 import {AccordionMethod} from 'components/accordionMethod';
 import {ActionWithdraw} from 'utils/types';
 import {NumberFormat, formatterUtils} from '@aragon/ods';
+import {CHAIN_METADATA} from 'utils/constants';
+import {useNetwork} from 'context/network';
 
 export const WithdrawCard: React.FC<{
   action: ActionWithdraw;
-  daoName: string;
-}> = ({action, daoName}) => {
+  daoAddress: string;
+  daoLabel: string;
+}> = ({action, daoAddress, daoLabel}) => {
   const {t} = useTranslation();
+  const {network} = useNetwork();
 
   const amount = Number(action.amount) || 0;
   const tokenPrice = Number(action.tokenPrice) || 0;
@@ -34,6 +38,12 @@ export const WithdrawCard: React.FC<{
       }) as string)
     : t('finance.unknownUSDValue');
 
+  const explorerURL = CHAIN_METADATA[network].explorer;
+  const daoExplorerURL = `${explorerURL}address/${daoAddress}`;
+
+  const recipient = (action.to.ensName || action.to.address) as string;
+  const recipientURL = `${explorerURL}address/${recipient}`;
+
   return (
     <AccordionMethod
       type="execution-widget"
@@ -44,8 +54,10 @@ export const WithdrawCard: React.FC<{
     >
       <Container>
         <CardTransfer
-          to={String(action.to.ensName || action.to.address)}
-          from={daoName}
+          to={recipient}
+          from={daoLabel}
+          fromLinkURL={daoExplorerURL}
+          toLinkURL={recipientURL}
           toLabel={t('labels.to')}
           fromLabel={t('labels.from')}
         />
