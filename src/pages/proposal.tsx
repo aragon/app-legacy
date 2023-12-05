@@ -56,12 +56,16 @@ import {
 import {useTokenAsync} from 'services/token/queries/use-token';
 import {CHAIN_METADATA} from 'utils/constants';
 import {featureFlags} from 'utils/featureFlags';
-import {GaslessVotingProposal} from '@vocdoni/gasless-voting';
+import {
+  GaslessVotingClient,
+  GaslessVotingProposal,
+} from '@vocdoni/gasless-voting';
 import {constants} from 'ethers';
 import {usePastVotingPower} from 'services/aragon-sdk/queries/use-past-voting-power';
 import {
   decodeAddMembersToAction,
   decodeApplyUpdateAction,
+  decodeGaslessSettingsToAction,
   decodeMetadataToAction,
   decodeMintTokensToAction,
   decodeMultisigSettingsToAction,
@@ -292,6 +296,7 @@ export const Proposal: React.FC = () => {
 
     const multisigClient = pluginClient as MultisigClient;
     const tokenVotingClient = pluginClient as TokenVotingClient;
+    const gaslessVotingClient = pluginClient as GaslessVotingClient;
 
     const getAction = async (action: DaoAction, index: number) => {
       const functionParams =
@@ -330,6 +335,11 @@ export const Proposal: React.FC = () => {
           return decodeMetadataToAction(action.data, client);
         case 'upgradeToAndCall':
           return decodeUpgradeToAndCallAction(action, client);
+        case 'updatePluginSettings':
+          return decodeGaslessSettingsToAction(
+            action.data,
+            gaslessVotingClient
+          );
         case 'grant':
         case 'revoke': {
           return decodeOSUpdateActions(
