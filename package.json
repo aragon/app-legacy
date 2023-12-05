@@ -17,7 +17,7 @@
     "lint": "eslint src --max-warnings=0 && yarn check-types",
     "lint:fix": "eslint src --fix",
     "check-types": "tsc --noemit",
-    "e2e": "env-cmd -f .env npx synpress run --configFile synpress.config.js --noExit",
+    "e2e": "env-cmd -f .env npx synpress run --configFile synpress.config.js",
     "e2e:reset": "cd tests/e2e && cpx default/runContext.json ."
   },
   "dependencies": {
