@@ -44,7 +44,7 @@ jobs:
           NODE_OPTIONS: '--max-old-space-size=6656'
 
       - name: Run E2E Tests
-        uses: yarn e2e
+        run: yarn e2e
         with:
           start: yarn dev
           wait-on: 'http://localhost:3000'
