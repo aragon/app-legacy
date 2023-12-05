@@ -878,7 +878,7 @@ const SummaryText = styled.p.attrs({
 })``;
 
 const ProposalContainer = styled.div.attrs({
-  className: 'space-y-6 md:w-3/5',
+  className: 'space-y-6 md:w-3/5 text-neutral-600',
 })``;
 
 const AdditionalInfoContainer = styled.div.attrs({

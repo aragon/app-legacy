@@ -194,11 +194,6 @@ export const DefineUpdateProposal: React.FC = () => {
       });
     }
     if (updateFramework?.plugin) {
-      // Add space between the two updates
-      if (updateFramework.os) {
-        proposalBody += '<p />';
-      }
-
       const updatedVersion = osxUpdates.getPluginUpdateLabel(
         pluginSelectedVersion?.version,
         pluginUpdateTypeLabel
