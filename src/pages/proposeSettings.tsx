@@ -27,10 +27,7 @@ export const ProposeSettings: React.FC = () => {
       showTxModal={showTxModal}
       setShowTxModal={setShowTxModal}
     >
-      {/*todo(kon): use ActionsProvider??*/}
-      {/*<ActionsProvider daoId={daoDetails.address}>*/}
       <ProposeSettingsStepper enableTxModal={enableTxModal} />
-      {/*</ActionsProvider>*/}
     </CreateProposalProvider>
   );
 };
