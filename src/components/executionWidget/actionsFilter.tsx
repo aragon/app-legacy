@@ -30,8 +30,8 @@ export const ActionsFilter: React.FC<ActionsFilterProps> = ({
       return (
         <WithdrawCard
           action={action}
-          daoAddress={dao?.address || ''}
-          daoLabel={toDisplayEns(dao?.ensDomain) || dao?.metadata?.name || ''}
+          daoAddress={dao?.address ?? ''}
+          daoLabel={(toDisplayEns(dao?.ensDomain) || dao?.metadata?.name) ?? ''}
         />
       );
     case 'add_address':

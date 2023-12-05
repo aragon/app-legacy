@@ -173,7 +173,7 @@ const UpdateProvider: React.FC<{children: ReactElement}> = ({children}) => {
         if (
           compareVersions(
             SupportedVersion[key as keyof typeof SupportedVersion],
-            versions.join('.') as string
+            versions.join('.')
           ) === 1
         ) {
           OSXVersions.set(
@@ -200,8 +200,6 @@ const UpdateProvider: React.FC<{children: ReactElement}> = ({children}) => {
         type: 'setOSXAvailableVersions',
         payload: OSXVersions,
       });
-
-      console.log('dispatching');
     }
   }, [setValue, versions]);
 
@@ -210,12 +208,12 @@ const UpdateProvider: React.FC<{children: ReactElement}> = ({children}) => {
     if (daoDetails && pluginAvailableVersions?.releases && preparedPluginList) {
       const pluginVersions = new Map();
 
-      pluginAvailableVersions.releases.map((release, releaseIndex) => {
+      pluginAvailableVersions.releases.forEach((release, releaseIndex) => {
         release.builds.sort((a, b) => {
           return a.build > b.build ? 1 : -1;
         });
 
-        release.builds.map((build, buildIndex) => {
+        release.builds.forEach((build, buildIndex) => {
           if (
             release.release >= daoDetails.plugins[0].release &&
             build.build > daoDetails.plugins[0].build
@@ -400,41 +398,43 @@ const UpdateProvider: React.FC<{children: ReactElement}> = ({children}) => {
             console.log(step.txHash);
             break;
           case PrepareUpdateStep.DONE:
-            const pluginListTemp = state.pluginList;
+            {
+              const pluginListTemp = state.pluginList;
 
-            const preparedData: ApplyUpdateParams = {
-              permissions: step.permissions,
-              pluginAddress: step.pluginAddress,
-              pluginRepo: step.pluginRepo,
-              initData: step.initData,
-              helpers: step.helpers,
-              versionTag: step.versionTag,
-            };
+              const preparedData: ApplyUpdateParams = {
+                permissions: step.permissions,
+                pluginAddress: step.pluginAddress,
+                pluginRepo: step.pluginRepo,
+                initData: step.initData,
+                helpers: step.helpers,
+                versionTag: step.versionTag,
+              };
 
-            pluginListTemp?.set(
-              `${step.versionTag.release}.${step.versionTag.build}`,
-              {
-                ...state.pluginList!.get(
-                  `${step.versionTag.release}.${step.versionTag.build}`
-                ),
+              pluginListTemp?.set(
+                `${step.versionTag.release}.${step.versionTag.build}`,
+                {
+                  ...state.pluginList!.get(
+                    `${step.versionTag.release}.${step.versionTag.build}`
+                  ),
+                  version: step.versionTag,
+                  isPrepared: true,
+                  preparedData,
+                }
+              );
+              dispatch({
+                type: 'setPluginAvailableVersions',
+                payload: pluginListTemp as Map<string, Plugin>,
+              });
+              setValue('pluginSelectedVersion', {
                 version: step.versionTag,
                 isPrepared: true,
-                preparedData,
-              }
-            );
-            dispatch({
-              type: 'setPluginAvailableVersions',
-              payload: pluginListTemp as Map<string, Plugin>,
-            });
-            setValue('pluginSelectedVersion', {
-              version: step.versionTag,
-              isPrepared: true,
-            });
-            dispatch({type: 'setDaoUpdateData'});
-            dispatch({
-              type: 'setPreparationProcessState',
-              payload: TransactionState.SUCCESS,
-            });
+              });
+              dispatch({type: 'setDaoUpdateData'});
+              dispatch({
+                type: 'setPreparationProcessState',
+                payload: TransactionState.SUCCESS,
+              });
+            }
             break;
         }
       }
@@ -467,7 +467,7 @@ const UpdateProvider: React.FC<{children: ReactElement}> = ({children}) => {
     >
       {children}
       <PublishModal
-        state={state.preparationProcessState || TransactionState.WAITING}
+        state={state.preparationProcessState ?? TransactionState.WAITING}
         isOpen={state.showModal.open}
         onClose={handleCloseModal}
         callback={handleExecutePrepare}
