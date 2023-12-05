@@ -2,13 +2,16 @@ import React from 'react';
 import {styled} from 'styled-components';
 
 import {IsAddress, shortenAddress} from '../../utils/addresses';
-import {IconChevronRight} from '../icons';
+import {IconChevronRight, IconLinkExternal} from '../icons';
+import {Link} from '../link';
 
 export type CardTransferProps = {
   to: string;
   from: string;
   toLabel: string;
   fromLabel: string;
+  toLinkURL: string;
+  fromLinkURL: string;
   bgWhite?: boolean;
 };
 
@@ -18,13 +21,25 @@ export const CardTransfer: React.FC<CardTransferProps> = ({
   from,
   toLabel,
   fromLabel,
+  toLinkURL,
+  fromLinkURL,
   bgWhite = false,
 }) => {
   return (
     <CardContainer data-testid="cardTransfer">
-      <Card label={fromLabel} copy={from} bgWhite={bgWhite} />
+      <Card
+        label={fromLabel}
+        copy={from}
+        bgWhite={bgWhite}
+        explorerURL={fromLinkURL}
+      />
       <IconChevronRight className="text-neutral-600" />
-      <Card label={toLabel} copy={to} bgWhite={bgWhite} />
+      <Card
+        label={toLabel}
+        copy={to}
+        bgWhite={bgWhite}
+        explorerURL={toLinkURL}
+      />
     </CardContainer>
   );
 };
@@ -33,14 +48,18 @@ type CardProps = {
   label: string;
   copy: string;
   bgWhite: boolean;
+  explorerURL: string;
 };
-const Card: React.FC<CardProps> = ({label, copy, bgWhite}) => {
+const Card: React.FC<CardProps> = ({label, copy, bgWhite, explorerURL}) => {
   return (
     <Container bgWhite={bgWhite}>
       <Label>{label}</Label>
-      <Value isAddress={IsAddress(copy)}>
-        {IsAddress(copy) ? shortenAddress(copy) : copy}
-      </Value>
+      <Link
+        label={IsAddress(copy) ? shortenAddress(copy) : copy}
+        type="neutral"
+        iconRight={<IconLinkExternal />}
+        href={explorerURL}
+      />
     </Container>
   );
 };
@@ -61,13 +80,3 @@ const Container = styled.div.attrs<ContainerProps>(({bgWhite}) => {
 const Label = styled.p.attrs({
   className: 'ft-text-sm text-neutral-500 capitalize',
 })``;
-
-// TODO: Revisit address shortening
-type ValueProps = {isAddress: boolean};
-const Value = styled.p.attrs<ValueProps>(({isAddress}) => {
-  const className = isAddress
-    ? 'font-semibold text-neutral-800'
-    : 'overflow-hidden font-semibold text-neutral-800 text-ellipsis whitespace-nowrap';
-
-  return {className};
-})<ValueProps>``;

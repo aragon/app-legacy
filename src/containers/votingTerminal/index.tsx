@@ -23,15 +23,17 @@ import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 
 import {StateEmpty} from 'components/stateEmpty';
-import {useNetwork} from 'context/network';
 import {useProviders} from 'context/providers';
 import {formatUnits} from 'ethers/lib/utils';
 import {usePastVotingPowerAsync} from 'services/aragon-sdk/queries/use-past-voting-power';
-import {CHAIN_METADATA} from 'utils/constants';
 import {Web3Address, shortenAddress} from 'utils/library';
 import BreakdownTab from './breakdownTab';
 import InfoTab from './infoTab';
 import {PluginTypes} from 'hooks/usePluginClient';
+import {generatePath, useNavigate, useParams} from 'react-router-dom';
+import {DaoMember} from 'utils/paths';
+import {useNetwork} from 'context/network';
+import {CHAIN_METADATA} from 'utils/constants';
 
 export type ProposalVoteResults = {
   yes: {value: string | number; percentage: number};
@@ -121,6 +123,8 @@ export const VotingTerminal: React.FC<VotingTerminalProps> = ({
   const {api: provider} = useProviders();
   const {t} = useTranslation();
   const {network} = useNetwork();
+  const navigate = useNavigate();
+  const {dao} = useParams();
   const fetchPastVotingPower = usePastVotingPowerAsync();
 
   const isMultisigProposal =
@@ -269,7 +273,20 @@ export const VotingTerminal: React.FC<VotingTerminalProps> = ({
               showAmount={daoToken !== undefined}
               onLoadMore={() => setPage(prev => prev + 1)}
               LoadMoreLabel={t('community.votersTable.loadMore')}
-              explorerURL={CHAIN_METADATA[network].explorer}
+              onVoterClick={user => {
+                dao
+                  ? navigate(
+                      generatePath(DaoMember, {
+                        network,
+                        dao,
+                        user,
+                      })
+                    )
+                  : window.open(
+                      `${CHAIN_METADATA[network].explorer}address/${user}`,
+                      '_blank'
+                    );
+              }}
             />
           ) : (
             <StateEmpty

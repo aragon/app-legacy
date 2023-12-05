@@ -3,13 +3,13 @@ import {UseQueryOptions, useQuery} from '@tanstack/react-query';
 import {GaslessVotingClient} from '@vocdoni/gasless-voting';
 import {gql} from 'graphql-request';
 
-import {usePluginClient} from 'hooks/usePluginClient';
+import {GaselessPluginName, usePluginClient} from 'hooks/usePluginClient';
 import {invariant} from 'utils/invariant';
 import {IFetchTotalProposalCountParams} from '../aragon-subgraph-service.api';
 import {aragonSubgraphQueryKeys} from '../query-keys';
 
 type ProposalCount = {
-  proposalCount: number;
+  proposalCount: bigint;
 };
 
 // Token voting query and fetch
@@ -31,7 +31,7 @@ const fetchTokenVotingProposalCount = async (
     params: {pluginAddress: params.pluginAddress},
   });
 
-  return data.tokenVotingPlugin.proposalCount ?? 0;
+  return Number(data.tokenVotingPlugin.proposalCount ?? 0);
 };
 
 // Multisig query and fetch
@@ -54,14 +54,16 @@ const fetchMultisigProposalCount = async (
     params: {pluginAddress: params.pluginAddress},
   });
 
-  return data.multisigPlugin.proposalCount ?? 0;
+  return Number(data.multisigPlugin.proposalCount ?? 0);
 };
 
 // Gasless voting query and fetch
 export const gaslessVotingProposalCountQuery = gql`
-  query GaslessVotingProposalCount($pluginAddress: ID!) {
-    gaslessVotingPlugin(id: $pluginAddress) {
-      proposalCount
+  query GaslessVotingProposalCount($pluginAddress: String!) {
+    plugins(where: {address: $pluginAddress}) {
+      dao {
+        proposalsCount
+      }
     }
   }
 `;
@@ -70,14 +72,20 @@ const fetchGaslessVotingProposalCount = async (
   params: IFetchTotalProposalCountParams,
   gqlClient: GaslessVotingClient['graphql']
 ): Promise<number> => {
-  type TResult = {multisigPlugin: ProposalCount};
+  type TResult = {
+    plugins: Array<{
+      dao: {
+        proposalsCount: bigint;
+      };
+    }>;
+  };
 
   const data = await gqlClient.request<TResult>({
     query: gaslessVotingProposalCountQuery,
     params: {pluginAddress: params.pluginAddress},
   });
 
-  return data.multisigPlugin.proposalCount ?? 0;
+  return Number(data.plugins[0].dao?.proposalsCount) || 0;
 };
 
 const fetchTotalProposalCount = async (
@@ -91,7 +99,7 @@ const fetchTotalProposalCount = async (
       return await fetchMultisigProposalCount(params, client.graphql);
     case 'token-voting.plugin.dao.eth':
       return await fetchTokenVotingProposalCount(params, client.graphql);
-    case 'vocdoni-gasless-voting-poc.plugin.dao.eth':
+    case GaselessPluginName:
       return await fetchGaslessVotingProposalCount(params, client.graphql);
     default:
       throw new Error('Invalid pluginType');

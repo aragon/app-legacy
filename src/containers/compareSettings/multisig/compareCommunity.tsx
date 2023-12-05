@@ -47,7 +47,7 @@ export const CompareMsCommunity: React.FC<CompareMyCommunityProps> = ({
 
   return (
     <DescriptionListContainer
-      title={t('navLinks.community')}
+      title={t('navLinks.members')}
       onEditClick={() =>
         navigate(generatePath(EditSettings, {network, dao: daoAddressOrEns}))
       }
