@@ -86,7 +86,7 @@ const ProposalTransactionProvider: React.FC<Props> = ({children}) => {
   const proposalId = new ProposalId(urlId!).export();
 
   const {address, isConnected} = useWallet();
-  const {network, networkUrlSegment} = useNetwork();
+  const {network} = useNetwork();
   const queryClient = useQueryClient();
   const {api: provider} = useProviders();
   const fetchVotingPower = useVotingPowerAsync();
@@ -121,7 +121,7 @@ const ProposalTransactionProvider: React.FC<Props> = ({children}) => {
 
   // intermediate values
   const daoAddressOrEns =
-    toDisplayEns(daoDetails?.ensDomain) ?? daoDetails?.address;
+    toDisplayEns(daoDetails?.ensDomain) || daoDetails?.address;
 
   const pluginType = daoDetails?.plugins[0].id as PluginTypes;
   const pluginAddress = daoDetails?.plugins[0].instanceAddress;
@@ -255,18 +255,16 @@ const ProposalTransactionProvider: React.FC<Props> = ({children}) => {
   }, [pluginType, proposalId, queryClient]);
 
   const invalidatePluginQueries = useCallback(() => {
-    queryClient.invalidateQueries([
-      'daoDetails',
-      daoAddressOrEns,
-      networkUrlSegment ?? network,
-    ]);
-  }, [daoAddressOrEns, network, networkUrlSegment, queryClient]);
+    queryClient.invalidateQueries(['daoDetails', daoAddressOrEns, network]);
+  }, [daoAddressOrEns, network, queryClient]);
 
   const invalidateProtocolQueries = useCallback(() => {
-    queryClient.invalidateQueries(
-      aragonSdkQueryKeys.protocolVersion(daoAddressOrEns)
-    );
-  }, [daoAddressOrEns, queryClient]);
+    if (daoDetails?.address) {
+      queryClient.invalidateQueries(
+        aragonSdkQueryKeys.protocolVersion(daoDetails?.address)
+      );
+    }
+  }, [daoDetails?.address, queryClient]);
 
   const onExecutionSuccess = useCallback(
     async (proposalId: string, txHash: string) => {
@@ -441,11 +439,9 @@ const ProposalTransactionProvider: React.FC<Props> = ({children}) => {
       case TransactionState.LOADING:
         break;
       case TransactionState.SUCCESS:
-        {
-          setShowExecutionModal(false);
-          setExecuteSubmitted(true);
-          invalidateProposalQueries();
-        }
+        setShowExecutionModal(false);
+        setExecuteSubmitted(true);
+        invalidateProposalQueries();
         break;
       default: {
         setShowExecutionModal(false);
