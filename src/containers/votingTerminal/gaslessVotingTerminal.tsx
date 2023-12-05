@@ -185,17 +185,10 @@ export const GaslessVotingTerminal: React.FC<CommitteeVotingTerminalProps> = ({
   useEffect(() => {
     if (proposal) {
       // set the very first time
-      setApprovalStatus(
-        getApproveStatusLabel(proposal, isApprovalPeriod, t, i18n.language)
-      );
+      setApprovalStatus(getApproveStatusLabel(proposal, t, i18n.language));
 
       const interval = setInterval(async () => {
-        const v = getApproveStatusLabel(
-          proposal,
-          isApprovalPeriod,
-          t,
-          i18n.language
-        );
+        const v = getApproveStatusLabel(proposal, t, i18n.language);
 
         // remove interval timer once the proposal has started
         if (proposal.startDate.valueOf() <= new Date().valueOf()) {
