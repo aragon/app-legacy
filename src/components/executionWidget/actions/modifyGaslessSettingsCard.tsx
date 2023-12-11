@@ -20,9 +20,9 @@ export const ModifyGaslessSettingsCard: React.FC<{
   return (
     <AccordionMethod
       type="execution-widget"
-      methodName={t('labels.updateGaslessAction')}
+      methodName={t('labels.updateExecutionMultisigAction')}
       smartContractName={t('labels.aragonOSx')}
-      methodDescription={t('labels.updateGaslessActionDescription')}
+      methodDescription={t('labels.updateExecutionMultisigActionDescription')}
       verified
     >
       <ActionCardDlContainer>

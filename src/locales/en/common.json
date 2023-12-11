@@ -245,7 +245,9 @@
     "mintableByDao": "Mintable by DAO",
     "basescan": "BaseScan",
     "Arbiscan": "Arbiscan",
-    "polygonscan": "Polygonscan"
+    "polygonscan": "Polygonscan",
+    "updateExecutionMultisigAction": "Update Execution Multisig",
+    "updateExecutionMultisigActionDescription": "Change addresses that can participate in the multisig"
   },
   "placeHolders": {
     "selectToken": "Select a token …",
