@@ -22,6 +22,7 @@ import {Address, formatUnits} from 'viem';
 import {useEnsAvatar, useEnsName, useEnsResolver} from 'wagmi';
 import {useMember} from 'services/aragon-sdk/queries/use-member';
 import {NumberFormat, formatterUtils} from '@aragon/ods';
+import {useCreatorProposals} from 'services/aragon-sdk/queries/use-creator-proposals';
 
 export const DaoMember: React.FC = () => {
   const {t} = useTranslation();
@@ -80,6 +81,18 @@ export const DaoMember: React.FC = () => {
     {enabled: !!memberAddress && !!daoDetails}
   );
 
+  const {
+    data: memberCreatedProposals,
+    isLoading: isMemberCreatedProposalsLoading,
+  } = useCreatorProposals(
+    {
+      address: memberAddress,
+      pluginAddress: pluginAddress || '',
+      pluginType,
+    },
+    {enabled: !!memberAddress && !!daoDetails}
+  );
+
   const isDelegating = !!daoMember?.delegators?.find(
     item => item.address.toLowerCase() === address?.toLowerCase()
   );
@@ -91,22 +104,13 @@ export const DaoMember: React.FC = () => {
     featureFlags.getValue('VITE_FEATURE_FLAG_DELEGATION') === 'true';
 
   const stats = useMemo<HeaderMemberStat[]>(() => {
-    /** @todo implement this stat */
-    const lastActivityDays = undefined;
-
-    /** @todo implement this stat */
-    const totalProposalsCreated = 0;
+    const totalProposalsCreated = memberCreatedProposals?.length || 0;
 
     if (!isTokenBasedDao) {
       return [
         {
           value: totalProposalsCreated,
           description: t('members.profile.labelProposalCreated'),
-        },
-        {
-          value: '-',
-          helpText: t('members.profile.labelDaysAgo'),
-          description: t('members.profile.labelLatestActivity'),
         },
       ];
     }
@@ -131,7 +135,7 @@ export const DaoMember: React.FC = () => {
           format: NumberFormat.TOKEN_AMOUNT_SHORT,
         }),
         description: t('members.profile.labelVotingPower'),
-        helpText: lastActivityDays ? daoToken.symbol : undefined,
+        helpText: daoToken.symbol,
       },
       {
         value: formatterUtils.formatNumber(memberTokenBalance, {
@@ -144,19 +148,21 @@ export const DaoMember: React.FC = () => {
         value: memberDelegations,
         description: t('members.profile.labelDelegationsReceived'),
       },
-      {
-        value: lastActivityDays || '-',
-        helpText: lastActivityDays
-          ? t('members.profile.labelDaysAgo')
-          : undefined,
-        description: t('members.profile.labelLatestActivity'),
-      },
     ];
-  }, [daoMember, daoToken, isTokenBasedDao, t]);
+  }, [
+    daoMember?.balance,
+    daoMember?.delegators?.length,
+    daoMember?.votingPower,
+    daoToken,
+    isTokenBasedDao,
+    memberCreatedProposals?.length,
+    t,
+  ]);
 
   const isPageLoading =
     daoDetailsLoading ||
     !memberAddress ||
+    isMemberCreatedProposalsLoading ||
     (isDelegationEnabled && isMemberDataLoading);
 
   /*************************************************

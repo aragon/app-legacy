@@ -4,10 +4,10 @@ import {aragonSdkQueryKeys} from '../query-keys';
 import type {IFetchMemberParams} from '../aragon-sdk-service.api';
 import {usePluginClient} from 'hooks/usePluginClient';
 import {useWallet} from 'hooks/useWallet';
-import {SupportedNetworks} from 'utils/constants';
 import {TokenVotingClient, TokenVotingMember} from '@aragon/sdk-client';
 import {invariant} from 'utils/invariant';
 import {SubgraphTokenVotingMember} from '@aragon/sdk-client/dist/tokenVoting/internal/types';
+import {useNetwork} from 'context/network';
 
 function toTokenVotingMember(
   member: SubgraphTokenVotingMember
@@ -80,13 +80,15 @@ export const useMember = (
   options: UseQueryOptions<TokenVotingMember> = {}
 ) => {
   const client = usePluginClient('token-voting.plugin.dao.eth');
-  const {address, network} = useWallet();
+  const {address} = useWallet();
+  const {network} = useNetwork();
+
   const baseParams = {
     address: address as string,
-    network: network as SupportedNetworks,
+    network: network,
   };
 
-  if (client == null || address == null || network == null) {
+  if (client == null) {
     options.enabled = false;
   }
 

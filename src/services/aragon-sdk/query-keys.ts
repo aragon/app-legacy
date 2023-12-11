@@ -13,6 +13,7 @@ import type {
   IFetchProposalsParams,
   IFetchVotingPowerParams,
   IFetchVotingSettingsParams,
+  IFetchCreatorProposalsParams,
 } from './aragon-sdk-service.api';
 import {SupportedNetworks} from 'utils/constants';
 
@@ -30,6 +31,7 @@ export enum AragonSdkQueryItem {
   VOTING_POWER = 'VOTING_POWER',
   VOTING_SETTINGS = 'VOTING_SETTINGS',
   GET_MEMBER = 'GET_MEMBER',
+  GET_CREATOR_PROPOSALS = 'GET_CREATOR_PROPOSALS',
   RELEASE_NOTES = 'RELEASE_NOTES',
 }
 
@@ -92,5 +94,9 @@ export const aragonSdkQueryKeys = {
     baseParams: IAragonSdkBaseParams,
     params: IFetchMemberParams
   ): QueryKey => [AragonSdkQueryItem.GET_MEMBER, baseParams, params],
+  getCreatorProposals: (
+    baseParams: IAragonSdkBaseParams,
+    params: IFetchCreatorProposalsParams
+  ): QueryKey => [AragonSdkQueryItem.GET_CREATOR_PROPOSALS, baseParams, params],
   releaseNotes: (): QueryKey => [AragonSdkQueryItem.RELEASE_NOTES],
 };
