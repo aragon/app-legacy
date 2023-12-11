@@ -37,7 +37,7 @@ import {TFunction} from 'i18next';
 
 import {ProposalVoteResults} from 'containers/votingTerminal';
 import {MultisigDaoMember} from 'hooks/useDaoMembers';
-import {GaselessPluginName, PluginTypes} from 'hooks/usePluginClient';
+import {PluginTypes} from 'hooks/usePluginClient';
 import {
   isGaslessVotingSettings,
   isMultisigVotingSettings,
@@ -315,27 +315,8 @@ export function getProposalStatusSteps(
   executionFailed: boolean,
   isSuccessfulMultisigSignalingProposal: boolean,
   executionBlock?: string,
-  executionDate?: Date,
-  tallyEndDate?: Date,
-  isExecutionMultisigApproved?: boolean
+  executionDate?: Date
 ): Array<ProgressStatusProps> {
-  // If gasless voting, add execution multisig approval step
-  const gaslessStep: Array<ProgressStatusProps> = [];
-  if (
-    pluginType === GaselessPluginName &&
-    tallyEndDate !== undefined &&
-    isExecutionMultisigApproved !== undefined
-  ) {
-    gaslessStep.push(
-      getExecutionMultisigApproval(
-        t,
-        isExecutionMultisigApproved,
-        endDate,
-        tallyEndDate
-      )
-    );
-  }
-
   switch (status) {
     case ProposalStatus.ACTIVE:
       return [
@@ -369,7 +350,6 @@ export function getProposalStatusSteps(
             publishedBlock,
             false
           ),
-          ...gaslessStep,
           {
             label: t('governance.statusWidget.failed'),
             mode: 'failed',
@@ -389,7 +369,6 @@ export function getProposalStatusSteps(
             publishedBlock,
             isSuccessfulMultisigSignalingProposal
           ),
-          ...gaslessStep,
         ];
 
         if (!isSuccessfulMultisigSignalingProposal) {
@@ -413,7 +392,6 @@ export function getProposalStatusSteps(
             isSuccessfulMultisigSignalingProposal,
             executionDate || new Date()
           ),
-          ...gaslessStep,
           {
             label: t('governance.statusWidget.executed'),
             mode: 'succeeded',
@@ -434,7 +412,6 @@ export function getProposalStatusSteps(
             publishedBlock,
             isSuccessfulMultisigSignalingProposal
           ),
-          ...gaslessStep,
           {label: t('governance.statusWidget.failed'), mode: 'failed'},
         ];
 
@@ -475,11 +452,11 @@ function getEndedProposalSteps(
   ];
 }
 
-export const getPublishedProposalStep = (
+function getPublishedProposalStep(
   t: TFunction,
   creationDate: Date,
   block: string | undefined
-): ProgressStatusProps => {
+): ProgressStatusProps {
   return {
     label: t('governance.statusWidget.published'),
     date: `${format(
@@ -489,13 +466,9 @@ export const getPublishedProposalStep = (
     mode: 'done',
     ...(block && {block}),
   };
-};
+}
 
-export function getActiveProposalStep(
-  t: TFunction,
-  startDate: Date,
-  mode: ModeType
-) {
+function getActiveProposalStep(t: TFunction, startDate: Date, mode: ModeType) {
   return {
     label: t('governance.statusWidget.active'),
     mode,
@@ -505,39 +478,6 @@ export function getActiveProposalStep(
     )}  ${getFormattedUtcOffset()}`,
   };
 }
-
-/**
- * Only for gasless voting, which has an additional step of approval
- * @param t
- * @param isApproved Enough approvers approved the gasless voting results
- * @param startDate Is the endate of the gasless voting
- * @param tallyEndDate
- */
-const getExecutionMultisigApproval = (
-  t: TFunction,
-  isApproved: boolean,
-  startDate: Date,
-  tallyEndDate: Date
-): ProgressStatusProps => {
-  const isApprovalPeriod = tallyEndDate > new Date();
-  // If not approved and approval period passed
-  let mode: ModeType = 'failed';
-  if (!isApproved && isApprovalPeriod) {
-    mode = 'active';
-  } else if (isApproved && isApprovalPeriod) {
-    mode = 'done';
-  } else if (isApproved && !isApprovalPeriod) {
-    mode = 'succeeded';
-  }
-  return {
-    label: t('governance.statusWidget.approvalPeriod'),
-    mode,
-    date: `${format(
-      isApprovalPeriod ? startDate : tallyEndDate,
-      KNOWN_FORMATS.proposals
-    )}  ${getFormattedUtcOffset()}`,
-  };
-};
 
 /**
  * get transformed data for terminal
