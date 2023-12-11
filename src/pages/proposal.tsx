@@ -677,7 +677,8 @@ export const Proposal: React.FC = () => {
         proposal.status,
         pluginType,
         proposal.startDate,
-        proposal.endDate,
+        // If is gasless the proposal ends after the expiration period
+        isGaslessProposal(proposal) ? proposal.tallyEndDate : proposal.endDate,
         proposal.creationDate,
         proposal.creationBlockNumber
           ? NumberFormatter.format(proposal.creationBlockNumber)
@@ -687,11 +688,7 @@ export const Proposal: React.FC = () => {
         proposal.executionBlockNumber
           ? NumberFormatter.format(proposal.executionBlockNumber!)
           : '',
-        proposal.executionDate ?? undefined,
-        isGaslessProposal(proposal) ? proposal.tallyEndDate : undefined,
-        isGaslessProposal(proposal)
-          ? proposal.settings.minTallyApprovals <= proposal.approvers.length
-          : undefined
+        proposal.executionDate ?? undefined
       )
     : [];
 
