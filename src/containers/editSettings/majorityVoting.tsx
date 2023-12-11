@@ -99,7 +99,6 @@ export const EditMvSettings: React.FC<EditMvSettingsProps> = ({daoDetails}) => {
     executionExpirationMinutes,
     executionExpirationHours,
     executionExpirationDays,
-    committee,
     committeeMinimumApproval,
   ] = useWatch({
     name: [
@@ -119,7 +118,6 @@ export const EditMvSettings: React.FC<EditMvSettingsProps> = ({daoDetails}) => {
       'executionExpirationMinutes',
       'executionExpirationHours',
       'executionExpirationDays',
-      'committee',
       'committeeMinimumApproval',
     ],
     control,
@@ -230,12 +228,7 @@ export const EditMvSettings: React.FC<EditMvSettingsProps> = ({daoDetails}) => {
         Number(executionExpirationHours) !== approvalHours ||
         Number(executionExpirationDays) !== approvalDays ||
         committeeMinimumApproval !==
-          (votingSettings as GaslessPluginVotingSettings).minTallyApprovals ||
-        JSON.stringify(
-          (committee as MultisigWalletField[])
-            .map(wallet => wallet.address)
-            .sort()
-        ) !== JSON.stringify(executionMultisigMembers?.sort())
+          (votingSettings as GaslessPluginVotingSettings).minTallyApprovals
       );
     }
     return false;
@@ -243,7 +236,6 @@ export const EditMvSettings: React.FC<EditMvSettingsProps> = ({daoDetails}) => {
     approvalDays,
     approvalHours,
     approvalMinutes,
-    committee,
     committeeMinimumApproval,
     executionExpirationDays,
     executionExpirationHours,
@@ -372,6 +364,7 @@ export const EditMvSettings: React.FC<EditMvSettingsProps> = ({daoDetails}) => {
     setValue('executionExpirationMinutes', approvalMinutes?.toString());
     setValue('executionExpirationHours', approvalHours?.toString());
     setValue('executionExpirationDays', approvalDays?.toString());
+    // This is needed to store on form state the actual committee  members in order to re-use the DefineExecutionMultisig
     setValue(
       'committee',
       executionMultisigMembers?.map(wallet => ({
@@ -388,6 +381,7 @@ export const EditMvSettings: React.FC<EditMvSettingsProps> = ({daoDetails}) => {
     approvalDays,
     approvalHours,
     approvalMinutes,
+    executionMultisigMembers,
     isGasless,
     setValue,
     votingSettings,
@@ -569,7 +563,7 @@ export const EditMvSettings: React.FC<EditMvSettingsProps> = ({daoDetails}) => {
                   dropdownItems={gaslessAction}
                 >
                   <AccordionContent>
-                    <DefineExecutionMultisig />
+                    <DefineExecutionMultisig isSettingPage />
                   </AccordionContent>
                 </AccordionItem>
               )}
