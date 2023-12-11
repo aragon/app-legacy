@@ -27,17 +27,6 @@ export const ModifyGaslessSettingsCard: React.FC<{
     >
       <ActionCardDlContainer>
         <Dl>
-          <Dt>{t('labels.members')}</Dt>
-          <Dd>
-            <Link
-              label={t('createDAO.review.distributionLink', {
-                count: inputs.executionMultisigMembers?.length || 0,
-              })}
-              onClick={() => open('committeeMembers')}
-            />
-          </Dd>
-        </Dl>
-        <Dl>
           <Dt>{t('labels.minimumApproval')}</Dt>
           <Dd>
             {inputs.minTallyApprovals}&nbsp;
@@ -68,7 +57,6 @@ export const ModifyGaslessSettingsCard: React.FC<{
             </div>
           </Dd>
         </Dl>
-        <CommitteeAddressesModal />
       </ActionCardDlContainer>
     </AccordionMethod>
   );

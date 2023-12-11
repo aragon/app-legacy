@@ -30,7 +30,6 @@ export const CompareGasless: React.FC<CompareGaslessProps> = ({
   const {t} = useTranslation();
 
   const {
-    committee,
     committeeMinimumApproval,
     executionExpirationMinutes,
     executionExpirationHours,
@@ -40,7 +39,7 @@ export const CompareGasless: React.FC<CompareGaslessProps> = ({
   let displayedInfo: ReviewExecutionMultisigProps;
   if (view === 'new') {
     displayedInfo = {
-      committee,
+      committee: daoSettings?.executionMultisigMembers || [],
       committeeMinimumApproval,
       executionExpirationMinutes,
       executionExpirationHours,
