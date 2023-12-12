@@ -139,7 +139,7 @@ export const useDaoMembers = (
     network === 'base' ||
     network === 'base-goerli'
   );
-  const useSubgraph = !isTokenBased || !covalentSupportedNetwork;
+  const useSubgraph = isTokenBased === true || !covalentSupportedNetwork;
   const {
     data: subgraphData = [],
     isError: isSubgraphError,
@@ -204,7 +204,7 @@ export const useDaoMembers = (
         daoToken,
         memberCount,
       },
-      isLoading: isSubgraphLoading || isGraphqlLoading,
+      isLoading: isSubgraphLoading || (useGraphql && isGraphqlLoading),
       isError: isSubgraphError || isGraphqlError,
     };
   }
@@ -270,7 +270,8 @@ export const useDaoMembers = (
       daoToken,
       memberCount,
     },
-    isLoading: isSubgraphLoading || isGraphqlLoading,
+    isLoading:
+      (useSubgraph && isSubgraphLoading) || (useGraphql && isGraphqlLoading),
     isError: isSubgraphError || isGraphqlError,
   };
 };
