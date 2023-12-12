@@ -16,7 +16,7 @@ export type CurrentDaoMembers = {
   currentDaoMembers?: DaoMember[];
 };
 
-type UpdateMinimumApprovalProps = ActionIndex &
+export type UpdateMinimumApprovalProps = ActionIndex &
   CustomHeaderProps &
   CurrentDaoMembers & {currentMinimumApproval?: number; isGasless?: boolean};
 

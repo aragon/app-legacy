@@ -1,4 +1,4 @@
-import {MultisigVotingSettings} from '@aragon/sdk-client';
+import {Erc20TokenDetails, MultisigVotingSettings} from '@aragon/sdk-client';
 import React, {useCallback, useState} from 'react';
 import {
   FieldErrors,
@@ -46,6 +46,7 @@ import {
   ManageMembersFormData,
 } from 'utils/types';
 import {GaslessPluginVotingSettings} from '@vocdoni/gasless-voting';
+import {GaslessUpdateMinimumApproval} from '../containers/actionBuilder/updateMinimumApproval/gaslessUpdateMinimumApproval';
 
 export const ManageMembers: React.FC = () => {
   const {t} = useTranslation();
@@ -178,13 +179,23 @@ export const ManageMembers: React.FC = () => {
                   useCustomHeader
                   currentDaoMembers={members}
                 />
-                <UpdateMinimumApproval
-                  actionIndex={2}
-                  useCustomHeader
-                  currentDaoMembers={members}
-                  currentMinimumApproval={minApprovals}
-                  isGasless={isGasless}
-                />
+                {isGasless ? (
+                  <GaslessUpdateMinimumApproval
+                    actionIndex={2}
+                    useCustomHeader
+                    currentDaoMembers={members}
+                    currentMinimumApproval={minApprovals}
+                    gaslessSettings={pluginSettings}
+                    pluginAddress={pluginAddress}
+                  />
+                ) : (
+                  <UpdateMinimumApproval
+                    actionIndex={2}
+                    useCustomHeader
+                    currentDaoMembers={members}
+                    currentMinimumApproval={minApprovals}
+                  />
+                )}
               </>
             </Step>
             <Step
