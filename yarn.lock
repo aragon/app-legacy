@@ -80,32 +80,7 @@
   dependencies:
     ethers "^5.6.2"
 
-"@aragon/osx-ethers@^1.3.0":
-  version "1.3.0"
-  resolved "https://registry.yarnpkg.com/@aragon/osx-ethers/-/osx-ethers-1.3.0.tgz#85ddd93f4448789e94154b313f9ddd8069dff568"
-  integrity sha512-zfLAYdgZ3SSifHiyJLkBKmoDw/IEX/yzvw6liUAa/gz7HZOsrwp3JsBJaIwB2epOnGa6vhXyWTKKZ15aJvoMaA==
-  dependencies:
-    ethers "^5.6.2"
-
-"@aragon/sdk-client-common@1.13.0":
-  version "1.13.0"
-  resolved "https://registry.yarnpkg.com/@aragon/sdk-client-common/-/sdk-client-common-1.13.0.tgz#3006d14b4b3faab29c5b7430a40759de9b7de96b"
-  integrity sha512-E5GZazXSX0LCVgx4KundbTmdyqhHI2IFEhEd/F0ACYGQwgvjAe073ADAb4WqVlVAVVnOHoU/T6KkgliFRN/Vmw==
-  dependencies:
-    "@aragon/osx-ethers" "^1.3.0"
-    "@aragon/osx-ethers-v1.0.0" "npm:@aragon/osx-ethers@1.2.1"
-    "@aragon/sdk-ipfs" "^1.1.0"
-    "@ethersproject/abstract-signer" "^5.5.0"
-    "@ethersproject/bignumber" "^5.6.0"
-    "@ethersproject/constants" "^5.6.0"
-    "@ethersproject/contracts" "^5.5.0"
-    "@ethersproject/providers" "^5.5.0"
-    "@ethersproject/wallet" "^5.6.0"
-    graphql "^16.5.0"
-    graphql-request "^4.3.0"
-    yup "^1.2.0"
-
-"@aragon/sdk-client-common@^1.12.0":
+"@aragon/sdk-client-common@1.13.0", "@aragon/sdk-client-common@^1.12.0":
   version "1.12.0"
   resolved "https://registry.yarnpkg.com/@aragon/sdk-client-common/-/sdk-client-common-1.12.0.tgz#01e7c105d9afc8860a251e7b9fc84b009464d4b7"
   integrity sha512-y+g17b2f639nmFJyMsRQVIyljRHDJC9ES0IS0KK9nkIeDgVyJK+je5NqzRSwjadpxeb2fEry9HSPw57FWFR4Mg==
