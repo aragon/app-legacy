@@ -27,9 +27,12 @@ import {ActionsProvider} from 'context/actions';
 import {CreateProposalProvider} from 'context/createProposal';
 import {useNetwork} from 'context/network';
 import {useDaoDetailsQuery} from 'hooks/useDaoDetails';
-import {useDaoMembers} from 'hooks/useDaoMembers';
+import {DaoMember, MultisigDaoMember, useDaoMembers} from 'hooks/useDaoMembers';
 import {PluginTypes} from 'hooks/usePluginClient';
-import {useVotingSettings} from 'services/aragon-sdk/queries/use-voting-settings';
+import {
+  isGaslessVotingSettings,
+  useVotingSettings,
+} from 'services/aragon-sdk/queries/use-voting-settings';
 import {
   removeUnchangedMinimumApprovalAction,
   toDisplayEns,
@@ -38,9 +41,11 @@ import {Community} from 'utils/paths';
 import {
   ActionAddAddress,
   ActionRemoveAddress,
+  ActionUpdateGaslessSettings,
   ActionUpdateMultisigPluginSettings,
   ManageMembersFormData,
 } from 'utils/types';
+import {GaslessPluginVotingSettings} from '@vocdoni/gasless-voting';
 
 export const ManageMembers: React.FC = () => {
   const {t} = useTranslation();
@@ -63,7 +68,7 @@ export const ManageMembers: React.FC = () => {
   const multisigVotingSettings = pluginSettings as
     | MultisigVotingSettings
     | undefined;
-
+  const isGasless = isGaslessVotingSettings(pluginSettings);
   const isLoading = detailsLoading || membersLoading || votingSettingsLoading;
 
   const formMethods = useForm<ManageMembersFormData>({
@@ -89,18 +94,26 @@ export const ManageMembers: React.FC = () => {
 
   const handleGoToSetupVoting = useCallback(
     (next: () => void) => {
-      if (multisigVotingSettings) {
+      if (multisigVotingSettings || isGasless) {
         formMethods.setValue(
           'actions',
           removeUnchangedMinimumApprovalAction(
             formActions,
-            multisigVotingSettings
+            pluginSettings as
+              | GaslessPluginVotingSettings
+              | MultisigVotingSettings
           ) as ManageMembersFormData['actions']
         );
         next();
       }
     },
-    [formActions, formMethods, multisigVotingSettings]
+    [
+      formActions,
+      formMethods,
+      isGasless,
+      multisigVotingSettings,
+      pluginSettings,
+    ]
   );
 
   /*************************************************
@@ -116,6 +129,18 @@ export const ManageMembers: React.FC = () => {
   // using this so that typescript doesn't complain about daoDetails
   // being possibly null. Unfortunately, I don't have a more elegant solution.
   if (!daoDetails || !multisigVotingSettings || !daoMembers) return null;
+
+  // For gasless voting, ignore useDaoMembers result
+  // We are going to use the execution multisig provided by the sdk
+  const members: DaoMember[] = isGasless
+    ? pluginSettings.executionMultisigMembers?.map(a => {
+        return {address: a} as MultisigDaoMember;
+      }) ?? []
+    : daoMembers.members;
+
+  const minApprovals = isGasless
+    ? pluginSettings.minTallyApprovals
+    : multisigVotingSettings.minApprovals;
 
   return (
     <FormProvider {...formMethods}>
@@ -137,11 +162,7 @@ export const ManageMembers: React.FC = () => {
               wizardTitle={t('newProposal.manageWallets.title')}
               wizardDescription={t('newProposal.manageWallets.description')}
               isNextButtonDisabled={
-                !actionsAreValid(
-                  errors,
-                  formActions,
-                  multisigVotingSettings.minApprovals
-                )
+                !actionsAreValid(errors, formActions, minApprovals)
               }
               onNextButtonClicked={handleGoToSetupVoting}
               onNextButtonDisabledClicked={() => formMethods.trigger('actions')}
@@ -150,18 +171,19 @@ export const ManageMembers: React.FC = () => {
                 <AddAddresses
                   actionIndex={0}
                   useCustomHeader
-                  currentDaoMembers={daoMembers.members}
+                  currentDaoMembers={members}
                 />
                 <RemoveAddresses
                   actionIndex={1}
                   useCustomHeader
-                  currentDaoMembers={daoMembers.members}
+                  currentDaoMembers={members}
                 />
                 <UpdateMinimumApproval
                   actionIndex={2}
                   useCustomHeader
-                  currentDaoMembers={daoMembers.members}
-                  currentMinimumApproval={multisigVotingSettings.minApprovals}
+                  currentDaoMembers={members}
+                  currentMinimumApproval={minApprovals}
+                  isGasless={isGasless}
                 />
               </>
             </Step>
@@ -224,6 +246,14 @@ function actionsAreValid(
     if (formActions[i].name === 'remove_address') {
       removedWallets += (formActions[i] as ActionRemoveAddress).inputs
         .memberWallets.length;
+      continue;
+    }
+
+    if (formActions[i].name === 'modify_gasless_voting_settings') {
+      const newMinimumApproval = (formActions[i] as ActionUpdateGaslessSettings)
+        .inputs.minTallyApprovals;
+
+      minimumApprovalChanged = minApprovals !== newMinimumApproval;
       continue;
     }
 

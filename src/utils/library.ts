@@ -65,7 +65,10 @@ import {Abi, addABI, decodeMethod} from './abiDecoder';
 import {attachEtherNotice} from './contract';
 import {getTokenInfo} from './tokens';
 import {daoABI} from 'abis/daoABI';
-import {GaslessVotingClient} from '@vocdoni/gasless-voting';
+import {
+  GaslessPluginVotingSettings,
+  GaslessVotingClient,
+} from '@vocdoni/gasless-voting';
 
 export function formatUnits(amount: BigNumberish, decimals: number) {
   if (amount.toString().includes('.') || !decimals) {
@@ -798,12 +801,16 @@ export function readFile(file: Blob): Promise<ArrayBuffer> {
  */
 export function removeUnchangedMinimumApprovalAction(
   actions: Action[],
-  pluginSettings: MultisigVotingSettings
+  pluginSettings: MultisigVotingSettings | GaslessPluginVotingSettings
 ) {
   return actions.flatMap(action => {
     if (
-      action.name === 'modify_multisig_voting_settings' &&
-      Number(action.inputs.minApprovals) === pluginSettings.minApprovals
+      (action.name === 'modify_multisig_voting_settings' &&
+        Number(action.inputs.minApprovals) ===
+          (pluginSettings as MultisigVotingSettings).minApprovals) ||
+      (action.name === 'modify_gasless_voting_settings' &&
+        Number(action.inputs.minTallyApprovals) ===
+          (pluginSettings as GaslessPluginVotingSettings).minTallyApprovals)
     )
       return [];
     else return action;

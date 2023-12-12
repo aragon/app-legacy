@@ -18,20 +18,23 @@ export type CurrentDaoMembers = {
 
 type UpdateMinimumApprovalProps = ActionIndex &
   CustomHeaderProps &
-  CurrentDaoMembers & {currentMinimumApproval?: number};
+  CurrentDaoMembers & {currentMinimumApproval?: number; isGasless?: boolean};
 
 const UpdateMinimumApproval: React.FC<UpdateMinimumApprovalProps> = ({
   actionIndex,
   useCustomHeader = false,
   currentDaoMembers,
   currentMinimumApproval,
+  isGasless = false,
 }) => {
   const {t} = useTranslation();
 
   // form context data & hooks
   const {setValue, control, trigger, getValues} = useFormContext();
 
-  const minimumApprovalKey = `actions.${actionIndex}.inputs.minApprovals`;
+  const minimumApprovalKey = isGasless
+    ? `actions.${actionIndex}.inputs.minTallyApprovals`
+    : `actions.${actionIndex}.inputs.minApprovals`;
 
   const minimumApproval = useWatch({
     name: minimumApprovalKey,
@@ -94,7 +97,14 @@ const UpdateMinimumApproval: React.FC<UpdateMinimumApprovalProps> = ({
   }, [actions, getValues]);
 
   useEffect(() => {
-    setValue(`actions.${actionIndex}.name`, 'modify_multisig_voting_settings');
+    if (isGasless) {
+      setValue(`actions.${actionIndex}.name`, 'modify_gasless_voting_settings');
+    } else {
+      setValue(
+        `actions.${actionIndex}.name`,
+        'modify_multisig_voting_settings'
+      );
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 

@@ -617,7 +617,10 @@ export type ProposalSettingsFormData = ProposalFormData & {
 
 export interface ManageMembersFormData extends ProposalFormData {
   actions: Array<
-    ActionAddAddress | ActionRemoveAddress | ActionUpdateMultisigPluginSettings
+    | ActionAddAddress
+    | ActionRemoveAddress
+    | ActionUpdateMultisigPluginSettings
+    | ActionUpdateGaslessSettings
   >;
 }
 
