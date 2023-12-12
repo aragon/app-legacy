@@ -369,7 +369,9 @@ export function decodeMultisigSettingsToAction(
 
 export function decodeGaslessSettingsToAction(
   data: Uint8Array | undefined,
-  client: GaslessVotingClient
+  client: GaslessVotingClient,
+  totalVotingWeight: bigint,
+  token?: Erc20TokenDetails
 ): ActionUpdateGaslessSettings | undefined {
   if (!client || !data) {
     console.error('SDK client is not initialized correctly');
@@ -378,7 +380,11 @@ export function decodeGaslessSettingsToAction(
 
   return {
     name: 'modify_gasless_voting_settings',
-    inputs: client.decoding.updatePluginSettingsAction(data),
+    inputs: {
+      ...client.decoding.updatePluginSettingsAction(data),
+      token,
+      totalVotingWeight,
+    },
   };
 }
 

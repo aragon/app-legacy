@@ -338,7 +338,9 @@ export const Proposal: React.FC = () => {
         case 'updatePluginSettings':
           return decodeGaslessSettingsToAction(
             action.data,
-            gaslessVotingClient
+            gaslessVotingClient,
+            (proposal as GaslessVotingProposal).totalVotingWeight as bigint,
+            proposalErc20Token
           );
         case 'grant':
         case 'revoke': {

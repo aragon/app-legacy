@@ -344,17 +344,19 @@ export type ActionUpdateMultisigPluginSettings = {
   inputs: MultisigVotingSettings;
 };
 
+type TokenVotingActionAdditionalInfo = {
+  token?: Erc20TokenDetails;
+  totalVotingWeight: bigint;
+};
+
 export type ActionUpdatePluginSettings = {
   name: 'modify_token_voting_settings';
-  inputs: VotingSettings & {
-    token?: Erc20TokenDetails;
-    totalVotingWeight: bigint;
-  };
+  inputs: VotingSettings & TokenVotingActionAdditionalInfo;
 };
 
 export type ActionUpdateGaslessSettings = {
   name: 'modify_gasless_voting_settings';
-  inputs: GaslessPluginVotingSettings;
+  inputs: GaslessPluginVotingSettings & TokenVotingActionAdditionalInfo;
 };
 
 export type ActionUpdateMetadata = {
