@@ -87,7 +87,7 @@
   dependencies:
     ethers "^5.6.2"
 
-"@aragon/sdk-client-common@1.13.0", "@aragon/sdk-client-common@^1.13.0":
+"@aragon/sdk-client-common@1.13.0":
   version "1.13.0"
   resolved "https://registry.yarnpkg.com/@aragon/sdk-client-common/-/sdk-client-common-1.13.0.tgz#3006d14b4b3faab29c5b7430a40759de9b7de96b"
   integrity sha512-E5GZazXSX0LCVgx4KundbTmdyqhHI2IFEhEd/F0ACYGQwgvjAe073ADAb4WqVlVAVVnOHoU/T6KkgliFRN/Vmw==
