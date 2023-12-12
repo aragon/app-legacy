@@ -129,7 +129,6 @@ export const ProposeSettingsStepper: React.FC<ProposalStepperType> = ({
       'durationMinutes',
       'daoLinks',
       'tokenDecimals',
-
       'executionExpirationMinutes',
       'executionExpirationHours',
       'executionExpirationDays',
@@ -161,23 +160,25 @@ export const ProposeSettingsStepper: React.FC<ProposalStepperType> = ({
       const gaslessSettingsAction: ActionUpdateGaslessSettings = {
         name: 'modify_gasless_voting_settings',
         inputs: {
+          token: daoToken,
+          totalVotingWeight: tokenSupply?.raw || BigInt(0),
+
           executionMultisigMembers: (committee as MultisigWalletField[]).map(
             wallet => wallet.address
           ),
           minTallyApprovals: committeeMinimumApproval,
           minDuration: getSecondsFromDHM(
-            executionExpirationDays,
-            executionExpirationHours,
-            executionExpirationMinutes
-          ),
-          minTallyDuration: getSecondsFromDHM(
             durationDays,
             durationHours,
             durationMinutes
           ),
+          minTallyDuration: getSecondsFromDHM(
+            executionExpirationDays,
+            executionExpirationHours,
+            executionExpirationMinutes
+          ),
           minParticipation: Number(minimumParticipation) / 100,
           supportThreshold: Number(minimumApproval) / 100,
-
           minProposerVotingPower:
             eligibilityType === 'token'
               ? parseUnits(
@@ -187,16 +188,9 @@ export const ProposeSettingsStepper: React.FC<ProposalStepperType> = ({
               : BigInt(0),
           censusStrategy: '',
           daoTokenAddress: daoToken?.address,
-          // onlyExecutionMultisigProposalCreation?: boolean;
           id: pluginAddress,
-          // dao: {
-          //   id: dao,
-          //   proposalsCount: number;
-          // };
         },
       };
-      // setValue('actions', [metadataAction, gaslessSettingsAction]);
-      // console.log('-> Gasless Actions added', getValues('actions'));
       settingsAction = gaslessSettingsAction;
     } else if (isTokenVotingSettings(pluginSettings)) {
       const voteSettingsAction: ActionUpdatePluginSettings = {
@@ -226,7 +220,6 @@ export const ProposeSettingsStepper: React.FC<ProposalStepperType> = ({
             : VotingMode.STANDARD,
         },
       };
-      // setValue('actions', [metadataAction, voteSettingsAction]);
       settingsAction = voteSettingsAction;
     } else {
       const multisigSettingsAction: ActionUpdateMultisigPluginSettings = {
@@ -236,7 +229,6 @@ export const ProposeSettingsStepper: React.FC<ProposalStepperType> = ({
           onlyListed: eligibilityType === 'multisig',
         },
       };
-      // setValue('actions', [metadataAction, multisigSettingsAction]);
       settingsAction = multisigSettingsAction;
     }
     setValue('actions', filterActions([metadataAction, settingsAction]));
