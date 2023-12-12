@@ -4,7 +4,7 @@ import {
   Erc20WrapperTokenDetails,
 } from '@aragon/sdk-client';
 import {ProposalMetadata} from '@aragon/sdk-client-common';
-import {useCallback} from 'react';
+import {useCallback, useState} from 'react';
 
 import {
   Census,
@@ -14,6 +14,7 @@ import {
   IElectionParameters,
   TokenCensus,
   UnpublishedElection,
+  AccountData,
 } from '@vocdoni/sdk';
 import {VoteValues} from '@aragon/sdk-client';
 import {useClient} from '@vocdoni/react-providers';
@@ -95,19 +96,19 @@ const useCreateGaslessProposal = ({
       } as GaslessProposalSteps,
     });
 
-  const {client: vocdoniClient, account, createAccount, errors} = useClient();
+  const {client: vocdoniClient} = useClient();
   const census3 = useCensus3Client();
+  const [account, setAccount] = useState<AccountData | undefined>(undefined);
 
   // todo(kon): check if this is needed somewhere else
   const collectFaucet = useCallback(
     async (cost: number) => {
-      let balance = account!.balance;
-
+      let balance = (await vocdoniClient.fetchAccountInfo()).balance;
       while (cost > balance) {
         balance = (await vocdoniClient.collectFaucetTokens()).balance;
       }
     },
-    [account, vocdoniClient]
+    [vocdoniClient]
   );
 
   const createVocdoniElection = useCallback(
@@ -145,10 +146,17 @@ const useCreateGaslessProposal = ({
   // todo(kon): this is not a callback
   const checkAccountCreation = useCallback(async () => {
     // Check if the account is already created, if not, create it
-    await createAccount()?.finally(() => {
-      if (errors.account) throw errors.account;
-    });
-  }, [createAccount, errors.account]);
+    let info;
+    if (account) return;
+    try {
+      info = await vocdoniClient.createAccount();
+    } catch (error) {
+      console.log(error);
+      throw Error('Error creating Vocdoni account');
+    } finally {
+      setAccount(info);
+    }
+  }, [account, vocdoniClient]);
 
   const createCensus = useCallback(async (): Promise<TokenCensus> => {
     async function getCensus3Token(): Promise<Census3Token> {
@@ -211,7 +219,6 @@ const useCreateGaslessProposal = ({
         GaslessProposalStepId.REGISTER_VOCDONI_ACCOUNT,
         checkAccountCreation
       );
-
       // 2. Create vocdoni election
       let census: TokenCensus;
       const electionId = await doStep(
