@@ -240,7 +240,6 @@ export const EditMvSettings: React.FC<EditMvSettingsProps> = ({daoDetails}) => {
     executionExpirationDays,
     executionExpirationHours,
     executionExpirationMinutes,
-    executionMultisigMembers,
     isGasless,
     votingSettings,
   ]);
