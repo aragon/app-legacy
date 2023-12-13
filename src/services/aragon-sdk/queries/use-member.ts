@@ -36,6 +36,8 @@ function toMemberDAOs(members: SubgraphMembers[]): MemberDAOsType {
   return members.map(member => ({
     address: member.plugin.dao.id,
     pluginAddress: member.plugin.dao.id,
+    metadata: member.plugin.dao.metadata,
+    subdomain: member.plugin.dao.subdomain,
   }));
 }
 
@@ -77,7 +79,7 @@ export const tokenMemberDAOsQuery = gql`
   }
 `;
 
-export const multisigApproverDAOsQuery = gql`
+export const membersDAOsQuery = gql`
   query MultisigApprovers(
     $where: TokenVotingMember_filter!
     $block: Block_height
@@ -88,6 +90,8 @@ export const multisigApproverDAOsQuery = gql`
         pluginAddress
         dao {
           id
+          subdomain
+          metadata
         }
       }
     }
@@ -97,6 +101,8 @@ export const multisigApproverDAOsQuery = gql`
         pluginAddress
         dao {
           id
+          subdomain
+          metadata
         }
       }
     }
@@ -144,7 +150,7 @@ const fetchMemberDAOs = async (
 
   const {tokenVotingMembers, multisigApprovers} =
     await client!.graphql.request<TResult>({
-      query: multisigApproverDAOsQuery,
+      query: membersDAOsQuery,
       params,
     });
 

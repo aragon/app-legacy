@@ -649,12 +649,16 @@ export interface WithdrawFormData extends Omit<ProposalFormData, 'actions'> {
 export type MemberDAOsType = {
   pluginAddress: string;
   address: string;
+  metadata: string;
+  subdomain: string;
 }[];
 
 export type SubgraphMembers = SubgraphTokenVotingMember & {
   plugin: {
     dao: {
       id: string;
+      metadata: string;
+      subdomain: string;
     };
   };
 };

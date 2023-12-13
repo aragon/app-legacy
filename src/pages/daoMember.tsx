@@ -22,7 +22,6 @@ import {Address, formatUnits} from 'viem';
 import {useEnsAvatar, useEnsName, useEnsResolver} from 'wagmi';
 import {useMember, useMemberDAOs} from 'services/aragon-sdk/queries/use-member';
 import {NumberFormat, formatterUtils} from '@aragon/ods';
-import {useDAOsByMember} from 'services/aragon-sdk/queries/use-daos';
 import {ActionItemMembership} from 'components/membersList/actionItemMembership';
 import {TokenVotingMember} from '@aragon/sdk-client';
 
@@ -233,7 +232,14 @@ export const DaoMember: React.FC = () => {
         }
       />
 
-      <ActionItemMembership addressOrEns={'234'} avatar={'234'} />
+      {daoMemberList?.map((dao, index) => (
+        <ActionItemMembership
+          key={index}
+          address={dao.address}
+          subdomain={dao.subdomain}
+          metadata={dao.metadata}
+        />
+      ))}
     </HeaderWrapper>
   );
 };
