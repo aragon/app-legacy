@@ -26,6 +26,7 @@ import {MultisigWalletField} from 'components/multisigWallets/row';
 import {TimeFilter, TransferTypes} from './constants';
 import {Web3Address} from './library';
 import {TokenType} from './validators';
+import {SubgraphTokenVotingMember} from '@aragon/sdk-client/dist/tokenVoting/internal/types';
 
 /*************************************************
  *                 DAO Creation types            *
@@ -644,3 +645,16 @@ type WithdrawFormDataAction = TokenFormData & {
 export interface WithdrawFormData extends Omit<ProposalFormData, 'actions'> {
   actions: WithdrawFormDataAction[];
 }
+
+export type MemberDAOsType = {
+  pluginAddress: string;
+  address: string;
+}[];
+
+export type SubgraphMembers = SubgraphTokenVotingMember & {
+  plugin: {
+    dao: {
+      id: string;
+    };
+  };
+};

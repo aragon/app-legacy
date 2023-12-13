@@ -46,8 +46,9 @@ export interface IFetchProposalParams {
 }
 
 export interface IFetchMemberParams {
-  pluginAddress: string;
   address: string;
+  pluginAddress?: string;
+  pluginType?: PluginTypes;
   blockNumber?: number;
 }
 
@@ -65,4 +66,9 @@ export interface IFetchPreparedPluginsParams {
 export interface IFetchIsMemberParams {
   pluginAddress: string;
   address: string;
+}
+
+export interface IFetchIsDAOListParams {
+  address: string | null;
+  pluginType?: PluginTypes;
 }

@@ -31,6 +31,7 @@ export enum AragonSdkQueryItem {
   VOTING_SETTINGS = 'VOTING_SETTINGS',
   GET_MEMBER = 'GET_MEMBER',
   RELEASE_NOTES = 'RELEASE_NOTES',
+  GET_DAOS = 'GET_DAOS',
 }
 
 // Add address and network parameters to all query keys to use the most updated DAO plugin client
@@ -93,4 +94,8 @@ export const aragonSdkQueryKeys = {
     params: IFetchMemberParams
   ): QueryKey => [AragonSdkQueryItem.GET_MEMBER, baseParams, params],
   releaseNotes: (): QueryKey => [AragonSdkQueryItem.RELEASE_NOTES],
+  getMemberDAOs: (params: IAragonSdkBaseParams): QueryKey => [
+    AragonSdkQueryItem.GET_DAOS,
+    params,
+  ],
 };

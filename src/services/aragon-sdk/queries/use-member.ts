@@ -5,9 +5,14 @@ import type {IFetchMemberParams} from '../aragon-sdk-service.api';
 import {usePluginClient} from 'hooks/usePluginClient';
 import {useWallet} from 'hooks/useWallet';
 import {SupportedNetworks} from 'utils/constants';
-import {TokenVotingClient, TokenVotingMember} from '@aragon/sdk-client';
+import {
+  MultisigClient,
+  TokenVotingClient,
+  TokenVotingMember,
+} from '@aragon/sdk-client';
 import {invariant} from 'utils/invariant';
 import {SubgraphTokenVotingMember} from '@aragon/sdk-client/dist/tokenVoting/internal/types';
+import {MemberDAOsType, SubgraphMembers} from 'utils/types';
 
 function toTokenVotingMember(
   member: SubgraphTokenVotingMember
@@ -29,6 +34,13 @@ function toTokenVotingMember(
         };
       }),
   };
+}
+
+function toMemberDAOs(members: SubgraphMembers[]): MemberDAOsType {
+  return members.map(member => ({
+    address: member.plugin.dao.id,
+    pluginAddress: member.plugin.dao.id,
+  }));
 }
 
 // TODO: remove GraphQL query when utility is implemented on the SDK
@@ -53,6 +65,38 @@ export const tokenMemberQuery = gql`
   }
 `;
 
+export const tokenMemberDAOsQuery = gql`
+  query TokenVotingMembers(
+    $where: TokenVotingMember_filter!
+    $block: Block_height
+  ) {
+    tokenVotingMembers(where: $where, block: $block) {
+      address
+      plugin {
+        dao {
+          id
+        }
+      }
+    }
+  }
+`;
+
+export const multisigApproverDAOsQuery = gql`
+  query MultisigApprovers(
+    $where: TokenVotingMember_filter!
+    $block: Block_height
+  ) {
+    multisigApprovers(where: $where, block: $block) {
+      address
+      plugin {
+        dao {
+          id
+        }
+      }
+    }
+  }
+`;
+
 const fetchMember = async (
   {pluginAddress, blockNumber, address}: IFetchMemberParams,
   client?: TokenVotingClient
@@ -60,7 +104,7 @@ const fetchMember = async (
   invariant(client != null, 'fetchMember: client is not defined');
   const params = {
     where: {
-      plugin: pluginAddress.toLowerCase(),
+      plugin: pluginAddress!.toLowerCase(),
       address: address.toLowerCase(),
     },
     block: blockNumber ? {number: blockNumber} : null,
@@ -73,6 +117,51 @@ const fetchMember = async (
   });
 
   return toTokenVotingMember(tokenVotingMembers[0]);
+};
+
+const fetchMemberDAOs = async (
+  {blockNumber, address}: IFetchMemberParams,
+  tokenVotingclient?: TokenVotingClient,
+  multisigClient?: MultisigClient
+): Promise<MemberDAOsType> => {
+  invariant(
+    tokenVotingclient != null || multisigClient != null,
+    'fetchMember: client is not defined'
+  );
+  const params = {
+    where: {
+      address: address.toLowerCase(),
+    },
+    block: blockNumber ? {number: blockNumber} : null,
+  };
+
+  type TResult = {tokenVotingMembers: SubgraphMembers[]};
+  type MResult = {multisigApprovers: SubgraphMembers[]};
+
+  const {tokenVotingMembers} =
+    await tokenVotingclient!.graphql.request<TResult>({
+      query: tokenMemberDAOsQuery,
+      params,
+    });
+
+  const {multisigApprovers} = await multisigClient!.graphql.request<MResult>({
+    query: multisigApproverDAOsQuery,
+    params,
+  });
+
+  console.log(
+    'multisigApprovers',
+    (tokenVotingMembers ?? []).concat(multisigApprovers)
+  );
+
+  console.log(
+    'multisigApprovers',
+    (tokenVotingMembers ?? []).concat(multisigApprovers),
+    multisigApprovers,
+    tokenVotingMembers
+  );
+
+  return toMemberDAOs((tokenVotingMembers ?? []).concat(multisigApprovers));
 };
 
 export const useMember = (
@@ -93,6 +182,29 @@ export const useMember = (
   return useQuery(
     aragonSdkQueryKeys.getMember(baseParams, params),
     () => fetchMember(params, client),
+    options
+  );
+};
+
+export const useMemberDAOs = (
+  params: IFetchMemberParams,
+  options: UseQueryOptions<MemberDAOsType> = {}
+) => {
+  const tokenVotingclient = usePluginClient('token-voting.plugin.dao.eth');
+  const multisigclient = usePluginClient('token-voting.plugin.dao.eth');
+  const {network} = useWallet();
+  const baseParams = {
+    address: params.address as string,
+    network: network as SupportedNetworks,
+  };
+
+  if (tokenVotingclient == null || multisigclient == null || network == null) {
+    options.enabled = false;
+  }
+
+  return useQuery(
+    aragonSdkQueryKeys.getMemberDAOs(baseParams),
+    () => fetchMemberDAOs(params, tokenVotingclient, multisigclient),
     options
   );
 };

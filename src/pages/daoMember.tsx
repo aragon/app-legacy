@@ -20,8 +20,11 @@ import {useDaoToken} from 'hooks/useDaoToken';
 import {useWallet} from 'hooks/useWallet';
 import {Address, formatUnits} from 'viem';
 import {useEnsAvatar, useEnsName, useEnsResolver} from 'wagmi';
-import {useMember} from 'services/aragon-sdk/queries/use-member';
+import {useMember, useMemberDAOs} from 'services/aragon-sdk/queries/use-member';
 import {NumberFormat, formatterUtils} from '@aragon/ods';
+import {useDAOsByMember} from 'services/aragon-sdk/queries/use-daos';
+import {ActionItemMembership} from 'components/membersList/actionItemMembership';
+import {TokenVotingMember} from '@aragon/sdk-client';
 
 export const DaoMember: React.FC = () => {
   const {t} = useTranslation();
@@ -80,7 +83,19 @@ export const DaoMember: React.FC = () => {
     {enabled: !!memberAddress && !!daoDetails}
   );
 
-  const isDelegating = !!daoMember?.delegators?.find(
+  const {data: daoMemberList, isLoading: isMemberDataListLoading} =
+    useMemberDAOs(
+      {
+        address: memberAddress?.toLowerCase(),
+        pluginType: pluginType,
+      },
+      {enabled: !!memberAddress}
+    );
+
+  useEffect(() => {
+    console.log('daoMember', daoMemberList, daoMember, memberAddress);
+  }, [daoMember, daoMemberList, memberAddress]);
+  const isDelegating = !!(daoMember as TokenVotingMember)?.delegators?.find(
     item => item.address.toLowerCase() === address?.toLowerCase()
   );
 
@@ -217,6 +232,8 @@ export const DaoMember: React.FC = () => {
           )
         }
       />
+
+      <ActionItemMembership addressOrEns={'234'} avatar={'234'} />
     </HeaderWrapper>
   );
 };
