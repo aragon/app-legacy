@@ -35,7 +35,7 @@ import useScreen from 'hooks/useScreen';
 import {CHAIN_METADATA} from 'utils/constants';
 import {featureFlags} from 'utils/featureFlags';
 import {shortenAddress, toDisplayEns} from 'utils/library';
-import {EditSettings} from 'utils/paths';
+import {EditSettings, ManageMembersProposal} from 'utils/paths';
 import GaslessVotingSettings from '../containers/settings/gaslessVoting';
 import {useIsMember} from 'services/aragon-sdk/queries/use-is-member';
 import {useWallet} from 'hooks/useWallet';
@@ -53,6 +53,7 @@ export const Settings: React.FC = () => {
 
   const pluginAddress = daoDetails?.plugins?.[0]?.instanceAddress as string;
   const pluginType = daoDetails?.plugins?.[0]?.id as PluginTypes;
+  const isGasless = pluginType === GaselessPluginName;
 
   const {data: isMember} = useIsMember({
     address: address as string,
@@ -74,7 +75,7 @@ export const Settings: React.FC = () => {
   const showUpdatesCard = updateExists && isMember && daoUpdateEnabled;
 
   return (
-    <SettingsWrapper>
+    <SettingsWrapper isGasless={isGasless}>
       {showUpdatesCard && (
         <div className={`mt-1 xl:mt-3 ${styles.fullWidth}`}>
           <SettingsUpdateCard />
@@ -326,7 +327,10 @@ const PluginSettingsWrapper: React.FC<IPluginSettings> = ({daoDetails}) => {
   }
 };
 
-const SettingsWrapper: React.FC<{children: ReactNode}> = ({children}) => {
+const SettingsWrapper: React.FC<{children: ReactNode; isGasless: boolean}> = ({
+  children,
+  isGasless,
+}) => {
   const {t} = useTranslation();
   const {isMobile} = useScreen();
 
@@ -342,6 +346,15 @@ const SettingsWrapper: React.FC<{children: ReactNode}> = ({children}) => {
         iconLeft: isMobile ? <IconGovernance /> : undefined,
         onClick: () => navigate(generatePath(EditSettings, {network, dao})),
       }}
+      secondaryBtnProps={
+        isGasless
+          ? {
+              label: t('labels.manageMember'),
+              onClick: () =>
+                navigate(generatePath(ManageMembersProposal, {network, dao})),
+            }
+          : undefined
+      }
       customBody={<>{children}</>}
     />
   );

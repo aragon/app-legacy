@@ -1,4 +1,4 @@
-import {Erc20TokenDetails, MultisigVotingSettings} from '@aragon/sdk-client';
+import {MultisigVotingSettings} from '@aragon/sdk-client';
 import React, {useCallback, useState} from 'react';
 import {
   FieldErrors,
