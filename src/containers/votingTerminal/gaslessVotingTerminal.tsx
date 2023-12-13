@@ -28,12 +28,12 @@ import {PluginTypes} from '../../hooks/usePluginClient';
 import {BigNumber} from 'ethers';
 import {VotingTerminalAccordionItem} from './accordionItem';
 
-type CommitteeExecutionWidgetProps = Pick<
+type GaslessExecutionWidgetProps = Pick<
   ExecutionWidgetProps,
   'actions' | 'onExecuteClicked'
 >;
 
-type CommitteeVotingTerminalProps = {
+type GaslessVotingTerminalProps = {
   votingStatusLabel: string;
   proposal: GaslessVotingProposal;
   pluginAddress: string;
@@ -43,10 +43,10 @@ type CommitteeVotingTerminalProps = {
   }>;
   pluginType: PluginTypes;
   votingPower: BigNumber;
-} & CommitteeExecutionWidgetProps &
+} & GaslessExecutionWidgetProps &
   PropsWithChildren;
 
-export const GaslessVotingTerminal: React.FC<CommitteeVotingTerminalProps> = ({
+export const GaslessVotingTerminal: React.FC<GaslessVotingTerminalProps> = ({
   votingStatusLabel,
   votingPower,
   proposal,
