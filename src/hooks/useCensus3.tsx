@@ -45,7 +45,8 @@ export const useCensus3CreateToken = ({chainId}: {chainId: number}) => {
         const token = await client?.methods.getToken(pluginAddress);
         if (!token) throw 'Cannot retrieve the token';
         await census3.createToken(token.address, 'erc20', chainId, undefined, [
-          'aragon/app',
+          'aragon',
+          'dao',
         ]);
       } catch (e) {
         if (!(e instanceof ErrTokenAlreadyExists)) {
