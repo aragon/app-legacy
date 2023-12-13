@@ -5,11 +5,7 @@ import type {IFetchMemberParams} from '../aragon-sdk-service.api';
 import {usePluginClient} from 'hooks/usePluginClient';
 import {useWallet} from 'hooks/useWallet';
 import {SupportedNetworks} from 'utils/constants';
-import {
-  MultisigClient,
-  TokenVotingClient,
-  TokenVotingMember,
-} from '@aragon/sdk-client';
+import {TokenVotingClient, TokenVotingMember} from '@aragon/sdk-client';
 import {invariant} from 'utils/invariant';
 import {SubgraphTokenVotingMember} from '@aragon/sdk-client/dist/tokenVoting/internal/types';
 import {MemberDAOsType, SubgraphMembers} from 'utils/types';
@@ -89,6 +85,16 @@ export const multisigApproverDAOsQuery = gql`
     multisigApprovers(where: $where, block: $block) {
       address
       plugin {
+        pluginAddress
+        dao {
+          id
+        }
+      }
+    }
+    tokenVotingMembers(where: $where, block: $block) {
+      address
+      plugin {
+        pluginAddress
         dao {
           id
         }
@@ -121,13 +127,9 @@ const fetchMember = async (
 
 const fetchMemberDAOs = async (
   {blockNumber, address}: IFetchMemberParams,
-  tokenVotingclient?: TokenVotingClient,
-  multisigClient?: MultisigClient
+  client?: TokenVotingClient
 ): Promise<MemberDAOsType> => {
-  invariant(
-    tokenVotingclient != null || multisigClient != null,
-    'fetchMember: client is not defined'
-  );
+  invariant(client != null, 'fetchMember: client is not defined');
   const params = {
     where: {
       address: address.toLowerCase(),
@@ -135,31 +137,16 @@ const fetchMemberDAOs = async (
     block: blockNumber ? {number: blockNumber} : null,
   };
 
-  type TResult = {tokenVotingMembers: SubgraphMembers[]};
-  type MResult = {multisigApprovers: SubgraphMembers[]};
+  type TResult = {
+    tokenVotingMembers: SubgraphMembers[];
+    multisigApprovers: SubgraphMembers[];
+  };
 
-  const {tokenVotingMembers} =
-    await tokenVotingclient!.graphql.request<TResult>({
-      query: tokenMemberDAOsQuery,
+  const {tokenVotingMembers, multisigApprovers} =
+    await client!.graphql.request<TResult>({
+      query: multisigApproverDAOsQuery,
       params,
     });
-
-  const {multisigApprovers} = await multisigClient!.graphql.request<MResult>({
-    query: multisigApproverDAOsQuery,
-    params,
-  });
-
-  console.log(
-    'multisigApprovers',
-    (tokenVotingMembers ?? []).concat(multisigApprovers)
-  );
-
-  console.log(
-    'multisigApprovers',
-    (tokenVotingMembers ?? []).concat(multisigApprovers),
-    multisigApprovers,
-    tokenVotingMembers
-  );
 
   return toMemberDAOs((tokenVotingMembers ?? []).concat(multisigApprovers));
 };
@@ -190,21 +177,20 @@ export const useMemberDAOs = (
   params: IFetchMemberParams,
   options: UseQueryOptions<MemberDAOsType> = {}
 ) => {
-  const tokenVotingclient = usePluginClient('token-voting.plugin.dao.eth');
-  const multisigclient = usePluginClient('token-voting.plugin.dao.eth');
+  const client = usePluginClient('token-voting.plugin.dao.eth');
   const {network} = useWallet();
   const baseParams = {
     address: params.address as string,
     network: network as SupportedNetworks,
   };
 
-  if (tokenVotingclient == null || multisigclient == null || network == null) {
+  if (client == null || network == null) {
     options.enabled = false;
   }
 
   return useQuery(
     aragonSdkQueryKeys.getMemberDAOs(baseParams),
-    () => fetchMemberDAOs(params, tokenVotingclient, multisigclient),
+    () => fetchMemberDAOs(params, client),
     options
   );
 };
