@@ -161,7 +161,7 @@ export const useGaslessCommiteVotes = (
   })(proposal);
 
   const proposalCanBeApproved =
-    isApprovalPeriod && proposal.status === ProposalStatus.SUCCEEDED;
+    isApprovalPeriod && proposal.status === ProposalStatus.ACTIVE;
 
   const approved = useMemo(() => {
     return proposal.approvers?.some(
