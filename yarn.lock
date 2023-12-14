@@ -4590,10 +4590,10 @@
   dependencies:
     ethers "^5.6.2"
 
-"@vocdoni/gasless-voting@0.0.1-rc9":
-  version "0.0.1-rc9"
-  resolved "https://registry.yarnpkg.com/@vocdoni/gasless-voting/-/gasless-voting-0.0.1-rc9.tgz#3f6137b40c87ed1386d0c1d9c3a8740dced4cc7e"
-  integrity sha512-8MFO8/4tajFahjXsc4T3wiZs29ph9xTxEPXQUIT+kahTiqTUtw6x76BSujcdM8mlAIPOEs8ucsjI4AGgnvMaTg==
+"@vocdoni/gasless-voting@0.0.1-rc10":
+  version "0.0.1-rc10"
+  resolved "https://registry.yarnpkg.com/@vocdoni/gasless-voting/-/gasless-voting-0.0.1-rc10.tgz#7008f91a0bd434c6649f198fa7e3bb87899dcd06"
+  integrity sha512-0tncQP2pKRcjRNdru3ML3gQNu5EgYtXSibQAvExrQEwkP4EBmC6/szCTK8XyvcwPoJ8yGhUmG3MdnXsaXnhUtQ==
   dependencies:
     "@aragon/osx-ethers" "1.3.0-rc0.3"
     "@aragon/sdk-client-common" "1.13.0"
