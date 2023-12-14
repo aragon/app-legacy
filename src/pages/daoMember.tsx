@@ -24,6 +24,7 @@ import {useMember, useMemberDAOs} from 'services/aragon-sdk/queries/use-member';
 import {NumberFormat, formatterUtils} from '@aragon/ods';
 import {ActionItemMembership} from 'components/membersList/actionItemMembership';
 import {TokenVotingMember} from '@aragon/sdk-client';
+import {DaoListSectionWrapper} from 'components/wrappers';
 
 export const DaoMember: React.FC = () => {
   const {t} = useTranslation();
@@ -82,18 +83,14 @@ export const DaoMember: React.FC = () => {
     {enabled: !!memberAddress && !!daoDetails}
   );
 
-  const {data: daoMemberList, isLoading: isMemberDataListLoading} =
-    useMemberDAOs(
-      {
-        address: memberAddress?.toLowerCase(),
-        pluginType: pluginType,
-      },
-      {enabled: !!memberAddress}
-    );
+  const {data: daoMemberList} = useMemberDAOs(
+    {
+      address: memberAddress?.toLowerCase(),
+      pluginType: pluginType,
+    },
+    {enabled: !!memberAddress}
+  );
 
-  useEffect(() => {
-    console.log('daoMember', daoMemberList, daoMember, memberAddress);
-  }, [daoMember, daoMemberList, memberAddress]);
   const isDelegating = !!(daoMember as TokenVotingMember)?.delegators?.find(
     item => item.address.toLowerCase() === address?.toLowerCase()
   );
@@ -232,14 +229,20 @@ export const DaoMember: React.FC = () => {
         }
       />
 
-      {daoMemberList?.map((dao, index) => (
-        <ActionItemMembership
-          key={index}
-          address={dao.address}
-          subdomain={dao.subdomain}
-          metadata={dao.metadata}
-        />
-      ))}
+      <RightNarrowContent>
+        <DaoListSectionWrapper title={t('members.profile.sectionMemberhsips')}>
+          <div className="space-y-2">
+            {daoMemberList?.map((dao, index) => (
+              <ActionItemMembership
+                key={index}
+                address={dao.address}
+                subdomain={dao.subdomain}
+                metadata={dao.metadata}
+              />
+            ))}
+          </div>
+        </DaoListSectionWrapper>
+      </RightNarrowContent>
     </HeaderWrapper>
   );
 };
@@ -247,4 +250,8 @@ export const DaoMember: React.FC = () => {
 const HeaderWrapper = styled.div.attrs({
   className:
     'w-screen -mx-4 md:col-span-full md:w-full md:mx-0 xl:col-start-2 xl:col-span-10 md:mt-6',
+})``;
+
+const RightNarrowContent = styled.div.attrs({
+  className: '',
 })``;

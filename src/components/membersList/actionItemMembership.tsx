@@ -1,22 +1,12 @@
 /* eslint-disable tailwindcss/no-custom-classname */
 import React, {useEffect, useState} from 'react';
 import styled from 'styled-components';
-import {
-  shortenAddress,
-  Avatar,
-  ButtonIcon,
-  Tag,
-  IconChevronRight,
-} from '@aragon/ods-old';
-import {DaoMember} from 'utils/paths';
-import {generatePath, useNavigate, useParams} from 'react-router-dom';
-import {useNetwork} from 'context/network';
-import {MemberVotingPower} from './memberVotingPower';
-import {featureFlags} from 'utils/featureFlags';
+import {shortenAddress, Avatar, IconChevronRight} from '@aragon/ods-old';
 import {resolveIpfsCid} from '@aragon/sdk-client-common';
 import {useClient} from 'hooks/useClient';
 import {Client, DaoListItem} from '@aragon/sdk-client';
 import {toDisplayEns} from 'utils/library';
+import {useTranslation} from 'react-i18next';
 
 /**
  * Type declarations for `ActionItemAddressProps`.
@@ -39,7 +29,8 @@ export type ActionItemAddressProps = {
 export const ActionItemMembership: React.FC<ActionItemAddressProps> = props => {
   const {address, subdomain, metadata} = props;
   const {client} = useClient();
-  const [avatarSrc, setAvatarSrc] = useState('');
+  const {t} = useTranslation();
+  // const [avatarSrc, setAvatarSrc] = useState('');
   const [metadataObject, setMetadataObject] = useState<DaoListItem['metadata']>(
     {
       name: '',
@@ -60,15 +51,13 @@ export const ActionItemMembership: React.FC<ActionItemAddressProps> = props => {
 
       if (ipfsClient?.avatar) {
         try {
-          const avatarCID = resolveIpfsCid(ipfsClient!.avatar);
-          console.log('testthis', ipfsClient?.avatar);
-          const ipfsClient = client.ipfs.getClient();
-          const imageBytes = await ipfsClient.cat(avatarCID); // Uint8Array
-          const imageBlob = new Blob([imageBytes] as unknown as BlobPart[]);
-
-          console.log('testthis', ipfsClient, imageBytes);
-
-          setAvatarSrc(URL.createObjectURL(imageBlob));
+          // const avatarCID = resolveIpfsCid(ipfsClient!.avatar);
+          // console.log('testthis', ipfsClient?.avatar);
+          // const ipfsClient = client.ipfs.getClient();
+          // const imageBytes = await ipfsClient.cat(avatarCID); // Uint8Array
+          // const imageBlob = new Blob([imageBytes] as unknown as BlobPart[]);
+          // console.log('testthis', ipfsClient, imageBytes);
+          // setAvatarSrc(URL.createObjectURL(imageBlob));
         } catch (err) {
           console.warn('Error resolving DAO avatar IPFS Cid', err);
         }
@@ -83,21 +72,23 @@ export const ActionItemMembership: React.FC<ActionItemAddressProps> = props => {
       className={
         'flex flex-row items-center justify-between gap-3' +
         'cursor-pointer rounded-xl border border-neutral-100 bg-neutral-0 px-4 py-3' +
-        'focus:outline-none focus-visible:ring focus-visible:ring-primary focus-visible:ring-offset' +
-        'hover:border-neutral-200 hover:shadow-neutral-md active:border-neutral-300' +
         'md:gap-4 md:px-6 md:py-3.5'
       }
     >
       <div className="flex space-x-3">
         <div className="mt-1">
-          <Avatar size="default" mode="circle" src={avatarSrc ?? address} />
+          <Avatar size="small" mode="circle" src={address} />
         </div>
         <div className="flex flex-col">
-          <Title>{metadataObject.name}</Title>
+          <Title>{metadataObject.name || 'No name found'}</Title>
           <Address>
             {toDisplayEns(subdomain) || shortenAddress(address)}
           </Address>
-          <Activity>-</Activity>
+          <Activity>
+            {t('members.profile.labelLatestActivity', {
+              time: '-',
+            })}
+          </Activity>
         </div>
       </div>
       <IconChevronRight />
@@ -114,5 +105,5 @@ const Address = styled.span.attrs({
 })``;
 
 const Activity = styled.div.attrs({
-  className: 'ft-text-sm text-neutral-500' as string,
+  className: 'ft-text-sm text-neutral-500 mt-2' as string,
 })``;
