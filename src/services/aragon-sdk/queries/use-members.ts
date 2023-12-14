@@ -21,6 +21,7 @@ const fetchMembers = async (
   }
   const data = await client.methods.getMembers({
     pluginAddress: params.pluginAddress,
+    limit: 10000,
   });
 
   return data;
