@@ -82,9 +82,12 @@ const MultisigSettings: React.FC<IPluginSettings> = ({daoDetails}) => {
       <SettingsCard title={t('labels.review.governance')}>
         <DescriptionPair>
           <Term>{t('labels.minimumApproval')}</Term>
-          <Definition>{`${votingSettings.minApprovals} of ${
-            daoMembers.memberCount
-          } ${t('labels.authorisedWallets')}`}</Definition>
+          <Definition>
+            {t('labels.review.multisigMinimumApprovals', {
+              count: votingSettings.minApprovals,
+              total: daoMembers.memberCount,
+            })}
+          </Definition>
         </DescriptionPair>
 
         <DescriptionPair className="border-none">

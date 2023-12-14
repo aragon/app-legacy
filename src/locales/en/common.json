@@ -172,7 +172,7 @@
       "tokenHoldersWithTkns": "Members with ≥ {{tokenAmount}} {{tokenSymbol}} voting power or balance",
       "earlyExecution": "Early execution",
       "voteReplacement": "Vote change",
-      "multisigMinimumApprovals": "of {{count}} authorized addresses",
+      "multisigMinimumApprovals": "{{count}} of {{total}} authorized addresses",
       "existingTokens": {
         "currentHolders": "Current Holders"
       },
