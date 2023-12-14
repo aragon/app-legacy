@@ -820,6 +820,8 @@ export const translateToAppNetwork = (
       return 'mumbai';
     case SdkSupportedNetworks.POLYGON:
       return 'polygon';
+    case SdkSupportedNetworks.SEPOLIA:
+      return 'sepolia';
     default:
       return 'unsupported';
   }
@@ -854,6 +856,8 @@ export function translateToNetworkishName(
       return SdkSupportedNetworks.MUMBAI;
     case 'polygon':
       return SdkSupportedNetworks.POLYGON;
+    case 'sepolia':
+      return SdkSupportedNetworks.SEPOLIA;
   }
 
   return 'unsupported';

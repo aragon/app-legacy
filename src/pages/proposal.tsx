@@ -274,15 +274,21 @@ export const Proposal: React.FC = () => {
     }
   }, [proposalStatus]);
 
+  const proposalAndClientsExist = !!proposal && !!client && !!pluginClient;
+  const proposalErc20Token =
+    proposalAndClientsExist && isErc20VotingProposal(proposal)
+      ? proposal.token
+      : undefined;
+  const totalVotingWeight = (proposal as TokenVotingProposal)
+    ?.totalVotingWeight;
+  const daoAddress = proposal?.dao.address || '';
+
   // decode proposal actions
   useEffect(() => {
-    if (!proposal || !client || !pluginClient) return;
+    if (!proposalAndClientsExist) return;
 
     let mintTokenActionsIndex = 0;
     const mintTokenActionsData: Uint8Array[] = [];
-    const proposalErc20Token = isErc20VotingProposal(proposal)
-      ? proposal.token
-      : undefined;
 
     const multisigClient = pluginClient as MultisigClient;
     const tokenVotingClient = pluginClient as TokenVotingClient;
@@ -315,7 +321,7 @@ export const Proposal: React.FC = () => {
           return decodePluginSettingsToAction(
             action.data,
             tokenVotingClient,
-            (proposal as TokenVotingProposal).totalVotingWeight as bigint,
+            totalVotingWeight as bigint,
             proposalErc20Token
           );
         case 'updateMultisigSettings':
@@ -327,7 +333,7 @@ export const Proposal: React.FC = () => {
         case 'grant':
         case 'revoke': {
           return decodeOSUpdateActions(
-            proposal.dao.address,
+            daoAddress,
             t,
             action,
             network,
@@ -368,12 +374,7 @@ export const Proposal: React.FC = () => {
               'decodeWithdrawToAction failed, trying decodeToExternalAction'
             );
 
-            return decodeToExternalAction(
-              action,
-              proposal.dao.address,
-              network,
-              t
-            );
+            return decodeToExternalAction(action, daoAddress, network, t);
           }
         }
       }
@@ -389,7 +390,7 @@ export const Proposal: React.FC = () => {
           mintTokenActionsData,
           pluginClient as TokenVotingClient,
           proposalErc20Token.address,
-          (proposal as TokenVotingProposal).totalVotingWeight,
+          totalVotingWeight,
           provider,
           network
         );
@@ -403,7 +404,17 @@ export const Proposal: React.FC = () => {
     };
 
     processActions();
-  }, [client, network, pluginClient, proposal, provider, fetchToken, t]);
+  }, [
+    proposalAndClientsExist,
+    proposalErc20Token,
+    totalVotingWeight,
+    client,
+    network,
+    pluginClient,
+    provider,
+    fetchToken,
+    t,
+  ]);
 
   // caches the status for breadcrumb
   useEffect(() => {
