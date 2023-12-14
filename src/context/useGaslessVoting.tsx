@@ -19,7 +19,6 @@ import {isGaslessProposal} from '../utils/proposals';
 import {GaselessPluginName, usePluginClient} from '../hooks/usePluginClient';
 import {useWallet} from '../hooks/useWallet';
 import {useDaoDetailsQuery} from '../hooks/useDaoDetails';
-import {ProposalStatus} from '@aragon/sdk-client-common';
 
 export enum GaslessVotingStepId {
   CREATE_VOTE_ID = 'CREATE_VOTE_ID',
@@ -123,6 +122,7 @@ export const useGaslessHasAlreadyVote = ({
         setHasAlreadyVote(true);
         return;
       }
+      if (!signer) return;
       setHasAlreadyVote(
         // !!(await client.hasAlreadyVoted(p!.vochainProposalId!))
         !!(await client.hasAlreadyVoted({
@@ -160,9 +160,7 @@ export const useGaslessCommiteVotes = (
     );
   })(proposal);
 
-  const proposalCanBeApproved =
-    isApprovalPeriod && proposal.status === ProposalStatus.ACTIVE;
-
+  const proposalCanBeApproved = isApprovalPeriod && proposal.canBeApproved;
   const approved = useMemo(() => {
     return proposal.approvers?.some(
       approver => approver.toLowerCase() === address?.toLowerCase()
