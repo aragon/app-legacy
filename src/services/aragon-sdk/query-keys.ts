@@ -91,11 +91,11 @@ export const aragonSdkQueryKeys = {
     params,
   ],
   getMember: (
-    baseParams: IAragonSdkBaseParams,
+    baseParams: Omit<IAragonSdkBaseParams, 'address'>,
     params: IFetchMemberParams
   ): QueryKey => [AragonSdkQueryItem.GET_MEMBER, baseParams, params],
   getCreatorProposals: (
-    baseParams: IAragonSdkBaseParams,
+    baseParams: Omit<IAragonSdkBaseParams, 'address'>,
     params: IFetchCreatorProposalsParams
   ): QueryKey => [AragonSdkQueryItem.GET_CREATOR_PROPOSALS, baseParams, params],
   releaseNotes: (): QueryKey => [AragonSdkQueryItem.RELEASE_NOTES],

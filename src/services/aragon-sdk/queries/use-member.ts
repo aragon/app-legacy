@@ -3,7 +3,6 @@ import {UseQueryOptions, useQuery} from '@tanstack/react-query';
 import {aragonSdkQueryKeys} from '../query-keys';
 import type {IFetchMemberParams} from '../aragon-sdk-service.api';
 import {usePluginClient} from 'hooks/usePluginClient';
-import {useWallet} from 'hooks/useWallet';
 import {TokenVotingClient, TokenVotingMember} from '@aragon/sdk-client';
 import {invariant} from 'utils/invariant';
 import {SubgraphTokenVotingMember} from '@aragon/sdk-client/dist/tokenVoting/internal/types';
@@ -80,11 +79,9 @@ export const useMember = (
   options: UseQueryOptions<TokenVotingMember> = {}
 ) => {
   const client = usePluginClient('token-voting.plugin.dao.eth');
-  const {address} = useWallet();
   const {network} = useNetwork();
 
   const baseParams = {
-    address: address as string,
     network: network,
   };
 

@@ -54,7 +54,7 @@ export interface IFetchMemberParams {
 export interface IFetchCreatorProposalsParams {
   pluginAddress: string;
   address: string;
-  pluginType: PluginTypes | undefined;
+  pluginType?: PluginTypes;
   blockNumber?: number;
 }
 

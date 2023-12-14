@@ -2,7 +2,6 @@ import {gql} from 'graphql-request';
 import {UseQueryOptions, useQuery} from '@tanstack/react-query';
 import {aragonSdkQueryKeys} from '../query-keys';
 import type {IFetchCreatorProposalsParams} from '../aragon-sdk-service.api';
-import {useWallet} from 'hooks/useWallet';
 import {MultisigProposal, TokenVotingProposal} from '@aragon/sdk-client';
 import {invariant} from 'utils/invariant';
 import {useNetwork} from 'context/network';
@@ -87,11 +86,9 @@ export const useCreatorProposals = (
   options: UseQueryOptions<ProposalBase[]> = {}
 ) => {
   const client = usePluginClient(params.pluginType);
-  const {address} = useWallet();
   const {network} = useNetwork();
 
   const baseParams = {
-    address: address as string,
     network: network,
   };
 

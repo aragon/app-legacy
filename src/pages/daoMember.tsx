@@ -87,10 +87,10 @@ export const DaoMember: React.FC = () => {
   } = useCreatorProposals(
     {
       address: memberAddress,
-      pluginAddress: pluginAddress || '',
+      pluginAddress: pluginAddress as string,
       pluginType,
     },
-    {enabled: !!memberAddress && !!daoDetails}
+    {enabled: !!memberAddress && !!daoDetails && !!pluginAddress}
   );
 
   const isDelegating = !!daoMember?.delegators?.find(
