@@ -11,6 +11,7 @@ import {
   ListItemProps,
 } from '@aragon/ods-old';
 import styled from 'styled-components';
+import {shortenAddress} from 'utils/library';
 
 export type AccordionType = 'action-builder' | 'execution-widget';
 
@@ -18,6 +19,7 @@ export type AccordionMethodType = {
   type: AccordionType;
   methodName: string;
   smartContractName?: string;
+  smartContractAddress?: string;
   verified?: boolean;
   alertLabel?: string;
   methodDescription?: string | React.ReactNode;
@@ -58,6 +60,7 @@ export const AccordionItem: React.FC<AccordionMethodType & {name: string}> = ({
   name,
   methodName,
   smartContractName,
+  smartContractAddress,
   verified = false,
   alertLabel,
   methodDescription,
@@ -74,18 +77,23 @@ export const AccordionItem: React.FC<AccordionMethodType & {name: string}> = ({
             <MethodName>{methodName}</MethodName>
             {smartContractName && (
               <div
-                className={`flex items-center space-x-2 ${
+                className={`flex items-center ${
                   verified ? 'text-primary-600' : 'text-warning-600'
                 }`}
               >
+                {smartContractAddress && (
+                  <p className="mr-4 text-neutral-600">
+                    {shortenAddress(smartContractAddress)}
+                  </p>
+                )}
+                {verified ? <IconSuccess /> : <IconWarning />}
                 <p
-                  className={`font-semibold ${
+                  className={`ml-2 font-semibold ${
                     verified ? 'text-primary-500' : 'text-warning-500'
                   }`}
                 >
                   {smartContractName}
                 </p>
-                {verified ? <IconSuccess /> : <IconWarning />}
               </div>
             )}
             {alertLabel && <AlertInline label={alertLabel} />}
