@@ -77,15 +77,10 @@ export const useWalletCanVote = (
     async function fetchCanVoteGasless() {
       let canVote = false;
       if (gaslessProposalId) {
-        canVote =
-          (await vocdoniClient.isInCensus({
-            wallet: signer,
-            electionId: gaslessProposalId,
-          })) &&
-          !(await vocdoniClient.hasAlreadyVoted({
-            wallet: signer,
-            electionId: gaslessProposalId,
-          }));
+        canVote = await vocdoniClient.isInCensus({
+          wallet: signer,
+          electionId: gaslessProposalId,
+        });
       }
       setData(canVote);
     }
