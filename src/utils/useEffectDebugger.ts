@@ -37,5 +37,9 @@ export const useEffectDebugger = (
     console.log('[use-effect-debugger] ', changedDeps);
   }
 
-  useEffect(effectHook, dependencies);
+  // TODO Manos: I actually added the effectHook in the dependencies list
+  // but apparently the linter does not recognize it, therefore I disable
+  // the corresponding error to the following line
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  useEffect(effectHook, dependencies.concat([effectHook]));
 };

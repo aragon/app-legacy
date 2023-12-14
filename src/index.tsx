@@ -47,15 +47,15 @@ const chains = [
   arbitrumGoerli,
   sepolia,
 ];
-const ledgerChains = [
-  goerli,
-  mainnet,
-  polygon,
-  polygonMumbai,
-  arbitrum,
-  arbitrumGoerli,
-  sepolia,
-];
+// const ledgerChains = [
+//   goerli,
+//   mainnet,
+//   polygon,
+//   polygonMumbai,
+//   arbitrum,
+//   arbitrumGoerli,
+//   sepolia,
+// ];
 
 const {publicClient} = configureChains(chains, [
   w3mProvider({projectId: walletConnectProjectID}),
