@@ -599,7 +599,7 @@ export const Proposal: React.FC = () => {
       // need to check canVote status on Multisig because
       // the delegation modals are not shown for Multisig
       ((isMultisigPlugin && (voted || canVote === false)) ||
-        (isGaslessVotingPlugin && voted) ||
+        (isGaslessVotingPlugin && (voted || canVote === false)) ||
         (isTokenVotingPlugin && voted && !canRevote)));
 
   const handleApprovalClick = useCallback(
