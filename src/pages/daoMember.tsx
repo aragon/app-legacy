@@ -222,7 +222,7 @@ export const DaoMember: React.FC = () => {
           )
         }
       />
-      <div className="flex flex-row gap-16">
+      <div className="flex flex-col gap-16 md:flex-row">
         <div className="flex grow flex-col gap-10">
           {memberCreatedProposals.length > 0 && (
             <div className="flex flex-col gap-4">
@@ -233,7 +233,7 @@ export const DaoMember: React.FC = () => {
             </div>
           )}
         </div>
-        <div className="flex w-full max-w-[400px] grow" />
+        <div className="flex w-full grow md:max-w-[400px]" />
       </div>
     </HeaderWrapper>
   );
