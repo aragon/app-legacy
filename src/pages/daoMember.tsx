@@ -1,4 +1,4 @@
-import {ButtonText, isEnsDomain} from '@aragon/ods-old';
+import {ButtonText, IconChevronRight, isEnsDomain} from '@aragon/ods-old';
 import {isEnsName} from '@aragon/sdk-client-common';
 import React, {useCallback, useEffect, useMemo} from 'react';
 import {useTranslation} from 'react-i18next';
@@ -82,7 +82,7 @@ export const DaoMember: React.FC = () => {
   );
 
   const {
-    data: memberCreatedProposals,
+    data: memberCreatedProposals = [],
     isLoading: isMemberCreatedProposalsLoading,
   } = useCreatorProposals(
     {
@@ -104,12 +104,10 @@ export const DaoMember: React.FC = () => {
     featureFlags.getValue('VITE_FEATURE_FLAG_DELEGATION') === 'true';
 
   const stats = useMemo<HeaderMemberStat[]>(() => {
-    const totalProposalsCreated = memberCreatedProposals?.length || 0;
-
     if (!isTokenBasedDao) {
       return [
         {
-          value: totalProposalsCreated,
+          value: memberCreatedProposals.length,
           description: t('members.profile.labelProposalCreated'),
         },
       ];
@@ -223,6 +221,43 @@ export const DaoMember: React.FC = () => {
           )
         }
       />
+      {memberCreatedProposals.length > 0 && (
+        <div className="flex flex-col gap-4">
+          <p className="font-normal text-neutral-800 ft-text-xl">
+            {memberCreatedProposals.length} proposals created
+          </p>
+          <div className="flex flex-col gap-2">
+            {memberCreatedProposals.map(proposal => (
+              <div
+                className="flex flex-row items-center gap-4 rounded-xl border border-neutral-100 bg-neutral-0 px-6 py-5"
+                key={proposal.id}
+              >
+                <div className="flex grow flex-col gap-3">
+                  <div className="flex flex-col gap-1">
+                    <p className="ft-text-lg text-neutral-800">
+                      {proposal.metadata.title}
+                    </p>
+                    <p className="ft-text-base text-neutral-600 line-clamp-3">
+                      {proposal.metadata.summary}
+                      {proposal.metadata.summary}
+                      {proposal.metadata.summary}
+                      {proposal.metadata.summary}
+                      {proposal.metadata.summary}
+                      {proposal.metadata.summary}
+                      {proposal.metadata.summary}
+                      {proposal.metadata.summary}
+                    </p>
+                  </div>
+                  <p className="ft-text-base text-neutral-500">
+                    {proposal.creationDate.getDate()}
+                  </p>
+                </div>
+                <IconChevronRight className="text-neutral-300 flex-shrink-0" />
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
     </HeaderWrapper>
   );
 };
