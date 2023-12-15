@@ -2,10 +2,14 @@ import {gql} from 'graphql-request';
 import {UseQueryOptions, useQuery} from '@tanstack/react-query';
 import {aragonSdkQueryKeys} from '../query-keys';
 import type {IFetchCreatorProposalsParams} from '../aragon-sdk-service.api';
-import {MultisigProposal, TokenVotingProposal} from '@aragon/sdk-client';
+import {
+  MultisigProposal,
+  ProposalSortBy,
+  TokenVotingProposal,
+} from '@aragon/sdk-client';
 import {invariant} from 'utils/invariant';
 import {useNetwork} from 'context/network';
-import {ProposalBase} from '@aragon/sdk-client-common';
+import {ProposalBase, SortDirection} from '@aragon/sdk-client-common';
 import {PluginClient, usePluginClient} from 'hooks/usePluginClient';
 import {GaslessVotingProposal} from '@vocdoni/gasless-voting';
 
@@ -15,8 +19,15 @@ export const tokenVotingProposalsQuery = gql`
   query TokenVotingProposals(
     $where: TokenVotingProposal_filter!
     $block: Block_height
+    $direction: OrderDirection!
+    $sortBy: TokenVotingProposal_orderBy!
   ) {
-    tokenVotingProposals(where: $where, block: $block) {
+    tokenVotingProposals(
+      where: $where
+      block: $block
+      orderDirection: $direction
+      orderBy: $sortBy
+    ) {
       id
     }
   }
@@ -26,8 +37,15 @@ export const multisigProposalsQuery = gql`
   query MultisigProposals(
     $where: MultisigProposal_filter!
     $block: Block_height
+    $direction: OrderDirection!
+    $sortBy: MultisigProposal_orderBy!
   ) {
-    multisigProposals(where: $where, block: $block) {
+    multisigProposals(
+      where: $where
+      block: $block
+      orderDirection: $direction
+      orderBy: $sortBy
+    ) {
       id
     }
   }
@@ -50,6 +68,8 @@ const fetchCreatorProposals = async (
       creator: address.toLowerCase(),
     },
     block: blockNumber ? {number: blockNumber} : null,
+    direction: SortDirection.DESC,
+    sortBy: ProposalSortBy.CREATED_AT,
   };
 
   type TResult = {

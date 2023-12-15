@@ -233,7 +233,7 @@ export const DaoMember: React.FC = () => {
             </div>
           )}
         </div>
-        <div className="flex max-w-[400px] grow w-full" />
+        <div className="flex w-full max-w-[400px] grow" />
       </div>
     </HeaderWrapper>
   );
