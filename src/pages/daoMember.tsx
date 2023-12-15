@@ -77,9 +77,9 @@ export const DaoMember: React.FC = () => {
   const {data: daoMember, isLoading: isMemberDataLoading} = useMember(
     {
       address: memberAddress,
-      pluginAddress: pluginAddress || '',
+      pluginAddress: pluginAddress as string,
     },
-    {enabled: !!memberAddress && !!daoDetails}
+    {enabled: memberAddress != null && pluginAddress != null}
   );
 
   const {

@@ -55,7 +55,7 @@ export const tokenMemberQuery = gql`
 const fetchMember = async (
   {pluginAddress, blockNumber, address}: IFetchMemberParams,
   client?: TokenVotingClient
-): Promise<TokenVotingMember> => {
+): Promise<TokenVotingMember | null> => {
   invariant(client != null, 'fetchMember: client is not defined');
   const params = {
     where: {
@@ -71,12 +71,16 @@ const fetchMember = async (
     params,
   });
 
+  if (tokenVotingMembers.length === 0) {
+    return null;
+  }
+
   return toTokenVotingMember(tokenVotingMembers[0]);
 };
 
 export const useMember = (
   params: IFetchMemberParams,
-  options: UseQueryOptions<TokenVotingMember> = {}
+  options: UseQueryOptions<TokenVotingMember | null> = {}
 ) => {
   const client = usePluginClient('token-voting.plugin.dao.eth');
   const {network} = useNetwork();
