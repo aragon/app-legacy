@@ -24,6 +24,7 @@ import {useMember} from 'services/aragon-sdk/queries/use-member';
 import {NumberFormat, formatterUtils} from '@aragon/ods';
 import {useCreatorProposals} from 'services/aragon-sdk/queries/use-creator-proposals';
 import {UserProposalList} from 'components/userProposalList';
+import {MemberSection} from './memberSection';
 
 export const DaoMember: React.FC = () => {
   const {t} = useTranslation();
@@ -222,17 +223,19 @@ export const DaoMember: React.FC = () => {
           )
         }
       />
-      <div className="flex flex-col gap-16 md:flex-row">
-        <div className="flex grow flex-col gap-10">
-          {memberCreatedProposals.length > 0 && (
-            <div className="flex flex-col gap-4">
-              <p className="font-normal text-neutral-800 ft-text-xl">
-                {memberCreatedProposals.length} proposals created
-              </p>
-              <UserProposalList proposals={memberCreatedProposals} />
-            </div>
-          )}
-        </div>
+      <div className="flex flex-col gap-16 px-4 md:flex-row md:px-0">
+        <MemberSection
+          isEmpty={memberCreatedProposals.length === 0}
+          empty={{
+            title: t('members.profile.emptyState.Participations'),
+            illustration: 'lightbulb',
+          }}
+          title={t('members.profile.sectionProposalsCreated', {
+            amount: memberCreatedProposals.length,
+          })}
+        >
+          <UserProposalList proposals={memberCreatedProposals} />
+        </MemberSection>
         <div className="flex w-full grow md:max-w-[400px]" />
       </div>
     </HeaderWrapper>
