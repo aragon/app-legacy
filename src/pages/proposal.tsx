@@ -430,6 +430,7 @@ export const Proposal: React.FC = () => {
     t,
     daoAddress,
     proposal?.actions,
+    proposal,
   ]);
 
   // caches the status for breadcrumb
