@@ -368,9 +368,9 @@ const DashboardContent: React.FC<DashboardContentProps> = ({
   pluginType,
   pluginAddress,
 }) => {
-  const {transfers, totalAssetValue} = useDaoVault();
+  const {transfers, totalAssetValue, isTokensLoading} = useDaoVault();
 
-  const {data} = useProposals({
+  const {data, isLoading} = useProposals({
     daoAddressOrEns,
     pluginType,
     pluginAddress,
@@ -382,6 +382,10 @@ const DashboardContent: React.FC<DashboardContentProps> = ({
   // page size that we fetch: 6
   const proposalCount = proposals.length;
   const transactionCount = transfers.length;
+
+  if (isTokensLoading || isLoading) {
+    return <Loading />;
+  }
 
   if (!proposalCount) {
     return (
@@ -480,7 +484,11 @@ const MobileDashboardContent: React.FC<DashboardContentProps> = ({
   pluginType,
   pluginAddress,
 }) => {
-  const {transfers, totalAssetValue} = useDaoVault();
+  const {transfers, totalAssetValue, isTokensLoading} = useDaoVault();
+
+  if (isTokensLoading) {
+    return <Loading />;
+  }
 
   return (
     <MobileLayout>
