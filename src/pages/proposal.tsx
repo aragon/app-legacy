@@ -319,9 +319,15 @@ export const Proposal: React.FC = () => {
           mintTokenActionsData.push(action.data);
           return;
         case 'addAddresses':
-          return decodeAddMembersToAction(action.data, multisigClient);
+          return decodeAddMembersToAction(
+            action.data,
+            isGaslessVotingPlugin ? gaslessVotingClient : multisigClient
+          );
         case 'removeAddresses':
-          return decodeRemoveMembersToAction(action.data, multisigClient);
+          return decodeRemoveMembersToAction(
+            action.data,
+            isGaslessVotingPlugin ? gaslessVotingClient : multisigClient
+          );
         case 'updateVotingSettings':
           return decodePluginSettingsToAction(
             action.data,

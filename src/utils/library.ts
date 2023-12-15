@@ -31,7 +31,7 @@ import {TFunction} from 'i18next';
 
 import {daoFactoryABI} from 'abis/daoFactoryABI';
 import {MultisigWalletField} from 'components/multisigWallets/row';
-import {PluginTypes} from 'hooks/usePluginClient';
+import {isGaslessVotingClient, PluginTypes} from 'hooks/usePluginClient';
 import {getEtherscanVerifiedContract} from 'services/etherscanAPI';
 import {Token} from 'services/token/domain';
 import {IFetchTokenParams} from 'services/token/token-service.api';
@@ -283,7 +283,7 @@ export async function decodeMintTokensToAction(
  */
 export async function decodeAddMembersToAction(
   data: Uint8Array | undefined,
-  client: MultisigClient | undefined
+  client: MultisigClient | GaslessVotingClient | undefined
 ): Promise<ActionAddAddress | undefined> {
   if (!client || !data) {
     console.error('SDK client is not initialized correctly');
@@ -309,7 +309,7 @@ export async function decodeAddMembersToAction(
  */
 export async function decodeRemoveMembersToAction(
   data: Uint8Array | undefined,
-  client: MultisigClient | undefined
+  client: MultisigClient | GaslessVotingClient | undefined
 ): Promise<ActionRemoveAddress | undefined> {
   if (!client || !data) {
     console.error('SDK client is not initialized correctly');
