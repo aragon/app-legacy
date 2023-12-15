@@ -25,7 +25,6 @@ export const UserProposalList: React.FC<IUserProposalListProps> = props => {
   const hasMore = filteredProposals.length < proposals.length;
 
   const getRelativeDate = (date: Date) => {
-    console.log({date});
     const locale = (Locales as Record<string, Locale>)[i18n.language];
     const timeUntilNow = formatDistanceToNow(date, {locale});
 
