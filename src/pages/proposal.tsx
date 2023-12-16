@@ -318,16 +318,14 @@ export const Proposal: React.FC = () => {
           if (mintTokenActionsData.length === 0) mintTokenActionsIndex = index;
           mintTokenActionsData.push(action.data);
           return;
+        case 'addExecutionMultisigMembers':
+          return decodeAddMembersToAction(action.data, gaslessVotingClient);
+        case 'removeExecutionMultisigMembers':
+          return decodeRemoveMembersToAction(action.data, multisigClient);
         case 'addAddresses':
-          return decodeAddMembersToAction(
-            action.data,
-            isGaslessVotingPlugin ? gaslessVotingClient : multisigClient
-          );
+          return decodeAddMembersToAction(action.data, multisigClient);
         case 'removeAddresses':
-          return decodeRemoveMembersToAction(
-            action.data,
-            isGaslessVotingPlugin ? gaslessVotingClient : multisigClient
-          );
+          return decodeRemoveMembersToAction(action.data, multisigClient);
         case 'updateVotingSettings':
           return decodePluginSettingsToAction(
             action.data,
@@ -434,6 +432,7 @@ export const Proposal: React.FC = () => {
     t,
     daoAddress,
     proposal?.actions,
+    proposal,
   ]);
 
   // caches the status for breadcrumb
