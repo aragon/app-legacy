@@ -34,7 +34,8 @@ import {decodeVotingMode, formatUnits, toDisplayEns} from 'utils/library';
 import {ProposeNewSettings} from 'utils/paths';
 import {GaslessPluginVotingSettings} from '@vocdoni/gasless-voting';
 import DefineExecutionMultisig from '../defineExecutionMultisig';
-import {MultisigWalletField} from '../../components/multisigWallets/row';
+import {ManageExecutionMultisig} from '../manageExecutionMultisig';
+import {MultisigDaoMember} from '../../hooks/useDaoMembers';
 
 type EditMvSettingsProps = {
   daoDetails: DaoDetails;
@@ -124,7 +125,7 @@ export const EditMvSettings: React.FC<EditMvSettingsProps> = ({daoDetails}) => {
   let approvalDays: number | undefined;
   let approvalHours: number | undefined;
   let approvalMinutes: number | undefined;
-  let executionMultisigMembers: string[] | undefined;
+  let executionMultisigMembers: MultisigDaoMember[] | undefined;
   if (isGasless && votingSettings) {
     const {days, hours, minutes} = getDHMFromSeconds(
       (votingSettings as GaslessPluginVotingSettings).minTallyDuration ?? 0
@@ -132,8 +133,11 @@ export const EditMvSettings: React.FC<EditMvSettingsProps> = ({daoDetails}) => {
     approvalDays = days;
     approvalHours = hours;
     approvalMinutes = minutes;
-    executionMultisigMembers = (votingSettings as GaslessPluginVotingSettings)
-      .executionMultisigMembers;
+    executionMultisigMembers = (
+      votingSettings as GaslessPluginVotingSettings
+    ).executionMultisigMembers?.map(wallet => ({
+      address: wallet,
+    })) as MultisigDaoMember[];
   }
 
   const controlledLinks = fields.map((field, index) => {
@@ -361,13 +365,7 @@ export const EditMvSettings: React.FC<EditMvSettingsProps> = ({daoDetails}) => {
     setValue('executionExpirationHours', approvalHours?.toString());
     setValue('executionExpirationDays', approvalDays?.toString());
     // This is needed to store on form state the actual committee  members in order to re-use the DefineExecutionMultisig
-    setValue(
-      'committee',
-      executionMultisigMembers?.map(wallet => ({
-        address: wallet,
-        ensName: '',
-      })) as MultisigWalletField[]
-    );
+    setValue('committee', executionMultisigMembers);
 
     setValue(
       'committeeMinimumApproval',
@@ -559,6 +557,14 @@ export const EditMvSettings: React.FC<EditMvSettingsProps> = ({daoDetails}) => {
                   dropdownItems={gaslessAction}
                 >
                   <AccordionContent>
+                    <ManageExecutionMultisig
+                      members={executionMultisigMembers}
+                      minTallyApprovals={
+                        (votingSettings as GaslessPluginVotingSettings)
+                          .minTallyApprovals
+                      }
+                      daoAddress={daoDetails.address}
+                    />
                     <DefineExecutionMultisig isSettingPage />
                   </AccordionContent>
                 </AccordionItem>

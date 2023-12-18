@@ -37,7 +37,7 @@ const UpdateMinimumApproval: React.FC<UpdateMinimumApprovalProps> = ({
   const {setValue, control, trigger, getValues} = useFormContext();
 
   const minimumApprovalKey = isGasless
-    ? `actions.${actionIndex}.inputs.minTallyApprovals`
+    ? `committeeMinimumApproval`
     : `actions.${actionIndex}.inputs.minApprovals`;
 
   const minimumApproval = useWatch({
@@ -102,13 +102,9 @@ const UpdateMinimumApproval: React.FC<UpdateMinimumApprovalProps> = ({
 
   useEffect(() => {
     if (isGasless) {
-      setValue(`actions.${actionIndex}.name`, 'modify_gasless_voting_settings');
-    } else {
-      setValue(
-        `actions.${actionIndex}.name`,
-        'modify_multisig_voting_settings'
-      );
+      return;
     }
+    setValue(`actions.${actionIndex}.name`, 'modify_multisig_voting_settings');
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
