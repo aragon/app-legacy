@@ -223,7 +223,9 @@ export const DaoMember: React.FC = () => {
         }
       />
       <div className="flex flex-col gap-16 px-4 md:flex-row md:px-0">
-        <UserProposalList proposals={memberCreatedProposals} />
+        <div className="flex grow flex-col gap-10">
+          <UserProposalList proposals={memberCreatedProposals} />
+        </div>
         <div className="flex w-full grow md:max-w-[400px]" />
       </div>
     </HeaderWrapper>

@@ -101,7 +101,6 @@ export const UserProposalList: React.FC<IUserProposalListProps> = props => {
             mode="secondary"
             label={t('members.profile.labelViewMore')}
             className="border-neutral-100"
-            bgWhite={false}
             iconRight={<IconChevronDown />}
             onClick={() => setPage(current => current + 1)}
           />
