@@ -14,6 +14,9 @@ export interface IUserProposalListProps {
   proposals?: ProposalBase[];
 }
 
+const initialProposalsPageSize = 2;
+const proposalsPageSize = 6;
+
 export const UserProposalList: React.FC<IUserProposalListProps> = props => {
   const {proposals = []} = props;
 
@@ -23,7 +26,12 @@ export const UserProposalList: React.FC<IUserProposalListProps> = props => {
 
   const [page, setPage] = useState(0);
 
-  const filteredProposals = proposals.slice(0, page === 0 ? 2 : page * 6 + 2);
+  const filteredProposals = proposals.slice(
+    0,
+    page === 0
+      ? initialProposalsPageSize
+      : page * proposalsPageSize + initialProposalsPageSize
+  );
   const hasMore = filteredProposals.length < proposals.length;
 
   const getRelativeDate = (date: Date) => {
