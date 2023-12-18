@@ -89,7 +89,7 @@ export const UserProposalList: React.FC<IUserProposalListProps> = props => {
                   </p>
                 </div>
                 <p className="text-neutral-500 ft-text-base">
-                  {getRelativeDate(proposal.creationDate)} ago
+                  {getRelativeDate(proposal.creationDate)}
                 </p>
               </div>
               <IconChevronRight className="shrink-0 text-neutral-300" />
