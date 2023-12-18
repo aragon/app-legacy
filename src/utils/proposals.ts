@@ -741,6 +741,11 @@ export function getVoteStatus(proposal: DetailedProposal, t: TFunction) {
           locale,
         });
 
+        if (isGaslessProposal(proposal) && proposal.endDate < new Date()) {
+          label = t('votingTerminal.status.succeeded');
+          break;
+        }
+
         label = t('votingTerminal.status.active', {timeUntilEnd});
       }
       break;
