@@ -70,8 +70,8 @@ export const ActionItemMembership: React.FC<ActionItemAddressProps> = props => {
   return (
     <a
       className={
-        'flex flex-row items-center justify-between gap-3' +
-        'cursor-pointer rounded-xl border border-neutral-100 bg-neutral-0 px-4 py-3' +
+        'flex flex-row items-center justify-between gap-3 ' +
+        'cursor-pointer rounded-xl border border-neutral-100 bg-neutral-0 px-4 py-3 ' +
         'md:gap-4 md:px-6 md:py-3.5'
       }
     >
