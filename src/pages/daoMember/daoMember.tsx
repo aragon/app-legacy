@@ -24,7 +24,6 @@ import {useMember} from 'services/aragon-sdk/queries/use-member';
 import {NumberFormat, formatterUtils} from '@aragon/ods';
 import {useCreatorProposals} from 'services/aragon-sdk/queries/use-creator-proposals';
 import {UserProposalList} from 'components/userProposalList';
-import {MemberSection} from './memberSection';
 
 export const DaoMember: React.FC = () => {
   const {t} = useTranslation();
@@ -224,13 +223,7 @@ export const DaoMember: React.FC = () => {
         }
       />
       <div className="flex flex-col gap-16 px-4 md:flex-row md:px-0">
-        <MemberSection
-          title={t('members.profile.sectionProposalsCreated', {
-            amount: memberCreatedProposals.length,
-          })}
-        >
-          <UserProposalList proposals={memberCreatedProposals} />
-        </MemberSection>
+        <UserProposalList proposals={memberCreatedProposals} />
         <div className="flex w-full grow md:max-w-[400px]" />
       </div>
     </HeaderWrapper>

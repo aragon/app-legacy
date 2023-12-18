@@ -2,12 +2,13 @@ import React, {useState} from 'react';
 import {ProposalBase} from '@aragon/sdk-client-common';
 import {ButtonText, IconChevronDown, IconChevronRight} from '@aragon/ods-old';
 import {Link, generatePath, useParams} from 'react-router-dom';
-import {Proposal} from 'utils/paths';
+import {NewProposal, Proposal} from 'utils/paths';
 import {useTranslation} from 'react-i18next';
 import {Locale, formatDistanceToNow} from 'date-fns';
 import * as Locales from 'date-fns/locale';
 import {useNetwork} from 'context/network';
-import {EmptyMemberSection} from 'pages/daoMember';
+import {EmptyMemberSection, MemberSection} from 'pages/daoMember';
+import {ProposalTypes} from 'utils/types';
 
 export interface IUserProposalListProps {
   proposals?: ProposalBase[];
@@ -44,44 +45,60 @@ export const UserProposalList: React.FC<IUserProposalListProps> = props => {
       <EmptyMemberSection
         title={t('members.profile.emptyState.ProposalsCreated')}
         illustration="not_found"
+        link={{
+          label: t('members.profile.emptyState.CTACreateProposal'),
+          href: generatePath(NewProposal, {
+            network,
+            dao,
+            type: ProposalTypes.Default,
+          }),
+        }}
       />
     );
   }
 
   return (
-    <div className="flex flex-col items-start gap-3">
-      <div className="flex w-full flex-col gap-2">
-        {filteredProposals.map(proposal => (
-          <Link
-            className="flex grow flex-row items-center gap-4 rounded-xl border border-neutral-100 bg-neutral-0 px-6 py-5"
-            key={proposal.id}
-            to={buildProposalPath(proposal.id)}
-          >
-            <div className="flex grow flex-col gap-3">
-              <div className="flex flex-col gap-1">
-                <p className="text-neutral-800 ft-text-lg">
-                  {proposal.metadata.title}
-                </p>
-                <p className="line-clamp-3 text-neutral-600 ft-text-base">
-                  {proposal.metadata.summary}
+    <MemberSection
+      title={t('members.profile.sectionProposalsCreated', {
+        amount: proposals.length,
+      })}
+    >
+      <div className="flex flex-col items-start gap-3">
+        <div className="flex w-full flex-col gap-2">
+          {filteredProposals.map(proposal => (
+            <Link
+              className="flex grow flex-row items-center gap-3 rounded-xl border border-neutral-100 bg-neutral-0 p-4 md:gap-4 md:px-6 md:py-5"
+              key={proposal.id}
+              to={buildProposalPath(proposal.id)}
+            >
+              <div className="flex grow flex-col gap-3">
+                <div className="flex flex-col gap-1">
+                  <p className="text-neutral-800 ft-text-lg">
+                    {proposal.metadata.title}
+                  </p>
+                  <p className="line-clamp-3 text-neutral-600 ft-text-base">
+                    {proposal.metadata.summary}
+                  </p>
+                </div>
+                <p className="text-neutral-500 ft-text-base">
+                  {getRelativeDate(proposal.creationDate)} ago
                 </p>
               </div>
-              <p className="text-neutral-500 ft-text-base">
-                {getRelativeDate(proposal.creationDate)} ago
-              </p>
-            </div>
-            <IconChevronRight className="shrink-0 text-neutral-300" />
-          </Link>
-        ))}
+              <IconChevronRight className="shrink-0 text-neutral-300" />
+            </Link>
+          ))}
+        </div>
+        {hasMore && (
+          <ButtonText
+            mode="secondary"
+            label={t('members.profile.labelViewMore')}
+            className="border-neutral-100"
+            bgWhite={false}
+            iconRight={<IconChevronDown />}
+            onClick={() => setPage(current => current + 1)}
+          />
+        )}
       </div>
-      {hasMore && (
-        <ButtonText
-          mode="secondary"
-          label="View more"
-          iconRight={<IconChevronDown />}
-          onClick={() => setPage(current => current + 1)}
-        />
-      )}
-    </div>
+    </MemberSection>
   );
 };
