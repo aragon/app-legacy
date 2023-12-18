@@ -225,11 +225,6 @@ export const DaoMember: React.FC = () => {
       />
       <div className="flex flex-col gap-16 px-4 md:flex-row md:px-0">
         <MemberSection
-          isEmpty={memberCreatedProposals.length === 0}
-          empty={{
-            title: t('members.profile.emptyState.Participations'),
-            illustration: 'lightbulb',
-          }}
           title={t('members.profile.sectionProposalsCreated', {
             amount: memberCreatedProposals.length,
           })}

@@ -7,6 +7,7 @@ import {useTranslation} from 'react-i18next';
 import {Locale, formatDistanceToNow} from 'date-fns';
 import * as Locales from 'date-fns/locale';
 import {useNetwork} from 'context/network';
+import {EmptyMemberSection} from 'pages/daoMember';
 
 export interface IUserProposalListProps {
   proposals?: ProposalBase[];
@@ -15,7 +16,7 @@ export interface IUserProposalListProps {
 export const UserProposalList: React.FC<IUserProposalListProps> = props => {
   const {proposals = []} = props;
 
-  const {i18n} = useTranslation();
+  const {t, i18n} = useTranslation();
   const {network} = useNetwork();
   const {dao} = useParams();
 
@@ -37,6 +38,15 @@ export const UserProposalList: React.FC<IUserProposalListProps> = props => {
       dao,
       id,
     });
+
+  if (proposals.length === 0) {
+    return (
+      <EmptyMemberSection
+        title={t('members.profile.emptyState.ProposalsCreated')}
+        illustration="not_found"
+      />
+    );
+  }
 
   return (
     <div className="flex flex-col items-start gap-3">
