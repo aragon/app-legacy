@@ -31,7 +31,7 @@ import {TFunction} from 'i18next';
 
 import {daoFactoryABI} from 'abis/daoFactoryABI';
 import {MultisigWalletField} from 'components/multisigWallets/row';
-import {isGaslessVotingClient, PluginTypes} from 'hooks/usePluginClient';
+import {PluginTypes} from 'hooks/usePluginClient';
 import {getEtherscanVerifiedContract} from 'services/etherscanAPI';
 import {Token} from 'services/token/domain';
 import {IFetchTokenParams} from 'services/token/token-service.api';

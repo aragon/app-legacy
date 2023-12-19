@@ -18,6 +18,7 @@ import {
 import {
   GaslessPluginVotingSettings,
   GaslessVotingProposal,
+  GaslessVotingProposalListItem,
 } from '@vocdoni/gasless-voting';
 import {BigNumber} from 'ethers';
 
@@ -194,7 +195,7 @@ export type DetailedProposal =
 export type ProposalListItem =
   | TokenVotingProposalListItem
   | MultisigProposalListItem
-  | GaslessVotingProposal;
+  | GaslessVotingProposalListItem;
 export type SupportedProposals = DetailedProposal | ProposalListItem;
 
 export type SupportedVotingSettings =
