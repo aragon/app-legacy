@@ -21,6 +21,7 @@ import AccordionSummary from '../addAddresses/accordionSummary';
 import {AddressRow} from '../addAddresses/addressRow';
 import {useAlertContext} from 'context/alert';
 import {CurrentDaoMembers} from '../updateMinimumApproval';
+import {useDaoDetailsQuery} from 'hooks/useDaoDetails';
 
 type RemoveAddressesProps = ActionIndex &
   CustomHeaderProps &
@@ -38,6 +39,8 @@ const RemoveAddresses: React.FC<RemoveAddressesProps> = ({
   const {open} = useGlobalModalContext();
   const {removeAction} = useActionsContext();
   const {alert} = useAlertContext();
+
+  const {data: daoDetails} = useDaoDetailsQuery();
 
   // form context data & hooks
   const {control, setValue} = useFormContext();
@@ -130,7 +133,8 @@ const RemoveAddresses: React.FC<RemoveAddressesProps> = ({
         verified
         type="action-builder"
         methodName={t('labels.removeWallets')}
-        smartContractName={t('labels.aragonOSx')}
+        smartContractName={`Multisig v${daoDetails?.plugins[0].release}.${daoDetails?.plugins[0].build}`}
+        smartContractAddress={daoDetails?.plugins[0].instanceAddress}
         methodDescription={t('labels.removeWalletsDescription')}
         dropdownItems={methodActions}
         customHeader={useCustomHeader && <CustomHeader />}

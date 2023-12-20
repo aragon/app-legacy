@@ -48,6 +48,11 @@ const MintTokens: React.FC<MintTokensProps> = ({
   const {t} = useTranslation();
   const {alert} = useAlertContext();
 
+  const {data: daoDetails} = useDaoDetailsQuery();
+  const {data: daoToken} = useDaoToken(
+    daoDetails?.plugins[0].instanceAddress as string
+  );
+
   const {removeAction} = useActionsContext();
   const {setValue, clearErrors, resetField} = useFormContext();
 
@@ -85,7 +90,8 @@ const MintTokens: React.FC<MintTokensProps> = ({
     <AccordionMethod
       type="action-builder"
       methodName={t('labels.mintTokens')}
-      smartContractName={t('labels.aragonOSx')}
+      smartContractName="GovernanceERC20"
+      smartContractAddress={daoToken?.address}
       verified
       methodDescription={t('newProposal.mintTokens.methodDescription')}
       additionalInfo={t('newProposal.mintTokens.additionalInfo')}

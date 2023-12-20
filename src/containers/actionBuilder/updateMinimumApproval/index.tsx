@@ -11,6 +11,7 @@ import {DaoMember} from 'hooks/useDaoMembers';
 import {CORRECTION_DELAY} from 'utils/constants';
 import {ActionAddAddress, ActionIndex, ActionRemoveAddress} from 'utils/types';
 import {CustomHeaderProps, FormItem} from '../addAddresses';
+import {useDaoDetailsQuery} from 'hooks/useDaoDetails';
 
 export type CurrentDaoMembers = {
   currentDaoMembers?: DaoMember[];
@@ -27,6 +28,8 @@ const UpdateMinimumApproval: React.FC<UpdateMinimumApprovalProps> = ({
   currentMinimumApproval,
 }) => {
   const {t} = useTranslation();
+
+  const {data: daoDetails} = useDaoDetailsQuery();
 
   // form context data & hooks
   const {setValue, control, trigger, getValues} = useFormContext();
@@ -153,7 +156,8 @@ const UpdateMinimumApproval: React.FC<UpdateMinimumApprovalProps> = ({
         verified
         type={'action-builder'}
         methodName={t('labels.minimumApproval')}
-        smartContractName={t('labels.aragonOSx')}
+        smartContractName={`Multisig v${daoDetails?.plugins[0].release}.${daoDetails?.plugins[0].build}`}
+        smartContractAddress={daoDetails?.plugins[0].instanceAddress}
         customHeader={useCustomHeader && <CustomHeader />}
         methodDescription={t('labels.minimumApprovalDescription')}
         additionalInfo={t('labels.minimumApprovalAdditionalInfo')}

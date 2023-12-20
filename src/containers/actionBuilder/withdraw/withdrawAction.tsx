@@ -9,8 +9,6 @@ import {useActionsContext} from 'context/actions';
 import {ActionIndex} from 'utils/types';
 import {FormItem} from '../addAddresses';
 import {useAlertContext} from 'context/alert';
-import {useDaoDetailsQuery} from 'hooks/useDaoDetails';
-import {useProtocolVersion} from 'services/aragon-sdk/queries/use-protocol-version';
 
 type WithdrawActionProps = ActionIndex & {allowRemove?: boolean};
 
@@ -22,10 +20,6 @@ const WithdrawAction: React.FC<WithdrawActionProps> = ({
   const {removeAction, duplicateAction} = useActionsContext();
   const {setValue, clearErrors, resetField} = useFormContext();
   const {alert} = useAlertContext();
-  const {data: daoDetails, isLoading: daoDetailsLoading} = useDaoDetailsQuery();
-  const {data: versions, isLoading: versionLoading} = useProtocolVersion(
-    daoDetails?.address || ''
-  );
 
   const resetWithdrawFields = () => {
     clearErrors(`actions.${actionIndex}`);
@@ -75,18 +69,13 @@ const WithdrawAction: React.FC<WithdrawActionProps> = ({
     return result;
   })();
 
-  if (daoDetailsLoading || versionLoading) {
-    return null;
-  }
-
   return (
     <AccordionMethod
       verified
       type="action-builder"
       methodName={t('TransferModal.item2Title')}
       dropdownItems={methodActions}
-      smartContractName={`${t('labels.aragonOSx')} v${versions?.join('.')}`}
-      smartContractAddress={daoDetails?.address}
+      smartContractName={t('labels.aragonOSx')}
       methodDescription={t('AddActionModal.withdrawAssetsActionSubtitle')}
     >
       <FormItem className="space-y-6 rounded-b-xl py-6">
