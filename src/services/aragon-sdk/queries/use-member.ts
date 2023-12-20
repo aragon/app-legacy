@@ -191,8 +191,6 @@ const fetchMemberDAOs = async (
         });
   });
 
-  console.log('filteredResponse', filteredResponse);
-
   return toMemberDAOs(filteredResponse);
 };
 
