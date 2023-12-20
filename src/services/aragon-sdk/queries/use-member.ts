@@ -8,6 +8,8 @@ import {invariant} from 'utils/invariant';
 import {SubgraphTokenVotingMember} from '@aragon/sdk-client/dist/tokenVoting/internal/types';
 import {MemberDAOsType, SubgraphMembers} from 'utils/types';
 import {useNetwork} from 'context/network';
+import {useWallet} from 'hooks/useWallet';
+import {SupportedNetworks} from 'utils/constants';
 
 function toTokenVotingMember(
   member: SubgraphTokenVotingMember

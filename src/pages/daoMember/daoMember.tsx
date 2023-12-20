@@ -234,7 +234,7 @@ export const DaoMember: React.FC = () => {
         }
       />
 
-      <RightNarrowContent>
+      {/* <RightNarrowContent>
         <DaoListSectionWrapper title={t('members.profile.sectionMemberhsips')}>
           <div className="space-y-2">
             {daoMemberList?.map((dao, index) => (
@@ -247,12 +247,27 @@ export const DaoMember: React.FC = () => {
             ))}
           </div>
         </DaoListSectionWrapper>
-      </RightNarrowContent>
+      </RightNarrowContent> */}
       <div className="flex flex-col gap-16 px-4 md:flex-row md:px-0">
         <div className="flex grow flex-col gap-10">
           <UserProposalList proposals={memberCreatedProposals} />
         </div>
-        <div className="flex w-full grow md:max-w-[400px]" />
+        <div className="flex flex-col w-full grow md:max-w-[400px]">
+          <DaoListSectionWrapper
+            title={t('members.profile.sectionMemberhsips')}
+          >
+            <div className="space-y-2">
+              {daoMemberList?.map((dao, index) => (
+                <ActionItemMembership
+                  key={index}
+                  address={dao.address}
+                  subdomain={dao.subdomain}
+                  metadata={dao.metadata}
+                />
+              ))}
+            </div>
+          </DaoListSectionWrapper>
+        </div>
       </div>
     </HeaderWrapper>
   );

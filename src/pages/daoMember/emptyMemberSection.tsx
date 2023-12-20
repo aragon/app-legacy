@@ -6,13 +6,13 @@ import {useHref} from 'react-router-dom';
 export interface IEmptyMemberSectionProps {
   title: string;
   illustration: IlluObjectProps['object'];
-  link: {label: string; href: string};
+  link?: {label: string; href: string};
 }
 
 export const EmptyMemberSection: React.FC<IEmptyMemberSectionProps> = props => {
   const {title, illustration, link} = props;
 
-  const processedLink = useHref(link.href);
+  const processedLink = useHref(link?.href || '');
 
   return (
     <div className="flex grow flex-row items-center justify-between gap-4 rounded-xl border border-neutral-100 bg-neutral-0 px-6 py-5">
@@ -20,14 +20,16 @@ export const EmptyMemberSection: React.FC<IEmptyMemberSectionProps> = props => {
         <p className="text-base font-semibold leading-tight md:text-lg">
           {title}
         </p>
-        <Button
-          variant="tertiary"
-          size="sm"
-          href={processedLink}
-          className="md:hidden"
-        >
-          {link.label}
-        </Button>
+        {link && (
+          <Button
+            variant="tertiary"
+            size="sm"
+            href={processedLink}
+            className="md:hidden"
+          >
+            {link.label}
+          </Button>
+        )}
       </div>
       <div className="rounded-full bg-neutral-50 p-2">
         <IlluObject
