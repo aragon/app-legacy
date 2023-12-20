@@ -1,4 +1,4 @@
-import {gql} from 'graphql-request';
+import request, {gql} from 'graphql-request';
 import {UseQueryOptions, useQuery} from '@tanstack/react-query';
 import {aragonSdkQueryKeys} from '../query-keys';
 import type {IFetchMemberParams} from '../aragon-sdk-service.api';
@@ -9,7 +9,7 @@ import {SubgraphTokenVotingMember} from '@aragon/sdk-client/dist/tokenVoting/int
 import {MemberDAOsType, SubgraphMembers} from 'utils/types';
 import {useNetwork} from 'context/network';
 import {useWallet} from 'hooks/useWallet';
-import {SupportedNetworks} from 'utils/constants';
+import {SUBGRAPH_API_URL, SupportedNetworks} from 'utils/constants';
 
 function toTokenVotingMember(
   member: SubgraphTokenVotingMember
@@ -39,6 +39,7 @@ function toMemberDAOs(members: SubgraphMembers[]): MemberDAOsType {
     pluginAddress: member.plugin.dao.id,
     metadata: member.plugin.dao.metadata,
     subdomain: member.plugin.dao.subdomain,
+    network: member.network,
   }));
 }
 
@@ -148,18 +149,44 @@ const fetchMemberDAOs = async (
     block: blockNumber ? {number: blockNumber} : null,
   };
 
+  const promisesResult = Object.entries(SUBGRAPH_API_URL).map(async ([key]) => {
+    if (key !== 'unsupported') {
+      const reponse = await request(
+        SUBGRAPH_API_URL[key as SupportedNetworks] as string,
+        membersDAOsQuery,
+        params
+      );
+      return {
+        ...reponse,
+        network: key as SupportedNetworks,
+      };
+    }
+  });
+
   type TResult = {
     tokenVotingMembers: SubgraphMembers[];
     multisigApprovers: SubgraphMembers[];
+    network: string;
   };
 
-  const {tokenVotingMembers, multisigApprovers} =
-    await client!.graphql.request<TResult>({
-      query: membersDAOsQuery,
-      params,
-    });
+  const response: TResult[] = await Promise.all(promisesResult);
+  const filteredResponse: SubgraphMembers[] = [];
 
-  return toMemberDAOs((tokenVotingMembers ?? []).concat(multisigApprovers));
+  response.map(networkDaos => {
+    if (networkDaos)
+      (networkDaos.tokenVotingMembers ?? [])
+        .concat(networkDaos.multisigApprovers)
+        .map(dao => {
+          filteredResponse.push({
+            ...dao,
+            network: networkDaos.network,
+          });
+        });
+  });
+
+  console.log('filteredResponse', filteredResponse);
+
+  return toMemberDAOs(filteredResponse);
 };
 
 export const useMember = (

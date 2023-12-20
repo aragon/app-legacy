@@ -651,6 +651,7 @@ export type MemberDAOsType = {
   address: string;
   metadata: string;
   subdomain: string;
+  network: string;
 }[];
 
 export type SubgraphMembers = SubgraphTokenVotingMember & {
@@ -661,4 +662,5 @@ export type SubgraphMembers = SubgraphTokenVotingMember & {
       subdomain: string;
     };
   };
+  network?: string;
 };

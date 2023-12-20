@@ -22,11 +22,11 @@ import {Address, formatUnits} from 'viem';
 import {useEnsAvatar, useEnsName, useEnsResolver} from 'wagmi';
 import {useMember, useMemberDAOs} from 'services/aragon-sdk/queries/use-member';
 import {NumberFormat, formatterUtils} from '@aragon/ods';
-import {ActionItemMembership} from 'components/membersList/actionItemMembership';
 import {TokenVotingMember} from '@aragon/sdk-client';
-import {DaoListSectionWrapper} from 'components/wrappers';
 import {useCreatorProposals} from 'services/aragon-sdk/queries/use-creator-proposals';
 import {UserProposalList} from 'components/userProposalList';
+import {MembershipDAOList} from 'components/membershipDAOList/membershipDAOList';
+import {MemberDAOsType} from 'utils/types';
 
 export const DaoMember: React.FC = () => {
   const {t} = useTranslation();
@@ -233,41 +233,9 @@ export const DaoMember: React.FC = () => {
           )
         }
       />
-
-      {/* <RightNarrowContent>
-        <DaoListSectionWrapper title={t('members.profile.sectionMemberhsips')}>
-          <div className="space-y-2">
-            {daoMemberList?.map((dao, index) => (
-              <ActionItemMembership
-                key={index}
-                address={dao.address}
-                subdomain={dao.subdomain}
-                metadata={dao.metadata}
-              />
-            ))}
-          </div>
-        </DaoListSectionWrapper>
-      </RightNarrowContent> */}
       <div className="flex flex-col gap-16 px-4 md:flex-row md:px-0">
-        <div className="flex grow flex-col gap-10">
-          <UserProposalList proposals={memberCreatedProposals} />
-        </div>
-        <div className="flex flex-col w-full grow md:max-w-[400px]">
-          <DaoListSectionWrapper
-            title={t('members.profile.sectionMemberhsips')}
-          >
-            <div className="space-y-2">
-              {daoMemberList?.map((dao, index) => (
-                <ActionItemMembership
-                  key={index}
-                  address={dao.address}
-                  subdomain={dao.subdomain}
-                  metadata={dao.metadata}
-                />
-              ))}
-            </div>
-          </DaoListSectionWrapper>
-        </div>
+        <UserProposalList proposals={memberCreatedProposals} />
+        <MembershipDAOList daos={daoMemberList as MemberDAOsType} />
       </div>
     </HeaderWrapper>
   );
@@ -276,8 +244,4 @@ export const DaoMember: React.FC = () => {
 const HeaderWrapper = styled.div.attrs({
   className:
     'w-screen -mx-4 md:col-span-full md:w-full md:mx-0 xl:col-start-2 xl:col-span-10 md:mt-6',
-})``;
-
-const RightNarrowContent = styled.div.attrs({
-  className: '',
 })``;
