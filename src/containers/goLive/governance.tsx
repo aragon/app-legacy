@@ -52,9 +52,9 @@ const Governance: React.FC = () => {
             <Dl>
               <Dt>{t('labels.minimumApproval')}</Dt>
               <Dd>
-                {multisigMinimumApprovals}&nbsp;
                 {t('labels.review.multisigMinimumApprovals', {
-                  count: multisigWallets.length,
+                  count: multisigMinimumApprovals,
+                  total: multisigWallets.length,
                 })}
               </Dd>
             </Dl>

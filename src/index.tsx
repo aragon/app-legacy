@@ -21,7 +21,7 @@ import {
   sepolia,
 } from 'wagmi/chains';
 import {infuraProvider} from 'wagmi/providers/infura';
-import {LedgerConnector} from 'wagmi/connectors/ledger';
+//import {LedgerConnector} from 'wagmi/connectors/ledger';
 import {AlertProvider} from 'context/alert';
 import {GlobalModalsProvider} from 'context/globalModals';
 import {NetworkProvider} from 'context/network';
@@ -47,6 +47,7 @@ const chains = [
   arbitrumGoerli,
   sepolia,
 ];
+/*
 const ledgerChains = [
   goerli,
   mainnet,
@@ -56,6 +57,7 @@ const ledgerChains = [
   arbitrumGoerli,
   sepolia,
 ];
+*/
 
 const {publicClient} = configureChains(chains, [
   w3mProvider({projectId: walletConnectProjectID}),
@@ -70,6 +72,7 @@ const wagmiConfig = createConfig({
       version: 2,
       chains,
     }),
+    /*
     new LedgerConnector({
       chains: ledgerChains,
       options: {
@@ -78,6 +81,7 @@ const wagmiConfig = createConfig({
         projectId: walletConnectProjectID,
       },
     }),
+    */
   ],
 
   publicClient,

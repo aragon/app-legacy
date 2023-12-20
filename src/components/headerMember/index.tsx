@@ -128,7 +128,7 @@ export const HeaderMember: React.FC<HeaderMemberProps> = ({
       {!!stats.length && (
         <StatsContainer total={stats.length}>
           {stats.map((stat, statIdx) => (
-            <StatItem key={`member-stat-${statIdx}`}>
+            <StatItem key={`member-stat-${statIdx}`} total={stats.length}>
               <StatHeader>
                 <StatValue>{stat.value}</StatValue>
                 {stat.helpText && <div>{stat.helpText}</div>}
@@ -200,10 +200,17 @@ const StatsContainer = styled.div.attrs<{total: number}>({
   }
 `;
 
-const StatItem = styled.div.attrs({
+const StatItem = styled.div.attrs<{total: number}>({
   className:
     'flex flex-col gap-0.5 border-[0.5px] border-neutral-100 p-5 text-neutral-500 bg-neutral-0',
-})``;
+})`
+  @media screen and (max-width: 786px) {
+    &:last-child {
+      ${props => (props.total % 2 !== 0 ? 'grid-column-start: 1;' : '')}
+      ${props => (props.total % 2 !== 0 ? 'grid-column-end: 3;' : '')}
+    }
+  }
+`;
 
 const StatHeader = styled.div.attrs({
   className: 'flex items-end gap-1',

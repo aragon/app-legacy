@@ -55,6 +55,9 @@ export const Finance: React.FC = () => {
     totalAssetValue,
     transfers,
     isDaoBalancePositive,
+    isCumulativeStatsLoading,
+    isTokensLoading,
+    isTransfersLoading,
   } = useDaoVault();
 
   sortTokens(tokens, 'treasurySharePercentage', true);
@@ -62,7 +65,12 @@ export const Finance: React.FC = () => {
   /*************************************************
    *                    Render                     *
    *************************************************/
-  if (isLoading) {
+  if (
+    isLoading ||
+    isTokensLoading ||
+    isTransfersLoading ||
+    isCumulativeStatsLoading
+  ) {
     return <Loading />;
   }
 
