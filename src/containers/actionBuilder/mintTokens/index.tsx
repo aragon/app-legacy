@@ -47,7 +47,7 @@ const MintTokens: React.FC<MintTokensProps> = ({
 }) => {
   const {t} = useTranslation();
   const {alert} = useAlertContext();
-
+  const {network} = useNetwork();
   const {data: daoDetails} = useDaoDetailsQuery();
   const {data: daoToken} = useDaoToken(
     daoDetails?.plugins[0].instanceAddress as string
@@ -92,6 +92,7 @@ const MintTokens: React.FC<MintTokensProps> = ({
       methodName={t('labels.mintTokens')}
       smartContractName="GovernanceERC20"
       smartContractAddress={daoToken?.address}
+      blockExplorerLink={`${CHAIN_METADATA[network].explorer}address/${daoToken?.address}`}
       verified
       methodDescription={t('newProposal.mintTokens.methodDescription')}
       additionalInfo={t('newProposal.mintTokens.additionalInfo')}

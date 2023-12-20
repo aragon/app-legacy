@@ -20,6 +20,7 @@ export type AccordionMethodType = {
   methodName: string;
   smartContractName?: string;
   smartContractAddress?: string;
+  blockExplorerLink?: string;
   verified?: boolean;
   alertLabel?: string;
   methodDescription?: string | React.ReactNode;
@@ -61,6 +62,7 @@ export const AccordionItem: React.FC<AccordionMethodType & {name: string}> = ({
   methodName,
   smartContractName,
   smartContractAddress,
+  blockExplorerLink,
   verified = false,
   alertLabel,
   methodDescription,
@@ -87,13 +89,14 @@ export const AccordionItem: React.FC<AccordionMethodType & {name: string}> = ({
                   </p>
                 )}
                 {verified ? <IconSuccess /> : <IconWarning />}
-                <p
+                <a
+                  href={blockExplorerLink}
                   className={`ml-2 font-semibold ${
                     verified ? 'text-primary-500' : 'text-warning-500'
                   }`}
                 >
                   {smartContractName}
-                </p>
+                </a>
               </div>
             )}
             {alertLabel && <AlertInline label={alertLabel} />}
