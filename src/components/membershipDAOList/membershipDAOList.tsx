@@ -27,15 +27,17 @@ export const MembershipDAOList: React.FC<IMembershipDAOListProps> = ({
 
   if (daos?.length === 0) {
     return (
-      <EmptyMemberSection
-        title={t('members.profile.emptyState.Memberships')}
-        illustration="users"
-      />
+      <div className="flex w-full grow flex-col md:max-w-[400px]">
+        <EmptyMemberSection
+          title={t('members.profile.emptyState.Memberships')}
+          illustration="users"
+        />
+      </div>
     );
   }
 
   return (
-    <div className="flex flex-col w-full grow md:max-w-[400px]">
+    <div className="flex w-full grow flex-col md:max-w-[400px]">
       <MemberSection
         title={t('members.profile.sectionMemberhsips', {
           amount: daos?.length,

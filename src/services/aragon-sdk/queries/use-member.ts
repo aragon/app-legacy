@@ -36,10 +36,10 @@ function toTokenVotingMember(
 function toMemberDAOs(members: SubgraphMembers[]): MemberDAOsType {
   return members.map(member => ({
     address: member.plugin.dao.id,
-    pluginAddress: member.plugin.dao.id,
+    pluginAddress: member.plugin.pluginAddress,
     metadata: member.plugin.dao.metadata,
     subdomain: member.plugin.dao.subdomain,
-    network: member.network,
+    network: member.network as string,
   }));
 }
 
@@ -91,6 +91,7 @@ export const membersDAOsQuery = gql`
       plugin {
         pluginAddress
         dao {
+          createdAt
           id
           subdomain
           metadata
@@ -102,6 +103,7 @@ export const membersDAOsQuery = gql`
       plugin {
         pluginAddress
         dao {
+          createdAt
           id
           subdomain
           metadata
@@ -138,7 +140,7 @@ const fetchMember = async (
 };
 
 const fetchMemberDAOs = async (
-  {blockNumber, address}: IFetchMemberParams,
+  {blockNumber, address, daoAddress}: IFetchMemberParams,
   client?: TokenVotingClient
 ): Promise<MemberDAOsType> => {
   invariant(client != null, 'fetchMember: client is not defined');
@@ -176,11 +178,16 @@ const fetchMemberDAOs = async (
     if (networkDaos)
       (networkDaos.tokenVotingMembers ?? [])
         .concat(networkDaos.multisigApprovers)
+        .sort(
+          (a, b) =>
+            Number(b.plugin.dao.createdAt) - Number(a.plugin.dao.createdAt)
+        )
         .map(dao => {
-          filteredResponse.push({
-            ...dao,
-            network: networkDaos.network,
-          });
+          if (dao.plugin.dao.id !== daoAddress)
+            filteredResponse.push({
+              ...dao,
+              network: networkDaos.network,
+            });
         });
   });
 

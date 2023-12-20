@@ -101,8 +101,9 @@ export const DaoMember: React.FC = () => {
     {
       address: memberAddress?.toLowerCase(),
       pluginType: pluginType,
+      daoAddress: daoDetails?.address,
     },
-    {enabled: !!memberAddress}
+    {enabled: !!memberAddress && !!daoDetails}
   );
 
   const isDelegating = !!(daoMember as TokenVotingMember)?.delegators?.find(

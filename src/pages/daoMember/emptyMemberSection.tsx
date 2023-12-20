@@ -15,7 +15,7 @@ export const EmptyMemberSection: React.FC<IEmptyMemberSectionProps> = props => {
   const processedLink = useHref(link?.href || '');
 
   return (
-    <div className="flex grow flex-row items-center justify-between gap-4 rounded-xl border border-neutral-100 bg-neutral-0 px-6 py-5">
+    <div className="flex flex-row items-center justify-between gap-4 rounded-xl border border-neutral-100 bg-neutral-0 px-6 py-5">
       <div className="flex grow flex-col items-start gap-4">
         <p className="text-base font-semibold leading-tight md:text-lg">
           {title}

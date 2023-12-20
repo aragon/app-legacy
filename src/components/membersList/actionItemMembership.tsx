@@ -5,7 +5,6 @@ import {resolveIpfsCid} from '@aragon/sdk-client-common';
 import {useClient} from 'hooks/useClient';
 import {Client, DaoListItem} from '@aragon/sdk-client';
 import {toDisplayEns} from 'utils/library';
-import {useTranslation} from 'react-i18next';
 import {generatePath, useNavigate} from 'react-router-dom';
 import {Dashboard} from 'utils/paths';
 
@@ -31,7 +30,6 @@ export type ActionItemAddressProps = {
 export const ActionItemMembership: React.FC<ActionItemAddressProps> = props => {
   const {address, subdomain, metadata, network} = props;
   const {client} = useClient();
-  const {t} = useTranslation();
   const navigate = useNavigate();
   const [metadataObject, setMetadataObject] = useState<DaoListItem['metadata']>(
     {
@@ -79,16 +77,16 @@ export const ActionItemMembership: React.FC<ActionItemAddressProps> = props => {
         </div>
         <div className="flex flex-col">
           <Title>
-            {metadata ? metadataObject.name || '' : 'No name found'}
+            {metadataObject ? metadataObject.name || '-' : 'No name found'}
           </Title>
           <Address>
             {toDisplayEns(subdomain) || shortenAddress(address)}
           </Address>
-          <Activity>
+          {/* <Activity>
             {t('members.profile.labelLatestActivity', {
               time: '-',
             })}
-          </Activity>
+          </Activity> */}
         </div>
       </div>
       <IconChevronRight />
@@ -104,6 +102,6 @@ const Address = styled.span.attrs({
   className: 'ft-text-base text-neutral-500' as string,
 })``;
 
-const Activity = styled.div.attrs({
-  className: 'ft-text-sm text-neutral-500 mt-2' as string,
-})``;
+// const Activity = styled.div.attrs({
+//   className: 'ft-text-sm text-neutral-500 mt-2' as string,
+// })``;

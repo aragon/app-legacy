@@ -656,7 +656,9 @@ export type MemberDAOsType = {
 
 export type SubgraphMembers = SubgraphTokenVotingMember & {
   plugin: {
+    pluginAddress: string;
     dao: {
+      createdAt: string;
       id: string;
       metadata: string;
       subdomain: string;

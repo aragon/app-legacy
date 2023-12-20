@@ -50,6 +50,7 @@ export interface IFetchMemberParams {
   pluginAddress?: string;
   pluginType?: PluginTypes;
   blockNumber?: number;
+  daoAddress?: string;
 }
 
 export interface IFetchCreatorProposalsParams {

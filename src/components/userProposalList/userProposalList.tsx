@@ -50,18 +50,20 @@ export const UserProposalList: React.FC<IUserProposalListProps> = props => {
 
   if (proposals.length === 0) {
     return (
-      <EmptyMemberSection
-        title={t('members.profile.emptyState.ProposalsCreated')}
-        illustration="not_found"
-        link={{
-          label: t('members.profile.emptyState.CTACreateProposal'),
-          href: generatePath(NewProposal, {
-            network,
-            dao,
-            type: ProposalTypes.Default,
-          }),
-        }}
-      />
+      <div className="flex grow flex-col gap-10">
+        <EmptyMemberSection
+          title={t('members.profile.emptyState.ProposalsCreated')}
+          illustration="not_found"
+          link={{
+            label: t('members.profile.emptyState.CTACreateProposal'),
+            href: generatePath(NewProposal, {
+              network,
+              dao,
+              type: ProposalTypes.Default,
+            }),
+          }}
+        />
+      </div>
     );
   }
 
