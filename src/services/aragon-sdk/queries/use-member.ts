@@ -34,13 +34,17 @@ function toTokenVotingMember(
 }
 
 function toMemberDAOs(members: SubgraphMembers[]): MemberDAOsType {
-  return members.map(member => ({
-    address: member.plugin.dao.id,
-    pluginAddress: member.plugin.pluginAddress,
-    metadata: member.plugin.dao.metadata,
-    subdomain: member.plugin.dao.subdomain,
-    network: member.network as string,
-  }));
+  return members
+    .sort(
+      (a, b) => Number(b.plugin.dao.createdAt) - Number(a.plugin.dao.createdAt)
+    )
+    .map(member => ({
+      address: member.plugin.dao.id,
+      pluginAddress: member.plugin.pluginAddress,
+      metadata: member.plugin.dao.metadata,
+      subdomain: member.plugin.dao.subdomain,
+      network: member.network as string,
+    }));
 }
 
 // TODO: remove GraphQL query when utility is implemented on the SDK
@@ -178,10 +182,6 @@ const fetchMemberDAOs = async (
     if (networkDaos)
       (networkDaos.tokenVotingMembers ?? [])
         .concat(networkDaos.multisigApprovers)
-        .sort(
-          (a, b) =>
-            Number(b.plugin.dao.createdAt) - Number(a.plugin.dao.createdAt)
-        )
         .map(dao => {
           if (dao.plugin.dao.id !== daoAddress)
             filteredResponse.push({
