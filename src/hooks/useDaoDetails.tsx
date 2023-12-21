@@ -7,7 +7,7 @@ import {useLocation, useNavigate, useParams} from 'react-router-dom';
 
 import {useNetwork} from 'context/network';
 import {useProviders} from 'context/providers';
-import {CHAIN_METADATA} from 'utils/constants';
+import {CHAIN_METADATA, SupportedNetworks} from 'utils/constants';
 import {toDisplayEns} from 'utils/library';
 import {NotFound} from 'utils/paths';
 import {useClient} from './useClient';
@@ -130,7 +130,7 @@ export const useDaoQuery = (
   return useQuery<DaoDetails | null>({
     queryKey: ['daoDetails', daoAddressOrEns, queryNetwork],
     queryFn,
-    select: addAvatarToDao(),
+    select: addAvatarToDao(network),
     enabled,
     // useQuery will cache an empty data for ens names which is wrong, but this config
     // will disable caching for ens names in L2 the caching is enabled for
@@ -199,14 +199,20 @@ export const useDaoDetailsQuery = () => {
  * @param dao DAO details
  * @returns DAO details object augmented with a resolved IPFS avatar
  */
-const addAvatarToDao = () => (dao: DaoDetails | null) => {
-  if (!dao) return null;
+const addAvatarToDao =
+  (network: SupportedNetworks) => (dao: DaoDetails | null) => {
+    if (!dao) return null;
 
-  return {
-    ...dao,
-    metadata: {
-      ...dao?.metadata,
-      avatar: dao?.metadata.avatar,
-    },
+    const processedEns = !CHAIN_METADATA[network].supportsEns
+      ? ''
+      : dao.ensDomain;
+
+    return {
+      ...dao,
+      ensDomain: processedEns,
+      metadata: {
+        ...dao?.metadata,
+        avatar: dao?.metadata.avatar,
+      },
+    };
   };
-};

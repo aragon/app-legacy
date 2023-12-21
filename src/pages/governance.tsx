@@ -40,6 +40,7 @@ export const Governance: React.FC = () => {
   const [filter, setFilter] = useState<ProposalStatus | 'All'>('All');
 
   const {data: daoDetails, isLoading: daoDetailsLoading} = useDaoDetailsQuery();
+  console.log({daoDetails});
   const pluginType = daoDetails?.plugins[0].id as PluginTypes | undefined;
   const pluginAddress = daoDetails?.plugins[0].instanceAddress;
 
