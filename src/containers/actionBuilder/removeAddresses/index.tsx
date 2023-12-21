@@ -137,7 +137,11 @@ const RemoveAddresses: React.FC<RemoveAddressesProps> = ({
         methodName={t('labels.removeWallets')}
         smartContractName={`Multisig v${daoDetails?.plugins[0].release}.${daoDetails?.plugins[0].build}`}
         smartContractAddress={daoDetails?.plugins[0].instanceAddress}
-        blockExplorerLink={`${CHAIN_METADATA[network].explorer}address/${daoDetails?.plugins[0].instanceAddress}`}
+        blockExplorerLink={
+          daoDetails?.plugins[0].instanceAddress
+            ? `${CHAIN_METADATA[network].explorer}address/${daoDetails?.plugins[0].instanceAddress}`
+            : undefined
+        }
         methodDescription={t('labels.removeWalletsDescription')}
         dropdownItems={methodActions}
         customHeader={useCustomHeader && <CustomHeader />}

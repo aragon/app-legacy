@@ -159,7 +159,11 @@ const UpdateMinimumApproval: React.FC<UpdateMinimumApprovalProps> = ({
         methodName={t('labels.minimumApproval')}
         smartContractName={`Multisig v${daoDetails?.plugins[0].release}.${daoDetails?.plugins[0].build}`}
         smartContractAddress={daoDetails?.plugins[0].instanceAddress}
-        blockExplorerLink={`${CHAIN_METADATA[network].explorer}address/${daoDetails?.plugins[0].instanceAddress}`}
+        blockExplorerLink={
+          daoDetails?.plugins[0].instanceAddress
+            ? `${CHAIN_METADATA[network].explorer}address/${daoDetails?.plugins[0].instanceAddress}`
+            : undefined
+        }
         customHeader={useCustomHeader && <CustomHeader />}
         methodDescription={t('labels.minimumApprovalDescription')}
         additionalInfo={t('labels.minimumApprovalAdditionalInfo')}

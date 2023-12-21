@@ -92,7 +92,11 @@ const MintTokens: React.FC<MintTokensProps> = ({
       methodName={t('labels.mintTokens')}
       smartContractName="GovernanceERC20"
       smartContractAddress={daoToken?.address}
-      blockExplorerLink={`${CHAIN_METADATA[network].explorer}address/${daoToken?.address}`}
+      blockExplorerLink={
+        daoToken?.address
+          ? `${CHAIN_METADATA[network].explorer}token/${daoToken?.address}`
+          : undefined
+      }
       verified
       methodDescription={t('newProposal.mintTokens.methodDescription')}
       additionalInfo={t('newProposal.mintTokens.additionalInfo')}
