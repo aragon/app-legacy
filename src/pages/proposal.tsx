@@ -411,15 +411,13 @@ export const Proposal: React.FC = () => {
     proposalErc20Token,
     totalVotingWeight,
     daoAddress,
-    proposal?.actions,
+    proposal,
     client,
     network,
     pluginClient,
     provider,
     fetchToken,
     t,
-    daoAddress,
-    proposal?.actions,
   ]);
 
   // caches the status for breadcrumb
