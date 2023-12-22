@@ -237,7 +237,9 @@ const CreateProposalWrapper: React.FC<Props> = ({
           );
           actions.push(
             Promise.resolve(
-              (pluginClient as MultisigClient).encoding.addAddressesAction({
+              (
+                pluginClient as MultisigClient | GaslessVotingClient
+              ).encoding.addAddressesAction({
                 pluginAddress: pluginAddress,
                 members: wallets,
               })
@@ -252,12 +254,12 @@ const CreateProposalWrapper: React.FC<Props> = ({
           if (wallets.length > 0)
             actions.push(
               Promise.resolve(
-                (pluginClient as MultisigClient).encoding.removeAddressesAction(
-                  {
-                    pluginAddress: pluginAddress,
-                    members: wallets,
-                  }
-                )
+                (
+                  pluginClient as MultisigClient | GaslessVotingClient
+                ).encoding.removeAddressesAction({
+                  pluginAddress: pluginAddress,
+                  members: wallets,
+                })
               )
             );
           break;

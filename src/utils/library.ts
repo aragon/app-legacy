@@ -65,7 +65,10 @@ import {Abi, addABI, decodeMethod} from './abiDecoder';
 import {attachEtherNotice} from './contract';
 import {getTokenInfo} from './tokens';
 import {daoABI} from 'abis/daoABI';
-import {GaslessVotingClient} from '@vocdoni/gasless-voting';
+import {
+  GaslessPluginVotingSettings,
+  GaslessVotingClient,
+} from '@vocdoni/gasless-voting';
 
 export function formatUnits(amount: BigNumberish, decimals: number) {
   if (amount.toString().includes('.') || !decimals) {
@@ -280,7 +283,7 @@ export async function decodeMintTokensToAction(
  */
 export async function decodeAddMembersToAction(
   data: Uint8Array | undefined,
-  client: MultisigClient | undefined
+  client: MultisigClient | GaslessVotingClient | undefined
 ): Promise<ActionAddAddress | undefined> {
   if (!client || !data) {
     console.error('SDK client is not initialized correctly');
@@ -306,7 +309,7 @@ export async function decodeAddMembersToAction(
  */
 export async function decodeRemoveMembersToAction(
   data: Uint8Array | undefined,
-  client: MultisigClient | undefined
+  client: MultisigClient | GaslessVotingClient | undefined
 ): Promise<ActionRemoveAddress | undefined> {
   if (!client || !data) {
     console.error('SDK client is not initialized correctly');
@@ -798,12 +801,16 @@ export function readFile(file: Blob): Promise<ArrayBuffer> {
  */
 export function removeUnchangedMinimumApprovalAction(
   actions: Action[],
-  pluginSettings: MultisigVotingSettings
+  pluginSettings: MultisigVotingSettings | GaslessPluginVotingSettings
 ) {
   return actions.flatMap(action => {
     if (
-      action.name === 'modify_multisig_voting_settings' &&
-      Number(action.inputs.minApprovals) === pluginSettings.minApprovals
+      (action.name === 'modify_multisig_voting_settings' &&
+        Number(action.inputs.minApprovals) ===
+          (pluginSettings as MultisigVotingSettings).minApprovals) ||
+      (action.name === 'modify_gasless_voting_settings' &&
+        Number(action.inputs.minTallyApprovals) ===
+          (pluginSettings as GaslessPluginVotingSettings).minTallyApprovals)
     )
       return [];
     else return action;

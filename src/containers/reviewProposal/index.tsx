@@ -79,6 +79,7 @@ const ReviewProposal: React.FC<ReviewProposalProps> = ({
     useVotingSettings({pluginAddress, pluginType});
 
   const isMultisig = isMultisigVotingSettings(votingSettings);
+  const isGasless = isGaslessVotingSettings(votingSettings);
 
   // Member list only needed for multisig so first page (1000) is sufficient
   const {
@@ -219,11 +220,12 @@ const ReviewProposal: React.FC<ReviewProposalProps> = ({
       setDisplayedActions(
         getNonEmptyActions(
           getValues('actions'),
-          isMultisig ? votingSettings : undefined
+          isMultisig ? votingSettings : undefined,
+          isGasless ? votingSettings : undefined
         )
       );
     }
-  }, [getValues, isMultisig, type, votingSettings]);
+  }, [isGasless, getValues, isMultisig, type, votingSettings]);
 
   useEffect(() => {
     if (type === ProposalTypes.OSUpdates) {

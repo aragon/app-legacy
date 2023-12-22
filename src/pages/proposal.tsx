@@ -318,6 +318,10 @@ export const Proposal: React.FC = () => {
           if (mintTokenActionsData.length === 0) mintTokenActionsIndex = index;
           mintTokenActionsData.push(action.data);
           return;
+        case 'addExecutionMultisigMembers':
+          return decodeAddMembersToAction(action.data, gaslessVotingClient);
+        case 'removeExecutionMultisigMembers':
+          return decodeRemoveMembersToAction(action.data, multisigClient);
         case 'addAddresses':
           return decodeAddMembersToAction(action.data, multisigClient);
         case 'removeAddresses':
