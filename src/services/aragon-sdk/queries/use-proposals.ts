@@ -19,7 +19,7 @@ import {proposalStorage} from 'utils/localStorage/proposalStorage';
 import {IFetchProposalsParams} from '../aragon-sdk-service.api';
 import {aragonSdkQueryKeys} from '../query-keys';
 import {transformInfiniteProposals} from '../selectors';
-import {GaslessVotingProposal} from '@vocdoni/gasless-voting';
+import {GaslessVotingProposalListItem} from '@vocdoni/gasless-voting';
 
 export const PROPOSALS_PER_PAGE = 6;
 
@@ -36,7 +36,7 @@ async function fetchProposals(
 ): Promise<
   | Array<MultisigProposalListItem>
   | Array<TokenVotingProposalListItem>
-  | Array<GaslessVotingProposal>
+  | Array<GaslessVotingProposalListItem>
 > {
   invariant(!!client, 'fetchProposalsAsync: client is not defined');
   const data = await client.methods.getProposals(params);
@@ -46,7 +46,9 @@ async function fetchProposals(
 export const useProposals = (
   userParams: Partial<IFetchProposalsParams> & {pluginAddress: string},
   options: UseInfiniteQueryOptions<
-    Array<MultisigProposalListItem> | Array<TokenVotingProposalListItem>
+    | Array<MultisigProposalListItem>
+    | Array<TokenVotingProposalListItem>
+    | Array<GaslessVotingProposalListItem>
   > = {}
 ) => {
   const params = {...DEFAULT_PARAMS, ...userParams};
@@ -73,7 +75,9 @@ export const useProposals = (
 
   const defaultSelect = (
     data: InfiniteData<
-      Array<MultisigProposalListItem> | Array<TokenVotingProposalListItem>
+      | Array<MultisigProposalListItem>
+      | Array<TokenVotingProposalListItem>
+      | Array<GaslessVotingProposalListItem>
     >
   ) => transformInfiniteProposals(chainId, data);
 
@@ -123,7 +127,10 @@ export const useProposals = (
       return [...finalStoredProposals, ...serverProposals].slice(
         0,
         params.limit
-      ) as Array<MultisigProposalListItem> | Array<TokenVotingProposalListItem>;
+      ) as
+        | Array<MultisigProposalListItem>
+        | Array<TokenVotingProposalListItem>
+        | Array<GaslessVotingProposalListItem>;
     },
 
     // If the length of the last page is equal to the limit from params,

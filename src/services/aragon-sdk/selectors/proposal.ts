@@ -8,7 +8,10 @@ import {
 } from '@aragon/sdk-client';
 import {ensure0x, ProposalStatus} from '@aragon/sdk-client-common';
 import {InfiniteData} from '@tanstack/react-query';
-import {GaslessVotingProposal} from '@vocdoni/gasless-voting';
+import {
+  GaslessVotingProposal,
+  GaslessVotingProposalListItem,
+} from '@vocdoni/gasless-voting';
 
 import {SupportedChainID} from 'utils/constants';
 import {executionStorage, voteStorage} from 'utils/localStorage';
@@ -32,7 +35,8 @@ import {
 export function transformInfiniteProposals<
   T extends
     | Array<MultisigProposalListItem>
-    | Array<TokenVotingProposalListItem>,
+    | Array<TokenVotingProposalListItem>
+    | Array<GaslessVotingProposalListItem>,
 >(chainId: SupportedChainID, data: InfiniteData<T>): InfiniteData<T> {
   return {
     ...data,
@@ -65,6 +69,7 @@ export function transformProposal<
     | MultisigProposalListItem
     | TokenVotingProposalListItem
     | GaslessVotingProposal
+    | GaslessVotingProposalListItem
     | null,
 >(chainId: SupportedChainID, data: T): T {
   if (data == null) {
@@ -86,9 +91,10 @@ export function syncProposalData<
   T extends
     | MultisigProposal
     | TokenVotingProposal
+    | GaslessVotingProposal
     | MultisigProposalListItem
     | TokenVotingProposalListItem
-    | GaslessVotingProposal,
+    | GaslessVotingProposalListItem,
 >(chainId: SupportedChainID, proposalId: string, serverData: T | null) {
   if (serverData) {
     proposalStorage.removeProposal(chainId, serverData.id);
@@ -113,9 +119,10 @@ function syncExecutionInfo(
   proposal:
     | MultisigProposal
     | TokenVotingProposal
+    | GaslessVotingProposal
     | MultisigProposalListItem
     | TokenVotingProposalListItem
-    | GaslessVotingProposal
+    | GaslessVotingProposalListItem
 ): void {
   if (proposal.status === ProposalStatus.EXECUTED) {
     // If the proposal is already executed, remove its detail from storage.
@@ -145,9 +152,10 @@ function syncApprovalsOrVotes(
   proposal:
     | MultisigProposal
     | TokenVotingProposal
+    | GaslessVotingProposal
     | MultisigProposalListItem
     | TokenVotingProposalListItem
-    | GaslessVotingProposal
+    | GaslessVotingProposalListItem
 ): void {
   if (isMultisigProposal(proposal)) {
     proposal.approvals = syncMultisigVotes(chainId, proposal);

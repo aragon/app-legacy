@@ -926,12 +926,18 @@ export function getProposalExecutionStatus(
  */
 export function getNonEmptyActions(
   actions: Array<Action>,
-  msVoteSettings?: MultisigVotingSettings
+  msVoteSettings?: MultisigVotingSettings,
+  gaslessVoteSettings?: GaslessPluginVotingSettings
 ): Action[] {
   return actions.flatMap(action => {
     if (action == null) return [];
 
-    if (action.name === 'modify_multisig_voting_settings') {
+    if (action.name === 'modify_gasless_voting_settings') {
+      return action.inputs.minTallyApprovals !==
+        gaslessVoteSettings?.minTallyApprovals
+        ? action
+        : [];
+    } else if (action.name === 'modify_multisig_voting_settings') {
       // minimum approval or onlyListed changed: return action or don't include
       return action.inputs.minApprovals !== msVoteSettings?.minApprovals ||
         action.inputs.onlyListed !== msVoteSettings.onlyListed
