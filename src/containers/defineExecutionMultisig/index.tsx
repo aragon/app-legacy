@@ -1,11 +1,20 @@
 import {Label} from '@aragon/ods-old';
-import React from 'react';
+import React, {useCallback, useEffect} from 'react';
+import {
+  Controller,
+  useFormContext,
+  useWatch,
+  ValidateResult,
+} from 'react-hook-form';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 
 import AddCommittee from 'components/addCommittee';
 import ExecutionExpirationTime from 'components/executionExpirationTime';
-import {ExecutionMultisigMinimumApproval} from '../../components/executionMultisigMinimumApproval';
+import MinimumApproval from '../../components/multisigMinimumApproval/minimumApproval';
+import {generateAlert} from '../../components/multisigMinimumApproval';
+
+const MIN_REQUIRED_APPROVALS = 1;
 
 export type ConfigureExecutionMultisigProps = {
   isSettingPage?: boolean;
@@ -15,6 +24,47 @@ const DefineExecutionMultisig: React.FC<ConfigureExecutionMultisigProps> = ({
   isSettingPage = false,
 }) => {
   const {t} = useTranslation();
+  const {control, setValue, trigger} = useFormContext();
+
+  const [committee, committeeMinimumApproval] = useWatch({
+    name: ['committee', 'committeeMinimumApproval'],
+  });
+
+  const committeeCount = committee?.length ?? 0;
+
+  const validateMinimumApproval = (value: number): ValidateResult => {
+    if (value > committeeCount) {
+      return t('errors.minimumApproval.exceedMaxThreshold');
+    } else if (value <= 0) {
+      return t('errors.required.minApproval');
+    }
+    return true;
+  };
+
+  const minApprovalChanged = useCallback(
+    (
+      e: React.ChangeEvent<HTMLInputElement>,
+      onChange: React.ChangeEventHandler
+    ) => {
+      const value = Number(e.target.value);
+      if (value > committeeCount) {
+        setValue('committeeMinimumApproval', committeeCount.toString());
+        e.target.value = committeeCount;
+      }
+      trigger(['committeeMinimumApproval']);
+      onChange(e);
+    },
+    [committeeCount, setValue, trigger]
+  );
+
+  // This is used to update the committeeMinimumApproval when a wallet is deleted
+  useEffect(() => {
+    if (Number(committeeMinimumApproval) === 0 && committeeCount === 1) {
+      setValue('committeeMinimumApproval', committeeCount.toString());
+    } else if (Number(committeeMinimumApproval) > committeeCount) {
+      setValue('committeeMinimumApproval', committeeCount.toString());
+    }
+  }, [committeeCount, committeeMinimumApproval, setValue]);
 
   return (
     <>
@@ -35,7 +85,33 @@ const DefineExecutionMultisig: React.FC<ConfigureExecutionMultisigProps> = ({
           label={t('labels.minimumApproval')}
           helpText={t('createDAO.step4.minimumApprovalSubtitle')}
         />
-        <ExecutionMultisigMinimumApproval />
+        <Controller
+          name="committeeMinimumApproval"
+          control={control}
+          defaultValue="1"
+          rules={{
+            required: t('errors.required.amount'),
+            validate: value => validateMinimumApproval(value),
+          }}
+          render={({
+            field: {onBlur, onChange, value, name},
+            fieldState: {error},
+          }) => (
+            <>
+              <MinimumApproval
+                name={name}
+                value={value}
+                min={MIN_REQUIRED_APPROVALS}
+                max={committeeCount}
+                onBlur={onBlur}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                  minApprovalChanged(e, onChange)
+                }
+                error={generateAlert(value, committee.length, t, error)}
+              />
+            </>
+          )}
+        />
       </FormItem>
 
       {/* Execution Expiration Time */}
