@@ -16,7 +16,13 @@ import {generateAlert} from '../../components/multisigMinimumApproval';
 
 const MIN_REQUIRED_APPROVALS = 1;
 
-const DefineExecutionMultisig: React.FC = () => {
+export type ConfigureExecutionMultisigProps = {
+  isSettingPage?: boolean;
+};
+
+const DefineExecutionMultisig: React.FC<ConfigureExecutionMultisigProps> = ({
+  isSettingPage = false,
+}) => {
   const {t} = useTranslation();
   const {control, setValue, trigger} = useFormContext();
 
@@ -63,13 +69,15 @@ const DefineExecutionMultisig: React.FC = () => {
   return (
     <>
       {/*Executive committee members*/}
-      <FormItem>
-        <Label
-          label={t('createDao.executionMultisig.membersLabel')}
-          helpText={t('createDao.executionMultisig.membersDesc')}
-        />
-        <AddCommittee />
-      </FormItem>
+      {!isSettingPage && (
+        <FormItem>
+          <Label
+            label={t('createDao.executionMultisig.membersLabel')}
+            helpText={t('createDao.executionMultisig.membersDesc')}
+          />
+          <AddCommittee />
+        </FormItem>
+      )}
 
       {/*Minimum Approval*/}
       <FormItem>

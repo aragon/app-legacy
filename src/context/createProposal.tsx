@@ -50,6 +50,8 @@ import {useDaoDetailsQuery} from 'hooks/useDaoDetails';
 import {useDaoToken} from 'hooks/useDaoToken';
 import {
   GaselessPluginName,
+  isGaslessVotingClient,
+  isTokenVotingClient,
   PluginTypes,
   usePluginClient,
 } from 'hooks/usePluginClient';
@@ -81,6 +83,7 @@ import {
 } from 'utils/date';
 import {
   getDefaultPayableAmountInputName,
+  readFile,
   toDisplayEns,
   translateToNetworkishName,
 } from 'utils/library';
@@ -186,7 +189,8 @@ const CreateProposalWrapper: React.FC<Props> = ({
     const actions: Array<Promise<DaoAction>> = [];
 
     // return an empty array for undefined clients
-    if (!pluginClient || !client) return Promise.resolve([] as DaoAction[]);
+    if (!pluginClient || !client || !daoDetails?.address)
+      return Promise.resolve([] as DaoAction[]);
 
     for await (const action of getNonEmptyActions(actionsFromForm)) {
       switch (action.name) {
@@ -233,7 +237,9 @@ const CreateProposalWrapper: React.FC<Props> = ({
           );
           actions.push(
             Promise.resolve(
-              (pluginClient as MultisigClient).encoding.addAddressesAction({
+              (
+                pluginClient as MultisigClient | GaslessVotingClient
+              ).encoding.addAddressesAction({
                 pluginAddress: pluginAddress,
                 members: wallets,
               })
@@ -248,12 +254,12 @@ const CreateProposalWrapper: React.FC<Props> = ({
           if (wallets.length > 0)
             actions.push(
               Promise.resolve(
-                (pluginClient as MultisigClient).encoding.removeAddressesAction(
-                  {
-                    pluginAddress: pluginAddress,
-                    members: wallets,
-                  }
-                )
+                (
+                  pluginClient as MultisigClient | GaslessVotingClient
+                ).encoding.removeAddressesAction({
+                  pluginAddress: pluginAddress,
+                  members: wallets,
+                })
               )
             );
           break;
@@ -364,13 +370,78 @@ const CreateProposalWrapper: React.FC<Props> = ({
           });
           break;
         }
+
+        case 'modify_metadata': {
+          const preparedAction = {...action};
+
+          if (
+            preparedAction.inputs.avatar &&
+            typeof preparedAction.inputs.avatar !== 'string'
+          ) {
+            try {
+              const daoLogoBuffer = await readFile(
+                preparedAction.inputs.avatar as unknown as Blob
+              );
+
+              const logoCID = await client?.ipfs.add(
+                new Uint8Array(daoLogoBuffer)
+              );
+              await client?.ipfs.pin(logoCID!);
+              preparedAction.inputs.avatar = `ipfs://${logoCID}`;
+            } catch (e) {
+              preparedAction.inputs.avatar = undefined;
+            }
+          }
+
+          try {
+            const ipfsUri = await client.methods.pinMetadata(
+              preparedAction.inputs
+            );
+
+            actions.push(
+              client.encoding.updateDaoMetadataAction(
+                daoDetails!.address,
+                ipfsUri
+              )
+            );
+          } catch (error) {
+            throw Error('Could not pin metadata on IPFS');
+          }
+          break;
+        }
+        case 'modify_gasless_voting_settings': {
+          if (isGaslessVotingClient(pluginClient)) {
+            actions.push(
+              Promise.resolve(
+                pluginClient.encoding.updatePluginSettingsAction(
+                  pluginAddress,
+                  action.inputs
+                )
+              )
+            );
+          }
+          break;
+        }
+        case 'modify_token_voting_settings': {
+          if (isTokenVotingClient(pluginClient)) {
+            actions.push(
+              Promise.resolve(
+                pluginClient.encoding.updatePluginSettingsAction(
+                  pluginAddress,
+                  action.inputs
+                )
+              )
+            );
+          }
+          break;
+        }
       }
     }
 
     return Promise.all(actions);
   }, [
     client,
-    daoDetails?.address,
+    daoDetails,
     getValues,
     network,
     pluginAddress,
