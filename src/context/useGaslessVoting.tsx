@@ -4,7 +4,7 @@ import {
 } from '@vocdoni/react-providers';
 import {useCallback, useEffect, useMemo, useState} from 'react';
 import {VoteProposalParams} from '@aragon/sdk-client';
-import {Vote} from '@vocdoni/sdk';
+import {ErrAPI, Vote} from '@vocdoni/sdk';
 import {
   StepsMap,
   StepStatus,
@@ -64,7 +64,20 @@ const useGaslessVoting = () => {
     async (vote: VoteProposalParams, electionId: string) => {
       const vocVote = new Vote([vote.vote - 1]); // See values on the enum, using vocdoni starts on 0
       await vocdoniClient.setElectionId(electionId);
-      return await vocdoniClient.submitVote(vocVote);
+      try {
+        return await vocdoniClient.submitVote(vocVote);
+      } catch (e) {
+        if (
+          e instanceof ErrAPI &&
+          e.message &&
+          e.message.includes('SendTx failed') &&
+          e.message.includes('finished at height') &&
+          e.message.includes('current height is')
+        ) {
+          throw new Error('The election has finished');
+        }
+        throw e;
+      }
     },
     [vocdoniClient]
   );
