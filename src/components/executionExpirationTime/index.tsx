@@ -43,7 +43,11 @@ const ExecutionExpirationTime: React.FC = () => {
         );
         setValue('executionExpirationHours', '0');
         setValue('executionExpirationMinutes', '0');
-      } else if (value === 0 && executionExpirationHours === '0') {
+      } else if (
+        value === 0 &&
+        (executionExpirationHours === undefined ||
+          executionExpirationHours === '0')
+      ) {
         setValue(
           'executionExpirationHours',
           COMMITTEE_EXECUTION_MIN_DURATION_HOURS.toString()
