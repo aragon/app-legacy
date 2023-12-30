@@ -6,8 +6,11 @@ import {useClient} from 'hooks/useClient';
 import {Client, DaoListItem} from '@aragon/sdk-client';
 import {toDisplayEns} from 'utils/library';
 import {generatePath, useNavigate} from 'react-router-dom';
-import {Dashboard} from 'utils/paths';
+import {DaoMember} from 'utils/paths';
 import {useResolveDaoAvatar} from 'hooks/useResolveDaoAvatar';
+import {useQueryClient} from '@tanstack/react-query';
+import {aragonSdkQueryKeys} from 'services/aragon-sdk/query-keys';
+import {SupportedNetworks} from 'utils/constants';
 
 /**
  * Type declarations for `ActionItemAddressProps`.
@@ -21,6 +24,7 @@ export type ActionItemAddressProps = {
   subdomain: string;
   network: string;
   metadata?: string;
+  memberAddress: string;
 };
 
 /**
@@ -29,9 +33,10 @@ export type ActionItemAddressProps = {
  * @returns JSX Element.
  */
 export const ActionItemMembership: React.FC<ActionItemAddressProps> = props => {
-  const {address, subdomain, metadata, network} = props;
+  const {address, memberAddress, subdomain, metadata, network} = props;
   const {client} = useClient();
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
   const [metadataObject, setMetadataObject] = useState<DaoListItem['metadata']>(
     {
       name: '',
@@ -41,11 +46,19 @@ export const ActionItemMembership: React.FC<ActionItemAddressProps> = props => {
   );
   const {avatar} = useResolveDaoAvatar(metadataObject.avatar);
 
+  const baseParams = {
+    address: memberAddress as string,
+    network: network as SupportedNetworks,
+  };
+
   const handleDaoClicked = (dao: string, network: string) => {
+    const memberskey = aragonSdkQueryKeys.getMemberDAOs(baseParams);
+    queryClient.invalidateQueries(memberskey);
     navigate(
-      generatePath(Dashboard, {
-        network: network,
+      generatePath(DaoMember, {
+        network,
         dao,
+        user: memberAddress,
       })
     );
   };

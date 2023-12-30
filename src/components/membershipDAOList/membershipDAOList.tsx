@@ -7,6 +7,7 @@ import {ActionItemMembership} from 'components/membersList/actionItemMembership'
 
 export interface IMembershipDAOListProps {
   daos?: MemberDAOsType;
+  memberAddress: string;
 }
 
 const initialDAOsPageSize = 3;
@@ -14,6 +15,7 @@ const daosPageSize = 6;
 
 export const MembershipDAOList: React.FC<IMembershipDAOListProps> = ({
   daos,
+  memberAddress,
 }) => {
   const {t} = useTranslation();
 
@@ -50,6 +52,7 @@ export const MembershipDAOList: React.FC<IMembershipDAOListProps> = ({
               subdomain={dao.subdomain}
               metadata={dao.metadata}
               network={dao.network}
+              memberAddress={memberAddress}
             />
           ))}
         </div>

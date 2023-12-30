@@ -238,7 +238,10 @@ export const DaoMember: React.FC = () => {
           <UserProposalList proposals={memberCreatedProposals} />
         </div>
         <div className="flex w-full grow flex-col md:max-w-[400px]">
-          <MembershipDAOList daos={daoMemberList} />
+          <MembershipDAOList
+            daos={daoMemberList}
+            memberAddress={memberAddress}
+          />
         </div>
       </div>
     </HeaderWrapper>
